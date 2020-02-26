@@ -166,11 +166,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			{
 				wsf.GetWritingSystems(ptr, cws);
 				var vwsT = MarshalEx.NativeToArray<int>(ptr, cws);
-				if (cws == 1 && vwsT[0] == 0)
-				{
-					return null;    // no writing systems to work with
-				}
-				return new List<int>(vwsT);
+				return cws == 1 && vwsT[0] == 0 ? null : new List<int>(vwsT);
 			}
 		}
 
@@ -184,18 +180,14 @@ namespace SIL.FieldWorks.Common.RootSites
 				return;
 			}
 			var vwsel = Callbacks.EditedRootBox.Selection;
-			ITsTextProps[] vttp;
-			IVwPropertyStore[] vvps;
-			int cttp;
-			SelectionHelper.GetSelectionProps(vwsel, out vttp, out vvps, out cttp);
+			SelectionHelper.GetSelectionProps(vwsel, out var vttp, out _, out var cttp);
 			var fChanged = false;
 			for (var ittp = 0; ittp < cttp; ++ittp)
 			{
-				int hvoWsOld, var;
 				var ttp = vttp[ittp];
 				// Change the writing system only if it is different and not a user prompt.
-				hvoWsOld = ttp.GetIntPropValues((int)FwTextPropType.ktptWs, out var);
-				if (ttp.GetIntPropValues(SimpleRootSite.ktptUserPrompt, out var) == -1 && hvoWsOld != hvoWsNew)
+				var hvoWsOld = ttp.GetIntPropValues((int)FwTextPropType.ktptWs, out _);
+				if (ttp.GetIntPropValues(SimpleRootSite.ktptUserPrompt, out _) == -1 && hvoWsOld != hvoWsNew)
 				{
 					var tpb = ttp.GetBldr();
 					tpb.SetIntPropValues((int)FwTextPropType.ktptWs, (int)FwTextPropVar.ktpvDefault, hvoWsNew);
@@ -273,12 +265,12 @@ namespace SIL.FieldWorks.Common.RootSites
 					var ss = GetShiftStatus(e.Modifiers);
 					if (e.KeyCode == Keys.Enter && (ss == VwShiftStatus.kfssShift || !CanEdit()))
 					{
-						return fRet;
+						return true;
 					}
 					var keyVal = e.KeyValue;
-					if (Control is SimpleRootSite)
+					if (Control is SimpleRootSite simpleRootSite)
 					{
-						keyVal = ((SimpleRootSite)Control).ConvertKeyValue(keyVal);
+						keyVal = simpleRootSite.ConvertKeyValue(keyVal);
 					}
 					fRet = CallOnExtendedKey(keyVal, ss);
 
@@ -296,7 +288,7 @@ namespace SIL.FieldWorks.Common.RootSites
 				case Keys.Delete:
 					if (!CanEdit())
 					{
-						return fRet;
+						return true;
 					}
 					// The Microsoft world apparently doesn't know that <DEL> is an ASCII
 					// character just as  much as <BS>, so TranslateMessage generates a
@@ -331,12 +323,11 @@ namespace SIL.FieldWorks.Common.RootSites
 				case Keys.Tab:
 					ss = GetShiftStatus(e.Modifiers);
 					keyVal = e.KeyValue;
-					if (Control is SimpleRootSite)
+					if (Control is SimpleRootSite rootSite)
 					{
-						keyVal = ((SimpleRootSite)Control).ConvertKeyValue(keyVal);
+						keyVal = rootSite.ConvertKeyValue(keyVal);
 					}
 					fRet = CallOnExtendedKey(keyVal, ss);
-
 					// REVIEW (EberhardB): I'm not sure if it's generally valid
 					// to call ScrollSelectionIntoView from HandleKeyDown
 					HandleKeyDown(e, ss);
@@ -359,17 +350,21 @@ namespace SIL.FieldWorks.Common.RootSites
 		public static bool IsIgnoredKey(KeyPressEventArgs e, Keys modifiers)
 		{
 			var ignoredKey = false;
-			if ((modifiers & Keys.Alt) == Keys.Alt)
+			switch (modifiers & Keys.Alt)
 			{
-				// For some languages, Alt is commonly used for keyboard input.  See LT-4182.
-			}
-			else if ((modifiers & Keys.Control) == Keys.Control)
-			{
-				// control-backspace, control-forward delete and control-M (same as return
-				// key) will be passed on for processing
-				ignoredKey = !(e.KeyChar == (int)VwSpecialChars.kscBackspace ||
-					e.KeyChar == (int)VwSpecialChars.kscDelForward ||
-					e.KeyChar == '\r');
+				case Keys.Alt:
+					// For some languages, Alt is commonly used for keyboard input.  See LT-4182.
+					break;
+				default:
+				{
+					if ((modifiers & Keys.Control) == Keys.Control)
+					{
+						// control-backspace, control-forward delete and control-M (same as return
+						// key) will be passed on for processing
+						ignoredKey = !(e.KeyChar == (int)VwSpecialChars.kscBackspace || e.KeyChar == (int)VwSpecialChars.kscDelForward || e.KeyChar == '\r');
+					}
+					break;
+				}
 			}
 			// Ignore control characters (most can only be generated using control key, see above; but Escape otherwise gets through...)
 			// One day we might want to allow tab, though I don't think it comes through this method anyway...
@@ -388,7 +383,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		{
 			// REVIEW (EberhardB): .NETs Unicode character type is 16bit, whereas AppCore used
 			// 32bit (int), so how do we handle this?
-			if (Callbacks != null && Callbacks.EditedRootBox != null)
+			if (Callbacks?.EditedRootBox != null)
 			{
 				var ss = GetShiftStatus(modifiers);
 				var buffer = new StringBuilder();
@@ -462,8 +457,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			var activeKbIsKeyMan = false;
 			if (Keyboard.Controller != null && Keyboard.Controller.ActiveKeyboard != null)
 			{
-				activeKbIsKeyMan = Keyboard.Controller.ActiveKeyboard.Format == KeyboardFormat.Keyman
-				                   || Keyboard.Controller.ActiveKeyboard.Format == KeyboardFormat.CompiledKeyman;
+				activeKbIsKeyMan = Keyboard.Controller.ActiveKeyboard.Format == KeyboardFormat.Keyman || Keyboard.Controller.ActiveKeyboard.Format == KeyboardFormat.CompiledKeyman;
 			}
 			if (activeKbIsKeyMan)
 			{
@@ -678,10 +672,8 @@ namespace SIL.FieldWorks.Common.RootSites
 							continue;
 						}
 
-						MessageBox.Show(ex1.Message, Resources.ksWarning, MessageBoxButtons.OK,
-							MessageBoxIcon.Warning);
-						Callbacks.EditedRootBox
-							.Reconstruct(); // Restore the actual value visually.
+						MessageBox.Show(ex1.Message, Resources.ksWarning, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+						Callbacks.EditedRootBox.Reconstruct(); // Restore the actual value visually.
 						fNotified = true;
 						break;
 					}
@@ -732,43 +724,38 @@ namespace SIL.FieldWorks.Common.RootSites
 			{
 				return;
 			}
-			if (e.KeyCode == Keys.End && ss == VwShiftStatus.kfssControl)
+			switch (e.KeyCode)
 			{
-				// Control end is supposed to scroll all the way to the end.
-				// We only know how to do this reliably for one class at present; otherwise,
-				// settle for making visible the selection we made at the end.
-				Callbacks.ScrollToEnd();
-				return;
-			}
-			if (e.KeyCode == Keys.Home && ss == VwShiftStatus.kfssControl)
-			{
-				// Control home is supposed to scroll all the way to the top
-				Callbacks.ScrollToTop();
-				return;
-			}
-			if (e.KeyCode == Keys.PageDown && (ss == VwShiftStatus.kfssNone || ss == VwShiftStatus.kfssShift))
-			{
-				Callbacks.ScrollPosition = new Point(-Callbacks.ScrollPosition.X, -Callbacks.ScrollPosition.Y + Control.Height);
-				// need to call ScrollSelectionIntoView below
-			}
-			else if (e.KeyCode == Keys.PageUp && (ss == VwShiftStatus.kfssNone || ss == VwShiftStatus.kfssShift))
-			{
-				Callbacks.ScrollPosition = new Point(-Callbacks.ScrollPosition.X, -Callbacks.ScrollPosition.Y - Control.Height);
-				// need to call ScrollSelectionIntoView below
+				case Keys.End when ss == VwShiftStatus.kfssControl:
+					// Control end is supposed to scroll all the way to the end.
+					// We only know how to do this reliably for one class at present; otherwise,
+					// settle for making visible the selection we made at the end.
+					Callbacks.ScrollToEnd();
+					return;
+				case Keys.Home when ss == VwShiftStatus.kfssControl:
+					// Control home is supposed to scroll all the way to the top
+					Callbacks.ScrollToTop();
+					return;
+				case Keys.PageDown when (ss == VwShiftStatus.kfssNone || ss == VwShiftStatus.kfssShift):
+					Callbacks.ScrollPosition = new Point(-Callbacks.ScrollPosition.X, -Callbacks.ScrollPosition.Y + Control.Height);
+					// need to call ScrollSelectionIntoView below
+					break;
+				case Keys.PageUp when (ss == VwShiftStatus.kfssNone || ss == VwShiftStatus.kfssShift):
+					Callbacks.ScrollPosition = new Point(-Callbacks.ScrollPosition.X, -Callbacks.ScrollPosition.Y - Control.Height);
+					// need to call ScrollSelectionIntoView below
+					break;
 			}
 			var rootb = Callbacks.EditedRootBox;
 			if (MiscUtils.IsUnix && (e.KeyCode == Keys.Right || e.KeyCode == Keys.Left || e.KeyCode == Keys.F7 || e.KeyCode == Keys.F8) && ss == VwShiftStatus.kfssNone)
 			{
 				// FWNX-456 fix for refreshing lines that cursor is not properly invalidating
-				if (Control is SimpleRootSite)
+				if (Control is SimpleRootSite controlAsSimpleRootSite)
 				{
-					var controlAsSimpleRootSite = (SimpleRootSite)Control;
 					var ip = controlAsSimpleRootSite.IPLocation;
-					Rect src, dst;
-					controlAsSimpleRootSite.GetTransformAtDst(rootb, ip, out src, out dst);
-					const int IPWidth = 2;
-					const int LineHeightFudgeFactor = 3;
-					var rect = new Rectangle(ip.X - dst.left, -dst.top, IPWidth, controlAsSimpleRootSite.LineHeight + LineHeightFudgeFactor);
+					controlAsSimpleRootSite.GetTransformAtDst(rootb, ip, out _, out var dst);
+					const int ipWidth = 2;
+					const int lineHeightFudgeFactor = 3;
+					var rect = new Rectangle(ip.X - dst.left, -dst.top, ipWidth, controlAsSimpleRootSite.LineHeight + lineHeightFudgeFactor);
 					controlAsSimpleRootSite.InvalidateRect(rootb, rect.Left, rect.Top, rect.Width, rect.Height);
 				}
 			}
@@ -787,10 +774,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		{
 			get
 			{
-				int hvoRoot, frag;
-				IVwViewConstructor vc;
-				IVwStylesheet ss;
-				EditedRootBox.GetRootObject(out hvoRoot, out vc, out frag, out ss);
+				EditedRootBox.GetRootObject(out _, out var vc, out _, out _);
 				return vc;
 			}
 		}
@@ -824,18 +808,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// always result in SelectionChanged() being called, or in the stored selection
 		/// becoming invalid.  So we check a little more closely here. (See LT-3787.)
 		/// </summary>
-		protected virtual bool IsCurrentSelectionOutOfDate
-		{
-			get
-			{
-				if (m_currentSelection?.Selection == null)
-				{
-					return true;
-				}
-				// If it's invalid, it's obviously out-of-date
-				return (!m_currentSelection.Selection.IsValid || m_currentSelection.Selection != RootBoxSelection);
-			}
-		}
+		protected virtual bool IsCurrentSelectionOutOfDate => m_currentSelection?.Selection == null || !m_currentSelection.Selection.IsValid || m_currentSelection.Selection != RootBoxSelection;
 
 		/// <summary>
 		/// Gets the selection from the root box that is currently being edited (can be null).
@@ -877,7 +850,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <c>null</c>.</remarks>
 		public virtual Cursor DefaultCursor
 		{
-			get { return m_defaultCursor; }
+			get => m_defaultCursor;
 			set
 			{
 				m_defaultCursor = value;
@@ -940,10 +913,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// </summary>
 		private IVwGraphics GetGraphics()
 		{
-			IVwGraphics vg;
-			Rect rcSrcRoot;
-			Rect rcDstRoot;
-			EditedRootBox.Site.GetGraphics(EditedRootBox, out vg, out rcSrcRoot, out rcDstRoot);
+			EditedRootBox.Site.GetGraphics(EditedRootBox, out var vg, out _, out _);
 			return vg;
 		}
 
@@ -972,17 +942,12 @@ namespace SIL.FieldWorks.Common.RootSites
 			}
 			else
 			{
-				IVwGraphics vg;
-				Rect rcSrcRoot;
-				Rect rcDstRoot;
-				rootb.Site.GetGraphics(rootb, out vg, out rcSrcRoot, out rcDstRoot);
+				rootb.Site.GetGraphics(rootb, out var vg, out var rcSrcRoot, out var rcDstRoot);
 				rootb.Site.ReleaseGraphics(rootb, vg); // this needs to be called!
 
 				// Check whether we need a hand or I-beam cursor.
 				var fInPicture = false;
-				int objDataType;
-				var fInObject = rootb.get_IsClickInObject(mousePos.X, mousePos.Y, rcSrcRoot, rcDstRoot, out objDataType);
-
+				var fInObject = rootb.get_IsClickInObject(mousePos.X, mousePos.Y, rcSrcRoot, rcDstRoot, out var objDataType);
 				// Don't display the hand cursor if we have a range selection
 				if (rootb.Selection != null && rootb.Selection.IsRange)
 				{
@@ -1045,8 +1010,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			{
 				return Cursors.Hand;
 			}
-
-			return Control is SimpleRootSite ? ((SimpleRootSite)Control).IBeamCursor : Cursors.IBeam;
+			return Control is SimpleRootSite simpleRootSite ? simpleRootSite.IBeamCursor : Cursors.IBeam;
 		}
 
 		/// <summary>
@@ -1179,9 +1143,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			ihvoFirst = 0;
 			ihvoLast = 0;
 			vqttp = null;
-
-			int ihvoAnchor, ihvoEnd;
-			if (!IsParagraphProps(out vwsel, out hvoText, out flidParaOwner, out vqvps, out ihvoAnchor, out ihvoEnd))
+			if (!IsParagraphProps(out vwsel, out hvoText, out flidParaOwner, out vqvps, out var ihvoAnchor, out var ihvoEnd))
 			{
 				return false;
 			}
@@ -1253,10 +1215,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			}
 			try
 			{
-				ITsTextProps[] vttp;
-				IVwPropertyStore[] vvps;
-				int cttp;
-				SelectionHelper.GetSelectionProps(vwsel, out vttp, out vvps, out cttp);
+				SelectionHelper.GetSelectionProps(vwsel, out var vttp, out _, out var cttp);
 				return cttp == 0 ? null : GetStyleNameFromTextProps(vttp, (int)StyleType.kstCharacter);
 			}
 			catch
@@ -1271,14 +1230,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <returns>An array of ITsTextProps objects</returns>
 		protected ITsTextProps[] GetParagraphTextPropsFromSelection()
 		{
-			IVwSelection vwsel;
-			int hvoText;
-			int tagText;
-			IVwPropertyStore[] vvps;
-			int ihvoFirst;
-			int ihvoLast;
-			ITsTextProps[] vttp;
-			return GetParagraphProps(out vwsel, out hvoText, out tagText, out vvps, out ihvoFirst, out ihvoLast, out vttp) ? vttp : null;
+			return GetParagraphProps(out _, out _, out _, out _, out _, out _, out var vttp) ? vttp : null;
 		}
 
 		/// <summary>
@@ -1361,9 +1313,7 @@ namespace SIL.FieldWorks.Common.RootSites
 				return false;
 			}
 			// Next check the end to see if we have a paragraph in the same text and flid
-			int hvoEnd;
-			int tagEnd;
-			if (!GetParagraphLevelInfoForSelection(vwsel, true, out hvoEnd, out tagEnd, out ihvoEnd))
+			if (!GetParagraphLevelInfoForSelection(vwsel, true, out var hvoEnd, out var tagEnd, out ihvoEnd))
 			{
 				return false;
 			}
@@ -1380,7 +1330,6 @@ namespace SIL.FieldWorks.Common.RootSites
 			{
 				// Got rid of this assertion. It seems to be fired from selecting near a
 				// picture.
-				//Debug.Assert(false, "This isn't handled well!");
 				Debug.WriteLine("Got a different number of properties from the number of paras we think are selected");
 				return false;
 			}
@@ -1412,12 +1361,11 @@ namespace SIL.FieldWorks.Common.RootSites
 				return false;
 			}
 			var cpropPrevious = 0;
-			IVwPropertyStore vps;
 			var fFoundParagraphLevel = false;
 			for (var lev = 0; lev < clev && !fFoundParagraphLevel; lev++)
 			{
 				// At this point, we know how to do this command only for structured text paragraphs.
-				vwsel.PropInfo(fEnd, lev, out hvoText, out tagText, out ihvo, out cpropPrevious, out vps);
+				vwsel.PropInfo(fEnd, lev, out hvoText, out tagText, out ihvo, out cpropPrevious, out _);
 				fFoundParagraphLevel = IsParagraphLevelTag(tagText);
 			}
 			// If we didn't find the paragraph level or we found a level for a property that
@@ -1436,18 +1384,12 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <summary>
 		/// The default tag/flid containing the contents of ordinary paragraphs
 		/// </summary>
-		protected virtual int ParagraphContentsTag
-		{
-			get { throw new NotSupportedException(); }
-		}
+		protected virtual int ParagraphContentsTag => throw new NotSupportedException();
 
 		/// <summary>
 		/// The default tag/flid containing the properties of ordinary paragraphs
 		/// </summary>
-		protected virtual int ParagraphPropertiesTag
-		{
-			get { throw new NotSupportedException(); }
-		}
+		protected virtual int ParagraphPropertiesTag => throw new NotSupportedException();
 
 		/// <summary>
 		/// Gets an array of property stores, one for each paragraph in the given selection.
@@ -1456,8 +1398,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <param name="vqvps">The property stores.</param>
 		protected virtual void GetParaPropStores(IVwSelection vwsel, out IVwPropertyStore[] vqvps)
 		{
-			int cvps;
-			SelectionHelper.GetParaProps(vwsel, out vqvps, out cvps);
+			SelectionHelper.GetParaProps(vwsel, out vqvps, out _);
 		}
 
 		/// <summary>
@@ -1486,9 +1427,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			{
 				return false;
 			}
-			int cttp;
-			SelectionHelper.GetSelectionProps(vwsel, out vttp, out vvps, out cttp);
-
+			SelectionHelper.GetSelectionProps(vwsel, out vttp, out vvps, out var cttp);
 			return cttp != 0;
 		}
 
@@ -1510,19 +1449,8 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// style).</param>
 		public virtual void ApplyStyle(string sStyleToApply)
 		{
-			IVwSelection vwsel;
-			IVwPropertyStore[] vvpsChar;
-			ITsTextProps[] vttpChar;
-			GetCharacterProps(out vwsel, out vttpChar, out vvpsChar);
-
-			IVwPropertyStore[] vvpsPara;
-			ITsTextProps[] vttpPara;
-			int hvoText;
-			int tagText;
-			int ihvoFirst;
-			int ihvoLast;
-			GetParagraphProps(out vwsel, out hvoText, out tagText, out vvpsPara, out ihvoFirst, out ihvoLast, out vttpPara);
-
+			GetCharacterProps(out var vwsel, out var vttpChar, out _);
+			GetParagraphProps(out vwsel, out _, out _, out _, out _, out _, out var vttpPara);
 			ApplyStyle(sStyleToApply, vwsel, vttpPara, vttpChar);
 		}
 
@@ -1544,10 +1472,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			{
 				return;
 			}
-			var stType = string.IsNullOrEmpty(sStyleToApply)
-				? StyleType.kstCharacter
-				: (StyleType)stylesheet.GetType(sStyleToApply);
-
+			var stType = string.IsNullOrEmpty(sStyleToApply) ? StyleType.kstCharacter : (StyleType)stylesheet.GetType(sStyleToApply);
 			switch (stType)
 			{
 				default:
@@ -1592,16 +1517,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// </remarks>
 		public virtual bool ApplyParagraphStyle(string strNewVal)
 		{
-			IVwSelection vwsel;
-			int hvoText;
-			int tagText;
-			int ihvoFirst, ihvoLast;
-			ITsTextProps[] vttp;
-			IVwPropertyStore[] vqvps;
-			ITsTextProps[] vttpHard;
-			IVwPropertyStore[] vvpsSoft;
-			bool fRet;
-			if (!GetAllParagraphProps(out vwsel, out hvoText, out tagText, out vttp, out vqvps, out ihvoFirst, out ihvoLast, out vttpHard, out vvpsSoft, out fRet))
+			if (!GetAllParagraphProps(out var vwsel, out var hvoText, out var tagText, out var vttp, out _, out var ihvoFirst, out var ihvoLast, out _, out var vvpsSoft, out var fRet))
 			{
 				return fRet;
 			}
@@ -1619,8 +1535,7 @@ namespace SIL.FieldWorks.Common.RootSites
 					// this can happen if para never had style set explicitly.
 					oldStyle = vttp[ittp].GetStrPropValue((int)FwTextPropType.ktptNamedStyle);
 				}
-				fChangedStyle |= (oldStyle != strNewVal);
-
+				fChangedStyle |= oldStyle != strNewVal;
 				// ENHANCE JohnT: it would be nice to detect we are applying the
 				// same style, and if there is explicit formatting put up the dialog
 				// asking whether to change the style defn.
@@ -1633,9 +1548,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			}
 			var helper = SelectionHelper.Create(vwsel, Callbacks.EditedRootBox.Site);
 			// Narrow the range of TsTextProps to only include those that are not NULL.
-			int ihvoFirstMod;
-			int ihvoLastMod;
-			NarrowRangeOfTsTxtProps(hvoText, tagText, vttp, vvpsSoft, true, ihvoFirst, ihvoLast, out ihvoFirstMod, out ihvoLastMod);
+			NarrowRangeOfTsTxtProps(hvoText, tagText, vttp, vvpsSoft, true, ihvoFirst, ihvoLast, out _, out _);
 			RestoreSelectionAtEndUow(vwsel, helper);
 			return true;
 		}
@@ -1654,10 +1567,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <param name="removeAllStyles">if true, all styles in selection will be removed</param>
 		public virtual void RemoveCharFormatting(bool removeAllStyles)
 		{
-			IVwSelection vwsel;
-			ITsTextProps[] vttp;
-			IVwPropertyStore[] vvps;
-			if (!GetCharacterProps(out vwsel, out vttp, out vvps))
+			if (!GetCharacterProps(out var vwsel, out var vttp, out _))
 			{
 				return;
 			}
@@ -1727,8 +1637,7 @@ namespace SIL.FieldWorks.Common.RootSites
 				}
 				// Skip user prompt strings. A user prompt string will (hopefully) have a
 				// dummy property set on it to indicate this.
-				int nvar;
-				if (vttp[ittp].GetIntPropValues(SimpleRootSite.ktptUserPrompt, out nvar) == 1)
+				if (vttp[ittp].GetIntPropValues(SimpleRootSite.ktptUserPrompt, out _) == 1)
 				{
 					continue;
 				}
@@ -1763,7 +1672,6 @@ namespace SIL.FieldWorks.Common.RootSites
 				vttp[ittp] = ttpEmpty;
 				fPropsModified = true;
 			}
-
 			if (fPropsModified)
 			{
 				// Setting the selection props might cause our selection to get destroyed because
@@ -1829,8 +1737,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			ihvoLastMod = -1;
 			for (var ihvo = ihvoFirst; ihvo <= ihvoLast; ihvo++)
 			{
-				ITsTextProps ttp;
-				ttp = vttp[ihvo - ihvoFirst];
+				var ttp = vttp[ihvo - ihvoFirst];
 				if (ttp != null)
 				{
 					// If we set a style for a paragraph at all, it must specify a named style.
@@ -1850,12 +1757,10 @@ namespace SIL.FieldWorks.Common.RootSites
 					{
 						ihvoFirstMod = ihvo;
 					}
-					int hvoPara;
 					// TODO (EberhardB): when we have the C# cache we can do this differently
-					hvoPara = sda.get_VecItem(hvoText, tagText, ihvo);
-					ITsTextProps ttpRet;
+					var hvoPara = sda.get_VecItem(hvoText, tagText, ihvo);
 					var vpsSoft = vvpsSoft[ihvo - ihvoFirst];
-					if (RemoveRedundantHardFormatting(vpsSoft, ttp, fParagraphStyle, hvoPara, out ttpRet))
+					if (RemoveRedundantHardFormatting(vpsSoft, ttp, fParagraphStyle, hvoPara, out var ttpRet))
 					{
 						ttp = ttpRet;
 					}
@@ -1893,50 +1798,34 @@ namespace SIL.FieldWorks.Common.RootSites
 				// But what we need to fix is the character hard formatting for each run in the
 				// paragraph.
 				// First, apply the new style to the "soft" property store.
-				string strStyle;
-				strStyle = ttpHard.GetStrPropValue((int)FwTextPropType.ktptNamedStyle);
-				ITsPropsBldr tpbStyle;
-				tpbStyle = TsStringUtils.MakePropsBldr();
+				var strStyle = ttpHard.GetStrPropValue((int)FwTextPropType.ktptNamedStyle);
+				var tpbStyle = TsStringUtils.MakePropsBldr();
 				tpbStyle.SetStrPropValue((int)FwTextPropType.ktptNamedStyle, strStyle);
-				ITsTextProps ttpStyle;
-				ttpStyle = tpbStyle.GetTextProps();
-				IVwPropertyStore vpsSoftPlusStyle;
-				vpsSoftPlusStyle = vpsSoft.get_DerivedPropertiesForTtp(ttpStyle);
 
-				ITsPropsBldr tpbEnc;
-				tpbEnc = TsStringUtils.MakePropsBldr();
-
+				var ttpStyle = tpbStyle.GetTextProps();
+				var vpsSoftPlusStyle = vpsSoft.get_DerivedPropertiesForTtp(ttpStyle);
+				var tpbEnc = TsStringUtils.MakePropsBldr();
 				var sda = Callbacks.EditedRootBox.DataAccess;
-				ITsString tss;
-				tss = sda.get_StringProp(hvoPara, ParagraphContentsTag);
 
-				ITsStrBldr tsb;
-				tsb = tss.GetBldr();
-
-				int crun;
-				crun = tss.RunCount;
+				var tss = sda.get_StringProp(hvoPara, ParagraphContentsTag);
+				var tsb = tss.GetBldr();
+				var crun = tss.RunCount;
 				var fChanged = false;
 				for (var irun = 0; irun < crun; irun++)
 				{
 					// Get the run's properties.
-					TsRunInfo tri;
-					ITsTextProps ttpRun;
-					ttpRun = tss.FetchRunInfo(irun, out tri);
+					var ttpRun = tss.FetchRunInfo(irun, out var tri);
 
 					// Create a property store based on the soft properties but with the writing
 					// system/ows specified. This has the effect of applying any character
 					// properties for the given writing system that are already in the property
 					// store.
-					IVwPropertyStore vpsForRun;
-					int ws, ows;
-					ws = ttpRun.GetIntPropValues((int)FwTextPropType.ktptWs, out ows);
+					var ws = ttpRun.GetIntPropValues((int)FwTextPropType.ktptWs, out var ows);
 					tpbEnc.SetIntPropValues((int)FwTextPropType.ktptWs, ows, ws);
-					ITsTextProps ttpEnc;
-					ttpEnc = tpbEnc.GetTextProps();
-					vpsForRun = vpsSoftPlusStyle.get_DerivedPropertiesForTtp(ttpEnc);
+					var ttpEnc = tpbEnc.GetTextProps();
+					var vpsForRun = vpsSoftPlusStyle.get_DerivedPropertiesForTtp(ttpEnc);
 					// Compare the adjusted property store to the run's properties.
-					ITsTextProps ttpFixed;
-					if (RemoveRedundantHardFormatting(vpsForRun, ttpRun, false, 0, out ttpFixed))
+					if (RemoveRedundantHardFormatting(vpsForRun, ttpRun, false, 0, out var ttpFixed))
 					{
 						// Make the change in the string builder.
 						tsb.SetProperties(tri.ichMin, tri.ichLim, ttpFixed);
@@ -1946,18 +1835,14 @@ namespace SIL.FieldWorks.Common.RootSites
 				if (fChanged)
 				{
 					// Update the string in the data cache.
-					ITsString tssFixed;
-					tssFixed = tsb.GetString();
-					sda.SetString(hvoPara, ParagraphContentsTag, tssFixed);
+					sda.SetString(hvoPara, ParagraphContentsTag, tsb.GetString());
 				}
 				return false;
 			}
 			var ctpt = ttpHard.IntPropCount;
 			for (var itpt = 0; itpt < ctpt; itpt++)
 			{
-				int tpt;
-				int nVarHard;
-				var nValHard = ttpHard.GetIntProp(itpt, out tpt, out nVarHard);
+				var nValHard = ttpHard.GetIntProp(itpt, out var tpt, out var nVarHard);
 				int nValSoft, nVarSoft;
 				switch ((FwTextPropType)tpt)
 				{
@@ -2057,8 +1942,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			ctpt = ttpHard.StrPropCount;
 			for (var itpt = 0; itpt < ctpt; itpt++)
 			{
-				int tpt;
-				var strHard = ttpHard.GetStrProp(itpt, out tpt);
+				var strHard = ttpHard.GetStrProp(itpt, out var tpt);
 				switch ((FwTextPropType)tpt)
 				{
 					case FwTextPropType.ktptFontFamily:
@@ -2181,7 +2065,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			// It also gets updated (in order to control the current item in the combo) when
 			// the selection changes. We have to be careful this does not trigger an attempt to
 			// modify the data.
-			if ((simpleRootSite != null && !simpleRootSite.WasFocused()) || simpleRootSite?.RootBox?.Selection == null)
+			if (simpleRootSite != null && !simpleRootSite.WasFocused() || simpleRootSite?.RootBox?.Selection == null)
 			{
 				return; //e.g, the dictionary preview pane isn't focused and shouldn't respond.
 			}
@@ -2238,8 +2122,7 @@ namespace SIL.FieldWorks.Common.RootSites
 				return;
 			}
 			CoreWritingSystemDefinition ws = null;
-			var writingSystemManager = WritingSystemFactory as WritingSystemManager;
-			if (writingSystemManager != null) // this sometimes happened in our tests when the window got/lost focus
+			if (WritingSystemFactory is WritingSystemManager writingSystemManager) // this sometimes happened in our tests when the window got/lost focus
 			{
 				ws = writingSystemManager.Get(nWs);
 			}
@@ -2388,8 +2271,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			// Get a copy of the selection as a TsString, and store it in the clipboard, together with
 			// the writing system factory.
 			ITsString tss = null;
-			var vwsite = EditedRootBox.Site as SimpleRootSite;
-			if (vwsite != null)
+			if (EditedRootBox.Site is SimpleRootSite vwsite)
 			{
 				tss = vwsite.GetTsStringForClipboard(vwsel);
 			}
@@ -2451,8 +2333,7 @@ namespace SIL.FieldWorks.Common.RootSites
 				return null;
 			}
 			var wsf = writingSystemFactory;
-			int destWs;
-			var pasteStatus = DeterminePasteWs(wsf, out destWs);
+			var pasteStatus = DeterminePasteWs(wsf, out var destWs);
 			switch (pasteStatus)
 			{
 				case PasteStatus.PreserveWs:
@@ -2540,11 +2421,8 @@ namespace SIL.FieldWorks.Common.RootSites
 			{
 				return false;
 			}
-			int ichE, ichA, hvoObjE, hvoObjA, tagE, tagA, wsE, wsA;
-			ITsString tssE, tssA;
-			bool fAssocPrev;
-			sel.TextSelInfo(true, out tssE, out ichE, out fAssocPrev, out hvoObjE, out tagE, out wsE);
-			sel.TextSelInfo(false, out tssA, out ichA, out fAssocPrev, out hvoObjA, out tagA, out wsA);
+			sel.TextSelInfo(true, out _, out _, out _, out var hvoObjE, out var tagE, out var wsE);
+			sel.TextSelInfo(false, out _, out _, out _, out var hvoObjA, out var tagA, out var wsA);
 			if (hvoObjE != hvoObjA || tagE != tagA || wsE != wsA)
 			{
 				return false;
@@ -2557,10 +2435,8 @@ namespace SIL.FieldWorks.Common.RootSites
 			}
 			for (var i = 0; i < cLevA - 1; i++)
 			{
-				int ihvoA, ihvoE, cPropPreviousA, cPropPreviousE;
-				IVwPropertyStore vps;
-				sel.PropInfo(true, i, out hvoObjE, out tagE, out ihvoE, out cPropPreviousE, out vps);
-				sel.PropInfo(false, i, out hvoObjA, out tagA, out ihvoA, out cPropPreviousA, out vps);
+				sel.PropInfo(true, i, out hvoObjE, out tagE, out var ihvoE, out var cPropPreviousE, out _);
+				sel.PropInfo(false, i, out hvoObjA, out tagA, out var ihvoA, out var cPropPreviousA, out _);
 				if (hvoObjE != hvoObjA || tagE != tagA || ihvoE != ihvoA || cPropPreviousA != cPropPreviousE)
 				{
 					return false;
@@ -2576,11 +2452,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// </summary>
 		public bool IsSelectionInOneEditableProp()
 		{
-			if (m_callbacks?.EditedRootBox == null)
-			{
-				return false;
-			}
-			return IsSelectionInOneEditableProp(m_callbacks.EditedRootBox.Selection);
+			return m_callbacks?.EditedRootBox != null && IsSelectionInOneEditableProp(m_callbacks.EditedRootBox.Selection);
 		}
 
 		/// <summary>
@@ -2598,10 +2470,7 @@ namespace SIL.FieldWorks.Common.RootSites
 				return false;
 			}
 			var sel = m_callbacks.EditedRootBox.Selection;
-			int ich, hvoObj, tag, ws;
-			bool fAssocPrev;
-			ITsString tss;
-			sel.TextSelInfo(true, out tss, out ich, out fAssocPrev, out hvoObj, out tag, out ws);
+			sel.TextSelInfo(true, out var tss, out _, out _, out _, out var tag, out _);
 			var sda = m_callbacks.EditedRootBox.DataAccess;
 			var mdc = sda.MetaDataCache;
 			if (mdc == null)
@@ -2663,11 +2532,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			}
 			// Handle anything needed immediately before the paste.
 			Callbacks.PrePasteProcessing();
-
-			ITsTextProps[] vttp;
-			IVwPropertyStore[] vvps;
-			int cttp;
-			SelectionHelper.GetSelectionProps(vwsel, out vttp, out vvps, out cttp);
+			SelectionHelper.GetSelectionProps(vwsel, out var vttp, out _, out var cttp);
 			if (cttp == 0)
 			{
 				return false;
@@ -2789,7 +2654,7 @@ namespace SIL.FieldWorks.Common.RootSites
 					// CanFormatChar is true only if the selected text is editable.
 					// TE-5774 Added VwSelType.kstPicture selection type comparison because
 					//	delete was being disabled for pictures
-					return (vwsel.CanFormatChar || vwsel.SelType == VwSelType.kstPicture);
+					return vwsel.CanFormatChar || vwsel.SelType == VwSelType.kstPicture;
 				}
 			}
 			return false;
@@ -2827,8 +2692,7 @@ namespace SIL.FieldWorks.Common.RootSites
 				{
 					return false; // No text selected.
 				}
-				int cttp;
-				vwsel.GetSelectionProps(0, ArrayPtr.Null, ArrayPtr.Null, out cttp);
+				vwsel.GetSelectionProps(0, ArrayPtr.Null, ArrayPtr.Null, out var cttp);
 				// No text selected.
 				return cttp != 0;
 			}
@@ -2839,31 +2703,14 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <returns>true if we are in an editable location</returns>
 		public virtual bool CanEdit()
 		{
-			if (Callbacks != null && Callbacks.EditedRootBox != null)
-			{
-				return CanEdit(Callbacks.EditedRootBox.Selection);
-			}
-			return false;
+			return Callbacks != null && Callbacks.EditedRootBox != null && CanEdit(Callbacks.EditedRootBox.Selection);
 		}
 
 		/// <summary />
 		/// <returns>true if editing would be possible for the specified selection</returns>
 		public virtual bool CanEdit(IVwSelection vwsel)
 		{
-			if (Editable)
-			{
-				// CanFormatChar is true only if the selected text is editable.
-				if (vwsel != null)
-				{
-					// When "&& vwsel.CanFormatChar" is included in the conditional,
-					//  it causes a problem in TE (TE-3339)
-					// But (JohnT, 18 Nov), we want to be able to get some idea, especially
-					// for insertion points, since this is used to help control mouse pointers.
-					return vwsel.IsRange || vwsel.IsEditable;
-				}
-				return false;
-			}
-			return false;
+			return Editable && vwsel != null && (vwsel.IsRange || vwsel.IsEditable);
 		}
 
 		/// <summary />

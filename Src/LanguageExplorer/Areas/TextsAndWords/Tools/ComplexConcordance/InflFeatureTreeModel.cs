@@ -27,40 +27,38 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 		{
 			foreach (var feature in features)
 			{
-				var complexFeat = feature as IFsComplexFeature;
-				if (complexFeat != null)
+				switch (feature)
 				{
 					// skip complex features without a type specified
-					if (complexFeat.TypeRA == null)
-					{
+					case IFsComplexFeature complexFeat when complexFeat.TypeRA == null:
 						continue;
-					}
-
-					var node = new ComplexFeatureNode(complexFeat) { Image = m_complexImage };
-					object value;
-					if (values == null || !values.TryGetValue(complexFeat, out value))
+					case IFsComplexFeature complexFeat:
 					{
-						value = null;
+						var node = new ComplexFeatureNode(complexFeat) { Image = m_complexImage };
+						if (values == null || !values.TryGetValue(complexFeat, out var value))
+						{
+							value = null;
+						}
+						AddFeatures(node, complexFeat.TypeRA.FeaturesRS, (IDictionary<IFsFeatDefn, object>)value);
+						parent.Nodes.Add(node);
+						break;
 					}
-					AddFeatures(node, complexFeat.TypeRA.FeaturesRS, (IDictionary<IFsFeatDefn, object>)value);
-					parent.Nodes.Add(node);
-				}
-				else
-				{
-					var closedFeat = feature as IFsClosedFeature;
-					if (closedFeat == null)
+					default:
 					{
-						continue;
+						if (!(feature is IFsClosedFeature closedFeat))
+						{
+							continue;
+						}
+						var node = new ClosedFeatureNode(closedFeat) { Image = m_closedImage };
+						if (values != null && values.TryGetValue(closedFeat, out var value))
+						{
+							var closedVal = (ClosedFeatureValue)value;
+							node.IsChecked = closedVal.Negate;
+							node.Value = new SymbolicValue(closedVal.Symbol);
+						}
+						parent.Nodes.Add(node);
+						break;
 					}
-					var node = new ClosedFeatureNode(closedFeat) { Image = m_closedImage };
-					object value;
-					if (values != null && values.TryGetValue(closedFeat, out value))
-					{
-						var closedVal = (ClosedFeatureValue)value;
-						node.IsChecked = closedVal.Negate;
-						node.Value = new SymbolicValue(closedVal.Symbol);
-					}
-					parent.Nodes.Add(node);
 				}
 			}
 		}
@@ -75,23 +73,22 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 		{
 			foreach (var child in node.Nodes)
 			{
-				var complexNode = child as ComplexFeatureNode;
-				if (complexNode != null)
+				switch (child)
 				{
-					var newValues = new Dictionary<IFsFeatDefn, object>();
-					AddInflFeatures(complexNode, newValues);
-					if (newValues.Count > 0)
+					case ComplexFeatureNode complexNode:
 					{
-						values[complexNode.Feature] = newValues;
+						var newValues = new Dictionary<IFsFeatDefn, object>();
+						AddInflFeatures(complexNode, newValues);
+						if (newValues.Count > 0)
+						{
+							values[complexNode.Feature] = newValues;
+						}
+
+						break;
 					}
-				}
-				else
-				{
-					var closedNode = child as ClosedFeatureNode;
-					if (closedNode?.Value.FeatureValue != null)
-					{
+					case ClosedFeatureNode closedNode when closedNode?.Value.FeatureValue != null:
 						values[closedNode.Feature] = new ClosedFeatureValue(closedNode.Value.FeatureValue, closedNode.IsChecked);
-					}
+						break;
 				}
 			}
 		}

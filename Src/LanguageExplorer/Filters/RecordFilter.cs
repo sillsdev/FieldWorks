@@ -58,8 +58,7 @@ namespace LanguageExplorer.Filters
 		/// </summary>
 		internal void SetCache(object obj, LcmCache cache)
 		{
-			var sfc = obj as IStoresLcmCache;
-			if (sfc != null)
+			if (obj is IStoresLcmCache sfc)
 			{
 				sfc.Cache = cache;
 			}
@@ -67,8 +66,7 @@ namespace LanguageExplorer.Filters
 
 		internal void SetDataAccess(object obj, ISilDataAccess sda)
 		{
-			var sfc = obj as IStoresDataAccess;
-			if (sfc != null)
+			if (obj is IStoresDataAccess sfc)
 			{
 				sfc.DataAccess = sda;
 			}

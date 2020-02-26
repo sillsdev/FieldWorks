@@ -109,8 +109,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 
 		internal AnalysisTree ConfirmAnalysis()
 		{
-			IWfiAnalysis obsoleteAna;
-			return GetRealAnalysis(true, out obsoleteAna);
+			return GetRealAnalysis(true, out _);
 		}
 
 		internal ILexSense GetLexSenseForWord()
@@ -123,7 +122,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 		private InterlinComboHandler GetComboHandler(IPropertyTable propertyTable, int flid, int morphIndex)
 		{
 			// first select the proper pull down icon.
-			int tagIcon = 0;
+			var tagIcon = 0;
 			switch (flid)
 			{
 				default:
@@ -152,8 +151,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 		{
 			using (var handler = GetComboHandler(propertyTable, flid, morphIndex))
 			{
-				int index;
-				var item = handler.GetComboItem(target, out index);
+				var item = handler.GetComboItem(target, out var index);
 				if (item != null)
 				{
 					return handler.Items[index];

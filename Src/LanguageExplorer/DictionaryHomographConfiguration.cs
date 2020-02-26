@@ -68,14 +68,8 @@ namespace LanguageExplorer
 		[XmlAttribute("customHomographNumbers")]
 		public string CustomHomographNumbers
 		{
-			get
-			{
-				return CustomHomographNumberList == null ? string.Empty : WebUtility.HtmlEncode(string.Join(",", CustomHomographNumberList));
-			}
-			set
-			{
-				CustomHomographNumberList = new List<string>(WebUtility.HtmlDecode(value).Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries));
-			}
+			get => CustomHomographNumberList == null ? string.Empty : WebUtility.HtmlEncode(string.Join(",", CustomHomographNumberList));
+			set => CustomHomographNumberList = new List<string>(WebUtility.HtmlDecode(value).Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries));
 		}
 
 		[XmlAttribute("homographWritingSystem")]

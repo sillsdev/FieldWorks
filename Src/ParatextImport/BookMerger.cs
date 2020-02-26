@@ -5256,15 +5256,14 @@ namespace ParatextImport
 				// Look thru paragraphs in textCurr to see where to insert the diff ref in proper order
 				for (int iPara = 0; iPara < textCurr.ParagraphsOS.Count; iPara++)
 				{
-					IScrTxtPara thisPara = (IScrTxtPara)textCurr[iPara];
-					BCVRef paraRefStart, dummy;
-					thisPara.GetRefsAtPosition(0, out paraRefStart, out dummy);
+					var thisPara = (IScrTxtPara)textCurr[iPara];
+					thisPara.GetRefsAtPosition(0, out var paraRefStart, out _);
 
 					// is the start ref of the diff before or the same as the start ref of thisPara?
 					if (diff.RefStart <= paraRefStart)
 					{
 						// REVIEW: This reference condition has been here for a while, but it does not
-						//  work well when the same verse spans multipe paras.
+						//  work well when the same verse spans multiple paras.
 						return iPara;
 					}
 				}

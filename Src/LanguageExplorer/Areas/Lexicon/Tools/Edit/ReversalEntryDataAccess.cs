@@ -44,7 +44,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				{
 					return false;
 				}
-				return obj is HvoWs && Equals((HvoWs)obj);
+				return obj is HvoWs hvoWs && Equals(hvoWs);
 			}
 
 			/// <inheritdoc />
@@ -78,23 +78,13 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			switch (tag)
 			{
 				case ReversalIndexEntrySliceView.kFlidEntries:
-					{
-						int[] rghvo;
-						if (m_mapIndexHvoEntryHvos.TryGetValue(hvo, out rghvo))
-						{
-							return rghvo.Length;
-						}
-						throw new ArgumentException("data not stored for get_VecSize(ReversalIndexEntrySliceView.kFlidEntries)");
-					}
+				{
+					return m_mapIndexHvoEntryHvos.TryGetValue(hvo, out var rghvo) ? rghvo.Length : throw new ArgumentException("data not stored for get_VecSize(ReversalIndexEntrySliceView.kFlidEntries)");
+				}
 				case ReversalIndexEntrySliceView.kFlidIndices:
-					{
-						int[] rghvo;
-						if (m_mapSenseHvoIndexHvos.TryGetValue(hvo, out rghvo))
-						{
-							return rghvo.Length;
-						}
-						throw new ArgumentException("data not stored for get_VecSize(ReversalIndexEntrySliceView.kFlidIndices)");
-					}
+				{
+					return m_mapSenseHvoIndexHvos.TryGetValue(hvo, out var rghvo) ? rghvo.Length : throw new ArgumentException("data not stored for get_VecSize(ReversalIndexEntrySliceView.kFlidIndices)");
+				}
 				default:
 					return base.get_VecSize(hvo, tag);
 			}
@@ -106,23 +96,13 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			switch (tag)
 			{
 				case ReversalIndexEntrySliceView.kFlidEntries:
-					{
-						int[] rghvo;
-						if (m_mapIndexHvoEntryHvos.TryGetValue(hvo, out rghvo))
-						{
-							return rghvo[index];
-						}
-						throw new ArgumentException("data not stored for get_VecSize(ReversalIndexEntrySliceView.kFlidEntries)");
-					}
+				{
+					return m_mapIndexHvoEntryHvos.TryGetValue(hvo, out var rghvo) ? rghvo[index] : throw new ArgumentException("data not stored for get_VecSize(ReversalIndexEntrySliceView.kFlidEntries)");
+				}
 				case ReversalIndexEntrySliceView.kFlidIndices:
-					{
-						int[] rghvo;
-						if (m_mapSenseHvoIndexHvos.TryGetValue(hvo, out rghvo))
-						{
-							return rghvo[index];
-						}
-						throw new ArgumentException("data not stored for get_VecSize(ReversalIndexEntrySliceView.kFlidIndices)");
-					}
+				{
+					return m_mapSenseHvoIndexHvos.TryGetValue(hvo, out var rghvo) ? rghvo[index] : throw new ArgumentException("data not stored for get_VecSize(ReversalIndexEntrySliceView.kFlidIndices)");
+				}
 				default:
 					return base.get_VecItem(hvo, tag, index);
 			}
@@ -133,9 +113,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		{
 			if (tag == ReversalIndexEntryTags.kflidReversalForm)
 			{
-				var key = new HvoWs(hvo, ws);
-				ITsString tss;
-				return m_mapHvoWsRevForm.TryGetValue(key, out tss) ? tss : TsStrFactory.EmptyString(ws);
+				return m_mapHvoWsRevForm.TryGetValue(new HvoWs(hvo, ws), out var tss) ? tss : TsStrFactory.EmptyString(ws);
 			}
 			return base.get_MultiStringAlt(hvo, tag, ws);
 		}
@@ -145,8 +123,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		{
 			if (tag == ReversalIndexEntryTags.kflidReversalForm)
 			{
-				var key = new HvoWs(hvo, ws);
-				m_mapHvoWsRevForm[key] = _tss;
+				m_mapHvoWsRevForm[new HvoWs(hvo, ws)] = _tss;
 			}
 			else
 			{
@@ -161,31 +138,25 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			{
 				return base.get_StringProp(hvo, tag);
 			}
-			ITsString tss;
-			return m_mapWsAbbr.TryGetValue(hvo, out tss) ? tss : null;
+			return m_mapWsAbbr.TryGetValue(hvo, out var tss) ? tss : null;
 		}
 
 		/// <summary />
 		public override string get_UnicodeProp(int hvo, int tag)
 		{
-			if (tag == ReversalIndexTags.kflidWritingSystem)
-			{
-				string val;
-				return m_mapHvoIdxWs.TryGetValue(hvo, out val) ? val : null;
-			}
-			return base.get_UnicodeProp(hvo, tag);
+			return tag == ReversalIndexTags.kflidWritingSystem ? m_mapHvoIdxWs.TryGetValue(hvo, out var val) ? val : null : base.get_UnicodeProp(hvo, tag);
 		}
 		/// <summary />
-		public override void PropChanged(IVwNotifyChange _nchng, int _ct, int hvo, int tag, int ivMin, int cvIns, int cvDel)
+		public override void PropChanged(IVwNotifyChange nchng, int ct, int hvo, int tag, int ivMin, int cvIns, int cvDel)
 		{
 			if (tag == ReversalIndexEntrySliceView.kFlidEntries)
 			{
 				// What can we do here??
-				base.PropChanged(_nchng, _ct, hvo, tag, ivMin, cvIns, cvDel);
+				base.PropChanged(nchng, ct, hvo, tag, ivMin, cvIns, cvDel);
 			}
 			else
 			{
-				base.PropChanged(_nchng, _ct, hvo, tag, ivMin, cvIns, cvDel);
+				base.PropChanged(nchng, ct, hvo, tag, ivMin, cvIns, cvDel);
 			}
 		}
 		#endregion
@@ -193,7 +164,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		#region IVwCacheDa Members
 
 		/// <summary />
-		public void CacheBinaryProp(int obj, int tag, byte[] _rgb, int cb)
+		public void CacheBinaryProp(int obj, int tag, byte[] rgb, int cb)
 		{
 			throw new NotSupportedException();
 		}
@@ -232,12 +203,11 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		}
 
 		/// <summary />
-		public void CacheReplace(int hvoObj, int tag, int ihvoMin, int ihvoLim, int[] _rghvo, int chvo)
+		public void CacheReplace(int hvoObj, int tag, int ihvoMin, int ihvoLim, int[] rghvo, int chvo)
 		{
 			if (tag == ReversalIndexEntrySliceView.kFlidEntries)
 			{
-				int[] rghvoOld;
-				if (m_mapIndexHvoEntryHvos.TryGetValue(hvoObj, out rghvoOld))
+				if (m_mapIndexHvoEntryHvos.TryGetValue(hvoObj, out var rghvoOld))
 				{
 					var rghvoNew = new List<int>();
 					rghvoNew.AddRange(rghvoOld);
@@ -245,10 +215,9 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 					{
 						rghvoNew.RemoveRange(ihvoMin, ihvoLim - ihvoMin);
 					}
-
 					if (chvo != 0)
 					{
-						rghvoNew.InsertRange(ihvoMin, _rghvo);
+						rghvoNew.InsertRange(ihvoMin, rghvo);
 					}
 					m_mapIndexHvoEntryHvos[hvoObj] = rghvoNew.ToArray();
 				}
@@ -268,8 +237,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		{
 			if (tag == ReversalIndexEntryTags.kflidReversalForm)
 			{
-				var key = new HvoWs(obj, ws);
-				m_mapHvoWsRevForm[key] = _tss;
+				m_mapHvoWsRevForm[new HvoWs(obj, ws)] = _tss;
 			}
 			else
 			{
@@ -278,11 +246,11 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		}
 
 		/// <summary />
-		public void CacheStringProp(int obj, int tag, ITsString _tss)
+		public void CacheStringProp(int obj, int tag, ITsString tss)
 		{
 			if (tag == kflidWsAbbr)
 			{
-				m_mapWsAbbr[obj] = _tss;
+				m_mapWsAbbr[obj] = tss;
 			}
 			else
 			{
@@ -297,11 +265,11 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		}
 
 		/// <summary />
-		public void CacheUnicodeProp(int obj, int tag, string _rgch, int cch)
+		public void CacheUnicodeProp(int obj, int tag, string rgch, int cch)
 		{
 			if (tag == ReversalIndexTags.kflidWritingSystem)
 			{
-				m_mapHvoIdxWs[obj] = _rgch;
+				m_mapHvoIdxWs[obj] = rgch;
 			}
 			else
 			{
@@ -310,7 +278,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		}
 
 		/// <summary />
-		public void CacheUnknown(int obj, int tag, object _unk)
+		public void CacheUnknown(int obj, int tag, object unk)
 		{
 			throw new NotSupportedException();
 		}
@@ -348,7 +316,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		}
 
 		/// <summary />
-		public void ClearInfoAboutAll(int[] _rghvo, int chvo, VwClearInfoAction cia)
+		public void ClearInfoAboutAll(int[] rghvo, int chvo, VwClearInfoAction cia)
 		{
 			throw new NotSupportedException();
 		}
@@ -372,13 +340,13 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		}
 
 		/// <summary />
-		public void InstallVirtual(IVwVirtualHandler _vh)
+		public void InstallVirtual(IVwVirtualHandler vh)
 		{
 			throw new NotSupportedException();
 		}
 
 		/// <summary />
-		public int get_CachedIntProp(int obj, int tag, out bool _f)
+		public int get_CachedIntProp(int obj, int tag, out bool f)
 		{
 			throw new NotSupportedException();
 		}

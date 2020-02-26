@@ -76,8 +76,7 @@ namespace LanguageExplorerTests.MGA
 			// check another terminal node, but with different parent, so no conflict
 			var node = m_doc.SelectSingleNode("//item[@id='cAdjAgr']/item[@target='tCommonAgr']/item[@target='fGender']/item[@target='vMasc']");
 			var glbiNew = new GlossListBoxItem(Cache, node, ".", "", false);
-			GlossListBoxItem glbiConflict;
-			var fResult = m_LabelGlosses.NewItemConflictsWithExtantItem(glbiNew, out glbiConflict);
+			var fResult = m_LabelGlosses.NewItemConflictsWithExtantItem(glbiNew, out var glbiConflict);
 			var sMsg = glbiConflict != null ? $"Masculine gender should not conflict, but did with {glbiConflict.Abbrev}." : "Masculine gender should not conflict";
 			Assert.IsFalse(fResult, sMsg);
 			// check a non-terminal node, so no conflict

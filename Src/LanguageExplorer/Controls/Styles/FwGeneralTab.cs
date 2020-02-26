@@ -327,8 +327,9 @@ namespace LanguageExplorer.Controls.Styles
 			var newName = m_txtStyleName.Text;
 			var oldName = styleInfo.Name;
 			// fix any styles that refer to this one
-			foreach (StyleInfo updateStyle in StyleTable.Values)
+			foreach (var baseStyleInfo in StyleTable.Values)
 			{
+				var updateStyle = (StyleInfo)baseStyleInfo;
 				if (updateStyle.BasedOnStyle != null && updateStyle.BasedOnStyle.Name == oldName)
 				{
 					updateStyle.SaveBasedOn(newName);
@@ -404,8 +405,7 @@ namespace LanguageExplorer.Controls.Styles
 			// Save the style name change in a list so the change can be applied to the
 			// database later. If the style has already been renamed, then just replace the
 			// existing entry. This list is keyed on the new name with the old name as the value.
-			string originalName;
-			if (RenamedStyles.TryGetValue(oldName, out originalName))
+			if (RenamedStyles.TryGetValue(oldName, out var originalName))
 			{
 				RenamedStyles.Remove(oldName);
 				if (originalName != newName)

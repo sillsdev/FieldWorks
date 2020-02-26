@@ -64,10 +64,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// </summary>
 		public override int CurrentIndex
 		{
-			get
-			{
-				return base.CurrentIndex;
-			}
+			get => base.CurrentIndex;
 			set
 			{
 				_selectionChanged = true;
@@ -149,10 +146,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		private void ParseAndUpdate()
 		{
-			var publisher = (ObjectListPublisher)VirtualListPublisher;
-			publisher.SetOwningPropInfo(WfiWordformTags.kClassId, "WordformInventory", "Wordforms");
+			var objectListPublisher = (ObjectListPublisher)VirtualListPublisher;
+			objectListPublisher.SetOwningPropInfo(WfiWordformTags.kClassId, "WordformInventory", "Wordforms");
 			NonUndoableUnitOfWorkHelper.Do(m_cache.ActionHandlerAccessor, ParseInterestingTexts);
-			publisher.SetOwningPropValue((m_cache.ServiceLocator.GetInstance<IWfiWordformRepository>().AllInstances().Select(wf => wf.Hvo)).ToArray());
+			objectListPublisher.SetOwningPropValue((m_cache.ServiceLocator.GetInstance<IWfiWordformRepository>().AllInstances().Select(wf => wf.Hvo)).ToArray());
 		}
 
 		/// <summary>
@@ -161,7 +158,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		private void ParseInterestingTexts()
 		{
 			// Also it should be forced to be empty if FwUtils.IsOkToDisplayScriptureIfPresent returns false.
-			var scriptureTexts = m_cache.LangProject.TranslatedScriptureOA?.StTexts.Where(aText => IsInterestingScripture(aText)) ?? new IStText[0];
+			var scriptureTexts = m_cache.LangProject.TranslatedScriptureOA?.StTexts.Where(IsInterestingScripture) ?? new IStText[0];
 			// Enhance JohnT: might eventually want to be more selective here, perhaps a genre filter.
 			var vernacularTexts = from st in m_cache.LangProject.Texts select st.ContentsOA;
 			// Filtered list that excludes IScrBookAnnotations.
@@ -192,10 +189,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		private bool IsInterestingScripture(IStText text)
 		{
 			// Typically this question only arises where we have a ConcDecorator involved.
-			if (VirtualListPublisher is DomainDataByFlidDecoratorBase)
+			if (VirtualListPublisher is DomainDataByFlidDecoratorBase domainDataByFlidDecoratorBase)
 			{
-				var concDecorator = ((DomainDataByFlidDecoratorBase)VirtualListPublisher).BaseSda as ConcDecorator;
-				if (concDecorator != null)
+				if (domainDataByFlidDecoratorBase.BaseSda is ConcDecorator concDecorator)
 				{
 					return concDecorator.IsInterestingText(text);
 				}

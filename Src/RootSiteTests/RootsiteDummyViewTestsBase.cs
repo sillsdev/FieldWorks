@@ -44,14 +44,9 @@ namespace SIL.FieldWorks.Common.RootSites
 		{
 			base.TestSetup();
 
-			var styleSheet = new LcmStyleSheet();
-
-			styleSheet.Init(Cache, Cache.LangProject.Hvo, LangProjectTags.kflidStyles);
-
 			Debug.Assert(m_basicView == null, "m_basicView is not null.");
-			_flexComponentParameters = TestSetupServices.SetupTestTriumvirate();
-
-			m_basicView = new DummyBasicView { Cache = Cache, Visible = false, StyleSheet = styleSheet };
+			_flexComponentParameters = TestSetupServices.SetupEverything(Cache);
+			m_basicView = new DummyBasicView { Cache = Cache, Visible = false, StyleSheet = _flexComponentParameters.PropertyTable.GetValue<LcmStyleSheet>(FwUtils.FwUtils.FlexStyleSheet) };
 			m_basicView.InitializeFlexComponent(_flexComponentParameters);
 		}
 

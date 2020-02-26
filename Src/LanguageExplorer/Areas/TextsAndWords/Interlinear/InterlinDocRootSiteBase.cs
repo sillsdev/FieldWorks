@@ -95,7 +95,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		internal bool IsCurrentTabForInterlineMaster
 		{
-			get { return _isCurrentTabForInterlineMaster; }
+			get => _isCurrentTabForInterlineMaster;
 			set
 			{
 				if (_isCurrentTabForInterlineMaster == value)
@@ -140,8 +140,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				parent = parent.Parent;
 			}
-			var master = parent as InterlinMaster;
-			if (master != null)
+			if (parent is InterlinMaster master)
 			{
 				var recordList = master.MyRecordList as InterlinearTextsRecordList;
 				recordList?.GetScriptureIds(); // initialize the InterestingTextList to include Scripture (prevent a crash trying later)
@@ -305,18 +304,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			AnalysisOccurrence result = null;
 			var cvsli = sel.CLevels(false);
 			cvsli--; // CLevels includes the string property itself, but AllTextSelInfo doesn't need it.
-			// Out variables for AllTextSelInfo.
-			int ihvoRoot;
-			int tagTextProp;
-			int cpropPrevious;
-			int ichAnchor;
-			int ichEnd;
-			int ws;
-			bool fAssocPrev;
-			int ihvoEnd;
-			ITsTextProps ttpBogus;
 			// Main array of information retrieved from sel.
-			var rgvsli = SelLevInfo.AllTextSelInfo(sel, cvsli, out ihvoRoot, out tagTextProp, out cpropPrevious, out ichAnchor, out ichEnd, out ws, out fAssocPrev, out ihvoEnd, out ttpBogus);
+			var rgvsli = SelLevInfo.AllTextSelInfo(sel, cvsli, out _, out _, out _, out _, out _, out _, out _, out _, out _);
 			if (rgvsli.Length <= 1)
 			{
 				return null;
@@ -327,8 +316,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			for (; i > 0; i--)
 			{
 				// get the container for whatever is selected at this level.
-				ICmObject container;
-				if (!m_objRepo.TryGetObject(rgvsli[i].hvo, out container))
+				if (!m_objRepo.TryGetObject(rgvsli[i].hvo, out var container))
 				{
 					return null; // may fail, e.g., trying to get bookmark for text just deleted.
 				}
@@ -374,9 +362,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		protected override void OnMouseDown(MouseEventArgs e)
 		{
 			RemoveContextButtonIfPresent();
-			int ilineChoice;
 			var sel = GrabMousePtSelectionToTest(e);
-			if (UserClickedOnLabels(sel, out ilineChoice))
+			if (UserClickedOnLabels(sel, out var ilineChoice))
 			{
 				SetContextButtonPosition(sel, ilineChoice);
 			}
@@ -416,11 +403,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			Rectangle rcSrcRoot;
 			using (new HoldGraphics(this))
 			{
-				Rect rcSec;
-				bool fSplit, fEndBeforeAnchor;
-				Rectangle rcDstRoot;
-				GetCoordRects(out rcSrcRoot, out rcDstRoot);
-				sel.Location(m_graphicsManager.VwGraphics, rcSrcRoot, rcDstRoot, out rcPrimary, out rcSec, out fSplit, out fEndBeforeAnchor);
+				GetCoordRects(out rcSrcRoot, out var rcDstRoot);
+				sel.Location(m_graphicsManager.VwGraphics, rcSrcRoot, rcDstRoot, out rcPrimary, out _, out _, out _);
 			}
 			CalculateHorizContextButtonPosition(rcPrimary, rcSrcRoot);
 			m_iLineChoice = ilineChoice;
@@ -434,16 +418,14 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		{
 			// Enhance GJM: Not perfect for RTL script, but I can't figure out how to
 			// do it right just now.
-			var horizPosition = TextIsRightToLeft ? rcPrimary.left : rcSrcRoot.left;
-			m_contextButton.Location = new Point(horizPosition, rcPrimary.top);
+			m_contextButton.Location = new Point(TextIsRightToLeft ? rcPrimary.left : rcSrcRoot.left, rcPrimary.top);
 		}
 
 		protected bool TextIsRightToLeft
 		{
 			get
 			{
-				var rootWs = RootStText.MainWritingSystem;
-				var wsEngine = Cache.LanguageWritingSystemFactoryAccessor.get_EngineOrNull(rootWs);
+				var wsEngine = Cache.LanguageWritingSystemFactoryAccessor.get_EngineOrNull(RootStText.MainWritingSystem);
 				return wsEngine != null && wsEngine.RightToLeftScript;
 			}
 		}
@@ -499,8 +481,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				return -1;
 			}
 			var props = helper.SelProps;
-			int dummyvar;
-			return props.GetIntPropValues((int)FwTextPropType.ktptBulNumStartAt, out dummyvar);
+			return props.GetIntPropValues((int)FwTextPropType.ktptBulNumStartAt, out _);
 		}
 
 		#region Label Context Menu stuff
@@ -528,8 +509,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			// 6) Configure Interlinear...
 			if (Vc?.LineChoices != null && !isRibbonMenu) // just to be safe; shouldn't happen
 			{
-				var curLineChoices = Vc.LineChoices.Clone() as InterlinLineChoices;
-				if (curLineChoices == null)
+				if (!(Vc.LineChoices.Clone() is InterlinLineChoices curLineChoices))
 				{
 					return menu;
 				}
@@ -574,8 +554,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		private void AddHideLineMenuItem(ContextMenuStrip menu, InterlinLineChoices curLineChoices, int ilineChoice)
 		{
-			var lineLabel = GetAppropriateLineLabel(curLineChoices, ilineChoice);
-			var hideItem = new ToolStripMenuItem(string.Format(ITextStrings.ksHideLine, lineLabel));
+			var hideItem = new ToolStripMenuItem(string.Format(ITextStrings.ksHideLine, GetAppropriateLineLabel(curLineChoices, ilineChoice)));
 			hideItem.Click += hideItem_Click;
 			hideItem.Tag = ilineChoice;
 			menu.Items.Add(hideItem);
@@ -625,8 +604,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			using (var dummyCombobox = new ComboBox())
 			{
 				var dummyCachedBoxes = new Dictionary<WsComboContent, ComboBox.ObjectCollection>();
-				var comboObjects = ConfigureInterlinDialog.WsComboItemsInternal(
-				Cache, dummyCombobox, dummyCachedBoxes, curSpec.ComboContent);
+				var comboObjects = ConfigureInterlinDialog.WsComboItemsInternal(Cache, dummyCombobox, dummyCachedBoxes, curSpec.ComboContent);
 				var choices = new WsComboItem[comboObjects.Count];
 				comboObjects.CopyTo(choices, 0);
 				return choices;
@@ -697,8 +675,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		private void hideItem_Click(object sender, EventArgs e)
 		{
 			var ilineToHide = (int)(((ToolStripMenuItem)sender).Tag);
-			var newLineChoices = Vc.LineChoices.Clone() as InterlinLineChoices;
-			if (newLineChoices != null)
+			if (Vc.LineChoices.Clone() is InterlinLineChoices newLineChoices)
 			{
 				newLineChoices.Remove(newLineChoices[ilineToHide]);
 				UpdateForNewLineChoices(newLineChoices);
@@ -708,15 +685,13 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		private void addWsToFlidItem_Click(object sender, EventArgs e)
 		{
-			var menuItem = sender as AddWritingSystemMenuItem;
-			if (menuItem == null)
+			if (!(sender is AddWritingSystemMenuItem menuItem))
 			{
 				return; // Impossible?
 			}
 			var flid = menuItem.Flid;
 			var wsToAdd = menuItem.Ws;
-			var newLineChoices = Vc.LineChoices.Clone() as InterlinLineChoices;
-			if (newLineChoices != null)
+			if (Vc.LineChoices.Clone() is InterlinLineChoices newLineChoices)
 			{
 				newLineChoices.Add(flid, wsToAdd);
 				UpdateForNewLineChoices(newLineChoices);
@@ -726,8 +701,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		private void moveUpItem_Click(object sender, EventArgs e)
 		{
 			var ilineToHide = (int)((ToolStripMenuItem)sender).Tag;
-			var newLineChoices = Vc.LineChoices.Clone() as InterlinLineChoices;
-			if (newLineChoices != null)
+			if (Vc.LineChoices.Clone() is InterlinLineChoices newLineChoices)
 			{
 				newLineChoices.MoveUp(ilineToHide);
 				UpdateForNewLineChoices(newLineChoices);
@@ -737,8 +711,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		private void moveDownItem_Click(object sender, EventArgs e)
 		{
 			var ilineToHide = (int)(((ToolStripMenuItem)sender).Tag);
-			var newLineChoices = Vc.LineChoices.Clone() as InterlinLineChoices;
-			if (newLineChoices != null)
+			if (Vc.LineChoices.Clone() is InterlinLineChoices newLineChoices)
 			{
 				newLineChoices.MoveDown(ilineToHide);
 				UpdateForNewLineChoices(newLineChoices);
@@ -753,8 +726,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				return; // Impossible?
 			}
 			var flid = menuItem.Flid;
-			var newLineChoices = Vc.LineChoices.Clone() as InterlinLineChoices;
-			if (newLineChoices != null && m_cache.GetManagedMetaDataCache().FieldExists(flid))
+			if (Vc.LineChoices.Clone() is InterlinLineChoices newLineChoices && m_cache.GetManagedMetaDataCache().FieldExists(flid))
 			{
 				newLineChoices.Add(flid);
 				UpdateForNewLineChoices(newLineChoices);
@@ -794,8 +766,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		public InterlinLineChoices SetupLineChoices(string lineConfigPropName, InterlinMode mode)
 		{
 			ConfigPropName = lineConfigPropName;
-			InterlinLineChoices lineChoices;
-			if (!TryRestoreLineChoices(out lineChoices))
+			if (!TryRestoreLineChoices(out var lineChoices))
 			{
 				if (ForEditing)
 				{
@@ -933,8 +904,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		{
 			for (var parentControl = Parent; parentControl != null; parentControl = parentControl.Parent)
 			{
-				var master = parentControl as InterlinMaster;
-				if (master != null)
+				if (parentControl is InterlinMaster master)
 				{
 					return master;
 				}
@@ -1081,8 +1051,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// </summary>
 		internal AnalysisOccurrence ConvertBookmarkToAnalysis(IStTextBookmark bookmark)
 		{
-			bool fDummy;
-			return ConvertBookmarkToAnalysis(bookmark, out fDummy);
+			return ConvertBookmarkToAnalysis(bookmark, out _);
 		}
 
 		/// <summary>

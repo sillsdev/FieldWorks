@@ -33,8 +33,6 @@ namespace LanguageExplorer.Areas.Lists.Tools.AnthroEdit
 		private CollapsingSplitContainer _collapsingSplitContainer;
 		private AnthroEditMenuHelper _toolMenuHelper;
 		private IRecordList _recordList;
-		[Import(AreaServices.ListsAreaMachineName)]
-		private IArea _area;
 		private LcmCache _cache;
 
 		#region Implementation of IMajorFlexComponent
@@ -129,7 +127,8 @@ namespace LanguageExplorer.Areas.Lists.Tools.AnthroEdit
 		/// <summary>
 		/// Get the area for the tool.
 		/// </summary>
-		public IArea Area => _area;
+		[field: Import(AreaServices.ListsAreaMachineName)]
+		public IArea Area { get; private set; }
 
 		/// <summary>
 		/// Get the image for the area.
@@ -195,14 +194,11 @@ namespace LanguageExplorer.Areas.Lists.Tools.AnthroEdit
 				insertMenuDictionary.Add(Command.CmdInsertPossibility, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdInsertAnthroCategory_Click, ()=> UiWidgetServices.CanSeeAndDo));
 				insertToolbarDictionary.Add(Command.CmdInsertPossibility, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdInsertAnthroCategory_Click, () => UiWidgetServices.CanSeeAndDo));
 				AreaServices.ResetMainPossibilityInsertUiWidgetsText(_majorFlexComponentParameters.UiWidgetController, ListResources.Anthropology_Category);
-
 				// <command id="CmdDataTree_Insert_AnthroCategory" label="Insert subcategory" message="DataTreeInsert" icon="AddSubItem">
 				insertMenuDictionary.Add(Command.CmdDataTree_Insert_Possibility, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdDataTree_Insert_AnthroCategory_Click, () => CanCmdDataTree_Insert_AnthroCategory));
 				insertToolbarDictionary.Add(Command.CmdDataTree_Insert_Possibility, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdDataTree_Insert_AnthroCategory_Click, ()=> CanCmdDataTree_Insert_AnthroCategory));
 				AreaServices.ResetSubitemPossibilityInsertUiWidgetsText(_majorFlexComponentParameters.UiWidgetController, ListResources.Subcategory);
-
 				dataTree.DataTreeSliceContextMenuParameterObject.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ContextMenuName.mnuDataTree_SubAnthroCategory, Create_mnuDataTree_SubAnthroCategory);
-
 				_majorFlexComponentParameters.UiWidgetController.AddHandlers(toolUiWidgetParameterObject);
 			}
 

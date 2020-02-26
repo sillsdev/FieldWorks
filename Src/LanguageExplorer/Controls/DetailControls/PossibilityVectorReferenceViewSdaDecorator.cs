@@ -41,8 +41,7 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		public ITsString GetLabelFor(int hvo)
 		{
-			ITsString value;
-			if (m_strings.TryGetValue(hvo, out value))
+			if (m_strings.TryGetValue(hvo, out var value))
 			{
 				return value;
 			}

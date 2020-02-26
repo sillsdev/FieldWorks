@@ -162,9 +162,8 @@ namespace LanguageExplorerTests.Controls.DetailControls
 		public void AddTwoNewTargetsToNonExistingList()
 		{
 			// Setup test
-			ILexEntry mainEntry = null;
 			var secondaryEntry = CreateSimpleEntry("form2", "gloss2");
-			var obj = AddComponentEntryRef(mainEntry, secondaryEntry);
+			var obj = AddComponentEntryRef(null, secondaryEntry);
 			var testItem = CreateSimpleEntry("testform", "testgloss");
 			var testItem2 = CreateSimpleEntry("test2form", "test2gloss");
 

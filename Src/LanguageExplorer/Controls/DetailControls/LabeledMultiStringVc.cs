@@ -35,11 +35,7 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		public virtual string TextStyle
 		{
-			get
-			{
-
-				return "Default Paragraph Characters";
-			}
+			get => "Default Paragraph Characters";
 			set
 			{
 				/*m_textStyle = value;*/
@@ -67,7 +63,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		public override void Display(IVwEnv vwenv, int hvo, int frag)
 		{
 			TriggerDisplay(vwenv);
-
 			// We use a table to display
 			// encodings in column one and the strings in column two.
 			// The table uses 100% of the available width.
@@ -80,10 +75,8 @@ namespace LanguageExplorer.Controls.DetailControls
 			m_mDxmpLabelWidth = 0;
 			for (var i = 0; i < m_rgws.Count; ++i)
 			{
-				int dxs;    // Width of displayed string.
-				int dys;    // Height of displayed string (not used here).
 				// Set qtss to a string representing the writing system.
-				vwenv.get_StringWidth(NameOfWs(i), m_ttpLabel, out dxs, out dys);
+				vwenv.get_StringWidth(NameOfWs(i), m_ttpLabel, out var dxs, out _);
 				m_mDxmpLabelWidth = Math.Max(m_mDxmpLabelWidth, dxs);
 			}
 			VwLength vlColWs; // 5-pt space plus max label width.

@@ -303,6 +303,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 			MakeListXml(result, doc.DocumentElement);
 			return result;
 		}
+
 		private void MakeListXml(ICmPossibilityList list, XmlElement root)
 		{
 			foreach (XmlNode item in root)
@@ -377,8 +378,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 		/// </summary>
 		internal IConstChartRow MakeRow(IDsConstChart chart, string lineNo)
 		{
-			var label = TsStringUtils.MakeString(lineNo, Logic.WsLineNumber);
-			return m_rowFact.Create(chart, chart.RowsOS.Count, label);
+			return m_rowFact.Create(chart, chart.RowsOS.Count, TsStringUtils.MakeString(lineNo, Logic.WsLineNumber));
 		}
 
 		/// <summary>
@@ -389,8 +389,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 		internal IConstChartWordGroup MakeWordGroup(IConstChartRow row, int icol, AnalysisOccurrence begPoint, AnalysisOccurrence endPoint)
 		{
 			Assert.Less(icol, m_allColumns.Count, "Invalid column index");
-			var ccwg = m_wordGrpFact.Create(row, row.CellsOS.Count, m_allColumns[icol], begPoint, endPoint);
-			return ccwg;
+			return m_wordGrpFact.Create(row, row.CellsOS.Count, m_allColumns[icol], begPoint, endPoint);
 		}
 
 		/// <summary>
@@ -445,8 +444,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 		{
 			Assert.Less(icol, m_allColumns.Count, "Invalid column index");
 			Assert.IsNotNull(marker, "Invalid marker.");
-			var cct = m_ccTagFact.Create(row, row.CellsOS.Count, m_allColumns[icol], marker);
-			return cct;
+			return m_ccTagFact.Create(row, row.CellsOS.Count, m_allColumns[icol], marker);
 		}
 
 		/// <summary>
@@ -455,8 +453,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 		internal IConstChartTag MakeMissingMarker(IConstChartRow row, int icol)
 		{
 			Assert.Less(icol, m_allColumns.Count, "Invalid column index");
-			var cct = m_ccTagFact.CreateMissingMarker(row, row.CellsOS.Count, m_allColumns[icol]);
-			return cct;
+			return m_ccTagFact.CreateMissingMarker(row, row.CellsOS.Count, m_allColumns[icol]);
 		}
 
 		/// <summary>
@@ -466,8 +463,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 		{
 			Assert.Less(icol, m_allColumns.Count, "Invalid column index");
 			Assert.IsNotNull(target, "Can't make a MovedTextMarker with no target WordGroup");
-			var ccmtm = m_mtmFact.Create(row, row.CellsOS.Count, m_allColumns[icol], fPreposed, target);
-			return ccmtm;
+			return m_mtmFact.Create(row, row.CellsOS.Count, m_allColumns[icol], fPreposed, target);
 		}
 
 		/// <summary>

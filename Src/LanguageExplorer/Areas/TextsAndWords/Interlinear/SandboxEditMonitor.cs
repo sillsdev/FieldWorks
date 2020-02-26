@@ -328,9 +328,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				m_infoDelayed = new SelInfo();
 				var cvsli = vwsel.CLevels(false);
 				cvsli--; // CLevels includes the string property itself, but AllTextSelInfo doesn't need it.
-				int ichEnd;
 				m_infoDelayed.rgvsli = SelLevInfo.AllTextSelInfo(vwsel, cvsli, out m_infoDelayed.ihvoRoot, out m_infoDelayed.tagTextProp, out m_infoDelayed.cpropPrevious,
-					out m_infoDelayed.ich, out ichEnd, out m_infoDelayed.ws, out m_infoDelayed.fAssocPrev, out m_infoDelayed.ihvoEnd, out m_infoDelayed.ttpSelProps);
+					out m_infoDelayed.ich, out var ichEnd, out m_infoDelayed.ws, out m_infoDelayed.fAssocPrev, out m_infoDelayed.ihvoEnd, out m_infoDelayed.ttpSelProps);
 				Debug.Assert(ichEnd == m_infoDelayed.ich);
 				Application.Idle += RecreateDelayedSelection;
 			}

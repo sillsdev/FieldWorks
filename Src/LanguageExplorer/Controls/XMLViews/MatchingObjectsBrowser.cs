@@ -280,19 +280,7 @@ namespace LanguageExplorer.Controls.XMLViews
 
 		private void UpdateVisibleColumns()
 		{
-			var results = new List<string>();
-			foreach (var columnSpec in m_bvMatches.ColumnSpecs)
-			{
-				var colLabel = XmlUtils.GetOptionalAttributeValue(columnSpec, "layout", null);
-				if (colLabel == null)
-				{
-					// In this case we are likely dealing with a dialog that does NOT use IsVisibleColumn()
-					// and there will be one pre-determined SearchField
-					continue;
-				}
-				results.Add(colLabel);
-			}
-			m_visibleColumns = results.ToArray();
+			m_visibleColumns = m_bvMatches.ColumnSpecs.Select(columnSpec => XmlUtils.GetOptionalAttributeValue(columnSpec, "layout", null)).Where(colLabel => colLabel != null).ToArray();
 		}
 
 		private void UpdateResults(SearchField firstField, IEnumerable<int> results)

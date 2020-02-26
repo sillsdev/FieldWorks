@@ -41,8 +41,7 @@ namespace LanguageExplorer
 		{
 			// The propertyTable GetProperty with a default can set and broadcast.
 			// We don't want that in our ReadOnly version so we can't use that.
-			T tableValue;
-			return _propertyTable.TryGetValue(propertyName, out tableValue) ? tableValue : defaultValue;
+			return _propertyTable.TryGetValue(propertyName, out T tableValue) ? tableValue : defaultValue;
 		}
 	}
 }

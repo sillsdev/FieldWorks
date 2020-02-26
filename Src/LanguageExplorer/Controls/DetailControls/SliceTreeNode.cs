@@ -9,6 +9,7 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Windows.Forms;
+using SIL.Code;
 using SIL.FieldWorks.Resources;
 using SIL.LCModel;
 using SIL.LCModel.Core.Cellar;
@@ -57,10 +58,8 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// <summary />
 		internal SliceTreeNode(Slice myParentSlice, SliceLeftEdgeContextMenuFactory sliceLeftEdgeContextMenuFactory, ContextMenuName leftEdgeContextMenuId)
 		{
-			if (myParentSlice == null)
-			{
-				throw new ArgumentNullException(nameof(myParentSlice));
-			}
+			Guard.AgainstNull(myParentSlice, nameof(myParentSlice));
+
 			InitializeComponent();
 			m_myParentSlice = myParentSlice;
 			_sliceLeftEdgeContextMenuFactory = sliceLeftEdgeContextMenuFactory;
@@ -93,19 +92,13 @@ namespace LanguageExplorer.Controls.DetailControls
 		protected override void OnDragEnter(DragEventArgs drgevent)
 		{
 			base.OnDragEnter(drgevent);
-			int hvoDstOwner; // dummies, we just want to set the Effect property of drgevent.
-			int flidDst;
-			int ihvoDstStart;
-			TestDropEffects(drgevent, out hvoDstOwner, out flidDst, out ihvoDstStart);
+			TestDropEffects(drgevent, out _, out _, out _);
 		}
 
 		protected override void OnDragDrop(DragEventArgs drgevent)
 		{
 			base.OnDragDrop(drgevent);
-			int hvoDstOwner;
-			int flidDst;
-			int ihvoDstStart;
-			var odi = TestDropEffects(drgevent, out hvoDstOwner, out flidDst, out ihvoDstStart);
+			var odi = TestDropEffects(drgevent, out var hvoDstOwner, out var flidDst, out var ihvoDstStart);
 			if (drgevent.Effect == DragDropEffects.None)
 			{
 				return;
@@ -418,10 +411,7 @@ namespace LanguageExplorer.Controls.DetailControls
 				}
 			}
 			// Enhance JohnT: Could we find a better label that shows more clearly what is being moved?
-			int hvoSrcOwner;
-			int flidSrc;
-			int ihvoSrcStart;
-			if (!m_myParentSlice.GetSeqContext(out hvoSrcOwner, out flidSrc, out ihvoSrcStart))
+			if (!m_myParentSlice.GetSeqContext(out var hvoSrcOwner, out var flidSrc, out var ihvoSrcStart))
 			{
 				return; // If we can't identify an object to move, don't do a drag.
 			}
@@ -504,11 +494,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// <remarks>TODO: Getting here without the Alt key may be considered a Mono bug.</remarks>
 		protected override bool ProcessDialogChar(char charCode)
 		{
-			if (!Platform.IsMono || ModifierKeys == Keys.Alt)
-			{
-				return base.ProcessDialogChar(charCode);
-			}
-			return false;
+			return (!Platform.IsMono || ModifierKeys == Keys.Alt) && base.ProcessDialogChar(charCode);
 		}
 	}
 }

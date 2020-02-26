@@ -72,15 +72,10 @@ namespace LanguageExplorerTests
 		private ILexEntryRef m_nolanryanComponents;
 		private ILexEntry m_sky;
 		private ILexExampleSentence m_goodHot;
-		private ILexExampleSentence m_badHot; // REVIEW (Hasso) 2018.02: many of these are unused. Can they be removed?
 		private ILexEntryRef m_hotWaterComponents;
-		private ILexEntryRef m_blueSkyComponents;
 		private ILexRefType m_synonym;
 		private ILexRefType m_partWhole;
 		private ILexReference m_blankSynonyms;
-		private ILexReference m_problemSynonyms;
-		private ILexReference m_bodyParts;
-		private ILexReference m_torsoParts;
 		private ICmSemanticDomain m_domainBadWords;
 		private ICmSemanticDomain m_domainTemperature;
 		private ILexEntry m_ringBell;
@@ -133,7 +128,7 @@ namespace LanguageExplorerTests
 				m_desirable = MakeSense(m_hot, "desirable");
 				m_fastCar = MakeSense(m_desirable, "fast (car)");
 
-				m_badHot = MakeExample(m_hotTemp, "a hot pile of blank", true);
+				MakeExample(m_hotTemp, "a hot pile of blank", true);
 				m_goodHot = MakeExample(m_hotTemp, "a hot bath", false);
 
 				m_water = MakeEntry("water", "H2O", false);
@@ -155,7 +150,7 @@ namespace LanguageExplorerTests
 				m_blankSynonyms = MakeLexRef(m_synonym, new ICmObject[] { m_blank, m_ouch.SensesOS[0], m_blip.SensesOS[0], m_blipOuch, m_bother });
 
 				m_problem = MakeEntry("problem", "difficulty", false);
-				m_problemSynonyms = MakeLexRef(m_synonym, new ICmObject[] { m_problem, m_trouble });
+				MakeLexRef(m_synonym, new ICmObject[] { m_problem, m_trouble });
 
 				m_body = MakeEntry("body", "body", true);
 				m_arm = MakeEntry("arm", "arm", false);
@@ -163,8 +158,8 @@ namespace LanguageExplorerTests
 				m_belly = MakeEntry("belly", "belly", true);
 				m_torso = MakeEntry("torso", "torso", false);
 				m_partWhole = MakeRefType("partWhole", null, (int)LexRefTypeTags.MappingTypes.kmtEntryTree);
-				m_bodyParts = MakeLexRef(m_partWhole, new ICmObject[] { m_body, m_arm, m_leg.SensesOS[0], m_torso, m_belly });
-				m_torsoParts = MakeLexRef(m_partWhole, new ICmObject[] { m_torso, m_arm, m_belly });
+				MakeLexRef(m_partWhole, new ICmObject[] { m_body, m_arm, m_leg.SensesOS[0], m_torso, m_belly });
+				MakeLexRef(m_partWhole, new ICmObject[] { m_torso, m_arm, m_belly });
 
 				m_hotBlank = MakeEntry("hotBlank", "problem rude word", false);
 				MakeEntryRef(m_hotBlank, new ICmObject[] { m_trouble, m_water2 }, new ICmObject[] { m_trouble, m_water2 }, LexEntryRefTags.krtComplexForm);
@@ -181,7 +176,7 @@ namespace LanguageExplorerTests
 				m_sky = MakeEntry("sky", "interface between atmosphere and space", false, true); // true excludes as headword
 				m_skyReal = m_sky.SensesOS[0];
 				m_blueSky = MakeEntry("blue sky", "clear, huge potential", false);
-				m_blueSkyComponents = MakeEntryRef(m_blueSky, new ICmObject[] { m_blueColor, m_skyReal }, new ICmObject[] { m_bluer, m_skyReal }, LexEntryRefTags.krtComplexForm);
+				MakeEntryRef(m_blueSky, new ICmObject[] { m_blueColor, m_skyReal }, new ICmObject[] { m_bluer, m_skyReal }, LexEntryRefTags.krtComplexForm);
 
 				m_ringBell = MakeEntry("ring", "bell", false);
 				m_ringCircle = MakeEntry("ring", "circle", false, true);
@@ -350,8 +345,7 @@ namespace LanguageExplorerTests
 			// This test is perhaps redundant here: DictionaryPublicationDecorator does not have to do anything to get this behavior.
 			using (var arrayPtr = MarshalEx.ArrayToNative<int>(2))
 			{
-				int chvo;
-				m_decorator.VecProp(m_hot.Hvo, LexEntryTags.kflidSenses, 2, out chvo, arrayPtr);
+				m_decorator.VecProp(m_hot.Hvo, LexEntryTags.kflidSenses, 2, out _, arrayPtr);
 				var values = MarshalEx.NativeToArray<int>(arrayPtr, 2);
 				Assert.That(values[0], Is.EqualTo(m_hot.SensesOS[0].Hvo));
 				Assert.That(values[1], Is.EqualTo(m_desirable.Hvo));

@@ -139,7 +139,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		public void DuplicatesHaveUniqueLabelSuffixes()
 		{
 			var parent = new ConfigurableDictionaryNode { Children = new List<ConfigurableDictionaryNode>() };
-			var nodeToDuplicateLabel = "node";
+			const string nodeToDuplicateLabel = "node";
 			var nodeToDuplicate = new ConfigurableDictionaryNode { Parent = parent, Label = nodeToDuplicateLabel, LabelSuffix = null };
 			var otherNodeA = new ConfigurableDictionaryNode { Parent = parent, Label = "node", LabelSuffix = "1" };
 			var otherNodeB = new ConfigurableDictionaryNode { Parent = parent, Label = "node", LabelSuffix = "B" };
@@ -158,7 +158,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		[Test]
 		public void DuplicatesGroupingNodeChildrenAffectSuffixes()
 		{
-			var nodeToDuplicateLabel = "node";
+			const string nodeToDuplicateLabel = "node";
 			var nodeToDuplicate = new ConfigurableDictionaryNode { Label = nodeToDuplicateLabel, LabelSuffix = null };
 			var dupUnderGroup = new ConfigurableDictionaryNode { Label = nodeToDuplicateLabel, LabelSuffix = "1" };
 			var groupingNode = new ConfigurableDictionaryNode
@@ -182,7 +182,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		[Test]
 		public void DuplicatesSharedGroupingNodeChildrenAffectSuffixes()
 		{
-			var nodeToDuplicateLabel = "node";
+			const string nodeToDuplicateLabel = "node";
 			var nodeToDuplicate = new ConfigurableDictionaryNode { FieldDescription = nodeToDuplicateLabel };
 			var dupUnderShardGroup = new ConfigurableDictionaryNode { FieldDescription = nodeToDuplicateLabel, LabelSuffix = "1" };
 			var sharedNode = new ConfigurableDictionaryNode
@@ -323,8 +323,9 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			var node = new ConfigurableDictionaryNode { Children = new List<ConfigurableDictionaryNode>(), Parent = parent };
 			parent.Children.Add(node);
 			node.UnlinkFromParent();
-			Assert.That(node.Parent, Is.Null); // node is now at the root of a hierarchy
-											   // SUT
+			// node is now at the root of a hierarchy
+			Assert.That(node.Parent, Is.Null);
+			// SUT
 			Assert.DoesNotThrow(() => node.UnlinkFromParent());
 		}
 
@@ -676,8 +677,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			var root = new ConfigurableDictionaryNode { Children = new List<ConfigurableDictionaryNode> { masterParent } };
 			CssGeneratorTests.PopulateFieldsForTesting(DictionaryConfigurationModelTests.CreateSimpleSharingModel(root, sharedNode));
 
-			ConfigurableDictionaryNode returnedMasterParent;
-			Assert.True(child.TryGetMasterParent(out returnedMasterParent)); // SUT
+			Assert.True(child.TryGetMasterParent(out var returnedMasterParent)); // SUT
 			Assert.AreSame(masterParent, returnedMasterParent);
 			Assert.False(masterParent.TryGetMasterParent(out returnedMasterParent), "The master parent doesn't *have* a master parent, it *is* one"); // SUT
 			Assert.IsNull(returnedMasterParent, "Master Parent");

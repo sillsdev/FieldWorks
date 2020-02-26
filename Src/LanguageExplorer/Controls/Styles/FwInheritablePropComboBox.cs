@@ -50,7 +50,7 @@ namespace LanguageExplorer.Controls.Styles
 		/// </returns>
 		public int AdjustedSelectedIndex
 		{
-			get { return (ShowingInheritedProperties || SelectedIndex < 0) ? SelectedIndex : SelectedIndex + 1; }
+			get => (ShowingInheritedProperties || SelectedIndex < 0) ? SelectedIndex : SelectedIndex + 1;
 			set
 			{
 				var newIndex = (ShowingInheritedProperties ? value : value - 1);
@@ -65,7 +65,7 @@ namespace LanguageExplorer.Controls.Styles
 		/// </summary>
 		public bool IsInherited
 		{
-			get { return m_ShowingInheritedProperties && (SelectedIndex == 0 || ForeColor.ToArgb() != SystemColors.WindowText.ToArgb()); }
+			get => m_ShowingInheritedProperties && (SelectedIndex == 0 || ForeColor.ToArgb() != SystemColors.WindowText.ToArgb());
 			set { }
 		}
 
@@ -76,7 +76,7 @@ namespace LanguageExplorer.Controls.Styles
 		/// </summary>
 		public bool ShowingInheritedProperties
 		{
-			get { return m_ShowingInheritedProperties; }
+			get => m_ShowingInheritedProperties;
 			set
 			{
 				if (m_ShowingInheritedProperties == value)

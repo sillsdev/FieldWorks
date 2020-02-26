@@ -75,7 +75,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		protected override SimpleListChooser GetChooser(IEnumerable<ObjectLabel> labels)
 		{
-			var contents = (m_cache.DomainDataByFlid as ISilDataAccessManaged).VecProp(m_obj.Hvo, m_flid).Select(hvo => m_cache.ServiceLocator.GetObject(hvo));
+			var contents = ((ISilDataAccessManaged)m_cache.DomainDataByFlid).VecProp(m_obj.Hvo, m_flid).Select(hvo => m_cache.ServiceLocator.GetObject(hvo));
 			return new SimpleListChooser(m_persistProvider, labels.OrderBy(ol => ol.Object.ShortName), m_fieldName, m_cache, contents, PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider));
 		}
 
@@ -100,19 +100,19 @@ namespace LanguageExplorer.Controls.DetailControls
 				return;
 			}
 			var h1 = m_phoneEnvRefView.RootBox.Height;
-			ICollection<IPhEnvironment> envs;
+			ICollection<IPhEnvironment> environments;
 			if (m_flid == MoAffixAllomorphTags.kflidPosition)
 			{
-				envs = ((IMoAffixAllomorph)m_obj).PositionRS;
+				environments = ((IMoAffixAllomorph)m_obj).PositionRS;
 			}
 			else
 			{
-				envs = m_obj is IMoAffixAllomorph ? ((IMoAffixAllomorph)m_obj).PhoneEnvRC : ((IMoStemAllomorph)m_obj).PhoneEnvRC;
+				environments = m_obj is IMoAffixAllomorph ? ((IMoAffixAllomorph)m_obj).PhoneEnvRC : ((IMoStemAllomorph)m_obj).PhoneEnvRC;
 			}
 			// First, we need a list of hvos added and a list of hvos deleted.
 			var newEnvs = new HashSet<IPhEnvironment>(chosenObjs.Cast<IPhEnvironment>());
 			var delEnvs = new HashSet<IPhEnvironment>();
-			foreach (var env in envs)
+			foreach (var env in environments)
 			{
 				if (newEnvs.Contains(env))
 				{
@@ -129,13 +129,13 @@ namespace LanguageExplorer.Controls.DetailControls
 				foreach (var env in newEnvs)
 				{
 					m_phoneEnvRefView.AddNewItem(env);
-					envs.Add(env);
+					environments.Add(env);
 				}
 
 				foreach (var env in delEnvs)
 				{
 					m_phoneEnvRefView.RemoveItem(env);
-					envs.Remove(env);
+					environments.Remove(env);
 				}
 			});
 			var h2 = m_phoneEnvRefView.RootBox.Height;

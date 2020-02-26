@@ -167,18 +167,10 @@ namespace LanguageExplorer.Controls.Styles
 		/// is invoked.</remarks>
 		public bool DefaultTextDirectionRtoL
 		{
-			get
-			{
-				if (m_currentStyleInfo == null)
-				{
-					return m_DefaultTextDirectionRtoL;
-				}
-				return m_currentStyleInfo.DirectionIsRightToLeft == TriStateBool.triNotSet ? m_DefaultTextDirectionRtoL : m_currentStyleInfo.DirectionIsRightToLeft == TriStateBool.triTrue;
-			}
-			set
-			{
-				m_DefaultTextDirectionRtoL = value;
-			}
+			get => m_currentStyleInfo == null
+					? m_DefaultTextDirectionRtoL
+					: m_currentStyleInfo.DirectionIsRightToLeft == TriStateBool.triNotSet ? m_DefaultTextDirectionRtoL : m_currentStyleInfo.DirectionIsRightToLeft == TriStateBool.triTrue;
+			set => m_DefaultTextDirectionRtoL = value;
 		}
 
 		/// <summary>

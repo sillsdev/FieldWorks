@@ -723,8 +723,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 		public void WordsFragDoc_OneWordAndOneGloss()
 		{
 			var wsEn = Cache.WritingSystemFactory.GetWsFromStr("en");
-			CoreWritingSystemDefinition wsKal;
-			Cache.ServiceLocator.WritingSystemManager.GetOrSet("qaa-x-kal", out wsKal);
+			Cache.ServiceLocator.WritingSystemManager.GetOrSet("qaa-x-kal", out var wsKal);
 
 			const string xml =
 				@"<document>
@@ -753,8 +752,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 		public void WordsFragDoc_OneWordAndOneGloss_AvoidDuplication()
 		{
 			var wsEn = Cache.WritingSystemFactory.GetWsFromStr("en");
-			CoreWritingSystemDefinition wsKal;
-			Cache.ServiceLocator.WritingSystemManager.GetOrSet("qaa-x-kal", out wsKal);
+			Cache.ServiceLocator.WritingSystemManager.GetOrSet("qaa-x-kal", out var wsKal);
 
 			const string xml =
 				@"<document>
@@ -788,8 +786,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 		public void WordsFragDoc_OneWordAndMultiGloss()
 		{
 			var wsEn = Cache.WritingSystemFactory.GetWsFromStr("en");
-			CoreWritingSystemDefinition wsKal;
-			Cache.ServiceLocator.WritingSystemManager.GetOrSet("qaa-x-kal", out wsKal);
+			Cache.ServiceLocator.WritingSystemManager.GetOrSet("qaa-x-kal", out var wsKal);
 
 			const string xml =
 				@"<document>
@@ -821,8 +818,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 		public void WordsFragDoc_OneWordAndMultiGloss_AvoidDuplication()
 		{
 			var wsEn = Cache.WritingSystemFactory.GetWsFromStr("en");
-			CoreWritingSystemDefinition wsKal;
-			Cache.ServiceLocator.WritingSystemManager.GetOrSet("qaa-x-kal", out wsKal);
+			Cache.ServiceLocator.WritingSystemManager.GetOrSet("qaa-x-kal", out var wsKal);
 
 			const string xml =
 				@"<document>
@@ -858,8 +854,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 		public void WordsFragDoc_OneWordPhraseAndOneGloss()
 		{
 			var wsEn = Cache.WritingSystemFactory.GetWsFromStr("en");
-			CoreWritingSystemDefinition wsKal;
-			Cache.ServiceLocator.WritingSystemManager.GetOrSet("qaa-x-kal", out wsKal);
+			Cache.ServiceLocator.WritingSystemManager.GetOrSet("qaa-x-kal", out var wsKal);
 
 			const string xml =
 				@"<document>
@@ -888,8 +883,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 		public void WordsFragDoc_OneWordPhraseAndOneGloss_AvoidDuplicates()
 		{
 			var wsEn = Cache.WritingSystemFactory.GetWsFromStr("en");
-			CoreWritingSystemDefinition wsKal;
-			Cache.ServiceLocator.WritingSystemManager.GetOrSet("qaa-x-kal", out wsKal);
+			Cache.ServiceLocator.WritingSystemManager.GetOrSet("qaa-x-kal", out var wsKal);
 
 			const string xml =
 				@"<document>

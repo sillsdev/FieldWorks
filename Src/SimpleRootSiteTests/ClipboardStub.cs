@@ -37,13 +37,13 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 		/// <inheritdoc />
 		public void SetDataObject(object data, bool copy)
 		{
-			m_DataObject = data is IDataObject ? (IDataObject)data : new DataObject(data);
+			m_DataObject = data is IDataObject dataObject ? dataObject : new DataObject(data);
 		}
 
 		/// <inheritdoc />
 		public void SetDataObject(object data, bool copy, int retries, int msDelay)
 		{
-			m_DataObject = data is IDataObject ? (IDataObject)data : new DataObject(data);
+			m_DataObject = data is IDataObject dataObject ? dataObject : new DataObject(data);
 		}
 
 		/// <inheritdoc />

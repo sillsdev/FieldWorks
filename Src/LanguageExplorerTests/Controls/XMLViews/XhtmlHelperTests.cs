@@ -63,10 +63,8 @@ namespace LanguageExplorerTests.Controls.XMLViews
 		public void MapCssToLang_UsesGetValidCssClassName()
 		{
 			_xhtmlHelper.MapCssToLang("#MyClass", "dummy");
-			List<string> output;
-
-			Assert.That(_xhtmlHelper.TryGetLangsFromCss("#MyClass", out output), Is.True, "unmodified class name should retrieve successfully");
-			Assert.That(_xhtmlHelper.TryGetLangsFromCss("NUMBER_SIGNMyClass", out output), Is.True, "corrected class name should also work");
+			Assert.That(_xhtmlHelper.TryGetLangsFromCss("#MyClass", out _), Is.True, "unmodified class name should retrieve successfully");
+			Assert.That(_xhtmlHelper.TryGetLangsFromCss("NUMBER_SIGNMyClass", out _), Is.True, "corrected class name should also work");
 		}
 	}
 }

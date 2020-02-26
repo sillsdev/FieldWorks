@@ -55,7 +55,7 @@ namespace LanguageExplorer
 		/// <remarks>This method assumes that it is called only with duplicated data</remarks>
 		internal static string GetSuffixedPartOfNamedViewOrDuplicateNode(string[] keyAttributes, string[] keyVals, out string[] stdKeyVals)
 		{
-			stdKeyVals = keyVals.Clone() as string[];
+			stdKeyVals = (string[])keyVals.Clone();
 			if (keyAttributes.Length > 2 && keyAttributes[2] == NameAttr && stdKeyVals.Length > 2)
 			{
 				var userModifiedName = stdKeyVals[2];

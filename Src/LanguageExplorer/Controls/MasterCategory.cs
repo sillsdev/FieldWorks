@@ -56,8 +56,7 @@ namespace LanguageExplorer.Controls
 			}
 			mc.m_node = node; // remember node, too, so can put info for all WSes in database
 			var sDefaultWS = cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Id;
-			string sContent;
-			mc.m_abbrevWs = GetBestWritingSystemForNamedNode(node, "abbrev", sDefaultWS, cache, out sContent);
+			mc.m_abbrevWs = GetBestWritingSystemForNamedNode(node, "abbrev", sDefaultWS, cache, out var sContent);
 			mc.m_abbrev = sContent;
 			mc.m_termWs = GetBestWritingSystemForNamedNode(node, "term", sDefaultWS, cache, out sContent);
 			mc.m_term = NameFixer(sContent);
@@ -110,9 +109,7 @@ namespace LanguageExplorer.Controls
 			}
 			UndoableUnitOfWorkHelper.Do(LanguageExplorerControls.ksUndoCreateCategory, LanguageExplorerControls.ksRedoCreateCategory, cache.ServiceLocator.GetInstance<IActionHandler>(), () =>
 			{
-				int newOwningFlid;
-				int insertLocation;
-				DeterminePOSLocationInfo(cache, subItemOwner, parent, posList, out newOwningFlid, out insertLocation);
+				DeterminePOSLocationInfo(cache, subItemOwner, parent, posList, out _, out _);
 				var wsf = cache.WritingSystemFactory;
 				Debug.Assert(POS != null);
 				var termWs = wsf.GetWsFromStr(m_termWs);

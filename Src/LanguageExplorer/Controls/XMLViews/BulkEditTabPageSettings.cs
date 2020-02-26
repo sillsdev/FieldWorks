@@ -145,8 +145,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		internal static void InitializeSelectedTab(BulkEditBar bulkEditBar)
 		{
-			BulkEditTabPageSettings tabPageSettings;
-			if (TryGetSettingsForCurrentTabPage(bulkEditBar, out tabPageSettings))
+			if (TryGetSettingsForCurrentTabPage(bulkEditBar, out var tabPageSettings))
 			{
 				// now that we've loaded/setup a tab, restore the settings for that tab.
 				try
@@ -169,8 +168,7 @@ namespace LanguageExplorer.Controls.XMLViews
 
 		private static bool TryGetSettingsForCurrentTabPage(BulkEditBar bulkEditBar, out BulkEditTabPageSettings tabPageSettings)
 		{
-			var currentTabSettingsKey = BuildCurrentTabSettingsKey(bulkEditBar);
-			tabPageSettings = DeserializeTabPageSettings(bulkEditBar, currentTabSettingsKey);
+			tabPageSettings = DeserializeTabPageSettings(bulkEditBar, BuildCurrentTabSettingsKey(bulkEditBar));
 			return tabPageSettings.AreLoaded;
 		}
 
@@ -248,16 +246,12 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		private static string BuildLastTabSettingsKey(BulkEditBar bulkEditBar)
 		{
-			var toolId = GetBulkEditBarToolId(bulkEditBar);
-			var property = $"{toolId}_LastTabPageSettings";
-			return property;
+			return $"{GetBulkEditBarToolId(bulkEditBar)}_LastTabPageSettings";
 		}
 
 		private static string BuildCurrentTabSettingsKey(BulkEditBar bulkEditBar)
 		{
-			var toolId = GetBulkEditBarToolId(bulkEditBar);
-			var property = $"{toolId}_{GetCurrentTabPageName(bulkEditBar)}_TabPageSettings";
-			return property;
+			return $"{GetBulkEditBarToolId(bulkEditBar)}_{GetCurrentTabPageName(bulkEditBar)}_TabPageSettings";
 		}
 
 
@@ -292,10 +286,8 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		private static BulkEditTabPageSettings DeserializeLastTabPageSettings(BulkEditBar bulkEditBar)
 		{
-			var lastTabSettingsKey = BuildLastTabSettingsKey(bulkEditBar);
 			// the value of LastTabSettings is the key to the tab settings in the property table.
-			var tabSettingsKey = bulkEditBar.PropertyTable.GetValue(lastTabSettingsKey, string.Empty, SettingsGroup.LocalSettings);
-			return DeserializeTabPageSettings(bulkEditBar, tabSettingsKey);
+			return DeserializeTabPageSettings(bulkEditBar, bulkEditBar.PropertyTable.GetValue(BuildLastTabSettingsKey(bulkEditBar), string.Empty, SettingsGroup.LocalSettings));
 		}
 
 		private static BulkEditTabPageSettings DeserializeTabPageSettings(BulkEditBar bulkEditBar, string tabSettingsKey)
@@ -368,8 +360,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary />
 		protected static string GetCurrentTabPageName(BulkEditBar bulkEditBar)
 		{
-			var selectedTabIndex = bulkEditBar.OperationsTabControl.SelectedIndex;
-			var tab = (BulkEditBarTabs)Enum.Parse(typeof(BulkEditBarTabs), selectedTabIndex.ToString());
+			var tab = (BulkEditBarTabs)Enum.Parse(typeof(BulkEditBarTabs), bulkEditBar.OperationsTabControl.SelectedIndex.ToString());
 			return tab.ToString();
 		}
 

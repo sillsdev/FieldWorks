@@ -140,12 +140,7 @@ namespace LanguageExplorer.Controls
 		/// </summary>
 		protected int CPropPrev(int tag)
 		{
-			if (m_stack.Count == 0)
-			{
-				return m_cpropPrev.GetCount(tag);
-			}
-			var top = m_stack[m_stack.Count - 1];
-			return top.m_cpropPrev.GetCount(tag);
+			return m_stack.Count == 0 ? m_cpropPrev.GetCount(tag) : m_stack[m_stack.Count - 1].m_cpropPrev.GetCount(tag);
 		}
 
 		/// <summary>
@@ -277,8 +272,7 @@ namespace LanguageExplorer.Controls
 			}
 			else
 			{
-				var top = m_stack[m_stack.Count - 1];
-				top.m_cpropPrev.Increment(tag);
+				m_stack[m_stack.Count - 1].m_cpropPrev.Increment(tag);
 			}
 		}
 
@@ -481,7 +475,7 @@ namespace LanguageExplorer.Controls
 		/// <summary>
 		/// Member AddStringProp
 		/// </summary>
-		public virtual void AddStringProp(int tag, IVwViewConstructor _vwvc)
+		public virtual void AddStringProp(int tag, IVwViewConstructor vwvc)
 		{
 			if (Finished)
 			{
@@ -797,8 +791,7 @@ namespace LanguageExplorer.Controls
 				// that property.
 				OpenProp((int)VwSpecialAttrTags.ktagNotAnAttr);
 			}
-			int ihvo;
-			if (m_vectorItemIndex.TryGetValue(CurrentPropTag, out ihvo))
+			if (m_vectorItemIndex.TryGetValue(CurrentPropTag, out var ihvo))
 			{
 				m_vectorItemIndex[CurrentPropTag] = ++ihvo;
 			}

@@ -7,6 +7,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
@@ -248,7 +249,6 @@ namespace LanguageExplorer.SfmToXml
 			m_sfmFileName = sfmFileName;
 			m_mappingFileName = mappingFileName;
 			m_outputFileName = outputFileName;
-
 			// Check we have read access to both files, and that they aren't empty:
 			TestFile(sfmFileName);
 			TestFile(mappingFileName);
@@ -365,7 +365,7 @@ namespace LanguageExplorer.SfmToXml
 				var comments = nl;
 				comments += " ================================================================" + nl;
 				comments += " Element: " + m_root.Name + nl;
-				comments += "  This element contains the inputfile in an XML format." + nl;
+				comments += "  This element contains the input file in an XML format." + nl;
 				comments += " ================================================================" + nl;
 				xmlOutput.WriteComment(comments);
 				try
@@ -387,13 +387,9 @@ namespace LanguageExplorer.SfmToXml
 				comments += " ================================================================" + nl;
 				xmlOutput.WriteComment(comments);
 				xmlOutput.WriteStartElement("fieldDescriptions");
-				foreach (DictionaryEntry fieldEntry in FieldMarkerHashTable)
+				foreach (var fd in FieldMarkerHashTable.Cast<DictionaryEntry>().Select(fieldEntry => fieldEntry.Value as ClsFieldDescription)
+					.Where(fd => !(fd is ClsCustomFieldDescription)))
 				{
-					var fd = fieldEntry.Value as ClsFieldDescription;
-					if (fd is ClsCustomFieldDescription)
-					{
-						continue;   // the custom fields will be put out in a CustomFields section following...
-					}
 					if (m_autoFieldsBySFM.ContainsKey(fd.SFM))
 					{
 						var afiBysfm = (ArrayList)m_autoFieldsBySFM[fd.SFM];
@@ -412,9 +408,8 @@ namespace LanguageExplorer.SfmToXml
 				comments += " ================================================================" + nl;
 				xmlOutput.WriteComment(comments);
 				xmlOutput.WriteStartElement("CustomFieldDescriptions");
-				foreach (DictionaryEntry fieldEntry in FieldMarkerHashTable)
+				foreach (var fd in FieldMarkerHashTable.Cast<DictionaryEntry>().Select(fieldEntry => fieldEntry.Value as ClsCustomFieldDescription))
 				{
-					var fd = fieldEntry.Value as ClsCustomFieldDescription;
 					fd?.ToXmlLangString(xmlOutput);
 				}
 				xmlOutput.WriteEndElement();
@@ -601,15 +596,14 @@ namespace LanguageExplorer.SfmToXml
 				Log.AddError(SfmToXmlStrings.NoValidHierarchyEntriesDefined);
 				success = false;
 			}
-			// Now populate the children hashtable: key is parent and value is arraylist of children.
+			// Now populate the children hashtable: key is parent and value is ArrayList of children.
 			foreach (DictionaryEntry dictionaryEntry in HierarchyHashTable)
 			{
 				var entry = (ClsHierarchyEntry)dictionaryEntry.Value;
 				// add this node as a child of all the ancestors of it
 				foreach (var name in entry.Ancestors)
 				{
-					var children = m_hierarchyChildren[name] as ArrayList;
-					if (children == null)
+					if (!(m_hierarchyChildren[name] is ArrayList children))
 					{
 						children = new ArrayList();
 						m_hierarchyChildren.Add(name, children);
@@ -639,9 +633,8 @@ namespace LanguageExplorer.SfmToXml
 			// determine what the leaf and root nodes are
 			var leaf = new Hashtable();
 			var root = new Hashtable();
-			foreach (DictionaryEntry dictionaryEntry in HierarchyHashTable)
+			foreach (var entry in HierarchyHashTable.Cast<DictionaryEntry>().Select(dictionaryEntry => (ClsHierarchyEntry)dictionaryEntry.Value))
 			{
-				var entry = (ClsHierarchyEntry)dictionaryEntry.Value;
 				leaf.Add(entry.Name, null);
 				foreach (var name in entry.Ancestors)
 				{
@@ -717,7 +710,7 @@ namespace LanguageExplorer.SfmToXml
 								allHierarchySfms.Add(beginSfm, hierarchy);
 							}
 						}
-						// Make sure beginfields don't appear in addtionalfields:
+						// Make sure beginfields don't appear in additionalfields:
 						if (hierarchy.AdditionalFieldsContains(beginSfm))
 						{
 							Log.AddError(string.Format(SfmToXmlStrings.HierarchyEntry0HasField1WhichIsInBeginFields, hierarchy.Name, beginSfm));
@@ -746,12 +739,10 @@ namespace LanguageExplorer.SfmToXml
 				}
 			}
 			// Test to make sure each of our Hierarchy SFMs is defined in the FieldDescriptions:
-			foreach (DictionaryEntry hierarchySfmPair in allHierarchySfms)
+			foreach (var hierarchySfmPair in allHierarchySfms.Cast<DictionaryEntry>().Where(hierarchySfmPair => !FieldMarkerHashTable.ContainsKey(hierarchySfmPair.Key)
+																												&& !m_fieldsToIgnore.ContainsKey(hierarchySfmPair.Key)))
 			{
-				if (!FieldMarkerHashTable.ContainsKey(hierarchySfmPair.Key) && !m_fieldsToIgnore.ContainsKey(hierarchySfmPair.Key))
-				{
-					Log.AddError(string.Format(SfmToXmlStrings.HierarchyEntry0RefersToInvalidSFM1, ((ClsHierarchyEntry)hierarchySfmPair.Value).Name, hierarchySfmPair.Key));
-				}
+				Log.AddError(string.Format(SfmToXmlStrings.HierarchyEntry0RefersToInvalidSFM1, ((ClsHierarchyEntry)hierarchySfmPair.Value).Name, hierarchySfmPair.Key));
 			}
 		}
 
@@ -904,9 +895,8 @@ namespace LanguageExplorer.SfmToXml
 
 		private void ValidateFieldDescriptions()
 		{
-			foreach (DictionaryEntry dictEntry in FieldMarkerHashTable)
+			foreach (var fldDesc in FieldMarkerHashTable.Cast<DictionaryEntry>().Select(dictEntry => (ClsFieldDescription)dictEntry.Value))
 			{
-				var fldDesc = (ClsFieldDescription)dictEntry.Value;
 				// Check that the given language exists in the languages list:
 				if (!LanguagesHashTable.ContainsKey(fldDesc.Language))
 				{
@@ -923,17 +913,7 @@ namespace LanguageExplorer.SfmToXml
 					continue;   // auto import fields aren't used in the hierarchy
 				}
 				// Make sure that each sfm is used in atleast one hierarchy entry
-				var bUsed = false;
-				foreach (DictionaryEntry hierarchy in HierarchyHashTable)
-				{
-					var entry = (ClsHierarchyEntry)hierarchy.Value;
-					if (entry.UsesSFM(fldDesc.SFM))
-					{
-						bUsed = true;
-						break;
-					}
-				}
-				if (!bUsed)
+				if (!HierarchyHashTable.Cast<DictionaryEntry>().Select(hierarchy => (ClsHierarchyEntry)hierarchy.Value).Any(entry => entry.UsesSFM(fldDesc.SFM)))
 				{
 					// LT-2217: only show errors for fields that are not 'ignored'
 					if (!m_fieldsToIgnore.ContainsKey(fldDesc.SFM))
@@ -958,8 +938,7 @@ namespace LanguageExplorer.SfmToXml
 			var success = true;
 			xmlOutput?.WriteStartElement("CustomFieldDescriptions");
 			// Iterate through all the input "CustomField" elements:
-			var fieldList = xmlMap.SelectNodes("sfmMapping/CustomFieldDescriptions/CustomField");
-			foreach (XmlNode fieldNode in fieldList)
+			foreach (XmlNode fieldNode in xmlMap.SelectNodes("sfmMapping/CustomFieldDescriptions/CustomField"))
 			{
 				var fieldDescription = new ClsCustomFieldDescription();
 				if (fieldDescription.ReadAndOutputXmlNode(fieldNode, LanguagesHashTable, m_topAnalysisWS, xmlOutput, ref m_langsToIgnore, ref m_fieldsToIgnore))
@@ -991,9 +970,8 @@ namespace LanguageExplorer.SfmToXml
 
 		private void ValidateCustomFieldDescriptions()
 		{
-			foreach (DictionaryEntry dictEntry in FieldMarkerHashTable)
+			foreach (var fldDesc in FieldMarkerHashTable.Cast<DictionaryEntry>().Select(dictEntry => (ClsFieldDescription)dictEntry.Value))
 			{
-				var fldDesc = (ClsFieldDescription)dictEntry.Value;
 				// Check that the given language exists in the languages list:
 				if (!LanguagesHashTable.ContainsKey(fldDesc.Language))
 				{
@@ -1010,17 +988,7 @@ namespace LanguageExplorer.SfmToXml
 					continue;   // auto import fields aren't used in the hierarchy
 				}
 				// Make sure that each sfm is used in atleast one hierarchy entry
-				var bUsed = false;
-				foreach (DictionaryEntry hierarchy in HierarchyHashTable)
-				{
-					var entry = (ClsHierarchyEntry)hierarchy.Value;
-					if (entry.UsesSFM(fldDesc.SFM))
-					{
-						bUsed = true;
-						break;
-					}
-				}
-				if (!bUsed)
+				if (!HierarchyHashTable.Cast<DictionaryEntry>().Select(hierarchy => (ClsHierarchyEntry)hierarchy.Value).Any(entry => entry.UsesSFM(fldDesc.SFM)))
 				{
 					// LT-2217: only show errors for fields that are not 'ignored'
 					if (!m_fieldsToIgnore.ContainsKey(fldDesc.SFM))
@@ -1047,7 +1015,7 @@ namespace LanguageExplorer.SfmToXml
 		{
 			// none
 			long index = -1;
-			// if the indata length is to small, just return
+			// if the inData length is too small, just return
 			if (inData.Length - startPos < item.Length)
 			{
 				return index;
@@ -1087,9 +1055,7 @@ namespace LanguageExplorer.SfmToXml
 
 		public static string MultiToWide(byte[] multi, int start, int end, Encoding encodingToUse)
 		{
-			MultiToWideError error;
-			byte[] badBytes;
-			return MultiToWideWithERROR(multi, start, end, encodingToUse, out error, out badBytes);
+			return MultiToWideWithERROR(multi, start, end, encodingToUse, out _, out _);
 		}
 
 		public static string MultiToWideWithERROR(byte[] multi, int start, int end, Encoding encodingToUse, out MultiToWideError err, out byte[] badBytes)
@@ -1176,10 +1142,7 @@ namespace LanguageExplorer.SfmToXml
 				var cMaxCodes = 20;
 				if (m_illegalCodes < cMaxCodes)
 				{
-					byte badCodePoint;
-					int badBytePosition;
-					int badByteCount;   // add a count msg to the line.
-					if (!workspaceAsString.IsUTF8String(out badCodePoint, out badBytePosition, out badByteCount))
+					if (!workspaceAsString.IsUTF8String(out var badCodePoint, out _, out var badByteCount))
 					{
 						// contains non-utf8 data
 						if (badByteCount > ClsStringToOrFromBytes.MaxInvalidBytes)
@@ -1551,9 +1514,7 @@ namespace LanguageExplorer.SfmToXml
 					case "sub":
 						try
 						{
-							string sAlloClass;
-							string sMorphTypeWs;
-							var sMorphType = GetMorphTypeInfo(ref sForm, out sAlloClass, out sMorphTypeWs);
+							var sMorphType = GetMorphTypeInfo(ref sForm, out var sAlloClass, out var sMorphTypeWs);
 							xmlOutput.WriteAttributeString("morphTypeWs", sMorphTypeWs);
 							xmlOutput.WriteAttributeString("morphType", sMorphType);
 							xmlOutput.WriteAttributeString("allomorphClass", sAlloClass);
@@ -1569,8 +1530,7 @@ namespace LanguageExplorer.SfmToXml
 						{
 							// We have something we can't interpret. Give the user an Error message, but continue on if
 							// the user ignores it. To continue on we use the entire string and assume it is a stem.
-							var errMsg = string.Format(SfmToXmlStrings.BadMorphMarkers012, lineNumber, cfd.SFMxmlSafe, ex.Message);
-							Log.AddFatalError(m_sfmFileName, lineNumber, errMsg);
+							Log.AddFatalError(m_sfmFileName, lineNumber, string.Format(SfmToXmlStrings.BadMorphMarkers012, lineNumber, cfd.SFMxmlSafe, ex.Message));
 							xmlOutput.WriteAttributeString("morphTypeWs", "en");
 							xmlOutput.WriteAttributeString("morphType", "stem");
 							xmlOutput.WriteAttributeString("allomorphClass", "MoStemAllomorph");
@@ -1643,12 +1603,9 @@ namespace LanguageExplorer.SfmToXml
 			try
 			{
 				var reader = new ByteReader(m_sfmFileName, ref Log);
-				byte[] sfmData;
-				byte[] badMarkerBytes;
-				string currentSfm;
 				var mgr = new ImportObjectManager(m_root.Name, this);
 				xmlOutput.WriteStartElement(m_root.Name);
-				while (reader.GetNextSfmMarkerAndData(out currentSfm, out sfmData, out badMarkerBytes))
+				while (reader.GetNextSfmMarkerAndData(out var currentSfm, out var sfmData, out var badMarkerBytes))
 				{
 					m_sfmLineNumber = reader.FoundLineNumber;
 					// If the currentSfm is empty, then this is a case where there is data before the marker
@@ -1711,7 +1668,7 @@ namespace LanguageExplorer.SfmToXml
 					var currentLocation = HierarchyHashTable[mgr.Current.Name] as ClsHierarchyEntry;
 					if (currentLocation == null)
 					{
-						throw new System.Exception("Current path location is undefined.");
+						throw new Exception("Current path location is undefined.");
 					}
 					// see if this sfm is labeled in the hierarchy as 'unique' - only one unique marker per entry
 					var uniqueSfm = currentLocation.UniqueFieldsContains(currentSfm);
@@ -1741,8 +1698,7 @@ namespace LanguageExplorer.SfmToXml
 							}
 							// for all other elements - > be hopeful ....
 							// (hopeful that there will be the needed other items for this element to follow)
-							ImportObject newElement;
-							if (mgr.AddNewEntry(needed, out newElement))
+							if (mgr.AddNewEntry(needed, out var newElement))
 							{
 								// log the 'OutOfOrder' caution
 								// go up the tree from this entry until we get the parent that equals the m_root.name and stop
@@ -1750,16 +1706,12 @@ namespace LanguageExplorer.SfmToXml
 								{
 									newElement = newElement.Parent;
 								}
-								string eleMarker;
-								byte[] eleData;
-								int eleLine;
-								newElement.GetCreationMarkerData(out eleLine, out eleMarker, out eleData);
+								newElement.GetCreationMarkerData(out var eleLine, out var eleMarker, out var eleData);
 								var entryData = ProcessSFMData(eleMarker, eleData, eleLine);
 								entryData = entryData.Replace(System.Environment.NewLine, " "); // remove newlines
 								entryData = entryData.Trim();   // remove whitespace
 								entryData = $"{eleLine}:{entryData}";
 								Log.AddOutOfOrderCaution(entryData, currentSfm, m_sfmLineNumber);
-
 								mgr.WriteOutClosedLexEntries(xmlOutput);
 								if (mgr.AddToOpenObjects(currentSfm, sfmData, m_sfmLineNumber))
 								{
@@ -1779,8 +1731,7 @@ namespace LanguageExplorer.SfmToXml
 							continue;   // handled in existing entry
 						}
 						// We will be opening a new hierarchy level.
-						ImportObject newElement;
-						if (mgr.AddNewEntry(newBeginHierarchyEntry, out newElement))
+						if (mgr.AddNewEntry(newBeginHierarchyEntry, out var newElement))
 						{
 							// Only needed here as the 'Entry' is the only one that can't be 'guessed' into creation and its the one
 							// that is included in the log.
@@ -2645,15 +2596,13 @@ namespace LanguageExplorer.SfmToXml
 				ChildrenCount++;
 			}
 
-			internal bool RemoveChild(ImportObject child)
+			internal void RemoveChild(ImportObject child)
 			{
 				if (ChildrenList.Contains(child))
 				{
 					ChildrenList.Remove(child);
 					ChildrenCount--;
-					return true;
 				}
-				return false;
 			}
 
 			internal ICollection Children => ChildrenList;
@@ -2666,19 +2615,6 @@ namespace LanguageExplorer.SfmToXml
 			}
 
 			internal int ChildrenCount { get; private set; }
-
-			private string NameLong
-			{
-				get
-				{
-					var OorC = "O:";
-					if (Closed)
-					{
-						OorC = "C:";
-					}
-					return $"{Name}<{OorC + GetHashCode()}>";
-				}
-			}
 
 			internal ImportObject Parent { get; }
 

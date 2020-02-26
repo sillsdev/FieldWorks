@@ -95,7 +95,7 @@ namespace LanguageExplorer.Controls.DetailControls
 				while (idxOther < ContainingDataTree.Slices.Count && (otherSlice == null || (otherSlice.Indent == Indent && idxOther > 0 && otherSlice.MyCmObject == MyCmObject)))
 				{
 					otherSlice = ContainingDataTree.Slices[idxOther++];
-					if (otherSlice is ReferenceVectorSlice && (otherSlice as ReferenceVectorSlice).Flid == otherFlid)
+					if (otherSlice is ReferenceVectorSlice referenceVectorSlice && referenceVectorSlice.Flid == otherFlid)
 					{
 						break;
 					}

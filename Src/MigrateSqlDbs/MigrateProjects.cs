@@ -51,10 +51,7 @@ namespace SIL.FieldWorks.MigrateSqlDbs.MigrateProjects
 			/// </summary>
 			public override string ToString()
 			{
-				return Migrated ? string.Format(Properties.Resources.ksMarkAsMigrated, Name)
-					: Failed ? string.Format(Properties.Resources.ksMarkAsFailed, Name)
-					: Exists ? string.Format(Properties.Resources.ksMarkAsExisting, Name)
-					: Name;
+				return Migrated ? string.Format(Properties.Resources.ksMarkAsMigrated, Name) : Failed ? string.Format(Properties.Resources.ksMarkAsFailed, Name) : Exists ? string.Format(Properties.Resources.ksMarkAsExisting, Name) : Name;
 			}
 
 			/// <summary>
@@ -256,15 +253,14 @@ namespace SIL.FieldWorks.MigrateSqlDbs.MigrateProjects
 		protected virtual int GetDbVersion(string dbName)
 		{
 			var version = -1;
-			using (var sqlConnection = new SqlConnection($"Server={Environment.MachineName}\\SILFW; Database={dbName}; User ID = sa; Password=inscrutable;" +
-				"Connect Timeout = 30; Pooling=false;"))
+			using (var sqlConnection = new SqlConnection($"Server={Environment.MachineName}\\SILFW; Database={dbName}; User ID = sa; Password=inscrutable;" + "Connect Timeout = 30; Pooling=false;"))
 			{
 				try
 				{
 					sqlConnection.Open();
 					using (var sqlComm = sqlConnection.CreateCommand())
 					{
-						var sSql = "select DbVer from Version$";
+						const string sSql = "select DbVer from Version$";
 						sqlComm.CommandText = sSql;
 						using (var sqlreader = sqlComm.ExecuteReader(System.Data.CommandBehavior.SingleResult))
 						{
@@ -290,7 +286,7 @@ namespace SIL.FieldWorks.MigrateSqlDbs.MigrateProjects
 		private void m_btnHelp_Click(object sender, EventArgs e)
 		{
 			var helpFile = Path.Combine(FwDirectoryFinder.CodeDirectory, "Helps", "FieldWorks_Language_Explorer_Help.chm");
-			var helpTopic = "/Overview/Migrate_FieldWorks_6.0.4_(or_earlier)_Projects.htm";
+			const string helpTopic = "/Overview/Migrate_FieldWorks_6.0.4_(or_earlier)_Projects.htm";
 			Help.ShowHelp(new Label(), helpFile, helpTopic);
 		}
 

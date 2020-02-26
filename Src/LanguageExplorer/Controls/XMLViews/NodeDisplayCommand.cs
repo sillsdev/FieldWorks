@@ -47,12 +47,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		public override bool Equals(object obj)
 		{
-			var other = obj as NodeDisplayCommand;
-			if (other == null)
-			{
-				return false;
-			}
-			return other.Node == Node;
+			return obj is NodeDisplayCommand nodeDisplayCommand && nodeDisplayCommand.Node == Node;
 		}
 
 		/// <summary>

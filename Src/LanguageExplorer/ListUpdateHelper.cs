@@ -75,10 +75,7 @@ namespace LanguageExplorer
 		/// </summary>
 		internal bool SkipShowRecord
 		{
-			get
-			{
-				return m_recordList != null && m_recordList.SkipShowRecord;
-			}
+			get => m_recordList != null && m_recordList.SkipShowRecord;
 			set
 			{
 				if (m_recordList != null)

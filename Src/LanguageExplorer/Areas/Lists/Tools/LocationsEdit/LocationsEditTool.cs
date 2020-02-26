@@ -33,8 +33,6 @@ namespace LanguageExplorer.Areas.Lists.Tools.LocationsEdit
 		private CollapsingSplitContainer _collapsingSplitContainer;
 		private LocationsEditMenuHelper _toolMenuHelper;
 		private IRecordList _recordList;
-		[Import(AreaServices.ListsAreaMachineName)]
-		private IArea _area;
 		private LcmCache _cache;
 
 		#region Implementation of IMajorFlexComponent
@@ -129,7 +127,8 @@ namespace LanguageExplorer.Areas.Lists.Tools.LocationsEdit
 		/// <summary>
 		/// Get the area for the tool.
 		/// </summary>
-		public IArea Area => _area;
+		[field: Import(AreaServices.ListsAreaMachineName)]
+		public IArea Area { get; private set; }
 
 		/// <summary>
 		/// Get the image for the area.
@@ -198,13 +197,10 @@ namespace LanguageExplorer.Areas.Lists.Tools.LocationsEdit
 				insertMenuDictionary.Add(Command.CmdInsertPossibility, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdInsertLocation_Click, ()=> UiWidgetServices.CanSeeAndDo));
 				insertToolbarDictionary.Add(Command.CmdInsertPossibility, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdInsertLocation_Click, () => UiWidgetServices.CanSeeAndDo));
 				AreaServices.ResetMainPossibilityInsertUiWidgetsText(_majorFlexComponentParameters.UiWidgetController, ListResources.Location);
-
 				insertMenuDictionary.Add(Command.CmdDataTree_Insert_Possibility, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdDataTree_Insert_Location_Click, () => CanCmdDataTree_Insert_Location));
 				insertToolbarDictionary.Add(Command.CmdDataTree_Insert_Possibility, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdDataTree_Insert_Location_Click, () => CanCmdDataTree_Insert_Location));
 				AreaServices.ResetSubitemPossibilityInsertUiWidgetsText(_majorFlexComponentParameters.UiWidgetController, ListResources.Subitem);
-
 				dataTree.DataTreeSliceContextMenuParameterObject.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ContextMenuName.mnuDataTree_SubLocation, Create_mnuDataTree_SubLocation);
-
 				_majorFlexComponentParameters.UiWidgetController.AddHandlers(toolUiWidgetParameterObject);
 			}
 

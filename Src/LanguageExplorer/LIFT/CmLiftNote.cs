@@ -12,10 +12,6 @@ namespace LanguageExplorer.LIFT
 	/// </summary>
 	public class CmLiftNote : LiftObject
 	{
-		public CmLiftNote()
-		{
-		}
-
 		/// <summary />
 		public CmLiftNote(string type, LiftMultiText contents)
 		{

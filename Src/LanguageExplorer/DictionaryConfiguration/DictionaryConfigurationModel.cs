@@ -93,31 +93,12 @@ namespace LanguageExplorer.DictionaryConfiguration
 		/// <summary>
 		/// Checks which folder this will be saved in to determine if it is a reversal
 		/// </summary>
-		internal bool IsReversal
-		{
-			get
-			{
-				if (!string.IsNullOrEmpty(WritingSystem))
-				{
-					return true;
-				}
-				// Fallback for migration
-				if (string.IsNullOrEmpty(FilePath))
-				{
-					return false; // easiest way to avoid a crash; assume something that may not be true!
-				}
-				var directory = Path.GetFileName(Path.GetDirectoryName(FilePath));
-				return DictionaryConfigurationServices.ReversalIndexConfigurationDirectoryName.Equals(directory);
-			}
-		}
+		internal bool IsReversal => !string.IsNullOrEmpty(WritingSystem) || !string.IsNullOrEmpty(FilePath) && DictionaryConfigurationServices.ReversalIndexConfigurationDirectoryName.Equals(Path.GetFileName(Path.GetDirectoryName(FilePath)));
 
 		/// <summary>
 		/// Checks if this model is Hybrid type. Not root and has Subentries
 		/// </summary>
-		internal bool IsHybrid
-		{
-			get { return !IsRootBased && Parts[0].Children != null && Parts[0].Children.Any(c => c.FieldDescription == "Subentries"); }
-		}
+		internal bool IsHybrid => !IsRootBased && Parts[0].Children != null && Parts[0].Children.Any(c => c.FieldDescription == "Subentries");
 
 		internal ConfigType Type
 		{

@@ -237,7 +237,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			{
 				return; // Too early to do much;
 			}
-			var movedSlice = sender is Slice ? (Slice)sender : (Slice)((SplitContainer)sender).Parent; // Have to move up one parent notch to get to the Slice.
+			var movedSlice = sender is Slice slice ? slice : (Slice)((SplitContainer)sender).Parent; // Have to move up one parent notch to get to the Slice.
 			if (m_currentSlice != movedSlice)
 			{
 				return; // Too early to do much;
@@ -443,12 +443,7 @@ namespace LanguageExplorer.Controls.DetailControls
 				}
 				return m_styleSheet;
 			}
-
-			set
-			{
-				m_styleSheet = value;
-			}
-
+			set => m_styleSheet = value;
 		}
 
 		public void PropChanged(int hvo, int tag, int ivMin, int cvIns, int cvDel)
@@ -693,10 +688,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </remarks>
 		public int SliceSplitPositionBase
 		{
-			get
-			{
-				return m_sliceSplitPositionBase;
-			}
+			get => m_sliceSplitPositionBase;
 			set
 			{
 				if (value == m_sliceSplitPositionBase)
@@ -829,12 +821,9 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		internal void EnsureDefaultCursorForSlices()
 		{
-			foreach (var slice in Slices)
+			foreach (var slice in Slices.Where(slice => slice.Cursor == Cursors.WaitCursor))
 			{
-				if (slice.Cursor == Cursors.WaitCursor)
-				{
-					slice.Cursor = Cursors.Default;
-				}
+				slice.Cursor = Cursors.Default;
 			}
 		}
 
@@ -1094,10 +1083,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		public bool DoNotRefresh
 		{
-			get
-			{
-				return m_fDoNotRefresh;
-			}
+			get => m_fDoNotRefresh;
 			set
 			{
 				var fOldValue = m_fDoNotRefresh;
@@ -1210,7 +1196,6 @@ namespace LanguageExplorer.Controls.DetailControls
 				finally
 				{
 					RefreshListNeeded = false;  // reset our flag.
-
 					m_currentSlicePartName = null;
 					m_currentSliceObjGuid = Guid.Empty;
 					m_fSetCurrentSliceNew = false;
@@ -1333,7 +1318,7 @@ namespace LanguageExplorer.Controls.DetailControls
 				var y = second.Key[i];
 				// We need this ugly chunk because two distinct wrappers for the same integer
 				// do not compare as equal! And we use integers (hvos) in these key lists...
-				if (x != y && !(x is int && y is int && ((int)x) == ((int)y)))
+				if (x != y && !(x is int xInt && y is int yInt && xInt == yInt))
 				{
 					return false;
 				}
@@ -1597,8 +1582,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </returns>
 		public int ApplyLayout(ICmObject obj, Slice parentSlice, XElement template, int indent, int insertPosition, ArrayList path, ObjSeqHashMap reuseMap)
 		{
-			NodeTestResult ntr;
-			return ApplyLayout(obj, parentSlice, template, indent, insertPosition, path, reuseMap, false, out ntr);
+			return ApplyLayout(obj, parentSlice, template, indent, insertPosition, path, reuseMap, false, out _);
 		}
 
 		/// <summary>
@@ -2593,16 +2577,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		public int ApplyChildren(ICmObject obj, Slice parentSlice, XElement template, int indent, int insertPosition, ArrayList path, ObjSeqHashMap reuseMap)
 		{
-			var insertPos = insertPosition;
-			foreach (var node in template.Elements())
-			{
-				if (node.Name == "ChangeRecordHandler")
-				{
-					continue;   // Handle only at the top level (at least for now).
-				}
-				insertPos = ApplyLayout(obj, parentSlice, node, indent, insertPos, path, reuseMap);
-			}
-			return insertPos;
+			return template.Elements().Where(node => node.Name != "ChangeRecordHandler").Aggregate(insertPosition, (current, node) => ApplyLayout(obj, parentSlice, node, indent, current, path, reuseMap));
 		}
 
 		// Must be overridden if nulls will be inserted into items; when real item is needed,
@@ -2665,7 +2640,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		public Slice FieldOrDummyAt(int i)
 		{
 			var slice = Slices[i];
-			// This cannot ever be null now that we dont; have the special SliceCollection class.
+			// This cannot ever be null now that we don't have the special SliceCollection class.
 			if (slice == null)
 			{
 				AboutToCreateField();
@@ -3106,12 +3081,9 @@ namespace LanguageExplorer.Controls.DetailControls
 					return;
 				}
 				base.ActiveControl = value;
-				foreach (var slice in Slices)
+				foreach (var slice in Slices.Where(slice => (slice.Control == value || slice == value) && m_currentSlice != slice))
 				{
-					if ((slice.Control == value || slice == value) && m_currentSlice != slice)
-					{
-						CurrentSlice = slice;
-					}
+					CurrentSlice = slice;
 				}
 			}
 		}
@@ -3355,9 +3327,8 @@ namespace LanguageExplorer.Controls.DetailControls
 					// more reliably than putting it at the beginning for some reason, and makes
 					// more sense in some circumstances (especially in the conversion from a ghost
 					// slice to a string type slice).
-					if (m_currentSlice is MultiStringSlice)
+					if (m_currentSlice is MultiStringSlice mss)
 					{
-						var mss = (MultiStringSlice)m_currentSlice;
 						mss.SelectAt(mss.WritingSystemsSelectedForDisplay.First().Handle, 99999);
 					}
 					else if (m_currentSlice is StringSlice)

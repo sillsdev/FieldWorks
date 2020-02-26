@@ -28,8 +28,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.BulkEditWordforms
 		private PaneBarContainer _paneBarContainer;
 		private RecordBrowseView _recordBrowseView;
 		private IRecordList _recordList;
-		[Import(AreaServices.TextAndWordsAreaMachineName)]
-		private IArea _area;
 
 		#region Implementation of IMajorFlexComponent
 
@@ -130,7 +128,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.BulkEditWordforms
 		/// <summary>
 		/// Get the area for the tool.
 		/// </summary>
-		public IArea Area => _area;
+		[field: Import(AreaServices.TextAndWordsAreaMachineName)]
+		public IArea Area { get; private set; }
 
 		/// <summary>
 		/// Get the image for the area.
@@ -185,7 +184,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.BulkEditWordforms
 					dlg.SetDlgInfo(_majorFlexComponentParameters.LcmCache, null);
 					if (dlg.ShowDialog() == DialogResult.OK)
 					{
-						_majorFlexComponentParameters.FlexComponentParameters.Publisher.Publish(LanguageExplorerConstants.JumpToRecord, dlg.SelectedObject.Hvo);
+						_majorFlexComponentParameters.FlexComponentParameters.Publisher.Publish(new PublisherParameterObject(LanguageExplorerConstants.JumpToRecord, dlg.SelectedObject.Hvo));
 					}
 				}
 			}

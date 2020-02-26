@@ -26,8 +26,7 @@ namespace LanguageExplorer.LcmUi
 			switch (frag)
 			{
 				case (int)VcFrags.kfragHeadWord:
-					var le = co as ILexEntry;
-					vwenv.AddString(le != null ? le.HeadWord : TsStringUtils.MakeString(co.ShortName, wsVern));
+					vwenv.AddString(co is ILexEntry lexEntry ? lexEntry.HeadWord : TsStringUtils.MakeString(co.ShortName, wsVern));
 					break;
 				case (int)VcFrags.kfragShortName:
 					vwenv.AddString(TsStringUtils.MakeString(co.ShortName, wsVern));

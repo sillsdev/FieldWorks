@@ -440,9 +440,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 
 			// Changes to existing WordGroup (at the beginning)
 			// Should leave 2 words in original WordGroup
-			VerifyWordGroup(0, 0, m_logic.AllMyColumns[1], new List<AnalysisOccurrence> { allParaOccurrences[0],
-				allParaOccurrences[1]});
-
+			VerifyWordGroup(0, 0, m_logic.AllMyColumns[1], new List<AnalysisOccurrence> { allParaOccurrences[0], allParaOccurrences[1]});
 			// New MT WordGroup (holding the words split off from the original)
 			// Should put last 3 words in MT WordGroup
 			VerifyWordGroup(0, 1, m_logic.AllMyColumns[1], new List<AnalysisOccurrence> { allParaOccurrences[2], allParaOccurrences[3], allParaOccurrences[4] });
@@ -884,7 +882,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 			var row1 = m_helper.MakeSecondRow();
 			var row2 = m_helper.MakeRow(m_chart, "1c");
 			var row3 = m_helper.MakeRow(m_chart, "1d");
-			var cellPart0_0 = m_helper.MakeWordGroup(row0, 0, allParaOccurrences[0], allParaOccurrences[0]);
+			m_helper.MakeWordGroup(row0, 0, allParaOccurrences[0], allParaOccurrences[0]);
 			var cellPartWrongText = m_helper.MakeWordGroup(row1, 0, strangeOccurrence, strangeOccurrence);
 			var cellPartFoolish = m_helper.MakeWordGroup(row2, 2, strangeOccurrence2, strangeOccurrence2);
 			m_helper.MakeWordGroup(row3, 1, allParaOccurrences[1], allParaOccurrences[1]);
@@ -1037,7 +1035,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 			// Setup this test.
 			// Two rows, selected cell is in the last column.
 			var allParaOccurrences = m_helper.MakeAnalysesUsedN(3);
-			int ilastCol = m_logic.AllMyColumns.Length - 1;
+			var ilastCol = m_logic.AllMyColumns.Length - 1;
 			var row0 = m_helper.MakeRow1a();
 			var row1 = m_helper.MakeSecondRow();
 			m_helper.MakeWordGroup(row0, 0, allParaOccurrences[0], allParaOccurrences[0]);

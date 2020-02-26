@@ -175,7 +175,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		private sealed class DummyUndoTaskHelper : UndoTaskHelper
 		{
 			public static bool m_fRollbackAction = true;
-			public static bool m_fRollbackCalled = false;
+			public static bool m_fRollbackCalled;
 
 			/// <summary>
 			/// Start the undo task

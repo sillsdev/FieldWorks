@@ -144,8 +144,7 @@ namespace LanguageExplorer.Filters
 		private string GetObjFromCacheOrItem(object item)
 		{
 			var item1 = (IManyOnePathSortItem)item;
-			string cachedKey;
-			if (!m_sortKeyCache.TryGetValue(item1, out cachedKey))
+			if (!m_sortKeyCache.TryGetValue(item1, out var cachedKey))
 			{
 				if (m_fUseKeys)
 				{

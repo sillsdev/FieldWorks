@@ -51,9 +51,21 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 \wc Pyle:PYLEE-1007
 \cdt 2012-06-05T08:23:54Z
 ";
-			var mappings = new List<InterlinearMapping>();
-			mappings.Add(new InterlinearMapping { Marker = "lx", Destination = InterlinDestination.Wordform, WritingSystem = "qaa-x-kal" });
-			mappings.Add(new InterlinearMapping { Marker = "ge", Destination = InterlinDestination.WordGloss, WritingSystem = "en" });
+			var mappings = new List<InterlinearMapping>
+			{
+				new InterlinearMapping
+				{
+					Marker = "lx",
+					Destination = InterlinDestination.Wordform,
+					WritingSystem = "qaa-x-kal"
+				},
+				new InterlinearMapping
+				{
+					Marker = "ge",
+					Destination = InterlinDestination.WordGloss,
+					WritingSystem = "en"
+				}
+			};
 			var wsf = GetWsf();
 			var input = new ByteReader("input1", Encoding.UTF8.GetBytes(input1));
 			using (var importWizard = new WordsSfmImportWizard())
@@ -111,9 +123,21 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 \lx wordtwo
 \lx wordthree
 ";
-			var mappings = new List<InterlinearMapping>();
-			mappings.Add(new InterlinearMapping { Marker = "lx", Destination = InterlinDestination.Wordform, WritingSystem = "qaa-x-kal" });
-			mappings.Add(new InterlinearMapping { Marker = "ge", Destination = InterlinDestination.WordGloss, WritingSystem = "en" });
+			var mappings = new List<InterlinearMapping>
+			{
+				new InterlinearMapping
+				{
+					Marker = "lx",
+					Destination = InterlinDestination.Wordform,
+					WritingSystem = "qaa-x-kal"
+				},
+				new InterlinearMapping
+				{
+					Marker = "ge",
+					Destination = InterlinDestination.WordGloss,
+					WritingSystem = "en"
+				}
+			};
 			var wsf = GetWsf();
 			var input = new ByteReader("input2", Encoding.UTF8.GetBytes(input2));
 			using (var importWizard = new WordsSfmImportWizard())
@@ -145,7 +169,6 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 						Assert.That(txtItems, Has.Count.EqualTo(1));
 						VerifyItem(word3, "./item[@type='txt']", "qaa-x-kal", "wordthree");
 					}
-
 				}
 			}
 		}
@@ -156,8 +179,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 		private static WritingSystemManager GetWsf()
 		{
 			var wsf = new WritingSystemManager();
-			CoreWritingSystemDefinition wsObj;
-			wsf.GetOrSet("qaa-x-kal", out wsObj);
+			wsf.GetOrSet("qaa-x-kal", out var wsObj);
 			EnsureQuoteAndHyphenWordForming(wsObj);
 			return wsf;
 		}

@@ -31,8 +31,6 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 	[Export(AreaServices.NotebookAreaMachineName, typeof(ITool))]
 	internal sealed class NotebookEditTool : ITool
 	{
-		[Import(AreaServices.NotebookAreaMachineName)]
-		private IArea _area;
 		private NotebookEditToolMenuHelper _toolMenuHelper;
 		private DataTree _dataTree;
 		private MultiPane _multiPane;
@@ -69,12 +67,11 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 		/// </remarks>
 		public void Activate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
-			majorFlexComponentParameters.FlexComponentParameters.PropertyTable.SetDefault($"{AreaServices.ToolForAreaNamed_}{_area.MachineName}", MachineName, true);
+			majorFlexComponentParameters.FlexComponentParameters.PropertyTable.SetDefault($"{AreaServices.ToolForAreaNamed_}{Area.MachineName}", MachineName, true);
 			if (_recordList == null)
 			{
 				_recordList = majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>(LanguageExplorerConstants.RecordListRepository).GetRecordList(NotebookArea.Records, majorFlexComponentParameters.StatusBar, NotebookArea.NotebookFactoryMethod);
 			}
-
 			var showHiddenFieldsPropertyName = UiWidgetServices.CreateShowHiddenFieldsPropertyName(MachineName);
 			_dataTree = new DataTree(majorFlexComponentParameters.SharedEventHandlers, majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue(UiWidgetServices.CreateShowHiddenFieldsPropertyName(MachineName), false));
 			_recordBrowseView = new RecordBrowseView(NotebookArea.LoadDocument(NotebookResources.NotebookEditBrowseParameters).Root, majorFlexComponentParameters.LcmCache, _recordList, majorFlexComponentParameters.UiWidgetController);
@@ -84,7 +81,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 			var mainMultiPaneParameters = new MultiPaneParameters
 			{
 				Orientation = Orientation.Vertical,
-				Area = _area,
+				Area = Area,
 				Id = "RecordBrowseAndDetailMultiPane",
 				ToolMachineName = MachineName,
 				DefaultPrintPane = "RecordDetailPane"
@@ -103,15 +100,12 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 				Dock = DockStyle.Right
 			};
 			paneBar.AddControls(new List<Control> { panelMenu, panelButton });
-
 			_multiPane = MultiPaneFactory.CreateMultiPaneWithTwoPaneBarContainersInMainCollapsingSplitContainer(majorFlexComponentParameters.FlexComponentParameters, majorFlexComponentParameters.MainCollapsingSplitContainer,
 				mainMultiPaneParameters, _recordBrowseView, "Browse", new PaneBar(), recordEditView, "Details", paneBar);
-
 			using (var gr = _multiPane.CreateGraphics())
 			{
 				_multiPane.Panel2MinSize = Math.Max((int)(162000 * gr.DpiX) / MiscUtils.kdzmpInch, CollapsingSplitContainer.kCollapseZone);
 			}
-
 			// Too early before now.
 			recordEditView.FinishInitialization();
 		}
@@ -163,7 +157,8 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 		/// <summary>
 		/// Get the area for the tool.
 		/// </summary>
-		public IArea Area => _area;
+		[field: Import(AreaServices.NotebookAreaMachineName)]
+		public IArea Area { get; private set; }
 
 		/// <summary>
 		/// Get the image for the area.
@@ -220,11 +215,9 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 				_partiallySharedForToolsWideMenuHelper.SetupCmdAddToLexicon(toolUiWidgetParameterObject, _dataTree, () => CanCmdAddToLexicon);
 				var menuItem = _majorFlexComponentParameters.UiWidgetController.InsertMenuDictionary[Command.CmdAddToLexicon];
 				menuItem.Tag = _dataTree;
-
 				// <item command="CmdLexiconLookup" defaultVisible="false" />
 				toolUiWidgetParameterObject.MenuItemsForTool[MainMenu.Tools].Add(Command.CmdLexiconLookup, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdLexiconLookup_Click, () => CanCmdLexiconLookup));
 				toolUiWidgetParameterObject.ToolBarItemsForTool[ToolBar.Insert].Add(Command.CmdLexiconLookup, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdLexiconLookup_Click, () => CanCmdLexiconLookup));
-
 				// Slice menus don't need to add anything to: toolUiWidgetParameterObject.
 				SetupSliceMenus();
 			}
@@ -266,8 +259,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 			private void CmdLexiconLookup_Click(object sender, EventArgs e)
 			{
 				var currentSliceAsStTextSlice = _dataTree.CurrentSliceAsStTextSlice;
-				int ichMin, ichLim, hvo, tag, ws;
-				if (currentSliceAsStTextSlice.RootSite.RootBox.Selection.GetSelectedWordPos(out hvo, out tag, out ws, out ichMin, out ichLim))
+				if (currentSliceAsStTextSlice.RootSite.RootBox.Selection.GetSelectedWordPos(out var hvo, out var tag, out var ws, out var ichMin, out var ichLim))
 				{
 					LexEntryUi.DisplayOrCreateEntry(_majorFlexComponentParameters.LcmCache, hvo, tag, ws, ichMin, ichLim, currentSliceAsStTextSlice, _majorFlexComponentParameters.FlexComponentParameters, _majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider), "UserHelpFile");
 				}
@@ -308,7 +300,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 				get
 				{
 					var root = _dataTree.Root;
-					return root.Owner is IRnResearchNbk && (root.Owner as IRnResearchNbk).RecordsOC.Count > 1;
+					return root.Owner is IRnResearchNbk researchNbk && researchNbk.RecordsOC.Count > 1;
 				}
 			}
 
@@ -322,9 +314,8 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 				var cache = _majorFlexComponentParameters.LcmCache;
 				var record = (IRnGenericRec)_dataTree.Root;
 				IRnGenericRec newOwner;
-				if (record.Owner is IRnResearchNbk)
+				if (record.Owner is IRnResearchNbk notebook)
 				{
-					var notebook = (IRnResearchNbk)record.Owner;
 					var owners = notebook.RecordsOC.Where(recT => recT != record).ToList();
 					newOwner = owners.Count == 1 ? owners[0] : ChooseNewOwner(owners.ToArray(), NotebookResources.Choose_Owner_of_Demoted_Record);
 				}
@@ -496,15 +487,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 			/// <summary>
 			/// See if it makes sense to provide the "Move Up" command.
 			/// </summary>
-			private bool CanMoveRecordUp
-			{
-				get
-				{
-					var currentSliceObject = _dataTree.CurrentSlice?.MyCmObject as IRnGenericRec;
-					var recordOwner = currentSliceObject?.Owner as IRnGenericRec;
-					return currentSliceObject != null && recordOwner != null && currentSliceObject.OwnOrd > 0;
-				}
-			}
+			private bool CanMoveRecordUp => _dataTree.CurrentSlice?.MyCmObject is IRnGenericRec currentSliceObject && currentSliceObject?.Owner is IRnGenericRec recordOwner && currentSliceObject.OwnOrd > 0;
 
 			private void MoveRecordUp_Clicked(object sender, EventArgs e)
 			{
@@ -520,15 +503,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 			/// <summary>
 			/// See if it makes sense to provide the "Move Down" command.
 			/// </summary>
-			private bool CanMoveRecordDown
-			{
-				get
-				{
-					var currentSliceObject = _dataTree.CurrentSlice?.MyCmObject as IRnGenericRec;
-					var recordOwner = currentSliceObject?.Owner as IRnGenericRec;
-					return currentSliceObject != null && recordOwner != null && currentSliceObject.OwnOrd < recordOwner.SubRecordsOS.Count - 1;
-				}
-			}
+			private bool CanMoveRecordDown => _dataTree.CurrentSlice?.MyCmObject is IRnGenericRec currentSliceObject && currentSliceObject?.Owner is IRnGenericRec recordOwner && currentSliceObject.OwnOrd < recordOwner.SubRecordsOS.Count - 1;
 
 			private void MoveRecordDown_Clicked(object sender, EventArgs e)
 			{
@@ -542,68 +517,45 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 				});
 			}
 
-			private bool CanPromoteSubitemInVector
-			{
-				get
-				{
-					var slice = _dataTree.CurrentSlice;
-					var currentSliceObject = slice.MyCmObject as IRnGenericRec;
-					return currentSliceObject != null && currentSliceObject.Owner is IRnGenericRec;
-				}
-			}
+			private bool CanPromoteSubitemInVector => _dataTree.CurrentSlice.MyCmObject is IRnGenericRec currentSliceObject && currentSliceObject.Owner is IRnGenericRec;
 
 			private void PromoteSubitemInVector_Clicked(object sender, EventArgs e)
 			{
 				var record = (IRnGenericRec)_dataTree.CurrentSlice.MyCmObject;
-				var recordOwner = record.Owner as IRnGenericRec;
+				var recordOwner = (IRnGenericRec)record.Owner;
 				UowHelpers.UndoExtensionUsingNewOrCurrentUOW(AreaResources.Promote, record.Cache.ActionHandlerAccessor, () =>
 				{
-					if (recordOwner.Owner is IRnGenericRec)
+					switch (recordOwner.Owner)
 					{
-						(recordOwner.Owner as IRnGenericRec).SubRecordsOS.Insert(recordOwner.OwnOrd + 1, record);
-					}
-					else if (recordOwner.Owner is IRnResearchNbk)
-					{
-						(recordOwner.Owner as IRnResearchNbk).RecordsOC.Add(record);
-					}
-					else
-					{
-						throw new Exception("RnGenericRec object not owned by either RnResearchNbk or RnGenericRec??");
+						case IRnGenericRec genericRec:
+							genericRec.SubRecordsOS.Insert(recordOwner.OwnOrd + 1, record);
+							break;
+						case IRnResearchNbk researchNbk:
+							researchNbk.RecordsOC.Add(record);
+							break;
+						default:
+							throw new Exception("RnGenericRec object not owned by either RnResearchNbk or RnGenericRec??");
 					}
 				});
 				if (recordOwner.Owner is IRnResearchNbk)
 				{
 					// If possible, jump to the newly promoted record.
-					_majorFlexComponentParameters.FlexComponentParameters.Publisher.Publish(LanguageExplorerConstants.JumpToRecord, record.Hvo);
+					_majorFlexComponentParameters.FlexComponentParameters.Publisher.Publish(new PublisherParameterObject(LanguageExplorerConstants.JumpToRecord, record.Hvo));
 				}
 			}
 
 			/// <summary>
 			/// See if it makes sense to provide the "Demote..." command.
 			/// </summary>
-			private bool CanDemoteSubitemInVector
-			{
-				get
-				{
-					var currentSliceObject = _dataTree.CurrentSlice?.MyCmObject as IRnGenericRec;
-					return currentSliceObject?.Owner is IRnGenericRec && (currentSliceObject.Owner as IRnGenericRec).SubRecordsOS.Count > 1;
-				}
-			}
+			private bool CanDemoteSubitemInVector => (_dataTree.CurrentSlice?.MyCmObject as IRnGenericRec)?.Owner is IRnGenericRec genericRec && genericRec.SubRecordsOS.Count > 1;
 
 			private void DemoteSubrecord_Clicked(object sender, EventArgs e)
 			{
 				var cache = _majorFlexComponentParameters.LcmCache;
 				var record = (IRnGenericRec)_dataTree.CurrentSlice.MyCmObject;
-				IRnGenericRec newOwner;
-				var recordOwner = record.Owner as IRnGenericRec;
-				if (recordOwner.SubRecordsOS.Count == 2)
-				{
-					newOwner = record.OwnOrd == 0 ? recordOwner.SubRecordsOS[1] : recordOwner.SubRecordsOS[0];
-				}
-				else
-				{
-					newOwner = ChooseNewOwner(recordOwner.SubRecordsOS.Where(recT => recT != record).ToArray(), NotebookResources.Choose_Owner_of_Demoted_Subrecord);
-				}
+				var recordOwner = (IRnGenericRec)record.Owner;
+				var newOwner = recordOwner.SubRecordsOS.Count == 2
+					? record.OwnOrd == 0 ? recordOwner.SubRecordsOS[1] : recordOwner.SubRecordsOS[0] : ChooseNewOwner(recordOwner.SubRecordsOS.Where(recT => recT != record).ToArray(), NotebookResources.Choose_Owner_of_Demoted_Subrecord);
 				if (newOwner == null)
 				{
 					return;
@@ -612,7 +564,6 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 				{
 					throw new InvalidOperationException("RnGenericRec cannot own itself!");
 				}
-
 				UowHelpers.UndoExtensionUsingNewOrCurrentUOW(NotebookResources.Demote_SansDots, cache.ActionHandlerAccessor, () =>
 				{
 					newOwner.SubRecordsOS.Insert(0, record);

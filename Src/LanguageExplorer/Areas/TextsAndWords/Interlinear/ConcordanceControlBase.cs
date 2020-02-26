@@ -79,13 +79,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		#endregion
 
-		public virtual string AccName
-		{
-			get
-			{
-				throw new NotSupportedException();
-			}
-		}
+		public virtual string AccName => throw new NotSupportedException();
 
 		/// <summary>
 		/// Get/set string that will trigger a message box to show.
@@ -105,8 +99,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		{
 			base.OnHandleCreated(e);
 
-			var paneBarContainer = Parent as IPaneBarContainer;
-			if (paneBarContainer == null)
+			if (!(Parent is IPaneBarContainer paneBarContainer))
 			{
 				return;
 			}

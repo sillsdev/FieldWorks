@@ -81,8 +81,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			Debug.Assert(wsf != null);
 			var ttp = tssWord.get_Properties(0);
 			Debug.Assert(ttp != null);
-			int var;
-			var ws = ttp.GetIntPropValues((int)FwTextPropType.ktptWs, out var);
+			var ws = ttp.GetIntPropValues((int)FwTextPropType.ktptWs, out _);
 			Debug.Assert(ws != 0);
 			var wsVern = wsf.get_EngineOrNull(ws);
 			Debug.Assert(wsVern != null);
@@ -91,17 +90,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			m_txtMorphs.Text = sMorphs;
 			m_sMorphs = sMorphs;
 			// Fix the help strings to use the actual MorphType markers.
-			IMoMorphType mmtStem;
-			IMoMorphType mmtPrefix;
-			IMoMorphType mmtSuffix;
-			IMoMorphType mmtInfix;
-			IMoMorphType mmtBoundStem;
-			IMoMorphType mmtProclitic;
-			IMoMorphType mmtEnclitic;
-			IMoMorphType mmtSimulfix;
-			IMoMorphType mmtSuprafix ;
 			var morphTypeRepo = cache.ServiceLocator.GetInstance<IMoMorphTypeRepository>();
-			morphTypeRepo.GetMajorMorphTypes(out mmtStem, out mmtPrefix, out mmtSuffix, out mmtInfix, out mmtBoundStem, out mmtProclitic, out mmtEnclitic, out mmtSimulfix, out mmtSuprafix);
+			morphTypeRepo.GetMajorMorphTypes(out var mmtStem, out var mmtPrefix, out var mmtSuffix, out var mmtInfix, out var mmtBoundStem, out var mmtProclitic, out var mmtEnclitic, out var mmtSimulfix, out var mmtSuprafix);
 			// Format the labels according to the MoMorphType Prefix/Postfix values.
 			var sExample1 = StringTable.Table.GetString("EditMorphBreaks-Example1", StringTable.DialogStrings);
 			var sExample2 = StringTable.Table.GetString("EditMorphBreaks-Example2", StringTable.DialogStrings);

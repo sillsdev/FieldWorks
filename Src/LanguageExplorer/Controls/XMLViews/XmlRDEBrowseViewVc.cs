@@ -5,6 +5,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
+using System.Linq;
 using System.Xml.Linq;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.ViewsInterfaces;
@@ -297,36 +298,19 @@ namespace LanguageExplorer.Controls.XMLViews
 		private bool ShouldSuppressNoForOtherColumn(XElement frag)
 		{
 			var suppressNoForColumn = XmlUtils.GetOptionalAttributeValue(frag, @"suppressNoForColumn");
-			if (!string.IsNullOrEmpty(suppressNoForColumn))
-			{
-				// If the column that suppresses the "no" special behavior is present, we don't want the "no" child.
-				// That includes if a ws-specific column which includes that label is present.
-				foreach (var col in m_columns)
-				{
-					if (XmlUtils.GetOptionalAttributeValue(col, @"label").Contains(suppressNoForColumn))
-					{
-						return true;
-					}
-				}
-			}
-			return false;
+			return !string.IsNullOrEmpty(suppressNoForColumn) && m_columns.Any(col => XmlUtils.GetOptionalAttributeValue(col, @"label").Contains(suppressNoForColumn));
 		}
 
 		private bool InEditableRow(IVwEnv vwenv)
 		{
-			int hvoTop, tag, ihvo;
-			vwenv.GetOuterObject(1, out hvoTop, out tag, out ihvo);
+			vwenv.GetOuterObject(1, out var hvoTop, out _, out _);
 			return m_editableHvos.Contains(hvoTop);
 		}
 
 
 		internal override int SelectedRowBackgroundColor(int hvo)
 		{
-			if (m_editableHvos.Contains(hvo))
-			{
-				return (int)RGB(Color.FromKnownColor(KnownColor.Window));
-			}
-			return NoEditBackgroundColor;
+			return m_editableHvos.Contains(hvo) ? (int)RGB(Color.FromKnownColor(KnownColor.Window)) : NoEditBackgroundColor;
 		}
 
 		private static int NoEditBackgroundColor => (int)RGB(SystemColors.ControlLight);

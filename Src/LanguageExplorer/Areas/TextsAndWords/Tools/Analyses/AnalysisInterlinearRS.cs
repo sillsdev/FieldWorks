@@ -142,7 +142,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 			Controls.Add(m_oneAnalSandbox);
 			if (m_oneAnalSandbox.RootBox == null)
 			{
-				m_oneAnalSandbox.MakeRoot();    // adding sandbox to Controls doesn't make rootbox.
+				// adding sandbox to Controls doesn't make rootbox.
+				m_oneAnalSandbox.MakeRoot();
 			}
 			InitSandbox();
 			m_oneAnalSandbox.SizeChanged += (HandleSandboxSizeChanged);
@@ -152,16 +153,16 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 			}
 		}
 
-		InterlinearSlice MySlice
+		private InterlinearSlice MySlice
 		{
 			get
 			{
 				var parent = Parent;
 				while (parent != null)
 				{
-					if (parent is InterlinearSlice)
+					if (parent is InterlinearSlice slice)
 					{
-						return parent as InterlinearSlice;
+						return slice;
 					}
 					parent = parent.Parent;
 				}
@@ -346,9 +347,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 			RootBox.Reconstruct();
 			using (new HoldGraphics(this))
 			{
-				Rectangle rcSrcRoot;
-				Rectangle rcDstRoot;
-				GetCoordRects(out rcSrcRoot, out rcDstRoot);
+				GetCoordRects(out var rcSrcRoot, out var rcDstRoot);
 				var rgvsli = new SelLevInfo[1];
 				rgvsli[0].ihvo = 0;
 				rgvsli[0].tag = m_cache.MetaDataCacheAccessor.GetFieldId2(CmObjectTags.kClassId, "Self", false);
@@ -358,9 +357,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 					Debug.WriteLine("Could not make selection in InitSandbox");
 					return; // can't position it accurately.
 				}
-				Rect rcSec;
-				bool fSplit, fEndBeforeAnchor;
-				sel.Location(m_graphicsManager.VwGraphics, rcSrcRoot, rcDstRoot, out m_rcPrimary, out rcSec, out fSplit, out fEndBeforeAnchor);
+				sel.Location(m_graphicsManager.VwGraphics, rcSrcRoot, rcDstRoot, out m_rcPrimary, out _, out _, out _);
 			}
 			SetPadding();
 			SetSandboxLocation();

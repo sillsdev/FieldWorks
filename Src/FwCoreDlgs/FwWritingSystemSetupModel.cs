@@ -556,7 +556,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 								WritingSystemServices.UpdateWritingSystemId(Cache, origWs, oldHandle, oldId);
 							}
 						}
-						_publisher?.Publish("WritingSystemUpdated", origWs.Id);
+						_publisher?.Publish(new PublisherParameterObject("WritingSystemUpdated", origWs.Id));
 					}
 					// whether or not the WS was created or changed, its list position may have changed (LT-19788)
 					AddOrMoveInList(allWritingSystems, workinglistIndex, origWs);
@@ -682,7 +682,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			}
 			if (deletedWsIds.Any())
 			{
-				_publisher?.Publish("WritingSystemDeleted", deletedWsIds.ToArray());
+				_publisher?.Publish(new PublisherParameterObject("WritingSystemDeleted", deletedWsIds.ToArray()));
 			}
 		}
 

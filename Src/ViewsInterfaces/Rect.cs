@@ -73,7 +73,7 @@ namespace SIL.FieldWorks.Common.ViewsInterfaces
 		/// </returns>
 		public override bool Equals(object obj)
 		{
-			return (obj is Rect && (Rect)obj == this);
+			return obj is Rect rect && rect == this;
 		}
 
 		/// <summary>
@@ -96,7 +96,7 @@ namespace SIL.FieldWorks.Common.ViewsInterfaces
 		/// <returns>The result of the operator.</returns>
 		public static bool operator == (Rect rc1, Rect rc2)
 		{
-			return (rc1.top == rc2.top && rc1.bottom == rc2.bottom && rc1.left == rc2.left && rc1.right == rc2.right);
+			return rc1.top == rc2.top && rc1.bottom == rc2.bottom && rc1.left == rc2.left && rc1.right == rc2.right;
 		}
 
 		/// <summary>
@@ -113,8 +113,7 @@ namespace SIL.FieldWorks.Common.ViewsInterfaces
 		/// <summary />
 		public override string ToString()
 		{
-			return "left=" + left + ", top=" + top +
-				", right=" + right + ", bottom=" + bottom;
+			return "left=" + left + ", top=" + top + ", right=" + right + ", bottom=" + bottom;
 		}
 	}
 	#endregion

@@ -139,11 +139,8 @@ namespace LanguageExplorer.Areas
 		/// <returns>true if editing the custom fields should proceed</returns>
 		public bool ShowCustomFieldWarning(IWin32Window owner)
 		{
-			if (!FLExBridgeHelper.DoesProjectHaveFlexRepo(m_cache.ProjectId))
-			{
-				return true;
-			}
-			return MessageBox.Show(owner, AreaResources.kstCustomFieldSendReceive, LanguageExplorerResources.ksWarning, MessageBoxButtons.OKCancel, MessageBoxIcon.Warning) == DialogResult.OK;
+			return !FLExBridgeHelper.DoesProjectHaveFlexRepo(m_cache.ProjectId) || MessageBox.Show(owner, AreaResources.kstCustomFieldSendReceive,
+					   LanguageExplorerResources.ksWarning, MessageBoxButtons.OKCancel, MessageBoxIcon.Warning) == DialogResult.OK;
 		}
 
 		/// <summary>
@@ -156,8 +153,7 @@ namespace LanguageExplorer.Areas
 			m_wsComboBox.Items.Clear();
 			m_wsComboBox.Items.Add(new IdAndString<int>(WritingSystemServices.kwsAnal, AreaResources.FirstAnalysisWs));
 			m_wsComboBox.Items.Add(new IdAndString<int>(WritingSystemServices.kwsVern, AreaResources.FirstVernacularWs));
-			if (m_typeComboBox.SelectedItem != null && ((IdAndString<CustomFieldType>)m_typeComboBox.SelectedItem).Id == CustomFieldType.SingleLineText
-				&& m_customFieldLocationType != CustomFieldLocationType.Interlinear)
+			if (m_typeComboBox.SelectedItem != null && ((IdAndString<CustomFieldType>)m_typeComboBox.SelectedItem).Id == CustomFieldType.SingleLineText && m_customFieldLocationType != CustomFieldLocationType.Interlinear)
 			{
 				m_wsComboBox.Items.Add(new IdAndString<int>(WritingSystemServices.kwsAnals, AreaResources.AllAnalysisWs));
 				m_wsComboBox.Items.Add(new IdAndString<int>(WritingSystemServices.kwsVerns, AreaResources.AllVernacularWs));
@@ -374,15 +370,10 @@ namespace LanguageExplorer.Areas
 			var didUpdate = false;  // will only be true if one of the fields has been changed
 			NonUndoableUnitOfWorkHelper.Do(m_cache.ActionHandlerAccessor, () =>
 			{
-				foreach (var fdw in m_customFields)
+				foreach (var fdw in m_customFields.Where(fdw => fdw.Fd.IsDirty))
 				{
-					// If this is a new record, the 'Name' will get created in the
-					// FieldDescription UpdateCustomField() method.
-					if (fdw.Fd.IsDirty)
-					{
-						fdw.Fd.UpdateCustomField();
-						didUpdate = true;
-					}
+					fdw.Fd.UpdateCustomField();
+					didUpdate = true;
 				}
 			});
 			if (didUpdate)
@@ -563,8 +554,7 @@ namespace LanguageExplorer.Areas
 			{
 				if (mod.OldLabel != mod.NewLabel)   // maybe the user changed his mind?
 				{
-					var xnlLayouts = FindAffectedLayouts(mod.OldLabel, null, mod.ClassName);
-					foreach (var xnLayout in xnlLayouts)
+					foreach (var xnLayout in FindAffectedLayouts(mod.OldLabel, null, mod.ClassName))
 					{
 						FixLayoutPartLabels(xnLayout, mod.OldLabel, mod.NewLabel);
 						m_layouts.PersistOverrideElement(xnLayout);
@@ -718,15 +708,13 @@ namespace LanguageExplorer.Areas
 			else
 			{
 				var userName = m_nameTextBox.Text;
-				var clsid = ((IdAndString<int>)m_locationComboBox.SelectedItem).Id;
-				var className = m_cache.DomainDataByFlid.MetaDataCache.GetClassName(clsid);
 				var sUserLabel = fd.Userlabel;
 				var count = fd.DataOccurrenceCount;
 				if (m_dictModLabels.ContainsKey(fd.Id))
 				{
 					sUserLabel = m_dictModLabels[fd.Id].OldLabel;
 				}
-				var xnlLayouts = FindAffectedLayouts(sUserLabel, fd.Name, className);
+				var xnlLayouts = FindAffectedLayouts(sUserLabel, fd.Name, m_cache.DomainDataByFlid.MetaDataCache.GetClassName(((IdAndString<int>)m_locationComboBox.SelectedItem).Id));
 				string message;
 				if (count != 0 && xnlLayouts.Count != 0)
 				{
@@ -843,8 +831,7 @@ namespace LanguageExplorer.Areas
 				return;
 			}
 			var rootId = ((IdAndString<Guid>)m_listComboBox.SelectedItem).Id;
-			ICmPossibilityList list;
-			if (!m_cache.ServiceLocator.GetInstance<ICmPossibilityListRepository>().TryGetObject(rootId, out list))
+			if (!m_cache.ServiceLocator.GetInstance<ICmPossibilityListRepository>().TryGetObject(rootId, out var list))
 			{
 				// Shouldn't happen, but... just being safe.
 				// OTOH, what ought to happen if the list doesn't exist?!
@@ -852,7 +839,6 @@ namespace LanguageExplorer.Areas
 				m_listComboBox.Items.Remove(m_listComboBox.SelectedItem);
 				return;
 			}
-
 			if (list != null)
 			{
 				m_fdwCurrentField.Fd.ListRootId = rootId;
@@ -1133,7 +1119,7 @@ namespace LanguageExplorer.Areas
 			}
 			// read only properties
 			public FieldDescription Fd { get; }
-			public bool IsNew { get; set; }
+			public bool IsNew { get; }
 		}
 
 		/// <summary>

@@ -27,15 +27,9 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			throw new NotSupportedException();
 		}
 
-		protected override int ParagraphContentsTag
-		{
-			get { throw new NotSupportedException(); }
-		}
+		protected override int ParagraphContentsTag => throw new NotSupportedException();
 
-		protected override int ParagraphPropertiesTag
-		{
-			get { throw new NotSupportedException(); }
-		}
+		protected override int ParagraphPropertiesTag => throw new NotSupportedException();
 
 		protected override ILgWritingSystemFactory WritingSystemFactory => base.WritingSystemFactory == null ? m_privateWsFactory ?? (m_privateWsFactory = new WritingSystemManager()) : base.WritingSystemFactory;
 	}

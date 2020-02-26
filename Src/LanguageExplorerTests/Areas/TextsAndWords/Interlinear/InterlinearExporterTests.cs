@@ -24,8 +24,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 		public override void TestSetup()
 		{
 			base.TestSetup();
-			CoreWritingSystemDefinition wsXkal;
-			Cache.ServiceLocator.WritingSystemManager.GetOrSet(QaaXKal, out wsXkal);
+			Cache.ServiceLocator.WritingSystemManager.GetOrSet(QaaXKal, out var wsXkal);
 			var wsEng = Cache.ServiceLocator.WritingSystemManager.Get("en");
 			m_choices = new InterlinLineChoices(Cache.LanguageProject, wsXkal.Handle, wsEng.Handle);
 		}
@@ -48,8 +47,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 
 			//// Set alternate case endings.
 			var ta = new ParagraphAnnotator(m_text1.ContentsOA[0]);
-			string altCaseForm;
-			ta.SetAlternateCase(0, 0, StringCaseStatus.allLower, out altCaseForm);
+			ta.SetAlternateCase(0, 0, StringCaseStatus.allLower, out var altCaseForm);
 			ta.ReparseParagraph();
 			Assert.AreEqual("xxxpus", altCaseForm);
 			exportedDoc = ExportToXml();
@@ -73,8 +71,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 			var formLexEntry = "went";
 			var wsXkal = Cache.ServiceLocator.WritingSystemManager.Get(QaaXKal);
 			var tssLexEntryForm = TsStringUtils.MakeString(formLexEntry, wsXkal.Handle);
-			int clsidForm;
-			var leGo = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create(MorphServices.FindMorphType(Cache, ref formLexEntry, out clsidForm), tssLexEntryForm, "go.PST", null);
+			var leGo = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create(MorphServices.FindMorphType(Cache, ref formLexEntry, out _), tssLexEntryForm, "go.PST", null);
 			pa.BreakIntoMorphs(0, 1, new ArrayList { leGo.LexemeFormOA });
 			pa.SetMorphSense(0, 1, 0, leGo.SensesOS[0]);
 			pa.ReparseParagraph();
@@ -110,9 +107,8 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 			var formEn = "en";
 			var tssGoForm = TsStringUtils.MakeString(formGo, wsXkal.Handle);
 			var tssEnForm = TsStringUtils.MakeString(formEn, wsXkal.Handle);
-			int clsidForm;
-			var leGo = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create(MorphServices.FindMorphType(Cache, ref formGo, out clsidForm), tssGoForm, "go", null);
-			var leEn = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create(MorphServices.FindMorphType(Cache, ref formEn, out clsidForm), tssEnForm, ".PP", null);
+			var leGo = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create(MorphServices.FindMorphType(Cache, ref formGo, out _), tssGoForm, "go", null);
+			var leEn = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create(MorphServices.FindMorphType(Cache, ref formEn, out _), tssEnForm, ".PP", null);
 			pa.BreakIntoMorphs(0, 2, new ArrayList { leGo.LexemeFormOA, tssEnForm });
 			pa.SetMorphSense(0, 2, 0, leGo.SensesOS[0]);
 			pa.SetMorphSense(0, 2, 1, leEn.SensesOS[0]);
@@ -144,12 +140,9 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 			pa.ReparseParagraph();
 			var exportedDoc = ExportToXml();
 
-			ITsString tssFreeTranslation;
-			pa.SetDefaultFreeTranslation(0, out tssFreeTranslation);
-			ITsString tssLitTranslation;
-			pa.SetDefaultLiteralTranslation(0, out tssLitTranslation);
-			ITsString tssNote1;
-			pa.SetDefaultNote(0, out tssNote1);
+			pa.SetDefaultFreeTranslation(0, out var tssFreeTranslation);
+			pa.SetDefaultLiteralTranslation(0, out var tssLitTranslation);
+			pa.SetDefaultNote(0, out var tssNote1);
 
 			var segment0 = para1.SegmentsOS[0];
 			var note2 = Cache.ServiceLocator.GetInstance<INoteFactory>().Create();
@@ -184,12 +177,9 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 			pa.ReparseParagraph();
 			var exportedDoc = ExportToXml();
 
-			ITsString tssFreeTranslation;
-			pa.SetDefaultFreeTranslation(0, out tssFreeTranslation);
-			ITsString tssLitTranslation;
-			pa.SetDefaultLiteralTranslation(0, out tssLitTranslation);
-			ITsString tssNote1;
-			pa.SetDefaultNote(0, out tssNote1);
+			pa.SetDefaultFreeTranslation(0, out var tssFreeTranslation);
+			pa.SetDefaultLiteralTranslation(0, out var tssLitTranslation);
+			pa.SetDefaultNote(0, out var tssNote1);
 
 			var segment0 = para1.SegmentsOS[0];
 			var note2 = Cache.ServiceLocator.GetInstance<INoteFactory>().Create();
@@ -230,8 +220,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 			var formLexEntry = "went";
 			var wsXkal = Cache.ServiceLocator.WritingSystemManager.Get(QaaXKal);
 			var tssLexEntryForm = TsStringUtils.MakeString(formLexEntry, wsXkal.Handle);
-			int clsidForm;
-			var leGo = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create(MorphServices.FindMorphType(Cache, ref formLexEntry, out clsidForm), tssLexEntryForm, "go.PST", null);
+			var leGo = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create(MorphServices.FindMorphType(Cache, ref formLexEntry, out _), tssLexEntryForm, "go.PST", null);
 			pa.BreakIntoMorphs(0, 1, new ArrayList { leGo.LexemeFormOA });
 			pa.SetMorphSense(0, 1, 0, leGo.SensesOS[0]);
 			pa.ReparseParagraph();
@@ -267,8 +256,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 			var formLexEntry = "went";
 
 			var tssLexEntryForm = TsStringUtils.MakeString(formLexEntry, wsXkal.Handle);
-			int clsidForm;
-			var leGo = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create(MorphServices.FindMorphType(Cache, ref formLexEntry, out clsidForm), tssLexEntryForm, "go.PST", null);
+			var leGo = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create(MorphServices.FindMorphType(Cache, ref formLexEntry, out _), tssLexEntryForm, "go.PST", null);
 			leGo.LexemeFormOA.Form.set_String(wsEs.Handle, "eswent");
 			pa.BreakIntoMorphs(0, 1, new ArrayList { leGo.LexemeFormOA });
 			pa.SetMorphSense(0, 1, 0, leGo.SensesOS[0]);
@@ -320,8 +308,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 
 			var wsXkal = Cache.ServiceLocator.WritingSystemManager.Get(QaaXKal);
 			var tssLexEntryForm = TsStringUtils.MakeString(formLexEntry, wsXkal.Handle);
-			int clsidForm;
-			var leGo = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create(MorphServices.FindMorphType(Cache, ref formLexEntry, out clsidForm), tssLexEntryForm, "go.PST", null);
+			var leGo = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create(MorphServices.FindMorphType(Cache, ref formLexEntry, out _), tssLexEntryForm, "go.PST", null);
 			var freeVarType = Cache.ServiceLocator.GetInstance<ILexEntryTypeRepository>().GetObject(LexEntryTypeTags.kguidLexTypFreeVar);
 			freeVarType.ReverseAbbr.SetAnalysisDefaultWritingSystem("fr. var.");
 			pa.SetVariantOf(0, 1, leGo, freeVarType);
@@ -359,8 +346,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 			var formLexEntry = "go";
 
 			var tssLexEntryForm = TsStringUtils.MakeString(formLexEntry, wsXkal.Handle);
-			int clsidForm;
-			var leGo = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create(MorphServices.FindMorphType(Cache, ref formLexEntry, out clsidForm), tssLexEntryForm, "go.PST", null);
+			var leGo = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create(MorphServices.FindMorphType(Cache, ref formLexEntry, out _), tssLexEntryForm, "go.PST", null);
 			var formLexEntryEs = "es" + formLexEntry;
 			leGo.LexemeFormOA.Form.set_String(wsEs.Handle, formLexEntryEs);
 			var freeVarType = Cache.ServiceLocator.GetInstance<ILexEntryTypeRepository>().GetObject(LexEntryTypeTags.kguidLexTypFreeVar);
@@ -413,8 +399,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 			var formLexEntry = "go";
 
 			var tssLexEntryForm = TsStringUtils.MakeString(formLexEntry, wsXkal.Handle);
-			int clsidForm;
-			var leGo = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create(MorphServices.FindMorphType(Cache, ref formLexEntry, out clsidForm), tssLexEntryForm, "go.PST", null);
+			var leGo = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create(MorphServices.FindMorphType(Cache, ref formLexEntry, out _), tssLexEntryForm, "go.PST", null);
 			var formLexEntryEs = "es" + formLexEntry;
 			leGo.LexemeFormOA.Form.set_String(wsEs.Handle, formLexEntryEs);
 			var freeVarType = Cache.ServiceLocator.GetInstance<ILexEntryTypeRepository>().GetObject(LexEntryTypeTags.kguidLexTypFreeVar);
@@ -462,8 +447,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 
 			var wsXkal = Cache.ServiceLocator.WritingSystemManager.Get(QaaXKal);
 			var tssLexEntryForm = TsStringUtils.MakeString(formLexEntry, wsXkal.Handle);
-			int clsidForm;
-			var leGo = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create(MorphServices.FindMorphType(Cache, ref formLexEntry, out clsidForm), tssLexEntryForm, "glossgo", null);
+			var leGo = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create(MorphServices.FindMorphType(Cache, ref formLexEntry, out _), tssLexEntryForm, "glossgo", null);
 			var pastVar = Cache.ServiceLocator.GetInstance<ILexEntryInflTypeRepository>().GetObject(LexEntryTypeTags.kguidLexTypPastVar);
 			pastVar.GlossAppend.SetAnalysisDefaultWritingSystem(".pst");
 
@@ -502,8 +486,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 
 			var wsXkal = Cache.ServiceLocator.WritingSystemManager.Get(QaaXKal);
 			var tssLexEntryForm = TsStringUtils.MakeString(formLexEntry, wsXkal.Handle);
-			int clsidForm;
-			var leGo = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create(MorphServices.FindMorphType(Cache, ref formLexEntry, out clsidForm), tssLexEntryForm, "glossgo", null);
+			var leGo = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create(MorphServices.FindMorphType(Cache, ref formLexEntry, out _), tssLexEntryForm, "glossgo", null);
 			var pastVar = Cache.ServiceLocator.GetInstance<ILexEntryInflTypeRepository>().GetObject(LexEntryTypeTags.kguidLexTypPastVar);
 			pastVar.GlossPrepend.SetAnalysisDefaultWritingSystem("Prepend.");
 
@@ -539,8 +522,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 
 			var wsXkal = Cache.ServiceLocator.WritingSystemManager.Get(QaaXKal);
 			var tssLexEntryForm = TsStringUtils.MakeString(formLexEntry, wsXkal.Handle);
-			int clsidForm;
-			var leGo = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create(MorphServices.FindMorphType(Cache, ref formLexEntry, out clsidForm), tssLexEntryForm, "glossgo", null);
+			var leGo = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create(MorphServices.FindMorphType(Cache, ref formLexEntry, out _), tssLexEntryForm, "glossgo", null);
 			var pastVar = Cache.ServiceLocator.GetInstance<ILexEntryInflTypeRepository>().GetObject(LexEntryTypeTags.kguidLexTypPastVar);
 			pastVar.GlossAppend.SetAnalysisDefaultWritingSystem(".pst");
 
@@ -580,8 +562,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 
 			var wsXkal = Cache.ServiceLocator.WritingSystemManager.Get(QaaXKal);
 			var tssLexEntryForm = TsStringUtils.MakeString(formLexEntry, wsXkal.Handle);
-			int clsidForm;
-			var leGo = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create(MorphServices.FindMorphType(Cache, ref formLexEntry, out clsidForm), tssLexEntryForm, "glossgo", null);
+			var leGo = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create(MorphServices.FindMorphType(Cache, ref formLexEntry, out _), tssLexEntryForm, "glossgo", null);
 			var pastVar = Cache.ServiceLocator.GetInstance<ILexEntryInflTypeRepository>().GetObject(LexEntryTypeTags.kguidLexTypPastVar);
 			leGo.SensesOS[0].Gloss.set_String(wsfr.Handle, "frglossgo");
 			pastVar.GlossAppend.SetAnalysisDefaultWritingSystem(".pst");
@@ -627,8 +608,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 
 			var wsXkal = Cache.ServiceLocator.WritingSystemManager.Get(QaaXKal);
 			var tssLexEntryForm = TsStringUtils.MakeString(formLexEntry, wsXkal.Handle);
-			int clsidForm;
-			var leGo = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create(MorphServices.FindMorphType(Cache, ref formLexEntry, out clsidForm), tssLexEntryForm, "glossgo", null);
+			var leGo = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create(MorphServices.FindMorphType(Cache, ref formLexEntry, out _), tssLexEntryForm, "glossgo", null);
 			var pastVar = Cache.ServiceLocator.GetInstance<ILexEntryInflTypeRepository>().GetObject(LexEntryTypeTags.kguidLexTypPastVar);
 			leGo.SensesOS[0].Gloss.set_String(wsfr.Handle, "frglossgo");
 			pastVar.GlossAppend.SetAnalysisDefaultWritingSystem(".pst");
@@ -689,8 +669,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 			var formLexEntry = "go";
 
 			var tssLexEntryForm = TsStringUtils.MakeString(formLexEntry, wsXkal.Handle);
-			int clsidForm;
-			var leGo = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create(MorphServices.FindMorphType(Cache, ref formLexEntry, out clsidForm), tssLexEntryForm, "glossgo", null);
+			var leGo = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create(MorphServices.FindMorphType(Cache, ref formLexEntry, out _), tssLexEntryForm, "glossgo", null);
 			const string formLexEntryEs = "eswent";
 			leGo.LexemeFormOA.Form.set_String(wsEs.Handle, formLexEntryEs);
 			var pastVar = Cache.ServiceLocator.GetInstance<ILexEntryInflTypeRepository>().GetObject(LexEntryTypeTags.kguidLexTypPastVar);
@@ -748,8 +727,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 			var formLexEntry = "go";
 
 			var tssLexEntryForm = TsStringUtils.MakeString(formLexEntry, wsXkal.Handle);
-			int clsidForm;
-			var leGo = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create(MorphServices.FindMorphType(Cache, ref formLexEntry, out clsidForm), tssLexEntryForm, "glossgo", null);
+			var leGo = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create(MorphServices.FindMorphType(Cache, ref formLexEntry, out _), tssLexEntryForm, "glossgo", null);
 			const string formLexEntryEs = "eswent";
 			leGo.LexemeFormOA.Form.set_String(wsEs.Handle, formLexEntryEs);
 			var pastVar = Cache.ServiceLocator.GetInstance<ILexEntryInflTypeRepository>().GetObject(LexEntryTypeTags.kguidLexTypPastVar);

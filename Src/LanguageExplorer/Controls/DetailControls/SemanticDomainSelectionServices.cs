@@ -26,8 +26,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		internal static ListViewItem CreateLabelListItem(ICmObject semDom, IVwStylesheet stylesheet, bool createChecked, bool displayUsage)
 		{
-			var semanticDomainItem = semDom as ICmSemanticDomain;
-			if (semanticDomainItem == null)
+			if (!(semDom is ICmSemanticDomain semanticDomainItem))
 			{
 				return new ListViewItem(DetailControlsStrings.ksSemanticDomainInvalid);
 			}
@@ -90,7 +89,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// <summary>
 		/// Creates the label node.
 		/// </summary>
-		private static DomainNode CreateLabelNode(ObjectLabel label, IVwStylesheet stylesheet, IEnumerable<ICmObject> selectedItems, bool displayUsage)
+		private static DomainNode CreateLabelNode(ObjectLabel label, IVwStylesheet stylesheet, HashSet<ICmObject> selectedItems, bool displayUsage)
 		{
 			var node = new DomainNode(label, stylesheet, displayUsage);
 			node.AddChildren(true, selectedItems);
@@ -130,7 +129,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		private static bool RecursivelyAdjustTreeNode(DomainNode node, object tag, bool check)
 		{
-			if ((node.Tag as ObjectLabel).Object == tag)
+			if ((node.Tag as ObjectLabel)?.Object == tag)
 			{
 				node.Checked = check;
 				return true;
@@ -141,7 +140,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// <summary>
 		/// Clear the ListView and add createObjectLabels to it. 'displayUsage' determines if the items are checked/unchecked.
 		/// </summary>
-		internal static void UpdateDomainListLabels(IEnumerable<ObjectLabel> createObjectLabels, IVwStylesheet stylesheet, ListView domainList, bool displayUsage)
+		internal static void UpdateDomainListLabels(List<ObjectLabel> createObjectLabels, IVwStylesheet stylesheet, ListView domainList, bool displayUsage)
 		{
 			domainList.BeginUpdate();   // Mono is extremely bad about redundant redrawing.  See FWNX-973 and FWNX-1043.
 			domainList.Items.Clear();
@@ -166,7 +165,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// Populate the TreeView with the labels and check/uncheck according to the selectedItems and displayUsage
 		/// parameters.
 		/// </summary>
-		internal static void UpdateDomainTreeLabels(IEnumerable<ObjectLabel> labels, bool displayUsage, TreeView domainTree, IVwStylesheet stylesheet, HashSet<ICmObject> selectedItems)
+		internal static void UpdateDomainTreeLabels(List<ObjectLabel> labels, bool displayUsage, TreeView domainTree, IVwStylesheet stylesheet, HashSet<ICmObject> selectedItems)
 		{
 			domainTree.BeginUpdate();   // Mono is extremely bad about redundant redrawing.  See FWNX-973 and FWNX-1043.
 			domainTree.Nodes.Clear();

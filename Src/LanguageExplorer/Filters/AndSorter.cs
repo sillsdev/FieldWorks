@@ -108,21 +108,12 @@ namespace LanguageExplorer.Filters
 
 		public override void MergeInto(List<IManyOnePathSortItem> records, List<IManyOnePathSortItem> newRecords)
 		{
-			var comp = new AndSorterComparer(Sorters);
-			MergeInto(records, newRecords, comp);
+			MergeInto(records, newRecords, new AndSorterComparer(Sorters));
 		}
 
 		public override bool CompatibleSorter(RecordSorter other)
 		{
-			foreach (var recordSorter in Sorters)
-			{
-				if (recordSorter.CompatibleSorter(other))
-				{
-					return true;
-				}
-			}
-
-			return false;
+			return Sorters.Any(recordSorter => recordSorter.CompatibleSorter(other));
 		}
 
 		public int CompatibleSorterIndex(RecordSorter other)
@@ -174,9 +165,8 @@ namespace LanguageExplorer.Filters
 			{
 				m_sorters = sorters;
 				m_comps = new List<IComparer>();
-				foreach (var recordSorter in m_sorters)
+				foreach (var comp in m_sorters.Select(recordSorter => recordSorter.Comparer))
 				{
-					var comp = recordSorter.Comparer;
 					(comp as StringFinderCompare)?.Init();
 					m_comps.Add(comp);
 				}

@@ -15,8 +15,7 @@ namespace LanguageExplorer.Areas.Lexicon.DictionaryConfiguration
 			InitializeComponent();
 
 			m_tb_guid.Text = guid.ToString();
-			var htmlElement = element as GeckoHtmlElement;
-			m_tb_xml.Text = htmlElement != null ? htmlElement.OuterHtml : element.TextContent;
+			m_tb_xml.Text = element is GeckoHtmlElement htmlElement ? htmlElement.OuterHtml : element.TextContent;
 		}
 
 		protected override bool ProcessCmdKey(ref Message msg, Keys keyData)

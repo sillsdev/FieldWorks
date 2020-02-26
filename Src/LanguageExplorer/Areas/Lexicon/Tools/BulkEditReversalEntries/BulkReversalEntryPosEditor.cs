@@ -26,8 +26,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.BulkEditReversalEntries
 					return null;
 				}
 				ICmPossibilityList list = null;
-				IReversalIndex ri;
-				if (m_cache.ServiceLocator.GetInstance<IReversalIndexRepository>().TryGetObject(riGuid, out ri))
+				if (m_cache.ServiceLocator.GetInstance<IReversalIndexRepository>().TryGetObject(riGuid, out var ri))
 				{
 					list = ri.PartsOfSpeechOA;
 				}
@@ -56,15 +55,16 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.BulkEditReversalEntries
 		/// </summary>
 		public override void DoIt(IEnumerable<int> itemsToChange, ProgressState state)
 		{
+			var asList = new List<int>(itemsToChange);
 			m_cache.DomainDataByFlid.BeginUndoTask(LanguageExplorerResources.ksUndoBulkEditRevPOS, LanguageExplorerResources.ksRedoBulkEditRevPOS);
 			var i = 0;
-			var interval = Math.Min(100, Math.Max(itemsToChange.Count() / 50, 1));
-			foreach (var entryId in itemsToChange)
+			var interval = Math.Min(100, Math.Max(asList.Count / 50, 1));
+			foreach (var entryId in asList)
 			{
 				i++;
 				if (i % interval == 0)
 				{
-					state.PercentDone = i * 80 / itemsToChange.Count() + 20;
+					state.PercentDone = i * 80 / asList.Count + 20;
 					state.Breath();
 				}
 				var entry = m_cache.ServiceLocator.GetInstance<IReversalIndexEntryRepository>().GetObject(entryId);

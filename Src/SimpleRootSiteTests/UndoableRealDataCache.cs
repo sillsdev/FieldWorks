@@ -474,9 +474,9 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 		}
 
 		/// <summary />
-		public void InsertNew(int hvoObj, int tag, int ihvo, int chvo, IVwStylesheet _ss)
+		public void InsertNew(int hvoObj, int tag, int ihvo, int chvo, IVwStylesheet ss)
 		{
-			m_cache.InsertNew(hvoObj, tag, ihvo, chvo, _ss);
+			m_cache.InsertNew(hvoObj, tag, ihvo, chvo, ss);
 		}
 
 		/// <summary />
@@ -504,21 +504,21 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 		}
 
 		/// <summary />
-		public void AddNotification(IVwNotifyChange _nchng)
+		public void AddNotification(IVwNotifyChange nchng)
 		{
-			m_cache.AddNotification(_nchng);
+			m_cache.AddNotification(nchng);
 		}
 
 		/// <summary />
-		public void PropChanged(IVwNotifyChange _nchng, int _ct, int hvo, int tag, int ivMin, int cvIns, int cvDel)
+		public void PropChanged(IVwNotifyChange nchng, int ct, int hvo, int tag, int ivMin, int cvIns, int cvDel)
 		{
-			m_cache.PropChanged(_nchng, _ct, hvo, tag, ivMin, cvIns, cvDel);
+			m_cache.PropChanged(nchng, ct, hvo, tag, ivMin, cvIns, cvDel);
 		}
 
 		/// <summary />
-		public void RemoveNotification(IVwNotifyChange _nchng)
+		public void RemoveNotification(IVwNotifyChange nchng)
 		{
-			m_cache.RemoveNotification(_nchng);
+			m_cache.RemoveNotification(nchng);
 		}
 
 		/// <summary />
@@ -542,9 +542,9 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 		/// <returns>
 		/// Return the actual number. If there is not enough room, throw an invalid argument exception.
 		/// </returns>
-		public int get_WritingSystemsOfInterest(int cwsMax, ArrayPtr _ws)
+		public int get_WritingSystemsOfInterest(int cwsMax, ArrayPtr ws)
 		{
-			return m_cache.get_WritingSystemsOfInterest(cwsMax, _ws);
+			return m_cache.get_WritingSystemsOfInterest(cwsMax, ws);
 		}
 
 		/// <summary />
@@ -633,8 +633,8 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 		/// </summary>
 		public int ParaContentsFlid
 		{
-			get { return m_cache.ParaContentsFlid; }
-			set { m_cache.ParaContentsFlid = value; }
+			get => m_cache.ParaContentsFlid;
+			set => m_cache.ParaContentsFlid = value;
 		}
 
 		/// <summary>
@@ -642,8 +642,8 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 		/// </summary>
 		public int ParaPropertiesFlid
 		{
-			get { return m_cache.ParaPropertiesFlid; }
-			set { m_cache.ParaPropertiesFlid = value; }
+			get => m_cache.ParaPropertiesFlid;
+			set => m_cache.ParaPropertiesFlid = value;
 		}
 
 		/// <summary>
@@ -651,22 +651,22 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 		/// </summary>
 		public int TextParagraphsFlid
 		{
-			get { return m_cache.TextParagraphsFlid; }
-			set { m_cache.TextParagraphsFlid = value; }
+			get => m_cache.TextParagraphsFlid;
+			set => m_cache.TextParagraphsFlid = value;
 		}
 
 		/// <summary />
 		public ILgWritingSystemFactory WritingSystemFactory
 		{
-			get { return m_cache.WritingSystemFactory; }
-			set { m_cache.WritingSystemFactory = value; }
+			get => m_cache.WritingSystemFactory;
+			set => m_cache.WritingSystemFactory = value;
 		}
 
 		/// <summary />
 		public IFwMetaDataCache MetaDataCache
 		{
-			get { return m_cache.MetaDataCache; }
-			set { m_cache.MetaDataCache = value; }
+			get => m_cache.MetaDataCache;
+			set => m_cache.MetaDataCache = value;
 		}
 	}
 }

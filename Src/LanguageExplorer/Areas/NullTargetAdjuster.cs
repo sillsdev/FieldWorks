@@ -6,7 +6,7 @@ using SIL.LCModel;
 
 namespace LanguageExplorer.Areas
 {
-	internal class NullTargetAdjuster : IPreferedTargetAdjuster
+	internal class NullTargetAdjuster : IPreferredTargetAdjuster
 	{
 		public ICmObject AdjustTarget(ICmObject target)
 		{

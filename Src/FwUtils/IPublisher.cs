@@ -14,19 +14,19 @@ namespace SIL.FieldWorks.Common.FwUtils
 	public interface IPublisher
 	{
 		/// <summary>
-		/// Publish the message using the new value.
+		/// Publish the message in the parameter object using the new value in the parameter object.
 		/// </summary>
-		/// <param name="message">The message to publish.</param>
-		/// <param name="newValue">The new value to send to subscribers. This may be null.</param>
-		void Publish(string message, object newValue);
+		/// <param name="publisherParameterObject">The new message and value to send to subscribers. This may not be null.</param>
+		/// <exception cref="ArgumentNullException">Thrown if <paramref name="publisherParameterObject"/> is null.</exception>
+		void Publish(PublisherParameterObject publisherParameterObject);
 
 		/// <summary>
 		/// Publish an ordered sequence of messages, each of which has a newValue (which may be null).
 		/// </summary>
-		/// <param name="messages">Ordered list of messages to publish. Each message has a matching new value (which may be null).</param>
-		/// <param name="newValues">Ordered list of new values. Each value matches a message.</param>
-		/// <exception cref="ArgumentNullException">Thrown if either <paramref name="messages"/> or <paramref name="newValues"/> are null.</exception>
-		/// <exception cref="ArgumentException">Thrown if the <paramref name="messages"/> and <paramref name="newValues"/> lists are not the same size.</exception>
-		void Publish(IList<string> messages, IList<object> newValues);
+		/// <param name="publisherParameterObjects">Ordered list of message/value parameter objects to publish. Each message has a matching new value (which may be null).</param>
+		/// <exception cref="ArgumentNullException">Thrown if <paramref name="publisherParameterObjects"/> is null.</exception>
+		/// <exception cref="InvalidOperationException">Thrown if there are fewer than 2 instances of <paramref name="publisherParameterObjects"/>.
+		/// That is, users should only call this method when they have multiple things to publish.</exception>
+		void Publish(IList<PublisherParameterObject> publisherParameterObjects);
 	}
 }

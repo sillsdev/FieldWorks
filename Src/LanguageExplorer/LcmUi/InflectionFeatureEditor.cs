@@ -158,10 +158,7 @@ namespace LanguageExplorer.LcmUi
 		/// </summary>
 		public LcmCache Cache
 		{
-			get
-			{
-				return m_cache;
-			}
+			get => m_cache;
 			set
 			{
 				m_cache = value;
@@ -177,15 +174,8 @@ namespace LanguageExplorer.LcmUi
 		/// </summary>
 		public XMLViewsDataCache DataAccess
 		{
-			get
-			{
-				if (m_sda == null)
-				{
-					throw new InvalidOperationException("Must set the special cache of a BulkEditSpecControl");
-				}
-				return m_sda;
-			}
-			set { m_sda = value; }
+			get => m_sda ?? throw new InvalidOperationException("Must set the special cache of a BulkEditSpecControl");
+			set => m_sda = value;
 		}
 
 		/// <summary>
@@ -319,8 +309,7 @@ namespace LanguageExplorer.LcmUi
 				IMoStemMsa msmTarget = null;
 				foreach (var msa in entry.MorphoSyntaxAnalysesOC)
 				{
-					var msm = msa as IMoStemMsa;
-					if (msm != null && MsaMatchesTarget(msm, fsTarget))
+					if (msa is IMoStemMsa msm && MsaMatchesTarget(msm, fsTarget))
 					{
 						// Can reuse this one!
 						msmTarget = msm;
@@ -345,8 +334,7 @@ namespace LanguageExplorer.LcmUi
 					}
 					foreach (var msa in entry.MorphoSyntaxAnalysesOC)
 					{
-						var msm = msa as IMoStemMsa;
-						if (msm == null)
+						if (!(msa is IMoStemMsa msm))
 						{
 							continue;
 						}

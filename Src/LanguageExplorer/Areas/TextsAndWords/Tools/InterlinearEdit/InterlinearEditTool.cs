@@ -30,8 +30,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.InterlinearEdit
 		private RecordBrowseView _recordBrowseView;
 		private IRecordList _recordList;
 		private InterlinMaster _interlinMaster;
-		[Import(AreaServices.TextAndWordsAreaMachineName)]
-		private IArea _area;
 
 		#region Implementation of IMajorFlexComponent
 
@@ -63,7 +61,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.InterlinearEdit
 		/// </remarks>
 		public void Activate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
-			majorFlexComponentParameters.FlexComponentParameters.PropertyTable.SetDefault($"{AreaServices.ToolForAreaNamed_}{_area.MachineName}", MachineName, true);
+			majorFlexComponentParameters.FlexComponentParameters.PropertyTable.SetDefault($"{AreaServices.ToolForAreaNamed_}{Area.MachineName}", MachineName, true);
 			if (_recordList == null)
 			{
 				_recordList = majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>(LanguageExplorerConstants.RecordListRepository).GetRecordList(TextAndWordsArea.InterlinearTexts, majorFlexComponentParameters.StatusBar, TextAndWordsArea.InterlinearTextsFactoryMethod);
@@ -71,7 +69,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.InterlinearEdit
 			var multiPaneParameters = new MultiPaneParameters
 			{
 				Orientation = Orientation.Vertical,
-				Area = _area,
+				Area = Area,
 				Id = "EditViewTextsMultiPane",
 				ToolMachineName = MachineName,
 				DefaultFixedPaneSizePoints = "145",
@@ -103,7 +101,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.InterlinearEdit
 			_multiPane = MultiPaneFactory.CreateMultiPaneWithTwoPaneBarContainersInMainCollapsingSplitContainer(majorFlexComponentParameters.FlexComponentParameters,
 				majorFlexComponentParameters.MainCollapsingSplitContainer, multiPaneParameters, _recordBrowseView, TextAndWordsResources.Texts, new PaneBar(), _interlinMaster, StringTable.Table.GetString("Text", StringTable.ClassNames), interlinMasterPaneBar);
 			_multiPane.FixedPanel = FixedPanel.Panel1;
-
 			// Too early before now.
 			_interlinMaster.FinishInitialization();
 			_interlinMaster.BringToFront();
@@ -158,7 +155,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.InterlinearEdit
 		/// <summary>
 		/// Get the area for the tool.
 		/// </summary>
-		public IArea Area => _area;
+		[field: Import(AreaServices.TextAndWordsAreaMachineName)]
+		public IArea Area { get; private set; }
 
 		/// <summary>
 		/// Get the image for the area.
@@ -188,7 +186,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.InterlinearEdit
 				_majorFlexComponentParameters = majorFlexComponentParameters;
 				_recordBrowseView = recordBrowseView;
 				_recordList = recordList;
-
 				SetupUiWidgets(tool);
 				CreateBrowseViewContextMenu();
 			}
@@ -199,7 +196,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.InterlinearEdit
 				_partiallySharedTextsAndWordsToolsMenuHelper = new PartiallySharedTextsAndWordsToolsMenuHelper(_majorFlexComponentParameters);
 				_partiallySharedTextsAndWordsToolsMenuHelper.AddFileMenusForExpectedTextAndWordsTools(toolUiWidgetParameterObject);
 				_partiallySharedForToolsWideMenuHelper = new PartiallySharedForToolsWideMenuHelper(_majorFlexComponentParameters, _recordList);
-
 				_majorFlexComponentParameters.UiWidgetController.AddHandlers(toolUiWidgetParameterObject);
 			}
 

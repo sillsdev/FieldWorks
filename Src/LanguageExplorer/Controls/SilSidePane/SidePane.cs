@@ -397,8 +397,7 @@ namespace LanguageExplorer.Controls.SilSidePane
 				if (ReferenceEquals(item.Tag, itemTag) && item.Text != newText)
 				{
 					item.Text = newText;
-					var widget = item.UnderlyingWidget as ListViewItem;
-					if (widget != null)
+					if (item.UnderlyingWidget is ListViewItem widget)
 					{
 						widget.Text = newText;
 					}

@@ -65,7 +65,7 @@ namespace LanguageExplorer.Controls
 
 		protected virtual string Form
 		{
-			get { return m_tbForm.Text; }
+			get => m_tbForm.Text;
 			set
 			{
 				m_tbForm.Text = value ?? string.Empty;
@@ -171,9 +171,7 @@ namespace LanguageExplorer.Controls
 			m_cache = cache;
 			// Reset window location.
 			// Get location to the stored values, if any.
-			Point dlgLocation;
-			Size dlgSize;
-			if (PropertyTable.TryGetValue(PersistenceLabel + "DlgLocation", out dlgLocation) && PropertyTable.TryGetValue(PersistenceLabel + "DlgSize", out dlgSize))
+			if (PropertyTable.TryGetValue($"{PersistenceLabel}DlgLocation", out Point dlgLocation) && PropertyTable.TryGetValue( $"{PersistenceLabel}DlgSize", out Size dlgSize))
 			{
 				var rect = new Rectangle(dlgLocation, dlgSize);
 				//grow it if it's too small.  This will happen when we add new controls to the dialog box.
@@ -679,8 +677,7 @@ namespace LanguageExplorer.Controls
 			}
 			var selStart = m_tbForm.SelectionStart;
 			var selLen = m_tbForm.SelectionLength;
-			int addToSelection;
-			var fixedText = AdjustText(out addToSelection);
+			var fixedText = AdjustText(out var addToSelection);
 			ResetMatches(fixedText);
 			// Even if AdjustText didn't move the selection, it may have changed the text,
 			// which has a side effect in a text box of selecting all of it. We don't want that here,

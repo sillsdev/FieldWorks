@@ -206,9 +206,7 @@ namespace LanguageExplorer.Controls.XMLViews
 								vwSelWord.GetSelectionString(out tssWord, " ");
 								tssWord = StripTrailingNewLine(tssWord);
 								hvoNewSelRow = SpecialCache.get_VecItem(RootObjectHvo, MainTag, newSelectedIndex);
-								int hvoObj, tag, ws;
-								bool fAssocPrev;
-								vwSelWord.TextSelInfo(false, out tssSource, out ichStart, out fAssocPrev, out hvoObj, out tag, out ws);
+								vwSelWord.TextSelInfo(false, out tssSource, out ichStart, out _, out _, out _, out _);
 							}
 						}
 					}
@@ -236,7 +234,7 @@ namespace LanguageExplorer.Controls.XMLViews
 				{
 					// We're doing click copies; generate an event.
 					// Do this AFTER other actions which may change the current line.
-					ClickCopy(this, new ClickCopyEventArgs(tssWord, hvoNewSelRow, tssSource, ichStart));
+					ClickCopy?.Invoke(this, new ClickCopyEventArgs(tssWord, hvoNewSelRow, tssSource, ichStart));
 				}
 				if (clickSel == null)
 				{
@@ -357,22 +355,13 @@ namespace LanguageExplorer.Controls.XMLViews
 				base.HandleSelectionChange(rootb, vwselNew);
 				m_wantScrollIntoView = false; // It should already be visible here.
 				// Collect all the information we can about the selection.
-				int ihvoRoot;
-				int tagTextProp;
-				int cpropPrevious;
-				int ichAnchor;
-				int ichEnd;
-				int ws;
-				bool fAssocPrev;
-				int ihvoEnd;
-				ITsTextProps ttpBogus;
 				var cvsli = vwselNew.CLevels(false) - 1;
 				if (cvsli < 0)
 				{
 					return;// Nothing useful we can do.
 				}
 				// Main array of information retrieved from sel that made combo.
-				var rgvsli = SelLevInfo.AllTextSelInfo(vwselNew, cvsli, out ihvoRoot, out tagTextProp, out cpropPrevious, out ichAnchor, out ichEnd, out ws, out fAssocPrev, out ihvoEnd, out ttpBogus);
+				var rgvsli = SelLevInfo.AllTextSelInfo(vwselNew, cvsli, out var ihvoRoot, out var tagTextProp, out var cpropPrevious, out var ichAnchor, out var ichEnd, out var ws, out var fAssocPrev, out var ihvoEnd, out var ttpBogus);
 				// The call to the base implementation can invalidate the selection. It's rare, but quite
 				// possible. (See the comment in EditingHelper.SelectionChanged() following
 				// Commit().) This test fixes LT-4731.

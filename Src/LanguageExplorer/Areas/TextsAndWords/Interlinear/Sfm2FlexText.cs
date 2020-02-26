@@ -110,9 +110,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			var ichLast = 0;
 			while (true)
 			{
-				int ichMin;
-				int ichLim;
-				var word = wordmaker.NextWord(out ichMin, out ichLim);
+				var word = wordmaker.NextWord(out var ichMin, out var ichLim);
 				if (word == null)
 				{
 					ichMin = text.Length;

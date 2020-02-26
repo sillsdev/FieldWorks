@@ -33,8 +33,6 @@ namespace LanguageExplorer.Areas.Lists.Tools.MorphTypeEdit
 		/// </summary>
 		private CollapsingSplitContainer _collapsingSplitContainer;
 		private IRecordList _recordList;
-		[Import(AreaServices.ListsAreaMachineName)]
-		private IArea _area;
 		private LcmCache _cache;
 		private MorphTypeEditMenuHelper _toolMenuHelper;
 
@@ -130,7 +128,8 @@ namespace LanguageExplorer.Areas.Lists.Tools.MorphTypeEdit
 		/// <summary>
 		/// Get the area for the tool.
 		/// </summary>
-		public IArea Area => _area;
+		[field: Import(AreaServices.ListsAreaMachineName)]
+		public IArea Area { get; private set; }
 
 		/// <summary>
 		/// Get the image for the area.

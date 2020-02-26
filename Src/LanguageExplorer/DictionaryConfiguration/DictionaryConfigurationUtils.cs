@@ -84,7 +84,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 		public static void SetReversalIndexGuidBasedOnReversalIndexConfiguration(IPropertyTable propertyTable, LcmCache cache)
 		{
 			var reversalIndexConfiguration = propertyTable.GetValue("ReversalIndexPublicationLayout", String.Empty);
-			if (String.IsNullOrEmpty(reversalIndexConfiguration))
+			if (string.IsNullOrEmpty(reversalIndexConfiguration))
 			{
 				return;
 			}
@@ -111,8 +111,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 			var topLevelGuid = DictionaryConfigurationServices.GetHrefFromGeckoDomElement(element);
 			if (topLevelGuid == Guid.Empty)
 			{
-				GeckoElement dummy;
-				DictionaryConfigurationServices.GetClassListFromGeckoElement(element, out topLevelGuid, out dummy);
+				DictionaryConfigurationServices.GetClassListFromGeckoElement(element, out topLevelGuid, out _);
 			}
 			if (topLevelGuid != Guid.Empty)
 			{
@@ -128,8 +127,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 				}
 				else
 				{
-					ICmObject obj;
-					if (objectRepository.TryGetObject(topLevelGuid, out obj))
+					if (objectRepository.TryGetObject(topLevelGuid, out var obj))
 					{
 						recordList.JumpToRecord(obj.Hvo);
 					}
@@ -147,11 +145,8 @@ namespace LanguageExplorer.DictionaryConfiguration
 		/// </remarks>
 		internal static void HandleDomRightClick(GeckoWebBrowser browser, DomMouseEventArgs e, GeckoElement element, FlexComponentParameters flexComponentParameters, string configObjectName, LcmCache cache, IRecordList activeRecordList)
 		{
-			Guid topLevelGuid;
-			GeckoElement entryElement;
-			var classList = DictionaryConfigurationServices.GetClassListFromGeckoElement(element, out topLevelGuid, out entryElement);
-			var localizedName = DictionaryConfigurationServices.GetDictionaryConfigurationType(flexComponentParameters.PropertyTable);
-			var label = String.Format(AreaResources.ksConfigure, localizedName);
+			var classList = DictionaryConfigurationServices.GetClassListFromGeckoElement(element, out var topLevelGuid, out var entryElement);
+			var label = string.Format(AreaResources.ksConfigure, DictionaryConfigurationServices.GetDictionaryConfigurationType(flexComponentParameters.PropertyTable));
 			s_contextMenu?.Dispose();
 			s_contextMenu = new ContextMenuStrip();
 			var item = new DisposableToolStripMenuItem(label);

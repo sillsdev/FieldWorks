@@ -38,9 +38,7 @@ namespace LanguageExplorer.Areas
 		/// </summary>
 		internal void ReloadWordSet(LcmCache cache)
 		{
-			var hvo = int.Parse(id);
-			var wordSet = cache.ServiceLocator.GetObject(hvo) as IWfiWordSet;
-			LoadCases(wordSet);
+			LoadCases((IWfiWordSet)cache.ServiceLocator.GetObject(int.Parse(id)));
 		}
 
 		/// <summary>

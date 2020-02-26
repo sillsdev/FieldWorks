@@ -426,8 +426,7 @@ namespace LanguageExplorerTests.Impls
 			Assert.IsTrue(m_dlg.FindTextControl.Focused, "Focus should have returned to Find box");
 			var tssFind = m_dlg.FindTextControl.Tss;
 			Assert.AreEqual(1, tssFind.RunCount);
-			int nvar;
-			Assert.AreEqual(Cache.WritingSystemFactory.GetWsFromStr("de"), tssFind.get_Properties(0).GetIntPropValues((int)FwTextPropType.ktptWs, out nvar));
+			Assert.AreEqual(Cache.WritingSystemFactory.GetWsFromStr("de"), tssFind.get_Properties(0).GetIntPropValues((int)FwTextPropType.ktptWs, out _));
 			Assert.IsTrue(m_dlg.MatchWsCheckboxChecked);
 			Assert.IsTrue(m_dlg.FindFormatLabel.Visible);
 			Assert.IsTrue(m_dlg.FindFormatTextLabel.Visible);
@@ -772,7 +771,7 @@ namespace LanguageExplorerTests.Impls
 			m_genesis.InsertFootnoteAt(0, strbldr, para.Contents.Length - 3);
 			para.Contents = strbldr.GetString();
 			m_vwRootsite.RefreshDisplay();
-			int origFootnoteCount = m_genesis.FootnotesOS.Count;
+			var origFootnoteCount = m_genesis.FootnotesOS.Count;
 			Assert.AreEqual(1, origFootnoteCount);
 			// This destroys the selection
 			m_vwRootsite.RootBox.Reconstruct();
@@ -1058,9 +1057,7 @@ namespace LanguageExplorerTests.Impls
 			for (var i = 0; i < numSegs; i++)
 			{
 				expectedTss = TsStringUtils.MakeString(string.Format("{0}th Free Translation.", i), m_wsEn);
-				int outWs;
-				ITsString actualTss;
-				Assert.True(segments[i].FreeTranslation.TryWs(m_wsEn, out outWs, out actualTss));
+				Assert.True(segments[i].FreeTranslation.TryWs(m_wsEn, out var outWs, out var actualTss));
 				Assert.AreEqual(m_wsEn, outWs);
 				AssertEx.AreTsStringsEqual(expectedTss, actualTss);
 			}

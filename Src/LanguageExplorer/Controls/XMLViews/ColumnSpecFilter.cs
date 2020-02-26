@@ -22,7 +22,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		XmlBrowseViewVc m_vc;
 
 		/// <summary>
-		/// for persistence.
+		/// Required for persistence. Do not remove!
 		/// </summary>
 		public ColumnSpecFilter()
 		{ }

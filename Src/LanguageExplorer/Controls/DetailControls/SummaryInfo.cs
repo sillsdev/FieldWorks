@@ -55,24 +55,13 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// <summary>
 		/// Should not be called
 		/// </summary>
-		public int ContextStringStartOffset
-		{
-			get
-			{
-				throw new NotSupportedException();
-			}
-		}
+		public int ContextStringStartOffset => throw new NotSupportedException();
 
 		/// <summary>
 		/// Should not be called
 		/// </summary>
-		public int ContextStringLength
-		{
-			get
-			{
-				throw new NotSupportedException();
-			}
-		}
+		public int ContextStringLength => throw new NotSupportedException();
+
 		/// <summary>
 		/// This allows the client to supply a view constructor to control what
 		/// appears in the slice. As it returns null, the standard summary VC is used.

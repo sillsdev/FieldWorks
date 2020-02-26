@@ -44,10 +44,7 @@ namespace LanguageExplorer.Controls
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public string URL
 		{
-			get
-			{
-				return m_url ?? "about:blank";
-			}
+			get => m_url ?? "about:blank";
 			set
 			{
 				// Review (Hasso): is there a case in which we would *want* to set m_url to null specifically (not about:blank)?
@@ -76,15 +73,9 @@ namespace LanguageExplorer.Controls
 		[Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public string DocumentText
 		{
-			get
-			{
-				// TODO pH 2013.09: GeckoFX implementation
-				return @"<!DOCTYPE HTML><HTML/>";
-			}
-			set
-			{
-				Browser.LoadHtml(value, null);
-			}
+			// TODO pH 2013.09: GeckoFX implementation
+			get => @"<!DOCTYPE HTML><HTML/>";
+			set => Browser.LoadHtml(value, null);
 		}
 
 		/// <summary />

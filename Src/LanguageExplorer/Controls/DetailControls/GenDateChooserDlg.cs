@@ -96,11 +96,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		public string HelpTopic
 		{
-			get
-			{
-				return m_helpTopic;
-			}
-
+			get => m_helpTopic;
 			set
 			{
 				m_helpTopic = value;
@@ -144,12 +140,9 @@ namespace LanguageExplorer.Controls.DetailControls
 				{
 					return new GenDate();
 				}
-				var precision = (GenDate.PrecisionType)m_precisionComboBox.SelectedIndex;
-				var month = m_monthComboBox.SelectedIndex == -1 ? GenDate.UnknownMonth : m_monthComboBox.SelectedIndex + 1;
-				var day = m_dayComboBox.SelectedIndex == -1 ? GenDate.UnknownDay : m_dayComboBox.SelectedIndex + 1;
-				var year = (int)m_yearUpDown.Value;
-				var ad = m_eraComboBox.SelectedIndex == ERA_AD;
-				return new GenDate(precision, month, day, year, ad);
+				var monthSelectedIndex = m_monthComboBox.SelectedIndex;
+				var daySelectedIndex = m_dayComboBox.SelectedIndex;
+				return new GenDate((GenDate.PrecisionType)m_precisionComboBox.SelectedIndex, monthSelectedIndex == -1 ? GenDate.UnknownMonth : monthSelectedIndex + 1, daySelectedIndex == -1 ? GenDate.UnknownDay : daySelectedIndex + 1, (int)m_yearUpDown.Value, m_eraComboBox.SelectedIndex == ERA_AD);
 			}
 
 			set

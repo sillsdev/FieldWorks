@@ -127,8 +127,7 @@ namespace RootSite.TestUtilities
 					}
 					break;
 				case 6: // StTxtPara, display details of our outer object
-					int hvoOuter, tag, ihvo;
-					vwenv.GetOuterObject(vwenv.EmbeddingLevel - 1, out hvoOuter, out tag, out ihvo);
+					vwenv.GetOuterObject(vwenv.EmbeddingLevel - 1, out var hvoOuter, out var tag, out var ihvo);
 					var tss = TsStringUtils.MakeString("Hvo = " + hvoOuter + "; Tag = " + tag + "; Ihvo = " + ihvo, m_wsDefault);
 					vwenv.AddString(tss);
 					break;

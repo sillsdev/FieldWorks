@@ -185,10 +185,7 @@ namespace LanguageExplorer.Areas
 			{
 				return; // odd. nothing more to do.
 			}
-			ILexEntry variant;
-			IVariantComponentLexeme componentLexeme;
-			ILexEntryType selectedEntryType;
-			GetVariantAndComponentAndSelectedEntryType(out variant, out componentLexeme, out selectedEntryType);
+			GetVariantAndComponentAndSelectedEntryType(out var variant, out var componentLexeme, out var selectedEntryType);
 			var matchingEntryRef = FindMatchingEntryRef(variant, componentLexeme, selectedEntryType);
 			try
 			{
@@ -271,10 +268,7 @@ namespace LanguageExplorer.Areas
 			{
 				// detect whether SelectedID already matches an existing EntryRef relationship.
 				// If so, we want to "Use" it rather than say "Add" when clicking OK.
-				ILexEntry variant;
-				IVariantComponentLexeme componentLexeme;
-				ILexEntryType selectedEntryType;
-				GetVariantAndComponentAndSelectedEntryType(out variant, out componentLexeme, out selectedEntryType);
+				GetVariantAndComponentAndSelectedEntryType(out var variant, out var componentLexeme, out var selectedEntryType);
 				var matchingEntryRef = FindMatchingEntryRef(variant, componentLexeme, selectedEntryType);
 				if (matchingEntryRef != null)
 				{

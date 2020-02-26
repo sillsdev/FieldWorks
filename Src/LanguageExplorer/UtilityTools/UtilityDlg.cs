@@ -143,7 +143,7 @@ namespace LanguageExplorer.UtilityTools
 		#endregion
 
 		/// <summary>
-		/// Get the Utilites list box.
+		/// Get the Utilities list box.
 		/// </summary>
 		public CheckedListBox Utilities { get; private set; }
 
@@ -299,11 +299,10 @@ namespace LanguageExplorer.UtilityTools
 			Font boldFont = null;
 			try
 			{
-				var boldFontStyle = FontStyle.Bold;
 				// Creating the bold equivalent of the current font doesn't seem to work in Mono,
 				// as we crash shortly due to failures in GDIPlus.GdipMeasureString() using that
 				// font.
-				boldFont = Platform.IsMono ? currentFont : new Font(currentFont.FontFamily, currentFont.Size, boldFontStyle);
+				boldFont = Platform.IsMono ? currentFont : new Font(currentFont.FontFamily, currentFont.Size, FontStyle.Bold);
 				WhatDescription = WhenDescription = RedoDescription = null;
 				((IUtility)Utilities.SelectedItem).OnSelection();
 				m_rtbDescription.Clear();

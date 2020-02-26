@@ -25,10 +25,12 @@ namespace LanguageExplorerTests.Controls.SilSidePane
 			_tab1 = new OutlookBarButton("tab1", null);
 			_tab2 = new OutlookBarButton("tab2", null);
 			_tab3 = new OutlookBarButton("tab3", null);
-			_tabs = new OutlookBarButtonCollection(_outlookBar);
-			_tabs.Add(_tab1);
-			_tabs.Add(_tab2);
-			_tabs.Add(_tab3);
+			_tabs = new OutlookBarButtonCollection(_outlookBar)
+			{
+				_tab1,
+				_tab2,
+				_tab3
+			};
 		}
 
 		[TearDown]
@@ -132,8 +134,8 @@ namespace LanguageExplorerTests.Controls.SilSidePane
 		{
 			var tabsBeforeDialog = new object[3];
 			var tabsAfterDialog = new object[3];
-			(_tabs as ICollection).CopyTo(tabsBeforeDialog, 0);
-			var tabsAfterDialog_expected = new object[3] { _tab2, _tab1, _tab3 };
+			((ICollection)_tabs).CopyTo(tabsBeforeDialog, 0);
+			var tabsAfterDialog_expected = new object[] { _tab2, _tab1, _tab3 };
 
 			using (var dialog = new NavPaneOptionsDlg(_tabs))
 			{
@@ -151,8 +153,8 @@ namespace LanguageExplorerTests.Controls.SilSidePane
 		{
 			var tabsBeforeDialog = new object[3];
 			var tabsAfterDialog = new object[3];
-			(_tabs as ICollection).CopyTo(tabsBeforeDialog, 0);
-			var tabsAfterDialog_expected = new object[3] { _tab1, _tab3, _tab2 };
+			((ICollection)_tabs).CopyTo(tabsBeforeDialog, 0);
+			var tabsAfterDialog_expected = new object[] { _tab1, _tab3, _tab2 };
 
 			using (var dialog = new NavPaneOptionsDlg(_tabs))
 			{
@@ -160,7 +162,7 @@ namespace LanguageExplorerTests.Controls.SilSidePane
 				dialog.tabListBox.SetSelected(2, true);
 				dialog.btn_Up.PerformClick();
 
-				(_tabs as ICollection).CopyTo(tabsAfterDialog, 0);
+				((ICollection)_tabs).CopyTo(tabsAfterDialog, 0);
 				Assert.AreEqual(tabsAfterDialog_expected, tabsAfterDialog, "Reordering a tab up did not work");
 			}
 		}
@@ -213,7 +215,7 @@ namespace LanguageExplorerTests.Controls.SilSidePane
 		{
 			var tabsBeforeDialog = new object[10];
 			var tabsAfterDialog = new object[10];
-			(_tabs as ICollection).CopyTo(tabsBeforeDialog, 0);
+			((ICollection)_tabs).CopyTo(tabsBeforeDialog, 0);
 
 			using (var dialog = new NavPaneOptionsDlg(_tabs))
 			{
@@ -226,7 +228,7 @@ namespace LanguageExplorerTests.Controls.SilSidePane
 				dialog.btn_Reset.PerformClick(); // Reset should restore things
 
 				Assert.IsTrue(dialog.tabListBox.GetItemChecked(2), "tab should be checked again after Reset");
-				(_tabs as ICollection).CopyTo(tabsAfterDialog, 0);
+				((ICollection)_tabs).CopyTo(tabsAfterDialog, 0);
 				Assert.AreEqual(tabsBeforeDialog, tabsAfterDialog, "tab order should be restored by Reset");
 			}
 		}

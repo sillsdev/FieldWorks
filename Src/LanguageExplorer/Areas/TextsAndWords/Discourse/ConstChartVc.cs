@@ -188,8 +188,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 
 		internal void ApplyFormatting(IVwEnv vwenv, string key)
 		{
-			ITsTextProps ttp;
-			if (m_formatProps.TryGetValue(key, out ttp))
+			if (m_formatProps.TryGetValue(key, out var ttp))
 			{
 				vwenv.Props = ttp;
 			}
@@ -264,8 +263,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 					else
 					{
 						// it's a moved text or clause reference placeholder.
-						int hvoClause;
-						if (m_chart.Logic.IsClausePlaceholder(hvo, out hvoClause))
+						if (m_chart.Logic.IsClausePlaceholder(hvo, out var hvoClause))
 						{
 							DisplayClausePlaceholder(vwenv, hvoClause);
 						}
@@ -374,10 +372,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			SetupAndOpenInnerPile(vwenv);
 			// we assume we're in the context of a segment with analyses here.
 			// we'll need this info down in DisplayAnalysisAndCloseInnerPile()
-			int hvoSeg;
-			int tagDummy;
-			int index;
-			vwenv.GetOuterObject(vwenv.EmbeddingLevel - 1, out hvoSeg, out tagDummy, out index);
+			vwenv.GetOuterObject(vwenv.EmbeddingLevel - 1, out var hvoSeg, out _, out var index);
 			var analysisOccurrence = new AnalysisOccurrence(m_segRepository.GetObject(hvoSeg), index);
 			DisplayAnalysisAndCloseInnerPile(vwenv, analysisOccurrence, false);
 		}
@@ -521,8 +516,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			}
 			else
 			{
-				int hvoOuter, tagOuter, ihvoRow;
-				vwenv.GetOuterObject(0, out hvoOuter, out tagOuter, out ihvoRow);
+				vwenv.GetOuterObject(0, out var hvoOuter, out var tagOuter, out var ihvoRow);
 				if (ihvoRow == 0)
 				{
 					fpos = (VwFramePosition)((int)fpos | (int)VwFramePosition.kvfpAbove);
@@ -701,8 +695,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 
 		internal void InsertOpenBracket(IVwEnv vwenv, string key)
 		{
-			string bracket;
-			if (!m_brackets.TryGetValue(key, out bracket))
+			if (!m_brackets.TryGetValue(key, out var bracket))
 			{
 				return;
 			}
@@ -711,8 +704,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 
 		internal void AddRtLOpenBracketWithRLMs(IVwEnv vwenv, string key)
 		{
-			string bracket;
-			if (!m_brackets.TryGetValue(key, out bracket))
+			if (!m_brackets.TryGetValue(key, out var bracket))
 			{
 				return;
 			}
@@ -736,8 +728,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 
 		internal void InsertCloseBracket(IVwEnv vwenv, string key)
 		{
-			string bracket;
-			if (!m_brackets.TryGetValue(key, out bracket))
+			if (!m_brackets.TryGetValue(key, out var bracket))
 			{
 				return;
 			}
@@ -746,8 +737,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 
 		internal void AddRtLCloseBracketWithRLMs(IVwEnv vwenv, string key)
 		{
-			string bracket;
-			if (!m_brackets.TryGetValue(key, out bracket))
+			if (!m_brackets.TryGetValue(key, out var bracket))
 			{
 				return;
 			}
@@ -899,10 +889,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 					// If the column or merge properties of the cell changes, we need to regenerate.
 					var cellPartFlidArray = new[]
 					{
-					ConstituentChartCellPartTags.kflidColumn,
-					ConstituentChartCellPartTags.kflidMergesBefore,
-					ConstituentChartCellPartTags.kflidMergesAfter
-				};
+						ConstituentChartCellPartTags.kflidColumn,
+						ConstituentChartCellPartTags.kflidMergesBefore,
+						ConstituentChartCellPartTags.kflidMergesAfter
+					};
 					NoteCellDependencies(cellPartFlidArray, hvoCellPart);
 					ProcessCurrentCellPart(hvoCellPart);
 				}
@@ -929,7 +919,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 					AddCellPartToCell(cellPart);
 					return;
 				}
-				//var ihvoNewCol = m_chart.DisplayFromLogical(GetIndexOfColumn(hvoColContainingCellPart));
 				var ihvoNewCol = GetIndexOfColumn(hvoColContainingCellPart);
 				if (ihvoNewCol < m_iLastColForWhichCellExists || ihvoNewCol >= m_chartBody.AllColumns.Length)
 				{
@@ -1095,16 +1084,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			/// </summary>
 			private bool GoesInsideClauseBrackets(int hvoPart)
 			{
-				if (m_chartBody.Logic.IsWordGroup(hvoPart))
-				{
-					return true;
-				}
-				int dummy;
-				if (m_chartBody.Logic.IsClausePlaceholder(hvoPart, out dummy))
-				{
-					return false;
-				}
-				return !IsListRef(hvoPart);
+				return m_chartBody.Logic.IsWordGroup(hvoPart) || !m_chartBody.Logic.IsClausePlaceholder(hvoPart, out var dummy) && !IsListRef(hvoPart);
 			}
 
 			private void AddCellPartToCell(IConstituentChartCellPart cellPart)
@@ -1240,7 +1220,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 				{
 					var icol = i + m_iLastColForWhichCellExists + 1; // display column index
 					OpenStandardCell(icol, 1);
-					//if (m_chart.Logic.ColumnHasAutoMissingMarkers(m_chart.LogicalFromDisplay(icol)))
 					if (m_chartBody.Logic.ColumnHasAutoMissingMarkers(icol))
 					{
 						m_vwenv.OpenParagraph();
@@ -1329,7 +1308,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			/// </summary>
 			private static bool IsListRef(IConstituentChartCellPart cellPart)
 			{
-				return (cellPart as IConstChartTag)?.TagRA != null;
+				return cellPart is IConstChartTag part && part.TagRA != null;
 			}
 
 			/// <summary>
@@ -1339,8 +1318,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			/// </summary>
 			private static bool IsMissingMkr(IConstituentChartCellPart cellPart)
 			{
-				var part = cellPart as IConstChartTag;
-				return part != null && part.TagRA == null;
+				return cellPart is IConstChartTag part && part.TagRA == null;
 			}
 		}
 	}

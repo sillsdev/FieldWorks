@@ -28,10 +28,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		{
 			try
 			{
-				string sfm;
-				byte[] sfmData;
-				byte[] badSfmData;
-				while (GetNextSfmMarkerAndData(out sfm, out sfmData, out badSfmData))
+				while (GetNextSfmMarkerAndData(out var sfm, out var sfmData, out _))
 				{
 					if (sfm.Length == 0)
 					{

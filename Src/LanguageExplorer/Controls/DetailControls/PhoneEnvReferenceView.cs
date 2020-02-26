@@ -131,12 +131,11 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		private void CacheEnvironments(IMoAffixAllomorph allomorph)
 		{
-			var hvos = m_rootFlid == MoAffixAllomorphTags.kflidPhoneEnv ? allomorph.PhoneEnvRC.ToHvoArray() : allomorph.PositionRS.ToHvoArray();
-			CacheEnvironments(hvos);
+			CacheEnvironments(m_rootFlid == MoAffixAllomorphTags.kflidPhoneEnv ? allomorph.PhoneEnvRC.ToHvoArray() : allomorph.PositionRS.ToHvoArray());
 			AppendPhoneEnv(kDummyPhoneEnvID, null);
 		}
 
-		private void CacheEnvironments(int[] realEnvHvos)
+		private void CacheEnvironments(IEnumerable<int> realEnvHvos)
 		{
 			foreach (var realHvoEnv in realEnvHvos)
 			{
@@ -290,19 +289,11 @@ namespace LanguageExplorer.Controls.DetailControls
 				tssOldSel = m_sda.get_StringProp(m_hvoOldSelection, kEnvStringRep);
 			}
 			base.HandleSelectionChange(rootb, vwselNew);
-			ITsString tss;
-			int ichAnchor;
-			bool fAssocPrev;
-			int hvoObj;
-			int tag;
 			// NB: This will be 0 after each call, since the string does
-			int ws;
 			// not have alternatives. Ws would be the WS of an alternative,
 			// if there were any.
-			vwselNew.TextSelInfo(false, out tss, out ichAnchor, out fAssocPrev, out hvoObj, out tag, out ws); // start of string info
-			int ichEnd;
-			int hvoObjEnd;
-			vwselNew.TextSelInfo(true, out tss, out ichEnd, out fAssocPrev, out hvoObjEnd, out tag, out ws); // end of string info
+			vwselNew.TextSelInfo(false, out var tss, out var ichAnchor, out var fAssocPrev, out var hvoObj, out var tag, out var ws); // start of string info
+			vwselNew.TextSelInfo(true, out tss, out var ichEnd, out fAssocPrev, out var hvoObjEnd, out tag, out ws); // end of string info
 			if (hvoObjEnd != hvoObj)
 			{   // owner of the end of the string in not the same as at the beginning - is this possible?
 				CheckHeight();
@@ -350,7 +341,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			// This point is only passed when the empty env pattern becomes "real"
 			// or when this is the original PropChanged pass and the string is null.
 			// This happens when
-			//  1) a characher is typed in the empty env. (was empty but not now)
+			//  1) a character is typed in the empty env. (was empty but not now)
 			//  2) a non-empty env is left by right-arrowing or clicking passed the separator bar.
 			// Before this, the empty env is a placeholder for the next env.
 			// After it is made real by giving it an hvo for the sda and selection mechanisms,
@@ -423,8 +414,7 @@ namespace LanguageExplorer.Controls.DetailControls
 				if (!m_validator.Recognize(env.StringRepresentation.Text) && !env.StringRepresentation.Equals(tss))
 				{
 					UndoableUnitOfWorkHelper.Do(DetailControlsStrings.ksUndoChange, DetailControlsStrings.ksRedoChange, env, () => { env.StringRepresentation = tss; });
-					ConstraintFailure failure;
-					env.CheckConstraints(PhEnvironmentTags.kflidStringRepresentation, true, out failure, /* adjust the squiggly line */ true);
+					env.CheckConstraints(PhEnvironmentTags.kflidStringRepresentation, true, out _, /* adjust the squiggly line */ true);
 				}
 			}
 			m_sda.SetString(hvoDummyObj, kEnvStringRep, bldr.GetString());
@@ -614,8 +604,7 @@ namespace LanguageExplorer.Controls.DetailControls
 					// in case.
 					anEnvironmentInEntry.StringRepresentation = envTssRep;
 					var bldr = envTssRep.GetBldr();
-					ConstraintFailure failure;
-					if (anEnvironmentInEntry.CheckConstraints(PhEnvironmentTags.kflidStringRepresentation, false, out failure, true))
+					if (anEnvironmentInEntry.CheckConstraints(PhEnvironmentTags.kflidStringRepresentation, false, out var failure, true))
 					{
 						ClearSquigglyLine(localDummyHvoOfAnEnvironmentInEntry, ref envTssRep, ref bldr);
 					}
@@ -702,7 +691,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			var preferredMatches = preferredHvos.Where(preferredHvo => EqualsIgnoringSpaces(GetEnvironmentFromHvo(allProjectEnvs, preferredHvo).StringRepresentation.Text, environmentPattern)).ToList();
 			if (preferredMatches.Any())
 			{
-				var unusedPreferred = preferredMatches.Except(alreadyUsedHvos);
+				var unusedPreferred = preferredMatches.Except(alreadyUsedHvos).ToList();
 				if (unusedPreferred.Any())
 				{
 					return GetEnvironmentFromHvo(allProjectEnvs, unusedPreferred.First());
@@ -730,11 +719,7 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		private static bool equalArrays(int[] v1, int[] v2)
 		{
-			if (v1.Length != v2.Length)
-			{
-				return false;
-			}
-			return !v1.Where((t, i) => t != v2[i]).Any();
+			return v1.Length == v2.Length && !v1.Where((t, i) => t != v2[i]).Any();
 		}
 
 		#endregion // Other methods
@@ -755,16 +740,9 @@ namespace LanguageExplorer.Controls.DetailControls
 			ichEnd = 0;
 			try
 			{
-				bool fAssocPrev;
-				int tag1;
-				int ws1;
 				vwsel = RootBox.Selection;
-				vwsel.TextSelInfo(false, out tss, out ichAnchor, out fAssocPrev, out hvoDummyObj, out tag1, out ws1);
-				ITsString tss2;
-				int hvoObjEnd;
-				int tag2;
-				int ws2;
-				vwsel.TextSelInfo(true, out tss2, out ichEnd, out fAssocPrev, out hvoObjEnd, out tag2, out ws2);
+				vwsel.TextSelInfo(false, out tss, out ichAnchor, out _, out hvoDummyObj, out _, out _);
+				vwsel.TextSelInfo(true, out _, out ichEnd, out _, out var hvoObjEnd, out _, out _);
 				if (hvoDummyObj != hvoObjEnd)
 				{
 					return false;
@@ -781,33 +759,24 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		internal void ShowEnvironmentError()
 		{
-			string s;
-			CanGetEnvironmentStringRep(out s);
-			string sMsg;
-			int pos;
-			StringServices.CreateErrorMessageFromXml(s, m_validator.ErrorMessage, out pos, out sMsg);
+			CanGetEnvironmentStringRep(out var stringRep);
+			StringServices.CreateErrorMessageFromXml(stringRep, m_validator.ErrorMessage, out _, out var sMsg);
 			MessageBox.Show(sMsg, DetailControlsStrings.ksBadEnv, MessageBoxButtons.OK, MessageBoxIcon.Information);
 		}
 
 		internal bool CanShowEnvironmentError()
 		{
-			string s;
-			if (CanGetEnvironmentStringRep(out s))
+			if (CanGetEnvironmentStringRep(out var environment))
 			{
-				return (!m_validator.Recognize(s));
+				return (!m_validator.Recognize(environment));
 			}
 			return false;
 		}
 
 		private bool CanGetEnvironmentStringRep(out string s)
 		{
-			int hvoDummyObj;
-			int ichAnchor;
-			int ichEnd;
-			ITsString tss;
-			IVwSelection vwsel;
 			s = null;
-			if (!GetSelectedStringRep(out tss, out vwsel, out hvoDummyObj, out ichAnchor, out ichEnd))
+			if (!GetSelectedStringRep(out var tss, out _, out var hvoDummyObj, out _, out _))
 			{
 				return false;
 			}
@@ -823,12 +792,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		{
 			get
 			{
-				int hvoDummyObj;
-				int ichAnchor;
-				int ichEnd;
-				ITsString tss;
-				IVwSelection vwsel;
-				if (!GetSelectedStringRep(out tss, out vwsel, out hvoDummyObj, out ichAnchor, out ichEnd))
+				if (!GetSelectedStringRep(out var tss, out _, out var hvoDummyObj, out _, out _))
 				{
 					return false;
 				}
@@ -845,12 +809,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		{
 			get
 			{
-				int hvoDummyObj;
-				int ichAnchor;
-				int ichEnd;
-				ITsString tss;
-				IVwSelection vwsel;
-				if (!GetSelectedStringRep(out tss, out vwsel, out hvoDummyObj, out ichAnchor, out ichEnd))
+				if (!GetSelectedStringRep(out var tss, out _, out var hvoDummyObj, out var ichAnchor, out var ichEnd))
 				{
 					return false;
 				}
@@ -872,12 +831,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		{
 			get
 			{
-				int hvoDummyObj;
-				int ichAnchor;
-				int ichEnd;
-				ITsString tss;
-				IVwSelection vwsel;
-				if (!GetSelectedStringRep(out tss, out vwsel, out hvoDummyObj, out ichAnchor, out ichEnd))
+				if (!GetSelectedStringRep(out var tss, out _, out var hvoDummyObj, out var ichAnchor, out var ichEnd))
 				{
 					return false;
 				}
@@ -885,8 +839,8 @@ namespace LanguageExplorer.Controls.DetailControls
 				{
 					return false;
 				}
-				var s = tss.Text;
-				return !string.IsNullOrEmpty(s) && PhonEnvRecognizer.CanInsertItem(s, ichEnd, ichAnchor);
+				var text = tss.Text;
+				return !string.IsNullOrEmpty(text) && PhonEnvRecognizer.CanInsertItem(text, ichEnd, ichAnchor);
 			}
 		}
 
@@ -894,12 +848,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		{
 			get
 			{
-				int hvoDummyObj;
-				int ichAnchor;
-				int ichEnd;
-				ITsString tss;
-				IVwSelection vwsel;
-				if (!GetSelectedStringRep(out tss, out vwsel, out hvoDummyObj, out ichAnchor, out ichEnd))
+				if (!GetSelectedStringRep(out var tss, out _, out var hvoDummyObj, out var ichAnchor, out var ichEnd))
 				{
 					return false;
 				}
@@ -907,8 +856,8 @@ namespace LanguageExplorer.Controls.DetailControls
 				{
 					return false;
 				}
-				var s = tss.Text;
-				return !string.IsNullOrEmpty(s) && PhonEnvRecognizer.CanInsertHashMark(s, ichEnd, ichAnchor);
+				var text = tss.Text;
+				return !string.IsNullOrEmpty(text) && PhonEnvRecognizer.CanInsertHashMark(text, ichEnd, ichAnchor);
 			}
 		}
 		#endregion
@@ -942,8 +891,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		#region Handle right click menu
 		protected override bool OnRightMouseUp(Point pt, Rectangle rcSrcRoot, Rectangle rcDstRoot)
 		{
-			var sel = RootBox.MakeSelAt(pt.X, pt.Y, rcSrcRoot, rcDstRoot, false);
-			var tsi = new TextSelInfo(sel);
+			var tsi = new TextSelInfo(RootBox.MakeSelAt(pt.X, pt.Y, rcSrcRoot, rcDstRoot, false));
 			return HandleRightClickOnObject(tsi.Hvo(false));
 		}
 

@@ -82,10 +82,8 @@ namespace LanguageExplorer.Controls.DetailControls
 		{
 			Debug.Assert(Cache != null);
 			Debug.Assert(ConfigurationNode != null);
-			var className = Cache.DomainDataByFlid.MetaDataCache.GetClassName(MyCmObject.ClassID);
 			m_fieldName = XmlUtils.GetMandatoryAttributeValue(ConfigurationNode, "field");
-			var mdc = Cache.DomainDataByFlid.MetaDataCache;
-			m_flid = mdc.GetFieldId2(mdc.GetClassId(className), m_fieldName, true);
+			m_flid = Cache.DomainDataByFlid.MetaDataCache.GetFieldId2(MyCmObject.ClassID, m_fieldName, true);
 		}
 	}
 }

@@ -4,6 +4,7 @@
 
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Windows.Forms;
 using SIL.LCModel;
 
@@ -86,8 +87,7 @@ namespace LanguageExplorer.Controls
 					else
 					{
 						// append "none of the above" node to terminal nodes
-						var noneOfTheAboveNode = new FeatureTreeNode(LanguageExplorerControls.ksNoneOfTheAbove, (int)LexTextImageKind.radio, (int)LexTextImageKind.radio, 0, FeatureTreeNodeKind.Other);
-						InsertNode(noneOfTheAboveNode, childNode);
+						InsertNode(new FeatureTreeNode(LanguageExplorerControls.ksNoneOfTheAbove, (int)LexTextImageKind.radio, (int)LexTextImageKind.radio, 0, FeatureTreeNodeKind.Other), childNode);
 					}
 				}
 			}
@@ -104,34 +104,39 @@ namespace LanguageExplorer.Controls
 
 		private void AddNode(IFsFeatDefn defn, FeatureTreeNode parentNode)
 		{
-			var closed = defn as IFsClosedFeature;
-			if (closed != null)
+			switch (defn)
 			{
-				if (!AlreadyInTree(closed.Hvo, parentNode))
+				case IFsClosedFeature closedFeature:
 				{
-					// avoid duplicates
-					var newNode = new FeatureTreeNode(closed.Name.AnalysisDefaultWritingSystem.Text, (int)LexTextImageKind.feature, (int)LexTextImageKind.feature, closed.Hvo, FeatureTreeNodeKind.Closed);
-					InsertNode(newNode, parentNode);
+					if (!AlreadyInTree(closedFeature.Hvo, parentNode))
+					{
+						// avoid duplicates
+						var newNode = new FeatureTreeNode(closedFeature.Name.AnalysisDefaultWritingSystem.Text, (int)LexTextImageKind.feature, (int)LexTextImageKind.feature, closedFeature.Hvo, FeatureTreeNodeKind.Closed);
+						InsertNode(newNode, parentNode);
 
-					foreach (var val in closed.ValuesSorted)
-					{
-						AddNode(val, newNode);
+						foreach (var val in closedFeature.ValuesSorted)
+						{
+							AddNode(val, newNode);
+						}
 					}
+
+					break;
 				}
-			}
-			var complex = defn as IFsComplexFeature;
-			if (complex != null)
-			{
-				if (!AlreadyInTree(complex.Hvo, parentNode))
+				case IFsComplexFeature complexFeature:
 				{
-					// avoid infinite loop if a complex feature's type is the same as other features.
-					var newNode = new FeatureTreeNode(complex.Name.BestAnalysisAlternative.Text, (int)LexTextImageKind.complex, (int)LexTextImageKind.complex, complex.Hvo, FeatureTreeNodeKind.Complex);
-					InsertNode(newNode, parentNode);
-					var type = complex.TypeRA;
-					foreach (var defn2 in type.FeaturesRS)
+					if (!AlreadyInTree(complexFeature.Hvo, parentNode))
 					{
-						AddNode(defn2, newNode);
+						// avoid infinite loop if a complex feature's type is the same as other features.
+						var newNode = new FeatureTreeNode(complexFeature.Name.BestAnalysisAlternative.Text, (int)LexTextImageKind.complex, (int)LexTextImageKind.complex, complexFeature.Hvo, FeatureTreeNodeKind.Complex);
+						InsertNode(newNode, parentNode);
+						var type = complexFeature.TypeRA;
+						foreach (var defn2 in type.FeaturesRS)
+						{
+							AddNode(defn2, newNode);
+						}
 					}
+
+					break;
 				}
 			}
 		}
@@ -146,45 +151,49 @@ namespace LanguageExplorer.Controls
 		{
 			var defn = spec.FeatureRA;
 			var col = parentNode?.Nodes ?? Nodes;
-			var closed = spec as IFsClosedValue;
-			if (closed != null)
+			switch (spec)
 			{
-				foreach (FeatureTreeNode node in col)
+				case IFsClosedValue closedValue:
 				{
-					if (defn.Hvo == node.Hvo)
+					foreach (FeatureTreeNode node in col)
 					{
-						// already there (which is to be expected); see if its value is, too
-						AddNodeFromFS(closed.ValueRA, node);
-						return;
+						if (defn.Hvo == node.Hvo)
+						{
+							// already there (which is to be expected); see if its value is, too
+							AddNodeFromFS(closedValue.ValueRA, node);
+							return;
+						}
 					}
-				}
-				// did not find the node, so add it and its value (not to be expected, but we'd better deal with it)
-				var newNode = new FeatureTreeNode(defn.Name.AnalysisDefaultWritingSystem.Text, (int)LexTextImageKind.feature, (int)LexTextImageKind.feature, defn.Hvo, FeatureTreeNodeKind.Closed);
-				InsertNode(newNode, parentNode);
-				var val = closed.ValueRA;
-				if (val != null)
-				{
-					var newValueNode = new FeatureTreeNode(val.Name.AnalysisDefaultWritingSystem.Text, (int)LexTextImageKind.radioSelected, (int)LexTextImageKind.radioSelected, val.Hvo, FeatureTreeNodeKind.SymFeatValue);
-					newValueNode.Chosen = true;
-					InsertNode(newValueNode, newNode);
-				}
-			}
-			var complex = spec as IFsComplexValue;
-			if (complex != null)
-			{
-				foreach (FeatureTreeNode node in col)
-				{
-					if (defn.Hvo == node.Hvo)
+					// did not find the node, so add it and its value (not to be expected, but we'd better deal with it)
+					var newNode = new FeatureTreeNode(defn.Name.AnalysisDefaultWritingSystem.Text, (int)LexTextImageKind.feature, (int)LexTextImageKind.feature, defn.Hvo, FeatureTreeNodeKind.Closed);
+					InsertNode(newNode, parentNode);
+					var val = closedValue.ValueRA;
+					if (val != null)
 					{
-						// already there (which is to be expected); see if its value is, too
-						AddNode((IFsFeatStruc)complex.ValueOA, node);
-						return;
+						var newValueNode = new FeatureTreeNode(val.Name.AnalysisDefaultWritingSystem.Text, (int)LexTextImageKind.radioSelected, (int)LexTextImageKind.radioSelected, val.Hvo, FeatureTreeNodeKind.SymFeatValue);
+						newValueNode.Chosen = true;
+						InsertNode(newValueNode, newNode);
 					}
+
+					break;
 				}
-				// did not find the node, so add it and its value (not to be expected, but we'd better deal with it)
-				var newNode = new FeatureTreeNode(defn.Name.AnalysisDefaultWritingSystem.Text, (int)LexTextImageKind.complex, (int)LexTextImageKind.complex, defn.Hvo, FeatureTreeNodeKind.Complex);
-				InsertNode(newNode, parentNode);
-				AddNode((IFsFeatStruc)complex.ValueOA, newNode);
+				case IFsComplexValue complexValue:
+				{
+					foreach (FeatureTreeNode node in col)
+					{
+						if (defn.Hvo == node.Hvo)
+						{
+							// already there (which is to be expected); see if its value is, too
+							AddNode((IFsFeatStruc)complexValue.ValueOA, node);
+							return;
+						}
+					}
+					// did not find the node, so add it and its value (not to be expected, but we'd better deal with it)
+					var newNode = new FeatureTreeNode(defn.Name.AnalysisDefaultWritingSystem.Text, (int)LexTextImageKind.complex, (int)LexTextImageKind.complex, defn.Hvo, FeatureTreeNodeKind.Complex);
+					InsertNode(newNode, parentNode);
+					AddNode((IFsFeatStruc)complexValue.ValueOA, newNode);
+					break;
+				}
 			}
 		}
 		private void AddNodeFromFS(IFsSymFeatVal val, FeatureTreeNode parentNode)
@@ -229,12 +238,9 @@ namespace LanguageExplorer.Controls
 			if (node == null)
 			{
 				// at the top level
-				foreach (FeatureTreeNode treeNode in Nodes)
+				if (Nodes.Cast<FeatureTreeNode>().Any(treeNode => iTag == treeNode.Hvo))
 				{
-					if (iTag == treeNode.Hvo)
-					{
-						return true;
-					}
+					return true;
 				}
 			}
 			while (node != null)
@@ -282,7 +288,7 @@ namespace LanguageExplorer.Controls
 			return tn.Nodes.Count == 0;
 		}
 
-		private void HandleCheckBoxNodes(TreeView tv, FeatureTreeNode tn)
+		private static void HandleCheckBoxNodes(TreeView tv, FeatureTreeNode tn)
 		{
 			if (!IsTerminalNode(tn))
 			{

@@ -307,8 +307,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		[Test]
 		public void GenerateFilePath()
 		{
-			List<DictionaryConfigurationModel> conflictingConfigs;
-			var configToRename = GenerateFilePath_Helper(out conflictingConfigs);
+			var configToRename = GenerateFilePath_Helper(out var conflictingConfigs);
 
 			// SUT
 			DictionaryConfigurationManagerController.GenerateFilePath(_controller._projectConfigDir, _controller._configurations, configToRename);
@@ -329,8 +328,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		[Test]
 		public void GenerateFilePath_AccountsForFilesOnDisk()
 		{
-			List<DictionaryConfigurationModel> conflictingConfigs;
-			var configToRename = GenerateFilePath_Helper(out conflictingConfigs);
+			var configToRename = GenerateFilePath_Helper(out _);
 
 			FileUtils.WriteStringtoFile(Path.Combine(_projectConfigPath, "configuration3_3.fwdictconfig"), "file contents of config file that is in the way on disk but not actually registered in the list of configurations", Encoding.UTF8);
 
@@ -657,7 +655,6 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		public void ExportConfiguration_ExportsZip()
 		{
 			// Writing to disk, not just in memory, so can use zip library.
-
 			FileUtils.Manager.Reset();
 			string expectedZipOutput = null;
 			try
@@ -695,7 +692,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		[Test]
 		public void PrepareCustomFieldsExport_Works()
 		{
-			var customFieldLabel = "TestField";
+			const string customFieldLabel = "TestField";
 			using (new CustomFieldForTest(Cache, customFieldLabel, customFieldLabel, LexEntryTags.kClassId, StTextTags.kClassId, -1, CellarPropertyType.OwningAtomic, Guid.Empty))
 			{
 				// SUT

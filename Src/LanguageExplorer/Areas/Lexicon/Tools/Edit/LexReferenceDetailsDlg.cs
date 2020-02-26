@@ -46,26 +46,14 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 		public string ReferenceName
 		{
-			get
-			{
-				return m_tbName.Text;
-			}
-			set
-			{
-				m_tbName.Text = value;
-			}
+			get => m_tbName.Text;
+			set => m_tbName.Text = value;
 		}
 
 		public string ReferenceComment
 		{
-			get
-			{
-				return m_tbComment.Text;
-			}
-			set
-			{
-				m_tbComment.Text = value;
-			}
+			get => m_tbComment.Text;
+			set => m_tbComment.Text = value;
 		}
 
 		/// <summary>

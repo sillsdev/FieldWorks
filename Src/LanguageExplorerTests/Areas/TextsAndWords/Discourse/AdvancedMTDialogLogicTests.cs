@@ -83,16 +83,6 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 		/// <summary>
 		/// Test must preload Clicked Cell, and Eligible Rows and then call this.
 		/// </summary>
-		private void SetupParameterObject(IConstChartWordGroup group)
-		{
-			SetupParamObjBase();
-			Assert.IsNotNull(group, "Invalid CCWordGroup.");
-			m_sentElem.AffectedWordGroups.Add(group);
-		}
-
-		/// <summary>
-		/// Test must preload Clicked Cell, and Eligible Rows and then call this.
-		/// </summary>
 		private void SetupParameterObject(IConstChartWordGroup[] affectedGroupsArray)
 		{
 			SetupParamObjBase();
@@ -222,11 +212,11 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 			SetClickedCell(row0, icolClicked);
 			SetEligibleRows(eligibleRows);
 			SetupParameterObject(new [] { cellPart0_0, cellPart0_0b, cellPart0_0c }); // Sets AffectedWordGroups to these
-
 			var selWords = new [] { allParaOccurrences[0] };
 
 			// SUT
-			m_dlgLogicPrepose.SetAffectedWordGroups(selWords); // We don't care about Pre/Postpose for this method.
+			// We don't care about Pre/Postpose for this method.
+			m_dlgLogicPrepose.SetAffectedWordGroups(selWords);
 
 			// Verify changes in SentElem.AffectedWordGroups
 			var expected = new List<IConstChartWordGroup> { cellPart0_0 };
@@ -251,11 +241,11 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 			SetEligibleRows(eligibleRows);
 			// Initially we set AffectedWordGroups to all the WordGroups in the cell here.
 			SetupParameterObject(new [] { cellPart0_0, cellPart0_0b, cellPart0_0c });
-
 			var selWords = new[] { allParaOccurrences[1], allParaOccurrences[2] };
 
 			// SUT
-			m_dlgLogicPrepose.SetAffectedWordGroups(selWords); // We don't care about Pre/Postpose for this method.
+			// We don't care about Pre/Postpose for this method.
+			m_dlgLogicPrepose.SetAffectedWordGroups(selWords);
 
 			// Verify changes in SentElem.AffectedWordGroups
 			var expected = new List<IConstChartWordGroup> { cellPart0_0, cellPart0_0b };
@@ -280,11 +270,10 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 			SetEligibleRows(eligibleRows);
 			// Initially we set AffectedWordGroups to all the WordGroups in the cell here.
 			SetupParameterObject(new [] { cellPart0_0, cellPart0_0b, cellPart0_0c });
-
 			var selWords = new[] { allParaOccurrences[2], allParaOccurrences[3] };
-
 			// SUT
-			m_dlgLogicPrepose.SetAffectedWordGroups(selWords); // We don't care about Pre/Postpose for this method.
+			// We don't care about Pre/Postpose for this method.
+			m_dlgLogicPrepose.SetAffectedWordGroups(selWords);
 
 			// Verify changes in SentElem.AffectedWordGroups
 			var expected = new List<IConstChartWordGroup> { cellPart0_0b, cellPart0_0c };
@@ -309,11 +298,11 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 			SetEligibleRows(eligibleRows);
 			// Initially we set AffectedWordGroups to all the WordGroups in the cell here.
 			SetupParameterObject(new [] { cellPart0_0, cellPart0_0b, cellPart0_0c });
-
 			var selWords = new[] { allParaOccurrences[3], allParaOccurrences[4] };
 
 			// SUT
-			m_dlgLogicPrepose.SetAffectedWordGroups(selWords); // We don't care about Pre/Postpose for this method.
+			// We don't care about Pre/Postpose for this method.
+			m_dlgLogicPrepose.SetAffectedWordGroups(selWords);
 
 			// Verify changes in SentElem.AffectedWordGroups
 			var expected = new List<IConstChartWordGroup> { cellPart0_0c };
@@ -338,11 +327,11 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 			SetEligibleRows(eligibleRows);
 			// Initially we set AffectedWordGroups to all the WordGroups in the cell here.
 			SetupParameterObject(new [] { cellPart0_0, cellPart0_0b, cellPart0_0c });
-
 			var selWords = new[] { allParaOccurrences[2] };
 
 			// SUT
-			m_dlgLogicPrepose.SetAffectedWordGroups(selWords); // We don't care about Pre/Postpose for this method.
+			// We don't care about Pre/Postpose for this method.
+			m_dlgLogicPrepose.SetAffectedWordGroups(selWords);
 
 			// Verify changes in SentElem.AffectedWordGroups
 			var expected = new List<IConstChartWordGroup> { cellPart0_0b };
@@ -367,12 +356,11 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 			SetEligibleRows(eligibleRows);
 			// Initially we set AffectedWordGroups to all the WordGroups in the cell here.
 			SetupParameterObject(new [] { cellPart0_0, cellPart0_0b, cellPart0_0c });
-
-			var selWords = new[] { allParaOccurrences[1], allParaOccurrences[2],
-				allParaOccurrences[3] };
+			var selWords = new[] { allParaOccurrences[1], allParaOccurrences[2], allParaOccurrences[3] };
 
 			// SUT
-			m_dlgLogicPrepose.SetAffectedWordGroups(selWords); // We don't care about Pre/Postpose for this method.
+			// We don't care about Pre/Postpose for this method.
+			m_dlgLogicPrepose.SetAffectedWordGroups(selWords);
 
 			// Verify changes in SentElem.AffectedWordGroups
 			var expected = new List<IConstChartWordGroup> { cellPart0_0, cellPart0_0b, cellPart0_0c };

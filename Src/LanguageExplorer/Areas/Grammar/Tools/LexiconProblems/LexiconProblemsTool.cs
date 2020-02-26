@@ -33,8 +33,6 @@ namespace LanguageExplorer.Areas.Grammar.Tools.LexiconProblems
 		/// </summary>
 		private CollapsingSplitContainer _collapsingSplitContainer;
 		private IRecordList _recordList;
-		[Import(AreaServices.GrammarAreaMachineName)]
-		private IArea _area;
 
 		#region Implementation of IMajorFlexComponent
 
@@ -119,7 +117,8 @@ namespace LanguageExplorer.Areas.Grammar.Tools.LexiconProblems
 		/// <summary>
 		/// Get the area for the tool.
 		/// </summary>
-		public IArea Area => _area;
+		[field: Import(AreaServices.GrammarAreaMachineName)]
+		public IArea Area { get; private set; }
 
 		/// <summary>
 		/// Get the image for the area.
@@ -156,14 +155,12 @@ namespace LanguageExplorer.Areas.Grammar.Tools.LexiconProblems
 				Guard.AgainstNull(tool, nameof(tool));
 
 				_majorFlexComponentParameters = majorFlexComponentParameters;
-
 				SetupUiWidgets(tool);
 			}
 
 			private void SetupUiWidgets(ITool tool)
 			{
 				var toolUiWidgetParameterObject = new ToolUiWidgetParameterObject(tool);
-
 				_majorFlexComponentParameters.UiWidgetController.AddHandlers(toolUiWidgetParameterObject);
 			}
 

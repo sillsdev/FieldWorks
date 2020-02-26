@@ -16,9 +16,8 @@ namespace LanguageExplorerTests
 		{
 			string[] keyAttributes = { null, null, "name", null };
 			string[] keyValues = { null, null, "test#1", null };
-			string[] stdKeyValues;
 			// SUT
-			var suffix = LayoutKeyUtils.GetSuffixedPartOfNamedViewOrDuplicateNode(keyAttributes, keyValues, out stdKeyValues);
+			var suffix = LayoutKeyUtils.GetSuffixedPartOfNamedViewOrDuplicateNode(keyAttributes, keyValues, out var stdKeyValues);
 			Assert.That(suffix, Is.StringMatching("#1"));
 			Assert.That(stdKeyValues[2], Is.StringMatching("test"));
 			keyValues[2] = "test%01";

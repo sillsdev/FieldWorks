@@ -114,8 +114,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 
 			// Verify
 			Assert.IsTrue(result, "Mark for delete has wrong return value.");
-			DictionaryConfigManager.DictConfigItem item;
-			m_testPresenter.StubConfigDict.TryGetValue(stest2, out item);
+			m_testPresenter.StubConfigDict.TryGetValue(stest2, out var item);
 			Assert.IsTrue(item.UserMarkedDelete, "Mark for delete failed.");
 			Assert.AreEqual("C1", m_testPresenter.StubCurView, "Delete shouldn't affect current view in this case.");
 		}
@@ -141,8 +140,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 
 			// Verify
 			Assert.IsFalse(result, "Mark for delete has wrong return value.");
-			DictionaryConfigManager.DictConfigItem item;
-			m_testPresenter.StubConfigDict.TryGetValue(stest2, out item);
+			m_testPresenter.StubConfigDict.TryGetValue(stest2, out var item);
 			Assert.IsFalse(item.UserMarkedDelete, "Mark for delete succeeded wrongly.");
 			Assert.AreEqual(stest1, m_testPresenter.StubCurView, "Delete shouldn't affect current view in this case.");
 		}
@@ -170,8 +168,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 
 			// Verify
 			Assert.IsTrue(result, "Mark for delete has wrong return value.");
-			DictionaryConfigManager.DictConfigItem item;
-			m_testPresenter.StubConfigDict.TryGetValue(stest2, out item);
+			m_testPresenter.StubConfigDict.TryGetValue(stest2, out var item);
 			Assert.IsTrue(item.UserMarkedDelete, "Mark for delete failed.");
 			Assert.AreEqual(stest1, m_testPresenter.StubCurView, "Delete should have changed current view back to the original.");
 		}
@@ -198,8 +195,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 
 			// Verify
 			Assert.IsTrue(result, "Mark for delete has wrong return value.");
-			DictionaryConfigManager.DictConfigItem item;
-			m_testPresenter.StubConfigDict.TryGetValue(stest2, out item);
+			m_testPresenter.StubConfigDict.TryGetValue(stest2, out var item);
 			Assert.IsTrue(item.UserMarkedDelete, "Mark for delete failed.");
 			Assert.AreEqual(stest2, m_testPresenter.StubOrigView, "Delete should not have changed original view.");
 			Assert.AreEqual(stest1, m_testPresenter.StubCurView, "Delete should have changed current view to the first protected view.");
@@ -227,8 +223,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 
 			// Verify
 			Assert.IsTrue(result, "Mark for delete has wrong return value.");
-			DictionaryConfigManager.DictConfigItem item;
-			m_testPresenter.StubConfigDict.TryGetValue(stest2, out item);
+			m_testPresenter.StubConfigDict.TryGetValue(stest2, out var item);
 			Assert.IsTrue(item.UserMarkedDelete, "Mark for delete failed.");
 			Assert.AreEqual(stest2, m_testPresenter.StubOrigView, "Delete should not have changed original view.");
 			Assert.AreEqual(stest1, m_testPresenter.StubCurView, "Delete should have changed current view to the first protected view.");
@@ -255,8 +250,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 
 			// Verify
 			Assert.AreEqual(cnt + 1, m_testPresenter.StubConfigDict.Count, "Should have added a new item.");
-			DictionaryConfigManager.DictConfigItem item;
-			m_testPresenter.StubConfigDict.TryGetValue(stest2, out item);
+			m_testPresenter.StubConfigDict.TryGetValue(stest2, out var item);
 			Assert.IsFalse(item.IsNew, "Old item should not be marked as New.");
 			var configItem = GetKeyFromValue("Copy of " + stest1);
 			Assert.IsNotNull(configItem, "Didn't find an item with the right Name.");
@@ -349,8 +343,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 
 			// Verify1
 			Assert.AreEqual(cnt, m_testPresenter.StubConfigDict.Count, "Should have the same number of items.");
-			DictionaryConfigManager.DictConfigItem item;
-			m_testPresenter.StubConfigDict.TryGetValue(stest2, out item);
+			m_testPresenter.StubConfigDict.TryGetValue(stest2, out var item);
 			Assert.AreNotEqual(newName, item.DispName, "Should not have renamed config item.");
 		}
 
@@ -377,7 +370,6 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 
 			// Verify1
 			Assert.AreEqual(cnt + 1, m_testPresenter.StubConfigDict.Count, "Should have gained a copied item.");
-			DictionaryConfigManager.DictConfigItem item;
 			var configItem = GetKeyFromValue(newName);
 			Assert.IsNotNull(configItem, "Didn't find an item with the right Name.");
 			Assert.IsTrue(configItem.IsNew, "New item should be marked as New.");
@@ -410,9 +402,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			m_testPresenter.CopyConfigItem(stest2);
 
 			// Verify1
-			Assert.AreEqual(cnt + 1, m_testPresenter.StubConfigDict.Count,
-				"Should have gained a copied item.");
-			DictionaryConfigManager.DictConfigItem item;
+			Assert.AreEqual(cnt + 1, m_testPresenter.StubConfigDict.Count, "Should have gained a copied item.");
 			var configItem = GetKeyFromValue(newName);
 			Assert.IsNotNull(configItem, "Didn't find an item with the right Name.");
 			Assert.IsTrue(configItem.IsNew, "New item should be marked as New.");
@@ -451,8 +441,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			Assert.AreEqual(1, m_testPresenter.NewConfigurationViews.Count(), "Wrong number of new items.");
 			var configItem = GetKeyFromValue("Copy of " + sname2);
 			Assert.IsNotNull(configItem, "Didn't find an item with the right Name.");
-			Assert.AreEqual(configItem.UniqueCode, m_testPresenter.NewConfigurationViews.First().Item1,
-				"Wrong unique code reported for new item.");
+			Assert.AreEqual(configItem.UniqueCode, m_testPresenter.NewConfigurationViews.First().Item1, "Wrong unique code reported for new item.");
 			Assert.AreEqual(sid2, m_testPresenter.NewConfigurationViews.First().Item2, "Wrong Copy Of reported for new item.");
 			Assert.AreEqual(1, m_testPresenter.RenamedExistingViews.Count());
 			Assert.AreEqual(sid2, m_testPresenter.RenamedExistingViews.First().Item1, "Wrong item reported as renamed.");
@@ -488,8 +477,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			m_testPresenter.PersistState();
 
 			// Verify1
-			Assert.AreEqual(1, m_testPresenter.NewConfigurationViews.Count(),
-				"Wrong number of new items.");
+			Assert.AreEqual(1, m_testPresenter.NewConfigurationViews.Count(), "Wrong number of new items.");
 			var configItem = GetKeyFromValue("Copy of " + sname2);
 			Assert.IsNotNull(configItem, "Didn't find an item with the right Name.");
 			Assert.AreEqual(configItem.UniqueCode, m_testPresenter.NewConfigurationViews.First().Item1, "Wrong unique code reported for new item.");

@@ -112,7 +112,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			// In this URI, the stuff up to tag=& is the part that allows FLEx to switch to the right object from the notes browser.
 			// the ID is the thing that allows the NotesBar to select the right notes to display for a particular entry.
 			// the Label is the title under which the note is shown in the Note creation window and notes browser.
-			return string.Format("silfw://localhost/link?app=flex&database=current&server=&tool=default&guid={0}&tag=&id={0}&label={1}", MyCmObject.Guid, MyCmObject.ShortName);
+			return $"silfw://localhost/link?app=flex&database=current&server=&tool=default&guid={MyCmObject.Guid}&tag=&id={MyCmObject.Guid}&label={MyCmObject.ShortName}";
 		}
 
 		private static string GetIdForObject(object targetOfNote)

@@ -149,8 +149,8 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			{
 				return replacement;
 			}
-			int var;
-			var ws = oldTss.get_Properties(0).GetIntPropValues((int)FwTextPropType.ktptWs, out var);
+
+			var ws = oldTss.get_Properties(0).GetIntPropValues((int)FwTextPropType.ktptWs, out _);
 			var cf = m_action.GetCaseFunctionFor(ws);
 			if (cf.StringCase(oldTss.Text) == StringCaseStatus.title)
 			{

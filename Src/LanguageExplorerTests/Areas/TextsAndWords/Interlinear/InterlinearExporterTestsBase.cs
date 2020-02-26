@@ -99,14 +99,14 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 
 		protected static XmlDocument TransformDoc(XmlDocument usxDocument, string fileXsl)
 		{
-			StreamFactory<MemoryStream> createStream = () => new MemoryStream();
+			MemoryStream CreateStream() => new MemoryStream();
 			var transformedDoc = new XmlDocument();
-			ExtractStream<MemoryStream> extractStream = delegate (MemoryStream stream)
+			void ExtractStream(MemoryStream stream)
 			{
 				stream.Seek(0, SeekOrigin.Begin);
 				transformedDoc.Load(stream);
-			};
-			TransformDoc(usxDocument, createStream, extractStream, fileXsl);
+			}
+			TransformDoc(usxDocument, CreateStream, ExtractStream, fileXsl);
 			return transformedDoc;
 		}
 

@@ -22,7 +22,6 @@ using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Resources;
 using SIL.LCModel;
-using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Core.Scripture;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Infrastructure;
@@ -56,14 +55,9 @@ namespace LanguageExplorer.Impls
 		private bool m_fInitialized;
 		/// <summary></summary>
 		private int m_nEnableLevel;
-		/// <summary>
-		/// The FieldWorks manager for dealing with FieldWorks-level stuff.
-		/// </summary>
-		[Import]
-		private IFieldWorksManager m_fwManager;
+
 		/// <summary />
 		private FwFindReplaceDlg m_findReplaceDlg;
-		private SuppressedCacheInfo m_suppressedCacheInfo;
 		/// <summary>
 		/// "NotSupressingRefresh" means that we are not suppressing view refreshes.
 		/// "SupressingRefreshAndWantRefresh" means we're suppressing and we need to do a refresh when finished.
@@ -149,14 +143,10 @@ namespace LanguageExplorer.Impls
 				{
 					return activeForm;
 				}
-				foreach (var tuple in _windows)
+				foreach (var wnd in _windows.Select(tuple => (Form)tuple.Item1).Where(wnd => wnd.ContainsFocus))
 				{
-					var wnd = (Form)tuple.Item1;
-					if (wnd.ContainsFocus)
-					{
-						// It is focussed, so return it.
-						return wnd;
-					}
+					// It is focused, so return it.
+					return wnd;
 				}
 				// None have focus, so get the first one, if there is one.
 				if (_windows.Any())
@@ -300,11 +290,9 @@ namespace LanguageExplorer.Impls
 				// Dispose managed resources here.
 				var mainWnds = new List<Tuple<IFwMainWnd, ExportLifetimeContext<IFwMainWnd>>>(_windows); // Use another list, since _windows may change.
 				_windows.Clear(); // In fact, just clear the main array, so the windows won't have to worry so much.
-				foreach (var tuple in mainWnds)
+				foreach (var mainWnd in mainWnds.Select(tuple => tuple.Item1))
 				{
-					var mainWnd = tuple.Item1;
-					var wnd = mainWnd as Form;
-					if (wnd != null)
+					if (mainWnd is Form wnd)
 					{
 						wnd.Closing -= OnClosingWindow;
 						wnd.Closed -= OnWindowClosed;
@@ -331,7 +319,6 @@ namespace LanguageExplorer.Impls
 			RegistrySettings = null;
 			m_findPattern = null;
 			m_findReplaceDlg = null;
-			m_suppressedCacheInfo = null;
 			PictureHolder = null;
 
 			BeingDisposed = false;
@@ -347,8 +334,7 @@ namespace LanguageExplorer.Impls
 		{
 			var csec = RegistrySettings.TotalAppRuntime;
 			var sStartup = RegistrySettings.LatestAppStartupTime;
-			long start;
-			if (!string.IsNullOrEmpty(sStartup) && long.TryParse(sStartup, out start))
+			if (!string.IsNullOrEmpty(sStartup) && long.TryParse(sStartup, out var start))
 			{
 				var started = new DateTime(start);
 				var finished = DateTime.Now.ToUniversalTime();
@@ -402,8 +388,8 @@ namespace LanguageExplorer.Impls
 		/// </summary>
 		public MsrSysType MeasurementSystem
 		{
-			get { return (MsrSysType)FwRegistrySettings.MeasurementUnitSetting; }
-			set { FwRegistrySettings.MeasurementUnitSetting = (int)value; }
+			get => (MsrSysType)FwRegistrySettings.MeasurementUnitSetting;
+			set => FwRegistrySettings.MeasurementUnitSetting = (int)value;
 		}
 
 		/// <summary>
@@ -511,15 +497,6 @@ namespace LanguageExplorer.Impls
 				}
 				return true;
 			}
-			if (m_suppressedCacheInfo != null)
-			{
-				var messages = m_suppressedCacheInfo.Queue;
-				if (!messages.Contains(sync))
-				{
-					messages.Enqueue(sync);
-				}
-				return true;
-			}
 			if (sync == SyncMsg.ksyncFullRefresh)
 			{
 				RefreshAllViews();
@@ -567,12 +544,9 @@ namespace LanguageExplorer.Impls
 			}
 			// TE-1913: Prevent user from accessing windows that are open to the same project.
 			// Originally this was used for importing.
-			foreach (var fwMainWnd in MainWindows)
+			foreach (var form in MainWindows.OfType<Form>())
 			{
-				if (fwMainWnd is Form)
-				{
-					((Form)fwMainWnd).Enabled = fEnable;
-				}
+				form.Enabled = fEnable;
 			}
 		}
 
@@ -606,10 +580,7 @@ namespace LanguageExplorer.Impls
 			{
 				return false;
 			}
-			int hvoRoot, frag;
-			IVwViewConstructor vc;
-			IVwStylesheet ss;
-			rootsite.RootBox.GetRootObject(out hvoRoot, out vc, out frag, out ss);
+			rootsite.RootBox.GetRootObject(out var hvoRoot, out _, out _, out _);
 			if (hvoRoot == 0)
 			{
 				return false;
@@ -641,7 +612,7 @@ namespace LanguageExplorer.Impls
 				return;
 			}
 			LinkHandler.PublishFollowLinkMessage(fwxwnd.Publisher, link);
-			var asForm = fwxwnd as Form;
+			var asForm = (Form)fwxwnd;
 			var topmost = asForm.TopMost;
 			asForm.TopMost = true;
 			asForm.TopMost = topmost;
@@ -653,7 +624,7 @@ namespace LanguageExplorer.Impls
 		/// </summary>
 		public void HandleOutgoingLink(FwAppArgs link)
 		{
-			m_fwManager.HandleLinkRequest(link);
+			FwManager.HandleLinkRequest(link);
 		}
 
 		/// <summary>
@@ -684,13 +655,11 @@ namespace LanguageExplorer.Impls
 			//Get the files which are pointed to by links in TsStrings
 			CollectMovableFilesFromFolder(lp.FilePathsInTsStringsOA, rgFilesToMove, oldLinkedFilesRootDir, sNewLinkedFilesRootDir);
 			var hyperlinks = StringServices.GetHyperlinksInFolder(Cache, oldLinkedFilesRootDir);
-			foreach (var linkInfo in hyperlinks)
+			foreach (var linkInfo in hyperlinks.Where(linkInfo => !rgFilesToMove.Contains(linkInfo.RelativePath)
+																  && FileUtils.SimilarFileExists(Path.Combine(oldLinkedFilesRootDir, linkInfo.RelativePath))
+																  && !FileUtils.SimilarFileExists(Path.Combine(sNewLinkedFilesRootDir, linkInfo.RelativePath))))
 			{
-				if (!rgFilesToMove.Contains(linkInfo.RelativePath) && FileUtils.SimilarFileExists(Path.Combine(oldLinkedFilesRootDir, linkInfo.RelativePath)) &&
-					!FileUtils.SimilarFileExists(Path.Combine(sNewLinkedFilesRootDir, linkInfo.RelativePath)))
-				{
-					rgFilesToMove.Add(linkInfo.RelativePath);
-				}
+				rgFilesToMove.Add(linkInfo.RelativePath);
 			}
 			if (!rgFilesToMove.Any())
 			{
@@ -1006,12 +975,13 @@ namespace LanguageExplorer.Impls
 		/// <summary>
 		/// Gets the cache, or null if not available.
 		/// </summary>
-		public LcmCache Cache => m_fwManager?.Cache;
+		public LcmCache Cache => FwManager?.Cache;
 
 		/// <summary>
 		/// Gets the FieldWorks manager for this application.
 		/// </summary>
-		public IFieldWorksManager FwManager => m_fwManager;
+		[field: Import]
+		public IFieldWorksManager FwManager { get; private set; }
 
 		/// <summary>
 		/// Removes the specified IFwMainWnd from the list of windows. If it is ok to close down
@@ -1047,7 +1017,7 @@ namespace LanguageExplorer.Impls
 			}
 			if (!_windows.Any())
 			{
-				m_fwManager.ExecuteAsync(m_fwManager.ShutdownApp, this);
+				FwManager.ExecuteAsync(FwManager.ShutdownApp, this);
 			}
 		}
 
@@ -1137,37 +1107,6 @@ namespace LanguageExplorer.Impls
 			Application.Idle -= CloseOldWindow;
 			m_windowToCloseOnIdle?.Close();
 			m_windowToCloseOnIdle = null;
-		}
-
-		/// <summary>
-		/// Returns str surrounded by double-quotes.
-		/// This is useful for paths containing spaces in Linux.
-		/// </summary>
-		private static string Enquote(string str)
-		{
-			return "\"" + str + "\"";
-		}
-
-		/// <summary>
-		/// Like OpenDocument(), but allowing specification of specific exception type T to catch.
-		/// </summary>
-		private static void OpenDocument<T>(string path, Action<T> exceptionHandler) where T : Exception
-		{
-			try
-			{
-				if (MiscUtils.IsUnix && (path.EndsWith(".html") || path.EndsWith(".htm")))
-				{
-					Process.Start(webBrowserProgramLinux, Enquote(path));
-				}
-				else
-				{
-					Process.Start(path);
-				}
-			}
-			catch (T e)
-			{
-				exceptionHandler?.Invoke(e);
-			}
 		}
 
 		/// <summary>
@@ -1363,28 +1302,6 @@ namespace LanguageExplorer.Impls
 		/// </summary>
 		/// <param name="scrn">The screen where the tiling will take place (only windows on this
 		/// screen will actually get tiled).</param>
-		/// <param name="screenDimension">The width or height, in pixels, of the display on
-		/// which tiling will be performed.</param>
-		/// <param name="minWindowDimension">The minimum allowable width or height, in pixels,
-		/// of tiled windows.</param>
-		/// <param name="desiredWindowDimension">The desired width or height, in pixels, of
-		/// tiled windows.</param>
-		/// <param name="windowSpacing">The distance, in pixels, between the left or top edge
-		/// of each tiled window. If there is only one window, this is undefined.</param>
-		private void CalcTileSizeAndSpacing(Screen scrn, int screenDimension, int minWindowDimension, out int desiredWindowDimension, out int windowSpacing)
-		{
-			CalcTileSizeAndSpacing(scrn, MainWindows, screenDimension, minWindowDimension, out desiredWindowDimension, out windowSpacing);
-		}
-
-		/// <summary>
-		/// This method can be used to do the size and spacing calculations when tiling either
-		/// side-by-side or stacked. It calculates two things: 1) The desired width or height
-		/// of tiled windows. 2) how many pixels between the left or top edges of tiled windows.
-		/// If the calculated width or height of a window is less than the allowable minimum,
-		/// then tiled windows will be overlapped.
-		/// </summary>
-		/// <param name="scrn">The screen where the tiling will take place (only windows on this
-		/// screen will actually get tiled).</param>
 		/// <param name="windowsToTile">A list of all the windows to tile (including the
 		/// current window)</param>
 		/// <param name="screenDimension">The width or height, in pixels, of the display on
@@ -1419,183 +1336,6 @@ namespace LanguageExplorer.Impls
 		}
 
 		/// <summary>
-		/// Arrange the windows top to bottom or left to right.
-		/// </summary>
-		/// <param name="wndCurr">Current Window (i.e. window whose menu was used to issue a
-		/// tile vertical or horizontal command.</param>
-		/// <param name="orientation">The value indicating whether to tile side by side or
-		/// stacked.</param>
-		private void TileWindows(Form wndCurr, WindowTiling orientation)
-		{
-			TileWindows(wndCurr, MainWindows, orientation);
-		}
-
-		/// <summary>
-		/// Arrange the windows top to bottom or left to right.
-		/// </summary>
-		/// <param name="wndCurr">Current Window (i.e. window whose menu was used to issue a
-		/// tile vertical or horizontal command.</param>
-		/// <param name="windowsToTile">A list of all the windows to tile (including the
-		/// current window)</param>
-		/// <param name="orientation">The value indicating whether to tile side by side or
-		/// stacked.</param>
-		private static void TileWindows(Form wndCurr, List<IFwMainWnd> windowsToTile, WindowTiling orientation)
-		{
-			// Get the screen in which to tile.
-			var scrn = Screen.FromControl(wndCurr);
-			int desiredDimension, windowSpacing;
-			// At this point, assume the entire screen's working area is the desired size
-			// and location for tiled windows, even though it's highly likely this will
-			// change below.
-			var rcDesired = scrn.WorkingArea;
-			// Get the proper window width or height and the space between the windows
-			// as they are tiled.
-			if (orientation == WindowTiling.Stacked)
-			{
-				CalcTileSizeAndSpacing(scrn, windowsToTile, scrn.WorkingArea.Height, wndCurr.MinimumSize.Height, out desiredDimension, out windowSpacing);
-				rcDesired.Height = desiredDimension;
-			}
-			else
-			{
-				CalcTileSizeAndSpacing(scrn, windowsToTile, scrn.WorkingArea.Width, wndCurr.MinimumSize.Width, out desiredDimension, out windowSpacing);
-				rcDesired.Width = desiredDimension;
-			}
-			// There is a strange situation when a user's task bar is at the right or top
-			// of the primary display. The working area returns the correct rectangle that
-			// does not include the task bar. However, we cannot set a window's X or Y
-			// coordinate to the working area's X or Y. If the window is to be located
-			// in the upper left corner next to the task bar, X and Y must be 0.
-			rcDesired.X -= ScreenHelper.TaskbarWidth;
-			rcDesired.Y -= ScreenHelper.TaskbarHeight;
-			// Move the active window to its proper place and size.
-			wndCurr.DesktopBounds = rcDesired;
-			// Now move the rest of the non minimized windows to their proper place.
-			foreach (Form wnd in windowsToTile)
-			{
-				if (wnd.WindowState == FormWindowState.Maximized)
-				{
-					wnd.WindowState = FormWindowState.Normal;
-				}
-				if (wnd != wndCurr && wnd.WindowState != FormWindowState.Minimized && Screen.FromControl(wnd).WorkingArea == scrn.WorkingArea)
-				{
-					if (orientation == WindowTiling.Stacked)
-					{
-						rcDesired.Y += windowSpacing;
-					}
-					else
-					{
-						rcDesired.X += windowSpacing;
-					}
-
-					wnd.DesktopBounds = rcDesired;
-				}
-			}
-			// If there was any overlapping of tiled windows, go from bottom to the top
-			// or right to left and activate each window so the tiling looks correct. i.e.
-			// Each window is overlapped on its top edge by the window directly on top or left.
-			if (windowSpacing != desiredDimension)
-			{
-				for (var i = windowsToTile.Count - 1; i >= 0; i--)
-				{
-					var currentToTile = windowsToTile[i];
-					var currentWindowToTile = (Form)currentToTile;
-					if (currentToTile != wndCurr && currentWindowToTile.WindowState != FormWindowState.Minimized &&
-						Screen.FromControl(currentWindowToTile).WorkingArea == scrn.WorkingArea)
-					{
-						currentWindowToTile.Activate();
-					}
-				}
-			}
-			// Finally, make the current window active.
-			wndCurr.Activate();
-		}
-
-		/// <summary>
-		/// Suppress execution of all synchronize messages and store them in a queue instead.
-		/// </summary>
-		private void SuppressSynchronize()
-		{
-			if (m_suppressedCacheInfo != null)
-			{
-				m_suppressedCacheInfo.Count++; // Nested call
-			}
-			else
-			{
-				m_suppressedCacheInfo = new SuppressedCacheInfo();
-			}
-		}
-
-		/// <summary>
-		/// Resume execution of synchronize messages. If there are any messages in the queue
-		/// execute them now.
-		/// </summary>
-		private void ResumeSynchronize()
-		{
-			if (m_suppressedCacheInfo == null)
-			{
-				return; // Nothing to do
-			}
-			m_suppressedCacheInfo.Count--;
-			if (m_suppressedCacheInfo.Count > 0)
-			{
-				return; // Still nested
-			}
-			BeginUpdate();
-			var messages = m_suppressedCacheInfo.Queue;
-			m_suppressedCacheInfo = null;
-			var fProcessUndoRedoAfter = false;
-			var savedUndoRedo = SyncMsg.ksyncFullRefresh; // Arbitrary
-			foreach (var synchMsg in messages)
-			{
-				if (synchMsg == SyncMsg.ksyncUndoRedo)
-				{
-					// we must process this synch message after all the others
-					fProcessUndoRedoAfter = true;
-					savedUndoRedo = synchMsg;
-					continue;
-				}
-				// Do the synch
-				if (!Synchronize(synchMsg))
-				{
-					fProcessUndoRedoAfter = false; // Refresh already done, final UndoRedo unnecessary
-					break; // One resulted in Refresh everything, ignore other synch msgs.
-				}
-			}
-			if (fProcessUndoRedoAfter)
-			{
-				Synchronize(savedUndoRedo);
-			}
-			// NOTE: This code may present a race condition, because there is a slight
-			// possibility that a sync message can come to the App at
-			// this point and then get cleared from the syncMessages list and never get run.
-			EndUpdate();
-		}
-
-		/// <summary>
-		/// Suppress all calls to <see cref="T:RefreshAllViews()"/> until <see cref="T:EndUpdate"/> is called.
-		/// </summary>
-		/// <remarks>Used by <see cref="T:ResumeSynchronize"/> to do only one refresh of the view.</remarks>
-		private void BeginUpdate()
-		{
-			Debug.Assert(DeclareRefreshInterest == RefreshInterest.NotSupressingRefresh, "Nested BeginUpdate");
-			DeclareRefreshInterest = RefreshInterest.SupressingRefreshButDoNotWantRefresh;
-		}
-
-		/// <summary>
-		/// Do a <see cref="T:RefreshAllViews()"/> if it was called at least once after <see cref="T:BeginUpdate"/>
-		/// </summary>
-		private void EndUpdate()
-		{
-			Debug.Assert(DeclareRefreshInterest != RefreshInterest.NotSupressingRefresh, "EndUpdate called without BeginUpdate");
-			var needRefresh = DeclareRefreshInterest == RefreshInterest.SupressingRefreshAndWantRefresh;
-			DeclareRefreshInterest = RefreshInterest.NotSupressingRefresh; // Make sure we don't try suppress the following RefreshAllViews()
-			if (needRefresh)
-			{
-				RefreshAllViews();
-			}
-		}
-
-		/// <summary>
 		/// Build a list of files that can be moved (or copied) to the new LinkedFiles root
 		/// directory.
 		/// </summary>
@@ -1620,16 +1360,14 @@ namespace LanguageExplorer.Impls
 				{
 					//if the file exists in the destination LinkedFiles location, then only copy/move it if
 					//file in the source location is newer.
-					var dateTimeOfFileSourceFile = File.GetLastWriteTime(sOldFilePath);
-					var dateTimeOfFileDestinationFile = File.GetLastWriteTime(sNewFilePath);
-					if (dateTimeOfFileSourceFile > dateTimeOfFileDestinationFile)
+					if (File.GetLastWriteTime(sOldFilePath) > File.GetLastWriteTime(sNewFilePath))
 					{
 						rgFilesToMove.Add(sFilepath);
 					}
 				}
 				else
 				{
-					//if the file does not exist in the destination LinkeFiles location then copy/move it.
+					//if the file does not exist in the destination LinkedFiles location then copy/move it.
 					rgFilesToMove.Add(sFilepath);
 				}
 			}
@@ -1652,8 +1390,7 @@ namespace LanguageExplorer.Impls
 				{
 					continue;
 				}
-				if (FileUtils.SimilarFileExists(Path.Combine(sOldRootDir, sFilepath)) &&
-					!FileUtils.SimilarFileExists(Path.Combine(sNewRootDir, sFilepath)))
+				if (FileUtils.SimilarFileExists(Path.Combine(sOldRootDir, sFilepath)) && !FileUtils.SimilarFileExists(Path.Combine(sNewRootDir, sFilepath)))
 				{
 					file.InternalPath = Path.Combine(sOldRootDir, sFilepath);
 				}
@@ -1664,35 +1401,10 @@ namespace LanguageExplorer.Impls
 			}
 		}
 
-		/// <summary>
-		/// Helper class that contains queued SyncMsgs and a reference count for
-		/// Suppress/ResumeSynchronize.
-		/// </summary>
-		private sealed class SuppressedCacheInfo
-		{
-			/// <summary>Reference count</summary>
-			public int Count = 1;
-
-			/// <summary>SyncMsg queue</summary>
-			public readonly Queue<SyncMsg> Queue = new Queue<SyncMsg>();
-		}
-
 		private enum RefreshInterest
 		{
 			NotSupressingRefresh,
-			SupressingRefreshAndWantRefresh,
-			SupressingRefreshButDoNotWantRefresh
-		}
-
-		/// <summary>
-		/// The different window tiling options
-		/// </summary>
-		private enum WindowTiling
-		{
-			/// <summary>Top to bottom (horizontal)</summary>
-			Stacked,
-			/// <summary>Side by side (vertical)</summary>
-			SideBySide,
+			SupressingRefreshAndWantRefresh
 		}
 	}
 }

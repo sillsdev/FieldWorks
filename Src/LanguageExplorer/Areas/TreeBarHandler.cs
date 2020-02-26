@@ -128,8 +128,7 @@ namespace LanguageExplorer.Areas
 			{
 				return;
 			}
-			Font font;
-			var text = GetTreeNodeLabel(currentObject, out font);
+			var text = GetTreeNodeLabel(currentObject, out var font);
 			if (text != node.Text)
 			{
 				node.Text = text;
@@ -340,9 +339,9 @@ namespace LanguageExplorer.Areas
 				{
 					continue;
 				}
-				if (node.Tag is int)
+				if (node.Tag is int tag)
 				{
-					expandedItems.Add((int)node.Tag);
+					expandedItems.Add(tag);
 				}
 				GetExpandedItems(node.Nodes, expandedItems);
 			}

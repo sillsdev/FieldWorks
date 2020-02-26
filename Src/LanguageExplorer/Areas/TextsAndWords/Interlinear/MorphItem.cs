@@ -92,7 +92,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			else
 			{
 				var morph = repository.GetObject(m_hvoMorph);
-				morphEntryReal = morph.Owner as ILexEntry;
+				morphEntryReal = (ILexEntry)morph.Owner;
 			}
 			return morphEntryReal;
 		}

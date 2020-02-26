@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using System.Xml.Serialization;
 
@@ -39,12 +40,7 @@ namespace LCMBrowser
 		public LCMClass Clone()
 		{
 			// Make copies of all the class' properties.
-			var props = new List<LCMClassProperty>();
-			foreach (var clsProp in Properties)
-			{
-				props.Add(new LCMClassProperty { Name = clsProp.Name, Displayed = clsProp.Displayed });
-			}
-
+			var props = Properties.Select(clsProp => new LCMClassProperty { Name = clsProp.Name, Displayed = clsProp.Displayed }).ToList();
 			var cls = new LCMClass(m_classType)
 			{
 				Properties = props
@@ -56,7 +52,7 @@ namespace LCMBrowser
 		[XmlAttribute]
 		public string ClassName
 		{
-			get { return m_className; }
+			get => m_className;
 			set
 			{
 				m_className = value;
@@ -106,15 +102,7 @@ namespace LCMBrowser
 		/// </summary>
 		public bool IsPropertyDisplayed(string propName)
 		{
-			foreach (var prop in Properties)
-			{
-				if (prop.Name == propName)
-				{
-					return prop.Displayed;
-				}
-			}
-
-			return false;
+			return Properties.Where(prop => prop.Name == propName).Select(prop => prop.Displayed).FirstOrDefault();
 		}
 
 		/// <summary>

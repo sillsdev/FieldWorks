@@ -74,10 +74,9 @@ namespace LanguageExplorer.LcmUi
 				{
 					return null;
 				}
-				var besc = bei.BulkEditControl as PhonologicalFeatureEditor;
-				if (besc != null)
+				if (bei.BulkEditControl is PhonologicalFeatureEditor phonologicalFeatureEditor)
 				{
-					besc.EnableTargetFeatureCombo += BulkEditBarPhonologicalFeatures_EnableTargetFeatureCombo;
+					phonologicalFeatureEditor.EnableTargetFeatureCombo += BulkEditBarPhonologicalFeatures_EnableTargetFeatureCombo;
 				}
 				return bei;
 			}
@@ -155,10 +154,9 @@ namespace LanguageExplorer.LcmUi
 				{
 					foreach (var bei in m_beItems)
 					{
-						var besc = bei?.BulkEditControl as PhonologicalFeatureEditor;
-						if (besc != null)
+						if (bei?.BulkEditControl is PhonologicalFeatureEditor phonologicalFeatureEditor)
 						{
-							besc.EnableTargetFeatureCombo -= BulkEditBarPhonologicalFeatures_EnableTargetFeatureCombo;
+							phonologicalFeatureEditor.EnableTargetFeatureCombo -= BulkEditBarPhonologicalFeatures_EnableTargetFeatureCombo;
 						}
 					}
 				}

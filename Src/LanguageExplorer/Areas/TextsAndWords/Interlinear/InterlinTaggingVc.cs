@@ -75,9 +75,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			// Get all AnalysisOccurrences in this Segment
 			var segWords = curSeg.AnalysesRS.Select((t, i) => new AnalysisOccurrence(curSeg, i)).ToList();
 			// Find all the tags for this Segment's AnalysisOccurrences and cache them
-			var textTagList = InterlinearTextServices.GetTaggingReferencingTheseWords(segWords);
 			var occurrencesTagged = new HashSet<AnalysisOccurrence>();
-			foreach (var tag in textTagList)
+			foreach (var tag in InterlinearTextServices.GetTaggingReferencingTheseWords(segWords))
 			{
 				occurrencesTagged.UnionWith(tag.GetOccurrences());
 				CacheTagString(tag);
@@ -129,17 +128,15 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					EndTagSetup(strBldr);
 				}
 				var key = GetDictKey(current);
-				var markupTags = (ICmPossibilityList)tagPossibility.Owner.Owner;
-				var possibilityCount = markupTags.PossibilitiesOS.Count;
 				var row = tagPossibility.Owner.IndexInOwner;
 				ITsString[] myList;
 				if (m_tagStrings.ContainsKey(key))
 				{
 					var currentLength = m_tagStrings[key].Length;
-					if (currentLength < possibilityCount)
+					if (currentLength < ((ICmPossibilityList)tagPossibility.Owner.Owner).PossibilitiesOS.Count)
 					{
 						myList = new ITsString[row >= currentLength ? row + 1 : currentLength];
-						for (int j = 0; j < currentLength; j++)
+						for (var j = 0; j < currentLength; j++)
 						{
 							myList[j] = m_tagStrings[key][j];
 						}
@@ -294,9 +291,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// </summary>
 		internal override void AddExtraBundleRows(IVwEnv vwenv, AnalysisOccurrence analysis)
 		{
-			ITsString[] tss;
-			var key = GetDictKey(analysis);
-			if (!m_tagStrings.TryGetValue(key, out tss))
+			if (!m_tagStrings.TryGetValue(GetDictKey(analysis), out var tss))
 			{
 				return;
 			}

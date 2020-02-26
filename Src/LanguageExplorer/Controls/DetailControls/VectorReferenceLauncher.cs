@@ -68,10 +68,7 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		public override XElement ConfigurationNode
 		{
-			get
-			{
-				return base.ConfigurationNode;
-			}
+			get => base.ConfigurationNode;
 			set
 			{
 				base.ConfigurationNode = value;
@@ -219,14 +216,7 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		protected internal virtual IEnumerable<ICmObject> Targets
 		{
-			get
-			{
-				if (m_obj == null || !m_obj.IsValidObject)
-				{
-					return new ICmObject[0];
-				}
-				return m_cache.GetManagedSilDataAccess().VecProp(m_obj.Hvo, m_flid).Select(hvo => m_cache.ServiceLocator.GetObject(hvo));
-			}
+			get => m_obj == null || !m_obj.IsValidObject ? new ICmObject[0] : m_cache.GetManagedSilDataAccess().VecProp(m_obj.Hvo, m_flid).Select(hvo => m_cache.ServiceLocator.GetObject(hvo));
 			set
 			{
 				// The old and new arrays are compared and modified as little as possible.

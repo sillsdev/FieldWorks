@@ -136,18 +136,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			{
 				return false;
 			}
-			var rootSite = site as IVwRootSite;
-			if (rootSite?.RootBox == null)
-			{
-				return false;
-			}
-			if (control.IsDisposed)
-			{
-				return false;
-			}
-			// It may be visible along with all its parents, but if the chain doesn't
-			// go up to a form we can't really see it.
-			return control.TopLevelControl is Form;
+			return (site as IVwRootSite)?.RootBox != null && !control.IsDisposed && control.TopLevelControl is Form;
 		}
 
 		#region Properties
@@ -179,20 +168,12 @@ namespace SIL.FieldWorks.Common.RootSites
 				}
 				if (m_activeSite != null)
 				{
-					var control = m_activeSite as Control;
-					if (control == null)
-					{
-						return m_activeSite;
-					}
-					return (IsReallyVisible(m_activeSite) ? m_activeSite : null);
+					return !(m_activeSite is Control) ? m_activeSite : IsReallyVisible(m_activeSite) ? m_activeSite : null;
 				}
-				foreach (var site in m_availableSites)
+				foreach (var site in m_availableSites.Where(IsReallyVisible))
 				{
-					if (IsReallyVisible(site))
-					{
-						m_activeSite = site;
-						return site;
-					}
+					m_activeSite = site;
+					return site;
 				}
 				return null;
 			}
@@ -251,13 +232,13 @@ namespace SIL.FieldWorks.Common.RootSites
 			control.ControlAdded += ControlWasAdded;
 			control.ControlRemoved += ControlWasRemoved;
 
-			if (control is IRootSite)
+			if (control is IRootSite rootSite)
 			{
 				// Before blindly adding the event handler, first remove it if there is
 				// already one subscribed
 				control.GotFocus -= ViewGotFocus;
 				control.GotFocus += ViewGotFocus;
-				m_availableSites.Add((IRootSite)control);
+				m_availableSites.Add(rootSite);
 			}
 
 			foreach (Control con in control.Controls)
@@ -275,10 +256,10 @@ namespace SIL.FieldWorks.Common.RootSites
 			control.ControlAdded -= ControlWasAdded;
 			control.ControlRemoved -= ControlWasRemoved;
 
-			if (control is IRootSite)
+			if (control is IRootSite rootSite)
 			{
 				control.GotFocus -= ViewGotFocus;
-				m_availableSites.Remove((IRootSite)control);
+				m_availableSites.Remove(rootSite);
 				if (m_activeSite == control)
 				{
 					m_activeSite = null;

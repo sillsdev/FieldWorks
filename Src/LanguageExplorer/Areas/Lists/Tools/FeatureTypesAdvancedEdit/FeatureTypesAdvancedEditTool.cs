@@ -35,9 +35,6 @@ namespace LanguageExplorer.Areas.Lists.Tools.FeatureTypesAdvancedEdit
 		private RecordBrowseView _recordBrowseView;
 		private IRecordList _recordList;
 
-		[Import(AreaServices.ListsAreaMachineName)]
-		private IArea _area;
-
 		#region Implementation of IMajorFlexComponent
 
 		/// <summary>
@@ -75,7 +72,6 @@ namespace LanguageExplorer.Areas.Lists.Tools.FeatureTypesAdvancedEdit
 			_recordBrowseView = new RecordBrowseView(XDocument.Parse(ListResources.FeatureTypesAdvancedEditBrowseViewParameters).Root,
 				majorFlexComponentParameters.LcmCache, _recordList,
 				majorFlexComponentParameters.UiWidgetController);
-
 			var showHiddenFieldsPropertyName = UiWidgetServices.CreateShowHiddenFieldsPropertyName(MachineName);
 			var dataTree = new DataTree(majorFlexComponentParameters.SharedEventHandlers, majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue(showHiddenFieldsPropertyName, false));
 			_toolMenuHelper = new FeatureTypesAdvancedEditMenuHelper(majorFlexComponentParameters, this, _recordBrowseView, _recordList);
@@ -86,7 +82,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.FeatureTypesAdvancedEdit
 			var mainMultiPaneParameters = new MultiPaneParameters
 			{
 				Orientation = Orientation.Vertical,
-				Area = _area,
+				Area = Area,
 				Id = "FeatureTypesAndDetailMultiPane",
 				ToolMachineName = MachineName
 			};
@@ -104,7 +100,6 @@ namespace LanguageExplorer.Areas.Lists.Tools.FeatureTypesAdvancedEdit
 						majorFlexComponentParameters.MainCollapsingSplitContainer,
 						mainMultiPaneParameters, _recordBrowseView, "Browse", new PaneBar(),
 						recordEditView, "Details", paneBar);
-
 			// Too early before now.
 			recordEditView.FinishInitialization();
 		}
@@ -162,7 +157,8 @@ namespace LanguageExplorer.Areas.Lists.Tools.FeatureTypesAdvancedEdit
 		/// <summary>
 		/// Get the area for the tool.
 		/// </summary>
-		public IArea Area => _area;
+		[field: Import(AreaServices.ListsAreaMachineName)]
+		public IArea Area { get; private set; }
 
 		/// <summary>
 		/// Get the image for the area.
@@ -219,7 +215,6 @@ namespace LanguageExplorer.Areas.Lists.Tools.FeatureTypesAdvancedEdit
 				// Change Text.
 				_majorFlexComponentParameters.UiWidgetController.InsertMenuDictionary[Command.CmdInsertFeatureType].Text = ListResources.Feature_Type;
 				_majorFlexComponentParameters.UiWidgetController.InsertToolBarDictionary[Command.CmdInsertFeatureType].ToolTipText = ListResources.Feature_Type;
-
 				_majorFlexComponentParameters.UiWidgetController.AddHandlers(toolUiWidgetParameterObject);
 				CreateBrowseViewContextMenu();
 			}

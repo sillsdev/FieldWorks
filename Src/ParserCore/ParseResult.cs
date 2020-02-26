@@ -43,18 +43,12 @@ namespace SIL.FieldWorks.WordWorks.Parser
 
 		public override bool Equals(object obj)
 		{
-			var other = obj as ParseResult;
-			return other != null && Equals(other);
+			return obj is ParseResult other && Equals(other);
 		}
 
 		public override int GetHashCode()
 		{
-			var code = 23;
-			foreach (var analysis in Analyses)
-			{
-				code = code * 31 + analysis.GetHashCode();
-			}
-			return code * 31 + (ErrorMessage == null ? 0 : ErrorMessage.GetHashCode());
+			return Analyses.Aggregate(23, (current, analysis) => current * 31 + analysis.GetHashCode()) * 31 + (ErrorMessage == null ? 0 : ErrorMessage.GetHashCode());
 		}
 	}
 }

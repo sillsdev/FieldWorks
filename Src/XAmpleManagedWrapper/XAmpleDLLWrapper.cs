@@ -190,7 +190,7 @@ namespace XAmpleManagedWrapper
 
 		static string PtrToString(IntPtr ptr, Encoding encoding)
 		{
-			int i = 0;
+			var i = 0;
 			byte b;
 			var bytes = new List<byte>();
 			while ((b = Marshal.ReadByte(ptr, i)) != 0)
@@ -256,7 +256,7 @@ namespace XAmpleManagedWrapper
 
 		public string ParseString(string sInput)
 		{
-			string lpszResult = AmpleSetParameterDelegate(m_setup, "TraceAnalysis", "OFF");
+			var lpszResult = AmpleSetParameterDelegate(m_setup, "TraceAnalysis", "OFF");
 			ThrowIfError(lpszResult);
 
 			lpszResult = AmpleParseTextDelegate(GetSetup(), sInput, "n");
@@ -268,7 +268,7 @@ namespace XAmpleManagedWrapper
 		public string TraceString(string input, string sSelectedMorphs)
 		{
 			//Guarantee that tracing has been turned on to XML form
-			string lpszResult = AmpleSetParameterDelegate(m_setup, "TraceAnalysis", "XML");
+			var lpszResult = AmpleSetParameterDelegate(m_setup, "TraceAnalysis", "XML");
 			ThrowIfError(lpszResult);
 
 			// add any selected morphs
@@ -318,7 +318,9 @@ namespace XAmpleManagedWrapper
 			AssignDelegates();
 
 			if (m_setup != IntPtr.Zero)
+			{
 				RemoveSetup();
+			}
 
 			m_setup = AmpleCreateSetup();
 			if (m_setup == IntPtr.Zero)
@@ -331,10 +333,10 @@ namespace XAmpleManagedWrapper
 		{
 			CheckPtr(m_setup);
 
-			var lpszCdTable = string.Format("{0}{1}cd.tab", lspzFixedFilesDir, Path.DirectorySeparatorChar);
-			var lpszAdCtl = string.Format("{0}{1}{2}adctl.txt", lspzDynamicFilesDir, Path.DirectorySeparatorChar, lspzDatabaseName);
-			var lpszGram = string.Format("{0}{1}{2}gram.txt", lspzDynamicFilesDir, Path.DirectorySeparatorChar, lspzDatabaseName);
-			var lpszDict = string.Format("{0}{1}{2}lex.txt", lspzDynamicFilesDir, Path.DirectorySeparatorChar, lspzDatabaseName);
+			var lpszCdTable = $"{lspzFixedFilesDir}{Path.DirectorySeparatorChar}cd.tab";
+			var lpszAdCtl = $"{lspzDynamicFilesDir}{Path.DirectorySeparatorChar}{lspzDatabaseName}adctl.txt";
+			var lpszGram = $"{lspzDynamicFilesDir}{Path.DirectorySeparatorChar}{lspzDatabaseName}gram.txt";
+			var lpszDict = $"{lspzDynamicFilesDir}{Path.DirectorySeparatorChar}{lspzDatabaseName}lex.txt";
 
 			m_ampleReset(m_setup);
 
@@ -377,9 +379,7 @@ namespace XAmpleManagedWrapper
 
 		public int GetAmpleThreadId()
 		{
-			if (Platform.IsWindows)
-				return AmpleThreadId();
-			return 0;
+			return Platform.IsWindows ? AmpleThreadId() : 0;
 		}
 
 		#region Protected members
@@ -420,7 +420,7 @@ namespace XAmpleManagedWrapper
 				{
 					stream.Write(result);
 					stream.Close();
-					string message = filenames.Length == 0 ? result : string.Format("{0}; Files: {1}", result, string.Join(",", filenames));
+					var message = filenames.Length == 0 ? result : $"{result}; Files: {string.Join(",", filenames)}";
 					throw new ApplicationException(message);
 				}
 			}
@@ -459,7 +459,7 @@ namespace XAmpleManagedWrapper
 		{
 			var lpszComment = Comment.ToString();
 
-			string sResult = AmpleSetParameterDelegate(m_setup, "BeginComment", lpszComment);
+			var sResult = AmpleSetParameterDelegate(m_setup, "BeginComment", lpszComment);
 			ThrowIfError(sResult);
 
 			sResult = AmpleSetParameterDelegate(m_setup, "MaxMorphnameLength", m_options.MaxMorphnameLength.ToString());

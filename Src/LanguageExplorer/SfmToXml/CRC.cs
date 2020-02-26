@@ -53,7 +53,7 @@ namespace LanguageExplorer.SfmToXml
 			return crc ^ CRC32_STARTVALUE;
 		}
 
-		private uint CalculateCRC_N(byte[] buffer, int count, uint lastValue, bool bFirst, bool bLast)
+		private static uint CalculateCRC_N(byte[] buffer, int count, uint lastValue, bool bFirst, bool bLast)
 		{
 			var crc = CRC32_STARTVALUE;
 			if (!bFirst)

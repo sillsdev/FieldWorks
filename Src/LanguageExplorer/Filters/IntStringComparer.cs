@@ -56,13 +56,9 @@ namespace LanguageExplorer.Filters
 		/// <summary />
 		public override bool Equals(object obj)
 		{
-			if (obj == null)
-			{
-				return false;
-			}
 			// TODO-Linux: System.Boolean System.Type::op_Inequality(System.Type,System.Type)
 			// is marked with [MonoTODO] and might not work as expected in 4.0.
-			return GetType() == obj.GetType();
+			return obj != null && GetType() == obj.GetType();
 		}
 
 		/// <summary />

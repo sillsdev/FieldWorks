@@ -167,16 +167,7 @@ namespace LanguageExplorer.Controls.XMLViews
 						throw new Exception("Unrecognized field type for generator: " + m_fieldType);
 				}
 				// Todo JohnT: handle restrictions.
-				var acceptedFields = new List<int>();
-				var uiIds = m_mdc.GetFields(m_clsid, true, (int)fieldTypes);
-				foreach (var ui in uiIds)
-				{
-					if (Accept(ui))
-					{
-						acceptedFields.Add(ui);
-					}
-				}
-				return acceptedFields;
+				return m_mdc.GetFields(m_clsid, true, (int)fieldTypes).Where(Accept).ToList();
 			}
 		}
 
@@ -463,13 +454,9 @@ namespace LanguageExplorer.Controls.XMLViews
 					var match = false;
 					if (keyAttrNames != null)
 					{
-						foreach (var matchNode in root.Elements())
+						if (root.Elements().Any(matchNode => MatchNodes(matchNode, genNode, keyAttrNames)))
 						{
-							if (MatchNodes(matchNode, genNode, keyAttrNames))
-							{
-								match = true;
-								break;
-							}
+							match = true;
 						}
 					}
 					if (!match) // not already present, or not checking; add it.
@@ -529,9 +516,9 @@ namespace LanguageExplorer.Controls.XMLViews
 			}
 
 			/// <summary />
-			public List<XElement> GenerateChildPartsIfNeeded()
+			public void GenerateChildPartsIfNeeded()
 			{
-				return GeneratePartsFromLayouts(m_rootClassId, XmlUtils.GetOptionalAttributeValue(m_source, "layout"), 0, ref m_source);
+				GeneratePartsFromLayouts(m_rootClassId, XmlUtils.GetOptionalAttributeValue(m_source, "layout"), 0, ref m_source);
 			}
 		}
 
@@ -568,7 +555,6 @@ namespace LanguageExplorer.Controls.XMLViews
 			/// </summary>
 			public override XElement[] Generate()
 			{
-				var ids = FieldIds;
 				var result = new XElement[m_collectionToGeneratePartsFrom.Count];
 				var iresult = 0;
 				// Enhance: generalize this
@@ -610,9 +596,7 @@ namespace LanguageExplorer.Controls.XMLViews
 
 			public override bool Visit(XAttribute xa)
 			{
-				var old = xa.Value;
-				var index = old.IndexOf(m_pattern);
-				if (index >= 0)
+				if (xa.Value.IndexOf(m_pattern) >= 0)
 				{
 					m_targets.Add(xa);
 				}

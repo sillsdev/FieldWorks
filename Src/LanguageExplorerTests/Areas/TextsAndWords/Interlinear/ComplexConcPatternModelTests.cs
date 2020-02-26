@@ -99,8 +99,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 			fs.TypeRA = type;
 			foreach (var featVal in featVals)
 			{
-				var closedFeat = featVal.Key as IFsClosedFeature;
-				if (closedFeat != null)
+				if (featVal.Key is IFsClosedFeature closedFeat)
 				{
 					var sym = (IFsSymFeatVal)featVal.Value;
 					var cv = Cache.ServiceLocator.GetInstance<IFsClosedValueFactory>().Create();
@@ -159,8 +158,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 			for (var i = 0; i < seg.AnalysesRS.Count; i++)
 			{
 				var analysis = seg.AnalysesRS[i];
-				var wordform = analysis as IWfiWordform;
-				if (wordform != null)
+				if (analysis is IWfiWordform wordform)
 				{
 					seg.AnalysesRS[i] = wordform.AnalysesOC.First().MeaningsOC.First();
 				}
@@ -197,8 +195,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 			var entry = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create();
 			// Lexeme Form and MSA.
 			var slotType = GetSlotType(lf);
-			IMoForm form;
-			var msa = GetMsaAndMoForm(entry, slotType, pos, inflFS, out form);
+			var msa = GetMsaAndMoForm(entry, slotType, pos, inflFS, out var form);
 			entry.LexemeFormOA = form;
 			var trimmed = lf.Trim('-');
 			form.Form.VernacularDefaultWritingSystem = MakeVernString(trimmed);

@@ -156,10 +156,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </exception>
 		public int SelectedIndex
 		{
-			get
-			{
-				return m_selectedIndex;
-			}
+			get => m_selectedIndex;
 			set
 			{
 				if (_hvoRoot == 0)
@@ -330,7 +327,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			if (ReadOnlySelect)
 			{
 				// We should NOT have focus! See if someone can take it back.
-				m_bv.Publisher.Publish("BrowseViewStoleFocus", this);
+				m_bv.Publisher.Publish(new PublisherParameterObject("BrowseViewStoleFocus", this));
 			}
 		}
 
@@ -439,9 +436,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			using (new HoldGraphics(this))
 			{
 				var pt = PixelToView(new Point(e.X, e.Y));
-				Rectangle rcSrcRoot;
-				Rectangle rcDstRoot;
-				GetCoordRects(out rcSrcRoot, out rcDstRoot);
+				GetCoordRects(out var rcSrcRoot, out var rcDstRoot);
 				// This can legitimately return null,
 				// e.g. because they selected beyond the last item.
 				return RootBox.MakeSelAt(pt.X, pt.Y, rcSrcRoot, rcDstRoot, false);
@@ -465,7 +460,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		/// <param name="sel"></param>
 		/// <param name="fEndPoint">true to get index based on end of selection, false based on anchor.
-		/// deafault is true, so in a long drag we get the mouse-up row.</param>
+		/// default is true, so in a long drag we get the mouse-up row.</param>
 		/// <returns></returns>
 		internal int GetRowIndexFromSelection(IVwSelection sel, bool fEndPoint)
 		{
@@ -476,9 +471,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			try
 			{
 				var clev = sel.CLevels(fEndPoint);
-				int hvoRoot, tag, ihvo, cpropPrevious;
-				IVwPropertyStore vps;
-				sel.PropInfo(fEndPoint, clev - 1, out hvoRoot, out tag, out ihvo, out cpropPrevious, out vps);
+				sel.PropInfo(fEndPoint, clev - 1, out _, out var tag, out var ihvo, out _, out _);
 				if (tag != MainTag) // not sure how this could happen, but the precaution was in an earlier version.
 				{
 					return -1;
@@ -612,17 +605,8 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				return;
 			}
-			int iLevel;
-			int iBox;
-			int iTableBox;
-			int cTableBoxes;
-			int iTableLevel;
-			int iCellBox;
-			int cCellBoxes;
-			int iCellLevel;
-			GetCurrentTableCellInfo(vwsel, out iLevel, out iBox, out iTableBox,
-									out cTableBoxes, out iTableLevel, out iCellBox, out cCellBoxes,
-									out iCellLevel);
+
+			GetCurrentTableCellInfo(vwsel, out var iLevel, out var iBox, out var iTableBox, out _, out _, out var iCellBox, out _, out var iCellLevel);
 			var vwsel2 = RootBox.MakeSelInBox(vwsel, true, iCellLevel, iCellBox, true, true, false);
 			if (vwsel2 == null)
 			{
@@ -632,13 +616,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			// from a bulk edit check box in a row that is all read-only, the resulting
 			// selection may be in another row. If we can't make a valid selection where
 			// we're trying to, don't change it at all.
-			int iLevel2;
-			int iBox2;
-			int iTableBox2;
-			int iCellBox2;
-			GetCurrentTableCellInfo(vwsel2, out iLevel2, out iBox2, out iTableBox2,
-									out cTableBoxes, out iTableLevel, out iCellBox2, out cCellBoxes,
-									out iCellLevel);
+			GetCurrentTableCellInfo(vwsel2, out var iLevel2, out var iBox2, out var iTableBox2, out _, out _, out var iCellBox2, out _, out iCellLevel);
 			if (iLevel2 == iLevel && iBox2 == iBox && iTableBox2 == iTableBox && iCellBox2 == iCellBox)
 			{
 				vwsel2.Install();
@@ -666,7 +644,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		protected override void OnMouseUp(MouseEventArgs e)
 		{
-			//If XmlBrouseView did not receive a mouse down event then we do not want to
+			//If XmlBrowseView did not receive a mouse down event then we do not want to
 			//do anything on the mouseUp because the mouseUp would have come from clicking
 			//somewhere else. LT-8939
 			if (!m_fMouseUpEnabled)
@@ -712,17 +690,13 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		internal SelectionHighlighting SelectedRowHighlighting
 		{
-			get
-			{
-				return m_fSelectedRowHighlighting;
-			}
+			get => m_fSelectedRowHighlighting;
 			set
 			{
 				if (m_fSelectedRowHighlighting == value)
 				{
 					return; // Nothing to do.
 				}
-
 				m_fSelectedRowHighlighting = value;
 				// Turn on or off the highlighting of the current row.
 				if (m_selectedIndex >= 0 && RootBox != null)
@@ -737,23 +711,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// True if we are running the read-only version of the view that is primarily used for
 		/// selecting.
 		/// </summary>
-		protected virtual bool ReadOnlySelect
-		{
-			get
-			{
-				if (PropertyTable == null)
-				{
-					return false;
-				}
-				// if we have an editable attribute defined use its value
-				if (_configurationSpec?.Attribute("editable") != null)
-				{
-					var fEditable = XmlUtils.GetBooleanAttributeValue(_configurationSpec, "editable");
-					return !fEditable;
-				}
-				return false; // "_readOnlyBrowse" properties are deprecated.
-			}
-		}
+		protected virtual bool ReadOnlySelect => PropertyTable != null && _configurationSpec?.Attribute("editable") != null && !XmlUtils.GetBooleanAttributeValue(_configurationSpec, "editable");
 
 		/// <summary>
 		/// the object that has properties that are shown by this view.
@@ -764,10 +722,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </remarks>
 		public virtual int RootObjectHvo
 		{
-			get
-			{
-				return _hvoRoot;
-			}
+			get => _hvoRoot;
 			set
 			{
 				if (value == 0)
@@ -989,12 +944,10 @@ namespace LanguageExplorer.Controls.XMLViews
 			set
 			{
 				Debug.Assert(!IsVertical, "Unexpected vertical XmlBrowseViewBase");
-
 				if (m_bv?.ScrollBar != null)
 				{
 					m_bv.ScrollBar.Maximum = value.Height;
 				}
-
 				// A new rootbox height will lead to a new MeanRowHeight, so ScrollBar.LargeChange and .SmallChange need
 				// to be updated.
 				SetScrollBarParameters(m_bv.ScrollBar);
@@ -1004,22 +957,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// Zero if no rows or null RootBox.
 		/// </summary>
-		public int MeanRowHeight
-		{
-			get
-			{
-				if (RootBox == null)
-				{
-					return 0;
-				}
-
-				if (RowCount == 0)
-				{
-					return 0;
-				}
-				return RootBox.Height / RowCount;
-			}
-		}
+		public int MeanRowHeight => RootBox == null ? 0 : RowCount == 0 ? 0 : RootBox.Height / RowCount;
 
 		/// <summary>
 		/// The amount of content that the user can scroll through within the content display area.
@@ -1050,10 +988,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		public override Point ScrollPosition
 		{
-			get
-			{
-				return _scrollPosition;
-			}
+			get => _scrollPosition;
 
 			set
 			{
@@ -1179,9 +1114,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				using (new HoldGraphics(this))
 				{
-					Rectangle rcSrcRoot;
-					Rectangle rcDstRoot;
-					GetCoordRects(out rcSrcRoot, out rcDstRoot);
+					GetCoordRects(out var rcSrcRoot, out var rcDstRoot);
 					var sel = RootBox.MakeSelAt(1, 0, rcSrcRoot, rcDstRoot, false);
 					m_iTopOfScreenObjectForScrollPosition = -1; // in case we can't figure one.
 					if (sel == null)
@@ -1190,9 +1123,7 @@ namespace LanguageExplorer.Controls.XMLViews
 					}
 					// This gets us the index of the object at the top of the screen in the list of
 					// objects we are browsing.
-					int hvoObjDummy, tagDummy, cpropPreviousDummy;
-					IVwPropertyStore vpsDummy;
-					sel.PropInfo(false, sel.CLevels(false) - 1, out hvoObjDummy, out tagDummy, out m_iTopOfScreenObjectForScrollPosition, out cpropPreviousDummy, out vpsDummy);
+					sel.PropInfo(false, sel.CLevels(false) - 1, out _, out _, out m_iTopOfScreenObjectForScrollPosition, out _, out _);
 					// Get a selection of that whole object. This is just in case there might be a pixel or two difference
 					// between the top of an IP and the top of the rectangle that encloses the whole object.
 					var rgvsli = new SelLevInfo[1];
@@ -1208,9 +1139,7 @@ namespace LanguageExplorer.Controls.XMLViews
 					//sel = RootBox.MakeSelInObj(0, 1, rgvsli, 0, false);
 					// Get its position, specifically, we save the distance from the top of the client area to the top of the object.
 					// Often this will be negative because the top of the TOS object is just above the top of the client area.
-					Rect rcPrimary, rcSec;
-					bool fSplit, fEndBeforeAnchor;
-					sel.Location(m_graphicsManager.VwGraphics, rcSrcRoot, rcDstRoot, out rcPrimary, out rcSec, out fSplit, out fEndBeforeAnchor);
+					sel.Location(m_graphicsManager.VwGraphics, rcSrcRoot, rcDstRoot, out var rcPrimary, out _, out _, out _);
 					m_dyTopOfScreenOffset = rcPrimary.top;
 				}
 			}
@@ -1262,14 +1191,10 @@ namespace LanguageExplorer.Controls.XMLViews
 				}
 				using (new HoldGraphics(this))
 				{
-					Rectangle rcSrcRoot;
-					Rectangle rcDstRoot;
-					GetCoordRects(out rcSrcRoot, out rcDstRoot);
+					GetCoordRects(out var rcSrcRoot, out var rcDstRoot);
 					// Get its position, specifically, we save the distance from the top of the client area to the top of the object.
 					// Often this will be negative because the top of the TOS object is just above the top of the client area.
-					Rect rcPrimary, rcSec;
-					bool fSplit, fEndBeforeAnchor;
-					sel.Location(m_graphicsManager.VwGraphics, rcSrcRoot, rcDstRoot, out rcPrimary, out rcSec, out fSplit, out fEndBeforeAnchor);
+					sel.Location(m_graphicsManager.VwGraphics, rcSrcRoot, rcDstRoot, out var rcPrimary, out _, out _, out _);
 					var dyCurrentOffset = rcPrimary.top;
 					var scrollDistance = dyCurrentOffset - m_dyTopOfScreenOffset; // positive means move window contents down.
 					var currentAsp = ScrollPosition; // negative!!
@@ -1327,14 +1252,8 @@ namespace LanguageExplorer.Controls.XMLViews
 			var sel = GetRowSelection(m_selectedIndex);
 			using (new HoldGraphics(this))
 			{
-				Rect rcPrimary;
-				Rect rcSecondary;
-				bool fSplit;
-				Rectangle rcSrcRoot;
-				Rectangle rcDstRoot;
-				GetCoordRects(out rcSrcRoot, out rcDstRoot);
-				bool fEndBeforeAnchor;
-				sel.Location(m_graphicsManager.VwGraphics, rcSrcRoot, rcDstRoot, out rcPrimary, out rcSecondary, out fSplit, out fEndBeforeAnchor);
+				GetCoordRects(out var rcSrcRoot, out var rcDstRoot);
+				sel.Location(m_graphicsManager.VwGraphics, rcSrcRoot, rcDstRoot, out var rcPrimary, out _, out _, out _);
 
 				return new Rectangle(rcPrimary.left, rcPrimary.top, rcPrimary.right - rcPrimary.left, rcPrimary.bottom - rcPrimary.top);
 			}
@@ -1394,16 +1313,13 @@ namespace LanguageExplorer.Controls.XMLViews
 					// If selection is already on the right row don't move it; might interfere with editing.
 					// Sometimes (e.g., in Words RDE) we get RecordNavigation during editing.
 					var clev = vwSel.CLevels(false); // anchor
-					int hvoRoot, tag, ihvo, cpropPrevious;
-					IVwPropertyStore vps;
 					// The first argument below was true, which seems wrong.  See LT-8506, which
 					// tends to prove that the argument must match that used in vwSel.CLevels() above.
-					vwSel.PropInfo(false, clev - 1, out hvoRoot, out tag, out ihvo, out cpropPrevious, out vps);
+					vwSel.PropInfo(false, clev - 1, out _, out _, out var ihvo, out _, out _);
 
 					// If it's multi-line also don't change it.
 					clev = vwSel.CLevels(true); // end
-					int ihvoEnd;
-					vwSel.PropInfo(true, clev - 1, out hvoRoot, out tag, out ihvoEnd, out cpropPrevious, out vps);
+					vwSel.PropInfo(true, clev - 1, out _, out _, out var ihvoEnd, out _, out _);
 					fWantNewIp = (ihvo == ihvoEnd && ihvo != SelectedIndex);
 				}
 				catch
@@ -1454,9 +1370,7 @@ namespace LanguageExplorer.Controls.XMLViews
 					if (vwselNew != null)
 					{
 						var clev = vwselNew.CLevels(false); // anchor
-						int hvoRoot, tag, ihvo, cpropPrevious;
-						IVwPropertyStore vps;
-						vwselNew.PropInfo(false, clev - 1, out hvoRoot, out tag, out ihvo, out cpropPrevious, out vps);
+						vwselNew.PropInfo(false, clev - 1, out _, out _, out var ihvo, out _, out _);
 						if (ihvo == index)
 						{
 							// install the selection this time.
@@ -1467,7 +1381,7 @@ namespace LanguageExplorer.Controls.XMLViews
 				}
 				catch (ObjectDisposedException ode)
 				{
-					throw ode; // We should die, if we get into this one.
+					throw; // We should die, if we get into this one.
 				}
 				catch
 				{
@@ -1507,9 +1421,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		public virtual VwLength[] GetColWidthInfo()
 		{
-			int[] widths; // not wanted here.
-			VwLength[] rglength;
-			m_bv.GetColWidthInfo(out rglength, out widths);
+			m_bv.GetColWidthInfo(out var rglength, out _);
 			return rglength;
 		}
 
@@ -1573,7 +1485,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			base.MakeRoot();
 
 			// Only change it if it is null or different.
-			// Otherwise, it does an uneeded disposal/creation of the layout cache.
+			// Otherwise, it does an unneeded disposal/creation of the layout cache.
 			if (m_xbvvc.Cache == null || m_xbvvc.Cache != m_cache)
 			{
 				m_xbvvc.Cache = m_cache;
@@ -1765,13 +1677,11 @@ namespace LanguageExplorer.Controls.XMLViews
 				{
 					m_repo = Cache.ServiceLocator.GetInstance<ICmObjectRepository>();
 				}
-				ICmObject objSel;
-				if (!m_repo.TryGetObject(SelectedObject, out objSel))
+				if (!m_repo.TryGetObject(SelectedObject, out var objSel))
 				{
 					return;
 				}
-				ICmObject obj;
-				if (!m_repo.TryGetObject(hvo, out obj))
+				if (!m_repo.TryGetObject(hvo, out var obj))
 				{
 					return;
 				}

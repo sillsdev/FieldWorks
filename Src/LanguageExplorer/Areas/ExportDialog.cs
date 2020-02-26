@@ -127,8 +127,7 @@ namespace LanguageExplorer.Areas
 			var cmo = PropertyTable.GetValue<ICmObject>(LanguageExplorerConstants.ActiveListSelectedObject, null);
 			if (cmo != null)
 			{
-				int clidRoot;
-				var newHvoRoot = SetRoot(cmo, out clidRoot);
+				var newHvoRoot = SetRoot(cmo, out var clidRoot);
 				if (newHvoRoot > 0)
 				{
 					m_hvoRootObj = newHvoRoot;
@@ -151,21 +150,26 @@ namespace LanguageExplorer.Areas
 		{
 			clidRoot = -1;
 			var hvoRoot = -1;
-			// Handle LexEntries that no longer have owners.
-			if (cmo is ILexEntry)
+			switch (cmo)
 			{
-				hvoRoot = m_cache.LanguageProject.LexDbOA.Hvo;
-				clidRoot = m_cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries;
-			}
-			else if (cmo is ICmSemanticDomain)
-			{
-				hvoRoot = cmo.OwnerOfClass<ICmPossibilityList>().Hvo;
-				clidRoot = CmPossibilityListTags.kClassId;
-			}
-			else if (cmo.Owner != null)
-			{
-				hvoRoot = cmo.Owner.Hvo;
-				clidRoot = cmo.Owner.ClassID;
+				// Handle LexEntries that no longer have owners.
+				case ILexEntry _:
+					hvoRoot = m_cache.LanguageProject.LexDbOA.Hvo;
+					clidRoot = m_cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries;
+					break;
+				case ICmSemanticDomain _:
+					hvoRoot = cmo.OwnerOfClass<ICmPossibilityList>().Hvo;
+					clidRoot = CmPossibilityListTags.kClassId;
+					break;
+				default:
+				{
+					if (cmo.Owner != null)
+					{
+						hvoRoot = cmo.Owner.Hvo;
+						clidRoot = cmo.Owner.ClassID;
+					}
+					break;
+				}
 			}
 			return hvoRoot;
 		}
@@ -175,23 +179,14 @@ namespace LanguageExplorer.Areas
 		/// </summary>
 		private static XmlDocView FindXmlDocView(Control control)
 		{
-			if (control == null)
+			switch (control)
 			{
-				return null;
+				case null:
+					return null;
+				case XmlDocView view:
+					return view;
 			}
-			if (control is XmlDocView)
-			{
-				return (XmlDocView)control;
-			}
-			foreach (Control c in control.Controls)
-			{
-				var xdv = FindXmlDocView(c);
-				if (xdv != null)
-				{
-					return xdv;
-				}
-			}
-			return null;
+			return control.Controls.Cast<Control>().Select(FindXmlDocView).FirstOrDefault(xdv => xdv != null);
 		}
 
 		/// <summary>
@@ -199,23 +194,14 @@ namespace LanguageExplorer.Areas
 		/// </summary>
 		private static XmlBrowseView FindXmlBrowseView(Control control)
 		{
-			if (control == null)
+			switch (control)
 			{
-				return null;
+				case null:
+					return null;
+				case XmlBrowseView view:
+					return view;
 			}
-			if (control is XmlBrowseView)
-			{
-				return (XmlBrowseView)control;
-			}
-			foreach (Control c in control.Controls)
-			{
-				var xbv = FindXmlBrowseView(c);
-				if (xbv != null)
-				{
-					return xbv;
-				}
-			}
-			return null;
+			return control.Controls.Cast<Control>().Select(FindXmlBrowseView).FirstOrDefault(xbv => xbv != null);
 		}
 
 		/// <inheritdoc />
@@ -735,10 +721,10 @@ namespace LanguageExplorer.Areas
 			switch (m_rgFxtTypes[FxtIndex((string)m_exportItems[0].Tag)].m_ft)
 			{
 				case FxtTypes.kftConfigured:
-					new DictionaryExportService(m_cache, PropertyTable.GetValue<IRecordListRepository>(LanguageExplorerConstants.RecordListRepository).ActiveRecordList, PropertyTable, Publisher, _mainWindowStatusBar).ExportDictionaryContent(xhtmlPath, progress: progress);
+					new DictionaryExportService(m_cache, PropertyTable.GetValue<IRecordListRepository>(LanguageExplorerConstants.RecordListRepository).ActiveRecordList, PropertyTable, _mainWindowStatusBar).ExportDictionaryContent(xhtmlPath, progress: progress);
 					break;
 				case FxtTypes.kftReversal:
-					new DictionaryExportService(m_cache, PropertyTable.GetValue<IRecordListRepository>(LanguageExplorerConstants.RecordListRepository).ActiveRecordList, PropertyTable, Publisher, _mainWindowStatusBar).ExportReversalContent(xhtmlPath, progress: progress);
+					new DictionaryExportService(m_cache, PropertyTable.GetValue<IRecordListRepository>(LanguageExplorerConstants.RecordListRepository).ActiveRecordList, PropertyTable, _mainWindowStatusBar).ExportReversalContent(xhtmlPath, progress: progress);
 					break;
 			}
 			return null;
@@ -751,7 +737,7 @@ namespace LanguageExplorer.Areas
 			var sXslts = (string)args[2];
 			m_progressDlg = progress;
 			var parameter = new Tuple<string, string, string>(sDataType, outPath, sXslts);
-			Publisher.Publish("SaveAsWebpage", parameter);
+			Publisher.Publish(new PublisherParameterObject("SaveAsWebpage", parameter));
 			m_progressDlg.Step(1000);
 			return null;
 		}
@@ -1349,8 +1335,7 @@ namespace LanguageExplorer.Areas
 				var riGuid = ReversalIndexServices.GetObjectGuidIfValid(PropertyTable, LanguageExplorerConstants.ReversalIndexGuid);
 				if (!riGuid.Equals(Guid.Empty))
 				{
-					IReversalIndex ri;
-					fContentsExists = m_cache.ServiceLocator.GetInstance<IReversalIndexRepository>().TryGetObject(riGuid, out ri) && ri.EntriesOC.Any();
+					fContentsExists = m_cache.ServiceLocator.GetInstance<IReversalIndexRepository>().TryGetObject(riGuid, out var ri) && ri.EntriesOC.Any();
 				}
 			}
 			ReflectionHelper.SetProperty(sf, "ExportReversal", fContentsExists);
@@ -1629,8 +1614,7 @@ namespace LanguageExplorer.Areas
 			get
 			{
 				const string installDirValue = "PathwayDir46";
-				object regObj;
-				if (RegistryHelper.RegEntryValueExists(RegistryHelper.CompanyKey, "Pathway", installDirValue, out regObj))
+				if (RegistryHelper.RegEntryValueExists(RegistryHelper.CompanyKey, "Pathway", installDirValue, out var regObj))
 				{
 					return (string)regObj;
 				}

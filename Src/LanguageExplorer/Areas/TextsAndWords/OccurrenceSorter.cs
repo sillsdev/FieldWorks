@@ -17,10 +17,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 
 		public override LcmCache Cache
 		{
-			set
-			{
-				m_cache = value;
-			}
+			set => m_cache = value;
 		}
 
 		public ISilDataAccessManaged SpecialDataAccess { get; set; }

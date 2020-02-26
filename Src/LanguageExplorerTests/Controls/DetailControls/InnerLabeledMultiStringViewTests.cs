@@ -51,8 +51,7 @@ namespace LanguageExplorerTests.Controls.DetailControls
 			Assert.AreEqual((int)CellarPropertyType.String, Cache.MetaDataCacheAccessor.GetFieldType(LexEntryTags.kflidImportResidue));
 			//SUT
 			InnerLabeledMultiStringView.EliminateExtraStyleAndWsInfo(Cache.MetaDataCacheAccessor, args, LexEntryTags.kflidImportResidue);
-			string differences;
-			Assert.True(TsStringHelper.TsStringsAreEqual(m_tss, args.TsString, out differences), differences);
+			Assert.True(TsStringHelper.TsStringsAreEqual(m_tss, args.TsString, out var differences), differences);
 		}
 
 		[Test]
@@ -63,8 +62,7 @@ namespace LanguageExplorerTests.Controls.DetailControls
 			Assert.AreEqual((int)CellarPropertyType.MultiString, Cache.MetaDataCacheAccessor.GetFieldType(LexSenseTags.kflidGeneralNote));
 			//SUT
 			InnerLabeledMultiStringView.EliminateExtraStyleAndWsInfo(Cache.MetaDataCacheAccessor, args, LexSenseTags.kflidGeneralNote);
-			string differences;
-			Assert.True(TsStringHelper.TsStringsAreEqual(m_tss, args.TsString, out differences), differences);
+			Assert.True(TsStringHelper.TsStringsAreEqual(m_tss, args.TsString, out var differences), differences);
 		}
 
 		[Test]
@@ -75,8 +73,7 @@ namespace LanguageExplorerTests.Controls.DetailControls
 			Assert.AreEqual((int)CellarPropertyType.Unicode, Cache.MetaDataCacheAccessor.GetFieldType(LexEntryTags.kflidLiftResidue));
 			//SUT
 			InnerLabeledMultiStringView.EliminateExtraStyleAndWsInfo(Cache.MetaDataCacheAccessor, args, LexEntryTags.kflidLiftResidue);
-			string differences;
-			Assert.False(TsStringHelper.TsStringsAreEqual(m_tss, args.TsString, out differences), differences);
+			Assert.False(TsStringHelper.TsStringsAreEqual(m_tss, args.TsString, out var differences), differences);
 			Assert.That(differences, Is.StringContaining("TsStrings have different number of runs"));
 		}
 
@@ -88,8 +85,7 @@ namespace LanguageExplorerTests.Controls.DetailControls
 			Assert.AreEqual((int)CellarPropertyType.MultiUnicode, Cache.MetaDataCacheAccessor.GetFieldType(LexEntryTags.kflidCitationForm));
 			//SUT
 			InnerLabeledMultiStringView.EliminateExtraStyleAndWsInfo(Cache.MetaDataCacheAccessor, args, LexEntryTags.kflidCitationForm);
-			string differences;
-			Assert.False(TsStringHelper.TsStringsAreEqual(m_tss, args.TsString, out differences), differences);
+			Assert.False(TsStringHelper.TsStringsAreEqual(m_tss, args.TsString, out var differences), differences);
 			Assert.That(differences, Is.StringContaining("TsStrings have different number of runs"));
 		}
 
@@ -97,7 +93,7 @@ namespace LanguageExplorerTests.Controls.DetailControls
 		public void InnerViewRefreshesWhenRefreshIsPending()
 		{
 			ILexEntry entry = null;
-			var flid = 5035001; // MoForm flid
+			const int flid = 5035001; // MoForm flid
 			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
 			{
 				entry = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create();

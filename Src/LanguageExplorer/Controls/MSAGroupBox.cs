@@ -124,10 +124,7 @@ namespace LanguageExplorer.Controls
 
 		public IMoInflAffixSlot Slot
 		{
-			get
-			{
-				return m_selectedSlot;
-			}
+			get => m_selectedSlot;
 			set
 			{
 				// Setting it to zero is supported, as it sets the selected index to -1.
@@ -190,10 +187,7 @@ namespace LanguageExplorer.Controls
 
 		public MsaType MSAType
 		{
-			get
-			{
-				return m_msaType;
-			}
+			get => m_msaType;
 			set
 			{
 				if (value == m_msaType)
@@ -677,20 +671,11 @@ namespace LanguageExplorer.Controls
 			{
 				// Not called by InsertEntryDlg; need to figure out the morphtype(s)
 				var lex = _flexComponentParameters.PropertyTable.GetValue<ILexEntry>(LanguageExplorerConstants.ActiveListSelectedObject);
-				if (lex != null)
-				{
-					return DomainObjectServices.GetSlots(m_cache, lex, m_selectedMainPOS);
-				}
-				return m_selectedMainPOS.AllAffixSlots;
+				return lex != null ? DomainObjectServices.GetSlots(m_cache, lex, m_selectedMainPOS) : m_selectedMainPOS.AllAffixSlots;
 			}
 			// Called by InsertEntryDlg so we know the morphtype
 			var fIsPrefixal = MorphServices.IsPrefixishType(m_cache, m_morphType.Hvo);
-			var fIsSuffixal = MorphServices.IsSuffixishType(m_cache, m_morphType.Hvo);
-			if (fIsPrefixal && fIsSuffixal)
-			{
-				return m_selectedMainPOS.AllAffixSlots;
-			}
-			return DomainObjectServices.GetSomeSlots(m_cache, m_selectedMainPOS.AllAffixSlots, fIsPrefixal);
+			return fIsPrefixal && MorphServices.IsSuffixishType(m_cache, m_morphType.Hvo) ? m_selectedMainPOS.AllAffixSlots : DomainObjectServices.GetSomeSlots(m_cache, m_selectedMainPOS.AllAffixSlots, fIsPrefixal);
 		}
 
 		public void AdjustInternalControlsAndGrow()
@@ -778,9 +763,7 @@ namespace LanguageExplorer.Controls
 			{
 				return;
 			}
-			var combo = sender as FwComboBox;
-			var selItem = combo.SelectedItem as HvoTssComboItem;
-			m_selectedSlot = (selItem == null) ? null : m_cache.ServiceLocator.GetInstance<IMoInflAffixSlotRepository>().GetObject(selItem.Hvo);
+			m_selectedSlot = (!(((FwComboBox)sender).SelectedItem is HvoTssComboItem selItem)) ? null : m_cache.ServiceLocator.GetInstance<IMoInflAffixSlotRepository>().GetObject(selItem.Hvo);
 		}
 		#endregion Affix slots combo box
 
@@ -790,9 +773,9 @@ namespace LanguageExplorer.Controls
 		{
 			m_selectedMainPOS = null;
 			var repo = m_cache.ServiceLocator.GetInstance<IPartOfSpeechRepository>();
-			if (e.Node is HvoTreeNode)
+			if (e.Node is HvoTreeNode hvoTreeNode)
 			{
-				repo.TryGetObject(((HvoTreeNode)e.Node).Hvo, out m_selectedMainPOS);
+				repo.TryGetObject(hvoTreeNode.Hvo, out m_selectedMainPOS);
 			}
 			// If this is an inflectional affix MSA,
 			// then populate slot list (FwComboBox m_fwcbSlots).
@@ -810,9 +793,9 @@ namespace LanguageExplorer.Controls
 		{
 			m_selectedSecondaryPOS = null;
 			var repo = m_cache.ServiceLocator.GetInstance<IPartOfSpeechRepository>();
-			if (e.Node is HvoTreeNode)
+			if (e.Node is HvoTreeNode hvoTreeNode)
 			{
-				repo.TryGetObject((e.Node as HvoTreeNode).Hvo, out m_selectedSecondaryPOS);
+				repo.TryGetObject(hvoTreeNode.Hvo, out m_selectedSecondaryPOS);
 			}
 		}
 

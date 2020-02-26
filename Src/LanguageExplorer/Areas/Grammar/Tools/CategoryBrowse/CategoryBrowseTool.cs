@@ -29,8 +29,6 @@ namespace LanguageExplorer.Areas.Grammar.Tools.CategoryBrowse
 		private PaneBarContainer _paneBarContainer;
 		private RecordBrowseView _recordBrowseView;
 		private IRecordList _recordList;
-		[Import(AreaServices.GrammarAreaMachineName)]
-		private IArea _area;
 
 		#region Implementation of IMajorFlexComponent
 
@@ -113,7 +111,8 @@ namespace LanguageExplorer.Areas.Grammar.Tools.CategoryBrowse
 		/// <summary>
 		/// Get the area for the tool.
 		/// </summary>
-		public IArea Area => _area;
+		[field: Import(AreaServices.GrammarAreaMachineName)]
+		public IArea Area { get; private set; }
 
 		/// <summary>
 		/// Get the image for the area.

@@ -40,7 +40,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				m_focusBoxOccurrence = null;
 				return null;
 			}
-			set { m_focusBoxOccurrence = value; }
+			set => m_focusBoxOccurrence = value;
 		}
 
 		/// <summary>
@@ -54,8 +54,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			// Determine whether it is the focus box occurrence.
 			if (FocusBoxOccurrence != null)
 			{
-				int hvoSeg, tag, ihvo;
-				vwenv.GetOuterObject(vwenv.EmbeddingLevel - 1, out hvoSeg, out tag, out ihvo);
+				vwenv.GetOuterObject(vwenv.EmbeddingLevel - 1, out var hvoSeg, out _, out var ihvo);
 				if (hvoSeg == FocusBoxOccurrence.Segment.Hvo && ihvo == FocusBoxOccurrence.Index)
 				{
 					// Leave room for the Sandbox instead of displaying the internlinear data.
@@ -66,10 +65,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					// top line of text properly.
 					// Enhance JohnT: 90% of font height is not always exactly right, but it's the closest
 					// I can get without a new API to get the exact ascent of the font.
-					var wsSeg = TsStringUtils.GetWsAtOffset(FocusBoxOccurrence.Segment.BaselineText, 0);
-					var dympBaseline = FontHeightAdjuster.GetFontHeightForStyle("Normal", StyleSheet, wsSeg, m_cache.LanguageWritingSystemFactoryAccessor) * 9 / 10;
 					var transparent = 0xC0000000; // FwTextColor.kclrTransparent won't convert to uint
-					vwenv.AddSimpleRect((int)transparent, FocusBoxSize.Width, FocusBoxSize.Height, -(FocusBoxSize.Height - dympBaseline));
+					vwenv.AddSimpleRect((int)transparent, FocusBoxSize.Width, FocusBoxSize.Height, -(FocusBoxSize.Height - FontHeightAdjuster.GetFontHeightForStyle("Normal", StyleSheet, TsStringUtils.GetWsAtOffset(FocusBoxOccurrence.Segment.BaselineText, 0), m_cache.LanguageWritingSystemFactoryAccessor) * 9 / 10));
 					return;
 				}
 			}

@@ -63,9 +63,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		/// </summary>
 		protected override bool DoContextMenu(IVwSelection sel, Point pt, Rectangle rcSrcRoot, Rectangle rcDstRoot)
 		{
-			int hvo, tag, ihvo, cpropPrevious;
-			IVwPropertyStore propStore;
-			sel.PropInfo(false, 0, out hvo, out tag, out ihvo, out cpropPrevious, out propStore);
+			sel.PropInfo(false, 0, out _, out _, out _, out _, out var propStore);
 			string nodePath = null;
 			if (propStore != null)
 			{
@@ -78,10 +76,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 					return true;
 				}
 				// may be a literal string, where we can get it from the string itself.
-				ITsString tss;
-				int ich, ws;
-				bool fAssocPrev;
-				sel.TextSelInfo(false, out tss, out ich, out fAssocPrev, out hvo, out tag, out ws);
+				sel.TextSelInfo(false, out var tss, out _, out _, out _, out _, out _);
 				nodePath = tss.get_Properties(0).GetStrPropValue((int)FwTextPropType.ktptBulNumTxtBef);
 			}
 			if (m_configObjectName == null)

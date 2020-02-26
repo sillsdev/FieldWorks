@@ -92,16 +92,8 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 					// Enhance: invoke launcher's selection dialog.
 					return;
 				}
-				ITsString tss;
-				int ichAnchor;
-				int ichEnd;
-				bool fAssocPrev;
-				int hvoObj;
-				int hvoObjEnd;
-				int tag;
-				int ws;
-				vwselNew.TextSelInfo(false, out tss, out ichAnchor, out fAssocPrev, out hvoObj, out tag, out ws);
-				vwselNew.TextSelInfo(true, out tss, out ichEnd, out fAssocPrev, out hvoObjEnd, out tag, out ws);
+				vwselNew.TextSelInfo(false, out _, out _, out _, out var hvoObj, out _, out _);
+				vwselNew.TextSelInfo(true, out _, out _, out _, out var hvoObjEnd, out _, out _);
 				if (hvoObj != hvoObjEnd)
 				{
 					return;

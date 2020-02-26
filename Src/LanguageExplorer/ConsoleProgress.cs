@@ -46,7 +46,7 @@ namespace LanguageExplorer
 		/// </summary>
 		public bool IsIndeterminate
 		{
-			get { return false; }
+			get => false;
 			set { }
 		}
 
@@ -55,7 +55,7 @@ namespace LanguageExplorer
 		/// </summary>
 		public int Maximum
 		{
-			get { return m_max; }
+			get => m_max;
 			set
 			{
 				m_max = value;
@@ -77,7 +77,7 @@ namespace LanguageExplorer
 		/// </summary>
 		public string Message
 		{
-			get { return m_message; }
+			get => m_message;
 			set
 			{
 				m_message = value;
@@ -95,7 +95,7 @@ namespace LanguageExplorer
 		/// </summary>
 		public int Minimum
 		{
-			get { return m_min; }
+			get => m_min;
 			set
 			{
 				m_min = value;
@@ -133,7 +133,7 @@ namespace LanguageExplorer
 		/// </summary>
 		public int StepSize
 		{
-			get { return 1; }
+			get => 1;
 			set { }
 		}
 
@@ -142,7 +142,7 @@ namespace LanguageExplorer
 		/// </summary>
 		public string Title
 		{
-			get { return string.Empty; }
+			get => string.Empty;
 			set { }
 		}
 
@@ -152,7 +152,7 @@ namespace LanguageExplorer
 		/// </summary>
 		public bool AllowCancel
 		{
-			get { return false; }
+			get => false;
 			set { }
 		}
 

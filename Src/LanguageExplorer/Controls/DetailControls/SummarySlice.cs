@@ -42,7 +42,7 @@ namespace LanguageExplorer.Controls.DetailControls
 					 var ordinaryMenuId = XmlUtils.GetOptionalAttributeValue(CallerNode, "menu");
 					if (string.IsNullOrEmpty(ordinaryMenuId))
 					{
-						// Try the ordinary context menu for the configuation node.
+						// Try the ordinary context menu for the configuration node.
 						ordinaryMenuId = XmlUtils.GetOptionalAttributeValue(ConfigurationNode, "menu");
 					}
 					hotlinksMenuId = string.IsNullOrEmpty(ordinaryMenuId) ? hotlinksMenuId : (ContextMenuName)Enum.Parse(typeof(ContextMenuName), ordinaryMenuId);
@@ -76,9 +76,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			{
 				// Instead of the parameter being a layout name, it is literal text which will be
 				// the whole contents of the slice, with standard properties.
-				var text = XmlUtils.GetMandatoryAttributeValue(CallerNode, "label");
-				text = StringTable.Table.LocalizeAttributeValue(text);
-				m_view = new LiteralLabelView(text, this);
+				m_view = new LiteralLabelView(StringTable.Table.LocalizeAttributeValue(XmlUtils.GetMandatoryAttributeValue(CallerNode, "label")), this);
 			}
 			else
 			{
@@ -124,10 +122,7 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		public override TreeItemState Expansion
 		{
-			get
-			{
-				return base.Expansion;
-			}
+			get => base.Expansion;
 			set
 			{
 				base.Expansion = value;
@@ -136,17 +131,17 @@ namespace LanguageExplorer.Controls.DetailControls
 					case TreeItemState.ktisExpanded:
 						m_button.Visible = true;
 						m_button.IsOpened = true;
-						if (m_view is XmlView && m_collapsedLayout != null)
+						if (m_view is XmlView view && m_collapsedLayout != null)
 						{
-							((XmlView)m_view).ResetTables(m_layout);
+							view.ResetTables(m_layout);
 						}
 						break;
 					case TreeItemState.ktisCollapsed:
 						m_button.Visible = true;
 						m_button.IsOpened = false;
-						if (m_view is XmlView && m_collapsedLayout != null)
+						if (m_view is XmlView xmlView && m_collapsedLayout != null)
 						{
-							((XmlView)m_view).ResetTables(m_collapsedLayout);
+							xmlView.ResetTables(m_collapsedLayout);
 						}
 						break;
 					case TreeItemState.ktisFixed:
@@ -208,10 +203,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		public override bool Active
 		{
-			get
-			{
-				return m_fActive;
-			}
+			get => m_fActive;
 			set
 			{
 				if (m_fActive == value)
@@ -238,10 +230,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		public override string Label
 		{
-			get
-			{
-				return m_strLabel;
-			}
+			get => m_strLabel;
 			set
 			{
 				// For LiteralString Summary slices we don't want to set the label since

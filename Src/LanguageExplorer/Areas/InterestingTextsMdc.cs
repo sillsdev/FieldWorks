@@ -24,68 +24,32 @@ namespace LanguageExplorer.Areas
 		// Not sure which of these we need, do both.
 		public override int GetFieldId2(int luClid, string bstrFieldName, bool fIncludeBaseClasses)
 		{
-			switch (luClid)
-			{
-				case LangProjectTags.kClassId:
-					{
-						switch (bstrFieldName)
-						{
-							case AreaServices.InterestingTexts:
-								return InterestingTextsDecorator.kflidInterestingTexts;
-						}
-					}
-					break;
-			}
-			return base.GetFieldId2(luClid, bstrFieldName, fIncludeBaseClasses);
+			return luClid == LangProjectTags.kClassId && bstrFieldName == AreaServices.InterestingTexts ? InterestingTextsDecorator.kflidInterestingTexts : base.GetFieldId2(luClid, bstrFieldName, fIncludeBaseClasses);
 		}
 
 		public override int GetFieldId(string bstrClassName, string bstrFieldName, bool fIncludeBaseClasses)
 		{
-			switch (bstrClassName)
-			{
-				case "LangProject":
-					return GetFieldId2(LangProjectTags.kClassId, bstrFieldName, fIncludeBaseClasses);
-			}
-
-			return base.GetFieldId(bstrClassName, bstrFieldName, fIncludeBaseClasses);
+			return bstrClassName == "LangProject" ? GetFieldId2(LangProjectTags.kClassId, bstrFieldName, fIncludeBaseClasses) : base.GetFieldId(bstrClassName, bstrFieldName, fIncludeBaseClasses);
 		}
 
 		public override string GetOwnClsName(int flid)
 		{
-			switch (flid)
-			{
-				case InterestingTextsDecorator.kflidInterestingTexts: return "LangProject";
-			}
-			return base.GetOwnClsName(flid);
+			return flid == InterestingTextsDecorator.kflidInterestingTexts ? "LangProject" : base.GetOwnClsName(flid);
 		}
 
 		public override int GetDstClsId(int flid)
 		{
-			switch (flid)
-			{
-				case InterestingTextsDecorator.kflidInterestingTexts:
-					return StTextTags.kClassId;
-			}
-			return base.GetDstClsId(flid);
+			return flid == InterestingTextsDecorator.kflidInterestingTexts ? StTextTags.kClassId : base.GetDstClsId(flid);
 		}
 
 		public override string GetFieldName(int flid)
 		{
-			switch (flid)
-			{
-				case InterestingTextsDecorator.kflidInterestingTexts: return AreaServices.InterestingTexts;
-			}
-			return base.GetFieldName(flid);
+			return flid == InterestingTextsDecorator.kflidInterestingTexts ? AreaServices.InterestingTexts : base.GetFieldName(flid);
 		}
 
 		public override int GetFieldType(int flid)
 		{
-			switch (flid)
-			{
-				case InterestingTextsDecorator.kflidInterestingTexts:
-					return (int)CellarPropertyType.ReferenceSequence;
-			}
-			return base.GetFieldType(flid);
+			return flid == InterestingTextsDecorator.kflidInterestingTexts ? (int)CellarPropertyType.ReferenceSequence : base.GetFieldType(flid);
 		}
 	}
 }

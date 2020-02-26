@@ -167,8 +167,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// <returns>The path to the HTML file</returns>
 		private string SaveHtmlToTemp()
 		{
-			var preferredPath = GetPreferredSavePath();
-			var htmlPath = Path.ChangeExtension(preferredPath, "html");
+			var htmlPath = Path.ChangeExtension(GetPreferredSavePath(), "html");
 			SavePublishedHtmlAndCss(htmlPath);
 			return htmlPath;
 		}
@@ -902,8 +901,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		{
 			using (var context = new AutoJSContext(((GeckoWebBrowser)mainBrowser.NativeBrowser).Window))
 			{
-				string checkedBoxes;
-				context.EvaluateScript("getNumOfCheckedBoxes()", out checkedBoxes);
+				context.EvaluateScript("getNumOfCheckedBoxes()", out var checkedBoxes);
 				var numOfCheckedBoxes = Convert.ToInt32(checkedBoxes);
 				okButton.Enabled = numOfCheckedBoxes > 0;
 			}
@@ -927,22 +925,17 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			}
 			using (var context = new AutoJSContext(((GeckoWebBrowser)mainBrowser.NativeBrowser).Window.DomWindow))
 			{
-				string rows;
-				context.EvaluateScript(@"getRows()", out rows);
+				context.EvaluateScript(@"getRows()", out var rows);
 				ReorderLineChoices(Array.ConvertAll(rows.Split(','), int.Parse));
 			}
 			Choices.m_specs.Clear();
 			foreach (var checkBox in checkBoxes)
 			{
 				var element = (GeckoInputElement)checkBox;
-				var elementId = element.GetAttribute("id");
-				var flidAndWs = elementId.Split('%');
-				var flid = int.Parse(flidAndWs[0]);
-				var ws = int.Parse(flidAndWs[1]);
-
+				var flidAndWs = element.GetAttribute("id").Split('%');
 				if (element.Checked)
 				{
-					Choices.m_specs.Add(Choices.CreateSpec(flid, ws));
+					Choices.m_specs.Add(Choices.CreateSpec(int.Parse(flidAndWs[0]), int.Parse(flidAndWs[1])));
 				}
 			}
 		}

@@ -15,9 +15,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		public override void FinishInit()
 		{
 			base.FinishInit();
-			var arl = (AtomicReferenceLauncher)Control;
-			var view = (AtomicReferenceView)arl.MainControl;
-			view.FinishInit(ConfigurationNode);
+			((AtomicReferenceView)((AtomicReferenceLauncher)Control).MainControl).FinishInit(ConfigurationNode);
 		}
 	}
 }

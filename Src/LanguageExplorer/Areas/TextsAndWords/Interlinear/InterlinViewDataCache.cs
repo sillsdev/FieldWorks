@@ -42,10 +42,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				default:
 					return base.get_ObjectProp(hvo, tag);
 				case ktagMostApprovedAnalysis:
-					{
-						int result;
-						return m_guessCache.TryGetValue(new HvoFlidKey(hvo, tag), out result) ? result : 0;
-					}
+					return m_guessCache.TryGetValue(new HvoFlidKey(hvo, tag), out var result) ? result : 0;
 			}
 		}
 
@@ -56,10 +53,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				default:
 					return base.get_IntProp(hvo, tag);
 				case ktagOpinionAgent:
-					{
-						int result;
-						return m_humanApproved.TryGetValue(new HvoFlidKey(hvo, tag), out result) ? result : 0;
-					}
+					return m_humanApproved.TryGetValue(new HvoFlidKey(hvo, tag), out var result) ? result : 0;
 			}
 		}
 

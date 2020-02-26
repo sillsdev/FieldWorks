@@ -244,12 +244,8 @@ namespace LanguageExplorer
 		internal void RemoveUserControlHandlers(UserControl userControl)
 		{
 			// Remove any child controls, as well.
-			foreach (var control in userControl.GetUserControlsInControl())
+			foreach (var control in userControl.GetUserControlsInControl().Where(control => _userControls.Contains(control)))
 			{
-				if (!_userControls.Contains(control))
-				{
-					continue;
-				}
 				_userControls.Remove(control);
 				_mainMenusController.RemoveUserControlHandlers(control);
 				_toolBarsController.RemoveUserControlHandlers(control);
@@ -368,10 +364,9 @@ namespace LanguageExplorer
 					_separatorMenuBundles = separatorMenuBundles;
 					foreach (var item in _supportedMenuItems.Values)
 					{
-						var itemAsToolStripDropDownItem = item as ToolStripDropDownItem;
-						if (itemAsToolStripDropDownItem != null && itemAsToolStripDropDownItem.HasDropDownItems)
+						if (item is ToolStripDropDownItem itemAsToolStripDropDownItem && itemAsToolStripDropDownItem.HasDropDownItems)
 						{
-							((ToolStripDropDownItem)item).DropDownOpened += MainMenu_DropDownOpened;
+							itemAsToolStripDropDownItem.DropDownOpened += MainMenu_DropDownOpened;
 						}
 					}
 				}
@@ -489,25 +484,7 @@ namespace LanguageExplorer
 					}
 					foreach (var separatorMenuBundle in _separatorMenuBundles)
 					{
-						var hasPrecedingVisible = false;
-						foreach (var precedingItem in separatorMenuBundle.PrecedingItems)
-						{
-							if (precedingItem.Visible)
-							{
-								hasPrecedingVisible = true;
-								break;
-							}
-						}
-						var hasFollowingVisible = false;
-						foreach (var followingItem in separatorMenuBundle.FollowingItems)
-						{
-							if (followingItem.Visible)
-							{
-								hasFollowingVisible = true;
-								break;
-							}
-						}
-						separatorMenuBundle.Separator.Visible = hasPrecedingVisible && hasFollowingVisible;
+						separatorMenuBundle.Separator.Visible = separatorMenuBundle.PrecedingItems.Any(precedingItem => precedingItem.Visible) && separatorMenuBundle.FollowingItems.Any(followingItem => followingItem.Visible);
 					}
 				}
 			}
@@ -711,25 +688,7 @@ namespace LanguageExplorer
 					}
 					foreach (var separatorMenuBundle in _separatorToolStripBundles)
 					{
-						var hasPrecedingVisible = false;
-						foreach (var precedingItem in separatorMenuBundle.PrecedingItems)
-						{
-							if (precedingItem.Visible)
-							{
-								hasPrecedingVisible = true;
-								break;
-							}
-						}
-						var hasFollowingVisible = false;
-						foreach (var followingItem in separatorMenuBundle.FollowingItems)
-						{
-							if (followingItem.Visible)
-							{
-								hasFollowingVisible = true;
-								break;
-							}
-						}
-						separatorMenuBundle.Separator.Visible = hasPrecedingVisible && hasFollowingVisible;
+						separatorMenuBundle.Separator.Visible = separatorMenuBundle.PrecedingItems.Any(precedingItem => precedingItem.Visible) && separatorMenuBundle.FollowingItems.Any(followingItem => followingItem.Visible);
 					}
 				}
 			}

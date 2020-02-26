@@ -71,7 +71,6 @@ namespace LanguageExplorer.Areas
 			var userController = new UserControlUiWidgetParameterObject(this);
 			userController.MenuItemsForUserControl[MainMenu.Tools].Add(Command.CmdConfigureXmlDocView, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(ConfigureXmlDocView_Clicked, () => UiWidgetServices.CanSeeAndDo));
 			_uiWidgetController.ToolsMenuDictionary[Command.CmdConfigureXmlDocView].Text = string.IsNullOrWhiteSpace(configureText) ? LanguageExplorerResources.ConfigureDocument : configureText;
-
 			_uiWidgetController.AddHandlers(userController);
 		}
 
@@ -83,8 +82,7 @@ namespace LanguageExplorer.Areas
 			layoutList.AddRange(GetBuiltInLayouts(PropertyTable.GetValue<XElement>("currentContentControlParameters", null)));
 			var builtInLayoutList = new List<string>();
 			builtInLayoutList.AddRange(layoutList.Select(layout => layout.Item2));
-			var userLayouts = m_mainView.Vc.LayoutCache.LayoutInventory.GetLayoutTypes();
-			layoutList.AddRange(GetUserDefinedDictLayouts(builtInLayoutList, userLayouts));
+			layoutList.AddRange(GetUserDefinedDictLayouts(builtInLayoutList, m_mainView.Vc.LayoutCache.LayoutInventory.GetLayoutTypes()));
 			return layoutList;
 		}
 
@@ -96,8 +94,7 @@ namespace LanguageExplorer.Areas
 			{
 				return new List<Tuple<string, string>>();
 			}
-			var layouts = configLayouts.Elements();
-			return ExtractLayoutsFromLayoutTypeList(layouts);
+			return ExtractLayoutsFromLayoutTypeList(configLayouts.Elements());
 		}
 
 		private static IEnumerable<Tuple<string, string>> ExtractLayoutsFromLayoutTypeList(IEnumerable<XElement> layouts)
@@ -122,8 +119,7 @@ namespace LanguageExplorer.Areas
 			}
 			// Find out if this layout name has a hashmark (#) in it. Return the part before it.
 			var parts = name.Split(Inventory.kcMarkLayoutCopy);
-			var result = parts.Length > 1 ? parts[0] : name;
-			return result;
+			return parts.Length > 1 ? parts[0] : name;
 		}
 
 		#endregion
@@ -153,8 +149,7 @@ namespace LanguageExplorer.Areas
 				{
 					return Cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS.Count > 0 ? Cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS[0] : null;
 				}
-				var pub = Cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS.FirstOrDefault(item => IsDesiredPublication(item, pubName));
-				return pub;
+				return Cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS.FirstOrDefault(item => IsDesiredPublication(item, pubName));
 			}
 		}
 
@@ -300,8 +295,7 @@ namespace LanguageExplorer.Areas
 				return;
 			}
 			var maxLayoutViewWidth = Width / 2 - kSpaceForMenuButton;
-			var result = GatherBuiltInAndUserLayouts();
-			var curViewName = FindViewNameInList(result);
+			var curViewName = FindViewNameInList(GatherBuiltInAndUserLayouts());
 			// Limit length of View title to remaining available width
 			curViewName = TrimToMaxPixelWidth(Math.Max(2, maxLayoutViewWidth), curViewName);
 			ResetSpacer(maxLayoutViewWidth, curViewName);
@@ -370,33 +364,24 @@ namespace LanguageExplorer.Areas
 
 		private bool IsCurrentReversalWsChanged()
 		{
-			if (m_currentObject == null)
-			{
-				return true;
-			}
-			var wsName = GetSafeWsName();
-			return m_currentPublication == null || m_currentPublication != wsName;
+			return m_currentObject == null || m_currentPublication == null || m_currentPublication != GetSafeWsName();
 		}
 
 		private string GetSafeWsName()
 		{
-			if (m_currentObject != null && m_currentObject.IsValidObject)
-			{
-				return WritingSystemServices.GetReversalIndexEntryWritingSystem(Cache, m_currentObject.Hvo, Cache.LangProject.CurrentAnalysisWritingSystems[0]).LanguageName;
-			}
-			return m_hvoOwner < 1 ? string.Empty : WritingSystemServices.GetReversalIndexWritingSystems(Cache, m_hvoOwner, false)[0].LanguageName;
+			return m_currentObject != null && m_currentObject.IsValidObject
+				? WritingSystemServices.GetReversalIndexEntryWritingSystem(Cache, m_currentObject.Hvo, Cache.LangProject.CurrentAnalysisWritingSystems[0]).LanguageName
+				: m_hvoOwner < 1 ? string.Empty : WritingSystemServices.GetReversalIndexWritingSystems(Cache, m_hvoOwner, false)[0].LanguageName;
 		}
 
 		private bool IsCurrentPublicationChanged()
 		{
-			var newPub = GetSelectedPublication();
-			return newPub != m_currentPublication;
+			return GetSelectedPublication() != m_currentPublication;
 		}
 
 		private bool IsCurrentConfigViewChanged()
 		{
-			var newView = GetSelectedConfigView();
-			return newView != m_currentConfigView;
+			return GetSelectedConfigView() != m_currentConfigView;
 		}
 
 		#endregion
@@ -455,9 +440,7 @@ namespace LanguageExplorer.Areas
 				{
 					return; // view is not configurable, don't show menu option.
 				}
-				int hvo, tag, ihvo, cpropPrevious;
-				IVwPropertyStore propStore;
-				sel.PropInfo(false, 0, out hvo, out tag, out ihvo, out cpropPrevious, out propStore);
+				sel.PropInfo(false, 0, out _, out _, out _, out _, out var propStore);
 				string nodePath = null;
 				if (propStore != null)
 				{
@@ -466,10 +449,7 @@ namespace LanguageExplorer.Areas
 				if (string.IsNullOrEmpty(nodePath))
 				{
 					// may be a literal string, where we can get it from the string itself.
-					ITsString tss;
-					int ich, ws;
-					bool fAssocPrev;
-					sel.TextSelInfo(false, out tss, out ich, out fAssocPrev, out hvo, out tag, out ws);
+					sel.TextSelInfo(false, out var tss, out _, out _, out _, out _, out _);
 					nodePath = tss.get_Properties(0).GetStrPropValue((int)FwTextPropType.ktptBulNumTxtBef);
 				}
 				if (m_contextMenu == null)
@@ -532,7 +512,7 @@ namespace LanguageExplorer.Areas
 		internal ICmObject SubitemClicked(Point where, int clsid)
 		{
 			var adjuster = m_currentConfigView != null && m_currentConfigView.StartsWith("publishRoot")
-				? (IPreferedTargetAdjuster)new MainEntryFromSubEntryTargetAdjuster()
+				? (IPreferredTargetAdjuster)new MainEntryFromSubEntryTargetAdjuster()
 				: new NullTargetAdjuster();
 			return SubitemClicked(where, clsid, m_mainView, Cache, MyRecordList, adjuster);
 		}
@@ -606,7 +586,7 @@ namespace LanguageExplorer.Areas
 		/// Return an item of the specified class that is indicated by a click at the specified position,
 		/// but only if it is part of a different object also of that class.
 		/// </summary>
-		internal static ICmObject SubitemClicked(Point where, int clsid, SimpleRootSite view, LcmCache cache, ISortItemProvider sortItemProvider, IPreferedTargetAdjuster adjuster)
+		internal static ICmObject SubitemClicked(Point where, int clsid, SimpleRootSite view, LcmCache cache, ISortItemProvider sortItemProvider, IPreferredTargetAdjuster adjuster)
 		{
 			var sel = view.GetSelectionAtPoint(where, false);
 			if (sel == null)
@@ -696,8 +676,7 @@ namespace LanguageExplorer.Areas
 		/// </summary>
 		private int AdjustedRecordListIndex()
 		{
-			var sda = m_mainView.DataAccess as ISilDataAccessManaged;
-			if (sda == null || sda == MyRecordList.VirtualListPublisher)
+			if (!(m_mainView.DataAccess is ISilDataAccessManaged sda) || sda == MyRecordList.VirtualListPublisher)
 			{
 				return MyRecordList.CurrentIndex; // no tricks.
 			}
@@ -758,10 +737,9 @@ namespace LanguageExplorer.Areas
 			{
 				return;
 			}
-			ExclusionReasonCode xrc;
 			// Make sure we explain to the user in case hvoTarget is not visible due to
 			// the current Publication layout or Configuration view.
-			if (!IsObjectVisible(hvoTarget, out xrc))
+			if (!IsObjectVisible(hvoTarget, out var xrc))
 			{
 				AreaServices.GiveSimpleWarning(PropertyTable.GetValue<Form>(FwUtils.window), PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider).HelpFile, xrc);
 			}
@@ -812,17 +790,7 @@ namespace LanguageExplorer.Areas
 
 		private const string ksRootBasedPrefix = "publishRoot";
 
-		protected bool IsRootBasedView
-		{
-			get
-			{
-				if (string.IsNullOrEmpty(m_currentConfigView))
-				{
-					return false;
-				}
-				return m_currentConfigView.Split(new[] { "#" }, StringSplitOptions.None)[0] == ksRootBasedPrefix;
-			}
-		}
+		protected bool IsRootBasedView => !string.IsNullOrEmpty(m_currentConfigView) && m_currentConfigView.Split(new[] { "#" }, StringSplitOptions.None)[0] == ksRootBasedPrefix;
 
 		/// <summary>
 		/// Ensure that we have the current record selected and visible in the window.  See LT-9109.
@@ -876,9 +844,7 @@ namespace LanguageExplorer.Areas
 					{
 						for (var ilevel = indexes.Count - 1; ilevel >= 0; ilevel--)
 						{
-							int hvoObj, tag, ihvo, cpropPrevious;
-							IVwPropertyStore vps;
-							sel.PropInfo(false, clevels - indexes.Count + ilevel, out hvoObj, out tag, out ihvo, out cpropPrevious, out vps);
+							sel.PropInfo(false, clevels - indexes.Count + ilevel, out _, out var tag, out var ihvo, out _, out _);
 							if (ihvo != indexes[ilevel] || tag != levelFlid)
 							{
 								break;

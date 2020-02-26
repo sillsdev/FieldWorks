@@ -80,8 +80,7 @@ namespace LanguageExplorer.Impls
 		/// <inheritdoc />
 		public bool TryGetEventHandler(Command key, out EventHandler eventHandler)
 		{
-			Tuple<EventHandler, Func<Tuple<bool, bool>>> handlerAndFunction;
-			if (TryGetEventHandler(key, out handlerAndFunction))
+			if (TryGetEventHandler(key, out Tuple<EventHandler, Func<Tuple<bool, bool>>> handlerAndFunction))
 			{
 				eventHandler = handlerAndFunction.Item1;
 				return true;
@@ -95,11 +94,6 @@ namespace LanguageExplorer.Impls
 		private static Tuple<bool, bool> DefaultStatusChecker()
 		{
 			return new Tuple<bool, bool>(false, false);
-		}
-
-		private static bool TryConvertToCommand(string key, out Command command)
-		{
-			return Enum.TryParse(key, out command);
 		}
 	}
 }

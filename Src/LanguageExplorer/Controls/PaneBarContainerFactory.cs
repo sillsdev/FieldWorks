@@ -26,10 +26,9 @@ namespace LanguageExplorer.Controls
 			var newPaneBarContainer = new PaneBarContainer(mainChildControl, paneBar);
 			mainCollapsingSplitContainer.SecondControl = newPaneBarContainer;
 			newPaneBarContainer.InitializeFlexComponent(flexComponentParameters);
-			if (mainChildControl is IFlexComponent)
+			if (mainChildControl is IFlexComponent flexComponent)
 			{
-				var asFlexComponent = (IFlexComponent)mainChildControl;
-				asFlexComponent.InitializeFlexComponent(flexComponentParameters);
+				flexComponent.InitializeFlexComponent(flexComponentParameters);
 			}
 			mainChildControl.BringToFront();
 			return newPaneBarContainer;
@@ -48,13 +47,12 @@ namespace LanguageExplorer.Controls
 			{
 				Dock = DockStyle.Fill
 			};
-			if (mainChildControl is IFlexComponent)
+			if (mainChildControl is IFlexComponent flexComponent)
 			{
-				((IFlexComponent)mainChildControl).InitializeFlexComponent(flexComponentParameters);
+				flexComponent.InitializeFlexComponent(flexComponentParameters);
 			}
-			if (mainChildControl is MultiPane)
+			if (mainChildControl is MultiPane mainChildControlAsMultiPane)
 			{
-				var mainChildControlAsMultiPane = (MultiPane)mainChildControl;
 				// Set first control of MultiPane for PaneBar, if it is IPaneBarUser.
 				if (mainChildControlAsMultiPane.FirstControl is IPaneBarUser)
 				{

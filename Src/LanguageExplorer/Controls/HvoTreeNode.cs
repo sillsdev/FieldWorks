@@ -69,10 +69,7 @@ namespace LanguageExplorer.Controls
 		/// </summary>
 		public ITsString Tss
 		{
-			get
-			{
-				return m_text;
-			}
+			get => m_text;
 			set
 			{
 				m_text = value;

@@ -21,8 +21,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		{
 			var servLoc = cache.ServiceLocator;
 			var wordformRepos = servLoc.GetInstance<IWfiWordformRepository>();
-			IWfiWordform retval;
-			if (wordformRepos.TryGetObject(form, false, out retval))
+			if (wordformRepos.TryGetObject(form, false, out var retval))
 			{
 				return retval;
 			}

@@ -121,8 +121,7 @@ namespace SIL.FieldWorks.Common.RootSites
 				}
 			}
 			var helper = new SelectionHelper(vwSel, rootSite);
-			return !helper.GetSelEndInfo(false) ? null :
-				!helper.GetSelEndInfo(true) ? null : helper;
+			return !helper.GetSelEndInfo(false) ? null : !helper.GetSelEndInfo(true) ? null : helper;
 		}
 
 		/// <summary>
@@ -208,12 +207,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// info of the selection</exception>
 		public SelLevInfo GetLevelInfoForTag(int tag, SelLimitType limitType)
 		{
-			SelLevInfo selLevInfo;
-			if (GetLevelInfoForTag(tag, limitType, out selLevInfo))
-			{
-				return selLevInfo;
-			}
-			throw new Exception("No selection level had the requested tag.");
+			return GetLevelInfoForTag(tag, limitType, out var selLevInfo) ? selLevInfo : throw new Exception("No selection level had the requested tag.");
 		}
 
 		/// <summary>
@@ -299,8 +293,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <param name="vvps">Returned array of IVwPropertyStores in the selection</param>
 		public void GetCurrSelectionProps(out ITsTextProps[] vttp, out IVwPropertyStore[] vvps)
 		{
-			int cttp;
-			GetSelectionProps(Selection, out vttp, out vvps, out cttp);
+			GetSelectionProps(Selection, out vttp, out vvps, out _);
 		}
 
 		/// <summary>
@@ -311,17 +304,11 @@ namespace SIL.FieldWorks.Common.RootSites
 		public Point GetLocation()
 		{
 			// TODO: what if selection anchor is off the screen?
-			IVwGraphics viewGraphics;
-			Rect rectangleSource, rectangleDestination;
-			RootSite.GetGraphics(m_rootSite.RootBox, out viewGraphics, out rectangleSource, out rectangleDestination);
-			Rect rectanglePrimary, rectangleSecondary;
+			RootSite.GetGraphics(m_rootSite.RootBox, out var viewGraphics, out var rectangleSource, out var rectangleDestination);
+			Rect rectanglePrimary;
 			try
 			{
-				bool isSplit;
-				bool shouldEndBeforeAnchor;
-				m_vwSel.Location(viewGraphics, rectangleSource, rectangleDestination,
-					out rectanglePrimary, out rectangleSecondary, out isSplit,
-					out shouldEndBeforeAnchor);
+				m_vwSel.Location(viewGraphics, rectangleSource, rectangleDestination, out rectanglePrimary, out _, out _, out _);
 
 			}
 			finally
@@ -339,8 +326,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <param name="vvps">Returned array of IVwPropertyStores in the selection</param>
 		/// <param name="cttp">Returned count of TsTxtProps (this is basically just the number
 		/// of runs in the selection)</param>
-		public static void GetSelectionProps(IVwSelection vwSel, out ITsTextProps[] vttp,
-			out IVwPropertyStore[] vvps, out int cttp)
+		public static void GetSelectionProps(IVwSelection vwSel, out ITsTextProps[] vttp, out IVwPropertyStore[] vvps, out int cttp)
 		{
 			Guard.AgainstNull(vwSel, nameof(vwSel));
 			vttp = null;
@@ -423,10 +409,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		{
 			try
 			{
-				ITsString tss;
-				int ich, hvoObj, tag, ws;
-				bool fAssocPrev;
-				Selection.TextSelInfo(IsEnd(limit), out tss, out ich, out fAssocPrev, out hvoObj, out tag, out ws);
+				Selection.TextSelInfo(IsEnd(limit), out var tss, out _, out _, out _, out _, out _);
 				return tss;
 			}
 			catch
@@ -482,19 +465,15 @@ namespace SIL.FieldWorks.Common.RootSites
 			}
 			try
 			{
-				ITsTextProps[] vttp;
-				IVwPropertyStore[] vvps;
-				int cttp;
 				var wsSaveFirst = -1;
-				GetSelectionProps(vwsel, out vttp, out vvps, out cttp);
+				GetSelectionProps(vwsel, out var vttp, out _, out var cttp);
 				if (cttp == 0)
 				{
 					return 0;
 				}
 				foreach (var ttp in vttp)
 				{
-					int var;
-					var ws = ttp.GetIntPropValues((int)FwTextPropType.ktptWs, out var);
+					var ws = ttp.GetIntPropValues((int)FwTextPropType.ktptWs, out _);
 					if (ws != -1)
 					{
 						if (fStopAtFirstWs)
@@ -548,11 +527,10 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// </summary>
 		public static bool IsEditable(ITsTextProps ttp, IVwPropertyStore vps)
 		{
-			int nVar;
 			var nVal = -1;
 			if (ttp != null)
 			{
-				nVal = ttp.GetIntPropValues((int)FwTextPropType.ktptEditable, out nVar);
+				nVal = ttp.GetIntPropValues((int)FwTextPropType.ktptEditable, out _);
 			}
 			if (nVal == -1 && vps != null)
 			{
@@ -600,8 +578,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <param name="fInstall">True to install the created selection, false otherwise</param>
 		public static SelectionHelper ReduceSelectionToIp(IVwRootSite rootSite, SelLimitType limit, bool fMakeVisible, bool fInstall)
 		{
-			var helper = Create(rootSite);
-			return helper?.ReduceSelectionToIp(limit, fMakeVisible, fInstall);
+			return (Create(rootSite))?.ReduceSelectionToIp(limit, fMakeVisible, fInstall);
 		}
 
 		/// <summary>
@@ -717,7 +694,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <returns>The selection, null if it could not return a valid one.</returns>
 		public virtual IVwSelection SetSelection(IVwRootSite rootSite, bool fInstall, bool fMakeVisible, VwScrollSelOpts scrollOption)
 		{
-			if (rootSite == null || rootSite.RootBox == null)
+			if (rootSite?.RootBox == null)
 			{
 				return null;
 			}
@@ -734,7 +711,7 @@ namespace SIL.FieldWorks.Common.RootSites
 					// We rarely expect to have an invalid selection after we install a new selection,
 					// but it's possible for selection side-effects to have invalidated it
 					// (e.g. highlighting a row in a browse view cf. LT-5033.)
-					sel = MakeRangeSelection(rootSite, fInstall);
+					sel = MakeRangeSelection(rootSite, true);
 				}
 				m_vwSel = sel.IsValid ? sel : null;
 				if (fMakeVisible && m_vwSel != null)
@@ -989,10 +966,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			{
 				return null;
 			}
-			bool fAssocPrev;
-			int hvoObj, tag, ws, ich;
-			ITsString tss;
-			sel.TextSelInfo(false, out tss, out ich, out fAssocPrev, out hvoObj, out tag, out ws);
+			sel.TextSelInfo(false, out var tss, out _, out _, out _, out _, out _);
 			if (tss != null)
 			{
 				IchAnchor = tss.Length;
@@ -1058,8 +1032,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <param name="type">Anchor or End</param>
 		private void RemoveLevel(int tag, SelLimitType type)
 		{
-			var iLevel = GetLevelForTag(tag, type);
-			RemoveLevelAt(iLevel, type);
+			RemoveLevelAt(GetLevelForTag(tag, type), type);
 		}
 
 		private void RemoveLevelAt(int iLevel, SelLimitType type)
@@ -1108,11 +1081,13 @@ namespace SIL.FieldWorks.Common.RootSites
 		{
 			var levInfo = GetLevelInfo(type);
 			var temp = new List<SelLevInfo>(levInfo);
-			var level = new SelLevInfo();
-			level.tag = tag;
-			level.ihvo = ihvo;
-			level.cpropPrevious = 0;
-			level.ws = ws;
+			var level = new SelLevInfo
+			{
+				tag = tag,
+				ihvo = ihvo,
+				cpropPrevious = 0,
+				ws = ws
+			};
 			temp.Insert(iLev, level);
 			SetLevelInfo(type, temp.ToArray());
 		}
@@ -1149,11 +1124,9 @@ namespace SIL.FieldWorks.Common.RootSites
 		{
 			try
 			{
-				if (m_rootSite != null && m_rootSite is SimpleRootSite)
+				if (m_rootSite != null && m_rootSite is SimpleRootSite rootSite)
 				{
-					var rootSite = (SimpleRootSite)m_rootSite;
-					var sel = m_vwSel ?? m_rootSite.RootBox.Selection;
-					m_dyIPTop = rootSite.IPDistanceFromWindowTop(sel);
+					m_dyIPTop = rootSite.IPDistanceFromWindowTop(m_vwSel ?? m_rootSite.RootBox.Selection);
 				}
 			}
 			catch
@@ -1232,8 +1205,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			}
 			if (m_selInfo[i] == null)
 			{
-				var otherEnd = m_selInfo[i == 0 ? 1 : 0];
-				m_selInfo[i] = new SelInfo(otherEnd);
+				m_selInfo[i] = new SelInfo(m_selInfo[i == 0 ? 1 : 0]);
 			}
 			return i;
 		}
@@ -1277,10 +1249,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <summary>
 		/// Gets whether or not the selection is valid
 		/// </summary>
-		public virtual bool IsValid
-		{
-			get {return (Selection != null && Selection.IsValid);}
-		}
+		public virtual bool IsValid => (Selection != null && Selection.IsValid);
 
 		/// <summary>
 		/// Gets a value indicating whether this selection is visible.
@@ -1301,17 +1270,17 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// </summary>
 		public virtual IVwRootSite RootSite
 		{
-			get { return m_rootSite; }
+			get => m_rootSite;
 			set
 			{
-				if (m_rootSite is Control)
+				if (m_rootSite is Control control)
 				{
-					((Control)m_rootSite).Disposed -= OnRootSiteDisposed;
+					control.Disposed -= OnRootSiteDisposed;
 				}
 				m_rootSite = value;
-				if (m_rootSite is Control)
+				if (m_rootSite is Control rootSite)
 				{
-					((Control)m_rootSite).Disposed += OnRootSiteDisposed;
+					rootSite.Disposed += OnRootSiteDisposed;
 				}
 				UpdateScrollLocation();
 			}
@@ -1357,14 +1326,8 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// </summary>
 		public virtual int NumberOfLevels
 		{
-			get
-			{
-				return GetNumberOfLevels(SelLimitType.Anchor);
-			}
-			set
-			{
-				SetNumberOfLevels(SelLimitType.Anchor, value);
-			}
+			get => GetNumberOfLevels(SelLimitType.Anchor);
+			set => SetNumberOfLevels(SelLimitType.Anchor, value);
 		}
 
 		/// <summary>
@@ -1401,8 +1364,8 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// </summary>
 		public virtual int IhvoRoot
 		{
-			get { return GetIhvoRoot(SelLimitType.Anchor); }
-			set { SetIhvoRoot(SelLimitType.Anchor, value); }
+			get => GetIhvoRoot(SelLimitType.Anchor);
+			set => SetIhvoRoot(SelLimitType.Anchor, value);
 		}
 
 		/// <summary>
@@ -1413,8 +1376,8 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// </summary>
 		public int TextPropId
 		{
-			get { return GetTextPropId(SelLimitType.Anchor); }
-			set { SetTextPropId(SelLimitType.Anchor, value); }
+			get => GetTextPropId(SelLimitType.Anchor);
+			set => SetTextPropId(SelLimitType.Anchor, value);
 		}
 
 		/// <summary>
@@ -1457,8 +1420,8 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// </summary>
 		public virtual int NumberOfPreviousProps
 		{
-			get { return GetNumberOfPreviousProps(SelLimitType.Anchor); }
-			set { SetNumberOfPreviousProps(SelLimitType.Anchor, value); }
+			get => GetNumberOfPreviousProps(SelLimitType.Anchor);
+			set => SetNumberOfPreviousProps(SelLimitType.Anchor, value);
 		}
 
 		/// <summary>
@@ -1493,11 +1456,8 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// selection!</remarks>
 		public virtual int IchAnchor
 		{
-			get { return GetIch(SelLimitType.Anchor); }
-			set
-			{
-				SetIch(SelLimitType.Anchor, value);
-			}
+			get => GetIch(SelLimitType.Anchor);
+			set => SetIch(SelLimitType.Anchor, value);
 		}
 
 		/// <summary>
@@ -1506,11 +1466,8 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// </summary>
 		public virtual int IchEnd
 		{
-			get { return GetIch(SelLimitType.End); }
-			set
-			{
-				SetIch(SelLimitType.End, value);
-			}
+			get => GetIch(SelLimitType.End);
+			set => SetIch(SelLimitType.End, value);
 		}
 
 		/// <summary>
@@ -1544,8 +1501,8 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// </summary>
 		public virtual int Ws
 		{
-			get { return GetWritingSystem(SelLimitType.Anchor); }
-			set { SetWritingSystem(SelLimitType.Anchor, value); }
+			get => GetWritingSystem(SelLimitType.Anchor);
+			set => SetWritingSystem(SelLimitType.Anchor, value);
 		}
 
 		/// <summary>
@@ -1575,8 +1532,8 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// </summary>
 		public virtual ITsTextProps SelProps
 		{
-			get { return GetSelProps(SelLimitType.End); }
-			set { SetSelProps(SelLimitType.End, value); }
+			get => GetSelProps(SelLimitType.End);
+			set => SetSelProps(SelLimitType.End, value);
 		}
 
 		/// <summary>
@@ -1589,12 +1546,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			get
 			{
 				var ichTop = GetIch(SelLimitType.Top);
-				if (ichTop <= 0)
-				{
-					return null;
-				}
-				var tss = GetTss(SelLimitType.Top);
-				return tss?.get_PropertiesAt(ichTop - 1);
+				return ichTop <= 0 ? null : (GetTss(SelLimitType.Top))?.get_PropertiesAt(ichTop - 1);
 			}
 		}
 
@@ -1643,8 +1595,8 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// </summary>
 		public virtual bool AssocPrev
 		{
-			get { return GetAssocPrev(SelLimitType.Anchor); }
-			set { SetAssocPrev(SelLimitType.Anchor, value); }
+			get => GetAssocPrev(SelLimitType.Anchor);
+			set => SetAssocPrev(SelLimitType.Anchor, value);
 		}
 
 		/// <summary>

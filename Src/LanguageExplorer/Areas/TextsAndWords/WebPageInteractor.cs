@@ -58,8 +58,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 				return;
 			}
 			var elem = e.Target.CastToGeckoElement();
-			int hvo;
-			if (TryGetHvo(elem, out hvo))
+			if (TryGetHvo(elem, out var hvo))
 			{
 				JumpToToolBasedOnHvo(hvo);
 			}
@@ -89,7 +88,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		/// <summary>
 		/// Have the main FLEx window jump to the appropriate item
 		/// </summary>
-		/// <param name="hvo">item whose parent will indcate where to jump to</param>
+		/// <param name="hvo">item whose parent will indicate where to jump to</param>
 		public void JumpToToolBasedOnHvo(int hvo)
 		{
 			if (hvo == 0)

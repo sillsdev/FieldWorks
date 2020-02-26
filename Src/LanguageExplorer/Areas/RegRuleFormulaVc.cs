@@ -94,15 +94,13 @@ namespace LanguageExplorer.Areas
 					{
 						vwenv.set_StringProperty((int)FwTextPropType.ktptNamedStyle, "Disabled Text");
 					}
-					int arrowWidth, slashWidth, underscoreWidth, charHeight;
-					vwenv.get_StringWidth(m_arrow, m_charProps, out arrowWidth, out charHeight);
+					vwenv.get_StringWidth(m_arrow, m_charProps, out var arrowWidth, out var charHeight);
 					var maxCharHeight = charHeight;
-					vwenv.get_StringWidth(m_slash, m_charProps, out slashWidth, out charHeight);
+					vwenv.get_StringWidth(m_slash, m_charProps, out var slashWidth, out charHeight);
 					maxCharHeight = Math.Max(charHeight, maxCharHeight);
-					vwenv.get_StringWidth(m_underscore, m_charProps, out underscoreWidth, out charHeight);
+					vwenv.get_StringWidth(m_underscore, m_charProps, out var underscoreWidth, out charHeight);
 					maxCharHeight = Math.Max(charHeight, maxCharHeight);
-					int dmpx, spaceHeight;
-					vwenv.get_StringWidth(m_zwSpace, m_bracketProps, out dmpx, out spaceHeight);
+					vwenv.get_StringWidth(m_zwSpace, m_bracketProps, out _, out var spaceHeight);
 					var maxNumLines = GetMaxNumLines();
 					var maxCtxtHeight = maxNumLines * spaceHeight;
 					var maxHeight = Math.Max(maxCharHeight, maxCtxtHeight);

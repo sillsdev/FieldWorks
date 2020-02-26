@@ -58,8 +58,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			{
 				// Dispose managed resources here.
 				m_sda?.RemoveNotification(this);
-				var arl = Control as AtomicReferenceLauncher;
-				if (arl != null)
+				if (Control is AtomicReferenceLauncher arl)
 				{
 					arl.ChoicesMade -= RefreshTree;
 					arl.ViewSizeChanged -= OnViewSizeChanged;

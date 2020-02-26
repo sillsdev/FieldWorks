@@ -23,8 +23,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 
 		internal RowMenuItem SelectedRow
 		{
-			get { return (RowMenuItem)m_rowsCombo.SelectedItem; }
-			set { m_rowsCombo.SelectedItem = value; }
+			get => (RowMenuItem)m_rowsCombo.SelectedItem;
+			set => m_rowsCombo.SelectedItem = value;
 		}
 
 		private void m_OkButton_Click(object sender, EventArgs e)

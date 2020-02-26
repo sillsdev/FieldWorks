@@ -32,15 +32,9 @@ namespace LanguageExplorer.Controls.XMLViews
 				case XMLViewsDataCache.ktagItemSelected: return "ItemSelected";
 			}
 			// Paste operations currently require the column to have some name.
-			if (flid >= XMLViewsDataCache.ktagEditColumnBase && flid < XMLViewsDataCache.ktagEditColumnLim)
-			{
-				return "RdeColumn" + (flid - XMLViewsDataCache.ktagEditColumnBase);
-			}
-			if (flid >= XMLViewsDataCache.ktagAlternateValueMultiBase && flid < XMLViewsDataCache.ktagAlternateValueMultiBaseLim)
-			{
-				return "PhonFeatColumn" + (flid - XMLViewsDataCache.ktagAlternateValueMultiBase);
-			}
-			return base.GetFieldName(flid);
+			return flid >= XMLViewsDataCache.ktagEditColumnBase && flid < XMLViewsDataCache.ktagEditColumnLim
+				? "RdeColumn" + (flid - XMLViewsDataCache.ktagEditColumnBase)
+				: flid >= XMLViewsDataCache.ktagAlternateValueMultiBase && flid < XMLViewsDataCache.ktagAlternateValueMultiBaseLim ? "PhonFeatColumn" + (flid - XMLViewsDataCache.ktagAlternateValueMultiBase) : base.GetFieldName(flid);
 		}
 
 		public override int GetFieldType(int luFlid)
@@ -48,11 +42,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			// This is a bit arbitrary. Technically, the form column isn't formattable, while the one shadowing
 			// Definition could be. But pretending all are Unicode just means Collect Words can't do formatting
 			// of definitions, while allowing it in the Form could lead to crashes when we copy to the real field.
-			if (luFlid >= XMLViewsDataCache.ktagEditColumnBase && luFlid < XMLViewsDataCache.ktagEditColumnLim)
-			{
-				return (int)CellarPropertyType.Unicode;
-			}
-			return base.GetFieldType(luFlid);
+			return luFlid >= XMLViewsDataCache.ktagEditColumnBase && luFlid < XMLViewsDataCache.ktagEditColumnLim ? (int)CellarPropertyType.Unicode : base.GetFieldType(luFlid);
 		}
 	}
 }

@@ -39,9 +39,9 @@ namespace LanguageExplorer.Controls.DetailControls
 			set
 			{
 				m_fShowWsLabel = value;
-				if (m_vc is StringSliceVc)
+				if (m_vc is StringSliceVc vc)
 				{
-					((StringSliceVc)m_vc).ShowWsLabel = value;
+					vc.ShowWsLabel = value;
 				}
 			}
 		}
@@ -53,9 +53,9 @@ namespace LanguageExplorer.Controls.DetailControls
 		{
 			set
 			{
-				if (m_vc is StringSliceVc)
+				if (m_vc is StringSliceVc vc)
 				{
-					((StringSliceVc)m_vc).DefaultWs = value;
+					vc.DefaultWs = value;
 				}
 			}
 		}
@@ -127,14 +127,13 @@ namespace LanguageExplorer.Controls.DetailControls
 			{
 				return;
 			}
-			ConstraintFailure failure;
-			if (m_obj is IPhEnvironment)
+			if (m_obj is IPhEnvironment environment)
 			{
-				((IPhEnvironment)m_obj).CheckConstraints(m_flid, true, out failure, /* adjust squiggly line */ true);
+				environment.CheckConstraints(m_flid, true, out _, /* adjust squiggly line */ true);
 			}
 			else
 			{
-				m_obj.CheckConstraints(m_flid, true, out failure);
+				m_obj.CheckConstraints(m_flid, true, out _);
 			}
 		}
 
@@ -267,9 +266,8 @@ namespace LanguageExplorer.Controls.DetailControls
 				}
 				var tss = RootBox.DataAccess.get_StringProp(m_hvoObj, m_flid);
 				var ttp = tss.get_Properties(0);
-				int var;
-				var ws = ttp.GetIntPropValues((int)FwTextPropType.ktptWs, out var);
-				if (ws != 0 && m_vc is StringSliceVc && ws != ((StringSliceVc)m_vc).MostRecentlyDisplayedWritingSystemHandle)
+				var ws = ttp.GetIntPropValues((int)FwTextPropType.ktptWs, out _);
+				if (ws != 0 && m_vc is StringSliceVc stringSliceVc && ws != stringSliceVc.MostRecentlyDisplayedWritingSystemHandle)
 				{
 					RootBox.Reconstruct();
 					hlpr.SetSelection(true);

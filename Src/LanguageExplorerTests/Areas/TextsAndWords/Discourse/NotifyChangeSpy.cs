@@ -20,7 +20,6 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 		public NotifyChangeSpy(ISilDataAccess sda)
 		{
 			m_sda = sda;
-			//m_sda.AddNotification(this);
 		}
 
 		#region IVwNotifyChange Members

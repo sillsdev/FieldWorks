@@ -70,8 +70,7 @@ namespace LanguageExplorer.Areas.Lexicon
 			if (!_hasBeenActivated)
 			{
 				// Restore HomographConfiguration settings.
-				string hcSettings;
-				if (_propertyTable.TryGetValue(LanguageExplorerConstants.HomographConfiguration, out hcSettings))
+				if (_propertyTable.TryGetValue(LanguageExplorerConstants.HomographConfiguration, out string hcSettings))
 				{
 					var serviceLocator = majorFlexComponentParameters.LcmCache.ServiceLocator;
 					var hc = serviceLocator.GetInstance<HomographConfiguration>();
@@ -248,7 +247,6 @@ namespace LanguageExplorer.Areas.Lexicon
 
 				_majorFlexComponentParameters = majorFlexComponentParameters;
 				_area = area;
-
 				var areaUiWidgetParameterObject = new AreaUiWidgetParameterObject(_area);
 				_customFieldsMenuHelper = new CustomFieldsMenuHelper(_majorFlexComponentParameters, _area, areaUiWidgetParameterObject);
 				_fileExportMenuHelper = new FileExportMenuHelper(majorFlexComponentParameters);

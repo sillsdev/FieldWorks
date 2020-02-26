@@ -267,8 +267,7 @@ namespace LanguageExplorer.Areas
 			using (var dlg = InitProgressDialog())
 			{
 				ShowGeneratingPage();
-				string sFxtOutputPath;
-				PerformRetrieval(out sFxtOutputPath, dlg);
+				PerformRetrieval(out var sFxtOutputPath, dlg);
 				PerformTransformations(sFxtOutputPath, dlg);
 				UpdateProgress(StringTable.Table.GetString("Complete", StringTable.DocumentGeneration), dlg);
 				dlg.Close();
@@ -289,7 +288,7 @@ namespace LanguageExplorer.Areas
 			m_iURLCounter = 0;
 			m_iMaxURLCount = 0;
 		}
-		private void ForwardButton_clickeded(object sender, EventArgs e)
+		private void ForwardButton_clicked(object sender, EventArgs e)
 		{
 			m_htmlControl.Forward();
 			// N.B. no need to increment m_iURLCounter because OnBeforeNavigate does it
@@ -300,8 +299,7 @@ namespace LanguageExplorer.Areas
 		/// </summary>
 		private void SaveAsWebpage(object parameterObj)
 		{
-			var param = parameterObj as Tuple<string, string, string>;
-			if (param == null)
+			if (!(parameterObj is Tuple<string, string, string> param))
 			{
 				throw new ArgumentException("Unexpected data type for 'parameterObj'.");
 			}
@@ -488,8 +486,7 @@ namespace LanguageExplorer.Areas
 
 		private XslCompiledTransform GetTransform(string xslName, string xslAssembly)
 		{
-			XslCompiledTransform transform;
-			if (!m_transforms.TryGetValue(xslName, out transform))
+			if (!m_transforms.TryGetValue(xslName, out var transform))
 			{
 				transform = M3ToXAmpleTransformer.CreateTransform(xslName, xslAssembly);
 				m_transforms[xslName] = transform;
@@ -502,8 +499,7 @@ namespace LanguageExplorer.Areas
 		{
 			lock (m_transforms)
 			{
-				XslCompiledTransform transform;
-				m_transforms.TryGetValue(xslPath, out transform);
+				m_transforms.TryGetValue(xslPath, out var transform);
 				if (transform != null)
 				{
 					return transform;
@@ -545,13 +541,12 @@ namespace LanguageExplorer.Areas
 			var parameterList = new XsltArgumentList();
 			foreach (var paramElement in element.Elements("param"))
 			{
-				var name = XmlUtils.GetMandatoryAttributeValue(paramElement, "name");
 				var value = XmlUtils.GetMandatoryAttributeValue(paramElement, "value");
 				if (value == "TransformDirectory")
 				{
 					value = TransformPath.Replace("\\", "/");
 				}
-				parameterList.AddParam(name, "", value);
+				parameterList.AddParam(XmlUtils.GetMandatoryAttributeValue(paramElement, "name"), "", value);
 			}
 			return parameterList;
 		}
@@ -606,10 +601,7 @@ namespace LanguageExplorer.Areas
 		/// </summary>
 		public string AccName
 		{
-			get
-			{
-				return "GeneratedHtmlViewer";
-			}
+			get => "GeneratedHtmlViewer";
 			set { }
 		}
 
@@ -619,7 +611,7 @@ namespace LanguageExplorer.Areas
 		/// <remarks>Set to null or string.Empty to not show the message box.</remarks>
 		public string MessageBoxTrigger
 		{
-			get { return string.Empty; }
+			get => string.Empty;
 			set { }
 		}
 
@@ -679,7 +671,7 @@ namespace LanguageExplorer.Areas
 			this.m_ForwardBtn.ImageList = this.imageList1;
 			this.m_ForwardBtn.Name = "m_ForwardBtn";
 			this.toolTip1.SetToolTip(this.m_ForwardBtn, resources.GetString("m_ForwardBtn.ToolTip"));
-			this.m_ForwardBtn.Click += new System.EventHandler(this.ForwardButton_clickeded);
+			this.m_ForwardBtn.Click += new System.EventHandler(this.ForwardButton_clicked);
 			//
 			// imageList1
 			//

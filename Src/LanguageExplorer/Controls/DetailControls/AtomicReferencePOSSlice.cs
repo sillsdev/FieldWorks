@@ -73,16 +73,16 @@ namespace LanguageExplorer.Controls.DetailControls
 			{
 				ICmPossibilityList list;
 				int ws;
-				var rie = obj as IReversalIndexEntry;
-				if (rie != null)
+				switch (obj)
 				{
-					list = rie.ReversalIndex.PartsOfSpeechOA;
-					ws = Cache.ServiceLocator.WritingSystemManager.GetWsFromStr(rie.ReversalIndex.WritingSystem);
-				}
-				else
-				{
-					list = Cache.LanguageProject.PartsOfSpeechOA;
-					ws = Cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle;
+					case IReversalIndexEntry rie:
+						list = rie.ReversalIndex.PartsOfSpeechOA;
+						ws = Cache.ServiceLocator.WritingSystemManager.GetWsFromStr(rie.ReversalIndex.WritingSystem);
+						break;
+					default:
+						list = Cache.LanguageProject.PartsOfSpeechOA;
+						ws = Cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle;
+						break;
 				}
 				Tree.WritingSystemCode = ws;
 				m_pOSPopupTreeManager = new POSPopupTreeManager(Tree, Cache, list, ws, false, flexComponentParameters, flexComponentParameters.PropertyTable.GetValue<Form>(FwUtils.window));
@@ -200,7 +200,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			{
 				return;
 			}
-			var hvoPos = (e.Node as HvoTreeNode).Hvo;
+			var hvoPos = ((HvoTreeNode)e.Node).Hvo;
 			// if hvoPos is negative, then allow POSPopupTreeManager AfterSelect to handle it.
 			if (hvoPos < 0)
 			{
@@ -212,33 +212,38 @@ namespace LanguageExplorer.Controls.DetailControls
 				UndoableUnitOfWorkHelper.Do(DetailControlsStrings.ksUndoSetCat, DetailControlsStrings.ksRedoSetCat, MyCmObject, () =>
 				{
 					Cache.DomainDataByFlid.SetObjProp(MyCmObject.Hvo, m_flid, hvoPos);
-					// Do some side effects for a couple of MSA classes.
-					if (MyCmObject is IMoInflAffMsa)
+					switch (MyCmObject)
 					{
-						var msa = (IMoInflAffMsa)MyCmObject;
-						if (hvoPos == 0)
+						// Do some side effects for a couple of MSA classes.
+						case IMoInflAffMsa inflAffMsa:
 						{
-							msa.SlotsRC.Clear();
-						}
-						else if (msa.SlotsRC.Count > 0)
-						{
-							var allSlots = msa.PartOfSpeechRA.AllAffixSlots;
-							if (msa.SlotsRC.All(slot => !allSlots.Contains(slot)))
+							if (hvoPos == 0)
 							{
-								msa.SlotsRC.Clear();
+								inflAffMsa.SlotsRC.Clear();
 							}
+							else if (inflAffMsa.SlotsRC.Count > 0)
+							{
+								var allSlots = inflAffMsa.PartOfSpeechRA.AllAffixSlots;
+								if (inflAffMsa.SlotsRC.All(slot => !allSlots.Contains(slot)))
+								{
+									inflAffMsa.SlotsRC.Clear();
+								}
+							}
+
+							break;
 						}
-					}
-					else if (MyCmObject is IMoDerivAffMsa)
-					{
-						var msa = (IMoDerivAffMsa)MyCmObject;
-						if (hvoPos > 0 && m_flid == MoDerivAffMsaTags.kflidFromPartOfSpeech && msa.ToPartOfSpeechRA == null)
+						case IMoDerivAffMsa derivAffMsa:
 						{
-							msa.ToPartOfSpeechRA = Cache.ServiceLocator.GetInstance<IPartOfSpeechRepository>().GetObject(hvoPos);
-						}
-						else if (hvoPos > 0 && m_flid == MoDerivAffMsaTags.kflidToPartOfSpeech && msa.FromPartOfSpeechRA == null)
-						{
-							msa.FromPartOfSpeechRA = Cache.ServiceLocator.GetInstance<IPartOfSpeechRepository>().GetObject(hvoPos);
+							if (hvoPos > 0 && m_flid == MoDerivAffMsaTags.kflidFromPartOfSpeech && derivAffMsa.ToPartOfSpeechRA == null)
+							{
+								derivAffMsa.ToPartOfSpeechRA = Cache.ServiceLocator.GetInstance<IPartOfSpeechRepository>().GetObject(hvoPos);
+							}
+							else if (hvoPos > 0 && m_flid == MoDerivAffMsaTags.kflidToPartOfSpeech && derivAffMsa.FromPartOfSpeechRA == null)
+							{
+								derivAffMsa.FromPartOfSpeechRA = Cache.ServiceLocator.GetInstance<IPartOfSpeechRepository>().GetObject(hvoPos);
+							}
+
+							break;
 						}
 					}
 				});

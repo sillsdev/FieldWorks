@@ -6,7 +6,6 @@ using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Windows.Forms;
-using Microsoft.Win32;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
@@ -77,12 +76,11 @@ namespace SIL.FieldWorks.MigrateSqlDbs.MigrateProjects
 				{
 					return -1;
 				}
-				string version;
-				if (!importer.IsValidOldFwInstalled(out version))
+				if (!importer.IsValidOldFwInstalled(out var version))
 				{
 					if (!string.IsNullOrEmpty(version) && version.CompareTo("5.4") < 0)
 					{
-						string launchesFlex = "0";
+						var launchesFlex = "0";
 						if (RegistryHelper.KeyExists(FwRegistryHelper.FieldWorksRegistryKey, "Language Explorer"))
 						{
 							using (var keyFlex = FwRegistryHelper.FieldWorksRegistryKey.CreateSubKey("Language Explorer"))
@@ -145,10 +143,7 @@ namespace SIL.FieldWorks.MigrateSqlDbs.MigrateProjects
 			{
 				if (s_fDebug)
 				{
-					var msg = string.Format(
-						"An exception was thrown while trying to get the list of projects:{1}{0}",
-						e.Message, Environment.NewLine);
-					MessageBox.Show(msg, "DEBUG!");
+					MessageBox.Show(string.Format("An exception was thrown while trying to get the list of projects:{1}{0}", e.Message, Environment.NewLine), "DEBUG!");
 				}
 				projects.Clear();
 			}

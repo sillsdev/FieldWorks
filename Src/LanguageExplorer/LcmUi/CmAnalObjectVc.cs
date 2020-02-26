@@ -32,8 +32,7 @@ namespace LanguageExplorer.LcmUi
 			{
 				case (int)VcFrags.kfragHeadWord:
 					co = m_cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvo);
-					var le = co as ILexEntry;
-					vwenv.AddString(le != null ? le.HeadWord : TsStringUtils.MakeString(co.ShortName, wsAnal));
+					vwenv.AddString(co is ILexEntry lexEntry ? lexEntry.HeadWord : TsStringUtils.MakeString(co.ShortName, wsAnal));
 					break;
 				case (int)VcFrags.kfragShortName:
 					co = m_cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvo);

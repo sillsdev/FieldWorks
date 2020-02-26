@@ -8,7 +8,6 @@ using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.LCModel;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Core.Text;
-using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel.DomainServices;
 
 namespace LanguageExplorer.Controls.DetailControls
@@ -64,8 +63,7 @@ namespace LanguageExplorer.Controls.DetailControls
 				{
 					var tss = m_cache.DomainDataByFlid.get_StringProp(hvo, m_flid);
 					var ttp = tss.get_Properties(0);
-					int dummy;
-					var ws = ttp.GetIntPropValues((int)FwTextPropType.ktptWs, out dummy);
+					var ws = ttp.GetIntPropValues((int)FwTextPropType.ktptWs, out _);
 					if (ws == 0)
 					{
 						ws = m_wsDefault;
@@ -97,9 +95,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			VwLength vlTable;
 			vlTable.nVal = 10000;
 			vlTable.unit = VwUnit.kunPercent100;
-			int dxs;    // Width of displayed string.
-			int dys;    // Height of displayed string (not used here).
-			vwenv.get_StringWidth(tssLabel, null, out dxs, out dys);
+			vwenv.get_StringWidth(tssLabel, null, out var dxs, out _);
 			VwLength vlColWs; // 5-pt space plus max label width.
 			vlColWs.nVal = dxs + 5000;
 			vlColWs.unit = VwUnit.kunPoint1000;
@@ -124,8 +120,6 @@ namespace LanguageExplorer.Controls.DetailControls
 			vwenv.MakeColumns(1, vlColMain);
 			vwenv.OpenTableBody();
 			vwenv.OpenTableRow();
-			// First cell has writing system abbreviation displayed using m_ttpLabel.
-			//vwenv.Props = m_ttpLabel;
 			vwenv.OpenTableCell(1, 1);
 			vwenv.set_IntProperty((int)FwTextPropType.ktptEditable, (int)FwTextPropVar.ktpvEnum, (int)TptEditable.ktptNotEditable);
 			vwenv.AddString(tssLabel);
@@ -150,8 +144,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		{
 			MostRecentlyDisplayedWritingSystemHandle = ws;
 			var sWs = m_cache.WritingSystemFactory.GetStrFromWs(ws);
-			CoreWritingSystemDefinition wsys;
-			WritingSystemServices.FindOrCreateWritingSystem(m_cache, FwDirectoryFinder.TemplateDirectory, sWs, false, false, out wsys);
+			WritingSystemServices.FindOrCreateWritingSystem(m_cache, FwDirectoryFinder.TemplateDirectory, sWs, false, false, out var wsys);
 			var result = wsys.Abbreviation;
 			if (string.IsNullOrEmpty(result))
 			{

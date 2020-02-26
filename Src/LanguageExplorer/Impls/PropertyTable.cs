@@ -214,8 +214,7 @@ namespace LanguageExplorer.Impls
 		void IPropertyTable.RemoveProperty(string name, SettingsGroup settingsGroup)
 		{
 			var key = GetPropertyKeyFromSettingsGroup(name, settingsGroup);
-			Property goner;
-			if (m_properties.TryRemove(key, out goner))
+			if (m_properties.TryRemove(key, out var goner))
 			{
 				goner.value = null;
 			}
@@ -234,8 +233,7 @@ namespace LanguageExplorer.Impls
 			}
 			// TODO: At some point in the future one should introduce a new interface, such as "IPropertyTableMigrator"
 			// TODO: and let each impl update stuff from 'n - 1' up to its 'n'.
-			string oldStringValue;
-			if (AsIPropertyRetriever.TryGetValue("currentContentControl", out oldStringValue))
+			if (AsIPropertyRetriever.TryGetValue("currentContentControl", out string oldStringValue))
 			{
 				AsIPropertyTable.RemoveProperty("currentContentControl");
 				AsIPropertyTable.SetProperty(AreaServices.ToolChoice, oldStringValue, true, settingsGroup: SettingsGroup.LocalSettings);
@@ -274,12 +272,10 @@ namespace LanguageExplorer.Impls
 			{
 				if (propertykvp.Value == null)
 				{
-					Property goner;
-					m_properties.TryRemove(propertykvp.Key, out goner);
+					m_properties.TryRemove(propertykvp.Key, out _);
 					continue;
 				}
-				var valueAsString = propertykvp.Value.value as string;
-				if (valueAsString == null || !valueAsString.StartsWith("<") || !valueAsString.EndsWith(">") || !valueAsString.Contains("assemblyPath"))
+				if (!(propertykvp.Value.value is string valueAsString) || !valueAsString.StartsWith("<") || !valueAsString.EndsWith(">") || !valueAsString.Contains("assemblyPath"))
 				{
 					continue;
 				}
@@ -338,14 +334,8 @@ namespace LanguageExplorer.Impls
 		/// <inheritdoc />
 		string IPropertyTable.LocalSettingsId
 		{
-			get
-			{
-				return m_localSettingsId ?? AsIPropertyTable.GlobalSettingsId;
-			}
-			set
-			{
-				m_localSettingsId = value;
-			}
+			get => m_localSettingsId ?? AsIPropertyTable.GlobalSettingsId;
+			set => m_localSettingsId = value;
 		}
 
 		/// <inheritdoc />
@@ -440,8 +430,7 @@ namespace LanguageExplorer.Impls
 
 		private Property GetProperty(string key)
 		{
-			Property result;
-			m_properties.TryGetValue(key, out result);
+			m_properties.TryGetValue(key, out var result);
 			return result;
 		}
 
@@ -454,8 +443,7 @@ namespace LanguageExplorer.Impls
 		private T GetValueInternal<T>(string key)
 		{
 			var defaultValue = default(T);
-			Property prop;
-			if (!m_properties.TryGetValue(key, out prop))
+			if (!m_properties.TryGetValue(key, out var prop))
 			{
 				return defaultValue;
 			}
@@ -491,9 +479,9 @@ namespace LanguageExplorer.Impls
 				prop.value = defaultValue;
 				return defaultValue;
 			}
-			if (prop.value is T)
+			if (prop.value is T value)
 			{
-				return (T)prop.value;
+				return value;
 			}
 			throw new ArgumentException("Mismatched data type.");
 		}
@@ -542,7 +530,7 @@ namespace LanguageExplorer.Impls
 				{
 					if (property.value != null && property.doDispose)
 					{
-						(property.value as IDisposable).Dispose(); // Get rid of the old value.
+						((IDisposable)property.value).Dispose(); // Get rid of the old value.
 					}
 					property.value = newValue;
 				}
@@ -558,7 +546,7 @@ namespace LanguageExplorer.Impls
 			{
 				var localSettingsPrefix = GetPathPrefixForSettingsId(AsIPropertyTable.LocalSettingsId);
 				var propertyName = key.StartsWith(localSettingsPrefix) ? key.Remove(0, localSettingsPrefix.Length) : key;
-				Publisher.Publish(propertyName, newValue);
+				Publisher.Publish(new PublisherParameterObject(propertyName, newValue));
 			}
 		}
 

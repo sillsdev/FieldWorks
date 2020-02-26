@@ -205,8 +205,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		private bool CleanupPendingEdits()
 		{
 			const bool cancelClose = false;
-			ITsString[] rgtss;
-			if (CanGotoNextRow(out rgtss))
+			if (CanGotoNextRow(out var rgtss))
 			{
 				// JohnT: if we pass false here, then the following sequence fails (See LT-7140)
 				// Use Collect Words to add a sense where the form (but not definition) matches an existing entry.
@@ -314,16 +313,7 @@ namespace LanguageExplorer.Controls.XMLViews
 				return false;
 			}
 			var cvsli = vwsel.CLevels(false) - 1;
-			int ihvoRoot;
-			int tagTextProp;
-			int cpropPrevious;
-			int ichAnchor;
-			int ichEnd;
-			int ws;
-			bool fAssocPrev;
-			int ihvoEnd;
-			ITsTextProps ttp;
-			var rgvsli = SelLevInfo.AllTextSelInfo(vwsel, cvsli, out ihvoRoot, out tagTextProp, out cpropPrevious, out ichAnchor, out ichEnd, out ws, out fAssocPrev, out ihvoEnd, out ttp);
+			var rgvsli = SelLevInfo.AllTextSelInfo(vwsel, cvsli, out _, out _, out _, out _, out _, out _, out _, out _, out _);
 			var fNewOrEditable = rgvsli[0].hvo == XmlRDEBrowseViewVc.khvoNewItem;
 			if (!fNewOrEditable)
 			{
@@ -356,8 +346,7 @@ namespace LanguageExplorer.Controls.XMLViews
 					ScrollToCurrentSelection();
 					break;
 				case '\r':
-					ITsString[] rgtss;
-					if (!CanGotoNextRow(out rgtss))
+					if (!CanGotoNextRow(out var rgtss))
 					{
 						return true;
 					}
@@ -373,15 +362,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		private bool CanAdvanceToNewRow(IVwSelection vwsel, out ITsString[] rgtss)
 		{
 			rgtss = null;
-			int iCellBox;
-			int cCellBoxes;
-			int iDummyBox;
-			int dummyLevel;
-			int iDummyTableBox;
-			int cDummyTableBoxes;
-			int iDummyTableLevel;
-			int iDummyCellLevel;
-			GetCurrentTableCellInfo(vwsel, out dummyLevel, out iDummyBox, out iDummyTableBox, out cDummyTableBoxes, out iDummyTableLevel, out iCellBox, out cCellBoxes, out iDummyCellLevel);
+			GetCurrentTableCellInfo(vwsel, out _, out _, out _, out _, out _, out var iCellBox, out var cCellBoxes, out _);
 			if ((ModifierKeys & Keys.Shift) != Keys.Shift)
 			{
 				bool cellsAllowMove;
@@ -431,15 +412,7 @@ namespace LanguageExplorer.Controls.XMLViews
 				var vwsel = RootBox.MakeTextSelection(0, rgvsli.Length, rgvsli, flidNew, 0, 0, 0, wsNew, false, -1, null, false);
 				if (m_xbvvc.ShowColumnsRTL)
 				{
-					int iLevel;
-					int iBox;
-					int iTableBox;
-					int cTableBoxes;
-					int iTableLevel;
-					int iCellBox;
-					int cCellBoxes;
-					int iCellLevel;
-					GetCurrentTableCellInfo(vwsel, out iLevel, out iBox, out iTableBox, out cTableBoxes, out iTableLevel, out iCellBox, out cCellBoxes, out iCellLevel);
+					GetCurrentTableCellInfo(vwsel, out _, out _, out _, out _, out _, out _, out var cCellBoxes, out var iCellLevel);
 					RootBox.MakeSelInBox(vwsel, true, iCellLevel, cCellBoxes - 1, true, false, true);
 				}
 				else
@@ -587,15 +560,12 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		private void CreateObjectFromEntryRow(ITsString[] rgtss, bool fAddItems)
 		{
-			int newObjHvo;
 			// Conceptual model class.
-			var sUndo = string.Format(XMLViewsStrings.ksUndoNewEntryX, rgtss[0].Text);
-			var sRedo = string.Format(XMLViewsStrings.ksRedoNewEntryX, rgtss[0].Text);
 			try
 			{
-				UndoableUnitOfWorkHelper.Do(sUndo, sRedo, Cache.ActionHandlerAccessor, () =>
+				UndoableUnitOfWorkHelper.Do(string.Format(XMLViewsStrings.ksUndoNewEntryX, rgtss[0].Text), string.Format(XMLViewsStrings.ksRedoNewEntryX, rgtss[0].Text), Cache.ActionHandlerAccessor, () =>
 				{
-					newObjHvo = CreateObjectFromEntryRow(rgtss);
+					var newObjHvo = CreateObjectFromEntryRow(rgtss);
 					var undoRedoAction = new CreateObjectFromEntryRowUndoAction(this, newObjHvo, fAddItems);
 					Cache.ActionHandlerAccessor.AddAction(undoRedoAction);
 					undoRedoAction.DoIt();
@@ -735,8 +705,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				return base.OnRightMouseUp(pt, rcSrcRoot, rcDstRoot);
 			}
-			ICmObject target;
-			if (!Cache.ServiceLocator.ObjectRepository.TryGetObject(hvo, out target) || !(target is ILexSense))
+			if (!Cache.ServiceLocator.ObjectRepository.TryGetObject(hvo, out var target) || !(target is ILexSense))
 			{
 				return base.OnRightMouseUp(pt, rcSrcRoot, rcDstRoot);
 			}
@@ -792,25 +761,15 @@ namespace LanguageExplorer.Controls.XMLViews
 			var vwsel = RootBox?.Selection;
 			if (vwsel != null)
 			{
-				int ihvoRoot;
-				int tag;
-				int cpropPrevious;
-				int ichAnchor;
-				int ichEnd;
-				int ws;
-				bool fAssocPrev;
-				int ihvoEnd;
-				ITsTextProps ttp;
 				var cvsli = vwsel.CLevels(false) - 1;
-				var rgvsli = SelLevInfo.AllTextSelInfo(vwsel, cvsli, out ihvoRoot, out tag, out cpropPrevious, out ichAnchor, out ichEnd, out ws, out fAssocPrev, out ihvoEnd, out ttp);
+				var rgvsli = SelLevInfo.AllTextSelInfo(vwsel, cvsli, out _, out _, out _, out _, out _, out _, out _, out _, out _);
 				if (rgvsli[0].hvo == XmlRDEBrowseViewVc.khvoNewItem)
 				{
-					ITsString[] rgtss;
-					fCanDelete = CanGotoNextRow(out rgtss);
+					fCanDelete = CanGotoNextRow(out _);
 				}
 				else
 				{
-					for (int i = 0; i < cvsli; ++i)
+					for (var i = 0; i < cvsli; ++i)
 					{
 						if (RDEVc.EditableObjectsContains(rgvsli[i].hvo))
 						{

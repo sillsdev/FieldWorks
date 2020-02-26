@@ -330,8 +330,7 @@ namespace LanguageExplorer.Controls
 			cbEC.Sorted = true;
 			while (de.MoveNext())
 			{
-				var name = de.Key as string;
-				if (name != null)
+				if (de.Key is string name)
 				{
 					cbEC.Items.Add(name);
 				}
@@ -414,8 +413,7 @@ namespace LanguageExplorer.Controls
 			if (m_wsInfo != null)
 			{
 				// (Bev) pick up the current writing system
-				var wsi = cbWS.SelectedItem as WsInfo;
-				if (wsi != null)
+				if (cbWS.SelectedItem is WsInfo wsi)
 				{
 					if (wsi.Map != null)
 					{

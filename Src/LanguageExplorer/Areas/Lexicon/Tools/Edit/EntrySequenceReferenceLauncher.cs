@@ -22,10 +22,10 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 	internal class EntrySequenceReferenceLauncher : VectorReferenceLauncher
 	{
 		/// <summary>
-		/// Use this to do the Add/RemoveNotifications, since it can be used in the unmanged section of Dispose.
+		/// Use this to do the Add/RemoveNotifications, since it can be used in the unmanaged section of Dispose.
 		/// (If m_sda is COM, that is.)
 		/// Doing it there will be safer, since there was a risk of it not being removed
-		/// in the mananged section, as when disposing was done by the Finalizer.
+		/// in the managed section, as when disposing was done by the Finalizer.
 		/// </summary>
 		private ISilDataAccess m_sda;
 
@@ -139,7 +139,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 							using (var dlg = new EntryGoDlg())
 							{
 								dlg.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
-								dlg.StartingEntry = m_obj as ILexEntry ?? (m_obj as ILexSense).Entry;
+								dlg.StartingEntry = m_obj as ILexEntry ?? ((ILexSense)m_obj).Entry;
 								dlg.SetDlgInfo(m_cache, null);
 								var str = ShowHelp.RemoveSpaces(Slice.Label);
 								dlg.SetHelpTopic("khtpChooseComplexFormEntryOrSense-" + str);
@@ -177,7 +177,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		private void HandleChooserForBackRefs(string fieldName, bool fPropContainsEntryRefs)
 		{
 			const string displayWs = "analysis vernacular";
-			IEnumerable<ICmObject> options = m_obj is ILexEntry ? ((ILexEntry)m_obj).ComplexFormEntries : ((ILexSense)m_obj).ComplexFormEntries;
+			IEnumerable<ICmObject> options = m_obj is ILexEntry entry ? entry.ComplexFormEntries : ((ILexSense)m_obj).ComplexFormEntries;
 			var oldValue = m_cache.GetManagedSilDataAccess().VecProp(m_obj.Hvo, m_flid).Select(hvo => m_cache.ServiceLocator.GetObject(hvo));
 			// We want a collection of LexEntries as the current values. If we're displaying lex entry refs we want their owners.
 			if (fPropContainsEntryRefs)
@@ -305,7 +305,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		public override void AddItem(ICmObject obj)
 		{
 			var lexemes = new HashSet<ICmObject>();
-			var ler = m_obj as ILexEntryRef;
+			var ler = (ILexEntryRef)m_obj;
 			switch (m_flid)
 			{
 				case LexEntryRefTags.kflidComponentLexemes:

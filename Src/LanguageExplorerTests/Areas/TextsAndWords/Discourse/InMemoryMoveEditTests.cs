@@ -508,8 +508,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 
 			// Verify
 			VerifyDeletedHvos(new[] { cellPart0_2.Hvo }, "Should have removed one item from row0; Hvo {0} still exists!");
-			VerifyRowContents(0,
-				new IConstituentChartCellPart[] { cellPart0_1, cellPart0_1b, cellPart0_2b, cellPart0_2c });
+			VerifyRowContents(0, new IConstituentChartCellPart[] { cellPart0_1, cellPart0_1b, cellPart0_2b, cellPart0_2c });
 			// Should have merged two WordGroups
 			VerifyWordGroup(0, 0, m_allColumns[1], new List<AnalysisOccurrence> { allParaOccurrences[0], allParaOccurrences[1] });
 		}

@@ -63,7 +63,7 @@ namespace LanguageExplorer.Controls.DetailControls
 				m_mainControl = value;
 				m_mainControl.TabIndex = 0;
 			}
-			get { return m_mainControl; }
+			get => m_mainControl;
 		}
 
 		/// <summary>
@@ -76,7 +76,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		public virtual XElement ConfigurationNode
 		{
-			get { return m_configurationNode; }
+			get => m_configurationNode;
 			set { m_configurationNode = value; }
 		}
 

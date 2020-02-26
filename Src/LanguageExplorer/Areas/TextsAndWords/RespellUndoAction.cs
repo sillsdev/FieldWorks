@@ -365,8 +365,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			{
 				return null;
 			}
-			ParaChangeInfo info;
-			if (m_changedParas.TryGetValue(hvoPara, out info))
+			if (m_changedParas.TryGetValue(hvoPara, out var info))
 			{
 				return info;
 			}
@@ -557,9 +556,9 @@ namespace LanguageExplorer.Areas.TextsAndWords
 				}
 				else
 				{
-					publisher.Publish("ItemDataModified", wfOld);
+					publisher.Publish(new PublisherParameterObject("ItemDataModified", wfOld));
 				}
-				publisher.Publish("ItemDataModified", wfNew);
+				publisher.Publish(new PublisherParameterObject("ItemDataModified", wfNew));
 				uuow.RollBack = false;
 			}
 		}
@@ -750,13 +749,20 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		{
 			// Notify everyone about the change in the virtual properties
 			// for the three types of analyses.
-			WordformVirtualPropChanged(hvoWf, "HumanApprovedAnalyses");
-			WordformVirtualPropChanged(hvoWf, "HumanNoOpinionParses");
-			WordformVirtualPropChanged(hvoWf, "HumanDisapprovedParses");
-			WordformVirtualPropChanged(hvoWf, "FullConcordanceCount");
-			WordformVirtualPropChanged(hvoWf, "UserCount");
-			WordformVirtualPropChanged(hvoWf, "ParserCount");
-			WordformVirtualPropChanged(hvoWf, "ConflictCount");
+			var virtualProperties = new List<string>
+			{
+				"HumanApprovedAnalyses",
+				"HumanNoOpinionParses",
+				"HumanDisapprovedParses",
+				"FullConcordanceCount",
+				"UserCount",
+				"ParserCount",
+				"ConflictCount"
+			};
+			foreach (var virtualProperty in virtualProperties)
+			{
+				WordformVirtualPropChanged(hvoWf, virtualProperty);
+			}
 		}
 
 		private void WordformVirtualPropChanged(int hvoWf, string name)
@@ -821,16 +827,13 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		/// </summary>
 		internal void RemoveChangedItems(HashSet<int> enabledItems, int tagEnabled)
 		{
-			foreach (var info in m_changedParas.Values)
+			foreach (var hvoFake in m_changedParas.Values.SelectMany(info => info.Changes))
 			{
-				foreach (var hvoFake in info.Changes)
+				m_specialSda.SetInt(hvoFake, tagEnabled, 0);
+				var matchingItem = (enabledItems.Where(item => item == hvoFake)).FirstOrDefault();
+				if (matchingItem != 0) // 0 is the standard default value for ints.
 				{
-					m_specialSda.SetInt(hvoFake, tagEnabled, 0);
-					var matchingItem = (enabledItems.Where(item => item == hvoFake)).FirstOrDefault();
-					if (matchingItem != 0) // 0 is the standard default value for ints.
-					{
-						enabledItems.Remove(matchingItem);
-					}
+					enabledItems.Remove(matchingItem);
 				}
 			}
 		}
@@ -840,15 +843,13 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		/// </summary>
 		internal CaseFunctions GetCaseFunctionFor(int ws)
 		{
-			CaseFunctions cf;
-			if (m_caseFunctions.TryGetValue(ws, out cf))
+			if (m_caseFunctions.TryGetValue(ws, out var caseFunctions))
 			{
-				return cf;
+				return caseFunctions;
 			}
-			var icuLocale = m_cache.ServiceLocator.WritingSystemManager.Get(ws).IcuLocale;
-			cf = new CaseFunctions(icuLocale);
-			m_caseFunctions[ws] = cf;
-			return cf;
+			caseFunctions = new CaseFunctions(m_cache.ServiceLocator.WritingSystemManager.Get(ws).IcuLocale);
+			m_caseFunctions[ws] = caseFunctions;
+			return caseFunctions;
 		}
 	}
 }

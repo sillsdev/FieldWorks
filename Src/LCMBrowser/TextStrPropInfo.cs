@@ -17,8 +17,7 @@ namespace LCMBrowser
 		/// <summary />
 		public TextStrPropInfo(ITsTextProps props, int iprop)
 		{
-			int tpt;
-			Value = props.GetStrProp(iprop, out tpt);
+			Value = props.GetStrProp(iprop, out var tpt);
 			Type = (FwTextPropType)tpt;
 		}
 

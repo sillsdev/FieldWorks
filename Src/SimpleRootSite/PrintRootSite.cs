@@ -217,7 +217,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <summary>
 		/// print root sites are never used for editing, so this routine should never be called.
 		/// </summary>
-		public void RequestSelectionAtEndOfUow(IVwRootBox _rootb, int ihvoRoot, int cvlsi, SelLevInfo[] rgvsli, int tagTextProp, int cpropPrevious, int ich, int wsAlt, bool fAssocPrev, ITsTextProps selProps)
+		public void RequestSelectionAtEndOfUow(IVwRootBox rootb, int ihvoRoot, int cvlsi, SelLevInfo[] rgvsli, int tagTextProp, int cpropPrevious, int ich, int wsAlt, bool fAssocPrev, ITsTextProps selProps)
 		{
 			throw new NotSupportedException();
 		}

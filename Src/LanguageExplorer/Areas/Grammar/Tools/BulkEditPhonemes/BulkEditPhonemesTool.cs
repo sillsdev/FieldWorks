@@ -29,8 +29,6 @@ namespace LanguageExplorer.Areas.Grammar.Tools.BulkEditPhonemes
 		private PaneBarContainer _paneBarContainer;
 		private AssignFeaturesToPhonemes _assignFeaturesToPhonemesView;
 		private IRecordList _recordList;
-		[Import(AreaServices.GrammarAreaMachineName)]
-		private IArea _area;
 
 		#region Implementation of IMajorFlexComponent
 
@@ -122,7 +120,8 @@ namespace LanguageExplorer.Areas.Grammar.Tools.BulkEditPhonemes
 		/// <summary>
 		/// Get the area for the tool.
 		/// </summary>
-		public IArea Area => _area;
+		[field: Import(AreaServices.GrammarAreaMachineName)]
+		public IArea Area { get; private set; }
 
 		/// <summary>
 		/// Get the image for the area.
@@ -148,7 +147,6 @@ namespace LanguageExplorer.Areas.Grammar.Tools.BulkEditPhonemes
 				_majorFlexComponentParameters = majorFlexComponentParameters;
 				_assignFeaturesToPhonemesView = assignFeaturesToPhonemes;
 				_recordList = recordList;
-
 				SetupUiWidgets(tool);
 				CreateBrowseViewContextMenu();
 			}
@@ -157,9 +155,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.BulkEditPhonemes
 			{
 				_grammarAreaServices = new GrammarAreaServices();
 				var toolUiWidgetParameterObject = new ToolUiWidgetParameterObject(tool);
-
 				_grammarAreaServices.Setup_CmdInsertPhoneme(_majorFlexComponentParameters.LcmCache, toolUiWidgetParameterObject);
-
 				_majorFlexComponentParameters.UiWidgetController.AddHandlers(toolUiWidgetParameterObject);
 			}
 

@@ -56,9 +56,9 @@ namespace LanguageExplorer.Controls
 			MainControl = mainControl;
 			PaneBar = paneBar;
 			paneBar.Dock = DockStyle.Top;
-			if (mainControl is IPaneBarUser)
+			if (mainControl is IPaneBarUser paneBarUser)
 			{
-				((IPaneBarUser)mainControl).MainPaneBar = PaneBar;
+				paneBarUser.MainPaneBar = PaneBar;
 			}
 			Dock = DockStyle.Fill;
 			mainControl.Dock = DockStyle.Fill;
@@ -146,13 +146,7 @@ namespace LanguageExplorer.Controls
 		/// <summary />
 		public Control PopulateCtrlTabTargetCandidateList(List<Control> targetCandidates)
 		{
-			if (targetCandidates == null)
-			{
-				throw new ArgumentNullException(nameof(targetCandidates));
-			}
-			// Don't bother with the IPaneBar.
-			// Just check out the main control.
-			return ((ICtrlTabProvider)MainControl).PopulateCtrlTabTargetCandidateList(targetCandidates);
+			return targetCandidates == null ? throw new ArgumentNullException(nameof(targetCandidates)) : ((ICtrlTabProvider)MainControl).PopulateCtrlTabTargetCandidateList(targetCandidates);
 		}
 
 		#endregion  ICtrlTabProvider implementation
@@ -160,8 +154,7 @@ namespace LanguageExplorer.Controls
 		/// <summary />
 		public void PostLayoutInit()
 		{
-			var initReceiver = MainControl as IPostLayoutInit;
-			initReceiver?.PostLayoutInit();
+			(MainControl as IPostLayoutInit)?.PostLayoutInit();
 		}
 
 		#region Implementation of IPropertyTableProvider

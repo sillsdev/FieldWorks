@@ -399,8 +399,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 		[Test]
 		public void MigrateFrom83Alpha_MissingReversalWsFilledIn()
 		{
-			CoreWritingSystemDefinition testWs;
-			WritingSystemServices.FindOrCreateWritingSystem(Cache, null, "ta-fonipa", false, false, out testWs);
+			WritingSystemServices.FindOrCreateWritingSystem(Cache, null, "ta-fonipa", false, false, out var testWs);
 			Cache.LangProject.AddToCurrentAnalysisWritingSystems(testWs);
 			var configModelEn = new DictionaryConfigurationModel
 			{
@@ -551,7 +550,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 		{
 			var DictionaryNodeSubSenseOptions = new DictionaryNodeSenseOptions
 			{
-				BeforeNumber = "",
+				BeforeNumber = string.Empty,
 				AfterNumber = ")",
 				NumberStyle = "Dictionary-SenseNumber",
 				NumberingStyle = "%d",
@@ -1185,7 +1184,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 			{
 				Version = FirstAlphaMigrator.VersionAlpha2,
 				WritingSystem = "en",
-				FilePath = String.Empty,
+				FilePath = string.Empty,
 				Parts = new List<ConfigurableDictionaryNode> { mainEntryNode }
 			};
 			_migrator.MigrateFrom83Alpha(model);

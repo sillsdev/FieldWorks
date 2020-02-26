@@ -256,7 +256,6 @@ namespace LanguageExplorer
 				using (var reader = XmlReader.Create(sXmlFilePath, settings))
 				{
 					var doc = XDocument.Load(reader);
-
 					var root = doc.Root;
 					CheckDtdVersion(root, ResourceFileName);
 					return root;
@@ -599,8 +598,7 @@ namespace LanguageExplorer
 			{
 				return;
 			}
-			int hasProperty;
-			var propValue = styleRules.GetIntPropValues(property, out hasProperty);
+			var propValue = styleRules.GetIntPropValues(property, out var hasProperty);
 			if (hasProperty != -1)
 			{
 				resultsList.Add(new Tuple<string, string>(attributeName, propValue / 1000 + " pt"));
@@ -618,8 +616,7 @@ namespace LanguageExplorer
 			{
 				return;
 			}
-			int hasColor;
-			var colorValueBGR = styleRules.GetIntPropValues(property, out hasColor);
+			var colorValueBGR = styleRules.GetIntPropValues(property, out var hasColor);
 			if (hasColor == -1)
 			{
 				return;
@@ -928,11 +925,10 @@ namespace LanguageExplorer
 		/// </remarks>
 		internal IStStyle FindOrCreateStyle(string styleName, StyleType styleType, ContextValues context, StructureValues structure, FunctionValues function, Guid factoryGuid)
 		{
-			IStStyle style;
 			var fUsingExistingStyle = false;
 			// EnsureCompatibleFactoryStyle will rename an incompatible user style to prevent collisions,
 			// but it is our responsibility to update the GUID on a compatible user style.
-			if (_originalStyles.TryGetValue(styleName, out style) && EnsureCompatibleFactoryStyle(style, styleType, context, structure, function))
+			if (_originalStyles.TryGetValue(styleName, out var style) && EnsureCompatibleFactoryStyle(style, styleType, context, structure, function))
 			{
 				// A style with the same name already exists in the project.
 				// It may be a user style or a factory style, but it has compatible context, structure, and function.
@@ -1460,7 +1456,7 @@ namespace LanguageExplorer
 					overrides[wsId] = fontInfo;
 				}
 			}
-			if (overrides.Count > 0)
+			if (overrides.Any())
 			{
 				var overridesString = BaseStyleInfo.GetOverridesString(overrides);
 				if (!string.IsNullOrEmpty(overridesString))
@@ -1723,8 +1719,7 @@ namespace LanguageExplorer
 			attr = paragraphElement.Attribute("bulNumStartAt");
 			if (attr != null)
 			{
-				int nVal;
-				if (!int.TryParse(attr.Value, out nVal))
+				if (!int.TryParse(attr.Value, out var nVal))
 				{
 					ReportInvalidInstallation(string.Format(LanguageExplorerResources.ksUnknownBulNumStartAtValue, styleName, ResourceFileName));
 					nVal = 0;
@@ -1829,8 +1824,7 @@ namespace LanguageExplorer
 			var bulletProps = new StringBuilder(propsBldr.IntPropCount * 3 + propsBldr.StrPropCount * 3);
 			for (var i = 0; i < propsBldr.IntPropCount; i++)
 			{
-				int var;
-				var intValue = propsBldr.GetIntProp(i, out type, out var);
+				var intValue = propsBldr.GetIntProp(i, out type, out _);
 				bulletProps.Append((char)type);
 				bulletProps.Append((char)(intValue & 0xFFFF));
 				bulletProps.Append((char)((intValue >> 16) & 0xFFFF));

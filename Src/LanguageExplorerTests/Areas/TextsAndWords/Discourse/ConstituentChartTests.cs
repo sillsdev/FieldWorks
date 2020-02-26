@@ -45,7 +45,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 				using (var chart = new FakeConstituentChart(Cache, new SharedEventHandlers()))
 				{
 					chart.InitializeFlexComponent(flexComponentParameters);
-					var headerView = ReflectionHelper.GetField(chart, "m_headerMainCols") as ChartHeaderView;
+					var headerView = (ChartHeaderView)ReflectionHelper.GetField(chart, "m_headerMainCols");
 					for (var i = 0; i < 5; i++)
 					{
 						headerView.Controls.Add(new HeaderLabel());

@@ -333,8 +333,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 		private static WritingSystemManager GetWsf()
 		{
 			var wsf = new WritingSystemManager();
-			CoreWritingSystemDefinition wsObj;
-			wsf.GetOrSet("qaa-x-kal", out wsObj);
+			wsf.GetOrSet("qaa-x-kal", out var wsObj);
 			EnsureQuoteAndHyphenWordForming(wsObj);
 			return wsf;
 		}

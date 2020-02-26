@@ -118,9 +118,9 @@ namespace LanguageExplorer.Controls.DetailControls
 							if (pi != null)
 							{
 								var s = pi.GetValue(obj, null);
-								if (s is ITsString)
+								if (s is ITsString tsString)
 								{
-									tss = (ITsString)s;
+									tss = tsString;
 								}
 								else
 								{
@@ -177,10 +177,7 @@ namespace LanguageExplorer.Controls.DetailControls
 				}
 				return sTextStyle;
 			}
-			set
-			{
-				m_textStyle = value;
-			}
+			set => m_textStyle = value;
 		}
 	}
 }

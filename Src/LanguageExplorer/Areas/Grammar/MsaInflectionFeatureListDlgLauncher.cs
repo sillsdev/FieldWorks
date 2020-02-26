@@ -88,8 +88,7 @@ namespace LanguageExplorer.Areas.Grammar
 						{
 							ctl = ctl.Parent;
 						}
-						var slice = ctl as Slice;
-						if (slice != null)
+						if (ctl is Slice slice)
 						{
 							var dt = slice.ContainingDataTree;
 							for (var i = 0; i < dt.Slices.Count; ++i)

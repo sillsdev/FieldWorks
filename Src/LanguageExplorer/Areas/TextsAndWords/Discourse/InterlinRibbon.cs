@@ -78,8 +78,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 
 		protected internal InterlinLineChoices RibbonLineChoices
 		{
-			get { return LineChoices; }
-			set { LineChoices = value; }
+			get => LineChoices;
+			set => LineChoices = value;
 		}
 
 		public virtual int OccurenceListId => m_occurenceListId;
@@ -93,7 +93,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		/// </summary>
 		public int EndSelLimitIndex
 		{
-			get { return m_iEndSelLim; }
+			get => m_iEndSelLim;
 			set
 			{
 				m_iEndSelLim = value;
@@ -103,7 +103,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 
 		public AnalysisOccurrence SelLimOccurrence
 		{
-			get { return m_endSelLimPoint; }
+			get => m_endSelLimPoint;
 			set
 			{
 				m_endSelLimPoint = value;
@@ -375,7 +375,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			protected override void AddWordBundleInternal(int hvo, IVwEnv vwenv)
 			{
 				SetupAndOpenInnerPile(vwenv);
-				var frag = (m_ribbon.Decorator as InterlinRibbonDecorator).OccurrenceFromHvo(hvo) as LocatedAnalysisOccurrence;
+				var frag = (m_ribbon.Decorator as InterlinRibbonDecorator)?.OccurrenceFromHvo(hvo) as LocatedAnalysisOccurrence;
 				DisplayAnalysisAndCloseInnerPile(vwenv, frag, false);
 			}
 

@@ -3,6 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Collections.Generic;
+using System.Linq;
 using SIL.LCModel.Application;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Infrastructure;
@@ -24,22 +25,12 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		public override int get_VecSize(int hvo, int tag)
 		{
-			if (tag == PhoneEnvReferenceView.kMainObjEnvironments)
-			{
-				List<int> objs;
-				return m_MainObjEnvs.TryGetValue(hvo, out objs) ? objs.Count : 0;
-			}
-			return base.get_VecSize(hvo, tag);
+			return tag == PhoneEnvReferenceView.kMainObjEnvironments ? m_MainObjEnvs.TryGetValue(hvo, out var objs) ? objs.Count : 0 : base.get_VecSize(hvo, tag);
 		}
 
 		public override int get_VecItem(int hvo, int tag, int index)
 		{
-			if (tag == PhoneEnvReferenceView.kMainObjEnvironments)
-			{
-				List<int> objs;
-				return m_MainObjEnvs.TryGetValue(hvo, out objs) ? objs[index] : 0;
-			}
-			return base.get_VecItem(hvo, tag, index);
+			return tag == PhoneEnvReferenceView.kMainObjEnvironments ? m_MainObjEnvs.TryGetValue(hvo, out var objs) ? objs[index] : 0 : base.get_VecItem(hvo, tag, index);
 		}
 
 		public override void DeleteObj(int hvoObj)
@@ -58,12 +49,9 @@ namespace LanguageExplorer.Controls.DetailControls
 				{
 					m_ErrorMsgs.Remove(hvoObj);
 				}
-				foreach (var x in m_MainObjEnvs)
+				foreach (var x in m_MainObjEnvs.Where(x => x.Value.Contains(hvoObj)))
 				{
-					if (x.Value.Contains(hvoObj))
-					{
-						x.Value.Remove(hvoObj);
-					}
+					x.Value.Remove(hvoObj);
 				}
 			}
 			else
@@ -74,12 +62,7 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		public override ITsString get_StringProp(int hvo, int tag)
 		{
-			if (tag == PhoneEnvReferenceView.kEnvStringRep)
-			{
-				ITsString tss;
-				return m_EnvStringReps.TryGetValue(hvo, out tss) ? tss : null;
-			}
-			return base.get_StringProp(hvo, tag);
+			return tag == PhoneEnvReferenceView.kEnvStringRep ? m_EnvStringReps.TryGetValue(hvo, out var tss) ? tss : null : base.get_StringProp(hvo, tag);
 		}
 
 		public override void SetString(int hvo, int tag, ITsString _tss)
@@ -96,12 +79,7 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		public override string get_UnicodeProp(int hvo, int tag)
 		{
-			if (tag == PhoneEnvReferenceView.kErrorMessage)
-			{
-				string sMsg;
-				return m_ErrorMsgs.TryGetValue(hvo, out sMsg) ? sMsg : null;
-			}
-			return base.get_UnicodeProp(hvo, tag);
+			return tag == PhoneEnvReferenceView.kErrorMessage ? m_ErrorMsgs.TryGetValue(hvo, out var sMsg) ? sMsg : null : base.get_UnicodeProp(hvo, tag);
 		}
 
 		public override void SetUnicode(int hvo, int tag, string _rgch, int cch)
@@ -121,8 +99,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			if (tag == PhoneEnvReferenceView.kMainObjEnvironments)
 			{
 				var hvo = --m_NextDummyId;
-				List<int> objs;
-				if (!m_MainObjEnvs.TryGetValue(hvoOwner, out objs))
+				if (!m_MainObjEnvs.TryGetValue(hvoOwner, out var objs))
 				{
 					objs = new List<int>();
 					m_MainObjEnvs.Add(hvoOwner, objs);
@@ -141,8 +118,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			{
 				return;
 			}
-			List<int> objs;
-			if (m_MainObjEnvs.TryGetValue(hvoObj, out objs))
+			if (m_MainObjEnvs.TryGetValue(hvoObj, out var objs))
 			{
 				var cDel = ihvoLim - ihvoMin;
 				if (cDel > 0)
@@ -165,8 +141,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			{
 				return;
 			}
-			List<int> objs;
-			if (m_MainObjEnvs.TryGetValue(hvoObj, out objs))
+			if (m_MainObjEnvs.TryGetValue(hvoObj, out var objs))
 			{
 				objs.Clear();
 			}

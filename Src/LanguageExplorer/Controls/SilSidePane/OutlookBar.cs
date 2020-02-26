@@ -105,7 +105,7 @@ namespace LanguageExplorer.Controls.SilSidePane
 		[DefaultValue(typeof(Renderer), "Outlook2003"), Category("Appearance")]
 		public Renderer Renderer
 		{
-			get { return m_renderer; }
+			get => m_renderer;
 			set
 			{
 				m_renderer = value;
@@ -116,7 +116,7 @@ namespace LanguageExplorer.Controls.SilSidePane
 		/// <summary />
 		public override Size MinimumSize
 		{
-			get { return new Size(BottomContainerLeftMargin, BottomContainerRectangle.Height + GripRectangle.Height); }
+			get => new Size(BottomContainerLeftMargin, BottomContainerRectangle.Height + GripRectangle.Height);
 			set { }
 		}
 
@@ -124,7 +124,7 @@ namespace LanguageExplorer.Controls.SilSidePane
 		[Category("Appearance"), DisplayName("LineColor")]
 		public Color OutlookBarLineColor
 		{
-			get { return m_outlookBarLineColor; }
+			get => m_outlookBarLineColor;
 			set
 			{
 				m_outlookBarLineColor = value;
@@ -136,7 +136,7 @@ namespace LanguageExplorer.Controls.SilSidePane
 		[Category("Appearance")]
 		public int ButtonHeight
 		{
-			get { return m_buttonHeight; }
+			get => m_buttonHeight;
 			set
 			{
 				if (value < 5)
@@ -152,7 +152,7 @@ namespace LanguageExplorer.Controls.SilSidePane
 		[DisplayName("ForeColorNotSelected")]
 		public override Color ForeColor
 		{
-			get { return base.ForeColor; }
+			get => base.ForeColor;
 			set
 			{
 				base.ForeColor = value;
@@ -164,7 +164,7 @@ namespace LanguageExplorer.Controls.SilSidePane
 		[Category("Appearance")]
 		public Color ForeColorSelected
 		{
-			get { return m_foreColorSelected; }
+			get => m_foreColorSelected;
 			set
 			{
 				m_foreColorSelected = value;
@@ -176,7 +176,7 @@ namespace LanguageExplorer.Controls.SilSidePane
 		[DisplayName("ButtonFont")]
 		public override Font Font
 		{
-			get { return base.Font; }
+			get => base.Font;
 			set
 			{
 				base.Font = value;
@@ -188,7 +188,7 @@ namespace LanguageExplorer.Controls.SilSidePane
 		[Category("Appearance"), DisplayName("ButtonHovering1")]
 		public Color ButtonColorHoveringTop
 		{
-			get { return m_buttonColorHoveringTop; }
+			get => m_buttonColorHoveringTop;
 			set
 			{
 				m_buttonColorHoveringTop = value;
@@ -200,7 +200,7 @@ namespace LanguageExplorer.Controls.SilSidePane
 		[Category("Appearance"), DisplayName("ButtonSelected1")]
 		public Color ButtonColorSelectedTop
 		{
-			get { return m_buttonColorSelectedTop; }
+			get => m_buttonColorSelectedTop;
 			set
 			{
 				m_buttonColorSelectedTop = value;
@@ -212,7 +212,7 @@ namespace LanguageExplorer.Controls.SilSidePane
 		[Category("Appearance"), DisplayName("ButtonSelectedHovering1")]
 		public Color ButtonColorSelectedAndHoveringTop
 		{
-			get { return m_buttonColorSelectedAndHoveringTop; }
+			get => m_buttonColorSelectedAndHoveringTop;
 			set
 			{
 				m_buttonColorSelectedAndHoveringTop = value;
@@ -224,7 +224,7 @@ namespace LanguageExplorer.Controls.SilSidePane
 		[Category("Appearance"), DisplayName("ButtonPassive1")]
 		public Color ButtonColorPassiveTop
 		{
-			get { return m_buttonColorPassiveTop; }
+			get => m_buttonColorPassiveTop;
 			set
 			{
 				m_buttonColorPassiveTop = value;
@@ -236,7 +236,7 @@ namespace LanguageExplorer.Controls.SilSidePane
 		[Category("Appearance"), DisplayName("ButtonHovering2")]
 		public Color ButtonColorHoveringBottom
 		{
-			get { return m_buttonColorHoveringBottom; }
+			get => m_buttonColorHoveringBottom;
 			set
 			{
 				m_buttonColorHoveringBottom = value;
@@ -248,7 +248,7 @@ namespace LanguageExplorer.Controls.SilSidePane
 		[Category("Appearance"), DisplayName("ButtonSelected2")]
 		public Color ButtonColorSelectedBottom
 		{
-			get { return m_buttonColorSelectedBottom; }
+			get => m_buttonColorSelectedBottom;
 			set
 			{
 				m_buttonColorSelectedBottom = value;
@@ -260,7 +260,7 @@ namespace LanguageExplorer.Controls.SilSidePane
 		[Category("Appearance"), DisplayName("ButtonSelectedHovering2")]
 		public Color ButtonColorSelectedAndHoveringBottom
 		{
-			get { return m_buttonColorSelectedAndHoveringBottom; }
+			get => m_buttonColorSelectedAndHoveringBottom;
 			set
 			{
 				m_buttonColorSelectedAndHoveringBottom = value;
@@ -272,7 +272,7 @@ namespace LanguageExplorer.Controls.SilSidePane
 		[Category("Appearance"), DisplayName("ButtonPassive2")]
 		public Color ButtonColorPassiveBottom
 		{
-			get { return m_buttonColorPassiveBottom; }
+			get => m_buttonColorPassiveBottom;
 			set
 			{
 				m_buttonColorPassiveBottom = value;
@@ -358,7 +358,6 @@ namespace LanguageExplorer.Controls.SilSidePane
 		{
 			m_hoveringButton = null;
 			m_dropDownHovering = false;
-
 			if (m_isResizing)
 			{
 				if (e.Y < -InternalButtonHeight)
@@ -464,21 +463,21 @@ namespace LanguageExplorer.Controls.SilSidePane
 			//Paint Grip...
 			PaintGripRectangle(e.Graphics);
 			//Paint Large Buttons...
-			var SyncLargeButtons = 0;
-			var IterateLargeButtons = 0;
-			for (IterateLargeButtons = 0; IterateLargeButtons <= Buttons.Count - 1; IterateLargeButtons++)
+			var syncLargeButtons = 0;
+			int iterateLargeButtons;
+			for (iterateLargeButtons = 0; iterateLargeButtons <= Buttons.Count - 1; iterateLargeButtons++)
 			{
-				if (Buttons[IterateLargeButtons].Visible)
+				if (Buttons[iterateLargeButtons].Visible)
 				{
-					var rec = new Rectangle(0, SyncLargeButtons * (InternalButtonHeight + 2) + GripRectangle.Height, Width, InternalButtonHeight + 2);
-					Buttons[IterateLargeButtons].Rectangle = rec;
-					Buttons[IterateLargeButtons].IsLarge = true;
-					PaintButton(Buttons[IterateLargeButtons], e.Graphics, (m_maxLargeButtonCount != SyncLargeButtons));
-					if (SyncLargeButtons == m_maxLargeButtonCount)
+					var rec = new Rectangle(0, syncLargeButtons * (InternalButtonHeight + 2) + GripRectangle.Height, Width, InternalButtonHeight + 2);
+					Buttons[iterateLargeButtons].Rectangle = rec;
+					Buttons[iterateLargeButtons].IsLarge = true;
+					PaintButton(Buttons[iterateLargeButtons], e.Graphics, (m_maxLargeButtonCount != syncLargeButtons));
+					if (syncLargeButtons == m_maxLargeButtonCount)
 					{
 						break;
 					}
-					SyncLargeButtons++;
+					syncLargeButtons++;
 				}
 			}
 			//Paint Small Buttons...
@@ -491,24 +490,24 @@ namespace LanguageExplorer.Controls.SilSidePane
 			{
 				m_maxSmallButtonCount = (Buttons.VisibleCount - m_maxLargeButtonCount);
 			}
-			var StartX = Width - DropDownRectangle.Width - (m_maxSmallButtonCount * SmallButtonWidth);
-			var SyncSmallButtons = 0;
-			int IterateSmallButtons;
-			for (IterateSmallButtons = IterateLargeButtons; IterateSmallButtons <= Buttons.Count - 1; IterateSmallButtons++)
+			var startX = Width - DropDownRectangle.Width - (m_maxSmallButtonCount * SmallButtonWidth);
+			var syncSmallButtons = 0;
+			int iterateSmallButtons;
+			for (iterateSmallButtons = iterateLargeButtons; iterateSmallButtons <= Buttons.Count - 1; iterateSmallButtons++)
 			{
-				if (SyncSmallButtons == m_maxSmallButtonCount)
+				if (syncSmallButtons == m_maxSmallButtonCount)
 				{
 					break;
 				}
-				if (Buttons[IterateSmallButtons].Visible)
+				if (Buttons[iterateSmallButtons].Visible)
 				{
-					Buttons[IterateSmallButtons].IsLarge = false;
-					Buttons[IterateSmallButtons].Rectangle = new Rectangle(StartX + (SyncSmallButtons * SmallButtonWidth), BottomContainerRectangle.Y, SmallButtonWidth, BottomContainerRectangle.Height);
-					PaintButton(Buttons[IterateSmallButtons], e.Graphics, false);
-					SyncSmallButtons++;
+					Buttons[iterateSmallButtons].IsLarge = false;
+					Buttons[iterateSmallButtons].Rectangle = new Rectangle(startX + (syncSmallButtons * SmallButtonWidth), BottomContainerRectangle.Y, SmallButtonWidth, BottomContainerRectangle.Height);
+					PaintButton(Buttons[iterateSmallButtons], e.Graphics, false);
+					syncSmallButtons++;
 				}
 			}
-			for (var i = IterateSmallButtons; i <= Buttons.VisibleCount - 1; i++)
+			for (var i = iterateSmallButtons; i <= Buttons.VisibleCount - 1; i++)
 			{
 				Buttons[i].Rectangle = Rectangle.Empty;
 			}
@@ -673,19 +672,19 @@ namespace LanguageExplorer.Controls.SilSidePane
 					break;
 				case Renderer.Outlook2007:
 					//Filling the top part of the button...
-					var TopRectangle = rc;
-					using (br = new LinearGradientBrush(TopRectangle, GetButtonColor(state, 0), GetButtonColor(state, 1), LinearGradientMode.Vertical))
+					var topRectangle = rc;
+					using (br = new LinearGradientBrush(topRectangle, GetButtonColor(state, 0), GetButtonColor(state, 1), LinearGradientMode.Vertical))
 					{
-						TopRectangle.Height = (InternalButtonHeight * 15) / 32;
-						g.FillRectangle(br, TopRectangle);
+						topRectangle.Height = (InternalButtonHeight * 15) / 32;
+						g.FillRectangle(br, topRectangle);
 					}
 					//and the bottom part...
-					var BottomRectangle = rc;
-					using (br = new LinearGradientBrush(BottomRectangle, GetButtonColor(state, 2), GetButtonColor(state, 3), LinearGradientMode.Vertical))
+					var bottomRectangle = rc;
+					using (br = new LinearGradientBrush(bottomRectangle, GetButtonColor(state, 2), GetButtonColor(state, 3), LinearGradientMode.Vertical))
 					{
-						BottomRectangle.Y += (InternalButtonHeight * 12) / 32;
-						BottomRectangle.Height -= (InternalButtonHeight * 12) / 32;
-						g.FillRectangle(br, BottomRectangle);
+						bottomRectangle.Y += (InternalButtonHeight * 12) / 32;
+						bottomRectangle.Height -= (InternalButtonHeight * 12) / 32;
+						g.FillRectangle(br, bottomRectangle);
 					}
 					break;
 				case Renderer.Custom:

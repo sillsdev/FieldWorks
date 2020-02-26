@@ -47,7 +47,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		protected SandboxBase m_sandbox; // the sandbox we're manipulating.
 
 		public InterlinComboHandler()
-			: base()
 		{
 		}
 
@@ -86,17 +85,17 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		protected override void DisposeManagedResources()
 		{
 			// Dispose managed resources here.
-			if (ComboList is IDisposable)
+			if (ComboList is IDisposable disposable)
 			{
-				if ((ComboList as Control).Parent == null)
+				if ((disposable as Control)?.Parent == null)
 				{
-					((IDisposable)ComboList).Dispose();
+					disposable.Dispose();
 				}
-				else if (ComboList is ComboListBox)
+				else if (disposable is ComboListBox)
 				{
 					// It typically has a parent, the special form used to display it, so will not
 					// get disposed by the above, but we do want to dispose it.
-					((IDisposable)ComboList).Dispose();
+					disposable.Dispose();
 				}
 			}
 			m_items?.Clear(); // I've seen it contain ints or MorphItems.
@@ -135,9 +134,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// </summary>
 		protected static ITsTextProps HighlightProperty(Color highlightColor)
 		{
-			var color = (int)CmObjectUi.RGB(highlightColor);
 			var bldr = TsStringUtils.MakePropsBldr();
-			bldr.SetIntPropValues((int)FwTextPropType.ktptForeColor, (int)FwTextPropVar.ktpvDefault, color);
+			bldr.SetIntPropValues((int)FwTextPropType.ktptForeColor, (int)FwTextPropVar.ktpvDefault, (int)CmObjectUi.RGB(highlightColor));
 			return bldr.GetTextProps();
 		}
 
@@ -160,7 +158,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			cvsli--;
 			// Out variable for AllTextSelInfo.
 			int tagTextProp;
-			// Main array of information retrived from sel that made combo.
+			// Main array of information retrieved from sel that made combo.
 			SelLevInfo[] rgvsli;
 			if (cvsli < 0)
 			{
@@ -168,16 +166,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			}
 			try
 			{
-				// More out variables for AllTextSelInfo.
-				int ihvoRoot;
-				int cpropPrevious;
-				int ichAnchor;
-				int ichEnd;
-				int ws;
-				bool fAssocPrev;
-				int ihvoEnd;
-				ITsTextProps ttpBogus;
-				rgvsli = SelLevInfo.AllTextSelInfo(vwselNew, cvsli, out ihvoRoot, out tagTextProp, out cpropPrevious, out ichAnchor, out ichEnd, out ws, out fAssocPrev, out ihvoEnd, out ttpBogus);
+				rgvsli = SelLevInfo.AllTextSelInfo(vwselNew, cvsli, out _, out tagTextProp, out _, out _, out _, out _, out _, out _, out _);
 			}
 			catch
 			{
@@ -327,9 +316,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		public virtual void Activate(Rect loc)
 		{
 			AdjustListBoxSize();
-			var c = ((ComboListBox)ComboList);
-			c.AdjustSize(500, 400); // these are maximums!
-			c.Launch(m_sandbox.RectangleToScreen(loc), Screen.GetWorkingArea(m_sandbox));
+			var comboListBox = ((ComboListBox)ComboList);
+			comboListBox.AdjustSize(500, 400); // these are maximums!
+			comboListBox.Launch(m_sandbox.RectangleToScreen(loc), Screen.GetWorkingArea(m_sandbox));
 		}
 
 		internal void AdjustListBoxSize()
@@ -347,14 +336,14 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				while (ie.MoveNext())
 				{
 					string s = null;
-					if (ie.Current is ITsString)
+					switch (ie.Current)
 					{
-						var tss = (ITsString)ie.Current;
-						s = tss.Text;
-					}
-					else if (ie.Current is string)
-					{
-						s = (string)ie.Current;
+						case ITsString tss:
+							s = tss.Text;
+							break;
+						case string current:
+							s = current;
+							break;
 					}
 					if (s == null)
 					{
@@ -435,9 +424,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// </summary>
 		public virtual void SelectComboItem(string target)
 		{
-			int index;
-			var foundItem = GetComboItem(target, out index);
-			if (foundItem != null)
+			if (GetComboItem(target, out var index) != null)
 			{
 				HandleSelect(index);
 			}
@@ -451,7 +438,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				foreach (var item in ComboList.Items)
 				{
-					if (item is ITsString && (item as ITsString).Text == target || item is ITssValue && (item as ITssValue).AsTss.Text == target)
+					if (item is ITsString tsString && tsString.Text == target || item is ITssValue tssValue && tssValue.AsTss.Text == target)
 					{
 						foundItem = item;
 						break;
@@ -637,7 +624,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				{
 					continue; // Can't sync from morph sense to word if we don't have  morph sense.
 				}
-				var sense = m_caches.RealObject(hvoSbSense) as ILexSense;
+				var sense = (ILexSense)m_caches.RealObject(hvoSbSense);
 				var msa = sense.MorphoSyntaxAnalysisRA;
 				var fStem = msa is IMoStemMsa;
 				// If we have only one morpheme, treat it as the stem from which we will copy the gloss.
@@ -659,7 +646,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 						hvoStemPos = hvoPOS;
 					}
 				}
-				else if (msa is IMoDerivAffMsa)
+				else if (msa is IMoDerivAffMsa derivAffMsa)
 				{
 					if (hvoDerivedPos != 0)
 					{
@@ -667,7 +654,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					}
 					else
 					{
-						hvoDerivedPos = (msa as IMoDerivAffMsa).ToPartOfSpeechRA?.Hvo ?? 0;
+						hvoDerivedPos = derivAffMsa.ToPartOfSpeechRA?.Hvo ?? 0;
 					}
 				}
 			}
@@ -722,7 +709,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			var hvoSbWordPos = m_caches.DataAccess.get_ObjectProp(m_hvoSbWord, SandboxBase.ktagSbWordPos);
 			m_caches.DataAccess.SetObjProp(m_hvoSbWord, SandboxBase.ktagSbWordPos, hvoPos);
 			m_caches.DataAccess.SetInt(hvoPos, SandboxBase.ktagSbNamedObjGuess, 1);
-			m_caches.DataAccess.PropChanged(m_rootb, (int)PropChangeType.kpctNotifyAll, m_hvoSbWord, SandboxBase.ktagSbWordPos, 0, 1, (hvoSbWordPos == 0 ? 0 : 1));
+			m_caches.DataAccess.PropChanged(m_rootb, (int)PropChangeType.kpctNotifyAll, m_hvoSbWord, SandboxBase.ktagSbWordPos, 0, 1, hvoSbWordPos == 0 ? 0 : 1);
 			return hvoPos;
 		}
 	}

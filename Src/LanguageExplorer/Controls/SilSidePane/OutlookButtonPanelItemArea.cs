@@ -92,7 +92,7 @@ namespace LanguageExplorer.Controls.SilSidePane
 			}
 			var item = widget.Tag as Item;
 			CurrentItem = item;
-			ItemClicked(item);
+			ItemClicked?.Invoke(item);
 		}
 	}
 }

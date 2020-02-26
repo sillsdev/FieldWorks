@@ -254,8 +254,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			{
 				var fd = featSys.FeaturesOC.First(f => f.Abbreviation.AnalysisDefaultWritingSystem.Text == featVal.Key);
 
-				var closedFeat = fd as IFsClosedFeature;
-				if (closedFeat != null)
+				if (fd is IFsClosedFeature closedFeat)
 				{
 					var sym = closedFeat.ValuesOC.First(v => v.Abbreviation.AnalysisDefaultWritingSystem.Text == (string)featVal.Value);
 					var cv = Cache.ServiceLocator.GetInstance<IFsClosedValueFactory>().Create();
@@ -1067,8 +1066,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			var hcPrule = (MetathesisRule)m_lang.Strata[0].PhonologicalRules[0];
 
 			Assert.That(hcPrule.Direction, Is.EqualTo(Direction.RightToLeft));
-			Assert.That(hcPrule.Pattern.ToString(), Is.EqualTo(string.Format("({0})({1})({2})({3})", VowelFS,
-				m_lang.Strata[0].CharacterDefinitionTable["a"].FeatureStruct, m_lang.Strata[0].CharacterDefinitionTable["t"].FeatureStruct, ConsFS)));
+			Assert.That(hcPrule.Pattern.ToString(), Is.EqualTo($"({VowelFS})({m_lang.Strata[0].CharacterDefinitionTable["a"].FeatureStruct})({m_lang.Strata[0].CharacterDefinitionTable["t"].FeatureStruct})({ConsFS})"));
 			Assert.That(hcPrule.LeftSwitchName, Is.EqualTo("r"));
 			Assert.That(hcPrule.RightSwitchName, Is.EqualTo("l"));
 		}
@@ -1247,9 +1245,8 @@ namespace SIL.FieldWorks.WordWorks.Parser
 
 			Cache.LanguageProject.MorphologicalDataOA.ParserParameters = "<ParserParameters><ActiveParser>HC</ActiveParser><HC><NoDefaultCompounding>true</NoDefaultCompounding><AcceptUnspecifiedGraphemes>true</AcceptUnspecifiedGraphemes></HC></ParserParameters>";
 			LoadLanguage();
+			Assert.That(m_lang.Strata[0].CharacterDefinitionTable.TryGetValue("e", out var cd), Is.True);
 
-			CharacterDefinition cd;
-			Assert.That(m_lang.Strata[0].CharacterDefinitionTable.TryGetValue("e", out cd), Is.True);
 			Assert.That(cd.FeatureStruct.ValueEquals(FeatureStruct.New().Symbol(HCFeatureSystem.Segment).Feature(HCFeatureSystem.StrRep).EqualTo("e").Value), Is.True);
 			Assert.That(m_lang.Strata[0].CharacterDefinitionTable.TryGetValue("ȧ", out cd), Is.True);
 			Assert.That(cd.FeatureStruct.ValueEquals(FeatureStruct.New().Symbol(HCFeatureSystem.Segment).Feature(HCFeatureSystem.StrRep).EqualTo("ȧ").Value), Is.True);

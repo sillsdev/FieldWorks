@@ -19,9 +19,9 @@ namespace LanguageExplorer.Controls.DetailControls
 			foreach (var obj in list)
 			{
 				// This ensures that two sequences containing the same boxed integer produce the same hash value.
-				if (obj is int)
+				if (obj is int objInt)
 				{
-					hash += (int)obj;
+					hash += objInt;
 				}
 				else
 				{

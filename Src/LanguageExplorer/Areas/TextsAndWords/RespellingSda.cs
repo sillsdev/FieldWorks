@@ -54,13 +54,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 
 		public override ITsString get_StringProp(int hvo, int tag)
 		{
-			switch (tag)
-			{
-				case kflidSpellingPreview:
-					RespellInfo info;
-					return m_mapRespell.TryGetValue(hvo, out info) ? info.SpellingPreview : null;
-			}
-			return base.get_StringProp(hvo, tag);
+			return tag == kflidSpellingPreview ? m_mapRespell.TryGetValue(hvo, out var info) ? info.SpellingPreview : null : base.get_StringProp(hvo, tag);
 		}
 
 		public override int[] VecProp(int hvo, int tag)
@@ -128,8 +122,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			switch (tag)
 			{
 				case kflidSpellingPreview:
-					RespellInfo info;
-					if (m_mapRespell.TryGetValue(hvo, out info))
+					if (m_mapRespell.TryGetValue(hvo, out var info))
 					{
 						info.SpellingPreview = _tss;
 					}
@@ -194,18 +187,14 @@ namespace LanguageExplorer.Areas.TextsAndWords
 					for (var irun = 0; irun < crun; irun++)
 					{
 						// See if the run is a picture ORC
-						TsRunInfo tri;
-						FwObjDataTypes odt;
-						ITsTextProps props;
-						var guid = TsStringUtils.GetGuidFromRun(contents, irun, out odt, out tri, out props, desiredType.ToArray());
+						var guid = TsStringUtils.GetGuidFromRun(contents, irun, out _, out var tri, out _, desiredType.ToArray());
 						if (guid == Guid.Empty)
 						{
 							continue;
 						}
 						// See if its caption contains our wordform
 						var obj = cmObjRepos.GetObject(guid);
-						var clsid = obj.ClassID;
-						if (clsid != CmPictureTags.kClassId)
+						if (obj.ClassID != CmPictureTags.kClassId)
 						{
 							continue; // bizarre, just for defensiveness.
 						}
@@ -214,9 +203,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 						var wordMaker = new WordMaker(caption, Cache.ServiceLocator.WritingSystemManager);
 						for (; ; )
 						{
-							int ichMin;
-							int ichLim;
-							var tssTxtWord = wordMaker.NextWord(out ichMin, out ichLim);
+							var tssTxtWord = wordMaker.NextWord(out var ichMin, out var ichLim);
 							if (tssTxtWord == null)
 							{
 								break;

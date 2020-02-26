@@ -30,8 +30,10 @@ namespace LanguageExplorerTests.Controls.XMLViews
 			keyAttrs["part"] = new[] { "ref" };
 
 			m_testPathMerge = Path.Combine(FwDirectoryFinder.SourceDirectory, "LanguageExplorerTests", "Controls", "XMLViews", "LayoutMergerTestData");
-			m_inventory = new Inventory(new[] { m_testPathMerge }, "*.fwlayout", "/LayoutInventory/*", keyAttrs, "InventoryMergeTests", "projectPath");
-			m_inventory.Merger = new LayoutMerger();
+			m_inventory = new Inventory(new[] { m_testPathMerge }, "*.fwlayout", "/LayoutInventory/*", keyAttrs, "InventoryMergeTests", "projectPath")
+			{
+				Merger = new LayoutMerger()
+			};
 		}
 
 		[Test]

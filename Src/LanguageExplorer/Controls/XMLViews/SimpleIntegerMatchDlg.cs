@@ -259,41 +259,33 @@ namespace LanguageExplorer.Controls.XMLViews
 		internal void SetDlgValues(IMatcher matcher)
 		{
 			long val;
-			if (matcher is RangeIntMatcher)
+			switch (matcher)
 			{
-				var rm = (RangeIntMatcher)matcher;
-				if (rm.Min == int.MinValue)
-				{
+				case RangeIntMatcher rangeIntMatcher when rangeIntMatcher.Min == int.MinValue:
 					m_comboMatchType.SelectedIndex = LessThan; // less than
-					val = rm.Max + 1;
-				}
-				else if (rm.Max == rm.Min)
-				{
+					val = rangeIntMatcher.Max + 1;
+					break;
+				case RangeIntMatcher rangeIntMatcher when rangeIntMatcher.Max == rangeIntMatcher.Min:
 					m_comboMatchType.SelectedIndex = EqualTo; // equal to
-					val = rm.Min;
-				}
-				else if (rm.Max == int.MaxValue)
-				{
+					val = rangeIntMatcher.Min;
+					break;
+				case RangeIntMatcher rangeIntMatcher when rangeIntMatcher.Max == int.MaxValue:
 					m_comboMatchType.SelectedIndex = GreaterThan; // greater than
-					val = rm.Min - 1;
-				}
-				else
-				{
-					m_comboMatchType.SelectedIndex = Between; // between
-					val = rm.Min;
-					m_nudVal2.Value = rm.Max;
-				}
+					val = rangeIntMatcher.Min - 1;
+					break;
 				// Enhance JohnT: it would be nice if there was some way to tell whether
 				// the user entered >= 3 versus > 2, but at present we can't.
-			}
-			else if (matcher is NotEqualIntMatcher)
-			{
-				m_comboMatchType.SelectedIndex = NotEqualTo; // not equal
-				val = ((NotEqualIntMatcher)matcher).NotEqualValue;
-			}
-			else
-			{
-				return; // old matcher is for some other combo item, use defaults.
+				case RangeIntMatcher rangeIntMatcher:
+					m_comboMatchType.SelectedIndex = Between; // between
+					val = rangeIntMatcher.Min;
+					m_nudVal2.Value = rangeIntMatcher.Max;
+					break;
+				case NotEqualIntMatcher notEqualIntMatcher:
+					m_comboMatchType.SelectedIndex = NotEqualTo; // not equal
+					val = notEqualIntMatcher.NotEqualValue;
+					break;
+				default:
+					return; // old matcher is for some other combo item, use defaults.
 			}
 			m_nudVal1.Value = val;
 		}

@@ -127,7 +127,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 			{
 				pp.Parse(m_para1);
 			}
-			var coords = new int[8, 2] { { 0, 0 }, { 0, 1 }, { 0, 2 }, { 1, 0 }, { 1, 1 }, { 1, 2 }, { 2, 0 }, { 2, 1 } };
+			var coords = new[,] { { 0, 0 }, { 0, 1 }, { 0, 2 }, { 1, 0 }, { 1, 1 }, { 1, 2 }, { 2, 0 }, { 2, 1 } };
 			m_occurrences = new AnalysisOccurrence[8];
 			for (var i = 0; i < 8; i++)
 			{
@@ -202,8 +202,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 		{
 			foreach (ToolStripItem item1 in items)
 			{
-				var item = item1 as ToolStripMenuItem;
-				if (item != null && item.Text == text)
+				if (item1 is ToolStripMenuItem item && item.Text == text)
 				{
 					Assert.AreEqual(cItems, item.DropDownItems.Count, "item " + text + " has wrong number of items");
 					return item;

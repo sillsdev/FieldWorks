@@ -18,7 +18,6 @@ using SIL.LCModel.Application.ApplicationServices;
 using SIL.LCModel.Core.Cellar;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Core.Text;
-using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Infrastructure;
 using SIL.Lift.Validation;
@@ -496,7 +495,7 @@ namespace LanguageExplorerTests.LIFT
 			m_mapPartsOfSpeech.Clear();
 			m_mapAcademicDomains.Clear();
 			m_mapPublications.Clear();
-			var mockProjectName = "xxyyzProjectFolderForLIFTTest";
+			const string mockProjectName = "xxyyzProjectFolderForLIFTTest";
 			MockProjectFolder = Path.Combine(Path.GetTempPath(), mockProjectName);
 			var mockProjectPath = Path.Combine(MockProjectFolder, mockProjectName + ".fwdata");
 			m_cache = LcmCache.CreateCacheWithNewBlankLangProj(new TestProjectId(BackendProviderType.kMemoryOnly, mockProjectPath), "en", "fr", "en", new DummyLcmUI(),
@@ -565,7 +564,6 @@ namespace LanguageExplorerTests.LIFT
 			{
 				publicationList.ImportList(m_cache.LangProject.LexDbOA, "PublicationTypes", reader, null);
 			}
-			var repoPub = m_cache.ServiceLocator.GetInstance<ICmPossibilityRepository>();
 			foreach (var publication in m_cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS)
 			{
 				m_mapPublications.Add(publication.Name.AnalysisDefaultWritingSystem.Text, publication);
@@ -701,8 +699,7 @@ namespace LanguageExplorerTests.LIFT
 
 		private void AddAcademicDomain(ILexSense ls, string domain)
 		{
-			ICmPossibility possibility;
-			if (m_mapAcademicDomains.TryGetValue(domain, out possibility))
+			if (m_mapAcademicDomains.TryGetValue(domain, out var possibility))
 			{
 				if (!ls.DomainTypesRC.Contains(possibility))
 				{
@@ -908,8 +905,7 @@ namespace LanguageExplorerTests.LIFT
 
 		private void AddCustomFieldMultistringText(FieldDescription fd, int hvo)
 		{
-			ITsString tss;
-			tss = TsStringUtils.MakeString("MultiString Analysis ws string", m_cache.DefaultAnalWs);
+			var tss = TsStringUtils.MakeString("MultiString Analysis ws string", m_cache.DefaultAnalWs);
 			if (fd.Type == CellarPropertyType.MultiString)
 			{
 				// A decent test of a multi-string property (as opposed to Multi-Unicode) requires more than one run.
@@ -1043,9 +1039,8 @@ namespace LanguageExplorerTests.LIFT
 		[Test]
 		public void LiftExport_MultipleReferencesToSameMediaFileCausesNoDuplication()
 		{
-			using (var uowHelper = new NonUndoableUnitOfWorkHelper(m_cache.ActionHandlerAccessor))
+			using (new NonUndoableUnitOfWorkHelper(m_cache.ActionHandlerAccessor))
 			{
-				var senseFactory = m_cache.ServiceLocator.GetInstance<ILexSenseFactory>();
 				var pronunciation = m_cache.ServiceLocator.GetInstance<ILexPronunciationFactory>().Create();
 				var media = m_cache.ServiceLocator.GetInstance<ICmMediaFactory>().Create();
 				var pronunFile = m_cache.ServiceLocator.GetInstance<ICmFileFactory>().Create();
@@ -1071,13 +1066,12 @@ namespace LanguageExplorerTests.LIFT
 		[Test]
 		public void LiftExport_MultiParagraphWithAmpersandExports()
 		{
-			using (var uowhelper = new UndoableUnitOfWorkHelper(m_cache.ActionHandlerAccessor, "undothis"))
+			using (new UndoableUnitOfWorkHelper(m_cache.ActionHandlerAccessor, "undothis"))
 			{
 				var fd = MakeCustomField("MultiParaOnLexEntry", LexEntryTags.kClassId, WritingSystemServices.kwsVernAnals, CustomFieldType.MultiparagraphText, Guid.Empty);
 				m_customFieldEntryIds.Add(fd.Id);
 				AddCustomFieldMultiParaText(fd, m_entryTest.Hvo);
 				var exporter = new LiftExporter(m_cache);
-				var xdoc = new XmlDocument();
 				var liftFilePath = Path.Combine(LiftFolder, "test.lift");
 				using (var liftFile = File.Create(liftFilePath))
 				using (TextWriter w = new StreamWriter(liftFile))
@@ -1106,13 +1100,14 @@ namespace LanguageExplorerTests.LIFT
 			foreach (XmlNode range in ranges)
 			{
 				var xrangeId = XmlUtils.GetOptionalAttributeValue(range, "id");
-				if (xrangeId == m_CustomPossListReferenced)
+				switch (xrangeId)
 				{
-					referencedCustomFieldList = range;
-				}
-				if (xrangeId == m_CustomPossListUnreferenced)
-				{
-					unreferencedCustomFieldList = range;
+					case m_CustomPossListReferenced:
+						referencedCustomFieldList = range;
+						break;
+					case m_CustomPossListUnreferenced:
+						unreferencedCustomFieldList = range;
+						break;
 				}
 			}
 			Assert.IsNotNull(referencedCustomFieldList, "Custom possibility list referenced by a custom field not exported");
@@ -1278,8 +1273,7 @@ namespace LanguageExplorerTests.LIFT
 				var xgram = xsense.SelectSingleNode("grammatical-info");
 				Assert.IsNotNull(xgram);
 				sValue = XmlUtils.GetOptionalAttributeValue(xgram, "value");
-				var msa = sense.MorphoSyntaxAnalysisRA as IMoStemMsa;
-				if (msa != null)
+				if (sense.MorphoSyntaxAnalysisRA is IMoStemMsa msa)
 				{
 					Assert.AreEqual(msa.PartOfSpeechRA.Name.AnalysisDefaultWritingSystem.Text, sValue);
 				}
@@ -1383,8 +1377,7 @@ namespace LanguageExplorerTests.LIFT
 			var refValue = relation.Attributes["ref"].Value;
 			Assert.That(refValue.StartsWith(target));
 			var guid = new Guid(refValue.Substring(target.Length + 1));
-			ILexEntry relatedEntry;
-			Assert.IsTrue(repoEntry.TryGetObject(guid, out relatedEntry));
+			Assert.IsTrue(repoEntry.TryGetObject(guid, out var relatedEntry));
 			Assert.That(relatedEntry.LexemeFormOA.Form.VernacularDefaultWritingSystem.Text, Is.EqualTo(target));
 		}
 
@@ -1594,49 +1587,41 @@ namespace LanguageExplorerTests.LIFT
 			foreach (XmlNode xnote in xnotes)
 			{
 				var sType = XmlUtils.GetOptionalAttributeValue(xnote, "type");
-				if (sType == null)
+				switch (sType)
 				{
-					VerifyTsString(xnote, m_cache.DefaultAnalWs, sense.GeneralNote.AnalysisDefaultWritingSystem);
-				}
-				else if (sType == "anthropology")
-				{
-					VerifyTsString(xnote, m_cache.DefaultAnalWs, sense.AnthroNote.AnalysisDefaultWritingSystem);
-				}
-				else if (sType == "bibliography")
-				{
-					VerifyTsString(xnote, m_cache.DefaultAnalWs, sense.Bibliography.AnalysisDefaultWritingSystem);
-				}
-				else if (sType == "discourse")
-				{
-					VerifyTsString(xnote, m_cache.DefaultAnalWs, sense.DiscourseNote.AnalysisDefaultWritingSystem);
-				}
-				else if (sType == "encyclopedic")
-				{
-					VerifyTsString(xnote, m_cache.DefaultAnalWs, sense.EncyclopedicInfo.AnalysisDefaultWritingSystem);
-				}
-				else if (sType == "grammar")
-				{
-					VerifyTsString(xnote, m_cache.DefaultAnalWs, sense.GrammarNote.AnalysisDefaultWritingSystem);
-				}
-				else if (sType == "phonology")
-				{
-					VerifyTsString(xnote, m_cache.DefaultAnalWs, sense.PhonologyNote.AnalysisDefaultWritingSystem);
-				}
-				else if (sType == "restrictions")
-				{
-					VerifyTsString(xnote, m_cache.DefaultAnalWs, sense.Restrictions.AnalysisDefaultWritingSystem);
-				}
-				else if (sType == "semantics")
-				{
-					VerifyTsString(xnote, m_cache.DefaultAnalWs, sense.SemanticsNote.AnalysisDefaultWritingSystem);
-				}
-				else if (sType == "sociolinguistics")
-				{
-					VerifyTsString(xnote, m_cache.DefaultAnalWs, sense.SocioLinguisticsNote.AnalysisDefaultWritingSystem);
-				}
-				else
-				{
-					Assert.IsNull(sType, "Unrecognized type attribute");
+					case null:
+						VerifyTsString(xnote, m_cache.DefaultAnalWs, sense.GeneralNote.AnalysisDefaultWritingSystem);
+						break;
+					case "anthropology":
+						VerifyTsString(xnote, m_cache.DefaultAnalWs, sense.AnthroNote.AnalysisDefaultWritingSystem);
+						break;
+					case "bibliography":
+						VerifyTsString(xnote, m_cache.DefaultAnalWs, sense.Bibliography.AnalysisDefaultWritingSystem);
+						break;
+					case "discourse":
+						VerifyTsString(xnote, m_cache.DefaultAnalWs, sense.DiscourseNote.AnalysisDefaultWritingSystem);
+						break;
+					case "encyclopedic":
+						VerifyTsString(xnote, m_cache.DefaultAnalWs, sense.EncyclopedicInfo.AnalysisDefaultWritingSystem);
+						break;
+					case "grammar":
+						VerifyTsString(xnote, m_cache.DefaultAnalWs, sense.GrammarNote.AnalysisDefaultWritingSystem);
+						break;
+					case "phonology":
+						VerifyTsString(xnote, m_cache.DefaultAnalWs, sense.PhonologyNote.AnalysisDefaultWritingSystem);
+						break;
+					case "restrictions":
+						VerifyTsString(xnote, m_cache.DefaultAnalWs, sense.Restrictions.AnalysisDefaultWritingSystem);
+						break;
+					case "semantics":
+						VerifyTsString(xnote, m_cache.DefaultAnalWs, sense.SemanticsNote.AnalysisDefaultWritingSystem);
+						break;
+					case "sociolinguistics":
+						VerifyTsString(xnote, m_cache.DefaultAnalWs, sense.SocioLinguisticsNote.AnalysisDefaultWritingSystem);
+						break;
+					default:
+						Assert.IsNull(sType, "Unrecognized type attribute");
+						break;
 				}
 			}
 			VerifySenseCustomFields(xsense, sense);
@@ -1664,15 +1649,12 @@ namespace LanguageExplorerTests.LIFT
 			Assert.IsTrue(File.Exists(Path.Combine(liftPicsFolder, kpictureOfTestFileName)));
 
 			const string secondPicName = kbasePictureOfTestFileName + "_1" + ".jpg";
-			var secondPic = pictureNodes.Cast<XmlNode>().First(node => XmlUtils.GetOptionalAttributeValue(node, "href") == secondPicName);
 			Assert.IsTrue(File.Exists(Path.Combine(liftPicsFolder, secondPicName)));
 
 			var thirdPicName = Path.Combine(ksubFolderName, kotherPicOfTestFileName);
-			var thirdPic = pictureNodes.Cast<XmlNode>().First(node => XmlUtils.GetOptionalAttributeValue(node, "href") == thirdPicName);
 			Assert.IsTrue(File.Exists(Path.Combine(liftPicsFolder, thirdPicName)));
 
 			var fourthPicName = Path.GetFileName(m_tempPictureFilePath);
-			var fourthPic = pictureNodes.Cast<XmlNode>().First(node => XmlUtils.GetOptionalAttributeValue(node, "href") == fourthPicName);
 			Assert.IsTrue(File.Exists(Path.Combine(liftPicsFolder, fourthPicName)));
 		}
 
@@ -1834,8 +1816,7 @@ namespace LanguageExplorerTests.LIFT
 				{
 					content = content.Replace("\x2028", Environment.NewLine);
 				}
-				int val;
-				var lang = tssText.get_Properties(i).GetIntPropValues((int)FwTextPropType.ktptWs, out val);
+				var lang = tssText.get_Properties(i).GetIntPropValues((int)FwTextPropType.ktptWs, out _);
 				var wsCode = m_cache.WritingSystemFactory.GetStrFromWs(lang);
 				var run = runs[i];
 				Assert.That(run.InnerText, Is.EqualTo(content));
@@ -1912,7 +1893,6 @@ namespace LanguageExplorerTests.LIFT
 		{
 			var loader = new XmlList();
 			loader.ImportList(Cache.LangProject, "PartsOfSpeech", Path.Combine(FwDirectoryFinder.TemplateDirectory, "POS.xml"), new DummyProgressDlg());
-			var servLoc = Cache.ServiceLocator;
 			var exporter = new LiftExporter(Cache);
 			var xdocRangeFile = new XmlDocument();
 			using (var w = new StringWriter())

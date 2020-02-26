@@ -35,8 +35,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.WordListConcordance
 		private IRecordList _recordListProvidingOwner;
 		private IRecordList _subservientRecordList;
 		private InterlinMaster _interlinMaster;
-		[Import(AreaServices.TextAndWordsAreaMachineName)]
-		private IArea _area;
 
 		#region Implementation of IMajorFlexComponent
 
@@ -82,7 +80,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.WordListConcordance
 			var nestedMultiPaneParameters = new MultiPaneParameters
 			{
 				Orientation = Orientation.Horizontal,
-				Area = _area,
+				Area = Area,
 				Id = "LineAndTextMultiPane",
 				ToolMachineName = MachineName,
 				DefaultFixedPaneSizePoints = "50%",
@@ -113,7 +111,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.WordListConcordance
 			var mainMultiPaneParameters = new MultiPaneParameters
 			{
 				Orientation = Orientation.Vertical,
-				Area = _area,
+				Area = Area,
 				Id = "WordsAndOccurrencesMultiPane",
 				ToolMachineName = MachineName,
 				DefaultPrintPane = "wordOccurrenceList",
@@ -121,7 +119,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.WordListConcordance
 			};
 			_outerMultiPane = MultiPaneFactory.CreateMultiPaneWithTwoPaneBarContainersInMainCollapsingSplitContainer(majorFlexComponentParameters.FlexComponentParameters,
 				majorFlexComponentParameters.MainCollapsingSplitContainer, mainMultiPaneParameters, _mainRecordBrowseView, "Concordance", new PaneBar(), _nestedMultiPane, "Tabs", new PaneBar());
-
 			// The next method call will add UserControl event handlers.
 			_interlinMaster.FinishInitialization();
 		}
@@ -177,7 +174,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.WordListConcordance
 		/// <summary>
 		/// Get the area for the tool.
 		/// </summary>
-		public IArea Area => _area;
+		[field: Import(AreaServices.TextAndWordsAreaMachineName)]
+		public IArea Area { get; private set; }
 
 		/// <summary>
 		/// Get the image for the area.
@@ -221,7 +219,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.WordListConcordance
 				_majorFlexComponentParameters = majorFlexComponentParameters;
 				_mainRecordBrowseView = mainRecordBrowseView;
 				_recordListProvidingOwner = recordListProvidingOwner;
-
 				SetupUiWidgets(tool);
 				// NB: The nested browse view on the right has no popup menu.
 				CreateBrowseViewContextMenu();
@@ -252,7 +249,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.WordListConcordance
 					dlg.SetDlgInfo(_majorFlexComponentParameters.LcmCache, null);
 					if (dlg.ShowDialog() == DialogResult.OK)
 					{
-						_majorFlexComponentParameters.FlexComponentParameters.Publisher.Publish(LanguageExplorerConstants.JumpToRecord, dlg.SelectedObject.Hvo);
+						_majorFlexComponentParameters.FlexComponentParameters.Publisher.Publish(new PublisherParameterObject(LanguageExplorerConstants.JumpToRecord, dlg.SelectedObject.Hvo));
 					}
 				}
 			}

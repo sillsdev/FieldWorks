@@ -41,10 +41,7 @@ namespace LanguageExplorer.Areas.Notebook
 		/// </summary>
 		public string HelpTopic
 		{
-			get
-			{
-				return m_helpTopic;
-			}
+			get => m_helpTopic;
 
 			set
 			{

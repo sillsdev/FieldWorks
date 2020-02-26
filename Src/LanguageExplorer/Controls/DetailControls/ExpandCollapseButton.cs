@@ -30,10 +30,7 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		public bool IsOpened
 		{
-			get
-			{
-				return m_opened;
-			}
+			get => m_opened;
 
 			set
 			{

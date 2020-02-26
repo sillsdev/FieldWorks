@@ -23,13 +23,12 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				return results;
 			}
-			var text = occurrences[0].Segment.Paragraph.Owner as IStText;
-			if (text == null)
+			if (!(occurrences[0].Segment.Paragraph.Owner is IStText text))
 			{
 				throw new NullReferenceException("Unexpected error!");
 			}
 			var tags = text.TagsOC;
-			if (tags.Count == 0)
+			if (!tags.Any())
 			{
 				return results;
 			}

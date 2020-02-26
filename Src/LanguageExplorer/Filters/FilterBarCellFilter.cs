@@ -76,8 +76,7 @@ namespace LanguageExplorer.Filters
 		/// </summary>
 		public override bool SameFilter(RecordFilter other)
 		{
-			var fbcOther = other as FilterBarCellFilter;
-			return fbcOther != null && (fbcOther.Finder.SameFinder(Finder) && fbcOther.Matcher.SameMatcher(Matcher));
+			return other is FilterBarCellFilter fbcOther && fbcOther.Finder.SameFinder(Finder) && fbcOther.Matcher.SameMatcher(Matcher);
 		}
 
 		#region IPersistAsXml Members

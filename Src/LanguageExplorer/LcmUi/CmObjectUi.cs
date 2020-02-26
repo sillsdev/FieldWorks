@@ -326,13 +326,9 @@ namespace LanguageExplorer.LcmUi
 
 			if (disposing)
 			{
-				if (PropertyTable != null)
-				{
-					PropertyTable.GetValue<IFwMainWnd>(FwUtils.window).IdleQueue.Remove(TryToDeleteFile);
-				}
 				// Dispose managed resources here.
-				var disposableVC = m_vc as IDisposable;
-				disposableVC?.Dispose();
+				PropertyTable?.GetValue<IFwMainWnd>(FwUtils.window).IdleQueue.Remove(TryToDeleteFile);
+				(m_vc as IDisposable)?.Dispose();
 			}
 
 			// Dispose unmanaged resources here, whether disposing is true or false.
@@ -404,7 +400,7 @@ namespace LanguageExplorer.LcmUi
 			var cmo = GetCurrentCmObject();
 			if (cmo != null && m_cmObject != null && cmo.Hvo == m_cmObject.Hvo)
 			{
-				Publisher.Publish("DeleteRecord", this);
+				Publisher.Publish(new PublisherParameterObject("DeleteRecord", this));
 			}
 			else
 			{
@@ -413,8 +409,7 @@ namespace LanguageExplorer.LcmUi
 				{
 					using (var dlg = new ConfirmDeleteObjectDlg(PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider)))
 					{
-						string cannotDeleteMsg;
-						if (CanDelete(out cannotDeleteMsg))
+						if (CanDelete(out var cannotDeleteMsg))
 						{
 							dlg.SetDlgInfo(MyCmObject, m_cache, PropertyTable);
 						}
@@ -442,14 +437,12 @@ namespace LanguageExplorer.LcmUi
 			// For media and pictures: should we delete the file also?
 			// arguably this should be on a subclass, but it's easier to share behavior for both here.
 			ICmFile file = null;
-			var pict = m_cmObject as ICmPicture;
-			if (pict != null)
+			if (m_cmObject is ICmPicture pict)
 			{
 				file = pict.PictureFileRA;
 			}
-			else if (m_cmObject is ICmMedia)
+			else if (m_cmObject is ICmMedia media)
 			{
-				var media = (ICmMedia)m_cmObject;
 				file = media.MediaFileRA;
 			}
 			else if (m_cmObject != null)
@@ -481,8 +474,7 @@ namespace LanguageExplorer.LcmUi
 			{
 				return false;
 			}
-			IFlexApp app;
-			if (propertyTable != null && propertyTable.TryGetValue(LanguageExplorerConstants.App, out app))
+			if (propertyTable != null && propertyTable.TryGetValue(LanguageExplorerConstants.App, out IFlexApp app))
 			{
 				app.PictureHolder.ReleasePicture(file.AbsoluteInternalPath);
 			}
@@ -535,9 +527,7 @@ namespace LanguageExplorer.LcmUi
 				dlg.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 				var wp = new WindowParams();
 				var mergeCandidates = new List<DummyCmObject>();
-				string helpTopic;
-				XElement guiControlParameters;
-				var dObj = GetMergeinfo(wp, mergeCandidates, out guiControlParameters, out helpTopic);
+				var dObj = GetMergeinfo(wp, mergeCandidates, out var guiControlParameters, out var helpTopic);
 				mergeCandidates.Sort();
 				dlg.SetDlgInfo(m_cache, wp, dObj, mergeCandidates, guiControlParameters, helpTopic);
 				if (DialogResult.OK == dlg.ShowDialog(mainWindow))
@@ -620,8 +610,7 @@ namespace LanguageExplorer.LcmUi
 				{
 					continue;
 				}
-				ICmObject obj;
-				if (!cache.ServiceLocator.GetInstance<ICmObjectRepository>().TryGetObject(hvo, out obj))
+				if (!cache.ServiceLocator.GetInstance<ICmObjectRepository>().TryGetObject(hvo, out var obj))
 				{
 					continue;
 				}

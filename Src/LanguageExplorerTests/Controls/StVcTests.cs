@@ -14,7 +14,6 @@ using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.LCModel;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Core.Text;
-using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Infrastructure;
 using SIL.LCModel.Utils;
@@ -31,8 +30,7 @@ namespace LanguageExplorerTests.Controls
 			base.FixtureSetup();
 
 			// Set a vern ws.
-			CoreWritingSystemDefinition french;
-			Cache.ServiceLocator.WritingSystemManager.GetOrSet("fr", out french);
+			Cache.ServiceLocator.WritingSystemManager.GetOrSet("fr", out var french);
 			NonUndoableUnitOfWorkHelper.Do(m_actionHandler, () =>
 			{
 				Cache.ServiceLocator.WritingSystems.VernacularWritingSystems.Add(french);
@@ -70,16 +68,14 @@ namespace LanguageExplorerTests.Controls
 
 			// Call to GetStrForGuid doesn't generate a footnote marker based on the
 			// Scripture Footnote properties since the method to do that is in TeStVc.
-			int dummy;
 			Assert.AreEqual(StringUtils.kszObject, footnoteMarker.Text);
 			var props = footnoteMarker.get_Properties(0);
 			Assert.AreEqual(2, props.IntPropCount);
-			Assert.AreEqual(Cache.DefaultUserWs, props.GetIntPropValues((int)FwTextPropType.ktptWs, out dummy));
-			Assert.AreEqual(0, props.GetIntPropValues((int)FwTextPropType.ktptEditable, out dummy));
+			Assert.AreEqual(Cache.DefaultUserWs, props.GetIntPropValues((int)FwTextPropType.ktptWs, out _));
+			Assert.AreEqual(0, props.GetIntPropValues((int)FwTextPropType.ktptEditable, out _));
 			Assert.AreEqual(1, props.StrPropCount);
 
-			FwObjDataTypes odt;
-			var footnoteGuid = TsStringUtils.GetGuidFromProps(props, null, out odt);
+			var footnoteGuid = TsStringUtils.GetGuidFromProps(props, null, out var odt);
 			Assert.IsTrue(odt == FwObjDataTypes.kodtPictEvenHot || odt == FwObjDataTypes.kodtPictOddHot);
 			Assert.AreEqual(footnote.Guid, footnoteGuid);
 		}
@@ -125,16 +121,12 @@ namespace LanguageExplorerTests.Controls
 
 					// Now the real test:
 					var sel = footnoteView.RootBox.Selection;
-					ITsString tss;
-					sel.GetSelectionString(out tss, string.Empty);
+					sel.GetSelectionString(out var tss, string.Empty);
 					Assert.AreEqual("a ", tss.Text.Substring(0, 2));
 
 					// make sure the marker and the space are read-only (maybe have to select each run
 					// separately to make this test truly correct)
-					ITsTextProps[] vttp;
-					IVwPropertyStore[] vvps;
-					int cttp;
-					SelectionHelper.GetSelectionProps(sel, out vttp, out vvps, out cttp);
+					SelectionHelper.GetSelectionProps(sel, out var vttp, out var vvps, out var cttp);
 					Assert.IsTrue(cttp >= 2);
 					Assert.IsFalse(SelectionHelper.IsEditable(vttp[0], vvps[0]), "Footnote marker is not read-only");
 					Assert.IsFalse(SelectionHelper.IsEditable(vttp[1], vvps[1]), "Space after marker is not read-only");
@@ -185,8 +177,7 @@ namespace LanguageExplorerTests.Controls
 
 					// Now the real test:
 					var sel = footnoteView.RootBox.Selection.GrowToWord();
-					ITsString tss;
-					sel.GetSelectionString(out tss, string.Empty);
+					sel.GetSelectionString(out var tss, string.Empty);
 					Assert.AreEqual("abcde", tss.Text);
 				}
 			}
@@ -219,8 +210,10 @@ namespace LanguageExplorerTests.Controls
 			/// <summary />
 			public DummyFootnoteVc(LcmCache cache) : base(cache.WritingSystemFactory.UserWs)
 			{
-				m_stvc = new StVc(cache.WritingSystemFactory.UserWs);
-				m_stvc.Cache = cache;
+				m_stvc = new StVc(cache.WritingSystemFactory.UserWs)
+				{
+					Cache = cache
+				};
 			}
 
 			#region Overridden methods
@@ -236,14 +229,12 @@ namespace LanguageExplorerTests.Controls
 				{
 					case (int)FootnoteFrags.kfrScripture:
 						{
-							vwenv.AddLazyVecItems(ScriptureTags.kflidScriptureBooks,
-								this, (int)FootnoteFrags.kfrBook);
+							vwenv.AddLazyVecItems(ScriptureTags.kflidScriptureBooks, this, (int)FootnoteFrags.kfrBook);
 							break;
 						}
 					case (int)FootnoteFrags.kfrBook:
 						{
-							vwenv.AddObjVecItems(ScrBookTags.kflidFootnotes, m_stvc,
-								(int)StTextFrags.kfrFootnote);
+							vwenv.AddObjVecItems(ScrBookTags.kflidFootnotes, m_stvc, (int)StTextFrags.kfrFootnote);
 							break;
 						}
 					default:
@@ -255,7 +246,7 @@ namespace LanguageExplorerTests.Controls
 			/// <summary />
 			public override int EstimateHeight(int hvo, int frag, int dxAvailWidth)
 			{
-				switch ((FootnoteFrags)frag)
+				switch (frag)
 				{
 					default:
 						return 400;
@@ -266,8 +257,8 @@ namespace LanguageExplorerTests.Controls
 
 			public bool DisplayTranslation
 			{
-				get { return m_stvc.DisplayTranslation; }
-				set { m_stvc.DisplayTranslation = value; }
+				get => m_stvc.DisplayTranslation;
+				set => m_stvc.DisplayTranslation = value;
 			}
 		}
 
@@ -306,8 +297,10 @@ namespace LanguageExplorerTests.Controls
 				}
 				base.MakeRoot();
 				// Set up a new view constructor.
-				m_footnoteVc = new DummyFootnoteVc(m_cache);
-				m_footnoteVc.DisplayTranslation = m_displayTranslation;
+				m_footnoteVc = new DummyFootnoteVc(m_cache)
+				{
+					DisplayTranslation = m_displayTranslation
+				};
 				RootBox.DataAccess = Cache.DomainDataByFlid;
 				RootBox.SetRootObject(Cache.LanguageProject.TranslatedScriptureOA.Hvo, m_footnoteVc, (int)FootnoteFrags.kfrScripture, m_styleSheet);
 				m_fRootboxMade = true;

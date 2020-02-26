@@ -33,21 +33,11 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		public XMLViewsDataCache DataAccess
 		{
-			get
-			{
-				if (m_sda == null)
-				{
-					throw new InvalidOperationException("Must set the special cache of a BulkEditSpecControl");
-				}
-				return m_sda;
-			}
-			set { m_sda = value; }
+			get => m_sda ?? throw new InvalidOperationException("Must set the special cache of a BulkEditSpecControl");
+			set => m_sda = value;
 		}
 
-		public virtual Control Control
-		{
-			get { throw new Exception("The method or operation is not implemented."); }
-		}
+		public virtual Control Control => throw new Exception("The method or operation is not implemented.");
 
 		/// <summary>
 		/// Required interface member not yet used.
@@ -69,20 +59,14 @@ namespace LanguageExplorer.Controls.XMLViews
 			throw new NotSupportedException();
 		}
 
-		public virtual bool CanClearField
-		{
-			get { throw new NotSupportedException(); }
-		}
+		public virtual bool CanClearField => throw new NotSupportedException();
 
 		public virtual void SetClearField()
 		{
 			throw new NotSupportedException();
 		}
 
-		public virtual List<int> FieldPath
-		{
-			get { throw new NotSupportedException(); }
-		}
+		public virtual List<int> FieldPath => throw new NotSupportedException();
 
 		protected void OnValueChanged(object sender, FwObjectSelectionEventArgs args)
 		{

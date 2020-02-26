@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace LanguageExplorer
 {
@@ -19,12 +20,7 @@ namespace LanguageExplorer
 		{
 			get
 			{
-				var retval = new Dictionary<MainMenu, Dictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>>>();
-				foreach (MainMenu mainMenu in Enum.GetValues(typeof(MainMenu)))
-				{
-					retval.Add(mainMenu, new Dictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>>());
-				}
-				return retval;
+				return Enum.GetValues(typeof(MainMenu)).Cast<MainMenu>().ToDictionary(mainMenu => mainMenu, mainMenu => new Dictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>>());
 			}
 		}
 
@@ -35,12 +31,7 @@ namespace LanguageExplorer
 		{
 			get
 			{
-				var retval = new Dictionary<ToolBar, Dictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>>>();
-				foreach (ToolBar toolBar in Enum.GetValues(typeof(ToolBar)))
-				{
-					retval.Add(toolBar, new Dictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>>());
-				}
-				return retval;
+				return Enum.GetValues(typeof(ToolBar)).Cast<ToolBar>().ToDictionary(toolBar => toolBar, toolBar => new Dictionary<Command, Tuple<EventHandler, Func<Tuple<bool, bool>>>>());
 			}
 		}
 

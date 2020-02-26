@@ -16,7 +16,6 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 		private readonly LcmCache m_cache;
 		private readonly int m_hvoStText;
 		private const int m_occurenceListId = -2011; // flid for charting ribbon
-		private readonly IAnalysisRepository m_analysisRepo;
 		private readonly InterlinRibbonDecorator m_sda;
 
 		internal MockRibbon(LcmCache cache, int hvoStText)
@@ -26,7 +25,6 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 			EndSelLimitIndex = -1;
 			SelLimOccurrence = null;
 			m_sda = new InterlinRibbonDecorator(m_cache, m_occurenceListId);
-			m_analysisRepo = cache.ServiceLocator.GetInstance<IAnalysisRepository>();
 		}
 
 		public ISilDataAccessManaged Decorator => m_sda;

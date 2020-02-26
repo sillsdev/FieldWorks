@@ -210,10 +210,9 @@ namespace LanguageExplorer.Controls.Styles
 				return null;
 			}
 			var styleName = comboItem as string;
-			var sci1 = comboItem as StyleComboItem;
-			if (sci1 != null && sci1.Style != null)
+			if (comboItem is StyleComboItem styleComboItem && styleComboItem.Style != null)
 			{
-				styleName = sci1.Style.Name;
+				styleName = styleComboItem.Style.Name;
 			}
 			return styleName;
 		}
@@ -257,8 +256,8 @@ namespace LanguageExplorer.Controls.Styles
 		/// </summary>
 		public bool AllowSelectStyleTypes
 		{
-			get { return m_pnlTypesCombo.Visible; }
-			set { m_pnlTypesCombo.Visible = value; }
+			get => m_pnlTypesCombo.Visible;
+			set => m_pnlTypesCombo.Visible = value;
 		}
 
 		/// <summary>
@@ -267,8 +266,8 @@ namespace LanguageExplorer.Controls.Styles
 		/// </summary>
 		public bool CanSelectParagraphBackgroundColor
 		{
-			get { return m_paragraphTab.ShowBackgroundColor; }
-			set { m_paragraphTab.ShowBackgroundColor = value; }
+			get => m_paragraphTab.ShowBackgroundColor;
+			set => m_paragraphTab.ShowBackgroundColor = value;
 		}
 
 		#endregion
@@ -450,34 +449,16 @@ namespace LanguageExplorer.Controls.Styles
 			switch (m_cboTypes.SelectedIndex)
 			{
 				case 0: // basic -- use current table of styles to obtain names
-					foreach (var style in m_styleTable.Keys)
-					{
-						if (style.StartsWith("Dictionary") || style.StartsWith("Classified"))
-						{
-							styles.Add(style);
-						}
-					}
+					styles.AddRange(m_styleTable.Keys.Where(style => style.StartsWith("Dictionary") || style.StartsWith("Classified")));
 					break;
 				case 1: // all
 					break;
 				case 2: // custom -- styleSheet contains all built-in styles (can't change names)
-					foreach (var style in m_styleSheet.Styles)
-					{
-						if (style.IsBuiltIn)
-						{
-							styles.Add(style.Name);
-						}
-					}
+					styles.AddRange(from style in m_styleSheet.Styles where style.IsBuiltIn select style.Name);
 					styles.Add(StyleUtils.DefaultParaCharsStyleName);
 					break;
 				case 3: // dictionary -- use current table of styles to obtain names
-					foreach (var style in m_styleTable.Keys)
-					{
-						if (!style.StartsWith("Dictionary") && !style.StartsWith("Classified"))
-						{
-							styles.Add(style);
-						}
-					}
+					styles.AddRange(m_styleTable.Keys.Where(style => !style.StartsWith("Dictionary") && !style.StartsWith("Classified")));
 					styles.Add(StyleUtils.DefaultParaCharsStyleName);
 					break;
 			}
@@ -708,8 +689,9 @@ namespace LanguageExplorer.Controls.Styles
 					{
 						MessageBoxUtils.Show(isee.Message, m_app.ApplicationName);
 					}
-					foreach (StyleInfo style in m_styleTable.Values)
+					foreach (var baseStyleInfo in m_styleTable.Values)
 					{
+						var style = (StyleInfo)baseStyleInfo;
 						if (style.IsParagraphStyle && !style.IsInternalStyle && (style.Context != style.NextStyle.Context || style.Structure == StructureValues.Body && style.NextStyle.Structure != style.Structure))
 						{
 							MessageBox.Show(this, string.Format(FwCoreDlgs.kstidStyleContextMismatchMsg, style.NextStyle.Name, style.Name), FwCoreDlgs.kstidStyleContextMismatchCaption, MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -720,8 +702,9 @@ namespace LanguageExplorer.Controls.Styles
 						}
 					}
 					// Save any changed styles to the database
-					foreach (StyleInfo style in m_styleTable.Values)
+					foreach (var baseStyleInfo in m_styleTable.Values)
 					{
+						var style = (StyleInfo)baseStyleInfo;
 						if (style.Dirty && style.IsValid)
 						{
 							// If there is already a real style, then the style has changed
@@ -743,8 +726,9 @@ namespace LanguageExplorer.Controls.Styles
 					}
 					// Save the real styles for based-on and following style. Do this last so
 					// all of the real styles for added styles will have been created.
-					foreach (StyleInfo style in m_styleTable.Values)
+					foreach (var baseStyleInfo in m_styleTable.Values)
 					{
+						var style = (StyleInfo)baseStyleInfo;
 						if (style.Dirty && style.IsValid)
 						{
 							style.SaveBasedOnAndFollowingToDB();
@@ -950,8 +934,7 @@ namespace LanguageExplorer.Controls.Styles
 		protected void SaveDeletedStyle(string styleName)
 		{
 			// Check if the style got previously renamed
-			string oldName;
-			if (m_renamedStyles.TryGetValue(styleName, out oldName))
+			if (m_renamedStyles.TryGetValue(styleName, out var oldName))
 			{
 				// Since it is, we just want to delete the original style name
 				// and not do the rename.

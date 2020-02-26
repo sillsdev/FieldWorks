@@ -38,23 +38,9 @@ namespace LanguageExplorer.Areas.Notebook
 		}
 
 		// Copied from ReferenceVectorSlice for initializing GhostReferenceVectorLauncher...may not be used.
-		protected string BestWsName
-		{
-			get
-			{
-				var parameters = ConfigurationNode.Element("deParams");
-				return parameters == null ? "analysis" : XmlUtils.GetOptionalAttributeValue(parameters, "ws", "analysis");
-			}
-		}
+		protected string BestWsName => XmlUtils.GetOptionalAttributeValue(ConfigurationNode.Element("deParams"), "ws", "analysis");
 
 		// Copied from ReferenceVectorSlice for initializing GhostReferenceVectorLauncher...may not be used.
-		protected string DisplayNameProperty
-		{
-			get
-			{
-				var parameters = ConfigurationNode.Element("deParams");
-				return parameters == null ? string.Empty : XmlUtils.GetOptionalAttributeValue(parameters, "displayProperty", string.Empty);
-			}
-		}
+		protected string DisplayNameProperty => XmlUtils.GetOptionalAttributeValue(ConfigurationNode.Element("deParams"), "displayProperty", string.Empty);
 	}
 }

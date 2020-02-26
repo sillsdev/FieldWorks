@@ -5,6 +5,7 @@
 using System;
 using System.Collections;
 using System.Xml.Linq;
+using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Core.WritingSystems;
@@ -39,7 +40,7 @@ namespace LanguageExplorer.Filters
 
 		public LcmCache Cache
 		{
-			set { m_cache = value; }
+			set => m_cache = value;
 		}
 
 		#endregion
@@ -92,16 +93,9 @@ namespace LanguageExplorer.Filters
 
 		public override bool Equals(object obj)
 		{
-			if (obj == null)
-			{
-				throw new ArgumentNullException("obj");
-			}
-			var comparer = obj as WritingSystemComparer;
-			if (comparer == null)
-			{
-				return false;
-			}
-			return WsId == comparer.WsId;
+			Guard.AgainstNull(obj, nameof(obj));
+
+			return obj is WritingSystemComparer comparer && WsId == comparer.WsId;
 		}
 
 		public override int GetHashCode()

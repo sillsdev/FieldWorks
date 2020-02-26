@@ -296,23 +296,21 @@ namespace LanguageExplorer.Controls.XMLViews
 				vwenv.AddLazyVecItems(MainSeqFlid, this, kRootFragId);
 				return;
 			}
-			var dispCommand = m_idToDisplayCommand[fragId];
-			dispCommand.PerformDisplay(this, fragId, hvo, vwenv);
+			m_idToDisplayCommand[fragId].PerformDisplay(this, fragId, hvo, vwenv);
 		}
 
 		internal void SetReversalWritingSystemFromRootObject(object obj)
 		{
-			if (obj is IReversalIndex)
+			if (obj is IReversalIndex index)
 			{
-				ReversalWs = m_cache.ServiceLocator.WritingSystemManager.GetWsFromStr((obj as IReversalIndex).WritingSystem);
+				ReversalWs = m_cache.ServiceLocator.WritingSystemManager.GetWsFromStr(index.WritingSystem);
 			}
 		}
 
 		internal bool CanGetMainCallerDisplayCommand(int fragId, out MainCallerDisplayCommand cmd)
 		{
-			DisplayCommand tmpCmd;
 			cmd = null;
-			if (!m_idToDisplayCommand.TryGetValue(fragId, out tmpCmd))
+			if (!m_idToDisplayCommand.TryGetValue(fragId, out var tmpCmd))
 			{
 				return false;
 			}
@@ -358,11 +356,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		public static XElement GetNodeForPart(int hvo, string layoutName, bool fIncludeLayouts, ISilDataAccess sda, LayoutCache layouts)
 		{
 			var clsid = sda.get_IntProp(hvo, CmObjectTags.kflidClass);
-			if (clsid == 0)
-			{
-				throw new Exception("Trying to get part node for invalid object " + hvo);
-			}
-			return layouts.GetNode(clsid, layoutName, fIncludeLayouts);
+			return clsid == 0 ? throw new Exception($"Trying to get part node for invalid object {hvo}") : layouts.GetNode(clsid, layoutName, fIncludeLayouts);
 		}
 
 		/// <summary>
@@ -437,8 +431,8 @@ namespace LanguageExplorer.Controls.XMLViews
 		// can force a particular WS to be used for all strings. Overridden by XmlBrowseViewVc.
 		internal virtual int WsForce
 		{
-			get { return 0; }
-			set { Debug.Fail("WsForce can only be set in browse VCs."); }
+			get => 0;
+			set => Debug.Fail("WsForce can only be set in browse VCs.");
 		}
 
 		/// <summary>
@@ -481,8 +475,7 @@ namespace LanguageExplorer.Controls.XMLViews
 					{
 						continue;
 					}
-					List<LexReferenceInfo> lris;
-					if (!m_mapGuidToReferenceInfo.TryGetValue(obj.Owner.Guid, out lris))
+					if (!m_mapGuidToReferenceInfo.TryGetValue(obj.Owner.Guid, out var lris))
 					{
 						continue;
 					}
@@ -686,15 +679,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		{
 			var propName = XmlUtils.GetMandatoryAttributeValue(frag, attrName);
 			var parts = propName.Split('.');
-			int flid;
-			if (parts.Length == 2)
-			{
-				flid = m_sda.MetaDataCache.GetFieldId(parts[0], parts[1], false);
-			}
-			else
-			{
-				flid = m_sda.MetaDataCache.GetFieldId2(m_cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvo).ClassID, propName, true);
-			}
+			var flid = parts.Length == 2 ? m_sda.MetaDataCache.GetFieldId(parts[0], parts[1], false) : m_sda.MetaDataCache.GetFieldId2(m_cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvo).ClassID, propName, true);
 			return m_sda.get_IntProp(hvo, flid);
 		}
 
@@ -889,7 +874,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		public static bool CanSkipNode(XElement frag)
 		{
-			return (frag.Name == "properties" || frag.Name == "dynamicloaderinfo");
+			return frag.Name == "properties" || frag.Name == "dynamicloaderinfo";
 		}
 
 		private void AddMultipleAlternatives(IEnumerable<int> wsIds, IVwEnv vwenv, int hvo, int flid, XElement caller, bool fCurrentHvo)
@@ -948,8 +933,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		private void AddStringThatCounts(IVwEnv vwenv, ITsString tss, XElement caller)
 		{
-			var env = vwenv as TestCollectorEnv;
-			if (env != null)
+			if (vwenv is TestCollectorEnv env)
 			{
 				env.AddTsString(tss);
 			}
@@ -990,8 +974,7 @@ namespace LanguageExplorer.Controls.XMLViews
 								AddStringFromOtherObj(frag, hvoTarget, vwenv, caller);
 								break;
 							}
-							int flid;
-							if (TryCustomField(m_sda, frag, hvo, out flid))
+							if (TryCustomField(m_sda, frag, hvo, out var flid))
 							{
 								// ignore invalid custom fields (LT-6474).
 								if (flid == 0)
@@ -1074,8 +1057,7 @@ namespace LanguageExplorer.Controls.XMLViews
 						{
 							var hvoTarget = hvo;
 							GetActualTarget(frag, ref hvoTarget, m_sda);    // modify the hvo if needed
-							int flid;
-							if (TryCustomField(m_sda, frag, hvoTarget, out flid))
+							if (TryCustomField(m_sda, frag, hvoTarget, out var flid))
 							{
 								// ignore invalid custom fields (LT-6474).
 								if (flid == 0)
@@ -1459,8 +1441,7 @@ namespace LanguageExplorer.Controls.XMLViews
 						}
 					case "stringList":
 						{
-							string[] labels;
-							if (!m_StringsFromListNode.TryGetValue(frag, out labels))
+							if (!m_StringsFromListNode.TryGetValue(frag, out var labels))
 							{
 								labels = StringTable.Table.GetStringsFromStringListNode(frag);
 								m_StringsFromListNode[frag] = labels;
@@ -1595,8 +1576,7 @@ namespace LanguageExplorer.Controls.XMLViews
 							{
 								break;
 							}
-							var picturePathCollector = vwenv as ICollectPicturePathsOnly;
-							if (picturePathCollector != null)
+							if (vwenv is ICollectPicturePathsOnly picturePathCollector)
 							{
 								if (File.Exists(FileUtils.ActualFilePath(imagePath)))
 								{
@@ -1887,8 +1867,8 @@ namespace LanguageExplorer.Controls.XMLViews
 							{
 								return;
 							}
-							int flid;
-							if (!TryCustomField(m_sda, frag, 0, out flid))
+
+							if (!TryCustomField(m_sda, frag, 0, out var flid))
 							{
 								flid = DetermineNeededFlid(frag, info);
 							}
@@ -1945,8 +1925,7 @@ namespace LanguageExplorer.Controls.XMLViews
 							{
 								return;
 							}
-							int flid;
-							if (!TryCustomField(m_sda, frag, 0, out flid))
+							if (!TryCustomField(m_sda, frag, 0, out var flid))
 							{
 								flid = DetermineNeededFlid(frag, info);
 							}
@@ -1984,8 +1963,7 @@ namespace LanguageExplorer.Controls.XMLViews
 					case "gendate":
 					case "int":
 						{
-							int flid;
-							if (!TryCustomField(m_sda, frag, 0, out flid))
+							if (!TryCustomField(m_sda, frag, 0, out var flid))
 							{
 								flid = DetermineNeededFlid(frag, info);
 							}
@@ -2009,8 +1987,7 @@ namespace LanguageExplorer.Controls.XMLViews
 						break;
 					case "seq":
 						{
-							int flid;
-							if (!TryCustomField(m_sda, frag, 0, out flid))
+							if (!TryCustomField(m_sda, frag, 0, out var flid))
 							{
 								flid = DetermineNeededFlid(frag, info);
 							}
@@ -2070,8 +2047,7 @@ namespace LanguageExplorer.Controls.XMLViews
 							// NOTE TO JohnT: perhaps "AddAtomicField" is really "AddSimpleField",
 							// "AddObjField" is really "AddOwningOrReferenceField" ??
 							// or split three ways instead of two? (one for AtomicRef/Own)
-							int flid;
-							if (!TryCustomField(m_sda, frag, 0, out flid))
+							if (!TryCustomField(m_sda, frag, 0, out var flid))
 							{
 								flid = DetermineNeededFlid(frag, info);
 							}
@@ -2193,8 +2169,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				return ReversalWs;  // we know this one locally.
 			}
-			int wsActual;
-			WritingSystemServices.GetMagicStringAlt(m_cache, m_sda, WsForce, hvo, flid, false, out wsActual);
+			WritingSystemServices.GetMagicStringAlt(m_cache, m_sda, WsForce, hvo, flid, false, out var wsActual);
 			// If the magic ws doesn't get changed properly, use the default.
 			return wsActual <= 0 ? wsDefault : wsActual;
 		}
@@ -2245,8 +2220,7 @@ namespace LanguageExplorer.Controls.XMLViews
 						break;
 				}
 				// We are going to display the contents of the part.
-				string flowType;
-				var style = PartRefSetupToProcessChildren(frag, node, hvo, vwenv, fSingleGramInfoFirst, out flowType);
+				var style = PartRefSetupToProcessChildren(frag, node, hvo, vwenv, fSingleGramInfoFirst, out var flowType);
 				ProcessChildren(node, vwenv, hvo, frag);
 				PartRefWrapupAfterProcessChildren(frag, vwenv, flowType, style);
 			}
@@ -2347,8 +2321,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			}
 			var flid = GetFlid(seq, hvo);
 			var rghvo = ((ISilDataAccessManaged)vwenv.DataAccess).VecProp(hvo, flid);
-			XAttribute xaNum;
-			var fNumber = XmlVcDisplayVec.SetNumberFlagIncludingSingleOption(frag, rghvo.Length, out xaNum);
+			var fNumber = XmlVcDisplayVec.SetNumberFlagIncludingSingleOption(frag, rghvo.Length, out _);
 			if (!fNumber)
 			{
 				return;
@@ -2372,8 +2345,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		private void DisplayFirstChildPOS(int firstChildHvo, int childFrag, IVwEnv vwenv)
 		{
 			var dispCommand = (MainCallerDisplayCommand)m_idToDisplayCommand[childFrag];
-			string layoutName;
-			var parent = dispCommand.GetNodeForChild(out layoutName, childFrag, this, firstChildHvo);
+			var parent = dispCommand.GetNodeForChild(out _, childFrag, this, firstChildHvo);
 			if (DisplayFirstChildPos(firstChildHvo, parent, vwenv))
 			{
 				return;
@@ -2439,8 +2411,7 @@ namespace LanguageExplorer.Controls.XMLViews
 					m_stackPartRef.Insert(0, gramInfoPartRef);
 					// This is the setup that invoking the part ref would normally do: wrap it in a flow and set a style if need be,
 					// insert before labels, etc.
-					string flowType;
-					var style = PartRefSetupToProcessChildren(gramInfoPartRef, objNode, hvoTarget, vwenv, true, out flowType);
+					var style = PartRefSetupToProcessChildren(gramInfoPartRef, objNode, hvoTarget, vwenv, true, out var flowType);
 					vwenv.AddObj(hvoTarget, this, fragId);
 					// This is the cleanup that invoking the part ref would normally do after displaying the effect of the part referred to.
 					// Closing any opened flow, adding following labels, etc.
@@ -2729,34 +2700,41 @@ namespace LanguageExplorer.Controls.XMLViews
 		{
 			var flid = GetFlid(frag, hvoTarget);
 			var itype = (CellarPropertyType)m_sda.MetaDataCache.GetFieldType(flid);
-			if (itype == CellarPropertyType.Unicode)
+			switch (itype)
 			{
-				var fragId = GetId(new DisplayUnicodeCommand(flid, m_cache.DefaultUserWs), m_idToDisplayCommand, m_displayCommandToId);
-				vwenv.AddObj(hvoTarget, this, fragId);
-			}
-			else if (itype == CellarPropertyType.String)
-			{
-				var fragId = GetId(new DisplayStringCommand(flid), m_idToDisplayCommand, m_displayCommandToId);
-				vwenv.AddObj(hvoTarget, this, fragId);
-			}
-			else // multistring of some type
-			{
-				var wsid = 0;
-				if (s_cwsMulti > 1)
+				case CellarPropertyType.Unicode:
 				{
-					var sLabelWs = XmlUtils.GetOptionalAttributeValue(frag, "ws");
-					if (sLabelWs != null && sLabelWs == "current")
+					var fragId = GetId(new DisplayUnicodeCommand(flid, m_cache.DefaultUserWs), m_idToDisplayCommand, m_displayCommandToId);
+					vwenv.AddObj(hvoTarget, this, fragId);
+					break;
+				}
+				case CellarPropertyType.String:
+				{
+					var fragId = GetId(new DisplayStringCommand(flid), m_idToDisplayCommand, m_displayCommandToId);
+					vwenv.AddObj(hvoTarget, this, fragId);
+					break;
+				}
+				default:
+				{
+					// multistring of some type
+					var wsid = 0;
+					if (s_cwsMulti > 1)
 					{
-						DisplayMultiSep(frag, vwenv, m_cache);
-						DisplayWsLabel(s_qwsCurrent, vwenv, m_cache);
-						wsid = s_qwsCurrent.Handle;
+						var sLabelWs = XmlUtils.GetOptionalAttributeValue(frag, "ws");
+						if (sLabelWs != null && sLabelWs == "current")
+						{
+							DisplayMultiSep(frag, vwenv, m_cache);
+							DisplayWsLabel(s_qwsCurrent, vwenv, m_cache);
+							wsid = s_qwsCurrent.Handle;
+						}
 					}
+					if (wsid == 0)
+					{
+						wsid = WritingSystemServices.GetWritingSystem(m_cache, frag.ConvertElement(), null, WritingSystemServices.kwsAnal).Handle;
+					}
+					DisplayOtherObjStringAlt(flid, wsid, vwenv, hvoTarget, caller);
+					break;
 				}
-				if (wsid == 0)
-				{
-					wsid = WritingSystemServices.GetWritingSystem(m_cache, frag.ConvertElement(), null, WritingSystemServices.kwsAnal).Handle;
-				}
-				DisplayOtherObjStringAlt(flid, wsid, vwenv, hvoTarget, caller);
 			}
 		}
 
@@ -2820,8 +2798,7 @@ namespace LanguageExplorer.Controls.XMLViews
 					if (hvoObj != 0 && validTypes.Count > 0)
 					{
 						var repo = m_cache.ServiceLocator.GetInstance<ILexEntryRepository>();
-						ILexEntry entry;
-						if (repo.TryGetObject(hvoObj, out entry) && entry.EntryRefsOS.Count > 0)
+						if (repo.TryGetObject(hvoObj, out var entry) && entry.EntryRefsOS.Count > 0)
 						{
 							var fOk = false;    // assume we don't want this entry.
 							foreach (var entryref in entry.EntryRefsOS.Where(entryref => entryref.HideMinorEntry == 0))
@@ -2899,8 +2876,7 @@ namespace LanguageExplorer.Controls.XMLViews
 							continue;
 						}
 						var lri = new LexReferenceInfo(s) { Index = i };
-						List<LexReferenceInfo> lris;
-						if (!m_mapGuidToReferenceInfo.TryGetValue(lri.ItemGuid, out lris))
+						if (!m_mapGuidToReferenceInfo.TryGetValue(lri.ItemGuid, out var lris))
 						{
 							lris = new List<LexReferenceInfo>();
 							m_mapGuidToReferenceInfo.Add(lri.ItemGuid, lris);
@@ -3046,23 +3022,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		public static bool ConditionPasses(IVwEnv vwenv, XElement frag, int hvo, LcmCache cache, ISilDataAccess sda, XElement caller)
 		{
 			GetActualTarget(frag, ref hvo, sda);    // modify the hvo if needed
-			if (!IsConditionsPass(frag, hvo, sda))
-			{
-				return false;
-			}
-			if (!LengthConditionsPass(vwenv, frag, hvo, sda))
-			{
-				return false;
-			}
-			if (!ValueEqualityConditionsPass(vwenv, frag, hvo, cache, sda, caller))
-			{
-				return false;
-			}
-			if (!BidiConditionPasses(frag, cache))
-			{
-				return false;
-			}
-			return true; // All conditions present passed.
+			return IsConditionsPass(frag, hvo, sda) && LengthConditionsPass(vwenv, frag, hvo, sda) && ValueEqualityConditionsPass(vwenv, frag, hvo, cache, sda, caller) && BidiConditionPasses(frag, cache);
 		}
 
 		/// <summary>
@@ -3079,13 +3039,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			}
 			var wsContainer = cache.ServiceLocator.WritingSystems;
 			var fBidi = XmlUtils.GetBooleanAttributeValue(sBidi);
-			var fRTLVern = wsContainer.DefaultVernacularWritingSystem.RightToLeftScript;
-			var fRTLAnal = wsContainer.DefaultAnalysisWritingSystem.RightToLeftScript;
-			if (fRTLVern == fRTLAnal)
-			{
-				return !fBidi;
-			}
-			return fBidi;
+			return wsContainer.DefaultVernacularWritingSystem.RightToLeftScript == wsContainer.DefaultAnalysisWritingSystem.RightToLeftScript ? !fBidi : fBidi;
 		}
 
 		/// <summary>
@@ -3093,44 +3047,16 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		private static bool ValueEqualityConditionsPass(IVwEnv vwenv, XElement frag, int hvo, LcmCache cache, ISilDataAccess sda, XElement caller)
 		{
-			if (!StringEqualsConditionPasses(vwenv, frag, hvo, sda))
-			{
-				return false;
-			}
-			if (!StringAltEqualsConditionPasses(vwenv, frag, hvo, cache, sda, caller))
-			{
-				return false;
-			}
-			if (!BoolEqualsConditionPasses(vwenv, frag, hvo, sda))
-			{
-				return false;
-			}
-			if (!IntEqualsConditionPasses(vwenv, frag, hvo, sda))
-			{
-				return false;
-			}
-			if (!IntGreaterConditionPasses(vwenv, frag, hvo, sda))
-			{
-				return false;
-			}
-			if (!IntLessConditionPasses(vwenv, frag, hvo, sda))
-			{
-				return false;
-			}
-			if (!IntMemberOfConditionPasses(vwenv, frag, hvo, sda))
-			{
-				return false;
-			}
-			if (!GuidEqualsConditionPasses(vwenv, frag, hvo, sda))
-			{
-				return false;
-			}
-			return HvoEqualsConditionPasses(vwenv, frag, hvo, sda) && FlidEqualsConditionPasses(vwenv, frag, hvo, sda);
+			return StringEqualsConditionPasses(vwenv, frag, hvo, sda) && StringAltEqualsConditionPasses(vwenv, frag, hvo, cache, sda, caller)
+																	  && BoolEqualsConditionPasses(vwenv, frag, hvo, sda) && IntEqualsConditionPasses(vwenv, frag, hvo, sda)
+																	  && IntGreaterConditionPasses(vwenv, frag, hvo, sda) && IntLessConditionPasses(vwenv, frag, hvo, sda)
+																	  && IntMemberOfConditionPasses(vwenv, frag, hvo, sda) && GuidEqualsConditionPasses(vwenv, frag, hvo, sda)
+																	  && HvoEqualsConditionPasses(vwenv, frag, hvo, sda) && FlidEqualsConditionPasses(vwenv, frag, hvo, sda);
 		}
 
 		private static void NoteDependency(IVwEnv vwenv, int hvo, int flid)
 		{
-			vwenv?.NoteDependency(new int[] { hvo }, new int[] { flid }, 1);
+			vwenv?.NoteDependency(new int[] { hvo }, new[] { flid }, 1);
 		}
 
 		private static int GetValueFromCache(IVwEnv vwenv, XElement frag, int hvo, ISilDataAccess sda)
@@ -3249,8 +3175,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				return true;
 			}
-			int flidVal;
-			if (!int.TryParse(sFlid, out flidVal))
+			if (!int.TryParse(sFlid, out var flidVal))
 			{
 				return false;
 			}
@@ -3298,8 +3223,7 @@ namespace LanguageExplorer.Controls.XMLViews
 					break;
 				case "$ParentHvo":
 					// compare with the next outer HVO in the hierarchy.
-					int hvoParent, tagDummy, ihvoDummy;
-					vwenv.GetOuterObject(vwenv.EmbeddingLevel - 1, out hvoParent, out tagDummy, out ihvoDummy);
+					vwenv.GetOuterObject(vwenv.EmbeddingLevel - 1, out var hvoParent, out _, out _);
 					if (val == hvoParent)
 					{
 						return true;
@@ -3431,8 +3355,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			if (flid != -1 && hvo != 0)
 			{
 				var tsString = sda.get_StringProp(hvo, flid);
-				int var;
-				var realWs = tsString.get_Properties(0).GetIntPropValues((int)FwTextPropType.ktptWs, out var);
+				var realWs = tsString.get_Properties(0).GetIntPropValues((int)FwTextPropType.ktptWs, out _);
 				// Third argument must be 0 to indicate a non-multistring.
 				// Fourth argument is the TsString version of the string we are testing against.
 				// The display will update for a change in whether it is true that sda.get_StringProp(hvo, flid) is equal to arg4
@@ -3566,8 +3489,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			var chvoMax = sda.get_VecSize(vectorHvo, flid);
 			using (var arrayPtr = MarshalEx.ArrayToNative<int>(chvoMax))
 			{
-				int chvo;
-				sda.VecProp(vectorHvo, flid, chvoMax, out chvo, arrayPtr);
+				sda.VecProp(vectorHvo, flid, chvoMax, out var chvo, arrayPtr);
 				contents = MarshalEx.NativeToArray<int>(arrayPtr, chvo);
 			}
 			foreach (var hvoVectorContent in contents)
@@ -3710,7 +3632,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		public ISilDataAccess DataAccess
 		{
-			get { return m_sda; }
+			get => m_sda;
 			set
 			{
 				m_sda = value;
@@ -3858,8 +3780,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			foreach (var flid in mdc.GetFieldIds())
 			{
 				var sName = mdc.GetFieldName(flid);
-				List<int> rgflids;
-				if (!mapNameFlids.TryGetValue(sName, out rgflids))
+				if (!mapNameFlids.TryGetValue(sName, out var rgflids))
 				{
 					rgflids = new List<int>();
 					mapNameFlids.Add(sName, rgflids);
@@ -3868,15 +3789,8 @@ namespace LanguageExplorer.Controls.XMLViews
 			}
 			foreach (var sName in mapNameFlids.Keys)
 			{
-				var cCustom = 0;
 				var rgflids = mapNameFlids[sName];
-				foreach (var flid in rgflids)
-				{
-					if (mdc.IsCustom(flid))
-					{
-						++cCustom;
-					}
-				}
+				var cCustom = rgflids.Count(flid => mdc.IsCustom(flid));
 				if (cCustom > 0)
 				{
 					m_mapCustomFields.Add(sName, cCustom == rgflids.Count);
@@ -3911,8 +3825,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				return true;
 			}
-			bool fAlways;
-			if (m_mapCustomFields.TryGetValue(fieldName, out fAlways))
+			if (m_mapCustomFields.TryGetValue(fieldName, out var fAlways))
 			{
 				try
 				{
@@ -4078,12 +3991,12 @@ namespace LanguageExplorer.Controls.XMLViews
 				{
 					return;
 				}
-				if (vwenv is ConfiguredExport)
+				if (vwenv is ConfiguredExport export)
 				{
 					css = XmlUtils.GetOptionalAttributeValue(frag, "css");
 					if (!string.IsNullOrEmpty(css))
 					{
-						configuredExport = (vwenv as ConfiguredExport);
+						configuredExport = export;
 						configuredExport.BeginCssClassIfNeeded(frag);
 					}
 				}
@@ -4138,10 +4051,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			var colsTotal = GetColCount(frag, hvo);
 			if (columns != null)
 			{
-				foreach (var node in columns)
-				{
-					colsSpeced += ProcessColumnSpec(node, vwenv, hvo, colsTotal);
-				}
+				colsSpeced += columns.Sum(node => ProcessColumnSpec(node, vwenv, hvo, colsTotal));
 			}
 			// Distribute remaining width equally to remaining columns, if any, by using
 			// the relative width capability.
@@ -4605,12 +4515,11 @@ namespace LanguageExplorer.Controls.XMLViews
 
 			public override bool Equals(object obj)
 			{
-				var other = obj as DisplayStringAltCommand;
-				if (other == null)
+				if (!(obj is DisplayStringAltCommand displayStringAltCommand))
 				{
 					return false;
 				}
-				return other.m_tag == m_tag && other.m_ws == m_ws && other.m_caller == m_caller;
+				return displayStringAltCommand.m_tag == m_tag && displayStringAltCommand.m_ws == m_ws && displayStringAltCommand.m_caller == m_caller;
 			}
 
 			public override int GetHashCode()
@@ -4684,12 +4593,11 @@ namespace LanguageExplorer.Controls.XMLViews
 
 			public override bool Equals(object obj)
 			{
-				var other = obj as DisplayUnicodeCommand;
-				if (other == null)
+				if (!(obj is DisplayUnicodeCommand displayUnicodeCommand))
 				{
 					return false;
 				}
-				return other.m_tag == m_tag && other.m_ws == m_ws;
+				return displayUnicodeCommand.m_tag == m_tag && displayUnicodeCommand.m_ws == m_ws;
 			}
 
 			public override int GetHashCode()
@@ -4717,23 +4625,8 @@ namespace LanguageExplorer.Controls.XMLViews
 			/// </summary>
 			public override bool Equals(object obj)
 			{
-				if (!base.Equals(obj))
-				{
-					return false;
-				}
-				var other = obj as MainCallerDisplayCommandSeq;
-				if (other == null || other.m_stackPartRef.Length != m_stackPartRef.Length)
-				{
-					return false;
-				}
-				for (var i = 0; i < m_stackPartRef.Length; i++)
-				{
-					if (m_stackPartRef[i] != other.m_stackPartRef[i])
-					{
-						return false;
-					}
-				}
-				return true;
+				return base.Equals(obj) && obj is MainCallerDisplayCommandSeq mainCallerDisplayCommandSeq && mainCallerDisplayCommandSeq.m_stackPartRef.Length == m_stackPartRef.Length
+					   && !m_stackPartRef.Where((t, i) => t != mainCallerDisplayCommandSeq.m_stackPartRef[i]).Any();
 			}
 
 			/// <summary>
@@ -4791,12 +4684,7 @@ namespace LanguageExplorer.Controls.XMLViews
 
 			public override bool Equals(object obj)
 			{
-				var other = obj as ObjLocalCommand;
-				if (other == null)
-				{
-					return false;
-				}
-				return other.m_caller == m_caller && other.m_objLocal == m_objLocal;
+				return obj is ObjLocalCommand objLocalCommand && objLocalCommand.m_caller == m_caller && objLocalCommand.m_objLocal == m_objLocal;
 			}
 
 			int HashOrZero(XElement node)
@@ -4819,7 +4707,6 @@ namespace LanguageExplorer.Controls.XMLViews
 			internal SimpleRootSite m_rootSite;
 
 			public RootDisplayCommand(string rootLayoutName, SimpleRootSite rootSite)
-				: base()
 			{
 				m_rootLayoutName = rootLayoutName;
 				m_rootSite = rootSite;
@@ -4849,8 +4736,7 @@ namespace LanguageExplorer.Controls.XMLViews
 
 			public override bool Equals(object obj)
 			{
-				var rdcOther = obj as RootDisplayCommand;
-				return rdcOther != null && base.Equals(obj) && m_rootLayoutName == rdcOther.m_rootLayoutName;
+				return obj is RootDisplayCommand rdcOther && base.Equals(obj) && m_rootLayoutName == rdcOther.m_rootLayoutName;
 			}
 
 			public override int GetHashCode()
@@ -4908,7 +4794,7 @@ namespace LanguageExplorer.Controls.XMLViews
 
 			internal override void PerformDisplay(XmlVc vc, int fragId, int hvo, IVwEnv vwenv)
 			{
-				if (XmlVc.ConditionPasses(m_condition, hvo, (m_rootSite as RootSite).Cache, m_sda))
+				if (ConditionPasses(m_condition, hvo, ((RootSite)m_rootSite)?.Cache, m_sda))
 				{
 					base.PerformDisplay(vc, fragId, hvo, vwenv);
 				}

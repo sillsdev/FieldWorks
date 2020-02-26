@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Text;
 
 namespace LanguageExplorer.SfmToXml
@@ -155,16 +156,12 @@ namespace LanguageExplorer.SfmToXml
 			AddSectionComment($"Created via the Lexical Import process: {DateTime.Now.ToString(CultureInfo.InvariantCulture)}", ref xmlText);
 			// Start of the map file
 			xmlText.AppendLine($"<sfmMapping version=\"{MapFileVersion}\">");
-			// ====================================================================
 			// Global Settings section of XML map file
-			// ====================================================================
 			AddSectionComment("Global Settings", ref xmlText);
 			xmlText.AppendLine("<settings>");
 			xmlText.AppendLine("<meaning app=\"fw.sil.org\"/>");
 			xmlText.AppendLine("</settings>");
-			// ====================================================================
 			// Import Options section of XML map file
-			// ====================================================================
 			AddSectionComment("Import Options", ref xmlText);
 			xmlText.AppendLine("<options>");
 			if (listOptions == null)
@@ -184,9 +181,7 @@ namespace LanguageExplorer.SfmToXml
 				}
 			}
 			xmlText.AppendLine("</options>");
-			// ====================================================================
 			// Languages section of XML map file
-			// ====================================================================
 			AddSectionComment("Language Definitions", ref xmlText);
 			xmlText.AppendLine("<languages>");
 			foreach (DictionaryEntry item in uiLangs)
@@ -201,9 +196,7 @@ namespace LanguageExplorer.SfmToXml
 				xmlText.AppendLine(xmlOutput);
 			}
 			xmlText.AppendLine("</languages>");
-			// ====================================================================
 			// Level Hierarchy section of XML map file
-			// ====================================================================
 			AddSectionComment("Level Hierarchy", ref xmlText);
 			xmlText.AppendLine("<hierarchy>");
 			// now use the list of FieldHierarchyInfo and ILexFields to put out the two sections in the map file
@@ -221,8 +214,7 @@ namespace LanguageExplorer.SfmToXml
 					continue;   // skip it for the Hierarchy list -- no change there
 				}
 				// get the class for the destination field : ASSUMPTION EACH FWDESTID IS UNIQUE AND NOT DUPLICATED AMONG CLASSES
-				string className;
-				var lfield = lexFields.GetField(fieldInfo.FwDestID, out className);
+				var lfield = lexFields.GetField(fieldInfo.FwDestID, out var className);
 				if (lfield == null)
 				{
 					className = fieldInfo.FwDestClass;  // currently only set for custom fields (7/08)
@@ -258,9 +250,7 @@ namespace LanguageExplorer.SfmToXml
 				xmlText.AppendLine(xmlOutput);
 			}
 			xmlText.AppendLine("</hierarchy>");
-			// ====================================================================
 			// Field Descriptions of XML map file
-			// ====================================================================
 			AddSectionComment("Field Descriptions", ref xmlText);
 			xmlText.AppendLine("<fieldDescriptions>");
 			// now put out each Field Description
@@ -277,8 +267,7 @@ namespace LanguageExplorer.SfmToXml
 				else
 				{
 					// get the class for the destination field : ASSUMPTION EACH FWDESTID IS UNIQUE AND NOT DUPLICATED AMONG CLASSES
-					string className;
-					var lfield = lexFields.GetField(fieldInfo.FwDestID, out className);
+					var lfield = lexFields.GetField(fieldInfo.FwDestID, out var className);
 					if (lfield == null)
 					{
 						className = fieldInfo.FwDestClass;  // currently only set for custom fields (7/08)
@@ -302,23 +291,15 @@ namespace LanguageExplorer.SfmToXml
 				xmlText.AppendLine(xmlOutput);
 			}
 			xmlText.AppendLine("</fieldDescriptions>");
-			// ====================================================================
 			// InField markers of XML map file
-			// ====================================================================
 			AddSectionComment("In Field Markers", ref xmlText);
 			xmlText.AppendLine("<inFieldMarkers>");
-			foreach (var marker in listInFieldMarkers)
+			foreach (var marker in listInFieldMarkers.Where(marker => marker != null))
 			{
-				if (marker == null)
-				{
-					continue;
-				}
 				xmlText.AppendLine(marker.ToXmlString());
 			}
 			xmlText.AppendLine("</inFieldMarkers>");
-			// ====================================================================
 			// Custom Field Descriptions of XML map file
-			// ====================================================================
 			AddSectionComment("Custom Field Descriptions", ref xmlText);
 			xmlText.AppendLine("<CustomFieldDescriptions>");
 			// now put out each Field Description
@@ -348,9 +329,7 @@ namespace LanguageExplorer.SfmToXml
 				xmlText.AppendLine(tmp.ToXmlString());
 			}
 			xmlText.AppendLine("</CustomFieldDescriptions>");
-			// ====================================================================
 			// now close out the map file
-			// ====================================================================
 			xmlText.AppendLine("</sfmMapping>");
 			using (var outMapFile = new StreamWriter(saveAsFileName, false))
 			{

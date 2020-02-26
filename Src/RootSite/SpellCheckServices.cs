@@ -81,11 +81,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <returns>the number of menu items added (not counting a possible separator line)</returns>
 		public static int MakeSpellCheckMenuOptions(LcmCache cache, Point pt, SimpleRootSite rootsite, ContextMenuStrip menu)
 		{
-			int hvoObj, tag, wsAlt, wsText;
-			string word;
-			ISpellEngine dict;
-			bool nonSpellingError;
-			var suggestions = GetSuggestions(pt, rootsite, out hvoObj, out tag, out wsAlt, out wsText, out word, out dict, out nonSpellingError);
+			var suggestions = GetSuggestions(pt, rootsite, out var hvoObj, out var tag, out var wsAlt, out var wsText, out var word, out var dict, out var nonSpellingError);
 			if (suggestions == null)
 			{
 				return 0;
@@ -158,8 +154,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// </summary>
 		private static void SpellingMenuItemClick(object sender, EventArgs e)
 		{
-			var item = sender as SpellCorrectMenuItem;
-			if (item == null)
+			if (!(sender is SpellCorrectMenuItem item))
 			{
 				var dict = sender as AddToDictMenuItem;
 				Debug.Assert(dict != null, "invalid sender of spell check item");
@@ -210,12 +205,8 @@ namespace SIL.FieldWorks.Common.RootSites
 			{
 				return null;
 			}
-			ITsString tss;
-			bool fAssocPrev;
-			int ichAnchor;
-			sel.TextSelInfo(false, out tss, out ichAnchor, out fAssocPrev, out hvoObj, out tag, out wsAlt);
-			int ichEnd, hvoObjE, tagE, wsE;
-			sel.TextSelInfo(true, out tss, out ichEnd, out fAssocPrev, out hvoObjE, out tagE, out wsE);
+			sel.TextSelInfo(false, out var tss, out var ichAnchor, out _, out hvoObj, out tag, out wsAlt);
+			sel.TextSelInfo(true, out tss, out var ichEnd, out _, out var hvoObjE, out var tagE, out var wsE);
 			if (hvoObj != hvoObjE || tag != tagE || wsAlt != wsE)
 			{
 				return null;
@@ -259,8 +250,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			{
 				return MakeWssSuggestions(tssWord, wss, rootb, hvoObj, tag, wsAlt, ichMin, ichLim);
 			}
-			ITsString keepOrcs; // holds any ORCs we found in the original word that we need to keep rather than reporting.
-			var result = MakeEmbeddedNscSuggestion(ref tssWord, styles, rootb, hvoObj, tag, wsAlt, ichMin, ichLim, out keepOrcs);
+			var result = MakeEmbeddedNscSuggestion(ref tssWord, styles, rootb, hvoObj, tag, wsAlt, ichMin, ichLim, out var keepOrcs);
 			if (result.Count > 0)
 			{
 				return result;

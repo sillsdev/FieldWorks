@@ -207,8 +207,7 @@ namespace LanguageExplorer.Impls
 			var fIgnore = lang.Length + style.Length == 0;
 			// get the xmlLang value
 			var xmlLangValue = "Unknown";
-			var langUI = m_uiLangs[lang] as LanguageInfoUI;
-			if (langUI != null)
+			if (m_uiLangs[lang] is LanguageInfoUI langUI)
 			{
 				xmlLangValue = langUI.ClsLanguage.XmlLang;
 			}
@@ -465,9 +464,8 @@ namespace LanguageExplorer.Impls
 			{
 				if (dlg.ShowDialog(this) == DialogResult.OK)
 				{
-					string langDesc, ws, ec, wsId;
 					// retrieve the new WS information from the dlg
-					dlg.GetCurrentLangInfo(out langDesc, out ws, out ec, out wsId);
+					dlg.GetCurrentLangInfo(out var langDesc, out var ws, out var ec, out var wsId);
 					// now put the lang info into the language list view
 					if (_importWizard.AddLanguage(langDesc, ws, ec, wsId))
 					{

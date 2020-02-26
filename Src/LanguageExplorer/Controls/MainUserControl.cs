@@ -48,14 +48,8 @@ namespace LanguageExplorer.Controls
 		/// </summary>
 		public string AccName
 		{
-			get
-			{
-				return AccNameDefault;
-			}
-			set
-			{
-				AccNameDefault = value;
-			}
+			get => AccNameDefault;
+			set => AccNameDefault = value;
 		}
 
 		#endregion IMainUserControl implementation
@@ -125,8 +119,8 @@ namespace LanguageExplorer.Controls
 			/// </summary>
 			public override string Name
 			{
-				get { return m_mainUserControl.AccName; }
-				set { m_mainUserControl.AccName = value; }
+				get => m_mainUserControl.AccName;
+				set => m_mainUserControl.AccName = value;
 			}
 		}
 	}

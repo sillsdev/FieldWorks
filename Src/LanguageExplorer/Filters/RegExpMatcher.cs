@@ -61,7 +61,6 @@ namespace LanguageExplorer.Filters
 		/// <summary />
 		public override string ErrorMessage()
 		{
-			string finalErrorMessage;
 			var errMsg = Pattern.ErrorMessage;
 			if (Pattern.Pattern.Text == null)
 			{
@@ -78,61 +77,42 @@ namespace LanguageExplorer.Filters
 			switch (errMsg)
 			{
 				default:
-					finalErrorMessage = string.Format(FiltersStrings.ksUnknownError, errMsg);
-					break;
+					return string.Format(FiltersStrings.ksUnknownError, errMsg);
 				case "U_ZERO_ERROR":
-					finalErrorMessage = FiltersStrings.ksNoError;
-					break;
+					return FiltersStrings.ksNoError;
 				case "U_REGEX_ERROR_START":
-					finalErrorMessage = FiltersStrings.ksRegexErrorStart;
-					break;
+					return FiltersStrings.ksRegexErrorStart;
 				case "U_REGEX_INTERNAL_ERROR":
-					finalErrorMessage = FiltersStrings.ksRegexInternalError;
-					break;
+					return FiltersStrings.ksRegexInternalError;
 				case "U_REGEX_RULE_SYNTAX":
-					finalErrorMessage = FiltersStrings.ksRegexRuleSyntax;
-					break;
+					return FiltersStrings.ksRegexRuleSyntax;
 				case "U_REGEX_INVALID_STATE":
-					finalErrorMessage = FiltersStrings.ksRegexInvalidState;
-					break;
+					return FiltersStrings.ksRegexInvalidState;
 				case "U_REGEX_BAD_ESCAPE_SEQUENCE":
-					finalErrorMessage = FiltersStrings.ksRegexBadEscapeSequence;
-					break;
+					return FiltersStrings.ksRegexBadEscapeSequence;
 				case "U_REGEX_PROPERTY_SYNTAX":
-					finalErrorMessage = FiltersStrings.ksRegexPropertySyntax;
-					break;
+					return FiltersStrings.ksRegexPropertySyntax;
 				case "U_REGEX_UNIMPLEMENTED":
-					finalErrorMessage = FiltersStrings.ksRegexUnimplemented;
-					break;
+					return FiltersStrings.ksRegexUnimplemented;
 				case "U_REGEX_MISMATCHED_PAREN":
-					finalErrorMessage = FiltersStrings.ksRegexMismatchedParen;
-					break;
+					return FiltersStrings.ksRegexMismatchedParen;
 				case "U_REGEX_NUMBER_TOO_BIG":
-					finalErrorMessage = FiltersStrings.ksRegexNumberTooBig;
-					break;
+					return FiltersStrings.ksRegexNumberTooBig;
 				case "U_REGEX_BAD_INTERVAL":
-					finalErrorMessage = FiltersStrings.ksRegexBadInterval;
-					break;
+					return FiltersStrings.ksRegexBadInterval;
 				case "U_REGEX_MAX_LT_MIN":
-					finalErrorMessage = FiltersStrings.ksRegexMaxLtMin;
-					break;
+					return FiltersStrings.ksRegexMaxLtMin;
 				case "U_REGEX_INVALID_BACK_REF":
-					finalErrorMessage = FiltersStrings.ksRegexInvalidBackRef;
-					break;
+					return FiltersStrings.ksRegexInvalidBackRef;
 				case "U_REGEX_INVALID_FLAG":
-					finalErrorMessage = FiltersStrings.ksRegexInvalidFlag;
-					break;
+					return FiltersStrings.ksRegexInvalidFlag;
 				case "U_REGEX_LOOK_BEHIND_LIMIT":
-					finalErrorMessage = FiltersStrings.ksRegexLookBehindLimit;
-					break;
+					return FiltersStrings.ksRegexLookBehindLimit;
 				case "U_REGEX_SET_CONTAINS_STRING":
-					finalErrorMessage = FiltersStrings.ksRegexSetContainsString;
-					break;
+					return FiltersStrings.ksRegexSetContainsString;
 				case "U_REGEX_ERROR_LIMIT":
-					finalErrorMessage = FiltersStrings.ksRegexErrorLimit;
-					break;
+					return FiltersStrings.ksRegexErrorLimit;
 			}
-			return finalErrorMessage;
 		}
 	}
 }

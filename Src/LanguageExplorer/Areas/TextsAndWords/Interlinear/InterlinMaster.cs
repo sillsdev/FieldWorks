@@ -165,12 +165,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		protected int GetWidth(string text, Font fnt)
 		{
-			int width;
 			using (var g = Graphics.FromHwnd(Handle))
 			{
-				width = (int)g.MeasureString(text, fnt).Width + 1;
+				return (int)g.MeasureString(text, fnt).Width + 1;
 			}
-			return width;
 		}
 
 		private void SetStyleSheetFor(IStyleSheet site)
@@ -196,24 +194,21 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		private void SetupInterlinearTabControlForStText(IInterlinearTabControl site)
 		{
 			InitializeInterlinearTabControl(site);
-			if (site is ISetupLineChoices)
+			if (site is ISetupLineChoices interlinearView)
 			{
-				var interlinearView = (ISetupLineChoices)site;
-				var lineChoicesKey = $"InterlinConfig_{(interlinearView.ForEditing ? "Edit" : "Doc")}_{InterlinearTab}";
-				var mode = GetLineMode();
-				interlinearView.SetupLineChoices(lineChoicesKey, mode);
+				interlinearView.SetupLineChoices($"InterlinConfig_{(interlinearView.ForEditing ? "Edit" : "Doc")}_{InterlinearTab}", GetLineMode());
 			}
 			// Review: possibly need to do SetPaneSizeAndRoot
 			if (site != null)
 			{
-				if (site is Control)
+				if (site is Control control)
 				{
-					(site as Control).SuspendLayout();
+					control.SuspendLayout();
 				}
 				site.SetRoot(RootStTextHvo);
-				if (site is Control)
+				if (site is Control control1)
 				{
-					(site as Control).ResumeLayout();
+					control1.ResumeLayout();
 				}
 			}
 		}
@@ -450,8 +445,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			}
 			if (hvoParaAnchor != 0)
 			{
-				IStTxtPara para;
-				if (Cache.ServiceLocator.GetInstance<IStTxtParaRepository>().TryGetObject(hvoParaAnchor, out para))
+				if (Cache.ServiceLocator.GetInstance<IStTxtParaRepository>().TryGetObject(hvoParaAnchor, out var para))
 				{
 					iPara = para.IndexInOwner;
 					if (hvoParaAnchor != hvoParaEnd)
@@ -750,11 +744,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		private bool SaveWorkInProgress()
 		{
-			if (m_idcAnalyze != null && m_idcAnalyze.Visible && !m_idcAnalyze.PrepareToGoAway())
-			{
-				return false;
-			}
-			return m_idcGloss == null || !m_idcGloss.Visible || m_idcGloss.PrepareToGoAway();
+			return (m_idcAnalyze == null || !m_idcAnalyze.Visible || m_idcAnalyze.PrepareToGoAway()) && (m_idcGloss == null || !m_idcGloss.Visible || m_idcGloss.PrepareToGoAway());
 		}
 
 		public void PrepareToRefresh()
@@ -783,8 +773,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			}
 			SetStyleSheetFor(site as IStyleSheet);
 			site.Cache = Cache;
-			var siteAsFlexComponent = site as IFlexComponent;
-			if (siteAsFlexComponent != null && siteAsFlexComponent.PropertyTable == null)
+			if (site is IFlexComponent siteAsFlexComponent && siteAsFlexComponent.PropertyTable == null)
 			{
 				// Only do it one time.
 				siteAsFlexComponent.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
@@ -818,8 +807,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				{
 					return string.Empty;
 				}
-				var text = rootObj as IText;
-				return text.Name.AnalysisDefaultWritingSystem.Text;
+				return ((IText)rootObj).Name.AnalysisDefaultWritingSystem.Text;
 			}
 		}
 
@@ -970,21 +958,17 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				return hvoRoot;
 			}
-			var occurrenceFromHvo = (MyRecordList).OccurrenceFromHvo(MyRecordList.CurrentObjectHvo);
-			var point = occurrenceFromHvo?.BestOccurrence;
+			var point = MyRecordList.OccurrenceFromHvo(MyRecordList.CurrentObjectHvo)?.BestOccurrence;
 			if (point != null && point.IsValid)
 			{
-				var para = point.Segment.Paragraph;
-				hvoRoot = para.Owner.Hvo;
+				hvoRoot = point.Segment.Paragraph.Owner.Hvo;
 			}
-			ICmObject text;
-			Cache.ServiceLocator.ObjectRepository.TryGetObject(hvoRoot, out text);
+			Cache.ServiceLocator.ObjectRepository.TryGetObject(hvoRoot, out var text);
 			if (m_fRefreshOccurred || m_bookmarks == null || text == null)
 			{
 				return hvoRoot;
 			}
-			InterAreaBookmark mark;
-			if (!m_bookmarks.TryGetValue(new Tuple<string, Guid>(MyRecordList.Id, text.Guid), out mark))
+			if (!m_bookmarks.TryGetValue(new Tuple<string, Guid>(MyRecordList.Id, text.Guid), out var mark))
 			{
 				mark = new InterAreaBookmark(this, Cache, PropertyTable);
 				m_bookmarks.Add(new Tuple<string, Guid>(MyRecordList.Id, text.Guid), mark);
@@ -1002,8 +986,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				return;
 			}
-			InterAreaBookmark mark;
-			if (m_bookmarks.TryGetValue(new Tuple<string, Guid>(MyRecordList.Id, stText.Guid), out mark))
+			if (m_bookmarks.TryGetValue(new Tuple<string, Guid>(MyRecordList.Id, stText.Guid), out var mark))
 			{
 				mark.Restore(IndexOfTextRecord);
 			}
@@ -1074,10 +1057,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				bool enabled;
 				if (menuIsVisible && m_rtPane.RootBox != null)
 				{
-					int hvoRoot, fragDummy;
-					IVwViewConstructor vcDummy;
-					IVwStylesheet ssDummy;
-					m_rtPane.RootBox.GetRootObject(out hvoRoot, out vcDummy, out fragDummy, out ssDummy);
+					m_rtPane.RootBox.GetRootObject(out var hvoRoot, out _, out _, out _);
 					enabled = hvoRoot != 0;
 				}
 				else

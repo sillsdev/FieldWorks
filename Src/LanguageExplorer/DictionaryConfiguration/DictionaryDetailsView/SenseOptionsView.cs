@@ -45,8 +45,8 @@ namespace LanguageExplorer.DictionaryConfiguration.DictionaryDetailsView
 
 		public string BeforeText
 		{
-			get { return SpecialCharacterHandling.VisibleToInvisibleCharacters(textBoxBefore.Text); }
-			set { textBoxBefore.Text = value; }
+			get => SpecialCharacterHandling.VisibleToInvisibleCharacters(textBoxBefore.Text);
+			set => textBoxBefore.Text = value;
 		}
 
 		internal List<NumberingStyleComboItem> NumberingStyles
@@ -62,7 +62,7 @@ namespace LanguageExplorer.DictionaryConfiguration.DictionaryDetailsView
 
 		public string NumberingStyle
 		{
-			get { return ((NumberingStyleComboItem)dropDownNumberingStyle.SelectedItem).FormatString; }
+			get => ((NumberingStyleComboItem)dropDownNumberingStyle.SelectedItem).FormatString;
 			set
 			{
 				if (string.IsNullOrEmpty(value))
@@ -94,7 +94,7 @@ namespace LanguageExplorer.DictionaryConfiguration.DictionaryDetailsView
 
 		public string ParentSenseNumberingStyle
 		{
-			get { return ((NumberingStyleComboItem)dropDownParentSenseNumberStyle.SelectedItem).FormatString; }
+			get => ((NumberingStyleComboItem)dropDownParentSenseNumberStyle.SelectedItem).FormatString;
 			set
 			{
 				if (string.IsNullOrEmpty(value))
@@ -115,8 +115,8 @@ namespace LanguageExplorer.DictionaryConfiguration.DictionaryDetailsView
 
 		public string AfterText
 		{
-			get { return SpecialCharacterHandling.VisibleToInvisibleCharacters(textBoxAfter.Text); }
-			set { textBoxAfter.Text = value; }
+			get => SpecialCharacterHandling.VisibleToInvisibleCharacters(textBoxAfter.Text);
+			set => textBoxAfter.Text = value;
 		}
 
 		/// <summary>Populate the Sense Number Style dropdown</summary>
@@ -143,37 +143,37 @@ namespace LanguageExplorer.DictionaryConfiguration.DictionaryDetailsView
 
 		public bool NumberSingleSense
 		{
-			get { return checkBoxNumberSingleSense.Checked; }
-			set { checkBoxNumberSingleSense.Checked = value; }
+			get => checkBoxNumberSingleSense.Checked;
+			set => checkBoxNumberSingleSense.Checked = value;
 		}
 
 		public bool ParentSenseNumberingStyleVisible
 		{
-			get { return dropDownParentSenseNumberStyle.Visible; }
-			set { labelParentSenseNumberStyle.Visible = dropDownParentSenseNumberStyle.Visible = value; }
+			get => dropDownParentSenseNumberStyle.Visible;
+			set => labelParentSenseNumberStyle.Visible = dropDownParentSenseNumberStyle.Visible = value;
 		}
 
 		public bool ShowGrammarFirst
 		{
-			get { return checkBoxShowGrammarFirst.Checked; }
-			set { checkBoxShowGrammarFirst.Checked = value; }
+			get => checkBoxShowGrammarFirst.Checked;
+			set => checkBoxShowGrammarFirst.Checked = value;
 		}
 
 		public bool SenseInPara
 		{
-			get { return checkBoxSenseInPara.Checked; }
-			set { checkBoxSenseInPara.Checked = value; }
+			get => checkBoxSenseInPara.Checked;
+			set => checkBoxSenseInPara.Checked = value;
 		}
 
 		public bool FirstSenseInline
 		{
-			get { return checkBoxFirstSenseInline.Checked; }
-			set { checkBoxFirstSenseInline.Checked = value; }
+			get => checkBoxFirstSenseInline.Checked;
+			set => checkBoxFirstSenseInline.Checked = value;
 		}
 
 		public bool FirstSenseInlineVisible
 		{
-			set { checkBoxFirstSenseInline.Visible = checkBoxFirstSenseInline.Enabled = value; }
+			set => checkBoxFirstSenseInline.Visible = checkBoxFirstSenseInline.Enabled = value;
 		}
 
 		internal ComboBox.ObjectCollection DropdownNumberingStyles => dropDownNumberingStyle.Items;
@@ -183,38 +183,38 @@ namespace LanguageExplorer.DictionaryConfiguration.DictionaryDetailsView
 		#region EventHandlers
 		public event EventHandler BeforeTextChanged
 		{
-			add { textBoxBefore.TextChanged += value; }
-			remove { textBoxBefore.TextChanged -= value; }
+			add => textBoxBefore.TextChanged += value;
+			remove => textBoxBefore.TextChanged -= value;
 		}
 
 		public event EventHandler NumberingStyleChanged
 		{
-			add { dropDownNumberingStyle.SelectedValueChanged += value; }
-			remove { dropDownNumberingStyle.SelectedValueChanged -= value; }
+			add => dropDownNumberingStyle.SelectedValueChanged += value;
+			remove => dropDownNumberingStyle.SelectedValueChanged -= value;
 		}
 
 		public event EventHandler ParentSenseNumberingStyleChanged
 		{
-			add { dropDownParentSenseNumberStyle.SelectedValueChanged += value; }
-			remove { dropDownParentSenseNumberStyle.SelectedValueChanged -= value; }
+			add => dropDownParentSenseNumberStyle.SelectedValueChanged += value;
+			remove => dropDownParentSenseNumberStyle.SelectedValueChanged -= value;
 		}
 
 		public event EventHandler AfterTextChanged
 		{
-			add { textBoxAfter.TextChanged += value; }
-			remove { textBoxAfter.TextChanged -= value; }
+			add => textBoxAfter.TextChanged += value;
+			remove => textBoxAfter.TextChanged -= value;
 		}
 
 		public event EventHandler NumberSingleSenseChanged
 		{
-			add { checkBoxNumberSingleSense.CheckedChanged += value; }
-			remove { checkBoxNumberSingleSense.CheckedChanged -= value; }
+			add => checkBoxNumberSingleSense.CheckedChanged += value;
+			remove => checkBoxNumberSingleSense.CheckedChanged -= value;
 		}
 
 		public event EventHandler NumberStyleChanged
 		{
-			add { dropDownStyle.SelectedValueChanged += value; }
-			remove { dropDownStyle.SelectedValueChanged -= value; }
+			add => dropDownStyle.SelectedValueChanged += value;
+			remove => dropDownStyle.SelectedValueChanged -= value;
 		}
 
 		private EventHandler ButtonStylesOnClick(EventHandler value) { return (sender, e) => value(dropDownStyle, e); }
@@ -222,26 +222,26 @@ namespace LanguageExplorer.DictionaryConfiguration.DictionaryDetailsView
 		/// <summary>Fired when the Styles... button is clicked. Object sender is the Style ComboBox so it can be updated</summary>
 		public event EventHandler StyleButtonClick
 		{
-			add { buttonStyles.Click += ButtonStylesOnClick(value); }
-			remove { buttonStyles.Click -= ButtonStylesOnClick(value); }
+			add => buttonStyles.Click += ButtonStylesOnClick(value);
+			remove => buttonStyles.Click -= ButtonStylesOnClick(value);
 		}
 
 		public event EventHandler ShowGrammarFirstChanged
 		{
-			add { checkBoxShowGrammarFirst.CheckedChanged += value; }
-			remove { checkBoxShowGrammarFirst.CheckedChanged -= value; }
+			add => checkBoxShowGrammarFirst.CheckedChanged += value;
+			remove => checkBoxShowGrammarFirst.CheckedChanged -= value;
 		}
 
 		public event EventHandler SenseInParaChanged
 		{
-			add { checkBoxSenseInPara.CheckedChanged += value; }
-			remove { checkBoxSenseInPara.CheckedChanged -= value; }
+			add => checkBoxSenseInPara.CheckedChanged += value;
+			remove => checkBoxSenseInPara.CheckedChanged -= value;
 		}
 
 		public event EventHandler FirstSenseInlineChanged
 		{
-			add { checkBoxFirstSenseInline.CheckedChanged += value; }
-			remove { checkBoxFirstSenseInline.CheckedChanged -= value; }
+			add => checkBoxFirstSenseInline.CheckedChanged += value;
+			remove => checkBoxFirstSenseInline.CheckedChanged -= value;
 		}
 		#endregion EventHandlers
 	}

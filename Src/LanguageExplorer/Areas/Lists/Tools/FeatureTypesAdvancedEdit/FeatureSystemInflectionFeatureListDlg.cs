@@ -11,11 +11,6 @@ namespace LanguageExplorer.Areas.Lists.Tools.FeatureTypesAdvancedEdit
 {
 	public class FeatureSystemInflectionFeatureListDlg : MsaInflectionFeatureListDlg
 	{
-		public FeatureSystemInflectionFeatureListDlg()
-			: base()
-		{
-		}
-
 		protected override void EnableLink()
 		{
 			linkLabel1.Enabled = true;
@@ -33,14 +28,8 @@ namespace LanguageExplorer.Areas.Lists.Tools.FeatureTypesAdvancedEdit
 		/// </summary>
 		public override string Prompt
 		{
-			get
-			{
-				return labelPrompt.Text;
-			}
-			set
-			{
-				labelPrompt.Text = value;
-			}
+			get => labelPrompt.Text;
+			set => labelPrompt.Text = value;
 		}
 
 		/// <summary>
@@ -48,14 +37,8 @@ namespace LanguageExplorer.Areas.Lists.Tools.FeatureTypesAdvancedEdit
 		/// </summary>
 		public override string LinkText
 		{
-			get
-			{
-				return linkLabel1.Text;
-			}
-			set
-			{
-				linkLabel1.Text = value;
-			}
+			get => linkLabel1.Text;
+			set => linkLabel1.Text = value;
 		}
 
 		/// <summary>

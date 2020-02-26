@@ -33,8 +33,6 @@ namespace LanguageExplorer.Areas.Lists.Tools.DomainTypeEdit
 		private CollapsingSplitContainer _collapsingSplitContainer;
 		private DomainTypeMenuHelper _toolMenuHelper;
 		private IRecordList _recordList;
-		[Import(AreaServices.ListsAreaMachineName)]
-		private IArea _area;
 		private LcmCache _cache;
 
 		#region Implementation of IMajorFlexComponent
@@ -66,7 +64,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.DomainTypeEdit
 		public void Activate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
 			_cache = majorFlexComponentParameters.LcmCache;
-			majorFlexComponentParameters.FlexComponentParameters.PropertyTable.SetDefault($"{AreaServices.ToolForAreaNamed_}{_area.MachineName}", MachineName, true);
+			majorFlexComponentParameters.FlexComponentParameters.PropertyTable.SetDefault($"{AreaServices.ToolForAreaNamed_}{Area.MachineName}", MachineName, true);
 			if (_recordList == null)
 			{
 				_recordList = majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>(LanguageExplorerConstants.RecordListRepository).GetRecordList(DomainTypeList, majorFlexComponentParameters.StatusBar, FactoryMethod);
@@ -130,7 +128,8 @@ namespace LanguageExplorer.Areas.Lists.Tools.DomainTypeEdit
 		/// <summary>
 		/// Get the area for the tool.
 		/// </summary>
-		public IArea Area => _area;
+		[field: Import(AreaServices.ListsAreaMachineName)]
+		public IArea Area { get; private set; }
 
 		/// <summary>
 		/// Get the image for the area.
@@ -178,7 +177,6 @@ namespace LanguageExplorer.Areas.Lists.Tools.DomainTypeEdit
 
 				_majorFlexComponentParameters = majorFlexComponentParameters;
 				_sharedListToolsUiWidgetMenuHelper = new SharedListToolsUiWidgetMenuHelper(majorFlexComponentParameters, tool, list, recordList, dataTree);
-
 				SetupToolUiWidgets(tool);
 			}
 

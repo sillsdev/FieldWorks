@@ -2,6 +2,8 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System;
+using System.Collections.Generic;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel.Core.KernelInterfaces;
 
@@ -26,9 +28,12 @@ namespace LanguageExplorer.Controls.XMLViews
 			// Not sure this can happen but play safe.
 			if (m_publisher != null)
 			{
-				m_publisher.Publish("ProgressReset", this);
-				m_publisher.Publish("AddTexts", this);
-				m_publisher.Publish("ProgressReset", this);
+				m_publisher.Publish(new List<PublisherParameterObject>
+				{
+					new PublisherParameterObject("ProgressReset", this),
+					new PublisherParameterObject("AddTexts", this),
+					new PublisherParameterObject("ProgressReset", this)
+				});
 			}
 			return false; // Whatever the user did, we don't currently count it as changing the filter.
 		}

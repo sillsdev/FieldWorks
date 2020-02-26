@@ -36,8 +36,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 
 		public override bool Equals(object obj)
 		{
-			var other = obj as ParseMorph;
-			return other != null && Equals(other);
+			return obj is ParseMorph other && Equals(other);
 		}
 
 		public override int GetHashCode()

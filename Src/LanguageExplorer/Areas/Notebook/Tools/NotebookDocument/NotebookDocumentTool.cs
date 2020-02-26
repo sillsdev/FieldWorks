@@ -27,8 +27,6 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookDocument
 		private NotebookDocumentToolMenuHelper _toolMenuHelper;
 		private PaneBarContainer _paneBarContainer;
 		private IRecordList _recordList;
-		[Import(AreaServices.NotebookAreaMachineName)]
-		private IArea _area;
 
 		#region Implementation of IMajorFlexComponent
 
@@ -115,7 +113,8 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookDocument
 		/// <summary>
 		/// Get the area for the tool.
 		/// </summary>
-		public IArea Area => _area;
+		[field: Import(AreaServices.NotebookAreaMachineName)]
+		public IArea Area { get; private set; }
 
 		/// <summary>
 		/// Get the image for the area.

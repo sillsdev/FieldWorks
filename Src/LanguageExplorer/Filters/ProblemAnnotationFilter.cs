@@ -3,6 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Collections.Generic;
+using System.Linq;
 using System.Xml.Linq;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
@@ -64,15 +65,13 @@ namespace LanguageExplorer.Filters
 		{
 			base.Init(cache, filterNode);
 			m_cache = cache;
-			var classList = XmlUtils.GetMandatoryAttributeValue(filterNode, "targetClasses");
-			var classes = classList.Split(',');
 			//enhance: currently, this will require that we name every subclass as well.
-			foreach (var name in classes)
+			foreach (var name in XmlUtils.GetMandatoryAttributeValue(filterNode, "targetClasses").Split(','))
 			{
 				var cls = cache.DomainDataByFlid.MetaDataCache.GetClassId(name.Trim());
 				if (cls <= 0)
 				{
-					throw new FwConfigurationException("The class name '" + name + "' is not valid");
+					throw new FwConfigurationException($"The class name '{name}' is not valid");
 				}
 				ClassIds.Add(cls);
 			}
@@ -84,24 +83,13 @@ namespace LanguageExplorer.Filters
 		public override bool Accept(IManyOnePathSortItem item)
 		{
 			var obj = item.KeyObjectUsing(m_cache);
-			if (!(obj is ICmBaseAnnotation))
-			{
-				return false; // It's not a base annotation
-			}
-			var annotation = (ICmBaseAnnotation)obj;
-			if (annotation.BeginObjectRA == null)
+			var annotation = obj as ICmBaseAnnotation;
+			if (annotation?.BeginObjectRA == null)
 			{
 				return false;
 			}
 			var cls = annotation.BeginObjectRA.ClassID;
-			foreach (var i in ClassIds)
-			{
-				if (i == cls)
-				{
-					return true;
-				}
-			}
-			return false;
+			return ClassIds.Any(i => i == cls);
 		}
 	}
 }

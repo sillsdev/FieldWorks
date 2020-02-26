@@ -62,13 +62,11 @@ namespace LanguageExplorer.Areas
 
 		public static InterestingTextList GetInterestingTextList(IPropertyTable propertyTable, ILcmServiceLocator services)
 		{
-			InterestingTextList interestingTextList;
-			if (propertyTable.TryGetValue(AreaServices.InterestingTexts, out interestingTextList))
+			if (propertyTable.TryGetValue(AreaServices.InterestingTexts, out InterestingTextList interestingTextList))
 			{
 				return interestingTextList;
 			}
-			interestingTextList = new InterestingTextList(propertyTable, services.GetInstance<ITextRepository>(), services.GetInstance<IStTextRepository>(),
-				services.GetInstance<IScrBookRepository>().AllInstances().Any());
+			interestingTextList = new InterestingTextList(propertyTable, services.GetInstance<ITextRepository>(), services.GetInstance<IStTextRepository>(), services.GetInstance<IScrBookRepository>().AllInstances().Any());
 			// Make this list available for other tools in this window, but don't try to persist it.
 			propertyTable.SetProperty(AreaServices.InterestingTexts, interestingTextList);
 			// Since the list hangs around indefinitely, it indefinitely monitors prop changes.
@@ -98,24 +96,17 @@ namespace LanguageExplorer.Areas
 
 		public override int[] VecProp(int hvo, int tag)
 		{
-			switch (tag)
+			if (tag == kflidInterestingTexts)
 			{
-				case kflidInterestingTexts:
-					SetRootHvo(hvo);
-					return GetInterestingTexts();
+				SetRootHvo(hvo);
+				return GetInterestingTexts();
 			}
 			return base.VecProp(hvo, tag);
 		}
 
 		public override int get_VecItem(int hvo, int tag, int index)
 		{
-			switch (tag)
-			{
-				case kflidInterestingTexts:
-					// Could set m_rootHvo = hvo here, but nothing should call this without first checking the size.
-					return GetInterestingTexts()[index];
-			}
-			return base.get_VecItem(hvo, tag, index);
+			return tag == kflidInterestingTexts ? GetInterestingTexts()[index] : base.get_VecItem(hvo, tag, index);
 		}
 
 		public IEnumerable<IStText> ScriptureTexts => m_interestingTexts.ScriptureTexts;
@@ -127,11 +118,10 @@ namespace LanguageExplorer.Areas
 
 		public override int get_VecSize(int hvo, int tag)
 		{
-			switch (tag)
+			if (tag == kflidInterestingTexts)
 			{
-				case kflidInterestingTexts:
-					SetRootHvo(hvo);
-					return GetInterestingTexts().Length;
+				SetRootHvo(hvo);
+				return GetInterestingTexts().Length;
 			}
 			return base.get_VecSize(hvo, tag);
 		}

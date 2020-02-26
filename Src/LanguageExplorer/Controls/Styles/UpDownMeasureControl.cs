@@ -52,10 +52,7 @@ namespace LanguageExplorer.Controls.Styles
 		/// </summary>
 		public int MeasureMax
 		{
-			get
-			{
-				return m_mptMax;
-			}
+			get => m_mptMax;
 			set
 			{
 				m_mptMax = value;
@@ -75,10 +72,7 @@ namespace LanguageExplorer.Controls.Styles
 		/// </summary>
 		public int MeasureMin
 		{
-			get
-			{
-				return m_mptMin;
-			}
+			get => m_mptMin;
 			set
 			{
 				m_mptMin = value;
@@ -98,14 +92,8 @@ namespace LanguageExplorer.Controls.Styles
 		/// </summary>
 		public int MeasureValue
 		{
-			get
-			{
-				return (int)Math.Round(m_mptValue);
-			}
-			set
-			{
-				SetMsrValue(value);
-			}
+			get => (int)Math.Round(m_mptValue);
+			set => SetMsrValue(value);
 		}
 
 		/// <summary>
@@ -113,10 +101,7 @@ namespace LanguageExplorer.Controls.Styles
 		/// </summary>
 		public MsrSysType MeasureType
 		{
-			get
-			{
-				return m_measureType;
-			}
+			get => m_measureType;
 			set
 			{
 				m_measureType = value;
@@ -134,7 +119,7 @@ namespace LanguageExplorer.Controls.Styles
 		/// example of this.</remarks>
 		public bool DisplayAbsoluteValues
 		{
-			get { return m_fDisplayAbsoluteValues; }
+			get => m_fDisplayAbsoluteValues;
 			set
 			{
 				m_fDisplayAbsoluteValues = value;
@@ -150,7 +135,7 @@ namespace LanguageExplorer.Controls.Styles
 		/// </summary>
 		public uint MeasureIncrementFactor
 		{
-			get { return m_measureIncrementFactor; }
+			get => m_measureIncrementFactor;
 			set
 			{
 				if (value == 0)
@@ -168,7 +153,7 @@ namespace LanguageExplorer.Controls.Styles
 		/// </summary>
 		public bool UseVariablePrecision
 		{
-			get { return m_useVariablePrecision; }
+			get => m_useVariablePrecision;
 			set
 			{
 				m_useVariablePrecision = value;

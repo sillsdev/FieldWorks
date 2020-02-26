@@ -36,8 +36,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 		private MultiPane _multiPane;
 		private RecordBrowseView _recordBrowseView;
 		private IRecordList _recordList;
-		[Import(AreaServices.TextAndWordsAreaMachineName)]
-		private IArea _area;
 
 		#region Implementation of IMajorFlexComponent
 
@@ -91,7 +89,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 				new MultiPaneParameters
 				{
 					Orientation = Orientation.Vertical,
-					Area = _area,
+					Area = Area,
 					Id = "WordsAndAnalysesMultiPane",
 					ToolMachineName = MachineName
 				}, _recordBrowseView, "WordList", new PaneBar(), recordEditView, "SingleWord", new PaneBar());
@@ -150,7 +148,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 		/// <summary>
 		/// Get the area for the tool.
 		/// </summary>
-		public IArea Area => _area;
+		[field: Import(AreaServices.TextAndWordsAreaMachineName)]
+		public IArea Area { get; private set; }
 
 		/// <summary>
 		/// Get the image for the area.
@@ -188,21 +187,20 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 					// Note that we may get here after the owner (or the owner's owner) of the
 					// current object has been deleted: see LT-10124.
 					var curObject = CurrentSliceObject;
-					if (curObject is IWfiWordform)
+					switch (curObject)
 					{
-						return (IWfiWordform)curObject;
-					}
-
-					if (curObject is IWfiAnalysis && curObject.Owner != null)
-					{
-						return (IWfiWordform)(curObject.Owner);
-					}
-					if (curObject is IWfiGloss && curObject.Owner != null)
-					{
-						var anal = curObject.OwnerOfClass<IWfiAnalysis>();
-						if (anal.Owner != null)
+						case IWfiWordform wordform:
+							return wordform;
+						case IWfiAnalysis _ when curObject.Owner != null:
+							return (IWfiWordform)(curObject.Owner);
+						case IWfiGloss _ when curObject.Owner != null:
 						{
-							return anal.OwnerOfClass<IWfiWordform>();
+							var anal = curObject.OwnerOfClass<IWfiAnalysis>();
+							if (anal.Owner != null)
+							{
+								return anal.OwnerOfClass<IWfiWordform>();
+							}
+							break;
 						}
 					}
 					return null;
@@ -214,18 +212,11 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 				get
 				{
 					var curObject = CurrentSliceObject;
-					return curObject is IWfiAnalysis ? (IWfiAnalysis)curObject : curObject is IWfiGloss ? curObject.OwnerOfClass<IWfiAnalysis>() : null;
+					return curObject is IWfiAnalysis analysis ? analysis : curObject is IWfiGloss ? curObject.OwnerOfClass<IWfiAnalysis>() : null;
 				}
 			}
 
-			private IWfiGloss Gloss
-			{
-				get
-				{
-					var curObject = CurrentSliceObject;
-					return curObject is IWfiGloss ? (IWfiGloss)curObject : null;
-				}
-			}
+			private IWfiGloss Gloss => CurrentSliceObject is IWfiGloss gloss ? gloss : null;
 
 			internal AnalysesToolMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, ITool tool, RecordBrowseView recordBrowseView, IRecordList recordList, DataTree dataTree)
 			{
@@ -242,7 +233,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 				_propertyTable = _majorFlexComponentParameters.FlexComponentParameters.PropertyTable;
 				_cache = _majorFlexComponentParameters.LcmCache;
 				_sharedEventHandlers = _majorFlexComponentParameters.SharedEventHandlers;
-
 				SetupUiWidgets(tool);
 				CreateBrowseViewContextMenu();
 			}
@@ -259,9 +249,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 				var insertToolBarDictionary = toolUiWidgetParameterObject.ToolBarItemsForTool[ToolBar.Insert];
 				UiWidgetServices.InsertPair(insertToolBarDictionary, insertMenuDictionary,
 					Command.CmdInsertHumanApprovedAnalysis, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(InsertHumanApprovedAnalysis_Click, () => UiWidgetServices.CanSeeAndDo));
-
 				_majorFlexComponentParameters.UiWidgetController.AddHandlers(toolUiWidgetParameterObject);
-
 				RegisterSliceLeftEdgeMenus();
 			}
 
@@ -465,7 +453,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 						{
 							var currentSense = mb.SenseRA;
 							if (currentSense == null)
+							{
 								mb.SenseRA = mb.DefaultSense;
+							}
 						}
 					}
 				});
@@ -579,8 +569,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
       <parameters field="Meanings" className="WfiGloss" />
     </command>
 				*/
-				var currentSlice = _dataTree.CurrentSlice;
-				currentSlice.HandleMergeCommand(true);
+				_dataTree.CurrentSlice.HandleMergeCommand(true);
 			}
 
 			private void WordGlossJumpToConcordance_Click(object sender, EventArgs e)

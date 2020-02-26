@@ -9,11 +9,6 @@ namespace LanguageExplorer.Areas.Lists.Tools.FeatureTypesAdvancedEdit
 	/// <summary />
 	internal sealed class FeatureSystemInflectionFeatureListDlgLauncherSlice : MsaInflectionFeatureListDlgLauncherSlice
 	{
-		public FeatureSystemInflectionFeatureListDlgLauncherSlice()
-			: base()
-		{
-		}
-
 		/// <summary>
 		/// This method, called once we have a cache and object, is our first chance to
 		/// actually create the embedded control.

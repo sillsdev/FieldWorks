@@ -129,10 +129,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		/// </summary>
 		public bool TryAWordDialogIsRunning
 		{
-			get
-			{
-				return m_tryAWordDialogRunning;
-			}
+			get => m_tryAWordDialogRunning;
 			set
 			{
 				m_tryAWordDialogRunning = value;
@@ -180,8 +177,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 
 		private void Work(IQueueAccessor<ParserPriority, ParserWork> queueAccessor)
 		{
-			ParserWork work;
-			if (queueAccessor.GetNextWorkItem(out work))
+			if (queueAccessor.GetNextWorkItem(out var work))
 			{
 				work.DoWork();
 			}
@@ -276,7 +272,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		{
 			var acSpaceTab = new[] { ' ', '	' };
 			var i = sWord.IndexOfAny(acSpaceTab);
-			return (i <= -1) || (i >= sWord.Length);
+			return i <= -1 || i >= sWord.Length;
 		}
 	}
 }

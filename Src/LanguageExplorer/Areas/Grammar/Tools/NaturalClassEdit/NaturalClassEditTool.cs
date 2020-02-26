@@ -31,8 +31,6 @@ namespace LanguageExplorer.Areas.Grammar.Tools.NaturalClassEdit
 		private MultiPane _multiPane;
 		private RecordBrowseView _recordBrowseView;
 		private IRecordList _recordList;
-		[Import(AreaServices.GrammarAreaMachineName)]
-		private IArea _area;
 
 		#region Implementation of IMajorFlexComponent
 
@@ -72,18 +70,16 @@ namespace LanguageExplorer.Areas.Grammar.Tools.NaturalClassEdit
 			var mainMultiPaneParameters = new MultiPaneParameters
 			{
 				Orientation = Orientation.Vertical,
-				Area = _area,
+				Area = Area,
 				Id = "NaturalClassItemsAndDetailMultiPane",
 				ToolMachineName = MachineName
 			};
-
 			var recordEditViewPaneBar = new PaneBar();
 			var panelButton = new PanelButton(majorFlexComponentParameters.FlexComponentParameters, null, showHiddenFieldsPropertyName, LanguageExplorerResources.ksShowHiddenFields, LanguageExplorerResources.ksShowHiddenFields)
 			{
 				Dock = DockStyle.Right
 			};
 			recordEditViewPaneBar.AddControls(new List<Control> { panelButton });
-
 			// Too early before now.
 			_toolMenuHelper = new NaturalClassEditToolMenuHelper(majorFlexComponentParameters, this, _recordBrowseView, _recordList);
 			_multiPane = MultiPaneFactory.CreateMultiPaneWithTwoPaneBarContainersInMainCollapsingSplitContainer(majorFlexComponentParameters.FlexComponentParameters,
@@ -139,7 +135,8 @@ namespace LanguageExplorer.Areas.Grammar.Tools.NaturalClassEdit
 		/// <summary>
 		/// Get the area for the tool.
 		/// </summary>
-		public IArea Area => _area;
+		[field: Import(AreaServices.GrammarAreaMachineName)]
+		public IArea Area { get; private set; }
 
 		/// <summary>
 		/// Get the image for the area.
@@ -179,7 +176,6 @@ namespace LanguageExplorer.Areas.Grammar.Tools.NaturalClassEdit
 				_recordBrowseView = recordBrowseView;
 				_recordList = recordList;
 				_phPhonData = _majorFlexComponentParameters.LcmCache.LanguageProject.PhonologicalDataOA;
-
 				SetupUiWidgets(tool);
 				CreateBrowseViewContextMenu();
 			}
@@ -187,7 +183,6 @@ namespace LanguageExplorer.Areas.Grammar.Tools.NaturalClassEdit
 			private void SetupUiWidgets(ITool tool)
 			{
 				var toolUiWidgetParameterObject = new ToolUiWidgetParameterObject(tool);
-
 				var insertMenuDictionary = toolUiWidgetParameterObject.MenuItemsForTool[MainMenu.Insert];
 				var insertToolBarDictionary = toolUiWidgetParameterObject.ToolBarItemsForTool[ToolBar.Insert];
 				// <command id="CmdInsertSegmentNaturalClasses" label="Natural Class (Phonemes)" message="InsertItemInVector" icon="naturalClass" shortcut="Ctrl+I">
@@ -196,7 +191,6 @@ namespace LanguageExplorer.Areas.Grammar.Tools.NaturalClassEdit
 				// <command id="CmdInsertFeatureNaturalClasses" label="Natural Class (Features)" message="InsertItemInVector" icon="addFeature">
 				insertMenuDictionary.Add(Command.CmdInsertFeatureNaturalClasses, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(InsertFeatureNaturalClasses_Clicked, () => UiWidgetServices.CanSeeAndDo));
 				insertToolBarDictionary.Add(Command.CmdInsertFeatureNaturalClasses, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(InsertFeatureNaturalClasses_Clicked, () => UiWidgetServices.CanSeeAndDo));
-
 				_majorFlexComponentParameters.UiWidgetController.AddHandlers(toolUiWidgetParameterObject);
 			}
 

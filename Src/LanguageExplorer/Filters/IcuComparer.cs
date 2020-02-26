@@ -67,7 +67,6 @@ namespace LanguageExplorer.Filters
 			if (m_lce != null)
 			{
 				m_lce.Close();
-				//Marshal.ReleaseComObject(m_lce);
 				var disposable = m_lce as IDisposable;
 				disposable?.Dispose();
 				m_lce = null;

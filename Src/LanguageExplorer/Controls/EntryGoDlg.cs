@@ -35,22 +35,13 @@ namespace LanguageExplorer.Controls
 		/// </summary>
 		public ILexEntry StartingEntry
 		{
-			get
-			{
-				return (ILexEntry)m_matchingObjectsBrowser.StartingObject;
-			}
-			set
-			{
-				m_matchingObjectsBrowser.StartingObject = value;
-			}
+			get => (ILexEntry)m_matchingObjectsBrowser.StartingObject;
+			set => m_matchingObjectsBrowser.StartingObject = value;
 		}
 
 		protected override string Form
 		{
-			set
-			{
-				base.Form = MorphServices.EnsureNoMarkers(value, m_cache);
-			}
+			set => base.Form = MorphServices.EnsureNoMarkers(value, m_cache);
 		}
 
 		#endregion Properties
@@ -85,8 +76,7 @@ namespace LanguageExplorer.Controls
 		/// </summary>
 		protected override void ResetMatches(string searchKey)
 		{
-			string sAdjusted;
-			var mmt = MorphServices.GetTypeIfMatchesPrefix(m_cache, searchKey, out sAdjusted);
+			var mmt = MorphServices.GetTypeIfMatchesPrefix(m_cache, searchKey, out _);
 			if (mmt != null)
 			{
 				searchKey = string.Empty;
@@ -98,8 +88,7 @@ namespace LanguageExplorer.Controls
 				// which is a good thing.  (fixes LT-802?)
 				try
 				{
-					int clsidForm;
-					MorphServices.FindMorphType(m_cache, ref searchKey, out clsidForm);
+					MorphServices.FindMorphType(m_cache, ref searchKey, out _);
 					m_btnInsert.Enabled = searchKey.Length > 0;
 				}
 				catch (Exception ex)
@@ -197,8 +186,7 @@ namespace LanguageExplorer.Controls
 			}
 			// Check whether we need to handle partial marking of a morphtype (suprafix in the
 			// default case: see LT-6082).
-			string sAdjusted;
-			var mmt = MorphServices.GetTypeIfMatchesPrefix(m_cache, fixedText, out sAdjusted);
+			var mmt = MorphServices.GetTypeIfMatchesPrefix(m_cache, fixedText, out var sAdjusted);
 			if (mmt != null && fixedText != sAdjusted)
 			{
 				m_skipCheck = true;
@@ -219,8 +207,7 @@ namespace LanguageExplorer.Controls
 				dlg.SetDlgInfo(m_cache, tssFormTrimmed);
 				if (dlg.ShowDialog(this) == DialogResult.OK)
 				{
-					ILexEntry entry;
-					dlg.GetDialogInfo(out entry, out m_fNewlyCreated);
+					dlg.GetDialogInfo(out var entry, out m_fNewlyCreated);
 					m_selObject = entry;
 					if (m_fNewlyCreated)
 					{

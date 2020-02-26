@@ -36,11 +36,7 @@ namespace LanguageExplorer.Areas.Lexicon
 		/// <summary />
 		protected override bool CanInsertClass(string className)
 		{
-			if (base.CanInsertClass(className))
-			{
-				return true;
-			}
-			return className == "ReversalIndexEntry";
+			return base.CanInsertClass(className) || className == "ReversalIndexEntry";
 		}
 
 		/// <summary />

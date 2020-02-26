@@ -3,6 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Diagnostics;
+using System.Linq;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.ViewsInterfaces;
@@ -75,9 +76,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			AddIfNotPresent(tssForm, wordform);
 			ComboList.SelectedIndex = IndexOfCurrentItem;
 			// Add any relevant 'other case' forms.
-			var wsVern = m_sandbox.RawWordformWs;
-			var locale = m_caches.MainCache.ServiceLocator.WritingSystemManager.Get(wsVern).IcuLocale;
-			var cf = new CaseFunctions(locale);
+			var cf = new CaseFunctions(m_caches.MainCache.ServiceLocator.WritingSystemManager.Get(m_sandbox.RawWordformWs).IcuLocale);
 			switch (m_sandbox.CaseStatus)
 			{
 				case StringCaseStatus.allLower:
@@ -127,7 +126,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				return; // no real wordform, can't have analyses.
 			}
 			var builder = TsStringUtils.MakeStrBldr();
-			var space = TsStringUtils.MakeString(fBaseWordIsPhrase ? "  " : " ", m_wsVern);
 			foreach (var wa in wordform.AnalysesOC)
 			{
 				var opinions = wa.GetAgentOpinion(m_caches.MainCache.LangProject.DefaultUserAgent);
@@ -145,23 +143,21 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				{
 					if (imorph != 0)
 					{
-						builder.ReplaceTsString(builder.Length, builder.Length, space);
+						builder.ReplaceTsString(builder.Length, builder.Length, TsStringUtils.MakeString(fBaseWordIsPhrase ? "  " : " ", m_wsVern));
 					}
 					var mb = wa.MorphBundlesOS[imorph];
 					var morph = mb.MorphRA;
 					if (morph != null)
 					{
-						var tss = morph.Form.get_String(m_sandbox.RawWordformWs);
 						var morphType = morph.MorphTypeRA;
 						var sPrefix = morphType.Prefix;
 						var sPostfix = morphType.Postfix;
 						var ich = builder.Length;
-						builder.ReplaceTsString(ich, ich, tss);
+						builder.ReplaceTsString(ich, ich, morph.Form.get_String(m_sandbox.RawWordformWs));
 						if (!string.IsNullOrEmpty(sPrefix))
 						{
 							builder.Replace(ich, ich, sPrefix, null);
 						}
-
 						if (!string.IsNullOrEmpty(sPostfix))
 						{
 							builder.Replace(builder.Length, builder.Length, sPostfix, null);
@@ -170,8 +166,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					else
 					{
 						// No MoMorph object? Must be the Form string.
-						var tss = mb.Form.get_String(m_sandbox.RawWordformWs);
-						builder.ReplaceTsString(builder.Length, builder.Length, tss);
+						builder.ReplaceTsString(builder.Length, builder.Length, mb.Form.get_String(m_sandbox.RawWordformWs));
 					}
 				}
 				var tssAnal = builder.GetString();
@@ -190,16 +185,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		{
 			// Can't use m_comboList.Items.Contains() because it doesn't use our Equals
 			// function and just notes that all the TsStrings are different objects.
-			var fFound = false;
-			foreach (ITsString tss in ComboList.Items)
-			{
-				if (tss.Equals(tssAnal))
-				{
-					fFound = true;
-					break;
-				}
-			}
-			if (fFound)
+			if (ComboList.Items.Cast<ITsString>().Any(tss => tss.Equals(tssAnal)))
 			{
 				return;
 			}
@@ -259,8 +245,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				// user selected an existing set of morph breaks.
 				var menuItemForm = (ComboList.Items[index]) as ITsString;
 				Debug.Assert(menuItemForm != null, "menu item should be TsString");
-				var hvoAnal = m_items[index];
-				if (hvoAnal == 0)
+				if (m_items[index] == 0)
 				{
 					// We're looking at an alternate case form of the whole word.
 					// Switch the sandbox to the corresponding form.
@@ -319,8 +304,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		internal string EditMorphBreaks()
 		{
 			string sMorphs;
-			var propTable = ((IPropertyTableProvider)m_sandbox.FindForm()).PropertyTable;
-			using (var dlg = new EditMorphBreaksDlg(propTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider)))
+			using (var dlg = new EditMorphBreaksDlg(m_sandbox.PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider)))
 			{
 				var tssWord = m_sandbox.SbWordForm(m_sandbox.RawWordformWs);
 				sMorphs = m_sandbox.SandboxEditMonitor.BuildCurrentMorphsString();

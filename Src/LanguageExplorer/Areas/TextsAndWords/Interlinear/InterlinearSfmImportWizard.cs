@@ -88,7 +88,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				break;
 			}
 			MakeEndOfTextVisibleAndFocus(m_loadSettingsFileBox);
-			m_browseLoadSettingsFileButon.Focus(); // a reasonable choice, and we've messed with focus making things visible
+			m_browseLoadSettingsFileButton.Focus(); // a reasonable choice, and we've messed with focus making things visible
 		}
 
 		/// <summary>
@@ -116,15 +116,14 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		private static string GetDefaultOutputSettingsPath(string input)
 		{
-			var pathWithoutExtension = input.Substring(0, input.Length - Path.GetExtension(input).Length);
-			return Path.ChangeExtension(pathWithoutExtension + "-import-settings", ".map");
+			return Path.ChangeExtension(input.Substring(0, input.Length - Path.GetExtension(input).Length) + "-import-settings", ".map");
 		}
 
 		private string[] InputFiles => SplitPaths(m_fileListBox.Text);
 
 		private string FirstInputFile => InputFiles.FirstOrDefault();
 
-		private void m_browseLoadSettingsFileButon_Click(object sender, EventArgs e)
+		private void m_browseLoadSettingsFileButton_Click(object sender, EventArgs e)
 		{
 			// Enhance JohnT: possibly some validation of a mapping file?
 			m_loadSettingsFileBox.Text = GetFile(m_loadSettingsFileBox.Text, FirstInputFile, new[]{ FileFilterType.ImportMapping, FileFilterType.AllFiles }, true,
@@ -282,8 +281,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 						{
 							return openFileDialog.FileName;
 						}
-						var msg = string.Format(ITextStrings.ksInvalidFileAreYouSure, openFileDialog.FileName);
-						var dr = MessageBox.Show(this, msg, ITextStrings.ksPossibleInvalidFile, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning);
+						var dr = MessageBox.Show(this, string.Format(ITextStrings.ksInvalidFileAreYouSure, openFileDialog.FileName), ITextStrings.ksPossibleInvalidFile, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning);
 						switch (dr)
 						{
 							case DialogResult.Yes:
@@ -314,8 +312,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 						followedBy = reader.MyFollowedByInfo;
 						foreach (string marker in reader.SfmInfo)
 						{
-							int oldVal;
-							if (!sfmcounts.TryGetValue(marker, out oldVal))
+							if (!sfmcounts.TryGetValue(marker, out var oldVal))
 							{
 								// first time we've seen it: this file determines order;
 								sfmOrder[fileNum * 100000 + reader.GetSFMOrder(marker)] = marker;
@@ -338,8 +335,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					foreach (var key in keys)
 					{
 						var marker = sfmOrder[key];
-						InterlinearMapping mapping;
-						if (savedMappings.TryGetValue(marker, out mapping))
+						if (savedMappings.TryGetValue(marker, out var mapping))
 						{
 							mapping = new InterlinearMapping(mapping);
 							if (string.IsNullOrEmpty(mapping.WritingSystem))
@@ -472,14 +468,13 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		{
 			var count = 0;
 			var headers = new HashSet<string>();
-			foreach (var interlinearMapping in mMappings)
+			foreach (var interlinearMapping in mMappings.Where(interlinearMapping => interlinearMapping.Destination == InterlinDestination.Id
+																					 || interlinearMapping.Destination == InterlinDestination.Source
+																					 || interlinearMapping.Destination == InterlinDestination.Comment
+																					 || interlinearMapping.Destination == InterlinDestination.Title
+																					 || interlinearMapping.Destination == InterlinDestination.Abbreviation))
 			{
-				if (interlinearMapping.Destination == InterlinDestination.Id || interlinearMapping.Destination == InterlinDestination.Source
-					|| interlinearMapping.Destination == InterlinDestination.Comment || interlinearMapping.Destination == InterlinDestination.Title
-					|| interlinearMapping.Destination == InterlinDestination.Abbreviation)
-				{
-					headers.Add(interlinearMapping.Marker);
-				}
+				headers.Add(interlinearMapping.Marker);
 			}
 			// if no headers were mapped then only one text could result (and 0 would be counted)
 			if (headers.Count == 0)
@@ -496,21 +491,14 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				}
 				//every time a header marker is followed by a non header it is the start of a text.
 				//for every non header that follows a header marker add the occurence count to count.
-				foreach (var followingMarker in markerAndFollowing.Value)
-				{
-					if (!headers.Contains(followingMarker.Key))
-					{
-						count += followingMarker.Value;
-					}
-				}
+				count += markerAndFollowing.Value.Where(followingMarker => !headers.Contains(followingMarker.Key)).Sum(followingMarker => followingMarker.Value);
 			}
 			return count;
 		}
 
 		private string GetWritingSystemName(string wsid)
 		{
-			var engine = m_cache.WritingSystemFactory.get_Engine(wsid);
-			return engine.ToString();
+			return m_cache.WritingSystemFactory.get_Engine(wsid).ToString();
 		}
 
 		protected override bool ValidToGoForward()
@@ -522,12 +510,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		protected virtual bool ValidateReadyToImport()
 		{
 			var gotBaseline = false;
-			foreach (var mapping in m_mappings)
+			foreach (var mapping in m_mappings.Where(mapping => mapping.Destination == InterlinDestination.Baseline))
 			{
-				if (mapping.Destination == InterlinDestination.Baseline)
-				{
-					gotBaseline = true;
-				}
+				gotBaseline = true;
 			}
 			if (!gotBaseline)
 			{
@@ -611,9 +596,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				{
 					continue; // report?
 				}
-				var input = new ByteReader(path);
-				var converterStage1 = GetSfmConverter();
-				var stage1 = converterStage1.Convert(input, m_mappings, m_cache.ServiceLocator.WritingSystemManager);
+				var stage1 = GetSfmConverter().Convert(new ByteReader(path), m_mappings, m_cache.ServiceLocator.WritingSystemManager);
 				// Skip actual import if SHIFT was held down.
 				if (secretShiftText.Visible)
 				{
@@ -657,14 +640,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			// settings are later applied to another file).
 			if (m_oldMappings != null)
 			{
-				var currentMarkers = new HashSet<string>(from map in m_mappings select map.Marker);
-				foreach (var mapping in m_oldMappings)
-				{
-					if (!currentMarkers.Contains(mapping.Marker))
-					{
-						mappingsToSave.Add(mapping);
-					}
-				}
+				var currentMarkers = new HashSet<string>(m_mappings.Select(map => map.Marker));
+				mappingsToSave.AddRange(m_oldMappings.Where(mapping => !currentMarkers.Contains(mapping.Marker)));
 			}
 			try
 			{
@@ -739,8 +716,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				var index = m_mappingsList.SelectedIndices[0];
 				var mapping = m_mappings[index];
-				var destinationsFilter = GetDestinationsFilter();
-				dlg.SetupDlg(m_helpTopicProvider, m_propertyTable.GetValue<IApp>(LanguageExplorerConstants.App), m_cache, mapping, destinationsFilter);
+				dlg.SetupDlg(m_helpTopicProvider, m_propertyTable.GetValue<IApp>(LanguageExplorerConstants.App), m_cache, mapping, GetDestinationsFilter());
 				dlg.ShowDialog(this);
 				var item = m_mappingsList.Items[index];
 				item.SubItems[2].Text = GetDestinationName(mapping.Destination);
@@ -857,11 +833,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				m_innerFollowedByInfo = new Dictionary<string, FollowedByInfo>();
 				try
 				{
-					string sfm;
 					string sfmLast = null;
-					byte[] sfmData;
-					byte[] badSfmData;
-					while (GetNextSfmMarkerAndData(out sfm, out sfmData, out badSfmData))
+					while (GetNextSfmMarkerAndData(out var sfm, out _, out _))
 					{
 						if (sfm.Length == 0)
 						{
@@ -885,11 +858,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 						// handle the marker and following counts
 						if (sfmLast != null)
 						{
-							Dictionary<string, int> markerHash;
-							if (MyFollowedByInfo.TryGetValue(sfmLast, out markerHash))
+							if (MyFollowedByInfo.TryGetValue(sfmLast, out var markerHash))
 							{
-								int count;
-								if (markerHash.TryGetValue(sfm, out count))
+								if (markerHash.TryGetValue(sfm, out var count))
 								{
 									count++;
 									markerHash[sfm] = count;
@@ -909,8 +880,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 							}
 							// new logic with List container
 							var key = BuildKey(sfmLast, sfm);
-							FollowedByInfo fbi;
-							if (m_innerFollowedByInfo.TryGetValue(key, out fbi))
+							if (m_innerFollowedByInfo.TryGetValue(key, out var fbi))
 							{
 								fbi.IncCount();
 								m_innerFollowedByInfo[key] = fbi;

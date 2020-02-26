@@ -74,34 +74,29 @@ namespace LanguageExplorer.DictionaryConfiguration
 			UserControl optionsView = null;
 			if (Options != null)
 			{
-				if (Options is DictionaryNodeWritingSystemAndParaOptions)
+				switch (Options)
 				{
-					optionsView = LoadWsAndParaOptions((DictionaryNodeWritingSystemAndParaOptions)Options);
-				}
-				else if (Options is DictionaryNodeWritingSystemOptions)
-				{
-					optionsView = LoadWsOptions((DictionaryNodeWritingSystemOptions)Options);
-				}
-				else if (Options is DictionaryNodeSenseOptions)
-				{
-					optionsView = LoadSenseOptions((DictionaryNodeSenseOptions)Options, node.Parent != null && node.FieldDescription == node.Parent.FieldDescription,
-						node.Parent != null && node.Parent.Label == "MainEntrySubsenses");
-				}
-				else if (Options is DictionaryNodeListOptions)
-				{
-					optionsView = LoadListOptions((DictionaryNodeListOptions)Options);
-				}
-				else if (Options is DictionaryNodeGroupingOptions)
-				{
-					optionsView = LoadGroupingOptions((DictionaryNodeGroupingOptions)Options);
-				}
-				else if (Options is DictionaryNodePictureOptions)
-				{
-					// todo: loading options here once UX has been worked out
-				}
-				else
-				{
-					throw new ArgumentException("Unrecognised type of DictionaryNodeOptions");
+					case DictionaryNodeWritingSystemAndParaOptions _:
+						optionsView = LoadWsAndParaOptions((DictionaryNodeWritingSystemAndParaOptions)Options);
+						break;
+					case DictionaryNodeWritingSystemOptions _:
+						optionsView = LoadWsOptions((DictionaryNodeWritingSystemOptions)Options);
+						break;
+					case DictionaryNodeSenseOptions _:
+						optionsView = LoadSenseOptions((DictionaryNodeSenseOptions)Options, node.Parent != null && node.FieldDescription == node.Parent.FieldDescription,
+							node.Parent != null && node.Parent.Label == "MainEntrySubsenses");
+						break;
+					case DictionaryNodeListOptions _:
+						optionsView = LoadListOptions((DictionaryNodeListOptions)Options);
+						break;
+					case DictionaryNodeGroupingOptions _:
+						optionsView = LoadGroupingOptions((DictionaryNodeGroupingOptions)Options);
+						break;
+					case DictionaryNodePictureOptions _:
+						// todo: loading options here once UX has been worked out
+						break;
+					default:
+						throw new ArgumentException("Unrecognised type of DictionaryNodeOptions");
 				}
 			}
 			else if ("MorphoSyntaxAnalysisRA".Equals(m_node.FieldDescription) && m_node.Parent.DictionaryNodeOptions is DictionaryNodeSenseOptions)
@@ -156,8 +151,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 			}
 			else
 			{
-				ConfigurableDictionaryNode masterParent;
-				if (node.TryGetMasterParent(out masterParent)) // node is a shared descendant
+				if (node.TryGetMasterParent(out var masterParent)) // node is a shared descendant
 				{
 					optionsView = new LabelOverPanel
 					{
@@ -432,9 +426,8 @@ namespace LanguageExplorer.DictionaryConfiguration
 			}
 			else
 			{
-				string label;
 				// REVIEW (Hasso) 2017.04: verifying available options is already accomplished in model.Load; here it is redundant.
-				var availableOptions = GetListItemsAndLabel(listOptions.ListId, out label);
+				var availableOptions = GetListItemsAndLabel(listOptions.ListId, out var label);
 				listOptionsView.ListViewLabel = label;
 				// Insert saved items in their saved order, with their saved check-state
 				var insertionIdx = 0;
@@ -482,8 +475,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 					listOptionsView.ListItemSelectionChanged += (sender, e) => ListViewSelectionChanged(listOptionsView, e);
 					listOptionsView.ListItemCheckBoxChanged += (sender, e) => ListItemCheckedChanged(listOptionsView, null, e);
 				}
-				var listAndParaOptions = listOptions as DictionaryNodeListAndParaOptions;
-				if (listAndParaOptions != null)
+				if (listOptions is DictionaryNodeListAndParaOptions listAndParaOptions)
 				{
 					listOptionsView.DisplayOptionCheckBoxChanged += (sender, e) =>
 					{
@@ -812,12 +804,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 			}
 			var xName = x.Name.BestAnalysisVernacularAlternative.Text;
 			var yName = y.Name.BestAnalysisVernacularAlternative.Text;
-			if (xName == null)
-			{
-				return yName == null ? 0 : -1;
-			}
-
-			return yName == null ? 1 : string.Compare(xName, yName, StringComparison.InvariantCulture);
+			return xName == null ? yName == null ? 0 : -1 : yName == null ? 1 : string.Compare(xName, yName, StringComparison.InvariantCulture);
 		}
 		#endregion Load more-static parts
 		#endregion LoadModel
@@ -968,13 +955,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 
 		private static bool CanReorder(ListViewItem item, Direction direction)
 		{
-			if (direction == Direction.Up)
-			{
-				// Cannot move up a default WS, the first item, or the first item below a default WS
-				return !((item.Tag is int) || (item.Index == 0) || (item.ListView.Items[item.Index - 1].Tag is int));
-			}
-			// Cannot move down a default WS or the last item
-			return !((item.Tag is int) || (item.Index >= item.ListView.Items.Count - 1));
+			return direction == Direction.Up ? !(item.Tag is int || item.Index == 0 || item.ListView.Items[item.Index - 1].Tag is int) : !(item.Tag is int || item.Index >= item.ListView.Items.Count - 1);
 		}
 
 		internal void Reorder(ListViewItem item, Direction direction)

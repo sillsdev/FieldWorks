@@ -512,29 +512,21 @@ namespace SIL.Ethnologue
 			var rgNames = new List<Names>();
 			if (fPrimary)
 			{
-				for (var i = 0; i < s_tblCountry.Count; ++i)
+				foreach (var country in s_tblCountry.Where(country => CorrectedStartsWith(country.Name, sCountryName)))
 				{
-					if (!CorrectedStartsWith(s_tblCountry[i].Name, sCountryName))
-					{
-						continue;
-					}
 					rgNames.AddRange(s_tblEthnologueLocation
-						.Where(el => el.MainCountryUsedId == s_tblCountry[i].Id)
-						.Select(el => new Names(el.PrimaryNameIdx, s_tblLanguageName[el.PrimaryNameIdx], el.MainCountryUsedId, s_tblCountry[i].Name.Normalize(NormalizationForm.FormD), el.EthnologueIdx, s_tblEthnologue[el.EthnologueIdx].Iso6393)));
+						.Where(el => el.MainCountryUsedId == country.Id)
+						.Select(el => new Names(el.PrimaryNameIdx, s_tblLanguageName[el.PrimaryNameIdx], el.MainCountryUsedId, country.Name.Normalize(NormalizationForm.FormD), el.EthnologueIdx, s_tblEthnologue[el.EthnologueIdx].Iso6393)));
 					break;
 				}
 			}
 			else
 			{
-				for (var i = 0; i < s_tblCountry.Count; ++i)
+				foreach (var country in s_tblCountry.Where(country => CorrectedStartsWith(country.Name, sCountryName)))
 				{
-					if (!CorrectedStartsWith(s_tblCountry[i].Name, sCountryName))
-					{
-						continue;
-					}
 					rgNames.AddRange(s_tblLanguageLocation
-						.Where(ll => ll.CountryUsedInId == s_tblCountry[i].Id)
-						.Select(ll => new Names(ll.LanguageIdx, s_tblLanguageName[ll.LanguageIdx], ll.CountryUsedInId, s_tblCountry[i].Name.Normalize(NormalizationForm.FormD), ll.EthnologueIdx, s_tblEthnologue[ll.EthnologueIdx].Iso6393)));
+						.Where(ll => ll.CountryUsedInId == country.Id)
+						.Select(ll => new Names(ll.LanguageIdx, s_tblLanguageName[ll.LanguageIdx], ll.CountryUsedInId, country.Name.Normalize(NormalizationForm.FormD), ll.EthnologueIdx, s_tblEthnologue[ll.EthnologueIdx].Iso6393)));
 				}
 			}
 			SelectDistinctNames(rgNames);

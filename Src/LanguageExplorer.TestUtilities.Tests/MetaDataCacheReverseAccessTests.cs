@@ -20,8 +20,7 @@ namespace LanguageExplorer.TestUtilities.Tests
 		[Test]
 		public void GetClassId_Valid()
 		{
-			var clid = m_metaDataCache.GetClassId("ClassD");
-			Assert.AreEqual(2, clid, "Wrong class Id.");
+			Assert.AreEqual(2, m_metaDataCache.GetClassId("ClassD"), "Wrong class Id.");
 		}
 
 		/// <summary>
@@ -40,8 +39,7 @@ namespace LanguageExplorer.TestUtilities.Tests
 		[Test]
 		public void GetFieldId_SansSuperClass()
 		{
-			var flid = m_metaDataCache.GetFieldId("ClassD", "MultiUnicodeProp12", false);
-			Assert.AreEqual(2003, flid, "Wrong field Id.");
+			Assert.AreEqual(2003, m_metaDataCache.GetFieldId("ClassD", "MultiUnicodeProp12", false), "Wrong field Id.");
 		}
 
 		/// <summary>
@@ -50,8 +48,7 @@ namespace LanguageExplorer.TestUtilities.Tests
 		[Test]
 		public void GetFieldId_WithSuperClass()
 		{
-			var flid = m_metaDataCache.GetFieldId("ClassL2", "Whatever", true);
-			Assert.AreEqual(35001, flid, "Wrong field Id.");
+			Assert.AreEqual(35001, m_metaDataCache.GetFieldId("ClassL2", "Whatever", true), "Wrong field Id.");
 		}
 
 		/// <summary>
@@ -69,8 +66,7 @@ namespace LanguageExplorer.TestUtilities.Tests
 		[Test]
 		public void GetFieldId_WithSuperClass_Nonexistent()
 		{
-			var flid = m_metaDataCache.GetFieldId("ClassL2", "Flurskuiwert", true);
-			Assert.AreEqual(0, flid, "Wrong field Id.");
+			Assert.AreEqual(0, m_metaDataCache.GetFieldId("ClassL2", "Flurskuiwert", true), "Wrong field Id.");
 		}
 
 		/// <summary>
@@ -79,8 +75,7 @@ namespace LanguageExplorer.TestUtilities.Tests
 		[Test]
 		public void GetFieldId2_SansSuperClass()
 		{
-			var flid = m_metaDataCache.GetFieldId2(2, "MultiUnicodeProp12", false);
-			Assert.AreEqual(2003, flid, "Wrong field Id.");
+			Assert.AreEqual(2003, m_metaDataCache.GetFieldId2(2, "MultiUnicodeProp12", false), "Wrong field Id.");
 		}
 
 		/// <summary>
@@ -89,8 +84,7 @@ namespace LanguageExplorer.TestUtilities.Tests
 		[Test]
 		public void GetFieldId2_WithSuperClass()
 		{
-			var flid = m_metaDataCache.GetFieldId2(45, "Whatever", true);
-			Assert.AreEqual(35001, flid, "Wrong field Id.");
+			Assert.AreEqual(35001, m_metaDataCache.GetFieldId2(45, "Whatever", true), "Wrong field Id.");
 		}
 
 		/// <summary>
@@ -117,11 +111,10 @@ namespace LanguageExplorer.TestUtilities.Tests
 		[Test]
 		public void GetDirectSubclasses_None()
 		{
-			int countDirectSubclasses;
 			using (var clids = MarshalEx.ArrayToNative<int>(10))
 			{
 				// Check ClassB.
-				m_metaDataCache.GetDirectSubclasses(45, 10, out countDirectSubclasses, clids);
+				m_metaDataCache.GetDirectSubclasses(45, 10, out var countDirectSubclasses, clids);
 				Assert.AreEqual(0, countDirectSubclasses, "Wrong number of subclasses returned.");
 			}
 		}
@@ -135,8 +128,7 @@ namespace LanguageExplorer.TestUtilities.Tests
 			using (var clids = MarshalEx.ArrayToNative<int>(10))
 			{
 				// Check ClassL (all of its direct subclasses).
-				int countDirectSubclasses;
-				m_metaDataCache.GetDirectSubclasses(35, 10, out countDirectSubclasses, clids);
+				m_metaDataCache.GetDirectSubclasses(35, 10, out var countDirectSubclasses, clids);
 				Assert.AreEqual(2, countDirectSubclasses, "Wrong number of subclasses returned.");
 				var ids = MarshalEx.NativeToArray<int>(clids, 10);
 				for (var i = 0; i < ids.Length; ++i)
@@ -160,8 +152,7 @@ namespace LanguageExplorer.TestUtilities.Tests
 		[Test]
 		public void GetDirectSubclasses_CountUnknown()
 		{
-			int countAllClasses;
-			m_metaDataCache.GetDirectSubclasses(35, 0, out countAllClasses, null);
+			m_metaDataCache.GetDirectSubclasses(35, 0, out var countAllClasses, null);
 			Assert.AreEqual(2, countAllClasses, "Wrong number of subclasses returned.");
 		}
 
@@ -174,8 +165,7 @@ namespace LanguageExplorer.TestUtilities.Tests
 			using (var clids = MarshalEx.ArrayToNative<int>(10))
 			{
 				// Check ClassC.
-				int countAllSubclasses;
-				m_metaDataCache.GetAllSubclasses(26, 10, out countAllSubclasses, clids);
+				m_metaDataCache.GetAllSubclasses(26, 10, out var countAllSubclasses, clids);
 				Assert.AreEqual(1, countAllSubclasses, "Wrong number of subclasses returned.");
 			}
 		}
@@ -189,8 +179,7 @@ namespace LanguageExplorer.TestUtilities.Tests
 			using (var clids = MarshalEx.ArrayToNative<int>(10))
 			{
 				// Check ClassL (all of its direct subclasses).
-				int countAllSubclasses;
-				m_metaDataCache.GetAllSubclasses(35, 10, out countAllSubclasses, clids);
+				m_metaDataCache.GetAllSubclasses(35, 10, out var countAllSubclasses, clids);
 				Assert.AreEqual(3, countAllSubclasses, "Wrong number of subclasses returned.");
 			}
 		}
@@ -205,8 +194,7 @@ namespace LanguageExplorer.TestUtilities.Tests
 			using (var clids = MarshalEx.ArrayToNative<int>(2))
 			{
 				// Check ClassL (but get it and only 1 of its subclasses).
-				int countAllSubclasses;
-				m_metaDataCache.GetAllSubclasses(35, 2, out countAllSubclasses, clids);
+				m_metaDataCache.GetAllSubclasses(35, 2, out var countAllSubclasses, clids);
 				Assert.AreEqual(2, countAllSubclasses, "Wrong number of subclasses returned.");
 			}
 		}
@@ -221,8 +209,7 @@ namespace LanguageExplorer.TestUtilities.Tests
 			using (var clids = MarshalEx.ArrayToNative<int>(countAllClasses))
 			{
 				// Check BaseClass.
-				int countAllSubclasses;
-				m_metaDataCache.GetAllSubclasses(0, countAllClasses, out countAllSubclasses, clids);
+				m_metaDataCache.GetAllSubclasses(0, countAllClasses, out var countAllSubclasses, clids);
 				Assert.AreEqual(countAllClasses, countAllSubclasses, "Wrong number of subclasses returned.");
 			}
 		}

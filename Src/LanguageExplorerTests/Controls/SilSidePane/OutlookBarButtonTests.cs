@@ -32,7 +32,7 @@ namespace LanguageExplorerTests.Controls.SilSidePane
 		{
 #pragma warning disable 0219
 			using (Image image = new Bitmap("./DefaultIcon.ico"))
-			using (var button = new OutlookBarButton("text", image))
+			using (new OutlookBarButton("text", image))
 			{ }
 #pragma warning restore 0219
 		}

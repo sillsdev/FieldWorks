@@ -18,10 +18,6 @@ namespace LanguageExplorer.Impls
 		/// </summary>
 		public string FullResponse { get; set; }
 
-		public WebonaryException(WebException webException) : this(null, webException)
-		{
-		}
-
 		internal WebonaryException(string fullResponse, WebException webException)
 		{
 			FullResponse = fullResponse;

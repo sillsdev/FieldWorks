@@ -261,10 +261,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// </summary>
 		public int PreferredVernWs
 		{
-			get
-			{
-				return m_wsVernForDisplay;
-			}
+			get => m_wsVernForDisplay;
 			private set
 			{
 				if (value <= 0)
@@ -394,9 +391,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					if (m_mpBundleHeight == 0)
 					{
 						// First time...figure it out.
-						int dmpx, dmpyAnal, dmpyVern;
-						vwenv.get_StringWidth(m_tssEmptyAnalysis, null, out dmpx, out dmpyAnal);
-						vwenv.get_StringWidth(m_tssEmptyVern, null, out dmpx, out dmpyVern);
+						vwenv.get_StringWidth(m_tssEmptyAnalysis, null, out _, out var dmpyAnal);
+						vwenv.get_StringWidth(m_tssEmptyVern, null, out _, out var dmpyVern);
 						m_mpBundleHeight = dmpyAnal * 4 + dmpyVern * 3;
 					}
 					// The interlinear bundles are not editable.
@@ -591,10 +587,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			SetupAndOpenInnerPile(vwenv);
 			// we assume we're in the context of a segment with analyses here.
 			// we'll need this info down in DisplayAnalysisAndCloseInnerPile()
-			int hvoSeg;
-			int tagDummy;
-			int index;
-			vwenv.GetOuterObject(vwenv.EmbeddingLevel - 1, out hvoSeg, out tagDummy, out index);
+			vwenv.GetOuterObject(vwenv.EmbeddingLevel - 1, out var hvoSeg, out _, out var index);
 			var analysisOccurrence = new AnalysisOccurrence(m_segRepository.GetObject(hvoSeg), index);
 			DisplayAnalysisAndCloseInnerPile(vwenv, analysisOccurrence, true);
 		}
@@ -649,8 +642,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			string label;
 			int flid;
 			var exporter = vwenv as InterlinearExporter;
-			var dummyFlid = LineChoices[lineChoiceIndex].Flid;
-			switch (dummyFlid)
+			switch (LineChoices[lineChoiceIndex].Flid)
 			{
 				case InterlinLineChoices.kflidFreeTrans:
 					label = ITextStrings.ksFree_;
@@ -688,8 +680,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			var labelWidth = 0;
 			if (wssAnalysis.Length > 1)
 			{
-				int dummyLabelHeight;
-				vwenv.get_StringWidth(tssLabel, null, out labelWidth, out dummyLabelHeight);
+				vwenv.get_StringWidth(tssLabel, null, out labelWidth, out _);
 			}
 			var wsVernPara = GetWsForSeg(hvoSeg);
 			if (IsWsRtl(wssAnalysis[0]) != IsWsRtl(wsVernPara))
@@ -880,11 +871,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				return;
 			}
-			ITsString tssDirWs;
-			if (!m_mapWsDirTss.TryGetValue(wsObj, out tssDirWs))
+			if (!m_mapWsDirTss.TryGetValue(wsObj, out var tssDirWs))
 			{
-				var fRtlWs = wsObj.RightToLeftScript;
-				tssDirWs = TsStringUtils.MakeString(fRtlWs ? "\x200F" : "\x200E", ws);
+				tssDirWs = TsStringUtils.MakeString(wsObj.RightToLeftScript ? "\x200F" : "\x200E", ws);
 				m_mapWsDirTss.Add(wsObj, tssDirWs);
 			}
 			vwenv.AddString(tssDirWs);
@@ -985,8 +974,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				var cseg = para.SegmentsOS.Count;
 				var idxSeg = para.SegmentsOS.IndexOf(seg); // sda.GetObjIndex(hvoStPara, ktagParaSegments, hvo);
-				var stText = para.Owner as IStText;
-				if (stText != null)
+				if (para.Owner is IStText stText)
 				{
 					flid = stText.OwningFlid;
 				}
@@ -998,7 +986,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					// a verse, but the letters indicating that the verse label is for only part of the verse.
 					// There is therefore a pathological case where, say, verse 4a as labeled in the main text
 					// gets another letter because 4a has multiple segments 4aa, 4ab, etc.
-					var chapRef = ScriptureServices.FullScrRef(scrPara, seg.BeginOffset, "").Trim();
+					var chapRef = ScriptureServices.FullScrRef(scrPara, seg.BeginOffset, string.Empty).Trim();
 					sbSegNum.Append(chapRef + ScriptureServices.VerseSegLabel(scrPara, idxSeg));
 				}
 				else
@@ -1017,14 +1005,13 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			var tsbSegNum = TsStringUtils.MakeStrBldr();
 			tsbSegNum.ReplaceTsString(0, tsbSegNum.Length, TsStringUtils.MakeString(sbSegNum.ToString(), m_cache.DefaultUserWs));
 			tsbSegNum.SetIntPropValues(0, tsbSegNum.Length, (int)FwTextPropType.ktptBold, (int)FwTextPropVar.ktpvEnum, (int)FwTextToggleVal.kttvForceOn);
-			var tssSegNum = tsbSegNum.GetString();
 			vwenv.set_IntProperty((int)FwTextPropType.ktptMarginTrailing, (int)FwTextPropVar.ktpvMilliPoint, 10000);
 			vwenv.set_IntProperty((int)FwTextPropType.ktptForeColor, (int)FwTextPropVar.ktpvDefault, (int)CmObjectUi.RGB(SystemColors.ControlText));
 			try
 			{
 				IsAddingSegmentReference = true;
 				vwenv.OpenInnerPile();
-				vwenv.AddString(tssSegNum);
+				vwenv.AddString(tsbSegNum.GetString());
 				vwenv.CloseInnerPile();
 			}
 			finally
@@ -1176,8 +1163,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		internal static bool TryGetLexGlossWithInflTypeTss(ILexEntry possibleVariant, ILexSense sense, InterlinLineSpec spec, InterlinLineChoices lineChoices, int vernWsContext, ILexEntryInflType inflType, out ITsString result)
 		{
-			var vcLexGlossFrag = new InterlinVc(possibleVariant.Cache);
-			vcLexGlossFrag.LineChoices = lineChoices;
+			var vcLexGlossFrag = new InterlinVc(possibleVariant.Cache)
+			{
+				LineChoices = lineChoices
+			};
 			result = null;
 			var collector = new TsStringCollectorEnv(null, vcLexGlossFrag.Cache.MainCacheAccessor, possibleVariant.Hvo)
 			{
@@ -1199,8 +1188,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		internal bool DisplayLexGlossWithInflType(IVwEnv vwenv, ILexEntry possibleVariant, ILexSense sense, InterlinLineSpec spec, ILexEntryInflType inflType)
 		{
 			var iLineChoice = LineChoices.IndexOf(spec);
-			ILexEntryRef ler;
-			if (!possibleVariant.IsVariantOfSenseOrOwnerEntry(sense, out ler))
+			if (!possibleVariant.IsVariantOfSenseOrOwnerEntry(sense, out var ler))
 			{
 				return false;
 			}
@@ -1230,9 +1218,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				}
 				else
 				{
-					ITsIncStrBldr sbPrepend;
-					ITsIncStrBldr sbAppend;
-					JoinGlossAffixesOfInflVariantTypes(ler, wsGloss, out sbPrepend, out sbAppend);
+					JoinGlossAffixesOfInflVariantTypes(ler, wsGloss, out var sbPrepend, out _);
 					if (sbPrepend.Text != null)
 					{
 						tssPrepend = sbPrepend.GetString();
@@ -1282,9 +1268,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				}
 				else
 				{
-					ITsIncStrBldr sbPrepend;
-					ITsIncStrBldr sbAppend;
-					JoinGlossAffixesOfInflVariantTypes(ler, wsGloss, out sbPrepend, out sbAppend);
+					JoinGlossAffixesOfInflVariantTypes(ler, wsGloss, out _, out var sbAppend);
 					if (sbAppend.Text != null)
 					{
 						tssAppend = sbAppend.GetString();
@@ -1365,14 +1349,13 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		private void DisplayMorphForm(IVwEnv vwenv, int hvo, int ws)
 		{
-			var mf = (IMoForm)m_coRepository.GetObject(hvo);
 			// The form of an MoForm. Hvo is some sort of MoMorph. Display includes its prefix
 			// and suffix.
 			// Todo: make prefix and suffix read-only.
 			// group prefix, form, suffix on one line.
 			vwenv.OpenParagraph();
 			// It may not have a morph type at all.
-			var morphType = mf.MorphTypeRA;
+			var morphType = ((IMoForm)m_coRepository.GetObject(hvo)).MorphTypeRA;
 			if (morphType != null)
 			{
 				vwenv.AddObjProp(MoFormTags.kflidMorphType, this, kfragPrefix);
@@ -1491,8 +1474,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					{
 						//identify those words the user has yet to approve which have multiple possible
 						//guesses user or machine, and set the background to a special color
-						var word = wag as IWfiWordform;
-						if (word != null)
+						if (wag is IWfiWordform word)
 						{
 							//test if there are multiple analyses that a user might choose from
 							if (SandboxBase.GetHasMultipleRelevantAnalyses(word))
@@ -1501,13 +1483,15 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 							}
 						}
 					}
-					var spec = m_choices[choiceIndex];
-					var ws = m_this.GetRealWsOrBestWsForContext(m_hvoWordform, spec);
-					if (ws == m_analysisOccurrence.BaselineWs)
-						m_vwenv.AddString(baseLineForm);
-					else
-						m_vwenv.AddObj(m_hvoWordform, m_this, kfragLineChoices + choiceIndex);
 
+					if (m_this.GetRealWsOrBestWsForContext(m_hvoWordform, m_choices[choiceIndex]) == m_analysisOccurrence.BaselineWs)
+					{
+						m_vwenv.AddString(baseLineForm);
+					}
+					else
+					{
+						m_vwenv.AddObj(m_hvoWordform, m_this, kfragLineChoices + choiceIndex);
+					}
 					m_this.IsDoingRealWordForm = false;
 					return;
 				}
@@ -1655,7 +1639,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					{
 						// Displaying one ws of all the glosses of an analysis, separated by commas.
 						vwenv.OpenParagraph();
-						var wa = m_coRepository.GetObject(hvo) as IWfiAnalysis;
+						var wa = (IWfiAnalysis)m_coRepository.GetObject(hvo);
 						var i = 0;
 						foreach (var gloss in wa.MeaningsOC)
 						{
@@ -1713,8 +1697,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				return;
 			}
-			var exporter = vwenv as InterlinearExporter;
-			if (exporter != null)
+			if (vwenv is InterlinearExporter exporter)
 			{
 				exporter.FreeAnnotationType = "custom";
 			}
@@ -1722,10 +1705,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			SetParaDirectionAndAlignment(vwenv, wssAnalysis[0]);
 			vwenv.OpenMappedPara();
 			var customCommentFlid = LineChoices[lineChoiceIndex].Flid;
-			var label = m_cache.MetaDataCacheAccessor.GetFieldLabel(customCommentFlid) + " ";
 			SetNoteLabelProps(vwenv);
 			// REVIEW: Should we set the label to a special color as well?
-			var tssLabel = MakeUiElementString(label, m_cache.DefaultUserWs, propsBldr => propsBldr.SetIntPropValues((int)FwTextPropType.ktptBold, (int)FwTextPropVar.ktpvEnum, (int)FwTextToggleVal.kttvForceOn));
+			var tssLabel = MakeUiElementString(m_cache.MetaDataCacheAccessor.GetFieldLabel(customCommentFlid) + " ", m_cache.DefaultUserWs, propsBldr => propsBldr.SetIntPropValues((int)FwTextPropType.ktptBold, (int)FwTextPropVar.ktpvEnum, (int)FwTextToggleVal.kttvForceOn));
 			var labelBldr = tssLabel.GetBldr();
 			AddLineIndexProperty(labelBldr, lineChoiceIndex);
 			tssLabel = labelBldr.GetString();
@@ -1852,26 +1834,20 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				// Also remember: this gets called for EVERY paragraph and segment in
 				// the text, it needs to run pretty fast.
 				case kfragInterlinPara:
-					var para = obj as IStTxtPara;
-					if (para == null)
+					if (!(obj is IStTxtPara para))
 					{
-						Debug.Assert(obj is IStTxtPara);
 						return 1200;
 					}
 					return EstimateParaHeight(para, dxAvailWidth);
 				case kfragTxtSection: // Is this even used??
-					var section = obj as IScrSection;
-					if (section == null)
+					if (!(obj is IScrSection section))
 					{
-						Debug.Assert(obj is IScrSection);
 						return 2000;
 					}
 					return EstimateStTextHeight(section.HeadingOA, dxAvailWidth) + EstimateStTextHeight(section.ContentOA, dxAvailWidth);
 				case kfragParaSegment:
-					var seg = obj as ISegment;
-					if (seg == null)
+					if (!(obj is ISegment seg))
 					{
-						Debug.Assert(obj is ISegment);
 						return 400;
 					}
 					return EstimateSegmentHeight(seg, dxAvailWidth);

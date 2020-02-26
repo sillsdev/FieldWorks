@@ -668,7 +668,7 @@ namespace LanguageExplorer.Controls.Styles
 		/// </summary>
 		public bool Dirty
 		{
-			get { return m_dirty; }
+			get => m_dirty;
 			set
 			{
 				m_dirty = value;

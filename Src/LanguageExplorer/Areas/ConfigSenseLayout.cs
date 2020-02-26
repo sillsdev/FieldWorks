@@ -103,8 +103,8 @@ namespace LanguageExplorer.Areas
 		/// </summary>
 		public bool DisplaySenseInPara
 		{
-			get { return m_chkSenseParagraphStyle.Checked; }
-			set { m_chkSenseParagraphStyle.Checked = value; }
+			get => m_chkSenseParagraphStyle.Checked;
+			set => m_chkSenseParagraphStyle.Checked = value;
 		}
 
 		/// <summary>
@@ -136,8 +136,8 @@ namespace LanguageExplorer.Areas
 		/// </summary>
 		public string SenseParaStyle
 		{
-			get { return GetStyleName(m_cbSenseParaStyle); }
-			set { SetStyleName(m_cbSenseParaStyle, value); }
+			get => GetStyleName(m_cbSenseParaStyle);
+			set => SetStyleName(m_cbSenseParaStyle, value);
 		}
 
 		private static void SetStyleName(ComboBox combo, string value)
@@ -164,8 +164,8 @@ namespace LanguageExplorer.Areas
 		/// </summary>
 		public bool NumberSingleSense
 		{
-			get { return m_chkNumberSingleSense.Checked; }
-			set { m_chkNumberSingleSense.Checked = value; }
+			get => m_chkNumberSingleSense.Checked;
+			set => m_chkNumberSingleSense.Checked = value;
 		}
 
 		/// <summary>
@@ -173,8 +173,8 @@ namespace LanguageExplorer.Areas
 		/// </summary>
 		public string AfterNumber
 		{
-			get { return m_tbAfterNumber.Text; }
-			set { m_tbAfterNumber.Text = value; }
+			get => m_tbAfterNumber.Text;
+			set => m_tbAfterNumber.Text = value;
 		}
 
 		/// <summary>
@@ -182,8 +182,8 @@ namespace LanguageExplorer.Areas
 		/// </summary>
 		public string BeforeNumber
 		{
-			get { return m_tbBeforeNumber.Text; }
-			set { m_tbBeforeNumber.Text = value; }
+			get => m_tbBeforeNumber.Text;
+			set => m_tbBeforeNumber.Text = value;
 		}
 
 		/// <summary>
@@ -191,8 +191,8 @@ namespace LanguageExplorer.Areas
 		/// </summary>
 		public CheckState BoldSenseNumber
 		{
-			get { return m_chkSenseBoldNumber.CheckState; }
-			set { m_chkSenseBoldNumber.CheckState = value; }
+			get => m_chkSenseBoldNumber.CheckState;
+			set => m_chkSenseBoldNumber.CheckState = value;
 		}
 
 		/// <summary>
@@ -200,8 +200,8 @@ namespace LanguageExplorer.Areas
 		/// </summary>
 		public CheckState ItalicSenseNumber
 		{
-			get { return m_chkSenseItalicNumber.CheckState; }
-			set { m_chkSenseItalicNumber.CheckState = value; }
+			get => m_chkSenseItalicNumber.CheckState;
+			set => m_chkSenseItalicNumber.CheckState = value;
 		}
 
 		/// <summary>

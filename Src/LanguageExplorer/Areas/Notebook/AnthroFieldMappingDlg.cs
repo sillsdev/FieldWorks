@@ -218,7 +218,7 @@ namespace LanguageExplorer.Areas.Notebook
 
 		private void m_cbDestination_SelectedIndexChanged(object sender, EventArgs e)
 		{
-			var dest = m_cbDestination.SelectedItem as DestinationField;
+			var dest = (DestinationField)m_cbDestination.SelectedItem;
 			m_rsfm.m_flid = dest.Flid;
 			m_rsfm.m_sName = dest.Name;
 			SetSubControl();
@@ -253,7 +253,7 @@ namespace LanguageExplorer.Areas.Notebook
 
 		private void m_btnOK_Click(object sender, EventArgs e)
 		{
-			var dest = m_cbDestination.SelectedItem as DestinationField;
+			var dest = (DestinationField)m_cbDestination.SelectedItem;
 			m_rsfm.m_flid = dest.Flid;
 			m_rsfm.m_sName = dest.Name;
 			Debug.Assert(m_groupOptions.Controls.Count == 1);
@@ -398,12 +398,7 @@ namespace LanguageExplorer.Areas.Notebook
 
 			public override bool Equals(object obj)
 			{
-				var that = obj as DestinationField;
-				if (that == null)
-				{
-					return false;
-				}
-				return Flid == that.Flid && Name == that.Name;
+				return obj is DestinationField that && Flid == that.Flid && Name == that.Name;
 			}
 
 			public override int GetHashCode()

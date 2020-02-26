@@ -41,8 +41,7 @@ namespace LanguageExplorer.Impls
 		{
 			Guard.AgainstNullOrEmptyString(message, nameof(message));
 
-			HashSet<Action<object>> subscribers;
-			if (!_subscriber.Subscriptions.TryGetValue(message, out subscribers))
+			if (!_subscriber.Subscriptions.TryGetValue(message, out var subscribers))
 			{
 				return;
 			}
@@ -58,32 +57,23 @@ namespace LanguageExplorer.Impls
 
 		#region Implementation of IPublisher
 
-		/// <summary>
-		/// Publish the message using the new value.
-		/// </summary>
-		/// <param name="message">The message to publish.</param>
-		/// <param name="newValue">The new value to send to subscribers. This may be null.</param>
-		public void Publish(string message, object newValue)
+		/// <inheritdoc />
+		void IPublisher.Publish(PublisherParameterObject publisherParameterObject)
 		{
-			PublishMessage(message, newValue);
+			Guard.AgainstNull(publisherParameterObject, nameof(publisherParameterObject));
+
+			PublishMessage(publisherParameterObject.Message, publisherParameterObject.NewValue);
 		}
 
-		/// <summary>
-		/// Publish an ordered sequence of messages, each of which has a newValue (which may be null).
-		/// </summary>
-		/// <param name="messages">Ordered list of messages to publish. Each message has a matching new value (which may be null).</param>
-		/// <param name="newValues">Ordered list of new values. Each value matches a message.</param>
-		/// <exception cref="ArgumentNullException">Thrown if either <paramref name="messages"/> or <paramref name="newValues"/> are null.</exception>
-		/// <exception cref="InvalidOperationException">Thrown if the <paramref name="messages"/> and <paramref name="newValues"/> lists are not the same size.</exception>
-		public void Publish(IList<string> messages, IList<object> newValues)
+		/// <inheritdoc />
+		void IPublisher.Publish(IList<PublisherParameterObject> publisherParameterObjects)
 		{
-			Guard.AgainstNull(messages, nameof(messages));
-			Guard.AgainstNull(newValues, nameof(newValues));
-			Require.That(messages.Count == newValues.Count, "'messages' and 'newValues' counts are not the same.");
+			Guard.AgainstNull(publisherParameterObjects, nameof(publisherParameterObjects));
+			Require.That(publisherParameterObjects.Count > 1, $"'{nameof(publisherParameterObjects)}' must contain at least two elements.");
 
-			for (var idx = 0; idx < messages.Count; ++idx)
+			foreach (var publisherParameterObject in publisherParameterObjects)
 			{
-				PublishMessage(messages[idx], newValues[idx]);
+				PublishMessage(publisherParameterObject.Message, publisherParameterObject.NewValue);
 			}
 		}
 		#endregion

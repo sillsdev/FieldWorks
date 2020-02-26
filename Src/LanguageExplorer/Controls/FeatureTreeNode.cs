@@ -16,8 +16,7 @@ namespace LanguageExplorer.Controls
 
 		public int CompareTo(object obj)
 		{
-			var node = obj as TreeNode;
-			return node == null ? 0 : Text.CompareTo(node.Text);
+			return !(obj is TreeNode node) ? 0 : Text.CompareTo(node.Text);
 		}
 
 		/// <summary>
@@ -31,26 +30,12 @@ namespace LanguageExplorer.Controls
 		/// <summary>
 		/// Hvo associated with the node
 		/// </summary>
-		public int Hvo
-		{
-			get
-			{
-				var info = Tag as FeatureTreeNodeInfo;
-				return info?.iHvo ?? 0;
-			}
-		}
+		public int Hvo => (Tag as FeatureTreeNodeInfo)?.iHvo ?? 0;
 
 		/// <summary>
 		/// Type of node
 		/// </summary>
-		public FeatureTreeNodeKind Kind
-		{
-			get
-			{
-				var info = Tag as FeatureTreeNodeInfo;
-				return info?.eKind ?? FeatureTreeNodeKind.Other;
-			}
-		}
+		public FeatureTreeNodeKind Kind => (Tag as FeatureTreeNodeInfo)?.eKind ?? FeatureTreeNodeKind.Other;
 
 		private sealed class FeatureTreeNodeInfo
 		{

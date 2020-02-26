@@ -76,8 +76,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			Guard.AgainstNull(hvos, nameof(hvos));
 
 			var cvDel = 0;
-			int[] old;
-			if (m_values.TryGetValue(hvoObj, out old))
+			if (m_values.TryGetValue(hvoObj, out var old))
 			{
 				cvDel = old.Length;
 			}
@@ -94,8 +93,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				return tag == OwningFlid ? m_owningPropValues.Length : base.get_VecSize(hvo, tag);
 			}
-			int[] old;
-			return m_values.TryGetValue(hvo, out old) ? old.Length : 0;
+			return m_values.TryGetValue(hvo, out var old) ? old.Length : 0;
 
 		}
 
@@ -105,16 +103,9 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		public override int get_VecItem(int hvo, int tag, int index)
 		{
-			if (tag == MadeUpFieldIdentifier)
-			{
-				int[] old;
-				if (m_values.TryGetValue(hvo, out old))
-				{
-					return old[index];
-				}
-				throw new InvalidOperationException("trying to get item from an invalid fake property");
-			}
-			return tag == OwningFlid ? m_owningPropValues[index] : base.get_VecItem(hvo, tag, index);
+			return tag == MadeUpFieldIdentifier ? m_values.TryGetValue(hvo, out var old)
+				? old[index] : throw new InvalidOperationException("trying to get item from an invalid fake property")
+				: tag == OwningFlid ? m_owningPropValues[index] : base.get_VecItem(hvo, tag, index);
 		}
 
 		/// <summary>
@@ -122,12 +113,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		public override int[] VecProp(int hvo, int tag)
 		{
-			if (tag != MadeUpFieldIdentifier)
-			{
-				return tag == OwningFlid ? m_owningPropValues : base.VecProp(hvo, tag);
-			}
-			int[] old;
-			return m_values.TryGetValue(hvo, out old) ? old : new int[0];
+			return tag != MadeUpFieldIdentifier ? tag == OwningFlid ? m_owningPropValues : base.VecProp(hvo, tag) : m_values.TryGetValue(hvo, out var old) ? old : new int[0];
 		}
 
 		/// <summary>
@@ -149,8 +135,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		public void Replace(int hvo, int ivMin, int[] insertions, int cvDel)
 		{
-			int[] oldHvos;
-			if (!m_values.TryGetValue(hvo, out oldHvos))
+			if (!m_values.TryGetValue(hvo, out var oldHvos))
 			{
 				oldHvos = new int[0];
 			}
@@ -198,15 +183,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			/// </summary>
 			public override int GetDstClsId(int flid)
 			{
-				if (flid == OwningFlid)
-				{
-					return m_publisher.m_owningDestClass;
-				}
-				if (flid == m_publisher.MadeUpFieldIdentifier && flid >= MinMadeUpFieldIdentifier)
-				{
-					return 0;
-				}
-				return base.GetDstClsId(flid);
+				return flid == OwningFlid ? m_publisher.m_owningDestClass : flid == m_publisher.MadeUpFieldIdentifier && flid >= MinMadeUpFieldIdentifier ? 0 : base.GetDstClsId(flid);
 			}
 
 			/// <summary>
@@ -214,16 +191,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			/// </summary>
 			public override string GetFieldName(int flid)
 			{
-				if (flid == OwningFlid)
-				{
-					return m_publisher.OwningFieldName;
-				}
-				if (flid == m_publisher.MadeUpFieldIdentifier && flid >= MinMadeUpFieldIdentifier)
-				{
-					return string.Empty;
-				}
-
-				return base.GetFieldName(flid);
+				return flid == OwningFlid ? m_publisher.OwningFieldName : flid == m_publisher.MadeUpFieldIdentifier && flid >= MinMadeUpFieldIdentifier ? string.Empty : base.GetFieldName(flid);
 			}
 
 			/// <summary>
@@ -231,16 +199,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			/// </summary>
 			public override string GetOwnClsName(int flid)
 			{
-				if (flid == OwningFlid)
-				{
-					return m_publisher.m_owningClassName;
-				}
-
-				if (flid == m_publisher.MadeUpFieldIdentifier && flid >= MinMadeUpFieldIdentifier)
-				{
-					return string.Empty;
-				}
-				return base.GetOwnClsName(flid);
+				return flid == OwningFlid ? m_publisher.m_owningClassName : flid == m_publisher.MadeUpFieldIdentifier && flid >= MinMadeUpFieldIdentifier ? string.Empty : base.GetOwnClsName(flid);
 			}
 
 			/// <summary>
@@ -248,15 +207,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			/// </summary>
 			public override int GetFieldType(int flid)
 			{
-				if (flid == OwningFlid)
-				{
-					return (int)CellarPropertyType.OwningSequence;
-				}
-				if (flid == m_publisher.MadeUpFieldIdentifier && flid >= MinMadeUpFieldIdentifier)
-				{
-					return (int)CellarPropertyType.OwningSequence;
-				}
-				return base.GetFieldType(flid);
+				return flid == OwningFlid ? (int)CellarPropertyType.OwningSequence : flid == m_publisher.MadeUpFieldIdentifier && flid >= MinMadeUpFieldIdentifier ? (int)CellarPropertyType.OwningSequence : base.GetFieldType(flid);
 			}
 
 			/// <summary>
@@ -264,11 +215,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			/// </summary>
 			public override int GetFieldId(string bstrClassName, string bstrFieldName, bool fIncludeBaseClasses)
 			{
-				if (bstrClassName == m_publisher.m_owningClassName && bstrFieldName == m_publisher.OwningFieldName)
-				{
-					return m_publisher.MadeUpFieldIdentifier;
-				}
-				return base.GetFieldId(bstrClassName, bstrFieldName, fIncludeBaseClasses);
+				return bstrClassName == m_publisher.m_owningClassName && bstrFieldName == m_publisher.OwningFieldName ? m_publisher.MadeUpFieldIdentifier : base.GetFieldId(bstrClassName, bstrFieldName, fIncludeBaseClasses);
 			}
 		}
 	}

@@ -15,7 +15,7 @@ namespace LanguageExplorer.MGA
 
 		public MGADialog MGADialog
 		{
-			get { return m_MGAForm; }
+			get => m_MGAForm;
 			set
 			{
 				if (m_MGAForm != null)

@@ -273,7 +273,7 @@ namespace LCMBrowser
 			}
 
 			// Add custom fields
-			if (LCMBrowserForm.CFields != null && LCMBrowserForm.CFields.Count > 0)
+			if (LCMBrowserForm.CFields != null && LCMBrowserForm.CFields.Any())
 			{
 				foreach (var cf in LCMBrowserForm.CFields)
 				{
@@ -281,8 +281,8 @@ namespace LCMBrowser
 					{
 						continue;
 					}
-					var clasName = m_mdc.GetClassName(cf.ClassID);
-					var lv = new ListViewItem(clasName);
+					var className = m_mdc.GetClassName(cf.ClassID);
+					var lv = new ListViewItem(className);
 					list.Add(lv);
 					// flid
 					lv.SubItems.Add(cf.FieldID.ToString());

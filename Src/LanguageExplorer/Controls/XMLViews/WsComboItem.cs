@@ -30,8 +30,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		public override bool Equals(object obj)
 		{
-			var item = obj as WsComboItem;
-			return item != null && m_name == item.m_name && Id == item.Id;
+			return obj is WsComboItem item && m_name == item.m_name && Id == item.Id;
 		}
 
 		/// <summary>
@@ -42,8 +41,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		{
 			var hashCode = 641297398;
 			hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(m_name);
-			hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(Id);
-			return hashCode;
+			return hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(Id);
 		}
 
 		/// <summary>

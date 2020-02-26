@@ -355,10 +355,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 
 			public bool IsDisposed { get; private set; }
 
-			public IBusConnection Connection
-			{
-				get { throw new NotSupportedException(); }
-			}
+			public IBusConnection Connection => throw new NotSupportedException();
 
 			public void FocusIn()
 			{
@@ -443,10 +440,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 
 			public bool IsDisposed { get; private set; }
 
-			public IBusConnection Connection
-			{
-				get { throw new NotSupportedException(); }
-			}
+			public IBusConnection Connection => throw new NotSupportedException();
 
 			public void FocusIn()
 			{
@@ -467,7 +461,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 					// Delete the pre-edit first. This is necessary because we use a no-op action
 					// handler, so the rollback doesn't do anything.
 					UpdatePreeditText(new IBusText(string.Empty), 0);
-					CommitText(new IBusText(PreEdit));
+					CommitText?.Invoke(new IBusText(PreEdit));
 				}
 
 				PreEdit = ((char)keySym).ToString();
@@ -475,7 +469,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 				{
 					PreEdit = PreEdit.ToUpper();
 				}
-				UpdatePreeditText(new IBusText(PreEdit), PreEdit.Length);
+				UpdatePreeditText?.Invoke(new IBusText(PreEdit), PreEdit.Length);
 				return true;
 			}
 
@@ -629,12 +623,12 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			protected void CallCommitText(string text)
 			{
 				CallUpdatePreeditText(string.Empty, 0);
-				CommitText(new IBusText(text));
+				CommitText?.Invoke(new IBusText(text));
 			}
 
 			protected void CallUpdatePreeditText(string text, int cursor_pos)
 			{
-				UpdatePreeditText(new IBusText(text), cursor_pos);
+				UpdatePreeditText?.Invoke(new IBusText(text), cursor_pos);
 			}
 
 			protected virtual void Commit(char lastCharacterTyped)
@@ -701,10 +695,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 
 			public bool IsDisposed { get; private set; }
 
-			public IBusConnection Connection
-			{
-				get { throw new NotSupportedException(); }
-			}
+			public IBusConnection Connection => throw new NotSupportedException();
 
 			public void FocusIn()
 			{
@@ -723,14 +714,14 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 				// if space.
 				if (keySym == (uint)' ') // 0x0020
 				{
-					foreach (char c in buffer)
+					foreach (var c in buffer)
 					{
-						CommitText(new IBusText("\b")); // 0x0008
+						CommitText?.Invoke(new IBusText("\b")); // 0x0008
 					}
 
-					foreach (char c in buffer.ToLowerInvariant())
+					foreach (var c in buffer.ToLowerInvariant())
 					{
-						CommitText(new IBusText(c.ToString()));
+						CommitText?.Invoke(new IBusText(c.ToString()));
 					}
 
 					buffer = string.Empty;
@@ -742,7 +733,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 					str = str.ToUpper();
 				}
 				buffer += str;
-				CommitText(new IBusText(str));
+				CommitText?.Invoke(new IBusText(str));
 				return true;
 			}
 
@@ -802,10 +793,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 
 			public bool IsDisposed { get; private set; }
 
-			public IBusConnection Connection
-			{
-				get { throw new NotSupportedException(); }
-			}
+			public IBusConnection Connection => throw new NotSupportedException();
 
 			public void FocusIn()
 			{
@@ -826,12 +814,12 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 				{
 					foreach (var c in buffer)
 					{
-						var mysteryValue = 22;
-						KeyEvent(0xFF00 | '\b', mysteryValue, 0); // 0x0008
+						const int mysteryValue = 22;
+						KeyEvent?.Invoke(0xFF00 | '\b', mysteryValue, 0); // 0x0008
 					}
 					foreach (var c in buffer.ToLowerInvariant())
 					{
-						CommitText(new IBusText(c.ToString()));
+						CommitText?.Invoke(new IBusText(c.ToString()));
 					}
 					buffer = string.Empty;
 					return true;
@@ -842,7 +830,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 					str = str.ToUpper();
 				}
 				buffer += str;
-				CommitText(new IBusText(str));
+				CommitText?.Invoke(new IBusText(str));
 				return true;
 			}
 

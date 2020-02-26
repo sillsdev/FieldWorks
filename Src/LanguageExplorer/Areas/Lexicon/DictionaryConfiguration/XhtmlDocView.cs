@@ -108,8 +108,7 @@ namespace LanguageExplorer.Areas.Lexicon.DictionaryConfiguration
 				MyRecordList.UpdateOwningObject(true);
 			}
 			Controls.Add(m_mainView);
-			var browser = m_mainView.NativeBrowser as GeckoWebBrowser;
-			if (browser != null)
+			if (m_mainView.NativeBrowser is GeckoWebBrowser browser)
 			{
 				var recordListId = XmlUtils.GetOptionalAttributeValue(m_configurationParametersElement, "clerk");
 				if (recordListId == LanguageExplorerConstants.Entries || recordListId == LanguageExplorerConstants.AllReversalEntries)
@@ -231,10 +230,9 @@ namespace LanguageExplorer.Areas.Lexicon.DictionaryConfiguration
 			{
 				return;
 			}
-			ExclusionReasonCode xrc;
 			// Make sure we explain to the user in case hvoTarget is not visible due to
 			// the current Publication layout or Configuration view.
-			if (!IsObjectVisible(hvoTarget, out xrc))
+			if (!IsObjectVisible(hvoTarget, out var xrc))
 			{
 				AreaServices.GiveSimpleWarning(PropertyTable.GetValue<Form>(FwUtils.window), PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider).HelpFile, xrc);
 			}
@@ -320,8 +318,7 @@ namespace LanguageExplorer.Areas.Lexicon.DictionaryConfiguration
 		/// </summary>
 		private void OnDocumentCompleted(object sender, EventArgs e)
 		{
-			var browser = m_mainView.NativeBrowser as GeckoWebBrowser;
-			if (browser == null)
+			if (!(m_mainView.NativeBrowser is GeckoWebBrowser browser))
 			{
 				return;
 			}
@@ -343,8 +340,6 @@ namespace LanguageExplorer.Areas.Lexicon.DictionaryConfiguration
 			if (goingUp)
 			{
 				// Use the up/down info to select the adjacentPage
-				Tuple<int, int> newCurPageRange;
-				Tuple<int, int> newAdjPageRange;
 				// Gecko xpath seems to be sensitive to namespaces, using * instead of span helps
 				var currentPageButton = GetTopCurrentPageButton(browserElement);
 				var adjacentPageButton = (GeckoHtmlElement)currentPageButton?.PreviousSibling;
@@ -356,7 +351,7 @@ namespace LanguageExplorer.Areas.Lexicon.DictionaryConfiguration
 				var oldAdjPageRange = new Tuple<int, int>(int.Parse(adjacentPageButton.Attributes["startIndex"].NodeValue), int.Parse(adjacentPageButton.Attributes["endIndex"].NodeValue));
 				var settings = new GeneratorSettings(Cache, new ReadOnlyPropertyTable(PropertyTable), false, false, string.Empty, isNormalRightToLeft);
 				var entries = ConfiguredXHTMLGenerator.GenerateNextFewEntries(PublicationDecorator, entriesToPublish, GetCurrentConfiguration(false), settings, oldCurPageRange,
-					oldAdjPageRange, ConfiguredXHTMLGenerator.EntriesToAddCount, out newCurPageRange, out newAdjPageRange);
+					oldAdjPageRange, ConfiguredXHTMLGenerator.EntriesToAddCount, out var newCurPageRange, out var newAdjPageRange);
 				// Load entries above the first entry
 				foreach (var entry in entries)
 				{
@@ -376,8 +371,6 @@ namespace LanguageExplorer.Areas.Lexicon.DictionaryConfiguration
 			else
 			{
 				// Use the up/down info to select the adjacentPage
-				Tuple<int, int> newCurrentPageRange;
-				Tuple<int, int> newAdjPageRange;
 				// Gecko xpath seems to be sensitive to namespaces, using * instead of span helps
 				var currentPageButton = GetBottomCurrentPageButton(browserElement);
 				var adjPage = (GeckoHtmlElement)currentPageButton?.NextSibling;
@@ -389,7 +382,7 @@ namespace LanguageExplorer.Areas.Lexicon.DictionaryConfiguration
 				var adjacentPageRange = new Tuple<int, int>(int.Parse(adjPage.Attributes["startIndex"].NodeValue), int.Parse(adjPage.Attributes["endIndex"].NodeValue));
 				var settings = new GeneratorSettings(Cache, new ReadOnlyPropertyTable(PropertyTable), false, false, string.Empty, isNormalRightToLeft);
 				var entries = ConfiguredXHTMLGenerator.GenerateNextFewEntries(PublicationDecorator, entriesToPublish, GetCurrentConfiguration(false), settings, currentPageRange,
-					adjacentPageRange, ConfiguredXHTMLGenerator.EntriesToAddCount, out newCurrentPageRange, out newAdjPageRange);
+					adjacentPageRange, ConfiguredXHTMLGenerator.EntriesToAddCount, out var newCurrentPageRange, out var newAdjPageRange);
 				// Load entries above the lower navigation buttons
 				foreach (var entry in entries)
 				{
@@ -583,9 +576,7 @@ namespace LanguageExplorer.Areas.Lexicon.DictionaryConfiguration
 		internal string GetValidPublicationForConfiguration(string configuration)
 		{
 			var currentPub = GetCurrentPublication();
-			List<string> inConfiguration;
-			List<string> notInConfiguration;
-			SplitPublicationsByConfiguration(Cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS, configuration, out inConfiguration, out notInConfiguration);
+			SplitPublicationsByConfiguration(Cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS, configuration, out var inConfiguration, out _);
 			return inConfiguration.Contains(currentPub) ? currentPub : inConfiguration.FirstOrDefault();
 		}
 
@@ -597,9 +588,7 @@ namespace LanguageExplorer.Areas.Lexicon.DictionaryConfiguration
 			}
 			var currentConfig = GetCurrentConfiguration(false);
 			var allConfigurations = DictionaryConfigurationUtils.GatherBuiltInAndUserConfigurations(Cache, m_configObjectName);
-			IDictionary<string, string> hasPub;
-			IDictionary<string, string> doesNotHavePub;
-			SplitConfigurationsByPublication(allConfigurations, publication, out hasPub, out doesNotHavePub);
+			SplitConfigurationsByPublication(allConfigurations, publication, out var hasPub, out _);
 			// If the current configuration is already valid use it otherwise return
 			// the first valid one or null if no configurations have the publication.
 			if (hasPub.Values.Contains(currentConfig))
@@ -703,8 +692,7 @@ namespace LanguageExplorer.Areas.Lexicon.DictionaryConfiguration
 			}
 			if (MyRecordList.Id == "AllReversalEntries")
 			{
-				var reversalEntry = MyRecordList.CurrentObject as IReversalIndexEntry;
-				if (reversalEntry == null)
+				if (!(MyRecordList.CurrentObject is IReversalIndexEntry reversalEntry))
 				{
 					return;
 				}
@@ -760,7 +748,7 @@ namespace LanguageExplorer.Areas.Lexicon.DictionaryConfiguration
 			{
 				return;
 			}
-			element.ClassName += " " + classToAdd;
+			element.ClassName += $" {classToAdd}";
 		}
 
 		/// <summary>
@@ -814,12 +802,11 @@ namespace LanguageExplorer.Areas.Lexicon.DictionaryConfiguration
 					progressDlg.AllowCancel = true;
 					progressDlg.CancelLabelText = LexiconResources.ksCancelingPublicationLabel;
 					progressDlg.Title = LexiconResources.ksPreparingPublicationDisplay;
-					var xhtmlPath = progressDlg.RunTask(true, SaveConfiguredXhtmlAndDisplay, publicationDecorator, configurationFile) as string;
-					if (xhtmlPath != null)
+					if (progressDlg.RunTask(true, SaveConfiguredXhtmlAndDisplay, publicationDecorator, configurationFile) is string xhtmlPath)
 					{
 						if (progressDlg.IsCanceling)
 						{
-							Publisher.Publish("SetToolFromName", AreaServices.LexiconEditMachineName);
+							Publisher.Publish(new PublisherParameterObject("SetToolFromName", AreaServices.LexiconEditMachineName));
 						}
 						else
 						{

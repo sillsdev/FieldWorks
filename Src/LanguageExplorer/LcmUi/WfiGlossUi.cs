@@ -32,7 +32,6 @@ namespace LanguageExplorer.LcmUi
 			wp.m_label = LcmUiStrings.ksGlosses;
 			var anal = (IWfiAnalysis)MyCmObject.Owner;
 			ITsString tss;
-			int nVar;
 			int ws;
 			foreach (var gloss in anal.MeaningsOC)
 			{
@@ -41,14 +40,14 @@ namespace LanguageExplorer.LcmUi
 					continue;
 				}
 				tss = gloss.ShortNameTSS;
-				ws = tss.get_PropertiesAt(0).GetIntPropValues((int)FwTextPropType.ktptWs, out nVar);
+				ws = tss.get_PropertiesAt(0).GetIntPropValues((int)FwTextPropType.ktptWs, out _);
 				mergeCandidates.Add(new DummyCmObject(gloss.Hvo, tss.Text, ws));
 			}
 			guiControlParameters = XElement.Parse(LcmUiStrings.MergeWordGlossListParameters);
 			helpTopic = "khtpMergeWordGloss";
 			var me = (IWfiGloss)MyCmObject;
 			tss = me.ShortNameTSS;
-			ws = tss.get_PropertiesAt(0).GetIntPropValues((int)FwTextPropType.ktptWs, out nVar);
+			ws = tss.get_PropertiesAt(0).GetIntPropValues((int)FwTextPropType.ktptWs, out _);
 			return new DummyCmObject(m_hvo, tss.Text, ws);
 		}
 	}

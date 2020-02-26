@@ -140,9 +140,7 @@ namespace LanguageExplorer
 		/// </summary>
 		internal static void SetCurrentConfiguration(IPropertyTable propertyTable, string currentConfig, bool fUpdate = true)
 		{
-			var pubLayoutPropName = GetInnerConfigDir(currentConfig) == DictionaryConfigurationDirectoryName
-				? "DictionaryPublicationLayout"
-				: "ReversalIndexPublicationLayout";
+			var pubLayoutPropName = GetInnerConfigDir(currentConfig) == DictionaryConfigurationDirectoryName ? "DictionaryPublicationLayout" : "ReversalIndexPublicationLayout";
 			propertyTable.SetProperty(pubLayoutPropName, currentConfig, fUpdate, true);
 		}
 
@@ -479,7 +477,7 @@ namespace LanguageExplorer
 				Configurations = configurations,
 				Publications = publications
 			};
-			using (var controller = new UploadToWebonaryController(cache, propertyTable, majorFlexComponentParameters.FlexComponentParameters.Publisher, majorFlexComponentParameters.StatusBar))
+			using (var controller = new UploadToWebonaryController(cache, propertyTable, majorFlexComponentParameters.StatusBar))
 			using (var dialog = new UploadToWebonaryDlg(controller, model, propertyTable))
 			{
 				dialog.ShowDialog();

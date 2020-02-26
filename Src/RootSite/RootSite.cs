@@ -178,8 +178,8 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// </summary>
 		public override bool InSelectionChanged
 		{
-			get { return s_fInSelectionChanged; }
-			set { s_fInSelectionChanged = value; }
+			get => s_fInSelectionChanged;
+			set => s_fInSelectionChanged = value;
 		}
 
 		/// <summary>
@@ -263,7 +263,7 @@ namespace SIL.FieldWorks.Common.RootSites
 				{
 					return false; // some sort of special field; if it ought to be formattable, make a decorator MDC that recognizes it.
 				}
-				var type = (CellarPropertyType)mdc.GetFieldType((int)flid);
+				var type = (CellarPropertyType)mdc.GetFieldType(flid);
 				return !(type == CellarPropertyType.Unicode || type == CellarPropertyType.MultiUnicode);
 			}
 		}
@@ -409,10 +409,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public virtual LcmCache Cache
 		{
-			get
-			{
-				return m_cache;
-			}
+			get => m_cache;
 			set
 			{
 				m_cache = value;
@@ -429,10 +426,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <summary />
 		public override float Zoom
 		{
-			get
-			{
-				return base.Zoom;
-			}
+			get => base.Zoom;
 			set
 			{
 				base.Zoom = value;
@@ -445,7 +439,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// </summary>
 		protected override int HorizMargin
 		{
-			get { return base.HorizMargin; }
+			get => base.HorizMargin;
 			set
 			{
 				base.HorizMargin = value;

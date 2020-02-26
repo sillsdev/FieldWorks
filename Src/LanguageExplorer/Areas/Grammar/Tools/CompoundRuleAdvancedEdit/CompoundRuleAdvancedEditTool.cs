@@ -31,8 +31,6 @@ namespace LanguageExplorer.Areas.Grammar.Tools.CompoundRuleAdvancedEdit
 		private MultiPane _multiPane;
 		private RecordBrowseActiveView _recordBrowseActiveView;
 		private IRecordList _recordList;
-		[Import(AreaServices.GrammarAreaMachineName)]
-		private IArea _area;
 
 		#region Implementation of IMajorFlexComponent
 
@@ -72,21 +70,18 @@ namespace LanguageExplorer.Areas.Grammar.Tools.CompoundRuleAdvancedEdit
 			var mainMultiPaneParameters = new MultiPaneParameters
 			{
 				Orientation = Orientation.Vertical,
-				Area = _area,
+				Area = Area,
 				Id = "CompoundRuleItemsAndDetailMultiPane",
 				ToolMachineName = MachineName
 			};
-
 			var recordEditViewPaneBar = new PaneBar();
 			var panelButton = new PanelButton(majorFlexComponentParameters.FlexComponentParameters, null, showHiddenFieldsPropertyName, LanguageExplorerResources.ksShowHiddenFields, LanguageExplorerResources.ksShowHiddenFields)
 			{
 				Dock = DockStyle.Right
 			};
 			recordEditViewPaneBar.AddControls(new List<Control> { panelButton });
-
 			_multiPane = MultiPaneFactory.CreateMultiPaneWithTwoPaneBarContainersInMainCollapsingSplitContainer(majorFlexComponentParameters.FlexComponentParameters, majorFlexComponentParameters.MainCollapsingSplitContainer,
 				mainMultiPaneParameters, _recordBrowseActiveView, "Browse", new PaneBar(), recordEditView, "Details", recordEditViewPaneBar);
-
 			// Too early before now.
 			recordEditView.FinishInitialization();
 		}
@@ -138,7 +133,8 @@ namespace LanguageExplorer.Areas.Grammar.Tools.CompoundRuleAdvancedEdit
 		/// <summary>
 		/// Get the area for the tool.
 		/// </summary>
-		public IArea Area => _area;
+		[field: Import(AreaServices.GrammarAreaMachineName)]
+		public IArea Area { get; private set; }
 
 		/// <summary>
 		/// Get the image for the area.
@@ -194,11 +190,9 @@ namespace LanguageExplorer.Areas.Grammar.Tools.CompoundRuleAdvancedEdit
 			{
 				var insertMenuDictionary = toolUiWidgetParameterObject.MenuItemsForTool[MainMenu.Insert];
 				var insertToolBarDictionary = toolUiWidgetParameterObject.ToolBarItemsForTool[ToolBar.Insert];
-
 				// <command id="CmdInsertEndocentricCompound" label="Headed Compound" message="InsertItemInVector" icon="endocompoundRule">
 				insertMenuDictionary.Add(Command.CmdInsertEndocentricCompound, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(InsertEndocentricCompound_Clicked, () => UiWidgetServices.CanSeeAndDo));
 				insertToolBarDictionary.Add(Command.CmdInsertEndocentricCompound, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(InsertEndocentricCompound_Clicked, () => UiWidgetServices.CanSeeAndDo));
-
 				// <command id="CmdInsertExocentricCompound" label="Non-headed Compound" message="InsertItemInVector" icon="exocompoundRule">
 				insertMenuDictionary.Add(Command.CmdInsertExocentricCompound, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(InsertInsertExocentricCompound_Clicked, () => UiWidgetServices.CanSeeAndDo));
 				insertToolBarDictionary.Add(Command.CmdInsertExocentricCompound, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(InsertInsertExocentricCompound_Clicked, () => UiWidgetServices.CanSeeAndDo));

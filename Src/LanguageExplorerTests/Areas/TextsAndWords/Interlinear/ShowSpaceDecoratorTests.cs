@@ -39,7 +39,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 		public void DecoratorGetHandlesEmptyStringWhenTurnedOn()
 		{
 			var mockDa = new MockDa();
-			const string underlyingValue = "";
+			var underlyingValue = string.Empty;
 			mockDa.StringValues[new Tuple<int, int>(27, StTxtParaTags.kflidContents)] = TsStringUtils.MakeString(underlyingValue, 77);
 			var decorator = new ShowSpaceDecorator(mockDa);
 			decorator.ShowSpaces = true;
@@ -97,8 +97,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 		{
 			for (var irun = 0; irun < tss.RunCount; irun++)
 			{
-				int nVar;
-				Assert.That(tss.get_Properties(irun).GetIntPropValues((int)FwTextPropType.ktptBackColor, out nVar), Is.EqualTo(-1));
+				Assert.That(tss.get_Properties(irun).GetIntPropValues((int)FwTextPropType.ktptBackColor, out var nVar), Is.EqualTo(-1));
 				Assert.That(nVar, Is.EqualTo(-1));
 			}
 		}
@@ -108,8 +107,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 			Assert.That(tss.RunCount, Is.EqualTo(colors.Length));
 			for (var irun = 0; irun < tss.RunCount; irun++)
 			{
-				int nVar;
-				Assert.That(tss.get_Properties(irun).GetIntPropValues((int)FwTextPropType.ktptBackColor, out nVar), Is.EqualTo(colors[irun]));
+				Assert.That(tss.get_Properties(irun).GetIntPropValues((int)FwTextPropType.ktptBackColor, out var nVar), Is.EqualTo(colors[irun]));
 				Assert.That(nVar, colors[irun] == -1 ? Is.EqualTo(-1) : Is.EqualTo((int)FwTextPropVar.ktpvDefault));
 			}
 		}

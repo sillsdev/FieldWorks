@@ -180,29 +180,13 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 
 			// The commented out methods below use u_getIntPropertyValue(), which doesn't
 			// work reliably with the limited number of data files that we modify.
-			//Assert.IsTrue(Character.IsAlphabetic(kChar1));	// now true
-			//Assert.IsTrue(Character.IsAlphabetic(kChar2));	// now true
-			//Assert.IsFalse(Character.IsAlphabetic(kChar3));
-			//Assert.IsFalse(Character.IsAlphabetic(kChar4));
 			Assert.IsFalse(Character.IsControl(kChar1));
 			Assert.IsFalse(Character.IsControl(kChar2));
 			Assert.IsFalse(Character.IsControl(kChar3));
 			Assert.IsFalse(Character.IsControl(kChar4));
-			//Assert.IsFalse(Character.IsDiacritic(kChar1));
-			//Assert.IsFalse(Character.IsDiacritic(kChar2));
-			//Assert.IsFalse(Character.IsDiacritic(kChar3));
-			//Assert.IsFalse(Character.IsDiacritic(kChar4));
-			//Assert.IsFalse(Character.IsIdeographic(kChar1));
-			//Assert.IsFalse(Character.IsIdeographic(kChar2));
-			//Assert.IsFalse(Character.IsIdeographic(kChar3));
-			//Assert.IsFalse(Character.IsIdeographic(kChar4));
-			//Assert.IsFalse(Character.IsNumeric(kChar1));
-			//Assert.IsFalse(Character.IsNumeric(kChar2));
-			//Assert.IsFalse(Character.IsNumeric(kChar3));
-			//Assert.IsTrue(Character.IsNumeric(kChar4));		// now true
 			Assert.IsFalse(Character.IsPunct(kChar1));
 			Assert.IsFalse(Character.IsPunct(kChar2));
-			Assert.IsTrue(Character.IsPunct(kChar3));           // now true
+			Assert.IsTrue(Character.IsPunct(kChar3));
 			Assert.IsFalse(Character.IsPunct(kChar4));
 			Assert.IsFalse(Character.IsSpace(kChar1));
 			Assert.IsFalse(Character.IsSpace(kChar2));
@@ -235,22 +219,6 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 			Assert.AreEqual("[none]", numericType.Description);
 			numericType = CustomIcu.GetNumericTypeInfo(kChar3);
 			Assert.AreEqual("[none]", numericType.Description);
-
-			// Current implementation (as of ICU50) is not overriding numeric type since we don't use it anywhere.
-			// Enhance silmods.c in icu patch if needed.
-			//numericType = Icu.GetNumericType(kChar4);
-			//Assert.AreEqual("Decimal Digit", numericType.Description);
-
-			// Current implementation (as of ICU50) is not overriding character names since we don't use them anywhere.
-			// Enhance silmods.c in icu patch if needed.
-			//var prettyName = Icu.GetPrettyICUCharName("\xE000");
-			//Assert.AreEqual("My Special Character", prettyName);
-			//prettyName = Icu.GetPrettyICUCharName("\xE001");
-			//Assert.AreEqual("My Uppercase Character", prettyName);
-			//prettyName = Icu.GetPrettyICUCharName(kChar3S);
-			//Assert.AreEqual("New Punctuation Mark", prettyName);
-			//var rawName = Icu.GetCharName(kChar4);	// can't pass large character code as 16-bit char.
-			//Assert.AreEqual("NEW DIGIT NINE", rawName);
 		}
 
 		private static void CreateAndInstallOurCustomChars(string sCustomCharsFile)
@@ -298,10 +266,6 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 				catch (Exception e1)
 				{
 					Assert.Fail("Something is wrong with the file you chose." + Environment.NewLine + " The file could not be opened. " + Environment.NewLine + Environment.NewLine + "   The error message was: '" + e1.Message);
-				}
-				if (zipIn == null)
-				{
-					return false;
 				}
 				Wrapper.Cleanup();
 				foreach (var dir in Directory.GetDirectories(icuDir))

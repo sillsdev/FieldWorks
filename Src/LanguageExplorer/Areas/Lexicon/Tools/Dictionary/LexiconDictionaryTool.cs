@@ -33,8 +33,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Dictionary
 		private PaneBarContainer _paneBarContainer;
 		private IRecordList _recordList;
 		private XhtmlDocView DocView { get; set; }
-		[Import(AreaServices.LexiconAreaMachineName)]
-		private IArea _area;
 
 		#region Implementation of IMajorFlexComponent
 
@@ -101,7 +99,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Dictionary
 			docViewPaneBar.AddControls(new List<Control> { leftPanelMenu, leftSpacer, rightPanelMenu, rightSpacer });
 			_paneBarContainer = PaneBarContainerFactory.Create(majorFlexComponentParameters.FlexComponentParameters, majorFlexComponentParameters.MainCollapsingSplitContainer,
 				DocView, docViewPaneBar);
-
 			_paneBarContainer.ResumeLayout(true);
 			DocView.FinishInitialization();
 			DocView.SelectedPublication = "DictionaryPublicationLayout";
@@ -155,7 +152,8 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Dictionary
 		/// <summary>
 		/// Get the area for the tool.
 		/// </summary>
-		public IArea Area => _area;
+		[field: Import(AreaServices.LexiconAreaMachineName)]
+		public IArea Area { get; private set; }
 
 		/// <summary>
 		/// Get the image for the area.
@@ -189,7 +187,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Dictionary
 				_fwMainWnd = _majorFlexComponentParameters.MainWindow;
 				MainPanelMenuContextMenuFactory = new PanelMenuContextMenuFactory();
 				_sharedLexiconToolsUiWidgetHelper = new SharedLexiconToolsUiWidgetHelper(_majorFlexComponentParameters, _recordList);
-
 				var toolUiWidgetParameterObject = new ToolUiWidgetParameterObject(tool);
 				SetupUiWidgets(toolUiWidgetParameterObject);
 				_majorFlexComponentParameters.UiWidgetController.AddHandlers(toolUiWidgetParameterObject);
@@ -220,9 +217,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Dictionary
 				var pubName = DocView.GetCurrentPublication();
 				currentToolStripMenuItem.Checked = (LanguageExplorerResources.AllEntriesPublication == pubName);
 				// // <menu list="Publications" inline="true" emptyAllowed="true" behavior="singlePropertyAtomicValue" property="SelectedPublication" />
-				List<string> inConfig;
-				List<string> notInConfig;
-				DocView.SplitPublicationsByConfiguration(_majorFlexComponentParameters.LcmCache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS, DocView.GetCurrentConfiguration(false), out inConfig, out notInConfig);
+				DocView.SplitPublicationsByConfiguration(_majorFlexComponentParameters.LcmCache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS, DocView.GetCurrentConfiguration(false), out var inConfig, out var notInConfig);
 				foreach (var pub in inConfig)
 				{
 					currentToolStripMenuItem = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, Publication_Clicked, pub);
@@ -239,7 +234,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Dictionary
 						currentToolStripMenuItem.Checked = (currentPublication == pub);
 					}
 				}
-
 				ToolStripMenuItemFactory.CreateToolStripSeparatorForContextMenuStrip(contextMenuStrip);
 				// <item command="CmdPublicationsJumpToDefault" />
 				ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, EditPublications_Clicked, LexiconResources.EditPublications);
@@ -258,10 +252,8 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Dictionary
 				ToolStripMenuItem currentToolStripMenuItem;
 
 				// 1. <menu list="Configurations" inline="true" emptyAllowed="true" behavior="singlePropertyAtomicValue" property="DictionaryPublicationLayout"/>
-				IDictionary<string, string> hasPub;
-				IDictionary<string, string> doesNotHavePub;
 				var allConfigurations = DictionaryConfigurationUtils.GatherBuiltInAndUserConfigurations(_propertyTable.GetValue<LcmCache>(FwUtils.cache), _configureObjectName);
-				DocView.SplitConfigurationsByPublication(allConfigurations, DocView.GetCurrentPublication(), out hasPub, out doesNotHavePub);
+				DocView.SplitConfigurationsByPublication(allConfigurations, DocView.GetCurrentPublication(), out var hasPub, out var doesNotHavePub);
 				// Add menu items that display the configuration name and send PropChanges with
 				// the configuration path.
 				var currentPublication = _propertyTable.GetValue<string>("DictionaryPublicationLayout");
@@ -283,7 +275,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Dictionary
 						currentToolStripMenuItem.Checked = (currentPublication == config.Value);
 					}
 				}
-
 				ToolStripMenuItemFactory.CreateToolStripSeparatorForContextMenuStrip(contextMenuStrip);
 				ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, ConfigureDictionary_Clicked, LexiconResources.ConfigureDictionary);
 

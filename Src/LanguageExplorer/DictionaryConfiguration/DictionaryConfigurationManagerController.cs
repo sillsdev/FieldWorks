@@ -78,6 +78,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 		{
 			Guard.AgainstNull(publication, nameof(publication));
 			Guard.AgainstNull(configuration, nameof(configuration));
+
 			if (!_publications.Contains(publication))
 			{
 				throw new ArgumentOutOfRangeException();
@@ -94,6 +95,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 		{
 			Guard.AgainstNull(publication, nameof(publication));
 			Guard.AgainstNull(configuration, nameof(configuration));
+
 			if (!_publications.Contains(publication))
 			{
 				throw new ArgumentOutOfRangeException();
@@ -141,9 +143,8 @@ namespace LanguageExplorer.DictionaryConfiguration
 		private void ReLoadPublications()
 		{
 			_publications = DictionaryConfigurationController.GetAllPublications(_cache);
-			foreach (var publication in _publications)
+			foreach (var item in _publications.Select(publication => new ListViewItem { Text = publication }))
 			{
-				var item = new ListViewItem { Text = publication };
 				_view.publicationsListView.Items.Add(item);
 			}
 		}
@@ -409,7 +410,6 @@ namespace LanguageExplorer.DictionaryConfiguration
 		private void ResetConfigurationContents(DictionaryConfigurationModel configurationToDelete)
 		{
 			var origFilePath = configurationToDelete.FilePath;
-			var filenameOfFilePath = Path.GetFileName(origFilePath);
 			var origReversalLabel = configurationToDelete.Label;
 			var origReversalWs = configurationToDelete.WritingSystem;
 			const string allReversalsFileName = "AllReversalIndexes" + LanguageExplorerConstants.DictionaryConfigurationFileExtension;
@@ -428,7 +428,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 			}
 			else
 			{
-				pathToDefaultFile = Path.Combine(_defaultConfigDir, filenameOfFilePath);
+				pathToDefaultFile = Path.Combine(_defaultConfigDir, Path.GetFileName(origFilePath));
 			}
 			configurationToDelete.FilePath = pathToDefaultFile;
 			// Recreate from shipped XML file.
@@ -633,13 +633,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 		/// </summary>
 		public static bool IsConfigurationACustomizedShippedDefault(DictionaryConfigurationModel configuration, string defaultConfigDir)
 		{
-			if (configuration.FilePath == null)
-			{
-				return false;
-			}
-			var defaultConfigurationFiles = FileUtils.GetFilesInDirectory(defaultConfigDir).Select(Path.GetFileName);
-			var filename = Path.GetFileName(configuration.FilePath);
-			return defaultConfigurationFiles.Contains(filename);
+			return configuration.FilePath != null && FileUtils.GetFilesInDirectory(defaultConfigDir).Select(Path.GetFileName).Contains(Path.GetFileName(configuration.FilePath));
 		}
 
 		/// <summary>
@@ -652,13 +646,9 @@ namespace LanguageExplorer.DictionaryConfiguration
 				return false;
 			}
 			// No configuration.WritingSystem means it is not a reversal, or that it is the AllReversalIndexes which doesn't act any different from a default config
-			if (!string.IsNullOrWhiteSpace(configuration.WritingSystem) && IetfLanguageTag.IsValid(configuration.WritingSystem))
-			{
-				var writingSystem = (CoreWritingSystemDefinition)cache.WritingSystemFactory.get_Engine(configuration.WritingSystem);
-				// The reversals start out with the filename matching the ws Id, copies will have a different file name
-				return writingSystem.Id == Path.GetFileNameWithoutExtension(configuration.FilePath);
-			}
-			return false;
+			return !string.IsNullOrWhiteSpace(configuration.WritingSystem)
+				   && IetfLanguageTag.IsValid(configuration.WritingSystem)
+				   && ((CoreWritingSystemDefinition)cache.WritingSystemFactory.get_Engine(configuration.WritingSystem)).Id == Path.GetFileNameWithoutExtension(configuration.FilePath);
 		}
 
 		#region Implementation of IPropertyTableProvider

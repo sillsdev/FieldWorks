@@ -268,7 +268,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.AdhocCoprohibEdit
 		/// </summary>
 		private sealed class LAllomorph : LObject, ITssValue
 		{
-			public int Type { get; }
+			private int Type { get; }
 
 			#region Construction & initialization
 

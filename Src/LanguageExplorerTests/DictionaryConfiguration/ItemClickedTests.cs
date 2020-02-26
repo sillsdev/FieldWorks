@@ -119,10 +119,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 				return Items.IndexOf(hvo);
 			}
 
-			int ISortItemProvider.ListItemsClass
-			{
-				get { throw new NotSupportedException(); }
-			}
+			int ISortItemProvider.ListItemsClass => throw new NotSupportedException();
 
 			void ISortItemProvider.RemoveItemsFor(int hvo)
 			{
@@ -208,8 +205,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			private void NoteItemWidth(IVwEnv vwenv, int hvo, int flid, int ws)
 			{
 				var tss = vwenv.DataAccess.get_MultiStringAlt(hvo, flid, ws);
-				int mpx, mpy;
-				vwenv.get_StringWidth(tss, null, out mpx, out mpy);
+				vwenv.get_StringWidth(tss, null, out var mpx, out _);
 				var dx = mpx * 96 / 72000; // to pixels
 				ItemWidths[hvo] = dx;
 			}

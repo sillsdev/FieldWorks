@@ -84,8 +84,7 @@ namespace LanguageExplorer.Areas.Notebook
 				{
 					return 0;
 				}
-				int cch;
-				return int.TryParse(m_tbShortLength.Text, out cch) ? cch : 0;
+				return int.TryParse(m_tbShortLength.Text, out var cch) ? cch : 0;
 			}
 		}
 

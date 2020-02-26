@@ -48,7 +48,7 @@ namespace LanguageExplorer.TestUtilities.Tests
 		[ExpectedException(typeof(ArgumentNullException))]
 		public void CreateMetaDataCacheEmptyPathname()
 		{
-			MetaDataCache.CreateMetaDataCache("");
+			MetaDataCache.CreateMetaDataCache(string.Empty);
 		}
 
 		/// <summary>

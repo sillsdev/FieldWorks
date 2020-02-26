@@ -101,8 +101,7 @@ namespace LanguageExplorer.TestUtilities
 
 		private void GetAllSubclassesForClid(int clid, ICollection<int> allSubclassClids)
 		{
-			var mcr = m_metaClassRecords[clid];
-			foreach (var subClassClid in mcr.m_directSubclasses)
+			foreach (var subClassClid in m_metaClassRecords[clid].m_directSubclasses)
 			{
 				allSubclassClids.Add(subClassClid);
 				GetAllSubclassesForClid(subClassClid, allSubclassClids);
@@ -142,14 +141,12 @@ namespace LanguageExplorer.TestUtilities
 
 			InitBaseClassMetaFields(doc);
 
-			int clid;
-			int flid;
 			MetaClassRec mcr;
 			MetaFieldRec mfr;
 			// Spin through each class now.
 			foreach (var newClassNode in classElements)
 			{
-				clid = XmlUtils.GetMandatoryIntegerAttributeValue(newClassNode, "num");
+				var clid = XmlUtils.GetMandatoryIntegerAttributeValue(newClassNode, "num");
 				if (clid > 0) // Basic initialization has already happened for the base class.
 				{
 					var newClassName = XmlUtils.GetMandatoryAttributeValue(newClassNode, "id");
@@ -173,7 +170,7 @@ namespace LanguageExplorer.TestUtilities
 				{
 					foreach (var fieldNode in newClassNode.Element("props").Elements())
 					{
-						flid = flidBase + XmlUtils.GetMandatoryIntegerAttributeValue(fieldNode, "num");
+						var flid = flidBase + XmlUtils.GetMandatoryIntegerAttributeValue(fieldNode, "num");
 						mfr = new MetaFieldRec
 						{
 							m_fieldName = XmlUtils.GetMandatoryAttributeValue(fieldNode, "id"),
@@ -306,10 +303,8 @@ namespace LanguageExplorer.TestUtilities
 					continue;
 				}
 
-				var recBase = m_metaClassRecords[clidBase];
-				recBase.m_directSubclasses.Add(clidChild);
+				m_metaClassRecords[clidBase].m_directSubclasses.Add(clidChild);
 			}
-
 			// Keep the good pathname in case we need to reload.
 			m_pathnames.Add(pathname);
 		}
@@ -388,14 +383,8 @@ namespace LanguageExplorer.TestUtilities
 		{
 			var iflid = 0;
 			var ids = new int[countOfOutputArray];
-			foreach (var kvp in m_nameToFlid)
+			foreach (var flid in m_nameToFlid.Select(kvp => kvp.Value).TakeWhile(flid => iflid != countOfOutputArray))
 			{
-				var flid = kvp.Value;
-				if (iflid == countOfOutputArray)
-				{
-					break;
-				}
-
 				ids[iflid++] = flid;
 			}
 			MarshalEx.ArrayToNative(flids, countOfOutputArray, ids);
@@ -452,50 +441,43 @@ namespace LanguageExplorer.TestUtilities
 		/// <inheritdoc />
 		public string GetFieldName(int flid)
 		{
-			var mfr = m_metaFieldRecords[flid];
-			return mfr.m_fieldName;
+			return m_metaFieldRecords[flid].m_fieldName;
 		}
 
 		/// <inheritdoc />
 		public string GetFieldNameOrNull(int flid)
 		{
-			MetaFieldRec mfr;
-			return m_metaFieldRecords.TryGetValue(flid, out mfr) ? mfr.m_fieldName : null;
+			return m_metaFieldRecords.TryGetValue(flid, out var mfr) ? mfr.m_fieldName : null;
 		}
 
 		/// <inheritdoc />
 		public string GetFieldLabel(int flid)
 		{
-			var mfr = m_metaFieldRecords[flid];
-			return mfr.m_fieldLabel;
+			return m_metaFieldRecords[flid].m_fieldLabel;
 		}
 
 		/// <inheritdoc />
 		public string GetFieldHelp(int flid)
 		{
-			var mfr = m_metaFieldRecords[flid];
-			return mfr.m_fieldHelp;
+			return m_metaFieldRecords[flid].m_fieldHelp;
 		}
 
 		/// <inheritdoc />
 		public string GetFieldXml(int flid)
 		{
-			var mfr = m_metaFieldRecords[flid];
-			return mfr.m_fieldXml;
+			return m_metaFieldRecords[flid].m_fieldXml;
 		}
 
 		/// <inheritdoc />
 		public int GetFieldWs(int flid)
 		{
-			var mfr = m_metaFieldRecords[flid];
-			return mfr.m_fieldWs;
+			return m_metaFieldRecords[flid].m_fieldWs;
 		}
 
 		/// <inheritdoc />
 		public int GetFieldType(int flid)
 		{
-			var mfr = m_metaFieldRecords[flid];
-			return (int)mfr.m_fieldType;
+			return (int)m_metaFieldRecords[flid].m_fieldType;
 		}
 
 		/// <inheritdoc />
@@ -514,8 +496,7 @@ namespace LanguageExplorer.TestUtilities
 			// Check superclasses.
 			do
 			{
-				var mcr = m_metaClassRecords[clid];
-				clid = mcr.m_baseClsid;
+				clid = m_metaClassRecords[clid].m_baseClsid;
 				if (mfr.m_dstClsid == clid)
 				{
 					return IsObjectFieldType(mfr.m_fieldType);
@@ -536,12 +517,8 @@ namespace LanguageExplorer.TestUtilities
 		{
 			var iclid = 0;
 			var ids = new int[arraySize];
-			foreach (var kvp in m_nameToClid)
+			foreach (var kvp in m_nameToClid.TakeWhile(kvp => iclid != arraySize))
 			{
-				if (iclid == arraySize)
-				{
-					break;
-				}
 				ids[iclid++] = kvp.Value;
 			}
 			MarshalEx.ArrayToNative(clids, arraySize, ids);
@@ -659,8 +636,7 @@ namespace LanguageExplorer.TestUtilities
 			}
 			else if (includeBaseClasses && clid > 0)
 			{
-				var superclassId = GetBaseClsId(clid);
-				flid = GetFieldId2(superclassId, fieldName, true);
+				flid = GetFieldId2(GetBaseClsId(clid), fieldName, true);
 			}
 
 			return flid;
@@ -735,13 +711,11 @@ namespace LanguageExplorer.TestUtilities
 
 			// Check condition #2, above.
 			// JohnT changed the last argument to 'false'. MDC should allow override virtual handlers.
-			var flid = GetFieldId2(clid, fieldName, false);
-			if (flid > 0)
+			if (GetFieldId2(clid, fieldName, false) > 0)
 			{
 				throw new ArgumentException("Field name already exists.", nameof(fieldName));
 			}
 			// Check condition #3, above.
-			MetaFieldRec mfr;
 			if (m_metaFieldRecords.ContainsKey(virtualFlid))
 			{
 				throw new ArgumentException("Field number already in use.", nameof(virtualFlid));
@@ -772,15 +746,14 @@ namespace LanguageExplorer.TestUtilities
 				case CellarPropertyType.ReferenceCollection:
 				case CellarPropertyType.OwningSequence:
 				case CellarPropertyType.ReferenceSequence:
-					mfr = new MetaFieldRec
+					var mfr = new MetaFieldRec
 					{
 						m_fieldType = fieldType,
 						m_fieldName = fieldName,
 						m_ownClsid = clid,
 						m_fType = FieldType.Virtual
 					};
-					var mcr = m_metaClassRecords[clid];
-					InstallField(mcr, clid, mfr.m_fieldName, virtualFlid, mfr);
+					InstallField(m_metaClassRecords[clid], clid, mfr.m_fieldName, virtualFlid, mfr);
 					break;
 			}
 		}
@@ -788,8 +761,7 @@ namespace LanguageExplorer.TestUtilities
 		/// <inheritdoc />
 		public bool get_IsVirtual(int flid)
 		{
-			var mfr = m_metaFieldRecords[flid];
-			return mfr.m_fType == FieldType.Virtual;
+			return m_metaFieldRecords[flid].m_fType == FieldType.Virtual;
 		}
 
 		#endregion Virtual access methods

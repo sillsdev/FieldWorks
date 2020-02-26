@@ -346,11 +346,10 @@ namespace LanguageExplorer.Controls.XMLViews
 			var drawRect = e.Bounds;
 			// For some reason Bounds.Height is much too big. Bigger than our whole control!
 			drawRect.Height = Height - 4;
-			int imageIndex;
 			//e.Header.Index is it's index in the original, un-dragged list of columns.
 			//m_columnIconIndexes is indexed by the current display position of columns that require the icon to be displayed.
 			var currentDisplayPositionOfColumn = OrderForColumnsDisplay[e.Header.Index];
-			if (!m_columnIconIndexes.TryGetValue(currentDisplayPositionOfColumn, out imageIndex))
+			if (!m_columnIconIndexes.TryGetValue(currentDisplayPositionOfColumn, out var imageIndex))
 			{
 				imageIndex = -1;
 			}

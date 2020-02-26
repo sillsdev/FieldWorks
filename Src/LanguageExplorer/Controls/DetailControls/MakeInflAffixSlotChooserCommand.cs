@@ -39,7 +39,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			});
 			// Enhance JohnT: usually the newly created slot will also get inserted into a template.
 			// Ideally we would make both part of the same UOW. However the code is in two distinct DLLs (see MorphologyEditor.dll).
-			return ObjectLabel.CreateObjectLabel(Cache, slot, "");
+			return ObjectLabel.CreateObjectLabel(Cache, slot, string.Empty);
 		}
 	}
 }

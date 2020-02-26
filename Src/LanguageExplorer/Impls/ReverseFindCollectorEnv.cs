@@ -41,13 +41,12 @@ namespace LanguageExplorer.Impls
 				Debug.Assert(m_StartLocation.TopLevelHvo == OpenObject && m_StartLocation.m_tag == tag);
 				ichBegin = m_StartLocation.m_ichMin;
 			}
-			int ichMin, ichLim;
 			// When we re-wrote the find stuff to use this FindCollectorEnv, we removed some
 			// whacky code from the FwFindReplaceDlg to try to deal with a sporadic failure
 			// reported as TE-4085. We're no longer even calling the same method on vwPattern,
 			// but if this failure ever recurs, this is probably the place where we'd want to
 			// put a try/catch block so we could retry the find.
-			m_Pattern.FindIn(textSource, ichBegin, 0, false, out ichMin, out ichLim, null);
+			m_Pattern.FindIn(textSource, ichBegin, 0, false, out var ichMin, out var ichLim, null);
 			if (PassedLimit(tag, ichMin))
 			{
 				StoppedAtLimit = true;
@@ -84,13 +83,7 @@ namespace LanguageExplorer.Impls
 			}
 			// If we haven't gotten to the same occurrence of the same object property, we haven't
 			// hit the limit.
-			if (m_LimitLocation.TopLevelHvo != OpenObject || m_LimitLocation.m_tag != tag || m_LimitLocation.m_cpropPrev != CPropPrev(tag))
-			{
-				return false;
-			}
-			// We are back in the same string. If we have hit or passed the limit offset, then
-			// return true;
-			return (testIch < 0 || testIch <= m_LimitLocation.m_ichLim);
+			return m_LimitLocation.TopLevelHvo == OpenObject && m_LimitLocation.m_tag == tag && m_LimitLocation.m_cpropPrev == CPropPrev(tag) && (testIch < 0 || testIch <= m_LimitLocation.m_ichLim);
 		}
 		#endregion
 	}

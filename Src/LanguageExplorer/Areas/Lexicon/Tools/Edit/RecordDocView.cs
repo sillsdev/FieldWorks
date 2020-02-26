@@ -155,8 +155,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 					m_rootSite.BringToFront();
 					using (new WaitCursor(this))
 					{
-						var root = m_rootSite as IChangeRootObject;
-						if (root != null && !MyRecordList.SuspendLoadingRecordUntilOnJumpToRecord)
+						if (m_rootSite is IChangeRootObject root && !MyRecordList.SuspendLoadingRecordUntilOnJumpToRecord)
 						{
 							root.SetRoot(MyRecordList.CurrentObject.Hvo);
 						}

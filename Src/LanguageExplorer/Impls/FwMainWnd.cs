@@ -65,18 +65,12 @@ namespace LanguageExplorer.Impls
 	{
 		[Import]
 		private IAreaRepository _areaRepository;
-		[Import]
-		private IPropertyTable _propertyTable;
-		[Import]
-		private IPublisher _publisher;
-		[Import]
-		private ISubscriber _subscriber;
+
 		[Import]
 		private IFlexApp _flexApp;
 		[Import]
 		private MacroMenuHandler _macroMenuHandler;
-		[Import]
-		private IdleQueue _idleQueue;
+
 		static bool _inUndoRedo; // true while executing an Undo/Redo command.
 		private bool _windowIsCopy;
 		private FwLinkArgs _startupLink;
@@ -129,8 +123,7 @@ namespace LanguageExplorer.Impls
 			// its active control.  This swallows keyboard input.  To prevent this, we select the
 			// desired control if one has been established so that keyboard input can still be seen
 			// by that control.  (See FWNX-785.)
-			if (MiscUtils.IsMono && m.Msg == (int)Win32.WinMsgs.WM_ACTIVATE && m.HWnd == Handle &&
-				DesiredControl != null && DesiredControl.Visible && DesiredControl.Enabled)
+			if (MiscUtils.IsMono && m.Msg == (int)Win32.WinMsgs.WM_ACTIVATE && m.HWnd == Handle && DesiredControl != null && DesiredControl.Visible && DesiredControl.Enabled)
 			{
 				DesiredControl.Select();
 			}
@@ -791,13 +784,11 @@ namespace LanguageExplorer.Impls
 			{
 				DiscardProperties();
 			}
-			FormWindowState state;
-			if (PropertyTable.TryGetValue(LanguageExplorerConstants.windowState, out state, SettingsGroup.GlobalSettings) && state != FormWindowState.Minimized)
+			if (PropertyTable.TryGetValue(LanguageExplorerConstants.windowState, out FormWindowState state, SettingsGroup.GlobalSettings) && state != FormWindowState.Minimized)
 			{
 				WindowState = state;
 			}
-			Point persistedLocation;
-			if (PropertyTable.TryGetValue(LanguageExplorerConstants.windowLocation, out persistedLocation, SettingsGroup.GlobalSettings))
+			if (PropertyTable.TryGetValue(LanguageExplorerConstants.windowLocation, out Point persistedLocation, SettingsGroup.GlobalSettings))
 			{
 				Location = persistedLocation;
 				//the location restoration only works if the window startposition is set to "manual"
@@ -805,8 +796,7 @@ namespace LanguageExplorer.Impls
 				//when it is Show()n.
 				StartPosition = FormStartPosition.Manual;
 			}
-			Size persistedSize;
-			if (!PropertyTable.TryGetValue(LanguageExplorerConstants.windowSize, out persistedSize, SettingsGroup.GlobalSettings))
+			if (!PropertyTable.TryGetValue(LanguageExplorerConstants.windowSize, out Size persistedSize, SettingsGroup.GlobalSettings))
 			{
 				return;
 			}
@@ -1207,8 +1197,8 @@ namespace LanguageExplorer.Impls
 		/// <summary>
 		/// Placement in the IPropertyTableProvider interface lets FwApp call PropertyTable.DoStuff.
 		/// </summary>
-		public IPropertyTable PropertyTable => _propertyTable;
-
+		[field: Import]
+		public IPropertyTable PropertyTable { get; private set; }
 		#endregion
 
 		#region Implementation of IRecordListOwner
@@ -1321,7 +1311,7 @@ namespace LanguageExplorer.Impls
 		private void OnClosing(object sender, CancelEventArgs e)
 		{
 			e.Cancel = false;
-			Publisher.Publish(LanguageExplorerConstants.ConsideringClosing, e);
+			Publisher.Publish(new PublisherParameterObject(LanguageExplorerConstants.ConsideringClosing, e));
 			if (e.Cancel)
 			{
 				return;
@@ -1387,7 +1377,7 @@ namespace LanguageExplorer.Impls
 				_sendReceiveMenuManager.InitializeFlexComponent(flexComponentParameters);
 			}
 			Cache.DomainDataByFlid.AddNotification(this);
-			CmdUseVernSpellingDictionary.Checked = _propertyTable.GetValue<bool>(LanguageExplorerConstants.UseVernSpellingDictionary);
+			CmdUseVernSpellingDictionary.Checked = PropertyTable.GetValue<bool>(LanguageExplorerConstants.UseVernSpellingDictionary);
 			if (CmdUseVernSpellingDictionary.Checked)
 			{
 				EnableVernacularSpelling();
@@ -1665,7 +1655,8 @@ namespace LanguageExplorer.Impls
 		/// <summary>
 		/// Get the IPublisher.
 		/// </summary>
-		public IPublisher Publisher => _publisher;
+		[field: Import]
+		public IPublisher Publisher { get; private set; }
 		#endregion
 
 		#region Implementation of ISubscriberProvider
@@ -1673,7 +1664,8 @@ namespace LanguageExplorer.Impls
 		/// <summary>
 		/// Get the ISubscriber.
 		/// </summary>
-		public ISubscriber Subscriber => _subscriber;
+		[field: Import]
+		public ISubscriber Subscriber { get; private set; }
 		#endregion
 
 		#region IIdleQueueProvider implementation
@@ -1681,8 +1673,8 @@ namespace LanguageExplorer.Impls
 		/// <summary>
 		/// Get the singleton (per window) instance of IdleQueue.
 		/// </summary>
-		public IdleQueue IdleQueue => _idleQueue;
-
+		[field: Import]
+		public IdleQueue IdleQueue { get; private set; }
 		#endregion
 
 		#region Implementation of IDisposable
@@ -1751,10 +1743,10 @@ namespace LanguageExplorer.Impls
 			_viewHelper = null;
 			_currentArea = null;
 			_stylesheet = null;
-			_publisher = null;
-			_subscriber = null;
+			Publisher = null;
+			Subscriber = null;
 			_areaRepository = null;
-			_idleQueue = null;
+			IdleQueue = null;
 			_majorFlexComponentParameters = null;
 			_writingSystemListHandler = null;
 			_combinedStylesListHandler = null;
@@ -1774,10 +1766,9 @@ namespace LanguageExplorer.Impls
 			// Leave the PropertyTable for last, since the above stuff may still want to access it, while shutting down.
 			if (disposing)
 			{
-				_propertyTable?.Dispose();
-				(_publisher as IDisposable)?.Dispose();
+				PropertyTable?.Dispose();
 			}
-			_propertyTable = null;
+			PropertyTable = null;
 		}
 
 		/// <summary>
@@ -1875,11 +1866,10 @@ namespace LanguageExplorer.Impls
 				var sda = rootSite.RootBox.DataAccess;
 				while (sda != null)
 				{
-					var cache = sda as DomainDataByFlidDecoratorBase;
-					if (cache != null)
+					if (sda is DomainDataByFlidDecoratorBase domainDataByFlidDecoratorBase)
 					{
-						cacheCollector.Add(cache);
-						sda = cache.BaseSda;
+						cacheCollector.Add(domainDataByFlidDecoratorBase);
+						sda = domainDataByFlidDecoratorBase.BaseSda;
 					}
 					else
 					{
@@ -1906,10 +1896,9 @@ namespace LanguageExplorer.Impls
 		private static void ReconstructViews(Control control)
 		{
 			var childrenRefreshed = false;
-			var refreshable = control as IRefreshableRoot;
-			if (refreshable != null)
+			if (control is IRefreshableRoot refreshableRoot)
 			{
-				childrenRefreshed = refreshable.RefreshDisplay();
+				childrenRefreshed = refreshableRoot.RefreshDisplay();
 			}
 			if (!childrenRefreshed)
 			{
@@ -2049,7 +2038,7 @@ namespace LanguageExplorer.Impls
 		/// </summary>
 		private static string Enquote(string str)
 		{
-			return "\"" + str + "\"";
+			return $"\"{str}\"";
 		}
 
 		private EditingHelper EditingHelper => ActiveView?.EditingHelper;
@@ -2161,7 +2150,7 @@ namespace LanguageExplorer.Impls
 		{
 			var model = new FwWritingSystemSetupModel(Cache.LangProject, FwWritingSystemSetupModel.ListType.Vernacular, Cache.ServiceLocator.WritingSystemManager, Cache);
 			model.WritingSystemListUpdated += OnWritingSystemListChanged;
-			using (var view = new FwWritingSystemSetupDlg(model, _propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), _flexApp))
+			using (var view = new FwWritingSystemSetupDlg(model, PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), _flexApp))
 			{
 				view.ShowDialog(this);
 			}
@@ -2172,7 +2161,7 @@ namespace LanguageExplorer.Impls
 		{
 			var model = new FwWritingSystemSetupModel(Cache.LangProject, FwWritingSystemSetupModel.ListType.Analysis, Cache.ServiceLocator.WritingSystemManager, Cache);
 			model.WritingSystemListUpdated += OnWritingSystemListChanged;
-			using (var view = new FwWritingSystemSetupDlg(model, _propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), _flexApp))
+			using (var view = new FwWritingSystemSetupDlg(model, PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), _flexApp))
 			{
 				view.ShowDialog(this);
 			}
@@ -2271,7 +2260,7 @@ namespace LanguageExplorer.Impls
 				MessageBoxUtils.Show($"Error: Cannot create project shortcut because destination directory '{directory}' does not exist.");
 				return;
 			}
-			var applicationArguments = "-" + FwAppArgs.kProject + " \"" + _flexApp.Cache.ProjectId.Handle + "\"";
+			var applicationArguments = $"-{FwAppArgs.kProject} \"{_flexApp.Cache.ProjectId.Handle}\"";
 			var description = ResourceHelper.FormatResourceString("kstidCreateShortcutLinkDescription", _flexApp.Cache.ProjectId.UiName, _flexApp.ApplicationName);
 			if (MiscUtils.IsUnix)
 			{
@@ -2292,8 +2281,8 @@ namespace LanguageExplorer.Impls
 				{
 					return;
 				}
-				var content = string.Format("[Desktop Entry]{0}" + "Version=1.0{0}" + "Terminal=false{0}" + "Exec=" + applicationExecutablePath + " " + applicationArguments + "{0}" +
-					"Icon=" + iconPath + "{0}" + "Type=Application{0}" + "Name=" + projectName + "{0}" + "Comment=" + description + "{0}", Environment.NewLine);
+				var content = string.Format("[Desktop Entry]{0}Version=1.0{0}Terminal=false{0}Exec=" + applicationExecutablePath + " " + applicationArguments + "{0}" +
+					"Icon=" + iconPath + "{0}" + "Type=Application{0}Name=" + projectName + "{0}Comment=" + description + "{0}", Environment.NewLine);
 				// Don't write a BOM
 				using (var launcher = FileUtils.OpenFileForWrite(launcherPath, new UTF8Encoding(false)))
 				{
@@ -2310,8 +2299,7 @@ namespace LanguageExplorer.Impls
 				var link = (IWshShortcut)shell.CreateShortcut(linkPath);
 				if (link.FullName != linkPath)
 				{
-					var msg = string.Format(LanguageExplorerResources.ksCannotCreateShortcut, _flexApp.ProductExecutableFile + " " + applicationArguments);
-					MessageBox.Show(ActiveForm, msg, LanguageExplorerResources.ksCannotCreateShortcutCaption, MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
+					MessageBox.Show(ActiveForm, string.Format(LanguageExplorerResources.ksCannotCreateShortcut, _flexApp.ProductExecutableFile + " " + applicationArguments), LanguageExplorerResources.ksCannotCreateShortcutCaption, MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
 					return;
 				}
 				link.TargetPath = _flexApp.ProductExecutableFile;
@@ -2411,14 +2399,7 @@ namespace LanguageExplorer.Impls
 			});
 		}
 
-		private Tuple<bool, bool> CanCmdCut
-		{
-			get
-			{
-				var editHelper = EditingHelper as RootSiteEditingHelper;
-				return new Tuple<bool, bool>(true, editHelper != null && editHelper.CanCut());
-			}
-		}
+		private Tuple<bool, bool> CanCmdCut => new Tuple<bool, bool>(true, EditingHelper is RootSiteEditingHelper editHelper && editHelper.CanCut());
 
 		private void Edit_Cut(object sender, EventArgs e)
 		{
@@ -2428,33 +2409,18 @@ namespace LanguageExplorer.Impls
 			}
 		}
 
-		private Tuple<bool, bool> CanCmdCopy
-		{
-			get
-			{
-				var editHelper = EditingHelper as RootSiteEditingHelper;
-				return new Tuple<bool, bool>(true, editHelper != null && editHelper.CanCopy());
-			}
-		}
+		private Tuple<bool, bool> CanCmdCopy => new Tuple<bool, bool>(true, EditingHelper is RootSiteEditingHelper editHelper && editHelper.CanCopy());
 
 		private void Edit_Copy(object sender, EventArgs e)
 		{
 			_viewHelper.ActiveView.EditingHelper.CopySelection();
 		}
 
-		private Tuple<bool, bool> CanCmdPaste
-		{
-			get
-			{
-				var editHelper = EditingHelper as RootSiteEditingHelper;
-				return new Tuple<bool, bool>(true, editHelper != null && editHelper.CanPaste());
-			}
-		}
+		private Tuple<bool, bool> CanCmdPaste => new Tuple<bool, bool>(true, EditingHelper is RootSiteEditingHelper editHelper && editHelper.CanPaste());
 
 		private void Edit_Paste(object sender, EventArgs e)
 		{
-			string stUndo, stRedo;
-			ResourceHelper.MakeUndoRedoLabels("kstidEditPaste", out stUndo, out stRedo);
+			ResourceHelper.MakeUndoRedoLabels("kstidEditPaste", out var stUndo, out var stRedo);
 			using (var undoHelper = new UndoableUnitOfWorkHelper(Cache.ServiceLocator.GetInstance<IActionHandler>(), stUndo, stRedo))
 			using (new DataUpdateMonitor(this, "EditPaste"))
 			{
@@ -2474,8 +2440,7 @@ namespace LanguageExplorer.Impls
 			var redoEnabled = ah.RedoableSequenceCount > 0;
 			string rawRedoText;
 			// Q: Is the focused control an instance of IUndoRedoHandler
-			var asIUndoRedoHandler = FocusedControl as IUndoRedoHandler;
-			if (asIUndoRedoHandler != null)
+			if (FocusedControl is IUndoRedoHandler asIUndoRedoHandler)
 			{
 				// A1: Yes: Let it set up the text and enabled state for both menus.
 				// The handler may opt to not fret about, or or the other,
@@ -2504,14 +2469,7 @@ namespace LanguageExplorer.Impls
 			Toolbar_CmdRedo.Enabled = redoEnabled;
 		}
 
-		private Tuple<bool, bool> CanCmdPasteHyperlink
-		{
-			get
-			{
-				var editHelper = EditingHelper as RootSiteEditingHelper;
-				return new Tuple<bool, bool>(true, editHelper != null && editHelper.CanPasteUrl() && editHelper.CanInsertLinkToFile());
-			}
-		}
+		private Tuple<bool, bool> CanCmdPasteHyperlink => new Tuple<bool, bool>(true, EditingHelper is RootSiteEditingHelper editHelper && editHelper.CanPasteUrl() && editHelper.CanInsertLinkToFile());
 
 		private void Edit_Paste_Hyperlink(object sender, EventArgs e)
 		{
@@ -2615,8 +2573,7 @@ very simple minor adjustments. ;)"
 				string rawUndoText;
 				var undoEnabled = ah.UndoableSequenceCount > 0;
 				// Q: Is the focused control an instance of IUndoRedoHandler
-				var asIUndoRedoHandler = FocusedControl as IUndoRedoHandler;
-				if (asIUndoRedoHandler != null)
+				if (FocusedControl is IUndoRedoHandler asIUndoRedoHandler)
 				{
 					// A1: Yes: Let it set up the text and enabled state for both menus.
 					// The handler may opt to not fret about, or or the other,
@@ -2639,15 +2596,13 @@ very simple minor adjustments. ;)"
 		private void Edit_Undo_Click(object sender, EventArgs e)
 		{
 			var focusedControl = FocusedControl;
-			var asIUndoRedoHandler = focusedControl as IUndoRedoHandler;
-			if (asIUndoRedoHandler != null)
+			if (focusedControl is IUndoRedoHandler asIUndoRedoHandler)
 			{
 				if (asIUndoRedoHandler.HandleUndo(sender, e))
 				{
 					return;
 				}
 			}
-
 			// For all the bother, the IUndoRedoHandler impl couldn't be bothered, so do it here.
 			var ah = Cache.DomainDataByFlid.GetActionHandler();
 			using (new WaitCursor(this))
@@ -2664,8 +2619,7 @@ very simple minor adjustments. ;)"
 			}
 			// Trigger a selection changed, to force updating of controls like the writing system combo
 			// that might be affected, if relevant.
-			var focusRootSite = focusedControl as SimpleRootSite;
-			if (focusRootSite != null && !focusRootSite.IsDisposed && focusRootSite.RootBox?.Selection != null)
+			if (focusedControl is SimpleRootSite focusRootSite && !focusRootSite.IsDisposed && focusRootSite.RootBox?.Selection != null)
 			{
 				focusRootSite.SelectionChanged(focusRootSite.RootBox, focusRootSite.RootBox.Selection);
 			}
@@ -2681,8 +2635,7 @@ very simple minor adjustments. ;)"
 				var redoEnabled = ah.RedoableSequenceCount > 0;
 				string rawRedoText;
 				// Q: Is the focused control an instance of IUndoRedoHandler
-				var asIUndoRedoHandler = FocusedControl as IUndoRedoHandler;
-				if (asIUndoRedoHandler != null)
+				if (FocusedControl is IUndoRedoHandler asIUndoRedoHandler)
 				{
 					// A1: Yes: Let it set up the text and enabled state for both menus.
 					// The handler may opt to not fret about, or or the other,
@@ -2706,8 +2659,7 @@ very simple minor adjustments. ;)"
 		private void Edit_Redo_Click(object sender, EventArgs e)
 		{
 			var focusedControl = FocusedControl;
-			var asIUndoRedoHandler = focusedControl as IUndoRedoHandler;
-			if (asIUndoRedoHandler != null)
+			if (focusedControl is IUndoRedoHandler asIUndoRedoHandler)
 			{
 				if (asIUndoRedoHandler.HandleRedo(sender, e))
 				{
@@ -2770,10 +2722,7 @@ very simple minor adjustments. ;)"
 
 		private void GetStyleNames(IVwRootSite rootsite, IVwSelection sel, ref string paraStyleName, ref string charStyleName)
 		{
-			ITsTextProps[] vttp;
-			IVwPropertyStore[] vvps;
-			int cttp;
-			SelectionHelper.GetSelectionProps(sel, out vttp, out vvps, out cttp);
+			SelectionHelper.GetSelectionProps(sel, out var vttp, out _, out var cttp);
 			var fSingleStyle = true;
 			string sStyle = null;
 			for (var ittp = 0; ittp < cttp; ++ittp)
@@ -2827,9 +2776,9 @@ very simple minor adjustments. ;)"
 				return;
 			}
 			var cmo = cmObjectRepository.GetObject(hvo);
-			if (cmo is IStPara)
+			if (cmo is IStPara stPara)
 			{
-				paraStyleName = (cmo as IStPara).StyleName;
+				paraStyleName = stPara.StyleName;
 			}
 		}
 
@@ -2856,8 +2805,7 @@ very simple minor adjustments. ;)"
 				{
 					return new Tuple<bool, bool>(true, false);
 				}
-				var rootSite = selectionHelper.RootSite as RootSite;
-				if (rootSite != null)
+				if (selectionHelper.RootSite is RootSite rootSite)
 				{
 					return new Tuple<bool, bool>(true, rootSite.CanApplyStyle);
 				}
@@ -2868,7 +2816,7 @@ very simple minor adjustments. ;)"
 
 		private void applyStyleToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-			// Disabled if there is no ActiveView and it cannot appy the styles.
+			// Disabled if there is no ActiveView and it cannot apply the styles.
 			SimpleRootSite rootsite = null;
 			try
 			{
@@ -2882,10 +2830,7 @@ very simple minor adjustments. ;)"
 				string paraStyleName = null;
 				string charStyleName = null;
 				GetStyleNames(rootsite, sel, ref paraStyleName, ref charStyleName);
-				int hvoRoot, frag;
-				IVwViewConstructor vc;
-				IVwStylesheet ss;
-				ActiveView.CastAsIVwRootSite().RootBox.GetRootObject(out hvoRoot, out vc, out frag, out ss);
+				ActiveView.CastAsIVwRootSite().RootBox.GetRootObject(out _, out _, out _, out _);
 				using (var applyStyleDlg = new FwApplyStyleDlg(Cache, _stylesheet, paraStyleName, charStyleName, _flexApp))
 				{
 					applyStyleDlg.ApplicableStyleContexts = new List<ContextValues>(new[] { ContextValues.General });
@@ -2895,8 +2840,7 @@ very simple minor adjustments. ;)"
 					{
 						return;
 					}
-					string sUndo, sRedo;
-					ResourceHelper.MakeUndoRedoLabels("kstidUndoApplyStyle", out sUndo, out sRedo);
+					ResourceHelper.MakeUndoRedoLabels("kstidUndoApplyStyle", out var sUndo, out var sRedo);
 					using (var helper = new UndoTaskHelper(Cache.ActionHandlerAccessor, ActiveView.CastAsIVwRootSite(), sUndo, sRedo))
 					{
 						_viewHelper.ActiveView.EditingHelper.ApplyStyle(applyStyleDlg.StyleChosen);
@@ -2983,19 +2927,7 @@ very simple minor adjustments. ;)"
 					tooltipText = string.Format(FwUtils.RemoveUnderline(LanguageExplorerResources.DeleteMenu), userFriendlyClassName);
 					deleteText = string.Format(deleteTextBase, userFriendlyClassName);
 					// See if a view can do it.
-					if (activeView is XmlDocView)
-					{
-						enableDelete = false;
-					}
-					else if (activeView is XmlBrowseRDEView)
-					{
-						enableDelete = ((XmlBrowseRDEView)activeView).SetupDeleteMenu(deleteTextBase, out deleteText);
-					}
-					else
-					{
-						// Let record list handle it (maybe).
-						enableDelete = activeRecordList.Editable && activeRecordList.CanDelete;
-					}
+					enableDelete = activeView is XmlBrowseRDEView xmlBrowseRdeView ? xmlBrowseRdeView.SetupDeleteMenu(deleteTextBase, out deleteText) : activeRecordList.Editable && activeRecordList.CanDelete;
 				}
 				Toolbar_CmdDeleteRecord.Enabled = deleteToolStripMenuItem.Enabled = enableDelete;
 				deleteToolStripMenuItem.Text = deleteText;
@@ -3011,10 +2943,10 @@ very simple minor adjustments. ;)"
 			{
 				// Go find some view to handle it.
 				var activeView = ActiveView;
-				if (activeView is XmlBrowseRDEView)
+				if (activeView is XmlBrowseRDEView xmlBrowseRdeView)
 				{
 					// Seems like it is the only main view that can do it.
-					((XmlBrowseRDEView)activeView).DeleteRecord();
+					xmlBrowseRdeView.DeleteRecord();
 				}
 			}
 			else
@@ -3028,14 +2960,12 @@ very simple minor adjustments. ;)"
 		{
 			get
 			{
-				var visible = true;
-				var enabled = EditingHelper is RootSiteEditingHelper && ((RootSiteEditingHelper)EditingHelper).CanPasteUrl();
+				var enabled = EditingHelper is RootSiteEditingHelper rootSiteEditingHelper && rootSiteEditingHelper.CanPasteUrl();
 				if (PropertyTable.GetValue(AllowInsertLinkToFile, true))
 				{
-					visible = true;
-					enabled = EditingHelper is RootSiteEditingHelper && ((RootSiteEditingHelper)EditingHelper).CanInsertLinkToFile();
+					enabled = EditingHelper is RootSiteEditingHelper helper && helper.CanInsertLinkToFile();
 				}
-				return new Tuple<bool, bool>(visible, enabled);
+				return new Tuple<bool, bool>(true, enabled);
 			}
 		}
 
@@ -3083,7 +3013,7 @@ very simple minor adjustments. ;)"
 
 		private void showVernacularSpellingErrorsToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-			var checking = !_propertyTable.GetValue<bool>(LanguageExplorerConstants.UseVernSpellingDictionary);
+			var checking = !PropertyTable.GetValue<bool>(LanguageExplorerConstants.UseVernSpellingDictionary);
 			if (checking)
 			{
 				EnableVernacularSpelling();
@@ -3093,7 +3023,7 @@ very simple minor adjustments. ;)"
 				WfiWordformServices.DisableVernacularSpellingDictionary(Cache);
 			}
 			CmdUseVernSpellingDictionary.Checked = checking;
-			_propertyTable.SetProperty(LanguageExplorerConstants.UseVernSpellingDictionary, checking, true);
+			PropertyTable.SetProperty(LanguageExplorerConstants.UseVernSpellingDictionary, checking, true);
 			RestartSpellChecking();
 		}
 

@@ -331,8 +331,7 @@ namespace LanguageExplorer.SfmToXml
 						break;
 					case "lang":
 						// Look up replacement language name:
-						var language = languages[attribute.Value] as ClsLanguage;
-						if (language != null)
+						if (languages[attribute.Value] is ClsLanguage language)
 						{
 							Language = language.KEY;
 							m_xmlLang = language.XmlLang;

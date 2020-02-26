@@ -15,11 +15,6 @@ namespace LanguageExplorer.Controls.DetailControls
 	{
 		#region Construction, Initialization, and Disposing
 
-		/// <summary />
-		public SemanticDomainReferenceLauncher()
-		{
-		}
-
 		#endregion // Construction, Initialization, and Disposing
 
 		/// <summary>
@@ -31,12 +26,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		protected override void HandleChooser()
 		{
 			const string displayWs = "best analysis";
-			var sense = m_obj as ILexSense;
-			if (sense == null)
-			{
-				Debug.Assert(sense != null, "This chooser can only be applied to senses");
-				return;
-			}
+			var sense = (ILexSense)m_obj;
 			var linkCommandNode = m_configurationNode.XPathSelectElement("descendant::chooserLink");
 			using (var chooser = new SemanticDomainsChooser
 			{

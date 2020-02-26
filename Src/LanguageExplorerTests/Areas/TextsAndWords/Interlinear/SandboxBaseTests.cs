@@ -263,23 +263,24 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 				var mockText = MakeText(wff);
 				var wf = MakeWordform(wff);
 				var wa = MakeAnalysis(wf);
-				var options = new MakeBundleOptions();
-				options.LexEntryForm = wff;
-				options.MakeMorph = (mff) =>
+				var options = new MakeBundleOptions
 				{
-					var slotType = GetSlotType(mff);
-					IMoMorphSynAnalysis msa;
-					var entry = MakeEntry(mff.Replace("-", ""), "V:(Imperative)", slotType, out msa);
-					var sense2 = MakeSense(entry, "gloss1", msa);
-					return entry.LexemeFormOA;
+					LexEntryForm = wff,
+					MakeMorph = mff =>
+					{
+						var slotType = GetSlotType(mff);
+						var entry = MakeEntry(mff.Replace("-", ""), "V:(Imperative)", slotType, out var msa);
+						var sense2 = MakeSense(entry, "gloss1", msa);
+						return entry.LexemeFormOA;
+					},
+					MakeSense = entry =>
+					{
+						var msa = entry.MorphoSyntaxAnalysesOC.ToList()[0];
+						var sense2 = MakeSense(entry, "gloss2", msa);
+						return sense2;
+					},
+					MakeMsa = sense => sense.MorphoSyntaxAnalysisRA
 				};
-				options.MakeSense = (entry) =>
-				{
-					var msa = entry.MorphoSyntaxAnalysesOC.ToList()[0];
-					var sense2 = MakeSense(entry, "gloss2", msa);
-					return sense2;
-				};
-				options.MakeMsa = (sense) => { return sense.MorphoSyntaxAnalysisRA; };
 				var wmb = MakeBundle(wa, options);
 				var para = (IStTxtPara)mockText.ContentsOA.ParagraphsOS[0];
 				var seg = para.SegmentsOS[0];
@@ -312,29 +313,28 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 				var mockText = MakeText(wff);
 				var wf = MakeWordform(wff);
 				var wa = MakeAnalysis(wf);
-				var options = new MakeBundleOptions();
-				options.LexEntryForm = wff;
-				options.MakeMorph = mff =>
+				var options = new MakeBundleOptions
 				{
-					var slotType = GetSlotType(mff);
-					IMoMorphSynAnalysis msa1;
-					const string mainEntryForm = "mainEntry";
-					var mainEntry = MakeEntry(mainEntryForm.Replace("-", ""), "V:(Imperative)", slotType, out msa1);
-					var mainSense = MakeSense(mainEntry, "mainGloss", msa1);
-
-					IMoMorphSynAnalysis msa2;
-					var variantEntry = MakeEntry(mff.Replace("-", ""), "V:(Imperative)", slotType, out msa2);
-					var letPlural = Cache.ServiceLocator.GetInstance<ILexEntryInflTypeRepository>().GetObject(LexEntryTypeTags.kguidLexTypPluralVar);
-					letPlural.GlossAppend.set_String(Cache.DefaultAnalWs, "pl");
-					variantEntry.MakeVariantOf(mainSense, letPlural);
-					return variantEntry.LexemeFormOA;
+					LexEntryForm = wff,
+					MakeMorph = mff =>
+					{
+						var slotType = GetSlotType(mff);
+						const string mainEntryForm = "mainEntry";
+						var mainEntry = MakeEntry(mainEntryForm.Replace("-", string.Empty), "V:(Imperative)", slotType, out var msa1);
+						var mainSense = MakeSense(mainEntry, "mainGloss", msa1);
+						var variantEntry = MakeEntry(mff.Replace("-", ""), "V:(Imperative)", slotType, out _);
+						var letPlural = Cache.ServiceLocator.GetInstance<ILexEntryInflTypeRepository>().GetObject(LexEntryTypeTags.kguidLexTypPluralVar);
+						letPlural.GlossAppend.set_String(Cache.DefaultAnalWs, "pl");
+						variantEntry.MakeVariantOf(mainSense, letPlural);
+						return variantEntry.LexemeFormOA;
+					},
+					MakeSense = entry =>
+					{
+						var entryRef = entry.EntryRefsOS.First();
+						return entryRef.ComponentLexemesRS.First() as ILexSense;
+					},
+					MakeMsa = sense => sense.MorphoSyntaxAnalysisRA
 				};
-				options.MakeSense = (entry) =>
-				{
-					var entryRef = entry.EntryRefsOS.First();
-					return entryRef.ComponentLexemesRS.First() as ILexSense;
-				};
-				options.MakeMsa = (sense) => { return sense.MorphoSyntaxAnalysisRA; };
 				var wmb = MakeBundle(wa, options);
 				var para = (IStTxtPara)mockText.ContentsOA.ParagraphsOS[0];
 				var seg = para.SegmentsOS[0];
@@ -342,7 +342,6 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 				return new AnalysisOccurrence(seg, 0);
 			}))
 			{
-				var initialAnalysisStack = sandbox.CurrentAnalysisTree;
 				using (var handler = GetComboHandler(sandbox, InterlinLineChoices.kflidLexEntries, 0) as IhMissingEntry)
 				{
 					var imorphItemCurrentSandboxState = handler.IndexOfCurrentItem;
@@ -416,38 +415,35 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 				var mockText = MakeText(wff);
 				var wf = MakeWordform(wff);
 				var wa = MakeAnalysis(wf);
-				var options = new MakeBundleOptions();
-				options.LexEntryForm = wff;
-				options.MakeMorph = mff =>
+				var options = new MakeBundleOptions
 				{
-					var slotType = GetSlotType(mff);
-					IMoMorphSynAnalysis msa1;
-					const string mainEntryForm = "mainEntry";
-					var mainEntry = MakeEntry(mainEntryForm.Replace("-", ""), "V:(Imperative)", slotType, out msa1);
-					var mainSense = MakeSense(mainEntry, "mainGloss", msa1);
-
-					IMoMorphSynAnalysis msa2;
-					var variantEntry = MakeEntry(mff.Replace("-", ""), "V:(Imperative)", slotType, out msa2);
-					var letPlural = Cache.ServiceLocator.GetInstance<ILexEntryInflTypeRepository>().GetObject(LexEntryTypeTags.kguidLexTypPluralVar);
-					letPlural.GlossAppend.set_String(Cache.DefaultAnalWs, "pl");
-					variantEntry.MakeVariantOf(mainSense, letPlural);
-					return variantEntry.LexemeFormOA;
+					LexEntryForm = wff,
+					MakeMorph = mff =>
+					{
+						var slotType = GetSlotType(mff);
+						const string mainEntryForm = "mainEntry";
+						var mainEntry = MakeEntry(mainEntryForm.Replace("-", string.Empty), "V:(Imperative)", slotType, out var msa1);
+						var mainSense = MakeSense(mainEntry, "mainGloss", msa1);
+						var variantEntry = MakeEntry(mff.Replace("-", string.Empty), "V:(Imperative)", slotType, out _);
+						var letPlural = Cache.ServiceLocator.GetInstance<ILexEntryInflTypeRepository>().GetObject(LexEntryTypeTags.kguidLexTypPluralVar);
+						letPlural.GlossAppend.set_String(Cache.DefaultAnalWs, "pl");
+						variantEntry.MakeVariantOf(mainSense, letPlural);
+						return variantEntry.LexemeFormOA;
+					},
+					MakeSense = entry =>
+					{
+						var entryRef = entry.EntryRefsOS.First();
+						return entryRef.ComponentLexemesRS.First() as ILexSense;
+					},
+					MakeMsa = (sense) => sense.MorphoSyntaxAnalysisRA,
+					MakeInflType = mf =>
+					{
+						var entry = (ILexEntry)mf.Owner;
+						var entryRef = entry.EntryRefsOS.First();
+						return entryRef.VariantEntryTypesRS.First() as ILexEntryInflType;
+					}
 				};
-				options.MakeSense = entry =>
-				{
-					var entryRef = entry.EntryRefsOS.First();
-					return entryRef.ComponentLexemesRS.First() as ILexSense;
-				};
-				options.MakeMsa = (sense) => { return sense.MorphoSyntaxAnalysisRA; };
-				options.MakeInflType = (mf) =>
-				{
-					var entry = mf.Owner as ILexEntry;
-					var entryRef = entry.EntryRefsOS.First();
-					var vet = entryRef.VariantEntryTypesRS.First() as ILexEntryInflType;
-					return vet;
-				};
-				var wmb = MakeBundle(wa, options);
-
+				MakeBundle(wa, options);
 				var para = (IStTxtPara)mockText.ContentsOA.ParagraphsOS[0];
 				var seg = para.SegmentsOS[0];
 				seg.AnalysesRS.Add(wa);
@@ -481,42 +477,40 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 				var mockText = MakeText(wff);
 				var wf = MakeWordform(wff);
 				var wa = MakeAnalysis(wf);
-				var options = new MakeBundleOptions();
-				options.LexEntryForm = wff;
-				options.MakeMorph = mff =>
+				var options = new MakeBundleOptions
 				{
-					var slotType = GetSlotType(mff);
-					IMoMorphSynAnalysis msa1;
-					const string mainEntryForm = "mainEntry";
-					var mainEntry = MakeEntry(mainEntryForm.Replace("-", ""), "V:(Imperative)", slotType, out msa1);
-					var mainSense = MakeSense(mainEntry, "mainGloss", msa1);
-
-					IMoMorphSynAnalysis msa2;
-					var variantEntry = MakeEntry(mff.Replace("-", ""), "V:(Imperative)", slotType, out msa2);
-					var letPlural = Cache.ServiceLocator.GetInstance<ILexEntryInflTypeRepository>().GetObject(LexEntryTypeTags.kguidLexTypPluralVar);
-					// add types to entryRef in the order of "pl" followed by "pst"
-					letPlural.GlossAppend.set_String(Cache.DefaultAnalWs, "pl");
-					var ler = variantEntry.MakeVariantOf(mainSense, letPlural);
-					var letPst = Cache.ServiceLocator.GetInstance<ILexEntryInflTypeRepository>().GetObject(LexEntryTypeTags.kguidLexTypPastVar);
-					letPst.GlossAppend.set_String(Cache.DefaultAnalWs, "pst");
-					ler.VariantEntryTypesRS.Add(letPst);
-					return variantEntry.LexemeFormOA;
+					LexEntryForm = wff,
+					MakeMorph = mff =>
+					{
+						var slotType = GetSlotType(mff);
+						const string mainEntryForm = "mainEntry";
+						var mainEntry = MakeEntry(mainEntryForm.Replace("-", string.Empty), "V:(Imperative)", slotType, out var msa1);
+						var mainSense = MakeSense(mainEntry, "mainGloss", msa1);
+						var variantEntry = MakeEntry(mff.Replace("-", string.Empty), "V:(Imperative)", slotType, out _);
+						var letPlural = Cache.ServiceLocator.GetInstance<ILexEntryInflTypeRepository>().GetObject(LexEntryTypeTags.kguidLexTypPluralVar);
+						// add types to entryRef in the order of "pl" followed by "pst"
+						letPlural.GlossAppend.set_String(Cache.DefaultAnalWs, "pl");
+						var ler = variantEntry.MakeVariantOf(mainSense, letPlural);
+						var letPst = Cache.ServiceLocator.GetInstance<ILexEntryInflTypeRepository>().GetObject(LexEntryTypeTags.kguidLexTypPastVar);
+						letPst.GlossAppend.set_String(Cache.DefaultAnalWs, "pst");
+						ler.VariantEntryTypesRS.Add(letPst);
+						return variantEntry.LexemeFormOA;
+					},
+					MakeSense = entry =>
+					{
+						var entryRef = entry.EntryRefsOS.First();
+						return entryRef.ComponentLexemesRS.First() as ILexSense;
+					},
+					MakeMsa = sense => sense.MorphoSyntaxAnalysisRA,
+					MakeInflType = mf =>
+					{
+						var entry = (ILexEntry)mf.Owner;
+						var entryRef = entry.EntryRefsOS.First();
+						var vet = entryRef.VariantEntryTypesRS.First() as ILexEntryInflType;
+						return vet;
+					}
 				};
-				options.MakeSense = entry =>
-				{
-					var entryRef = entry.EntryRefsOS.First();
-					return entryRef.ComponentLexemesRS.First() as ILexSense;
-				};
-				options.MakeMsa = sense => { return sense.MorphoSyntaxAnalysisRA; };
-				options.MakeInflType = mf =>
-				{
-					var entry = mf.Owner as ILexEntry;
-					var entryRef = entry.EntryRefsOS.First();
-					var vet = entryRef.VariantEntryTypesRS.First() as ILexEntryInflType;
-					return vet;
-				};
-				var wmb = MakeBundle(wa, options);
-
+				MakeBundle(wa, options);
 				var para = (IStTxtPara)mockText.ContentsOA.ParagraphsOS[0];
 				var seg = para.SegmentsOS[0];
 				seg.AnalysesRS.Add(wa);
@@ -553,39 +547,37 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 				var mockText = MakeText(wff);
 				var wf = MakeWordform(wff);
 				var wa = MakeAnalysis(wf);
-				var options = new MakeBundleOptions();
-				options.LexEntryForm = wff;
-				options.MakeMorph = mff =>
+				var options = new MakeBundleOptions
 				{
-					var slotType = GetSlotType(mff);
-					IMoMorphSynAnalysis msa1;
-					const string mainEntryForm = "mainEntry";
-					var mainEntry = MakeEntry(mainEntryForm.Replace("-", ""), "V:(Imperative)", slotType, out msa1);
-					var mainSense = MakeSense(mainEntry, "mainGloss", msa1);
-
-					IMoMorphSynAnalysis msa2;
-					var variantEntry = MakeEntry(mff.Replace("-", ""), "V:(Imperative)", slotType, out msa2);
-					var letPlural = Cache.ServiceLocator.GetInstance<ILexEntryInflTypeRepository>().GetObject(LexEntryTypeTags.kguidLexTypPluralVar);
-					letPlural.GlossAppend.set_String(Cache.DefaultAnalWs, "pl");
-					var letPst = Cache.ServiceLocator.GetInstance<ILexEntryInflTypeRepository>().GetObject(LexEntryTypeTags.kguidLexTypPastVar);
-					letPst.GlossAppend.set_String(Cache.DefaultAnalWs, "pst");
-					// add types to entryRef in the order of "pst" followed by "pl"
-					var ler = variantEntry.MakeVariantOf(mainSense, letPst);
-					ler.VariantEntryTypesRS.Add(letPlural);
-					return variantEntry.LexemeFormOA;
-				};
-				options.MakeSense = entry =>
-				{
-					var entryRef = entry.EntryRefsOS.First();
-					return entryRef.ComponentLexemesRS.First() as ILexSense;
-				};
-				options.MakeMsa = sense => { return sense.MorphoSyntaxAnalysisRA; };
-				options.MakeInflType = mf =>
-				{
-					var entry = mf.Owner as ILexEntry;
-					var entryRef = entry.EntryRefsOS.First();
-					var vet = entryRef.VariantEntryTypesRS.First() as ILexEntryInflType;
-					return vet;
+					LexEntryForm = wff,
+					MakeMorph = mff =>
+					{
+						var slotType = GetSlotType(mff);
+						const string mainEntryForm = "mainEntry";
+						var mainEntry = MakeEntry(mainEntryForm.Replace("-", string.Empty), "V:(Imperative)", slotType, out var msa1);
+						var mainSense = MakeSense(mainEntry, "mainGloss", msa1);
+						var variantEntry = MakeEntry(mff.Replace("-", string.Empty), "V:(Imperative)", slotType, out _);
+						var letPlural = Cache.ServiceLocator.GetInstance<ILexEntryInflTypeRepository>().GetObject(LexEntryTypeTags.kguidLexTypPluralVar);
+						letPlural.GlossAppend.set_String(Cache.DefaultAnalWs, "pl");
+						var letPst = Cache.ServiceLocator.GetInstance<ILexEntryInflTypeRepository>().GetObject(LexEntryTypeTags.kguidLexTypPastVar);
+						letPst.GlossAppend.set_String(Cache.DefaultAnalWs, "pst");
+						// add types to entryRef in the order of "pst" followed by "pl"
+						var ler = variantEntry.MakeVariantOf(mainSense, letPst);
+						ler.VariantEntryTypesRS.Add(letPlural);
+						return variantEntry.LexemeFormOA;
+					},
+					MakeSense = entry =>
+					{
+						var entryRef = entry.EntryRefsOS.First();
+						return entryRef.ComponentLexemesRS.First() as ILexSense;
+					},
+					MakeMsa = sense => sense.MorphoSyntaxAnalysisRA,
+					MakeInflType = mf =>
+					{
+						var entry = (ILexEntry)mf.Owner;
+						var entryRef = entry.EntryRefsOS.First();
+						return entryRef.VariantEntryTypesRS.First() as ILexEntryInflType;
+					}
 				};
 				var wmb = MakeBundle(wa, options);
 
@@ -667,10 +659,10 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 			}
 		}
 
-		private InterlinComboHandler GetComboHandler(SandboxBase sandbox, int flid, int morphIndex)
+		private static InterlinComboHandler GetComboHandler(SandboxBase sandbox, int flid, int morphIndex)
 		{
 			// first select the proper pull down icon.
-			int tagIcon = 0;
+			var tagIcon = 0;
 			switch (flid)
 			{
 				case InterlinLineChoices.kflidMorphemes:
@@ -711,23 +703,11 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 		{
 			Assert.That(sandbox.RootBox.Selection, Is.Not.Null);
 			Assert.That(sandbox.MorphIndex, Is.EqualTo(morphIndex));
-			int ihvoRoot;
-			int tagTextProp;
-			int cpropPrevious;
-			int ichAnchor;
-			int ichEnd;
-			int ws;
-			bool fAssocPrev;
-			int ihvoEnd;
-			ITsTextProps ttpBogus;
 			// Main array of information retrieved from sel that made combo.
-			SelLevInfo[] rgvsli;
-			bool fIsPictureSel; // icon selected.
-
 			var sel = sandbox.RootBox.Selection;
-			fIsPictureSel = sel.SelType == VwSelType.kstPicture;
+			var fIsPictureSel = sel.SelType == VwSelType.kstPicture;
 			var cvsli = sel.CLevels(false) - 1;
-			rgvsli = SelLevInfo.AllTextSelInfo(sel, cvsli, out ihvoRoot, out tagTextProp, out cpropPrevious, out ichAnchor, out ichEnd, out ws, out fAssocPrev, out ihvoEnd, out ttpBogus);
+			var rgvsli = SelLevInfo.AllTextSelInfo(sel, cvsli, out _, out var tagTextProp, out _, out _, out _, out _, out _, out _, out _);
 			Assert.That(fIsPictureSel, Is.EqualTo(fPicture));
 			Assert.That(tagTextProp, Is.EqualTo(tagText));
 			if (tagTextProp == SandboxBase.ktagSbNamedObjName)
@@ -743,10 +723,10 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 			var wf = MakeWordform("nihimbilira");
 			var wa = MakeAnalysis(wf);
 			var wg = MakeGloss(wa, "I see");
-			var ni = MakeBundle(wa, "ni-", "1SgSubj", "V:(Subject)");
-			var him = MakeBundle(wa, "him-", "3SgObj", "V:Object");
-			var bili = MakeBundle(wa, "bili", "to see", "trans (1)");
-			var ra = MakeBundle(wa, "-ra", "Pres", "sta:Tense");
+			MakeBundle(wa, "ni-", "1SgSubj", "V:(Subject)");
+			MakeBundle(wa, "him-", "3SgObj", "V:Object");
+			MakeBundle(wa, "bili", "to see", "trans (1)");
+			MakeBundle(wa, "-ra", "Pres", "sta:Tense");
 			var para = (IStTxtPara)greenMat.ContentsOA.ParagraphsOS[0];
 			var seg = para.SegmentsOS[0];
 			seg.AnalysesRS.Add(wg);
@@ -811,15 +791,13 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 				MakeMorph = mff =>
 				{
 					var slotType = GetSlotType(mff);
-					IMoMorphSynAnalysis msa;
-					var entry = MakeEntry(mff.Replace("-", string.Empty), pos, slotType, out msa);
+					var entry = MakeEntry(mff.Replace("-", string.Empty), pos, slotType, out _);
 					return entry.LexemeFormOA;
 				},
 				MakeSense = entry =>
 				{
 					var msa = entry.MorphoSyntaxAnalysesOC.ToList()[0];
-					var sense = MakeSense(entry, gloss, msa);
-					return sense;
+					return MakeSense(entry, gloss, msa);
 				},
 				MakeMsa = sense => sense.MorphoSyntaxAnalysisRA
 			};
@@ -878,8 +856,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 			// The entry itself.
 			var entry = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create();
 			// Lexeme Form and MSA.
-			IMoForm form;
-			msa = GetMsaAndMoForm(entry, slotType, pos, out form);
+			msa = GetMsaAndMoForm(entry, slotType, pos, out var form);
 			entry.LexemeFormOA = form;
 			form.Form.VernacularDefaultWritingSystem = MakeVernString(lf);
 			form.MorphTypeRA = Cache.ServiceLocator.GetInstance<IMoMorphTypeRepository>().GetObject(slotType);

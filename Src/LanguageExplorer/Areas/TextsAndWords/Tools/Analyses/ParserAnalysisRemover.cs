@@ -23,11 +23,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 		/// <summary />
 		internal ParserAnalysisRemover(UtilityDlg utilityDlg)
 		{
-			if (utilityDlg == null)
-			{
-				throw new ArgumentNullException(nameof(utilityDlg));
-			}
-			m_dlg = utilityDlg;
+			m_dlg = utilityDlg ?? throw new ArgumentNullException(nameof(utilityDlg));
 		}
 
 		/// <summary>
@@ -71,7 +67,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 			m_dlg.ProgressBar.Maximum = analyses.Length;
 			m_dlg.ProgressBar.Step = 1;
 			// stop parser if it's running.
-			m_dlg.Publisher.Publish(LanguageExplorerConstants.StopParser, null);
+			m_dlg.Publisher.Publish(new PublisherParameterObject(LanguageExplorerConstants.StopParser));
 			NonUndoableUnitOfWorkHelper.Do(cache.ActionHandlerAccessor, () =>
 			{
 				foreach (var analysis in analyses)

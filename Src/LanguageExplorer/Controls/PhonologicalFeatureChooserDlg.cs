@@ -232,9 +232,7 @@ namespace LanguageExplorer.Controls
 			{
 				// Reset window location.
 				// Get location to the stored values, if any.
-				Point dlgLocation;
-				Size dlgSize;
-				if (_flexComponentParameters.PropertyTable.TryGetValue("phonFeatListDlgLocation", out dlgLocation) && _flexComponentParameters.PropertyTable.TryGetValue("phonFeatListDlgSize", out dlgSize))
+				if (_flexComponentParameters.PropertyTable.TryGetValue("phonFeatListDlgLocation", out Point dlgLocation) && _flexComponentParameters.PropertyTable.TryGetValue("phonFeatListDlgSize", out Size dlgSize))
 				{
 					var rect = new Rectangle(dlgLocation, dlgSize);
 					ScreenHelper.EnsureVisibleRect(ref rect);
@@ -313,21 +311,10 @@ namespace LanguageExplorer.Controls
 
 		private bool IsValuesComboBoxVisible(HScrollProperties hprops)
 		{
-			var iVerticalScrollBarWidth = (m_bvList.ScrollBar.Visible) ? SystemInformation.VerticalScrollBarWidth : 0;
-			var iHorizontalScrollBarHeight = (hprops.Visible) ? SystemInformation.HorizontalScrollBarHeight : 0;
-			if (m_valuesCombo.Top < (m_listPanel.Top + m_bvList.BrowseView.Top))
-			{
-				return false;  // too high
-			}
-			if (m_valuesCombo.Bottom > (m_listPanel.Bottom - iHorizontalScrollBarHeight))
-			{
-				return false; // too low
-			}
-			if (m_valuesCombo.Right > (m_listPanel.Right - iVerticalScrollBarWidth + 1))
-			{
-				return false; // too far to the right
-			}
-			return m_valuesCombo.Left >= m_listPanel.Left;
+			var iVerticalScrollBarWidth = m_bvList.ScrollBar.Visible ? SystemInformation.VerticalScrollBarWidth : 0;
+			var iHorizontalScrollBarHeight = hprops.Visible ? SystemInformation.HorizontalScrollBarHeight : 0;
+			return m_valuesCombo.Top >= m_listPanel.Top + m_bvList.BrowseView.Top && m_valuesCombo.Bottom <= m_listPanel.Bottom - iHorizontalScrollBarHeight
+																				  && m_valuesCombo.Right <= m_listPanel.Right - iVerticalScrollBarWidth + 1 && m_valuesCombo.Left >= m_listPanel.Left;
 		}
 
 		private void PopulateValuesCombo()
@@ -347,8 +334,8 @@ namespace LanguageExplorer.Controls
 			var valHvo = m_sda.get_ObjectProp(hvoSel, PhonologicalFeaturePublisher.ValueFlid);
 			var comboSelectedIndex = -1;
 			var index = 0;
-			var sortedVaues = feat.ValuesOC.OrderBy(v => v.Abbreviation.BestAnalysisAlternative.Text);
-			foreach (var val in sortedVaues)
+			var sortedValues = feat.ValuesOC.OrderBy(v => v.Abbreviation.BestAnalysisAlternative.Text);
+			foreach (var val in sortedValues)
 			{
 				m_valuesCombo.Items.Add(val.Abbreviation.BestAnalysisAlternative);
 				// try to set the selected item
@@ -406,8 +393,7 @@ namespace LanguageExplorer.Controls
 				if (ShowFeatureConstraintValues)
 				{
 					// make sure the dummy value reflects the selected value
-					var str = m_valuesCombo.SelectedItem as string;
-					if (str != null)
+					if (m_valuesCombo.SelectedItem is string str)
 					{
 						if (str == LanguageExplorerControls.ks_DontCare_)
 						{
@@ -525,10 +511,7 @@ namespace LanguageExplorer.Controls
 		/// </summary>
 		public IPhSimpleContextNC Context
 		{
-			get
-			{
-				return m_ctxt;
-			}
+			get => m_ctxt;
 			set
 			{
 				m_ctxt = value;
@@ -546,15 +529,8 @@ namespace LanguageExplorer.Controls
 		/// </summary>
 		public string Prompt
 		{
-			get
-			{
-				return labelPrompt.Text;
-			}
-			set
-			{
-				var s1 = value ?? LanguageExplorerControls.ksPhonologicalFeatures;
-				labelPrompt.Text = s1;
-			}
+			get => labelPrompt.Text;
+			set => labelPrompt.Text = value ?? LanguageExplorerControls.ksPhonologicalFeatures;
 		}
 
 		/// <summary>
@@ -572,14 +548,8 @@ namespace LanguageExplorer.Controls
 		/// </summary>
 		public string Title
 		{
-			get
-			{
-				return Text;
-			}
-			set
-			{
-				Text = value;
-			}
+			get => Text;
+			set => Text = value;
 		}
 
 		/// <summary>
@@ -587,14 +557,8 @@ namespace LanguageExplorer.Controls
 		/// </summary>
 		public string LinkText
 		{
-			get
-			{
-				return linkLabel1.Text;
-			}
-			set
-			{
-				linkLabel1.Text = value ?? LanguageExplorerControls.ksPhonologicalFeaturesAdd;
-			}
+			get => linkLabel1.Text;
+			set => linkLabel1.Text = value ?? LanguageExplorerControls.ksPhonologicalFeaturesAdd;
 		}
 
 		#region Windows Form Designer generated code
@@ -725,16 +689,7 @@ namespace LanguageExplorer.Controls
 		/// </summary>
 		private bool CheckFeatureStructure()
 		{
-			var featureHvos = m_bvList.AllItems;
-			foreach (var hvoClosedFeature in featureHvos)
-			{
-				var valHvo = m_sda.get_ObjectProp(hvoClosedFeature, PhonologicalFeaturePublisher.ValueFlid);
-				if (valHvo > 0)
-				{
-					return true;
-				}
-			}
-			return false;
+			return m_bvList.AllItems.Select(hvoClosedFeature => m_sda.get_ObjectProp(hvoClosedFeature, PhonologicalFeaturePublisher.ValueFlid)).Any(valHvo => valHvo > 0);
 		}
 
 		/// <summary>
@@ -743,8 +698,7 @@ namespace LanguageExplorer.Controls
 		/// <remarks>Is internal for Unit Testing</remarks>
 		internal void UpdateFeatureStructure()
 		{
-			var featureHvos = m_bvList.AllItems;
-			foreach (var hvoClosedFeature in featureHvos)
+			foreach (var hvoClosedFeature in m_bvList.AllItems)
 			{
 				var valHvo = m_sda.get_ObjectProp(hvoClosedFeature, PhonologicalFeaturePublisher.ValueFlid);
 				if (valHvo > 0)
@@ -801,8 +755,7 @@ namespace LanguageExplorer.Controls
 			{
 				if (tag == ValueFlid)
 				{
-					int valHvo;
-					if (!m_objProps.TryGetValue(hvo, out valHvo))
+					if (!m_objProps.TryGetValue(hvo, out var valHvo))
 					{
 						valHvo = 0;
 					}
@@ -826,8 +779,7 @@ namespace LanguageExplorer.Controls
 			{
 				if (tag == PolarityFlid)
 				{
-					string str;
-					if (!m_unicodeProps.TryGetValue(hvo, out str))
+					if (!m_unicodeProps.TryGetValue(hvo, out var str))
 					{
 						str = string.Empty;
 					}
@@ -843,8 +795,7 @@ namespace LanguageExplorer.Controls
 			{
 				if (tag == PolarityFlid)
 				{
-					string str;
-					if (!m_unicodeProps.TryGetValue(hvo, out str))
+					if (!m_unicodeProps.TryGetValue(hvo, out var str))
 					{
 						str = string.Empty;
 					}
@@ -879,16 +830,9 @@ namespace LanguageExplorer.Controls
 
 				public override int GetFieldId(string bstrClassName, string bstrFieldName, bool fIncludeBaseClasses)
 				{
-					if (bstrClassName == "FsClosedFeature" && bstrFieldName == "DummyPolarity")
-					{
-						return PolarityFlid;
-					}
-					if (bstrClassName == "FsClosedFeature" && bstrFieldName == "DummyValue")
-					{
-						return ValueFlid;
-					}
-					return base.GetFieldId(bstrClassName, bstrFieldName, fIncludeBaseClasses);
+					return bstrClassName == "FsClosedFeature" && bstrFieldName == "DummyPolarity" ? PolarityFlid : bstrClassName == "FsClosedFeature" && bstrFieldName == "DummyValue" ? ValueFlid : base.GetFieldId(bstrClassName, bstrFieldName, fIncludeBaseClasses);
 				}
+
 				public override int GetFieldType(int luFlid)
 				{
 					return luFlid == PolarityFlid ? (int)CellarPropertyType.Unicode : base.GetFieldType(luFlid);

@@ -156,8 +156,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				if (m_combo != null)
 				{
 					m_combo.SelectedIndexChanged -= m_combo_SelectedIndexChanged;
-					var combo = m_combo as FwComboBox;
-					if (combo != null && combo.Parent == null)
+					if (m_combo is FwComboBox combo && combo.Parent == null)
 					{
 						combo.Dispose();
 					}
@@ -185,7 +184,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// <param name="text"></param>
 		/// <param name="fPossibleCurrent">generally true; false for items like "new analysis" that
 		/// can't possibly be the current item, though hvoAnalysis might match.</param>
-		/// <param name="tag">tag to specify an otherwise ambigious item.</param>
+		/// <param name="tag">tag to specify an otherwise ambiguous item.</param>
 		private void AddItem(ICmObject co, ITsString text, bool fPossibleCurrent, int tag = 0)
 		{
 			if (text.Length == 0)
@@ -203,7 +202,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		private void AddSeparatorLine()
 		{
-			//review
 			var builder = TsStringUtils.MakeStrBldr();
 			builder.Replace(0, 0, "-------", null);
 			builder.SetIntPropValues(0, builder.Length, (int)FwTextPropType.ktptWs, (int)FwTextPropVar.ktpvDefault, m_cache.DefaultUserWs);
@@ -231,7 +229,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				}
 			}
 
-			// Add option to clear the analysis altogeter.
+			// Add option to clear the analysis altogether.
 			AddItem(wordform, MakeSimpleString(ITextStrings.ksNewAnalysis), false, WfiWordformTags.kClassId);
 			// Add option to reset to the default
 			AddItem(null, MakeSimpleString(ITextStrings.ksUseDefaultAnalysis), false);
@@ -319,7 +317,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				// Review: Appears to be similar to code in LexEntryVc.
 				if (mf != null)
 				{
-					var entry = mf.Owner as ILexEntry;
+					var entry = (ILexEntry)mf.Owner;
 					var lexemeForm = entry.LexemeFormOA;
 					if (lexemeForm != null)
 					{
@@ -342,7 +340,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				var ichForm = tsb.Length;
 				tsb.ReplaceTsString(ichForm, ichForm, tssForm);
 				tsb.SetProperties(ichForm, tsb.Length, formTextProperties);
-
 				// add category (part of speech)
 				var msa = mb.MsaRA;
 				tsb.Replace(tsb.Length, tsb.Length, " ", null);
@@ -364,8 +361,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					tsb.Replace(ichMinSense, ichMinSense, tssGloss.Text, glossTextProperties);
 				}
 				else
+				{
 					tsb.Replace(ichMinSense, ichMinSense, ksMissingString, glossTextProperties);
-
+				}
 				// Enhance JohnT: use proper seps.
 				tsb.Replace(tsb.Length, tsb.Length, ksPartSeparator, null);
 			}
@@ -429,8 +427,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				bldr.SetIntPropValues((int)FwTextPropType.ktptSuperscript, (int)FwTextPropVar.ktpvEnum, (int)FwSuperscriptVal.kssvSub);
 			}
 
-
-
 			bldr.SetIntPropValues((int)FwTextPropType.ktptForeColor, (int)FwTextPropVar.ktpvDefault, color);
 			return bldr.GetTextProps();
 		}
@@ -445,10 +441,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// </summary>
 		public void Activate(Rect loc)
 		{
-			var combo = m_combo as FwComboBox;
-			if (combo != null)
+			if (m_combo is FwComboBox combo)
 			{
-
 				combo.Location = new Point(loc.left, loc.top);
 				// 21 is the default height of a combo, the smallest reasonable size.
 				combo.Size = new Size(Math.Max(loc.right - loc.left + 30, 200), Math.Max(loc.bottom - loc.top, 50));
@@ -459,9 +453,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			}
 			else
 			{
-				var c = (m_combo as ComboListBox);
-				c.AdjustSize(500, 400); // these are maximums!
-				c.Launch(Owner.RectangleToScreen(loc), Screen.GetWorkingArea(Owner));
+				var comboListBox = (ComboListBox)m_combo;
+				comboListBox.AdjustSize(500, 400); // these are maximums!
+				comboListBox.Launch(Owner.RectangleToScreen(loc), Screen.GetWorkingArea(Owner));
 			}
 		}
 
@@ -491,12 +485,13 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				m_hvoAnalysis = x;
 			}
-			Hide(); // Moved here from the end as the 'AnalysisChosen' method can
-					// cause the current object to be disposed of.  Not very nice...
-					// if there are other calls yet to be invoked on the object.
-					// LT-5775: this is no real fix, as a real fix would understand
-					// why the RootBox.MakeTextSelection would cause this object to
-					// be disposed.  This I don't know...
+			// Moved here from the end as the 'AnalysisChosen' method can
+			// cause the current object to be disposed of.  Not very nice...
+			// if there are other calls yet to be invoked on the object.
+			Hide();
+			// LT-5775: this is no real fix, as a real fix would understand
+			// why the RootBox.MakeTextSelection would cause this object to
+			// be disposed.  This I don't know...
 			AnalysisChosen?.Invoke(this, new EventArgs());
 
 		}
@@ -514,13 +509,11 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// </summary>
 		public void Hide()
 		{
-			var combo = m_combo as FwComboBox;
-			if (combo != null && Owner.Controls.Contains(combo))
+			if (m_combo is FwComboBox combo && Owner.Controls.Contains(combo))
 			{
 				Owner.Controls.Remove(combo);
 			}
-			var clb = m_combo as ComboListBox;
-			clb?.HideForm();
+			(m_combo as ComboListBox)?.HideForm();
 		}
 	}
 }

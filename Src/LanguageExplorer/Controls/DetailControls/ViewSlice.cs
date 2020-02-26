@@ -66,10 +66,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// <summary />
 		public override Control Control
 		{
-			get
-			{
-				return base.Control;
-			}
+			get => base.Control;
 			set
 			{
 				base.Control = value;

@@ -2,6 +2,7 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System.Linq;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.LCModel;
@@ -35,7 +36,7 @@ namespace LanguageExplorer.Controls.DetailControls
 				{
 					var list = (ICmPossibilityList)m_rootObj.ReferenceTargetOwner(m_rootFlid);
 					var ws = list.IsVernacular ? m_cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Handle : m_cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle;
-					if (list.PossibilitiesOS.Count > 0)
+					if (list.PossibilitiesOS.Any())
 					{
 						var label = ObjectLabel.CreateObjectLabel(m_cache, list.PossibilitiesOS[0], m_displayNameProperty, m_displayWs);
 						ws = label.AsTss.get_WritingSystem(0);

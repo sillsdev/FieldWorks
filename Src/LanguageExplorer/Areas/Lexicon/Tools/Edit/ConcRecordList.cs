@@ -27,10 +27,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 		public override bool IsControllingTheRecordTreeBar
 		{
-			get
-			{
-				return false;
-			}
+			get => false;
 			set
 			{
 				// Do not do anything here, unless you want to manage the "RecordList.RecordListRepository.ActiveRecordList" property.

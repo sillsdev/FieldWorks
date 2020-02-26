@@ -41,14 +41,8 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		/// </summary>
 		public bool TryAWordDialogIsRunning
 		{
-			get
-			{
-				return m_scheduler.TryAWordDialogIsRunning;
-			}
-			set
-			{
-				m_scheduler.TryAWordDialogIsRunning = value;
-			}
+			get => m_scheduler.TryAWordDialogIsRunning;
+			set => m_scheduler.TryAWordDialogIsRunning = value;
 		}
 
 		/// <summary>

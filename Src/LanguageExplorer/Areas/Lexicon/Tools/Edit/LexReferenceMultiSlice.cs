@@ -77,16 +77,14 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		{
 			var fieldName = XmlUtils.GetMandatoryAttributeValue(ConfigurationNode, "field");
 			var refs = ReflectionHelper.GetProperty(MyCmObject, fieldName);
-			var refsInts = refs as IEnumerable<int>;
-			if (refsInts != null)
+			if (refs is IEnumerable<int> refsInts)
 			{
 				m_refs = (refsInts.Select(hvo => Cache.ServiceLocator.GetInstance<ILexReferenceRepository>().GetObject(hvo))).ToList();
 			}
 			else
 			{
 				m_refs = new List<ILexReference>();
-				var refsObjs = refs as IEnumerable;
-				if (refsObjs != null)
+				if (refs is IEnumerable refsObjs)
 				{
 					m_refs.AddRange(refsObjs.Cast<ILexReference>());
 				}
@@ -512,9 +510,9 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				{
 					return;     // the user cancelled out of the operation.
 				}
-				if (lrt.MappingType == (int)LexRefTypeTags.MappingTypes.kmtSenseTree ||
-					lrt.MappingType == (int)LexRefTypeTags.MappingTypes.kmtEntryTree ||
-					lrt.MappingType == (int)LexRefTypeTags.MappingTypes.kmtEntryOrSenseTree)
+				if (lrt.MappingType == (int)LexRefTypeTags.MappingTypes.kmtSenseTree
+					|| lrt.MappingType == (int)LexRefTypeTags.MappingTypes.kmtEntryTree
+					|| lrt.MappingType == (int)LexRefTypeTags.MappingTypes.kmtEntryOrSenseTree)
 				{
 					// Use an existing ILexReference if one exists.
 					foreach (var lr in lrt.MembersOC)
@@ -628,9 +626,9 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		{
 			ICmObject first = null;
 			EntryGoDlg dlg = null;
-			var sTitle = string.Empty;
 			try
 			{
+				string sTitle;
 				switch ((LexRefTypeTags.MappingTypes)lrt.MappingType)
 				{
 					case LexRefTypeTags.MappingTypes.kmtEntryOrSensePair:

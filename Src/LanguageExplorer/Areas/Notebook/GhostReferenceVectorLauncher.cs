@@ -54,8 +54,7 @@ namespace LanguageExplorer.Areas.Notebook
 					// in one situation, where we need to create a notebook record, associate the current object
 					// with it, and add the values to it.
 					((IText)m_obj).AssociateWithNotebook(false);
-					IRnGenericRec notebookRec;
-					((IText)m_obj).NotebookRecordRefersToThisText(out notebookRec);
+					((IText)m_obj).NotebookRecordRefersToThisText(out var notebookRec);
 					var recHvo = notebookRec.Hvo;
 					var values = (from obj in chooser.ChosenObjects select obj.Hvo).ToArray();
 					var listFlid = m_flid;

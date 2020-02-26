@@ -137,9 +137,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			InformListeners(TaskPhase.Finished);
 		}
 
-		public string Description => Phase == TaskPhase.ErrorEncountered
-			? string.Format(ParserCoreStrings.ksX_error, m_description)
-			: m_description;
+		public string Description => Phase == TaskPhase.ErrorEncountered ? string.Format(ParserCoreStrings.ksX_error, m_description) : m_description;
 
 		/// <summary>
 		/// this is used to hold the results of a trace request
@@ -178,10 +176,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		/// </summary>
 		public string NotificationMessage
 		{
-			get
-			{
-				return m_notificationMessage;
-			}
+			get => m_notificationMessage;
 			set
 			{
 				m_notificationMessage = value;

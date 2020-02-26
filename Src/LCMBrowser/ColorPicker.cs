@@ -5,6 +5,7 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 
@@ -74,25 +75,14 @@ namespace LCMBrowser
 		/// <summary>
 		/// Gets the list of all colors from which to choose.
 		/// </summary>
-		public List<Color> Colors
-		{
-			get
-			{
-				var list = new List<Color>();
-				foreach (var clr in m_colorButtons.Keys)
-				{
-					list.Add(clr);
-				}
-				return list;
-			}
-		}
+		public List<Color> Colors => m_colorButtons.Keys.ToList();
 
 		/// <summary>
 		/// Gets or sets the current color.
 		/// </summary>
 		public Color SelectedColor
 		{
-			get { return m_clrSelected; }
+			get => m_clrSelected;
 			set
 			{
 				m_clrSelected = value;
@@ -100,8 +90,7 @@ namespace LCMBrowser
 				{
 					btn.Checked = false;
 				}
-				ToolStripButton clrBtn;
-				if (m_colorButtons.TryGetValue(m_clrSelected, out clrBtn))
+				if (m_colorButtons.TryGetValue(m_clrSelected, out var clrBtn))
 				{
 					clrBtn.Checked = true;
 				}
@@ -113,8 +102,7 @@ namespace LCMBrowser
 		/// </summary>
 		private void HandleButtonClick(object sender, EventArgs e)
 		{
-			var btn = sender as ToolStripButton;
-			SelectedColor = (Color)btn.Tag;
+			SelectedColor = (Color)((ToolStripButton)sender).Tag;
 			ColorPicked?.Invoke(this, SelectedColor);
 		}
 
@@ -123,7 +111,7 @@ namespace LCMBrowser
 		/// </summary>
 		private static void HandleButtonPaint(object sender, PaintEventArgs e)
 		{
-			var btn = sender as ToolStripButton;
+			var btn = (ToolStripButton)sender;
 			var rc = btn.ContentRectangle;
 			if (!btn.Checked && !btn.Selected)
 			{

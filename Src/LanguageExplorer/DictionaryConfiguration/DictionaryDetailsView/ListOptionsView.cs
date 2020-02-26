@@ -86,14 +86,14 @@ namespace LanguageExplorer.DictionaryConfiguration.DictionaryDetailsView
 		/// <summary>Whether or not the single "display option" checkbox below the list is checked</summary>
 		public bool DisplayOptionCheckBoxChecked
 		{
-			get { return checkBoxDisplayOption.Checked; }
-			set { checkBoxDisplayOption.Checked = value; }
+			get => checkBoxDisplayOption.Checked;
+			set => checkBoxDisplayOption.Checked = value;
 		}
 
 		public bool DisplayOptionCheckBox2Checked
 		{
-			get { return checkBoxDisplayOption2.Checked; }
-			set { checkBoxDisplayOption2.Checked = value; }
+			get => checkBoxDisplayOption2.Checked;
+			set => checkBoxDisplayOption2.Checked = value;
 		}
 
 		public List<ListViewItem> AvailableItems
@@ -103,32 +103,32 @@ namespace LanguageExplorer.DictionaryConfiguration.DictionaryDetailsView
 				listView.Items.Clear();
 				listView.Items.AddRange(value.ToArray());
 			}
-			get { return listView.Items.Cast<ListViewItem>().ToList(); }
+			get => listView.Items.Cast<ListViewItem>().ToList();
 		}
 
 		/// <summary>Label for the "DisplayOption" CheckBox below the list, eg "Disp WS Abbrevs" or "Disp Complex Forms in Paragraphs"</summary>
-		public string DisplayOptionCheckBoxLabel { set { checkBoxDisplayOption.Text = value; } }
+		public string DisplayOptionCheckBoxLabel { set => checkBoxDisplayOption.Text = value; }
 
-		public string DisplayOptionCheckBox2Label { set { checkBoxDisplayOption2.Text = value; } }
+		public string DisplayOptionCheckBox2Label { set => checkBoxDisplayOption2.Text = value; }
 
 		/// <summary>Label for the list, eg "Writing Systems:" or "Complex Form Types:"</summary>
-		public string ListViewLabel { set { labelListView.Text = value; } }
+		public string ListViewLabel { set => labelListView.Text = value; }
 
-		public bool MoveUpEnabled { set { buttonUp.Enabled = value; } }
+		public bool MoveUpEnabled { set => buttonUp.Enabled = value; }
 
-		public bool MoveDownEnabled { set { buttonDown.Enabled = value; } }
+		public bool MoveDownEnabled { set => buttonDown.Enabled = value; }
 
 		/// <summary>Whether or not the single "display option" checkbox below the list is visible</summary>
-		public bool DisplayOptionCheckBoxVisible { set { checkBoxDisplayOption.Visible = value; } }
+		public bool DisplayOptionCheckBoxVisible { set => checkBoxDisplayOption.Visible = value; }
 
 		/// <summary>Whether or not the single "display option2" checkbox below the list is visible</summary>
-		public bool DisplayOptionCheckBox2Visible { set { checkBoxDisplayOption2.Visible = value; } }
+		public bool DisplayOptionCheckBox2Visible { set => checkBoxDisplayOption2.Visible = value; }
 
 		/// <summary>Whether or not the single "display option" checkbox below the list is enabled</summary>
 		public bool DisplayOptionCheckBoxEnabled
 		{
-			get { return checkBoxDisplayOption.Enabled; }
-			set { checkBoxDisplayOption.Enabled = value; }
+			get => checkBoxDisplayOption.Enabled;
+			set => checkBoxDisplayOption.Enabled = value;
 		}
 
 		/// <note>
@@ -147,39 +147,39 @@ namespace LanguageExplorer.DictionaryConfiguration.DictionaryDetailsView
 
 		public event EventHandler UpClicked
 		{
-			add { buttonUp.Click += value; }
-			remove { buttonUp.Click -= value; }
+			add => buttonUp.Click += value;
+			remove => buttonUp.Click -= value;
 		}
 
 		public event EventHandler DownClicked
 		{
-			add { buttonDown.Click += value; }
-			remove { buttonDown.Click -= value; }
+			add => buttonDown.Click += value;
+			remove => buttonDown.Click -= value;
 		}
 
 		public event ListViewItemSelectionChangedEventHandler ListItemSelectionChanged
 		{
-			add { listView.ItemSelectionChanged += value; }
-			remove { listView.ItemSelectionChanged -= value; }
+			add => listView.ItemSelectionChanged += value;
+			remove => listView.ItemSelectionChanged -= value;
 		}
 
 		public event ItemCheckedEventHandler ListItemCheckBoxChanged
 		{
-			add { listView.ItemChecked += value; }
-			remove { listView.ItemChecked -= value; }
+			add => listView.ItemChecked += value;
+			remove => listView.ItemChecked -= value;
 		}
 
 		/// <summary>EventHandler for the single "display option" checkbox below the list</summary>
 		public event EventHandler DisplayOptionCheckBoxChanged
 		{
-			add { checkBoxDisplayOption.CheckedChanged += value; }
-			remove { checkBoxDisplayOption.CheckedChanged -= value; }
+			add => checkBoxDisplayOption.CheckedChanged += value;
+			remove => checkBoxDisplayOption.CheckedChanged -= value;
 		}
 
 		public event EventHandler DisplayOptionCheckBox2Changed
 		{
-			add { checkBoxDisplayOption2.CheckedChanged += value; }
-			remove { checkBoxDisplayOption2.CheckedChanged -= value; }
+			add => checkBoxDisplayOption2.CheckedChanged += value;
+			remove => checkBoxDisplayOption2.CheckedChanged -= value;
 		}
 	}
 }

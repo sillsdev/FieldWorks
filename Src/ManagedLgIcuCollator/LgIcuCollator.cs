@@ -82,7 +82,7 @@ namespace SIL.FieldWorks.Language
 			throw new NotSupportedException();
 		}
 
-		public void SortKeyRgch(string _ch, int cchIn, LgCollatingOptions colopt, int cchMaxOut, ArrayPtr _chKey, out int _cchOut)
+		public void SortKeyRgch(string _ch, int cchIn, LgCollatingOptions colopt, int cchMaxOut, ArrayPtr chKey, out int cchOut)
 		{
 			throw new NotSupportedException();
 		}
@@ -109,16 +109,13 @@ namespace SIL.FieldWorks.Language
 
 		public int CompareVariant(object saValue1, object saValue2, LgCollatingOptions colopt)
 		{
-			var key1 = saValue1 as byte[];
-			var key2 = saValue2 as byte[];
-
 			EnsureCollator();
 
-			if (key1 == null)
+			if (!(saValue1 is byte[] key1))
 			{
 				return 1;
 			}
-			if (key2 == null)
+			if (!(saValue2 is byte[] key2))
 			{
 				return -1;
 			}
@@ -134,15 +131,7 @@ namespace SIL.FieldWorks.Language
 					return -1;
 				}
 			}
-			if (key1.Length > key2.Length)
-			{
-				return 1;
-			}
-			if (key2.Length > key1.Length)
-			{
-				return -1;
-			}
-			return 0;
+			return key1.Length > key2.Length ? 1 : key2.Length > key1.Length ? -1 : 0;
 		}
 
 

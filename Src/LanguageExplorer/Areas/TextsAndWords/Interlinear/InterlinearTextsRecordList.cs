@@ -55,21 +55,17 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		protected override void ReportCannotDelete()
 		{
-			var text = CurrentObject is IWfiWordform ? ITextStrings.ksCannotDeleteWordform : ITextStrings.ksCannotDeleteScripture;
-			MessageBox.Show(PropertyTable.GetValue<Form>(FwUtils.window), text, ITextStrings.ksError, MessageBoxButtons.OK, MessageBoxIcon.Error);
+			MessageBox.Show(PropertyTable.GetValue<Form>(FwUtils.window), CurrentObject is IWfiWordform ? ITextStrings.ksCannotDeleteWordform : ITextStrings.ksCannotDeleteScripture, ITextStrings.ksError, MessageBoxButtons.OK, MessageBoxIcon.Error);
 		}
 
 		protected override bool AddItemToList(int hvoItem)
 		{
-
-			IStText stText;
-			if (!m_cache.ServiceLocator.GetInstance<IStTextRepository>().TryGetObject(hvoItem, out stText))
+			if (!m_cache.ServiceLocator.GetInstance<IStTextRepository>().TryGetObject(hvoItem, out var stText))
 			{
 				// Not an StText; we have no idea how to add it (possibly a WfiWordform?).
 				return base.AddItemToList(hvoItem);
 			}
-			var interestingTexts = GetInterestingTextList();
-			return interestingTexts.AddChapterToInterestingTexts(stText);
+			return GetInterestingTextList().AddChapterToInterestingTexts(stText);
 		}
 
 		#endregion
@@ -78,9 +74,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		{
 			// get saved scripture choices
 			var interestingTextsList = GetInterestingTextList();
-			var interestingTexts = interestingTextsList.InterestingTexts.ToArray();
 
-			using (var dlg = new FilterTextsDialog(PropertyTable.GetValue<IApp>(LanguageExplorerConstants.App), m_cache, interestingTexts, PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider)))
+			using (var dlg = new FilterTextsDialog(PropertyTable.GetValue<IApp>(LanguageExplorerConstants.App), m_cache, interestingTextsList.InterestingTexts.ToList(), PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider)))
 			{
 				if (dlg.ShowDialog(PropertyTable.GetValue<Form>(FwUtils.window)) != DialogResult.OK)
 				{
@@ -136,7 +131,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				// Tell the user we're turning off the filter, and then do it.
 				MessageBox.Show(ITextStrings.ksTurningOffFilter, ITextStrings.ksNote, MessageBoxButtons.OK);
-				Publisher.Publish("RemoveFilters", this);
+				Publisher.Publish(new PublisherParameterObject("RemoveFilters", this));
 				_activeMenuBarFilter = null;
 			}
 			SaveOnChangeRecord(); // commit any changes before we create a new text.
@@ -145,8 +140,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			// (when selected from the text list: ie a genre w/o a text was selected)
 			var property = GetCorrespondingPropertyName("DelayedGenreAssignment");
 			var genreList = PropertyTable.GetValue<List<TreeNode>>(property, null);
-			var ownerText = newText.Owner as IText;
-			if (genreList != null && genreList.Count > 0 && ownerText != null)
+			if (genreList != null && genreList.Count > 0 && newText.Owner is IText ownerText)
 			{
 				foreach (var node in genreList)
 				{

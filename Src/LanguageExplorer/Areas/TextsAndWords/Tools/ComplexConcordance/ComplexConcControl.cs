@@ -147,8 +147,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 			int start, end;
 			if (!sel.IsRange)
 			{
-				int index;
-				GetInsertionIndex(sel, out parent, out index);
+				GetInsertionIndex(sel, out parent, out var index);
 				start = index - 1;
 				end = index;
 			}
@@ -168,9 +167,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 			{
 				return false;
 			}
-			ComplexConcPatternNode parent;
-			int index;
-			GetInsertionIndex(sel, out parent, out index);
+			GetInsertionIndex(sel, out var parent, out var index);
 			if (index == 0)
 			{
 				return false;
@@ -190,9 +187,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 			{
 				return false;
 			}
-			ComplexConcPatternNode parent;
-			int index;
-			GetInsertionIndex(sel, out parent, out index);
+			GetInsertionIndex(sel, out var parent, out var index);
 			if (parent.IsLeaf)
 			{
 				return false;
@@ -420,20 +415,20 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 			}
 			if (parent.Parent != null && parent.Children.Count == 1)
 			{
-				var p = parent.Parent;
+				var grandParent = parent.Parent;
 				var parentIndex = GetNodeIndex(parent);
-				p.Children.RemoveAt(parentIndex);
-				p.Children.Insert(parentIndex, parent.Children[0]);
+				grandParent.Children.RemoveAt(parentIndex);
+				grandParent.Children.Insert(parentIndex, parent.Children[0]);
 				index = index == 1 ? parentIndex + 1 : parentIndex;
 			}
 			else
 			{
 				while (parent.Parent != null && parent.IsLeaf)
 				{
-					var p = parent.Parent;
+					var grandParent = parent.Parent;
 					index = GetNodeIndex(parent);
-					p.Children.Remove(parent);
-					parent = p;
+					grandParent.Children.Remove(parent);
+					parent = grandParent;
 				}
 			}
 			if (index >= parent.Children.Count)
@@ -667,9 +662,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 				return;
 			}
 			var sel = SelectionHelper.Create(m_view);
-			ComplexConcPatternNode parent;
-			int index;
-			GetInsertionIndex(sel, out parent, out index);
+			GetInsertionIndex(sel, out var parent, out var index);
 			// if the current selection is a range remove the items we are overwriting
 			if (sel.IsRange)
 			{
@@ -801,22 +794,22 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 			}
 			else
 			{
-				var morphNode = nodes[0] as ComplexConcMorphNode;
-				if (morphNode != null)
+				switch (nodes[0])
 				{
-					using (var dlg = new ComplexConcMorphDlg())
+					case ComplexConcMorphNode morphNode:
 					{
-						dlg.SetDlgInfo(m_cache, flexComponentParameters, morphNode);
-						if (dlg.ShowDialog(fwMainWnd) == DialogResult.Cancel)
+						using (var dlg = new ComplexConcMorphDlg())
 						{
-							return;
+							dlg.SetDlgInfo(m_cache, flexComponentParameters, morphNode);
+							if (dlg.ShowDialog(fwMainWnd) == DialogResult.Cancel)
+							{
+								return;
+							}
 						}
+
+						break;
 					}
-				}
-				else
-				{
-					var tagNode = nodes[0] as ComplexConcTagNode;
-					if (tagNode != null)
+					case ComplexConcTagNode tagNode:
 					{
 						using (var dlg = new ComplexConcTagDlg())
 						{
@@ -826,6 +819,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 								return;
 							}
 						}
+
+						break;
 					}
 				}
 			}

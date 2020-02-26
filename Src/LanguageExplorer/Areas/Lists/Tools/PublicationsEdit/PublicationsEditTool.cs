@@ -25,7 +25,6 @@ namespace LanguageExplorer.Areas.Lists.Tools.PublicationsEdit
 	internal sealed class PublicationsEditTool : IListTool
 	{
 		private const string PublicationList = "PublicationList";
-		private const string PublicationsEditParameters = "PublicationsEditParameters";
 		/// <summary>
 		/// Main control to the right of the side bar control. This holds a RecordBar on the left and a PaneBarContainer on the right.
 		/// The RecordBar has no top PaneBar for information, menus, etc.
@@ -177,7 +176,6 @@ namespace LanguageExplorer.Areas.Lists.Tools.PublicationsEdit
 
 				_majorFlexComponentParameters = majorFlexComponentParameters;
 				_sharedListToolsUiWidgetMenuHelper = new SharedListToolsUiWidgetMenuHelper(majorFlexComponentParameters, tool, list, recordList, dataTree);
-
 				SetupToolUiWidgets(tool);
 			}
 

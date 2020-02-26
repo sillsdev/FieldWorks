@@ -174,8 +174,7 @@ namespace LanguageExplorer.Areas
 		public override void PropChanged(int hvo, int tag, int ivMin, int cvIns, int cvDel)
 		{
 			base.PropChanged(hvo, tag, ivMin, cvIns, cvDel);
-			int[] values;
-			if (!m_values.TryGetValue(hvo, out values))
+			if (!m_values.TryGetValue(hvo, out _))
 			{
 				return;
 			}
@@ -195,16 +194,14 @@ namespace LanguageExplorer.Areas
 		/// </summary>
 		private int[] GetAnalysisOccurrences(int hvo, bool includeChildren)
 		{
-			int[] values;
-			if (m_values.TryGetValue(hvo, out values))
+			if (m_values.TryGetValue(hvo, out var values))
 			{
 				return values;
 			}
 			var analysis = (IAnalysis)m_services.GetObject(hvo);
-			var wf = analysis.Wordform;
-			var bag = wf.OccurrencesBag;
+			var bag = analysis.Wordform.OccurrencesBag;
 			var valuesList = new List<int>(bag.Count);
-			foreach (var seg in bag.Items.Where(item => BelongsToInterestingText(item)))
+			foreach (var seg in bag.Items.Where(BelongsToInterestingText))
 			{
 				foreach (var occurrence in seg.GetOccurrencesOfAnalysis(analysis, bag.Occurrences(seg), includeChildren))
 				{
@@ -262,8 +259,7 @@ namespace LanguageExplorer.Areas
 		public void UpdateAnalysisOccurrences(IAnalysis obj, bool includeChildren)
 		{
 			var hvo = obj.Hvo;
-			int[] values;
-			if (!m_values.TryGetValue(hvo, out values))
+			if (!m_values.TryGetValue(hvo, out var values))
 			{
 				return; // never loaded it, don't unless we get asked for it.
 			}
@@ -299,10 +295,11 @@ namespace LanguageExplorer.Areas
 		/// </summary>
 		public void SetOccurrences(int hvo, IEnumerable<IParaFragment> occurrences)
 		{
+			var asList = occurrences.ToList();
 			var oldCount = m_concValues.Length;
-			var values = new int[occurrences.Count()];
+			var values = new int[asList.Count];
 			var i = 0;
-			foreach (var occurrence in occurrences)
+			foreach (var occurrence in asList)
 			{
 				var hvoOcc = m_nextId--;
 				values[i++] = hvoOcc;
@@ -326,18 +323,15 @@ namespace LanguageExplorer.Areas
 		/// </summary>
 		private int[] GetSenseOccurrences(int hvo)
 		{
-			int[] values;
-			if (m_values.TryGetValue(hvo, out values))
+			if (m_values.TryGetValue(hvo, out var values))
 			{
 				return values;
 			}
-			var sense = m_services.GetInstance<ILexSenseRepository>().GetObject(hvo);
-			var bundles = m_services.GetInstance<IWfiMorphBundleRepository>().InstancesWithSense(sense);
 			var valuesList = new List<int>();
-			foreach (IWfiAnalysis wa in (bundles.Select(bundle => bundle.Owner)).Distinct())
+			foreach (IWfiAnalysis wa in m_services.GetInstance<IWfiMorphBundleRepository>().InstancesWithSense(m_services.GetInstance<ILexSenseRepository>().GetObject(hvo)).Select(bundle => bundle.Owner).Distinct())
 			{
 				var bag = ((IWfiWordform)wa.Owner).OccurrencesBag;
-				foreach (var seg in bag.Items.Where(item => BelongsToInterestingText(item)))
+				foreach (var seg in bag.Items.Where(BelongsToInterestingText))
 				{
 					foreach (var occurrence in seg.GetOccurrencesOfAnalysis(wa, bag.Occurrences(seg), true))
 					{
@@ -358,8 +352,7 @@ namespace LanguageExplorer.Areas
 			{
 				return true; // no filtering
 			}
-			var text = seg.Paragraph?.Owner as IStText;
-			return (text != null && m_interestingTexts.IsInterestingText(text));
+			return seg.Paragraph?.Owner is IStText text && m_interestingTexts.IsInterestingText(text);
 
 		}
 
@@ -415,12 +408,7 @@ namespace LanguageExplorer.Areas
 				case kflidSenseOccurrences:
 					return GetSenseOccurrences(hvo)[index];
 				case kflidTextGenres:
-					var text = GetStText(hvo);
-					if (text != null)
-					{
-						return text.GenreCategories[index].Hvo;
-					}
-					return 0;
+					return GetStText(hvo)?.GenreCategories[index].Hvo ?? 0;
 			}
 			return base.get_VecItem(hvo, tag, index);
 		}
@@ -442,12 +430,7 @@ namespace LanguageExplorer.Areas
 				case kflidSenseOccurrences:
 					return GetSenseOccurrences(hvo).Length;
 				case kflidTextGenres:
-					var text = GetStText(hvo);
-					if (text != null)
-					{
-						return text.GenreCategories.Count;
-					}
-					return 0;
+					return GetStText(hvo)?.GenreCategories.Count ?? 0;
 			}
 			return base.get_VecSize(hvo, tag);
 		}
@@ -458,11 +441,7 @@ namespace LanguageExplorer.Areas
 			{
 				case kflidTextIsTranslation:
 					var text = GetStText(hvo);
-					if (text != null)
-					{
-						return text.IsTranslation;
-					}
-					return false;
+					return text != null && text.IsTranslation;
 			}
 			return base.get_BooleanProp(hvo, tag);
 		}
@@ -475,8 +454,7 @@ namespace LanguageExplorer.Areas
 					return GetAnalysisOccurrences(hvo).Length;
 				case kflidBeginOffset:
 					{
-						IParaFragment occurrence;
-						if (m_occurrences.TryGetValue(hvo, out occurrence) && occurrence.IsValid)
+						if (m_occurrences.TryGetValue(hvo, out var occurrence) && occurrence.IsValid)
 						{
 							return occurrence.GetMyBeginOffsetInPara();
 						}
@@ -484,8 +462,7 @@ namespace LanguageExplorer.Areas
 					}
 				case kflidEndOffset:
 					{
-						IParaFragment occurrence;
-						if (m_occurrences.TryGetValue(hvo, out occurrence) && occurrence.IsValid)
+						if (m_occurrences.TryGetValue(hvo, out var occurrence) && occurrence.IsValid)
 						{
 							return occurrence.GetMyEndOffsetInPara();
 						}
@@ -549,8 +526,7 @@ namespace LanguageExplorer.Areas
 			{
 				case kflidTextObject:
 					{
-						IParaFragment occurrence;
-						if (m_occurrences.TryGetValue(hvo, out occurrence) && occurrence.IsValid)
+						if (m_occurrences.TryGetValue(hvo, out var occurrence) && occurrence.IsValid)
 						{
 							return occurrence.TextObject.Hvo;
 						}
@@ -558,8 +534,7 @@ namespace LanguageExplorer.Areas
 					}
 				case kflidSegment:
 					{
-						IParaFragment occurrence;
-						if (m_occurrences.TryGetValue(hvo, out occurrence) && occurrence.IsValid && occurrence.Segment != null)
+						if (m_occurrences.TryGetValue(hvo, out var occurrence) && occurrence.IsValid && occurrence.Segment != null)
 						{
 							return occurrence.Segment.Hvo;
 						}
@@ -567,8 +542,7 @@ namespace LanguageExplorer.Areas
 					}
 				case kflidAnalysis:
 					{
-						IParaFragment occurrence;
-						if (m_occurrences.TryGetValue(hvo, out occurrence) && occurrence.IsValid && occurrence.Analysis != null)
+						if (m_occurrences.TryGetValue(hvo, out var occurrence) && occurrence.IsValid && occurrence.Analysis != null)
 						{
 							return occurrence.Analysis.Hvo;
 						}
@@ -576,8 +550,7 @@ namespace LanguageExplorer.Areas
 					}
 				case kflidParagraph:
 					{
-						IParaFragment occurrence;
-						if (m_occurrences.TryGetValue(hvo, out occurrence) && occurrence.IsValid)
+						if (m_occurrences.TryGetValue(hvo, out var occurrence) && occurrence.IsValid)
 						{
 							return occurrence.Paragraph.Hvo;
 						}
@@ -596,14 +569,12 @@ namespace LanguageExplorer.Areas
 			return m_occurrences.ContainsKey(hvo) ? m_occurrences[hvo] : (IParaFragment)null;
 		}
 
-		void m_interestingTexts_InterestingTextsChanged(object sender, InterestingTextsChangedArgs e)
+		private void m_interestingTexts_InterestingTextsChanged(object sender, InterestingTextsChangedArgs e)
 		{
 			m_values.Clear(); // Forget all we know about occurrences, since the texts they are based on have changed.
-			const int flid = ObjectListPublisher.OwningFlid;
-			var langProj = m_services.GetInstance<ILangProjectRepository>().AllInstances().First();
 			var oldSize = m_services.GetInstance<IWfiWordformRepository>().AllInstances().Count();
 			// Force everything to be redisplayed by pretending all the wordforms were replaced.
-			SendPropChanged(langProj.Hvo, flid, 0, oldSize, oldSize);
+			SendPropChanged(PropertyTable.GetValue<LcmCache>(FwUtils.cache).LanguageProject.Hvo, ObjectListPublisher.OwningFlid, 0, oldSize, oldSize);
 		}
 
 		/// <summary>

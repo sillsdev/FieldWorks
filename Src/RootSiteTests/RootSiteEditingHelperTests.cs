@@ -46,8 +46,7 @@ namespace SIL.FieldWorks.Common.RootSites
 					Assert.IsNotNull(pict);
 					Assert.IsTrue(pict.PictureFileRA.AbsoluteInternalPath == pict.PictureFileRA.InternalPath);
 					var sTextRepOfObject = editHelper.TextRepOfObj(Cache, pict.Guid);
-					int objectDataType;
-					var guid = editHelper.MakeObjFromText(Cache, sTextRepOfObject, null, out objectDataType);
+					var guid = editHelper.MakeObjFromText(Cache, sTextRepOfObject, null, out _);
 					var pictNew = Cache.ServiceLocator.GetInstance<ICmPictureRepository>().GetObject(guid);
 					Assert.IsTrue(pict != pictNew);
 					internalPathOrig = pict.PictureFileRA.AbsoluteInternalPath;

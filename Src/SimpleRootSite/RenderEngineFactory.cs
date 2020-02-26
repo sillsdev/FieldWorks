@@ -48,15 +48,13 @@ namespace SIL.FieldWorks.Common.RootSites
 
 			if (ws.IsGraphiteEnabled)
 			{
-				Dictionary<Tuple<string, bool, bool>, GraphiteEngine> wsGraphiteEngines;
-				if (!m_graphiteEngines.TryGetValue(ws, out wsGraphiteEngines))
+				if (!m_graphiteEngines.TryGetValue(ws, out var wsGraphiteEngines))
 				{
 					wsGraphiteEngines = new Dictionary<Tuple<string, bool, bool>, GraphiteEngine>();
 					m_graphiteEngines[ws] = wsGraphiteEngines;
 				}
 				var key = Tuple.Create(fontName, chrp.ttvBold == (int)FwTextToggleVal.kttvForceOn, chrp.ttvItalic == (int)FwTextToggleVal.kttvForceOn);
-				GraphiteEngine graphiteEngine;
-				if (!wsGraphiteEngines.TryGetValue(key, out graphiteEngine))
+				if (!wsGraphiteEngines.TryGetValue(key, out var graphiteEngine))
 				{
 					graphiteEngine = GraphiteEngineClass.Create();
 					var fontFeatures = fontName == ws.DefaultFontName ? ws.DefaultFontFeatures : null;
@@ -81,15 +79,13 @@ namespace SIL.FieldWorks.Common.RootSites
 			}
 			else
 			{
-				Dictionary<Tuple<string, bool, bool>, GraphiteEngine> wsGraphiteEngines;
-				if (m_graphiteEngines.TryGetValue(ws, out wsGraphiteEngines))
+				if (m_graphiteEngines.TryGetValue(ws, out var wsGraphiteEngines))
 				{
 					ReleaseRenderEngines(wsGraphiteEngines.Values);
 					m_graphiteEngines.Remove(ws);
 				}
 			}
-			IRenderEngine nonGraphiteEngine;
-			if (!m_nonGraphiteEngines.TryGetValue(ws.WritingSystemFactory, out nonGraphiteEngine))
+			if (!m_nonGraphiteEngines.TryGetValue(ws.WritingSystemFactory, out var nonGraphiteEngine))
 			{
 				nonGraphiteEngine = UniscribeEngineClass.Create();
 				nonGraphiteEngine.InitRenderer(vg, null);
@@ -126,8 +122,7 @@ namespace SIL.FieldWorks.Common.RootSites
 				ReleaseRenderEngines(kvp.Value.Values);
 				m_graphiteEngines.Remove(kvp.Key);
 			}
-			IRenderEngine nonGraphiteRenderEngine;
-			if (m_nonGraphiteEngines.TryGetValue(wsf, out nonGraphiteRenderEngine))
+			if (m_nonGraphiteEngines.TryGetValue(wsf, out var nonGraphiteRenderEngine))
 			{
 				Marshal.ReleaseComObject(nonGraphiteRenderEngine);
 				m_nonGraphiteEngines.Remove(wsf);

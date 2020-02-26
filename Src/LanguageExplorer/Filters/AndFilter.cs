@@ -24,14 +24,7 @@ namespace LanguageExplorer.Filters
 		/// </summary>
 		public override bool Accept(IManyOnePathSortItem item)
 		{
-			foreach (RecordFilter f in Filters)
-			{
-				if (!f.Accept(item))
-				{
-					return false;
-				}
-			}
-			return true;
+			return Filters.Cast<RecordFilter>().All(f => f.Accept(item));
 		}
 
 		/// <summary>
@@ -119,9 +112,9 @@ namespace LanguageExplorer.Filters
 				base.DataAccess = value;
 				foreach (var obj in Filters)
 				{
-					if (obj is IStoresDataAccess)
+					if (obj is IStoresDataAccess storesDataAccess)
 					{
-						((IStoresDataAccess)obj).DataAccess = value;
+						storesDataAccess.DataAccess = value;
 					}
 				}
 			}
@@ -143,16 +136,7 @@ namespace LanguageExplorer.Filters
 		/// </summary>
 		public override RecordFilter EqualContainedFilter(RecordFilter other)
 		{
-			for (var i = 0; i < Count; ++i)
-			{
-				var filter = Filters[i] as RecordFilter;
-				var result = filter.EqualContainedFilter(other);
-				if (result != null)
-				{
-					return result;
-				}
-			}
-			return null;
+			return Filters.Cast<RecordFilter>().Select(recordFilter => recordFilter.EqualContainedFilter(other)).FirstOrDefault();
 		}
 	}
 }

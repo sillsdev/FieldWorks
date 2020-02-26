@@ -92,13 +92,12 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				case kfragRoot:
 					if (m_dxLabWidth == 0)
 					{
-						int dmpx1, dmpy;    //, dmpx2;
-						vwenv.get_StringWidth(m_tssTitle, m_ttpBold, out dmpx1, out dmpy);
+						vwenv.get_StringWidth(m_tssTitle, m_ttpBold, out var dmpx1, out _);
 						m_dxLabWidth = dmpx1 + 13000; // add 3 pt spacing to box, 10 to margin.
 						m_dxWsLabWidth = 0;
 						foreach (var tssLabel in m_WsLabels)
 						{
-							vwenv.get_StringWidth(tssLabel, m_ttpWsLabel, out dmpx1, out dmpy);
+							vwenv.get_StringWidth(tssLabel, m_ttpWsLabel, out dmpx1, out _);
 							m_dxWsLabWidth = Math.Max(m_dxWsLabWidth, dmpx1);
 						}
 						m_dxWsLabWidth += 18000; // 3 pts white space each side, 11 margin, 1 border, plus 1 for safety.

@@ -3,6 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Collections.Generic;
+using System.Linq;
 using System.Xml.Linq;
 using LanguageExplorer.Filters;
 using SIL.LCModel;
@@ -48,7 +49,7 @@ namespace LanguageExplorer.Controls.XMLViews
 
 		internal int[] Targets
 		{
-			get { return m_originalTargets; }
+			get => m_originalTargets;
 			set
 			{
 				m_originalTargets = value;
@@ -84,17 +85,7 @@ namespace LanguageExplorer.Controls.XMLViews
 				}
 				return matches.Count == m_targets.Count; // success if we found them all.
 			}
-			// any or none: look for first match
-			foreach (var hvo in values)
-			{
-				if (m_targets.Contains(hvo))
-				{
-					// If we wanted any, finding one is a success; if we wanted none, finding any is a failure.
-					return Mode == ListMatchOptions.Any;
-				}
-			}
-			// If we wanted any, not finding any is failure; if we wanted none, not finding any is success.
-			return Mode != ListMatchOptions.Any;
+			return values.Any(hvo => m_targets.Contains(hvo)) ? Mode == ListMatchOptions.Any : Mode != ListMatchOptions.Any;
 		}
 
 		/// <summary>
@@ -121,10 +112,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		public override ISilDataAccess DataAccess
 		{
-			set
-			{
-				m_sda = value;
-			}
+			set => m_sda = value;
 		}
 
 		/// <summary>
@@ -194,19 +182,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				// We don't want to crash if we haven't been properly initialized!  See LT-9731.
 				// And this  filter probably isn't valid anyway.
-				if (m_cache == null)
-				{
-					return false;
-				}
-				foreach (var hvo in m_targets)
-				{
-					ICmObject dummy;
-					if (!m_cache.ServiceLocator.GetInstance<ICmObjectRepository>().TryGetObject(hvo, out dummy))
-					{
-						return false;
-					}
-				}
-				return true;
+				return m_cache != null && m_targets.All(hvo => m_cache.ServiceLocator.GetInstance<ICmObjectRepository>().TryGetObject(hvo, out _));
 			}
 		}
 	}

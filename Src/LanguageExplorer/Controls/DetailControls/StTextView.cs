@@ -32,10 +32,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		public IStText StText
 		{
-			get
-			{
-				return m_text;
-			}
+			get => m_text;
 			set
 			{
 				var oldText = m_text;

@@ -6,6 +6,7 @@ using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
+using System.Linq;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FwCoreDlgs.Controls;
@@ -86,19 +87,13 @@ namespace LanguageExplorer.Controls.DetailControls
 			var msaRepository = m_cache.ServiceLocator.GetInstance<IMoMorphSynAnalysisRepository>();
 			if (hvoOriginalMsa != 0)
 			{
-				foreach (var sense in entry.AllSenses)
+				foreach (var sense in entry.AllSenses.Where(sense => sense.MorphoSyntaxAnalysisRA != null && sense.MorphoSyntaxAnalysisRA == msaRepository.GetObject(hvoOriginalMsa)))
 				{
-					if (sense.MorphoSyntaxAnalysisRA != null)
+					if (tisb.Text != null)
 					{
-						if (sense.MorphoSyntaxAnalysisRA == msaRepository.GetObject(hvoOriginalMsa))
-						{
-							if (tisb.Text != null)
-							{
-								tisb.Append(", ");  // REVIEW: IS LOCALIZATION NEEDED FOR BUILDING THIS LIST?
-							}
-							tisb.AppendTsString(sense.ShortNameTSS);
-						}
+						tisb.Append(", ");  // REVIEW: IS LOCALIZATION NEEDED FOR BUILDING THIS LIST?
 					}
+					tisb.AppendTsString(sense.ShortNameTSS);
 				}
 			}
 			m_fwtbSenses.Tss = tisb.GetString();
@@ -115,8 +110,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			}
 			// Reset window location.
 			// Get location to the stored values, if any.
-			Point dlgLocation;
-			if (_flexComponentParameters.PropertyTable.TryGetValue("msaCreatorDlgLocation", out dlgLocation))
+			if (_flexComponentParameters.PropertyTable.TryGetValue("msaCreatorDlgLocation", out Point dlgLocation))
 			{
 				// JohnT: this dialog can't be resized. So it doesn't make sense to
 				// remember a size. If we do, we need to override OnLoad (as in SimpleListChooser)

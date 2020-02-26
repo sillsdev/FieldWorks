@@ -47,7 +47,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		/// <summary />
 		public ICmObject DisplayParent
 		{
-			set { m_displayParent = value; }
+			set => m_displayParent = value;
 		}
 	}
 }

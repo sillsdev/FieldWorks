@@ -221,8 +221,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			// SUT
 			var testController = new HeadwordNumbersController(view, model, Cache);
 
-			Assert.That(view.HomographWritingSystem, Is.StringContaining("French"),
-				"The writing system in the view should match the model (but show the pretty name).");
+			Assert.That(view.HomographWritingSystem, Is.StringContaining("French"), "The writing system in the view should match the model (but show the pretty name).");
 		}
 
 		[Test]
@@ -274,7 +273,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 
 			internal void TriggerCustomDigitsChanged()
 			{
-				CustomDigitsChanged(this, null);
+				CustomDigitsChanged?.Invoke(this, null);
 			}
 			public void SetWsFactoryForCustomDigits(ILgWritingSystemFactory factory) { }
 		}

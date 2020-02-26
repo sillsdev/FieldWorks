@@ -218,16 +218,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			var cvsli = vwsel.CLevels(false);
 			// CLevels includes the string property itself, but AllTextSelInfo doesn't need it.
 			cvsli--;
-			int ihvoRoot;
-			int tagTextProp;
-			int cpropPrevious;
-			int ichAnchor;
-			int ichEnd;
-			int ws;
-			bool fAssocPrev;
-			int ihvoEnd;
-			ITsTextProps ttp;
-			var rgvsli = SelLevInfo.AllTextSelInfo(vwsel, cvsli, out ihvoRoot, out tagTextProp, out cpropPrevious, out ichAnchor, out ichEnd, out ws, out fAssocPrev, out ihvoEnd, out ttp);
+			var rgvsli = SelLevInfo.AllTextSelInfo(vwsel, cvsli, out var ihvoRoot, out var tagTextProp, out var cpropPrevious, out var ichAnchor, out var ichEnd, out var ws, out var fAssocPrev, out var ihvoEnd, out var ttp);
 			Debug.Assert(ichAnchor == ichEnd);
 			Debug.Assert(ichAnchor > 0);
 			--ichEnd;

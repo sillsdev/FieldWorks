@@ -21,8 +21,6 @@ namespace LanguageExplorer.Areas.Grammar.Tools.GrammarSketch
 	{
 		private GrammarSketchHtmlViewer _grammarSketchHtmlViewer;
 		private GrammarSketchToolMenuHelper _toolMenuHelper;
-		[Import(AreaServices.GrammarAreaMachineName)]
-		private IArea _area;
 
 		#region Implementation of IMajorFlexComponent
 
@@ -104,7 +102,8 @@ namespace LanguageExplorer.Areas.Grammar.Tools.GrammarSketch
 		/// <summary>
 		/// Get the area for the tool.
 		/// </summary>
-		public IArea Area => _area;
+		[field: Import(AreaServices.GrammarAreaMachineName)]
+		public IArea Area { get; private set; }
 
 		/// <summary>
 		/// Get the image for the area.
@@ -125,7 +124,6 @@ namespace LanguageExplorer.Areas.Grammar.Tools.GrammarSketch
 				Guard.AgainstNull(tool, nameof(tool));
 
 				_majorFlexComponentParameters = majorFlexComponentParameters;
-
 				var toolUiWidgetParameterObject = new ToolUiWidgetParameterObject(tool);
 				toolUiWidgetParameterObject.MenuItemsForTool[MainMenu.File].Add(Command.CmdExport, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(FileExportMenu_Click, () => UiWidgetServices.CanSeeAndDo));
 				_majorFlexComponentParameters.UiWidgetController.AddHandlers(toolUiWidgetParameterObject);

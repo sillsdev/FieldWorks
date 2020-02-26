@@ -685,9 +685,7 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		internal static int GetCustomFieldFlid(XElement caller, IFwMetaDataCache mdc, ICmObject obj)
 		{
-			var fieldName = XmlUtils.GetMandatoryAttributeValue(caller, "param");
-			int flid;
-			mdc.GetManagedMetaDataCache().TryGetFieldId(obj.ClassID, fieldName, out flid);
+			mdc.GetManagedMetaDataCache().TryGetFieldId(obj.ClassID, XmlUtils.GetMandatoryAttributeValue(caller, "param"), out var flid);
 			return flid;
 		}
 	}

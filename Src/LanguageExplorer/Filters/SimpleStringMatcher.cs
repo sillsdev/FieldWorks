@@ -118,9 +118,7 @@ namespace LanguageExplorer.Filters
 			{
 				ichStart = lastMatch.IchLim;
 			}
-			int ichMin;
-			int ichLim;
-			Pattern.FindIn(m_ts, ichStart, m_tssSource.Length, true, out ichMin, out ichLim, null);
+			Pattern.FindIn(m_ts, ichStart, m_tssSource.Length, true, out var ichMin, out var ichLim, null);
 			return new MatchRangePair(ichMin, ichLim);
 		}
 
@@ -264,9 +262,7 @@ namespace LanguageExplorer.Filters
 		{
 			base.PersistAsXml(element);
 			XmlUtils.SetAttribute(element, "pattern", Pattern.Pattern.Text);
-			int var;
-			var ws = Pattern.Pattern.get_PropertiesAt(0).GetIntPropValues((int)FwTextPropType.ktptWs, out var);
-			XmlUtils.SetAttribute(element, "ws", ws.ToString());
+			XmlUtils.SetAttribute(element, "ws", Pattern.Pattern.get_PropertiesAt(0).GetIntPropValues((int)FwTextPropType.ktptWs, out _).ToString());
 			XmlUtils.SetAttribute(element, "matchCase", Pattern.MatchCase.ToString());
 			XmlUtils.SetAttribute(element, "matchDiacritics", Pattern.MatchDiacritics.ToString());
 			// NOTE!! if any more properties of the matcher become significant, they should be
@@ -293,10 +289,7 @@ namespace LanguageExplorer.Filters
 				base.Cache = value;
 				if (m_persistNode != null && Pattern.Pattern == null)
 				{
-					var ws = XmlUtils.GetOptionalIntegerValue(m_persistNode, "ws", value.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle);
-					var tss = TsStringUtils.MakeString(XmlUtils.GetMandatoryAttributeValue(m_persistNode, "pattern"), ws);
-					Pattern.Pattern = tss;
-
+					Pattern.Pattern = TsStringUtils.MakeString(XmlUtils.GetMandatoryAttributeValue(m_persistNode, "pattern"), XmlUtils.GetOptionalIntegerValue(m_persistNode, "ws", value.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle));
 					Pattern.MatchCase = XmlUtils.GetOptionalBooleanAttributeValue(m_persistNode, "matchCase", false);
 					Pattern.MatchDiacritics = XmlUtils.GetOptionalBooleanAttributeValue(m_persistNode, "matchDiacritics", false);
 
@@ -317,11 +310,9 @@ namespace LanguageExplorer.Filters
 		public static void SetupPatternCollating(IVwPattern pattern, LcmCache cache)
 		{
 			pattern.IcuLocale = cache.ServiceLocator.WritingSystemFactory.GetStrFromWs(pattern.Pattern.get_WritingSystem(0));
-			var ws = cache.ServiceLocator.WritingSystemManager.Get(pattern.IcuLocale);
 			// Enhance JohnT: we would like to be able to make it use the defined collating rules for the
 			// other sort types, but don't currently know how.
-			var rulesCollation = ws?.DefaultCollation as RulesCollationDefinition;
-			if (rulesCollation != null && rulesCollation.IsValid)
+			if (cache.ServiceLocator.WritingSystemManager.Get(pattern.IcuLocale)?.DefaultCollation is RulesCollationDefinition rulesCollation && rulesCollation.IsValid)
 			{
 				pattern.IcuCollatingRules = rulesCollation.CollationRules;
 			}

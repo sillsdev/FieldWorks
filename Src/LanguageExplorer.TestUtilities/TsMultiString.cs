@@ -38,15 +38,13 @@ namespace LanguageExplorer.TestUtilities
 
 		public ITsString get_String(int ws)
 		{
-			ITsString tss;
-			return m_strings.TryGetValue(ws, out tss) ? tss : TsStringUtils.EmptyString(ws);
+			return m_strings.TryGetValue(ws, out var tss) ? tss : TsStringUtils.EmptyString(ws);
 		}
 
 		public void set_String(int ws, ITsString tss)
 		{
 			tss = TsStringUtils.NormalizeNfd(tss);
-			ITsString originalValue;
-			m_strings.TryGetValue(ws, out originalValue);
+			m_strings.TryGetValue(ws, out var originalValue);
 			if (tss == originalValue)
 			{
 				return;

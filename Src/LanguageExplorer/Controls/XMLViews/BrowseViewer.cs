@@ -95,7 +95,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// (the one the user clicked on); in this case, client should generate PropChanged as needed
 		/// to update the display. When the user does something like CheckAll, a list is sent; in this case,
 		/// AFTER invoking the event, the browse view does a Reconstruct, so generating PropChanged is not
-		/// necessary (or helpul, unless some other view also needs updating).
+		/// necessary (or helpfull, unless some other view also needs updating).
 		/// </summary>
 		public event CheckBoxChangedEventHandler CheckBoxChanged;
 		/// <summary>
@@ -103,7 +103,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// directly obtain the new object. If you care more about the position of the object in the list
 		/// (especially if the list may contain duplicates), you may wish to use the SelectedIndexChanged
 		/// event instead. This SelectionChangedEvent will not fire if the selection moves from one
-		/// occurrene of an object to another occurrence of the same object.
+		/// occurrence of an object to another occurrence of the same object.
 		/// </summary>
 		public event FwSelectionChangedEventHandler SelectionChanged;
 		/// <summary>
@@ -190,9 +190,7 @@ namespace LanguageExplorer.Controls.XMLViews
 				{
 					// No direct caching of fake stuff, but we can use the 'Decorator' SDA,
 					// as it won't affect the data store wit this flid.
-					//Cache.VwCacheDaAccessor.CacheIntProp(RootObjectHvo, XmlBrowseViewVc.ktagActiveColumn, value + 1);
 					SpecialCache.SetInt(RootObjectHvo, XMLViewsDataCache.ktagActiveColumn, value + 1);
-
 					if (!BrowseView.Vc.HasPreviewArrow && value >= 0)
 					{
 						BrowseView.Vc.PreviewArrow = BulkEditBar.PreviewArrowStatic;
@@ -347,26 +345,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <returns></returns>
 		private bool WantBrowseSpellingStatus()
 		{
-			if (m_currentFilter == null)
-			{
-				return false;
-			}
-			if (m_currentFilter is FilterBarCellFilter)
-			{
-				return ((FilterBarCellFilter)m_currentFilter).Matcher is BadSpellingMatcher;
-			}
-			if (!(m_currentFilter is AndFilter))
-			{
-				return false;
-			}
-			foreach (var item in ((AndFilter)m_currentFilter).Filters)
-			{
-				if ((item as FilterBarCellFilter)?.Matcher is BadSpellingMatcher)
-				{
-					return true;
-				}
-			}
-			return false;
+			return m_currentFilter != null && (m_currentFilter is FilterBarCellFilter barCellFilter ? barCellFilter.Matcher is BadSpellingMatcher : m_currentFilter is AndFilter currentFilter && currentFilter.Filters.Cast<object>().Any(item => (item as FilterBarCellFilter)?.Matcher is BadSpellingMatcher));
 		}
 
 		/// <summary>
@@ -378,14 +357,8 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		public int SelectedIndex
 		{
-			get
-			{
-				return BrowseView.SelectedIndex;
-			}
-			set
-			{
-				BrowseView.SelectedIndex = value;
-			}
+			get => BrowseView.SelectedIndex;
+			set => BrowseView.SelectedIndex = value;
 		}
 
 		/// <summary>
@@ -421,17 +394,9 @@ namespace LanguageExplorer.Controls.XMLViews
 				{
 					return cols;
 				}
-				if (Sorter is AndSorter)
+				if (Sorter is AndSorter andSorter)
 				{
-					var sorters = ((AndSorter)Sorter).Sorters;
-					foreach (var sorterObj in sorters)
-					{
-						var icol = ColumnInfoIndexOfCompatibleSorter(sorterObj);
-						if (icol >= 0)
-						{
-							cols.Add(icol);
-						}
-					}
+					cols.AddRange(andSorter.Sorters.Select(ColumnInfoIndexOfCompatibleSorter).Where(icol => icol >= 0));
 				}
 				else
 				{
@@ -480,9 +445,9 @@ namespace LanguageExplorer.Controls.XMLViews
 				return;
 			}
 			List<RecordSorter> sorters;
-			if (sorter is AndSorter)
+			if (sorter is AndSorter andSorter)
 			{
-				sorters = ((AndSorter)sorter).Sorters;
+				sorters = andSorter.Sorters;
 			}
 			else
 			{
@@ -496,13 +461,7 @@ namespace LanguageExplorer.Controls.XMLViews
 				// set our current column to the one we are sorting.
 				var ifsi = ColumnInfoIndexOfCompatibleSorter(sorters[i]);
 				// set our header column arrow
-				var order = SortOrder.Ascending;
-				var grs = sorters[i] as GenRecordSorter;
-				var sfc = grs?.Comparer as StringFinderCompare;
-				if (sfc != null)
-				{
-					order = sfc.Order;
-				}
+				var order = (sorters[i] as GenRecordSorter)?.Comparer is StringFinderCompare sfc ? sfc.Order : SortOrder.Ascending;
 				var iHeaderColumn = ColumnHeaderIndex(ifsi);
 				switch (i)
 				{
@@ -550,14 +509,8 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </remarks>
 		public int RootObjectHvo
 		{
-			get
-			{
-				return BrowseView.RootObjectHvo;
-			}
-			set
-			{
-				BrowseView.RootObjectHvo = value;
-			}
+			get => BrowseView.RootObjectHvo;
+			set => BrowseView.RootObjectHvo = value;
 		}
 
 		/// <summary>
@@ -565,10 +518,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		public IVwStylesheet StyleSheet
 		{
-			get
-			{
-				return BrowseView.StyleSheet;
-			}
+			get => BrowseView.StyleSheet;
 			set
 			{
 				BrowseView.StyleSheet = value;
@@ -601,9 +551,8 @@ namespace LanguageExplorer.Controls.XMLViews
 		{
 			m_configParamsElement = configParamsElement;
 			Cache = cache;
-			Tuple<Dictionary<int, int>, bool> selectedInfo;
 			var key = new Tuple<XElement, int>(configParamsElement, hvoRoot);
-			if (s_selectedCache.TryGetValue(key, out selectedInfo))
+			if (s_selectedCache.TryGetValue(key, out var selectedInfo))
 			{
 				SpecialCache = new XMLViewsDataCache(sda, selectedInfo.Item2, selectedInfo.Item1);
 				s_selectedCache.Remove(key); // don't reuse again while this view is open
@@ -739,7 +688,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			Size = new Size(400, 304);
 			if (ColumnIndexOffset() > 0)
 			{
-				var ch = new ColumnHeader { Text = "" };
+				var ch = new ColumnHeader { Text = string.Empty };
 				m_lvHeader.Columns.Add(ch);
 			}
 			if (BrowseView.Vc.ShowColumnsRTL)
@@ -965,7 +914,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			for (var i = 0; i < sorters.Count; i++)
 			{
 				var ifsi = ColumnInfoIndexOfCompatibleSorter(sorters[i]);
-				if (sorters[i] as GenRecordSorter == null && ifsi < 0)
+				if (!(sorters[i] is GenRecordSorter) && ifsi < 0)
 				{
 					// we don't want to use this sorter because it's not the kind that our filters
 					// are set up for. Let's change the sorter to one of our own.
@@ -974,19 +923,15 @@ namespace LanguageExplorer.Controls.XMLViews
 				}
 				if (ifsi < 0)
 				{
-					// The given sorter is a GenRecordSorter, but we couldn't find its column
-					// in our browse view columns.
-					//newSorter = (GenRecordSorter)sorters[i];
-
 					// Until adding the column dynamically is implemented, we'll just drop this sorter
 					continue;
 				}
 				// ifsi >= 0
 				// We found a sorter in our columns that matches the given one,
 				// so, preserve the given sorter's Order and SortFromEnd states.
-				var grs = sorters[i] as GenRecordSorter;
-				var sfc = grs.Comparer as StringFinderCompare;
-				var newGrs = FilterBar.ColumnInfo[ifsi].Sorter as GenRecordSorter;
+				var grs = (GenRecordSorter)sorters[i];
+				var sfc = (StringFinderCompare)grs.Comparer;
+				var newGrs = (GenRecordSorter)FilterBar.ColumnInfo[ifsi].Sorter;
 				if (!newGrs.Equals(grs))
 				{
 					sfc.CopyTo(newGrs.Comparer as StringFinderCompare); // copy Order and SortFromEnd
@@ -1089,7 +1034,7 @@ namespace LanguageExplorer.Controls.XMLViews
 					// before we actually change the filter, save all the selected and unselected items.
 					m_fSavedSelectionsDuringFilterChange = true;
 					SaveAllSelectionItems();
-					FilterChanged(this, args);
+					FilterChanged?.Invoke(this, args);
 				}
 				SetBrowseViewSpellingStatus();
 			}
@@ -1578,8 +1523,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			var width = -1; // default to trigger percentage width calculation.
 			if (PropertyTable != null)
 			{
-				var propName = FormatColumnWidthPropertyName(iCol);
-				width = PropertyTable.GetValue(propName, -1, SettingsGroup.LocalSettings);
+				width = PropertyTable.GetValue(FormatColumnWidthPropertyName(iCol), -1, SettingsGroup.LocalSettings);
 			}
 			return width;
 		}
@@ -1615,22 +1559,7 @@ namespace LanguageExplorer.Controls.XMLViews
 
 		private static bool EqualIntArrays(int[] first, int[] second)
 		{
-			if (first == null)
-			{
-				return second == null;
-			}
-			if (first.Length != second?.Length)
-			{
-				return false;
-			}
-			for (var i = 0; i < first.Length; i++)
-			{
-				if (first[i] != second[i])
-				{
-					return false;
-				}
-			}
-			return true;
+			return first == null ? second == null : first.Length == second?.Length && !first.Where((t, i) => t != second[i]).Any();
 		}
 
 		/// <summary>
@@ -1678,9 +1607,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				return;
 			}
-			VwLength[] rglength;
-			int[] widths;
-			GetColWidthInfo(out rglength, out widths);
+			GetColWidthInfo(out var rglength, out var widths);
 			// This is very worth checking, because this routine gets called once per column
 			// while turning the sort arrow on and off, with no actual width changes.
 			// I've observed that to cost 3 seconds on a large table.
@@ -1824,29 +1751,27 @@ namespace LanguageExplorer.Controls.XMLViews
 			else if ((ModifierKeys & Keys.Shift) == Keys.Shift)
 			{
 				// If the user is holding shift down, we need to be working with an AndSorter
-				AndSorter asorter;
-				if (Sorter is AndSorter)
+				if (Sorter is AndSorter andSorter)
 				{
-					asorter = (AndSorter)Sorter;
-					if (asorter.CompatibleSorter(newSorter))
+					if (andSorter.CompatibleSorter(newSorter))
 					{
 						// Same one, just reversing the direction
-						var i = asorter.CompatibleSorterIndex(newSorter);
-						asorter.Sorters[i] = ReverseNewSorter(newSorter, asorter.Sorters[i]);
+						var i = andSorter.CompatibleSorterIndex(newSorter);
+						andSorter.Sorters[i] = ReverseNewSorter(newSorter, andSorter.Sorters[i]);
 					}
 					else
 					{
-						asorter.Add(newSorter);
+						andSorter.Add(newSorter);
 					}
 				}
 				else
 				{
-					asorter = new AndSorter();
-					asorter.Add(Sorter);
-					asorter.Add(newSorter);
-					m_SortersToDispose.Add(asorter);
+					andSorter = new AndSorter();
+					andSorter.Add(Sorter);
+					andSorter.Add(newSorter);
+					m_SortersToDispose.Add(andSorter);
 				}
-				newSorter = asorter;
+				newSorter = andSorter;
 			}
 			SetAndRaiseSorter(newSorter, true);
 		}
@@ -1854,13 +1779,11 @@ namespace LanguageExplorer.Controls.XMLViews
 		private static RecordSorter ReverseNewSorter(RecordSorter newSorter, RecordSorter oldSorter)
 		{
 			var origNewSorter = newSorter; // In case of complete failure
-			var grs = oldSorter as GenRecordSorter;
-			if (grs == null)
+			if (!(oldSorter is GenRecordSorter grs))
 			{
 				return origNewSorter; // should not happen.
 			}
-			var sfc = grs.Comparer as StringFinderCompare;
-			if (sfc == null)
+			if (!(grs.Comparer is StringFinderCompare sfc))
 			{
 				return origNewSorter; // should not happen
 			}
@@ -1869,8 +1792,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				return newSorter;
 			}
-			var grs2 = newSorter as GenRecordSorter;
-			if (grs2 == null)
+			if (!(newSorter is GenRecordSorter grs2))
 			{
 				return origNewSorter; // should not happen.
 			}
@@ -1888,18 +1810,9 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				return false; // If there isn't a sorter, no columns can be actively sorted
 			}
-			var sorters = Sorter is AndSorter ? ((AndSorter)Sorter).Sorters : new List<RecordSorter> { Sorter };
-			// This loop attempts to locate the sorter in the list of active sorters that responsible for the column in question
-			foreach (RecordSorter rs in sorters)
-			{
-				var ifsi = ColumnInfoIndexOfCompatibleSorter(rs);
-				if (ifsi == icol - FilterBar.ColumnOffset)
-				{
-					return SpecificColumnSortedFromEnd(icol);
-				}
-			}
-			// Otherwise, we return false
-			return false;
+			var sorters = Sorter is AndSorter sorter ? sorter.Sorters : new List<RecordSorter> { Sorter };
+			// Attempts to locate the sorter in the list of active sorters that responsible for the column in question
+			return sorters.Any(rs => ColumnInfoIndexOfCompatibleSorter(rs) == icol - FilterBar.ColumnOffset) && SpecificColumnSortedFromEnd(icol);
 		}
 
 		/// <summary>
@@ -1909,13 +1822,12 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		private bool SpecificColumnSortedFromEnd(int icol)
 		{
-			var grs = GetColumnSorter(icol) as GenRecordSorter;
-			if (grs == null)
+			if (!(GetColumnSorter(icol) is GenRecordSorter grs))
 			{
 				return false;
 			}
 			Debug.Assert(grs.Comparer is StringFinderCompare, "Current Column does not have one of our sorters.");
-			return grs.Comparer is StringFinderCompare && ((StringFinderCompare)grs.Comparer).SortedFromEnd;
+			return grs.Comparer is StringFinderCompare compare && compare.SortedFromEnd;
 		}
 
 		/// <summary>
@@ -1924,11 +1836,8 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		private bool CurrentColumnSortedFromEnd
 		{
-			get
-			{
-				// See notes on the method for why this is different than the other ones
-				return SpecificColumnSortedFromEnd(m_icolCurrent);
-			}
+			// See notes on the method for why this is different than the other ones
+			get => SpecificColumnSortedFromEnd(m_icolCurrent);
 			set
 			{
 				var grs = GetCurrentColumnSorter() as GenRecordSorter;
@@ -1938,9 +1847,9 @@ namespace LanguageExplorer.Controls.XMLViews
 					return;
 				}
 				Debug.Assert(grs.Comparer is StringFinderCompare, "Current Column does not have one of our sorters.");
-				if (grs.Comparer is StringFinderCompare)
+				if (grs.Comparer is StringFinderCompare stringFinderCompare)
 				{
-					((StringFinderCompare)grs.Comparer).SortedFromEnd = value;
+					stringFinderCompare.SortedFromEnd = value;
 				}
 			}
 		}
@@ -1953,17 +1862,12 @@ namespace LanguageExplorer.Controls.XMLViews
 		{
 			get
 			{
-				var grs = GetCurrentColumnSorter() as GenRecordSorter;
-				if (grs == null)
+				if (!(GetCurrentColumnSorter() is GenRecordSorter grs))
 				{
 					return false;
 				}
-				Debug.Assert(grs.Comparer as StringFinderCompare != null, "Current Column does not have one of our sorters.");
-				if (grs.Comparer as StringFinderCompare != null)
-				{
-					return (grs.Comparer as StringFinderCompare).SortedByLength;
-				}
-				return false;
+				Debug.Assert(grs.Comparer is StringFinderCompare, "Current Column does not have one of our sorters.");
+				return grs.Comparer is StringFinderCompare stringFinderCompare && stringFinderCompare.SortedByLength;
 			}
 			set
 			{
@@ -1973,10 +1877,10 @@ namespace LanguageExplorer.Controls.XMLViews
 				{
 					return;
 				}
-				Debug.Assert(grs.Comparer as StringFinderCompare != null, "Current Column does not have one of our sorters.");
-				if (grs.Comparer as StringFinderCompare != null)
+				Debug.Assert(grs.Comparer is StringFinderCompare, "Current Column does not have one of our sorters.");
+				if (grs.Comparer is StringFinderCompare stringFinderCompare)
 				{
-					(grs.Comparer as StringFinderCompare).SortedByLength = value;
+					stringFinderCompare.SortedByLength = value;
 				}
 			}
 		}
@@ -2100,14 +2004,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				return true;
 			}
-			foreach (var oldSpec in oldSpecs)
-			{
-				if (!newSpecs.Contains(oldSpec))
-				{
-					return true;
-				}
-			}
-			return false;
+			return oldSpecs.Any(oldSpec => !newSpecs.Contains(oldSpec));
 		}
 
 		/// <summary>
@@ -2188,8 +2085,7 @@ namespace LanguageExplorer.Controls.XMLViews
 				var node = colSpecs[i];
 				var ch = MakeColumnHeader(node);
 				//Set the width either to the temporarily stored width, or the default initial column width
-				int width;
-				ch.Width = widths.TryGetValue(node, out width) ? width : GetInitialColumnWidth(node, Scroller.ClientRectangle.Width, dpiX);
+				ch.Width = widths.TryGetValue(node, out var width) ? width : GetInitialColumnWidth(node, Scroller.ClientRectangle.Width, dpiX);
 				if (BrowseView.Vc.ShowColumnsRTL)
 				{
 					var iRev = colSpecs.Count - (i + 1);
@@ -2367,17 +2263,7 @@ namespace LanguageExplorer.Controls.XMLViews
 							return null;
 						}
 						var correctLabel = labels[desiredItem];
-						FilterBarCellFilter spellFilter;
-						if (linkSetupInfoValue == "CorrectSpelling") //"Exclude Correct" TE-8200
-						{
-							// Use this one for NOT Correct ("Exclude Correct"), that is, undecided OR incorrect,
-							// all things that have squiggles. (could also be "Exclude Incorrect" or "Exclude Undecided")
-							spellFilter = MakeFilter(possibleColumns, "Spelling Status", new InvertMatcher(new ExactMatcher(FilterBar.MatchExactPattern(correctLabel))));
-						}
-						else // linkSetupInfo == "ReviewUndecidedSpelling"   --> "Undecided"
-						{
-							spellFilter = MakeFilter(possibleColumns, "Spelling Status", new ExactMatcher(FilterBar.MatchExactPattern(correctLabel)));
-						}
+						var spellFilter = linkSetupInfoValue == "CorrectSpelling" ? MakeFilter(possibleColumns, "Spelling Status", new InvertMatcher(new ExactMatcher(FilterBar.MatchExactPattern(correctLabel)))) : MakeFilter(possibleColumns, "Spelling Status", new ExactMatcher(FilterBar.MatchExactPattern(correctLabel)));
 						var occurrenceFilter = MakeFilter(possibleColumns, "Number in Corpus", new RangeIntMatcher(1, Int32.MaxValue));
 						var andFilter = new AndFilter();
 						andFilter.Add(spellFilter);
@@ -2390,7 +2276,7 @@ namespace LanguageExplorer.Controls.XMLViews
 					{
 						var hvoOfAnthroItemProperty = linkProperties.FirstOrDefault(prop => prop.Name == "HvoOfAnthroItem");
 						var itemHvo = hvoOfAnthroItemProperty?.Value as string;
-						if (String.IsNullOrWhiteSpace(linkSetupInfoValue))
+						if (string.IsNullOrWhiteSpace(linkSetupInfoValue))
 						{
 							return null;
 						}
@@ -2627,14 +2513,8 @@ namespace LanguageExplorer.Controls.XMLViews
 
 		internal List<XElement> ColumnSpecs
 		{
-			get
-			{
-				return BrowseView.Vc.ColumnSpecs;
-			}
-			set
-			{
-				BrowseView.Vc.ColumnSpecs = value;
-			}
+			get => BrowseView.Vc.ColumnSpecs;
+			set => BrowseView.Vc.ColumnSpecs = value;
 		}
 
 		/// <summary>
@@ -2695,13 +2575,7 @@ namespace LanguageExplorer.Controls.XMLViews
 				return null;
 			}
 			var ifsi = icol - FilterBar.ColumnOffset;
-			if (ifsi < 0)
-			{
-				// Should not happen.
-				return null;
-			}
-			var fsi = FilterBar.ColumnInfo[ifsi];
-			return fsi?.Sorter;
+			return ifsi < 0 ? null : FilterBar.ColumnInfo[ifsi]?.Sorter;
 		}
 
 		private void m_checkMarkButton_Click(object sender, EventArgs e)
@@ -2909,7 +2783,6 @@ namespace LanguageExplorer.Controls.XMLViews
 				SpecialCache.VecProp(RootObjectHvo, MainTag, chvo, out chvo, arrayPtr);
 				contents = MarshalEx.NativeToArray<int>(arrayPtr, chvo);
 			}
-
 			var changedHvos = new List<int>();
 			foreach (var hvoItem in contents)
 			{
@@ -3075,8 +2948,8 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		public SelectionHighlighting SelectedRowHighlighting
 		{
-			get { return BrowseView.SelectedRowHighlighting; }
-			set { BrowseView.SelectedRowHighlighting = value; }
+			get => BrowseView.SelectedRowHighlighting;
+			set => BrowseView.SelectedRowHighlighting = value;
 		}
 
 		/// <summary>
@@ -3102,7 +2975,7 @@ namespace LanguageExplorer.Controls.XMLViews
 				Debug.Assert(m_orderForColumnsDisplay.Count == ColumnCount);
 				return m_orderForColumnsDisplay;
 			}
-			set { m_orderForColumnsDisplay = value; }
+			set => m_orderForColumnsDisplay = value;
 		}
 
 		// In your AllItems list, the specified objects have been replaced (typically dummy to real).
@@ -3211,7 +3084,7 @@ namespace LanguageExplorer.Controls.XMLViews
 				: this(bv.m_configParamsElement, bv.RootObjectHvo, bv.MainTag, bv.Cache, bv.PropertyTable, bv.StyleSheet, bv, icolLvHeaderToAdd)
 			{
 				// add only the specified column to this browseview.
-				(Vc as OneColumnXmlBrowseViewVc).SetupOneColumnSpec(bv, icolLvHeaderToAdd);
+				((OneColumnXmlBrowseViewVc)Vc).SetupOneColumnSpec(bv, icolLvHeaderToAdd);
 			}
 
 			private OneColumnXmlBrowseView(XElement nodeSpec, int hvoRoot, int mainTag, LcmCache cache, IPropertyTable propertyTable, IVwStylesheet styleSheet, BrowseViewer bv, int icolLvHeaderToAdd)
@@ -3219,7 +3092,7 @@ namespace LanguageExplorer.Controls.XMLViews
 				Init(nodeSpec, hvoRoot, mainTag, cache, bv);
 				m_styleSheet = styleSheet;
 				// add only the specified column to this browseview.
-				(Vc as OneColumnXmlBrowseViewVc).SetupOneColumnSpec(bv, icolLvHeaderToAdd);
+				((OneColumnXmlBrowseViewVc)Vc).SetupOneColumnSpec(bv, icolLvHeaderToAdd);
 				MakeRoot();
 				// note: bv was used to initialize SortItemProvider. But we don't need it after init so null it out.
 				m_bv = null;
@@ -3242,10 +3115,7 @@ namespace LanguageExplorer.Controls.XMLViews
 
 			public override Point ScrollPosition
 			{
-				get
-				{
-					return base.ScrollPosition;
-				}
+				get => base.ScrollPosition;
 				set { }
 			}
 

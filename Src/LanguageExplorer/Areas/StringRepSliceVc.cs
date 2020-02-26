@@ -12,10 +12,6 @@ namespace LanguageExplorer.Areas
 	{
 		public static int Flid => PhEnvironmentTags.kflidStringRepresentation;
 
-		public StringRepSliceVc()
-		{
-		}
-
 		public override void Display(IVwEnv vwenv, int hvo, int frag)
 		{
 			vwenv.AddStringProp(Flid, this);

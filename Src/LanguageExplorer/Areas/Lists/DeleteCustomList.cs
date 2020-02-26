@@ -56,8 +56,7 @@ namespace LanguageExplorer.Areas.Lists
 			// Make sure user knows if any possibilities owned by this list are referenced
 			// by anything else!
 			GetCustomFieldsReferencingList(m_listToDelete.Guid);
-			ICmPossibility poss;
-			if (HasPossibilityReferences(out poss) > 0)
+			if (HasPossibilityReferences(out var poss) > 0)
 			{
 				var name = poss.Name.BestAnalysisVernacularAlternative.Text;
 				// Warn user that possibilities in this list are in use.

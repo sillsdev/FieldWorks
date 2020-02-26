@@ -185,8 +185,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		private void btnOK_Click(object sender, EventArgs e)
 		{
 			var newParserParamsElem = XElement.Parse(m_dsParserParameters.GetXml());
-			var oldParserParamsElem = XElement.Parse(XmlRep);
-			newParserParamsElem.Add(oldParserParamsElem.Element("ActiveParser"));
+			newParserParamsElem.Add(XElement.Parse(XmlRep).Element("ActiveParser"));
 			XmlRep = newParserParamsElem.ToString();
 			ValidateValues(newParserParamsElem);
 		}
@@ -284,8 +283,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		private void PopulateDataGrid(DataGrid dataGrid, string parser)
 		{
 			dataGrid.SetDataBinding(m_dsParserParameters, parser);
-			var view = CreateDataView(m_dsParserParameters.Tables[parser]);
-			dataGrid.DataSource = view;
+			dataGrid.DataSource = CreateDataView(m_dsParserParameters.Tables[parser]);
 			dataGrid.TableStyles.Add(new DataGridTableStyle { MappingName = parser, RowHeadersVisible = false, AllowSorting = false });
 			foreach (var col in dataGrid.TableStyles[0].GridColumnStyles.OfType<DataGridBoolColumn>())
 			{

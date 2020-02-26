@@ -63,8 +63,7 @@ namespace LanguageExplorer.Controls
 					}
 					if (multiUnicode != null)
 					{
-						int wsDummy;
-						collector.Add(new HvoTreeNode(multiUnicode.GetAlternativeOrBestTss(wsName, out wsDummy), pos.Hvo));
+						collector.Add(new HvoTreeNode(multiUnicode.GetAlternativeOrBestTss(wsName, out _), pos.Hvo));
 					}
 				}
 			}

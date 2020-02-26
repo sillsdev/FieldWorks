@@ -31,8 +31,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Concordance
 		private RecordBrowseView _recordBrowseView;
 		private IRecordList _recordList;
 		private InterlinMaster _interlinMaster;
-		[Import(AreaServices.TextAndWordsAreaMachineName)]
-		private IArea _area;
 
 		#region Implementation of IMajorFlexComponent
 
@@ -73,7 +71,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Concordance
 			var mainConcordanceContainerParameters = new MultiPaneParameters
 			{
 				Orientation = Orientation.Vertical,
-				Area = _area,
+				Area = Area,
 				Id = "WordsAndOccurrencesMultiPane",
 				ToolMachineName = MachineName,
 				DefaultPrintPane = "wordOccurrenceList",
@@ -81,7 +79,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Concordance
 				FirstControlParameters = new SplitterChildControlParameters(), // Leave its Control as null. Will be a newly created MultiPane, the controls of which are in "nestedMultiPaneParameters"
 				SecondControlParameters = new SplitterChildControlParameters() // Control (PaneBarContainer+InterlinMasterNoTitleBar) added below. Leave Label null.
 			};
-
 			var interlinMasterPaneBar = new PaneBar();
 			var panelButtonAddWordsToLexicon = new PanelButton(majorFlexComponentParameters.FlexComponentParameters, null, TextAndWordsArea.ITexts_AddWordsToLexicon, TextAndWordsResources.Add_Words_to_Lexicon, TextAndWordsResources.Add_Words_to_Lexicon)
 			{
@@ -98,12 +95,11 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Concordance
 			root.Element("wordOccurrenceList").Element("parameters").Element("includeCordanceColumns").ReplaceWith(columns);
 			_interlinMaster = new InterlinMaster(root.Element("ITextControl").Element("parameters"), majorFlexComponentParameters, _recordList, paneBarButtons, false);
 			mainConcordanceContainerParameters.SecondControlParameters.Control = PaneBarContainerFactory.Create(majorFlexComponentParameters.FlexComponentParameters, _interlinMaster, interlinMasterPaneBar);
-
 			// This will be the nested MultiPane that goes into mainConcordanceContainerParameters.FirstControlParameters.Control
 			var nestedMultiPaneParameters = new MultiPaneParameters
 			{
 				Orientation = Orientation.Horizontal,
-				Area = _area,
+				Area = Area,
 				Id = "LineAndTextMultiPane",
 				ToolMachineName = MachineName,
 				FirstCollapseZone = 110000,
@@ -118,7 +114,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Concordance
 			nestedMultiPaneParameters.SecondControlParameters.Control = PaneBarContainerFactory.Create(majorFlexComponentParameters.FlexComponentParameters, _recordBrowseView);
 			// Nested MP is created by call to MultiPaneFactory.CreateConcordanceContainer
 			_concordanceContainer = MultiPaneFactory.CreateConcordanceContainer(majorFlexComponentParameters.FlexComponentParameters, majorFlexComponentParameters.MainCollapsingSplitContainer, mainConcordanceContainerParameters, nestedMultiPaneParameters);
-
 			_interlinMaster.FinishInitialization();
 		}
 
@@ -170,13 +165,13 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Concordance
 		/// <summary>
 		/// Get the area for the tool.
 		/// </summary>
-		public IArea Area => _area;
+		[field: Import(AreaServices.TextAndWordsAreaMachineName)]
+		public IArea Area { get; private set; }
 
 		/// <summary>
 		/// Get the image for the area.
 		/// </summary>
 		public Image Icon => Images.SideBySideView.SetBackgroundColor(Color.Magenta);
-
 
 		#endregion
 
@@ -198,7 +193,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Concordance
 			{
 				// Tool must be added, even when it adds no tool specific handlers.
 				var toolUiWidgetParameterObject = new ToolUiWidgetParameterObject(tool);
-
 				_majorFlexComponentParameters.UiWidgetController.AddHandlers(toolUiWidgetParameterObject);
 			}
 

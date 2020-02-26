@@ -139,8 +139,7 @@ namespace LanguageExplorer.Controls.XMLViews
 				return; // nothing to do
 			}
 			var xaParam = partRefNode.Attribute(ParamAttr);
-			string suffix;
-			if (m_partLevelParamAttrSuffix.TryGetValue(dupKey, out suffix))
+			if (m_partLevelParamAttrSuffix.TryGetValue(dupKey, out var suffix))
 			{
 				xaParam.Value = xaParam.Value + suffix;
 			}
@@ -153,8 +152,7 @@ namespace LanguageExplorer.Controls.XMLViews
 				return; // nothing to do
 			}
 			var xaLabel = partRefNode.Attribute(LabelAttr);
-			string suffix;
-			if (m_labelAttrSuffix.TryGetValue(dupKey, out suffix))
+			if (m_labelAttrSuffix.TryGetValue(dupKey, out var suffix))
 			{
 				xaLabel.Value = xaLabel.Value + suffix;
 			}
@@ -244,23 +242,8 @@ namespace LanguageExplorer.Controls.XMLViews
 		// input range. Currently this requires both that it has a ref of $child and the key doesn't match ANY part node in the input.
 		private bool WantToCopyMissingItem(XElement node)
 		{
-			if (XmlUtils.GetOptionalAttributeValue(node, RefAttr, string.Empty) != ChildStr)
-			{
-				return false;
-			}
-			var key = GetKey(node);
-			if (m_insertedMissing.Contains(node))
-			{
-				return false; // don't insert twice!
-			}
-			foreach (var child in m_newMaster.Elements())
-			{
-				if (IsMergeableNode(child) && GetKey(child) == key)
-				{
-					return false;
-				}
-			}
-			return true;
+			return XmlUtils.GetOptionalAttributeValue(node, RefAttr, string.Empty) == ChildStr
+				   && !m_insertedMissing.Contains(node) && m_newMaster.Elements().All(child => !IsMergeableNode(child) || GetKey(child) != GetKey(node));
 		}
 
 		private void CopyParts(int startIndex, int limIndex)

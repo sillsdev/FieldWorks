@@ -92,21 +92,7 @@ namespace LanguageExplorer.Areas
 
 		private int GetOutputMaxNumLines()
 		{
-			var maxNumLines = 1;
-			foreach (var modify in m_rule.OutputOS.OfType<IMoModifyFromInput>())
-			{
-				var nc = modify.ModificationRA;
-				if (nc?.FeaturesOA == null)
-				{
-					continue;
-				}
-				var numLines = nc.FeaturesOA.FeatureSpecsOC.Count;
-				if (numLines > maxNumLines)
-				{
-					maxNumLines = numLines;
-				}
-			}
-			return maxNumLines;
+			return m_rule.OutputOS.OfType<IMoModifyFromInput>().Select(modify => modify.ModificationRA).Where(nc => nc?.FeaturesOA != null).Select(nc => nc.FeaturesOA.FeatureSpecsOC.Count).Concat(new[] { 1 }).Max();
 		}
 
 		protected override int GetVarIndex(IPhFeatureConstraint var)

@@ -63,8 +63,7 @@ namespace LanguageExplorer.Controls.XMLViews
 				}
 			}
 			// secondly, see if we can find the plural form for the destination class.
-			var dstClass = mdc.GetDstClsId(owningFlid);
-			return TryFindPluralFormFromClassId(mdc, dstClass, out titleStr);
+			return TryFindPluralFormFromClassId(mdc, mdc.GetDstClsId(owningFlid), out titleStr);
 		}
 
 		/// <summary />
@@ -102,8 +101,7 @@ namespace LanguageExplorer.Controls.XMLViews
 				return input;
 			}
 			var result = input.Clone();
-			var replacer = new ReplaceParamWithDefault();
-			XmlUtils.VisitAttributes(result, replacer);
+			XmlUtils.VisitAttributes(result, new ReplaceParamWithDefault());
 			return result;
 		}
 
@@ -113,8 +111,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		public static XElement CopyReplacingParamDefault(XElement input, string paramId, string val)
 		{
 			var result = input.Clone();
-			var replacer = new ReplaceParamDefault(paramId, val);
-			XmlUtils.VisitAttributes(result, replacer);
+			XmlUtils.VisitAttributes(result, new ReplaceParamDefault(paramId, val));
 			return result;
 		}
 
@@ -144,8 +141,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		public static string FindWsParam(XElement node)
 		{
-			var paramList = FindParams(node);
-			foreach (var s in paramList)
+			foreach (var s in FindParams(node))
 			{
 				// Enhance JohnT: may handle other parameters, and show something here for them.
 				if (s.StartsWith(StringServices.WsParamLabel))
@@ -163,9 +159,8 @@ namespace LanguageExplorer.Controls.XMLViews
 		public static int FindIndexOfAttrVal(List<XElement> nodes, string attName, string attVal)
 		{
 			var index = 0;
-			foreach (var node in nodes)
+			foreach (var sAttr in nodes.Select(node => StringTable.Table.LocalizeAttributeValue(XmlUtils.GetOptionalAttributeValue(node, attName, null))))
 			{
-				var sAttr = StringTable.Table.LocalizeAttributeValue(XmlUtils.GetOptionalAttributeValue(node, attName, null));
 				if (sAttr == attVal)
 				{
 					return index;
@@ -224,12 +219,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			// However, if we pad with zeros as above, "0" as a pattern matches everything!
 			// Since that's a fairly likely pattern, we pad with "/" (less than 0, more than '-'.
 			// Bizarre matches are still possible, but much less likely.
-			if (val >= 0)
-			{
-				return AlphaCompPosNumString(val);
-			}
-			// We add 1 here because otherwise we pass a negative value to the other method for int.MinValue
-			return "-" + AlphaCompPosNumString(int.MaxValue + val + 1);
+			return val >= 0 ? AlphaCompPosNumString(val) : "-" + AlphaCompPosNumString(int.MaxValue + val + 1);
 		}
 
 		/// <summary>
@@ -243,11 +233,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			Debug.Assert(val >= 0);
 			var maxDigits = int.MaxValue.ToString().Length;
 			var sVal = val.ToString();
-			if (sVal.Length == maxDigits)
-			{
-				return sVal;
-			}
-			return new string('/', maxDigits - sVal.Length) + sVal;
+			return sVal.Length == maxDigits ? sVal : new string('/', maxDigits - sVal.Length) + sVal;
 		}
 
 		/// <summary>
@@ -285,16 +271,12 @@ namespace LanguageExplorer.Controls.XMLViews
 		public static List<XElement> CorrespondingItems(List<XElement> sourceNodes, List<XElement> selectNodes, string attName)
 		{
 			var result = new List<XElement>(selectNodes.Count);
-			foreach (var node in selectNodes)
+			foreach (var attVal in selectNodes.Select(node => XmlUtils.GetMandatoryAttributeValue(node, attName)))
 			{
-				var attVal = XmlUtils.GetMandatoryAttributeValue(node, attName);
-				foreach (var node1 in sourceNodes)
+				foreach (var node1 in sourceNodes.Where(node1 => XmlUtils.GetMandatoryAttributeValue(node1, attName) == attVal))
 				{
-					if (XmlUtils.GetMandatoryAttributeValue(node1, attName) == attVal)
-					{
-						result.Add(node1);
-						break;
-					}
+					result.Add(node1);
+					break;
 				}
 			}
 			return result;
@@ -306,9 +288,8 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		public static void CollectBrowseItems(int hvo, XElement colSpec, List<IManyOnePathSortItem> collector, IFwMetaDataCache mdc, ISilDataAccess sda, LayoutCache layouts)
 		{
-			var topNode = XmlBrowseViewVc.GetColumnNode(colSpec, hvo, sda, layouts);
 			// Todo: handle various cases here, mostly drill-down to <seq> or <obj>
-			CollectBrowseItems(hvo, topNode, collector, mdc, sda, layouts, null, null, null);
+			CollectBrowseItems(hvo, XmlBrowseViewVc.GetColumnNode(colSpec, hvo, sda, layouts), collector, mdc, sda, layouts, null, null, null);
 		}
 
 		/// <summary>
@@ -436,15 +417,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		private static XElement GetNodeForRelatedObject(int hvoDst, XElement caller, XElement node, LayoutCache layouts, ISilDataAccess sda)
 		{
-			if (XmlUtils.GetOptionalAttributeValue(node, "frag") != null)
-			{
-				return null; // old approach not handled.
-			}
-			// (frag="true" is also used to prevent splitting entry when sorting on gloss or
-			// allomorph in Find Entries dialog display.  Part of fixing LT-10293.)
-			var layoutName = XmlVc.GetLayoutName(node, caller);
-			var layoutNode = XmlVc.GetNodeForPart(hvoDst, layoutName, true, sda, layouts);
-			return XmlVc.GetDisplayNodeForChild(layoutNode, node, layouts);
+			return XmlUtils.GetOptionalAttributeValue(node, "frag") != null ? null : XmlVc.GetDisplayNodeForChild(XmlVc.GetNodeForPart(hvoDst, XmlVc.GetLayoutName(node, caller), true, sda, layouts), node, layouts);
 		}
 
 		private static int[] AppendInt(int[] sofar, int add)
@@ -554,11 +527,7 @@ namespace LanguageExplorer.Controls.XMLViews
 
 		internal static string DisplayWsLabel(CoreWritingSystemDefinition ws, LcmCache cache)
 		{
-			if (ws == null)
-			{
-				return string.Empty;
-			}
-			return (ws.Abbreviation ?? ws.Id) ?? XMLViewsStrings.ksUNK + " ";
+			return ws == null ? string.Empty : (ws.Abbreviation ?? ws.Id) ?? XMLViewsStrings.ksUNK + " ";
 		}
 
 		private static string AddMultipleAlternatives(LcmCache cache, ISilDataAccess sda, IEnumerable<int> wsIds, int hvo, int flid, XElement frag)
@@ -669,20 +638,14 @@ namespace LanguageExplorer.Controls.XMLViews
 								case (int)CellarPropertyType.MultiString:
 									if (wsForce < 0)
 									{
-										int wsActual;
-										var tss = WritingSystemServices.GetMagicStringAlt(lcmCache, sda, wsForce, hvo, flid, true, out wsActual);
-										return new[] { tss == null ? "" : tss.Text };
+										var tss = WritingSystemServices.GetMagicStringAlt(lcmCache, sda, wsForce, hvo, flid, true, out _);
+										return new[] { tss == null ? string.Empty : tss.Text };
 									}
 									return new[] { sda.get_MultiStringAlt(hvo, flid, wsForce).Text };
 							}
 						}
-						bool fFoundType;
-						var strValue = lcmCache.GetText(hvo, flid, layout.ConvertElement(), out fFoundType);
-						if (fFoundType)
-						{
-							return new[] { strValue };
-						}
-						throw new Exception($"Bad property type ({strValue} for hvo {hvo} found for string property {flid} in {layout}");
+						var strValue = lcmCache.GetText(hvo, flid, layout.ConvertElement(), out var fFoundType);
+						return fFoundType ? new[] { strValue } : throw new Exception($"Bad property type ({strValue} for hvo {hvo} found for string property {flid} in {layout}");
 					}
 				case "configureMlString":
 					{
@@ -705,35 +668,25 @@ namespace LanguageExplorer.Controls.XMLViews
 				// but we can't tell that and it rarely makes a difference.)
 				case "para":
 				case "span":
-					{
-						return AssembleChildKeys(lcmCache, sda, layout, hvo, layoutCache, caller, wsForce);
-					}
+					return AssembleChildKeys(lcmCache, sda, layout, hvo, layoutCache, caller, wsForce);
 				case "column":
 					// top-level node for whole column; concatenate children as for "para"
 					// if multipara is false, otherwise as for "div"
-					if (XmlUtils.GetOptionalBooleanAttributeValue(layout, "multipara", false))
-					{
-						return ChildKeys(lcmCache, sda, layout, hvo, layoutCache, caller, wsForce);
-					}
-					return AssembleChildKeys(lcmCache, sda, layout, hvo, layoutCache, caller, wsForce);
+					return XmlUtils.GetOptionalBooleanAttributeValue(layout, "multipara", false) ? ChildKeys(lcmCache, sda, layout, hvo, layoutCache, caller, wsForce) : AssembleChildKeys(lcmCache, sda, layout, hvo, layoutCache, caller, wsForce);
 				case "part":
+					var partref = XmlUtils.GetOptionalAttributeValue(layout, "ref");
+					if (partref == null)
 					{
-						var partref = XmlUtils.GetOptionalAttributeValue(layout, "ref");
-						if (partref == null)
-						{
-							return ChildKeys(lcmCache, sda, layout, hvo, layoutCache, caller, wsForce); // an actual part, made up of its pieces
-						}
-						var part = XmlVc.GetNodeForPart(hvo, partref, false, sda, layoutCache);
-						// This is the critical place where we introduce a caller. The 'layout' is really a 'part ref' which is the
-						// 'caller' for all embedded nodes in the called part.
-						return StringsFor(lcmCache, sda, part, hvo, layoutCache, layout, wsForce);
+						return ChildKeys(lcmCache, sda, layout, hvo, layoutCache, caller, wsForce); // an actual part, made up of its pieces
 					}
+					var part = XmlVc.GetNodeForPart(hvo, partref, false, sda, layoutCache);
+					// This is the critical place where we introduce a caller. The 'layout' is really a 'part ref' which is the
+					// 'caller' for all embedded nodes in the called part.
+					return StringsFor(lcmCache, sda, part, hvo, layoutCache, layout, wsForce);
 				case "div":
 				case "innerpile":
-					{
-						// Concatenate keys for child nodes (as distinct strings)
-						return ChildKeys(lcmCache, sda, layout, hvo, layoutCache, caller, wsForce);
-					}
+					// Concatenate keys for child nodes (as distinct strings)
+					return ChildKeys(lcmCache, sda, layout, hvo, layoutCache, caller, wsForce);
 				case "obj":
 					{
 						// Follow the property, get the object, look up the layout to use,
@@ -761,8 +714,7 @@ namespace LanguageExplorer.Controls.XMLViews
 						var ctarget = sda.get_VecSize(hvo, flid);
 						using (var arrayPtr = MarshalEx.ArrayToNative<int>(ctarget))
 						{
-							int chvo;
-							sda.VecProp(hvo, flid, ctarget, out chvo, arrayPtr);
+							sda.VecProp(hvo, flid, ctarget, out var chvo, arrayPtr);
 							contents = MarshalEx.NativeToArray<int>(arrayPtr, chvo);
 						}
 						string[] result = null;
@@ -1059,16 +1011,10 @@ namespace LanguageExplorer.Controls.XMLViews
 				case "pronunciation":
 					return wsContainer.DefaultPronunciationWritingSystem.Handle;
 				case "reversal":
-					{
-						if (WritingSystemServices.CurrentReversalWsId > 0)
-						{
-							return WritingSystemServices.CurrentReversalWsId;
-						}
-						int wsmagic;
-						return WritingSystemServices.InterpretWsLabel(cache, wsParam, wsContainer.DefaultAnalysisWritingSystem, 0, 0, null, out wsmagic);
-					}
+					return WritingSystemServices.CurrentReversalWsId > 0 ? WritingSystemServices.CurrentReversalWsId : WritingSystemServices.InterpretWsLabel(cache, wsParam, wsContainer.DefaultAnalysisWritingSystem, 0, 0, null, out _);
 				case "":
-					return wsContainer.DefaultAnalysisWritingSystem.Handle;     // Most likely value.
+					// Most likely value.
+					return wsContainer.DefaultAnalysisWritingSystem.Handle;
 				default:
 					return cache.ServiceLocator.WritingSystemManager.GetWsFromStr(wsParam);
 			}
@@ -1082,12 +1028,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		public static bool GetWsRequiresObject(XElement frag)
 		{
 			var xa = frag.Attribute("ws");
-			if (xa == null)
-			{
-				return false;
-			}
-			var wsSpec = xa.Value;
-			return GetWsRequiresObject(wsSpec);
+			return xa != null && GetWsRequiresObject(xa.Value);
 		}
 
 		/// <summary>
@@ -1214,10 +1155,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		private class TestForParameter : IAttributeVisitor
 		{
-			public TestForParameter()
-			{
-			}
-
 			public virtual bool Visit(XAttribute xa)
 			{
 				HasAttribute |= IsParameter(xa.Value);
@@ -1231,15 +1168,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			/// </summary>
 			internal static bool IsParameter(string input)
 			{
-				if (input.Length < 2)
-				{
-					return false;
-				}
-				if (input[0] != '$')
-				{
-					return false;
-				}
-				return (input.IndexOf('=') >= 0);
+				return input.Length >= 2 && input[0] == '$' && input.IndexOf('=') >= 0;
 			}
 		}
 

@@ -48,7 +48,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		/// <summary />
 		internal IPaneBar PaneBar
 		{
-			get { return m_paneBar; }
+			get => m_paneBar;
 			set
 			{
 				if (m_paneBar != null)
@@ -56,8 +56,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 					throw new InvalidOperationException(@"Pane bar container already has a pane bar.");
 				}
 				m_paneBar = value;
-				var pbAsControl = m_paneBar as Control;
-				if (pbAsControl != null && pbAsControl.AccessibleName == null)
+				if (m_paneBar is Control pbAsControl && pbAsControl.AccessibleName == null)
 				{
 					pbAsControl.AccessibleName = "LanguageExplorer.Controls.PaneBar";
 				}

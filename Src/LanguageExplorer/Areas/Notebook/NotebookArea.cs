@@ -98,7 +98,6 @@ namespace LanguageExplorer.Areas.Notebook
 		public void EnsurePropertiesAreCurrent()
 		{
 			_propertyTable.SetProperty(AreaServices.InitialArea, MachineName, true, settingsGroup: SettingsGroup.LocalSettings);
-
 			PersistedOrDefaultTool.EnsurePropertiesAreCurrent();
 		}
 
@@ -144,9 +143,8 @@ namespace LanguageExplorer.Areas.Notebook
 						AreaServices.NotebookBrowseToolMachineName,
 						AreaServices.NotebookDocumentToolMachineName
 					};
-					foreach (var toolName in myBuiltinToolsInOrder)
+					foreach (var currentBuiltinTool in myBuiltinToolsInOrder.Select(toolName => _myTools.First(tool => tool.MachineName == toolName)))
 					{
-						var currentBuiltinTool = _myTools.First(tool => tool.MachineName == toolName);
 						_dictionaryOfAllTools.Add(currentBuiltinTool.UiName, currentBuiltinTool);
 					}
 					// Add user-defined tools in unspecified order, but after the fully supported tools.

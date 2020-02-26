@@ -25,7 +25,6 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 		protected override void CreateTestData()
 		{
 			base.CreateTestData();
-			//m_firstParaOccurrences = m_helper.m_allOccurrences[m_firstPara];
 			m_ccl = new TestCCLogic(Cache, m_chart, m_stText);
 			m_helper.Logic = m_ccl;
 			m_ccl.Ribbon = new MockRibbon(Cache, m_stText.Hvo);
@@ -145,7 +144,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 			var para = MakeParagraphSpecificContent("flabbergast");
 			var firstWord = new AnalysisOccurrence(para.SegmentsOS[0], 0);
 			var row = m_helper.MakeFirstRow();
-			var wordGrp = m_helper.MakeWordGroup(row, 0, firstWord, firstWord);
+			m_helper.MakeWordGroup(row, 0, firstWord, firstWord);
 			var result = m_ccl.NextUnchartedInput(kmaxWords);
 			Assert.AreEqual(0, result.Length);
 		}
@@ -177,8 +176,8 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 			var para = MakeParagraphSpecificContent("We want five words here");
 			var seg = para.SegmentsOS[0];
 			var row = m_helper.MakeFirstRow();
-			var wg1 = MakeWordGroup(row, 0, new AnalysisOccurrence(seg, 0), new AnalysisOccurrence(seg, 1));
-			var wg2 = MakeWordGroup(row, 0, new AnalysisOccurrence(seg, 2), new AnalysisOccurrence(seg, 2));
+			MakeWordGroup(row, 0, new AnalysisOccurrence(seg, 0), new AnalysisOccurrence(seg, 1));
+			MakeWordGroup(row, 0, new AnalysisOccurrence(seg, 2), new AnalysisOccurrence(seg, 2));
 			var expected = new[]
 			{
 				new AnalysisOccurrence(seg, 3),
@@ -670,13 +669,12 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 			MakeWordGroup(row2, 2, w3, w3);
 			MakeWordGroup(row2, 3, w4, w4);
 
-			ChartLocation result1, result2;
 			var precCell = m_ccl.MakeLocObj(1, row1);
 			var follCell = m_ccl.MakeLocObj(3, row1);
 
 			// SUT
-			CallGetWordGroupCellsBorderingChOrph(w1, out result1, out result2);
 
+			CallGetWordGroupCellsBorderingChOrph(w1, out var result1, out var result2);
 			// Test results
 			Assert.IsTrue(precCell.IsSameLocation(result1));
 			Assert.IsTrue(follCell.IsSameLocation(result2));
@@ -707,13 +705,12 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 			//MakeWordGroup(row2, 2, w3, w3); // We left w3 uncharted, it's an offset ChOrph!
 			MakeWordGroup(row2, 3, w4, w4);
 
-			ChartLocation result1, result2;
 			var precCell = m_ccl.MakeLocObj(3, row1);
 			var follCell = m_ccl.MakeLocObj(3, row2);
 
 			// SUT
-			CallGetWordGroupCellsBorderingChOrph(w3, out result1, out result2);
 
+			CallGetWordGroupCellsBorderingChOrph(w3, out var result1, out var result2);
 			// Test results
 			Assert.IsTrue(precCell.IsSameLocation(result1));
 			Assert.IsTrue(follCell.IsSameLocation(result2));
@@ -750,12 +747,11 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 			MakeWordGroup(row2, 2, w4, w4); // Left w5 uncharted, offset ChOrph!
 			MakeWordGroup(row4, 1, w6, w6);
 
-			ChartLocation result1, result2;
 			var precCell = m_ccl.MakeLocObj(2, row2);
 			var follCell = m_ccl.MakeLocObj(1, row4);
 
-			CallGetWordGroupCellsBorderingChOrph(w5, out result1, out result2);
 
+			CallGetWordGroupCellsBorderingChOrph(w5, out var result1, out var result2);
 			// Test results
 			Assert.IsTrue(precCell.IsSameLocation(result1));
 			Assert.IsTrue(follCell.IsSameLocation(result2));
@@ -788,12 +784,11 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 			MakeWordGroup(row2, 2, w3, w5);
 			MakeWordGroup(row2, 3, w6, w6); // Leaves 1 wordform uncharted (in the ribbon)
 
-			ChartLocation result1, result2;
 			var precCell = m_ccl.MakeLocObj(0, row1);
 			var follCell = m_ccl.MakeLocObj(1, row1);
 
-			CallGetWordGroupCellsBorderingChOrph(w0, out result1, out result2);
 
+			CallGetWordGroupCellsBorderingChOrph(w0, out var result1, out var result2);
 			// Test results
 			Assert.IsTrue(precCell.IsSameLocation(result1));
 			Assert.IsTrue(follCell.IsSameLocation(result2));
@@ -828,12 +823,10 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 			MakeWordGroup(row2, 3, w5, w6); // Leaves 1 wordform uncharted (in the ribbon)
 			var testCell = m_ccl.MakeLocObj(2, row1);
 
-			int whereToInsertActual;
-			IConstChartWordGroup existingWordGroupActual;
 
 			// SUT; icol of WordGroup in question = 2, iPara of ChOrph = 1
-			var result = m_ccl.FindWhereToAddChOrph(testCell, 1, w4.GetMyBeginOffsetInPara(), out whereToInsertActual, out existingWordGroupActual);
 
+			var result = m_ccl.FindWhereToAddChOrph(testCell, 1, w4.GetMyBeginOffsetInPara(), out var whereToInsertActual, out var existingWordGroupActual);
 			// Test results
 			Assert.AreEqual(FindWhereToAddResult.kAppendToExisting, result);
 			Assert.AreEqual(2, whereToInsertActual);
@@ -866,12 +859,10 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 			MakeWordGroup(row2, 0, w4, w4); // Leaves 1 wordform uncharted (in the ribbon)
 			var testCell = m_ccl.MakeLocObj(2, row1);
 
-			int whereToInsertActual;
-			IConstChartWordGroup existingWordGroupActual;
 
 			// SUT; icol of WordGroup in question = 2, iPara of ChOrph = 1
-			var result = m_ccl.FindWhereToAddChOrph(testCell, 1, w3.GetMyBeginOffsetInPara(), out whereToInsertActual, out existingWordGroupActual);
 
+			var result = m_ccl.FindWhereToAddChOrph(testCell, 1, w3.GetMyBeginOffsetInPara(), out var whereToInsertActual, out var existingWordGroupActual);
 			// Test results
 			Assert.AreEqual(FindWhereToAddResult.kAppendToExisting, result, "Wrong enum result.");
 			Assert.AreEqual(2, whereToInsertActual, "The index whereToInsert is wrong.");
@@ -908,12 +899,10 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 			MakeWordGroup(row2, 3, w7, w7);
 			var testCell = m_ccl.MakeLocObj(0, row2);
 
-			int whereToInsertActual;
-			IConstChartWordGroup existingWordGroupActual;
 
 			// SUT; icol of WordGroup in question = 0, iPara of ChOrph = 0
-			var result = m_ccl.FindWhereToAddChOrph(testCell, 0, w4.GetMyBeginOffsetInPara(), out whereToInsertActual, out existingWordGroupActual);
 
+			var result = m_ccl.FindWhereToAddChOrph(testCell, 0, w4.GetMyBeginOffsetInPara(), out var whereToInsertActual, out var existingWordGroupActual);
 			// Test results
 			Assert.AreEqual(FindWhereToAddResult.kInsertChOrphInWordGrp, result);
 			Assert.AreEqual(0, whereToInsertActual);
@@ -943,12 +932,9 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 			// This tests what happens if we try to put the ChOrph in column index 3.
 			var testCell = m_ccl.MakeLocObj(3, row1);
 
-			int whereToInsertActual;
-			IConstChartWordGroup existingWordGroupActual;
-
 			// SUT; icol of WordGroup in question = 3, iPara of ChOrph = 0
-			var result = m_ccl.FindWhereToAddChOrph(testCell, 0, w2.GetMyBeginOffsetInPara(), out whereToInsertActual, out existingWordGroupActual);
 
+			var result = m_ccl.FindWhereToAddChOrph(testCell, 0, w2.GetMyBeginOffsetInPara(), out var whereToInsertActual, out var existingWordGroupActual);
 			// Test results
 			Assert.AreEqual(FindWhereToAddResult.kInsertWordGrpInRow, result);
 			Assert.AreEqual(1, whereToInsertActual); // index in Row.Cells!
@@ -981,12 +967,9 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 			// This tests what happens if we try to put the ChOrph in column index 1.
 			var testCell = m_ccl.MakeLocObj(1, row1);
 
-			int whereToInsertActual;
-			IConstChartWordGroup existingWordGroupActual;
-
 			// SUT; icol of WordGroup in question = 1, iPara of ChOrph = 0
-			var result = m_ccl.FindWhereToAddChOrph(testCell, 0, w2.GetMyBeginOffsetInPara(), out whereToInsertActual, out existingWordGroupActual);
 
+			var result = m_ccl.FindWhereToAddChOrph(testCell, 0, w2.GetMyBeginOffsetInPara(), out _, out var existingWordGroupActual);
 			// Test results
 			Assert.AreEqual(FindWhereToAddResult.kAppendToExisting, result);
 			Assert.AreEqual(wg1_1.Hvo, existingWordGroupActual.Hvo);
@@ -1017,12 +1000,9 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 			// This tests what happens if we try to put the ChOrph in column index 1.
 			var testCell = m_ccl.MakeLocObj(1, row1);
 
-			int whereToInsertActual;
-			IConstChartWordGroup existingWordGroupActual;
-
 			// SUT; icol of WordGroup in question = 1, iPara of ChOrph = 0
-			var result = m_ccl.FindWhereToAddChOrph(testCell, 0, w3.GetMyBeginOffsetInPara(), out whereToInsertActual, out existingWordGroupActual);
 
+			var result = m_ccl.FindWhereToAddChOrph(testCell, 0, w3.GetMyBeginOffsetInPara(), out var whereToInsertActual, out var existingWordGroupActual);
 			// Test results
 			Assert.AreEqual(FindWhereToAddResult.kAppendToExisting, result);
 			Assert.AreEqual(wg1_1.Hvo, existingWordGroupActual.Hvo);
@@ -1053,12 +1033,9 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 			// This tests what happens if we try to put the ChOrph in column index 1.
 			var testCell = m_ccl.MakeLocObj(1, row1);
 
-			int whereToInsertActual;
-			IConstChartWordGroup existingWordGroupActual;
-
 			// SUT; icol of WordGroup in question = 1, iPara of ChOrph = 0
-			var result = m_ccl.FindWhereToAddChOrph(testCell, 0, w0.GetMyBeginOffsetInPara(), out whereToInsertActual, out existingWordGroupActual);
 
+			var result = m_ccl.FindWhereToAddChOrph(testCell, 0, w0.GetMyBeginOffsetInPara(), out var whereToInsertActual, out var existingWordGroupActual);
 			// Test results
 			Assert.AreEqual(FindWhereToAddResult.kInsertChOrphInWordGrp, result);
 			Assert.AreEqual(wg1_1.Hvo, existingWordGroupActual.Hvo);
@@ -1087,7 +1064,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 			var row1 = m_helper.MakeFirstRow();
 			var row2 = m_helper.MakeSecondRow();
 			MakeWordGroup(row1, 1, w0, w1);
-			var wg1_2 = MakeWordGroup(row1, 3, w2, w2); // Left w3 uncharted
+			MakeWordGroup(row1, 3, w2, w2); // Left w3 uncharted
 			MakeWordGroup(row2, 2, w3, w4); // Leaves 1 wordform uncharted (in the ribbon)
 			// Leaves 1 wordform uncharted (in the ribbon)
 
@@ -1122,7 +1099,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 			var row1 = m_helper.MakeFirstRow();
 			var row2 = m_helper.MakeSecondRow();
 			MakeWordGroup(row1, 1, w1, w1); // Left w0 uncharted
-			var wg1_2 = MakeWordGroup(row1, 3, w2, w2);
+			MakeWordGroup(row1, 3, w2, w2);
 			MakeWordGroup(row2, 2, w3, w4); // Leaves 1 wordform uncharted (in the ribbon)
 			// Leaves 1 wordform uncharted (in the ribbon)
 

@@ -135,9 +135,7 @@ namespace LanguageExplorer.Controls
 			{
 				m_sWindowKeyLocation = sWindowKey + "Location";
 				m_sWindowKeySize = sWindowKey + "Size";
-
 				ResetWindowLocationAndSize();
-
 				m_helpTopicProvider = m_propertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider);
 				helpProvider = new HelpProvider
 				{
@@ -154,9 +152,7 @@ namespace LanguageExplorer.Controls
 		private void ResetWindowLocationAndSize()
 		{
 			// Get location to the stored values, if any.
-			Point dlgLocation;
-			Size dlgSize;
-			if (!m_propertyTable.TryGetValue(m_sWindowKeyLocation, out dlgLocation) || !m_propertyTable.TryGetValue(m_sWindowKeySize, out dlgSize))
+			if (!m_propertyTable.TryGetValue(m_sWindowKeyLocation, out Point dlgLocation) || !m_propertyTable.TryGetValue(m_sWindowKeySize, out Size dlgSize))
 			{
 				return;
 			}
@@ -352,7 +348,7 @@ namespace LanguageExplorer.Controls
 
 		protected void m_tvMasterList_AfterSelect(object sender, TreeViewEventArgs e)
 		{
-			var mi = e.Node.Tag as MasterItem;
+			var mi = (MasterItem)e.Node.Tag;
 			mi.ResetDescription(m_rtbDescription);
 			ResetOKBtnEnable();
 		}
@@ -365,7 +361,7 @@ namespace LanguageExplorer.Controls
 			{
 				return;
 			}
-			var selMC = e.Node.Tag as MasterItem;
+			var selMC = (MasterItem)e.Node.Tag;
 			e.Cancel = selMC.InDatabase;
 			if (selMC.InDatabase || !selMC.KindCanBeInDatabase())
 			{
@@ -406,12 +402,7 @@ namespace LanguageExplorer.Controls
 
 		private static bool HasChosenItemNotInDatabase(TreeNode node)
 		{
-			if (!node.Checked)
-			{
-				return false;
-			}
-			var mi = node.Tag as MasterItem;
-			return mi != null && !mi.InDatabase;
+			return node.Checked && node.Tag is MasterItem masterItem && !masterItem.InDatabase;
 		}
 
 		/// <summary>
@@ -434,11 +425,10 @@ namespace LanguageExplorer.Controls
 							}
 							else
 							{
-								var mi = m_tvMasterList.SelectedNode.Tag as MasterItem;
-								if (mi != null)
+								if (m_tvMasterList.SelectedNode.Tag is MasterItem masterItem)
 								{
-									mi.AddToDatabase(m_cache);
-									SelectedFeatDefn = mi.FeatureDefn;
+									masterItem.AddToDatabase(m_cache);
+									SelectedFeatDefn = masterItem.FeatureDefn;
 								}
 							}
 						}
@@ -472,7 +462,7 @@ namespace LanguageExplorer.Controls
 					{
 						continue;
 					}
-					var mi = node.Tag as MasterItem;
+					var mi = (MasterItem)node.Tag;
 					if (mi.InDatabase)
 					{
 						continue;

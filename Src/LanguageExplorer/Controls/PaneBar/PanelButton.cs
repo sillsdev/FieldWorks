@@ -75,22 +75,26 @@ namespace LanguageExplorer.Controls.PaneBar
 			// Unwire event handlers
 			foreach (Control control in Controls)
 			{
-				if (control is CheckBox)
+				switch (control)
 				{
-					var controlAsCheckBox = (CheckBox)control;
-					controlAsCheckBox.Click -= PanelButton_CheckBox_Clicked;
-					controlAsCheckBox.MouseEnter -= panelButton_MouseEnter;
-					controlAsCheckBox.MouseLeave -= panelButton_MouseLeave;
-					controlAsCheckBox.MouseDown -= panelButton_MouseDown;
+					case CheckBox asCheckBox:
+					{
+						asCheckBox.Click -= PanelButton_CheckBox_Clicked;
+						asCheckBox.MouseEnter -= panelButton_MouseEnter;
+						asCheckBox.MouseLeave -= panelButton_MouseLeave;
+						asCheckBox.MouseDown -= panelButton_MouseDown;
+						break;
+					}
+					case PanelExtension panelExtension:
+					{
+						panelExtension.Click -= PanelButton_Image_Clicked;
+						panelExtension.MouseEnter -= panelButton_MouseEnter;
+						panelExtension.MouseLeave -= panelButton_MouseLeave;
+						panelExtension.MouseDown -= panelButton_MouseDown;
+						break;
+					}
 				}
-				else if (control is PanelExtension)
-				{
-					var controlAsPanelExtension = (PanelExtension)control;
-					controlAsPanelExtension.Click -= PanelButton_Image_Clicked;
-					controlAsPanelExtension.MouseEnter -= panelButton_MouseEnter;
-					controlAsPanelExtension.MouseLeave -= panelButton_MouseLeave;
-					controlAsPanelExtension.MouseDown -= panelButton_MouseDown;
-				}
+
 				control.Dispose();
 			}
 			Controls.Clear(); // Clear out any previous checkboxes and images
@@ -147,7 +151,7 @@ namespace LanguageExplorer.Controls.PaneBar
 				_isChecked = cb.Checked;
 				_propertyTable.SetProperty(_property, _isChecked, true, settingsGroup: SettingsGroup.LocalSettings);
 				var message = _property.Contains(LanguageExplorerConstants.ShowHiddenFields) ? LanguageExplorerConstants.ShowHiddenFields : _property;
-				_publisher.Publish(message, _isChecked);
+				_publisher.Publish(new PublisherParameterObject(message, _isChecked));
 			}
 		}
 
@@ -181,7 +185,7 @@ namespace LanguageExplorer.Controls.PaneBar
 			{
 				_isChecked = !_isChecked;
 				_propertyTable.SetProperty(_property, _isChecked, true, settingsGroup: SettingsGroup.LocalSettings);
-				_publisher.Publish(LanguageExplorerConstants.ShowHiddenFields, _isChecked);
+				_publisher.Publish(new PublisherParameterObject(LanguageExplorerConstants.ShowHiddenFields, _isChecked));
 			}
 		}
 

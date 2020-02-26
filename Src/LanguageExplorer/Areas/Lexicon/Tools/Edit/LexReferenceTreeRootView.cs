@@ -10,11 +10,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 	internal sealed class LexReferenceTreeRootView : AtomicReferenceView
 	{
 		/// <summary />
-		public LexReferenceTreeRootView() : base()
-		{
-		}
-
-		/// <summary />
 		public override void SetReferenceVc()
 		{
 			m_atomicReferenceVc = new LexReferenceTreeRootVc(m_cache, m_rootObj.Hvo, m_rootFlid, m_displayNameProperty);

@@ -293,9 +293,9 @@ namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 			{
 				var convertedMinorEntryNodesType = BuildConvertedMinorEntryNodes();
 				convertedMinorEntryNodesType.FilePath = convertedModelFile.Path;
-				var defaultMInorEntryNodesType = BuildCurrentDefaultMinorEntryNodes();
+				var defaultMinorEntryNodesType = BuildCurrentDefaultMinorEntryNodes();
 
-				_migrator.CopyNewDefaultsIntoConvertedModel(convertedMinorEntryNodesType, defaultMInorEntryNodesType);
+				_migrator.CopyNewDefaultsIntoConvertedModel(convertedMinorEntryNodesType, defaultMinorEntryNodesType);
 				convertedMinorEntryNodesType.Save();
 				AssertThatXmlIn.File(convertedModelFile.Path).HasSpecifiedNumberOfMatchesForXpath(MinorEntryComplexXpath, 1);
 				AssertThatXmlIn.File(convertedModelFile.Path).HasSpecifiedNumberOfMatchesForXpath(MinorEntryVariantXpath, 1);
@@ -572,7 +572,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 			Assert.DoesNotThrow(() => configNode = _migrator.ConvertLayoutTreeNodeToConfigNode(nodeWithWs));
 			Assert.NotNull(configNode.DictionaryNodeOptions, "No DictionaryNodeOptions were created for a treenode with a writing system");
 			Assert.IsTrue(configNode.DictionaryNodeOptions is DictionaryNodeWritingSystemOptions, "Writing system options node not created");
-			var wsOpts = configNode.DictionaryNodeOptions as DictionaryNodeWritingSystemOptions;
+			var wsOpts = (DictionaryNodeWritingSystemOptions)configNode.DictionaryNodeOptions;
 			Assert.AreEqual(wsOpts.WsType, WritingSystemType.Analysis);
 			Assert.IsNotNull(wsOpts.Options, "analysis choice did not result in any options being created.");
 		}
@@ -586,7 +586,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 			Assert.DoesNotThrow(() => configNode = _migrator.ConvertLayoutTreeNodeToConfigNode(nodeWithWs));
 			Assert.NotNull(configNode.DictionaryNodeOptions, "No DictionaryNodeOptions were created for a treenode with a writing system");
 			Assert.IsTrue(configNode.DictionaryNodeOptions is DictionaryNodeWritingSystemOptions, "Writing system options node not created");
-			var wsOpts = configNode.DictionaryNodeOptions as DictionaryNodeWritingSystemOptions;
+			var wsOpts = (DictionaryNodeWritingSystemOptions)configNode.DictionaryNodeOptions;
 			Assert.AreEqual(wsOpts.WsType, WritingSystemType.Vernacular);
 			Assert.IsNotNull(wsOpts.Options, "vernacular choice did not result in any options being created.");
 		}
@@ -600,7 +600,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 			Assert.DoesNotThrow(() => configNode = _migrator.ConvertLayoutTreeNodeToConfigNode(nodeWithWs));
 			Assert.NotNull(configNode.DictionaryNodeOptions, "No DictionaryNodeOptions were created for a treenode with a writing system");
 			Assert.IsTrue(configNode.DictionaryNodeOptions is DictionaryNodeWritingSystemOptions, "Writing system options node not created");
-			var wsOpts = configNode.DictionaryNodeOptions as DictionaryNodeWritingSystemOptions;
+			var wsOpts = (DictionaryNodeWritingSystemOptions)configNode.DictionaryNodeOptions;
 			Assert.AreEqual(wsOpts.WsType, WritingSystemType.Both);
 			Assert.IsNotNull(wsOpts.Options, "vernacular analysis choice did not result in any options being created.");
 			Assert.IsNotNull(wsOpts.Options.Find(option => option.IsEnabled && option.Id == "vernacular"), "vernacular choice was not migrated.");
@@ -615,7 +615,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 			Assert.DoesNotThrow(() => configNode = _migrator.ConvertLayoutTreeNodeToConfigNode(nodeWithWs));
 			Assert.NotNull(configNode.DictionaryNodeOptions, "No DictionaryNodeOptions were created for a treenode with a writing system");
 			Assert.IsTrue(configNode.DictionaryNodeOptions is DictionaryNodeWritingSystemOptions, "Writing system options node not created");
-			var wsOpts = configNode.DictionaryNodeOptions as DictionaryNodeWritingSystemOptions;
+			var wsOpts = (DictionaryNodeWritingSystemOptions)configNode.DictionaryNodeOptions;
 			Assert.AreEqual(wsOpts.WsType, WritingSystemType.Pronunciation);
 			Assert.IsNotNull(wsOpts.Options, "pronunciation choice did not result in any options being created.");
 			Assert.IsNotNull(wsOpts.Options.Find(option => option.IsEnabled && option.Id == "pronunciation"), "pronunciation choice was not migrated.");
@@ -630,7 +630,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 			Assert.DoesNotThrow(() => configNode = _migrator.ConvertLayoutTreeNodeToConfigNode(nodeWithWs));
 			Assert.NotNull(configNode.DictionaryNodeOptions, "No DictionaryNodeOptions were created for a treenode with a writing system");
 			Assert.IsTrue(configNode.DictionaryNodeOptions is DictionaryNodeWritingSystemOptions, "Writing system options node not created");
-			var wsOpts = configNode.DictionaryNodeOptions as DictionaryNodeWritingSystemOptions;
+			var wsOpts = (DictionaryNodeWritingSystemOptions)configNode.DictionaryNodeOptions;
 			Assert.AreEqual(wsOpts.WsType, WritingSystemType.Both);
 			Assert.IsNotNull(wsOpts.Options, "analysis vernacular choice did not result in any options being created.");
 			Assert.IsNotNull(wsOpts.Options.Find(option => option.IsEnabled && option.Id == "analysis"), "analysis choice was not migrated.");
@@ -645,7 +645,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 			Assert.DoesNotThrow(() => configNode = _migrator.ConvertLayoutTreeNodeToConfigNode(nodeWithWs));
 			Assert.NotNull(configNode.DictionaryNodeOptions, "No DictionaryNodeOptions were created for a treenode with a writing system");
 			Assert.IsTrue(configNode.DictionaryNodeOptions is DictionaryNodeWritingSystemOptions, "Writing system options node not created");
-			var wsOpts = configNode.DictionaryNodeOptions as DictionaryNodeWritingSystemOptions;
+			var wsOpts = (DictionaryNodeWritingSystemOptions)configNode.DictionaryNodeOptions;
 			Assert.AreEqual(wsOpts.WsType, WritingSystemType.Vernacular);
 			Assert.IsNotNull(wsOpts.Options, "French choice did not result in any options being created.");
 			Assert.IsNotNull(wsOpts.Options.Find(option => option.IsEnabled && option.Id == "fr"), "French choice was not migrated.");
@@ -660,7 +660,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 			Assert.DoesNotThrow(() => configNode = _migrator.ConvertLayoutTreeNodeToConfigNode(nodeWithWs));
 			Assert.NotNull(configNode.DictionaryNodeOptions, "No DictionaryNodeOptions were created for a treenode with a writing system");
 			Assert.IsTrue(configNode.DictionaryNodeOptions is DictionaryNodeWritingSystemOptions, "Writing system options node not created");
-			var wsOpts = configNode.DictionaryNodeOptions as DictionaryNodeWritingSystemOptions;
+			var wsOpts = (DictionaryNodeWritingSystemOptions)configNode.DictionaryNodeOptions;
 			Assert.AreEqual(wsOpts.WsType, WritingSystemType.Vernacular);
 			Assert.IsNotNull(wsOpts.Options, "two languages did not result in ws options being created");
 			Assert.IsNotNull(wsOpts.Options.Find(option => option.IsEnabled && option.Id == "fr"), "French choice was not migrated.");
@@ -697,7 +697,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 			Assert.DoesNotThrow(() => configNode = _migrator.ConvertLayoutTreeNodeToConfigNode(nodeWithSequence));
 			Assert.NotNull(configNode.DictionaryNodeOptions, "No DictionaryNodeOptions were created for a treenode with a LexReferenceInfo");
 			Assert.IsTrue(configNode.DictionaryNodeOptions is DictionaryNodeListOptions, "List system options node not created");
-			var lexRelationOptions = configNode.DictionaryNodeOptions as DictionaryNodeListOptions;
+			var lexRelationOptions = (DictionaryNodeListOptions)configNode.DictionaryNodeOptions;
 			Assert.AreEqual(lexRelationOptions.Options.Count, 1);
 			Assert.AreEqual(lexRelationOptions.Options[0].Id, enabledGuid.Substring(1));
 			Assert.IsTrue(lexRelationOptions.Options[0].IsEnabled);
@@ -714,7 +714,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 			Assert.DoesNotThrow(() => configNode = _migrator.ConvertLayoutTreeNodeToConfigNode(nodeWithSequence));
 			Assert.NotNull(configNode.DictionaryNodeOptions, "No DictionaryNodeOptions were created for a treenode with a LexReferenceInfo");
 			Assert.IsTrue(configNode.DictionaryNodeOptions is DictionaryNodeListOptions, "List system options node not created");
-			var lexRelationOptions = configNode.DictionaryNodeOptions as DictionaryNodeListOptions;
+			var lexRelationOptions = (DictionaryNodeListOptions)configNode.DictionaryNodeOptions;
 			Assert.AreEqual(lexRelationOptions.Options.Count, 1);
 			Assert.AreEqual(lexRelationOptions.Options[0].Id, disabledGuid.Substring(1));
 			Assert.IsFalse(lexRelationOptions.Options[0].IsEnabled);
@@ -733,7 +733,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 			Assert.DoesNotThrow(() => configNode = _migrator.ConvertLayoutTreeNodeToConfigNode(nodeWithSequence));
 			Assert.NotNull(configNode.DictionaryNodeOptions, "No DictionaryNodeOptions were created for a treenode with a LexReferenceInfo");
 			Assert.IsTrue(configNode.DictionaryNodeOptions is DictionaryNodeListOptions, "List system options node not created");
-			var lexRelationOptions = configNode.DictionaryNodeOptions as DictionaryNodeListOptions;
+			var lexRelationOptions = (DictionaryNodeListOptions)configNode.DictionaryNodeOptions;
 			Assert.AreEqual(lexRelationOptions.Options.Count, 2);
 			Assert.AreEqual(lexRelationOptions.Options[0].Id, enabledGuid);
 			Assert.IsTrue(lexRelationOptions.Options[0].IsEnabled);
@@ -772,7 +772,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 			Assert.DoesNotThrow(() => configNode = _migrator.ConvertLayoutTreeNodeToConfigNode(nodeWithSequence));
 			Assert.NotNull(configNode.DictionaryNodeOptions, "No DictionaryNodeOptions were created for the treenode");
 			Assert.IsTrue(configNode.DictionaryNodeOptions is DictionaryNodeListOptions, "List system options node not created");
-			var lexRelationOptions = configNode.DictionaryNodeOptions as DictionaryNodeListOptions;
+			var lexRelationOptions = (DictionaryNodeListOptions)configNode.DictionaryNodeOptions;
 			Assert.AreEqual(lexRelationOptions.Options.Count, 1);
 			Assert.AreEqual(lexRelationOptions.Options[0].Id, enabledGuid.Substring(1));
 			Assert.IsTrue(lexRelationOptions.Options[0].IsEnabled);
@@ -789,7 +789,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 			Assert.DoesNotThrow(() => configNode = _migrator.ConvertLayoutTreeNodeToConfigNode(nodeWithSequence));
 			Assert.NotNull(configNode.DictionaryNodeOptions, "No DictionaryNodeOptions were created for the treenode");
 			Assert.IsTrue(configNode.DictionaryNodeOptions is DictionaryNodeListOptions, "List system options node not created");
-			var lexRelationOptions = configNode.DictionaryNodeOptions as DictionaryNodeListOptions;
+			var lexRelationOptions = (DictionaryNodeListOptions)configNode.DictionaryNodeOptions;
 			Assert.AreEqual(lexRelationOptions.Options.Count, 1);
 			Assert.AreEqual(lexRelationOptions.Options[0].Id, disabledGuid.Substring(1));
 			Assert.IsFalse(lexRelationOptions.Options[0].IsEnabled);
@@ -2395,7 +2395,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 		{
 			var oldTypeNode = new LayoutTreeNode
 			{
-				After = "",
+				After = string.Empty,
 				Before = " ",
 				Between = ", ",
 				ClassName = "LexEntryRef",
@@ -2404,7 +2404,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 			};
 			var oldVariantFormNode = new LayoutTreeNode
 			{
-				After = "",
+				After = string.Empty,
 				Before = " ",
 				Between = ", ",
 				ClassName = "LexEntry",
@@ -2413,7 +2413,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 			};
 			var oldCommentNode = new LayoutTreeNode
 			{
-				After = "",
+				After = string.Empty,
 				Before = " ",
 				Between = " ",
 				ClassName = "LexEntryRef",
@@ -2436,7 +2436,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 			oldVariantsNode.Nodes.Add(oldCommentNode);
 			var oldRefSensesNode = new LayoutTreeNode
 			{
-				After = "",
+				After = string.Empty,
 				Before = " ",
 				Between = "; ",
 				ClassName = "ReversalIndexEntry",

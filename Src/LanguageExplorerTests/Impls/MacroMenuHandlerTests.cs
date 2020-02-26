@@ -152,18 +152,16 @@ namespace LanguageExplorerTests.Impls
 				EndIch = 2,
 				AnchorIch = 5
 			};
-			int ichA, hvoA, flid, ws, ichE, start, length;
-			ICmObject obj;
 
-			Assert.That(_macroMenuHandler.SafeToDoMacro(macro4, sel, out obj, out flid, out ws, out start, out length), Is.False); // wrong type of selection
+			Assert.That(_macroMenuHandler.SafeToDoMacro(macro4, sel, out _, out _, out _, out _, out _), Is.False); // wrong type of selection
 
 			sel.TypeToReturn = VwSelType.kstText;
 			sel.EndHvo = 316;
-			Assert.That(_macroMenuHandler.SafeToDoMacro(macro4, sel, out obj, out flid, out ws, out start, out length), Is.False); // different objects
+			Assert.That(_macroMenuHandler.SafeToDoMacro(macro4, sel, out _, out _, out _, out _, out _), Is.False); // different objects
 
 			sel.EndHvo = sel.AnchorHvo;
 			sel.EndTag = 3;
-			Assert.That(_macroMenuHandler.SafeToDoMacro(macro4, sel, out obj, out flid, out ws, out start, out length), Is.False); // different tags
+			Assert.That(_macroMenuHandler.SafeToDoMacro(macro4, sel, out _, out _, out _, out _, out _), Is.False); // different tags
 		}
 
 		/// <summary>
@@ -171,10 +169,7 @@ namespace LanguageExplorerTests.Impls
 		/// </summary>
 		private sealed class MacroF2 : IFlexMacro
 		{
-			public string CommandName
-			{
-				get { throw new NotSupportedException(); }
-			}
+			public string CommandName => throw new NotSupportedException();
 
 			private bool BeEnabled;
 			public bool Enabled(ICmObject target, int targetField, int wsId, int start, int length)
@@ -251,27 +246,27 @@ namespace LanguageExplorerTests.Impls
 				}
 			}
 
-			public void GetSelectionProps(int cttpMax, ArrayPtr _rgpttp, ArrayPtr _rgpvps, out int _cttp)
+			public void GetSelectionProps(int cttpMax, ArrayPtr rgpttp, ArrayPtr rgpvps, out int cttp)
 			{
 				throw new NotSupportedException();
 			}
 
-			public void GetHardAndSoftCharProps(int cttpMax, ArrayPtr _rgpttpSel, ArrayPtr _rgpvpsSoft, out int _cttp)
+			public void GetHardAndSoftCharProps(int cttpMax, ArrayPtr rgpttpSel, ArrayPtr rgpvpsSoft, out int cttp)
 			{
 				throw new NotSupportedException();
 			}
 
-			public void GetParaProps(int cttpMax, ArrayPtr _rgpvps, out int _cttp)
+			public void GetParaProps(int cttpMax, ArrayPtr rgpvps, out int cttp)
 			{
 				throw new NotSupportedException();
 			}
 
-			public void GetHardAndSoftParaProps(int cttpMax, ITsTextProps[] _rgpttpPara, ArrayPtr _rgpttpHard, ArrayPtr _rgpvpsSoft, out int _cttp)
+			public void GetHardAndSoftParaProps(int cttpMax, ITsTextProps[] rgpttpPara, ArrayPtr rgpttpHard, ArrayPtr rgpvpsSoft, out int cttp)
 			{
 				throw new NotSupportedException();
 			}
 
-			public void SetSelectionProps(int cttp, ITsTextProps[] _rgpttp)
+			public void SetSelectionProps(int cttp, ITsTextProps[] rgpttp)
 			{
 				throw new NotSupportedException();
 			}
@@ -281,22 +276,22 @@ namespace LanguageExplorerTests.Impls
 				throw new NotSupportedException();
 			}
 
-			public void PropInfo(bool fEndPoint, int ilev, out int _hvoObj, out int _tag, out int _ihvo, out int _cpropPrevious, out IVwPropertyStore _pvps)
+			public void PropInfo(bool fEndPoint, int ilev, out int hvoObj, out int tag, out int ihvo, out int cpropPrevious, out IVwPropertyStore pvps)
 			{
 				throw new NotSupportedException();
 			}
 
-			public void AllTextSelInfo(out int _ihvoRoot, int cvlsi, ArrayPtr _rgvsli, out int _tagTextProp, out int _cpropPrevious, out int _ichAnchor, out int _ichEnd, out int _ws, out bool _fAssocPrev, out int _ihvoEnd, out ITsTextProps _pttp)
+			public void AllTextSelInfo(out int ihvoRoot, int cvlsi, ArrayPtr rgvsli, out int tagTextProp, out int cpropPrevious, out int ichAnchor, out int ichEnd, out int ws, out bool fAssocPrev, out int ihvoEnd, out ITsTextProps pttp)
 			{
 				throw new NotSupportedException();
 			}
 
-			public void AllSelEndInfo(bool fEndPoint, out int _ihvoRoot, int cvlsi, ArrayPtr _rgvsli, out int _tagTextProp, out int _cpropPrevious, out int _ich, out int _ws, out bool _fAssocPrev, out ITsTextProps _pttp)
+			public void AllSelEndInfo(bool fEndPoint, out int ihvoRoot, int cvlsi, ArrayPtr rgvsli, out int tagTextProp, out int cpropPrevious, out int ich, out int ws, out bool fAssocPrev, out ITsTextProps pttp)
 			{
 				throw new NotSupportedException();
 			}
 
-			public bool CompleteEdits(out VwChangeInfo _ci)
+			public bool CompleteEdits(out VwChangeInfo ci)
 			{
 				throw new NotSupportedException();
 			}
@@ -306,27 +301,27 @@ namespace LanguageExplorerTests.Impls
 				throw new NotSupportedException();
 			}
 
-			public void Location(IVwGraphics _vg, Rect rcSrc, Rect rcDst, out Rect _rdPrimary, out Rect _rdSecondary, out bool _fSplit, out bool _fEndBeforeAnchor)
+			public void Location(IVwGraphics vg, Rect rcSrc, Rect rcDst, out Rect rdPrimary, out Rect rdSecondary, out bool fSplit, out bool fEndBeforeAnchor)
 			{
 				throw new NotSupportedException();
 			}
 
-			public void GetParaLocation(out Rect _rdLoc)
+			public void GetParaLocation(out Rect rdLoc)
 			{
 				throw new NotSupportedException();
 			}
 
-			public void ReplaceWithTsString(ITsString _tss)
+			public void ReplaceWithTsString(ITsString tss)
 			{
 				throw new NotSupportedException();
 			}
 
-			public void GetSelectionString(out ITsString _ptss, string bstrSep)
+			public void GetSelectionString(out ITsString ptss, string bstrSep)
 			{
 				throw new NotSupportedException();
 			}
 
-			public void GetFirstParaString(out ITsString _ptss, string bstrSep, out bool _fGotItAll)
+			public void GetFirstParaString(out ITsString ptss, string bstrSep, out bool fGotItAll)
 			{
 				throw new NotSupportedException();
 			}
@@ -341,7 +336,7 @@ namespace LanguageExplorerTests.Impls
 				throw new NotSupportedException();
 			}
 
-			public bool get_Follows(IVwSelection _sel)
+			public bool get_Follows(IVwSelection sel)
 			{
 				throw new NotSupportedException();
 			}
@@ -361,7 +356,7 @@ namespace LanguageExplorerTests.Impls
 				throw new NotSupportedException();
 			}
 
-			public void SetTypingProps(ITsTextProps _ttp)
+			public void SetTypingProps(ITsTextProps ttp)
 			{
 				throw new NotSupportedException();
 			}
@@ -386,57 +381,30 @@ namespace LanguageExplorerTests.Impls
 				throw new NotSupportedException();
 			}
 
-			public bool IsRange
-			{
-				get { throw new NotSupportedException(); }
-			}
+			public bool IsRange => throw new NotSupportedException();
 
-			public bool EndBeforeAnchor
-			{
-				get { throw new NotSupportedException(); }
-			}
+			public bool EndBeforeAnchor => throw new NotSupportedException();
 
-			public bool CanFormatPara
-			{
-				get { throw new NotSupportedException(); }
-			}
+			public bool CanFormatPara => throw new NotSupportedException();
 
-			public bool CanFormatChar
-			{
-				get { throw new NotSupportedException(); }
-			}
+			public bool CanFormatChar => throw new NotSupportedException();
 
-			public bool CanFormatOverlay
-			{
-				get { throw new NotSupportedException(); }
-			}
+			public bool CanFormatOverlay => throw new NotSupportedException();
 
-			public bool IsValid
-			{
-				get { throw new NotImplementedException(); }
-			}
+			public bool IsValid => throw new NotImplementedException();
 
 			public bool AssocPrev
 			{
-				get { throw new NotSupportedException(); }
-				set { throw new NotSupportedException(); }
+				get => throw new NotSupportedException();
+				set => throw new NotSupportedException();
 			}
 
 
-			public IVwRootBox RootBox
-			{
-				get { throw new NotSupportedException(); }
-			}
+			public IVwRootBox RootBox => throw new NotSupportedException();
 
-			public bool IsEditable
-			{
-				get { throw new NotSupportedException(); }
-			}
+			public bool IsEditable => throw new NotSupportedException();
 
-			public bool IsEnabled
-			{
-				get { throw new NotSupportedException(); }
-			}
+			public bool IsEnabled => throw new NotSupportedException();
 		}
 	}
 }

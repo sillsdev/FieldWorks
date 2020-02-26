@@ -137,10 +137,7 @@ namespace LanguageExplorer.Controls
 		private ITsString TssForm
 		{
 			// REVIEW: trim?
-			get
-			{
-				return msLexicalForm == null ? m_tbLexicalForm.Tss : msLexicalForm.Value(m_cache.DefaultVernWs);
-			}
+			get => msLexicalForm == null ? m_tbLexicalForm.Tss : msLexicalForm.Value(m_cache.DefaultVernWs);
 			set
 			{
 				if (msLexicalForm == null)
@@ -166,8 +163,7 @@ namespace LanguageExplorer.Controls
 				}
 				for (var i = 0; i < msLexicalForm.NumberOfWritingSystems; ++i)
 				{
-					int ws;
-					var tss = msLexicalForm.ValueAndWs(i, out ws);
+					var tss = msLexicalForm.ValueAndWs(i, out _);
 					if (tss != null && tss.Length > 0)
 					{
 						return tss.Text.Trim();
@@ -185,8 +181,7 @@ namespace LanguageExplorer.Controls
 				{
 					for (var i = 0; i < msLexicalForm.NumberOfWritingSystems; ++i)
 					{
-						int ws;
-						var tss = msLexicalForm.ValueAndWs(i, out ws);
+						var tss = msLexicalForm.ValueAndWs(i, out var ws);
 						if (tss != null && tss.Length > 0)
 						{
 							msLexicalForm.SetValue(ws, value);
@@ -208,8 +203,7 @@ namespace LanguageExplorer.Controls
 				}
 				for (var i = 0; i < msLexicalForm.NumberOfWritingSystems; ++i)
 				{
-					int ws;
-					var tss = msLexicalForm.ValueAndWs(i, out ws);
+					var tss = msLexicalForm.ValueAndWs(i, out _);
 					if (tss != null && tss.Length > 0)
 					{
 						return tss;
@@ -289,10 +283,7 @@ namespace LanguageExplorer.Controls
 		public ITsString TssGloss
 		{
 			// REVIEW: trim?
-			get
-			{
-				return msGloss == null ? m_tbGloss.Tss : msGloss.Value(m_cache.DefaultAnalWs);
-			}
+			get => msGloss == null ? m_tbGloss.Tss : msGloss.Value(m_cache.DefaultAnalWs);
 			set
 			{
 				if (msGloss == null)
@@ -328,18 +319,12 @@ namespace LanguageExplorer.Controls
 
 		public IPartOfSpeech POS
 		{
-			set
-			{
-				m_msaGroupBox.StemPOS = value;
-			}
+			set => m_msaGroupBox.StemPOS = value;
 		}
 
 		public MsaType MsaType
 		{
-			get
-			{
-				return m_msaGroupBox?.MSAType ?? MsaType.kStem;
-			}
+			get => m_msaGroupBox?.MSAType ?? MsaType.kStem;
 			set
 			{
 				if (m_msaGroupBox != null)
@@ -350,10 +335,7 @@ namespace LanguageExplorer.Controls
 		}
 		public IMoInflAffixSlot Slot
 		{
-			get
-			{
-				return m_msaGroupBox?.Slot;
-			}
+			get => m_msaGroupBox?.Slot;
 			set
 			{
 				if (m_msaGroupBox != null)
@@ -596,9 +578,8 @@ namespace LanguageExplorer.Controls
 				rgComplexTypes.Sort();
 				m_idxNotComplex = m_cbComplexFormType.Items.Count;
 				m_cbComplexFormType.Items.Add(new DummyEntryType(LanguageExplorerControls.ksNotApplicable, false));
-				foreach (var entryType in rgComplexTypes)
+				foreach (var type in rgComplexTypes.Cast<ILexEntryType>())
 				{
-					var type = (ILexEntryType)entryType;
 					m_cbComplexFormType.Items.Add(type);
 				}
 				m_cbComplexFormType.SelectedIndex = 0;
@@ -1191,8 +1172,7 @@ namespace LanguageExplorer.Controls
 		{
 			var form = BestForm;
 			var originalForm = form;
-			int clsid;
-			var mmt = MorphServices.FindMorphType(m_cache, ref form, out clsid);
+			var mmt = MorphServices.FindMorphType(m_cache, ref form, out _);
 			bool result;
 			switch (m_morphType.Guid.ToString())
 			{
@@ -1228,7 +1208,7 @@ namespace LanguageExplorer.Controls
 			}
 			// Pathologically the user may have changed the markers so that we cannot distinguish things that
 			// are normally distinct (e.g., LT-12378).
-			return (mmt.Prefix + form + mmt.Postfix) == originalForm;
+			return mmt.Prefix + form + mmt.Postfix == originalForm;
 		}
 
 		/// <summary>
@@ -1243,8 +1223,7 @@ namespace LanguageExplorer.Controls
 			if (msLexicalForm == null)
 			{
 				var tss = TssForm;
-				string left, right;
-				if (!StringServices.GetCircumfixLeftAndRightParts(m_cache, tss, out left, out right))
+				if (!StringServices.GetCircumfixLeftAndRightParts(m_cache, tss, out _, out _))
 				{
 					return true;
 				}
@@ -1254,12 +1233,10 @@ namespace LanguageExplorer.Controls
 				// Check all other writing systems.
 				for (var i = 0; i < msLexicalForm.NumberOfWritingSystems; i++)
 				{
-					int ws;
-					var tss = msLexicalForm.ValueAndWs(i, out ws);
+					var tss = msLexicalForm.ValueAndWs(i, out _);
 					if (tss?.Text != null)
 					{
-						string left, right;
-						if (!StringServices.GetCircumfixLeftAndRightParts(m_cache, tss, out left, out right))
+						if (!StringServices.GetCircumfixLeftAndRightParts(m_cache, tss, out _, out _))
 						{
 							return true;
 						}
@@ -1339,8 +1316,7 @@ namespace LanguageExplorer.Controls
 				// Save all the writing systems.
 				for (var i = 0; i < lmsControl.NumberOfWritingSystems; i++)
 				{
-					int ws;
-					var tss = lmsControl.ValueAndWs(i, out ws);
+					var tss = lmsControl.ValueAndWs(i, out var ws);
 					if (tss?.Text != null)
 					{
 						// In the case of copied text, sometimes the string had the wrong ws attached to it. (LT-11950)
@@ -1379,8 +1355,7 @@ namespace LanguageExplorer.Controls
 				return;
 			}
 			var newForm = BestForm;
-			string sAdjusted;
-			var mmt = MorphServices.GetTypeIfMatchesPrefix(m_cache, newForm, out sAdjusted);
+			var mmt = MorphServices.GetTypeIfMatchesPrefix(m_cache, newForm, out var sAdjusted);
 			if (mmt != null)
 			{
 				if (newForm != sAdjusted)
@@ -1405,8 +1380,7 @@ namespace LanguageExplorer.Controls
 			{
 				try
 				{
-					int clsid;
-					mmt = MorphServices.FindMorphType(m_cache, ref newForm, out clsid);
+					mmt = MorphServices.FindMorphType(m_cache, ref newForm, out _);
 				}
 				catch (Exception ex)
 				{

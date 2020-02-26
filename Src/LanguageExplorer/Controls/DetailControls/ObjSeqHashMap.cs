@@ -58,12 +58,9 @@ namespace LanguageExplorer.Controls.DetailControls
 						yield return item;
 					}
 				}
-				foreach (var list in m_slicesToReuse.Values)
+				foreach (var item in m_slicesToReuse.Values.SelectMany(list => list))
 				{
-					foreach (var item in list)
-					{
-						yield return item;
-					}
+					yield return item;
 				}
 			}
 		}
@@ -80,9 +77,8 @@ namespace LanguageExplorer.Controls.DetailControls
 				m_table[keyList] = list;
 			}
 			list.Add(obj);
-			List<Slice> reusableSlices;
 			var key = obj.GetType().Name;
-			if (!m_slicesToReuse.TryGetValue(key, out reusableSlices))
+			if (!m_slicesToReuse.TryGetValue(key, out var reusableSlices))
 			{
 				reusableSlices = new List<Slice>();
 				m_slicesToReuse[key] = reusableSlices;
@@ -113,9 +109,8 @@ namespace LanguageExplorer.Controls.DetailControls
 		{
 			var list = (ArrayList)m_table[keyList];
 			list?.Remove(obj);
-			List<Slice> reusableSlices;
 			var key = obj.GetType().Name;
-			if (m_slicesToReuse.TryGetValue(key, out reusableSlices))
+			if (m_slicesToReuse.TryGetValue(key, out var reusableSlices))
 			{
 				reusableSlices.Remove(obj);
 			}
@@ -124,8 +119,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// <summary />
 		public Slice GetSliceToReuse(string className)
 		{
-			List<Slice> reusableSlices;
-			if (!m_slicesToReuse.TryGetValue(className, out reusableSlices))
+			if (!m_slicesToReuse.TryGetValue(className, out var reusableSlices))
 			{
 				return null;
 			}

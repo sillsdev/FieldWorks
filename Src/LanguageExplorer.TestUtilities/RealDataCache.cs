@@ -817,12 +817,9 @@ namespace LanguageExplorer.TestUtilities
 		public ITsMultiString get_MultiStringProp(int hvo, int tag)
 		{
 			var tsms = new TsMultiString();
-			foreach (var key in m_extendedKeyCache.Keys)
+			foreach (var key in m_extendedKeyCache.Keys.Where(key => key.Hvo == hvo && key.Flid == tag))
 			{
-				if (key.Hvo == hvo && key.Flid == tag)
-				{
-					tsms.set_String(key.Ws, m_extendedKeyCache[key]);
-				}
+				tsms.set_String(key.Ws, m_extendedKeyCache[key]);
 			}
 			return tsms;
 		}
@@ -890,9 +887,7 @@ namespace LanguageExplorer.TestUtilities
 		/// <inheritdoc />
 		public int get_VecSize(int hvo, int tag)
 		{
-			var key = new HvoFlidKey(hvo, tag);
-			List<int> collection;
-			return m_vectorCache.TryGetValue(key, out collection) ? collection.Count : 0;
+			return m_vectorCache.TryGetValue(new HvoFlidKey(hvo, tag), out var collection) ? collection.Count : 0;
 		}
 
 		/// <inheritdoc />
@@ -904,9 +899,7 @@ namespace LanguageExplorer.TestUtilities
 		/// <inheritdoc />
 		public int GetObjIndex(int hvoOwn, int flid, int hvo)
 		{
-			var key = new HvoFlidKey(hvoOwn, flid);
-			var val = m_vectorCache[key];
-			return val.IndexOf(hvo);
+			return m_vectorCache[new HvoFlidKey(hvoOwn, flid)].IndexOf(hvo);
 		}
 
 		// The ones below here are for editing, so can wait.
@@ -935,9 +928,8 @@ namespace LanguageExplorer.TestUtilities
 		/// <inheritdoc />
 		public void Replace(int hvoObj, int tag, int ihvoMin, int ihvoLim, [MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 5)] int[] rghvo, int chvo)
 		{
-			List<int> list;
 			var key = new HvoFlidKey(hvoObj, tag);
-			if (m_vectorCache.TryGetValue(key, out list))
+			if (m_vectorCache.TryGetValue(key, out var list))
 			{
 				while (ihvoLim > ihvoMin)
 				{
@@ -1148,7 +1140,6 @@ namespace LanguageExplorer.TestUtilities
 		public bool get_IsPropInCache(int hvo, int tag, int cpt, int ws)
 		{
 			var key = new HvoFlidKey(hvo, tag);
-			var keyWs = new HvoFlidWSKey(hvo, tag, ws);
 			switch ((CellarPropertyType)cpt)
 			{
 				default:
@@ -1175,7 +1166,7 @@ namespace LanguageExplorer.TestUtilities
 					return m_basicITsStringCache.ContainsKey(key);
 				case CellarPropertyType.MultiUnicode: // Fall through.
 				case CellarPropertyType.MultiString:
-					return m_extendedKeyCache.ContainsKey(keyWs);
+					return m_extendedKeyCache.ContainsKey(new HvoFlidWSKey(hvo, tag, ws));
 				case CellarPropertyType.Unicode:
 					return m_basicStringCache.ContainsKey(key);
 
@@ -1246,22 +1237,13 @@ namespace LanguageExplorer.TestUtilities
 		/// <inheritdoc />
 		public bool get_IsValidObject(int hvo)
 		{
-			if (hvo == 0)
-			{
-				throw new ArgumentException("'hvo' cannot be 0.");
-			}
-			// If it contains the key, it is valid.
-			return m_intCache.ContainsKey(new HvoFlidKey(hvo, (int)CmObjectFields.kflidCmObject_Class));
+			return hvo == 0 ? throw new ArgumentException("'hvo' cannot be 0.") : m_intCache.ContainsKey(new HvoFlidKey(hvo, (int)CmObjectFields.kflidCmObject_Class));
 		}
 
 		/// <inheritdoc />
 		public bool get_IsDummyId(int hvo)
 		{
-			if (hvo == 0)
-			{
-				throw new ArgumentException("'hvo' cannot be 0.");
-			}
-			return false;
+			return hvo == 0 ? throw new ArgumentException("'hvo' cannot be 0.") : false;
 		}
 
 		/// <inheritdoc />
@@ -1329,10 +1311,7 @@ namespace LanguageExplorer.TestUtilities
 		/// <inheritdoc />
 		public IFwMetaDataCache MetaDataCache
 		{
-			get
-			{
-				return m_metaDataCache;
-			}
+			get => m_metaDataCache;
 			set
 			{
 				if (value != null && !(value is MetaDataCache))
@@ -1538,7 +1517,7 @@ namespace LanguageExplorer.TestUtilities
 
 			public override int GetHashCode()
 			{
-				return (Hvo ^ Flid);
+				return Hvo ^ Flid;
 			}
 
 			public override string ToString()
@@ -1574,7 +1553,7 @@ namespace LanguageExplorer.TestUtilities
 
 			public override int GetHashCode()
 			{
-				return (Hvo ^ Flid ^ Ws);
+				return Hvo ^ Flid ^ Ws;
 			}
 
 			public override string ToString()

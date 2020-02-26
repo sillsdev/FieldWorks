@@ -88,8 +88,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		{
 			get
 			{
-				var node = m_configurationNode.Element("deParams");
-				var nullLabel = XmlUtils.GetOptionalAttributeValue(node, "nullLabel");
+				var nullLabel = XmlUtils.GetOptionalAttributeValue(m_configurationNode.Element("deParams"), "nullLabel");
 				return nullLabel == null || nullLabel.Length > 0;
 			}
 		}

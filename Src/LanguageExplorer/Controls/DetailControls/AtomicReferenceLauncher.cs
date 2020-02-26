@@ -119,10 +119,7 @@ namespace LanguageExplorer.Controls.DetailControls
 				var hvo = m_cache.DomainDataByFlid.get_ObjectProp(m_obj.Hvo, m_flid);
 				return hvo > 0 ? m_cache.ServiceLocator.GetObject(hvo) : null;
 			}
-			set
-			{
-				m_cache.DomainDataByFlid.SetObjProp(m_obj.Hvo, m_flid, value != null ? value.Hvo : 0);
-			}
+			set => m_cache.DomainDataByFlid.SetObjProp(m_obj.Hvo, m_flid, value?.Hvo ?? 0);
 		}
 
 		public override void UpdateDisplayFromDatabase()

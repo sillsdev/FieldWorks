@@ -69,7 +69,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			// for Western European languages)
 			var encConv = new SilEncConverters40.EncConverters();
 			var de = encConv.GetEnumerator();
-			var sEncConvName = "Windows1252<>Unicode";  // REVIEW: SHOULD THIS NAME BE LOCALIZED?
+			const string sEncConvName = "Windows1252<>Unicode"; // REVIEW: SHOULD THIS NAME BE LOCALIZED?
 			var fMustCreateEncCnv = true;
 			while (de.MoveNext())
 			{
@@ -431,26 +431,16 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 										var wsFWName = string.Empty;
 										var wsEC = string.Empty;
 										var wsFWCode = string.Empty;
-										foreach (var kvp in wsInfo)
+										foreach (var wsi in wsInfo.Select(kvp => kvp.Value).Where(wsi => wsName == wsi.Name))
 										{
-											var wsi = kvp.Value;
-											if (wsName != wsi.Name)
-											{
-												continue;
-											}
 											wsFWName = TsStringUtils.NormalizeToNFC(wsi.Name);
 											wsEC = TsStringUtils.NormalizeToNFC(wsi.Map);
 											wsFWCode = TsStringUtils.NormalizeToNFC(wsi.Id);
 										}
 										if (wsFWName == string.Empty)
 										{
-											foreach (var kvp in wsInfo)
+											foreach (var wsi in wsInfo.Select(kvp => kvp.Value).Where(wsi => BaseName(wsName) == BaseName(wsi.Name)))
 											{
-												var wsi = kvp.Value;
-												if (BaseName(wsName) != BaseName(wsi.Name))
-												{
-													continue;
-												}
 												wsFWName = TsStringUtils.NormalizeToNFC(wsi.Name);
 												wsEC = TsStringUtils.NormalizeToNFC(wsi.Map);
 												wsFWCode = TsStringUtils.NormalizeToNFC(wsi.Id);
@@ -581,18 +571,13 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			var selIndex = selIndexes[0];
 			// only support 1
 			var lvItem = listViewMapping.Items[selIndex];
-			var app = m_propertyTable.GetValue<IApp>(LanguageExplorerConstants.App);
-			using (var dlg = new LexImportWizardLanguage(m_cache, m_propertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider), app))
+			using (var dlg = new LexImportWizardLanguage(m_cache, m_propertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider), m_propertyTable.GetValue<IApp>(LanguageExplorerConstants.App)))
 			{
 				dlg.LangToModify(lvItem.Text, lvItem.SubItems[1].Text, lvItem.SubItems[2].Text);
 				if (dlg.ShowDialog(this) == DialogResult.OK)
 				{
 					// retrieve the new WS information from the dlg
-					string llName;
-					string fwName;
-					string ec;
-					string fwCode;
-					dlg.GetCurrentLangInfo(out llName, out fwName, out ec, out fwCode);
+					dlg.GetCurrentLangInfo(out var llName, out var fwName, out var ec, out var fwCode);
 					// remove the one that was modified
 					listViewMapping.Items.Remove(lvItem);
 					// now add the modified one

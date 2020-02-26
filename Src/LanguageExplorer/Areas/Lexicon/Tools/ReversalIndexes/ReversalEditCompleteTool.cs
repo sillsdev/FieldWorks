@@ -36,8 +36,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 		private MultiPane _multiPane;
 		private IRecordList _recordList;
 		private XhtmlDocView DocView { get; set; }
-		[Import(AreaServices.LexiconAreaMachineName)]
-		private IArea _area;
 
 		#region Implementation of IMajorFlexComponent
 
@@ -81,7 +79,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 			var mainMultiPaneParameters = new MultiPaneParameters
 			{
 				Orientation = Orientation.Vertical,
-				Area = _area,
+				Area = Area,
 				Id = "ReversalIndexItemsAndDetailMultiPane",
 				ToolMachineName = MachineName
 			};
@@ -117,10 +115,8 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 				Dock = DockStyle.Right
 			};
 			recordEditViewPaneBar.AddControls(new List<Control> { panelButton });
-
 			_multiPane = MultiPaneFactory.CreateMultiPaneWithTwoPaneBarContainersInMainCollapsingSplitContainer(majorFlexComponentParameters.FlexComponentParameters,
 				majorFlexComponentParameters.MainCollapsingSplitContainer, mainMultiPaneParameters, DocView, "Doc Reversals", docViewPaneBar, recordEditView, "Browse Entries", recordEditViewPaneBar);
-
 			// Too early before now.
 			recordEditView.FinishInitialization();
 			DocView.FinishInitialization();
@@ -175,7 +171,8 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 		/// <summary>
 		/// Get the area for the tool.
 		/// </summary>
-		public IArea Area => _area;
+		[field: Import(AreaServices.LexiconAreaMachineName)]
+		public IArea Area { get; private set; }
 
 		/// <summary>
 		/// Get the image for the area.
@@ -209,7 +206,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 				_dataTree = dataTree;
 				_recordList = recordList;
 				DocView = xhtmlDocView;
-
 				_cache = majorFlexComponentParameters.LcmCache;
 				_propertyTable = majorFlexComponentParameters.FlexComponentParameters.PropertyTable;
 				_reversalIndexRepository = _cache.ServiceLocator.GetInstance<IReversalIndexRepository>();
@@ -231,13 +227,10 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 				// Right menu on doc view.
 				MainPanelMenuContextMenuFactory.RegisterPanelMenuCreatorMethod(AreaServices.RightPanelMenuId, CreateRightMainPanelContextMenuStrip);
 				_dataTree.DataTreeSliceContextMenuParameterObject.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ContextMenuName.mnuReorderVector, Create_mnuReorderVector);
-
 				// mnuDataTree_MoveReversalIndexEntry
 				_dataTree.DataTreeSliceContextMenuParameterObject.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ContextMenuName.mnuDataTree_MoveReversalIndexEntry, Create_mnuDataTree_MoveReversalIndexEntry);
-
 				// mnuDataTree_InsertReversalSubentry
 				_dataTree.DataTreeSliceContextMenuParameterObject.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ContextMenuName.mnuDataTree_InsertReversalSubentry, Create_mnuDataTree_InsertReversalSubentry);
-
 				// Hotlinks menus.
 				_dataTree.DataTreeSliceContextMenuParameterObject.HotlinksMenuFactory.RegisterHotlinksMenuCreatorMethod(ContextMenuName.mnuDataTree_InsertReversalSubentry_Hotlinks, Create_mnuDataTree_InsertReversalSubentry_Hotlinks);
 			}
@@ -257,12 +250,11 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 				{
 					// <command id="CmdDataTree_MoveUp_ReversalSubentry" label="Move Subentry _Up" message="MoveUpObjectInSequence" icon="MoveUp">
 					var menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, MoveUpObjectInOwningSequence_Clicked, LexiconResources.Move_Subentry_Up, image: imageHolder.smallCommandImages.Images[AreaServices.MoveUpIndex]);
-					bool visible;
-					menu.Enabled = AreaServices.CanMoveUpObjectInOwningSequence(_dataTree, _cache, out visible);
+					menu.Enabled = AreaServices.CanMoveUpObjectInOwningSequence(_dataTree, _cache, out _);
 
 					// <command id="CmdDataTree_MoveDown_ReversalSubentry" label="Move Subentry Down" message="MoveDownObjectInSequence" icon="MoveDown">
 					menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, MoveDownObjectInOwningSequence_Clicked, LexiconResources.Move_Subentry_Down, image: imageHolder.smallCommandImages.Images[AreaServices.MoveDownIndex]);
-					menu.Enabled = AreaServices.CanMoveDownObjectInOwningSequence(_dataTree, _cache, out visible);
+					menu.Enabled = AreaServices.CanMoveDownObjectInOwningSequence(_dataTree, _cache, out _);
 
 					// <item label="-" translate="do not translate"/>
 					ToolStripMenuItemFactory.CreateToolStripSeparatorForContextMenuStrip(contextMenuStrip);
@@ -365,7 +357,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 						_recordList?.RemoveItemsFor(currentEntry.Hvo);
 						// Note: PropChanged should happen on the old owner and the new while completing the unit of work.
 						// Have to jump to a main entry, as RecordList doesn't know anything about subentries.
-						_majorFlexComponentParameters.FlexComponentParameters.Publisher.Publish(LanguageExplorerConstants.JumpToRecord, newOwner.MainEntry.Hvo);
+						_majorFlexComponentParameters.FlexComponentParameters.Publisher.Publish(new PublisherParameterObject(LanguageExplorerConstants.JumpToRecord, newOwner.MainEntry.Hvo));
 					}
 				}
 			}
@@ -376,9 +368,9 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 			{
 				get
 				{
-					var reversalIndexEntry = _dataTree.CurrentSlice?.MyCmObject as IReversalIndexEntry;
-					return reversalIndexEntry != null && (reversalIndexEntry.ReversalIndex.EntriesOC.Count > 1)
-						   || reversalIndexEntry.ReversalIndex.EntriesOC.Count != 0 && reversalIndexEntry.ReversalIndex.EntriesOC.First().SubentriesOS.Any();
+					var reversalIndexEntry = (IReversalIndexEntry)_dataTree.CurrentSlice?.MyCmObject;
+					return reversalIndexEntry != null && (reversalIndexEntry.ReversalIndex.EntriesOC.Count > 1
+						   || reversalIndexEntry.ReversalIndex.EntriesOC.Count != 0 && reversalIndexEntry.ReversalIndex.EntriesOC.First().SubentriesOS.Any());
 				}
 			}
 
@@ -483,7 +475,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 				ToolStripMenuItemFactory.CreateToolStripSeparatorForContextMenuStrip(contextMenuStrip);
 				// <item command="CmdConfigureDictionary" />
 				ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, ConfigureDictionary_Clicked, LexiconResources.ConfigureReversalIndex);
-
 				return retVal;
 			}
 
@@ -523,9 +514,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 				currentToolStripMenuItem.Checked = LanguageExplorerResources.AllEntriesPublication == DocView.GetCurrentPublication();
 
 				// <menu list="Publications" inline="true" emptyAllowed="true" behavior="singlePropertyAtomicValue" property="SelectedPublication" />
-				List<string> inConfig;
-				List<string> notInConfig;
-				DocView.SplitPublicationsByConfiguration(_majorFlexComponentParameters.LcmCache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS, DocView.GetCurrentConfiguration(false), out inConfig, out notInConfig);
+				DocView.SplitPublicationsByConfiguration(_majorFlexComponentParameters.LcmCache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS, DocView.GetCurrentConfiguration(false), out var inConfig, out var notInConfig);
 				foreach (var pub in inConfig)
 				{
 					currentToolStripMenuItem = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, Publication_Clicked, pub);
@@ -546,7 +535,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 				ToolStripMenuItemFactory.CreateToolStripSeparatorForContextMenuStrip(contextMenuStrip);
 				// <item command="CmdPublicationsJumpToDefault" />
 				ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, EditPublications_Clicked, LexiconResources.EditPublications);
-
 				return retVal;
 			}
 

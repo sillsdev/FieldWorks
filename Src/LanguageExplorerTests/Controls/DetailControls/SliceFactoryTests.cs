@@ -54,9 +54,10 @@ namespace LanguageExplorerTests.Controls.DetailControls
 			{
 				m_returnObject = returnObject;
 			}
-			public IActionHandler ActionHandler { get { throw new NotSupportedException(); } }
-			public ICmObjectIdFactory CmObjectIdFactory { get { throw new NotSupportedException(); } }
-			public IDataSetup DataSetup { get { throw new NotSupportedException(); } }
+			public IActionHandler ActionHandler => throw new NotSupportedException();
+			public ICmObjectIdFactory CmObjectIdFactory => throw new NotSupportedException();
+			public IDataSetup DataSetup => throw new NotSupportedException();
+
 			public ICmObject GetObject(int hvo)
 			{
 				return m_returnObject;
@@ -64,12 +65,12 @@ namespace LanguageExplorerTests.Controls.DetailControls
 			public bool IsValidObjectId(int hvo) { throw new NotSupportedException(); }
 			public ICmObject GetObject(Guid guid) { throw new NotSupportedException(); }
 			public ICmObject GetObject(ICmObjectId id) { throw new NotSupportedException(); }
-			public WritingSystemManager WritingSystemManager { get { throw new NotSupportedException(); } }
-			public IWritingSystemContainer WritingSystems { get { throw new NotSupportedException(); } }
-			public ICmObjectRepository ObjectRepository { get { throw new NotSupportedException(); } }
-			public ICmObjectIdFactory ObjectIdFactory { get { throw new NotSupportedException(); } }
-			public IFwMetaDataCacheManaged MetaDataCache { get { throw new NotSupportedException(); } }
-			public ILgWritingSystemFactory WritingSystemFactory { get { throw new NotSupportedException(); } }
+			public WritingSystemManager WritingSystemManager => throw new NotSupportedException();
+			public IWritingSystemContainer WritingSystems => throw new NotSupportedException();
+			public ICmObjectRepository ObjectRepository => throw new NotSupportedException();
+			public ICmObjectIdFactory ObjectIdFactory => throw new NotSupportedException();
+			public IFwMetaDataCacheManaged MetaDataCache => throw new NotSupportedException();
+			public ILgWritingSystemFactory WritingSystemFactory => throw new NotSupportedException();
 			public IEnumerable<object> GetAllInstances(Type serviceType)
 			{ throw new NotSupportedException(); }
 			public IEnumerable<TService> GetAllInstances<TService>()
@@ -129,24 +130,14 @@ namespace LanguageExplorerTests.Controls.DetailControls
 			public IEnumerable<ICmObject> AllOwnedObjects { get; private set; }
 			public int Hvo { get; }
 			public ICmObject Owner { get; set; }
-			public int OwningFlid
-			{
-				get { throw new NotSupportedException(); }
-			}
-			public int OwnOrd
-			{
-				get { throw new NotSupportedException(); }
-			}
-			public int ClassID
-			{
-				get { throw new NotSupportedException(); }
-			}
+			public int OwningFlid => throw new NotSupportedException();
+
+			public int OwnOrd => throw new NotSupportedException();
+
+			public int ClassID => throw new NotSupportedException();
 			public Guid Guid { get; }
 
-			public ICmObjectId Id
-			{
-				get { throw new NotSupportedException(); }
-			}
+			public ICmObjectId Id => throw new NotSupportedException();
 
 			public ICmObject GetObject(ICmObjectRepository repo)
 			{
@@ -158,19 +149,14 @@ namespace LanguageExplorerTests.Controls.DetailControls
 				throw new NotSupportedException();
 			}
 
-			public string ClassName
-			{
-				get { throw new NotSupportedException(); }
-			}
+			public string ClassName => throw new NotSupportedException();
+
 			public void Delete()
 			{
 				throw new NotSupportedException();
 			}
 
-			public ILcmServiceLocator Services
-			{
-				get { throw new NotSupportedException(); }
-			}
+			public ILcmServiceLocator Services => throw new NotSupportedException();
 
 			public ICmObject OwnerOfClass(int clsid)
 			{
@@ -182,10 +168,7 @@ namespace LanguageExplorerTests.Controls.DetailControls
 				throw new NotSupportedException();
 			}
 
-			public ICmObject Self
-			{
-				get { throw new NotSupportedException(); }
-			}
+			public ICmObject Self => throw new NotSupportedException();
 
 			public bool CheckConstraints(int flidToCheck, bool createAnnotation, out ConstraintFailure failure)
 			{
@@ -222,10 +205,7 @@ namespace LanguageExplorerTests.Controls.DetailControls
 				throw new NotSupportedException();
 			}
 
-			public int IndexInOwner
-			{
-				get { throw new NotSupportedException(); }
-			}
+			public int IndexInOwner => throw new NotSupportedException();
 
 			public IEnumerable<ICmObject> ReferenceTargetCandidates(int flid)
 			{
@@ -234,10 +214,7 @@ namespace LanguageExplorerTests.Controls.DetailControls
 
 			public bool IsValidObject { get; }
 
-			public LcmCache Cache
-			{
-				get { throw new NotSupportedException(); }
-			}
+			public LcmCache Cache => throw new NotSupportedException();
 
 			public void MergeObject(ICmObject objSrc)
 			{
@@ -249,60 +226,27 @@ namespace LanguageExplorerTests.Controls.DetailControls
 				throw new NotSupportedException();
 			}
 
-			public bool CanDelete
-			{
-				get { throw new NotSupportedException(); }
-			}
+			public bool CanDelete => throw new NotSupportedException();
 
-			public ITsString ObjectIdName
-			{
-				get { throw new NotSupportedException(); }
-			}
+			public ITsString ObjectIdName => throw new NotSupportedException();
 
-			public string ShortName
-			{
-				get { throw new NotSupportedException(); }
-			}
+			public string ShortName => throw new NotSupportedException();
 
-			public ITsString ShortNameTSS
-			{
-				get { throw new NotSupportedException(); }
-			}
+			public ITsString ShortNameTSS => throw new NotSupportedException();
 
-			public ITsString DeletionTextTSS
-			{
-				get { throw new NotSupportedException(); }
-			}
+			public ITsString DeletionTextTSS => throw new NotSupportedException();
 
-			public ITsString ChooserNameTS
-			{
-				get { throw new NotSupportedException(); }
-			}
+			public ITsString ChooserNameTS => throw new NotSupportedException();
 
-			public string SortKey
-			{
-				get { throw new NotSupportedException(); }
-			}
+			public string SortKey => throw new NotSupportedException();
 
-			public string SortKeyWs
-			{
-				get { throw new NotSupportedException(); }
-			}
+			public string SortKeyWs => throw new NotSupportedException();
 
-			public int SortKey2
-			{
-				get { throw new NotSupportedException(); }
-			}
+			public int SortKey2 => throw new NotSupportedException();
 
-			public string SortKey2Alpha
-			{
-				get { throw new NotSupportedException(); }
-			}
+			public string SortKey2Alpha => throw new NotSupportedException();
 
-			public HashSet<ICmObject> ReferringObjects
-			{
-				get { throw new NotSupportedException(); }
-			}
+			public HashSet<ICmObject> ReferringObjects => throw new NotSupportedException();
 
 			public IEnumerable<ICmObject> OwnedObjects { get; private set; }
 		}

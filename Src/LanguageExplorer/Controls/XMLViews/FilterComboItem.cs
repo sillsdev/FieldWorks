@@ -132,7 +132,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			// (be especially careful about subclasses) because a side effect is to persist the
 			// filter. Changes (e.g., to matcher label) after this won't take effect.
 			// Note that for this reason some overrides don't call the base class method.
-			m_fsi.Filter = (m_matcher == null ? null : new FilterBarCellFilter(m_fsi.Finder, m_matcher));
+			m_fsi.Filter = m_matcher == null ? null : new FilterBarCellFilter(m_fsi.Finder, m_matcher);
 		}
 
 		/// <summary />

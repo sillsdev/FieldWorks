@@ -43,8 +43,7 @@ namespace LanguageExplorer.Filters
 		/// </summary>
 		public override bool SameMatcher(IMatcher other)
 		{
-			var other2 = other as InvertMatcher;
-			return other2 != null && MatcherToInvert.SameMatcher(other2.MatcherToInvert);
+			return other is InvertMatcher invertMatcher && MatcherToInvert.SameMatcher(invertMatcher.MatcherToInvert);
 		}
 
 		/// <summary>
@@ -71,9 +70,9 @@ namespace LanguageExplorer.Filters
 		{
 			set
 			{
-				if (MatcherToInvert is IStoresLcmCache)
+				if (MatcherToInvert is IStoresLcmCache storesLcmCache)
 				{
-					((IStoresLcmCache)MatcherToInvert).Cache = value;
+					storesLcmCache.Cache = value;
 				}
 			}
 		}
@@ -82,9 +81,9 @@ namespace LanguageExplorer.Filters
 		{
 			set
 			{
-				if (MatcherToInvert is IStoresDataAccess)
+				if (MatcherToInvert is IStoresDataAccess storesDataAccess)
 				{
-					((IStoresDataAccess)MatcherToInvert).DataAccess = value;
+					storesDataAccess.DataAccess = value;
 				}
 			}
 		}

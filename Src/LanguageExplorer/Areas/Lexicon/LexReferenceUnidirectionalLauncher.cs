@@ -60,7 +60,7 @@ namespace LanguageExplorer.Areas.Lexicon
 				dlg.SetHelpTopic("khtpChooseLexicalRelationAdd");
 				if (dlg.ShowDialog(FindForm()) == DialogResult.OK)
 				{
-					if (!(m_obj as ILexReference).TargetsRS.Contains(dlg.SelectedObject))
+					if (!((ILexReference)m_obj).TargetsRS.Contains(dlg.SelectedObject))
 					{
 						AddItem(dlg.SelectedObject);
 					}

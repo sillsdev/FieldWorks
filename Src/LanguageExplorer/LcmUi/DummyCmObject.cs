@@ -46,8 +46,7 @@ namespace LanguageExplorer.LcmUi
 
 		public int CompareTo(object obj)
 		{
-			var that = obj as DummyCmObject;
-			return that == null ? -1 : m_displayName.CompareTo(that.m_displayName);
+			return !(obj is DummyCmObject that) ? -1 : m_displayName.CompareTo(that.m_displayName);
 		}
 
 		#endregion

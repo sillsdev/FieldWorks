@@ -240,10 +240,7 @@ namespace LanguageExplorer.Controls
 		/// </summary>
 		public TreeNode SelectedNode
 		{
-			get
-			{
-				return m_treeView.SelectedNode;
-			}
+			get => m_treeView.SelectedNode;
 			set
 			{
 				if (Platform.IsMono)
@@ -268,14 +265,8 @@ namespace LanguageExplorer.Controls
 		/// </summary>
 		public bool Sorted
 		{
-			get
-			{
-				return m_treeView.Sorted;
-			}
-			set
-			{
-				m_treeView.Sorted = value;
-			}
+			get => m_treeView.Sorted;
+			set => m_treeView.Sorted = value;
 		}
 
 		/// <summary>
@@ -470,8 +461,7 @@ namespace LanguageExplorer.Controls
 				Show();
 			}
 			m_fShown = true;
-			var selNode = m_treeView.SelectedNode;
-			selNode?.EnsureVisible();
+			(m_treeView.SelectedNode)?.EnsureVisible();
 			m_fwPopupMessageFilter = new FwPopupMessageFilter(this);
 			Application.AddMessageFilter(m_fwPopupMessageFilter);
 			m_treeView.Focus();
@@ -510,7 +500,7 @@ namespace LanguageExplorer.Controls
 			if (tn != null && tn == m_tnMouseDown && e.X >= tn.Bounds.X && e.X <= tn.Bounds.X + tn.Bounds.Width && e.Y >= tn.Bounds.Y && e.Y <= tn.Bounds.Y + tn.Bounds.Height)
 			{
 				tn = m_treeView.SelectedNode;
-				if (tn == null || tn == m_tnMouseDown || (tn == null && m_tnMouseDown != null))
+				if (tn == null || tn == m_tnMouseDown)
 				{
 					// set the selected node to null, so that the TreeView will think that the
 					// selection has changed, and go ahead and fire the BeforeSelect and AfterSelect

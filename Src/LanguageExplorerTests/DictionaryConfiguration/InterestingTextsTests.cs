@@ -233,10 +233,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 				throw new NotSupportedException();
 			}
 
-			public int Count
-			{
-				get { throw new NotSupportedException(); }
-			}
+			public int Count => throw new NotSupportedException();
 
 			public IList<IStText> GetObjects(IList<int> hvos)
 			{
@@ -289,10 +286,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 				return _texts.ToArray();
 			}
 
-			public int Count
-			{
-				get { throw new NotSupportedException(); }
-			}
+			public int Count => throw new NotSupportedException();
 		}
 
 		private class MockCmObject : ICmObject
@@ -316,37 +310,22 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 
 			public ICmObject Owner { get; set; }
 
-			int ICmObject.OwningFlid
-			{
-				get { throw new NotSupportedException(); }
-			}
+			int ICmObject.OwningFlid => throw new NotSupportedException();
 
-			int ICmObject.OwnOrd
-			{
-				get { throw new NotSupportedException(); }
-			}
+			int ICmObject.OwnOrd => throw new NotSupportedException();
 
-			int ICmObject.ClassID
-			{
-				get { throw new NotSupportedException(); }
-			}
+			int ICmObject.ClassID => throw new NotSupportedException();
 
 			Guid ICmObject.Guid => _guid;
 
-			ICmObjectId ICmObjectOrId.Id
-			{
-				get { throw new NotSupportedException(); }
-			}
+			ICmObjectId ICmObjectOrId.Id => throw new NotSupportedException();
 
 			ICmObject ICmObjectOrId.GetObject(ICmObjectRepository repo)
 			{
 				throw new NotSupportedException();
 			}
 
-			string ICmObject.ClassName
-			{
-				get { throw new NotSupportedException(); }
-			}
+			string ICmObject.ClassName => throw new NotSupportedException();
 
 			/// <summary>
 			/// Delete the recipient object.
@@ -356,10 +335,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 				throw new NotSupportedException();
 			}
 
-			ILcmServiceLocator ICmObject.Services
-			{
-				get { throw new NotSupportedException(); }
-			}
+			ILcmServiceLocator ICmObject.Services => throw new NotSupportedException();
 
 			ICmObject ICmObject.OwnerOfClass(int clsid)
 			{
@@ -411,10 +387,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 				throw new NotSupportedException();
 			}
 
-			int ICmObject.IndexInOwner
-			{
-				get { throw new NotSupportedException(); }
-			}
+			int ICmObject.IndexInOwner => throw new NotSupportedException();
 
 			IEnumerable<ICmObject> ICmObject.ReferenceTargetCandidates(int flid)
 			{
@@ -423,10 +396,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 
 			public bool IsValidObject { get; set; }
 
-			LcmCache ICmObject.Cache
-			{
-				get { throw new NotSupportedException(); }
-			}
+			LcmCache ICmObject.Cache => throw new NotSupportedException();
 
 			void ICmObject.MergeObject(ICmObject objSrc)
 			{
@@ -443,60 +413,27 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 				get { throw new NotSupportedException(); }
 			}
 
-			ITsString ICmObject.ObjectIdName
-			{
-				get { throw new NotSupportedException(); }
-			}
+			ITsString ICmObject.ObjectIdName => throw new NotSupportedException();
 
-			string ICmObject.ShortName
-			{
-				get { throw new NotSupportedException(); }
-			}
+			string ICmObject.ShortName => throw new NotSupportedException();
 
-			ITsString ICmObject.ShortNameTSS
-			{
-				get { throw new NotSupportedException(); }
-			}
+			ITsString ICmObject.ShortNameTSS => throw new NotSupportedException();
 
-			ITsString ICmObject.DeletionTextTSS
-			{
-				get { throw new NotSupportedException(); }
-			}
+			ITsString ICmObject.DeletionTextTSS => throw new NotSupportedException();
 
-			ITsString ICmObject.ChooserNameTS
-			{
-				get { throw new NotSupportedException(); }
-			}
+			ITsString ICmObject.ChooserNameTS => throw new NotSupportedException();
 
-			string ICmObject.SortKey
-			{
-				get { throw new NotSupportedException(); }
-			}
+			string ICmObject.SortKey => throw new NotSupportedException();
 
-			string ICmObject.SortKeyWs
-			{
-				get { throw new NotSupportedException(); }
-			}
+			string ICmObject.SortKeyWs => throw new NotSupportedException();
 
-			int ICmObject.SortKey2
-			{
-				get { throw new NotSupportedException(); }
-			}
+			int ICmObject.SortKey2 => throw new NotSupportedException();
 
-			string ICmObject.SortKey2Alpha
-			{
-				get { throw new NotSupportedException(); }
-			}
+			string ICmObject.SortKey2Alpha => throw new NotSupportedException();
 
-			HashSet<ICmObject> ICmObject.ReferringObjects
-			{
-				get { throw new NotSupportedException(); }
-			}
+			HashSet<ICmObject> ICmObject.ReferringObjects => throw new NotSupportedException();
 
-			IEnumerable<ICmObject> ICmObject.OwnedObjects
-			{
-				get { throw new NotSupportedException(); }
-			}
+			IEnumerable<ICmObject> ICmObject.OwnedObjects => throw new NotSupportedException();
 		}
 
 		private sealed class MockScrSection : MockCmObject, IScrSection
@@ -506,7 +443,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 
 			IStText IScrSection.HeadingOA
 			{
-				get { return _heading; }
+				get => _heading;
 				set
 				{
 					_heading = value;
@@ -519,7 +456,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 
 			IStText IScrSection.ContentOA
 			{
-				get { return _content; }
+				get => _content;
 				set
 				{
 					_content = value;
@@ -532,26 +469,26 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 
 			int IScrSection.VerseRefStart
 			{
-				get { throw new NotSupportedException(); }
-				set { throw new NotSupportedException(); }
+				get => throw new NotSupportedException();
+				set => throw new NotSupportedException();
 			}
 
 			int IScrSection.VerseRefEnd
 			{
-				get { throw new NotSupportedException(); }
-				set { throw new NotSupportedException(); }
+				get => throw new NotSupportedException();
+				set => throw new NotSupportedException();
 			}
 
 			int IScrSection.VerseRefMin
 			{
-				get { throw new NotSupportedException(); }
-				set { throw new NotSupportedException(); }
+				get => throw new NotSupportedException();
+				set => throw new NotSupportedException();
 			}
 
 			int IScrSection.VerseRefMax
 			{
-				get { throw new NotSupportedException(); }
-				set { throw new NotSupportedException(); }
+				get => throw new NotSupportedException();
+				set => throw new NotSupportedException();
 			}
 
 			bool IScrSection.ContainsChapter(int chapter)
@@ -559,75 +496,33 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 				throw new NotSupportedException();
 			}
 
-			bool IScrSection.IsIntro
-			{
-				get { throw new NotSupportedException(); }
-			}
+			bool IScrSection.IsIntro => throw new NotSupportedException();
 
-			int IScrSection.ContentParagraphCount
-			{
-				get { throw new NotSupportedException(); }
-			}
+			int IScrSection.ContentParagraphCount => throw new NotSupportedException();
 
-			int IScrSection.HeadingParagraphCount
-			{
-				get { throw new NotSupportedException(); }
-			}
+			int IScrSection.HeadingParagraphCount => throw new NotSupportedException();
 
-			IEnumerable<IScrTxtPara> IScrSection.Paragraphs
-			{
-				get { throw new NotSupportedException(); }
-			}
+			IEnumerable<IScrTxtPara> IScrSection.Paragraphs => throw new NotSupportedException();
 
-			bool IScrSection.IsFirstScriptureSection
-			{
-				get { throw new NotSupportedException(); }
-			}
+			bool IScrSection.IsFirstScriptureSection => throw new NotSupportedException();
 
-			IScrSection IScrSection.PreviousSection
-			{
-				get { throw new NotSupportedException(); }
-			}
+			IScrSection IScrSection.PreviousSection => throw new NotSupportedException();
 
-			IScrSection IScrSection.NextSection
-			{
-				get { throw new NotSupportedException(); }
-			}
+			IScrSection IScrSection.NextSection => throw new NotSupportedException();
 
-			IStTxtPara IScrSection.FirstContentParagraph
-			{
-				get { throw new NotSupportedException(); }
-			}
+			IStTxtPara IScrSection.FirstContentParagraph => throw new NotSupportedException();
 
-			IStTxtPara IScrSection.LastContentParagraph
-			{
-				get { throw new NotSupportedException(); }
-			}
+			IStTxtPara IScrSection.LastContentParagraph => throw new NotSupportedException();
 
-			IStTxtPara IScrSection.FirstHeadingParagraph
-			{
-				get { throw new NotSupportedException(); }
-			}
+			IStTxtPara IScrSection.FirstHeadingParagraph => throw new NotSupportedException();
 
-			IStTxtPara IScrSection.LastHeadingParagraph
-			{
-				get { throw new NotSupportedException(); }
-			}
+			IStTxtPara IScrSection.LastHeadingParagraph => throw new NotSupportedException();
 
-			ContextValues IScrSection.Context
-			{
-				get { throw new NotSupportedException(); }
-			}
+			ContextValues IScrSection.Context => throw new NotSupportedException();
 
-			bool IScrSection.StartsWithVerseOrChapterNumber
-			{
-				get { throw new NotSupportedException(); }
-			}
+			bool IScrSection.StartsWithVerseOrChapterNumber => throw new NotSupportedException();
 
-			bool IScrSection.StartsWithChapterNumber
-			{
-				get { throw new NotSupportedException(); }
-			}
+			bool IScrSection.StartsWithChapterNumber => throw new NotSupportedException();
 
 			bool IScrSection.ContainsReference(ScrReference reference)
 			{
@@ -711,18 +606,15 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 				AsIText.ContentsOA = new MockStText();
 			}
 
-			public IRnGenericRec AssociatedNotebookRecord
-			{
-				get { throw new NotSupportedException(); }
-			}
+			public IRnGenericRec AssociatedNotebookRecord => throw new NotSupportedException();
 
 			/// <summary>
 			/// Get or set the MediaFiles
 			/// </summary>
 			public ICmMediaContainer MediaFilesOA
 			{
-				get { throw new NotSupportedException(); }
-				set { throw new NotSupportedException(); }
+				get => throw new NotSupportedException();
+				set => throw new NotSupportedException();
 			}
 
 			public void AssociateWithNotebook(bool makeYourOwnUow)
@@ -730,14 +622,11 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 				throw new NotSupportedException();
 			}
 
-			IMultiString IText.Source
-			{
-				get { throw new NotSupportedException(); }
-			}
+			IMultiString IText.Source => throw new NotSupportedException();
 
 			IStText IText.ContentsOA
 			{
-				get { return _contents; }
+				get => _contents;
 				set
 				{
 					if (_contents != null)
@@ -752,53 +641,35 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 				}
 			}
 
-			ILcmReferenceCollection<ICmPossibility> IText.GenresRC
-			{
-				get { throw new NotSupportedException(); }
-			}
+			ILcmReferenceCollection<ICmPossibility> IText.GenresRC => throw new NotSupportedException();
 
-			IMultiUnicode IText.Abbreviation
-			{
-				get { throw new NotSupportedException(); }
-			}
+			IMultiUnicode IText.Abbreviation => throw new NotSupportedException();
 
 			bool IText.IsTranslated
 			{
-				get { throw new NotSupportedException(); }
-				set { throw new NotSupportedException(); }
+				get => throw new NotSupportedException();
+				set => throw new NotSupportedException();
 			}
 
-			IMultiUnicode ICmMajorObject.Name
-			{
-				get { throw new NotSupportedException(); }
-			}
+			IMultiUnicode ICmMajorObject.Name => throw new NotSupportedException();
 
 			DateTime ICmMajorObject.DateCreated
 			{
-				get { throw new NotSupportedException(); }
-				set { throw new NotSupportedException(); }
+				get => throw new NotSupportedException();
+				set => throw new NotSupportedException();
 			}
 
 			DateTime ICmMajorObject.DateModified
 			{
-				get { throw new NotSupportedException(); }
-				set { throw new NotSupportedException(); }
+				get => throw new NotSupportedException();
+				set => throw new NotSupportedException();
 			}
 
-			IMultiString ICmMajorObject.Description
-			{
-				get { throw new NotSupportedException(); }
-			}
+			IMultiString ICmMajorObject.Description => throw new NotSupportedException();
 
-			ILcmOwningCollection<IPublication> ICmMajorObject.PublicationsOC
-			{
-				get { throw new NotSupportedException(); }
-			}
+			ILcmOwningCollection<IPublication> ICmMajorObject.PublicationsOC => throw new NotSupportedException();
 
-			ILcmOwningCollection<IPubHFSet> ICmMajorObject.HeaderFooterSetsOC
-			{
-				get { throw new NotSupportedException(); }
-			}
+			ILcmOwningCollection<IPubHFSet> ICmMajorObject.HeaderFooterSetsOC => throw new NotSupportedException();
 
 			IPubHFSet ICmMajorObject.FindHeaderFooterSetByName(string name)
 			{
@@ -808,37 +679,25 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 
 		private sealed class MockStText : MockCmObject, IStText
 		{
-			ILcmOwningSequence<IStPara> IStText.ParagraphsOS
-			{
-				get { throw new NotSupportedException(); }
-			}
+			ILcmOwningSequence<IStPara> IStText.ParagraphsOS => throw new NotSupportedException();
 
 			bool IStText.RightToLeft
 			{
-				get { throw new NotSupportedException(); }
-				set { throw new NotSupportedException(); }
+				get => throw new NotSupportedException();
+				set => throw new NotSupportedException();
 			}
 
-			ILcmOwningCollection<ITextTag> IStText.TagsOC
-			{
-				get { throw new NotSupportedException(); }
-			}
+			ILcmOwningCollection<ITextTag> IStText.TagsOC => throw new NotSupportedException();
 
 			DateTime IStText.DateModified
 			{
-				get { throw new NotSupportedException(); }
-				set { throw new NotSupportedException(); }
+				get => throw new NotSupportedException();
+				set => throw new NotSupportedException();
 			}
 
-			IStTxtPara IStText.this[int i]
-			{
-				get { throw new NotSupportedException(); }
-			}
+			IStTxtPara IStText.this[int i] => throw new NotSupportedException();
 
-			bool IStText.IsEmpty
-			{
-				get { throw new NotSupportedException(); }
-			}
+			bool IStText.IsEmpty => throw new NotSupportedException();
 
 			IScrFootnote IStText.FindFirstFootnote(out int iPara, out int ich)
 			{
@@ -875,35 +734,20 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 				throw new NotSupportedException();
 			}
 
-			IMultiAccessorBase IStText.Title
-			{
-				get { throw new NotSupportedException(); }
-			}
+			IMultiAccessorBase IStText.Title => throw new NotSupportedException();
 
-			IMultiAccessorBase IStText.Source
-			{
-				get { throw new NotSupportedException(); }
-			}
+			IMultiAccessorBase IStText.Source => throw new NotSupportedException();
 
-			IMultiAccessorBase IStText.Comment
-			{
-				get { throw new NotSupportedException(); }
-			}
+			IMultiAccessorBase IStText.Comment => throw new NotSupportedException();
 
-			List<ICmPossibility> IStText.GenreCategories
-			{
-				get { throw new NotSupportedException(); }
-			}
+			List<ICmPossibility> IStText.GenreCategories => throw new NotSupportedException();
 
-			int IStText.MainWritingSystem
-			{
-				get { throw new NotSupportedException(); }
-			}
+			int IStText.MainWritingSystem => throw new NotSupportedException();
 
 			bool IStText.IsTranslation
 			{
-				get { throw new NotSupportedException(); }
-				set { throw new NotSupportedException(); }
+				get => throw new NotSupportedException();
+				set => throw new NotSupportedException();
 			}
 
 			HashSet<IWfiWordform> IStText.UniqueWordforms()

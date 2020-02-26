@@ -5,6 +5,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Xml;
 
 namespace LanguageExplorer.SfmToXml
@@ -174,13 +175,9 @@ namespace LanguageExplorer.SfmToXml
 				var valid = true;
 				if (SFM != null)
 				{
-					foreach (var c in SFM)
+					if (SFM.Any(c => char.IsPunctuation(c) || char.IsControl(c)))
 					{
-						if (char.IsPunctuation(c) || char.IsControl(c))
-						{
-							valid = false;
-							break;
-						}
+						valid = false;
 					}
 				}
 				return !valid;
@@ -230,10 +227,7 @@ namespace LanguageExplorer.SfmToXml
 
 		public bool IsAbbr
 		{
-			get
-			{
-				return IsAbbrField && m_abbr;
-			}
+			get => IsAbbrField && m_abbr;
 			set
 			{
 				IsAbbrField = true;
@@ -254,10 +248,7 @@ namespace LanguageExplorer.SfmToXml
 
 		public string RefFunc
 		{
-			get
-			{
-				return m_refFunc;
-			}
+			get => m_refFunc;
 			set
 			{
 				m_refFunc = value;
@@ -267,10 +258,7 @@ namespace LanguageExplorer.SfmToXml
 
 		public string RefFuncWS
 		{
-			get
-			{
-				return m_refFuncWS;
-			}
+			get => m_refFuncWS;
 			set
 			{
 				m_refFuncWS = value;
@@ -323,10 +311,7 @@ namespace LanguageExplorer.SfmToXml
 
 		public string MeaningID
 		{
-			get
-			{
-				return MeaningId;
-			}
+			get => MeaningId;
 			set
 			{
 				MeaningId = MakeValidFwId(value);

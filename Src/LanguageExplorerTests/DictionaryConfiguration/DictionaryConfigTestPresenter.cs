@@ -53,13 +53,13 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 
 		internal string StubCurView
 		{
-			get { return m_currentView; }
-			set { m_currentView = value; }
+			get => m_currentView;
+			set => m_currentView = value;
 		}
 
 		internal string StubOrigView
 		{
-			get { return m_originalView; }
+			get => m_originalView;
 			set
 			{
 				m_originalView = value;

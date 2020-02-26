@@ -10,18 +10,11 @@ namespace LanguageExplorer.Areas
 	/// <summary>
 	/// If the initial target is a subentry replace it with the appropriate top-level entry.
 	/// </summary>
-	internal class MainEntryFromSubEntryTargetAdjuster : IPreferedTargetAdjuster
+	internal class MainEntryFromSubEntryTargetAdjuster : IPreferredTargetAdjuster
 	{
 		public ICmObject AdjustTarget(ICmObject firstMatch)
 		{
-			if (!(firstMatch is ILexEntry))
-			{
-				return firstMatch; // by default change nothing.
-			}
-			var subentry = (ILexEntry)firstMatch;
-			var componentsEntryRef = subentry.EntryRefsOS.FirstOrDefault(se => se.RefType == LexEntryRefTags.krtComplexForm);
-			var root = componentsEntryRef?.PrimaryEntryRoots.FirstOrDefault();
-			return root ?? firstMatch;
+			return !(firstMatch is ILexEntry) ? firstMatch : ((ILexEntry)firstMatch).EntryRefsOS.FirstOrDefault(se => se.RefType == LexEntryRefTags.krtComplexForm)?.PrimaryEntryRoots.FirstOrDefault() ?? firstMatch;
 		}
 	}
 }

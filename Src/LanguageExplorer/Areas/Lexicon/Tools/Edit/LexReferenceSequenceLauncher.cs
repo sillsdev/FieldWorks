@@ -68,7 +68,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				{
 					return;
 				}
-				if (!(m_obj as ILexReference).TargetsRS.Contains(dlg.SelectedObject))
+				if (!((ILexReference)m_obj).TargetsRS.Contains(dlg.SelectedObject))
 				{
 					AddItem(dlg.SelectedObject);
 				}
@@ -104,7 +104,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				m_displayParent = value;
 				if (m_vectorRefView != null)
 				{
-					(m_vectorRefView as LexReferenceSequenceView).DisplayParent = value;
+					((LexReferenceSequenceView)m_vectorRefView).DisplayParent = value;
 				}
 			}
 		}

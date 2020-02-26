@@ -104,12 +104,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <param name="guid">The guid of the object in the DB</param>
 		public string TextRepOfObj(LcmCache cache, Guid guid)
 		{
-			ICmObject obj;
-			if (cache.ServiceLocator.ObjectRepository.TryGetObject(guid, out obj) && obj is IEmbeddedObject)
-			{
-				return ((IEmbeddedObject)obj).TextRepresentation;
-			}
-			return null;
+			return cache.ServiceLocator.ObjectRepository.TryGetObject(guid, out var obj) && obj is IEmbeddedObject embeddedObject ? embeddedObject.TextRepresentation : null;
 		}
 
 		/// <summary>
@@ -144,24 +139,21 @@ namespace SIL.FieldWorks.Common.RootSites
 					kodt = (int)FwObjDataTypes.kodtNameGuidHot;
 					var helper = SelectionHelper.Create(selDst, null);
 					var repo = cache.ServiceLocator.GetInstance<IStFootnoteRepository>();
-					SelLevInfo info;
 					ISegment segment;
-					if (helper.GetLevelInfoForTag(StTxtParaTags.kflidSegments, out info))
+					if (helper.GetLevelInfoForTag(StTxtParaTags.kflidSegments, out var info))
 					{
 						segment = Cache.ServiceLocator.GetInstance<ISegmentRepository>().GetObject(info.hvo);
 					}
 					else
 					{
-						SelLevInfo paraLevInfo;
-						helper.GetLevelInfoForTag(StTextTags.kflidParagraphs, out paraLevInfo);
+						helper.GetLevelInfoForTag(StTextTags.kflidParagraphs, out var paraLevInfo);
 						var para = cache.ServiceLocator.GetInstance<IStTxtParaRepository>().GetObject(paraLevInfo.hvo);
 						segment = para.GetSegmentForOffsetInFreeTranslation(helper.GetIch(SelLimitType.Top), helper.Ws);
 					}
 					var tssVernSegment = segment.BaselineText;
 					foreach (var guid in tssVernSegment.GetAllEmbeddedObjectGuids(FwObjDataTypes.kodtOwnNameGuidHot))
 					{
-						IStFootnote footnote;
-						if (repo.TryGetObject(guid, out footnote) && footnote.TextRepresentation == sTextRep)
+						if (repo.TryGetObject(guid, out var footnote) && footnote.TextRepresentation == sTextRep)
 						{
 							// Now we know the footnote being pasted corresponds to one in the proper place in the
 							// vernacular. Next we have to make sure it's not already somewhere else in the BT.
@@ -196,13 +188,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <summary>
 		/// Gets text properties to apply to a picture caption.
 		/// </summary>
-		public virtual ITsTextProps CaptionProps
-		{
-			get
-			{
-				throw new NotSupportedException();
-			}
-		}
+		public virtual ITsTextProps CaptionProps => throw new NotSupportedException();
 		#endregion
 
 		#region Overridden methods & properties
@@ -213,8 +199,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		{
 			if (Cache != null)
 			{
-				if (Cache.ActionHandlerAccessor.CurrentDepth > 0 ||
-					Cache.ActionHandlerAccessor.SuppressSelections)
+				if (Cache.ActionHandlerAccessor.CurrentDepth > 0 || Cache.ActionHandlerAccessor.SuppressSelections)
 				{
 					// Make sure that between the time this method is called and the time we actually
 					// fire the deferred event, we don't use an out-of-date cached selection.
@@ -247,9 +232,9 @@ namespace SIL.FieldWorks.Common.RootSites
 			{
 				var rootb = EditedRootBox;
 				RootSite site = null;
-				if (rootb != null && rootb.Selection != null)
+				if (rootb?.Selection != null)
 				{
-					if (rootb.Selection.RootBox != null && rootb.Selection.RootBox.Site != null)
+					if (rootb.Selection.RootBox?.Site != null)
 					{
 						site = rootb.Selection.RootBox.Site as RootSite;
 						if (site != null)
@@ -373,7 +358,9 @@ namespace SIL.FieldWorks.Common.RootSites
 							return;
 					}
 					if (found)
+					{
 						action(info.hvo, selHelperOrc.TextPropId, selHelperOrc.Ws, ichAnchor);
+					}
 				}
 			}
 		}
@@ -410,8 +397,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// </summary>
 		public override void RemoveCharFormatting(bool removeAllStyles)
 		{
-			string undo, redo;
-			ResourceHelper.MakeUndoRedoLabels("kstidUndoStyleChanges", out undo, out redo);
+			ResourceHelper.MakeUndoRedoLabels("kstidUndoStyleChanges", out var undo, out var redo);
 			UndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(undo, redo, Cache.ServiceLocator.GetInstance<IActionHandler>(), () => CallBaseRemoveCharFormatting(removeAllStyles));
 		}
 
@@ -445,11 +431,9 @@ namespace SIL.FieldWorks.Common.RootSites
 			{
 				if (sel.IsRange)
 				{
-					int var;
-					var hvoWs = ttp.GetIntPropValues((int)FwTextPropType.ktptWs, out var);
+					var hvoWs = ttp.GetIntPropValues((int)FwTextPropType.ktptWs, out _);
 					var wsName = Cache.ServiceLocator.WritingSystemManager.Get(hvoWs).DisplayLabel;
-					string undo, redo;
-					ResourceHelper.MakeUndoRedoLabels("kstidUndoWritingSystemChanges", out undo, out redo);
+					ResourceHelper.MakeUndoRedoLabels("kstidUndoWritingSystemChanges", out var undo, out var redo);
 					undo = string.Format(undo, wsName);
 					redo = string.Format(redo, wsName);
 					UndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(undo, redo, Cache.ServiceLocator.GetInstance<IActionHandler>(), () => CallBaseChangeWritingSystem(sel, props, numProps));
@@ -489,8 +473,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			if (ttp != null)
 			{
 				var style = ttp.GetStrPropValue((int)FwTextPropType.ktptNamedStyle);
-				string undo, redo;
-				ResourceHelper.MakeUndoRedoLabels("kstidUndoStyleChanges", out undo, out redo);
+				ResourceHelper.MakeUndoRedoLabels("kstidUndoStyleChanges", out var undo, out var redo);
 				undo = string.Format(undo, style);
 				redo = string.Format(redo, style);
 				UndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(undo, redo, Cache.ServiceLocator.GetInstance<IActionHandler>(),
@@ -514,8 +497,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			if (ttp != null)
 			{
 				var style = ttp.GetStrPropValue((int)FwTextPropType.ktptNamedStyle);
-				string undo, redo;
-				ResourceHelper.MakeUndoRedoLabels("kstidUndoStyleChanges", out undo, out redo);
+				ResourceHelper.MakeUndoRedoLabels("kstidUndoStyleChanges", out var undo, out var redo);
 				undo = string.Format(undo, style);
 				redo = string.Format(redo, style);
 				UndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(undo, redo, Cache.ServiceLocator.GetInstance<IActionHandler>(),
@@ -546,7 +528,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// </summary>
 		protected override bool IsUnknownProp(IFwMetaDataCache mdc, int tag)
 		{
-			return !(mdc is IFwMetaDataCacheManaged && ((IFwMetaDataCacheManaged)mdc).FieldExists(tag));
+			return !(mdc is IFwMetaDataCacheManaged metaDataCacheManaged && metaDataCacheManaged.FieldExists(tag));
 		}
 
 		/// <summary>
@@ -603,9 +585,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		{
 			base.HandleKeyDown(e, ss);
 
-			string stUndo;
-			string stRedo;
-			ResourceHelper.MakeUndoRedoLabels("kstidUndoTyping", out stUndo, out stRedo);
+			ResourceHelper.MakeUndoRedoLabels("kstidUndoTyping", out var stUndo, out var stRedo);
 			if (e.KeyValue == (char)Keys.Return)
 			{
 				stUndo = string.Format(stUndo, "LSEP");
@@ -647,18 +627,17 @@ namespace SIL.FieldWorks.Common.RootSites
 			}
 			// Try get a useful undo/redo message
 			string stUndo, stRedo;
-			if (e.KeyChar == (char)Keys.Back || e.KeyChar == (char)127)
+			switch (e.KeyChar)
 			{
-				ResourceHelper.MakeUndoRedoLabels("kstidUndoDelete", out stUndo, out stRedo);
-			}
-			else
-			{
-				if (e.KeyChar == (char)Keys.Return && modifiers == Keys.Shift)
-				{
+				case (char)Keys.Back:
+				case (char)127:
+					ResourceHelper.MakeUndoRedoLabels("kstidUndoDelete", out stUndo, out stRedo);
+					break;
+				case (char)Keys.Return when modifiers == Keys.Shift:
 					// Handle case for inserting line break
 					ResourceHelper.MakeUndoRedoLabels("kstidHardLineBreak", out stUndo, out stRedo);
-				}
-				else
+					break;
+				default:
 				{
 					ResourceHelper.MakeUndoRedoLabels("kstidUndoTyping", out stUndo, out stRedo);
 					if (e.KeyChar == (char)Keys.Return)
@@ -671,6 +650,7 @@ namespace SIL.FieldWorks.Common.RootSites
 						stUndo = string.Format(stUndo, e.KeyChar);
 						stRedo = string.Format(stRedo, e.KeyChar);
 					}
+					break;
 				}
 			}
 
@@ -722,9 +702,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			{
 				return; // no way we can do it.
 			}
-			ITsString tssLink;
-			bool fGotItAll;
-			sel.GetFirstParaString(out tssLink, " ", out fGotItAll);
+			sel.GetFirstParaString(out var tssLink, " ", out var fGotItAll);
 			var tsb = tssLink.GetBldr();
 			if (sel.IsRange)
 			{
@@ -748,7 +726,7 @@ namespace SIL.FieldWorks.Common.RootSites
 
 			using (var undoTaskHelper = new UndoTaskHelper(actionHandler, EditedRootBox.Site, RootSiteStrings.ksUndoInsertLink, RootSiteStrings.ksRedoInsertLink))
 			{
-				if (Cache != null && Cache.ProjectId != null)
+				if (Cache?.ProjectId != null)
 				{
 					clip = FwLinkArgs.FixSilfwUrlForCurrentProject(clip, Cache.ProjectId.Name);
 				}

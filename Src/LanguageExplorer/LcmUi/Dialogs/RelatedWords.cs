@@ -162,7 +162,7 @@ namespace LanguageExplorer.LcmUi.Dialogs
 			AccessibleName = GetType().Name;
 			m_btnInsert.Visible = !hideInsertButton;
 			m_cdaTemp = cdaTemp;
-			var sda = m_cdaTemp as ISilDataAccess;
+			var sda = (ISilDataAccess)m_cdaTemp;
 			sda.WritingSystemFactory = cache.WritingSystemFactory;
 			SetupForEntry(domains, lexrels);
 			var entry = cache.ServiceLocator.GetInstance<ILexEntryRepository>().GetObject(m_hvoEntry);
@@ -358,13 +358,10 @@ namespace LanguageExplorer.LcmUi.Dialogs
 			{
 				return;
 			}
-			string undo;
-			string redo;
-			ResourceHelper.MakeUndoRedoLabels("kstidUndoRedoInsertRelatedWord", out undo, out redo);
+			ResourceHelper.MakeUndoRedoLabels("kstidUndoRedoInsertRelatedWord", out var undo, out var redo);
 			using (var undoTaskHelper = new UndoTaskHelper(m_cache.ActionHandlerAccessor, m_view.RootBox.Site, undo, redo))
 			{
-				ITsString tss;
-				sel.GetSelectionString(out tss, string.Empty);
+				sel.GetSelectionString(out var tss, string.Empty);
 				m_sel.ReplaceWithTsString(tss);
 				undoTaskHelper.RollBack = false;
 			}
@@ -379,12 +376,9 @@ namespace LanguageExplorer.LcmUi.Dialogs
 			{
 				return null;
 			}
-			ITsString tss;
-			int ichMin, ichLim, hvo, tag, ws;
-			bool fAssocPrev;
-			sel3.TextSelInfo(false, out tss, out ichMin, out fAssocPrev, out hvo, out tag, out ws);
-			sel3.TextSelInfo(true, out tss, out ichLim, out fAssocPrev, out hvo, out tag, out ws);
-			var tssWf = (m_cdaTemp as ISilDataAccess).get_StringProp(hvo, tag);
+			sel3.TextSelInfo(false, out _, out _, out _, out var hvo, out var tag, out _);
+			sel3.TextSelInfo(true, out _, out _, out _, out hvo, out tag, out _);
+			var tssWf = ((ISilDataAccess)m_cdaTemp).get_StringProp(hvo, tag);
 			if (tssWf == null || tssWf.Length == 0)
 			{
 				return null;
@@ -404,10 +398,7 @@ namespace LanguageExplorer.LcmUi.Dialogs
 					ShowNotInDictMessage(this);
 					return;
 				}
-				int[] domains;
-				int[] lexrels;
-				IVwCacheDa cdaTemp;
-				if (!LoadDomainAndRelationInfo(m_cache, leui.MyCmObject.Hvo, out domains, out lexrels, out cdaTemp, this))
+				if (!LoadDomainAndRelationInfo(m_cache, leui.MyCmObject.Hvo, out var domains, out var lexrels, out var cdaTemp, this))
 				{
 					return;
 				}
@@ -415,11 +406,11 @@ namespace LanguageExplorer.LcmUi.Dialogs
 				// copy the names loaded into the even more temporary cda to the main one.
 				foreach (var hvoDomain in domains)
 				{
-					m_cdaTemp.CacheStringProp(hvoDomain, RelatedWordsVc.ktagName, (cdaTemp as ISilDataAccess).get_StringProp(hvoDomain, RelatedWordsVc.ktagName));
+					m_cdaTemp.CacheStringProp(hvoDomain, RelatedWordsVc.ktagName, ((ISilDataAccess)cdaTemp).get_StringProp(hvoDomain, RelatedWordsVc.ktagName));
 				}
 				foreach (var hvoLexRel in lexrels)
 				{
-					m_cdaTemp.CacheStringProp(hvoLexRel, RelatedWordsVc.ktagName, (cdaTemp as ISilDataAccess).get_StringProp(hvoLexRel, RelatedWordsVc.ktagName));
+					m_cdaTemp.CacheStringProp(hvoLexRel, RelatedWordsVc.ktagName, ((ISilDataAccess)cdaTemp).get_StringProp(hvoLexRel, RelatedWordsVc.ktagName));
 				}
 				m_hvoEntry = leui.MyCmObject.Hvo;
 				SetupForEntry(domains, lexrels);

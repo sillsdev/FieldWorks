@@ -113,8 +113,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			m_persistProvider = PersistenceProviderFactory.CreatePersistenceProvider(PropertyTable);
 			m_cache = PropertyTable.GetValue<LcmCache>(FwUtils.cache);
 			m_parserMenuManager = parserMenuManager;
-
-			Text = $@"{m_cache.ProjectId.UiName} - {Text}";
+			Text = $"{m_cache.ProjectId.UiName} - {Text}";
 			SetRootSite();
 			SetFontInfo();
 			// restore window location and size after setting up the form textbox, because it might adjust size of
@@ -129,8 +128,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 				SetWordToUse(wordform.Form.VernacularDefaultWritingSystem.Text);
 			}
 			m_webPageInteractor = new WebPageInteractor(m_htmlControl, Publisher, m_cache, m_wordformTextBox);
-			var helpTopicProvider = PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider);
-			if (helpTopicProvider != null) // trying this
+			if (PropertyTable.TryGetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider, out var helpTopicProvider))
 			{
 				m_helpProvider.HelpNamespace = helpTopicProvider.HelpFile;
 				m_helpProvider.SetHelpKeyword(this, helpTopicProvider.GetHelpString(HelpTopicID));
@@ -149,7 +147,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 
 		private void SetRootSite()
 		{
-			m_rootsite = new TryAWordRootSite(_sharedEventHandlers)
+			m_rootsite = new TryAWordRootSite()
 			{
 				Dock = DockStyle.Top
 			};
@@ -170,7 +168,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			}
 		}
 
-		private string GetString(string id)
+		private static string GetString(string id)
 		{
 			return StringTable.Table.GetString(id, "Linguistics/Morphology/TryAWord");
 		}
@@ -437,17 +435,15 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			}
 			var sWord = CleanUpWord();
 			// check to see if limiting trace and, if so, if all morphs have msas
-			int[] selectedTraceMorphs;
-			if (!GetSelectedTraceMorphs(out selectedTraceMorphs))
+			if (!GetSelectedTraceMorphs(out var selectedTraceMorphs))
 			{
 				return;
 			}
 			// Display a "processing" message (and include info on how to improve the results)
 			var uri = new Uri(Path.Combine(TransformPath, "WhileTracing.htm"));
 			m_htmlControl.URL = uri.AbsoluteUri;
-			sWord = sWord.Replace(' ', '.'); // LT-7334 to allow for phrases; do this at the last minute
 			m_parserMenuManager.Connection.TryAWordDialogIsRunning = true; // make sure this is set properly
-			m_tryAWordResult = m_parserMenuManager.Connection.BeginTryAWord(sWord, DoTrace, selectedTraceMorphs);
+			m_tryAWordResult = m_parserMenuManager.Connection.BeginTryAWord(sWord.Replace(' ', '.'), DoTrace, selectedTraceMorphs);
 			// waiting for result, so disable Try It button
 			m_tryItButton.Enabled = false;
 		}
@@ -575,7 +571,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			}
 		}
 
-		private string ParserStoppedMessage()
+		private static string ParserStoppedMessage()
 		{
 			return GetString("ParserStatusPrefix") + ParserUIStrings.ksNoParserLoaded + GetString("ParserStatusSuffix");
 		}

@@ -744,7 +744,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 					new DictionaryNodeOption { Id = "en" }
 				}
 			};
-			var DictionaryNodeSenseOptions = new DictionaryNodeSenseOptions
+			var dictionaryNodeSenseOptions = new DictionaryNodeSenseOptions
 			{
 				BeforeNumber = "",
 				AfterNumber = ")",
@@ -754,7 +754,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 				NumberEvenASingleSense = true,
 				ShowSharedGrammarInfoFirst = false
 			};
-			var DictionaryNodeSubSenseOptions = new DictionaryNodeSenseOptions
+			var dictionaryNodeSubSenseOptions = new DictionaryNodeSenseOptions
 			{
 				BeforeNumber = "",
 				AfterNumber = ")",
@@ -774,14 +774,14 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 				FieldDescription = "SensesOS",
 				CSSClassNameOverride = "senses",
 				Label = "Subsenses",
-				DictionaryNodeOptions = DictionaryNodeSubSenseOptions,
+				DictionaryNodeOptions = dictionaryNodeSubSenseOptions,
 				Children = new List<ConfigurableDictionaryNode> { glossNode }
 			};
 			var sensesNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "SensesOS",
 				CSSClassNameOverride = "senses",
-				DictionaryNodeOptions = DictionaryNodeSenseOptions,
+				DictionaryNodeOptions = dictionaryNodeSenseOptions,
 				Children = new List<ConfigurableDictionaryNode> { glossNode, subSenseNode }
 			};
 			var mainEntryNode = new ConfigurableDictionaryNode

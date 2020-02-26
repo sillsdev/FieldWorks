@@ -93,10 +93,7 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 		/// </summary>
 		public PUACharacter PUAChar
 		{
-			get
-			{
-				return m_storedPuaChar;
-			}
+			get => m_storedPuaChar;
 			set
 			{
 				m_storedPuaChar = value;
@@ -109,10 +106,7 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 		/// </summary>
 		public bool Modify
 		{
-			get
-			{
-				return m_modifyMode;
-			}
+			get => m_modifyMode;
 			set
 			{
 				m_modifyMode = value;
@@ -1191,8 +1185,7 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 
 			//Parse the display string so that the user can see what codepoints they have entered.
 			// Display an error star if any errors are encountered in the process.
-			string parsedDecomposition;
-			var errorMessages = ParseDecomposition(m_txtDecomposition.Text, out parsedDecomposition);
+			var errorMessages = ParseDecomposition(m_txtDecomposition.Text, out var parsedDecomposition);
 			if (errorMessages.Count == 0)
 			{
 				m_lblDecompostionDisplay.Text = parsedDecomposition;
@@ -1215,8 +1208,7 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 			// Set the underlying data
 			m_puaChar.Decomposition = m_txtDecomposition.Text;
 			// Display text describing any errors in the decomposition string syntax.
-			string parsedDecomposition;
-			var errorMessages = ParseDecomposition(m_txtDecomposition.Text, out parsedDecomposition);
+			var errorMessages = ParseDecomposition(m_txtDecomposition.Text, out _);
 			m_errorMessageHandler.AddMessage(m_txtDecomposition, errorMessages);
 
 			DecompositionControlsLeave();

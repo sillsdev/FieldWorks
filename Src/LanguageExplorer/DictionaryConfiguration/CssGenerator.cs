@@ -120,7 +120,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 		{
 			// Generate the rules for the programmatic default style info (
 			var defaultStyleProps = GetOnlyCharacterStyle(GenerateCssStyleFromLcmStyleSheet("Normal", DefaultStyle, fwStyleSheet, cache.ServiceLocator.WritingSystemManager.get_EngineOrNull(DefaultStyle)));
-			if (!defaultStyleProps.Any(p => p.Name == "font-size"))
+			if (defaultStyleProps.All(p => p.Name != "font-size"))
 			{
 				defaultStyleProps.Add(new Property("font-size") { Term = new PrimitiveTerm(UnitType.Point, FontInfo.kDefaultFontSize) });
 			}
@@ -220,8 +220,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 			else if (listAndParaOpts != null)
 			{
 				GenerateCssFromListAndParaOptions(configNode, listAndParaOpts, styleSheet, ref baseSelection, cache, fwStyleSheet);
-				var wsOptions = configNode.DictionaryNodeOptions as DictionaryNodeWritingSystemOptions;
-				if (wsOptions != null && wsOptions.DisplayWritingSystemAbbreviations)
+				if (configNode.DictionaryNodeOptions is DictionaryNodeWritingSystemOptions wsOptions && wsOptions.DisplayWritingSystemAbbreviations)
 				{
 					if (DictionaryConfigurationModel.NoteInParaStyles.Contains(configNode.FieldDescription))
 					{
@@ -238,8 +237,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 				}
 				var selectors = GenerateSelectorsFromNode(baseSelection, configNode, out baseSelection, cache, fwStyleSheet);
 
-				var wsOptions = configNode.DictionaryNodeOptions as DictionaryNodeWritingSystemOptions;
-				if (wsOptions != null)
+				if (configNode.DictionaryNodeOptions is DictionaryNodeWritingSystemOptions wsOptions)
 				{
 					GenerateCssFromWsOptions(configNode, wsOptions, styleSheet, baseSelection, cache, fwStyleSheet);
 					if (wsOptions.DisplayWritingSystemAbbreviations)
@@ -405,8 +403,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 					styleDeclaration = GenerateCssStyleFromLcmStyleSheet(configNode.Style, DefaultStyle, fwStyleSheet, cache.ServiceLocator.WritingSystemManager.get_EngineOrNull(DefaultStyle));
 				}
 				GenerateCssForCounterReset(styleSheet, bulletSelector, styleDeclaration, false);
-				var senseOptions = configNode.DictionaryNodeOptions as DictionaryNodeSenseOptions;
-				var senseSufixRule = senseOptions != null && senseOptions.DisplayFirstSenseInline ? ":not(:first-child):before" : ":before";
+				var senseSufixRule = configNode.DictionaryNodeOptions is DictionaryNodeSenseOptions senseOptions && senseOptions.DisplayFirstSenseInline ? ":not(:first-child):before" : ":before";
 				var bulletRule = new StyleRule { Value = bulletSelector + senseSufixRule };
 				bulletRule.Declarations.Properties.AddRange(GetOnlyBulletContent(styleDeclaration));
 				var projectStyle = fwStyleSheet.Styles[configNode.Style];
@@ -572,7 +569,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 				// if the writing system isn't a magic name just use it otherwise find the right one from the magic list
 				var wsIdString = possiblyMagic == 0 ? ws.Id : WritingSystemServices.GetWritingSystemList(cache, possiblyMagic, true).First().Id;
 				var wsId = cache.LanguageWritingSystemFactoryAccessor.GetWsFromStr(wsIdString);
-				var wsRule = new StyleRule { Value = baseSelection + $"[lang|=\"{wsIdString}\"]" };
+				var wsRule = new StyleRule { Value = $"{baseSelection}[lang|=\"{wsIdString}\"]" };
 				if (!string.IsNullOrEmpty(configNode.Style))
 				{
 					wsRule.Declarations.Properties.AddRange(GenerateCssStyleFromLcmStyleSheet(configNode.Style, wsId, fwStyleSheet, cache.ServiceLocator.WritingSystemManager.get_EngineOrNull(wsId)));
@@ -596,7 +593,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 		private static void GenerateCssFromPictureOptions(ConfigurableDictionaryNode configNode, DictionaryNodePictureOptions pictureOptions, StyleSheet styleSheet, string baseSelection)
 		{
 			var pictureAndCaptionRule = new StyleRule();
-			pictureAndCaptionRule.Value = baseSelection + " " + SelectClassName(configNode);
+			pictureAndCaptionRule.Value = $"{baseSelection} {SelectClassName(configNode)}";
 			var pictureProps = pictureAndCaptionRule.Declarations.Properties;
 			pictureProps.Add(new Property("float") { Term = new PrimitiveTerm(UnitType.Ident, "right") });
 			pictureProps.Add(new Property("text-align") { Term = new PrimitiveTerm(UnitType.Ident, "center") });
@@ -685,11 +682,10 @@ namespace LanguageExplorer.DictionaryConfiguration
 					{
 						collectionSelector = pictCaptionContent + "." + GetClassAttributeForConfig(configNode);
 					}
-					var itemSelector = " ." + GetClassAttributeForCollectionItem(configNode);
+					var itemSelector = $" .{GetClassAttributeForCollectionItem(configNode)}";
 					var betweenSelector = $"{parentSelector}> {collectionSelector}>{itemSelector}+{itemSelector}:before";
-					ConfigurableDictionaryNode dummy;
 					// use default (class-named) between selector for factored references, because "span+span" erroneously matches Type spans
-					if (configNode.DictionaryNodeOptions != null && !ConfiguredXHTMLGenerator.IsFactoredReference(configNode, out dummy))
+					if (configNode.DictionaryNodeOptions != null && !ConfiguredXHTMLGenerator.IsFactoredReference(configNode, out _))
 					{
 						var wsOptions = configNode.DictionaryNodeOptions as DictionaryNodeWritingSystemOptions;
 						var senseOptions = configNode.DictionaryNodeOptions as DictionaryNodeSenseOptions;
@@ -798,8 +794,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 		private static bool IsFactoredReferenceType(ConfigurableDictionaryNode configNode)
 		{
 			var parent = configNode.Parent;
-			ConfigurableDictionaryNode typeNode;
-			return parent != null && ConfiguredXHTMLGenerator.IsFactoredReference(parent, out typeNode) && ReferenceEquals(typeNode, configNode);
+			return parent != null && ConfiguredXHTMLGenerator.IsFactoredReference(parent, out var typeNode) && ReferenceEquals(typeNode, configNode);
 		}
 
 		/// <summary>
@@ -1046,14 +1041,22 @@ namespace LanguageExplorer.DictionaryConfiguration
 					};
 					declaration.Add(borderColor);
 				}
-				var borderLeft = new Property("border-left-width");
-				borderLeft.Term = new PrimitiveTerm(UnitType.Point, MilliPtToPt(exportStyleInfo.BorderLeading));
-				var borderRight = new Property("border-right-width");
-				borderRight.Term = new PrimitiveTerm(UnitType.Point, MilliPtToPt(exportStyleInfo.BorderTrailing));
-				var borderTop = new Property("border-top-width");
-				borderTop.Term = new PrimitiveTerm(UnitType.Point, MilliPtToPt(exportStyleInfo.BorderTop));
-				var borderBottom = new Property("border-bottom-width");
-				borderBottom.Term = new PrimitiveTerm(UnitType.Point, MilliPtToPt(exportStyleInfo.BorderBottom));
+				var borderLeft = new Property("border-left-width")
+				{
+					Term = new PrimitiveTerm(UnitType.Point, MilliPtToPt(exportStyleInfo.BorderLeading))
+				};
+				var borderRight = new Property("border-right-width")
+				{
+					Term = new PrimitiveTerm(UnitType.Point, MilliPtToPt(exportStyleInfo.BorderTrailing))
+				};
+				var borderTop = new Property("border-top-width")
+				{
+					Term = new PrimitiveTerm(UnitType.Point, MilliPtToPt(exportStyleInfo.BorderTop))
+				};
+				var borderBottom = new Property("border-bottom-width")
+				{
+					Term = new PrimitiveTerm(UnitType.Point, MilliPtToPt(exportStyleInfo.BorderBottom))
+				};
 				declaration.Add(borderLeft);
 				declaration.Add(borderRight);
 				declaration.Add(borderTop);
@@ -1152,8 +1155,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 			var styleList = new List<StyleDeclaration> { declaration };
 			if (calculateFirstSenseStyle && ancestorIndents.Ancestor != null)
 			{
-				var senseOptions = ancestorIndents.Ancestor.DictionaryNodeOptions as DictionaryNodeSenseOptions;
-				if (senseOptions != null && senseOptions.DisplayEachSenseInAParagraph)
+				if (ancestorIndents.Ancestor.DictionaryNodeOptions is DictionaryNodeSenseOptions senseOptions && senseOptions.DisplayEachSenseInAParagraph)
 				{
 					ancestorIndents = CalculateParagraphIndentsFromAncestors(ancestorIndents.Ancestor, styleSheet, new AncestorIndents(0f, 0f));
 					var marginLeft = CalculateMarginLeft(exportStyleInfo, ancestorIndents, hangingIndent);
@@ -1333,16 +1335,16 @@ namespace LanguageExplorer.DictionaryConfiguration
 		/// <summary>
 		/// Generates css from boolean style values using writing system overrides where appropriate
 		/// </summary>
-		private static void AddInfoFromWsOrDefaultValue(InheritableStyleProp<bool> wsFontInfo, IStyleProp<bool> defaultFontInfo, string propName, string trueValue, string falseValue,
-														StyleDeclaration declaration)
+		private static void AddInfoFromWsOrDefaultValue(InheritableStyleProp<bool> wsFontInfo, IStyleProp<bool> defaultFontInfo, string propName, string trueValue, string falseValue, StyleDeclaration declaration)
 		{
-			bool fontValue;
-			if (!GetFontValue(wsFontInfo, defaultFontInfo, out fontValue))
+			if (!GetFontValue(wsFontInfo, defaultFontInfo, out var fontValue))
 			{
 				return;
 			}
-			var fontProp = new Property(propName);
-			fontProp.Term = new PrimitiveTerm(UnitType.Ident, fontValue ? trueValue : falseValue);
+			var fontProp = new Property(propName)
+			{
+				Term = new PrimitiveTerm(UnitType.Ident, fontValue ? trueValue : falseValue)
+			};
 			declaration.Add(fontProp);
 		}
 
@@ -1351,13 +1353,14 @@ namespace LanguageExplorer.DictionaryConfiguration
 		/// </summary>
 		private static void AddInfoFromWsOrDefaultValue(InheritableStyleProp<Color> wsFontInfo, IStyleProp<Color> defaultFontInfo, string propName, StyleDeclaration declaration)
 		{
-			Color fontValue;
-			if (!GetFontValue(wsFontInfo, defaultFontInfo, out fontValue))
+			if (!GetFontValue(wsFontInfo, defaultFontInfo, out var fontValue))
 			{
 				return;
 			}
-			var fontProp = new Property(propName);
-			fontProp.Term = new PrimitiveTerm(UnitType.RGB, HtmlColor.FromRgba(fontValue.R, fontValue.G, fontValue.B, fontValue.A).ToString());
+			var fontProp = new Property(propName)
+			{
+				Term = new PrimitiveTerm(UnitType.RGB, HtmlColor.FromRgba(fontValue.R, fontValue.G, fontValue.B, fontValue.A).ToString())
+			};
 			declaration.Add(fontProp);
 		}
 
@@ -1366,13 +1369,14 @@ namespace LanguageExplorer.DictionaryConfiguration
 		/// </summary>
 		private static void AddInfoFromWsOrDefaultValue(InheritableStyleProp<int> wsFontInfo, IStyleProp<int> defaultFontInfo, string propName, UnitType termType, StyleDeclaration declaration)
 		{
-			int fontValue;
-			if (!GetFontValue(wsFontInfo, defaultFontInfo, out fontValue))
+			if (!GetFontValue(wsFontInfo, defaultFontInfo, out var fontValue))
 			{
 				return;
 			}
-			var fontProp = new Property(propName);
-			fontProp.Term = new PrimitiveTerm(termType, MilliPtToPt(fontValue));
+			var fontProp = new Property(propName)
+			{
+				Term = new PrimitiveTerm(termType, MilliPtToPt(fontValue))
+			};
 			declaration.Add(fontProp);
 		}
 
@@ -1381,20 +1385,26 @@ namespace LanguageExplorer.DictionaryConfiguration
 		/// </summary>
 		private static void AddInfoFromWsOrDefaultValue(InheritableStyleProp<FwSuperscriptVal> wsFontInfo, IStyleProp<FwSuperscriptVal> defaultFontInfo, StyleDeclaration declaration)
 		{
-			FwSuperscriptVal fontValue;
-			if (!GetFontValue(wsFontInfo, defaultFontInfo, out fontValue))
+			if (!GetFontValue(wsFontInfo, defaultFontInfo, out var fontValue))
 			{
 				return;
 			}
-			var sizeProp = new Property("font-size");
-			sizeProp.Term = new PrimitiveTerm(UnitType.Ident, "58%"); //58% is what OpenOffice does
+			var sizeProp = new Property("font-size")
+			{
+				Term = new PrimitiveTerm(UnitType.Ident, "58%")
+			};
+			//58% is what OpenOffice does
 			declaration.Add(sizeProp);
 			if (fontValue != FwSuperscriptVal.kssvOff)
 			{
-				var position = new Property("position");
-				position.Term = new PrimitiveTerm(UnitType.Ident, "relative");
-				var top = new Property("top");
-				top.Term = fontValue == FwSuperscriptVal.kssvSub ? new PrimitiveTerm(UnitType.Pixel, "0.3em") : new PrimitiveTerm(UnitType.Pixel, "-0.6em");
+				var position = new Property("position")
+				{
+					Term = new PrimitiveTerm(UnitType.Ident, "relative")
+				};
+				var top = new Property("top")
+				{
+					Term = fontValue == FwSuperscriptVal.kssvSub ? new PrimitiveTerm(UnitType.Pixel, "0.3em") : new PrimitiveTerm(UnitType.Pixel, "-0.6em")
+				};
 				declaration.Add(position);
 				declaration.Add(top);
 			}
@@ -1402,8 +1412,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 
 		private static void AddInfoForUnderline(FontInfo wsFont, ICharacterStyleInfo defaultFont, StyleDeclaration declaration)
 		{
-			FwUnderlineType underlineType;
-			if (!GetFontValue(wsFont.m_underline, defaultFont.Underline, out underlineType))
+			if (!GetFontValue(wsFont.m_underline, defaultFont.Underline, out var underlineType))
 			{
 				return;
 			}
@@ -1426,8 +1435,10 @@ namespace LanguageExplorer.DictionaryConfiguration
 					}
 				case (FwUnderlineType.kuntSingle):
 					{
-						var fontProp = new Property("text-decoration");
-						fontProp.Term = new PrimitiveTerm(UnitType.Ident, "underline");
+						var fontProp = new Property("text-decoration")
+						{
+							Term = new PrimitiveTerm(UnitType.Ident, "underline")
+						};
 						declaration.Add(fontProp);
 						// The wsFontInfo is publicly accessible InheritableStyleProp value if set, checks for explicit overrides.
 						// Otherwise the defaultFontInfo if set, or null.
@@ -1436,8 +1447,10 @@ namespace LanguageExplorer.DictionaryConfiguration
 					}
 				case (FwUnderlineType.kuntStrikethrough):
 					{
-						var fontProp = new Property("text-decoration");
-						fontProp.Term = new PrimitiveTerm(UnitType.Ident, "line-through");
+						var fontProp = new Property("text-decoration")
+						{
+							Term = new PrimitiveTerm(UnitType.Ident, "line-through")
+						};
 						declaration.Add(fontProp);
 						// The wsFontInfo is publicly accessible InheritableStyleProp value if set, checks for explicit overrides.
 						// Otherwise the defaultFontInfo if set, or null.
@@ -1474,7 +1487,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 		/// <returns>true if fontValue was defined in one of the info objects</returns>
 		private static bool GetFontValue<T>(InheritableStyleProp<T> wsFontInfo, IStyleProp<T> defaultFontInfo, out T fontValue)
 		{
-			fontValue = default(T);
+			fontValue = default;
 			if (wsFontInfo.ValueIsSet)
 			{
 				fontValue = wsFontInfo.Value;
@@ -1576,8 +1589,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 			var directionOfRule = !isRtl ? "right" : "left";
 			selectedEntryBefore.Declarations.Properties.Add(new Property("background")
 			{
-				Term = new PrimitiveTerm(UnitType.Ident,
-				"linear-gradient(to " + directionOfRule + ", rgb(100,200,245), rgb(200,238,252) 2em, rgb(200,238,252), transparent, transparent)")
+				Term = new PrimitiveTerm(UnitType.Ident, "linear-gradient(to " + directionOfRule + ", rgb(100,200,245), rgb(200,238,252) 2em, rgb(200,238,252), transparent, transparent)")
 			});
 			selectedEntryBefore.Declarations.Properties.Add(new Property("background-position")
 			{

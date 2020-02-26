@@ -46,9 +46,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 				return;
 			}
 			var info = new TextSelInfo(RootBox);
-			var end = Math.Max(info.ContainingObjectIndex(info.Levels(true) - 1, true), info.ContainingObjectIndex(info.Levels(false) - 1, false));
-			var begin = Math.Min(info.ContainingObjectIndex(info.Levels(true) - 1, true), info.ContainingObjectIndex(info.Levels(false) - 1, false));
-			SelectRange(begin, end);
+			SelectRange(Math.Min(info.ContainingObjectIndex(info.Levels(true) - 1, true), info.ContainingObjectIndex(info.Levels(false) - 1, false)),
+				Math.Max(info.ContainingObjectIndex(info.Levels(true) - 1, true), info.ContainingObjectIndex(info.Levels(false) - 1, false)));
 		}
 
 		private void SelectRange(int begin1, int end1)

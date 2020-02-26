@@ -267,8 +267,7 @@ namespace LanguageExplorer.LIFT
 			{
 				for (var i = 0; i < poss.Name.StringCount; ++i)
 				{
-					int ws;
-					var s = poss.Name.GetStringFromIndex(i, out ws).Text;
+					var s = poss.Name.GetStringFromIndex(i, out _).Text;
 					if (string.IsNullOrEmpty(s) || m_dictMmt.ContainsKey(s))
 					{
 						continue;
@@ -285,10 +284,9 @@ namespace LanguageExplorer.LIFT
 			foreach (var pos in m_cache.LangProject.AllPartsOfSpeech)
 			{
 				posNames.Clear();
-				int ws;
 				for (var i = 0; i < pos.Name.StringCount; ++i)
 				{
-					var name = pos.Name.GetStringFromIndex(i, out ws).Text;
+					var name = pos.Name.GetStringFromIndex(i, out _).Text;
 					if (!string.IsNullOrEmpty(name))
 					{
 						posNames.Add(name);
@@ -302,7 +300,7 @@ namespace LanguageExplorer.LIFT
 				{
 					for (var i = 0; i < stem.Name.StringCount; ++i)
 					{
-						var name = stem.Name.GetStringFromIndex(i, out ws).Text;
+						var name = stem.Name.GetStringFromIndex(i, out _).Text;
 						if (string.IsNullOrEmpty(name))
 						{
 							continue;
@@ -340,8 +338,7 @@ namespace LanguageExplorer.LIFT
 			{
 				for (var i = 0; i < rie.ReversalForm.StringCount; ++i)
 				{
-					int ws;
-					var tss = rie.ReversalForm.GetStringFromIndex(i, out ws);
+					var tss = rie.ReversalForm.GetStringFromIndex(i, out var ws);
 					if (tss.Length > 0)
 					{
 						var mue = new MuElement(ws, tss.Text);
@@ -379,15 +376,14 @@ namespace LanguageExplorer.LIFT
 			}
 			foreach (ILexRefType lrt in m_cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS)
 			{
-				int ws;
 				for (var i = 0; i < lrt.ReverseAbbreviation.StringCount; ++i)
 				{
-					var tss = lrt.ReverseAbbreviation.GetStringFromIndex(i, out ws);
+					var tss = lrt.ReverseAbbreviation.GetStringFromIndex(i, out _);
 					AddToReverseLexRefTypesMap(tss, lrt);
 				}
 				for (var i = 0; i < lrt.ReverseName.StringCount; ++i)
 				{
-					var tss = lrt.ReverseName.GetStringFromIndex(i, out ws);
+					var tss = lrt.ReverseName.GetStringFromIndex(i, out _);
 					AddToReverseLexRefTypesMap(tss, lrt);
 				}
 			}
@@ -553,8 +549,10 @@ namespace LanguageExplorer.LIFT
 						}
 						else
 						{
-							rgenv = new List<IPhEnvironment>();
-							rgenv.Add(env);
+							rgenv = new List<IPhEnvironment>
+							{
+								env
+							};
 							m_dictEnvirons.Add(s, rgenv);
 						}
 					}
@@ -574,15 +572,14 @@ namespace LanguageExplorer.LIFT
 			}
 			foreach (var poss in possibilities)
 			{
-				int ws;
 				for (var i = 0; i < poss.Abbreviation.StringCount; ++i)
 				{
-					var tss = poss.Abbreviation.GetStringFromIndex(i, out ws);
+					var tss = poss.Abbreviation.GetStringFromIndex(i, out _);
 					AddToPossibilityMap(tss, poss, dict);
 				}
 				for (var i = 0; i < poss.Name.StringCount; ++i)
 				{
-					var tss = poss.Name.GetStringFromIndex(i, out ws);
+					var tss = poss.Name.GetStringFromIndex(i, out _);
 					AddToPossibilityMap(tss, poss, dict);
 				}
 				InitializePossibilityMap(poss.SubPossibilitiesOS, dict);
@@ -639,8 +636,7 @@ namespace LanguageExplorer.LIFT
 			{
 				for (var i = 0; i < poss.Abbreviation.StringCount; ++i)
 				{
-					int ws;
-					var tssAbbr = poss.Abbreviation.GetStringFromIndex(i, out ws);
+					var tssAbbr = poss.Abbreviation.GetStringFromIndex(i, out var ws);
 					if (tssAbbr.Length > 0)
 					{
 						var tssName = poss.Name.get_String(ws);
@@ -1029,8 +1025,7 @@ namespace LanguageExplorer.LIFT
 					var sOrder = XmlUtils.GetOptionalAttributeValue(node, "order", null);
 					if (!string.IsNullOrEmpty(sOrder))
 					{
-						int order;
-						rel.Order = int.TryParse(sOrder, out order) ? order : 0;
+						rel.Order = int.TryParse(sOrder, out var order) ? order : 0;
 					}
 				}
 				foreach (XmlNode xn in node.SelectNodes("field"))
@@ -1157,7 +1152,7 @@ namespace LanguageExplorer.LIFT
 			var sWhen = XmlUtils.GetOptionalAttributeValue(node, tag);
 			if (string.IsNullOrEmpty(sWhen))
 			{
-				return default(DateTime);
+				return default;
 			}
 			try
 			{
@@ -1165,7 +1160,7 @@ namespace LanguageExplorer.LIFT
 			}
 			catch (FormatException)
 			{
-				return default(DateTime);
+				return default;
 			}
 		}
 
@@ -1290,12 +1285,11 @@ namespace LanguageExplorer.LIFT
 		/// <summary />
 		private void ProcessFeatureDefinition(string id, string guidAttr, string parent, LiftMultiText description, LiftMultiText label, LiftMultiText abbrev, string rawXml, IFsFeatureSystem featSystem)
 		{
-			IFsFeatDefn feat;
 			var guid = ConvertStringToGuid(guidAttr);
 			// For some reason we are processing the list twice: once when actually processing the range file
 			// and once when proessing the LIFT file. During the second pass this prevents adding the same guid twice
 			// which causes a crash.
-			if (m_mapLiftGuidFeatDefn.TryGetValue(guid, out feat))
+			if (m_mapLiftGuidFeatDefn.TryGetValue(guid, out var feat))
 			{
 				return;
 			}
@@ -1455,8 +1449,7 @@ namespace LanguageExplorer.LIFT
 			}
 			if (featComplex.TypeRA == null || m_msImport == MergeStyle.MsKeepNew || m_msImport == MergeStyle.MsKeepOnlyNew)
 			{
-				IFsFeatStrucType featType;
-				if (m_mapIdFeatStrucType.TryGetValue(sComplexType, out featType))
+				if (m_mapIdFeatStrucType.TryGetValue(sComplexType, out var featType))
 				{
 					featComplex.TypeRA = featType;
 				}
@@ -1500,8 +1493,7 @@ namespace LanguageExplorer.LIFT
 				foreach (var sAbbr in rgsValues)
 				{
 					var key = $"{id}:{sAbbr}";
-					IFsSymFeatVal featValue;
-					if (m_mapIdAbbrSymFeatVal.TryGetValue(key, out featValue))
+					if (m_mapIdAbbrSymFeatVal.TryGetValue(key, out var featValue))
 					{
 						featClosed.ValuesOC.Add(featValue);
 						continue;
@@ -1509,7 +1501,7 @@ namespace LanguageExplorer.LIFT
 					if (m_rgPendingSymFeatVal.Count > 0)
 					{
 						PendingFeatureValue val = null;
-						foreach (PendingFeatureValue pfv in m_rgPendingSymFeatVal)
+						foreach (var pfv in m_rgPendingSymFeatVal)
 						{
 							if (pfv.FeatureId == id && pfv.Id == sAbbr)
 							{
@@ -1528,8 +1520,7 @@ namespace LanguageExplorer.LIFT
 				}
 				if (rgsMissing.Any())
 				{
-					List<string> missingItems;
-					if (!m_mapClosedFeatMissingValueAbbrs.TryGetValue(featClosed, out missingItems))
+					if (!m_mapClosedFeatMissingValueAbbrs.TryGetValue(featClosed, out var missingItems))
 					{
 						m_mapClosedFeatMissingValueAbbrs.Add(featClosed, rgsMissing);
 					}
@@ -1791,8 +1782,7 @@ namespace LanguageExplorer.LIFT
 			{
 				for (var i = 0; i < sfv.Abbreviation.StringCount; ++i)
 				{
-					int ws;
-					var tss = sfv.Abbreviation.GetStringFromIndex(i, out ws);
+					var tss = sfv.Abbreviation.GetStringFromIndex(i, out _);
 					if (tss.Text == id)
 					{
 						return sfv;
@@ -1807,16 +1797,14 @@ namespace LanguageExplorer.LIFT
 			IFsClosedFeature featClosed = null;
 			if (guid != Guid.Empty)
 			{
-				IFsFeatDefn feat;
-				if (m_mapLiftGuidFeatDefn.TryGetValue(guid, out feat))
+				if (m_mapLiftGuidFeatDefn.TryGetValue(guid, out var feat))
 				{
 					featClosed = feat as IFsClosedFeature;
 				}
 			}
 			if (featClosed == null && !string.IsNullOrEmpty(sFeatId))
 			{
-				IFsFeatDefn feat;
-				if (m_mapIdFeatDefn.TryGetValue(sFeatId, out feat))
+				if (m_mapIdFeatDefn.TryGetValue(sFeatId, out var feat))
 				{
 					featClosed = feat as IFsClosedFeature;
 				}
@@ -1855,8 +1843,7 @@ namespace LanguageExplorer.LIFT
 			{
 				for (var i = 0; i < feat.Abbreviation.StringCount; ++i)
 				{
-					int ws;
-					var tssAbbr = feat.Abbreviation.GetStringFromIndex(i, out ws);
+					var tssAbbr = feat.Abbreviation.GetStringFromIndex(i, out _);
 					var sAbbr = tssAbbr.Text;
 					if (!string.IsNullOrEmpty(sAbbr) && !m_mapIdFeatDefn.ContainsKey(sAbbr))
 					{
@@ -1872,8 +1859,7 @@ namespace LanguageExplorer.LIFT
 			{
 				for (var i = 0; i < featType.Abbreviation.StringCount; ++i)
 				{
-					int ws;
-					var tssAbbr = featType.Abbreviation.GetStringFromIndex(i, out ws);
+					var tssAbbr = featType.Abbreviation.GetStringFromIndex(i, out _);
 					var sAbbr = tssAbbr.Text;
 					if (!string.IsNullOrEmpty(sAbbr) && !m_mapIdFeatStrucType.ContainsKey(sAbbr))
 					{
@@ -1890,8 +1876,7 @@ namespace LanguageExplorer.LIFT
 				var setIds = new HashSet<string>();
 				for (var i = 0; i < featClosed.Abbreviation.StringCount; ++i)
 				{
-					int ws;
-					var tssAbbr = featClosed.Abbreviation.GetStringFromIndex(i, out ws);
+					var tssAbbr = featClosed.Abbreviation.GetStringFromIndex(i, out _);
 					var sAbbr = tssAbbr.Text;
 					if (!string.IsNullOrEmpty(sAbbr))
 					{
@@ -1902,8 +1887,7 @@ namespace LanguageExplorer.LIFT
 				{
 					for (var i = 0; i < featVal.Abbreviation.StringCount; ++i)
 					{
-						int ws;
-						var tssAbbr = featVal.Abbreviation.GetStringFromIndex(i, out ws);
+						var tssAbbr = featVal.Abbreviation.GetStringFromIndex(i, out _);
 						var sAbbr = tssAbbr.Text;
 						if (!string.IsNullOrEmpty(sAbbr))
 						{
@@ -1930,19 +1914,16 @@ namespace LanguageExplorer.LIFT
 				return;
 			}
 			var sPosName = range.Substring(0, idx);
-			ICmPossibility poss;
-			if (!m_dictPos.TryGetValue(sPosName, out poss))
+			if (!m_dictPos.TryGetValue(sPosName, out var poss))
 			{
 				return;
 			}
-			var pos = poss as IPartOfSpeech;
-			if (pos == null)
+			if (!(poss is IPartOfSpeech pos))
 			{
 				return;
 			}
-			IMoStemName stem;
 			var key = $"{sPosName}:{id}";
-			if (!m_dictStemName.TryGetValue(key, out stem))
+			if (!m_dictStemName.TryGetValue(key, out var stem))
 			{
 				stem = m_cache.ServiceLocator.GetInstance<IMoStemNameFactory>().Create();
 				pos.StemNamesOC.Add(stem);
@@ -1991,11 +1972,9 @@ namespace LanguageExplorer.LIFT
 		{
 			var key = tag;
 			//if the header field we are processing is a custom field, then create it.
-			int typeFlid;
-			if (IsCustomField(tag, description, out typeFlid))
+			if (IsCustomField(tag, description, out var typeFlid))
 			{
-				Guid idk;
-				FindOrCreateCustomField(tag, description, typeFlid, out idk);
+				FindOrCreateCustomField(tag, description, typeFlid, out var idk);
 				key = typeFlid + tag;
 			}
 			// We may need this information later, but don't do anything for now except save it.
@@ -2008,8 +1987,7 @@ namespace LanguageExplorer.LIFT
 		/// </summary>
 		private bool IsCustomField(string tag, LiftMultiText description, out int typeFlid)
 		{
-			LiftString lstr;
-			if (description.TryGetValue("qaa-x-spec", out lstr))
+			if (description.TryGetValue("qaa-x-spec", out var lstr))
 			{
 				var value = lstr.Text;
 				var items = value.Split(new char[] { '=', ';' });
@@ -2067,8 +2045,7 @@ namespace LanguageExplorer.LIFT
 			try
 			{
 				m_fCreatingNewEntry = true;
-				bool fNeedNewId;
-				var le = CreateNewLexEntry(entry.Guid, out fNeedNewId);
+				var le = CreateNewLexEntry(entry.Guid, out var fNeedNewId);
 				if (m_cdConflict is ConflictingEntry)
 				{
 					((ConflictingEntry)m_cdConflict).DupEntry = le;
@@ -2100,11 +2077,11 @@ namespace LanguageExplorer.LIFT
 				{
 					CreateEntrySense(le, sense);
 				}
-				if (entry.DateCreated != default(DateTime))
+				if (entry.DateCreated != default)
 				{
 					le.DateCreated = entry.DateCreated.ToLocalTime();
 				}
-				if (entry.DateModified != default(DateTime))
+				if (entry.DateModified != default)
 				{
 					m_rgPendingModifyTimes.Add(new PendingModifyTime(le, entry.DateModified.ToLocalTime()));
 				}
@@ -2136,9 +2113,8 @@ namespace LanguageExplorer.LIFT
 			catch (ArgumentException ex)
 			{
 				// presumably duplicate id.
-				ICmObject cmo2;
 				string msg = null;
-				if (m_mapIdObject.TryGetValue(id, out cmo2))
+				if (m_mapIdObject.TryGetValue(id, out var cmo2))
 				{
 					if (cmo != cmo2)
 					{
@@ -2190,7 +2166,7 @@ namespace LanguageExplorer.LIFT
 		private bool EntryHasConflictingData(CmLiftEntry entry)
 		{
 			m_cdConflict = null;
-			var le = entry.CmObject as ILexEntry;
+			var le = (ILexEntry)entry.CmObject;
 			if (LexemeFormsConflict(le, entry))
 			{
 				return true;
@@ -2254,8 +2230,7 @@ namespace LanguageExplorer.LIFT
 			}
 			foreach (var sense in entry.Senses)
 			{
-				ILexSense ls;
-				map.TryGetValue(sense, out ls);
+				map.TryGetValue(sense, out var ls);
 				if (ls == null || (m_msImport == MergeStyle.MsKeepBoth && SenseHasConflictingData(ls, sense)))
 				{
 					CreateEntrySense(le, sense);
@@ -2328,11 +2303,9 @@ namespace LanguageExplorer.LIFT
 		{
 			if (entry.LexicalForm != null && !entry.LexicalForm.IsEmpty)
 			{
-				IMoMorphType mmt;
-				string realForm;
 				AddNewWsToVernacular();
 				var tssForm = GetFirstLiftTsString(entry.LexicalForm);
-				var mf = CreateMoForm(entry.Traits, tssForm, out mmt, out realForm, le.Guid, LexEntryTags.kflidLexemeForm);
+				var mf = CreateMoForm(entry.Traits, tssForm, out var mmt, out var realForm, le.Guid, LexEntryTags.kflidLexemeForm);
 				le.LexemeFormOA = mf;
 				FinishMoForm(mf, entry.LexicalForm, tssForm, mmt, realForm, le.Guid, LexEntryTags.kflidLexemeForm);
 			}
@@ -2484,9 +2457,8 @@ namespace LanguageExplorer.LIFT
 		private void ProcessUnknownTrait(LiftObject liftObject, LiftTrait lt, ICmObject cmo)
 		{
 			var clid = cmo.ClassID;
-			LiftMultiText desc; // safe-XML
 			var sType = lt.Name;
-			if (!m_dictFieldDef.TryGetValue(m_cache.DomainDataByFlid.MetaDataCache.GetClassId(cmo.ClassName) + lt.Name, out desc))
+			if (!m_dictFieldDef.TryGetValue(m_cache.DomainDataByFlid.MetaDataCache.GetClassId(cmo.ClassName) + lt.Name, out var desc))
 			{
 				StoreTraitAsResidue(cmo, lt);
 				return;
@@ -2586,8 +2558,7 @@ namespace LanguageExplorer.LIFT
 		/// </summary>
 		private void ReplaceMoForm(IMoForm oldForm, IMoForm newForm)
 		{
-			LiftResidue residue;
-			if (m_dictResidue.TryGetValue(oldForm.Hvo, out residue))
+			if (m_dictResidue.TryGetValue(oldForm.Hvo, out var residue))
 			{
 				m_dictResidue.Remove(oldForm.Hvo);
 			}
@@ -2777,8 +2748,7 @@ namespace LanguageExplorer.LIFT
 						}
 						break;
 					default:
-						int flid;
-						if (m_dictCustomFlid.TryGetValue("LexEntry-" + lf.Type, out flid))
+						if (m_dictCustomFlid.TryGetValue("LexEntry-" + lf.Type, out var flid))
 						{
 							if (CustomFieldDataConflicts(le.Hvo, flid, lf.Content))
 							{
@@ -3194,9 +3164,7 @@ namespace LanguageExplorer.LIFT
 			{
 				AddNewWsToVernacular();
 				var tssForm = GetFirstLiftTsString(lv.Form);
-				IMoMorphType mmt;
-				string realForm;
-				var mf = CreateMoForm(lv.Traits, tssForm, out mmt, out realForm, le.Guid, LexEntryTags.kflidAlternateForms);
+				var mf = CreateMoForm(lv.Traits, tssForm, out var mmt, out var realForm, le.Guid, LexEntryTags.kflidAlternateForms);
 				le.AlternateFormsOS.Add(mf);
 				FinishMoForm(mf, lv.Form, tssForm, mmt, realForm, le.Guid, LexEntryTags.kflidAlternateForms);
 				bool fTypeSpecified;
@@ -3227,8 +3195,7 @@ namespace LanguageExplorer.LIFT
 				realForm = tssForm.Text;
 				mmt = FindMorphType(ref realForm, out clsidForm, guidEntry, flid);
 			}
-			IMoMorphType mmt2;
-			var clsidForm2 = GetMoFormClassFromTraits(traits, out mmt2);
+			var clsidForm2 = GetMoFormClassFromTraits(traits, out var mmt2);
 			if (clsidForm2 != 0 && mmt2 != null)
 			{
 				if (mmt2 != mmt)
@@ -3244,8 +3211,7 @@ namespace LanguageExplorer.LIFT
 				case MoAffixAllomorphTags.kClassId:
 					return CreateNewMoAffixAllomorph();
 				default:
-					throw new InvalidProgramException(
-						"unexpected MoForm subclass returned from FindMorphType or GetMoFormClassFromTraits");
+					throw new InvalidProgramException("unexpected MoForm subclass returned from FindMorphType or GetMoFormClassFromTraits");
 			}
 		}
 
@@ -3274,9 +3240,7 @@ namespace LanguageExplorer.LIFT
 					{
 						continue;
 					}
-					IMoMorphType mmt;
-					string realForm;
-					mf = CreateMoForm(lv.Traits, tssForm, out mmt, out realForm, le.Guid, LexEntryTags.kflidAlternateForms);
+					mf = CreateMoForm(lv.Traits, tssForm, out var mmt, out var realForm, le.Guid, LexEntryTags.kflidAlternateForms);
 					le.AlternateFormsOS.Add(mf);
 					FinishMoForm(mf, lv.Form, tssForm, mmt, realForm, le.Guid, LexEntryTags.kflidAlternateForms);
 					dictHvoVariant.Add(mf.Hvo, lv);
@@ -3285,8 +3249,7 @@ namespace LanguageExplorer.LIFT
 				{
 					MergeInAllomorphForms(lv.Form, mf.Form, mf.ClassID, le.Guid, LexEntryTags.kflidAlternateForms);
 				}
-				bool fTypeSpecified;
-				ProcessMoFormTraits(mf, lv, out mf, out fTypeSpecified);
+				ProcessMoFormTraits(mf, lv, out mf, out var fTypeSpecified);
 				ProcessMoFormFields(mf, lv);
 				StoreResidueFromVariant(mf, lv);
 				if (!fTypeSpecified)
@@ -3412,13 +3375,14 @@ namespace LanguageExplorer.LIFT
 						break;
 					case "environment":
 						var rgenv = FindOrCreateEnvironment(lt.Value);
-						if (form is IMoStemAllomorph)
+						switch (form)
 						{
-							AddEnvironmentIfNeeded(rgenv, (form as IMoStemAllomorph).PhoneEnvRC);
-						}
-						else if (form is IMoAffixAllomorph)
-						{
-							AddEnvironmentIfNeeded(rgenv, (form as IMoAffixAllomorph).PhoneEnvRC);
+							case IMoStemAllomorph stemAllomorph:
+								AddEnvironmentIfNeeded(rgenv, stemAllomorph.PhoneEnvRC);
+								break;
+							case IMoAffixAllomorph affixAllomorph:
+								AddEnvironmentIfNeeded(rgenv, affixAllomorph.PhoneEnvRC);
+								break;
 						}
 						break;
 					default:
@@ -3607,8 +3571,7 @@ namespace LanguageExplorer.LIFT
 							{
 								for (var i = 0; i < cmf.Name.StringCount; ++i)
 								{
-									int wsT;
-									var tss = cmf.Name.GetStringFromIndex(i, out wsT);
+									var tss = cmf.Name.GetStringFromIndex(i, out var wsT);
 									if (tss.Text == CmFolderTags.LocalMedia)
 									{
 										cmfMedia = cmf;
@@ -3623,16 +3586,14 @@ namespace LanguageExplorer.LIFT
 							}
 							if (cmfMedia == null)
 							{
-								var factFolder = m_cache.ServiceLocator.GetInstance<ICmFolderFactory>();
-								cmfMedia = factFolder.Create();
+								cmfMedia = m_cache.ServiceLocator.GetInstance<ICmFolderFactory>().Create();
 								m_cache.LangProject.MediaOC.Add(cmfMedia);
 								cmfMedia.Name.UserDefaultWritingSystem = TsStringUtils.MakeString(CmFolderTags.LocalMedia, m_cache.DefaultUserWs);
 							}
 							var file = cmfMedia.FilesOC.FirstOrDefault(cf => cf.AbsoluteInternalPath == sPath);
 							if (file == null)
 							{
-								var factFile = m_cache.ServiceLocator.GetInstance<ICmFileFactory>();
-								file = factFile.Create();
+								file = m_cache.ServiceLocator.GetInstance<ICmFileFactory>().Create();
 								cmfMedia.FilesOC.Add(file);
 								file.InternalPath = sPath;
 							}
@@ -3715,7 +3676,7 @@ namespace LanguageExplorer.LIFT
 				if (phon.Form.Count == 0)
 				{
 					var forms = GetAllUnicodeAlternatives(pron.Form);
-					fFormMatches = (forms.Count == 0);
+					fFormMatches = forms.Count == 0;
 				}
 				else
 				{
@@ -4092,8 +4053,7 @@ namespace LanguageExplorer.LIFT
 			try
 			{
 				m_fCreatingNewSense = true;
-				bool fNeedNewId;
-				var ls = CreateNewLexSense(sense.Guid, le, out fNeedNewId);
+				var ls = CreateNewLexSense(sense.Guid, le, out var fNeedNewId);
 				FillInNewSense(ls, sense, fNeedNewId);
 			}
 			finally
@@ -4108,8 +4068,7 @@ namespace LanguageExplorer.LIFT
 			try
 			{
 				m_fCreatingNewSense = true;
-				bool fNeedNewId;
-				var lsSub = CreateNewLexSense(sub.Guid, ls, out fNeedNewId);
+				var lsSub = CreateNewLexSense(sub.Guid, ls, out var fNeedNewId);
 				FillInNewSense(lsSub, sub, fNeedNewId);
 			}
 			finally
@@ -4197,8 +4156,7 @@ namespace LanguageExplorer.LIFT
 			}
 			foreach (var sub in sense.Subsenses)
 			{
-				ILexSense lsSub;
-				map.TryGetValue(sub, out lsSub);
+				map.TryGetValue(sub, out var lsSub);
 				if (lsSub == null || (m_msImport == MergeStyle.MsKeepBoth && SenseHasConflictingData(lsSub, sub)))
 				{
 					CreateSubsense(ls, sub);
@@ -4269,8 +4227,7 @@ namespace LanguageExplorer.LIFT
 			}
 			foreach (var expl in sense.Examples)
 			{
-				ILexExampleSentence les;
-				map.TryGetValue(expl, out les);
+				map.TryGetValue(expl, out var les);
 				if (les == null)
 				{
 					les = CreateNewLexExampleSentence(expl.Guid, ls);
@@ -4509,8 +4466,7 @@ namespace LanguageExplorer.LIFT
 			}
 			foreach (var tran in expl.Translations)
 			{
-				ICmTranslation ct;
-				map.TryGetValue(tran, out ct);
+				map.TryGetValue(tran, out var ct);
 				ICmPossibility type = null;
 				if (!string.IsNullOrEmpty(tran.Type))
 				{
@@ -4767,8 +4723,7 @@ namespace LanguageExplorer.LIFT
 					}
 					else
 					{
-						List<string> rgsInflClasses;
-						if (!dictPosInflClasses.TryGetValue(sPos, out rgsInflClasses))
+						if (!dictPosInflClasses.TryGetValue(sPos, out var rgsInflClasses))
 						{
 							rgsInflClasses = new List<string>();
 							dictPosInflClasses.Add(sPos, rgsInflClasses);
@@ -4838,8 +4793,7 @@ namespace LanguageExplorer.LIFT
 			if (msaSense is IMoDerivAffMsa)
 			{
 				var key = $"{sFromPos}:{sFromStemName}";
-				IMoStemName stem;
-				if (m_dictStemName.TryGetValue(key, out stem))
+				if (m_dictStemName.TryGetValue(key, out var stem))
 				{
 					(msaSense as IMoDerivAffMsa).FromStemNameRA = stem;
 					return;
@@ -4860,8 +4814,7 @@ namespace LanguageExplorer.LIFT
 
 		private ICmPossibility FindOrCreateExceptionFeature(string sValue)
 		{
-			ICmPossibility poss;
-			if (!m_dictExceptFeats.TryGetValue(sValue, out poss))
+			if (!m_dictExceptFeats.TryGetValue(sValue, out var poss))
 			{
 				EnsureProdRestrictListExists();
 				if (m_factCmPossibility == null)
@@ -4888,9 +4841,8 @@ namespace LanguageExplorer.LIFT
 		{
 			foreach (var msa in le.MorphoSyntaxAnalysesOC)
 			{
-				var msaStem = msa as IMoStemMsa;
-				if (msaStem != null && msaStem.PartOfSpeechRA == pos && MsaSlotInfoMatches(dictPosSlots, msaStem) && MsaInflClassInfoMatches(dictPosInflClasses, null, msaStem)
-				    && MsaExceptionFeatsMatch(rgpossProdRestrict, null, msaStem) && MsaInflFeatureMatches(sInflectionFeature, null, msaStem))
+				if (msa is IMoStemMsa msaStem && msaStem.PartOfSpeechRA == pos && MsaSlotInfoMatches(dictPosSlots, msaStem) && MsaInflClassInfoMatches(dictPosInflClasses, null, msaStem)
+					&& MsaExceptionFeatsMatch(rgpossProdRestrict, null, msaStem) && MsaInflFeatureMatches(sInflectionFeature, null, msaStem))
 				{
 					msaSense = msa;
 					return false;
@@ -4907,8 +4859,7 @@ namespace LanguageExplorer.LIFT
 
 		private void StoreMsaExceptionFeatures(List<ICmPossibility> rgpossProdRestrict, List<ICmPossibility> rgpossFromProdRestrict, IMoMorphSynAnalysis msaSense)
 		{
-			var msaStem = msaSense as IMoStemMsa;
-			if (msaStem != null)
+			if (msaSense is IMoStemMsa msaStem)
 			{
 				foreach (var poss in rgpossProdRestrict)
 				{
@@ -4916,8 +4867,7 @@ namespace LanguageExplorer.LIFT
 				}
 				return;
 			}
-			var msaInfl = msaSense as IMoInflAffMsa;
-			if (msaInfl != null)
+			if (msaSense is IMoInflAffMsa msaInfl)
 			{
 				foreach (var poss in rgpossProdRestrict)
 				{
@@ -4925,8 +4875,7 @@ namespace LanguageExplorer.LIFT
 				}
 				return;
 			}
-			var msaDeriv = msaSense as IMoDerivAffMsa;
-			if (msaDeriv != null)
+			if (msaSense is IMoDerivAffMsa msaDeriv)
 			{
 				foreach (var poss in rgpossProdRestrict)
 				{
@@ -4951,8 +4900,7 @@ namespace LanguageExplorer.LIFT
 		{
 			foreach (var msa in le.MorphoSyntaxAnalysesOC)
 			{
-				var msaAffix = msa as IMoUnclassifiedAffixMsa;
-				if (msaAffix != null && msaAffix.PartOfSpeechRA == pos && MsaSlotInfoMatches(dictPosSlots, msaAffix) && MsaInflClassInfoMatches(dictPosInflClasses, null, msaAffix))
+				if (msa is IMoUnclassifiedAffixMsa msaAffix && msaAffix.PartOfSpeechRA == pos && MsaSlotInfoMatches(dictPosSlots, msaAffix) && MsaInflClassInfoMatches(dictPosInflClasses, null, msaAffix))
 				{
 					msaSense = msa;
 					return false;
@@ -5009,9 +4957,8 @@ namespace LanguageExplorer.LIFT
 			}
 			foreach (var msa in le.MorphoSyntaxAnalysesOC)
 			{
-				var msaAffix = msa as IMoDerivAffMsa;
-				if (msaAffix != null && msaAffix.ToPartOfSpeechRA == pos && msaAffix.FromPartOfSpeechRA == posFrom && MsaSlotInfoMatches(dictPosSlots, msaAffix)
-				    && MsaInflClassInfoMatches(dictPosInflClasses, dictPosFromInflClasses, msaAffix) && MsaExceptionFeatsMatch(rgpossProdRestrict, rgpossFromProdRestrict, msaAffix)
+				if (msa is IMoDerivAffMsa msaAffix && msaAffix.ToPartOfSpeechRA == pos && msaAffix.FromPartOfSpeechRA == posFrom && MsaSlotInfoMatches(dictPosSlots, msaAffix)
+					&& MsaInflClassInfoMatches(dictPosInflClasses, dictPosFromInflClasses, msaAffix) && MsaExceptionFeatsMatch(rgpossProdRestrict, rgpossFromProdRestrict, msaAffix)
 					&& MsaInflFeatureMatches(sInflectionFeature, sFromInflFeature, msaAffix) && MsaStemNameMatches(sFromStemName, msaAffix))
 				{
 					msaSense = msa;
@@ -5040,9 +4987,8 @@ namespace LanguageExplorer.LIFT
 		{
 			foreach (var msa in le.MorphoSyntaxAnalysesOC)
 			{
-				var msaAffix = msa as IMoInflAffMsa;
-				if (msaAffix != null && msaAffix.PartOfSpeechRA == pos && MsaSlotInfoMatches(dictPosSlots, msaAffix) && MsaInflClassInfoMatches(dictPosInflClasses, null, msaAffix)
-				    && MsaExceptionFeatsMatch(rgpossProdRestrict, null, msaAffix) && MsaInflFeatureMatches(sFeatureString, null, msaAffix))
+				if (msa is IMoInflAffMsa msaAffix && msaAffix.PartOfSpeechRA == pos && MsaSlotInfoMatches(dictPosSlots, msaAffix) && MsaInflClassInfoMatches(dictPosInflClasses, null, msaAffix)
+					&& MsaExceptionFeatsMatch(rgpossProdRestrict, null, msaAffix) && MsaInflFeatureMatches(sFeatureString, null, msaAffix))
 				{
 					msaSense = msa;
 					return false;
@@ -5220,8 +5166,7 @@ namespace LanguageExplorer.LIFT
 
 		private void ProcessMsaSlotInformation(Dictionary<string, List<string>> dictPosSlots, IMoMorphSynAnalysis msa)
 		{
-			var msaInfl = msa as IMoInflAffMsa;
-			if (msaInfl == null)
+			if (!(msa is IMoInflAffMsa msaInfl))
 			{
 				return;
 			}
@@ -5253,8 +5198,7 @@ namespace LanguageExplorer.LIFT
 
 		private bool MsaSlotInfoMatches(Dictionary<string, List<string>> dictPosSlots, IMoMorphSynAnalysis msa)
 		{
-			var msaInfl = msa as IMoInflAffMsa;
-			if (msaInfl == null)
+			if (!(msa is IMoInflAffMsa msaInfl))
 			{
 				return true;
 			}
@@ -5288,18 +5232,15 @@ namespace LanguageExplorer.LIFT
 
 		private bool MsaExceptionFeatsMatch(List<ICmPossibility> rgpossProdRestrict, List<ICmPossibility> rgpossFromProdRestrict, IMoMorphSynAnalysis msa)
 		{
-			var msaStem = msa as IMoStemMsa;
-			if (msaStem != null)
+			if (msa is IMoStemMsa msaStem)
 			{
 				return msaStem.ProdRestrictRC.Count == rgpossProdRestrict.Count && msaStem.ProdRestrictRC.All(poss => rgpossProdRestrict.Contains(poss));
 			}
-			var msaInfl = msa as IMoInflAffMsa;
-			if (msaInfl != null)
+			if (msa is IMoInflAffMsa msaInfl)
 			{
 				return msaInfl.FromProdRestrictRC.Count == rgpossProdRestrict.Count && msaInfl.FromProdRestrictRC.All(poss => rgpossProdRestrict.Contains(poss));
 			}
-			var msaDeriv = msa as IMoDerivAffMsa;
-			if (msaDeriv != null)
+			if (msa is IMoDerivAffMsa msaDeriv)
 			{
 				if (msaDeriv.ToProdRestrictRC.Count != rgpossProdRestrict.Count)
 				{
@@ -5327,8 +5268,7 @@ namespace LanguageExplorer.LIFT
 
 		private bool MsaInflFeatureMatches(string sFeatureString, string sFromInflectionFeature, IMoMorphSynAnalysis msa)
 		{
-			var msaStem = msa as IMoStemMsa;
-			if (msaStem != null)
+			if (msa is IMoStemMsa msaStem)
 			{
 				if (msaStem.MsFeaturesOA == null)
 				{
@@ -5341,8 +5281,7 @@ namespace LanguageExplorer.LIFT
 				}
 				return sFeatureString == msaStem.MsFeaturesOA.LiftName;
 			}
-			var msaInfl = msa as IMoInflAffMsa;
-			if (msaInfl != null)
+			if (msa is IMoInflAffMsa msaInfl)
 			{
 				if (msaInfl.InflFeatsOA == null)
 				{
@@ -5355,8 +5294,7 @@ namespace LanguageExplorer.LIFT
 				}
 				return sFeatureString == msaInfl.InflFeatsOA.LiftName;
 			}
-			var msaDeriv = msa as IMoDerivAffMsa;
-			if (msaDeriv != null)
+			if (msa is IMoDerivAffMsa msaDeriv)
 			{
 				bool fOk;
 				if (msaDeriv.ToMsFeaturesOA == null)
@@ -5456,8 +5394,7 @@ namespace LanguageExplorer.LIFT
 					}
 					if (!string.IsNullOrEmpty(sType))
 					{
-						IFsFeatStrucType type;
-						if (m_mapIdFeatStrucType.TryGetValue(sType, out type))
+						if (m_mapIdFeatStrucType.TryGetValue(sType, out var type))
 						{
 							feat.TypeRA = type;
 						}
@@ -5554,8 +5491,7 @@ namespace LanguageExplorer.LIFT
 			for (var i = 0; i < rgsName.Count; ++i)
 			{
 				var sName = rgsName[i];
-				IFsFeatDefn featDefn;
-				if (!m_mapIdFeatDefn.TryGetValue(sName, out featDefn))
+				if (!m_mapIdFeatDefn.TryGetValue(sName, out var featDefn))
 				{
 					// REVIEW: SHOULD WE TRY TO CREATE ONE?
 					return false;
@@ -5596,9 +5532,8 @@ namespace LanguageExplorer.LIFT
 					{
 						m_factFsClosedValue = m_cache.ServiceLocator.GetInstance<IFsClosedValueFactory>();
 					}
-					IFsSymFeatVal featVal;
 					var valueKey = $"{sName}:{sValue}";
-					if (m_mapIdAbbrSymFeatVal.TryGetValue(valueKey, out featVal))
+					if (m_mapIdAbbrSymFeatVal.TryGetValue(valueKey, out var featVal))
 					{
 						var val = m_factFsClosedValue.Create();
 						ownerFeatStruc.FeatureSpecsOC.Add(val);
@@ -5716,8 +5651,7 @@ namespace LanguageExplorer.LIFT
 			var msn = msaAffix.FromStemNameRA;
 			for (var i = 0; i < msn.Name.StringCount; ++i)
 			{
-				int ws;
-				var tss = msn.Name.GetStringFromIndex(i, out ws);
+				var tss = msn.Name.GetStringFromIndex(i, out var ws);
 				if (tss.Text == sFromStemName)
 				{
 					return true;
@@ -5752,8 +5686,7 @@ namespace LanguageExplorer.LIFT
 				{
 					var len = trait.Name.Length - (trait.Name.EndsWith("-slot") ? 5 : 6);
 					var sTraitPos = trait.Name.Substring(0, len);
-					List<string> rgsSlots;
-					if (!dictPosSlots.TryGetValue(sTraitPos, out rgsSlots))
+					if (!dictPosSlots.TryGetValue(sTraitPos, out var rgsSlots))
 					{
 						rgsSlots = new List<string>();
 						dictPosSlots.Add(sTraitPos, rgsSlots);
@@ -5764,8 +5697,7 @@ namespace LanguageExplorer.LIFT
 				{
 					var len = trait.Name.Length - (trait.Name.EndsWith("-infl-class") ? 11 : 16);
 					var sTraitPos = trait.Name.Substring(0, len);
-					List<string> rgsInflClasses;
-					if (!dictPosInflClasses.TryGetValue(sTraitPos, out rgsInflClasses))
+					if (!dictPosInflClasses.TryGetValue(sTraitPos, out var rgsInflClasses))
 					{
 						rgsInflClasses = new List<string>();
 						dictPosInflClasses.Add(sTraitPos, rgsInflClasses);
@@ -6018,8 +5950,7 @@ namespace LanguageExplorer.LIFT
 			}
 			foreach (var uref in sense.Illustrations)
 			{
-				ICmPicture pict;
-				map.TryGetValue(uref, out pict);
+				map.TryGetValue(uref, out var pict);
 				if (pict == null)
 				{
 					var ws = uref.Label != null && !uref.Label.IsEmpty ? GetWsFromLiftLang(uref.Label.FirstValue.Key) : m_cache.DefaultVernWs;
@@ -6206,8 +6137,7 @@ namespace LanguageExplorer.LIFT
 		/// <summary />
 		private IReversalIndexEntry FindOrCreateMatchingReversal(LiftMultiText form, Dictionary<MuElement, List<IReversalIndexEntry>> mapToRIEs, ILcmOwningCollection<IReversalIndexEntry> entriesOS)
 		{
-			IReversalIndexEntry rie;
-			var rgmue = FindAnyMatchingReversal(form, mapToRIEs, out rie);
+			var rgmue = FindAnyMatchingReversal(form, mapToRIEs, out var rie);
 			if (rie == null)
 			{
 				rie = CreateNewReversalIndexEntry();
@@ -6234,8 +6164,7 @@ namespace LanguageExplorer.LIFT
 				// LiftMultiText parameter may have come in with escaped characters which need to be
 				// converted to plain text before comparing with existing entries
 				var mue = new MuElement(ws, icuNormalizer.Normalize(XmlUtils.DecodeXmlAttribute(sNewNorm)));
-				List<IReversalIndexEntry> rgrie;
-				if (rie == null && mapToRIEs.TryGetValue(mue, out rgrie))
+				if (rie == null && mapToRIEs.TryGetValue(mue, out var rgrie))
 				{
 					foreach (var rieT in rgrie)
 					{
@@ -6254,8 +6183,7 @@ namespace LanguageExplorer.LIFT
 		/// <summary />
 		private IReversalIndexEntry FindOrCreateMatchingReversal(LiftMultiText form, Dictionary<MuElement, List<IReversalIndexEntry>> mapToRIEs, ILcmOwningSequence<IReversalIndexEntry> entriesOS)
 		{
-			IReversalIndexEntry rie;
-			var rgmue = FindAnyMatchingReversal(form, mapToRIEs, out rie);
+			var rgmue = FindAnyMatchingReversal(form, mapToRIEs, out var rie);
 			if (rie == null)
 			{
 				rie = CreateNewReversalIndexEntry();
@@ -6593,13 +6521,11 @@ namespace LanguageExplorer.LIFT
 			}
 			else
 			{
-				LiftMultiText desc; // safe XML
-				if (!m_dictFieldDef.TryGetValue(m_cache.DomainDataByFlid.MetaDataCache.GetClassId(co.ClassName) + sType, out desc))
+				if (!m_dictFieldDef.TryGetValue(m_cache.DomainDataByFlid.MetaDataCache.GetClassId(co.ClassName) + sType, out var desc))
 				{
 					m_dictFieldDef.TryGetValue(sOldPrefix + sType, out desc);
 				}
-				Guid possListGuid;
-				flid = FindOrCreateCustomField(sType, desc, clid, out possListGuid);
+				flid = FindOrCreateCustomField(sType, desc, clid, out var possListGuid);
 				if (flid == 0)
 				{
 					if (clid == LexSenseTags.kClassId || clid == LexExampleSentenceTags.kClassId)
@@ -6930,8 +6856,7 @@ namespace LanguageExplorer.LIFT
 		{
 			foreach (var msa in le.MorphoSyntaxAnalysesOC)
 			{
-				var msaAffix = msa as IMoUnclassifiedAffixMsa;
-				if (msaAffix != null && msaAffix.PartOfSpeechRA == null)
+				if (msa is IMoUnclassifiedAffixMsa msaAffix && msaAffix.PartOfSpeechRA == null)
 				{
 					return msa;
 				}
@@ -6970,10 +6895,9 @@ namespace LanguageExplorer.LIFT
 		/// <summary />
 		private IPartOfSpeech FindOrCreatePartOfSpeech(string val)
 		{
-			ICmPossibility poss;
-			if (TryGetPossibilityMatchingTrait(val, m_dictPos, out poss))
+			if (TryGetPossibilityMatchingTrait(val, m_dictPos, out var poss))
 			{
-				return poss as IPartOfSpeech;
+				return (IPartOfSpeech)poss;
 			}
 			var pos = CreateNewPartOfSpeech();
 			m_cache.LangProject.PartsOfSpeechOA.PossibilitiesOS.Add(pos);
@@ -7024,8 +6948,7 @@ namespace LanguageExplorer.LIFT
 
 		private List<IPhEnvironment> FindOrCreateEnvironment(string sEnv)
 		{
-			List<IPhEnvironment> rghvo;
-			if (!m_dictEnvirons.TryGetValue(sEnv, out rghvo))
+			if (!m_dictEnvirons.TryGetValue(sEnv, out var rghvo))
 			{
 				var envNew = CreateNewPhEnvironment();
 				m_cache.LangProject.PhonologicalDataOA.EnvironmentsOS.Add(envNew);
@@ -7040,10 +6963,9 @@ namespace LanguageExplorer.LIFT
 
 		private IMoMorphType FindMorphType(string sTypeName)
 		{
-			ICmPossibility mmt;
-			if (m_dictMmt.TryGetValue(sTypeName, out mmt) || m_dictMmt.TryGetValue(sTypeName.ToLowerInvariant(), out mmt))
+			if (m_dictMmt.TryGetValue(sTypeName, out var mmt) || m_dictMmt.TryGetValue(sTypeName.ToLowerInvariant(), out mmt))
 			{
-				return mmt as IMoMorphType;
+				return (IMoMorphType)mmt;
 			}
 			// This seems the most suitable default value.  Returning null causes crashes.
 			// (See FWR-3869.)
@@ -7064,12 +6986,9 @@ namespace LanguageExplorer.LIFT
 			{
 				// If we got a guid our first choice is to match that object.
 				var objRepo = m_cache.ServiceLocator.ObjectRepository;
-				Guid realGuid;
-				ICmObject match;
-				if (Guid.TryParse(guid, out realGuid) && objRepo.TryGetObject(realGuid, out match))
+				if (Guid.TryParse(guid, out var realGuid) && objRepo.TryGetObject(realGuid, out var match))
 				{
-					var lrt1 = match as ILexRefType;
-					if (lrt1 != null)
+					if (match is ILexRefType lrt1)
 					{
 						// For now we're doing this minimal merge. If we want to switch to using the regular merge rules
 						// for entries/senses, change these calls to MergeInMultiString.
@@ -7086,9 +7005,8 @@ namespace LanguageExplorer.LIFT
 					throw new ApplicationException($"input file expects object {guid} to be a LexRefType, but it is a {match.GetType().Name}");
 				}
 			}
-			ICmPossibility poss;
 			var normalizedRelTypeName = relationTypeName.Normalize().ToLowerInvariant();
-			if (m_dictLexRefTypes.TryGetValue(normalizedRelTypeName, out poss))
+			if (m_dictLexRefTypes.TryGetValue(normalizedRelTypeName, out var poss))
 			{
 				return;
 			}
@@ -7122,8 +7040,7 @@ namespace LanguageExplorer.LIFT
 
 		private ILexEntryType FindComplexFormType(string sOldEntryType)
 		{
-			ICmPossibility poss;
-			if (m_dictComplexFormType.TryGetValue(sOldEntryType, out poss) || m_dictComplexFormType.TryGetValue(sOldEntryType.ToLowerInvariant(), out poss))
+			if (m_dictComplexFormType.TryGetValue(sOldEntryType, out var poss) || m_dictComplexFormType.TryGetValue(sOldEntryType.ToLowerInvariant(), out poss))
 			{
 				return poss as ILexEntryType;
 			}
@@ -7132,8 +7049,7 @@ namespace LanguageExplorer.LIFT
 
 		private ILexEntryType FindVariantType(string sOldEntryType)
 		{
-			ICmPossibility poss;
-			if (m_dictVariantType.TryGetValue(sOldEntryType, out poss) || m_dictVariantType.TryGetValue(sOldEntryType.ToLowerInvariant(), out poss))
+			if (m_dictVariantType.TryGetValue(sOldEntryType, out var poss) || m_dictVariantType.TryGetValue(sOldEntryType.ToLowerInvariant(), out poss))
 			{
 				return poss as ILexEntryType;
 			}
@@ -7142,8 +7058,7 @@ namespace LanguageExplorer.LIFT
 
 		private ILexEntryType FindOrCreateComplexFormType(string sType)
 		{
-			ICmPossibility poss;
-			if (TryGetPossibilityMatchingTrait(sType, m_dictComplexFormType, out poss))
+			if (TryGetPossibilityMatchingTrait(sType, m_dictComplexFormType, out var poss))
 			{
 				return poss as ILexEntryType;
 			}
@@ -7159,8 +7074,7 @@ namespace LanguageExplorer.LIFT
 
 		private ILexEntryType FindOrCreateVariantType(string sType)
 		{
-			ICmPossibility poss;
-			if (TryGetPossibilityMatchingTrait(sType, m_dictVariantType, out poss))
+			if (TryGetPossibilityMatchingTrait(sType, m_dictVariantType, out var poss))
 			{
 				return poss as ILexEntryType;
 			}
@@ -7192,8 +7106,7 @@ namespace LanguageExplorer.LIFT
 		private static ICmPossibility FindOrCreatePossibility(string traitValue, int ws, Func<ICmPossibility> createMethod,
 			IDictionary<string, ICmPossibility> dict, ICollection<ICmPossibility> rgnewPoss, ICmPossibilityList listToUpdate)
 		{
-			ICmPossibility poss;
-			if (TryGetPossibilityMatchingTrait(traitValue, dict, out poss))
+			if (TryGetPossibilityMatchingTrait(traitValue, dict, out var poss))
 			{
 				return poss;
 			}
@@ -7719,9 +7632,8 @@ namespace LanguageExplorer.LIFT
 
 		private string StripAlloForm(string form, int clsidForm, Guid guidEntry, int flid)
 		{
-			int clsid;
 			// Strip any affix/clitic markers from the form before storing it.
-			FindMorphType(ref form, out clsid, guidEntry, flid);
+			FindMorphType(ref form, out var clsid, guidEntry, flid);
 			if (clsidForm != 0 && clsid != clsidForm)
 			{
 				// complain about varying morph types??
@@ -7902,8 +7814,7 @@ namespace LanguageExplorer.LIFT
 
 		public int GetWsFromLiftLang(string key)
 		{
-			int hvo;
-			if (m_mapLangWs.TryGetValue(key, out hvo))
+			if (m_mapLangWs.TryGetValue(key, out var hvo))
 			{
 				return hvo;
 			}
@@ -8206,7 +8117,6 @@ namespace LanguageExplorer.LIFT
 				{
 					continue;
 				}
-
 				if (string.IsNullOrEmpty(sNew) || (tssOld == null || tssOld.Length == 0))
 				{
 					return false;
@@ -8331,8 +8241,7 @@ namespace LanguageExplorer.LIFT
 
 		private XmlDocument FindOrCreateResidue(ICmObject cmo, string sId, int flid)
 		{
-			LiftResidue res;
-			if (!m_dictResidue.TryGetValue(cmo.Hvo, out res))
+			if (!m_dictResidue.TryGetValue(cmo.Hvo, out var res))
 			{
 				res = CreateLiftResidue(cmo.Hvo, flid, sId);
 				m_dictResidue.Add(cmo.Hvo, res);
@@ -8438,36 +8347,26 @@ namespace LanguageExplorer.LIFT
 
 		private XmlDocument FindOrCreateResidue(ICmObject extensible)
 		{
-			// chaining if..else if instead of switch deals easier with matching superclasses.
-			if (extensible is ILexEntry)
+			switch (extensible)
 			{
-				return FindOrCreateResidue(extensible, null, LexEntryTags.kflidLiftResidue);
+				// chaining if..else if instead of switch deals easier with matching superclasses.
+				case ILexEntry _:
+					return FindOrCreateResidue(extensible, null, LexEntryTags.kflidLiftResidue);
+				case ILexSense _:
+					return FindOrCreateResidue(extensible, null, LexSenseTags.kflidLiftResidue);
+				case ILexEtymology _:
+					return FindOrCreateResidue(extensible, null, LexEtymologyTags.kflidLiftResidue);
+				case ILexExampleSentence _:
+					return FindOrCreateResidue(extensible, null, LexExampleSentenceTags.kflidLiftResidue);
+				case ILexPronunciation _:
+					return FindOrCreateResidue(extensible, null, LexPronunciationTags.kflidLiftResidue);
+				case ILexReference _:
+					return FindOrCreateResidue(extensible, null, LexReferenceTags.kflidLiftResidue);
+				case IMoForm _:
+					return FindOrCreateResidue(extensible, null, MoFormTags.kflidLiftResidue);
+				default:
+					return extensible is IMoMorphSynAnalysis ? FindOrCreateResidue(extensible, null, MoMorphSynAnalysisTags.kflidLiftResidue) : null;
 			}
-			if (extensible is ILexSense)
-			{
-				return FindOrCreateResidue(extensible, null, LexSenseTags.kflidLiftResidue);
-			}
-			if (extensible is ILexEtymology)
-			{
-				return FindOrCreateResidue(extensible, null, LexEtymologyTags.kflidLiftResidue);
-			}
-			if (extensible is ILexExampleSentence)
-			{
-				return FindOrCreateResidue(extensible, null, LexExampleSentenceTags.kflidLiftResidue);
-			}
-			if (extensible is ILexPronunciation)
-			{
-				return FindOrCreateResidue(extensible, null, LexPronunciationTags.kflidLiftResidue);
-			}
-			if (extensible is ILexReference)
-			{
-				return FindOrCreateResidue(extensible, null, LexReferenceTags.kflidLiftResidue);
-			}
-			if (extensible is IMoForm)
-			{
-				return FindOrCreateResidue(extensible, null, MoFormTags.kflidLiftResidue);
-			}
-			return extensible is IMoMorphSynAnalysis ? FindOrCreateResidue(extensible, null, MoMorphSynAnalysisTags.kflidLiftResidue) : null;
 		}
 
 		/// <summary />
@@ -8945,7 +8844,7 @@ namespace LanguageExplorer.LIFT
 
 		public bool IsDateSet(DateTime dt)
 		{
-			return dt != default(DateTime) && dt != m_defaultDateTime;
+			return dt != default && dt != m_defaultDateTime;
 		}
 
 		private void StoreAnnotationsAndDatesInResidue(ICmObject extensible, LiftObject obj)
@@ -9034,7 +8933,6 @@ namespace LanguageExplorer.LIFT
 			var clidDst = 0;
 			if (!string.IsNullOrEmpty(sSpec))
 			{
-				string sDstCls;
 				var rgsDef = sSpec.Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
 				for (var i = 0; i < rgsDef.Length; i++)
 				{
@@ -9047,7 +8945,7 @@ namespace LanguageExplorer.LIFT
 					type = CellarPropertyType.MultiUnicode;
 				}
 				wsSelector = GetCustomFieldWsSelector(rgsDef);
-				clidDst = GetCustomFieldDstCls(rgsDef, out sDstCls);
+				clidDst = GetCustomFieldDstCls(rgsDef, out var sDstCls);
 				possListGuid = GetCustomFieldPossListGuid(rgsDef);
 			}
 			foreach (var fd in FieldDescription.FieldDescriptors(m_cache))
@@ -9316,9 +9214,7 @@ namespace LanguageExplorer.LIFT
 			var poss = GetPossibilityForGuidIfExisting(id, guidAttr, m_dictSemDom);
 			if (poss == null)
 			{
-				var csdParent = !string.IsNullOrEmpty(parent) && m_dictSemDom.ContainsKey(parent)
-					? (ICmObject)m_dictSemDom[parent]
-					: m_cache.LangProject.SemanticDomainListOA;
+				var csdParent = !string.IsNullOrEmpty(parent) && m_dictSemDom.ContainsKey(parent) ? (ICmObject)m_dictSemDom[parent] : m_cache.LangProject.SemanticDomainListOA;
 				var csd = CreateNewCmSemanticDomain(guidAttr, csdParent);
 				SetNewPossibilityAttributes(id, description, label, abbrev, csd);
 				m_dictSemDom[id] = csd;
@@ -9442,9 +9338,7 @@ namespace LanguageExplorer.LIFT
 			var poss = FindExistingPossibility(id, guidAttr, label, abbrev, m_dictPos, m_cache.LangProject.PartsOfSpeechOA);
 			if (poss == null)
 			{
-				var posParent = !string.IsNullOrEmpty(parent) && m_dictPos.ContainsKey(parent)
-					? (ICmObject)m_dictPos[parent]
-					: m_cache.LangProject.PartsOfSpeechOA;
+				var posParent = !string.IsNullOrEmpty(parent) && m_dictPos.ContainsKey(parent) ? (ICmObject)m_dictPos[parent] : m_cache.LangProject.PartsOfSpeechOA;
 				var pos = CreateNewPartOfSpeech(guidAttr, posParent);
 				SetNewPossibilityAttributes(id, description, label, abbrev, pos);
 				m_dictPos[id] = pos;
@@ -9539,9 +9433,7 @@ namespace LanguageExplorer.LIFT
 			var poss = FindExistingPossibility(id, guidAttr, label, abbrev, m_dictMmt, m_cache.LangProject.LexDbOA.MorphTypesOA);
 			if (poss == null)
 			{
-				var mmtParent = !string.IsNullOrEmpty(parent) && m_dictPos.ContainsKey(parent)
-					? (ICmObject)m_dictMmt[parent]
-					: m_cache.LangProject.LexDbOA.MorphTypesOA;
+				var mmtParent = !string.IsNullOrEmpty(parent) && m_dictPos.ContainsKey(parent) ? (ICmObject)m_dictMmt[parent] : m_cache.LangProject.LexDbOA.MorphTypesOA;
 				var mmt = CreateNewMoMorphType(guidAttr, mmtParent);
 				SetNewPossibilityAttributes(id, description, label, abbrev, mmt);
 				m_dictMmt[id] = mmt;
@@ -9712,8 +9604,7 @@ namespace LanguageExplorer.LIFT
 			{
 				return;
 			}
-			Dictionary<string, IMoInflClass> dictSlots;
-			if (!m_dictDictSlots.TryGetValue(sOwner, out dictSlots))
+			if (!m_dictDictSlots.TryGetValue(sOwner, out var dictSlots))
 			{
 				dictSlots = new Dictionary<string, IMoInflClass>();
 				m_dictDictSlots[sOwner] = dictSlots;
@@ -10187,8 +10078,7 @@ namespace LanguageExplorer.LIFT
 			{
 				target = rgRefs[0].CmObject;
 				var sRef = rgRefs[0].TargetId;
-				ICmObject cmo;
-				if (!string.IsNullOrEmpty(sRef) && m_mapIdObject.TryGetValue(sRef, out cmo))
+				if (!string.IsNullOrEmpty(sRef) && m_mapIdObject.TryGetValue(sRef, out var cmo))
 				{
 					Debug.Assert(cmo is ILexEntry);
 					le = (ILexEntry)cmo;
@@ -10475,9 +10365,8 @@ namespace LanguageExplorer.LIFT
 							ILexEntryType subtype = null;
 							foreach (var poss in letVar.SubPossibilitiesOS)
 							{
-								var sub = poss as ILexEntryType;
-								if (sub != null && (sub.Name.AnalysisDefaultWritingSystem.Text == sOldCondition
-								                    || sub.Abbreviation.AnalysisDefaultWritingSystem.Text == sOldCondition
+								if (poss is ILexEntryType sub && (sub.Name.AnalysisDefaultWritingSystem.Text == sOldCondition
+													|| sub.Abbreviation.AnalysisDefaultWritingSystem.Text == sOldCondition
 													|| sub.ReverseAbbr.AnalysisDefaultWritingSystem.Text == sOldCondition))
 								{
 									subtype = sub;
@@ -10735,8 +10624,7 @@ namespace LanguageExplorer.LIFT
 				{
 					continue;
 				}
-				List<Tuple<HashSet<int>, HashSet<PendingRelation>>> relationsForType;
-				uniqueRelations.TryGetValue(rel.RelationType, out relationsForType);
+				uniqueRelations.TryGetValue(rel.RelationType, out var relationsForType);
 				if (relationsForType != null)
 				{
 					var foundGroup = false;
@@ -10801,8 +10689,7 @@ namespace LanguageExplorer.LIFT
 					{
 						continue;
 					}
-					List<ICmObject> oldItems;
-					var lr = FindExistingSequence(lrt, incomingRelations, out oldItems);
+					var lr = FindExistingSequence(lrt, incomingRelations, out var oldItems);
 					if (lr == null)
 					{
 						lr = CreateNewLexReference();
@@ -10895,8 +10782,7 @@ namespace LanguageExplorer.LIFT
 			{
 				return;
 			}
-			List<ICmObject> oldItems;
-			var lr = FindExistingSequence(lrt, rgRelation, out oldItems);
+			var lr = FindExistingSequence(lrt, rgRelation, out var oldItems);
 			if (lr == null) //This is a new relation, add all the targets
 			{
 				lr = CreateNewLexReference();
@@ -11244,8 +11130,7 @@ namespace LanguageExplorer.LIFT
 			var repoMsa = m_cache.ServiceLocator.GetInstance<IMoMorphSynAnalysisRepository>();
 			foreach (var msa in repoMsa.AllInstances())
 			{
-				var le = msa.Owner as ILexEntry;
-				if (le == null)
+				if (!(msa.Owner is ILexEntry le))
 				{
 					continue;
 				}
@@ -11324,8 +11209,7 @@ namespace LanguageExplorer.LIFT
 			{
 				m_repoCmObject = m_cache.ServiceLocator.GetInstance<ICmObjectRepository>();
 			}
-			ICmObject retval;
-			m_repoCmObject.TryGetObject(hvo, out retval);
+			m_repoCmObject.TryGetObject(hvo, out var retval);
 			return retval; // May be null.
 		}
 
@@ -11335,8 +11219,7 @@ namespace LanguageExplorer.LIFT
 			{
 				m_repoCmObject = m_cache.ServiceLocator.GetInstance<ICmObjectRepository>();
 			}
-			ICmObject retval;
-			m_repoCmObject.TryGetObject(guid, out retval);
+			m_repoCmObject.TryGetObject(guid, out var retval);
 			return retval; // May be null.
 		}
 
@@ -11570,8 +11453,7 @@ namespace LanguageExplorer.LIFT
 			var fNoType = type == null;
 			if (fNoType)
 			{
-				ICmObject obj;
-				if (m_repoCmObject.TryGetObject(LangProjectTags.kguidTranFreeTranslation, out obj))
+				if (m_repoCmObject.TryGetObject(LangProjectTags.kguidTranFreeTranslation, out var obj))
 				{
 					type = obj as ICmPossibility;
 				}
@@ -12041,23 +11923,13 @@ namespace LanguageExplorer.LIFT
 
 		private void ProcessCustomListRangeElement(XmlNode xnElem, ICmPossibilityList possList, Dictionary<string, ICmPossibility> dictCustomList, List<ICmPossibility> rgnewCustom)
 		{
-			string guidAttr;
-			string parent;
-			LiftMultiText description; // non-safe-XML
-			LiftMultiText label; // non-safe-XML
-			LiftMultiText abbrev; // non-safe-XML
-			var id = GetRangeElementDetails(xnElem, out guidAttr, out parent, out description, out label, out abbrev);
+			var id = GetRangeElementDetails(xnElem, out var guidAttr, out var parent, out var description, out var label, out var abbrev);
 			ProcessPossibility(id, guidAttr, parent, MakeSafeLiftMultiText(description), MakeSafeLiftMultiText(label), MakeSafeLiftMultiText(abbrev), dictCustomList, rgnewCustom, possList, true);
 		}
 
 		private void ProcessRangeElement(XmlNode xnElem, string range)
 		{
-			string guidAttr;
-			string parent;
-			LiftMultiText description; // non-safe-XML
-			LiftMultiText label; // non-safe-XML
-			LiftMultiText abbrev; // non-safe-XML
-			var id = GetRangeElementDetails(xnElem, out guidAttr, out parent, out description, out label, out abbrev);
+			var id = GetRangeElementDetails(xnElem, out var guidAttr, out var parent, out var description, out var label, out var abbrev);
 			((ILexiconMerger<LiftObject, CmLiftEntry, CmLiftSense, CmLiftExample>)this).ProcessRangeElement(range, id, guidAttr, parent, description, label, abbrev, xnElem.OuterXml);
 		}
 
@@ -12391,8 +12263,7 @@ namespace LanguageExplorer.LIFT
 					continue; // pathological, but let's try to survive
 				}
 				var oldTag = attr.Value;
-				string newTag;
-				if (TryGetNewTag(oldTag, out newTag))
+				if (TryGetNewTag(oldTag, out var newTag))
 				{
 					changed = true;
 					attr.Value = newTag;
@@ -12480,8 +12351,7 @@ namespace LanguageExplorer.LIFT
 
 		private List<ICmPossibility> GetRgnewCustom(string range)
 		{
-			List<ICmPossibility> rgnewCustom;
-			if (!m_rgnewCustoms.TryGetValue(range, out rgnewCustom))
+			if (!m_rgnewCustoms.TryGetValue(range, out var rgnewCustom))
 			{
 				rgnewCustom = new List<ICmPossibility>();
 				m_rgnewCustoms.Add(range, rgnewCustom);
@@ -12491,8 +12361,7 @@ namespace LanguageExplorer.LIFT
 
 		private Dictionary<string, ICmPossibility> GetDictCustomList(string range)
 		{
-			Dictionary<string, ICmPossibility> dictCustomList;
-			if (!m_dictCustomLists.TryGetValue(range, out dictCustomList))
+			if (!m_dictCustomLists.TryGetValue(range, out var dictCustomList))
 			{
 				dictCustomList = new Dictionary<string, ICmPossibility>();
 				m_dictCustomLists.Add(range, dictCustomList);
@@ -12525,9 +12394,8 @@ namespace LanguageExplorer.LIFT
 
 			public override bool Equals(object obj)
 			{
-				if (obj is MuElement)
+				if (obj is MuElement that)
 				{
-					var that = (MuElement)obj;
 					return m_text == that.m_text && m_ws == that.m_ws;
 				}
 				return false;
@@ -12585,7 +12453,7 @@ namespace LanguageExplorer.LIFT
 
 			internal ILexEntry DupEntry
 			{
-				set { m_leNew = value; }
+				set => m_leNew = value;
 			}
 		}
 
@@ -12644,7 +12512,7 @@ namespace LanguageExplorer.LIFT
 				var cmo = m_merger.GetObjectForGuid(m_guid);
 				if (cmo is ILexEntry)
 				{
-					return cmo as ILexEntry;
+					return (ILexEntry)cmo;
 				}
 				return cmo.OwnerOfClass<ILexEntry>();
 			}
@@ -12670,8 +12538,7 @@ namespace LanguageExplorer.LIFT
 
 			public override bool Equals(object obj)
 			{
-				var that = obj as PendingErrorReport;
-				if (that != null && m_flid == that.m_flid && m_guid == that.m_guid && m_ws == that.m_ws)
+				if (obj is PendingErrorReport that && m_flid == that.m_flid && m_guid == that.m_guid && m_ws == that.m_ws)
 				{
 					if (m_cache != null && that.m_cache != null)
 					{
@@ -12713,8 +12580,7 @@ namespace LanguageExplorer.LIFT
 
 			public override bool Equals(object obj)
 			{
-				var that = obj as InvalidData;
-				return that != null && ErrorMessage == that.ErrorMessage && BadValue == that.BadValue && base.Equals(obj);
+				return obj is InvalidData that && ErrorMessage == that.ErrorMessage && BadValue == that.BadValue && base.Equals(obj);
 			}
 
 			public override int GetHashCode()
@@ -13008,8 +12874,8 @@ namespace LanguageExplorer.LIFT
 
 			public int HideMinorEntry
 			{
-				get { return m_nHideMinorEntry; }
-				set { m_nHideMinorEntry = value; }
+				get => m_nHideMinorEntry;
+				set => m_nHideMinorEntry = value;
 			}
 
 			/// <summary>

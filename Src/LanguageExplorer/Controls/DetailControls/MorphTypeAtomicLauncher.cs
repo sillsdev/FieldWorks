@@ -158,8 +158,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		private bool ChangeAffixToStem(ILexEntry entry, IMoMorphType type)
 		{
-			var affix = m_obj as IMoAffixForm;
-			if (affix == null)
+			if (!(m_obj is IMoAffixForm affix))
 			{
 				throw new ApplicationException("Affix form is not defined");
 			}
@@ -196,42 +195,43 @@ namespace LanguageExplorer.Controls.DetailControls
 			}
 			for (var i = 0; !fLoseGramInfo && i < rgmsaAffix.Count; ++i)
 			{
-				var msaInfl = rgmsaAffix[i] as IMoInflAffMsa;
-				if (msaInfl != null)
+				switch (rgmsaAffix[i])
 				{
-					if (msaInfl.AffixCategoryRA != null ||
-						msaInfl.FromProdRestrictRC.Count > 0 ||
-						msaInfl.SlotsRC.Count > 0 ||
-						msaInfl.InflFeatsOA != null)
+					case IMoInflAffMsa msaInfl:
 					{
-						fLoseGramInfo = true;
+						if (msaInfl.AffixCategoryRA != null ||
+							msaInfl.FromProdRestrictRC.Count > 0 ||
+							msaInfl.SlotsRC.Count > 0 ||
+							msaInfl.InflFeatsOA != null)
+						{
+							fLoseGramInfo = true;
+						}
+						continue;
 					}
-					continue;
-				}
-				var msaDeriv = rgmsaAffix[i] as IMoDerivAffMsa;
-				if (msaDeriv != null)
-				{
-					if (msaDeriv.AffixCategoryRA != null ||
-						msaDeriv.FromInflectionClassRA != null ||
-						msaDeriv.FromPartOfSpeechRA != null ||
-						msaDeriv.FromProdRestrictRC.Count > 0 ||
-						msaDeriv.FromStemNameRA != null ||
-						msaDeriv.StratumRA != null ||
-						msaDeriv.ToInflectionClassRA != null ||
-						msaDeriv.ToProdRestrictRC.Count > 0 ||
-						msaDeriv.FromMsFeaturesOA != null ||
-						msaDeriv.ToMsFeaturesOA != null)
+					case IMoDerivAffMsa msaDeriv:
 					{
-						fLoseGramInfo = true;
+						if (msaDeriv.AffixCategoryRA != null ||
+							msaDeriv.FromInflectionClassRA != null ||
+							msaDeriv.FromPartOfSpeechRA != null ||
+							msaDeriv.FromProdRestrictRC.Count > 0 ||
+							msaDeriv.FromStemNameRA != null ||
+							msaDeriv.StratumRA != null ||
+							msaDeriv.ToInflectionClassRA != null ||
+							msaDeriv.ToProdRestrictRC.Count > 0 ||
+							msaDeriv.FromMsFeaturesOA != null ||
+							msaDeriv.ToMsFeaturesOA != null)
+						{
+							fLoseGramInfo = true;
+						}
+						continue;
 					}
-					continue;
-				}
-				var msaStep = rgmsaAffix[i] as IMoDerivStepMsa;
-				if (msaStep != null)
-				{
-					if (msaStep.InflectionClassRA != null || msaStep.ProdRestrictRC.Count > 0 || msaStep.InflFeatsOA != null || msaStep.MsFeaturesOA != null)
+					case IMoDerivStepMsa msaStep:
 					{
-						fLoseGramInfo = true;
+						if (msaStep.InflectionClassRA != null || msaStep.ProdRestrictRC.Count > 0 || msaStep.InflFeatsOA != null || msaStep.MsFeaturesOA != null)
+						{
+							fLoseGramInfo = true;
+						}
+						break;
 					}
 				}
 			}
@@ -280,15 +280,13 @@ namespace LanguageExplorer.Controls.DetailControls
 			{
 				sMsg = StringTable.Table.GetStringWithXPath("ChangeMorphTypeLoseGramInfo", m_ksPath);
 			}
-			var sCaption = StringTable.Table.GetStringWithXPath("ChangeLexemeMorphTypeCaption", m_ksPath);
-			var result = MessageBox.Show(sMsg, sCaption, MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+			var result = MessageBox.Show(sMsg, StringTable.Table.GetStringWithXPath("ChangeLexemeMorphTypeCaption", m_ksPath), MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
 			return result == DialogResult.No;
 		}
 
 		private bool ChangeStemToAffix(ILexEntry entry, IMoMorphType type)
 		{
-			var stem = m_obj as IMoStemAllomorph;
-			if (stem == null)
+			if (!(m_obj is IMoStemAllomorph stem))
 			{
 				throw new ApplicationException("Stem allomorph is not defined");
 			}
@@ -312,8 +310,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			var fLoseGramInfo = false;
 			foreach (var moMorphSynAnalysis in rgmsaStem)
 			{
-				var msa = moMorphSynAnalysis as IMoStemMsa;
-				if (msa != null && (msa.FromPartsOfSpeechRC.Count > 0 || msa.InflectionClassRA != null || msa.ProdRestrictRC.Count > 0 || msa.StratumRA != null || msa.MsFeaturesOA != null))
+				if (moMorphSynAnalysis is IMoStemMsa msa && (msa.FromPartsOfSpeechRC.Count > 0 || msa.InflectionClassRA != null || msa.ProdRestrictRC.Count > 0 || msa.StratumRA != null || msa.MsFeaturesOA != null))
 				{
 					fLoseGramInfo = true;
 					break;
@@ -357,20 +354,27 @@ namespace LanguageExplorer.Controls.DetailControls
 				{
 					throw new InvalidOperationException("Thou shalt not call methods after the slice is disposed!");
 				}
-				if (slice.MyCmObject is IMoMorphSynAnalysis && rgmsaOld.Contains(slice.MyCmObject as IMoMorphSynAnalysis))
+
+				switch (slice.MyCmObject)
 				{
-					slice.Dispose();
-				}
-				else if (slice is MSAReferenceComboBoxSlice)
-				{
-					slice.Dispose();
+					case IMoMorphSynAnalysis analysis when rgmsaOld.Contains(analysis):
+						slice.Dispose();
+						break;
+					default:
+					{
+						if (slice is MSAReferenceComboBoxSlice)
+						{
+							slice.Dispose();
+						}
+						break;
+					}
 				}
 			}
 			// now fix the record list, since it may be showing MoForm dependent columns (e.g. MorphType, Homograph, etc...)
 			dtree.FixRecordList();
 			dtree.DoNotRefresh = false;
 			var sliceT = dtree.Slices[idx];
-			if (sliceT == null || !(sliceT is MorphTypeAtomicReferenceSlice))
+			if (!(sliceT is MorphTypeAtomicReferenceSlice))
 			{
 				return;
 			}

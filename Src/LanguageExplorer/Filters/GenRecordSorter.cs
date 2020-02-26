@@ -41,9 +41,9 @@ namespace LanguageExplorer.Filters
 		public override void Preload(object rootObj)
 		{
 			base.Preload(rootObj);
-			if (Comparer is StringFinderCompare)
+			if (Comparer is StringFinderCompare stringFinderCompare)
 			{
-				((StringFinderCompare)Comparer).Preload(rootObj);
+				stringFinderCompare.Preload(rootObj);
 			}
 		}
 
@@ -55,9 +55,9 @@ namespace LanguageExplorer.Filters
 			set
 			{
 				base.DataAccess = value;
-				if (Comparer is StringFinderCompare)
+				if (Comparer is StringFinderCompare stringFinderCompare)
 				{
-					((StringFinderCompare)Comparer).DataAccess = value;
+					stringFinderCompare.DataAccess = value;
 				}
 			}
 		}
@@ -68,8 +68,7 @@ namespace LanguageExplorer.Filters
 		/// </summary>
 		public override bool CompatibleSorter(RecordSorter other)
 		{
-			var grsOther = other as GenRecordSorter;
-			if (grsOther == null)
+			if (!(other is GenRecordSorter grsOther))
 			{
 				return false;
 			}
@@ -79,9 +78,8 @@ namespace LanguageExplorer.Filters
 			}
 			// Currently the only other kind of compatibility we know how to detect
 			// is StringFinderCompares that do more-or-less the same thing.
-			var sfcThis = Comparer as StringFinderCompare;
 			var sfcOther = grsOther.Comparer as StringFinderCompare;
-			if (sfcThis == null || sfcOther == null)
+			if (!(Comparer is StringFinderCompare sfcThis) || sfcOther == null)
 			{
 				return false;
 			}
@@ -99,11 +97,7 @@ namespace LanguageExplorer.Filters
 		private static IComparer UnpackReverseCompare(StringFinderCompare sfc)
 		{
 			var subComp = sfc.SubComparer;
-			if (subComp is ReverseComparer)
-			{
-				subComp = (subComp as ReverseComparer).SubComp;
-			}
-			return subComp;
+			return subComp is ReverseComparer reverseComparer ? reverseComparer.SubComp : subComp;
 		}
 
 		/// <summary>
@@ -119,16 +113,12 @@ namespace LanguageExplorer.Filters
 				return true;
 			}
 			// IcuComparers on same Ws?
-			var firstIcu = first as IcuComparer;
-			var secondIcu = second as IcuComparer;
-			if (firstIcu != null && secondIcu != null && firstIcu.WsCode == secondIcu.WsCode)
+			if (first is IcuComparer firstIcu && second is IcuComparer secondIcu && firstIcu.WsCode == secondIcu.WsCode)
 			{
 				return true;
 			}
 			// WritingSystemComparers on same Ws?
-			var firstWs = first as WritingSystemComparer;
-			var secondWs = second as WritingSystemComparer;
-			if (firstWs != null && secondWs != null && firstWs.WsId == secondWs.WsId)
+			if (first is WritingSystemComparer firstWs && second is WritingSystemComparer secondWs && firstWs.WsId == secondWs.WsId)
 			{
 				return true;
 			}
@@ -138,9 +128,7 @@ namespace LanguageExplorer.Filters
 				return true;
 			}
 			// LcmComparers on the same property?
-			var firstLcm = first as LcmCompare;
-			var secondLcm = second as LcmCompare;
-			return firstLcm != null && secondLcm != null && firstLcm.PropertyName == secondLcm.PropertyName;
+			return first is LcmCompare firstLcm && second is LcmCompare secondLcm && firstLcm.PropertyName == secondLcm.PropertyName;
 		}
 
 		/// <summary>
@@ -161,8 +149,7 @@ namespace LanguageExplorer.Filters
 		public override void PersistAsXml(XElement element)
 		{
 			base.PersistAsXml(element); // does nothing, but in case needed later...
-			var persistComparer = Comparer as IPersistAsXml;
-			if (persistComparer == null)
+			if (!(Comparer is IPersistAsXml persistComparer))
 			{
 				throw new Exception($"cannot persist GenRecSorter with comparer class {Comparer.GetType().AssemblyQualifiedName}");
 			}
@@ -195,9 +182,9 @@ namespace LanguageExplorer.Filters
 		{
 			set
 			{
-				if (Comparer is IStoresLcmCache)
+				if (Comparer is IStoresLcmCache storesLcmCache)
 				{
-					((IStoresLcmCache)Comparer).Cache = value;
+					storesLcmCache.Cache = value;
 				}
 			}
 		}
@@ -209,9 +196,9 @@ namespace LanguageExplorer.Filters
 		/// </summary>
 		public override void CollectItems(int hvo, List<IManyOnePathSortItem> collector)
 		{
-			if (Comparer is StringFinderCompare)
+			if (Comparer is StringFinderCompare stringFinderCompare)
 			{
-				((StringFinderCompare)Comparer).CollectItems(hvo, collector);
+				stringFinderCompare.CollectItems(hvo, collector);
 			}
 			else
 			{
@@ -228,19 +215,19 @@ namespace LanguageExplorer.Filters
 			var dt1 = DateTime.Now;
 			var tc1 = Environment.TickCount;
 #endif
-			if (Comparer is StringFinderCompare)
+			if (Comparer is StringFinderCompare stringFinderCompare)
 			{
-				((StringFinderCompare)Comparer).Init();
-				((StringFinderCompare)Comparer).ComparisonNoter = this;
+				stringFinderCompare.Init();
+				stringFinderCompare.ComparisonNoter = this;
 				m_comparisonsDone = 0;
 				m_percentDone = 0;
 				// Make sure at least 1 so we don't divide by zero.
 				m_comparisonsEstimated = Math.Max(records.Count * (int)Math.Ceiling(Math.Log(records.Count, 2.0)), 1);
 			}
 			records.Sort(Comparer);
-			if (Comparer is StringFinderCompare)
+			if (Comparer is StringFinderCompare finderCompare)
 			{
-				((StringFinderCompare)Comparer).Cleanup();
+				finderCompare.Cleanup();
 			}
 #if DEBUG
 			// only do this if the timing switch is info or verbose
@@ -258,14 +245,14 @@ namespace LanguageExplorer.Filters
 		/// </summary>
 		public override void MergeInto(List<IManyOnePathSortItem> records, List<IManyOnePathSortItem> newRecords)
 		{
-			if (Comparer is StringFinderCompare)
+			if (Comparer is StringFinderCompare stringFinderCompare)
 			{
-				((StringFinderCompare)Comparer).Init();
+				stringFinderCompare.Init();
 			}
 			MergeInto(records, newRecords, Comparer);
-			if (Comparer is StringFinderCompare)
+			if (Comparer is StringFinderCompare finderCompare)
 			{
-				((StringFinderCompare)Comparer).Cleanup();
+				finderCompare.Cleanup();
 			}
 		}
 

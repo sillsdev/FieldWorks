@@ -80,8 +80,7 @@ namespace LanguageExplorer.Impls
 					continue;
 				}
 				var macroMenu = allMacroMenus[idx];
-				Command command;
-				Enum.TryParse(macroMenu.Name, out command);
+				Enum.TryParse(macroMenu.Name, out Command command);
 				macroMenu.ShortcutKeys = shortcutKeys[idx++];
 				macroMenu.Tag = macro;
 				toolsMenuDictionary.Add(command, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(Macro_Clicked, () => CanDoMacro(macro)));
@@ -113,19 +112,13 @@ namespace LanguageExplorer.Impls
 		private void Macro_Clicked(object sender, EventArgs e)
 		{
 			var macro = (IFlexMacro)((ToolStripMenuItem)sender).Tag;
-			ICmObject obj;
-			int flid;
-			int ws;
-			int start;
-			int length;
-			if (!SafeToDoMacro(macro, out obj, out flid, out ws, out start, out length))
+			if (!SafeToDoMacro(macro, out var obj, out var flid, out var ws, out var start, out var length))
 			{
 				return;
 			}
-			var commandName = macro.CommandName;
 			// We normally let undo and redo be localized independently, but we compromise in the interests of making macros
 			// easier to create.
-			UowHelpers.UndoExtension(commandName, obj.Cache.ActionHandlerAccessor, () => macro.RunMacro(obj, flid, ws, start, length));
+			UowHelpers.UndoExtension(macro.CommandName, obj.Cache.ActionHandlerAccessor, () => macro.RunMacro(obj, flid, ws, start, length));
 		}
 
 		/// <summary>
@@ -179,18 +172,12 @@ namespace LanguageExplorer.Impls
 		/// </summary>
 		internal bool SafeToDoMacro(IFlexMacro macro)
 		{
-			ICmObject obj;
-			int flid;
-			int ws;
-			int start;
-			int length;
-			return SafeToDoMacro(macro, out obj, out flid, out ws, out start, out length);
+			return SafeToDoMacro(macro, out _, out _, out _, out _, out _);
 		}
 
 		private bool SafeToDoMacro(IFlexMacro macro, out ICmObject obj, out int flid, out int ws, out int start, out int length)
 		{
-			var selection = (_mainWindow?.ActiveView as IVwRootSite)?.RootBox?.Selection;
-			return SafeToDoMacro(macro, selection, out obj, out flid, out ws, out start, out length);
+			return SafeToDoMacro(macro, (_mainWindow?.ActiveView as IVwRootSite)?.RootBox?.Selection, out obj, out flid, out ws, out start, out length);
 		}
 
 		/// <summary>
@@ -204,11 +191,8 @@ namespace LanguageExplorer.Impls
 			{
 				return false;
 			}
-			ITsString dummy;
-			int hvoA, hvoE, flidE, ichA, ichE, wsE;
-			bool fAssocPrev;
-			sel.TextSelInfo(false, out dummy, out ichA, out fAssocPrev, out hvoA, out flid, out ws);
-			sel.TextSelInfo(true, out dummy, out ichE, out fAssocPrev, out hvoE, out flidE, out wsE);
+			sel.TextSelInfo(false, out _, out var ichA, out _, out var hvoA, out flid, out ws);
+			sel.TextSelInfo(true, out _, out var ichE, out _, out var hvoE, out var flidE, out var wsE);
 			// for safety require selection to be in a single property.
 			if (hvoA != hvoE || flid != flidE || ws != wsE)
 			{

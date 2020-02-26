@@ -34,9 +34,8 @@ namespace LanguageExplorer.TestUtilities
 
 		internal ITsString CreateFromStr(XmlNode strNode)
 		{
-			ITsIncStrBldr tisb = TsStringUtils.MakeIncStrBldr();
+			var tisb = TsStringUtils.MakeIncStrBldr();
 			ProcessRunElements(strNode.ChildNodes, tisb);
-
 			return tisb.GetString();
 		}
 

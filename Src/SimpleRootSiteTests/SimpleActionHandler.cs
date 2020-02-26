@@ -68,7 +68,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			throw new NotSupportedException();
 		}
 
-		public void StartSeq(string bstrUndo, string bstrRedo, IUndoAction _uact)
+		public void StartSeq(string bstrUndo, string bstrRedo, IUndoAction uact)
 		{
 			throw new NotSupportedException();
 		}
@@ -79,8 +79,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			{
 				return;
 			}
-			var cacheAction = act as CacheUndoAction;
-			if (cacheAction != null)
+			if (act is CacheUndoAction cacheAction)
 			{
 				cacheAction.RootBox = RootBox;
 			}
@@ -183,48 +182,17 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 
 		public int CurrentDepth => m_OpenTask == null ? 0 : 1;
 
-		public int TopMarkHandle
-		{
-			get
-			{
-				throw new NotSupportedException();
-			}
-		}
+		public int TopMarkHandle => throw new NotSupportedException();
 
 		public int UndoableActionCount => m_UndoTasks[m_UndoTasks.Count - 1].Count;
 
-		public int UndoableSequenceCount
-		{
-			get
-			{
-				throw new NotSupportedException();
-			}
-		}
+		public int UndoableSequenceCount => throw new NotSupportedException();
 
-		public int RedoableSequenceCount
-		{
-			get
-			{
-				throw new NotSupportedException();
-			}
-		}
+		public int RedoableSequenceCount => throw new NotSupportedException();
 
-		public bool IsUndoOrRedoInProgress
-		{
-			get
-			{
-				throw new NotSupportedException();
-			}
-		}
+		public bool IsUndoOrRedoInProgress => throw new NotSupportedException();
 
-		public bool SuppressSelections
-		{
-			get
-			{
-				throw new NotSupportedException();
-			}
-		}
-
+		public bool SuppressSelections => throw new NotSupportedException();
 		#endregion
 	}
 }

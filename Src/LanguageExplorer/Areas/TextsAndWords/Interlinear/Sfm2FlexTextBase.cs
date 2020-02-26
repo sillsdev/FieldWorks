@@ -44,13 +44,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					{
 						m_mappings[mapping.Marker] = mapping;
 					}
-					string marker;
-					byte[] data;
-					byte[] badData;
-					while (GetNextSfmMarkerAndData(out marker, out data))
+					while (GetNextSfmMarkerAndData(out var marker, out var data))
 					{
-						TMapping mapping;
-						if (!m_mappings.TryGetValue(marker, out mapping))
+						if (!m_mappings.TryGetValue(marker, out var mapping))
 						{
 							continue; // ignore any markers we don't know.
 						}
@@ -104,8 +100,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		protected bool GetRawData(out string marker, out byte[] data)
 		{
-			byte[] badData;
-			return m_reader.GetNextSfmMarkerAndData(out marker, out data, out badData);
+			return m_reader.GetNextSfmMarkerAndData(out marker, out data, out _);
 		}
 
 		/// <summary>
@@ -118,8 +113,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		protected virtual void MakeRepeatableItem(TMapping mapping, byte[] data, string itemType, string parentMarker, HashSet<Tuple<InterlinDestination, string>> itemsInThisParent)
 		{
 			var text = GetString(data, mapping).Trim();
-			byte[] moreData;
-			while (GetMoreData(mapping.Marker, out moreData))
+			while (GetMoreData(mapping.Marker, out var moreData))
 			{
 				var moreText = GetString(moreData, mapping).Trim();
 				if (string.IsNullOrEmpty(text))
@@ -146,8 +140,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// </summary>
 		private bool GetMoreData(string marker, out byte[] data)
 		{
-			string nextMarker;
-			if (!GetRawData(out nextMarker, out data))
+			if (!GetRawData(out var nextMarker, out data))
 			{
 				return false;
 			}
@@ -169,8 +162,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		protected void MakeItem(TMapping mapping, byte[] data, string itemType, string parentMarker)
 		{
-			var text = GetString(data, mapping).Trim();
-			MakeItem(mapping, text, itemType, parentMarker);
+			MakeItem(mapping, GetString(data, mapping).Trim(), itemType, parentMarker);
 		}
 
 		protected void MakeItem(TMapping mapping, string text, string itemType, string parentMarker)

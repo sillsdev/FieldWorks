@@ -45,7 +45,6 @@ namespace LanguageExplorer.Areas.Lists
 			m_publisher = publisher;
 			Cache = cache;
 			m_btnOK.Enabled = false;
-
 			InitializeWSCombo();
 			InitializeDisplayByCombo();
 		}
@@ -87,7 +86,7 @@ namespace LanguageExplorer.Areas.Lists
 			m_lmscDescription.Enabled = false;
 			m_closedListLabel.Visible = true;
 
-			// Want to be able to click OK, but there'll never be any changes.
+			// Want to be able to click OK, but there will never be any changes.
 			EnableOKButton(true);
 		}
 
@@ -120,8 +119,7 @@ namespace LanguageExplorer.Areas.Lists
 				return result;
 			}
 			// If English is not the DefaultUserWs, add it to the list.
-			CoreWritingSystemDefinition engWs;
-			if (wsMgr.TryGet("en", out engWs))
+			if (wsMgr.TryGet("en", out var engWs))
 			{
 				result.Add(engWs);
 			}
@@ -161,9 +159,7 @@ namespace LanguageExplorer.Areas.Lists
 				{
 					continue;
 				}
-				int actualWs;
-				ITsString tssStr;
-				if (!multiField.TryWs(curWs, out actualWs, out tssStr))
+				if (!multiField.TryWs(curWs, out _, out var tssStr))
 				{
 					continue;
 				}
@@ -283,8 +279,7 @@ namespace LanguageExplorer.Areas.Lists
 					var curWs = m_lmscListName.Ws(i);
 					var emptyStr = TsStringUtils.EmptyString(curWs).Text;
 					var lmscName = m_lmscListName.Value(curWs).Text;
-					if (repo.AllInstances().Any(list =>
-						list.Name.get_String(curWs).Text != emptyStr && list.Name.get_String(curWs).Text == lmscName))
+					if (repo.AllInstances().Any(list => list.Name.get_String(curWs).Text != emptyStr && list.Name.get_String(curWs).Text == lmscName))
 					{
 						return true;
 					}
@@ -396,7 +391,7 @@ namespace LanguageExplorer.Areas.Lists
 		/// </summary>
 		public int SelectedWs
 		{
-			get { return ((IdAndString<int>)m_wsCombo.SelectedItem).Id; }
+			get => ((IdAndString<int>)m_wsCombo.SelectedItem).Id;
 			set
 			{
 				for (var i = 0; i < m_wsCombo.Items.Count; i++)
@@ -417,8 +412,8 @@ namespace LanguageExplorer.Areas.Lists
 		/// </summary>
 		public PossNameType DisplayBy
 		{
-			get { return ((IdAndString<PossNameType>)m_displayByCombo.SelectedItem).Id; }
-			set { m_displayByCombo.SelectedIndex = (int)value; }
+			get => ((IdAndString<PossNameType>)m_displayByCombo.SelectedItem).Id;
+			set => m_displayByCombo.SelectedIndex = (int)value;
 		}
 
 		/// <summary>
@@ -427,8 +422,8 @@ namespace LanguageExplorer.Areas.Lists
 		/// </summary>
 		public bool SupportsHierarchy
 		{
-			get { return m_chkBoxHierarchy.Checked; }
-			set { m_chkBoxHierarchy.Checked = value; }
+			get => m_chkBoxHierarchy.Checked;
+			set => m_chkBoxHierarchy.Checked = value;
 		}
 
 		/// <summary>
@@ -437,8 +432,8 @@ namespace LanguageExplorer.Areas.Lists
 		/// </summary>
 		public bool SortByName
 		{
-			get { return m_chkBoxSortBy.Checked; }
-			set { m_chkBoxSortBy.Checked = value; }
+			get => m_chkBoxSortBy.Checked;
+			set => m_chkBoxSortBy.Checked = value;
 		}
 
 		/// <summary>
@@ -447,8 +442,8 @@ namespace LanguageExplorer.Areas.Lists
 		/// </summary>
 		public bool AllowDuplicate
 		{
-			get { return m_chkBoxDuplicate.Checked; }
-			set { m_chkBoxDuplicate.Checked = value; }
+			get => m_chkBoxDuplicate.Checked;
+			set => m_chkBoxDuplicate.Checked = value;
 		}
 
 		#endregion

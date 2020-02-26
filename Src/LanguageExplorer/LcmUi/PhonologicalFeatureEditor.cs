@@ -163,10 +163,7 @@ namespace LanguageExplorer.LcmUi
 		/// </summary>
 		public LcmCache Cache
 		{
-			get
-			{
-				return m_cache;
-			}
+			get => m_cache;
 			set
 			{
 				m_cache = value;
@@ -187,15 +184,8 @@ namespace LanguageExplorer.LcmUi
 		/// </summary>
 		public XMLViewsDataCache DataAccess
 		{
-			get
-			{
-				if (m_sda == null)
-				{
-					throw new InvalidOperationException("Must set the special cache of a BulkEditSpecControl");
-				}
-				return m_sda;
-			}
-			set { m_sda = value; }
+			get => m_sda ?? throw new InvalidOperationException("Must set the special cache of a BulkEditSpecControl");
+			set => m_sda = value;
 		}
 
 		/// <summary>
@@ -236,8 +226,7 @@ namespace LanguageExplorer.LcmUi
 				var hvo = ((HvoTreeNode)e.Node).Hvo;
 				if (hvo == PhonologicalFeaturePopupTreeManager.kRemoveThisFeature)
 				{
-					var ptm = sender as PhonologicalFeaturePopupTreeManager;
-					if (ptm != null)
+					if (sender is PhonologicalFeaturePopupTreeManager ptm)
 					{
 						SelectedHvo = ptm.ClosedFeature.Hvo;
 						SelectedLabel = LcmUiStrings.ksRemoveThisFeature;
@@ -247,26 +236,26 @@ namespace LanguageExplorer.LcmUi
 				else
 				{
 					var obj = m_cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvo);
-					if (obj is IFsFeatStruc)
+					switch (obj)
 					{
-						SelectedHvo = hvo;
-						SelectedLabel = e.Node.Text;
-						// since we're using the phonological feature chooser, disable the
-						// Target Feature combo (it's no longer relevant)
-						EnableTargetFeatureCombo?.Invoke(this, new TargetFeatureEventArgs(false));
-					}
-					else if (obj is IFsSymFeatVal)
-					{
-						SelectedHvo = hvo;
-						SelectedLabel = e.Node.Text;
-						EnableTargetFeatureCombo?.Invoke(this, new TargetFeatureEventArgs(true));
-					}
-					else
-					{
-						SelectedHvo = 0;
-						SelectedLabel = string.Empty;
-						m_tree.Text = string.Empty;
-						EnableTargetFeatureCombo?.Invoke(this, new TargetFeatureEventArgs(true));
+						case IFsFeatStruc _:
+							SelectedHvo = hvo;
+							SelectedLabel = e.Node.Text;
+							// since we're using the phonological feature chooser, disable the
+							// Target Feature combo (it's no longer relevant)
+							EnableTargetFeatureCombo?.Invoke(this, new TargetFeatureEventArgs(false));
+							break;
+						case IFsSymFeatVal _:
+							SelectedHvo = hvo;
+							SelectedLabel = e.Node.Text;
+							EnableTargetFeatureCombo?.Invoke(this, new TargetFeatureEventArgs(true));
+							break;
+						default:
+							SelectedHvo = 0;
+							SelectedLabel = string.Empty;
+							m_tree.Text = string.Empty;
+							EnableTargetFeatureCombo?.Invoke(this, new TargetFeatureEventArgs(true));
+							break;
 					}
 				}
 			}
@@ -346,18 +335,21 @@ namespace LanguageExplorer.LcmUi
 		{
 			IFsFeatStruc fsTarget = null;
 			var obj = Cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(SelectedHvo);
-			if (obj is IFsFeatStruc)
+			switch (obj)
 			{
-				fsTarget = (IFsFeatStruc)obj;
-			}
-			else if (obj is IFsSymFeatVal)
-			{
-				var closedValue = (IFsSymFeatVal)obj;
-				fsTarget = m_PhonologicalFeatureTreeManager.CreateEmptyFeatureStructureInAnnotation(obj);
-				var fsClosedValue = Cache.ServiceLocator.GetInstance<IFsClosedValueFactory>().Create();
-				fsTarget.FeatureSpecsOC.Add(fsClosedValue);
-				fsClosedValue.FeatureRA = (IFsFeatDefn)closedValue.Owner;
-				fsClosedValue.ValueRA = closedValue;
+				case IFsFeatStruc featStruc:
+					fsTarget = featStruc;
+					break;
+				case IFsSymFeatVal symFeatVal:
+				{
+					var closedValue = symFeatVal;
+					fsTarget = m_PhonologicalFeatureTreeManager.CreateEmptyFeatureStructureInAnnotation(symFeatVal);
+					var fsClosedValue = Cache.ServiceLocator.GetInstance<IFsClosedValueFactory>().Create();
+					fsTarget.FeatureSpecsOC.Add(fsClosedValue);
+					fsClosedValue.FeatureRA = (IFsFeatDefn)closedValue.Owner;
+					fsClosedValue.ValueRA = closedValue;
+					break;
+				}
 			}
 			return fsTarget;
 		}
@@ -503,15 +495,13 @@ namespace LanguageExplorer.LcmUi
 			switch (selectedObject.ClassID)
 			{
 				case FsSymFeatValTags.kClassId: // user has chosen a value for the targeted feature
-					var symFeatVal = selectedObject as IFsSymFeatVal;
-					if (symFeatVal != null)
+					if (selectedObject is IFsSymFeatVal symFeatVal)
 					{
 						return !features.FeatureSpecsOC.Any(s => s.ClassID == FsClosedValueTags.kClassId && ((IFsClosedValue)s).ValueRA == symFeatVal);
 					}
 					break;
 				case FsFeatStrucTags.kClassId: // user has specified one or more feature/value pairs
-					var fs = selectedObject as IFsFeatStruc;
-					if (fs != null)
+					if (selectedObject is IFsFeatStruc)
 					{
 						return !features.FeatureSpecsOC.Any(s =>
 							s.ClassID == FsClosedValueTags.kClassId &&
@@ -521,8 +511,7 @@ namespace LanguageExplorer.LcmUi
 
 					break;
 				case FsClosedFeatureTags.kClassId: // user has chosen the remove targeted feature option
-					var closedFeature = selectedObject as IFsClosedFeature;
-					if (closedFeature != null)
+					if (selectedObject is IFsClosedFeature closedFeature)
 					{
 						return features.FeatureSpecsOC.Any(s => s.FeatureRA == closedFeature);
 					}
@@ -597,8 +586,8 @@ namespace LanguageExplorer.LcmUi
 				}
 				if (ClosedFeature != null)
 				{
-					var sortedVaues = ClosedFeature.ValuesOC.OrderBy(v => v.Abbreviation.BestAnalysisAlternative.Text);
-					foreach (var closedValue in sortedVaues)
+					var sortedValues = ClosedFeature.ValuesOC.OrderBy(v => v.Abbreviation.BestAnalysisAlternative.Text);
+					foreach (var closedValue in sortedValues)
 					{
 						var node = new HvoTreeNode(closedValue.Abbreviation.BestAnalysisAlternative, closedValue.Hvo);
 						popupTree.Nodes.Add(node);

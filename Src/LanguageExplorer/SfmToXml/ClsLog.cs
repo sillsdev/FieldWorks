@@ -57,8 +57,7 @@ namespace LanguageExplorer.SfmToXml
 
 		private void FoundSFMNotDefined(string sfm)
 		{
-			SfmData data;
-			if (!m_sfmData.TryGetValue(sfm, out data))
+			if (!m_sfmData.TryGetValue(sfm, out var data))
 			{
 				data = new SfmData();
 				m_sfmData.Add(sfm, data);
@@ -68,8 +67,7 @@ namespace LanguageExplorer.SfmToXml
 
 		private void FoundSFMWithData(string sfm)
 		{
-			SfmData data;
-			if (!m_sfmData.TryGetValue(sfm, out data))
+			if (!m_sfmData.TryGetValue(sfm, out var data))
 			{
 				data = new SfmData();
 				m_sfmData.Add(sfm, data);
@@ -80,8 +78,7 @@ namespace LanguageExplorer.SfmToXml
 		private void FoundSFMWithoutData(string sfm)
 		{
 			m_sfmsWithOutData++;
-			SfmData data;
-			if (!m_sfmData.TryGetValue(sfm, out data))
+			if (!m_sfmData.TryGetValue(sfm, out var data))
 			{
 				data = new SfmData();
 				m_sfmData.Add(sfm, data);
@@ -91,8 +88,7 @@ namespace LanguageExplorer.SfmToXml
 
 		private void FoundSFMError(string sfm)
 		{
-			SfmData data;
-			if (!m_sfmData.TryGetValue(sfm, out data))
+			if (!m_sfmData.TryGetValue(sfm, out var data))
 			{
 				data = new SfmData();
 				m_sfmData.Add(sfm, data);
@@ -102,8 +98,7 @@ namespace LanguageExplorer.SfmToXml
 
 		private void FoundSFMWarning(string sfm)
 		{
-			SfmData data;
-			if (!m_sfmData.TryGetValue(sfm, out data))
+			if (!m_sfmData.TryGetValue(sfm, out var data))
 			{
 				data = new SfmData();
 				m_sfmData.Add(sfm, data);
@@ -161,8 +156,7 @@ namespace LanguageExplorer.SfmToXml
 
 		public void AddSFMWarning(string file, int line, string sfm, string text)
 		{
-			int counter;
-			if (m_sfmWarningsAndErrors.TryGetValue(sfm, out counter))
+			if (m_sfmWarningsAndErrors.TryGetValue(sfm, out var counter))
 			{
 				m_sfmWarningsAndErrors[sfm] = ++counter;
 			}
@@ -182,8 +176,7 @@ namespace LanguageExplorer.SfmToXml
 
 		public void AddSFMError(string file, int line, string sfm, string text)
 		{
-			int counter;
-			if (m_sfmWarningsAndErrors.TryGetValue(sfm, out counter))
+			if (m_sfmWarningsAndErrors.TryGetValue(sfm, out var counter))
 			{
 				m_sfmWarningsAndErrors[sfm] = ++counter;
 			}

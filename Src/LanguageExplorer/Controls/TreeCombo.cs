@@ -106,10 +106,7 @@ namespace LanguageExplorer.Controls
 		[Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public override ComboBoxStyle DropDownStyle
 		{
-			get
-			{
-				return ComboBoxStyle.DropDownList;
-			}
+			get => ComboBoxStyle.DropDownList;
 			set
 			{
 				// do nothing
@@ -133,10 +130,7 @@ namespace LanguageExplorer.Controls
 		/// </summary>
 		public override Font Font
 		{
-			get
-			{
-				return base.Font;
-			}
+			get => base.Font;
 			set
 			{
 				base.Font = value;
@@ -150,10 +144,7 @@ namespace LanguageExplorer.Controls
 		[Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public override IVwStylesheet StyleSheet
 		{
-			get
-			{
-				return base.StyleSheet;
-			}
+			get => base.StyleSheet;
 			set
 			{
 				base.StyleSheet = value;
@@ -179,9 +170,9 @@ namespace LanguageExplorer.Controls
 							}
 						}
 					}
-					if (nFontSize == -1 && value is LcmStyleSheet)
+					if (nFontSize == -1 && value is LcmStyleSheet lcmStyleSheet)
 					{
-						nFontSize = ((LcmStyleSheet)value).NormalFontSize;
+						nFontSize = lcmStyleSheet.NormalFontSize;
 					}
 					var nFontSizeTree = (int)(Tree.Font.SizeInPoints * 1000);
 					if (nFontSize > nFontSizeTree)
@@ -201,10 +192,7 @@ namespace LanguageExplorer.Controls
 		[Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public TreeNode SelectedNode
 		{
-			get
-			{
-				return Tree.SelectedNode;
-			}
+			get => Tree.SelectedNode;
 			set
 			{
 				Tree.SelectedNode = value;
@@ -218,14 +206,8 @@ namespace LanguageExplorer.Controls
 		[Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public override object SelectedItem
 		{
-			get
-			{
-				return SelectedNode;
-			}
-			set
-			{
-				SelectedNode = value as TreeNode;
-			}
+			get => SelectedNode;
+			set => SelectedNode = value as TreeNode;
 		}
 
 		#endregion Properties
@@ -269,8 +251,7 @@ namespace LanguageExplorer.Controls
 			}
 			else
 			{
-				var hvoTreeNode = node as HvoTreeNode;
-				if (hvoTreeNode != null)
+				if (node is HvoTreeNode hvoTreeNode)
 				{
 					TextBox.Tss = hvoTreeNode.Tss;
 				}

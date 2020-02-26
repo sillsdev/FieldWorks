@@ -179,18 +179,11 @@ namespace LanguageExplorer.Controls.XMLViews
 				{
 					hvoStringOwner = m_ghostParentHelper.GetOwnerOfTargetProperty(hvo);
 				}
-				if (hvoStringOwner == 0)
-				{
-					return null; // hasn't been created yet.
-				}
-				if (m_flidType != (int)CellarPropertyType.Unicode)
-				{
-					return DataAccess.get_StringProp(hvoStringOwner, m_flid);
-				}
-				var ustring = DataAccess.get_UnicodeProp(hvoStringOwner, m_flid);
-				// Enhance: For the time being Default Analysis Ws is sufficient. If there is ever
-				// a Unicode vernacular field that is made Bulk Editable, we will need to rethink this code.
-				return TsStringUtils.MakeString(ustring ?? string.Empty, m_cache.DefaultAnalWs);
+				return hvoStringOwner == 0
+					? null
+					: m_flidType != (int)CellarPropertyType.Unicode
+						? DataAccess.get_StringProp(hvoStringOwner, m_flid)
+						: TsStringUtils.MakeString(DataAccess.get_UnicodeProp(hvoStringOwner, m_flid) ?? string.Empty, m_cache.DefaultAnalWs);
 			}
 
 			public override void SetNewValue(int hvo, ITsString tss)
@@ -212,8 +205,7 @@ namespace LanguageExplorer.Controls.XMLViews
 
 			private void SetUnicodeStringValue(int hvoStringOwner, ITsString tss)
 			{
-				var strValue = (tss == null) ? string.Empty : tss.Text;
-				DataAccess.set_UnicodeProp(hvoStringOwner, m_flid, strValue);
+				DataAccess.set_UnicodeProp(hvoStringOwner, m_flid, tss == null ? string.Empty : tss.Text);
 			}
 
 			protected virtual void SetStringValue(int hvoStringOwner, ITsString tss)

@@ -51,10 +51,6 @@ namespace LanguageExplorer.Areas
 		/// tell whether the tree bar is required, optional, or not allowed for this view
 		/// </summary>
 		protected TreebarAvailability m_treebarAvailability;
-		/// <summary>
-		/// Last known parent that is a MultiPane.
-		/// </summary>
-		private MultiPane m_mpParent;
 		private Container components = null;
 		/// <summary>
 		/// Sometimes an active record list (eg., in a view) is repurposed (eg., in a dialog for printing).
@@ -146,7 +142,6 @@ namespace LanguageExplorer.Areas
 				}
 			}
 			m_informationBar = null; // Should be disposed automatically, since it is in the Controls collection.
-			m_mpParent = null;
 			MyRecordList = null;
 
 			base.Dispose(disposing);
@@ -333,7 +328,6 @@ namespace LanguageExplorer.Areas
 			var suppress = XmlUtils.GetOptionalAttributeValue(m_configurationParametersElement, "suppressInfoBar", "false");
 			if (suppress == "ifNotFirst")
 			{
-				m_mpParent = mp;
 				mp_ShowFirstPaneChanged(mp, new EventArgs());
 			}
 		}
@@ -370,9 +364,8 @@ namespace LanguageExplorer.Areas
 			if (MyRecordList.CurrentObject != null)
 			{
 				var typeName = MyRecordList.CurrentObject.GetType().Name;
-				if (MyRecordList.CurrentObject is ICmPossibility)
+				if (MyRecordList.CurrentObject is ICmPossibility possibility)
 				{
-					var possibility = (ICmPossibility)MyRecordList.CurrentObject;
 					className = possibility.ItemTypeName();
 				}
 				else
@@ -389,8 +382,7 @@ namespace LanguageExplorer.Areas
 				var emptyTitleId = XmlUtils.GetOptionalAttributeValue(m_configurationParametersElement, "emptyTitleId");
 				if (!string.IsNullOrEmpty(emptyTitleId))
 				{
-					string titleStr;
-					XmlViewsUtils.TryFindString(StringTable.EmptyTitles, emptyTitleId, out titleStr);
+					XmlViewsUtils.TryFindString(StringTable.EmptyTitles, emptyTitleId, out var titleStr);
 					if (titleStr != "*" + emptyTitleId + "*")
 					{
 						className = titleStr;
@@ -414,7 +406,7 @@ namespace LanguageExplorer.Areas
 		{
 			var mpSender = (MultiPane)sender;
 
-			var fWantInfoBar = (this == mpSender.FirstVisibleControl);
+			var fWantInfoBar = this == mpSender.FirstVisibleControl;
 			if (fWantInfoBar && m_informationBar == null)
 			{
 				AddPaneBar();

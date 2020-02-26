@@ -116,16 +116,19 @@ namespace LanguageExplorer.Filters
 		public void Init()
 		{
 			m_objToKey.Clear();
-			if (SubComparer is IcuComparer)
+			switch (SubComparer)
 			{
-				((IcuComparer)SubComparer).OpenCollatingEngine();
-			}
-			else if (SubComparer is ReverseComparer)
-			{
-				var ct = ReverseComparer.Reverse(SubComparer);
-				if (ct is IcuComparer)
+				case IcuComparer icuComparer:
+					icuComparer.OpenCollatingEngine();
+					break;
+				case ReverseComparer _:
 				{
-					((IcuComparer)ct).OpenCollatingEngine();
+					var ct = ReverseComparer.Reverse(SubComparer);
+					if (ct is IcuComparer icuComparer)
+					{
+						icuComparer.OpenCollatingEngine();
+					}
+					break;
 				}
 			}
 		}
@@ -137,16 +140,19 @@ namespace LanguageExplorer.Filters
 		public void Cleanup()
 		{
 			m_objToKey.Clear(); // redundant, but may help free memory.
-			if (SubComparer is IcuComparer)
+			switch (SubComparer)
 			{
-				((IcuComparer)SubComparer).CloseCollatingEngine();
-			}
-			else if (SubComparer is ReverseComparer)
-			{
-				var ct = ReverseComparer.Reverse(SubComparer);
-				if (ct is IcuComparer)
+				case IcuComparer icuComparer:
+					icuComparer.CloseCollatingEngine();
+					break;
+				case ReverseComparer _:
 				{
-					((IcuComparer)ct).CloseCollatingEngine();
+					var ct = ReverseComparer.Reverse(SubComparer);
+					if (ct is IcuComparer icuComparer)
+					{
+						icuComparer.CloseCollatingEngine();
+					}
+					break;
 				}
 			}
 		}
@@ -163,8 +169,7 @@ namespace LanguageExplorer.Filters
 		{
 			try
 			{
-				var result = m_objToKey[key] as string[];
-				if (result != null)
+				if (m_objToKey[key] is string[] result)
 				{
 					return result;
 				}
@@ -270,7 +275,7 @@ namespace LanguageExplorer.Filters
 		/// Count the number of orthographic characters (word-forming, nondiacritic) in the
 		/// key.
 		/// </summary>
-		private int OrthographicLength(string key)
+		private static int OrthographicLength(string key)
 		{
 			var cchOrtho = 0;
 			var rgch = key.ToCharArray();
@@ -355,13 +360,13 @@ namespace LanguageExplorer.Filters
 		{
 			set
 			{
-				if (Finder is IStoresLcmCache)
+				if (Finder is IStoresLcmCache storesLcmCache)
 				{
-					((IStoresLcmCache)Finder).Cache = value;
+					storesLcmCache.Cache = value;
 				}
-				if (SubComparer is IStoresLcmCache)
+				if (SubComparer is IStoresLcmCache subComparer)
 				{
-					((IStoresLcmCache)SubComparer).Cache = value;
+					subComparer.Cache = value;
 				}
 			}
 		}
@@ -379,7 +384,7 @@ namespace LanguageExplorer.Filters
 				SortedByLength = SortedByLength,
 				SortedFromEnd = SortedFromEnd,
 				m_objToKey = m_objToKey.Clone() as Hashtable,
-				SubComparer = SubComparer is ICloneable ? ((ICloneable)SubComparer).Clone() as IComparer : SubComparer,
+				SubComparer = SubComparer is ICloneable cloneable ? cloneable.Clone() as IComparer : SubComparer,
 				ComparisonNoter = ComparisonNoter
 			};
 		}
@@ -447,11 +452,7 @@ namespace LanguageExplorer.Filters
 					}
 				}
 			}
-			if (SubComparer == null)
-			{
-				return that.SubComparer == null;
-			}
-			return SubComparer.Equals(that.SubComparer);
+			return SubComparer?.Equals(that.SubComparer) ?? that.SubComparer == null;
 		}
 
 		/// <summary />

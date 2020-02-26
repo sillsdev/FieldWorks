@@ -171,7 +171,7 @@ namespace LanguageExplorer.Areas
 
 		private void link_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
 		{
-			Insert(this, new InsertEventArgs(e.Link.LinkData, e.Link.Tag));
+			Insert?.Invoke(this, new InsertEventArgs(e.Link.LinkData, e.Link.Tag));
 		}
 
 		#region Component Designer generated code
@@ -241,8 +241,7 @@ namespace LanguageExplorer.Areas
 				try
 				{
 					m_growing = true;
-					var sz = new Size(Width, int.MaxValue);
-					sz = TextRenderer.MeasureText(Text, Font, sz, TextFormatFlags.WordBreak);
+					var sz = TextRenderer.MeasureText(Text, Font, new Size(Width, int.MaxValue), TextFormatFlags.WordBreak);
 					// The mono implementation chops off the bottom line of the display (FWNX-752).
 					if (MiscUtils.IsMono)
 					{

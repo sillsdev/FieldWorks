@@ -151,8 +151,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 					var skip = false;
 					foreach (var morphElem in analysisElem.Descendants("Morph"))
 					{
-						ParseMorph morph;
-						if (!TryCreateParseMorph(m_cache, morphElem, out morph))
+						if (!TryCreateParseMorph(m_cache, morphElem, out var morph))
 						{
 							skip = true;
 							break;
@@ -197,14 +196,12 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			// 4. <MSI DbRef="y"... and y is an hvo for a LexEntry followed by a period and an index digit.
 			//       The LexEntry is a variant form and the (non-zero) index indicates
 			//       which set of LexEntryRefs it is for.
-			ICmObject objForm;
-			if (!cache.ServiceLocator.GetInstance<ICmObjectRepository>().TryGetObject(int.Parse(formHvo), out objForm))
+			if (!cache.ServiceLocator.GetInstance<ICmObjectRepository>().TryGetObject(int.Parse(formHvo), out var objForm))
 			{
 				morph = null;
 				return false;
 			}
-			var form = objForm as IMoForm;
-			if (form == null)
+			if (!(objForm is IMoForm form))
 			{
 				morph = null;
 				return true;
@@ -212,25 +209,19 @@ namespace SIL.FieldWorks.WordWorks.Parser
 
 			// Irregularly inflected forms can have a combination MSA hvo: the LexEntry hvo, a period, and an index to the LexEntryRef
 			var msaTuple = ProcessMsaHvo(msaHvo);
-			ICmObject objMsa;
-			if (!cache.ServiceLocator.GetInstance<ICmObjectRepository>().TryGetObject(msaTuple.Item1, out objMsa))
+			if (!cache.ServiceLocator.GetInstance<ICmObjectRepository>().TryGetObject(msaTuple.Item1, out var objMsa))
 			{
 				morph = null;
 				return false;
 			}
-			var msa = objMsa as IMoMorphSynAnalysis;
-			if (msa != null)
+			switch (objMsa)
 			{
-				morph = new ParseMorph(form, msa);
-				return true;
-			}
-
-			var msaAsLexEntry = objMsa as ILexEntry;
-			if (msaAsLexEntry != null)
-			{
+				case IMoMorphSynAnalysis msa:
+					morph = new ParseMorph(form, msa);
+					return true;
 				// is an irregularly inflected form
 				// get the MoStemMsa of its variant
-				if (msaAsLexEntry.EntryRefsOS.Count > 0)
+				case ILexEntry msaAsLexEntry when msaAsLexEntry.EntryRefsOS.Count > 0:
 				{
 					var lexEntryRef = msaAsLexEntry.EntryRefsOS[msaTuple.Item2];
 					var sense = MorphServices.GetMainOrFirstSenseOfVariant(lexEntryRef);
@@ -238,11 +229,11 @@ namespace SIL.FieldWorks.WordWorks.Parser
 					morph = new ParseMorph(form, sense.MorphoSyntaxAnalysisRA, inflType);
 					return true;
 				}
+				default:
+					// if it is anything else, we ignore it
+					morph = null;
+					return true;
 			}
-
-			// if it is anything else, we ignore it
-			morph = null;
-			return true;
 		}
 
 		private static Tuple<int, int> ProcessMsaHvo(string msaHvo)
@@ -358,8 +349,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 					}
 					failureElem.SetAttributeValue("test", test.Substring(0, i) + sb);
 				}
-				else if ((test.StartsWith("ANCC_FT") || test.StartsWith("MCC_FT")) && !test.Contains("ExcpFeat") && !test.Contains("StemName")
-					&& !test.Contains("IrregInflForm"))
+				else if ((test.StartsWith("ANCC_FT") || test.StartsWith("MCC_FT")) && !test.Contains("ExcpFeat") && !test.Contains("StemName") && !test.Contains("IrregInflForm"))
 				{
 					var index = test.IndexOf(":", StringComparison.Ordinal);
 					var testName = test.Substring(0, index);
@@ -397,28 +387,11 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			switch (classID)
 			{
 				case MoFormTags.kClassId:
-					var form = obj as IMoForm;
-					if (form != null)
-					{
-						return form.ShortName;
-					}
-					throw new ApplicationException(ParserCoreStrings.ksUnknownAllomorph);
-
+					return obj is IMoForm form ? form.ShortName : throw new ApplicationException(ParserCoreStrings.ksUnknownAllomorph);
 				case MoMorphSynAnalysisTags.kClassId:
-					var msa = obj as IMoMorphSynAnalysis;
-					if (msa != null)
-					{
-						return msa.LongName;
-					}
-					throw new ApplicationException(ParserCoreStrings.ksUnknownMorpheme);
-
+					return obj is IMoMorphSynAnalysis msa ? msa.LongName : throw new ApplicationException(ParserCoreStrings.ksUnknownMorpheme);
 				case PhNaturalClassTags.kClassId:
-					var nc = obj as IPhNCSegments;
-					if (nc != null)
-					{
-						return nc.Name.BestAnalysisAlternative.Text;
-					}
-					throw new ApplicationException(ParserCoreStrings.ksUnknownNaturalClass);
+					return obj is IPhNCSegments nc ? nc.Name.BestAnalysisAlternative.Text : throw new ApplicationException(ParserCoreStrings.ksUnknownNaturalClass);
 			}
 			return null;
 		}

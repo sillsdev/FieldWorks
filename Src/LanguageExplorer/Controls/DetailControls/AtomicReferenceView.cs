@@ -179,26 +179,13 @@ namespace LanguageExplorer.Controls.DetailControls
 				// Enhance: invoke launcher's selection dialog.
 				return;
 			}
-			ITsString tss;
-			int ichAnchor;
-			int ichEnd;
-			bool fAssocPrev;
-			int hvoObj;
-			int hvoObjEnd;
-			int tag;
-			int ws;
-			vwselNew.TextSelInfo(false, out tss, out ichAnchor, out fAssocPrev, out hvoObj, out tag, out ws);
-			vwselNew.TextSelInfo(true, out tss, out ichEnd, out fAssocPrev, out hvoObjEnd, out tag, out ws);
+			vwselNew.TextSelInfo(false, out _, out var ichAnchor, out _, out var hvoObj, out _, out _);
+			vwselNew.TextSelInfo(true, out _, out var ichEnd, out _, out var hvoObjEnd, out _, out _);
 			if (hvoObj != hvoObjEnd)
 			{
 				return;
 			}
-			int ihvoRoot;
-			int tagTextProp;
-			int cpropPrevious;
-			int ihvoEnd;
-			ITsTextProps ttp;
-			var rgvsli = SelLevInfo.AllTextSelInfo(vwselNew, cvsli, out ihvoRoot, out tagTextProp, out cpropPrevious, out ichAnchor, out ichEnd, out ws, out fAssocPrev, out ihvoEnd, out ttp);
+			var rgvsli = SelLevInfo.AllTextSelInfo(vwselNew, cvsli, out var ihvoRoot, out _, out _, out ichAnchor, out ichEnd, out _, out _, out _, out _);
 			Debug.Assert(RootBox != null);
 			// Create a selection that covers the entire target object.  If it differs from
 			// the new selection, we'll install it (which will recurse back to this method).
@@ -207,16 +194,8 @@ namespace LanguageExplorer.Controls.DetailControls
 			{
 				return;
 			}
-			ITsString tssWhole;
-			int ichAnchorWhole;
-			int ichEndWhole;
-			int hvoObjWhole;
-			int hvoObjEndWhole;
-			bool fAssocPrevWhole;
-			int tagWhole;
-			int wsWhole;
-			vwselWhole.TextSelInfo(false, out tssWhole, out ichAnchorWhole, out fAssocPrevWhole, out hvoObjWhole, out tagWhole, out wsWhole);
-			vwselWhole.TextSelInfo(true, out tssWhole, out ichEndWhole, out fAssocPrevWhole, out hvoObjEndWhole, out tagWhole, out wsWhole);
+			vwselWhole.TextSelInfo(false, out _, out var ichAnchorWhole, out _, out var hvoObjWhole, out _, out _);
+			vwselWhole.TextSelInfo(true, out _, out var ichEndWhole, out _, out var hvoObjEndWhole, out _, out _);
 			if (hvoObj == hvoObjWhole && hvoObjEnd == hvoObjEndWhole && (ichAnchor != ichAnchorWhole || ichEnd != ichEndWhole))
 			{
 				// Install it this time!

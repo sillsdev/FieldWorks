@@ -69,8 +69,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonologicalFeaturesAdvancedEdit
 				m_cache.LangProject.PhFeatureSystemOA.FeaturesOC.Add(SelectedFeatDefn);
 				// create the two default feature values
 				IFsSymFeatVal symFV;
-				var closed = SelectedFeatDefn as IFsClosedFeature;
-				if (closed != null)
+				if (SelectedFeatDefn is IFsClosedFeature closed)
 				{
 					var symFeatFactory = m_cache.ServiceLocator.GetInstance<IFsSymFeatValFactory>();
 					symFV = symFeatFactory.Create();

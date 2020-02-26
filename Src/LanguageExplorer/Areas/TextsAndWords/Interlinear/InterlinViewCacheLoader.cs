@@ -89,10 +89,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			}
 			// next get the best guess for wordform or analysis
 			var wag = occurrence.Analysis;
-			IAnalysis wagGuess;
 			// now record the guess in the decorator.
-			// Todo JohnT: if occurrence.Indx is 0, record using DefaultStartSentenceFlid.
-			if (GuessServices.TryGetBestGuess(occurrence, out wagGuess))
+			// Todo JohnT: if occurrence.Index is 0, record using DefaultStartSentenceFlid.
+			if (GuessServices.TryGetBestGuess(occurrence, out var wagGuess))
 			{
 				SetObjProp(wag.Hvo, InterlinViewDataCache.AnalysisMostApprovedFlid, wagGuess.Hvo);
 				SetInt(wagGuess.Analysis.Hvo, InterlinViewDataCache.OpinionAgentFlid, (int)GuessServices.GetOpinionAgent(wagGuess.Analysis));

@@ -64,7 +64,7 @@ namespace LanguageExplorerTests.Areas.Lists
 		{
 			featStruct = CreateFeatureSystem();
 			// load some feature system values into treeview
-			var pos = _langProject.PartsOfSpeechOA.PossibilitiesOS[0] as IPartOfSpeech;
+			var pos = (IPartOfSpeech)_langProject.PartsOfSpeechOA.PossibilitiesOS[0];
 			var tv = new FeatureStructureTreeView();
 			tv.PopulateTreeFromInflectableFeats(pos.InflectableFeatsRC);
 			Assert.AreEqual(1, tv.Nodes.Count, "Count of top level nodes in tree view");
@@ -72,8 +72,7 @@ namespace LanguageExplorerTests.Areas.Lists
 			Assert.AreEqual(1, col.Count, "Count of first level nodes in tree view");
 			foreach (TreeNode node in col)
 			{
-				var col2 = node.Nodes;
-				Assert.AreEqual(2, col2.Count, "Count of second level nodes in tree view");
+				Assert.AreEqual(2, node.Nodes.Count, "Count of second level nodes in tree view");
 				if (node.PrevNode == null)
 				{
 					node.Checked = true;
@@ -105,21 +104,21 @@ namespace LanguageExplorerTests.Areas.Lists
 
 		private static void LoadFeatureValuesIntoTreeview(FeatureStructureTreeView tv, IFsFeatStruc featStruct)
 		{
-			TreeNodeCollection col;
 			tv.PopulateTreeFromFeatureStructure(featStruct);
 			Assert.AreEqual(1, tv.Nodes.Count, "Count of top level after feature structure");
-			col = tv.Nodes[0].Nodes;
+			var col = tv.Nodes[0].Nodes;
 			Assert.AreEqual(2, col.Count, "Count of first level nodes in tree view");
 			foreach (TreeNode node in col)
 			{
 				var col2 = node.Nodes;
-				if (node.Text == "gender")
+				switch (node.Text)
 				{
-					Assert.AreEqual(2, col2.Count, "Count of second level nodes in tree view");
-				}
-				if (node.Text == "person")
-				{
-					Assert.AreEqual(1, col2.Count, "Count of second level nodes in tree view");
+					case "gender":
+						Assert.AreEqual(2, col2.Count, "Count of second level nodes in tree view");
+						break;
+					case "person":
+						Assert.AreEqual(1, col2.Count, "Count of second level nodes in tree view");
+						break;
 				}
 			}
 		}
@@ -153,8 +152,7 @@ namespace LanguageExplorerTests.Areas.Lists
 		public void LoadInflectableFeats()
 		{
 			// Set up sample data
-			IFsFeatStruc featStruct;
-			using (var tv = SetUpSampleData(out featStruct))
+			using (var tv = SetUpSampleData(out var featStruct))
 			{
 				// load some feature structure values into treeview
 				LoadFeatureValuesIntoTreeview(tv, featStruct);

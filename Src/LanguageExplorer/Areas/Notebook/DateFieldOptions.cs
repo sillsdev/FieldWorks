@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
@@ -76,9 +77,8 @@ namespace LanguageExplorer.Areas.Notebook
 			m_helpTopicProvider = helpTopicProvider;
 			m_fGenDate = fGenDate;
 			m_lvDateFormats.Items.Clear();
-			foreach (var sFmt in rsfm.m_dto.m_rgsFmt)
+			foreach (var lvi in rsfm.m_dto.m_rgsFmt.Select(sFmt => new ListViewItem(new[] { sFmt, m_dtExample.ToString(sFmt) })))
 			{
-				var lvi = new ListViewItem(new[] { sFmt, m_dtExample.ToString(sFmt) });
 				m_lvDateFormats.Items.Add(lvi);
 			}
 		}

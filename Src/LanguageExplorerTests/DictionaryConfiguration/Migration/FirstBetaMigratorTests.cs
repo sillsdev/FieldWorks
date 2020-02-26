@@ -216,7 +216,7 @@ name='Stem-based (complex forms as main entries)' version='8' lastModified='2016
 				}
 			};
 			var alphaModel = new DictionaryConfigurationModel { Version = FirstAlphaMigrator.VersionAlpha3, Parts = new List<ConfigurableDictionaryNode> { firstPartNode } };
-			var group = "Group";
+			const string @group = "Group";
 			var groupNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = group,
@@ -242,9 +242,9 @@ name='Stem-based (complex forms as main entries)' version='8' lastModified='2016
 		[Test]
 		public void MigrateFrom83Alpha_ChildAndGrandChildGroupsMigrated()
 		{
-			var olderBroField = "OlderBro";
-			var grandChildField = "GrandKid";
-			var cousinField = "cuz";
+			const string olderBroField = "OlderBro";
+			const string grandChildField = "GrandKid";
+			const string cousinField = "cuz";
 			var grandKidNode = new ConfigurableDictionaryNode { FieldDescription = grandChildField };
 			var cousinNode = new ConfigurableDictionaryNode { FieldDescription = cousinField };
 			var firstPartNode = new ConfigurableDictionaryNode
@@ -257,7 +257,7 @@ name='Stem-based (complex forms as main entries)' version='8' lastModified='2016
 				}
 			};
 			var alphaModel = new DictionaryConfigurationModel { Version = FirstAlphaMigrator.VersionAlpha3, Parts = new List<ConfigurableDictionaryNode> { firstPartNode } };
-			var group = "Group";
+			const string @group = "Group";
 			var grandKidGroup = new ConfigurableDictionaryNode
 			{
 				FieldDescription = group,
@@ -315,7 +315,7 @@ name='Stem-based (complex forms as main entries)' version='8' lastModified='2016
 				Version = FirstAlphaMigrator.VersionAlpha3,
 				Parts = new List<ConfigurableDictionaryNode> { firstPartNode }
 			};
-			const string @group = "Group";
+			const string group = "Group";
 			const string description = "TestDescription";
 			const string before = "[";
 			const string after = "]";
@@ -838,26 +838,26 @@ name='Stem-based (complex forms as main entries)' version='8' lastModified='2016
 				Version = FirstAlphaMigrator.VersionAlpha3,
 				Parts = new List<ConfigurableDictionaryNode> { alphaMainEntryNode }
 			};
-			var RefSenseHeadwordTypeNode = new ConfigurableDictionaryNode
+			var refSenseHeadwordTypeNode = new ConfigurableDictionaryNode
 			{
 				Label = "Referenced Sense Headword",
 				FieldDescription = "HeadWordRef",
 				CSSClassNameOverride = "headword",
 				IsEnabled = true
 			};
-			var TargetsNode = new ConfigurableDictionaryNode
+			var targetsNode = new ConfigurableDictionaryNode
 			{
 				Label = "Targets",
 				FieldDescription = "ConfigTargets",
 				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetFullyEnabledListOptions(Cache, ListIds.Variant),
-				Children = new List<ConfigurableDictionaryNode> { RefSenseHeadwordTypeNode },
+				Children = new List<ConfigurableDictionaryNode> { refSenseHeadwordTypeNode },
 				IsEnabled = true
 			};
 			var sensesNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "SensesOS",
 				CSSClassNameOverride = "senses",
-				Children = new List<ConfigurableDictionaryNode> { TargetsNode }
+				Children = new List<ConfigurableDictionaryNode> { targetsNode }
 			};
 			var mainEntryNode = new ConfigurableDictionaryNode
 			{
@@ -1438,8 +1438,8 @@ name='Stem-based (complex forms as main entries)' version='8' lastModified='2016
 		[Test]
 		public void MigrateFrom83Alpha_UpdatesCssOverrideAndStyles()
 		{
-			var reversalStyle = "Reversal-Normal";
-			var reversalCss = "reversalindexentry";
+			const string reversalStyle = "Reversal-Normal";
+			const string reversalCss = "reversalindexentry";
 			var userModel = new DictionaryConfigurationModel
 			{
 				WritingSystem = "en", // reversal

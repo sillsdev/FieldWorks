@@ -28,8 +28,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.BulkEditEntries
 		private PaneBarContainer _paneBarContainer;
 		private RecordBrowseView _recordBrowseView;
 		private IRecordList _recordList;
-		[Import(AreaServices.LexiconAreaMachineName)]
-		private IArea _area;
 
 		#region Implementation of IMajorFlexComponent
 
@@ -122,7 +120,8 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.BulkEditEntries
 		/// <summary>
 		/// Get the area for the tool.
 		/// </summary>
-		public IArea Area => _area;
+		[field: Import(AreaServices.LexiconAreaMachineName)]
+		public IArea Area { get; private set; }
 
 		/// <summary>
 		/// Get the image for the area.
@@ -296,7 +295,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.BulkEditEntries
 				_recordList = recordList;
 				_partiallySharedForToolsWideMenuHelper = new PartiallySharedForToolsWideMenuHelper(majorFlexComponentParameters, recordList);
 				_sharedLexiconToolsUiWidgetHelper = new SharedLexiconToolsUiWidgetHelper(_majorFlexComponentParameters, _recordList);
-
 				_jumpMenus = new List<ToolStripMenuItem>(3);
 				var toolUiWidgetParameterObject = new ToolUiWidgetParameterObject(tool);
 				SetupUiWidgets(toolUiWidgetParameterObject);

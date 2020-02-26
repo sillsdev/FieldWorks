@@ -66,9 +66,8 @@ namespace LanguageExplorer.Controls.Styles
 					ChangedToUnspecified?.Invoke(this, EventArgs.Empty);
 				}
 			}
-			if (sender is UpDownMeasureControl)
+			if (sender is UpDownMeasureControl ctrl)
 			{
-				var ctrl = (UpDownMeasureControl)sender;
 				if (ctrl.Text == string.Empty)
 				{
 					// When numerical values in the special indentation and line spacing controls are reset,
@@ -386,10 +385,7 @@ namespace LanguageExplorer.Controls.Styles
 		/// </summary>
 		public bool ShowBackgroundColor
 		{
-			get
-			{
-				return m_cboBackground.Visible;
-			}
+			get => m_cboBackground.Visible;
 			set
 			{
 				m_cboBackground.Visible = value;
@@ -449,9 +445,9 @@ namespace LanguageExplorer.Controls.Styles
 			{
 				return false;
 			}
-			if (c is FwInheritablePropComboBox)
+			if (c is FwInheritablePropComboBox inheritablePropComboBox)
 			{
-				return ((FwInheritablePropComboBox)c).IsInherited;
+				return inheritablePropComboBox.IsInherited;
 			}
 			// The Direction combo box has index 0 as the unspecified state
 			if (c == m_cboDirection && (TriStateBool)m_cboDirection.SelectedIndex == TriStateBool.triNotSet)

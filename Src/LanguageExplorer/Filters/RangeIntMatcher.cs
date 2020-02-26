@@ -73,8 +73,7 @@ namespace LanguageExplorer.Filters
 			}
 			try
 			{
-				var values = stringval.Text.Split(' ').Select(s => long.Parse(s));
-				return values.Any(x => x >= Min && x <= Max);
+				return stringval.Text.Split(' ').Select(long.Parse).Any(x => x >= Min && x <= Max);
 			}
 			catch (OverflowException)
 			{
@@ -87,12 +86,7 @@ namespace LanguageExplorer.Filters
 		/// </summary>
 		public override bool SameMatcher(IMatcher other)
 		{
-			var other2 = other as RangeIntMatcher;
-			if (other2 == null)
-			{
-				return false;
-			}
-			return other2.Min == Min && other2.Max == Max;
+			return other is RangeIntMatcher rangeIntMatcher && rangeIntMatcher.Min == Min && rangeIntMatcher.Max == Max;
 		}
 		#endregion
 	}

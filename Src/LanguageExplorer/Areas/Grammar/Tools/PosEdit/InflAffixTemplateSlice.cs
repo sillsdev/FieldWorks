@@ -226,12 +226,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 					pt = PixelToView(new Point(e.X, e.Y));
 					GetCoordRects(out rcSrcRoot, out rcDstRoot);
 					var sel = RootBox.MakeSelAt(pt.X, pt.Y, rcSrcRoot, rcDstRoot, false);
-					ITsString tss;
-					int ichAnchor;
-					bool fAssocPrev;
-					int hvoObj;
-					int ws;
-					sel.TextSelInfo(false, out tss, out ichAnchor, out fAssocPrev, out hvoObj, out tag, out ws);
+					sel.TextSelInfo(false, out _, out _, out _, out _, out tag, out _);
 				}
 				if (tag == 0) // indicates it is an icon
 				{
@@ -264,13 +259,9 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 				{
 					return base.OnRightMouseUp(pt, rcSrcRoot, rcDstRoot); // no object, so quit and let base handle it
 				}
-				int index;
-				int hvo, tag, prev; // dummies.
-									// dummy
-				IVwPropertyStore vps;
 				// Level 0 would give info about ktagText and the hvo of the dummy line object.
 				// Level 1 gives info about which line object it is in the root.
-				sel.PropInfo(false, 0, out hvo, out tag, out index, out prev, out vps);  // using level 1 for an msa should return the slot it belongs in
+				sel.PropInfo(false, 0, out var hvo, out _, out _, out _, out _);  // using level 1 for an msa should return the slot it belongs in
 #if MaybeSomeDayToTryAndGetRemoveMsaCorrectForCircumfixes
 				int indexSlot;
 				int hvoSlot, tagSlot, prevSlot; // dummies.
@@ -295,8 +286,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 				var ctl = Parent;
 				while (ctl != null)
 				{
-					var slice = ctl as Slice;
-					if (slice != null)
+					if (ctl is Slice slice)
 					{
 						return slice;
 					}
@@ -327,10 +317,8 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 
 			private void HandleMove(bool moveLeft = true)
 			{
-				ILcmReferenceSequence<IMoInflAffixSlot> seq;
-				int index;
 				var slot = _clickedCmObject as IMoInflAffixSlot;
-				GetAffixSequenceContainingSlot(slot, out seq, out index);
+				GetAffixSequenceContainingSlot(slot, out var seq, out var index);
 				var baseText = DetermineSlotContextMenuItemLabel(moveLeft ? GrammarResources.Move_XXX_back_one_Slot : GrammarResources.Move_XXX_forward_one_Slot).Text;
 				UowHelpers.UndoExtension(baseText, Cache.ServiceLocator.GetInstance<IActionHandler>(), () =>
 				{
@@ -360,9 +348,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 
 			private void InflTemplateRemoveSlot_Clicked(object sender, EventArgs e)
 			{
-				ILcmReferenceSequence<IMoInflAffixSlot> seq;
-				int index;
-				GetAffixSequenceContainingSlot(_clickedCmObject as IMoInflAffixSlot, out seq, out index);
+				GetAffixSequenceContainingSlot(_clickedCmObject as IMoInflAffixSlot, out var seq, out var index);
 				var baseUowText = seq[index].Name.BestAnalysisVernacularAlternative.Text;
 				using (var helper = new UndoableUnitOfWorkHelper(m_cache.ActionHandlerAccessor, string.Format(AreaResources.ksUndoRemovingSlot, baseUowText), string.Format(AreaResources.ksRedoRemovingSlot, baseUowText)))
 				{
@@ -516,10 +502,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 				lex.SensesOS.Add(newSense);
 				var firstSense = lex.SensesOS[0];
 				// only copying gloss for now and only copying default analysis ws
-				//newSense.Definition.AnalysisDefaultWritingSystem.Text = firstSense.Definition.AnalysisDefaultWritingSystem.Text;
 				newSense.Gloss.AnalysisDefaultWritingSystem = firstSense.Gloss.AnalysisDefaultWritingSystem;
-				//newSense.GrammarNote.AnalysisDefaultWritingSystem.Text = firstSense.GrammarNote.AnalysisDefaultWritingSystem.Text;
-				//newSense.SemanticsNote.AnalysisDefaultWritingSystem.Text = firstSense.SemanticsNote.AnalysisDefaultWritingSystem.Text;
 				newSense.MorphoSyntaxAnalysisRA = newMsa;
 			}
 
@@ -656,8 +639,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 				chooser.TextParamHvo = _template.Owner.Hvo;
 				chooser.Title = _slotChooserTitle;
 				chooser.InstructionalText = _slotChooserInstructionalText;
-				string sTopPOS;
-				var pos = GetHighestPOS(_template.OwnerOfClass<IPartOfSpeech>(), out sTopPOS);
+				var pos = GetHighestPOS(_template.OwnerOfClass<IPartOfSpeech>(), out var sTopPOS);
 				var sLabel = string.Format(_obligatorySlot, sTopPOS);
 				chooser.AddLink(sLabel, LinkType.kSimpleLink, new MakeInflAffixSlotChooserCommand(Cache, true, sLabel, pos.Hvo, false, PropertyTable, Publisher, Subscriber));
 				sLabel = string.Format(_optionalSlot, sTopPOS);
@@ -687,12 +669,9 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 
 			private void HandleInsertAroundSlot(bool before, IMoInflAffixSlot chosenSlot, out int flid, out int ihvo)
 			{
-				ILcmReferenceSequence<IMoInflAffixSlot> seq;
-				int index;
-				flid = GetAffixSequenceContainingSlot(_clickedCmObject as IMoInflAffixSlot, out seq, out index);
+				flid = GetAffixSequenceContainingSlot(_clickedCmObject as IMoInflAffixSlot, out var seq, out var index);
 				var iOffset = before ? 0 : 1;
-				UndoableUnitOfWorkHelper.Do(AreaResources.ksUndoAddSlot, AreaResources.ksRedoAddSlot, Cache.ActionHandlerAccessor,
-					() => seq.Insert(index + iOffset, chosenSlot));
+				UndoableUnitOfWorkHelper.Do(AreaResources.ksUndoAddSlot, AreaResources.ksRedoAddSlot, Cache.ActionHandlerAccessor, () => seq.Insert(index + iOffset, chosenSlot));
 				// The views system numbers visually, so adjust index for RTL vernacular writing system.
 				ihvo = index + iOffset;
 				if (IsRTL())
@@ -708,16 +687,14 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 					flid = MoInflAffixTemplateTags.kflidPrefixSlots;
 					// The views system numbers visually, so adjust index for RTL vernacular writing system.
 					ihvo = IsRTL() ? 0 : _template.PrefixSlotsRS.Count;
-					UndoableUnitOfWorkHelper.Do(AreaResources.ksUndoAddSlot, AreaResources.ksRedoAddSlot, Cache.ActionHandlerAccessor,
-						() => _template.PrefixSlotsRS.Add(chosenSlot));
+					UndoableUnitOfWorkHelper.Do(AreaResources.ksUndoAddSlot, AreaResources.ksRedoAddSlot, Cache.ActionHandlerAccessor, () => _template.PrefixSlotsRS.Add(chosenSlot));
 				}
 				else
 				{
 					flid = MoInflAffixTemplateTags.kflidSuffixSlots;
 					// The views system numbers visually, so adjust index for RTL vernacular writing system.
 					ihvo = IsRTL() ? _template.SuffixSlotsRS.Count : 0;
-					UndoableUnitOfWorkHelper.Do(AreaResources.ksUndoAddSlot, AreaResources.ksRedoAddSlot, Cache.ActionHandlerAccessor,
-						() => _template.SuffixSlotsRS.Insert(0, chosenSlot));
+					UndoableUnitOfWorkHelper.Do(AreaResources.ksUndoAddSlot, AreaResources.ksRedoAddSlot, Cache.ActionHandlerAccessor, () => _template.SuffixSlotsRS.Insert(0, chosenSlot));
 				}
 			}
 
@@ -1152,14 +1129,14 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 						while (ie.MoveNext())
 						{
 							string s = null;
-							if (ie.Current is ITsString)
+							switch (ie.Current)
 							{
-								var tss = (ITsString)ie.Current;
-								s = tss.Text;
-							}
-							else if (ie.Current is string)
-							{
-								s = (string)ie.Current;
+								case ITsString tss:
+									s = tss.Text;
+									break;
+								case string current:
+									s = current;
+									break;
 							}
 							if (s != null)
 							{

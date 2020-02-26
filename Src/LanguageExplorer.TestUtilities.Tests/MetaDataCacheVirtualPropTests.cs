@@ -26,16 +26,13 @@ namespace LanguageExplorer.TestUtilities.Tests
 			const string fieldName = "NewImageVP";
 			m_metaDataCache.AddVirtualProp(className, fieldName, flid, (int)type);
 			// Check its flid.
-			var newFlid = m_metaDataCache.GetFieldId(className, fieldName, false);
-			Assert.AreEqual(flid, newFlid, "Wrong field Id.");
+			Assert.AreEqual(flid, m_metaDataCache.GetFieldId(className, fieldName, false), "Wrong field Id.");
 			// Check its data type.
 			Assert.AreEqual(type, (CellarPropertyType)m_metaDataCache.GetFieldType(flid), "Wrong field type.");
 			// Check to see it is virtual.
-			var isVirtual = m_metaDataCache.get_IsVirtual(flid);
-			Assert.IsTrue(isVirtual, "Wrong field virtual setting.");
+			Assert.IsTrue(m_metaDataCache.get_IsVirtual(flid), "Wrong field virtual setting.");
 			// Check the clid it was supposed to be placed in.
-			var clid = m_metaDataCache.GetClassId(className);
-			Assert.AreEqual(clid, m_metaDataCache.GetOwnClsId(flid), "Wrong clid for new virtual field.");
+			Assert.AreEqual(m_metaDataCache.GetClassId(className), m_metaDataCache.GetOwnClsId(flid), "Wrong clid for new virtual field.");
 			Assert.AreEqual(fieldName, m_metaDataCache.GetFieldName(flid), "Wrong field name for new virtual field.");
 		}
 
@@ -56,11 +53,7 @@ namespace LanguageExplorer.TestUtilities.Tests
 		[ExpectedException(typeof(ArgumentException))]
 		public void AddVirtualPropNoClassTest()
 		{
-			const int flid = 2000000002;
-			const int type = (int)CellarPropertyType.Image;
-			const string className = "BogusClass";
-			const string fieldName = "NewImageVP";
-			m_metaDataCache.AddVirtualProp(className, fieldName, flid, type);
+			m_metaDataCache.AddVirtualProp("BogusClass", "NewImageVP", 2000000002, (int)CellarPropertyType.Image);
 		}
 
 		/// <summary>
@@ -70,11 +63,7 @@ namespace LanguageExplorer.TestUtilities.Tests
 		[ExpectedException(typeof(ArgumentException))]
 		public void AddVirtualPropFieldExistsTest()
 		{
-			const int flid = 2000000003;
-			const int type = (int)CellarPropertyType.Image;
-			const string className = "ClassK";
-			const string fieldName = "MultiStringProp11";
-			m_metaDataCache.AddVirtualProp(className, fieldName, flid, type);
+			m_metaDataCache.AddVirtualProp("ClassK", "MultiStringProp11", 2000000003, (int)CellarPropertyType.Image);
 		}
 
 		/// <summary>
@@ -84,11 +73,7 @@ namespace LanguageExplorer.TestUtilities.Tests
 		[ExpectedException(typeof(ArgumentException))]
 		public void AddVirtualPropFlidExistsTest()
 		{
-			var flid = m_metaDataCache.GetFieldId("ClassB", "WhoCares", true);
-			const int type = (int)CellarPropertyType.Image;
-			const string className = "ClassB";
-			const string fieldName = "NewName";
-			m_metaDataCache.AddVirtualProp(className, fieldName, flid, type);
+			m_metaDataCache.AddVirtualProp("ClassB", "NewName", m_metaDataCache.GetFieldId("ClassB", "WhoCares", true), (int)CellarPropertyType.Image);
 		}
 
 		/// <summary>
@@ -98,11 +83,7 @@ namespace LanguageExplorer.TestUtilities.Tests
 		[ExpectedException(typeof(ArgumentException))]
 		public void AddVirtualPropInvalidLowFieldTypeTest()
 		{
-			const int flid = 2000000004;
-			const int type = 0;
-			const string className = "ClassB";
-			const string fieldName = "NewName";
-			m_metaDataCache.AddVirtualProp(className, fieldName, flid, type);
+			m_metaDataCache.AddVirtualProp("ClassB", "NewName", 2000000004, 0);
 		}
 
 		/// <summary>
@@ -112,11 +93,7 @@ namespace LanguageExplorer.TestUtilities.Tests
 		[ExpectedException(typeof(ArgumentException))]
 		public void AddVirtualPropInvalidHighFieldTypeTest()
 		{
-			const int flid = 2000000005;
-			const int type = 1000;
-			const string className = "ClassB";
-			const string fieldName = "NewName";
-			m_metaDataCache.AddVirtualProp(className, fieldName, flid, type);
+			m_metaDataCache.AddVirtualProp("ClassB", "NewName", 2000000005, 1000);
 		}
 	}
 }

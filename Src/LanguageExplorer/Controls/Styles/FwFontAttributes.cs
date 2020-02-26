@@ -41,7 +41,7 @@ namespace LanguageExplorer.Controls.Styles
 		/// </summary>
 		public ILgWritingSystemFactory WritingSystemFactory
 		{
-			set { m_btnFontFeatures.WritingSystemFactory = value; }
+			set => m_btnFontFeatures.WritingSystemFactory = value;
 		}
 
 		/// <summary>
@@ -55,8 +55,8 @@ namespace LanguageExplorer.Controls.Styles
 		/// </summary>
 		public bool FontFeaturesTag
 		{
-			get { return (bool)m_btnFontFeatures.Tag; }
-			set { m_btnFontFeatures.Tag = value; }
+			get => (bool)m_btnFontFeatures.Tag;
+			set => m_btnFontFeatures.Tag = value;
 		}
 
 		/// <summary>
@@ -64,7 +64,7 @@ namespace LanguageExplorer.Controls.Styles
 		/// </summary>
 		public string FontName
 		{
-			set { m_btnFontFeatures.FontName = value; }
+			set => m_btnFontFeatures.FontName = value;
 		}
 
 		/// <summary>
@@ -72,7 +72,7 @@ namespace LanguageExplorer.Controls.Styles
 		/// </summary>
 		public bool AllowSuperSubScript
 		{
-			get { return m_chkSubscript.Enabled; }
+			get => m_chkSubscript.Enabled;
 			set
 			{
 				m_chkSubscript.Enabled = value;
@@ -478,7 +478,7 @@ namespace LanguageExplorer.Controls.Styles
 		/// window text color.</returns>
 		private Color GetCtrlForeColorForProp<T>(InheritableStyleProp<T> prop)
 		{
-			return (prop.IsInherited && ShowingInheritedProperties) ? SystemColors.GrayText : SystemColors.WindowText;
+			return prop.IsInherited && ShowingInheritedProperties ? SystemColors.GrayText : SystemColors.WindowText;
 		}
 
 		/// <summary>
@@ -523,18 +523,16 @@ namespace LanguageExplorer.Controls.Styles
 			{
 				return false;
 			}
-			if (c is FwInheritablePropComboBox)
+			switch (c)
 			{
-				return ((FwInheritablePropComboBox)c).IsInherited;
+				case FwInheritablePropComboBox inheritablePropComboBox:
+					return inheritablePropComboBox.IsInherited;
+				case FwColorCombo colorCombo:
+					return colorCombo.IsInherited;
+				case CheckBox checkBox:
+					return checkBox.CheckState == CheckState.Indeterminate;
 			}
-			if (c is FwColorCombo)
-			{
-				return ((FwColorCombo)c).IsInherited;
-			}
-			if (c is CheckBox)
-			{
-				return ((CheckBox)c).CheckState == CheckState.Indeterminate;
-			}
+
 			if (c == m_btnFontFeatures)
 			{
 				return (bool)m_btnFontFeatures.Tag;
@@ -561,12 +559,10 @@ namespace LanguageExplorer.Controls.Styles
 						m_chkSubscript.CheckState = CheckState.Unchecked;
 						m_chkSuperscript.CheckState = CheckState.Unchecked;
 						break;
-
 					case FwSuperscriptVal.kssvSub:
 						m_chkSubscript.CheckState = CheckState.Checked;
 						m_chkSuperscript.CheckState = CheckState.Unchecked;
 						break;
-
 					case FwSuperscriptVal.kssvSuper:
 						m_chkSubscript.CheckState = CheckState.Unchecked;
 						m_chkSuperscript.CheckState = CheckState.Checked;

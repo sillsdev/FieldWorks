@@ -34,11 +34,8 @@ namespace LanguageExplorer.Impls
 
 		public string LanguageDescriptor
 		{
-			get
-			{
-				return IsLangIgnore ? string.Format(LanguageExplorerControls.ksX_Ignored, LanguageDescriptorRaw) : LanguageDescriptorRaw;
-			}
-			set { LanguageDescriptorRaw = value; }
+			get => IsLangIgnore ? string.Format(LanguageExplorerControls.ksX_Ignored, LanguageDescriptorRaw) : LanguageDescriptorRaw;
+			set => LanguageDescriptorRaw = value;
 		}
 
 		public string WritingSystem { get; private set; }
@@ -74,14 +71,14 @@ namespace LanguageExplorer.Impls
 
 		public bool Exclude
 		{
-			get { return m_clsFieldDescription.IsExcluded; }
-			set { m_clsFieldDescription.IsExcluded = value; }
+			get => m_clsFieldDescription.IsExcluded;
+			set => m_clsFieldDescription.IsExcluded = value;
 		}
 
 		public bool AutoImport
 		{
-			get { return m_clsFieldDescription.IsAutoImportField; }
-			set { m_clsFieldDescription.IsAutoImportField = value; }
+			get => m_clsFieldDescription.IsAutoImportField;
+			set => m_clsFieldDescription.IsAutoImportField = value;
 		}
 
 		public void ClearRef()
@@ -93,14 +90,14 @@ namespace LanguageExplorer.Impls
 
 		public string RefField
 		{
-			get { return m_clsFieldDescription.RefFunc; }
-			set { m_clsFieldDescription.RefFunc = value; }
+			get => m_clsFieldDescription.RefFunc;
+			set => m_clsFieldDescription.RefFunc = value;
 		}
 
 		public string RefFieldWS
 		{
-			get { return m_clsFieldDescription.RefFuncWS; }
-			set { m_clsFieldDescription.RefFuncWS = value; }
+			get => m_clsFieldDescription.RefFuncWS;
+			set => m_clsFieldDescription.RefFuncWS = value;
 		}
 
 		public string FwId
@@ -125,13 +122,13 @@ namespace LanguageExplorer.Impls
 		public string[] ListViewStrings()
 		{
 			var customTag = string.Empty;
-			if (LexImportField is LexImportCustomField)
+			if (LexImportField is LexImportCustomField lexImportCustomField)
 			{
-				customTag = " (Custom " + ((LexImportCustomField)LexImportField).UIClass + ")";
+				customTag = $" (Custom {lexImportCustomField.UIClass})";
 			}
 			else if (IsRefField)
 			{
-				customTag = " (" + RefField + ")";
+				customTag = $" ({RefField})";
 			}
 			return new[] {"\\" + Marker,						// col 1
 				Convert.ToString(Order), // col 2
@@ -143,18 +140,8 @@ namespace LanguageExplorer.Impls
 
 		public bool IsLangIgnore => WritingSystem == Ignore;
 
-		public string DestinationField
-		{
-			get
-			{
-				// field level exclusion
-				if (Exclude)
-				{
-					return LanguageExplorerControls.ksDoNotImport;   // "Not imported";
-				}
-				return AutoImport ? LanguageExplorerControls.ksImportResidue_Auto : RawDestinationField;
-			}
-		}
+		// field level exclusion
+		public string DestinationField => Exclude ? LanguageExplorerControls.ksDoNotImport : AutoImport ? LanguageExplorerControls.ksImportResidue_Auto : RawDestinationField;
 
 		public ContentMapping(string marker, string desc, string className, string fwDest, string ws, string langDescriptor, int count, int order, ClsFieldDescription fdesc, bool isCustom)
 		{

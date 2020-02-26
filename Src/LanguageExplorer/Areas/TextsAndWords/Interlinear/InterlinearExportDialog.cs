@@ -100,12 +100,11 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				// Mustn't show any Scripture, so remove scripture from the list
 				textsToChooseFrom = textsToChooseFrom.Where(text => !ScriptureServices.ScriptureIsResponsibleFor(text)).ToList();
 			}
-			var interestingTexts = textsToChooseFrom.ToArray();
-			using (var dlg = new FilterTextsDialog(PropertyTable.GetValue<IApp>(LanguageExplorerConstants.App), m_cache, interestingTexts, PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider)))
+			using (var dlg = new FilterTextsDialog(PropertyTable.GetValue<IApp>(LanguageExplorerConstants.App), m_cache, textsToChooseFrom, PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider)))
 			{
 				// LT-12181: Was 'PruneToSelectedTexts(text) and most others were deleted.
 				// We want 'PruneToInterestingTextsAndSelect(interestingTexts, selectedText)'
-				dlg.PruneToInterestingTextsAndSelect(interestingTexts, (IStText)m_objRoot);
+				dlg.PruneToInterestingTextsAndSelect(textsToChooseFrom, (IStText)m_objRoot);
 				dlg.TreeViewLabel = ITextStrings.ksSelectSectionsExported;
 				if (dlg.ShowDialog(this) == DialogResult.OK)
 				{
@@ -134,22 +133,18 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		private object DoExportWithProgress(IThreadedProgress progressDlg, params object[] args)
 		{
 			var outPath = (string)args[0];
-			var fxtPath = (string)args[1];
 			if (m_objs.Count == 0)
 			{
 				m_objs.Add(m_objRoot);
 			}
-			var ddNode = m_ddNodes[NodeIndex(fxtPath)];
+			var ddNode = m_ddNodes[NodeIndex((string)args[1])];
 			var mode = XmlUtils.GetOptionalAttributeValue(ddNode, "mode", "xml");
 			using (new WaitCursor(this))
 			{
 				try
 				{
-					InterlinearExporter exporter;
-					ExportPhase1(mode, out exporter, outPath);
-					var rootDir = FwDirectoryFinder.CodeDirectory;
-					var transform = XmlUtils.GetOptionalAttributeValue(ddNode, "transform", "");
-					var sTransformPath = Path.Combine(rootDir, "Language Explorer", "Export Templates", "Interlinear");
+					ExportPhase1(mode, out var exporter, outPath);
+					var sTransformPath = Path.Combine(FwDirectoryFinder.CodeDirectory, "Language Explorer", "Export Templates", "Interlinear");
 					switch (mode)
 					{
 						default:
@@ -159,8 +154,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 							// no further processing needed.
 							break;
 						case "applySingleTransform":
-							var sTransform = Path.Combine(sTransformPath, transform);
-							exporter.PostProcess(sTransform, outPath, 1);
+							exporter.PostProcess(Path.Combine(sTransformPath, XmlUtils.GetOptionalAttributeValue(ddNode, "transform", string.Empty)), outPath, 1);
 							break;
 						case "openOffice":
 							var tempDir = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
@@ -187,7 +181,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 								{
 									contentFileTransform = XmlUtils.GetOptionalAttributeValue(implementation, "contentTransform", contentFileTransform);
 								}
-								var xsl2 = new XslCompiledTransform();
 								xsl.Load(Path.Combine(sTransformPath, contentFileTransform));
 								xsl.Transform(outPath, Path.Combine(tempDir, "content.xml"));
 								var mimetypePath = Path.Combine(tempDir, "mimetype");
@@ -218,11 +211,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		protected int NodeIndex(string pathname)
 		{
-			var file = Path.GetFileName(pathname);
+			var filename = Path.GetFileName(pathname);
 			for (var i = 0; i < m_ddNodes.Count; i++)
 			{
-				var fileN = m_ddNodes[i].BaseURI.Substring(m_ddNodes[i].BaseURI.LastIndexOf('/') + 1);
-				if (fileN == file)
+				if (m_ddNodes[i].BaseURI.Substring(m_ddNodes[i].BaseURI.LastIndexOf('/') + 1) == filename)
 				{
 					return i;
 				}

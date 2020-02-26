@@ -104,24 +104,28 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonologicalFeaturesAdvancedEdit
 			{
 				return;
 			}
-			if (tag == FsFeatStrucTags.kflidFeatureSpecs)
+			switch (tag)
 			{
-				var featStruc = m_cache.ServiceLocator.GetInstance<IFsFeatStrucRepository>().GetObject(hvo);
-				// only want to do something when the feature structure is part of a IPhPhoneme))
-				if (featStruc.OwningFlid != PhPhonemeTags.kflidFeatures)
+				case FsFeatStrucTags.kflidFeatureSpecs:
 				{
-					return;
+					var featStruc = m_cache.ServiceLocator.GetInstance<IFsFeatStrucRepository>().GetObject(hvo);
+					// only want to do something when the feature structure is part of a IPhPhoneme))
+					if (featStruc.OwningFlid != PhPhonemeTags.kflidFeatures)
+					{
+						return;
+					}
+					break;
+				}
+				case PhPhonemeTags.kflidFeatures when Phoneme != null && hvo == Phoneme.Hvo:
+				{
+					m_fs = Phoneme.FeaturesOA;
+					if (m_fs != null)
+					{
+						RootBox?.SetRootObject(m_fs.Hvo, m_vc, (int)VcFrags.kfragName, RootBox.Stylesheet);
+					}
+					break;
 				}
 			}
-			if (tag == PhPhonemeTags.kflidFeatures && Phoneme != null && hvo == Phoneme.Hvo)
-			{
-				m_fs = Phoneme.FeaturesOA;
-				if (m_fs != null)
-				{
-					RootBox?.SetRootObject(m_fs.Hvo, m_vc, (int)VcFrags.kfragName, RootBox.Stylesheet);
-				}
-			}
-
 			RootBox?.Reconstruct();
 		}
 	}

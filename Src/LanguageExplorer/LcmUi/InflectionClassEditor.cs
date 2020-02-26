@@ -153,10 +153,7 @@ namespace LanguageExplorer.LcmUi
 		/// </summary>
 		public LcmCache Cache
 		{
-			get
-			{
-				return m_cache;
-			}
+			get => m_cache;
 			set
 			{
 				m_cache = value;
@@ -171,15 +168,8 @@ namespace LanguageExplorer.LcmUi
 		/// </summary>
 		public XMLViewsDataCache DataAccess
 		{
-			get
-			{
-				if (m_sda == null)
-				{
-					throw new InvalidOperationException("Must set the special cache of a BulkEditSpecControl");
-				}
-				return m_sda;
-			}
-			set { m_sda = value; }
+			get => m_sda ?? throw new InvalidOperationException("Must set the special cache of a BulkEditSpecControl");
+			set => m_sda = value;
 		}
 
 		/// <summary>
@@ -202,14 +192,14 @@ namespace LanguageExplorer.LcmUi
 			// Todo: user selected a part of speech.
 			// Arrange to turn all relevant items blue.
 			// Remember which item was selected so we can later 'doit'.
-			if (e.Node is HvoTreeNode)
+			if (e.Node is HvoTreeNode hvoTreeNode)
 			{
-				var hvo = ((HvoTreeNode)e.Node).Hvo;
+				var hvo = hvoTreeNode.Hvo;
 				var clid = m_cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetClsid(hvo);
 				if (clid == MoInflClassTags.kClassId)
 				{
 					m_selectedHvo = hvo;
-					m_selectedLabel = e.Node.Text;
+					m_selectedLabel = hvoTreeNode.Text;
 				}
 				else
 				{
@@ -427,9 +417,8 @@ namespace LanguageExplorer.LcmUi
 		{
 			var fEnable = false;
 			var ls = m_cache.ServiceLocator.GetInstance<ILexSenseRepository>().GetObject(hvo);
-			if (ls.MorphoSyntaxAnalysisRA is IMoStemMsa)
+			if (ls.MorphoSyntaxAnalysisRA is IMoStemMsa msa)
 			{
-				var msa = (IMoStemMsa)ls.MorphoSyntaxAnalysisRA;
 				var pos = msa.PartOfSpeechRA;
 				if (pos != null && possiblePOS.Contains(pos.Hvo))
 				{
@@ -438,20 +427,6 @@ namespace LanguageExplorer.LcmUi
 				}
 			}
 			return fEnable;
-		}
-
-		private IPartOfSpeech GetPOS()
-		{
-			if (m_selectedHvo != 0)
-			{
-				var owner = m_cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(m_selectedHvo).Owner;
-				while (owner is IMoInflClass)
-				{
-					owner = owner.Owner;
-				}
-				return owner as IPartOfSpeech;
-			}
-			return null;
 		}
 
 		private HashSet<int> GetPossiblePartsOfSpeech()
@@ -508,28 +483,6 @@ namespace LanguageExplorer.LcmUi
 				}
 				return DynamicLoader.TypeForLoaderNode(colSpec) == typeof(InflectionClassEditor);
 			}
-
-			/// <summary>
-			/// Return the HVO of the list from which choices can be made.
-			/// Critical TODO JohnT: this isn't right; need to get the simple list chooser populated with the
-			/// items we put in the chooser; but how??
-			/// </summary>
-			public static int List(LcmCache cache)
-			{
-				return cache.LanguageProject.PartsOfSpeechOA.Hvo;
-			}
-
-			/// <summary>
-			/// This is a filter for an atomic property, and the "all" and "only" options should not be presented.
-			/// Review JOhnT: is this true?
-			/// </summary>
-			public static bool Atomic => true;
-
-			/// <summary>
-			/// The items for this filter are the leaves of the tree formed by the possibilities in the list,
-			/// by following the InflectionClasses property of each PartOfSpeech.
-			/// </summary>
-			public static int LeafFlid => PartOfSpeechTags.kflidInflectionClasses;
 		}
 	}
 }

@@ -70,8 +70,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		public void MorphologicalRuleUnapplied(IMorphologicalRule rule, int subruleIndex, Word input, Word output)
 		{
 			var trace = new XElement("MorphologicalRuleAnalysisTrace", CreateMorphologicalRuleElement(rule));
-			var aprule = rule as AffixProcessRule;
-			if (aprule != null)
+			if (rule is AffixProcessRule aprule)
 			{
 				trace.Add(CreateAllomorphElement(aprule.Allomorphs[subruleIndex]));
 			}
@@ -136,8 +135,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				CreateWordElement("Input", input, false),
 				CreateWordElement("Output", input, false));
 
-			var rewriteRule = rule as RewriteRule;
-			if (rewriteRule != null)
+			if (rule is RewriteRule rewriteRule)
 			{
 				var sr = rewriteRule.Subrules[subruleIndex];
 				switch (reason)
@@ -188,8 +186,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		public void MorphologicalRuleApplied(IMorphologicalRule rule, int subruleIndex, Word input, Word output)
 		{
 			var trace = new XElement("MorphologicalRuleSynthesisTrace", CreateMorphologicalRuleElement(rule));
-			var aprule = rule as AffixProcessRule;
-			if (aprule != null)
+			if (rule is AffixProcessRule aprule)
 			{
 				trace.Add(CreateAllomorphElement(aprule.Allomorphs[subruleIndex]));
 			}
@@ -229,8 +226,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 					break;
 
 				case FailureReason.RequiredStemName:
-					trace.Add(new XElement("FailureReason", new XAttribute("type", "fromStemName"),
-						new XElement("StemName", failureObj)));
+					trace.Add(new XElement("FailureReason", new XAttribute("type", "fromStemName"), new XElement("StemName", failureObj)));
 					break;
 
 				case FailureReason.RequiredMprFeatures:
@@ -401,18 +397,14 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		private XElement CreateMorphemeElement(Morpheme morpheme)
 		{
 			var msaID = (int?)morpheme.Properties["ID"] ?? 0;
-			IMoMorphSynAnalysis msa;
-			if (msaID == 0 || !m_cache.ServiceLocator.GetInstance<IMoMorphSynAnalysisRepository>().TryGetObject(msaID, out msa))
+			if (msaID == 0 || !m_cache.ServiceLocator.GetInstance<IMoMorphSynAnalysisRepository>().TryGetObject(msaID, out var msa))
 			{
 				return null;
 			}
 			var inflTypeID = (int?)morpheme.Properties["InflTypeID"] ?? 0;
 			ILexEntryInflType inflType = null;
-			if (inflTypeID != 0 && !m_cache.ServiceLocator.GetInstance<ILexEntryInflTypeRepository>().TryGetObject(inflTypeID, out inflType))
-			{
-				return null;
-			}
-			return HCParser.CreateMorphemeElement(msa, inflType);
+			return inflTypeID != 0 && !m_cache.ServiceLocator.GetInstance<ILexEntryInflTypeRepository>().TryGetObject(inflTypeID, out inflType)
+				? null : HCParser.CreateMorphemeElement(msa, inflType);
 		}
 
 		private static XElement CreateMorphologicalRuleElement(IMorphologicalRule rule)
@@ -425,8 +417,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		private static XElement CreateHCRuleElement(string name, IHCRule rule)
 		{
 			var id = 0;
-			var morpheme = rule as Morpheme;
-			if (morpheme != null)
+			if (rule is Morpheme morpheme)
 			{
 				id = (int?)morpheme.Properties["ID"] ?? 0;
 			}
@@ -439,14 +430,12 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			if (isNull)
 			{
 				var slotID = (int)allomorph.Morpheme.Properties["SlotID"];
-				IMoInflAffixSlot slot;
-				if (!m_cache.ServiceLocator.GetInstance<IMoInflAffixSlotRepository>().TryGetObject(slotID, out slot))
+				if (!m_cache.ServiceLocator.GetInstance<IMoInflAffixSlotRepository>().TryGetObject(slotID, out var slot))
 				{
 					return null;
 				}
 				var nullInflTypeID = (int)allomorph.Morpheme.Properties["InflTypeID"];
-				ILexEntryInflType nullInflType;
-				if (!m_cache.ServiceLocator.GetInstance<ILexEntryInflTypeRepository>().TryGetObject(nullInflTypeID, out nullInflType))
+				if (!m_cache.ServiceLocator.GetInstance<ILexEntryInflTypeRepository>().TryGetObject(nullInflTypeID, out var nullInflType))
 				{
 					return null;
 				}
@@ -454,7 +443,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				return new XElement("Allomorph", new XAttribute("id", 0), new XAttribute("type", isPrefix ? MoMorphTypeTags.kMorphPrefix : MoMorphTypeTags.kMorphSuffix),
 					new XElement("Form", "^0"),
 					new XElement("Morpheme", new XAttribute("id", 0), new XAttribute("type", "infl"),
-						new XElement("HeadWord", string.Format("Automatically generated null affix for the {0} irregularly inflected form", nullInflType.Name.BestAnalysisAlternative.Text)),
+						new XElement("HeadWord", $"Automatically generated null affix for the {nullInflType.Name.BestAnalysisAlternative.Text} irregularly inflected form"),
 						new XElement("Gloss", (nullInflType.GlossPrepend.BestAnalysisAlternative.Text == "***" ? "" : nullInflType.GlossPrepend.BestAnalysisAlternative.Text)
 							+ (nullInflType.GlossAppend.BestAnalysisAlternative.Text == "***" ? "" : nullInflType.GlossAppend.BestAnalysisAlternative.Text)),
 						new XElement("Category", slot.OwnerOfClass<IPartOfSpeech>().Abbreviation.BestAnalysisAlternative.Text),
@@ -462,15 +451,13 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			}
 
 			var formID = (int?)allomorph.Properties["ID"] ?? 0;
-			IMoForm form;
-			if (formID == 0 || !m_cache.ServiceLocator.GetInstance<IMoFormRepository>().TryGetObject(formID, out form))
+			if (formID == 0 || !m_cache.ServiceLocator.GetInstance<IMoFormRepository>().TryGetObject(formID, out var form))
 			{
 				return null;
 			}
 			var formID2 = (int?)allomorph.Properties["ID2"] ?? 0;
 			var msaID = (int)allomorph.Morpheme.Properties["ID"];
-			IMoMorphSynAnalysis msa;
-			if (!m_cache.ServiceLocator.GetInstance<IMoMorphSynAnalysisRepository>().TryGetObject(msaID, out msa))
+			if (!m_cache.ServiceLocator.GetInstance<IMoMorphSynAnalysisRepository>().TryGetObject(msaID, out var msa))
 			{
 				return null;
 			}

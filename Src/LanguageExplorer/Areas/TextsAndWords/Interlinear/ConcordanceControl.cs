@@ -81,8 +81,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			m_fwtbItem.StyleSheet = FwUtils.StyleSheetFromPropertyTable(PropertyTable);
 			m_fwtbItem.WritingSystemCode = m_cache.DefaultVernWs;
 			m_fwtbItem.Text = string.Empty;
-			m_fwtbItem.Visible = false; // Needed to prevent LT-12162 unneeded text box.
-
+			// Needed to prevent LT-12162 unneeded text box.
+			m_fwtbItem.Visible = false;
 			// Set some default values.
 			m_rbtnAnywhere.Checked = true;
 			m_btnRegExp.Enabled = false;
@@ -188,9 +188,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		private int CurrentSelectedWs()
 		{
-			var ws = m_cbWritingSystem.SelectedItem as CoreWritingSystemDefinition;
 			// Could have nothing selected.  See LT-8041.
-			return ws?.Handle ?? m_cache.DefaultVernWs;
+			return (m_cbWritingSystem.SelectedItem as CoreWritingSystemDefinition)?.Handle ?? m_cache.DefaultVernWs;
 		}
 
 		protected string GetConcordanceOption()
@@ -524,23 +523,13 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			ShowHelp.ShowHelpTopic(m_helpTopicProvider, "khtpSpecConcordanceCrit");
 		}
 
-		/// <summary>
-		/// Instead of reloading the list, clear the results if we are needing a reload.
-		/// This will force the user to hit 'Search' explicitly, to prevent automatic reloading
-		/// when the search might take a long time. LT-6967
-		/// </summary>
-		private void ClearResults()
-		{
-			LoadMatches(false);
-		}
-
 		protected override List<IParaFragment> SearchForMatches()
 		{
 			if (m_fObjectConcorded)
 			{
 				return FindMatchingItems();
 			}
-			List<IParaFragment> occurrences = null;
+			List<IParaFragment> occurrences;
 			using (new WaitCursor(this))
 			{
 				var sMatch = m_tbSearchText.Visible ? m_tbSearchText.Text.Trim() : m_cbSearchText.SelectedItem.ToString();
@@ -702,8 +691,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		private ICmObject GetMatchObject()
 		{
-			ICmObject matchingObject;
-			if (m_cache.ServiceLocator.GetInstance<ICmObjectRepository>().TryGetObject(m_hvoMatch, out matchingObject))
+			if (m_cache.ServiceLocator.GetInstance<ICmObjectRepository>().TryGetObject(m_hvoMatch, out var matchingObject))
 			{
 				return matchingObject;
 			}
@@ -714,10 +702,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				return null;
 			}
 			var newTarget = m_cache.ServiceLocator.GetObject(m_hvoMatch);
-			var targetAsWordform = newTarget as IWfiWordform;
-			if (targetAsWordform != null && targetAsWordform.AnalysesOC.Count > 0)
+			if (newTarget is IWfiWordform targetAsWordform && targetAsWordform.AnalysesOC.Any())
 			{
-				InitializeConcordanceSearch(((IWfiWordform)newTarget).AnalysesOC.First());
+				InitializeConcordanceSearch(targetAsWordform.AnalysesOC.First());
 			}
 			else
 			{
@@ -762,9 +749,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				if (wordform != null)
 				{
 					tss = wordform.Form.BestVernacularAlternative;
-					var ttp = tss.get_PropertiesAt(0);
-					int nVar;
-					ws = ttp.GetIntPropValues((int)FwTextPropType.ktptWs, out nVar);
+					ws = tss.get_PropertiesAt(0).GetIntPropValues((int)FwTextPropType.ktptWs, out _);
 				}
 				if (tss == null)
 				{
@@ -816,7 +801,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			var idx = 0;
 			for (var i = 0; i < m_cbLine.Items.Count; ++i)
 			{
-				if ((m_cbLine.Items[i] as ConcordLine).Line == line)
+				if (((ConcordLine)m_cbLine.Items[i]).Line == line)
 				{
 					idx = i;
 					break;
@@ -909,7 +894,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		private List<IParaFragment> UpdateConcordanceForBaseline(int ws)
 		{
-			var matcher = GetMatcher(ws) as SimpleStringMatcher;
+			var matcher = (SimpleStringMatcher)GetMatcher(ws);
 			if (!matcher.IsValid())
 			{
 				return new List<IParaFragment>();
@@ -985,50 +970,57 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		{
 			var result = new List<int>();
 			ICmPossibility pos;
-			if (msa is IMoInflAffMsa)
+			switch (msa)
 			{
-				pos = ((IMoInflAffMsa)msa).PartOfSpeechRA;
-				if (pos != null)
+				case IMoInflAffMsa inflAffMsa:
 				{
-					result.Add(pos.Hvo);
+					pos = inflAffMsa.PartOfSpeechRA;
+					if (pos != null)
+					{
+						result.Add(pos.Hvo);
+					}
+					break;
 				}
-			}
-			if (msa is IMoStemMsa)
-			{
-				pos = ((IMoStemMsa)msa).PartOfSpeechRA;
-				if (pos != null)
+				case IMoStemMsa stemMsa:
 				{
-					result.Add(pos.Hvo);
+					pos = stemMsa.PartOfSpeechRA;
+					if (pos != null)
+					{
+						result.Add(pos.Hvo);
+					}
+					break;
 				}
-			}
-			if (msa is IMoDerivAffMsa)
-			{
-				var derivMsa = (IMoDerivAffMsa)msa;
-				pos = derivMsa.ToPartOfSpeechRA;
-				if (pos != null)
+				case IMoDerivAffMsa derivAffMsa:
 				{
-					result.Add(pos.Hvo);
+					pos = derivAffMsa.ToPartOfSpeechRA;
+					if (pos != null)
+					{
+						result.Add(pos.Hvo);
+					}
+					pos = derivAffMsa.FromPartOfSpeechRA;
+					if (pos != null)
+					{
+						result.Add(pos.Hvo);
+					}
+					break;
 				}
-				pos = derivMsa.FromPartOfSpeechRA;
-				if (pos != null)
+				case IMoDerivStepMsa stepMsa:
 				{
-					result.Add(pos.Hvo);
+					pos = stepMsa.PartOfSpeechRA;
+					if (pos != null)
+					{
+						result.Add(pos.Hvo);
+					}
+					break;
 				}
-			}
-			if (msa is IMoDerivStepMsa)
-			{
-				pos = ((IMoDerivStepMsa)msa).PartOfSpeechRA;
-				if (pos != null)
+				case IMoUnclassifiedAffixMsa unclassifiedAffixMsa:
 				{
-					result.Add(pos.Hvo);
-				}
-			}
-			if (msa is IMoUnclassifiedAffixMsa)
-			{
-				pos = ((IMoUnclassifiedAffixMsa)msa).PartOfSpeechRA;
-				if (pos != null)
-				{
-					result.Add(pos.Hvo);
+					pos = unclassifiedAffixMsa.PartOfSpeechRA;
+					if (pos != null)
+					{
+						result.Add(pos.Hvo);
+					}
+					break;
 				}
 			}
 			return result;
@@ -1214,8 +1206,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				if (!m_vwPattern.UseRegularExpressions && m_vwPattern.MatchDiacritics && m_vwPattern.MatchOldWritingSystem && m_vwPattern.Pattern.RunCount == 1)
 				{
 					var target = m_vwPattern.Pattern.Text;
-					int nVar;
-					var wsMatch = m_vwPattern.Pattern.get_Properties(0).GetIntPropValues((int)FwTextPropType.ktptWs, out nVar);
+					var wsMatch = m_vwPattern.Pattern.get_Properties(0).GetIntPropValues((int)FwTextPropType.ktptWs, out _);
 					return m_vwPattern.MatchCase ? new ExactLiteralMatcher(target, wsMatch) : new ExactCaseInsensitiveLiteralMatcher(target, wsMatch);
 				}
 				matcher = new ExactMatcher(m_vwPattern);
@@ -1248,7 +1239,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		private void ShowRegExpMatcherError()
 		{
-			var errMsg = "Invalid regular expression";
+			const string errMsg = "Invalid regular expression";
 			MessageBox.Show(this, errMsg, @"Warning", MessageBoxButtons.OK, MessageBoxIcon.Error);
 		}
 
@@ -1334,13 +1325,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			var matcher = GetMatcher(ws);
 			foreach (var para in ParagraphsToSearch)
 			{
-				foreach (var seg in para.SegmentsOS)
-				{
-					if (matcher.Matches(seg.FreeTranslation.get_String(ws)))
-					{
-						result.Add(MakeOccurrence(para, seg.BeginOffset, seg.EndOffset));
-					}
-				}
+				result.AddRange(para.SegmentsOS.Where(seg => matcher.Matches(seg.FreeTranslation.get_String(ws))).Select(seg => MakeOccurrence(para, seg.BeginOffset, seg.EndOffset)));
 			}
 			return result;
 		}
@@ -1441,8 +1426,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			m_hvoMatch = cmo.Hvo;
 			m_backupHvo = cmo.Owner?.Hvo ?? 0;
 			var ttpObj = tssObj.get_PropertiesAt(0);
-			int nVar;
-			var ws = ttpObj.GetIntPropValues((int)FwTextPropType.ktptWs, out nVar);
+			var ws = ttpObj.GetIntPropValues((int)FwTextPropType.ktptWs, out _);
 			m_fwtbItem.WritingSystemCode = (ws > 0) ? ws : m_cache.DefaultVernWs;
 			var dyHeight = m_fwtbItem.PreferredHeight;
 			m_fwtbItem.Height = dyHeight;
@@ -1482,9 +1466,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				{
 					case WfiWordformTags.kClassId:
 						var wwf = (IWfiWordform)target;
-						int ws;
-						ITsString tss;
-						if (wwf.Form != null && wwf.Form.TryWs(WritingSystemServices.kwsFirstVern, out ws, out tss))
+						if (wwf.Form != null && wwf.Form.TryWs(WritingSystemServices.kwsFirstVern, out var ws, out var tss))
 						{
 							InitializeConcordanceSearch(tss.Text, ws, ConcordanceLines.kWord);
 						}
@@ -1510,8 +1492,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 						if (((string)tag[1]).Equals(AreaServices.PartOfSpeechGramInfo))
 						{
 							Debug.Assert(target is IMoMorphSynAnalysis);
-							var msa = target as IMoMorphSynAnalysis;
-							InitializeConcordanceSearch(target, msa.InterlinearNameTSS);
+							InitializeConcordanceSearch(target, ((IMoMorphSynAnalysis)target).InterlinearNameTSS);
 						}
 						else
 						{

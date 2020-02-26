@@ -279,7 +279,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				if (InterlinWordControl != null && InterlinWordControl.RightToLeftWritingSystem && InterlinWordControl is UserControl)
 				{
-					var sandbox = InterlinWordControl as UserControl;
+					var sandbox = (UserControl)InterlinWordControl;
 					if (panelSandbox.Width != sandbox.Width)
 					{
 						panelSandbox.Width = sandbox.Width;
@@ -615,8 +615,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItemsTuple, mainMenuStrip, btnBreakPhrase_Click, menuItem.Text, menuItem.ToolTipText, menuItem.ShortcutKeys, menuItem.Image);
 			}
 			var wantSeparator = true;
-			Tuple<EventHandler, Func<Tuple<bool, bool>>> handlerAndFunction;
-			if (_sharedEventHandlers.TryGetEventHandler(Command.CmdRepeatLastMoveLeft, out handlerAndFunction))
+			if (_sharedEventHandlers.TryGetEventHandler(Command.CmdRepeatLastMoveLeft, out Tuple<EventHandler, Func<Tuple<bool, bool>>> handlerAndFunction))
 			{
 				// <item label="-" translate="do not translate" />
 				ToolStripMenuItemFactory.CreateToolStripSeparatorForContextMenuStrip(mainMenuStrip);
@@ -712,8 +711,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				{ Command.CmdBreakPhrase, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(btnBreakPhrase_Click, ()=> CanBreakPhrase) }
 			};
-			Tuple<EventHandler, Func<Tuple<bool, bool>>> handlerAndFunction;
-			if (_sharedEventHandlers.TryGetEventHandler(Command.CmdRepeatLastMoveLeft, out handlerAndFunction))
+			if (_sharedEventHandlers.TryGetEventHandler(Command.CmdRepeatLastMoveLeft, out Tuple<EventHandler, Func<Tuple<bool, bool>>> handlerAndFunction))
 			{
 				// <item command="CmdRepeatLastMoveLeft" />
 				dataMenuHandlers.Add(Command.CmdRepeatLastMoveLeft, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(handlerAndFunction.Item1, () => handlerAndFunction.Item2.Invoke()));
@@ -831,8 +829,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				// Is there another segment before the next wordform?
 				// It would have no analyses or just punctuation.
 				// It could have "real" annotations.
-				AnalysisOccurrence realAnalysis;
-				var nextSeg = InterlinDoc.GetNextSegment(SelectedOccurrence.Segment.Owner.IndexInOwner, SelectedOccurrence.Segment.IndexInOwner, false, out realAnalysis); // downward move
+				var nextSeg = InterlinDoc.GetNextSegment(SelectedOccurrence.Segment.Owner.IndexInOwner, SelectedOccurrence.Segment.IndexInOwner, false, out _); // downward move
 				if (nextSeg != null && nextSeg != nextWordform.Segment)
 				{
 					// This is a segment before the one containing the next wordform.
@@ -918,8 +915,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// <summary />
 		protected virtual void ApproveAnalysis(bool fSaveGuess)
 		{
-			IWfiAnalysis obsoleteAna;
-			var newAnalysisTree = InterlinWordControl.GetRealAnalysis(fSaveGuess, out obsoleteAna);
+			var newAnalysisTree = InterlinWordControl.GetRealAnalysis(fSaveGuess, out var obsoleteAna);
 			// if we've made it this far, might as well try to go the whole way through the UOW.
 			SaveAnalysisForAnnotation(SelectedOccurrence, newAnalysisTree);
 			FinishSettingAnalysis(newAnalysisTree, InitialAnalysis);
@@ -981,19 +977,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		private static void TryCacheRealWordForm(AnalysisOccurrence occurrence)
 		{
-			ITsString tssBaselineCbaForm;
-			if (BaselineFormDiffersFromAnalysisWord(occurrence, out tssBaselineCbaForm))
-			{
-			}
+			BaselineFormDiffersFromAnalysisWord(occurrence, out _);
 		}
-
-		///// <summary>
-		///// We can navigate from one bundle to another if the focus box controller is
-		///// actually visible. (Earlier versions of this method also checked it was in the right tool, but
-		///// that was when the sandbox included this functionality. The controller is only shown when navigation
-		///// is possible.)
-		///// </summary>
-		//protected bool CanNavigateBundles => Visible;
 
 		/// <summary>
 		/// Move to the next bundle in the direction indicated by fForward. If fSaveGuess is true, save guesses in the current position,
@@ -1135,9 +1120,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				return;
 			}
 			var oldWf = SelectedOccurrence.Analysis.Wordform;
-			var stText = SelectedOccurrence.Paragraph.Owner as IStText;
-			if (stText == null || stText.ParagraphsOS.Count == 0)
+			if (!(SelectedOccurrence.Paragraph.Owner is IStText stText) || !stText.ParagraphsOS.Any())
+			{
 				return; // paranoia, we should be in one of its paragraphs.
+			}
 			// We don't need to discard existing guesses, even though we will modify Segment.Analyses,
 			// since guesses for other wordforms will not be affected, and there will be no remaining
 			// guesses for the word we're confirming everywhere. (This needs to be outside the block
@@ -1147,8 +1133,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				// Needs to include GetRealAnalysis, since it might create a new one.
 				UowHelpers.UndoExtension(uowBaseText.Replace("_", string.Empty), Cache.ActionHandlerAccessor, () =>
 				{
-					IWfiAnalysis obsoleteAna;
-					var newAnalysisTree = InterlinWordControl.GetRealAnalysis(true, out obsoleteAna);
+					var newAnalysisTree = InterlinWordControl.GetRealAnalysis(true, out var obsoleteAna);
 					var wf = newAnalysisTree.Wordform;
 					if (newAnalysisTree.Analysis == wf)
 					{
@@ -1179,16 +1164,13 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		private void ApplyAnalysisToInstancesOfWordform(IAnalysis newAnalysis, IWfiWordform oldWordform, IWfiWordform newWordform)
 		{
 			var navigator = new SegmentServices.StTextAnnotationNavigator(SelectedOccurrence);
-			foreach (var occ in navigator.GetAnalysisOccurrencesAdvancingInStText().ToList())
+			// We certainly want to update any occurrence that exactly matches the wordform of the analysis we are confirming.
+			// If oldWordform is different, we are confirming a different case form from what occurred in the text,
+			// and we only confirm these if SelectedOccurrence and occ are both sentence-initial.
+			// We want to do that only for sentence-initial occurrences.
+			foreach (var occ in navigator.GetAnalysisOccurrencesAdvancingInStText().ToList().Where(occ => occ.Analysis == newWordform || occ.Analysis == oldWordform && occ.Index == 0 && SelectedOccurrence.Index == 0))
 			{
-				// We certainly want to update any occurrence that exactly matches the wordform of the analysis we are confirming.
-				// If oldWordform is different, we are confirming a different case form from what occurred in the text,
-				// and we only confirm these if SelectedOccurrence and occ are both sentence-initial.
-				// We want to do that only for sentence-initial occurrences.
-				if (occ.Analysis == newWordform || (occ.Analysis == oldWordform && occ.Index == 0 && SelectedOccurrence.Index == 0))
-				{
-					occ.Segment.AnalysesRS[occ.Index] = newAnalysis;
-				}
+				occ.Segment.AnalysesRS[occ.Index] = newAnalysis;
 			}
 		}
 
@@ -1396,15 +1378,14 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			private AnalysisOccurrence OccurrenceBeforeApproveAndMove { get; set; }
 			private AnalysisOccurrence OccurrenceAfterApproveAndMove { get; set; }
 
-			private UndoRedoApproveAnalysis AddUndoRedoAction(AnalysisOccurrence currentAnnotation, AnalysisOccurrence newAnnotation)
+			private void AddUndoRedoAction(AnalysisOccurrence currentAnnotation, AnalysisOccurrence newAnnotation)
 			{
 				if (Cache.ActionHandlerAccessor == null || currentAnnotation == newAnnotation)
 				{
-					return null;
+					return;
 				}
 				var undoRedoAction = new UndoRedoApproveAnalysis(FocusBox.InterlinDoc, currentAnnotation, newAnnotation);
 				Cache.ActionHandlerAccessor.AddAction(undoRedoAction);
-				return undoRedoAction;
 			}
 
 			protected override void DisposeManagedResources()

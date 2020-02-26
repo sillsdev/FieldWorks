@@ -3,6 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using LanguageExplorer.Controls.DetailControls;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 
 namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
@@ -39,7 +40,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				m_displayParent = value;
 				if (m_VectorReferenceVc != null)
 				{
-					(m_VectorReferenceVc as LexReferenceSequenceVc).DisplayParent = value;
+					((LexReferenceSequenceVc)m_VectorReferenceVc).DisplayParent = value;
 				}
 			}
 		}
@@ -53,16 +54,14 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		protected override void Delete()
 		{
 			var sel = RootBox.Selection;
-			int cvsli;
-			int hvoObj;
-			if (!CheckForValidDelete(sel, out cvsli, out hvoObj))
+			if (!CheckForValidDelete(sel, out var cvsli, out var hvoObj))
 			{
 				return;
 			}
 			if (m_displayParent != null && hvoObj == m_displayParent.Hvo)
 			{
 				// We need to handle this the same way as the delete command in the slice menu.
-				Publisher.Publish("DataTreeDelete", null);
+				Publisher.Publish(new PublisherParameterObject("DataTreeDelete"));
 			}
 			else
 			{

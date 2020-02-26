@@ -109,7 +109,7 @@ namespace LanguageExplorer.Areas
 			}
 			if (!ReferenceEquals(oldOwningObject, newOwningObject) && OwningObject != null)
 			{
-				Publisher.Publish(AreaServices.RecordListOwningObjChanged, this);
+				Publisher.Publish(new PublisherParameterObject(AreaServices.RecordListOwningObjChanged, this));
 			}
 		}
 

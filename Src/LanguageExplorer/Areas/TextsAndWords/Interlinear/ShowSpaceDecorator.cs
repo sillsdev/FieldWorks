@@ -64,8 +64,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			var index = text.IndexOf(' ');
 			while (index >= 0)
 			{
-				int nVar;
-				if (bldr.get_PropertiesAt(index).GetIntPropValues((int)FwTextPropType.ktptBackColor, out nVar) == KzwsBackColor)
+				if (bldr.get_PropertiesAt(index).GetIntPropValues((int)FwTextPropType.ktptBackColor, out _) == KzwsBackColor)
 				{
 					bldr.Replace(index, index + 1, AnalysisOccurrence.KstrZws, null);
 				}
@@ -73,11 +72,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			}
 			for (var irun = bldr.RunCount - 1; irun >= 0; irun--)
 			{
-				int nVar;
-				if (bldr.get_Properties(irun).GetIntPropValues((int)FwTextPropType.ktptBackColor, out nVar) == KzwsBackColor)
+				if (bldr.get_Properties(irun).GetIntPropValues((int)FwTextPropType.ktptBackColor, out _) == KzwsBackColor)
 				{
-					int ichMin, ichLim;
-					bldr.GetBoundsOfRun(irun, out ichMin, out ichLim);
+					bldr.GetBoundsOfRun(irun, out var ichMin, out var ichLim);
 					bldr.SetIntPropValues(ichMin, ichLim, (int)FwTextPropType.ktptBackColor, -1, -1);
 				}
 			}

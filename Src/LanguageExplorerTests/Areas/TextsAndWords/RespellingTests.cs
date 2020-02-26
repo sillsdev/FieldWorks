@@ -84,11 +84,10 @@ namespace LanguageExplorerTests.Areas.TextsAndWords
 		[Test]
 		public void CanUndoChangeMultipleOccurrences_InSingleSegment()
 		{
-			IStTxtPara para;
 			const string ksParaText = "If we hope we are hoping, we are.";
 			const string ksWordToReplace = "we";
 			const string ksNewWord = ksWordToReplace + "Q";
-			var respellUndoAction = SetUpParaAndRespellUndoAction(ksParaText, ksWordToReplace, ksNewWord, out para);
+			var respellUndoAction = SetUpParaAndRespellUndoAction(ksParaText, ksWordToReplace, ksNewWord, out var para);
 			respellUndoAction.AllChanged = false;
 			respellUndoAction.KeepAnalyses = true;
 			respellUndoAction.UpdateLexicalEntries = true;
@@ -101,11 +100,10 @@ namespace LanguageExplorerTests.Areas.TextsAndWords
 		[Test]
 		public void CanRespellShortenWord()
 		{
-			IStTxtPara para;
 			const string ksParaText = "somelongwords must be short somelongwords. somelongwords are. somelongwords aren't. somelongwords somelongwords";
 			const string ksWordToReplace = "somelongwords";
 			const string ksNewWord = "s";
-			var respellUndoAction = SetUpParaAndRespellUndoAction(ksParaText, ksWordToReplace, ksNewWord, out para);
+			var respellUndoAction = SetUpParaAndRespellUndoAction(ksParaText, ksWordToReplace, ksNewWord, out var para);
 			respellUndoAction.AllChanged = false;
 			respellUndoAction.KeepAnalyses = true;
 			respellUndoAction.UpdateLexicalEntries = true;
@@ -118,12 +116,11 @@ namespace LanguageExplorerTests.Areas.TextsAndWords
 		[Test]
 		public void CanRespellMultiMorphemicWordAndKeepUsages()
 		{
-			IStTxtPara para;
 			const string ksParaText = "somelongwords must be multimorphemic. somelongwords multimorphemic are.";
 			const string ksWordToReplace = "multimorphemic";
 			const string ksNewWord = "massivemorphemic";
 			var morphs = new[] { "multi", "morphemic" };
-			var respellUndoAction = SetUpParaAndRespellUndoAction(ksParaText, ksWordToReplace, ksNewWord, out para, true, morphs);
+			var respellUndoAction = SetUpParaAndRespellUndoAction(ksParaText, ksWordToReplace, ksNewWord, out var para, true, morphs);
 			Assert.AreEqual(2, para.SegmentsOS[0].AnalysesRS[3].Analysis.MorphBundlesOS.Count, "Should have 2 morph bundles before spelling change.");
 			respellUndoAction.AllChanged = true;
 			respellUndoAction.KeepAnalyses = true;
@@ -146,11 +143,10 @@ namespace LanguageExplorerTests.Areas.TextsAndWords
 		[Test]
 		public void CanUndoChangeMultipleOccurrences_InMultipleSegmentsInPara()
 		{
-			IStTxtPara para;
 			const string ksParaText = "If we hope we are nice. Hoping is what we do when we want. Therefore, we are nice, aren't we? Yes.";
 			const string ksWordToReplace = "we";
 			const string ksNewWord = ksWordToReplace + "Q";
-			var respellUndoAction = SetUpParaAndRespellUndoAction(ksParaText, ksWordToReplace, ksNewWord, out para);
+			var respellUndoAction = SetUpParaAndRespellUndoAction(ksParaText, ksWordToReplace, ksNewWord, out var para);
 			respellUndoAction.AllChanged = false;
 			respellUndoAction.KeepAnalyses = true;
 			respellUndoAction.UpdateLexicalEntries = true;
@@ -167,11 +163,10 @@ namespace LanguageExplorerTests.Areas.TextsAndWords
 		[Test]
 		public void CanUndoChangeMultipleOccurrences_InSingleSegment_Glosses()
 		{
-			IStTxtPara para;
 			const string ksParaText = "If we hope we are hoping, we are.";
 			const string ksWordToReplace = "we";
 			const string ksNewWord = ksWordToReplace + "Q";
-			var respellUndoAction = SetUpParaAndRespellUndoAction(ksParaText, ksWordToReplace, ksNewWord, out para,  true);
+			var respellUndoAction = SetUpParaAndRespellUndoAction(ksParaText, ksWordToReplace, ksNewWord, out var para,  true);
 			respellUndoAction.AllChanged = false;
 			respellUndoAction.KeepAnalyses = true;
 			respellUndoAction.UpdateLexicalEntries = true;
@@ -193,11 +188,10 @@ namespace LanguageExplorerTests.Areas.TextsAndWords
 		[Test]
 		public void CanUndoChangeMultipleOccurrences_InMultipleSegmentsInPara_Glosses()
 		{
-			IStTxtPara para;
 			const string ksParaText = "If we hope we are nice. Hoping is what we do when we want. Therefore, we are nice, aren't we? Yes.";
 			const string ksWordToReplace = "we";
 			const string ksNewWord = ksWordToReplace + "Q";
-			var respellUndoAction = SetUpParaAndRespellUndoAction(ksParaText, ksWordToReplace, ksNewWord, out para, true);
+			var respellUndoAction = SetUpParaAndRespellUndoAction(ksParaText, ksWordToReplace, ksNewWord, out var para, true);
 			UndoableUnitOfWorkHelper.Do("Undo Added FT", "Redo Added FT", m_actionHandler, () =>
 			{
 				var i = 0;
@@ -241,11 +235,10 @@ namespace LanguageExplorerTests.Areas.TextsAndWords
 		[Test]
 		public void CanUndoChangeSingleOccurrence_InSingleSegment()
 		{
-			IStTxtPara paragraph;
 			const string ksParaText = "If we hope we are hoping, we are.";
 			const string ksWordToReplace = "hope";
 			const string ksNewWord = ksWordToReplace + "ful";
-			var respellUndoAction = SetUpParaAndRespellUndoAction(ksParaText, ksWordToReplace, ksNewWord, out paragraph);
+			var respellUndoAction = SetUpParaAndRespellUndoAction(ksParaText, ksWordToReplace, ksNewWord, out var paragraph);
 			respellUndoAction.AllChanged = true;
 			respellUndoAction.CopyAnalyses = false;
 			respellUndoAction.KeepAnalyses = false;

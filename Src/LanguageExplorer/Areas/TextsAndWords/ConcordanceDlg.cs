@@ -207,8 +207,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 					var tss = gloss.Form.BestAnalysisAlternative;
 					var normalizedText = TsStringUtils.NormalizeToNFC(tss.Text);
 					var props = tss.get_PropertiesAt(0);
-					int nVar;
-					var ws = props.GetIntPropValues((int)FwTextPropType.ktptWs, out nVar);
+					var ws = props.GetIntPropValues((int)FwTextPropType.ktptWs, out _);
 					var fontname = _wordform.Cache.ServiceLocator.WritingSystemManager.Get(ws).DefaultFontName;
 					var srcTnGloss = new TreeNode
 					{
@@ -612,8 +611,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		private void SetRecordStatus()
 		{
 			var objectCount = _currentBrowseView.MyRecordList.ListSize;
-			var message = objectCount == 0 ? LanguageExplorerResources.ksNoRecords : $"{_currentBrowseView.BrowseViewer.SelectedIndex + 1}/{objectCount}";
-			_toolStripRecordStatusLabel.Text = message;
+			_toolStripRecordStatusLabel.Text = objectCount == 0 ? LanguageExplorerResources.ksNoRecords : $"{_currentBrowseView.BrowseViewer.SelectedIndex + 1}/{objectCount}";
 			_toolStripProgressBar.Value = _toolStripProgressBar.Minimum;    // clear the progress bar
 		}
 

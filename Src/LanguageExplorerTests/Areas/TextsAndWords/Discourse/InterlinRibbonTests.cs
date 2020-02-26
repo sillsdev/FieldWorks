@@ -130,7 +130,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 			int heightMany = _ribbon.RootBox.Height;
 			Assert.IsTrue(widthMany > widthOne, "adding more wordforms should make the root box wider");
 			// In a real view they might not be exactly equal due to subscripts and the like, but our
-			// text and anaysis are very simple.
+			// text and analysis are very simple.
 			Assert.AreEqual(heightOne, heightMany, "ribbon should not wrap!");
 		}
 
@@ -208,14 +208,11 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 			{
 				using (new HoldGraphics(this))
 				{
-					Rectangle rcSrcRoot, rcDstRoot;
-					GetCoordRects(out rcSrcRoot, out rcDstRoot);
-					Rect rcPrimary, rcSec, rcPrimary2;
-					bool fSplit, fEndBeforeAnchor;
+					GetCoordRects(out var rcSrcRoot, out var rcDstRoot);
 					var anchor = RootBox.Selection.EndPoint(false);
 					var end = RootBox.Selection.EndPoint(true);
-					anchor.Location(m_graphicsManager.VwGraphics, rcSrcRoot, rcDstRoot, out rcPrimary, out rcSec, out fSplit, out fEndBeforeAnchor);
-					end.Location(m_graphicsManager.VwGraphics, rcSrcRoot, rcDstRoot, out rcPrimary2, out rcSec, out fSplit, out fEndBeforeAnchor);
+					anchor.Location(m_graphicsManager.VwGraphics, rcSrcRoot, rcDstRoot, out var rcPrimary, out _, out _, out _);
+					end.Location(m_graphicsManager.VwGraphics, rcSrcRoot, rcDstRoot, out var rcPrimary2, out _, out _, out _);
 					var left = Math.Min(rcPrimary.left, rcPrimary2.left);
 					var top = Math.Min(rcPrimary.top, rcPrimary2.top);
 					var width = Math.Max(rcPrimary.right, rcPrimary2.right) - left;

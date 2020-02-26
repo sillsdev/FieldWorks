@@ -31,8 +31,6 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonologicalRuleEdit
 		private MultiPane _multiPane;
 		private RecordBrowseActiveView _recordBrowseActiveView;
 		private IRecordList _recordList;
-		[Import(AreaServices.GrammarAreaMachineName)]
-		private IArea _area;
 
 		#region Implementation of IMajorFlexComponent
 
@@ -73,22 +71,19 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonologicalRuleEdit
 			var mainMultiPaneParameters = new MultiPaneParameters
 			{
 				Orientation = Orientation.Vertical,
-				Area = _area,
+				Area = Area,
 				Id = "PhonologicalRuleItemsAndDetailMultiPane",
 				ToolMachineName = MachineName
 			};
-
 			var recordEditViewPaneBar = new PaneBar();
 			var panelButton = new PanelButton(majorFlexComponentParameters.FlexComponentParameters, null, showHiddenFieldsPropertyName, LanguageExplorerResources.ksShowHiddenFields, LanguageExplorerResources.ksShowHiddenFields)
 			{
 				Dock = DockStyle.Right
 			};
 			recordEditViewPaneBar.AddControls(new List<Control> { panelButton });
-
 			_multiPane = MultiPaneFactory.CreateMultiPaneWithTwoPaneBarContainersInMainCollapsingSplitContainer(majorFlexComponentParameters.FlexComponentParameters,
 				majorFlexComponentParameters.MainCollapsingSplitContainer, mainMultiPaneParameters, _recordBrowseActiveView, "Browse", new PaneBar(),
 				recordEditView, "Details", recordEditViewPaneBar);
-
 			// Too early before now.
 			recordEditView.FinishInitialization();
 		}
@@ -140,7 +135,8 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonologicalRuleEdit
 		/// <summary>
 		/// Get the area for the tool.
 		/// </summary>
-		public IArea Area => _area;
+		[field: Import(AreaServices.GrammarAreaMachineName)]
+		public IArea Area { get; private set; }
 
 		/// <summary>
 		/// Get the image for the area.
@@ -184,7 +180,6 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonologicalRuleEdit
 				_recordBrowseActiveView = recordBrowseActiveView;
 				_recordList = recordList;
 				_phPhonData = _majorFlexComponentParameters.LcmCache.LanguageProject.PhonologicalDataOA;
-
 				SetupUiWidgets(tool);
 				CreateBrowseViewContextMenu();
 			}
@@ -196,7 +191,6 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonologicalRuleEdit
 				var insertToolBarDictionary = toolUiWidgetParameterObject.ToolBarItemsForTool[ToolBar.Insert];
 				UiWidgetServices.InsertPair(insertToolBarDictionary, insertMenuDictionary, Command.CmdInsertPhRegularRule, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdInsertPhRegularRule_Click, () => UiWidgetServices.CanSeeAndDo));
 				UiWidgetServices.InsertPair(insertToolBarDictionary, insertMenuDictionary, Command.CmdInsertPhMetathesisRule, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdInsertPhMetathesisRule_Click, () => UiWidgetServices.CanSeeAndDo));
-
 				_majorFlexComponentParameters.UiWidgetController.AddHandlers(toolUiWidgetParameterObject);
 			}
 

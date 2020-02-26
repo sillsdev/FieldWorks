@@ -239,14 +239,8 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 		/// </summary>
 		public new bool HScroll
 		{
-			get
-			{
-				return base.HScroll;
-			}
-			set
-			{
-				base.HScroll = value;
-			}
+			get => base.HScroll;
+			set => base.HScroll = value;
 		}
 
 		/// <summary>
@@ -259,18 +253,12 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 				var nLineHeight = 0;
 				using (new HoldGraphics(this))
 				{
-					Rectangle rcSrcRoot;
-					Rectangle rcDstRoot;
-					GetCoordRects(out rcSrcRoot, out rcDstRoot);
+					GetCoordRects(out var rcSrcRoot, out var rcDstRoot);
 
-					Rect rdIP;
-					Rect rdSecondary;
-					bool fSplit;
-					bool fEndBeforeAnchor;
 					var vwsel = RootBox.Selection;
 					if (vwsel != null)
 					{
-						vwsel.Location(m_graphicsManager.VwGraphics, rcSrcRoot, rcDstRoot, out rdIP, out rdSecondary, out fSplit, out fEndBeforeAnchor);
+						vwsel.Location(m_graphicsManager.VwGraphics, rcSrcRoot, rcDstRoot, out var rdIP, out _, out _, out _);
 						nLineHeight = rdIP.bottom - rdIP.top;
 					}
 				}
@@ -289,18 +277,12 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 				var nSelWidth = 0;
 				using (new HoldGraphics(this))
 				{
-					Rectangle rcSrcRoot;
-					Rectangle rcDstRoot;
-					GetCoordRects(out rcSrcRoot, out rcDstRoot);
+					GetCoordRects(out var rcSrcRoot, out var rcDstRoot);
 
-					Rect rdIP;
-					Rect rdSecondary;
-					bool fSplit;
-					bool fEndBeforeAnchor;
 					var vwsel = RootBox.Selection;
 					if (vwsel != null)
 					{
-						vwsel.Location(m_graphicsManager.VwGraphics, rcSrcRoot, rcDstRoot, out rdIP, out rdSecondary, out fSplit, out fEndBeforeAnchor);
+						vwsel.Location(m_graphicsManager.VwGraphics, rcSrcRoot, rcDstRoot, out var rdIP, out _, out _, out _);
 						nSelWidth = rdIP.right - rdIP.left;
 					}
 				}
@@ -497,8 +479,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 						AddParagraphContents(vwenv);
 						break;
 					case 6: // StTxtPara, display details of our outer object
-						int hvoOuter, tag, ihvo;
-						vwenv.GetOuterObject(vwenv.EmbeddingLevel - 1, out hvoOuter, out tag, out ihvo);
+						vwenv.GetOuterObject(vwenv.EmbeddingLevel - 1, out var hvoOuter, out var tag, out var ihvo);
 						var tss = TsStringUtils.MakeString("Hvo = " + hvoOuter + "; Tag = " + tag + "; Ihvo = " + ihvo, m_wsDefault);
 						vwenv.AddString(tss);
 						break;

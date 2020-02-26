@@ -27,7 +27,7 @@ namespace LCMBrowser
 		/// </summary>
 		public override string ToString()
 		{
-			return (Text ?? string.Empty);
+			return Text ?? string.Empty;
 		}
 	}
 }

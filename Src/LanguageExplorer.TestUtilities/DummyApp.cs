@@ -34,27 +34,12 @@ namespace LanguageExplorer.TestUtilities
 			throw new NotSupportedException();
 		}
 
-		public string HelpFile
-		{
-			get
-			{
-				throw new NotSupportedException();
-			}
-		}
-		public string SupportEmailAddress
-		{
-			get
-			{
-				throw new NotSupportedException();
-			}
-		}
-		public string FeedbackEmailAddress
-		{
-			get
-			{
-				throw new NotSupportedException();
-			}
-		}
+		public string HelpFile => throw new NotSupportedException();
+
+		public string SupportEmailAddress => throw new NotSupportedException();
+
+		public string FeedbackEmailAddress => throw new NotSupportedException();
+
 		public bool PreFilterMessage(ref Message m)
 		{
 			throw new NotSupportedException();
@@ -66,22 +51,10 @@ namespace LanguageExplorer.TestUtilities
 		}
 
 		public MsrSysType MeasurementSystem { get; set; }
-		public Form ActiveMainWindow
-		{
-			get
-			{
-				throw new NotSupportedException();
-			}
-		}
+		public Form ActiveMainWindow => throw new NotSupportedException();
 		public string ApplicationName => "DummyApp";
 
-		public LcmCache Cache
-		{
-			get
-			{
-				throw new NotSupportedException();
-			}
-		}
+		public LcmCache Cache => throw new NotSupportedException();
 
 		public PictureHolder PictureHolder { get; private set; }
 
@@ -95,13 +68,8 @@ namespace LanguageExplorer.TestUtilities
 			throw new NotSupportedException();
 		}
 
-		public RegistryKey SettingsKey
-		{
-			get
-			{
-				throw new NotSupportedException();
-			}
-		}
+		public RegistryKey SettingsKey => throw new NotSupportedException();
+
 		public bool Synchronize(SyncMsg sync)
 		{
 			throw new NotSupportedException();

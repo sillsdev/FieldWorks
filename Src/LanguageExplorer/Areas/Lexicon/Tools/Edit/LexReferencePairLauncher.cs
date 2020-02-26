@@ -30,7 +30,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		{
 			get
 			{
-				var lr = m_obj as ILexReference;
+				var lr = (ILexReference)m_obj;
 				if (lr.TargetsRS.Count < 2)
 				{
 					return null;
@@ -47,7 +47,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				Debug.Assert(value != null);
 
 				var index = 0;
-				var lr = m_obj as ILexReference;
+				var lr = (ILexReference)m_obj;
 				var item = lr.TargetsRS[0];
 				if (item == m_displayParent)
 				{
@@ -166,7 +166,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				m_displayParent = value;
 				if (m_atomicRefView != null)
 				{
-					(m_atomicRefView as LexReferencePairView).DisplayParent = value;
+					((LexReferencePairView)m_atomicRefView).DisplayParent = value;
 				}
 			}
 		}

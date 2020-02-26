@@ -59,9 +59,7 @@ namespace LanguageExplorer.Filters
 			{
 				return false;
 			}
-			DateTime time;
-			GenDate gen;
-			if (!HandleGenDate && DateTime.TryParse(text, out time))
+			if (!HandleGenDate && DateTime.TryParse(text, out var time))
 			{
 				switch (MatchType)
 				{
@@ -76,7 +74,7 @@ namespace LanguageExplorer.Filters
 						return time < Start || time > End;
 				}
 			}
-			else if (HandleGenDate && GenDate.TryParse(text, out gen))
+			else if (HandleGenDate && GenDate.TryParse(text, out var gen))
 			{
 				switch (MatchType)
 				{
@@ -145,7 +143,7 @@ namespace LanguageExplorer.Filters
 			return gen.Day <= date.Day && gen.Precision != GenDate.PrecisionType.After;
 		}
 
-		private bool GenDateMightBeBeforeDate(GenDate gen, DateTime date, bool fAD)
+		private static bool GenDateMightBeBeforeDate(GenDate gen, DateTime date, bool fAD)
 		{
 			if (gen.IsAD && !fAD) // AD > BC
 			{
@@ -283,11 +281,7 @@ namespace LanguageExplorer.Filters
 			{
 				return gen.Precision != GenDate.PrecisionType.Before;
 			}
-			if (gen.Day == date.Day)
-			{
-				return gen.Precision != GenDate.PrecisionType.Before;
-			}
-			return gen.Day > date.Day || gen.Precision == GenDate.PrecisionType.After;
+			return gen.Day == date.Day ? gen.Precision != GenDate.PrecisionType.Before : gen.Day > date.Day || gen.Precision == GenDate.PrecisionType.After;
 		}
 
 		private bool GenDateIsInRange(GenDate gen)
@@ -297,13 +291,12 @@ namespace LanguageExplorer.Filters
 
 		public override bool SameMatcher(IMatcher other)
 		{
-			var dtOther = other as DateTimeMatcher;
-			if (dtOther == null)
+			if (!(other is DateTimeMatcher dateTimeMatcher))
 			{
 				return false;
 			}
-			return End == dtOther.End && Start == dtOther.Start && MatchType == dtOther.MatchType && HandleGenDate == dtOther.HandleGenDate
-			       && (!HandleGenDate || IsStartAD == dtOther.IsStartAD && IsEndAD == dtOther.IsEndAD && UnspecificMatching == dtOther.UnspecificMatching);
+			return End == dateTimeMatcher.End && Start == dateTimeMatcher.Start && MatchType == dateTimeMatcher.MatchType && HandleGenDate == dateTimeMatcher.HandleGenDate
+			       && (!HandleGenDate || IsStartAD == dateTimeMatcher.IsStartAD && IsEndAD == dateTimeMatcher.IsEndAD && UnspecificMatching == dateTimeMatcher.UnspecificMatching);
 		}
 
 		public override void PersistAsXml(XElement element)

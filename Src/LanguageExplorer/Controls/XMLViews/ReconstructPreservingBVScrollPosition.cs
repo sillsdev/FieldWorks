@@ -122,9 +122,7 @@ namespace LanguageExplorer.Controls.XMLViews
 				// since in #1 the m_bv may have been finalized already.
 				// Restore scroll position here
 				m_bv?.BrowseView?.RootBox?.Reconstruct(); // Otherwise every cell redraws individually!
-
 				m_bv.BrowseView.RestoreScrollPosition(null);
-
 				if (m_fHiliteWasVisible && m_irow >= 0 && m_irow < m_bv.AllItems.Count)
 				{
 					// If there WAS a highlighted row visible and it is no longer visible, scroll to make it so.
@@ -135,10 +133,10 @@ namespace LanguageExplorer.Controls.XMLViews
 					}
 				}
 
-				m_bv = null;
 			}
 
 			// Dispose unmanaged resources here, whether disposing is true or false.
+			m_bv = null;
 
 			IsDisposed = true;
 		}

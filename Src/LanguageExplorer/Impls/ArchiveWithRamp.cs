@@ -68,10 +68,9 @@ namespace LanguageExplorer.Impls
 			if (!string.IsNullOrEmpty(projName))
 			{
 				var fileDate = backups.GetAvailableVersions(projName).FirstOrDefault();
-				if (fileDate != default(DateTime))
+				if (fileDate != default)
 				{
 					var backup = backups.GetBackupFile(projName, fileDate, true);
-
 					if (backup != null)
 					{
 						m_lblMostRecentBackup.Text = fileDate.ToString(Thread.CurrentThread.CurrentCulture);

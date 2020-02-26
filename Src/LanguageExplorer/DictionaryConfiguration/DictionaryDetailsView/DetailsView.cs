@@ -43,27 +43,27 @@ namespace LanguageExplorer.DictionaryConfiguration.DictionaryDetailsView
 
 		public string BeforeText
 		{
-			get { return SpecialCharacterHandling.VisibleToInvisibleCharacters(textBoxBefore.Text); }
-			set { textBoxBefore.Text = value; }
+			get => SpecialCharacterHandling.VisibleToInvisibleCharacters(textBoxBefore.Text);
+			set => textBoxBefore.Text = value;
 		}
 
 		public string BetweenText
 		{
-			get { return SpecialCharacterHandling.VisibleToInvisibleCharacters(textBoxBetween.Text); }
-			set { textBoxBetween.Text = value; }
+			get => SpecialCharacterHandling.VisibleToInvisibleCharacters(textBoxBetween.Text);
+			set => textBoxBetween.Text = value;
 		}
 
 		public string AfterText
 		{
-			get { return SpecialCharacterHandling.VisibleToInvisibleCharacters(textBoxAfter.Text); }
-			set { textBoxAfter.Text = value; }
+			get => SpecialCharacterHandling.VisibleToInvisibleCharacters(textBoxAfter.Text);
+			set => textBoxAfter.Text = value;
 		}
 
 		public string Style => ((StyleComboItem)dropDownStyle.SelectedItem).Style?.Name;
 
 		public bool StylesVisible
 		{
-			set { labelStyle.Visible = dropDownStyle.Visible = buttonStyles.Visible = value; }
+			set => labelStyle.Visible = dropDownStyle.Visible = buttonStyles.Visible = value;
 		}
 
 		public bool StylesEnabled
@@ -73,7 +73,7 @@ namespace LanguageExplorer.DictionaryConfiguration.DictionaryDetailsView
 
 		public bool SurroundingCharsVisible
 		{
-			get { return textBoxBefore.Visible; }
+			get => textBoxBefore.Visible;
 			set
 			{
 				textBoxBefore.Visible = textBoxBetween.Visible = textBoxAfter.Visible = value;
@@ -112,8 +112,8 @@ namespace LanguageExplorer.DictionaryConfiguration.DictionaryDetailsView
 
 		public event EventHandler StyleSelectionChanged
 		{
-			add { dropDownStyle.SelectedValueChanged += value; }
-			remove { dropDownStyle.SelectedValueChanged -= value; }
+			add => dropDownStyle.SelectedValueChanged += value;
+			remove => dropDownStyle.SelectedValueChanged -= value;
 		}
 
 		/// <summary>
@@ -132,20 +132,20 @@ namespace LanguageExplorer.DictionaryConfiguration.DictionaryDetailsView
 
 		public event EventHandler BeforeTextChanged
 		{
-			add { textBoxBefore.TextChanged += value; }
-			remove { textBoxBefore.TextChanged -= value; }
+			add => textBoxBefore.TextChanged += value;
+			remove => textBoxBefore.TextChanged -= value;
 		}
 
 		public event EventHandler BetweenTextChanged
 		{
-			add { textBoxBetween.TextChanged += value; }
-			remove { textBoxBetween.TextChanged -= value; }
+			add => textBoxBetween.TextChanged += value;
+			remove => textBoxBetween.TextChanged -= value;
 		}
 
 		public event EventHandler AfterTextChanged
 		{
-			add { textBoxAfter.TextChanged += value; }
-			remove { textBoxAfter.TextChanged -= value; }
+			add => textBoxAfter.TextChanged += value;
+			remove => textBoxAfter.TextChanged -= value;
 		}
 
 		public void SetStyles(List<StyleComboItem> styles, string selectedStyle, bool usingParaStyles = false)

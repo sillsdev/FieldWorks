@@ -29,12 +29,10 @@ namespace LanguageExplorer.Areas.TextsAndWords
 
 		protected override IEnumerable<ITsString> GetStrings(SearchField field, ICmObject obj)
 		{
-			var wf = (IWfiWordform)obj;
-			var ws = field.String.get_WritingSystemAt(0);
 			switch (field.Flid)
 			{
 				case WfiWordformTags.kflidForm:
-					var form = wf.Form.StringOrNull(ws);
+					var form = ((IWfiWordform)obj).Form.StringOrNull(field.String.get_WritingSystemAt(0));
 					if (form != null && form.Length > 0)
 					{
 						yield return form;
@@ -57,13 +55,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 
 		protected override bool IsFieldMultiString(SearchField field)
 		{
-			switch (field.Flid)
-			{
-				case WfiWordformTags.kflidForm:
-					return true;
-			}
-
-			throw new ArgumentException(@"Unrecognized field.", nameof(field));
+			return field.Flid == WfiWordformTags.kflidForm ? true : throw new ArgumentException(@"Unrecognized field.", nameof(field));
 		}
 
 		/// <inheritdoc />

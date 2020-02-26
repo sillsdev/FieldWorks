@@ -142,8 +142,7 @@ namespace LanguageExplorer.LcmUi
 
 		public bool CheckAndReportProtectedChartColumn()
 		{
-			string msg;
-			if (!CanModifyChartColumn(out msg))
+			if (!CanModifyChartColumn(out var msg))
 			{
 				MessageBoxUtils.Show(msg, LcmUiStrings.ksWarningCaption, MessageBoxButtons.OK, MessageBoxIcon.Warning);
 				return true;

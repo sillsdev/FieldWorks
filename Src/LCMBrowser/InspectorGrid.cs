@@ -3,6 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Windows.Forms;
@@ -58,7 +59,7 @@ namespace LCMBrowser
 		/// <inheritdoc />
 		protected override void Dispose(bool disposing)
 		{
-			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + " ******");
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + " ******");
 			base.Dispose(disposing);
 		}
 
@@ -67,7 +68,7 @@ namespace LCMBrowser
 		/// </summary>
 		public IInspectorList List
 		{
-			get { return m_list; }
+			get => m_list;
 			set
 			{
 				m_list = value;
@@ -88,7 +89,7 @@ namespace LCMBrowser
 			get
 			{
 				var irow = CurrentCellAddress.Y;
-				return (irow >= 0 ? m_list[irow] : null);
+				return irow >= 0 ? m_list[irow] : null;
 			}
 		}
 
@@ -97,7 +98,7 @@ namespace LCMBrowser
 		/// </summary>
 		public Color ShadingColor
 		{
-			get { return m_clrShading; }
+			get => m_clrShading;
 			set
 			{
 				m_clrShading = value;
@@ -153,8 +154,7 @@ namespace LCMBrowser
 		{
 			if (!m_list.IsExpanded(currRow))
 			{
-				int parentRow;
-				m_list.GetParent(currRow, out parentRow);
+				m_list.GetParent(currRow, out var parentRow);
 				currRow = parentRow;
 			}
 			Rectangle rc;
@@ -170,9 +170,7 @@ namespace LCMBrowser
 				return;
 			}
 
-			int firstRowInBlock, lastRowInBlock;
-			GetRowsInBlock(currRow, out firstRowInBlock, out lastRowInBlock);
-
+			GetRowsInBlock(currRow, out var firstRowInBlock, out var lastRowInBlock);
 			if (firstRowInBlock == m_firstRowInShadind && lastRowInBlock == m_lastRowInShading)
 			{
 				return;
@@ -234,8 +232,7 @@ namespace LCMBrowser
 			var rcHotSpot = Rectangle.Empty;
 			var isSelected = ((e.State & DataGridViewElementStates.Selected) > 0);
 			var isInBlock = (!isSelected && e.RowIndex >= m_firstRowInShadind && e.RowIndex <= m_lastRowInShading);
-			var isIndentedCell = (e.ColumnIndex == 0);
-
+			var isIndentedCell = e.ColumnIndex == 0;
 			if (isIndentedCell)
 			{
 				// Calculate the location and size of the rectangle into which text will be drawn.
@@ -262,8 +259,7 @@ namespace LCMBrowser
 			}
 
 			var clrFore = (isSelected ? e.CellStyle.SelectionForeColor : e.CellStyle.ForeColor);
-			var flags = TextFormatFlags.Left | TextFormatFlags.VerticalCenter | TextFormatFlags.EndEllipsis | TextFormatFlags.SingleLine;
-
+			const TextFormatFlags flags = TextFormatFlags.Left | TextFormatFlags.VerticalCenter | TextFormatFlags.EndEllipsis | TextFormatFlags.SingleLine;
 			TextRenderer.DrawText(e.Graphics, e.FormattedValue as string, e.CellStyle.Font, rcText, clrFore, flags);
 
 			DrawBorders(e, isIndentedCell, isInBlock && m_clrShading != Color.Empty ? m_clrShading : GridColor, isInBlock ? rcText.X : rcHotSpot.X);
@@ -384,17 +380,17 @@ namespace LCMBrowser
 			}
 			else
 			{
-				if (e.ColumnIndex == 0)
+				switch (e.ColumnIndex)
 				{
-					e.Value = io.DisplayName;
-				}
-				else if (e.ColumnIndex == 1)
-				{
-					e.Value = io.DisplayValue;
-				}
-				else
-				{
-					e.Value = io.DisplayType;
+					case 0:
+						e.Value = io.DisplayName;
+						break;
+					case 1:
+						e.Value = io.DisplayValue;
+						break;
+					default:
+						e.Value = io.DisplayType;
+						break;
 				}
 			}
 		}

@@ -55,9 +55,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			{
 				return;
 			}
-			var tssForm = TsStringUtils.EmptyString(wsObj.Handle);
-			var field = new SearchField(WfiWordformTags.kflidForm, tssForm);
-			m_matchingObjectsBrowser.SearchAsync(new[] { field });
+			m_matchingObjectsBrowser.SearchAsync(new[] { new SearchField(WfiWordformTags.kflidForm, TsStringUtils.EmptyString(wsObj.Handle)) });
 		}
 
 		/// <summary>
@@ -67,9 +65,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		{
 			var wsObj = (CoreWritingSystemDefinition)m_cbWritingSystems.SelectedItem;
 			var wsSelHvo = wsObj?.Handle ?? 0;
-			string form;
-			int vernWs;
-			if (!GetSearchKey(wsSelHvo, searchKey, out form, out vernWs))
+			if (!GetSearchKey(wsSelHvo, searchKey, out var form, out var vernWs))
 			{
 				var ws = TsStringUtils.GetWsAtOffset(m_tbForm.Tss, 0);
 				if (!GetSearchKey(ws, searchKey, out form, out vernWs))
@@ -85,8 +81,9 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			}
 
 			if (m_oldSearchKey != string.Empty || searchKey != string.Empty)
+			{
 				StartSearchAnimation();
-
+			}
 			// disable Go button until we rebuild our match list.
 			m_btnOK.Enabled = false;
 			m_oldSearchKey = searchKey;

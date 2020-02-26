@@ -81,8 +81,8 @@ namespace LanguageExplorer.Areas
 		public List<IStText> CoreTexts
 		{
 
-			get { return m_coreTexts ?? (m_coreTexts = GetCoreTexts()); }
-			set { m_coreTexts = value; }
+			get => m_coreTexts ?? (m_coreTexts = GetCoreTexts());
+			set => m_coreTexts = value;
 		}
 
 		public bool IncludeScripture { get; private set; }
@@ -94,7 +94,7 @@ namespace LanguageExplorer.Areas
 		{
 			var result = AllCoreTexts.ToList();
 			var excludedGuids = ExcludedCoreTextIdList();
-			return excludedGuids.Count == 0 ? result : (result.Where(obj => !excludedGuids.Contains(obj.Guid))).ToList();
+			return excludedGuids.Count == 0 ? result : result.Where(obj => !excludedGuids.Contains(obj.Guid)).ToList();
 		}
 
 		/// <summary>
@@ -104,9 +104,8 @@ namespace LanguageExplorer.Areas
 
 		private HashSet<Guid> ExcludedCoreTextIdList()
 		{
-			var idList = m_propertyTable.GetValue(ExcludeCoreTextPropertyName, "").Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
 			var excludedGuids = new HashSet<Guid>();
-			foreach (var id in idList)
+			foreach (var id in m_propertyTable.GetValue(ExcludeCoreTextPropertyName, "").Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
 			{
 				Guid guid;
 				try
@@ -132,8 +131,7 @@ namespace LanguageExplorer.Areas
 		private List<IStText> GetScriptureTexts()
 		{
 			var result = new List<IStText>();
-			var idList = m_propertyTable.GetValue(PersistPropertyName, string.Empty);
-			foreach (var id in idList.Split(','))
+			foreach (var id in m_propertyTable.GetValue(PersistPropertyName, string.Empty).Split(','))
 			{
 				if (id.Length == 0)
 				{
@@ -150,8 +148,7 @@ namespace LanguageExplorer.Areas
 					Debug.WriteLine(PersistPropertyName + "contains invalid guid " + id);
 					continue;
 				}
-				IStText item;
-				if (m_stTextRepository.TryGetObject(guid, out item))
+				if (m_stTextRepository.TryGetObject(guid, out _))
 				{
 					result.Add(m_stTextRepository.GetObject(guid));
 				}
@@ -296,8 +293,7 @@ namespace LanguageExplorer.Areas
 				Debug.Fail("We may need to add a new RelatedRecordListId.");
 				return; // somehow we got in here with the wrong record list?!
 			}
-			var otherRelatedRecordListId = GetRelatedRecordListIds(recordList.Id);
-			foreach (var recordListId in otherRelatedRecordListId)
+			foreach (var recordListId in GetRelatedRecordListIds(recordList.Id))
 			{
 				RemoveSortSequenceFile(RecordView.GetSortFilePersistPathname(Cache, recordListId));
 			}
@@ -452,8 +448,7 @@ namespace LanguageExplorer.Areas
 			}
 			m_scriptureTexts.Insert(index, newText);
 			// Also insert the other text in the same section
-			var sec = newText.Owner as IScrSection;
-			if (sec != null) // not a book title
+			if (newText.Owner is IScrSection sec) // not a book title
 			{
 				if (newText == sec.ContentOA && sec.HeadingOA != null)
 				{
@@ -548,7 +543,7 @@ namespace LanguageExplorer.Areas
 		/// if not in the title, add (section index + 1)*2.
 		/// If in contents add 1.
 		/// </summary>
-		private int TextPosition(IStText text)
+		private static int TextPosition(IStText text)
 		{
 			var owner = text.Owner;
 			var flid = text.OwningFlid;

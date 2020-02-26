@@ -31,27 +31,27 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			throw new NotSupportedException();
 		}
 
-		public void SetSite(IVwRootSite _vrs)
+		public void SetSite(IVwRootSite vrs)
 		{
 			throw new NotSupportedException();
 		}
 
-		public void SetRootObjects(int[] _rghvo, IVwViewConstructor[] _rgpvwvc, int[] _rgfrag, IVwStylesheet _ss, int chvo)
+		public void SetRootObjects(int[] rghvo, IVwViewConstructor[] rgpvwvc, int[] rgfrag, IVwStylesheet ss, int chvo)
 		{
 			throw new NotSupportedException();
 		}
 
-		public void SetRootObject(int hvo, IVwViewConstructor _vwvc, int frag, IVwStylesheet _ss)
+		public void SetRootObject(int hvo, IVwViewConstructor vwvc, int frag, IVwStylesheet ss)
 		{
 			throw new NotSupportedException();
 		}
 
-		public void SetRootVariant(object v, IVwStylesheet _ss, IVwViewConstructor _vwvc, int frag)
+		public void SetRootVariant(object v, IVwStylesheet ss, IVwViewConstructor vwvc, int frag)
 		{
 			throw new NotSupportedException();
 		}
 
-		public void SetRootString(ITsString _tss, IVwStylesheet _ss, IVwViewConstructor _vwvc, int frag)
+		public void SetRootString(ITsString tss, IVwStylesheet ss, IVwViewConstructor vwvc, int frag)
 		{
 			throw new NotSupportedException();
 		}
@@ -61,17 +61,17 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			throw new NotSupportedException();
 		}
 
-		public void Serialize(System.Runtime.InteropServices.ComTypes.IStream _strm)
+		public void Serialize(System.Runtime.InteropServices.ComTypes.IStream strm)
 		{
 			throw new NotSupportedException();
 		}
 
-		public void Deserialize(System.Runtime.InteropServices.ComTypes.IStream _strm)
+		public void Deserialize(System.Runtime.InteropServices.ComTypes.IStream strm)
 		{
 			throw new NotSupportedException();
 		}
 
-		public void WriteWpx(System.Runtime.InteropServices.ComTypes.IStream _strm)
+		public void WriteWpx(System.Runtime.InteropServices.ComTypes.IStream strm)
 		{
 			throw new NotSupportedException();
 		}
@@ -81,15 +81,15 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			throw new NotSupportedException();
 		}
 
-		public IVwSelection MakeTextSelection(int ihvoRoot, int cvlsi, SelLevInfo[] _rgvsli, int tagTextProp, int cpropPrevious,
-			int ichAnchor, int ichEnd, int ws, bool fAssocPrev, int ihvoEnd, ITsTextProps _ttpIns, bool fInstall)
+		public IVwSelection MakeTextSelection(int ihvoRoot, int cvlsi, SelLevInfo[] rgvsli, int tagTextProp, int cpropPrevious,
+			int ichAnchor, int ichEnd, int ws, bool fAssocPrev, int ihvoEnd, ITsTextProps ttpIns, bool fInstall)
 		{
 			return new DummyVwSelection(this, ichAnchor, ichEnd);
 		}
 
-		public IVwSelection MakeRangeSelection(IVwSelection _selAnchor, IVwSelection _selEnd, bool fInstall)
+		public IVwSelection MakeRangeSelection(IVwSelection selAnchor, IVwSelection selEnd, bool fInstall)
 		{
-			m_dummySelection = new DummyVwSelection(this, (_selAnchor as DummyVwSelection).Anchor, (_selEnd as DummyVwSelection).End);
+			m_dummySelection = new DummyVwSelection(this, ((DummyVwSelection)selAnchor).Anchor, ((DummyVwSelection)selEnd).End);
 			return m_dummySelection;
 		}
 
@@ -98,13 +98,13 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			throw new NotSupportedException();
 		}
 
-		public IVwSelection MakeTextSelInObj(int ihvoRoot, int cvsli, SelLevInfo[] _rgvsli, int cvsliEnd, SelLevInfo[] _rgvsliEnd,
+		public IVwSelection MakeTextSelInObj(int ihvoRoot, int cvsli, SelLevInfo[] rgvsli, int cvsliEnd, SelLevInfo[] rgvsliEnd,
 			bool fInitial, bool fEdit, bool fRange, bool fWholeObj, bool fInstall)
 		{
 			throw new NotSupportedException();
 		}
 
-		public IVwSelection MakeSelInObj(int ihvoRoot, int cvsli, SelLevInfo[] _rgvsli, int tag,
+		public IVwSelection MakeSelInObj(int ihvoRoot, int cvsli, SelLevInfo[] rgvsli, int tag,
 			bool fInstall)
 		{
 			throw new NotSupportedException();
@@ -115,7 +115,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			throw new NotSupportedException();
 		}
 
-		public IVwSelection MakeSelInBox(IVwSelection _selInit, bool fEndPoint, int iLevel, int iBox, bool fInitial, bool fRange, bool fInstall)
+		public IVwSelection MakeSelInBox(IVwSelection selInit, bool fEndPoint, int iLevel, int iBox, bool fInitial, bool fRange, bool fInstall)
 		{
 			throw new NotSupportedException();
 		}
@@ -125,18 +125,18 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			throw new NotSupportedException();
 		}
 
-		public bool get_IsClickInObject(int xd, int yd, Rect rcSrc, Rect rcDst, out int _odt)
+		public bool get_IsClickInObject(int xd, int yd, Rect rcSrc, Rect rcDst, out int odt)
 		{
 			throw new NotSupportedException();
 		}
 
-		public bool get_IsClickInOverlayTag(int xd, int yd, Rect rcSrc1, Rect rcDst1, out int _iGuid, out string _bstrGuids,
-			out Rect _rcTag, out Rect _rcAllTags, out bool _fOpeningTag)
+		public bool get_IsClickInOverlayTag(int xd, int yd, Rect rcSrc1, Rect rcDst1, out int iGuid, out string bstrGuids,
+			out Rect rcTag, out Rect rcAllTags, out bool fOpeningTag)
 		{
 			throw new NotSupportedException();
 		}
 
-		public void OnTyping(IVwGraphics _vg, string input, VwShiftStatus shiftStatus, ref int _wsPending)
+		public void OnTyping(IVwGraphics vg, string input, VwShiftStatus shiftStatus, ref int wsPending)
 		{
 			const string BackSpace = "\b";
 
@@ -156,9 +156,9 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			m_dummySelection.ReplaceWithTsString(TsStringUtils.MakeString(input, ws));
 		}
 
-		public void DeleteRangeIfComplex(IVwGraphics _vg, out bool _fWasComplex)
+		public void DeleteRangeIfComplex(IVwGraphics vg, out bool fWasComplex)
 		{
-			_fWasComplex = false;
+			fWasComplex = false;
 		}
 
 		public void OnChar(int chw)
@@ -211,32 +211,32 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			throw new NotSupportedException();
 		}
 
-		public VwPrepDrawResult PrepareToDraw(IVwGraphics _vg, Rect rcSrc, Rect rcDst)
+		public VwPrepDrawResult PrepareToDraw(IVwGraphics vg, Rect rcSrc, Rect rcDst)
 		{
 			throw new NotSupportedException();
 		}
 
-		public void DrawRoot(IVwGraphics _vg, Rect rcSrc, Rect rcDst, bool fDrawSel)
+		public void DrawRoot(IVwGraphics vg, Rect rcSrc, Rect rcDst, bool fDrawSel)
 		{
 			throw new NotSupportedException();
 		}
 
-		public void Layout(IVwGraphics _vg, int dxsAvailWidth)
+		public void Layout(IVwGraphics vg, int dxsAvailWidth)
 		{
 			throw new NotSupportedException();
 		}
 
-		public void InitializePrinting(IVwPrintContext _vpc)
+		public void InitializePrinting(IVwPrintContext vpc)
 		{
 			throw new NotSupportedException();
 		}
 
-		public int GetTotalPrintPages(IVwPrintContext _vpc)
+		public int GetTotalPrintPages(IVwPrintContext vpc)
 		{
 			throw new NotSupportedException();
 		}
 
-		public void PrintSinglePage(IVwPrintContext _vpc, int nPageNo)
+		public void PrintSinglePage(IVwPrintContext vpc, int nPageNo)
 		{
 			throw new NotSupportedException();
 		}
@@ -260,12 +260,12 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			throw new NotSupportedException();
 		}
 
-		public void DrawingErrors(IVwGraphics _vg)
+		public void DrawingErrors(IVwGraphics vg)
 		{
 			throw new NotSupportedException();
 		}
 
-		public void SetTableColWidths(VwLength[] _rgvlen, int cvlen)
+		public void SetTableColWidths(VwLength[] rgvlen, int cvlen)
 		{
 			throw new NotSupportedException();
 		}
@@ -275,12 +275,12 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			throw new NotSupportedException();
 		}
 
-		public void GetRootObject(out int _hvo, out IVwViewConstructor _pvwvc, out int _frag, out IVwStylesheet _pss)
+		public void GetRootObject(out int hvo, out IVwViewConstructor pvwvc, out int frag, out IVwStylesheet pss)
 		{
 			throw new NotSupportedException();
 		}
 
-		public void DrawRoot2(IVwGraphics _vg, Rect rcSrc, Rect rcDst, bool fDrawSel, int ysTop, int dysHeight)
+		public void DrawRoot2(IVwGraphics vg, Rect rcSrc, Rect rcDst, bool fDrawSel, int ysTop, int dysHeight)
 		{
 			throw new NotSupportedException();
 		}
@@ -300,20 +300,14 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			throw new NotSupportedException();
 		}
 
-		public void SetSpellingRepository(IGetSpellChecker _gsp)
+		public void SetSpellingRepository(IGetSpellChecker gsp)
 		{
 		}
 
 		public ISilDataAccess DataAccess
 		{
-			get
-			{
-				return m_dummyDataAccess;
-			}
-			set
-			{
-				throw new NotSupportedException();
-			}
+			get => m_dummyDataAccess;
+			set => throw new NotSupportedException();
 		}
 
 		public IRenderEngineFactory RenderEngineFactory { get; set; }
@@ -322,25 +316,13 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 
 		public IVwOverlay Overlay
 		{
-			get
-			{
-				throw new NotSupportedException();
-			}
-			set
-			{
-				throw new NotSupportedException();
-			}
+			get => throw new NotSupportedException();
+			set => throw new NotSupportedException();
 		}
 
 		public IVwSelection Selection => m_dummySelection;
 
-		public VwSelectionState SelectionState
-		{
-			get
-			{
-				throw new NotSupportedException();
-			}
-		}
+		public VwSelectionState SelectionState => throw new NotSupportedException();
 
 		public int Height => 0;
 
@@ -348,49 +330,19 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 
 		public IVwRootSite Site => m_dummySimpleRootSite;
 
-		public IVwStylesheet Stylesheet
-		{
-			get
-			{
-				throw new NotSupportedException();
-			}
-		}
+		public IVwStylesheet Stylesheet => throw new NotSupportedException();
 
-		public int XdPos
-		{
-			get
-			{
-				throw new NotSupportedException();
-			}
-		}
+		public int XdPos => throw new NotSupportedException();
 
-		public IVwSynchronizer Synchronizer
-		{
-			get
-			{
-				throw new NotSupportedException();
-			}
-		}
+		public IVwSynchronizer Synchronizer => throw new NotSupportedException();
 
 		public int MaxParasToScan
 		{
-			get
-			{
-				throw new NotSupportedException();
-			}
-			set
-			{
-				throw new NotSupportedException();
-			}
+			get => throw new NotSupportedException();
+			set => throw new NotSupportedException();
 		}
 
-		public bool IsCompositionInProgress
-		{
-			get
-			{
-				throw new NotSupportedException();
-			}
-		}
+		public bool IsCompositionInProgress => throw new NotSupportedException();
 
 		public bool IsPropChangedInProgress => false;
 		#endregion
@@ -420,12 +372,12 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 				throw new NotSupportedException();
 			}
 
-			public void VecProp(int hvo, int tag, int chvoMax, out int _chvo, ArrayPtr _rghvo)
+			public void VecProp(int hvo, int tag, int chvoMax, out int chvo, ArrayPtr rghvo)
 			{
 				throw new NotSupportedException();
 			}
 
-			public void BinaryPropRgb(int obj, int tag, ArrayPtr _rgb, int cbMax, out int _cb)
+			public void BinaryPropRgb(int obj, int tag, ArrayPtr rgb, int cbMax, out int cb)
 			{
 				throw new NotSupportedException();
 			}
@@ -490,7 +442,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 				throw new NotSupportedException();
 			}
 
-			public void UnicodePropRgch(int obj, int tag, ArrayPtr _rgch, int cchMax, out int _cch)
+			public void UnicodePropRgch(int obj, int tag, ArrayPtr rgch, int cchMax, out int cch)
 			{
 				throw new NotSupportedException();
 			}
@@ -545,9 +497,9 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 				return m_actionHandler;
 			}
 
-			public void SetActionHandler(IActionHandler _acth)
+			public void SetActionHandler(IActionHandler acth)
 			{
-				m_actionHandler = _acth;
+				m_actionHandler = acth;
 			}
 
 			public void DeleteObj(int hvoObj)
@@ -560,7 +512,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 				throw new NotSupportedException();
 			}
 
-			public void InsertNew(int hvoObj, int tag, int ihvo, int chvo, IVwStylesheet _ss)
+			public void InsertNew(int hvoObj, int tag, int ihvo, int chvo, IVwStylesheet ss)
 			{
 				throw new NotSupportedException();
 			}
@@ -580,7 +532,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 				throw new NotSupportedException();
 			}
 
-			public void Replace(int hvoObj, int tag, int ihvoMin, int ihvoLim, int[] _rghvo, int chvo)
+			public void Replace(int hvoObj, int tag, int ihvoMin, int ihvoLim, int[] rghvo, int chvo)
 			{
 				throw new NotSupportedException();
 			}
@@ -595,7 +547,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 				throw new NotSupportedException();
 			}
 
-			public void SetBinary(int hvo, int tag, byte[] _rgb, int cb)
+			public void SetBinary(int hvo, int tag, byte[] rgb, int cb)
 			{
 				throw new NotSupportedException();
 			}
@@ -620,12 +572,12 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 				throw new NotSupportedException();
 			}
 
-			public void SetMultiStringAlt(int hvo, int tag, int ws, ITsString _tss)
+			public void SetMultiStringAlt(int hvo, int tag, int ws, ITsString tss)
 			{
 				throw new NotSupportedException();
 			}
 
-			public void SetString(int hvo, int tag, ITsString _tss)
+			public void SetString(int hvo, int tag, ITsString tss)
 			{
 				throw new NotSupportedException();
 			}
@@ -635,27 +587,27 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 				throw new NotSupportedException();
 			}
 
-			public void SetUnicode(int hvo, int tag, string _rgch, int cch)
+			public void SetUnicode(int hvo, int tag, string rgch, int cch)
 			{
 				throw new NotSupportedException();
 			}
 
-			public void SetUnknown(int hvo, int tag, object _unk)
+			public void SetUnknown(int hvo, int tag, object unk)
 			{
 				throw new NotSupportedException();
 			}
 
-			public void AddNotification(IVwNotifyChange _nchng)
+			public void AddNotification(IVwNotifyChange nchng)
 			{
 				throw new NotSupportedException();
 			}
 
-			public void PropChanged(IVwNotifyChange _nchng, int _ct, int hvo, int tag, int ivMin, int cvIns, int cvDel)
+			public void PropChanged(IVwNotifyChange nchng, int ct, int hvo, int tag, int ivMin, int cvIns, int cvDel)
 			{
 				throw new NotSupportedException();
 			}
 
-			public void RemoveNotification(IVwNotifyChange _nchng)
+			public void RemoveNotification(IVwNotifyChange nchng)
 			{
 				throw new NotSupportedException();
 			}
@@ -665,7 +617,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 				throw new NotSupportedException();
 			}
 
-			public int get_WritingSystemsOfInterest(int cwsMax, ArrayPtr _ws)
+			public int get_WritingSystemsOfInterest(int cwsMax, ArrayPtr ws)
 			{
 				throw new NotSupportedException();
 			}
@@ -727,26 +679,14 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 
 			public ILgWritingSystemFactory WritingSystemFactory
 			{
-				get
-				{
-					throw new NotSupportedException();
-				}
-				set
-				{
-					throw new NotSupportedException();
-				}
+				get => throw new NotSupportedException();
+				set => throw new NotSupportedException();
 			}
 
 			public IFwMetaDataCache MetaDataCache
 			{
-				get
-				{
-					throw new NotSupportedException();
-				}
-				set
-				{
-					throw new NotSupportedException();
-				}
+				get => throw new NotSupportedException();
+				set => throw new NotSupportedException();
 			}
 			#endregion
 
@@ -785,11 +725,11 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 				{
 				}
 
-				public void StartSeq(string bstrUndo, string bstrRedo, IUndoAction _uact)
+				public void StartSeq(string bstrUndo, string bstrRedo, IUndoAction uact)
 				{
 				}
 
-				public void AddAction(IUndoAction _uact)
+				public void AddAction(IUndoAction uact)
 				{
 				}
 
@@ -825,12 +765,12 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 
 				public UndoResult Undo()
 				{
-					return default(UndoResult);
+					return default;
 				}
 
 				public UndoResult Redo()
 				{
-					return default(UndoResult);
+					return default;
 				}
 
 				public void Rollback(int nDepth)

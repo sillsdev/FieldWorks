@@ -118,8 +118,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		public void MapCssToLang(string cssClass, string sLang)
 		{
 			var key = GetValidCssClassName(cssClass);
-			List<string> rgsLangs;
-			if (!m_dictClassData.TryGetValue(key, out rgsLangs))
+			if (!m_dictClassData.TryGetValue(key, out var rgsLangs))
 			{
 				rgsLangs = new List<string>();
 				m_dictClassData.Add(key, rgsLangs);
@@ -515,8 +514,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		private void WriteScriptureCssStyle(string sStyle, List<string> langs)
 		{
 			var sCssStyleName = GetValidCssClassName(sStyle);
-			string sStyleName;
-			if (!m_mapCssClassToFwStyle.TryGetValue(sCssStyleName, out sStyleName))
+			if (!m_mapCssClassToFwStyle.TryGetValue(sCssStyleName, out var sStyleName))
 			{
 				sStyleName = sStyle.Replace('_', ' ');      // just in case...
 			}
@@ -594,8 +592,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		public string GetValidCssClassName(string sFwStyle)
 		{
-			string sCssClassName;
-			if (m_mapFwStyleToCssClass.TryGetValue(sFwStyle, out sCssClassName))
+			if (m_mapFwStyleToCssClass.TryGetValue(sFwStyle, out var sCssClassName))
 			{
 				return sCssClassName;
 			}
@@ -638,8 +635,7 @@ namespace LanguageExplorer.Controls.XMLViews
 				sCssClassName = 'X' + sCssClassName;
 			}
 			m_mapFwStyleToCssClass.Add(sFwStyle, sCssClassName);
-			string sOldStyle;
-			if (!m_mapCssClassToFwStyle.TryGetValue(sCssClassName, out sOldStyle))
+			if (!m_mapCssClassToFwStyle.TryGetValue(sCssClassName, out _))
 			{
 				m_mapCssClassToFwStyle.Add(sCssClassName, sFwStyle);
 			}
@@ -828,8 +824,7 @@ namespace LanguageExplorer.Controls.XMLViews
 				WriteCssMinorEntry();
 				m_dictClassData.Remove("minorentry");
 			}
-			List<string> rgsLangs;
-			if (m_dictClassData.TryGetValue("xitem", out rgsLangs))
+			if (m_dictClassData.TryGetValue("xitem", out var rgsLangs))
 			{
 				WriteCssXItem(rgsLangs);
 				m_dictClassData.Remove("xitem");
@@ -919,11 +914,8 @@ namespace LanguageExplorer.Controls.XMLViews
 
 		private void WriteCssComplexForm()
 		{
-			XElement xn;
-			List<string> rgsLangs;
-			string style;
 			var fShowAsIndentedPara = false;
-			if (m_mapCssClassToXnode.TryGetValue("complexformrefs", out xn))
+			if (m_mapCssClassToXnode.TryGetValue("complexformrefs", out var xn))
 			{
 				fShowAsIndentedPara = XmlUtils.GetOptionalBooleanAttributeValue(xn, "showasindentedpara", false);
 			}
@@ -935,11 +927,11 @@ namespace LanguageExplorer.Controls.XMLViews
 				m_writer.WriteLine("}");
 				return;
 			}
-			if (!m_mapCssClassToFwStyle.TryGetValue("complexformrefs", out style))
+			if (!m_mapCssClassToFwStyle.TryGetValue("complexformrefs", out var style))
 			{
 				style = XmlUtils.GetOptionalAttributeValue(xn, "style");
 			}
-			if (!m_dictClassData.TryGetValue("complexformrefs", out rgsLangs))
+			if (!m_dictClassData.TryGetValue("complexformrefs", out var rgsLangs))
 			{
 				rgsLangs = null;
 			}
@@ -964,9 +956,8 @@ namespace LanguageExplorer.Controls.XMLViews
 		private void WriteCssSubentry()
 		{
 			m_writer.WriteLine(".subentry {");
-			XElement xnSub;
 			string style = null;
-			if (m_mapCssClassToXnode.TryGetValue("subentries", out xnSub))
+			if (m_mapCssClassToXnode.TryGetValue("subentries", out var xnSub))
 			{
 				style = XmlUtils.GetOptionalAttributeValue(xnSub, "parastyle");
 			}
@@ -983,9 +974,8 @@ namespace LanguageExplorer.Controls.XMLViews
 		private void WriteCssMinorEntry()
 		{
 			m_writer.WriteLine(".minorentry {");
-			XElement xnSub;
 			string style = null;
-			if (m_mapCssClassToXnode.TryGetValue("minorentries", out xnSub))
+			if (m_mapCssClassToXnode.TryGetValue("minorentries", out var xnSub))
 			{
 				style = XmlUtils.GetOptionalAttributeValue(xnSub, "parastyle");
 			}
@@ -1026,8 +1016,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		private void WriteCssSensePara()
 		{
 			m_writer.WriteLine(".sensepara {");
-			string style;
-			if (m_mapClassToStyle.TryGetValue("sensepara", out style))
+			if (m_mapClassToStyle.TryGetValue("sensepara", out var style))
 			{
 				var esi = WriteFontInfoToCss(m_cache.DefaultAnalWs, style, "sensepara");
 				WriteParaStyleInfoToCss(esi);
@@ -1106,9 +1095,8 @@ namespace LanguageExplorer.Controls.XMLViews
 
 		private void WriteCssHeadrefBefore()
 		{
-			List<string> texts;
 			m_writer.Write(".headref:before {content:\"");
-			m_dictClassData.TryGetValue("headref-before", out texts);
+			m_dictClassData.TryGetValue("headref-before", out var texts);
 			m_writer.Write(texts[0]); // only one text in the list
 			m_writer.WriteLine("\"}");
 		}
@@ -1116,8 +1104,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		private void WriteCssHeadrefAfter()
 		{
 			m_writer.Write(".headref:after {content:\"");
-			List<string> texts;
-			m_dictClassData.TryGetValue("headref-after", out texts);
+			m_dictClassData.TryGetValue("headref-after", out var texts);
 			m_writer.Write(texts[0]); // only one text in the list
 			m_writer.WriteLine("\"}");
 		}
@@ -1212,9 +1199,8 @@ namespace LanguageExplorer.Controls.XMLViews
 
 		private void ProcessDictionaryCssStyle(string sClass)
 		{
-			XElement xn;
 			string sBaseClass;
-			if (!m_mapCssClassToXnode.TryGetValue(GetValidCssClassName(sClass), out xn))
+			if (!m_mapCssClassToXnode.TryGetValue(GetValidCssClassName(sClass), out var xn))
 			{
 				var idx = sClass.IndexOf("_L", StringComparison.Ordinal);
 				if (idx <= 0)
@@ -1235,9 +1221,8 @@ namespace LanguageExplorer.Controls.XMLViews
 			var sStyle = XmlUtils.GetOptionalAttributeValue(xn, "style");
 			var fShowAsIndentedPara = XmlUtils.GetOptionalBooleanAttributeValue(xn, "showasindentedpara", false);
 			var ws = 0;
-			List<string> rgsLangs;
 			string sLang = null;
-			if (m_dictClassData.TryGetValue(GetValidCssClassName(sClass), out rgsLangs) && rgsLangs.Count > 0)
+			if (m_dictClassData.TryGetValue(GetValidCssClassName(sClass), out var rgsLangs) && rgsLangs.Count > 0)
 			{
 				sLang = rgsLangs[0];
 				ws = m_cache.LanguageWritingSystemFactoryAccessor.GetWsFromStr(sLang);
@@ -1307,7 +1292,6 @@ namespace LanguageExplorer.Controls.XMLViews
 				}
 				m_writer.WriteLine(" */");
 			}
-			List<string> rgsStyles;
 			if (!string.IsNullOrEmpty(sStyle))
 			{
 				m_writer.WriteLine("    /* explicit FieldWorks style = '{0}' */", sStyle);
@@ -1317,7 +1301,7 @@ namespace LanguageExplorer.Controls.XMLViews
 					WriteParaStyleInfoToCss(esi);
 				}
 			}
-			else if (ws != m_cache.DefaultAnalWs && m_mapCssToStyleEnv.TryGetValue(sBaseClass, out rgsStyles) && rgsStyles.Count > 0)
+			else if (ws != m_cache.DefaultAnalWs && m_mapCssToStyleEnv.TryGetValue(sBaseClass, out var rgsStyles) && rgsStyles.Count > 0)
 			{
 				m_writer.WriteLine("    /* cascaded environment FieldWorks style = '{0}' */", rgsStyles[0]);
 				var esi = WriteFontInfoToCss(ws, rgsStyles[0], null);
@@ -1331,15 +1315,11 @@ namespace LanguageExplorer.Controls.XMLViews
 				var parastyle = XmlUtils.GetOptionalAttributeValue(xn, "parastyle");
 				if (!string.IsNullOrEmpty(parastyle))
 				{
-					BaseStyleInfo bsi;
-					if (m_styleTable.TryGetValue(GetValidCssClassName(parastyle), out bsi))
+					if (m_styleTable.TryGetValue(GetValidCssClassName(parastyle), out var bsi))
 					{
-						var esi = bsi as ExportStyleInfo;
-						if (esi != null)
+						if (bsi is ExportStyleInfo esi)
 						{
-							string sLeading;
-							string sTrailing;
-							WriteHorizontalPaddingValues(esi, true, out sLeading, out sTrailing); // LT-12658 allow to indent
+							WriteHorizontalPaddingValues(esi, true, out _, out _); // LT-12658 allow to indent
 						}
 					}
 				}
@@ -1387,8 +1367,7 @@ namespace LanguageExplorer.Controls.XMLViews
 
 		private void WriteParaBulletInfoToCss(string sStyle, string sClass, string sCounter)
 		{
-			BaseStyleInfo bsi;
-			if (!m_styleTable.TryGetValue(GetValidCssClassName(sStyle), out bsi))
+			if (!m_styleTable.TryGetValue(GetValidCssClassName(sStyle), out var bsi))
 			{
 				return;
 			}
@@ -1396,8 +1375,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				return;
 			}
-			var esi = bsi as ExportStyleInfo;
-			if (esi == null)
+			if (!(bsi is ExportStyleInfo esi))
 			{
 				return;
 			}
@@ -1463,12 +1441,11 @@ namespace LanguageExplorer.Controls.XMLViews
 
 		private ExportStyleInfo WriteFontInfoToCss(int ws, string sStyle, string sCss)
 		{
-			BaseStyleInfo bsi;
-			if (!m_styleTable.TryGetValue(GetValidCssClassName(sStyle), out bsi))
+			if (!m_styleTable.TryGetValue(GetValidCssClassName(sStyle), out var bsi))
 			{
 				return null;
 			}
-			var esi = bsi as ExportStyleInfo;
+			var esi = (ExportStyleInfo)bsi;
 			if (!WriteFontAttr(ws, "font-family", esi, sCss, true) && ws != -1)
 			{
 				if (!WriteFontAttr(-1, "font-family", esi, sCss, true))
@@ -1654,8 +1631,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			if (fInherited)
 			{
 				var sBaseStyle = esi.InheritsFrom;
-				BaseStyleInfo bsiBase;
-				if (!string.IsNullOrEmpty(sBaseStyle) && m_styleTable.TryGetValue(GetValidCssClassName(sBaseStyle), out bsiBase))
+				if (!string.IsNullOrEmpty(sBaseStyle) && m_styleTable.TryGetValue(GetValidCssClassName(sBaseStyle), out var bsiBase))
 				{
 					if (WriteFontAttr(ws, sAttr, bsiBase as ExportStyleInfo, sCss, false))
 					{
@@ -1664,13 +1640,11 @@ namespace LanguageExplorer.Controls.XMLViews
 				}
 				if (!string.IsNullOrEmpty(sCss))
 				{
-					List<string> rgsStyles;
-					if (m_mapCssToStyleEnv.TryGetValue(sCss, out rgsStyles))
+					if (m_mapCssToStyleEnv.TryGetValue(sCss, out var rgsStyles))
 					{
 						foreach (var sParaStyle in rgsStyles)
 						{
-							BaseStyleInfo bsiPara;
-							if (m_styleTable.TryGetValue(GetValidCssClassName(sParaStyle), out bsiPara) && WriteFontAttr(ws, sAttr, bsiPara as ExportStyleInfo, null, false))
+							if (m_styleTable.TryGetValue(GetValidCssClassName(sParaStyle), out var bsiPara) && WriteFontAttr(ws, sAttr, bsiPara as ExportStyleInfo, null, false))
 							{
 								return true;
 							}
@@ -1692,9 +1666,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				return; // If the style was not defined in our stylesheet, we can't write anything for it.
 			}
-			string sLeading;
-			string sTrailing;
-			WriteHorizontalPaddingValues(esi, hangingIndent, out sLeading, out sTrailing);
+			WriteHorizontalPaddingValues(esi, hangingIndent, out var sLeading, out var sTrailing);
 			if (esi.HasAlignment)
 			{
 				switch (esi.Alignment)
@@ -1862,8 +1834,7 @@ namespace LanguageExplorer.Controls.XMLViews
 				// Check for actual FW style names (possibly munged) that appear in the
 				// exported data, but aren't mapped to an XmlNode containing necessary
 				// information.  Map them simply to the FW style.
-				XElement xn;
-				if (m_dictClassData[sClass].Count > 0 && !m_mapCssClassToXnode.TryGetValue(sClass, out xn))
+				if (m_dictClassData[sClass].Count > 0 && !m_mapCssClassToXnode.TryGetValue(sClass, out _))
 				{
 					// We probably need to put this out anyway if it's an actual FW style name.
 					string sStyle = null;
@@ -1899,9 +1870,8 @@ namespace LanguageExplorer.Controls.XMLViews
 
 		private void ProcessNotebookCssStyle(string sClass)
 		{
-			XElement xn;
 			string sBaseClass;
-			if (!m_mapCssClassToXnode.TryGetValue(GetValidCssClassName(sClass), out xn))
+			if (!m_mapCssClassToXnode.TryGetValue(GetValidCssClassName(sClass), out var xn))
 			{
 				var idx = sClass.IndexOf("_L", StringComparison.Ordinal);
 				if (idx <= 0)
@@ -1923,9 +1893,8 @@ namespace LanguageExplorer.Controls.XMLViews
 			var sSep = XmlUtils.GetOptionalAttributeValue(xn, "sep");
 			var sStyle = XmlUtils.GetOptionalAttributeValue(xn, "style");
 			var ws = 0;
-			List<string> rgsLangs;
 			string sLang = null;
-			if (m_dictClassData.TryGetValue(GetValidCssClassName(sClass), out rgsLangs) && rgsLangs.Count > 0)
+			if (m_dictClassData.TryGetValue(GetValidCssClassName(sClass), out var rgsLangs) && rgsLangs.Count > 0)
 			{
 				sLang = rgsLangs[0];
 				ws = m_cache.LanguageWritingSystemFactoryAccessor.GetWsFromStr(sLang);
@@ -1995,13 +1964,12 @@ namespace LanguageExplorer.Controls.XMLViews
 				}
 				m_writer.WriteLine(" */");
 			}
-			List<string> rgsStyles;
 			if (!string.IsNullOrEmpty(sStyle))
 			{
 				m_writer.WriteLine("    /* explicit FieldWorks style = '{0}' */", sStyle);
 				WriteFontInfoToCss(ws, sStyle, sBaseClass);
 			}
-			else if (ws != m_cache.DefaultAnalWs && m_mapCssToStyleEnv.TryGetValue(sBaseClass, out rgsStyles) && rgsStyles.Count > 0)
+			else if (ws != m_cache.DefaultAnalWs && m_mapCssToStyleEnv.TryGetValue(sBaseClass, out var rgsStyles) && rgsStyles.Count > 0)
 			{
 				m_writer.WriteLine("    /* cascaded environment FieldWorks style = '{0}' */", rgsStyles[0]);
 				WriteFontInfoToCss(ws, rgsStyles[0], null);
@@ -2105,7 +2073,7 @@ namespace LanguageExplorer.Controls.XMLViews
 								}
 							}
 						}
-						else if ((idxClass - 4 >= 0) && sLine.Substring(idxClass - 4).StartsWith("<div ") && sLine.Substring(idxLim).StartsWith("\" id=\""))
+						else if (idxClass - 4 >= 0 && sLine.Substring(idxClass - 4).StartsWith("<div ") && sLine.Substring(idxLim).StartsWith("\" id=\""))
 						{
 							var idx = sLine.IndexOf(">", idxLim, StringComparison.Ordinal);
 							if (idx > 0)
@@ -2125,14 +2093,12 @@ namespace LanguageExplorer.Controls.XMLViews
 								}
 							}
 						}
-						List<string> rgsLangs;
-						if (!m_dictClassData.TryGetValue(GetValidCssClassName(sClass), out rgsLangs))
+						if (!m_dictClassData.TryGetValue(GetValidCssClassName(sClass), out var rgsLangs))
 						{
 							// Many TE styles have spaces in their names, which are
 							// replaced by underscores.  Try finding the original name
 							// before inserting a new value into the table.
-							string sFwStyle;
-							if (!m_mapCssClassToFwStyle.TryGetValue(sClass, out sFwStyle))
+							if (!m_mapCssClassToFwStyle.TryGetValue(sClass, out var sFwStyle))
 							{
 								sFwStyle = sClass.Replace('_', ' ');        // just in case...
 							}
@@ -2144,15 +2110,13 @@ namespace LanguageExplorer.Controls.XMLViews
 								{
 									if (!string.IsNullOrEmpty(before))
 									{
-										var rgsBefores = new List<string> { before };
 										// sorry, literal text not a language
-										MapCssToLangs(sClass, rgsBefores);
+										MapCssToLangs(sClass, new List<string> { before });
 									}
 									if (!string.IsNullOrEmpty(after))
 									{
-										var rgsAfters = new List<string> { after };
 										// sorry, literal text not a language
-										MapCssToLangs(sClass, rgsAfters);
+										MapCssToLangs(sClass, new List<string> { after });
 									}
 								}
 								else

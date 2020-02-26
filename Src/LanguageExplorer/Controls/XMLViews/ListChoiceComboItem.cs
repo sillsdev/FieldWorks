@@ -271,8 +271,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		public override ITsString SetFromFilter(RecordFilter recordFilter, FilterSortItem item)
 		{
-			var filter = recordFilter as ListChoiceFilter;
-			return filter == null ? null : (!filter.CompatibleFilter(m_colSpec) ? null : MakeLabel(filter));
+			return !(recordFilter is ListChoiceFilter filter) ? null : (!filter.CompatibleFilter(m_colSpec) ? null : MakeLabel(filter));
 		}
 	}
 }

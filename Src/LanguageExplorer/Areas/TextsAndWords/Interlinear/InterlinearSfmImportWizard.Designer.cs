@@ -39,7 +39,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			this.tabPage1 = new System.Windows.Forms.TabPage();
 			this.m_useDefaultSettingsLink = new System.Windows.Forms.LinkLabel();
 			this.label6 = new System.Windows.Forms.Label();
-			this.m_browseLoadSettingsFileButon = new System.Windows.Forms.Button();
+			this.m_browseLoadSettingsFileButton = new System.Windows.Forms.Button();
 			this.m_loadSettingsFileBox = new System.Windows.Forms.TextBox();
 			this.label5 = new System.Windows.Forms.Label();
 			this.m_fileListBox = new System.Windows.Forms.TextBox();
@@ -61,7 +61,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			this.numberOfTextsLabel = new System.Windows.Forms.Label();
 			this.secretShiftText = new System.Windows.Forms.Label();
 			this.label8 = new System.Windows.Forms.Label();
-			this.m_browseSaveSettingsFileButon = new System.Windows.Forms.Button();
+			this.m_browseSaveSettingsFileButton = new System.Windows.Forms.Button();
 			this.m_saveSettingsFileBox = new System.Windows.Forms.TextBox();
 			this.label11 = new System.Windows.Forms.Label();
 			this.label10 = new System.Windows.Forms.Label();
@@ -109,7 +109,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			//
 			this.tabPage1.Controls.Add(this.m_useDefaultSettingsLink);
 			this.tabPage1.Controls.Add(this.label6);
-			this.tabPage1.Controls.Add(this.m_browseLoadSettingsFileButon);
+			this.tabPage1.Controls.Add(this.m_browseLoadSettingsFileButton);
 			this.tabPage1.Controls.Add(this.m_loadSettingsFileBox);
 			this.tabPage1.Controls.Add(this.label5);
 			this.tabPage1.Controls.Add(this.m_fileListBox);
@@ -134,12 +134,12 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			resources.ApplyResources(this.label6, "label6");
 			this.label6.Name = "label6";
 			//
-			// m_browseLoadSettingsFileButon
+			// m_browseLoadSettingsFileButton
 			//
-			resources.ApplyResources(this.m_browseLoadSettingsFileButon, "m_browseLoadSettingsFileButon");
-			this.m_browseLoadSettingsFileButon.Name = "m_browseLoadSettingsFileButon";
-			this.m_browseLoadSettingsFileButon.UseVisualStyleBackColor = true;
-			this.m_browseLoadSettingsFileButon.Click += new System.EventHandler(this.m_browseLoadSettingsFileButon_Click);
+			resources.ApplyResources(this.m_browseLoadSettingsFileButton, "m_browseLoadSettingsFileButton");
+			this.m_browseLoadSettingsFileButton.Name = "m_browseLoadSettingsFileButton";
+			this.m_browseLoadSettingsFileButton.UseVisualStyleBackColor = true;
+			this.m_browseLoadSettingsFileButton.Click += new System.EventHandler(this.m_browseLoadSettingsFileButton_Click);
 			//
 			// m_loadSettingsFileBox
 			//
@@ -246,7 +246,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			this.tabPage4.Controls.Add(this.numberOfTextsLabel);
 			this.tabPage4.Controls.Add(this.secretShiftText);
 			this.tabPage4.Controls.Add(this.label8);
-			this.tabPage4.Controls.Add(this.m_browseSaveSettingsFileButon);
+			this.tabPage4.Controls.Add(this.m_browseSaveSettingsFileButton);
 			this.tabPage4.Controls.Add(this.m_saveSettingsFileBox);
 			this.tabPage4.Controls.Add(this.label11);
 			this.tabPage4.Controls.Add(this.label10);
@@ -272,12 +272,12 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			resources.ApplyResources(this.label8, "label8");
 			this.label8.Name = "label8";
 			//
-			// m_browseSaveSettingsFileButon
+			// m_browseSaveSettingsFileButton
 			//
-			resources.ApplyResources(this.m_browseSaveSettingsFileButon, "m_browseSaveSettingsFileButon");
-			this.m_browseSaveSettingsFileButon.Name = "m_browseSaveSettingsFileButon";
-			this.m_browseSaveSettingsFileButon.UseVisualStyleBackColor = true;
-			this.m_browseSaveSettingsFileButon.Click += new System.EventHandler(this.m_browseSaveSettingsFileButon_Click);
+			resources.ApplyResources(this.m_browseSaveSettingsFileButton, "m_browseSaveSettingsFileButton");
+			this.m_browseSaveSettingsFileButton.Name = "m_browseSaveSettingsFileButton";
+			this.m_browseSaveSettingsFileButton.UseVisualStyleBackColor = true;
+			this.m_browseSaveSettingsFileButton.Click += new System.EventHandler(this.m_browseSaveSettingsFileButon_Click);
 			//
 			// m_saveSettingsFileBox
 			//
@@ -327,7 +327,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		private System.Windows.Forms.TabPage tabPage1;
 		private System.Windows.Forms.Label label1;
-		private System.Windows.Forms.Button m_browseLoadSettingsFileButon;
+		private System.Windows.Forms.Button m_browseLoadSettingsFileButton;
 		private System.Windows.Forms.TextBox m_loadSettingsFileBox;
 		private System.Windows.Forms.Label label5;
 		private System.Windows.Forms.TextBox m_fileListBox;
@@ -348,7 +348,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		private System.Windows.Forms.ColumnHeader Converter;
 		private System.Windows.Forms.ColumnHeader Counts;
 		private System.Windows.Forms.Label label8;
-		private System.Windows.Forms.Button m_browseSaveSettingsFileButon;
+		private System.Windows.Forms.Button m_browseSaveSettingsFileButton;
 		private System.Windows.Forms.TextBox m_saveSettingsFileBox;
 		private System.Windows.Forms.Label label11;
 		private System.Windows.Forms.Label secretShiftText;

@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
+using System.Linq;
 using System.Windows.Forms;
 using LanguageExplorer.Controls;
 using LanguageExplorer.Controls.DetailControls;
@@ -119,7 +120,7 @@ namespace LanguageExplorer.Areas.Lexicon
 					_recordBar.ListView.ItemChecked -= OnDomainListChecked;
 					var semDomainsToShow = m_semDomRepo.FindDomainsThatMatch(searchString);
 					SemanticDomainSelectionServices.UpdateDomainListLabels(
-						ObjectLabel.CreateObjectLabels(m_cache, semDomainsToShow, string.Empty, m_cache.LanguageWritingSystemFactoryAccessor.GetStrFromWs(m_cache.DefaultAnalWs)),
+						ObjectLabel.CreateObjectLabels(m_cache, semDomainsToShow, string.Empty, m_cache.LanguageWritingSystemFactoryAccessor.GetStrFromWs(m_cache.DefaultAnalWs)).ToList(),
 						m_stylesheet, _recordBar.ListView, true);
 					m_btnCancelSearch.SearchIsActive = true;
 				}
@@ -173,8 +174,7 @@ namespace LanguageExplorer.Areas.Lexicon
 		private void SetInfoBarText()
 		{
 			const string titleId = "SemanticDomain-Plural";
-			string titleStr;
-			XmlViewsUtils.TryFindString(StringTable.AlternativeTitles, titleId, out titleStr);
+			XmlViewsUtils.TryFindString(StringTable.AlternativeTitles, titleId, out var titleStr);
 			// if they specified an altTitleId, but it wasn't found, they need to do something,
 			// so just return *titleId*
 			if (titleStr == null)

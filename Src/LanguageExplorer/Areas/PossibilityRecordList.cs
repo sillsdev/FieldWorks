@@ -283,7 +283,7 @@ namespace LanguageExplorer.Areas
 				}
 				// OK, no sibling. Return owner if it's in the list.
 				var index1 = IndexOf(hvoOwner);
-				return (index1 >= 0) ? index1 : CurrentIndex;
+				return index1 >= 0 ? index1 : CurrentIndex;
 			}
 		}
 

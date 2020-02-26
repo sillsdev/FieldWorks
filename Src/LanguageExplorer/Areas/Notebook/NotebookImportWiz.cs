@@ -306,9 +306,8 @@ namespace LanguageExplorer.Areas.Notebook
 		{
 			m_lvMappingLanguages.Items.Clear();
 			var wss = new HashSet<CoreWritingSystemDefinition>();
-			foreach (var sWs in m_mapWsEncConv.Keys)
+			foreach (var ecc in m_mapWsEncConv.Keys.Select(sWs => m_mapWsEncConv[sWs]))
 			{
-				var ecc = m_mapWsEncConv[sWs];
 				wss.Add(ecc.WritingSystem);
 				m_lvMappingLanguages.Items.Add(new ListViewItem(new[] { ecc.Name, ecc.ConverterName }) { Tag = ecc });
 			}
@@ -331,8 +330,7 @@ namespace LanguageExplorer.Areas.Notebook
 		private ListViewItem CreateListViewItemForWS(CoreWritingSystemDefinition ws)
 		{
 			var sEncCnv = string.IsNullOrEmpty(ws.LegacyMapping) ? SfmToXml.SfmToXmlServices.AlreadyInUnicode : ws.LegacyMapping;
-			EncConverterChoice ecc;
-			if (m_mapWsEncConv.TryGetValue(ws.Id, out ecc))
+			if (m_mapWsEncConv.TryGetValue(ws.Id, out var ecc))
 			{
 				ecc.ConverterName = sEncCnv;
 			}
@@ -542,9 +540,8 @@ namespace LanguageExplorer.Areas.Notebook
 			var sRecMkr = m_cbRecordMarker.SelectedItem as string;
 			Debug.Assert(sRecMkr != null);
 			var sRecMkrBase = sRecMkr.Substring(1);
-			foreach (var sMkr in m_mapMkrRsf.Keys)
+			foreach (var rsf in m_mapMkrRsf.Keys.Select(sMkr => m_mapMkrRsf[sMkr]))
 			{
-				var rsf = m_mapMkrRsf[sMkr];
 				rsf.m_nLevel = rsf.m_sMkr == sRecMkrBase ? 1 : 0;
 			}
 		}
@@ -1134,13 +1131,11 @@ namespace LanguageExplorer.Areas.Notebook
 					m_mapMkrRsf.Add(rsf.m_sMkr, rsf);
 				}
 				m_lvContentMapping.Items.Clear();
-				foreach (var sMkr in m_mapMkrRsf.Keys)
+				foreach (var lvi in m_mapMkrRsf.Keys.Select(sMkr => m_mapMkrRsf[sMkr]).Select(rsf => new ListViewItem(new[] { "\\" + rsf.m_sMkr, m_SfmFile.GetSFMCount(rsf.m_sMkr).ToString(), m_SfmFile.GetSFMWithDataCount(rsf.m_sMkr).ToString(), rsf.m_sName})
 				{
-					var rsf = m_mapMkrRsf[sMkr];
-					var lvi = new ListViewItem(new[] { "\\" + rsf.m_sMkr, m_SfmFile.GetSFMCount(rsf.m_sMkr).ToString(), m_SfmFile.GetSFMWithDataCount(rsf.m_sMkr).ToString(), rsf.m_sName})
-					{
-						Tag = rsf
-					};
+					Tag = rsf
+				}))
+				{
 					m_lvContentMapping.Items.Add(lvi);
 				}
 			}
@@ -1166,13 +1161,12 @@ namespace LanguageExplorer.Areas.Notebook
 			while (prjRdr.GetNextSfmMarkerAndData(out sMkr, out sfmData, out badSfmData))
 			{
 				MultiToWideError mwError;
-				byte[] badData;
 				switch (sMkr)
 				{
 					case "+db":
 						if (sfmData.Length > 0)
 						{
-							var sData = Converter.MultiToWideWithERROR(sfmData, 0, sfmData.Length - 1, Encoding.UTF8, out mwError, out badData);
+							var sData = Converter.MultiToWideWithERROR(sfmData, 0, sfmData.Length - 1, Encoding.UTF8, out mwError, out _);
 							if (mwError == MultiToWideError.None)
 							{
 								var sFile = Path.GetFileName(sData.Trim());
@@ -1186,7 +1180,7 @@ namespace LanguageExplorer.Areas.Notebook
 					case "mkrPriKey":
 						if (fInDataDefs && sfmData.Length > 0)
 						{
-							var sData = Converter.MultiToWideWithERROR(sfmData, 0, sfmData.Length - 1, Encoding.UTF8, out mwError, out badData);
+							var sData = Converter.MultiToWideWithERROR(sfmData, 0, sfmData.Length - 1, Encoding.UTF8, out mwError, out _);
 							if (mwError == MultiToWideError.None)
 							{
 								m_recMkr = sData.Trim();
@@ -1199,8 +1193,7 @@ namespace LanguageExplorer.Areas.Notebook
 
 		private RnSfMarker FindOrCreateRnSfMarker(string mkr)
 		{
-			RnSfMarker rsf;
-			if (m_mapMkrRsfFromFile.TryGetValue(mkr, out rsf))
+			if (m_mapMkrRsfFromFile.TryGetValue(mkr, out var rsf))
 			{
 				return rsf;
 			}
@@ -1230,8 +1223,7 @@ namespace LanguageExplorer.Areas.Notebook
 				}
 				for (var i = 1; i <= mapOrderMarker.Count; ++i)
 				{
-					string sMkr;
-					if (mapOrderMarker.TryGetValue(i, out sMkr))
+					if (mapOrderMarker.TryGetValue(i, out var sMkr))
 					{
 						if (sMkr.StartsWith("_"))
 						{
@@ -1256,9 +1248,8 @@ namespace LanguageExplorer.Areas.Notebook
 		{
 			if (m_lvCharMappings.Items.Count == 0)
 			{
-				foreach (var cm in m_rgcm)
+				foreach (var lvi in m_rgcm.Select(CreateListItemForCharMapping))
 				{
-					var lvi = CreateListItemForCharMapping(cm);
 					m_lvCharMappings.Items.Add(lvi);
 				}
 			}
@@ -1270,15 +1261,11 @@ namespace LanguageExplorer.Areas.Notebook
 			var sWs = cm.DestinationWritingSystemId;
 			if (!string.IsNullOrEmpty(sWs))
 			{
-				CoreWritingSystemDefinition ws;
-				m_cache.ServiceLocator.WritingSystemManager.GetOrSet(sWs, out ws);
+				m_cache.ServiceLocator.WritingSystemManager.GetOrSet(sWs, out var ws);
 				Debug.Assert(ws != null);
 				sWsName = ws.DisplayLabel;
 			}
-			var sStyle = cm.DestinationStyle ?? string.Empty;
-			var sBegin = cm.BeginMarker ?? string.Empty;
-			var sEnd = cm.EndMarker ?? string.Empty;
-			return new ListViewItem(new[] { sBegin, sEnd, sWsName, sStyle }) { Tag = cm };
+			return new ListViewItem(new[] { cm.BeginMarker ?? string.Empty, cm.EndMarker ?? string.Empty, sWsName, cm.DestinationStyle ?? string.Empty }) { Tag = cm };
 		}
 
 		private void ShowSaveButtonOrNot()
@@ -1328,8 +1315,7 @@ namespace LanguageExplorer.Areas.Notebook
 				{
 					if (!runSilent)
 					{
-						var msg = string.Format(LanguageExplorerControls.ksInvalidSettingsSaveFileX, m_tbSaveAsFileName.Text);
-						MessageBox.Show(this, msg, LanguageExplorerControls.ksInvalidFile, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+						MessageBox.Show(this, string.Format(LanguageExplorerControls.ksInvalidSettingsSaveFileX, m_tbSaveAsFileName.Text), LanguageExplorerControls.ksInvalidFile, MessageBoxButtons.OK, MessageBoxIcon.Warning);
 					}
 					fStayHere = true;
 					m_tbSaveAsFileName.Focus();
@@ -1340,8 +1326,7 @@ namespace LanguageExplorer.Areas.Notebook
 				// We don't want to overwrite the database with the settings!  See LT-8126.
 				if (!runSilent)
 				{
-					var msg = string.Format(LanguageExplorerControls.ksSettingsSaveFileSameAsDatabaseFile, m_tbSaveAsFileName.Text, m_tbDatabaseFileName.Text);
-					MessageBox.Show(this, msg, LanguageExplorerControls.ksInvalidFile, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+					MessageBox.Show(this, string.Format(LanguageExplorerControls.ksSettingsSaveFileSameAsDatabaseFile, m_tbSaveAsFileName.Text, m_tbDatabaseFileName.Text), LanguageExplorerControls.ksInvalidFile, MessageBoxButtons.OK, MessageBoxIcon.Warning);
 				}
 				fStayHere = true;
 			}
@@ -1423,8 +1408,8 @@ namespace LanguageExplorer.Areas.Notebook
 			}
 			if (AllowQuickFinishButton())
 			{
-				m_lastQuickFinishTab = m_CurrentStepNumber; // save for later
-
+				// save for later
+				m_lastQuickFinishTab = m_CurrentStepNumber;
 				// before jumping we need to make sure all the data structures are populated
 				//  for (near) future use.
 				while (CurrentStepNumber < kstepFinal)
@@ -1673,10 +1658,10 @@ namespace LanguageExplorer.Areas.Notebook
 						}
 						break;
 					case "Multiple":
-						if (cpt == CellarPropertyType.ReferenceCollection ||
-							cpt == CellarPropertyType.ReferenceSequence ||
-							cpt == CellarPropertyType.OwningCollection ||
-							cpt == CellarPropertyType.OwningSequence)
+						if (cpt == CellarPropertyType.ReferenceCollection
+							|| cpt == CellarPropertyType.ReferenceSequence
+							|| cpt == CellarPropertyType.OwningCollection
+							|| cpt == CellarPropertyType.OwningSequence)
 						{
 							sfm.m_tlo.m_fHaveMulti = true;
 							sfm.m_tlo.m_sDelimMulti = XmlUtils.GetMandatoryAttributeValue(xn, "sep");
@@ -1741,18 +1726,6 @@ namespace LanguageExplorer.Areas.Notebook
 			}
 		}
 
-		private void ReadLinkMarker(XmlNode xnMarker, RnSfMarker sfm)
-		{
-			foreach (XmlNode xn in xnMarker.ChildNodes)
-			{
-				switch (xn.Name)
-				{
-					case "IgnoreEmpty":
-						break;
-				}
-			}
-		}
-
 		private void AddCharMapping(XmlNode xn)
 		{
 			m_rgcm.Add(new CharMapping(xn));
@@ -1775,30 +1748,18 @@ namespace LanguageExplorer.Areas.Notebook
 			};
 			for (var flid = flidMin; flid <= flidMax; ++flid)
 			{
-				var fSkip = false;
-				foreach (var flidMissing in flidsMissing)
-				{
-					if (flid == flidMissing)
-					{
-						fSkip = true;
-						break;
-					}
-				}
-				if (fSkip)
+				if (flidsMissing.Any(flidMissing => flid == flidMissing))
 				{
 					continue;
 				}
-				var stid = "kstid" + m_mdc.GetFieldName(flid);
-				var sName = ResourceHelper.GetResourceString(stid);
-				m_mapFlidName.Add(flid, sName);
+				m_mapFlidName.Add(flid, ResourceHelper.GetResourceString($"kstid{m_mdc.GetFieldName(flid)}"));
 			}
 			// Look for custom fields belonging to RnGenericRec.
 			foreach (var flid in m_mdc.GetFieldIds())
 			{
 				if (flid >= (RnGenericRecTags.kClassId * 1000 + 500) && flid <= (RnGenericRecTags.kClassId * 1000 + 999))
 				{
-					var sName = m_mdc.GetFieldLabel(flid);
-					m_mapFlidName.Add(flid, sName);
+					m_mapFlidName.Add(flid, m_mdc.GetFieldLabel(flid));
 				}
 			}
 		}
@@ -1880,16 +1841,7 @@ namespace LanguageExplorer.Areas.Notebook
 
 		private void listViewHierarchy_SelectedIndexChanged(object sender, EventArgs e)
 		{
-			if (m_lvHierarchy.SelectedItems.Count == 0)
-			{
-				m_btnDeleteRecordMapping.Enabled = false;
-				m_btnModifyRecordMapping.Enabled = false;
-			}
-			else
-			{
-				m_btnDeleteRecordMapping.Enabled = true;
-				m_btnModifyRecordMapping.Enabled = true;
-			}
+			m_btnDeleteRecordMapping.Enabled = m_lvHierarchy.SelectedItems.Count == 0 ? m_btnModifyRecordMapping.Enabled = false : m_btnModifyRecordMapping.Enabled = true;
 		}
 
 		private void DoImport()
@@ -1966,8 +1918,8 @@ namespace LanguageExplorer.Areas.Notebook
 						{
 							continue;
 						}
-						RnSfMarker rsf;
-						if (!m_mapMkrRsf.TryGetValue(field.Marker, out rsf))
+
+						if (!m_mapMkrRsf.TryGetValue(field.Marker, out var rsf))
 						{
 							// complain?  log complaint? throw a fit?
 							continue;
@@ -2229,17 +2181,14 @@ namespace LanguageExplorer.Areas.Notebook
 		private void FixSettingsForThisDatabase()
 		{
 			ECInterfaces.IEncConverters encConverters = new EncConverters();
-			foreach (var ecc in m_mapWsEncConv.Values)
+			foreach (var ecc in m_mapWsEncConv.Values.Where(ecc => !string.IsNullOrEmpty(ecc.ConverterName) && ecc.ConverterName != SfmToXmlServices.AlreadyInUnicode))
 			{
-				if (!string.IsNullOrEmpty(ecc.ConverterName) && ecc.ConverterName != SfmToXmlServices.AlreadyInUnicode)
+				foreach (string convName in encConverters.Keys)
 				{
-					foreach (string convName in encConverters.Keys)
+					if (convName == ecc.ConverterName)
 					{
-						if (convName == ecc.ConverterName)
-						{
-							ecc.Converter = encConverters[convName];
-							break;
-						}
+						ecc.Converter = encConverters[convName];
+						break;
 					}
 				}
 			}
@@ -2308,8 +2257,7 @@ namespace LanguageExplorer.Areas.Notebook
 			{
 				if (!string.IsNullOrEmpty(cm.DestinationWritingSystemId))
 				{
-					CoreWritingSystemDefinition ws;
-					m_cache.ServiceLocator.WritingSystemManager.GetOrSet(cm.DestinationWritingSystemId, out ws);
+					m_cache.ServiceLocator.WritingSystemManager.GetOrSet(cm.DestinationWritingSystemId, out var ws);
 					cm.DestinationWritingSystem = ws;
 				}
 			}
@@ -2332,16 +2280,7 @@ namespace LanguageExplorer.Areas.Notebook
 			{
 				return;
 			}
-			List<string> rgsHier;
-			if (rsf.m_tlo.m_fHaveSub)
-			{
-				rgsHier = SplitString(sDefault, rsf.m_tlo.m_rgsDelimSub);
-			}
-			else
-			{
-				rgsHier = new List<string> { sDefault };
-			}
-			rgsHier = PruneEmptyStrings(rgsHier);
+			var rgsHier = PruneEmptyStrings(rsf.m_tlo.m_fHaveSub ? SplitString(sDefault, rsf.m_tlo.m_rgsDelimSub) : new List<string> { sDefault });
 			if (!rgsHier.Any())
 			{
 				return;
@@ -2469,16 +2408,7 @@ namespace LanguageExplorer.Areas.Notebook
 
 		private List<string> PruneEmptyStrings(List<string> rgsData)
 		{
-			var rgsOut = new List<string>();
-			foreach (var sT in rgsData)
-			{
-				var sOut = sT?.Trim();
-				if (sOut?.Length > 0)
-				{
-					rgsOut.Add(sOut);
-				}
-			}
-			return rgsOut;
+			return rgsData.Select(sT => sT?.Trim()).Where(sOut => sOut?.Length > 0).ToList();
 		}
 
 		/// <summary>
@@ -2747,8 +2677,7 @@ namespace LanguageExplorer.Areas.Notebook
 			}
 			if (!string.IsNullOrEmpty(sWs))
 			{
-				EncConverterChoice ecc;
-				if (m_mapWsEncConv.TryGetValue(sWs, out ecc))
+				if (m_mapWsEncConv.TryGetValue(sWs, out var ecc))
 				{
 					if (ecc.Converter != null)
 					{
@@ -2861,8 +2790,7 @@ namespace LanguageExplorer.Areas.Notebook
 			{
 				return;     // nothing we can do without data!
 			}
-			GenDate gdt;
-			if (!TryParseGenDate(sData, rsf.m_dto.m_rgsFmt, out gdt))
+			if (!TryParseGenDate(sData, rsf.m_dto.m_rgsFmt, out var gdt))
 			{
 				LogMessage(string.Format(LanguageExplorerControls.ksCannotParseGenericDate, sData, field.Marker), field.LineNumber);
 				return;
@@ -2905,8 +2833,7 @@ namespace LanguageExplorer.Areas.Notebook
 			}
 			int year;
 			var fAD = true;
-			DateTime dt;
-			if (DateTime.TryParseExact(sData, rgsFmt.ToArray(), null, DateTimeStyles.None, out dt))
+			if (DateTime.TryParseExact(sData, rgsFmt.ToArray(), null, DateTimeStyles.None, out var dt))
 			{
 				if (dt.Year > 0)
 				{
@@ -2922,8 +2849,7 @@ namespace LanguageExplorer.Areas.Notebook
 			}
 			foreach (var sFmt in rgsFmt)
 			{
-				GenDateInfo gdi;
-				var sResidue = ParseFormattedDate(sData, sFmt, out gdi);
+				var sResidue = ParseFormattedDate(sData, sFmt, out var gdi);
 				if (!gdi.error)
 				{
 					year = gdi.year;
@@ -3244,8 +3170,7 @@ namespace LanguageExplorer.Areas.Notebook
 			{
 				return;     // nothing we can do without data!
 			}
-			DateTime dt;
-			if (!DateTime.TryParseExact(sData, rsf.m_dto.m_rgsFmt.ToArray(), null, DateTimeStyles.None, out dt))
+			if (!DateTime.TryParseExact(sData, rsf.m_dto.m_rgsFmt.ToArray(), null, DateTimeStyles.None, out var dt))
 			{
 				LogMessage(string.Format(LanguageExplorerControls.ksCannotParseDateTime, field.Data, field.Marker), field.LineNumber);
 				return;
@@ -3305,9 +3230,8 @@ namespace LanguageExplorer.Areas.Notebook
 			}
 			foreach (var pend in m_pendingLinks)
 			{
-				IRnGenericRec rec;
 				var sData = pend.Field.Data;
-				if (mapTitleRec.TryGetValue(sData, out rec))
+				if (mapTitleRec.TryGetValue(sData, out var rec))
 				{
 					if (SetLink(pend, rec))
 					{
@@ -3605,24 +3529,9 @@ namespace LanguageExplorer.Areas.Notebook
 			{
 				foreach (var sDel in rgsDelims)
 				{
-					var rgsSplit = new List<string>();
-					foreach (var sItem in rgsData)
-					{
-						var s1 = sItem.Trim();
-						if (s1.Length == 0)
-						{
-							continue;
-						}
-						var rgsT = SplitString(s1, sDel);
-						foreach (var s2 in rgsT)
-						{
-							var s3 = s2.Trim();
-							if (s3.Length > 0)
-							{
-								rgsSplit.Add(s3);
-							}
-						}
-					}
+					var rgsSplit = rgsData.Select(sItem => sItem.Trim())
+						.Where(s1 => s1.Length != 0).SelectMany(s1 => SplitString(s1, sDel), (s1, s2) => s2.Trim())
+						.Where(s3 => s3.Length > 0).ToList();
 					rgsData = rgsSplit;
 				}
 			}
@@ -3654,8 +3563,7 @@ namespace LanguageExplorer.Areas.Notebook
 			var rgsHier = SplitForSubitems(rsf, sData);
 			if (rgsHier == null || !rgsHier.Any())
 			{
-				var def = rsf.m_tlo.m_default as ICmAnthroItem;
-				if (def != null && !rec.AnthroCodesRC.Contains(def))
+				if (rsf.m_tlo.m_default is ICmAnthroItem def && !rec.AnthroCodesRC.Contains(def))
 				{
 					rec.AnthroCodesRC.Add(def);
 				}
@@ -3668,9 +3576,12 @@ namespace LanguageExplorer.Areas.Notebook
 			var poss = FindPossibilityOrNull(rgsHier, m_mapAnthroCode);
 			if (poss != null)
 			{
-				if (!rec.AnthroCodesRC.Contains(poss as ICmAnthroItem))
+				if (poss is ICmAnthroItem possAsCmAnthroItem)
 				{
-					rec.AnthroCodesRC.Add(poss as ICmAnthroItem);
+					if (!rec.AnthroCodesRC.Contains(possAsCmAnthroItem))
+					{
+						rec.AnthroCodesRC.Add(possAsCmAnthroItem);
+					}
 				}
 				return true;
 			}
@@ -3728,8 +3639,7 @@ namespace LanguageExplorer.Areas.Notebook
 			var rgsHier = SplitForSubitems(rsf, sData);
 			if (rgsHier == null || !rgsHier.Any())
 			{
-				var def = rsf.m_tlo.m_default as ICmLocation;
-				if (def != null && !rec.LocationsRC.Contains(def))
+				if (rsf.m_tlo.m_default is ICmLocation def && !rec.LocationsRC.Contains(def))
 				{
 					rec.LocationsRC.Add(def);
 				}
@@ -3853,8 +3763,7 @@ namespace LanguageExplorer.Areas.Notebook
 			var rgsHier = SplitForSubitems(rsf, sData);
 			if (rgsHier == null || !rgsHier.Any())
 			{
-				var def = rsf.m_tlo.m_default as ICmPerson;
-				if (def != null && !rec.SourcesRC.Contains(def))
+				if (rsf.m_tlo.m_default is ICmPerson def && !rec.SourcesRC.Contains(def))
 				{
 					rec.SourcesRC.Add(def);
 				}
@@ -4060,8 +3969,7 @@ namespace LanguageExplorer.Areas.Notebook
 			var rgsHier = SplitForSubitems(rsf, sData);
 			if (rgsHier == null || !rgsHier.Any())
 			{
-				var def = rsf.m_tlo.m_default as ICmPerson;
-				if (def != null && !partic.ParticipantsRC.Contains(def))
+				if (rsf.m_tlo.m_default is ICmPerson def && !partic.ParticipantsRC.Contains(def))
 				{
 					partic.ParticipantsRC.Add(def);
 				}
@@ -4216,15 +4124,14 @@ namespace LanguageExplorer.Areas.Notebook
 					}
 					break;
 				default:
-					Dictionary<string, ICmPossibility> map;
-					if (!m_mapListMapPossibilities.TryGetValue(list.Guid, out map))
+					if (!m_mapListMapPossibilities.TryGetValue(list.Guid, out var map))
 					{
 						map = new Dictionary<string, ICmPossibility>();
 						FillPossibilityMap(rsf, list.PossibilitiesOS, map);
 						m_mapListMapPossibilities.Add(list.Guid, map);
 					}
-					List<ICmPossibility> rgNew;
-					if (!m_mapNewPossibilities.TryGetValue(list.Guid, out rgNew))
+
+					if (!m_mapNewPossibilities.TryGetValue(list.Guid, out var rgNew))
 					{
 						rgNew = new List<ICmPossibility>();
 						m_mapNewPossibilities.Add(list.Guid, rgNew);
@@ -4383,12 +4290,7 @@ namespace LanguageExplorer.Areas.Notebook
 			#region IComparable Members
 			public int CompareTo(object obj)
 			{
-				var that = obj as ImportMessage;
-				if (that == null)
-				{
-					return 1;
-				}
-				return Message == that.Message ? LineNumber.CompareTo(that.LineNumber) : Message.CompareTo(that.Message);
+				return !(obj is ImportMessage that) ? 1 : Message == that.Message ? LineNumber.CompareTo(that.LineNumber) : Message.CompareTo(that.Message);
 			}
 			#endregion
 		}
@@ -4479,7 +4381,7 @@ namespace LanguageExplorer.Areas.Notebook
 			/// </summary>
 			public string ConverterName
 			{
-				get { return m_sConverter; }
+				get => m_sConverter;
 				set
 				{
 					m_sConverter = value;

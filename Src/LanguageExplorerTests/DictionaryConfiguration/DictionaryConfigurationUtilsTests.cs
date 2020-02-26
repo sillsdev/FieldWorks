@@ -48,7 +48,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		[Test]
 		public void GatherBuiltInAndUserConfigurations_ReturnsShippedConfigurations()
 		{
-			var configObjectName = "Dictionary";
+			const string configObjectName = "Dictionary";
 			// SUT
 			var fileListFromResults = DictionaryConfigurationUtils.GatherBuiltInAndUserConfigurations(Cache, configObjectName).Values;
 			var shippedFileList = Directory.EnumerateFiles(Path.Combine(FwDirectoryFinder.DefaultConfigurations, "Dictionary"), "*" + LanguageExplorerConstants.DictionaryConfigurationFileExtension);

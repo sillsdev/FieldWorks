@@ -51,9 +51,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			: base(actionHandler)
 		{
 			m_vwRootSite = rootSite;
-
-			string stUndo, stRedo;
-			ResourceHelper.MakeUndoRedoLabels(stid, out stUndo, out stRedo);
+			ResourceHelper.MakeUndoRedoLabels(stid, out var stUndo, out var stRedo);
 			Init(stUndo, stRedo);
 		}
 

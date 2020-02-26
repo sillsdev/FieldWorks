@@ -29,11 +29,6 @@ namespace LanguageExplorer.DictionaryConfiguration
 			}
 		}
 
-		private void cancelButton_Click(object sender, EventArgs e)
-		{
-			Close();
-		}
-
 		private void helpButton_Click(object sender, EventArgs e)
 		{
 			ShowHelp.ShowHelpTopic(m_helpTopicProvider, HelpTopic);

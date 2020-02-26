@@ -68,8 +68,7 @@ namespace LanguageExplorer.Areas.Notebook
 			}
 			if (!string.IsNullOrEmpty(sWs))
 			{
-				CoreWritingSystemDefinition selectedWs;
-				if (!m_cache.ServiceLocator.WritingSystemManager.GetOrSet(sWs, out selectedWs))
+				if (!m_cache.ServiceLocator.WritingSystemManager.GetOrSet(sWs, out var selectedWs))
 				{
 					m_cbWritingSystem.Items.Add(selectedWs);
 				}

@@ -53,8 +53,7 @@ namespace LanguageExplorer.LcmUi
 					continue; // can't fix this one, not a stem.
 				}
 				var entry = sense.OwnerOfClass(LexEntryTags.kClassId) as ILexEntry;
-				List<ILexSense> senses;
-				if (!sensesByEntry.TryGetValue(entry, out senses))
+				if (!sensesByEntry.TryGetValue(entry, out var senses))
 				{
 					senses = new List<ILexSense>();
 					sensesByEntry[entry] = senses;
@@ -162,7 +161,7 @@ namespace LanguageExplorer.LcmUi
 		/// Add to excludedSenses any sense of the entry (directly or indirectly owned)
 		/// which is not a member of includedSenses.
 		/// </summary>
-		private void AddExcludedSenses(ILexEntry entry, List<ILexSense> excludedSenses, List<ILexSense> includedSenses)
+		private static void AddExcludedSenses(ILexEntry entry, List<ILexSense> excludedSenses, List<ILexSense> includedSenses)
 		{
 			foreach (var sense in entry.SensesOS)
 			{
@@ -178,7 +177,7 @@ namespace LanguageExplorer.LcmUi
 		/// Add to excludedSenses any sense of the entry (directly or indirectly owned)
 		/// which is not a member of includedSenses.
 		/// </summary>
-		static void AddExcludedSenses(ILexSense owningSense, List<ILexSense> excludedSenses, List<ILexSense> includedSenses)
+		private static void AddExcludedSenses(ILexSense owningSense, List<ILexSense> excludedSenses, List<ILexSense> includedSenses)
 		{
 			foreach (var sense in owningSense.SensesOS)
 			{

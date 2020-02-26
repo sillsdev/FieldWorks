@@ -17,14 +17,13 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonemeEdit
 	internal class BasicIPASymbolSlice : StringSlice
 	{
 		private static readonly XDocument s_ipaInfoDocument;
+		private bool m_justChangedDescription;
+		private bool m_justChangedFeatures;
 
 		static BasicIPASymbolSlice()
 		{
 			s_ipaInfoDocument = XDocument.Load(Path.Combine(FwDirectoryFinder.TemplateDirectory, PhPhonemeTags.ksBasicIPAInfoFile));
 		}
-
-		private bool m_justChangedDescription;
-		private bool m_justChangedFeatures;
 
 		/// <summary />
 		public BasicIPASymbolSlice(ICmObject obj, int flid, int ws)
@@ -65,9 +64,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonemeEdit
 				{
 					var sLocale = writingSystem.Id;
 					// Mono XPath processing crashes when the expression starts out with // here.  See FWNX-730.
-					var sXPath = "/SegmentDefinitions/SegmentDefinition[Representations/Representation[.='" +
-									XmlUtils.MakeSafeXmlAttribute(phoneme.BasicIPASymbol.Text) +
-									"']]/Descriptions/Description[@lang='" + sLocale + "']";
+					var sXPath = $"/SegmentDefinitions/SegmentDefinition[Representations/Representation[.='{XmlUtils.MakeSafeXmlAttribute(phoneme.BasicIPASymbol.Text)}']]/Descriptions/Description[@lang='{sLocale}']";
 					description = s_ipaInfoDocument.XPathSelectElement(sXPath);
 				}
 				if (description != null)

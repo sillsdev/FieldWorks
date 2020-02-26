@@ -101,8 +101,7 @@ namespace LanguageExplorer.LcmUi
 
 		private static void AddHvoPOStoResults(ISilDataAccess sda, List<int> results, int hvoMsa, int flidPos)
 		{
-			int hvoPOS;
-			hvoPOS = sda.get_ObjectProp(hvoMsa, flidPos);
+			var hvoPOS = sda.get_ObjectProp(hvoMsa, flidPos);
 			if (hvoPOS != 0)
 			{
 				results.Add(hvoPOS);

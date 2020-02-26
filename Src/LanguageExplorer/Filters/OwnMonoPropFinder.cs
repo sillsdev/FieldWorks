@@ -64,12 +64,7 @@ namespace LanguageExplorer.Filters
 		/// </summary>
 		public override bool SameFinder(IStringFinder other)
 		{
-			var other2 = other as OwnMonoPropFinder;
-			if (other2 == null)
-			{
-				return false;
-			}
-			return other2.Flid == Flid && other2.DataAccess == DataAccess;
+			return other is OwnMonoPropFinder ownMonoPropFinder && ownMonoPropFinder.Flid == Flid && ownMonoPropFinder.DataAccess == DataAccess;
 		}
 
 		#endregion

@@ -33,13 +33,10 @@ namespace SIL.FieldWorks.Common.RootSites
 			// of the selection may have changed.
 			m_savedSelection = SelectionHelper.Create(rootSite);
 			m_rootSite = rootSite;
-
-			Rectangle rcSrc, rcDst;
-			rootSite.GetCoordRects(out rcSrc, out rcDst);
+			rootSite.GetCoordRects(out var rcSrc, out var rcDst);
 			try
 			{
-				var sel = rootSite.RootBox.MakeSelAt(5, 5, rcSrc, rcDst, false);
-				m_topOfViewSelection = SelectionHelper.Create(sel, rootSite);
+				m_topOfViewSelection = SelectionHelper.Create(rootSite.RootBox.MakeSelAt(5, 5, rcSrc, rcDst, false), rootSite);
 			}
 			catch (COMException)
 			{
@@ -84,12 +81,12 @@ namespace SIL.FieldWorks.Common.RootSites
 				return;
 			}
 
-			IVwSelection newSel = RestoreSelection();
+			var newSel = RestoreSelection();
 			if (newSel == null)
 			{
 				try
 				{
-					// Any selection is betther than no selection...
+					// Any selection is better than no selection...
 					m_rootSite.RootBox.MakeSimpleSel(true, true, false, true);
 				}
 				catch (COMException)
@@ -108,14 +105,18 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// </summary>
 		protected virtual IVwSelection RestoreSelection()
 		{
-			bool makeVisible = false;
+			var makeVisible = false;
 			if (m_topOfViewSelection != null)
 			{
-				IVwSelection selTop = m_topOfViewSelection.SetSelection(m_rootSite, false, false);
+				var selTop = m_topOfViewSelection.SetSelection(m_rootSite, false, false);
 				if (selTop != null && selTop.IsValid)
+				{
 					m_topOfViewSelection.RestoreScrollPos();
+				}
 				else
+				{
 					makeVisible = true;
+				}
 			}
 
 			return m_savedSelection.MakeBest(makeVisible);

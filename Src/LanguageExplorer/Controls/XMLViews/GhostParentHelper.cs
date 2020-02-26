@@ -118,7 +118,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		public static GhostParentHelper CreateIfPossible(ILcmServiceLocator services, int flid)
 		{
 			var mdc = services.MetaDataCache;
-			return CreateIfPossible(services, mdc.GetOwnClsName(flid) + "." + mdc.GetFieldName(flid));
+			return CreateIfPossible(services, $"{mdc.GetOwnClsName(flid)}.{mdc.GetFieldName(flid)}");
 		}
 
 		internal GhostParentHelper(ILcmServiceLocator services, int parentClsid, int flidOwning)
@@ -174,8 +174,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		internal virtual int ClassToCreate(int hvoItem, int flidBasicProp)
 		{
-			var mdc = m_services.GetInstance<IFwMetaDataCacheManaged>();
-			return mdc.GetOwnClsId(flidBasicProp);
+			return m_services.GetInstance<IFwMetaDataCacheManaged>().GetOwnClsId(flidBasicProp);
 		}
 
 		/// <summary>
@@ -252,8 +251,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			/// </summary>
 			internal override int ClassToCreate(int hvoItem, int flidBasicProp)
 			{
-				var entry = m_services.GetObject(hvoItem) as ILexEntry;
-				return entry.GetDefaultClassForNewAllomorph();
+				return ((ILexEntry)m_services.GetObject(hvoItem)).GetDefaultClassForNewAllomorph();
 			}
 		}
 

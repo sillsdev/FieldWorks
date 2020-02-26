@@ -209,11 +209,7 @@ namespace LanguageExplorer.Areas
 
 		private static object ToContextObject(int cellId)
 		{
-			if (cellId == -1)
-			{
-				return null;
-			}
-			return cellId;
+			return cellId == -1 ? (object)null : cellId;
 		}
 
 		object IPatternControl.GetContext(SelectionHelper sel, SelLimitType limit)
@@ -316,8 +312,7 @@ namespace LanguageExplorer.Areas
 
 		private int InsertNC(IPhNaturalClass nc, SelectionHelper sel, out int cellIndex)
 		{
-			IPhSimpleContextNC ctxt;
-			return InsertNC(nc, sel, out cellIndex, out ctxt);
+			return InsertNC(nc, sel, out cellIndex, out _);
 		}
 
 		/// <summary>
@@ -392,13 +387,7 @@ namespace LanguageExplorer.Areas
 			}
 		}
 
-		protected virtual string RuleName
-		{
-			get
-			{
-				throw new NotSupportedException();
-			}
-		}
+		protected virtual string RuleName => throw new NotSupportedException();
 
 		/// <summary>
 		/// Handle launching of the environment chooser.
@@ -510,8 +499,7 @@ namespace LanguageExplorer.Areas
 								m_cache.LangProject.PhonologicalDataOA.NaturalClassesOS.Add(featNC);
 								featNC.Name.SetUserWritingSystem(string.Format(AreaResources.ksRuleNCFeatsName, RuleName));
 								featNC.FeaturesOA = m_cache.ServiceLocator.GetInstance<IFsFeatStrucFactory>().Create();
-								IPhSimpleContextNC ctxt;
-								cellId = InsertNC(featNC, sel, out cellIndex, out ctxt);
+								cellId = InsertNC(featNC, sel, out cellIndex, out var ctxt);
 								featChooser.Context = ctxt;
 								featChooser.UpdateFeatureStructure();
 							});
@@ -604,11 +592,11 @@ namespace LanguageExplorer.Areas
 			if (sel.IsRange)
 			{
 				var indices = GetIndicesToRemove(ctxts, sel);
-				foreach (int idx in indices)
+				foreach (var idx in indices)
 				{
-					var c = (IPhSimpleContext)ctxts[idx];
-					c.PreRemovalSideEffects();
-					seq.Remove(c);
+					var simpleContext = (IPhSimpleContext)ctxts[idx];
+					simpleContext.PreRemovalSideEffects();
+					seq.Remove(simpleContext);
 				}
 			}
 			seq.Insert(index, ctxt);
@@ -877,12 +865,11 @@ namespace LanguageExplorer.Areas
 				var natClass = (IPhNCFeatures)ctxt.FeatureStructureRA;
 				featChooser.Title = AreaResources.ksRuleFeatsChooserTitle;
 				var flexComponentParameters = new FlexComponentParameters(PropertyTable, Publisher, Subscriber);
-				if (m_obj is IPhSegRuleRHS)
+				if (m_obj is IPhSegRuleRHS rule)
 				{
 					featChooser.ShowFeatureConstraintValues = true;
 					if (natClass.FeaturesOA != null)
 					{
-						var rule = m_obj as IPhSegRuleRHS;
 						featChooser.SetDlgInfo(m_cache, flexComponentParameters, rule.OwningRule, ctxt);
 					}
 					else
@@ -971,20 +958,12 @@ namespace LanguageExplorer.Areas
 
 		internal static bool IsWordBoundary(IPhContextOrVar ctxt)
 		{
-			if (ctxt?.ClassID != PhSimpleContextBdryTags.kClassId)
-			{
-				return false;
-			}
-			return ((IPhSimpleContextBdry)ctxt).FeatureStructureRA.Guid == LangProjectTags.kguidPhRuleWordBdry;
+			return ctxt?.ClassID == PhSimpleContextBdryTags.kClassId && ((IPhSimpleContextBdry)ctxt).FeatureStructureRA.Guid == LangProjectTags.kguidPhRuleWordBdry;
 		}
 
 		internal static bool IsMorphBoundary(IPhContextOrVar ctxt)
 		{
-			if (ctxt?.ClassID != PhSimpleContextBdryTags.kClassId)
-			{
-				return false;
-			}
-			return ((IPhSimpleContextBdry)ctxt).FeatureStructureRA.Guid == LangProjectTags.kguidPhRuleMorphBdry;
+			return ctxt?.ClassID == PhSimpleContextBdryTags.kClassId && ((IPhSimpleContextBdry)ctxt).FeatureStructureRA.Guid == LangProjectTags.kguidPhRuleMorphBdry;
 		}
 
 		#region Component Designer generated code

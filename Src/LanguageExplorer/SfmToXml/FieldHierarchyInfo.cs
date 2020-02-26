@@ -61,7 +61,7 @@ namespace LanguageExplorer.SfmToXml
 
 		public string FwDestID { get; private set; }
 
-		public string FwDestID_Changed { set { FwDestID = value; } }
+		public string FwDestID_Changed { set => FwDestID = value; }
 
 		public string Lang { get; }
 

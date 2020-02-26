@@ -170,7 +170,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			m_handlingMessage = true;
 			try
 			{
-				var sense = MyCmObject as ILexSense;
+				var sense = (ILexSense)MyCmObject;
 				if (sense.MorphoSyntaxAnalysisRA != null)
 				{
 					m_MSAPopupTreeManager.LoadPopupTree(sense.MorphoSyntaxAnalysisRA.Hvo);
@@ -197,8 +197,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			{
 				return;
 			}
-			var htn = e.Node as HvoTreeNode;
-			if (htn == null)
+			if (!(e.Node is HvoTreeNode htn))
 			{
 				return;
 			}
@@ -215,7 +214,7 @@ namespace LanguageExplorer.Controls.DetailControls
 				ContainingDataTree.RefreshList(false);
 				return;
 			}
-			var sense = MyCmObject as ILexSense;
+			var sense = (ILexSense)MyCmObject;
 			// Setting sense.DummyMSA can cause the DataTree to want to refresh.  Don't
 			// let this happen until after we're through!  See LT-9713 and LT-9714.
 			var fOldDoNotRefresh = ContainingDataTree.DoNotRefresh;
@@ -235,8 +234,7 @@ namespace LanguageExplorer.Controls.DetailControls
 						MsaType = sense.GetDesiredMsaType(),
 						MainPOS = obj as IPartOfSpeech
 					};
-					var stemMsa = sense.MorphoSyntaxAnalysisRA as IMoStemMsa;
-					if (stemMsa != null)
+					if (sense.MorphoSyntaxAnalysisRA is IMoStemMsa stemMsa)
 					{
 						sandoxMSA.FromPartsOfSpeech = stemMsa.FromPartsOfSpeechRC;
 					}
@@ -261,7 +259,7 @@ namespace LanguageExplorer.Controls.DetailControls
 				// a pending Windows message.  See LT-9713 and LT-9714.
 				if (ContainingDataTree.DoNotRefresh != fOldDoNotRefresh)
 				{
-					Publisher.Publish(LanguageExplorerConstants.DelayedRefreshList, fOldDoNotRefresh);
+					Publisher.Publish(new PublisherParameterObject(LanguageExplorerConstants.DelayedRefreshList, fOldDoNotRefresh));
 				}
 			}
 		}
@@ -270,7 +268,7 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		public void PropChanged(int hvo, int tag, int ivMin, int cvIns, int cvDel)
 		{
-			var sense = MyCmObject as ILexSense;
+			var sense = (ILexSense)MyCmObject;
 			if (sense.MorphoSyntaxAnalysisRA != null)
 			{
 				if (sense.MorphoSyntaxAnalysisRA.Hvo == hvo)
@@ -326,7 +324,7 @@ namespace LanguageExplorer.Controls.DetailControls
 
 			public ILexSense Sense { get; set; }
 
-			public string FieldName { get; set; } = string.Empty;
+			private string FieldName { get; } = string.Empty;
 
 			public IPersistenceProvider PersistenceProvider { get; set; }
 
@@ -487,8 +485,7 @@ namespace LanguageExplorer.Controls.DetailControls
 				// JohnT: as described in LT-4633, a stem can be given an allomorph that
 				// is an affix. So we need some sort of way to handle this.
 				var tssLabel = msa.InterlinearNameTSS;
-				var stemMsa = msa as IMoStemMsa;
-				if (stemMsa != null && stemMsa.PartOfSpeechRA == null)
+				if (msa is IMoStemMsa stemMsa && stemMsa.PartOfSpeechRA == null)
 				{
 					tssLabel = TsStringUtils.MakeString(m_sUnknown, Cache.ServiceLocator.WritingSystemManager.UserWs);
 				}

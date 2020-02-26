@@ -128,11 +128,9 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonologicalFeaturesAdvancedEdit
 			{
 				return flid;
 			}
-			if (!obj.Cache.GetManagedMetaDataCache().TryGetFieldId(obj.ClassID, attrName, out flid))
-			{
-				throw new ApplicationException($"DataTree could not find the flid for attribute '{attrName}' of class '{obj.ClassID}'.");
-			}
-			return flid;
+			return !obj.Cache.GetManagedMetaDataCache().TryGetFieldId(obj.ClassID, attrName, out flid)
+				? throw new ApplicationException($"DataTree could not find the flid for attribute '{attrName}' of class '{obj.ClassID}'.")
+				: flid;
 		}
 
 		private static IFsFeatStruc GetFeatureStructureFromOwner(ICmObject obj, int flid)

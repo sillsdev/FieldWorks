@@ -227,15 +227,16 @@ namespace LanguageExplorer.Areas
 			{
 				return;
 			}
-			// NB: Some clients are not any of the types that are checked below, which is fine. That means nothing else is done here.
-			if (importDlg is IFormReplacementNeeded && oldWsUser != cache.WritingSystemFactory.UserWs)
+			switch (importDlg)
 			{
-				flexApp.ReplaceMainWindow(mainWindow);
-			}
-			else if (importDlg is IImportForm)
-			{
-				// Make everything we've imported visible.
-				mainWindow.RefreshAllViews();
+				// NB: Some clients are not any of the types that are checked below, which is fine. That means nothing else is done here.
+				case IFormReplacementNeeded _ when oldWsUser != cache.WritingSystemFactory.UserWs:
+					flexApp.ReplaceMainWindow(mainWindow);
+					break;
+				case IImportForm _:
+					// Make everything we've imported visible.
+					mainWindow.RefreshAllViews();
+					break;
 			}
 		}
 
@@ -256,7 +257,7 @@ namespace LanguageExplorer.Areas
 				// Not a custom list.
 				return false;
 			}
-			bool fchanged;
+			bool changed;
 			var type = fd.Type;
 			var objRepo = cache.ServiceLocator.GetInstance<ICmObjectRepository>();
 			var objClass = fd.Class;
@@ -278,7 +279,7 @@ namespace LanguageExplorer.Areas
 							ddbf.Replace(partResult.Item1, flid, 0, partResult.Item2, null, 0);
 						}
 					});
-					fchanged = tupleList.Any();
+					changed = tupleList.Any();
 					break;
 				case CellarPropertyType.ReferenceAtomic:
 					// Handle atomic reference fields
@@ -293,20 +294,13 @@ namespace LanguageExplorer.Areas
 							ddbf.SetObjProp(hvo, flid, LcmCache.kNullHvo);
 						}
 					});
-					fchanged = objsWithDataThisFlid.Any();
+					changed = objsWithDataThisFlid.Any();
 					break;
 				default:
-					fchanged = false;
+					changed = false;
 					break;
 			}
-			return fchanged;
-		}
-
-		private static bool IsCustomList(LcmCache cache, Guid owningListGuid)
-		{
-			// Custom lists are unowned.
-			var list = cache.ServiceLocator.GetInstance<ICmPossibilityListRepository>().GetObject(owningListGuid);
-			return list.Owner == null;
+			return changed;
 		}
 
 		/// <summary>
@@ -515,13 +509,7 @@ namespace LanguageExplorer.Areas
 
 		internal static void LexiconLookup(LcmCache cache, FlexComponentParameters flexComponentParameters, RootSite rootSite)
 		{
-			int ichMin;
-			int ichLim;
-			int hvo;
-			int tag;
-			int ws;
-			ITsString tss;
-			rootSite.RootBox.Selection.GetWordLimitsOfSelection(out ichMin, out ichLim, out hvo, out tag, out ws, out tss);
+			rootSite.RootBox.Selection.GetWordLimitsOfSelection(out var ichMin, out var ichLim, out var hvo, out var tag, out var ws, out _);
 			if (ichLim > ichMin)
 			{
 				LexEntryUi.DisplayOrCreateEntry(cache, hvo, tag, ws, ichMin, ichLim, flexComponentParameters.PropertyTable.GetValue<IWin32Window>(FwUtils.window), flexComponentParameters, flexComponentParameters.PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider), "UserHelpFile");
@@ -530,13 +518,7 @@ namespace LanguageExplorer.Areas
 
 		internal static void AddToLexicon(LcmCache lcmCache, FlexComponentParameters flexComponentParameters, StTextSlice currentSliceAsStTextSlice)
 		{
-			int ichMin;
-			int ichLim;
-			int hvoDummy;
-			int Dummy;
-			int ws;
-			ITsString tss;
-			currentSliceAsStTextSlice.RootSite.RootBox.Selection.GetWordLimitsOfSelection(out ichMin, out ichLim, out hvoDummy, out Dummy, out ws, out tss);
+			currentSliceAsStTextSlice.RootSite.RootBox.Selection.GetWordLimitsOfSelection(out var ichMin, out var ichLim, out _, out _, out var ws, out var tss);
 			if (ws == 0)
 			{
 				ws = tss.GetWsFromString(ichMin, ichLim);
@@ -599,7 +581,6 @@ namespace LanguageExplorer.Areas
 				// Visible & enabled.
 				return true;
 			}
-
 			// Visible & enabled are the same at this point.
 			return cache.DomainDataByFlid.MetaDataCache.GetBaseClsId(currentObject.ClassID) == specifiedClsid;
 		}
@@ -608,8 +589,8 @@ namespace LanguageExplorer.Areas
 		/// It will add the menu (and optional separator) only if the menu will be both visible and enabled.
 		/// </summary>
 		internal static void ConditionallyAddJumpToToolMenuItem(ContextMenuStrip contextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>> menuItems, LcmCache cache, IPublisher publisher,
-			ICmObject rootObject, ICmObject selectedObject, EventHandler eventHandler,
-			string currentToolMachineName, string targetToolName, ref bool wantSeparator, string className, string menuLabel, int separatorInsertLocation = 0)
+			ICmObject rootObject, ICmObject selectedObject, EventHandler eventHandler, string currentToolMachineName, string targetToolName, ref bool wantSeparator, string className,
+			string menuLabel, int separatorInsertLocation = 0)
 		{
 			var visibleAndEnabled = CanJumpToTool(currentToolMachineName, targetToolName, cache, rootObject, selectedObject, className);
 			if (visibleAndEnabled)

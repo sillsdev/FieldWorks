@@ -23,11 +23,8 @@ namespace LanguageExplorer.Areas.Notebook
 		{
 			try
 			{
-				string sfm;
-				byte[] sfmData;
-				byte[] badSfmData;
 				var lineNum = 0;
-				while (GetNextSfmMarkerAndData(out sfm, out sfmData, out badSfmData))
+				while (GetNextSfmMarkerAndData(out var sfm, out var sfmData, out _))
 				{
 					if (sfm.Length == 0)
 					{

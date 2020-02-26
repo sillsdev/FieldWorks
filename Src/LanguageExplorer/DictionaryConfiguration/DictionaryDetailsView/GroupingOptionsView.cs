@@ -23,26 +23,26 @@ namespace LanguageExplorer.DictionaryConfiguration.DictionaryDetailsView
 
 		public string Description
 		{
-			get { return descriptionBox.Text; }
-			set { descriptionBox.Text = value; }
+			get => descriptionBox.Text;
+			set => descriptionBox.Text = value;
 		}
 
 		public bool DisplayInParagraph
 		{
-			get { return displayInParagraph.Checked; }
-			set { displayInParagraph.Checked = value; }
+			get => displayInParagraph.Checked;
+			set => displayInParagraph.Checked = value;
 		}
 
 		public event EventHandler DisplayInParagraphChanged
 		{
-			add { displayInParagraph.CheckedChanged += value; }
-			remove { displayInParagraph.CheckedChanged -= value; }
+			add => displayInParagraph.CheckedChanged += value;
+			remove => displayInParagraph.CheckedChanged -= value;
 		}
 
 		public event EventHandler DescriptionChanged
 		{
-			add { descriptionBox.TextChanged += value; }
-			remove { descriptionBox.TextChanged -= value; }
+			add => descriptionBox.TextChanged += value;
+			remove => descriptionBox.TextChanged -= value;
 		}
 	}
 }

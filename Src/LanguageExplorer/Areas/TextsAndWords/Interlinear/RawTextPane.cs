@@ -53,12 +53,12 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		internal XElement ConfigurationParameters
 		{
-			set { _configurationParameters = value; }
+			set => _configurationParameters = value;
 		}
 
 		internal bool IsCurrentTabForInterlineMaster
 		{
-			get { return _isCurrentTabForInterlineMaster; }
+			get => _isCurrentTabForInterlineMaster;
 			set
 			{
 				if (_isCurrentTabForInterlineMaster == value)
@@ -105,8 +105,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 			if (disposing)
 			{
-					var sharedEventHandlers = MyMajorFlexComponentParameters.SharedEventHandlers;
-					var jumpHandler = sharedEventHandlers.GetEventHandler(Command.CmdJumpToTool);
+				var sharedEventHandlers = MyMajorFlexComponentParameters.SharedEventHandlers;
+				var jumpHandler = sharedEventHandlers.GetEventHandler(Command.CmdJumpToTool);
 				// Dispose managed resources here.
 				DisposeContextMenuStrip(sharedEventHandlers, jumpHandler);
 			}
@@ -244,8 +244,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				return false; // don't insert second ZWS before existing one (or normal space).
 			}
-			int nVar;
-			var ws = helper.GetSelProps(SelLimitType.Anchor).GetIntPropValues((int)FwTextPropType.ktptWs, out nVar);
+			var ws = helper.GetSelProps(SelLimitType.Anchor).GetIntPropValues((int)FwTextPropType.ktptWs, out _);
 			if (ws != 0)
 			{
 				UndoableUnitOfWorkHelper.Do(ITextStrings.ksUndoInsertInvisibleSpace, ITextStrings.ksRedoInsertInvisibleSpace, Cache.ActionHandlerAccessor,
@@ -297,10 +296,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				var isTextPresent = RootBox?.Selection != null;
 				if (isTextPresent) //well, the rootbox is at least there, test it for text.
 				{
-					ITsString tss;
-					int ichLim, hvo, tag, ws;
-					bool fAssocPrev;
-					RootBox.Selection.TextSelInfo(true, out tss, out ichLim, out fAssocPrev, out hvo, out tag, out ws);
+					RootBox.Selection.TextSelInfo(true, out var tss, out var ichLim, out _, out _, out _, out _);
 					if (ichLim == 0 && tss.Length == 0) //nope, no text.
 					{
 						isTextPresent = false;
@@ -346,10 +342,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				var isTextPresent = RootBox?.Selection != null;
 				if (isTextPresent) //well, the rootbox is at least there, test it for text.
 				{
-					ITsString tss;
-					int ichLim, hvo, tag, ws;
-					bool fAssocPrev;
-					RootBox.Selection.TextSelInfo(true, out tss, out ichLim, out fAssocPrev, out hvo, out tag, out ws);
+					RootBox.Selection.TextSelInfo(true, out var tss, out var ichLim, out _, out _, out _, out _);
 					if (ichLim == 0 && tss.Length == 0) //nope, no text.
 					{
 						isTextPresent = false;
@@ -403,11 +396,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				// No change, so bail out.
 				return;
 			}
-			int hvo;
-			int tag;
-			int ichMin;
-			int ichLim;
-			if (!GetSelectedWordPos(RootBox.Selection, out hvo, out tag, out ws, out ichMin, out ichLim) || tag != StTxtParaTags.kflidContents)
+			if (!GetSelectedWordPos(RootBox.Selection, out var hvo, out var tag, out ws, out _, out _) || tag != StTxtParaTags.kflidContents)
 			{
 				return;
 			}
@@ -508,10 +497,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				return;
 			}
-			IWfiWordform wordform;
 			// 'wordform' may be null.
-			GetSelectedWordform(vwselNew, out wordform);
-			Publisher.Publish(TextAndWordsArea.TextSelectedWord, wordform);
+			GetSelectedWordform(vwselNew, out var wordform);
+			Publisher.Publish(new PublisherParameterObject(TextAndWordsArea.TextSelectedWord, wordform));
 			var helper = SelectionHelper.Create(vwselNew, this);
 			if (helper != null && helper.GetTextPropId(SelLimitType.Anchor) == RawTextVc.kTagUserPrompt)
 			{
@@ -603,8 +591,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				return false;
 			}
-			IWfiWordform wordform;
-			if (!GetSelectedWordform(RootBox.Selection, out wordform))
+			if (!GetSelectedWordform(RootBox.Selection, out _))
 			{
 				return false;
 			}
@@ -690,8 +677,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				if (sel != null && sel.IsValid)
 				{
 					// We just need to see if it's possible
-					int hvoDummy, tagDummy, wsDummy, ichMinDummy, ichLimDummy;
-					enabled = GetSelectedWordPos(sel, out hvoDummy, out tagDummy, out wsDummy, out ichMinDummy, out ichLimDummy);
+					enabled = GetSelectedWordPos(sel, out _, out _, out _, out _, out _);
 				}
 				return enabled;
 			}
@@ -699,8 +685,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		private void CmdLexiconLookup_Click(object sender, EventArgs e)
 		{
-			int ichMin, ichLim, hvo, tag, ws;
-			if (GetSelectedWordPos(RootBox.Selection, out hvo, out tag, out ws, out ichMin, out ichLim))
+			if (GetSelectedWordPos(RootBox.Selection, out var hvo, out var tag, out var ws, out var ichMin, out var ichLim))
 			{
 				LexEntryUi.DisplayOrCreateEntry(m_cache, hvo, tag, ws, ichMin, ichLim, this, new FlexComponentParameters(PropertyTable, Publisher, Subscriber), PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider), "UserHelpFile");
 			}
@@ -720,18 +705,15 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				ichMin = ichLim = -1;
 				return false;
 			}
-			ITsString tss;
-			bool fAssocPrev;
-			wordsel.TextSelInfo(false, out tss, out ichMin, out fAssocPrev, out hvo, out tag, out ws);
-			wordsel.TextSelInfo(true, out tss, out ichLim, out fAssocPrev, out hvo, out tag, out ws);
+			wordsel.TextSelInfo(false, out _, out ichMin, out _, out hvo, out tag, out ws);
+			wordsel.TextSelInfo(true, out _, out ichLim, out _, out hvo, out tag, out ws);
 			return ichLim > 0;
 		}
 
 		private bool GetSelectedWordform(IVwSelection sel, out IWfiWordform wordform)
 		{
 			wordform = null;
-			int ichMin, ichLim, hvo, tag, ws;
-			if (!GetSelectedWordPos(sel, out hvo, out tag, out ws, out ichMin, out ichLim))
+			if (!GetSelectedWordPos(sel, out var hvo, out var tag, out _, out var ichMin, out var ichLim))
 			{
 				return false;
 			}
@@ -789,8 +771,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				{
 					continue;
 				}
-				bool exact;
-				var occurrence = seg.FindWagform(ichMin - seg.BeginOffset, ichLim - seg.BeginOffset, out exact);
+				var occurrence = seg.FindWagform(ichMin - seg.BeginOffset, ichLim - seg.BeginOffset, out _);
 				if (occurrence != null)
 				{
 					anal = occurrence.Analysis;
@@ -814,10 +795,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				var isTextPresent = RootBox?.Selection != null;
 				if (isTextPresent) //well, the rootbox is at least there, test it for text.
 				{
-					ITsString tss;
-					int ichLim, hvo, tag, ws;
-					bool fAssocPrev;
-					RootBox.Selection.TextSelInfo(true, out tss, out ichLim, out fAssocPrev, out hvo, out tag, out ws);
+					RootBox.Selection.TextSelInfo(true, out var tss, out var ichLim, out _, out _, out _, out _);
 					if (ichLim == 0 && tss.Length == 0) //nope, no text.
 					{
 						isTextPresent = false;
@@ -833,11 +811,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		private void CmdGuessWordBreaks_Click(object sender, EventArgs e)
 		{
 			var sel = RootBox.Selection;
-			ITsString tss;
-			int ichMin, hvoStart, ichLim, hvoEnd, tag, ws;
-			bool fAssocPrev;
-			sel.TextSelInfo(false, out tss, out ichMin, out fAssocPrev, out hvoStart, out tag, out ws);
-			sel.TextSelInfo(true, out tss, out ichLim, out fAssocPrev, out hvoEnd, out tag, out ws);
+			sel.TextSelInfo(false, out _, out var ichMin, out _, out var hvoStart, out _, out _);
+			sel.TextSelInfo(true, out _, out var ichLim, out _, out var hvoEnd, out _, out _);
 			if (sel.EndBeforeAnchor)
 			{
 				Swap(ref ichMin, ref ichLim);

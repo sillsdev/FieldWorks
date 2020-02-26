@@ -21,7 +21,7 @@ namespace LanguageExplorer.UtilityTools
 			m_btnFixLinks.Enabled = false;
 			foreach (var dir in Directory.GetDirectories(FwDirectoryFinder.ProjectsDirectory))
 			{
-				var ext = LcmFileHelper.ksFwDataXmlFileExtension;
+				const string ext = LcmFileHelper.ksFwDataXmlFileExtension;
 				var lockext = ext + ".lock";
 				var basename = Path.GetFileName(dir);
 				var datafile = Path.Combine(dir, basename + ext);

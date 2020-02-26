@@ -400,7 +400,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			// If it is a custom field, any layout name that starts with the expected string...typically generated from something like
 			// "CustomIntegerForEntry_$fieldName"...is a match.
 			var close = customField ? string.Empty : "\"";
-			var pattern = new Regex("<column [^>]*layout *= *\"" + layoutName + close + "[^>]*/>");
+			var pattern = new Regex($"<column [^>]*layout *= *\"{layoutName}" + close + "[^>]*/>");
 			var match = pattern.Match(savedCols);
 			if (match.Success)
 			{
@@ -411,7 +411,7 @@ namespace LanguageExplorer.Controls.XMLViews
 				{
 					gap = string.Empty;
 				}
-				savedCols = leadIn + gap + attrName + "=\"" + attrValue + "\"" + savedCols.Substring(index);
+				savedCols = $"{leadIn}{gap}{attrName}=\"{attrValue}\"{savedCols.Substring(index)}";
 			}
 			return savedCols;
 		}
@@ -465,12 +465,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		public List<XElement> ComputePossibleColumns()
 		{
-			XmlVc vc = null;
-			if (ListItemsClass != 0)
-			{
-				vc = this;
-			}
-			PossibleColumnSpecs = PartGenerator.GetGeneratedChildren(m_xnSpec.Element("columns"), m_xbv.Cache, vc, (int)ListItemsClass);
+			PossibleColumnSpecs = PartGenerator.GetGeneratedChildren(m_xnSpec.Element("columns"), m_xbv.Cache, ListItemsClass != 0 ? this : null, ListItemsClass);
 			return PossibleColumnSpecs;
 		}
 
@@ -502,10 +497,7 @@ namespace LanguageExplorer.Controls.XMLViews
 				}
 				return m_listItemsClass;
 			}
-			set
-			{
-				m_listItemsClass = value;
-			}
+			set => m_listItemsClass = value;
 		}
 
 		/// <summary>
@@ -513,22 +505,10 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		internal bool IsValidColumnSpec(XElement node)
 		{
-			var possibleColumns = PossibleColumnSpecs;
 			// first, check to see if we can find some part or child node information
 			// to process. Eg. Custom field column nodes that refer to parts that no longer exist
 			// because the custom field has been removed so the parts cannot be generated
-			var partNode = GetPartFromParentNode(node, ListItemsClass);
-			if (partNode == null)
-			{
-				return false;   // invalid node, don't add.
-			}
-			var badCustomField = CheckForBadCustomField(possibleColumns, node);
-			if (badCustomField)
-			{
-				return false;   // invalid custom field, don't add.
-			}
-			var badReversalIndex = CheckForBadReversalIndex(node);
-			return !badReversalIndex;
+			return GetPartFromParentNode(node, ListItemsClass) != null && !CheckForBadCustomField(PossibleColumnSpecs, node) && !CheckForBadReversalIndex(node);
 		}
 
 		/// <summary>
@@ -540,9 +520,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		private bool CheckForBadCustomField(List<XElement> possibleColumns, XElement node)
 		{
 			// see if this node is based on a layout. If so, get its part
-			PropWs propWs;
-			XElement columnForCustomField;
-			if (!TryColumnForCustomField(node, ListItemsClass, out columnForCustomField, out propWs))
+			if (!TryColumnForCustomField(node, ListItemsClass, out var columnForCustomField, out var propWs))
 			{
 				return false;
 			}
@@ -554,7 +532,7 @@ namespace LanguageExplorer.Controls.XMLViews
 				{
 					return true;
 				}
-				if ((m_mdc as IFwMetaDataCacheManaged).FieldExists(className, fieldName, false))
+				if (((IFwMetaDataCacheManaged)m_mdc).FieldExists(className, fieldName, false))
 				{
 					ColumnConfigureDialog.GenerateColumnLabel(node, m_cache);
 					return false;
@@ -581,9 +559,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			foreach (var possibleColumn in possibleColumns)
 			{
 				// Desired node may be a child of a child...  (See LT-6447.)
-				PropWs propWs;
-				XElement columnForCustomField;
-				if (TryColumnForCustomField(possibleColumn, ListItemsClass, out columnForCustomField, out propWs))
+				if (TryColumnForCustomField(possibleColumn, ListItemsClass, out _, out var propWs))
 				{
 					// the flid of the updated custom field node matches the given flid of the old node.
 					if (propWs != null && propWs.Flid == flid)
@@ -610,23 +586,8 @@ namespace LanguageExplorer.Controls.XMLViews
 				return false;
 			}
 			var sWs = StringServices.GetWsSpecWithoutPrefix(XmlUtils.GetOptionalAttributeValue(child, "ws"));
-			if (sWs == null || sWs == "reversal")
-			{
-				return false;
-			}
-			if (!m_cache.ServiceLocator.WritingSystemManager.Exists(sWs))
-			{
-				return true;    // invalid writing system
-			}
-			// Check whether we have a reversal index for the given writing system.
-			foreach (var idx in m_cache.LangProject.LexDbOA.ReversalIndexesOC)
-			{
-				if (idx.WritingSystem == sWs)
-				{
-					return false;
-				}
-			}
-			return true;
+			return sWs != null && sWs != "reversal"
+							   && (!m_cache.ServiceLocator.WritingSystemManager.Exists(sWs) || m_cache.LangProject.LexDbOA.ReversalIndexesOC.All(idx => idx.WritingSystem != sWs));
 		}
 		#endregion Construction and initialization
 
@@ -654,28 +615,16 @@ namespace LanguageExplorer.Controls.XMLViews
 
 		internal virtual List<XElement> ColumnSpecs
 		{
-			get
-			{
-				return m_columns;
-			}
-			set
-			{
-				m_columns = value;
-			}
+			get => m_columns;
+			set => m_columns = value;
 		}
 
 		protected internal List<XElement> PossibleColumnSpecs { get; protected set; }
 
 		internal ISortItemProvider SortItemProvider
 		{
-			get
-			{
-				return m_sortItemProvider;
-			}
-			set
-			{
-				m_sortItemProvider = value;
-			}
+			get => m_sortItemProvider;
+			set => m_sortItemProvider = value;
 		}
 
 		/// <summary>
@@ -738,10 +687,9 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				vwenv.set_IntProperty((int)FwTextPropType.ktptEditable, (int)FwTextPropVar.ktpvEnum, (int)TptEditable.ktptNotEditable);
 			}
-			int index, hvoDummy, tagDummy;
 			var clev = vwenv.EmbeddingLevel;
-			vwenv.GetOuterObject(clev - 2, out hvoDummy, out tagDummy, out index);
-			if (index >= m_sda.get_VecSize(hvoDummy, tagDummy))
+			vwenv.GetOuterObject(clev - 2, out var hvoOuter, out var tag, out var index);
+			if (index >= m_sda.get_VecSize(hvoOuter, tag))
 			{
 				return; // something to fix.
 			}
@@ -796,7 +744,6 @@ namespace LanguageExplorer.Controls.XMLViews
 				vl100, // using 100% of available space
 				72000 / 96, //0, // no border
 				VwAlignment.kvaLeft, // cells by default left aligned
-									 //	VwFramePosition.kvfpBelow, //.kvfpBox, //.kvfpVoid, // no frame
 				VwFramePosition.kvfpBelow | VwFramePosition.kvfpRhs,
 				VwRule.kvrlCols, // vertical lines between columns
 				0, // no space between cells
@@ -815,8 +762,7 @@ namespace LanguageExplorer.Controls.XMLViews
 				AddSelectionCell(vwenv, hvo);
 			}
 			// Make the cells.
-			int hvoRoot, tagDummy2, ihvoDummy;
-			vwenv.GetOuterObject(0, out hvoRoot, out tagDummy2, out ihvoDummy);
+			vwenv.GetOuterObject(0, out var hvoRoot, out _, out _);
 			var icolActive = GetActiveColumn(vwenv, hvoRoot);
 			// if m_fShowSelected is true, we get an extra column of checkmarks that gives us
 			// a different index into the columns. This allows the one-based indexing to work
@@ -877,15 +823,7 @@ namespace LanguageExplorer.Controls.XMLViews
 				}
 			}
 			var fSortedFromEnd = m_xbv.ColumnSortedFromEnd(icol - cAdjCol);
-			int tal;
-			if (fRightToLeft)
-			{
-				tal = fSortedFromEnd ? (int)FwTextAlign.ktalLeft : (int)FwTextAlign.ktalRight;
-			}
-			else
-			{
-				tal = fSortedFromEnd ? (int)FwTextAlign.ktalRight : (int)FwTextAlign.ktalLeft;
-			}
+			var tal = fRightToLeft ? fSortedFromEnd ? (int)FwTextAlign.ktalLeft : (int)FwTextAlign.ktalRight : fSortedFromEnd ? (int)FwTextAlign.ktalRight : (int)FwTextAlign.ktalLeft;
 			vwenv.set_IntProperty((int)FwTextPropType.ktptAlign, (int)FwTextPropVar.ktpvEnum, tal);
 			// If this cell is audio, don't allow editing.
 			if (fVoice)
@@ -970,8 +908,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			else
 			{
 				var level = vwenv.EmbeddingLevel;
-				int hvoDum, tag, ihvo;
-				vwenv.GetOuterObject(level - 2, out hvoDum, out tag, out ihvo);
+				vwenv.GetOuterObject(level - 2, out _, out var tag, out var ihvo);
 				Debug.Assert(tag == m_madeUpFieldIdentifier);
 				var item = m_sortItemProvider.SortItemAt(ihvo);
 				if (item != null)
@@ -1006,7 +943,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				return 0; // can't find a useful combination.
 			}
-			var mdc = m_mdc as IFwMetaDataCacheManaged;
+			var mdc = (IFwMetaDataCacheManaged)m_mdc;
 			var objectClid = m_sda.get_IntProp(hvo, CmObjectTags.kflidClass);
 			if (xn.Parent != null && xn.Parent.Name == "obj")
 			{
@@ -1199,8 +1136,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		public void DisplayCell(IManyOnePathSortItem item, XElement node, int hvo, IVwEnv vwenv)
 		{
 			var outerParts = new List<XElement>();
-			int hvoToDisplay;
-			var dispCommand = XmlViewsUtils.GetDisplayCommandForColumn(item, node, m_mdc, m_sda, LayoutCache, out hvoToDisplay, outerParts);
+			var dispCommand = XmlViewsUtils.GetDisplayCommandForColumn(item, node, m_mdc, m_sda, LayoutCache, out var hvoToDisplay, outerParts);
 			// See if the column has a writing system established for it.
 			try
 			{
@@ -1301,9 +1237,9 @@ namespace LanguageExplorer.Controls.XMLViews
 								if (ws != 0)
 								{
 									var o = mi.Invoke(co, new object[] { ws });
-									if (o.GetType() == typeof(bool))
+									if (o is bool b)
 									{
-										fAllowEdit = fNot ? !(bool)o : (bool)o;
+										fAllowEdit = fNot ? !b : b;
 									}
 								}
 							}
@@ -1428,9 +1364,9 @@ namespace LanguageExplorer.Controls.XMLViews
 					if (hvo > 0)
 					{
 						var obj = m_cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvo);
-						if (obj is IReversalIndex)
+						if (obj is IReversalIndex reversalIndex)
 						{
-							ReversalWs = m_cache.ServiceLocator.WritingSystemManager.GetWsFromStr((obj as IReversalIndex).WritingSystem);
+							ReversalWs = m_cache.ServiceLocator.WritingSystemManager.GetWsFromStr(reversalIndex.WritingSystem);
 						}
 						vwenv.AddLazyVecItems(m_madeUpFieldIdentifier, this, kfragListItem);
 					}

@@ -97,8 +97,7 @@ namespace LanguageExplorer.Controls.Styles
 			var fontSize = FontSize;
 			fontInfo.IsDirty |= fontInfo.m_fontSize.Save(false, fontSize * 1000);
 			// color
-			bool fIsInherited;
-			var color = m_FontAttributes.GetFontColor(out fIsInherited);
+			var color = m_FontAttributes.GetFontColor(out var fIsInherited);
 			fontInfo.IsDirty |= fontInfo.m_fontColor.Save(fIsInherited, color);
 			// background color
 			color = m_FontAttributes.GetBackgroundColor(out fIsInherited);
@@ -132,11 +131,7 @@ namespace LanguageExplorer.Controls.Styles
 		/// </summary>
 		bool IFontDialog.CanChooseFont
 		{
-			set
-			{
-				m_tbFontName.Enabled = false;
-				m_lbFontNames.Enabled = false;
-			}
+			set => m_tbFontName.Enabled = m_lbFontNames.Enabled = false;
 		}
 		#endregion
 
@@ -274,8 +269,7 @@ namespace LanguageExplorer.Controls.Styles
 		/// </summary>
 		protected internal bool UpdateFontSizeIfValid(string size)
 		{
-			int newSize;
-			int.TryParse(size, out newSize);
+			int.TryParse(size, out var newSize);
 			if (newSize <= 0)
 			{
 				return false;
@@ -337,8 +331,8 @@ namespace LanguageExplorer.Controls.Styles
 		/// <summary />
 		internal bool InSelectedIndexChangedHandler
 		{
-			get { return m_fInSelectedIndexChangedHandler; }
-			set { m_fInSelectedIndexChangedHandler = value; }
+			get => m_fInSelectedIndexChangedHandler;
+			set => m_fInSelectedIndexChangedHandler = value;
 		}
 
 		/// <summary />
@@ -361,13 +355,12 @@ namespace LanguageExplorer.Controls.Styles
 			var propsBldr = TsStringUtils.MakePropsBldr();
 			propsBldr.SetStrPropValue((int)FwTextPropType.ktptFontFamily, m_tbFontName.Text);
 			propsBldr.SetIntPropValues((int)FwTextPropType.ktptFontSize, (int)FwTextPropVar.ktpvMilliPoint, FontSize * 1000);
-			bool fIsInherited;
-			propsBldr.SetIntPropValues((int)FwTextPropType.ktptBold, (int)FwTextPropVar.ktpvEnum, m_FontAttributes.GetBold(out fIsInherited) ? 1 : 0);
-			propsBldr.SetIntPropValues((int)FwTextPropType.ktptItalic, (int)FwTextPropVar.ktpvEnum, m_FontAttributes.GetItalic(out fIsInherited) ? 1 : 0);
-			propsBldr.SetIntPropValues((int)FwTextPropType.ktptUnderline, (int)FwTextPropVar.ktpvEnum, (int)m_FontAttributes.GetUnderlineType(out fIsInherited));
-			propsBldr.SetIntPropValues((int)FwTextPropType.ktptForeColor, (int)FwTextPropVar.ktpvDefault, (int)ColorUtil.ConvertColorToBGR(m_FontAttributes.GetFontColor(out fIsInherited)));
-			propsBldr.SetIntPropValues((int)FwTextPropType.ktptBackColor, (int)FwTextPropVar.ktpvDefault, (int)ColorUtil.ConvertColorToBGR(m_FontAttributes.GetBackgroundColor(out fIsInherited)));
-			propsBldr.SetIntPropValues((int)FwTextPropType.ktptUnderColor, (int)FwTextPropVar.ktpvDefault, (int)ColorUtil.ConvertColorToBGR(m_FontAttributes.GetUnderlineColor(out fIsInherited)));
+			propsBldr.SetIntPropValues((int)FwTextPropType.ktptBold, (int)FwTextPropVar.ktpvEnum, m_FontAttributes.GetBold(out _) ? 1 : 0);
+			propsBldr.SetIntPropValues((int)FwTextPropType.ktptItalic, (int)FwTextPropVar.ktpvEnum, m_FontAttributes.GetItalic(out _) ? 1 : 0);
+			propsBldr.SetIntPropValues((int)FwTextPropType.ktptUnderline, (int)FwTextPropVar.ktpvEnum, (int)m_FontAttributes.GetUnderlineType(out _));
+			propsBldr.SetIntPropValues((int)FwTextPropType.ktptForeColor, (int)FwTextPropVar.ktpvDefault, (int)ColorUtil.ConvertColorToBGR(m_FontAttributes.GetFontColor(out _)));
+			propsBldr.SetIntPropValues((int)FwTextPropType.ktptBackColor, (int)FwTextPropVar.ktpvDefault, (int)ColorUtil.ConvertColorToBGR(m_FontAttributes.GetBackgroundColor(out _)));
+			propsBldr.SetIntPropValues((int)FwTextPropType.ktptUnderColor, (int)FwTextPropVar.ktpvDefault, (int)ColorUtil.ConvertColorToBGR(m_FontAttributes.GetUnderlineColor(out _)));
 			propsBldr.SetIntPropValues((int)FwTextPropType.ktptWs, (int)FwTextPropVar.ktpvDefault, m_DefaultWs);
 			strBldr.Replace(3, 3, m_tbFontName.Text, propsBldr.GetTextProps());
 			m_preview.Tss = strBldr.GetString();

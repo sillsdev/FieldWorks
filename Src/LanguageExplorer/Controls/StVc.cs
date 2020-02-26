@@ -83,8 +83,8 @@ namespace LanguageExplorer.Controls
 		/// </summary>
 		public virtual int BackTranslationWS
 		{
-			get { return DefaultWs; }
-			set { DefaultWs = value; }
+			get => DefaultWs;
+			set => DefaultWs = value;
 		}
 
 		/// <summary>
@@ -98,8 +98,8 @@ namespace LanguageExplorer.Controls
 		/// </summary>
 		public IHeightEstimator HeightEstimator
 		{
-			get { return m_heightEstimator; }
-			set { m_heightEstimator = value; }
+			get => m_heightEstimator;
+			set => m_heightEstimator = value;
 		}
 
 		/// <summary>
@@ -125,8 +125,8 @@ namespace LanguageExplorer.Controls
 		/// </summary>
 		public string DefaultParaStyle
 		{
-			get { return m_sDefaultParaStyle ?? string.Empty; }
-			set { m_sDefaultParaStyle = value; }
+			get => m_sDefaultParaStyle ?? string.Empty;
+			set => m_sDefaultParaStyle = value;
 		}
 
 		/// <summary>
@@ -134,8 +134,8 @@ namespace LanguageExplorer.Controls
 		/// </summary>
 		public Color BackColor
 		{
-			get { return m_BackColor; }
-			set { m_BackColor = value; }
+			get => m_BackColor;
+			set => m_BackColor = value;
 		}
 
 		/// <summary>
@@ -175,10 +175,7 @@ namespace LanguageExplorer.Controls
 		/// </summary>
 		public override LcmCache Cache
 		{
-			get
-			{
-				return base.Cache;
-			}
+			get => base.Cache;
 			set
 			{
 				base.Cache = value;
@@ -208,8 +205,8 @@ namespace LanguageExplorer.Controls
 		/// </summary>
 		public bool DisplayTranslation
 		{
-			get { return ContentType != ContentTypes.kctNormal; }
-			set { ContentType = value ? ContentTypes.kctSimpleBT : ContentTypes.kctNormal; }
+			get => ContentType != ContentTypes.kctNormal;
+			set => ContentType = value ? ContentTypes.kctSimpleBT : ContentTypes.kctNormal;
 		}
 
 		/// <summary>
@@ -344,11 +341,7 @@ namespace LanguageExplorer.Controls
 			// Insert the label if it is the first paragraph.
 			if (vc.Label != null)
 			{
-				var lev = vwenv.EmbeddingLevel;
-				int hvoOuter;
-				int ihvoItem;
-				int tagOuter;
-				vwenv.GetOuterObject(lev - 1, out hvoOuter, out tagOuter, out ihvoItem);
+				vwenv.GetOuterObject(vwenv.EmbeddingLevel - 1, out _, out _, out var ihvoItem);
 				if (ihvoItem == 0)
 				{
 					vwenv.AddObj(paraHvo, vc, (int)StTextFrags.kfrLabel);
@@ -356,11 +349,7 @@ namespace LanguageExplorer.Controls
 			}
 			if (frag == (int)StTextFrags.kfrFootnotePara)
 			{
-				var lev = vwenv.EmbeddingLevel;
-				int hvoOuter;
-				int ihvoItem;
-				int tagOuter;
-				vwenv.GetOuterObject(lev - 1, out hvoOuter, out tagOuter, out ihvoItem);
+				vwenv.GetOuterObject(vwenv.EmbeddingLevel - 1, out var hvoOuter, out _, out var ihvoItem);
 				// Note a dependency on the footnote options so that the footnote will
 				// be refreshed when these are changed.
 				// If this is the 1st paragraph in the footnote...
@@ -408,9 +397,7 @@ namespace LanguageExplorer.Controls
 		/// <param name="paraHvo">The HVO of the paragraph.</param>
 		protected virtual void SetupWsAndDirectionForPara(IVwEnv vwenv, int paraHvo)
 		{
-			bool fIsRightToLeftPara;
-			int wsPara;
-			GetWsAndDirectionForPara(paraHvo, out fIsRightToLeftPara, out wsPara);
+			GetWsAndDirectionForPara(paraHvo, out var fIsRightToLeftPara, out var wsPara);
 			// This sets the current default paragraph writing system from the relevant field spec.
 			// It will only be applied if the paragraph itself lacks a writing system.
 			vwenv.set_IntProperty((int)FwTextPropType.ktptBaseWs, (int)FwTextPropVar.ktpvDefault, wsPara);

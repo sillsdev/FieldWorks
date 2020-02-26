@@ -72,8 +72,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 			if (DialogResult == DialogResult.OK)
 			{
 				m_homographConfiguration.SetShowHomographNumber(HomographConfiguration.HeadwordVariant.Main, !m_radioHide.Checked);
-				m_homographConfiguration.SetShowHomographNumber(HomographConfiguration.HeadwordVariant.ReversalCrossRef,
-				!m_radioHide.Checked && m_chkShowHomographNumInReversal.Checked);
+				m_homographConfiguration.SetShowHomographNumber(HomographConfiguration.HeadwordVariant.ReversalCrossRef, !m_radioHide.Checked && m_chkShowHomographNumInReversal.Checked);
 				m_homographConfiguration.HomographNumberBefore = m_radioBefore.Checked;
 				m_homographConfiguration.ShowSenseNumberReversal = !m_radioHide.Checked && m_chkShowSenseNumInReversal.Checked;
 			}
@@ -147,7 +146,6 @@ namespace LanguageExplorer.DictionaryConfiguration
 				}
 			}
 		}
-
 
 		/// <summary>
 		/// Sets the help topic ID for the window.  This is used in both the Help button and when the user hits F1

@@ -18,7 +18,7 @@ namespace SIL.FieldWorks.MigrateSqlDbs.MigrateProjects
 		public FWVersionTooOld(string version)
 		{
 			InitializeComponent();
-			m_txtDescription.Text = String.Format(m_txtDescription.Text, version);
+			m_txtDescription.Text = string.Format(m_txtDescription.Text, version);
 		}
 
 		// TODO-Linux: this doesn't work on Linux!

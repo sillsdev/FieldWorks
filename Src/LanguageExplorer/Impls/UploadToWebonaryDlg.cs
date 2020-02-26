@@ -121,8 +121,7 @@ namespace LanguageExplorer.Impls
 		{
 			if (!m_controller.IsSortingOnAlphaHeaders)
 			{
-				MessageBox.Show(
-					"Your data is sorted by a field that does not allow us to calculate letter headings. Please change your sort column before uploading to Webonary.",
+				MessageBox.Show("Your data is sorted by a field that does not allow us to calculate letter headings. Please change your sort column before uploading to Webonary.",
 					"Letter Headings not Sorted", MessageBoxButtons.OK, MessageBoxIcon.Warning);
 			}
 		}

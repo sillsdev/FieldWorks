@@ -65,9 +65,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			// than both of them. This value works on Windows, but something different might be needed on Linux. Roughly, it should
 			// be a little smaller than the first two (non-lazy) paragraphs, but definitely bigger than just one.
 			ShowForm(TestLanguages.English, DisplayType.kAll, 150);
-			Rectangle rcSrcRoot;
-			Rectangle rcDstRoot;
-			m_basicView.GetCoordRects(out rcSrcRoot, out rcDstRoot);
+			m_basicView.GetCoordRects(out var rcSrcRoot, out _);
 			var currentHeight = m_basicView.RootBox.Height;
 			// Initially we have 2 expanded boxes with 6 lines each, and 2 lazy boxes with
 			// 2 fragments each
@@ -166,7 +164,7 @@ namespace SIL.FieldWorks.Common.RootSites
 
 		/// <summary>
 		/// Test the RootSite.AdjustScrollRange1 method for the vertical scroll bar when the
-		/// thumb positioin is somewhere in the middle.
+		/// thumb position is somewhere in the middle.
 		/// </summary>
 		[Test]
 		[Platform(Exclude = "Linux", Reason = "This test is too dependent on mono ScrollableControl behaving the same as .NET")]
@@ -349,7 +347,6 @@ namespace SIL.FieldWorks.Common.RootSites
 			Assert.IsFalse(fRet, "4. test");
 
 			fRet = view.AdjustScrollRange(0, 0, 30, nPos - 1);
-			//nHeight += 30;
 			nPos += 30;
 			Assert.AreEqual(nPos, -view.ScrollPosition.Y, "4. test");
 			Assert.AreEqual(nHeight, view.DisplayRectangle.Height, "4. test");
@@ -527,8 +524,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			Assert.AreEqual(nPos, -view.ScrollPosition.X, "2. test");
 			Assert.AreEqual(nWidth, view.DisplayRectangle.Width, "2. test");
 			Assert.IsFalse(fRet, "2. test");
-
-			int scrollMax = view.DisplayRectangle.Width - dxdWindwidth;
+			var scrollMax = view.DisplayRectangle.Width - dxdWindwidth;
 
 			// Thumb position is almost at the far right
 			view.ScrollPosition = new Point(scrollMax - 15, 0);
@@ -759,33 +755,17 @@ namespace SIL.FieldWorks.Common.RootSites
 			// Test 1: selection in one paragraph
 			rootBox.MakeSimpleSel(false, true, false, true);
 			var sel = rootBox.Selection;
-			ITsString tss;
-			int ich, hvoObj, tag, ws;
-			bool fAssocPrev;
-			sel.TextSelInfo(true, out tss, out ich, out fAssocPrev, out hvoObj, out tag, out ws);
+			sel.TextSelInfo(true, out _, out _, out var fAssocPrev, out _, out var tag, out var ws);
 			var clev = sel.CLevels(true);
 			clev--; // result it returns is one more than what the AllTextSelInfo routine wants.
 			using (var rgvsliTemp = MarshalEx.ArrayToNative<SelLevInfo>(clev))
 			{
-				int ihvoRoot;
-				int cpropPrevious;
-				int ichAnchor;
-				int ichEnd;
-				int ihvoEnd1;
-				ITsTextProps ttp;
-				sel.AllTextSelInfo(out ihvoRoot, clev, rgvsliTemp, out tag, out cpropPrevious, out ichAnchor, out ichEnd, out ws, out fAssocPrev, out ihvoEnd1, out ttp);
+				sel.AllTextSelInfo(out var ihvoRoot, clev, rgvsliTemp, out tag, out var cpropPrevious, out _, out _, out ws, out fAssocPrev, out var ihvoEnd1, out var ttp);
 				var rgvsli = MarshalEx.NativeToArray<SelLevInfo>(rgvsliTemp, clev);
-				var ichInsert = 0;
+				const int ichInsert = 0;
 				rootBox.MakeTextSelection(ihvoRoot, clev, rgvsli, tag, cpropPrevious, ichInsert, ichInsert + 5, ws, fAssocPrev, ihvoEnd1, ttp, true);
 
-				IVwSelection vwsel;
-				int hvoText;
-				int tagText;
-				int ihvoAnchor;
-				int ihvoEnd;
-				IVwPropertyStore[] vqvps;
-				var fRet = m_basicView.IsParagraphProps(out vwsel, out hvoText, out tagText, out vqvps, out ihvoAnchor, out ihvoEnd);
-
+				var fRet = m_basicView.IsParagraphProps(out _, out _, out _, out _, out var ihvoAnchor, out var ihvoEnd);
 				Assert.AreEqual(true, fRet, "1. test:");
 				Assert.AreEqual(ihvoAnchor, ihvoEnd, "1. test:");
 
@@ -795,9 +775,7 @@ namespace SIL.FieldWorks.Common.RootSites
 				rgvsli[0].ihvo = 0; // first paragraph
 				rgvsli[clev - 1].ihvo = 2; // third section
 				rootBox.MakeTextSelInObj(ihvoRoot, clev, rgvsli, clev, rgvsliEnd, false, true, true, true, true);
-
-				fRet = m_basicView.IsParagraphProps(out vwsel, out hvoText, out tagText, out vqvps, out ihvoAnchor, out ihvoEnd);
-
+				fRet = m_basicView.IsParagraphProps(out _, out _, out _, out _, out ihvoAnchor, out ihvoEnd);
 				Assert.AreEqual(false, fRet, "2. test:");
 			}
 		}
@@ -813,16 +791,12 @@ namespace SIL.FieldWorks.Common.RootSites
 			ShowForm(TestLanguages.English, DisplayType.kFootnoteDetailsSinglePara);
 
 			var rootBox = m_basicView.RootBox;
-			IVwSelection vwsel;
-			int hvoText, tagText, ihvoAnchor, ihvoEnd;
-			IVwPropertyStore[] vqvps;
-
 			var selAnchor = rootBox.MakeSimpleSel(true, false, false, true);
 			m_basicView.CallOnKeyDown(new KeyEventArgs(Keys.End));
 			var selEnd = rootBox.Selection;
 			rootBox.MakeRangeSelection(selAnchor, selEnd, true);
 
-			Assert.IsTrue(m_basicView.IsParagraphProps(out vwsel, out hvoText, out tagText, out vqvps, out ihvoAnchor, out ihvoEnd));
+			Assert.IsTrue(m_basicView.IsParagraphProps(out _, out _, out _, out _, out _, out _));
 		}
 
 		/// <summary>
@@ -840,34 +814,17 @@ namespace SIL.FieldWorks.Common.RootSites
 			// Test 1: selection in one paragraph
 			rootBox.MakeSimpleSel(false, true, false, true);
 			var sel = rootBox.Selection;
-			ITsString tss;
-			int ich, hvoObj, tag, ws;
-			bool fAssocPrev;
-			sel.TextSelInfo(true, out tss, out ich, out fAssocPrev, out hvoObj, out tag, out ws);
+			sel.TextSelInfo(true, out _, out _, out var fAssocPrev, out _, out var tag, out var ws);
 			var clev = sel.CLevels(true);
 			clev--; // result it returns is one more than what the AllTextSelInfo routine wants.
-			ITsTextProps ttp;
 			using (var rgvsliTemp = MarshalEx.ArrayToNative<SelLevInfo>(clev))
 			{
-				int ihvoRoot;
-				int cpropPrevious;
-				int ichAnchor;
-				int ichEnd;
-				int ihvoEnd1;
-				sel.AllTextSelInfo(out ihvoRoot, clev, rgvsliTemp, out tag, out cpropPrevious, out ichAnchor, out ichEnd, out ws, out fAssocPrev, out ihvoEnd1, out ttp);
+				sel.AllTextSelInfo(out var ihvoRoot, clev, rgvsliTemp, out tag, out var cpropPrevious, out _, out _, out ws, out fAssocPrev, out var ihvoEnd1, out var ttp);
 				var rgvsli = MarshalEx.NativeToArray<SelLevInfo>(rgvsliTemp, clev);
-				var ichInsert = 0;
+				const int ichInsert = 0;
 				rootBox.MakeTextSelection(ihvoRoot, clev, rgvsli, tag, cpropPrevious, ichInsert, ichInsert + 5, ws, fAssocPrev, ihvoEnd1, ttp, true);
 
-				IVwSelection vwsel;
-				int hvoText;
-				int tagText;
-				int ihvoFirst;
-				int ihvoLast;
-				IVwPropertyStore[] vqvps;
-				ITsTextProps[] vqttp;
-				var fRet = m_basicView.GetParagraphProps(out vwsel, out hvoText, out tagText, out vqvps, out ihvoFirst, out ihvoLast, out vqttp);
-
+				var fRet = m_basicView.GetParagraphProps(out _, out _, out _, out _, out var ihvoFirst, out var ihvoLast, out var vqttp);
 				Assert.IsTrue(fRet, "Test 1 ");
 				Assert.AreEqual(ihvoFirst, ihvoLast, "Test 1 ");
 				Assert.AreEqual(1, vqttp.Length, "Test 1 ");
@@ -877,10 +834,8 @@ namespace SIL.FieldWorks.Common.RootSites
 				rgvsli.CopyTo(rgvsliEnd, 0);
 				rgvsli[0].ihvo = 0; // first paragraph
 				rgvsli[clev - 1].ihvo = 2; // third section
-				rootBox.MakeTextSelInObj(ihvoRoot, clev, rgvsli, clev, rgvsliEnd, false, true, true, true, 					true);
-
-				fRet = m_basicView.GetParagraphProps(out vwsel, out hvoText, out tagText, out vqvps, out ihvoFirst, out ihvoLast, out vqttp);
-
+				rootBox.MakeTextSelInObj(ihvoRoot, clev, rgvsli, clev, rgvsliEnd, false, true, true, true, true);
+				fRet = m_basicView.GetParagraphProps(out _, out _, out _, out _, out ihvoFirst, out ihvoLast, out vqttp);
 				Assert.IsFalse(fRet, "Test 2 ");
 			}
 		}
@@ -893,8 +848,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		public void GetParagraphProps_InPictureCaption()
 		{
 			var filename = Environment.OSVersion.Platform == PlatformID.Unix ? "/junk.jpg" : "c:\\junk.jpg";
-			var pict = Cache.ServiceLocator.GetInstance<ICmPictureFactory>().Create(filename,
-				TsStringUtils.MakeString("Test picture", Cache.DefaultVernWs), CmFolderTags.LocalPictures);
+			var pict = Cache.ServiceLocator.GetInstance<ICmPictureFactory>().Create(filename, TsStringUtils.MakeString("Test picture", Cache.DefaultVernWs), CmFolderTags.LocalPictures);
 			Assert.IsNotNull(pict);
 
 			ShowForm(TestLanguages.English, DisplayType.kNormal);
@@ -905,25 +859,14 @@ namespace SIL.FieldWorks.Common.RootSites
 			mockedSelection.Expect(s => s.CompleteEdits(out changeInfo)).IgnoreArguments().Return(true);
 			mockedSelection.Expect(s => s.CLevels(true)).Return(2);
 			mockedSelection.Expect(s => s.CLevels(false)).Return(2);
-			int ignoreOut;
-			IVwPropertyStore outPropStore;
-			mockedSelection.Expect(s => s.PropInfo(false, 0, out ignoreOut, out ignoreOut, out ignoreOut, out ignoreOut, out outPropStore))
-				.OutRef(pict.Hvo, CmPictureTags.kflidCaption, 0, 0, null);
-			mockedSelection.Expect(s => s.PropInfo(true, 0, out ignoreOut, out ignoreOut, out ignoreOut, out ignoreOut, out outPropStore))
-				.OutRef(pict.Hvo, CmPictureTags.kflidCaption, 0, 0, null);
+			mockedSelection.Expect(s => s.PropInfo(false, 0, out _, out _, out _, out _, out _)).OutRef(pict.Hvo, CmPictureTags.kflidCaption, 0, 0, null);
+			mockedSelection.Expect(s => s.PropInfo(true, 0, out _, out _, out _, out _, out _)).OutRef(pict.Hvo, CmPictureTags.kflidCaption, 0, 0, null);
 			mockedSelection.Expect(s => s.EndBeforeAnchor).Return(false);
 
 			var editingHelper = (DummyEditingHelper)m_basicView.EditingHelper;
 			editingHelper.m_mockedSelection = (IVwSelection)mockedSelection;
 			editingHelper.m_fOverrideGetParaPropStores = true;
-
-			IVwSelection vwsel;
-			int hvoText, tagText, ihvoFirst, ihvoLast;
-			IVwPropertyStore[] vvps;
-			ITsTextProps[] vttp;
-
-			Assert.IsTrue(m_basicView.GetParagraphProps(out vwsel, out hvoText, out tagText, out vvps, out ihvoFirst, out ihvoLast, out vttp));
-
+			Assert.IsTrue(m_basicView.GetParagraphProps(out _, out _, out var tagText, out _, out _, out _, out var vttp));
 			Assert.AreEqual(CmPictureTags.kflidCaption, tagText);
 			Assert.AreEqual(1, vttp.Length);
 			Assert.AreEqual("Figure caption", vttp[0].GetStrPropValue((int)FwTextPropType.ktptNamedStyle));
@@ -970,7 +913,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			rootBox.MakeTextSelection(0, 2, levelInfo, StTxtParaTags.kflidContents, 0, ich, 0, 0, true, 1, null, true);
 			TypeBackspace();
 
-			Assert.AreEqual(DummyBasicView.kFirstParaEng + DummyBasicView.kSecondParaEng, 				para1.Contents.Text);
+			Assert.AreEqual(DummyBasicView.kFirstParaEng + DummyBasicView.kSecondParaEng, para1.Contents.Text);
 			Assert.AreEqual("BT1 BT2", bt1.Translation.get_String(m_wsEng).Text);
 		}
 
@@ -1091,7 +1034,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			levelInfo[0].cpropPrevious = 0;
 			levelInfo[0].ihvo = 0;
 			var ich = DummyBasicView.kFirstParaEng.Length + 5;
-			rootBox.MakeTextSelection(0, 2, levelInfo, 				StTxtParaTags.kflidContents, 0, ich, ich, 0, true, -1, null, true);
+			rootBox.MakeTextSelection(0, 2, levelInfo, StTxtParaTags.kflidContents, 0, ich, ich, 0, true, -1, null, true);
 			TypeEnter();
 
 			var para1 = (IStTxtPara)text1.ParagraphsOS[0];
@@ -1141,8 +1084,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			levelInfo[0].cpropPrevious = 0;
 			levelInfo[0].ihvo = 0;
 			var ich = DummyBasicView.kFirstParaEng.Length;
-			rootBox.MakeTextSelection(0, 2, levelInfo,
-				StTxtParaTags.kflidContents, 0, ich, 0, 0, true, 1, null, true);
+			rootBox.MakeTextSelection(0, 2, levelInfo, StTxtParaTags.kflidContents, 0, ich, 0, 0, true, 1, null, true);
 			TypeBackspace();
 
 			Assert.AreEqual(DummyBasicView.kFirstParaEng + DummyBasicView.kSecondParaEng, para1.Contents.Text);
@@ -1182,8 +1124,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			levelInfo[0].cpropPrevious = 0;
 			levelInfo[0].ihvo = 0;
 			var ich = DummyBasicView.kFirstParaEng.Length;
-			rootBox.MakeTextSelection(0, 2, levelInfo,
-				StTxtParaTags.kflidContents, 0, ich, 0, 0, true, 1, null, true);
+			rootBox.MakeTextSelection(0, 2, levelInfo, StTxtParaTags.kflidContents, 0, ich, 0, 0, true, 1, null, true);
 			TypeBackspace();
 
 			Assert.AreEqual(DummyBasicView.kFirstParaEng + DummyBasicView.kSecondParaEng, para1.Contents.Text);
@@ -1228,8 +1169,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			levelInfo[0].cpropPrevious = 0;
 			levelInfo[0].ihvo = 0;
 			var ich = DummyBasicView.kFirstParaEng.Length;
-			rootBox.MakeTextSelection(0, 2, levelInfo,
-				StTxtParaTags.kflidContents, 0, ich, 0, 0, true, 1, null, true);
+			rootBox.MakeTextSelection(0, 2, levelInfo, StTxtParaTags.kflidContents, 0, ich, 0, 0, true, 1, null, true);
 			TypeBackspace();
 
 			Assert.AreEqual(DummyBasicView.kFirstParaEng + DummyBasicView.kSecondParaEng, para1.Contents.Text);
@@ -1277,8 +1217,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			levelInfo[0].cpropPrevious = 0;
 			levelInfo[0].ihvo = 0;
 			var ich = DummyBasicView.kFirstParaEng.Length;
-			rootBox.MakeTextSelection(0, 2, levelInfo,
-				StTxtParaTags.kflidContents, 0, ich, 0, 0, true, 1, null, true);
+			rootBox.MakeTextSelection(0, 2, levelInfo, StTxtParaTags.kflidContents, 0, ich, 0, 0, true, 1, null, true);
 			TypeBackspace();
 
 			Assert.AreEqual(DummyBasicView.kFirstParaEng + DummyBasicView.kSecondParaEng, para1.Contents.Text);
@@ -1326,8 +1265,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			levelInfo[0].cpropPrevious = 0;
 			levelInfo[0].ihvo = 0;
 			var ich = DummyBasicView.kFirstParaEng.Length;
-			rootBox.MakeTextSelection(0, 2, levelInfo,
-				StTxtParaTags.kflidContents, 0, ich, 0, 0, true, 1, null, true);
+			rootBox.MakeTextSelection(0, 2, levelInfo, StTxtParaTags.kflidContents, 0, ich, 0, 0, true, 1, null, true);
 			TypeBackspace();
 
 			Assert.AreEqual(DummyBasicView.kFirstParaEng + DummyBasicView.kSecondParaEng, para1.Contents.Text);
@@ -1796,7 +1734,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			levelInfo[0].cpropPrevious = 0;
 			levelInfo[0].ihvo = 0;
 			var ichAnchor = DummyBasicView.kFirstParaEng.Length - 2;
-			var ichEnd = 2;
+			const int ichEnd = 2;
 			var sel = rootBox.MakeTextSelection(0, 2, levelInfo, StTxtParaTags.kflidContents, 0, ichAnchor, ichEnd, 0, true, 1, null, true);
 			TypeChar('a');
 
@@ -2014,9 +1952,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			try
 			{
 				var wsTemp = -1;
-				bool fWasComplex;
-				rootBox.DeleteRangeIfComplex(vg, out fWasComplex);
-
+				rootBox.DeleteRangeIfComplex(vg, out var fWasComplex);
 				// Attempt to act like the real program in the case of complex deletions
 				if (fWasComplex)
 				{

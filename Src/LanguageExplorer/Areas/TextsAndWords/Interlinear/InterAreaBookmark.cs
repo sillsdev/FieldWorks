@@ -19,10 +19,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		private IPropertyTable m_propertyTable;
 		private string m_bookmarkId;
 
-		internal InterAreaBookmark()
-		{
-		}
-
 		internal InterAreaBookmark(InterlinMaster interlinMaster, LcmCache cache, IPropertyTable propertyTable) // For restoring
 		{
 			Init(interlinMaster, cache, propertyTable);
@@ -47,10 +43,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				Reset(index); // let's just reset for an empty location.
 				return;
 			}
-			var iParaInText = point.Segment.Paragraph.IndexInOwner;
 			var begOffset = point.Segment.GetAnalysisBeginOffset(point.Index);
-			var endOffset = point.HasWordform ? begOffset + point.BaselineText.Length : begOffset;
-			Save(index, iParaInText, begOffset, endOffset, fPersistNow);
+			Save(index, point.Segment.Paragraph.IndexInOwner, begOffset, point.HasWordform ? begOffset + point.BaselineText.Length : begOffset, fPersistNow);
 		}
 
 		/// <summary>

@@ -25,8 +25,6 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookBrowse
 		private PaneBarContainer _paneBarContainer;
 		private RecordBrowseView _recordBrowseView;
 		private IRecordList _recordList;
-		[Import(AreaServices.NotebookAreaMachineName)]
-		private IArea _area;
 
 		#region Implementation of IMajorFlexComponent
 
@@ -62,7 +60,6 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookBrowse
 				// Try getting it from the notebook area.
 				_recordList = majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>(LanguageExplorerConstants.RecordListRepository).GetRecordList(NotebookArea.Records, majorFlexComponentParameters.StatusBar, NotebookArea.NotebookFactoryMethod);
 			}
-
 			_recordBrowseView = new RecordBrowseView(NotebookArea.LoadDocument(NotebookResources.NotebookBrowseParameters).Root, majorFlexComponentParameters.LcmCache, _recordList, majorFlexComponentParameters.UiWidgetController);
 			// NB: The constructor will create the ToolUiWidgetParameterObject instance and register events.
 			_toolMenuHelper = new NotebookBrowseToolMenuHelper(majorFlexComponentParameters, this, _recordBrowseView, _recordList);
@@ -116,7 +113,8 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookBrowse
 		/// <summary>
 		/// Get the area for the tool.
 		/// </summary>
-		public IArea Area => _area;
+		[field: Import(AreaServices.NotebookAreaMachineName)]
+		public IArea Area { get; private set; }
 
 		/// <summary>
 		/// Get the image for the area.

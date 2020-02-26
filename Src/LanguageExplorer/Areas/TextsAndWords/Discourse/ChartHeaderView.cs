@@ -128,7 +128,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			var num = Width / (Controls.Count + 1);
 			this[iColumnChanged].Width = num;
 			UpdatePositions();
-			ColumnWidthChanged(this, new ColumnWidthChangedEventArgs(iColumnChanged));
+			ColumnWidthChanged?.Invoke(this, new ColumnWidthChangedEventArgs(iColumnChanged));
 		}
 
 		/// <summary>
@@ -148,9 +148,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			newColumn.MouseUp += OnColumnMouseUp;
 			newColumn.Paint += OnColumnPaint;
 			newColumn.DoubleClick += OnColumnDoubleClick;
-			if (newColumn is HeaderLabel)
+			if (newColumn is HeaderLabel label)
 			{
-				((HeaderLabel)newColumn).BorderStyle = BorderStyle.None;
+				label.BorderStyle = BorderStyle.None;
 			}
 		}
 
@@ -159,7 +159,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		/// </summary>
 		private void OnColumnDoubleClick(object sender, EventArgs e)
 		{
-			var header = sender as Control;
+			var header = (Control)sender;
 			if (header.Cursor != Cursors.VSplit)
 			{
 				return;
@@ -302,10 +302,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		/// </summary>
 		private void OnColumnPaint(object sender, PaintEventArgs e)
 		{
-			var header = sender as Control;
-			var topLeft = new Point(0, 0);
-			var bottomRight = new Size(header.Width - 1, header.Height - 1);
-			e.Graphics.DrawRectangle(new Pen(Color.Black), new Rectangle(topLeft, bottomRight));
+			var header = (Control)sender;
+			e.Graphics.DrawRectangle(new Pen(Color.Black), new Rectangle(new Point(0, 0), new Size(header.Width - 1, header.Height - 1)));
 		}
 
 		/// <summary>
@@ -341,7 +339,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			m_isResizingColumn = false;
 			ResumeLayout(false);
 			this[Controls.Count - 1].ResumeLayout(false);
-			ColumnWidthChanged(this, new ColumnWidthChangedEventArgs(Controls.Count - 1));
+			ColumnWidthChanged?.Invoke(this, new ColumnWidthChangedEventArgs(Controls.Count - 1));
 		}
 	}
 }

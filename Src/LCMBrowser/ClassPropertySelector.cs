@@ -50,7 +50,7 @@ namespace LCMBrowser
 		/// </summary>
 		private void cboClass_SelectionChangeCommitted(object sender, EventArgs e)
 		{
-			var clsProps = cboClass.SelectedItem as LCMClass;
+			var clsProps = (LCMClass)cboClass.SelectedItem;
 			lblMsg.Text = string.Format(m_fmtMsg, clsProps.ClassName);
 			gridProperties.CellValueChanged -= gridProperties_CellValueChanged;
 			gridProperties.Rows.Clear();
@@ -89,7 +89,7 @@ namespace LCMBrowser
 				return;
 			}
 			var cells = gridProperties.Rows[e.RowIndex].Cells;
-			var prop = cells[2].Value as LCMClassProperty;
+			var prop = (LCMClassProperty)cells[2].Value;
 			if (LCMClassList.IsCmObjectProperty(prop.Name))
 			{
 				e.CellStyle.ForeColor = SystemColors.GrayText;

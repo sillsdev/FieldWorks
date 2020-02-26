@@ -71,16 +71,13 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			m_wsManager = new WritingSystemManager();
 			m_cache.WritingSystemFactory = m_wsManager;
 
-			CoreWritingSystemDefinition enWs;
-			m_wsManager.GetOrSet("en", out enWs);
+			m_wsManager.GetOrSet("en", out var enWs);
 			m_wsEng = enWs.Handle;
 
-			CoreWritingSystemDefinition frWs;
-			m_wsManager.GetOrSet("fr", out frWs);
+			m_wsManager.GetOrSet("fr", out var frWs);
 			m_wsFrn = frWs.Handle;
 
-			CoreWritingSystemDefinition deWs;
-			m_wsManager.GetOrSet("de", out deWs);
+			m_wsManager.GetOrSet("de", out var deWs);
 			m_wsDeu = deWs.Handle;
 
 			m_wsManager.UserWs = m_wsEng;
@@ -294,7 +291,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			#region IVwStylesheet Members
 			public int CStyles => 1;
 
-			public void CacheProps(int cch, string _rgchName, int hvoStyle, ITsTextProps _ttp)
+			public void CacheProps(int cch, string rgchName, int hvoStyle, ITsTextProps ttp)
 			{
 				throw new NotSupportedException();
 			}
@@ -331,7 +328,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 				return "Normal";
 			}
 
-			public ITsTextProps GetStyleRgch(int cch, string _rgchName)
+			public ITsTextProps GetStyleRgch(int cch, string rgchName)
 			{
 				return TsStringUtils.MakeProps(null, 0);
 			}
@@ -358,7 +355,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 
 			public ITsTextProps NormalFontStyle => TsStringUtils.MakeProps(null, 0);
 
-			public void PutStyle(string bstrName, string bstrUsage, int hvoStyle, int hvoBasedOn, int hvoNext, int nType, bool fBuiltIn, bool fModified, ITsTextProps _ttp)
+			public void PutStyle(string bstrName, string bstrUsage, int hvoStyle, int hvoBasedOn, int hvoNext, int nType, bool fBuiltIn, bool fModified, ITsTextProps ttp)
 			{
 				throw new NotSupportedException();
 			}

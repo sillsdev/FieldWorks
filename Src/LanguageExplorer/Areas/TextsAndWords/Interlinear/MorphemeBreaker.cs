@@ -69,8 +69,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			try
 			{
 				// The subclass of MoMorph to create if we need a new object.
-				int clsidForm;
-				mmt = MorphServices.FindMorphType(m_caches.MainCache, ref realForm, out clsidForm);
+				mmt = MorphServices.FindMorphType(m_caches.MainCache, ref realForm, out _);
 			}
 			catch (Exception e)
 			{
@@ -96,9 +95,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					};
 					for (var skip = 1; skip <= maxSkip; ++skip)
 					{
-						int hvoSbFormT;
-						int hvoSbMorphT;
-						var sSbFormT = GetExistingMorphForm(out hvoSbMorphT, out hvoSbFormT, m_imorph + skip);
+						var sSbFormT = GetExistingMorphForm(out var hvoSbMorphT, out var hvoSbFormT, m_imorph + skip);
 						if (sSbFormT == realForm)
 						{
 							hvoSbForm = hvoSbFormT;
@@ -204,8 +201,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			vichMin.Add(0);
 			for (var ichStart = 0; ichStart < fullForm.Length;)
 			{
-				int iMatched;
-				var ichBrk = fullForm.IndexOfAnyString(breakMarkers, ichStart, out iMatched);
+				var ichBrk = fullForm.IndexOfAnyString(breakMarkers, ichStart, out var iMatched);
 				if (ichBrk < 0)
 				{
 					break;
@@ -271,10 +267,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				fFixedProblem = false;
 				for (var ichStart = 0; ;)
 				{
-					int iMatchedPrefix;
-					var indexPrefix = fullForm.IndexOfAnyString(prefixMarkers, ichStart, out iMatchedPrefix);
-					int iMatchedPostfix;
-					var indexPostfix = fullForm.IndexOfAnyString(postfixMarkers, ichStart, out iMatchedPostfix);
+					var indexPrefix = fullForm.IndexOfAnyString(prefixMarkers, ichStart, out var iMatchedPrefix);
+					var indexPostfix = fullForm.IndexOfAnyString(postfixMarkers, ichStart, out var iMatchedPostfix);
 					if (indexPrefix < 0 && indexPostfix < 0)
 					{
 						break; // no (remaining) problems!!
@@ -396,8 +390,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		public static List<string> BreakIntoMorphs(string morphFormWithMarkers, string baseWord)
 		{
-			List<int> ichMinsOfNextMorph;
-			return BreakIntoMorphs(morphFormWithMarkers, baseWord, out ichMinsOfNextMorph);
+			return BreakIntoMorphs(morphFormWithMarkers, baseWord, out _);
 		}
 
 		/// <summary>
@@ -541,8 +534,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			// For trimming, it is adjusted in TrimInputString().
 			var fullForm = DoBasicFinding(TrimInputString(), breakMarkers, prefixMarkers, postfixMarkers);
 			AdjustIpForInsertions(fullForm);
-			List<int> ccTrailingMorphs;
-			var morphs = BreakIntoMorphs(fullForm, tssBaseWordform.Text, out ccTrailingMorphs);
+			var morphs = BreakIntoMorphs(fullForm, tssBaseWordform.Text, out var ccTrailingMorphs);
 			var imorph = 0;
 			m_cNewMorphs = morphs.Count;
 			foreach (var morph in morphs)

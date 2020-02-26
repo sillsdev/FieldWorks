@@ -26,15 +26,15 @@ namespace LanguageExplorer.Areas
 		{
 			var firstControl = multiPaneParameters.FirstControlParameters.Control;
 			firstControl.Dock = DockStyle.Fill;
-			if (firstControl is IFlexComponent)
+			if (firstControl is IFlexComponent flexComponent)
 			{
-				((IFlexComponent)firstControl).InitializeFlexComponent(flexComponentParameters);
+				flexComponent.InitializeFlexComponent(flexComponentParameters);
 			}
 			var secondControl = multiPaneParameters.SecondControlParameters.Control;
 			secondControl.Dock = DockStyle.Fill;
-			if (secondControl is IFlexComponent)
+			if (secondControl is IFlexComponent flexComponent2)
 			{
-				((IFlexComponent)secondControl).InitializeFlexComponent(flexComponentParameters);
+				flexComponent2.InitializeFlexComponent(flexComponentParameters);
 			}
 			var nestedMultiPane = new MultiPane(multiPaneParameters);
 			InitializeSubControl(nestedMultiPane, firstControl, true);
@@ -144,13 +144,9 @@ namespace LanguageExplorer.Areas
 				Label = secondlabel
 			};
 			var multiPane = CreateInMainCollapsingSplitContainer(flexComponentParameters, mainCollapsingSplitContainer, multiPaneParameters);
-			if (secondControl is IPaneBarUser)
+			if (secondControl is IPaneBarUser aspbUser && aspbUser.MainPaneBar == null)
 			{
-				var aspbUser = (IPaneBarUser)secondControl;
-				if (aspbUser.MainPaneBar == null)
-				{
-					((IPaneBarUser)secondControl).MainPaneBar = ((IPaneBarContainer)multiPane.SecondControl).PaneBar;
-				}
+				aspbUser.MainPaneBar = ((IPaneBarContainer)multiPane.SecondControl).PaneBar;
 			}
 			mainCollapsingSplitContainerAsControl.ResumeLayout();
 			return multiPane;
@@ -175,9 +171,9 @@ namespace LanguageExplorer.Areas
 			concordanceContainer.InitializeFlexComponent(flexComponentParameters);
 			mainCollapsingSplitContainer.SecondControl = concordanceContainer;
 			var firstControl = concordanceContainerParameters.FirstControlParameters.Control;
-			if (firstControl is IFlexComponent)
+			if (firstControl is IFlexComponent component)
 			{
-				((IFlexComponent)firstControl).InitializeFlexComponent(flexComponentParameters);
+				component.InitializeFlexComponent(flexComponentParameters);
 			}
 			var secondControl = concordanceContainerParameters.SecondControlParameters.Control;
 			firstControl.BringToFront();

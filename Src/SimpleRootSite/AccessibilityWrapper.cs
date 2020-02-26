@@ -24,17 +24,14 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// Get the IAccessible that we wrap. If we don't have one yet, see if it's possible to get it
 		/// from the rootsite. If so, tell it any accessibleName that has been set on this.
 		/// </summary>
-		IAccessible AccessibleImpl
+		private IAccessible AccessibleImpl
 		{
 			get
 			{
 				if (m_comAccessible == null)
 				{
 					m_comAccessible = m_rootSite.AccessibleRootObject as IAccessible;
-					if (m_comAccessible != null)
-					{
-						m_comAccessible.set_accName(null, m_tempName);
-					}
+					m_comAccessible?.set_accName(null, m_tempName);
 				}
 				return m_comAccessible;
 			}
@@ -56,11 +53,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// </summary>
 		public override int GetChildCount()
 		{
-			if (AccessibleImpl == null)
-			{
-				return 0;
-			}
-			return AccessibleImpl.accChildCount;
+			return AccessibleImpl?.accChildCount ?? 0;
 		}
 
 		/// <summary>
@@ -68,16 +61,8 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// </summary>
 		public override AccessibleObject GetChild(int index)
 		{
-			if (AccessibleImpl == null)
-			{
-				return null;
-			}
-			object child = AccessibleImpl.get_accChild(index);
-			if (child is IAccessible)
-			{
-				return MakeRelatedWrapper(child as IAccessible);
-			}
-			return null; // Enhance: could be an 'element' but I don't think we do this.
+			var child = AccessibleImpl?.get_accChild(index);
+			return child is IAccessible accessible ? MakeRelatedWrapper(accessible) : null;
 		}
 
 		/// <summary>
@@ -90,11 +75,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// </summary>
 		private AccessibleObject MakeRelatedWrapper(IAccessible iAccessible)
 		{
-			if (iAccessible == null)
-			{
-				return null;
-			}
-			return new AccessibilityWrapper(m_rootSite, iAccessible);
+			return iAccessible == null ? null : new AccessibilityWrapper(m_rootSite, iAccessible);
 		}
 
 		/// <summary>
@@ -108,8 +89,7 @@ namespace SIL.FieldWorks.Common.RootSites
 				{
 					return new Rectangle(0, 0, 0, 0);
 				}
-				int xLeft, yTop, dxWidth, dyHeight;
-				AccessibleImpl.accLocation(out xLeft, out yTop, out dxWidth, out dyHeight, null);
+				AccessibleImpl.accLocation(out var xLeft, out var yTop, out var dxWidth, out var dyHeight, null);
 				return new Rectangle(xLeft, yTop, dxWidth, dyHeight);
 			}
 		}
@@ -128,16 +108,8 @@ namespace SIL.FieldWorks.Common.RootSites
 			{
 				return null;
 			}
-			object target = AccessibleImpl.accHitTest(x, y);
-			if (target is IAccessible)
-			{
-				return MakeRelatedWrapper(target as IAccessible);
-			}
-			if (target is int)
-			{
-				return this; // Views accessibility object only makes int for CHILDID_SELF
-			}
-			return null;
+			var target = AccessibleImpl.accHitTest(x, y);
+			return target is IAccessible accessible ? MakeRelatedWrapper(accessible) : target is int ? this : null;
 		}
 
 		// No point in wrapping DefaultAction, DoDefaultAction, GetFocused, GetSelection, KeyboardShortcut, HelpTopic, Select
@@ -149,19 +121,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// </summary>
 		public override string Name
 		{
-			get
-			{
-				if (AccessibleImpl == null)
-				{
-					return m_tempName;
-				}
-				string result = AccessibleImpl.get_accName(null);
-				if (result == null)
-				{
-					return string.Empty;
-				}
-				return result;
-			}
+			get => AccessibleImpl == null ? m_tempName : AccessibleImpl.get_accName(null) ?? string.Empty;
 			set
 			{
 				if (AccessibleImpl == null)
@@ -178,78 +138,25 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <summary>
 		/// One of many methods that delegate to the IAccessible, with a suitable default if it is null.
 		/// </summary>
-		public override AccessibleObject Parent
-		{
-			get
-			{
-				if (AccessibleImpl == null)
-				{
-					return null;
-				}
-				object parent = AccessibleImpl.accParent;
-				if (parent is IAccessible)
-				{
-					return MakeRelatedWrapper(parent as IAccessible);
-				}
-				if (m_rootSite == null)
-				{
-					return null; // Should not happen, child boxes have parent box.
-				}
-				if (m_rootSite.Parent == null)
-				{
-					return null;
-				}
-				return m_rootSite.Parent.AccessibilityObject;
-			}
-		}
+		public override AccessibleObject Parent => AccessibleImpl == null ? null : AccessibleImpl.accParent is IAccessible accessible ? MakeRelatedWrapper(accessible) : m_rootSite?.Parent?.AccessibilityObject;
 
 		/// <summary>
 		/// One of many methods that delegate to the IAccessible, with a suitable default if it is null.
 		/// </summary>
-		public override AccessibleRole Role
-		{
-			get
-			{
-				if (AccessibleImpl == null)
-				{
-					return AccessibleRole.None;
-				}
-				return (AccessibleRole)(AccessibleImpl.get_accRole(null));
-			}
-		}
+		public override AccessibleRole Role => (AccessibleRole?)AccessibleImpl?.get_accRole(null) ?? AccessibleRole.None;
 
 		/// <summary>
 		/// One of many methods that delegate to the IAccessible, with a suitable default if it is null.
 		/// </summary>
-		public override AccessibleStates State
-		{
-			get
-			{
-				if (AccessibleImpl == null)
-				{
-					return AccessibleStates.None;
-				}
-				return (AccessibleStates)(AccessibleImpl.get_accState(null));
-			}
-		}
+		public override AccessibleStates State => (AccessibleStates?)AccessibleImpl?.get_accState(null) ?? AccessibleStates.None;
 
 		/// <summary>
 		/// One of many methods that delegate to the IAccessible, with a suitable default if it is null.
 		/// </summary>
 		public override string Value
 		{
-			get
-			{
-				if (AccessibleImpl == null)
-				{
-					return string.Empty;
-				}
-				return AccessibleImpl.get_accValue(null);
-			}
-			set
-			{
-				throw new NotSupportedException();
-			}
+			get => AccessibleImpl == null ? string.Empty : AccessibleImpl.get_accValue(null);
+			set => throw new NotSupportedException();
 		}
 
 
@@ -260,16 +167,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// /// </summary>
 		public override AccessibleObject Navigate(AccessibleNavigation navdir)
 		{
-			if (AccessibleImpl == null)
-			{
-				return null;
-			}
-			object target = AccessibleImpl.accNavigate((int)navdir, null);
-			if (target is Accessibility.IAccessible)
-			{
-				return MakeRelatedWrapper(target as IAccessible);
-			}
-			return null;
+			return AccessibleImpl?.accNavigate((int)navdir, null) is IAccessible accessible ? MakeRelatedWrapper(accessible) : null;
 		}
 	}
 }

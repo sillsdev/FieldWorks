@@ -98,8 +98,7 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 
 				//Initialize and populate the parser if necessary
 				// 1. Maps our XML file to a list of PUACharacter objects.
-				string comment;
-				var chars = ParseCustomCharsFile(filename, out comment);
+				var chars = ParseCustomCharsFile(filename, out var comment);
 
 				// (Step 1 has been moved before the "intro")
 				// 2. Sort the PUA characters
@@ -196,8 +195,7 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 				{
 					continue;
 				}
-				int code;
-				if (int.TryParse(xaCode.Value, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out code) && !m_dictCustomChars.ContainsKey(code))
+				if (int.TryParse(xaCode.Value, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out var code) && !m_dictCustomChars.ContainsKey(code))
 				{
 					var spec = new PUACharacter(xaCode.Value, xaData.Value);
 					m_dictCustomChars.Add(code, spec);

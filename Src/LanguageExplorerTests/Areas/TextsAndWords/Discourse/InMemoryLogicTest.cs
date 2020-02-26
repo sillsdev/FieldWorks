@@ -23,7 +23,6 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 		IDsConstChart m_chart;
 		ICmPossibility m_template;
 		TestCCLogic m_logic;
-		MockRibbon m_mockRibbon;
 		List<ICmPossibility> m_allColumns;
 
 		#region Test setup
@@ -33,7 +32,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 			base.CreateTestData();
 			m_logic = new TestCCLogic(Cache, m_chart, m_stText);
 			m_helper.Logic = m_logic;
-			m_logic.Ribbon = m_mockRibbon = new MockRibbon(Cache, m_stText.Hvo);
+			m_logic.Ribbon = new MockRibbon(Cache, m_stText.Hvo);
 			m_template = m_helper.MakeTemplate(out m_allColumns);
 			// Note: do this AFTER creating the template, which may also create the DiscourseData object.
 			m_chart = m_helper.SetupAChart();
@@ -63,8 +62,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 		{
 			foreach (ToolStripItem item1 in items)
 			{
-				var item = item1 as ToolStripMenuItem;
-				if (item == null || item.Text != text)
+				if (!(item1 is ToolStripMenuItem item) || item.Text != text)
 				{
 					continue;
 				}
@@ -241,10 +239,6 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 
 				// Verify the delete from here item
 				AssertHasMenuWithText(strip.Items, LanguageExplorerResources.ksClearFromHereOnMenuItem, 0);
-
-				// The target cell isn't empty so we shouldn't have this menu item.
-				// Except LT-8545 says possibility markers aren't 'contents' as such
-				//AssertHasNoMenuWithText(strip.Items, LanguageExplorerResources.ksMarkMissingItem);
 			}
 		}
 
@@ -591,10 +585,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 			var allParaOccurrences = m_helper.MakeAnalysesUsedN(1);
 			var row0 = m_helper.MakeFirstRow();
 			m_helper.MakeWordGroup(row0, 1, allParaOccurrences[0], allParaOccurrences[0]);
-
-			int whereToInsert;
-			IConstChartWordGroup existingWordGroupToAppendTo;
-			var result = m_logic.FindWhereToAddWords(3, out whereToInsert, out existingWordGroupToAppendTo);
+			var result = m_logic.FindWhereToAddWords(3, out var whereToInsert, out var existingWordGroupToAppendTo);
 			Assert.AreEqual(FindWhereToAddResult.kInsertWordGrpInRow, result);
 			Assert.AreEqual(1, whereToInsert, "should insert at end, after 1 existing wordform");
 			Assert.IsNull(existingWordGroupToAppendTo);
@@ -608,9 +599,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 			m_helper.MakeWordGroup(row0, 1, allParaOccurrences[0], allParaOccurrences[0]);
 			m_helper.MakeWordGroup(row0, 1, allParaOccurrences[1], allParaOccurrences[1]);
 
-			int whereToInsert;
-			IConstChartWordGroup existingWordGroupToAppendTo;
-			var result = m_logic.FindWhereToAddWords(3, out whereToInsert, out existingWordGroupToAppendTo);
+			var result = m_logic.FindWhereToAddWords(3, out var whereToInsert, out var existingWordGroupToAppendTo);
 			Assert.AreEqual(FindWhereToAddResult.kInsertWordGrpInRow, result);
 			Assert.AreEqual(2, whereToInsert, "should insert at end, after 2 existing wordforms");
 			Assert.IsNull(existingWordGroupToAppendTo);
@@ -627,9 +616,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 			var row0 = m_helper.MakeFirstRow();
 			m_helper.MakeWordGroup(row0, 1, allParaOccurrences[0], allParaOccurrences[0]);
 
-			int whereToInsert;
-			IConstChartWordGroup existingWordGroupToAppendTo;
-			var result = m_logic.FindWhereToAddWords(0, out whereToInsert, out existingWordGroupToAppendTo);
+			var result = m_logic.FindWhereToAddWords(0, out var whereToInsert, out var existingWordGroupToAppendTo);
 			Assert.AreEqual(FindWhereToAddResult.kMakeNewRow, result);
 			Assert.AreEqual(0, whereToInsert, "should insert at start of new row");
 			Assert.IsNull(existingWordGroupToAppendTo);
@@ -643,9 +630,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 			var cellPart0_1 = m_helper.MakeWordGroup(row0, 1, allParaOccurrences[0], allParaOccurrences[0]);
 			m_helper.MakeMovedTextMarker(row0, 4, cellPart0_1, true);
 
-			int whereToInsert;
-			IConstChartWordGroup existingWordGroupToAppendTo;
-			var result = m_logic.FindWhereToAddWords(4, out whereToInsert, out existingWordGroupToAppendTo);
+			var result = m_logic.FindWhereToAddWords(4, out var whereToInsert, out var existingWordGroupToAppendTo);
 			Assert.AreEqual(FindWhereToAddResult.kMakeNewRow, result);
 			Assert.AreEqual(0, whereToInsert, "should insert at start of new row");
 			Assert.IsNull(existingWordGroupToAppendTo);
@@ -659,9 +644,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 			var cellPart0_1 = m_helper.MakeWordGroup(row0, 1, allParaOccurrences[0], allParaOccurrences[0]);
 			m_helper.MakeMovedTextMarker(row0, 4, cellPart0_1, true);
 
-			int whereToInsert;
-			IConstChartWordGroup existingWordGroupToAppendTo;
-			var result = m_logic.FindWhereToAddWords(5, out whereToInsert, out existingWordGroupToAppendTo);
+			var result = m_logic.FindWhereToAddWords(5, out var whereToInsert, out var existingWordGroupToAppendTo);
 			Assert.AreEqual(FindWhereToAddResult.kInsertWordGrpInRow, result);
 			Assert.AreEqual(row0.CellsOS.Count, whereToInsert, "should insert at end of row");
 			Assert.IsNull(existingWordGroupToAppendTo);
@@ -675,9 +658,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 			m_helper.MakeWordGroup(row0, 1, allParaOccurrences[0], allParaOccurrences[0]);
 			m_helper.MakeWordGroup(row0, 1, allParaOccurrences[1], allParaOccurrences[2]);
 
-			int whereToInsert;
-			IConstChartWordGroup existingWordGroupToAppendTo;
-			var result = m_logic.FindWhereToAddWords(5, out whereToInsert, out existingWordGroupToAppendTo);
+			var result = m_logic.FindWhereToAddWords(5, out var whereToInsert, out var existingWordGroupToAppendTo);
 			Assert.AreEqual(FindWhereToAddResult.kInsertWordGrpInRow, result);
 			Assert.AreEqual(row0.CellsOS.Count, whereToInsert, "should insert at end of row");
 			Assert.IsNull(existingWordGroupToAppendTo);
@@ -688,12 +669,9 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 		{
 			m_helper.MakeAnalysesUsedN(1);
 			var row0 = m_helper.MakeFirstRow();
-			//m_helper.MakeMovedTextMarker(row0, 4, null, true); // probably won't work!
 			m_helper.MakeMissingMarker(row0, 4);
 
-			int whereToInsert;
-			IConstChartWordGroup existingWordGroupToAppendTo;
-			var result = m_logic.FindWhereToAddWords(0, out whereToInsert, out existingWordGroupToAppendTo);
+			var result = m_logic.FindWhereToAddWords(0, out var whereToInsert, out var existingWordGroupToAppendTo);
 			Assert.AreEqual(FindWhereToAddResult.kInsertWordGrpInRow, result);
 			Assert.AreEqual(0, whereToInsert, "should insert at start of row");
 			Assert.IsNull(existingWordGroupToAppendTo);
@@ -748,10 +726,9 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 			m_helper.MakeWordGroup(row0, 2, allParaOccurrences[3], allParaOccurrences[3]);
 			m_helper.MakeWordGroup(row0, 4, allParaOccurrences[4], allParaOccurrences[4]);
 			var cell = MakeLocObj(row0, 3);
-			int index_actual;
 
 			// SUT; mostly interested in the index, but verify that the list is empty too.
-			var cellPartList = m_logic.CellPartsInCell(cell, out index_actual);
+			var cellPartList = m_logic.CellPartsInCell(cell, out var index_actual);
 			Assert.AreEqual(3, index_actual, "Should be at index 3 in row.Cells.");
 			Assert.IsEmpty(cellPartList, "Shouldn't be any CellParts in this cell (should be empty list).");
 		}
@@ -998,15 +975,13 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 		[Test]
 		public void TestConvertColumnIndex_FirstOfFive()
 		{
-			var actual = m_logic.ConvertColumnIndexToFromRtL(0, 4);
-			Assert.AreEqual(4, actual, "RTL column index conversion failed.");
+			Assert.AreEqual(4, m_logic.ConvertColumnIndexToFromRtL(0, 4), "RTL column index conversion failed.");
 		}
 
 		[Test]
 		public void TestConvertColumnIndex_LastOfFive()
 		{
-			var actual = m_logic.ConvertColumnIndexToFromRtL(4, 4);
-			Assert.AreEqual(0, actual, "RTL column index conversion failed.");
+			Assert.AreEqual(0, m_logic.ConvertColumnIndexToFromRtL(4, 4), "RTL column index conversion failed.");
 		}
 
 		[Test]
@@ -1019,8 +994,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 		[Test]
 		public void TestConvertColumnIndex_FourthOfFive()
 		{
-			var actual = m_logic.ConvertColumnIndexToFromRtL(3, 4);
-			Assert.AreEqual(1, actual, "RTL column index conversion failed.");
+			Assert.AreEqual(1, m_logic.ConvertColumnIndexToFromRtL(3, 4), "RTL column index conversion failed.");
 		}
 
 		[Test]
@@ -1033,43 +1007,37 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 		[Test]
 		public void TestConvertColumnIndex_SecondOfFour()
 		{
-			var actual = m_logic.ConvertColumnIndexToFromRtL(1, 3);
-			Assert.AreEqual(2, actual, "RTL column index conversion failed.");
+			Assert.AreEqual(2, m_logic.ConvertColumnIndexToFromRtL(1, 3), "RTL column index conversion failed.");
 		}
 
 		[Test]
 		public void TestConvertColumnIndex_ThirdOfFour()
 		{
-			var actual = m_logic.ConvertColumnIndexToFromRtL(2, 3);
-			Assert.AreEqual(1, actual, "RTL column index conversion failed.");
+			Assert.AreEqual(1, m_logic.ConvertColumnIndexToFromRtL(2, 3), "RTL column index conversion failed.");
 		}
 
 		[Test]
 		public void TestConvertColumnIndex_LastOfFour()
 		{
-			var actual = m_logic.ConvertColumnIndexToFromRtL(3, 3);
-			Assert.AreEqual(0, actual, "RTL column index conversion failed.");
+			Assert.AreEqual(0, m_logic.ConvertColumnIndexToFromRtL(3, 3), "RTL column index conversion failed.");
 		}
 
 		[Test]
 		public void TestConvertColumnIndex_OnlyOne()
 		{
-			var actual = m_logic.ConvertColumnIndexToFromRtL(0, 0);
-			Assert.AreEqual(0, actual, "RTL column index conversion failed.");
+			Assert.AreEqual(0, m_logic.ConvertColumnIndexToFromRtL(0, 0), "RTL column index conversion failed.");
 		}
 
 		[Test]
 		public void TestConvertColumnIndex_FirstOfTwo()
 		{
-			var actual = m_logic.ConvertColumnIndexToFromRtL(0, 1);
-			Assert.AreEqual(1, actual, "RTL column index conversion failed.");
+			Assert.AreEqual(1, m_logic.ConvertColumnIndexToFromRtL(0, 1), "RTL column index conversion failed.");
 		}
 
 		[Test]
 		public void TestConvertColumnIndex_LastOfTwo()
 		{
-			var actual = m_logic.ConvertColumnIndexToFromRtL(1, 1);
-			Assert.AreEqual(0, actual, "RTL column index conversion failed.");
+			Assert.AreEqual(0, m_logic.ConvertColumnIndexToFromRtL(1, 1), "RTL column index conversion failed.");
 		}
 
 		#endregion

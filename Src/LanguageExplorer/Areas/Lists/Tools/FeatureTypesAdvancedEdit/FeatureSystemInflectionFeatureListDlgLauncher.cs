@@ -13,12 +13,6 @@ namespace LanguageExplorer.Areas.Lists.Tools.FeatureTypesAdvancedEdit
 	/// <summary />
 	internal sealed class FeatureSystemInflectionFeatureListDlgLauncher : MsaInflectionFeatureListDlgLauncher
 	{
-		/// <summary />
-		public FeatureSystemInflectionFeatureListDlgLauncher()
-			: base()
-		{
-		}
-
 		/// <summary>
 		/// Handle launching of the LexEntryInflType features editor.
 		/// </summary>
@@ -31,13 +25,13 @@ namespace LanguageExplorer.Areas.Lists.Tools.FeatureTypesAdvancedEdit
 				var parentSlice = Slice;
 				if (originalFs == null)
 				{
-					var leit = parentSlice.MyCmObject as ILexEntryInflType;
-					var owningFlid = (parentSlice as FeatureSystemInflectionFeatureListDlgLauncherSlice).Flid;
+					var leit = (ILexEntryInflType)parentSlice.MyCmObject;
+					var owningFlid = ((FeatureSystemInflectionFeatureListDlgLauncherSlice)parentSlice).Flid;
 					dlg.SetDlgInfo(m_cache, PropertyTable, leit, owningFlid);
 				}
 				else
 				{
-					dlg.SetDlgInfo(m_cache, PropertyTable, originalFs, (parentSlice as FeatureSystemInflectionFeatureListDlgLauncherSlice).Flid);
+					dlg.SetDlgInfo(m_cache, PropertyTable, originalFs, ((FeatureSystemInflectionFeatureListDlgLauncherSlice)parentSlice).Flid);
 				}
 				const string ksPath = "/group[@id='Linguistics']/group[@id='Morphology']/group[@id='FeatureChooser']/";
 				dlg.Text = StringTable.Table.GetStringWithXPath("InflectionFeatureTitle", ksPath);

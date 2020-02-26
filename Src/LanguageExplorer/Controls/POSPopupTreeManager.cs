@@ -78,8 +78,7 @@ namespace LanguageExplorer.Controls
 
 		protected override void m_treeCombo_AfterSelect(object sender, TreeViewEventArgs e)
 		{
-			var selectedNode = e.Node as HvoTreeNode;
-			if (selectedNode != null && selectedNode.Hvo == kMore && e.Action == TreeViewAction.ByMouse)
+			if (e.Node is HvoTreeNode selectedNode && selectedNode.Hvo == kMore && e.Action == TreeViewAction.ByMouse)
 			{
 				if (TreeCombo != null)
 				{

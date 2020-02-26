@@ -44,16 +44,15 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			ConcordanceControlBase concordanceControl = null;
 			foreach (Control control in parentControl.Controls)
 			{
-				if (control is ConcordanceControlBase)
+				if (control is ConcordanceControlBase concordanceControlBase)
 				{
-					concordanceControl = control as ConcordanceControlBase;
+					concordanceControl = concordanceControlBase;
 					continue;
 				}
 				var cv = control as IClearValues;
 				cv?.ClearValues();
-				var refreshable = control as IRefreshableRoot;
 				var childrenRefreshed = false;
-				if (refreshable != null)
+				if (control is IRefreshableRoot refreshable)
 				{
 					childrenRefreshed = refreshable.RefreshDisplay();
 				}

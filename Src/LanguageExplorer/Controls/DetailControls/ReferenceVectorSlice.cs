@@ -55,8 +55,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			if (disposing)
 			{
 				// Dispose managed resources here.
-				var vrl = Control as VectorReferenceLauncher;
-				if (vrl != null)
+				if (Control is VectorReferenceLauncher vrl)
 				{
 					vrl.ViewSizeChanged -= OnViewSizeChanged;
 					var view = (VectorReferenceView)vrl.MainControl;
@@ -106,8 +105,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(3);
 
 			ToolStripMenuItem menu;
-			bool visible;
-			var enabled = CanDisplayMoveTargetDownInSequence(out visible);
+			var enabled = CanDisplayMoveTargetDownInSequence(out var visible);
 			if (visible)
 			{
 				// <command id="CmdMoveTargetToPreviousInSequence" label="Move Left" message="MoveTargetDownInSequence"/>

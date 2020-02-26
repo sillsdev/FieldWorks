@@ -49,57 +49,57 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary />
 		public string IcuCollatingRules
 		{
-			get { return m_pattern.IcuCollatingRules; }
-			set { m_pattern.IcuCollatingRules = value; }
+			get => m_pattern.IcuCollatingRules;
+			set => m_pattern.IcuCollatingRules = value;
 		}
 
 		/// <summary />
 		public string IcuLocale
 		{
-			get { return m_pattern.IcuLocale; }
-			set { m_pattern.IcuLocale = value; }
+			get => m_pattern.IcuLocale;
+			set => m_pattern.IcuLocale = value;
 		}
 
 		/// <summary />
 		public bool MatchCase
 		{
-			get { return m_pattern.MatchCase; }
-			set { m_pattern.MatchCase = value; }
+			get => m_pattern.MatchCase;
+			set => m_pattern.MatchCase = value;
 		}
 
 		/// <summary />
 		public bool MatchCompatibility
 		{
-			get { return m_pattern.MatchCompatibility; }
-			set { m_pattern.MatchCompatibility = value; }
+			get => m_pattern.MatchCompatibility;
+			set => m_pattern.MatchCompatibility = value;
 		}
 
 		/// <summary />
 		public bool MatchDiacritics
 		{
-			get { return m_pattern.MatchDiacritics; }
-			set { m_pattern.MatchDiacritics = value; }
+			get => m_pattern.MatchDiacritics;
+			set => m_pattern.MatchDiacritics = value;
 		}
 
 		/// <summary />
 		public bool MatchExactly
 		{
-			get { return m_pattern.MatchExactly; }
-			set { m_pattern.MatchExactly = value; }
+			get => m_pattern.MatchExactly;
+			set => m_pattern.MatchExactly = value;
 		}
 
 		/// <summary />
 		public bool MatchOldWritingSystem
 		{
-			get { return m_pattern.MatchOldWritingSystem; }
-			set { m_pattern.MatchOldWritingSystem = value; }
+			get => m_pattern.MatchOldWritingSystem;
+			set => m_pattern.MatchOldWritingSystem = value;
 		}
 
 		/// <summary />
 		public bool MatchWholeWord
 		{
-			get { return m_pattern.MatchWholeWord; }
-			set { m_pattern.MatchWholeWord = value; }
+			get => m_pattern.MatchWholeWord;
+			set => m_pattern.MatchWholeWord = value;
 		}
 
 		/// <summary>
@@ -199,22 +199,22 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary />
 		public bool ShowMore
 		{
-			get { return m_pattern.ShowMore; }
-			set { m_pattern.ShowMore = value; }
+			get => m_pattern.ShowMore;
+			set => m_pattern.ShowMore = value;
 		}
 
 		/// <summary />
 		public bool StoppedAtLimit
 		{
-			get { return m_pattern.StoppedAtLimit; }
-			set { m_pattern.StoppedAtLimit = value; }
+			get => m_pattern.StoppedAtLimit;
+			set => m_pattern.StoppedAtLimit = value;
 		}
 
 		/// <summary />
 		public bool UseRegularExpressions
 		{
-			get { return m_pattern.UseRegularExpressions; }
-			set { m_pattern.UseRegularExpressions = value; }
+			get => m_pattern.UseRegularExpressions;
+			set => m_pattern.UseRegularExpressions = value;
 		}
 	}
 }

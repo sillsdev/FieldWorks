@@ -37,8 +37,8 @@ namespace LanguageExplorer.Controls.Styles
 		/// </summary>
 		public bool ShowUnspecified
 		{
-			get { return _showUnspecified; }
-			set { IsInherited = _showUnspecified = value; }
+			get => _showUnspecified;
+			set => IsInherited = _showUnspecified = value;
 		}
 
 		/// <summary>State values for the drop down button</summary>
@@ -107,10 +107,7 @@ namespace LanguageExplorer.Controls.Styles
 		/// </summary>
 		public Color ColorValue
 		{
-			get
-			{
-				return m_currentColor;
-			}
+			get => m_currentColor;
 			set
 			{
 				m_currentColor = value;
@@ -426,10 +423,7 @@ namespace LanguageExplorer.Controls.Styles
 			/// </summary>
 			internal Color CurrentColor
 			{
-				get
-				{
-					return m_currColor;
-				}
+				get => m_currColor;
 				private set
 				{
 					m_currColor = value;
@@ -540,10 +534,7 @@ namespace LanguageExplorer.Controls.Styles
 			/// </summary>
 			internal Color CurrentColor
 			{
-				get
-				{
-					return m_currColor;
-				}
+				get => m_currColor;
 				set
 				{
 					m_currColor = value;
@@ -562,8 +553,7 @@ namespace LanguageExplorer.Controls.Styles
 			/// <summary />
 			private void btn_Click(object sender, EventArgs e)
 			{
-				var btn = sender as XButton;
-				if (btn != null && m_clrButtons.ContainsKey(btn) && m_clrButtons[btn] != m_currColor)
+				if (sender is XButton btn && m_clrButtons.ContainsKey(btn) && m_clrButtons[btn] != m_currColor)
 				{
 					CurrentColorName = m_toolTip.GetToolTip(btn);
 					CurrentColor = m_clrButtons[btn];
@@ -574,8 +564,7 @@ namespace LanguageExplorer.Controls.Styles
 			/// <summary />
 			private void btn_Paint(object sender, PaintEventArgs e)
 			{
-				var btn = sender as XButton;
-				if (btn == null)
+				if (!(sender is XButton btn))
 				{
 					return;
 				}
@@ -809,7 +798,7 @@ namespace LanguageExplorer.Controls.Styles
 				/// </summary>
 				private void DrawText(PaintEventArgs e)
 				{
-					var flags = TextFormatFlags.NoPrefix | TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter | TextFormatFlags.SingleLine | TextFormatFlags.NoPadding;
+					const TextFormatFlags flags = TextFormatFlags.NoPrefix | TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter | TextFormatFlags.SingleLine | TextFormatFlags.NoPadding;
 					var clr = (Enabled ? ForeColor : SystemColors.GrayText);
 					TextRenderer.DrawText(e.Graphics, Text, Font, ClientRectangle, clr, flags);
 				}
@@ -899,11 +888,8 @@ namespace LanguageExplorer.Controls.Styles
 					{
 						return VisualStyleElement.Spin.UpHorizontal.Disabled;
 					}
-					if (m_state == PaintState.Normal)
-					{
-						return VisualStyleElement.Spin.UpHorizontal.Normal;
-					}
-					return (m_state == PaintState.Hot ? VisualStyleElement.Spin.UpHorizontal.Hot : VisualStyleElement.Spin.UpHorizontal.Pressed);
+
+					return m_state == PaintState.Normal ? VisualStyleElement.Spin.UpHorizontal.Normal : m_state == PaintState.Hot ? VisualStyleElement.Spin.UpHorizontal.Hot : VisualStyleElement.Spin.UpHorizontal.Pressed;
 				}
 			}
 		}

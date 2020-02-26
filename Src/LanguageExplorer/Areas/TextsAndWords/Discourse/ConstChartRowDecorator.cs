@@ -104,7 +104,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		private void PutOutTableCellStartingAt(int iopenCell)
 		{
 			var fsentCloseCell = false;
-			for (var i = iopenCell; (i < m_calledMethods.Count && !fsentCloseCell); i++)
+			for (var i = iopenCell; i < m_calledMethods.Count && !fsentCloseCell; i++)
 			{
 				if (m_calledMethods[i].MethodType == DecoratorMethodTypes.CloseTableCell)
 				{
@@ -172,15 +172,15 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 
 		#region Implemented IVwEnv Methods and Props
 
-		public virtual void AddObjProp(int tag, IVwViewConstructor _vwvc, int frag)
+		public virtual void AddObjProp(int tag, IVwViewConstructor vwvc, int frag)
 		{
 			if (!IsRtL)
 			{
-				m_vwEnv.AddObjProp(tag, _vwvc, frag);
+				m_vwEnv.AddObjProp(tag, vwvc, frag);
 				return;
 			}
 			m_iStartEmbedding.Add(m_numOfCalls);
-			m_calledMethods.Add(new StoredMethod(DecoratorMethodTypes.AddObjProp, new object[] { tag, _vwvc, frag }));
+			m_calledMethods.Add(new StoredMethod(DecoratorMethodTypes.AddObjProp, new object[] { tag, vwvc, frag }));
 			m_numOfCalls++;
 		}
 
@@ -420,7 +420,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 
 		#endregion
 
-		#region Unimplemented Methods
+		#region Not supported Methods
 
 		public void AddReversedObjVecItems(int tag, IVwViewConstructor vwvc, int frag)
 		{
@@ -642,16 +642,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			throw new NotSupportedException();
 		}
 
-		public int OpenObject
-		{
-			get { throw new NotSupportedException(); }
-		}
+		public int OpenObject => throw new NotSupportedException();
 
-		public int EmbeddingLevel
-		{
-			get { throw new NotSupportedException(); }
-		}
-
+		public int EmbeddingLevel => throw new NotSupportedException();
 		#endregion
 	}
 }

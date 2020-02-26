@@ -155,26 +155,13 @@ namespace LanguageExplorer.Controls.DetailControls
 				// Enhance: invoke launcher's selection dialog.
 				return;
 			}
-			ITsString tss;
-			int ichAnchor;
-			int ichEnd;
-			bool fAssocPrev;
-			int hvoObj;
-			int hvoObjEnd;
-			int tag;
-			int ws;
-			vwselNew.TextSelInfo(false, out tss, out ichAnchor, out fAssocPrev, out hvoObj, out tag, out ws);
-			vwselNew.TextSelInfo(true, out tss, out ichEnd, out fAssocPrev, out hvoObjEnd, out tag, out ws);
+			vwselNew.TextSelInfo(false, out _, out var ichAnchor, out _, out var hvoObj, out _, out _);
+			vwselNew.TextSelInfo(true, out _, out var ichEnd, out _, out var hvoObjEnd, out _, out _);
 			if (hvoObj != hvoObjEnd)
 			{
 				return;
 			}
-			int ihvoRoot;
-			int tagTextProp;
-			int cpropPrevious;
-			int ihvoEnd;
-			ITsTextProps ttp;
-			var rgvsli = SelLevInfo.AllTextSelInfo(vwselNew, cvsli, out ihvoRoot, out tagTextProp, out cpropPrevious, out ichAnchor, out ichEnd, out ws, out fAssocPrev, out ihvoEnd, out ttp);
+			var rgvsli = SelLevInfo.AllTextSelInfo(vwselNew, cvsli, out var ihvoRoot, out _, out _, out ichAnchor, out ichEnd, out _, out _, out _, out _);
 			Debug.Assert(RootBox != null);
 			// Create a selection that covers the entire target object.  If it differs from
 			// the new selection, we'll install it (which will recurse back to this method).
@@ -183,16 +170,8 @@ namespace LanguageExplorer.Controls.DetailControls
 			{
 				return;
 			}
-			ITsString tssWhole;
-			int ichAnchorWhole;
-			int ichEndWhole;
-			int hvoObjWhole;
-			int hvoObjEndWhole;
-			bool fAssocPrevWhole;
-			int tagWhole;
-			int wsWhole;
-			vwselWhole.TextSelInfo(false, out tssWhole, out ichAnchorWhole, out fAssocPrevWhole, out hvoObjWhole, out tagWhole, out wsWhole);
-			vwselWhole.TextSelInfo(true, out tssWhole, out ichEndWhole, out fAssocPrevWhole, out hvoObjEndWhole, out tagWhole, out wsWhole);
+			vwselWhole.TextSelInfo(false, out _, out var ichAnchorWhole, out _, out var hvoObjWhole, out _, out _);
+			vwselWhole.TextSelInfo(true, out _, out var ichEndWhole, out _, out var hvoObjEndWhole, out _, out _);
 			if (hvoObj == hvoObjWhole && hvoObjEnd == hvoObjEndWhole && (ichAnchor != ichAnchorWhole || ichEnd != ichEndWhole))
 			{
 				// Install it this time!
@@ -252,17 +231,12 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		internal bool CanMoveItem(bool forward, out bool visible)
 		{
-			int ihvo;
-			List<ICmObject> vals;
-			return PrepareForMoveItem(forward, out visible, out ihvo, out vals);
+			return PrepareForMoveItem(forward, out visible, out _, out _);
 		}
 
 		internal void MoveItem(bool forward)
 		{
-			int ihvo;
-			List<ICmObject> vals;
-			bool visible;
-			if (!PrepareForMoveItem(forward, out visible, out ihvo, out vals))
+			if (!PrepareForMoveItem(forward, out _, out var ihvo, out var vals))
 			{
 				return;
 			}
@@ -330,10 +304,8 @@ namespace LanguageExplorer.Controls.DetailControls
 				// No object in selection, so quit.
 				return false;
 			}
-			int hvoObj, flid, cpropPrevious;
-			IVwPropertyStore vps;
 			//the index (ihvo) set by this method is the index of the visible items, any logic using this index must also deal with only the visible items
-			RootBox.Selection.PropInfo(false, cvsli, out hvoObj, out flid, out ihvo, out cpropPrevious, out vps);
+			RootBox.Selection.PropInfo(false, cvsli, out var hvoObj, out var flid, out ihvo, out _, out _);
 			Debug.Assert(hvoObj == m_rootObj.Hvo);
 			Debug.Assert(flid == m_rootFlid);
 			//set vals to the visible items
@@ -411,9 +383,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		protected void Delete(string undoText, string redoText)
 		{
 			var sel = RootBox.Selection;
-			int cvsli;
-			int hvoObj;
-			if (CheckForValidDelete(sel, out cvsli, out hvoObj))
+			if (CheckForValidDelete(sel, out var cvsli, out var hvoObj))
 			{
 				DeleteObjectFromVector(sel, cvsli, hvoObj, undoText, redoText);
 			}
@@ -422,16 +392,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		protected void DeleteObjectFromVector(IVwSelection sel, int cvsli, int hvoObj, string undoText, string redoText)
 		{
 			var hvoObjEnd = hvoObj;
-			int ichAnchor;
-			int ichEnd;
-			bool fAssocPrev;
-			int ws;
-			int ihvoRoot;
-			int tagTextProp;
-			int cpropPrevious;
-			int ihvoEnd;
-			ITsTextProps ttp;
-			var rgvsli = SelLevInfo.AllTextSelInfo(sel, cvsli, out ihvoRoot, out tagTextProp, out cpropPrevious, out ichAnchor, out ichEnd, out ws, out fAssocPrev, out ihvoEnd, out ttp);
+			var rgvsli = SelLevInfo.AllTextSelInfo(sel, cvsli, out var ihvoRoot, out _, out _, out var ichAnchor, out var ichEnd, out _, out _, out _, out _);
 			Debug.Assert(RootBox != null);
 			// Create a selection that covers the entire target object.  If it differs from
 			// the new selection, we'll install it (which will recurse back to this method).
@@ -440,16 +401,8 @@ namespace LanguageExplorer.Controls.DetailControls
 			{
 				return;
 			}
-			ITsString tssWhole;
-			int ichAnchorWhole;
-			int ichEndWhole;
-			int hvoObjWhole;
-			int hvoObjEndWhole;
-			bool fAssocPrevWhole;
-			int tagWhole;
-			int wsWhole;
-			vwselWhole.TextSelInfo(false, out tssWhole, out ichAnchorWhole, out fAssocPrevWhole, out hvoObjWhole, out tagWhole, out wsWhole);
-			vwselWhole.TextSelInfo(true, out tssWhole, out ichEndWhole, out fAssocPrevWhole, out hvoObjEndWhole, out tagWhole, out wsWhole);
+			vwselWhole.TextSelInfo(false, out _, out var ichAnchorWhole, out _, out var hvoObjWhole, out _, out _);
+			vwselWhole.TextSelInfo(true, out _, out var ichEndWhole, out _, out var hvoObjEndWhole, out _, out _);
 			if (hvoObj != hvoObjWhole || hvoObjEnd != hvoObjEndWhole || ichAnchor != ichAnchorWhole || ichEnd != ichEndWhole)
 			{
 				return;
@@ -492,15 +445,8 @@ namespace LanguageExplorer.Controls.DetailControls
 				// No object in selection, so quit.
 				return false;
 			}
-			ITsString tss;
-			int ichAnchor;
-			bool fAssocPrev;
-			int tag;
-			int ws;
-			int ichEnd;
-			int hvoObjEnd;
-			sel.TextSelInfo(false, out tss, out ichAnchor, out fAssocPrev, out hvoObj, out tag, out ws);
-			sel.TextSelInfo(true, out tss, out ichEnd, out fAssocPrev, out hvoObjEnd, out tag, out ws);
+			sel.TextSelInfo(false, out _, out _, out _, out hvoObj, out _, out _);
+			sel.TextSelInfo(true, out _, out _, out _, out var hvoObjEnd, out _, out _);
 			return (hvoObj == hvoObjEnd);
 		}
 
@@ -598,13 +544,7 @@ namespace LanguageExplorer.Controls.DetailControls
 					// No object in selection, so quit.
 					return null;
 				}
-				ITsString tss;
-				int ichAnchor;
-				bool fAssocPrev;
-				int tag;
-				int ws;
-				int hvoObj;
-				sel.TextSelInfo(false, out tss, out ichAnchor, out fAssocPrev, out hvoObj, out tag, out ws);
+				sel.TextSelInfo(false, out _, out _, out _, out var hvoObj, out _, out _);
 				return m_cache.ServiceLocator.IsValidObjectId(hvoObj) ? m_cache.ServiceLocator.GetObject(hvoObj) : null;
 			}
 

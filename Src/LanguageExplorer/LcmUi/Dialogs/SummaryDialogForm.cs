@@ -272,17 +272,7 @@ namespace LanguageExplorer.LcmUi.Dialogs
 			{
 				// Expand the selection to cover the entire LexEntry object.
 				var cvsli = e.Selection.CLevels(false) - 1;
-				int ihvoRoot;
-				int tagTextProp;
-				int cpropPrev;
-				int ichAnchor;
-				int ichEnd;
-				int ws;
-				bool fAssocPrev;
-				int ihvoEnd;
-				ITsTextProps ttp;
-				var rgvsli = SelLevInfo.AllTextSelInfo(e.Selection, cvsli, out ihvoRoot, out tagTextProp, out cpropPrev, out ichAnchor, out ichEnd,
-					out ws, out fAssocPrev, out ihvoEnd, out ttp);
+				var rgvsli = SelLevInfo.AllTextSelInfo(e.Selection, cvsli, out var ihvoRoot, out _, out _, out _, out _, out _, out _, out _, out _);
 				// The selection should cover the outermost object (which should be a LexEntry).
 				var rgvsliOuter = new SelLevInfo[1];
 				rgvsliOuter[0] = rgvsli[cvsli - 1];

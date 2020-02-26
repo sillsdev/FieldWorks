@@ -62,7 +62,6 @@ namespace LanguageExplorerTests.Impls
 \lx ha
 \se baha
 \de twoB ";
-			var entryRepo = Cache.ServiceLocator.GetInstance<ILexEntryRepository>();
 			DoImport(someNumbered_OutOfOrder_Subentry, MakeDefaultFields(), 5);
 
 			VerifyHomographNumber("oneB", 1);
@@ -106,7 +105,6 @@ namespace LanguageExplorerTests.Impls
 \lx zahuwua
 \mn zahuwa1
 \de one ";
-			var entryRepo = Cache.ServiceLocator.GetInstance<ILexEntryRepository>();
 			DoImport(refsToSubentry, MakeDefaultFields(), 7);
 
 			VerifyHomographNumber("oneD", 1);
@@ -289,13 +287,15 @@ namespace LanguageExplorerTests.Impls
 		/// </summary>
 		private static List<FieldHierarchyInfo> MakeDefaultFields()
 		{
-			var sfmInfo = new List<FieldHierarchyInfo>();
-			sfmInfo.Add(new FieldHierarchyInfo("lx", "lex", "Vernacular", true, "Entry"));
-			sfmInfo.Add(new FieldHierarchyInfo("hm", "hom", "English", false, "Entry"));
-			sfmInfo.Add(new FieldHierarchyInfo("de", "def", "English", true, "Sense"));
-			sfmInfo.Add(new FieldHierarchyInfo("ge", "glos", "English", true, "Sense"));
-			sfmInfo.Add(new FieldHierarchyInfo("ps", "pos", "English", true, "Sense"));
-			sfmInfo.Add(new FieldHierarchyInfo("mn", "meref", "Vernacular", false, "Entry"));
+			var sfmInfo = new List<FieldHierarchyInfo>
+			{
+				new FieldHierarchyInfo("lx", "lex", "Vernacular", true, "Entry"),
+				new FieldHierarchyInfo("hm", "hom", "English", false, "Entry"),
+				new FieldHierarchyInfo("de", "def", "English", true, "Sense"),
+				new FieldHierarchyInfo("ge", "glos", "English", true, "Sense"),
+				new FieldHierarchyInfo("ps", "pos", "English", true, "Sense"),
+				new FieldHierarchyInfo("mn", "meref", "Vernacular", false, "Entry")
+			};
 			var variantInfo = new FieldHierarchyInfo("va", "var", "Vernacular", true, "Variant");
 			sfmInfo.Add(variantInfo);
 			variantInfo.RefFunc = "fr";

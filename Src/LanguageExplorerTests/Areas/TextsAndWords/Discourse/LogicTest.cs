@@ -168,8 +168,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 		{
 			// We've set everything up except some input wordforms. We should get an error message.
 			m_mockRibbon.CSelected = 0;
-			IConstChartRow dummy;
-			Assert.IsNotNull(m_logic.MoveToColumn(1, out dummy));
+			Assert.IsNotNull(m_logic.MoveToColumn(1, out _));
 			Assert.IsNotNull(m_logic.MakeMovedText(1, 3));
 		}
 
@@ -185,8 +184,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 			EndSetupTask(); // SUT needs its own UOW to test Undo/Redo
 
 			// SUT
-			IConstChartRow dummy;
-			UndoableUnitOfWorkHelper.Do("TestUndo", "TestRedo", Cache.ActionHandlerAccessor, () => m_logic.MoveToColumn(1, out dummy));
+			UndoableUnitOfWorkHelper.Do("TestUndo", "TestRedo", Cache.ActionHandlerAccessor, () => m_logic.MoveToColumn(1, out _));
 			VerifyMoveFirstOccurrenceToCol1(allParaOccurrences, 1);
 
 			// Now test Undo
@@ -215,9 +213,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 			EndSetupTask(); // SUT needs own UOW to test Undo/Redo
 
 			// SUT
-			IConstChartRow dummy;
-			UndoableUnitOfWorkHelper.Do("TestUndo", "TestRedo", Cache.ActionHandlerAccessor,
-				() => m_logic.MoveToColumn(1, out dummy));
+			UndoableUnitOfWorkHelper.Do("TestUndo", "TestRedo", Cache.ActionHandlerAccessor, () => m_logic.MoveToColumn(1, out _));
 			VerifyMoveSecondOccurrenceToSameCol(allParaOccurrences, 1);
 			// Now test Undo
 			Assert.IsTrue(Cache.ActionHandlerAccessor.CanUndo());
@@ -248,9 +244,8 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 			var cellPart0_1 = MakeWordGroup(row0, 1, allParaOccurrences[0], allParaOccurrences[0]);
 			MakeMovedTextMarker(row0, 4, cellPart0_1, true);
 			EndSetupTask(); // SUT needs own UOW in order to test Undo/Redo
-			IConstChartRow dummy;
 
-			UndoableUnitOfWorkHelper.Do("TestUndo", "TestRedo", Cache.ActionHandlerAccessor, () => m_logic.MoveToColumn(3, out dummy));
+			UndoableUnitOfWorkHelper.Do("TestUndo", "TestRedo", Cache.ActionHandlerAccessor, () => m_logic.MoveToColumn(3, out _));
 			VerifyMoveOccurrenceToSameRowLaterColBeforeMtm(allParaOccurrences, cellPart0_1, 1);
 			// Now test Undo
 			Assert.IsTrue(Cache.ActionHandlerAccessor.CanUndo());

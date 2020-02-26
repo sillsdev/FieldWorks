@@ -88,34 +88,31 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		public void SetDlgValues(IMatcher matcher, IVwStylesheet stylesheet)
 		{
-			// Figure out which kind to check
-			if (matcher is AnywhereMatcher)
+			switch (matcher)
 			{
-				m_anywhereButton.Checked = true;
-			}
-			else if (matcher is EndMatcher)
-			{
-				m_atEndButton.Checked = true;
-			}
-			else if (matcher is BeginMatcher)
-			{
-				m_atStartButton.Checked = true;
-			}
-			else if (matcher is RegExpMatcher)
-			{
-				m_regExButton.Checked = true;
-			}
-			else if (matcher is ExactMatcher)
-			{
-				m_wholeItemButton.Checked = true;
+				// Figure out which kind to check
+				case AnywhereMatcher _:
+					m_anywhereButton.Checked = true;
+					break;
+				case EndMatcher _:
+					m_atEndButton.Checked = true;
+					break;
+				case BeginMatcher _:
+					m_atStartButton.Checked = true;
+					break;
+				case RegExpMatcher _:
+					m_regExButton.Checked = true;
+					break;
+				case ExactMatcher _:
+					m_wholeItemButton.Checked = true;
+					break;
 			}
 			// Now get the attributes
-			if (matcher is SimpleStringMatcher)
+			if (matcher is SimpleStringMatcher simpleStringMatcher)
 			{
-				var ssMatcher = (SimpleStringMatcher)matcher;
-				m_textBox.Tss = ssMatcher.Pattern.Pattern;
-				m_MatchCasecheckBox.Checked = ssMatcher.Pattern.MatchCase;
-				m_MatchDiacriticscheckBox.Checked = ssMatcher.Pattern.MatchDiacritics;
+				m_textBox.Tss = simpleStringMatcher.Pattern.Pattern;
+				m_MatchCasecheckBox.Checked = simpleStringMatcher.Pattern.MatchCase;
+				m_MatchDiacriticscheckBox.Checked = simpleStringMatcher.Pattern.MatchDiacritics;
 			}
 			m_textBox.AdjustForStyleSheet(this, null, stylesheet);
 		}

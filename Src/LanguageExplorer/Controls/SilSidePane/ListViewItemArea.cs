@@ -126,7 +126,7 @@ namespace LanguageExplorer.Controls.SilSidePane
 			CurrentItem = item;
 			if (!_clicked)
 			{
-				ItemClicked(item);
+				ItemClicked?.Invoke(item);
 			}
 		}
 
@@ -149,7 +149,7 @@ namespace LanguageExplorer.Controls.SilSidePane
 			base.OnMouseUp(e);
 			if (_clicked)
 			{
-				ItemClicked(CurrentItem);
+				ItemClicked?.Invoke(CurrentItem);
 				_clicked = false;
 			}
 		}
@@ -162,7 +162,7 @@ namespace LanguageExplorer.Controls.SilSidePane
 			base.OnMouseLeave(e);
 			if (_clicked)
 			{
-				ItemClicked(CurrentItem);
+				ItemClicked?.Invoke(CurrentItem);
 				_clicked = false;
 			}
 		}

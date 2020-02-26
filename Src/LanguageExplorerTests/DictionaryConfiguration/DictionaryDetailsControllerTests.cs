@@ -390,8 +390,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 
 		private List<ListViewItem> VerifyGetListItems(ListIds listId, int expectedCount)
 		{
-			string label;
-			var result = _staticDDController.GetListItemsAndLabel(listId, out label); // SUT
+			var result = _staticDDController.GetListItemsAndLabel(listId, out var label); // SUT
 			Assert.AreEqual(expectedCount, result.Count, $"Incorrect number of {listId} Types");
 			StringAssert.Contains(listId.ToString(), label);
 			return result;
@@ -400,8 +399,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		[Test]
 		public void GetListItems_ThrowsIfUnknown()
 		{
-			string label;
-			Assert.Throws<ArgumentException>(() => _staticDDController.GetListItemsAndLabel(ListIds.None, out label));
+			Assert.Throws<ArgumentException>(() => _staticDDController.GetListItemsAndLabel(ListIds.None, out _));
 		}
 
 		[Test]
@@ -509,11 +507,10 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			Assert.AreEqual(1, wsOptions.Options.Count(option => option.IsEnabled), "There should be exactly one enabled option in the model");
 			Assert.AreEqual(WritingSystemServices.GetMagicWsNameFromId(WritingSystemServices.kwsVern), wsOptions.Options.First(option => option.IsEnabled).Id, "The same item should still be enabled");
 
-			string label;
 			var listOptions = new DictionaryNodeListOptions
 			{
 				// For non-WS lists, we must save any unchecked items explicitly.
-				Options = _staticDDController.GetListItemsAndLabel(ListIds.Variant, out label).Select(lvi => new DictionaryNodeOption { Id = (string)lvi.Tag, IsEnabled = false }).ToList(),
+				Options = _staticDDController.GetListItemsAndLabel(ListIds.Variant, out _).Select(lvi => new DictionaryNodeOption { Id = (string)lvi.Tag, IsEnabled = false }).ToList(),
 				ListId = ListIds.Variant
 			};
 			listOptions.Options.Last().IsEnabled = true;
@@ -774,27 +771,29 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 					var innerControls = 0;
 					foreach (Control innerControl in control.Controls)
 					{
-						if (innerControl is CheckBox && innerControl.Name == "checkBoxShowGrammarFirst")
+						switch (innerControl)
 						{
-							Assert.IsTrue(innerControl.Enabled && innerControl.Visible, "checkBoxShowGrammarFirst should be enabled and visible for {0}", label);
-							++innerControls;
-						}
-						else if (innerControl is CheckBox && innerControl.Name == "checkBoxSenseInPara")
-						{
-							Assert.IsTrue(innerControl.Enabled && innerControl.Visible, "checkBoxSenseInPara should be enabled and visible for {0}", label);
-							++innerControls;
-						}
-						else if (innerControl is CheckBox && innerControl.Name == "checkBoxFirstSenseInline")
-						{
-							if (isSubsense)
+							case CheckBox _ when innerControl.Name == "checkBoxShowGrammarFirst":
+								Assert.IsTrue(innerControl.Enabled && innerControl.Visible, "checkBoxShowGrammarFirst should be enabled and visible for {0}", label);
+								++innerControls;
+								break;
+							case CheckBox _ when innerControl.Name == "checkBoxSenseInPara":
+								Assert.IsTrue(innerControl.Enabled && innerControl.Visible, "checkBoxSenseInPara should be enabled and visible for {0}", label);
+								++innerControls;
+								break;
+							case CheckBox _ when innerControl.Name == "checkBoxFirstSenseInline":
 							{
-								Assert.IsFalse(innerControl.Enabled || innerControl.Visible, "checkBoxFirstSenseInline should be disabled and invisible when no paras");
+								if (isSubsense)
+								{
+									Assert.IsFalse(innerControl.Enabled || innerControl.Visible, "checkBoxFirstSenseInline should be disabled and invisible when no paras");
+								}
+								else
+								{
+									Assert.IsTrue(innerControl.Enabled && innerControl.Visible, "checkBoxFirstSenseInline should be enabled and visible when paras");
+								}
+								++innerControls;
+								break;
 							}
-							else
-							{
-								Assert.IsTrue(innerControl.Enabled && innerControl.Visible, "checkBoxFirstSenseInline should be enabled and visible when paras");
-							}
-							++innerControls;
 						}
 					}
 					Assert.AreEqual(3, innerControls, "Matched incorrect number of controls within senseStructureVerticalFlow for {0}", label);
@@ -899,8 +898,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		[Test]
 		public void CheckNamedWsUnchecksDefault()
 		{
-			var wsOptions = (DictionaryNodeWritingSystemOptions)ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new[] { "vernacular" },
-				WritingSystemType.Vernacular);
+			var wsOptions = (DictionaryNodeWritingSystemOptions)ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new[] { "vernacular" }, WritingSystemType.Vernacular);
 			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), _flexComponentParameters.PropertyTable);
 			controller.LoadNode(null, new ConfigurableDictionaryNode { DictionaryNodeOptions = wsOptions });
 			using (var view = controller.View)

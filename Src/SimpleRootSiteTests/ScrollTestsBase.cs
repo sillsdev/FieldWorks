@@ -64,9 +64,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 		{
 			m_selection.Expect(s =>
 			{
-				Rect outRect;
-				bool outJunk;
-				s.Location(null, new Rect(), new Rect(), out rcPrimary, out outRect, out outJunk, out fEndBeforeAnchor);
+				s.Location(null, new Rect(), new Rect(), out rcPrimary, out _, out _, out fEndBeforeAnchor);
 			}).IgnoreArguments().OutRef(new Rect(rcPrimary.left - scrollPos.X, rcPrimary.top - scrollPos.Y, rcPrimary.right - scrollPos.X, rcPrimary.bottom - scrollPos.Y), new Rect(0, 0, 0, 0), false, fEndBeforeAnchor);
 			m_selection.Expect(s => s.IsRange).Return(fIsRange);
 			m_selection.Expect(s => s.SelType).Return(VwSelType.kstText);
@@ -93,23 +91,14 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			/// <summary />
 			public new IVwRootBox RootBox
 			{
-				set
-				{
-					base.RootBox = value;
-				}
+				set => base.RootBox = value;
 			}
 
 			/// <summary />
 			public override Point ScrollPosition
 			{
-				set
-				{
-					m_position = new Point(-value.X, -value.Y);
-				}
-				get
-				{
-					return m_position;
-				}
+				set => m_position = new Point(-value.X, -value.Y);
+				get => m_position;
 			}
 
 			/// <summary>

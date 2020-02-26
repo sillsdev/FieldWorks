@@ -146,10 +146,7 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		protected override void HandleSelectionChange(IVwRootBox prootb, IVwSelection vwselNew)
 		{
-			ITsString tssTyped;
-			int ich, hvo, tag, ws;
-			bool fAssocPrev;
-			vwselNew.TextSelInfo(false, out tssTyped, out ich, out fAssocPrev, out hvo, out tag, out ws);
+			vwselNew.TextSelInfo(false, out var tssTyped, out _, out _, out _, out _, out _);
 			base.HandleSelectionChange(prootb, vwselNew);
 			if (tssTyped.Length != 0)
 			{
@@ -184,13 +181,10 @@ namespace LanguageExplorer.Controls.DetailControls
 					// ord = 0 set above (inserting the first and only object at position 0).
 					break;
 			}
-			var sClassRaw = mdc.GetClassName(m_clidDst);
-			var sClass = StringTable.Table.GetString(sClassRaw, StringTable.ClassNames);
-			var sUndo = string.Format(DetailControlsStrings.ksUndoCreate0, sClass);
-			var sRedo = string.Format(DetailControlsStrings.ksRedoCreate0, sClass);
+			var sClass = StringTable.Table.GetString(mdc.GetClassName(m_clidDst), StringTable.ClassNames);
 			var hvoNewObj = 0;
-			var hvoStringObj = 0;
-			UndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(sUndo, sRedo, m_cache.ServiceLocator.GetInstance<IActionHandler>(), () =>
+			int hvoStringObj;
+			UndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(string.Format(DetailControlsStrings.ksUndoCreate0, sClass), string.Format(DetailControlsStrings.ksRedoCreate0, sClass), m_cache.ServiceLocator.GetInstance<IActionHandler>(), () =>
 			{
 				// Special case: if we just created a Text in RnGenericRecord, and we want to show the contents
 				// of an StTxtPara, make the intermediate objects
@@ -303,12 +297,11 @@ namespace LanguageExplorer.Controls.DetailControls
 					mss.Control.Focus();
 					break;
 				}
-				if (slice is StTextSlice)
+				if (slice is StTextSlice stslice)
 				{
-					var stslice = (StTextSlice)slice;
 					GetSliceReadyToFocus(stslice);
 					stslice.SelectAt(ich);
-					slice.Control.Focus();
+					stslice.Control.Focus();
 					break;
 				}
 			}
@@ -356,10 +349,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			var flidStringProp = m_flidStringProp;
 			var wsToCreate = m_wsToCreate;
 			var datatree = slice.ContainingDataTree;
-			ITsString tssTyped;
-			int ich, hvo, tag, ws;
-			bool fAssocPrev;
-			RootBox.Selection.TextSelInfo(false, out tssTyped, out ich, out fAssocPrev, out hvo, out tag, out ws);
+			RootBox.Selection.TextSelInfo(false, out var tssTyped, out var ich, out _, out _, out _, out _);
 			// Make the real object and set the string property we are ghosting. The final PropChanged
 			// will typically dispose this and create a new string slice whose key is our own key
 			// followed by the flid of the string property.

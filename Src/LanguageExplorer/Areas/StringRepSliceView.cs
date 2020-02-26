@@ -98,12 +98,11 @@ namespace LanguageExplorer.Areas
 				{
 					wc = new WaitCursor(frm);
 				}
-				ConstraintFailure failure;
-				m_env.CheckConstraints(PhEnvironmentTags.kflidStringRepresentation, true, out failure, /* adjust the squiggly line */ true);
+				m_env.CheckConstraints(PhEnvironmentTags.kflidStringRepresentation, true, out _, /* adjust the squiggly line */ true);
 				// This will make the record list update to the new value.
 				if (refresh)
 				{
-					Publisher.Publish("Refresh", null);
+					Publisher.Publish(new PublisherParameterObject("Refresh"));
 				}
 			}
 			finally
@@ -148,26 +147,24 @@ namespace LanguageExplorer.Areas
 
 		internal bool CanShowEnvironmentError()
 		{
-			var s = m_env.StringRepresentation.Text;
-			if (string.IsNullOrEmpty(s))
+			var text = m_env.StringRepresentation.Text;
+			if (string.IsNullOrEmpty(text))
 			{
 				return false;
 			}
-			return (!m_validator.Recognize(s));
+			return (!m_validator.Recognize(text));
 		}
 
 		internal void ShowEnvironmentError()
 		{
-			var s = m_env.StringRepresentation.Text;
-			if (string.IsNullOrEmpty(s))
+			var text = m_env.StringRepresentation.Text;
+			if (string.IsNullOrEmpty(text))
 			{
 				return;
 			}
-			if (!m_validator.Recognize(s))
+			if (!m_validator.Recognize(text))
 			{
-				string sMsg;
-				int pos;
-				PhonEnvRecognizer.CreateErrorMessageFromXml(s, m_validator.ErrorMessage, out pos, out sMsg);
+				PhonEnvRecognizer.CreateErrorMessageFromXml(text, m_validator.ErrorMessage, out _, out var sMsg);
 				MessageBox.Show(sMsg, AreaResources.ksErrorInEnvironment, MessageBoxButtons.OK, MessageBoxIcon.Information);
 			}
 		}
@@ -188,13 +185,7 @@ namespace LanguageExplorer.Areas
 			{
 				return -1;
 			}
-			int ichEnd;
-			ITsString tss;
-			bool fAssocPrev;
-			int hvo;
-			int flid;
-			int ws;
-			vwsel.TextSelInfo(fEnd, out tss, out ichEnd, out fAssocPrev, out hvo, out flid, out ws);
+			vwsel.TextSelInfo(fEnd, out _, out var ichEnd, out _, out var hvo, out var flid, out _);
 			Debug.Assert(hvo == m_env.Hvo);
 			Debug.Assert(flid == PhEnvironmentTags.kflidStringRepresentation);
 			return ichEnd;
@@ -204,12 +195,12 @@ namespace LanguageExplorer.Areas
 		{
 			get
 			{
-				var s = m_env.StringRepresentation.Text;
-				if (string.IsNullOrEmpty(s))
+				var text = m_env.StringRepresentation.Text;
+				if (string.IsNullOrEmpty(text))
 				{
 					return false;
 				}
-				var ichSlash = s.IndexOf('/');
+				var ichSlash = text.IndexOf('/');
 				if (ichSlash < 0)
 				{
 					return false;
@@ -220,11 +211,7 @@ namespace LanguageExplorer.Areas
 					return false;
 				}
 				var ichAnchor = GetSelectionEndPoint(false);
-				if (ichAnchor < 0)
-				{
-					return false;
-				}
-				return (ichEnd > ichSlash) && (ichAnchor > ichSlash) && (s.IndexOf('_') < 0);
+				return ichAnchor >= 0 && (ichEnd > ichSlash && ichAnchor > ichSlash && text.IndexOf('_') < 0);
 			}
 		}
 
@@ -232,14 +219,14 @@ namespace LanguageExplorer.Areas
 		{
 			get
 			{
-				var s = m_env.StringRepresentation.Text;
-				if (string.IsNullOrEmpty(s))
+				var text = m_env.StringRepresentation.Text;
+				if (string.IsNullOrEmpty(text))
 				{
 					return false;
 				}
 				var ichEnd = GetSelectionEndPoint(true);
 				var ichAnchor = GetSelectionEndPoint(false);
-				return PhonEnvRecognizer.CanInsertItem(s, ichEnd, ichAnchor);
+				return PhonEnvRecognizer.CanInsertItem(text, ichEnd, ichAnchor);
 			}
 		}
 
@@ -247,14 +234,14 @@ namespace LanguageExplorer.Areas
 		{
 			get
 			{
-				var s = m_env.StringRepresentation.Text;
-				if (string.IsNullOrEmpty(s))
+				var text = m_env.StringRepresentation.Text;
+				if (string.IsNullOrEmpty(text))
 				{
 					return false;
 				}
 				var ichEnd = GetSelectionEndPoint(true);
 				var ichAnchor = GetSelectionEndPoint(false);
-				return PhonEnvRecognizer.CanInsertHashMark(s, ichEnd, ichAnchor);
+				return PhonEnvRecognizer.CanInsertHashMark(text, ichEnd, ichAnchor);
 			}
 		}
 

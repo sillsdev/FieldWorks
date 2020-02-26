@@ -103,7 +103,7 @@ namespace LanguageExplorer.Impls
 				return true;
 			}
 			var cPropPrev = CPropPrev(tag);
-			return (m_StartLocation.m_location.Where(lev => lev.tag == tag && lev.cpropPrevious == cPropPrev).Select(lev => lev.hvo == hvoItem)).FirstOrDefault();
+			return m_StartLocation.m_location.Where(lev => lev.tag == tag && lev.cpropPrevious == cPropPrev).Select(lev => lev.hvo == hvoItem).FirstOrDefault();
 		}
 
 		/// <summary>
@@ -304,13 +304,12 @@ namespace LanguageExplorer.Impls
 				Debug.Assert(m_StartLocation.TopLevelHvo == OpenObject && m_StartLocation.m_tag == tag);
 				ichBegin = m_StartLocation.m_ichLim;
 			}
-			int ichMin, ichLim;
 			// When we re-wrote the find stuff to use this FindCollectorEnv, we removed some
 			// whacky code from the FwFindReplaceDlg to try to deal with a sporadic failure
 			// reported as TE-4085. We're no longer even calling the same method on vwPattern,
 			// but if this failure ever recurs, this is probably the place where we'd want to
 			// put a try/catch block so we could retry the find.
-			m_Pattern.FindIn(textSource, ichBegin, tss.Length, true, out ichMin, out ichLim, null);
+			m_Pattern.FindIn(textSource, ichBegin, tss.Length, true, out var ichMin, out var ichLim, null);
 			if (PassedLimit(tag, ichMin))
 			{
 				StoppedAtLimit = true;

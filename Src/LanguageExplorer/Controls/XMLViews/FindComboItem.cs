@@ -53,7 +53,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			// selected, it fails, making the string empty. If there was already nothing
 			// selected, setting the text goes ahead.
 			m_combo.SelectedIndex = -1;
-			m_combo.Tss = (m_matcher as SimpleStringMatcher).Pattern.Pattern;
+			m_combo.Tss = ((SimpleStringMatcher)m_matcher)?.Pattern.Pattern;
 			base.InvokeWithInstalledMatcher();
 		}
 
@@ -94,14 +94,8 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		public IMatcher Matcher
 		{
-			get
-			{
-				return m_matcher;
-			}
-			set
-			{
-				m_matcher = value;
-			}
+			get => m_matcher;
+			set => m_matcher = value;
 		}
 	}
 }

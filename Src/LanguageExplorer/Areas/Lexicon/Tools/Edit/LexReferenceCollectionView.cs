@@ -43,7 +43,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				m_displayParent = value;
 				if (m_VectorReferenceVc != null)
 				{
-					(m_VectorReferenceVc as LexReferenceCollectionVc).DisplayParent = value;
+					((LexReferenceCollectionVc)m_VectorReferenceVc).DisplayParent = value;
 				}
 			}
 		}

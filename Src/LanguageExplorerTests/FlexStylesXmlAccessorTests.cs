@@ -137,8 +137,7 @@ namespace LanguageExplorerTests
 
 			Assert.That(style1.IsValidObject, Is.False, "should have deleted original style in course of changing guid");
 
-			IStStyle newStyle1;
-			Assert.That(Cache.ServiceLocator.GetInstance<IStStyleRepository>().TryGetObject(factoryGuid1, out newStyle1), Is.True, "should have created a new style with the specified guid");
+			Assert.That(Cache.ServiceLocator.GetInstance<IStStyleRepository>().TryGetObject(factoryGuid1, out var newStyle1), Is.True, "should have created a new style with the specified guid");
 			Assert.That(newStyle1.Name, Is.EqualTo("testA"));
 			Assert.That(newStyle1.IsBuiltIn, Is.True);
 			Assert.That(newStyle1.IsModified, Is.True);
@@ -146,8 +145,7 @@ namespace LanguageExplorerTests
 			Assert.That(newStyle1.Rules, Is.EqualTo(props1));
 			Assert.That(newStyle1.UserLevel, Is.EqualTo(5));
 
-			IStStyle newStyle2;
-			Assert.That(Cache.ServiceLocator.GetInstance<IStStyleRepository>().TryGetObject(factoryGuid2, out newStyle2), Is.True, "should have created second new style with the specified guid");
+			Assert.That(Cache.ServiceLocator.GetInstance<IStStyleRepository>().TryGetObject(factoryGuid2, out var newStyle2), Is.True, "should have created second new style with the specified guid");
 			Assert.That(newStyle2.Name, Is.EqualTo("testB"));
 			Assert.That(newStyle2.IsBuiltIn, Is.True);
 			Assert.That(newStyle2.IsModified, Is.True);
@@ -209,7 +207,7 @@ namespace LanguageExplorerTests
 			var scr = Cache.ServiceLocator.GetInstance<IScriptureFactory>().Create();
 			var scriptureStyle = Cache.ServiceLocator.GetInstance<IStStyleFactory>().Create();
 			scr.StylesOC.Add(scriptureStyle);
-			var styleName = "Scripture Style";
+			const string styleName = "Scripture Style";
 			scriptureStyle.Name = styleName;
 
 			scriptureStyle.Type = StyleType.kstParagraph;

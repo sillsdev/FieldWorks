@@ -33,8 +33,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		{
 			base.InitializeFlexComponent(flexComponentParameters);
 
-			var mdc = VirtualListPublisher.MetaDataCache;
-			m_flid = mdc.GetFieldId2(WfiWordformTags.kClassId, "Occurrences", false);
+			m_flid = VirtualListPublisher.MetaDataCache.GetFieldId2(WfiWordformTags.kClassId, "Occurrences", false);
 			Sorter = new OccurrenceSorter
 			{
 				Cache = PropertyTable.GetValue<LcmCache>(FwUtils.cache),
@@ -57,8 +56,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			// get the list from our decorated SDA.
 			var objs = VirtualListPublisher.VecProp(OwningObject.Hvo, m_flid);
 			// copy the list to where it's expected to be found. (should this be necessary?)
-			var chvo = VirtualListPublisher.get_VecSize(OwningObject.Hvo, VirtualFlid);
-			VirtualListPublisher.Replace(OwningObject.Hvo, VirtualFlid, 0, chvo, objs, objs.Length);
+			VirtualListPublisher.Replace(OwningObject.Hvo, VirtualFlid, 0, VirtualListPublisher.get_VecSize(OwningObject.Hvo, VirtualFlid), objs, objs.Length);
 			return objs;
 		}
 

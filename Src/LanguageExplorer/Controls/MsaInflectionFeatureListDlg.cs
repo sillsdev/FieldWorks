@@ -117,9 +117,7 @@ namespace LanguageExplorer.Controls
 		{
 			// Reset window location.
 			// Get location to the stored values, if any.
-			Point dlgLocation;
-			Size dlgSize;
-			if (m_propertyTable.TryGetValue("msaInflFeatListDlgLocation", out dlgLocation) && m_propertyTable.TryGetValue("msaInflFeatListDlgSize", out dlgSize))
+			if (m_propertyTable.TryGetValue("msaInflFeatListDlgLocation", out Point dlgLocation) && m_propertyTable.TryGetValue("msaInflFeatListDlgSize", out Size dlgSize))
 			{
 				var rect = new Rectangle(dlgLocation, dlgSize);
 				ScreenHelper.EnsureVisibleRect(ref rect);
@@ -208,8 +206,7 @@ namespace LanguageExplorer.Controls
 
 		private void PopulateTreeFromPosInEntry(ICmObject cobj)
 		{
-			var entry = cobj.Owner as ILexEntry;
-			if (entry == null)
+			if (!(cobj.Owner is ILexEntry entry))
 			{
 				return;
 			}
@@ -285,12 +282,7 @@ namespace LanguageExplorer.Controls
 					// get entry of the allomorph and then get the msa of first sense and return its (from) POS
 					var entry = cobj.Owner as ILexEntry;
 					var sense = entry?.SensesOS[0];
-					if (sense == null)
-					{
-						return null;
-					}
-					var msa = sense.MorphoSyntaxAnalysisRA;
-					return GetPosFromCmObjectAndFlid(msa, MoDerivAffMsaTags.kflidFromMsFeatures);
+					return sense == null ? null : GetPosFromCmObjectAndFlid(sense.MorphoSyntaxAnalysisRA, MoDerivAffMsaTags.kflidFromMsFeatures);
 			}
 			return null;
 		}
@@ -310,10 +302,7 @@ namespace LanguageExplorer.Controls
 		/// </summary>
 		public virtual string Prompt
 		{
-			get
-			{
-				return labelPrompt.Text;
-			}
+			get => labelPrompt.Text;
 			set
 			{
 				var s1 = value ?? LanguageExplorerControls.ksFeaturesForX;
@@ -347,14 +336,8 @@ namespace LanguageExplorer.Controls
 		/// </summary>
 		public string Title
 		{
-			get
-			{
-				return Text;
-			}
-			set
-			{
-				Text = value;
-			}
+			get => Text;
+			set => Text = value;
 		}
 
 		/// <summary>
@@ -362,14 +345,8 @@ namespace LanguageExplorer.Controls
 		/// </summary>
 		public virtual string LinkText
 		{
-			get
-			{
-				return linkLabel1.Text;
-			}
-			set
-			{
-				linkLabel1.Text = string.Format(value ?? LanguageExplorerControls.ksAddFeaturesToX, HighestPOS == null ? LanguageExplorerControls.ksUnknownCategory : HighestPOS.Name.AnalysisDefaultWritingSystem.Text);
-			}
+			get => linkLabel1.Text;
+			set => linkLabel1.Text = string.Format(value ?? LanguageExplorerControls.ksAddFeaturesToX, HighestPOS == null ? LanguageExplorerControls.ksUnknownCategory : HighestPOS.Name.AnalysisDefaultWritingSystem.Text);
 		}
 
 		#region Windows Form Designer generated code
@@ -507,11 +484,9 @@ namespace LanguageExplorer.Controls
 						// Didn't have one to begin with. See whether we want to create one.
 						if (CheckFeatureStructure(m_tvMsaFeatureList.Nodes))
 						{
-							var repo = m_cache.ServiceLocator.GetInstance<IFsFeatStrucRepository>();
 							// FsFeatStruc may be owned atomically or in a colllection. See which fake insertion index we need.
 							var where = m_cache.MetaDataCacheAccessor.GetFieldType(m_owningFlid) == (int)CellarPropertyType.OwningAtomic ? -2 : -1;
-							var hvoNew = m_cache.DomainDataByFlid.MakeNewObject(FsFeatStrucTags.kClassId, m_hvoOwner, m_owningFlid, where);
-							FS = repo.GetObject(hvoNew);
+							FS = m_cache.ServiceLocator.GetInstance<IFsFeatStrucRepository>().GetObject(m_cache.DomainDataByFlid.MakeNewObject(FsFeatStrucTags.kClassId, m_hvoOwner, m_owningFlid, where));
 						}
 						else
 						{
@@ -655,10 +630,9 @@ namespace LanguageExplorer.Controls
 					}
 					break;
 				case FeatureTreeNodeKind.SymFeatValue:
-					var closed = val as IFsClosedValue;
-					if (closed != null)
+					if (val is IFsClosedValue closedValue)
 					{
-						closed.ValueRA = m_cache.ServiceLocator.GetInstance<IFsSymFeatValRepository>().GetObject(node.Hvo);
+						closedValue.ValueRA = m_cache.ServiceLocator.GetInstance<IFsSymFeatValRepository>().GetObject(node.Hvo);
 					}
 					break;
 			}

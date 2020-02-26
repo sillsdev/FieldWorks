@@ -472,7 +472,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					ImportBackTranslation(owningForm, bookNum, btProject);
 				}
 			}
-
 			bookNode.Nodes.Clear(); // Gets rid of dummy.
 			// Add Title node.
 			if (book.TitleOA != null)
@@ -513,9 +512,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			foreach (var scrFootnote in footnotes)
 			{
 				// insert under the relevant section, if any (LTB-408)
-				IScrSection containingSection;
 				IStText containingTitle = null;
-				if (!scrFootnote.TryGetContainingSection(out containingSection) && !scrFootnote.TryGetContainingTitle(out containingTitle))
+				if (!scrFootnote.TryGetContainingSection(out var containingSection) && !scrFootnote.TryGetContainingTitle(out containingTitle))
 				{
 					continue;
 				}
@@ -634,10 +632,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		// Class to sort the Genre's before they are displayed.
 		private sealed class CmPossibilitySorter : IComparer<ICmPossibility>
 		{
-			internal CmPossibilitySorter()
-			{
-			}
-
 			#region IComparer<T> Members
 
 			public int Compare(ICmPossibility x, ICmPossibility y)

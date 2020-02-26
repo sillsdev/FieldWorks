@@ -56,7 +56,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		public bool SearchIsActive
 		{
-			get { return m_active; }
+			get => m_active;
 			set
 			{
 				m_active = value;

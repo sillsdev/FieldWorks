@@ -252,8 +252,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			Assert.AreEqual(importedTestStyle.UserLevel, 2);
 			var importedParaStyle = Cache.LangProject.StylesOC.FirstOrDefault(style => style.Name == "Nominal");
 			Assert.NotNull(importedParaStyle, "test style was not imported.");
-			int hasColor;
-			var color = importedParaStyle.Rules.GetIntPropValues((int)FwTextPropType.ktptBackColor, out hasColor);
+			var color = importedParaStyle.Rules.GetIntPropValues((int)FwTextPropType.ktptBackColor, out var hasColor);
 			Assert.That(hasColor == 0, "Background color should be set");
 			Assert.AreEqual(NamedRedBGR, color, "Background color should be set to Named Red");
 			color = importedParaStyle.Rules.GetIntPropValues((int)FwTextPropType.ktptForeColor, out hasColor);
@@ -544,12 +543,12 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		public void DoImport_AddsNewPublications()
 		{
 			var configFile = FileUtils.GetTempFile("unittest.xml");
-			const string XmlOpenTagsThruRoot = @"<?xml version=""1.0"" encoding=""utf-8""?>
+			const string xmlOpenTagsThruRoot = @"<?xml version=""1.0"" encoding=""utf-8""?>
 			<DictionaryConfiguration name=""Root"" allPublications=""true"" isRootBased=""true"" version=""1"" lastModified=""2014-02-13"">";
-			const string XmlCloseTagsFromRoot = @"</DictionaryConfiguration>";
-			FileUtils.WriteStringtoFile(configFile, XmlOpenTagsThruRoot +
+			const string xmlCloseTagsFromRoot = "</DictionaryConfiguration>";
+			FileUtils.WriteStringtoFile(configFile, xmlOpenTagsThruRoot +
 				"<ConfigurationItem name=\"Main Entry\" style=\"Dictionary-Normal\" styleType=\"paragraph\" isEnabled=\"true\" field=\"LexEntry\" cssClassNameOverride=\"entry\"></ConfigurationItem>"
-				+ XmlCloseTagsFromRoot, Encoding.UTF8);
+				+ xmlCloseTagsFromRoot, Encoding.UTF8);
 			_controller._temporaryImportConfigLocation = configFile;
 			_controller.NewConfigToImport = new DictionaryConfigurationModel()
 			{
@@ -589,13 +588,13 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 
 					var configurationToExport = importExportDCModel;
 					_pathToConfiguration = configurationToExport.FilePath;
-					const string XmlOpenTagsThruRoot = @"<?xml version=""1.0"" encoding=""utf-8""?>
+					const string xmlOpenTagsThruRoot = @"<?xml version=""1.0"" encoding=""utf-8""?>
 			<DictionaryConfiguration name=""Root"" allPublications=""true"" isRootBased=""true"" version=""1"" lastModified=""2014-02-13"">";
-					const string XmlCloseTagsFromRoot = @"</DictionaryConfiguration>";
-					const string XmlTagsHeaword = @"<ConfigurationItem name=""Main Entry"" isEnabled=""true"" field=""LexEntry"">\r\n\t\t\t\t\t<ConfigurationItem name=""Testword"" nameSuffix=""2b"" before=""["" between="", "" after=""] "" style=""Dictionary-Headword"" isEnabled=""true"" field=""HeadWord"">""\r\n\r\n\r\n\t\t\t\t\t</ConfigurationItem>\r\n\t\t\t\t</ConfigurationItem>\r\n\t\t\t\t<SharedItems/>";
-					const string XmlTagsCustomField = @" <ConfigurationItem name = ""CustomField1"" isEnabled=""true"" isCustomField=""true"" before="" "" field=""OwningEntry"" subField=""CustomField1"" />";
+					const string xmlCloseTagsFromRoot = @"</DictionaryConfiguration>";
+					const string xmlTagsHeaword = @"<ConfigurationItem name=""Main Entry"" isEnabled=""true"" field=""LexEntry"">\r\n\t\t\t\t\t<ConfigurationItem name=""Testword"" nameSuffix=""2b"" before=""["" between="", "" after=""] "" style=""Dictionary-Headword"" isEnabled=""true"" field=""HeadWord"">""\r\n\r\n\r\n\t\t\t\t\t</ConfigurationItem>\r\n\t\t\t\t</ConfigurationItem>\r\n\t\t\t\t<SharedItems/>";
+					const string xmlTagsCustomField = @" <ConfigurationItem name = ""CustomField1"" isEnabled=""true"" isCustomField=""true"" before="" "" field=""OwningEntry"" subField=""CustomField1"" />";
 					File.WriteAllText(_pathToConfiguration,
-						XmlOpenTagsThruRoot + XmlTagsHeaword + XmlTagsCustomField + XmlCloseTagsFromRoot);
+						xmlOpenTagsThruRoot + xmlTagsHeaword + xmlTagsCustomField + xmlCloseTagsFromRoot);
 					// This export should create the zipfile containing the custom field information (currently in LIFT format)
 					DictionaryConfigurationManagerController.ExportConfiguration(configurationToExport, zipFile, Cache);
 				} // Destroy two of the custom fields and verify the state

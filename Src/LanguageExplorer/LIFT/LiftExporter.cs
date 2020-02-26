@@ -114,7 +114,7 @@ namespace LanguageExplorer.LIFT
 				SetProgressMessage(this, ma);
 			}
 
-			// pre-emtively delete the audio folder so files of deleted/changed references
+			// preemptively delete the audio folder so files of deleted/changed references
 			// won't be orphaned
 			if (Directory.Exists(Path.Combine(FolderPath, "audio")))
 			{
@@ -463,8 +463,7 @@ namespace LanguageExplorer.LIFT
 			for (var irun = 0; irun < tss.RunCount; ++irun)
 			{
 				var ttp = tss.get_Properties(irun);
-				int nvar;
-				var ws = ttp.GetIntPropValues((int)FwTextPropType.ktptWs, out nvar);
+				var ws = ttp.GetIntPropValues((int)FwTextPropType.ktptWs, out _);
 				var sLang = m_cache.WritingSystemFactory.GetStrFromWs(ws);
 				var style = ttp.GetStrPropValue((int)FwTextPropType.ktptNamedStyle);
 				w.Write("<span lang=\"{0}\"", MakeSafeAndNormalizedAttribute(sLang));
@@ -564,7 +563,7 @@ namespace LanguageExplorer.LIFT
 		private void WriteMediaFile(TextWriter w, ICmMedia file)
 		{
 			//LT-13681
-			if (file == null || file.MediaFileRA == null)
+			if (file?.MediaFileRA == null)
 			{
 				return;
 			}
@@ -653,12 +652,7 @@ namespace LanguageExplorer.LIFT
 
 		private static string MakeSafeAndNormalizedAttribute(string inputString)
 		{
-			if (string.IsNullOrEmpty(inputString))
-			{
-				return inputString;
-			}
-			var normalizedString = CustomIcu.GetIcuNormalizer(FwNormalizationMode.knmNFC).Normalize(inputString);
-			return XmlUtils.MakeSafeXmlAttribute(normalizedString);
+			return string.IsNullOrEmpty(inputString) ? inputString : XmlUtils.MakeSafeXmlAttribute(CustomIcu.GetIcuNormalizer(FwNormalizationMode.knmNFC).Normalize(inputString));
 		}
 
 		private void WriteLexEntryRef(TextWriter w, ILexEntryRef ler)
@@ -935,9 +929,10 @@ namespace LanguageExplorer.LIFT
 			}
 			// Typically internalPath is something like "Pictures\MyFile.jpg".
 			// If it starts with the expected folder, we want to make the LIFT path omit that element.
-			var writePath = Path.GetFileName(internalPath); // the path to store in the lift file (by default).
-															// Try a few ways stripping off the expected root folder. I'm not sure what separator we actually store,
-															// especially if the FW project has lived on both Linux and Windows.
+			// the path to store in the lift file (by default).
+			var writePath = Path.GetFileName(internalPath);
+			// Try a few ways stripping off the expected root folder. I'm not sure what separator we actually store,
+			// especially if the FW project has lived on both Linux and Windows.
 			if (internalPath.StartsWith(expectRootFolder + Path.PathSeparator))
 			{
 				writePath = internalPath.Substring((expectRootFolder + Path.PathSeparator).Length);
@@ -986,7 +981,7 @@ namespace LanguageExplorer.LIFT
 				}
 				m_filesCreated[actualPath] = new Tuple<string, string>(destFilePath, safeWritePath);
 				// There may nevertheless be an existing file of that name, e.g., from an earlier export to the same location.
-				// We don't want to genereate mangled names and multiple copies in such cases, so we allow overwrite.
+				// We don't want to generate mangled names and multiple copies in such cases, so we allow overwrite.
 				Directory.CreateDirectory(Path.GetDirectoryName(destFilePath));
 				File.Copy(safeSourcePath, destFilePath, true);
 			}
@@ -1033,7 +1028,9 @@ namespace LanguageExplorer.LIFT
 		{
 			var tss = multi.BestAnalysisVernacularAlternative;
 			if (tss.Text == "***")
+			{
 				tss = multi.get_String(wsDefault);
+			}
 			return MakeSafeAndNormalizedAttribute(tss.Text);
 		}
 
@@ -1244,12 +1241,11 @@ namespace LanguageExplorer.LIFT
 		{
 			w.WriteLine("<ranges>");
 			var sOutputFilePath = "DUMMYFILENAME.lift";
-			if (w is StreamWriter)
+			if (w is StreamWriter sw)
 			{
-				var sw = (StreamWriter)w;
-				if (sw.BaseStream is FileStream)
+				if (sw.BaseStream is FileStream fileStream)
 				{
-					sOutputFilePath = ((FileStream)sw.BaseStream).Name;
+					sOutputFilePath = fileStream.Name;
 				}
 			}
 			var sRangesFile = Path.ChangeExtension(sOutputFilePath.Replace('\\', '/'), ".lift-ranges");
@@ -1305,8 +1301,7 @@ namespace LanguageExplorer.LIFT
 			{
 				//We actually want to export any range which is referenced by a Custom field and is not already output.
 				//not just Custom ranges.
-				string rangeName;
-				m_CmPossListsReferencedOrCustom.TryGetValue(posList.Key, out rangeName);
+				m_CmPossListsReferencedOrCustom.TryGetValue(posList.Key, out var rangeName);
 				w.WriteLine("<range id=\"{0}\" href=\"file://{1}\"/>",
 				MakeSafeAndNormalizedAttribute(rangeName), sRangesFile);
 			}
@@ -1459,8 +1454,7 @@ namespace LanguageExplorer.LIFT
 			if (cpt == CellarPropertyType.ReferenceAtomic || cpt == CellarPropertyType.ReferenceCollection || cpt == CellarPropertyType.ReferenceSequence)
 			{
 				var listGuid = m_mdc.GetFieldListRoot(flid);
-				string listName;
-				var haveValue = m_ListsGuidToRangeName.TryGetValue(listGuid, out listName);
+				var haveValue = m_ListsGuidToRangeName.TryGetValue(listGuid, out var listName);
 				Debug.Assert(haveValue, "We have a problem of having a Custom List which is not accounted for.");
 				sb.AppendFormat("; range={0}", listName);
 			}
@@ -1503,8 +1497,7 @@ namespace LanguageExplorer.LIFT
 			}
 			for (var i = 0; i < multi.StringCount; ++i)
 			{
-				int ws;
-				var sForm = multi.GetStringFromIndex(i, out ws).Text;
+				var sForm = multi.GetStringFromIndex(i, out var ws).Text;
 				if (string.IsNullOrEmpty(sForm))
 				{
 					continue;
@@ -1598,8 +1591,7 @@ namespace LanguageExplorer.LIFT
 			}
 			for (var i = 0; i < multi.StringCount; ++i)
 			{
-				int ws;
-				var tssForm = multi.GetStringFromIndex(i, out ws);
+				var tssForm = multi.GetStringFromIndex(i, out var ws);
 				var sLang = m_cache.WritingSystemFactory.GetStrFromWs(ws);
 				w.WriteLine("<{0} lang=\"{1}\"><text>{2}</text></{0}>", elementName, MakeSafeAndNormalizedAttribute(sLang), ConvertTsStringToLiftXml(tssForm, ws));
 			}
@@ -1654,14 +1646,12 @@ namespace LanguageExplorer.LIFT
 			}
 			for (var irun = 0; irun < crun; ++irun)
 			{
-				int tpt;
 				int nProp;
-				int nVar;
 				var ttp = tssVal.get_Properties(irun);
 				var fSpan = true;
 				if (ttp.IntPropCount == 1 && ttp.StrPropCount == 0)
 				{
-					nProp = ttp.GetIntProp(0, out tpt, out nVar);
+					nProp = ttp.GetIntProp(0, out var tpt, out _);
 					if (tpt == (int)FwTextPropType.ktptWs && nProp == wsString)
 					{
 						fSpan = false;
@@ -1673,7 +1663,7 @@ namespace LanguageExplorer.LIFT
 					var cprop = ttp.IntPropCount;
 					for (var iprop = 0; iprop < cprop; ++iprop)
 					{
-						nProp = ttp.GetIntProp(iprop, out tpt, out nVar);
+						nProp = ttp.GetIntProp(iprop, out var tpt, out _);
 						if (tpt == (int)FwTextPropType.ktptWs && nProp != wsString)
 						{
 							var ws = m_wsManager.Get(nProp);
@@ -1683,7 +1673,7 @@ namespace LanguageExplorer.LIFT
 					cprop = ttp.StrPropCount;
 					for (var iprop = 0; iprop < cprop; ++iprop)
 					{
-						var sProp = ttp.GetStrProp(iprop, out tpt);
+						var sProp = ttp.GetStrProp(iprop, out var tpt);
 						switch (tpt)
 						{
 							case (int)FwTextPropType.ktptNamedStyle:
@@ -1794,8 +1784,9 @@ namespace LanguageExplorer.LIFT
 		protected object GetProperty(ICmObject target, string property)
 		{
 			if (target == null)
-			{ return null; }
-
+			{
+				return null;
+			}
 			var fWantHvo = false;
 			var type = target.GetType();
 			var info = type.GetProperty(property, BindingFlags.Instance | BindingFlags.Public | BindingFlags.FlattenHierarchy);
@@ -1874,8 +1865,7 @@ namespace LanguageExplorer.LIFT
 			{
 				//We actually want to export any range which is referenced by a Custom field and is not already output.
 				//not just Custom ranges.
-				string rangeName;
-				var gotRangeName = m_CmPossListsReferencedOrCustom.TryGetValue(possList.Key, out rangeName);
+				m_CmPossListsReferencedOrCustom.TryGetValue(possList.Key, out var rangeName);
 				var customPossList = m_repoCmPossibilityLists.GetObject(possList.Key);
 				w.WriteLine("<!-- This is a custom list or other list which is not output by default but if referenced in the data of a field.  -->");
 				WritePossibilityListAsRange(w, rangeName, customPossList, customPossList.Guid.ToString());
@@ -1910,9 +1900,9 @@ namespace LanguageExplorer.LIFT
 		private void WritePartOfSpeechRangeElement(TextWriter w, IPartOfSpeech pos)
 		{
 			var liftId = pos.Name.BestAnalysisVernacularAlternative.Text;
-			if (pos.Owner is IPartOfSpeech)
+			if (pos.Owner is IPartOfSpeech partOfSpeech)
 			{
-				var liftIdOwner = ((IPartOfSpeech)(pos.Owner)).Name.BestAnalysisVernacularAlternative.Text;
+				var liftIdOwner = ((IPartOfSpeech)partOfSpeech).Name.BestAnalysisVernacularAlternative.Text;
 				w.WriteLine("<range-element id=\"{0}\" guid=\"{1}\" parent=\"{2}\">", XmlUtils.MakeSafeXmlAttribute(liftId), pos.Guid, MakeSafeAndNormalizedAttribute(liftIdOwner));
 			}
 			else
@@ -1947,9 +1937,9 @@ namespace LanguageExplorer.LIFT
 		private void WriteLexRefType(TextWriter w, ILexRefType refer)
 		{
 			var liftId = refer.Name.BestAnalysisVernacularAlternative.Text;
-			if (refer.Owner is ILexRefType)
+			if (refer.Owner is ILexRefType lexRefType)
 			{
-				var liftIdOwner = ((ILexRefType)refer.Owner).Name.BestAnalysisVernacularAlternative.Text;
+				var liftIdOwner = lexRefType.Name.BestAnalysisVernacularAlternative.Text;
 				w.WriteLine("<range-element id=\"{0}\" guid=\"{1}\" parent=\"{2}\">", XmlUtils.MakeSafeXmlAttribute(liftId), refer.Guid, MakeSafeAndNormalizedAttribute(liftIdOwner));
 			}
 			else
@@ -2423,12 +2413,8 @@ namespace LanguageExplorer.LIFT
 
 		private void WriteAffixSlotRanges(TextWriter w)
 		{
-			foreach (var pos in m_cache.LangProject.AllPartsOfSpeech)
+			foreach (var pos in m_cache.LangProject.AllPartsOfSpeech.Where(pos => pos.AffixSlotsOC.Count != 0))
 			{
-				if (pos.AffixSlotsOC.Count == 0)
-				{
-					continue;
-				}
 				w.WriteLine("<range id=\"{0}-slot\" guid=\"{1}\">", MakeSafeAndNormalizedAttribute(pos.Name.BestAnalysisVernacularAlternative.Text), pos.Guid);
 				foreach (var slot in pos.AffixSlotsOC)
 				{
@@ -2447,12 +2433,8 @@ namespace LanguageExplorer.LIFT
 
 		private void WriteInflectionClassRanges(TextWriter w)
 		{
-			foreach (var pos in m_cache.LangProject.AllPartsOfSpeech)
+			foreach (var pos in m_cache.LangProject.AllPartsOfSpeech.Where(pos => pos.InflectionClassesOC.Count != 0))
 			{
-				if (pos.InflectionClassesOC.Count == 0)
-				{
-					continue;
-				}
 				w.WriteLine("<range id=\"{0}-infl-class\" guid=\"{1}\">", MakeSafeAndNormalizedAttribute(pos.Name.BestAnalysisVernacularAlternative.Text), pos.Guid);
 				foreach (var inflClass in pos.InflectionClassesOC)
 				{
@@ -2477,12 +2459,8 @@ namespace LanguageExplorer.LIFT
 
 		private void WriteStemNameRanges(TextWriter w)
 		{
-			foreach (var pos in m_cache.LangProject.AllPartsOfSpeech)
+			foreach (var pos in m_cache.LangProject.AllPartsOfSpeech.Where(pos => pos.StemNamesOC.Count != 0))
 			{
-				if (pos.StemNamesOC.Count == 0)
-				{
-					continue;
-				}
 				w.WriteLine("<range id=\"{0}-stem-name\" guid=\"{1}\">", MakeSafeAndNormalizedAttribute(pos.Name.BestAnalysisVernacularAlternative.Text), pos.Guid);
 				foreach (var stem in pos.StemNamesOC)
 				{
@@ -2547,8 +2525,7 @@ namespace LanguageExplorer.LIFT
 						{
 							continue;
 						}
-						ICmPossibilityList possList;
-						if (possListRepo.TryGetObject(listGuid, out possList))
+						if (possListRepo.TryGetObject(listGuid, out var possList))
 						{
 							var rangeName = RangeNames.GetRangeNameForLiftExport(m_mdc, possList);
 							if (!listsToBeExported.ContainsKey(possList.Guid))
@@ -2580,13 +2557,9 @@ namespace LanguageExplorer.LIFT
 
 		private void GetListsNotAddedYet(ICmObject obj, Dictionary<Guid, string> cmPossibilityListsReferenced)
 		{
-			var cmPossibilityListGuidsTemp = GetCmPossibilityListsObjectReferences(obj);
-			foreach (var possList in cmPossibilityListGuidsTemp)
+			foreach (var possList in GetCmPossibilityListsObjectReferences(obj).Where(possList => !cmPossibilityListsReferenced.ContainsKey(possList.Key)))
 			{
-				if (!cmPossibilityListsReferenced.ContainsKey(possList.Key))
-				{
-					cmPossibilityListsReferenced.Add(possList.Key, possList.Value);
-				}
+				cmPossibilityListsReferenced.Add(possList.Key, possList.Value);
 			}
 		}
 
@@ -2596,14 +2569,10 @@ namespace LanguageExplorer.LIFT
 			foreach (var flid in m_mdc.GetFields(obj.ClassID, true, (int)CellarPropertyTypeFilter.All))
 			{
 				var type = (CellarPropertyType)m_mdc.GetFieldType(flid);
-
 				//First of all only fields which have the following types will have references to data in lists.
-				if (type == CellarPropertyType.ReferenceAtomic ||
-					 type == CellarPropertyType.ReferenceCollection ||
-					 type == CellarPropertyType.ReferenceSequence)
+				if (type == CellarPropertyType.ReferenceAtomic || type == CellarPropertyType.ReferenceCollection || type == CellarPropertyType.ReferenceSequence)
 				{
 					var fieldDstClsName = m_mdc.GetDstClsName(flid);
-
 					if (fieldDstClsName.Equals("CmPossibility") || fieldDstClsName.Equals("CmSemanticDomain") || fieldDstClsName.Equals("CmAnthroItem"))
 					{
 						switch (type)
@@ -2635,9 +2604,7 @@ namespace LanguageExplorer.LIFT
 
 		private void AddPossListRefdByField(int possHvo, Dictionary<Guid, string> cmPossibilityListsReferencedByFields)
 		{
-			var repoCmPossibilities = m_cache.ServiceLocator.GetInstance<ICmPossibilityRepository>();
-			ICmPossibility poss;
-			if (repoCmPossibilities.TryGetObject(possHvo, out poss))
+			if (m_cache.ServiceLocator.GetInstance<ICmPossibilityRepository>().TryGetObject(possHvo, out var poss))
 			{
 				var possList = poss.OwningList;
 				var possListGuid = possList.Guid;
@@ -2655,12 +2622,9 @@ namespace LanguageExplorer.LIFT
 
 			//First remove items from m_CmPossibilityListsReferencedByCustomFields which are in the group
 			//of ranges which are going to be output by default so that they are not output twice.
-			foreach (var standardRangesOutput in m_ListsGuidToRangeName)
+			foreach (var standardRangesOutput in m_ListsGuidToRangeName.Where(standardRangesOutput => cmPossibilityListsReferencedByFields.ContainsKey(standardRangesOutput.Key)))
 			{
-				if (cmPossibilityListsReferencedByFields.ContainsKey(standardRangesOutput.Key))
-				{
-					cmPossibilityListsReferencedByFields.Remove(standardRangesOutput.Key);
-				}
+				cmPossibilityListsReferencedByFields.Remove(standardRangesOutput.Key);
 			}
 
 			//Now include the remaining lists which need to be output. That is ones which are referenced

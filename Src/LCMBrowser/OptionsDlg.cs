@@ -33,7 +33,7 @@ namespace LCMBrowser
 		/// </summary>
 		public Color SelectedColor
 		{
-			get { return clrPicker.SelectedColor; }
+			get => clrPicker.SelectedColor;
 			set
 			{
 				clrPicker.SelectedColor = value;
@@ -47,7 +47,7 @@ namespace LCMBrowser
 		/// </summary>
 		public bool ShadingEnabled
 		{
-			get { return chkShade.Checked; }
+			get => chkShade.Checked;
 			set
 			{
 				chkShade.CheckedChanged -= chkShade_CheckedChanged;
@@ -116,8 +116,7 @@ namespace LCMBrowser
 		/// </summary>
 		private void txtRGB_Validated(object sender, EventArgs e)
 		{
-			uint rgb;
-			if (uint.TryParse(txtRGB.Text, NumberStyles.HexNumber, null, out rgb))
+			if (uint.TryParse(txtRGB.Text, NumberStyles.HexNumber, null, out var rgb))
 			{
 				txtRGB.Text = txtRGB.Text.ToUpper(CultureInfo.InvariantCulture);
 				rgb |= 0xFF000000;

@@ -48,7 +48,6 @@ namespace LanguageExplorer.Areas.Notebook
 			m_tbOnlyBefore.Enabled = m_chkOnlyBeforeEnable.Checked;
 		}
 
-
 		private void m_btnAddSubst_Click(object sender, EventArgs e)
 		{
 			using (var dlg = new ImportMatchReplaceDlg())
@@ -196,14 +195,7 @@ namespace LanguageExplorer.Areas.Notebook
 			}
 		}
 
-		public string WritingSystem
-		{
-			get
-			{
-				var ws = m_cbWritingSystem.SelectedItem as CoreWritingSystemDefinition;
-				return ws?.Id;
-			}
-		}
+		public string WritingSystem => (m_cbWritingSystem.SelectedItem as CoreWritingSystemDefinition)?.Id;
 
 		private void m_btnAddWritingSystem_WritingSystemAdded(object sender, EventArgs e)
 		{

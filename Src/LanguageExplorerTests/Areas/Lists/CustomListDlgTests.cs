@@ -62,8 +62,7 @@ namespace LanguageExplorerTests.Areas.Lists
 		private void SetUserWs(string wsStr)
 		{
 			var wsMgr = Cache.ServiceLocator.WritingSystemManager;
-			CoreWritingSystemDefinition userWs;
-			wsMgr.GetOrSet(wsStr, out userWs);
+			wsMgr.GetOrSet(wsStr, out var userWs);
 			wsMgr.UserWritingSystem = userWs;
 		}
 
@@ -81,11 +80,9 @@ namespace LanguageExplorerTests.Areas.Lists
 				var wsFr = Cache.WritingSystemFactory.GetWsFromStr("fr");
 				Assert.True(wsFr > 0, "Test failed because French ws is not installed.");
 				dlg.InitializeMultiString();
-				// setup up multistring controls
-				var nameTss = TsStringUtils.MakeString("Gens", wsFr);
 
 				// SUT (actually tests both Set and Get)
-				dlg.SetListNameForWs(nameTss, wsFr);
+				dlg.SetListNameForWs(TsStringUtils.MakeString("Gens", wsFr), wsFr);
 
 				// Verify
 				Assert.AreEqual("Gens", dlg.GetListNameForWs(wsFr).Text, "Setting the custom list Name failed.");
@@ -106,13 +103,10 @@ namespace LanguageExplorerTests.Areas.Lists
 				var wsSp = Cache.WritingSystemFactory.GetWsFromStr("es");
 				Assert.True(wsSp > 0, "Test failed because Spanish ws is not installed.");
 				dlg.InitializeMultiString();
-				// setup up multistring controls
-				var nameTssFr = TsStringUtils.MakeString("Une description en français!", wsFr);
-				var nameTssSp = TsStringUtils.MakeString("Un descripción en español?", wsSp);
 
 				// SUT (actually tests both Set and Get)
-				dlg.SetDescriptionForWs(nameTssFr, wsFr);
-				dlg.SetDescriptionForWs(nameTssSp, wsSp);
+				dlg.SetDescriptionForWs(TsStringUtils.MakeString("Une description en français!", wsFr), wsFr);
+				dlg.SetDescriptionForWs(TsStringUtils.MakeString("Un descripción en español?", wsSp), wsSp);
 
 				// Verify
 				Assert.AreEqual("Une description en français!", dlg.GetDescriptionForWs(wsFr).Text, "Setting the custom list Description in French failed.");
@@ -139,7 +133,6 @@ namespace LanguageExplorerTests.Areas.Lists
 				newList.Name.set_String(wsFr, nameTss);
 				// set French alternative in new list to "Gens-test"
 				dlg.SetListNameForWs(nameTss, wsFr);
-				// set dialog list name French alternative to the same thing
 
 				// SUT
 				var fdup = dlg.IsNameDuplicated;
@@ -293,12 +286,9 @@ namespace LanguageExplorerTests.Areas.Lists
 
 				// Verify
 				Assert.AreEqual(2, wss.Count, "Wrong number of wss found.");
-				var fenglish = wss.Any(ws => ws.IcuLocale == "en");
-				var fspanish = wss.Any(ws => ws.IcuLocale == "es");
-				var ffrench = wss.Any(ws => ws.IcuLocale == "fr");
-				Assert.IsTrue(fenglish, "English not found.");
-				Assert.IsTrue(fspanish, "Spanish not found.");
-				Assert.IsFalse(ffrench, "French should not be found.");
+				Assert.IsTrue(wss.Any(ws => ws.IcuLocale == "en"), "English not found.");
+				Assert.IsTrue(wss.Any(ws => ws.IcuLocale == "es"), "Spanish not found.");
+				Assert.IsFalse(wss.Any(ws => ws.IcuLocale == "fr"), "French should not be found.");
 			}
 		}
 
@@ -319,13 +309,10 @@ namespace LanguageExplorerTests.Areas.Lists
 
 				// Verify
 				Assert.AreEqual(2, wss.Count, "Wrong number of wss found.");
-				var fenglish = wss.Any(ws => ws.IcuLocale == "en");
 				// Interesting! We input the string "es-MX" and get out the string "es_MX"!
-				var fspanish = wss.Any(ws => ws.IcuLocale == "es_MX");
-				var ffrench = wss.Any(ws => ws.IcuLocale == "fr");
-				Assert.IsTrue(fenglish, "English not found.");
-				Assert.IsTrue(fspanish, "Spanish(Mexican) not found.");
-				Assert.IsFalse(ffrench, "French should not be found.");
+				Assert.IsTrue(wss.Any(ws => ws.IcuLocale == "en"), "English not found.");
+				Assert.IsTrue(wss.Any(ws => ws.IcuLocale == "es_MX"), "Spanish(Mexican) not found.");
+				Assert.IsFalse(wss.Any(ws => ws.IcuLocale == "fr"), "French should not be found.");
 			}
 		}
 
@@ -346,12 +333,9 @@ namespace LanguageExplorerTests.Areas.Lists
 
 				// Verify
 				Assert.AreEqual(1, wss.Count, "Wrong number of wss found.");
-				var fenglish = wss.Any(ws => ws.IcuLocale == "en");
-				var fspanish = wss.Any(ws => ws.IcuLocale == "es");
-				var ffrench = wss.Any(ws => ws.IcuLocale == "fr");
-				Assert.IsTrue(fenglish, "English not found.");
-				Assert.IsFalse(fspanish, "Spanish should not found.");
-				Assert.IsFalse(ffrench, "French should not be found.");
+				Assert.IsTrue(wss.Any(ws => ws.IcuLocale == "en"), "English not found.");
+				Assert.IsFalse(wss.Any(ws => ws.IcuLocale == "es"), "Spanish should not found.");
+				Assert.IsFalse(wss.Any(ws => ws.IcuLocale == "fr"), "French should not be found.");
 			}
 		}
 

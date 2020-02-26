@@ -127,10 +127,7 @@ namespace LanguageExplorer.Controls.Styles
 				}
 				return _writingSystem;
 			}
-			set
-			{
-				_writingSystem = value;
-			}
+			set => _writingSystem = value;
 		}
 
 		/// <summary>
@@ -171,10 +168,7 @@ namespace LanguageExplorer.Controls.Styles
 		/// </summary>
 		public bool IsRightToLeft
 		{
-			get
-			{
-				return m_vc != null && m_vc.IsRightToLeft;
-			}
+			get => m_vc != null && m_vc.IsRightToLeft;
 			set
 			{
 				if (m_vc != null)

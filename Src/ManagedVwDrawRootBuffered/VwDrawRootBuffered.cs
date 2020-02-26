@@ -226,8 +226,7 @@ namespace SIL.FieldWorks.Views
 				IVwGraphics qvgDummy = null;
 				try
 				{
-					Rect rcDst, rcSrc;
-					vrs.GetGraphics(rootb, out qvgDummy, out rcSrc, out rcDst);
+					vrs.GetGraphics(rootb, out qvgDummy, out var rcSrc, out var rcDst);
 					Rectangle temp = rcDst;
 					temp.Offset(-rcp.Left, -rcp.Top);
 					rcDst = temp;

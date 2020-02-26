@@ -18,7 +18,6 @@
 // </remarks>
 
 using System;
-using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using NUnit.Framework;
 
@@ -47,15 +46,9 @@ namespace SIL.FieldWorks.Common.ViewsInterfaces
 				m_graphics = Graphics.FromImage(m_bitmap);
 			}
 
-			public Graphics Graphics
-			{
-				get { return m_graphics; }
-			}
+			public Graphics Graphics => m_graphics;
 
-			public Bitmap Bitmap
-			{
-				get { return m_bitmap; }
-			}
+			public Bitmap Bitmap => m_bitmap;
 
 			#region IDisposable Members
 			#if DEBUG
@@ -146,8 +139,7 @@ namespace SIL.FieldWorks.Common.ViewsInterfaces
 
 				vwGraphics.PushClipRect(rect1);
 
-				int left, top, right, bottom;
-				vwGraphics.GetClipRect(out left, out top, out right, out bottom);
+				vwGraphics.GetClipRect(out var left, out var top, out var right, out var bottom);
 
 				Assert.IsTrue(left == rect1.left, "First push failed: left");
 				Assert.IsTrue(right == rect1.right, "First push failed: right");
@@ -251,11 +243,9 @@ namespace SIL.FieldWorks.Common.ViewsInterfaces
 			{
 				vwGraphics.Initialize(gr.Graphics.GetHdc());
 
-				int left, top, right, bottom;
-
 				var rect = new Rect(50,25,1000,1000);
 				vwGraphics.SetClipRect(ref rect);
-				vwGraphics.GetClipRect(out left, out top, out right, out bottom);
+				vwGraphics.GetClipRect(out var left, out var top, out var right, out var bottom);
 
 				Assert.AreEqual(50, left, "Left doesn't match");
 				Assert.AreEqual(25, top, "Top doesn't match");
@@ -322,12 +312,14 @@ namespace SIL.FieldWorks.Common.ViewsInterfaces
 		/// <returns>-1 if no NonWhite pixel found</returns>
 		internal int SearchForBottomMostNonWhitePixel(Bitmap bitmap, int width, int height)
 		{
-			for (int y = height -1 ; y >= 0; --y)
+			for (var y = height -1 ; y >= 0; --y)
 			{
-				for (int x = width -1 ; x >= 0; --x)
+				for (var x = width -1 ; x >= 0; --x)
 				{
 					if (!ColorCompare(bitmap.GetPixel(x, y), Color.White))
+					{
 						return y;
+					}
 				}
 			}
 
@@ -341,12 +333,14 @@ namespace SIL.FieldWorks.Common.ViewsInterfaces
 		/// <returns>-1 if no NonWhite pixel found</returns>
 		internal int SearchForRightMostNonWhitePixel(Bitmap bitmap, int width, int height)
 		{
-			for (int x = width -1 ; x >= 0; --x)
+			for (var x = width -1 ; x >= 0; --x)
 			{
-				for (int y = height -1 ; y >= 0; --y)
+				for (var y = height -1 ; y >= 0; --y)
 				{
 					if (!ColorCompare(bitmap.GetPixel(x, y), Color.White))
+					{
 						return x;
+					}
 				}
 			}
 
@@ -360,12 +354,14 @@ namespace SIL.FieldWorks.Common.ViewsInterfaces
 		/// <returns>-1 if no NonWhite pixel found</returns>
 		internal int SearchForLeftMostNonWhitePixel(Bitmap bitmap, int width, int height)
 		{
-			for (int x = 0; x < width; ++x)
+			for (var x = 0; x < width; ++x)
 			{
-				for (int y = 0; y < height; ++y)
+				for (var y = 0; y < height; ++y)
 				{
 					if (!ColorCompare(bitmap.GetPixel(x, y), Color.White))
+					{
 						return x;
+					}
 				}
 			}
 
@@ -394,10 +390,7 @@ namespace SIL.FieldWorks.Common.ViewsInterfaces
 					vwGraphics.PushClipRect(new Rect(0, 0, areaWidth, areaHeight));
 					vwGraphics.ForeColor = ConvertToVwGraphicsColor(Color.Black);
 
-					int extentX;
-					int extentY;
-
-					vwGraphics.GetTextExtent(testString.Length, testString, out extentX, out extentY);
+					vwGraphics.GetTextExtent(testString.Length, testString, out var extentX, out var extentY);
 
 					Assert.That(extentX > 0, "extentX should be greater than 0");
 					Assert.That(extentY > 0, "extentY should be greater than 0");
@@ -458,10 +451,7 @@ namespace SIL.FieldWorks.Common.ViewsInterfaces
 				vwGraphics.PushClipRect(new Rect(0, 0, areaWidth, areaHeight));
 				vwGraphics.ForeColor = ConvertToVwGraphicsColor(Color.Black);
 
-				int extentX;
-				int extentY;
-
-				vwGraphics.GetTextExtent(0, String.Empty, out extentX, out extentY);
+				vwGraphics.GetTextExtent(0, String.Empty, out var extentX, out var extentY);
 
 				Assert.That(extentX == 0, "extentX should equal 0");
 				Assert.That(extentY > 0, "extentY should be greater than 0");

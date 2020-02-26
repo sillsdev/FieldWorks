@@ -102,9 +102,9 @@ namespace LanguageExplorer.DictionaryConfiguration
 			var existingConfigurationInTheWay = _configurations.FirstOrDefault(config => config.Label == NewConfigToImport.Label
 				&& Path.GetDirectoryName(config.FilePath) == _projectConfigDir);
 			NewConfigToImport.Publications.ForEach(publication =>
-				{
-					AddPublicationTypeIfNotPresent(publication, _cache);
-				});
+			{
+				AddPublicationTypeIfNotPresent(publication, _cache);
+			});
 			try
 			{
 				ImportStyles(_importStylesLocation);
@@ -327,8 +327,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 		private IEnumerable<string> CustomFieldsInLiftFile(string liftFilePath)
 		{
 			var liftDoc = XDocument.Load(liftFilePath);
-			var customFields = liftDoc.XPathSelectElements("//field[form[@lang='qaa-x-spec']]");
-			return customFields.Select(cf => cf.Attribute("tag").Value);
+			return liftDoc.XPathSelectElements("//field[form[@lang='qaa-x-spec']]").Select(cf => cf.Attribute("tag").Value);
 		}
 
 		/// <summary>
@@ -382,15 +381,15 @@ namespace LanguageExplorer.DictionaryConfiguration
 			string mainStatus;
 			var publicationStatus = string.Empty;
 			var customFieldStatus = string.Empty;
-			_view.explanationLabel.Text = "";
-
+			_view.explanationLabel.Text = string.Empty;
 			if (NewConfigToImport == null)
 			{
 				var invalidConfigFileMsg = string.Empty;
 				if (_isInvalidConfigFile)
 				{
 					var configType = Path.GetFileName(_projectConfigDir) == DictionaryConfigurationServices.DictionaryConfigurationDirectoryName
-					? LanguageExplorerResources.ReversalIndex : LanguageExplorerResources.Dictionary;
+						? LanguageExplorerResources.ReversalIndex
+						: LanguageExplorerResources.Dictionary;
 					invalidConfigFileMsg = string.Format(DictionaryConfigurationStrings.DictionaryConfigurationMismatch, configType) + Environment.NewLine;
 				}
 				_view.explanationLabel.Text = invalidConfigFileMsg + DictionaryConfigurationStrings.kstidCannotImport;

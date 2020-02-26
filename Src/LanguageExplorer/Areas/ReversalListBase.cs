@@ -64,11 +64,9 @@ namespace LanguageExplorer.Areas
 				DataAccess = VirtualListPublisher,
 				Cache = m_cache
 			};
-			if (base.TryRestoreSorter() && Sorter is GenRecordSorter)
+			if (base.TryRestoreSorter() && Sorter is GenRecordSorter genRecordSorter)
 			{
-				var sorter = (GenRecordSorter)Sorter;
-				var stringFinderComparer = sorter.Comparer as StringFinderCompare;
-				if (stringFinderComparer != null)
+				if (genRecordSorter.Comparer is StringFinderCompare stringFinderComparer)
 				{
 					var colSpec = ReflectionHelper.GetField(stringFinderComparer.Finder, "m_colSpec") as XElement ?? BrowseViewFormCol;
 					Sorter = new GenRecordSorter(new StringFinderCompare(LayoutFinder.CreateFinder(m_cache, colSpec, fakevc, PropertyTable.GetValue<IApp>(LanguageExplorerConstants.App)), stringFinderComparer.SubComparer));
@@ -155,7 +153,7 @@ namespace LanguageExplorer.Areas
 			UpdateFiltersAndSortersIfNeeded(); // Load the index-specific sorter
 			OnChangeSorter(); // Update the column headers with sort arrows
 			OwningObject = newOwningObj; // This automatically reloads (and sorts) the list
-			Publisher.Publish("MasterRefresh", null);
+			Publisher.Publish(new PublisherParameterObject("MasterRefresh"));
 		}
 
 		/// <summary />

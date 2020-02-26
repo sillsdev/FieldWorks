@@ -128,10 +128,9 @@ namespace LanguageExplorer.Controls
 
 			if (selectedMI.Text == LanguageExplorerControls.ks_DefineNew_)
 			{
-				IEnumerable<CoreWritingSystemDefinition> newWritingSystems;
 				if (FwWritingSystemSetupDlg.ShowNewDialog(FindForm(), m_cache.ServiceLocator.WritingSystemManager, m_cache.ServiceLocator.WritingSystems,
 					m_helpTopicProvider, m_app, isAnalysis ? FwWritingSystemSetupModel.ListType.Analysis : FwWritingSystemSetupModel.ListType.Vernacular,
-					out newWritingSystems))
+					out var newWritingSystems))
 				{
 					ws = newWritingSystems.First();
 				}

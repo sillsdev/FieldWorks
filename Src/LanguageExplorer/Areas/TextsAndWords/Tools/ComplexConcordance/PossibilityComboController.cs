@@ -27,10 +27,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 			{
 				match = AddNodes(popupTree.Nodes, List.Hvo, CmPossibilityListTags.kflidPossibilities, hvoTarget, tagName);
 			}
-			var empty = AddAnyItem(popupTree);
 			if (hvoTarget == 0)
 			{
-				match = empty;
+				match = AddAnyItem(popupTree);
 			}
 			return match;
 		}

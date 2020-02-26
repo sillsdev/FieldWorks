@@ -30,7 +30,9 @@ namespace XAmpleManagedWrapperTests
 		public void TestInit()
 		{
 			using (var wrapper = InitHelper())
+			{
 				Assert.IsNotNull(wrapper);
+			}
 		}
 
 		[Test]
@@ -39,7 +41,7 @@ namespace XAmpleManagedWrapperTests
 			using (var xAmple = InitHelper())
 			{
 				LoadFilesHelper(xAmple);
-				string parsedWord = xAmple.ParseWord("Hello");
+				var parsedWord = xAmple.ParseWord("Hello");
 				Assert.IsNotNull(parsedWord);
 				Assert.IsNotEmpty(parsedWord);
 			}
@@ -51,7 +53,7 @@ namespace XAmpleManagedWrapperTests
 			using (var xAmple = InitHelper())
 			{
 				LoadFilesHelper(xAmple);
-				string tracedWord = xAmple.TraceWord("Hello", "Hello");
+				var tracedWord = xAmple.TraceWord("Hello", "Hello");
 				Assert.IsNotNull(tracedWord);
 				Assert.IsNotEmpty(tracedWord);
 			}
@@ -68,7 +70,9 @@ namespace XAmpleManagedWrapperTests
 		public void TestSetParameter()
 		{
 			using (var xAmple = InitHelper())
+			{
 				xAmple.SetParameter("MaxAnalysesToReturn", "3");
+			}
 		}
 
 		[Test]

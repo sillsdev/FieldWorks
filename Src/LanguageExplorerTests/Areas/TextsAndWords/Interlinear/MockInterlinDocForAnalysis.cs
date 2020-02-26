@@ -41,7 +41,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 
 		internal IVwRootBox MockedRootBox
 		{
-			set { RootBox = value; }
+			set => RootBox = value;
 		}
 
 		/// <summary>

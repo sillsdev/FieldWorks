@@ -19,12 +19,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 
 		public override string Text
 		{
-			get { return Feature.Name.BestAnalysisAlternative.Text; }
-
-			set
-			{
-				throw new NotSupportedException();
-			}
+			get => Feature.Name.BestAnalysisAlternative.Text;
+			set => throw new NotSupportedException();
 		}
 	}
 }

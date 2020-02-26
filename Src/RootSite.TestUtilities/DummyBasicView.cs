@@ -188,7 +188,7 @@ namespace RootSite.TestUtilities
 		public void MakeEnglishParagraphs()
 		{
 			var wsf = m_cache.WritingSystemFactory;
-			int wsEng = wsf.GetWsFromStr("en");
+			var wsEng = wsf.GetWsFromStr("en");
 			AddParagraphsToLangProj(wsEng, kFirstParaEng, kSecondParaEng);
 		}
 
@@ -199,7 +199,6 @@ namespace RootSite.TestUtilities
 		{
 			var servLoc = Cache.ServiceLocator;
 			var txt = servLoc.GetInstance<ITextFactory>().Create();
-			//Cache.LanguageProject.TextsOC.Add(txt);
 			var text = servLoc.GetInstance<IStTextFactory>().Create();
 			txt.ContentsOA = text;
 			var stTxtParaFactory = servLoc.GetInstance<IStTxtParaFactory>();
@@ -231,14 +230,8 @@ namespace RootSite.TestUtilities
 		/// </summary>
 		public override Point ScrollPosition
 		{
-			get
-			{
-				return m_scrollPosition;
-			}
-			set
-			{
-				m_scrollPosition = new Point(-value.X, -value.Y);
-			}
+			get => m_scrollPosition;
+			set => m_scrollPosition = new Point(-value.X, -value.Y);
 		}
 
 		/// <summary>
@@ -425,14 +418,8 @@ namespace RootSite.TestUtilities
 		/// </summary>
 		public new bool VScroll
 		{
-			get
-			{
-				return base.VScroll;
-			}
-			set
-			{
-				base.VScroll = value;
-			}
+			get => base.VScroll;
+			set => base.VScroll = value;
 		}
 
 		/// <summary>
@@ -440,14 +427,8 @@ namespace RootSite.TestUtilities
 		/// </summary>
 		public new bool HScroll
 		{
-			get
-			{
-				return base.HScroll;
-			}
-			set
-			{
-				base.HScroll = value;
-			}
+			get => base.HScroll;
+			set => base.HScroll = value;
 		}
 
 		/// <summary>
@@ -460,18 +441,11 @@ namespace RootSite.TestUtilities
 				var nLineHeight = 0;
 				using (new HoldGraphics(this))
 				{
-					Rectangle rcSrcRoot;
-					Rectangle rcDstRoot;
-					GetCoordRects(out rcSrcRoot, out rcDstRoot);
-
-					Rect rdIP;
-					Rect rdSecondary;
-					bool fSplit;
-					bool fEndBeforeAnchor;
+					GetCoordRects(out var rcSrcRoot, out var rcDstRoot);
 					var vwsel = RootBox.Selection;
 					if (vwsel != null)
 					{
-						vwsel.Location(m_graphicsManager.VwGraphics, rcSrcRoot, rcDstRoot, out rdIP, out rdSecondary, out fSplit, out fEndBeforeAnchor);
+						vwsel.Location(m_graphicsManager.VwGraphics, rcSrcRoot, rcDstRoot, out var rdIP, out _, out _, out _);
 						nLineHeight = rdIP.bottom - rdIP.top;
 					}
 				}
@@ -490,18 +464,11 @@ namespace RootSite.TestUtilities
 				var nSelWidth = 0;
 				using (new HoldGraphics(this))
 				{
-					Rectangle rcSrcRoot;
-					Rectangle rcDstRoot;
-					GetCoordRects(out rcSrcRoot, out rcDstRoot);
-
-					Rect rdIP;
-					Rect rdSecondary;
-					bool fSplit;
-					bool fEndBeforeAnchor;
+					GetCoordRects(out var rcSrcRoot, out var rcDstRoot);
 					var vwsel = RootBox.Selection;
 					if (vwsel != null)
 					{
-						vwsel.Location(m_graphicsManager.VwGraphics, rcSrcRoot, rcDstRoot, out rdIP, out rdSecondary, out fSplit, out fEndBeforeAnchor);
+						vwsel.Location(m_graphicsManager.VwGraphics, rcSrcRoot, rcDstRoot, out var rdIP, out _, out _, out _);
 						nSelWidth = rdIP.right - rdIP.left;
 					}
 				}

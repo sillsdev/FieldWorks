@@ -368,8 +368,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 		public void ImportWordsWithMultipleWss()
 		{
 			var wsEn = Cache.WritingSystemFactory.GetWsFromStr("en");
-			CoreWritingSystemDefinition wsWbl;
-			Cache.ServiceLocator.WritingSystemManager.GetOrSet("wbl-Arab-AF", out wsWbl);
+			Cache.ServiceLocator.WritingSystemManager.GetOrSet("wbl-Arab-AF", out var wsWbl);
 			wsWbl.RightToLeftScript = true;
 			CoreWritingSystemDefinition wsWblIpa;
 			Cache.ServiceLocator.WritingSystemManager.GetOrSet("wbl-Qaaa-AF-fonipa-x-Zipa", out wsWblIpa);
@@ -779,7 +778,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 					firstEntry.MoveNext();
 					var imported = firstEntry.Current;
 					var para = imported.ContentsOA[0];
-					var spaceArray = new char[] { ' ' };
+					var spaceArray = new[] { ' ' };
 					var spaceOne = para.Contents.Text.Substring(2, 1); //should be: " "
 					var spaceTwo = para.Contents.Text.Substring(5, 1); //should be: " "
 					var spaceThree = para.Contents.Text.Substring(9, 1);
@@ -833,7 +832,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 					firstEntry.MoveNext();
 					var imported = firstEntry.Current; // why is this null?!
 					var para = imported.ContentsOA[0];
-					var spaceArray = new char[] { ' ' };
+					var spaceArray = new[] { ' ' };
 					var spaceOne = para.Contents.Text.Substring(2, 1); //should be: " "
 					var spaceTwo = para.Contents.Text.Substring(6, 1); //should be: " "
 					var spaceThree = para.Contents.Text.Substring(10, 1);

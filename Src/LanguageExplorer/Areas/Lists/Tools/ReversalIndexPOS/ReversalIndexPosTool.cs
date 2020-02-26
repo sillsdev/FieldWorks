@@ -32,8 +32,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 		private RecordBrowseView _recordBrowseView;
 		private ReversalIndexPosEditMenuHelper _toolMenuHelper;
 		private IReversalIndex _currentReversalIndex;
-		[Import(AreaServices.ListsAreaMachineName)]
-		private IArea _area;
+
 		[Import]
 		private IPropertyTable _propertyTable;
 		[Import]
@@ -84,12 +83,12 @@ namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 			_recordBrowseView = new RecordBrowseView(XDocument.Parse(ListResources.ReversalToolReversalIndexPOSBrowseViewParameters).Root, _cache, _recordList, majorFlexComponentParameters.UiWidgetController);
 			var showHiddenFieldsPropertyName = UiWidgetServices.CreateShowHiddenFieldsPropertyName(MachineName);
 			var dataTree = new DataTree(majorFlexComponentParameters.SharedEventHandlers, _propertyTable.GetValue(showHiddenFieldsPropertyName, false));
-			_toolMenuHelper = new ReversalIndexPosEditMenuHelper(majorFlexComponentParameters, this, _currentReversalIndex, _recordList, dataTree, _recordBrowseView, showHiddenFieldsPropertyName);
+			_toolMenuHelper = new ReversalIndexPosEditMenuHelper(majorFlexComponentParameters, this, _currentReversalIndex, _recordList, dataTree, _recordBrowseView);
 			var recordEditView = new RecordEditView(XDocument.Parse(ListResources.ReversalToolReversalIndexPOSRecordEditViewParameters).Root, XDocument.Parse(AreaResources.HideAdvancedListItemFields), _cache, _recordList, dataTree, majorFlexComponentParameters.UiWidgetController);
 			var mainMultiPaneParameters = new MultiPaneParameters
 			{
 				Orientation = Orientation.Vertical,
-				Area = _area,
+				Area = Area,
 				Id = "RevEntryPOSesAndDetailMultiPane",
 				ToolMachineName = MachineName
 			};
@@ -105,17 +104,14 @@ namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 				BackgroundImageLayout = ImageLayout.Center
 			};
 			browseViewPaneBar.AddControls(new List<Control> { panelMenu });
-
 			var recordEditViewPaneBar = new PaneBar();
 			var panelButton = new PanelButton(majorFlexComponentParameters.FlexComponentParameters, null, showHiddenFieldsPropertyName, LanguageExplorerResources.ksShowHiddenFields, LanguageExplorerResources.ksShowHiddenFields)
 			{
 				Dock = DockStyle.Right
 			};
 			recordEditViewPaneBar.AddControls(new List<Control> { panelButton });
-
 			_multiPane = MultiPaneFactory.CreateMultiPaneWithTwoPaneBarContainersInMainCollapsingSplitContainer(majorFlexComponentParameters.FlexComponentParameters, majorFlexComponentParameters.MainCollapsingSplitContainer,
 				mainMultiPaneParameters, _recordBrowseView, "Browse", browseViewPaneBar, recordEditView, "Details", recordEditViewPaneBar);
-
 			// Too early before now.
 			recordEditView.FinishInitialization();
 		}
@@ -173,7 +169,8 @@ namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 		/// <summary>
 		/// Get the area for the tool.
 		/// </summary>
-		public IArea Area => _area;
+		[field: Import(AreaServices.ListsAreaMachineName)]
+		public IArea Area { get; private set; }
 
 		/// <summary>
 		/// Get the image for the area.
@@ -226,7 +223,6 @@ namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 			private DataTree _dataTree;
 			private LcmCache _cache;
 			private IReversalIndexRepository _reversalIndexRepository;
-			private string _extendedPropertyName;
 			private RecordBrowseView _recordBrowseView;
 			private IPropertyTable _propertyTable;
 			internal PanelMenuContextMenuFactory MainPanelMenuContextMenuFactory { get; private set; }
@@ -234,7 +230,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 
 			private IPropertyTable PropertyTable => _majorFlexComponentParameters.FlexComponentParameters.PropertyTable;
 
-			internal ReversalIndexPosEditMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, ITool tool, IReversalIndex currentReversalIndex, IRecordList recordList, DataTree dataTree, RecordBrowseView recordBrowseView, string extendedPropertyName)
+			internal ReversalIndexPosEditMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, ITool tool, IReversalIndex currentReversalIndex, IRecordList recordList, DataTree dataTree, RecordBrowseView recordBrowseView)
 			{
 				Guard.AgainstNull(majorFlexComponentParameters, nameof(majorFlexComponentParameters));
 				Guard.AgainstNull(tool, nameof(tool));
@@ -242,7 +238,6 @@ namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 				Guard.AgainstNull(recordList, nameof(recordList));
 				Guard.AgainstNull(dataTree, nameof(dataTree));
 				Guard.AgainstNull(recordBrowseView, nameof(recordBrowseView));
-				Guard.AgainstNullOrEmptyString(extendedPropertyName, nameof(extendedPropertyName));
 
 				_majorFlexComponentParameters = majorFlexComponentParameters;
 				_currentReversalIndex = currentReversalIndex;
@@ -252,7 +247,6 @@ namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 				_cache = _majorFlexComponentParameters.LcmCache;
 				_recordBrowseView = recordBrowseView;
 				_sharedListToolsUiWidgetMenuHelper = new SharedListToolsUiWidgetMenuHelper(majorFlexComponentParameters, tool, _list, recordList, dataTree);
-				_extendedPropertyName = extendedPropertyName;
 				_propertyTable = _majorFlexComponentParameters.FlexComponentParameters.PropertyTable;
 				MainPanelMenuContextMenuFactory = new PanelMenuContextMenuFactory();
 
@@ -576,7 +570,6 @@ namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 				_dataTree = null;
 				_cache = null;
 				_reversalIndexRepository = null;
-				_extendedPropertyName = null;
 				_recordBrowseView = null;
 				_propertyTable = null;
 				MainPanelMenuContextMenuFactory = null;

@@ -114,10 +114,9 @@ namespace LanguageExplorer.Areas
 			{
 				ctrl.Height = newHeight;
 			}
-			foreach (var c in ctrl.Controls)
+			foreach (var control in ctrl.Controls)
 			{
-				var ctl = c as Control;
-				if (ctl != null)
+				if (control is Control ctl)
 				{
 					SetSubcontrolHeights(ctl, oldHeight, newHeight);
 				}

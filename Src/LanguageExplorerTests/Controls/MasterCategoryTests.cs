@@ -98,7 +98,7 @@ namespace LanguageExplorerTests.Controls.LexText
 			var mRevIndexFactory = Cache.ServiceLocator.GetInstance<IReversalIndexFactory>();
 			var index = mRevIndexFactory.Create();
 			Cache.LangProject.LexDbOA.ReversalIndexesOC.Add(index);
-			ICmPossibilityListFactory fact = Cache.ServiceLocator.GetInstance<ICmPossibilityListFactory>();
+			var fact = Cache.ServiceLocator.GetInstance<ICmPossibilityListFactory>();
 			index.PartsOfSpeechOA = fact.Create();
 			var posList = index.PartsOfSpeechOA;
 			var doc = new XmlDocument();
@@ -121,16 +121,14 @@ namespace LanguageExplorerTests.Controls.LexText
 
 		private IPartOfSpeech CheckPos(string guid, ICmObject owner)
 		{
-			IPartOfSpeech pos;
-			Assert.That(Cache.ServiceLocator.GetInstance<IPartOfSpeechRepository>().TryGetObject(new Guid(guid), out pos), Is.True, "expected POS should be created with the right guid");
+			Assert.That(Cache.ServiceLocator.GetInstance<IPartOfSpeechRepository>().TryGetObject(new Guid(guid), out var pos), Is.True, "expected POS should be created with the right guid");
 			Assert.That(pos.Owner, Is.EqualTo(owner), "POS should be created at the right place in the hierarchy");
 			return pos;
 		}
 
 		private void CheckPosDoesNotExist(string id)
 		{
-			IPartOfSpeech pos;
-			Assert.That(Cache.ServiceLocator.GetInstance<IPartOfSpeechRepository>().TryGetObject(new Guid(id), out pos), Is.False, "default possibility list should not already contain objects that this test creates");
+			Assert.That(Cache.ServiceLocator.GetInstance<IPartOfSpeechRepository>().TryGetObject(new Guid(id), out _), Is.False, "default possibility list should not already contain objects that this test creates");
 		}
 	}
 }

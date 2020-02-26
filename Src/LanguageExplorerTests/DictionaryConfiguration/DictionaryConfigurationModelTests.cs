@@ -40,7 +40,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 				</ConfigurationItem>
 				<SharedItems/>" +
 			XmlCloseTagsFromRoot;
-		private const string XmlCloseTagsFromRoot = @"</DictionaryConfiguration>";
+		private const string XmlCloseTagsFromRoot = "</DictionaryConfiguration>";
 		private const string m_reference = "Reference";
 		private const string m_field = "LexEntry";
 
@@ -384,7 +384,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			using (var modelFile = new TempFile(
 				new[] {
 					XmlOpenTagsThruRoot,
-					@"<Publications><Publication>Main Dictionary</Publication><Publication>Not A Real Publication</Publication></Publications>",
+					"<Publications><Publication>Main Dictionary</Publication><Publication>Not A Real Publication</Publication></Publications>",
 					XmlCloseTagsFromRoot }))
 			{
 				// SUT
@@ -405,7 +405,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			using (var modelFile = new TempFile(
 				new[] {
 					XmlOpenTagsThruRoot,
-					@"<Publications><Publication>Not A Real Publication</Publication></Publications>",
+					"<Publications><Publication>Not A Real Publication</Publication></Publications>",
 					XmlCloseTagsFromRoot }))
 			{
 				// SUT
@@ -427,7 +427,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			using (var modelFile = new TempFile(
 				new[] {
 					XmlOpenTagsThruRoot,
-					@"<Publications><Publication>Main Dictionary</Publication><Publication>New and unknown publication 1</Publication><Publication>New and unknown publication 2</Publication></Publications>",
+					"<Publications><Publication>Main Dictionary</Publication><Publication>New and unknown publication 1</Publication><Publication>New and unknown publication 2</Publication></Publications>",
 					XmlCloseTagsFromRoot }))
 			{
 				// SUT

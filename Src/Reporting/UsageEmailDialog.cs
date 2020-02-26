@@ -62,14 +62,8 @@ namespace SIL.Utils
 		/// <summary />
 		public string EmailAddress
 		{
-			set
-			{
-				m_emailAddress = value;
-			}
-			get
-			{
-				return m_emailAddress;
-			}
+			set => m_emailAddress = value;
+			get => m_emailAddress;
 		}
 
 		/// <summary>
@@ -77,40 +71,22 @@ namespace SIL.Utils
 		/// </summary>
 		public string EmailSubject
 		{
-			set
-			{
-				m_emailSubject = value;
-			}
-			get
-			{
-				return m_emailSubject;
-			}
+			set => m_emailSubject = value;
+			get => m_emailSubject;
 		}
 
 		/// <summary />
 		public string Body
 		{
-			set
-			{
-				m_emailBody = value;
-			}
-			get
-			{
-				return m_emailBody;
-			}
+			set => m_emailBody = value;
+			get => m_emailBody;
 		}
 
 		/// <summary />
 		public string TopLineText
 		{
-			set
-			{
-				m_topLineText.Text = value;
-			}
-			get
-			{
-				return m_topLineText.Text;
-			}
+			set => m_topLineText.Text = value;
+			get => m_topLineText.Text;
 		}
 
 		#region Windows Form Designer generated code
@@ -270,7 +246,7 @@ namespace SIL.Utils
 				{
 					d.TopLineText = topMessage;
 					d.EmailAddress = emailAddress;
-					d.EmailSubject = string.Format("{0} {1} Report {2} Launches", applicationName, version, launchCount);
+					d.EmailSubject = $"{applicationName} {version} Report {launchCount} Launches";
 					var bldr = new StringBuilder();
 					bldr.AppendFormat("<report app='{0}' version='{1}' linux='{2}'>", applicationName, version, MiscUtils.IsUnix);
 					bldr.AppendFormat("<stat type='launches' value='{0}'/>", launchCount);

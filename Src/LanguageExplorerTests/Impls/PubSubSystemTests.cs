@@ -52,7 +52,6 @@ namespace LanguageExplorerTests.Impls
 			};
 			subscriber.DoSubscriptions(_flexComponentParameters.Subscriber);
 			subscriber.ShouldDoReentrantPublish = true;
-			var someRandomSubscriber = new SomeRandomMessageSubscriber();
 			SomeRandomMessageSubscriber.DoSubscriptions(_flexComponentParameters.Subscriber);
 
 			// Run test.
@@ -76,14 +75,13 @@ namespace LanguageExplorerTests.Impls
 			};
 			subscriber.DoSubscriptions(_flexComponentParameters.Subscriber);
 			subscriber.ShouldDoReentrantPublish = true;
-			var someRandomSubscriber = new SomeRandomMessageSubscriber();
 			SomeRandomMessageSubscriber.DoSubscriptions(_flexComponentParameters.Subscriber);
 			var niceGuyMultipleSubscriber = new NiceGuy_MultipleSubscriber();
 			niceGuyMultipleSubscriber.DoSubscriptions(_flexComponentParameters.Subscriber);
 
 			// Run test.
 			Assert.IsTrue(subscriber.One);
-			Assert.DoesNotThrow(() => _flexComponentParameters.Publisher.Publish("BadBoy", false));
+			Assert.DoesNotThrow(() => _flexComponentParameters.Publisher.Publish(new PublisherParameterObject("BadBoy", false)));
 			subscriber.DoUnsubscriptions(_flexComponentParameters.Subscriber);
 			SomeRandomMessageSubscriber.DoUnsubscriptions(_flexComponentParameters.Subscriber);
 			niceGuyMultipleSubscriber.DoUnsubscriptions(_flexComponentParameters.Subscriber);
@@ -212,36 +210,56 @@ namespace LanguageExplorerTests.Impls
 			Assert.IsTrue(subscriber2.One); // Did not change.
 		}
 
+		[Test]
+		[TestCase(null)]
+		[TestCase("")]
+		[TestCase(" ")]
+		public void IllFormedPublisherParameterObjectThrows(string message)
+		{
+			Assert.Throws<ArgumentNullException>(() => { var dummy = new PublisherParameterObject(message); });
+		}
+
+		[Test]
+		public void VerifyPublishMessageCalls()
+		{
+			// Test multiple call Publish override.
+			Assert.Throws<ArgumentNullException>(() => _flexComponentParameters.Publisher.Publish((IList<PublisherParameterObject>)null));
+			var publisherParameterObject = new List<PublisherParameterObject>();
+			Assert.Throws<InvalidOperationException>(() => _flexComponentParameters.Publisher.Publish(publisherParameterObject));
+			publisherParameterObject.Add(new PublisherParameterObject("MessageOne"));
+			Assert.Throws<InvalidOperationException>(() => _flexComponentParameters.Publisher.Publish(publisherParameterObject));
+			publisherParameterObject.Add(new PublisherParameterObject("MessageTwo"));
+			Assert.DoesNotThrow(() => _flexComponentParameters.Publisher.Publish(publisherParameterObject));
+
+			// Test single message Publish method override.
+			Assert.Throws<ArgumentNullException>(() => _flexComponentParameters.Publisher.Publish((PublisherParameterObject)null));
+			Assert.DoesNotThrow(() => _flexComponentParameters.Publisher.Publish(publisherParameterObject[0]));
+		}
 
 		private static class Publisher
 		{
 			internal static void PublishMessageOne(IPublisher pubSystem)
 			{
-				pubSystem.Publish("MessageOne", false);
+				pubSystem.Publish(new PublisherParameterObject("MessageOne", false));
 			}
 
 			internal static void PublishMessageTwo(IPublisher pubSystem)
 			{
-				pubSystem.Publish("MessageTwo", 2);
+				pubSystem.Publish(new PublisherParameterObject("MessageTwo", 2));
 			}
 
 			internal static void PublishBothMessages(IPublisher pubSystem)
 			{
-				var commands = new List<string>
+				var messages = new List<PublisherParameterObject>
 				{
-					"MessageOne",
-					"MessageTwo"
+					new PublisherParameterObject("MessageOne", false),
+					new PublisherParameterObject("MessageTwo", int.MaxValue)
 				};
-				var parms = new List<object>
-				{
-					false,
-					int.MaxValue
-				};
-				pubSystem.Publish(commands, parms);
+				pubSystem.Publish(messages);
 			}
 		}
 
-		private sealed class SomeRandomMessageSubscriber
+		private static class SomeRandomMessageSubscriber
 		{
 			/// <summary>
 			/// This is the subscribed message handler for "SomeRandomMessage" message.
@@ -327,14 +345,14 @@ namespace LanguageExplorerTests.Impls
 
 			internal bool One
 			{
-				get { return _one; }
+				get => _one;
 				set
 				{
 					_one = value;
 					if (ShouldDoReentrantPublish)
 					{
 						// Bad boy! Re-entrant test should fail on this.
-						Publisher.Publish("SomeRandomMessage", "Whatever");
+						Publisher.Publish(new PublisherParameterObject("SomeRandomMessage", "Whatever"));
 					}
 				}
 			}
@@ -366,24 +384,19 @@ namespace LanguageExplorerTests.Impls
 
 			internal bool One
 			{
-				get { return _one; }
+				get => _one;
 				set
 				{
 					_one = value;
 					if (ShouldDoReentrantPublish)
 					{
 						// Bad boy! Re-entrant test should fail on this.
-						var commands = new List<string>
+						var messages = new List<PublisherParameterObject>
 						{
-							"MessageOne",
-							"SomeRandomMessage"
+							new PublisherParameterObject("MessageOne", false),
+							new PublisherParameterObject("SomeRandomMessage", "Whatever")
 						};
-						var parms = new List<object>
-						{
-							false,
-							"Whatever"
-						};
-						Publisher.Publish(commands, parms);
+						Publisher.Publish(messages);
 					}
 				}
 			}
@@ -404,67 +417,6 @@ namespace LanguageExplorerTests.Impls
 			private void ReentrantBadBoyHandler(object newValue)
 			{
 				One = (bool)newValue; // NB: The bad part is in the setter, which fires off more Publish calls.
-			}
-		}
-
-		private sealed class ReentrantSubscriber_MultipleCalls
-		{
-			private bool _one;
-			internal IPublisher Publisher { get; set; }
-
-			internal bool One
-			{
-				get { return _one; }
-				set
-				{
-					_one = value;
-					if (ShouldDoReentrantPublish)
-					{
-						// Bad boy! Re-entrant test should fail on this.
-						var commands = new List<string>
-						{
-							"MessageOne",
-							"SomeRandomMessage"
-						};
-						var parms = new List<object>
-						{
-							false,
-							"Whatever"
-						};
-						Publisher.Publish(commands, parms);
-					}
-				}
-			}
-
-			internal int Two { get; set; }
-			internal bool ShouldDoReentrantPublish { get; set; }
-
-			internal void DoSubscriptions(ISubscriber subscriber)
-			{
-				subscriber.Subscribe("MessageOne", ReentrantMessageOneHandler);
-				subscriber.Subscribe("MessageTwo", OrdinaryMessageTwoHandler);
-			}
-
-			internal void DoUnsubscriptions(ISubscriber subscriber)
-			{
-				subscriber.Unsubscribe("MessageOne", ReentrantMessageOneHandler);
-				subscriber.Unsubscribe("MessageTwo", OrdinaryMessageTwoHandler);
-			}
-
-			/// <summary>
-			/// This is the subscribed message handler for "MessageOne" message.
-			/// </summary>
-			private void ReentrantMessageOneHandler(object newValue)
-			{
-				One = (bool)newValue; // NB: The bad part is in the setter, which fires off more Publish calls.
-			}
-
-			/// <summary>
-			/// This is the subscribed message handler for "MessageOne" message.
-			/// </summary>
-			private void OrdinaryMessageTwoHandler(object newValue)
-			{
-				Two = (int)newValue;
 			}
 		}
 

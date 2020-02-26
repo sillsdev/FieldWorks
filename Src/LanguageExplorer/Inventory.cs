@@ -288,23 +288,20 @@ namespace LanguageExplorer
 				var root = m_mainDoc.Root;
 				Debug.Assert(root != null);
 				var nodes = root.Elements("layoutType");
-				if (nodes != null)
+				foreach (var node in nodes.OfType<XElement>())
 				{
-					foreach (var node in nodes.OfType<XElement>())
+					var layoutNode = XmlUtils.GetMandatoryAttributeValue(node, "layout");
+					if (layoutNode.EndsWith(tag))
 					{
-						var layoutNode = XmlUtils.GetMandatoryAttributeValue(node, "layout");
-						if (layoutNode.EndsWith(tag))
-						{
-							layoutType = node;
-							break;
-						}
+						layoutType = node;
+						break;
 					}
-					if (layoutType != null)
-					{
-						var label = XmlUtils.GetMandatoryAttributeValue(layoutType, "label");
-						var className = XmlUtils.GetOptionalAttributeValue(layoutType.Elements().First(), "class");
-						name = $"{label}_{className}";
-					}
+				}
+				if (layoutType != null)
+				{
+					var label = XmlUtils.GetMandatoryAttributeValue(layoutType, "label");
+					var className = XmlUtils.GetOptionalAttributeValue(layoutType.Elements().First(), "class");
+					name = $"{label}_{className}";
 				}
 			}
 			if (string.IsNullOrEmpty(name))
@@ -872,16 +869,7 @@ namespace LanguageExplorer
 			// if the alteration is an override (key = id), the base node is saved in m_baseDoc,
 			// otherwise it is just in the normal main document.
 			var keyAttrs = KeyAttributes[elementName];
-			var id = XmlUtils.GetOptionalAttributeValue(alteration, keyAttrs[keyAttrs.Length - 1]);
-			if (id == keyBase[keyBase.Length - 1])
-			{
-				// An override, the base should already be saved in m_baseDoc
-				return GetEltFromDoc(elementName, keyBase, m_baseDoc);
-			}
-			// not an override, just an ordinary derived node.
-			// Possibly the base is another derived node, not yet computed, so we need
-			// to use the full GetElement to ensure that it gets created if needed.
-			return GetElement(elementName, keyBase);
+			return XmlUtils.GetOptionalAttributeValue(alteration, keyAttrs[keyAttrs.Length - 1]) == keyBase[keyBase.Length - 1] ? GetEltFromDoc(elementName, keyBase, m_baseDoc) : GetElement(elementName, keyBase);
 		}
 
 		/// <summary>
@@ -1014,8 +1002,7 @@ namespace LanguageExplorer
 					continue;
 				}
 				var nodeList = LoadOneInventoryFile(path);
-				bool wasMerged;
-				var cleanedNodes = MergeAndUpdateNodes(nodeList, version, out wasMerged, loadUserOverRides);
+				var cleanedNodes = MergeAndUpdateNodes(nodeList, version, out var wasMerged, loadUserOverRides);
 				LoadElementList(cleanedNodes, version, root);
 				if (wasMerged)
 				{
@@ -1046,21 +1033,9 @@ namespace LanguageExplorer
 					AddNode(element, root);
 					continue;
 				}
-				//set up the values for other options
-				string[] keyAttrs;
-				var key = GetKeyMain(element, out keyAttrs);
-				XElement current;
 				//if the element table already has a match then we want to insert replacing the current value
-				if (m_getElementTable.TryGetValue(key, out current))
-				{
-					InsertNodeInDoc(element, current, m_mainDoc, key);
-				}
-				else //otherwise we are not going to attempt and replace any existing configurations
-				{
-					// We do NOT want this one to replace 'current', since it has a different name.
-					// We already know there is no matching node to replace.
-					InsertNodeInDoc(element, null, m_mainDoc, key);
-				}
+				var key = GetKeyMain(element, out _);
+				InsertNodeInDoc(element, m_getElementTable.TryGetValue(key, out var current) ? current : null, m_mainDoc, key);
 			}
 		}
 
@@ -1120,10 +1095,8 @@ namespace LanguageExplorer
 					}
 					else
 					{
-						string[] keyAttrs;
-						var key = GetKeyMain(node, out keyAttrs);
-						XElement current;
-						if (m_getElementTable.TryGetValue(key, out current))
+						var key = GetKeyMain(node, out var keyAttrs);
+						if (m_getElementTable.TryGetValue(key, out var current))
 						{
 							var merged = Merger.Merge(current, node, m_mainDoc, string.Empty);
 							if (loadUserOverRides)
@@ -1136,8 +1109,7 @@ namespace LanguageExplorer
 						else
 						{
 							// May be part of a named view or a duplicated node. Look for the unmodified one to merge with.
-							string[] standardKeyVals;
-							var oldLayoutSuffix = LayoutKeyUtils.GetSuffixedPartOfNamedViewOrDuplicateNode(keyAttrs, key.KeyVals, out standardKeyVals);
+							var oldLayoutSuffix = LayoutKeyUtils.GetSuffixedPartOfNamedViewOrDuplicateNode(keyAttrs, key.KeyVals, out var standardKeyVals);
 							if (string.IsNullOrEmpty(oldLayoutSuffix) || !m_getElementTable.TryGetValue(new GetElementKey(key.ElementName, standardKeyVals, m_mainDoc), out current))
 							{
 								continue;
@@ -1217,13 +1189,11 @@ namespace LanguageExplorer
 
 		private void AddNode(XElement node, XElement root)
 		{
-			string[] keyAttrs;
-			var keyMain = GetKeyMain(node, out keyAttrs);
+			var keyMain = GetKeyMain(node, out var keyAttrs);
 			var keyVals = keyMain.KeyVals;
 			var elementName = keyMain.ElementName;
-			XElement extantNode;
 			// Value may be null in the Dictionary, even if key is present.
-			m_getElementTable.TryGetValue(keyMain, out extantNode);
+			m_getElementTable.TryGetValue(keyMain, out var extantNode);
 			// Is the current node a derived node?
 			var baseName = XmlUtils.GetOptionalAttributeValue(node, "base");
 			if (baseName != null)
@@ -1350,8 +1320,7 @@ namespace LanguageExplorer
 			var root = m_mainDoc.Root;
 			var xdoc = XDocument.Parse(input);
 			var elementList = xdoc.XPathSelectElements(m_xpathElementsWanted);
-			bool dummy;
-			var cleanedNodes = MergeAndUpdateNodes(elementList, version, out dummy, false);
+			var cleanedNodes = MergeAndUpdateNodes(elementList, version, out _, false);
 			LoadElementList(cleanedNodes, version, root);
 		}
 
@@ -1404,9 +1373,8 @@ namespace LanguageExplorer
 			{
 				return main;
 			}
-			XElement result;
 			var key = new Tuple<XElement, XElement>(main, alteration);
-			if (m_unifiedNodes.TryGetValue(key, out result))
+			if (m_unifiedNodes.TryGetValue(key, out var result))
 			{
 				return result; // It will not be null.
 			}
@@ -1443,8 +1411,7 @@ namespace LanguageExplorer
 			int i;
 			for (i = path.Length - 1; i > 0; i--)
 			{
-				var node = path[i] as XElement;
-				if (node == null || node.Name != "sublayout")
+				if (!(path[i] is XElement element) || element.Name != "sublayout")
 				{
 					continue;
 				}
@@ -1459,12 +1426,11 @@ namespace LanguageExplorer
 			var currentParent = result;
 			for (; i < path.Length; i++)
 			{
-				var node = path[i] as XElement;
-				if (node == null || node.Name != "part")
+				if (!(path[i] is XElement element) || element.Name != "part")
 				{
 					continue;
 				}
-				var partId = XmlUtils.GetOptionalAttributeValue(node, "ref");
+				var partId = XmlUtils.GetOptionalAttributeValue(element, "ref");
 				if (partId == null)
 				{
 					continue; // a part node, but not a part ref.
@@ -1474,7 +1440,7 @@ namespace LanguageExplorer
 				// <indent>. If the current part ref we are trying to add has such a parent,
 				// try to reuse a matching one from the currentParent; failing that, make
 				// a suitable parent node and make it current.
-				var parent = node.Parent;
+				var parent = element.Parent;
 				if (parent != null && parent.Name == "indent")
 				{
 					var adjustParent = currentParent.Elements().FirstOrDefault(child => child.Name == parent.Name);
@@ -1491,7 +1457,7 @@ namespace LanguageExplorer
 					var partIdChild = XmlUtils.GetOptionalAttributeValue(child, "ref");
 					// For most children, one with the right part ID is enough, but for custom ones
 					// it must have the right param, as well.
-					if (partIdChild == partId && (partIdChild != "Custom" || XmlUtils.GetOptionalAttributeValue(node, "param") == XmlUtils.GetOptionalAttributeValue(child, "param")))
+					if (partIdChild == partId && (partIdChild != "Custom" || XmlUtils.GetOptionalAttributeValue(element, "param") == XmlUtils.GetOptionalAttributeValue(child, "param")))
 					{
 						currentChild = child;
 						break;
@@ -1505,11 +1471,11 @@ namespace LanguageExplorer
 					currentChild = new XElement("part");
 					currentParent.Add(currentChild);
 					XmlUtils.SetAttribute(currentChild, "ref", partId);
-					if (XmlUtils.GetOptionalAttributeValue(node, "ref") == "Custom")
+					if (XmlUtils.GetOptionalAttributeValue(element, "ref") == "Custom")
 					{
 						// In this case (and possibly this case only, at least, we weren't doing it
 						// before), we need to copy the param attribute.
-						var param = XmlUtils.GetOptionalAttributeValue(node, "param");
+						var param = XmlUtils.GetOptionalAttributeValue(element, "param");
 						if (!string.IsNullOrEmpty(param))
 						{
 							XmlUtils.SetAttribute(currentChild, "param", param);
@@ -1542,8 +1508,7 @@ namespace LanguageExplorer
 			/// <summary />
 			public override bool Equals(object obj)
 			{
-				var other = obj as GetElementKey;
-				if (other == null)
+				if (!(obj is GetElementKey other))
 				{
 					return false;
 				}

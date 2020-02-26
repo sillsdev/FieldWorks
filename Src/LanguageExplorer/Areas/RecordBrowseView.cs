@@ -653,9 +653,7 @@ namespace LanguageExplorer.Areas
 
 		private void CheckExpectedListItemsClassInSync()
 		{
-			var beExpectedListItemsClass = BrowseViewer.BulkEditBar.ExpectedListItemsClassId;
-			var recordListExpectedListItemsClass = MyRecordList.ListItemsClass;
-			RecordList.CheckExpectedListItemsClassInSync(beExpectedListItemsClass, recordListExpectedListItemsClass);
+			RecordList.CheckExpectedListItemsClassInSync(BrowseViewer.BulkEditBar.ExpectedListItemsClassId, MyRecordList.ListItemsClass);
 		}
 
 		private void ConsideringClosing_Handler(object newValue)

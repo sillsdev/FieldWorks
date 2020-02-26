@@ -92,8 +92,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				IsWebBrowserContextMenuEnabled = false
 			};
 			Controls.Add(m_mainView);
-			var browser = m_mainView.NativeBrowser as GeckoWebBrowser;
-			if (browser != null)
+			if (m_mainView.NativeBrowser is GeckoWebBrowser browser)
 			{
 				browser.DomClick += OnDomClick;
 			}
@@ -194,10 +193,9 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			{
 				return;
 			}
-			var gb = m_mainView.NativeBrowser as GeckoWebBrowser;
-			if (gb != null && gb.Document != null)
+			if (m_mainView.NativeBrowser is GeckoWebBrowser gb)
 			{
-				gb.Document.Body.SetAttribute("style", "background-color:#DEDEDE");
+				gb.Document?.Body.SetAttribute("style", "background-color:#DEDEDE");
 			}
 			var idleQueue = PropertyTable.GetValue<IFwMainWnd>(FwUtils.window).IdleQueue;
 			if (!idleQueue.Contains(ShowRecordOnIdle))

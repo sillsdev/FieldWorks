@@ -111,8 +111,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 			Assert.AreEqual(InterlinLineChoices.kflidFreeTrans, choices[5].Flid);
 
 			// We can't remove the Word line.
-			string msg;
-			Assert.IsFalse(choices.OkToRemove(choices[0], out msg));
+			Assert.IsFalse(choices.OkToRemove(choices[0], out var msg));
 			Assert.IsNotNull(msg);
 			// Add another word line and make sure we can remove one of them.
 			choices.Add(InterlinLineChoices.kflidWord);
@@ -373,7 +372,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 			Assert.AreEqual(2, wsList.Count);
 		}
 
-		private void MakeStandardState(InterlinLineChoices choices)
+		private static void MakeStandardState(InterlinLineChoices choices)
 		{
 			choices.Add(InterlinLineChoices.kflidWord); // 0
 			choices.Add(InterlinLineChoices.kflidMorphemes); // 1
@@ -502,16 +501,13 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 		public void Persistence()
 		{
 			var wsManager = new WritingSystemManager();
-			CoreWritingSystemDefinition enWs;
-			wsManager.GetOrSet("en", out enWs);
+			wsManager.GetOrSet("en", out var enWs);
 			var wsEng = enWs.Handle;
 
-			CoreWritingSystemDefinition frWs;
-			wsManager.GetOrSet("fr", out frWs);
+			wsManager.GetOrSet("fr", out var frWs);
 			var wsFrn = frWs.Handle;
 
-			CoreWritingSystemDefinition deWs;
-			wsManager.GetOrSet("de", out deWs);
+			wsManager.GetOrSet("de", out var deWs);
 			var wsGer = deWs.Handle;
 
 			var choices = new InterlinLineChoices(m_lp, wsFrn, wsEng);
@@ -555,12 +551,10 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 		public void GetActualWs_MorphBundleBehavesLikeMoForm()
 		{
 			var wsManager = new WritingSystemManager();
-			CoreWritingSystemDefinition enWs;
-			wsManager.GetOrSet("en", out enWs);
+			wsManager.GetOrSet("en", out var enWs);
 			var wsEng = enWs.Handle;
 
-			CoreWritingSystemDefinition frWs;
-			wsManager.GetOrSet("fr", out frWs);
+			wsManager.GetOrSet("fr", out var frWs);
 			var wsFrn = frWs.Handle;
 
 			var choices = new InterlinLineChoices(m_lp, wsFrn, wsEng);
@@ -570,14 +564,11 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 			// The StringFlid for this line spec always corresponds to a MoForm
 			Assert.AreEqual(MoFormTags.kflidForm, spec.StringFlid);
 
-			IWfiWordform wf;
-			IWfiAnalysis wag;
-			var str = TsStringUtils.MakeString("WordForm", spec.WritingSystem);
 			var wmb = Cache.ServiceLocator.GetInstance<IWfiMorphBundleFactory>().Create();
 			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
 			{
-				wf = Cache.ServiceLocator.GetInstance<IWfiWordformFactory>().Create(str);
-				wag = WordAnalysisOrGlossServices.CreateNewAnalysisWAG(wf);
+				var wf = Cache.ServiceLocator.GetInstance<IWfiWordformFactory>().Create(TsStringUtils.MakeString("WordForm", spec.WritingSystem));
+				var wag = WordAnalysisOrGlossServices.CreateNewAnalysisWAG(wf);
 				wag.MorphBundlesOS.Add(wmb);
 				var entry = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create();
 				IMoForm moForm = Cache.ServiceLocator.GetInstance<IMoStemAllomorphFactory>().Create();

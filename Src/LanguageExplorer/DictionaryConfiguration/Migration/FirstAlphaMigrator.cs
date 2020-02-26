@@ -98,10 +98,9 @@ namespace LanguageExplorer.DictionaryConfiguration.Migration
 			DictionaryConfigurationServices.PerformActionOnNodes(nodes, node =>
 			{
 				node.ReferenceItem = null;
-				var rsOptions = node.DictionaryNodeOptions as DictionaryNodeReferringSenseOptions;
-				if (rsOptions != null)
+				if (node.DictionaryNodeOptions is DictionaryNodeReferringSenseOptions dictionaryNodeReferringSenseOptions)
 				{
-					node.DictionaryNodeOptions = rsOptions.WritingSystemOptions;
+					node.DictionaryNodeOptions = dictionaryNodeReferringSenseOptions.WritingSystemOptions;
 				}
 			});
 		}
@@ -269,20 +268,23 @@ namespace LanguageExplorer.DictionaryConfiguration.Migration
 						{
 							return;
 						}
-						if (n.Parent.FieldDescription == "ExamplesOS" && n.FieldDescription == "Example")
+						switch (n.Parent.FieldDescription)
 						{
-							n.Label = "Example Sentence";
-						}
-						else if (n.Parent.FieldDescription == "ReferringSenses")
-						{
-							if (n.FieldDescription == "Owner" && n.SubField == "Bibliography")
-							{
-								n.Label = "Bibliography (Entry)";
-							}
-							else if (n.FieldDescription == "Bibliography")
-							{
-								n.Label = "Bibliography (Sense)";
-							}
+							case "ExamplesOS" when n.FieldDescription == "Example":
+								n.Label = "Example Sentence";
+								break;
+							case "ReferringSenses":
+								switch (n.FieldDescription)
+								{
+									case "Owner" when n.SubField == "Bibliography":
+										n.Label = "Bibliography (Entry)";
+										break;
+									case "Bibliography":
+										n.Label = "Bibliography (Sense)";
+										break;
+								}
+
+								break;
 						}
 					});
 					break;
@@ -305,59 +307,67 @@ namespace LanguageExplorer.DictionaryConfiguration.Migration
 				case VersionAlpha2:
 					DictionaryConfigurationServices.PerformActionOnNodes(nodes, n =>
 					{
-						if (n.FieldDescription == null)
+						switch (n.FieldDescription)
 						{
-							logger.WriteLine($"Warning: '{DictionaryConfigurationServices.BuildPathStringFromNode(n)}' reached the Alpha2 migration with a null FieldDescription.");
-							return;
-						}
-						if (n.FieldDescription == "VisibleVariantEntryRefs" && n.Label == "Variant Of")
-						{
-							n.Label = "Variant of";
-						}
-						else if (n.FieldDescription.Contains("EntryType"))
-						{
-							var parentFd = n.Parent.FieldDescription;
-							if (n.FieldDescription == ConfiguredXHTMLGenerator.LookupComplexEntryType || isReversal && (n.FieldDescription == "VariantEntryTypesRS" || n.FieldDescription == "ComplexEntryTypesRS"))
+							case null:
+								logger.WriteLine($"Warning: '{DictionaryConfigurationServices.BuildPathStringFromNode(n)}' reached the Alpha2 migration with a null FieldDescription.");
+								return;
+							case "VisibleVariantEntryRefs" when n.Label == "Variant Of":
+								n.Label = "Variant of";
+								break;
+							default:
 							{
-								if (parentFd == "ComplexFormEntryRefs")
+								if (n.FieldDescription.Contains("EntryType"))
 								{
-									// set type children to RevAbbr/RevName
-									SetEntryTypeChildrenBackward(n);
+									var parentFd = n.Parent.FieldDescription;
+									if (n.FieldDescription == ConfiguredXHTMLGenerator.LookupComplexEntryType || isReversal && (n.FieldDescription == "VariantEntryTypesRS" || n.FieldDescription == "ComplexEntryTypesRS"))
+									{
+										if (parentFd == "ComplexFormEntryRefs")
+										{
+											// set type children to RevAbbr/RevName
+											SetEntryTypeChildrenBackward(n);
+										}
+										else
+										{
+											// set type children to Abbr/Name
+											SetEntryTypeChildrenForward(n);
+										}
+									}
+									else if (parentFd.EndsWith("BackRefs") || parentFd == "ComplexFormsNotSubentries")
+									{
+										// set type children to Abbr/Name
+										SetEntryTypeChildrenForward(n);
+									}
+									else
+									{
+										// set type children to RevAbbr/RevName
+										SetEntryTypeChildrenBackward(n);
+									}
 								}
-								else
+								else switch (n.Label)
 								{
-									// set type children to Abbr/Name
-									SetEntryTypeChildrenForward(n);
+									case "Headword" when n.Parent.FieldDescription == "ReferringSenses":
+									case "Form" when n.Parent.Label.StartsWith("Subentry Under"):
+										n.Label = "Referenced Headword";
+										break;
+									case "Subsenses" when n.Parent.FieldDescription == "SensesOS":
+									{
+										var senseNode = (DictionaryNodeSenseOptions)n.DictionaryNodeOptions;
+										if (senseNode != null)
+										{
+											senseNode.ParentSenseNumberingStyle = "%.";
+											senseNode.NumberingStyle = "%d";
+											n.DictionaryNodeOptions = senseNode;
+										}
+										break;
+									}
+									case "Allomorphs" when n.FieldDescription == "Owner":
+										n.FieldDescription = "Entry";
+										break;
 								}
+
+								break;
 							}
-							else if (parentFd.EndsWith("BackRefs") || parentFd == "ComplexFormsNotSubentries")
-							{
-								// set type children to Abbr/Name
-								SetEntryTypeChildrenForward(n);
-							}
-							else
-							{
-								// set type children to RevAbbr/RevName
-								SetEntryTypeChildrenBackward(n);
-							}
-						}
-						else if (n.Label == "Headword" && n.Parent.FieldDescription == "ReferringSenses" || (n.Label == "Form" && n.Parent.Label.StartsWith("Subentry Under")))
-						{
-							n.Label = "Referenced Headword";
-						}
-						else if (n.Label == "Subsenses" && n.Parent.FieldDescription == "SensesOS")
-						{
-							var senseNode = (DictionaryNodeSenseOptions)n.DictionaryNodeOptions;
-							if (senseNode != null)
-							{
-								senseNode.ParentSenseNumberingStyle = "%.";
-								senseNode.NumberingStyle = "%d";
-								n.DictionaryNodeOptions = senseNode;
-							}
-						}
-						else if (n.Label == "Allomorphs" && n.FieldDescription == "Owner")
-						{
-							n.FieldDescription = "Entry";
 						}
 						if (n.Label == "Referenced Headword")
 						{

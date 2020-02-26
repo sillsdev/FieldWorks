@@ -8,6 +8,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
+using SIL.Code;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Controls.FileDialog;
 using SIL.FieldWorks.Common.FwUtils;
@@ -84,10 +85,8 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// <param name="fAnalysis">true to use analysis writing system for caption</param>
 		public PicturePropertiesDialog(LcmCache cache, ICmPicture initialPicture, IHelpTopicProvider helpTopicProvider, IApp app, bool fAnalysis)
 		{
-			if (cache == null)
-			{
-				throw (new ArgumentNullException(nameof(cache), "The LcmCache cannot be null"));
-			}
+			Guard.AgainstNull(cache, nameof(cache));
+
 			Logger.WriteEvent("Opening 'Picture Properties' dialog");
 			m_cache = cache;
 			m_initialPicture = initialPicture;
@@ -142,9 +141,7 @@ namespace LanguageExplorer.Controls.DetailControls
 				{
 					continue;
 				}
-				int actualWs;
-				ITsString tssStr;
-				if (!caption.TryWs(curWs, out actualWs, out tssStr))
+				if (!caption.TryWs(curWs, out _, out var tssStr))
 				{
 					continue;
 				}
@@ -569,8 +566,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			Logger.WriteEvent($"Closing 'Picture Properties' dialog with result {DialogResult}");
 			if (DialogResult == DialogResult.OK)
 			{
-				var action = (m_initialPicture == null ? "Creating" : "Changing");
-				Logger.WriteEvent($"{action} Picture Properties: file: {m_filePath}, {(m_txtCaption.Text.Length > 0 ? "with" : "no")} caption");
+				Logger.WriteEvent($"{(m_initialPicture == null ? "Creating" : "Changing")} Picture Properties: file: {m_filePath}, {(m_txtCaption.Text.Length > 0 ? "with" : "no")} caption");
 			}
 			base.OnClosed(e);
 		}

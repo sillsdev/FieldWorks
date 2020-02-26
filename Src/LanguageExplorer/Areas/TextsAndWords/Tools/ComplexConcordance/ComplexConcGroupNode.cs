@@ -69,7 +69,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 			}
 			if (alternation != null)
 			{
-				@group.Children.Add(alternation.Children.Count == 1 ? alternation.Children.First : alternation);
+				group.Children.Add(alternation.Children.Count == 1 ? alternation.Children.First : alternation);
 			}
 			return AddQuantifier(group);
 		}

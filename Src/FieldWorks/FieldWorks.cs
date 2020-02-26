@@ -1666,7 +1666,7 @@ namespace SIL.FieldWorks
 									var mainWindow = Form.ActiveForm;
 									if (mainWindow is IFwMainWnd)
 									{
-										((IFwMainWnd)mainWindow).Publisher.Publish("SFMImport", null);
+										((IFwMainWnd)mainWindow).Publisher.Publish(new PublisherParameterObject("SFMImport"));
 									}
 									else
 									{
@@ -2655,7 +2655,7 @@ namespace SIL.FieldWorks
 				s_activeMainWnd = fwMainWindowAsIFwMainWnd;
 				using (new DataUpdateMonitor(fwMainWindowAsForm, "Migrating Dictionary Configuration Settings"))
 				{
-					s_activeMainWnd.Publisher.Publish("MigrateOldConfigurations", null);
+					s_activeMainWnd.Publisher.Publish(new PublisherParameterObject("MigrateOldConfigurations"));
 				}
 				EnsureValidReversalIndexConfigFile(s_flexApp.Cache);
 				s_activeMainWnd.PropertyTable.SetProperty(FwUtils.AppSettings, s_appSettings);

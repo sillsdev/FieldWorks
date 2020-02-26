@@ -208,12 +208,12 @@ namespace LanguageExplorer.Controls.XMLViews
 			try
 			{
 				m_fInUpdateActive = true;
-				if (currentFilter is AndFilter)
+				if (currentFilter is AndFilter andFilter)
 				{
 					// We have to copy the list, because the internal operation of this loop
 					// may change the original list, invalidating the (implicit) enumerator.
 					// See LT-1133 for an example of what happens without making this copy.
-					var filters = (ArrayList)((AndFilter)currentFilter).Filters.Clone();
+					var filters = (ArrayList)andFilter.Filters.Clone();
 					foreach (RecordFilter filter in filters)
 					{
 						ActivateCompatibleFilter(filter);
@@ -275,27 +275,26 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <returns>true, if the column node spec can use the filter.</returns>
 		public bool CanActivateFilter(RecordFilter filter, XElement colSpec)
 		{
-			if (filter is AndFilter)
+			switch (filter)
 			{
-				var filters = ((AndFilter)filter).Filters;
-				foreach (RecordFilter rf in filters)
+				case AndFilter andFilter:
 				{
-					if ((rf is FilterBarCellFilter || rf is ListChoiceFilter) && CanActivateFilter(rf, colSpec))
+					var filters = andFilter.Filters;
+					if (filters.Cast<RecordFilter>().Any(rf => (rf is FilterBarCellFilter || rf is ListChoiceFilter) && CanActivateFilter(rf, colSpec)))
 					{
 						return true;
 					}
+					break;
 				}
-			}
-			else if (filter is FilterBarCellFilter)
-			{
-				var colFinder = LayoutFinder.CreateFinder(m_cache, colSpec, m_bv.BrowseView.Vc, m_app);
-				var fSameFinder = ((FilterBarCellFilter)filter).Finder.SameFinder(colFinder);
-				(colFinder as IDisposable)?.Dispose();
-				return fSameFinder;
-			}
-			else if (filter is ListChoiceFilter)
-			{
-				return (filter as ListChoiceFilter).CompatibleFilter(colSpec);
+				case FilterBarCellFilter filterBarCellFilter:
+				{
+					var colFinder = LayoutFinder.CreateFinder(m_cache, colSpec, m_bv.BrowseView.Vc, m_app);
+					var fSameFinder = filterBarCellFilter.Finder.SameFinder(colFinder);
+					(colFinder as IDisposable)?.Dispose();
+					return fSameFinder;
+				}
+				case ListChoiceFilter choiceFilter:
+					return choiceFilter.CompatibleFilter(colSpec);
 			}
 			return false;
 		}
@@ -452,7 +451,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		protected override Size DefaultSize => new Size(100, FwComboBoxBase.ComboHeight);
 
-		ITsString MakeLabel(string name)
+		private ITsString MakeLabel(string name)
 		{
 			return MakeLabel(name, m_userWs);
 		}
@@ -811,9 +810,9 @@ namespace LanguageExplorer.Controls.XMLViews
 			// Also apply stylesheet to each ComboBox.
 			foreach (var item in m_items)
 			{
-				if (item.Combo is FwComboBox)
+				if (item.Combo is FwComboBox comboBox)
 				{
-					item.Combo.StyleSheet = stylesheet;
+					comboBox.StyleSheet = stylesheet;
 				}
 			}
 		}
@@ -847,7 +846,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			Height = height;
 			foreach (var item in m_items)
 			{
-				if (!(item.Combo is FwComboBox))
+				if (!(item.Combo is FwComboBox comboBox))
 				{
 					continue;
 				}

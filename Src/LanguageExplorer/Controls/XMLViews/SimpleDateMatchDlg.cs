@@ -55,14 +55,8 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		public DateTime SelectionStart
 		{
-			get
-			{
-				return ShowingTimes ? m_startPicker.Value : m_startPicker.Value.Date;
-			}
-			set
-			{
-				m_startPicker.Value = value;
-			}
+			get => ShowingTimes ? m_startPicker.Value : m_startPicker.Value.Date;
+			set => m_startPicker.Value = value;
 		}
 
 		private bool ShowingTimes => m_typeCombo.SelectedIndex == 4;
@@ -87,10 +81,7 @@ namespace LanguageExplorer.Controls.XMLViews
 				end = end.AddSeconds(3599.999);
 				return end;
 			}
-			set
-			{
-				m_endPicker.Value = value;
-			}
+			set => m_endPicker.Value = value;
 		}
 
 		private void UpdateCalendarOptions()
@@ -189,8 +180,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		public void SetDlgValues(IMatcher matcher1)
 		{
-			var matcher = matcher1 as DateTimeMatcher;
-			if (matcher == null)
+			if (!(matcher1 is DateTimeMatcher matcher))
 			{
 				return;
 			}

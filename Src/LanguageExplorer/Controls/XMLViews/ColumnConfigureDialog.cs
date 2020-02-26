@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Linq;
 using System.Windows.Forms;
 using System.Xml.Linq;
 using SIL.FieldWorks.Common.Controls;
@@ -95,10 +96,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <value><c>true</c> if [show bulk edit icons]; otherwise, <c>false</c>.</value>
 		public bool ShowBulkEditIcons
 		{
-			get
-			{
-				return showBulkEditIcons;
-			}
+			get => showBulkEditIcons;
 			set
 			{
 				showBulkEditIcons = value;
@@ -184,8 +182,7 @@ namespace LanguageExplorer.Controls.XMLViews
 				var idx = -1;
 				for (var i = 0; i < wsCombo.Items.Count; ++i)
 				{
-					var item = wsCombo.Items[i] as WsComboItem;
-					if (item != null)
+					if (wsCombo.Items[i] is WsComboItem item)
 					{
 						if (item.ToString() == sDefaultRevWsName)
 						{
@@ -209,12 +206,9 @@ namespace LanguageExplorer.Controls.XMLViews
 			var ri = m_cache.ServiceLocator.GetInstance<IReversalIndexRepository>().GetObject(RootObjectHvo);
 			var sLang = m_cache.ServiceLocator.WritingSystemManager.Get(ri.WritingSystem).Language;
 			var fSort = wsCombo.Sorted;
-			foreach (var ws in WritingSystemServices.GetReversalIndexWritingSystems(m_cache, ri.Hvo, false))
+			foreach (var ws in WritingSystemServices.GetReversalIndexWritingSystems(m_cache, ri.Hvo, false).Where(ws => ws.Language == sLang))
 			{
-				if (ws.Language == sLang)
-				{
-					wsCombo.Items.Add(new WsComboItem(ws.DisplayLabel, ws.Id));
-				}
+				wsCombo.Items.Add(new WsComboItem(ws.DisplayLabel, ws.Id));
 			}
 			wsCombo.Sorted = fSort;
 			m_wccCurrent = WsComboContent.kwccReversalIndex;
@@ -466,9 +460,7 @@ namespace LanguageExplorer.Controls.XMLViews
 				else
 				{
 					// Probably this ws was deleted. See LT-12253.
-					string newWsDispCat;
-					string newColName;
-					if (!TryToRevertToDefaultWs(node, out newColName, out newWsDispCat))
+					if (!TryToRevertToDefaultWs(node, out var newColName, out var newWsDispCat))
 					{
 						// Caller should delete this node from the current list of columns.
 						return null;
@@ -637,12 +629,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				ri = m_cache.LangProject.LexDbOA.ReversalIndexesOC.ToArray()[0];
 			}
-			if (ri != null)
-			{
-				var ws = m_cache.ServiceLocator.WritingSystemManager.Get(ri.WritingSystem);
-				return ws.DisplayLabel;
-			}
-			return null;
+			return ri != null ? m_cache.ServiceLocator.WritingSystemManager.Get(ri.WritingSystem).DisplayLabel : null;
 		}
 
 		private ListViewItem AddCurrentItem(XElement node)
@@ -681,13 +668,9 @@ namespace LanguageExplorer.Controls.XMLViews
 
 		private void SafelyMakeOptionsList(ListView optionsList)
 		{
-			foreach (var node in m_possibleColumns)
+			foreach (var listItem in m_possibleColumns.Select(MakeCurrentItem).Where(listItem => listItem != null))
 			{
-				var listItem = MakeCurrentItem(node);
-				if (listItem != null)
-				{
-					optionsList.Items.Add(listItem);
-				}
+				optionsList.Items.Add(listItem);
 			}
 		}
 
@@ -976,9 +959,7 @@ namespace LanguageExplorer.Controls.XMLViews
 					// If the ws is not -50, then we know to compare against integer ws codes, not string labels
 					if (ws != -50)
 					{
-						int wsOtherMagic;
-						var wsOther = WritingSystemServices.InterpretWsLabel(m_cache, otherWsParam, null, 0, 0, null, out wsOtherMagic);
-						if (ws == wsOther && wsMagic == wsOtherMagic)
+						if (ws == WritingSystemServices.InterpretWsLabel(m_cache, otherWsParam, null, 0, 0, null, out var wsOtherMagic) && wsMagic == wsOtherMagic)
 						{
 							sameSpec = true;
 						}
@@ -1052,8 +1033,7 @@ namespace LanguageExplorer.Controls.XMLViews
 
 		private bool ColumnHasAsDuplicate(XElement colSpec)
 		{
-			var duplicateColumnLabels = GetDuplicateColumns();
-			return duplicateColumnLabels.Contains(colSpec.Attribute("label").Value);
+			return GetDuplicateColumns().Contains(colSpec.Attribute("label").Value);
 		}
 
 		private void removeButton_Click(object sender, EventArgs e)

@@ -86,15 +86,11 @@ namespace LCMBrowser
 
 					// Go through the LCM class names from the meta data cache and
 					// make sure all of them are found in the list just deserialized.
-					foreach (var name in AllLcmClassNames)
+					foreach (var name in AllLcmClassNames.Where(name => AllLcmClasses.All(cls => cls.ClassName != name)))
 					{
-						// Search the deserialized list for the class name.
-						if (!AllLcmClasses.Any(cls => cls.ClassName == name))
-						{
-							// If the class was not found in the deserialized list,
-							// then add it to the list.
-							AllLcmClasses.Add(new LCMClass(GetLCMClassType(name)));
-						}
+						// If the class was not found in the deserialized list,
+						// then add it to the list.
+						AllLcmClasses.Add(new LCMClass(GetLCMClassType(name)));
 					}
 				}
 			}
@@ -221,8 +217,7 @@ namespace LCMBrowser
 			{
 				return false;
 			}
-			LCMClass cls;
-			return s_LCMClassesByType.TryGetValue(cmObj.GetType(), out cls) && cls.IsPropertyDisplayed(propName);
+			return s_LCMClassesByType.TryGetValue(cmObj.GetType(), out var cls) && cls.IsPropertyDisplayed(propName);
 		}
 
 		/// <summary>
@@ -244,7 +239,7 @@ namespace LCMBrowser
 		public static LCMClass GetLCMClassProperties(string className)
 		{
 			var type = GetLCMClassType(className);
-			return (type != null ? new LCMClass(type) : null);
+			return type != null ? new LCMClass(type) : null;
 		}
 	}
 }

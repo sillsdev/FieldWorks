@@ -203,8 +203,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 			var basePath = Path.Combine(Path.GetTempPath(), "DictionaryPreview", cache.ProjectId.Name);
 			FileUtils.EnsureDirectoryExists(basePath);
 			var confName = DictionaryConfigurationServices.MakeFilenameSafeForHtml(Path.GetFileNameWithoutExtension(config.FilePath));
-			var fileName = isSingleEntryPreview ? confName + "-Preview" : confName;
-			return Path.Combine(basePath, fileName);
+			return Path.Combine(basePath, isSingleEntryPreview ? confName + "-Preview" : confName);
 		}
 
 		/// <summary>
@@ -564,16 +563,9 @@ namespace LanguageExplorer.DictionaryConfiguration
 			if (entryHvos.Length % entriesPerPage != 0) // If we didn't luck out and have exactly full pages
 			{
 				// If the last page is less than 10% of the max entries per page just add them to the last page
-				if (entryHvos.Length % entriesPerPage <= entriesPerPage / 10)
-				{
-					// Generate a last page including the 10% or less overflow entries
-					pageRanges.Add(new Tuple<int, int>(Math.Max(entryHvos.Length - entryHvos.Length % entriesPerPage - entriesPerPage, 0), entryHvos.Length - 1));
-				}
-				else
-				{
-					// Generate the page with the last entries
-					pageRanges.Add(new Tuple<int, int>(Math.Max(entryHvos.Length - entryHvos.Length % entriesPerPage, 0), entryHvos.Length - 1));
-				}
+				pageRanges.Add(entryHvos.Length % entriesPerPage <= entriesPerPage / 10
+					? new Tuple<int, int>(Math.Max(entryHvos.Length - entryHvos.Length % entriesPerPage - entriesPerPage, 0), entryHvos.Length - 1)
+					: new Tuple<int, int>(Math.Max(entryHvos.Length - entryHvos.Length % entriesPerPage, 0), entryHvos.Length - 1));
 			}
 			else
 			{
@@ -647,17 +639,13 @@ namespace LanguageExplorer.DictionaryConfiguration
 
 		internal static void GenerateLetterHeaderIfNeeded(ICmObject entry, ref string lastHeader, XmlWriter xhtmlWriter, GeneratorSettings settings)
 		{
-			// If performance is an issue these dummy's can be stored between calls
-			var dummyOne = new Dictionary<string, ISet<string>>();
-			var dummyTwo = new Dictionary<string, Dictionary<string, string>>();
-			var dummyThree = new Dictionary<string, ISet<string>>();
 			var cache = settings.Cache;
 			var wsString = cache.WritingSystemFactory.GetStrFromWs(cache.DefaultVernWs);
-			if (entry is IReversalIndexEntry)
+			if (entry is IReversalIndexEntry reversalIndexEntry)
 			{
-				wsString = ((IReversalIndexEntry)entry).SortKeyWs;
+				wsString = reversalIndexEntry.SortKeyWs;
 			}
-			var firstLetter = ConfiguredExport.GetLeadChar(GetHeadwordForLetterHead(entry), wsString, dummyOne, dummyTwo, dummyThree, cache);
+			var firstLetter = ConfiguredExport.GetLeadChar(GetHeadwordForLetterHead(entry), wsString, new Dictionary<string, ISet<string>>(), new Dictionary<string, Dictionary<string, string>>(), new Dictionary<string, ISet<string>>(), cache);
 			if (firstLetter == lastHeader || string.IsNullOrEmpty(firstLetter))
 			{
 				return;
@@ -695,12 +683,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 		/// <returns>the "headword" in NFD (the heading letter must be normalized to NFC before writing to XHTML, per LT-18177)</returns>
 		private static string GetHeadwordForLetterHead(ICmObject entry)
 		{
-			var lexEntry = entry as ILexEntry;
-			if (lexEntry == null)
-			{
-				return (entry as IReversalIndexEntry)?.ReversalForm.BestAnalysisAlternative.Text.TrimStart() ?? string.Empty;
-			}
-			return lexEntry.HomographForm.TrimStart();
+			return !(entry is ILexEntry lexEntry) ? (entry as IReversalIndexEntry)?.ReversalForm.BestAnalysisAlternative.Text.TrimStart() ?? string.Empty : lexEntry.HomographForm.TrimStart();
 		}
 
 		/// <summary>
@@ -721,11 +704,8 @@ namespace LanguageExplorer.DictionaryConfiguration
 
 		public static string GenerateXHTMLForMainEntry(ICmObject entry, ConfigurableDictionaryNode configuration, DictionaryPublicationDecorator publicationDecorator, GeneratorSettings settings)
 		{
-			if (configuration.DictionaryNodeOptions != null && ((ILexEntry)entry).ComplexFormEntryRefs.Any() && !IsListItemSelectedForExport(configuration, entry))
-			{
-				return string.Empty;
-			}
-			return GenerateXHTMLForEntry(entry, configuration, publicationDecorator, settings);
+			return configuration.DictionaryNodeOptions != null && ((ILexEntry)entry).ComplexFormEntryRefs.Any() && !IsListItemSelectedForExport(configuration, entry)
+				? string.Empty : GenerateXHTMLForEntry(entry, configuration, publicationDecorator, settings);
 		}
 
 		private static string GenerateXHTMLForMinorEntry(ICmObject entry, DictionaryConfigurationModel configuration, DictionaryPublicationDecorator publicationDecorator, GeneratorSettings settings)
@@ -742,28 +722,18 @@ namespace LanguageExplorer.DictionaryConfiguration
 		/// </summary>
 		internal static bool IsMainEntry(ICmObject entry, DictionaryConfigurationModel config)
 		{
-			var lexEntry = entry as ILexEntry;
-			if (lexEntry == null /* only LexEntries can be Minor; others (ReversalIndex, etc) are always Main.*/ || !lexEntry.EntryRefsOS.Any())
-			{
-				// owning an ILexEntryRef denotes Complex Forms or Variants (not owning any denotes Main Entries)
-				return true;
-			}
-			if (config.IsRootBased) // Root-based configs consider all Complex Forms and Variants to be Minor Entries
-			{
-				return false;
-			}
-			// Lexeme-Based and Hybrid configs consider Complex Forms to be Main Entries (Variants are still Minor Entries)
-			return lexEntry.EntryRefsOS.Any(ler => ler.RefType == LexEntryRefTags.krtComplexForm);
+			return !(entry is ILexEntry lexEntry) /* only LexEntries can be Minor; others (ReversalIndex, etc) are always Main.*/
+				   || !lexEntry.EntryRefsOS.Any() || !config.IsRootBased && lexEntry.EntryRefsOS.Any(ler => ler.RefType == LexEntryRefTags.krtComplexForm);
 		}
 
 		/// <summary>Generates XHTML for an ICmObject for a specific ConfigurableDictionaryNode</summary>
 		/// <remarks>the configuration node must match the entry type</remarks>
 		internal static string GenerateXHTMLForEntry(ICmObject entry, ConfigurableDictionaryNode configuration, DictionaryPublicationDecorator publicationDecorator, GeneratorSettings settings)
 		{
-			if (settings == null || entry == null || configuration == null)
-			{
-				throw new ArgumentNullException();
-			}
+			Guard.AgainstNull(settings, nameof(settings));
+			Guard.AgainstNull(entry, nameof(entry));
+			Guard.AgainstNull(configuration, nameof(configuration));
+
 			// ReSharper disable LocalizableElement, because seriously, who cares about localized exceptions?
 			if (string.IsNullOrEmpty(configuration.FieldDescription))
 			{
@@ -850,7 +820,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 				if (field is ILexEntryRef)
 				{
 					var ret = new StringBuilder();
-					foreach (var sense in (((field as ILexEntryRef).Owner as ILexEntry).AllSenses))
+					foreach (var sense in (((ILexEntry)((ILexEntryRef)field).Owner).AllSenses))
 					{
 						ret.Append(GenerateXHTMLForDefinitionOrGloss(sense, config, settings));
 					}
@@ -889,8 +859,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 				if (config.IsCustomField)
 				{
 					// Get the custom field value (in SubField) using the property which came from the field object
-					if (!GetPropValueForCustomField(propertyValue, config, cache, ((ICmObject)propertyValue).ClassName,
-						config.SubField, ref propertyValue))
+					if (!GetPropValueForCustomField(propertyValue, config, cache, ((ICmObject)propertyValue).ClassName, config.SubField, ref propertyValue))
 					{
 						return string.Empty;
 					}
@@ -903,8 +872,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 					if (subProp == null)
 					{
 #if DEBUG
-						var msg = $"Issue with finding (subField) {subField} for (subType) {subType}";
-						ShowConfigDebugInfo(msg, config);
+						ShowConfigDebugInfo($"Issue with finding (subField) {subField} for (subType) {subType}", config);
 #endif
 						return string.Empty;
 					}
@@ -925,11 +893,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 			switch (typeForNode)
 			{
 				case PropertyType.CollectionType:
-					if (!IsCollectionEmpty(propertyValue))
-					{
-						return GenerateXHTMLForCollection(propertyValue, config, publicationDecorator, field, settings, info);
-					}
-					return string.Empty;
+					return !IsCollectionEmpty(propertyValue) ? GenerateXHTMLForCollection(propertyValue, config, publicationDecorator, field, settings, info) : string.Empty;
 				case PropertyType.MoFormType:
 					return GenerateXHTMLForMoForm(propertyValue as IMoForm, config, settings);
 				case PropertyType.CmObjectType:
@@ -937,9 +901,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 				case PropertyType.CmPictureType:
 					fileProperty = propertyValue as ICmFile;
 					fileOwner = field as ICmObject;
-					return fileProperty != null && fileOwner != null
-						? GenerateXHTMLForPicture(fileProperty, config, fileOwner, settings)
-						: GenerateXHTMLForPictureCaption(propertyValue, config, settings);
+					return fileProperty != null && fileOwner != null ? GenerateXHTMLForPicture(fileProperty, config, fileOwner, settings) : GenerateXHTMLForPictureCaption(propertyValue, config, settings);
 				case PropertyType.CmPossibility:
 					return GenerateXHTMLForPossibility(propertyValue, config, publicationDecorator, settings);
 				case PropertyType.CmFileType:
@@ -993,7 +955,6 @@ namespace LanguageExplorer.DictionaryConfiguration
 			{
 				xw.WriteStartElement("span");
 				xw.WriteAttributeString("class", CssGenerator.GetClassAttributeForConfig(config));
-
 				var innerBuilder = new StringBuilder();
 				foreach (var child in config.ReferencedOrDirectChildren)
 				{
@@ -1025,9 +986,9 @@ namespace LanguageExplorer.DictionaryConfiguration
 			}
 			var customFieldType = cache.MetaDataCacheAccessor.GetFieldType(customFieldFlid);
 			ICmObject specificObject;
-			if (fieldOwner is ISenseOrEntry)
+			if (fieldOwner is ISenseOrEntry senseOrEntry)
 			{
-				specificObject = ((ISenseOrEntry)fieldOwner).Item;
+				specificObject = senseOrEntry.Item;
 				if (!cache.GetManagedMetaDataCache().GetFields(specificObject.ClassID, true, (int)CellarPropertyTypeFilter.All).Contains(customFieldFlid))
 				{
 					return false;
@@ -1118,7 +1079,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 				}
 				else
 				{
-					xw.WriteRaw("");
+					xw.WriteRaw(string.Empty);
 				}
 				xw.WriteFullEndElement();
 				xw.Flush();
@@ -1237,10 +1198,9 @@ namespace LanguageExplorer.DictionaryConfiguration
 		/// </summary>
 		private static string GetClassNameForCustomFieldParent(ConfigurableDictionaryNode customFieldNode, IFwMetaDataCacheManaged metaDataCacheAccessor)
 		{
-			Type unneeded;
 			// If the parent node of the custom field represents a collection, calling GetTypeForConfigurationNode
 			// with the parent node returns the collection type. We want the type of the elements in the collection.
-			var parentNodeType = GetTypeForConfigurationNode(customFieldNode.Parent, metaDataCacheAccessor, out unneeded);
+			var parentNodeType = GetTypeForConfigurationNode(customFieldNode.Parent, metaDataCacheAccessor, out _);
 			if (parentNodeType == null)
 			{
 				Debug.Assert(parentNodeType != null, "Unable to find type for configuration node");
@@ -1250,12 +1210,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 			{
 				parentNodeType = parentNodeType.GetGenericArguments()[0];
 			}
-			if (parentNodeType.IsInterface)
-			{
-				// Strip off the interface designation since custom fields are added to concrete classes
-				return parentNodeType.Name.Substring(1);
-			}
-			return parentNodeType.Name;
+			return parentNodeType.IsInterface ? parentNodeType.Name.Substring(1) : parentNodeType.Name;
 		}
 
 		private static string GenerateXHTMLForPossibility(object propertyValue, ConfigurableDictionaryNode config,
@@ -1266,9 +1221,8 @@ namespace LanguageExplorer.DictionaryConfiguration
 				return string.Empty;
 			}
 			var bldr = new StringBuilder();
-			foreach (var child in config.ReferencedOrDirectChildren)
+			foreach (var content in config.ReferencedOrDirectChildren.Select(child => GenerateXHTMLForFieldByReflection(propertyValue, child, publicationDecorator, settings)))
 			{
-				var content = GenerateXHTMLForFieldByReflection(propertyValue, child, publicationDecorator, settings);
 				bldr.Append(content);
 			}
 			return bldr.Length > 0 ? WriteRawElementContents("span", bldr.ToString(), config) : string.Empty;
@@ -1337,8 +1291,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 			{
 				if (option.IsEnabled)
 				{
-					int wsId;
-					var bestString = sense.GetDefinitionOrGloss(option.Id, out wsId);
+					var bestString = sense.GetDefinitionOrGloss(option.Id, out var wsId);
 					if (bestString != null)
 					{
 						var contentItem = GenerateWsPrefixAndString(config, settings, wsOption, wsId, bestString, Guid.Empty);
@@ -1429,12 +1382,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 
 		private static bool AreFilesIdentical(string source, string destination, bool isWavExport)
 		{
-			if (!isWavExport)
-			{
-				return FileUtils.AreFilesIdentical(source, destination);
-			}
-			var exists = WavConverter.AlreadyExists(source, destination);
-			return exists == SaveFile.IdenticalExists;
+			return !isWavExport ? FileUtils.AreFilesIdentical(source, destination) : WavConverter.AlreadyExists(source, destination) == SaveFile.IdenticalExists;
 		}
 
 		private static string MakeSafeFilePath(string filePath)
@@ -1475,9 +1423,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 		/// <returns></returns>
 		internal static PropertyType GetPropertyTypeForConfigurationNode(ConfigurableDictionaryNode config, Type fieldTypeFromData, IFwMetaDataCacheManaged metaDataCacheAccessor)
 		{
-			Type parentType;
-			var fieldType = GetTypeForConfigurationNode(config, metaDataCacheAccessor, out parentType) ?? fieldTypeFromData;
-			return GetPropertyTypeFromReflectedTypes(fieldType, parentType);
+			return GetPropertyTypeFromReflectedTypes(GetTypeForConfigurationNode(config, metaDataCacheAccessor, out var parentType) ?? fieldTypeFromData, parentType);
 		}
 
 		private static PropertyType GetPropertyTypeFromReflectedTypes(Type fieldType, Type parentType)
@@ -1510,11 +1456,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 			{
 				return PropertyType.CmPossibility;
 			}
-			if (typeof(ICmObject).IsAssignableFrom(fieldType))
-			{
-				return PropertyType.CmObjectType;
-			}
-			return PropertyType.PrimitiveType;
+			return typeof(ICmObject).IsAssignableFrom(fieldType) ? PropertyType.CmObjectType : PropertyType.PrimitiveType;
 		}
 
 		/// <summary>
@@ -1731,8 +1673,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 			else
 			{
 				FilterAndSortCollectionIfNeeded(ref collection, pubDecorator, config.SubField ?? config.FieldDescription);
-				ConfigurableDictionaryNode lexEntryTypeNode;
-				if (IsVariantEntryType(config, out lexEntryTypeNode))
+				if (IsVariantEntryType(config, out var lexEntryTypeNode))
 				{
 					bldr.Append(GenerateXHTMLForILexEntryRefCollection(config, collection, cmOwner, pubDecorator, settings, lexEntryTypeNode, false));
 				}
@@ -1789,14 +1730,12 @@ namespace LanguageExplorer.DictionaryConfiguration
 
 		private static bool IsLexReferenceCollection(ConfigurableDictionaryNode config)
 		{
-			var opt = config.DictionaryNodeOptions as DictionaryNodeListOptions;
-			return opt != null && (opt.ListId == ListIds.Entry || opt.ListId == ListIds.Sense);
+			return config.DictionaryNodeOptions is DictionaryNodeListOptions dictionaryNodeListOptions && (dictionaryNodeListOptions.ListId == ListIds.Entry || dictionaryNodeListOptions.ListId == ListIds.Sense);
 		}
 
 		internal static bool IsFactoredReference(ConfigurableDictionaryNode node, out ConfigurableDictionaryNode typeChild)
 		{
-			var paraOptions = node.DictionaryNodeOptions as IParaOption;
-			if (paraOptions != null && paraOptions.DisplayEachInAParagraph)
+			if (node.DictionaryNodeOptions is IParaOption paraOptions && paraOptions.DisplayEachInAParagraph)
 			{
 				typeChild = null;
 				return false;
@@ -1823,8 +1762,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 		private static bool IsVariantEntryType(ConfigurableDictionaryNode config, out ConfigurableDictionaryNode variantEntryTypeNode)
 		{
 			variantEntryTypeNode = null;
-			var variantOptions = config.DictionaryNodeOptions as DictionaryNodeListOptions;
-			if (variantOptions != null && variantOptions.ListId == ListIds.Variant)
+			if (config.DictionaryNodeOptions is DictionaryNodeListOptions variantOptions && variantOptions.ListId == ListIds.Variant)
 			{
 				variantEntryTypeNode = config.ReferencedOrDirectChildren.FirstOrDefault(x => x.FieldDescription == "VariantEntryTypesRS");
 				return variantEntryTypeNode != null;
@@ -1891,8 +1829,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 				? lexEntryTypes.Select(t => t.Guid)
 				: listOptions.Options.Where(o => o.IsEnabled).Select(o => new Guid(o.Id));
 			// Don't factor out Types when displaying in a paragraph
-			var paraOptions = config.DictionaryNodeOptions as IParaOption;
-			if (paraOptions != null && paraOptions.DisplayEachInAParagraph)
+			if (config.DictionaryNodeOptions is IParaOption paraOptions && paraOptions.DisplayEachInAParagraph)
 			{
 				typeNode = null;
 			}
@@ -1900,12 +1837,9 @@ namespace LanguageExplorer.DictionaryConfiguration
 			foreach (var typeGuid in lexEntryTypesFiltered)
 			{
 				var innerBldr = new StringBuilder();
-				foreach (var lexEntRef in lerCollection)
+				foreach (var lexEntRef in lerCollection.Where(lexEntRef => isComplex ? lexEntRef.ComplexEntryTypesRS.Any(t => t.Guid == typeGuid) : lexEntRef.VariantEntryTypesRS.Any(t => t.Guid == typeGuid)))
 				{
-					if (isComplex ? lexEntRef.ComplexEntryTypesRS.Any(t => t.Guid == typeGuid) : lexEntRef.VariantEntryTypesRS.Any(t => t.Guid == typeGuid))
-					{
-						innerBldr.Append(GenerateCollectionItemContent(config, pubDecorator, lexEntRef, collectionOwner, settings, typeNode));
-					}
+					innerBldr.Append(GenerateCollectionItemContent(config, pubDecorator, lexEntRef, collectionOwner, settings, typeNode));
 				}
 				// Display the Type iff there were refs of this Type (and we are factoring)
 				if (innerBldr.Length > 0 && typeNode != null)
@@ -1967,31 +1901,36 @@ namespace LanguageExplorer.DictionaryConfiguration
 		/// </summary>
 		private static void FilterAndSortCollectionIfNeeded(ref IEnumerable collection, DictionaryPublicationDecorator decorator, string fieldDescr)
 		{
-			if (collection is IEnumerable<ICmObject>)
+			switch (collection)
 			{
-				var cmCollection = collection.Cast<ICmObject>();
-				if (decorator != null)
+				case IEnumerable<ICmObject> _:
 				{
-					cmCollection = cmCollection.Where(item => !decorator.IsExcludedObject(item));
+					var cmCollection = collection.Cast<ICmObject>();
+					if (decorator != null)
+					{
+						cmCollection = cmCollection.Where(item => !decorator.IsExcludedObject(item));
+					}
+					if (IsCollectionInNeedOfSorting(fieldDescr))
+					{
+						cmCollection = cmCollection.OrderBy(x => x.SortKey2);
+					}
+					collection = cmCollection;
+					break;
 				}
-				if (IsCollectionInNeedOfSorting(fieldDescr))
+				case IEnumerable<ISenseOrEntry> _:
 				{
-					cmCollection = cmCollection.OrderBy(x => x.SortKey2);
+					var seCollection = collection.Cast<ISenseOrEntry>();
+					if (decorator != null)
+					{
+						seCollection = seCollection.Where(item => !decorator.IsExcludedObject(item.Item));
+					}
+					if (IsCollectionInNeedOfSorting(fieldDescr))
+					{
+						seCollection = seCollection.OrderBy(x => x.Item.SortKey2);
+					}
+					collection = seCollection;
+					break;
 				}
-				collection = cmCollection;
-			}
-			else if (collection is IEnumerable<ISenseOrEntry>)
-			{
-				var seCollection = collection.Cast<ISenseOrEntry>();
-				if (decorator != null)
-				{
-					seCollection = seCollection.Where(item => !decorator.IsExcludedObject(item.Item));
-				}
-				if (IsCollectionInNeedOfSorting(fieldDescr))
-				{
-					seCollection = seCollection.OrderBy(x => x.Item.SortKey2);
-				}
-				collection = seCollection;
 			}
 		}
 
@@ -2070,20 +2009,8 @@ namespace LanguageExplorer.DictionaryConfiguration
 		/// </summary>
 		internal static bool ShouldThisSenseBeNumbered(ILexSense sense, ConfigurableDictionaryNode senseConfiguration, IEnumerable<ILexSense> siblingSenses)
 		{
-			var senseOptions = senseConfiguration.DictionaryNodeOptions as DictionaryNodeSenseOptions;
-			if (string.IsNullOrEmpty(senseOptions.NumberingStyle))
-			{
-				return false;
-			}
-			if (siblingSenses.Count() > 1)
-			{
-				return true;
-			}
-			if (senseOptions.NumberEvenASingleSense)
-			{
-				return true;
-			}
-			return sense.SensesOS.Any() && AreThereEnabledSubsensesWithNumberingStyle(senseConfiguration);
+			var senseOptions = (DictionaryNodeSenseOptions)senseConfiguration.DictionaryNodeOptions;
+			return !string.IsNullOrEmpty(senseOptions.NumberingStyle) && (siblingSenses.Count() > 1 || senseOptions.NumberEvenASingleSense || sense.SensesOS.Any() && AreThereEnabledSubsensesWithNumberingStyle(senseConfiguration));
 		}
 
 		/// <summary>
@@ -2092,12 +2019,8 @@ namespace LanguageExplorer.DictionaryConfiguration
 		/// <param name="senseNode">sense node that might have subsenses</param>
 		internal static bool AreThereEnabledSubsensesWithNumberingStyle(ConfigurableDictionaryNode senseNode)
 		{
-			if (senseNode == null)
-			{
-				return false;
-			}
-			return senseNode.Children.Any(child => child.DictionaryNodeOptions is DictionaryNodeSenseOptions && child.IsEnabled
-					&& !string.IsNullOrEmpty(((DictionaryNodeSenseOptions)child.DictionaryNodeOptions).NumberingStyle));
+			return senseNode != null && senseNode.Children.Any(child => child.DictionaryNodeOptions is DictionaryNodeSenseOptions dictionaryNodeSenseOptions
+																		&& child.IsEnabled && !string.IsNullOrEmpty(dictionaryNodeSenseOptions.NumberingStyle));
 		}
 
 		private static string InsertGramInfoBeforeSenses(ILexSense item, ConfigurableDictionaryNode gramInfoNode, DictionaryPublicationDecorator publicationDecorator, GeneratorSettings settings)
@@ -2189,10 +2112,9 @@ namespace LanguageExplorer.DictionaryConfiguration
 				entryType = propertyValue.GetType();
 				property = entryType.GetProperty(child.FieldDescription);
 				propertyValue = property.GetValue(propertyValue, new object[] { });
-				if (propertyValue is ITsString)
+				if (propertyValue is ITsString tsString)
 				{
-					var fieldValue = (ITsString)propertyValue;
-					requestedString = fieldValue.Text;
+					requestedString = tsString.Text;
 				}
 				else
 				{
@@ -2223,12 +2145,9 @@ namespace LanguageExplorer.DictionaryConfiguration
 			var bldr = new StringBuilder();
 			if (config.ReferencedOrDirectChildren != null)
 			{
-				foreach (var child in config.ReferencedOrDirectChildren)
+				foreach (var child in config.ReferencedOrDirectChildren.Where(child => child.FieldDescription != "MorphoSyntaxAnalysisRA" || !isSameGrammaticalInfo))
 				{
-					if (child.FieldDescription != "MorphoSyntaxAnalysisRA" || !isSameGrammaticalInfo)
-					{
-						bldr.Append(ReallyGenerateXHTMLForFieldByReflection(item, child, publicationDecorator, settings, info));
-					}
+					bldr.Append(ReallyGenerateXHTMLForFieldByReflection(item, child, publicationDecorator, settings, info));
 				}
 			}
 			if (bldr.Length == 0)
@@ -2257,27 +2176,20 @@ namespace LanguageExplorer.DictionaryConfiguration
 		private static void GeneratePictureContent(ConfigurableDictionaryNode config, DictionaryPublicationDecorator publicationDecorator, object item, GeneratorSettings settings, StringBuilder bldr)
 		{
 			//Adding Thumbnail tag
-			foreach (var child in config.ReferencedOrDirectChildren)
+			foreach (var content in from child in config.ReferencedOrDirectChildren where child.FieldDescription == "PictureFileRA" select GenerateXHTMLForFieldByReflection(item, child, publicationDecorator, settings))
 			{
-				if (child.FieldDescription == "PictureFileRA")
-				{
-					var content = GenerateXHTMLForFieldByReflection(item, child, publicationDecorator, settings);
-					bldr.Append(content);
-					break;
-				}
+				bldr.Append(content);
+				break;
 			}
 			//Adding tags for Sense Number and Caption
 			// Note: this SenseNumber comes from a field in the LCM model (not generated based on a DictionaryNodeSenseOptions).
 			//  Should we choose in the future to generate the Picture's sense number using ConfiguredXHTMLGenerator based on a SenseOption,
 			//  we will need to pass the SenseOptions to this point in the call tree.
 			var captionBldr = new StringBuilder();
-			foreach (var child in config.ReferencedOrDirectChildren)
+			foreach (var content in config.ReferencedOrDirectChildren.Where(child => child.FieldDescription != "PictureFileRA")
+				.Select(child => GenerateXHTMLForFieldByReflection(item, child, publicationDecorator, settings)))
 			{
-				if (child.FieldDescription != "PictureFileRA")
-				{
-					var content = GenerateXHTMLForFieldByReflection(item, child, publicationDecorator, settings);
-					captionBldr.Append(content);
-				}
+				captionBldr.Append(content);
 			}
 			if (captionBldr.Length == 0)
 			{
@@ -2296,9 +2208,9 @@ namespace LanguageExplorer.DictionaryConfiguration
 		private static string GenerateCollectionItemContent(ConfigurableDictionaryNode config, DictionaryPublicationDecorator publicationDecorator,
 			object item, object collectionOwner, GeneratorSettings settings, ConfigurableDictionaryNode factoredTypeField = null)
 		{
-			if (item is IMultiStringAccessor)
+			if (item is IMultiStringAccessor multiStringAccessor)
 			{
-				return GenerateXHTMLForStrings((IMultiStringAccessor)item, config, settings);
+				return GenerateXHTMLForStrings(multiStringAccessor, config, settings);
 			}
 			if (config.DictionaryNodeOptions is DictionaryNodeListOptions && !IsListItemSelectedForExport(config, item, collectionOwner) || config.ReferencedOrDirectChildren == null)
 			{
@@ -2351,9 +2263,8 @@ namespace LanguageExplorer.DictionaryConfiguration
 			// so we'll now group all the targets by LexRefType and sort their targets alphabetically before generating XHTML
 			var organizedRefs = SortAndFilterLexRefsAndTargets(collection, cmOwner, config);
 			// Now that we have things in the right order, try outputting one type at a time
-			foreach (var referenceList in organizedRefs)
+			foreach (var xBldr in organizedRefs.Select(referenceList => GenerateCrossReferenceChildren(config, pubDecorator, referenceList, cmOwner, settings)))
 			{
-				var xBldr = GenerateCrossReferenceChildren(config, pubDecorator, referenceList, cmOwner, settings);
 				bldr.Append(xBldr);
 			}
 		}
@@ -2503,17 +2414,14 @@ namespace LanguageExplorer.DictionaryConfiguration
 				return string.Empty;
 			}
 			var complexEntryRef = EntryRefForSubentry(subEntry, mainEntryOrSense);
-			return complexEntryRef == null
-				? string.Empty
-				: GenerateXHTMLForCollection(complexEntryRef.ComplexEntryTypesRS, config, publicationDecorator, subEntry, settings);
+			return complexEntryRef == null ? string.Empty : GenerateXHTMLForCollection(complexEntryRef.ComplexEntryTypesRS, config, publicationDecorator, subEntry, settings);
 		}
 
 		private static ILexEntryRef EntryRefForSubentry(ILexEntry subEntry, object mainEntryOrSense)
 		{
 			var mainEntry = mainEntryOrSense as ILexEntry ?? ((ILexSense)mainEntryOrSense).Entry;
-			var complexEntryRef = subEntry.ComplexFormEntryRefs.FirstOrDefault(entryRef => entryRef.PrimaryLexemesRS.Contains(mainEntry) // subsubentries
-																						|| entryRef.PrimaryEntryRoots.Contains(mainEntry)); // subs under sense
-			return complexEntryRef;
+			return subEntry.ComplexFormEntryRefs.FirstOrDefault(entryRef => entryRef.PrimaryLexemesRS.Contains(mainEntry) // subsubentries
+																			|| entryRef.PrimaryEntryRoots.Contains(mainEntry)); // subs under sense
 		}
 
 		private static string GenerateSenseNumberSpanIfNeeded(ConfigurableDictionaryNode senseConfigNode, bool isThisSenseNumbered, ref SenseInfo info)
@@ -2786,19 +2694,17 @@ namespace LanguageExplorer.DictionaryConfiguration
 		/// </summary>
 		private static bool IsCollectionEmpty(object collection)
 		{
-			if (collection == null)
+			switch (collection)
 			{
-				throw new ArgumentNullException(nameof(collection));
+				case null:
+					throw new ArgumentNullException(nameof(collection));
+				case IEnumerable enumerable:
+					return !(enumerable.Cast<object>().Any());
+				case ILcmVector lcmVector:
+					return lcmVector.ToHvoArray().Length == 0;
+				default:
+					throw new ArgumentException(@"Cannot test something that isn't a collection", nameof(collection));
 			}
-			if (collection is IEnumerable)
-			{
-				return !(((IEnumerable)collection).Cast<object>().Any());
-			}
-			if (collection is ILcmVector)
-			{
-				return ((ILcmVector)collection).ToHvoArray().Length == 0;
-			}
-			throw new ArgumentException(@"Cannot test something that isn't a collection", nameof(collection));
 		}
 
 		/// <summary>
@@ -2815,25 +2721,23 @@ namespace LanguageExplorer.DictionaryConfiguration
 			var guid = Guid.Empty;
 			if (config.IsHeadWord)
 			{
-				if (field is ILexEntry)
+				switch (field)
 				{
-					guid = ((ILexEntry)field).Guid;
-				}
-				else if (field is ILexEntryRef)
-				{
-					guid = ((ILexEntryRef)field).OwningEntry.Guid;
-				}
-				else if (field is ISenseOrEntry)
-				{
-					guid = ((ISenseOrEntry)field).EntryGuid;
-				}
-				else if (field is ILexSense)
-				{
-					guid = ((ILexSense)field).OwnerOfClass(LexEntryTags.kClassId).Guid;
-				}
-				else
-				{
-					Debug.WriteLine($"Need to find Entry Guid for {field?.GetType().Name ?? DictionaryConfigurationServices.BuildPathStringFromNode(config)}");
+					case ILexEntry lexEntry:
+						guid = lexEntry.Guid;
+						break;
+					case ILexEntryRef lexEntryRef:
+						guid = lexEntryRef.OwningEntry.Guid;
+						break;
+					case ISenseOrEntry senseOrEntry:
+						guid = senseOrEntry.EntryGuid;
+						break;
+					case ILexSense lexSense:
+						guid = lexSense.OwnerOfClass(LexEntryTags.kClassId).Guid;
+						break;
+					default:
+						Debug.WriteLine($"Need to find Entry Guid for {field?.GetType().Name ?? DictionaryConfigurationServices.BuildPathStringFromNode(config)}");
+						break;
 				}
 			}
 			if (propertyValue is ITsString)
@@ -2845,59 +2749,42 @@ namespace LanguageExplorer.DictionaryConfiguration
 				var content = GenerateXHTMLForString((ITsString)propertyValue, config, settings, guid);
 				return !string.IsNullOrEmpty(content) ? WriteRawElementContents("span", content, config) : string.Empty;
 			}
-			if (propertyValue is IMultiStringAccessor)
+			switch (propertyValue)
 			{
-				return GenerateXHTMLForStrings((IMultiStringAccessor)propertyValue, config, settings, guid);
-			}
-			if (propertyValue is int)
-			{
-				return WriteElementContents(propertyValue, config);
-			}
-			if (propertyValue is DateTime)
-			{
-				return WriteElementContents(((DateTime)propertyValue).ToLongDateString(), config);
-			}
-			if (propertyValue is GenDate)
-			{
-				return WriteElementContents(((GenDate)propertyValue).ToLongString(), config);
-			}
-			if (propertyValue is IMultiAccessorBase)
-			{
-				return field is ISenseOrEntry ? GenerateXHTMLForVirtualStrings(((ISenseOrEntry)field).Item, (IMultiAccessorBase)propertyValue, config, settings, guid)
-					: GenerateXHTMLForVirtualStrings((ICmObject)field, (IMultiAccessorBase)propertyValue, config, settings, guid);
-			}
-			if (propertyValue is string)
-			{
-				return WriteElementContents(propertyValue, config);
-			}
-			if (propertyValue is IStText)
-			{
-				var bldr = new StringBuilder();
-				foreach (var para in (propertyValue as IStText).ParagraphsOS)
+				case IMultiStringAccessor multiStringAccessor:
+					return GenerateXHTMLForStrings(multiStringAccessor, config, settings, guid);
+				case int _:
+					return WriteElementContents(propertyValue, config);
+				case DateTime dateTime:
+					return WriteElementContents(dateTime.ToLongDateString(), config);
+				case GenDate genDate:
+					return WriteElementContents(genDate.ToLongString(), config);
+				case IMultiAccessorBase multiAccessorBase:
+					return field is ISenseOrEntry senseOrEntry ? GenerateXHTMLForVirtualStrings(senseOrEntry.Item, multiAccessorBase, config, settings, guid) : GenerateXHTMLForVirtualStrings((ICmObject)field, multiAccessorBase, config, settings, guid);
+				case string _:
+					return WriteElementContents(propertyValue, config);
+				case IStText stText:
 				{
-					var stp = para as IStTxtPara;
-					if (stp == null)
+					var bldr = new StringBuilder();
+					foreach (var para in stText.ParagraphsOS)
 					{
-						continue;
+							if (!(para is IStTxtPara stTxtPara))
+							{
+								continue;
+							}
+							var contentPara = GenerateXHTMLForString(stTxtPara.Contents, config, settings, guid);
+						if (!string.IsNullOrEmpty(contentPara))
+						{
+							bldr.Append(contentPara);
+							bldr.AppendLine();
+						}
 					}
-					var contentPara = GenerateXHTMLForString(stp.Contents, config, settings, guid);
-					if (!string.IsNullOrEmpty(contentPara))
-					{
-						bldr.Append(contentPara);
-						bldr.AppendLine();
-					}
+					return bldr.Length > 0 ? WriteRawElementContents("div", bldr.ToString(), null) : string.Empty;
 				}
-				if (bldr.Length > 0)
-				{
-					// Do we not have/want a class from the config node?
-					return WriteRawElementContents("div", bldr.ToString(), null);
-				}
-				return string.Empty;
+				default:
+					Debug.WriteLine(propertyValue == null ? $"Bad configuration node: {DictionaryConfigurationServices.BuildPathStringFromNode(config)}" : $"What do I do with {propertyValue.GetType().Name}?");
+					return string.Empty;
 			}
-			Debug.WriteLine(propertyValue == null
-				? $"Bad configuration node: {DictionaryConfigurationServices.BuildPathStringFromNode(config)}"
-				: $"What do I do with {propertyValue.GetType().Name}?");
-			return string.Empty;
 		}
 
 		private static string WriteElementContents(object propertyValue, ConfigurableDictionaryNode config)
@@ -3040,8 +2927,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 			return bldr.Length > 0 ? WriteRawElementContents("span", bldr.ToString(), config) : string.Empty;
 		}
 
-		private static string GenerateWsPrefixAndString(ConfigurableDictionaryNode config, GeneratorSettings settings,
-			DictionaryNodeWritingSystemOptions wsOptions, int wsId, ITsString requestedString, Guid guid)
+		private static string GenerateWsPrefixAndString(ConfigurableDictionaryNode config, GeneratorSettings settings, DictionaryNodeWritingSystemOptions wsOptions, int wsId, ITsString requestedString, Guid guid)
 		{
 			if (string.IsNullOrEmpty(requestedString.Text))
 			{
@@ -3157,14 +3043,13 @@ namespace LanguageExplorer.DictionaryConfiguration
 							badStrBuilder.Append(unicodeChars.GetTextElement());
 						}
 					}
-					return string.Format("<span>\u0FFF\u0FFF\u0FFF<!-- Error generating content for string: '{0}' invalid surrogate pairs replaced with \\u0fff --></span>", badStrBuilder);
+					return $"<span>\u0FFF\u0FFF\u0FFF<!-- Error generating content for string: '{badStrBuilder}' invalid surrogate pairs replaced with \\u0fff --></span>";
 				}
 			}
 			return string.Empty;
 		}
 
-		private static void GenerateSpanWithPossibleLink(GeneratorSettings settings, string writingSystem, XmlWriter writer, string style,
-			string text, Guid linkDestination, bool rightToLeft)
+		private static void GenerateSpanWithPossibleLink(GeneratorSettings settings, string writingSystem, XmlWriter writer, string style, string text, Guid linkDestination, bool rightToLeft)
 		{
 			writer.WriteStartElement("span");
 			writer.WriteAttributeString("lang", writingSystem);
@@ -3189,7 +3074,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 				writer.WriteStartElement("a");
 				writer.WriteAttributeString("href", "#g" + linkDestination);
 			}
-			const char txtlineSplit = (char)8232; //Line-Seperator Decimal Code
+			const char txtlineSplit = (char)8232; //Line-Separator Decimal Code
 			if (text.Contains(txtlineSplit))
 			{
 				var txtContents = text.Split(txtlineSplit);
@@ -3276,11 +3161,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 		private static string GetElementNameForProperty(ConfigurableDictionaryNode config)
 		{
 			//TODO: Improve this logic to deal with subentries if necessary
-			if (config.FieldDescription.Equals("LexEntry") || config.DictionaryNodeOptions is DictionaryNodePictureOptions)
-			{
-				return "div";
-			}
-			return "span";
+			return config.FieldDescription.Equals("LexEntry") || config.DictionaryNodeOptions is DictionaryNodePictureOptions ? "div" : "span";
 		}
 
 		/// <summary>

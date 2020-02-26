@@ -102,7 +102,7 @@ namespace LanguageExplorer.Controls.SilSidePane
 		/// <summary />
 		internal OutlookBar Owner
 		{
-			get { return _owner; }
+			get => _owner;
 			set
 			{
 				if (_disposeOwner)
@@ -121,7 +121,7 @@ namespace LanguageExplorer.Controls.SilSidePane
 		[DefaultValue(typeof(bool), "True")]
 		public bool Visible
 		{
-			get { return _visible; }
+			get => _visible;
 			set
 			{
 				_visible = value;
@@ -136,7 +136,7 @@ namespace LanguageExplorer.Controls.SilSidePane
 		[DefaultValue(typeof(bool), "False"), Browsable(false)]
 		public bool Selected
 		{
-			get { return _selected; }
+			get => _selected;
 			set
 			{
 				_selected = value;
@@ -157,7 +157,7 @@ namespace LanguageExplorer.Controls.SilSidePane
 		[DefaultValue(typeof(bool), "True")]
 		public bool Allowed
 		{
-			get { return _allowed; }
+			get => _allowed;
 			set
 			{
 				_allowed = value;

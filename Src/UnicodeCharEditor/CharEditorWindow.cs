@@ -50,16 +50,12 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 		{
 			public int Compare(object x, object y)
 			{
-				var pli1 = x as PuaListItem;
-				var pli2 = y as PuaListItem;
-				if (pli1 != null && pli2 != null)
+				if (x is PuaListItem pli1 && y is PuaListItem pli2)
 				{
 					return pli1.Code.CompareTo(pli2.Code);
 				}
-				int code1;
-				int code2;
-				if (int.TryParse(x.ToString(), NumberStyles.HexNumber, CultureInfo.InvariantCulture, out code1) &&
-					int.TryParse(y.ToString(), NumberStyles.HexNumber, CultureInfo.InvariantCulture, out code2))
+				if (int.TryParse(x.ToString(), NumberStyles.HexNumber, CultureInfo.InvariantCulture, out var code1) &&
+					int.TryParse(y.ToString(), NumberStyles.HexNumber, CultureInfo.InvariantCulture, out var code2))
 				{
 					return code1.CompareTo(code2);
 				}
@@ -146,9 +142,7 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 					{
 						continue;
 					}
-					int code;
-					int codeMax;
-					if (!ParseCodeField(sCode, out code, out codeMax))
+					if (!ParseCodeField(sCode, out var code, out var codeMax))
 					{
 						continue;
 					}
@@ -250,8 +244,7 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 				{
 					continue;
 				}
-				int code;
-				if (int.TryParse(xaCode.Value, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out code) && !m_dictCustomChars.ContainsKey(code))
+				if (int.TryParse(xaCode.Value, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out var code) && !m_dictCustomChars.ContainsKey(code))
 				{
 					var spec = new PUACharacter(xaCode.Value, xaData.Value);
 					m_dictCustomChars.Add(code, spec);
@@ -278,10 +271,9 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 					PuaListItem lviOld = null;
 					foreach (var item in m_lvCharSpecs.Items)
 					{
-						var pli = item as PuaListItem;
-						if (pli != null && pli.Code == lviNew.Code)
+						if (item is PuaListItem pli && pli.Code == lviNew.Code)
 						{
-							lviOld = item as PuaListItem;
+							lviOld = pli;
 							break;
 						}
 					}
@@ -363,8 +355,7 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 				int code;
 				if (int.TryParse(sCode, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out code))
 				{
-					PUACharacter charSpec;
-					if (m_dictCustomChars.TryGetValue(code, out charSpec))
+					if (m_dictCustomChars.TryGetValue(code, out var charSpec))
 					{
 						return charSpec;
 					}
@@ -391,8 +382,7 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 		/// </summary>
 		internal bool IsCustomChar(string sCode)
 		{
-			int code;
-			return int.TryParse(sCode, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out code) && m_dictCustomChars.ContainsKey(code);
+			return int.TryParse(sCode, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out var code) && m_dictCustomChars.ContainsKey(code);
 		}
 
 		private void m_lvCharSpecs_MouseDoubleClick(object sender, MouseEventArgs e)

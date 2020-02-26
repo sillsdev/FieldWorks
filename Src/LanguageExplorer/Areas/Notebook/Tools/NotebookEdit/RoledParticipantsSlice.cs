@@ -169,7 +169,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 		private ContextMenuStrip CreateContextMenu()
 		{
 			var contextMenuStrip = new ContextMenuStrip();
-			var existingRoles = Record.Roles;
+			var existingRoles = Record.Roles.ToList();
 			foreach (var role in Cache.LanguageProject.RolesOA.PossibilitiesOS)
 			{
 				// only display add menu options for roles that have not been added yet

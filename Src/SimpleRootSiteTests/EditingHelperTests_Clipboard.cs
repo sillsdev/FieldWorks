@@ -57,12 +57,10 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 		public void GetSetClipboard()
 		{
 			var wsManager = new WritingSystemManager();
-			CoreWritingSystemDefinition enWs;
-			wsManager.GetOrSet("en", out enWs);
+			wsManager.GetOrSet("en", out var enWs);
 			var wsEng = enWs.Handle;
 
-			CoreWritingSystemDefinition swgWs;
-			wsManager.GetOrSet("swg", out swgWs);
+			wsManager.GetOrSet("swg", out var swgWs);
 			var wsSwg = swgWs.Handle;
 
 			var incStrBldr = TsStringUtils.MakeIncStrBldr();
@@ -88,8 +86,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 		public void SetTsStringOnClipboard_UsesNFC()
 		{
 			var wsManager = new WritingSystemManager();
-			CoreWritingSystemDefinition enWs;
-			wsManager.GetOrSet("en", out enWs);
+			wsManager.GetOrSet("en", out var enWs);
 			var wsEng = enWs.Handle;
 			const string originalInput = "\x7a7a\x60f3\x79d1\x5b78\x0020\xd558";
 			var input = originalInput.Normalize(NormalizationForm.FormD);

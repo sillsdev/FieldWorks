@@ -23,7 +23,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 	{
 		#region Data Members
 		/// <summary>List of Scripture objects</summary>
-		private readonly IStText[] _objList;
+		private readonly List<IStText> _objList;
 		/// <summary>LCM cache</summary>
 		private readonly LcmCache _cache;
 		/// <summary>Help Provider</summary>
@@ -61,7 +61,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		}
 
 		/// <summary />
-		public FilterTextsDialog(IApp app, LcmCache cache, IStText[] objList, IHelpTopicProvider helpTopicProvider)
+		public FilterTextsDialog(IApp app, LcmCache cache, List<IStText> objList, IHelpTopicProvider helpTopicProvider)
 			: this()
 		{
 			Guard.AgainstNull(app, nameof(app));
@@ -176,21 +176,20 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			if (node.Nodes.Count > 0)
 			{
 				// ToList() is absolutely necessary to keep from changing node collection while looping!
-				var unused = node.Nodes.Cast<TreeNode>().Where(PruneChild).ToList();
-				foreach (var subTreeNode in unused)
+				foreach (var subTreeNode in node.Nodes.Cast<TreeNode>().Where(PruneChild).ToList())
 				{
 					node.Nodes.Remove(subTreeNode);
 				}
 			}
 			if (node.Tag != null)
 			{
-				if (node.Tag is IStText)
+				if (node.Tag is IStText stText)
 				{
-					if (!_textsToShow.Contains(node.Tag as IStText))
+					if (!_textsToShow.Contains(stText))
 					{
 						return true;
 					}
-					if (node.Tag == _selectedText)
+					if (stText == _selectedText)
 					{
 						_treeTexts.SelectedNode = node;
 						_treeTexts.SetChecked(node, TriStateTreeViewCheckState.Checked);
@@ -231,8 +230,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			_textsToShow = interestingTexts;
 			_selectedText = selectedText;
 			// ToList() is absolutely necessary to keep from changing node collection while looping!
-			var unusedNodes = _treeTexts.Nodes.Cast<TreeNode>().Where(PruneChild).ToList();
-			foreach (var treeNode in unusedNodes)
+			foreach (var treeNode in _treeTexts.Nodes.Cast<TreeNode>().Where(PruneChild).ToList())
 			{
 				_treeTexts.Nodes.Remove(treeNode);
 			}
@@ -243,8 +241,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// </summary>
 		public string TreeViewLabel
 		{
-			get { return _treeViewLabel.Text; }
-			set { _treeViewLabel.Text = value; }
+			get => _treeViewLabel.Text;
+			set => _treeViewLabel.Text = value;
 		}
 
 		/// <summary>
@@ -284,11 +282,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			var showWarning = false;
 			var message = ITextStrings.kOkbtnEmptySelection;
 			var checkedList = _treeTexts.GetCheckedNodeList();
-			var own = Owner as IFwMainWnd;
-			if (own != null && OnlyGenresChecked(checkedList))
+			if (Owner is IFwMainWnd mainWnd && OnlyGenresChecked(checkedList))
 			{
 				message = ITextStrings.kOkbtnGenreSelection;
-				own.PropertyTable.SetProperty("RecordList-DelayedGenreAssignment", checkedList, true);
+				mainWnd.PropertyTable.SetProperty("RecordList-DelayedGenreAssignment", checkedList, true);
 				showWarning = true;
 			}
 			if (_treeTexts.GetNodesWithState(TriStateTreeViewCheckState.Checked).Length == 0)
@@ -370,7 +367,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			this.Name = "FilterTextsDialog";
 			this._helpProvider.SetShowHelp(this, ((bool)(resources.GetObject("$this.ShowHelp"))));
 			this.ResumeLayout(false);
-
 		}
 	}
 }

@@ -82,7 +82,6 @@ namespace LanguageExplorer.Areas.TextsAndWords
 				_propertyTable.SetDefault("UpdateLexiconIfPossible", true, true, settingsGroup: SettingsGroup.GlobalSettings);
 				_propertyTable.SetDefault("CopyAnalysesToNewSpelling", true, true, settingsGroup: SettingsGroup.GlobalSettings);
 				_propertyTable.SetDefault("MaintainCaseOnChangeSpelling", true, true, settingsGroup: SettingsGroup.GlobalSettings);
-
 				_propertyTable.SetDefault(ITexts_AddWordsToLexicon, false, true);
 				_propertyTable.SetDefault(ShowHiddenFields_interlinearEdit, false, true);
 				_propertyTable.SetDefault("ITexts_ShowAddWordsToLexiconDlg", true, true);
@@ -190,7 +189,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		/// </summary>
 		public ITool ActiveTool
 		{
-			get { return _activeTool; }
+			get => _activeTool;
 			set
 			{
 				_activeTool = value;
@@ -287,7 +286,6 @@ namespace LanguageExplorer.Areas.TextsAndWords
 				_area = area;
 				_sharedEventHandlers = _majorFlexComponentParameters.SharedEventHandlers;
 				_sharedEventHandlers.Add(Command.CmdRespeller, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(Respeller_Click, ()=> UiWidgetServices.CanSeeAndDo));
-
 				SetupUiWidgets();
 			}
 
@@ -336,16 +334,14 @@ namespace LanguageExplorer.Areas.TextsAndWords
 
 			private void AddTexts_Clicked(object sender, EventArgs e)
 			{
-				var recordList = (InterlinearTextsRecordList)_propertyTable.GetValue<IRecordListRepository>(LanguageExplorerConstants.RecordListRepository).ActiveRecordList;
-				recordList.AddTexts();
+				((InterlinearTextsRecordList)_propertyTable.GetValue<IRecordListRepository>(LanguageExplorerConstants.RecordListRepository).ActiveRecordList).AddTexts();
 			}
 
 			private Tuple<bool, bool> CanCmdInsertText => new Tuple<bool, bool>(true, ActiveTool.MachineName == AreaServices.InterlinearEditMachineName);
 
 			private void CmdInsertText_Click(object sender, EventArgs e)
 			{
-				var recordList = (InterlinearTextsRecordList)_propertyTable.GetValue<IRecordListRepository>(LanguageExplorerConstants.RecordListRepository).ActiveRecordList;
-				recordList.OnInsertInterlinText();
+				((InterlinearTextsRecordList)_propertyTable.GetValue<IRecordListRepository>(LanguageExplorerConstants.RecordListRepository).ActiveRecordList).OnInsertInterlinText();
 			}
 
 			private void ImportWordSetToolStripMenuItemOnClick(object sender, EventArgs eventArgs)
@@ -381,8 +377,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 				{
 					return Guid.Empty;
 				}
-				IWfiWordform wordform;
-				return wordformRepos.TryGetObject(word, out wordform) ? wordform.Guid : Guid.Empty;
+				return wordformRepos.TryGetObject(word, out var wordform) ? wordform.Guid : Guid.Empty;
 			}
 
 			private Tuple<bool, bool> CanCmdChangeSpelling => new Tuple<bool, bool>(true, string.IsNullOrWhiteSpace(ActiveWord?.Text));
@@ -472,9 +467,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 						// we should be able to get our info from the current record list.
 						// but return null if we can't get the info, otherwise we allow the user to
 						// bring up the change spelling dialog and crash because no wordform can be found (LT-8766).
-						var recordList = _propertyTable.GetValue<IRecordListRepository>(LanguageExplorerConstants.RecordListRepository).ActiveRecordList;
-						var tssVern = (recordList?.CurrentObject as IWfiWordform)?.Form?.BestVernacularAlternative;
-						return tssVern;
+						return ((_propertyTable.GetValue<IRecordListRepository>(LanguageExplorerConstants.RecordListRepository).ActiveRecordList)?.CurrentObject as IWfiWordform)?.Form?.BestVernacularAlternative;
 					}
 					var window = _majorFlexComponentParameters.MainWindow;
 					var roots = window.ActiveView?.AllRootBoxes();
@@ -486,11 +479,9 @@ namespace LanguageExplorer.Areas.TextsAndWords
 					if (tssWord != null)
 					{
 						// Check for a valid vernacular writing system.  (See LT-8892.)
-						var ws = TsStringUtils.GetWsAtOffset(tssWord, 0);
 						var cache = _propertyTable.GetValue<LcmCache>(FwUtils.cache);
-						var wsObj = cache.ServiceLocator.WritingSystemManager.Get(ws);
-						if (cache.ServiceLocator.WritingSystems.VernacularWritingSystems.Contains(
-							wsObj))
+						var wsObj = cache.ServiceLocator.WritingSystemManager.Get(TsStringUtils.GetWsAtOffset(tssWord, 0));
+						if (cache.ServiceLocator.WritingSystems.VernacularWritingSystems.Contains(wsObj))
 						{
 							return tssWord;
 						}

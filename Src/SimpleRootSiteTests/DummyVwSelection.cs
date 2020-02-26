@@ -39,38 +39,38 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 		}
 
 		#region IVwSelection implementation
-		public void GetSelectionProps(int cttpMax, ArrayPtr _rgpttp, ArrayPtr _rgpvps, out int _cttp)
+		public void GetSelectionProps(int cttpMax, ArrayPtr rgpttp, ArrayPtr rgpvps, out int cttp)
 		{
-			_cttp = 0;
+			cttp = 0;
 		}
 
-		public void GetHardAndSoftCharProps(int cttpMax, ArrayPtr _rgpttpSel, ArrayPtr _rgpvpsSoft, out int _cttp)
+		public void GetHardAndSoftCharProps(int cttpMax, ArrayPtr rgpttpSel, ArrayPtr rgpvpsSoft, out int cttp)
 		{
-			_cttp = 0;
+			cttp = 0;
 		}
 
-		public void GetParaProps(int cttpMax, ArrayPtr _rgpvps, out int _cttp)
+		public void GetParaProps(int cttpMax, ArrayPtr rgpvps, out int cttp)
 		{
-			_cttp = 0;
+			cttp = 0;
 		}
 
-		public void GetHardAndSoftParaProps(int cttpMax, ITsTextProps[] _rgpttpPara, ArrayPtr _rgpttpHard, ArrayPtr _rgpvpsSoft, out int _cttp)
+		public void GetHardAndSoftParaProps(int cttpMax, ITsTextProps[] rgpttpPara, ArrayPtr rgpttpHard, ArrayPtr rgpvpsSoft, out int cttp)
 		{
-			_cttp = 0;
+			cttp = 0;
 		}
 
-		public void SetSelectionProps(int cttp, ITsTextProps[] _rgpttp)
+		public void SetSelectionProps(int cttp, ITsTextProps[] rgpttp)
 		{
 		}
 
-		public void TextSelInfo(bool fEndPoint, out ITsString _ptss, out int _ich, out bool _fAssocPrev, out int _hvoObj, out int _tag, out int _ws)
+		public void TextSelInfo(bool fEndPoint, out ITsString ptss, out int ich, out bool fAssocPrev, out int hvoObj, out int tag, out int ws)
 		{
-			_ptss = null;
-			_ich = 0;
-			_fAssocPrev = false;
-			_hvoObj = 0;
-			_tag = 0;
-			_ws = 0;
+			ptss = null;
+			ich = 0;
+			fAssocPrev = false;
+			hvoObj = 0;
+			tag = 0;
+			ws = 0;
 		}
 
 		public int CLevels(bool fEndPoint)
@@ -78,44 +78,44 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			return 0;
 		}
 
-		public void PropInfo(bool fEndPoint, int ilev, out int _hvoObj, out int _tag, out int _ihvo, out int _cpropPrevious, out IVwPropertyStore _pvps)
+		public void PropInfo(bool fEndPoint, int ilev, out int hvoObj, out int tag, out int ihvo, out int cpropPrevious, out IVwPropertyStore pvps)
 		{
-			_hvoObj = 0;
-			_tag = 0;
-			_ihvo = 0;
-			_cpropPrevious = 0;
-			_pvps = null;
+			hvoObj = 0;
+			tag = 0;
+			ihvo = 0;
+			cpropPrevious = 0;
+			pvps = null;
 		}
 
-		public void AllTextSelInfo(out int _ihvoRoot, int cvlsi, ArrayPtr _rgvsli, out int _tagTextProp, out int _cpropPrevious, out int _ichAnchor,
-			out int _ichEnd, out int _ws, out bool _fAssocPrev, out int _ihvoEnd, out ITsTextProps _pttp)
+		public void AllTextSelInfo(out int ihvoRoot, int cvlsi, ArrayPtr rgvsli, out int tagTextProp, out int cpropPrevious, out int ichAnchor,
+			out int ichEnd, out int ws, out bool fAssocPrev, out int ihvoEnd, out ITsTextProps pttp)
 		{
-			_ihvoRoot = 0;
-			_tagTextProp = 0;
-			_cpropPrevious = 0;
-			_ichAnchor = 0;
-			_ichEnd = 0;
-			_ws = 0;
-			_fAssocPrev = false;
-			_ihvoEnd = 0;
-			_pttp = null;
+			ihvoRoot = 0;
+			tagTextProp = 0;
+			cpropPrevious = 0;
+			ichAnchor = 0;
+			ichEnd = 0;
+			ws = 0;
+			fAssocPrev = false;
+			ihvoEnd = 0;
+			pttp = null;
 		}
 
-		public void AllSelEndInfo(bool fEndPoint, out int _ihvoRoot, int cvlsi, ArrayPtr _rgvsli, out int _tagTextProp, out int _cpropPrevious,
-			out int _ich, out int _ws, out bool _fAssocPrev, out ITsTextProps _pttp)
+		public void AllSelEndInfo(bool fEndPoint, out int ihvoRoot, int cvlsi, ArrayPtr rgvsli, out int tagTextProp, out int cpropPrevious,
+			out int ich, out int ws, out bool fAssocPrev, out ITsTextProps pttp)
 		{
-			_ihvoRoot = 0;
-			_tagTextProp = 0;
-			_cpropPrevious = 0;
-			_ich = fEndPoint ? End : Anchor;
-			_ws = 0;
-			_fAssocPrev = false;
-			_pttp = null;
+			ihvoRoot = 0;
+			tagTextProp = 0;
+			cpropPrevious = 0;
+			ich = fEndPoint ? End : Anchor;
+			ws = 0;
+			fAssocPrev = false;
+			pttp = null;
 		}
 
-		public bool CompleteEdits(out VwChangeInfo _ci)
+		public bool CompleteEdits(out VwChangeInfo ci)
 		{
-			_ci = default(VwChangeInfo);
+			ci = default;
 			return true;
 		}
 
@@ -123,22 +123,22 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 		{
 		}
 
-		public void Location(IVwGraphics _vg, Rect rcSrc, Rect rcDst, out Rect _rdPrimary, out Rect _rdSecondary, out bool _fSplit, out bool _fEndBeforeAnchor)
+		public void Location(IVwGraphics vg, Rect rcSrc, Rect rcDst, out Rect rdPrimary, out Rect rdSecondary, out bool fSplit, out bool fEndBeforeAnchor)
 		{
-			_rdPrimary = default(Rect);
-			_rdSecondary = default(Rect);
-			_fSplit = false;
-			_fEndBeforeAnchor = false;
+			rdPrimary = default;
+			rdSecondary = default;
+			fSplit = false;
+			fEndBeforeAnchor = false;
 		}
 
-		public void GetParaLocation(out Rect _rdLoc)
+		public void GetParaLocation(out Rect rdLoc)
 		{
-			_rdLoc = default(Rect);
+			rdLoc = default;
 		}
 
-		public void ReplaceWithTsString(ITsString _tss)
+		public void ReplaceWithTsString(ITsString tss)
 		{
-			var selectionText = (_tss != null ? _tss.Text : string.Empty) ?? string.Empty;
+			var selectionText = (tss != null ? tss.Text : string.Empty) ?? string.Empty;
 			var begin = Math.Min(Anchor, End);
 			var end = Math.Max(Anchor, End);
 			if (begin < m_rootBox.Text.Length)
@@ -156,12 +156,12 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			Anchor = End = begin + selectionText.Length;
 		}
 
-		public void GetSelectionString(out ITsString _ptss, string bstrSep)
+		public void GetSelectionString(out ITsString ptss, string bstrSep)
 		{
-			_ptss = TsStringUtils.MakeString(SelectionText, m_rootBox.m_dummySimpleRootSite.WritingSystemFactory.UserWs);
+			ptss = TsStringUtils.MakeString(SelectionText, m_rootBox.m_dummySimpleRootSite.WritingSystemFactory.UserWs);
 		}
 
-		public void GetFirstParaString(out ITsString _ptss, string bstrSep, out bool _fGotItAll)
+		public void GetFirstParaString(out ITsString ptss, string bstrSep, out bool fGotItAll)
 		{
 			throw new NotSupportedException();
 		}
@@ -176,7 +176,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			throw new NotSupportedException();
 		}
 
-		public bool get_Follows(IVwSelection _sel)
+		public bool get_Follows(IVwSelection sel)
 		{
 			throw new NotSupportedException();
 		}
@@ -196,7 +196,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			throw new NotSupportedException();
 		}
 
-		public void SetTypingProps(ITsTextProps _ttp)
+		public void SetTypingProps(ITsTextProps ttp)
 		{
 			throw new NotSupportedException();
 		}
@@ -225,63 +225,27 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 
 		public bool EndBeforeAnchor => End < Anchor;
 
-		public bool CanFormatPara
-		{
-			get
-			{
-				throw new NotSupportedException();
-			}
-		}
+		public bool CanFormatPara => throw new NotSupportedException();
 
-		public bool CanFormatChar
-		{
-			get
-			{
-				throw new NotSupportedException();
-			}
-		}
+		public bool CanFormatChar => throw new NotSupportedException();
 
-		public bool CanFormatOverlay
-		{
-			get
-			{
-				throw new NotSupportedException();
-			}
-		}
+		public bool CanFormatOverlay => throw new NotSupportedException();
 
 		public bool IsValid => true;
 
 		public bool AssocPrev
 		{
-			get
-			{
-				throw new NotSupportedException();
-			}
-			set
-			{
-				throw new NotSupportedException();
-			}
+			get => throw new NotSupportedException();
+			set => throw new NotSupportedException();
 		}
 
 		public VwSelType SelType => VwSelType.kstText;
 
 		public IVwRootBox RootBox => m_rootBox;
 
-		public bool IsEditable
-		{
-			get
-			{
-				throw new NotSupportedException();
-			}
-		}
+		public bool IsEditable => throw new NotSupportedException();
 
-		public bool IsEnabled
-		{
-			get
-			{
-				throw new NotSupportedException();
-			}
-		}
+		public bool IsEnabled => throw new NotSupportedException();
 		#endregion
 	}
 }

@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
+using System.Linq;
 using System.Windows.Forms;
 using LanguageExplorer.Controls;
 using SIL.LCModel;
@@ -64,7 +65,7 @@ namespace LanguageExplorer.Areas
 				{
 					if (m_selObject != null)
 					{
-						if (!(m_selObject is ILexEntry) || ((ILexEntry)m_selObject).SensesOS.Count == 0)
+						if (!(m_selObject is ILexEntry) || !((ILexEntry)m_selObject).SensesOS.Any())
 						{
 							return null; // We want a sense here, and there isn't one.
 						}

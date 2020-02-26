@@ -86,8 +86,7 @@ namespace LanguageExplorer.Filters
 		{
 			if (Label != null)
 			{
-				var contents = TsStringUtils.GetXmlRep(Label, WritingSystemFactory, 0, false);
-				XmlUtils.SetAttribute(element, "label", contents);
+				XmlUtils.SetAttribute(element, "label", TsStringUtils.GetXmlRep(Label, WritingSystemFactory, 0, false));
 			}
 		}
 

@@ -91,8 +91,8 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		public string TextStyle
 		{
-			get { return InnerView.TextStyle; }
-			set { InnerView.TextStyle = value; }
+			get => InnerView.TextStyle;
+			set => InnerView.TextStyle = value;
 		}
 
 		/// <summary>
@@ -168,8 +168,8 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		public List<CoreWritingSystemDefinition> WritingSystemsToDisplay
 		{
-			get { return InnerView.WritingSystemsToDisplay; }
-			set { InnerView.WritingSystemsToDisplay = value; }
+			get => InnerView.WritingSystemsToDisplay;
+			set => InnerView.WritingSystemsToDisplay = value;
 		}
 
 		/// <summary />
@@ -236,8 +236,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			}
 			foreach (var control in m_soundControls)
 			{
-				int wsIndex;
-				var ws = WsForSoundField(control, out wsIndex);
+				var ws = WsForSoundField(control, out var wsIndex);
 				if (ws != null)
 				{
 					control.Left = indent;
@@ -250,8 +249,7 @@ namespace LanguageExplorer.Controls.DetailControls
 						// soon, perhaps before the root box is even constructed.
 						// Leave control.Top zero and hope layout gets called again when we can make
 						// the selection successfully.
-						Rectangle selRect;
-						if (InnerView.GetSoundControlRectangle(sel, out selRect))
+						if (InnerView.GetSoundControlRectangle(sel, out var selRect))
 						{
 							control.Top = selRect.Top;
 						}
@@ -343,8 +341,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		{
 			// We don't want the file name hanging aroudn once we deleted the file.
 			var sc = (ShortSoundFieldControl)sender;
-			int dummy;
-			var ws = WsForSoundField(sc, out dummy);
+			var ws = WsForSoundField(sc, out var dummy);
 			var handle = ws?.Handle ?? 0;
 			NonUndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(InnerView.Cache.ActionHandlerAccessor,
 				() => InnerView.Cache.DomainDataByFlid.SetMultiStringAlt(InnerView.HvoObj, InnerView.Flid, handle, TsStringUtils.EmptyString(handle)));
@@ -353,11 +350,9 @@ namespace LanguageExplorer.Controls.DetailControls
 		private void soundFieldControl_BeforeStartingToRecord(object sender, EventArgs e)
 		{
 			var sc = (ShortSoundFieldControl)sender;
-			string path;
-			var filename = CreateNewSoundFilename(out path);
+			var filename = CreateNewSoundFilename(out var path);
 			sc.Path = path;
-			int dummy;
-			var ws = WsForSoundField(sc, out dummy);
+			var ws = WsForSoundField(sc, out _);
 			NonUndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(InnerView.Cache.ActionHandlerAccessor,
 				() => InnerView.Cache.DomainDataByFlid.SetMultiStringAlt(InnerView.HvoObj, InnerView.Flid, ws.Handle, TsStringUtils.MakeString(filename, ws.Handle)));
 		}
@@ -380,8 +375,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			string filename;
 			do
 			{
-				filename = baseNameForFile;
-				filename = Path.ChangeExtension(DateTime.UtcNow.Ticks + filename, "wav");
+				filename = Path.ChangeExtension(DateTime.UtcNow.Ticks + baseNameForFile, "wav");
 				path = Path.Combine(mediaDir, filename);
 
 			} while (File.Exists(path));
@@ -391,10 +385,9 @@ namespace LanguageExplorer.Controls.DetailControls
 		private void soundFieldControl_SoundRecorded(object sender, EventArgs e)
 		{
 			var sc = (ShortSoundFieldControl)sender;
-			int dummy;
-			var ws = WsForSoundField(sc, out dummy);
+			var ws = WsForSoundField(sc, out _);
 			var filenameNew = Path.GetFileName(sc.Path);
-			var filenameOld = InnerView.Cache.DomainDataByFlid.get_MultiStringAlt(InnerView.HvoObj, InnerView.Flid, ws.Handle).Text ?? "";
+			var filenameOld = InnerView.Cache.DomainDataByFlid.get_MultiStringAlt(InnerView.HvoObj, InnerView.Flid, ws.Handle).Text ?? string.Empty;
 			if (filenameNew != filenameOld)
 			{
 				NonUndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(InnerView.Cache.ActionHandlerAccessor,

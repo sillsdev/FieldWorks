@@ -31,10 +31,6 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		/// in the managed section, as when disposing was done by the Finalizer.
 		/// </summary>
 		private ISilDataAccess m_sda;
-		/// <summary>
-		/// Control how much output we send to the application's listeners (e.g. visual studio output window)
-		/// </summary>
-		private TraceSwitch m_traceSwitch = new TraceSwitch("ParserMenuManager", string.Empty);
 		private TryAWordDlg m_dialog;
 		private FormWindowState m_prevWindowState;
 		private Timer m_timer;
@@ -113,10 +109,8 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			parserMenuDictionary.Add(Command.CmdChooseXAmpleParser, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(ChooseParser_Click, () => UiWidgetServices.CanSeeAndDo));
 			parserMenuDictionary.Add(Command.CmdChooseHCParser, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(ChooseParser_Click, () => UiWidgetServices.CanSeeAndDo));
 			parserMenuDictionary.Add(Command.CmdEditParserParameters, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(EditParserParameters_Click, () => UiWidgetServices.CanSeeAndDo));
-
 			Subscriber.Subscribe(TextAndWordsArea.TextSelectedWord, TextSelectedWord_Handler);
 			Subscriber.Subscribe(LanguageExplorerConstants.StopParser, StopParser_Handler);
-
 			UpdateStatusPanelProgress();
 		}
 
@@ -165,8 +159,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		private void RecordListRecordChanged(object sender, RecordNavigationEventArgs e)
 		{
 			var currentObject = e.RecordNavigationInfo.MyRecordList.CurrentObject;
-			var asIStText = currentObject as IStText;
-			if (asIStText != null)
+			if (currentObject is IStText asIStText)
 			{
 				if (!ReferenceEquals(_currentStText, asIStText))
 				{
@@ -174,8 +167,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 				}
 				return;
 			}
-			var asIWfiWordform = currentObject as IWfiWordform;
-			if (asIWfiWordform != null)
+			if (currentObject is IWfiWordform asIWfiWordform)
 			{
 				_currentWordform = asIWfiWordform;
 				Connection?.UpdateWordform(_currentWordform, ParserPriority.High);
@@ -458,7 +450,6 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			m_sda = null;
 			m_timer = null;
 			m_cache = null;
-			m_traceSwitch = null;
 			Connection = null;
 			_sharedEventHandlers = null;
 			_statusPanelProgress = null;
@@ -649,31 +640,5 @@ namespace LanguageExplorer.Areas.TextsAndWords
 				}
 			}
 		}
-
-		#region TraceSwitch methods
-
-		private void TraceVerbose(string s)
-		{
-			if (m_traceSwitch.TraceVerbose)
-			{
-				Trace.Write(s);
-			}
-		}
-		private void TraceVerboseLine(string s)
-		{
-			if (m_traceSwitch.TraceVerbose)
-			{
-				Trace.WriteLine("PLID=" + System.Threading.Thread.CurrentThread.GetHashCode() + ": " + s);
-			}
-		}
-		private void TraceInfoLine(string s)
-		{
-			if (m_traceSwitch.TraceInfo || m_traceSwitch.TraceVerbose)
-			{
-				Trace.WriteLine("PLID=" + System.Threading.Thread.CurrentThread.GetHashCode() + ": " + s);
-			}
-		}
-
-		#endregion TraceSwitch methods
 	}
 }

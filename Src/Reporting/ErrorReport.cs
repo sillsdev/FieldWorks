@@ -558,7 +558,7 @@ namespace SIL.Utils
 			m_stepsLabel.Text = ReportingStrings.kstidReportSeriousProblemSteps;
 			m_reproduce.Text = ReportingStrings.kstidReportSeriousProblemDearFlex;
 			m_reproduce.Select(0, 0);
-			lbl_AdditionInfo.Text = "";
+			lbl_AdditionInfo.Text = string.Empty;
 		}
 
 		private static void UpdateCrashCount(RegistryKey applicationKey, string sPropName)
@@ -581,8 +581,7 @@ namespace SIL.Utils
 			var sStartup = (string)applicationKey.GetValue("LatestAppStartupTime", string.Empty);
 			var csec = (int)applicationKey.GetValue("TotalAppRuntime", 0);
 			var secBeforeCrash = 0;
-			long start;
-			if (!string.IsNullOrEmpty(sStartup) && long.TryParse(sStartup, out start))
+			if (!string.IsNullOrEmpty(sStartup) && long.TryParse(sStartup, out var start))
 			{
 				var started = new DateTime(start);
 				var finished = DateTime.Now.ToUniversalTime();

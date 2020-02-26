@@ -416,12 +416,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 			switch (cellId)
 			{
 				case PhMetathesisRuleTags.kidxLeftEnv:
-					if (Rule.LeftEnvIndex == -1)
-					{
-						return 0;
-					}
-					return Rule.LeftEnvLimit;
-
+					return Rule.LeftEnvIndex == -1 ? 0 : Rule.LeftEnvLimit;
 				case PhMetathesisRuleTags.kidxLeftSwitch:
 					if (Rule.LeftSwitchIndex == -1)
 					{
@@ -432,8 +427,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 					{
 						leftMidCount = Rule.MiddleLimit - Rule.MiddleIndex;
 					}
-					return (Rule.LeftSwitchLimit - Rule.LeftSwitchIndex) + leftMidCount;
-
+					return Rule.LeftSwitchLimit - Rule.LeftSwitchIndex + leftMidCount;
 				case PhMetathesisRuleTags.kidxRightSwitch:
 					if (Rule.RightSwitchIndex == -1)
 					{
@@ -444,8 +438,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 					{
 						rightMidCount = Rule.MiddleLimit - Rule.MiddleIndex;
 					}
-					return (Rule.RightSwitchLimit - Rule.RightSwitchIndex) + rightMidCount;
-
+					return Rule.RightSwitchLimit - Rule.RightSwitchIndex + rightMidCount;
 				case PhMetathesisRuleTags.kidxRightEnv:
 					if (Rule.RightEnvIndex == -1)
 					{
@@ -548,10 +541,9 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 		{
 			cellIndex = -1;
 			var cellId = GetCell(sel);
-			int index;
 			// PhMetathesisRule.UpdateStrucChange does not need to be called here, because it is called in
 			// PhSimpleContext.DeleteObjectSideEffects
-			var reconstruct = RemoveContextsFrom(forward, sel, Rule.StrucDescOS, true, out index);
+			var reconstruct = RemoveContextsFrom(forward, sel, Rule.StrucDescOS, true, out var index);
 			if (reconstruct)
 			{
 				cellIndex = ConvertToCellIndex(cellId, index);

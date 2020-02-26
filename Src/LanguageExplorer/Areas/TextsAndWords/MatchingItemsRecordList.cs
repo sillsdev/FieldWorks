@@ -45,10 +45,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		/// </summary>
 		public override RecordFilter Filter
 		{
-			get
-			{
-				return null;
-			}
+			get => null;
 			set
 			{
 			}

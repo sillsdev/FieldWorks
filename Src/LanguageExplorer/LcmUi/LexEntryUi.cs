@@ -123,8 +123,7 @@ namespace LanguageExplorer.LcmUi
 				{
 					if (seg.BeginOffset <= ichMin && seg.EndOffset >= ichLim)
 					{
-						bool exact;
-						var occurrence = seg.FindWagform(ichMin - seg.BeginOffset, ichLim - seg.BeginOffset, out exact);
+						var occurrence = seg.FindWagform(ichMin - seg.BeginOffset, ichLim - seg.BeginOffset, out _);
 						if (occurrence != null)
 						{
 							anal = occurrence.Analysis;
@@ -134,13 +133,14 @@ namespace LanguageExplorer.LcmUi
 				}
 				if (anal != null)
 				{
-					if (anal is IWfiAnalysis)
+					switch (anal)
 					{
-						wfa = (IWfiAnalysis)anal;
-					}
-					else if (anal is IWfiGloss)
-					{
-						wfa = ((IWfiGloss)anal).OwnerOfClass<IWfiAnalysis>();
+						case IWfiAnalysis analysis:
+							wfa = analysis;
+							break;
+						case IWfiGloss gloss:
+							wfa = gloss.OwnerOfClass<IWfiAnalysis>();
+							break;
 					}
 				}
 			}
@@ -289,10 +289,7 @@ namespace LanguageExplorer.LcmUi
 					return;
 				}
 				var hvoEntry = leui.MyCmObject.Hvo;
-				int[] domains;
-				int[] lexrels;
-				IVwCacheDa cdaTemp;
-				if (!RelatedWords.LoadDomainAndRelationInfo(cache, hvoEntry, out domains, out lexrels, out cdaTemp, owner))
+				if (!RelatedWords.LoadDomainAndRelationInfo(cache, hvoEntry, out var domains, out var lexrels, out var cdaTemp, owner))
 				{
 					return;
 				}
@@ -327,11 +324,8 @@ namespace LanguageExplorer.LcmUi
 			{
 				return;
 			}
-			ITsString tss;
-			int ichMin, ichLim, hvo, tag, ws;
-			bool fAssocPrev;
-			sel3.TextSelInfo(false, out tss, out ichMin, out fAssocPrev, out hvo, out tag, out ws);
-			sel3.TextSelInfo(true, out tss, out ichLim, out fAssocPrev, out hvo, out tag, out ws);
+			sel3.TextSelInfo(false, out var tss, out var ichMin, out _, out _, out _, out _);
+			sel3.TextSelInfo(true, out tss, out var ichLim, out _, out _, out _, out _);
 			if (tss.Text == null)
 			{
 				return;

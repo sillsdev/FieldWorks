@@ -65,7 +65,7 @@ namespace LanguageExplorerTests.Controls.XMLViews
 			publisher.RemoveNotification(recorder);
 		}
 
-		private void VerifyCurrentValue(int hvoRoot, ObjectListPublisher publisher, int[] values, string label)
+		private static void VerifyCurrentValue(int hvoRoot, ObjectListPublisher publisher, int[] values, string label)
 		{
 			var newValues = publisher.VecProp(hvoRoot, ObjectListFlid);
 			Assert.AreEqual(values.Length, newValues.Length, label + "length from VecProp");

@@ -90,7 +90,7 @@ namespace LanguageExplorer.Areas.Grammar
 		/// <summary />
 		protected override int DesiredHeight(RootSite rs)
 		{
-			return Math.Max(base.DesiredHeight(rs), (Control as MSADlgLauncher).LauncherButton.Height);
+			return Math.Max(base.DesiredHeight(rs), ((MSADlgLauncher)Control).LauncherButton.Height);
 		}
 
 		/// <summary>

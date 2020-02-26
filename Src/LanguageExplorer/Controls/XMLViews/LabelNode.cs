@@ -37,8 +37,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			m_fEnabled = true;
 			m_enabledColor = ForeColor;
 			var tssDisplay = label.AsTss;
-			int wsVern;
-			if (HasVernacularText(tssDisplay, label.Cache.ServiceLocator.WritingSystems.CurrentVernacularWritingSystems.Select(ws => ws.Handle), out wsVern))
+			if (HasVernacularText(tssDisplay, label.Cache.ServiceLocator.WritingSystems.CurrentVernacularWritingSystems.Select(ws => ws.Handle), out var wsVern))
 			{
 				NodeFont = GetVernacularFont(label.Cache.WritingSystemFactory, wsVern, stylesheet);
 			}
@@ -56,10 +55,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		public bool DisplayUsage
 		{
-			get
-			{
-				return m_displayUsage;
-			}
+			get => m_displayUsage;
 			set
 			{
 				m_displayUsage = value;
@@ -113,8 +109,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			for (var irun = 0; irun < crun; irun++)
 			{
 				var ttp = tss.get_Properties(irun);
-				int nvar;
-				var ws = ttp.GetIntPropValues((int)FwTextPropType.ktptWs, out nvar);
+				var ws = ttp.GetIntPropValues((int)FwTextPropType.ktptWs, out _);
 				if (vernWses.Any(vernWS => ws == vernWS))
 				{
 					wsVern = ws;
@@ -255,10 +250,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				// Even if we don't have to create children for this, we need to search the
 				// children for matches, and perhaps expand some of them.
-				foreach (LabelNode node in Nodes)
-				{
-					nodeRepresentingCurrentChoice = CheckForSelection(node.Label, objToSelect, node, nodeRepresentingCurrentChoice);
-				}
+				nodeRepresentingCurrentChoice = Nodes.Cast<LabelNode>().Aggregate(nodeRepresentingCurrentChoice, (current, node) => CheckForSelection(node.Label, objToSelect, node, current));
 			}
 			if (nodeRepresentingCurrentChoice == null)
 			{
@@ -308,7 +300,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		public bool Enabled
 		{
-			get { return m_fEnabled; }
+			get => m_fEnabled;
 			set
 			{
 				if (m_fEnabled && !value)

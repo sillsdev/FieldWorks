@@ -34,10 +34,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			public SelectionWrapper(SimpleRootSite rootSite)
 			{
 				SelectionHelper = new SelectionHelper(rootSite.EditingHelper.CurrentSelection);
-				ITsTextProps[] textProps;
-				IVwPropertyStore[] propertyStores;
-				int numberOfProps;
-				SelectionHelper.GetSelectionProps(SelectionHelper.Selection, out textProps, out propertyStores, out numberOfProps);
+				SelectionHelper.GetSelectionProps(SelectionHelper.Selection, out var textProps, out _, out var numberOfProps);
 				if (numberOfProps > 0)
 				{
 					m_TextProps = textProps;
@@ -164,11 +161,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		private static ITsTextProps[] GetSelectionProps(SelectionHelper selectionHelper)
 		{
 			var selection = selectionHelper.Selection;
-			ITsTextProps[] vttp;
-			IVwPropertyStore[] vvps;
-			int cttp;
-			SelectionHelper.GetSelectionProps(selection, out vttp, out vvps, out cttp);
-
+			SelectionHelper.GetSelectionProps(selection, out var vttp, out _, out _);
 			// ENHANCE: We probably should call a method similar to VwTextSel::CleanPropertiesForTyping
 			// to get rid of any unwanted properties.
 			return vttp;
@@ -190,8 +183,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			var colorGray = (int)ColorUtil.ConvertColorToBGR(Color.Gray);
 			for (var i = 0; i < textProps.IntPropCount; i++)
 			{
-				int type, variation;
-				var value = textProps.GetIntProp(i, out type, out variation);
+				var value = textProps.GetIntProp(i, out var type, out var variation);
 				if (!underLine)
 				{
 					if (type == (int)FwTextPropType.ktptUnderline && value == (int)FwUnderlineType.kuntSingle || type == (int)FwTextPropType.ktptUnderColor && value == colorGray)
@@ -323,8 +315,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			IsCommittingKeyboard = false;
 			foreach (var attribute in text.Attributes)
 			{
-				var iBusUnderlineAttribute = attribute as IBusUnderlineAttribute;
-				if (iBusUnderlineAttribute != null && iBusUnderlineAttribute.Underline == IBusAttrUnderline.None)
+				if (attribute is IBusUnderlineAttribute iBusUnderlineAttribute && iBusUnderlineAttribute.Underline == IBusAttrUnderline.None)
 				{
 					IsCommittingKeyboard = true;
 				}
@@ -359,9 +350,8 @@ namespace SIL.FieldWorks.Common.RootSites
 			{
 				if (m_initialSelection != null && m_endOfPreedit != null)
 				{
-					ITsString tss;
 					var selection = AssociatedSimpleRootSite.RootBox.MakeRangeSelection(m_initialSelection.RestoreSelection(), m_endOfPreedit.SetSelection(AssociatedSimpleRootSite), true);
-					selection.GetSelectionString(out tss, string.Empty);
+					selection.GetSelectionString(out var tss, string.Empty);
 					OnCommitText(tss.Text, false);
 
 					m_initialSelection = null;

@@ -72,7 +72,7 @@ namespace LanguageExplorer.Archiving
 			foreach (var wsid in descr.AvailableWritingSystemIds)
 			{
 				var descrText = descr.get_String(wsid).Text;
-				if ((!string.IsNullOrEmpty(descrText)) && (descrText != "***"))
+				if (!string.IsNullOrEmpty(descrText) && (descrText != "***"))
 				{
 					descriptions[wsMgr.Get(wsid).GetIso3Code()] = descrText;
 				}

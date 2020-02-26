@@ -99,9 +99,8 @@ namespace LanguageExplorer.Areas
 					VwLength ctxtLen;
 					ctxtLen.nVal = 1;
 					ctxtLen.unit = VwUnit.kunRelative;
-					int resultx, inputx, dmpy;
-					vwenv.get_StringWidth(m_resultStr, m_colHeaderProps, out resultx, out dmpy);
-					vwenv.get_StringWidth(m_inputStr, m_colHeaderProps, out inputx, out dmpy);
+					vwenv.get_StringWidth(m_resultStr, m_colHeaderProps, out var resultx, out _);
+					vwenv.get_StringWidth(m_inputStr, m_colHeaderProps, out var inputx, out _);
 					VwLength headerLen;
 					headerLen.nVal = Math.Max(resultx, inputx) + 8000;
 					headerLen.unit = VwUnit.kunPoint1000;

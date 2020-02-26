@@ -258,8 +258,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		protected CaseFunctions VernCaseFuncs(ITsString tss)
 		{
-			var locale = Caches.MainCache.ServiceLocator.WritingSystemManager.Get(TsStringUtils.GetWsAtOffset(tss, 0)).IcuLocale;
-			return new CaseFunctions(locale);
+			return new CaseFunctions(Caches.MainCache.ServiceLocator.WritingSystemManager.Get(TsStringUtils.GetWsAtOffset(tss, 0)).IcuLocale);
 		}
 
 		protected bool ComboOnMouseHover => false;
@@ -286,12 +285,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				var sda = Caches.DataAccess;
 				// See if any alternate writing systems of word line are filled in.
 				var wordformWss = InterlinLineChoices.OtherWritingSystemsForFlid(InterlinLineChoices.kflidWord, 0);
-				foreach (var wsId in wordformWss)
+				if (wordformWss.Any(wsId => sda.get_MultiStringAlt(kSbWord, ktagSbWordForm, wsId).Length > 0))
 				{
-					if (sda.get_MultiStringAlt(kSbWord, ktagSbWordForm, wsId).Length > 0)
-					{
-						return false;
-					}
+					return false;
 				}
 
 				if (!IsMorphFormLineEmpty)
@@ -338,15 +334,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		internal bool HasWordGloss()
 		{
 			var sda = Caches.DataAccess;
-			foreach (var wsId in InterlinLineChoices.WritingSystemsForFlid(InterlinLineChoices.kflidWordGloss))
-			{
-				// some analysis exists if any gloss multistring has content.
-				if (sda.get_MultiStringAlt(kSbWord, ktagSbWordGloss, wsId).Length > 0)
-				{
-					return true;
-				}
-			}
-			return false;
+			return InterlinLineChoices.WritingSystemsForFlid(InterlinLineChoices.kflidWordGloss).Any(wsId => sda.get_MultiStringAlt(kSbWord, ktagSbWordGloss, wsId).Length > 0);
 		}
 
 		/// <summary>
@@ -435,7 +423,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// </summary>
 		public int MultipleAnalysisColor
 		{
-			get { return m_multipleAnalysisColor; }
+			get => m_multipleAnalysisColor;
 			set
 			{
 				if (m_multipleAnalysisColor == value)
@@ -492,10 +480,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		public bool SizeToContent
 		{
-			get
-			{
-				return m_fSizeToContent;
-			}
+			get => m_fSizeToContent;
 			set
 			{
 				m_fSizeToContent = value;
@@ -594,11 +579,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			get
 			{
 				var tsi = new TextSelInfo(RootBox);
-				if (tsi.ContainingObjectTag(tsi.Levels(false) - 1) != ktagSbWordMorphs || tsi.TagAnchor == ktagMorphFormIcon) // don't count the morpheme dropdown icon.
-				{
-					return -1;
-				}
-				return tsi.ContainingObjectIndex(tsi.Levels(false) - 1);
+				return tsi.ContainingObjectTag(tsi.Levels(false) - 1) != ktagSbWordMorphs || tsi.TagAnchor == ktagMorphFormIcon
+					? -1 : tsi.ContainingObjectIndex(tsi.Levels(false) - 1);
 			}
 		}
 
@@ -628,11 +610,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				}
 				// only the first Morpheme line is currently displaying prefix/postfix.
 				var currentLine = GetLineOfCurrentSelection();
-				if (currentLine != -1 && InterlinLineChoices.IsFirstOccurrenceOfFlid(currentLine))
-				{
-					return (tsi.ContainingObjectTag(1) == ktagSbMorphForm && Caches.DataAccess.get_StringProp(tsi.ContainingObject(1), ktagSbMorphPrefix).Length == 0);
-				}
-				return tsi.IchAnchor == 0;
+				return currentLine != -1 && InterlinLineChoices.IsFirstOccurrenceOfFlid(currentLine)
+					? tsi.ContainingObjectTag(1) == ktagSbMorphForm && Caches.DataAccess.get_StringProp(tsi.ContainingObject(1), ktagSbMorphPrefix).Length == 0 : tsi.IchAnchor == 0;
 			}
 		}
 
@@ -662,11 +641,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				}
 				// only the first Morpheme line is currently displaying prefix/postfix.
 				var currentLine = GetLineOfCurrentSelection();
-				if (currentLine != -1 && InterlinLineChoices.IsFirstOccurrenceOfFlid(currentLine))
-				{
-					return (tsi.ContainingObjectTag(1) == ktagSbMorphForm && Caches.DataAccess.get_StringProp(tsi.ContainingObject(1), ktagSbMorphPostfix).Length == 0);
-				}
-				return tsi.AnchorLength == tsi.IchEnd;
+				return currentLine != -1 && InterlinLineChoices.IsFirstOccurrenceOfFlid(currentLine)
+					? tsi.ContainingObjectTag(1) == ktagSbMorphForm && Caches.DataAccess.get_StringProp(tsi.ContainingObject(1), ktagSbMorphPostfix).Length == 0 : tsi.AnchorLength == tsi.IchEnd;
 			}
 		}
 
@@ -800,15 +776,16 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		private void SubscribeToRootSiteEventHandlerEvents()
 		{
-			if (MiscUtils.IsMono)
+			if (!MiscUtils.IsMono)
 			{
-				var ibusRootSiteEventHandler = RootSiteEventHandler as IbusRootSiteEventHandler;
-				if (ibusRootSiteEventHandler != null)
-				{
-					ibusRootSiteEventHandler.PreeditOpened += OnPreeditOpened;
-					ibusRootSiteEventHandler.PreeditClosed += OnPreeditClosed;
-				}
+				return;
 			}
+			if (!(RootSiteEventHandler is IbusRootSiteEventHandler ibusRootSiteEventHandler))
+			{
+				return;
+			}
+			ibusRootSiteEventHandler.PreeditOpened += OnPreeditOpened;
+			ibusRootSiteEventHandler.PreeditClosed += OnPreeditClosed;
 		}
 
 		private void OnPreeditOpened(object sender, EventArgs e)
@@ -904,10 +881,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				UsingGuess = LoadRealDataIntoSec1(kSbWord, fLookForDefaults, fAdjustCase);
 				Debug.Assert(CurrentAnalysisTree.Wordform != null || FormOfWordform != null);
-
-				// At this point the only reason to force the current displayed analysis
-				// to be returned instead of the original is if we're guessing.
-				//m_fForceReturnNewAnalysis = fGuessing;
 
 				// Treat initial state (including guessing) as something you can leave without saving.
 				// Make sure it doesn't think any edits have happened, even if reusing from some other word.
@@ -1035,8 +1008,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 						CopyStringsToSecondary(InterlinLineChoices.kflidMorphemes, sdaMain, mb.Hvo, WfiMorphBundleTags.kflidForm, cda, hvoMorphForm, ktagSbNamedObjName);
 						// We will slightly adjust the form we display in the default vernacular WS.
 						var specMorphemes = InterlinLineChoices.GetPrimarySpec(InterlinLineChoices.kflidMorphemes);
-						int wsForm;
-						if (specMorphemes == null || !mb.Form.TryWs(specMorphemes.WritingSystem, out wsForm))
+						if (specMorphemes == null || !mb.Form.TryWs(specMorphemes.WritingSystem, out var wsForm))
 						{
 							wsForm = RawWordformWs;
 						}
@@ -1050,8 +1022,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 						{
 							try
 							{
-								int clsidForm;
-								var mmt = MorphServices.FindMorphType(Caches.MainCache, ref realForm, out clsidForm);
+								var mmt = MorphServices.FindMorphType(Caches.MainCache, ref realForm, out _);
 								sPrefix = mmt.Prefix;
 								sPostfix = mmt.Postfix;
 							}
@@ -1100,13 +1071,12 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 						// Create the corresponding dummy.
 						int hvoLexSenseSec;
 						// Add any irregularly inflected form type info to the LexGloss.
-						ILexEntryRef lerTest;
 						ILexEntry possibleVariant = null;
 						if (mf != null)
 						{
-							possibleVariant = mf.Owner as ILexEntry;
+							possibleVariant = (ILexEntry)mf.Owner;
 						}
-						if (possibleVariant != null && possibleVariant.IsVariantOfSenseOrOwnerEntry(senseReal, out lerTest))
+						if (possibleVariant != null && possibleVariant.IsVariantOfSenseOrOwnerEntry(senseReal, out _))
 						{
 							hvoLexSenseSec = Caches.FindOrCreateSec(senseReal.Hvo, kclsidSbNamedObj, hvoSbWord, ktagSbWordDummy);
 							CacheLexGlossWithInflTypeForAllCurrentWs(possibleVariant, hvoLexSenseSec, wsVern, cda, mb.InflTypeRA);
@@ -1139,8 +1109,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 							// used in order to retrieve the data in Vc.Display().  See LT_7976.
 							// Use InterlinAbbrTss to get an appropriate different name for each ws
 							var tssLexPos = msaReal.InterlinAbbrTSS(ws);
-							var wsActual = TsStringUtils.GetWsAtOffset(tssLexPos, 0);
-							cda.CacheStringAlt(hvoPos, ktagSbNamedObjName, wsActual, tssLexPos);
+							cda.CacheStringAlt(hvoPos, ktagSbNamedObjName, TsStringUtils.GetWsAtOffset(tssLexPos, 0), tssLexPos);
 						}
 						cda.CacheObjProp(hvoMbSec, ktagSbMorphPos, hvoPos);
 						cda.CacheIntProp(hvoPos, ktagSbNamedObjGuess, fGuessing);
@@ -1153,7 +1122,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					{
 						continue;
 					}
-					var entryReal = mf.Owner as ILexEntry;
+					var entryReal = (ILexEntry)mf.Owner;
 					// We can assume the owner is a LexEntry as that is the only type of object
 					// that can own MoForms. We don't actually create the LexEntry, to
 					// improve performance. All the relevant data should already have
@@ -1165,9 +1134,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				{
 					return fGuessing != 0;
 				}
-				var msg = bldrError.ToString().Trim();
-				var wnd = FindForm() ?? PropertyTable.GetValue<IWin32Window>(FwUtils.window);
-				MessageBox.Show(wnd, msg, ITextStrings.ksWarning, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+				MessageBox.Show(FindForm() ?? PropertyTable.GetValue<IWin32Window>(FwUtils.window), bldrError.ToString().Trim(), ITextStrings.ksWarning, MessageBoxButtons.OK, MessageBoxIcon.Warning);
 			}
 			else
 			{
@@ -1180,9 +1147,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				if (fAdjustCase && CaseStatus == StringCaseStatus.title && tssForm != null && tssForm.Length > 0)
 				{
 					tssForm = TsStringUtils.MakeString(cf.ToLower(tssForm.Text), RawWordformWs);
-					FormOfWordform = tssForm; // need this to be set in case hvoWordformRef set to zero.
-											  // If we adjust the case of the form, we must adjust the hvo as well,
-											  // or any analyses created will go to the wrong WfiWordform.
+					// need this to be set in case hvoWordformRef set to zero.
+					FormOfWordform = tssForm;
+					// If we adjust the case of the form, we must adjust the hvo as well,
+					// or any analyses created will go to the wrong WfiWordform.
 					CurrentAnalysisTree.Analysis = GetWordform(tssForm);
 					if (CurrentAnalysisTree.Wordform != null)
 					{
@@ -1210,7 +1178,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		internal static bool IsAnalysisHumanApproved(LcmCache cache, IWfiAnalysis analysis)
 		{
 			// non-existent analysis can't be approved.
-			return (analysis?.EvaluationsRC).FirstOrDefault(ae => ae.Approves && (ae.Owner as ICmAgent).Human) != null;
+			return (analysis?.EvaluationsRC).FirstOrDefault(ae => ae.Approves && ((ICmAgent)ae.Owner).Human) != null;
 		}
 
 		/// <summary>
@@ -1296,8 +1264,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					throw new ArgumentException($"magic ws {ws} not yet supported.");
 				}
 
-				var tss = hvoMain == 0 ? TsStringUtils.EmptyString(wsActual) : sdaMain.get_MultiStringAlt(hvoMain, flidMain, wsActual);
-				cda.CacheStringAlt(hvoSec, flidSec, wsActual, tss);
+				cda.CacheStringAlt(hvoSec, flidSec, wsActual, hvoMain == 0 ? TsStringUtils.EmptyString(wsActual) : sdaMain.get_MultiStringAlt(hvoMain, flidMain, wsActual));
 			}
 		}
 
@@ -1429,9 +1396,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				}
 			}
 
-			int glossLength;
-			int cpropPrevious;
-			GetWordGlossInfo(lineIndex, out glossLength, out cpropPrevious);
+			GetWordGlossInfo(lineIndex, out var glossLength, out var cpropPrevious);
 			// select at the end
 			return MoveSelection(new SelLevInfo[0], ktagSbWordGloss, cpropPrevious, glossLength, glossLength);
 		}
@@ -1477,8 +1442,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				}
 			}
 
-			var tssLexEntry = LexEntryVc.GetLexEntryTss(Cache, hvoEntryToDisplay, wsVern, ler);
-			cda.CacheStringAlt(hvoEntry, ktagSbNamedObjName, wsVern, tssLexEntry);
+			cda.CacheStringAlt(hvoEntry, ktagSbNamedObjName, wsVern, LexEntryVc.GetLexEntryTss(Cache, hvoEntryToDisplay, wsVern, ler));
 			cda.CacheObjProp(hvoMbSec, ktagSbMorphEntry, hvoEntry);
 			cda.CacheIntProp(hvoEntry, ktagSbNamedObjGuess, fGuessing);
 			var writingSystems = InterlinLineChoices.OtherWritingSystemsForFlid(InterlinLineChoices.kflidLexEntries, 0);
@@ -1501,18 +1465,15 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		private void CacheLexGlossWithInflTypeForAllCurrentWs(ILexEntry possibleVariant, int hvoLexSenseSec, int wsVern, IVwCacheDa cda, ILexEntryInflType inflType)
 		{
 			IList<int> currentAnalysisWsList = Caches.MainCache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems.Select(wsObj => wsObj.Handle).ToArray();
-			CacheStringAltForAllCurrentWs(currentAnalysisWsList, cda, hvoLexSenseSec, ktagSbNamedObjName,
-				delegate (int wsLexGloss)
-				{
-					var hvoSenseReal = Caches.RealHvo(hvoLexSenseSec);
-					var sense = Cache.ServiceLocator.GetInstance<ILexSenseRepository>().GetObject(hvoSenseReal);
-					var spec = InterlinLineChoices.CreateSpec(InterlinLineChoices.kflidLexGloss, wsLexGloss);
-					var choices = new InterlinLineChoices(Cache, InterlinLineChoices.m_wsDefVern,
-														InterlinLineChoices.m_wsDefAnal);
-					choices.Add(spec);
-					ITsString tssResult;
-					return InterlinVc.TryGetLexGlossWithInflTypeTss(possibleVariant, sense, spec, choices, wsVern, inflType, out tssResult) ? tssResult : null;
-				});
+			CacheStringAltForAllCurrentWs(currentAnalysisWsList, cda, hvoLexSenseSec, ktagSbNamedObjName, delegate (int wsLexGloss)
+			{
+				var hvoSenseReal = Caches.RealHvo(hvoLexSenseSec);
+				var sense = Cache.ServiceLocator.GetInstance<ILexSenseRepository>().GetObject(hvoSenseReal);
+				var spec = InterlinLineChoices.CreateSpec(InterlinLineChoices.kflidLexGloss, wsLexGloss);
+				var choices = new InterlinLineChoices(Cache, InterlinLineChoices.m_wsDefVern, InterlinLineChoices.m_wsDefAnal);
+				choices.Add(spec);
+				return InterlinVc.TryGetLexGlossWithInflTypeTss(possibleVariant, sense, spec, choices, wsVern, inflType, out var tssResult) ? tssResult : null;
+			});
 		}
 
 		/// <summary>
@@ -1520,8 +1481,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// </summary>
 		private IWfiWordform GetWordform(ITsString form)
 		{
-			IWfiWordform wordform;
-			return Cache.ServiceLocator.GetInstance<IWfiWordformRepository>().TryGetObject(form, out wordform) ? wordform : null;
+			return Cache.ServiceLocator.GetInstance<IWfiWordformRepository>().TryGetObject(form, out var wordform) ? wordform : null;
 		}
 
 		/// <summary>
@@ -1629,8 +1589,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				var coRef = ler.ComponentLexemesRS[0];
 				hvoEntryToDisplay = (coRef as ILexSense)?.EntryID ?? coRef.Hvo;
 			}
-			var tssName = LexEntryVc.GetLexEntryTss(Cache, hvoEntryToDisplay, wsVern, ler);
-			Caches.DataAccess.SetMultiStringAlt(hvoEntry, ktagSbNamedObjName, RawWordformWs, tssName);
+			Caches.DataAccess.SetMultiStringAlt(hvoEntry, ktagSbNamedObjName, RawWordformWs, LexEntryVc.GetLexEntryTss(Cache, hvoEntryToDisplay, wsVern, ler));
 			Caches.DataAccess.SetObjProp(hvoMorph, ktagSbMorphEntry, hvoEntry);
 			Caches.DataAccess.SetInt(hvoEntry, ktagSbNamedObjGuess, 1);
 			Caches.DataAccess.PropChanged(RootBox, (int)PropChangeType.kpctNotifyAll, hvoMorph, ktagSbMorphGloss, 0, 1, 0);
@@ -1777,13 +1736,11 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			for (var i = 0; i < cRef; ++i)
 			{
 				var hvoRef = sda.get_VecItem(hvoEntry, LexEntryTags.kflidEntryRefs, i);
-				var refType = sda.get_IntProp(hvoRef, LexEntryRefTags.kflidRefType);
-				if (refType != LexEntryRefTags.krtVariant)
+				if (sda.get_IntProp(hvoRef, LexEntryRefTags.kflidRefType) != LexEntryRefTags.krtVariant)
 				{
 					continue;
 				}
-				var cEntries = sda.get_VecSize(hvoRef, LexEntryRefTags.kflidComponentLexemes);
-				if (cEntries != 1)
+				if (sda.get_VecSize(hvoRef, LexEntryRefTags.kflidComponentLexemes) != 1)
 				{
 					continue;
 				}
@@ -1860,20 +1817,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			return guid == MoMorphTypeTags.kguidMorphBoundRoot || guid == MoMorphTypeTags.kguidMorphBoundStem;
 		}
 
-		/// <summary>
-		/// If hvoEntryReal refers to a variant, try for the first sense of the entry it's
-		/// a variant of.  Otherwise, give up and return 0.
-		/// </summary>
-		private int GetSenseForVariantIfPossible(int hvoEntryReal)
-		{
-			var ler = GetVariantRef(Caches.MainCache, hvoEntryReal, false);
-			if (ler == null)
-			{
-				return 0;
-			}
-			return (ler.ComponentLexemesRS[0] as ILexEntry)?.SensesOS[0].Hvo ?? ler.ComponentLexemesRS[0].Hvo;
-		}
-
 		// Handles a change in the item selected in the combo box.
 		internal void HandleComboSelChange(object sender, EventArgs ea)
 		{
@@ -1902,8 +1845,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		private void ShowComboForSelection(IVwSelection vwselNew, bool fMouseDown)
 		{
 			// It's a good idea to get this first...it's possible for MakeCombo to leave the selection invalid.
-			Rect loc;
-			vwselNew.GetParaLocation(out loc);
+			vwselNew.GetParaLocation(out var loc);
 			if (!fMouseDown)
 			{
 				// It's a mouse move.
@@ -1929,12 +1871,13 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					return;
 				}
 			}
-			FinishUpOk(); // Just like OK, if there are pending edits in the combo, do them.
-						  // Changing a different item may result in changes to this one also. This could invalidate
-						  // the selection, in which case, we can't use it.
-						  // Enhance JohnT: might consider trying the current selection, if any, if called from
-						  // MouseDown...that would not be useful if called from hover. But there probably isn't
-						  // a current selection in that case. Could try a selection at the saved mouse position.
+			// Just like OK, if there are pending edits in the combo, do them.
+			FinishUpOk();
+			// Changing a different item may result in changes to this one also. This could invalidate
+			// the selection, in which case, we can't use it.
+			// Enhance JohnT: might consider trying the current selection, if any, if called from
+			// MouseDown...that would not be useful if called from hover. But there probably isn't
+			// a current selection in that case. Could try a selection at the saved mouse position.
 			if (!vwselNew.IsValid)
 			{
 				return;
@@ -2002,8 +1945,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			IVwSelection selArrow;
 			const int dxPixelIncrement = 3;
 			const uint iconParagraphWidth = 10;
-			Rect rect;
-			selOrig.GetParaLocation(out rect);
+			selOrig.GetParaLocation(out var rect);
 			if (m_vc.RightToLeft)
 			{
 				// Right to Left:
@@ -2038,8 +1980,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				throw new ArgumentException($"dxPixelIncrement({dxPixelIncrement}) must be nonzero");
 			}
 			IVwSelection sel = null;
-			Rect rect;
-			selOrig.GetParaLocation(out rect);
+			selOrig.GetParaLocation(out var rect);
 			var y = rect.top + (rect.bottom - rect.top) / 2;
 			var pt = new Point((int)xMin, y);
 			uint xLim;
@@ -2063,9 +2004,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				using (new HoldGraphics(this))
 				{
-					Rectangle rcSrcRoot;
-					Rectangle rcDstRoot;
-					GetCoordRects(out rcSrcRoot, out rcDstRoot);
+					GetCoordRects(out var rcSrcRoot, out var rcDstRoot);
 					sel = RootBox.MakeSelAt(pt.X, pt.Y, rcSrcRoot, rcDstRoot, false);
 					if (sel != null && sel.SelType == selType)
 					{
@@ -2078,9 +2017,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			return sel;
 		}
 
-		private IVwSelection SelectFirstAssociatedText()
+		private void SelectFirstAssociatedText()
 		{
-			return SelectFirstAssociatedText(RootBox.Selection);
+			SelectFirstAssociatedText(RootBox.Selection);
 		}
 
 		/// <summary>
@@ -2100,8 +2039,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			Debug.Assert(tsi.IsPicture);
 			IVwSelection selStartOfText;
 			const int dxPixelIncrement = 1;
-			Rect rect;
-			selOrig.GetParaLocation(out rect);
+			selOrig.GetParaLocation(out var rect);
 			var widthIconPara = (rect.right - rect.left);
 			var xMaxCountOfPixels = (widthIconPara) * 2;
 			selStartOfText = m_vc.RightToLeft ?
@@ -2124,12 +2062,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// <param name="fShift">If true, reverse sequence.</param>
 		internal void HandleTab(bool fShift)
 		{
-			int startLineIndex;
-			int currentLineIndex;
-			int increment;
-			bool fSkipIcon;
-			int iNextMorphIndex;
-			GetLineOfCurrentSelectionAndNextTabStop(fShift, out currentLineIndex, out startLineIndex, out increment, out fSkipIcon, out iNextMorphIndex);
+			GetLineOfCurrentSelectionAndNextTabStop(fShift, out var currentLineIndex, out var startLineIndex, out var increment, out var fSkipIcon, out var iNextMorphIndex);
 			if (currentLineIndex < 0)
 			{
 				return;
@@ -2143,12 +2076,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// </summary>
 		public int GetLineOfCurrentSelection()
 		{
-			int startLineIndex;
-			int currentLineIndex;
-			int increment;
-			bool fSkipIcon;
-			int iNextMorphIndex;
-			GetLineOfCurrentSelectionAndNextTabStop(false, out currentLineIndex, out startLineIndex, out increment, out fSkipIcon, out iNextMorphIndex);
+			GetLineOfCurrentSelectionAndNextTabStop(false, out var currentLineIndex, out _, out _, out _, out _);
 			return currentLineIndex;
 		}
 
@@ -2179,14 +2107,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				fIsPictureSel = sel.SelType == VwSelType.kstPicture;
 				var cvsli = sel.CLevels(false) - 1;
 				// more out variables for AllTextSelInfo.
-				int ihvoRoot;
-				int cpropPrevious;
-				int ichAnchor;
-				int ichEnd;
-				bool fAssocPrev;
-				int ihvoEnd;
-				ITsTextProps ttpBogus;
-				rgvsli = SelLevInfo.AllTextSelInfo(sel, cvsli, out ihvoRoot, out tagTextProp, out cpropPrevious, out ichAnchor, out ichEnd, out ws, out fAssocPrev, out ihvoEnd, out ttpBogus);
+				rgvsli = SelLevInfo.AllTextSelInfo(sel, cvsli, out _, out tagTextProp, out _, out _, out _, out ws, out _, out _, out _);
 			}
 			catch
 			{
@@ -2195,9 +2116,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			}
 
 			// Find our next morpheme index if our current selection is in a morpheme field
-			bool fOnNextLine;
 			var cMorph = CheckMorphs();
-			iNextMorphIndex = NextMorphIndex(increment, out fOnNextLine);
+			iNextMorphIndex = NextMorphIndex(increment, out var fOnNextLine);
 			// Handle special cases where our current selection is not in a morpheme index.
 			if (iNextMorphIndex < 0 && increment < 0)
 			{
@@ -2217,9 +2137,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 						startLineIndex = currentLineIndex;
 					}
 					break;
-				case ktagMissingMorphs: // line 2, morpheme forms, no guess.
-										// It's not supposed to be possible to get a selection into this line.
-										// (Maybe the end-point, but not the anchor.)
+				// line 2, morpheme forms, no guess.
+				case ktagMissingMorphs:
+					// It's not supposed to be possible to get a selection into this line.
+					// (Maybe the end-point, but not the anchor.)
 					Debug.Assert(false);
 					break;
 				case ktagMorphFormIcon:
@@ -2365,11 +2286,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			if (sel.SelType == VwSelType.kstText)
 			{
 				// For a text selection, unless it's an IP at the end of the string, handle it normally.
-				ITsString tss;
-				bool fAssocPrev;
-				int ichAnchor, ichEnd, hvoObjA, tagA, hvoObjE, tagE, wsE, wsA;
-				sel.TextSelInfo(true, out tss, out ichEnd, out fAssocPrev, out hvoObjE, out tagE, out wsE);
-				sel.TextSelInfo(false, out tss, out ichAnchor, out fAssocPrev, out hvoObjA, out tagA, out wsA);
+				sel.TextSelInfo(true, out var tss, out var ichEnd, out _, out var hvoObjE, out var tagE, out var wsE);
+				sel.TextSelInfo(false, out tss, out var ichAnchor, out _, out var hvoObjA, out var tagA, out var wsA);
 				if (hvoObjE != hvoObjA || tagE != tagA || wsE != wsA || ichEnd != ichAnchor || ichEnd != tss.Length)
 				{
 					return false;
@@ -2398,11 +2316,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			if (sel.SelType == VwSelType.kstText)
 			{
 				// Unless it's an IP at the start of the string, handle it normally.
-				ITsString tss;
-				bool fAssocPrev;
-				int ichAnchor, ichEnd, hvoObjA, tagA, hvoObjE, tagE, wsE, wsA;
-				sel.TextSelInfo(true, out tss, out ichEnd, out fAssocPrev, out hvoObjE, out tagE, out wsE);
-				sel.TextSelInfo(false, out tss, out ichAnchor, out fAssocPrev, out hvoObjA, out tagA, out wsA);
+				sel.TextSelInfo(true, out _, out var ichEnd, out _, out var hvoObjE, out var tagE, out var wsE);
+				sel.TextSelInfo(false, out _, out var ichAnchor, out _, out var hvoObjA, out var tagA, out var wsA);
 				if (hvoObjE != hvoObjA || tagE != tagA || wsE != wsA || ichEnd != ichAnchor || ichEnd != 0)
 				{
 					return false;
@@ -2984,9 +2899,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 						else if (IsInGlossMode())
 						{
 							// in gloss mode, we want to select the whole gloss, since the user may want to type over it.
-							int glossLength;
-							int cpropPrevious;
-							GetWordGlossInfo(ispec, out glossLength, out cpropPrevious);
+							GetWordGlossInfo(ispec, out var glossLength, out var cpropPrevious);
 							return MoveSelection(new SelLevInfo[0], ktagSbWordGloss, cpropPrevious, 0, glossLength);
 						}
 						else
@@ -3107,9 +3020,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		internal ITsString SbWordForm(int wsVern)
 		{
-			var sda = Caches.DataAccess;
-			var tssForm = sda.get_MultiStringAlt(kSbWord, ktagSbWordForm, wsVern);
-			return tssForm;
+			return Caches.DataAccess.get_MultiStringAlt(kSbWord, ktagSbWordForm, wsVern);
 		}
 
 		/// <summary>
@@ -3200,16 +3111,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// </summary>
 		private bool SelectTextNearestToNextIcon(bool fForward)
 		{
-			var fShift = !fForward;
-			int currentLineIndex;
-			int startLineIndex;
-			int increment;
-			bool fSkipIcon;
-			int iNextMorphIndex;
-			GetLineOfCurrentSelectionAndNextTabStop(fShift, out currentLineIndex, out startLineIndex, out increment, out fSkipIcon, out iNextMorphIndex);
+			GetLineOfCurrentSelectionAndNextTabStop(!fForward, out var currentLineIndex, out _, out var increment, out _, out var iNextMorphIndex);
 			var currentMorphIndex = MorphIndex;
 			var cMorphs = MorphCount;
-			if (fForward && currentMorphIndex == (cMorphs - 1))
+			if (fForward && currentMorphIndex == cMorphs - 1)
 			{
 				// don't wrap.
 				iNextMorphIndex = currentMorphIndex;
@@ -3280,8 +3185,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				return wa;
 			}
-			IWfiGloss tempHvoWordGloss;
-			GetDefaults(GetWordformOfAnalysis(), ref wa, out tempHvoWordGloss);
+			GetDefaults(GetWordformOfAnalysis(), ref wa, out _);
 			return wa;
 		}
 
@@ -3561,8 +3465,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			var cda = (IVwCacheDa)Caches.DataAccess;
 			foreach (var wsId in InterlinLineChoices.WritingSystemsForFlid(InterlinLineChoices.kflidWordGloss, true))
 			{
-				var tss = TsStringUtils.EmptyString(wsId);
-				cda.CacheStringAlt(kSbWord, ktagSbWordGloss, wsId, tss);
+				cda.CacheStringAlt(kSbWord, ktagSbWordGloss, wsId, TsStringUtils.EmptyString(wsId));
 			}
 		}
 
@@ -3611,8 +3514,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			}
 			return new GetRealAnalysisMethod(PropertyTable.GetValue<Form>(FwUtils.window),
 				PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider), this, Caches,
-				kSbWord, CurrentAnalysisTree, GetWfiAnalysisOfAnalysis(), existingGloss,
-				InterlinLineChoices, FormOfWordform, fWantOnlyWfiAnalysis);
+				kSbWord, CurrentAnalysisTree, GetWfiAnalysisOfAnalysis(), existingGloss, InterlinLineChoices, FormOfWordform, fWantOnlyWfiAnalysis);
 		}
 
 		protected virtual void LoadForWordBundleAnalysis(int hvoWag)
@@ -3651,17 +3553,15 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 			RootBox.SetRootObject(kSbWord, m_vc, SandboxVc.kfragBundle, m_stylesheet);
 
-			m_dxdLayoutWidth = kForceLayout; // Don't try to draw until we get OnSize and do layout.
-											 // For some reason, we don't always initialize our control size to be the same as our rootbox.
+			// Don't try to draw until we get OnSize and do layout.
+			m_dxdLayoutWidth = kForceLayout;
+			// For some reason, we don't always initialize our control size to be the same as our rootbox.
 			Margin = new Padding(3, 0, 3, 1);
 			SyncControlSizeToRootBoxSize();
 			if (RightToLeftWritingSystem)
 			{
 				Anchor = AnchorStyles.Right | AnchorStyles.Top;
 			}
-
-			//TODO:
-			//ptmw->RegisterRootBox(qrootb);
 		}
 
 		private void SyncControlSizeToRootBoxSize()
@@ -3700,13 +3600,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// </summary>
 		public override VwDelProbResponse OnProblemDeletion(IVwSelection sel, VwDelProbType dpt)
 		{
-			ITsString tss;
-			bool fAssocPrev;
-			int ichSel;
-			int hvoObj;
-			int tag;
-			int ws;
-			sel.TextSelInfo(false, out tss, out ichSel, out fAssocPrev, out hvoObj, out tag, out ws);
+			sel.TextSelInfo(false, out _, out _, out _, out var hvoObj, out var tag, out var ws);
 			if (!EditMonitor.IsPropMorphBreak(hvoObj, tag, ws))
 			{
 				return VwDelProbResponse.kdprFail;
@@ -3930,16 +3824,16 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			// Save the position to be used by hover.
 			m_LastMouseMovePos = new Point(e.X, e.Y);
 			if (RootBox == null)
+			{
 				return;
+			}
 #if TraceMouseCalls
 			Debug.WriteLine("Sandbox.OnMouseMove(e.X,Y = {" + e.X +", " + e.Y + "})" +
 				" - fInDrag = " + m_fInMouseDrag + ", fNewSel = " + m_fNewSelection);
 #endif
 			using (new HoldGraphics(this))
 			{
-				Rectangle rcSrcRoot;
-				Rectangle rcDstRoot;
-				GetCoordRects(out rcSrcRoot, out rcDstRoot);
+				GetCoordRects(out var rcSrcRoot, out var rcDstRoot);
 #if TraceMouseCalls
 				Debug.WriteLine("SandboxBase.OnMouseMove(" + m_LastMouseMovePos.ToString() + "): rcSrcRoot = " + rcSrcRoot.ToString() + ", rcDstRoot = " + rcDstRoot.ToString());
 #endif
@@ -3966,7 +3860,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				}
 #if TraceMouseCalls
 				else
+				{
 					Debug.WriteLine("SandboxBase.OnMouseMove(): pt = " + pt.ToString() + ", vwsel = null");
+				}
 #endif
 			}
 		}
@@ -3991,26 +3887,14 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			// AllTextSelInfo doesn't need it.)
 			var cvsli = sel.CLevels(false) - 1;
 			// Out variables for AllTextSelInfo.
-			int ihvoRoot;
-			int tagRightClickTextProp;
-			int cpropPrevious;
-			int ichAnchor;
-			int ichEnd;
-			int ws;
-			bool fAssocPrev;
-			int ihvoEnd;
-			ITsTextProps ttpBogus;
 			// Main array of information retrieved from sel that made combo.
-			SelLevInfo.AllTextSelInfo(sel, cvsli,
-				out ihvoRoot, out tagRightClickTextProp, out cpropPrevious, out ichAnchor, out ichEnd,
-				out ws, out fAssocPrev, out ihvoEnd, out ttpBogus);
+			SelLevInfo.AllTextSelInfo(sel, cvsli, out _, out var tagRightClickTextProp, out _, out _, out _, out _, out _, out _, out _);
 			if (tagRightClickTextProp >= ktagMinIcon && tagRightClickTextProp < ktagLimIcon) // it's an icon
 			{
 				// don't bother doing anything for clicks on the icons.
 				return false;
 			}
-			ICmObject realObject;
-			tagRightClickTextProp = GetInfoForJumpToTool(sel, out realObject);
+			tagRightClickTextProp = GetInfoForJumpToTool(sel, out var realObject);
 			if (realObject != null)
 			{
 				if (tagRightClickTextProp == ktagSbWordGloss)
@@ -4041,13 +3925,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// </summary>
 		private int GetInfoForJumpToTool(IVwSelection sel, out ICmObject realObject)
 		{
-			int ws;
-			int tagRightClickTextProp;
-			bool fAssocPrev;
-			ITsString tss;
-			int ichAnchorDum;
-			int hvoRightClickObject;
-			sel.TextSelInfo(false, out tss, out ichAnchorDum, out fAssocPrev, out hvoRightClickObject, out tagRightClickTextProp, out ws);
+			sel.TextSelInfo(false, out _, out _, out _, out var hvoRightClickObject, out var tagRightClickTextProp, out _);
 			switch (tagRightClickTextProp)
 			{
 				case ktagSbMorphPrefix:
@@ -4059,9 +3937,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				case ktagSbNamedObjName:
 					if (sel.CLevels(false) < 2)
 						break;
-					int hvoOuterObj, tagOuter, ihvoOuter, cpropPreviousOuter;
-					IVwPropertyStore vpsDummy;
-					sel.PropInfo(false, 1, out hvoOuterObj, out tagOuter, out ihvoOuter, out cpropPreviousOuter, out vpsDummy);
+					sel.PropInfo(false, 1, out var hvoOuterObj, out var tagOuter, out _, out _, out _);
 					if (tagOuter == ktagSbMorphGloss || tagOuter == ktagSbMorphPos || tagOuter == ktagSbMorphForm || tagOuter == ktagSbMorphEntry)
 					{
 						m_hvoRightClickMorph = hvoOuterObj;
@@ -4071,7 +3947,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					m_hvoRightClickMorph = 0;
 					break;
 			}
-
 			realObject = Caches.RealObject(hvoRightClickObject);
 			return tagRightClickTextProp;
 		}
@@ -4138,20 +4013,12 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					return GetObjectFromRightClickMorph(ktagSbMorphForm);
 				case LexEntryTags.kClassName:
 					var result = GetObjectFromRightClickMorph(ktagSbMorphEntry);
-					if (result != 0)
-					{
-						return result;
-					}
-					return GetMostPromisingEntry();
+					return result != 0 ? result : GetMostPromisingEntry();
 				case LexSenseTags.kClassName:
 					return GetObjectFromRightClickMorph(ktagSbMorphGloss);
 				case PartOfSpeechTags.kClassName:
 					hvoMsa = GetObjectFromRightClickMorph(ktagSbMorphPos);
-					if (hvoMsa == 0)
-					{
-						return 0;
-					}
-					return hvoMsa;
+					return hvoMsa == 0 ? 0 : hvoMsa;
 				//LT-12195 Change Show Concordance of Category right click menu item for Lex Gram. Info. line of Interlinear.
 				case AreaServices.PartOfSpeechGramInfo:
 					hvoMsa = GetObjectFromRightClickMorph(ktagSbMorphPos);
@@ -4279,8 +4146,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				return;
 			}
 #if TraceMouseCalls
-				Debug.WriteLine("Sandbox.CallMouseDown(pt = {"+ point.X +", "+ point.Y +"})" +
-					" - fInDrag = " + m_fInMouseDrag + ", fNewSel = " + m_fNewSelection);
+				Debug.WriteLine("Sandbox.CallMouseDown(pt = {"+ point.X +", "+ point.Y +"}) - fInDrag = " + m_fInMouseDrag + ", fNewSel = " + m_fNewSelection);
 #endif
 			WsPending = -1;
 			try
@@ -4308,8 +4174,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				return;
 			}
 #if TraceMouseCalls
-				Debug.WriteLine("Sandbox.CallMouseDownExtended(pt = {"+pt.X+", "+pt.Y+"})" +
-					" - fInDrag = " + m_fInMouseDrag + ", fNewSel = " + m_fNewSelection);
+				Debug.WriteLine("Sandbox.CallMouseDownExtended(pt = {"+pt.X+", "+pt.Y+"}) - fInDrag = " + m_fInMouseDrag + ", fNewSel = " + m_fNewSelection);
 #endif
 			WsPending = -1;
 			var vwsel = RootBox.Selection;
@@ -4338,8 +4203,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				return;
 			}
 #if TraceMouseCalls
-				Debug.WriteLine("Sandbox.CallMouseMoveDrag(pt = {"+ pt.X +", " + pt.Y +"})" +
-					" - fInDrag = " + m_fInMouseDrag + ", fNewSel = " + m_fNewSelection);
+				Debug.WriteLine("Sandbox.CallMouseMoveDrag(pt = {"+ pt.X +", " + pt.Y +"}) - fInDrag = " + m_fInMouseDrag + ", fNewSel = " + m_fNewSelection);
 #endif
 			if (m_fNewSelection)
 			{
@@ -4373,24 +4237,20 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			if (RootBox != null && m_fInMouseDrag)
 			{
 #if TraceMouseCalls
-				Debug.WriteLine("Sandbox.CallMouseUp(pt = {" + pt.X +", " + pt.Y + "})" +
-					" - fInDrag = " + m_fInMouseDrag + ", fNewSel = " + m_fNewSelection);
+				Debug.WriteLine("Sandbox.CallMouseUp(pt = {" + pt.X +", " + pt.Y + "}) - fInDrag = " + m_fInMouseDrag + ", fNewSel = " + m_fNewSelection);
 #endif
 				// if we're dragging to create or extend a selection
 				// don't select text that is currently above or below current viewable area
 				if (pt.Y < 0)  // if mouse is above viewable area
 				{
-					//m_rootb.MouseUp(pt.X, 0, rcSrcRoot, rcDstRoot);
 					CallMouseDownExtended(new Point(pt.X, 0), rcSrcRoot, rcDstRoot);
 				}
 				else if (pt.Y > Bottom)  // if mouse is below viewable area
 				{
-					//m_rootb.MouseUp(pt.X, Bottom, rcSrcRoot, rcDstRoot);
 					CallMouseDownExtended(new Point(pt.X, Bottom), rcSrcRoot, rcDstRoot);
 				}
 				else  // mouse is inside viewable area
 				{
-					//m_rootb.MouseUp(pt.X, pt.Y, rcSrcRoot, rcDstRoot);
 					CallMouseDownExtended(pt, rcSrcRoot, rcDstRoot);
 				}
 			}
@@ -4466,12 +4326,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// </summary>
 		bool IUndoRedoHandler.HandleRedo(object sender, EventArgs e)
 		{
-			if (Caches.DataAccess.IsDirty() || m_fHaveUndone)
-			{
-				return true; // We (didn't) do it.
-			}
-			// We didn't handle it. Caller may be able to undo something we don't know about.
-			return false;
+			return Caches.DataAccess.IsDirty() || m_fHaveUndone;
 		}
 
 		#endregion
@@ -4509,7 +4364,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			// width in millipoints of the arrow picture.
 			private int m_dxmpArrowPicWidth;
 			private bool m_fIconsForAnalysisChoices;
-			private bool m_fRtl;
 			private SandboxBase m_sandbox;
 
 			internal SandboxVc(CachePair caches, InterlinLineChoices choices, bool fIconsForAnalysisChoices, SandboxBase sandbox)
@@ -4535,7 +4389,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				var wsObj = caches.MainCache.ServiceLocator.WritingSystemManager.Get(rawWordformWs);
 				if (wsObj != null)
 				{
-					m_fRtl = wsObj.RightToLeftScript;
+					RightToLeft = wsObj.RightToLeftScript;
 				}
 			}
 
@@ -4609,10 +4463,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			/// </summary>
 			internal int MultipleOptionBGColor
 			{
-				get
-				{
-					return multipleAnalysisColor;
-				}
+				get => multipleAnalysisColor;
 				set
 				{
 					if (multipleAnalysisColor == value)
@@ -4633,13 +4484,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			/// <summary>
 			/// Get/set whether the sandbox is RTL
 			/// </summary>
-			internal bool RightToLeft
-			{
-				get
-				{
-					return m_fRtl;
-				}
-			}
+			internal bool RightToLeft { get; }
 
 			internal bool ShowWordGlossIcon { get; private set; }
 
@@ -4695,7 +4540,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 							// This makes a little separation between left border and arrows.
 							vwenv.set_IntProperty((int)FwTextPropType.ktptPadLeading, (int)FwTextPropVar.ktpvMilliPoint, 1000);
-							if (m_fRtl)
+							if (RightToLeft)
 							{
 								// This must not be on the outer paragraph or we get infinite width behavior.
 								vwenv.set_IntProperty((int)FwTextPropType.ktptRightToLeft, (int)FwTextPropVar.ktpvEnum, (int)FwTextToggleVal.kttvForceOn);

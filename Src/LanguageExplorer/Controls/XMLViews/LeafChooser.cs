@@ -111,22 +111,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			/// </summary>
 			public override bool WantNodeForLabel(ObjectLabel label)
 			{
-				if (!base.WantNodeForLabel(label)) // currently does nothing, but just in case...
-				{
-					return false;
-				}
-				if (HasLeaves(label))
-				{
-					return true;
-				}
-				foreach (var labelSub in label.SubItems)
-				{
-					if (WantNodeForLabel(labelSub))
-					{
-						return true;
-					}
-				}
-				return false;
+				return base.WantNodeForLabel(label) && (HasLeaves(label) || label.SubItems.Any(WantNodeForLabel));
 			}
 
 			private bool HasLeaves(ObjectLabel label)

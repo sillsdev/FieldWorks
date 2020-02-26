@@ -160,8 +160,7 @@ namespace LanguageExplorer.Impls
 		{
 			for (var i = 0; i < Items.Count; i++)
 			{
-				var ldi = Items[i] as LanguageDisplayItem;
-				if (ldi != null)
+				if (Items[i] is LanguageDisplayItem ldi)
 				{
 					if (ldi.Locale == locale)
 					{
@@ -214,7 +213,6 @@ namespace LanguageExplorer.Impls
 		protected override void OnDrawItem(DrawItemEventArgs e)
 		{
 			base.OnDrawItem(e);
-			Brush brush;
 			// Create the brush using the ForeColor specified by the DrawItemEventArgs
 			if (m_foreColorBrush == null)
 			{
@@ -230,7 +228,7 @@ namespace LanguageExplorer.Impls
 			// Select the appropriate brush depending on if the item is selected.
 			// Since State can be a combination (bit-flag) of enum values, you can't use
 			// "==" to compare them.
-			brush = (e.State & DrawItemState.Selected) == DrawItemState.Selected ? SystemBrushes.HighlightText : m_foreColorBrush;
+			var brush = (e.State & DrawItemState.Selected) == DrawItemState.Selected ? SystemBrushes.HighlightText : m_foreColorBrush;
 			// Perform the painting.
 			var lang = ((LanguageDisplayItem)Items[e.Index]).Locale;
 			using (var font = GetFontForLanguage(lang))
@@ -299,10 +297,9 @@ namespace LanguageExplorer.Impls
 			/// </returns>
 			public override bool Equals(object obj)
 			{
-				var ldi = obj as LanguageDisplayItem;
-				if (ldi != null)
+				if (obj is LanguageDisplayItem ldi)
 				{
-					return (ldi.Locale == Locale && ldi.Name == Name);
+					return ldi.Locale == Locale && ldi.Name == Name;
 				}
 
 				return false;

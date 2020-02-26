@@ -60,14 +60,8 @@ namespace SIL.FieldWorks.Common.RootSites
 				try
 				{
 					var cvsli = Selection.CLevels(false) - 1;
-					int ihvoRoot;
-					int cpropPrevious;
-					int ws;
-					bool fAssocPrev;
-					int ihvoEnd;
-					ITsTextProps ttpBogus;
-					rgvsli = SelLevInfo.AllTextSelInfo(Selection, cvsli, out ihvoRoot, out tagTextProp, out cpropPrevious, out ichAnchor,
-						out ichEnd, out ws, out fAssocPrev, out ihvoEnd, out ttpBogus);
+					rgvsli = SelLevInfo.AllTextSelInfo(Selection, cvsli, out _, out tagTextProp, out _, out ichAnchor,
+						out ichEnd, out _, out _, out _, out _);
 				}
 				catch (Exception)
 				{
@@ -219,9 +213,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			{
 				return 0;
 			}
-			int hvoObj, tag, ihvo, cpropPrevious;
-			IVwPropertyStore vps;
-			Selection.PropInfo(fEndPoint, level, out hvoObj, out tag, out ihvo, out cpropPrevious, out vps);
+			Selection.PropInfo(fEndPoint, level, out var hvoObj, out _, out _, out _, out _);
 			return hvoObj;
 		}
 
@@ -245,9 +237,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			{
 				return 0;
 			}
-			int hvoObj, tag, ihvo, cpropPrevious;
-			IVwPropertyStore vps;
-			Selection.PropInfo(fEndPoint, level, out hvoObj, out tag, out ihvo, out cpropPrevious, out vps);
+			Selection.PropInfo(fEndPoint, level, out _, out var tag, out _, out _, out _);
 			return tag;
 		}
 
@@ -273,9 +263,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			{
 				return -1;
 			}
-			int hvoObj, tag, ihvo, cpropPrevious;
-			IVwPropertyStore vps;
-			Selection.PropInfo(fEndPoint, level, out hvoObj, out tag, out ihvo, out cpropPrevious, out vps);
+			Selection.PropInfo(fEndPoint, level, out _, out _, out var ihvo, out _, out _);
 			return ihvo;
 		}
 

@@ -58,9 +58,8 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		protected override void UpdateDisplayFromDatabase()
 		{
-			var rtb = (RichTextBox)Control;
 			var dt = SilTime.GetTimeProperty(Cache.DomainDataByFlid, MyCmObject.Hvo, m_flid);
-			rtb.Text = dt == DateTime.MinValue ? "Date/Time not set" : string.Format(DetailControlsStrings.ksDateAndTime, dt.ToLongDateString(), dt.ToShortTimeString());
+			((RichTextBox)Control).Text = dt == DateTime.MinValue ? "Date/Time not set" : string.Format(DetailControlsStrings.ksDateAndTime, dt.ToLongDateString(), dt.ToShortTimeString());
 		}
 
 		protected override void OnGotFocus(EventArgs e)

@@ -44,12 +44,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		// Make it work sensibly as a hash key
 		public override bool Equals(object obj)
 		{
-			var other = obj as MainCallerDisplayCommand;
-			if (other == null)
-			{
-				return false;
-			}
-			return other.MainElement == MainElement && other.Caller == Caller && other.UseMainAsFrag == UseMainAsFrag && other.m_wsForce == m_wsForce;
+			return obj is MainCallerDisplayCommand mainCallerDisplayCommand && mainCallerDisplayCommand.MainElement == MainElement && mainCallerDisplayCommand.Caller == Caller && mainCallerDisplayCommand.UseMainAsFrag == UseMainAsFrag && mainCallerDisplayCommand.m_wsForce == m_wsForce;
 		}
 
 		// Make it work sensibly as a hash key.
@@ -60,8 +55,7 @@ namespace LanguageExplorer.Controls.XMLViews
 
 		internal override void PerformDisplay(XmlVc vc, int fragId, int hvo, IVwEnv vwenv)
 		{
-			string layoutName;
-			var node = GetNodeForChild(out layoutName, fragId, vc, hvo);
+			var node = GetNodeForChild(out var layoutName, fragId, vc, hvo);
 			var oldWsForce = vc.WsForce;
 			var logStream = vc.LogStream;
 			try
@@ -172,17 +166,13 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				return; // or assert? an object prop should have a dest class.
 			}
-			string layoutName;
-			var node = GetNodeForChildClass(out layoutName, fragId, vc, clsid);
+			var node = GetNodeForChildClass(out _, fragId, vc, clsid);
 			DetermineNeededFieldsForChildren(vc, node, null, info);
 		}
 
 		internal XElement GetNodeForChild(out string layoutName, int fragId, XmlVc vc, int hvo)
 		{
-			XElement node;
-			XElement callingFrag;
-			layoutName = null;
-			layoutName = GetLayoutName(out callingFrag, out node);
+			layoutName = GetLayoutName(out var callingFrag, out var node);
 			if (node == null)
 			{
 				node = vc.GetNodeForPart(hvo, layoutName, true);
@@ -197,10 +187,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		internal XElement GetNodeForChildClass(out string layoutName, int fragId, XmlVc vc, int clsid)
 		{
-			XElement node;
-			XElement callingFrag;
-			layoutName = null;
-			layoutName = GetLayoutName(out callingFrag, out node);
+			layoutName = GetLayoutName(out var callingFrag, out var node);
 			if (node == null)
 			{
 				node = vc.GetNodeForPart(layoutName, true, clsid);

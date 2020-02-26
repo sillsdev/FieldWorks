@@ -98,49 +98,40 @@ namespace LanguageExplorerTests.Impls
 		[Test]
 		public void TryGetValueTest()
 		{
-			object bestValue;
-
 			// Test nonexistent properties.
-			var fPropertyExists = _propertyTable.TryGetValue("NonexistentPropertyA", out bestValue);
+			var fPropertyExists = _propertyTable.TryGetValue("NonexistentPropertyA", out object bestValue);
 			Assert.IsFalse(fPropertyExists, "best NonexistentPropertyA should not exist.");
 			Assert.IsNull(bestValue, "Invalid value for best NonexistentPropertyA.");
 
 			// Test global property values.
-			bool gpba;
-			fPropertyExists = _propertyTable.TryGetValue("BooleanPropertyA", out gpba, SettingsGroup.GlobalSettings);
+			fPropertyExists = _propertyTable.TryGetValue("BooleanPropertyA", out bool gpba, SettingsGroup.GlobalSettings);
 			Assert.IsTrue(fPropertyExists, "global BooleanPropertyA not found.");
 			Assert.IsFalse(gpba, "Invalid value for global BooleanPropertyA.");
 
-			int gpia;
-			fPropertyExists = _propertyTable.TryGetValue("IntegerPropertyA", out gpia, SettingsGroup.GlobalSettings);
+			fPropertyExists = _propertyTable.TryGetValue("IntegerPropertyA", out int gpia, SettingsGroup.GlobalSettings);
 			Assert.IsTrue(fPropertyExists, "global IntegerPropertyA not found.");
 			Assert.AreEqual(253, gpia, "Invalid value for global IntegerPropertyA.");
 
-			string gpsa;
-			fPropertyExists = _propertyTable.TryGetValue("StringPropertyA", out gpsa, SettingsGroup.GlobalSettings);
+			fPropertyExists = _propertyTable.TryGetValue("StringPropertyA", out string gpsa, SettingsGroup.GlobalSettings);
 			Assert.IsTrue(fPropertyExists, "global StringPropertyA not found.");
 			Assert.AreEqual("global_StringPropertyA_value", gpsa, "Invalid value for global StringPropertyA.");
 
 			// Test local property values
-			bool lpba;
-			fPropertyExists = _propertyTable.TryGetValue("BooleanPropertyA", out lpba, SettingsGroup.LocalSettings);
+			fPropertyExists = _propertyTable.TryGetValue("BooleanPropertyA", out bool lpba, SettingsGroup.LocalSettings);
 			Assert.IsTrue(fPropertyExists, "local BooleanPropertyA not found.");
 			Assert.IsTrue(lpba, "Invalid value for local BooleanPropertyA.");
 
-			int lpia;
-			fPropertyExists = _propertyTable.TryGetValue("IntegerPropertyA", out lpia, SettingsGroup.LocalSettings);
+			fPropertyExists = _propertyTable.TryGetValue("IntegerPropertyA", out int lpia, SettingsGroup.LocalSettings);
 			Assert.IsTrue(fPropertyExists, "local IntegerPropertyA not found.");
 			Assert.AreEqual(333, lpia, "Invalid value for local IntegerPropertyA.");
 
-			string lpsa;
-			fPropertyExists = _propertyTable.TryGetValue("StringPropertyA", out lpsa, SettingsGroup.LocalSettings);
+			fPropertyExists = _propertyTable.TryGetValue("StringPropertyA", out string lpsa, SettingsGroup.LocalSettings);
 			Assert.IsTrue(fPropertyExists, "local StringPropertyA not found.");
 			Assert.AreEqual("local_StringPropertyA_value", lpsa, "Invalid value for local StringPropertyA.");
 
 			// Test best settings
 			// Match on unique globals.
-			bool ugpba;
-			fPropertyExists = _propertyTable.TryGetValue("BestBooleanPropertyA", out ugpba);
+			fPropertyExists = _propertyTable.TryGetValue("BestBooleanPropertyA", out bool ugpba);
 			Assert.IsTrue(fPropertyExists, "best BestBooleanPropertyA not found.");
 			Assert.IsTrue(ugpba, "Invalid value for best BestBooleanPropertyA.");
 			fPropertyExists = _propertyTable.TryGetValue("BestBooleanPropertyA", out ugpba);
@@ -148,8 +139,7 @@ namespace LanguageExplorerTests.Impls
 			Assert.IsTrue(ugpba, "Invalid value for best BestBooleanPropertyA.");
 
 			// Match on unique locals
-			int ulpia;
-			fPropertyExists = _propertyTable.TryGetValue("BestIntegerPropertyB", out ulpia);
+			fPropertyExists = _propertyTable.TryGetValue("BestIntegerPropertyB", out int ulpia);
 			Assert.IsTrue(fPropertyExists, "best BestIntegerPropertyB not found.");
 			Assert.AreEqual(-586, ulpia, "Invalid value for best BestIntegerPropertyB.");
 			fPropertyExists = _propertyTable.TryGetValue("BestIntegerPropertyB", out ulpia);
@@ -157,8 +147,7 @@ namespace LanguageExplorerTests.Impls
 			Assert.AreEqual(-586, ulpia, "Invalid value for best BestIntegerPropertyB.");
 
 			// Match best locals common with global properties
-			bool bpba;
-			fPropertyExists = _propertyTable.TryGetValue("BooleanPropertyA", out bpba);
+			fPropertyExists = _propertyTable.TryGetValue("BooleanPropertyA", out bool bpba);
 			Assert.IsTrue(fPropertyExists, "best BooleanPropertyA not found.");
 			Assert.IsTrue(bpba, "Invalid value for best BooleanPropertyA.");
 			fPropertyExists = _propertyTable.TryGetValue("BooleanPropertyA", out bpba);
@@ -181,41 +170,33 @@ namespace LanguageExplorerTests.Impls
 			Assert.IsFalse(fPropertyExists, "best NonexistentPropertyA should not exist.");
 
 			// Test global property values.
-			bool gpba;
 			fPropertyExists = _propertyTable.PropertyExists("BooleanPropertyA", SettingsGroup.GlobalSettings);
 			Assert.IsTrue(fPropertyExists, "global BooleanPropertyA not found.");
 
-			int gpia;
 			fPropertyExists = _propertyTable.PropertyExists("IntegerPropertyA", SettingsGroup.GlobalSettings);
 			Assert.IsTrue(fPropertyExists, "global IntegerPropertyA not found.");
 
-			string gpsa;
 			fPropertyExists = _propertyTable.PropertyExists("StringPropertyA", SettingsGroup.GlobalSettings);
 			Assert.IsTrue(fPropertyExists, "global StringPropertyA not found.");
 
 			// Test local property values
-			bool lpba;
 			fPropertyExists = _propertyTable.PropertyExists("BooleanPropertyA", SettingsGroup.LocalSettings);
 			Assert.IsTrue(fPropertyExists, "local BooleanPropertyA not found.");
 
-			int lpia;
 			fPropertyExists = _propertyTable.PropertyExists("IntegerPropertyA", SettingsGroup.LocalSettings);
 			Assert.IsTrue(fPropertyExists, "local IntegerPropertyA not found.");
 
-			string lpsa;
 			fPropertyExists = _propertyTable.PropertyExists("StringPropertyA", SettingsGroup.LocalSettings);
 			Assert.IsTrue(fPropertyExists, "local StringPropertyA not found.");
 
 			// Test best settings
 			// Match on unique globals.
-			bool ugpba;
 			fPropertyExists = _propertyTable.PropertyExists("BestBooleanPropertyA");
 			Assert.IsTrue(fPropertyExists, "best BestBooleanPropertyA not found.");
 			fPropertyExists = _propertyTable.PropertyExists("BestBooleanPropertyA");
 			Assert.IsTrue(fPropertyExists, "best BestBooleanPropertyA not found.");
 
 			// Match on unique locals
-			int ulpia;
 			fPropertyExists = _propertyTable.PropertyExists("BestIntegerPropertyB");
 			Assert.IsTrue(fPropertyExists, "best BestIntegerPropertyB not found.");
 			fPropertyExists = _propertyTable.PropertyExists("BestIntegerPropertyB");
@@ -226,7 +207,6 @@ namespace LanguageExplorerTests.Impls
 			Assert.IsFalse(fPropertyExists, "best BestIntegerPropertyB not found.");
 
 			// Match best locals common with global properties
-			bool bpba;
 			fPropertyExists = _propertyTable.PropertyExists("BooleanPropertyA");
 			Assert.IsTrue(fPropertyExists, "best BooleanPropertyA not found.");
 			fPropertyExists = _propertyTable.PropertyExists("BooleanPropertyA");
@@ -575,7 +555,7 @@ namespace LanguageExplorerTests.Impls
 			gpsa = _propertyTable.GetValue("StringPropertyA", "local_StringPropertyC_value", SettingsGroup.GlobalSettings);
 			Assert.AreEqual("global_StringPropertyA_value", gpsa, "Invalid value for global StringPropertyA.");
 
-			// Make new properties. ------------------
+			// Make new properties.
 			//---- Global Settings
 			_propertyTable.SetProperty("BooleanPropertyC", true, true, settingsGroup: SettingsGroup.GlobalSettings);
 			var gpbc = _propertyTable.GetValue("BooleanPropertyC", false, SettingsGroup.GlobalSettings);
@@ -730,7 +710,7 @@ namespace LanguageExplorerTests.Impls
 			var lpsa = _propertyTable.GetValue<string>("StringPropertyA", SettingsGroup.LocalSettings);
 			Assert.AreEqual("local_StringPropertyA_value", lpsa, "Invalid value for local StringPropertyA.");
 
-			// Make new properties. ------------------
+			// Make new properties.
 			//---- Global Settings
 			_propertyTable.SetDefault("BooleanPropertyC", true, true, settingsGroup: SettingsGroup.GlobalSettings);
 			var gpbc = _propertyTable.GetValue("BooleanPropertyC", false, SettingsGroup.GlobalSettings);
@@ -744,7 +724,7 @@ namespace LanguageExplorerTests.Impls
 			var gpsc = _propertyTable.GetValue("StringPropertyC", "local_StringPropertyC_value", SettingsGroup.GlobalSettings);
 			Assert.AreEqual("global_StringPropertyC_value", gpsc, "Invalid value for global StringPropertyC.");
 
-			//---- Local Settings
+			// Local Settings
 			_propertyTable.SetDefault("BooleanPropertyC", false);
 			var lpbc = _propertyTable.GetValue("BooleanPropertyC", true, SettingsGroup.LocalSettings);
 			Assert.IsFalse(lpbc, "Invalid value for local BooleanPropertyC.");

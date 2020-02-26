@@ -89,8 +89,7 @@ namespace LanguageExplorer.Controls.SilSidePane
 		/// <summary />
 		protected override void OnItemAdded(ToolStripItemEventArgs e)
 		{
-			var button = e.Item as ToolStripButton;
-			if (button != null)
+			if (e.Item is ToolStripButton button)
 			{
 				button.DisplayStyle = ToolStripItemDisplayStyle.ImageAndText;
 				button.ImageAlign = ContentAlignment.MiddleCenter;

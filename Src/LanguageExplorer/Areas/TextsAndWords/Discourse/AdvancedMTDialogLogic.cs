@@ -63,8 +63,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 
 		private void CacheWordGroupOccurrencesForRibbon()
 		{
-			var words = m_wordGroup.GetOccurrences();
-			DlgRibbon.CacheRibbonItems(words);
+			DlgRibbon.CacheRibbonItems(m_wordGroup.GetOccurrences());
 		}
 
 		#region GetProperties

@@ -180,14 +180,8 @@ namespace LanguageExplorer.LcmUi.Dialogs
 		/// </summary>
 		public string TopMessage
 		{
-			get
-			{
-				return label1.Text;
-			}
-			set
-			{
-				label1.Text = value;
-			}
+			get => label1.Text;
+			set => label1.Text = value;
 		}
 
 		/// <summary>
@@ -196,14 +190,8 @@ namespace LanguageExplorer.LcmUi.Dialogs
 		/// </summary>
 		public string BottomQuestion
 		{
-			get
-			{
-				return label2.Text;
-			}
-			set
-			{
-				label2.Text = value;
-			}
+			get => label2.Text;
+			set => label2.Text = value;
 		}
 
 		/// <summary>
@@ -211,14 +199,8 @@ namespace LanguageExplorer.LcmUi.Dialogs
 		/// </summary>
 		public string TopBodyText
 		{
-			get
-			{
-				return m_descriptionBox3.Text;
-			}
-			set
-			{
-				m_descriptionBox3.Text = value;
-			}
+			get => m_descriptionBox3.Text;
+			set => m_descriptionBox3.Text = value;
 		}
 
 		/// <summary>
@@ -226,14 +208,8 @@ namespace LanguageExplorer.LcmUi.Dialogs
 		/// </summary>
 		public string BottomBodyText
 		{
-			get
-			{
-				return m_descriptionBox4.Text;
-			}
-			set
-			{
-				m_descriptionBox4.Text = value;
-			}
+			get => m_descriptionBox4.Text;
+			set => m_descriptionBox4.Text = value;
 		}
 
 		/// <summary>
@@ -241,14 +217,8 @@ namespace LanguageExplorer.LcmUi.Dialogs
 		/// </summary>
 		public string WindowTitle
 		{
-			get
-			{
-				return Text;
-			}
-			set
-			{
-				Text = value;
-			}
+			get => Text;
+			set => Text = value;
 		}
 
 		/// <summary>
@@ -256,14 +226,8 @@ namespace LanguageExplorer.LcmUi.Dialogs
 		/// </summary>
 		public string DeleteButtonText
 		{
-			get
-			{
-				return m_deleteButton.Text;
-			}
-			set
-			{
-				m_deleteButton.Text = value;
-			}
+			get => m_deleteButton.Text;
+			set => m_deleteButton.Text = value;
 		}
 
 		/// <summary>
@@ -271,14 +235,8 @@ namespace LanguageExplorer.LcmUi.Dialogs
 		/// </summary>
 		public string CancelButtonText
 		{
-			get
-			{
-				return m_cancelButton.Text;
-			}
-			set
-			{
-				m_cancelButton.Text = value;
-			}
+			get => m_cancelButton.Text;
+			set => m_cancelButton.Text = value;
 		}
 
 		#region Windows Form Designer generated code

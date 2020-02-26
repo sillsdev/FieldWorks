@@ -32,8 +32,6 @@ namespace LanguageExplorer.Areas.Lists.Tools.SenseTypeEdit
 		private CollapsingSplitContainer _collapsingSplitContainer;
 		private SenseMenuHelper _toolMenuHelper;
 		private IRecordList _recordList;
-		[Import(AreaServices.ListsAreaMachineName)]
-		private IArea _area;
 		private LcmCache _cache;
 
 		#region Implementation of IMajorFlexComponent
@@ -128,7 +126,8 @@ namespace LanguageExplorer.Areas.Lists.Tools.SenseTypeEdit
 		/// <summary>
 		/// Get the area for the tool.
 		/// </summary>
-		public IArea Area => _area;
+		[field: Import(AreaServices.ListsAreaMachineName)]
+		public IArea Area { get; private set; }
 
 		/// <summary>
 		/// Get the image for the area.
@@ -176,7 +175,6 @@ namespace LanguageExplorer.Areas.Lists.Tools.SenseTypeEdit
 
 				_majorFlexComponentParameters = majorFlexComponentParameters;
 				_sharedListToolsUiWidgetMenuHelper = new SharedListToolsUiWidgetMenuHelper(majorFlexComponentParameters, tool, list, recordList, dataTree);
-
 				SetupToolUiWidgets(tool);
 			}
 

@@ -172,7 +172,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		}
 
 		/// <summary>
-		/// We need a smarter selection restorere here, to try to keep the selection on the same object.
+		/// We need a smarter selection restorer here, to try to keep the selection on the same object.
 		/// </summary>
 		protected override SelectionRestorer CreateSelectionRestorer()
 		{
@@ -346,10 +346,8 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				return; // paranoia
 			}
-			int hvoRoot, tag, ihvo, ihvoEnd, cpropPrevious;
-			IVwPropertyStore vps;
-			vwselNew.PropInfo(true, clevEnd - 1, out hvoRoot, out tag, out ihvoEnd, out cpropPrevious, out vps);
-			vwselNew.PropInfo(false, clev - 1, out hvoRoot, out tag, out ihvo, out cpropPrevious, out vps);
+			vwselNew.PropInfo(true, clevEnd - 1, out var hvoRoot, out var tag, out var ihvoEnd, out _, out _);
+			vwselNew.PropInfo(false, clev - 1, out hvoRoot, out tag, out var ihvo, out _, out _);
 			// Give up if the selection doesn't indicate any top-level object; I think this can happen with pictures.
 			// selection larger than a top-level object, maybe select all, side effects are confusing.
 			if (ihvo != ihvoEnd || ihvo < 0)
@@ -410,11 +408,9 @@ namespace LanguageExplorer.Controls.XMLViews
 				oldSda = RootBox.DataAccess;
 				var sel = RootBox.Selection;
 				var clev = sel.CLevels(true);
-				int hvoObj, tag, ihvoEnd, ihvoAnchor, cpropPrevious;
-				IVwPropertyStore vps;
-				sel.PropInfo(true, clev - 1, out hvoObj, out tag, out ihvoEnd, out cpropPrevious, out vps);
+				sel.PropInfo(true, clev - 1, out _, out _, out var ihvoEnd, out _, out _);
 				clev = sel.CLevels(false);
-				sel.PropInfo(false, clev - 1, out hvoObj, out tag, out ihvoAnchor, out cpropPrevious, out vps);
+				sel.PropInfo(false, clev - 1, out _, out _, out var ihvoAnchor, out _, out _);
 				var originalObjects = m_sdaSource.VecProp(m_hvoRoot, m_mainFlid);
 				var ihvoMin = Math.Min(ihvoEnd, ihvoAnchor);
 				var ihvoLim = Math.Max(ihvoEnd, ihvoAnchor) + 1;
@@ -461,7 +457,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		{
 			private LcmCache Cache { get; }
 
-			public XmlSeqSelectionRestorer(SimpleRootSite rootSite, LcmCache cache) : base(rootSite)
+			internal XmlSeqSelectionRestorer(SimpleRootSite rootSite, LcmCache cache) : base(rootSite)
 			{
 				Cache = cache;
 			}
@@ -502,15 +498,11 @@ namespace LanguageExplorer.Controls.XMLViews
 				}
 				var rootLevelInfo = oldLevels[oldLevels.Length - 1];
 				var hvoTarget = rootLevelInfo.hvo;
-				ICmObject target;
 				var sda = m_savedSelection.RootSite.RootBox.DataAccess;
-				int rootHvo, frag;
-				IVwViewConstructor vc;
-				IVwStylesheet ss;
-				m_savedSelection.RootSite.RootBox.GetRootObject(out rootHvo, out vc, out frag, out ss);
+				m_savedSelection.RootSite.RootBox.GetRootObject(out var rootHvo, out _, out _, out _);
 				var vsliTarget = new[] { rootLevelInfo };
 				var chvo = sda.get_VecSize(rootHvo, rootLevelInfo.tag);
-				if (Cache.ServiceLocator.ObjectRepository.TryGetObject(hvoTarget, out target) && target is ILexEntry)
+				if (Cache.ServiceLocator.ObjectRepository.TryGetObject(hvoTarget, out var target) && target is ILexEntry)
 				{
 					// maybe we can't see it because it has become a subentry.
 					var subentry = (ILexEntry)target;
@@ -563,19 +555,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			/// </summary>
 			private bool IsGoodRestore(IVwSelection restored, bool wasRange)
 			{
-				if (restored.IsRange)
-				{
-					return true; // can't be a problem
-				}
-				if (!wasRange)
-				{
-					return true; // original was an IP, we expect the restored one to be.
-				}
-				if (m_rootSite.ReadOnlyView)
-				{
-					return false; // for a read-only view we want a range if at all possible.
-				}
-				return true; // for an editable view an IP is a reasonable result.
+				return restored.IsRange || !wasRange || !m_rootSite.ReadOnlyView;
 			}
 		}
 	}

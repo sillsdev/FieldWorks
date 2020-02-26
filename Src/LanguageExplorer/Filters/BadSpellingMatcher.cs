@@ -143,16 +143,14 @@ namespace LanguageExplorer.Filters
 			private bool CheckWord(int ichMinWord, int ichLimWord)
 			{
 				var word = TsStringUtils.NormalizeToNFC(m_text.Substring(ichMinWord, ichLimWord - ichMinWord));
-				TsRunInfo tri;
-				var props = m_tss.FetchRunInfoAt(ichMinWord, out tri);
-				int var;
-				var ws = props.GetIntPropValues((int)FwTextPropType.ktptWs, out var);
+				var props = m_tss.FetchRunInfoAt(ichMinWord, out var tri);
+				var ws = props.GetIntPropValues((int)FwTextPropType.ktptWs, out _);
 				var fFoundOurWs = ws == m_ws.Handle;
 				var fFoundOtherWs = ws != m_ws.Handle;
 				while (tri.ichLim < ichLimWord)
 				{
 					props = m_tss.FetchRunInfoAt(tri.ichLim, out tri);
-					ws = props.GetIntPropValues((int)FwTextPropType.ktptWs, out var);
+					ws = props.GetIntPropValues((int)FwTextPropType.ktptWs, out _);
 					fFoundOurWs |= ws == m_ws.Handle;
 					fFoundOtherWs |= ws != m_ws.Handle;
 				}

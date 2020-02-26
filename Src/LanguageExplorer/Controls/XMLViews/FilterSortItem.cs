@@ -136,14 +136,10 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <remarks>A Finder assigned here will be disposed by FilterSortItem.Dispose.</remarks>
 		public IStringFinder Finder
 		{
-			get
-			{
-				return m_finder;
-			}
+			get => m_finder;
 			set
 			{
 				(m_finder as IDisposable)?.Dispose();
-
 				m_finder = value;
 			}
 		}
@@ -154,10 +150,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <remarks>The Combo that gets set here will be disposed by FilterSortItem.</remarks>
 		public FwComboBox Combo
 		{
-			get
-			{
-				return m_combo;
-			}
+			get => m_combo;
 			set
 			{
 				(m_combo as IDisposable)?.Dispose();
@@ -170,10 +163,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		public IMatcher Matcher
 		{
-			get
-			{
-				return m_matcher;
-			}
+			get => m_matcher;
 			set
 			{
 				m_matcher = value;
@@ -190,10 +180,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <remarks>A Sorter assigned here will be disposed by FilterSortItem.Dispose.</remarks>
 		public RecordSorter Sorter
 		{
-			get
-			{
-				return m_sorter;
-			}
+			get => m_sorter;
 			set
 			{
 				(m_sorter as IDisposable)?.Dispose();
@@ -208,10 +195,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <remarks>A Filter assigned here will be disposed by FilterSortItem.Dispose.</remarks>
 		public RecordFilter Filter
 		{
-			get
-			{
-				return m_filter;
-			}
+			get => m_filter;
 			set
 			{
 				var old = m_filter;
@@ -220,7 +204,7 @@ namespace LanguageExplorer.Controls.XMLViews
 				// Change the filter if they are not the same );
 				if (FilterChanged != null && (m_filter != null && !m_filter.SameFilter(old)) || (old != null && !old.SameFilter(m_filter)))
 				{
-					FilterChanged(this, new FilterChangeEventArgs(m_filter, old));
+					FilterChanged?.Invoke(this, new FilterChangeEventArgs(m_filter, old));
 				}
 			}
 		}

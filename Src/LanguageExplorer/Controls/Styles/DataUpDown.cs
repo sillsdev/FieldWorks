@@ -3,6 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Linq;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel.Utils;
@@ -65,10 +66,7 @@ namespace LanguageExplorer.Controls.Styles
 		/// </summary>
 		public int Value
 		{
-			get
-			{
-				return m_currentValue;
-			}
+			get => m_currentValue;
 			set
 			{
 				if (value >= MinValue && value <= MaxValue)
@@ -144,13 +142,9 @@ namespace LanguageExplorer.Controls.Styles
 			switch (m_mode)
 			{
 				case DataUpDownMode.Normal:
-					foreach (var ch in text)
+					if (text.Any(ch => !char.IsDigit(ch)))
 					{
-						if (!char.IsDigit(ch))
-						{
-							newValue = -1;
-							break;
-						}
+						newValue = -1;
 					}
 					if (newValue != -1)
 					{

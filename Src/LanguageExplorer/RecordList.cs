@@ -725,8 +725,7 @@ namespace LanguageExplorer
 				{
 					return null;
 				}
-				ICmObject currentObject;
-				if (m_cache.ServiceLocator.ObjectRepository.TryGetObject(hvo, out currentObject))
+				if (m_cache.ServiceLocator.ObjectRepository.TryGetObject(hvo, out var currentObject))
 				{
 					return currentObject;
 				}
@@ -753,14 +752,8 @@ namespace LanguageExplorer
 
 		public virtual RecordFilter Filter
 		{
-			get
-			{
-				return m_filter;
-			}
-			set
-			{
-				m_filter = value;
-			}
+			get => m_filter;
+			set => m_filter = value;
 		}
 
 		public string FontName => m_fontName;
@@ -830,7 +823,7 @@ namespace LanguageExplorer
 		/// </summary>
 		public bool ListLoadingSuppressed
 		{
-			get { return m_suppressingLoadList; }
+			get => m_suppressingLoadList;
 			set
 			{
 				if (m_suppressingLoadList == value)
@@ -870,10 +863,7 @@ namespace LanguageExplorer
 		/// </summary>
 		public bool ListModificationInProgress
 		{
-			get
-			{
-				return UpdatingList;
-			}
+			get => UpdatingList;
 			set
 			{
 				UpdatingList = value;
@@ -940,12 +930,11 @@ namespace LanguageExplorer
 					// Change filter to whatever (if anything) replaces it.
 					m_filter = args.Added is NullFilter ? null : args.Added;
 				}
-				else if (m_filter is AndFilter)
+				else if (m_filter is AndFilter andFilter)
 				{
-					var af = (AndFilter)m_filter;
 					if (args.Removed != null)
 					{
-						af.Remove(args.Removed);
+						andFilter.Remove(args.Removed);
 					}
 					if (args.Added != null)
 					{
@@ -954,15 +943,15 @@ namespace LanguageExplorer
 						// that filter. Instead, we can just add nothing.
 						if (!(args.Added is NullFilter))
 						{
-							af.Add(args.Added);
+							andFilter.Add(args.Added);
 						}
 					}
 					// Remove AndFilter if we get down to one.
 					// This is not just an optimization, it allows the last filter to be removed
 					// leaving empty, so the status bar can show that there is then no filter.
-					if (af.Filters.Count == 1)
+					if (andFilter.Filters.Count == 1)
 					{
-						m_filter = af.Filters[0] as RecordFilter;
+						m_filter = andFilter.Filters[0] as RecordFilter;
 					}
 				}
 				else
@@ -983,7 +972,7 @@ namespace LanguageExplorer
 				var persistFilter = DynamicLoader.PersistObject(Filter, "filter");
 				PropertyTable.SetProperty(FilterPropertyTableId, persistFilter, true, true, SettingsGroup.LocalSettings);
 				// adjust menu bar items according to current state of Filter, where needed.
-				Publisher.Publish("AdjustFilterSelection", Filter);
+				Publisher.Publish(new PublisherParameterObject("AdjustFilterSelection", Filter));
 				UpdateFilterStatusBarPanel();
 				if (Filter != null)
 				{
@@ -1001,16 +990,15 @@ namespace LanguageExplorer
 		public void OnChangeFilterClearAll()
 		{
 			_activeMenuBarFilter = null; // there won't be a menu bar filter after this.
-			if (Filter is AndFilter)
+			if (Filter is AndFilter andFilter)
 			{
 				// If some parts are not user visible we should not remove them.
-				var af = (AndFilter)Filter;
-				var children = af.Filters;
+				var children = andFilter.Filters;
 				var childrenToKeep = children.Cast<RecordFilter>().Where(filter => !filter.IsUserVisible);
 				var count = childrenToKeep.Count();
 				if (count == 1)
 				{
-					OnChangeFilter(new FilterChangeEventArgs(childrenToKeep.First(), af));
+					OnChangeFilter(new FilterChangeEventArgs(childrenToKeep.First(), andFilter));
 					return;
 				}
 				if (count > 0)
@@ -1202,10 +1190,7 @@ namespace LanguageExplorer
 		/// </summary>
 		public ICmObject OwningObject
 		{
-			get
-			{
-				return m_owningObject;
-			}
+			get => m_owningObject;
 			set
 			{
 				if (ReferenceEquals(m_owningObject, value))
@@ -1305,8 +1290,8 @@ namespace LanguageExplorer
 		/// </summary>
 		public virtual bool RequestedLoadWhileSuppressed
 		{
-			get { return m_requestedLoadWhileSuppressed; }
-			set { m_requestedLoadWhileSuppressed = value; }
+			get => m_requestedLoadWhileSuppressed;
+			set => m_requestedLoadWhileSuppressed = value;
 		}
 
 		public void ResetFilterToDefault()
@@ -1400,14 +1385,8 @@ namespace LanguageExplorer
 		/// </summary>
 		public List<IManyOnePathSortItem> SortedObjects
 		{
-			get
-			{
-				return m_sortedObjects ?? (m_sortedObjects = new List<IManyOnePathSortItem>());
-			}
-			set
-			{
-				m_sortedObjects = value;
-			}
+			get => m_sortedObjects ?? (m_sortedObjects = new List<IManyOnePathSortItem>());
+			set => m_sortedObjects = value;
 		}
 
 		/// <summary>
@@ -1415,10 +1394,7 @@ namespace LanguageExplorer
 		/// </summary>
 		public RecordSorter Sorter
 		{
-			get
-			{
-				return m_sorter;
-			}
+			get => m_sorter;
 			set
 			{
 				m_sorter = value;
@@ -1674,8 +1650,7 @@ namespace LanguageExplorer
 		{
 			// see if the property is the VirtualFlid of the owning record list. If so,
 			// the owning record list has reloaded, so we should also reload.
-			IRecordList listProvidingRootObject;
-			if (TryListProvidingRootObject(out listProvidingRootObject) && listProvidingRootObject.VirtualFlid == tag && cvDel > 0)
+			if (TryListProvidingRootObject(out var listProvidingRootObject) && listProvidingRootObject.VirtualFlid == tag && cvDel > 0)
 			{
 				// we're deleting or replacing items, so assume need to reload.
 				// we want to wait until after everything is finished reloading, however.
@@ -1819,7 +1794,7 @@ namespace LanguageExplorer
 				m_sorter?.Preload(OwningObject);
 			}
 			var panel = PropertyTable.GetValue<StatusBarProgressPanel>("ProgressBar");
-			using (var progress = (panel == null) ? new NullProgressState() : new ProgressState(panel))
+			using (var progress = panel == null ? new NullProgressState() : new ProgressState(panel))
 			{
 				progress.SetMilestone(LanguageExplorerResources.ksSorting);
 				// Allocate an arbitrary 20% for making the items.
@@ -1934,8 +1909,7 @@ namespace LanguageExplorer
 			{
 				return;
 			}
-			var item = PropertyTable.GetValue<ListViewItem>(LanguageExplorerConstants.SelectedListBarNode);
-			if (item == null)
+			if (!PropertyTable.TryGetValue<ListViewItem>(LanguageExplorerConstants.SelectedListBarNode, out var item))
 			{
 				return;
 			}
@@ -1956,8 +1930,7 @@ namespace LanguageExplorer
 			{
 				return;
 			}
-			var node = PropertyTable.GetValue<TreeNode>(LanguageExplorerConstants.SelectedTreeBarNode);
-			if (node == null)
+			if (!PropertyTable.TryGetValue<TreeNode>(LanguageExplorerConstants.SelectedTreeBarNode, out var node))
 			{
 				return;
 			}
@@ -1991,7 +1964,7 @@ namespace LanguageExplorer
 					{
 						CurrentIndex = FindClosestValidIndex(idx, cobj);
 					}
-					Publisher.Publish(LanguageExplorerConstants.StopParser, null);  // stop parser if it's running.
+					Publisher.Publish(new PublisherParameterObject(LanguageExplorerConstants.StopParser));  // stop parser if it's running.
 				}
 				finally
 				{
@@ -2021,7 +1994,7 @@ namespace LanguageExplorer
 		{
 			for (var i = idx + 1; i < cobj; ++i)
 			{
-				var item = (IManyOnePathSortItem)SortedObjects[i];
+				var item = SortedObjects[i];
 				if (!m_cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(item.KeyObject).IsValidObject)
 				{
 					continue;
@@ -2038,7 +2011,7 @@ namespace LanguageExplorer
 			}
 			for (var i = idx - 1; i >= 0; --i)
 			{
-				var item = (IManyOnePathSortItem)SortedObjects[i];
+				var item = SortedObjects[i];
 				if (!m_cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(item.KeyObject).IsValidObject)
 				{
 					continue;
@@ -2152,7 +2125,7 @@ namespace LanguageExplorer
 		{
 			if (!_reloadingDueToMissingObject)
 			{
-				Publisher.Publish("SaveScrollPosition", null);
+				Publisher.Publish(new PublisherParameterObject("SaveScrollPosition"));
 			}
 		}
 
@@ -2160,7 +2133,7 @@ namespace LanguageExplorer
 		{
 			if (!_reloadingDueToMissingObject)
 			{
-				Publisher.Publish("RestoreScrollPosition", null);
+				Publisher.Publish(new PublisherParameterObject("RestoreScrollPosition"));
 			}
 		}
 
@@ -2372,16 +2345,7 @@ namespace LanguageExplorer
 
 		protected virtual string GetStatusBarMsgForCurrentObject()
 		{
-			string msg;
-			if (!m_cache.ServiceLocator.IsValidObjectId(CurrentObjectHvo))
-			{
-				msg = LanguageExplorerResources.ADeletedObject;
-			}
-			else
-			{
-				msg = CurrentObject.ToStatusBar();
-			}
-			return msg;
+			return !m_cache.ServiceLocator.IsValidObjectId(CurrentObjectHvo) ? LanguageExplorerResources.ADeletedObject : CurrentObject.ToStatusBar();
 		}
 
 		/// <summary />
@@ -2471,9 +2435,9 @@ namespace LanguageExplorer
 			}
 			// (LT-9515) restored sorters need to set some properties that could not be persisted.
 			sorter.Cache = m_cache;
-			if (sorter is GenRecordSorter)
+			if (sorter is GenRecordSorter genRecordSorter)
 			{
-				var comparer = ((GenRecordSorter)sorter).Comparer;
+				var comparer = genRecordSorter.Comparer;
 				WritingSystemComparer subComparer = null;
 				if (comparer != null)
 				{
@@ -2595,7 +2559,7 @@ namespace LanguageExplorer
 			var msg = FilterStatusContents(Filter != null && Filter.IsUserVisible);
 			if (IgnoreStatusPanel)
 			{
-				Publisher.Publish("DialogFilterStatus", msg);
+				Publisher.Publish(new PublisherParameterObject("DialogFilterStatus", msg));
 			}
 			else
 			{
@@ -2644,8 +2608,7 @@ namespace LanguageExplorer
 			// This may be a change to content we depend upon.
 			// 1) see if the property is the VirtualFlid of the owning record list. If so,
 			// the owning record list has reloaded, so we should also reload.
-			IRecordList listProvidingRootObject;
-			if (TryListProvidingRootObject(out listProvidingRootObject) && listProvidingRootObject.VirtualFlid == tag && cvDel > 0)
+			if (TryListProvidingRootObject(out var listProvidingRootObject) && listProvidingRootObject.VirtualFlid == tag && cvDel > 0)
 			{
 				// we're deleting or replacing items, so assume need to reload.
 				// we want to wait until after everything is finished reloading, however.
@@ -2891,10 +2854,10 @@ namespace LanguageExplorer
 				return;
 			}
 			m_sorter.DataAccess = VirtualListPublisher;
-			if (m_sorter is IReportsSortProgress)
+			if (m_sorter is IReportsSortProgress reportsSortProgress)
 			{
 				// Uses the last 80% of the bar (first part used for building the list).
-				((IReportsSortProgress)m_sorter).SetPercentDone = percent =>
+				reportsSortProgress.SetPercentDone = percent =>
 				{
 					progress.PercentDone = 20 + percent * 4 / 5;
 					progress.Breath();
@@ -3214,7 +3177,7 @@ namespace LanguageExplorer
 
 		protected virtual bool CanInsertClass(string className)
 		{
-			return (GetMatchingClass(className) != null);
+			return GetMatchingClass(className) != null;
 		}
 
 		/// <summary>
@@ -3356,7 +3319,7 @@ namespace LanguageExplorer
 				owners.Add(owner.Hvo);
 			}
 			var i = 0;
-			foreach (IManyOnePathSortItem item in SortedObjects)
+			foreach (var item in SortedObjects)
 			{
 				if (owners.Contains(item.RootObjectHvo))
 				{

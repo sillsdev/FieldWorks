@@ -65,8 +65,8 @@ namespace LanguageExplorer.LcmUi
 		/// </summary>
 		public int Position
 		{
-			get { return ProgressBar.Value; }
-			set { ProgressBar.Value = value; }
+			get => ProgressBar.Value;
+			set => ProgressBar.Value = value;
 		}
 
 		/// <summary>
@@ -74,8 +74,8 @@ namespace LanguageExplorer.LcmUi
 		/// </summary>
 		public int StepSize
 		{
-			get { return ProgressBar.Step; }
-			set { ProgressBar.Step = value; }
+			get => ProgressBar.Step;
+			set => ProgressBar.Step = value;
 		}
 
 		/// <summary>
@@ -83,16 +83,16 @@ namespace LanguageExplorer.LcmUi
 		/// </summary>
 		public int Minimum
 		{
-			get { return ProgressBar.Minimum; }
-			set { ProgressBar.Minimum = value; }
+			get => ProgressBar.Minimum;
+			set => ProgressBar.Minimum = value;
 		}
 		/// <summary>
 		/// The maximum value of the progress bar.
 		/// </summary>
 		public int Maximum
 		{
-			get { return ProgressBar.Maximum; }
-			set { ProgressBar.Maximum = value; }
+			get => ProgressBar.Maximum;
+			set => ProgressBar.Maximum = value;
 		}
 
 		/// <summary>
@@ -111,8 +111,8 @@ namespace LanguageExplorer.LcmUi
 		/// </summary>
 		public bool IsIndeterminate
 		{
-			get { return ProgressBar.Style == ProgressBarStyle.Marquee; }
-			set { ProgressBar.Style = value ? ProgressBarStyle.Marquee : ProgressBarStyle.Continuous; }
+			get => ProgressBar.Style == ProgressBarStyle.Marquee;
+			set => ProgressBar.Style = value ? ProgressBarStyle.Marquee : ProgressBarStyle.Continuous;
 		}
 
 		/// <summary>
@@ -121,7 +121,7 @@ namespace LanguageExplorer.LcmUi
 		/// </summary>
 		public bool AllowCancel
 		{
-			get { return false; }
+			get => false;
 			set { }
 		}
 		#endregion

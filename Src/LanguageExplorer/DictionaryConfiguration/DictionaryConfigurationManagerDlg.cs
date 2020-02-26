@@ -72,7 +72,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 
 		internal string HelpTopic
 		{
-			get { return m_helpTopic ?? (m_helpTopic = "khtpDictConfigManager"); }
+			get => m_helpTopic ?? (m_helpTopic = "khtpDictConfigManager");
 			set
 			{
 				if (string.IsNullOrEmpty(value))
@@ -84,7 +84,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 			}
 		}
 
-		public string ConfigurationGroupText { set { configurationsGroupBox.Text = value; } }
+		public string ConfigurationGroupText { set => configurationsGroupBox.Text = value; }
 
 		private void helpButton_Click(object sender, EventArgs e)
 		{

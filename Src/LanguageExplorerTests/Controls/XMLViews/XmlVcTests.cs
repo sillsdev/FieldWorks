@@ -127,8 +127,7 @@ namespace LanguageExplorerTests.Controls.XMLViews
 		{
 			for (var i = 1; i < events.Count; i++)
 			{
-				var ssp = events[i] as StringAltMemberAdded;
-				if (ssp == null || ssp.Hvo != hvo || ssp.Tag != tag || ssp.Ws != ws)
+				if (!(events[i] is StringAltMemberAdded ssp) || ssp.Hvo != hvo || ssp.Tag != tag || ssp.Ws != ws)
 				{
 					continue;
 				}
@@ -144,8 +143,7 @@ namespace LanguageExplorerTests.Controls.XMLViews
 		{
 			for (var i = 1; i < events.Count; i++)
 			{
-				var spa = events[i] as StringPropAdded;
-				if (spa == null || spa.Hvo != hvo || spa.Tag != tag)
+				if (!(events[i] is StringPropAdded spa) || spa.Hvo != hvo || spa.Tag != tag)
 				{
 					continue;
 				}
@@ -161,8 +159,7 @@ namespace LanguageExplorerTests.Controls.XMLViews
 		{
 			for (var i = 1; i < events.Count; i++)
 			{
-				var ssp = events[i] as StringAltMemberAdded;
-				if (ssp == null || ssp.Hvo != hvo || ssp.Tag != tag || ssp.Ws != ws)
+				if (!(events[i] is StringAltMemberAdded ssp) || ssp.Hvo != hvo || ssp.Tag != tag || ssp.Ws != ws)
 				{
 					continue;
 				}
@@ -325,7 +322,7 @@ namespace LanguageExplorerTests.Controls.XMLViews
 			/// <summary />
 			public void AddStringProp(int tag, IVwViewConstructor vc)
 			{
-				EventHistory.Add(new StringPropAdded() { Hvo = OpenObject, Tag = tag, Vc = vc });
+				EventHistory.Add(new StringPropAdded { Hvo = OpenObject, Tag = tag, Vc = vc });
 			}
 
 			/// <summary />
@@ -349,7 +346,7 @@ namespace LanguageExplorerTests.Controls.XMLViews
 			/// <summary />
 			public void AddStringAltMember(int tag, int ws, IVwViewConstructor vc)
 			{
-				EventHistory.Add(new StringAltMemberAdded() { Hvo = OpenObject, Tag = tag, Ws = ws, Vc = vc });
+				EventHistory.Add(new StringAltMemberAdded { Hvo = OpenObject, Tag = tag, Ws = ws, Vc = vc });
 			}
 
 			/// <summary />
@@ -367,7 +364,6 @@ namespace LanguageExplorerTests.Controls.XMLViews
 			/// <summary>
 			/// Add literal text that is not a property and not editable.
 			/// </summary>
-			/// <param name="_ss"/>
 			public void AddString(ITsString ss)
 			{
 				EventHistory.Add(new StringAdded { Content = ss });
@@ -600,7 +596,7 @@ namespace LanguageExplorerTests.Controls.XMLViews
 				throw new NotSupportedException();
 			}
 
-			public List<object> EventHistory = new List<object>();
+			public readonly List<object> EventHistory = new List<object>();
 
 			/// <summary />
 			public void set_StringProperty(int sp, string bstrValue)
@@ -642,10 +638,7 @@ namespace LanguageExplorerTests.Controls.XMLViews
 			public int OpenObject { get; set; }
 
 			/// <summary />
-			public int EmbeddingLevel
-			{
-				get { throw new NotSupportedException(); }
-			}
+			public int EmbeddingLevel => throw new NotSupportedException();
 
 			/// <summary />
 			public ISilDataAccess DataAccess { get; set; }
@@ -653,7 +646,7 @@ namespace LanguageExplorerTests.Controls.XMLViews
 			/// <summary />
 			public ITsTextProps Props
 			{
-				set { throw new NotSupportedException(); }
+				set => throw new NotSupportedException();
 			}
 		}
 	}

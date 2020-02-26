@@ -204,14 +204,12 @@ namespace LanguageExplorer.DictionaryConfiguration
 				LexRelType = XmlUtils.GetOptionalAttributeValue(config, "lexreltype");
 				if (!string.IsNullOrEmpty(LexRelType))
 				{
-					var sRelTypes = XmlUtils.GetOptionalAttributeValue(config, "reltypeseq");
-					RelTypeList = LexReferenceInfo.CreateListFromStorageString(sRelTypes);
+					RelTypeList = LexReferenceInfo.CreateListFromStorageString(XmlUtils.GetOptionalAttributeValue(config, "reltypeseq"));
 				}
 				EntryType = XmlUtils.GetOptionalAttributeValue(config, "entrytype");
 				if (!string.IsNullOrEmpty(EntryType))
 				{
-					var sTypeseq = XmlUtils.GetOptionalAttributeValue(config, "entrytypeseq");
-					EntryTypeList = ItemTypeInfo.CreateListFromStorageString(sTypeseq);
+					EntryTypeList = ItemTypeInfo.CreateListFromStorageString(XmlUtils.GetOptionalAttributeValue(config, "entrytypeseq"));
 				}
 			}
 			Checked = m_sVisibility.ToLowerInvariant() != "never";
@@ -358,7 +356,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 
 		public string Label
 		{
-			get { return m_sLabel; }
+			get => m_sLabel;
 			set
 			{
 				m_sLabel = value;
@@ -438,7 +436,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 
 		public string WsLabel
 		{
-			get { return m_sWsLabel; }
+			get => m_sWsLabel;
 			set
 			{
 				var temp = value;
@@ -455,20 +453,13 @@ namespace LanguageExplorer.DictionaryConfiguration
 			{
 				return false;
 			}
-
 			var magicId = WritingSystemServices.GetMagicWsIdFromName(possibleMagicLabel);
 			if (magicId == 0)
 			{
 				return false;
 			}
-
 			var newId = WritingSystemServices.GetMagicWsIdFromName(newValue);
-			if (newId == 0)
-			{
-				return false;
-			}
-
-			return newId == WritingSystemServices.SmartMagicWsToSimpleMagicWs(magicId);
+			return newId != 0 && newId == WritingSystemServices.SmartMagicWsToSimpleMagicWs(magicId);
 		}
 
 		public string WsType { get; set; }
@@ -503,8 +494,12 @@ namespace LanguageExplorer.DictionaryConfiguration
 
 		public bool ShowComplexFormPara
 		{
-			get { return m_fShowComplexFormPara; }
-			set { m_fShowComplexFormPara = value; AllowParaStyle = value; }
+			get => m_fShowComplexFormPara;
+			set
+			{
+				m_fShowComplexFormPara = value;
+				AllowParaStyle = value;
+			}
 		}
 
 		public bool ShowWsLabels { get; set; }
@@ -515,7 +510,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 
 		public string DupString
 		{
-			get { return m_sDup; }
+			get => m_sDup;
 			set
 			{
 				m_sDup = value;
@@ -548,10 +543,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 
 		internal int OriginalNumberOfSubnodes
 		{
-			get
-			{
-				return m_cSubnodes == -1 ? 0 : m_cSubnodes;
-			}
+			get => m_cSubnodes == -1 ? 0 : m_cSubnodes;
 			set
 			{
 				Debug.Assert(value >= m_cSubnodes);
@@ -775,7 +767,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 
 		internal XElement HiddenChild
 		{
-			get { return m_xnHiddenChild; }
+			get => m_xnHiddenChild;
 			set
 			{
 				m_xnHiddenChild = value;
@@ -876,13 +868,8 @@ namespace LanguageExplorer.DictionaryConfiguration
 					}
 					if (Level == 0 && !IsTopLevel && xnDirtyLayout == ParentLayout)
 					{
-						foreach (var ltn in topNodes)
+						foreach (var ltn in topNodes.Where(ltn => !ltn.IsTopLevel && ltn.ParentLayout == xnDirtyLayout))
 						{
-							if (ltn.IsTopLevel || ltn.ParentLayout != xnDirtyLayout)
-							{
-								continue;
-							}
-
 							if (fDirty && ltn == this)
 							{
 								ltn.StoreUpdatedValuesInConfiguration();
@@ -996,8 +983,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 
 		private static void UpdateAttributeIfDirty(XElement xn, string sName, string sValue)
 		{
-			var sOldValue = XmlUtils.GetOptionalAttributeValue(xn, sName);
-			if (StringsDiffer(sValue, sOldValue))
+			if (StringsDiffer(sValue, XmlUtils.GetOptionalAttributeValue(xn, sName)))
 			{
 				UpdateAttribute(xn, sName, sValue);
 			}
@@ -1066,10 +1052,8 @@ namespace LanguageExplorer.DictionaryConfiguration
 		/// </summary>
 		private void CopyPartAttributes(XElement xn)
 		{
-			var sVisibility = XmlUtils.GetOptionalAttributeValue(xn, "visibility");
-			var fContentVisible = sVisibility != "never";
 			ContentVisible = Checked;    // in case (un)checked in treeview, but node never selected.
-			if (fContentVisible != ContentVisible)
+			if (XmlUtils.GetOptionalAttributeValue(xn, "visibility") != "never" != ContentVisible)
 			{
 				UpdateAttribute(xn, "visibility", ContentVisible ? "ifdata" : "never");
 			}
@@ -1098,8 +1082,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 				UpdateAttribute(xn, "numsingle", NumberSingleSense.ToString());
 			}
 			UpdateAttributeIfDirty(xn, "numfont", NumFont);
-			var fSingleGramInfoFirst = XmlUtils.GetOptionalBooleanAttributeValue(Configuration, "singlegraminfofirst", false);
-			if (fSingleGramInfoFirst != ShowSingleGramInfoFirst)
+			if (XmlUtils.GetOptionalBooleanAttributeValue(Configuration, "singlegraminfofirst", false) != ShowSingleGramInfoFirst)
 			{
 				UpdateAttribute(xn, "singlegraminfofirst", ShowSingleGramInfoFirst.ToString());
 				LayoutTreeNode ltnOther = null;
@@ -1107,8 +1090,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 				{
 					foreach (TreeNode n in Nodes)
 					{
-						var ltn = n as LayoutTreeNode;
-						if (ltn != null && ltn.ShowGramInfoConfig)
+						if (n is LayoutTreeNode ltn && ltn.ShowGramInfoConfig)
 						{
 							ltnOther = ltn;
 							break;
@@ -1117,8 +1099,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 				}
 				else if (ShowGramInfoConfig)
 				{
-					var ltn = Parent as LayoutTreeNode;
-					if (ltn != null && ltn.ShowSenseConfig)
+					if (Parent is LayoutTreeNode ltn && ltn.ShowSenseConfig)
 					{
 						ltnOther = ltn;
 					}
@@ -1130,37 +1111,31 @@ namespace LanguageExplorer.DictionaryConfiguration
 			}
 			if (ShowSenseConfig)
 			{
-				var fSenseIsPara = Param != null && Param.EndsWith("_AsPara");
-				var sSenseParaStyle = XmlUtils.GetOptionalAttributeValue(Configuration, "parastyle");
-				if (fSenseIsPara != ShowSenseAsPara || sSenseParaStyle != SenseParaStyle)
+				if (Param != null && Param.EndsWith("_AsPara") != ShowSenseAsPara || XmlUtils.GetOptionalAttributeValue(Configuration, "parastyle") != SenseParaStyle)
 				{
 					UpdateSenseConfig(xn);
 				}
 			}
-			var fShowComplexFormPara = XmlUtils.GetOptionalBooleanAttributeValue(Configuration, "showasindentedpara", false);
-			if (fShowComplexFormPara != m_fShowComplexFormPara)
+			if (XmlUtils.GetOptionalBooleanAttributeValue(Configuration, "showasindentedpara", false) != m_fShowComplexFormPara)
 			{
 				UpdateAttribute(xn, "showasindentedpara", m_fShowComplexFormPara.ToString());
 			}
-			var fShowWsLabels = XmlUtils.GetOptionalBooleanAttributeValue(xn, "showLabels", false);
-			if (fShowWsLabels != ShowWsLabels)
+			if (XmlUtils.GetOptionalBooleanAttributeValue(xn, "showLabels", false) != ShowWsLabels)
 			{
 				UpdateAttribute(xn, "showLabels", ShowWsLabels.ToString());
 			}
 			if (!string.IsNullOrEmpty(LexRelType))
 			{
-				var sOrigRefTypeSeq = XmlUtils.GetOptionalAttributeValue(Configuration, "reltypeseq");
 				var sNewRefTypeSeq = LexRelTypeSequence;
-				if (sOrigRefTypeSeq != sNewRefTypeSeq)
+				if (XmlUtils.GetOptionalAttributeValue(Configuration, "reltypeseq") != sNewRefTypeSeq)
 				{
 					UpdateAttribute(xn, "reltypeseq", sNewRefTypeSeq);
 				}
 			}
 			if (!string.IsNullOrEmpty(EntryType))
 			{
-				var sOrigEntryTypeSeq = XmlUtils.GetOptionalAttributeValue(Configuration, "entrytypeseq");
 				var sNewEntryTypeSeq = EntryTypeSequence;
-				if (sOrigEntryTypeSeq != sNewEntryTypeSeq)
+				if (XmlUtils.GetOptionalAttributeValue(Configuration, "entrytypeseq") != sNewEntryTypeSeq)
 				{
 					UpdateAttribute(xn, "entrytypeseq", sNewEntryTypeSeq);
 				}
@@ -1249,13 +1224,11 @@ namespace LanguageExplorer.DictionaryConfiguration
 				var sStyleChild = ltn.NumStyle;
 				if (sStyle != sStyleChild)
 				{
-					var sStyleOld = XmlUtils.GetOptionalAttributeValue(Configuration, "numstyle");
-					var sStyleChildOld = XmlUtils.GetOptionalAttributeValue(ltn.Configuration, "numstyle");
-					if (sStyle != sStyleOld)
+					if (sStyle != XmlUtils.GetOptionalAttributeValue(Configuration, "numstyle"))
 					{
 						ltn.NumStyle = sStyle;
 					}
-					else if (sStyleChild != sStyleChildOld)
+					else if (sStyleChild != XmlUtils.GetOptionalAttributeValue(ltn.Configuration, "numstyle"))
 					{
 						NumStyle = sStyleChild;
 					}
@@ -1265,13 +1238,11 @@ namespace LanguageExplorer.DictionaryConfiguration
 				var sFontChild = ltn.NumFont;
 				if (sFont != sFontChild)
 				{
-					var sFontOld = XmlUtils.GetOptionalAttributeValue(Configuration, "numfont");
-					var sFontChildOld = XmlUtils.GetOptionalAttributeValue(ltn.Configuration, "numfont");
-					if (sFont != sFontOld)
+					if (sFont != XmlUtils.GetOptionalAttributeValue(Configuration, "numfont"))
 					{
 						ltn.NumFont = sFont;
 					}
-					else if (sFontChild != sFontChildOld)
+					else if (sFontChild != XmlUtils.GetOptionalAttributeValue(ltn.Configuration, "numfont"))
 					{
 						NumFont = sFontChild;
 					}

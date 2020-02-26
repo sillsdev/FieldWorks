@@ -118,7 +118,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		internal ConcordanceControlBase ConcordanceControl
 		{
-			get { return _concordanceControl; }
+			get => _concordanceControl;
 			set
 			{
 				_concordanceControl = value;

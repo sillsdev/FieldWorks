@@ -136,9 +136,8 @@ namespace LanguageExplorer.Areas.Grammar
 						AreaServices.GrammarSketchMachineName,
 						AreaServices.LexiconProblemsMachineName
 					};
-					foreach (var toolName in myBuiltinToolsInOrder)
+					foreach (var currentBuiltinTool in myBuiltinToolsInOrder.Select(toolName => _myTools.First(tool => tool.MachineName == toolName)))
 					{
-						var currentBuiltinTool = _myTools.First(tool => tool.MachineName == toolName);
 						_dictionaryOfAllTools.Add(currentBuiltinTool.UiName, currentBuiltinTool);
 					}
 					// Add user-defined tools in unspecified order, but after the fully supported tools.

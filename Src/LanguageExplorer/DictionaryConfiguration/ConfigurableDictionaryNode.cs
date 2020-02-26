@@ -224,12 +224,12 @@ namespace LanguageExplorer.DictionaryConfiguration
 		/// <summary>
 		/// Whether this is a SharedItem.
 		/// </summary>
-		internal bool IsSharedItem => Parent != null && Parent.ReferencedNode != null;
+		internal bool IsSharedItem => Parent?.ReferencedNode != null;
 
 		/// <summary>
 		/// Whether this has a SharedItem anywhere in its ancestry
 		/// </summary>
-		internal bool IsSharedItemOrDescendant { get { ConfigurableDictionaryNode dummy; return TryGetMasterParent(out dummy); } }
+		internal bool IsSharedItemOrDescendant => TryGetMasterParent(out _);
 
 		/// <summary>
 		/// Finds the nearest Master Parent in this node's ancestry if this is a SharedItem or descendent;
@@ -320,13 +320,11 @@ namespace LanguageExplorer.DictionaryConfiguration
 
 		public override bool Equals(object other)
 		{
-			var otherNode = other as ConfigurableDictionaryNode;
-			if (otherNode == null || Label != otherNode.Label || LabelSuffix != otherNode.LabelSuffix || FieldDescription != otherNode.FieldDescription)
-			{
-				return false;
-			}
-			// The rules for our tree prevent two same-named nodes under a parent
-			return CheckParents(this, otherNode);
+			return other is ConfigurableDictionaryNode configurableDictionaryNode
+				   && Label == configurableDictionaryNode.Label
+				   && LabelSuffix == configurableDictionaryNode.LabelSuffix
+				   && FieldDescription == configurableDictionaryNode.FieldDescription
+				   && CheckParents(this, configurableDictionaryNode);
 		}
 
 		/// <summary>
@@ -334,15 +332,8 @@ namespace LanguageExplorer.DictionaryConfiguration
 		/// </summary>
 		private static bool CheckParents(ConfigurableDictionaryNode first, ConfigurableDictionaryNode second)
 		{
-			if (first == null && second == null)
-			{
-				return true;
-			}
-			if (first == null ^ second == null || first.Parent == null ^ second.Parent == null) // ^ is XOR
-			{
-				return false;
-			}
-			return first.Label == second.Label && first.LabelSuffix == second.LabelSuffix && CheckParents(first.Parent, second.Parent);
+			return first == null && second == null || !(first == null ^ second == null)
+				   && !(first.Parent == null ^ second.Parent == null) && first.Label == second.Label && first.LabelSuffix == second.LabelSuffix && CheckParents(first.Parent, second.Parent);
 		}
 
 		/// <summary>

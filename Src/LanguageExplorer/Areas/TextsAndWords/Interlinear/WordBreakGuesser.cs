@@ -80,7 +80,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				m_maxChars = Math.Max(m_maxChars, word.Length);
 				m_minChars = Math.Min(m_minChars, word.Length);
 			}
-
 			//Add all the stems from the Lexicon including all their allomorphs (as I understand this it will capture phrases as well -naylor Aug 2011)
 			foreach (var stem in m_cache.ServiceLocator.GetInstance<ILexEntryRepository>().AllInstances())
 			{
@@ -247,17 +246,12 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// <param name="worstPossible">characters in sentence</param>
 		private static int CalculateScore(List<WordLoc> wordList, int worstPossible)
 		{
-			var score = worstPossible;
-			return wordList?.Aggregate(score, (current, wordLoc) => current - wordLoc.Length) ?? score;
+			return wordList?.Aggregate(worstPossible, (current, wordLoc) => current - wordLoc.Length) ?? worstPossible;
 		}
 
 		private static bool SpaceAt(ITsStrBldr bldr, int ich)
 		{
-			if (ich >= bldr.Length || ich < 0)
-			{
-				return false;
-			}
-			return bldr.Text[ich] == ' ' || bldr.Text[ich] == '\u200B'; // optimize: do some trick with FetchChars
+			return ich < bldr.Length && ich >= 0 && (bldr.Text[ich] == ' ' || bldr.Text[ich] == '\u200B');
 		}
 
 		private static void InsertSpace(ITsStrBldr bldr, int ich)

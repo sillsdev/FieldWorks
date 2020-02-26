@@ -70,15 +70,14 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 						{
 							return;     // What if the user deleted all the texts?  See LT-6727.
 						}
-						var stText = m_coRepository.GetObject(hvo) as IStText;
+						var stText = (IStText)m_coRepository.GetObject(hvo);
 						vwenv.set_IntProperty((int)FwTextPropType.ktptEditable, (int)FwTextPropVar.ktpvDefault, (int)TptEditable.ktptNotEditable);
 						vwenv.OpenDiv();
 						vwenv.set_IntProperty((int)FwTextPropType.ktptMarginBottom, (int)FwTextPropVar.ktpvMilliPoint, 6000);
 						vwenv.set_IntProperty((int)FwTextPropType.ktptFontSize, (int)FwTextPropVar.ktpvMilliPoint, 24000);
 						// Add both vernacular and analysis if we have them (LT-5561).
 						var fAddedVernacular = false;
-						int wsVernTitle;
-						if (stText.Title.TryWs(WritingSystemServices.kwsFirstVern, out wsVernTitle))
+						if (stText.Title.TryWs(WritingSystemServices.kwsFirstVern, out var wsVernTitle))
 						{
 							vwenv.OpenParagraph();
 							vwenv.AddStringAltMember(vtagStTextTitle, wsVernTitle, this);
@@ -87,9 +86,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 						}
 						vwenv.set_IntProperty((int)FwTextPropType.ktptMarginBottom, (int)FwTextPropVar.ktpvMilliPoint, 10000);
 						vwenv.OpenParagraph();
-						ITsString tssAnal;
-						int wsAnalysisTitle;
-						if (stText.Title.TryWs(WritingSystemServices.kwsFirstAnal, out wsAnalysisTitle, out tssAnal) && !tssAnal.Equals(stText.Title.BestVernacularAlternative))
+						if (stText.Title.TryWs(WritingSystemServices.kwsFirstAnal, out var wsAnalysisTitle, out var tssAnal) && !tssAnal.Equals(stText.Title.BestVernacularAlternative))
 						{
 							if (fAddedVernacular)
 							{
@@ -101,13 +98,11 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 						else
 						{
 							// just add a blank title.
-							var blankTitle = TsStringUtils.EmptyString(m_wsAnalysis);
-							vwenv.AddString(blankTitle);
+							vwenv.AddString(TsStringUtils.EmptyString(m_wsAnalysis));
 						}
 						vwenv.CloseParagraph();
 						vwenv.set_IntProperty((int)FwTextPropType.ktptMarginBottom, (int)FwTextPropVar.ktpvMilliPoint, 10000);
-						int wsSource;
-						if (stText.Source.TryWs(WritingSystemServices.kwsFirstVernOrAnal, out wsSource))
+						if (stText.Source.TryWs(WritingSystemServices.kwsFirstVernOrAnal, out var wsSource))
 						{
 							vwenv.OpenParagraph();
 							vwenv.set_IntProperty((int)FwTextPropType.ktptFontSize, (int)FwTextPropVar.ktpvMilliPoint, 12000);
@@ -117,8 +112,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 						else
 						{
 							// just add a blank source.
-							var tssBlank = TsStringUtils.EmptyString(m_wsAnalysis);
-							vwenv.AddString(tssBlank);
+							vwenv.AddString(TsStringUtils.EmptyString(m_wsAnalysis));
 						}
 						vwenv.set_IntProperty((int)FwTextPropType.ktptMarginBottom, (int)FwTextPropVar.ktpvMilliPoint, 10000);
 						vwenv.OpenParagraph();

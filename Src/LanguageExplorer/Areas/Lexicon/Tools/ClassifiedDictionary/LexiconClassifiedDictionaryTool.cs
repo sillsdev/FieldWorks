@@ -28,8 +28,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ClassifiedDictionary
 		private LexiconClassifiedDictionaryToolMenuHelper _toolMenuHelper;
 		private PaneBarContainer _paneBarContainer;
 		private IRecordList _recordList;
-		[Import(AreaServices.LexiconAreaMachineName)]
-		private IArea _area;
 
 		#region Implementation of IMajorFlexComponent
 
@@ -73,7 +71,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ClassifiedDictionary
 			// NB: XmlDocView adds user control handler.
 			var xmlDocView = new XmlDocView(XDocument.Parse(AreaResources.LexiconClassifiedDictionaryParameters).Root, majorFlexComponentParameters.LcmCache, _recordList, majorFlexComponentParameters.UiWidgetController, AreaResources.Classified_Dictionary);
 			_paneBarContainer = PaneBarContainerFactory.Create(majorFlexComponentParameters.FlexComponentParameters, majorFlexComponentParameters.MainCollapsingSplitContainer, xmlDocView, xmlDocViewPaneBar);
-
 			// Too early before now.
 			_toolMenuHelper.DocView = xmlDocView;
 			((ISemanticDomainTreeBarHandler)_recordList.MyTreeBarHandler).FinishInitialization(xmlDocViewPaneBar);
@@ -125,7 +122,8 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ClassifiedDictionary
 		/// <summary>
 		/// Get the area for the tool.
 		/// </summary>
-		public IArea Area => _area;
+		[field: Import(AreaServices.LexiconAreaMachineName)]
+		public IArea Area { get; private set; }
 
 		/// <summary>
 		/// Get the image for the area.
@@ -145,7 +143,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ClassifiedDictionary
 				Guard.AgainstNull(tool, nameof(tool));
 
 				_majorFlexComponentParameters = majorFlexComponentParameters;
-
 				var toolUiWidgetParameterObject = new ToolUiWidgetParameterObject(tool);
 				SetupUiWidgets(toolUiWidgetParameterObject);
 				majorFlexComponentParameters.UiWidgetController.AddHandlers(toolUiWidgetParameterObject);

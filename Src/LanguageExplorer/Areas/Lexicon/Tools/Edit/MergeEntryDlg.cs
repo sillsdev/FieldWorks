@@ -25,7 +25,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		private PictureBox m_pictureBox;
 		private XElement m_parametersElement;
 
-
 		protected override WindowParams DefaultWindowParams => new WindowParams
 		{
 			m_title = LanguageExplorerControls.ksMergeEntry,

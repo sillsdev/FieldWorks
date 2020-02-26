@@ -84,22 +84,18 @@ namespace LanguageExplorer.DictionaryConfiguration.Migration
 			m_logger.WriteLine("Migrating dictionary configurations");
 			m_configDirSuffixBeingMigrated = DictionaryConfigurationServices.DictionaryConfigurationDirectoryName;
 			Directory.CreateDirectory(Path.Combine(projectPath, m_configDirSuffixBeingMigrated));
-			UndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW("Undo Migrate old Dictionary Configurations", "Redo Migrate old Dictionary Configurations",
-				Cache.ActionHandlerAccessor, PerformMigrationUOW);
+			UndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW("Undo Migrate old Dictionary Configurations", "Redo Migrate old Dictionary Configurations", Cache.ActionHandlerAccessor, PerformMigrationUOW);
 			m_logger.WriteLine($"Migrating Reversal Index configurations, if any - {DateTime.Now:h:mm:ss}");
 			m_configDirSuffixBeingMigrated = DictionaryConfigurationServices.ReversalIndexConfigurationDirectoryName;
 			Directory.CreateDirectory(Path.Combine(projectPath, m_configDirSuffixBeingMigrated));
-			UndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW("Undo Migrate old Reversal Configurations", "Redo Migrate old Reversal Configurations",
-				Cache.ActionHandlerAccessor, PerformMigrationUOW);
+			UndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW("Undo Migrate old Reversal Configurations", "Redo Migrate old Reversal Configurations", Cache.ActionHandlerAccessor, PerformMigrationUOW);
 		}
 
 		/// <summary>Perform the migration for Dictionary or Reversal (depending on m_configDirSuffixBeingMigrated.</summary>
 		/// <remarks>Must be called in an UndoableUnitOfWork.</remarks>
 		private void PerformMigrationUOW()
 		{
-			var tool = m_configDirSuffixBeingMigrated == DictionaryConfigurationServices.DictionaryConfigurationDirectoryName
-				? AreaServices.LexiconDictionaryMachineName
-				: AreaServices.ReversalEditCompleteMachineName;
+			var tool = m_configDirSuffixBeingMigrated == DictionaryConfigurationServices.DictionaryConfigurationDirectoryName ? AreaServices.LexiconDictionaryMachineName : AreaServices.ReversalEditCompleteMachineName;
 			LegacyConfigurationUtils.BuildTreeFromLayoutAndParts(GetConfigureLayoutsNodeForTool(tool), this);
 		}
 
@@ -339,8 +335,7 @@ namespace LanguageExplorer.DictionaryConfiguration.Migration
 					// This node does not match anything in the shipping defaults; it may be a custom field, or it may
 					// have been overlooked before, or we may have garbage.  See https://jira.sil.org/browse/LT-16735.
 					var parentType = DictionaryConfigurationController.GetLookupClassForCustomFieldParent(currentDefaultNode, Cache);
-					bool isCustom;
-					if (IsFieldValid(child.Label, parentType, out isCustom))
+					if (IsFieldValid(child.Label, parentType, out var isCustom))
 					{
 						if (isCustom)
 						{
@@ -508,13 +503,10 @@ namespace LanguageExplorer.DictionaryConfiguration.Migration
 		internal void CopyDefaultsIntoMinorEntryNode(DictionaryConfigurationModel convertedModel, ConfigurableDictionaryNode convertedNode, ConfigurableDictionaryNode currentDefaultNode, ListIds complexOrVariant)
 		{
 			convertedNode.Label = currentDefaultNode.Label;
-			var nodeOptions = convertedNode.DictionaryNodeOptions as DictionaryNodeListOptions;
-			if (nodeOptions != null)
+			if (convertedNode.DictionaryNodeOptions is DictionaryNodeListOptions nodeOptions)
 			{
 				nodeOptions.ListId = complexOrVariant;
-				var availableOptions = complexOrVariant == ListIds.Complex
-					? AvailableComplexFormTypes
-					: AvailableVariantTypes;
+				var availableOptions = complexOrVariant == ListIds.Complex ? AvailableComplexFormTypes : AvailableVariantTypes;
 				nodeOptions.Options = nodeOptions.Options.Where(option => availableOptions.Contains(option.Id)).ToList();
 			}
 			CopyDefaultsIntoConfigNode(convertedModel, convertedNode, currentDefaultNode);
@@ -674,11 +666,8 @@ namespace LanguageExplorer.DictionaryConfiguration.Migration
 		{
 			m_logger.IncreaseIndent();
 			SetupCustomFieldNameDictionaries();
-			Dictionary<string, string> cfLabelToName;
 			// If we know the Custom Field's parent's type, pass a dictionary of the Custom Fields available on that type
-			SetupCustomField(child, parentType != null && m_classToCustomFieldsLabelToName.TryGetValue(parentType, out cfLabelToName)
-					? cfLabelToName
-					: null);
+			SetupCustomField(child, parentType != null && m_classToCustomFieldsLabelToName.TryGetValue(parentType, out var cfLabelToName) ? cfLabelToName : null);
 			m_logger.DecreaseIndent();
 		}
 
@@ -810,8 +799,7 @@ namespace LanguageExplorer.DictionaryConfiguration.Migration
 		private void SetupCustomField(ConfigurableDictionaryNode node, IDictionary<string, string> labelToName)
 		{
 			node.IsCustomField = true;
-			string nodeName;
-			if (labelToName != null && labelToName.TryGetValue(node.Label, out nodeName))
+			if (labelToName != null && labelToName.TryGetValue(node.Label, out var nodeName))
 			{
 				m_logger.WriteLine($"Found name '{nodeName}' for Custom Field labeled '{node.Label}'; using.");
 				node.FieldDescription = nodeName;
@@ -883,12 +871,7 @@ namespace LanguageExplorer.DictionaryConfiguration.Migration
 			try
 			{
 				var parentType = DictionaryConfigurationController.GetLookupClassForCustomFieldParent(node.Parent, Cache);
-				if (parentType == null)
-				{
-					return 0;
-				}
-				var flid = metaDataCache.GetFieldId(parentType, node.FieldDescription, false);
-				return flid;
+				return parentType == null ? 0 : metaDataCache.GetFieldId(parentType, node.FieldDescription, false);
 			}
 			catch (Exception)
 			{
@@ -897,8 +880,7 @@ namespace LanguageExplorer.DictionaryConfiguration.Migration
 		}
 		/// <summary>Attempts to find and return a node from the currentDefaultChildren whose Label matches childLabel.</summary>
 		/// <returns>true if successful</returns>
-		private static bool TryGetMatchingNode(string childLabel, IEnumerable<ConfigurableDictionaryNode> currentDefaultChildren, List<ConfigurableDictionaryNode> matchedChildren,
-			out ConfigurableDictionaryNode matchFromCurrentDefault)
+		private static bool TryGetMatchingNode(string childLabel, IEnumerable<ConfigurableDictionaryNode> currentDefaultChildren, List<ConfigurableDictionaryNode> matchedChildren, out ConfigurableDictionaryNode matchFromCurrentDefault)
 		{
 			matchFromCurrentDefault = currentDefaultChildren.FirstOrDefault(baseChild => childLabel == baseChild.Label);
 			if (matchFromCurrentDefault != null)
@@ -908,7 +890,8 @@ namespace LanguageExplorer.DictionaryConfiguration.Migration
 			}
 			return false;
 		}
-		private void SetListOptionsProperties(string type, string sequence, DictionaryNodeListOptions options)
+
+		private static void SetListOptionsProperties(string type, string sequence, DictionaryNodeListOptions options)
 		{
 			options.Options = new List<DictionaryNodeOption>();
 			options.ListId = (ListIds)Enum.Parse(typeof(ListIds), type, true);
@@ -998,16 +981,9 @@ namespace LanguageExplorer.DictionaryConfiguration.Migration
 				return false;
 			}
 			// if the font doesn't match
-			if (string.IsNullOrEmpty(node.NumFont) && fontInfo.FontName.ValueIsSet || // node value is empty but fontInfo isn't
-				!string.IsNullOrEmpty(node.NumFont) && !fontInfo.FontName.ValueIsSet || // fontinfo is empty but node value isn't
-				fontInfo.FontName.ValueIsSet && string.Compare(node.NumFont, fontInfo.FontName.Value, StringComparison.Ordinal) != 0)
-			{
-				// node value was empty but fontInfo isn't or
-				// fontInfo was empty but node value wasn't or
-				// both strings had content but it didn't match
-				return false;
-			}
-			return true;
+			return (!string.IsNullOrEmpty(node.NumFont) || !fontInfo.FontName.ValueIsSet)
+				   && (string.IsNullOrEmpty(node.NumFont) || fontInfo.FontName.ValueIsSet)
+				   && (!fontInfo.FontName.ValueIsSet || string.Compare(node.NumFont, fontInfo.FontName.Value, StringComparison.Ordinal) == 0);
 		}
 
 		private List<DictionaryNodeOption> MigrateWsOptions(string wsLabel)
@@ -1082,7 +1058,7 @@ namespace LanguageExplorer.DictionaryConfiguration.Migration
 		/// </summary>
 		internal ISimpleLogger SetTestLogger
 		{
-			set { m_logger = value; }
+			set => m_logger = value;
 		}
 
 		/// <summary>

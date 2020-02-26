@@ -228,8 +228,7 @@ namespace LanguageExplorer.Areas
 		{
 			foreach (var obj in m_lvLists.Items)
 			{
-				var lvi = obj as ListViewItem;
-				lvi.Checked = true;
+				((ListViewItem)obj).Checked = true;
 			}
 		}
 
@@ -237,8 +236,7 @@ namespace LanguageExplorer.Areas
 		{
 			foreach (var obj in m_lvLists.Items)
 			{
-				var lvi = obj as ListViewItem;
-				lvi.Checked = false;
+				((ListViewItem)obj).Checked = false;
 			}
 		}
 

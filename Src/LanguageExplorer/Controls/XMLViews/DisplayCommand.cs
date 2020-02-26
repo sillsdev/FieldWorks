@@ -12,8 +12,6 @@ namespace LanguageExplorer.Controls.XMLViews
 	/// </summary>
 	internal abstract class DisplayCommand
 	{
-		private static int _displayLevel;
-
 		internal abstract void PerformDisplay(XmlVc vc, int fragId, int hvo, IVwEnv vwenv);
 
 		/// <summary>
@@ -28,16 +26,12 @@ namespace LanguageExplorer.Controls.XMLViews
 
 		internal virtual void ProcessChildren(int fragId, XmlVc vc, IVwEnv vwenv, XElement node, int hvo)
 		{
-			++_displayLevel;
 			vc.ProcessChildren(node, vwenv, hvo);
-			--_displayLevel;
 		}
 
 		internal virtual void ProcessChildren(int fragId, XmlVc vc, IVwEnv vwenv, XElement node, int hvo, XElement caller)
 		{
-			++_displayLevel;
 			vc.ProcessChildren(node, vwenv, hvo, caller);
-			--_displayLevel;
 		}
 
 		// Gather up info about what fields are needed for the specified node.

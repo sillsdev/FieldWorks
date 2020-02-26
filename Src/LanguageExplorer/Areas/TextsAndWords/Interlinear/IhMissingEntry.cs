@@ -26,8 +26,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 	internal class IhMissingEntry : InterlinComboHandler
 	{
 		private IHelpTopicProvider m_helpTopicProvider;
-		// form of the morpheme when the combo was initialized.
-		ITsString m_tssMorphForm;
 		// flag to HideCombo after HandleSelect.
 		bool m_fHideCombo = true;
 		// int for all classes, except IhMissingEntry, which stuffs MorphItem data into it.
@@ -107,7 +105,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			}
 
 			// Dispose unmanaged resources here, whether disposing is true or false.
-			m_tssMorphForm = null;
 
 			base.Dispose(disposing);
 		}
@@ -157,7 +154,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			var sPrefix = StrFromTss(sda.get_StringProp(SelectedMorphHvo, SandboxBase.ktagSbMorphPrefix));
 			var sPostfix = StrFromTss(sda.get_StringProp(SelectedMorphHvo, SandboxBase.ktagSbMorphPostfix));
 			var morphs = MorphServices.GetMatchingMorphs(m_caches.MainCache, sPrefix, tssMorphForm, sPostfix);
-			m_tssMorphForm = tssMorphForm;
 			MorphItems.Clear();
 			foreach (var mf in morphs)
 			{
@@ -178,15 +174,15 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		internal static ILexEntry GetMainEntryOfVariant(ILexEntryRef ler)
 		{
-			var component = ler.ComponentLexemesRS[0] as IVariantComponentLexeme;
+			var component = (IVariantComponentLexeme)ler.ComponentLexemesRS[0];
 			ILexEntry mainEntryOfVariant = null;
 			switch (component.ClassID)
 			{
 				case LexEntryTags.kClassId:
-					mainEntryOfVariant = component as ILexEntry;
+					mainEntryOfVariant = (ILexEntry)component;
 					break;
 				case LexSenseTags.kClassId:
-					mainEntryOfVariant = (component as ILexSense).Entry;
+					mainEntryOfVariant = (component as ILexSense)?.Entry;
 					break;
 			}
 			return mainEntryOfVariant;
@@ -213,8 +209,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			else
 			{
 				// looks like we're not in a good state, so just use the form for the name.
-				int wsActual;
-				tssName = mf.Form.GetAlternativeOrBestTss(m_wsVern, out wsActual);
+				tssName = mf.Form.GetAlternativeOrBestTss(m_wsVern, out _);
 			}
 			var wsAnalysis = m_caches.MainCache.ServiceLocator.WritingSystemManager.Get(m_caches.MainCache.DefaultAnalWs);
 			// Populate morphItems with Sense/Msa level specifics
@@ -455,7 +450,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			var coRepository = m_caches.MainCache.ServiceLocator.GetInstance<ICmObjectRepository>();
 			var co = coRepository.GetObject(realHvo);
 			var classid = co.ClassID;
-			var msa = co as IMoMorphSynAnalysis;
 
 			// Look through our relevant list items to see if we find a match.
 			for (var i = 0; i < MorphItems.Count; ++i)
@@ -481,10 +475,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 						break;
 					default:
 						// See if we can match on the MSA
-						if (msa != null && mi.m_hvoMsa == realHvo)
+						if (co is IMoMorphSynAnalysis msa && mi.m_hvoMsa == realHvo)
 						{
 							// verify the item sense is its owner
-							var ls = coRepository.GetObject(mi.m_hvoSense) as ILexSense;
+							var ls = (ILexSense)coRepository.GetObject(mi.m_hvoSense);
 							if (msa == ls.MorphoSyntaxAnalysisRA)
 							{
 								return i;
@@ -509,10 +503,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// </summary>
 		private void RunCreateEntryDlg()
 		{
-			ILexEntry le;
-			IMoForm allomorph;
-			ILexSense sense;
-			CreateNewEntry(false, out le, out allomorph, out sense);
+			CreateNewEntry(false, out _, out _, out _);
 		}
 
 		internal void CreateNewEntry(bool fCreateNow, out ILexEntry le, out IMoForm allomorph, out ILexSense sense)
@@ -645,11 +636,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		internal void RunAddNewAllomorphDlg()
 		{
-			ITsString tssForm;
-			ITsString tssFullForm;
-			IMoMorphType morphType;
-			GetMorphInfo(out tssForm, out tssFullForm, out morphType);
-
+			GetMorphInfo(out var tssForm, out var tssFullForm, out var morphType);
 			using (var dlg = new AddAllomorphDlg())
 			{
 				dlg.InitializeFlexComponent(new FlexComponentParameters(m_sandbox.PropertyTable, m_sandbox.Publisher, m_sandbox.Subscriber));
@@ -670,7 +657,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				{
 					var morphLe = le.LexemeFormOA;
 					var mmtLe = morphLe.MorphTypeRA;
-					IMoMorphType mmtNew = null;
+					IMoMorphType mmtNew;
 					mmtNew = morphType;
 					string entryForm = null;
 					var tssHeadword = le.HeadWord;
@@ -704,13 +691,14 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 								var haveUnclassifiedMSA = false;
 								foreach (var msa in le.MorphoSyntaxAnalysesOC)
 								{
-									if (msa is IMoStemMsa)
+									switch (msa)
 									{
-										haveStemMSA = true;
-									}
-									if (msa is IMoUnclassifiedAffixMsa)
-									{
-										haveUnclassifiedMSA = true;
+										case IMoStemMsa _:
+											haveStemMSA = true;
+											break;
+										case IMoUnclassifiedAffixMsa _:
+											haveUnclassifiedMSA = true;
+											break;
 									}
 								}
 								switch (mmtNew.Guid.ToString())
@@ -787,8 +775,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		private void GetMorphInfo(out ITsString tssForm, out ITsString tssFullForm, out IMoMorphType morphType)
 		{
-			IMoForm morphReal;
-			GetMorphInfo(out tssForm, out tssFullForm, out morphReal, out morphType);
+			GetMorphInfo(out tssForm, out tssFullForm, out _, out morphType);
 		}
 
 		private void GetMorphInfo(out ITsString tssForm, out ITsString tssFullForm, out IMoForm morphReal, out IMoMorphType morphType)
@@ -814,9 +801,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				if (!string.IsNullOrEmpty(fullForm))
 				{
 					// Find the type for this morpheme
-					int clsidForm;
 					var fullFormTmp = fullForm;
-					morphType = MorphServices.FindMorphType(m_caches.MainCache, ref fullFormTmp, out clsidForm);
+					morphType = MorphServices.FindMorphType(m_caches.MainCache, ref fullFormTmp, out _);
 				}
 			}
 		}
@@ -927,8 +913,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			var morphIndex = GetMorphIndex();
 			// NOTE: m_comboList.SelectedItem does not get automatically set in (some) tests.
 			// so we use index here.
-			InterlinComboHandlerActionComboItem comboItem = ComboList.Items[index] as InterlinComboHandlerActionComboItem;
-			if (comboItem != null)
+			if (ComboList.Items[index] is InterlinComboHandlerActionComboItem comboItem)
 			{
 				if (!comboItem.IsEnabled)
 				{
@@ -1084,11 +1069,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					dlg.InitializeFlexComponent(new FlexComponentParameters(m_sandbox.PropertyTable, m_sandbox.Publisher, m_sandbox.Subscriber));
 					// if no previous variant relationship has been defined,
 					// then don't try to fill initial information,
-					ITsString tssForm;
-					ITsString tssFullForm;
-					IMoMorphType morphType;
-					IMoForm morphReal;
-					GetMorphInfo(out tssForm, out tssFullForm, out morphReal, out morphType);
+					GetMorphInfo(out var tssForm, out _, out var morphReal, out _);
 					if (morphReal != null && morphReal.IsValidObject)
 					{
 						var variantEntry = morphReal.Owner as ILexEntry;
@@ -1117,8 +1098,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					// if we didn't have a starting entry, create one now.
 					var variantResult = variantEntryRef.Owner as ILexEntry;
 					var hvoVariantType = dlg.SelectedVariantEntryTypeHvo;
-					ILexEntryInflType inflType;
-					m_caches.MainCache.ServiceLocator.GetInstance<ILexEntryInflTypeRepository>().TryGetObject(hvoVariantType, out inflType);
+					m_caches.MainCache.ServiceLocator.GetInstance<ILexEntryInflTypeRepository>().TryGetObject(hvoVariantType, out var inflType);
 					// we need to create a new LexEntryRef.
 					var morphBundleEntry = dlg.SelectedObject as ILexEntry;
 					var morphBundleSense = dlg.SelectedObject as ILexSense;

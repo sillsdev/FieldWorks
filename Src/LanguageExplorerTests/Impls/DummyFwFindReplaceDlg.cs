@@ -54,14 +54,8 @@ namespace LanguageExplorerTests.Impls
 		/// </summary>
 		public ITsString PrevPatternText
 		{
-			get
-			{
-				return m_prevSearchText;
-			}
-			set
-			{
-				m_prevSearchText = value;
-			}
+			get => m_prevSearchText;
+			set => m_prevSearchText = value;
 		}
 
 		/// <summary>
@@ -111,14 +105,8 @@ namespace LanguageExplorerTests.Impls
 		/// </summary>
 		public bool MatchWsCheckboxChecked
 		{
-			get
-			{
-				return chkMatchWS.Checked;
-			}
-			set
-			{
-				chkMatchWS.Checked = value;
-			}
+			get => chkMatchWS.Checked;
+			set => chkMatchWS.Checked = value;
 		}
 
 		/// <summary>
@@ -139,14 +127,8 @@ namespace LanguageExplorerTests.Impls
 		/// </summary>
 		public bool UseRegExCheckboxChecked
 		{
-			get
-			{
-				return chkUseRegularExpressions.Checked;
-			}
-			set
-			{
-				chkUseRegularExpressions.Checked = value;
-			}
+			get => chkUseRegularExpressions.Checked;
+			set => chkUseRegularExpressions.Checked = value;
 		}
 
 		/// <summary>
@@ -210,7 +192,7 @@ namespace LanguageExplorerTests.Impls
 		/// operation.
 		/// </summary>
 		/// <param name="iInstancePara">The index of the instance of the paragraph property
-		/// in whose contants the selection was expected.</param>
+		/// in whose contents the selection was expected.</param>
 		/// <param name="iPara">The index of the para where the selection was expected.</param>
 		/// <param name="iInstanceString">The index of the instance of the string property where
 		/// the selection was expected.</param>

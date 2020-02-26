@@ -13,13 +13,13 @@ namespace LanguageExplorer.DictionaryConfiguration
 		/// </summary>
 		public string DisplayLabel
 		{
-			set { description.Text = description.Text.Replace("%s", value); }
+			set => description.Text = description.Text.Replace("%s", value);
 		}
 
 		public string NewSuffix
 		{
-			get { return newSuffix.Text; }
-			set { newSuffix.Text = value; }
+			get => newSuffix.Text;
+			set => newSuffix.Text = value;
 		}
 
 		public DictionaryConfigurationNodeRenameDlg()

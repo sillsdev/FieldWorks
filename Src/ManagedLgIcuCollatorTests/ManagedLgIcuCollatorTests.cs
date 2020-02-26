@@ -64,10 +64,7 @@ namespace SIL.FieldWorks.Language
 			using (var icuCollator = ManagedLgIcuCollatorInitializerHelper())
 			{
 				Assert.IsNotNull(icuCollator);
-
-				var options = new LgCollatingOptions();
-
-				var result = icuCollator.get_SortKey("abc", options);
+				var result = icuCollator.get_SortKey("abc", new LgCollatingOptions());
 				Assert.IsNotEmpty(result);
 
 				icuCollator.Close();
@@ -81,10 +78,7 @@ namespace SIL.FieldWorks.Language
 			using (var icuCollator = ManagedLgIcuCollatorInitializerHelper())
 			{
 				Assert.IsNotNull(icuCollator);
-
-				var options = new LgCollatingOptions();
-
-				var obj = icuCollator.get_SortKeyVariant("abc", options);
+				var obj = icuCollator.get_SortKeyVariant("abc", new LgCollatingOptions());
 				Assert.IsNotNull(obj);
 
 				icuCollator.Close();
@@ -99,9 +93,7 @@ namespace SIL.FieldWorks.Language
 			using (var icuCollator = ManagedLgIcuCollatorInitializerHelper())
 			{
 				Assert.IsNotNull(icuCollator);
-
-				int cchOut;
-				icuCollator.SortKeyRgch(null, 0, new LgCollatingOptions(), 0, null, out cchOut);
+				icuCollator.SortKeyRgch(null, 0, new LgCollatingOptions(), 0, null, out _);
 			}
 		}
 
@@ -112,22 +104,18 @@ namespace SIL.FieldWorks.Language
 			using (var icuCollator = ManagedLgIcuCollatorInitializerHelper())
 			{
 				Assert.IsNotNull(icuCollator);
-
-				var options = new LgCollatingOptions();
-
-				object obj1 = icuCollator.get_SortKeyVariant("action", options);
-
-				Assert.That((obj1 as byte[])[0], Is.EqualTo(41));
-				Assert.That((obj1 as byte[])[1], Is.EqualTo(45));
-				Assert.That((obj1 as byte[])[2], Is.EqualTo(79));
-				Assert.That((obj1 as byte[])[3], Is.EqualTo(57));
-				Assert.That((obj1 as byte[])[4], Is.EqualTo(69));
-				Assert.That((obj1 as byte[])[5], Is.EqualTo(67));
-				Assert.That((obj1 as byte[])[6], Is.EqualTo(1));
-				Assert.That((obj1 as byte[])[7], Is.EqualTo(10));
-				Assert.That((obj1 as byte[])[8], Is.EqualTo(1));
-				Assert.That((obj1 as byte[])[9], Is.EqualTo(10));
-				Assert.That((obj1 as byte[])[10], Is.EqualTo(0));
+				var bytes = (byte[])icuCollator.get_SortKeyVariant("action", new LgCollatingOptions());
+				Assert.That(bytes[0], Is.EqualTo(41));
+				Assert.That(bytes[1], Is.EqualTo(45));
+				Assert.That(bytes[2], Is.EqualTo(79));
+				Assert.That(bytes[3], Is.EqualTo(57));
+				Assert.That(bytes[4], Is.EqualTo(69));
+				Assert.That(bytes[5], Is.EqualTo(67));
+				Assert.That(bytes[6], Is.EqualTo(1));
+				Assert.That(bytes[7], Is.EqualTo(10));
+				Assert.That(bytes[8], Is.EqualTo(1));
+				Assert.That(bytes[9], Is.EqualTo(10));
+				Assert.That(bytes[10], Is.EqualTo(0));
 			}
 		}
 
@@ -139,9 +127,7 @@ namespace SIL.FieldWorks.Language
 			using (var icuCollator = ManagedLgIcuCollatorInitializerHelper())
 			{
 				Assert.IsNotNull(icuCollator);
-
-				var options = new LgCollatingOptions();
-
+				const LgCollatingOptions options = new LgCollatingOptions();
 				var obj1 = icuCollator.get_SortKeyVariant("abc", options);
 				var obj2 = obj1;
 				var obj3 = icuCollator.get_SortKeyVariant("def", options);
@@ -160,12 +146,9 @@ namespace SIL.FieldWorks.Language
 			using (var icuCollator = ManagedLgIcuCollatorInitializerHelper())
 			{
 				Assert.IsNotNull(icuCollator);
-
-				var options = new LgCollatingOptions();
-
-				object obj1 = icuCollator.get_SortKeyVariant("action", options);
-				object obj2 = icuCollator.get_SortKeyVariant("actiom", options);
-
+				const LgCollatingOptions options = new LgCollatingOptions();
+				var obj1 = icuCollator.get_SortKeyVariant("action", options);
+				var obj2 = icuCollator.get_SortKeyVariant("actiom", options);
 				Assert.IsTrue(icuCollator.CompareVariant(obj1, obj2, options) != 0, " action != actionm");
 
 				obj1 = icuCollator.get_SortKeyVariant("tenepa", options);
@@ -176,7 +159,6 @@ namespace SIL.FieldWorks.Language
 				obj2 = icuCollator.get_SortKeyVariant("hello", options);
 
 				Assert.IsTrue(icuCollator.CompareVariant(obj1, obj2, options) == 0, " hello == hello");
-
 
 				obj1 = icuCollator.get_SortKeyVariant("tenepaa", options);
 				obj2 = icuCollator.get_SortKeyVariant("tenepa", options);
@@ -199,10 +181,8 @@ namespace SIL.FieldWorks.Language
 			using (var icuCollator = ManagedLgIcuCollatorInitializerHelper())
 			{
 				Assert.IsNotNull(icuCollator);
-
-				var options = new LgCollatingOptions();
-
-				Assert.IsTrue(icuCollator.Compare(string.Empty, String.Empty, options) == 0);
+				const LgCollatingOptions options = new LgCollatingOptions();
+				Assert.IsTrue(icuCollator.Compare(string.Empty, string.Empty, options) == 0);
 				Assert.IsTrue(icuCollator.Compare("abc", "abc", options) == 0);
 				Assert.IsTrue(icuCollator.Compare("abc", "def", options) != 0);
 			}

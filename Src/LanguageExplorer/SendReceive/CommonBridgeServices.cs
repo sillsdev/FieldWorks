@@ -64,20 +64,20 @@ namespace LanguageExplorer.SendReceive
 
 		internal static void StopParser(IPublisher publisher)
 		{
-			publisher.Publish(LanguageExplorerConstants.StopParser, null);
+			publisher.Publish(new PublisherParameterObject(LanguageExplorerConstants.StopParser));
 		}
 
 		/// <summary>Callback to refresh the Message Slice after OnView[Lift]Messages</summary>
 		internal static void BroadcastMasterRefresh(IPublisher publisher)
 		{
-			publisher.Publish("MasterRefresh", null);
+			publisher.Publish(new PublisherParameterObject("MasterRefresh"));
 		}
 
 		internal static void PublishHandleLocalHotlinkMessage(IPublisher publisher, object sender, FLExJumpEventArgs e)
 		{
-			if (!String.IsNullOrEmpty(e.JumpUrl))
+			if (!string.IsNullOrEmpty(e.JumpUrl))
 			{
-				publisher.Publish(FwUtils.HandleLocalHotlink, new LocalLinkArgs { Link = e.JumpUrl });
+				publisher.Publish(new PublisherParameterObject(FwUtils.HandleLocalHotlink, new LocalLinkArgs { Link = e.JumpUrl }));
 			}
 		}
 
@@ -97,8 +97,7 @@ namespace LanguageExplorer.SendReceive
 				{
 					continue; // Skip them, since they are part of some other repository.
 				}
-				long oldLength;
-				savedState.TryGetValue(file, out oldLength);
+				savedState.TryGetValue(file, out var oldLength);
 				if (new FileInfo(file).Length == oldLength)
 				{
 					continue; // no new notes in this file.
@@ -123,7 +122,7 @@ namespace LanguageExplorer.SendReceive
 			{
 				// Send a message for the reopened instance to display the message viewer (used to be conflict report).
 				// Caller has been disposed by now.
-				newAppWindow.Publisher.Publish(publisherMessage, null);
+				newAppWindow.Publisher.Publish(new PublisherParameterObject(publisherMessage));
 			}
 		}
 

@@ -30,7 +30,7 @@ namespace LanguageExplorer
 		/// Return true if the command should be enabled. You may assume that target is non-null and the selection
 		/// is entirely contained in one field of target. (Otherwise the macro will automatically be disabled.)
 		/// It is fine to always return true, then display a message (in RunMacro, NOT here) if there is some non-obvious
-		/// reason why thecommand cannot be executed. In fact, it is generally preferable to do this unless the reason is
+		/// reason why the command cannot be executed. In fact, it is generally preferable to do this unless the reason is
 		/// something obvious, like the wrong kind of object selected or an empty selection.
 		/// Arguments are the same as for RunMacro.
 		/// </summary>

@@ -51,8 +51,8 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// </summary>
 		protected int LangProjectHvo
 		{
-			get { return m_hvoLangProject; }
-			set { m_hvoLangProject = value; }
+			get => m_hvoLangProject;
+			set => m_hvoLangProject = value;
 		}
 
 		/// <summary>
@@ -60,13 +60,9 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// </summary>
 		public virtual LcmCache Cache
 		{
-			get
-			{
-				return m_cache;
-			}
+			get => m_cache;
 			set
 			{
-
 				m_cache = value;
 				if (m_wsDefault <= 0)
 				{
@@ -114,13 +110,9 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// </summary>
 		public override ITsString UpdateProp(IVwSelection vwsel, int hvo, int tag, int frag, ITsString tssVal)
 		{
-			var mdc = vwsel.RootBox.DataAccess.MetaDataCache;
-			if (mdc is IFwMetaDataCacheManaged && ((IFwMetaDataCacheManaged)mdc).FieldExists(tag) &&
-				vwsel.RootBox.DataAccess.MetaDataCache.GetFieldType(tag) == (int)CellarPropertyType.GenDate)
-			{
-				return tssVal;
-			}
-			return base.UpdateProp(vwsel, hvo, tag, frag, tssVal);
+			return vwsel.RootBox.DataAccess.MetaDataCache is IFwMetaDataCacheManaged metaDataCacheManaged
+				   && metaDataCacheManaged.FieldExists(tag)
+				   && vwsel.RootBox.DataAccess.MetaDataCache.GetFieldType(tag) == (int)CellarPropertyType.GenDate ? tssVal : base.UpdateProp(vwsel, hvo, tag, frag, tssVal);
 		}
 
 		/// <summary>
@@ -185,16 +177,15 @@ namespace SIL.FieldWorks.Common.RootSites
 			var guid = MiscUtils.GetGuidFromObjData(bstrGuid);
 
 			var obj = m_cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(guid);
-			if (obj is IScrFootnote)
+			switch (obj)
 			{
-				return GetFootnoteIconString(DefaultWs, guid);
+				case IScrFootnote _:
+					return GetFootnoteIconString(DefaultWs, guid);
+				case ICmPicture _:
+					return GetPictureString();
+				default:
+					throw new NotSupportedException("Cannot get a string for objects other than footnotes and pictures.");
 			}
-			if (obj is ICmPicture)
-			{
-				return GetPictureString();
-			}
-
-			throw new NotSupportedException("Cannot get a string for objects other than footnotes and pictures.");
 		}
 
 		private ITsString GetPictureString()
@@ -414,10 +405,7 @@ namespace SIL.FieldWorks.Common.RootSites
 				Picture.SetHdc(hdc);
 			}
 
-			public int Handle
-			{
-				get { throw new NotSupportedException("Not sure whether we could safely implement this simply since the underlying picture could be disposed before the caller finished using the handle."); /* return Picture.Handle; */ }
-			}
+			public int Handle => throw new NotSupportedException("Not sure whether we could safely implement this simply since the underlying picture could be disposed before the caller finished using the handle.") /* return Picture.Handle; */;
 
 			public int hPal => Picture.hPal;
 
@@ -448,15 +436,12 @@ namespace SIL.FieldWorks.Common.RootSites
 				}
 			}
 
-			public int CurDC
-			{
-				get { throw new NotSupportedException("Not sure whether we could safely implement this simply since the underlying picture could be disposed before the caller finished using the return value."); /* return Picture.CurDC; */ }
-			}
+			public int CurDC => throw new NotSupportedException("Not sure whether we could safely implement this simply since the underlying picture could be disposed before the caller finished using the return value.") /* return Picture.CurDC; */;
 
 			public bool KeepOriginalFormat
 			{
-				get { return Picture.KeepOriginalFormat; }
-				set { Picture.KeepOriginalFormat = value; }
+				get => Picture.KeepOriginalFormat;
+				set => Picture.KeepOriginalFormat = value;
 			}
 
 			public int Attributes => Picture.Attributes;

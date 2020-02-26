@@ -31,8 +31,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.CollectWords
 		private RecordBrowseView _recordBrowseView;
 		private IRecordList _recordListProvidingOwner;
 		private IRecordList _subservientRecordList;
-		[Import(AreaServices.LexiconAreaMachineName)]
-		private IArea _area;
+
 		[Import]
 		private IPropertyTable _propertyTable;
 		private RapidDataEntryToolMenuHelper _toolMenuHelper;
@@ -56,7 +55,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.CollectWords
 			majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>(LanguageExplorerConstants.RecordListRepository).RemoveRecordList(_recordListProvidingOwner);
 
 			CollapsingSplitContainerFactory.RemoveFromParentAndDispose(majorFlexComponentParameters.MainCollapsingSplitContainer, ref _collapsingSplitContainer);
-
 			// Dispose after the main UI stuff.
 			_toolMenuHelper.Dispose();
 
@@ -76,7 +74,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.CollectWords
 		{
 			var mainCollapsingSplitContainerAsControl = (Control)majorFlexComponentParameters.MainCollapsingSplitContainer;
 			mainCollapsingSplitContainerAsControl.SuspendLayout();
-
 			var root = XDocument.Parse(LexiconResources.RapidDataEntryToolParameters).Root;
 			if (_recordListProvidingOwner == null)
 			{
@@ -96,7 +93,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.CollectWords
 			_collapsingSplitContainer.FirstControl = recordBar;
 			_collapsingSplitContainer.SecondLabel = AreaResources.ksMainContentLabel;
 			_collapsingSplitContainer.SplitterDistance = _propertyTable.GetValue<int>(LanguageExplorerConstants.RecordListWidthGlobal, SettingsGroup.GlobalSettings);
-
 			var showHiddenFieldsPropertyName = UiWidgetServices.CreateShowHiddenFieldsPropertyName(MachineName);
 			var recordEditViewPaneBar = new PaneBar();
 			var panelButton = new PanelButton(majorFlexComponentParameters.FlexComponentParameters, null, showHiddenFieldsPropertyName, LanguageExplorerResources.ksShowHiddenFields, LanguageExplorerResources.ksShowHiddenFields)
@@ -115,7 +111,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.CollectWords
 			var mainMultiPaneParameters = new MultiPaneParameters
 			{
 				Orientation = Orientation.Horizontal,
-				Area = _area,
+				Area = Area,
 				Id = "SemanticCategoryAndItems",
 				ToolMachineName = MachineName,
 				DefaultFocusControl = "RecordBrowseView",
@@ -123,14 +119,13 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.CollectWords
 				SecondControlParameters = new SplitterChildControlParameters { Control = _recordBrowseView, Label = "Details" }
 			};
 			var nestedMultiPane = MultiPaneFactory.CreateNestedMultiPane(majorFlexComponentParameters.FlexComponentParameters, mainMultiPaneParameters);
-			nestedMultiPane.SplitterDistance = _propertyTable.GetValue<int>($"MultiPaneSplitterDistance_{_area.MachineName}_{MachineName}_{mainMultiPaneParameters.Id}");
+			nestedMultiPane.SplitterDistance = _propertyTable.GetValue<int>($"MultiPaneSplitterDistance_{Area.MachineName}_{MachineName}_{mainMultiPaneParameters.Id}");
 			_collapsingSplitContainer.SecondControl = PaneBarContainerFactory.Create(majorFlexComponentParameters.FlexComponentParameters, nestedMultiPane, recordEditViewPaneBar);
 			majorFlexComponentParameters.MainCollapsingSplitContainer.SecondControl = _collapsingSplitContainer;
 			_collapsingSplitContainer.ResumeLayout();
 			mainCollapsingSplitContainerAsControl.ResumeLayout();
 			recordEditView.BringToFront();
 			recordBar.BringToFront();
-
 			// Too early before now.
 			((ISemanticDomainTreeBarHandler)_recordListProvidingOwner.MyTreeBarHandler).FinishInitialization(new PaneBar());
 			recordEditView.FinishInitialization();
@@ -184,7 +179,8 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.CollectWords
 		/// <summary>
 		/// Get the area for the tool.
 		/// </summary>
-		public IArea Area => _area;
+		[field: Import(AreaServices.LexiconAreaMachineName)]
+		public IArea Area { get; private set; }
 
 		/// <summary>
 		/// Get the image for the area.
@@ -228,7 +224,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.CollectWords
 				_recordBrowseView = recordBrowseView;
 				_recordList = recordList;
 				_partiallySharedForToolsWideMenuHelper = new PartiallySharedForToolsWideMenuHelper(_majorFlexComponentParameters, _recordList);
-
 				var toolUiWidgetParameterObject = new ToolUiWidgetParameterObject(tool);
 				// Only register tool for now. The tool's RecordBrowseView will register as a UserControl, so a tool must be registered before that happens.
 				_majorFlexComponentParameters.UiWidgetController.AddHandlers(toolUiWidgetParameterObject);

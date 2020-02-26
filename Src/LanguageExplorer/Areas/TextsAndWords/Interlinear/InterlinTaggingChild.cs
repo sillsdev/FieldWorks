@@ -13,7 +13,6 @@ using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.LCModel;
-using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Infrastructure;
 using SIL.LCModel.Utils;
@@ -88,9 +87,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				{
 					return;
 				}
-				SelLevInfo[] analysisLevels;
-				SelLevInfo[] endLevels;
-				if (TryGetAnalysisLevelsAndEndLevels(vwselNew, out analysisLevels, out endLevels))
+				if (TryGetAnalysisLevelsAndEndLevels(vwselNew, out var analysisLevels, out var endLevels))
 				{
 					m_hvoCurSegment = analysisLevels[1].hvo;
 					SelectedWordforms = GetSelectedOccurrences(analysisLevels, endLevels[0].ihvo);
@@ -120,8 +117,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			// level in rgvsliEnd to have the same tag but not necessarily the same ihvo.
 			// All the higher levels should be exactly the same. The loop checks this, and if successful
 			// sets iend to the index of the property corresponding to analysisLevels[0].
-			int iend;
-			if (AreHigherLevelsSameObject(analysisLevels, rgvsliEnd, out iend))
+			if (AreHigherLevelsSameObject(analysisLevels, rgvsliEnd, out var iend))
 			{
 				endLevels = analysisLevels.Clone() as SelLevInfo[];
 				if (endLevels != null)
@@ -146,14 +142,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			var cvsli = vwselNew.CLevels(fEndPoint) - 1;
 			using (var prgvsli = MarshalEx.ArrayToNative<SelLevInfo>(cvsli))
 			{
-				int dummyHvoRoot;
-				int dummyTagTextProp;
-				int dummyPropPrevious;
-				int dummyIch;
-				int dummyWs;
-				bool dummyAssocPrev;
-				ITsTextProps dummyTtpSelProps;
-				vwselNew.AllSelEndInfo(fEndPoint, out dummyHvoRoot, cvsli, prgvsli, out dummyTagTextProp, out dummyPropPrevious, out dummyIch, out dummyWs, out dummyAssocPrev, out dummyTtpSelProps);
+				vwselNew.AllSelEndInfo(fEndPoint, out _, cvsli, prgvsli, out _, out _, out _, out _, out _, out _);
 				return MarshalEx.NativeToArray<SelLevInfo>(prgvsli, cvsli);
 			}
 		}
@@ -166,8 +155,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			var hvoSegment = analysisLevels[1].hvo;
 			var ianchor = analysisLevels[0].ihvo;
 			// These two lines are in case the user selects "backwards"
-			var first = Math.Min(ianchor, iend);
-			var last = Math.Max(ianchor, iend);
 			var selectedWordforms = new List<AnalysisOccurrence>();
 			ISegment seg;
 			try
@@ -178,7 +165,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				return selectedWordforms; // "Selection" isn't in a TextSegment.
 			}
-			for (var i = first; i <= last; i++)
+			for (var i = Math.Min(ianchor, iend); i <= Math.Max(ianchor, iend); i++)
 			{
 				var point = new AnalysisOccurrence(seg, i);
 				// Don't want any punctuation sneaking in!
@@ -197,9 +184,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				return null;
 			}
-			SelLevInfo[] analysisLevels;
-			SelLevInfo[] endLevels;
-			return TryGetAnalysisLevelsAndEndLevels(vwselNew, out analysisLevels, out endLevels) ? GetSelectedOccurrences(analysisLevels, endLevels[0].ihvo) : null;
+			return TryGetAnalysisLevelsAndEndLevels(vwselNew, out var analysisLevels, out var endLevels) ? GetSelectedOccurrences(analysisLevels, endLevels[0].ihvo) : null;
 		}
 
 		/// <summary>
@@ -251,8 +236,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// </summary>
 		private SelLevInfo[] GetSelLevInfoFromSelection(IVwSelection vwsel)
 		{
-			var helper = SelectionHelper.Create(vwsel, this);
-			return helper?.LevelInfo;
+			return SelectionHelper.Create(vwsel, this)?.LevelInfo;
 		}
 
 		private static bool AreHigherLevelsSameObject(SelLevInfo[] analysisLevels, SelLevInfo[] rgvsliEnd, out int iend)
@@ -292,8 +276,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				var selTest = GrabMousePtSelectionToTest(e);
 				// Could be the user right-clicked on the labels?
 				// If so, activate the base class method
-				int dummy;
-				if (UserClickedOnLabels(selTest, out dummy))
+				if (UserClickedOnLabels(selTest, out _))
 				{
 					base.OnMouseDown(e);
 					return;
@@ -391,8 +374,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		private void Tag_Item_Click(object sender, EventArgs e)
 		{
-			var item = sender as TagPossibilityMenuItem;
-			if (item == null)
+			if (!(sender is TagPossibilityMenuItem item))
 			{
 				return;
 			}
@@ -462,10 +444,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			RootStText.TagsOC.Add(ttag);
 			ttag.TagRA = tagPoss;
 			// Enhance Gordon: If we allow non-contiguous selection eventually this won't work.
-			var point1 = SelectedWordforms[0];
-			var point2 = SelectedWordforms[SelectedWordforms.Count - 1];
-			SetTagBeginPoint(ttag, point1);
-			SetTagEndPoint(ttag, point2);
+			SetTagBeginPoint(ttag, SelectedWordforms[0]);
+			SetTagEndPoint(ttag, SelectedWordforms[SelectedWordforms.Count - 1]);
 			DeleteTextTags(objsToDelete);
 			CacheTagString(ttag);
 			return ttag;

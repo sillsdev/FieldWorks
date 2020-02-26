@@ -59,7 +59,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		[Browsable(true), DefaultValue(TabAlignment.Bottom)]
 		public new TabAlignment Alignment
 		{
-			get { return base.Alignment; }
+			get => base.Alignment;
 			set
 			{
 				if (value <= TabAlignment.Bottom)
@@ -84,8 +84,8 @@ namespace LanguageExplorer.Controls.XMLViews
 		[Browsable(true), DefaultValue(true)]
 		public new bool HotTrack
 		{
-			get { return base.HotTrack; }
-			set { base.HotTrack = value; }
+			get => base.HotTrack;
+			set => base.HotTrack = value;
 		}
 
 		/// <summary>
@@ -108,7 +108,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		EditorBrowsable(EditorBrowsableState.Never)]
 		public new TabAppearance Appearance
 		{
-			get { return base.Appearance; }
+			get => base.Appearance;
 			set
 			{
 				if (value == TabAppearance.Normal)
@@ -138,7 +138,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		EditorBrowsable(EditorBrowsableState.Never)]
 		public new TabDrawMode DrawMode
 		{
-			get { return base.DrawMode; }
+			get => base.DrawMode;
 			set
 			{
 				if (value == TabDrawMode.Normal)
@@ -166,7 +166,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </PermissionSet>
 		public override RightToLeft RightToLeft
 		{
-			get { return base.RightToLeft; }
+			get => base.RightToLeft;
 			set
 			{
 				if (value == RightToLeft.No)
@@ -184,12 +184,12 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </returns>
 		public override bool RightToLeftLayout
 		{
-			get { return base.RightToLeftLayout; }
+			get => base.RightToLeftLayout;
 			set
 			{
 				if (!value)
 				{
-					base.RightToLeftLayout = value;
+					base.RightToLeftLayout = false;
 				}
 			}
 		}

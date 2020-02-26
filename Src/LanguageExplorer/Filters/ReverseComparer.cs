@@ -62,8 +62,7 @@ namespace LanguageExplorer.Filters
 		/// </summary>
 		public static IComparer Reverse(IComparer comp)
 		{
-			var rc = comp as ReverseComparer;
-			return rc == null ? new ReverseComparer(comp) : rc.SubComp;
+			return !(comp is ReverseComparer reverseComparer) ? new ReverseComparer(comp) : reverseComparer.SubComp;
 		}
 
 		#region IPersistAsXml Members
@@ -118,9 +117,9 @@ namespace LanguageExplorer.Filters
 		{
 			set
 			{
-				if (SubComp is IStoresLcmCache)
+				if (SubComp is IStoresLcmCache storesLcmCache)
 				{
-					((IStoresLcmCache)SubComp).Cache = value;
+					storesLcmCache.Cache = value;
 				}
 			}
 		}
@@ -129,9 +128,9 @@ namespace LanguageExplorer.Filters
 		{
 			set
 			{
-				if (SubComp is IStoresDataAccess)
+				if (SubComp is IStoresDataAccess storesDataAccess)
 				{
-					((IStoresDataAccess)SubComp).DataAccess = value;
+					storesDataAccess.DataAccess = value;
 				}
 			}
 		}
@@ -142,7 +141,7 @@ namespace LanguageExplorer.Filters
 		/// </summary>
 		public object Clone()
 		{
-			return new ReverseComparer(SubComp is ICloneable ? (IComparer)((ICloneable)SubComp).Clone() : SubComp);
+			return new ReverseComparer(SubComp is ICloneable cloneable ? (IComparer)cloneable.Clone() : SubComp);
 		}
 		#endregion
 	}

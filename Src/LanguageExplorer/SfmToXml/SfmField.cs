@@ -29,7 +29,7 @@ namespace LanguageExplorer.SfmToXml
 
 		public string Data
 		{
-			get { return m_sData; }
+			get => m_sData;
 			set
 			{
 				m_sData = value;

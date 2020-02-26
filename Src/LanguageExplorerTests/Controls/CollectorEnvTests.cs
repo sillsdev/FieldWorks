@@ -76,7 +76,9 @@ namespace LanguageExplorerTests.Controls
 			public override void Display(IVwEnv vwenv, int hvo, int frag)
 			{
 				var frWs = vwenv.DataAccess.WritingSystemFactory.GetWsFromStr("fr");
-				int hvoOuter, tag, ihvo;
+				int hvoOuter;
+				int tag;
+				int ihvo;
 				ITsString tss;
 				switch (frag)
 				{

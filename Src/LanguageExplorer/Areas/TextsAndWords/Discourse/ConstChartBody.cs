@@ -204,9 +204,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 
 		protected override void OnMouseMove(MouseEventArgs e)
 		{
-			int icol;
-			int irow;
-			if (GetCellInfo(e, out icol, out irow))
+			if (GetCellInfo(e, out var icol, out var irow))
 			{
 				var info = new SelLevInfo[1];
 				info[0].ihvo = irow;
@@ -281,10 +279,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 
 		internal InterlinLineChoices LineChoices
 		{
-			get
-			{
-				return m_lineChoices;
-			}
+			get => m_lineChoices;
 			set
 			{
 				m_lineChoices = value;
@@ -383,10 +378,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			if (e.Button == MouseButtons.Right || m_hoverButton.Bounds.Contains(e.Location))
 			{
 				// Bring up the menu if the user right clicks or clicks on the menu hover button.
-				int icol;
-				int irow;
 				var chart = Cache.ServiceLocator.GetInstance<IDsConstChartRepository>().GetObject(m_hvoChart);
-				if (GetCellInfo(e, out icol, out irow))
+				if (GetCellInfo(e, out var icol, out var irow))
 				{
 					icol = LogicalFromDisplay(icol);
 					var cell = new ChartLocation(chart.RowsOS[irow], icol);
@@ -417,9 +410,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			using (new HoldGraphics(this))
 			{
 				var pt = PixelToView(new Point(e.X, e.Y));
-				Rectangle rcSrcRoot;
-				Rectangle rcDstRoot;
-				GetCoordRects(out rcSrcRoot, out rcDstRoot);
+				GetCoordRects(out var rcSrcRoot, out var rcDstRoot);
 				var sel = RootBox.MakeSelAt(pt.X, pt.Y, rcSrcRoot, rcDstRoot, false);
 				if (sel == null)
 				{

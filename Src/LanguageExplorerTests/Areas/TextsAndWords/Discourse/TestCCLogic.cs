@@ -3,6 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Collections.Generic;
+using System.Linq;
 using LanguageExplorer.Areas.TextsAndWords.Discourse;
 using NUnit.Framework;
 using SIL.LCModel;
@@ -110,9 +111,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 
 		internal void CallMergeCellContents(IConstChartRow rowSrc, int icolSrc, IConstChartRow rowDst, int icolDst, bool forward)
 		{
-			var srcCell = new ChartLocation(rowSrc, icolSrc);
-			var dstCell = new ChartLocation(rowDst, icolDst);
-			MergeCellContents(srcCell, dstCell, forward);
+			MergeCellContents(new ChartLocation(rowSrc, icolSrc), new ChartLocation(rowDst, icolDst), forward);
 		}
 
 		internal void CallRemoveDepClause(ChartLocation srcCell)
@@ -128,13 +127,10 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 		/// </summary>
 		internal object[] VerifyEventExists(string name, int cargs)
 		{
-			foreach (var item in m_events)
+			foreach (var item in m_events.Where(item => item.Length > 0 && item[0] is string && name == (string)(item[0])))
 			{
-				if (item.Length > 0 && (item[0] is string) && name == (string)(item[0]))
-				{
-					Assert.AreEqual(cargs, item.Length - 1, name + " event should have " + cargs + " arguments");
-					return item;
-				}
+				Assert.AreEqual(cargs, item.Length - 1, name + " event should have " + cargs + " arguments");
+				return item;
 			}
 			Assert.Fail("expected event " + name);
 			return null;

@@ -142,8 +142,7 @@ namespace LanguageExplorer
 					continue;
 				}
 				var key = entry.HomographForm + repo.HomographMorphOrder(Cache, entry.PrimaryMorphType);
-				SortedList<int, ILexEntry> collection;
-				if (!homographs.TryGetValue(key, out collection))
+				if (!homographs.TryGetValue(key, out var collection))
 				{
 					collection = new SortedList<int, ILexEntry>();
 					homographs[key] = collection;
@@ -198,20 +197,14 @@ namespace LanguageExplorer
 
 		public override int get_IntProp(int hvo, int tag)
 		{
-			if (tag != LexEntryTags.kflidHomographNumber)
-			{
-				return base.get_IntProp(hvo, tag);
-			}
-			int result;
-			return m_homographNumbers.TryGetValue(hvo, out result) ? result : base.get_IntProp(hvo, tag);
+			return tag != LexEntryTags.kflidHomographNumber ? base.get_IntProp(hvo, tag) : m_homographNumbers.TryGetValue(hvo, out var result) ? result : base.get_IntProp(hvo, tag);
 		}
 
 		public override ITsString get_StringProp(int hvo, int tag)
 		{
 			if (tag == m_headwordFlid)
 			{
-				int hn;
-				if (m_homographNumbers.TryGetValue(hvo, out hn))
+				if (m_homographNumbers.TryGetValue(hvo, out var hn))
 				{
 					var entry = m_entryRepo.GetObject(hvo);
 					return StringServices.HeadWordForWsAndHn(entry, Cache.DefaultVernWs, hn);
@@ -240,8 +233,7 @@ namespace LanguageExplorer
 		{
 			if (tag == m_mlHeadwordFlid)
 			{
-				int hn;
-				if (m_homographNumbers.TryGetValue(hvo, out hn))
+				if (m_homographNumbers.TryGetValue(hvo, out var hn))
 				{
 					return StringServices.HeadWordForWsAndHn(m_entryRepo.GetObject(hvo), ws, hn, string.Empty, HomographConfiguration.HeadwordVariant.Main);
 				}
@@ -249,8 +241,7 @@ namespace LanguageExplorer
 			}
 			else if (tag == m_headwordRefFlid)
 			{
-				int hn;
-				if (m_homographNumbers.TryGetValue(hvo, out hn))
+				if (m_homographNumbers.TryGetValue(hvo, out var hn))
 				{
 					return StringServices.HeadWordForWsAndHn(m_entryRepo.GetObject(hvo), ws, hn, string.Empty, HomographConfiguration.HeadwordVariant.DictionaryCrossRef);
 				}
@@ -258,8 +249,7 @@ namespace LanguageExplorer
 			}
 			else if (tag == m_headwordReversalFlid)
 			{
-				int hn;
-				if (m_homographNumbers.TryGetValue(hvo, out hn))
+				if (m_homographNumbers.TryGetValue(hvo, out var hn))
 				{
 					return StringServices.HeadWordForWsAndHn(m_entryRepo.GetObject(hvo), ws, hn, string.Empty, HomographConfiguration.HeadwordVariant.ReversalCrossRef);
 				}
@@ -285,8 +275,7 @@ namespace LanguageExplorer
 		public ITsString OwnerOutlineNameForWs(ILexSense sense, int wsVern, HomographConfiguration.HeadwordVariant hv)
 		{
 			var entry = sense.Entry;
-			int hn;
-			if (!m_homographNumbers.TryGetValue(entry.Hvo, out hn))
+			if (!m_homographNumbers.TryGetValue(entry.Hvo, out var hn))
 			{
 				hn = entry.HomographNumber; // unknown entry, use its own HN instead of our override
 			}
@@ -311,16 +300,7 @@ namespace LanguageExplorer
 			//		|| (SensesOS.Count == 1 && SensesOS[0].SensesOS.Count > 0);
 			// but must go through our own cache because some of them may be suppressed.
 			var senseCount = get_VecSize(entry.Hvo, LexEntryTags.kflidSenses);
-			if (senseCount > 1)
-			{
-				return true;
-			}
-			if (senseCount == 0)
-			{
-				return false;
-			}
-			return get_VecSize(get_VecItem(entry.Hvo, LexEntryTags.kflidSenses, 0), LexSenseTags.kflidSenses) > 0;
-
+			return senseCount > 1 || senseCount != 0 && get_VecSize(get_VecItem(entry.Hvo, LexEntryTags.kflidSenses, 0), LexSenseTags.kflidSenses) > 0;
 		}
 
 		private void BuildFieldsToFilter()
@@ -384,17 +364,19 @@ namespace LanguageExplorer
 				if (entry == null || entry.DoNotPublishInRC.Contains(Publication))
 				{
 					m_excludedItems.Add(obj.Hvo);
-					if (obj is ILexEntry)
+					switch (obj)
 					{
-						foreach (var sense in ((ILexEntry)obj).SensesOS)
+						case ILexEntry lexEntry:
 						{
-							ExcludeSense(sense);
+							foreach (var sense in lexEntry.SensesOS)
+							{
+								ExcludeSense(sense);
+							}
+							break;
 						}
-					}
-
-					if (obj is ILexSense)
-					{
-						ExcludeSense((ILexSense)obj);
+						case ILexSense lexSense:
+							ExcludeSense(lexSense);
+							break;
 					}
 				}
 				else
@@ -442,8 +424,7 @@ namespace LanguageExplorer
 						var reversalIndexGuid = ReversalIndexServices.GetObjectGuidIfValid(propertyTable, LanguageExplorerConstants.ReversalIndexGuid);
 						if (reversalIndexGuid != Guid.Empty)
 						{
-							var currentReversalIndex = Cache.ServiceLocator.GetObject(reversalIndexGuid) as IReversalIndex;
-							if (currentReversalIndex != null)
+							if (Cache.ServiceLocator.GetObject(reversalIndexGuid) is IReversalIndex currentReversalIndex)
 							{
 								return GetSortedAndFilteredReversalEntries(currentReversalIndex.Hvo, virtualFlid);
 							}
@@ -555,9 +536,8 @@ namespace LanguageExplorer
 
 		private bool IsPublishableLexEntryRef(int hvoSource, int hvoRef)
 		{
-			ILexEntryRef ler;
 			ILexEntry refOwner = null;
-			if (m_lerRepo.TryGetObject(hvoRef, out ler))
+			if (m_lerRepo.TryGetObject(hvoRef, out var ler))
 			{
 				refOwner = ler.Owner as ILexEntry;
 			}
@@ -571,8 +551,7 @@ namespace LanguageExplorer
 		// A picture is publishable if the sense it belongs to is not excluded.
 		private bool IsPublishablePicture(int hvo)
 		{
-			var sense = Cache.ServiceLocator.GetObject(hvo).Owner as ILexSense;
-			return sense != null && !m_excludedItems.Contains(sense.Hvo);
+			return Cache.ServiceLocator.GetObject(hvo).Owner is ILexSense sense && !m_excludedItems.Contains(sense.Hvo);
 		}
 
 
@@ -611,15 +590,15 @@ namespace LanguageExplorer
 		/// </summary>
 		internal bool IsExcludedObject(ICmObject item)
 		{
-			if (item is IReversalIndexEntry)
+			switch (item)
 			{
-				return !IsPublishableReversalEntry((IReversalIndexEntry)item);
+				case IReversalIndexEntry reversalIndexEntry:
+					return !IsPublishableReversalEntry(reversalIndexEntry);
+				case ILexEntryRef lexEntryRef:
+					return !IsPublishableReference(lexEntryRef);
+				default:
+					return m_excludedItems.Contains(item.Hvo);
 			}
-			if (item is ILexEntryRef)
-			{
-				return !IsPublishableReference((ILexEntryRef)item);
-			}
-			return m_excludedItems.Contains(item.Hvo);
 		}
 
 		private bool IsPublishableReference(ILexEntryRef entryRef)

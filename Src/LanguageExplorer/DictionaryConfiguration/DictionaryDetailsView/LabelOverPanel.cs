@@ -18,9 +18,9 @@ namespace LanguageExplorer.DictionaryConfiguration.DictionaryDetailsView
 			InitializeComponent();
 		}
 
-		public string LabelText { set { label.Text = value; } }
+		public string LabelText { set => label.Text = value; }
 
-		public string LabelToolTip { set { m_tt.SetToolTip(label, value); } }
+		public string LabelToolTip { set => m_tt.SetToolTip(label, value); }
 
 		public UserControl PanelContents
 		{
@@ -43,8 +43,8 @@ namespace LanguageExplorer.DictionaryConfiguration.DictionaryDetailsView
 
 		public event EventHandler LabelClicked
 		{
-			add { label.Click += value; }
-			remove { label.Click -= value; }
+			add => label.Click += value;
+			remove => label.Click -= value;
 		}
 
 		/// <summary>

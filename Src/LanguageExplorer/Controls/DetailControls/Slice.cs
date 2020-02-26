@@ -180,7 +180,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// <summary>
 		/// Add these menus:
 		/// 1. Separator (but only if there are already items in the ContextMenuStrip).
-		/// 2. 'Field Visbility', and its three sub-menus.
+		/// 2. 'Field Visibility', and its three sub-menus.
 		/// 3. Have Slice subclasses to add ones they need (e.g., Writing Systems and its sub-menus).
 		/// 4. 'Help...'
 		/// </summary>
@@ -244,10 +244,10 @@ namespace LanguageExplorer.Controls.DetailControls
 		}
 
 		internal virtual void PrepareToShowContextMenu()
-		{ /* Nothing to do here. Suclasses can override and do more, if desired. */ }
+		{ /* Nothing to do here. Subclasses can override and do more, if desired. */ }
 
 		protected virtual void AddSpecialContextMenus(ContextMenuStrip topLevelContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>> menuItems)
-		{ /* Nothing to do here either. Suclasses can override and add more, if desired. */ }
+		{ /* Nothing to do here either. Subclasses can override and add more, if desired. */ }
 
 		/// <summary />
 		public object[] Key { get; set; }
@@ -344,17 +344,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// <summary>
 		/// is this node representing a property which is an (unordered) collection?
 		/// </summary>
-		public bool IsCollectionNode
-		{
-			get
-			{
-				if (ConfigurationNode == null)
-				{
-					return false;
-				}
-				return ConfigurationNode.Element("seq") != null && !IsSequenceNode;
-			}
-		}
+		public bool IsCollectionNode => ConfigurationNode?.Element("seq") != null && !IsSequenceNode;
 
 		/// <summary>
 		/// is this node a header?
@@ -574,8 +564,7 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		private void SetViewStylesheet(Control control, DataTree tc)
 		{
-			var rootSite = control as SimpleRootSite;
-			if (rootSite != null && rootSite.StyleSheet == null)
+			if (control is SimpleRootSite rootSite && rootSite.StyleSheet == null)
 			{
 				rootSite.StyleSheet = tc.StyleSheet;
 			}
@@ -834,10 +823,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		public virtual bool Active
 		{
-			get
-			{
-				return false;
-			}
+			get => false;
 			set
 			{
 			}
@@ -868,7 +854,7 @@ namespace LanguageExplorer.Controls.DetailControls
 				// Dispose managed resources here.
 				SplitCont.SplitterMoved -= mySplitterMoved;
 				// If anyone but the owning DataTree called this to be disposed,
-				// then it will still hold a referecne to this slice in an event handler.
+				// then it will still hold a reference to this slice in an event handler.
 				// We could take care of it here by asking the DT to remove it,
 				// but I (RandyR) am inclined to not do that, since
 				// only the DT is really authorized to dispose its slices.
@@ -992,8 +978,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			}
 			if (indentNode != null)
 			{
-				NodeTestResult ntr;
-				insPos = ContainingDataTree.ApplyLayout(obj, this, indentNode, indent + ExtraIndent(indentNode), insPos, path, reuseMap, false, out ntr);
+				insPos = ContainingDataTree.ApplyLayout(obj, this, indentNode, indent + ExtraIndent(indentNode), insPos, path, reuseMap, false, out _);
 			}
 			else
 			{
@@ -1025,30 +1010,20 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		public virtual string Label
 		{
-			get
-			{
-				return m_strLabel;
-			}
-			set
-			{
-				m_strLabel = value;
-			}
+			get => m_strLabel;
+			set => m_strLabel = value;
 		}
 
 		/// <summary />
 		public string Abbreviation
 		{
-			get
-			{
-				return m_strAbbr;
-			}
+			get => m_strAbbr;
 			set
 			{
 				m_strAbbr = value;
 				if (string.IsNullOrEmpty(m_strAbbr) && m_strLabel != null)
 				{
-					var len = m_strLabel.Length > 4 ? 4 : m_strLabel.Length;
-					m_strAbbr = m_strLabel.Substring(0, len);
+					m_strAbbr = m_strLabel.Substring(0, m_strLabel.Length > 4 ? 4 : m_strLabel.Length);
 				}
 			}
 		}
@@ -1081,14 +1056,13 @@ namespace LanguageExplorer.Controls.DetailControls
 			return GetHelpTopicID(ChooserDlgHelpTopicID, "khtpChoose");
 		}
 
-		public string GetChooserHelpTopicID(string ChooserDlgHelpTopicID)
+		public string GetChooserHelpTopicID(string chooserDlgHelpTopicID)
 		{
-			return GetHelpTopicID(ChooserDlgHelpTopicID, "khtpChoose");
+			return GetHelpTopicID(chooserDlgHelpTopicID, "khtpChoose");
 		}
 
 		private string GetHelpTopicID(string xmlHelpTopicID, string generatedIDPrefix)
 		{
-			string helpTopicID;
 			if (xmlHelpTopicID == "khtpField-PhRegularRule-RuleFormula")
 			{
 				xmlHelpTopicID = "khtpChoose-Environment";
@@ -1108,8 +1082,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			{
 				// Cross Reference (entry level) or lexical relation (sense level) subitems
 				var repo = Cache.ServiceLocator.GetInstance<ILexEntryRepository>();
-				ILexEntry lex;
-				repo.TryGetObject(parentHvo, out lex);
+				repo.TryGetObject(parentHvo, out var lex);
 				if (lex != null) // It must be the entry level
 				{
 					generatedHelpTopicID = helpTopicPrefix + "-" + toolChoice + "-CrossReferenceSubitem";
@@ -1293,21 +1266,8 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// expanded or not. This will be null if it can't be expanded, since we don't need to persist
 		/// that. Otherwise we currently base it on the Guid of the Object.
 		/// </summary>
-		internal string ExpansionStateKey
-		{
-			get
-			{
-				if (Expansion == TreeItemState.ktisFixed || Expansion == TreeItemState.ktisCollapsedEmpty)
-				{
-					return null; // nothing useful to remember
-				}
-				if (MyCmObject == null)
-				{
-					return null; // not sure this can happen, but without a key we can't do anything useful.
-				}
-				return "expand" + Convert.ToBase64String(MyCmObject.Guid.ToByteArray());
-			}
-		}
+		internal string ExpansionStateKey => Expansion == TreeItemState.ktisFixed || Expansion == TreeItemState.ktisCollapsedEmpty ? null
+			: MyCmObject == null ? null : "expand" + Convert.ToBase64String(MyCmObject.Guid.ToByteArray());
 
 		/// <summary>
 		/// Expand this node, which is at position iSlice in its parent.
@@ -1915,15 +1875,15 @@ namespace LanguageExplorer.Controls.DetailControls
 		public virtual bool HandleDeleteCommand()
 		{
 			var obj = GetObjectForMenusToOperateOn();
+			if (obj == null)
+			{
+				throw new FwConfigurationException("Slice:GetObjectHvoForMenusToOperateOn is either messed up or should not have been called, because it could not find the object to be deleted.", ConfigurationNode);
+			}
 			// Build a list of neighboring slices, ordered by proximity (max of 40 either way...don't want to build too much
 			// of a lazy view).
 			var dataTree = ContainingDataTree;
 			var nearbySlices = GetNearbySlices();
 			bool result;
-			if (obj == null)
-			{
-				throw new FwConfigurationException("Slice:GetObjectHvoForMenusToOperateOn is either messed up or should not have been called, because it could not find the object to be deleted.", ConfigurationNode);
-			}
 			try
 			{
 				dataTree.SetCurrentObjectFlids(obj.Hvo, 0);
@@ -2248,8 +2208,7 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		protected void ReplacePartWithNewAttribute(string attr, string attrValueNew)
 		{
-			XElement newPartref;
-			var newLayout = Inventory.MakeOverride(Key, attr, attrValueNew, LayoutCache.LayoutVersionNumber, out newPartref);
+			var newLayout = Inventory.MakeOverride(Key, attr, attrValueNew, LayoutCache.LayoutVersionNumber, out var newPartref);
 			Inventory.GetInventory("layouts", Cache.ProjectId.Name).PersistOverrideElement(newLayout);
 			var dataTree = ContainingDataTree;
 			var rootKey = Key[0] as XElement;
@@ -2261,8 +2220,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			{
 				slice.Key[0] = newLayout;
 			}
-			int lastPartRef;
-			var oldPartRef = PartRef(out lastPartRef);
+			var oldPartRef = PartRef(out var lastPartRef);
 			if (oldPartRef == null)
 			{
 				return;
@@ -2292,8 +2250,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		protected internal XElement PartRef()
 		{
-			int indexInKey;
-			return PartRef(out indexInKey);
+			return PartRef(out _);
 		}
 
 		private XElement PartRef(out int indexInKey)
@@ -2306,8 +2263,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			}
 			for (var i = 0; i < Key.Length; i++)
 			{
-				var node = Key[i] as XElement;
-				if (node == null || node.Name != "part" || XmlUtils.GetOptionalAttributeValue(node, "ref", null) == null)
+				if (!(Key[i] is XElement node) || node.Name != "part" || XmlUtils.GetOptionalAttributeValue(node, "ref", null) == null)
 				{
 					continue;
 				}

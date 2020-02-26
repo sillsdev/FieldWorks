@@ -81,8 +81,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		public override void Install(DataTree parentDataTree)
 		{
-			var launcher = Control as ReferenceLauncher;
-			if (launcher != null)
+			if (Control is ReferenceLauncher launcher)
 			{
 				launcher.Editable = XmlUtils.GetOptionalBooleanAttributeValue(ConfigurationNode, "editable", true);
 			}

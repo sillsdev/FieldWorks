@@ -98,15 +98,15 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 				// This block makes the first row, puts WordGroups in cells 1 and 2, and list refs in cells 1 and 2
 				var row0 = m_helper.MakeFirstRow();
 				var movedItem = allParaOccurrences[1];
-				var cellPart0_1 = m_helper.MakeWordGroup(row0, 1, allParaOccurrences[0], allParaOccurrences[0]);
+				m_helper.MakeWordGroup(row0, 1, allParaOccurrences[0], allParaOccurrences[0]);
 				var marker = m_helper.GetAMarker();
-				var cellPart0_1b = m_helper.MakeChartMarker(row0, 1, marker);
-				var cellPart0_2 = m_helper.MakeWordGroup(row0, 2, movedItem, movedItem);
+				m_helper.MakeChartMarker(row0, 1, marker);
+				m_helper.MakeWordGroup(row0, 2, movedItem, movedItem);
 				var marker2 = m_helper.GetAnotherMarker();
-				var cellPart0_2b = m_helper.MakeChartMarker(row0, 2, marker2);
-				var cellPart0_2c = m_helper.MakeChartMarker(row0, 2, marker);
-				var cellPart0_3 = m_helper.MakeWordGroup(row0, 3, lastOccurrence, lastOccurrence);
 
+				m_helper.MakeChartMarker(row0, 2, marker2);
+				m_helper.MakeChartMarker(row0, 2, marker);
+				m_helper.MakeWordGroup(row0, 3, lastOccurrence, lastOccurrence);
 				// Now another row, and cell 4 on the first has a ref to it. The new row has a WordGroup with two
 				// wordforms in cell 1. The cell is two columns wide, being merged with the previous cell.
 				var row1 = m_helper.MakeSecondRow();
@@ -115,11 +115,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Discourse
 				cellPart1_1.MergesBefore = true;
 
 				// Let's have some notes on row 0.
-				//var notesText = Cache.ServiceLocator.GetInstance<IStTextFactory>().Create();
 				row0.Notes = TsStringUtils.MakeString("This is a test note", Cache.DefaultAnalWs);
-				//var notesPara = Cache.ServiceLocator.GetInstance<IStTxtParaFactory>().Create();
-				//notesText.ParagraphsOS.Add(notesPara);
-				//notesPara.Contents = ;
 
 				// And some moved text in row 1
 				var cellPart1_2 = m_helper.MakeWordGroup(row1, 2, allParaOccurrences[4], allParaOccurrences[4]);

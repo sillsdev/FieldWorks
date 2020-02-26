@@ -389,11 +389,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 					return Rule.OutputOS.Count;
 				default:
 					var ctxtOrVar = m_cache.ServiceLocator.GetInstance<IPhContextOrVarRepository>().GetObject(cellId);
-					if (ctxtOrVar.ClassID == PhSequenceContextTags.kClassId)
-					{
-						return ((IPhSequenceContext)ctxtOrVar).MembersRS.Count;
-					}
-					return 1;
+					return ctxtOrVar.ClassID == PhSequenceContextTags.kClassId ? ((IPhSequenceContext)ctxtOrVar).MembersRS.Count : 1;
 			}
 		}
 
@@ -410,11 +406,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				default:
 					var ctxtOrVar = m_cache.ServiceLocator.GetInstance<IPhContextOrVarRepository>().GetObject(cellId);
 					var index = ctxtOrVar.IndexInOwner;
-					if (index == Rule.InputOS.Count - 1)
-					{
-						return AffixRuleFormulaVc.ktagRightEmpty;
-					}
-					return Rule.InputOS[index + 1].Hvo;
+					return index == Rule.InputOS.Count - 1 ? AffixRuleFormulaVc.ktagRightEmpty : Rule.InputOS[index + 1].Hvo;
 			}
 		}
 
@@ -431,11 +423,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				default:
 					var ctxtOrVar = m_cache.ServiceLocator.GetInstance<IPhContextOrVarRepository>().GetObject(cellId);
 					var index = ctxtOrVar.IndexInOwner;
-					if (index == 0)
-					{
-						return AffixRuleFormulaVc.ktagLeftEmpty;
-					}
-					return Rule.InputOS[index - 1].Hvo;
+					return index == 0 ? AffixRuleFormulaVc.ktagLeftEmpty : Rule.InputOS[index - 1].Hvo;
 			}
 		}
 
@@ -682,30 +670,17 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 		private bool IsLastVariable(IPhContextOrVar ctxtOrVar)
 		{
-			if (ctxtOrVar.ClassID != PhVariableTags.kClassId)
-			{
-				return false;
-			}
-			return Rule.InputOS.Count(cur => cur.ClassID == PhVariableTags.kClassId) == 1;
+			return ctxtOrVar.ClassID == PhVariableTags.kClassId && Rule.InputOS.Count(cur => cur.ClassID == PhVariableTags.kClassId) == 1;
 		}
 
 		private bool IsLastVariableMapping(IMoRuleMapping mapping)
 		{
-			if (mapping.ClassID != MoCopyFromInputTags.kClassId)
-			{
-				return false;
-			}
-			var copy = (IMoCopyFromInput)mapping;
-			return IsLastVariable(copy.ContentRA);
+			return mapping.ClassID == MoCopyFromInputTags.kClassId && IsLastVariable(((IMoCopyFromInput)mapping).ContentRA);
 		}
 
 		private bool IsFinalLastVariableMapping(IMoRuleMapping mapping)
 		{
-			if (!IsLastVariableMapping(mapping))
-			{
-				return false;
-			}
-			return Rule.OutputOS.Count(curMapping => IsLastVariableMapping(curMapping)) == 1;
+			return IsLastVariableMapping(mapping) && Rule.OutputOS.Count(IsLastVariableMapping) == 1;
 		}
 
 		/// <summary>
@@ -916,7 +891,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			base.OnSizeChanged(e);
 			if (_view != null)
 			{
-				int w = Width;
+				var w = Width;
 				_view.Width = w > 0 ? w : 0;
 			}
 		}

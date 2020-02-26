@@ -83,23 +83,26 @@ namespace LanguageExplorer.Controls.DetailControls
 							if (pi != null)
 							{
 								var info = pi.GetValue(obj, null);
-								// handle the object type
-								if (info is string)
+								switch (info)
 								{
-									tss = TsStringUtils.MakeString((string)info, ws);
-								}
-								else if (info is IMultiUnicode)
-								{
-									var accessor = info as IMultiUnicode;
-									tss = accessor.get_String(ws); // try the requested one (or default analysis)
-									if (tss == null || tss.Length == 0)
+									// handle the object type
+									case string text:
+										tss = TsStringUtils.MakeString(text, ws);
+										break;
+									case IMultiUnicode multiUnicode:
 									{
-										tss = accessor.BestAnalysisVernacularAlternative; // get something
+										var accessor = multiUnicode;
+										tss = accessor.get_String(ws); // try the requested one (or default analysis)
+										if (tss == null || tss.Length == 0)
+										{
+											tss = accessor.BestAnalysisVernacularAlternative; // get something
+										}
+
+										break;
 									}
-								}
-								else
-								{
-									tss = info is ITsString ? (ITsString)info : null;
+									default:
+										tss = info is ITsString tsString ? tsString : null;
+										break;
 								}
 							}
 							else
@@ -144,10 +147,7 @@ namespace LanguageExplorer.Controls.DetailControls
 				}
 				return sTextStyle;
 			}
-			set
-			{
-				m_textStyle = value;
-			}
+			set => m_textStyle = value;
 		}
 	}
 }

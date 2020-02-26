@@ -28,10 +28,7 @@ namespace LanguageExplorer.Areas
 
 		public override bool IsControllingTheRecordTreeBar
 		{
-			get
-			{
-				return true; // assume this will be true, say for instance in the context of a dialog.
-			}
+			get => true; // assume this will be true, say for instance in the context of a dialog.
 			set
 			{
 				// Do not do anything here, unless you want to manage the "RecordList.RecordListRepository.ActiveRecordList" property.

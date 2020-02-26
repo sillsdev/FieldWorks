@@ -47,7 +47,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private bool m_fOnlyUnicode;
 		/// <summary>The Encoding Converter may have changed and may need to be saved.</summary>
 		private bool m_fConverterChanged;
-		private IApp m_app;
 
 		/// <summary>
 		/// Is the loaded converter supported? True if no conv is loaded. Basically, we're just trying to
@@ -78,10 +77,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <summary>
 		/// Sets the application.
 		/// </summary>
-		public IApp Application
-		{
-			set => m_app = value;
-		}
+		public IApp Application { private get; set; }
 
 		/// <summary>
 		/// Gets or sets the converters.
@@ -401,9 +397,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 						}
 						catch (Exception ee)
 						{
-							Debug.Assert(m_app != null, "Bet you wish you set the Application property!");
+							Debug.Assert(Application != null, "Bet you wish you set the Application property!");
 							Debug.WriteLine(ee.Message);
-							MessageBox.Show(string.Format(AddConverterDlgStrings.kstidICUErrorText, Environment.NewLine, m_app.ApplicationName),
+							MessageBox.Show(string.Format(AddConverterDlgStrings.kstidICUErrorText, Environment.NewLine, Application.ApplicationName),
 								AddConverterDlgStrings.kstidICUErrorTitle, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
 						}
 						cboSpec.EndUpdate();

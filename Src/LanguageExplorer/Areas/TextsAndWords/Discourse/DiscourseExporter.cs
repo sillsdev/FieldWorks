@@ -111,9 +111,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		private void WriteLanguages()
 		{
 			m_writer.WriteStartElement("languages");
-			foreach (var wsActual in m_usedWritingSystems)
+			foreach (var ws in m_usedWritingSystems.Select(wsActual => m_cache.ServiceLocator.WritingSystemManager.Get(wsActual)))
 			{
-				var ws = m_cache.ServiceLocator.WritingSystemManager.Get(wsActual);
 				m_writer.WriteStartElement("language");
 				// we don't have enough context at this point to get all the possible writing system
 				// information we may encounter in the word bundles.
@@ -134,7 +133,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			m_writer.WriteEndElement(); // languages
 		}
 
-		public override void AddStringProp(int tag, IVwViewConstructor _vwvc)
+		public override void AddStringProp(int tag, IVwViewConstructor vwvc)
 		{
 			switch (tag)
 			{
@@ -220,8 +219,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 
 		private static int GetWsFromTsString(ITsString tss)
 		{
-			int var;
-			return tss.get_PropertiesAt(0).GetIntPropValues((int)FwTextPropType.ktptWs, out var);
+			return tss.get_PropertiesAt(0).GetIntPropValues((int)FwTextPropType.ktptWs, out _);
 		}
 
 		public override void set_IntProperty(int tpt, int tpv, int nValue)
@@ -352,23 +350,23 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		/// </summary>
 		public override void OpenTableCell(int nRowSpan, int nColSpan)
 		{
-			if (m_titleStage == TitleStage.ktsStart && m_frags.Count > 0 && m_frags[m_frags.Count - 1] == ConstChartVc.kfragColumnGroupHeader)
+			switch (m_titleStage)
 			{
-				// got the first group header
-				m_titleStage = TitleStage.ktsGotFirstRowGroups;
-			}
-			else if (m_titleStage == TitleStage.ktsGotFirstRowGroups && m_frags.Count == 0)
-			{
-				// got the column groups, no longer in that, next thing is the notes header
-				m_titleStage = TitleStage.ktsGotNotesHeaderCell;
-			}
-			else if (m_titleStage == TitleStage.ktsGotNotesHeaderCell)
-			{
-				// got the one last cell on the very first row, now starting the second row, close first and make a new row.
-				m_writer.WriteEndElement();  // terminate the first header row.
-				m_writer.WriteStartElement("row"); // second row headers
-				m_writer.WriteAttributeString("type", "title2");
-				m_titleStage = TitleStage.ktsStartedSecondHeaderRow;
+				case TitleStage.ktsStart when m_frags.Any() && m_frags[m_frags.Count - 1] == ConstChartVc.kfragColumnGroupHeader:
+					// got the first group header
+					m_titleStage = TitleStage.ktsGotFirstRowGroups;
+					break;
+				case TitleStage.ktsGotFirstRowGroups when !m_frags.Any():
+					// got the column groups, no longer in that, next thing is the notes header
+					m_titleStage = TitleStage.ktsGotNotesHeaderCell;
+					break;
+				case TitleStage.ktsGotNotesHeaderCell:
+					// got the one last cell on the very first row, now starting the second row, close first and make a new row.
+					m_writer.WriteEndElement();  // terminate the first header row.
+					m_writer.WriteStartElement("row"); // second row headers
+					m_writer.WriteAttributeString("type", "title2");
+					m_titleStage = TitleStage.ktsStartedSecondHeaderRow;
+					break;
 			}
 			m_writer.WriteStartElement("cell");
 			if (m_fNextCellReversed)
@@ -385,7 +383,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		{
 			base.CloseTableCell();
 			m_writer.WriteEndElement(); // the "main" element
-			if (m_glossesInCellCollector.Count > 0)
+			if (m_glossesInCellCollector.Any())
 			{
 				m_writer.WriteStartElement("glosses");
 				foreach (var gloss in m_glossesInCellCollector)
@@ -396,8 +394,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 					m_writer.WriteString(gloss);
 					m_writer.WriteEndElement(); // gloss
 				}
-				m_writer.WriteEndElement(); // glosses
-											// Ready to start collecting for the next cell.
+				// glosses
+				m_writer.WriteEndElement();
+				// Ready to start collecting for the next cell.
 				m_glossesInCellCollector.Clear();
 			}
 

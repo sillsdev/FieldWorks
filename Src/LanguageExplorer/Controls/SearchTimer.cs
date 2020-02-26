@@ -45,18 +45,10 @@ namespace LanguageExplorer.Controls
 		/// <param name="searcher">The delegate that will do the searching.</param>
 		public SearchTimer(Control owningControl, int interval, Searcher searcher)
 		{
-			if (owningControl == null)
-			{
-				throw new ArgumentNullException(nameof(owningControl));
-			}
-			if (searcher == null)
-			{
-				throw new ArgumentNullException(nameof(searcher));
-			}
 			m_timer = new Timer();
-			m_owningControl = owningControl;
+			m_owningControl = owningControl ?? throw new ArgumentNullException(nameof(owningControl));
 			m_interval = interval;
-			m_searcher = searcher;
+			m_searcher = searcher ?? throw new ArgumentNullException(nameof(searcher));
 		}
 
 		#region Disposable stuff

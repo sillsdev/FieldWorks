@@ -109,14 +109,8 @@ namespace LanguageExplorer.Controls
 		/// </summary>
 		public int SelectedIndex
 		{
-			get
-			{
-				return ListBox.SelectedIndex;
-			}
-			set
-			{
-				ListBox.SelectedIndex = value;
-			}
+			get => ListBox.SelectedIndex;
+			set => ListBox.SelectedIndex = value;
 		}
 
 		/// <summary>
@@ -125,10 +119,7 @@ namespace LanguageExplorer.Controls
 		[Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public override IVwStylesheet StyleSheet
 		{
-			get
-			{
-				return base.StyleSheet;
-			}
+			get => base.StyleSheet;
 			set
 			{
 				base.StyleSheet = value;
@@ -148,10 +139,7 @@ namespace LanguageExplorer.Controls
 		[Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public override object SelectedItem
 		{
-			get
-			{
-				return ListBox.SelectedItem;
-			}
+			get => ListBox.SelectedItem;
 			set
 			{
 				ListBox.SelectedItem = value;
@@ -170,10 +158,7 @@ namespace LanguageExplorer.Controls
 		[Browsable(true), DesignerSerializationVisibility(DesignerSerializationVisibility.Visible)]
 		public override string Text
 		{
-			get
-			{
-				return base.Text;
-			}
+			get => base.Text;
 			set
 			{
 				base.Text = value;
@@ -187,10 +172,7 @@ namespace LanguageExplorer.Controls
 		[Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public override ITsString Tss
 		{
-			get
-			{
-				return base.Tss;
-			}
+			get => base.Tss;
 			set
 			{
 				base.Tss = value;
@@ -212,10 +194,7 @@ namespace LanguageExplorer.Controls
 		[Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public override int WritingSystemCode
 		{
-			get
-			{
-				return base.WritingSystemCode;
-			}
+			get => base.WritingSystemCode;
 			set
 			{
 				base.WritingSystemCode = value;
@@ -229,10 +208,7 @@ namespace LanguageExplorer.Controls
 		[Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public override ILgWritingSystemFactory WritingSystemFactory
 		{
-			get
-			{
-				return base.WritingSystemFactory;
-			}
+			get => base.WritingSystemFactory;
 			set
 			{
 				base.WritingSystemFactory = value;
@@ -246,10 +222,7 @@ namespace LanguageExplorer.Controls
 		/// </summary>
 		public override Font Font
 		{
-			get
-			{
-				return base.Font;
-			}
+			get => base.Font;
 			set
 			{
 				base.Font = value;

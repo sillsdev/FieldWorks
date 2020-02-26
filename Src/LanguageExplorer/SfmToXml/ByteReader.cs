@@ -315,8 +315,7 @@ namespace LanguageExplorer.SfmToXml
 				// have hit our first whitespace data or the end of the file
 				var endOfMarker = (int)m_position - 1;
 				// convert the bytes of the sfm marker to the string for it
-				MultiToWideError mwError;
-				sfmMarker = Converter.MultiToWideWithERROR(m_FileData, startOfMarker + 1, endOfMarker, Encoding.UTF8, out mwError, out badSfmBytes);
+				sfmMarker = Converter.MultiToWideWithERROR(m_FileData, startOfMarker + 1, endOfMarker, Encoding.UTF8, out _, out badSfmBytes);
 				if (m_position < m_FileData.Length)
 				{
 					// eat all the white space after the marker
@@ -478,7 +477,7 @@ namespace LanguageExplorer.SfmToXml
 		/// <param name="readPos">Index into readData to begin examination at</param>
 		/// <param name="searchData">Bytes to compare with</param>
 		/// <returns>True if readPos is an index into readData where a copy of searchData begins</returns>
-		private bool BytesMatch(byte[] readData, long readPos, byte[] searchData)
+		private static bool BytesMatch(byte[] readData, long readPos, byte[] searchData)
 		{
 			// First test that there are enough bytes before the end of readData to possibly contain
 			// searchData:

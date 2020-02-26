@@ -3,6 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Collections;
+using System.Linq;
 using LanguageExplorer.Filters;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
@@ -78,14 +79,7 @@ namespace LanguageExplorer.Areas
 		/// <inheritdoc />
 		public RecordFilter GetFilter(string filterName)
 		{
-			foreach (RecordFilter filter in Filters)
-			{
-				if (filter.id == filterName)
-				{
-					return filter;
-				}
-			}
-			return null;
+			return Filters.Cast<RecordFilter>().FirstOrDefault(filter => filter.id == filterName);
 		}
 
 		/// <inheritdoc />
@@ -96,8 +90,7 @@ namespace LanguageExplorer.Areas
 				return false;   // we aren't providing any items.
 			}
 			var currentFilter = argument;
-			RecordFilter matchingFilter;
-			if (ContainsOurFilter(currentFilter, out matchingFilter))
+			if (ContainsOurFilter(currentFilter, out var matchingFilter))
 			{
 				// we found a match. if we don't already have a WordSetNullFilter, add it now.
 				if (!(Filters[0] is WordSetNullFilter))
@@ -125,11 +118,11 @@ namespace LanguageExplorer.Areas
 			{
 				return false;
 			}
-			for (var i = 0; i < Filters.Count; ++i)
+			foreach (var currentFilter in Filters)
 			{
-				if (filter.Contains(Filters[i] as RecordFilter))
+				if (filter.Contains(currentFilter as RecordFilter))
 				{
-					matchingFilter = (RecordFilter)Filters[i];
+					matchingFilter = (RecordFilter)currentFilter;
 					return true;
 				}
 			}

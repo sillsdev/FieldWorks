@@ -26,11 +26,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			{
 				var list = (ICmPossibilityList)MyCmObject.ReferenceTargetOwner(m_flid);
 				var parameters = ConfigurationNode.Element("deParams");
-				if (parameters == null)
-				{
-					return list.IsVernacular ? "best vernoranal" : "best analorvern";
-				}
-				return XmlUtils.GetOptionalAttributeValue(parameters, "ws", list.IsVernacular ? "best vernoranal" : "best analorvern");
+				return parameters == null ? list.IsVernacular ? "best vernoranal" : "best analorvern" : XmlUtils.GetOptionalAttributeValue(parameters, "ws", list.IsVernacular ? "best vernoranal" : "best analorvern");
 			}
 		}
 

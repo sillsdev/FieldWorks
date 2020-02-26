@@ -112,7 +112,6 @@ namespace LanguageExplorer.Controls
 			image = m_imageList16x16.Images[0].Clone() as Image;
 			image.RotateFlip(RotateFlipType.Rotate270FlipNone);
 			m_expandSplitterIcons[3] = image;
-			Panel1.SizeChanged += Panel1_SizeChanged;
 			BackColor = Color.FromKnownColor(KnownColor.Control); // so the splitter itself is gray
 			Panel1.BackColor = Color.FromKnownColor(KnownColor.Window); // the content areas should be white if not covered.
 			Panel2.BackColor = Color.FromKnownColor(KnownColor.Window); // the content areas should be white if not covered.
@@ -138,11 +137,6 @@ namespace LanguageExplorer.Controls
 			{
 				m_secondMainControl.Size = Panel2.Size;
 			}
-		}
-
-		private void Panel1_SizeChanged(object sender, EventArgs e)
-		{
-			var height_width = Orientation == Orientation.Vertical ? Panel1.Width : Panel1.Height;
 		}
 
 		#endregion Construction
@@ -182,10 +176,7 @@ namespace LanguageExplorer.Controls
 		/// </remarks>
 		public Control FirstControl
 		{
-			get
-			{
-				return m_firstMainControl;
-			}
+			get => m_firstMainControl;
 			set
 			{
 				if (value == null)
@@ -219,10 +210,7 @@ namespace LanguageExplorer.Controls
 		/// </summary>
 		public int FirstCollapseZone
 		{
-			set
-			{
-				m_firstCollapseZone = GetNewCollapseZoneValue(value);
-			}
+			set => m_firstCollapseZone = GetNewCollapseZoneValue(value);
 		}
 
 		/// <summary>
@@ -239,10 +227,7 @@ namespace LanguageExplorer.Controls
 		/// </remarks>
 		public Control SecondControl
 		{
-			get
-			{
-				return m_secondMainControl;
-			}
+			get => m_secondMainControl;
 			set
 			{
 				if (value == null)
@@ -279,10 +264,7 @@ namespace LanguageExplorer.Controls
 		/// </summary>
 		public int SecondCollapseZone
 		{
-			set
-			{
-				m_secondCollapseZone = GetNewCollapseZoneValue(value);
-			}
+			set => m_secondCollapseZone = GetNewCollapseZoneValue(value);
 		}
 
 		private int GetNewCollapseZoneValue(int newValue)
@@ -300,8 +282,8 @@ namespace LanguageExplorer.Controls
 		/// </summary>
 		public string FirstLabel
 		{
-			get { return m_firstLabel; }
-			set { m_firstLabel = value ?? string.Empty; }
+			get => m_firstLabel;
+			set => m_firstLabel = value ?? string.Empty;
 		}
 
 		/// <summary>
@@ -309,8 +291,8 @@ namespace LanguageExplorer.Controls
 		/// </summary>
 		public string SecondLabel
 		{
-			get { return m_secondLabel; }
-			set { m_secondLabel = value ?? string.Empty; }
+			get => m_secondLabel;
+			set => m_secondLabel = value ?? string.Empty;
 		}
 
 		#endregion Properties
@@ -369,7 +351,7 @@ namespace LanguageExplorer.Controls
 					if (Orientation == Orientation.Vertical)
 					{
 						y += icon.Height + kLabelOffset;
-						var format = StringFormat.GenericDefault.Clone() as StringFormat;
+						var format = (StringFormat)StringFormat.GenericDefault.Clone();
 						format.FormatFlags = StringFormatFlags.DirectionVertical;
 						try
 						{
@@ -443,12 +425,11 @@ namespace LanguageExplorer.Controls
 						return;
 					}
 					// It may be a PaneBarContainer
-					if (m_firstMainControl is PaneBarContainer)
+					if (m_firstMainControl is PaneBarContainer pbc)
 					{
-						var pbc = (PaneBarContainer)m_firstMainControl;
 						// pbc.MainControl could be a nested MultiPane, but we don't care about it.
 						// MultiPane won't implement ISnapSplitPosition, so we are good on that point.
-						if (pbc.MainControl is ISnapSplitPosition && ((ISnapSplitPosition)pbc.MainControl).SnapSplitPosition(ref splitDistance))
+						if (pbc.MainControl is ISnapSplitPosition position && position.SnapSplitPosition(ref splitDistance))
 						{
 							SplitterDistance = splitDistance;
 							m_previousSplitterPosition = splitDistance;
@@ -599,7 +580,6 @@ namespace LanguageExplorer.Controls
 			{
 				m_wantResetControls = false;
 				base.OnSizeChanged(e);
-
 				m_firstFrontedControl?.BringToFront();
 				m_secondFrontedControl?.BringToFront();
 			}
@@ -614,13 +594,13 @@ namespace LanguageExplorer.Controls
 		/// <summary />
 		public void PostLayoutInit()
 		{
-			if (FirstControl is IPostLayoutInit)
+			if (FirstControl is IPostLayoutInit postLayoutInit1)
 			{
-				((IPostLayoutInit)FirstControl).PostLayoutInit();
+				postLayoutInit1.PostLayoutInit();
 			}
-			if (SecondControl is IPostLayoutInit)
+			if (SecondControl is IPostLayoutInit postLayoutInit2)
 			{
-				((IPostLayoutInit)SecondControl).PostLayoutInit();
+				postLayoutInit2.PostLayoutInit();
 			}
 		}
 	}

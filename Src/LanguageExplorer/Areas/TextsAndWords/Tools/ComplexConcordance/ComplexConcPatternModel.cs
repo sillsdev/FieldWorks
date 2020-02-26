@@ -77,8 +77,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 			m_featSys.Add(new ComplexFeature("infl") { Description = "Infl", DefaultValue = FeatureStruct.New().Value });
 			foreach (var feature in m_cache.LangProject.MsFeatureSystemOA.FeaturesOC)
 			{
-				var complexFeat = feature as IFsComplexFeature;
-				if (complexFeat != null)
+				if (feature is IFsComplexFeature complexFeat)
 				{
 					m_featSys.Add(new ComplexFeature(complexFeat.Hvo.ToString(CultureInfo.InvariantCulture)) { Description = complexFeat.Abbreviation.BestAnalysisAlternative.Text, DefaultValue = FeatureStruct.New().Value });
 				}

@@ -2,11 +2,11 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Windows.Forms;
+using SIL.Code;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
@@ -27,10 +27,8 @@ namespace LanguageExplorer.UtilityTools
 		/// <summary />
 		internal ErrorFixer(UtilityDlg utilityDlg)
 		{
-			if (utilityDlg == null)
-			{
-				throw new ArgumentNullException(nameof(utilityDlg));
-			}
+			Guard.AgainstNull(utilityDlg, nameof(utilityDlg));
+
 			_dlg = utilityDlg;
 		}
 

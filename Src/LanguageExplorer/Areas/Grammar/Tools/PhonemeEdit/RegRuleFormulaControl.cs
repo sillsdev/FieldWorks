@@ -179,8 +179,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonemeEdit
 			int min, max;
 			var setContextOccurrence = false;
 
-			var dictionary = ((ToolStripMenuItem)sender).Tag as Dictionary<string, int>;
-			if (dictionary != null)
+			if (((ToolStripMenuItem)sender).Tag is Dictionary<string, int> dictionary)
 			{
 				min = dictionary["min"];
 				max = dictionary["max"];
@@ -287,9 +286,8 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonemeEdit
 					}
 					var indices = GetIndicesToRemove(rightCtxts, sel);
 					return indices[indices.Length - 1] == rightCtxts.Length - 1;
-				// we cannot insert anything to the right of a word boundary in the right context
-
 				default:
+					// we cannot insert anything to the right of a word boundary in the right context
 					return opt.Type != RuleInsertType.WordBoundary;
 			}
 		}
@@ -435,7 +433,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonemeEdit
 			}
 		}
 
-		void AppendToEnv(IPhPhonContext ctxt, int flid)
+		private void AppendToEnv(IPhPhonContext ctxt, int flid)
 		{
 			IPhSequenceContext seqCtxt = null;
 
@@ -649,15 +647,9 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonemeEdit
 				case PhSegRuleRHSTags.kflidRightContext:
 					var leftEnv = cellId == PhSegRuleRHSTags.kflidLeftContext;
 					var ctxt = leftEnv ? Rhs.LeftContextOA : Rhs.RightContextOA;
-					if (ctxt == null)
-					{
-						return 0;
-					}
-					if (ctxt.ClassID != PhSequenceContextTags.kClassId)
-					{
-						return 1;
-					}
-					return ((IPhSequenceContext)ctxt).MembersRS.Count;
+					return ctxt == null ? 0 :
+						ctxt.ClassID != PhSequenceContextTags.kClassId ? 1 :
+						((IPhSequenceContext)ctxt).MembersRS.Count;
 			}
 			return 0;
 		}
@@ -902,18 +894,14 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonemeEdit
 
 			if (index == -1)
 			{
-				var envCtxt = cellId == PhSegRuleRHSTags.kflidLeftContext ? Rhs.LeftContextOA : Rhs.RightContextOA;
-				IPhSequenceContext seqCtxt;
-				index = GetIndex(ctxt, envCtxt, out seqCtxt);
+				index = GetIndex(ctxt, cellId == PhSegRuleRHSTags.kflidLeftContext ? Rhs.LeftContextOA : Rhs.RightContextOA, out _);
 			}
-
 			ReconstructView(cellId, index, true);
 		}
 
 		private int OverwriteContext(IPhPhonContext src, IPhPhonContext dest, bool leftEnv, bool preserveDest)
 		{
-			IPhSequenceContext seqCtxt;
-			var index = GetIndex(dest, leftEnv ? Rhs.LeftContextOA : Rhs.RightContextOA, out seqCtxt);
+			var index = GetIndex(dest, leftEnv ? Rhs.LeftContextOA : Rhs.RightContextOA, out var seqCtxt);
 			if (index != -1)
 			{
 				if (!src.IsValidObject)

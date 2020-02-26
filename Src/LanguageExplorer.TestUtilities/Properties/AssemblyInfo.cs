@@ -14,3 +14,4 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 [assembly: InternalsVisibleTo("LanguageExplorerTests")]
+[assembly: InternalsVisibleTo("RootSiteTests")]

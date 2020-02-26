@@ -72,8 +72,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		internal void Display(ref ITsString tssDelayedNumber)
 		{
-			MainCallerDisplayCommand dispInfo;
-			if (!m_viewConstructor.CanGetMainCallerDisplayCommand(m_frag, out dispInfo))
+			if (!m_viewConstructor.CanGetMainCallerDisplayCommand(m_frag, out var dispInfo))
 			{
 				// Shouldn't be possible, but just in case...
 				Debug.Assert(true, "No MainCallerDisplayCommand!");
@@ -87,9 +86,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				listDelimitNode = dispInfo.Caller;
 			}
-			//
 			// 1. get number of items in vector
-			//
 			var chvo = m_sda.get_VecSize(m_hvo, m_flid);
 			if (chvo == 0)
 			{
@@ -97,12 +94,10 @@ namespace LanguageExplorer.Controls.XMLViews
 				ProcessEmptyVector(m_vwEnv, m_hvo, m_flid);
 				return;
 			}
-			//
 			// 2. for each item in the vector,
 			//		a) print leading number if desired.
 			//		b) call AddObj
 			//		c) print separator if desired and needed
-			//
 			var rghvo = GetVector(m_sda, m_hvo, m_flid);
 			Debug.Assert(chvo == rghvo.Length);
 			//
@@ -114,8 +109,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			var fCheckForEmptyItems = XmlUtils.GetOptionalBooleanAttributeValue(specialAttrsNode, "checkForEmptyItems", false);
 			var exclude = XmlUtils.GetOptionalAttributeValue(specialAttrsNode, "excludeHvo", null);
 			var fFirstOnly = XmlUtils.GetOptionalBooleanAttributeValue(specialAttrsNode, "firstOnly", false);
-			XAttribute xaNum;
-			var fNumber = SetNumberFlagIncludingSingleOption(listDelimitNode, chvo, out xaNum);
+			var fNumber = SetNumberFlagIncludingSingleOption(listDelimitNode, chvo, out var xaNum);
 			ApplySortingIfSpecified(rghvo, specialAttrsNode);
 			// Determine if sequence should be filtered by a stored list of Guids.
 			// Note that if we filter, we replace rghvo with the filtered list.
@@ -124,9 +118,8 @@ namespace LanguageExplorer.Controls.XMLViews
 				// order by vector item type guids
 				// Don't reorder LexEntry VisibleComplexFormBackRefs vector if the user overrode it manually.
 				var obj = m_cache.ServiceLocator.GetObject(m_hvo);
-				if (obj is ILexEntry)
+				if (obj is ILexEntry lexEntry)
 				{
-					var lexEntry = obj as ILexEntry;
 					if (m_flid == m_cache.MetaDataCacheAccessor.GetFieldId("LexEntry", "VisibleComplexFormBackRefs", false))
 					{
 						if (!VirtualOrderingServices.HasVirtualOrdering(lexEntry, "VisibleComplexFormBackRefs"))
@@ -405,17 +398,19 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				return false;
 			}
-			if (exclude == "this" && rghvo[ihvo] == m_hvo)
+			switch (exclude)
 			{
-				return true;
-			}
-			if (exclude == "parent")
-			{
-				int hvoParent, tagDummy, ihvoDummy;
-				m_vwEnv.GetOuterObject(m_vwEnv.EmbeddingLevel - 1, out hvoParent, out tagDummy, out ihvoDummy);
-				if (rghvo[ihvo] == hvoParent)
-				{
+				case "this" when rghvo[ihvo] == m_hvo:
 					return true;
+				case "parent":
+				{
+					m_vwEnv.GetOuterObject(m_vwEnv.EmbeddingLevel - 1, out var hvoParent, out _, out _);
+					if (rghvo[ihvo] == hvoParent)
+					{
+						return true;
+					}
+
+					break;
 				}
 			}
 			return false;
@@ -638,15 +633,8 @@ namespace LanguageExplorer.Controls.XMLViews
 		{
 			// If it's not the kind of vector we know how to deal with, safest to assume the item
 			// is not empty.
-			MainCallerDisplayCommand command;
-			if (!m_viewConstructor.CanGetMainCallerDisplayCommand(fragId, out command))
-			{
-				return false;
-			}
-			string layoutName;
-			var node = command.GetNodeForChild(out layoutName, fragId, m_viewConstructor, hvo);
-			var keys = XmlViewsUtils.ChildKeys(m_cache, m_sda, node, hvo, Layouts, command.Caller, m_viewConstructor.WsForce);
-			return AreAllKeysEmpty(keys);
+			return m_viewConstructor.CanGetMainCallerDisplayCommand(fragId, out var command)
+				   && AreAllKeysEmpty(XmlViewsUtils.ChildKeys(m_cache, m_sda, command.GetNodeForChild(out _, fragId, m_viewConstructor, hvo), hvo, Layouts, command.Caller, m_viewConstructor.WsForce));
 		}
 
 		/// <summary>
@@ -700,9 +688,9 @@ namespace LanguageExplorer.Controls.XMLViews
 
 		private void OutputItemNumber(IVwEnv vwenv, ITsString tssNumber)
 		{
-			if (vwenv is ConfiguredExport)
+			if (vwenv is ConfiguredExport configuredExport)
 			{
-				((ConfiguredExport)vwenv).OutputItemNumber(tssNumber, m_numberPartRef);
+				configuredExport.OutputItemNumber(tssNumber, m_numberPartRef);
 			}
 			else
 			{

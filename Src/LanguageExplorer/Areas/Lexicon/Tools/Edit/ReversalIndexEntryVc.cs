@@ -5,6 +5,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.LCModel;
@@ -95,10 +96,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 						var sda = vwenv.DataAccess;
 						foreach (var idx in m_usedIndices)
 						{
-							var wsHandle = m_cache.ServiceLocator.WritingSystemManager.GetWsFromStr(idx.WritingSystem);
-							int dxs;    // Width of displayed string.
-							int dys;    // Height of displayed string (not used here).
-							vwenv.get_StringWidth(sda.get_StringProp(wsHandle, ReversalEntryDataAccess.kflidWsAbbr), m_ttpLabel, out dxs, out dys);
+							vwenv.get_StringWidth(sda.get_StringProp(m_cache.ServiceLocator.WritingSystemManager.GetWsFromStr(idx.WritingSystem), ReversalEntryDataAccess.kflidWsAbbr), m_ttpLabel, out var dxs, out _);
 							dxsMax = Math.Max(dxsMax, dxs);
 						}
 						VwLength vlColWs; // 5-pt space plus max label width.
@@ -135,15 +133,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				case ReversalIndexEntrySliceView.kFragIndexMain:
 					{
 						// First cell has writing system abbreviation displayed using m_ttpLabel.
-						var wsHvo = 0;
-						foreach (var idx in m_usedIndices)
-						{
-							if (idx.Hvo == hvo)
-							{
-								wsHvo = m_cache.ServiceLocator.WritingSystemManager.GetWsFromStr(idx.WritingSystem);
-								break;
-							}
-						}
+						var wsHvo = m_usedIndices.Where(idx => idx.Hvo == hvo).Select(idx => m_cache.ServiceLocator.WritingSystemManager.GetWsFromStr(idx.WritingSystem)).FirstOrDefault();
 						Debug.Assert(wsHvo > 0, "Could not find writing system.");
 
 						var wsOldDefault = DefaultWs;
@@ -277,15 +267,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 					}
 				case ReversalIndexEntrySliceView.kFragEntries:
 					{
-						var wsHvo = 0;
-						foreach (var idx in m_usedIndices)
-						{
-							if (idx.Hvo == hvo)
-							{
-								wsHvo = m_cache.ServiceLocator.WritingSystemManager.GetWsFromStr(idx.WritingSystem);
-								break;
-							}
-						}
+						var wsHvo = m_usedIndices.Where(idx => idx.Hvo == hvo).Select(idx => m_cache.ServiceLocator.WritingSystemManager.GetWsFromStr(idx.WritingSystem)).FirstOrDefault();
 						Debug.Assert(wsHvo > 0, "Could not find writing system.");
 						var wsOldDefault = DefaultWs;
 						DefaultWs = wsHvo;

@@ -79,7 +79,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 
 		public bool HomographBefore
 		{
-			get { return m_radioBefore.Checked; }
+			get => m_radioBefore.Checked;
 			set
 			{
 				m_radioBefore.Checked = value;
@@ -90,7 +90,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 
 		public bool ShowHomographOnCrossRef
 		{
-			get { return m_chkShowHomographNumInDict.Checked; }
+			get => m_chkShowHomographNumInDict.Checked;
 			set
 			{
 				m_chkShowHomographNumInDict.Checked = value;
@@ -100,13 +100,13 @@ namespace LanguageExplorer.DictionaryConfiguration
 
 		public bool ShowSenseNumber
 		{
-			get { return m_chkShowSenseNumber.Checked; }
-			set { m_chkShowSenseNumber.Checked = value; }
+			get => m_chkShowSenseNumber.Checked;
+			set => m_chkShowSenseNumber.Checked = value;
 		}
 
 		public bool ShowHomograph
 		{
-			get { return !m_radioNone.Checked; }
+			get => !m_radioNone.Checked;
 			set
 			{
 				if (!value)
@@ -125,14 +125,14 @@ namespace LanguageExplorer.DictionaryConfiguration
 
 		public string Description
 		{
-			get { return m_configurationDescription.Text; }
-			set { m_configurationDescription.Text = value; }
+			get => m_configurationDescription.Text;
+			set => m_configurationDescription.Text = value;
 		}
 
 		public string CurrentHomographStyle
 		{
-			get { return _homographStyleCombo.Items[0].ToString(); }
-			set { _homographStyleCombo.Items[0] = value; }
+			get => _homographStyleCombo.Items[0].ToString();
+			set => _homographStyleCombo.Items[0] = value;
 		}
 
 		public void SetupDialog(IHelpTopicProvider helpTopicProvider)
@@ -182,7 +182,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 
 		public string HomographWritingSystem
 		{
-			get { return m_writingSystemCombo.Text; }
+			get => m_writingSystemCombo.Text;
 			set
 			{
 				m_writingSystemCombo.SelectedIndex = m_writingSystemCombo.FindString(value);
@@ -220,7 +220,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 
 		public IEnumerable<string> CustomDigits
 		{
-			get { return _digitBoxes.Select(db => db.Text).Where(text => !string.IsNullOrEmpty(text)); }
+			get => _digitBoxes.Select(db => db.Text).Where(text => !string.IsNullOrEmpty(text));
 			set
 			{
 				var digitsArray = value.ToArray();
@@ -257,7 +257,11 @@ namespace LanguageExplorer.DictionaryConfiguration
 			}
 		}
 
-		public bool OkButtonEnabled { get { return m_btnOk.Enabled; } set { m_btnOk.Enabled = value; } }
+		public bool OkButtonEnabled
+		{
+			get => m_btnOk.Enabled;
+			set => m_btnOk.Enabled = value;
+		}
 
 		public LcmStyleSheet SetStyleSheet
 		{

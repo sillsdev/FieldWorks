@@ -34,10 +34,9 @@ namespace LanguageExplorer.Controls
 		/// </summary>
 		protected override void OnGotFocus(EventArgs e)
 		{
-			if (Parent is IContainerControl)
+			if (Parent is IContainerControl containerControl)
 			{
-				var uc = (IContainerControl)Parent;
-				uc.ActiveControl = this;
+				containerControl.ActiveControl = this;
 			}
 			base.OnGotFocus(e);
 			try

@@ -63,11 +63,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 			{
 				case ktagChildren:
 					var node = m_nodes[hvo];
-					if (node.IsLeaf)
-					{
-						return new int[0];
-					}
-					return node.Children.Select(n => n.Hvo).ToArray();
+					return node.IsLeaf ? new int[0] : node.Children.Select(n => n.Hvo).ToArray();
 				default:
 					return base.VecProp(hvo, tag);
 			}

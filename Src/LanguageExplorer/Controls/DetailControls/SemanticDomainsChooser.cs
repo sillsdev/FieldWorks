@@ -50,7 +50,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			m_stylesheet = FwUtils.StyleSheetFromPropertyTable(propertyTable);
 			selectedDomainsList.Font = FontHeightAdjuster.GetFontForNormalStyle(Cache.DefaultAnalWs, m_stylesheet, Cache);
 			m_selectedItems.UnionWith(selectedItems);
-			UpdateDomainTreeAndListLabels(labels);
+			UpdateDomainTreeAndListLabels(labels.ToList());
 			searchTextBox.WritingSystemFactory = Cache.LanguageWritingSystemFactoryAccessor;
 			searchTextBox.AdjustForStyleSheet(m_stylesheet);
 			m_SearchTimer = new SearchTimer(this, 500, SearchSemanticDomains, new List<Control> { domainTree, domainList });
@@ -72,7 +72,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			m_SearchTimer.OnSearchTextChanged(sender, e);
 		}
 
-		private void UpdateDomainTreeAndListLabels(IEnumerable<ObjectLabel> labels)
+		private void UpdateDomainTreeAndListLabels(List<ObjectLabel> labels)
 		{
 			domainTree.BeginUpdate();
 			SemanticDomainSelectionServices.UpdateDomainTreeLabels(labels, displayUsageCheckBox.Checked, domainTree, m_stylesheet, m_selectedItems);
@@ -93,7 +93,7 @@ namespace LanguageExplorer.Controls.DetailControls
 				btnCancelSearch.SearchIsActive = true;
 				domainList.ItemChecked -= OnDomainListChecked;
 				var semDomainsToShow = m_semdomRepo.FindDomainsThatMatch(searchString);
-				SemanticDomainSelectionServices.UpdateDomainListLabels(ObjectLabel.CreateObjectLabels(Cache, semDomainsToShow, string.Empty, DisplayWs), m_stylesheet, domainList, displayUsageCheckBox.Checked);
+				SemanticDomainSelectionServices.UpdateDomainListLabels(ObjectLabel.CreateObjectLabels(Cache, semDomainsToShow, string.Empty, DisplayWs).ToList(), m_stylesheet, domainList, displayUsageCheckBox.Checked);
 				domainTree.Visible = false;
 				domainList.Visible = true;
 				domainList.ItemChecked += OnDomainListChecked;
@@ -137,8 +137,7 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		private void OnSuggestClicked(object sender, EventArgs e)
 		{
-			IEnumerable<ICmSemanticDomain> partialMatches;
-			var semDomainsToShow = m_semdomRepo.FindDomainsThatMatchWordsIn(Sense, out partialMatches);
+			var semDomainsToShow = m_semdomRepo.FindDomainsThatMatchWordsIn(Sense, out var partialMatches);
 			foreach (var domain in semDomainsToShow)
 			{
 				SemanticDomainSelectionServices.AdjustSelectedDomainList(domain, m_stylesheet, true, selectedDomainsList);
@@ -182,8 +181,7 @@ namespace LanguageExplorer.Controls.DetailControls
 					node.DisplayUsage = displayUsageCheckBox.Checked;
 					foreach (TreeNode childNode in node.Nodes)
 					{
-						var labelNode = childNode as LabelNode;
-						if (labelNode != null)
+						if (childNode is LabelNode labelNode)
 						{
 							stack.Push(labelNode);
 						}

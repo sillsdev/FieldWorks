@@ -276,31 +276,31 @@
   <data name="&gt;&gt;label6.ZOrder" xml:space="preserve">
 	<value>1</value>
   </data>
-  <data name="m_browseLoadSettingsFileButon.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+  <data name="m_browseLoadSettingsFileButton.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
 	<value>Top, Right</value>
   </data>
-  <data name="m_browseLoadSettingsFileButon.Location" type="System.Drawing.Point, System.Drawing">
+  <data name="m_browseLoadSettingsFileButton.Location" type="System.Drawing.Point, System.Drawing">
 	<value>303, 209</value>
   </data>
-  <data name="m_browseLoadSettingsFileButon.Size" type="System.Drawing.Size, System.Drawing">
+  <data name="m_browseLoadSettingsFileButton.Size" type="System.Drawing.Size, System.Drawing">
 	<value>75, 23</value>
   </data>
-  <data name="m_browseLoadSettingsFileButon.TabIndex" type="System.Int32, mscorlib">
+  <data name="m_browseLoadSettingsFileButton.TabIndex" type="System.Int32, mscorlib">
 	<value>8</value>
   </data>
-  <data name="m_browseLoadSettingsFileButon.Text" xml:space="preserve">
+  <data name="m_browseLoadSettingsFileButton.Text" xml:space="preserve">
 	<value>Browse...</value>
   </data>
-  <data name="&gt;&gt;m_browseLoadSettingsFileButon.Name" xml:space="preserve">
-	<value>m_browseLoadSettingsFileButon</value>
+  <data name="&gt;&gt;m_browseLoadSettingsFileButton.Name" xml:space="preserve">
+	<value>m_browseLoadSettingsFileButton</value>
   </data>
-  <data name="&gt;&gt;m_browseLoadSettingsFileButon.Type" xml:space="preserve">
+  <data name="&gt;&gt;m_browseLoadSettingsFileButton.Type" xml:space="preserve">
 	<value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;m_browseLoadSettingsFileButon.Parent" xml:space="preserve">
+  <data name="&gt;&gt;m_browseLoadSettingsFileButton.Parent" xml:space="preserve">
 	<value>tabPage1</value>
   </data>
-  <data name="&gt;&gt;m_browseLoadSettingsFileButon.ZOrder" xml:space="preserve">
+  <data name="&gt;&gt;m_browseLoadSettingsFileButton.ZOrder" xml:space="preserve">
 	<value>2</value>
   </data>
   <data name="m_loadSettingsFileBox.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
@@ -768,34 +768,34 @@
   <data name="&gt;&gt;label8.ZOrder" xml:space="preserve">
 	<value>2</value>
   </data>
-  <data name="m_browseSaveSettingsFileButon.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+  <data name="m_browseSaveSettingsFileButton.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
 	<value>Top, Right</value>
   </data>
-  <data name="m_browseSaveSettingsFileButon.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+  <data name="m_browseSaveSettingsFileButton.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
 	<value>NoControl</value>
   </data>
-  <data name="m_browseSaveSettingsFileButon.Location" type="System.Drawing.Point, System.Drawing">
+  <data name="m_browseSaveSettingsFileButton.Location" type="System.Drawing.Point, System.Drawing">
 	<value>262, 59</value>
   </data>
-  <data name="m_browseSaveSettingsFileButon.Size" type="System.Drawing.Size, System.Drawing">
+  <data name="m_browseSaveSettingsFileButton.Size" type="System.Drawing.Size, System.Drawing">
 	<value>75, 23</value>
   </data>
-  <data name="m_browseSaveSettingsFileButon.TabIndex" type="System.Int32, mscorlib">
+  <data name="m_browseSaveSettingsFileButton.TabIndex" type="System.Int32, mscorlib">
 	<value>12</value>
   </data>
-  <data name="m_browseSaveSettingsFileButon.Text" xml:space="preserve">
+  <data name="m_browseSaveSettingsFileButton.Text" xml:space="preserve">
 	<value>Browse...</value>
   </data>
-  <data name="&gt;&gt;m_browseSaveSettingsFileButon.Name" xml:space="preserve">
-	<value>m_browseSaveSettingsFileButon</value>
+  <data name="&gt;&gt;m_browseSaveSettingsFileButton.Name" xml:space="preserve">
+	<value>m_browseSaveSettingsFileButton</value>
   </data>
-  <data name="&gt;&gt;m_browseSaveSettingsFileButon.Type" xml:space="preserve">
+  <data name="&gt;&gt;m_browseSaveSettingsFileButton.Type" xml:space="preserve">
 	<value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;m_browseSaveSettingsFileButon.Parent" xml:space="preserve">
+  <data name="&gt;&gt;m_browseSaveSettingsFileButton.Parent" xml:space="preserve">
 	<value>tabPage4</value>
   </data>
-  <data name="&gt;&gt;m_browseSaveSettingsFileButon.ZOrder" xml:space="preserve">
+  <data name="&gt;&gt;m_browseSaveSettingsFileButton.ZOrder" xml:space="preserve">
 	<value>3</value>
   </data>
   <data name="m_saveSettingsFileBox.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">

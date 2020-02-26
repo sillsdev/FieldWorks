@@ -48,7 +48,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 			// overwrite the last state of one we may have saved during the tests.
 			if (InterlinWordControl != null && selected != SelectedOccurrence)
 			{
-				(InterlinWordControl as MockSandbox).NewAnalysisTree = new AnalysisTree();
+				((MockSandbox)InterlinWordControl).NewAnalysisTree = new AnalysisTree();
 			}
 			base.SelectOccurrence(selected);
 		}
@@ -74,7 +74,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 			base.ApproveAnalysis(fSaveGuess);
 		}
 
-		internal AnalysisTree NewAnalysisTree => (InterlinWordControl as MockSandbox).NewAnalysisTree;
+		internal AnalysisTree NewAnalysisTree => ((MockSandbox)InterlinWordControl).NewAnalysisTree;
 
 		private sealed class MockSandbox : UserControl, IAnalysisControlInternal
 		{
@@ -152,10 +152,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 				set {; }
 			}
 
-			public bool IsDirty
-			{
-				get { throw new NotSupportedException(); }
-			}
+			public bool IsDirty => throw new NotSupportedException();
 		}
 	}
 }

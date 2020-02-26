@@ -19,19 +19,17 @@ namespace LanguageExplorer
 	internal class DictionaryExportService
 	{
 		private readonly IPropertyTable m_propertyTable;
-		private readonly IPublisher m_publisher;
 		private LcmCache Cache { get; }
 		private IRecordList MyRecordList { get; }
 		private StatusBar _statusBar;
 		private const string DictionaryType = "Dictionary";
 		private const string ReversalType = "Reversal Index";
 
-		public DictionaryExportService(LcmCache cache, IRecordList activeRecordList, IPropertyTable propertyTable, IPublisher publisher, StatusBar statusBar)
+		public DictionaryExportService(LcmCache cache, IRecordList activeRecordList, IPropertyTable propertyTable, StatusBar statusBar)
 		{
 			Cache = cache;
 			MyRecordList = activeRecordList;
 			m_propertyTable = propertyTable;
-			m_publisher = publisher;
 			_statusBar = statusBar;
 		}
 
@@ -77,12 +75,11 @@ namespace LanguageExplorer
 
 		internal int CountReversalIndexEntries(IReversalIndex ri)
 		{
-			int[] entries;
 			using (ReversalIndexActivator.ActivateReversalIndex(ri.Guid, m_propertyTable, MyRecordList))
 			{
-				ConfiguredXHTMLGenerator.GetPublicationDecoratorAndEntries(m_propertyTable, out entries, ReversalType, Cache, MyRecordList);
+				ConfiguredXHTMLGenerator.GetPublicationDecoratorAndEntries(m_propertyTable, out var entries, ReversalType, Cache, MyRecordList);
+				return entries.Length;
 			}
-			return entries.Length;
 		}
 
 		public void ExportDictionaryContent(string xhtmlPath, DictionaryConfigurationModel configuration = null, IThreadedProgress progress = null)
@@ -106,8 +103,7 @@ namespace LanguageExplorer
 
 		private void ExportConfiguredXhtml(string xhtmlPath, DictionaryConfigurationModel configuration, string exportType, IThreadedProgress progress)
 		{
-			int[] entriesToSave;
-			var publicationDecorator = ConfiguredXHTMLGenerator.GetPublicationDecoratorAndEntries(m_propertyTable, out entriesToSave, exportType, Cache, MyRecordList);
+			var publicationDecorator = ConfiguredXHTMLGenerator.GetPublicationDecoratorAndEntries(m_propertyTable, out var entriesToSave, exportType, Cache, MyRecordList);
 			if (progress != null)
 			{
 				progress.Maximum = entriesToSave.Length;
@@ -199,8 +195,7 @@ namespace LanguageExplorer
 					if (propertyTable.GetValue<IRecordListRepository>(LanguageExplorerConstants.RecordListRepository).ActiveRecordList != tempRecordList)
 					{
 						// Some tests may not have a window.
-						var form = propertyTable.GetValue<Form>(FwUtils.window);
-						if (form != null)
+						if (propertyTable.TryGetValue<Form>(FwUtils.window, out var form))
 						{
 							RecordListServices.SetRecordList(form.Handle, tempRecordList);
 						}
@@ -244,8 +239,7 @@ namespace LanguageExplorer
 
 				if (disposing)
 				{
-					string dummy;
-					ActivateReversalIndexIfNeeded(m_sCurrentRevIdxGuid, m_propertyTable, m_recordList, out dummy);
+					ActivateReversalIndexIfNeeded(m_sCurrentRevIdxGuid, m_propertyTable, m_recordList, out _);
 				}
 
 				_isDisposed = true;
@@ -269,8 +263,7 @@ namespace LanguageExplorer
 
 			internal static ReversalIndexActivator ActivateReversalIndex(Guid reversalGuid, IPropertyTable propertyTable, IRecordList activeRecordList)
 			{
-				string originalReversalIndexGuid;
-				return ActivateReversalIndexIfNeeded(reversalGuid.ToString(), propertyTable, activeRecordList, out originalReversalIndexGuid)
+				return ActivateReversalIndexIfNeeded(reversalGuid.ToString(), propertyTable, activeRecordList, out var originalReversalIndexGuid)
 					? new ReversalIndexActivator(originalReversalIndexGuid, propertyTable, activeRecordList) : null;
 			}
 

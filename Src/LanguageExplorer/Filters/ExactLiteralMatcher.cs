@@ -34,8 +34,7 @@ namespace LanguageExplorer.Filters
 			var crun = tssKey.RunCount;
 			for (var irun = 0; irun < crun; irun++)
 			{
-				int nVar;
-				if (tssKey.get_Properties(irun).GetIntPropValues((int)FwTextPropType.ktptWs, out nVar) != WritingSystem)
+				if (tssKey.get_Properties(irun).GetIntPropValues((int)FwTextPropType.ktptWs, out _) != WritingSystem)
 				{
 					return false;
 				}

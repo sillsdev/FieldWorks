@@ -114,8 +114,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			{
 				foreach (var lexEntryType in entryRef.VariantEntryTypesRS)
 				{
-					var inflEntryType = lexEntryType as ILexEntryInflType;
-					if (inflEntryType != null)
+					if (lexEntryType is ILexEntryInflType inflEntryType)
 					{
 						WriteFeatureStructureNodes(writer, inflEntryType.InflFeatsOA, stemMsa.Hvo);
 					}
@@ -239,8 +238,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				writer.WriteStartElement("feature");
 				writer.WriteElementString("name", spec.FeatureRA.Abbreviation.BestAnalysisAlternative.Text);
 				writer.WriteStartElement("value");
-				var cv = spec as IFsClosedValue;
-				if (cv != null)
+				if (spec is IFsClosedValue cv)
 				{
 					writer.WriteString(cv.ValueRA.Abbreviation.BestAnalysisAlternative.Text);
 				}
@@ -251,8 +249,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 					{
 						continue; // skip this one since we're not dealing with it yet
 					}
-					var nestedFs = complex.ValueOA as IFsFeatStruc;
-					if (nestedFs != null)
+					if (complex.ValueOA is IFsFeatStruc nestedFs)
 					{
 						WriteFeatureStructureNodes(writer, nestedFs, 0);
 					}
@@ -300,17 +297,11 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			if (iCount > 0)
 			{
 				if (iCount > 1)
-				{ // have a circumfix; assume only two slots and assume that the first is prefix and second is suffix
-				  // TODO: ideally would figure out if the slots are prefix or suffix slots and then align the
-				  // 0 and 1 indices to the appropriate slot.  Will just do this for now (hab 2005.08.04).
-					if (type != null && type != "sfx")
-					{
-						slotHvo = inflMsa.SlotsRC.ToHvoArray()[0];
-					}
-					else
-					{
-						slotHvo = inflMsa.SlotsRC.ToHvoArray()[1];
-					}
+				{
+					// have a circumfix; assume only two slots and assume that the first is prefix and second is suffix
+					// TODO: ideally would figure out if the slots are prefix or suffix slots and then align the
+					// 0 and 1 indices to the appropriate slot.  Will just do this for now (hab 2005.08.04).
+					slotHvo = type != null && type != "sfx" ? inflMsa.SlotsRC.ToHvoArray()[0] : inflMsa.SlotsRC.ToHvoArray()[1];
 				}
 				else
 				{
@@ -345,8 +336,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				// This is one of the null allomorphs we create when building the
 				// input for the parser in order to still get the Word Grammar to have something in any
 				// required slots in affix templates.
-				var lexEntryInflType = obj as ILexEntryInflType;
-				if (lexEntryInflType != null)
+				if (obj is ILexEntryInflType lexEntryInflType)
 				{
 					WriteLexEntryInflTypeElement(writer, wordType, lexEntryInflType);
 					return;
@@ -371,11 +361,9 @@ namespace SIL.FieldWorks.WordWorks.Parser
 					if (entry.EntryRefsOS.Count > 0)
 					{
 						var lexEntryRef = entry.EntryRefsOS[msaTuple.Item2];
-						ITsIncStrBldr sbGlossPrepend;
-						ITsIncStrBldr sbGlossAppend;
 						var sense = MorphServices.GetMainOrFirstSenseOfVariant(lexEntryRef);
 						var glossWs = cache.ServiceLocator.WritingSystemManager.Get(cache.DefaultAnalWs);
-						MorphServices.JoinGlossAffixesOfInflVariantTypes(lexEntryRef.VariantEntryTypesRS, glossWs, out sbGlossPrepend, out sbGlossAppend);
+						MorphServices.JoinGlossAffixesOfInflVariantTypes(lexEntryRef.VariantEntryTypesRS, glossWs, out var sbGlossPrepend, out var sbGlossAppend);
 						var sbGloss = sbGlossPrepend;
 						sbGloss.Append(sense.Gloss.BestAnalysisAlternative.Text);
 						sbGloss.Append(sbGlossAppend.Text);
@@ -385,12 +373,10 @@ namespace SIL.FieldWorks.WordWorks.Parser
 					{
 						gloss = ParserCoreStrings.ksUnknownGloss;
 					}
-
 				}
 				else
 				{
-					var msa = msaObj as IMoMorphSynAnalysis;
-					gloss = msa != null ? msa.GetGlossOfFirstSense() : shortName.Substring(iFirstSpace, iLastSpace - iFirstSpace).Trim();
+					gloss = msaObj is IMoMorphSynAnalysis msa ? msa.GetGlossOfFirstSense() : shortName.Substring(iFirstSpace, iLastSpace - iFirstSpace).Trim();
 				}
 				citationForm = shortName.Substring(iLastSpace).Trim();
 				shortName = string.Format(ParserCoreStrings.ksX_Y_Z, alloform, gloss, citationForm);
@@ -504,8 +490,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 
 		private static void WriteAffixAlloFeatsElement(XmlWriter writer, IMoForm form, string propsText)
 		{
-			var sallo = form as IMoAffixAllomorph;
-			if (sallo == null)
+			if (!(form is IMoAffixAllomorph sallo))
 			{
 				return;  // the form could be an IMoAffixProcess in which case there are no MsEnvFeatures.
 			}
@@ -527,42 +512,43 @@ namespace SIL.FieldWorks.WordWorks.Parser
 
 		private static void WriteNotAffixAlloFeatsElement(XmlWriter writer, LcmCache cache, string propsText)
 		{
-			if (propsText != null)
+			if (propsText == null)
 			{
-				var i = propsText.IndexOf("MSEnvFSNot", StringComparison.Ordinal);
-				if (i > -1)
+				return;
+			}
+			var i = propsText.IndexOf("MSEnvFSNot", StringComparison.Ordinal);
+			if (i > -1)
+			{
+				writer.WriteStartElement("affixAlloFeats");
+				writer.WriteStartElement("not");
+				var s = propsText.Substring(i);
+				var j = s.IndexOf(' ');
+				if (j > 0)
 				{
-					writer.WriteStartElement("affixAlloFeats");
-					writer.WriteStartElement("not");
-					var s = propsText.Substring(i);
-					var j = s.IndexOf(' ');
-					if (j > 0)
-					{
-						s = propsText.Substring(i, j + 1);
-					}
-					var iNot = s.IndexOf("Not", StringComparison.Ordinal) + 3;
-					while (iNot > 3)
-					{
-						var iNextNot = s.IndexOf("Not", iNot, StringComparison.Ordinal);
-						string sFsHvo;
-						if (iNextNot > -1)
-						{
-							// there are more
-							sFsHvo = s.Substring(iNot, iNextNot - iNot);
-							WriteFeatureStructureFromHvoString(writer, cache, sFsHvo);
-							iNot = iNextNot + 3;
-						}
-						else
-						{
-							// is the last one
-							sFsHvo = s.Substring(iNot);
-							WriteFeatureStructureFromHvoString(writer, cache, sFsHvo);
-							iNot = 0;
-						}
-					}
-					writer.WriteEndElement(); //not
-					writer.WriteEndElement(); //affixAlloFeats
+					s = propsText.Substring(i, j + 1);
 				}
+				var iNot = s.IndexOf("Not", StringComparison.Ordinal) + 3;
+				while (iNot > 3)
+				{
+					var iNextNot = s.IndexOf("Not", iNot, StringComparison.Ordinal);
+					string sFsHvo;
+					if (iNextNot > -1)
+					{
+						// there are more
+						sFsHvo = s.Substring(iNot, iNextNot - iNot);
+						WriteFeatureStructureFromHvoString(writer, cache, sFsHvo);
+						iNot = iNextNot + 3;
+					}
+					else
+					{
+						// is the last one
+						sFsHvo = s.Substring(iNot);
+						WriteFeatureStructureFromHvoString(writer, cache, sFsHvo);
+						iNot = 0;
+					}
+				}
+				writer.WriteEndElement(); //not
+				writer.WriteEndElement(); //affixAlloFeats
 			}
 		}
 
@@ -592,12 +578,9 @@ namespace SIL.FieldWorks.WordWorks.Parser
 
 		public static void WriteInflClassesElement(this XmlWriter writer, LcmCache cache, string formID)
 		{
-			var hvo = int.Parse(formID, CultureInfo.InvariantCulture);
-			var obj = cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvo);
-			var form = obj as IMoAffixForm;  // only for affix forms
-			if (form != null)
+			if (cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(int.Parse(formID, CultureInfo.InvariantCulture)) is IMoAffixForm form)
 			{
-				if (form.InflectionClassesRC.Count > 0)
+				if (form.InflectionClassesRC.Any())
 				{
 					writer.WriteStartElement("inflClasses");
 					WriteInflectionClassesAndSubclassesXmlElement(writer, form.InflectionClassesRC);

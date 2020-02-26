@@ -43,8 +43,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				var sda = m_caches.DataAccess;
 				foreach (var wsId in m_sandbox.InterlinLineChoices.WritingSystemsForFlid(InterlinLineChoices.kflidWordGloss))
 				{
-					var tssGloss = TsStringUtils.MakeString(string.Empty, wsId);
-					sda.SetMultiStringAlt(m_hvoSbWord, SandboxBase.ktagSbWordGloss, wsId, tssGloss);
+					sda.SetMultiStringAlt(m_hvoSbWord, SandboxBase.ktagSbWordGloss, wsId, TsStringUtils.MakeString(string.Empty, wsId));
 					sda.PropChanged(null, (int)PropChangeType.kpctNotifyAll, m_hvoSbWord, SandboxBase.ktagSbWordGloss, wsId, 0, 0);
 				}
 			}

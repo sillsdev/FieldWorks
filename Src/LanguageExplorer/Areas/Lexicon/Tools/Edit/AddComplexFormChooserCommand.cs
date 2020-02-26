@@ -35,7 +35,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				{
 					m_lexEntry = m_lexSense.Entry;
 				}
-
 			}
 			m_parentWindow = parentWindow;
 		}

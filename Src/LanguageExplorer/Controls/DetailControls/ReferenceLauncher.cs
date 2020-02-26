@@ -50,12 +50,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		}
 		#endregion // Properties
 
-		#region Construction, Initialization, and Disposing
-		/// <summary />
-		internal ReferenceLauncher()
-		{
-		}
-
+		#region Disposing
 		/// <summary>
 		/// Clean up any resources being used.
 		/// </summary>
@@ -75,7 +70,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			base.Dispose(disposing);
 		}
 
-		#endregion // Construction, Initialization, and Disposing
+		#endregion // Disposing
 
 		/// <summary>
 		/// Handle launching of the standard chooser.

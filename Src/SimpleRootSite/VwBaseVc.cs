@@ -51,13 +51,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <summary>
 		/// Gets the ITsTextProps to apply to the caption of pictures
 		/// </summary>
-		public virtual ITsTextProps CaptionProps
-		{
-			get
-			{
-				throw new NotSupportedException("Derived classes that support pictures should implement this.");
-			}
-		}
+		public virtual ITsTextProps CaptionProps => throw new NotSupportedException("Derived classes that support pictures should implement this.");
 
 		/// <summary>
 		/// Gets/Sets a name for this VC for debugging purposes.
@@ -69,8 +63,8 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// </summary>
 		public virtual int DefaultWs
 		{
-			get { return m_wsDefault; }
-			set { m_wsDefault = value; }
+			get => m_wsDefault;
+			set => m_wsDefault = value;
 		}
 
 		/// <summary>
@@ -178,7 +172,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			var args = new LocalLinkArgs() { Link = url };
 			if (Publisher != null)
 			{
-				Publisher.Publish(FwUtils.FwUtils.HandleLocalHotlink, args);
+				Publisher.Publish(new PublisherParameterObject(FwUtils.FwUtils.HandleLocalHotlink, args));
 				if (args.LinkHandledLocally)
 				{
 					return;

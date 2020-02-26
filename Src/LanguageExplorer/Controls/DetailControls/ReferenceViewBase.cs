@@ -37,10 +37,7 @@ namespace LanguageExplorer.Controls.DetailControls
 				}
 				return m_textStyle;
 			}
-			set
-			{
-				m_textStyle = value;
-			}
+			set => m_textStyle = value;
 		}
 
 		public void Initialize(ICmObject rootObj, int rootFlid, string rootFieldName, LcmCache cache, string displayNameProperty)

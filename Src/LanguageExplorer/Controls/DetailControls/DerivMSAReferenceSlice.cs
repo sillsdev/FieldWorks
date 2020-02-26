@@ -90,9 +90,9 @@ namespace LanguageExplorer.Controls.DetailControls
 						break;
 					}
 				}
-				if (otherSlice is AtomicReferenceSlice)
+				if (otherSlice is AtomicReferenceSlice atomicReferenceSlice)
 				{
-					otherHvo = GetOtherHvo((AtomicReferenceSlice)otherSlice, otherFlid, myIsFromPOS, out otherControl);
+					otherHvo = GetOtherHvo(atomicReferenceSlice, otherFlid, myIsFromPOS, out otherControl);
 				}
 				else
 				{
@@ -102,20 +102,20 @@ namespace LanguageExplorer.Controls.DetailControls
 			if (otherControl == null && idxSender < ContainingDataTree.Slices.Count)
 			{
 				idxOther = idxSender + 1;
-				while (otherSlice == null || (otherSlice.Indent == Indent && idxOther > 0 && otherSlice.MyCmObject == MyCmObject))
+				while (otherSlice == null || otherSlice.Indent == Indent && idxOther > 0 && otherSlice.MyCmObject == MyCmObject)
 				{
 					otherSlice = ContainingDataTree.Slices[idxOther++];
-					if (otherSlice is AtomicReferenceSlice && ((AtomicReferenceSlice)otherSlice).Flid == otherFlid)
+					if (otherSlice is AtomicReferenceSlice atomicReferenceSlice && atomicReferenceSlice.Flid == otherFlid)
 					{
 						break;
 					}
 				}
-				if (otherSlice is AtomicReferenceSlice)
+				if (otherSlice is AtomicReferenceSlice referenceSlice)
 				{
-					otherHvo = GetOtherHvo((AtomicReferenceSlice)otherSlice, otherFlid, myIsFromPOS, out otherControl);
+					otherHvo = GetOtherHvo(referenceSlice, otherFlid, myIsFromPOS, out otherControl);
 				}
 			}
-			var msa = MyCmObject as IMoDerivAffMsa;
+			var msa = (IMoDerivAffMsa)MyCmObject;
 			if (e.Hvo == 0 && otherHvo != 0)
 			{
 				if (otherControl != null)

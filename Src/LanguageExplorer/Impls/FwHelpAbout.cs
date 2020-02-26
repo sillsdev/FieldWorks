@@ -285,8 +285,7 @@ namespace LanguageExplorer.Impls
 				Win32.GlobalMemoryStatusEx(ref memStatEx);
 				edtAvailableMemory.Text = string.Format(m_sAvailableMemoryFmt, memStatEx.ullAvailPhys / BytesPerMiB, memStatEx.ullTotalPhys / BytesPerMiB);
 				// Set the available disk space information.
-				ulong _, lpTotalNumberOfBytes, lpTotalNumberOfFreeBytes;
-				Win32.GetDiskFreeSpaceEx(strRoot, out _, out lpTotalNumberOfBytes, out lpTotalNumberOfFreeBytes);
+				Win32.GetDiskFreeSpaceEx(strRoot, out _, out var lpTotalNumberOfBytes, out var lpTotalNumberOfFreeBytes);
 				var gbFree = lpTotalNumberOfFreeBytes / BytesPerGiB;
 				var gbTotal = lpTotalNumberOfBytes / BytesPerGiB;
 				edtAvailableDiskSpace.Text = string.Format(m_sAvailableDiskSpaceFmt, gbFree, gbTotal, strRoot);

@@ -260,8 +260,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		public InterlinLineChoices SetupLineChoices(string lineConfigPropName, InterlinMode mode)
 		{
 			ConfigPropName = lineConfigPropName;
-			InterlinLineChoices lineChoices;
-			if (!TryRestoreLineChoices(out lineChoices))
+			if (!TryRestoreLineChoices(out var lineChoices))
 			{
 				if (ForEditing)
 				{
@@ -302,7 +301,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		/// </summary>
 		public IVwStylesheet StyleSheet
 		{
-			get { return Body.StyleSheet; }
+			get => Body.StyleSheet;
 			set
 			{
 				Body.StyleSheet = value;
@@ -430,13 +429,12 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			m_topBottomSplit.Orientation = Orientation.Horizontal;
 			Controls.Add(m_topBottomSplit);
 			Dock = DockStyle.Fill;
-
 			ResumeLayout();
 		}
 
 		private void SplitLayout(object sender, LayoutEventArgs e)
 		{
-			var container = sender as SplitContainer;
+			var container = (SplitContainer)sender;
 			container.Width = Width;
 			container.Height = Height;
 		}
@@ -481,7 +479,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 			};
 			m_headerMainCols.Layout += m_headerMainCols_Layout;
 			m_headerMainCols.SizeChanged += m_headerMainCols_SizeChanged;
-
 			m_templateSelectionPanel = new Panel()
 			{
 				Height = new Button().Height,
@@ -496,14 +493,15 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		private static void TemplateSelectionPanel_Layout(object sender, EventArgs e)
 		{
 			var panel = (Panel)sender;
-			if (panel.Controls.Count != 0)
+			if (panel.Controls.Count == 0)
 			{
-				var templateButton = panel.Controls[0];
-				templateButton.SuspendLayout();
-				templateButton.Width = new Button().Width * 2;
-				templateButton.Left = panel.Width - templateButton.Width;
-				templateButton.ResumeLayout();
+				return;
 			}
+			var templateButton = panel.Controls[0];
+			templateButton.SuspendLayout();
+			templateButton.Width = new Button().Width * 2;
+			templateButton.Left = panel.Width - templateButton.Width;
+			templateButton.ResumeLayout();
 		}
 
 		private void BuildBottomStuffUI()
@@ -824,7 +822,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 				// skip number column, fine tune
 				c.Width = ColumnPositions[ipair + 2] - ColumnPositions[ipair + 1] - widthBtnContextMenu;
 				// Redo button name in case some won't (or now will!) fit on the button
-				c.Text = GetBtnName(m_headerMainCols[ipair + 1].Text, c.Width - ((c as Button).Image.Width * 2));
+				c.Text = GetBtnName(m_headerMainCols[ipair + 1].Text, c.Width - ((Button)c).Image.Width * 2);
 				var c2 = m_buttonRow.Controls[ipair * 2 + 1];
 				// pull-down
 				c2.Left = c.Right;
@@ -837,18 +835,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 
 		protected internal IStText RootStText { get; set; }
 
-		protected internal bool ChartIsRtL
-		{
-			get
-			{
-				if (RootStText == null || !RootStText.IsValidObject)
-				{
-					return false;
-				}
-				var defWs = Cache.ServiceLocator.WritingSystemManager.Get(RootStText.MainWritingSystem);
-				return defWs.RightToLeftScript;
-			}
-		}
+		protected internal bool ChartIsRtL => RootStText != null && RootStText.IsValidObject && Cache.ServiceLocator.WritingSystemManager.Get(RootStText.MainWritingSystem).RightToLeftScript;
 
 		public void RefreshRoot()
 		{
@@ -882,7 +869,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 
 		private void TemplateSelectionChanged(object sender, EventArgs e)
 		{
-			var selection = sender as ComboBox;
+			var selection = (ComboBox)sender;
 			var template = selection.SelectedItem as ICmPossibility;
 			// If user chooses to add a new template then navigate them to the Text Constituent Chart Template list view
 			if (selection.SelectedItem as string == LanguageExplorerResources.ksCreateNewTemplate)
@@ -1038,16 +1025,14 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		/// </summary>
 		private void PrepareForChOrphInsert(int iPara, int offset)
 		{
-			IConstChartRow rowPrec;
 			// disable ineligible MoveHere buttons
-			SetEligibleButtons(m_logic.PrepareForChOrphInsert(iPara, offset, out rowPrec));
+			SetEligibleButtons(m_logic.PrepareForChOrphInsert(iPara, offset, out var rowPrec));
 			// disable dropdown context buttons (next to MoveHere buttons)
 			DisableAllContextButtons();
 			// create a ChartLocation for scrolling and scroll to first row
 			Body.SelectAndScrollToLoc(new ChartLocation(rowPrec, 0), false);
-			bool fExactMatch;
 			// bookmark this location, but don't persist.
-			m_bookmark.Save(SegmentServices.FindNearestAnalysis(GetTextParagraphByIndex(iPara), offset, offset, out fExactMatch), false, m_bookmark.TextIndex);
+			m_bookmark.Save(SegmentServices.FindNearestAnalysis(GetTextParagraphByIndex(iPara), offset, offset, out _), false, m_bookmark.TextIndex);
 		}
 
 		private IStTxtPara GetTextParagraphByIndex(int iPara)
@@ -1091,8 +1076,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		{
 			object myParent = curLevelControl.Parent;
 			return myParent == null ? null
-				: !(myParent is InterlinMaster) ? GetAncestorBookmark(myParent as Control, basedOnRa)
-					: InterlinMaster.m_bookmarks[new Tuple<string, Guid>((myParent as InterlinMaster).MyRecordList.Id, basedOnRa.Guid)];
+				: !(myParent is InterlinMaster) ? GetAncestorBookmark((Control)myParent, basedOnRa) : InterlinMaster.m_bookmarks[new Tuple<string, Guid>((myParent as InterlinMaster).MyRecordList.Id, basedOnRa.Guid)];
 		}
 
 		public void SelectOccurrence(AnalysisOccurrence point)
@@ -1442,14 +1426,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 
 		public bool NotesDataFromPropertyTable
 		{
-			get
-			{
-				return PropertyTable == null || PropertyTable.GetValue("notesOnRight", true, SettingsGroup.LocalSettings);
-			}
-			set
-			{
-				PropertyTable?.SetProperty("notesOnRight", value, settingsGroup: SettingsGroup.LocalSettings);
-			}
+			get => PropertyTable == null || PropertyTable.GetValue("notesOnRight", true, SettingsGroup.LocalSettings);
+			set => PropertyTable?.SetProperty("notesOnRight", value, settingsGroup: SettingsGroup.LocalSettings);
 		}
 
 		/// <summary>
@@ -1519,8 +1497,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 				{
 					try
 					{
-						DiscourseExporter exporter;
-						ExportPhase1(out exporter, outPath);
+						ExportPhase1(out var exporter, outPath);
 						var rootDir = FwDirectoryFinder.CodeDirectory;
 						var transform = XmlUtils.GetOptionalAttributeValue(ddNode, "transform", "");
 						var sTransformPath = Path.Combine(rootDir, "Language Explorer", "Export Templates", "Discourse");

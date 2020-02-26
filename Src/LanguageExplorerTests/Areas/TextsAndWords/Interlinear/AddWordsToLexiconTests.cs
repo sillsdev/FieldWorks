@@ -144,7 +144,6 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 
 			// confirm the analysis (making a real analysis and a LexSense)
 			var wag = m_sandbox.ConfirmAnalysis();
-			var glossFactory = Cache.ServiceLocator.GetInstance<IWfiGlossFactory>();
 
 			var wfiGloss = wag.Gloss;
 			CompareTss(tssWordGlossInSandbox, wfiGloss.Form.get_String(Cache.DefaultAnalWs));
@@ -200,9 +199,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 		{
 			var cba0_0 = GetNewAnalysisOccurence(m_text1, 0, 0, 0);
 			m_sandbox.SwitchWord(cba0_0);
-			ILexEntry lexEntry1_Entry;
-			ILexSense lexEntry1_Sense1;
-			SetupLexEntryAndSense("xxxa", "xxxa.existingsense1", out lexEntry1_Entry, out lexEntry1_Sense1);
+			SetupLexEntryAndSense("xxxa", "xxxa.existingsense1", out _, out _);
 
 			// mark the count of LexEntries
 			var cEntriesOrig = Cache.LangProject.LexDbOA.Entries.Count();
@@ -241,23 +238,19 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 			var cba0_0 = GetNewAnalysisOccurence(m_text1, 0, 0, 0);
 			m_sandbox.SwitchWord(cba0_0);
 			const string formLexEntry = "xxxab";
-			var tssLexEntryForm = TsStringUtils.MakeString(formLexEntry, Cache.DefaultVernWs);
+			TsStringUtils.MakeString(formLexEntry, Cache.DefaultVernWs);
 			const string formAllomorph = "xxxa";
 			var tssAllomorphForm = TsStringUtils.MakeString(formAllomorph, Cache.DefaultVernWs);
 
 			// first create an entry with a matching allomorph that doesn't match 'verb' POS we will be selecting in the sandbox
-			ILexEntry lexEntry_NounPos;
-			ILexSense lexSense_NounPos;
-			SetupLexEntryAndSense("xxxab", "0.0.xxxab_NounPos", "noun", out lexEntry_NounPos, out lexSense_NounPos);
+			SetupLexEntryAndSense("xxxab", "0.0.xxxab_NounPos", "noun", out var lexEntry_NounPos, out _);
 			var stemFactory = Cache.ServiceLocator.GetInstance<IMoStemAllomorphFactory>();
 			var allomorph0 = stemFactory.Create();
 			lexEntry_NounPos.AlternateFormsOS.Add(allomorph0);
 			allomorph0.Form.set_String(TsStringUtils.GetWsAtOffset(tssAllomorphForm, 0), tssAllomorphForm);
 
 			// now create the entry we want to match, that has a 'verb' POS.
-			ILexEntry lexEntry1_Entry;
-			ILexSense lexEntry1_Sense1;
-			SetupLexEntryAndSense("xxxab", "0.0.xxxab_VerbPos", "verb", out lexEntry1_Entry, out lexEntry1_Sense1);
+			SetupLexEntryAndSense("xxxab", "0.0.xxxab_VerbPos", "verb", out var lexEntry1_Entry, out _);
 			var allomorph = stemFactory.Create();
 			lexEntry1_Entry.AlternateFormsOS.Add(allomorph);
 			allomorph.MorphTypeRA = lexEntry1_Entry.LexemeFormOA.MorphTypeRA;
@@ -266,7 +259,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 			var cEntriesOrig = Cache.LangProject.LexDbOA.Entries.Count();
 
 			// add a new word gloss
-			var tssWordGlossInSandbox = m_sandbox.SetTssInSandbox(InterlinLineChoices.kflidWordGloss, Cache.DefaultAnalWs, "0.0.xxxa");
+			m_sandbox.SetTssInSandbox(InterlinLineChoices.kflidWordGloss, Cache.DefaultAnalWs, "0.0.xxxa");
 			var wf = cba0_0.Analysis.Wordform;
 			// set word pos to verb
 			var hvoSbWordPos = m_sandbox.GetComboItemHvo(_propertyTable, InterlinLineChoices.kflidWordPos, 0, "transitive verb");
@@ -296,9 +289,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 		{
 			var cba0_0 = GetNewAnalysisOccurence(m_text1, 0, 0, 0);
 			m_sandbox.SwitchWord(cba0_0);
-			ILexEntry lexEntry1_Entry;
-			ILexSense lexEntry1_Sense1;
-			SetupLexEntryAndSense("xxxa", "0.0.xxxa", out lexEntry1_Entry, out lexEntry1_Sense1);
+			SetupLexEntryAndSense("xxxa", "0.0.xxxa", out var lexEntry1_Entry, out var lexEntry1_Sense1);
 
 			// mark the count of LexEntries
 			var cEntriesOrig = Cache.LangProject.LexDbOA.Entries.Count();
@@ -396,15 +387,10 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 		{
 			var cba0_0 = GetNewAnalysisOccurence(m_text1, 0, 0, 0);
 			m_sandbox.SwitchWord(cba0_0);
-			ILexEntry lexEntry1_Entry;
-			ILexSense lexEntry1_Sense1;
-			ILexEntry lexEntry2_Entry;
-			ILexSense lexEntry2_Sense1;
-			IWfiWordform wf;
-			SetupLexEntryAndSense("xxxa", "0.0.xxxa", out lexEntry1_Entry, out lexEntry1_Sense1);
-			SetupLexEntryAndSense("xxxa", "xxxa.AlternativeGloss", out lexEntry2_Entry, out lexEntry2_Sense1);
+			SetupLexEntryAndSense("xxxa", "0.0.xxxa", out var lexEntry1_Entry, out var lexEntry1_Sense1);
+			SetupLexEntryAndSense("xxxa", "xxxa.AlternativeGloss", out var lexEntry2_Entry, out var lexEntry2_Sense1);
 			// setup an existing analysis and gloss to match existing entry
-			var morphBundle1 = SetupMorphBundleForEntry(cba0_0, "0.0.xxxa", lexEntry1_Entry, lexEntry1_Sense1, out wf);
+			var morphBundle1 = SetupMorphBundleForEntry(cba0_0, "0.0.xxxa", lexEntry1_Entry, lexEntry1_Sense1, out var wf);
 			var morphBundle2 = SetupMorphBundleForEntry(cba0_0, "xxxa.AlternativeGloss", lexEntry2_Entry, lexEntry2_Sense1, out wf);
 			// load sandbox with a guess.
 			m_sandbox.SwitchWord(cba0_0);

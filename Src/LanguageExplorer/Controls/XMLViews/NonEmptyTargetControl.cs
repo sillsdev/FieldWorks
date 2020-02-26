@@ -96,14 +96,8 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		public ILgWritingSystemFactory WritingSystemFactory
 		{
-			get
-			{
-				return sepBox.WritingSystemFactory;
-			}
-			set
-			{
-				sepBox.WritingSystemFactory = value;
-			}
+			get => sepBox.WritingSystemFactory;
+			set => sepBox.WritingSystemFactory = value;
 		}
 
 		/// <summary>
@@ -111,14 +105,8 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		public int WritingSystemCode
 		{
-			get
-			{
-				return sepBox.WritingSystemCode;
-			}
-			set
-			{
-				sepBox.WritingSystemCode = value;
-			}
+			get => sepBox.WritingSystemCode;
+			set => sepBox.WritingSystemCode = value;
 		}
 
 		/// <summary>
@@ -126,14 +114,8 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		public ITsString TssSeparator
 		{
-			get
-			{
-				return sepBox.Tss;
-			}
-			set
-			{
-				sepBox.Tss = value;
-			}
+			get => sepBox.Tss;
+			set => sepBox.Tss = value;
 		}
 
 		/// <summary>
@@ -141,14 +123,8 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		public string Separator
 		{
-			get
-			{
-				return sepBox.Text;
-			}
-			set
-			{
-				sepBox.Text = value;
-			}
+			get => sepBox.Text;
+			set => sepBox.Text = value;
 		}
 
 		#region Component Designer generated code

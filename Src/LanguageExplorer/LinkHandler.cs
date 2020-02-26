@@ -50,7 +50,6 @@ namespace LanguageExplorer
 			_propertyTable = flexComponentParameters.PropertyTable;
 			_publisher = flexComponentParameters.Publisher;
 			_subscriber = flexComponentParameters.Subscriber;
-
 			_cache = cache;
 			_propertyTable.SetProperty(LanguageExplorerConstants.LinkHandler, this);
 			_subscriber.Subscribe(FollowLink, FollowLink_Handler);
@@ -232,10 +231,8 @@ namespace LanguageExplorer
 				{
 					_propertyTable.SetProperty(LanguageExplorerConstants.SuspendLoadingRecordUntilOnJumpToRecord, $"{_activeFwLinkArgs.ToolName},{_activeFwLinkArgs.TargetGuid}", settingsGroup: SettingsGroup.LocalSettings);
 				}
-				var messages = new List<string>();
-				var newValues = new List<object>();
-				messages.Add(LanguageExplorerConstants.SetToolFromName);
-				newValues.Add(_activeFwLinkArgs.ToolName);
+				var messages = new List<PublisherParameterObject>();
+				messages.Add(new PublisherParameterObject(LanguageExplorerConstants.SetToolFromName, _activeFwLinkArgs.ToolName));
 				// Note: It can be Guid.Empty in cases where it was never set,
 				// or more likely, when the HVO was set to -1.
 				if (_activeFwLinkArgs.TargetGuid != Guid.Empty)
@@ -252,12 +249,10 @@ namespace LanguageExplorer
 							_propertyTable.SetProperty(LanguageExplorerConstants.ReversalIndexGuid, cmObject.Owner.Guid.ToString(), true, settingsGroup: SettingsGroup.LocalSettings);
 						}
 					}
-					messages.Add(LanguageExplorerConstants.JumpToRecord);
-					newValues.Add(cmObject.Hvo);
+					messages.Add(new PublisherParameterObject(LanguageExplorerConstants.JumpToRecord, cmObject.Hvo));
 				}
-				messages.Add(LanguageExplorerConstants.LinkFollowed);
-				newValues.Add(_activeFwLinkArgs);
-				_publisher.Publish(messages, newValues);
+				messages.Add(new PublisherParameterObject(LanguageExplorerConstants.LinkFollowed, _activeFwLinkArgs));
+				_publisher.Publish(messages);
 			}
 			catch(Exception err)
 			{
@@ -268,17 +263,11 @@ namespace LanguageExplorer
 
 		internal static void PublishFollowLinkMessage(IPublisher publisher, FwLinkArgs linkArgsForJump)
 		{
-			var commands = new List<string>
+			publisher.Publish(new List<PublisherParameterObject>
 			{
-				FwUtils.AboutToFollowLink,
-				FollowLink
-			};
-			var parms = new List<object>
-			{
-				null,
-				linkArgsForJump
-			};
-			publisher.Publish(commands, parms);
+				new PublisherParameterObject(FwUtils.AboutToFollowLink),
+				new PublisherParameterObject(FollowLink, linkArgsForJump)
+			});
 		}
 
 		#region IDisposable & Co. implementation

@@ -116,14 +116,8 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		public int SelectedIndex
 		{
-			get
-			{
-				return m_bvList.SelectedIndex;
-			}
-			set
-			{
-				m_bvList.SelectedIndex = value;
-			}
+			get => m_bvList.SelectedIndex;
+			set => m_bvList.SelectedIndex = value;
 		}
 		#endregion
 	}

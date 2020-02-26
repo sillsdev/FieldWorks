@@ -43,11 +43,7 @@ namespace LCMBrowser
 				throw new ArgumentOutOfRangeException("index");
 			}
 			var currObj = this[index];
-			if (currObj == null)
-			{
-				throw new NullReferenceException("currObj");
-			}
-			return currObj.HasChildren && (IsExpanded(index) ? CollapseObject(index) : ExpandObject(index));
+			return currObj == null ? throw new NullReferenceException("currObj") : currObj.HasChildren && (IsExpanded(index) ? CollapseObject(index) : ExpandObject(index));
 		}
 
 		/// <summary>
@@ -103,8 +99,7 @@ namespace LCMBrowser
 			// work for Linq results. This works for both, but we need to make sure the
 			// object is not a string because we don't want to show strings as an array
 			// of characters.
-			var enumList = obj as IEnumerable;
-			if (enumList != null && enumList.GetType() != typeof(string))
+			if (obj is IEnumerable enumList && enumList.GetType() != typeof(string))
 			{
 				var i = 0;
 				foreach (var item in enumList)
@@ -138,7 +133,7 @@ namespace LCMBrowser
 		/// </summary>
 		protected virtual PropertyInfo[] GetPropsForObj(object obj)
 		{
-			return (obj == null ? new PropertyInfo[] { } : obj.GetType().GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.GetProperty));
+			return obj == null ? new PropertyInfo[] { } : obj.GetType().GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.GetProperty);
 		}
 
 		/// <summary>
@@ -203,9 +198,7 @@ namespace LCMBrowser
 				gio.DisplayType = CleanupGenericListType(gio.DisplayType.Replace('+', '.'));
 				if (fSetHasChildrenFromType)
 				{
-					var flags = BindingFlags.Instance | BindingFlags.Public;
-					gio.HasChildren = (obj != null && objType.GetProperties(flags).Length > 0 && !objType.IsPrimitive
-									   && objType != typeof(string) && objType != typeof(Guid));
+					gio.HasChildren = obj != null && objType.GetProperties(BindingFlags.Instance | BindingFlags.Public).Length > 0 && !objType.IsPrimitive && objType != typeof(string) && objType != typeof(Guid);
 				}
 			}
 
@@ -253,8 +246,7 @@ namespace LCMBrowser
 			{
 				return string.Empty;
 			}
-			if (CleanDictionaryType("System.Collections.Generic.KeyValuePair`2", ref type)
-				|| CleanDictionaryType("System.Collections.Generic.Dictionary`2", ref type))
+			if (CleanDictionaryType("System.Collections.Generic.KeyValuePair`2", ref type) || CleanDictionaryType("System.Collections.Generic.Dictionary`2", ref type))
 			{
 				return type;
 			}
@@ -382,8 +374,7 @@ namespace LCMBrowser
 		/// </summary>
 		public IInspectorObject GetParent(int index)
 		{
-			int indexParent;
-			return GetParent(index, out indexParent);
+			return GetParent(index, out _);
 		}
 
 		/// <summary>

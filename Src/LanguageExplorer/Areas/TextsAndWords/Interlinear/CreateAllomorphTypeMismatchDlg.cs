@@ -27,10 +27,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// </summary>
 		public string Warning
 		{
-			set
-			{
-				m_lblMessage1_Warning.Text = value;
-			}
+			set => m_lblMessage1_Warning.Text = value;
 		}
 
 		/// <summary>
@@ -38,10 +35,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// </summary>
 		public string Question
 		{
-			set
-			{
-				m_lblMessage2_Question.Text = value;
-			}
+			set => m_lblMessage2_Question.Text = value;
 		}
 
 		public CreateAllomorphTypeMismatchDlg()

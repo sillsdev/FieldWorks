@@ -64,16 +64,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			m_flidStTextSource = m_cache.MetaDataCacheAccessor.GetFieldId("StText", "Source", false);
 			m_vc = vc;
 			SetTextTitleAndMetadata(objRoot as IStText);
-			// Get morphtype information that we need later.  (plus stuff we don't...)  See LT-8288.
-			IMoMorphType mmtStem;
-			IMoMorphType mmtPrefix;
-			IMoMorphType mmtSuffix;
-			IMoMorphType mmtInfix;
-			IMoMorphType mmtBoundStem;
-			IMoMorphType mmtSimulfix;
-			IMoMorphType mmtSuprafix;
-			m_cache.ServiceLocator.GetInstance<IMoMorphTypeRepository>().GetMajorMorphTypes(out mmtStem, out mmtPrefix, out mmtSuffix, out mmtInfix, out mmtBoundStem, out m_mmtProclitic,
-				out m_mmtEnclitic, out mmtSimulfix, out mmtSuprafix);
+			// Get morphtype information that we need later.
+			m_cache.ServiceLocator.GetInstance<IMoMorphTypeRepository>().GetMajorMorphTypes(out _, out _, out _, out _, out _, out m_mmtProclitic,
+				out m_mmtEnclitic, out _, out _);
 			m_wsManager = m_cache.ServiceLocator.WritingSystemManager;
 			m_repoObj = m_cache.ServiceLocator.GetInstance<ICmObjectRepository>();
 		}
@@ -122,11 +115,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		public override void AddStringAltMember(int tag, int ws, IVwViewConstructor vwvc)
 		{
 			//get the writing system for english for use in writing out the morphType, the types will ALWAYS be defined in english
-			//but they may not be defined in other languages, using English on import and export should garauntee the correct behavior
-			var englishWS = m_cache.WritingSystemFactory.GetWsFromStr("en");
+			//but they may not be defined in other languages, using English on import and export should guarantee the correct behavior
 			if (m_fDoingMorphType)
 			{
-				m_writer.WriteAttributeString("type", GetText(DataAccess.get_MultiStringAlt(OpenObject, tag, englishWS)));
+				m_writer.WriteAttributeString("type", GetText(DataAccess.get_MultiStringAlt(OpenObject, tag, m_cache.WritingSystemFactory.GetWsFromStr("en"))));
 				// also output the GUID so any tool that processes the output can know for sure which morphtype it is
 				// Save the morphtype.  See LT-8288.
 				m_guidMorphType = WriteGuidAttributeForCurrentObj();
@@ -209,8 +201,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		{
 			if (m_repoObj.IsValidObjectId(hvo))
 			{
-				var obj = m_repoObj.GetObject(hvo);
-				var guid = obj.Guid;
+				var guid = m_repoObj.GetObject(hvo).Guid;
 				m_writer.WriteAttributeString("guid", guid.ToString());
 				return guid;
 			}
@@ -248,14 +239,12 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				tsb.Replace(tsb.Length, tsb.Length, sPostfix, null);
 			}
-			tss = tsb.GetString();
-			return tss;
+			return tsb.GetString();
 		}
 
 		private void WritePrefixLangAlt(int ws, int tag)
 		{
-			var icuCode = m_cache.LanguageWritingSystemFactoryAccessor.GetStrFromWs(ws);
-			m_writer.WriteAttributeString("lang", icuCode);
+			m_writer.WriteAttributeString("lang", m_cache.LanguageWritingSystemFactoryAccessor.GetStrFromWs(ws));
 			if (m_sPendingPrefix != null)
 			{
 				m_writer.WriteString(m_sPendingPrefix);
@@ -266,25 +255,20 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		private void WriteItem(int tag, string itemType, int alt)
 		{
-			var ws = alt;
-			var tss = ws == 0 ? DataAccess.get_StringProp(OpenObject, tag) : DataAccess.get_MultiStringAlt(OpenObject, tag, alt);
-			WriteItem(itemType, tss);
+			WriteItem(itemType, alt == 0 ? DataAccess.get_StringProp(OpenObject, tag) : DataAccess.get_MultiStringAlt(OpenObject, tag, alt));
 		}
 
 		private void WriteItem(string itemType, ITsString tss)
 		{
 			m_writer.WriteStartElement("item");
 			m_writer.WriteAttributeString("type", itemType);
-			var ws = GetWsFromTsString(tss);
-			WriteLangAndContent(ws, tss);
+			WriteLangAndContent(GetWsFromTsString(tss), tss);
 			m_writer.WriteEndElement();
 		}
 
 		private static int GetWsFromTsString(ITsString tss)
 		{
-			var ttp = tss.get_PropertiesAt(0);
-			int var;
-			return ttp.GetIntPropValues((int)FwTextPropType.ktptWs, out var);
+			return tss.get_PropertiesAt(0).GetIntPropValues((int)FwTextPropType.ktptWs, out _);
 		}
 
 		/// <summary>
@@ -294,8 +278,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		private void WriteLangAndContent(int ws, ITsString tss)
 		{
 			UpdateWsList(ws);
-			var icuCode = m_cache.LanguageWritingSystemFactoryAccessor.GetStrFromWs(ws);
-			m_writer.WriteAttributeString("lang", icuCode);
+			m_writer.WriteAttributeString("lang", m_cache.LanguageWritingSystemFactoryAccessor.GetStrFromWs(ws));
 			m_writer.WriteString(GetText(tss));
 		}
 
@@ -310,8 +293,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		private static string GetText(ITsString tss)
 		{
-			var result = tss.Text;
-			return result?.Normalize() ?? string.Empty;
+			return tss.Text?.Normalize() ?? string.Empty;
 		}
 
 		public override void AddObj(int hvoItem, IVwViewConstructor vc, int frag)
@@ -336,9 +318,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					break;
 			}
 			// (LT-9374) Export Variant Type information for variants
-			if (vc is InterlinVc && frag >= InterlinVc.kfragLineChoices && frag < InterlinVc.kfragLineChoices + ((InterlinVc)vc).LineChoices.Count)
+			if (vc is InterlinVc interlinVc && frag >= InterlinVc.kfragLineChoices && frag < InterlinVc.kfragLineChoices + interlinVc.LineChoices.Count)
 			{
-				var spec = ((InterlinVc)vc).LineChoices[frag - InterlinVc.kfragLineChoices];
+				var spec = interlinVc.LineChoices[frag - InterlinVc.kfragLineChoices];
 				if (spec.Flid == InterlinLineChoices.kflidLexGloss)
 				{
 					OpenItem("gls");
@@ -362,8 +344,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				return;
 			}
-			var spec2 = ((InterlinVc)vc).LineChoices[frag - InterlinVc.kfragLineChoices];
-			if (spec2.Flid == InterlinLineChoices.kflidLexGloss)
+			if (((InterlinVc)vc).LineChoices[frag - InterlinVc.kfragLineChoices].Flid == InterlinLineChoices.kflidLexGloss)
 			{
 				CloseItem();
 			}
@@ -371,22 +352,25 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		public override void AddProp(int tag, IVwViewConstructor vc, int frag)
 		{
-			if (tag == InterlinVc.ktagGlossPrepend)
+			switch (tag)
 			{
-				m_fDoingGlossPrepend = true;
+				case InterlinVc.ktagGlossPrepend:
+					m_fDoingGlossPrepend = true;
+					break;
+				case InterlinVc.ktagGlossAppend:
+					m_fDoingGlossAppend = true;
+					break;
 			}
-			if (tag == InterlinVc.ktagGlossAppend)
-			{
-				m_fDoingGlossAppend = true;
-			}
+
 			base.AddProp(tag, vc, frag);
-			if (tag == InterlinVc.ktagGlossPrepend)
+			switch (tag)
 			{
-				m_fDoingGlossPrepend = false;
-			}
-			if (tag == InterlinVc.ktagGlossAppend)
-			{
-				m_fDoingGlossAppend = false;
+				case InterlinVc.ktagGlossPrepend:
+					m_fDoingGlossPrepend = false;
+					break;
+				case InterlinVc.ktagGlossAppend:
+					m_fDoingGlossAppend = false;
+					break;
 			}
 		}
 
@@ -603,11 +587,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 						m_writer.WriteStartElement("language");
 						// we don't have enough context at this point to get all the possible writing system
 						// information we may encounter in the word bundles.
-						var icuCode = m_cache.LanguageWritingSystemFactoryAccessor.GetStrFromWs(wsActual);
-						m_writer.WriteAttributeString("lang", icuCode);
+						m_writer.WriteAttributeString("lang", m_cache.LanguageWritingSystemFactoryAccessor.GetStrFromWs(wsActual));
 						var ws = m_wsManager.Get(wsActual);
-						var fontName = ws.DefaultFontName;
-						m_writer.WriteAttributeString("font", fontName);
+						m_writer.WriteAttributeString("font", ws.DefaultFontName);
 						if (m_cache.ServiceLocator.WritingSystems.VernacularWritingSystems.Contains(ws))
 						{
 							m_writer.WriteAttributeString("vernacular", "true");
@@ -753,8 +735,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				return;
 			}
-			var text = txt.Owner as IText;
-			if (text != null)
+			if (txt.Owner is IText text)
 			{
 				foreach (var writingSystemId in text.Name.AvailableWritingSystemIds)
 				{

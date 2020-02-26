@@ -47,8 +47,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		public override bool HandleReturnKey()
 		{
 			// If it hasn't changed don't do anything.
-			var newval = ComboList.Text;
-			if (newval == StrFromTss(m_caches.DataAccess.get_MultiStringAlt(m_hvoSbWord, SandboxBase.ktagSbWordForm, m_sandbox.RawWordformWs)))
+			if (ComboList.Text == StrFromTss(m_caches.DataAccess.get_MultiStringAlt(m_hvoSbWord, SandboxBase.ktagSbWordForm, m_sandbox.RawWordformWs)))
 			{
 				return true;
 			}

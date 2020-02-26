@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
+using System.Linq;
 using System.Windows.Forms;
 using System.Xml.Linq;
 using SIL.FieldWorks.Common.RootSites;
@@ -130,8 +131,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			}
 			using (new HoldGraphics(this))
 			{
-				bool fEndBeforeAnchor;
-				SelectionRectangle(sel, out selRect, out fEndBeforeAnchor);
+				SelectionRectangle(sel, out selRect, out _);
 			}
 			return true;
 		}
@@ -174,10 +174,7 @@ namespace LanguageExplorer.Controls.DetailControls
 				}
 				return m_textStyle;
 			}
-			set
-			{
-				m_textStyle = value;
-			}
+			set => m_textStyle = value;
 		}
 
 		/// <summary>
@@ -403,12 +400,9 @@ namespace LanguageExplorer.Controls.DetailControls
 			{
 				result = new List<CoreWritingSystemDefinition>(result); // just in case caller does not want it modified
 				var additionalWss = WritingSystemServices.GetWritingSystemList(m_cache, m_wsAdditionalOptions, HvoObj, m_forceIncludeEnglish, true);
-				foreach (var ws in additionalWss)
+				foreach (var ws in additionalWss.Where(ws => !result.Contains(ws)))
 				{
-					if (!result.Contains(ws))
-					{
-						result.Add(ws);
-					}
+					result.Add(ws);
 				}
 			}
 			return result;

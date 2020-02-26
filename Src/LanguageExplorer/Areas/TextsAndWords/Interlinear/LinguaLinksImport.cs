@@ -153,8 +153,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			// There should be some contents in the phase 3 file if
 			// the process is valid and is using a valid file.
 			// Make sure the file isn't empty and show msg if it is.
-			var fi = new FileInfo(m_sTempDir + "LLPhase3Output.xml");
-			if (fi.Length == 0)
+			if (new FileInfo(m_sTempDir + "LLPhase3Output.xml").Length == 0)
 			{
 				ReportError(string.Format(ITextStrings.ksInvalidLLFile, m_LinguaLinksXmlFileName), ITextStrings.ksLLImport);
 				throw new InvalidDataException();
@@ -265,8 +264,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 						IText newText;
 						if (!string.IsNullOrEmpty(interlineartext.guid))
 						{
-							ICmObject repoObj;
-							m_cache.ServiceLocator.ObjectRepository.TryGetObject(new Guid(interlineartext.guid), out repoObj);
+							m_cache.ServiceLocator.ObjectRepository.TryGetObject(new Guid(interlineartext.guid), out var repoObj);
 							newText = repoObj as IText;
 							if (newText != null && ShowPossibleMergeDialog(progress) == DialogResult.Yes)
 							{
@@ -407,12 +405,12 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			//we need to invoke the dialog on the main thread so we can use the progress dialog as the parent.
 			//otherwise the message box can be displayed behind everything
 			var asyncResult = progress.SynchronizeInvoke.BeginInvoke(new ShowDialogAboveProgressbarDelegate(ShowDialogAboveProgressbar), new object[]
-				{
-					progress,
-					ITextStrings.ksAskMergeInterlinearText,
-					ITextStrings.ksAskMergeInterlinearTextTitle,
-					MessageBoxButtons.YesNo
-				});
+			{
+				progress,
+				ITextStrings.ksAskMergeInterlinearText,
+				ITextStrings.ksAskMergeInterlinearTextTitle,
+				MessageBoxButtons.YesNo
+			});
 			return (DialogResult)progress.SynchronizeInvoke.EndInvoke(asyncResult);
 		}
 
@@ -470,8 +468,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			var wordBuilder = wordString.GetBldr();
 			if (spaceBefore) //put a space to the left of the punct
 			{
-				ILgWritingSystem wsEngine;
-				if (TryGetWsEngine(wsFactory, item.lang, out wsEngine))
+				if (TryGetWsEngine(wsFactory, item.lang, out var wsEngine))
 				{
 					wordBuilder.ReplaceTsString(0, 0, TsStringUtils.MakeString(string.Empty + space, wsEngine.Handle));
 				}
@@ -479,8 +476,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			}
 			if (spaceHere && followsWord && !LastCharIsSpaceOrQuote(wordString, index, space, quote))
 			{
-				ILgWritingSystem wsEngine;
-				if (TryGetWsEngine(wsFactory, item.lang, out wsEngine))
+				if (TryGetWsEngine(wsFactory, item.lang, out var wsEngine))
 				{
 					wordBuilder.ReplaceTsString(index, index, TsStringUtils.MakeString(string.Empty + space, wsEngine.Handle));
 				}
@@ -488,8 +484,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			}
 			if (spaceAfter) //put a space to the right of the punct
 			{
-				ILgWritingSystem wsEngine;
-				if (TryGetWsEngine(wsFactory, item.lang, out wsEngine))
+				if (TryGetWsEngine(wsFactory, item.lang, out var wsEngine))
 				{
 					wordBuilder.ReplaceTsString(wordBuilder.Length, wordBuilder.Length, TsStringUtils.MakeString(string.Empty + space, wsEngine.Handle));
 				}
@@ -507,7 +502,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				return false;
 			}
 			var charString = wordString.GetChars(index, index + 1);
-			return (charString[0] == space || charString[0] == quote);
+			return charString[0] == space || charString[0] == quote;
 		}
 
 		private static bool TryGetWsEngine(ILgWritingSystemFactory wsFact, string langCode, out ILgWritingSystem wsEngine)
@@ -1525,8 +1520,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			}
 			catch
 			{
-				var sLogFile = Path.Combine(m_sTempDir, NextInput);
-				ReportError(string.Format(ITextStrings.ksFailedLoadingLL, m_LinguaLinksXmlFileName, m_cache.ProjectId.Name, Environment.NewLine, sLogFile), ITextStrings.ksLLImportFailed);
+				ReportError(string.Format(ITextStrings.ksFailedLoadingLL, m_LinguaLinksXmlFileName, m_cache.ProjectId.Name, Environment.NewLine, Path.Combine(m_sTempDir, NextInput)), ITextStrings.ksLLImportFailed);
 				return false;
 			}
 
@@ -1552,13 +1546,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					{
 						continue;
 					}
-					foreach (var character in s)
+					if (s.Any(character => Icu.Character.IsNumeric(s[character])))
 					{
-						if (Icu.Character.IsNumeric(s[character]))
-						{
-							rgwfDel.Add(wf);
-							break;
-						}
+						rgwfDel.Add(wf);
 					}
 				}
 				foreach (var wf in rgwfDel)
@@ -1723,14 +1713,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				return false;
 			}
-			var wsFact = lcmCache.WritingSystemFactory;
 			var wordItem = phrase.WordsContent.Words[0].Items[0];
-			var ws = GetWsEngine(wsFact, wordItem.lang).Handle;
-			if (string.IsNullOrEmpty(wordItem.Value))
-			{
-				return true; // if it has no text, it can't be a known wordform...
-			}
-			return lcmCache.ServiceLocator.GetInstance<IWfiWordformRepository>().GetMatchingWordform(ws, wordItem.Value) == null;
+			return string.IsNullOrEmpty(wordItem.Value) || lcmCache.ServiceLocator.GetInstance<IWfiWordformRepository>().GetMatchingWordform(GetWsEngine(lcmCache.WritingSystemFactory, wordItem.lang).Handle, wordItem.Value) == null;
 		}
 
 		/// <summary>
@@ -1889,8 +1873,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		private static ILgWritingSystem GetWsEngine(ILgWritingSystemFactory wsFactory, string langCode)
 		{
-			ILgWritingSystem result;
-			return s_wsMapper.TryGetValue(langCode, out result) ? result : wsFactory.get_Engine(langCode);
+			return s_wsMapper.TryGetValue(langCode, out var result) ? result : wsFactory.get_Engine(langCode);
 		}
 
 		/// <summary>
@@ -2041,10 +2024,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		{
 			if (!string.IsNullOrEmpty(word.guid))
 			{
-				ICmObject repoObj;
-				newSegment.Cache.ServiceLocator.ObjectRepository.TryGetObject(new Guid(word.guid), out repoObj);
-				var modelWord = repoObj as IAnalysis;
-				if (modelWord != null)
+				newSegment.Cache.ServiceLocator.ObjectRepository.TryGetObject(new Guid(word.guid), out var repoObj);
+				if (repoObj is IAnalysis modelWord)
 				{
 					UpgradeToWordGloss(word, ref modelWord);
 					newSegment.AnalysesRS.Add(modelWord);
@@ -2072,7 +2053,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// </summary>
 		private static bool CheckAndAddLanguagesInternal(LcmCache cache, Interlineartext interlinText, ILgWritingSystemFactory wsFactory, IThreadedProgress progress)
 		{
-			if (interlinText.languages != null && interlinText.languages.language != null)
+			if (interlinText.languages?.language != null)
 			{
 				if (!SomeLanguageSpecifiesVernacular(interlinText))
 				{
@@ -2081,8 +2062,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				}
 				foreach (var lang in interlinText.languages.language)
 				{
-					bool fIsVernacular;
-					var writingSystem = SafelyGetWritingSystem(cache, wsFactory, lang, out fIsVernacular);
+					var writingSystem = SafelyGetWritingSystem(cache, wsFactory, lang, out var fIsVernacular);
 					DialogResult result;
 					if (fIsVernacular)
 					{
@@ -2234,8 +2214,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			}
 			catch (ArgumentException e)
 			{
-				CoreWritingSystemDefinition ws;
-				WritingSystemServices.FindOrCreateSomeWritingSystem(cache, FwDirectoryFinder.TemplateDirectory, lang.lang, !fIsVernacular, fIsVernacular, out ws);
+				WritingSystemServices.FindOrCreateSomeWritingSystem(cache, FwDirectoryFinder.TemplateDirectory, lang.lang, !fIsVernacular, fIsVernacular, out var ws);
 				writingSystem = ws;
 				s_wsMapper.Add(lang.lang, writingSystem); // old id string -> new langWs mapping
 			}
@@ -2323,14 +2302,12 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// </summary>
 		private static void AddAlternativeWssToWordform(IAnalysis analysis, Word word, ILgWritingSystem wsMainVernWs)
 		{
-			var wsFact = analysis.Cache.WritingSystemFactory;
-			var wf = analysis.Wordform;
 			foreach (var wordItem in word.Items)
 			{
 				switch (wordItem.type)
 				{
 					case "txt":
-						var wsAlt = GetWsEngine(wsFact, wordItem.lang);
+						var wsAlt = GetWsEngine(analysis.Cache.WritingSystemFactory, wordItem.lang);
 						if (wsAlt.Handle == wsMainVernWs.Handle)
 						{
 							continue;
@@ -2338,7 +2315,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 						var wffAlt = TsStringUtils.MakeString(wordItem.Value, wsAlt.Handle);
 						if (wffAlt.Length > 0)
 						{
-							wf.Form.set_String(wsAlt.Handle, wffAlt);
+							analysis.Wordform.Form.set_String(wsAlt.Handle, wffAlt);
 						}
 						break;
 				}
@@ -2359,8 +2336,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				var dictMapLangToGloss = new Dictionary<string, string>();
 				foreach (var wordGlossItem in word.Items.Select(i => i).Where(i => i.type == "gls"))
 				{
-					string gloss;
-					if (!dictMapLangToGloss.TryGetValue(wordGlossItem.lang, out gloss))
+					if (!dictMapLangToGloss.TryGetValue(wordGlossItem.lang, out var gloss))
 					{
 						dictMapLangToGloss.Add(wordGlossItem.lang, wordGlossItem.Value);
 						continue;
@@ -2383,9 +2359,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					var wsNewGloss = GetWsEngine(wsFact, wordGlossItem.lang).Handle;
 					var newGlossTss = TsStringUtils.MakeString(wordGlossItem.Value, wsNewGloss);
 					var wfiWord = analysis.Wordform;
-					var hasGlosses = wfiWord.AnalysesOC.Any(wfia => wfia.MeaningsOC.Any());
 					IWfiGloss matchingGloss = null;
-					if (hasGlosses)
+					if (wfiWord.AnalysesOC.Any(wfia => wfia.MeaningsOC.Any()))
 					{
 						foreach (var wfa in wfiWord.AnalysesOC)
 						{
@@ -2416,9 +2391,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 						// Create a morpheme form that matches the wordform.
 						var morphemeBundle = cache.ServiceLocator.GetInstance<IWfiMorphBundleFactory>().Create();
 						var wordItem = word.Items.Select(i => i).First(i => i.type == "txt");
-						var wsWord = GetWsEngine(wsFact, wordItem.lang).Handle;
 						analysisTree.WfiAnalysis.MorphBundlesOS.Add(morphemeBundle);
-						morphemeBundle.Form.set_String(wsWord, wordItem.Value);
+						morphemeBundle.Form.set_String(GetWsEngine(wsFact, wordItem.lang).Handle, wordItem.Value);
 						analysis = analysisTree.Gloss;
 					}
 				}
@@ -2468,10 +2442,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			newText.MediaFilesOA.OffsetType = interlinText.mediafiles.offsetType;
 			foreach (var mediaFile in interlinText.mediafiles.media)
 			{
-				ICmObject extantObject;
-				cache.ServiceLocator.ObjectRepository.TryGetObject(new Guid(mediaFile.guid), out extantObject);
-				var media = extantObject as ICmMediaURI;
-				if (media == null)
+				cache.ServiceLocator.ObjectRepository.TryGetObject(new Guid(mediaFile.guid), out var extantObject);
+				if (!(extantObject is ICmMediaURI media))
 				{
 					media = cache.ServiceLocator.GetInstance<ICmMediaURIFactory>().Create(cache, new Guid(mediaFile.guid));
 					newText.MediaFilesOA.MediaURIsOC.Add(media);

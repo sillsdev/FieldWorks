@@ -143,10 +143,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		/// <summary />
 		public ISilDataAccess DataAccess
 		{
-			get
-			{
-				return m_sda;
-			}
+			get => m_sda;
 			set
 			{
 				if (m_sda == value)
@@ -180,8 +177,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		/// </summary>/returns>
 		public int RealHvo(int secHvo)
 		{
-			int realHvo;
-			return m_SdaToLcm.TryGetValue(secHvo, out realHvo) ? realHvo : 0;
+			return m_SdaToLcm.TryGetValue(secHvo, out var realHvo) ? realHvo : 0;
 		}
 
 		/// <summary>
@@ -207,8 +203,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		/// </summary>
 		public bool RemoveSec(int secHvo)
 		{
-			int realHvo;
-			if (m_SdaToLcm.TryGetValue(secHvo, out realHvo))
+			if (m_SdaToLcm.TryGetValue(secHvo, out var realHvo))
 			{
 				m_lcmToSda.Remove(realHvo);
 			}
@@ -220,8 +215,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		/// </summary>
 		public bool RemoveReal(int realHvo)
 		{
-			int secHvo;
-			if (m_lcmToSda.TryGetValue(realHvo, out secHvo))
+			if (m_lcmToSda.TryGetValue(realHvo, out var secHvo))
 			{
 				m_SdaToLcm.Remove(secHvo);
 			}

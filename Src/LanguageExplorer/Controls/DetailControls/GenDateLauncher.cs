@@ -26,7 +26,7 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		public void UpdateDisplayFromDatabase()
 		{
-			var genDate = (m_cache.DomainDataByFlid as ISilDataAccessManaged).get_GenDateProp(m_obj.Hvo, m_flid);
+			var genDate = m_cache.GetManagedSilDataAccess().get_GenDateProp(m_obj.Hvo, m_flid);
 			m_genDateTextBox.Text = genDate.ToLongString();
 		}
 

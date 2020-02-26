@@ -108,7 +108,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		public bool PossibilitiesDependOnObject
 		{
-			get { return m_fPossibilitiesDependOnObject; }
+			get => m_fPossibilitiesDependOnObject;
 			set
 			{
 				m_fPossibilitiesDependOnObject = value;
@@ -136,9 +136,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			try
 			{
 				m_fInSelectionChanged = true; // suppress recursive calls.
-				int hvoParent;
-				int ihvo;
-				var hvoSel = SelectedObject(rootb, sel, out hvoParent, out ihvo);
+				var hvoSel = SelectedObject(rootb, sel, out var hvoParent, out var ihvo);
 				if (hvoSel == m_hvoTa && hvoParent == m_hvoParent)
 				{
 					return;
@@ -156,7 +154,7 @@ namespace LanguageExplorer.Controls.DetailControls
 					ParentObject = hvoParent;
 					m_ihvoTa = ihvo;
 					// Ensure the initial tag name matches the real one.
-					(m_sda as IVwCacheDa).CacheStringProp(hvoSel, m_taTagName, m_sda.get_StringProp(hvoSel, m_snTagName));
+					((IVwCacheDa)m_sda).CacheStringProp(hvoSel, m_taTagName, m_sda.get_StringProp(hvoSel, m_snTagName));
 					SwitchTagAndFixSel(m_taTagName, rootb);
 				}
 				else
@@ -175,7 +173,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		protected int ParentObject
 		{
-			get { return m_hvoParent; }
+			get => m_hvoParent;
 			set
 			{
 				if (m_hvoParent == value)
@@ -211,9 +209,7 @@ namespace LanguageExplorer.Controls.DetailControls
 				// Next step will destroy selection. Save info to install new one.
 				cvsli = sel.CLevels(false) - 1;
 				// Get selection information to determine where the user is typing.
-				int tagTextProp;
-				ITsTextProps ttp;
-				rgvsli = SelLevInfo.AllTextSelInfo(sel, cvsli, out ihvoRoot, out tagTextProp, out cpropPrevious, out ichAnchor, out ichEnd, out ws, out fAssocPrev, out ihvoEnd, out ttp);
+				rgvsli = SelLevInfo.AllTextSelInfo(sel, cvsli, out ihvoRoot, out _, out cpropPrevious, out ichAnchor, out ichEnd, out ws, out fAssocPrev, out ihvoEnd, out _);
 			}
 			// This needs to be done even if we don't have a selection.
 			m_sda.PropChanged(null, (int)PropChangeType.kpctNotifyAll, m_hvoParent, m_virtualTagObj, m_ihvoTa, 1, 1);
@@ -269,17 +265,14 @@ namespace LanguageExplorer.Controls.DetailControls
 			{
 				return 0;
 			}
-			ITsString tssA, tssE;
-			int ichA, ichE, hvoObjA, hvoObjE, tagA, tagE, ws;
-			bool fAssocPrev;
 			// Enhance JohnT: what we're really trying to do here is confirm that the selection is
 			// all in one string property. We could readily have a method in the selection interface to tell us that.
-			sel.TextSelInfo(false, out tssA, out ichA, out fAssocPrev, out hvoObjA, out tagA, out ws);
+			sel.TextSelInfo(false, out var tssA, out var ichA, out _, out var hvoObjA, out var tagA, out _);
 			if (tagA != m_taTagName && tagA != m_snTagName)
 			{
 				return 0; // selection not anchored in any sort of type-ahead name property.
 			}
-			sel.TextSelInfo(true, out tssE, out ichE, out fAssocPrev, out hvoObjE, out tagE, out ws);
+			sel.TextSelInfo(true, out var tssE, out var ichE, out _, out var hvoObjE, out var tagE, out _);
 			var cch = tssA.Length;
 			// To do our type-ahead trick, both ends of the seleciton must be in the same string property.
 			// Also, we want the selection to extend to the end of the name.
@@ -294,9 +287,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			{
 				return 0; // can't be our property.
 			}
-			int tagParent, cpropPrevious;
-			IVwPropertyStore vps;
-			sel.PropInfo(false, 1, out hvoParent, out tagParent, out ihvo, out cpropPrevious, out vps);
+			sel.PropInfo(false, 1, out hvoParent, out var tagParent, out ihvo, out _, out _);
 			return tagParent != m_virtualTagObj ? 0 : hvoObjA;
 		}
 
@@ -338,10 +329,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			switch (frag)
 			{
 				case kfragName:
-					int hvoParent;
-					int tag;
-					int ihvo;
-					vwenv.GetOuterObject(vwenv.EmbeddingLevel - 1, out hvoParent, out tag, out ihvo);
+					vwenv.GetOuterObject(vwenv.EmbeddingLevel - 1, out var hvoParent, out _, out var ihvo);
 					if (m_fGotFocus && hvo == m_hvoTa && hvoParent == m_hvoParent && ihvo == m_ihvoTa)
 					{
 						vwenv.AddStringProp(m_taTagName, this);
@@ -369,17 +357,14 @@ namespace LanguageExplorer.Controls.DetailControls
 			{
 				return false;
 			}
-			ITsString tssA, tssE;
-			int ichA, ichE, hvoObjA, hvoObjE, tagA, tagE, ws;
-			bool fAssocPrev;
 			// Enhance JohnT: what we're really trying to do here is confirm that the selection is
 			// all in one string property. We could readily have a method in the selection interface to tell us that.
-			sel.TextSelInfo(false, out tssA, out ichA, out fAssocPrev, out hvoObjA, out tagA, out ws);
+			sel.TextSelInfo(false, out var tssA, out var ichA, out _, out var hvoObjA, out var tagA, out var ws);
 			if (tagA != m_taTagName)
 			{
 				return false; // selection not anchored in a type-ahead name property.
 			}
-			sel.TextSelInfo(true, out tssE, out ichE, out fAssocPrev, out hvoObjE, out tagE, out ws);
+			sel.TextSelInfo(true, out var tssE, out var ichE, out _, out var hvoObjE, out var tagE, out ws);
 			var cch = tssA.Length;
 			// To do our type-ahead trick, both ends of the seleciton must be in the same string property.
 			// Also, we want the selection to extend to the end of the name.
@@ -409,11 +394,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			// CLevels includes the string prop itself, but AllTextSelInfo does not need it.
 			cvsli--;
 			// Get selection information to determine where the user is typing.
-			int ihvoObj;
-			int tagTextProp;
-			int cpropPrevious, ichAnchor, ichEnd, ihvoEnd;
-			ITsTextProps ttp;
-			var rgvsli = SelLevInfo.AllTextSelInfo(sel, cvsli, out ihvoObj, out tagTextProp, out cpropPrevious, out ichAnchor, out ichEnd, out ws, out fAssocPrev, out ihvoEnd, out ttp);
+			var rgvsli = SelLevInfo.AllTextSelInfo(sel, cvsli, out var ihvoObj, out var tagTextProp, out var cpropPrevious, out var ichAnchor, out var ichEnd, out ws, out _, out var ihvoEnd, out _);
 			if (tagTextProp != m_taTagName || ichAnchor != ichEnd || ihvoEnd != -1 || cvsli < 1)
 			{
 				return true; // something bizarre happened, but keypress is done.
@@ -422,11 +403,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			// Get the parent object we will modify.
 			// (This would usually work, but not if the parent object is the root of the whole display,
 			// as in a simple atomic ref type ahead slice.
-			//int hvoParent = rgvsli[1].hvo; // object whose reference property we are setting.)
-			int tagParent, cpropPreviousDummy, ihvo;
-			IVwPropertyStore vps;
-			int hvoParent;
-			sel.PropInfo(false, 1, out hvoParent, out tagParent, out ihvo, out cpropPreviousDummy, out vps);
+			sel.PropInfo(false, 1, out var hvoParent, out _, out _, out _, out _);
 			if (hvoParent != m_hvoParent)
 			{
 				return true; // another bizarre unexpected event.
@@ -434,10 +411,9 @@ namespace LanguageExplorer.Controls.DetailControls
 			// This is what the name looks like after the keypress.
 			var tssTyped = m_sda.get_StringProp(hvoLeaf, m_taTagName);
 			// Get the substitute. This is where the actual type-ahead behavior happens. Sets hvoNewRef to 0 if no match.
-			ICmObject objNewRef;
-			var tssLookup = Lookup(tssTyped, out objNewRef);
+			var tssLookup = Lookup(tssTyped, out var objNewRef);
 			var hvoNewRef = objNewRef?.Hvo ?? 0;
-			var cda = m_sda as IVwCacheDa;
+			var cda = (IVwCacheDa)m_sda;
 			if (hvoNewRef == 0 && tssTyped.Length > 0)
 			{
 				// No match...underline string in red squiggle.

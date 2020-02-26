@@ -55,7 +55,7 @@ namespace LanguageExplorer.Controls.Styles
 		/// </summary>
 		public ILgWritingSystemFactory WritingSystemFactory
 		{
-			set { m_FontAttributes.WritingSystemFactory = value; }
+			set => m_FontAttributes.WritingSystemFactory = value;
 		}
 		#endregion
 
@@ -435,19 +435,16 @@ namespace LanguageExplorer.Controls.Styles
 			{
 				return true;
 			}
-			if (c is FwInheritablePropComboBox)
+			switch (c)
 			{
-				return ((FwInheritablePropComboBox)c).IsInherited;
+				case FwInheritablePropComboBox inheritablePropComboBox:
+					return inheritablePropComboBox.IsInherited;
+				case FwColorCombo colorCombo when colorCombo.IsInherited:
+				case CheckBox checkBox when checkBox.CheckState == CheckState.Indeterminate:
+					return true;
+				default:
+					return c.ForeColor.ToArgb() != SystemColors.WindowText.ToArgb();
 			}
-			if (c is FwColorCombo && ((FwColorCombo)c).IsInherited)
-			{
-				return true;
-			}
-			if (c is CheckBox && ((CheckBox)c).CheckState == CheckState.Indeterminate)
-			{
-				return true;
-			}
-			return c.ForeColor.ToArgb() != SystemColors.WindowText.ToArgb();
 		}
 
 		#endregion

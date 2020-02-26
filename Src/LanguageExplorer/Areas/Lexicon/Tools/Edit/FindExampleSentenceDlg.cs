@@ -108,11 +108,11 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 			helpProvider.SetHelpNavigator(this, HelpNavigator.Topic);
 			helpProvider.SetShowHelp(this, true);
-			var helpToicProvider = PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider);
-			if (helpToicProvider != null)
+			var helpTopicProvider = PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider);
+			if (helpTopicProvider != null)
 			{
-				helpProvider.HelpNamespace = helpToicProvider.HelpFile;
-				helpProvider.SetHelpKeyword(this, helpToicProvider.GetHelpString(_helpTopic));
+				helpProvider.HelpNamespace = helpTopicProvider.HelpFile;
+				helpProvider.SetHelpKeyword(this, helpTopicProvider.GetHelpString(_helpTopic));
 				btnHelp.Enabled = true;
 			}
 
@@ -196,12 +196,11 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			UndoableUnitOfWorkHelper.Do(LanguageExplorerResources.ksUndoAddExamples, LanguageExplorerResources.ksRedoAddExamples, _cache.ActionHandlerAccessor, () =>
 			{
 				var cNewExamples = 0;
-				foreach (var segHvo in uniqueSegments)
+				foreach (var segment in uniqueSegments.Select(segHvo => _cache.ServiceLocator.GetObject(segHvo) as ISegment))
 				{
-					var seg = _cache.ServiceLocator.GetObject(segHvo) as ISegment;
 					ILexExampleSentence newLexExample;
 					if (cNewExamples == 0 && _lexExampleSentence != null && _lexExampleSentence.Example.BestVernacularAlternative.Text == "***"
-					    && (_lexExampleSentence.TranslationsOC == null || _lexExampleSentence.TranslationsOC.Count == 0) && _lexExampleSentence.Reference.Length == 0)
+						&& (_lexExampleSentence.TranslationsOC == null || _lexExampleSentence.TranslationsOC.Count == 0) && _lexExampleSentence.Reference.Length == 0)
 					{
 						// we were given an empty LexExampleSentence, so use this one for our first new Example.
 						newLexExample = _lexExampleSentence;
@@ -216,23 +215,23 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 					// copy the segment string into the new LexExampleSentence
 					// Enhance: bold the relevant occurrence(s).
 					// LT-11388 Make sure baseline text gets copied into correct ws
-					var baseWs = GetBestVernWsForNewExample(seg);
-					newLexExample.Example.set_String(baseWs, seg.BaselineText);
-					if (seg.FreeTranslation.AvailableWritingSystemIds.Length > 0)
+					var baseWs = GetBestVernWsForNewExample(segment);
+					newLexExample.Example.set_String(baseWs, segment.BaselineText);
+					if (segment.FreeTranslation.AvailableWritingSystemIds.Length > 0)
 					{
 						var trans = _cache.ServiceLocator.GetInstance<ICmTranslationFactory>().Create(newLexExample, _cache.ServiceLocator.GetInstance<ICmPossibilityRepository>().GetObject(CmPossibilityTags.kguidTranFreeTranslation));
-						trans.Translation.CopyAlternatives(seg.FreeTranslation);
+						trans.Translation.CopyAlternatives(segment.FreeTranslation);
 					}
-					if (seg.LiteralTranslation.AvailableWritingSystemIds.Length > 0)
+					if (segment.LiteralTranslation.AvailableWritingSystemIds.Length > 0)
 					{
 						var trans = _cache.ServiceLocator.GetInstance<ICmTranslationFactory>().Create(newLexExample, _cache.ServiceLocator.GetInstance<ICmPossibilityRepository>().GetObject(CmPossibilityTags.kguidTranLiteralTranslation));
-						trans.Translation.CopyAlternatives(seg.LiteralTranslation);
+						trans.Translation.CopyAlternatives(segment.LiteralTranslation);
 					}
 					// copy the reference.
-					var tssRef = seg.Paragraph.Reference(seg, seg.BeginOffset);
+					var tssRef = segment.Paragraph.Reference(segment, segment.BeginOffset);
 					// convert the plain reference string into a link.
 					var tsb = tssRef.GetBldr();
-					var fwl = new FwLinkArgs(AreaServices.InterlinearEditMachineName, seg.Owner.Owner.Guid);
+					var fwl = new FwLinkArgs(AreaServices.InterlinearEditMachineName, segment.Owner.Owner.Guid);
 					tsb.SetStrPropValue(0, tsb.Length, (int)FwTextPropType.ktptObjData, (char)FwObjDataTypes.kodtExternalPathName + fwl.ToString());
 					tsb.SetStrPropValue(0, tsb.Length, (int)FwTextPropType.ktptNamedStyle, "Hyperlink");
 					newLexExample.Reference = tsb.GetString();

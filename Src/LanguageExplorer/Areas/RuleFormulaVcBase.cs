@@ -76,8 +76,7 @@ namespace LanguageExplorer.Areas
 					// in an iteration context, since an iteration context does it for us
 					if (vwenv.EmbeddingLevel > 0)
 					{
-						int outerHvo, outerTag, outerIndex;
-						vwenv.GetOuterObject(vwenv.EmbeddingLevel - 1, out outerHvo, out outerTag, out outerIndex);
+						vwenv.GetOuterObject(vwenv.EmbeddingLevel - 1, out var outerHvo, out _, out _);
 						var outerObj = m_cache.ServiceLocator.GetObject(outerHvo);
 						isOuterIterCtxt = outerObj.ClassID == PhIterationContextTags.kClassId;
 					}
@@ -353,13 +352,11 @@ namespace LanguageExplorer.Areas
 			switch (frag)
 			{
 				case kfragFeatureLine:
-					var value = m_cache.ServiceLocator.GetInstance<IFsClosedValueRepository>().GetObject(vwenv.CurrentObject());
-					tss = CreateFeatureLine(value);
+					tss = CreateFeatureLine(m_cache.ServiceLocator.GetInstance<IFsClosedValueRepository>().GetObject(vwenv.CurrentObject()));
 					break;
 				case kfragPlusVariableLine:
 				case kfragMinusVariableLine:
-					var var = m_cache.ServiceLocator.GetInstance<IPhFeatureConstraintRepository>().GetObject(vwenv.CurrentObject());
-					tss = CreateVariableLine(var, frag == kfragPlusVariableLine);
+					tss = CreateVariableLine(m_cache.ServiceLocator.GetInstance<IPhFeatureConstraintRepository>().GetObject(vwenv.CurrentObject()), frag == kfragPlusVariableLine);
 					break;
 				case kfragIterCtxtMax:
 					// if the max value is -1, it indicates that it is infinite
@@ -507,12 +504,7 @@ namespace LanguageExplorer.Areas
 			{
 				case PhSequenceContextTags.kClassId:
 					var seqCtxt = (IPhSequenceContext)ctxtOrVar;
-					var totalLen = 0;
-					foreach (var cur in seqCtxt.MembersRS)
-					{
-						totalLen += GetWidth(cur, vwenv);
-					}
-					return totalLen;
+					return seqCtxt.MembersRS.Sum(cur => GetWidth(cur, vwenv));
 				case PhIterationContextTags.kClassId:
 					return GetIterCtxtWidth(ctxtOrVar as IPhIterationContext, vwenv) + PileMargin * 2;
 				case PhVariableTags.kClassId:
@@ -541,10 +533,8 @@ namespace LanguageExplorer.Areas
 					len += GetStrWidth(m_leftParen, null, vwenv);
 					len += GetStrWidth(m_rightParen, null, vwenv);
 				}
-				var fontHeight = GetFontHeight(m_cache.DefaultUserWs);
-				var superSubHeight = (fontHeight * 2) / 3;
 				var tpb = TsStringUtils.MakePropsBldr();
-				tpb.SetIntPropValues((int)FwTextPropType.ktptFontSize, (int)FwTextPropVar.ktpvMilliPoint, superSubHeight);
+				tpb.SetIntPropValues((int)FwTextPropType.ktptFontSize, (int)FwTextPropVar.ktpvMilliPoint, GetFontHeight(m_cache.DefaultUserWs) * 2 / 3);
 				len += GetMinMaxWidth(ctxt, tpb.GetTextProps(), vwenv);
 			}
 			return len;
@@ -554,10 +544,7 @@ namespace LanguageExplorer.Areas
 		private int GetMinMaxWidth(IPhIterationContext ctxt, ITsTextProps props, IVwEnv vwenv)
 		{
 			var userWs = m_cache.DefaultUserWs;
-			var minWidth = GetStrWidth(TsStringUtils.MakeString(Convert.ToString(ctxt.Minimum), userWs), props, vwenv);
-			var maxStr = ctxt.Maximum == -1 ? m_infinity : TsStringUtils.MakeString(Convert.ToString(ctxt.Maximum), userWs);
-			var maxWidth = GetStrWidth(maxStr, props, vwenv);
-			return Math.Max(minWidth, maxWidth);
+			return Math.Max(GetStrWidth(TsStringUtils.MakeString(Convert.ToString(ctxt.Minimum), userWs), props, vwenv), GetStrWidth(ctxt.Maximum == -1 ? m_infinity : TsStringUtils.MakeString(Convert.ToString(ctxt.Maximum), userWs), props, vwenv));
 		}
 
 		private int GetSimpleCtxtWidth(IPhSimpleContext ctxt, IVwEnv vwenv)
@@ -653,24 +640,12 @@ namespace LanguageExplorer.Areas
 
 		private int GetVariablesWidth(IPhSimpleContextNC ctxt, IVwEnv vwenv, bool polarity)
 		{
-			var vars = polarity ? ctxt.PlusConstrRS : ctxt.MinusConstrRS;
-			var maxLen = 0;
-			foreach (var var in vars)
-			{
-				var varLine = CreateVariableLine(var, polarity);
-				var len = GetStrWidth(varLine, null, vwenv);
-				if (len > maxLen)
-				{
-					maxLen = len;
-				}
-			}
-			return maxLen;
+			return (polarity ? ctxt.PlusConstrRS : ctxt.MinusConstrRS).Select(var => CreateVariableLine(var, polarity)).Select(varLine => GetStrWidth(varLine, null, vwenv)).Concat(new[] { 0 }).Max();
 		}
 
 		protected int GetStrWidth(ITsString tss, ITsTextProps props, IVwEnv vwenv)
 		{
-			int dmpx, dmpy;
-			vwenv.get_StringWidth(tss, props, out dmpx, out dmpy);
+			vwenv.get_StringWidth(tss, props, out var dmpx, out _);
 			return dmpx;
 		}
 	}

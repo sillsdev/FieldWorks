@@ -71,16 +71,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			// Get information about current selection
 			var cvsli = vwsel.CLevels(false);
 			cvsli--; // CLevels includes the string property itself, but AllTextSelInfo doesn't need it.
-			int ihvoRoot;
-			int tagTextProp;
-			int cpropPrevious;
-			int ichAnchor;
-			int ichEnd;
-			int ihvoEnd;
-			bool fAssocPrev;
-			int ws;
-			ITsTextProps ttp;
-			var rgvsli = SelLevInfo.AllTextSelInfo(vwsel, cvsli, out ihvoRoot, out tagTextProp, out cpropPrevious, out ichAnchor, out ichEnd, out ws, out fAssocPrev, out ihvoEnd, out ttp);
+			var rgvsli = SelLevInfo.AllTextSelInfo(vwsel, cvsli, out var ihvoRoot, out _, out var cpropPrevious, out var ichAnchor, out var ichEnd, out _, out var fAssocPrev, out var ihvoEnd, out _);
 			// get para info
 			var para = Cache.ServiceLocator.GetInstance<IStTxtParaRepository>().GetObject(hvo);
 			// Add the text the user just typed to the paragraph - this destroys the selection
@@ -88,7 +79,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			para.Contents = tssVal;
 			// now restore the selection
 			m_rootb.MakeTextSelection(ihvoRoot, cvsli, rgvsli, StTxtParaTags.kflidContents, cpropPrevious, ichAnchor, ichEnd, Cache.DefaultVernWs, fAssocPrev, ihvoEnd, null, true);
-
 			return tssVal;
 		}
 

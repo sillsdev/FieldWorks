@@ -114,10 +114,7 @@ namespace LanguageExplorer.Filters
 		/// </summary>
 		public LcmCache Cache
 		{
-			set
-			{
-				DataAccess = value.DomainDataByFlid;
-			}
+			set => DataAccess = value.DomainDataByFlid;
 		}
 		#endregion
 	}

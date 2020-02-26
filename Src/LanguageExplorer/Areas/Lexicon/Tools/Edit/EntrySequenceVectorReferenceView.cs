@@ -65,8 +65,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			var clev = helper.NumberOfLevels;
 			var rginfo = helper.LevelInfo;
 			var info = rginfo[clev - 1];
-			ICmObject cmo;
-			if (info.tag != m_rootFlid || !m_cache.ServiceLocator.ObjectRepository.TryGetObject(info.hvo, out cmo))
+			if (info.tag != m_rootFlid || !m_cache.ServiceLocator.ObjectRepository.TryGetObject(info.hvo, out var cmo))
 			{
 				return base.OnProblemDeletion(sel, dpt);
 			}
@@ -91,34 +90,35 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			{
 				var obj = m_cache.ServiceLocator.GetObject(rghvos[ihvo]);
 				ILexEntryRef ler = null;
-				if (obj is ILexEntry)
+				switch (obj)
 				{
-					var complex = (ILexEntry)obj;
-					// the selected object in the list is a complex entry which has this as one of
-					// its components.  We want to remove this from its components.
-					foreach (var item in complex.EntryRefsOS)
+					case ILexEntry entry:
 					{
-						switch (item.RefType)
+						var complex = entry;
+						// the selected object in the list is a complex entry which has this as one of
+						// its components.  We want to remove this from its components.
+						foreach (var item in complex.EntryRefsOS)
 						{
-							case LexEntryRefTags.krtComplexForm:
-							case LexEntryRefTags.krtVariant:
-								ler = item;
-								break;
-							default:
-								throw new Exception("Unexpected LexEntryRef type in EntrySequenceVectorReferenceView.OnProblemDeletion");
+							switch (item.RefType)
+							{
+								case LexEntryRefTags.krtComplexForm:
+								case LexEntryRefTags.krtVariant:
+									ler = item;
+									break;
+								default:
+									throw new Exception("Unexpected LexEntryRef type in EntrySequenceVectorReferenceView.OnProblemDeletion");
+							}
 						}
+
+						break;
 					}
+					case ILexEntryRef @ref:
+						ler = @ref;
+						break;
+					default:
+						return VwDelProbResponse.kdprAbort; // we don't know how to delete it.
 				}
-				else if (obj is ILexEntryRef)
-				{
-					ler = (ILexEntryRef)obj;
-				}
-				else
-				{
-					return VwDelProbResponse.kdprAbort; // we don't know how to delete it.
-				}
-				var fieldName = m_cache.MetaDataCacheAccessor.GetFieldName(m_rootFlid);
-				switch (fieldName)
+				switch (m_cache.MetaDataCacheAccessor.GetFieldName(m_rootFlid))
 				{
 					case "Subentries":
 						ler.PrimaryLexemesRS.Remove(m_rootObj);

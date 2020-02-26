@@ -178,9 +178,8 @@ namespace LanguageExplorerTests.Controls.Styles
 		[Test]
 		public void ApplyNewFontSizeIfValid_ValidChar_InsertionPointChanged()
 		{
-			TextBox fontSizeTextBox;
 			const int initialFontSize = 17;
-			ApplyNewFontSizeIfValid_Helper_SetupInsertionPoint(initialFontSize, out fontSizeTextBox);
+			ApplyNewFontSizeIfValid_Helper_SetupInsertionPoint(initialFontSize, out var fontSizeTextBox);
 
 			// User types "8"
 			fontSizeTextBox.AppendText("8");
@@ -193,9 +192,8 @@ namespace LanguageExplorerTests.Controls.Styles
 		[Test]
 		public void ApplyNewFontSizeIfValid_AppendInvalidChar_InsertionPointNotChanged()
 		{
-			TextBox fontSizeTextBox;
 			const int initialFontSize = 17;
-			ApplyNewFontSizeIfValid_Helper_SetupInsertionPoint(initialFontSize, out fontSizeTextBox);
+			ApplyNewFontSizeIfValid_Helper_SetupInsertionPoint(initialFontSize, out var fontSizeTextBox);
 
 			// User types "k"
 			fontSizeTextBox.AppendText("k");
@@ -208,9 +206,8 @@ namespace LanguageExplorerTests.Controls.Styles
 		[Test]
 		public void ApplyNewFontSizeIfValid_PrependInvalidChar_InsertionPointNotChanged()
 		{
-			TextBox fontSizeTextBox;
 			const int initialFontSize = 17;
-			ApplyNewFontSizeIfValid_Helper_SetupInsertionPoint(initialFontSize, out fontSizeTextBox);
+			ApplyNewFontSizeIfValid_Helper_SetupInsertionPoint(initialFontSize, out var fontSizeTextBox);
 
 			// User clicks at beginning and types "k"
 			fontSizeTextBox.Select(0, 0);
@@ -226,9 +223,8 @@ namespace LanguageExplorerTests.Controls.Styles
 		[Test]
 		public void ApplyNewFontSizeIfValid_InsertInvalidCharInMiddle_InsertionPointNotChanged()
 		{
-			TextBox fontSizeTextBox;
 			const int initialFontSize = 17;
-			ApplyNewFontSizeIfValid_Helper_SetupInsertionPoint(initialFontSize, out fontSizeTextBox);
+			ApplyNewFontSizeIfValid_Helper_SetupInsertionPoint(initialFontSize, out var fontSizeTextBox);
 
 			// User clicks in middle and types "k"
 			fontSizeTextBox.Select(1, 0);
@@ -243,9 +239,8 @@ namespace LanguageExplorerTests.Controls.Styles
 		[Test]
 		public void ApplyNewFontSizeIfValid_Append4thDigit_InsertionPointNotChanged()
 		{
-			TextBox fontSizeTextBox;
 			const int initialFontSize = 178;
-			ApplyNewFontSizeIfValid_Helper_SetupInsertionPoint(initialFontSize, out fontSizeTextBox);
+			ApplyNewFontSizeIfValid_Helper_SetupInsertionPoint(initialFontSize, out var fontSizeTextBox);
 
 			// User clicks at end and types 9
 			fontSizeTextBox.Select(3, 0);
@@ -265,9 +260,8 @@ namespace LanguageExplorerTests.Controls.Styles
 		[Test]
 		public void ApplyNewFontSizeIfValid_UserDeletesOnlyDigit()
 		{
-			TextBox fontSizeTextBox;
 			const int initialFontSize = 9;
-			ApplyNewFontSizeIfValid_Helper_SetupInsertionPoint(initialFontSize, out fontSizeTextBox);
+			ApplyNewFontSizeIfValid_Helper_SetupInsertionPoint(initialFontSize, out var fontSizeTextBox);
 
 			// User clicks at end and types backspace
 			fontSizeTextBox.Select(1, 0);
@@ -282,9 +276,8 @@ namespace LanguageExplorerTests.Controls.Styles
 		[Test]
 		public void ApplyNewFontSizeIfValid_UserTypesJunkOverSelection_TextUnchanged()
 		{
-			TextBox fontSizeTextBox;
 			const int initialFontSize = 123;
-			ApplyNewFontSizeIfValid_Helper_SetupInsertionPoint(initialFontSize, out fontSizeTextBox);
+			ApplyNewFontSizeIfValid_Helper_SetupInsertionPoint(initialFontSize, out var fontSizeTextBox);
 
 			// User clicks between 1 and 2, drags to between 2 and 3, and types "a".
 			fontSizeTextBox.Select(1, 1);

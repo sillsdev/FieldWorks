@@ -23,11 +23,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 		/// <summary />
 		internal SortReversalSubEntries(UtilityDlg utilityDlg)
 		{
-			if (utilityDlg == null)
-			{
-				throw new ArgumentNullException(nameof(utilityDlg));
-			}
-			m_dlg = utilityDlg;
+			m_dlg = utilityDlg ?? throw new ArgumentNullException(nameof(utilityDlg));
 		}
 
 		/// <summary />

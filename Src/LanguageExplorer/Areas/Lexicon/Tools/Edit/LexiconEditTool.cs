@@ -42,8 +42,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		private XhtmlRecordDocView _xhtmlRecordDocView;
 		private MultiPane _innerMultiPane;
 		private IRecordList _recordList;
-		[Import(AreaServices.LexiconAreaMachineName)]
-		private IArea _area;
+
 		[Import]
 		private IPropertyTable _propertyTable;
 
@@ -79,17 +78,15 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		public void Activate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
 			_propertyTable.SetDefault(Show_DictionaryPubPreview, true, true);
-			_propertyTable.SetDefault($"{AreaServices.ToolForAreaNamed_}{_area.MachineName}", MachineName, true);
+			_propertyTable.SetDefault($"{AreaServices.ToolForAreaNamed_}{Area.MachineName}", MachineName, true);
 			if (_recordList == null)
 			{
 				_recordList = majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>(LanguageExplorerConstants.RecordListRepository).GetRecordList(LanguageExplorerConstants.Entries, majorFlexComponentParameters.StatusBar, LexiconArea.EntriesFactoryMethod);
 			}
-
 			var root = XDocument.Parse(LexiconResources.LexiconBrowseParameters).Root;
 			// Modify the basic parameters for this tool.
 			root.Attribute("id").Value = "lexentryList";
 			root.Add(new XAttribute("defaultCursor", "Arrow"), new XAttribute("hscroll", "true"));
-
 			var overrides = XElement.Parse(LexiconResources.LexiconBrowseOverrides);
 			// Add one more element to 'overrides'.
 			overrides.Add(new XElement("column", new XAttribute("layout", "DefinitionsForSense"), new XAttribute("visibility", "menu")));
@@ -100,12 +97,12 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			var showHiddenFieldsPropertyName = UiWidgetServices.CreateShowHiddenFieldsPropertyName(MachineName);
 			MyDataTree = new DataTree(majorFlexComponentParameters.SharedEventHandlers, majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue(showHiddenFieldsPropertyName, false));
 			_xhtmlRecordDocView = new XhtmlRecordDocView(XDocument.Parse(LexiconResources.LexiconEditRecordDocViewParameters).Root, majorFlexComponentParameters.LcmCache, _recordList, majorFlexComponentParameters.UiWidgetController);
-			_toolMenuHelper = new LexiconEditToolMenuHelper(majorFlexComponentParameters, this, MyDataTree, _recordList, _recordBrowseView, _xhtmlRecordDocView, showHiddenFieldsPropertyName);
+			_toolMenuHelper = new LexiconEditToolMenuHelper(majorFlexComponentParameters, this, MyDataTree, _recordList, _recordBrowseView, _xhtmlRecordDocView);
 			var recordEditView = new RecordEditView(XElement.Parse(LexiconResources.LexiconEditRecordEditViewParameters), XDocument.Parse(AreaResources.VisibilityFilter_All), majorFlexComponentParameters.LcmCache, _recordList, MyDataTree, majorFlexComponentParameters.UiWidgetController);
 			var nestedMultiPaneParameters = new MultiPaneParameters
 			{
 				Orientation = Orientation.Horizontal,
-				Area = _area,
+				Area = Area,
 				DefaultFixedPaneSizePoints = "60",
 				Id = "TestEditMulti",
 				ToolMachineName = MachineName,
@@ -123,7 +120,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			var mainMultiPaneParameters = new MultiPaneParameters
 			{
 				Orientation = Orientation.Vertical,
-				Area = _area,
+				Area = Area,
 				Id = "LexItemsAndDetailMultiPane",
 				ToolMachineName = MachineName,
 				DefaultPrintPane = "DictionaryPubPreview"
@@ -131,7 +128,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			var paneBar = new PaneBar();
 			var img = LanguageExplorerResources.MenuWidget;
 			img.MakeTransparent(Color.Magenta);
-
 			var panelMenu = new PanelMenu(_toolMenuHelper.MainPanelMenuContextMenuFactory, AreaServices.LeftPanelMenuId)
 			{
 				Dock = DockStyle.Left,
@@ -148,7 +144,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				_innerMultiPane = MultiPaneFactory.CreateNestedMultiPane(majorFlexComponentParameters.FlexComponentParameters, nestedMultiPaneParameters), "Dictionary & Details", paneBar);
 			_innerMultiPane.Panel1Collapsed = !_propertyTable.GetValue<bool>(Show_DictionaryPubPreview);
 			_toolMenuHelper.InnerMultiPane = _innerMultiPane;
-
 			// Too early before now.
 			recordEditView.FinishInitialization();
 		}
@@ -200,7 +195,8 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		/// <summary>
 		/// Get the area for the tool.
 		/// </summary>
-		public IArea Area => _area;
+		[field: Import(AreaServices.LexiconAreaMachineName)]
+		public IArea Area { get; private set; }
 
 		/// <summary>
 		/// Get the image for the area.
@@ -214,7 +210,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		/// </summary>
 		private sealed class LexiconEditToolMenuHelper : IDisposable
 		{
-			private string _extendedPropertyName;
 			private MajorFlexComponentParameters _majorFlexComponentParameters;
 			private IPropertyTable _propertyTable;
 			private ISubscriber _subscriber;
@@ -234,7 +229,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 			internal MultiPane InnerMultiPane { get; set; }
 
-			internal LexiconEditToolMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, ITool tool, DataTree dataTree, IRecordList recordList, RecordBrowseView recordBrowseView, XhtmlRecordDocView xhtmlRecordDocView, string extendedPropertyName)
+			internal LexiconEditToolMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, ITool tool, DataTree dataTree, IRecordList recordList, RecordBrowseView recordBrowseView, XhtmlRecordDocView xhtmlRecordDocView)
 			{
 				Guard.AgainstNull(majorFlexComponentParameters, nameof(majorFlexComponentParameters));
 				Guard.AgainstNull(tool, nameof(tool));
@@ -242,7 +237,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				Guard.AgainstNull(recordList, nameof(recordList));
 				Guard.AgainstNull(recordBrowseView, nameof(recordBrowseView));
 				Guard.AgainstNull(xhtmlRecordDocView, nameof(xhtmlRecordDocView));
-				Guard.AgainstNullOrEmptyString(extendedPropertyName, nameof(extendedPropertyName));
 
 				_majorFlexComponentParameters = majorFlexComponentParameters;
 				_propertyTable = _majorFlexComponentParameters.FlexComponentParameters.PropertyTable;
@@ -255,8 +249,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				_xhtmlRecordDocView = xhtmlRecordDocView;
 				_mainWnd = majorFlexComponentParameters.MainWindow;
 				_dataTree = dataTree;
-				_extendedPropertyName = extendedPropertyName;
-
 				var toolUiWidgetParameterObject = new ToolUiWidgetParameterObject(tool);
 				SetupUiWidgets(toolUiWidgetParameterObject);
 				_majorFlexComponentParameters.UiWidgetController.AddHandlers(toolUiWidgetParameterObject);
@@ -303,19 +295,15 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				MainPanelMenuContextMenuFactory = new PanelMenuContextMenuFactory();
 				_partiallySharedForToolsWideMenuHelper = new PartiallySharedForToolsWideMenuHelper(_majorFlexComponentParameters, _recordList);
 				_sharedLexiconToolsUiWidgetHelper = new SharedLexiconToolsUiWidgetHelper(_majorFlexComponentParameters, _recordList);
-
 				// Both used by RightClickContextMenuManager
 				_sharedEventHandlers.Add(Command.CmdMoveTargetToPreviousInSequence, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(MoveReferencedTargetDownInSequence_Clicked, () => UiWidgetServices.CanSeeAndDo));
 				_sharedEventHandlers.Add(Command.CmdMoveTargetToNextInSequence, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(MoveReferencedTargetUpInSequence_Clicked, () => UiWidgetServices.CanSeeAndDo));
-
 				// Was: LexiconEditToolViewMenuManager
 				// Various tool level shared handlers for within the Lexicon area.
 				_sharedLexiconToolsUiWidgetHelper.SetupToolUiWidgets(toolUiWidgetParameterObject, new HashSet<Command>{ Command.CmdGoToEntry, Command.CmdInsertLexEntry, Command.CmdConfigureDictionary });
-
 				// <item label="Show _Dictionary Preview" boolProperty="Show_DictionaryPubPreview" defaultVisible="false"/>
 				toolUiWidgetParameterObject.MenuItemsForTool[MainMenu.View].Add(Command.Show_DictionaryPubPreview, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(Show_Dictionary_Preview_Clicked, () => UiWidgetServices.CanSeeAndDo));
 				((ToolStripMenuItem)_majorFlexComponentParameters.UiWidgetController.ViewMenuDictionary[Command.Show_DictionaryPubPreview]).Checked = _propertyTable.GetValue<bool>(Show_DictionaryPubPreview);
-
 				// Was: LexiconEditToolInsertMenuManager
 				var insertMenuDictionary = toolUiWidgetParameterObject.MenuItemsForTool[MainMenu.Insert];
 				// <item command="CmdInsertSense" defaultVisible="false" />;
@@ -336,14 +324,11 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				insertMenuDictionary.Add(Command.CmdInsertVariant, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(Insert_Variant_Clicked, () => UiWidgetServices.CanSeeAndDo));
 				// <item command="CmdInsertMediaFile" defaultVisible="false" />
 				insertMenuDictionary.Add(Command.CmdInsertMediaFile, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(Insert_Sound_Or_Movie_File_Clicked, () => UiWidgetServices.CanSeeAndDo));
-
 				// Was: LexiconEditToolToolsMenuManager
 				var toolsMenuDictionary = toolUiWidgetParameterObject.MenuItemsForTool[MainMenu.Tools];
 				// <item command="CmdMergeEntry" defaultVisible="false"/>
 				toolsMenuDictionary.Add(Command.CmdMergeEntry, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(Merge_With_Entry_Clicked, () => CanCmdMergeEntry));
-
 				// Was: LexiconEditToolToolbarManager (Blended in, above.)
-
 				// Slice stack from LexEntry.fwlayout (less senses, which are handled in another manager class).
 				Register_After_CitationForm_Bundle();
 				Register_Pronunciation_Bundle();
@@ -521,7 +506,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 						dlg.InitialDirectory = _propertyTable.GetValue(insertMediaFileLastDirectory, _cache.LangProject.LinkedFilesRootDir);
 						dlg.Filter = ResourceHelper.BuildFileFilter(FileFilterType.AllAudio, FileFilterType.AllVideo, FileFilterType.AllFiles);
 						dlg.FilterIndex = 1;
-						if (String.IsNullOrEmpty(dlg.Title) || dlg.Title == "*kstidInsertMediaChooseFileCaption*")
+						if (string.IsNullOrEmpty(dlg.Title) || dlg.Title == "*kstidInsertMediaChooseFileCaption*")
 						{
 							dlg.Title = LexiconResources.ChooseSoundOrMovieFile;
 						}
@@ -529,7 +514,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 						dlg.CheckFileExists = true;
 						dlg.CheckPathExists = true;
 						dlg.Multiselect = true;
-
 						var dialogResult = DialogResult.None;
 						var helpProvider = _propertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider);
 						var linkedFilesRootDir = _cache.LangProject.LinkedFilesRootDir;
@@ -541,7 +525,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 							{
 								var fileNames = MoveOrCopyFilesController.MoveCopyOrLeaveMediaFiles(dlg.FileNames, linkedFilesRootDir, helpProvider);
 								var mediaFolderName = StringTable.Table.GetString("kstidMediaFolder");
-								if (String.IsNullOrEmpty(mediaFolderName) || mediaFolderName == "*kstidMediaFolder*")
+								if (string.IsNullOrEmpty(mediaFolderName) || mediaFolderName == "*kstidMediaFolder*")
 								{
 									mediaFolderName = CmFolderTags.LocalMedia;
 								}
@@ -750,8 +734,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				ToolStripMenuItemFactory.CreateToolStripSeparatorForContextMenuStrip(contextMenuStrip);
 				using (var imageHolder = new ImageHolder())
 				{
-					bool visible;
-					var enabled = AreaServices.CanMoveUpObjectInOwningSequence(_dataTree, _cache, out visible);
+					var enabled = AreaServices.CanMoveUpObjectInOwningSequence(_dataTree, _cache, out var visible);
 					if (visible)
 					{
 						// <command id="CmdDataTree_MoveUp_Pronunciation" label="Move Pronunciation _Up" message="MoveUpObjectInSequence" icon="MoveUp">
@@ -827,13 +810,12 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 					// <command id="CmdDataTree_MoveUp_Etymology" label="Move Etymology _Up" message="MoveUpObjectInSequence" icon="MoveUp">
 					//	<parameters field="Etymology" className="LexEtymology"/>
 					var menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, MoveUpObjectInOwningSequence_Clicked, LexiconResources.Move_Etymology_Up, image: imageHolder.smallCommandImages.Images[AreaServices.MoveUpIndex]);
-					bool visible;
-					menu.Enabled = AreaServices.CanMoveUpObjectInOwningSequence(_dataTree, _cache, out visible);
+					menu.Enabled = AreaServices.CanMoveUpObjectInOwningSequence(_dataTree, _cache, out _);
 
 					// <command id="CmdDataTree_MoveDown_Etymology" label="Move Etymology _Down" message="MoveDownObjectInSequence" icon="MoveDown">
 					//	<parameters field="Etymology" className="LexEtymology"/>
 					menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, MoveDownObjectInOwningSequence_Clicked, LexiconResources.Move_Etymology_Down, image: imageHolder.smallCommandImages.Images[AreaServices.MoveDownIndex]);
-					menu.Enabled = AreaServices.CanMoveDownObjectInOwningSequence(_dataTree, _cache, out visible);
+					menu.Enabled = AreaServices.CanMoveDownObjectInOwningSequence(_dataTree, _cache, out _);
 				}
 
 				// <item label="-" translate="do not translate"/>
@@ -1137,16 +1119,15 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				while (true)
 				{
 					var currentObject = currentSlice.MyCmObject;
-					if (currentObject is ILexSense)
+					if (currentObject is ILexSense sense)
 					{
-						currentSense = (ILexSense)currentObject;
+						currentSense = sense;
 						break;
 					}
 					currentSlice = currentSlice.ParentSlice;
 				}
-				if (currentSense.Owner is ILexSense)
+				if (currentSense.Owner is ILexSense owningSense)
 				{
-					var owningSense = (ILexSense)currentSense.Owner;
 					LexSenseUi.CreateNewLexSense(_cache, owningSense, owningSense.SensesOS.IndexOf(currentSense) + 1);
 				}
 				else
@@ -1341,12 +1322,11 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				{
 					// <command id="CmdDataTree_MoveUp_ExtNote" label="Move Extended Note _Up" message="MoveUpObjectInSequence" icon="MoveUp">
 					var menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, MoveUpObjectInOwningSequence_Clicked, LexiconResources.Move_Extended_Note_Up, image: imageHolder.smallCommandImages.Images[AreaServices.MoveUpIndex]);
-					bool visible;
-					menu.Enabled = AreaServices.CanMoveUpObjectInOwningSequence(_dataTree, _cache, out visible);
+					menu.Enabled = AreaServices.CanMoveUpObjectInOwningSequence(_dataTree, _cache, out _);
 
 					// <command id="CmdDataTree_MoveDown_ExtNote" label="Move Extended Note _Down" message="MoveDownObjectInSequence" icon="MoveDown">
 					menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, MoveDownObjectInOwningSequence_Clicked, LexiconResources.Move_Extended_Note_Down, image: imageHolder.smallCommandImages.Images[AreaServices.MoveDownIndex]);
-					menu.Enabled = AreaServices.CanMoveDownObjectInOwningSequence(_dataTree, _cache, out visible);
+					menu.Enabled = AreaServices.CanMoveDownObjectInOwningSequence(_dataTree, _cache, out _);
 				}
 
 				// <item label="-" translate="do not translate"/>
@@ -1425,12 +1405,11 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				{
 					// <command id="CmdDataTree_MoveUp_Picture" label="Move Picture _Up" message="MoveUpObjectInSequence" icon="MoveUp">
 					var menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, MoveUpObjectInOwningSequence_Clicked, LexiconResources.Move_Picture_Up, image: imageHolder.smallCommandImages.Images[AreaServices.MoveUpIndex]);
-					bool visible;
-					menu.Enabled = AreaServices.CanMoveUpObjectInOwningSequence(_dataTree, _cache, out visible);
+					menu.Enabled = AreaServices.CanMoveUpObjectInOwningSequence(_dataTree, _cache, out _);
 
 					// <command id="CmdDataTree_MoveDown_Picture" label="Move Picture _Down" message="MoveDownObjectInSequence" icon="MoveDown">
 					menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, MoveDownObjectInOwningSequence_Clicked, LexiconResources.Move_Picture_Down, image: imageHolder.smallCommandImages.Images[AreaServices.MoveDownIndex]);
-					menu.Enabled = AreaServices.CanMoveDownObjectInOwningSequence(_dataTree, _cache, out visible);
+					menu.Enabled = AreaServices.CanMoveDownObjectInOwningSequence(_dataTree, _cache, out _);
 				}
 
 				// <item label="-" translate="do not translate"/>
@@ -1451,29 +1430,18 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 				// Create an array of potential slices to call the showProperties method on.  If we're being called from a PictureSlice,
 				// there's no need to go through the whole list, so we can be a little more intelligent
-				if (slice is PictureSlice)
+				if (slice is PictureSlice pictureSlice1)
 				{
-					pictureSlices.Add(slice as PictureSlice);
+					pictureSlices.Add(pictureSlice1);
 				}
 				else
 				{
-					foreach (var otherSlice in _dataTree.Slices)
-					{
-						if (otherSlice is PictureSlice && !ReferenceEquals(slice, otherSlice))
-						{
-							pictureSlices.Add(otherSlice as PictureSlice);
-						}
-					}
+					pictureSlices.AddRange(_dataTree.Slices.Where(otherSlice => otherSlice is PictureSlice && !ReferenceEquals(slice, otherSlice)).Select(otherSlice => otherSlice as PictureSlice));
 				}
-
-				foreach (var pictureSlice in pictureSlices)
+				foreach (var pictureSlice in pictureSlices.Where(pictureSlice => ReferenceEquals(pictureSlice.MyCmObject, slice.MyCmObject)))
 				{
-					// Make sure the target slice refers to the same object that we do
-					if (ReferenceEquals(pictureSlice.MyCmObject, slice.MyCmObject))
-					{
-						pictureSlice.showProperties();
-						break;
-					}
+					pictureSlice.showProperties();
+					break;
 				}
 			}
 
@@ -1522,12 +1490,11 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				{
 					// <command id="CmdDataTree_MoveUp_Example" label="Move Example _Up" message="MoveUpObjectInSequence" icon="MoveUp">
 					var menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, MoveUpObjectInOwningSequence_Clicked, LexiconResources.Move_Example_Up, image: imageHolder.smallCommandImages.Images[AreaServices.MoveUpIndex]);
-					bool visible;
-					menu.Enabled = AreaServices.CanMoveUpObjectInOwningSequence(_dataTree, _cache, out visible);
+					menu.Enabled = AreaServices.CanMoveUpObjectInOwningSequence(_dataTree, _cache, out _);
 
 					// <command id="CmdDataTree_MoveDown_Example" label="Move Example _Down" message="MoveDownObjectInSequence" icon="MoveDown">
 					menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, MoveDownObjectInOwningSequence_Clicked, LexiconResources.Move_Example_Down, image: imageHolder.smallCommandImages.Images[AreaServices.MoveDownIndex]);
-					menu.Enabled = AreaServices.CanMoveDownObjectInOwningSequence(_dataTree, _cache, out visible);
+					menu.Enabled = AreaServices.CanMoveDownObjectInOwningSequence(_dataTree, _cache, out _);
 				}
 
 				// <item label="-" translate="do not translate"/>
@@ -1584,12 +1551,11 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				{
 					// <command id="CmdDataTree_MoveUp_Sense" label="Move Sense Up" message="MoveUpObjectInSequence" icon="MoveUp">
 					menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, MoveUpObjectInOwningSequence_Clicked, LexiconResources.Move_Sense_Up, image: imageHolder.smallCommandImages.Images[AreaServices.MoveUpIndex]);
-					bool visible;
-					menu.Enabled = AreaServices.CanMoveUpObjectInOwningSequence(_dataTree, _cache, out visible);
+					menu.Enabled = AreaServices.CanMoveUpObjectInOwningSequence(_dataTree, _cache, out _);
 
 					// <command id="CmdDataTree_MoveDown_Sense" label="Move Sense Down" message="MoveDownObjectInSequence" icon="MoveDown">
 					menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, MoveDownObjectInOwningSequence_Clicked, LexiconResources.Move_Sense_Down, image: imageHolder.smallCommandImages.Images[AreaServices.MoveDownIndex]);
-					menu.Enabled = AreaServices.CanMoveDownObjectInOwningSequence(_dataTree, _cache, out visible);
+					menu.Enabled = AreaServices.CanMoveDownObjectInOwningSequence(_dataTree, _cache, out _);
 
 					// <command id="CmdDataTree_MakeSub_Sense" label="Demote" message="DemoteSense" icon="MoveRight">
 					menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, Demote_Sense_Clicked, AreaResources.Demote, image: imageHolder.smallCommandImages.Images[AreaServices.MoveRightIndex]);
@@ -1640,10 +1606,8 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 			private static bool CanPromoteSense(Slice currentSlice)
 			{
-				var moveeSense = currentSlice.MyCmObject as ILexSense;
-				var oldOwningSense = currentSlice.MyCmObject.Owner as ILexSense;
 				// Can't promote top-level sense or something that isn't a sense.
-				return moveeSense != null && oldOwningSense != null;
+				return currentSlice.MyCmObject is ILexSense && currentSlice.MyCmObject.Owner is ILexSense;
 			}
 
 			private void Promote_Sense_Clicked(object sender, EventArgs e)
@@ -1654,9 +1618,8 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 					var oldOwner = slice.MyCmObject.Owner;
 					var index = oldOwner.IndexInOwner;
 					var newOwner = oldOwner.Owner;
-					if (newOwner is ILexEntry)
+					if (newOwner is ILexEntry newOwningEntry)
 					{
-						var newOwningEntry = (ILexEntry)newOwner;
 						newOwningEntry.SensesOS.Insert(index + 1, slice.MyCmObject as ILexSense);
 					}
 					else
@@ -1839,7 +1802,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 						// not implemented
 						break;
 				}
-
 				if (msg != null)
 				{
 					return MessageBox.Show(msg, LanguageExplorerResources.ksConvertFormLoseCaption, MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes;
@@ -1849,13 +1811,10 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 			private void SelectNewFormSlice(IMoForm newForm)
 			{
-				foreach (var slice in _dataTree.Slices)
+				foreach (var slice in _dataTree.Slices.Where(slice => slice.MyCmObject.Hvo == newForm.Hvo))
 				{
-					if (slice.MyCmObject.Hvo == newForm.Hvo)
-					{
-						_dataTree.ActiveControl = slice;
-						break;
-					}
+					_dataTree.ActiveControl = slice;
+					break;
 				}
 			}
 
@@ -2140,11 +2099,10 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				{
 					// <command id="CmdDataTree_MoveUp_AlternateForm" label="Move Form _Up" message="MoveUpObjectInSequence" icon="MoveUp">
 					menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, MoveUpObjectInOwningSequence_Clicked, LexiconResources.Move_Form_Up, image: imageHolder.smallCommandImages.Images[AreaServices.MoveUpIndex]);
-					bool visible;
-					menu.Enabled = AreaServices.CanMoveUpObjectInOwningSequence(_dataTree, _cache, out visible);
+					menu.Enabled = AreaServices.CanMoveUpObjectInOwningSequence(_dataTree, _cache, out _);
 					// <command id="CmdDataTree_MoveDown_AlternateForm" label="Move Form _Down" message="MoveDownObjectInSequence" icon="MoveDown">
 					menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, MoveDownObjectInOwningSequence_Clicked, LexiconResources.Move_Form_Down, image: imageHolder.smallCommandImages.Images[AreaServices.MoveDownIndex]);
-					menu.Enabled = AreaServices.CanMoveDownObjectInOwningSequence(_dataTree, _cache, out visible);
+					menu.Enabled = AreaServices.CanMoveDownObjectInOwningSequence(_dataTree, _cache, out _);
 				}
 
 				// <item label="-" translate="do not translate"/>
@@ -2179,12 +2137,11 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				{
 					// <item command="CmdDataTree_MoveUp_Allomorph"/>
 					menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, MoveUpObjectInOwningSequence_Clicked, LexiconResources.Move_Form_Up, image: imageHolder.smallCommandImages.Images[AreaServices.MoveUpIndex]);
-					bool visible;
-					menu.Enabled = AreaServices.CanMoveUpObjectInOwningSequence(_dataTree, _cache, out visible);
+					menu.Enabled = AreaServices.CanMoveUpObjectInOwningSequence(_dataTree, _cache, out _);
 
 					// <item command="CmdDataTree_MoveDown_Allomorph"/>
 					menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, MoveDownObjectInOwningSequence_Clicked, LexiconResources.Move_Form_Down, image: imageHolder.smallCommandImages.Images[AreaServices.MoveDownIndex]);
-					menu.Enabled = AreaServices.CanMoveDownObjectInOwningSequence(_dataTree, _cache, out visible);
+					menu.Enabled = AreaServices.CanMoveDownObjectInOwningSequence(_dataTree, _cache, out _);
 				}
 
 				// <item label="-" translate="do not translate"/>
@@ -2373,7 +2330,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 					_recordBrowseView.ContextMenuStrip = null;
 				}
 				MainPanelMenuContextMenuFactory = null;
-				_extendedPropertyName = null;
 				_majorFlexComponentParameters = null;
 				_propertyTable = null;
 				_subscriber = null;

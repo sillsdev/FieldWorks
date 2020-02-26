@@ -58,9 +58,11 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			var tabIndex = m_addWritingSystemButton.TabIndex;
 			var text = m_addWritingSystemButton.Text;
 			Controls.Remove(m_addWritingSystemButton);
-			m_addWritingSystemButton = new AddWritingSystemButton();
-			m_addWritingSystemButton.Location = loc;
-			m_addWritingSystemButton.Anchor = AnchorStyles.Left | AnchorStyles.Bottom;
+			m_addWritingSystemButton = new AddWritingSystemButton
+			{
+				Location = loc,
+				Anchor = AnchorStyles.Left | AnchorStyles.Bottom
+			};
 			Controls.Add(m_addWritingSystemButton);
 			m_addWritingSystemButton.TabIndex = tabIndex;
 			m_addWritingSystemButton.Text = text;
@@ -112,8 +114,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		public static string GetDestinationNameFromResource(InterlinDestination dest, ResourceManager rm)
 		{
-			var stid = "ksFld" + dest;
-			return rm.GetString(stid) ?? dest.ToString();
+			return rm.GetString($"ksFld{dest}") ?? dest.ToString();
 		}
 
 		private void LoadDestinations()
@@ -162,8 +163,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			m_converterCombo.Sorted = true;
 			while (de.MoveNext())
 			{
-				var name = de.Key as string;
-				if (name != null)
+				if (de.Key is string name)
 				{
 					m_converterCombo.Items.Add(name);
 				}

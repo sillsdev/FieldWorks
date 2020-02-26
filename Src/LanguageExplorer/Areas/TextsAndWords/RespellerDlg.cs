@@ -194,8 +194,8 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		{
 			_statusBar = statusBar;
 			m_concordanceRecordList = (ConcordanceRecordList)PropertyTable.GetValue<IRecordListRepository>(LanguageExplorerConstants.RecordListRepository).GetRecordList(TextAndWordsArea.ConcordanceWords);
-			m_concordanceRecordList.SuppressSaveOnChangeRecord = true; // various things trigger change record and would prevent Undo
-
+			// various things trigger change record and would prevent Undo
+			m_concordanceRecordList.SuppressSaveOnChangeRecord = true;
 			//We need to re-parse the interesting texts so that the rows in the dialog show all the occurrences (make sure it is up to date)
 			//Un-suppress to allow for the list to be reloaded during ParseInterestingTextsIfNeeded()
 			//(this record list and its list are not visible in this dialog, so there will be no future reload)
@@ -517,8 +517,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		private void SetEnabledState()
 		{
 			var enabledBasic = !string.IsNullOrEmpty(m_cbNewSpelling.Text) && m_cbNewSpelling.Text != m_srcwfiWordform.Form.get_String(m_vernWs).Text;
-			bool someWillChange;
-			var changeAll = AllWillChange(out someWillChange);
+			var changeAll = AllWillChange(out var someWillChange);
 			m_btnApply.Enabled = enabledBasic && someWillChange;
 			m_btnPreviewClear.Enabled = enabledBasic && someWillChange; // todo: also if 'clear' needed.
 			m_cbUpdateLexicon.Enabled = changeAll && WordformHasMonomorphemicAnalyses;
@@ -614,8 +613,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 				{
 					MakeUndoAction();
 				}
-				bool someWillChange;
-				if (AllWillChange(out someWillChange))
+				if (AllWillChange(out _))
 				{
 					// No point in letting the user think they can make more changes.
 					m_cbNewSpelling.Enabled = false;
@@ -631,7 +629,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 				m_respellUndoaction.DoIt(Publisher);
 				// On the other hand, we don't want to update the new wordform until after DoIt...it might not exist before,
 				// and we won't be messing up any existing occurrences.
-				Publisher.Publish("ItemDataModified", m_cache.ServiceLocator.GetObject(m_respellUndoaction.NewWordform));
+				Publisher.Publish(new PublisherParameterObject("ItemDataModified", m_cache.ServiceLocator.GetObject(m_respellUndoaction.NewWordform)));
 				ChangesWereMade = true;
 				m_respellUndoaction.RemoveChangedItems(m_enabledItems, m_sourceSentences.BrowseViewer.PreviewEnabledTag);
 				// If everything changed remember the new wordform.

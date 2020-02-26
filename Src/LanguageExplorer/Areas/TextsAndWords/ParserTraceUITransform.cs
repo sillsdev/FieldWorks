@@ -44,8 +44,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		{
 			var wsf = cache.WritingSystemFactory;
 			var wsContainer = cache.ServiceLocator.WritingSystems;
-			var defAnalWs = wsContainer.DefaultAnalysisWritingSystem;
-			using (var myFont = FontHeightAdjuster.GetFontForNormalStyle(defAnalWs.Handle, wsf, propertyTable))
+			using (var myFont = FontHeightAdjuster.GetFontForNormalStyle(wsContainer.DefaultAnalysisWritingSystem.Handle, wsf, propertyTable))
 			{
 				argumentList.AddParam("prmAnalysisFont", "", myFont.FontFamily.Name);
 				argumentList.AddParam("prmAnalysisFontSize", "", myFont.Size + "pt");

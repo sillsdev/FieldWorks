@@ -24,10 +24,7 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		public bool Expanded
 		{
-			get
-			{
-				return m_fExpanded;
-			}
+			get => m_fExpanded;
 			set
 			{
 				// Caller should arrange to regenerate the view.
@@ -73,8 +70,7 @@ namespace LanguageExplorer.Controls.DetailControls
 					{
 						// One line of context.
 						// Figure the index of this object in the next object out (the root).
-						int hvoOuter, tagOuter, ihvo;
-						vwenv.GetOuterObject(vwenv.EmbeddingLevel - 1, out hvoOuter, out tagOuter, out ihvo);
+						vwenv.GetOuterObject(vwenv.EmbeddingLevel - 1, out _, out _, out var ihvo);
 						var ichKey = m_ni.ContextStringStartOffset(ihvo, hvo);
 						var cchKey = m_ni.ContextStringLength(ihvo, hvo);
 						// Enhance JohnT: make the alignment position a function of window width.

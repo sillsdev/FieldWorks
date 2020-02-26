@@ -89,119 +89,122 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 				case kfragNode:
 					var node = ((ComplexConcPatternSda)vwenv.DataAccess).Nodes[hvo];
 					var maxNumLines = GetMaxNumLines(vwenv);
-					if (node is ComplexConcOrNode)
+					switch (node)
 					{
-						OpenSingleLinePile(vwenv, maxNumLines);
-						vwenv.AddProp(ktagInnerNonBoundary, this, kfragOR);
-						CloseSingleLinePile(vwenv, false);
-					}
-					else if (node is ComplexConcWordBdryNode)
-					{
-						OpenSingleLinePile(vwenv, maxNumLines);
-						vwenv.AddProp(ktagInnerNonBoundary, this, kfragHash);
-						CloseSingleLinePile(vwenv);
-					}
-					else if (node is ComplexConcGroupNode)
-					{
-						var numLines = GetNumLines(node);
-						var hasMinMax = node.Maximum != 1 || node.Minimum != 1;
-						if (numLines == 1)
-						{
-							OpenSingleLinePile(vwenv, maxNumLines, false);
-							// use normal parentheses for a single line group
-							vwenv.AddProp(ktagLeftBoundary, this, kfragLeftParen);
-							vwenv.AddObjVecItems(ComplexConcPatternSda.ktagChildren, this, kfragNode);
-							vwenv.AddProp(hasMinMax ? ktagInnerNonBoundary : ktagRightBoundary, this, kfragRightParen);
-							if (hasMinMax)
-							{
-								DisplayMinMax(numLines, vwenv);
-							}
+						case ComplexConcOrNode _:
+							OpenSingleLinePile(vwenv, maxNumLines);
+							vwenv.AddProp(ktagInnerNonBoundary, this, kfragOR);
 							CloseSingleLinePile(vwenv, false);
-						}
-						else
+							break;
+						case ComplexConcWordBdryNode _:
+							OpenSingleLinePile(vwenv, maxNumLines);
+							vwenv.AddProp(ktagInnerNonBoundary, this, kfragHash);
+							CloseSingleLinePile(vwenv);
+							break;
+						case ComplexConcGroupNode _:
 						{
-							vwenv.Props = m_bracketProps;
-							vwenv.set_IntProperty((int)FwTextPropType.ktptMarginLeading, (int)FwTextPropVar.ktpvMilliPoint, PileMargin);
-							vwenv.OpenInnerPile();
-							AddExtraLines(maxNumLines - numLines, ktagLeftNonBoundary, vwenv);
-							vwenv.AddProp(ktagLeftNonBoundary, this, kfragLeftParenUpHook);
-							for (var i = 1; i < numLines - 1; i++)
+							var numLines = GetNumLines(node);
+							var hasMinMax = node.Maximum != 1 || node.Minimum != 1;
+							if (numLines == 1)
 							{
-								vwenv.AddProp(ktagLeftNonBoundary, this, kfragLeftParenExt);
+								OpenSingleLinePile(vwenv, maxNumLines, false);
+								// use normal parentheses for a single line group
+								vwenv.AddProp(ktagLeftBoundary, this, kfragLeftParen);
+								vwenv.AddObjVecItems(ComplexConcPatternSda.ktagChildren, this, kfragNode);
+								vwenv.AddProp(hasMinMax ? ktagInnerNonBoundary : ktagRightBoundary, this, kfragRightParen);
+								if (hasMinMax)
+								{
+									DisplayMinMax(numLines, vwenv);
+								}
+								CloseSingleLinePile(vwenv, false);
 							}
-							vwenv.AddProp(ktagLeftBoundary, this, kfragLeftParenLowHook);
-							vwenv.CloseInnerPile();
-							vwenv.AddObjVecItems(ComplexConcPatternSda.ktagChildren, this, kfragNode);
-							vwenv.Props = m_bracketProps;
-							vwenv.set_IntProperty((int)FwTextPropType.ktptMarginTrailing, (int)FwTextPropVar.ktpvMilliPoint, PileMargin);
-							vwenv.OpenInnerPile();
-							AddExtraLines(maxNumLines - numLines, hasMinMax ? ktagInnerNonBoundary : ktagRightNonBoundary, vwenv);
-							vwenv.AddProp(hasMinMax ? ktagInnerNonBoundary : ktagRightNonBoundary, this, kfragRightParenUpHook);
-							for (var i = 1; i < numLines - 1; i++)
+							else
 							{
-								vwenv.AddProp(hasMinMax ? ktagInnerNonBoundary : ktagRightNonBoundary, this, kfragRightParenExt);
+								vwenv.Props = m_bracketProps;
+								vwenv.set_IntProperty((int)FwTextPropType.ktptMarginLeading, (int)FwTextPropVar.ktpvMilliPoint, PileMargin);
+								vwenv.OpenInnerPile();
+								AddExtraLines(maxNumLines - numLines, ktagLeftNonBoundary, vwenv);
+								vwenv.AddProp(ktagLeftNonBoundary, this, kfragLeftParenUpHook);
+								for (var i = 1; i < numLines - 1; i++)
+								{
+									vwenv.AddProp(ktagLeftNonBoundary, this, kfragLeftParenExt);
+								}
+								vwenv.AddProp(ktagLeftBoundary, this, kfragLeftParenLowHook);
+								vwenv.CloseInnerPile();
+								vwenv.AddObjVecItems(ComplexConcPatternSda.ktagChildren, this, kfragNode);
+								vwenv.Props = m_bracketProps;
+								vwenv.set_IntProperty((int)FwTextPropType.ktptMarginTrailing, (int)FwTextPropVar.ktpvMilliPoint, PileMargin);
+								vwenv.OpenInnerPile();
+								AddExtraLines(maxNumLines - numLines, hasMinMax ? ktagInnerNonBoundary : ktagRightNonBoundary, vwenv);
+								vwenv.AddProp(hasMinMax ? ktagInnerNonBoundary : ktagRightNonBoundary, this, kfragRightParenUpHook);
+								for (var i = 1; i < numLines - 1; i++)
+								{
+									vwenv.AddProp(hasMinMax ? ktagInnerNonBoundary : ktagRightNonBoundary, this, kfragRightParenExt);
+								}
+								vwenv.AddProp(hasMinMax ? ktagInnerNonBoundary : ktagRightBoundary, this, kfragRightParenLowHook);
+								vwenv.CloseInnerPile();
+								if (hasMinMax)
+								{
+									DisplayMinMax(numLines, vwenv);
+								}
 							}
-							vwenv.AddProp(hasMinMax ? ktagInnerNonBoundary : ktagRightBoundary, this, kfragRightParenLowHook);
-							vwenv.CloseInnerPile();
-							if (hasMinMax)
-							{
-								DisplayMinMax(numLines, vwenv);
-							}
+							break;
 						}
-					}
-					else
-					{
-						var hasMinMax = node.Maximum != 1 || node.Minimum != 1;
-						var numLines = GetNumLines(node);
-						if (numLines == 1)
+						default:
 						{
-							OpenSingleLinePile(vwenv, maxNumLines, false);
-							// use normal brackets for a single line constraint
-							vwenv.AddProp(ktagLeftBoundary, this, kfragLeftBracket);
-							DisplayFeatures(vwenv, node);
-							vwenv.AddProp(hasMinMax ? ktagInnerNonBoundary : ktagRightBoundary, this, kfragRightBracket);
-							if (hasMinMax)
+							var hasMinMax = node.Maximum != 1 || node.Minimum != 1;
+							var numLines = GetNumLines(node);
+							if (numLines == 1)
 							{
-								DisplayMinMax(numLines, vwenv);
+								OpenSingleLinePile(vwenv, maxNumLines, false);
+								// use normal brackets for a single line constraint
+								vwenv.AddProp(ktagLeftBoundary, this, kfragLeftBracket);
+								DisplayFeatures(vwenv, node);
+								vwenv.AddProp(hasMinMax ? ktagInnerNonBoundary : ktagRightBoundary, this, kfragRightBracket);
+								if (hasMinMax)
+								{
+									DisplayMinMax(numLines, vwenv);
+								}
+								CloseSingleLinePile(vwenv, false);
 							}
-							CloseSingleLinePile(vwenv, false);
-						}
-						else
-						{
-							// left bracket pile
-							vwenv.Props = m_bracketProps;
-							vwenv.set_IntProperty((int)FwTextPropType.ktptMarginLeading, (int)FwTextPropVar.ktpvMilliPoint, PileMargin);
-							vwenv.OpenInnerPile();
-							AddExtraLines(maxNumLines - numLines, ktagLeftNonBoundary, vwenv);
-							vwenv.AddProp(ktagLeftNonBoundary, this, kfragLeftBracketUpHook);
-							for (var i = 1; i < numLines - 1; i++)
+							else
 							{
-								vwenv.AddProp(ktagLeftNonBoundary, this, kfragLeftBracketExt);
+								// left bracket pile
+								vwenv.Props = m_bracketProps;
+								vwenv.set_IntProperty((int)FwTextPropType.ktptMarginLeading, (int)FwTextPropVar.ktpvMilliPoint, PileMargin);
+								vwenv.OpenInnerPile();
+								AddExtraLines(maxNumLines - numLines, ktagLeftNonBoundary, vwenv);
+								vwenv.AddProp(ktagLeftNonBoundary, this, kfragLeftBracketUpHook);
+								for (var i = 1; i < numLines - 1; i++)
+								{
+									vwenv.AddProp(ktagLeftNonBoundary, this, kfragLeftBracketExt);
+								}
+								vwenv.AddProp(ktagLeftBoundary, this, kfragLeftBracketLowHook);
+								vwenv.CloseInnerPile();
+								// feature pile
+								vwenv.set_IntProperty((int)FwTextPropType.ktptAlign, (int)FwTextPropVar.ktpvEnum, (int)FwTextAlign.ktalLeft);
+								vwenv.OpenInnerPile();
+								AddExtraLines(maxNumLines - numLines, ktagInnerNonBoundary, vwenv);
+								DisplayFeatures(vwenv, node);
+								vwenv.CloseInnerPile();
+								// right bracket pile
+								vwenv.Props = m_bracketProps;
+								vwenv.set_IntProperty((int)FwTextPropType.ktptMarginTrailing, (int)FwTextPropVar.ktpvMilliPoint, PileMargin);
+								vwenv.OpenInnerPile();
+								AddExtraLines(maxNumLines - numLines, hasMinMax ? ktagInnerNonBoundary : ktagRightNonBoundary, vwenv);
+								vwenv.AddProp(hasMinMax ? ktagInnerNonBoundary : ktagRightNonBoundary, this, kfragRightBracketUpHook);
+								for (var i = 1; i < numLines - 1; i++)
+								{
+									vwenv.AddProp(hasMinMax ? ktagInnerNonBoundary : ktagRightNonBoundary, this, kfragRightBracketExt);
+								}
+								vwenv.AddProp(hasMinMax ? ktagInnerNonBoundary : ktagRightBoundary, this, kfragRightBracketLowHook);
+								vwenv.CloseInnerPile();
+								if (hasMinMax)
+								{
+									DisplayMinMax(numLines, vwenv);
+								}
 							}
-							vwenv.AddProp(ktagLeftBoundary, this, kfragLeftBracketLowHook);
-							vwenv.CloseInnerPile();
-							// feature pile
-							vwenv.set_IntProperty((int)FwTextPropType.ktptAlign, (int)FwTextPropVar.ktpvEnum, (int)FwTextAlign.ktalLeft);
-							vwenv.OpenInnerPile();
-							AddExtraLines(maxNumLines - numLines, ktagInnerNonBoundary, vwenv);
-							DisplayFeatures(vwenv, node);
-							vwenv.CloseInnerPile();
-							// right bracket pile
-							vwenv.Props = m_bracketProps;
-							vwenv.set_IntProperty((int)FwTextPropType.ktptMarginTrailing, (int)FwTextPropVar.ktpvMilliPoint, PileMargin);
-							vwenv.OpenInnerPile();
-							AddExtraLines(maxNumLines - numLines, hasMinMax ? ktagInnerNonBoundary : ktagRightNonBoundary, vwenv);
-							vwenv.AddProp(hasMinMax ? ktagInnerNonBoundary : ktagRightNonBoundary, this, kfragRightBracketUpHook);
-							for (var i = 1; i < numLines - 1; i++)
-							{
-								vwenv.AddProp(hasMinMax ? ktagInnerNonBoundary : ktagRightNonBoundary, this, kfragRightBracketExt);
-							}
-							vwenv.AddProp(hasMinMax ? ktagInnerNonBoundary : ktagRightBoundary, this, kfragRightBracketLowHook);
-							vwenv.CloseInnerPile();
-							if (hasMinMax)
-							{
-								DisplayMinMax(numLines, vwenv);
-							}
+							break;
 						}
 					}
 					break;
@@ -216,8 +219,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 				// if the inner context is a single line, then make the min value a subscript and the max value a superscript.
 				// I tried to use the Views subscript and superscript properties, but they added extra space so that it would
 				// have the same line height of a normal character, which is not what I wanted, so I compute the size myself
-				var fontHeight = GetFontHeight(m_cache.DefaultUserWs);
-				var superSubHeight = (fontHeight * 2) / 3;
+				var superSubHeight = GetFontHeight(m_cache.DefaultUserWs) * 2 / 3;
 				vwenv.set_IntProperty((int)FwTextPropType.ktptFontSize, (int)FwTextPropVar.ktpvMilliPoint, superSubHeight);
 				vwenv.set_IntProperty((int)FwTextPropType.ktptLineHeight, (int)FwTextPropVar.ktpvMilliPoint, -superSubHeight);
 				superOffset = superSubHeight / 2;
@@ -270,26 +272,21 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 							break;
 						case ktagForm:
 							ITsString form = null;
-							var formMorphNode = node as ComplexConcMorphNode;
-							if (formMorphNode != null)
+							switch (node)
 							{
-								form = formMorphNode.Form;
-							}
-							else
-							{
-								var formWordNode = node as ComplexConcWordNode;
-								if (formWordNode != null)
-								{
+								case ComplexConcMorphNode formMorphNode:
+									form = formMorphNode.Form;
+									break;
+								case ComplexConcWordNode formWordNode:
 									form = formWordNode.Form;
-								}
+									break;
 							}
 							Debug.Assert(form != null);
 							tss = CreateFeatureLine(ComplexConcordanceResources.ksComplexConcForm, form, false);
 							break;
 						case ktagEntry:
 							ITsString entry = null;
-							var entryMorphNode = node as ComplexConcMorphNode;
-							if (entryMorphNode != null)
+							if (node is ComplexConcMorphNode entryMorphNode)
 							{
 								entry = entryMorphNode.Entry;
 							}
@@ -298,18 +295,14 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 							break;
 						case ktagGloss:
 							ITsString gloss = null;
-							var glossMorphNode = node as ComplexConcMorphNode;
-							if (glossMorphNode != null)
+							switch (node)
 							{
-								gloss = glossMorphNode.Gloss;
-							}
-							else
-							{
-								var glossWordNode = node as ComplexConcWordNode;
-								if (glossWordNode != null)
-								{
+								case ComplexConcMorphNode glossMorphNode:
+									gloss = glossMorphNode.Gloss;
+									break;
+								case ComplexConcWordNode glossWordNode:
 									gloss = glossWordNode.Gloss;
-								}
+									break;
 							}
 							Debug.Assert(gloss != null);
 							tss = CreateFeatureLine(ComplexConcordanceResources.ksComplexConcGloss, gloss, false);
@@ -317,28 +310,23 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 						case ktagCategory:
 							IPartOfSpeech category = null;
 							var catNegated = false;
-							var catMorphNode = node as ComplexConcMorphNode;
-							if (catMorphNode != null)
+							switch (node)
 							{
-								category = catMorphNode.Category;
-								catNegated = catMorphNode.NegateCategory;
-							}
-							else
-							{
-								var catWordNode = node as ComplexConcWordNode;
-								if (catWordNode != null)
-								{
+								case ComplexConcMorphNode catMorphNode:
+									category = catMorphNode.Category;
+									catNegated = catMorphNode.NegateCategory;
+									break;
+								case ComplexConcWordNode catWordNode:
 									category = catWordNode.Category;
 									catNegated = catWordNode.NegateCategory;
-								}
+									break;
 							}
 							Debug.Assert(category != null);
 							tss = CreateFeatureLine(ComplexConcordanceResources.ksComplexConcCategory, category.Abbreviation.BestAnalysisAlternative, catNegated);
 							break;
 						case ktagTag:
 							ICmPossibility tagPoss = null;
-							var tagNode = node as ComplexConcTagNode;
-							if (tagNode != null)
+							if (node is ComplexConcTagNode tagNode)
 							{
 								tagPoss = tagNode.Tag;
 							}
@@ -350,19 +338,21 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 							break;
 						default:
 							var feature = m_curInflFeatures.Keys.Single(f => f.Hvo == tag);
-							if (feature is IFsComplexFeature)
+							switch (feature)
 							{
-								tss = CreateFeatureLine(feature.Abbreviation.BestAnalysisAlternative, null, false);
-							}
-							else if (feature is IFsClosedFeature)
-							{
-								var value = (ClosedFeatureValue)m_curInflFeatures[feature];
-								tss = CreateFeatureLine(feature.Abbreviation.BestAnalysisAlternative, value.Symbol.Abbreviation.BestAnalysisAlternative, value.Negate);
+								case IFsComplexFeature _:
+									tss = CreateFeatureLine(feature.Abbreviation.BestAnalysisAlternative, null, false);
+									break;
+								case IFsClosedFeature _:
+								{
+									var value = (ClosedFeatureValue)m_curInflFeatures[feature];
+									tss = CreateFeatureLine(feature.Abbreviation.BestAnalysisAlternative, value.Symbol.Abbreviation.BestAnalysisAlternative, value.Negate);
+									break;
+								}
 							}
 							break;
 					}
 					break;
-
 				case kfragNodeMax:
 					// if the max value is -1, it indicates that it is infinite
 					var node1 = ((ComplexConcPatternSda)vwenv.DataAccess).Nodes[vwenv.CurrentObject()];
@@ -388,38 +378,37 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 		private void DisplayFeatures(IVwEnv vwenv, ComplexConcPatternNode node)
 		{
 			vwenv.AddProp(ktagType, this, kfragFeatureLine);
-			var morphNode = node as ComplexConcMorphNode;
-			if (morphNode != null)
+			switch (node)
 			{
-				if (morphNode.Form != null)
+				case ComplexConcMorphNode morphNode:
 				{
-					vwenv.AddProp(ktagForm, this, kfragFeatureLine);
+					if (morphNode.Form != null)
+					{
+						vwenv.AddProp(ktagForm, this, kfragFeatureLine);
+					}
+					if (morphNode.Entry != null)
+					{
+						vwenv.AddProp(ktagEntry, this, kfragFeatureLine);
+					}
+					if (morphNode.Category != null)
+					{
+						vwenv.AddProp(ktagCategory, this, kfragFeatureLine);
+					}
+					if (morphNode.Gloss != null)
+					{
+						vwenv.AddProp(ktagGloss, this, kfragFeatureLine);
+					}
+					if (!morphNode.InflFeatures.Any())
+					{
+						return;
+					}
+					vwenv.OpenParagraph();
+					vwenv.AddProp(ktagInfl, this, kfragFeatureLine);
+					DisplayInflFeatures(vwenv, morphNode.InflFeatures);
+					vwenv.CloseParagraph();
+					break;
 				}
-				if (morphNode.Entry != null)
-				{
-					vwenv.AddProp(ktagEntry, this, kfragFeatureLine);
-				}
-				if (morphNode.Category != null)
-				{
-					vwenv.AddProp(ktagCategory, this, kfragFeatureLine);
-				}
-				if (morphNode.Gloss != null)
-				{
-					vwenv.AddProp(ktagGloss, this, kfragFeatureLine);
-				}
-				if (!morphNode.InflFeatures.Any())
-				{
-					return;
-				}
-				vwenv.OpenParagraph();
-				vwenv.AddProp(ktagInfl, this, kfragFeatureLine);
-				DisplayInflFeatures(vwenv, morphNode.InflFeatures);
-				vwenv.CloseParagraph();
-			}
-			else
-			{
-				var wordNode = node as ComplexConcWordNode;
-				if (wordNode != null)
+				case ComplexConcWordNode wordNode:
 				{
 					if (wordNode.Form != null)
 					{
@@ -441,15 +430,11 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 					vwenv.AddProp(ktagInfl, this, kfragFeatureLine);
 					DisplayInflFeatures(vwenv, wordNode.InflFeatures);
 					vwenv.CloseParagraph();
+					break;
 				}
-				else
-				{
-					var tagNode = node as ComplexConcTagNode;
-					if (tagNode?.Tag != null)
-					{
-						vwenv.AddProp(ktagTag, this, kfragFeatureLine);
-					}
-				}
+				case ComplexConcTagNode tagNode when tagNode.Tag != null:
+					vwenv.AddProp(ktagTag, this, kfragFeatureLine);
+					break;
 			}
 		}
 
@@ -555,60 +540,60 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 
 		private int GetNumLines(ComplexConcPatternNode node)
 		{
-			var morphNode = node as ComplexConcMorphNode;
-			if (morphNode != null)
+			switch (node)
 			{
-				var numLines = 1;
-				if (morphNode.Form != null)
+				case ComplexConcMorphNode morphNode:
 				{
-					numLines++;
+					var numLines = 1;
+					if (morphNode.Form != null)
+					{
+						numLines++;
+					}
+					if (morphNode.Entry != null)
+					{
+						numLines++;
+					}
+					if (morphNode.Gloss != null)
+					{
+						numLines++;
+					}
+					if (morphNode.Category != null)
+					{
+						numLines++;
+					}
+					numLines += GetNumLines(morphNode.InflFeatures);
+					return numLines;
 				}
-				if (morphNode.Entry != null)
+				case ComplexConcWordNode wordNode:
 				{
-					numLines++;
+					var numLines = 1;
+					if (wordNode.Form != null)
+					{
+						numLines++;
+					}
+					if (wordNode.Gloss != null)
+					{
+						numLines++;
+					}
+					if (wordNode.Category != null)
+					{
+						numLines++;
+					}
+					numLines += GetNumLines(wordNode.InflFeatures);
+					return numLines;
 				}
-				if (morphNode.Gloss != null)
+				case ComplexConcTagNode tagNode:
 				{
-					numLines++;
+					var numLines = 1;
+					if (tagNode.Tag != null)
+					{
+						numLines++;
+					}
+					return numLines;
 				}
-				if (morphNode.Category != null)
-				{
-					numLines++;
-				}
-				numLines += GetNumLines(morphNode.InflFeatures);
-				return numLines;
+				default:
+					return !node.IsLeaf ? node.Children.Max(GetNumLines) : 1;
 			}
-			var wordNode = node as ComplexConcWordNode;
-			if (wordNode != null)
-			{
-				var numLines = 1;
-				if (wordNode.Form != null)
-				{
-					numLines++;
-				}
-				if (wordNode.Gloss != null)
-				{
-					numLines++;
-				}
-				if (wordNode.Category != null)
-				{
-					numLines++;
-				}
-				numLines += GetNumLines(wordNode.InflFeatures);
-				return numLines;
-			}
-			var tagNode = node as ComplexConcTagNode;
-			if (tagNode != null)
-			{
-				var numLines = 1;
-				if (tagNode.Tag != null)
-				{
-					numLines++;
-				}
-				return numLines;
-			}
-
-			return !node.IsLeaf ? node.Children.Max(n => GetNumLines(n)) : 1;
 		}
 
 		private static int GetNumLines(IDictionary<IFsFeatDefn, object> inflFeatures)

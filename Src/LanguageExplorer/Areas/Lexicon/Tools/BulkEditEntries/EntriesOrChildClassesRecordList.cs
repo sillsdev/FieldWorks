@@ -46,11 +46,11 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.BulkEditEntries
 	{
 		int m_flidEntries;
 		int m_prevFlid;
-		readonly IDictionary<int, bool> m_reloadNeededForProperty = new Dictionary<int, bool>();
+		private readonly IDictionary<int, bool> m_reloadNeededForProperty = new Dictionary<int, bool>();
 		PartOwnershipTree _partOwnershipTree;
 		// suspend loading the property until given a class by RecordBrowseView via
 		// RecordList.OnChangeListItemsClass();
-		bool m_suspendReloadUntilOnChangeListItemsClass = true;
+		private bool m_suspendReloadUntilOnChangeListItemsClass = true;
 
 		/// <summary />
 		internal EntriesOrChildClassesRecordList(string id, StatusBar statusBar, ISilDataAccessManaged decorator, ILexDb owner)
@@ -162,15 +162,8 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.BulkEditEntries
 
 		public override bool RequestedLoadWhileSuppressed
 		{
-			get
-			{
-
-				return base.RequestedLoadWhileSuppressed || (m_reloadNeededForProperty.ContainsKey(m_flid) && m_reloadNeededForProperty[m_flid]);
-			}
-			set
-			{
-				base.RequestedLoadWhileSuppressed = value;
-			}
+			get => base.RequestedLoadWhileSuppressed || (m_reloadNeededForProperty.ContainsKey(m_flid) && m_reloadNeededForProperty[m_flid]);
+			set => base.RequestedLoadWhileSuppressed = value;
 		}
 
 		protected override bool NeedToReloadList()
@@ -257,8 +250,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.BulkEditEntries
 				return -1;
 			}
 			// we've changed list items class, so find the corresponding new object.
-			ISet<int> commonAncestors;
-			var relatives = _partOwnershipTree.FindCorrespondingItemsInCurrentList(m_prevFlid, new HashSet<int>(new[] { hvoCurrentBeforeGetObjectSet }), m_flid, out commonAncestors);
+			var relatives = _partOwnershipTree.FindCorrespondingItemsInCurrentList(m_prevFlid, new HashSet<int>(new[] { hvoCurrentBeforeGetObjectSet }), m_flid, out var commonAncestors);
 			var newHvoRoot = relatives.Count > 0 ? relatives.ToArray()[0] : 0;
 			var hvoCommonAncestor = commonAncestors.Count > 0 ? commonAncestors.ToArray()[0] : 0;
 			if (newHvoRoot == 0 && hvoCommonAncestor != 0)
@@ -351,8 +343,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.BulkEditEntries
 			var relativesInCurrentList = new HashSet<int>();
 			foreach (var sourceFlidToItems in sourceFlidsToItems)
 			{
-				ISet<int> commonAncestors;
-				relativesInCurrentList.UnionWith(pot.FindCorrespondingItemsInCurrentList(sourceFlidToItems.Key, sourceFlidToItems.Value, m_flid, out commonAncestors));
+				relativesInCurrentList.UnionWith(pot.FindCorrespondingItemsInCurrentList(sourceFlidToItems.Key, sourceFlidToItems.Value, m_flid, out _));
 			}
 			return relativesInCurrentList;
 		}
@@ -369,8 +360,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.BulkEditEntries
 					// a previous list, not the current one)
 					continue;
 				}
-				HashSet<int> itemsInSourceFlid;
-				if (!sourceFlidsToItems.TryGetValue((int)itemAndSourceTag.Value, out itemsInSourceFlid))
+				if (!sourceFlidsToItems.TryGetValue((int)itemAndSourceTag.Value, out var itemsInSourceFlid))
 				{
 					itemsInSourceFlid = new HashSet<int>();
 					sourceFlidsToItems.Add((int)itemAndSourceTag.Value, itemsInSourceFlid);
@@ -624,8 +614,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.BulkEditEntries
 
 			private XElement GetTreeNode(int classId)
 			{
-				var className = Cache.DomainDataByFlid.MetaDataCache.GetClassName(classId);
-				return _classOwnershipTreeElement.XPathSelectElement(".//" + className);
+				return _classOwnershipTreeElement.XPathSelectElement($".//{Cache.DomainDataByFlid.MetaDataCache.GetClassName(classId)}");
 			}
 
 			private int GetHvoCommonAncestor(int hvoBeforeListChange, int prevListItemsClass, int newListItemsClass)

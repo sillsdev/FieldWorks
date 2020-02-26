@@ -10,7 +10,7 @@ namespace LanguageExplorer.Areas
 	/// Interface that may be implemented to adjust the object that we will try to jump to when it
 	/// is clicked in the view.
 	/// </summary>
-	internal interface IPreferedTargetAdjuster
+	internal interface IPreferredTargetAdjuster
 	{
 		ICmObject AdjustTarget(ICmObject target);
 	}

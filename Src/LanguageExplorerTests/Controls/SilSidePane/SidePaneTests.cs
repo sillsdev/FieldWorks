@@ -283,7 +283,6 @@ namespace LanguageExplorerTests.Controls.SilSidePane
 		public void SelectTab_havingText()
 		{
 			var tab = new Tab("tabname");
-			tab.Text = "tabtext";
 			_sidePane.AddTab(tab);
 			var successful = _sidePane.SelectTab(tab);
 			Assert.IsTrue(successful);

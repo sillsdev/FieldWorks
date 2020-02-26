@@ -45,9 +45,7 @@ namespace LanguageExplorerTests.Archiving
 		public void DoesWritingSystemUseKeyman_NonKeymanKeyboardReturnsFalse()
 		{
 			var ws = Cache.LangProject.DefaultAnalysisWritingSystem;
-			var testKeyboard = new DefaultKeyboardDefinition("test", "keyboard", "layout", "locale", true);
-			ws.KnownKeyboards.Add(testKeyboard);
-
+			ws.KnownKeyboards.Add(new DefaultKeyboardDefinition("test", "keyboard", "layout", "locale", true));
 			Assert.That(ReapRamp.DoesWritingSystemUseKeyman(ws), Is.False, "Unable to determine if a writing system is keyman, the location or name of the class in Palaso probably changed");
 		}
 	}

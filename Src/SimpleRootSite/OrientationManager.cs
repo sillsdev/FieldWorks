@@ -56,10 +56,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		{
 			var dpi = m_site.Dpi;
 			rcSrcRoot = Rectangle.FromLTRB(0, 0, dpi.X, dpi.Y);
-			int dxdScrollOffset;
-			int dydScrollOffset;
-			m_site.GetScrollOffsets(out dxdScrollOffset, out dydScrollOffset);
-
+			m_site.GetScrollOffsets(out var dxdScrollOffset, out var dydScrollOffset);
 			rcDstRoot = new Rectangle(-dxdScrollOffset + m_site.HorizMargin, -dydScrollOffset, dpi.X, dpi.Y);
 		}
 

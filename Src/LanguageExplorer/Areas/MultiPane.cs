@@ -174,7 +174,7 @@ namespace LanguageExplorer.Areas
 			if (sizeOfSharedDimensionPanel1 != kCollapsedSize && !Panel1Collapsed)
 			{
 				// Panel1 is visible and wide.
-				result = (FirstControl as ICtrlTabProvider).PopulateCtrlTabTargetCandidateList(targetCandidates);
+				result = ((ICtrlTabProvider)FirstControl).PopulateCtrlTabTargetCandidateList(targetCandidates);
 				if (!FirstControl.ContainsFocus)
 				{
 					result = null;
@@ -186,7 +186,7 @@ namespace LanguageExplorer.Areas
 				return result;
 			}
 			// Panel2 is visible and wide.
-			var otherResult = (SecondControl as ICtrlTabProvider).PopulateCtrlTabTargetCandidateList(targetCandidates);
+			var otherResult = ((ICtrlTabProvider)SecondControl).PopulateCtrlTabTargetCandidateList(targetCandidates);
 			if (SecondControl.ContainsFocus)
 			{
 				Debug.Assert(result == null, "result is unexpectedly not null.");
@@ -207,15 +207,15 @@ namespace LanguageExplorer.Areas
 		/// </remarks>
 		internal Size ParentSizeHint
 		{
-			get { return m_parentSizeHint; }
-			set { m_parentSizeHint = value; }
+			get => m_parentSizeHint;
+			set => m_parentSizeHint = value;
 		}
 
 		/// <summary />
 		internal string DefaultPrintPaneId
 		{
-			get { return PrintPane; }
-			set { PrintPane = value; }
+			get => PrintPane;
+			set => PrintPane = value;
 		}
 
 		/// <summary>
@@ -395,7 +395,6 @@ namespace LanguageExplorer.Areas
 			Subscriber = flexComponentParameters.Subscriber;
 
 			Panel1Collapsed = !PropertyTable.GetValue($"Show_{m_id}", true);
-
 			m_fOkToPersistSplit = true;
 			SetSplitterDistance();
 		}

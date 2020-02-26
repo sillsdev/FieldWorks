@@ -154,17 +154,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				{
 					var morphItems = handler.MorphItems;
 					// see if we can use an existing Sense, if it matches the word gloss and word MSA
-					foreach (var morphItem in morphItems)
+					foreach (var morphItem in morphItems.Where(SbWordGlossMatchesSenseGloss).Where(SbWordPosMatchesSenseMsaPos))
 					{
-						// skip lex senses that do not match word gloss and pos in the Sandbox
-						if (!SbWordGlossMatchesSenseGloss(morphItem))
-						{
-							continue;
-						}
-						if (!SbWordPosMatchesSenseMsaPos(morphItem))
-						{
-							continue;
-						}
 						// found a LexSense matching our Word Gloss and MSA POS
 						matchingMorphItem = morphItem;
 						break;
@@ -231,7 +222,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					// if we couldn't use an existing sense but we match a LexEntry form,
 					// add a new sense to an existing entry.
 					ILexEntry bestEntry = null;
-					if (morphItems.Count > 0 && matchingMorphItem.m_hvoSense == 0)
+					if (morphItems.Any() && matchingMorphItem.m_hvoSense == 0)
 					{
 						// Tried using FindBestLexEntryAmongstHomographs() but it matches
 						// only CitationForm which MorphItems doesn't know anything about,
@@ -242,13 +233,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 						// with a sense using that same category
 						// otherwise just add the new sense to the first entry in MorphItems.
 						var bestMorphItem = morphItems[0];
-						foreach (var morphItem in morphItems)
+						foreach (var morphItem in morphItems.Where(SbWordMainPosMatchesSenseMsaMainPos))
 						{
-							// skip items that do not match word main pos in the Sandbox
-							if (!SbWordMainPosMatchesSenseMsaMainPos(morphItem))
-							{
-								continue;
-							}
 							bestMorphItem = morphItem;
 							break;
 						}
@@ -260,21 +246,17 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					if (matchingMorphItem.m_hvoMorph == 0)
 					{
 						// we didn't find a matching lex entry, so create a new entry
-						ILexEntry newEntry;
-						ILexSense newSense;
-						IMoForm allomorph;
-						handler.CreateNewEntry(true, out newEntry, out allomorph, out newSense);
+						handler.CreateNewEntry(true, out _, out _, out _);
 					}
 					else if (bestEntry != null)
 					{
 						// we found matching lex entry, so create a new sense for it
 						var senseFactory = mainCache.ServiceLocator.GetInstance<ILexSenseFactory>();
-						var newSense = senseFactory.Create(bestEntry, new SandboxGenericMSA(), "");
+						var newSense = senseFactory.Create(bestEntry, new SandboxGenericMSA(), string.Empty);
 						// copy over any word glosses we're showing.
 						CopyGlossesToSense(newSense);
 						// copy over the Word POS
-						var pos = m_caches.RealObject(m_sda.get_ObjectProp(m_hvoSbWord, SandboxBase.ktagSbWordPos)) as IPartOfSpeech;
-						(newSense.MorphoSyntaxAnalysisRA as IMoStemMsa).PartOfSpeechRA = pos;
+						((IMoStemMsa)newSense.MorphoSyntaxAnalysisRA).PartOfSpeechRA = (IPartOfSpeech)m_caches.RealObject(m_sda.get_ObjectProp(m_hvoSbWord, SandboxBase.ktagSbWordPos));
 						var morph = mainCache.ServiceLocator.GetInstance<IMoFormRepository>().GetObject(matchingMorphItem.m_hvoMorph);
 						handler.UpdateMorphEntry(morph, bestEntry, newSense);
 					}
@@ -302,13 +284,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			if (fWordGlossLineIsShowing)
 			{
 				// flag that we need to create wfi gloss information if any configured word gloss lines have content.
-				foreach (var wsId in m_choices.WritingSystemsForFlid(InterlinLineChoices.kflidWordGloss))
+				if (m_choices.WritingSystemsForFlid(InterlinLineChoices.kflidWordGloss).Any(wsId => m_sda.get_MultiStringAlt(m_hvoSbWord, SandboxBase.ktagSbWordGloss, wsId).Length > 0))
 				{
-					if (m_sda.get_MultiStringAlt(m_hvoSbWord, SandboxBase.ktagSbWordGloss, wsId).Length > 0)
-					{
-						fNeedGloss = true;
-						break;
-					}
+					fNeedGloss = true;
 				}
 			}
 			// OK, we have some information that corresponds to an analysis. Find or create
@@ -511,16 +489,13 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			<radio button> see a concordance and choose which ones to change to
 			en->"them" sp->"ellas"?
 			*/
-
 			// (LT-1428, LT-12472)
-			// -----------------------------
 			// When the user edits a gloss,
 			// (1) If there is an existing gloss matching what they just changed it to
 			//		then switch this instance to point to that one.
 			// (2) Else if the gloss is used only in this instance, or if it matches on all WSs that are not blank in the gloss,
 			//		then apply the edits directly to the gloss.
 			// (3) Else, create a new gloss.
-			//-------------------------------
 			var gloss = fFoundAnalysis ? FindMatchingGloss() : null;
 			if (gloss == null && m_sandbox.WordGlossReferenceCount == 1)
 			{
@@ -570,8 +545,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				// is there another MSA we can use?
 				foreach (var msaOther in lexEntry.MorphoSyntaxAnalysesOC)
 				{
-					var stem = msaOther as IMoStemMsa;
-					if (stem == null)
+					if (!(msaOther is IMoStemMsa stem))
 					{
 						continue;
 					}
@@ -596,7 +570,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		// Answer true if the analysis is only used in one place (typically the current one).
 		// It must have at most one WfiGloss and a net of one Segment that references it and its gloss if any.
 		// That one segment must only reference it once.
-		private bool OnlyUsedThisOnce(IWfiAnalysis oldAnalysis)
+		private static bool OnlyUsedThisOnce(IWfiAnalysis oldAnalysis)
 		{
 			if (oldAnalysis.MeaningsOC.Count > 1)
 			{
@@ -673,8 +647,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				return pos == null;
 			}
-			var msa = m_caches.MainCache.ServiceLocator.GetInstance<IMoMorphSynAnalysisRepository>().GetObject(morphItem.m_hvoMsa) as IMoStemMsa;
-			return msa != null && msa.PartOfSpeechRA == pos;
+			return m_caches.MainCache.ServiceLocator.GetInstance<IMoMorphSynAnalysisRepository>().GetObject(morphItem.m_hvoMsa) is IMoStemMsa msa && msa.PartOfSpeechRA == pos;
 		}
 
 		/// <summary>
@@ -691,8 +664,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			// in which case we MIGHT see another kind here, so use the root repository and 'as'.
 			if (morphItem.m_hvoMsa != 0)
 			{
-				var msa = m_caches.MainCache.ServiceLocator.GetInstance<IMoMorphSynAnalysisRepository>().GetObject(morphItem.m_hvoMsa) as IMoStemMsa;
-				if (msa != null && msa.PartOfSpeechRA != null)
+				if (m_caches.MainCache.ServiceLocator.GetInstance<IMoMorphSynAnalysisRepository>().GetObject(morphItem.m_hvoMsa) is IMoStemMsa msa && msa.PartOfSpeechRA != null)
 				{
 					var posCandidate = msa.PartOfSpeechRA;
 					var mainPosCandidate = posCandidate.MainPossibility;
@@ -717,16 +689,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				return false;
 			}
 			// compare our gloss information.
-			var wordGlossWss = m_choices.WritingSystemsForFlid(InterlinLineChoices.kflidWordGloss);
-			foreach (var wsId in wordGlossWss)
-			{
-				if (!IsMlSame(m_hvoSbWord, SandboxBase.ktagSbWordGloss, wsId, morphItem.m_hvoSense, LexSenseTags.kflidGloss))
-				{
-					// the sandbox word gloss differs from the sense gloss, so go to the next morphItem.
-					return false;
-				}
-			}
-			return true;
+			return m_choices.WritingSystemsForFlid(InterlinLineChoices.kflidWordGloss).All(wsId => IsMlSame(m_hvoSbWord, SandboxBase.ktagSbWordGloss, wsId, morphItem.m_hvoSense, LexSenseTags.kflidGloss));
 		}
 
 		protected void BuildMorphLists()
@@ -751,9 +714,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// </summary>
 		private void UpdateMlaIfDifferent(int hvoSrc, int flidSrc, int wsId, int hvoDst, int flidDest)
 		{
-			ITsString tss;
-			ITsString tssOld;
-			if (IsMlSame(hvoSrc, flidSrc, wsId, hvoDst, flidDest, out tss, out tssOld))
+			if (IsMlSame(hvoSrc, flidSrc, wsId, hvoDst, flidDest, out var tss, out _))
 			{
 				return;
 			}
@@ -762,9 +723,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		private bool IsMlSame(int hvoSrc, int flidSrc, int wsId, int hvoDst, int flidDest)
 		{
-			ITsString tss;
-			ITsString tssOld;
-			return IsMlSame(hvoSrc, flidSrc, wsId, hvoDst, flidDest, out tss, out tssOld);
+			return IsMlSame(hvoSrc, flidSrc, wsId, hvoDst, flidDest, out _, out _);
 		}
 		private bool IsMlSame(int hvoSrc, int flidSrc, int wsId, int hvoDst, int flidDest, out ITsString tss, out ITsString tssOld)
 		{
@@ -968,7 +927,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				return false;
 			}
 			var mb = possibleAnalysis.MorphBundlesOS[0];
-			return (mb.MorphRA == null && mb.MsaRA == null && mb.SenseRA == null);
+			return mb.MorphRA == null && mb.MsaRA == null && mb.SenseRA == null;
 		}
 
 		/// <summary>
@@ -1050,8 +1009,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		private int GetRealHvoFromSbWmbInflType(int imorph)
 		{
-			var hvoSbMorph = m_sda.get_VecItem(m_hvoSbWord, SandboxBase.ktagSbWordMorphs, imorph);
-			return m_caches.RealHvo(m_sda.get_ObjectProp(hvoSbMorph, SandboxBase.ktagSbNamedObjInflType));
+			return m_caches.RealHvo(m_sda.get_ObjectProp(m_sda.get_VecItem(m_hvoSbWord, SandboxBase.ktagSbWordMorphs, imorph), SandboxBase.ktagSbNamedObjInflType));
 		}
 	}
 }

@@ -144,8 +144,7 @@ namespace LanguageExplorer.Impls
 		/// </summary>
 		private void ApplicationOnIdle(object sender, EventArgs eventArgs)
 		{
-			var activeView = _mainWnd.ActiveView as SimpleRootSite;
-			if (activeView == null)
+			if (!(_mainWnd.ActiveView is SimpleRootSite activeView))
 			{
 				return;
 			}

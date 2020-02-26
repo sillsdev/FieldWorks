@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Windows.Forms;
 using System.Xml;
 using SIL.Code;
@@ -96,9 +97,7 @@ namespace LanguageExplorer.Controls
 			m_propertyTable = propertyTable;
 			// Reset window location.
 			// Get location to the stored values, if any.
-			Point dlgLocation;
-			Size dlgSize;
-			if (m_propertyTable.TryGetValue("masterCatListDlgLocation", out dlgLocation) && m_propertyTable.TryGetValue("masterCatListDlgSize", out dlgSize))
+			if (m_propertyTable.TryGetValue("masterCatListDlgLocation", out Point dlgLocation) && m_propertyTable.TryGetValue("masterCatListDlgSize", out Size dlgSize))
 			{
 				var rect = new Rectangle(dlgLocation, dlgSize);
 				ScreenHelper.EnsureVisibleRect(ref rect);
@@ -403,17 +402,8 @@ namespace LanguageExplorer.Controls
 
 		private void ResetOKBtnEnable()
 		{
-			var haveCheckeditems = false;
-			foreach (var node in m_nodes)
-			{
-				if (node.Checked)
-				{
-					haveCheckeditems = true;
-					break;
-				}
-			}
 			var selNode = m_tvMasterList.SelectedNode;
-			m_btnOK.Enabled = haveCheckeditems || (selNode != null && !((MasterCategory)selNode.Tag).InDatabase);
+			m_btnOK.Enabled = m_nodes.Any(node => node.Checked) || (selNode != null && !((MasterCategory)selNode.Tag).InDatabase);
 		}
 
 		/// <summary>

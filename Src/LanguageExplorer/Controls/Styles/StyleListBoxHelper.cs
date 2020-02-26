@@ -210,7 +210,7 @@ namespace LanguageExplorer.Controls.Styles
 		/// </summary>
 		public bool ShowInternalStyles
 		{
-			set { m_showInternalStyles = value; }
+			set => m_showInternalStyles = value;
 		}
 
 		/// <summary>
@@ -233,10 +233,7 @@ namespace LanguageExplorer.Controls.Styles
 		/// </summary>
 		public string SelectedStyleName
 		{
-			get
-			{
-				return (ListBoxControl.SelectedIndex != -1 ? SelectedStyle.ToString() : string.Empty);
-			}
+			get => (ListBoxControl.SelectedIndex != -1 ? SelectedStyle.ToString() : string.Empty);
 			set
 			{
 				if (value != null)
@@ -297,7 +294,7 @@ namespace LanguageExplorer.Controls.Styles
 		/// </remarks>
 		public List<ContextValues> ExcludeStylesWithContext
 		{
-			get { return m_excludedContexts ?? (m_excludedContexts = new List<ContextValues>()); }
+			get => m_excludedContexts ?? (m_excludedContexts = new List<ContextValues>());
 			set
 			{
 				if (value != null)
@@ -320,7 +317,7 @@ namespace LanguageExplorer.Controls.Styles
 		/// </summary>
 		public List<ContextValues> IncludeStylesWithContext
 		{
-			get { return m_includedContexts ?? (m_includedContexts = new List<ContextValues>()); }
+			get => m_includedContexts ?? (m_includedContexts = new List<ContextValues>());
 			set
 			{
 				if (value != null)
@@ -339,7 +336,7 @@ namespace LanguageExplorer.Controls.Styles
 		/// </summary>
 		public List<string> ExplicitStylesToDisplay
 		{
-			get { return m_explicitStylesToDisplay; }
+			get => m_explicitStylesToDisplay;
 			set
 			{
 				m_explicitStylesToDisplay = value;
@@ -355,7 +352,7 @@ namespace LanguageExplorer.Controls.Styles
 		/// </summary>
 		public List<string> ExplicitStylesToExclude
 		{
-			get { return m_explicitStylesToExclude; }
+			get => m_explicitStylesToExclude;
 			set
 			{
 				m_explicitStylesToExclude = value;
@@ -375,7 +372,7 @@ namespace LanguageExplorer.Controls.Styles
 		/// </summary>
 		public int MaxStyleLevel
 		{
-			get { return m_maxStyleLevel; }
+			get => m_maxStyleLevel;
 			set
 			{
 				if (m_maxStyleLevel != value)
@@ -539,8 +536,7 @@ namespace LanguageExplorer.Controls.Styles
 		public IStStyle StyleFromName(string styleName)
 		{
 			//TE-5609 Prevent crash in case of missing style by using TryGetValue.
-			StyleListItem item;
-			if (m_styleItemList.TryGetValue(styleName, out item))
+			if (m_styleItemList.TryGetValue(styleName, out var item))
 			{
 				Debug.Assert(item.StyleInfo.RealStyle != null);
 				return item.StyleInfo.RealStyle;

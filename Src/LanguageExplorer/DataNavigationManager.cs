@@ -68,10 +68,7 @@ namespace LanguageExplorer
 
 		internal IRecordList RecordList
 		{
-			set
-			{
-				_recordList = value;
-			}
+			set => _recordList = value;
 		}
 
 		private void MoveToIndex(Navigation navigateTo)

@@ -268,9 +268,8 @@ namespace LanguageExplorerTests.Controls.XMLViews
 
 			// Try on original column. We get original object since there's no path,
 			// but we still dig inside the span
-			int useHvo;
 			var collectStructNodes = new List<XElement>();
-			var useNode = XmlViewsUtils.GetNodeToUseForColumn(bvi, m_columnList[0], m_mdc, m_sda, m_layouts, out useHvo, collectStructNodes);
+			var useNode = XmlViewsUtils.GetNodeToUseForColumn(bvi, m_columnList[0], m_mdc, m_sda, m_layouts, out var useHvo, collectStructNodes);
 			Assert.AreEqual(1, useHvo);
 			CheckDebugId(useNode, "LexemeCf");
 			Assert.AreEqual(1, collectStructNodes.Count);
@@ -313,9 +312,8 @@ namespace LanguageExplorerTests.Controls.XMLViews
 
 			// Try on first column. Nothing in the path matches, but we still dig inside
 			// the span.
-			int useHvo;
 			var collectStructNodes = new List<XElement>();
-			var useNode = XmlViewsUtils.GetNodeToUseForColumn(bvi, m_columnList[0], m_mdc, m_sda, m_layouts, out useHvo, collectStructNodes);
+			var useNode = XmlViewsUtils.GetNodeToUseForColumn(bvi, m_columnList[0], m_mdc, m_sda, m_layouts, out var useHvo, collectStructNodes);
 			Assert.AreEqual(1, useHvo);
 			CheckDebugId(useNode, "LexemeCf");
 			Assert.AreEqual(1, collectStructNodes.Count);
@@ -361,9 +359,8 @@ namespace LanguageExplorerTests.Controls.XMLViews
 
 			// Try on first column. Nothing in the path matches, but we still dig inside
 			// the span.
-			int useHvo;
 			var collectStructNodes = new List<XElement>();
-			var useNode = XmlViewsUtils.GetNodeToUseForColumn(bvi, m_columnList[0], m_mdc, m_sda, m_layouts, out useHvo, collectStructNodes);
+			var useNode = XmlViewsUtils.GetNodeToUseForColumn(bvi, m_columnList[0], m_mdc, m_sda, m_layouts, out var useHvo, collectStructNodes);
 			Assert.AreEqual(6, useHvo);
 			CheckDebugId(useNode, "LexemeCf");
 			Assert.AreEqual(1, collectStructNodes.Count);

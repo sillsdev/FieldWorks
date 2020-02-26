@@ -66,8 +66,7 @@ namespace LanguageExplorer.Filters
 			{
 				return null;
 			}
-			ICmObject result;
-			cache.ServiceLocator.ObjectRepository.TryGetObject(hvo, out result);
+			cache.ServiceLocator.ObjectRepository.TryGetObject(hvo, out var result);
 			return result;
 		}
 
@@ -216,7 +215,7 @@ namespace LanguageExplorer.Filters
 			result += "path ";
 			if (_pathObjects != null)
 			{
-				result = _pathObjects.Aggregate(result, (current, hvo) => current + (hvo + " "));
+				result = _pathObjects.Aggregate(result, (current, hvo) => $"{current}{(hvo + " ")}");
 			}
 			return result;
 		}
@@ -281,14 +280,7 @@ namespace LanguageExplorer.Filters
 				return result;
 			}
 
-			int IManyOnePathSortItem.RootObjectHvo
-			{
-				get
-				{
-					var objOrId = _pathObjects == null ? _item : _pathObjects[0];
-					return _repo.GetHvoFromObjectOrId(objOrId);
-				}
-			}
+			int IManyOnePathSortItem.RootObjectHvo => _repo.GetHvoFromObjectOrId(_pathObjects == null ? _item : _pathObjects[0]);
 
 			int IManyOnePathSortItem.KeyObject => _repo.GetHvoFromObjectOrId(_item);
 

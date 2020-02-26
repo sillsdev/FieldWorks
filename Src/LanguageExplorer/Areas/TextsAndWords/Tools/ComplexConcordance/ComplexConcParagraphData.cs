@@ -62,15 +62,13 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 					{
 						return false;
 					}
-					var wordform = analysis.Item1 as IWfiWordform;
-					if (wordform != null)
+					if (analysis.Item1 is IWfiWordform wordform)
 					{
 						var wordFS = new FeatureStruct();
 						wordFS.AddValue(typeFeat, typeFeat.PossibleSymbols["word"]);
 						foreach (var ws in wordform.Form.AvailableWritingSystemIds)
 						{
-							StringFeature strFeat;
-							if (featSys.TryGetFeature($"form-{ws}", out strFeat))
+							if (featSys.TryGetFeature($"form-{ws}", out StringFeature strFeat))
 							{
 								wordFS.AddValue(strFeat, wordform.Form.get_String(ws).Text);
 							}
@@ -95,8 +93,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 							morphFS.AddValue(typeFeat, typeFeat.PossibleSymbols["morph"]);
 							foreach (var ws in mb.Form.AvailableWritingSystemIds.Union(mb.MorphRA == null ? Enumerable.Empty<int>() : mb.MorphRA.Form.AvailableWritingSystemIds))
 							{
-								StringFeature strFeat;
-								if (!featSys.TryGetFeature($"form-{ws}", out strFeat))
+								if (!featSys.TryGetFeature($"form-{ws}", out StringFeature strFeat))
 								{
 									continue;
 								}
@@ -117,8 +114,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 							{
 								foreach (var ws in mb.SenseRA.Gloss.AvailableWritingSystemIds)
 								{
-									StringFeature strFeat;
-									if (featSys.TryGetFeature($"gloss-{ws}", out strFeat))
+									if (featSys.TryGetFeature($"gloss-{ws}", out StringFeature strFeat))
 									{
 										morphFS.AddValue(strFeat, mb.SenseRA.Gloss.get_String(ws).Text);
 									}
@@ -129,8 +125,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 								var entry = (ILexEntry)mb.MorphRA.Owner;
 								foreach (var ws in entry.LexemeFormOA.Form.AvailableWritingSystemIds)
 								{
-									StringFeature strFeat;
-									if (featSys.TryGetFeature($"entry-{ws}", out strFeat))
+									if (featSys.TryGetFeature($"entry-{ws}", out StringFeature strFeat))
 									{
 										morphFS.AddValue(strFeat, entry.LexemeFormOA.Form.get_String(ws).Text);
 									}
@@ -176,19 +171,16 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 						wordform = wanalysis.Wordform;
 						foreach (var ws in wordform.Form.AvailableWritingSystemIds)
 						{
-							StringFeature strFeat;
-							if (featSys.TryGetFeature($"form-{ws}", out strFeat))
+							if (featSys.TryGetFeature($"form-{ws}", out StringFeature strFeat))
 							{
 								wordFS.AddValue(strFeat, wordform.Form.get_String(ws).Text);
 							}
 						}
-						var gloss = analysis.Item1 as IWfiGloss;
-						if (gloss != null)
+						if (analysis.Item1 is IWfiGloss gloss)
 						{
 							foreach (var ws in gloss.Form.AvailableWritingSystemIds)
 							{
-								StringFeature strFeat;
-								if (featSys.TryGetFeature($"gloss-{ws}", out strFeat))
+								if (featSys.TryGetFeature($"gloss-{ws}", out StringFeature strFeat))
 								{
 									wordFS.AddValue(strFeat, gloss.Form.get_String(ws).Text);
 								}
@@ -221,8 +213,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 				{
 					continue;
 				}
-				List<Annotation<ShapeNode>> beginSegment, endSegment;
-				if (!segments.TryGetValue(tag.BeginSegmentRA, out beginSegment) || !segments.TryGetValue(tag.EndSegmentRA, out endSegment))
+				if (!segments.TryGetValue(tag.BeginSegmentRA, out var beginSegment) || !segments.TryGetValue(tag.EndSegmentRA, out var endSegment))
 				{
 					continue;
 				}
@@ -257,83 +248,77 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 		{
 			var result = new List<int>();
 			ICmPossibility pos;
-			var affMsa = msa as IMoInflAffMsa;
-			if (affMsa != null)
+			switch (msa)
 			{
-				pos = affMsa.PartOfSpeechRA;
-				if (pos != null)
+				case IMoInflAffMsa affMsa:
 				{
-					result.Add(pos.Hvo);
+					pos = affMsa.PartOfSpeechRA;
+					if (pos != null)
+					{
+						result.Add(pos.Hvo);
+					}
+					break;
+				}
+				case IMoStemMsa stemMsa:
+				{
+					pos = stemMsa.PartOfSpeechRA;
+					if (pos != null)
+					{
+						result.Add(pos.Hvo);
+					}
+					break;
+				}
+				case IMoDerivAffMsa derivAffMsa:
+				{
+					pos = derivAffMsa.ToPartOfSpeechRA;
+					if (pos != null)
+					{
+						result.Add(pos.Hvo);
+					}
+					pos = derivAffMsa.FromPartOfSpeechRA;
+					if (pos != null)
+					{
+						result.Add(pos.Hvo);
+					}
+					break;
+				}
+				case IMoDerivStepMsa stepMsa:
+				{
+					pos = stepMsa.PartOfSpeechRA;
+					if (pos != null)
+					{
+						result.Add(pos.Hvo);
+					}
+					break;
+				}
+				case IMoUnclassifiedAffixMsa affixMsa:
+				{
+					pos = affixMsa.PartOfSpeechRA;
+					if (pos != null)
+					{
+						result.Add(pos.Hvo);
+					}
+					break;
 				}
 			}
-			var stemMsa = msa as IMoStemMsa;
-			if (stemMsa != null)
-			{
-				pos = stemMsa.PartOfSpeechRA;
-				if (pos != null)
-				{
-					result.Add(pos.Hvo);
-				}
-			}
-			var derivAffMsa = msa as IMoDerivAffMsa;
-			if (derivAffMsa != null)
-			{
-				var derivMsa = derivAffMsa;
-				pos = derivMsa.ToPartOfSpeechRA;
-				if (pos != null)
-				{
-					result.Add(pos.Hvo);
-				}
-				pos = derivMsa.FromPartOfSpeechRA;
-				if (pos != null)
-				{
-					result.Add(pos.Hvo);
-				}
-			}
-			var stepMsa = msa as IMoDerivStepMsa;
-			if (stepMsa != null)
-			{
-				pos = stepMsa.PartOfSpeechRA;
-				if (pos != null)
-				{
-					result.Add(pos.Hvo);
-				}
-			}
-			var affixMsa = msa as IMoUnclassifiedAffixMsa;
-			if (affixMsa != null)
-			{
-				pos = affixMsa.PartOfSpeechRA;
-				if (pos != null)
-				{
-					result.Add(pos.Hvo);
-				}
-			}
+
 			return result;
 		}
 
 		private static FeatureStruct GetFeatureStruct(FeatureSystem featSys, IMoMorphSynAnalysis msa)
 		{
 			IFsFeatStruc fs = null;
-			var stemMsa = msa as IMoStemMsa;
-			if (stemMsa != null)
+			switch (msa)
 			{
-				fs = stemMsa.MsFeaturesOA;
-			}
-			else
-			{
-				var inflMsa = msa as IMoInflAffMsa;
-				if (inflMsa != null)
-				{
+				case IMoStemMsa stemMsa:
+					fs = stemMsa.MsFeaturesOA;
+					break;
+				case IMoInflAffMsa inflMsa:
 					fs = inflMsa.InflFeatsOA;
-				}
-				else
-				{
-					var dervMsa = msa as IMoDerivAffMsa;
-					if (dervMsa != null)
-					{
-						fs = dervMsa.ToMsFeaturesOA;
-					}
-				}
+					break;
+				case IMoDerivAffMsa dervMsa:
+					fs = dervMsa.ToMsFeaturesOA;
+					break;
 			}
 			return fs != null && !fs.IsEmpty ? GetFeatureStruct(featSys, fs) : null;
 		}
@@ -343,26 +328,26 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 			var featStruct = new FeatureStruct();
 			foreach (var featSpec in fs.FeatureSpecsOC)
 			{
-				var complexVal = featSpec as IFsComplexValue;
-				if (complexVal != null)
+				switch (featSpec)
 				{
-					var cfs = complexVal.ValueOA as IFsFeatStruc;
-					if (complexVal.FeatureRA != null && cfs != null && !cfs.IsEmpty)
+					case IFsComplexValue complexVal:
 					{
-						featStruct.AddValue(featSys.GetFeature(complexVal.FeatureRA.Hvo.ToString(CultureInfo.InvariantCulture)), GetFeatureStruct(featSys, cfs));
+						if (complexVal.FeatureRA != null && complexVal.ValueOA is IFsFeatStruc cfs && !cfs.IsEmpty)
+						{
+							featStruct.AddValue(featSys.GetFeature(complexVal.FeatureRA.Hvo.ToString(CultureInfo.InvariantCulture)), GetFeatureStruct(featSys, cfs));
+						}
+
+						break;
 					}
-				}
-				else
-				{
-					var closedVal = featSpec as IFsClosedValue;
-					if (closedVal != null && closedVal.FeatureRA != null && closedVal.ValueRA != null)
+					case IFsClosedValue closedVal when closedVal.FeatureRA != null && closedVal.ValueRA != null:
 					{
-					    var symFeat = featSys.GetFeature<SymbolicFeature>(closedVal.FeatureRA.Hvo.ToString(CultureInfo.InvariantCulture));
-					    FeatureSymbol symbol;
-					    if (symFeat.PossibleSymbols.TryGetValue(closedVal.ValueRA.Hvo.ToString(CultureInfo.InvariantCulture), out symbol))
-					    {
-						    featStruct.AddValue(symFeat, symbol);
-					    }
+						var symFeat = featSys.GetFeature<SymbolicFeature>(closedVal.FeatureRA.Hvo.ToString(CultureInfo.InvariantCulture));
+						if (symFeat.PossibleSymbols.TryGetValue(closedVal.ValueRA.Hvo.ToString(CultureInfo.InvariantCulture), out var symbol))
+						{
+							featStruct.AddValue(symFeat, symbol);
+						}
+
+						break;
 					}
 				}
 			}

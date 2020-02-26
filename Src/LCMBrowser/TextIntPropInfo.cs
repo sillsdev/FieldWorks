@@ -22,9 +22,7 @@ namespace LCMBrowser
 		/// <summary />
 		public TextIntPropInfo(ITsTextProps props, int iprop, LcmCache cache)
 		{
-			int nvar;
-			int tpt;
-			Value = props.GetIntProp(iprop, out tpt, out nvar);
+			Value = props.GetIntProp(iprop, out var tpt, out var nvar);
 			Type = (FwTextPropType)tpt;
 			Variant = (FwTextPropVar)nvar;
 

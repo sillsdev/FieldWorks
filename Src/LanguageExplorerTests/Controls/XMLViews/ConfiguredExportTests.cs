@@ -76,9 +76,7 @@ namespace LanguageExplorerTests.Controls.XMLViews
 				using (var writer = new StreamWriter(stream))
 				{
 					exporter.Initialize(Cache, _flexComponentParameters.PropertyTable, writer, null, "xhtml", null, "dicBody");
-					Dictionary<string, string> mapChars;
-					ISet<string> ignoreSet;
-					var data = exporter.GetDigraphs(ws.Id, out mapChars, out ignoreSet);
+					var data = exporter.GetDigraphs(ws.Id, out var mapChars, out _);
 					Assert.AreEqual(mapChars.Count, 2, "Too many characters found equivalents");
 					Assert.AreEqual(mapChars["a"], "az");
 					Assert.AreEqual(mapChars["ch"], "c");
@@ -153,7 +151,7 @@ namespace LanguageExplorerTests.Controls.XMLViews
 					exporter.Initialize(Cache, _flexComponentParameters.PropertyTable, writer, null, "xhtml", null, "dicBody");
 					Dictionary<string, string> mapChars = null;
 					ISet<string> ignoreSet = null;
-					ISet<string> data = null;
+					ISet<string> data;
 					Assert.DoesNotThrow(() => data = exporter.GetDigraphs(ws.Id, out mapChars, out ignoreSet));
 					Assert.AreEqual(mapChars.Count, 0, "Too many characters found equivalents");
 					Assert.AreEqual(ignoreSet.Count, 1, "Ignorable character not parsed from rule");
@@ -245,9 +243,7 @@ namespace LanguageExplorerTests.Controls.XMLViews
 				using (var writer = new StreamWriter(stream))
 				{
 					exporter.Initialize(Cache, _flexComponentParameters.PropertyTable, writer, null, "xhtml", null, "dicBody");
-					Dictionary<string, string> mapChars;
-					ISet<string> ignoreSet;
-					var data = exporter.GetDigraphs(ws.Id, out mapChars, out ignoreSet);
+					var data = exporter.GetDigraphs(ws.Id, out var mapChars, out _);
 					Assert.AreEqual(mapChars.Count, 2, "Too many characters found equivalents");
 					Assert.AreEqual(mapChars["a"], "az");
 					Assert.AreEqual(mapChars["ch"], "c");
@@ -268,9 +264,7 @@ namespace LanguageExplorerTests.Controls.XMLViews
 				using (var writer = new StreamWriter(stream))
 				{
 					exporter.Initialize(Cache, _flexComponentParameters.PropertyTable, writer, null, "xhtml", null, "dicBody");
-					Dictionary<string, string> mapChars;
-					ISet<string> ignoreSet;
-					var data = exporter.GetDigraphs(ws.Id, out mapChars, out ignoreSet);
+					var data = exporter.GetDigraphs(ws.Id, out var mapChars, out _);
 					Assert.AreEqual(data.Count, 2, "Two Digraphs should be returned");
 					Assert.AreEqual(mapChars["ñ"], "ñe");
 				}
@@ -312,9 +306,7 @@ namespace LanguageExplorerTests.Controls.XMLViews
 				using (var writer = new StreamWriter(stream))
 				{
 					exporter.Initialize(Cache, _flexComponentParameters.PropertyTable, writer, null, "xhtml", null, "dicBody");
-					Dictionary<string, string> mapChars;
-					ISet<string> ignoreSet;
-					var data = exporter.GetDigraphs(ws.Id, out mapChars, out ignoreSet);
+					var data = exporter.GetDigraphs(ws.Id, out var mapChars, out _);
 					Assert.AreEqual(mapChars.Count, 0, "No equivalents expected");
 				}
 			}

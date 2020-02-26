@@ -17,40 +17,34 @@ namespace SIL.FieldWorks.WordWorks.Parser
 	/// <summary />
 	public class M3ToXAmpleTransformerTests
 	{
-		string m_sM3FXTDump;
-		string m_sM3FXTCircumfixDump;
-		string m_sM3FXTCircumfixInfixDump;
-		string m_sM3FXTCliticDump;
-		string m_sM3FXTFullRedupDump;
-		string m_sM3FXTConceptualIntroDump;
-		string m_sM3FXTStemNameDump;
-		string m_sM3FXTStemName2Dump;
-		string m_sM3FXTStemName3Dump;
-		string m_sM3FXTRootCliticEnvsDump;
-		string m_sM3FXTCliticEnvsDump;
-		string m_sM3FXTAffixAlloFeatsDump;
-		string m_sM3FXTLatinDump;
-		string m_sM3FXTIrregularlyInflectedFormsDump;
-		readonly Dictionary<string, XPathDocument> m_mapXmlDocs = new Dictionary<string, XPathDocument>();
-
-		XslCompiledTransform m_adTransform;
-		XslCompiledTransform m_lexTransform;
-		XslCompiledTransform m_gramTransform;
-
-		bool m_fResultMatchesExpected = true;
-
+		private string m_sM3FXTDump;
+		private string m_sM3FXTCircumfixDump;
+		private string m_sM3FXTCircumfixInfixDump;
+		private string m_sM3FXTCliticDump;
+		private string m_sM3FXTFullRedupDump;
+		private string m_sM3FXTConceptualIntroDump;
+		private string m_sM3FXTStemNameDump;
+		private string m_sM3FXTStemName2Dump;
+		private string m_sM3FXTStemName3Dump;
+		private string m_sM3FXTRootCliticEnvsDump;
+		private string m_sM3FXTCliticEnvsDump;
+		private string m_sM3FXTAffixAlloFeatsDump;
+		private string m_sM3FXTLatinDump;
+		private string m_sM3FXTIrregularlyInflectedFormsDump;
+		private readonly Dictionary<string, XPathDocument> m_mapXmlDocs = new Dictionary<string, XPathDocument>();
+		private XslCompiledTransform m_adTransform;
+		private XslCompiledTransform m_lexTransform;
+		private XslCompiledTransform m_gramTransform;
+		private bool m_fResultMatchesExpected = true;
 		/// <summary>
 		/// Location of test files
 		/// </summary>
-		protected string m_sTestPath;
-		protected string m_sTransformPath;
+		private string m_sTestPath;
 
 		[TestFixtureSetUp]
 		public void FixtureSetup()
 		{
 			m_sTestPath = Path.Combine(FwDirectoryFinder.SourceDirectory, "ParserCoreTests", "M3ToXAmpleTransformerTestsDataFiles");
-			m_sTransformPath = Path.Combine(FwDirectoryFinder.FlexFolder, "Transforms");
-
 			SetUpXAmpleTransforms();
 			SetUpM3FXTDump();
 		}
@@ -120,6 +114,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			ApplyTransform(m_sM3FXTLatinDump, m_adTransform, "LatinAdCtl.txt");
 			ApplyTransform(m_sM3FXTIrregularlyInflectedFormsDump, m_adTransform, "IrregularlyInflectedFormsAdCtl.txt");
 		}
+
 		/// <summary>
 		/// Test creating the lexicon file
 		/// </summary>
@@ -139,6 +134,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			ApplyTransform(m_sM3FXTAffixAlloFeatsDump, m_lexTransform, "AffixAlloFeatsLexicon.txt");
 			ApplyTransform(m_sM3FXTIrregularlyInflectedFormsDump, m_lexTransform, "IrregularlyInflectedFormsLexicon.txt");
 		}
+
 		/// <summary>
 		/// Test creating the word grammar file
 		/// </summary>
@@ -155,6 +151,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			ApplyTransform(m_sM3FXTAffixAlloFeatsDump, m_gramTransform, "AffixAlloFeatsWordGrammar.txt");
 			ApplyTransform(m_sM3FXTLatinDump, m_gramTransform, "LatinWordGrammar.txt");
 		}
+
 		private void ApplyTransform(string sInput, XslCompiledTransform transform, string sExpectedOutput)
 		{
 			var fxtDump = m_mapXmlDocs[sInput];

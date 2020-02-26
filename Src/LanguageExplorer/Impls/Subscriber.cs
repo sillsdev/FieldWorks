@@ -29,8 +29,7 @@ namespace LanguageExplorer.Impls
 		/// has been published</param>
 		public void Subscribe(string message, Action<object> messageHandler)
 		{
-			HashSet<Action<object>> subscribers;
-			if (!_subscriptions.TryGetValue(message, out subscribers))
+			if (!_subscriptions.TryGetValue(message, out var subscribers))
 			{
 				subscribers = new HashSet<Action<object>>();
 				_subscriptions.Add(message, subscribers);
@@ -48,8 +47,7 @@ namespace LanguageExplorer.Impls
 		/// <param name="messageHandler">The action that is no longer interested in <paramref name="message"/>.</param>
 		public void Unsubscribe(string message, Action<object> messageHandler)
 		{
-			HashSet<Action<object>> subscribers;
-			if (!_subscriptions.TryGetValue(message, out subscribers))
+			if (!_subscriptions.TryGetValue(message, out var subscribers))
 			{
 				return;
 			}

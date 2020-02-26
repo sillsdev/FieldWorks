@@ -45,9 +45,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			var servLoc = Cache.ServiceLocator;
 			var wf = FindOrCreateWordform(form);
 			var actualSize = servLoc.GetInstance<ICmBaseAnnotationRepository>().AllInstances().Count(ann => ann.BeginObjectRA == wf);
-			// wf.RefsFrom_CmBaseAnnotation_BeginObject.Count;
-			var msg = string.Format("Wrong number of {0} annotations for: {1}", isStarting ? "starting" : "ending", form);
-			Assert.AreEqual(expectedSize, actualSize, msg);
+			Assert.AreEqual(expectedSize, actualSize, $"Wrong number of {(isStarting ? "starting" : "ending")} annotations for: {form}");
 			return wf;
 		}
 

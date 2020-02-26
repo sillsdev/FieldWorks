@@ -238,8 +238,7 @@ namespace LanguageExplorer.MGA
 				return; // just to be safe
 			}
 			var glbiNew = new GlossListBoxItem(m_cache, mif.Node, treeViewGlossListItem.AfterSeparator, treeViewGlossListItem.ComplexNameSeparator, treeViewGlossListItem.ComplexNameFirst);
-			GlossListBoxItem glbiConflict;
-			if (glossListBoxGloss.NewItemConflictsWithExtantItem(glbiNew, out glbiConflict))
+			if (glossListBoxGloss.NewItemConflictsWithExtantItem(glbiNew, out var glbiConflict))
 			{
 				const string ksPath = "/group[@id='Linguistics']/group[@id='Morphology']/group[@id='MGA']/";
 				var sMsg1 = StringTable.Table.GetStringWithXPath("ItemConflictDlgMessage", ksPath);

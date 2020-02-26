@@ -196,16 +196,14 @@ namespace LanguageExplorer.Areas.Notebook
 					writer.WriteLine("<DefaultFontFeatures><Uni>{0}</Uni></DefaultFontFeatures>", XmlUtils.MakeSafeXml(wsLocal.DefaultFontFeatures));
 				}
 				string sortUsing = string.Empty, sortRules = string.Empty;
-				var simpleCollation = wsLocal.DefaultCollation as SimpleRulesCollationDefinition;
-				if (simpleCollation != null)
+				if (wsLocal.DefaultCollation is SimpleRulesCollationDefinition simpleCollation)
 				{
 					sortUsing = "CustomSimple";
 					sortRules = simpleCollation.SimpleRules;
 				}
 				else
 				{
-					var icuCollation = wsLocal.DefaultCollation as IcuRulesCollationDefinition;
-					if (icuCollation != null)
+					if (wsLocal.DefaultCollation is IcuRulesCollationDefinition icuCollation)
 					{
 						if (!string.IsNullOrEmpty(icuCollation.IcuRules) || icuCollation.Imports.Count > 0)
 						{
@@ -219,8 +217,7 @@ namespace LanguageExplorer.Areas.Notebook
 					}
 					else
 					{
-						var systemCollation = wsLocal.DefaultCollation as SystemCollationDefinition;
-						if (systemCollation != null)
+						if (wsLocal.DefaultCollation is SystemCollationDefinition systemCollation)
 						{
 							sortUsing = "OtherLanguage";
 							sortRules = systemCollation.LanguageTag;
@@ -321,8 +318,7 @@ namespace LanguageExplorer.Areas.Notebook
 					collection.AddRange(part.ParticipantsRC.ToArray());
 					if (part.RoleRA != null)
 					{
-						int wsRole;
-						var tssRole = part.RoleRA.Name.GetAlternativeOrBestTss(m_cache.DefaultAnalWs, out wsRole);
+						var tssRole = part.RoleRA.Name.GetAlternativeOrBestTss(m_cache.DefaultAnalWs, out _);
 						ExportReferenceList(writer, collection, tssRole.Text, "RnRoledPartic", CellarPropertyType.ReferenceCollection);
 					}
 					else
@@ -476,8 +472,7 @@ namespace LanguageExplorer.Areas.Notebook
 							writer.WriteLine("<Field name=\"{0}\" type=\"MultiString\">", fieldName);
 							for (var i = 0; i < tms.StringCount; ++i)
 							{
-								int ws;
-								tss = tms.GetStringFromIndex(i, out ws);
+								tss = tms.GetStringFromIndex(i, out var ws);
 								if (tss == null || tss.Length <= 0)
 								{
 									continue;
@@ -586,11 +581,6 @@ namespace LanguageExplorer.Areas.Notebook
 			}
 		}
 
-		private void ExportMultiString(TextWriter writer, ITsString tss, int ws, string fieldName, string p, string fieldName_6)
-		{
-			writer.WriteLine("<!-- ExportMultiString not yet written... -->");
-		}
-
 		/// <summary>
 		/// Get a label for a cross-referenced record.
 		/// </summary>
@@ -599,8 +589,7 @@ namespace LanguageExplorer.Areas.Notebook
 			var bldr = new StringBuilder();
 			if (rec.TypeRA != null && rec.TypeRA.Name != null)
 			{
-				int ws;
-				var tss = rec.TypeRA.Name.GetAlternativeOrBestTss(m_cache.DefaultAnalWs, out ws);
+				var tss = rec.TypeRA.Name.GetAlternativeOrBestTss(m_cache.DefaultAnalWs, out _);
 				if (tss.Length > 0)
 				{
 					bldr.AppendFormat("{0} - ", tss.Text);
@@ -628,8 +617,7 @@ namespace LanguageExplorer.Areas.Notebook
 			{
 				return;
 			}
-			int ws;
-			var tss = poss.Name.GetAlternativeOrBestTss(m_cache.DefaultAnalWs, out ws);
+			var tss = poss.Name.GetAlternativeOrBestTss(m_cache.DefaultAnalWs, out var ws);
 			writer.WriteLine("<Field name=\"{0}\" type=\"{1}\" card=\"atomic\">", fieldName, targetType);
 			writer.WriteLine("<Item ws=\"{0}\">{1}</Item>", m_cache.WritingSystemFactory.GetStrFromWs(ws), XmlUtils.MakeSafeXml(tss.Text));
 			writer.WriteLine("</Field>");
@@ -647,8 +635,7 @@ namespace LanguageExplorer.Areas.Notebook
 			writer.WriteLine(cpt == CellarPropertyType.ReferenceCollection ? "<Field name=\"{0}\" type=\"{1}\" card=\"collection\">" : "<Field name=\"{0}\" type=\"{1}\" card=\"sequence\">", fieldName, targetType);
 			foreach (var item in collection)
 			{
-				int ws;
-				var tss = item.Name.GetAlternativeOrBestTss(m_cache.DefaultAnalWs, out ws);
+				var tss = item.Name.GetAlternativeOrBestTss(m_cache.DefaultAnalWs, out var ws);
 				writer.WriteLine("<Item ws=\"{0}\">{1}</Item>", m_cache.WritingSystemFactory.GetStrFromWs(ws), XmlUtils.MakeSafeXml(tss.Text));
 			}
 			writer.WriteLine("</Field>");
@@ -682,8 +669,7 @@ namespace LanguageExplorer.Areas.Notebook
 			var cch = 0;
 			foreach (var para in text.ParagraphsOS)
 			{
-				var stp = para as IStTxtPara;
-				if (stp != null && stp.Contents != null)
+				if (para is IStTxtPara stp && stp.Contents != null)
 				{
 					cch += stp.Contents.Length;
 				}
@@ -700,8 +686,7 @@ namespace LanguageExplorer.Areas.Notebook
 			writer.WriteLine("<Field name=\"{0}\" type=\"StText\">", fieldName);
 			foreach (var para in text.ParagraphsOS)
 			{
-				var stp = para as IStTxtPara;
-				if (stp == null)
+				if (!(para is IStTxtPara stp))
 				{
 					continue;
 				}

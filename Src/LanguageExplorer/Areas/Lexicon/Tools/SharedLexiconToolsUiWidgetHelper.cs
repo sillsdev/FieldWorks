@@ -106,9 +106,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools
 				{
 					return;
 				}
-				ILexEntry entry;
-				bool newby;
-				dlg.GetDialogInfo(out entry, out newby);
+				dlg.GetDialogInfo(out var entry, out _);
 				// No need for a PropChanged here because InsertEntryDlg takes care of that. (LT-3608)
 				mainWnd.RefreshAllViews();
 				_recordList.JumpToRecord(entry.Hvo);

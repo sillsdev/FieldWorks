@@ -124,9 +124,9 @@ namespace LanguageExplorerTests.Filters
 			var obj = DynamicLoader.RestoreObject(doc.Root);
 			m_objectsToDispose.Add(obj);
 			Assert.IsInstanceOf<AndSorter>(obj);
-			var sortersOut = (obj as AndSorter).Sorters;
-			var grsOut1 = sortersOut[0] as GenRecordSorter;
-			var grsOut2 = sortersOut[1] as GenRecordSorter;
+			var sortersOut = ((AndSorter)obj).Sorters;
+			var grsOut1 = (GenRecordSorter)sortersOut[0];
+			var grsOut2 = (GenRecordSorter)sortersOut[1];
 			var compOut1 = grsOut1.Comparer;
 			var compOut2 = grsOut2.Comparer;
 			Assert.IsTrue(compOut1 is IcuComparer);
@@ -148,7 +148,7 @@ namespace LanguageExplorerTests.Filters
 		/// </summary>
 		static IStringFinder GetFinder(AndFilter andFilter, int index)
 		{
-			return (andFilter.Filters[index] as FilterBarCellFilter).Finder;
+			return ((FilterBarCellFilter)andFilter.Filters[index]).Finder;
 		}
 
 		/// <summary>
@@ -260,7 +260,7 @@ namespace LanguageExplorerTests.Filters
 			var doc = XDocument.Parse(xml);
 
 			// And check all the pieces...
-			var andFilterOut = DynamicLoader.RestoreObject(doc.Root) as AndFilter;
+			var andFilterOut = (AndFilter)DynamicLoader.RestoreObject(doc.Root);
 			m_objectsToDispose.Add(andFilterOut);
 			andFilterOut.Cache = Cache;
 
@@ -309,29 +309,29 @@ namespace LanguageExplorerTests.Filters
 			var invertMatchOut = GetMatcher(andFilter, 8) as InvertMatcher;
 			Assert.IsNotNull(invertMatchOut);
 
-			var mlPropFinderOut = GetFinder(andFilter, 2) as OwnMlPropFinder;
+			var mlPropFinderOut = (OwnMlPropFinder)GetFinder(andFilter, 2);
 			Assert.AreEqual(m_sda, mlPropFinderOut.DataAccess);
 			Assert.AreEqual(788, mlPropFinderOut.Flid);
 			Assert.AreEqual(23, mlPropFinderOut.Ws);
 
-			var monoPropFinderOut = GetFinder(andFilter, 3) as OwnMonoPropFinder;
+			var monoPropFinderOut = (OwnMonoPropFinder)GetFinder(andFilter, 3);
 			Assert.AreEqual(m_sda, monoPropFinderOut.DataAccess);
 			Assert.AreEqual(954, monoPropFinderOut.Flid);
 
-			var oneIndMlPropFinderOut = GetFinder(andFilter, 4) as OneIndirectMlPropFinder;
+			var oneIndMlPropFinderOut = (OneIndirectMlPropFinder)GetFinder(andFilter, 4);
 			Assert.AreEqual(m_sda, oneIndMlPropFinderOut.DataAccess);
 			Assert.AreEqual(221, oneIndMlPropFinderOut.FlidVec);
 			Assert.AreEqual(222, oneIndMlPropFinderOut.FlidString);
 			Assert.AreEqual(27, oneIndMlPropFinderOut.Ws);
 
-			var mimlPropFinderOut = GetFinder(andFilter, 5) as MultiIndirectMlPropFinder;
+			var mimlPropFinderOut = (MultiIndirectMlPropFinder)GetFinder(andFilter, 5);
 			Assert.AreEqual(m_sda, mimlPropFinderOut.DataAccess);
 			Assert.AreEqual(444, mimlPropFinderOut.VecFlids[0]);
 			Assert.AreEqual(555, mimlPropFinderOut.VecFlids[1]);
 			Assert.AreEqual(666, mimlPropFinderOut.FlidString);
 			Assert.AreEqual(87, mimlPropFinderOut.Ws);
 
-			var oneIndAtomFinderOut = GetFinder(andFilter, 6) as OneIndirectAtomMlPropFinder;
+			var oneIndAtomFinderOut = (OneIndirectAtomMlPropFinder)GetFinder(andFilter, 6);
 			Assert.AreEqual(m_sda, oneIndAtomFinderOut.DataAccess);
 			Assert.AreEqual(543, oneIndAtomFinderOut.FlidAtom);
 			Assert.AreEqual(345, oneIndAtomFinderOut.FlidString);
@@ -357,7 +357,7 @@ namespace LanguageExplorerTests.Filters
 			var doc = XDocument.Parse(xml);
 
 			// And check all the pieces...
-			var prsOut = DynamicLoader.RestoreObject(doc.Root) as PropertyRecordSorter;
+			var prsOut = (PropertyRecordSorter)DynamicLoader.RestoreObject(doc.Root);
 			prsOut.Cache = Cache;
 			Assert.AreEqual("longName", prsOut.PropertyName);
 		}
@@ -372,7 +372,7 @@ namespace LanguageExplorerTests.Filters
 			var xml = DynamicLoader.PersistObject(sfComp, "comparer");
 			var doc = XDocument.Parse(xml);
 			// And check all the pieces...
-			var sfCompOut = DynamicLoader.RestoreObject(doc.Root) as StringFinderCompare;
+			var sfCompOut = (StringFinderCompare)DynamicLoader.RestoreObject(doc.Root);
 			m_objectsToDispose.Add(sfCompOut);
 			sfCompOut.Cache = Cache;
 

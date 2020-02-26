@@ -19,11 +19,7 @@ namespace LanguageExplorer.Filters
 		/// </summary>
 		public override bool Matches(ITsString arg)
 		{
-			if (arg == null || arg.Length == 0)
-			{
-				return true;
-			}
-			return arg.Text.All(t => char.IsWhiteSpace(t));
+			return arg == null || arg.Length == 0 || arg.Text.All(char.IsWhiteSpace);
 		}
 
 		/// <summary>

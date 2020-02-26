@@ -111,10 +111,7 @@ namespace LanguageExplorer.Controls.XMLViews
 
 		internal XmlBrowseViewVc Vc
 		{
-			get
-			{
-				return m_vc;
-			}
+			get => m_vc;
 			set
 			{
 				m_vc = value;
@@ -251,12 +248,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		public virtual bool SameFinder(IStringFinder other)
 		{
-			var otherLf = other as LayoutFinder;
-			if (otherLf == null)
-			{
-				return false;
-			}
-			return SameLayoutName(otherLf) && SameData(otherLf) && SameConfiguration(otherLf);
+			return other is LayoutFinder otherLf && SameLayoutName(otherLf) && SameData(otherLf) && SameConfiguration(otherLf);
 		}
 
 		private bool SameLayoutName(LayoutFinder otherLf)
@@ -271,15 +263,14 @@ namespace LanguageExplorer.Controls.XMLViews
 				return true;
 			}
 			var first = RootSdaOf(m_sda);
-			var second = RootSdaOf(otherLf.m_sda);
-			return first == second && first != null;
+			return first == RootSdaOf(otherLf.m_sda) && first != null;
 		}
 
 		private static ISilDataAccessManaged RootSdaOf(ISilDataAccess sda)
 		{
-			if (sda is DomainDataByFlidDecoratorBase)
+			if (sda is DomainDataByFlidDecoratorBase dataByFlidDecoratorBase)
 			{
-				return RootSdaOf((sda as DomainDataByFlidDecoratorBase).BaseSda);
+				return RootSdaOf(dataByFlidDecoratorBase.BaseSda);
 			}
 			return sda as ISilDataAccessManaged;
 		}
@@ -419,19 +410,13 @@ namespace LanguageExplorer.Controls.XMLViews
 
 			private string SortMethod
 			{
-				set
-				{
-					m_sMethodName = value ?? string.Empty;
-				}
+				set => m_sMethodName = value ?? string.Empty;
 			}
 
 			private string WritingSystemName
 			{
-				get { return m_wsName; }
-				set
-				{
-					m_wsName = value == string.Empty ? null : value;
-				}
+				get => m_wsName;
+				set => m_wsName = value == string.Empty ? null : value;
 			}
 
 			/// <summary>
@@ -626,9 +611,9 @@ namespace LanguageExplorer.Controls.XMLViews
 					{
 						obj = mi.Invoke(cmo, new object[] { sortedFromEnd });
 					}
-					if (obj is string)
+					if (obj is string text)
 					{
-						return new[] { (string)obj };
+						return new[] { text };
 					}
 					// otherwise assume it already is a string array.
 					return (string[])obj;
@@ -644,12 +629,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			/// </summary>
 			public override bool SameFinder(IStringFinder other)
 			{
-				if (!(other is SortMethodFinder))
-				{
-					return false;
-				}
-				var smf = (SortMethodFinder)other;
-				return m_sMethodName == smf.m_sMethodName && base.SameFinder(other) && m_wsName == smf.m_wsName;
+				return other is SortMethodFinder sortMethodFinder && m_sMethodName == sortMethodFinder.m_sMethodName && base.SameFinder(other) && m_wsName == sortMethodFinder.m_wsName;
 			}
 
 			#endregion

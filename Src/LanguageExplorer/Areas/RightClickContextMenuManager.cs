@@ -489,15 +489,13 @@ namespace LanguageExplorer.Areas
 				menu.Checked = menuIsChecked;
 			}
 
-			if (slice is ReferenceVectorSlice)
+			if (slice is ReferenceVectorSlice referenceVectorSlice)
 			{
 				/*
 				  <item command="CmdMoveTargetToPreviousInSequence" />
 				  <command id="CmdMoveTargetToPreviousInSequence" label="Move Left" message="MoveTargetDownInSequence" />
 				*/
-				var referenceVectorSlice = (ReferenceVectorSlice)slice;
-				bool visible;
-				var enabled = referenceVectorSlice.CanDisplayMoveTargetDownInSequence(out visible);
+				var enabled = referenceVectorSlice.CanDisplayMoveTargetDownInSequence(out var visible);
 				if (visible)
 				{
 					if (wantSeparator)
@@ -563,8 +561,7 @@ namespace LanguageExplorer.Areas
 			var currentSlice = _dataTree.CurrentSlice;
 			var entryOrSense = currentSlice.MyCmObject;
 			var entry = _cache.ServiceLocator.GetInstance<ILexEntryRepository>().GetObject(currentSlice.GetSelectionHvoFromControls());
-			ILexEntryRef lexEntryRef;
-			if (ComponentShowsComplexForm(entryOrSense, entry, out lexEntryRef))
+			if (ComponentShowsComplexForm(entryOrSense, entry, out var lexEntryRef))
 			{
 				// Remove from visibility array
 				using (var helper = new UndoableUnitOfWorkHelper(_cache.ActionHandlerAccessor, DictionaryConfigurationStrings.ksUndoVisibleComplexForm, DictionaryConfigurationStrings.ksRedoVisibleComplexForm))
@@ -618,8 +615,7 @@ namespace LanguageExplorer.Areas
 				return; // Not the right slice for this command
 			}
 			visibleAndEnabled = true;
-			ILexEntryRef lexEntryRef;
-			menuIsChecked = ComponentShowsComplexForm(lexOrSenseComponent, complexFormEntry, out lexEntryRef);
+			menuIsChecked = ComponentShowsComplexForm(lexOrSenseComponent, complexFormEntry, out _);
 		}
 
 		private bool ComponentShowsComplexForm(ICmObject lexOrSenseComponent, ILexEntry complexFormEntry, out ILexEntryRef complexFormReference)
@@ -669,8 +665,7 @@ namespace LanguageExplorer.Areas
 		{
 			// 6 users in PopupContextMenuCreatorMethod_mnuReferenceChoices
 			var selectedObject = _recordList.CurrentObject;
-			var asReferenceVectorSlice = slice as ReferenceVectorSlice; // May be null.
-			if (asReferenceVectorSlice != null)
+			if (slice is ReferenceVectorSlice asReferenceVectorSlice)
 			{
 				// Dig out selected item in slice.
 				var vectorReferenceLauncher = (VectorReferenceLauncher)asReferenceVectorSlice.Control;
@@ -679,8 +674,7 @@ namespace LanguageExplorer.Areas
 			}
 			else
 			{
-				var asAtomicReferenceSlice = slice as AtomicReferenceSlice; // May be null.
-				if (asAtomicReferenceSlice != null)
+				if (slice is AtomicReferenceSlice asAtomicReferenceSlice)
 				{
 					// Dig out selected item in slice.
 					var atomicReferenceLauncher = (AtomicReferenceLauncher)asAtomicReferenceSlice.Control;
@@ -720,8 +714,7 @@ namespace LanguageExplorer.Areas
 				var vectorReferenceView = (VectorReferenceView)vectorReferenceLauncher.MainControl;
 				selectedObject = vectorReferenceView.SelectedObject as ICmPossibility;
 			}
-			var asAtomicReferenceSlice = slice as AtomicReferenceSlice; // May be null.
-			if (asAtomicReferenceSlice != null)
+			if (slice is AtomicReferenceSlice asAtomicReferenceSlice)
 			{
 				// Dig out selected item in slice.
 				var atomicReferenceLauncher = (AtomicReferenceLauncher)asAtomicReferenceSlice.Control;
@@ -783,15 +776,7 @@ namespace LanguageExplorer.Areas
 			get
 			{
 				var currentSlice = _dataTree.CurrentSlice;
-				if (_currentTool.MachineName == AreaServices.EnvironmentEditMachineName && currentSlice.MyCmObject == _recordList.CurrentObject || currentSlice.MyCmObject.IsOwnedBy(_recordList.CurrentObject))
-				{
-					return false;
-				}
-				if (currentSlice.MyCmObject.ClassID == PhEnvironmentTags.kClassId)
-				{
-					return true;
-				}
-				return _dataTree.Cache.DomainDataByFlid.MetaDataCache.GetBaseClsId(currentSlice.MyCmObject.ClassID) == PhEnvironmentTags.kClassId;
+				return (_currentTool.MachineName != AreaServices.EnvironmentEditMachineName || currentSlice.MyCmObject != _recordList.CurrentObject) && !currentSlice.MyCmObject.IsOwnedBy(_recordList.CurrentObject) && (currentSlice.MyCmObject.ClassID == PhEnvironmentTags.kClassId || _dataTree.Cache.DomainDataByFlid.MetaDataCache.GetBaseClsId(currentSlice.MyCmObject.ClassID) == PhEnvironmentTags.kClassId);
 			}
 		}
 

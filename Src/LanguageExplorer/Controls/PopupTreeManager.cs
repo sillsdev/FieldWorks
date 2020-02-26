@@ -477,8 +477,7 @@ namespace LanguageExplorer.Controls
 					if (e.Action == TreeViewAction.ByKeyboard)
 					{
 						// Select the next/previous one, rather than the line.
-						var oldSelNode = pt.SelectedNode as HvoTreeNode;
-						if (oldSelNode != null)
+						if (pt.SelectedNode is HvoTreeNode oldSelNode)
 						{
 							if (oldSelNode == newSelNode.NextNode && newSelNode.PrevNode != null)
 							{
@@ -509,8 +508,7 @@ namespace LanguageExplorer.Controls
 		/// </summary>
 		protected virtual void m_treeCombo_AfterSelect(object sender, TreeViewEventArgs e)
 		{
-			var selectedNode = e.Node as HvoTreeNode;
-			if (selectedNode == null)
+			if (!(e.Node is HvoTreeNode))
 			{
 				return; // User moved highlight off any item and hit enter; ignore.
 			}

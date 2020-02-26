@@ -4,6 +4,7 @@
 
 using System.Diagnostics;
 using System.Drawing;
+using System.Linq;
 using LanguageExplorer.Controls;
 using LanguageExplorer.LcmUi;
 using SIL.FieldWorks.Common.FwUtils;
@@ -27,8 +28,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		public override void HandleSelect(int index)
 		{
 			var fGuessingOld = m_caches.DataAccess.get_IntProp(m_hvoSbWord, SandboxBase.ktagSbWordGlossGuess);
-			var item = ComboList.SelectedItem as HvoTssComboItem;
-			if (item == null)
+			if (!(ComboList.SelectedItem is HvoTssComboItem item))
 			{
 				return;
 			}
@@ -70,9 +70,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				var analMethod = m_sandbox.CreateRealWfiAnalysisMethod();
 				var anal = analMethod.Run();
 				helper.RollBack = false;
-				if (anal is IWfiAnalysis && anal.Guid != wa.Guid)
+				if (anal is IWfiAnalysis analysis && analysis.Guid != wa.Guid)
 				{
-					AddComboItems(ref hvoEmptyGloss, tsb, anal as IWfiAnalysis);
+					AddComboItems(ref hvoEmptyGloss, tsb, analysis);
 				}
 				Debug.Assert(analMethod.ObsoleteAnalysis == null);
 			}
@@ -108,12 +108,11 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					}
 					var oldLen = tsb.Length;
 					tsb.ReplaceTsString(oldLen, oldLen, nextWsGloss);
-					var color = (int)CmObjectUi.RGB(Color.Blue);
-					tsb.SetIntPropValues(oldLen, tsb.Length, (int)FwTextPropType.ktptForeColor, (int)FwTextPropVar.ktpvDefault, color);
+					tsb.SetIntPropValues(oldLen, tsb.Length, (int)FwTextPropType.ktptForeColor, (int)FwTextPropVar.ktpvDefault, (int)CmObjectUi.RGB(Color.Blue));
 					glossCount++;
 				}
 				// (LT-1428) If we find an empty gloss, use this hvo for "New word gloss" instead of 0.
-				if (glossCount == 0 && wsids.Count > 0)
+				if (glossCount == 0 && wsids.Any())
 				{
 					hvoEmptyGloss = gloss.Hvo;
 					var tpbUserWs = TsStringUtils.MakePropsBldr();

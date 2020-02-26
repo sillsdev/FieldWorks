@@ -16,7 +16,6 @@ using LanguageExplorer.Areas;
 using LanguageExplorer.Controls.XMLViews;
 using LanguageExplorer.DictionaryConfiguration;
 using LanguageExplorer.Filters;
-using LanguageExplorer.Impls;
 using LanguageExplorer.TestUtilities;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwUtils;
@@ -386,7 +385,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			const string expectedMediaFolder = @"Src/LanguageExplorerTests/DictionaryConfiguration/TestData/LinkedFiles/AudioVisual/";
 			var pron1 = Cache.ServiceLocator.GetInstance<ILexPronunciationFactory>().Create();
 			entry.PronunciationsOS.Add(pron1);
-			var fileName1 = "test1.mp4";
+			const string fileName1 = "test1.mp4";
 			CreateTestMediaFile(Cache, fileName1, folder, pron1);
 			var videoFileUrl1 = expectedMediaFolder + fileName1;
 			var pron2 = Cache.ServiceLocator.GetInstance<ILexPronunciationFactory>().Create();
@@ -744,7 +743,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		[Test]
 		public void GenerateXHTMLForEntry_TwoSensesWithSameInfo_ThirdSenseNotPublished_ShowGramInfoFirst()
 		{
-			var DictionaryNodeSenseOptions = new DictionaryNodeSenseOptions
+			var dictionaryNodeSenseOptions = new DictionaryNodeSenseOptions
 			{
 				ShowSharedGrammarInfoFirst = true
 			};
@@ -764,7 +763,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			{
 				FieldDescription = "SensesOS",
 				CSSClassNameOverride = "Senses",
-				DictionaryNodeOptions = DictionaryNodeSenseOptions,
+				DictionaryNodeOptions = dictionaryNodeSenseOptions,
 				Children = new List<ConfigurableDictionaryNode> { gramInfoNode }
 			};
 			var mainEntryNode = new ConfigurableDictionaryNode
@@ -829,7 +828,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		[Test]
 		public void GenerateXHTMLForEntry_TwoSensesWithDifferentGramInfoShowInfoInSenses()
 		{
-			var DictionaryNodeSenseOptions = new DictionaryNodeSenseOptions
+			var dictionaryNodeSenseOptions = new DictionaryNodeSenseOptions
 			{
 				ShowSharedGrammarInfoFirst = true
 			};
@@ -849,7 +848,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			{
 				FieldDescription = "SensesOS",
 				CSSClassNameOverride = "Senses",
-				DictionaryNodeOptions = DictionaryNodeSenseOptions,
+				DictionaryNodeOptions = dictionaryNodeSenseOptions,
 				Children = new List<ConfigurableDictionaryNode> { gramInfoNode }
 			};
 			var mainEntryNode = new ConfigurableDictionaryNode
@@ -894,7 +893,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		[Test]
 		public void GenerateXHTMLForEntry_TwoSensesWithNoGramInfoDisplaysNothingForSharedGramInfo()
 		{
-			var DictionaryNodeSenseOptions = new DictionaryNodeSenseOptions
+			var dictionaryNodeSenseOptions = new DictionaryNodeSenseOptions
 			{
 				ShowSharedGrammarInfoFirst = true
 			};
@@ -912,7 +911,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			var sensesNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "SensesOS",
-				DictionaryNodeOptions = DictionaryNodeSenseOptions,
+				DictionaryNodeOptions = dictionaryNodeSenseOptions,
 				Children = new List<ConfigurableDictionaryNode> { gramInfoNode }
 			};
 			var headword = new ConfigurableDictionaryNode
@@ -1878,7 +1877,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		[Test]
 		public void GetPropertyTypeForConfigurationNode_StTextReturnsPrimitive()
 		{
-			var fieldName = "CustomMultiPara";
+			const string fieldName = "CustomMultiPara";
 			using (var customField = new CustomFieldForTest(Cache, fieldName, fieldName, Cache.MetaDataCacheAccessor.GetClassId("LexEntry"), StTextTags.kClassId, -1,
 			 CellarPropertyType.OwningAtomic, Guid.Empty))
 			{
@@ -2282,7 +2281,6 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		[Test]
 		public void GenerateXHTMLForEntry_TurnedOffSubsensesCausesSenseToBehaveLikeSingleSense_WithNoSenseNumber()
 		{
-
 			var wsOpts = GetWsOptionsForLanguages(new[] { "en" });
 			var glossNode = new ConfigurableDictionaryNode { FieldDescription = "Gloss", DictionaryNodeOptions = wsOpts };
 			var senseOptions = new DictionaryNodeSenseOptions
@@ -2350,7 +2348,6 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		[Test]
 		public void GenerateXHTMLForEntry_EmptyStyleSubsensesCausesSenseToBehaveLikeSingleSense_WithNoSenseNumber()
 		{
-
 			var wsOpts = GetWsOptionsForLanguages(new[] { "en" });
 			var glossNode = new ConfigurableDictionaryNode { FieldDescription = "Gloss", DictionaryNodeOptions = wsOpts };
 			var senseOptions = new DictionaryNodeSenseOptions
@@ -2417,7 +2414,6 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		[Test]
 		public void GenerateXHTMLForEntry_SubsenseStyleInfluencesSenseNumberShown()
 		{
-
 			var wsOpts = GetWsOptionsForLanguages(new[] { "en" });
 			var glossNode = new ConfigurableDictionaryNode { FieldDescription = "Gloss", DictionaryNodeOptions = wsOpts };
 			var senseOptions = new DictionaryNodeSenseOptions
@@ -2475,9 +2471,9 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		public void GenerateXHTMLForEntry_NumberingSingleSenseAlsoCountsSubSense()
 		{
 			var wsOpts = GetWsOptionsForLanguages(new[] { "en" });
-			var DictionaryNodeSenseOptions = new DictionaryNodeSenseOptions
+			var dictionaryNodeSenseOptions = new DictionaryNodeSenseOptions
 			{
-				BeforeNumber = "",
+				BeforeNumber = string.Empty,
 				AfterNumber = ")",
 				NumberStyle = "Dictionary-SenseNumber",
 				NumberingStyle = "%d",
@@ -2491,14 +2487,14 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			{
 				FieldDescription = "SensesOS",
 				CSSClassNameOverride = "senses",
-				DictionaryNodeOptions = DictionaryNodeSenseOptions,
+				DictionaryNodeOptions = dictionaryNodeSenseOptions,
 				Children = new List<ConfigurableDictionaryNode> { glossNode }
 			};
 			var sensesNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "SensesOS",
 				CSSClassNameOverride = "senses",
-				DictionaryNodeOptions = DictionaryNodeSenseOptions,
+				DictionaryNodeOptions = dictionaryNodeSenseOptions,
 				Children = new List<ConfigurableDictionaryNode> { glossNode, subSenseNode }
 			};
 
@@ -2522,9 +2518,9 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		public void GenerateXHTMLForEntry_SensesAndSubSensesWithDifferentNumberingStyle()
 		{
 			var wsOpts = GetWsOptionsForLanguages(new[] { "en" });
-			var DictionaryNodeSenseOptions = new DictionaryNodeSenseOptions
+			var dictionaryNodeSenseOptions = new DictionaryNodeSenseOptions
 			{
-				BeforeNumber = "",
+				BeforeNumber = string.Empty,
 				AfterNumber = ")",
 				NumberStyle = "Dictionary-SenseNumber",
 				NumberingStyle = "%A",
@@ -2532,9 +2528,9 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 				NumberEvenASingleSense = true,
 				ShowSharedGrammarInfoFirst = false
 			};
-			var DictionaryNodeSubSenseOptions = new DictionaryNodeSenseOptions
+			var dictionaryNodeSubSenseOptions = new DictionaryNodeSenseOptions
 			{
-				BeforeNumber = "",
+				BeforeNumber = string.Empty,
 				AfterNumber = ")",
 				NumberStyle = "Dictionary-SenseNumber",
 				NumberingStyle = "%I",
@@ -2548,14 +2544,14 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			{
 				FieldDescription = "SensesOS",
 				CSSClassNameOverride = "senses",
-				DictionaryNodeOptions = DictionaryNodeSubSenseOptions,
+				DictionaryNodeOptions = dictionaryNodeSubSenseOptions,
 				Children = new List<ConfigurableDictionaryNode> { glossNode }
 			};
 			var sensesNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "SensesOS",
 				CSSClassNameOverride = "senses",
-				DictionaryNodeOptions = DictionaryNodeSenseOptions,
+				DictionaryNodeOptions = dictionaryNodeSenseOptions,
 				Children = new List<ConfigurableDictionaryNode> { glossNode, subSenseNode }
 			};
 
@@ -2585,11 +2581,10 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		[Test]
 		public void GenerateXHTMLForEntry_SensesAndSubSensesWithNumberingStyle()
 		{
-
 			var wsOpts = GetWsOptionsForLanguages(new[] { "en" });
-			var DictionaryNodeSenseOptions = new DictionaryNodeSenseOptions
+			var dictionaryNodeSenseOptions = new DictionaryNodeSenseOptions
 			{
-				BeforeNumber = "",
+				BeforeNumber = string.Empty,
 				AfterNumber = ")",
 				NumberStyle = "Dictionary-SenseNumber",
 				NumberingStyle = "%A",
@@ -2597,9 +2592,9 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 				NumberEvenASingleSense = true,
 				ShowSharedGrammarInfoFirst = false
 			};
-			var DictionaryNodeSubSenseOptions = new DictionaryNodeSenseOptions
+			var dictionaryNodeSubSenseOptions = new DictionaryNodeSenseOptions
 			{
-				BeforeNumber = "",
+				BeforeNumber = string.Empty,
 				AfterNumber = ")",
 				NumberStyle = "Dictionary-SenseNumber",
 				NumberingStyle = "%d",
@@ -2613,14 +2608,14 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			{
 				FieldDescription = "SensesOS",
 				CSSClassNameOverride = "senses",
-				DictionaryNodeOptions = DictionaryNodeSubSenseOptions,
+				DictionaryNodeOptions = dictionaryNodeSubSenseOptions,
 				Children = new List<ConfigurableDictionaryNode> { glossNode }
 			};
 			var sensesNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "SensesOS",
 				CSSClassNameOverride = "senses",
-				DictionaryNodeOptions = DictionaryNodeSenseOptions,
+				DictionaryNodeOptions = dictionaryNodeSenseOptions,
 				Children = new List<ConfigurableDictionaryNode> { glossNode, subSenseNode }
 			};
 
@@ -2654,11 +2649,10 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		[Test]
 		public void GenerateXHTMLForEntry_NoSenseNumberFIfStyleSaysNoNumbering()
 		{
-
 			var wsOpts = GetWsOptionsForLanguages(new[] { "en" });
-			var DictionaryNodeSenseOptions = new DictionaryNodeSenseOptions
+			var dictionaryNodeSenseOptions = new DictionaryNodeSenseOptions
 			{
-				BeforeNumber = "",
+				BeforeNumber = string.Empty,
 				AfterNumber = ")",
 				NumberStyle = "Dictionary-SenseNumber",
 				NumberingStyle = string.Empty,
@@ -2672,7 +2666,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			{
 				FieldDescription = "SensesOS",
 				CSSClassNameOverride = "senses",
-				DictionaryNodeOptions = DictionaryNodeSenseOptions,
+				DictionaryNodeOptions = dictionaryNodeSenseOptions,
 				Children = new List<ConfigurableDictionaryNode> { glossNode }
 			};
 
@@ -2698,18 +2692,17 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		[Test]
 		public void GenerateXHTMLForEntry_SensesNoneAndSubSensesWithNumberingStyle()
 		{
-
 			var wsOpts = GetWsOptionsForLanguages(new[] { "en" });
-			var DictionaryNodeSenseOptions = new DictionaryNodeSenseOptions
+			var dictionaryNodeSenseOptions = new DictionaryNodeSenseOptions
 			{
-				BeforeNumber = "",
+				BeforeNumber = string.Empty,
 				AfterNumber = ")",
 				NumberStyle = "Dictionary-SenseNumber",
 				DisplayEachSenseInAParagraph = false,
 				NumberEvenASingleSense = true,
 				ShowSharedGrammarInfoFirst = false
 			};
-			var DictionaryNodeSubSenseOptions = new DictionaryNodeSenseOptions
+			var dictionaryNodeSubSenseOptions = new DictionaryNodeSenseOptions
 			{
 				BeforeNumber = "",
 				AfterNumber = ")",
@@ -2725,14 +2718,14 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			{
 				FieldDescription = "SensesOS",
 				CSSClassNameOverride = "senses",
-				DictionaryNodeOptions = DictionaryNodeSubSenseOptions,
+				DictionaryNodeOptions = dictionaryNodeSubSenseOptions,
 				Children = new List<ConfigurableDictionaryNode> { glossNode }
 			};
 			var sensesNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "SensesOS",
 				CSSClassNameOverride = "senses",
-				DictionaryNodeOptions = DictionaryNodeSenseOptions,
+				DictionaryNodeOptions = dictionaryNodeSenseOptions,
 				Children = new List<ConfigurableDictionaryNode> { glossNode, subSenseNode }
 			};
 
@@ -2758,7 +2751,6 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		[Test]
 		public void GenerateXHTMLForEntry_SensesGeneratedForMultipleSubSenses()
 		{
-
 			var wsOpts = GetWsOptionsForLanguages(new[] { "en" });
 			var senseOptions = new DictionaryNodeSenseOptions { AfterNumber = ")", NumberingStyle = "%d", NumberEvenASingleSense = true };
 
@@ -2806,7 +2798,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		{
 			var wsOpts = GetWsOptionsForLanguages(new[] { "en" });
 
-			var SubSubSenseOptions = new DictionaryNodeSenseOptions { NumberingStyle = "%A", ParentSenseNumberingStyle = "%j", NumberEvenASingleSense = true };
+			var subSubSenseOptions = new DictionaryNodeSenseOptions { NumberingStyle = "%A", ParentSenseNumberingStyle = "%j", NumberEvenASingleSense = true };
 			var subSenseOptions = new DictionaryNodeSenseOptions { NumberingStyle = "%a", ParentSenseNumberingStyle = "%j" };
 			var senseOptions = new DictionaryNodeSenseOptions { NumberingStyle = "%d" };
 			var glossNode = new ConfigurableDictionaryNode { FieldDescription = "Gloss", DictionaryNodeOptions = wsOpts };
@@ -2814,7 +2806,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			{
 				FieldDescription = "SensesOS",
 				CSSClassNameOverride = "senses",
-				DictionaryNodeOptions = SubSubSenseOptions,
+				DictionaryNodeOptions = subSubSenseOptions,
 				Children = new List<ConfigurableDictionaryNode> { glossNode }
 			};
 			var subSenseNode = new ConfigurableDictionaryNode
@@ -2860,7 +2852,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		{
 			var wsOpts = GetWsOptionsForLanguages(new[] { "en" });
 
-			var SubSubSenseOptions = new DictionaryNodeSenseOptions { NumberingStyle = "%A", ParentSenseNumberingStyle = "%.", NumberEvenASingleSense = true };
+			var subSubSenseOptions = new DictionaryNodeSenseOptions { NumberingStyle = "%A", ParentSenseNumberingStyle = "%.", NumberEvenASingleSense = true };
 			var subSenseOptions = new DictionaryNodeSenseOptions { NumberingStyle = "%a", ParentSenseNumberingStyle = "%." };
 			var senseOptions = new DictionaryNodeSenseOptions { NumberingStyle = "%d" };
 			var glossNode = new ConfigurableDictionaryNode { FieldDescription = "Gloss", DictionaryNodeOptions = wsOpts };
@@ -2868,7 +2860,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			{
 				FieldDescription = "SensesOS",
 				CSSClassNameOverride = "senses",
-				DictionaryNodeOptions = SubSubSenseOptions,
+				DictionaryNodeOptions = subSubSenseOptions,
 				Children = new List<ConfigurableDictionaryNode> { glossNode }
 			};
 			var subSenseNode = new ConfigurableDictionaryNode
@@ -2914,7 +2906,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		{
 			var wsOpts = GetWsOptionsForLanguages(new[] { "en" });
 
-			var SubSubSenseOptions = new DictionaryNodeSenseOptions { NumberingStyle = "%A", ParentSenseNumberingStyle = "", NumberEvenASingleSense = true };
+			var subSubSenseOptions = new DictionaryNodeSenseOptions { NumberingStyle = "%A", ParentSenseNumberingStyle = "", NumberEvenASingleSense = true };
 			var subSenseOptions = new DictionaryNodeSenseOptions { NumberingStyle = "%a", ParentSenseNumberingStyle = "" };
 			var senseOptions = new DictionaryNodeSenseOptions { NumberingStyle = "%d" };
 			var glossNode = new ConfigurableDictionaryNode { FieldDescription = "Gloss", DictionaryNodeOptions = wsOpts };
@@ -2922,7 +2914,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			{
 				FieldDescription = "SensesOS",
 				CSSClassNameOverride = "senses",
-				DictionaryNodeOptions = SubSubSenseOptions,
+				DictionaryNodeOptions = subSubSenseOptions,
 				Children = new List<ConfigurableDictionaryNode> { glossNode }
 			};
 			var subSenseNode = new ConfigurableDictionaryNode
@@ -3024,7 +3016,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		{
 			var posNoun = CreatePartOfSpeech("noun", "n");
 
-			var firstHeadword = "homme";
+			const string firstHeadword = "homme";
 			var firstEntry = CreateInterestingLexEntry(Cache);
 			AddHeadwordToEntry(firstEntry, firstHeadword, _wsFr);
 			AddSingleSubSenseToSense("man", firstEntry.SensesOS[0]);
@@ -3100,7 +3092,6 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		[Test]
 		public void GenerateXHTMLForEntry_SubSensesOfSingleSenses_GetFullNumbers()
 		{
-
 			var wsOpts = GetWsOptionsForLanguages(new[] { "en" });
 			var senseOptions = new DictionaryNodeSenseOptions
 			{
@@ -3160,7 +3151,6 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		[Test]
 		public void GenerateXHTMLForEntry_SubentriesSensesDontGetMainEntrySensesNumbers()
 		{
-
 			var wsOpts = GetWsOptionsForLanguages(new[] { "en" });
 			var senseOptions = new DictionaryNodeSenseOptions { AfterNumber = ")", NumberingStyle = "%O", NumberEvenASingleSense = true };
 
@@ -3270,7 +3260,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			const string senseEntryGuid = "/div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense' and @entryguid]";
 			// This assert is dependent on the specific entry data created in CreateInterestingLexEntry
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(senseEntryGuid, 1);
-			string senseEntryGuidstatsWithG = "/div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense' and @entryguid='g" + testEntry.Guid + "']";
+			var senseEntryGuidstatsWithG = "/div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense' and @entryguid='g" + testEntry.Guid + "']";
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(senseEntryGuidstatsWithG, 1);
 		}
 
@@ -3763,13 +3753,13 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			var refType = Cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.First(poss => poss.Name.BestAnalysisAlternative.Text == refTypeName);
 			Assert.IsNotNull(refType);
 
-			var RevNameNode = new ConfigurableDictionaryNode
+			var revNameNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "ReverseName",
 				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "fr" })
 			};
 
-			var RevAbbrNode = new ConfigurableDictionaryNode
+			var revAbbrNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "ReverseAbbr",
 				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "fr" })
@@ -3779,7 +3769,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			{
 				FieldDescription = "EntryTypes",
 				CSSClassNameOverride = "entrytypes",
-				Children = new List<ConfigurableDictionaryNode> { RevNameNode, RevAbbrNode }
+				Children = new List<ConfigurableDictionaryNode> { revNameNode, revAbbrNode }
 			};
 
 			var refHeadwordNode = new ConfigurableDictionaryNode
@@ -4310,9 +4300,9 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			var settings = new GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
 			//SUT
 			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(mainEntry, mainEntryNode, null, settings);
-			const string NameXpath = "//span[@class='minimallexreferences']/span[@class='minimallexreference' and position()='{0}']/span[@class='ownertype_name']/span[@lang='en' and text()='{1}']";
-			var fwdNameFirstXpath = string.Format(NameXpath, "1", etyRefTypeName);
-			var fwdNameSecondXpath = string.Format(NameXpath, "2", comRefTypeName);
+			const string nameXpath = "//span[@class='minimallexreferences']/span[@class='minimallexreference' and position()='{0}']/span[@class='ownertype_name']/span[@lang='en' and text()='{1}']";
+			var fwdNameFirstXpath = string.Format(nameXpath, "1", etyRefTypeName);
+			var fwdNameSecondXpath = string.Format(nameXpath, "2", comRefTypeName);
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(fwdNameFirstXpath, 1);
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(fwdNameSecondXpath, 1);
 			crossReferencesNode.DictionaryNodeOptions = new DictionaryNodeListOptions
@@ -4321,8 +4311,8 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 				Options = DictionaryDetailsControllerTests.ListOfEnabledDNOsFromStrings(new[] { comRefType.Guid + ":f", etyRefType.Guid + ":f" })
 			};
 			var resultAfterChange = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(mainEntry, mainEntryNode, null, settings);
-			var fwdNameChangedFirstXpath = string.Format(NameXpath, "1", comRefTypeName);
-			var fwdNameChangedSecondXpath = string.Format(NameXpath, "2", etyRefTypeName);
+			var fwdNameChangedFirstXpath = string.Format(nameXpath, "1", comRefTypeName);
+			var fwdNameChangedSecondXpath = string.Format(nameXpath, "2", etyRefTypeName);
 			AssertThatXmlIn.String(resultAfterChange).HasSpecifiedNumberOfMatchesForXpath(fwdNameChangedFirstXpath, 1);
 			AssertThatXmlIn.String(resultAfterChange).HasSpecifiedNumberOfMatchesForXpath(fwdNameChangedSecondXpath, 1);
 		}
@@ -4463,7 +4453,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			var output = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(firstEntry, mainEntryNode, null, settings);
 			var goodTarget = $"//span[@class='lexsensereferences']/span[@class='lexsensereference']/span[@class='configtargets']/span[@class='configtarget']/span[@class='headword']/span[@lang='fr' and text()='{firstHeadword}']";
 			AssertThatXmlIn.String(output).HasSpecifiedNumberOfMatchesForXpath(goodTarget, 1);
-			var badTarget = "//span[@class='lexsensereferences']/span[@class='lexsensereference']/span[@class='configtargets']/span[@class='configtarget']/span[@class='gloss']";
+			const string badTarget = "//span[@class='lexsensereferences']/span[@class='lexsensereference']/span[@class='configtargets']/span[@class='configtarget']/span[@class='gloss']";
 			AssertThatXmlIn.String(output).HasNoMatchForXpath(badTarget);
 		}
 
@@ -4534,7 +4524,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(goodTarget1, 1);
 			const string badTarget1 = "//span[@class='lexsensereferences']/span[@class='lexsensereference']/span[@class='ownertype_name']/span[text()='Part']/ancestor::span[1]/following-sibling::node()//span[@class='configtarget']/span[@class='gloss']/span[@lang='en' and text()='b1']";
 			AssertThatXmlIn.String(result).HasNoMatchForXpath(badTarget1);
-			var goodTarget2 = "//span[@class='lexsensereferences']/span[@class='lexsensereference']/span[@class='ownertype_name']/span[text()='Whole']/ancestor::span[1]/following-sibling::node()//span[@class='configtarget']/span[@class='gloss']/span[@lang='en' and text()='b1']";
+			const string goodTarget2 = "//span[@class='lexsensereferences']/span[@class='lexsensereference']/span[@class='ownertype_name']/span[text()='Whole']/ancestor::span[1]/following-sibling::node()//span[@class='configtarget']/span[@class='gloss']/span[@lang='en' and text()='b1']";
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(goodTarget2, 1);
 			const string badTarget2 = "//span[@class='lexsensereferences']/span[@class='lexsensereference']/span[@class='ownertype_name']/span[text()='Whole']/ancestor::span[1]/following-sibling::node()//span[@class='configtarget']/span[@class='gloss']/span[@lang='en' and text()='b2']";
 			AssertThatXmlIn.String(result).HasNoMatchForXpath(badTarget2);
@@ -5117,14 +5107,14 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		public void GenerateLetterHeaderIfNeeded_GeneratesHeaderIfNoPreviousHeader()
 		{
 			var entry = CreateInterestingLexEntry(Cache);
-			using (var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
+			using (var xhtmlWriter = XmlWriter.Create(XHTMLStringBuilder))
 			{
 				// SUT
 				string last = null;
-				XHTMLWriter.WriteStartElement("TestElement");
-				ConfiguredXHTMLGenerator.GenerateLetterHeaderIfNeeded(entry, ref last, XHTMLWriter, DefaultSettings);
-				XHTMLWriter.WriteEndElement();
-				XHTMLWriter.Flush();
+				xhtmlWriter.WriteStartElement("TestElement");
+				ConfiguredXHTMLGenerator.GenerateLetterHeaderIfNeeded(entry, ref last, xhtmlWriter, DefaultSettings);
+				xhtmlWriter.WriteEndElement();
+				xhtmlWriter.Flush();
 				const string letterHeaderToMatch = "//div[@class='letHead']/span[@class='letter' and @lang='fr' and text()='C c']";
 				AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(letterHeaderToMatch, 1);
 			}
@@ -5134,14 +5124,14 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		public void GenerateLetterHeaderIfNeeded_GeneratesHeaderIfPreviousHeaderDoesNotMatch()
 		{
 			var entry = CreateInterestingLexEntry(Cache);
-			using (var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
+			using (var xhtmlWriter = XmlWriter.Create(XHTMLStringBuilder))
 			{
 				// SUT
 				var last = "A a";
-				XHTMLWriter.WriteStartElement("TestElement");
-				ConfiguredXHTMLGenerator.GenerateLetterHeaderIfNeeded(entry, ref last, XHTMLWriter, DefaultSettings);
-				XHTMLWriter.WriteEndElement();
-				XHTMLWriter.Flush();
+				xhtmlWriter.WriteStartElement("TestElement");
+				ConfiguredXHTMLGenerator.GenerateLetterHeaderIfNeeded(entry, ref last, xhtmlWriter, DefaultSettings);
+				xhtmlWriter.WriteEndElement();
+				xhtmlWriter.Flush();
 				const string letterHeaderToMatch = "//div[@class='letHead']/span[@class='letter' and @lang='fr' and text()='C c']";
 				AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(letterHeaderToMatch, 1);
 			}
@@ -5151,14 +5141,14 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		public void GenerateLetterHeaderIfNeeded_GeneratesHeaderForSuffixWithNewBaseLetter()
 		{
 			var entry = CreateInterestingSuffix(Cache, " ba");
-			using (var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
+			using (var xhtmlWriter = XmlWriter.Create(XHTMLStringBuilder))
 			{
 				// SUT
 				var last = "A a";
-				XHTMLWriter.WriteStartElement("TestElement");
-				ConfiguredXHTMLGenerator.GenerateLetterHeaderIfNeeded(entry, ref last, XHTMLWriter, DefaultSettings);
-				XHTMLWriter.WriteEndElement();
-				XHTMLWriter.Flush();
+				xhtmlWriter.WriteStartElement("TestElement");
+				ConfiguredXHTMLGenerator.GenerateLetterHeaderIfNeeded(entry, ref last, xhtmlWriter, DefaultSettings);
+				xhtmlWriter.WriteEndElement();
+				xhtmlWriter.Flush();
 				const string letterHeaderToMatch = "//div[@class='letHead']/span[@class='letter' and @lang='fr' and text()='B b']";
 				AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(letterHeaderToMatch, 1);
 			}
@@ -5168,15 +5158,15 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		public void GenerateLetterHeaderIfNeeded_GeneratesNoHeaderIfPreviousHeaderDoesMatch()
 		{
 			var entry = CreateInterestingLexEntry(Cache);
-			using (var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
+			using (var xhtmlWriter = XmlWriter.Create(XHTMLStringBuilder))
 			{
 				// SUT
 				var last = "A a";
-				XHTMLWriter.WriteStartElement("TestElement");
-				ConfiguredXHTMLGenerator.GenerateLetterHeaderIfNeeded(entry, ref last, XHTMLWriter, DefaultSettings);
-				ConfiguredXHTMLGenerator.GenerateLetterHeaderIfNeeded(entry, ref last, XHTMLWriter, DefaultSettings);
-				XHTMLWriter.WriteEndElement();
-				XHTMLWriter.Flush();
+				xhtmlWriter.WriteStartElement("TestElement");
+				ConfiguredXHTMLGenerator.GenerateLetterHeaderIfNeeded(entry, ref last, xhtmlWriter, DefaultSettings);
+				ConfiguredXHTMLGenerator.GenerateLetterHeaderIfNeeded(entry, ref last, xhtmlWriter, DefaultSettings);
+				xhtmlWriter.WriteEndElement();
+				xhtmlWriter.Flush();
 				const string letterHeaderToMatch = "//div[@class='letHead']/span[@class='letter' and @lang='fr' and text()='C c']";
 				const string proveOnlyOneHeader = "//div[@class='letHead']/span[@class='letter']";
 				AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(letterHeaderToMatch, 1);
@@ -5385,7 +5375,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 				if (!MiscUtils.IsUnix)
 					AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(pictureWithComposedPath, 1);
 				// that src contains a string, and escaping any Windows path separators
-				AssertRegex(result, string.Format("src=\"[^\"]*{0}[^\"]*\"", pictureRelativePath.Replace(@"\", @"\\")), 1);
+				AssertRegex(result, $"src=\"[^\"]*{pictureRelativePath.Replace(@"\", @"\\")}[^\"]*\"", 1);
 				// The second file with the same name should have had something appended to the end of the filename but the initial filename should match both entries
 				var filenameWithoutExtension = Path.GetFileNameWithoutExtension(pictureRelativePath);
 				var pictureStartsWith = "/div[@class='lexentry']/span[@class='pictures']/span[@class='picture']/img[contains(@src, '" + filenameWithoutExtension + "')]";
@@ -5697,10 +5687,10 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 				var testEntry = CreateInterestingLexEntry(Cache);
 				const string customData = @"I am custom sense data";
 				var wsEn = Cache.WritingSystemFactory.GetWsFromStr("en");
-				var testSence = testEntry.SensesOS[0];
+				var testSense = testEntry.SensesOS[0];
 
 				// Set custom field data
-				Cache.MainCacheAccessor.SetString(testSence.Hvo, customField.Flid, TsStringUtils.MakeString(customData, wsEn));
+				Cache.MainCacheAccessor.SetString(testSense.Hvo, customField.Flid, TsStringUtils.MakeString(customData, wsEn));
 				var settings = new GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
 				//SUT
 				var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, settings);
@@ -5757,8 +5747,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		[Test]
 		public void GenerateXHTMLForEntry_StringCustomFieldOnAllomorphGeneratesContent()
 		{
-			using (var customField = new CustomFieldForTest(Cache, "CustomString", Cache.MetaDataCacheAccessor.GetClassId("MoForm"), 0,
-			 CellarPropertyType.String, Guid.Empty))
+			using (var customField = new CustomFieldForTest(Cache, "CustomString", Cache.MetaDataCacheAccessor.GetClassId("MoForm"), 0, CellarPropertyType.String, Guid.Empty))
 			{
 				var customFieldNode = new ConfigurableDictionaryNode
 				{
@@ -6227,8 +6216,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		[Test]
 		public void GenerateXHTMLForEntry_WsAudiowithHyperlink()
 		{
-			CoreWritingSystemDefinition wsEnAudio;
-			Cache.ServiceLocator.WritingSystemManager.GetOrSet("en-Zxxx-x-audio", out wsEnAudio);
+			Cache.ServiceLocator.WritingSystemManager.GetOrSet("en-Zxxx-x-audio", out var wsEnAudio);
 			Cache.ServiceLocator.WritingSystems.AddToCurrentVernacularWritingSystems(wsEnAudio);
 			var headwordNode = new ConfigurableDictionaryNode
 			{
@@ -6537,8 +6525,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		[Test]
 		public void GenerateXHTMLForEntry_WsAudiowithRelativePaths()
 		{
-			CoreWritingSystemDefinition wsEnAudio;
-			Cache.ServiceLocator.WritingSystemManager.GetOrSet("en-Zxxx-x-audio", out wsEnAudio);
+			Cache.ServiceLocator.WritingSystemManager.GetOrSet("en-Zxxx-x-audio", out var wsEnAudio);
 			Cache.ServiceLocator.WritingSystems.AddToCurrentVernacularWritingSystems(wsEnAudio);
 			var headwordNode = new ConfigurableDictionaryNode
 			{
@@ -6575,9 +6562,8 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		[Test]
 		public void GenerateXHTMLForEntry_WsAudioCrashOnPrimarySelection()
 		{
-			CoreWritingSystemDefinition wsEn, wsEnAudio;
-			Cache.ServiceLocator.WritingSystemManager.GetOrSet("en-Zxxx-x-audio", out wsEnAudio);
-			Cache.ServiceLocator.WritingSystemManager.GetOrSet("en", out wsEn);
+			Cache.ServiceLocator.WritingSystemManager.GetOrSet("en-Zxxx-x-audio", out var wsEnAudio);
+			Cache.ServiceLocator.WritingSystemManager.GetOrSet("en", out var wsEn);
 
 			try
 			{
@@ -6590,7 +6576,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 				Cache.ServiceLocator.WritingSystems.AnalysisWritingSystems.Add(wsEnAudio);
 				Cache.ServiceLocator.WritingSystems.AnalysisWritingSystems.Add(wsEn);
 
-				var DictionaryNodeSenseOptions = new DictionaryNodeSenseOptions
+				var dictionaryNodeSenseOptions = new DictionaryNodeSenseOptions
 				{
 					ShowSharedGrammarInfoFirst = true
 				};
@@ -6610,7 +6596,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 				{
 					FieldDescription = "SensesOS",
 					CSSClassNameOverride = "Senses",
-					DictionaryNodeOptions = DictionaryNodeSenseOptions,
+					DictionaryNodeOptions = dictionaryNodeSenseOptions,
 					Children = new List<ConfigurableDictionaryNode> { gramInfoNode }
 				};
 				var mainEntryNode = new ConfigurableDictionaryNode
@@ -7328,7 +7314,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			// The second example of the first sense should not be published at all, since it is not published in main and
 			// its owner is not published in test.
 			var entryCorps = CreateInterestingLexEntry(Cache, "corps", "body");
-			var Pronunciation = AddPronunciationToEntry(entryCorps, "pronunciation", _wsFr, Cache);
+			var pronunciation = AddPronunciationToEntry(entryCorps, "pronunciation", _wsFr, Cache);
 			var exampleCorpsBody1 = AddExampleToSense(entryCorps.SensesOS[0], "Le corps est gros.", "The body is big.");
 			var exampleCorpsBody2 = AddExampleToSense(entryCorps.SensesOS[0], "Le corps est esprit.", "The body is spirit.");
 			AddSenseToEntry(entryCorps, "corpse", _wsEn, Cache);
@@ -7339,7 +7325,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			sensePic.Caption.set_String(wsFr, TsStringUtils.MakeString("caption", wsFr));
 			entryCorps.SensesOS[0].PicturesOS.Add(sensePic);
 
-			Pronunciation.DoNotPublishInRC.Add(typeTest);
+			pronunciation.DoNotPublishInRC.Add(typeTest);
 			entryCorps.SensesOS[0].DoNotPublishInRC.Add(typeTest);
 			exampleCorpsBody1.DoNotPublishInRC.Add(typeTest);
 			exampleCorpsBody2.DoNotPublishInRC.Add(typeMain);   // should not show at all!
@@ -7777,7 +7763,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			var thirdComplexForm = CreateInterestingLexEntry(Cache, "entry3", "myComplexForm");
 			CreateComplexForm(Cache, entryEntry, thirdComplexForm, false); //Compound
 
-			int flidVirtual = Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries;
+			var flidVirtual = Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries;
 			var pubMain = new DictionaryPublicationDecorator(Cache, Cache.GetManagedSilDataAccess(), flidVirtual, typeMain);
 
 			var complexFormTypeNameNode = new ConfigurableDictionaryNode
@@ -7840,7 +7826,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			var thirdComplexForm = CreateInterestingLexEntry(Cache, "entry3", "myComplexForm");
 			CreateComplexForm(Cache, entryEntry, thirdComplexForm, false); //Compound
 
-			int flidVirtual = Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries;
+			var flidVirtual = Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries;
 			var pubMain = new DictionaryPublicationDecorator(Cache, Cache.GetManagedSilDataAccess(), flidVirtual, typeMain);
 
 			var complexFormTypeNameNode = new ConfigurableDictionaryNode
@@ -8017,7 +8003,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 				DictionaryNodeOptions = new DictionaryNodeListAndParaOptions { DisplayEachInAParagraph = true },
 				FieldDescription = "Subentries"
 			};
-			var SenseNode = new ConfigurableDictionaryNode
+			var senseNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "SensesOS",
 				CSSClassNameOverride = "senses",
@@ -8026,7 +8012,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			};
 			var mainEntryNode = new ConfigurableDictionaryNode
 			{
-				Children = new List<ConfigurableDictionaryNode> { SenseNode, subentryNode },
+				Children = new List<ConfigurableDictionaryNode> { senseNode, subentryNode },
 				FieldDescription = "LexEntry"
 			};
 			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
@@ -8047,7 +8033,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			AddHeadwordToEntry(lexentry1, "femme", _wsFr);
 			var lexentry2 = CreateInterestingLexEntry(Cache);
 			AddHeadwordToEntry(lexentry2, "homme", _wsFr);
-			int flidVirtual = Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries;
+			var flidVirtual = Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries;
 			var pubEverything = new DictionaryPublicationDecorator(Cache, Cache.GetManagedSilDataAccess(), flidVirtual);
 			var glossNode = new ConfigurableDictionaryNode { FieldDescription = "Gloss", DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "en" }) };
 			var SenseNode = new ConfigurableDictionaryNode
@@ -8106,12 +8092,12 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		public void SavePublishedHtmlWithStyles_SortByNonHeadwordProducesNoLetHead()
 		{
 			var firstAEntry = CreateInterestingLexEntry(Cache);
-			var firstAHeadword = "alpha1";
-			var bHeadword = "beta";
+			const string firstAHeadword = "alpha1";
+			const string bHeadword = "beta";
 			AddHeadwordToEntry(firstAEntry, firstAHeadword, _wsFr);
 			var bEntry = CreateInterestingLexEntry(Cache);
 			AddHeadwordToEntry(bEntry, bHeadword, _wsFr);
-			int flidVirtual = Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries;
+			var flidVirtual = Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries;
 			var pubEverything = new DictionaryPublicationDecorator(Cache, Cache.GetManagedSilDataAccess(), flidVirtual);
 			var mainHeadwordNode = new ConfigurableDictionaryNode
 			{
@@ -8149,15 +8135,15 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		public void SavePublishedHtmlWithStyles_ProducesHeadingsAndEntriesInOrder()
 		{
 			var firstAEntry = CreateInterestingLexEntry(Cache);
-			var firstAHeadword = "alpha1";
-			var secondAHeadword = "alpha2";
-			var bHeadword = "beta";
+			const string firstAHeadword = "alpha1";
+			const string secondAHeadword = "alpha2";
+			const string bHeadword = "beta";
 			AddHeadwordToEntry(firstAEntry, firstAHeadword, _wsFr);
 			var secondAEntry = CreateInterestingLexEntry(Cache);
 			AddHeadwordToEntry(secondAEntry, secondAHeadword, _wsFr);
 			var bEntry = CreateInterestingLexEntry(Cache);
 			AddHeadwordToEntry(bEntry, bHeadword, _wsFr);
-			int flidVirtual = Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries;
+			var flidVirtual = Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries;
 			var pubEverything = new DictionaryPublicationDecorator(Cache, Cache.GetManagedSilDataAccess(), flidVirtual);
 			var mainHeadwordNode = new ConfigurableDictionaryNode
 			{
@@ -8391,7 +8377,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			var posNoun = CreatePartOfSpeech("noun", "n");
 			var posAdj = CreatePartOfSpeech("adjective", "adj");
 
-			var firstHeadword = "homme";
+			const string firstHeadword = "homme";
 			var firstEntry = CreateInterestingLexEntry(Cache);
 			AddHeadwordToEntry(firstEntry, firstHeadword, _wsFr);
 			AddSingleSubSenseToSense("man", firstEntry.SensesOS[0]);
@@ -8399,7 +8385,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			firstEntry.SensesOS[0].MorphoSyntaxAnalysisRA = msa1;
 			firstEntry.SensesOS[0].SensesOS[0].MorphoSyntaxAnalysisRA = msa1;
 
-			var secondHeadword = "femme";
+			const string secondHeadword = "femme";
 			var secondEntry = CreateInterestingLexEntry(Cache);
 			AddHeadwordToEntry(secondEntry, secondHeadword, _wsFr);
 			AddSenseAndTwoSubsensesToEntry(secondEntry, "woman");
@@ -8687,14 +8673,14 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			var comRefType = CreateLexRefType(LexRefTypeTags.MappingTypes.kmtEntryCollection, comRefTypeName, "cf", string.Empty, string.Empty);
 			if (SeparateReferences)
 			{
-				const string Guid1 = "11111111-f1ac-4950-8562-4d617e0ace18";
-				const string Guid2 = "22222222-e929-4202-8886-b156a4c035f5";
-				const string Guid3 = "33333333-9a03-49bc-8375-2ab9bafbc90b";
+				const string guid1 = "11111111-f1ac-4950-8562-4d617e0ace18";
+				const string guid2 = "22222222-e929-4202-8886-b156a4c035f5";
+				const string guid3 = "33333333-9a03-49bc-8375-2ab9bafbc90b";
 
 				// these have specific Guids so we know they would be in this order if ordered by Guid
-				CreateLexReference(comRefType, new List<ICmObject> { mainEntry, compareReferencedEntry1 }, new Guid(Guid1));
-				CreateLexReference(comRefType, new List<ICmObject> { mainEntry, compareReferencedEntry2 }, new Guid(Guid2));
-				CreateLexReference(comRefType, new List<ICmObject> { mainEntry, compareReferencedEntry3 }, new Guid(Guid3));
+				CreateLexReference(comRefType, new List<ICmObject> { mainEntry, compareReferencedEntry1 }, new Guid(guid1));
+				CreateLexReference(comRefType, new List<ICmObject> { mainEntry, compareReferencedEntry2 }, new Guid(guid2));
+				CreateLexReference(comRefType, new List<ICmObject> { mainEntry, compareReferencedEntry3 }, new Guid(guid3));
 			}
 			else
 			{
@@ -9328,9 +9314,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		[TestCase("\ud81b\udf00test", false, "\ud81b\udf00t")]
 		public void GetIndexLettersOfHeadword(string headWord, bool onlyFirstLetter, string expected)
 		{
-			var actual = typeof(ConfiguredXHTMLGenerator)
-				.GetMethod("GetIndexLettersOfHeadword", BindingFlags.NonPublic | BindingFlags.Static)
-				.Invoke(null, new object[] {headWord, onlyFirstLetter});
+			var actual = typeof(ConfiguredXHTMLGenerator).GetMethod("GetIndexLettersOfHeadword", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] {headWord, onlyFirstLetter});
 			Assert.AreEqual(expected, actual, $"{onlyFirstLetter} {headWord}");
 		}
 
@@ -9348,12 +9332,10 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			AddHeadwordToEntry(thirdEntry, "famille", _wsFr);
 			var currentPage = new Tuple<int, int>(0, 2);
 			var adjacentPage = new Tuple<int, int>(2, 2);
-			Tuple<int, int> current;
-			Tuple<int, int> adjacent;
 			var settings = new GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, "");
 			// SUT
 			ConfiguredXHTMLGenerator.GenerateAdjustedPageButtons(new[] { firstEntry.Hvo, secondEntry.Hvo, thirdEntry.Hvo }, settings, currentPage, adjacentPage, 2,
-				out current, out adjacent);
+				out var current, out var adjacent);
 			Assert.IsNull(adjacent, "The Adjacent page should have been consumed into the current page");
 			Assert.AreEqual(0, current.Item1, "Current page should start at 0");
 			Assert.AreEqual(2, current.Item2, "Current page should end at 2");
@@ -9372,11 +9354,9 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			AddHeadwordToEntry(thirdEntry, "famille", _wsFr);
 			var currentPage = new Tuple<int, int>(1, 2);
 			var adjPage = new Tuple<int, int>(0, 1);
-			Tuple<int, int> current;
-			Tuple<int, int> adjacent;
 			var settings = new GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, "");
 			// SUT
-			ConfiguredXHTMLGenerator.GenerateAdjustedPageButtons(new[] { firstEntry.Hvo, secondEntry.Hvo, thirdEntry.Hvo }, settings, currentPage, adjPage, 2, out current, out adjacent);
+			ConfiguredXHTMLGenerator.GenerateAdjustedPageButtons(new[] { firstEntry.Hvo, secondEntry.Hvo, thirdEntry.Hvo }, settings, currentPage, adjPage, 2, out var current, out var adjacent);
 			Assert.IsNull(adjacent, "The Adjacent page should have been consumed into the current page");
 			Assert.AreEqual(0, current.Item1, "Current page should start at 0");
 			Assert.AreEqual(2, current.Item2, "Current page should end at 2");
@@ -9399,11 +9379,9 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 
 			var currentPage = new Tuple<int, int>(0, 2);
 			var adjPage = new Tuple<int, int>(3, 4);
-			Tuple<int, int> current;
-			Tuple<int, int> adjacent;
 			var settings = new GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, string.Empty);
 			// SUT
-			ConfiguredXHTMLGenerator.GenerateAdjustedPageButtons(new[] { firstEntry.Hvo, secondEntry.Hvo, thirdEntry.Hvo, fourthEntry.Hvo }, settings, currentPage, adjPage, 1, out current, out adjacent);
+			ConfiguredXHTMLGenerator.GenerateAdjustedPageButtons(new[] { firstEntry.Hvo, secondEntry.Hvo, thirdEntry.Hvo, fourthEntry.Hvo }, settings, currentPage, adjPage, 1, out var current, out var adjacent);
 			Assert.AreEqual(0, current.Item1, "Current page should start at 0");
 			Assert.AreEqual(3, current.Item2, "Current page should end at 3");
 			Assert.AreEqual(4, adjacent.Item1, "Adjacent page should start at 4");
@@ -9427,11 +9405,9 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 
 			var adjPage = new Tuple<int, int>(0, 2);
 			var currentPage = new Tuple<int, int>(3, 4);
-			Tuple<int, int> current;
-			Tuple<int, int> adjacent;
 			var settings = new GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, string.Empty);
 			// SUT
-			ConfiguredXHTMLGenerator.GenerateAdjustedPageButtons(new[] { firstEntry.Hvo, secondEntry.Hvo, thirdEntry.Hvo, fourthEntry.Hvo }, settings, currentPage, adjPage, 1, out current, out adjacent);
+			ConfiguredXHTMLGenerator.GenerateAdjustedPageButtons(new[] { firstEntry.Hvo, secondEntry.Hvo, thirdEntry.Hvo, fourthEntry.Hvo }, settings, currentPage, adjPage, 1, out var current, out var adjacent);
 			Assert.AreEqual(2, current.Item1, "Current page should start at 2");
 			Assert.AreEqual(4, current.Item2, "Current page should end at 4");
 			Assert.AreEqual(0, adjacent.Item1, "Adjacent page should start at 0");
@@ -9477,13 +9453,11 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			{
 				var adjPage = new Tuple<int, int>(0, 2);
 				var currentPage = new Tuple<int, int>(3, 3);
-				Tuple<int, int> current;
-				Tuple<int, int> adjacent;
 				var settings = new GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, string.Empty);
 
 				// SUT
 				var entries = ConfiguredXHTMLGenerator.GenerateNextFewEntries(pubEverything, new[] { firstEntry.Hvo, secondEntry.Hvo, thirdEntry.Hvo, fourthEntry.Hvo }, configPath,
-					settings, currentPage, adjPage, 1, out current, out adjacent);
+					settings, currentPage, adjPage, 1, out _, out _);
 				Assert.AreEqual(1, entries.Count, "No entries generated");
 				Assert.That(entries[0], Is.StringContaining(thirdEntry.HeadWord.Text));
 			}
@@ -9532,13 +9506,11 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			{
 				var adjPage = new Tuple<int, int>(2, 3);
 				var currentPage = new Tuple<int, int>(0, 1);
-				Tuple<int, int> current;
-				Tuple<int, int> adjacent;
 				var settings = new GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, string.Empty);
 
 				// SUT
 				var entries = ConfiguredXHTMLGenerator.GenerateNextFewEntries(pubEverything, new[] { firstEntry.Hvo, secondEntry.Hvo, thirdEntry.Hvo, fourthEntry.Hvo }, configPath,
-					settings, currentPage, adjPage, 2, out current, out adjacent);
+					settings, currentPage, adjPage, 2, out _, out var adjacent);
 				Assert.AreEqual(2, entries.Count, "Not enough entries generated");
 				Assert.That(entries[0], Is.StringContaining(thirdEntry.HeadWord.Text));
 				Assert.That(entries[1], Is.StringContaining(fourthEntry.HeadWord.Text));
@@ -9962,8 +9934,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		{
 			var senseFactory = Cache.ServiceLocator.GetInstance<ILexSenseFactory>();
 			var sense = senseFactory.Create();
-			var entry = entryOrSense as ILexEntry;
-			if (entry != null)
+			if (entryOrSense is ILexEntry entry)
 			{
 				entry.SensesOS.Add(sense);
 			}
@@ -10028,7 +9999,6 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		private static IStText CreateMultiParaText(string content, LcmCache cache)
 		{
 			var text = cache.ServiceLocator.GetInstance<ITextFactory>().Create();
-			//cache.LangProject.
 			var stText = cache.ServiceLocator.GetInstance<IStTextFactory>().Create();
 			cache.LangProject.InterlinearTexts.Add(stText);
 			text.ContentsOA = stText;
@@ -10082,8 +10052,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 				return;
 			}
 			var wsManager = Cache.ServiceLocator.WritingSystemManager;
-			CoreWritingSystemDefinition hebrew;
-			wsManager.GetOrSet("he", out hebrew);
+			wsManager.GetOrSet("he", out var hebrew);
 			hebrew.RightToLeftScript = true;
 			_wsHe = hebrew.Handle;
 		}

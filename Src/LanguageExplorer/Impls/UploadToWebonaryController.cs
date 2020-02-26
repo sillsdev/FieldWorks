@@ -37,11 +37,11 @@ namespace LanguageExplorer.Impls
 
 		public IPropertyTable PropertyTable { get; }
 
-		public UploadToWebonaryController(LcmCache cache, IPropertyTable propertyTable, IPublisher publisher, StatusBar statusBar)
+		public UploadToWebonaryController(LcmCache cache, IPropertyTable propertyTable, StatusBar statusBar)
 		{
 			m_cache = cache;
 			PropertyTable = propertyTable;
-			m_exportService = new DictionaryExportService(cache, PropertyTable.GetValue<IRecordListRepository>(LanguageExplorerConstants.RecordListRepository).ActiveRecordList, propertyTable, publisher, statusBar);
+			m_exportService = new DictionaryExportService(cache, PropertyTable.GetValue<IRecordListRepository>(LanguageExplorerConstants.RecordListRepository).ActiveRecordList, propertyTable, statusBar);
 			m_publicationActivator = new PublicationActivator(propertyTable);
 		}
 

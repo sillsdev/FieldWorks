@@ -4,6 +4,7 @@
 
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using SIL.LCModel.Core.KernelInterfaces;
 
 namespace LanguageExplorer.Controls.XMLViews
@@ -55,24 +56,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// Gets a value indicating whether this instance has atomic fields.
 		/// </summary>
-		public bool HasAtomicFields
-		{
-			get
-			{
-				if (AtomicFields.Count > 0)
-				{
-					return true;
-				}
-				foreach (var info in SeqFields)
-				{
-					if (!info.IsSequence)
-					{
-						return true;
-					}
-				}
-				return false;
-			}
-		}
+		public bool HasAtomicFields => AtomicFields.Count > 0 || SeqFields.Any(info => !info.IsSequence);
 
 		/// <summary>
 		/// Answer the class of objects for which we are collecting fields.
@@ -233,9 +217,7 @@ namespace LanguageExplorer.Controls.XMLViews
 
 		private static string GetFancyFieldName(int flid, IFwMetaDataCache mdc)
 		{
-			var f = mdc.GetFieldName(flid);
-			var c = mdc.GetOwnClsName(flid);
-			return c + '_' + f;
+			return $"{mdc.GetOwnClsName(flid)}_{mdc.GetFieldName(flid)}";
 		}
 
 		private sealed class VirtualNeededPropertyInfo : NeededPropertyInfo

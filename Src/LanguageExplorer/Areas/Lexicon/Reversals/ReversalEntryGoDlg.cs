@@ -173,7 +173,7 @@ namespace LanguageExplorer.Areas.Lexicon.Reversals
 						break;
 
 					default:
-						throw new ArgumentException(@"Unrecognized field.", "field");
+						throw new ArgumentException(@"Unrecognized field.", nameof(field));
 				}
 			}
 
@@ -199,13 +199,7 @@ namespace LanguageExplorer.Areas.Lexicon.Reversals
 			/// <summary />
 			protected override bool IsFieldMultiString(SearchField field)
 			{
-				switch (field.Flid)
-				{
-					case ReversalIndexEntryTags.kflidReversalForm:
-						return true;
-				}
-
-				throw new ArgumentException(@"Unrecognized field.", "field");
+				return field.Flid == ReversalIndexEntryTags.kflidReversalForm ? true : throw new ArgumentException(@"Unrecognized field.", nameof(field));
 			}
 
 			protected override IEnumerable<int> FilterResults(IEnumerable<int> results)

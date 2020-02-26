@@ -30,39 +30,20 @@ namespace LanguageExplorer.DictionaryConfiguration
 			var xnConfig = layoutTypes[0].Element("configure");
 			Debug.Assert(xnConfig != null);
 			var configClass = XmlUtils.GetMandatoryAttributeValue(xnConfig, "class");
-			foreach (var xn in converter.GetLayoutTypes())
-			{
-				var xnConfigure = xn.Element("configure");
-				if (XmlUtils.GetMandatoryAttributeValue(xnConfigure, "class") == configClass)
-				{
-					layoutTypes.Add(xn);
-				}
-			}
+			layoutTypes.AddRange(converter.GetLayoutTypes().Where(xn => XmlUtils.GetMandatoryAttributeValue(xn.Element("configure"), "class") == configClass));
 			foreach (var xnLayoutType in layoutTypes)
 			{
 				if (xnLayoutType.Name.LocalName != "layoutType")
 				{
 					continue;
 				}
-				var sLabel = XmlUtils.GetOptionalAttributeValue(xnLayoutType, "label");
-				if (sLabel == "$wsName") // if the label for the layout matches $wsName then this is a reversal index layout
+				if (XmlUtils.GetOptionalAttributeValue(xnLayoutType, "label") == "$wsName") // if the label for the layout matches $wsName then this is a reversal index layout
 				{
 					var sLayout = XmlUtils.GetOptionalAttributeValue(xnLayoutType, "layout");
 					Debug.Assert(sLayout.EndsWith("-$ws"));
-					var fReversalIndex = true;
-					foreach (var config in xnLayoutType.Elements())
-					{
-						if (config.Name.LocalName != "configure")
-						{
-							continue;
-						}
-						var sClass = XmlUtils.GetOptionalAttributeValue(config, "class");
-						if (sClass != "ReversalIndexEntry")
-						{
-							fReversalIndex = false;
-							break;
-						}
-					}
+					var fReversalIndex = xnLayoutType.Elements()
+						.Where(config => config.Name.LocalName == "configure")
+						.Select(config => XmlUtils.GetOptionalAttributeValue(config, "class")).All(sClass => sClass == "ReversalIndexEntry");
 					if (!fReversalIndex)
 					{
 						continue;
@@ -74,8 +55,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 						converter.ExpandWsTaggedNodes(sWsTag);  // just in case we have a new index.
 																// Create a copy of the layoutType node for the specific writing system.
 						var xnRealLayout = CreateWsSpecficLayoutType(xnLayoutType, ws.DisplayLabel, sLayout.Replace("$ws", sWsTag), sWsTag);
-						var rgltnStyle = BuildLayoutTree(xnRealLayout, converter);
-						converter.AddDictionaryTypeItem(xnRealLayout, rgltnStyle);
+						converter.AddDictionaryTypeItem(xnRealLayout, BuildLayoutTree(xnRealLayout, converter));
 					}
 				}
 				else
@@ -171,93 +151,100 @@ namespace LanguageExplorer.DictionaryConfiguration
 		{
 			var fMerging = iStart < ltnParent.Nodes.Count;
 			var className = XmlUtils.GetMandatoryAttributeValue(layout, "class");
-			var nodes = PartGenerator.GetGeneratedChildren(layout, converter.Cache, new[] { "ref", "label" });
-			foreach (var node in nodes)
+			foreach (var node in PartGenerator.GetGeneratedChildren(layout, converter.Cache, new[] { "ref", "label" }))
 			{
-				if (node.Name.LocalName == "sublayout")
+				switch (node.Name.LocalName)
 				{
-					Debug.Assert(!fMerging);
-					var subLayoutName = XmlUtils.GetOptionalAttributeValue(node, "name", null);
-					var subLayout = subLayoutName == null ? node : converter.GetLayoutElement(className, subLayoutName);
-					if (subLayout != null)
-					{
-						AddChildNodes(subLayout, ltnParent, ltnParent.Nodes.Count, converter);
-					}
-				}
-				else if (node.Name == "part")
-				{
-					// Check whether this node has already been added to this parent.  Don't add
-					// it if it's already there!
-					var ltnOld = FindMatchingNode(ltnParent, node);
-					if (ltnOld != null)
-					{
-						continue;
-					}
-					var sRef = XmlUtils.GetMandatoryAttributeValue(node, "ref");
-					var part = converter.GetPartElement(className, sRef);
-					if (part == null && sRef != "$child")
-					{
-						continue;
-					}
-					var fHide = XmlUtils.GetOptionalBooleanAttributeValue(node, "hideConfig", false);
-					LayoutTreeNode ltn;
-					var cOrig = 0;
-					if (!fHide)
-					{
-						ltn = new LayoutTreeNode(node, converter, className)
-						{
-							OriginalIndex = ltnParent.Nodes.Count,
-							ParentLayout = layout,
-							HiddenNode = converter.LayoutLevels.HiddenPartRef,
-							HiddenNodeLayout = converter.LayoutLevels.HiddenLayout
-						};
-						if (!string.IsNullOrEmpty(ltn.LexRelType))
-						{
-							converter.BuildRelationTypeList(ltn);
-						}
-
-						if (!string.IsNullOrEmpty(ltn.EntryType))
-						{
-							converter.BuildEntryTypeList(ltn, ltnParent.LayoutName);
-						}
-						ltnParent.Nodes.Add(ltn);
-					}
-					else
+					case "sublayout":
 					{
 						Debug.Assert(!fMerging);
-						ltn = ltnParent;
-						cOrig = ltn.Nodes.Count;
-						if (className == "StTxtPara")
+						var subLayoutName = XmlUtils.GetOptionalAttributeValue(node, "name", null);
+						var subLayout = subLayoutName == null ? node : converter.GetLayoutElement(className, subLayoutName);
+						if (subLayout != null)
 						{
-							ltnParent.HiddenChildLayout = layout;
-							ltnParent.HiddenChild = node;
+							AddChildNodes(subLayout, ltnParent, ltnParent.Nodes.Count, converter);
 						}
+						break;
 					}
-					try
+					default:
 					{
-						converter.LayoutLevels.Push(node, layout);
-						var fOldAdding = ltn.AddingSubnodes;
-						ltn.AddingSubnodes = true;
-						if (part != null)
+						if (node.Name == "part")
 						{
-							ProcessChildNodes(part.Elements(), className, ltn, converter);
+							// Check whether this node has already been added to this parent.  Don't add
+							// it if it's already there!
+							var ltnOld = FindMatchingNode(ltnParent, node);
+							if (ltnOld != null)
+							{
+								continue;
+							}
+							var sRef = XmlUtils.GetMandatoryAttributeValue(node, "ref");
+							var part = converter.GetPartElement(className, sRef);
+							if (part == null && sRef != "$child")
+							{
+								continue;
+							}
+							var fHide = XmlUtils.GetOptionalBooleanAttributeValue(node, "hideConfig", false);
+							LayoutTreeNode ltn;
+							var cOrig = 0;
+							if (!fHide)
+							{
+								ltn = new LayoutTreeNode(node, converter, className)
+								{
+									OriginalIndex = ltnParent.Nodes.Count,
+									ParentLayout = layout,
+									HiddenNode = converter.LayoutLevels.HiddenPartRef,
+									HiddenNodeLayout = converter.LayoutLevels.HiddenLayout
+								};
+								if (!string.IsNullOrEmpty(ltn.LexRelType))
+								{
+									converter.BuildRelationTypeList(ltn);
+								}
+
+								if (!string.IsNullOrEmpty(ltn.EntryType))
+								{
+									converter.BuildEntryTypeList(ltn, ltnParent.LayoutName);
+								}
+								ltnParent.Nodes.Add(ltn);
+							}
+							else
+							{
+								Debug.Assert(!fMerging);
+								ltn = ltnParent;
+								cOrig = ltn.Nodes.Count;
+								if (className == "StTxtPara")
+								{
+									ltnParent.HiddenChildLayout = layout;
+									ltnParent.HiddenChild = node;
+								}
+							}
+							try
+							{
+								converter.LayoutLevels.Push(node, layout);
+								var fOldAdding = ltn.AddingSubnodes;
+								ltn.AddingSubnodes = true;
+								if (part != null)
+								{
+									ProcessChildNodes(part.Elements(), className, ltn, converter);
+								}
+								ltn.OriginalNumberOfSubnodes = ltn.Nodes.Count;
+								ltn.AddingSubnodes = fOldAdding;
+								if (!fHide)
+								{
+									continue;
+								}
+								var cNew = ltn.Nodes.Count - cOrig;
+								if (cNew > 1)
+								{
+									var msg = $"{cNew} nodes for a hidden PartRef ({node.GetOuterXml()})!";
+									converter.LogConversionError(msg);
+								}
+							}
+							finally
+							{
+								converter.LayoutLevels.Pop();
+							}
 						}
-						ltn.OriginalNumberOfSubnodes = ltn.Nodes.Count;
-						ltn.AddingSubnodes = fOldAdding;
-						if (!fHide)
-						{
-							continue;
-						}
-						var cNew = ltn.Nodes.Count - cOrig;
-						if (cNew > 1)
-						{
-							var msg = $"{cNew} nodes for a hidden PartRef ({node.GetOuterXml()})!";
-							converter.LogConversionError(msg);
-						}
-					}
-					finally
-					{
-						converter.LayoutLevels.Pop();
+						break;
 					}
 				}
 			}
@@ -285,33 +272,30 @@ namespace LanguageExplorer.DictionaryConfiguration
 		private static void StoreChildNodeInfo(XElement xn, string className, LayoutTreeNode ltn, ILayoutConverter converter)
 		{
 			var xnCaller = converter.LayoutLevels.PartRef ?? ltn.Configuration;
-			var hideConfig = xnCaller != null && XmlUtils.GetOptionalBooleanAttributeValue(xnCaller, "hideConfig", false);
 			// Insert any special configuration appropriate for this property...unless the caller is hidden, in which case,
 			// we don't want to configure it at all.
 			var sField = XmlUtils.GetMandatoryAttributeValue(xn, "field");
-			if (!ltn.IsTopLevel && !hideConfig)
+			if (!ltn.IsTopLevel && !(xnCaller != null && XmlUtils.GetOptionalBooleanAttributeValue(xnCaller, "hideConfig", false)))
 			{
-				if (sField == "Senses" && (ltn.ClassName == "LexEntry" || ltn.ClassName == "LexSense"))
+				switch (sField)
 				{
-					ltn.ShowSenseConfig = true;
-				}
-				else if (sField == "ReferringSenses" && ltn.ClassName == "ReversalIndexEntry")
-				{
-					ltn.ShowSenseConfig = true;
-				}
-				if (sField == "MorphoSyntaxAnalysis" && ltn.ClassName == "LexSense")
-				{
-					ltn.ShowGramInfoConfig = true;
-				}
-				if (sField == "VisibleComplexFormBackRefs" || sField == "ComplexFormsNotSubentries")
-				{
-					//The existence of the attribute is important for this setting, not its value!
-					var sShowAsIndentedPara = XmlUtils.GetOptionalAttributeValue(ltn.Configuration, "showasindentedpara");
-					ltn.ShowComplexFormParaConfig = !string.IsNullOrEmpty(sShowAsIndentedPara);
+					case "Senses" when ltn.ClassName == "LexEntry" || ltn.ClassName == "LexSense":
+					case "ReferringSenses" when ltn.ClassName == "ReversalIndexEntry":
+						ltn.ShowSenseConfig = true;
+						break;
+					case "MorphoSyntaxAnalysis" when ltn.ClassName == "LexSense":
+						ltn.ShowGramInfoConfig = true;
+						break;
+					case "VisibleComplexFormBackRefs":
+					case "ComplexFormsNotSubentries":
+					{
+						//The existence of the attribute is important for this setting, not its value!
+						ltn.ShowComplexFormParaConfig = !string.IsNullOrEmpty(XmlUtils.GetOptionalAttributeValue(ltn.Configuration, "showasindentedpara"));
+						break;
+					}
 				}
 			}
-			var fRecurse = XmlUtils.GetOptionalBooleanAttributeValue(ltn.Configuration, "recurseConfig", true);
-			if (!fRecurse)
+			if (!XmlUtils.GetOptionalBooleanAttributeValue(ltn.Configuration, "recurseConfig", true))
 			{
 				// We don't want to recurse forever just because senses have subsenses, which
 				// can have subsenses, which can ...
@@ -401,8 +385,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 				{
 					// Complain if we can't find either a layout or a part, and the name isn't tagged
 					// for a writing system.  (We check only for English, being lazy.)
-					var msg = $"Missing jtview layout for class=\"{rgsClasses[0]}\" name=\"{sLayout}\"";
-					converter.LogConversionError(msg);
+					converter.LogConversionError($"Missing jtview layout for class=\"{rgsClasses[0]}\" name=\"{sLayout}\"");
 				}
 			}
 		}

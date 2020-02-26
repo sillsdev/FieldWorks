@@ -33,8 +33,6 @@ namespace LanguageExplorer.Areas.Lists.Tools.ChartTempEdit
 		private CollapsingSplitContainer _collapsingSplitContainer;
 		private CharttempMenuHelper _toolMenuHelper;
 		private IRecordList _recordList;
-		[Import(AreaServices.ListsAreaMachineName)]
-		private IArea _area;
 		private LcmCache _cache;
 
 		#region Implementation of IMajorFlexComponent
@@ -129,7 +127,8 @@ namespace LanguageExplorer.Areas.Lists.Tools.ChartTempEdit
 		/// <summary>
 		/// Get the area for the tool.
 		/// </summary>
-		public IArea Area => _area;
+		[field: Import(AreaServices.ListsAreaMachineName)]
+		public IArea Area { get; private set; }
 
 		/// <summary>
 		/// Get the image for the area.
@@ -164,7 +163,6 @@ namespace LanguageExplorer.Areas.Lists.Tools.ChartTempEdit
 				NonUndoableUnitOfWorkHelper.Do(cache.ActionHandlerAccessor, () => cache.LanguageProject.GetDefaultChartTemplate());
 				template = MyList;
 			}
-
 			return new TreeBarHandlerAwarePossibilityRecordList(recordListId, statusBar, cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(),
 				template, new PossibilityTreeBarHandler(flexComponentParameters.PropertyTable, true, true, false, "best analysis"));
 		}
@@ -184,7 +182,6 @@ namespace LanguageExplorer.Areas.Lists.Tools.ChartTempEdit
 
 				_majorFlexComponentParameters = majorFlexComponentParameters;
 				_sharedListToolsUiWidgetMenuHelper = new SharedListToolsUiWidgetMenuHelper(majorFlexComponentParameters, tool, list, recordList, dataTree);
-
 				SetupToolUiWidgets(tool);
 			}
 

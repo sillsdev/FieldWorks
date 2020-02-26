@@ -61,13 +61,7 @@ namespace LanguageExplorer.Areas.Notebook
 
 		protected override bool IsFieldMultiString(SearchField field)
 		{
-			switch (field.Flid)
-			{
-				case RnGenericRecTags.kflidTitle:
-					return false;
-			}
-
-			throw new ArgumentException("Unrecognized field.", nameof(field));
+			return field.Flid == RnGenericRecTags.kflidTitle ? false : throw new ArgumentException("Unrecognized field.", nameof(field));
 		}
 
 		/// <inheritdoc />

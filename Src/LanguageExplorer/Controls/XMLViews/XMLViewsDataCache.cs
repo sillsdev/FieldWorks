@@ -114,12 +114,7 @@ namespace LanguageExplorer.Controls.XMLViews
 					return base.get_IntProp(hvo, tag);
 				case ktagActiveColumn: // Fall through
 				case ktagItemEnabled: // Fall through
-					int result;
-					if (m_integerCache.TryGetValue(new HvoFlidKey(hvo, tag), out result))
-					{
-						return result;
-					}
-					return 0;
+					return m_integerCache.TryGetValue(new HvoFlidKey(hvo, tag), out var result) ? result : 0;
 				case ktagItemSelected:
 					return GetItemSelectedValue(hvo);
 			}
@@ -127,12 +122,7 @@ namespace LanguageExplorer.Controls.XMLViews
 
 		private int GetItemSelectedValue(int hvo)
 		{
-			int sel;
-			if (SelectedCache.TryGetValue(hvo, out sel))
-			{
-				return sel;
-			}
-			return DefaultSelected ? 1 : 0;
+			return SelectedCache.TryGetValue(hvo, out var sel) ? sel : DefaultSelected ? 1 : 0;
 		}
 
 		/// <summary>
@@ -238,16 +228,8 @@ namespace LanguageExplorer.Controls.XMLViews
 					return result1;
 				}
 			}
-			ITsString result;
-			if (m_mlStringCache.TryGetValue(new HvoFlidWSKey(hvo, tag, ws), out result))
-			{
-				return result;
-			}
-			if (tag == m_tagReversalEntriesBulkText && result1 != null)
-			{
-				return result1;
-			}
-			return TsStringUtils.EmptyString(ws);
+			return m_mlStringCache.TryGetValue(new HvoFlidWSKey(hvo, tag, ws), out var result) ? result
+				: tag == m_tagReversalEntriesBulkText && result1 != null ? result1 : TsStringUtils.EmptyString(ws);
 		}
 
 		/// <summary>
@@ -287,8 +269,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				return base.get_StringProp(hvo, tag);
 			}
-			ITsString result;
-			if (m_stringCache.TryGetValue(new HvoFlidKey(hvo, tag), out result))
+			if (m_stringCache.TryGetValue(new HvoFlidKey(hvo, tag), out var result))
 			{
 				return result;
 			}
@@ -310,14 +291,8 @@ namespace LanguageExplorer.Controls.XMLViews
 					return TsStringUtils.EmptyString(x.Ws);
 				}
 			}
-			if (tss != null)
-			{
-				var ws = TsStringUtils.GetWsOfRun(tss, 0);
-				return TsStringUtils.EmptyString(ws);
-			}
-			// Enhance JohnT: might be desirable to return empty string rather than crashing,
-			// but as things stand, we don't know what would be a sensible WS.
-			throw new InvalidOperationException("trying to read a preview value not previously cached");
+
+			return tss != null ? TsStringUtils.EmptyString(TsStringUtils.GetWsOfRun(tss, 0)) : throw new InvalidOperationException("trying to read a preview value not previously cached");
 		}
 
 		/// <summary>
@@ -328,8 +303,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			if ((tag == ktagAlternateValue) || (tag >= ktagAlternateValueMultiBase && tag < ktagAlternateValueMultiBaseLim))
 			{
 				var oldLen = 0;
-				ITsString oldVal;
-				if (m_stringCache.TryGetValue(new HvoFlidKey(hvo, tag), out oldVal))
+				if (m_stringCache.TryGetValue(new HvoFlidKey(hvo, tag), out var oldVal))
 				{
 					oldLen = oldVal.Length;
 				}

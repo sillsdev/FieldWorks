@@ -17,8 +17,7 @@ namespace LanguageExplorer.Controls
 		/// </summary>
 		public int GetCount(int tag)
 		{
-			int value;
-			return m_cpropPrev.TryGetValue(tag, out value) ? value : -1;
+			return m_cpropPrev.TryGetValue(tag, out var value) ? value : -1;
 		}
 
 		/// <summary>

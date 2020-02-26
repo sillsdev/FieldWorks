@@ -22,7 +22,6 @@ namespace LanguageExplorer.Areas.TextsAndWords
 {
 	internal sealed class TryAWordRootSite : RootSiteControl
 	{
-		private ISharedEventHandlers _sharedEventHandlers;
 		private InterlinVc m_vc;
 		private ITsString m_sWordForm;
 		private IWfiWordform m_wordform;
@@ -31,11 +30,6 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		private List<int> m_msaHvoList = new List<int>();
 		private bool m_fRootMade;
 		private int m_labelWidth;
-
-		public TryAWordRootSite(ISharedEventHandlers sharedEventHandlers)
-		{
-			_sharedEventHandlers = sharedEventHandlers;
-		}
 
 		#region Overrides of SimpleRootSite
 
@@ -189,9 +183,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			RootBox.Reconstruct();
 			using (new HoldGraphics(this))
 			{
-				Rectangle rcSrcRoot;
-				Rectangle rcDstRoot;
-				GetCoordRects(out rcSrcRoot, out rcDstRoot);
+				GetCoordRects(out var rcSrcRoot, out var rcDstRoot);
 				var rgvsli = new SelLevInfo[1];
 				rgvsli[0].ihvo = 0;
 				rgvsli[0].tag = m_cache.MetaDataCacheAccessor.GetFieldId2(CmObjectTags.kClassId, "Self", false);
@@ -202,9 +194,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 					m_tryAWordSandbox.Left = 150;
 					return; // can't position it accurately.
 				}
-				Rect rcPrimary, rcSec;
-				bool fSplit, fEndBeforeAnchor;
-				sel.Location(m_graphicsManager.VwGraphics, rcSrcRoot, rcDstRoot, out rcPrimary, out rcSec, out fSplit, out fEndBeforeAnchor);
+				sel.Location(m_graphicsManager.VwGraphics, rcSrcRoot, rcDstRoot, out var rcPrimary, out _, out _, out _);
 				if (m_vc.RightToLeft)
 				{
 					m_tryAWordSandbox.Left = rcPrimary.right - m_tryAWordSandbox.Width;

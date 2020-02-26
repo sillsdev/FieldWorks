@@ -81,12 +81,10 @@ namespace LanguageExplorer.Filters
 		/// </summary>
 		public override bool SameFinder(IStringFinder other)
 		{
-			var other2 = other as OneIndirectAtomMlPropFinder;
-			if (other2 == null)
-			{
-				return false;
-			}
-			return other2.FlidAtom == FlidAtom && other2.DataAccess == DataAccess && other2.FlidString == FlidString && other2.Ws == Ws;
+			return other is OneIndirectAtomMlPropFinder oneIndirectAtomMlPropFinder && oneIndirectAtomMlPropFinder.FlidAtom == FlidAtom
+																					&& oneIndirectAtomMlPropFinder.DataAccess == DataAccess
+																					&& oneIndirectAtomMlPropFinder.FlidString == FlidString
+																					&& oneIndirectAtomMlPropFinder.Ws == Ws;
 		}
 
 		#endregion

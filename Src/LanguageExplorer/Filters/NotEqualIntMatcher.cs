@@ -47,8 +47,7 @@ namespace LanguageExplorer.Filters
 		/// </summary>
 		public override bool SameMatcher(IMatcher other)
 		{
-			var other2 = other as NotEqualIntMatcher;
-			return other2 != null && other2.NotEqualValue == NotEqualValue;
+			return other is NotEqualIntMatcher notEqualIntMatcher && notEqualIntMatcher.NotEqualValue == NotEqualValue;
 		}
 
 		#endregion

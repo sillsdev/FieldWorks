@@ -33,8 +33,8 @@ namespace LanguageExplorer.Areas
 
 		public override bool IsControllingTheRecordTreeBar
 		{
-			get { return true; }
-			set { base.IsControllingTheRecordTreeBar = true; }
+			get => true;
+			set => base.IsControllingTheRecordTreeBar = true;
 		}
 
 		public override ITreeBarHandler MyTreeBarHandler => _possibilityTreeBarHandler;

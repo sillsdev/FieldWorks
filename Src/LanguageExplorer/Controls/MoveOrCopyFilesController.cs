@@ -97,7 +97,7 @@ namespace LanguageExplorer.Controls
 			}
 			if (File.Exists(sNewFile))
 			{
-				if (MessageBox.Show(String.Format(FwCoreDlgs.ksAlreadyExists, sNewFile), FwCoreDlgs.kstidWarning, MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.No)
+				if (MessageBox.Show(string.Format(FwCoreDlgs.ksAlreadyExists, sNewFile), FwCoreDlgs.kstidWarning, MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.No)
 				{
 					return sFile;
 				}

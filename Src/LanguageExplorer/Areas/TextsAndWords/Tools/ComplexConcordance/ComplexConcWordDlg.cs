@@ -152,8 +152,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 
 		private void UpdateTextBoxWs(ComboBox wsComboBox, FwTextBox textBox)
 		{
-			var ws = wsComboBox.SelectedItem as CoreWritingSystemDefinition;
-			if (ws == null)
+			if (!(wsComboBox.SelectedItem is CoreWritingSystemDefinition ws))
 			{
 				Debug.Assert(wsComboBox.SelectedIndex == -1);
 				return;

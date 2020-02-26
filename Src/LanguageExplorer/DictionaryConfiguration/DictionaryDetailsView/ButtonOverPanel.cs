@@ -19,9 +19,9 @@ namespace LanguageExplorer.DictionaryConfiguration.DictionaryDetailsView
 			ButtonToolTip = DictionaryConfigurationStrings.ConfigureReferencedHeadwordsTooltip;
 		}
 
-		public string ButtonText { set { button.Text = value; } }
+		public string ButtonText { set => button.Text = value; }
 
-		public string ButtonToolTip { set { m_tt.SetToolTip(button, value); } }
+		public string ButtonToolTip { set => m_tt.SetToolTip(button, value); }
 
 		public UserControl PanelContents
 		{
@@ -44,8 +44,8 @@ namespace LanguageExplorer.DictionaryConfiguration.DictionaryDetailsView
 
 		public event EventHandler ButtonClicked
 		{
-			add { button.Click += value; }
-			remove { button.Click -= value; }
+			add => button.Click += value;
+			remove => button.Click -= value;
 		}
 
 		/// <summary>

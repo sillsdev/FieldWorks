@@ -86,10 +86,7 @@ namespace LanguageExplorer.Areas
 
 		private void ExportTranslatedList(TextWriter w, ICmPossibilityList list)
 		{
-			var owner = list.Owner.ClassName;
-			var field = m_cache.MetaDataCacheAccessor.GetFieldName(list.OwningFlid);
-			var itemClass = m_cache.MetaDataCacheAccessor.GetClassName(list.ItemClsid);
-			w.WriteLine("<List owner=\"{0}\" field=\"{1}\" itemClass=\"{2}\">", owner, field, itemClass);
+			w.WriteLine("<List owner=\"{0}\" field=\"{1}\" itemClass=\"{2}\">", list.Owner.ClassName, m_cache.MetaDataCacheAccessor.GetFieldName(list.OwningFlid), m_cache.MetaDataCacheAccessor.GetClassName(list.ItemClsid));
 			ExportMultiUnicode(w, list.Name);
 			ExportMultiUnicode(w, list.Abbreviation);
 			ExportMultiString(w, list.Description);

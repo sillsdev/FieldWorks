@@ -175,7 +175,9 @@ namespace LanguageExplorer.Controls
 		{
 			// if we haven't already enabled a font, do so now.
 			if (m_font == null)
+			{
 				SetFontToCurrentWs();
+			}
 			base.AddResultString(s);
 		}
 

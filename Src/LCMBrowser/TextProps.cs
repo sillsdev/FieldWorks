@@ -26,8 +26,7 @@ namespace LCMBrowser
 		/// <summary />
 		public TextProps(int irun, ITsString tss, LcmCache cache)
 		{
-			TsRunInfo runinfo;
-			var ttp = tss.FetchRunInfo(irun, out runinfo);
+			var ttp = tss.FetchRunInfo(irun, out var runinfo);
 			IchMin = runinfo.ichMin;
 			IchLim = runinfo.ichLim;
 			SetProps(ttp, cache);

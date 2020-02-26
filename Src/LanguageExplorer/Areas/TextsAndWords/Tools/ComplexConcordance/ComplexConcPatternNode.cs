@@ -32,7 +32,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 
 		public ComplexConcPatternNode Parent
 		{
-			get { return m_parent; }
+			get => m_parent;
 			set
 			{
 				if (value == null)
@@ -49,7 +49,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 
 		public ComplexConcPatternSda Sda
 		{
-			get { return m_sda; }
+			get => m_sda;
 			set
 			{
 				if (value == null)
@@ -115,18 +115,22 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 			var fs = new FeatureStruct();
 			foreach (var kvp in values)
 			{
-				if (kvp.Key is IFsComplexFeature)
+				switch (kvp.Key)
 				{
-					var childValues = (IDictionary<IFsFeatDefn, object>)kvp.Value;
-					fs.AddValue(featSys.GetFeature(kvp.Key.Hvo.ToString(CultureInfo.InvariantCulture)), GetFeatureStruct(featSys, childValues));
-				}
-				else if (kvp.Key is IFsClosedFeature)
-				{
-					var value = (ClosedFeatureValue)kvp.Value;
-					var symFeat = featSys.GetFeature<SymbolicFeature>(kvp.Key.Hvo.ToString(CultureInfo.InvariantCulture));
-
-					var symbol = symFeat.PossibleSymbols[value.Symbol.Hvo.ToString(CultureInfo.InvariantCulture)];
-					fs.AddValue(symFeat, value.Negate ? new SymbolicFeatureValue(symFeat.PossibleSymbols.Except(symbol.ToEnumerable())) : new SymbolicFeatureValue(symbol));
+					case IFsComplexFeature _:
+					{
+						var childValues = (IDictionary<IFsFeatDefn, object>)kvp.Value;
+						fs.AddValue(featSys.GetFeature(kvp.Key.Hvo.ToString(CultureInfo.InvariantCulture)), GetFeatureStruct(featSys, childValues));
+						break;
+					}
+					case IFsClosedFeature _:
+					{
+						var value = (ClosedFeatureValue)kvp.Value;
+						var symFeat = featSys.GetFeature<SymbolicFeature>(kvp.Key.Hvo.ToString(CultureInfo.InvariantCulture));
+						var symbol = symFeat.PossibleSymbols[value.Symbol.Hvo.ToString(CultureInfo.InvariantCulture)];
+						fs.AddValue(symFeat, value.Negate ? new SymbolicFeatureValue(symFeat.PossibleSymbols.Except(symbol.ToEnumerable())) : new SymbolicFeatureValue(symbol));
+						break;
+					}
 				}
 			}
 			return fs;

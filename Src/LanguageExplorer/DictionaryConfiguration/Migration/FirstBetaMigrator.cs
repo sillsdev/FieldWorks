@@ -151,12 +151,10 @@ namespace LanguageExplorer.DictionaryConfiguration.Migration
 
 		private static bool IsComplexFormsNode(ConfigurableDictionaryNode node)
 		{
-			var options = node.DictionaryNodeOptions as DictionaryNodeListOptions;
-			return options != null && options.ListId == ListIds.Complex;
+			return node.DictionaryNodeOptions is DictionaryNodeListOptions options && options.ListId == ListIds.Complex;
 		}
 
-		private static void MigratePartFromOldVersionToCurrent(ISimpleLogger logger, DictionaryConfigurationModel oldConfig, ConfigurableDictionaryNode oldConfigPart,
-			ConfigurableDictionaryNode currentDefaultConfigPart)
+		private static void MigratePartFromOldVersionToCurrent(ISimpleLogger logger, DictionaryConfigurationModel oldConfig, ConfigurableDictionaryNode oldConfigPart, ConfigurableDictionaryNode currentDefaultConfigPart)
 		{
 			var oldVersion = oldConfig.Version;
 			if (oldVersion < FirstAlphaMigrator.VersionAlpha3)
@@ -227,17 +225,18 @@ namespace LanguageExplorer.DictionaryConfiguration.Migration
 			{
 				DictionaryConfigurationServices.PerformActionOnNodes(part.Children, node =>
 				{
-					if (node.DisplayLabel == "Primary Entry References" && node.FieldDescription == "EntryRefsWithThisMainSense")
+					switch (node.DisplayLabel)
 					{
-						node.FieldDescription = "MainEntryRefs";
-						node.HideCustomFields = true;
-						node.Before = "  (";
-						node.After = ")";
-					}
-					if (node.DisplayLabel == "Primary Entry(s)" && node.FieldDescription == "PrimarySensesOrEntries")
-					{
-						node.FieldDescription = "ConfigReferencedEntries";
-						node.CSSClassNameOverride = "referencedentries";
+						case "Primary Entry References" when node.FieldDescription == "EntryRefsWithThisMainSense":
+							node.FieldDescription = "MainEntryRefs";
+							node.HideCustomFields = true;
+							node.Before = "  (";
+							node.After = ")";
+							break;
+						case "Primary Entry(s)" when node.FieldDescription == "PrimarySensesOrEntries":
+							node.FieldDescription = "ConfigReferencedEntries";
+							node.CSSClassNameOverride = "referencedentries";
+							break;
 					}
 				});
 			}
@@ -347,8 +346,7 @@ namespace LanguageExplorer.DictionaryConfiguration.Migration
 			// Rename all the reversals based on the ws id (the user's  name for copies is still stored inside the file)
 			foreach (var fName in dictConfigFiles)
 			{
-				int version;
-				var wsValue = GetWritingSystemNameAndVersion(fName, out version);
+				var wsValue = GetWritingSystemNameAndVersion(fName, out var version);
 				if (string.IsNullOrEmpty(wsValue) || version >= DictionaryConfigurationServices.VersionCurrent)
 				{
 					continue;
@@ -364,19 +362,9 @@ namespace LanguageExplorer.DictionaryConfiguration.Migration
 				}
 				else
 				{
-					var files = Directory.GetFiles(Path.GetDirectoryName(fName));
-					var count = 0;
-					for (var i = 0; i < files.Length; i++)
-					{
-						if (Path.GetFileNameWithoutExtension(files[i]).StartsWith(wsValue))
-						{
-							var m = Regex.Match(Path.GetFileName(files[i]), wsValue + @"\d*\.");
-							if (m.Success)
-							{
-								count++;
-							}
-						}
-					}
+					var count = (Directory.GetFiles(Path.GetDirectoryName(fName))
+						.Where(file => Path.GetFileNameWithoutExtension(file).StartsWith(wsValue))
+						.Select(file => Regex.Match(Path.GetFileName(file), wsValue + @"\d*\."))).Count(m => m.Success);
 					newFName = $"{wsValue}{count}{LanguageExplorerConstants.DictionaryConfigurationFileExtension}";
 					newFName = Path.Combine(Path.GetDirectoryName(fName), newFName);
 					File.Move(fName, newFName);
@@ -422,8 +410,7 @@ namespace LanguageExplorer.DictionaryConfiguration.Migration
 		private static void MigrateNewChildNodesAndOptionsInto(ConfigurableDictionaryNode destinationNode, ConfigurableDictionaryNode sourceNode)
 		{
 			// REVIEW (Hasso) 2017.03: If this is a NoteInParaStyles node: Rather than overwriting the user's Options, copy their Options into a new WS&ParaOptions
-			if ((destinationNode.DictionaryNodeOptions == null || DictionaryConfigurationModel.NoteInParaStyles.Contains(sourceNode.FieldDescription))
-			    && sourceNode.DictionaryNodeOptions != null)
+			if ((destinationNode.DictionaryNodeOptions == null || DictionaryConfigurationModel.NoteInParaStyles.Contains(sourceNode.FieldDescription)) && sourceNode.DictionaryNodeOptions != null)
 			{
 				destinationNode.DictionaryNodeOptions = sourceNode.DictionaryNodeOptions;
 			}
@@ -454,15 +441,14 @@ namespace LanguageExplorer.DictionaryConfiguration.Migration
 			if (sourceNode.StyleType != StyleTypes.Default && destinationNode.StyleType == StyleTypes.Default)
 			{
 				var nodeStyleType = sourceNode.StyleType;
-				var nodeParaOpts = destinationNode.DictionaryNodeOptions as IParaOption;
-				if (nodeParaOpts != null)
+				if (destinationNode.DictionaryNodeOptions is IParaOption nodeParaOpts)
 				{
 					nodeStyleType = nodeParaOpts.DisplayEachInAParagraph ? StyleTypes.Paragraph : StyleTypes.Character;
 				}
 				destinationNode.StyleType = nodeStyleType;
 			}
-			if (sourceNode.StyleType == destinationNode.StyleType && // in case the user changed, for example, from Paragraph to Character style
-				!string.IsNullOrEmpty(sourceNode.Style) && string.IsNullOrEmpty(destinationNode.Style))
+			// in case the user changed, for example, from Paragraph to Character style
+			if (sourceNode.StyleType == destinationNode.StyleType && !string.IsNullOrEmpty(sourceNode.Style) && string.IsNullOrEmpty(destinationNode.Style))
 			{
 				destinationNode.Style = sourceNode.Style;
 			}
@@ -530,11 +516,12 @@ namespace LanguageExplorer.DictionaryConfiguration.Migration
 			return possibleMatches.FirstOrDefault(n => n.Label == label);
 		}
 
-		private static void InsertNewNodeIntoOldConfig(ConfigurableDictionaryNode destinationParentNode, ConfigurableDictionaryNode newChildNode,
-			ConfigurableDictionaryNode sourceParentNode, int indexInSourceParentNode)
+		private static void InsertNewNodeIntoOldConfig(ConfigurableDictionaryNode destinationParentNode, ConfigurableDictionaryNode newChildNode, ConfigurableDictionaryNode sourceParentNode, int indexInSourceParentNode)
 		{
 			if (indexInSourceParentNode == 0)
+			{
 				destinationParentNode.Children.Insert(0, newChildNode);
+			}
 			else
 			{
 				var olderSiblingLabel = sourceParentNode.Children[indexInSourceParentNode - 1].Label;

@@ -47,30 +47,15 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		public bool ShowAllTypesCheckBoxVisible
 		{
-			get
-			{
-				return m_showAllTypesCheckBox.Visible;
-			}
-			set
-			{
-				m_showAllTypesCheckBox.Visible = value;
-			}
+			get => m_showAllTypesCheckBox.Visible;
+			set => m_showAllTypesCheckBox.Visible = value;
 		}
 
 		private void m_showAllTypesCheckBox_CheckedChanged(object sender, EventArgs e)
 		{
 			// If a node is selected, try selecting again when we get through.
 			var selected = SelectedObject;
-			IEnumerable<ICmObject> candidates;
-			if (m_showAllTypesCheckBox.Checked)
-			{
-				var form = (IMoForm)m_obj;
-				candidates = form.GetAllMorphTypeReferenceTargetCandidates();
-			}
-			else
-			{
-				candidates = m_obj.ReferenceTargetCandidates(m_flid);
-			}
+			var candidates = m_showAllTypesCheckBox.Checked ? ((IMoForm)m_obj).GetAllMorphTypeReferenceTargetCandidates() : m_obj.ReferenceTargetCandidates(m_flid);
 			LoadTree(ObjectLabel.CreateObjectLabels(Cache, candidates, m_displayNameProperty, "best analorvern"), null, false);
 			MakeSelection(selected);
 		}

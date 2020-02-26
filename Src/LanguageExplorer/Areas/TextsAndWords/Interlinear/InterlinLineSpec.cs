@@ -27,10 +27,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		private int m_flidString; // the string property to use with m_ws
 		private ITsString m_tssWsLabel;
 
-		public InterlinLineSpec()
-		{
-		}
-
 		/// <summary>
 		/// Compare the public property getters to the given spec.
 		/// </summary>
@@ -49,11 +45,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// </summary>
 		public int StringFlid
 		{
-			get
-			{
-				return m_flidString == 0 ? Flid : m_flidString;
-			}
-			set { m_flidString = value; }
+			get => m_flidString == 0 ? Flid : m_flidString;
+			set => m_flidString = value;
 		}
 
 		/// <summary>
@@ -61,7 +54,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// </summary>
 		public int WritingSystem
 		{
-			get { return m_ws; }
+			get => m_ws;
 			set
 			{
 				if (m_ws == value)
@@ -89,13 +82,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				// we depend upon someone else to determine the ws.
 				return 0;
 			}
-			int wsActual;
-			ITsString dummy;
 			// While displaying the morph bundle, we need the ws used by the Form. If we can't get the Form from the MoForm, we
 			// substitute with the Form stored in the WfiMorphBundle. But our system incorrectly assumes that this object
 			// is a MoForm, so we specify that if our object is a WfiMorphBundle, use the relevant flid.
-			var flid = cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvo) is IWfiMorphBundle ? WfiMorphBundleTags.kflidForm : StringFlid;
-			WritingSystemServices.TryWs(cache, WritingSystem, wsFallback, hvo, flid, out wsActual, out dummy);
+			WritingSystemServices.TryWs(cache, WritingSystem, wsFallback, hvo, cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvo) is IWfiMorphBundle ? WfiMorphBundleTags.kflidForm : StringFlid, out var wsActual, out _);
 			return wsActual;
 		}
 
@@ -103,7 +93,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		public bool MorphemeLevel
 		{
-			get { return m_fMorpheme; }
+			get => m_fMorpheme;
 			set
 			{
 				m_fMorpheme = value;
@@ -116,7 +106,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		public bool WordLevel
 		{
-			get { return m_fWord; }
+			get => m_fWord;
 			set
 			{
 				m_fWord = value;

@@ -94,9 +94,9 @@ namespace LanguageExplorer.Filters
 			var dt1 = DateTime.Now;
 			var tc1 = Environment.TickCount;
 #endif
-			if (Comparer is LcmCompare)
+			if (Comparer is LcmCompare lcmCompare)
 			{
-				((LcmCompare)Comparer).ComparisonNoter = this;
+				lcmCompare.ComparisonNoter = this;
 				m_comparisonsDone = 0;
 				m_percentDone = 0;
 				// Make sure at least 1 so we don't divide by zero.
@@ -119,7 +119,7 @@ namespace LanguageExplorer.Filters
 		public override void MergeInto(/*ref*/ List<IManyOnePathSortItem> records, List<IManyOnePathSortItem> newRecords)
 		{
 			var fc = new LcmCompare(PropertyName, _cache);
-			MergeInto(records, newRecords, (IComparer)fc);
+			MergeInto(records, newRecords, fc);
 			fc.CloseCollatingEngine(); // Release the ICU data file.
 		}
 	}

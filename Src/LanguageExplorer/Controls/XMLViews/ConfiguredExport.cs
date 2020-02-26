@@ -8,6 +8,7 @@ using System.Collections.Specialized;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml.Linq;
@@ -184,7 +185,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// Member AddStringProp
 		/// </summary>
-		public override void AddStringProp(int tag, IVwViewConstructor _vwvc)
+		public override void AddStringProp(int tag, IVwViewConstructor vwvc)
 		{
 			var ccOld = WriteFieldStartTag(tag);
 			var tss = DataAccess.get_StringProp(CurrentObject(), tag);
@@ -198,8 +199,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				return string.Empty;
 			}
-			string sWs;
-			if (m_dictWsStr.TryGetValue(ws, out sWs))
+			if (m_dictWsStr.TryGetValue(ws, out var sWs))
 			{
 				return sWs;
 			}
@@ -446,14 +446,16 @@ namespace LanguageExplorer.Controls.XMLViews
 			}
 			else
 			{
-				if (clid == LexEntryTags.kClassId && m_sFormat == "xhtml")
+				switch (clid)
 				{
-					WriteEntryLetterHeadIfNeeded(hvoItem);
+					case LexEntryTags.kClassId when m_sFormat == "xhtml":
+						WriteEntryLetterHeadIfNeeded(hvoItem);
+						break;
+					case ReversalIndexEntryTags.kClassId when m_sFormat == "xhtml":
+						WriteReversalLetterHeadIfNeeded(hvoItem);
+						break;
 				}
-				else if (clid == ReversalIndexEntryTags.kClassId && m_sFormat == "xhtml")
-				{
-					WriteReversalLetterHeadIfNeeded(hvoItem);
-				}
+
 				m_writer.WriteLine("<{0} id=\"hvo{1}\">", sClass, hvoItem);
 			}
 			m_rgElementTags.Add(sClass);
@@ -532,25 +534,10 @@ namespace LanguageExplorer.Controls.XMLViews
 				return string.Empty;
 			}
 			var sEntryPre = Icu.UnicodeString.ToLower(sEntryNFD, sWs);
-			Dictionary<string, string> mapChars;
 			// List of characters to ignore in creating letter heads.
-			ISet<string> chIgnoreList;
-			var sortChars = GetDigraphs(sWs, wsDigraphMap, wsCharEquivalentMap, wsIgnorableCharMap, cache, out mapChars, out chIgnoreList);
+			var sortChars = GetDigraphs(sWs, wsDigraphMap, wsCharEquivalentMap, wsIgnorableCharMap, cache, out var mapChars, out var chIgnoreList);
 			var sEntry = string.Empty;
-			if (chIgnoreList != null) // this list was built in GetDigraphs()
-			{
-				foreach (var ch in sEntryPre)
-				{
-					if (!chIgnoreList.Contains(ch.ToString(CultureInfo.InvariantCulture)))
-					{
-						sEntry += ch;
-					}
-				}
-			}
-			else
-			{
-				sEntry = sEntryPre;
-			}
+			sEntry = chIgnoreList != null ? sEntryPre.Where(ch => !chIgnoreList.Contains(ch.ToString(CultureInfo.InvariantCulture))).Aggregate(sEntry, (current, ch) => current + ch) : sEntryPre;
 			if (string.IsNullOrEmpty(sEntry))
 			{
 				return string.Empty; // check again
@@ -562,25 +549,15 @@ namespace LanguageExplorer.Controls.XMLViews
 			// with the representative of its equivalence class// replace subsorting chars by their main sort char. a << 'a << ^a, etc. are replaced by a.
 			do
 			{
-				foreach (var key in map.Keys)
-				{
-					sEntry = sEntry.Replace(key, map[key]);
-				}
+				sEntry = map.Keys.Aggregate(sEntry, (current, key) => current.Replace(key, map[key]));
 				fChanged = sEntryT != sEntry;
 				if (sEntry.Length > sEntryT.Length && map == mapChars)
 				{
 					// Rules like a -> a' repeat infinitely! To truncate this eliminate any rule whose output contains an input.
 					map = new Dictionary<string, string>(mapChars);
-					foreach (var kvp in mapChars)
+					foreach (var kvp in mapChars.Where(kvp => mapChars.Keys.Any(key1 => kvp.Value.Contains(key1))))
 					{
-						foreach (var key1 in mapChars.Keys)
-						{
-							if (kvp.Value.Contains(key1))
-							{
-								map.Remove(kvp.Key);
-								break;
-							}
-						}
+						map.Remove(kvp.Key);
 					}
 				}
 				sEntryT = sEntry;
@@ -676,14 +653,11 @@ namespace LanguageExplorer.Controls.XMLViews
 			mapChars = new Dictionary<string, string>();
 			var ws = cache.ServiceLocator.WritingSystemManager.Get(sWs);
 			wsDigraphMap[sWs] = digraphs;
-			var simpleCollation = ws.DefaultCollation as SimpleRulesCollationDefinition;
-			if (simpleCollation != null)
+			if (ws.DefaultCollation is SimpleRulesCollationDefinition simpleCollation)
 			{
 				if (!string.IsNullOrEmpty(simpleCollation.SimpleRules))
 				{
-					var rules = simpleCollation.SimpleRules.Replace(" ", "=");
-					var primaryParts = rules.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
-					foreach (var part in primaryParts)
+					foreach (var part in simpleCollation.SimpleRules.Replace(" ", "=").Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries))
 					{
 						BuildDigraphSet(part, sWs, wsDigraphMap);
 						MapRuleCharsToPrimary(part, sWs, wsCharEquivalentMap);
@@ -914,10 +888,8 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				return;     // subentries shouldn't trigger letter head change!
 			}
-			var entry = (IReversalIndexEntry)obj;
-			var idx = (IReversalIndex)objOwner;
-			var ws = m_cache.ServiceLocator.WritingSystemManager.Get(idx.WritingSystem);
-			var sEntry = entry.ReversalForm.get_String(ws.Handle).Text;
+			var ws = m_cache.ServiceLocator.WritingSystemManager.Get(((IReversalIndex)objOwner).WritingSystem);
+			var sEntry = ((IReversalIndexEntry)obj).ReversalForm.get_String(ws.Handle).Text;
 			if (string.IsNullOrEmpty(sEntry))
 			{
 				return;
@@ -1044,8 +1016,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				return;
 			}
-			ICmObject cmObject;
-			if (m_cache.ServiceLocator.GetInstance<ICmObjectRepository>().TryGetObject(hvo, out cmObject))
+			if (m_cache.ServiceLocator.GetInstance<ICmObjectRepository>().TryGetObject(hvo, out var cmObject))
 			{
 				sClass = cmObject.ClassName + "Link";
 				var sOut = $"<{sClass} target=\"hvo{hvo}\">";
@@ -1070,8 +1041,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				sClass2 = m_rgClassNames[iTopClass];
 			}
-			var safeField = MakeStringValidXmlElement(sField);
-			return !string.IsNullOrEmpty(sClass) ? $"{sClass}_{safeField}" : $"{sClass2}_{safeField}";
+			return !string.IsNullOrEmpty(sClass) ? $"{sClass}_{MakeStringValidXmlElement(sField)}" : $"{sClass2}_{MakeStringValidXmlElement(sField)}";
 		}
 
 		/// <summary>
@@ -1157,7 +1127,7 @@ namespace LanguageExplorer.Controls.XMLViews
 				var sDestClass = DataAccess.MetaDataCache.GetDstClsName(flid);
 				if (m_cc == CurrentContext.insideLink)
 				{
-					sDestClass = sDestClass + "Link";
+					sDestClass = $"{sDestClass}Link";
 				}
 				IndentLine();
 				m_writer.WriteLine(sFmt, sDestClass);
@@ -1292,8 +1262,7 @@ namespace LanguageExplorer.Controls.XMLViews
 				}
 				if (!string.IsNullOrEmpty(cssClass) && !cssClass.StartsWith("$fwstyle="))
 				{
-					XElement oldNode;
-					if (m_xhtml.TryGetNodeFromCssClass(cssClass, out oldNode))
+					if (m_xhtml.TryGetNodeFromCssClass(cssClass, out var oldNode))
 					{
 						// Trouble: we have some other node using the same style. This can legitimately happen
 						// if we output the same part with different writing systems selected, so deal with that.
@@ -1330,13 +1299,20 @@ namespace LanguageExplorer.Controls.XMLViews
 				else
 				{
 					var flowType = GetFlowType(frag);
-					if (flowType == "div" || flowType == "para")
+					switch (flowType)
 					{
-						m_writer.WriteLine("<div class=\"{0}\">", m_xhtml.GetValidCssClassName(cssClass));
-					}
-					else if (flowType != "divInPara")
-					{
-						m_writer.WriteLine("<span class=\"{0}\">", m_xhtml.GetValidCssClassName(cssClass));
+						case "div":
+						case "para":
+							m_writer.WriteLine("<div class=\"{0}\">", m_xhtml.GetValidCssClassName(cssClass));
+							break;
+						default:
+						{
+							if (flowType != "divInPara")
+							{
+								m_writer.WriteLine("<span class=\"{0}\">", m_xhtml.GetValidCssClassName(cssClass));
+							}
+							break;
+						}
 					}
 				}
 			}
@@ -1344,13 +1320,7 @@ namespace LanguageExplorer.Controls.XMLViews
 
 		private static string GetFlowType(XElement frag)
 		{
-			var flowType = XmlUtils.GetOptionalAttributeValue(frag, "flowType", null);
-			if (flowType != null)
-			{
-				return flowType;
-			}
-			var fShowAsPara = XmlUtils.GetOptionalBooleanAttributeValue(frag, "showasindentedpara", false);
-			return fShowAsPara ? "para" : null;
+			return XmlUtils.GetOptionalAttributeValue(frag, "flowType", null) ?? (XmlUtils.GetOptionalBooleanAttributeValue(frag, "showasindentedpara", false) ? "para" : null);
 		}
 
 		/// <summary>
@@ -1367,8 +1337,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				return;
 			}
-			string cssClass;
-			if (!m_mapXnToCssClass.TryGetValue(frag, out cssClass) || string.IsNullOrEmpty(cssClass))
+			if (!m_mapXnToCssClass.TryGetValue(frag, out var cssClass) || string.IsNullOrEmpty(cssClass))
 			{
 				return;
 			}
@@ -1391,8 +1360,7 @@ namespace LanguageExplorer.Controls.XMLViews
 				{
 					return;
 				}
-				List<string> envirs;
-				if (m_xhtml.MapCssToStyleEnv(cssClass, out envirs))
+				if (m_xhtml.MapCssToStyleEnv(cssClass, out var envirs))
 				{
 					if (!envirs.Contains(m_sActiveParaStyle))
 					{

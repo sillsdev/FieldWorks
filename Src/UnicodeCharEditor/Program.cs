@@ -50,8 +50,7 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 						// If the second argument is a Process ID (int), wait up to five minutes for the proces to exit and then clean up;
 						// otherwise, silently do nothing.
 						needCleanup = false;
-						int pid;
-						if (int.TryParse(args.LastOrDefault(), out pid))
+						if (int.TryParse(args.LastOrDefault(), out var pid))
 						{
 							var iterationCount = 0;
 							while (Process.GetProcesses().Any(p => p.Id == pid) && iterationCount < 300)

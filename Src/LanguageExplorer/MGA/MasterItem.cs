@@ -62,8 +62,8 @@ namespace LanguageExplorer.MGA
 
 		public virtual bool KindCanBeInDatabase()
 		{
-			return (m_eKind == MGAImageKind.radio || m_eKind == MGAImageKind.radioSelected || m_eKind == MGAImageKind.checkBox || m_eKind == MGAImageKind.checkedBox
-			        || m_eKind == MGAImageKind.userChoice || m_eKind == MGAImageKind.complex);
+			return m_eKind == MGAImageKind.radio || m_eKind == MGAImageKind.radioSelected || m_eKind == MGAImageKind.checkBox || m_eKind == MGAImageKind.checkedBox
+				   || m_eKind == MGAImageKind.userChoice || m_eKind == MGAImageKind.complex;
 		}
 
 		public virtual void AddToDatabase(LcmCache cache)

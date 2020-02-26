@@ -185,9 +185,7 @@ namespace LanguageExplorer.Areas.Lists.Tools
 			/*
 			      <item command="CmdDataTree_Insert_Possibility" /> // Shared
 			*/
-			var currentPossibility = _recordList.CurrentObject as ICmPossibility; // this will be null for the features 'list', but not to worry, since the menu won't be built for that tool.
-			var menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, CmdDataTree_Insert_Possibility_Click, ListResources.Insert_Subitem, image: AreaResources.AddSubItem.ToBitmap());
-			//menu.Tag = new List<object> { currentPossibility, _dataTree, _recordList, _majorFlexComponentParameters.FlexComponentParameters.PropertyTable, AreaServices.PopulateForSubitemInsert(_list, currentPossibility, ListResources.Insert_Subitem) };
+			ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, CmdDataTree_Insert_Possibility_Click, ListResources.Insert_Subitem, image: AreaResources.AddSubItem.ToBitmap());
 
 			// End: <menu id="mnuDataTree_SubPossibilities">
 

@@ -31,7 +31,7 @@ namespace LanguageExplorer.UtilityTools
 			return Label;
 		}
 
-		private string InvokePython(string arguments)
+		private static string InvokePython(string arguments)
 		{
 			using (var p = new Process())
 			{
@@ -63,10 +63,7 @@ namespace LanguageExplorer.UtilityTools
 		/// </remarks>
 		public UtilityDlg Dialog
 		{
-			set
-			{
-				m_dlg = value;
-			}
+			set => m_dlg = value;
 		}
 
 		/// <summary>

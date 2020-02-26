@@ -51,9 +51,7 @@ namespace LanguageExplorer.Controls.PaneBar
 			{
 				return; // can't draw anything, and will crash if we try
 			}
-			var beginColor = Color.FromArgb(0x58, 0x80, 0xd0);
-			var endColor = Color.FromArgb(0x08, 0x40, 0x98);
-			using (var brush = new LinearGradientBrush(rectangleToPaint, beginColor, endColor, LinearGradientMode.Vertical))
+			using (var brush = new LinearGradientBrush(rectangleToPaint, Color.FromArgb(0x58, 0x80, 0xd0), Color.FromArgb(0x08, 0x40, 0x98), LinearGradientMode.Vertical))
 			{
 				e.Graphics.FillRectangle(brush, rectangleToPaint);
 			}

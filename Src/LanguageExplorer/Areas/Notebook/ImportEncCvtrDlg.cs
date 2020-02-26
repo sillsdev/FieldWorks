@@ -75,7 +75,6 @@ namespace LanguageExplorer.Areas.Notebook
 			catch (Exception ex)
 			{
 				MessageBox.Show(this, string.Format(LanguageExplorerControls.ksErrorAccessingEncodingConverters, ex.Message));
-				return;
 			}
 		}
 
@@ -90,8 +89,7 @@ namespace LanguageExplorer.Areas.Notebook
 			m_cbEC.Sorted = true;
 			while (de.MoveNext())
 			{
-				var name = de.Key as string;
-				if (name != null)
+				if (de.Key is string name)
 				{
 					m_cbEC.Items.Add(name);
 				}

@@ -94,10 +94,7 @@ namespace LanguageExplorer.Areas
 		/// </summary>
 		public TreeNode SelectedNode
 		{
-			set
-			{
-				TreeView.SelectedNode = value;
-			}
+			set => TreeView.SelectedNode = value;
 		}
 
 		/// <summary>

@@ -5,6 +5,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Xml;
 using System.Xml.Linq;
 using System.Xml.XPath;
@@ -74,8 +75,7 @@ namespace LanguageExplorer.Impls
 
 		public ILexImportField GetAutoField(string className)
 		{
-			ILexImportField field;
-			m_autoFields.TryGetValue(className, out field);
+			m_autoFields.TryGetValue(className, out var field);
 			return field;
 		}
 
@@ -83,8 +83,7 @@ namespace LanguageExplorer.Impls
 		/// <remarks>assumes that the fwDest is only in one class</remarks>
 		public ILexImportField GetField(string fwDest, out string className)
 		{
-			List<string> classNames;
-			if (!m_allFields.TryGetValue(fwDest, out classNames))
+			if (!m_allFields.TryGetValue(fwDest, out var classNames))
 			{
 				className = string.Empty;
 				return null;
@@ -102,13 +101,7 @@ namespace LanguageExplorer.Impls
 
 		public ILexImportField GetField(string className, string fwDest)
 		{
-			Dictionary<string, ILexImportField> fields;
-			if (!m_classFields.TryGetValue(className, out fields))
-			{
-				return null;
-			}
-			ILexImportField field;
-			return !fields.TryGetValue(fwDest, out field) ? null : field;
+			return !m_classFields.TryGetValue(className, out var fields) ? null : !fields.TryGetValue(fwDest, out var field) ? null : field;
 		}
 
 		/// <summary>
@@ -116,8 +109,7 @@ namespace LanguageExplorer.Impls
 		/// </summary>
 		public bool AddField(string className, string partOf, ILexImportField field)
 		{
-			Dictionary<string, ILexImportField> fields;
-			if (!m_classFields.TryGetValue(className, out fields))
+			if (!m_classFields.TryGetValue(className, out var fields))
 			{
 				fields = new Dictionary<string, ILexImportField>();
 				m_classFields.Add(className, fields);
@@ -177,8 +169,7 @@ namespace LanguageExplorer.Impls
 			}
 			foreach (var className in classNames)
 			{
-				Dictionary<string, ILexImportField> fields;
-				if (!m_classFields.TryGetValue(className, out fields))
+				if (!m_classFields.TryGetValue(className, out var fields))
 				{
 					fields = new Dictionary<string, ILexImportField>();
 					m_classFields.Add(className, fields);
@@ -192,8 +183,7 @@ namespace LanguageExplorer.Impls
 				{
 					m_customFields.Add(field.CustomKey, field);
 				}
-				List<string> classnames;
-				if (!m_allFields.TryGetValue(field.ID, out classnames))
+				if (!m_allFields.TryGetValue(field.ID, out var classnames))
 				{
 					m_allFields.Add(field.ID, new List<string>(new string[] { className }));
 				}
@@ -212,8 +202,7 @@ namespace LanguageExplorer.Impls
 
 		public string HierarchyForClass(string className)
 		{
-			string partOf;
-			return m_classPartOf.TryGetValue(className, out partOf) ? partOf : "***UnknownClassName***";
+			return m_classPartOf.TryGetValue(className, out var partOf) ? partOf : "***UnknownClassName***";
 		}
 
 		/// <summary>
@@ -221,33 +210,22 @@ namespace LanguageExplorer.Impls
 		/// </summary>
 		public ICollection FieldsForClass(string className)
 		{
-			Dictionary<string, ILexImportField> fields;
-			return m_classFields.TryGetValue(className, out fields) ? fields.Values : null;
+			return m_classFields.TryGetValue(className, out var fields) ? fields.Values : null;
 		}
 
 		public string GetUIDestForName(string fieldName)
 		{
-			foreach (var classObj in m_classFields)
-			{
-				if (classObj.Value.ContainsKey(fieldName))
-				{
-					return classObj.Value[fieldName].UIName;
-				}
-			}
-			return null;
+			return m_classFields.Where(classObj => classObj.Value.ContainsKey(fieldName))
+				.Select(classObj => classObj.Value[fieldName].UIName).FirstOrDefault();
 		}
 
 		public bool GetDestinationForName(string name, out string className, out string fieldName)
 		{
-			foreach (var classObj in m_classFields)
+			foreach (var classObj in m_classFields.Where(classObj => classObj.Value.ContainsKey(name)))
 			{
-				if (classObj.Value.ContainsKey(name))
-				{
-
-					className = classObj.Key;
-					fieldName = classObj.Value[name].UIName;
-					return true;
-				}
+				className = classObj.Key;
+				fieldName = classObj.Value[name].UIName;
+				return true;
 			}
 			className = fieldName = string.Empty;
 			return false;
@@ -334,9 +312,7 @@ namespace LanguageExplorer.Impls
 					// is a abbrv field
 					field.IsAbbrField = m_AbbrSignatures.Contains(field.Signature);
 					AddField(className, partOf, field);
-
-					List<string> classnames;
-					if (!m_allFields.TryGetValue(field.ID, out classnames))
+					if (!m_allFields.TryGetValue(field.ID, out var classnames))
 					{
 						m_allFields.Add(field.ID, new List<string>(new[] { className }));
 					}

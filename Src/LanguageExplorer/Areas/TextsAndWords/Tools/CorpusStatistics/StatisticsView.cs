@@ -100,7 +100,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.CorpusStatistics
 		/// </summary>
 		public string AccName
 		{
-			get { return LanguageExplorerResources.ksTextAreaStatisticsViewName; }
+			get => LanguageExplorerResources.ksTextAreaStatisticsViewName;
 			set { /* Do nothing. */ ; }
 		}
 
@@ -205,8 +205,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.CorpusStatistics
 						foreach (var ws in valdWSs)
 						{
 							// increase the count of words(tokens) for this language
-							int count;
-							if (languageCount.TryGetValue(ws, out count))
+							if (languageCount.TryGetValue(ws, out var count))
 							{
 								languageCount[ws] = count + 1;
 							}
@@ -215,8 +214,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.CorpusStatistics
 								languageCount.Add(ws, 1);
 							}
 							//increase the count of unique words(types) for this language
-							HashSet<string> pair;
-							if (languageTypeCount.TryGetValue(ws, out pair))
+							if (languageTypeCount.TryGetValue(ws, out var pair))
 							{
 								//add the string for this writing system in all lower case to the set, unique count is case insensitive
 								pair.Add(wordForm.Form.get_String(ws).Text.ToLower());

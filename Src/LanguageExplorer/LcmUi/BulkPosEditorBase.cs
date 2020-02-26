@@ -174,10 +174,7 @@ namespace LanguageExplorer.LcmUi
 		/// </summary>
 		public LcmCache Cache
 		{
-			get
-			{
-				return m_cache;
-			}
+			get => m_cache;
 			set
 			{
 				m_cache = value;
@@ -196,15 +193,8 @@ namespace LanguageExplorer.LcmUi
 		/// </summary>
 		public XMLViewsDataCache DataAccess
 		{
-			get
-			{
-				if (m_sda == null)
-				{
-					throw new InvalidOperationException("Must set the special cache of a BulkEditSpecControl");
-				}
-				return m_sda;
-			}
-			set { m_sda = value; }
+			get => m_sda ?? throw new InvalidOperationException("Must set the special cache of a BulkEditSpecControl");
+			set => m_sda = value;
 		}
 
 		/// <summary>
@@ -267,7 +257,7 @@ namespace LanguageExplorer.LcmUi
 			}
 			else
 			{
-				m_selectedHvo = (node as HvoTreeNode).Hvo;
+				m_selectedHvo = ((HvoTreeNode)node).Hvo;
 				m_selectedLabel = node.Text;
 			}
 		}

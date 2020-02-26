@@ -40,9 +40,7 @@ namespace LanguageExplorer.Controls.DetailControls
 				dlg.DisableAffixTypeMainPosAndSlot();
 				if (dlg.ShowDialog() == DialogResult.OK)
 				{
-					bool fCreated;
-					ILexEntry entry;
-					dlg.GetDialogInfo(out entry, out fCreated);
+					dlg.GetDialogInfo(out var entry, out _);
 					if (entry == null)
 					{
 						throw new ArgumentNullException("Expected entry cannot be null", "entry");
@@ -70,7 +68,7 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		private IMoMorphType GetMorphType()
 		{
-			var sMorphTypeName = (m_fPrefix ? "prefix" : "suffix");
+			var sMorphTypeName = m_fPrefix ? "prefix" : "suffix";
 			var iEnglishWs = WritingSystemServices.FallbackUserWs(Cache);
 			return Cache.LanguageProject.LexDbOA.MorphTypesOA.ReallyReallyAllPossibilities.Where(type => sMorphTypeName == type.Name.get_String(iEnglishWs).Text).Select(type => type as IMoMorphType).FirstOrDefault();
 		}

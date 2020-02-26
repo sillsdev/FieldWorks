@@ -69,10 +69,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		public int DefaultWs
 		{
-			get
-			{
-				return m_wsDefault;
-			}
+			get => m_wsDefault;
 			set
 			{
 				m_wsDefault = value;

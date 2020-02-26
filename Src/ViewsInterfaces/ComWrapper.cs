@@ -101,24 +101,19 @@ namespace SIL.FieldWorks.Common.ViewsInterfaces
 	public class ComPictureWrapper : IDisposable
 	{
 		/// <summary>
-		///
-		/// </summary>
-		private readonly IPicture m_picture;
-
-		/// <summary>
 		/// Initializes a new instance of the <see cref="ComPictureWrapper"/> class.
 		/// </summary>
 		/// <param name="picture">The picture.</param>
 		public ComPictureWrapper(IPicture picture)
 		{
-			m_picture = picture;
+			Picture = picture;
 		}
 
 		/// <summary>
 		/// Gets the picture.
 		/// </summary>
 		/// <value>The picture.</value>
-		public IPicture Picture { get { return m_picture; } }
+		public IPicture Picture { get; }
 
 		#region IDisposable Members
 		#if DEBUG
@@ -149,12 +144,13 @@ namespace SIL.FieldWorks.Common.ViewsInterfaces
 			if (fDisposing)
 			{
 				// dispose managed and unmanaged objects
-				var disposable = m_picture as IDisposable;
-				if (disposable != null)
-					disposable.Dispose();
+				var disposable = Picture as IDisposable;
+				disposable?.Dispose();
 			}
-				if (m_picture != null && Marshal.IsComObject(m_picture))
-					Marshal.ReleaseComObject(m_picture);
+			if (Picture != null && Marshal.IsComObject(Picture))
+			{
+				Marshal.ReleaseComObject(Picture);
+			}
 			IsDisposed = true;
 		}
 		#endregion

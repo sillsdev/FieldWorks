@@ -294,7 +294,7 @@ namespace LanguageExplorerTests.Controls.XMLViews
 		public void MeanRowHeight_Normal()
 		{
 			// Measurement when running Flex for single-line row
-			int expectedHeight = 25;
+			const int expectedHeight = 25;
 			Assert.That(m_view.MeanRowHeight, Is.EqualTo(expectedHeight));
 		}
 
@@ -433,7 +433,7 @@ namespace LanguageExplorerTests.Controls.XMLViews
 		[Test]
 		public void ScrollMinSize_SettingSetsScrollBarMaximumToSame()
 		{
-			var height = 456;
+			const int height = 456;
 			m_view.ScrollMinSize = new Size(123, height);
 			Assert.That(m_view.m_bv.ScrollBar.Maximum, Is.EqualTo(height));
 		}
@@ -504,10 +504,7 @@ namespace LanguageExplorerTests.Controls.XMLViews
 			/// </summary>
 			public int Height
 			{
-				set
-				{
-					m_height = value;
-				}
+				set => m_height = value;
 				get
 				{
 					if (m_height != null)
@@ -547,22 +544,13 @@ namespace LanguageExplorerTests.Controls.XMLViews
 			}
 
 			/// <summary />
-			public IVwSelection Selection
-			{
-				get { throw new NotSupportedException(); }
-			}
+			public IVwSelection Selection => throw new NotSupportedException();
 
 			/// <summary />
-			public VwSelectionState SelectionState
-			{
-				get { throw new NotSupportedException(); }
-			}
+			public VwSelectionState SelectionState => throw new NotSupportedException();
 
 			/// <summary />
-			public int Width
-			{
-				get { throw new NotSupportedException(); }
-			}
+			public int Width => throw new NotSupportedException();
 
 			/// <summary />
 			public IVwRootSite Site
@@ -571,22 +559,13 @@ namespace LanguageExplorerTests.Controls.XMLViews
 			}
 
 			/// <summary />
-			public IVwStylesheet Stylesheet
-			{
-				get { throw new NotSupportedException(); }
-			}
+			public IVwStylesheet Stylesheet => throw new NotSupportedException();
 
 			/// <summary />
-			public int XdPos
-			{
-				get { throw new NotSupportedException(); }
-			}
+			public int XdPos => throw new NotSupportedException();
 
 			/// <summary />
-			public IVwSynchronizer Synchronizer
-			{
-				get { throw new NotSupportedException(); }
-			}
+			public IVwSynchronizer Synchronizer => throw new NotSupportedException();
 
 			/// <summary />
 			public int MaxParasToScan
@@ -596,16 +575,10 @@ namespace LanguageExplorerTests.Controls.XMLViews
 			}
 
 			/// <summary />
-			public bool IsCompositionInProgress
-			{
-				get { throw new NotSupportedException(); }
-			}
+			public bool IsCompositionInProgress => throw new NotSupportedException();
 
 			/// <summary />
-			public bool IsPropChangedInProgress
-			{
-				get { throw new NotSupportedException(); }
-			}
+			public bool IsPropChangedInProgress => throw new NotSupportedException();
 
 			/// <summary />
 			public void PropChanged(int hvo, int tag, int ivMin, int cvIns, int cvDel)
@@ -620,25 +593,25 @@ namespace LanguageExplorerTests.Controls.XMLViews
 			}
 
 			/// <summary />
-			public void SetRootObjects(int[] _rghvo, IVwViewConstructor[] _rgpvwvc, int[] _rgfrag, IVwStylesheet _ss, int chvo)
+			public void SetRootObjects(int[] rghvo, IVwViewConstructor[] rgpvwvc, int[] rgfrag, IVwStylesheet ss, int chvo)
 			{
 				throw new NotSupportedException();
 			}
 
 			/// <summary />
-			public void SetRootObject(int hvo, IVwViewConstructor _vwvc, int frag, IVwStylesheet _ss)
+			public void SetRootObject(int hvo, IVwViewConstructor vwvc, int frag, IVwStylesheet ss)
 			{
 				throw new NotSupportedException();
 			}
 
 			/// <summary />
-			public void SetRootVariant(object v, IVwStylesheet _ss, IVwViewConstructor _vwvc, int frag)
+			public void SetRootVariant(object v, IVwStylesheet ss, IVwViewConstructor vwvc, int frag)
 			{
 				throw new NotSupportedException();
 			}
 
 			/// <summary />
-			public void SetRootString(ITsString _tss, IVwStylesheet _ss, IVwViewConstructor _vwvc, int frag)
+			public void SetRootString(ITsString tss, IVwStylesheet ss, IVwViewConstructor vwvc, int frag)
 			{
 				throw new NotSupportedException();
 			}
@@ -650,19 +623,19 @@ namespace LanguageExplorerTests.Controls.XMLViews
 			}
 
 			/// <summary />
-			public void Serialize(IStream _strm)
+			public void Serialize(IStream strm)
 			{
 				throw new NotSupportedException();
 			}
 
 			/// <summary />
-			public void Deserialize(IStream _strm)
+			public void Deserialize(IStream strm)
 			{
 				throw new NotSupportedException();
 			}
 
 			/// <summary />
-			public void WriteWpx(IStream _strm)
+			public void WriteWpx(IStream strm)
 			{
 				throw new NotSupportedException();
 			}
@@ -674,13 +647,13 @@ namespace LanguageExplorerTests.Controls.XMLViews
 			}
 
 			/// <summary />
-			public IVwSelection MakeTextSelection(int ihvoRoot, int cvlsi, SelLevInfo[] _rgvsli, int tagTextProp, int cpropPrevious, int ichAnchor, int ichEnd, int ws, bool fAssocPrev, int ihvoEnd, ITsTextProps _ttpIns, bool fInstall)
+			public IVwSelection MakeTextSelection(int ihvoRoot, int cvlsi, SelLevInfo[] rgvsli, int tagTextProp, int cpropPrevious, int ichAnchor, int ichEnd, int ws, bool fAssocPrev, int ihvoEnd, ITsTextProps ttpIns, bool fInstall)
 			{
 				throw new NotSupportedException();
 			}
 
 			/// <summary />
-			public IVwSelection MakeRangeSelection(IVwSelection _selAnchor, IVwSelection _selEnd, bool fInstall)
+			public IVwSelection MakeRangeSelection(IVwSelection selAnchor, IVwSelection selEnd, bool fInstall)
 			{
 				throw new NotSupportedException();
 			}
@@ -692,13 +665,13 @@ namespace LanguageExplorerTests.Controls.XMLViews
 			}
 
 			/// <summary />
-			public IVwSelection MakeTextSelInObj(int ihvoRoot, int cvsli, SelLevInfo[] _rgvsli, int cvsliEnd, SelLevInfo[] _rgvsliEnd, bool fInitial, bool fEdit, bool fRange, bool fWholeObj, bool fInstall)
+			public IVwSelection MakeTextSelInObj(int ihvoRoot, int cvsli, SelLevInfo[] rgvsli, int cvsliEnd, SelLevInfo[] rgvsliEnd, bool fInitial, bool fEdit, bool fRange, bool fWholeObj, bool fInstall)
 			{
 				throw new NotSupportedException();
 			}
 
 			/// <summary />
-			public IVwSelection MakeSelInObj(int ihvoRoot, int cvsli, SelLevInfo[] _rgvsli, int tag, bool fInstall)
+			public IVwSelection MakeSelInObj(int ihvoRoot, int cvsli, SelLevInfo[] rgvsli, int tag, bool fInstall)
 			{
 				throw new NotSupportedException();
 			}
@@ -710,7 +683,7 @@ namespace LanguageExplorerTests.Controls.XMLViews
 			}
 
 			/// <summary />
-			public IVwSelection MakeSelInBox(IVwSelection _selInit, bool fEndPoint, int iLevel, int iBox, bool fInitial, bool fRange, bool fInstall)
+			public IVwSelection MakeSelInBox(IVwSelection selInit, bool fEndPoint, int iLevel, int iBox, bool fInitial, bool fRange, bool fInstall)
 			{
 				throw new NotSupportedException();
 			}
@@ -722,25 +695,25 @@ namespace LanguageExplorerTests.Controls.XMLViews
 			}
 
 			/// <summary />
-			public bool get_IsClickInObject(int xd, int yd, Rect rcSrc, Rect rcDst, out int _odt)
+			public bool get_IsClickInObject(int xd, int yd, Rect rcSrc, Rect rcDst, out int odt)
 			{
 				throw new NotSupportedException();
 			}
 
 			/// <summary />
-			public bool get_IsClickInOverlayTag(int xd, int yd, Rect rcSrc1, Rect rcDst1, out int _iGuid, out string _bstrGuids, out Rect _rcTag, out Rect _rcAllTags, out bool _fOpeningTag)
+			public bool get_IsClickInOverlayTag(int xd, int yd, Rect rcSrc1, Rect rcDst1, out int iGuid, out string bstrGuids, out Rect rcTag, out Rect rcAllTags, out bool fOpeningTag)
 			{
 				throw new NotSupportedException();
 			}
 
 			/// <summary />
-			public void OnTyping(IVwGraphics _vg, string bstrInput, VwShiftStatus ss, ref int _wsPending)
+			public void OnTyping(IVwGraphics vg, string bstrInput, VwShiftStatus ss, ref int wsPending)
 			{
 				throw new NotSupportedException();
 			}
 
 			/// <summary />
-			public void DeleteRangeIfComplex(IVwGraphics _vg, out bool _fWasComplex)
+			public void DeleteRangeIfComplex(IVwGraphics vg, out bool fWasComplex)
 			{
 				throw new NotSupportedException();
 			}
@@ -806,37 +779,37 @@ namespace LanguageExplorerTests.Controls.XMLViews
 			}
 
 			/// <summary />
-			public VwPrepDrawResult PrepareToDraw(IVwGraphics _vg, Rect rcSrc, Rect rcDst)
+			public VwPrepDrawResult PrepareToDraw(IVwGraphics vg, Rect rcSrc, Rect rcDst)
 			{
 				throw new NotSupportedException();
 			}
 
 			/// <summary />
-			public void DrawRoot(IVwGraphics _vg, Rect rcSrc, Rect rcDst, bool fDrawSel)
+			public void DrawRoot(IVwGraphics vg, Rect rcSrc, Rect rcDst, bool fDrawSel)
 			{
 				throw new NotSupportedException();
 			}
 
 			/// <summary />
-			public void Layout(IVwGraphics _vg, int dxsAvailWidth)
+			public void Layout(IVwGraphics vg, int dxsAvailWidth)
 			{
 				throw new NotSupportedException();
 			}
 
 			/// <summary />
-			public void InitializePrinting(IVwPrintContext _vpc)
+			public void InitializePrinting(IVwPrintContext vpc)
 			{
 				throw new NotSupportedException();
 			}
 
 			/// <summary />
-			public int GetTotalPrintPages(IVwPrintContext _vpc)
+			public int GetTotalPrintPages(IVwPrintContext vpc)
 			{
 				throw new NotSupportedException();
 			}
 
 			/// <summary />
-			public void PrintSinglePage(IVwPrintContext _vpc, int nPageNo)
+			public void PrintSinglePage(IVwPrintContext vpc, int nPageNo)
 			{
 				throw new NotSupportedException();
 			}
@@ -866,13 +839,13 @@ namespace LanguageExplorerTests.Controls.XMLViews
 			}
 
 			/// <summary />
-			public void DrawingErrors(IVwGraphics _vg)
+			public void DrawingErrors(IVwGraphics vg)
 			{
 				throw new NotSupportedException();
 			}
 
 			/// <summary />
-			public void SetTableColWidths(VwLength[] _rgvlen, int cvlen)
+			public void SetTableColWidths(VwLength[] rgvlen, int cvlen)
 			{
 				throw new NotSupportedException();
 			}
@@ -884,13 +857,13 @@ namespace LanguageExplorerTests.Controls.XMLViews
 			}
 
 			/// <summary />
-			public void GetRootObject(out int _hvo, out IVwViewConstructor _pvwvc, out int _frag, out IVwStylesheet _pss)
+			public void GetRootObject(out int hvo, out IVwViewConstructor pvwvc, out int frag, out IVwStylesheet pss)
 			{
 				throw new NotSupportedException();
 			}
 
 			/// <summary />
-			public void DrawRoot2(IVwGraphics _vg, Rect rcSrc, Rect rcDst, bool fDrawSel, int ysTop, int dysHeight)
+			public void DrawRoot2(IVwGraphics vg, Rect rcSrc, Rect rcDst, bool fDrawSel, int ysTop, int dysHeight)
 			{
 				throw new NotSupportedException();
 			}
@@ -914,7 +887,7 @@ namespace LanguageExplorerTests.Controls.XMLViews
 			}
 
 			/// <summary />
-			public void SetSpellingRepository(IGetSpellChecker _gsp)
+			public void SetSpellingRepository(IGetSpellChecker gsp)
 			{
 			}
 

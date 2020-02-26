@@ -144,16 +144,8 @@ namespace LanguageExplorer.Controls
 		/// </summary>
 		public virtual string DisplayName
 		{
-			set
-			{
-				//just for subclasses
-				throw new NotSupportedException();
-			}
-
-			get
-			{
-				return AsTss.Text;
-			}
+			set => throw new NotSupportedException();
+			get => AsTss.Text;
 		}
 
 		/// <summary>
@@ -212,50 +204,54 @@ namespace LanguageExplorer.Controls
 				// is available.
 				if (m_displayNameProperty != null)
 				{
-					if (Object is IMoMorphSynAnalysis)
+					switch (Object)
 					{
-						var msa = Object as IMoMorphSynAnalysis;
-						switch (m_displayNameProperty)
-						{
-							case "InterlinearName": // Fall through.
-							case "InterlinearNameTSS":
-								return msa.InterlinearNameTSS;
-							case "LongName":
+						case IMoMorphSynAnalysis msa:
+							switch (m_displayNameProperty)
+							{
+								case "InterlinearName": // Fall through.
+								case "InterlinearNameTSS":
+									return msa.InterlinearNameTSS;
+								case "LongName":
 								{
 									return TsStringUtils.MakeString(msa.LongName, Cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle);
 								}
-							case "LongNameTs":
+								case "LongNameTs":
 								{
 									return msa.LongNameTs;
 								}
-							case "ChooserNameTS":
+								case "ChooserNameTS":
 								{
 									return msa.ChooserNameTS;
 								}
-						}
-					}
-					else if (m_displayNameProperty == "LongNameTSS" && Object is ILexSense)
-					{
-						return ((ILexSense)Object).LongNameTSS;
-					}
-					else if (m_displayNameProperty == "LongName" && Object is IFsFeatStruc)
-					{
-						return ((IFsFeatStruc)Object).LongNameTSS;
-					}
-					else if (m_displayNameProperty == "ObjectIdName")
-					{
-						return Object.ObjectIdName;
-					}
-					else
-					{
-						var prop = Object.GetType().GetProperty(m_displayNameProperty);
-						if (prop != null)
-						{
-							var val = prop.GetValue(Object, null);
-							if (val is ITsString)
-							{
-								return val as ITsString;
 							}
+
+							break;
+						default:
+						{
+							switch (m_displayNameProperty)
+							{
+								case "LongNameTSS" when Object is ILexSense sense:
+									return sense.LongNameTSS;
+								case "LongName" when Object is IFsFeatStruc featStruc:
+									return featStruc.LongNameTSS;
+								case "ObjectIdName":
+									return Object.ObjectIdName;
+								default:
+								{
+									var prop = Object.GetType().GetProperty(m_displayNameProperty);
+									if (prop != null)
+									{
+										var val = prop.GetValue(Object, null);
+										if (val is ITsString tsString)
+										{
+											return tsString;
+										}
+									}
+									break;
+								}
+							}
+							break;
 						}
 					}
 				}

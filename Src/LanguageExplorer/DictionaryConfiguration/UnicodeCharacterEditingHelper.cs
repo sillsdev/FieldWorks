@@ -36,9 +36,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 				{
 					return match.Value;
 				}
-				var hexdigits = match.Groups[1].Value;
-				int codepoint;
-				if (!int.TryParse(hexdigits, NumberStyles.AllowHexSpecifier, null, out codepoint))
+				if (!int.TryParse(match.Groups[1].Value, NumberStyles.AllowHexSpecifier, null, out var codepoint))
 				{
 					// Failed somehow.
 					return match.Value;
@@ -89,7 +87,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 			{
 				return;
 			}
-			var textbox = ((TextBoxBase)sender);
+			var textbox = (TextBoxBase)sender;
 			var insertionPointLocation = textbox.SelectionStart;
 			var originalSelectionLength = textbox.SelectionLength;
 			var beginningText = textbox.Text.Substring(0, insertionPointLocation);

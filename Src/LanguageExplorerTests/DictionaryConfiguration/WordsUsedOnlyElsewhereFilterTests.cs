@@ -94,22 +94,15 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 
 			public override IFwMetaDataCache MetaDataCache
 			{
-				get
-				{
-					return m_mdc;
-				}
-				set
-				{
-					base.MetaDataCache = value;
-				}
+				get => m_mdc;
+				set => base.MetaDataCache = value;
 			}
 
 			public override int get_IntProp(int hvo, int tag)
 			{
 				if (tag == FakeMdc.kMadeUpFieldIdentifier)
 				{
-					int result;
-					HvoToOccurrenceCount.TryGetValue(hvo, out result);
+					HvoToOccurrenceCount.TryGetValue(hvo, out var result);
 					return result;
 				}
 				return base.get_IntProp(hvo, tag);

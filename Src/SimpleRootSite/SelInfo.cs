@@ -51,8 +51,9 @@ namespace SIL.FieldWorks.Common.RootSites
 		public SelInfo(SelInfo src)
 		{
 			if (src == null)
+			{
 				return;
-
+			}
 			tagTextProp = src.tagTextProp;
 			ihvoRoot = src.ihvoRoot;
 			cpropPrevious = src.cpropPrevious;
@@ -75,39 +76,57 @@ namespace SIL.FieldWorks.Common.RootSites
 		public static bool operator <(SelInfo s1, SelInfo s2)
 		{
 			if (s1.rgvsli.Length != s2.rgvsli.Length)
+			{
 				throw new ArgumentException("Number of levels differs");
-
-			for (int i = s1.rgvsli.Length - 1; i >= 0; i--)
+			}
+			for (var i = s1.rgvsli.Length - 1; i >= 0; i--)
 			{
 				if (s1.rgvsli[i].tag != s2.rgvsli[i].tag)
+				{
 					throw new ArgumentException("Differing tags");
+				}
 				if (s1.rgvsli[i].ihvo > s2.rgvsli[i].ihvo)
+				{
 					return false;
-				else if (s1.rgvsli[i].ihvo == s2.rgvsli[i].ihvo)
+				}
+				if (s1.rgvsli[i].ihvo == s2.rgvsli[i].ihvo)
 				{
 					if (s1.rgvsli[i].cpropPrevious > s2.rgvsli[i].cpropPrevious)
+					{
 						return false;
-					else if (s1.rgvsli[i].cpropPrevious < s2.rgvsli[i].cpropPrevious)
+					}
+					if (s1.rgvsli[i].cpropPrevious < s2.rgvsli[i].cpropPrevious)
+					{
 						return true;
-
+					}
 				}
 				else
+				{
 					return true;
+				}
 			}
 
 			if (s1.ihvoRoot > s2.ihvoRoot)
+			{
 				return false;
-			else if (s1.ihvoRoot == s2.ihvoRoot)
+			}
+			if (s1.ihvoRoot == s2.ihvoRoot)
 			{
 				if (s1.cpropPrevious > s2.cpropPrevious)
+				{
 					return false;
-				else if (s1.cpropPrevious == s2.cpropPrevious)
+				}
+				if (s1.cpropPrevious == s2.cpropPrevious)
 				{
 					if (s1.ich >= s2.ich)
+					{
 						return false;
+					}
 				}
 				else
+				{
 					return true;
+				}
 			}
 
 			return true;

@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows.Forms;
 
 namespace LanguageExplorer.DictionaryConfiguration.DictionaryDetailsView
@@ -85,20 +86,12 @@ namespace LanguageExplorer.DictionaryConfiguration.DictionaryDetailsView
 		/// </summary>
 		internal static string InvisibleToVisibleCharacters(string operand)
 		{
-			foreach (var replacement in VisibleCharacterSubstitutions)
-			{
-				operand = operand.Replace(replacement.Key.ToString(), replacement.Value);
-			}
-			return operand;
+			return VisibleCharacterSubstitutions.Aggregate(operand, (current, replacement) => current.Replace(replacement.Key.ToString(), replacement.Value));
 		}
 
 		public static string VisibleToInvisibleCharacters(string operand)
 		{
-			foreach (var replacement in VisibleCharacterSubstitutions)
-			{
-				operand = operand.Replace(replacement.Value, replacement.Key.ToString());
-			}
-			return operand;
+			return VisibleCharacterSubstitutions.Aggregate(operand, (current, replacement) => current.Replace(replacement.Value, replacement.Key.ToString()));
 		}
 
 		private static void PopulateCssCharacterSubstitutions()
@@ -115,11 +108,7 @@ namespace LanguageExplorer.DictionaryConfiguration.DictionaryDetailsView
 			{
 				PopulateCssCharacterSubstitutions();
 			}
-			foreach (var replacement in s_cssCharacterSubstitutions)
-			{
-				operand = operand.Replace(replacement.Key.ToString(), replacement.Value);
-			}
-			return operand;
+			return s_cssCharacterSubstitutions.Aggregate(operand, (current, replacement) => current.Replace(replacement.Key.ToString(), replacement.Value));
 		}
 	}
 }

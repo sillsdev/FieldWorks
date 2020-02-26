@@ -206,18 +206,16 @@ namespace LanguageExplorer.Impls
 			m_LexFields = new LexImportFields();
 			m_LexFields.ReadLexImportFields(m_sImportFields);
 			// now read in any custom fields
-			bool customFieldsChanged;
-			m_CustomFields = ((ILexImportWizard)this).ReadCustomFieldsFromDB(out customFieldsChanged);   // compare with map file before showing the UI and before the Import
+			m_CustomFields = ((ILexImportWizard)this).ReadCustomFieldsFromDB(out _);   // compare with map file before showing the UI and before the Import
 			// set up default button states
 			NextButtonEnabled = true;
 			AcceptButton = null;
 			btnModifyMappingLanguage.Enabled = false;
 			btnModifyContentMapping.Enabled = false;
 			m_chkCreateMissingLinks.Checked = false;
-			string dictFileToImport;
 			m_SettingsFileName.Items.Clear();
 			m_SettingsFileName.Items.Add(m_sMDFImportMap);
-			if (GetLastImportFile(out dictFileToImport))
+			if (GetLastImportFile(out var dictFileToImport))
 			{
 				FindFilesForDatabaseFile(dictFileToImport);
 				m_DatabaseFileName.Text = dictFileToImport;
@@ -410,7 +408,6 @@ namespace LanguageExplorer.Impls
 				var enableOtherFiles = !CheckForPhaseFileName();
 				m_SettingsFileName.Enabled = enableOtherFiles;
 				m_SaveAsFileName.Enabled = enableOtherFiles;
-				string settings, saveAs;
 				// clear the values for the settings and save as files
 				if (m_isPhaseInputFile)
 				{
@@ -418,7 +415,7 @@ namespace LanguageExplorer.Impls
 					m_SaveAsFileName.Text = string.Empty;
 					m_SettingsFileName.Items.Clear();
 				}
-				else if (FindDBSettingsSaved(m_DatabaseFileName.Text, out settings, out saveAs))
+				else if (FindDBSettingsSaved(m_DatabaseFileName.Text, out var settings, out var saveAs))
 				{
 					m_SettingsFileName.Text = settings;
 					m_SaveAsFileName.Text = saveAs;
@@ -559,63 +556,53 @@ namespace LanguageExplorer.Impls
 				sbHelp.Append("</Usage>");
 			}
 			sbHelp.Append("<Settings>Set the Language Descriptor to the language of this field.</Settings>");
-			if (fd.Type == CellarPropertyType.MultiUnicode)
+			switch (fd.Type)
 			{
-				sbHelp.Append("<Mapping>No</Mapping>");
-				sbHelp.Append("<Appends>Yes, appends field contents into a single field.</Appends>");
-				sbHelp.Append("<List>No</List>");
-				sbHelp.Append("<Multilingual>No</Multilingual>");
-			}
-			else if (fd.Type == CellarPropertyType.String)
-			{
-				sbHelp.Append("<Mapping>Yes</Mapping>");
-				sbHelp.Append("<Appends>Yes, appends field contents into a single field.</Appends>");
-				sbHelp.Append("<List>No</List>");
-				sbHelp.Append("<Multilingual>No</Multilingual>");
-			}
-			else if (fd.Type == CellarPropertyType.OwningAtomic && fd.DstCls == StTextTags.kClassId)
-			{
-				sbHelp.Append("<Mapping>Yes</Mapping>");
-				sbHelp.Append("<Appends>Yes, appends field contents into a single field.</Appends>");
-				sbHelp.Append("<List>No</List>");
-				sbHelp.Append("<Multilingual>No</Multilingual>");
-			}
-			else if (fd.Type == CellarPropertyType.ReferenceAtomic && fd.ListRootId != Guid.Empty)
-			{
-				sbHelp.Append("<Mapping>No</Mapping>");
-				sbHelp.Append("<Appends>No, does not append field contents into a single field.</Appends>");
-				sbHelp.Append("<List>Yes</List>");
-				sbHelp.Append("<Multilingual>No</Multilingual>");
-			}
-			else if (fd.Type == CellarPropertyType.ReferenceCollection && fd.ListRootId != Guid.Empty)
-			{
-				sbHelp.Append("<Mapping>No</Mapping>");
-				sbHelp.Append("<Appends>Yes, appends field contents into a single field.</Appends>");
-				sbHelp.Append("<List>Yes</List>");
-				sbHelp.Append("<Multilingual>No</Multilingual>");
-			}
-			// JohnT: added these three for LT-11188. Not sure yet what else has to change or how this is used.
-			else if (fd.Type == CellarPropertyType.GenDate || fd.Type == CellarPropertyType.Numeric || fd.Type == CellarPropertyType.Integer)
-			{
-				sbHelp.Append("<Mapping>No</Mapping>");
-				sbHelp.Append("<Appends>No, does not append field contents into a single field.</Appends>");
-				sbHelp.Append("<List>No</List>");
-				sbHelp.Append("<Multilingual>No</Multilingual>");
-			}
-			else
-			{
-				throw new Exception("bad type for custom field - code has to change");
+				case CellarPropertyType.MultiUnicode:
+					sbHelp.Append("<Mapping>No</Mapping>");
+					sbHelp.Append("<Appends>Yes, appends field contents into a single field.</Appends>");
+					sbHelp.Append("<List>No</List>");
+					sbHelp.Append("<Multilingual>No</Multilingual>");
+					break;
+				case CellarPropertyType.String:
+					sbHelp.Append("<Mapping>Yes</Mapping>");
+					sbHelp.Append("<Appends>Yes, appends field contents into a single field.</Appends>");
+					sbHelp.Append("<List>No</List>");
+					sbHelp.Append("<Multilingual>No</Multilingual>");
+					break;
+				case CellarPropertyType.OwningAtomic when fd.DstCls == StTextTags.kClassId:
+					sbHelp.Append("<Mapping>Yes</Mapping>");
+					sbHelp.Append("<Appends>Yes, appends field contents into a single field.</Appends>");
+					sbHelp.Append("<List>No</List>");
+					sbHelp.Append("<Multilingual>No</Multilingual>");
+					break;
+				case CellarPropertyType.ReferenceAtomic when fd.ListRootId != Guid.Empty:
+					sbHelp.Append("<Mapping>No</Mapping>");
+					sbHelp.Append("<Appends>No, does not append field contents into a single field.</Appends>");
+					sbHelp.Append("<List>Yes</List>");
+					sbHelp.Append("<Multilingual>No</Multilingual>");
+					break;
+				// JohnT: added these three for LT-11188. Not sure yet what else has to change or how this is used.
+				case CellarPropertyType.ReferenceCollection when fd.ListRootId != Guid.Empty:
+					sbHelp.Append("<Mapping>No</Mapping>");
+					sbHelp.Append("<Appends>Yes, appends field contents into a single field.</Appends>");
+					sbHelp.Append("<List>Yes</List>");
+					sbHelp.Append("<Multilingual>No</Multilingual>");
+					break;
+				case CellarPropertyType.GenDate:
+				case CellarPropertyType.Numeric:
+				case CellarPropertyType.Integer:
+					sbHelp.Append("<Mapping>No</Mapping>");
+					sbHelp.Append("<Appends>No, does not append field contents into a single field.</Appends>");
+					sbHelp.Append("<List>No</List>");
+					sbHelp.Append("<Multilingual>No</Multilingual>");
+					break;
+				default:
+					throw new Exception("bad type for custom field - code has to change");
 			}
 			sbHelp.Append("</Help></Field>");
 			return sbHelp.ToString();
 		}
-
-		//internal Tuple<ILexImportFields, bool> ReadCustomFieldsFromDB()
-		//{
-		//	bool changed;
-		//	var customFields = ReadCustomFieldsFromDB(out changed);
-		//	return new Tuple<ILexImportFields, bool>(customFields, changed);
-		//}
 
 		ILexImportFields ILexImportWizard.ReadCustomFieldsFromDB(out bool changed)
 		{
@@ -726,9 +713,8 @@ namespace LanguageExplorer.Impls
 				if (dlg.ShowDialog(this) == DialogResult.OK)
 				{
 					m_dirtySenseLastSave = true;
-					string langDesc, ws, ec, wsId;
 					// retrieve the new WS information from the dlg
-					dlg.GetCurrentLangInfo(out langDesc, out ws, out ec, out wsId);
+					dlg.GetCurrentLangInfo(out var langDesc, out var ws, out var ec, out var wsId);
 					// now put the lang info into the language list view
 					((ILexImportWizard)this).AddLanguage(langDesc, ws, ec, wsId);
 				}
@@ -767,9 +753,8 @@ namespace LanguageExplorer.Impls
 					return;
 				}
 				m_dirtySenseLastSave = true;
-				string langDesc, ws, ec, wsId;
 				// retrieve the new WS information from the dlg
-				dlg.GetCurrentLangInfo(out langDesc, out ws, out ec, out wsId);
+				dlg.GetCurrentLangInfo(out var langDesc, out var ws, out var ec, out var wsId);
 				var selectedIndex = listViewMappingLanguages.SelectedIndices[0];
 				listViewMappingLanguages.Items[selectedIndex] = CreateLanguageMappingItem(langDesc, ws, ec, wsId);
 				listViewMappingLanguages.Items[selectedIndex].Selected = true; // maintain the selection
@@ -783,13 +768,8 @@ namespace LanguageExplorer.Impls
 				// now update any existing markers that have this langdescriptor
 				var anyUpdated = false;
 				var markers = m_MappingMgr.ContentMappingItems;
-				foreach (DictionaryEntry markerEntry in markers)
+				foreach (var info in markers.Cast<DictionaryEntry>().Select(markerEntry => (ContentMapping)markerEntry.Value).Where(info => info.LanguageDescriptorRaw == langDesc))
 				{
-					var info = (ContentMapping)markerEntry.Value;
-					if (info.LanguageDescriptorRaw != langDesc)
-					{
-						continue;
-					}
 					info.UpdateLanguageValues(ws, wsId, langDesc);
 					anyUpdated = true;
 				}
@@ -803,8 +783,7 @@ namespace LanguageExplorer.Impls
 		private string ConvertNameFromIdtoFW(string wsId)
 		{
 			//getting name for a writing system given the identifier.
-			CoreWritingSystemDefinition ws;
-			return m_cache.ServiceLocator.WritingSystemManager.TryGet(wsId, out ws) ? ws.DisplayLabel : null;
+			return m_cache.ServiceLocator.WritingSystemManager.TryGet(wsId, out var ws) ? ws.DisplayLabel : null;
 		}
 
 		#endregion
@@ -835,8 +814,7 @@ namespace LanguageExplorer.Impls
 
 		private static void SetListViewItemColor(ref ListViewItem item)
 		{
-			var info = item.Tag as ContentMapping;
-			if (info == null)
+			if (!(item.Tag is ContentMapping info))
 			{
 				return;
 			}
@@ -870,12 +848,11 @@ namespace LanguageExplorer.Impls
 			listViewContentMapping.BeginUpdate();
 			listViewContentMapping.Items.Clear();
 			var markers = m_MappingMgr.ContentMappingItems;
-			foreach (DictionaryEntry markerEntry in markers)
+			foreach (var info in markers.Cast<DictionaryEntry>().Select(markerEntry => (ContentMapping)markerEntry.Value))
 			{
-				var info = (ContentMapping)markerEntry.Value;
-				if (info.LexImportField is LexImportCustomField)
+				if (info.LexImportField is LexImportCustomField importCustomField)
 				{
-					((LexImportCustomField)info.LexImportField).UIClass = info.DestinationClass;
+					importCustomField.UIClass = info.DestinationClass;
 				}
 				var lvItem = new ListViewItem(info.ListViewStrings())
 				{
@@ -979,12 +956,11 @@ namespace LanguageExplorer.Impls
 						contentMapping.AutoImport = dlg.AutoImport;
 						// get the language values
 						var userKey = dlg.LangDesc;
-						var ws = dlg.WritingSystem;
 						// it is possible through the GUI to have more UILanguages now, so get a fresh list
 						langDescs = GetUILanguages();
 						var langInfo = (LanguageInfoUI)langDescs[userKey];
 						var shortName = langInfo.ICUName;
-						contentMapping.UpdateLanguageValues(ws, shortName, userKey);
+						contentMapping.UpdateLanguageValues(dlg.WritingSystem, shortName, userKey);
 						if (!contentMapping.AutoImport) // auto import only allows lang so skip the following
 						{
 							contentMapping.FwId = dlg.FWDestID;
@@ -992,16 +968,14 @@ namespace LanguageExplorer.Impls
 							var cname = dlg.FWDestinationClass;
 							if (dlg.IsCustomField)
 							{
-								string cnameTmp;
-								m_CustomFields.GetDestinationForName(contentMapping.FwId, out cnameTmp, out fname);
+								m_CustomFields.GetDestinationForName(contentMapping.FwId, out _, out fname);
 								contentMapping.AddLexImportCustomField(m_CustomFields.GetField(cname, contentMapping.FwId), cname);
 								// Need to make sure the clscustom... member of the contentMapping object is a custom one now
 								// this is needed for the modify dlg that comes up.
 							}
 							else
 							{
-								string cnameTmp;
-								m_LexFields.GetDestinationForName(contentMapping.FwId, out cnameTmp, out fname);
+								m_LexFields.GetDestinationForName(contentMapping.FwId, out _, out fname);
 								contentMapping.AddLexImportField(m_LexFields.GetField(cname, contentMapping.FwId));
 								// need to make sure the clscustom... isn't set on the contentMapping object.
 							}
@@ -1086,7 +1060,8 @@ namespace LanguageExplorer.Impls
 				var info = (ContentMapping)item.Tag;
 				if (info.AutoImport)
 				{
-					continue;           // autoimport fields can't be taged to start certian classes...
+					// autoimport fields can't be tagged to start certain classes...
+					continue;
 				}
 				ArrayList markers;
 				if (classMarkers.ContainsKey(info.DestinationClass))
@@ -1125,7 +1100,7 @@ namespace LanguageExplorer.Impls
 					continue;
 				}
 				var mappingInfo = dict.Value as ArrayList;  // MarkerPresenter.ContentMapping;
-				var tnode = new TreeNode(dict.Key as string)
+				var tnode = new TreeNode((string)dict.Key)
 				{
 					Tag = null,
 					NodeFont = new Font(tvBeginMarkers.Font, FontStyle.Bold)
@@ -1167,16 +1142,7 @@ namespace LanguageExplorer.Impls
 
 		private bool Step5NextButtonEnabled()
 		{
-			var nextOk = true;
-			foreach (TreeNode node in tvBeginMarkers.Nodes)
-			{
-				if (HasCheckedChild(node) == 0) // count of checked children
-				{
-					nextOk = false;
-					break;
-				}
-			}
-			return nextOk;
+			return tvBeginMarkers.Nodes.Cast<TreeNode>().All(node => HasCheckedChild(node) != 0);
 		}
 
 		/// <summary>
@@ -1190,16 +1156,14 @@ namespace LanguageExplorer.Impls
 		/// </returns>
 		private static int HasCheckedChild(TreeNode node)
 		{
-			if (node.Nodes.Count == 0)
-			{
-				return -1;
-			}
-			return node.Nodes.Cast<TreeNode>().Count(child => child.Checked);
+			return node.Nodes.Count == 0
+				? -1
+				: node.Nodes.Cast<TreeNode>().Count(child => child.Checked);
 		}
 
 		#endregion
 
-		// Step 7 is where the Feasability check is preformed.  This is the
+		// Step 7 is where the Feasibility check is preformed.  This is the
 		// final step before letting the whole import process run it's course.
 		#region Step 7 event handlers and routines
 
@@ -1398,9 +1362,7 @@ namespace LanguageExplorer.Impls
 			}
 			catch (Exception e)
 			{
-				var nl = Environment.NewLine;
-				var msg = string.Format(LanguageExplorerControls.ksCannotDisplayReportX, sHtmlFile, nl, e.Message);
-				MessageBox.Show(this, msg, LanguageExplorerControls.ksErrorShowingReport);
+				MessageBox.Show(this, string.Format(LanguageExplorerControls.ksCannotDisplayReportX, sHtmlFile, Environment.NewLine, e.Message), LanguageExplorerControls.ksErrorShowingReport);
 			}
 		}
 
@@ -1573,9 +1535,8 @@ namespace LanguageExplorer.Impls
 		private void FindFilesForDatabaseFile(string dbToImport)
 		{
 			m_SettingsFileName.Text = string.Empty; // empty at start
-			m_SaveAsFileName.Text = string.Empty;       // empty at start
-			string settings, saveAs;
-			if (FindDBSettingsSaved(dbToImport, out settings, out saveAs))
+			m_SaveAsFileName.Text = string.Empty; // empty at start
+			if (FindDBSettingsSaved(dbToImport, out var settings, out var saveAs))
 			{
 				if (settings != null)
 				{
@@ -1773,8 +1734,7 @@ namespace LanguageExplorer.Impls
 						break;
 					case 3:
 						// current technique for getting the custom fields in the DB
-						bool customFieldsChanged;
-						m_CustomFields = ((ILexImportWizard)this).ReadCustomFieldsFromDB(out customFieldsChanged);
+						m_CustomFields = ((ILexImportWizard)this).ReadCustomFieldsFromDB(out _);
 						UpdateIfInputFileContentsChanged();
 						if (m_dirtyInputFile || m_dirtyMapFile)
 						{
@@ -1883,8 +1843,7 @@ namespace LanguageExplorer.Impls
 			{
 				if (!runSilent)
 				{
-					var msg = string.Format(LanguageExplorerControls.ksInvalidSettingsFileX, m_SettingsFileName.Text);
-					MessageBox.Show(this, msg, LanguageExplorerControls.ksInvalidFile, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+					MessageBox.Show(this, string.Format(LanguageExplorerControls.ksInvalidSettingsFileX, m_SettingsFileName.Text), LanguageExplorerControls.ksInvalidFile, MessageBoxButtons.OK, MessageBoxIcon.Warning);
 				}
 				fStayHere = true;
 				m_SettingsFileName.Focus();
@@ -1893,8 +1852,7 @@ namespace LanguageExplorer.Impls
 			{
 				if (!runSilent)
 				{
-					var msg = LanguageExplorerControls.ksUndefinedSettingsSaveFile;
-					MessageBox.Show(this, msg, LanguageExplorerControls.ksInvalidFile, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+					MessageBox.Show(this, LanguageExplorerControls.ksUndefinedSettingsSaveFile, LanguageExplorerControls.ksInvalidFile, MessageBoxButtons.OK, MessageBoxIcon.Warning);
 				}
 				fStayHere = true;
 				m_SaveAsFileName.Focus();
@@ -1918,8 +1876,7 @@ namespace LanguageExplorer.Impls
 				{
 					if (!runSilent)
 					{
-						var msg = string.Format(LanguageExplorerControls.ksInvalidSettingsSaveFileX, m_SaveAsFileName.Text);
-						MessageBox.Show(this, msg, LanguageExplorerControls.ksInvalidFile, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+						MessageBox.Show(this, string.Format(LanguageExplorerControls.ksInvalidSettingsSaveFileX, m_SaveAsFileName.Text), LanguageExplorerControls.ksInvalidFile, MessageBoxButtons.OK, MessageBoxIcon.Warning);
 					}
 					fStayHere = true;
 					m_SaveAsFileName.Focus();
@@ -1930,8 +1887,7 @@ namespace LanguageExplorer.Impls
 				// We don't want to overwrite the database with the settings!  See LT-8126.
 				if (!runSilent)
 				{
-					var msg = string.Format(LanguageExplorerControls.ksSettingsSaveFileSameAsDatabaseFile, m_SaveAsFileName.Text, m_DatabaseFileName.Text);
-					MessageBox.Show(this, msg, LanguageExplorerControls.ksInvalidFile, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+					MessageBox.Show(this, string.Format(LanguageExplorerControls.ksSettingsSaveFileSameAsDatabaseFile, m_SaveAsFileName.Text, m_DatabaseFileName.Text), LanguageExplorerControls.ksInvalidFile, MessageBoxButtons.OK, MessageBoxIcon.Warning);
 				}
 				fStayHere = true;
 			}
@@ -2660,11 +2616,9 @@ namespace LanguageExplorer.Impls
 
 		private void tvBeginMarkers_KeyUp(object obj, KeyEventArgs kea)
 		{
-			var tv = (TreeView)obj;
-			var tn = tv.SelectedNode;
 			if (kea.KeyCode == Keys.Space)
 			{
-				tvBeginMarkers_HandleCheckBoxNode(tn);
+				tvBeginMarkers_HandleCheckBoxNode(((TreeView)obj).SelectedNode);
 			}
 		}
 
@@ -2674,8 +2628,7 @@ namespace LanguageExplorer.Impls
 			{
 				return;
 			}
-			var tv = (TreeView)obj;
-			var tn = tv.GetNodeAt(mea.X, mea.Y);
+			var tn = ((TreeView)obj).GetNodeAt(mea.X, mea.Y);
 			if (tn == null)
 			{
 				return;
@@ -2708,10 +2661,9 @@ namespace LanguageExplorer.Impls
 			}
 			// Save this information selected begin marker or unselected begin marker into
 			// the underlying data structure.
-			var data = tn.Tag as ContentMapping;
-			if (data != null)
+			if (tn.Tag is ContentMapping contentMapping)
 			{
-				data.IsBeginMarker = tn.Checked;
+				contentMapping.IsBeginMarker = tn.Checked;
 				if (!tn.Checked && HasCheckedChild(tn.Parent) == 0) // no sibling nodes selected either
 				{
 					tn.Parent.BackColor = Color.Gold;       // add attention to ones with out checked buttons
@@ -2752,9 +2704,7 @@ namespace LanguageExplorer.Impls
 				return false;
 			}
 			var sNewLine = Environment.NewLine;
-			var sMapFileMsg = string.Format(LanguageExplorerControls.ksMapFileWasX, checkedMapFileName);
-			var sEntriesImportedMsg = string.Format(LanguageExplorerControls.ksXEntriesImported, entries);
-			m_sPhase1HtmlReport = $"<p>{sMapFileMsg}{sNewLine}<h3>{sEntriesImportedMsg}</h3>{sNewLine}";
+			m_sPhase1HtmlReport = $"<p>{string.Format(LanguageExplorerControls.ksMapFileWasX, checkedMapFileName)}{sNewLine}<h3>{string.Format(LanguageExplorerControls.ksXEntriesImported, entries)}</h3>{sNewLine}";
 			var errorCount = ProcessErrorLogErrors(xmlMap, ref m_sPhase1HtmlReport);
 			var warningCount = ProcessErrorLogWarnings(xmlMap, ref m_sPhase1HtmlReport);
 			ProcessErrorLogCautions(xmlMap, ref m_sPhase1HtmlReport);
@@ -2861,23 +2811,26 @@ namespace LanguageExplorer.Impls
 					bldr.Append("<h3>");
 					if (listedErrors > 0)
 					{
-						if (listedErrors == 1 && errorCount == 1)
+						switch (listedErrors)
 						{
-							// probably can't happen...
-							bldr.AppendFormat(LanguageExplorerControls.ks1Error1Detailed);
-						}
-						else if (listedErrors == 1)
-						{
-							bldr.AppendFormat(LanguageExplorerControls.ksXErrors1Detailed, errorCount);
-						}
-						else if (errorCount == 1)
-						{
-							// probably can't happen...
-							bldr.AppendFormat(LanguageExplorerControls.ks1ErrorXDetailed, listedErrors);
-						}
-						else
-						{
-							bldr.AppendFormat(LanguageExplorerControls.ksXErrorsYDetailed, errorCount, listedErrors);
+							case 1 when errorCount == 1:
+								// probably can't happen...
+								bldr.AppendFormat(LanguageExplorerControls.ks1Error1Detailed);
+								break;
+							case 1:
+								bldr.AppendFormat(LanguageExplorerControls.ksXErrors1Detailed, errorCount);
+								break;
+							default:
+								if (errorCount == 1)
+								{
+									// probably can't happen...
+									bldr.AppendFormat(LanguageExplorerControls.ks1ErrorXDetailed, listedErrors);
+								}
+								else
+								{
+									bldr.AppendFormat(LanguageExplorerControls.ksXErrorsYDetailed, errorCount, listedErrors);
+								}
+								break;
 						}
 					}
 					else if (errorCount == 1)
@@ -2942,11 +2895,11 @@ namespace LanguageExplorer.Impls
 				return 0;
 			}
 			var warningCount = 0;
-			foreach (XmlAttribute Attribute in warningsNode.Attributes)
+			foreach (XmlAttribute xmlAttribute in warningsNode.Attributes)
 			{
-				if (Attribute.Name == "count")
+				if (xmlAttribute.Name == "count")
 				{
-					warningCount = Convert.ToInt32(Attribute.Value);
+					warningCount = Convert.ToInt32(xmlAttribute.Value);
 				}
 			}
 			if (warningCount == 0)
@@ -2990,15 +2943,15 @@ namespace LanguageExplorer.Impls
 			var oooNode = xmlMap.SelectSingleNode("database/ErrorLog/OutOfOrder");
 			if (oooNode != null)
 			{
-				foreach (XmlAttribute Attribute in oooNode.Attributes)
+				foreach (XmlAttribute xmlAttribute in oooNode.Attributes)
 				{
-					switch (Attribute.Name)
+					switch (xmlAttribute.Name)
 					{
 						case "count":
-							cautionCount = Convert.ToInt32(Attribute.Value);
+							cautionCount = Convert.ToInt32(xmlAttribute.Value);
 							break;
 						case "listed":
-							listedCautions = Convert.ToInt32(Attribute.Value);
+							listedCautions = Convert.ToInt32(xmlAttribute.Value);
 							break;
 					}
 				}
@@ -3007,23 +2960,26 @@ namespace LanguageExplorer.Impls
 					sHtml.Append("<h3>");
 					if (listedCautions > 0)
 					{
-						if (listedCautions == 1 && cautionCount == 1)
+						switch (listedCautions)
 						{
-							// probably can't happen.
-							sHtml.Append(LanguageExplorerControls.ks1Entry1Detailed);
-						}
-						else if (listedCautions == 1)
-						{
-							sHtml.AppendFormat(LanguageExplorerControls.ksXEntries1Detailed, cautionCount);
-						}
-						else if (cautionCount == 1)
-						{
-							// probably can't happen
-							sHtml.AppendFormat(LanguageExplorerControls.ks1EntryXDetailed, listedCautions);
-						}
-						else
-						{
-							sHtml.AppendFormat(LanguageExplorerControls.ksXEntriesYDetailed, cautionCount, listedCautions);
+							case 1 when cautionCount == 1:
+								// probably can't happen.
+								sHtml.Append(LanguageExplorerControls.ks1Entry1Detailed);
+								break;
+							case 1:
+								sHtml.AppendFormat(LanguageExplorerControls.ksXEntries1Detailed, cautionCount);
+								break;
+							default:
+								if (cautionCount == 1)
+								{
+									// probably can't happen
+									sHtml.AppendFormat(LanguageExplorerControls.ks1EntryXDetailed, listedCautions);
+								}
+								else
+								{
+									sHtml.AppendFormat(LanguageExplorerControls.ksXEntriesYDetailed, cautionCount, listedCautions);
+								}
+								break;
 						}
 					}
 					else
@@ -3187,14 +3143,7 @@ namespace LanguageExplorer.Impls
 
 		private void ShowFinishLabel()
 		{
-			if (CurrentStepNumber == 7 && (ModifierKeys & Keys.Shift) == Keys.Shift)
-			{
-				lblFinishWOImport.Visible = true;
-			}
-			else
-			{
-				lblFinishWOImport.Visible = false;
-			}
+			lblFinishWOImport.Visible = CurrentStepNumber == 7 && (ModifierKeys & Keys.Shift) == Keys.Shift;
 		}
 
 		private void m_DisplayImportReport_KeyDown(object sender, KeyEventArgs e)
@@ -3240,7 +3189,7 @@ namespace LanguageExplorer.Impls
 
 		private void btnQuickFinish_Click(object sender, EventArgs e)
 		{
-			// don't continue if there are invliad file names / paths
+			// don't continue if there are invalid file names / paths
 			if (UsesInvalidFileNames(false))
 			{
 				return;
@@ -3396,7 +3345,7 @@ namespace LanguageExplorer.Impls
 			}
 		}
 
-		private void MoveButton(ButtonBase btn, int dw, int dh)
+		private static void MoveButton(ButtonBase btn, int dw, int dh)
 		{
 			Debug.Assert(!Platform.IsMono, "only needed on Windows");
 			var oldPoint = btn.Location;
@@ -3405,7 +3354,7 @@ namespace LanguageExplorer.Impls
 			btn.Location = oldPoint;
 		}
 
-		private void MoveButton2(ButtonBase btn, int dw, int YCoord)
+		public void MoveButton2(ButtonBase btn, int dw, int YCoord)
 		{
 			Debug.Assert(!Platform.IsMono, "only needed on Windows");
 			var oldPoint = btn.Location;
@@ -3702,7 +3651,6 @@ namespace LanguageExplorer.Impls
 		{
 			NoChanges,
 			DoesntExist,
-			DifferentGUID,
 			ASD
 		}
 
@@ -3845,13 +3793,13 @@ namespace LanguageExplorer.Impls
 				var first = true;
 				foreach (DictionaryEntry uiLang in m_htUILangInfo)
 				{
-					if ((uiLang.Value as LanguageInfoUI).ICUName == "en")   // looking for English
+					if (((LanguageInfoUI)uiLang.Value).ICUName == "en")   // looking for English
 					{
 						ws = "en";
 						langDesc = uiLang.Key as string;
 						return;
 					}
-					if (notIgnore.Key as string == "" && (uiLang.Value as LanguageInfoUI).ICUName != SfmToXmlServices.Ignore)
+					if (notIgnore.Key as string == string.Empty && ((LanguageInfoUI)uiLang.Value).ICUName != SfmToXmlServices.Ignore)
 					{
 						notIgnore = uiLang;
 					}
@@ -3863,13 +3811,13 @@ namespace LanguageExplorer.Impls
 				}
 				if (notIgnore.Key as string != string.Empty)
 				{
-					ws = (notIgnore.Value as LanguageInfoUI).ICUName;
+					ws = ((LanguageInfoUI)notIgnore.Value).ICUName;
 					langDesc = notIgnore.Key as string;
 					return;
 				}
 				if (firstOne.Key as string != string.Empty)
 				{
-					ws = (firstOne.Value as LanguageInfoUI).ICUName;
+					ws = ((LanguageInfoUI)firstOne.Value).ICUName;
 					langDesc = firstOne.Key as string;
 				}
 			}
@@ -3890,13 +3838,13 @@ namespace LanguageExplorer.Impls
 				return LexImportFields.ContainsCustomField(lexCustomField.CustomKey);
 			}
 
-			public bool IsValidCustomField(ClsFieldDescription mapField)
+			private bool IsValidCustomField(ClsFieldDescription mapField)
 			{
 				// get the field description info from the map file for this marker
-				if (mapField is ClsCustomFieldDescription)
+				if (mapField is ClsCustomFieldDescription customFieldDescription)
 				{
 					// first make sure if it's a custom field, that the field exists in the database
-					if (LexImportFields.ContainsCustomField(((ClsCustomFieldDescription)mapField).CustomKey))
+					if (LexImportFields.ContainsCustomField(customFieldDescription.CustomKey))
 					{
 						return true;
 					}
@@ -3913,7 +3861,7 @@ namespace LanguageExplorer.Impls
 				}
 				else
 				{
-					var keysToDelete = new System.Collections.Generic.List<object>();
+					var keysToDelete = new List<object>();
 					// remove ones from memory that no longer exist in the data
 					foreach (DictionaryEntry de in ContentMappingItems)
 					{
@@ -3995,16 +3943,15 @@ namespace LanguageExplorer.Impls
 								if (mapField.MeaningID.Length > 0)
 								{
 									fwID = mapField.MeaningID;
-									if (mapField is ClsCustomFieldDescription)
+									if (mapField is ClsCustomFieldDescription customFieldDescription)
 									{
-										var custom = (ClsCustomFieldDescription)mapField;
-										className = custom.ClassNameUI;
-										dest = custom.Name;// +" (Custom " + className + ")";	// MeaningID;	//  custom.Name;
-										if (fwID != custom.Name && fwID.StartsWith("custom"))
+										className = customFieldDescription.ClassNameUI;
+										dest = customFieldDescription.Name;// +" (Custom " + className + ")";	// MeaningID;	//  custom.Name;
+										if (fwID != customFieldDescription.Name && fwID.StartsWith("custom"))
 										{
 											// must have an old 6.0 mapping file - see FWR-1707.
-											mapField.MeaningID = custom.Name;
-											fwID = custom.Name;
+											customFieldDescription.MeaningID = customFieldDescription.Name;
+											fwID = customFieldDescription.Name;
 										}
 									}
 									else
@@ -4065,7 +4012,7 @@ namespace LanguageExplorer.Impls
 				{
 					var hierarchy = dictEentry.Value as ClsHierarchyEntry;
 
-					foreach (string beginSfm in hierarchy.BeginFields)
+					foreach (var beginSfm in hierarchy.BeginFields)
 					{
 						if (ContentMappingItems.ContainsKey(beginSfm))
 						{
@@ -4079,11 +4026,10 @@ namespace LanguageExplorer.Impls
 
 			public ContentMapping DefaultContent(string sfmKEY)
 			{
-				string ws, langDesc;
 				var marker = sfmKEY;
 				var desc = string.Empty;
 				// search through the langs and find the autolang to use
-				GetLangInfoForAutoFields(out langDesc, out ws);
+				GetLangInfoForAutoFields(out var langDesc, out var ws);
 				var count = m_DataInfo.GetSFMWithDataCount(sfmKEY);
 				var order = m_DataInfo.GetSFMOrder(sfmKEY);
 				return new ContentMapping(marker, desc, string.Empty, string.Empty, ws, langDesc, count, order, null, false);
@@ -4208,8 +4154,7 @@ namespace LanguageExplorer.Impls
 				var clsid = MoStemAllomorphTags.kClassId;
 				var mmt = sForm.Length > 0 ? MorphServices.FindMorphType(m_cache, ref sForm, out clsid) : m_cache.ServiceLocator.GetInstance<IMoMorphTypeRepository>().GetObject(MoMorphTypeTags.kguidMorphStem);
 				sAlloClass = m_cache.DomainDataByFlid.MetaDataCache.GetClassName(clsid);
-				int ws;
-				var tss = mmt.Name.GetAlternativeOrBestTss(m_wsEn, out ws);
+				var tss = mmt.Name.GetAlternativeOrBestTss(m_wsEn, out var ws);
 				sMorphTypeWs = ws == m_wsEn ? "en" : m_cache.WritingSystemFactory.GetStrFromWs(ws);
 				return tss.Text;
 			}
@@ -4548,16 +4493,11 @@ namespace LanguageExplorer.Impls
 						sw.WriteLine("<ul>");
 						var sPath = m_sPhase4Output.Replace("\\", "\\\\");
 						var rgsCreated = xid.CreatedForMessages;
-						var rgxMsgs = new List<Regex>();
-						foreach (var sMsg in rgsCreated)
-						{
-							var sRegex = "^" + sMsg + "$";
-							sRegex = sRegex.Replace("{0}", sPath);
-							sRegex = sRegex.Replace("{1}", "[0-9]+");
-							sRegex = sRegex.Replace("{2}", "[^\"]+");
-							var xMsg = new Regex(sRegex);
-							rgxMsgs.Add(xMsg);
-						}
+						var rgxMsgs = (rgsCreated.Select(sMsg => "^" + sMsg + "$")
+							.Select(sRegex => sRegex.Replace("{0}", sPath))
+							.Select(sRegex => sRegex.Replace("{1}", "[0-9]+"))
+							.Select(sRegex => sRegex.Replace("{2}", "[^\"]+"))
+							.Select(sRegex => new Regex(sRegex))).ToList();
 						var sElapsedTimeMsg = xid.ElapsedTimeMsg;
 						ich = sElapsedTimeMsg.IndexOf("{0:F1}");
 						Debug.Assert(ich >= 0);
@@ -4649,14 +4589,7 @@ namespace LanguageExplorer.Impls
 
 			private static bool AnyMsgMatches(List<Regex> rgxCreated, string sInput)
 			{
-				foreach (var xMsg in rgxCreated)
-				{
-					if (xMsg.IsMatch(sInput))
-					{
-						return true;
-					}
-				}
-				return false;
+				return rgxCreated.Any(xMsg => xMsg.IsMatch(sInput));
 			}
 
 			private string LinkRef(int hvo)

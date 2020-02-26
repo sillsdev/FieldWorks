@@ -48,7 +48,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonologicalFeaturesAdvancedEdit
 				IFsFeatStruc originalFs = null;
 				var parentSlice = Slice;
 				var parentSliceClass = parentSlice.MyCmObject.ClassID;
-				var owningFlid = (parentSlice as PhonologicalFeatureListDlgLauncherSlice).Flid;
+				var owningFlid = ((PhonologicalFeatureListDlgLauncherSlice)parentSlice).Flid;
 				switch (parentSliceClass)
 				{
 					case PhPhonemeTags.kClassId:

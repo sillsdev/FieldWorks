@@ -28,16 +28,12 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		/// <summary />
 		protected internal override ICmObject Target
 		{
-			get
-			{
-				return (m_obj as ILexReference).TargetsRS[0];
-			}
+			get => (m_obj as ILexReference)?.TargetsRS[0];
 			set
 			{
 				Debug.Assert(value != null);
-
-				var lr = m_obj as ILexReference;
-				var lrt = lr.Owner as ILexRefType;
+				var lr = (ILexReference)m_obj;
+				var lrt = (ILexRefType)lr.Owner;
 				var objToLink = GetChildObject();
 				// See if there is another existing relation of the same type with the desired 'whole'.
 				var newRef = lrt.MembersOC.FirstOrDefault(lr1 => lr1.TargetsRS.Count > 0 && lr1.TargetsRS[0] == value);
@@ -102,11 +98,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			{
 				owningSlice = parent as LexReferenceTreeRootSlice;
 			}
-			if (owningSlice == null)
-			{
-				throw new FwConfigurationException("LexReferenceTreeRootLauncher must be a child of a LexReferenceTreeRootSlice");
-			}
-			return owningSlice.ParentSlice.MyCmObject;
+			return owningSlice == null ? throw new FwConfigurationException("LexReferenceTreeRootLauncher must be a child of a LexReferenceTreeRootSlice") : owningSlice.ParentSlice.MyCmObject;
 		}
 
 		/// <summary>

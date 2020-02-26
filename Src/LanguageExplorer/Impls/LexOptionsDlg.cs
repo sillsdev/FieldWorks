@@ -72,8 +72,7 @@ namespace LanguageExplorer.Impls
 				FwRegistryHelper.FieldWorksRegistryKey.SetValue(FwRegistryHelper.UserLocaleValueName, NewUserWs);
 				//The writing system the user selects for the user interface may not be loaded yet into the project
 				//database. Therefore we need to check this first and if it is not we need to load it.
-				CoreWritingSystemDefinition ws;
-				m_cache.ServiceLocator.WritingSystemManager.GetOrSet(NewUserWs, out ws);
+				m_cache.ServiceLocator.WritingSystemManager.GetOrSet(NewUserWs, out var ws);
 				m_cache.ServiceLocator.WritingSystemManager.UserWritingSystem = ws;
 				// Reload the string table with the appropriate language data.
 				StringTable.Table.Reload(NewUserWs);
@@ -88,11 +87,7 @@ namespace LanguageExplorer.Impls
 		{
 			// If set to true and there is a last edited project name stored, FieldWorks will
 			// open that project automatically instead of displaying the usual Welcome dialog.
-			get
-			{
-				var app = m_propertyTable.GetValue<IFlexApp>(LanguageExplorerConstants.App);
-				return app.RegistrySettings.AutoOpenLastEditedProject;
-			}
+			get => m_propertyTable.GetValue<IFlexApp>(LanguageExplorerConstants.App).RegistrySettings.AutoOpenLastEditedProject;
 			set
 			{
 				var app = m_propertyTable.GetValue<IFlexApp>(LanguageExplorerConstants.App);

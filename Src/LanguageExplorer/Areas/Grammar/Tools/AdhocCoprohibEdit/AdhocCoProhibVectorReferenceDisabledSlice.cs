@@ -8,11 +8,6 @@ namespace LanguageExplorer.Areas.Grammar.Tools.AdhocCoprohibEdit
 {
 	internal class AdhocCoProhibVectorReferenceDisabledSlice : AdhocCoProhibVectorReferenceSlice
 	{
-		public AdhocCoProhibVectorReferenceDisabledSlice()
-			: base()
-		{
-		}
-
 		public override void FinishInit()
 		{
 			base.FinishInit();

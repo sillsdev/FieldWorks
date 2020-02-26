@@ -469,12 +469,11 @@ namespace LanguageExplorer.Controls.XMLViews
 			}
 			try
 			{
-				var flid = cache.DomainDataByFlid.MetaDataCache.GetFieldId(parts[0], parts[1], true);
-				return flid;
+				return cache.DomainDataByFlid.MetaDataCache.GetFieldId(parts[0], parts[1], true);
 			}
 			catch (Exception e)
 			{
-				throw new FwConfigurationException("Don't recognize atomicFlatListItem field " + descriptor, e);
+				throw new FwConfigurationException($"Don't recognize atomicFlatListItem field {descriptor}", e);
 			}
 		}
 
@@ -490,8 +489,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <returns>Hvo or 0</returns>
 		private int GetNamedListHvo(XElement node, string attrName)
 		{
-			var possList = GetNamedList(node, attrName);
-			return possList?.Hvo ?? 0;
+			return GetNamedList(node, attrName)?.Hvo ?? 0;
 		}
 
 		/// <summary>
@@ -501,8 +499,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <returns>Hvo or 0</returns>
 		internal static int GetNamedListHvo(LcmCache cache, XElement node, string attrName)
 		{
-			var possList = GetNamedList(cache, node, attrName);
-			return possList?.Hvo ?? (int)SpecialHVOValues.kHvoUninitializedObject;
+			return GetNamedList(cache, node, attrName)?.Hvo ?? (int)SpecialHVOValues.kHvoUninitializedObject;
 		}
 
 		/// <summary>
@@ -686,8 +683,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			}
 			(besc as IGhostable)?.InitForGhostItems(besc.Cache, colSpec);
 			besc.ValueChanged += besc_ValueChanged;
-			var bei = new BulkEditItem(besc);
-			return bei;
+			return new BulkEditItem(besc);
 		}
 
 		/// <summary>
@@ -1152,26 +1148,15 @@ namespace LanguageExplorer.Controls.XMLViews
 		}
 		#endregion
 
-		private bool DeleteRowsItemSelected
-		{
-			get
-			{
-				if (m_operationsTabControl.SelectedTab != m_deleteTab)
-				{
-					return false;
-				}
-				return DeleteWhatCombo.SelectedItem is ListClassTargetFieldItem;
-			}
-		}
+		private bool DeleteRowsItemSelected => m_operationsTabControl.SelectedTab == m_deleteTab && DeleteWhatCombo.SelectedItem is ListClassTargetFieldItem;
 
 		private List<ListClassTargetFieldItem> ListItemsClassesInfo(HashSet<int> classes)
 		{
 			var targetClasses = new List<ListClassTargetFieldItem>();
 			foreach (var classId in classes)
 			{
-				string pluralOfClass;
 				// get plural form labels from AlternativeTitles
-				XmlViewsUtils.TryFindPluralFormFromClassId(m_bv.SpecialCache.MetaDataCache, classId, out pluralOfClass);
+				XmlViewsUtils.TryFindPluralFormFromClassId(m_bv.SpecialCache.MetaDataCache, classId, out var pluralOfClass);
 				if (pluralOfClass.Length > 0)
 				{
 					targetClasses.Add(new ListClassTargetFieldItem(pluralOfClass + " (" + XMLViewsStrings.ksRows + ")", classId));
@@ -1357,7 +1342,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// needed for AllowDeleteItem().
 		/// </summary>
-		private GhostParentHelper UpdateCurrentGhostParentHelper()
+		private void UpdateCurrentGhostParentHelper()
 		{
 			m_ghostParentHelper = null;
 			// see if the object is a ghost object owner.
@@ -1369,7 +1354,6 @@ namespace LanguageExplorer.Controls.XMLViews
 					break;
 				}
 			}
-			return m_ghostParentHelper;
 		}
 
 		private void m_helpButton_Click(object sender, EventArgs e)
@@ -1435,8 +1419,7 @@ namespace LanguageExplorer.Controls.XMLViews
 
 		private void MakeSuggestions(ProgressState state)
 		{
-			var bei = m_beItems[m_itemIndex];
-			bei.BulkEditControl.MakeSuggestions(ItemsToChange(false), XMLViewsDataCache.ktagAlternateValue, XMLViewsDataCache.ktagItemEnabled, state);
+			m_beItems[m_itemIndex].BulkEditControl.MakeSuggestions(ItemsToChange(false), XMLViewsDataCache.ktagAlternateValue, XMLViewsDataCache.ktagItemEnabled, state);
 		}
 
 		private const int SUGGEST_BTN_YOFFSET = 30;
@@ -1511,7 +1494,7 @@ namespace LanguageExplorer.Controls.XMLViews
 
 		private bool PreviewOn
 		{
-			get { return m_previewOn; }
+			get => m_previewOn;
 			set
 			{
 				m_previewOn = value;
@@ -1647,8 +1630,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary/>
 		protected virtual void ShowPreviewItems(ProgressState state)
 		{
-			var bei = m_beItems[m_itemIndex];
-			bei.BulkEditControl.FakeDoit(ItemsToChange(false), XMLViewsDataCache.ktagAlternateValue, XMLViewsDataCache.ktagItemEnabled, state);
+			m_beItems[m_itemIndex].BulkEditControl.FakeDoit(ItemsToChange(false), XMLViewsDataCache.ktagAlternateValue, XMLViewsDataCache.ktagItemEnabled, state);
 		}
 
 		internal void ClearPreview()
@@ -1668,8 +1650,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		ReplaceWithMethod MakeReplaceWithMethod(out int newActiveColumn)
 		{
 			newActiveColumn = 0;  // in case we fail.
-			var fci = FindReplaceTargetCombo.SelectedItem as FieldComboItem;
-			if (fci == null)
+			if (!(FindReplaceTargetCombo.SelectedItem is FieldComboItem fci))
 			{
 				MessageBox.Show(XMLViewsStrings.ksChooseEditTarget);
 				return null;
@@ -1684,8 +1665,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		private ClearMethod MakeClearMethod(out int newActiveColumn)
 		{
 			newActiveColumn = 0;  // in case we fail.
-			var fci = DeleteWhatCombo.SelectedItem as FieldComboItem;
-			if (fci == null)
+			if (!(DeleteWhatCombo.SelectedItem is FieldComboItem fci))
 			{
 				MessageBox.Show(XMLViewsStrings.ksChooseClearTarget);
 				return null;
@@ -1700,14 +1680,12 @@ namespace LanguageExplorer.Controls.XMLViews
 		private TransduceMethod MakeTransduceMethod(out int newActiveColumn)
 		{
 			newActiveColumn = 0;  // in case we fail.
-			var fci = TransduceTargetCombo.SelectedItem as FieldComboItem;
-			if (fci == null)
+			if (!(TransduceTargetCombo.SelectedItem is FieldComboItem fci))
 			{
 				MessageBox.Show(XMLViewsStrings.ksChooseDestination);
 				return null;
 			}
-			var fciSrc = TransduceSourceCombo.SelectedItem as FieldComboItem;
-			if (fciSrc == null)
+			if (!(TransduceSourceCombo.SelectedItem is FieldComboItem fciSrc))
 			{
 				MessageBox.Show(XMLViewsStrings.ksChooseSource);
 				return null;
@@ -1740,14 +1718,12 @@ namespace LanguageExplorer.Controls.XMLViews
 		private BulkCopyMethod MakeBulkCopyMethod(out int newActiveColumn)
 		{
 			newActiveColumn = 0;  // in case we fail.
-			var fci = BulkCopyTargetCombo.SelectedItem as FieldComboItem;
-			if (fci == null)
+			if (!(BulkCopyTargetCombo.SelectedItem is FieldComboItem fci))
 			{
 				MessageBox.Show(XMLViewsStrings.ksChooseDestination);
 				return null;
 			}
-			var fciSrc = BulkCopySourceCombo.SelectedItem as FieldComboItem;
-			if (fciSrc == null)
+			if (!(BulkCopySourceCombo.SelectedItem is FieldComboItem fciSrc))
 			{
 				MessageBox.Show(XMLViewsStrings.ksChooseSource);
 				return null;
@@ -1800,15 +1776,7 @@ namespace LanguageExplorer.Controls.XMLViews
 				{
 					entry1 = y.Owner as ILexEntry;
 				}
-				if (entry1 == null)
-				{
-					return entry2 == null ? 0 : -1; // any entry is larger than a non-entry.
-				}
-				if (entry2 == null)
-				{
-					return 1;
-				}
-				return entry1.HomographNumber.CompareTo(entry2.HomographNumber);
+				return entry1 == null ? entry2 == null ? 0 : -1 : entry2 == null ? 1 : entry1.HomographNumber.CompareTo(entry2.HomographNumber);
 			});
 			return objects.Select(obj => obj.Hvo).ToList(); // probably counted at least twice and enumerated, so collection is likely more efficient.
 		}
@@ -1866,8 +1834,7 @@ namespace LanguageExplorer.Controls.XMLViews
 					}
 					else if (m_operationsTabControl.SelectedTab == FindReplaceTab)
 					{
-						int newCol;
-						var method = MakeReplaceWithMethod(out newCol);
+						var method = MakeReplaceWithMethod(out _);
 						if (method == null)
 						{
 							return;
@@ -1877,8 +1844,7 @@ namespace LanguageExplorer.Controls.XMLViews
 					}
 					else if (m_operationsTabControl.SelectedTab == BulkCopyTab)
 					{
-						int newCol;
-						var method = MakeBulkCopyMethod(out newCol);
+						var method = MakeBulkCopyMethod(out _);
 						if (method == null)
 						{
 							return;
@@ -1888,8 +1854,7 @@ namespace LanguageExplorer.Controls.XMLViews
 					}
 					else if (m_operationsTabControl.SelectedTab == TransduceTab)
 					{
-						int newCol;
-						var method = MakeTransduceMethod(out newCol);
+						var method = MakeTransduceMethod(out _);
 						if (method == null)
 						{
 							return;
@@ -1913,8 +1878,7 @@ namespace LanguageExplorer.Controls.XMLViews
 						}
 						else if (DeleteWhatCombo.SelectedItem is FieldComboItem)
 						{
-							int newCol;
-							var method = MakeClearMethod(out newCol);
+							var method = MakeClearMethod(out _);
 							if (method == null)
 							{
 								return;
@@ -1952,8 +1916,7 @@ namespace LanguageExplorer.Controls.XMLViews
 
 		private void FixReplacedItems(object doItObject)
 		{
-			var gro = doItObject as IGetReplacedObjects;
-			var replacedObjects = gro?.ReplacedObjects;
+			var replacedObjects = (doItObject as IGetReplacedObjects)?.ReplacedObjects;
 			if (replacedObjects != null && replacedObjects.Count != 0)
 			{
 				m_bv.FixReplacedItems(replacedObjects);
@@ -1992,8 +1955,7 @@ namespace LanguageExplorer.Controls.XMLViews
 					idsToDelete.Add(hvoToDelete);
 				}
 			}
-			bool fUndo;
-			if (!CheckMultiDeleteConditionsAndReport(idsToDelete, out fUndo))
+			if (!CheckMultiDeleteConditionsAndReport(idsToDelete, out _))
 			{
 				return;
 			}
@@ -2014,8 +1976,7 @@ namespace LanguageExplorer.Controls.XMLViews
 							state.Breath();
 						}
 						i++;
-						ICmObject obj;
-						if (m_cache.ServiceLocator.ObjectRepository.TryGetObject(hvo, out obj))
+						if (m_cache.ServiceLocator.ObjectRepository.TryGetObject(hvo, out _))
 						{
 							m_bv.SpecialCache.DeleteObj(hvo);
 						}
@@ -2065,7 +2026,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			if (m_piBulkDeleteIfZero != null)
 			{
 				var o = m_piBulkDeleteIfZero.GetValue(co, null);
-				if (o.GetType() == typeof(int) && (int)o != 0)
+				if (o is int i && i != 0)
 				{
 					return false;
 				}
@@ -2169,7 +2130,6 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				DeleteWhatCombo.Items.Add(rootClassOption);
 			}
-
 			// Default to deleting rows if that's all we have in the combo box list.
 			DeleteWhatCombo.ResumeLayout();
 			var enabled = m_deleteTab.Enabled;
@@ -2237,15 +2197,13 @@ namespace LanguageExplorer.Controls.XMLViews
 
 		private void EnablePreviewApplyForBulkCopy()
 		{
-			var enabled = BulkCopyTab.Enabled;
 			// The following would also make sense. But I think it is better to enable the buttons
 			// and put up an explanation if they can't be used. If we change it to the following,
 			// we need event handlers to get this called when the relevant indexes change.
 			//			bool enabled = m_bulkCopySourceCombo.SelectedIndex >= 0
 			//				&& m_bulkCopyTargetCombo.SelectedIndex >= 0
 			//				&& m_bulkCopyTargetCombo.SelectedIndex != m_bulkCopySourceCombo.SelectedIndex;
-			m_ApplyButton.Enabled = enabled;
-			m_previewButton.Enabled = enabled;
+			m_ApplyButton.Enabled = m_previewButton.Enabled = BulkCopyTab.Enabled;
 		}
 
 		/// <summary>
@@ -2346,21 +2304,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		}
 
 		// The currently active bulk edit item (if any).
-		internal BulkEditItem CurrentItem
-		{
-			get
-			{
-				if (m_beItems == null)
-				{
-					return null;
-				}
-				if (m_itemIndex < 0 || m_itemIndex >= m_beItems.Length)
-				{
-					return null;
-				}
-				return m_beItems[m_itemIndex];
-			}
-		}
+		internal BulkEditItem CurrentItem => m_beItems == null ? null : m_itemIndex < 0 || m_itemIndex >= m_beItems.Length ? null : m_beItems[m_itemIndex];
 
 		/// <summary>
 		/// Enables the preview apply for list choice.
@@ -2379,7 +2323,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			// we need to disable these buttons when in this state.
 			if (m_beItems[m_itemIndex] != null && m_beItems[m_itemIndex].BulkEditControl is ComplexListChooserBEditControl)
 			{
-				if ((m_beItems[m_itemIndex].BulkEditControl as ComplexListChooserBEditControl).ChosenObjects.Any())
+				if (((ComplexListChooserBEditControl)m_beItems[m_itemIndex].BulkEditControl).ChosenObjects.Any())
 				{
 					m_ApplyButton.Enabled = true;
 					m_previewButton.Enabled = true;
@@ -2690,16 +2634,12 @@ namespace LanguageExplorer.Controls.XMLViews
 				}
 				catch
 				{
-					Debug.Fail(string.Format("There was an error creating Delete combo item for column ({0})", selectedItem.ColumnIndex), optionLabel);
+					Debug.Fail($"There was an error creating Delete combo item for column ({selectedItem.ColumnIndex})", optionLabel);
 					// skip buggy column
 					continue;
 				}
 				var item = new FieldComboItem(optionLabel, icol, accessor);
 				combo.Items.Add(item);
-				if (selectedItem != null && selectedItem.ToString() == item.ToString())
-				{
-					var newSelection = item;
-				}
 			}
 		}
 
@@ -2743,9 +2683,9 @@ namespace LanguageExplorer.Controls.XMLViews
 				if (m_miClickEditIf != null)
 				{
 					var o = m_miClickEditIf.Invoke(co, new object[] { m_wsClickEditIf });
-					if (o.GetType() == typeof(bool))
+					if (o is bool b)
 					{
-						var fAllowEdit = m_fClickEditIfNot ? !(bool)o : (bool)o;
+						var fAllowEdit = m_fClickEditIfNot ? !b : b;
 						if (!fAllowEdit)
 						{
 							return;
@@ -2930,8 +2870,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				return;
 			}
-			int flid;
-			m_expectedListItemsClassId = GetExpectedListItemsClassAndTargetFieldFromSelectedItem(selectedItem, out flid);
+			m_expectedListItemsClassId = GetExpectedListItemsClassAndTargetFieldFromSelectedItem(selectedItem, out var flid);
 			if (m_expectedListItemsClassId != 0)
 			{
 				using (var targetFieldItem = new TargetFieldItem(selectedItem.ToString(), selectedItem.ColumnIndex, m_expectedListItemsClassId, flid))
@@ -2946,8 +2885,7 @@ namespace LanguageExplorer.Controls.XMLViews
 
 		private int GetExpectedListItemsClassFromSelectedItem(FieldComboItem selectedItem)
 		{
-			int dummy;
-			return GetExpectedListItemsClassAndTargetFieldFromSelectedItem(selectedItem, out dummy);
+			return GetExpectedListItemsClassAndTargetFieldFromSelectedItem(selectedItem, out _);
 		}
 
 		private int GetExpectedListItemsClassAndTargetFieldFromSelectedItem(FieldComboItem selectedItem, out int field)
@@ -2967,9 +2905,8 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				// figure out the class of the expected list items for the corresponding bulk edit item
 				// and make that our target class.
-				if (selectedItem is TargetFieldItem && ((TargetFieldItem)selectedItem).ExpectedListItemsClass != 0)
+				if (selectedItem is TargetFieldItem targetFieldItem && targetFieldItem.ExpectedListItemsClass != 0)
 				{
-					var targetFieldItem = (TargetFieldItem)selectedItem;
 					listItemsClassId = targetFieldItem.ExpectedListItemsClass;
 					field = targetFieldItem.TargetFlid;
 				}
@@ -2977,15 +2914,7 @@ namespace LanguageExplorer.Controls.XMLViews
 				{
 					// the expected class of the list items will be the source class
 					// of the first field in the FieldPath;
-					if (selectedItem.Accessor != null)
-					{
-						field = selectedItem.Accessor.FieldPath[0];
-					}
-					else
-					{
-						var beItem = m_beItems[selectedItem.ColumnIndex];
-						field = beItem.BulkEditControl.FieldPath[0];
-					}
+					field = selectedItem.Accessor?.FieldPath[0] ?? m_beItems[selectedItem.ColumnIndex].BulkEditControl.FieldPath[0];
 					listItemsClassId = m_cache.DomainDataByFlid.MetaDataCache.GetOwnClsId(field);
 				}
 			}
@@ -3337,7 +3266,7 @@ namespace LanguageExplorer.Controls.XMLViews
 					return false;
 				}
 				var tss = OldValue(hvo);
-				return (tss != null && tss.Length != 0);
+				return tss != null && tss.Length != 0;
 			}
 
 			/// <summary>
@@ -3380,8 +3309,7 @@ namespace LanguageExplorer.Controls.XMLViews
 				}
 				var tss = OldValue(hvo) ?? TsStringUtils.EmptyString(m_accessor.WritingSystem);
 				m_textSourceInit.SetString(tss);
-				int ichMin, ichLim;
-				m_pattern.FindIn(m_ts, 0, tss.Length, true, out ichMin, out ichLim, null);
+				m_pattern.FindIn(m_ts, 0, tss.Length, true, out var ichMin, out _, null);
 				return ichMin >= 0;
 			}
 
@@ -3410,8 +3338,7 @@ namespace LanguageExplorer.Controls.XMLViews
 				var ichLimLastMatch = -1;
 				for (; ichStartSearch <= cch;)
 				{
-					int ichMin, ichLim;
-					m_pattern.FindIn(m_ts, ichStartSearch, cch, true, out ichMin, out ichLim, null);
+					m_pattern.FindIn(m_ts, ichStartSearch, cch, true, out var ichMin, out var ichLim, null);
 					if (ichMin < 0)
 					{
 						break;
@@ -3578,16 +3505,7 @@ namespace LanguageExplorer.Controls.XMLViews
 				{
 					sNew = tssNew.Text;
 				}
-				if (string.IsNullOrEmpty(sOld) && string.IsNullOrEmpty(sNew))
-				{
-					// They're really the same, regardless of properties.
-					return false;
-				}
-				if (sOld != sNew)
-				{
-					return true;
-				}
-				return !tssNew.Equals(tssOld);
+				return (!string.IsNullOrEmpty(sOld) || !string.IsNullOrEmpty(sNew)) && (sOld != sNew || !tssNew.Equals(tssOld));
 			}
 
 
@@ -3712,8 +3630,7 @@ namespace LanguageExplorer.Controls.XMLViews
 					{
 						continue;
 					}
-					int valOld;
-					if (TryGetOriginalListValue(sda, hvoItem, out valOld) && valOld == val)
+					if (TryGetOriginalListValue(sda, hvoItem, out var valOld) && valOld == val)
 					{
 						continue;
 					}
@@ -4157,10 +4074,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			/// <summary>
 			///
 			/// </summary>
-			public override int WritingSystem
-			{
-				get { throw new NotSupportedException(); }
-			}
+			public override int WritingSystem => throw new NotSupportedException();
 		}
 
 		/// <summary>
@@ -4216,15 +4130,8 @@ namespace LanguageExplorer.Controls.XMLViews
 			/// </summary>
 			public XMLViewsDataCache DataAccess
 			{
-				get
-				{
-					if (m_sda == null)
-					{
-						throw new InvalidOperationException("Must set the special cache of a BulkEditSpecControl");
-					}
-					return m_sda;
-				}
-				set { m_sda = value; }
+				get => m_sda ?? throw new InvalidOperationException("Must set the special cache of a BulkEditSpecControl");
+				set => m_sda = value;
 			}
 
 			public IVwStylesheet Stylesheet
@@ -4244,8 +4151,7 @@ namespace LanguageExplorer.Controls.XMLViews
 				UndoableUnitOfWorkHelper.Do(XMLViewsStrings.ksUndoBulkEdit, XMLViewsStrings.ksRedoBulkEdit, Cache.ActionHandlerAccessor, () =>
 				{
 					var sda = Cache.DomainDataByFlid;
-					var item = m_combo.SelectedItem as HvoTssComboItem;
-					if (item == null)
+					if (!(m_combo.SelectedItem is HvoTssComboItem item))
 					{
 						return;
 					}
@@ -4439,14 +4345,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				// Tell the parent control that we may have changed the selected item so it can
 				// enable or disable the Apply and Preview buttons based on the selection.
-				if (ValueChanged == null)
-				{
-					return;
-				}
-				var index = m_combo.SelectedIndex;
-				var htci = m_combo.SelectedItem as HvoTssComboItem;
-				var hvo = htci?.Hvo ?? 0;
-				ValueChanged(sender, new FwObjectSelectionEventArgs(hvo, index));
+				ValueChanged?.Invoke(sender, new FwObjectSelectionEventArgs((m_combo.SelectedItem as HvoTssComboItem)?.Hvo ?? 0, m_combo.SelectedIndex));
 			}
 
 			/// <summary>
@@ -4706,8 +4605,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			public override void FakeDoit(IEnumerable<int> itemsToChange, int tagMadeUpFieldIdentifier, int tagEnabled, ProgressState state)
 			{
 				var sda = Cache.DomainDataByFlid;
-				var item = m_combo.SelectedItem as HvoTssComboItem;
-				if (item == null)
+				if (!(m_combo.SelectedItem is HvoTssComboItem item))
 				{
 					return;
 				}

@@ -210,8 +210,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			// at least, not while we have any changes that really need to be saved, since we
 			// should have lost focus and saved before doing anything that would cause a regenerate.
 			// But let's not crash.
-			var extensions = Cache.ActionHandlerAccessor as IActionHandlerExtensions;
-			if (extensions != null && !extensions.CanStartUow || !m_sense.IsValidObject) //users might quickly realize a mistake and delete the sense before we have converted our dummy.
+			if (Cache.ActionHandlerAccessor is IActionHandlerExtensions extensions && !extensions.CanStartUow || !m_sense.IsValidObject) //users might quickly realize a mistake and delete the sense before we have converted our dummy.
 			{
 				return 0;
 			}
@@ -293,9 +292,8 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				{
 					// Remove the sense from the reversal index entry and delete the entry if the SensesRS property is empty
 					Cache.DomainDataByFlid.BeginUndoTask(LanguageExplorerResources.ksUndoDeleteRevFromSense, LanguageExplorerResources.ksRedoDeleteRevFromSense);
-					foreach (var entry in removedEntries)
+					foreach (var rie in removedEntries.Select(entry => Cache.ServiceLocator.GetInstance<IReversalIndexEntryRepository>().GetObject(entry)))
 					{
-						var rie = Cache.ServiceLocator.GetInstance<IReversalIndexEntryRepository>().GetObject(entry);
 						rie.SensesRS.Remove(m_sense);
 						if (rie.SensesRS.Count == 0 && rie.SubentriesOS.Count == 0)
 						{
@@ -407,9 +405,9 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			for (var i = maxLevel; i < rgsForms.Count; ++i)
 			{
 				var rie = fact.Create();
-				if (owner is IReversalIndex)
+				if (owner is IReversalIndex index)
 				{
-					(owner as IReversalIndex).EntriesOC.Add(rie);
+					index.EntriesOC.Add(rie);
 				}
 				else
 				{
@@ -564,11 +562,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				// As the user adds new entries, the dummy ID data member server will keep
 				// decrementing its count. The cache may end up with any number of IDs that
 				// are less than m_dummyEntryId.
-				var entryIds = new List<int>();
-				foreach (var rie in idx.EntriesForSense(entries))
-				{
-					entryIds.Add(rie.Hvo);
-				}
+				var entryIds = idx.EntriesForSense(entries).Select(rie => rie.Hvo).ToList();
 				var wsHandle = m_cache.ServiceLocator.WritingSystemManager.GetWsFromStr(idx.WritingSystem);
 				// Cache a dummy string for each WS.
 				var tssEmpty = TsStringUtils.EmptyString(wsHandle);
@@ -594,8 +588,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				var cform = ent.ReversalForm.StringCount;
 				for (var i = 0; i < cform; ++i)
 				{
-					int ws;
-					var form = ent.ReversalForm.GetStringFromIndex(i, out ws).Text;
+					var form = ent.ReversalForm.GetStringFromIndex(i, out var ws).Text;
 					// If the entry is actually a subentry, display the form(s) of its
 					// parent(s) as well, separating levels by a colon.  See LT-4665.
 					if (ent.OwningFlid != ReversalIndexTags.kflidEntries)
@@ -627,16 +620,8 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			}
 			base.HandleSelectionChange(rootb, vwselNew);
 
-			ITsString tss;
-			int ichAnchor;
-			bool fAssocPrev;
-			int hvoObj;
-			int tag;
-			int ws;
-			vwselNew.TextSelInfo(false, out tss, out ichAnchor, out fAssocPrev, out hvoObj, out tag, out ws);
-			int ichEnd;
-			int hvoObjEnd;
-			vwselNew.TextSelInfo(true, out tss, out ichEnd, out fAssocPrev, out hvoObjEnd, out tag, out ws);
+			vwselNew.TextSelInfo(false, out var tss, out var ichAnchor, out var fAssocPrev, out var hvoObj, out var tag, out var ws);
+			vwselNew.TextSelInfo(true, out tss, out var ichEnd, out fAssocPrev, out var hvoObjEnd, out tag, out ws);
 			if (hvoObjEnd != hvoObj)
 			{
 				// Can't do much with a multi-object selection.
@@ -645,13 +630,10 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			}
 
 			// The next level out in the view should be the entry in the index.
-			int hvoIndex, ihvoEntry, cpropPrevious, tagEntry;
-			IVwPropertyStore vps;
-			vwselNew.PropInfo(false, 1, out hvoIndex, out tagEntry, out ihvoEntry, out cpropPrevious, out vps);
+			vwselNew.PropInfo(false, 1, out var hvoIndex, out _, out _, out _, out _);
 			// And the next one is the relevant index.
-			int hvoSense, tagIndex, ihvoIndex;
-			vwselNew.PropInfo(false, 2, out hvoSense, out tagIndex, out ihvoIndex, out cpropPrevious, out vps);
 
+			vwselNew.PropInfo(false, 2, out _, out _, out var ihvoIndex, out _, out _);
 			var count = m_sdaRev.get_VecSize(hvoIndex, kFlidEntries);
 			var lastEntryHvo = m_sdaRev.get_VecItem(hvoIndex, kFlidEntries, count - 1);
 			string oldForm = null;
@@ -695,8 +677,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			m_sdaRev.CacheReplace(hvoIndex, kFlidEntries, count, count, new[] { m_dummyId }, 1);
 			// Set its 'form' to be an empty string in the appropriate writing system.
 			var props = tss.get_PropertiesAt(0);
-			int nVar;
-			ws = props.GetIntPropValues((int)FwTextPropType.ktptWs, out nVar);
+			ws = props.GetIntPropValues((int)FwTextPropType.ktptWs, out _);
 			var tssEmpty = TsStringUtils.EmptyString(ws);
 			m_sdaRev.CacheStringAlt(m_dummyId, ReversalIndexEntryTags.kflidReversalForm, ws, tssEmpty);
 			// Refresh

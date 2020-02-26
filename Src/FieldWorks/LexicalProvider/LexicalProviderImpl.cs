@@ -506,13 +506,13 @@ namespace SIL.FieldWorks.LexicalProvider
 			#region Implementation of IPublisher
 
 			/// <inheritdoc />
-			void IPublisher.Publish(string message, object newValue)
+			void IPublisher.Publish(PublisherParameterObject publisherParameterObject)
 			{
 				// Pretend to do something.
 			}
 
 			/// <inheritdoc />
-			void IPublisher.Publish(IList<string> messages, IList<object> newValues)
+			void IPublisher.Publish(IList<PublisherParameterObject> publisherParameterObjects)
 			{
 				// Pretend to do something.
 			}

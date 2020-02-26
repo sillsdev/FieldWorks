@@ -140,11 +140,6 @@ namespace LanguageExplorer.Areas
 			HandleDeletion(sender);
 		}
 
-		private static void CmdDeleteSelectedObject_Clicked(object sender, EventArgs e)
-		{
-			HandleDeletion(sender);
-		}
-
 		private static void DeleteSelectedBrowseViewObject_Clicked(object sender, EventArgs e)
 		{
 			var tag = (IList<object>)((ToolStripMenuItem)sender).Tag;
@@ -153,7 +148,7 @@ namespace LanguageExplorer.Areas
 
 		private static void HandleDeletion(object sender)
 		{
-			(((ToolStripMenuItem)sender).Tag as Slice).HandleDeleteCommand();
+			((Slice)((ToolStripMenuItem)sender).Tag).HandleDeleteCommand();
 		}
 
 		private void Insert_Slash_Clicked(object sender, EventArgs e)
@@ -260,21 +255,21 @@ namespace LanguageExplorer.Areas
 			var tagList = (List<object>)((ToolStripMenuItem)sender).Tag;
 			Guid jumpToGuid;
 			var guidSupplier = tagList[2];
-			if (guidSupplier is Guid)
+			if (guidSupplier is Guid guid)
 			{
-				jumpToGuid = (Guid)guidSupplier;
+				jumpToGuid = guid;
 			}
-			else if (guidSupplier is IRecordList)
+			else if (guidSupplier is IRecordList list)
 			{
-				jumpToGuid = ((IRecordList)guidSupplier).CurrentObject.Guid;
+				jumpToGuid = list.CurrentObject.Guid;
 			}
-			else if (guidSupplier is DataTree)
+			else if (guidSupplier is DataTree dataTree)
 			{
-				jumpToGuid = ((DataTree)guidSupplier).CurrentSlice.MyCmObject.Guid;
+				jumpToGuid = dataTree.CurrentSlice.MyCmObject.Guid;
 			}
-			else if (guidSupplier is ICmObject)
+			else if (guidSupplier is ICmObject cmObject)
 			{
-				jumpToGuid = ((ICmObject)guidSupplier).Guid;
+				jumpToGuid = cmObject.Guid;
 			}
 			else
 			{

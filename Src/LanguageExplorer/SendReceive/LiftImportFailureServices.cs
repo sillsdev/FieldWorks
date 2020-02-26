@@ -69,7 +69,7 @@ namespace LanguageExplorer.SendReceive
 		/// </summary>
 		internal static void RegisterBasicImportFailure(string baseLiftFolderDirectoryName)
 		{
-			// The results (of the FLEx inital import failure) will be that Lift Bridge will store the fact of the import failure,
+			// The results (of the FLEx initial import failure) will be that Lift Bridge will store the fact of the import failure,
 			// and then protect the repo from damage by another S/R by Flex
 			// by seeing the last import failure, and then requiring the user to re-try the failed import,
 			// using the same LIFT file that had failed, before.

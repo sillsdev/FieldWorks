@@ -128,9 +128,8 @@ namespace LCMBrowser
 				}
 			}
 
-			var keyFirstDisplayedObj = (firstDisplayedObj != null ? firstDisplayedObj.Key : -1);
-			var keyCurrSelectedObj = (currSelectedObj != null ? currSelectedObj.Key : -1);
-
+			var keyFirstDisplayedObj = firstDisplayedObj?.Key ?? -1;
+			var keyCurrSelectedObj = currSelectedObj?.Key ?? -1;
 			// Save all the expanded objects.
 			var expandedObjects = new List<int>();
 

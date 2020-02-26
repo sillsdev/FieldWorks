@@ -31,30 +31,21 @@ namespace LanguageExplorerTests.Impls
 		/// <summary>
 		/// Placement in the IPropertyTableProvider interface lets FwApp call IPropertyTable.DoStuff.
 		/// </summary>
-		IPropertyTable IPropertyTableProvider.PropertyTable
-		{
-			get { throw new NotSupportedException(); }
-		}
+		IPropertyTable IPropertyTableProvider.PropertyTable => throw new NotSupportedException();
 		#endregion
 
 		#region Implementation of IPublisherProvider
 		/// <summary>
 		/// Get the IPublisher.
 		/// </summary>
-		IPublisher IPublisherProvider.Publisher
-		{
-			get { throw new NotSupportedException(); }
-		}
+		IPublisher IPublisherProvider.Publisher => throw new NotSupportedException();
 		#endregion
 
 		#region Implementation of ISubscriberProvider
 		/// <summary>
 		/// Get the ISubscriber.
 		/// </summary>
-		ISubscriber ISubscriberProvider.Subscriber
-		{
-			get { throw new NotSupportedException(); }
-		}
+		ISubscriber ISubscriberProvider.Subscriber => throw new NotSupportedException();
 		#endregion
 
 		#region Implementation of IRecordListOwner
@@ -77,26 +68,17 @@ namespace LanguageExplorerTests.Impls
 		/// <summary>
 		/// Gets the active view of the window
 		/// </summary>
-		IRootSite IFwMainWnd.ActiveView
-		{
-			get { throw new NotSupportedException(); }
-		}
+		IRootSite IFwMainWnd.ActiveView => throw new NotSupportedException();
 
 		/// <summary>
 		/// Gets the focused control of the window
 		/// </summary>
-		Control IFwMainWnd.FocusedControl
-		{
-			get { throw new NotSupportedException(); }
-		}
+		Control IFwMainWnd.FocusedControl => throw new NotSupportedException();
 
 		/// <summary>
 		/// Gets the data objects cache.
 		/// </summary>
-		LcmCache IFwMainWnd.Cache
-		{
-			get { throw new NotSupportedException(); }
-		}
+		LcmCache IFwMainWnd.Cache => throw new NotSupportedException();
 
 		public void ClearInvalidatedStoredData()
 		{
@@ -117,10 +99,7 @@ namespace LanguageExplorerTests.Impls
 		/// Gets a Rectangle representing the position and size of the window in its
 		/// normal (non-minimized, non-maximized) state.
 		/// </summary>
-		Rectangle IFwMainWnd.NormalStateDesktopBounds
-		{
-			get { throw new NotSupportedException(); }
-		}
+		Rectangle IFwMainWnd.NormalStateDesktopBounds => throw new NotSupportedException();
 
 		/// <summary>
 		/// Called just before a window synchronizes it's views with DB changes (e.g. when an

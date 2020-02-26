@@ -32,27 +32,7 @@ namespace LanguageExplorer.Controls.Styles
 		public int CompareTo(object obj)
 		{
 			var that = obj as StyleComboItem;
-			if (this == that)
-			{
-				return 0;
-			}
-			if (that == null)
-			{
-				return 1;
-			}
-			if (Style == that.Style)
-			{
-				return 0;
-			}
-			if (that.Style == null)
-			{
-				return 1;
-			}
-			if (Style == null)
-			{
-				return -1;
-			}
-			return Style.Name.CompareTo(that.Style.Name);
+			return this == that ? 0 : that == null ? 1 : Style == that.Style ? 0 : that.Style == null ? 1 : Style?.Name.CompareTo(that.Style.Name) ?? -1;
 		}
 	}
 }

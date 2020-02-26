@@ -46,7 +46,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		internal override void PrepareToShowContextMenu()
 		{
 			base.PrepareToShowContextMenu();
-			// Calulate the WS that need to be showed.
+			// Calculate the WS that need to be showed.
 			var currentlyAvailableForChecking = new List<string>(WritingSystemOptionsForDisplay.Select(writingSystemDefinition => writingSystemDefinition.DisplayLabel));
 			var currentlyCheckedWritingSystems = new List<string>(WritingSystemsSelectedForDisplay.Select(writingSystemDefinition => writingSystemDefinition.DisplayLabel));
 			foreach (var wsMenu in _writingSystemMenuItems)

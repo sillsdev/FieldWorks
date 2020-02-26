@@ -84,7 +84,6 @@ namespace LanguageExplorer.Areas.Lists
 		public void EnsurePropertiesAreCurrent()
 		{
 			_propertyTable.SetProperty(AreaServices.InitialArea, MachineName, true, settingsGroup: SettingsGroup.LocalSettings);
-
 			var toolToPersist = ActiveTool ?? _sortedDictionaryOfAllTools.Values.First(tool => tool.MachineName == AreaServices.ListsAreaDefaultToolMachineName);
 			toolToPersist.EnsurePropertiesAreCurrent();
 		}
@@ -176,8 +175,8 @@ namespace LanguageExplorer.Areas.Lists
 		/// <inheritdoc />
 		event EventHandler IListArea.ListAreaToolsChanged
 		{
-			add { ListAreaToolsChanged += value; }
-			remove { ListAreaToolsChanged -= value; }
+			add => ListAreaToolsChanged += value;
+			remove => ListAreaToolsChanged -= value;
 		}
 
 		/// <summary>

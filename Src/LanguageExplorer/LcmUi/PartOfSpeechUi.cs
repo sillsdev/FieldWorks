@@ -2,7 +2,6 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System;
 using System.Windows.Forms;
 using LanguageExplorer.Controls;
 using SIL.Code;
@@ -44,7 +43,7 @@ namespace LanguageExplorer.LcmUi
 					case DialogResult.OK: // Fall through.
 					case DialogResult.Yes:
 						posUi = new PartOfSpeechUi(dlg.SelectedPOS);
-						publisher.Publish(LanguageExplorerConstants.JumpToRecord, dlg.SelectedPOS.Hvo);
+						publisher.Publish(new PublisherParameterObject(LanguageExplorerConstants.JumpToRecord, dlg.SelectedPOS.Hvo));
 						break;
 				}
 			}

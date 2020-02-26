@@ -31,8 +31,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 		private RecordBrowseView _recordBrowseView;
 		private IRecordList _recordList;
 		private InterlinMaster _interlinMaster;
-		[Import(AreaServices.TextAndWordsAreaMachineName)]
-		private IArea _area;
 
 		#region Implementation of IMajorFlexComponent
 
@@ -73,7 +71,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 			var mainConcordanceContainerParameters = new MultiPaneParameters
 			{
 				Orientation = Orientation.Vertical,
-				Area = _area,
+				Area = Area,
 				Id = "WordsAndOccurrencesMultiPane",
 				ToolMachineName = MachineName,
 				DefaultPrintPane = "wordOccurrenceList",
@@ -98,12 +96,11 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 			root.Element("wordOccurrenceList").Element("parameters").Element("includeCordanceColumns").ReplaceWith(columns);
 			_interlinMaster = new InterlinMaster(root.Element("ITextControl").Element("parameters"), majorFlexComponentParameters, _recordList, paneBarButtons, false);
 			mainConcordanceContainerParameters.SecondControlParameters.Control = PaneBarContainerFactory.Create(majorFlexComponentParameters.FlexComponentParameters, _interlinMaster, interlinMasterPaneBar);
-
 			// This will be the nested MultiPane that goes into mainConcordanceContainerParameters.FirstControlParameters.Control
 			var nestedMultiPaneParameters = new MultiPaneParameters
 			{
 				Orientation = Orientation.Horizontal,
-				Area = _area,
+				Area = Area,
 				Id = "PatternAndTextMultiPane",
 				ToolMachineName = MachineName,
 				FirstCollapseZone = 110000,
@@ -121,7 +118,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 			nestedMultiPaneParameters.SecondControlParameters.Control = PaneBarContainerFactory.Create(majorFlexComponentParameters.FlexComponentParameters, _recordBrowseView);
 			// Nested MP is created by call to MultiPaneFactory.CreateConcordanceContainer
 			_concordanceContainer = MultiPaneFactory.CreateConcordanceContainer(majorFlexComponentParameters.FlexComponentParameters, majorFlexComponentParameters.MainCollapsingSplitContainer, mainConcordanceContainerParameters, nestedMultiPaneParameters);
-
 			_interlinMaster.FinishInitialization();
 		}
 
@@ -173,7 +169,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 		/// <summary>
 		/// Get the area for the tool.
 		/// </summary>
-		public IArea Area => _area;
+		[field: Import(AreaServices.TextAndWordsAreaMachineName)]
+		public IArea Area { get; private set; }
 
 		/// <summary>
 		/// Get the image for the area.

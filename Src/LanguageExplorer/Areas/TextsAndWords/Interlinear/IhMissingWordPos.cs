@@ -156,7 +156,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			// or if we are simulating a click (e.g. by pressing Enter).
 			if (!m_fUnderConstruction && e.Action == TreeViewAction.ByMouse)
 			{
-				SelectItem((e.Node as HvoTreeNode).Hvo, e.Node.Text);
+				SelectItem(((HvoTreeNode)e.Node).Hvo, e.Node.Text);
 			}
 		}
 

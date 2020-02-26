@@ -20,8 +20,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.CorpusStatistics
 	{
 		private CorpusStatisticsToolMenuHelper _toolMenuHelper;
 		private StatisticsView _statisticsView;
-		[Import(AreaServices.TextAndWordsAreaMachineName)]
-		private IArea _area;
 
 		#region Implementation of IMajorFlexComponent
 
@@ -99,7 +97,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.CorpusStatistics
 		/// <summary>
 		/// Get the area for the tool.
 		/// </summary>
-		public IArea Area => _area;
+		[field: Import(AreaServices.TextAndWordsAreaMachineName)]
+		public IArea Area { get; private set; }
 
 		/// <summary>
 		/// Get the image for the area.

@@ -314,9 +314,9 @@ namespace LCMBrowser
 				// Close any windows from a previously opened project, if there is one.
 				foreach (var dc in m_dockPanel.DocumentsToArray())
 				{
-					if (dc is InspectorWnd)
+					if (dc is InspectorWnd inspectorWnd)
 					{
-						((InspectorWnd)dc).Close();
+						inspectorWnd.Close();
 					}
 				}
 
@@ -512,13 +512,12 @@ namespace LCMBrowser
 		/// </summary>
 		private string GetNewInspectorWndTitle(object obj)
 		{
-			if (obj == null)
+			switch (obj)
 			{
-				return string.Empty;
-			}
-			if (obj is ITsString)
-			{
-				return $"ITsString: '{((ITsString)obj).Text}'";
+				case null:
+					return string.Empty;
+				case ITsString tsString:
+					return $"ITsString: '{tsString.Text}'";
 			}
 			var objString = obj.ToString();
 			var title = objString;
@@ -563,22 +562,21 @@ namespace LCMBrowser
 		/// </summary>
 		private void HandleWindowClosed(object sender, FormClosedEventArgs e)
 		{
-			if (sender is DockContent)
+			if (sender is DockContent dockContent)
 			{
-				((DockContent)sender).FormClosed -= HandleWindowClosed;
+				dockContent.FormClosed -= HandleWindowClosed;
 			}
-			if (sender is InspectorWnd)
+			if (sender is InspectorWnd asInspectorWnd)
 			{
-				var asInspectorWnd = (InspectorWnd)sender;
 				asInspectorWnd.InspectorGrid.Enter -= InspectorGrid_Enter;
 				asInspectorWnd.InspectorGrid.Leave -= InspectorGrid_Leave;
 			}
 
 			tsbShowObjInNewWnd.Enabled = false;
 
-			if (sender is InspectorWnd)
+			if (sender is InspectorWnd inspectorWnd)
 			{
-				((InspectorWnd)sender).WillObjDisappearOnRefresh -= HandleWillObjDisappearOnRefresh;
+				inspectorWnd.WillObjDisappearOnRefresh -= HandleWillObjDisappearOnRefresh;
 			}
 			if (sender == m_modelWnd)
 			{
@@ -619,10 +617,10 @@ namespace LCMBrowser
 
 			var currentWnd = m_dockPanel.ActiveDocument;
 			var documents = m_dockPanel.DocumentsToArray();
-			var wndAnchor = documents[0] as DockContent;
+			var wndAnchor = (DockContent)documents[0];
 			for (var i = documents.Length - 1; i >= 0; i--)
 			{
-				var wnd = documents[i] as DockContent;
+				var wnd = (DockContent)documents[i];
 				wnd.DockTo(wndAnchor.Pane, DockStyle.Fill, 0);
 			}
 
@@ -638,8 +636,7 @@ namespace LCMBrowser
 			m_dockPanel.SuspendLayout();
 
 			var documents = m_dockPanel.DocumentsToArray();
-			var wndAnchor = documents[0] as DockContent;
-			if (wndAnchor == null)
+			if (!(documents[0] is DockContent))
 			{
 				return;
 			}
@@ -670,8 +667,7 @@ namespace LCMBrowser
 			if (text.StartsWith("[") && text.EndsWith("]"))
 			{
 				text = text.Trim('[', ']');
-				int i;
-				if (int.TryParse(text, out i))
+				if (int.TryParse(text, out _))
 				{
 					text = null;
 				}
@@ -708,8 +704,7 @@ namespace LCMBrowser
 				return;
 			}
 			var mdc = m_cache.ServiceLocator.GetInstance<IFwMetaDataCacheManaged>();
-			var owner = io.ParentInspectorObject.Object as ICmObject ?? ((ICmObject)io.ParentInspectorObject.OwningObject);
-
+			var owner = io.ParentInspectorObject.Object as ICmObject ?? (ICmObject)io.ParentInspectorObject.OwningObject;
 			var currentObj = io.Object as ICmObject ?? ((ICmObject)io.OwningObject);
 			int flid;
 			try
@@ -876,8 +871,7 @@ namespace LCMBrowser
 			{
 				if (owner.ClassID == mdc.GetClassId("CmPossibilityList")) //if the owner is CmPossibilityList
 				{
-					var holdposs = owner as ICmPossibilityList;
-					if (holdposs == null)
+					if (!(owner is ICmPossibilityList holdposs))
 					{
 						MessageBox.Show("PossOwnedByPossList; holdposs is null");
 						return false;
@@ -916,9 +910,9 @@ namespace LCMBrowser
 
 				foreach (var dc in m_dockPanel.DocumentsToArray())
 				{
-					if (dc is InspectorWnd)
+					if (dc is InspectorWnd inspectorWnd)
 					{
-						((InspectorWnd)dc).InspectorGrid.ShadingColor = clrNew;
+						inspectorWnd.InspectorGrid.ShadingColor = clrNew;
 					}
 				}
 			}
@@ -929,15 +923,12 @@ namespace LCMBrowser
 		/// </summary>
 		private void CmnuAddObjectClick(object sender, EventArgs e)
 		{
-			ICmObject refTarget;
 			ICmPossibilityList holdposs;
 			int oclid;
 			var ord = 0;
 			int idx;
 			int flid;
-			var mWnd = m_dockPanel.ActiveContent as InspectorWnd;
-
-			var io = mWnd?.CurrentInspectorObject;
+			var io = (m_dockPanel.ActiveContent as InspectorWnd)?.CurrentInspectorObject;
 			if (io == null)
 			{
 				return;
@@ -988,7 +979,7 @@ namespace LCMBrowser
 			var clid = m_cache.MetaDataCacheAccessor.GetDstClsId(flid);
 			if (type == "RS" || type == "RC" || type == "RA")
 			{
-				if (DisplayReferenceObjectsToAdd(flid, type, currentObj, out refTarget))
+				if (DisplayReferenceObjectsToAdd(flid, type, currentObj, out var refTarget))
 				{
 					if (refTarget != null)
 					{
@@ -1070,8 +1061,7 @@ namespace LCMBrowser
 				return true;
 			}
 			var clidSubs = mdc.GetAllSubclasses(clid);
-			list.AddRange(clidSubs.Where(t => !mdc.GetAbstract(t)).Select(t => mdc.GetClassName(t)));
-
+			list.AddRange(clidSubs.Where(t => !mdc.GetAbstract(t)).Select(mdc.GetClassName));
 			if (clidSubs.Length > 1)
 			{
 				using (var dlg = new RealListChooser("ClassName", list))
@@ -1133,8 +1123,7 @@ namespace LCMBrowser
 					}
 				}
 				Skip:
-				List<ICmPossibility> possList;
-				var desiredClasses = GetClassesForRefObjs(flid, sclid, out possList);
+				var desiredClasses = GetClassesForRefObjs(flid, sclid, out var possList);
 				if (desiredClasses != null && possList == null)
 				{
 					if (refObjs.Count == 0)
@@ -1154,12 +1143,7 @@ namespace LCMBrowser
 					}
 					if (labels.Count == 0)
 					{
-						var hashList = string.Empty;
-						foreach (var de in desiredClasses)
-						{
-							hashList = hashList + mdc.GetClassName(de) + " ";
-						}
-						MessageBox.Show($"No objects exist within the selected classes.  Try again.  Selected classes are: {hashList}");
+						MessageBox.Show($"No objects exist within the selected classes.  Try again.  Selected classes are: {desiredClasses.Aggregate(string.Empty, (current, de) => current + mdc.GetClassName(de) + " ")}");
 					}
 					else
 					{
@@ -1414,9 +1398,7 @@ namespace LCMBrowser
 			var nodePos = (node.DisplayName.Contains("[") ? int.Parse(node.DisplayName.Substring(1, node.DisplayName.IndexOf("]") - 1)) : 0);
 			if (node.ParentInspectorObject != null)
 			{
-				return (node.ParentInspectorObject.DisplayName.EndsWith("OS") || node.ParentInspectorObject.DisplayName.EndsWith("RS")) &&
-					   (node.OwningObject as Array) != null && (node.OwningObject as Array).Length > 1 &&
-					   nodePos > 0;
+				return (node.ParentInspectorObject.DisplayName.EndsWith("OS") || node.ParentInspectorObject.DisplayName.EndsWith("RS")) && (node.OwningObject as Array)?.Length > 1 && nodePos > 0;
 			}
 			return false;
 		}
@@ -1427,13 +1409,8 @@ namespace LCMBrowser
 		private static bool MoveObjectDownFromHere(IInspectorObject node)
 		{
 			var nodePos = (node.DisplayName.Contains("[") ? int.Parse(node.DisplayName.Substring(1, node.DisplayName.IndexOf("]") - 1)) : 0);
-			if (node.ParentInspectorObject != null)
-			{
-				return (node.ParentInspectorObject.DisplayName.EndsWith("OS") || node.ParentInspectorObject.DisplayName.EndsWith("RS")) &&
-					   (node.OwningObject as Array) != null && (node.OwningObject as Array).Length > 1 &&
-					   nodePos < (node.OwningObject as Array).Length - 1;
-			}
-			return false;
+			return node.ParentInspectorObject != null && (node.ParentInspectorObject.DisplayName.EndsWith("OS") || node.ParentInspectorObject.DisplayName.EndsWith("RS"))
+													  && (node.OwningObject as Array)?.Length > 1 && nodePos < ((Array)node.OwningObject).Length - 1;
 		}
 
 		/// <summary>
@@ -1549,8 +1526,7 @@ namespace LCMBrowser
 				return;
 			}
 
-			var owner = (io.ParentInspectorObject.Object as ICmObject ?? io.ParentInspectorObject.OriginalObject as ICmObject) ??
-						io.ParentInspectorObject.OwningObject as ICmObject;
+			var owner = (io.ParentInspectorObject.Object as ICmObject ?? io.ParentInspectorObject.OriginalObject as ICmObject) ?? io.ParentInspectorObject.OwningObject as ICmObject;
 			if (owner == null) // we're on a field
 			{
 				MessageBox.Show("owner object couldn't be created.");
@@ -1624,7 +1600,7 @@ namespace LCMBrowser
 
 				foreach (var dc in m_dockPanel.DocumentsToArray().OfType<InspectorWnd>())
 				{
-					(dc).RefreshView();
+					dc.RefreshView();
 				}
 			}
 		}
@@ -1657,8 +1633,7 @@ namespace LCMBrowser
 				return;
 			}
 			var guid = new Guid(m_tstxtGuidSrch.Text.Trim());
-			ICmObject obj;
-			if (m_cache.ServiceLocator.GetInstance<ICmObjectRepository>().TryGetObject(guid, out obj))
+			if (m_cache.ServiceLocator.GetInstance<ICmObjectRepository>().TryGetObject(guid, out var obj))
 			{
 				var wnd = ShowNewInspectorWindow(obj, obj.ToString());
 				wnd.ToolTipText = wnd.Text + Environment.NewLine + "Guid: " + m_tstxtGuidSrch.Text.Trim();
@@ -1882,10 +1857,7 @@ namespace LCMBrowser
 				return;
 			}
 
-			PropertyInfo pi;
-			ICmObject obj;
-			int hvo;
-			if (!BuildLcmPINeeded(mWnd.CurrentInspectorObject, out pi, out obj, out hvo))
+			if (!BuildLcmPINeeded(mWnd.CurrentInspectorObject, out var pi, out var obj, out var hvo))
 			{
 				throw new ApplicationException("The necessary Info to update the LCM wasn't obtained.");
 			}
@@ -2074,130 +2046,140 @@ namespace LCMBrowser
 			switch (operation)
 			{
 				case "String":
-					NonUndoableUnitOfWorkHelper.Do(m_cache.ActionHandlerAccessor,
-					() =>
-					{
-						if (node != null && node.Flid > 0)
-						{
-							m_cache.DomainDataByFlid.set_UnicodeProp(obj.Hvo, node.Flid, strVal);
-						}
-						else if (pi == null && node != null)
-						{
-							if (GetPI(node, StripOffTypeChars(node.DisplayName), obj, out pi))
-							{
-								pi.SetValue(obj, strVal, null);
-							}
-						}
-						else
-						{
-							pi.SetValue(obj, strVal, null);
-						}
-					});
+					NonUndoableUnitOfWorkHelper.Do(m_cache.ActionHandlerAccessor, UpdateStringValue);
 					break;
 				case "GenDate":
-					NonUndoableUnitOfWorkHelper.Do(m_cache.ActionHandlerAccessor,
-					() =>
-					{
-						if (node != null && node.Flid > 0)
-						{
-							m_silDataAccessManaged.SetGenDate(obj.Hvo, node.Flid, genVal);
-						}
-						else if (pi == null && node != null)
-						{
-							if (GetPI(node, StripOffTypeChars(node.DisplayName), obj, out pi))
-							{
-								pi.SetValue(obj, genVal, null);
-							}
-						}
-						else
-						{
-							pi.SetValue(obj, genVal, null);
-						}
-					});
+					NonUndoableUnitOfWorkHelper.Do(m_cache.ActionHandlerAccessor, UpdateGenDateValue);
 					break;
 				case "DateTime":
-					NonUndoableUnitOfWorkHelper.Do(m_cache.ActionHandlerAccessor, () =>
-					{
-						if (node != null && node.Flid > 0)
-						{
-							m_silDataAccessManaged.SetDateTime(obj.Hvo, node.Flid, dtVal);
-						}
-						else if (pi == null && node != null)
-						{
-							if (GetPI(node, StripOffTypeChars(node.DisplayName), obj, out pi))
-							{
-								pi.SetValue(obj, dtVal, null);
-							}
-						}
-						else
-						{
-							pi.SetValue(obj, dtVal, null);
-						}
-					});
+					NonUndoableUnitOfWorkHelper.Do(m_cache.ActionHandlerAccessor, UpdateDateTimeValue);
 					break;
 				case "Boolean":
-					NonUndoableUnitOfWorkHelper.Do(m_cache.ActionHandlerAccessor, () =>
-					{
-						if (node != null && node.Flid > 0)
-						{
-							m_cache.DomainDataByFlid.SetBoolean(obj.Hvo, node.Flid, boolVal);
-						}
-						else if (pi == null && node != null)
-						{
-							if (GetPI(node, StripOffTypeChars(node.DisplayName), obj, out pi))
-							{
-								pi.SetValue(obj, boolVal, null);
-							}
-						}
-						else
-						{
-							pi.SetValue(obj, boolVal, null);
-						}
-					});
+					NonUndoableUnitOfWorkHelper.Do(m_cache.ActionHandlerAccessor, UpdateBooleanValue);
 					break;
 				case "Integer":
-					NonUndoableUnitOfWorkHelper.Do(m_cache.ActionHandlerAccessor, () =>
-				   {
-					   if (node != null && node.Flid > 0)
-					   {
-						   m_cache.DomainDataByFlid.SetInt(obj.Hvo, node.Flid, intVal);
-					   }
-					   else if (pi == null && node != null)
-					   {
-						   if (GetPI(node, StripOffTypeChars(node.DisplayName), obj, out pi))
-						   {
-							   pi.SetValue(obj, intVal, null);
-						   }
-					   }
-					   else
-					   {
-						   pi.SetValue(obj, intVal, null);
-					   }
-				   });
+					NonUndoableUnitOfWorkHelper.Do(m_cache.ActionHandlerAccessor, UpdateIntegerValue);
 					break;
 				case "Guid":
-					NonUndoableUnitOfWorkHelper.Do(m_cache.ActionHandlerAccessor, () =>
-				   {
-					   if (node != null && node.Flid > 0)
-					   {
-						   m_cache.DomainDataByFlid.SetGuid(obj.Hvo, node.Flid, guidVal);
-					   }
-					   else if (pi == null && node != null)
-					   {
-						   if (GetPI(node, StripOffTypeChars(node.DisplayName), obj, out pi))
-						   {
-							   pi.SetValue(obj, guidVal, null);
-						   }
-					   }
-					   else
-					   {
-						   pi.SetValue(obj, guidVal, null);
-					   }
-				   });
+					NonUndoableUnitOfWorkHelper.Do(m_cache.ActionHandlerAccessor, UpdateGuidValue);
 					break;
 				default:
 					MessageBox.Show($"Operation passed to UpdateValues is invalid: {operation}");
 					break;
+			}
+
+			void UpdateGenDateValue()
+			{
+				if (node != null && node.Flid > 0)
+				{
+					m_silDataAccessManaged.SetGenDate(obj.Hvo, node.Flid, genVal);
+				}
+				else if (pi == null && node != null)
+				{
+					if (GetPI(node, StripOffTypeChars(node.DisplayName), obj, out pi))
+					{
+						pi.SetValue(obj, genVal, null);
+					}
+				}
+				else
+				{
+					pi.SetValue(obj, genVal, null);
+				}
+			}
+
+			void UpdateStringValue()
+			{
+				if (node != null && node.Flid > 0)
+				{
+					m_cache.DomainDataByFlid.set_UnicodeProp(obj.Hvo, node.Flid, strVal);
+				}
+				else if (pi == null && node != null)
+				{
+					if (GetPI(node, StripOffTypeChars(node.DisplayName), obj, out pi))
+					{
+						pi.SetValue(obj, strVal, null);
+					}
+				}
+				else
+				{
+					pi.SetValue(obj, strVal, null);
+				}
+			}
+
+			void UpdateDateTimeValue()
+			{
+				if (node != null && node.Flid > 0)
+				{
+					m_silDataAccessManaged.SetDateTime(obj.Hvo, node.Flid, dtVal);
+				}
+				else if (pi == null && node != null)
+				{
+					if (GetPI(node, StripOffTypeChars(node.DisplayName), obj, out pi))
+					{
+						pi.SetValue(obj, dtVal, null);
+					}
+				}
+				else
+				{
+					pi.SetValue(obj, dtVal, null);
+				}
+			}
+
+			void UpdateBooleanValue()
+			{
+				if (node != null && node.Flid > 0)
+				{
+					m_cache.DomainDataByFlid.SetBoolean(obj.Hvo, node.Flid, boolVal);
+				}
+				else if (pi == null && node != null)
+				{
+					if (GetPI(node, StripOffTypeChars(node.DisplayName), obj, out pi))
+					{
+						pi.SetValue(obj, boolVal, null);
+					}
+				}
+				else
+				{
+					pi.SetValue(obj, boolVal, null);
+				}
+			}
+
+			void UpdateIntegerValue()
+			{
+				if (node != null && node.Flid > 0)
+				{
+					m_cache.DomainDataByFlid.SetInt(obj.Hvo, node.Flid, intVal);
+				}
+				else if (pi == null && node != null)
+				{
+					if (GetPI(node, StripOffTypeChars(node.DisplayName), obj, out pi))
+					{
+						pi.SetValue(obj, intVal, null);
+					}
+				}
+				else
+				{
+					pi.SetValue(obj, intVal, null);
+				}
+			}
+
+			void UpdateGuidValue()
+			{
+				if (node != null && node.Flid > 0)
+				{
+					m_cache.DomainDataByFlid.SetGuid(obj.Hvo, node.Flid, guidVal);
+				}
+				else if (pi == null && node != null)
+				{
+					if (GetPI(node, StripOffTypeChars(node.DisplayName), obj, out pi))
+					{
+						pi.SetValue(obj, guidVal, null);
+					}
+				}
+				else
+				{
+					pi.SetValue(obj, guidVal, null);
+				}
 			}
 		}
 
@@ -2391,8 +2373,7 @@ namespace LCMBrowser
 					}
 				}
 
-				if (mWnd.InspectorList[i].DisplayName == node.ParentInspectorObject.DisplayName &&
-					hvo == ((ICmObject)node.ParentInspectorObject.OwningObject).Hvo)
+				if (mWnd.InspectorList[i].DisplayName == node.ParentInspectorObject.DisplayName && hvo == ((ICmObject)node.ParentInspectorObject.OwningObject).Hvo)
 				{
 					genDateFlag = true;
 				}

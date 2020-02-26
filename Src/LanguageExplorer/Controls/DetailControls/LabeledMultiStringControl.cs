@@ -144,11 +144,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		public bool HasBorder
 		{
-			get
-			{
-				return m_hasBorder;
-			}
-
+			get => m_hasBorder;
 			set
 			{
 				m_hasBorder = value;
@@ -178,11 +174,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		[BrowsableAttribute(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public new BorderStyle BorderStyle
 		{
-			get
-			{
-				return base.BorderStyle;
-			}
-
+			get => base.BorderStyle;
 			set
 			{
 				if (!Application.RenderWithVisualStyles)
@@ -205,11 +197,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		[BrowsableAttribute(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public new Padding Padding
 		{
-			get
-			{
-				return m_textPadding;
-			}
-
+			get => m_textPadding;
 			set
 			{
 				m_textPadding = value;
@@ -235,10 +223,8 @@ namespace LanguageExplorer.Controls.DetailControls
 		private void SetPadding()
 		{
 			var rect = ContentRectangle;
-			base.Padding = new Padding(rect.Left - ClientRectangle.Left + m_textPadding.Left,
-				rect.Top - ClientRectangle.Top + m_textPadding.Top,
-				ClientRectangle.Right - rect.Right + m_textPadding.Right,
-				ClientRectangle.Bottom - rect.Bottom + m_textPadding.Bottom);
+			base.Padding = new Padding(rect.Left - ClientRectangle.Left + m_textPadding.Left, rect.Top - ClientRectangle.Top + m_textPadding.Top,
+				ClientRectangle.Right - rect.Right + m_textPadding.Right, ClientRectangle.Bottom - rect.Bottom + m_textPadding.Bottom);
 		}
 
 		/// <summary />
@@ -361,11 +347,8 @@ namespace LanguageExplorer.Controls.DetailControls
 			if (sel != null)
 			{
 				// See if the desired thing is already selected. If so do nothing. This can prevent stack overflow!
-				ITsString tssDummy;
-				int ichAnchor, ichEnd, hvo, tag, wsDummy;
-				bool fAssocPrev;
-				sel.TextSelInfo(true, out tssDummy, out ichEnd, out fAssocPrev, out hvo, out tag, out wsDummy);
-				sel.TextSelInfo(false, out tssDummy, out ichAnchor, out fAssocPrev, out hvo, out tag, out wsDummy);
+				sel.TextSelInfo(true, out _, out var ichEnd, out _, out _, out _, out _);
+				sel.TextSelInfo(false, out _, out var ichAnchor, out _, out _, out _, out _);
 				if (Math.Min(ichAnchor, ichEnd) == start && Math.Max(ichAnchor, ichEnd) == start + length)
 				{
 					return;

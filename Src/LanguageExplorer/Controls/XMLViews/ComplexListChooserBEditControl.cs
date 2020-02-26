@@ -148,10 +148,7 @@ namespace LanguageExplorer.Controls.XMLViews
 
 		public LcmCache Cache
 		{
-			get
-			{
-				return m_cache;
-			}
+			get => m_cache;
 			set
 			{
 				m_cache = value;
@@ -165,15 +162,8 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		public XMLViewsDataCache DataAccess
 		{
-			get
-			{
-				if (m_sda == null)
-				{
-					throw new InvalidOperationException("Must set the special cache of a BulkEditSpecControl");
-				}
-				return m_sda;
-			}
-			set { m_sda = value; }
+			get => m_sda ?? throw new InvalidOperationException("Must set the special cache of a BulkEditSpecControl");
+			set => m_sda = value;
 		}
 
 		/// <summary>
@@ -181,8 +171,8 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		internal IEnumerable<ICmObject> ChosenObjects
 		{
-			get { return m_chosenObjs; }
-			set { m_chosenObjs = value.ToList(); }
+			get => m_chosenObjs;
+			set => m_chosenObjs = value.ToList();
 		}
 
 		/// <summary />
@@ -217,8 +207,7 @@ namespace LanguageExplorer.Controls.XMLViews
 						{
 							continue;
 						}
-						List<ICmObject> oldVals, newVal;
-						ComputeValue(chosenObjs, hvoItem, out oldVals, out newVal);
+						ComputeValue(chosenObjs, hvoItem, out var oldVals, out var newVal);
 						if (oldVals.SequenceEqual(newVal))
 						{
 							continue;
@@ -261,9 +250,7 @@ namespace LanguageExplorer.Controls.XMLViews
 				var fEnable = false;
 				if (!DisableItem(hvoItem))
 				{
-					List<ICmObject> oldVals;
-					List<ICmObject> newVal;
-					ComputeValue(chosenObjs, hvoItem, out oldVals, out newVal);
+					ComputeValue(chosenObjs, hvoItem, out var oldVals, out var newVal);
 					fEnable = !oldVals.SequenceEqual(newVal);
 					if (fEnable)
 					{
@@ -310,7 +297,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			}
 			if (!Atomic)
 			{
-				return (m_cache.DomainDataByFlid as ISilDataAccessManaged).VecProp(hvoReal, m_flid).Select(hvo => m_cache.ServiceLocator.GetObject(hvo)).ToList();
+				return ((ISilDataAccessManaged)m_cache.DomainDataByFlid).VecProp(hvoReal, m_flid).Select(hvo => m_cache.ServiceLocator.GetObject(hvo)).ToList();
 			}
 			var result = new List<ICmObject>();
 			var val = m_cache.DomainDataByFlid.get_ObjectProp(hvoReal, m_flid);
@@ -345,12 +332,9 @@ namespace LanguageExplorer.Controls.XMLViews
 				if (oldVals.Count > 0)
 				{
 					var newValues = new List<ICmObject>(oldVals);
-					foreach (var obj in chosenObjs)
+					foreach (var obj in chosenObjs.Where(obj => newValues.Contains(obj)))
 					{
-						if (newValues.Contains(obj))
-						{
-							newValues.Remove(obj);
-						}
+						newValues.Remove(obj);
 					}
 					newVal = newValues;
 				}
@@ -365,12 +349,9 @@ namespace LanguageExplorer.Controls.XMLViews
 				else
 				{
 					var newValues = new List<ICmObject>(oldVals);
-					foreach (var obj in chosenObjs)
+					foreach (var obj in chosenObjs.Where(obj => !newValues.Contains(obj)))
 					{
-						if (!newValues.Contains(obj))
-						{
-							newValues.Add(obj);
-						}
+						newValues.Add(obj);
 					}
 					newVal = newValues;
 				}

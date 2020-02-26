@@ -40,8 +40,7 @@ namespace LanguageExplorerTests
 			var rootLayout = _root.XPathSelectElement("layout[@name=\"Test1\"]");
 			var cfPartRef = rootLayout.XPathSelectElement("part[@ref=\"CitationForm\"]");
 			object[] path = {rootLayout, cfPartRef};
-			XElement finalPartref;
-			var result = Inventory.MakeOverride(path, "visibility", "ifdata", 7, out finalPartref);
+			var result = Inventory.MakeOverride(path, "visibility", "ifdata", 7, out _);
 			Assert.AreEqual(rootLayout.Elements().Count(), result.Elements().Count());
 			var cfNewPartRef =  result.XPathSelectElement("part[@ref=\"CitationForm\"]");
 			Assert.AreEqual("ifdata", XmlUtils.GetOptionalAttributeValue(cfNewPartRef, "visibility"));
@@ -56,8 +55,7 @@ namespace LanguageExplorerTests
 			var sensesPartRef = rootLayout.XPathSelectElement("part[@ref=\"Senses\"]");
 			var glossPartRef = _root.XPathSelectElement("part[@ref=\"Gloss\"]");
 			object[] path = {rootLayout, 1, sensesPartRef, 2, glossPartRef};
-			XElement finalPartref;
-			var result = Inventory.MakeOverride(path, "visibility", "ifdata", 1, out finalPartref);
+			var result = Inventory.MakeOverride(path, "visibility", "ifdata", 1, out _);
 			Assert.AreEqual(rootLayout.Elements().Count(), result.Elements().Count());
 			var glossNewPartRef =  result.XPathSelectElement("//part[@ref=\"Gloss\"]");
 			Assert.AreEqual("ifdata", XmlUtils.GetOptionalAttributeValue(glossNewPartRef, "visibility"));
@@ -80,8 +78,7 @@ namespace LanguageExplorerTests
 			var blahPart = _root.XPathSelectElement("part[@id=\"blah\"]");
 			var nonsenceLayout = _root.XPathSelectElement("layout[@id=\"nonsence\"]");
 			object[] path = {rootLayout, 1, sensesPartRef, blahPart, nonsenceLayout, synPartRef, 2, glossPartRef};
-			XElement finalPartref;
-			var result = Inventory.MakeOverride(path, "visibility", "ifdata", 1, out finalPartref);
+			var result = Inventory.MakeOverride(path, "visibility", "ifdata", 1, out _);
 			Assert.AreEqual(rootLayout.Elements().Count(), result.Elements().Count());
 			var glossNewPartRef =  result.XPathSelectElement("//part[@ref=\"Gloss\"]");
 			Assert.AreEqual("ifdata", XmlUtils.GetOptionalAttributeValue(glossNewPartRef, "visibility"));
@@ -106,8 +103,7 @@ namespace LanguageExplorerTests
 			var sensesPartRef = rootLayout.XPathSelectElement("part[@ref=\"Senses\"]");
 			var antonymnPartRef = sensesPartRef.XPathSelectElement("indent/part[@ref=\"Antonymns\"]");
 			object[] path = {rootLayout, 1, sensesPartRef, 2, antonymnPartRef};
-			XElement finalPartref;
-			var result = Inventory.MakeOverride(path, "visibility", "ifdata", 1, out finalPartref);
+			var result = Inventory.MakeOverride(path, "visibility", "ifdata", 1, out _);
 			Assert.AreEqual(rootLayout.Elements().Count(), result.Elements().Count());
 			var antonymNewPartRef =  result.XPathSelectElement("//part[@ref=\"Antonymns\"]");
 			Assert.AreEqual("ifdata", XmlUtils.GetOptionalAttributeValue(antonymNewPartRef, "visibility"));

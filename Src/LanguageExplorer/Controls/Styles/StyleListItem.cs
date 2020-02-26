@@ -140,8 +140,7 @@ namespace LanguageExplorer.Controls.Styles
 		/// greater than 0 if this item is greater than obj</returns>
 		public int CompareTo(object obj)
 		{
-			var other = obj as StyleListItem;
-			return other == null ? 0 : Name.CompareTo(other.Name);
+			return !(obj is StyleListItem other) ? 0 : Name.CompareTo(other.Name);
 		}
 
 		#endregion

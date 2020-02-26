@@ -242,14 +242,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			{
 				return;
 			}
-			if (Platform.IsWindows)
-			{
-				RootSiteEventHandler = new WindowsLanguageProfileSink(this);
-			}
-			else
-			{
-				RootSiteEventHandler = new IbusRootSiteEventHandler(this);
-			}
+			RootSiteEventHandler = Platform.IsWindows ? (object)new WindowsLanguageProfileSink(this) : new IbusRootSiteEventHandler(this);
 			KeyboardController.RegisterControl(this, RootSiteEventHandler);
 		}
 
@@ -433,10 +426,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// </summary>
 		public virtual bool ShowRangeSelAfterLostFocus
 		{
-			get
-			{
-				return m_fShowRangeSelAfterLostFocus;
-			}
+			get => m_fShowRangeSelAfterLostFocus;
 			set
 			{
 				m_fShowRangeSelAfterLostFocus = value;
@@ -452,10 +442,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// </summary>
 		public bool IsTextBox
 		{
-			get
-			{
-				return m_fIsTextBox;
-			}
+			get => m_fIsTextBox;
 			set
 			{
 				m_fIsTextBox = value;
@@ -474,14 +461,8 @@ namespace SIL.FieldWorks.Common.RootSites
 		[DefaultValue(2)]
 		protected internal virtual int HorizMargin
 		{
-			get
-			{
-				return m_nHorizMargin;
-			}
-			set
-			{
-				m_nHorizMargin = value;
-			}
+			get => m_nHorizMargin;
+			set => m_nHorizMargin = value;
 		}
 
 		/// <summary>
@@ -496,10 +477,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public virtual bool AllowLayout
 		{
-			get
-			{
-				return m_fAllowLayout;
-			}
+			get => m_fAllowLayout;
 			set
 			{
 				m_fAllowLayout = value;
@@ -560,10 +538,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public virtual IVwStylesheet StyleSheet
 		{
-			get
-			{
-				return m_styleSheet;
-			}
+			get => m_styleSheet;
 			set
 			{
 				if (m_styleSheet == value)
@@ -579,10 +554,7 @@ namespace SIL.FieldWorks.Common.RootSites
 				{
 					// Clean up. This code assumes there is only one root, almost universally true.
 					// If not, either make sure the stylesheet is set early, or override.
-					int hvoRoot, frag;
-					IVwViewConstructor vc;
-					IVwStylesheet ss;
-					RootBox.GetRootObject(out hvoRoot, out vc, out frag, out ss);
+					RootBox.GetRootObject(out var hvoRoot, out var vc, out var frag, out _);
 					RootBox.SetRootObject(hvoRoot, vc, frag, m_styleSheet);
 				}
 			}
@@ -612,11 +584,8 @@ namespace SIL.FieldWorks.Common.RootSites
 						}
 						using (new HoldGraphics(this))
 						{
-							Rectangle rcSrcRoot, rcDstRoot;
-							Rect rcSec, rcPrimary;
-							bool fSplit, fEndBeforeAnchor;
-							GetCoordRects(out rcSrcRoot, out rcDstRoot);
-							vwsel.Location(m_graphicsManager.VwGraphics, rcSrcRoot, rcDstRoot, out rcPrimary, out rcSec, out fSplit, out fEndBeforeAnchor);
+							GetCoordRects(out var rcSrcRoot, out var rcDstRoot);
+							vwsel.Location(m_graphicsManager.VwGraphics, rcSrcRoot, rcDstRoot, out var rcPrimary, out _, out _, out _);
 							return new Point((rcPrimary.right + rcPrimary.left) / 2, (rcPrimary.top + rcPrimary.bottom) / 2);
 						}
 					}
@@ -633,10 +602,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// </summary>
 		public bool ReadOnlyView
 		{
-			get
-			{
-				return !EditingHelper.Editable;
-			}
+			get => !EditingHelper.Editable;
 			set
 			{
 				// check if this property will actually change
@@ -682,10 +648,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// </summary>
 		public virtual float Zoom
 		{
-			get
-			{
-				return m_Zoom;
-			}
+			get => m_Zoom;
 			set
 			{
 				m_Zoom = value;
@@ -842,10 +805,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		{
 			InitGraphics();
 			pvg = m_graphicsManager.VwGraphics;
-
-			Rectangle rcSrc, rcDst;
-			GetCoordRects(out rcSrc, out rcDst);
-
+			GetCoordRects(out var rcSrc, out var rcDst);
 			rcSrcRoot = rcSrc;
 			rcDstRoot = rcDst;
 		}
@@ -870,9 +830,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		{
 			using (new HoldGraphics(this))
 			{
-				Rectangle rcSrc, rcDst;
-				GetCoordRects(out rcSrc, out rcDst);
-
+				GetCoordRects(out var rcSrc, out var rcDst);
 				rcSrcRoot = rcSrc;
 				rcDstRoot = rcDst;
 			}
@@ -940,7 +898,6 @@ namespace SIL.FieldWorks.Common.RootSites
 				return;
 			}
 			UpdateScrollRange();
-
 			OnLayoutSizeChanged(new EventArgs());
 		}
 
@@ -1103,10 +1060,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// </summary>
 		public virtual Point ScrollPosition
 		{
-			get
-			{
-				return AutoScrollPosition;
-			}
+			get => AutoScrollPosition;
 			set
 			{
 				var newPos = value;
@@ -1146,10 +1100,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// </summary>
 		public virtual Size ScrollMinSize
 		{
-			get
-			{
-				return AutoScrollMinSize;
-			}
+			get => AutoScrollMinSize;
 			set
 			{
 				if (Platform.IsMono)
@@ -1195,10 +1146,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// </summary>
 		public virtual bool SizeChangedSuppression
 		{
-			get
-			{
-				return false;
-			}
+			get => false;
 			set
 			{
 			}
@@ -1249,12 +1197,12 @@ namespace SIL.FieldWorks.Common.RootSites
 				// dy gets added to the scroll offset. This means a positive dy causes there to be more
 				// of the view hidden above the top of the screen. This is the same effect as clicking a
 				// down arrow, which paradoxically causes the window contents to move up.
-				int dy;
 				var ydCurr = -ScrollPosition.Y; // Where the window thinks it is now.
 				using (new HoldGraphics(this))
 				{
 					// This loop repeats until we have figured out a scroll distance AND confirmed
 					// that we can draw that location without messing things up.
+					int dy;
 					for (; ; )
 					{
 						var ydMax = DisplayRectangle.Height - ClientHeight + 1;
@@ -1264,27 +1212,24 @@ namespace SIL.FieldWorks.Common.RootSites
 						// that would affect the scroll position we need to be at the very bottom.
 						// To avoid this, we make the same PrepareToDraw call
 						// that the rendering code will make before drawing after the scroll.
-						Rectangle rcSrcRoot;
-						Rectangle rcDstRoot;
-						GetCoordRects(out rcSrcRoot, out rcDstRoot);
+						GetCoordRects(out var rcSrcRoot, out var rcDstRoot);
 						rcDstRoot.Offset(0, -dy);
-
 						var dyRange = RootBox.Height;
 						var r = AdjustedClientRectangle;
 						var clipRect = new Rect(r.Left, r.Top, r.Right, r.Bottom);
-
-						if (m_graphicsManager.VwGraphics is IVwGraphicsWin32)
+						if (m_graphicsManager.VwGraphics is IVwGraphicsWin32 graphicsWin32)
 						{
-							((IVwGraphicsWin32)m_graphicsManager.VwGraphics).SetClipRect(ref clipRect);
+							graphicsWin32.SetClipRect(ref clipRect);
 						}
 						if (RootBox != null && m_dxdLayoutWidth > 0)
 						{
 							PrepareToDraw(rcSrcRoot, rcDstRoot);
 						}
-						ydCurr = -ScrollPosition.Y; // Where the window thinks it is now. (May have changed expanding.)
-													// If PrepareToDraw didn't change the scroll range, it didn't mess anything up and we
-													// can use the dy we figured. Otherwise, loop and figure it again with more complete
-													// information, because something at a relevant point has been expanded to real boxes.
+						// Where the window thinks it is now. (May have changed expanding.)
+						ydCurr = -ScrollPosition.Y;
+						// If PrepareToDraw didn't change the scroll range, it didn't mess anything up and we
+						// can use the dy we figured. Otherwise, loop and figure it again with more complete
+						// information, because something at a relevant point has been expanded to real boxes.
 						if (RootBox.Height == dyRange)
 						{
 							break;
@@ -1450,10 +1395,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		[Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public bool AllowPainting
 		{
-			get
-			{
-				return (m_nAllowPaint == 0);
-			}
+			get => (m_nAllowPaint == 0);
 			set
 			{
 				// we use WM_SETREDRAW to prevent the scrollbar from jumping around when we are
@@ -1592,20 +1534,15 @@ namespace SIL.FieldWorks.Common.RootSites
 			{
 				return;
 			}
-			int hvo;
-			IVwViewConstructor vc;
-			int frag;
-			IVwStylesheet ss;
-			GetPrintInfo(out hvo, out vc, out frag, out ss);
+			GetPrintInfo(out var hvo, out var vc, out var frag, out var ss);
 			IPrintRootSite printRootSite = new PrintRootSite(DataAccess, hvo, vc, frag, ss);
-
 			try
 			{
 				printRootSite.Print(printDoc);
 			}
 			catch (ContinuableErrorException e)
 			{
-				throw e;
+				throw;
 			}
 			catch (Exception e)
 			{
@@ -1636,17 +1573,8 @@ namespace SIL.FieldWorks.Common.RootSites
 			}
 			using (new HoldGraphics(this))
 			{
-				Rectangle rcSrcRoot;
-				Rectangle rcDstRoot;
-				GetCoordRects(out rcSrcRoot, out rcDstRoot);
-
-				Rect rcPrimary;
-				Rect rcSecondary;
-				bool fSplit;
-				bool fEndBeforeAnchor;
-
-				sel.Location(m_graphicsManager.VwGraphics, rcSrcRoot, rcDstRoot, out rcPrimary, out rcSecondary, out fSplit, out fEndBeforeAnchor);
-
+				GetCoordRects(out var rcSrcRoot, out var rcDstRoot);
+				sel.Location(m_graphicsManager.VwGraphics, rcSrcRoot, rcDstRoot, out var rcPrimary, out _, out _, out _);
 				return rcPrimary.top;
 			}
 		}
@@ -1726,14 +1654,8 @@ namespace SIL.FieldWorks.Common.RootSites
 			Debug.Assert(vwsel != null);
 			Debug.Assert(m_graphicsManager.VwGraphics != null);
 
-			Rect rcPrimary;
-			Rect rcSecondary;
-			bool fSplit;
-			Rectangle rcSrcRoot;
-			Rectangle rcDstRoot;
-			GetCoordRects(out rcSrcRoot, out rcDstRoot);
-
-			vwsel.Location(m_graphicsManager.VwGraphics, rcSrcRoot, rcDstRoot, out rcPrimary, out rcSecondary, out fSplit, out fEndBeforeAnchor);
+			GetCoordRects(out var rcSrcRoot, out var rcDstRoot);
+			vwsel.Location(m_graphicsManager.VwGraphics, rcSrcRoot, rcDstRoot, out var rcPrimary, out var rcSecondary, out var fSplit, out fEndBeforeAnchor);
 			rcIdeal = rcPrimary;
 
 			if (fSplit)
@@ -1873,10 +1795,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			}
 			using (new HoldGraphics(this))
 			{
-				bool fEndBeforeAnchor;
-				Rectangle rcIdeal;
-				SelectionRectangle(vwsel, out rcIdeal, out fEndBeforeAnchor);
-
+				SelectionRectangle(vwsel, out var rcIdeal, out var fEndBeforeAnchor);
 				//rcIdeal.Inflate(0, 1); // for good measure
 				// OK, we want rcIdeal to be visible.
 				// dy gets added to the scroll offset. This means a positive dy causes there to be more
@@ -1893,9 +1812,10 @@ namespace SIL.FieldWorks.Common.RootSites
 					for (; ; )
 					{
 						// Get the amount to add to rdIdeal to make it comparable with the window
-						// postion.
-						ydTop = -ScrollPosition.Y; // Where the window thinks it is now.
-												   // Adjust for that and also the height of the (optional) header.
+						// position.
+						// Where the window thinks it is now.
+						ydTop = -ScrollPosition.Y;
+						// Adjust for that and also the height of the (optional) header.
 						rcIdeal.Offset(0, ydTop - m_dyHeader); // Was in drawing coords, adjusted by top.
 						var ydBottom = ydTop + ClientHeight - m_dyHeader;
 						// Is the end of the selection partly off the top of the screen?
@@ -1956,8 +1876,7 @@ namespace SIL.FieldWorks.Common.RootSites
 						// (which it usually is), that would affect the position' where the
 						// selection gets moved to. To avoid this, we make the same PrepareToDraw
 						// call that the rendering code will make before drawing after the scroll.
-						Rectangle rcSrc, rcDst;
-						GetCoordRects(out rcSrc, out rcDst);
+						GetCoordRects(out var rcSrc, out var rcDst);
 						rcDst.Offset(0, -dy); // Want to draw at the position we plan to move to.
 
 						// Get the whole range we are scrolling over. We use this later to see whether
@@ -2040,8 +1959,9 @@ namespace SIL.FieldWorks.Common.RootSites
 					}
 					else // not a vertical window, normal case
 					{
-						rcIdeal.Offset(xdLeft, 0); // Was in drawing coords, adjusted by left.
-												   // extra 4 pixels so Ip doesn't disappear at right.
+						// Was in drawing coords, adjusted by left.
+						rcIdeal.Offset(xdLeft, 0);
+						// extra 4 pixels so Ip doesn't disappear at right.
 						var xdRight = xdLeft + ClientRectangle.Width;
 						// Is the selection right of the right side of the screen?
 						if (rcIdeal.Right > xdRight)
@@ -2055,18 +1975,7 @@ namespace SIL.FieldWorks.Common.RootSites
 							if (rcIdeal.Width > ClientRectangle.Width && !fEndBeforeAnchor)
 							{
 								// Is it bigger than the screen?
-								if (rcIdeal.Width > ClientRectangle.Width)
-								{
-									// Left is off, and though it is too big to show entirely, we can show
-									// more. Move the window contents right (negative dx).
-									dx = rcIdeal.Right - xdRight;
-								}
-								else
-								{
-									// Partly off left, and fits: move window contents right (less is hidden,
-									// neg dx).
-									dx = rcIdeal.Left - xdLeft;
-								}
+								dx = rcIdeal.Width > ClientRectangle.Width ? rcIdeal.Right - xdRight : rcIdeal.Left - xdLeft;
 							}
 							else
 							{
@@ -2217,11 +2126,8 @@ namespace SIL.FieldWorks.Common.RootSites
 				// Put IP at top of window.
 				MakeSelectionVisible(sel);
 
-				Rectangle rcSrcRoot;
-				Rectangle rcDstRoot;
-
 				// Expand the lazy boxes 1 screen up
-				GetCoordRects(out rcSrcRoot, out rcDstRoot);
+				GetCoordRects(out var rcSrcRoot, out var rcDstRoot);
 				rcDstRoot.Offset(0, -ClientRectangle.Height);
 				PrepareToDraw(rcSrcRoot, rcDstRoot);
 
@@ -2232,12 +2138,8 @@ namespace SIL.FieldWorks.Common.RootSites
 
 				// Get the difference between where we want the selection to be and its
 				// current position
-				Rect rcPrimary;
-				Rect rcSecondary;
-				bool fSplit;
-				bool fEndBeforeAnchor;
 				GetCoordRects(out rcSrcRoot, out rcDstRoot);
-				sel.Location(m_graphicsManager.VwGraphics, rcSrcRoot, rcDstRoot, out rcPrimary, out rcSecondary, out fSplit, out fEndBeforeAnchor);
+				sel.Location(m_graphicsManager.VwGraphics, rcSrcRoot, rcDstRoot, out var rcPrimary, out _, out _, out _);
 				var difference = dyPos - rcPrimary.top;
 
 				// Now move the scroll position so the IP will be where we want it.
@@ -2325,15 +2227,8 @@ namespace SIL.FieldWorks.Common.RootSites
 #if JASONTODO
 				TODO: There doesn't appear to be any implementors or users of IOleServiceProvider, other than this code, which really does nothing.
 #endif
-				if (RootBox is IOleServiceProvider)
+				if (RootBox is IOleServiceProvider sp)
 				{
-					var sp = (IOleServiceProvider)RootBox;
-					if (sp == null)
-					{
-						// REVIEW (TomB): Shouldn't this just throw an exception?
-						MessageBox.Show("Null IServiceProvider from root");
-						Debug.Fail("Null IServiceProvider from root");
-					}
 					var guidAcc = Marshal.GenerateGuidForType(typeof(IAccessible));
 					// 1st guid currently ignored.
 					sp.QueryService(ref guidAcc, ref guidAcc, out obj);
@@ -2509,9 +2404,8 @@ namespace SIL.FieldWorks.Common.RootSites
 				else
 				{
 					var hwndOld = m.WParam;
-					int procIdOld, procIdThis;
-					Win32.GetWindowThreadProcessId(hwndOld, out procIdOld);
-					Win32.GetWindowThreadProcessId(Handle, out procIdThis);
+					Win32.GetWindowThreadProcessId(hwndOld, out var procIdOld);
+					Win32.GetWindowThreadProcessId(Handle, out var procIdThis);
 					if (procIdOld == procIdThis && RootBox != null && EditingHelper != null)
 					{
 						EditingHelper.SetKeyboardForSelection(RootBox.Selection);
@@ -2665,9 +2559,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			{
 				using (new HoldGraphics(this))
 				{
-					Rectangle rcSrcRoot;
-					Rectangle rcDstRoot;
-					GetCoordRects(out rcSrcRoot, out rcDstRoot);
+					GetCoordRects(out var rcSrcRoot, out var rcDstRoot);
 
 					// For now at least we care only if the mouse is down.
 					if (e.Button == MouseButtons.Left)
@@ -2854,8 +2746,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <param name="fInstall">Indicates whether or not to "install" the selection</param>
 		public IVwSelection GetSelectionAtViewPoint(Point position, bool fInstall)
 		{
-			Rectangle rcSrcRoot, rcDstRoot;
-			GetCoordRects(out rcSrcRoot, out rcDstRoot);
+			GetCoordRects(out var rcSrcRoot, out var rcDstRoot);
 			try
 			{
 				return RootBox.MakeSelAt(position.X, position.Y, rcSrcRoot, rcDstRoot, false);
@@ -2921,14 +2812,9 @@ namespace SIL.FieldWorks.Common.RootSites
 
 						// We don't want to destroy a range selection if we are within the range, since it
 						// is quite likely the user will want to do a right+click cut or paste.
-						Rect rcPrimary;
-						Rect rcSecondary;
-						bool fSplit;
-						bool fEndBeforeAnchor;
-
 						Debug.Assert(m_graphicsManager.VwGraphics != null);
 
-						sel.Location(m_graphicsManager.VwGraphics, rcSrcRoot, rcDstRoot, out rcPrimary, out rcSecondary, out fSplit, out fEndBeforeAnchor);
+						sel.Location(m_graphicsManager.VwGraphics, rcSrcRoot, rcDstRoot, out var rcPrimary, out _, out _, out _);
 
 						if (pt.X >= rcPrimary.left && pt.X < rcPrimary.right && pt.Y >= rcPrimary.top && pt.Y < rcPrimary.bottom)
 						{
@@ -3029,11 +2915,8 @@ namespace SIL.FieldWorks.Common.RootSites
 					// Set point to somewhere around the middle of the selection in window coords.
 					using (new HoldGraphics(this))
 					{
-						Rectangle rcSrcRoot, rcDstRoot;
-						Rect rcSec, rcPrimary;
-						bool fSplit, fEndBeforeAnchor;
-						GetCoordRects(out rcSrcRoot, out rcDstRoot);
-						RootBox.Selection.Location(m_graphicsManager.VwGraphics, rcSrcRoot, rcDstRoot, out rcPrimary, out rcSec, out fSplit, out fEndBeforeAnchor);
+						GetCoordRects(out var rcSrcRoot, out var rcDstRoot);
+						RootBox.Selection.Location(m_graphicsManager.VwGraphics, rcSrcRoot, rcDstRoot, out var rcPrimary, out _, out _, out _);
 
 						pt = new Point((rcPrimary.right + rcPrimary.left) / 2, (rcPrimary.top + rcPrimary.bottom) / 2);
 					}
@@ -3052,8 +2935,7 @@ namespace SIL.FieldWorks.Common.RootSites
 					}
 					using (var hg = new HoldGraphics(this))
 					{
-						Rectangle rcSrcRoot, rcDstRoot;
-						GetCoordRects(out rcSrcRoot, out rcDstRoot);
+						GetCoordRects(out var rcSrcRoot, out var rcDstRoot);
 						return DoContextMenu(RootBox.Selection, pt, rcSrcRoot, rcDstRoot);
 					}
 
@@ -3085,9 +2967,7 @@ namespace SIL.FieldWorks.Common.RootSites
 				using (new HoldGraphics(this))
 				{
 					var pt = PointToClient(Cursor.Position);
-					Rectangle rcSrcRoot;
-					Rectangle rcDstRoot;
-					GetCoordRects(out rcSrcRoot, out rcDstRoot);
+					GetCoordRects(out var rcSrcRoot, out var rcDstRoot);
 
 					CallMouseDblClk(PixelToView(pt), rcSrcRoot, rcDstRoot);
 				}
@@ -3110,9 +2990,7 @@ namespace SIL.FieldWorks.Common.RootSites
 				using (new HoldGraphics(this))
 				{
 					var pt = PixelToView(new Point(e.X, e.Y));
-					Rectangle rcSrcRoot;
-					Rectangle rcDstRoot;
-					GetCoordRects(out rcSrcRoot, out rcDstRoot);
+					GetCoordRects(out var rcSrcRoot, out var rcDstRoot);
 					CallMouseUp(pt, rcSrcRoot, rcDstRoot);
 
 					if (e.Button == MouseButtons.Right)
@@ -3203,17 +3081,17 @@ namespace SIL.FieldWorks.Common.RootSites
 			}
 			using (new HoldGraphics(this))
 			{
-				if (e.KeyCode == Keys.PageUp && ((e.Modifiers & Keys.Control) == Keys.Control))
+				switch (e.KeyCode)
 				{
-					GoToPageTop((e.Modifiers & Keys.Shift) == Keys.Shift);
-				}
-				else if (e.KeyCode == Keys.PageDown && ((e.Modifiers & Keys.Control) == Keys.Control))
-				{
-					GoToPageBottom((e.Modifiers & Keys.Shift) == Keys.Shift);
-				}
-				else
-				{
-					base.OnKeyDown(e);
+					case Keys.PageUp when ((e.Modifiers & Keys.Control) == Keys.Control):
+						GoToPageTop((e.Modifiers & Keys.Shift) == Keys.Shift);
+						break;
+					case Keys.PageDown when ((e.Modifiers & Keys.Control) == Keys.Control):
+						GoToPageBottom((e.Modifiers & Keys.Shift) == Keys.Shift);
+						break;
+					default:
+						base.OnKeyDown(e);
+						break;
 				}
 
 				Debug.Assert(m_graphicsManager.VwGraphics != null);
@@ -3277,7 +3155,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// </summary>
 		public virtual bool InSelectionChanged
 		{
-			get { return false; }
+			get => false;
 			set { }
 		}
 
@@ -3309,9 +3187,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			{
 				using (new HoldGraphics(this))
 				{
-					Rectangle rcSrc;
-					Rectangle rcDst;
-					GetCoordRects(out rcSrc, out rcDst);
+					GetCoordRects(out var rcSrc, out var rcDst);
 					LayoutInProgress = true;
 					try
 					{
@@ -3404,14 +3280,8 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// </summary>
 		public virtual ILgWritingSystemFactory WritingSystemFactory
 		{
-			get
-			{
-				return m_wsf;
-			}
-			set
-			{
-				m_wsf = value;
-			}
+			get => m_wsf;
+			set => m_wsf = value;
 		}
 
 		/// <summary>
@@ -3747,9 +3617,9 @@ namespace SIL.FieldWorks.Common.RootSites
 			var y = pt.Y;
 			if (RootBox != null)
 			{
-				if (Parent is ScrollableControl)
+				if (Parent is ScrollableControl scrollableControl)
 				{
-					y += ((ScrollableControl)Parent).AutoScrollPosition.Y;
+					y += scrollableControl.AutoScrollPosition.Y;
 				}
 				// if we're dragging to create or extend a selection
 				// don't select text that is currently above or below current viewable area
@@ -3808,11 +3678,7 @@ namespace SIL.FieldWorks.Common.RootSites
 				WsPending = wsMatch;
 				return;
 			}
-			ITsTextProps[] vttp;
-			IVwPropertyStore[] vvps;
-			int cttp;
-
-			SelectionHelper.GetSelectionProps(vwsel, out vttp, out vvps, out cttp);
+			SelectionHelper.GetSelectionProps(vwsel, out var vttp, out _, out var cttp);
 
 			if (cttp == 0)
 			{
@@ -3865,11 +3731,8 @@ namespace SIL.FieldWorks.Common.RootSites
 			Rect rcPrimary;
 			using (new HoldGraphics(this))
 			{
-				Rectangle rcSrcRoot, rcDstRoot;
-				GetCoordRects(out rcSrcRoot, out rcDstRoot);
-				Rect rcSec;
-				bool fSplit, fEndBeforeAnchor;
-				sel.Location(m_graphicsManager.VwGraphics, rcSrcRoot, rcDstRoot, out rcPrimary, out rcSec, out fSplit, out fEndBeforeAnchor);
+				GetCoordRects(out var rcSrcRoot, out var rcDstRoot);
+				sel.Location(m_graphicsManager.VwGraphics, rcSrcRoot, rcDstRoot, out rcPrimary, out _, out _, out _);
 			}
 			return rcPrimary;
 		}
@@ -4287,14 +4150,11 @@ namespace SIL.FieldWorks.Common.RootSites
 			{
 				return;
 			}
-			int hvo, frag;
-			IVwViewConstructor vc;
-			IVwStylesheet ss;
-			RootBox.GetRootObject(out hvo, out vc, out frag, out ss);
-			if (vc is VwBaseVc)
+			RootBox.GetRootObject(out _, out var vc, out _, out _);
+			if (vc is VwBaseVc baseVc)
 			{
 				// This really only needs to be done once but I can't find another reliable way to do it.
-				((VwBaseVc)vc).Publisher = Publisher;
+				baseVc.Publisher = Publisher;
 			}
 		}
 
@@ -4349,15 +4209,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			{
 				return false;
 			}
-			ITsString tss;
-			int ich;
-			bool fAssocPrev;
-			int hvoObj;
-			int propTag;
-			int ws;
-			TsRunInfo tri;
-			ITsTextProps ttp;
-			vwsel.TextSelInfo(false, out tss, out ich, out fAssocPrev, out hvoObj, out propTag, out ws);
+			vwsel.TextSelInfo(false, out var tss, out var ich, out var fAssocPrev, out _, out _, out var ws);
 			// The following test is covering a bug in TextSelInfo until JohnT fixes it. If you right+click
 			// to the right of a tags field (with one tag), TextSelInfo returns a qtss with a null
 			// string and returns ich = length of the entire string. As a result get_RunAt fails
@@ -4371,6 +4223,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			{
 				return false; // No string to check.
 			}
+			ITsTextProps ttp;
 			string sbstr;
 			var sbstrMain = string.Empty;
 			var crun = tss.RunCount;
@@ -4379,7 +4232,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			int irunLim;
 			for (irunMin = irun; irunMin >= 0; irunMin--)
 			{
-				ttp = tss.FetchRunInfo(irunMin, out tri);
+				ttp = tss.FetchRunInfo(irunMin, out _);
 				sbstr = ttp.GetStrPropValue((int)FwTextPropType.ktptObjData);
 				if (sbstr.Length == 0 || sbstr[0] != (byte)FwObjDataTypes.kodtExternalPathName)
 				{
@@ -4408,7 +4261,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			}
 			for (irunLim = irun + 1; irunLim < crun; irunLim++)
 			{
-				ttp = tss.FetchRunInfo(irunLim, out tri);
+				ttp = tss.FetchRunInfo(irunLim, out _);
 				sbstr = ttp.GetStrPropValue((int)FwTextPropType.ktptObjData);
 				if (sbstr.Length == 0 || sbstr[0] != (byte)FwObjDataTypes.kodtExternalPathName)
 				{
@@ -4432,14 +4285,8 @@ namespace SIL.FieldWorks.Common.RootSites
 			var cvsli = vwsel.CLevels(false);
 			cvsli--; // CLevels includes the string property itself, but AllTextSelInfo doesn't need it.
 
-			int ihvoRoot;
-			int tagTextProp;
-			int cpropPrevious;
-			int ichAnchor;
-			int ichEnd;
-			int ihvoEnd;
-			var rgvsli = SelLevInfo.AllTextSelInfo(vwsel, cvsli, out ihvoRoot, out tagTextProp, out cpropPrevious, out ichAnchor,
-				out ichEnd, out ws, out fAssocPrev, out ihvoEnd, out ttp);
+			var rgvsli = SelLevInfo.AllTextSelInfo(vwsel, cvsli, out var ihvoRoot, out var tagTextProp, out var cpropPrevious, out _,
+				out _, out ws, out fAssocPrev, out var ihvoEnd, out ttp);
 
 			// This does not actually make the selection active.
 			RootBox.MakeTextSelection(ihvoRoot, cvsli, rgvsli, tagTextProp, cpropPrevious, ichMin, ichLim, ws, fAssocPrev, ihvoEnd, ttp, false);
@@ -4487,12 +4334,9 @@ namespace SIL.FieldWorks.Common.RootSites
 				return;
 			}
 			// Look through the list to see if we've already given this message before.
-			foreach (var msg in s_vstrDrawErrMsgs)
+			if (s_vstrDrawErrMsgs.Any(msg => msg == e.Message))
 			{
-				if (msg == e.Message)
-				{
-					return;
-				}
+				return;
 			}
 
 			s_vstrDrawErrMsgs.Add(e.Message);
@@ -4516,19 +4360,10 @@ namespace SIL.FieldWorks.Common.RootSites
 			string uid;
 			using (var arrayPtr = MarshalEx.StringToNative((int)VwConst1.kcchGuidRepLength + 1, true))
 			{
-				int hvo;
-				uint clrFore;
-				uint clrBack;
-				uint clrUnder;
-				int unt;
-				bool fHidden;
-				pvo.GetDbTagInfo(itag, out hvo, out clrFore, out clrBack, out clrUnder, out unt, out fHidden, arrayPtr);
+				pvo.GetDbTagInfo(itag, out _, out _, out _, out _, out _, out _, arrayPtr);
 				uid = MarshalEx.NativeToString(arrayPtr, (int)VwConst1.kcchGuidRepLength, false);
 			}
-			IVwSelection vwsel;
-			ITsTextProps[] vttp;
-			IVwPropertyStore[] vvps;
-			if (EditingHelper.GetCharacterProps(out vwsel, out vttp, out vvps))
+			if (EditingHelper.GetCharacterProps(out var vwsel, out var vttp, out _))
 			{
 				var cttp = vttp.Length;
 				for (var ittp = 0; ittp < cttp; ittp++)
@@ -4623,7 +4458,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		{
 			Rectangle rcPrimary;
 			bool fEndBeforeAnchor;
-			int ydTop;
 			// make sure we have a m_graphicsManager.VwGraphics
 			using (new HoldGraphics(this))
 			{
@@ -4645,7 +4479,7 @@ namespace SIL.FieldWorks.Common.RootSites
 				return right >= 0 && left <= ClientRectangle.Width;
 			}
 			// Where the window thinks it is now.
-			ydTop = -ScrollPosition.Y;
+			var ydTop = -ScrollPosition.Y;
 			// Adjust for that and also the height of the (optional) header.
 			rcPrimary.Offset(0, ydTop - m_dyHeader); // Was in drawing coords, adjusted by top.
 			// OK, we want rcIdealPrimary to be visible.
@@ -4655,7 +4489,7 @@ namespace SIL.FieldWorks.Common.RootSites
 				ydTop += LineHeight;
 				ydBottom -= LineHeight;
 			}
-			var isVisible = false;
+			bool isVisible;
 			// Does the selection rectangle overlap the screen one?
 			// Note that for insertion points and pictures we want the selection to be
 			// entirely visible.
@@ -4678,7 +4512,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			// If not scrolling horizontally, vertically is good enough.
 			if (!DoAutoHScroll)
 			{
-				return isVisible;
+				return true;
 			}
 			var ydLeft = -ScrollPosition.X + HorizMargin;
 			var ydRight = ydLeft + ClientRectangle.Width - (HorizMargin * 2);
@@ -5032,7 +4866,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		// use a SimpleRootSite.
 		private sealed class WindowsLanguageProfileSink : IWindowsLanguageProfileSink
 		{
-			private SimpleRootSite Parent { get; set; }
+			private SimpleRootSite Parent { get; }
 
 			public WindowsLanguageProfileSink(SimpleRootSite parent)
 			{

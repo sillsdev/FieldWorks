@@ -171,30 +171,30 @@ namespace LanguageExplorer.SfmToXml
 
 		public bool ReadXmlNode(XmlNode Level)
 		{
-			foreach (XmlAttribute Attribute in Level.Attributes)
+			foreach (XmlAttribute xmlAttribute in Level.Attributes)
 			{
-				switch (Attribute.Name)
+				switch (xmlAttribute.Name)
 				{
 					case "name":
-						Name = Attribute.Value;
+						Name = xmlAttribute.Value;
 						break;
 					case "partOf":
-						SplitString(Attribute.Value, m_ancestors);
+						SplitString(xmlAttribute.Value, m_ancestors);
 						break;
 					case "beginFields":
-						SplitString(Attribute.Value, m_beginFields);
+						SplitString(xmlAttribute.Value, m_beginFields);
 						break;
 					case "additionalFields":
-						SplitString(Attribute.Value, m_additionalFields);
+						SplitString(xmlAttribute.Value, m_additionalFields);
 						break;
 					case "multiFields":
-						SplitString(Attribute.Value, m_multiFields);
+						SplitString(xmlAttribute.Value, m_multiFields);
 						break;
 					case "uniqueFields":
-						SplitString(Attribute.Value, m_uniqueFields);
+						SplitString(xmlAttribute.Value, m_uniqueFields);
 						break;
 					default:
-						Converter.Log.AddWarning(string.Format(SfmToXmlStrings.UnknownAttribute0InTheHierarchySection, Attribute.Name));
+						Converter.Log.AddWarning(string.Format(SfmToXmlStrings.UnknownAttribute0InTheHierarchySection, xmlAttribute.Name));
 						break;
 				}
 			}

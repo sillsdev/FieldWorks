@@ -76,7 +76,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// </summary>
 		internal InterlinMode Mode
 		{
-			get { return m_mode; }
+			get => m_mode;
 			set
 			{
 				if (m_mode == value)
@@ -91,19 +91,13 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		internal List<LineOption> AllLineOptions
 		{
-			get { return m_allLineOptions; }
+			get => m_allLineOptions;
 			set
 			{
 				m_allLineOptions = value;
-
 				// AllLineOptions and AllLineSpecs will be identical
 				// On a set of AllLineOptions, AllLineSpecs will also be updated.
-				var newLineSpecs = new List<InterlinLineSpec>();
-				foreach (var option in value)
-				{
-					newLineSpecs.Add(CreateSpec(option.Flid, 0));
-				}
-				AllLineSpecs = newLineSpecs;
+				AllLineSpecs = value.Select(option => CreateSpec(option.Flid, 0)).ToList();
 			}
 		}
 
@@ -346,8 +340,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		internal bool OkToRemove(InterlinLineSpec spec)
 		{
-			string message;
-			return OkToRemove(spec, out message);
+			return OkToRemove(spec, out _);
 		}
 
 		/// <summary>
@@ -617,12 +610,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		public List<int> WritingSystemsForFlid(int flid, bool fGetDefaultForMissing)
 		{
 			var result = new List<int>();
-			foreach (var spec in m_specs)
+			foreach (var spec in m_specs.Where(spec => spec.Flid == flid && result.IndexOf(spec.WritingSystem) < 0))
 			{
-				if (spec.Flid == flid && result.IndexOf(spec.WritingSystem) < 0)
-				{
-					result.Add(spec.WritingSystem);
-				}
+				result.Add(spec.WritingSystem);
 			}
 			if (fGetDefaultForMissing && result.Count == 0)
 			{
@@ -637,15 +627,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// </summary>
 		public int RepetitionsOfFlid(int flid)
 		{
-			var result = 0;
-			foreach (var spec in m_specs)
-			{
-				if (spec.Flid == flid)
-				{
-					result++;
-				}
-			}
-			return result;
+			return m_specs.Count(spec => spec.Flid == flid);
 		}
 
 		/// <summary>
@@ -656,12 +638,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			get
 			{
 				var result = new List<int>();
-				foreach (var spec in m_specs)
+				foreach (var spec in m_specs.Where(spec => result.IndexOf(spec.WritingSystem) < 0))
 				{
-					if (result.IndexOf(spec.WritingSystem) < 0)
-					{
-						result.Add(spec.WritingSystem);
-					}
+					result.Add(spec.WritingSystem);
 				}
 				return result;
 			}
@@ -704,12 +683,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				wsToOmit = specDefault.WritingSystem;
 			}
 			var result = new List<int>();
-			foreach (var spec in m_specs)
+			foreach (var spec in m_specs.Where(spec => spec.Flid == flid && result.IndexOf(spec.WritingSystem) < 0 && spec.WritingSystem != wsToOmit))
 			{
-				if (spec.Flid == flid && result.IndexOf(spec.WritingSystem) < 0 && spec.WritingSystem != wsToOmit)
-				{
-					result.Add(spec.WritingSystem);
-				}
+				result.Add(spec.WritingSystem);
 			}
 			return result;
 		}
@@ -740,28 +716,22 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		{
 			var matchingSpecs = ItemsWithFlids(new[] { specFlid });
 			// should we consider creating a default spec instead?
-			if (matchingSpecs.Count == 0)
+			if (!matchingSpecs.Any())
 			{
 				return null;
 			}
 			// search for the first matching spec that we can't remove.
-			foreach (var spec in matchingSpecs)
+			foreach (var spec in matchingSpecs.Where(spec => !OkToRemove(spec)))
 			{
-				if (!OkToRemove(spec))
-				{
-					return spec;
-				}
+				return spec;
 			}
 			// search for the first spec that is a default spec.
-			foreach (var spec in matchingSpecs)
+			foreach (var spec in matchingSpecs.Where(spec => IsDefaultSpec(spec)))
 			{
-				if (IsDefaultSpec(spec))
-				{
-					return spec;
-				}
+				return spec;
 			}
 			// lastly return the first matchingSpec
-			return matchingSpecs[0];
+			return matchingSpecs.First();
 		}
 
 		/// <summary />
@@ -1034,7 +1004,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				return;
 			}
-			for (var i = n + 1; i < Count && ((fMoveMorphemeGroup && this[i].MorphemeLevel) || (fMoveNoteGroup && this[i].Flid == kflidNote)); i++)
+			for (var i = n + 1; i < Count && (fMoveMorphemeGroup && this[i].MorphemeLevel || fMoveNoteGroup && this[i].Flid == kflidNote); i++)
 			{
 				var specT = this[i];
 				m_specs.RemoveAt(i);
@@ -1067,13 +1037,13 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		public object Clone()
 		{
-			var result = MemberwiseClone() as InterlinLineChoices;
+			var result = (InterlinLineChoices)MemberwiseClone();
 			// We need a deep clone of the specs, because not only may we reorder the
 			// list and add items, but we may alter items, e.g., by setting the WS.
 			result.m_specs = new List<InterlinLineSpec>(m_specs.Count);
 			foreach (var spec in m_specs)
 			{
-				result.m_specs.Add(spec.Clone() as InterlinLineSpec);
+				result.m_specs.Add((InterlinLineSpec)spec.Clone());
 			}
 			return result;
 		}

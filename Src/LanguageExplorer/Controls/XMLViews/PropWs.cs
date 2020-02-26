@@ -30,12 +30,11 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <exception cref="T:System.NullReferenceException">The <paramref name="obj"/> parameter is null.</exception>
 		public override bool Equals(object obj)
 		{
-			var other = obj as PropWs;
-			if (other == null)
+			if (!(obj is PropWs propWs))
 			{
 				return false;
 			}
-			return other.Flid == Flid && other.Ws == Ws;
+			return propWs.Flid == Flid && propWs.Ws == Ws;
 		}
 
 		/// <summary>

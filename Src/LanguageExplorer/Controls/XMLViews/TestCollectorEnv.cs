@@ -29,7 +29,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// Gets the result.
 		/// </summary>
-		public bool Result { get; private set; } = false;
+		public bool Result { get; private set; }
 
 		/// <summary>
 		/// This collector is done as soon as we know there's something there.

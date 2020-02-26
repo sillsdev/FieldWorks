@@ -46,11 +46,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 		protected LexEntryTypeConverters(UtilityDlg utilityDlg)
 		{
-			if (utilityDlg == null)
-			{
-				throw new ArgumentNullException(nameof(utilityDlg));
-			}
-			m_dlg = utilityDlg;
+			m_dlg = utilityDlg ?? throw new ArgumentNullException(nameof(utilityDlg));
 		}
 
 		/// <summary>
@@ -67,8 +63,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		{
 			foreach (TreeNode tnode in nodes)
 			{
-				var node = tnode as LabelNode;
-				if (node == null)
+				if (!(tnode is LabelNode node))
 				{
 					continue;
 				}
@@ -109,10 +104,10 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		/// </summary>
 		protected SimpleListChooser GetChooser(IEnumerable<ObjectLabel> labels, int classId)
 		{
-			var contents = m_cache.LangProject.LexDbOA.VariantEntryTypesOA.ReallyReallyAllPossibilities.Where(lexEntryType => lexEntryType.ClassID == classId);
-			var persistProvider = m_dlg.PropertyTable.GetValue<IPersistenceProvider>("persistProvider");
-			var fieldName = StringTable.Table.GetString("VariantEntryTypes", StringTable.PossibilityListItemTypeNames);
-			return new SimpleListChooser(persistProvider, labels, fieldName, m_cache, contents, m_dlg.PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider));
+			return new SimpleListChooser(m_dlg.PropertyTable.GetValue<IPersistenceProvider>("persistProvider"), labels,
+				StringTable.Table.GetString("VariantEntryTypes", StringTable.PossibilityListItemTypeNames), m_cache,
+				m_cache.LangProject.LexDbOA.VariantEntryTypesOA.ReallyReallyAllPossibilities.Where(lexEntryType => lexEntryType.ClassID == classId),
+				m_dlg.PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider));
 		}
 
 		/// <summary />

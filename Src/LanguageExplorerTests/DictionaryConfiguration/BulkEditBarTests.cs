@@ -15,7 +15,6 @@ using LanguageExplorer.Areas.Lexicon.Tools.BulkEditEntries;
 using LanguageExplorer.Controls;
 using LanguageExplorer.Controls.XMLViews;
 using LanguageExplorer.Filters;
-using LanguageExplorer.Impls;
 using LanguageExplorer.TestUtilities;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.Controls;
@@ -132,7 +131,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			_statusBar = new StatusBar();
 			_entriesOrChildClassesRecordList = new EntriesOrChildClassesRecordList(AreaServices.EntriesOrChildren, _statusBar, Cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), Cache.LanguageProject.LexDbOA);
 			_entriesOrChildClassesRecordList.InitializeFlexComponent(_flexComponentParameters);
-			_recordListRepository = _flexComponentParameters.PropertyTableGetValue<IRecordListRepository>(LanguageExplorerConstants.RecordListRepository);
+			_recordListRepository = _flexComponentParameters.PropertyTable.GetValue<IRecordListRepository>(LanguageExplorerConstants.RecordListRepository);
 			_recordListRepository.ActiveRecordList = _entriesOrChildClassesRecordList;
 			var root = XDocument.Parse(LexiconResources.BulkEditEntriesOrSensesToolParameters).Root;
 			var parametersElement = root.Element("parameters");
@@ -175,32 +174,20 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			// 'CurrentContentControl' zaps undo stack!
 			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
 			{
-				foreach (var obj in _createdObjectList)
+				foreach (var obj in _createdObjectList.Where(obj => obj.IsValidObject))
 				{
-					if (!obj.IsValidObject)
+					switch (obj)
 					{
-						continue; // owned object could have been deleted already by owner
+						case IMoMorphType _:
+						case IPartOfSpeech _:
+							continue; // these don't need to be deleted between tests
+						case ILexEntry _:
+						case ICmSemanticDomain _:
+						case ILexEntryRef _:
+							obj.Delete();
+							break;
 					}
-					if (obj is IMoMorphType || obj is IPartOfSpeech)
-					{
-						continue; // these don't need to be deleted between tests
-					}
-					if (obj is ILexEntry)
-					{
-						obj.Delete();
-					}
-					if (obj is ICmSemanticDomain)
-					{
-						obj.Delete();
-					}
-					if (obj is ILexEntryRef)
-					{
-						obj.Delete();
-					}
-					// Some types won't get deleted directly (e.g. ILexSense),
-					// but should get deleted by their owner.
 				}
-
 			});
 			_createdObjectList.Clear();
 		}
@@ -386,22 +373,13 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 
 			internal List<FieldComboItem> GetTargetFields()
 			{
-				var items = new List<FieldComboItem>();
-				foreach (FieldComboItem item in CurrentTargetCombo.Items)
-				{
-					items.Add(item);
-				}
-				return items;
+				return CurrentTargetCombo.Items.Cast<FieldComboItem>().ToList();
 			}
 
 			internal Control GetTabControlChild(string controlName)
 			{
 				var matches = m_operationsTabControl.SelectedTab.Controls.Find(controlName, true);
-				if (matches != null && matches.Length > 0)
-				{
-					return matches[0];
-				}
-				return null;
+				return matches.Length > 0 ? matches[0] : null;
 			}
 
 			internal IBulkEditSpecControl CurrentBulkEditSpecControl => m_beItems[m_itemIndex].BulkEditControl;
@@ -475,14 +453,13 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 					// these are dialogs
 					if (filterType == "Filter for...")
 					{
-						var ws = (fci as FindComboItem).Ws;
-						(fci as FindComboItem).Matcher = CreateAnywhereMatcher(query, ws);
+						((FindComboItem)fci).Matcher = CreateAnywhereMatcher(query, ((FindComboItem)fci).Ws);
 						fci.InvokeWithInstalledMatcher();
 					}
 					else if (filterType == "Choose...")
 					{
 						// by default match on "Any"
-						(fci as ListChoiceComboItem).InvokeWithColumnSpecFilter(ListMatchOptions.Any, new List<string>(new string[] { query }));
+						((ListChoiceComboItem)fci).InvokeWithColumnSpecFilter(ListMatchOptions.Any, new List<string>(new string[] { query }));
 					}
 				}
 				else
@@ -554,16 +531,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 
 			internal IList<int> UncheckedItems()
 			{
-				IList<int> uncheckedItems = new List<int>();
-				foreach (var hvoItem in AllItems)
-				{
-					if (!IsItemChecked(hvoItem))
-					{
-						uncheckedItems.Add(hvoItem);
-					}
-				}
-
-				return uncheckedItems;
+				return AllItems.Where(hvoItem => !IsItemChecked(hvoItem)).ToList();
 			}
 		}
 
@@ -746,8 +714,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			var oilSemDom = semDomDict["oil"];
 			var greenSemDom = semDomDict["green"];
 			var subsenseSemDom = semDomDict["subsense"];
-			ILexSense green, see, understand, english1, subsense1, subsense2; // 'out' values
-			GrabSensesWeNeed(out green, out see, out understand, out subsense1, out subsense2, out english1);
+			GrabSensesWeNeed(out var green, out var see, out var understand, out var subsense1, out var subsense2, out var english1);
 			// give 'understand' a pre-existing 'oil' semantic domain
 			AddSemanticDomainToSense(understand, oilSemDom);
 			_bulkEditBarForTests.SwitchTab("ListChoice");
@@ -872,7 +839,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			// TargetField == Sense
 			_bulkEditBarForTests.SetTargetField("Glosses");
 			// make sure current record is a Sense
-			int hvoOfCurrentSense = _browseViewerForTests.AllItems[_browseViewerForTests.SelectedIndex];
+			var hvoOfCurrentSense = _browseViewerForTests.AllItems[_browseViewerForTests.SelectedIndex];
 			Assert.AreEqual(LexSenseTags.kClassId, GetClassOfObject(hvoOfCurrentSense));
 			// Make sure filter is still applied on right column during the transition.
 			// verify there are 4 rows
@@ -900,7 +867,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			// TargetField == Sense
 			_bulkEditBarForTests.SetTargetField("Senses (Rows)");
 			// make sure current record is a Sense
-			int hvoOfCurrentSense = _browseViewerForTests.AllItems[_browseViewerForTests.SelectedIndex];
+			var hvoOfCurrentSense = _browseViewerForTests.AllItems[_browseViewerForTests.SelectedIndex];
 			Assert.AreEqual(LexSenseTags.kClassId, GetClassOfObject(hvoOfCurrentSense));
 			// Make sure filter is still applied on right column during the transition.
 			// verify there are 4 rows
@@ -929,16 +896,11 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			// setup data.
 			AddPronunciation();
 			AddTwoLocations();
-			ILexPronunciation firstPronunciation;
-			ILexEntry firstEntryWithPronunciation;
-			ILexEntry firstEntryWithoutPronunciation;
-			List<ILexEntry> entriesWithoutPronunciations;
-			List<ILexPronunciation> pronunciations;
-			SetupPronunciationData(out firstPronunciation,
-				out firstEntryWithPronunciation,
-				out firstEntryWithoutPronunciation,
-				out entriesWithoutPronunciations,
-				out pronunciations);
+			SetupPronunciationData(out var firstPronunciation,
+				out var firstEntryWithPronunciation,
+				out var firstEntryWithoutPronunciation,
+				out var entriesWithoutPronunciations,
+				out var pronunciations);
 			var recordList = (_browseViewerForTests.Parent as RecordBrowseViewForTests).MyRecordList;
 			// SUT
 			// first select an entry with a pronunciation, and see if we move to that entry's pronunciation
@@ -1092,16 +1054,11 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		{
 			// Setup data
 			AddPronunciation();
-			ILexPronunciation firstPronunciation;
-			ILexEntry firstEntryWithPronunciation;
-			ILexEntry firstEntryWithoutPronunciation;
-			List<ILexEntry> entriesWithoutPronunciations;
-			List<ILexPronunciation> pronunciations;
-			SetupPronunciationData(out firstPronunciation,
-				out firstEntryWithPronunciation,
-				out firstEntryWithoutPronunciation,
-				out entriesWithoutPronunciations,
-				out pronunciations);
+			SetupPronunciationData(out var firstPronunciation,
+				out var firstEntryWithPronunciation,
+				out var firstEntryWithoutPronunciation,
+				out _,
+				out _);
 			// do a bulk copy from LexemeForm to Pronunciations
 			_bulkEditBarForTests.SwitchTab("BulkCopy");
 			_browseViewerForTests.ShowColumn("Pronunciation");
@@ -1140,16 +1097,11 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		{
 			// Setup data.
 			AddPronunciation();
-			ILexPronunciation firstPronunciation;
-			ILexEntry firstEntryWithPronunciation;
-			ILexEntry firstEntryWithoutPronunciation;
-			List<ILexEntry> entriesWithoutPronunciations;
-			List<ILexPronunciation> pronunciations;
-			SetupPronunciationData(out firstPronunciation,
-				out firstEntryWithPronunciation,
-				out firstEntryWithoutPronunciation,
-				out entriesWithoutPronunciations,
-				out pronunciations);
+			SetupPronunciationData(out var firstPronunciation,
+				out var firstEntryWithPronunciation,
+				out var firstEntryWithoutPronunciation,
+				out _,
+				out _);
 			// do a bulk copy from LexemeForm to Pronunciations
 			_bulkEditBarForTests.SwitchTab("BulkCopy");
 			_browseViewerForTests.ShowColumn("Pronunciation");
@@ -1306,17 +1258,12 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		{
 			_bulkEditBarForTests.PersistSettings = true;
 			// setup data.
-			IMoForm firstAllomorph;
-			ILexEntry firstEntryWithAllomorph;
-			ILexEntry firstEntryWithoutAllomorph;
-			List<ILexEntry> entriesWithoutAllomorphs;
-			List<IMoForm> allomorphs;
-			SetupAllomorphsData(out firstAllomorph,
-				out firstEntryWithAllomorph,
-				out firstEntryWithoutAllomorph,
-				out entriesWithoutAllomorphs,
-				out allomorphs);
-			var recordlist = (_browseViewerForTests.Parent as RecordBrowseViewForTests).MyRecordList;
+			SetupAllomorphsData(out var firstAllomorph,
+				out var firstEntryWithAllomorph,
+				out var firstEntryWithoutAllomorph,
+				out var entriesWithoutAllomorphs,
+				out var allomorphs);
+			var recordlist = ((RecordBrowseViewForTests)_browseViewerForTests.Parent).MyRecordList;
 			// first select an entry with an allomorph , and see if we move to that entry's allomorphs
 			// when we switch to "Is Abstract Form (Allomorph)" for target field.
 			recordlist.JumpToRecord(firstEntryWithAllomorph.Hvo);
@@ -1382,7 +1329,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			// make sure there still isn't a new allomorph.
 			Assert.AreEqual(0, firstEntryWithoutAllomorph.AlternateFormsOS.Count);
 			Assert.AreEqual(recordlist.ListSize, allomorphs.Count + entriesWithoutAllomorphs.Count);
-			recordlist = (_browseViewerForTests.Parent as RecordBrowseViewForTests).MyRecordList;
+			recordlist = ((RecordBrowseViewForTests)_browseViewerForTests.Parent).MyRecordList;
 			Assert.AreEqual(firstEntryWithoutAllomorph.Hvo, recordlist.CurrentObject.Hvo);
 			// also make sure the total count of the list has not changed.
 			Assert.AreEqual(recordlist.ListSize, allomorphs.Count + entriesWithoutAllomorphs.Count);
@@ -1406,7 +1353,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			Assert.AreEqual(cOriginal + 1, _browseViewerForTests.ColumnSpecs.Count);
 			_bulkEditBarForTests.SetTargetField("Variant Types");
 			Assert.AreEqual("Variant Types", _bulkEditBarForTests.SelectedTargetFieldItem.ToString());
-			var recordlist = (_browseViewerForTests.Parent as RecordBrowseViewForTests).MyRecordList;
+			var recordlist = ((RecordBrowseViewForTests)_browseViewerForTests.Parent).MyRecordList;
 			recordlist.JumpToRecord(secondVariantRef.Hvo);
 			Assert.AreEqual(secondVariantRef, recordlist.CurrentObject as ILexEntryRef);
 			// make sure we're not on the first index, since when we switch to pronunciations,
@@ -1446,7 +1393,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			_bulkEditBarForTests.SetTargetField("Complex Form Types");
 			Assert.AreEqual("Complex Form Types", _bulkEditBarForTests.SelectedTargetFieldItem.ToString());
 			recordlist.JumpToRecord(hvoComplexRef);
-			var complexEntryRef = recordlist.CurrentObject as ILexEntryRef;
+			var complexEntryRef = (ILexEntryRef)recordlist.CurrentObject;
 			Assert.AreEqual(0, complexEntryRef.VariantEntryTypesRS.Count);
 			_browseViewerForTests.OnUncheckAll();
 			_browseViewerForTests.SetCheckedItems(new List<int>(new[] { hvoComplexRef }));
@@ -1496,9 +1443,8 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		/// <returns></returns>
 		private ILexEntry CreateZZZparentEntryWithMultipleSensesAndPronunciation_AndUpdateList()
 		{
-			ILexPronunciation dummy;
-			var ZZZparentEntry = CreateZZZparentEntryWithMultipleSensesAndPronunciation(out dummy);
-			var recordlist = (_browseViewerForTests.Parent as RecordBrowseViewForTests).MyRecordList;
+			var ZZZparentEntry = CreateZZZparentEntryWithMultipleSensesAndPronunciation(out _);
+			var recordlist = ((RecordBrowseViewForTests)_browseViewerForTests.Parent).MyRecordList;
 			recordlist.UpdateList(true);
 			return ZZZparentEntry;
 		}
@@ -1566,7 +1512,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			_bulkEditBarForTests.SwitchTab("BulkCopy");
 			_bulkEditBarForTests.SetTargetField("Lexeme Form");
 			Assert.AreEqual(LexEntryTags.kClassId, _browseViewerForTests.ListItemsClass);
-			var recordList = (_browseViewerForTests.Parent as RecordBrowseViewForTests).MyRecordList;
+			var recordList = ((RecordBrowseViewForTests)_browseViewerForTests.Parent).MyRecordList;
 			// check that record list has also changed.
 			Assert.AreEqual(recordList.ListSize, _browseViewerForTests.CheckedItems.Count);
 			Assert.AreEqual(recordList.ListSize, _browseViewerForTests.CheckedItems.Count);
@@ -1585,7 +1531,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		public virtual void CheckboxBehavior_ChangingFilterShouldRestoreSelectedStateOfItemsThatBecomeVisible_Selected()
 		{
 			var ZZZparentEntry = CreateZZZparentEntryWithMultipleSensesAndPronunciation_AndUpdateList();
-			var recordList = (_browseViewerForTests.Parent as RecordBrowseViewForTests).MyRecordList;
+			var recordList = ((RecordBrowseViewForTests)_browseViewerForTests.Parent).MyRecordList;
 			_bulkEditBarForTests.SwitchTab("BulkCopy");
 			_bulkEditBarForTests.SetTargetField("Lexeme Form");
 			Assert.AreEqual(LexEntryTags.kClassId, _browseViewerForTests.ListItemsClass);
@@ -1610,7 +1556,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			_bulkEditBarForTests.SwitchTab("BulkCopy");
 			_bulkEditBarForTests.SetTargetField("Lexeme Form");
 			Assert.AreEqual(LexEntryTags.kClassId, _browseViewerForTests.ListItemsClass);
-			var recordList = (_browseViewerForTests.Parent as RecordBrowseViewForTests).MyRecordList;
+			var recordList = ((RecordBrowseViewForTests)_browseViewerForTests.Parent)?.MyRecordList;
 			// unselect our test data
 			_browseViewerForTests.UnselectItem(ZZZparentEntry.Hvo);
 			var unselectedItems = _browseViewerForTests.UncheckedItems();
@@ -1662,7 +1608,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			_bulkEditBarForTests.SwitchTab("BulkCopy");
 			_bulkEditBarForTests.SetTargetField("Lexeme Form");
 			Assert.AreEqual(LexEntryTags.kClassId, _browseViewerForTests.ListItemsClass);
-			var recordList = (_browseViewerForTests.Parent as RecordBrowseViewForTests).MyRecordList;
+			var recordList = ((RecordBrowseViewForTests)_browseViewerForTests.Parent).MyRecordList;
 			// unselect the entry.
 			_browseViewerForTests.UnselectItem(entryWithMultipleDescendents.Hvo);
 			using (FilterBehavior.Create(this))
@@ -1740,8 +1686,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		public void CheckboxBehavior_SiblingClassesItemsShouldInheritSelectionThroughParent_Selected()
 		{
 			// first create an entry with a pronunciation and some senses.
-			ILexPronunciation pronunciation;
-			var parentEntry = CreateZZZparentEntryWithMultipleSensesAndPronunciation(out pronunciation);
+			var parentEntry = CreateZZZparentEntryWithMultipleSensesAndPronunciation(out var pronunciation);
 			_bulkEditBarForTests.SwitchTab("BulkCopy");
 			_browseViewerForTests.ShowColumn("Pronunciation");
 			_bulkEditBarForTests.SetTargetField("Pronunciations");
@@ -1763,8 +1708,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		public void CheckboxBehavior_SiblingClassesItemsShouldInheritSelectionThroughParent_UnSelected()
 		{
 			// first create an entry with a pronunciation and some senses.
-			ILexPronunciation pronunciation;
-			var parentEntry = CreateZZZparentEntryWithMultipleSensesAndPronunciation(out pronunciation);
+			var parentEntry = CreateZZZparentEntryWithMultipleSensesAndPronunciation(out var pronunciation);
 			_bulkEditBarForTests.SwitchTab("BulkCopy");
 			_browseViewerForTests.ShowColumn("Pronunciation");
 			_bulkEditBarForTests.SetTargetField("Pronunciations");
@@ -1819,7 +1763,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			_bulkEditBarForTests.SwitchTab("BulkCopy");
 			_browseViewerForTests.ShowColumn("ExampleTranslation");
 			_bulkEditBarForTests.SetTargetField("Example Translations");
-			var recordList = (_browseViewerForTests.Parent as RecordBrowseViewForTests).MyRecordList;
+			var recordList = ((RecordBrowseViewForTests)_browseViewerForTests.Parent).MyRecordList;
 			// having fewer translations than parent entries is strange
 			// but it's currently the only way we can allow bulk editing translations.
 			// We can allow ghosting for Examples that don't have translations

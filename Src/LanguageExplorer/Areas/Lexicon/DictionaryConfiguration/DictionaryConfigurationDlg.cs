@@ -140,14 +140,14 @@ namespace LanguageExplorer.Areas.Lexicon.DictionaryConfiguration
 				// Set the preview content when all else has settled, this is really here so that the preview displays properly on the
 				// initial dialog load. The GeckoWebBrowser is supposed to handle setting the content before it becomes visible, but it
 				// doesn't work
-				EventHandler refreshDelegate = null;
-				refreshDelegate = delegate
+				void RefreshDelegate(object sender, EventArgs e)
 				{
 					// Since we are handling this delayed the dialog may have been closed before we get around to it
 					if (m_preview.IsDisposed)
 					{
 						return;
 					}
+
 					var browser = (GeckoWebBrowser)m_preview.NativeBrowser;
 					// Workaround to prevent the Gecko browser from stealing focus each time we set the PreviewData
 					browser.WebBrowserFocus.Deactivate();
@@ -155,9 +155,9 @@ namespace LanguageExplorer.Areas.Lexicon.DictionaryConfiguration
 					// but it must be set to a valid Uri
 					browser.LoadContent(value, "file:///c:/MayNotExist/doesnotmatter.html", "application/xhtml+xml");
 					m_preview.Refresh();
-					Application.Idle -= refreshDelegate;
-				};
-				Application.Idle += refreshDelegate;
+					Application.Idle -= RefreshDelegate;
+				}
+				Application.Idle += RefreshDelegate;
 			}
 		}
 
@@ -275,12 +275,9 @@ namespace LanguageExplorer.Areas.Lexicon.DictionaryConfiguration
 
 		private static bool DoesGeckoElementOriginateFromConfigNode(ConfigurableDictionaryNode configNode, GeckoElement element, ConfigurableDictionaryNode topLevelNode)
 		{
-			Guid dummyGuid;
-			GeckoElement dummyElement;
-			var classListForGeckoElement = DictionaryConfigurationServices.GetClassListFromGeckoElement(element, out dummyGuid, out dummyElement);
+			var classListForGeckoElement = DictionaryConfigurationServices.GetClassListFromGeckoElement(element, out _, out _);
 			classListForGeckoElement.RemoveAt(0); // don't need the top level class
-			var nodeToMatch = DictionaryConfigurationController.FindConfigNode(topLevelNode, classListForGeckoElement);
-			return Equals(nodeToMatch, configNode);
+			return Equals(DictionaryConfigurationController.FindConfigNode(topLevelNode, classListForGeckoElement), configNode);
 		}
 
 		private static IEnumerable<GeckoElement> FindMatchingSpans(ConfigurableDictionaryNode selectedNode, GeckoElement parent, ConfigurableDictionaryNode topLevelNode, IFwMetaDataCacheManaged metaDataCacheAccessor)

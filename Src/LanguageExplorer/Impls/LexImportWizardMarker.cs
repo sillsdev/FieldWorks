@@ -100,8 +100,7 @@ namespace LanguageExplorer.Impls
 			// - remove CFS that are in the TV and not in the CFS list
 			// - add CFS that are in the list and not in the TV
 			// - handle the case where the current marker is a CF and it's no longer in the list (just throw for now)
-			bool changed;
-			CustomFields = _importWizard.ReadCustomFieldsFromDB(out changed);
+			CustomFields = _importWizard.ReadCustomFieldsFromDB(out _);
 			// Init will only be called the first time, so here we don't have to remove an nodes
 			tvDestination.BeginUpdate();
 			foreach (TreeNode classNameNode in tvDestination.Nodes)
@@ -140,7 +139,7 @@ namespace LanguageExplorer.Impls
 				}
 				foreach (TreeNode fieldNode in classNode.Nodes)
 				{
-					if ((fieldNode.Tag as LexImportField).ID == currentMarker.FwId)
+					if (((LexImportField)fieldNode.Tag).ID == currentMarker.FwId)
 					{
 						tvDestination.SelectedNode = fieldNode;
 						found = true;
@@ -183,8 +182,7 @@ namespace LanguageExplorer.Impls
 				m_refFuncString = currentMarker.RefField;
 				cbFunction.Enabled = true;
 				var node = tvDestination.SelectedNode;
-				var field = node?.Tag as LexImportField;
-				if (field != null)
+				if (node?.Tag is LexImportField field)
 				{
 					FillLexicalRefTypesCombo(field);
 					// walk the name to abbr list and select the name
@@ -596,9 +594,8 @@ namespace LanguageExplorer.Impls
 			{
 				if (dlg.ShowDialog(this) == DialogResult.OK)
 				{
-					string langDesc, ws, ec, wsId;
 					// retrieve the new WS information from the dlg
-					dlg.GetCurrentLangInfo(out langDesc, out ws, out ec, out wsId);
+					dlg.GetCurrentLangInfo(out var langDesc, out var ws, out var ec, out var wsId);
 
 					// now put the lang info into the language list view
 					if (_importWizard.AddLanguage(langDesc, ws, ec, wsId))
@@ -642,8 +639,7 @@ namespace LanguageExplorer.Impls
 		private void tvDestination_AfterSelect(object sender, TreeViewEventArgs e)
 		{
 			UpdateOKButtonState();
-			var field = e.Node.Tag as LexImportField;
-			if (field == null)
+			if (!(e.Node.Tag is LexImportField field))
 			{
 				return;
 			}
@@ -895,12 +891,11 @@ namespace LanguageExplorer.Impls
 
 		private void btnAddCustomField_Click(object sender, EventArgs e)
 		{
-			_publisher.Publish("AddCustomField", null);
+			_publisher.Publish(new PublisherParameterObject("AddCustomField"));
 			// At this point there could be custom fields added or removed, so we have to
 			// recalculate the customfields and populate the TVcontrol based on the currently
 			// defined custom fields.
-			bool customFieldsChanged;
-			CustomFields = _importWizard.ReadCustomFieldsFromDB(out customFieldsChanged);
+			CustomFields = _importWizard.ReadCustomFieldsFromDB(out var customFieldsChanged);
 			// if the custom fields have changed any, then update the display with the changes
 			if (customFieldsChanged)
 			{
@@ -963,9 +958,7 @@ namespace LanguageExplorer.Impls
 				if (!cbFunction.Items.Contains(funcText))
 				{
 					// found case where the user has entered their own text and want to add it to the proper list
-					var tn = tvDestination.SelectedNode;
-					var field = tn.Tag as LexImportField;
-					if (field != null && field.IsRef)
+					if (tvDestination.SelectedNode.Tag is LexImportField field && field.IsRef)
 					{
 						var entryTypefactory = m_cache.ServiceLocator.GetInstance<ILexEntryTypeFactory>();
 						ICmPossibility newType;
@@ -1009,9 +1002,9 @@ namespace LanguageExplorer.Impls
 
 		private struct NameWSandAbbr    // objects that are stuffed in the m_htNameToAbbr hashtable
 		{
-			public string Name;
-			public string NameWS;
-			public string Abbr;
+			internal string Name;
+			internal string NameWS;
+			internal string Abbr;
 		};
 	}
 }

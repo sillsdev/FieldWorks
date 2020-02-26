@@ -49,7 +49,7 @@ namespace LanguageExplorer.Impls
 				var curConfig = Configurations.Values.FirstOrDefault(config => pathToCurrentConfiguration.Equals(config.FilePath));
 				return curConfig?.Label;
 			}
-			set { m_selectedConfiguration = value; }
+			set => m_selectedConfiguration = value;
 		}
 
 		public ICollection<string> SelectedReversals { get; set; }

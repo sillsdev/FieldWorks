@@ -192,7 +192,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		}
 
 		/// <summary />
-		private void Init(LcmCache cache, IHelpTopicProvider helpTopicProvider, 			IPersistenceProvider persistProvider, string fieldName, IEnumerable<ObjectLabel> labels,
+		private void Init(LcmCache cache, IHelpTopicProvider helpTopicProvider, IPersistenceProvider persistProvider, string fieldName, IEnumerable<ObjectLabel> labels,
 			ICmObject currentObj, string nullLabel, IVwStylesheet stylesheet)
 		{
 			m_stylesheet = stylesheet;
@@ -404,15 +404,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		{
 			set
 			{
-				var sText = value;
-				if (sText.IndexOf("{0}") >= 0 && (STextParam != null || TextParamHvo != 0))
-				{
-					m_lblExplanation.Text = string.Format(sText, TextParam);
-				}
-				else
-				{
-					m_lblExplanation.Text = sText;
-				}
+				m_lblExplanation.Text = value.IndexOf("{0}") >= 0 && (STextParam != null || TextParamHvo != 0) ? string.Format(value, TextParam) : value;
 				m_lblExplanation.Visible = true;
 			}
 		}
@@ -429,7 +421,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			// Don't show a link if it's back to this object's owner
 			// Note LexEntry no longer has an owner. But m_hvoObject can be 0 (FWR-2886).
 			var objt = (m_hvoObject != 0) ? Cache.ServiceLocator.GetObject(m_hvoObject) : null;
-			var ownedHvo = (objt != null && objt.Owner != null) ? objt.Owner.Hvo : 0;
+			var ownedHvo = objt?.Owner?.Hvo ?? 0;
 			if (TextParamHvo != 0 && m_hvoObject != 0 && TextParamHvo == ownedHvo)
 			{
 				return;
@@ -448,25 +440,30 @@ namespace LanguageExplorer.Controls.XMLViews
 				sText = string.Format(sText, TextParam);
 			}
 			++m_cLinksShown;
-			if (m_cLinksShown == 1)
+			switch (m_cLinksShown)
 			{
-				m_lblLink1.Text = sText;
-				if (type != LinkType.kSimpleLink)
+				case 1:
 				{
-					m_picboxLink1.Image = m_imageList.Images[(int)type];
+					m_lblLink1.Text = sText;
+					if (type != LinkType.kSimpleLink)
+					{
+						m_picboxLink1.Image = m_imageList.Images[(int)type];
+					}
+					Obj1 = obj;
+					m_link1Panel.Visible = true;
+					break;
 				}
-				Obj1 = obj;
-				m_link1Panel.Visible = true;
-			}
-			else if (m_cLinksShown == 2)
-			{
-				m_lblLink2.Text = sText;
-				if (type != LinkType.kSimpleLink)
+				case 2:
 				{
-					m_picboxLink2.Image = m_imageList.Images[(int)type];
+					m_lblLink2.Text = sText;
+					if (type != LinkType.kSimpleLink)
+					{
+						m_picboxLink2.Image = m_imageList.Images[(int)type];
+					}
+					m_obj2 = obj;
+					m_link2Panel.Visible = true;
+					break;
 				}
-				m_obj2 = obj;
-				m_link2Panel.Visible = true;
 			}
 		}
 
@@ -606,14 +603,7 @@ namespace LanguageExplorer.Controls.XMLViews
 
 		private static bool AnyItemChecked(TreeNodeCollection nodes)
 		{
-			foreach (TreeNode child in nodes)
-			{
-				if (child.Checked || AnyItemChecked(child.Nodes))
-				{
-					return true;
-				}
-			}
-			return false;
+			return nodes.Cast<TreeNode>().Any(child => child.Checked || AnyItemChecked(child.Nodes));
 		}
 
 		/// <summary>
@@ -628,22 +618,13 @@ namespace LanguageExplorer.Controls.XMLViews
 
 		internal ListMatchOptions ListMatchMode
 		{
-			get
-			{
-				if (m_AllButton != null && m_AllButton.Checked)
-				{
-					return ListMatchOptions.All;
-				}
-				if (m_NoneButton.Checked)
-				{
-					return ListMatchOptions.None;
-				}
-				if (m_ExactButton != null && m_ExactButton.Checked)
-				{
-					return ListMatchOptions.Exact;
-				}
-				return ListMatchOptions.Any;
-			}
+			get => m_AllButton != null && m_AllButton.Checked
+					? ListMatchOptions.All
+					: m_NoneButton.Checked
+						? ListMatchOptions.None
+						: m_ExactButton != null && m_ExactButton.Checked
+							? ListMatchOptions.Exact
+							: ListMatchOptions.Any;
 			set
 			{
 				switch (value)
@@ -677,10 +658,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		public string TextParam
 		{
-			set
-			{
-				STextParam = value;
-			}
+			set => STextParam = value;
 			get
 			{
 				if (STextParam != null)
@@ -865,14 +843,14 @@ namespace LanguageExplorer.Controls.XMLViews
 			};
 			if (Platform.IsMono)
 			{
-				var browser = m_webBrowser.NativeBrowser as Gecko.GeckoWebBrowser;
+				var browser = (Gecko.GeckoWebBrowser)m_webBrowser.NativeBrowser;
 				browser.TabIndex = 1;
 				browser.MinimumSize = new Size(20, 20);
 				browser.NoDefaultContextMenu = true;
 			}
 			else
 			{
-				var browser = m_webBrowser.NativeBrowser as WebBrowser;
+				var browser = (WebBrowser)m_webBrowser.NativeBrowser;
 				browser.IsWebBrowserContextMenuEnabled = false;
 				browser.WebBrowserShortcutsEnabled = false;
 				browser.AllowWebBrowserDrop = false;
@@ -940,8 +918,7 @@ namespace LanguageExplorer.Controls.XMLViews
 				while (stack.Count > 0)
 				{
 					var node = stack.Pop();
-					var pos = node.Label.Object as ICmPossibility;
-					var curHelpTopic = pos?.HelpId;
+					var curHelpTopic = (node.Label.Object as ICmPossibility)?.HelpId;
 					if (curHelpTopic != null && curHelpTopic.ToLowerInvariant() == helpTopic)
 					{
 						m_labelsTreeView.SelectedNode = node;
@@ -950,8 +927,7 @@ namespace LanguageExplorer.Controls.XMLViews
 					node.AddChildren(true, m_chosenObjs);
 					foreach (TreeNode childNode in node.Nodes)
 					{
-						var labelNode = childNode as LabelNode;
-						if (labelNode != null)
+						if (childNode is LabelNode labelNode)
 						{
 							stack.Push(labelNode);
 						}
@@ -962,8 +938,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				for (var i = 0; i < m_labels.Count; i++)
 				{
-					var pos = m_labels[i].Object as ICmPossibility;
-					var curHelpTopic = pos?.HelpId;
+					var curHelpTopic = (m_labels[i].Object as ICmPossibility)?.HelpId;
 					if (curHelpTopic != null && curHelpTopic.ToLowerInvariant() == helpTopic)
 					{
 						m_flvLabels.SelectedIndex = i;
@@ -996,8 +971,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				return;
 			}
-			var pos = selectedLabel.Object as ICmPossibility;
-			if (pos != null)
+			if (selectedLabel.Object is ICmPossibility pos)
 			{
 				var helpFile = pos.OwningList.HelpFile;
 				if (!Platform.IsWindows)
@@ -1119,7 +1093,6 @@ namespace LanguageExplorer.Controls.XMLViews
 				{
 					FileUtils.Delete(tempfile);
 				}
-				tempfile = null;
 			}
 			else if (Platform.IsWindows)
 			{
@@ -1208,8 +1181,7 @@ namespace LanguageExplorer.Controls.XMLViews
 					node.DisplayUsage = m_displayUsageCheckBox.Checked;
 					foreach (TreeNode childNode in node.Nodes)
 					{
-						var labelNode = childNode as LabelNode;
-						if (labelNode != null)
+						if (childNode is LabelNode labelNode)
 						{
 							stack.Push(labelNode);
 						}
@@ -1672,15 +1644,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			}
 			//no, so look in my descendants
 			searchNode.AddChildren(true, m_chosenObjs);
-			foreach (LabelNode node in searchNode.Nodes)
-			{
-				var n = FindNode(node, obj);
-				if (n != null)
-				{
-					return n;
-				}
-			}
-			return null;
+			return (searchNode.Nodes.Cast<LabelNode>().Select(node => FindNode(node, obj))).FirstOrDefault(n => n != null);
 		}
 		#endregion
 
@@ -1975,10 +1939,9 @@ namespace LanguageExplorer.Controls.XMLViews
 		}
 		#endregion
 
-		private void HandleCommmandChoice(ChooserCommandNode node)
+		private void HandleCommandChoice(TreeNode node)
 		{
-			var cmd = node?.Tag as ChooserCommand;
-			if (cmd == null)
+			if (!(node?.Tag is ChooserCommand cmd))
 			{
 				return;
 			}
@@ -2000,7 +1963,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			}
 			else if (m_labelsTreeView?.SelectedNode?.Tag is ChooserCommand)
 			{
-				HandleCommmandChoice(m_labelsTreeView.SelectedNode as ChooserCommandNode);
+				HandleCommandChoice(m_labelsTreeView.SelectedNode);
 			}
 			// TODO: Do something similar for a selected item in a FlatListView.
 			else
@@ -2064,8 +2027,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			}
 			for (var i = 0; i < node.Nodes.Count; ++i)
 			{
-				var x = node.Nodes[i] as LabelNode;
-				if (x != null)
+				if (node.Nodes[i] is LabelNode x)
 				{
 					if (x.Checked)
 					{
@@ -2101,20 +2063,6 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				node.AddChildren(false, m_chosenObjs);
 			}
-		}
-
-		/// <summary />
-		public void AddChooserCommand(ChooserCommand cmd)
-		{
-			var node = new ChooserCommandNode(cmd);
-			var defAnalWS = cmd.Cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem;
-			var sFontName = defAnalWS.DefaultFontName;
-			// TODO: need to get analysis font's size
-			// and then set it to use underline:
-			var font = new Font(sFontName, 10.0f, FontStyle.Italic);
-			node.NodeFont = font;
-			//node.ForeColor = Color.DarkGreen;
-			m_labelsTreeView.Nodes.Insert(0, node);
 		}
 
 		private void m_lblLink1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
@@ -2313,22 +2261,6 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				m_displayUsageCheckBox.Checked = false;
 			}
-		}
-
-		/// <summary />
-		private sealed class ChooserCommandNode : TreeNode
-		{
-			/// <summary />
-			public ChooserCommandNode(ChooserCommand cmd)
-			{
-				Tag = cmd;
-				Text = cmd.Label;
-			}
-
-			/// <summary>
-			/// Gets the command.
-			/// </summary>
-			public ChooserCommand Command => (ChooserCommand)Tag;
 		}
 	}
 }

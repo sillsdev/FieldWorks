@@ -30,8 +30,7 @@ namespace LanguageExplorer
 			if (string.IsNullOrEmpty(root.AccessibleName))
 			{
 				var baseName = root.GetType().Name;
-				int previous;
-				if (!previousOccurrences.TryGetValue(baseName, out previous))
+				if (!previousOccurrences.TryGetValue(baseName, out var previous))
 				{
 					previous = 0;
 				}

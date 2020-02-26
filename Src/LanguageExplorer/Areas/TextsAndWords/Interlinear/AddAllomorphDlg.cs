@@ -137,14 +137,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				}
 				InconsistentType = !fMatchingType;
 				MatchingForm = fMatchingForm;
-				if (fMatchingForm && fMatchingType)
-				{
-					m_btnOK.Text = LanguageExplorerControls.ksUseAllomorph;
-				}
-				else
-				{
-					m_btnOK.Text = LanguageExplorerControls.ksAddAllomorph_;
-				}
+				m_btnOK.Text = fMatchingForm && fMatchingType ? LanguageExplorerControls.ksUseAllomorph : LanguageExplorerControls.ksAddAllomorph_;
 				m_btnOK.Enabled = true;
 			}
 			else

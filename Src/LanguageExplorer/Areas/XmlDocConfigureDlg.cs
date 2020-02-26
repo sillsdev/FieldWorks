@@ -215,8 +215,7 @@ namespace LanguageExplorer.Areas
 			m_configNotLocalizedObjectName = XmlUtils.GetOptionalAttributeValue(configurationParameters, "configureObjectName", "");
 			Text = string.Format(Text, m_configObjectName);
 			m_defaultRootLayoutName = XmlUtils.GetOptionalAttributeValue(configurationParameters, "layout");
-			string sLayoutType;
-			m_propertyTable.TryGetValue(m_sLayoutPropertyName, out sLayoutType);
+			m_propertyTable.TryGetValue(m_sLayoutPropertyName, out string sLayoutType);
 			if (string.IsNullOrEmpty(sLayoutType))
 			{
 				sLayoutType = m_defaultRootLayoutName;
@@ -225,9 +224,7 @@ namespace LanguageExplorer.Areas
 			LegacyConfigurationUtils.BuildTreeFromLayoutAndParts(configureLayouts, this);
 			SetSelectedDictionaryTypeItem(sLayoutType);
 			// Restore the location and size from last time we called this dialog.
-			Point dlgLocation;
-			Size dlgSize;
-			if (m_propertyTable.TryGetValue("XmlDocConfigureDlg_Location", out dlgLocation) && m_propertyTable.TryGetValue("XmlDocConfigureDlg_Size", out dlgSize))
+			if (m_propertyTable.TryGetValue("XmlDocConfigureDlg_Location", out Point dlgLocation) && m_propertyTable.TryGetValue("XmlDocConfigureDlg_Size", out Size dlgSize))
 			{
 				var rect = new Rectangle(dlgLocation, dlgSize);
 				ScreenHelper.EnsureVisibleRect(ref rect);
@@ -245,8 +242,7 @@ namespace LanguageExplorer.Areas
 			var idx = -1;
 			for (var i = 0; i < m_cbDictType.Items.Count; ++i)
 			{
-				var item = m_cbDictType.Items[i] as LayoutTypeComboItem;
-				if (item != null && item.LayoutName == sLayoutType)
+				if (m_cbDictType.Items[i] is LayoutTypeComboItem item && item.LayoutName == sLayoutType)
 				{
 					idx = i;
 					break;
@@ -693,10 +689,9 @@ namespace LanguageExplorer.Areas
 		{
 			StoreNodeData(m_current);   // Ensure duplicate has current data.
 			var ltn = (LayoutTreeNode)m_current.Clone();
-			var idx = m_current.Index;
 			var tnParent = m_current.Parent;
 			var old = m_current;
-			tnParent.Nodes.Insert(idx - 1, ltn);
+			tnParent.Nodes.Insert(m_current.Index - 1, ltn);
 			m_tvParts.SelectedNode = ltn;
 			// It's important to remove the old one AFTER we insert AND SELECT the new one.
 			// otherwise another node is temporarily selected which may somehow result in it
@@ -710,10 +705,9 @@ namespace LanguageExplorer.Areas
 		{
 			StoreNodeData(m_current);   // Ensure duplicate has current data.
 			var ltn = (LayoutTreeNode)m_current.Clone();
-			var idx = m_current.Index;
 			var tnParent = m_current.Parent;
 			var old = m_current;
-			tnParent.Nodes.Insert(idx + 2, ltn); // after the following node, since this one is not yet deleted.
+			tnParent.Nodes.Insert(m_current.Index + 2, ltn); // after the following node, since this one is not yet deleted.
 			m_tvParts.SelectedNode = ltn;
 			// It's important to remove the old one AFTER we insert AND SELECT the new one.
 			// otherwise another node is temporarily selected which may somehow result in it
@@ -730,7 +724,7 @@ namespace LanguageExplorer.Areas
 			LayoutTreeNode ltnDup;
 			// Generate a unique label to identify this as the n'th duplicate in the list.
 			var rgsLabels = new List<string>();
-			string sBaseLabel = null;
+			string sBaseLabel;
 			if (m_current.Level == 0)
 			{
 				var nodes = ((LayoutTypeComboItem)m_cbDictType.SelectedItem).TreeNodes;
@@ -1491,7 +1485,6 @@ namespace LanguageExplorer.Areas
 			try
 			{
 				m_fItemCheck = true;
-				int cChecks;
 				var lvic = m_lvItems.CheckedItems;
 				if (lvic.Count == 0)
 				{
@@ -1505,24 +1498,22 @@ namespace LanguageExplorer.Areas
 				{
 					if (e.NewValue == CheckState.Unchecked)
 					{
-						cChecks = lvic.Count - 1;
 						// Can't uncheck the last remaining checked item! (only rule)
 						if (lvic.Count == 1 && lvic[0].Index == e.Index)
 						{
 							e.NewValue = CheckState.Checked;
-							++cChecks;
 						}
 					}
 				}
 				switch (m_listType)
 				{
 					case ListViewContent.RelationTypes:
-						m_current.RelTypeList[e.Index].Enabled = (e.NewValue == CheckState.Checked);
+						m_current.RelTypeList[e.Index].Enabled = e.NewValue == CheckState.Checked;
 						break;
 					case ListViewContent.ComplexFormTypes:
 					case ListViewContent.VariantTypes:
 					case ListViewContent.MinorEntryTypes:
-						m_current.EntryTypeList[e.Index].Enabled = (e.NewValue == CheckState.Checked);
+						m_current.EntryTypeList[e.Index].Enabled = e.NewValue == CheckState.Checked;
 						break;
 				}
 			}
@@ -1838,15 +1829,17 @@ namespace LanguageExplorer.Areas
 			foreach (ListViewItem lvi in m_lvItems.CheckedItems)
 			{
 				var sWs = string.Empty;
-				if (lvi.Tag is int)
+				switch (lvi.Tag)
 				{
-					var ws = (int)lvi.Tag;
-					WritingSystemServices.SmartMagicWsToSimpleMagicWs(ws);
-					sWs = WritingSystemServices.GetMagicWsNameFromId(ws);
-				}
-				else if (lvi.Tag is CoreWritingSystemDefinition)
-				{
-					sWs = ((CoreWritingSystemDefinition)lvi.Tag).Id;
+					case int ws:
+					{
+						WritingSystemServices.SmartMagicWsToSimpleMagicWs(ws);
+						sWs = WritingSystemServices.GetMagicWsNameFromId(ws);
+						break;
+					}
+					case CoreWritingSystemDefinition definition:
+						sWs = definition.Id;
+						break;
 				}
 				if (sbLabel.Length > 0)
 				{
@@ -1892,8 +1885,7 @@ namespace LanguageExplorer.Areas
 			}
 			ltn.ShowSingleGramInfoFirst = m_chkShowSingleGramInfoFirst.Checked;
 			// Set the information on the parent sense node as well.
-			var ltnParent = ltn.Parent as LayoutTreeNode;
-			if (ltnParent != null && ltnParent.ShowSenseConfig)
+			if (ltn.Parent is LayoutTreeNode ltnParent && ltnParent.ShowSenseConfig)
 			{
 				ltnParent.ShowSingleGramInfoFirst = m_chkShowSingleGramInfoFirst.Checked;
 			}
@@ -2060,8 +2052,7 @@ namespace LanguageExplorer.Areas
 			DetermineStateOfContextControls();
 			// Arrange placement of Surrounding Context control after making the above (perhaps) visible.
 			PlaceContextControls(m_cfgSenses);
-			string sBefore, sMark, sAfter;
-			m_current.SplitNumberFormat(out sBefore, out sMark, out sAfter);
+			m_current.SplitNumberFormat(out var sBefore, out var sMark, out var sAfter);
 			if (m_current.Number == "")
 			{
 				m_cfgSenses.NumberStyleCombo.SelectedIndex = 0;
@@ -2464,8 +2455,7 @@ namespace LanguageExplorer.Areas
 					}
 					// Add this to the list of writing systems, since the user must have
 					// wanted it at some time.
-					CoreWritingSystemDefinition ws2;
-					if (Cache.ServiceLocator.WritingSystemManager.TryGet(sLabel, out ws2))
+					if (Cache.ServiceLocator.WritingSystemManager.TryGet(sLabel, out var ws2))
 					{
 						m_lvItems.Items.Insert(indexTarget++, new ListViewItem(ws2.DisplayLabel) { Tag = ws2, Checked = true });
 					}
@@ -2849,28 +2839,8 @@ namespace LanguageExplorer.Areas
 		private bool IsDirty()
 		{
 			StoreNodeData(m_current);
-			if (m_fDeleteCustomFiles)
-			{
-				return true;
-			}
-			var sOldRootLayout = m_propertyTable.GetValue<string>(m_sLayoutPropertyName);
-			var sRootLayout = ((LayoutTypeComboItem)m_cbDictType.SelectedItem).LayoutName;
-			if (sOldRootLayout != sRootLayout)
-			{
-				return true;
-			}
-			foreach (var item in m_cbDictType.Items)
-			{
-				var ltci = (LayoutTypeComboItem)item;
-				foreach (var ltn in ltci.TreeNodes)
-				{
-					if (ltn.IsDirty())
-					{
-						return true;
-					}
-				}
-			}
-			return false;
+			return m_fDeleteCustomFiles || m_propertyTable.GetValue<string>(m_sLayoutPropertyName) != ((LayoutTypeComboItem)m_cbDictType.SelectedItem).LayoutName
+										|| m_cbDictType.Items.Cast<LayoutTypeComboItem>().Any(ltci => ltci.TreeNodes.Any(ltn => ltn.IsDirty()));
 		}
 
 		private void SaveModifiedLayouts()
@@ -2908,12 +2878,9 @@ namespace LanguageExplorer.Areas
 				m_layouts.PersistOverrideElement(layout);
 			}
 			var layoutsPersisted = new HashSet<XElement>(rgxnLayouts);
-			foreach (var xnNewBase in m_rgxnNewLayoutNodes)
+			foreach (var xnNewBase in m_rgxnNewLayoutNodes.Where(xnNewBase => !layoutsPersisted.Contains(xnNewBase)))
 			{
-				if (!layoutsPersisted.Contains(xnNewBase)) // don't need to persist a node that got into both lists twice
-				{
-					m_layouts.PersistOverrideElement(xnNewBase);
-				}
+				m_layouts.PersistOverrideElement(xnNewBase);
 			}
 			m_rgxnNewLayoutNodes.Clear();
 		}
@@ -2966,8 +2933,7 @@ namespace LanguageExplorer.Areas
 		/// </summary>
 		private void m_linkManageViews_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
 		{
-			var currentItem = m_cbDictType.SelectedItem as LayoutTypeComboItem;
-			if (currentItem == null)
+			if (!(m_cbDictType.SelectedItem is LayoutTypeComboItem currentItem))
 			{
 				return;
 			}
@@ -2979,7 +2945,7 @@ namespace LanguageExplorer.Areas
 				var presenter = dlg.Presenter;
 				if (dlg.ShowDialog() == DialogResult.OK)
 				{
-					ProcessXMLConfigChanges(presenter as IDictConfigManager);
+					ProcessXMLConfigChanges((IDictConfigManager)presenter);
 				}
 			}
 		}
@@ -3031,8 +2997,7 @@ namespace LanguageExplorer.Areas
 				var code = viewSpec.Item1;
 				var baseLayout = viewSpec.Item2;
 				var label = viewSpec.Item3;
-				XElement xnBaseConfig;
-				if (mapLayoutToConfigBase.TryGetValue(baseLayout, out xnBaseConfig))
+				if (mapLayoutToConfigBase.TryGetValue(baseLayout, out var xnBaseConfig))
 				{
 					CopyConfiguration(xnBaseConfig, code, label);
 				}
@@ -3105,7 +3070,6 @@ namespace LanguageExplorer.Areas
 			DuplicateLayout(newSuffixLayout, "#" + code, new List<XElement>());
 			m_layouts.AddNodeToInventory(newSuffixLayout);
 			m_rgxnNewLayoutNodes.Add(newSuffixLayout);
-			return;
 		}
 
 		private static void MarkLayoutTreeNodesAsNew(IEnumerable<LayoutTreeNode> rgltnStyle)
@@ -3167,8 +3131,7 @@ namespace LanguageExplorer.Areas
 			foreach (var viewId in viewsToDelete)
 			{
 				// Find match and delete
-				LayoutTypeComboItem defunct;
-				if (layoutMap.TryGetValue(viewId, out defunct))
+				if (layoutMap.TryGetValue(viewId, out var defunct))
 				{
 					layoutMap.Remove(viewId);
 					var path = GetConfigFilePath(defunct.LayoutTypeNode, configDir);
@@ -3182,10 +3145,7 @@ namespace LanguageExplorer.Areas
 
 		private static string GetConfigFilePath(XElement xnConfig, string configDir)
 		{
-			var label = XmlUtils.GetMandatoryAttributeValue(xnConfig, "label");
-			var className = XmlUtils.GetMandatoryAttributeValue(xnConfig.Elements().First(), "class");
-			var name = $"{label}_{className}.fwlayout";
-			return Path.Combine(configDir, name);
+			return Path.Combine(configDir, $"{XmlUtils.GetMandatoryAttributeValue(xnConfig, "label")}_{XmlUtils.GetMandatoryAttributeValue(xnConfig.Elements().First(), "class")}.fwlayout");
 		}
 
 		private void RewriteComboBoxItemsAfterDelete(Dictionary<string, LayoutTypeComboItem> layoutMap)
@@ -3266,8 +3226,7 @@ namespace LanguageExplorer.Areas
 			}
 			// Found match
 			Debug.WriteLine("Found layout key: " + mapKey);
-			LayoutTypeComboItem layoutItem;
-			layoutMap.TryGetValue(mapKey, out layoutItem);
+			layoutMap.TryGetValue(mapKey, out var layoutItem);
 			return layoutItem;
 		}
 
@@ -3345,7 +3304,7 @@ namespace LanguageExplorer.Areas
 
 		private sealed class GuidAndSubClass
 		{
-			private Guid ItemGuid { get; set; }
+			private Guid ItemGuid { get; }
 			internal TypeSubClass SubClass { get; set; }
 
 			internal GuidAndSubClass(Guid guid, TypeSubClass sub)

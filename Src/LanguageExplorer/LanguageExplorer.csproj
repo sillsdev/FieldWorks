@@ -343,7 +343,7 @@
     <Compile Include="Controls\IImportForm.cs" />
     <Compile Include="Areas\InsertOption.cs" />
     <Compile Include="Areas\IPhEnvSliceCommon.cs" />
-    <Compile Include="Areas\IPreferedTargetAdjuster.cs" />
+    <Compile Include="Areas\IPreferredTargetAdjuster.cs" />
     <Compile Include="Areas\Lexicon\ISemanticDomainTreeBarHandler.cs" />
     <Compile Include="Areas\Lexicon\Tools\SharedLexiconToolsUiWidgetHelper.cs" />
     <Compile Include="Areas\Lexicon\LexReferenceUnidirectionalVc.cs" />

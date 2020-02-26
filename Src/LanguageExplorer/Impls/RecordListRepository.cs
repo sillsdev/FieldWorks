@@ -72,8 +72,7 @@ namespace LanguageExplorer.Impls
 		{
 			Guard.AgainstNull(recordList, nameof(recordList));
 
-			IRecordList goner;
-			if (!_recordLists.TryGetValue(recordList.Id, out goner))
+			if (!_recordLists.TryGetValue(recordList.Id, out var goner))
 			{
 				return;
 			}
@@ -100,8 +99,7 @@ namespace LanguageExplorer.Impls
 		{
 			Guard.AgainstNullOrEmptyString(recordListId, nameof(recordListId));
 
-			IRecordList recordListToGet;
-			_recordLists.TryGetValue(recordListId, out recordListToGet);
+			_recordLists.TryGetValue(recordListId, out var recordListToGet);
 			return recordListToGet;
 		}
 
@@ -121,10 +119,7 @@ namespace LanguageExplorer.Impls
 				_activeRecordList = value;
 				_activeRecordList?.ActivateUI();
 			}
-			get
-			{
-				return _activeRecordList;
-			}
+			get => _activeRecordList;
 		}
 
 		/// <summary>
@@ -137,8 +132,7 @@ namespace LanguageExplorer.Impls
 		/// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="recordListFactoryMethod"/> doesn't know how to make a record list with the given Id.</exception>
 		IRecordList IRecordListRepositoryForTools.GetRecordList(string recordListId, StatusBar statusBar, Func<LcmCache, FlexComponentParameters, string, StatusBar, IRecordList> recordListFactoryMethod)
 		{
-			IRecordList retVal;
-			if (_recordLists.TryGetValue(recordListId, out retVal))
+			if (_recordLists.TryGetValue(recordListId, out var retVal))
 			{
 				return retVal;
 			}
@@ -159,8 +153,7 @@ namespace LanguageExplorer.Impls
 		/// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="recordListFactoryMethod"/> doesn't know how to make a record list with the given Id.</exception>
 		IRecordList IRecordListRepositoryForTools.GetRecordList(string recordListId, StatusBar statusBar, ICmPossibilityList customList, Func<ICmPossibilityList, LcmCache, FlexComponentParameters, string, StatusBar, IRecordList> recordListFactoryMethod)
 		{
-			IRecordList retVal;
-			if (_recordLists.TryGetValue(recordListId, out retVal))
+			if (_recordLists.TryGetValue(recordListId, out var retVal))
 			{
 				return retVal;
 			}

@@ -49,7 +49,7 @@ namespace LanguageExplorer.LcmUi
 					case DialogResult.OK: // Fall through.
 					case DialogResult.Yes:
 						ffdUi = new FsFeatDefnUi(dlg.SelectedFeatDefn);
-						publisher.Publish(LanguageExplorerConstants.JumpToRecord, dlg.SelectedFeatDefn.Hvo);
+						publisher.Publish(new PublisherParameterObject(LanguageExplorerConstants.JumpToRecord, dlg.SelectedFeatDefn.Hvo));
 						break;
 				}
 			}

@@ -114,8 +114,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		/// </summary>
 		internal RowMenuItem SelectedRow
 		{
-			get { return (RowMenuItem)m_rowsCombo.SelectedItem; }
-			set { m_rowsCombo.SelectedItem = value; }
+			get => (RowMenuItem)m_rowsCombo.SelectedItem;
+			set => m_rowsCombo.SelectedItem = value;
 		}
 
 		/// <summary>
@@ -136,8 +136,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		// Column selected by user in combobox
 		internal ColumnMenuItem SelectedColumn
 		{
-			get { return (ColumnMenuItem)m_columnsCombo.SelectedItem; }
-			set { m_columnsCombo.SelectedItem = value; }
+			get => (ColumnMenuItem)m_columnsCombo.SelectedItem;
+			set => m_columnsCombo.SelectedItem = value;
 		}
 
 		internal AdvancedMTDialogLogic DlgLogic { get; private set; }

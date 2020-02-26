@@ -131,12 +131,10 @@ namespace LanguageExplorerTests.Areas.Lists
 			Assert.AreEqual(clists, m_listRepo.Count, "Should not delete an owned list.");
 		}
 
-		///--------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests trying to delete a Custom list with one Possibility, but with nothing
 		/// referencing it.
 		/// </summary>
-		///--------------------------------------------------------------------------------------
 		[Test]
 		public void DeleteCustomList_OnePossibilityNoReference()
 		{
@@ -152,12 +150,10 @@ namespace LanguageExplorerTests.Areas.Lists
 			Assert.AreEqual(clists - 1, m_listRepo.Count, "Possibility not referenced by anything. Should just delete the list.");
 		}
 
-		///--------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests trying to delete a Custom list with one Possibility referenced by something
 		/// else. 'User' responds to dialog with 'No'.
 		/// </summary>
-		///--------------------------------------------------------------------------------------
 		[Test]
 		public void DeleteCustomList_OnePossibilityRef_No()
 		{
@@ -175,18 +171,14 @@ namespace LanguageExplorerTests.Areas.Lists
 			m_helper.Run(m_testList);
 
 			// Verify
-			Assert.AreEqual(clists, m_listRepo.Count,
-				"'User' responded 'No'. Should not delete the list.");
-			Assert.AreEqual(newPossName, m_helper.PossNameInDlg,
-				"Name of possibility found is not the one we put in there!");
+			Assert.AreEqual(clists, m_listRepo.Count, "'User' responded 'No'. Should not delete the list.");
+			Assert.AreEqual(newPossName, m_helper.PossNameInDlg, "Name of possibility found is not the one we put in there!");
 		}
 
-		///--------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests trying to delete a Custom list with one Possibility referenced by something
 		/// else. 'User' responds to dialog with 'Yes'.
 		/// </summary>
-		///--------------------------------------------------------------------------------------
 		[Test]
 		public void DeleteCustomList_OnePossibilityRef_Yes()
 		{
@@ -204,18 +196,14 @@ namespace LanguageExplorerTests.Areas.Lists
 			m_helper.Run(m_testList);
 
 			// Verify
-			Assert.AreEqual(clists - 1, m_listRepo.Count,
-				"'User' responded 'Yes'. Should have deleted the list.");
-			Assert.AreEqual(newPossName, m_helper.PossNameInDlg,
-				"Name of possibility found is not the one we put in there!");
+			Assert.AreEqual(clists - 1, m_listRepo.Count, "'User' responded 'Yes'. Should have deleted the list.");
+			Assert.AreEqual(newPossName, m_helper.PossNameInDlg, "Name of possibility found is not the one we put in there!");
 		}
 
-		///--------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests trying to delete a Custom list with one Possibility referenced by a Custom field.
 		/// 'User' responds to dialog with 'Yes'.
 		/// </summary>
-		///--------------------------------------------------------------------------------------
 		[Test]
 		public void DeleteCustomList_OnePossibilityReferencingCustomField_Yes()
 		{
@@ -238,21 +226,16 @@ namespace LanguageExplorerTests.Areas.Lists
 			m_helper.Run(m_testList);
 
 			// Verify
-			Assert.AreEqual(clists - 1, m_listRepo.Count,
-				"'User' responded 'Yes'. Should have deleted the list.");
-			Assert.AreEqual(cfields, Cache.MetaDataCacheAccessor.FieldCount,
-				"Custom Field should get deleted.");
-			Assert.AreEqual(newPossName, m_helper.PossNameInDlg,
-				"Name of possibility found is not the one we put in there!");
+			Assert.AreEqual(clists - 1, m_listRepo.Count, "'User' responded 'Yes'. Should have deleted the list.");
+			Assert.AreEqual(cfields, Cache.MetaDataCacheAccessor.FieldCount, "Custom Field should get deleted.");
+			Assert.AreEqual(newPossName, m_helper.PossNameInDlg, "Name of possibility found is not the one we put in there!");
 		}
 
-		///--------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests trying to delete a Custom list with one Possibility referenced by a Custom field.
 		/// The Custom field is in Entry and is of type Reference Atomic.
 		/// 'User' responds to dialog with 'Yes'.
 		/// </summary>
-		///--------------------------------------------------------------------------------------
 		[Test]
 		public void DeleteCustomList_OnePossibilityReferencingDeletedCustomField_Yes()
 		{
@@ -276,26 +259,20 @@ namespace LanguageExplorerTests.Areas.Lists
 			// apparently the delete field and delete list need to be separate tasks
 			// in order to make the bug appear (LT-12251)
 			Cache.ActionHandlerAccessor.BeginUndoTask("UndoDeleteList", "RedoDeleteList");
-			Assert.AreEqual(cfields, Cache.MetaDataCacheAccessor.FieldCount,
-				"Custom Field should have been deleted.");
-
+			Assert.AreEqual(cfields, Cache.MetaDataCacheAccessor.FieldCount, "Custom Field should have been deleted.");
 			// SUT
 			m_helper.Run(m_testList);
 
 			// Verify
-			Assert.AreEqual(clists - 1, m_listRepo.Count,
-				"'User' responded 'Yes'. Should have deleted the list.");
-			Assert.AreEqual(String.Empty, m_helper.PossNameInDlg,
-				"This test shouldn't go through the dialog.");
+			Assert.AreEqual(clists - 1, m_listRepo.Count, "'User' responded 'Yes'. Should have deleted the list.");
+			Assert.AreEqual(String.Empty, m_helper.PossNameInDlg, "This test shouldn't go through the dialog.");
 		}
 
-		///--------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests trying to delete a Custom list with one Possibility referenced by a Custom field.
 		/// The Custom field is in Sense and is of type Reference Collection.
 		/// 'User' responds to dialog with 'Yes'.
 		/// </summary>
-		///--------------------------------------------------------------------------------------
 		[Test]
 		public void DeleteCustomList_OnePossibilityReferencingDeletedCustomField_RefMultipleField_Yes()
 		{
@@ -304,7 +281,6 @@ namespace LanguageExplorerTests.Areas.Lists
 			var clists = m_listRepo.Count;
 			var cfields = Cache.MetaDataCacheAccessor.FieldCount;
 			var newPoss = CreateCustomItemAddToList(m_testList, newPossName);
-			//m_helper.ExpectedTestResponse = DialogResult.Yes; // Doesn't go through the dialog
 
 			// Create a custom field in LexSense
 			var fd = CreateCustomMultipleRefFieldInLexSense(m_testList.Guid);
@@ -319,25 +295,20 @@ namespace LanguageExplorerTests.Areas.Lists
 			// apparently the delete field and delete list need to be separate tasks
 			// in order to make the bug appear (LT-12251)
 			Cache.ActionHandlerAccessor.BeginUndoTask("UndoDeleteList", "RedoDeleteList");
-			Assert.AreEqual(cfields, Cache.MetaDataCacheAccessor.FieldCount,
-				"Custom Field should have been deleted.");
+			Assert.AreEqual(cfields, Cache.MetaDataCacheAccessor.FieldCount, "Custom Field should have been deleted.");
 
 			// SUT
 			m_helper.Run(m_testList);
 
 			// Verify
-			Assert.AreEqual(clists - 1, m_listRepo.Count,
-				"'User' responded 'Yes'. Should have deleted the list.");
-			Assert.AreEqual(String.Empty, m_helper.PossNameInDlg,
-				"This test shouldn't go through the dialog.");
+			Assert.AreEqual(clists - 1, m_listRepo.Count, "'User' responded 'Yes'. Should have deleted the list.");
+			Assert.AreEqual(String.Empty, m_helper.PossNameInDlg, "This test shouldn't go through the dialog.");
 		}
 
-		///--------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests trying to delete a Custom list with one Possibility referenced by a Custom field.
 		/// 'User' responds to dialog with 'No'.
 		/// </summary>
-		///--------------------------------------------------------------------------------------
 		[Test]
 		public void DeleteCustomList_OnePossibilityReferencingCustomField_No()
 		{
@@ -360,24 +331,19 @@ namespace LanguageExplorerTests.Areas.Lists
 			m_helper.Run(m_testList);
 
 			// Verify
-			Assert.AreEqual(clists, m_listRepo.Count,
-				"'User' responded 'No'. Should not have deleted the list.");
-			Assert.AreEqual(cfields + 1, Cache.MetaDataCacheAccessor.FieldCount,
-				"Custom Field should not get deleted.");
-			Assert.AreEqual(newPossName, m_helper.PossNameInDlg,
-				"Name of possibility found is not the one we put in there!");
+			Assert.AreEqual(clists, m_listRepo.Count, "'User' responded 'No'. Should not have deleted the list.");
+			Assert.AreEqual(cfields + 1, Cache.MetaDataCacheAccessor.FieldCount, "Custom Field should not get deleted.");
+			Assert.AreEqual(newPossName, m_helper.PossNameInDlg, "Name of possibility found is not the one we put in there!");
 			// Remove field from mdc so it doesn't mess up other tests!
 			fd.MarkForDeletion = true;
 			fd.UpdateCustomField();
 			FieldDescription.ClearDataAbout();
 		}
 
-		///--------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests trying to delete a Custom list with several Possibilities referenced by something
 		/// else. 'User' responds to dialog with 'Yes'.
 		/// </summary>
-		///--------------------------------------------------------------------------------------
 		[Test]
 		public void DeleteCustomList_MultiPossibilityRef_Yes()
 		{
@@ -401,10 +367,8 @@ namespace LanguageExplorerTests.Areas.Lists
 			m_helper.Run(m_testList);
 
 			// Verify
-			Assert.AreEqual(clists - 1, m_listRepo.Count,
-				"'User' responded 'Yes'. Should have deleted the list.");
-			Assert.AreEqual(newPossName + "1", m_helper.PossNameInDlg,
-				"Name of possibility found is not the one we put in there!");
+			Assert.AreEqual(clists - 1, m_listRepo.Count, "'User' responded 'Yes'. Should have deleted the list.");
+			Assert.AreEqual(newPossName + "1", m_helper.PossNameInDlg, "Name of possibility found is not the one we put in there!");
 		}
 	}
 }
