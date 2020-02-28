@@ -8,6 +8,7 @@
     <ProjectGuid>{04DB1DD6-082B-4453-8B83-0B40C019F149}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
+    <AppConfig>..\..\AppForTests.config</AppConfig>
     <RootNamespace>SIL.FieldWorks.ParatextLexiconPlugin</RootNamespace>
     <AssemblyName>FwParatextLexiconPluginTests</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>

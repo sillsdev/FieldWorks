@@ -20,6 +20,7 @@
     <AssemblyName>DetailControlsTests</AssemblyName>
     <AssemblyOriginatorKeyFile>
     </AssemblyOriginatorKeyFile>
+    <AppConfig>..\..\..\..\AppForTests.config</AppConfig>
     <DefaultClientScript>JScript</DefaultClientScript>
     <DefaultHTMLPageLayout>Grid</DefaultHTMLPageLayout>
     <DefaultTargetSchema>IE50</DefaultTargetSchema>

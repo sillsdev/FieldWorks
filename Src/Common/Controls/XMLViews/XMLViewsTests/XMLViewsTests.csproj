@@ -22,6 +22,7 @@
     <AssemblyName>XMLViewsTests</AssemblyName>
     <AssemblyOriginatorKeyFile>
     </AssemblyOriginatorKeyFile>
+    <AppConfig>..\..\..\..\StaAppForTests.config</AppConfig>
     <DefaultClientScript>JScript</DefaultClientScript>
     <DefaultHTMLPageLayout>Grid</DefaultHTMLPageLayout>
     <DefaultTargetSchema>IE50</DefaultTargetSchema>
@@ -291,9 +292,6 @@
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="DhListViewTests.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="LayoutMergerTestData\LexEntryParts.xml" />

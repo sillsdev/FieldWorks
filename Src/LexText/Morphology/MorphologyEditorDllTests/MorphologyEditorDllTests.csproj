@@ -8,6 +8,7 @@
     <ProjectGuid>{C2B9ADAB-EA23-474E-9F53-1127CDAF09F6}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
+    <AppConfig>..\..\..\AppForTests.config</AppConfig>
     <RootNamespace>SIL.FieldWorks.XWorks.MorphologyEditor</RootNamespace>
     <AssemblyName>MorphologyEditorDllTests</AssemblyName>
     <FileUpgradeFlags>

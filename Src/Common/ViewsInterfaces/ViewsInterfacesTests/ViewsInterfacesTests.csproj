@@ -10,6 +10,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>SIL.FieldWorks.Common.ViewsInterfaces</RootNamespace>
     <AssemblyName>ViewsInterfacesTests</AssemblyName>
+    <AppConfig>..\..\..\AppForTests.config</AppConfig>
     <SccProjectName>
     </SccProjectName>
     <SccLocalPath>
