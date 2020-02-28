@@ -317,10 +317,11 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 			if (y.MsgId == null)
 				return 1;
 
+			// First, ignore case and cruft so that similar strings are close together
 			for (var i = 0; i < x.MsgId.Count && i < y.MsgId.Count; ++i)
 			{
-				var s1 = RemoveLeadingCruft(x.MsgId[i].Replace("&", "").Trim());
-				var s2 = RemoveLeadingCruft(y.MsgId[i].Replace("&", "").Trim());
+				var s1 = RemoveCruft(x.MsgId[i]);
+				var s2 = RemoveCruft(y.MsgId[i]);
 				var n = string.Compare(s1, s2, StringComparison.OrdinalIgnoreCase);
 				if (n != 0)
 					return n;
@@ -329,18 +330,24 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 				return -1;
 			if (x.MsgId.Count > y.MsgId.Count)
 				return 1;
-			return string.Compare(x.MsgId[0], y.MsgId[0], StringComparison.OrdinalIgnoreCase);
+
+			// If the strings are otherwise identical, sort including case and cruft so that
+			// identical strings can be merged without the interference of not-quite-identical strings
+			return string.Compare(x.MsgId[0], y.MsgId[0], StringComparison.Ordinal);
 		}
 
 		/// <summary>
-		/// Remove leading characters from the string that we don't want to compare, at least not if we don't have to.
+		/// Remove leading and control characters from the string that we don't want to compare, at least not if we don't have to.
 		/// </summary>
-		private static string RemoveLeadingCruft(string s)
+		private static string RemoveCruft(string s)
 		{
-			var s1 = s.Replace("\\n", "\n");
-			s1 = s1.Replace("\\t", "\t");
+			// Remove hotkey markers and trim whitespace
+			var s1 = s.Replace("&", "").Replace("_", "").Trim()
+				// unescape newlines and tabs
+				.Replace(@"\n", "\n").Replace(@"\t", "\t");
+			// Remove any leading non-letters (format markers, etc.)
 			while (s1.Length > 0 && !char.IsLetter(s1[0]))
-				s1 = s1.Remove(0, 1);
+				s1 = s1.Substring(1);
 			return s1;
 		}
 
@@ -348,16 +355,16 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 		{
 			if (MsgId == null && that.MsgId == null)
 				return true;
-			if (MsgId == null || that.MsgId == null)
+			if (MsgId == null || that.MsgId == null || MsgId.Count != that.MsgId.Count)
 				return false;
-			for (var i = 0; i < MsgId.Count && i < that.MsgId.Count; ++i)
+			for (var i = 0; i < MsgId.Count; ++i)
 			{
 				var s1 = MsgId[i];
 				var s2 = that.MsgId[i];
 				if (s1 != s2)
 					return false;
 			}
-			return MsgId.Count == that.MsgId.Count;
+			return true;
 		}
 
 		public bool IsObsolete { get; set; }

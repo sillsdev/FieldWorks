@@ -18,8 +18,8 @@ namespace FwBuildTasks
 			if (Directory.Exists(path))
 			{
 				SIL.TestUtilities.TestUtilities.DeleteFolderThatMayBeInUse(path);
+				Thread.Sleep(1000); // wait for the directory to finish being deleted
 			}
-			Thread.Sleep(1000); // wait for the directory to finish being deleted
 			Directory.CreateDirectory(path);
 		}
 	}

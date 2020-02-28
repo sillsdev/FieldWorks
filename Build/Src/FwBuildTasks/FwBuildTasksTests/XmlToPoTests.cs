@@ -361,6 +361,56 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 		}
 
 		[Test]
+		public void POString_Sort()
+		{
+			var poStrings = new[]
+			{
+				"Remove example",
+				"Citation Form",
+				"Citation form",
+				"Remove allomorph",
+				"Remove translation",
+				"Remove &example",
+				"Remove _example",
+				"Citation Form",
+				"Citation Family",
+				"{0} something else",
+				"Citation form",
+				"Citation Form",
+				"something else"
+			}.Select(msgId => new POString(null, new []{msgId})).ToList();
+			// SUT
+			poStrings.Sort(POString.CompareMsgIds);
+			var msgIds = poStrings.Select(poStr => poStr.MsgIdAsString()).ToArray();
+			var sortedStrings = new[]
+			{
+				"Citation Family",
+				"Citation Form",
+				"Citation Form",
+				"Citation Form",
+				"Citation form",
+				"Citation form",
+				"Remove allomorph",
+				"Remove &example",
+				"Remove _example",
+				"Remove example",
+				"Remove translation",
+				"something else",
+				"{0} something else"
+			};
+			AssertArraysAreEqual(sortedStrings, msgIds);
+		}
+
+		private static void AssertArraysAreEqual(IReadOnlyList<string> arr1, IReadOnlyList<string> arr2)
+		{
+			for (var i = 0; i < arr1.Count && i < arr2.Count; i++)
+			{
+				Assert.AreEqual(arr1[i], arr2[i], $"Arrays differ at index {i}");
+			}
+			Assert.AreEqual(arr1.Count, arr2.Count, "Array lengths differ");
+		}
+
+		[Test]
 		public void POString_WriteAndReadLeadingNewlines()
 		{
 			var poStr = new POString(new []{"Displayed in a message box.", "/Src/FwResources//FwStrings.resx::kstidFatalError2"},

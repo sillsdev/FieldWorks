@@ -514,7 +514,8 @@ msgstr ""_Über Language Explorer""
 
 				var fullFileContent = File.ReadAllText(stringsFile);
 				AssertThatXmlStartsWith(XDocument.Parse(DeStringsData).Root, XDocument.Parse(fullFileContent).Root);
-				Assert.Greater(fullFileContent.Length, DeStringsData.Length + 400);
+				Assert.Greater(fullFileContent.Length, DeStringsData.Length + 640,
+					"The resulting file should be considerably longer than the original. 640 characters ought to be enough (for anyone).");
 			}
 		}
 
