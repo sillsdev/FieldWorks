@@ -19,6 +19,8 @@
 		<L10nsDirectory>$(L10nsBaseDir)/l10ns</L10nsDirectory>
 		<ListsDirectory>$(L10nsBaseDir)/lists</ListsDirectory>
 		<MessagesPot>$(L10nsBaseDir)/messages.pot</MessagesPot>
+		<LcmRootDir>$(LcmLocalArtifactsDir)/../..</LcmRootDir>
+		<LcmSrcDir>$(LcmRootDir)/src</LcmSrcDir>
 		<CrowdinZip>$(DownloadsDir)/Crowdin.zip</CrowdinZip>
 		<OnFailedCrowdinDownload Condition="Exists('$(CrowdinZip)')">WarnAndContinue</OnFailedCrowdinDownload>
 		<OnFailedCrowdinDownload Condition="!Exists('$(CrowdinZip)')">ErrorAndStop</OnFailedCrowdinDownload>
@@ -36,15 +38,19 @@
 		<Exec WorkingDirectory="$(fwrt)" Command="overcrowdin updatefiles -v"/>
 	</Target>
 
-	<Target Name="CopyLcmResxFiles">
-		<Error Text="To update localizations, liblcm must be cloned locally. Run 'build /t:UpdateDevelopmentPropertiesFile' to set the liblcm location."
-			Condition="!Exists($(LcmLocalArtifactsDir/../../src))"/>
+	<Target Name="CopyLcmResxFiles" DependsOnTargets="VerifyLcmCloned">
+		<ForceDelete Files="$(L10nsBaseDir)/LCM"/>
 		<ItemGroup>
-			<LcmResxFiles Include="$(LcmArtifactsDir)/../../src/**/*.resx"/>
+			<LcmResxFiles Include="$(LcmSrcDir)/**/*.resx"/>
 		</ItemGroup>
 		<Message Text="@(LcmResxFiles)" />
 		<Copy SourceFiles="@(LcmResxFiles)"
 			DestinationFiles="@(LcmResxFiles->'$(L10nsBaseDir)/LCM/%(RecursiveDir)%(Filename)%(Extension)')"/>
+	</Target>
+
+	<Target Name="VerifyLcmCloned">
+		<Error Text="To update localizations, liblcm must be cloned locally. Run 'build /t:UpdateDevelopmentPropertiesFile' to set the liblcm location."
+			Condition="!Exists('$(LcmSrcDir)')"/>
 	</Target>
 
 	<!-- Download translations from Crowdin -->
@@ -52,11 +58,6 @@
 		<ForceDelete Files="$(L10nsDirectory)"/>
 		<Exec WorkingDirectory="$(fwrt)" Command="overcrowdin download -v -r2 -f $(CrowdinZip)" ContinueOnError="$(OnFailedCrowdinDownload)"/>
 		<Unzip ZipFilename="$(CrowdinZip)" ToDir="$(L10nsDirectory)"/>
-		<ItemGroup>
-			<Folders Include="$([System.IO.Directory]::GetDirectories(&quot;$(L10nsDirectory)&quot;))" />
-		</ItemGroup>
-		<MSBuild Projects="$(MSBuildProjectFullPath)" Targets="moveLcmFolders"
-			Properties="FolderToPrune=%(Folders.Identity)"/>
 		<NormalizeLocales L10nsDirectory="$(L10nsDirectory)"/>
 		<ItemGroup>
 			<LocaleDirs Include="$([System.IO.Directory]::GetDirectories(&quot;$(L10nsDirectory)&quot;))"/>
@@ -66,19 +67,16 @@
 	</Target>
 
 	<!-- Each downloaded translation needs the following post-processing:
-			* Insert strings from messages.*.po into strings-*.xml -->
+			* Insert strings from messages.*.po into strings-*.xml
+			* Move LCM resx files to a more convenient place (they have extra folders in Crowdin
+			  because of the folder structure we use to upload them) -->
 	<Target Name="postProcessDownloadedTranslation">
+		<Message Text="Converting po file and relocating LCM .resx files for $(Locale)" />
 		<PoToXml PoFile="$(LocaleDir)/messages.$(Locale).po" StringsXml="$(LocaleDir)/strings-$(Locale).xml"/>
-	</Target>
-
-	<!-- LCM resx files in crowdin end up with extra folders because of the folder structure we use on upload this task
-		moves the files to a more convenient place to process after the download -->
-	<Target Name="moveLcmFolders">
-		<Message Text="Pruning Localizations/LCM in $(FolderToPrune)" />
 		<ItemGroup>
-			<TranslatedResxFiles Include="$(FolderToPrune)/Localizations/LCM/**/*.resx"/>
+			<TranslatedResxFiles Include="$(LocaleDir)/Localizations/LCM/**/*.resx"/>
 		</ItemGroup>
-		<Move SourceFiles="@(TranslatedResxFiles)" DestinationFolder="$(FolderToPrune)/src/%(RecursiveDir)" />
+		<Move SourceFiles="@(TranslatedResxFiles)" DestinationFolder="$(LocaleDir)/src/%(RecursiveDir)" />
 	</Target>
 
 	<!-- Create and zip LocalizedLists-*.xml files to DistFiles/Templates -->
@@ -122,13 +120,12 @@
 	</Target>
 
 	<!-- Copy translated .resx files and strings-<locale>.xml to their destinations -->
-	<Target Name="processLanguages-source">
-		<Error Text="To localize liblcm it must be cloned locally."
-			Condition="!Exists($(LcmLocalArtifactsDir/../../src))"/>
+	<Target Name="processLanguages-source" DependsOnTargets="VerifyLcmCloned">
 	<!-- Process source for liblcm -->
+	<!-- Passing RootDir as SrcFolder because LCM stores common assembly info in its root dir. -->
 		<LocalizeFieldWorks
-			RootDirectory="$(LcmArtifactsDir)/../.."
-			SrcFolder="$(LcmArtifactsDir)/../../"
+			RootDirectory="$(LcmRootDir)"
+			SrcFolder="$(LcmRootDir)"
 			L10nFileDirectory="$(fwrt)/Localizations/l10ns"
 			Config="$(config-capital)"
 			OutputFolder="$(fwrt)/Output"
@@ -145,9 +142,7 @@
 	</Target>
 
 	<!-- Build localized dll's -->
-	<Target Name="processLanguages-binaries">
-		<Error Text="To localize liblcm it must be cloned locally."
-			Condition="!Exists($(LcmLocalArtifactsDir/../../src))"/>
+	<Target Name="processLanguages-binaries" DependsOnTargets="VerifyLcmCloned">
 		<!-- REVIEW (Hasso) 2020.01: what does this copy? -->
 		<ItemGroup>
 			<LocalizationFiles Include="$(fwrt)/Localizations/Output/**/*.*" Condition="Exists('$(fwrt)/Localizations/Output')"/>
@@ -157,9 +152,10 @@
 			SkipUnchangedFiles="true"/>
 
 	<!-- Process source for liblcm -->
+	<!-- Passing RootDir as SrcFolder because LCM stores common assembly info in its root dir. -->
 		<LocalizeFieldWorks
-			RootDirectory="$(LcmArtifactsDir)/../.."
-			SrcFolder="$(LcmArtifactsDir)/../../"
+			RootDirectory="$(LcmRootDir)"
+			SrcFolder="$(LcmRootDir)"
 			L10nFileDirectory="$(fwrt)/Localizations/l10ns"
 			Config="$(config-capital)"
 			OutputFolder="$(fwrt)/Output"
