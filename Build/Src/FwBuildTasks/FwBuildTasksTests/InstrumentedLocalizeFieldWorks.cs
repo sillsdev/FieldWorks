@@ -3,8 +3,6 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using System.IO;
-using FwBuildTasks;
 using SIL.FieldWorks.Build.Tasks.Localization;
 
 namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
@@ -17,21 +15,6 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 		{
 			BuildEngine = new MockBuildEngine();
 			LocalizerType = typeof(InstrumentedLocalizer);
-		}
-
-		/// <summary>
-		/// In normal operation, this is the same as RootDirectory. In test, we find the real one, to allow us to
-		/// find fixed files like LocalizeResx.xml
-		/// </summary>
-		protected override string RealFwRoot
-		{
-			get
-			{
-				var path = BuildUtils.GetAssemblyFolder();
-				while (Path.GetFileName(path) != "Build")
-					path = Path.GetDirectoryName(path);
-				return Path.GetDirectoryName(path);
-			}
 		}
 
 		protected override void LogError(string message)

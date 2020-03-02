@@ -228,9 +228,6 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 			var sLabel = xel.Attribute("label")?.Value;
 			if (!string.IsNullOrEmpty(sLabel?.Trim()) && sLabel.Trim() != "$label")
 				StoreAttributeString(xel, "label", sLabel, poStrings, autoCommentFilePath);
-			var sAbbr = xel.Attribute("abbr")?.Value;
-			if (!string.IsNullOrEmpty(sAbbr?.Trim()))
-				StoreAttributeString(xel, "abbr", sAbbr, poStrings, autoCommentFilePath);
 			var sTitle = xel.Attribute("title")?.Value;
 			if (!string.IsNullOrEmpty(sTitle?.Trim()))
 				StoreAttributeString(xel, "title", sTitle, poStrings, autoCommentFilePath);

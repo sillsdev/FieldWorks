@@ -141,9 +141,7 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 		private string GetLocalizedResxSourcePath(string resxPath)
 		{
 			var resxFileName = Path.GetFileNameWithoutExtension(resxPath);
-			var rootFolder = Path.GetDirectoryName(Options.SrcFolder); // TODO (Hasso) 2020.01: access RootDir dir-ectly?
-			// ReSharper disable once PossibleNullReferenceException
-			var partialDir = Path.GetDirectoryName(resxPath.Substring(rootFolder.Length + 1));
+			var partialDir = Path.GetDirectoryName(resxPath.Substring(Options.RootDir.Length + 1));
 			var sourceFolder = Path.Combine(Options.CurrentLocaleDir, partialDir);
 			var fileName = $"{resxFileName}.{Options.Locale}.resx";
 			return Path.Combine(sourceFolder, fileName);

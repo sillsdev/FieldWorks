@@ -50,7 +50,7 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 		{
 			try
 			{
-				if (Options.BuildSource)
+				if (Options.CopyStringsXml)
 				{
 					CopyStringsXml();
 				}

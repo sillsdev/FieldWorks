@@ -12,32 +12,38 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 		{
 			_LocalizeFieldWorksTask = localizeFieldWorksTask;
 			SrcFolder = localizeFieldWorksTask.SrcFolder;
+			RootDir = localizeFieldWorksTask.RootDirectory;
 			OutputFolder = localizeFieldWorksTask.OutputFolder;
 			AssemblyInfoPath = localizeFieldWorksTask.AssemblyInfoPath;
 			Config = localizeFieldWorksTask.Config;
 			BuildSource = localizeFieldWorksTask.BuildSource;
 			BuildBinaries = localizeFieldWorksTask.BuildBinaries;
+			CopyStringsXml = localizeFieldWorksTask.CopyStringsXml;
 		}
 
 		public LocalizerOptions(LocalizerOptions otherOptions)
 		{
 			_LocalizeFieldWorksTask = otherOptions._LocalizeFieldWorksTask;
 			SrcFolder = otherOptions.SrcFolder;
+			RootDir = otherOptions.RootDir;
 			OutputFolder = otherOptions.OutputFolder;
 			AssemblyInfoPath = otherOptions.AssemblyInfoPath;
 			Config = otherOptions.Config;
 			BuildSource = otherOptions.BuildSource;
 			BuildBinaries = otherOptions.BuildBinaries;
+			CopyStringsXml = otherOptions.CopyStringsXml;
 		}
 
 		protected readonly LocalizeFieldWorks _LocalizeFieldWorksTask;
 
 		public string SrcFolder { get; }
+		public string RootDir { get; }
 		public string OutputFolder { get; }
 		public string AssemblyInfoPath { get; }
 		public string Config { get; }
 		public bool BuildSource { get; }
 		public bool BuildBinaries { get; }
+		public bool CopyStringsXml { get; }
 
 		/// <summary>
 		/// The path where we expect to store a file like strings-es.xml for a given locale.

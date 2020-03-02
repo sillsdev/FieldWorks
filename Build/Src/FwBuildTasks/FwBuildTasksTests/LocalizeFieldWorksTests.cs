@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2020 SIL International
+﻿// Copyright (c) 2015-2020 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -89,7 +89,7 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 		private string SimpleSetupWithResX(string locale, string english, string localized)
 		{
 			SimpleSetupFDO(locale);
-			return CreateLocalizedResX(m_FdoFolder, "FDO", "simple_sample", locale, english, localized);
+			return CreateLocalizedResX(m_FdoFolder, "simple_sample", locale, english, localized);
 		}
 
 		/// <summary>Create a minimal CommonAssemblyInfo.cs file</summary>
@@ -129,8 +129,8 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 			m_sideBarFolder = CreateLocalizedProject(m_srcFolder, "SidebarLibrary");
 			m_xCoreFolder = CreateLocalizedProject(m_srcFolder, "xCore");
 			m_xCoreInterfacesFolder = CreateLocalizedProject(m_xCoreFolder, "xCoreInterfaces", "xCoreIntName");
-			CreateLocalizedResX(m_FieldWorksPropertiesFolder, "FieldWorks", "more strings");
-			CreateLocalizedResX(m_FieldWorksFolder, "FieldWorks", "strings");
+			CreateLocalizedResX(m_FieldWorksPropertiesFolder, "more strings");
+			CreateLocalizedResX(m_FieldWorksFolder, "strings");
 		}
 
 		private static string CreateFolder(string parent, string name)
@@ -156,7 +156,7 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 		{
 			var projectFolder = CreateFolder(parent, name);
 			CreateProjectInExistingFolder(projectFolder, name, assemblyName);
-			CreateLocalizedResXFor(projectFolder, name, $"{name}-strings", locale, projectStringsText);
+			CreateLocalizedResXFor(projectFolder, $"{name}-strings", locale, projectStringsText);
 			return projectFolder;
 		}
 
@@ -195,14 +195,14 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 
 		/// <summary>creates an English and a localized version of the same ResX file</summary>
 		/// <returns>the path to the localized version of the ResX file</returns>
-		private string CreateLocalizedResX(string projectFolder, string projectName, string fileNameNoExt,
+		private string CreateLocalizedResX(string projectFolder, string fileNameNoExt,
 			string locale = LocaleEs, string englishText = SampleStringEn, string localizedText = SampleStringEs)
 		{
 			CreateResX(projectFolder, fileNameNoExt, englishText);
-			return CreateLocalizedResXFor(projectFolder, projectName, fileNameNoExt, locale, localizedText);
+			return CreateLocalizedResXFor(projectFolder, fileNameNoExt, locale, localizedText);
 		}
 
-		private string CreateLocalizedResXFor(string projectFolder, string projectName,
+		private string CreateLocalizedResXFor(string projectFolder,
 			string fileNameNoExt, string locale, string localizedText)
 		{
 			return CreateResX(projectFolder.Replace(m_rootPath, m_l10nFolder), $"{fileNameNoExt}.{locale}.resx", localizedText);
@@ -246,6 +246,7 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 		public void DoIt()
 		{
 			FullSetup();
+			m_sut.CopyStringsXml = true;
 
 			var result = m_sut.Execute();
 
@@ -283,16 +284,17 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 		}
 
 		[Test]
-		public void DoIt_SourceOnly()
+		public void DoIt_SourceOnly([Values(true, false)] bool copyStringsXml)
 		{
 			FullSetup();
-
 			m_sut.Build = "SourceOnly";
+			m_sut.CopyStringsXml = copyStringsXml;
+
 			var result = m_sut.Execute();
 
 			Assert.That(result, Is.True, m_sut.ErrorMessages);
 			var stringsEsPath = m_sut.StringsXmlPath("es");
-			Assert.That(File.Exists(stringsEsPath));
+			Assert.AreEqual(copyStringsXml, File.Exists(stringsEsPath), "strings-xx.xml copied if and only if requested.");
 
 			// The Assembly Linker should not be run for source-only
 			Assert.That(InstrumentedProjectLocalizer.LinkerPath.Count, Is.EqualTo(0));
@@ -534,6 +536,7 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 		{
 			SimpleSetupFDO(LocaleGe, localizedStringsXml: "test {o}");
 			var badXmlFilePath = m_sut.StringsXmlSourcePath(LocaleGe);
+			m_sut.CopyStringsXml = true;
 
 			var result = m_sut.Execute();
 

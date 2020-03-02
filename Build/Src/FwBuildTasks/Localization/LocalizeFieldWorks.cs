@@ -4,7 +4,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
 using Microsoft.Build.Framework;
@@ -14,15 +13,15 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 {
 	/// <summary>
 	/// This class implements a complex process required to generate various resource DLLs for
-	/// the localization of fieldworks. The main input of the process is a set of files kept
+	/// the localization of fieldworks and liblcm. The main input of the process is a set of files kept
 	/// under Localizations/l10ns/[locale], which are translated versions of resx and other files
 	/// in FieldWorks for the specified [locale] (e.g., fr, es, zh-CN).
 	///
 	/// We first apply some sanity checks, making sure String.Format markers like {0}, {1}, etc.
-	/// have not been obviously mangled in translation. TODO (Hasso) 2019.11: test and reimplement these checks if necessary
+	/// have not been obviously mangled in translation.
 	///
 	/// The first stage of the process copies localized strings-[locale].xml files to
-	/// DistFiles/Language Explorer/Configuration (the same place as strings-en.xml). TODO (Hasso) 2019.11: reimplement
+	/// DistFiles/Language Explorer/Configuration (the same place as strings-en.xml).
 	///
 	/// The second stage generates a resources.dll for each (non-test) project under Src, in
 	/// Output/[config]/[locale]/[project].resources.dll. For example, in a release build
@@ -61,8 +60,16 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 		[Required]
 		public string RootDirectory { get; set; }
 
+		/// <summary>
+		/// The directory containing CommonAssemblyInfo.cs and whose subdirectories contain projects and resx files
+		/// </summary>
 		[Required]
 		public string SrcFolder { get; set; }
+
+		/// <summary>
+		/// Whether to copy strings-xx.xml to its home under DistFiles (default is false)
+		/// </summary>
+		public bool CopyStringsXml { get; set; }
 
 		/// <summary>
 		/// What to build: Valid values are: SourceOnly, BinaryOnly, All
@@ -136,10 +143,6 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 		/// </summary>
 		public override bool Execute()
 		{
-#if DEBUG
-			string test = RealFwRoot;
-			Debug.WriteLine("RealFwRoot => '{0}'", test);   // keeps compiler from complaining.
-#endif
 			Log.LogMessage(MessageImportance.Low, "L10nFileDirectory is set to {0}.", L10nFileDirectory);
 
 			// Get all the directories containing localized .resx files:
@@ -200,12 +203,6 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 		{
 			Log.LogError(message);
 		}
-
-		/// <summary>
-		/// In normal operation, this is the same as RootDirectory. In test, we find the real one, to allow us to
-		/// find fixed files like LocalizeResx.xml
-		/// </summary>
-		protected virtual string RealFwRoot => RootDirectory;
 
 		/// <remarks>for testing only: get the project folders of the first Localizer</remarks>
 		internal List<string> GetProjectFolders()
