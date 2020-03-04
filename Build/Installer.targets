@@ -7,7 +7,7 @@
 	<PropertyGroup>
 		<ApplicationName>FieldWorks Language Explorer</ApplicationName>
 		<SafeApplicationName>FieldWorks</SafeApplicationName> <!-- should not contain any spaces or illegal filename characters -->
-		<CopyrightYear>2018</CopyrightYear>
+		<CopyrightYear>2020</CopyrightYear>
 		<Manufacturer>SIL International</Manufacturer>
 	</PropertyGroup>
 
@@ -400,7 +400,7 @@
 			Condition="!Exists('$(WixLibsDir)/vcredist_2017_x64.exe') And $(Platform)=='x64'"
 			DownloadsDir="$(WixLibsDir)"/>	<!-- VisualC++ 14.1 runtime -->
 		<!-- FLEx Bridge -->
-		<DownloadFile Address="https://build.palaso.org/guestAuth/repository/download/FLExBridgeDevelopWin32InstallerSansPublish/.lastSuccessful/FLExBridge_Offline.exe"
+		<DownloadFile Address="https://build.palaso.org/guestAuth/repository/download/FLExBridgeDevelopWin32InstallerSansPublish/fw-9.0.8.tcbuildtag/FLExBridge_Offline.exe"
 			DownloadsDir="$(WixLibsDir)"/> <!-- always download to get the latest version -->
 	</Target>
 
