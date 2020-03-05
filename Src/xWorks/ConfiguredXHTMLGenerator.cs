@@ -473,6 +473,8 @@ namespace SIL.FieldWorks.XWorks
 			{
 				xhtmlWriter.WriteAttributeString("id", "currentPageButton");
 			}
+			var wsString = GetWsForEntryType(settings.Cache.ServiceLocator.GetObject(entryHvos[page.Item1]), settings.Cache);
+			xhtmlWriter.WriteAttributeString("lang", wsString);
 			xhtmlWriter.WriteString(GeneratePageButtonText(entryHvos[page.Item1], entryHvos[page.Item2], settings, page.Item1 == 0));
 			xhtmlWriter.WriteEndElement();
 		}
@@ -632,9 +634,7 @@ namespace SIL.FieldWorks.XWorks
 			var dummyTwo = new Dictionary<string, Dictionary<string, string>>();
 			var dummyThree = new Dictionary<string, ISet<string>>();
 			var cache = settings.Cache;
-			var wsString = cache.WritingSystemFactory.GetStrFromWs(cache.DefaultVernWs);
-			if (entry is IReversalIndexEntry)
-				wsString = ((IReversalIndexEntry)entry).SortKeyWs;
+			var wsString = GetWsForEntryType(entry, settings.Cache);
 			var firstLetter = ConfiguredExport.GetLeadChar(GetHeadwordForLetterHead(entry), wsString, dummyOne, dummyTwo, dummyThree,
 				cache);
 			if (firstLetter != lastHeader && !string.IsNullOrEmpty(firstLetter))
@@ -679,6 +679,17 @@ namespace SIL.FieldWorks.XWorks
 				return revEntry != null ? revEntry.ReversalForm.BestAnalysisAlternative.Text.TrimStart() : string.Empty;
 			}
 			return lexEntry.HomographForm.TrimStart();
+		}
+
+		/// <summary>
+		/// Get the writing system string for a LexEntry or an IReversalIndexEntry
+		/// </summary>
+		internal static string GetWsForEntryType(ICmObject entry, LcmCache cache)
+		{
+			var wsString = cache.WritingSystemFactory.GetStrFromWs(cache.DefaultVernWs);
+			if (entry is IReversalIndexEntry)
+				wsString = ((IReversalIndexEntry)entry).SortKeyWs;
+			return wsString;
 		}
 
 		/// <summary>
