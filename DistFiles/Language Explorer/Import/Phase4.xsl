@@ -712,9 +712,9 @@ Main template
 			</xsl:when>
 			<!-- ReversalEntries -->
 			<xsl:when test="name(.)='ReversalEntries'">
-				<ReversalEntries>
+				<ReferringReversalIndexEntries>
 					<xsl:apply-templates/>
-				</ReversalEntries>
+				</ReferringReversalIndexEntries>
 			</xsl:when>
 			<!-- Reference -->
 			<xsl:when test="name(.)='Reference'">
