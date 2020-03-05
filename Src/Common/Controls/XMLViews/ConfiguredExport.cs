@@ -767,7 +767,8 @@ namespace SIL.FieldWorks.Common.Controls
 					for (int i = 0; i < individualRules.Length; ++i)
 					{
 						var rule = individualRules[i];
-						RemoveICUEscapeChars(ref rule);
+						// prepare rule for parsing by dropping certain whitespace and handling ICU Escape chars
+						NormalizeRule(ref rule);
 						// This is a valid rule that specifies that the digraph aa should be ignored
 						// [last tertiary ignorable] = \u02bc = aa
 						// This may never happen, but some single characters should be ignored or they will
@@ -825,18 +826,18 @@ namespace SIL.FieldWorks.Common.Controls
 
 		private static string ProcessAdvancedSyntacticalElements(ISet<string> chIgnoreSet, string rule)
 		{
-			const string ignorableEndMarker = "ignorable] = ";
+			const string ignorableEndMarker = "ignorable]";
 			const string beforeBegin = "[before ";
 			// parse out the ignorables and add them to the ignore list
 			int ignorableBracketEnd = rule.IndexOf(ignorableEndMarker);
 			if(ignorableBracketEnd > -1)
 			{
 				ignorableBracketEnd += ignorableEndMarker.Length; // skip over the search target
-				string[] chars = rule.Substring(ignorableBracketEnd).Split(new[] { " = " },
-																				  StringSplitOptions.RemoveEmptyEntries);
-				if(chars.Length > 0)
+				var charsToIgnore = rule.Substring(ignorableBracketEnd).Split(new[] { "=" },
+					StringSplitOptions.RemoveEmptyEntries);
+				if(charsToIgnore.Length > 0)
 				{
-					foreach(var ch in chars)
+					foreach(var ch in charsToIgnore)
 						chIgnoreSet.Add(ch);
 				}
 				// the ignorable section could be at the end of other parts of a rule so strip it off the end
@@ -911,6 +912,14 @@ namespace SIL.FieldWorks.Common.Controls
 					}
 				}
 			}
+		}
+
+		private static void NormalizeRule(ref string rule)
+		{
+			// drop carriage returns and spaces around '='
+			rule = rule.TrimEnd('\r', '\n');
+			rule = rule.Replace(" =", "=").Replace("= ", "=");
+			RemoveICUEscapeChars(ref rule);
 		}
 
 		private static void RemoveICUEscapeChars(ref string sRule)
