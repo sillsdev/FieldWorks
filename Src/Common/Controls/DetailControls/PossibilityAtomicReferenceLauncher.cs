@@ -72,19 +72,24 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				}
 				else
 				{
-					ICmPossibility[] possibilities = m_autoComplete.Possibilities.ToArray();
-					if (possibilities.Length == 1)
-					{
-						if (possibilities[0] != Target)
-							AddItem(possibilities[0]);
-					}
-					else
-					{
-						UpdateDisplayFromDatabase();
-					}
+					UpdateAutoComplete();
 				}
 			}
 			m_autoComplete.Hide();
+		}
+
+		protected virtual void UpdateAutoComplete()
+		{
+			ICmPossibility[] possibilities = m_autoComplete.Possibilities.ToArray();
+			if (possibilities.Length == 1)
+			{
+				if (possibilities[0].Equals(Target))
+					AddItem(possibilities[0]);
+			}
+			else
+			{
+				UpdateDisplayFromDatabase();
+			}
 		}
 
 		#endregion // Overrides

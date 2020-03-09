@@ -178,6 +178,11 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			});
 		}
 
+		protected override void UpdateAutoComplete()
+		{
+			// Do nothing here.
+		}
+
 		protected override void HandlePossibilitySelected(object sender, EventArgs e)
 		{
 			MakeMorphTypeChange((IMoMorphType)AutoCompleteSelectedPossibility);
