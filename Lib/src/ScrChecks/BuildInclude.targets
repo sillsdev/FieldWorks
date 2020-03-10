@@ -6,19 +6,23 @@
 		</Target>
 	-->
 
-	<ItemGroup>
-		<ScrChecksFiles Include="$(TargetPath)"/>
-		<ScrChecksFiles Include="$(TargetDir)$(TargetName).pdb" Condition="Exists('$(TargetDir)$(TargetName).pdb')"/>
-		<ScrChecksFiles Include="$(TargetPath).mdb" Condition="Exists('$(TargetPath).mdb')"/>
-		<ScrChecksCopied Include="..\..\..\DistFiles\Editorial Checks\$(TargetName).dll"/>
-		<ScrChecksCopied Include="..\..\..\DistFiles\Editorial Checks\$(TargetName).pdb" Condition="Exists('$(TargetName).pdb')"/>
-		<ScrChecksCopied Include="..\..\..\DistFiles\Editorial Checks\$(TargetName).dll.mdb" Condition="Exists('$(TargetName).dll.mdb')"/>
-	</ItemGroup>
 	<Target Name="AfterBuild">
+		<ItemGroup>
+			<ScrChecksFiles Include="$(TargetPath)"/>
+			<ScrChecksFiles Include="$(TargetDir)$(TargetName).pdb" Condition="Exists('$(TargetDir)$(TargetName).pdb')"/>
+			<ScrChecksFiles Include="$(TargetPath).mdb" Condition="Exists('$(TargetPath).mdb')"/>
+		</ItemGroup>
 		<MakeDir Directories="..\..\..\DistFiles\Editorial Checks"/>
 		<Copy SourceFiles="@(ScrChecksFiles)" DestinationFolder="..\..\..\DistFiles\Editorial Checks" OverwriteReadOnlyFiles="true"/>
 	</Target>
 	<Target Name="AfterClean">
+		<ItemGroup>
+			<ScrChecksCopied Include="..\..\..\DistFiles\Editorial Checks\$(TargetName).dll"/>
+			<ScrChecksCopied Include="..\..\..\DistFiles\Editorial Checks\$(TargetName).pdb"
+				Condition="Exists('..\..\..\DistFiles\Editorial Checks\$(TargetName).pdb')"/>
+			<ScrChecksCopied Include="..\..\..\DistFiles\Editorial Checks\$(TargetName).dll.mdb"
+				Condition="Exists('..\..\..\DistFiles\Editorial Checks\$(TargetName).dll.mdb')"/>
+		</ItemGroup>
 		<Delete Files="@(ScrChecksCopied)" ContinueOnError="true"/>
 	</Target>
 </Project>
