@@ -35,10 +35,14 @@
 		<Component Id="FwInstallDir" Guid="A7FB26F2-4219-4C79-A16A-811DEAB111FE">
 			<Environment Id="FwInstallDir" Name="FIELDWORKSDIR" Action="set" System="yes" Value="[APPFOLDER]" />
 		</Component>
+		<Component Id="FwIcuData" Guid="34CB7CF2-6D44-488D-A497-E3EE42C95290">
+			<Environment Id="FwIcuData" Name="ICU_DATA" Action="set" System="yes" Value="[OVRHARVESTDATAFOLDER]\Icu54\icudt54l" />
+		</Component>
 	</DirectoryRef>
 	<ComponentGroup Id="FwEnvironmentVars">
 		<ComponentRef Id="FwPath"/>
 		<ComponentRef Id="FwInstallDir"/>
+		<ComponentRef Id="FwIcuData"/>
 	</ComponentGroup>
 
 	<DirectoryRef Id="ProgramMenuFolder">
