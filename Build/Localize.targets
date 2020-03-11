@@ -54,7 +54,7 @@
 	</Target>
 
 	<Target Name="VerifyLcmCloned">
-		<Error Text="To update localizations, liblcm must be cloned locally. Run 'build /t:UpdateDevelopmentPropertiesFile' to set the liblcm location."
+		<Error Text="To update localizations, liblcm must be cloned locally. Run 'build /t:UpdateDevelopmentPropertiesFile' to set the liblcm location. LcmSrcDir '$(LcmSrcDir)' was not found. LcmLocalArtifactsDir is '$(LcmLocalArtifactsDir)'."
 			Condition="!Exists('$(LcmSrcDir)')"/>
 	</Target>
 
