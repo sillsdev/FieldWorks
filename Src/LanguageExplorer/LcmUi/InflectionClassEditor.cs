@@ -51,8 +51,7 @@ namespace LanguageExplorer.LcmUi
 		{
 			m_publisher = publisher;
 			_subscriber = subscriber;
-			var displayWs = XmlUtils.GetOptionalAttributeValue(configurationNode, "displayWs", "best analorvern");
-			m_displayWs = WritingSystemServices.GetMagicWsIdFromName(displayWs);
+			m_displayWs = WritingSystemServices.GetMagicWsIdFromName(XmlUtils.GetOptionalAttributeValue(configurationNode, "displayWs", "best analorvern"));
 		}
 
 		#region IDisposable & Co. implementation

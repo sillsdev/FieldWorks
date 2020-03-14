@@ -145,7 +145,8 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		public virtual bool CompatibleFilter(XElement colSpec)
 		{
-			return BeSpec == XmlUtils.GetOptionalAttributeValue(colSpec, "bulkEdit", null) || BeSpec == XmlUtils.GetOptionalAttributeValue(colSpec, "chooserFilter", null);
+			var beSpec = BeSpec;
+			return beSpec == XmlUtils.GetOptionalAttributeValue(colSpec, "bulkEdit", null) || beSpec == XmlUtils.GetOptionalAttributeValue(colSpec, "chooserFilter", null);
 		}
 
 		// The value of the "bulkEdit" property that causes this kind of filter to be created.

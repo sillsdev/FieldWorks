@@ -224,7 +224,6 @@
     <Compile Include="IIdleQueueProvider.cs" />
     <Compile Include="IMessageBox.cs" />
     <Compile Include="InvalidComboInfo.cs" />
-    <Compile Include="IPersistAsXml.cs" />
     <Compile Include="IReadonlyPropertyTable.cs" />
     <Compile Include="IdleProcessingHelper.cs" />
     <Compile Include="IScrCheckInventory.cs" />
@@ -238,7 +237,6 @@
     <Compile Include="CharacterCategorizer.cs" />
     <Compile Include="CharEnumeratorForByteArray.cs" />
     <Compile Include="DisposableObjectsSet.cs" />
-    <Compile Include="DynamicLoader.cs" />
     <Compile Include="FLExBridgeHelper.cs" />
     <Compile Include="FlexComponentParameters.cs" />
     <Compile Include="GeneratedFwUtils.cs" />
@@ -289,12 +287,10 @@
     <Compile Include="RecordErrorEventArgs.cs" />
     <Compile Include="ReversalIndexServices.cs" />
     <Compile Include="Properties\Settings.cs" />
-    <Compile Include="RuntimeConfigurationException.cs" />
     <Compile Include="SettingsGroup.cs" />
     <Compile Include="ShowHelp.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="FwConfigurationException.cs" />
     <Compile Include="StartupException.cs" />
     <Compile Include="StringTable.cs" />
     <Compile Include="TextType.cs" />

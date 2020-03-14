@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Xml.Linq;
+using System.Xml.XPath;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 
@@ -138,7 +139,7 @@ namespace LanguageExplorer.Filters
 			Sorters = new List<RecordSorter>(element.Elements().Count());
 			foreach (var child in element.Elements())
 			{
-				Sorters.Add((RecordSorter)DynamicLoader.RestoreFromChild(child, "."));
+				Sorters.Add((RecordSorter)DynamicLoader.RestoreObject(child.XPathSelectElement(".")));
 			}
 		}
 

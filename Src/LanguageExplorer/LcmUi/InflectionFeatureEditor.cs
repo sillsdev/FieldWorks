@@ -8,6 +8,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Windows.Forms;
 using System.Xml;
+using System.Xml.Linq;
 using LanguageExplorer.Areas;
 using LanguageExplorer.Controls;
 using LanguageExplorer.Controls.XMLViews;
@@ -48,13 +49,12 @@ namespace LanguageExplorer.LcmUi
 			//	Handle AfterSelect event in m_tree_TreeLoad() through m_pOSPopupTreeManager
 		}
 
-		public InflectionFeatureEditor(IPublisher publisher, ISubscriber subscriber, XmlNode configurationNode)
+		public InflectionFeatureEditor(IPublisher publisher, ISubscriber subscriber, XElement configurationNode)
 			: this()
 		{
 			m_publisher = publisher;
 			_subscriber = subscriber;
-			var displayWs = XmlUtils.GetOptionalAttributeValue(configurationNode, "displayWs", "best analorvern");
-			m_displayWs = WritingSystemServices.GetMagicWsIdFromName(displayWs);
+			m_displayWs = WritingSystemServices.GetMagicWsIdFromName(XmlUtils.GetOptionalAttributeValue(configurationNode, "displayWs", "best analorvern"));
 		}
 
 		#region IDisposable & Co. implementation

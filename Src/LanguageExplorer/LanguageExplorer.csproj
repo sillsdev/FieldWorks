@@ -382,6 +382,8 @@
     </Compile>
     <Compile Include="Controls\ILexImportWizard.cs" />
     <Compile Include="Controls\XMLViews\VwPatternSerializableSettings.cs" />
+    <Compile Include="DynamicLoader.cs" />
+    <Compile Include="FwConfigurationException.cs" />
     <Compile Include="GlobalUiWidgetParameterObject.cs" />
     <Compile Include="HelpTopicPaths.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -390,6 +392,7 @@
     </Compile>
     <Compile Include="IListTool.cs" />
     <Compile Include="IManyOnePathSortItem.cs" />
+    <Compile Include="IPersistAsXml.cs" />
     <Compile Include="MatchType.cs" />
     <Compile Include="ISeparatorMenuBundle.cs" />
     <Compile Include="ISeparatorToolStripBundle.cs" />
@@ -402,6 +405,7 @@
     <Compile Include="MainMenusParameterObject.cs" />
     <Compile Include="MainToolBarsParameterObject.cs" />
     <Compile Include="MainUiWidget.cs" />
+    <Compile Include="RuntimeConfigurationException.cs" />
     <Compile Include="SeparatorMenuBundle.cs" />
     <Compile Include="SeparatorToolStripBundle.cs" />
     <Compile Include="SfmToXml\IsSfmFile.cs" />

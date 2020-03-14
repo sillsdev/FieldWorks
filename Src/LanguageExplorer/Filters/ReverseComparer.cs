@@ -5,7 +5,7 @@
 using System;
 using System.Collections;
 using System.Xml.Linq;
-using SIL.FieldWorks.Common.FwUtils;
+using System.Xml.XPath;
 using SIL.LCModel;
 using SIL.LCModel.Core.KernelInterfaces;
 
@@ -80,7 +80,7 @@ namespace LanguageExplorer.Filters
 		/// </summary>
 		public void InitXml(XElement element)
 		{
-			SubComp = DynamicLoader.RestoreFromChild(element, "comparer") as IComparer;
+			SubComp = DynamicLoader.RestoreObject(element.XPathSelectElement("comparer")) as IComparer;
 		}
 
 		#endregion

@@ -4,7 +4,7 @@
 
 using System;
 
-namespace SIL.FieldWorks.Common.FwUtils
+namespace LanguageExplorer
 {
 	/// <summary>
 	/// Use this exception when the format of the configuration XML

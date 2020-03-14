@@ -5,6 +5,7 @@
 using System;
 using System.Collections.Generic;
 using System.Xml.Linq;
+using LanguageExplorer;
 using LanguageExplorer.Filters;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwUtils;

@@ -6,6 +6,7 @@ using System.Collections;
 using System.Diagnostics;
 using System.Linq;
 using System.Xml.Linq;
+using System.Xml.XPath;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Core.KernelInterfaces;
@@ -83,7 +84,7 @@ namespace LanguageExplorer.Filters
 			Filters = new ArrayList(element.Elements().Count());
 			foreach (var child in element.Elements())
 			{
-				Filters.Add(DynamicLoader.RestoreFromChild(child, "."));
+				Filters.Add(DynamicLoader.RestoreObject(child.XPathSelectElement(".")));
 			}
 		}
 

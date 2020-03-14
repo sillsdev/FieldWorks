@@ -4,7 +4,7 @@
 
 using System.Xml.Linq;
 
-namespace SIL.FieldWorks.Common.FwUtils
+namespace LanguageExplorer
 {
 	public interface IPersistAsXml
 	{

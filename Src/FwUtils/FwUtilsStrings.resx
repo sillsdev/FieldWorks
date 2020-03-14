@@ -210,9 +210,6 @@ If you want to use Paratext with this project, make a change in this project (so
     <value>Version: {0}</value>
     <comment>Displays in the Help/About box and the splash screen</comment>
   </data>
-  <data name="XMLConfigurationError" xml:space="preserve">
-    <value>XML Configuration Error</value>
-  </data>
   <data name="Abort" xml:space="preserve">
     <value>Abort</value>
   </data>

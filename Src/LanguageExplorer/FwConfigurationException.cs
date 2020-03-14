@@ -7,7 +7,7 @@ using System.Windows.Forms;
 using System.Xml;
 using System.Xml.Linq;
 
-namespace SIL.FieldWorks.Common.FwUtils
+namespace LanguageExplorer
 {
 	/// <summary>
 	/// Use this exception when it looks like the configuration XML itself has a problem.
@@ -15,12 +15,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 	/// </summary>
 	public class FwConfigurationException : ApplicationException
 	{
-		/// <summary />
-		public FwConfigurationException(string message, XmlNode node, Exception exInner)
-			: base(message + Environment.NewLine + node.OuterXml, exInner)
-		{
-		}
-
 		/// <summary />
 		public FwConfigurationException(string message, XElement node, Exception exInner)
 			: base(message + Environment.NewLine + node, exInner)
@@ -53,7 +47,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 
 		public void ShowDialog()
 		{
-			MessageBox.Show(Message, FwUtilsStrings.XMLConfigurationError, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+			MessageBox.Show(Message, LanguageExplorerResources.XMLConfigurationError, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
 		}
 	}
 }

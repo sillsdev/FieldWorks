@@ -3855,6 +3855,15 @@ namespace LanguageExplorer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to XML Configuration Error.
+        /// </summary>
+        internal static string XMLConfigurationError {
+            get {
+                return ResourceManager.GetString("XMLConfigurationError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
         /// </summary>
         internal static System.Drawing.Icon ZeroWidth {

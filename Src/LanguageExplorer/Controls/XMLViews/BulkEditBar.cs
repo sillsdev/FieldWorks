@@ -13,6 +13,7 @@ using System.Windows.Forms;
 using System.Xml.Linq;
 using ECInterfaces;
 using LanguageExplorer.Areas;
+using LanguageExplorer.Areas.Lexicon.Tools.BulkEditReversalEntries;
 using LanguageExplorer.Filters;
 using LanguageExplorer.Impls;
 using LanguageExplorer.LcmUi;
@@ -592,17 +593,19 @@ namespace LanguageExplorer.Controls.XMLViews
 			int flidSub;
 			switch (beSpec)
 			{
-				case "external":
-					try
-					{
-						// NB: colSpec node must have a child node named dynamicloaderinfo.
-						besc = (IBulkEditSpecControl)DynamicLoader.CreateObjectUsingLoaderNode(colSpec);
-					}
-					catch (Exception)
-					{
-						MessageBox.Show(XMLViewsStrings.ksBarElementFailed);
-						return null;
-					}
+				case "BulkReversalEntryPosEditor":
+					besc = new BulkReversalEntryPosEditor();
+					((IFlexComponent)besc).InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
+					break;
+				case "BulkPosEditor":
+					besc = new BulkPosEditor();
+					((IFlexComponent)besc).InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
+					break;
+				case "InflectionFeatureEditor":
+					besc = new InflectionFeatureEditor(Publisher, Subscriber, colSpec);
+					break;
+				case "InflectionClassEditor":
+					besc = new InflectionClassEditor(Publisher, Subscriber, colSpec);
 					break;
 				case "phonemeFlatListItem":
 					besc = new PhonologicalFeatureEditor(Publisher, Subscriber, colSpec);

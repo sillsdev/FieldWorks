@@ -1924,7 +1924,7 @@ namespace LanguageExplorer.Controls.DetailControls
 							m_rch.Dispose();
 							m_rch = null;
 						}
-						m_rch = (IRecordChangeHandler)DynamicLoader.CreateObject(node, null);
+						m_rch = (IRecordChangeHandler)DynamicLoader.CreateObject(node);
 						m_rch.Disposed += m_rch_Disposed;
 						Debug.Assert(m_rch != null);
 						m_listName = XmlUtils.GetOptionalAttributeValue(node, "listName");

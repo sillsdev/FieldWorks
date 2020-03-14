@@ -4,6 +4,7 @@
 
 using System.Diagnostics;
 using System.Xml.Linq;
+using System.Xml.XPath;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Core.KernelInterfaces;
@@ -98,8 +99,8 @@ namespace LanguageExplorer.Filters
 		{
 			base.InitXml(element);
 			Debug.Assert(Finder == null);
-			Finder = DynamicLoader.RestoreFromChild(element, "finder") as IStringFinder;
-			Matcher = DynamicLoader.RestoreFromChild(element, "matcher") as IMatcher;
+			Finder = DynamicLoader.RestoreObject(element.XPathSelectElement("finder")) as IStringFinder;
+			Matcher = DynamicLoader.RestoreObject(element.XPathSelectElement("matcher")) as IMatcher;
 		}
 
 		#endregion

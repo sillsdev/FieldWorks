@@ -18,10 +18,6 @@ namespace LanguageExplorer.LcmUi
 	/// </summary>
 	public class BulkPosEditor : BulkPosEditorBase
 	{
-		public BulkPosEditor()
-		{
-		}
-
 		protected override ICmPossibilityList List => m_cache.LanguageProject.PartsOfSpeechOA;
 
 		public override void DoIt(IEnumerable<int> itemsToChange, ProgressState state)

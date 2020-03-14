@@ -36,7 +36,6 @@
 // using an AndFilter.
 // </remarks>
 using System.Xml.Linq;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.Xml;

@@ -417,15 +417,6 @@ namespace SIL.FieldWorks.Common.FwUtils {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to XML Configuration Error.
-        /// </summary>
-        public static string XMLConfigurationError {
-            get {
-                return ResourceManager.GetString("XMLConfigurationError", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Yes.
         /// </summary>
         public static string Yes {

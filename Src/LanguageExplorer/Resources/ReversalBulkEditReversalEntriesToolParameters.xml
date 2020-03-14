@@ -21,8 +21,7 @@
 				</para>
 			</seq>
 		</column>
-		<column label="Reversal Category" width="15%" bulkEdit="external">
-			<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Areas.Lexicon.Tools.BulkEditReversalEntries.BulkReversalEntryPosEditor"/>
+		<column label="Reversal Category" width="15%" bulkEdit="BulkReversalEntryPosEditor">
 			<properties>
 				<editable value="false"/>
 			</properties>

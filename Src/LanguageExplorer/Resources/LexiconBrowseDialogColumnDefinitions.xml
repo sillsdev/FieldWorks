@@ -21,31 +21,15 @@
 	<column layout="GrammaticalInfoAbbrForSense" headerlabel="Grammatical Info." chooserFilter="external" label="Grammatical Info. (Abbr.)" multipara="true"  width="72000" visibility="dialog">
 		<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.LcmUi.PosFilter"/>
 	</column>
-	<column layout="GrammaticalCategoryForSense" label="Grammatical Category" multipara="true" visibility="dialog" width="72000"
-		bulkEdit="external">
-		<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.LcmUi.BulkPosEditor"/>
-	</column>
+	<column layout="GrammaticalCategoryForSense" label="Grammatical Category" multipara="true" visibility="dialog" width="72000" bulkEdit="BulkPosEditor" />
 	<column layout="OutlineForSense" label="Sense Number" multipara="true" ws="$ws=analysis" field="LexEntry.Senses" visibility="dialog" />
 	<column layout="ReversalEntriesForSense" editLayout ="ReversalEntriesForSenseEdit" label="Reversals" multipara="true" transduce="LexSense.ReversalEntriesBulkText"
 		  ws="$ws=analysis" visibility="dialog"/>
 	<column layout="IsAbstractFormForEntry" label="Is Abstract Form" visibility="dialog"
 			bulkEdit="booleanOnSubfield" bulkDelete="false" field="LexEntry.LexemeForm" subfield="MoForm.IsAbstract" items="0:no;1:yes" blankPossible="false" sortType="YesNo"/>
 	<column layout="InflectionClassForStem" label="Inflection Classes (Stem)" multipara="true" editable="false"
-		bulkEdit="external" field="LexEntry.Senses" subfield="LexSense.MorphoSyntaxAnalysis" visibility="dialog" displayWs="best analysis">
-		<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.LcmUi.InflectionClassEditor">
-			<args>
-				<arg name="xpathToConfigurationNode" value="ancestor::column"/>
-			</args>
-		</dynamicloaderinfo>
-	</column>
-	<column layout="InflectionFeaturesForSense" label="Inflection Features" multipara="true" width="25%"
-		bulkEdit="external" editable="false" visibility="dialog" displayWs="best analysis">
-		<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.LcmUi.InflectionFeatureEditor">
-			<args>
-				<arg name="xpathToConfigurationNode" value="ancestor::column"/>
-			</args>
-		</dynamicloaderinfo>
-	</column>
+		bulkEdit="InflectionClassEditor" field="LexEntry.Senses" subfield="LexSense.MorphoSyntaxAnalysis" visibility="dialog" displayWs="best analysis" />
+	<column layout="InflectionFeaturesForSense" label="Inflection Features" multipara="true" width="25%" bulkEdit="InflectionFeatureEditor" editable="false" visibility="dialog" displayWs="best analysis" />
 	<column layout="ExceptionFeatures" label="Exception 'Features'" multipara="true" width="25%"
 		editable="false" visibility="dialog" displayWs="best analysis">
 	</column>

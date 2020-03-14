@@ -5,7 +5,6 @@
 using System;
 using System.Collections;
 using System.Xml.Linq;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Language;
 using SIL.Xml;

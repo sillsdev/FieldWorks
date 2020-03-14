@@ -7,7 +7,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Windows.Forms;
 using System.Xml.Linq;
-using SIL.FieldWorks.Common.FwUtils;
+using System.Xml.XPath;
 using SIL.LCModel;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Utils;
@@ -343,8 +343,8 @@ namespace LanguageExplorer.Filters
 		/// </summary>
 		public void InitXml(XElement element)
 		{
-			Finder = DynamicLoader.RestoreFromChild(element, "finder") as IStringFinder;
-			SubComparer = DynamicLoader.RestoreFromChild(element, "comparer") as IComparer;
+			Finder = DynamicLoader.RestoreObject(element.XPathSelectElement("finder")) as IStringFinder;
+			SubComparer = DynamicLoader.RestoreObject(element.XPathSelectElement("comparer")) as IComparer;
 			SortedFromEnd = XmlUtils.GetOptionalBooleanAttributeValue(element, "sortFromEnd", false);
 			SortedByLength = XmlUtils.GetOptionalBooleanAttributeValue(element, "sortByLength", false);
 		}

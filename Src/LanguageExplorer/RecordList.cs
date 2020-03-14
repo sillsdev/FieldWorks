@@ -9,6 +9,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
+using System.Xml.Linq;
 using LanguageExplorer.Areas;
 using LanguageExplorer.Controls.XMLViews;
 using LanguageExplorer.Filters;
@@ -2369,7 +2370,7 @@ namespace LanguageExplorer
 			{
 				try
 				{
-					filter = DynamicLoader.RestoreObject(persistFilter) as RecordFilter;
+					filter = DynamicLoader.RestoreObject(XDocument.Parse(persistFilter).Root) as RecordFilter;
 					if (filter != null)
 					{
 						// (LT-9515) restored filters need these set, because they can't be persisted.
@@ -2415,7 +2416,7 @@ namespace LanguageExplorer
 			{
 				try
 				{
-					sorter = DynamicLoader.RestoreObject(persistSorter) as RecordSorter;
+					sorter = DynamicLoader.RestoreObject(XDocument.Parse(persistSorter).Root) as RecordSorter;
 				}
 				catch
 				{

@@ -86,11 +86,11 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				// we can get this from the columnSpec
 				var beSpec = XmlUtils.GetOptionalAttributeValue(m_colSpec, "bulkEdit", string.Empty);
-				if (string.IsNullOrEmpty(beSpec))
+				if (string.IsNullOrWhiteSpace(beSpec))
 				{
 					beSpec = XmlUtils.GetOptionalAttributeValue(m_colSpec, "chooserFilter", string.Empty);
 				}
-				if (beSpec == string.Empty)
+				if (string.IsNullOrWhiteSpace(beSpec))
 				{
 					// Enhance: figure it out from the the column spec parts.
 				}

@@ -1491,4 +1491,7 @@ you expect.</value>
   <data name="Paste" xml:space="preserve">
     <value>Paste</value>
   </data>
+  <data name="XMLConfigurationError" xml:space="preserve">
+    <value>XML Configuration Error</value>
+  </data>
 </root>
