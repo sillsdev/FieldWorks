@@ -165,6 +165,8 @@ namespace SIL.FieldWorks.Common.FwUtils
 			{
 				// We read the registry value and set an environment variable ICU_DATA here so that
 				// FwKernelInterfaces.dll is independent of WinForms.
+				// ENHANCE: store data directory somewhere else other than registry (user.config
+				// file?) and use that.
 				string icuDirValueName = string.Format("Icu{0}DataDir",
 					CustomIcu.Version);
 				using (var userKey = RegistryHelper.CompanyKey)
@@ -184,6 +186,8 @@ namespace SIL.FieldWorks.Common.FwUtils
 						Environment.SetEnvironmentVariable("ICU_DATA", dir);
 				}
 			}
+			// ICU_DATA should point to the directory that contains nfc_fw.nrm and nfkc_fw.nrm
+			// (i.e. icudt54l).
 			CustomIcu.InitIcuDataDir();
 		}
 

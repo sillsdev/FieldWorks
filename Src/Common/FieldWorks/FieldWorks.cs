@@ -141,7 +141,7 @@ namespace SIL.FieldWorks
 			var newPath = $"{pathName}{Path.PathSeparator}{Environment.GetEnvironmentVariable("PATH")}";
 			Environment.SetEnvironmentVariable("PATH", newPath);
 			Icu.Wrapper.ConfineIcuVersions(54);
-			Icu.Wrapper.Init();
+			// ICU will be initialized further down (by calling FwUtils.InitializeIcu())
 			LcmCache.NewerWritingSystemFound += ComplainToUserAboutNewWs;
 			FwRegistryHelper.Initialize();
 
