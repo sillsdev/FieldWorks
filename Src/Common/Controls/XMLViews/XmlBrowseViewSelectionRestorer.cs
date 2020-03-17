@@ -5,7 +5,6 @@
 // File: XmlBrowseViewSelectionRestorer.cs
 // Responsibility: FLEx Team
 
-using System;
 using SIL.FieldWorks.Common.RootSites;
 
 namespace SIL.FieldWorks.Common.Controls

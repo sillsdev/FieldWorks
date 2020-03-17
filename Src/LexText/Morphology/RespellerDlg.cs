@@ -59,7 +59,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		string m_lblExplainText; // original text of m_lblExplainDisabled
 
 		// Typically the clerk of the calling Words/Analysis view that manages a list of wordforms.
-		// May be null when called from TE change spelling dialog.
+		// May be null when when the friendly tool is not active.
 		RecordClerk m_wfClerk;
 		int m_hvoNewWordform; // if we made a new wordform and changed all instances, this gets set.
 
@@ -106,11 +106,9 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 				dlg.BringToFront();
 				try
 				{
-					var cache = wf.Cache;
 					m_srcwfiWordform = wf;
-					m_cache = cache;
-					if (m_fDisposeMediator && m_mediator != null)
-						m_mediator.Dispose();
+					if (m_fDisposeMediator)
+						m_mediator?.Dispose();
 
 					m_fDisposeMediator = false;
 					return SetDlgInfoPrivate(mediator, propertyTable, configurationParams);
@@ -230,7 +228,6 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 					m_specialSda.SetInt(concId, XMLViewsDataCache.ktagItemSelected, 1);
 				}
 				// We initially check everything.
-				var segmentRepos = m_cache.ServiceLocator.GetInstance<ISegmentRepository>();
 				foreach (var hvo in m_sourceSentences.BrowseViewer.AllItems)
 					m_enabledItems.Add(hvo);
 
@@ -520,7 +517,9 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		private void m_btnClose_Click(object sender, EventArgs e)
 		{
 			if (ChangesWereMade)
+			{
 				m_mediator.SendMessage("MasterRefresh", null);
+			}
 			Close();
 		}
 
@@ -585,7 +584,15 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 				m_respellUndoaction.RemoveChangedItems(m_enabledItems, m_sourceSentences.BrowseViewer.PreviewEnabledTag);
 				// If everything changed remember the new wordform.
 				if (m_respellUndoaction.AllChanged)
-					m_hvoNewWordform = m_respellUndoaction.NewWordform;
+				{
+					var newWordform = m_respellUndoaction.RepoWf.GetObject(m_respellUndoaction.NewWordform);
+					m_hvoNewWordform = newWordform.Hvo;
+					// LT-20118 avoid crash due to Refresh trying to find possibly deleted old hvo.
+					DestroyOldSelection();
+					// Clear PropertyTable of references to old hvo
+					m_propertyTable.SetProperty("ActiveClerkSelectedObject", newWordform, true);
+					m_propertyTable.SetProperty("TextSelectedWord", newWordform, true);
+				}
 				if (m_previewOn)
 					EnsurePreviewOff(); // will reconstruct
 				else
@@ -595,6 +602,17 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 				}
 				SetEnabledState();
 			}
+		}
+
+		private void DestroyOldSelection()
+		{
+			// This is sure a complicated way to do this, but if we don't and the old wordform goes away,
+			// there will still be a selection out there referencing the old hvo.
+			var contentControlObj =
+				m_propertyTable.GetValue<PaneBarContainer>("currentContentControlObject");
+			var recordBrowseView = contentControlObj?.Controls[0] as RecordBrowseView;
+			var browseView = recordBrowseView?.BrowseViewer?.BrowseView;
+			browseView?.RootBox?.DestroySelection();
 		}
 
 		/// <summary>
@@ -1418,7 +1436,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			int flidOccurrences = specialMdc.GetFieldId2(WfiWordformTags.kClassId, "Occurrences", false);
 
 			using (UndoableUnitOfWorkHelper uuow = new UndoableUnitOfWorkHelper(m_cache.ActionHandlerAccessor,
-								String.Format(MEStrings.ksUndoChangeSpelling, m_oldSpelling, NewSpelling),
+				String.Format(MEStrings.ksUndoChangeSpelling, m_oldSpelling, NewSpelling),
 				String.Format(MEStrings.ksRedoChangeSpelling, m_oldSpelling, NewSpelling)))
 			{
 				IWfiWordform wfOld = FindOrCreateWordform(m_oldSpelling, m_vernWs);
@@ -1518,7 +1536,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		private void SetOldOccurrencesOfWordforms(int flidOccurrences, IWfiWordform wfOld, IWfiWordform wfNew)
 		{
 			OldWordform = wfOld.Hvo;
-			m_oldOccurrencesOldWf = m_specialSda.VecProp(wfOld.Hvo, flidOccurrences);;
+			m_oldOccurrencesOldWf = m_specialSda.VecProp(wfOld.Hvo, flidOccurrences);
 
 			NewWordform = wfNew.Hvo;
 			m_oldOccurrencesNewWf = m_specialSda.VecProp(wfNew.Hvo, flidOccurrences);

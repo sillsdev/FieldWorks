@@ -457,7 +457,7 @@ namespace SIL.FieldWorks.XWorks
 				switch (ft)
 				{
 					case FxtTypes.kftClassifiedDict:
-						// Should match the tool in DistFiles/Language Explorer/Configuration/RDE/toolConfiguration.xml, the value attribute in
+						// Should match the tool in DistFiles/Language Explorer/Configuration/Lexicon/RDE/toolConfiguration.xml, the value attribute in
 						// <tool label="Classified Dictionary" value="lexiconClassifiedDictionary" icon="DocumentView">.
 						// We use this to create that tool and base this export on its objects and saved configuration.
 						tool = "lexiconClassifiedDictionary";
