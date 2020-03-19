@@ -696,21 +696,35 @@ namespace SIL.FieldWorks.IText
 				importSettings = m_scr.FindOrCreateDefaultImportSettings(TypeOfImport.Paratext6, m_scriptureStylesheet, FwDirectoryFinder.FlexStylesPath);
 				importSettings.ParatextScrProj = m_associatedPtText.Name;
 				importSettings.StartRef = new BCVRef(bookNum, 0, 0);
+				importSettings.EndRef = new BCVRef(bookNum, 0, 0);
 				importSettings.ParatextBTProj = btProject.Name;
 				importSettings.ImportTranslation = false;
 				importSettings.ImportBackTranslation = true;
 
 				ParatextHelper.LoadProjectMappings(importSettings);
 				var importMap = importSettings.GetMappingListForDomain(ImportDomain.Main);
-				var figureInfo = importMap[@"\fig"];
-				if (figureInfo != null)
+				// Check for corrupted import settings, clear them out if they are bad.
+				if (importMap == null)
 				{
-					figureInfo.IsExcluded = true;
+					m_scr.DefaultImportSettings = null;
+					m_scr.ImportSettingsOC.Clear();
+					importSettings = null;
 				}
-				importSettings.SaveSettings();
+				else
+				{
+					var figureInfo = importMap[@"\fig"];
+					if (figureInfo != null)
+					{
+						figureInfo.IsExcluded = true;
+					}
+					importSettings.SaveSettings();
+				}
 			});
 
-			ReflectionHelper.GetBoolResult(ReflectionHelper.GetType("ParatextImport.dll", "ParatextImport.ParatextImportManager"), "ImportParatext", owningForm, m_cache, importSettings, m_scriptureStylesheet, App);
+			if (importSettings != null)
+			{
+				ReflectionHelper.GetBoolResult(ReflectionHelper.GetType("ParatextImport.dll", "ParatextImport.ParatextImportManager"), "ImportParatext", owningForm, m_cache, importSettings, m_scriptureStylesheet, App);
+			}
 		}
 	}
 }
