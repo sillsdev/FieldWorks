@@ -140,6 +140,11 @@
       <DependentUpon>CharEditorWindow.cs</DependentUpon>
     </Compile>
     <Compile Include="ErrorCodes.cs" />
+    <Compile Include="HelpTopicPaths.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>HelpTopicPaths.resx</DependentUpon>
+    </Compile>
     <Compile Include="IcuErrorCodes.cs" />
     <Compile Include="IcuLockedException.cs" />
     <Compile Include="LogFile.cs" />
@@ -148,6 +153,11 @@
     <Compile Include="UceException.cs" />
     <EmbeddedResource Include="CharEditorWindow.resx">
       <DependentUpon>CharEditorWindow.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="HelpTopicPaths.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>HelpTopicPaths.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">

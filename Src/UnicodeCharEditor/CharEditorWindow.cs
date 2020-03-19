@@ -512,7 +512,7 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 			if (s_helpResources == null)
 			{
 				s_helpResources = new ResourceManager(
-					"SIL.FieldWorks.UnicodeCharEditor.Properties.Resources", Assembly.GetExecutingAssembly());
+					"SIL.FieldWorks.UnicodeCharEditor.HelpTopicPaths", Assembly.GetExecutingAssembly());
 			}
 			if (sPropName == null)
 				return "NullStringID";

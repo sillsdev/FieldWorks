@@ -1,36 +1,21 @@
-// Copyright (c) 2010-2013 SIL International
+// Copyright (c) 2010-2020 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: FlexHelpTopicProvider.cs
-// Responsibility: TE Team
-//
-// <remarks>
-// </remarks>
 
 using System.Reflection;
 using System.Resources;
-using SIL.FieldWorks.Common.Framework;
+using SIL.FieldWorks.Common.FwUtils;
 
 namespace SIL.FieldWorks.XWorks.LexText
 {
-	/// ----------------------------------------------------------------------------------------
 	/// <summary>
 	/// FLEx-specific HelpTopicProvider
 	/// </summary>
-	/// ----------------------------------------------------------------------------------------
 	public class FlexHelpTopicProvider : HelpTopicProviderBase
 	{
-		private static ResourceManager s_helpResources = null;
+		private static ResourceManager s_helpResources;
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Gets a help file URL or topic
-		/// </summary>
-		/// <param name="stid"></param>
-		/// <returns>The requested string</returns>
-		/// ------------------------------------------------------------------------------------
-		public override string GetHelpString(string stid)
+		public override string GetHelpString(string id)
 		{
 			if (s_helpResources == null)
 			{
@@ -38,11 +23,11 @@ namespace SIL.FieldWorks.XWorks.LexText
 					Assembly.GetExecutingAssembly());
 			}
 
-			if (stid == null)
+			if (id == null)
 				return "NullStringID";
 
 			// First try to find it in our resource file. If that doesn't work, try the more general one
-			return s_helpResources.GetString(stid) ?? base.GetHelpString(stid);
+			return s_helpResources.GetString(id) ?? base.GetHelpString(id);
 		}
 	}
 }

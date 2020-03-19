@@ -18,8 +18,9 @@
     {
       "source": "Src/**/*.resx",
       "translation": "/%locale%/%original_path%/%file_name%.%locale%.%file_extension%",
-	  "ignore": [
-        "Src/**/*Tests/**/*"
+      "ignore": [
+        "Src/**/*Tests/**/*",
+        "Src/**/HelpTopicPaths.resx"
       ]
     },
     {

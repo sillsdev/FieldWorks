@@ -282,7 +282,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="ExportStyleInfo.cs" />
-    <Compile Include="HelpTopicProviderBase.cs" />
     <Compile Include="ExternalSettingsAccessorBase.cs" />
     <Compile Include="FrameworkStrings.Designer.cs">
       <AutoGen>True</AutoGen>

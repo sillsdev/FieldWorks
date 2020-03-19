@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace LCMBrowser.Properties {
+namespace SIL.FieldWorks.UnicodeCharEditor {
     using System;
     
     
@@ -22,14 +22,14 @@ namespace LCMBrowser.Properties {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    internal class Resources {
+    internal class HelpTopicPaths {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
         private static global::System.Globalization.CultureInfo resourceCulture;
         
         [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        internal Resources() {
+        internal HelpTopicPaths() {
         }
         
         /// <summary>
@@ -39,7 +39,7 @@ namespace LCMBrowser.Properties {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("LCMBrowser.Properties.Resources", typeof(Resources).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("SIL.FieldWorks.UnicodeCharEditor.HelpTopicPaths", typeof(HelpTopicPaths).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -61,32 +61,38 @@ namespace LCMBrowser.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        ///   Looks up a localized string similar to /Advanced_Tasks/Writing_Systems/Modifying_a_Writing_System/Valid_Characters_dialog_box/Add_or_modify_custom_characters.htm.
         /// </summary>
-        internal static System.Drawing.Bitmap kimidFDOModel {
+        internal static string khtpUnicodeEditorCharTab {
             get {
-                object obj = ResourceManager.GetObject("kimidFDOModel", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
+                return ResourceManager.GetString("khtpUnicodeEditorCharTab", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        ///   Looks up a localized string similar to /Advanced_Tasks/Writing_Systems/Modifying_a_Writing_System/Private_Use_Area_character_properties.htm.
         /// </summary>
-        internal static System.Drawing.Bitmap kimidShowCmObjectProperties {
+        internal static string khtpWsAddPUAChar {
             get {
-                object obj = ResourceManager.GetObject("kimidShowCmObjectProperties", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
+                return ResourceManager.GetString("khtpWsAddPUAChar", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        ///   Looks up a localized string similar to /Advanced_Tasks/Writing_Systems/Modifying_a_Writing_System/Private_Use_Area_character_properties.htm.
         /// </summary>
-        internal static System.Drawing.Bitmap LCMBrowser {
+        internal static string khtpWsModifyPUAChar {
             get {
-                object obj = ResourceManager.GetObject("LCMBrowser", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
+                return ResourceManager.GetString("khtpWsModifyPUAChar", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to \Helps\FieldWorks_Language_Explorer_Help.chm.
+        /// </summary>
+        internal static string UserHelpFile {
+            get {
+                return ResourceManager.GetString("UserHelpFile", resourceCulture);
             }
         }
     }

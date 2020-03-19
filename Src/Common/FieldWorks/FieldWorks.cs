@@ -3425,8 +3425,7 @@ namespace SIL.FieldWorks
 		/// <summary>
 		/// Gets a HelpTopicProvider for the specified application if possible. Falls back to
 		/// getting the HelpTopicProvider for another application if the requested one is not
-		/// installed. Will not return null (but it could throw an exception if no FW app is
-		/// installed).
+		/// installed. Will not return null.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		internal static IHelpTopicProvider GetHelpTopicProvider()
