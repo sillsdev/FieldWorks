@@ -149,6 +149,10 @@
     <Reference Include="Accessibility">
       <Name>Accessibility</Name>
     </Reference>
+    <Reference Include="Filters, Version=9.1.0.26426, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Output\Debug\Filters.dll</HintPath>
+    </Reference>
     <Reference Include="SIL.LCModel.Core.Tests, Version=9.0.0.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Output\Debug\SIL.LCModel.Core.Tests.dll</HintPath>
@@ -293,6 +297,7 @@
     </Compile>
     <Compile Include="ComboHandlerTests.cs" />
     <Compile Include="ComplexConcPatternModelTests.cs" />
+    <Compile Include="ConcordanceControlTests.cs" />
     <Compile Include="ImportInterlinearAnalysesTests.cs" />
     <Compile Include="InterlinearExporterTests.cs" />
     <Compile Include="BIRDFormatImportTests.cs" />

@@ -25,6 +25,7 @@ using SIL.LCModel;
 using SIL.FieldWorks.Filters;
 using SIL.FieldWorks.FwCoreDlgs;
 using SIL.FieldWorks.XWorks;
+using SIL.LCModel.Core.Cellar;
 using XCore;
 
 namespace SIL.FieldWorks.IText
@@ -340,7 +341,8 @@ namespace SIL.FieldWorks.IText
 			kNote,
 			kGramCategory,
 			kWordCategory,
-			kTags
+			kTags,
+			kCustom
 		};
 
 		/// <summary>
@@ -387,12 +389,14 @@ namespace SIL.FieldWorks.IText
 			private string m_name;
 			private int m_wsMagic;
 			ConcordanceLines m_line;
+			private int m_flidIfCustom; // only for custom fields!
 
-			internal ConcordLine(string name, int wsMagic, ConcordanceLines line)
+			internal ConcordLine(string name, int wsMagic, ConcordanceLines line, int flidIfCustom = 0)
 			{
 				m_name = name;
 				m_wsMagic = wsMagic;
 				m_line = line;
+				m_flidIfCustom = flidIfCustom;
 			}
 
 			internal string Name
@@ -409,6 +413,9 @@ namespace SIL.FieldWorks.IText
 			{
 				get { return m_line; }
 			}
+
+			/// <remarks>Only for custom fields!</remarks>
+			internal int FlidIfCustom => m_flidIfCustom;
 
 			public override string ToString()
 			{
@@ -652,6 +659,9 @@ namespace SIL.FieldWorks.IText
 						break;
 					case ConcordanceLines.kTags:
 						occurrences = UpdateConcordanceForTag(ws);
+						break;
+					case ConcordanceLines.kCustom:
+						occurrences = UpdateConcordanceForCustomField(conc.FlidIfCustom, ws);
 						break;
 					default:
 						occurrences = new List<IParaFragment>();
@@ -912,7 +922,15 @@ namespace SIL.FieldWorks.IText
 			m_cbLine.Items.Add(new ConcordLine(ITextStrings.ksTagging,
 				WritingSystemServices.kwsAnals,
 				ConcordanceLines.kTags));
-
+			var classId = m_cache.MetaDataCacheAccessor.GetClassId("Segment");
+			var mdc = (IFwMetaDataCacheManaged)m_cache.MetaDataCacheAccessor;
+			foreach (int flid in mdc.GetFields(classId, false, (int)CellarPropertyTypeFilter.All))
+			{
+				if (!mdc.IsCustom(flid))
+					continue;
+				m_cbLine.Items.Add(new ConcordLine(mdc.GetFieldName(flid), mdc.GetFieldWs(flid),
+					ConcordanceLines.kCustom, flid));
+			}
 
 			m_cbLine.SelectedIndex = 0;
 		}
@@ -950,9 +968,19 @@ namespace SIL.FieldWorks.IText
 						m_cbWritingSystem.Items.Add(ws);
 					wsSet = m_cache.DefaultAnalWs;
 					break;
+				case WritingSystemServices.kwsAnal:
+					m_cbWritingSystem.Items.Add(m_cache.ServiceLocator.WritingSystems
+						.DefaultAnalysisWritingSystem);
+					wsSet = m_cache.DefaultAnalWs;
+					break;
+				case WritingSystemServices.kwsVern:
+					m_cbWritingSystem.Items.Add(m_cache.ServiceLocator.WritingSystems
+						.DefaultVernacularWritingSystem);
+					wsSet = m_cache.DefaultVernWs;
+					break;
 			}
 			//Keep the users current selection if they have switched to a similar field (vernacular or analysis)
-			if(current != null && m_cbWritingSystem.Items.Contains(current))
+			if (current != null && m_cbWritingSystem.Items.Contains(current))
 				m_cbWritingSystem.SelectedItem = current;
 			else //otherwise set it to the default for the correct language type
 				SetWritingSystem(wsSet);
@@ -1025,6 +1053,56 @@ namespace SIL.FieldWorks.IText
 					}
 				}
 			}
+			return occurrences;
+		}
+
+		private List<IParaFragment> UpdateConcordanceForCustomField(int flid, int ws)
+		{
+			SimpleStringMatcher matcher = GetMatcher(ws) as SimpleStringMatcher;
+			ISilDataAccess sda = m_cache.MainCacheAccessor;
+			var paragraphsToSearch = ParagraphsToSearch;
+
+			return GetOccurrencesInCustomField(flid, paragraphsToSearch, sda, matcher);
+		}
+
+		// internal (and static) for unit testing.
+		internal static List<IParaFragment> GetOccurrencesInCustomField(int flid, HashSet<IStTxtPara> paragraphsToSearch,
+			ISilDataAccess sda, SimpleStringMatcher matcher)
+		{
+			var occurrences = new List<IParaFragment>();
+			if (!matcher.IsValid())
+				return occurrences;
+
+			int cPara = 0;
+			foreach (var para in paragraphsToSearch)
+			{
+				++cPara;
+				foreach (var segment in para.SegmentsOS)
+				{
+					var content = sda.get_StringProp(segment.Hvo, flid);
+					// Find occurrences of the string in this field.
+					if (matcher.Matches(content))
+					{
+						// Since we don't have any way yet to show individual matches,
+						// just make one occurrence if we got any match on this paragraph.
+						List<MatchRangePair> results = matcher.GetAllResults();
+						if (results.Count > 0)
+						{
+							occurrences.Add(new ParaFragment(segment, 0, content.Length, null));
+							if (occurrences.Count >= MaxConcordanceMatches())
+							{
+								MessageBox.Show(String.Format(
+										ITextStrings.ksShowingOnlyTheFirstXXXMatches,
+										occurrences.Count, cPara, paragraphsToSearch.Count),
+									ITextStrings.ksNotice,
+									MessageBoxButtons.OK, MessageBoxIcon.Information);
+								return occurrences;
+							}
+						}
+					}
+				}
+			}
+
 			return occurrences;
 		}
 
