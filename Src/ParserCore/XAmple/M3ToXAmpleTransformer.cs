@@ -14,7 +14,7 @@ using System.Xml.Xsl;
 using SIL.LCModel.Utils;
 using SIL.WordWorks.GAFAWS.PositionAnalysis;
 
-namespace SIL.FieldWorks.WordWorks.Parser
+namespace SIL.FieldWorks.WordWorks.Parser.XAmple
 {
 	/// <summary>
 	/// Given an XML file representing an instance of a M3 grammar model,

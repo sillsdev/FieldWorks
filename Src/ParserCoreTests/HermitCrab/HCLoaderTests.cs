@@ -17,7 +17,7 @@ using SIL.Machine.Annotations;
 using SIL.Machine.FeatureModel;
 using FS = System.Collections.Generic.Dictionary<string, object>;
 
-namespace SIL.FieldWorks.WordWorks.Parser
+namespace SIL.FieldWorks.WordWorks.Parser.HermitCrab
 {
 	[TestFixture]
 	public class HCLoaderTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase

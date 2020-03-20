@@ -6,9 +6,8 @@ using System;
 using System.IO;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwUtils;
-using XAmpleManagedWrapper;
 
-namespace XAmpleManagedWrapperTests
+namespace SIL.FieldWorks.WordWorks.Parser.XAmple
 {
 	[TestFixture]
 	public class TestXAmpleDLLWrapper
@@ -22,7 +21,7 @@ namespace XAmpleManagedWrapperTests
 
 		protected void LoadFilesHelper(XAmpleDLLWrapper wrapper)
 		{
-			var tempPath = Path.Combine(FwDirectoryFinder.SourceDirectory, "ParserCoreTests", "M3ToXAmpleTransformerTestsDataFiles");
+			var tempPath = Path.Combine(FwDirectoryFinder.SourceDirectory, "ParserCoreTests", "XAmple", "M3ToXAmpleTransformerTestsDataFiles");
 			var xPath = Path.Combine(FwDirectoryFinder.CodeDirectory, "Language Explorer", "Configuration", "Grammar");
 			wrapper.LoadFiles(xPath, tempPath, "StemName3");
 		}

@@ -10,7 +10,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using SIL.PlatformUtilities;
 
-namespace XAmpleManagedWrapper
+namespace SIL.FieldWorks.WordWorks.Parser.XAmple
 {
 	public delegate IntPtr SpecAmpleCreateSetup();
 	public delegate string SpecAmpleDeleteSetup(IntPtr pSetupIo);

@@ -13,6 +13,8 @@ using System.Text;
 using System.Web;
 using Paratext.LexicalContracts;
 using SIL.FieldWorks.WordWorks.Parser;
+using SIL.FieldWorks.WordWorks.Parser.HermitCrab;
+using SIL.FieldWorks.WordWorks.Parser.XAmple;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel;

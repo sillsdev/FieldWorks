@@ -4,7 +4,7 @@
 
 using SIL.LCModel;
 
-namespace SIL.FieldWorks.WordWorks.Parser
+namespace SIL.FieldWorks.WordWorks.Parser.HermitCrab
 {
 	public interface IHCLoadErrorLogger
 	{

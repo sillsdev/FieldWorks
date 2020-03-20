@@ -187,10 +187,6 @@
     <Reference Include="System.Core" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
-    <Reference Include="XAmpleManagedWrapper, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Debug\XAmpleManagedWrapper.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssemblyInfo.cs">
@@ -200,9 +196,9 @@
       <Link>CommonAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="FwXmlTraceManager.cs" />
-    <Compile Include="HCLoader.cs" />
-    <Compile Include="HCParser.cs" />
-    <Compile Include="IHCLoadErrorLogger.cs" />
+    <Compile Include="HermitCrab\HCLoader.cs" />
+    <Compile Include="HermitCrab\HCParser.cs" />
+    <Compile Include="HermitCrab\IHCLoadErrorLogger.cs" />
     <Compile Include="InvalidAffixProcessException.cs" />
     <Compile Include="InvalidReduplicationFormException.cs" />
     <Compile Include="IParser.cs" />
@@ -211,7 +207,7 @@
     <Compile Include="ParserModelChangeListener.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="M3ToXAmpleTransformer.cs">
+    <Compile Include="XAmple\M3ToXAmpleTransformer.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="ParseFiler.cs">
@@ -237,7 +233,11 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="WordformUpdatedEventArgs.cs" />
-    <Compile Include="XAmpleParser.cs" />
+    <Compile Include="XAmple\XAmpleParser.cs" />
+    <Compile Include="XAmple\AmpleOptions.cs" />
+    <Compile Include="XAmple\IXAmpleWrapper.cs" />
+    <Compile Include="XAmple\XAmpleDLLWrapper.cs" />
+    <Compile Include="XAmple\XAmpleWrapper.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="ParserCoreStrings.resx">
@@ -246,11 +246,23 @@
       <LastGenOutput>ParserCoreStrings.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
+      <Visible>False</Visible>
+      <ProductName>Windows Installer 3.1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
-  <PropertyGroup>
-    <PreBuildEvent>
-    </PreBuildEvent>
-    <PostBuildEvent>
-    </PostBuildEvent>
-  </PropertyGroup>
+  <Import Project="BuildInclude.targets" />
 </Project>

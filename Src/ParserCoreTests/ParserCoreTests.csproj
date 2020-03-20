@@ -205,18 +205,21 @@
     <Compile Include="..\AssemblyInfoForTests.cs">
       <Link>AssemblyInfoForTests.cs</Link>
     </Compile>
-    <Compile Include="HCLoaderTests.cs" />
-    <Compile Include="XAmpleParserTests.cs" />
-    <Compile Include="M3ToXAmpleTransformerTests.cs">
+    <Compile Include="HermitCrab\HCLoaderTests.cs" />
+    <Compile Include="XAmple\XAmpleParserTests.cs" />
+    <Compile Include="XAmple\M3ToXAmpleTransformerTests.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="ParseFilerProcessingTests.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="XAmple\TestXAmpleDLLWrapper.cs" />
+    <Compile Include="XAmple\TestXAmpleWrapper.cs" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent>

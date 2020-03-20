@@ -9,7 +9,7 @@ using NUnit.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 
-namespace SIL.FieldWorks.WordWorks.Parser
+namespace SIL.FieldWorks.WordWorks.Parser.XAmple
 {
 	/// <summary />
 	[TestFixture]
@@ -18,7 +18,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		[Test]
 		public void ConvertFailures()
 		{
-			var testPath = Path.Combine(FwDirectoryFinder.SourceDirectory, "ParserCoreTests", "Failures.xml");
+			var testPath = Path.Combine(FwDirectoryFinder.SourceDirectory, "ParserCoreTests", "XAmple", "Failures.xml");
 			var doc = XDocument.Load(testPath);
 			var failures = doc.Descendants("failure").ToArray();
 			var anccFailures = failures.Where(e => ((string)e.Attribute("test")).StartsWith("ANCC_FT")).ToArray();

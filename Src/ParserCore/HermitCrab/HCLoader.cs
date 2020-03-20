@@ -21,7 +21,7 @@ using SIL.Machine.Annotations;
 using SIL.Machine.FeatureModel;
 using SIL.Machine.Matching;
 
-namespace SIL.FieldWorks.WordWorks.Parser
+namespace SIL.FieldWorks.WordWorks.Parser.HermitCrab
 {
 	public class HCLoader
 	{

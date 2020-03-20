@@ -14,9 +14,8 @@ using SIL.LCModel;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Infrastructure;
 using SIL.ObjectModel;
-using XAmpleManagedWrapper;
 
-namespace SIL.FieldWorks.WordWorks.Parser
+namespace SIL.FieldWorks.WordWorks.Parser.XAmple
 {
 	public class XAmpleParser : DisposableBase, IParser
 	{

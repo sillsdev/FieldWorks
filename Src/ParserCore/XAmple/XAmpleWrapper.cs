@@ -5,7 +5,7 @@
 using System;
 using System.Diagnostics;
 
-namespace XAmpleManagedWrapper
+namespace SIL.FieldWorks.WordWorks.Parser.XAmple
 {
 	public class XAmpleWrapper : IXAmpleWrapper, IDisposable
 	{

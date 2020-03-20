@@ -5,6 +5,7 @@
 using System.Diagnostics;
 using System.Linq;
 using System.Xml.Linq;
+using SIL.FieldWorks.WordWorks.Parser.HermitCrab;
 using SIL.HermitCrab;
 using SIL.HermitCrab.MorphologicalRules;
 using SIL.HermitCrab.PhonologicalRules;

@@ -17,7 +17,7 @@ using SIL.LCModel.Infrastructure;
 using SIL.Machine.Annotations;
 using SIL.ObjectModel;
 
-namespace SIL.FieldWorks.WordWorks.Parser
+namespace SIL.FieldWorks.WordWorks.Parser.HermitCrab
 {
 	public class HCParser : DisposableBase, IParser
 	{

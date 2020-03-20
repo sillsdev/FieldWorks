@@ -28,6 +28,8 @@ no exception: Create an infl affix slot with no affixes in it and then use this 
 using System;
 using System.Diagnostics;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.WordWorks.Parser.HermitCrab;
+using SIL.FieldWorks.WordWorks.Parser.XAmple;
 using SIL.LCModel;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Core.Text;

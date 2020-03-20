@@ -8,7 +8,7 @@ using System.Xml.Linq;
 using System.Xml.XPath;
 using System.Xml.Xsl;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.WordWorks.Parser;
+using SIL.FieldWorks.WordWorks.Parser.XAmple;
 using SIL.LCModel;
 
 namespace LanguageExplorer.Areas.TextsAndWords

@@ -12,7 +12,7 @@ using NUnit.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel.Utils;
 
-namespace SIL.FieldWorks.WordWorks.Parser
+namespace SIL.FieldWorks.WordWorks.Parser.XAmple
 {
 	/// <summary />
 	public class M3ToXAmpleTransformerTests
@@ -44,7 +44,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		[TestFixtureSetUp]
 		public void FixtureSetup()
 		{
-			m_sTestPath = Path.Combine(FwDirectoryFinder.SourceDirectory, "ParserCoreTests", "M3ToXAmpleTransformerTestsDataFiles");
+			m_sTestPath = Path.Combine(FwDirectoryFinder.SourceDirectory, "ParserCoreTests", "XAmple", "M3ToXAmpleTransformerTestsDataFiles");
 			SetUpXAmpleTransforms();
 			SetUpM3FXTDump();
 		}

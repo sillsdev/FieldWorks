@@ -11,7 +11,7 @@ using System.Xml.Xsl;
 using FieldWorks.TestUtilities;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.WordWorks.Parser;
+using SIL.FieldWorks.WordWorks.Parser.XAmple;
 using SIL.LCModel.Utils;
 
 namespace LanguageExplorerTests.Areas.TextsAndWords

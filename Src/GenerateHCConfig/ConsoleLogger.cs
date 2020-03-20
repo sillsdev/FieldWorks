@@ -4,7 +4,7 @@
 
 using System;
 using System.ComponentModel;
-using SIL.FieldWorks.WordWorks.Parser;
+using SIL.FieldWorks.WordWorks.Parser.HermitCrab;
 using SIL.LCModel;
 
 namespace GenerateHCConfig

@@ -5,7 +5,7 @@
 using System;
 using System.IO;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.WordWorks.Parser;
+using SIL.FieldWorks.WordWorks.Parser.HermitCrab;
 using SIL.HermitCrab;
 using SIL.LCModel;
 using SIL.LCModel.Utils;
