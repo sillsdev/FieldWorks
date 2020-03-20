@@ -437,7 +437,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <summary>
 		/// Gets or sets the horizontal margin
 		/// </summary>
-		protected override int HorizMargin
+		protected internal override int HorizMargin
 		{
 			get => base.HorizMargin;
 			set

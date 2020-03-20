@@ -148,6 +148,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\FieldWorks.TestUtilities.dll</HintPath>
     </Reference>
+    <Reference Include="ibusdotnet, Version=2.0.0.20771, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\ibusdotnet.2.0.0.20771\lib\ibusdotnet.dll</HintPath>
+    </Reference>
     <Reference Include="RootSite.TestUtilities, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\RootSite.TestUtilities.dll</HintPath>
@@ -171,6 +175,10 @@
     <Reference Include="SIL.LCModel.Utils.Tests, Version=9.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\SIL.LCModel.Utils.Tests.dll</HintPath>
+    </Reference>
+    <Reference Include="SIL.Windows.Forms.Keyboarding, Version=6.0.0.0, Culture=neutral, processorArchitecture=AMD64">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Output\Debug\SIL.Windows.Forms.Keyboarding.dll</HintPath>
     </Reference>
     <Reference Include="ViewsInterfaces">
       <Name>ViewsInterfaces</Name>
@@ -211,10 +219,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\SIL.LCModel.Utils.dll</HintPath>
     </Reference>
-    <Reference Include="SimpleRootSite">
-      <Name>SimpleRootSite</Name>
-      <HintPath>..\..\Output\Debug\SimpleRootSite.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
@@ -231,9 +235,22 @@
     <Compile Include="BasicViewTestsBase.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="CacheInfo.cs" />
+    <Compile Include="CacheUndoAction.cs" />
+    <Compile Include="ClipboardStub.cs" />
+    <Compile Include="DummyRootBox.cs" />
+    <Compile Include="DummySelectionHelper.cs" />
+    <Compile Include="DummyVwSelection.cs" />
+    <Compile Include="EditingHelperTests.cs" />
+    <Compile Include="EditingHelperTests_Clipboard.cs" />
+    <Compile Include="EditingHelperTests_ClipboardReal.cs" />
+    <Compile Include="IbusRootSiteEventHandlerTests.cs" />
+    <Compile Include="IbusRootSiteEventHandlerTests_Simple.cs" />
+    <Compile Include="MakeBestTests.cs" />
     <Compile Include="MoreRootSiteTests.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="ObjType.cs" />
     <Compile Include="PrintRootSiteTests.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -242,12 +259,27 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>RootSiteTestsResources.resx</DependentUpon>
     </Compile>
+    <Compile Include="RenderEngineFactoryTests.cs" />
     <Compile Include="RootsiteBasicViewTestsBase.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="RootsiteDummyViewTestsBase.cs" />
     <Compile Include="RootSiteEditingHelperTests.cs" />
+    <Compile Include="ScrollTestsBase.cs" />
+    <Compile Include="SelectionHelperTestsBase.cs" />
+    <Compile Include="SelHelperTests.cs" />
+    <Compile Include="SimpleActionHandler.cs" />
+    <Compile Include="SimpleBasicView.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="SimpleRootSiteTests.cs" />
+    <Compile Include="SimpleRootsiteTestsBase.cs" />
+    <Compile Include="SimpleRootsiteTestsConstants.cs" />
+    <Compile Include="SimpleRootSiteTests_IsSelectionVisibleTests.cs" />
+    <Compile Include="SimpleRootSiteTests_ScrollSelectionIntoView.cs" />
     <Compile Include="TestLanguages.cs" />
+    <Compile Include="TsStringWrapperTests.cs" />
+    <Compile Include="UndoableRealDataCache.cs" />
     <Compile Include="UndoTaskHelperTests.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -257,8 +289,15 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>RootSiteTestsResources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <EmbeddedResource Include="SimpleBasicView.resx">
+      <DependentUpon>SimpleBasicView.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="SimpleRootSiteDataProviderCacheModel.xml" />
+    <None Include="TextCacheModel.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="InterlinPopupArrow.bmp" />
     <Content Include="RootSiteDataProviderCacheModel.xml" />
   </ItemGroup>

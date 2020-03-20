@@ -132,7 +132,7 @@
 		<Message Text="Finished building Views."/>
 	</Target>
 
-	<Target Name="testViews" DependsOnTargets="GenericLib;Views;SimpleRootSite;FwKernel">
+	<Target Name="testViews" DependsOnTargets="GenericLib;Views;RootSite;FwKernel">
 		<Make Condition="'$(OS)'=='Windows_NT'"
 				Makefile="$(fwrt)\Src\views\Test\testViews.mak"
 				Configuration="$(config-capital)"

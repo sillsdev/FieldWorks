@@ -36,9 +36,17 @@ namespace RootSite.TestUtilities
 		}
 
 		/// <summary>
-		/// Gets the selection from the root box that is currently being edited (can be null).
+		/// Gets the text from clipboard.
 		/// </summary>
-		public override IVwSelection RootBoxSelection => m_mockedSelection ?? base.RootBoxSelection;
+		public ITsString CallGetTextFromClipboard()
+		{
+			return GetTextFromClipboard(null, false, TsStringUtils.MakeProps("bla", 1));
+		}
+
+	/// <summary>
+	/// Gets the selection from the root box that is currently being edited (can be null).
+	/// </summary>
+	public override IVwSelection RootBoxSelection => m_mockedSelection ?? base.RootBoxSelection;
 
 		/// <summary>
 		/// Gets an array of property stores, one for each paragraph in the given selection.

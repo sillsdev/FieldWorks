@@ -13,6 +13,5 @@
 		<Project name="FwUtilsTests"/>
 		<Project name="ParserCoreTests"/>
 		<Project name="RootSiteTests"/>
-		<Project name="SimpleRootSiteTests"/>
 	</TimeoutGroup>
 </TestTimeoutValues>	

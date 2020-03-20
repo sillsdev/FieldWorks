@@ -280,10 +280,6 @@
       <HintPath>..\..\Output\Debug\icu.net.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="SimpleRootSite">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Debug\SimpleRootSite.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data" />

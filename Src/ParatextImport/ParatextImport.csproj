@@ -160,10 +160,6 @@
       <HintPath>..\..\Output\Debug\icu.net.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="SimpleRootSite, Version=5.5.0.19449, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Debug\SimpleRootSite.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />

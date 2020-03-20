@@ -150,10 +150,24 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Accessibility" />
+    <Reference Include="ibusdotnet, Version=2.0.0.20771, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\ibusdotnet.2.0.0.20771\lib\ibusdotnet.dll</HintPath>
+    </Reference>
+    <Reference Include="ManagedVwDrawRootBuffered, Version=10.0.0.11571, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Output\Debug\ManagedVwDrawRootBuffered.dll</HintPath>
+    </Reference>
     <Reference Include="SIL.Core.Desktop">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\SIL.Core.Desktop.dll</HintPath>
     </Reference>
+    <Reference Include="SIL.Windows.Forms.Keyboarding, Version=6.0.0.0, Culture=neutral, processorArchitecture=AMD64">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Output\Debug\SIL.Windows.Forms.Keyboarding.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Xml.Linq" />
     <Reference Include="ViewsInterfaces">
       <Name>ViewsInterfaces</Name>
       <HintPath>..\..\Output\Debug\ViewsInterfaces.dll</HintPath>
@@ -189,10 +203,6 @@
     <Reference Include="SIL.LCModel.Utils, Version=9.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
     </Reference>
-    <Reference Include="SimpleRootSite">
-      <Name>SimpleRootSite</Name>
-      <HintPath>..\..\Output\Debug\SimpleRootSite.dll</HintPath>
-    </Reference>
     <Reference Include="icu.net">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\icu.net.dll</HintPath>
@@ -207,22 +217,43 @@
     <Compile Include="..\CommonAssemblyInfo.cs">
       <Link>CommonAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="AccessibilityWrapper.cs" />
+    <Compile Include="ActiveViewHelper.cs" />
     <Compile Include="AddToDictMenuItem.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="CkBehavior.cs" />
+    <Compile Include="DataUpdateMonitor.cs" />
+    <Compile Include="EditingHelper.cs" />
     <Compile Include="FwBaseVc.cs" />
+    <Compile Include="FwPasteFixTssEventArgs.cs" />
+    <Compile Include="FwRightMouseClickEventArgs.cs" />
+    <Compile Include="HoldGraphics.cs" />
+    <Compile Include="IbusRootSiteEventHandler.cs" />
+    <Compile Include="IChangeRootObject.cs" />
+    <Compile Include="IEditingCallbacks.cs" />
     <Compile Include="IHeightEstimator.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="IPrintRootSite.cs" />
+    <Compile Include="IRefreshableRoot.cs" />
+    <Compile Include="IRootSite.cs" />
     <Compile Include="IRootSiteSlave.cs" />
+    <Compile Include="ISelectionChangeNotifier.cs" />
+    <Compile Include="ISuppressDefaultKeyboardOnKillFocus.cs" />
+    <Compile Include="LocalLinkArgs.cs" />
+    <Compile Include="OrientationManager.cs" />
+    <Compile Include="PasteStatus.cs" />
+    <Compile Include="PrintRootSite.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="RenderEngineFactory.cs" />
     <Compile Include="RequestSelectionByHelper.cs" />
     <Compile Include="RequestSelectionHelper.cs" />
     <Compile Include="RootSite.cs">
@@ -236,12 +267,25 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>RootSiteStrings.resx</DependentUpon>
     </Compile>
+    <Compile Include="SelectionHelper.cs" />
+    <Compile Include="SelectionRestorer.cs" />
+    <Compile Include="SelInfo.cs" />
+    <Compile Include="SelLimitType.cs" />
+    <Compile Include="SimpleRootSite.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="SpellCheckServices.cs" />
     <Compile Include="SpellCheckStatus.cs" />
     <Compile Include="SpellCorrectMenuItem.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="TextSelInfo.cs" />
+    <Compile Include="TsStringWrapper.cs" />
     <Compile Include="UndoTaskHelper.cs" />
+    <Compile Include="ViewInputManager.cs" />
+    <Compile Include="VwBaseVc.cs" />
+    <Compile Include="VwSelectionArgs.cs" />
+    <Compile Include="WpfInterfacesForMono.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -254,6 +298,10 @@
       <SubType>Designer</SubType>
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>RootSiteStrings.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SimpleRootSite.resx">
+      <DependentUpon>SimpleRootSite.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
@@ -275,6 +323,10 @@
       <ProductName>Windows Installer 3.1</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Resources\HORIZONTAL_IBEAM.CUR" />
+    <Content Include="Resources\PictureNotFound_256x226.bmp" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

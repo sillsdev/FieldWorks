@@ -3,7 +3,13 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Reflection;
+using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 
 [assembly: AssemblyTitle("FieldWorks Base RootSite")]
 
-[assembly: System.Runtime.InteropServices.ComVisible(false)]
+[assembly: ComVisible(false)]
+
+[assembly: InternalsVisibleTo("LanguageExplorerTests")]
+[assembly: InternalsVisibleTo("RootSiteTests")]
+[assembly: InternalsVisibleTo("SimpleRootSiteTests")]

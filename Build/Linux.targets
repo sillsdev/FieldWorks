@@ -231,8 +231,8 @@
 			FirstLine="17A2E876-2968-11E0-8046-0019DBF4566E libManagedComBridge.so COMInterfaces.dll SIL.FieldWorks.Common.COMInterfaces.ManagedPictureFactory"
 			SecondLine="110B7E88-2968-11E0-B493-0019DBF4566E libManagedComBridge.so"/>
 		<!-- ViewInputManager class, ILgTextServices and IViewInputMgr interfaces -->
-		<WriteTextFile TargetFile="$(dir-outputBase)/SimpleRootSite.compmap"
-			FirstLine="830BAF1F-6F84-46EF-B63E-3C1BFDF9E83E libManagedComBridge.so SimpleRootSite.dll SIL.FieldWorks.Common.RootSites.ViewInputManager"
+		<WriteTextFile TargetFile="$(dir-outputBase)/RootSite.compmap"
+			FirstLine="830BAF1F-6F84-46EF-B63E-3C1BFDF9E83E libManagedComBridge.so RootSite.dll SIL.FieldWorks.Common.RootSites.ViewInputManager"
 			SecondLine="5B6303DE-E635-4DD7-A7FC-345BEEF352D8 libManagedComBridge.so"
 			ThirdLine="E41668F7-D506-4C8A-A5D7-FEAE5630797E libManagedComBridge.so"/>
 		<WriteTextFile TargetFile="$(dir-outputBase)/ManagedVwDrawRootBuffered.compmap"

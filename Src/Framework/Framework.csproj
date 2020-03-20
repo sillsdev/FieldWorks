@@ -222,10 +222,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\SIL.LCModel.Utils.dll</HintPath>
     </Reference>
-    <Reference Include="SimpleRootSite, Version=5.5.0.18221, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\Output\Debug\SimpleRootSite.dll</HintPath>
-      <SpecificVersion>False</SpecificVersion>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />

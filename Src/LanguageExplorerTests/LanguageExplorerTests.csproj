@@ -199,10 +199,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Release\SIL.WritingSystems.dll</HintPath>
     </Reference>
-    <Reference Include="SimpleRootSite">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Release\SimpleRootSite.dll</HintPath>
-    </Reference>
     <Reference Include="ECInterfaces" Condition="'$(OS)'!='Unix'">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\ECInterfaces.dll</HintPath>
