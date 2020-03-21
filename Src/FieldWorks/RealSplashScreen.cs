@@ -20,7 +20,7 @@ namespace SIL.FieldWorks
 	/// The real splash screen that the user sees. It gets created and handled by FwSplashScreen
 	/// and runs in a separate thread.
 	/// </summary>
-	internal class RealSplashScreen : Form, IProgress
+	internal sealed class RealSplashScreen : Form, IProgress
 	{
 		#region Events
 		event CancelEventHandler IProgress.Canceling
@@ -44,7 +44,7 @@ namespace SIL.FieldWorks
 		private PictureBox m_picSilLogo;
 		private ProgressLine progressLine;
 		private PictureBox marqueeGif;
-		private bool m_fDisplaySILInfo;
+		private readonly bool m_fDisplaySILInfo;
 		private Label m_lblSuiteName;
 
 		/// <summary>Used for locking the splash screen</summary>
@@ -74,7 +74,7 @@ namespace SIL.FieldWorks
 		}
 
 		/// <summary />
-		public RealSplashScreen(bool fDisplaySILInfo) : this()
+		internal RealSplashScreen(bool fDisplaySILInfo) : this()
 		{
 			m_fDisplaySILInfo = fDisplaySILInfo;
 			m_picSilLogo.Visible = fDisplaySILInfo;
@@ -229,12 +229,12 @@ namespace SIL.FieldWorks
 		}
 		#endregion
 
-		#region Public Methods
+		#region Internal Methods
 		/// <summary>
 		/// Activates (brings back to the top) the splash screen (assuming it is already visible
 		/// and the application showing it is the active application).
 		/// </summary>
-		public void RealActivate()
+		internal void RealActivate()
 		{
 			BringToFront();
 			Refresh();
@@ -243,7 +243,7 @@ namespace SIL.FieldWorks
 		/// <summary>
 		/// Closes the splash screen
 		/// </summary>
-		public void RealClose()
+		internal void RealClose()
 		{
 			m_timer?.Change(Timeout.Infinite, Timeout.Infinite);
 			Close();
@@ -253,7 +253,7 @@ namespace SIL.FieldWorks
 		/// Sets the assembly of the product-specific EXE (e.g., TE.exe or FLEx.exe).
 		/// .Net callers should set this.
 		/// </summary>
-		public void SetProductExecutableAssembly(Assembly value)
+		internal void SetProductExecutableAssembly(Assembly value)
 		{
 			m_productExecutableAssembly = value;
 			InitControlLabels();
@@ -265,6 +265,8 @@ namespace SIL.FieldWorks
 		/// Shows the splash screen
 		/// </summary>
 		internal EventWaitHandle WaitHandle { get; set; }
+
+		internal IProgress AsIProgress => this;
 		#endregion
 
 		#region Non-public methods
@@ -283,7 +285,7 @@ namespace SIL.FieldWorks
 		/// <summary>
 		/// Initialize text of controls prior to display
 		/// </summary>
-		protected void InitControlLabels()
+		private void InitControlLabels()
 		{
 			try
 			{
@@ -307,7 +309,7 @@ namespace SIL.FieldWorks
 		/// <summary>
 		/// Tasks needing to be done when Window is being opened: Set window position.
 		/// </summary>
-		private void SetPosition(object obj, System.EventArgs e)
+		private void SetPosition(object obj, EventArgs e)
 		{
 			Left = (ScreenHelper.PrimaryScreen.WorkingArea.Width - Width) / 2;
 			Top = (ScreenHelper.PrimaryScreen.WorkingArea.Height - Height) / 2;
@@ -402,7 +404,7 @@ namespace SIL.FieldWorks
 		/// <summary>
 		/// Gets or sets the message to display to indicate startup activity on the splash screen
 		/// </summary>
-		public string Message
+		string IProgress.Message
 		{
 			get => lblMessage.Text;
 			set
@@ -421,18 +423,18 @@ namespace SIL.FieldWorks
 		/// Gets an object to be used for ensuring that required tasks are invoked on the main
 		/// UI thread.
 		/// </summary>
-		public ISynchronizeInvoke SynchronizeInvoke => this;
+		ISynchronizeInvoke IProgress.SynchronizeInvoke => this;
 
 		/// <summary>
 		/// Gets the form displaying the progress (used for message box owners, etc). If the progress
 		/// is not associated with a visible Form, then this returns its owning form, if any.
 		/// </summary>
-		public Form Form => this;
+		private Form Form => this;
 
 		/// <summary>
 		/// Gets or sets a value indicating whether this progress is indeterminate.
 		/// </summary>
-		public bool IsIndeterminate
+		bool IProgress.IsIndeterminate
 		{
 			get => marqueeGif.Visible;
 			set => marqueeGif.Visible = value;
@@ -442,7 +444,7 @@ namespace SIL.FieldWorks
 		/// Gets or sets a value indicating whether the opertation executing on the separate thread
 		/// can be cancelled by a different thread (typically the main UI thread).
 		/// </summary>
-		public bool AllowCancel
+		bool IProgress.AllowCancel
 		{
 			get => false;
 			set => throw new NotSupportedException();
@@ -451,7 +453,7 @@ namespace SIL.FieldWorks
 		/// <summary>
 		/// Gets or sets a Position
 		/// </summary>
-		public int Position
+		int IProgress.Position
 		{
 			get => progressLine.Value;
 			set
@@ -474,7 +476,7 @@ namespace SIL.FieldWorks
 		/// <summary>
 		/// Gets or sets the minimum
 		/// </summary>
-		public int Minimum
+		int IProgress.Minimum
 		{
 			get => progressLine.MinValue;
 			set => progressLine.MinValue = value;
@@ -483,7 +485,7 @@ namespace SIL.FieldWorks
 		/// <summary>
 		/// Gets or sets the maximum
 		/// </summary>
-		public int Maximum
+		int IProgress.Maximum
 		{
 			get => progressLine.MaxValue;
 			set => progressLine.MaxValue = value;
@@ -492,7 +494,7 @@ namespace SIL.FieldWorks
 		/// <summary>
 		/// Member Step
 		/// </summary>
-		public void Step(int nStepAmt)
+		void IProgress.Step(int nStepAmt)
 		{
 			if (nStepAmt > 0)
 			{
@@ -507,7 +509,7 @@ namespace SIL.FieldWorks
 		/// <summary>
 		/// Get the title of the progress display window.
 		/// </summary>
-		public string Title
+		string IProgress.Title
 		{
 			get => Text;
 			set => Text = value;
@@ -516,7 +518,7 @@ namespace SIL.FieldWorks
 		/// <summary>
 		/// Gets or sets a StepSize
 		/// </summary>
-		public int StepSize
+		int IProgress.StepSize
 		{
 			get => progressLine.Step;
 			set => progressLine.Step = value;

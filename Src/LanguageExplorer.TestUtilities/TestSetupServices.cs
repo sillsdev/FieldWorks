@@ -51,8 +51,7 @@ namespace LanguageExplorer.TestUtilities
 			}
 			if (includeFwApplicationSettings)
 			{
-				var appSettings = new TestFwApplicationSettings();
-				propertyTable.SetProperty(FwUtils.AppSettings, appSettings);
+				propertyTable.SetProperty(FwUtils.AppSettings, new TestFwApplicationSettings());
 			}
 			return flexComponentParameters;
 		}

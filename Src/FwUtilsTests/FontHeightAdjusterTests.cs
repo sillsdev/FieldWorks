@@ -21,7 +21,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 	public class FontHeightAdjusterTests
 	{
 		#region Data Members
-		TestFwStylesheet m_stylesheet;
+		IVwStylesheet m_stylesheet;
 		WritingSystemManager m_wsManager;
 		int m_hvoGermanWs;
 		int m_hvoEnglishWs;
@@ -67,7 +67,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			fo.writingSystem = m_hvoGermanWs;
 			fo.fontSize = 13;
 			fontOverrides.Add(fo);
-			m_stylesheet.OverrideFontsForWritingSystems("StyleA", fontOverrides);
+			((TestFwStylesheet)m_stylesheet).OverrideFontsForWritingSystems("StyleA", fontOverrides);
 
 			fontOverrides.Clear();
 			fo.writingSystem = m_hvoEnglishWs;
@@ -76,7 +76,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			fo.writingSystem = m_hvoGermanWs;
 			fo.fontSize = 56;
 			fontOverrides.Add(fo);
-			m_stylesheet.OverrideFontsForWritingSystems("StyleB", fontOverrides);
+			((TestFwStylesheet)m_stylesheet).OverrideFontsForWritingSystems("StyleB", fontOverrides);
 		}
 
 		/// <summary>

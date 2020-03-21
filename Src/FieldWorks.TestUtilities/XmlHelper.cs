@@ -14,7 +14,7 @@ namespace FieldWorks.TestUtilities
 	/// <summary>
 	/// XmlHelper contains methods to help when testing with XmlDocuments.
 	/// </summary>
-	public static class XmlHelper
+	internal static class XmlHelper
 	{
 		/// <summary>
 		/// Compares the XML documents and reports where the actual XML document differs from
@@ -25,7 +25,7 @@ namespace FieldWorks.TestUtilities
 		/// <param name="strDifference">A string describing the difference between the expected
 		/// and actual nodes</param>
 		/// <returns><c>true</c> if nodes are the same; <c>false</c> otherwise</returns>
-		public static bool CompareXmlNodes(XmlNodeList expected, XmlNodeList actual, out string strDifference)
+		internal static bool CompareXmlNodes(XmlNodeList expected, XmlNodeList actual, out string strDifference)
 		{
 			if (expected.Count != actual.Count)
 			{
@@ -100,7 +100,7 @@ namespace FieldWorks.TestUtilities
 		/// <returns>
 		/// 	<c>true</c> if the attributes are the same; <c>false</c> otherwise
 		/// </returns>
-		public static bool CompareXmlAttributes(string owningNodeName, XmlAttributeCollection expected, XmlAttributeCollection actual, out string strDifference)
+		internal static bool CompareXmlAttributes(string owningNodeName, XmlAttributeCollection expected, XmlAttributeCollection actual, out string strDifference)
 		{
 			strDifference = string.Empty;
 			var expectedCount = expected?.Count ?? 0;
@@ -144,7 +144,7 @@ namespace FieldWorks.TestUtilities
 		/// The StringBuilder argument provides useful information for test output when the
 		/// first difference is discovered.
 		/// </remarks>
-		public static bool EqualXml(XElement xeExpected, XElement xeActual, StringBuilder sb)
+		internal static bool EqualXml(XElement xeExpected, XElement xeActual, StringBuilder sb)
 		{
 			if (xeExpected.Name != xeActual.Name)
 			{

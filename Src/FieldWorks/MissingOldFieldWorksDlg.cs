@@ -14,7 +14,7 @@ namespace SIL.FieldWorks
 	/// This dialog is popped up when the user tries to restore/migrate an old project, but the
 	/// old version of FieldWorks (or its special SQL Server instance) is not installed.
 	/// </summary>
-	public partial class MissingOldFieldWorksDlg : Form
+	internal sealed partial class MissingOldFieldWorksDlg : Form
 	{
 		/// <summary />
 		private MissingOldFieldWorksDlg()
@@ -23,7 +23,7 @@ namespace SIL.FieldWorks
 		}
 
 		/// <summary />
-		public MissingOldFieldWorksDlg(RestoreProjectSettings settings, bool fHaveFw60, bool fHaveSqlSvr) : this()
+		internal MissingOldFieldWorksDlg(RestoreProjectSettings settings, bool fHaveFw60, bool fHaveSqlSvr) : this()
 		{
 			Debug.Assert(!fHaveFw60 || !fHaveSqlSvr);
 			if (fHaveFw60)

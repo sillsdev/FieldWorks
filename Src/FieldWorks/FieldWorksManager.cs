@@ -18,27 +18,27 @@ namespace SIL.FieldWorks
 	/// there is only one FieldWorks object in each process.
 	/// </summary>
 	[Export(typeof(IFieldWorksManager))]
-	internal class FieldWorksManager : IFieldWorksManager
+	internal sealed class FieldWorksManager : IFieldWorksManager
 	{
 		#region IFieldWorksManager Members
 
 		/// <inheritdoc />
-		public LcmCache Cache => FieldWorks.Cache;
+		LcmCache IFieldWorksManager.Cache => FieldWorks.Cache;
 
 		/// <inheritdoc />
-		public void ShutdownApp(IFlexApp app)
+		void IFieldWorksManager.ShutdownApp(IFlexApp app)
 		{
 			FieldWorks.ShutdownApp(app);
 		}
 
 		/// <inheritdoc />
-		public void ExecuteAsync<T>(Action<T> action, T param1)
+		void IFieldWorksManager.ExecuteAsync<T>(Action<T> action, T param1)
 		{
 			FieldWorks.ThreadHelper.InvokeAsync(action, param1);
 		}
 
 		/// <inheritdoc />
-		public void OpenNewWindowForApp(IFwMainWnd currentWindow)
+		void IFieldWorksManager.OpenNewWindowForApp(IFwMainWnd currentWindow)
 		{
 			if (!FieldWorks.CreateAndInitNewMainWindow(currentWindow, false))
 			{
@@ -47,7 +47,7 @@ namespace SIL.FieldWorks
 		}
 
 		/// <inheritdoc />
-		public void ChooseLangProject()
+		void IFieldWorksManager.ChooseLangProject()
 		{
 			var openedProject = FieldWorks.ChooseLangProject();
 			if (openedProject != null && !FieldWorks.OpenExistingProject(openedProject))
@@ -57,7 +57,7 @@ namespace SIL.FieldWorks
 		}
 
 		/// <inheritdoc />
-		public void CreateNewProject()
+		void IFieldWorksManager.CreateNewProject()
 		{
 			var newProject = FieldWorks.CreateNewProject();
 			if (newProject != null && !FieldWorks.OpenNewProject(newProject))
@@ -67,43 +67,43 @@ namespace SIL.FieldWorks
 		}
 
 		/// <inheritdoc />
-		public void DeleteProject(IHelpTopicProvider helpTopicProvider, Form dialogOwner)
+		void IFieldWorksManager.DeleteProject(IHelpTopicProvider helpTopicProvider, Form dialogOwner)
 		{
 			FieldWorks.DeleteProject(dialogOwner, helpTopicProvider);
 		}
 
 		/// <inheritdoc />
-		public string BackupProject(Form dialogOwner)
+		string IFieldWorksManager.BackupProject(Form dialogOwner)
 		{
 			return FieldWorks.BackupProject(dialogOwner);
 		}
 
 		/// <inheritdoc />
-		public void RestoreProject(IHelpTopicProvider helpTopicProvider, Form dialogOwner)
+		void IFieldWorksManager.RestoreProject(IHelpTopicProvider helpTopicProvider, Form dialogOwner)
 		{
 			FieldWorks.RestoreProject(dialogOwner, helpTopicProvider);
 		}
 
 		/// <inheritdoc />
-		public void FileProjectLocation(IApp app, Form dialogOwner)
+		void IFieldWorksManager.FileProjectLocation(IApp app, Form dialogOwner)
 		{
-			FieldWorks.FileProjectLocation(dialogOwner, app, Cache);
+			FieldWorks.FileProjectLocation(dialogOwner, app, FieldWorks.Cache);
 		}
 
 		/// <inheritdoc />
-		public bool RenameProject(string newName)
+		bool IFieldWorksManager.RenameProject(string newName)
 		{
 			return FieldWorks.RenameProject(newName);
 		}
 
 		/// <inheritdoc />
-		public void HandleLinkRequest(FwAppArgs link)
+		void IFieldWorksManager.HandleLinkRequest(FwAppArgs link)
 		{
 			FieldWorks.HandleLinkRequest(link);
 		}
 
 		/// <inheritdoc />
-		public IFlexApp ReopenProject(string project, FwAppArgs app)
+		IFlexApp IFieldWorksManager.ReopenProject(string project, FwAppArgs app)
 		{
 			return FieldWorks.ReopenProject(project, app);
 		}

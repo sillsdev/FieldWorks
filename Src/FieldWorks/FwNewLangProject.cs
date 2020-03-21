@@ -18,12 +18,12 @@ namespace SIL.FieldWorks
 	/// <summary>
 	/// FwNewLangProject dialog.
 	/// </summary>
-	public partial class FwNewLangProject : Form
+	internal sealed partial class FwNewLangProject : Form
 	{
 		#region Data members
 		private readonly WritingSystemManager m_wsManager;
-		private IHelpTopicProvider m_helpTopicProvider;
-		private FwNewLangProjectModel m_model;
+		private readonly IHelpTopicProvider m_helpTopicProvider;
+		private readonly FwNewLangProjectModel m_model;
 
 		#endregion
 
@@ -32,19 +32,19 @@ namespace SIL.FieldWorks
 		/// <summary>
 		/// Get the database name from the dialog
 		/// </summary>
-		public string DatabaseName { get; private set; }
+		internal string DatabaseName { get; private set; }
 
 		/// <summary>
 		/// Get the value indicating whether a new project should be created.
 		/// When there is a project with an identical name, the user has the option of opening
 		/// the existing project. In this case, this property has a value of false.
 		/// </summary>
-		public bool IsProjectNew { get; } = true;
+		internal bool IsProjectNew { get; } = true;
 
 		#endregion
 
 		/// <summary />
-		public FwNewLangProject(FwNewLangProjectModel model, IHelpTopicProvider helpTopicProvider = null)
+		internal FwNewLangProject(FwNewLangProjectModel model, IHelpTopicProvider helpTopicProvider = null)
 		{
 			Logger.WriteEvent("Opening New Language Project dialog");
 			//
@@ -197,7 +197,7 @@ namespace SIL.FieldWorks
 		/// <summary>
 		/// Shows the dialog as a modal dialog
 		/// </summary>
-		public DialogResult DisplayDialog(Form f)
+		internal DialogResult DisplayDialog(Form f)
 		{
 			// We can't create a new database if the folder where it will go is
 			// Encrypted or compressed or nonexistent, so check for these first:
@@ -209,7 +209,7 @@ namespace SIL.FieldWorks
 		/// If it is not found, offer to let the user choose a new one.
 		/// Return true if we end up with a valid data directory.
 		/// </summary>
-		public static bool CheckProjectDirectory(Form f, IHelpTopicProvider helpTopicProvider)
+		internal static bool CheckProjectDirectory(Form f, IHelpTopicProvider helpTopicProvider)
 		{
 			string warning = null;
 			var dataDirectory = FwDirectoryFinder.ProjectsDirectory;

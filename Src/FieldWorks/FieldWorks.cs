@@ -109,10 +109,6 @@ namespace SIL.FieldWorks
 
 		#region Main Method and Initialization Methods
 
-		/// <summary></summary>
-		[DllImport("kernel32.dll")]
-		public static extern IntPtr LoadLibrary(string fileName);
-
 		/// <summary>
 		/// The main entry point for the FieldWorks executable.
 		/// </summary>
@@ -358,7 +354,7 @@ namespace SIL.FieldWorks
 					// program from hanging around sometimes after it supposedly exits.
 					// Doing the shutdown here seems cleaner than using an ApplicationExit
 					// delegate.
-					var foo = new GeckoWebBrowser();
+					var dummy = new GeckoWebBrowser();
 					Xpcom.Shutdown(); // REVIEW pH 2016.07: likely not necessary with Gecko45
 				}
 			}
@@ -511,7 +507,7 @@ namespace SIL.FieldWorks
 			}
 			// If that doesn't exist, try the current system UI locale set at program startup
 			// This is typically en-US, but we want this to match en since our English localizations use en.
-			if (string.IsNullOrEmpty(locale) && Thread.CurrentThread.CurrentUICulture != null)
+			if (string.IsNullOrEmpty(locale))
 			{
 				locale = Thread.CurrentThread.CurrentUICulture.Name;
 				if (locale.StartsWith("en-"))
@@ -575,14 +571,14 @@ namespace SIL.FieldWorks
 			// name of the folder is the culture ID for which the resources apply. The
 			// name of the folder is stripped from the path and used to add a language
 			// to the list.
-			return rgsDirs.Where(dir => Directory.GetFiles(dir, "*.resources.dll").Length > 0).Select(dir => Path.GetFileName(dir)).ToList();
+			return rgsDirs.Where(dir => Directory.GetFiles(dir, "*.resources.dll").Length > 0).Select(Path.GetFileName).ToList();
 		}
 
 		/// <summary>
 		/// Dummy method to be used for InvokeOnEventsThread which is used as a way to initialize
 		/// the Broadcast window and prevent errors on shutdown.
 		/// </summary>
-		public static void DoNothing()
+		private static void DoNothing()
 		{
 		}
 		#endregion
@@ -619,7 +615,7 @@ namespace SIL.FieldWorks
 		/// <summary>
 		/// Gets the project associated with this FieldWorks process.
 		/// </summary>
-		internal static ProjectId Project { get; private set; }
+		private static ProjectId Project { get; set; }
 
 		/// <summary>
 		/// Gets the cache used by this FieldWorks instance.
@@ -978,9 +974,9 @@ namespace SIL.FieldWorks
 		/// </summary>
 		private static void HandleUnhandledException(object sender, UnhandledExceptionEventArgs e)
 		{
-			if (e.ExceptionObject is Exception)
+			if (e.ExceptionObject is Exception exception)
 			{
-				DisplayError(e.ExceptionObject as Exception, e.IsTerminating);
+				DisplayError(exception, e.IsTerminating);
 			}
 			else
 			{
@@ -1064,7 +1060,7 @@ namespace SIL.FieldWorks
 				// Make sure that the program can be properly shut down after displaying the exception. (FWR-3179)
 				ResetStateForForcedShutdown();
 
-				if (exception is ExternalException && (uint)(((ExternalException)exception).ErrorCode) == 0x8007000E) // E_OUTOFMEMORY
+				if (exception is ExternalException externalException && (uint)externalException.ErrorCode == 0x8007000E) // E_OUTOFMEMORY
 				{
 					Trace.Assert(false, ResourceHelper.GetResourceString("kstidMiscError"), ResourceHelper.GetResourceString("kstidOutOfMemory"));
 					return true;
@@ -1201,7 +1197,7 @@ namespace SIL.FieldWorks
 				return;
 			}
 			// Set the splash screen message
-			s_splashScreen.Message = msg;
+			((IThreadedProgress)s_splashScreen).Message = msg;
 			s_splashScreen.Refresh();
 		}
 
@@ -1664,9 +1660,9 @@ namespace SIL.FieldWorks
 								{
 									Project = projectToTry; // Window is open on this project, we must not try to initialize it again.
 									var mainWindow = Form.ActiveForm;
-									if (mainWindow is IFwMainWnd)
+									if (mainWindow is IFwMainWnd fwMainWnd)
 									{
-										((IFwMainWnd)mainWindow).Publisher.Publish(new PublisherParameterObject("SFMImport"));
+										fwMainWnd.Publisher.Publish(new PublisherParameterObject("SFMImport"));
 									}
 									else
 									{
@@ -2555,9 +2551,9 @@ namespace SIL.FieldWorks
 					// e.g. "C:\\ProgramData\\SIL\\FieldWorks"
 					oldDir = FwDirectoryFinder.CommonAppDataFolder("FieldWorks");
 				}
-				oldDir = oldDir.TrimEnd(new[] { Path.PathSeparator });
+				oldDir = oldDir.TrimEnd(Path.PathSeparator);
 				var newDir = app.Cache.LangProject.LinkedFilesRootDir;
-				newDir = newDir.TrimEnd(new[] { Path.PathSeparator });
+				newDir = newDir.TrimEnd(Path.PathSeparator);
 				// This isn't foolproof since the currently open project on the 9th time may
 				// not even be one that was migrated. But it will probably work for most users.
 				if (newDir.ToLowerInvariant() != oldDir.ToLowerInvariant())
@@ -3379,7 +3375,7 @@ namespace SIL.FieldWorks
 			ErrorReporter.AddProperty("UserDomainName", Environment.UserDomainName);
 			ErrorReporter.AddProperty("UserName", Environment.UserName);
 			ErrorReporter.AddProperty("SystemDirectory", Environment.SystemDirectory);
-			ErrorReporter.AddProperty("Culture", System.Globalization.CultureInfo.CurrentCulture.ToString());
+			ErrorReporter.AddProperty("Culture", CultureInfo.CurrentCulture.ToString());
 			using (var bm = new Bitmap(10, 10))
 			{
 				ErrorReporter.AddProperty("ScreenDpiX", bm.HorizontalResolution.ToString());
@@ -3828,6 +3824,436 @@ namespace SIL.FieldWorks
 				var text = Properties.Resources.ksDeleteAndReportCorruptSettingsFile;
 				MessageBox.Show(text, caption, MessageBoxButtons.OK, MessageBoxIcon.Warning);
 			}
+		}
+
+		/// <summary>
+		/// FW Splash Screen
+		/// </summary>
+		private sealed class FwSplashScreen : IThreadedProgress, IDisposable
+		{
+			#region Events
+			event CancelEventHandler IProgress.Canceling
+			{
+				add { }
+				remove { }
+			}
+			#endregion
+
+			#region Data members
+			private delegate void SetStringPropDelegate(string value);
+			private delegate void SetAssemblyPropDelegate(Assembly value);
+			private delegate string GetStringPropDelegate();
+			private delegate void SetIntPropDelegate(int value);
+			private delegate int GetIntPropDelegate();
+
+			private bool m_DisplaySILInfo;
+			private bool m_fNoUi;
+			private Thread m_thread;
+			private RealSplashScreen m_splashScreen;
+			private EventWaitHandle m_waitHandle;
+			private IThreadedProgress AsIThreadedProgress => this;
+			#endregion
+
+			#region Disposable stuff
+			/// <summary />
+			~FwSplashScreen()
+			{
+				Dispose(false);
+			}
+
+			/// <summary />
+			private bool IsDisposed { get; set; }
+
+			/// <summary />
+			public void Dispose()
+			{
+				Dispose(true);
+				GC.SuppressFinalize(this);
+			}
+
+			/// <summary />
+			private void Dispose(bool fDisposing)
+			{
+				Debug.WriteLineIf(!fDisposing, "****** Missing Dispose() call for " + GetType() + ". ****** ");
+				if (IsDisposed)
+				{
+					// No need to run it more than once.
+					return;
+				}
+				if (fDisposing)
+				{
+					// dispose managed objects
+					Close();
+					var disposable = m_waitHandle as IDisposable;
+					disposable?.Dispose();
+				}
+				m_waitHandle = null;
+				IsDisposed = true;
+			}
+			#endregion
+
+			#region Internal Methods
+			/// <summary>
+			/// Shows the splash screen
+			/// </summary>
+			/// <param name="fDisplaySILInfo">if set to <c>false</c>, any SIL-identifying information
+			/// will be hidden.</param>
+			/// <param name="fNoUi">if set to <c>true</c> no UI is to be shown (i.e., we aren't
+			/// really going to show the splash screen).</param>
+			internal void Show(bool fDisplaySILInfo, bool fNoUi)
+			{
+				if (m_thread != null)
+				{
+					return;
+				}
+
+				m_DisplaySILInfo = fDisplaySILInfo;
+				m_fNoUi = fNoUi;
+				m_waitHandle = new EventWaitHandle(false, EventResetMode.AutoReset);
+
+				if (Platform.IsMono)
+				{
+					// mono winforms can't create items not on main thread.
+					StartSplashScreen(); // Create Modeless dialog on Main GUI thread
+				}
+				else if (fNoUi)
+				{
+					StartSplashScreen();
+				}
+				else
+				{
+					m_thread = new Thread(StartSplashScreen) { IsBackground = true };
+					m_thread.SetApartmentState(ApartmentState.STA);
+					m_thread.Name = "SplashScreen";
+					// Copy the UI culture from the main thread to the splash screen thread.
+					m_thread.CurrentUICulture = Thread.CurrentThread.CurrentUICulture;
+					m_thread.Start();
+					m_waitHandle.WaitOne();
+				}
+
+				Debug.Assert(m_splashScreen != null);
+				lock (m_splashScreen.m_Synchronizer)
+				{
+					m_splashScreen.Invoke(new SetAssemblyPropDelegate(m_splashScreen.SetProductExecutableAssembly), ProductExecutableAssembly);
+				}
+				AsIThreadedProgress.Message = string.Empty;
+			}
+
+			/// <summary>
+			/// Closes the splash screen
+			/// </summary>
+			internal void Close()
+			{
+				if (m_splashScreen == null)
+				{
+					return;
+				}
+
+				lock (m_splashScreen.m_Synchronizer)
+				{
+					try
+					{
+						m_splashScreen.Invoke(new MethodInvoker(m_splashScreen.RealClose));
+					}
+					catch
+					{
+						// Something bad happened, but we are closing anyways :)
+					}
+				}
+				if (!Platform.IsMono)
+				{
+					m_thread?.Join();
+				}
+				lock (m_splashScreen.m_Synchronizer)
+				{
+					m_splashScreen.Dispose();
+					m_splashScreen = null;
+				}
+				if (!Platform.IsMono)
+				{
+					m_thread = null;
+				}
+			}
+
+			/// <summary>
+			/// Refreshes the display of the splash screen
+			/// </summary>
+			internal void Refresh()
+			{
+				Debug.Assert(m_splashScreen != null);
+				lock (m_splashScreen.m_Synchronizer)
+				{
+					m_splashScreen.Invoke(new MethodInvoker(m_splashScreen.Refresh));
+				}
+			}
+			#endregion
+
+			#region Internal properties
+			/// <summary>
+			/// The assembly of the product-specific EXE (e.g., TE.exe or FLEx.exe).
+			/// .Net callers should set this.
+			/// </summary>
+			internal Assembly ProductExecutableAssembly { get; set; }
+			#endregion
+
+			#region IProgress Members
+			/// <summary>
+			/// Member Step
+			/// </summary>
+			void IProgress.Step(int nStepAmt)
+			{
+				lock (m_splashScreen.m_Synchronizer)
+				{
+					m_splashScreen.Invoke(new SetIntPropDelegate(m_splashScreen.AsIProgress.Step), nStepAmt);
+				}
+			}
+
+			/// <summary>
+			/// Gets or sets the minimum value of the progress bar.
+			/// </summary>
+			int IProgress.Minimum
+			{
+				get
+				{
+					lock (m_splashScreen.m_Synchronizer)
+					{
+						int MinMethod() => m_splashScreen.AsIProgress.Minimum;
+						return (int)m_splashScreen.Invoke((GetIntPropDelegate)MinMethod);
+					}
+				}
+				set
+				{
+					lock (m_splashScreen.m_Synchronizer)
+					{
+						void MinMethod(int min)
+						{
+							m_splashScreen.AsIProgress.Minimum = min;
+						}
+						m_splashScreen.Invoke((SetIntPropDelegate)MinMethod, value);
+					}
+				}
+			}
+
+			/// <summary>
+			/// Gets or sets the maximum value of the progress bar.
+			/// </summary>
+			int IProgress.Maximum
+			{
+				get
+				{
+					lock (m_splashScreen.m_Synchronizer)
+					{
+						int MaxMethod() => m_splashScreen.AsIProgress.Maximum;
+						return (int)m_splashScreen.Invoke((GetIntPropDelegate)MaxMethod);
+					}
+				}
+				set
+				{
+					lock (m_splashScreen.m_Synchronizer)
+					{
+						void MaxMethod(int max)
+						{
+							m_splashScreen.AsIProgress.Maximum = max;
+						}
+						m_splashScreen.Invoke((SetIntPropDelegate)MaxMethod, value);
+					}
+				}
+			}
+
+			/// <summary>
+			/// The message to display to indicate startup activity on the splash screen
+			/// </summary>
+			string IProgress.Message
+			{
+				get
+				{
+					lock (m_splashScreen.m_Synchronizer)
+					{
+						string Method() => m_splashScreen.AsIProgress.Message;
+						return (string)m_splashScreen.Invoke((GetStringPropDelegate)Method);
+					}
+				}
+				set
+				{
+					lock (m_splashScreen.m_Synchronizer)
+					{
+						m_splashScreen.Invoke((SetStringPropDelegate)SetMethod, value);
+					}
+					void SetMethod(string val)
+					{
+						m_splashScreen.AsIProgress.Message = val;
+					}
+				}
+			}
+
+			/// <summary>
+			/// Set the current position of the progress bar. This should be within the limits set by
+			/// SetRange. If it is not, then the value is set to either the minimum or the maximum.
+			/// </summary>
+			int IProgress.Position
+			{
+				get
+				{
+					lock (m_splashScreen.m_Synchronizer)
+					{
+						int Method() => m_splashScreen.AsIProgress.Position;
+						return (int)m_splashScreen.Invoke((GetIntPropDelegate)Method);
+					}
+				}
+				set
+				{
+					lock (m_splashScreen.m_Synchronizer)
+					{
+						void Method(int val)
+						{
+							m_splashScreen.AsIProgress.Position = val;
+						}
+						m_splashScreen.Invoke((SetIntPropDelegate)Method, value);
+					}
+				}
+			}
+
+			/// <summary>
+			/// Set the size of the step increment used by Step.
+			/// </summary>
+			int IProgress.StepSize
+			{
+				get
+				{
+					lock (m_splashScreen.m_Synchronizer)
+					{
+						int Method() => m_splashScreen.AsIProgress.StepSize;
+						return (int)m_splashScreen.Invoke((GetIntPropDelegate)Method);
+					}
+				}
+				set
+				{
+					lock (m_splashScreen.m_Synchronizer)
+					{
+						void Method(int val)
+						{
+							m_splashScreen.AsIProgress.StepSize = val;
+						}
+						m_splashScreen.Invoke((SetIntPropDelegate)Method, value);
+					}
+				}
+			}
+
+			/// <summary>
+			/// Set the title of the progress display window.
+			/// </summary>
+			string IProgress.Title
+			{
+				get => throw new Exception("The property 'Title' is not implemented.");
+				set { }
+			}
+
+			/// <summary>
+			/// Gets an object to be used for ensuring that required tasks are invoked on the main
+			/// UI thread.
+			/// </summary>
+			ISynchronizeInvoke IProgress.SynchronizeInvoke => m_splashScreen;
+
+			/// <summary>
+			/// Gets the progress as a form (used for message box owners, etc).
+			/// </summary>
+			public Form Form => m_splashScreen;
+
+			/// <summary>
+			/// Gets or sets a value indicating whether this progress is indeterminate.
+			/// </summary>
+			bool IProgress.IsIndeterminate
+			{
+				get => m_splashScreen.InvokeRequired ? (bool)m_splashScreen.Invoke((Func<bool>)(() => m_splashScreen.AsIProgress.IsIndeterminate)) : m_splashScreen.AsIProgress.IsIndeterminate;
+				set
+				{
+					if (m_splashScreen.InvokeRequired)
+					{
+						m_splashScreen.Invoke((Action<bool>)(b => m_splashScreen.AsIProgress.IsIndeterminate = b), value);
+					}
+					else
+					{
+						m_splashScreen.AsIProgress.IsIndeterminate = value;
+					}
+				}
+			}
+
+			/// <summary>
+			/// Gets or sets a value indicating whether the operation executing on the separate thread
+			/// can be cancelled by a different thread (typically the main UI thread).
+			/// </summary>
+			bool IProgress.AllowCancel
+			{
+				get => false;
+				set => throw new NotSupportedException();
+			}
+
+			/// <summary />
+			bool IThreadedProgress.IsCanceling => false;
+			#endregion
+
+			#region private methods
+			/// <summary>
+			/// Starts the splash screen.
+			/// </summary>
+			private void StartSplashScreen()
+			{
+				m_splashScreen = new RealSplashScreen(m_DisplaySILInfo) { WaitHandle = m_waitHandle };
+				if (m_fNoUi)
+				{
+					var dummy = m_splashScreen.Handle; // force handle creation.
+				}
+				else if (Platform.IsMono)
+				{
+					// Mono Winforms can't create Forms that are not on the Main thread.
+					m_splashScreen.CreateControl();
+					m_splashScreen.AsIProgress.Message = string.Empty;
+					m_splashScreen.Show();
+				}
+				else
+				{
+					m_splashScreen.ShowDialog();
+				}
+			}
+			#endregion
+
+			#region IThreadedProgress implementation
+
+			/// <summary>
+			/// Gets a value indicating whether the task has been canceled.
+			/// </summary>
+			public bool Canceled => false;
+
+			/// <summary>
+			/// If progress dialog is already showing, we run the background task using it (without
+			/// creating a separate thread). Otherwise we display a new progress dialog as a modal
+			/// dialog and start the background task in a separate thread.
+			/// </summary>
+			/// <param name="backgroundTask">The background task.</param>
+			/// <param name="parameters">The parameters that will be passed to the background task</param>
+			/// <returns>
+			/// The return value from the background thread.
+			/// </returns>
+			public object RunTask(Func<IThreadedProgress, object[], object> backgroundTask, params object[] parameters)
+			{
+				return RunTask(true, backgroundTask, parameters);
+			}
+
+			/// <summary>
+			/// Displays the progress dialog as a modal dialog and starts the background task.
+			/// </summary>
+			/// <param name="fDisplayUi">set to <c>true</c> to display the progress dialog,
+			/// <c>false</c> to run without UI.</param>
+			/// <param name="backgroundTask">The background task.</param>
+			/// <param name="parameters">The parameters that will be passed to the background task</param>
+			/// <returns>
+			/// The return value from the background thread.
+			/// </returns>
+			public object RunTask(bool fDisplayUi, Func<IThreadedProgress, object[], object> backgroundTask, params object[] parameters)
+			{
+				return backgroundTask(this, parameters);
+			}
+			#endregion
 		}
 	}
 }

@@ -21,7 +21,7 @@ namespace FieldWorks.TestUtilities.Tests
 		[Test]
 		public void TestAddAndRetrieveStyle()
 		{
-			var stylesheet = new TestFwStylesheet();
+			IVwStylesheet stylesheet = new TestFwStylesheet();
 			var hvoNewStyle = stylesheet.MakeNewStyle();
 			stylesheet.PutStyle("FirstStyle", "bls", hvoNewStyle, 0, hvoNewStyle, 0, false, false, null);
 			Assert.AreEqual(hvoNewStyle, stylesheet.get_NthStyle(0));
@@ -55,7 +55,7 @@ namespace FieldWorks.TestUtilities.Tests
 		[Test]
 		public void TestGetNextStyle()
 		{
-			var stylesheet = new TestFwStylesheet();
+			IVwStylesheet stylesheet = new TestFwStylesheet();
 			var hvoNewStyle1 = stylesheet.MakeNewStyle();
 			stylesheet.PutStyle("FirstStyle", "bla", hvoNewStyle1, 0, 0, 0, false, false, null);
 			var hvoNewStyle2 = stylesheet.MakeNewStyle();
@@ -70,7 +70,7 @@ namespace FieldWorks.TestUtilities.Tests
 		[Test]
 		public void TestGetBasedOnStyle()
 		{
-			var stylesheet = new TestFwStylesheet();
+			IVwStylesheet stylesheet = new TestFwStylesheet();
 			var hvoNewStyle1 = stylesheet.MakeNewStyle();
 			stylesheet.PutStyle("FirstStyle", "bla", hvoNewStyle1, 0, 0, 0, false, false, null);
 			var hvoNewStyle2 = stylesheet.MakeNewStyle();
@@ -84,7 +84,7 @@ namespace FieldWorks.TestUtilities.Tests
 		[Test]
 		public void TestOverrideFontForWritingSystem_ForStyleWithNullProps()
 		{
-			var stylesheet = new TestFwStylesheet();
+			IVwStylesheet stylesheet = new TestFwStylesheet();
 			var hvoNewStyle1 = stylesheet.MakeNewStyle();
 			stylesheet.PutStyle("FirstStyle", "bla", hvoNewStyle1, 0, 0, 0, false, false, null);
 
@@ -99,7 +99,7 @@ namespace FieldWorks.TestUtilities.Tests
 			aFontOverride.writingSystem = hvoGermanWs;
 			aFontOverride.fontSize = 48;
 			fontOverrides.Add(aFontOverride);
-			stylesheet.OverrideFontsForWritingSystems("FirstStyle", fontOverrides);
+			((TestFwStylesheet)stylesheet).OverrideFontsForWritingSystems("FirstStyle", fontOverrides);
 
 			//check results
 			IVwPropertyStore vwps = VwPropertyStoreClass.Create();
@@ -124,7 +124,7 @@ namespace FieldWorks.TestUtilities.Tests
 		[Test]
 		public void TestOverrideFontsForWritingSystems_ForStyleWithProps()
 		{
-			var stylesheet = new TestFwStylesheet();
+			IVwStylesheet stylesheet = new TestFwStylesheet();
 			var hvoNewStyle1 = stylesheet.MakeNewStyle();
 
 			var propsBldr = TsStringUtils.MakePropsBldr();
@@ -158,7 +158,7 @@ namespace FieldWorks.TestUtilities.Tests
 			aFontOverride.writingSystem = hvoGermanWs;
 			aFontOverride.fontSize = 48;
 			fontOverrides.Add(aFontOverride);
-			stylesheet.OverrideFontsForWritingSystems("FirstStyle", fontOverrides);
+			((TestFwStylesheet)stylesheet).OverrideFontsForWritingSystems("FirstStyle", fontOverrides);
 
 			//check results
 			IVwPropertyStore vwps = VwPropertyStoreClass.Create();

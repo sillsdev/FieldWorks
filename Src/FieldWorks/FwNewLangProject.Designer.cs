@@ -7,7 +7,7 @@ using System.Windows.Forms;
 
 namespace SIL.FieldWorks
 {
-	public partial class FwNewLangProject
+	partial class FwNewLangProject
 	{
 		/// <summary>
 		/// Required designer variable.

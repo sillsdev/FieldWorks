@@ -81,36 +81,6 @@ namespace SIL.FieldWorks.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap Download {
-            get {
-                object obj = ResourceManager.GetObject("Download", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap Import {
-            get {
-                object obj = ResourceManager.GetObject("Import", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap Info {
-            get {
-                object obj = ResourceManager.GetObject("Info", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Do you want to continue with the restore?.
         /// </summary>
         internal static string ksBackupErrorDuringRestore {
@@ -239,24 +209,6 @@ namespace SIL.FieldWorks.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Unable to modify project locations..
-        /// </summary>
-        internal static string ksInsufficientPrivilegesToUpdateProjectLocationCaption {
-            get {
-                return ResourceManager.GetString("ksInsufficientPrivilegesToUpdateProjectLocationCaption", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Administrator privileges are required to modify project locations. .
-        /// </summary>
-        internal static string ksInsufficientPrivilegesToUpdateProjectLocationText {
-            get {
-                return ResourceManager.GetString("ksInsufficientPrivilegesToUpdateProjectLocationText", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to {0} is not a valid directory for linked files. Please select a valid directory..
         /// </summary>
         internal static string ksInvalidLinkedFilesFolder {
@@ -356,15 +308,6 @@ namespace SIL.FieldWorks.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to {0} - {1}.
-        /// </summary>
-        internal static string ksProjectNameAndServerFmt {
-            get {
-                return ResourceManager.GetString("ksProjectNameAndServerFmt", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to {0} project(s) failed to migrate properly..
         /// </summary>
         internal static string ksProjectsFailedToMigrate {
@@ -401,31 +344,11 @@ namespace SIL.FieldWorks.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Unable to access the project data folder:
-        ///{0}
-        ///Ensure that this folder is shared and that you have permission to access it..
-        /// </summary>
-        internal static string kstidCannotAccessProjectPath {
-            get {
-                return ResourceManager.GetString("kstidCannotAccessProjectPath", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to You may be able to set up a virtual machine running Windows 7 or earlier and install FieldWorks there. On Windows 7 or earlier, this dialog will allow you to download some components that can migrate your project. Unfortunately these components are not directly supported on your operating system..
         /// </summary>
         internal static string kstidCantMigrateWrongOS {
             get {
                 return ResourceManager.GetString("kstidCantMigrateWrongOS", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Choose a command:.
-        /// </summary>
-        internal static string kstidChooseCommand {
-            get {
-                return ResourceManager.GetString("kstidChooseCommand", resourceCulture);
             }
         }
         

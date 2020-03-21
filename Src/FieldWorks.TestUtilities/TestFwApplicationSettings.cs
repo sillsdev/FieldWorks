@@ -12,7 +12,7 @@ namespace FieldWorks.TestUtilities
 	/// <summary>
 	/// Test application settings class
 	/// </summary>
-	public class TestFwApplicationSettings : IFwApplicationSettings
+	internal sealed class TestFwApplicationSettings : IFwApplicationSettings
 	{
 		/// <inheritdoc />
 		bool IFwApplicationSettings.UpdateGlobalWSStore { get; set; }

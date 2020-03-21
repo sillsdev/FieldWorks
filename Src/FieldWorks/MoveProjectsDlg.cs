@@ -9,14 +9,14 @@ using SIL.FieldWorks.Common.FwUtils;
 namespace SIL.FieldWorks
 {
 	/// <summary />
-	public partial class MoveProjectsDlg : Form
+	internal sealed partial class MoveProjectsDlg : Form
 	{
-		IHelpTopicProvider m_helpTopicProvider;
+		private readonly IHelpTopicProvider m_helpTopicProvider;
 		private HelpProvider m_helpProvider;
 		private string m_helpTopic = "khtpMoveProjectDlgNewLocation";
 
 		/// <summary />
-		public MoveProjectsDlg(IHelpTopicProvider helpTopicProvider)
+		internal MoveProjectsDlg(IHelpTopicProvider helpTopicProvider)
 		{
 			InitializeComponent();
 			m_helpTopicProvider = helpTopicProvider;

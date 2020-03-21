@@ -11,7 +11,7 @@ using SIL.PaToFdoInterfaces;
 namespace SIL.FieldWorks.PaObjects
 {
 	/// <summary />
-	public class PaMultiString : IPaMultiString
+	public sealed class PaMultiString : IPaMultiString
 	{
 		/// <summary />
 		public static PaMultiString Create(ITsMultiString msa, ILcmServiceLocator svcloc)

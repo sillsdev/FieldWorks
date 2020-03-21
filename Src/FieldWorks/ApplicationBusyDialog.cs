@@ -15,7 +15,7 @@ namespace SIL.FieldWorks
 	/// Class that displays a dialog box on a separate thread to tell the user that the
 	/// requested FW application can't be started just yet.
 	/// </summary>
-	public partial class ApplicationBusyDialog : Form
+	internal sealed partial class ApplicationBusyDialog : Form
 	{
 		private WaitFor m_whatToWaitFor;
 		private FwAppArgs m_args;
@@ -124,7 +124,7 @@ namespace SIL.FieldWorks
 		/// <summary>
 		/// Handles the Click event of the m_btnCancel control.
 		/// </summary>
-		private void m_btnCancel_Click(object sender, System.EventArgs e)
+		private void m_btnCancel_Click(object sender, EventArgs e)
 		{
 			m_fCancelPressed = true;
 		}

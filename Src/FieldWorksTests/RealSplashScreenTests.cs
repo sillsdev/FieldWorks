@@ -38,7 +38,7 @@ namespace SIL.FieldWorks
 			{
 				window.WaitHandle = waitHandle;
 				window.CreateControl();
-				window.Message = string.Empty;
+				window.AsIProgress.Message = string.Empty;
 				window.Show();
 				Application.DoEvents();
 			}

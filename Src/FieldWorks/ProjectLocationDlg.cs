@@ -19,7 +19,7 @@ namespace SIL.FieldWorks
 	/// <summary>
 	/// This dialog supports controlling the location and sharing of the project folder.
 	/// </summary>
-	public partial class ProjectLocationDlg : Form
+	internal sealed partial class ProjectLocationDlg : Form
 	{
 		private readonly IHelpTopicProvider m_helpTopicProvider;
 
@@ -30,7 +30,7 @@ namespace SIL.FieldWorks
 		}
 
 		/// <summary />
-		public ProjectLocationDlg(IHelpTopicProvider helpTopicProvider, LcmCache cache = null)
+		internal ProjectLocationDlg(IHelpTopicProvider helpTopicProvider, LcmCache cache = null)
 			: this()
 		{
 			if (cache == null)
@@ -212,7 +212,7 @@ namespace SIL.FieldWorks
 		/// <summary>
 		/// Answer what the user wants the projects folder to be.
 		/// </summary>
-		public string ProjectsFolder => m_tbProjectsFolder.Text;
+		internal string ProjectsFolder => m_tbProjectsFolder.Text;
 
 		/// <summary>
 		/// Don't actually do it here; the caller has better access to the necessary methods.

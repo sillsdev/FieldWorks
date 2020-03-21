@@ -11,7 +11,7 @@ namespace SIL.FieldWorks
 	/// Settings used to restore a FieldWorks project from a backup.
 	/// </summary>
 	[Serializable]
-	public class FwRestoreProjectSettings
+	public sealed class FwRestoreProjectSettings
 	{
 		/// <summary />
 		/// <param name="settings">The restore settings (as saved by the dialog).</param>

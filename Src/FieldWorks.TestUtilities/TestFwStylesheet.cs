@@ -15,7 +15,7 @@ namespace FieldWorks.TestUtilities
 	/// TestFwStylesheet class is based on a mocked IVwStylesheet, with some simple real
 	/// implementations as necessary.
 	/// </summary>
-	public class TestFwStylesheet : IVwStylesheet
+	internal sealed class TestFwStylesheet : IVwStylesheet
 	{
 		private sealed class TestStyle
 		{
@@ -39,13 +39,15 @@ namespace FieldWorks.TestUtilities
 		/// <summary>Used for assigning HVO's</summary>
 		private int m_hvoLast;
 
+		private IVwStylesheet AsIVwStylesheet => this;
+
 		#region Methods of IVwStylesheet
 		/// <summary>
 		/// Gets the name of the default paragraph style to use as the base for new styles
 		/// (Usually "Normal")
 		/// </summary>
 		/// <returns>Always returns "Normal"</returns>
-		public string GetDefaultBasedOnStyleName()
+		string IVwStylesheet.GetDefaultBasedOnStyleName()
 		{
 			return "Normal";
 		}
@@ -57,9 +59,9 @@ namespace FieldWorks.TestUtilities
 		/// <param name="fCharStyle"><c>true</c> if the style is a character style;
 		/// otherwise <c>false</c></param>
 		/// <returns>Name of the style that is the default for the context</returns>
-		public virtual string GetDefaultStyleForContext(int nContext, bool fCharStyle)
+		public string GetDefaultStyleForContext(int nContext, bool fCharStyle)
 		{
-			return GetDefaultBasedOnStyleName();
+			return AsIVwStylesheet.GetDefaultBasedOnStyleName();
 		}
 
 		/// <summary>
@@ -75,7 +77,7 @@ namespace FieldWorks.TestUtilities
 		/// <param name="fBuiltIn">True if predefined style</param>
 		/// <param name="fModified">True if user has modified predefined style</param>
 		/// <param name="ttp">TextProps, contains the formatting of the style</param>
-		public void PutStyle(string sName, string saUsage, int hvoStyle, int hvoBasedOn, int hvoNext, int nType, bool fBuiltIn, bool fModified, ITsTextProps ttp)
+		void IVwStylesheet.PutStyle(string sName, string saUsage, int hvoStyle, int hvoBasedOn, int hvoNext, int nType, bool fBuiltIn, bool fModified, ITsTextProps ttp)
 		{
 			// our local reference
 			var style = m_rgStyles.FirstOrDefault(stStyle => stStyle.Hvo == hvoStyle);
@@ -110,7 +112,7 @@ namespace FieldWorks.TestUtilities
 		/// <param name="cch">Length of the style name - not used</param>
 		/// <param name="sName">The style name</param>
 		/// <returns>TextProps with retrieved properties, or null if not found</returns>
-		public ITsTextProps GetStyleRgch(int cch, string sName)
+		ITsTextProps IVwStylesheet.GetStyleRgch(int cch, string sName)
 		{
 			return m_htStyleRules.ContainsKey(sName) ? m_htStyleRules[sName] : null;
 		}
@@ -121,7 +123,7 @@ namespace FieldWorks.TestUtilities
 		/// </summary>
 		/// <param name="sName">Name of the style for this paragraph.</param>
 		/// <returns>Name of the style for the next paragraph.</returns>
-		public string GetNextStyle(string sName)
+		string IVwStylesheet.GetNextStyle(string sName)
 		{
 			var style = FindStyle(sName);
 			if (style != null && style.NextStyle != 0)
@@ -137,7 +139,7 @@ namespace FieldWorks.TestUtilities
 		/// </summary>
 		/// <param name="sName">Name of the style</param>
 		/// <returns>Name of the BasedOn style if available, otherwise empty string</returns>
-		public string GetBasedOn(string sName)
+		string IVwStylesheet.GetBasedOn(string sName)
 		{
 			var style = FindStyle(sName);
 			if (style != null && style.BasedOnStyle != 0)
@@ -153,7 +155,7 @@ namespace FieldWorks.TestUtilities
 		/// </summary>
 		/// <param name="sName">Style name</param>
 		/// <returns>Returns type of the style (0 by default)</returns>
-		public int GetType(string sName)
+		int IVwStylesheet.GetType(string sName)
 		{
 			return FindStyle(sName)?.Type ?? 0;
 		}
@@ -163,7 +165,7 @@ namespace FieldWorks.TestUtilities
 		/// </summary>
 		/// <param name="sName">Style name</param>
 		/// <returns>Returns context of the style (0 by default)</returns>
-		public int GetContext(string sName)
+		int IVwStylesheet.GetContext(string sName)
 		{
 			return 0;
 		}
@@ -171,7 +173,7 @@ namespace FieldWorks.TestUtilities
 		/// <summary>
 		/// Is the style named sName a predefined style?
 		/// </summary>
-		public bool IsBuiltIn(string sName)
+		bool IVwStylesheet.IsBuiltIn(string sName)
 		{
 			var style = FindStyle(sName);
 			return style != null && style.IsBuiltIn;
@@ -180,7 +182,7 @@ namespace FieldWorks.TestUtilities
 		/// <summary>
 		/// Was the (predefined) style named sName changed by the user?
 		/// </summary>
-		public bool IsModified(string sName)
+		bool IVwStylesheet.IsModified(string sName)
 		{
 			var style = FindStyle(sName);
 			return style != null && style.IsModified;
@@ -190,13 +192,13 @@ namespace FieldWorks.TestUtilities
 		/// Return the associated Data Access object
 		/// </summary>
 		/// <returns>Returns null</returns>
-		public ISilDataAccess DataAccess => null;
+		ISilDataAccess IVwStylesheet.DataAccess => null;
 
 		/// <summary>
 		/// Create a new style and return its HVO.
 		/// </summary>
 		/// <returns>The hvo of the new object, or 0 if not created.</returns>
-		public int MakeNewStyle()
+		int IVwStylesheet.MakeNewStyle()
 		{
 			return GetNewStyleHvo(); //create the style
 		}
@@ -205,7 +207,7 @@ namespace FieldWorks.TestUtilities
 		/// Return an HVO for a newly created style.
 		/// </summary>
 		/// <returns>The hvo of the new object.</returns>
-		protected virtual int GetNewStyleHvo()
+		private int GetNewStyleHvo()
 		{
 			return ++m_hvoLast;
 		}
@@ -214,7 +216,7 @@ namespace FieldWorks.TestUtilities
 		/// Delete a style from a stylesheet.
 		/// </summary>
 		/// <param name="hvoStyle">ID of style to delete.</param>
-		public void Delete(int hvoStyle)
+		void IVwStylesheet.Delete(int hvoStyle)
 		{
 			for (var i = 0; i < m_rgStyles.Count; i++)
 			{
@@ -235,14 +237,14 @@ namespace FieldWorks.TestUtilities
 		/// Get number of styles in sheet.
 		/// </summary>
 		/// <returns>Number of styles in sheet.</returns>
-		public int CStyles => m_rgStyles.Count;
+		int IVwStylesheet.CStyles => m_rgStyles.Count;
 
 		/// <summary>
 		/// Get the HVO of the Nth style (in an arbitrary order).
 		/// </summary>
 		/// <param name="iStyle">Index of the style</param>
 		/// <returns>HVO</returns>
-		public int get_NthStyle(int iStyle)
+		int IVwStylesheet.get_NthStyle(int iStyle)
 		{
 			Debug.Assert(0 <= iStyle && iStyle < m_rgStyles.Count);
 
@@ -253,7 +255,7 @@ namespace FieldWorks.TestUtilities
 		/// Get the name of the Nth style (in an arbitrary order).
 		/// </summary>
 		/// <param name="iStyle">Index of the style</param>
-		public string get_NthStyleName(int iStyle)
+		string IVwStylesheet.get_NthStyleName(int iStyle)
 		{
 			Debug.Assert(0 <= iStyle && iStyle < m_rgStyles.Count);
 
@@ -263,7 +265,7 @@ namespace FieldWorks.TestUtilities
 		/// <summary>
 		/// Return null.
 		/// </summary>
-		public ITsTextProps NormalFontStyle => null;
+		ITsTextProps IVwStylesheet.NormalFontStyle => null;
 
 		/// <summary>
 		/// Return true if the given style is one that is protected within the style sheet.
@@ -273,15 +275,15 @@ namespace FieldWorks.TestUtilities
 		/// <remarks>This is a default implementation that returns the built-in flag.
 		/// Specialized style sheets may derive their own version.
 		/// </remarks>
-		public bool get_IsStyleProtected(string sName)
+		bool IVwStylesheet.get_IsStyleProtected(string sName)
 		{
-			return IsBuiltIn(sName);
+			return AsIVwStylesheet.IsBuiltIn(sName);
 		}
 
 		/// <summary>
 		/// No-op.
 		/// </summary>
-		public void CacheProps(int cch, string sName, int hvoStyle, ITsTextProps ttp)
+		void IVwStylesheet.CacheProps(int cch, string sName, int hvoStyle, ITsTextProps ttp)
 		{
 		}
 		#endregion
@@ -313,7 +315,7 @@ namespace FieldWorks.TestUtilities
 		/// </summary>
 		/// <param name="styleName">Name of the style whose properties are to be set</param>
 		/// <param name="fontOverrides">List of FontOverride's</param>
-		public void OverrideFontsForWritingSystems(string styleName, List<FontOverride> fontOverrides)
+		internal void OverrideFontsForWritingSystems(string styleName, List<FontOverride> fontOverrides)
 		{
 			var style = FindStyle(styleName);
 			var propsBldr = style.Rules != null ? style.Rules.GetBldr() : TsStringUtils.MakePropsBldr();
@@ -333,7 +335,7 @@ namespace FieldWorks.TestUtilities
 				propsAsString += Convert.ToChar((aFontOverride.fontSize * 1000) >> 16);
 			}
 			propsBldr.SetStrPropValue((int)FwTextStringProp.kstpWsStyle, propsAsString);
-			PutStyle(styleName, string.Empty, style.Hvo, style.BasedOnStyle, style.NextStyle, style.Type, style.IsBuiltIn, true, propsBldr.GetTextProps());
+			AsIVwStylesheet.PutStyle(styleName, string.Empty, style.Hvo, style.BasedOnStyle, style.NextStyle, style.Type, style.IsBuiltIn, true, propsBldr.GetTextProps());
 		}
 		#endregion
 	}

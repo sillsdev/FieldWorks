@@ -128,10 +128,6 @@
   <data name="ksOpenSampleProject" xml:space="preserve">
     <value>Open the sample project, </value>
   </data>
-  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="Download" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>../Resources/Download26x26.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
   <data name="ksRestoringOldFwBackupFailed" xml:space="preserve">
     <value>Restoring from an old FieldWorks backup failed.</value>
   </data>
@@ -151,10 +147,6 @@
     <value>The following writing systems were updated in another project. Would you like to use those changes in this project ({1}) too?
 {0}</value>
   </data>
-  <data name="kstidChooseCommand" xml:space="preserve">
-    <value>Choose a command:</value>
-    <comment>Label text in Unable to Open Project dialog box (replaces "To get started, choose a command:", which appears in the Welcometo FieldWorks dialog box.)</comment>
-  </data>
   <data name="kstidCacheInitFailure" xml:space="preserve">
     <value>Unable to initialize the data.</value>
     <comment>Message shown on the Unable to Open Project dialog box when the cache cannot be initialized.</comment>
@@ -168,11 +160,6 @@
   </data>
   <data name="ksMigratingProjectsFailed" xml:space="preserve">
     <value>Migrating existing projects failed totally.</value>
-  </data>
-  <data name="kstidCannotAccessProjectPath" xml:space="preserve">
-    <value>Unable to access the project data folder:
-{0}
-Ensure that this folder is shared and that you have permission to access it.</value>
   </data>
   <data name="kstidRenamingProject" xml:space="preserve">
     <value>Renaming project...</value>
@@ -192,9 +179,6 @@ Ensure that this folder is shared and that you have permission to access it.</va
   <data name="kstidFoundInvalidWs" xml:space="preserve">
     <value>Invalid Writing System Found</value>
   </data>
-  <data name="ksInsufficientPrivilegesToUpdateProjectLocationText" xml:space="preserve">
-    <value>Administrator privileges are required to modify project locations. </value>
-  </data>
   <data name="ksErrorMigratingProjects" xml:space="preserve">
     <value>An error occurred trying to migrate existing projects from an older version of FieldWorks:</value>
   </data>
@@ -213,6 +197,7 @@ Ensure that this folder is shared and that you have permission to access it.</va
   <data name="ksChangeProjectLocationFailedDetails" xml:space="preserve">
     <value>The attempt to change the location of the projects folder has failed. This is usually because you do not have administrator privileges in this account (or you answered 'no' when asked whether it was OK to make changes to your machine). Because the project folder location affects all users of this computer, administrator privilege is required to change it.</value>
   </data>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="OpenFile" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>../Resources/OpenFile.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
@@ -251,14 +236,8 @@ Continue using English as the user interface language?</value>
   <data name="ksReviewLocationOfLinkedFiles" xml:space="preserve">
     <value>Review the location of Linked Files</value>
   </data>
-  <data name="ksInsufficientPrivilegesToUpdateProjectLocationCaption" xml:space="preserve">
-    <value>Unable to modify project locations.</value>
-  </data>
   <data name="SendReceiveGetArrow32x32" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>../Resources/SendReceiveGetArrow32x32.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="ksProjectNameAndServerFmt" xml:space="preserve">
-    <value>{0} - {1}</value>
   </data>
   <data name="ksOpenLastEditedProject" xml:space="preserve">
     <value>Open the last project, </value>
@@ -284,12 +263,6 @@ Continue using English as the user interface language?</value>
   </data>
   <data name="ksErrorCaption" xml:space="preserve">
     <value>Error</value>
-  </data>
-  <data name="Import" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>../Resources/Import28x28.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="Info" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>../Resources/Info.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="ksHklmCaption" xml:space="preserve">
     <value>FieldWorks can't run</value>

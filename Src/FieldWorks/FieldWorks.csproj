@@ -255,15 +255,12 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="FwRestoreProjectSettings.cs" />
-    <Compile Include="FwSplashScreen.cs" />
     <Compile Include="LexicalProvider\EntryType.cs" />
     <Compile Include="LexicalProvider\ILexicalServiceProvider.cs" />
     <Compile Include="LexicalProvider\LexemeType.cs" />
     <Compile Include="LexicalProvider\LexGloss.cs" />
     <Compile Include="LexicalProvider\LexicalEntry.cs" />
-    <Compile Include="LexicalProvider\LexicalProviderImpl.cs" />
     <Compile Include="LexicalProvider\LexicalProviderManager.cs" />
-    <Compile Include="LexicalProvider\LexicalServiceProvider.cs" />
     <Compile Include="LexicalProvider\LexSense.cs" />
     <Compile Include="MissingOldFieldWorksDlg.cs">
       <SubType>Form</SubType>
@@ -277,18 +274,9 @@
     <Compile Include="MoveProjectsDlg.Designer.cs">
       <DependentUpon>MoveProjectsDlg.cs</DependentUpon>
     </Compile>
-    <Compile Include="PaObjects\PaCmPossibility.cs" />
-    <Compile Include="PaObjects\PaComplexFormInfo.cs" />
     <Compile Include="PaObjects\PaLexEntry.cs" />
-    <Compile Include="PaObjects\PaLexicalInfo.cs" />
-    <Compile Include="PaObjects\PaLexPronunciation.cs" />
-    <Compile Include="PaObjects\PaLexSense.cs" />
-    <Compile Include="PaObjects\PaMediaFile.cs" />
     <Compile Include="PaObjects\PaMultiString.cs" />
     <Compile Include="PaObjects\PaRemoteRequest.cs" />
-    <Compile Include="PaObjects\PaVariant.cs" />
-    <Compile Include="PaObjects\PaVariantOfInfo.cs" />
-    <Compile Include="PaObjects\PaWritingSystem.cs" />
     <Compile Include="LexicalProvider\ILexicalProvider.cs" />
     <Compile Include="FieldWorks.cs" />
     <Compile Include="ProjectLocationDlg.cs">
@@ -313,7 +301,7 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="RemoteRequest.cs" />
+    <Compile Include="PaObjects\RemoteRequest.cs" />
     <Compile Include="WelcomeToFieldWorksDlg.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -352,6 +340,7 @@
     </EmbeddedResource>
     <EmbeddedResource Include="ChooseLangProjectDialog.resx">
       <DependentUpon>ChooseLangProjectDialog.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="FwNewLangProject.resx">
       <DependentUpon>FwNewLangProject.cs</DependentUpon>
@@ -388,10 +377,7 @@
     <None Include="Resources\DatabaseNew.png" />
     <None Include="Resources\chorus32x32.png" />
     <None Include="Resources\Bullet.png" />
-    <Content Include="Resources\Download26x26.png" />
-    <Content Include="Resources\Import28x28.png" />
     <None Include="Resources\SendReceiveGetArrow32x32.png" />
-    <None Include="Resources\Info.png" />
     <None Include="Resources\wait22trans.gif" />
     <Content Include="SmallBookOnCube.ico" />
   </ItemGroup>

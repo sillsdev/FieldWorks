@@ -16,10 +16,10 @@ namespace SIL.FieldWorks
 	/// <summary>
 	/// Dialog presenting multiple options for how to begin a FLEx session
 	/// </summary>
-	internal partial class WelcomeToFieldWorksDlg : Form
+	internal sealed partial class WelcomeToFieldWorksDlg : Form
 	{
-		private string m_helpTopic = "khtpWelcomeToFieldworks";
-		private readonly HelpProvider helpProvider;
+		private readonly string _helpTopic = "khtpWelcomeToFieldworks";
+		private HelpProvider _helpProvider;
 
 		#region Construction, Initialization and Deconstruction
 
@@ -29,7 +29,7 @@ namespace SIL.FieldWorks
 		/// project could not be opened.</param>
 		/// <param name="showReportingRow">True (usually only on the first run) when we want to show the first-time warning about
 		/// sending google analytics information</param>
-		public WelcomeToFieldWorksDlg(IHelpTopicProvider helpTopicProvider, StartupException exception, bool showReportingRow)
+		internal WelcomeToFieldWorksDlg(IHelpTopicProvider helpTopicProvider, StartupException exception, bool showReportingRow)
 		{
 			InitializeComponent();
 			AccessibleName = GetType().Name;
@@ -43,7 +43,7 @@ namespace SIL.FieldWorks
 			}
 			else
 			{
-				m_helpTopic = "khtpUnableToOpenProject";
+				_helpTopic = "khtpUnableToOpenProject";
 				Text = Properties.Resources.kstidUnableToOpenProjectCaption;
 				m_lblProjectLoadError.Text = exception.Message;
 				Logger.WriteEvent("Opening 'Unable to Open Project' dialog");
@@ -55,27 +55,27 @@ namespace SIL.FieldWorks
 			}
 
 			m_helpTopicProvider = helpTopicProvider;
-			helpProvider = new HelpProvider
+			_helpProvider = new HelpProvider
 			{
 				HelpNamespace = FwDirectoryFinder.CodeDirectory + m_helpTopicProvider.GetHelpString("UserHelpFile")
 			};
-			helpProvider.SetHelpKeyword(this, m_helpTopicProvider.GetHelpString(m_helpTopic));
-			helpProvider.SetHelpNavigator(this, HelpNavigator.Topic);
+			_helpProvider.SetHelpKeyword(this, m_helpTopicProvider.GetHelpString(_helpTopic));
+			_helpProvider.SetHelpNavigator(this, HelpNavigator.Topic);
 			receiveButton.Enabled = FLExBridgeHelper.IsFlexBridgeInstalled();
 		}
 
-		public bool OpenLastProjectCheckboxIsChecked
+		internal bool OpenLastProjectCheckboxIsChecked
 		{
 			get => alwaysOpenLastProjectCheckBox.Checked;
 			set => alwaysOpenLastProjectCheckBox.Checked = value;
 		}
 
-		public void SetFirstOrLastProjectText(bool firstTimeOpening)
+		internal void SetFirstOrLastProjectText(bool firstTimeOpening)
 		{
 			m_sampleOrLastProjectLinkLabel.Text = firstTimeOpening ? Properties.Resources.ksOpenSampleProject : Properties.Resources.ksOpenLastEditedProject;
 		}
 
-		public string ProjectLinkUiName
+		internal string ProjectLinkUiName
 		{
 			get => m_openSampleOrLastProjectLink.Text;
 			set => m_openSampleOrLastProjectLink.Text = value;
@@ -103,7 +103,10 @@ namespace SIL.FieldWorks
 			if (disposing)
 			{
 				components?.Dispose();
+				_helpProvider?.Dispose();
 			}
+			_helpProvider = null;
+
 			base.Dispose(disposing);
 		}
 
@@ -112,7 +115,7 @@ namespace SIL.FieldWorks
 		/// <summary>
 		/// Gets the button that was pressed
 		/// </summary>
-		public ButtonPress DlgResult { get; private set; } = ButtonPress.Exit;
+		internal ButtonPress DlgResult { get; private set; } = ButtonPress.Exit;
 
 		#region Overriden methods
 
@@ -222,7 +225,7 @@ namespace SIL.FieldWorks
 		/// </summary>
 		private void m_btnHelp_Click(object sender, EventArgs e)
 		{
-			ShowHelp.ShowHelpTopic(m_helpTopicProvider, m_helpTopic);
+			ShowHelp.ShowHelpTopic(m_helpTopicProvider, _helpTopic);
 		}
 
 		#endregion

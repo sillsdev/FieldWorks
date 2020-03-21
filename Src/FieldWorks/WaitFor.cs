@@ -5,7 +5,7 @@
 namespace SIL.FieldWorks
 {
 	/// <summary>Things this dialog can wait for</summary>
-	public enum WaitFor
+	internal enum WaitFor
 	{
 		/// <summary>Application currently has no windows open because it's doing something.
 		/// This dialog will wait until one is created.</summary>

@@ -16,7 +16,7 @@ using SIL.LCModel;
 namespace SIL.FieldWorks
 {
 	/// <summary />
-	public partial class ChooseLangProjectDialog : Form
+	internal sealed partial class ChooseLangProjectDialog : Form
 	{
 		#region Member variables
 		private readonly IHelpTopicProvider m_helpTopicProvider;
@@ -65,23 +65,11 @@ namespace SIL.FieldWorks
 		}
 
 		/// <summary />
-		/// <param name="bounds">The initial client bounds of the dialog.</param>
-		/// <param name="splitterPosition">The initial splitter position.</param>
-		public ChooseLangProjectDialog(Rectangle bounds, int splitterPosition)
-			: this(null, false)
-		{
-			m_initialBounds = bounds;
-			m_initialSplitterPosition = splitterPosition;
-
-			StartPosition = m_initialBounds == Rectangle.Empty ? FormStartPosition.CenterParent : FormStartPosition.Manual;
-		}
-
-		/// <summary />
 		/// <param name="helpTopicProvider">The help topic provider.</param>
-		/// <param name="openToAssosiateFwProject">If set to <c>true</c> the dialog will be
+		/// <param name="openToAssociateFwProject">If set to <c>true</c> the dialog will be
 		/// used to associate a FieldWorks project with another application (e.g. Paratext).
 		/// </param>
-		public ChooseLangProjectDialog(IHelpTopicProvider helpTopicProvider, bool openToAssosiateFwProject)
+		internal ChooseLangProjectDialog(IHelpTopicProvider helpTopicProvider, bool openToAssociateFwProject)
 			: this()
 		{
 			m_helpTopicProvider = helpTopicProvider;
@@ -90,7 +78,7 @@ namespace SIL.FieldWorks
 			{
 				m_btnHelp.Enabled = false;
 			}
-			if (openToAssosiateFwProject)
+			if (openToAssociateFwProject)
 			{
 				Text = Properties.Resources.kstidOpenToAssociateFwProj;
 			}
@@ -107,17 +95,12 @@ namespace SIL.FieldWorks
 		/// <summary>
 		/// Project name (for local projects, this will be a file name)
 		/// </summary>
-		public string Project { get; private set; }
+		internal string Project { get; private set; }
 
 		/// <summary>
 		/// Project type chosen, if OpenBridgeProjectLinkClicked used.
 		/// </summary>
-		public ObtainedProjectType ObtainedProjectType => m_obtainedProjectType;
-
-		/// <summary>
-		/// Gets the splitter position.
-		/// </summary>
-		public int SplitterPosition => m_splitContainer.SplitterDistance;
+		internal ObtainedProjectType ObtainedProjectType => m_obtainedProjectType;
 		#endregion
 
 		#region Methods

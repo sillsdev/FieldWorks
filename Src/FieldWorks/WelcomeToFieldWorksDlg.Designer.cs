@@ -12,7 +12,7 @@ namespace SIL.FieldWorks
 	/// <summary>
 	/// Dialog presenting multiple options for how to begin a FLEx session
 	/// </summary>
-	internal partial class WelcomeToFieldWorksDlg
+	partial class WelcomeToFieldWorksDlg
 	{
 		#region Data members
 		/// <summary>
