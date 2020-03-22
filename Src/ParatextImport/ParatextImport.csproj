@@ -107,10 +107,6 @@
       <HintPath>..\..\Output\Debug\SIL.LCModel.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
     </Reference>
-    <Reference Include="Framework, Version=5.5.0.21859, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\Output\Debug\Framework.dll</HintPath>
-      <SpecificVersion>False</SpecificVersion>
-    </Reference>
     <Reference Include="FwControls, Version=5.5.0.19438, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\Output\Debug\FwControls.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>

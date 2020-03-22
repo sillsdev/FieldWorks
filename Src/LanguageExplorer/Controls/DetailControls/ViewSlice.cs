@@ -11,8 +11,7 @@ using SIL.Xml;
 namespace LanguageExplorer.Controls.DetailControls
 {
 	/// <summary>
-	/// A tree control item where the embedded form is a View (specifically
-	/// SIL.FieldWorks.Common.Framework.RootSite).
+	/// A tree control item where the embedded form is a View.
 	/// </summary>
 	internal class ViewSlice : Slice
 	{

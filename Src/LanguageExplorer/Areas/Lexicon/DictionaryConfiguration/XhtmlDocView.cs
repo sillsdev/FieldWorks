@@ -13,7 +13,6 @@ using System.Xml.Linq;
 using Gecko;
 using Gecko.DOM;
 using LanguageExplorer.DictionaryConfiguration;
-using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.DomainServices;

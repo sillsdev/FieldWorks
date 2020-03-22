@@ -16,7 +16,6 @@ using System.Xml;
 using LanguageExplorer.Controls.XMLViews;
 using LanguageExplorer.Filters;
 using SIL.Code;
-using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Core.Cellar;

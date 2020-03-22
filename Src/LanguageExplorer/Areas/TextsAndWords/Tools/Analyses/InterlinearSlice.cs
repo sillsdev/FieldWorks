@@ -11,8 +11,7 @@ using SIL.LCModel;
 namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 {
 	/// <summary>
-	/// A tree control item where the embedded form is a View (specifically
-	/// SIL.FieldWorks.Common.Framework.RootSite).
+	/// A tree control item where the embedded form is a View.
 	/// </summary>
 	internal sealed class InterlinearSlice : ViewSlice
 	{

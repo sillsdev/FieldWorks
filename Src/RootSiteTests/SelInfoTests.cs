@@ -4,10 +4,9 @@
 
 using System;
 using NUnit.Framework;
-using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 
-namespace SIL.FieldWorks.Common.Framework
+namespace SIL.FieldWorks.Common.RootSites
 {
 	/// <summary>
 	/// Tests the compare methods of SelInfo

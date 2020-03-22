@@ -22,7 +22,6 @@ using LanguageExplorer.Impls;
 using LanguageExplorer.TestUtilities;
 using LanguageExplorerTests.DictionaryConfiguration;
 using NUnit.Framework;
-using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.IO;
 using SIL.LCModel;
@@ -269,7 +268,7 @@ namespace LanguageExplorerTests.Impls
 		[Test]
 		public void UploadToWebonaryThrowsOnNullInput()
 		{
-			using (var controller = new MockUploadToWebonaryController(Cache, _flexComponentParameters.PropertyTable, _flexComponentParameters.Publisher, _statusBar, null, null))
+			using (var controller = new MockUploadToWebonaryController(Cache, _flexComponentParameters.PropertyTable, _statusBar, null, null))
 			{
 				var view = new MockWebonaryDlg();
 				var model = new UploadToWebonaryModel(_flexComponentParameters.PropertyTable);
@@ -283,7 +282,7 @@ namespace LanguageExplorerTests.Impls
 		public void UploadToWebonaryReportsFailedAuthentication()
 		{
 			var responseContents = Encoding.UTF8.GetBytes("Wrong username or password.\nauthentication failed\n");
-			using (var controller = new MockUploadToWebonaryController(Cache, _flexComponentParameters.PropertyTable, _flexComponentParameters.Publisher, _statusBar, responseContents: responseContents))
+			using (var controller = new MockUploadToWebonaryController(Cache, _flexComponentParameters.PropertyTable, _statusBar, responseContents: responseContents))
 			{
 				var view = new MockWebonaryDlg()
 				{
@@ -305,7 +304,7 @@ namespace LanguageExplorerTests.Impls
 		public void UploadToWebonaryReportsIncorrectSiteName()
 		{
 			// Test for a successful response indicating that a redirect should happen
-			using (var controller = new MockUploadToWebonaryController(Cache, _flexComponentParameters.PropertyTable, _flexComponentParameters.Publisher, _statusBar, responseContents: new byte[] { }, responseStatus: HttpStatusCode.Found))
+			using (var controller = new MockUploadToWebonaryController(Cache, _flexComponentParameters.PropertyTable, _statusBar, responseContents: new byte[] { }, responseStatus: HttpStatusCode.Found))
 			{
 				var view = new MockWebonaryDlg()
 				{
@@ -321,11 +320,11 @@ namespace LanguageExplorerTests.Impls
 			}
 
 			// Test with an exception which indicates a redirect should happen
-			var redirectException = new WebonaryException(new WebException("Redirected."))
+			var redirectException = new WebonaryException("WebException with null response stream.", new WebException("Redirected."))
 			{
 				StatusCode = HttpStatusCode.Redirect
 			};
-			using (var controller = new MockUploadToWebonaryController(Cache, _flexComponentParameters.PropertyTable, _flexComponentParameters.Publisher, _statusBar, redirectException, new byte[] { }))
+			using (var controller = new MockUploadToWebonaryController(Cache, _flexComponentParameters.PropertyTable, _statusBar, redirectException, new byte[] { }))
 			{
 				var view = new MockWebonaryDlg()
 				{
@@ -344,11 +343,11 @@ namespace LanguageExplorerTests.Impls
 		[Test]
 		public void UploadToWebonaryReportsLackingPermissionsToUpload()
 		{
-			var ex = new WebonaryException(new WebException("Unable to connect to Webonary.  Please check your username and password and your Internet connection."))
+			var ex = new WebonaryException("WebException with null response stream.", new WebException("Unable to connect to Webonary.  Please check your username and password and your Internet connection."))
 			{
 				StatusCode = HttpStatusCode.BadRequest
 			};
-			using (var controller = new MockUploadToWebonaryController(Cache, _flexComponentParameters.PropertyTable, _flexComponentParameters.Publisher, _statusBar, ex))
+			using (var controller = new MockUploadToWebonaryController(Cache, _flexComponentParameters.PropertyTable, _statusBar, ex))
 			{
 				var view = new MockWebonaryDlg()
 				{
@@ -368,7 +367,7 @@ namespace LanguageExplorerTests.Impls
 		public void UploadToWebonaryReportsSuccess()
 		{
 			const string success = "Upload successful.";
-			using (var controller = new MockUploadToWebonaryController(Cache, _flexComponentParameters.PropertyTable, _flexComponentParameters.Publisher, _statusBar, responseContents: Encoding.UTF8.GetBytes(success)))
+			using (var controller = new MockUploadToWebonaryController(Cache, _flexComponentParameters.PropertyTable, _statusBar, responseContents: Encoding.UTF8.GetBytes(success)))
 			{
 				var view = new MockWebonaryDlg()
 				{
@@ -387,7 +386,7 @@ namespace LanguageExplorerTests.Impls
 		public void UploadToWebonaryErrorInProcessingHandled()
 		{
 			var webonaryProcessingErrorContent = Encoding.UTF8.GetBytes("Error processing data: bad data.");
-			using (var controller = new MockUploadToWebonaryController(Cache, _flexComponentParameters.PropertyTable, _flexComponentParameters.Publisher, _statusBar, responseContents: webonaryProcessingErrorContent))
+			using (var controller = new MockUploadToWebonaryController(Cache, _flexComponentParameters.PropertyTable, _statusBar, responseContents: webonaryProcessingErrorContent))
 			{
 				var view = new MockWebonaryDlg
 				{
@@ -543,8 +542,8 @@ namespace LanguageExplorerTests.Impls
 		public void ResetsProptablesPublicationOnExit()
 		{
 			var originalPub = _flexComponentParameters.PropertyTable.GetValue("SelectedPublication", "Main Dictionary");
-			_flexComponentParameters.PropertyTable.SetProperty("SelectedPublication", originalPub, false); // just in case we fell back on the default
-			using (var controller = new MockUploadToWebonaryController(Cache, _flexComponentParameters.PropertyTable, _flexComponentParameters.Publisher, _statusBar))
+			_flexComponentParameters.PropertyTable.SetProperty("SelectedPublication", originalPub); // just in case we fell back on the default
+			using (var controller = new MockUploadToWebonaryController(Cache, _flexComponentParameters.PropertyTable, _statusBar))
 			{
 				controller.ActivatePublication("Wiktionary");
 				Assert.AreEqual("Wiktionary", _flexComponentParameters.PropertyTable.GetValue<string>("SelectedPublication", null), "Didn't activate temp publication");
@@ -596,7 +595,7 @@ namespace LanguageExplorerTests.Impls
 		/// </summary>
 		public UploadToWebonaryController SetUpController()
 		{
-			return new MockUploadToWebonaryController(Cache, _flexComponentParameters.PropertyTable, _flexComponentParameters.Publisher, _statusBar, responseContents: Encoding.UTF8.GetBytes("Upload successful"));
+			return new MockUploadToWebonaryController(Cache, _flexComponentParameters.PropertyTable, _statusBar, responseContents: Encoding.UTF8.GetBytes("Upload successful"));
 		}
 
 		internal class MockWebonaryDlg : IUploadToWebonaryView
@@ -638,8 +637,8 @@ namespace LanguageExplorerTests.Impls
 			/// <summary>
 			/// Tests using this constructor do not need to be marked [ByHand]; an exception, response, and response code can all be set.
 			/// </summary>
-			internal MockUploadToWebonaryController(LcmCache cache, IPropertyTable propertyTable, IPublisher publisher, StatusBar statusBar, WebonaryException exceptionResponse = null,
-				byte[] responseContents = null, HttpStatusCode responseStatus = HttpStatusCode.OK) : base(cache, propertyTable, publisher, statusBar)
+			internal MockUploadToWebonaryController(LcmCache cache, IPropertyTable propertyTable, StatusBar statusBar, WebonaryException exceptionResponse = null,
+				byte[] responseContents = null, HttpStatusCode responseStatus = HttpStatusCode.OK) : base(cache, propertyTable, statusBar)
 			{
 				CreateWebClient = () => new MockWebonaryClient(exceptionResponse, responseContents, responseStatus);
 			}

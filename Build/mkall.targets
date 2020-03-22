@@ -551,6 +551,9 @@
 		<Copy SourceFiles="@(IcuFileSet32)" DestinationFolder="$(dir-outputBase)/lib/x86" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'$(OS)'=='Windows_NT'" />
 		<Copy SourceFiles="@(IcuFileSet64)" DestinationFolder="$(dir-outputBase)/lib/x64" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'$(OS)'=='Windows_NT' AND '$(arch)'=='x64'" />
 
+		<!-- Rhino Mock dll -->
+		<Copy SourceFiles="$(fwrt)/Bin/Rhino/Rhino.Mocks.dll" DestinationFolder="$(dir-outputBase)" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true"/>
+
 		<!-- NUnit dlls -->
 		<Unzip ZipFilename="$(DownloadsDir)/NUnit-2.6.4.zip" ToDir="$(DownloadsDir)/" />
 		<CreateItem Include="$(DownloadsDir)/NUnit-2.6.4/**/*">

@@ -31,8 +31,7 @@ namespace LanguageExplorer.Controls.DetailControls
 {
 	/// <summary>
 	/// A DataTree displays a tree diagram alongside a collection of controls. Each control is
-	/// represented as a Slice, and typically contains an actual .NET control of some
-	/// sort (most often, in FieldWorks, a subclass of SIL.FieldWorks.Common.Framework.RootSite).
+	/// represented as a Slice, and typically contains an actual .NET control of some sort.
 	/// The controls are arranged vertically, one under the other, and the tree diagram is
 	/// aligned with the controls.
 	///

@@ -11,32 +11,32 @@ using SIL.Windows.Forms.HotSpot;
 
 namespace FixFwData
 {
-	internal class Program
+	internal static class Program
 	{
 		private static int Main(string[] args)
 		{
 			SetUpErrorHandling();
-			var data = new FwDataFixer(args[0], new NullProgress(), logger, counter);
+			var data = new FwDataFixer(args[0], new NullProgress(), Logger, Counter);
 			data.FixErrorsAndSave();
-			return errorsOccurred ? 1 : 0;
+			return s_errorsOccurred ? 1 : 0;
 		}
 
-		private static bool errorsOccurred;
-		private static int errorCount;
+		private static bool s_errorsOccurred;
+		private static int s_errorCount;
 
-		private static void logger(string description, bool errorFixed)
+		private static void Logger(string description, bool errorFixed)
 		{
 			Console.WriteLine(description);
-			errorsOccurred = true;
+			s_errorsOccurred = true;
 			if (errorFixed)
 			{
-				++errorCount;
+				++s_errorCount;
 			}
 		}
 
-		private static int counter()
+		private static int Counter()
 		{
-			return errorCount;
+			return s_errorCount;
 		}
 
 		private static void SetUpErrorHandling()
@@ -53,7 +53,7 @@ namespace FixFwData
 		{
 			public event CancelEventHandler Canceling;
 
-			public void Step(int amount)
+			void IProgress.Step(int amount)
 			{
 				if (Canceling != null)
 				{
@@ -62,26 +62,27 @@ namespace FixFwData
 				}
 			}
 
-			public string Title { get; set; }
+			string IProgress.Title { get; set; }
 
-			public string Message
+			string IProgress.Message
 			{
 				get => null;
 				set => Console.Out.WriteLine(value);
 			}
 
-			public int Position { get; set; }
-			public int StepSize { get; set; }
-			public int Minimum { get; set; }
-			public int Maximum { get; set; }
-			public ISynchronizeInvoke SynchronizeInvoke { get; private set; }
-			public bool IsIndeterminate
+			int IProgress.Position { get; set; }
+			int IProgress.StepSize { get; set; }
+			int IProgress.Minimum { get; set; }
+			int IProgress.Maximum { get; set; }
+			ISynchronizeInvoke IProgress.SynchronizeInvoke { get; }
+
+			bool IProgress.IsIndeterminate
 			{
 				get => false;
 				set { }
 			}
 
-			public bool AllowCancel
+			bool IProgress.AllowCancel
 			{
 				get => false;
 				set { }

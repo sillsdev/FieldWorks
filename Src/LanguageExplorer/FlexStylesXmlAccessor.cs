@@ -17,7 +17,6 @@ using System.Xml.Schema;
 using System.Xml.Serialization;
 using System.Xml.XPath;
 using SIL.Code;
-using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Resources;
 using SIL.LCModel;
@@ -878,7 +877,7 @@ namespace LanguageExplorer
 				if (_reservedStyles.ContainsKey(styleName))
 				{
 					var info = _reservedStyles[styleName];
-					info.created = true;
+					info.Created = true;
 				}
 				// set the user level
 				style.UserLevel = int.Parse(styleTag.Attribute("userlevel").Value);
@@ -1046,7 +1045,7 @@ namespace LanguageExplorer
 		/// <returns>The name of the based-on style</returns>
 		private string GetBasedOn(XElement element, string styleName)
 		{
-			return _reservedStyles.ContainsKey(styleName) ? _reservedStyles[styleName].basedOn : element.Attribute("basedOn")?.Value.Replace("_", " ");
+			return _reservedStyles.ContainsKey(styleName) ? _reservedStyles[styleName].BasedOn : element.Attribute("basedOn")?.Value.Replace("_", " ");
 		}
 
 		/// <summary>
@@ -1060,7 +1059,7 @@ namespace LanguageExplorer
 		{
 			if (_reservedStyles.ContainsKey(styleName))
 			{
-				return _reservedStyles[styleName].context;
+				return _reservedStyles[styleName].Context;
 			}
 			var sContext = element.Attribute("context").Value;
 			// EndMarker was left out of the original conversion and would have raised an exception.
@@ -1090,7 +1089,7 @@ namespace LanguageExplorer
 		{
 			if (_reservedStyles.ContainsKey(styleName))
 			{
-				return _reservedStyles[styleName].structure;
+				return _reservedStyles[styleName].Structure;
 			}
 			var attribute = element.Attribute("structure");
 			var sStructure = attribute?.Value;
@@ -1121,7 +1120,7 @@ namespace LanguageExplorer
 		{
 			if (_reservedStyles.ContainsKey(styleName))
 			{
-				return _reservedStyles[styleName].function;
+				return _reservedStyles[styleName].Function;
 			}
 			var attribute = element.Attribute("use");
 			var sFunction = attribute?.Value;
@@ -1170,7 +1169,7 @@ namespace LanguageExplorer
 		{
 			if (_reservedStyles.ContainsKey(styleName))
 			{
-				return _reservedStyles[styleName].styleType;
+				return _reservedStyles[styleName].StyleType;
 			}
 			var sType = element.Attribute("type").Value;
 			if (context != ContextValues.InternalConfigureView && context != ContextValues.Internal && context != ContextValues.General && context != ContextValues.Book
@@ -1895,7 +1894,7 @@ namespace LanguageExplorer
 				string sNextStyleName = null;
 				if (_reservedStyles.ContainsKey(styleName))
 				{
-					sNextStyleName = _reservedStyles[styleName].nextStyle;
+					sNextStyleName = _reservedStyles[styleName].NextStyle;
 				}
 				else
 				{
@@ -1926,7 +1925,7 @@ namespace LanguageExplorer
 			foreach (var styleName in _reservedStyles.Keys)
 			{
 				var info = _reservedStyles[styleName];
-				if (!info.created)
+				if (!info.Created)
 				{
 					var style = _updatedStyles[styleName];
 					if (style.Type == StyleType.kstParagraph)
@@ -1935,16 +1934,16 @@ namespace LanguageExplorer
 						IStStyle newStyle = null;
 						if (styleName != StyleServices.NormalStyleName)
 						{
-							if (_updatedStyles.ContainsKey(info.basedOn))
+							if (_updatedStyles.ContainsKey(info.BasedOn))
 							{
-								newStyle = _updatedStyles[info.basedOn];
+								newStyle = _updatedStyles[info.BasedOn];
 							}
 							style.BasedOnRA = newStyle;
 						}
 						newStyle = null;
-						if (_updatedStyles.ContainsKey(info.nextStyle))
+						if (_updatedStyles.ContainsKey(info.NextStyle))
 						{
-							newStyle = _updatedStyles[info.nextStyle];
+							newStyle = _updatedStyles[info.NextStyle];
 						}
 						style.NextRA = newStyle;
 					}
@@ -2063,6 +2062,63 @@ namespace LanguageExplorer
 		private static string GetStyleName(XElement element)
 		{
 			return element.Attribute("id").Value.Replace("_", " ");
+		}
+
+		/// <summary>
+		/// Options to indicate how to deal with user-modified styles.
+		/// </summary>
+		private enum OverwriteOptions
+		{
+			/// <summary>
+			/// Overwrite only the functional properties of the user-modified style,
+			/// not the properties that merely affect appearance.
+			/// </summary>
+			FunctionalPropertiesOnly,
+			/// <summary>
+			/// Overwrite all the properties of the user-modified style
+			/// </summary>
+			All,
+		}
+
+		/// <summary>
+		/// Holds info about certain reserved styles. This info overrides any conflicting info
+		/// in the external XML stylesheet
+		/// </summary>
+		private sealed class ReservedStyleInfo
+		{
+			/// <summary />
+			internal bool Created { get; set; }
+			/// <summary />
+			internal ContextValues Context { get; }
+			/// <summary />
+			internal StructureValues Structure { get; }
+			/// <summary />
+			internal FunctionValues Function { get; }
+			/// <summary />
+			internal StyleType StyleType { get; }
+			/// <summary />
+			internal string NextStyle { get; }
+			/// <summary />
+			internal string BasedOn { get; }
+
+			/// <summary>
+			/// General-purpose constructor
+			/// </summary>
+			/// <param name="context">Context</param>
+			/// <param name="structure">Structure</param>
+			/// <param name="function">Function</param>
+			/// <param name="styleType">Paragraph or character</param>
+			/// <param name="nextStyle">Name of "Next" style, or null if this is info about a character style</param>
+			/// <param name="basedOn">Name of base style, or null if this is info about a character style </param>
+			public ReservedStyleInfo(ContextValues context, StructureValues structure, FunctionValues function, StyleType styleType = StyleType.kstCharacter, string nextStyle = null, string basedOn = null)
+			{
+				Context = context;
+				Structure = structure;
+				Function = function;
+				StyleType = styleType;
+				NextStyle = nextStyle;
+				BasedOn = basedOn;
+			}
 		}
 	}
 }

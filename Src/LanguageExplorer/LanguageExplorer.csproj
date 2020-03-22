@@ -159,10 +159,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\Chorus.exe</HintPath>
     </Reference>
-    <Reference Include="Framework">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Release\Framework.dll</HintPath>
-    </Reference>
     <Reference Include="FwControls">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Release\FwControls.dll</HintPath>
@@ -379,7 +375,9 @@
     <Compile Include="Controls\ILexImportWizard.cs" />
     <Compile Include="Controls\XMLViews\VwPatternSerializableSettings.cs" />
     <Compile Include="DynamicLoader.cs" />
+    <Compile Include="ExportStyleInfo.cs" />
     <Compile Include="FwConfigurationException.cs" />
+    <Compile Include="FwRegistrySettings.cs" />
     <Compile Include="GlobalUiWidgetParameterObject.cs" />
     <Compile Include="HelpTopicPaths.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -3707,6 +3705,83 @@
     <Content Include="images\Lexicon32.ico" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="images\Framework\FWAbout.bmp" />
+    <None Include="images\Framework\FWAddToDictionary.png" />
+    <None Include="images\Framework\FWBackgroundColor.bmp" />
+    <None Include="images\Framework\FWBold.bmp" />
+    <None Include="images\Framework\FWBorders.bmp" />
+    <None Include="images\Framework\FWBrowse-Large.bmp" />
+    <None Include="images\Framework\FWBulletedList.bmp" />
+    <None Include="images\Framework\FWCenter.bmp" />
+    <None Include="images\Framework\FWContents.bmp" />
+    <None Include="images\Framework\FWContextHelp.bmp" />
+    <None Include="images\Framework\FWCopy.bmp" />
+    <None Include="images\Framework\FWCut.bmp" />
+    <None Include="images\Framework\FWDataEntry-Large.bmp" />
+    <None Include="images\Framework\FWDataEntry-Small.bmp" />
+    <None Include="images\Framework\FWDecreaseIndent.bmp" />
+    <None Include="images\Framework\FwDelete.bmp" />
+    <None Include="images\Framework\FWDeleteProject.bmp" />
+    <None Include="images\Framework\FWDocument-Large.bmp" />
+    <None Include="images\Framework\FWDocument-Small.bmp" />
+    <None Include="images\Framework\FWFilterAdvanced-Large.bmp" />
+    <None Include="images\Framework\FWFilterAdvanced-Small.bmp" />
+    <None Include="images\Framework\FWFilterBasic-Large.bmp" />
+    <None Include="images\Framework\FWFilterBasic-Small.bmp" />
+    <None Include="images\Framework\FWFilterOff-Large.bmp" />
+    <None Include="images\Framework\FWFilterOff-Small.bmp" />
+    <None Include="images\Framework\FWFind.bmp" />
+    <None Include="images\Framework\FwFindHelp.bmp" />
+    <None Include="images\Framework\FWFindNext.bmp" />
+    <None Include="images\Framework\FWFindPrev.bmp" />
+    <None Include="images\Framework\FWFirstArrow.bmp" />
+    <None Include="images\Framework\FWFontColor.bmp" />
+    <None Include="images\Framework\FWHowDoI.bmp" />
+    <None Include="images\Framework\FWIncreaseIndent.bmp" />
+    <None Include="images\Framework\FWIndex.bmp" />
+    <None Include="images\Framework\FWInsertFootnote.bmp" />
+    <None Include="images\Framework\FWInsertSection.bmp" />
+    <None Include="images\Framework\FWInsertVerseNumbers.bmp" />
+    <None Include="images\Framework\FWItalics.bmp" />
+    <None Include="images\Framework\FWLastArrow.bmp" />
+    <None Include="images\Framework\FWLeft.bmp" />
+    <None Include="images\Framework\FWLeftArrow.bmp" />
+    <None Include="images\Framework\FWNew.bmp" />
+    <None Include="images\Framework\FWNewWindow.bmp" />
+    <None Include="images\Framework\FWNumberedList.bmp" />
+    <None Include="images\Framework\FWOpen.bmp" />
+    <None Include="images\Framework\FWPageSetup.bmp" />
+    <None Include="images\Framework\FWParaBorderAll.bmp" />
+    <None Include="images\Framework\FWParaBorderBottom.bmp" />
+    <None Include="images\Framework\FWParaBorderLeft.bmp" />
+    <None Include="images\Framework\FWParaBorderNone.bmp" />
+    <None Include="images\Framework\FWParaBorderRight.bmp" />
+    <None Include="images\Framework\FWParaBorderTop.bmp" />
+    <None Include="images\Framework\FWPaste.bmp" />
+    <None Include="images\Framework\FWPrint.bmp" />
+    <None Include="images\Framework\FWPrintPreview.bmp" />
+    <None Include="images\Framework\FWRedo.bmp" />
+    <None Include="images\Framework\FWRefresh.bmp" />
+    <None Include="images\Framework\FwReplace.bmp" />
+    <None Include="images\Framework\FWRight.bmp" />
+    <None Include="images\Framework\FWRightArrow.bmp" />
+    <None Include="images\Framework\FWSave.bmp" />
+    <None Include="images\Framework\FWSILLogo.bmp" />
+    <None Include="images\Framework\FWSILLogoColor2005-PLD.bmp" />
+    <None Include="images\Framework\FWSILLogoColor2005-PLD_118x168.bmp" />
+    <None Include="images\Framework\FWSILLogoColor2005.bmp" />
+    <None Include="images\Framework\FWSILLogoColor2005_118x139.bmp" />
+    <None Include="images\Framework\FWSort-Large.bmp" />
+    <None Include="images\Framework\FWSort-Small.bmp" />
+    <None Include="images\Framework\FWSplitter.bmp" />
+    <None Include="images\Framework\FWTileCascade.bmp" />
+    <None Include="images\Framework\FWTileSideBySide.bmp" />
+    <None Include="images\Framework\FWTileStacked.bmp" />
+    <None Include="images\Framework\FWTutorials.bmp" />
+    <None Include="images\Framework\FWUndo.bmp" />
+    <None Include="images\Framework\FWUserFace.bmp" />
+    <None Include="images\Framework\FWWhatsThis.bmp" />
+    <None Include="images\Framework\LT.ico" />
     <None Include="Controls\DetailControls\atomicNode.bmp" />
     <None Include="Controls\DetailControls\CollectionNode.bmp" />
     <None Include="Controls\DetailControls\SequenceSmall.bmp" />

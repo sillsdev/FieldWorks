@@ -8,12 +8,12 @@ using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel.Utils;
 using SIL.Utils;
 
-namespace SIL.FieldWorks.Common.Framework
+namespace LanguageExplorer
 {
 	/// <summary>
 	/// Provides a means to store in and retrieve from the registry misc. fieldworks settings.
 	/// </summary>
-	public class FwRegistrySettings : IDisposable
+	internal sealed class FwRegistrySettings : IDisposable
 	{
 		#region Member Variables
 		private readonly RegistryBoolSetting m_firstTimeAppHasBeenRun;
@@ -48,7 +48,7 @@ namespace SIL.FieldWorks.Common.Framework
 		/// Initialize static registry settings.
 		/// NOTE: This should be called only by unit tests.
 		/// </summary>
-		public static void Init()
+		internal static void Init()
 		{
 			if (s_measurementUnitSetting != null)
 			{
@@ -65,7 +65,7 @@ namespace SIL.FieldWorks.Common.Framework
 		}
 
 		/// <summary />
-		public FwRegistrySettings(IApp app)
+		internal FwRegistrySettings(IApp app)
 		{
 			if (app == null)
 			{
@@ -94,7 +94,7 @@ namespace SIL.FieldWorks.Common.Framework
 		}
 
 		/// <summary/>
-		public bool IsDisposed { get; private set; }
+		private bool IsDisposed { get; set; }
 
 		/// <summary/>
 		public void Dispose()
@@ -104,9 +104,9 @@ namespace SIL.FieldWorks.Common.Framework
 		}
 
 		/// <summary/>
-		protected virtual void Dispose(bool fDisposing)
+		private void Dispose(bool disposing)
 		{
-			Debug.WriteLineIf(!fDisposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 
 			if (IsDisposed)
 			{
@@ -114,7 +114,7 @@ namespace SIL.FieldWorks.Common.Framework
 				return;
 			}
 
-			if (fDisposing)
+			if (disposing)
 			{
 				// dispose managed objects
 				m_firstTimeAppHasBeenRun.Dispose();
@@ -137,7 +137,7 @@ namespace SIL.FieldWorks.Common.Framework
 		/// Release static registry settings.
 		/// NOTE: This should be called only by unit tests.
 		/// </summary>
-		public static void Release()
+		internal static void Release()
 		{
 			s_measurementUnitSetting?.Dispose();
 			s_disableSplashScreen?.Dispose();
@@ -153,7 +153,7 @@ namespace SIL.FieldWorks.Common.Framework
 		/// This value is set at the start of loading a FieldWorks project and is cleared
 		/// when the loading of that project finishes.
 		/// </summary>
-		public int LoadingProcessId
+		internal int LoadingProcessId
 		{
 			get => m_loadingProcessId.Value;
 			set => m_loadingProcessId.Value = value;
@@ -163,7 +163,7 @@ namespace SIL.FieldWorks.Common.Framework
 		/// Gets a value indicating whether or not this is the first time this app has
 		/// ever been run.
 		/// </summary>
-		public bool FirstTimeAppHasBeenRun
+		internal bool FirstTimeAppHasBeenRun
 		{
 			get => m_firstTimeAppHasBeenRun.Value;
 			set => m_firstTimeAppHasBeenRun.Value = value;
@@ -172,7 +172,7 @@ namespace SIL.FieldWorks.Common.Framework
 		/// <summary>
 		/// Gets the number of times this app has been run.
 		/// </summary>
-		public int NumberOfLaunches
+		internal int NumberOfLaunches
 		{
 			get => m_numberOfLaunches.Value;
 			set => m_numberOfLaunches.Value = value;
@@ -181,7 +181,7 @@ namespace SIL.FieldWorks.Common.Framework
 		/// <summary>
 		/// Get/set the number of serious (Green Dialog Box) crashes that have happened.
 		/// </summary>
-		public int NumberOfSeriousCrashes
+		internal int NumberOfSeriousCrashes
 		{
 			get => m_numberOfSeriousCrashes.Value;
 			set => m_numberOfSeriousCrashes.Value = value;
@@ -190,7 +190,7 @@ namespace SIL.FieldWorks.Common.Framework
 		/// <summary>
 		/// Get/set the number of annoying (Yellow Dialog Box) crashes that have happened.
 		/// </summary>
-		public int NumberOfAnnoyingCrashes
+		internal int NumberOfAnnoyingCrashes
 		{
 			get => m_numberOfAnnoyingCrashes.Value;
 			set => m_numberOfAnnoyingCrashes.Value = value;
@@ -199,7 +199,7 @@ namespace SIL.FieldWorks.Common.Framework
 		/// <summary>
 		/// Get/set the total number of seconds that the application has run on this computer.
 		/// </summary>
-		public int TotalAppRuntime
+		internal int TotalAppRuntime
 		{
 			get => m_totalAppRuntime.Value;
 			set => m_totalAppRuntime.Value = value;
@@ -208,7 +208,7 @@ namespace SIL.FieldWorks.Common.Framework
 		/// <summary>
 		/// Get/set the startup time (in ticks) for the current run of the application.
 		/// </summary>
-		public string LatestAppStartupTime
+		internal string LatestAppStartupTime
 		{
 			get => m_appStartupTime.Value;
 			set => m_appStartupTime.Value = value;
@@ -219,7 +219,7 @@ namespace SIL.FieldWorks.Common.Framework
 		/// the application. (Until something gets saved, it is the very first project the
 		/// user opens.)
 		/// </summary>
-		public string LatestProject
+		internal string LatestProject
 		{
 			get => m_latestProject.Value;
 			set => m_latestProject.Value = value;
@@ -228,7 +228,7 @@ namespace SIL.FieldWorks.Common.Framework
 		/// <summary>
 		/// Gets or sets the value in the registry for the sidebar's visibility.
 		/// </summary>
-		public bool ShowSideBarSetting
+		internal bool ShowSideBarSetting
 		{
 			get => m_showSideBar.Value;
 			set => m_showSideBar.Value = value;
@@ -237,7 +237,7 @@ namespace SIL.FieldWorks.Common.Framework
 		/// <summary>
 		/// Gets or sets the value in the registry for the status bar's visibility.
 		/// </summary>
-		public bool ShowStatusBarSetting
+		internal bool ShowStatusBarSetting
 		{
 			get => m_showStatusBar.Value;
 			set => m_showStatusBar.Value = value;
@@ -247,7 +247,7 @@ namespace SIL.FieldWorks.Common.Framework
 		/// Gets or sets the value in the registry for whether to show the Welcome dialog, or
 		/// just automatically open the latest successfully opened project.
 		/// </summary>
-		public bool AutoOpenLastEditedProject
+		internal bool AutoOpenLastEditedProject
 		{
 			get => m_openLastEditedProject.Value;
 			set => m_openLastEditedProject.Value = value;
@@ -259,12 +259,12 @@ namespace SIL.FieldWorks.Common.Framework
 		/// <summary>
 		/// Gets the value in the registry for the splash screen enable flag.
 		/// </summary>
-		public static bool DisableSplashScreenSetting => s_disableSplashScreen.Value;
+		internal static bool DisableSplashScreenSetting => s_disableSplashScreen.Value;
 
 		/// <summary>
 		/// Get or set the value for the "Measurement Units" setting from the registry.
 		/// </summary>
-		public static int MeasurementUnitSetting
+		internal static int MeasurementUnitSetting
 		{
 			get => s_measurementUnitSetting.Value;
 			set => s_measurementUnitSetting.Value = value;
@@ -275,7 +275,7 @@ namespace SIL.FieldWorks.Common.Framework
 		/// Adds the options as properties of the error reporter so that they show up in a
 		/// call stack.
 		/// </summary>
-		public void AddErrorReportingInfo()
+		internal void AddErrorReportingInfo()
 		{
 			ErrorReporter.AddProperty("FirstTimeAppHasBeenRun", FirstTimeAppHasBeenRun.ToString());
 			var cLaunches = NumberOfLaunches + 1;   // this is stored before it's incremented.
