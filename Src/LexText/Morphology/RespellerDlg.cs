@@ -609,10 +609,14 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			// This is sure a complicated way to do this, but if we don't and the old wordform goes away,
 			// there will still be a selection out there referencing the old hvo.
 			var contentControlObj =
-				m_propertyTable.GetValue<PaneBarContainer>("currentContentControlObject");
-			var recordBrowseView = contentControlObj?.Controls[0] as RecordBrowseView;
-			var browseView = recordBrowseView?.BrowseViewer?.BrowseView;
-			browseView?.RootBox?.DestroySelection();
+				m_propertyTable.GetValue<IxCoreContentControl>("currentContentControlObject");
+			// This could be other sorts of control (e.g. MultiPane), but this is the one that was causing problems (LT-20118)
+			if (contentControlObj is PaneBarContainer control)
+			{
+				var recordBrowseView = control.Controls[0] as RecordBrowseView;
+				var browseView = recordBrowseView?.BrowseViewer?.BrowseView;
+				browseView?.RootBox?.DestroySelection();
+			}
 		}
 
 		/// <summary>
@@ -1512,13 +1516,17 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 				// to update the ConcDecorator state, then close the UOW which triggers other PropChanged effects.
 				// We have to use SendMessage so the ConcDecorator gets that updated before the Clerk using it
 				// tries to re-read the list.
-				if (wfOld.CanDelete)
+				// LT-20118 found a case where wfOld was already deleted at this point.
+				if (wfOld.IsValidObject)
 				{
-					wfOld.Delete();
-				}
-				else
-				{
-					mediator.SendMessage("ItemDataModified", wfOld);
+					if (wfOld.CanDelete)
+					{
+						wfOld.Delete();
+					}
+					else
+					{
+						mediator.SendMessage("ItemDataModified", wfOld);
+					}
 				}
 
 				mediator.SendMessage("ItemDataModified", wfNew);
