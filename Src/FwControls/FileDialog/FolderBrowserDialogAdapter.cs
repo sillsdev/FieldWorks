@@ -19,7 +19,7 @@ namespace SIL.FieldWorks.Common.Controls.FileDialog
 		/// <summary />
 		public FolderBrowserDialogAdapter()
 		{
-			m_dlg = Manager.CreateFolderBrowserDialog();
+			m_dlg = FileDialogFactory.CreateFolderBrowserDialog();
 		}
 
 		#region IFolderBrowserDialog implementation

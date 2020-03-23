@@ -13,7 +13,6 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using Icu;
-using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Controls.FileDialog;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.ScriptureUtils;
@@ -467,7 +466,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			/// Moves the selected characters from the current grid to the opposing grid.
 			/// </summary>
 			/// <returns>The character grid to which the character was moved.</returns>
-			public CharacterGrid MoveSelectedChars()
+			internal CharacterGrid MoveSelectedChars()
 			{
 				var gridFrom = CurrentGrid;
 				var gridTo = gridFrom == m_gridOther ? m_gridWordForming : m_gridOther;
@@ -535,7 +534,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <summary>Hold a reference to the writing system manager</summary>
 		private WritingSystemManager m_wsManager;
 
-		private OpenFileDialogAdapter m_openFileDialog;
+		private IOpenFileDialog m_openFileDialog;
 		private CheckBoxColumnHeaderHandler m_chkBoxColHdrHandler;
 
 		#endregion
@@ -550,11 +549,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			InitializeComponent();
 			AccessibleName = GetType().Name;
 
-			m_openFileDialog = new OpenFileDialogAdapter
-			{
-				InitialDirectory = ScriptureProvider.SettingsDirectory,
-				Title = FwCoreDlgs.kstidLanguageFileBrowser
-			};
+			m_openFileDialog = new OpenFileDialogAdapter();
+			m_openFileDialog.InitialDirectory = ScriptureProvider.SettingsDirectory;
+			m_openFileDialog.Title = FwCoreDlgs.kstidLanguageFileBrowser;
 			// to import from language files from Paratext or Toolbox
 			splitContainerOuter.Panel2MinSize = splitValidCharsOuter.Left + (btnTreatAsWrdForming.Right - btnTreatAsPunct.Left);
 
@@ -653,11 +650,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 			if (disposing)
 			{
-				m_openFileDialog?.Dispose();
+				(m_openFileDialog as IDisposable)?.Dispose();
 				m_fntForSpecialChar?.Dispose();
 				m_validCharsGridMngr?.Dispose();
 				m_chkBoxColHdrHandler?.Dispose();
-				m_openFileDialog?.Dispose();
 				components?.Dispose();
 			}
 

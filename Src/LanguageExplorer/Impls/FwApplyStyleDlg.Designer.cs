@@ -3,6 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Diagnostics;
+using LanguageExplorer.Controls;
 using LanguageExplorer.Controls.Styles;
 
 namespace LanguageExplorer.Impls
@@ -50,7 +51,7 @@ namespace LanguageExplorer.Impls
 			this.m_lstStyles = new CaseSensitiveListBox();
 			this.m_btnOk = new System.Windows.Forms.Button();
 			this.m_btnCancel = new System.Windows.Forms.Button();
-			this.m_btnHelp = new SIL.FieldWorks.Common.Controls.FwHelpButton();
+			this.m_btnHelp = new FwHelpButton();
 			this.m_pnlMasterGrid = new System.Windows.Forms.TableLayoutPanel();
 			label1 = new System.Windows.Forms.Label();
 			this.contextMenuStyles.SuspendLayout();
@@ -143,7 +144,7 @@ namespace LanguageExplorer.Impls
 		protected CaseSensitiveListBox m_lstStyles;
 		private System.Windows.Forms.Button m_btnOk;
 		private System.Windows.Forms.Button m_btnCancel;
-		private SIL.FieldWorks.Common.Controls.FwHelpButton m_btnHelp;
+		private FwHelpButton m_btnHelp;
 		private System.Windows.Forms.ContextMenuStrip contextMenuStyles;
 		private System.Windows.Forms.ToolStripMenuItem helpToolStripMenuItem;
 		private System.Windows.Forms.TableLayoutPanel m_pnlMasterGrid;

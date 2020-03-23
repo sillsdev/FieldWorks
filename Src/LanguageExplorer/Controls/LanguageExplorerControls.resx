@@ -1337,4 +1337,19 @@ Sorry, in this browser, opening the file via hyperlink presents a security risk.
   <data name="ksQuestionMarks" xml:space="preserve">
     <value>???</value>
   </data>
+  <data name="kstidWizTabPage" xml:space="preserve">
+    <value>Pg. {0}</value>
+  </data>
+  <data name="kstidWizFinishButtonText" xml:space="preserve">
+    <value>Fi&amp;nish</value>
+    <comment>Text for the Finish buttons on wizards.</comment>
+  </data>
+  <data name="kstidWizForwardButtonText" xml:space="preserve">
+    <value>&amp;Next &gt;</value>
+    <comment>Text for the Next buttons on wizards.</comment>
+  </data>
+  <data name="kstidWizStepLabel" xml:space="preserve">
+    <value>Step {0} of {1}</value>
+    <comment>Text and format of label on wizards indicating what step user is on out of total number of steps.</comment>
+  </data>
 </root>

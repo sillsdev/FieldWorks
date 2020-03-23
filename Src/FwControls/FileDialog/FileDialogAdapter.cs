@@ -4,6 +4,7 @@
 
 using System;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Windows.Forms;
 
 namespace SIL.FieldWorks.Common.Controls.FileDialog
@@ -14,143 +15,143 @@ namespace SIL.FieldWorks.Common.Controls.FileDialog
 	public abstract class FileDialogAdapter : IFileDialog, IDisposable
 	{
 		/// <summary/>
-		protected IFileDialog m_dlg;
+		protected IFileDialog _dlg;
 
 		#region IFileDialog implementation
 
 		/// <inheritdoc />
-		public event EventHandler Disposed
+		event EventHandler IFileDialog.Disposed
 		{
-			add => m_dlg.Disposed += value;
-			remove => m_dlg.Disposed -= value;
+			add => _dlg.Disposed += value;
+			remove => _dlg.Disposed -= value;
 		}
 
 		/// <inheritdoc />
-		public event CancelEventHandler FileOk
+		event CancelEventHandler IFileDialog.FileOk
 		{
-			add => m_dlg.FileOk += value;
-			remove => m_dlg.FileOk -= value;
+			add => _dlg.FileOk += value;
+			remove => _dlg.FileOk -= value;
 		}
 
 		/// <inheritdoc />
-		public event EventHandler HelpRequest
+		event EventHandler IFileDialog.HelpRequest
 		{
-			add => m_dlg.HelpRequest += value;
-			remove => m_dlg.HelpRequest -= value;
+			add => _dlg.HelpRequest += value;
+			remove => _dlg.HelpRequest -= value;
 		}
 
 		/// <inheritdoc />
-		public void Reset()
+		void IFileDialog.Reset()
 		{
-			m_dlg.Reset();
+			_dlg.Reset();
 		}
 
 		/// <summary>
 		/// Runs the dialog box with a default owner.
 		/// </summary>
-		public DialogResult ShowDialog()
+		DialogResult IFileDialog.ShowDialog()
 		{
-			return m_dlg.ShowDialog();
+			return _dlg.ShowDialog();
 		}
 
 		/// <inheritdoc />
-		public DialogResult ShowDialog(IWin32Window owner)
+		DialogResult IFileDialog.ShowDialog(IWin32Window owner)
 		{
-			return m_dlg.ShowDialog(owner);
+			return _dlg.ShowDialog(owner);
 		}
 
 		/// <inheritdoc />
-		public bool AddExtension
+		bool IFileDialog.AddExtension
 		{
-			get => m_dlg.AddExtension;
-			set => m_dlg.AddExtension = value;
+			get => _dlg.AddExtension;
+			set => _dlg.AddExtension = value;
 		}
 
 		/// <inheritdoc />
-		public bool CheckFileExists
+		bool IFileDialog.CheckFileExists
 		{
-			get => m_dlg.CheckFileExists;
-			set => m_dlg.CheckFileExists = value;
+			get => _dlg.CheckFileExists;
+			set => _dlg.CheckFileExists = value;
 		}
 
 		/// <inheritdoc />
-		public bool CheckPathExists
+		bool IFileDialog.CheckPathExists
 		{
-			get => m_dlg.CheckPathExists;
-			set => m_dlg.CheckPathExists = value;
+			get => _dlg.CheckPathExists;
+			set => _dlg.CheckPathExists = value;
 		}
 
 		/// <inheritdoc />
-		public string DefaultExt
+		string IFileDialog.DefaultExt
 		{
-			get => m_dlg.DefaultExt;
-			set => m_dlg.DefaultExt = value;
+			get => _dlg.DefaultExt;
+			set => _dlg.DefaultExt = value;
 		}
 
 		/// <inheritdoc />
-		public string FileName
+		string IFileDialog.FileName
 		{
-			get => m_dlg.FileName;
-			set => m_dlg.FileName = value;
+			get => _dlg.FileName;
+			set => _dlg.FileName = value;
 		}
 
 		/// <inheritdoc />
-		public string[] FileNames => m_dlg.FileNames;
+		string[] IFileDialog.FileNames => _dlg.FileNames;
 
 		/// <inheritdoc />
-		public string Filter
+		string IFileDialog.Filter
 		{
-			get => m_dlg.Filter;
-			set => m_dlg.Filter = value;
+			get => _dlg.Filter;
+			set => _dlg.Filter = value;
 		}
 
 		/// <inheritdoc />
-		public int FilterIndex
+		int IFileDialog.FilterIndex
 		{
-			get => m_dlg.FilterIndex;
-			set => m_dlg.FilterIndex = value;
+			get => _dlg.FilterIndex;
+			set => _dlg.FilterIndex = value;
 		}
 
 		/// <inheritdoc />
-		public string InitialDirectory
+		string IFileDialog.InitialDirectory
 		{
-			get => m_dlg.InitialDirectory;
-			set => m_dlg.InitialDirectory = value;
+			get => _dlg.InitialDirectory;
+			set => _dlg.InitialDirectory = value;
 		}
 
 		/// <inheritdoc />
-		public bool RestoreDirectory
+		bool IFileDialog.RestoreDirectory
 		{
-			get => m_dlg.RestoreDirectory;
-			set => m_dlg.RestoreDirectory = value;
+			get => _dlg.RestoreDirectory;
+			set => _dlg.RestoreDirectory = value;
 		}
 
 		/// <inheritdoc />
-		public bool ShowHelp
+		bool IFileDialog.ShowHelp
 		{
-			get => m_dlg.ShowHelp;
-			set => m_dlg.ShowHelp = value;
+			get => _dlg.ShowHelp;
+			set => _dlg.ShowHelp = value;
 		}
 
 		/// <inheritdoc />
-		public bool SupportMultiDottedExtensions
+		bool IFileDialog.SupportMultiDottedExtensions
 		{
-			get => m_dlg.SupportMultiDottedExtensions;
-			set => m_dlg.SupportMultiDottedExtensions = value;
+			get => _dlg.SupportMultiDottedExtensions;
+			set => _dlg.SupportMultiDottedExtensions = value;
 		}
 
 		/// <inheritdoc />
-		public string Title
+		string IFileDialog.Title
 		{
-			get => m_dlg.Title;
-			set => m_dlg.Title = value;
+			get => _dlg.Title;
+			set => _dlg.Title = value;
 		}
 
 		/// <inheritdoc />
-		public bool ValidateNames
+		bool IFileDialog.ValidateNames
 		{
-			get => m_dlg.ValidateNames;
-			set => m_dlg.ValidateNames = value;
+			get => _dlg.ValidateNames;
+			set => _dlg.ValidateNames = value;
 		}
 		#endregion
 
@@ -163,10 +164,10 @@ namespace SIL.FieldWorks.Common.Controls.FileDialog
 		}
 
 		/// <summary/>
-		public bool IsDisposed { get; private set; }
+		private bool IsDisposed { get; set; }
 
 		/// <inheritdoc />
-		public void Dispose()
+		void IDisposable.Dispose()
 		{
 			Dispose(true);
 			GC.SuppressFinalize(this);
@@ -175,7 +176,7 @@ namespace SIL.FieldWorks.Common.Controls.FileDialog
 		/// <summary />
 		protected virtual void Dispose(bool disposing)
 		{
-			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + ". *******");
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + ". *******");
 			if (IsDisposed)
 			{
 				// No need to run it more than once.
@@ -184,10 +185,10 @@ namespace SIL.FieldWorks.Common.Controls.FileDialog
 
 			if (disposing)
 			{
-				var disposable = m_dlg as IDisposable;
+				var disposable = _dlg as IDisposable;
 				disposable?.Dispose();
 			}
-			m_dlg = null;
+			_dlg = null;
 			IsDisposed = true;
 		}
 		#endregion

@@ -31,13 +31,13 @@ namespace SIL.FieldWorks.FwCoreDlgs
 	internal sealed class ConverterTrial : UserControl
 	{
 		private FwOverrideComboBox outputFontCombo;
-		private OpenFileDialogAdapter ofDlg;
+		private IOpenFileDialog ofDlg;
 		private string m_mapname; // name of the conversion to apply when convert is pressed.
 		private StringBuilder m_savedOutput; // saves the converted data for saving to a file
 		private SampleView m_svOutput;
 		private bool m_fHasOutput;
 		private Panel OutputPanel;
-		private SaveFileDialogAdapter saveFileDialog;
+		private ISaveFileDialog saveFileDialog;
 		private TextBox txtInputFile;
 		private ToolTip toolTipInputFile;
 		private Button convertButton;
@@ -52,17 +52,13 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			// This call is required by the Windows.Forms Form Designer.
 			InitializeComponent();
-			ofDlg = new OpenFileDialogAdapter
-			{
-				DefaultExt = "txt",
-				Filter = FileUtils.FileDialogFilterCaseInsensitiveCombinations(FwCoreDlgs.ofDlg_Filter)
-			};
-			saveFileDialog = new SaveFileDialogAdapter
-			{
-				DefaultExt = "txt",
-				RestoreDirectory = true,
-				Filter = ofDlg.Filter
-			};
+			ofDlg = new OpenFileDialogAdapter();
+			ofDlg.DefaultExt = "txt";
+			ofDlg.Filter = FileUtils.FileDialogFilterCaseInsensitiveCombinations(FwCoreDlgs.ofDlg_Filter);
+			saveFileDialog = new SaveFileDialogAdapter();
+			saveFileDialog.DefaultExt = "txt";
+			saveFileDialog.RestoreDirectory = true;
+			saveFileDialog.Filter = ofDlg.Filter;
 			if (DesignMode)
 			{
 				return;
@@ -97,8 +93,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			{
 				components?.Dispose();
 
-				saveFileDialog.Dispose();
-				ofDlg.Dispose();
+				(saveFileDialog as IDisposable)?.Dispose();
+				(ofDlg as IDisposable)?.Dispose();
 			}
 			base.Dispose(disposing);
 		}

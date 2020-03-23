@@ -19,7 +19,7 @@ namespace SIL.FieldWorks.Resources {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class FwStrings {
@@ -322,7 +322,7 @@ namespace SIL.FieldWorks.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Change Vernacular Writing System.
+        ///   Looks up a localized string similar to Default Vernacular Writing System Has Changed.
         /// </summary>
         internal static string kstidChangeHomographNumberWsTitle {
             get {
@@ -2963,33 +2963,6 @@ namespace SIL.FieldWorks.Resources {
         internal static string kstidWindowTileStackedMsg {
             get {
                 return ResourceManager.GetString("kstidWindowTileStackedMsg", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Fi&amp;nish.
-        /// </summary>
-        internal static string kstidWizFinishButtonText {
-            get {
-                return ResourceManager.GetString("kstidWizFinishButtonText", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to &amp;Next &gt;.
-        /// </summary>
-        internal static string kstidWizForwardButtonText {
-            get {
-                return ResourceManager.GetString("kstidWizForwardButtonText", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Step {0} of {1}.
-        /// </summary>
-        internal static string kstidWizStepLabel {
-            get {
-                return ResourceManager.GetString("kstidWizStepLabel", resourceCulture);
             }
         }
         

@@ -4,7 +4,7 @@
 
 using System.Drawing;
 using System.Windows.Forms;
-using SIL.FieldWorks.Common.Controls;
+using LanguageExplorer.Controls;
 using SIL.FieldWorks.Common.FwUtils;
 
 namespace LanguageExplorer

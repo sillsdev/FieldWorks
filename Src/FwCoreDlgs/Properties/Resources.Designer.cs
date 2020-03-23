@@ -93,16 +93,6 @@ namespace SIL.FieldWorks.FwCoreDlgs.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap chorus32 {
-            get {
-                object obj = ResourceManager.GetObject("chorus32", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
         internal static System.Drawing.Bitmap DownArrow {
             get {
                 object obj = ResourceManager.GetObject("DownArrow", resourceCulture);
@@ -117,6 +107,61 @@ namespace SIL.FieldWorks.FwCoreDlgs.Properties {
             get {
                 object obj = ResourceManager.GetObject("FwCopyRight", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap kimidMissingGlyph {
+            get {
+                object obj = ResourceManager.GetObject("kimidMissingGlyph", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unicode Value: {0}.
+        /// </summary>
+        internal static string kstidChrGridCodepoint {
+            get {
+                return ResourceManager.GetString("kstidChrGridCodepoint", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unicode Values: {0}.
+        /// </summary>
+        internal static string kstidChrGridCodepoints {
+            get {
+                return ResourceManager.GetString("kstidChrGridCodepoints", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Writing system font cannot render this character.
+        /// </summary>
+        internal static string kstidChrGridMissingGlyphHdg {
+            get {
+                return ResourceManager.GetString("kstidChrGridMissingGlyphHdg", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Name: {0}.
+        /// </summary>
+        internal static string kstidChrGridName {
+            get {
+                return ResourceManager.GetString("kstidChrGridName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Character Information.
+        /// </summary>
+        internal static string kstidChrGridNormalHdg {
+            get {
+                return ResourceManager.GetString("kstidChrGridNormalHdg", resourceCulture);
             }
         }
         
@@ -285,6 +330,249 @@ namespace SIL.FieldWorks.FwCoreDlgs.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to SPACE.
+        /// </summary>
+        internal static string kstidSpecialChar0020 {
+            get {
+                return ResourceManager.GetString("kstidSpecialChar0020", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to NBSP.
+        /// </summary>
+        internal static string kstidSpecialChar00A0 {
+            get {
+                return ResourceManager.GetString("kstidSpecialChar00A0", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to MVS.
+        /// </summary>
+        internal static string kstidSpecialChar180E {
+            get {
+                return ResourceManager.GetString("kstidSpecialChar180E", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to NQSP.
+        /// </summary>
+        internal static string kstidSpecialChar2000 {
+            get {
+                return ResourceManager.GetString("kstidSpecialChar2000", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to MQSP.
+        /// </summary>
+        internal static string kstidSpecialChar2001 {
+            get {
+                return ResourceManager.GetString("kstidSpecialChar2001", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ENSP.
+        /// </summary>
+        internal static string kstidSpecialChar2002 {
+            get {
+                return ResourceManager.GetString("kstidSpecialChar2002", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to EMSP.
+        /// </summary>
+        internal static string kstidSpecialChar2003 {
+            get {
+                return ResourceManager.GetString("kstidSpecialChar2003", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 3/MSP.
+        /// </summary>
+        internal static string kstidSpecialChar2004 {
+            get {
+                return ResourceManager.GetString("kstidSpecialChar2004", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 4/MSP.
+        /// </summary>
+        internal static string kstidSpecialChar2005 {
+            get {
+                return ResourceManager.GetString("kstidSpecialChar2005", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 6/MSP.
+        /// </summary>
+        internal static string kstidSpecialChar2006 {
+            get {
+                return ResourceManager.GetString("kstidSpecialChar2006", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to FSP.
+        /// </summary>
+        internal static string kstidSpecialChar2007 {
+            get {
+                return ResourceManager.GetString("kstidSpecialChar2007", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to PSP.
+        /// </summary>
+        internal static string kstidSpecialChar2008 {
+            get {
+                return ResourceManager.GetString("kstidSpecialChar2008", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to THSP.
+        /// </summary>
+        internal static string kstidSpecialChar2009 {
+            get {
+                return ResourceManager.GetString("kstidSpecialChar2009", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to HSP.
+        /// </summary>
+        internal static string kstidSpecialChar200A {
+            get {
+                return ResourceManager.GetString("kstidSpecialChar200A", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ZWSP.
+        /// </summary>
+        internal static string kstidSpecialChar200B {
+            get {
+                return ResourceManager.GetString("kstidSpecialChar200B", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ZWNJ.
+        /// </summary>
+        internal static string kstidSpecialChar200C {
+            get {
+                return ResourceManager.GetString("kstidSpecialChar200C", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ZWJ.
+        /// </summary>
+        internal static string kstidSpecialChar200D {
+            get {
+                return ResourceManager.GetString("kstidSpecialChar200D", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to LRM.
+        /// </summary>
+        internal static string kstidSpecialChar200E {
+            get {
+                return ResourceManager.GetString("kstidSpecialChar200E", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to RLM.
+        /// </summary>
+        internal static string kstidSpecialChar200F {
+            get {
+                return ResourceManager.GetString("kstidSpecialChar200F", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to LSEP.
+        /// </summary>
+        internal static string kstidSpecialChar2028 {
+            get {
+                return ResourceManager.GetString("kstidSpecialChar2028", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to PSEP.
+        /// </summary>
+        internal static string kstidSpecialChar2029 {
+            get {
+                return ResourceManager.GetString("kstidSpecialChar2029", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to LRE.
+        /// </summary>
+        internal static string kstidSpecialChar202A {
+            get {
+                return ResourceManager.GetString("kstidSpecialChar202A", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to RLE.
+        /// </summary>
+        internal static string kstidSpecialChar202B {
+            get {
+                return ResourceManager.GetString("kstidSpecialChar202B", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to PDF.
+        /// </summary>
+        internal static string kstidSpecialChar202C {
+            get {
+                return ResourceManager.GetString("kstidSpecialChar202C", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to NNBSP.
+        /// </summary>
+        internal static string kstidSpecialChar202F {
+            get {
+                return ResourceManager.GetString("kstidSpecialChar202F", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to MMSP.
+        /// </summary>
+        internal static string kstidSpecialChar205F {
+            get {
+                return ResourceManager.GetString("kstidSpecialChar205F", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to IDSP.
+        /// </summary>
+        internal static string kstidSpecialChar3000 {
+            get {
+                return ResourceManager.GetString("kstidSpecialChar3000", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to &amp;Treat as not Word Forming.
         /// </summary>
         internal static string kstidTreatAsOther {
@@ -412,13 +700,9 @@ namespace SIL.FieldWorks.FwCoreDlgs.Properties {
             }
         }
         
-        internal static System.Drawing.Bitmap wait22trans {
-            get {
-                object obj = ResourceManager.GetObject("wait22trans", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap Warning {
             get {
                 object obj = ResourceManager.GetObject("Warning", resourceCulture);

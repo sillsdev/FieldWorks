@@ -2348,17 +2348,18 @@ namespace LanguageExplorer.Impls
 			var form = ActiveForm ?? this;
 			using (var dlg = new OpenFileDialogAdapter())
 			{
-				dlg.CheckFileExists = true;
-				dlg.RestoreDirectory = true;
-				dlg.Title = ResourceHelper.GetResourceString("kstidOpenTranslatedLists");
-				dlg.ValidateNames = true;
-				dlg.Multiselect = false;
-				dlg.Filter = ResourceHelper.FileFilter(FileFilterType.FieldWorksTranslatedLists);
-				if (dlg.ShowDialog(form) != DialogResult.OK)
+				var dlgAsIFileDialog = (IFileDialog)dlg;
+				dlgAsIFileDialog.CheckFileExists = true;
+				dlgAsIFileDialog.RestoreDirectory = true;
+				dlgAsIFileDialog.Title = ResourceHelper.GetResourceString("kstidOpenTranslatedLists");
+				dlgAsIFileDialog.ValidateNames = true;
+				((IOpenFileDialog)dlgAsIFileDialog).Multiselect = false;
+				dlgAsIFileDialog.Filter = ResourceHelper.FileFilter(FileFilterType.FieldWorksTranslatedLists);
+				if (dlgAsIFileDialog.ShowDialog(form) != DialogResult.OK)
 				{
 					return;
 				}
-				filename = dlg.FileName;
+				filename = dlgAsIFileDialog.FileName;
 			}
 			using (new WaitCursor(form, true))
 			{
@@ -2979,13 +2980,14 @@ very simple minor adjustments. ;)"
 			string pathname;
 			using (var fileDialog = new OpenFileDialogAdapter())
 			{
-				fileDialog.Filter = ResourceHelper.FileFilter(FileFilterType.AllFiles);
-				fileDialog.RestoreDirectory = true;
-				if (fileDialog.ShowDialog() != DialogResult.OK)
+				var fileDialogAsIFileDialog = (IFileDialog)fileDialog;
+				fileDialogAsIFileDialog.Filter = ResourceHelper.FileFilter(FileFilterType.AllFiles);
+				fileDialogAsIFileDialog.RestoreDirectory = true;
+				if (fileDialogAsIFileDialog.ShowDialog() != DialogResult.OK)
 				{
 					return;
 				}
-				pathname = fileDialog.FileName;
+				pathname = fileDialogAsIFileDialog.FileName;
 			}
 			if (string.IsNullOrEmpty(pathname))
 			{

@@ -213,13 +213,9 @@
       <Link>AssemblyInfoForTests.cs</Link>
     </Compile>
     <Compile Include="DummyProgressDlg.cs" />
-    <Compile Include="ObtainProjectMethodTests.cs" />
     <Compile Include="OpenFileDialogLinuxTests.cs" />
     <Compile Include="ProgressDlgTests.cs">
     </Compile>
-    <Compile Include="TriStateTreeViewTests.cs">
-    </Compile>
-    <Compile Include="ProgressStateTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">

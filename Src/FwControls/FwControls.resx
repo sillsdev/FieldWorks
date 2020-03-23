@@ -117,15 +117,6 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="kstidWizFinishButtonText" xml:space="preserve">
-    <value>Fi&amp;nish</value>
-  </data>
-  <data name="kstidWizForwardButtonText" xml:space="preserve">
-    <value>&amp;Next &gt;</value>
-  </data>
-  <data name="kstidWizStepLabel" xml:space="preserve">
-    <value>Step {0} of {1}</value>
-  </data>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="CheckBox" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
@@ -141,23 +132,5 @@
         Dl/0ILA218Wv2F7EmAlVjGO5gtx2RMoP1MvNGI8fsNc7Y5hA1LE/YwwC35ob2BmXpDdDsDdM1MydQGcM
         cj8LuRnj9qBHbjsiLFZjzIQqnxOxA2ISW7MPZ2v2AAAAAElFTkSuQmCC
 </value>
-  </data>
-  <data name="kstidWizTabPage" xml:space="preserve">
-    <value>Pg. {0}</value>
-  </data>
-  <data name="kBridgeAlreadyRunning" xml:space="preserve">
-    <value>There is already a copy of FLExBridge running.
-You probably have a Conflict Report open. It will need to be closed before you can access any of the other FLExBridge functions such as:
--- Send/Receive Project
--- Get project from a colleague
--- View Conflict Report (can't have two open)
-If you don't see any FLExBridge windows open, it may just be that FLExBridge is still shutting down. Please wait 15 seconds and try again.</value>
-  </data>
-  <data name="kFlexBridge" xml:space="preserve">
-    <value>FLExBridge</value>
-  </data>
-  <data name="ksCreatingLiftProject" xml:space="preserve">
-    <value>Creating a project to import LIFT data into</value>
-    <comment>Displayed in a progress dialog when getting a LIFT repository to make a new local project</comment>
   </data>
 </root>

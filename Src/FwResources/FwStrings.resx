@@ -805,18 +805,6 @@ only in multiple-paragraph fields like 'Description'</value>
     <value>Current Writing System</value>
     <comment>Text for the writing system selector toolbar tooltip</comment>
   </data>
-  <data name="kstidWizFinishButtonText" xml:space="preserve">
-    <value>Fi&amp;nish</value>
-    <comment>Text for the Finish buttons on wizards.</comment>
-  </data>
-  <data name="kstidWizForwardButtonText" xml:space="preserve">
-    <value>&amp;Next &gt;</value>
-    <comment>Text for the Next buttons on wizards.</comment>
-  </data>
-  <data name="kstidWizStepLabel" xml:space="preserve">
-    <value>Step {0} of {1}</value>
-    <comment>Text and format of label on wizards indicating what step user is on out of total number of steps.</comment>
-  </data>
   <data name="kstidOldDbVersionUpdateMsg" xml:space="preserve">
     <value>The {0} database needs to be updated from version {1} to version {2}.{3}{3}Performing this update could take a while. Do you want to continue with the Update?</value>
     <comment>Shows the database and dbversion and appversion</comment>

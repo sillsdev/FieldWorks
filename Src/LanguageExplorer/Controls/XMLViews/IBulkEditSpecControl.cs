@@ -4,7 +4,6 @@
 
 using System.Collections.Generic;
 using System.Windows.Forms;
-using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Core.KernelInterfaces;

@@ -57,7 +57,7 @@ namespace LanguageExplorer.Areas.Notebook
 		private ICmPossibilityListRepository m_repoList;
 
 		private bool m_fCanceling;
-		private OpenFileDialogAdapter openFileDialog;
+		private IOpenFileDialog openFileDialog;
 		private CmPossibilityCreator m_factPossibility;
 		private CmAnthroItemCreator m_factAnthroItem;
 		private CmLocationCreator m_factLocation;

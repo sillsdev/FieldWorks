@@ -8,7 +8,7 @@ using LanguageExplorer.Areas.TextsAndWords.Discourse;
 using LanguageExplorer.Impls;
 using LanguageExplorer.TestUtilities;
 using NUnit.Framework;
-using SIL.FieldWorks.Common.Controls;
+using SIL.FieldWorks.FwCoreDlgs;
 using SIL.LCModel;
 using SIL.LCModel.Utils;
 

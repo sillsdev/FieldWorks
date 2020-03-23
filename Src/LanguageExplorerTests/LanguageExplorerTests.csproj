@@ -238,6 +238,7 @@
     <Compile Include="Areas\TextsAndWords\Interlinear\TestableFocusBox.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Include="Areas\TextsAndWords\Interlinear\TriStateTreeViewTests.cs" />
     <Compile Include="CreateOverrideTests.cs" />
     <Compile Include="DeleteListHelper.cs" />
     <Compile Include="DeleteCustomListTestsBase.cs" />
@@ -268,6 +269,8 @@
     <Compile Include="Impls\FwFindReplaceDlgWithLiteralStringsTests.cs" />
     <Compile Include="Impls\FwFindReplaceDlgWithObjectsRepeatedInDisplayTests.cs" />
     <Compile Include="MGA\GlossListTreeViewTest.cs" />
+    <Compile Include="ProgressStateTests.cs" />
+    <Compile Include="SendReceive\ObtainProjectMethodTests.cs" />
     <Compile Include="TestStyle.cs" />
     <Compile Include="Filters\DateTimeMatcherTests.cs" />
     <Compile Include="Filters\FindResultsSorterTests.cs" />

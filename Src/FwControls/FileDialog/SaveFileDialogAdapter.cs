@@ -9,32 +9,34 @@ namespace SIL.FieldWorks.Common.Controls.FileDialog
 	/// <summary>
 	/// Prompts the user to select a location for saving a file.
 	/// </summary>
-	public class SaveFileDialogAdapter : FileDialogAdapter, ISaveFileDialog
+	public sealed class SaveFileDialogAdapter : FileDialogAdapter, ISaveFileDialog
 	{
 		/// <summary />
 		public SaveFileDialogAdapter()
 		{
-			m_dlg = Manager.CreateSaveFileDialog();
+			_dlg = FileDialogFactory.CreateSaveFileDialog();
+		}
+
+		private ISaveFileDialog DlgAsISaveFileDialog => (ISaveFileDialog)_dlg;
+
+		/// <inheritdoc />
+		bool ISaveFileDialog.CreatePrompt
+		{
+			get => DlgAsISaveFileDialog.CreatePrompt;
+			set => DlgAsISaveFileDialog.CreatePrompt = value;
 		}
 
 		/// <inheritdoc />
-		public bool CreatePrompt
+		bool ISaveFileDialog.OverwritePrompt
 		{
-			get => ((ISaveFileDialog)m_dlg).CreatePrompt;
-			set => ((ISaveFileDialog)m_dlg).CreatePrompt = value;
+			get => DlgAsISaveFileDialog.OverwritePrompt;
+			set => DlgAsISaveFileDialog.OverwritePrompt = value;
 		}
 
 		/// <inheritdoc />
-		public bool OverwritePrompt
+		Stream ISaveFileDialog.OpenFile()
 		{
-			get => ((ISaveFileDialog)m_dlg).OverwritePrompt;
-			set => ((ISaveFileDialog)m_dlg).OverwritePrompt = value;
-		}
-
-		/// <inheritdoc />
-		public Stream OpenFile()
-		{
-			return ((ISaveFileDialog)m_dlg).OpenFile();
+			return DlgAsISaveFileDialog.OpenFile();
 		}
 	}
 }

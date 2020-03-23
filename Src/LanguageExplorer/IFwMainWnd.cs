@@ -5,7 +5,6 @@
 using System;
 using System.Drawing;
 using System.Windows.Forms;
-using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.LCModel;

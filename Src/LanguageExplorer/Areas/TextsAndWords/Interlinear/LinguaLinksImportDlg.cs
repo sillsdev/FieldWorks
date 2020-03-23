@@ -35,7 +35,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		private Label label1;
 		private TextBox m_LinguaLinksXmlFileName;
 		private Button btn_LinguaLinksXmlBrowse;
-		private OpenFileDialogAdapter openFileDialog;
+		private IOpenFileDialog openFileDialog;
 		private ColumnHeader columnHeader1;
 		private ColumnHeader columnHeader2;
 		private ColumnHeader columnHeader3;
@@ -140,7 +140,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			if (disposing)
 			{
 				components?.Dispose();
-				openFileDialog.Dispose();
+				(openFileDialog as IDisposable)?.Dispose();
 			}
 			base.Dispose(disposing);
 		}

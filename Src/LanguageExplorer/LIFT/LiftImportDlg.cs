@@ -34,7 +34,7 @@ namespace LanguageExplorer.LIFT
 		private IPropertyTable m_propertyTable;
 		private IThreadedProgress m_progressDlg;
 		private string m_sLogFile;      // name of HTML log file (if successful).
-		private OpenFileDialogAdapter openFileDialog1;
+		private IOpenFileDialog openFileDialog1;
 		private MergeStyle m_msImport = MergeStyle.MsKeepOld;
 
 		public LiftImportDlg()

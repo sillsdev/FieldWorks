@@ -8,27 +8,27 @@ namespace SIL.FieldWorks.Common.Controls.FileDialog
 {
 	/// <summary>Cross-platform OpenFile dialog. On Windows it displays .NET's WinForms
 	/// OpenFileDialog, on Linux the GTK FileChooserDialog.</summary>
-	public class OpenFileDialogAdapter : FileDialogAdapter, IOpenFileDialog
+	public sealed class OpenFileDialogAdapter : FileDialogAdapter, IOpenFileDialog
 	{
 		/// <summary />
 		public OpenFileDialogAdapter()
 		{
-			m_dlg = Manager.CreateOpenFileDialog();
+			_dlg = FileDialogFactory.CreateOpenFileDialog();
 		}
 
 		#region IOpenFileDialog implementation
 
 		/// <inheritdoc />
-		public Stream OpenFile()
+		Stream IOpenFileDialog.OpenFile()
 		{
-			return ((IOpenFileDialog)m_dlg).OpenFile();
+			return ((IOpenFileDialog)_dlg).OpenFile();
 		}
 
 		/// <inheritdoc />
-		public bool Multiselect
+		bool IOpenFileDialog.Multiselect
 		{
-			get => ((IOpenFileDialog)m_dlg).Multiselect;
-			set => ((IOpenFileDialog)m_dlg).Multiselect = value;
+			get => ((IOpenFileDialog)_dlg).Multiselect;
+			set => ((IOpenFileDialog)_dlg).Multiselect = value;
 		}
 		#endregion
 	}

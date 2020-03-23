@@ -11,7 +11,7 @@ namespace SIL.FieldWorks.Common.Controls
 {
 	/// <summary />
 	[ToolboxBitmap(typeof(FwButton), "resources.BorderDrawing.bmp")]
-	public sealed class BorderDrawing : Component
+	internal sealed class BorderDrawing : Component
 	{
 		/// <summary />
 		private Rectangle m_rect;
@@ -29,57 +29,24 @@ namespace SIL.FieldWorks.Common.Controls
 		#region Constructors
 
 		/// <summary />
-		public BorderDrawing()
+		internal BorderDrawing()
 		{
 			Graphics = null;
-		}
-
-		/// <summary />
-		public BorderDrawing(Graphics g)
-		{
-			Graphics = g;
-		}
-
-		/// <summary />
-		public BorderDrawing(Graphics g, System.Drawing.Rectangle rect)
-		{
-			Graphics = g;
-			m_rect = rect;
-		}
-
-		/// <summary />
-		public BorderDrawing(Graphics g, System.Drawing.Rectangle rect, BorderTypes brdrType)
-		{
-			Graphics = g;
-			m_rect = rect;
-			m_brdrType = brdrType;
-			Draw();
-		}
-
-		/// <summary />
-		public BorderDrawing(Graphics g, int x, int y, int nWidth, int nHeight, BorderTypes brdrType)
-		{
-			Graphics = g;
-			m_rect = new System.Drawing.Rectangle(x, y, nWidth, nHeight);
-			m_brdrType = brdrType;
-			Draw();
-		}
-
-		/// <summary />
-		public BorderDrawing(IContainer container)
-		{
-			// Required for Windows.Forms Class Composition Designer support
-			container.Add(this);
 		}
 		#endregion
 
 		/// <summary />
-		public bool IsDisposed { get; private set; }
+		private bool IsDisposed { get; set; }
 
 		/// <inheritdoc />
 		protected override void Dispose(bool disposing)
 		{
 			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + ". ******");
+			if (IsDisposed)
+			{
+				// No need to run it more than once.
+				return;
+			}
 
 			base.Dispose(disposing);
 
@@ -92,45 +59,24 @@ namespace SIL.FieldWorks.Common.Controls
 			IsDisposed = true;
 		}
 
-		/// <summary>
-		///  This is an alternate way to set the edge colors.
-		/// </summary>
-		public void EdgeColors(Color clrLightest, Color clrLight, Color clrDark, Color clrDarkest)
-		{
-			BorderLightestColor = clrLightest;
-			BorderLightColor = clrLight;
-			BorderDarkColor = clrDark;
-			BorderDarkestColor = clrDarkest;
-		}
-
-		/// <summary>
-		/// This is an alternate way to set the edge colors to be used if border type is single
-		/// sunken or raised.
-		/// </summary>
-		public void EdgeColors(Color clrLight, Color clrDark)
-		{
-			BorderLightestColor = clrLight;
-			BorderDarkColor = clrDark;
-		}
-
 		#region Properties
 
 		/// <summary>
 		/// Gets or sets the graphics object.
 		/// </summary>
 		[Browsable(false)]
-		public Graphics Graphics { get; set; }
+		internal Graphics Graphics { get; set; }
 
 		/// <summary>
 		/// Gets or sets the color used to draw border style Single.
 		/// </summary>
 		[Description("Determines the color used to draw border style Single.")]
-		public Color SingleBorderColor { get; set; } = SystemColors.ControlDark;
+		internal Color SingleBorderColor { get; set; } = SystemColors.ControlDark;
 
 		/// <summary>
 		///  Allow setting individual edge colors for raised and sunken borders.
 		/// </summary>
-		public Color BorderLightestColor
+		internal Color BorderLightestColor
 		{
 			get => m_penLightestEdge.Color;
 			set => m_penLightestEdge.Color = value;
@@ -139,7 +85,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <summary>
 		///  Allow setting individual edge colors for raised and sunken borders.
 		/// </summary>
-		public Color BorderLightColor
+		internal Color BorderLightColor
 		{
 			get => m_penLightEdge.Color;
 			set => m_penLightEdge.Color = value;
@@ -148,7 +94,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <summary>
 		///  Allow setting individual edge colors for raised and sunken borders.
 		/// </summary>
-		public Color BorderDarkColor
+		internal Color BorderDarkColor
 		{
 			get => m_penDarkEdge.Color;
 			set => m_penDarkEdge.Color = value;
@@ -157,7 +103,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <summary>
 		///  Allow setting individual edge colors for raised and sunken borders.
 		/// </summary>
-		public Color BorderDarkestColor
+		internal Color BorderDarkestColor
 		{
 			get => m_penDarkestEdge.Color;
 			set => m_penDarkestEdge.Color = value;
@@ -208,7 +154,7 @@ namespace SIL.FieldWorks.Common.Controls
 		#endregion
 
 		/// <summary />
-		public void Draw(Graphics g, Rectangle rect, BorderTypes brdrType)
+		internal void Draw(Graphics g, Rectangle rect, BorderTypes brdrType)
 		{
 			Graphics = g;
 			m_rect = rect;
@@ -219,7 +165,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <summary>
 		/// Draws this instance.
 		/// </summary>
-		public void Draw()
+		private void Draw()
 		{
 			if (Graphics == null)
 			{

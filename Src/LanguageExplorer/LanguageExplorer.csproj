@@ -151,6 +151,7 @@
       <Private>False</Private>
     </Reference>
     <Reference Include="System.ComponentModel.Composition" />
+    <Reference Include="System.Design" />
     <Reference Include="System.Security" />
     <Reference Include="ViewsInterfaces">
       <HintPath>..\..\Output\Debug\ViewsInterfaces.dll</HintPath>
@@ -324,6 +325,13 @@
     </Compile>
     <Compile Include="Areas\IdAndString.cs" />
     <Compile Include="Areas\Lexicon\Reversals\ReversalServices.cs" />
+    <Compile Include="Areas\ProgressDialogWorkingOn.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Areas\TextsAndWords\Interlinear\TriStateTreeView.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Areas\TextsAndWords\Interlinear\TriStateTreeViewCheckState.cs" />
     <Compile Include="Areas\TextsAndWords\Tools\WordListConcordance\SubservientConcordanceRecordList.cs" />
     <Compile Include="Areas\TextsAndWords\IInterlinearConfigurator.cs" />
     <Compile Include="Areas\TextsAndWords\Interlinear\InterlinearTextServices.cs" />
@@ -331,6 +339,14 @@
     <Compile Include="Command.cs" />
     <Compile Include="ContextMenuName.cs" />
     <Compile Include="Controls\ControlServices.cs" />
+    <Compile Include="Controls\Designer\FwHelpButtonDesigner.cs" />
+    <Compile Include="Controls\Designer\ProgressLineDesigner.cs" />
+    <Compile Include="Controls\FwHelpButton.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\FwHelpButton.Designer.cs">
+      <DependentUpon>FwHelpButton.cs</DependentUpon>
+    </Compile>
     <Compile Include="Controls\IFormReplacementNeeded.cs" />
     <Compile Include="Controls\IImportForm.cs" />
     <Compile Include="Areas\InsertOption.cs" />
@@ -373,6 +389,23 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Controls\ILexImportWizard.cs" />
+    <Compile Include="Controls\IWizardPaintPanSteps.cs" />
+    <Compile Include="Controls\LineDrawing.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Controls\LineTypes.cs" />
+    <Compile Include="Controls\ProgressLine.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\ProgressLine.Designer.cs">
+      <DependentUpon>ProgressLine.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\StatusBarProgressPanel.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Controls\WizardDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Controls\XMLViews\VwPatternSerializableSettings.cs" />
     <Compile Include="DynamicLoader.cs" />
     <Compile Include="ExportStyleInfo.cs" />
@@ -387,6 +420,7 @@
     <Compile Include="IListTool.cs" />
     <Compile Include="IManyOnePathSortItem.cs" />
     <Compile Include="IPersistAsXml.cs" />
+    <Compile Include="IProgressDisplayer.cs" />
     <Compile Include="MatchType.cs" />
     <Compile Include="ISeparatorMenuBundle.cs" />
     <Compile Include="ISeparatorToolStripBundle.cs" />
@@ -399,7 +433,16 @@
     <Compile Include="MainMenusParameterObject.cs" />
     <Compile Include="MainToolBarsParameterObject.cs" />
     <Compile Include="MainUiWidget.cs" />
+    <Compile Include="NullProgressState.cs" />
+    <Compile Include="ProgressState.cs" />
     <Compile Include="RuntimeConfigurationException.cs" />
+    <Compile Include="SendReceive\ObtainedProjectType.cs" />
+    <Compile Include="SendReceive\ObtainProjectMethod.cs" />
+    <Compile Include="SendReceive\SendReceiveResources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>SendReceiveResources.resx</DependentUpon>
+    </Compile>
     <Compile Include="SeparatorMenuBundle.cs" />
     <Compile Include="SeparatorToolStripBundle.cs" />
     <Compile Include="SfmToXml\IsSfmFile.cs" />
@@ -1934,6 +1977,8 @@
     <Compile Include="Areas\ViewBase.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <None Include="images\FwContorls\ExplorerBar_Collapse_Glyph.png" />
+    <None Include="images\FwContorls\ExplorerBar_Epand_Glyph.png" />
     <Content Include="Resources\AnalysisInSegmentsOccurrenceList.xml" />
     <None Include="Resources\ConstituentChartStyleInfo.xml" />
     <Content Include="Resources\GlossInSegmentsOccurrenceList.xml" />
@@ -1965,6 +2010,14 @@
     <EmbeddedResource Include="Areas\Grammar\Tools\PhonologicalFeaturesAdvancedEdit\MasterPhonologicalFeatureListDlg.resx">
       <DependentUpon>MasterPhonologicalFeatureListDlg.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Areas\ProgressDialogWorkingOn.resx">
+      <DependentUpon>ProgressDialogWorkingOn.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Areas\TextsAndWords\Interlinear\TriStateTreeView.resx">
+      <DependentUpon>TriStateTreeView.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="Areas\TextsAndWords\Tools\ComplexConcordance\ComplexConcordanceResources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>ComplexConcordanceResources.Designer.cs</LastGenOutput>
@@ -1980,8 +2033,24 @@
       <DependentUpon>FwComboBox.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="Controls\FwHelpButton.resx">
+      <DependentUpon>FwHelpButton.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="Controls\HtmlControl.resx">
       <DependentUpon>HtmlControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\ProgressLine.resx">
+      <DependentUpon>ProgressLine.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\StatusBarProgressPanel.resx">
+      <DependentUpon>StatusBarProgressPanel.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\WizardDialog.resx">
+      <DependentUpon>WizardDialog.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Impls\UserInterfaceChooser.resx">
       <DependentUpon>UserInterfaceChooser.cs</DependentUpon>
@@ -2559,6 +2628,10 @@
     <EmbeddedResource Include="Areas\ViewBase.resx">
       <DependentUpon>ViewBase.cs</DependentUpon>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SendReceive\SendReceiveResources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>SendReceiveResources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="SfmToXml\SfmToXmlStrings.resx">
       <Generator>ResXFileCodeGenerator</Generator>

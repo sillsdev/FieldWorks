@@ -6,7 +6,6 @@ using System.Diagnostics;
 using System.Linq;
 using System.Xml.Linq;
 using LanguageExplorer.Controls.XMLViews;
-using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Application;

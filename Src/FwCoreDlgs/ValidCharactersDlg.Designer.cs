@@ -80,11 +80,11 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			this.splitValidCharsOuter = new System.Windows.Forms.SplitContainer();
 			this.splitValidCharsInner = new System.Windows.Forms.SplitContainer();
 			this.pnlWordForming = new SIL.FieldWorks.Common.Controls.FwPanel();
-			this.chrGridWordForming = new SIL.FieldWorks.Common.Controls.CharacterGrid();
-			this.hlblWordForming = new SIL.FieldWorks.Common.Controls.HeaderLabel();
+			this.chrGridWordForming = new CharacterGrid();
+			this.hlblWordForming = new HeaderLabel();
 			this.pnlOther = new SIL.FieldWorks.Common.Controls.FwPanel();
-			this.chrGridOther = new SIL.FieldWorks.Common.Controls.CharacterGrid();
-			this.hlblOther = new SIL.FieldWorks.Common.Controls.HeaderLabel();
+			this.chrGridOther = new CharacterGrid();
+			this.hlblOther = new HeaderLabel();
 			this.pnlMoveButtons = new System.Windows.Forms.Panel();
 			this.btnTreatAsPunct = new System.Windows.Forms.Button();
 			this.btnTreatAsWrdForming = new System.Windows.Forms.Button();
@@ -637,7 +637,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			this.chrGridWordForming.ShowCellToolTips = false;
 			this.chrGridWordForming.StandardTab = true;
 			this.chrGridWordForming.VirtualMode = true;
-			this.chrGridWordForming.CharacterChanged += new SIL.FieldWorks.Common.Controls.CharacterChangedHandler(this.HandleCharGridCharacterChanged);
+			this.chrGridWordForming.CharacterChanged += new CharacterChangedHandler(this.HandleCharGridCharacterChanged);
 			this.chrGridWordForming.DoubleClick += new System.EventHandler(this.btnRemoveChar_Click);
 			// 
 			// hlblWordForming
@@ -689,7 +689,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			this.chrGridOther.ShowCellToolTips = false;
 			this.chrGridOther.StandardTab = true;
 			this.chrGridOther.VirtualMode = true;
-			this.chrGridOther.CharacterChanged += new SIL.FieldWorks.Common.Controls.CharacterChangedHandler(this.HandleCharGridCharacterChanged);
+			this.chrGridOther.CharacterChanged += new CharacterChangedHandler(this.HandleCharGridCharacterChanged);
 			// 
 			// hlblOther
 			// 
@@ -831,7 +831,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private System.Windows.Forms.Label lblValidChars;
 		private System.Windows.Forms.TabPage tabData;
 		private System.Windows.Forms.TabPage tabUnicode;
-		private SIL.FieldWorks.Common.Controls.CharacterGrid chrGridWordForming;
+		private CharacterGrid chrGridWordForming;
 		private System.Windows.Forms.TextBox txtLanguageFile;
 		private System.Windows.Forms.RadioButton rdoLanguageFile;
 		private System.Windows.Forms.RadioButton rdoSimilarWs;
@@ -871,7 +871,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private System.Windows.Forms.DataGridViewTextBoxColumn colCharCode;
 		private System.Windows.Forms.DataGridViewTextBoxColumn colCount;
 		private System.Windows.Forms.DataGridViewCheckBoxColumn colStatus;
-		private SIL.FieldWorks.Common.Controls.CharacterGrid chrGridOther;
+		private CharacterGrid chrGridOther;
 		private System.Windows.Forms.RadioButton rbUnicodeValue;
 		private System.Windows.Forms.GroupBox grpUnicodeValue;
 		private System.Windows.Forms.Label lblUnicodeValue;
@@ -879,8 +879,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private System.Windows.Forms.Label label4;
 		private SIL.FieldWorks.Common.Controls.FwPanel pnlWordForming;
 		private SIL.FieldWorks.Common.Controls.FwPanel pnlOther;
-		private SIL.FieldWorks.Common.Controls.HeaderLabel hlblOther;
-		private SIL.FieldWorks.Common.Controls.HeaderLabel hlblWordForming;
+		private HeaderLabel hlblOther;
+		private HeaderLabel hlblWordForming;
 		private System.Windows.Forms.Button btnTreatAsPunct;
 		private System.Windows.Forms.Button btnTreatAsWrdForming;
 		private System.Windows.Forms.SplitContainer splitValidCharsOuter;

@@ -13,7 +13,7 @@ namespace SIL.FieldWorks.Common.Controls.Design
 	/// Extends design-time behavior for components that extend
 	/// <see href="SIL.FieldWorks.Common.Controls.FwButton.html">FwButton</see>.
 	/// </summary>
-	internal class FwButtonDesigner : ControlDesigner
+	internal sealed class FwButtonDesigner : ControlDesigner
 	{
 		/// <inheritdoc />
 		protected override void PreFilterProperties(IDictionary properties)

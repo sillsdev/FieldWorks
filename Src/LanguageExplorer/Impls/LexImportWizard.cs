@@ -28,7 +28,6 @@ using SIL.LCModel;
 using SIL.LCModel.Application.ApplicationServices;
 using SIL.LCModel.Core.Cellar;
 using SIL.LCModel.Core.KernelInterfaces;
-using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Utils;
 using SIL.PlatformUtilities;
@@ -89,7 +88,7 @@ namespace LanguageExplorer.Impls
 		private Button btnDeleteCharMapping;
 		private ColumnHeader columnHeaderCM4;
 		private ImageList imageList1;
-		private OpenFileDialogAdapter openFileDialog;
+		private IOpenFileDialog openFileDialog;
 		private CheckBox m_chkCreateMissingLinks;
 		List<uint> m_lastCrcs = new List<uint>();
 		private const string kOptionKeyMissingLinkCheckbox = "chkCreateMissingLinks";

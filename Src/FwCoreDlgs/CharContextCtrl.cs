@@ -367,17 +367,16 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			// Let the user specify a Paratext or Toolbox language file to scan.
 			var languageFiles = ResourceHelper.GetResourceString("kstidToolboxLanguageFiles");
 			var allFiles = ResourceHelper.GetResourceString("kstidAllFiles");
-			using (var openFileDialog = new OpenFileDialogAdapter
+			using (var openFileDialog = new OpenFileDialogAdapter())
 			{
-				Title = FwCoreDlgs.kstidLanguageFileBrowser,
-				InitialDirectory = ScriptureProvider.SettingsDirectory,
-				CheckFileExists = true,
-				Filter = FileUtils.FileDialogFilterCaseInsensitiveCombinations(string.Format("{0} ({1})|{1}|{2} ({3})|{3}", languageFiles, "*.lds;*.lng", allFiles, "*.*"))
-			})
-			{
-				if (openFileDialog.ShowDialog() == DialogResult.OK)
+				var openFileDialogAsIOpenFileDialog = (IOpenFileDialog)openFileDialog;
+				openFileDialogAsIOpenFileDialog.Title = FwCoreDlgs.kstidLanguageFileBrowser;
+				openFileDialogAsIOpenFileDialog.InitialDirectory = ScriptureProvider.SettingsDirectory;
+				openFileDialogAsIOpenFileDialog.CheckFileExists = true;
+				openFileDialogAsIOpenFileDialog.Filter = FileUtils.FileDialogFilterCaseInsensitiveCombinations(string.Format("{0} ({1})|{1}|{2} ({3})|{3}", languageFiles, "*.lds;*.lng", allFiles, "*.*"));
+				if (openFileDialogAsIOpenFileDialog.ShowDialog() == DialogResult.OK)
 				{
-					GetTokensSubStrings(openFileDialog.FileName);
+					GetTokensSubStrings(openFileDialogAsIOpenFileDialog.FileName);
 				}
 			}
 		}

@@ -7,7 +7,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
-using SIL.FieldWorks.Common.Controls;
+using LanguageExplorer.SendReceive;
 using SIL.FieldWorks.Common.Controls.FileDialog;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Resources;
@@ -190,16 +190,17 @@ namespace SIL.FieldWorks
 			// Use 'el cheapo' .Net dlg to find LangProj.
 			using (var dlg = new OpenFileDialogAdapter())
 			{
+				var dlgAsIFileDialog = (IFileDialog)dlg;
 				Hide();
-				dlg.CheckFileExists = true;
-				dlg.InitialDirectory = FwDirectoryFinder.ProjectsDirectory;
-				dlg.RestoreDirectory = true;
-				dlg.Title = Properties.Resources.ksChooseLangProjectDialogTitle;
-				dlg.ValidateNames = true;
-				dlg.Multiselect = false;
-				dlg.Filter = ResourceHelper.FileFilter(FileFilterType.FieldWorksProjectFiles);
-				DialogResult = dlg.ShowDialog(Owner);
-				Project = dlg.FileName;
+				dlgAsIFileDialog.CheckFileExists = true;
+				dlgAsIFileDialog.InitialDirectory = FwDirectoryFinder.ProjectsDirectory;
+				dlgAsIFileDialog.RestoreDirectory = true;
+				dlgAsIFileDialog.Title = Properties.Resources.ksChooseLangProjectDialogTitle;
+				dlgAsIFileDialog.ValidateNames = true;
+				((IOpenFileDialog)dlgAsIFileDialog).Multiselect = false;
+				dlgAsIFileDialog.Filter = ResourceHelper.FileFilter(FileFilterType.FieldWorksProjectFiles);
+				DialogResult = dlgAsIFileDialog.ShowDialog(Owner);
+				Project = dlgAsIFileDialog.FileName;
 			}
 		}
 

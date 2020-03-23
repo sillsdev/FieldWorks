@@ -5,7 +5,7 @@
 namespace SIL.FieldWorks.Common.Controls
 {
 	/// <summary />
-	public enum BorderTypes
+	internal enum BorderTypes
 	{
 		/// <summary>A single border where all four sides are the same color.</summary>
 		Single,

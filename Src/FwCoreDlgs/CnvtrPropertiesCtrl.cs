@@ -33,7 +33,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		public FwOverrideComboBox cboConverter;
 		/// <summary />
 		public FwOverrideComboBox cboSpec;
-		private OpenFileDialogAdapter ofDlg = new OpenFileDialogAdapter();
+		private IOpenFileDialog ofDlg = new OpenFileDialogAdapter();
 
 		/// <summary>Event handler when settings for a converter change.</summary>
 		public event EventHandler ConverterFileChanged;
@@ -141,7 +141,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			if (disposing)
 			{
 				components?.Dispose();
-				ofDlg?.Dispose();
+				(ofDlg as IDisposable)?.Dispose();
 			}
 			ofDlg = null;
 			components = null;

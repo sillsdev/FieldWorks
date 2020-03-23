@@ -205,30 +205,16 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\CommonAssemblyInfo.cs">
-      <Link>CommonAssemblyInfo.cs</Link>
+      <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
-    <Compile Include="AssemblyInfo.cs">
+    <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="BorderTypes.cs" />
     <Compile Include="ButtonStyles.cs" />
     <Compile Include="ButtonToggleStates.cs" />
     <Compile Include="CancelException.cs" />
-    <Compile Include="CharacterGrid.cs">
-      <SubType>Component</SubType>
-    </Compile>
     <Compile Include="Design\FwButtonDesigner.cs" />
-    <Compile Include="Design\FwHelpButtonDesigner.cs" />
-    <Compile Include="Design\ProgressLineDesigner.cs" />
-    <Compile Include="IProgressDisplayer.cs" />
-    <Compile Include="IWizardPaintPanSteps.cs" />
-    <Compile Include="LineDrawing.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="LineTypes.cs" />
-    <Compile Include="NullProgressState.cs" />
-    <Compile Include="ObtainedProjectType.cs" />
-    <Compile Include="ObtainProjectMethod.cs" />
     <Compile Include="FwButton.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -236,12 +222,6 @@
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>FwControls.resx</DependentUpon>
-    </Compile>
-    <Compile Include="FwHelpButton.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="FwHelpButton.Designer.cs">
-      <DependentUpon>FwHelpButton.cs</DependentUpon>
     </Compile>
     <Compile Include="FwOverrideComboBox.cs">
       <SubType>Component</SubType>
@@ -255,55 +235,15 @@
     <Compile Include="FwTextPanel.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="HeaderLabel.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="LineControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="LineControl.Designer.cs">
-      <DependentUpon>LineControl.cs</DependentUpon>
-    </Compile>
-    <Compile Include="ProgressDialogWorkingOn.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="ProgressLine.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="ProgressLine.Designer.cs">
-      <DependentUpon>ProgressLine.cs</DependentUpon>
-    </Compile>
-    <Compile Include="ProgressState.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="ProgressDialogImpl.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="ProgressDialogImpl.Designer.cs">
       <DependentUpon>ProgressDialogImpl.cs</DependentUpon>
     </Compile>
-    <Compile Include="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
-    <Compile Include="StatusBarProgressPanel.cs">
-      <SubType>Component</SubType>
-    </Compile>
     <Compile Include="ProgressDialogWithTask.cs" />
     <Compile Include="SunkenAppearances.cs" />
     <Compile Include="TextLocation.cs" />
-    <Compile Include="TriStateTreeView.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="TriStateTreeViewCheckState.cs" />
-    <Compile Include="WizardDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <EmbeddedResource Include="CharacterGrid.resx">
-      <DependentUpon>CharacterGrid.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
     <EmbeddedResource Include="FwButton.resx">
       <DependentUpon>FwButton.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -317,30 +257,9 @@
       <DependentUpon>BorderDrawing.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="FwHelpButton.resx">
-      <SubType>Designer</SubType>
-      <DependentUpon>FwHelpButton.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="LineControl.resx">
-      <SubType>Designer</SubType>
-      <DependentUpon>LineControl.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="ProgressDialogImpl.resx">
       <SubType>Designer</SubType>
       <DependentUpon>ProgressDialogImpl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="ProgressDialogWorkingOn.resx">
-      <DependentUpon>ProgressDialogWorkingOn.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="ProgressLine.resx">
-      <DependentUpon>ProgressLine.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Properties\Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="resources\BorderDrawing.bmp" />
     <EmbeddedResource Include="resources\HelpButton.ICO" />
@@ -349,24 +268,9 @@
     <EmbeddedResource Include="resources\SelectedOption.bmp" />
     <EmbeddedResource Include="resources\UnSelectedOption.bmp" />
     <EmbeddedResource Include="resources\WhatsThisHelpProvider.bmp" />
-    <EmbeddedResource Include="StatusBarProgressPanel.resx">
-      <DependentUpon>StatusBarProgressPanel.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="TriStateTreeView.resx">
-      <DependentUpon>TriStateTreeView.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="WizardDialog.resx">
-      <DependentUpon>WizardDialog.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
     <Content Include="resources\Checked.bmp" />
-    <None Include="resources\ExplorerBar_Collapse_Glyph.png" />
-    <None Include="resources\ExplorerBar_Epand_Glyph.png" />
     <Content Include="resources\FWButtonMenuArrow.bmp" />
     <Content Include="resources\GreyChecked.bmp" />
-    <None Include="resources\MissingGlyph.png" />
     <Content Include="resources\Unchecked.bmp" />
     <Compile Include="FileDialog\FileDialogAdapter.cs" />
     <Compile Include="FileDialog\FileDialogStrings.Designer.cs">
@@ -375,7 +279,7 @@
       <DesignTime>True</DesignTime>
     </Compile>
     <Compile Include="FileDialog\FolderBrowserDialogAdapter.cs" />
-    <Compile Include="FileDialog\Manager.cs" />
+    <Compile Include="FileDialog\FileDialogFactory.cs" />
     <Compile Include="FileDialog\OpenFileDialogAdapter.cs" />
     <Compile Include="FileDialog\SaveFileDialogAdapter.cs" />
     <None Include="FileDialog\readme.txt" />
@@ -383,19 +287,12 @@
     <Compile Include="FileDialog\IFolderBrowserDialog.cs" />
     <Compile Include="FileDialog\IOpenFileDialog.cs" />
     <Compile Include="FileDialog\ISaveFileDialog.cs" />
-    <Compile Include="FileDialog\Linux\FileDialogLinux.cs" />
-    <Compile Include="FileDialog\Linux\FolderBrowserDialogLinux.cs" />
-    <Compile Include="FileDialog\Linux\OpenFileDialogLinux.cs" />
-    <Compile Include="FileDialog\Linux\SaveFileDialogLinux.cs" />
-    <Compile Include="FileDialog\Windows\FileDialogWindows.cs" />
-    <Compile Include="FileDialog\Windows\FolderBrowserDialogWindows.cs" />
-    <Compile Include="FileDialog\Windows\OpenFileDialogWindows.cs" />
-    <Compile Include="FileDialog\Windows\SaveFileDialogWindows.cs" />
     <EmbeddedResource Include="FileDialog\FileDialogStrings.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>FileDialogStrings.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <DistFiles>../../DistFiles</DistFiles>

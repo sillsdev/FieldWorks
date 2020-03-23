@@ -69,7 +69,7 @@ namespace LanguageExplorer.Controls.Styles
 			this.resetToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_btnOk = new System.Windows.Forms.Button();
 			this.m_btnCancel = new System.Windows.Forms.Button();
-			this.m_btnHelp = new SIL.FieldWorks.Common.Controls.FwHelpButton();
+			this.m_btnHelp = new FwHelpButton();
 			this.m_tabControl = new System.Windows.Forms.TabControl();
 			this.m_tbGeneral = new System.Windows.Forms.TabPage();
 			this.m_generalTab = new FwGeneralTab();
@@ -374,7 +374,7 @@ namespace LanguageExplorer.Controls.Styles
 		protected CaseSensitiveListBox m_lstStyles;
 		private System.Windows.Forms.Button m_btnOk;
 		private System.Windows.Forms.Button m_btnCancel;
-		private SIL.FieldWorks.Common.Controls.FwHelpButton m_btnHelp;
+		private FwHelpButton m_btnHelp;
 		private System.Windows.Forms.TabControl m_tabControl;
 		private System.Windows.Forms.TabPage m_tbGeneral;
 		private System.Windows.Forms.TabPage m_tbFont;

@@ -8,7 +8,7 @@ using System.Diagnostics;
 using System.Reflection;
 using System.Threading;
 using System.Windows.Forms;
-using SIL.FieldWorks.Common.Controls;
+using LanguageExplorer.Controls;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel.Utils;
 using SIL.PlatformUtilities;
@@ -119,7 +119,7 @@ namespace SIL.FieldWorks
 			this.lblAppVersion = new System.Windows.Forms.Label();
 			this.m_panel = new System.Windows.Forms.Panel();
 			this.marqueeGif = new System.Windows.Forms.PictureBox();
-			this.progressLine = new SIL.FieldWorks.Common.Controls.ProgressLine();
+			this.progressLine = new ProgressLine();
 			this.lblFwVersion = new System.Windows.Forms.Label();
 			((System.ComponentModel.ISupportInitialize)(this.m_picSilLogo)).BeginInit();
 			this.m_panel.SuspendLayout();

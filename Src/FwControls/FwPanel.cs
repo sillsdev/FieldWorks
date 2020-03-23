@@ -15,7 +15,7 @@ namespace SIL.FieldWorks.Common.Controls
 	/// enabled and is a single line (painted using visual styles) when visual styles are
 	/// enabled.
 	/// </summary>
-	public class FwPanel : FwTextPanel
+	public sealed class FwPanel : FwTextPanel
 	{
 		private bool m_overrideBorderDrawing;
 

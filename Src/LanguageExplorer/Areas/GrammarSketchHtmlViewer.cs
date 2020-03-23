@@ -16,7 +16,6 @@ using LanguageExplorer.Areas.Grammar;
 using LanguageExplorer.Controls;
 using Microsoft.Win32;
 using SIL.Code;
-using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.WordWorks.Parser.XAmple;
 using SIL.LCModel;

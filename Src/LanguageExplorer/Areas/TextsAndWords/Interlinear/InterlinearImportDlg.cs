@@ -35,18 +35,19 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		{
 			using (var dlg = new OpenFileDialogAdapter())
 			{
-				dlg.DefaultExt = "flextext";
-				dlg.Filter = ResourceHelper.BuildFileFilter(FileFilterType.FLExText, FileFilterType.XML, FileFilterType.AllFiles);
-				dlg.FilterIndex = 1;
-				dlg.CheckFileExists = true;
-				dlg.Multiselect = false;
+				var dlgAsIOpenFileDialog = (IOpenFileDialog)dlg;
+				dlgAsIOpenFileDialog.DefaultExt = "flextext";
+				dlgAsIOpenFileDialog.Filter = ResourceHelper.BuildFileFilter(FileFilterType.FLExText, FileFilterType.XML, FileFilterType.AllFiles);
+				dlgAsIOpenFileDialog.FilterIndex = 1;
+				dlgAsIOpenFileDialog.CheckFileExists = true;
+				dlgAsIOpenFileDialog.Multiselect = false;
 				if (!string.IsNullOrEmpty(m_tbFilename.Text) && !string.IsNullOrEmpty(m_tbFilename.Text.Trim()))
 				{
-					dlg.FileName = m_tbFilename.Text;
+					dlgAsIOpenFileDialog.FileName = m_tbFilename.Text;
 				}
-				if (dlg.ShowDialog() == DialogResult.OK)
+				if (dlgAsIOpenFileDialog.ShowDialog() == DialogResult.OK)
 				{
-					m_tbFilename.Text = dlg.FileName;
+					m_tbFilename.Text = dlgAsIOpenFileDialog.FileName;
 				}
 			}
 		}

@@ -5,7 +5,6 @@
 using System;
 using System.Collections.Generic;
 using LanguageExplorer.LcmUi;
-using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 

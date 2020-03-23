@@ -304,6 +304,9 @@
       <DependentUpon>RestoreProjectDlg.cs</DependentUpon>
     </Compile>
     <Compile Include="BackupRestore\RestoreProjectPresenter.cs" />
+    <Compile Include="CharacterGrid.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="CharContextCtrl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -358,6 +361,12 @@
     <Compile Include="Controls\InnerFwTextBox.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Include="Controls\LineControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\LineControl.Designer.cs">
+      <DependentUpon>LineControl.cs</DependentUpon>
+    </Compile>
     <Compile Include="Controls\LocaleMenuButton.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -405,6 +414,9 @@
       <DependentUpon>FwWritingSystemSetupDlg.cs</DependentUpon>
     </Compile>
     <Compile Include="FwWritingSystemSetupModel.cs" />
+    <Compile Include="HeaderLabel.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="MergeWritingSystemDlg.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -508,6 +520,10 @@
     <EmbeddedResource Include="BackupRestore\RestoreProjectDlg.resx">
       <DependentUpon>RestoreProjectDlg.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="CharacterGrid.resx">
+      <DependentUpon>CharacterGrid.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="CharContextCtrl.resx">
       <DependentUpon>CharContextCtrl.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -530,6 +546,10 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\FwTextBox.resx">
       <DependentUpon>FwTextBox.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\LineControl.resx">
+      <DependentUpon>LineControl.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\LocaleMenuButton.resx">
@@ -612,6 +632,7 @@
     <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Resources\MissingGlyph.png" />
     <Content Include="Resources\WizardConnectToStep.png" />
     <Content Include="Resources\WizardStepComplete.png" />
     <None Include="Resources\WizardNotComplete.png" />

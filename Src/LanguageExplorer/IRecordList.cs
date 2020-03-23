@@ -4,8 +4,8 @@
 
 using System;
 using System.Collections.Generic;
+using LanguageExplorer.Controls;
 using LanguageExplorer.Filters;
-using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Application;

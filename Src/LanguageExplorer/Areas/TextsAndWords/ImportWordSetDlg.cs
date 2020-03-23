@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
 using System.Windows.Forms;
-using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Controls.FileDialog;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Resources;
@@ -186,14 +185,15 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		{
 			using (var dlg = new OpenFileDialogAdapter())
 			{
-				dlg.Multiselect = true;
-				dlg.Filter = ResourceHelper.FileFilter(FileFilterType.Text);
-				if (dlg.ShowDialog(this) != DialogResult.OK)
+				var dlgAsIOpenFileDialog = (IOpenFileDialog)dlg;
+				dlgAsIOpenFileDialog.Multiselect = true;
+				dlgAsIOpenFileDialog.Filter = ResourceHelper.FileFilter(FileFilterType.Text);
+				if (dlgAsIOpenFileDialog.ShowDialog(this) != DialogResult.OK)
 				{
 					return;
 				}
-				tbFileNames.Lines = dlg.FileNames;
-				_paths = dlg.FileNames;
+				tbFileNames.Lines = dlgAsIOpenFileDialog.FileNames;
+				_paths = dlgAsIOpenFileDialog.FileNames;
 			}
 		}
 		/// <summary>

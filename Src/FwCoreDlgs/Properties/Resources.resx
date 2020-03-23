@@ -276,4 +276,135 @@ Quotation mark: {2}</value>
   <data name="WizardStepComplete" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>../Resources/WizardStepComplete.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="kimidMissingGlyph" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\MissingGlyph.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="kstidChrGridCodepoint" xml:space="preserve">
+    <value>Unicode Value: {0}</value>
+    <comment>Text for the character grid tooltip.</comment>
+  </data>
+  <data name="kstidChrGridCodepoints" xml:space="preserve">
+    <value>Unicode Values: {0}</value>
+    <comment>Text for the character grid tooltip.</comment>
+  </data>
+  <data name="kstidChrGridMissingGlyphHdg" xml:space="preserve">
+    <value>Writing system font cannot render this character</value>
+    <comment>Heading for the character grid tooltip when the character it represents cannot be rendered by the font.</comment>
+  </data>
+  <data name="kstidChrGridName" xml:space="preserve">
+    <value>Name: {0}</value>
+    <comment>Text for the character grid tooltip.</comment>
+  </data>
+  <data name="kstidChrGridNormalHdg" xml:space="preserve">
+    <value>Character Information</value>
+    <comment>Heading for the character grid tooltip when the character it represents can be rendered by the font.</comment>
+  </data>
+  <data name="kstidSpecialChar0020" xml:space="preserve">
+    <value>SPACE</value>
+    <comment>Text displayed in a character grid for the Unicode charater indicated by the 4 digit hexidecimal number found at the end of the resource name.</comment>
+  </data>
+  <data name="kstidSpecialChar00A0" xml:space="preserve">
+    <value>NBSP</value>
+    <comment>Text displayed in a character grid for the Unicode charater indicated by the 4 digit hexidecimal number found at the end of the resource name.</comment>
+  </data>
+  <data name="kstidSpecialChar180E" xml:space="preserve">
+    <value>MVS</value>
+    <comment>Text displayed in a character grid for the Unicode charater indicated by the 4 digit hexidecimal number found at the end of the resource name.</comment>
+  </data>
+  <data name="kstidSpecialChar2000" xml:space="preserve">
+    <value>NQSP</value>
+    <comment>Text displayed in a character grid for the Unicode charater indicated by the 4 digit hexidecimal number found at the end of the resource name.</comment>
+  </data>
+  <data name="kstidSpecialChar2001" xml:space="preserve">
+    <value>MQSP</value>
+    <comment>Text displayed in a character grid for the Unicode charater indicated by the 4 digit hexidecimal number found at the end of the resource name.</comment>
+  </data>
+  <data name="kstidSpecialChar2002" xml:space="preserve">
+    <value>ENSP</value>
+    <comment>Text displayed in a character grid for the Unicode charater indicated by the 4 digit hexidecimal number found at the end of the resource name.</comment>
+  </data>
+  <data name="kstidSpecialChar2003" xml:space="preserve">
+    <value>EMSP</value>
+    <comment>Text displayed in a character grid for the Unicode charater indicated by the 4 digit hexidecimal number found at the end of the resource name.</comment>
+  </data>
+  <data name="kstidSpecialChar2004" xml:space="preserve">
+    <value>3/MSP</value>
+    <comment>Text displayed in a character grid for the Unicode charater indicated by the 4 digit hexidecimal number found at the end of the resource name.</comment>
+  </data>
+  <data name="kstidSpecialChar2005" xml:space="preserve">
+    <value>4/MSP</value>
+    <comment>Text displayed in a character grid for the Unicode charater indicated by the 4 digit hexidecimal number found at the end of the resource name.</comment>
+  </data>
+  <data name="kstidSpecialChar2006" xml:space="preserve">
+    <value>6/MSP</value>
+    <comment>Text displayed in a character grid for the Unicode charater indicated by the 4 digit hexidecimal number found at the end of the resource name.</comment>
+  </data>
+  <data name="kstidSpecialChar2007" xml:space="preserve">
+    <value>FSP</value>
+    <comment>Text displayed in a character grid for the Unicode charater indicated by the 4 digit hexidecimal number found at the end of the resource name.</comment>
+  </data>
+  <data name="kstidSpecialChar2008" xml:space="preserve">
+    <value>PSP</value>
+    <comment>Text displayed in a character grid for the Unicode charater indicated by the 4 digit hexidecimal number found at the end of the resource name.</comment>
+  </data>
+  <data name="kstidSpecialChar2009" xml:space="preserve">
+    <value>THSP</value>
+    <comment>Text displayed in a character grid for the Unicode charater indicated by the 4 digit hexidecimal number found at the end of the resource name.</comment>
+  </data>
+  <data name="kstidSpecialChar200A" xml:space="preserve">
+    <value>HSP</value>
+    <comment>Text displayed in a character grid for the Unicode charater indicated by the 4 digit hexidecimal number found at the end of the resource name.</comment>
+  </data>
+  <data name="kstidSpecialChar200B" xml:space="preserve">
+    <value>ZWSP</value>
+    <comment>Text displayed in a character grid for the Unicode charater indicated by the 4 digit hexidecimal number found at the end of the resource name.</comment>
+  </data>
+  <data name="kstidSpecialChar200C" xml:space="preserve">
+    <value>ZWNJ</value>
+    <comment>Text displayed in a character grid for the Unicode charater indicated by the 4 digit hexidecimal number found at the end of the resource name.</comment>
+  </data>
+  <data name="kstidSpecialChar200D" xml:space="preserve">
+    <value>ZWJ</value>
+    <comment>Text displayed in a character grid for the Unicode charater indicated by the 4 digit hexidecimal number found at the end of the resource name.</comment>
+  </data>
+  <data name="kstidSpecialChar200E" xml:space="preserve">
+    <value>LRM</value>
+    <comment>Text displayed in a character grid for the Unicode charater indicated by the 4 digit hexidecimal number found at the end of the resource name.</comment>
+  </data>
+  <data name="kstidSpecialChar200F" xml:space="preserve">
+    <value>RLM</value>
+    <comment>Text displayed in a character grid for the Unicode charater indicated by the 4 digit hexidecimal number found at the end of the resource name.</comment>
+  </data>
+  <data name="kstidSpecialChar2028" xml:space="preserve">
+    <value>LSEP</value>
+    <comment>Text displayed in a character grid for the Unicode charater indicated by the 4 digit hexidecimal number found at the end of the resource name.</comment>
+  </data>
+  <data name="kstidSpecialChar2029" xml:space="preserve">
+    <value>PSEP</value>
+    <comment>Text displayed in a character grid for the Unicode charater indicated by the 4 digit hexidecimal number found at the end of the resource name.</comment>
+  </data>
+  <data name="kstidSpecialChar202A" xml:space="preserve">
+    <value>LRE</value>
+    <comment>Text displayed in a character grid for the Unicode charater indicated by the 4 digit hexidecimal number found at the end of the resource name.</comment>
+  </data>
+  <data name="kstidSpecialChar202B" xml:space="preserve">
+    <value>RLE</value>
+    <comment>Text displayed in a character grid for the Unicode charater indicated by the 4 digit hexidecimal number found at the end of the resource name.</comment>
+  </data>
+  <data name="kstidSpecialChar202C" xml:space="preserve">
+    <value>PDF</value>
+    <comment>Text displayed in a character grid for the Unicode charater indicated by the 4 digit hexidecimal number found at the end of the resource name.</comment>
+  </data>
+  <data name="kstidSpecialChar202F" xml:space="preserve">
+    <value>NNBSP</value>
+    <comment>Text displayed in a character grid for the Unicode charater indicated by the 4 digit hexidecimal number found at the end of the resource name.</comment>
+  </data>
+  <data name="kstidSpecialChar205F" xml:space="preserve">
+    <value>MMSP</value>
+    <comment>Text displayed in a character grid for the Unicode charater indicated by the 4 digit hexidecimal number found at the end of the resource name.</comment>
+  </data>
+  <data name="kstidSpecialChar3000" xml:space="preserve">
+    <value>IDSP</value>
+    <comment>Text displayed in a character grid for the Unicode charater indicated by the 4 digit hexidecimal number found at the end of the resource name.</comment>
+  </data>
 </root>

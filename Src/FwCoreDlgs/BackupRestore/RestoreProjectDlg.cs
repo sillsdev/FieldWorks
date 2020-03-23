@@ -51,7 +51,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.BackupRestore
 		#region Data members
 		private readonly RestoreProjectPresenter m_presenter;
 		private readonly string m_fmtUseOriginalName;
-		private OpenFileDialogAdapter m_openFileDlg;
+		private IOpenFileDialog m_openFileDlg;
 		private char[] m_invalidCharArray;
 
 		#endregion
@@ -226,17 +226,15 @@ namespace SIL.FieldWorks.FwCoreDlgs.BackupRestore
 		{
 			if (m_openFileDlg == null)
 			{
-				m_openFileDlg = new OpenFileDialogAdapter
-				{
-					CheckFileExists = true,
-					InitialDirectory = FwDirectoryFinder.DefaultBackupDirectory,
-					RestoreDirectory = true,
-					Title = FwCoreDlgs.ksFindBackupFileDialogTitle,
-					ValidateNames = true,
-					Multiselect = false,
-					Filter = ResourceHelper.BuildFileFilter(FileFilterType.FieldWorksAllBackupFiles, FileFilterType.XML)
-				};
+				m_openFileDlg = new OpenFileDialogAdapter();
 			}
+			m_openFileDlg.CheckFileExists = true;
+			m_openFileDlg.InitialDirectory = FwDirectoryFinder.DefaultBackupDirectory;
+			m_openFileDlg.RestoreDirectory = true;
+			m_openFileDlg.Title = FwCoreDlgs.ksFindBackupFileDialogTitle;
+			m_openFileDlg.ValidateNames = true;
+			m_openFileDlg.Multiselect = false;
+			m_openFileDlg.Filter = ResourceHelper.BuildFileFilter(FileFilterType.FieldWorksAllBackupFiles, FileFilterType.XML);
 			if (m_openFileDlg.ShowDialog(this) == DialogResult.OK)
 			{
 				//In the presentation layer:
