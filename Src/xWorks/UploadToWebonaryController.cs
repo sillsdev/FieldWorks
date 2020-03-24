@@ -165,8 +165,8 @@ namespace SIL.FieldWorks.XWorks
 		{
 			// To do local testing set the WEBONARYSERVER environment variable to something like 192.168.33.10
 			var server = Environment.GetEnvironmentVariable("WEBONARYSERVER");
-			server = string.IsNullOrEmpty(server) ? "webonary.org" : server;
-			return string.Format("https://{0}.{1}/wp-json/webonary/import", siteName, server);
+			server = string.IsNullOrEmpty(server) ? "www.webonary.org" : server;
+			return $"https://{server}/{siteName}/wp-json/webonary/import";
 		}
 
 		internal void UploadToWebonary(string zipFileToUpload, UploadToWebonaryModel model, IUploadToWebonaryView view)
