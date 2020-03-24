@@ -1124,7 +1124,7 @@ display/printout!
   <!-- * NAMED TEMPLATES * -->
   <!-- ******************* -->
 
-  <!-- Process any string reliably that has Str or AStr elements. This -->
+  <!-- Process any string reliably that has Str or AStr or AUni elements. This -->
   <!-- should keep our .xsl templates from breaking with model changes -->
   <!-- having to do with underlying strings. -->
 
