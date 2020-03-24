@@ -35,7 +35,7 @@ This software is licensed under the LGPL, version 2.1 or later
 			primary assembly so the original filename can be used as the
 			output of ILRepack. -->
 		<Copy SourceFiles="$(PrimaryAssembly)" DestinationFiles="$(PrimaryAssembly)~" />
-		<Exec Command="$(ILRepackBin) /internalize /out:$(PrimaryAssembly) @(LibDirs -> '/lib:%(Identity)', ' ') $(PrimaryAssembly)~ @(RepackAssemblies -> '%(Identity)', ' ')" />
+		<Exec Command="$(ILRepackBin) /internalize /repackDrop:NoLinuxRepack /out:$(PrimaryAssembly) @(LibDirs -> '/lib:%(Identity)', ' ') $(PrimaryAssembly)~ @(RepackAssemblies -> '%(Identity)', ' ')" />
 		<!-- Any dependency .config files may contain dllmaps that we will need in the repacked assembly. -->
 		<Copy SourceFiles="$(OutputPath)/SIL.LCModel.Core.dll.config" DestinationFiles="$(PrimaryAssembly).config"/>
 	</Target>
