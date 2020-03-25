@@ -194,7 +194,7 @@ namespace SIL.FieldWorks.IText
 			// LT-12179: Create a List for collecting selected tree nodes which we will later sort
 			// before actually adding them to the tree:
 			var foundFirstText = false;
-			CollationDefinition wsCollator = new SystemCollationDefinition();
+			CollationDefinition wsCollator = null;
 			foreach (var tex in allTexts)
 			{
 				if (tex.GenresRC.Any())
@@ -215,15 +215,14 @@ namespace SIL.FieldWorks.IText
 					continue;
 				}
 				foundFirstText = true;
-				var ws1 = tex.ChooserNameTS.get_WritingSystemAt(0);
-				var wsEngine = m_cache.WritingSystemFactory.get_EngineOrNull(ws1);
-				wsCollator = (wsEngine as WritingSystemDefinition)?.DefaultCollation;
+				wsCollator = GetCollatorFromTextNameWs(tex);
 			}
 
 			if (!textsWithNoGenre.Any())
 			{
 				return textsNode;
 			}
+			// if the text name writing system didn't give us a collator to use then default to system
 			if (wsCollator == null)
 				wsCollator = new SystemCollationDefinition();
 			// LT-12179: Order the TreeNodes alphabetically:
@@ -235,6 +234,13 @@ namespace SIL.FieldWorks.IText
 			};
 			textsNode.Nodes.Add(woGenreTreeNode);
 			return textsNode;
+		}
+
+		private static CollationDefinition GetCollatorFromTextNameWs(LCModel.IText text)
+		{
+			var ws1 = text.ChooserNameTS.get_WritingSystemAt(0);
+			var wsEngine = text.Cache?.WritingSystemFactory.get_EngineOrNull(ws1);
+			return (wsEngine as WritingSystemDefinition)?.DefaultCollation;
 		}
 
 		/// <summary>
@@ -263,8 +269,7 @@ namespace SIL.FieldWorks.IText
 				// before actually adding them to the tree:
 				var sortedNodes = new List<TreeNode>();
 				var foundFirstText = false;
-				// Create a collator ready for sorting:
-				var collator = new ManagedLgIcuCollator();
+				CollationDefinition wsCollator = null;
 
 				foreach (var tex in allTexts)
 				{   // This tex may not have a genre or it may claim to be in more than one
@@ -288,16 +293,18 @@ namespace SIL.FieldWorks.IText
 						continue;
 					}
 					foundFirstText = true;
-					var ws1 = tex.ChooserNameTS.get_WritingSystemAt(0);
-					var wsEngine = gen.Cache.WritingSystemFactory.get_EngineOrNull(ws1);
-					collator.Open(wsEngine.Id);
+					wsCollator = GetCollatorFromTextNameWs(tex);
 				}
+
+				// if the text name writing system didn't give us a collator to use then default to system
+				if(wsCollator == null)
+					wsCollator = new SystemCollationDefinition();
 
 				// LT-12179:
 				if (foundFirstText)
 				{
 					// Order the TreeNodes alphabetically:
-					sortedNodes.Sort((x, y) => collator.Compare(x.Text, y.Text, LgCollatingOptions.fcoIgnoreCase));
+					sortedNodes.Sort((x, y) => wsCollator.Collator.Compare(x.Text, y.Text));
 					// Add the TreeNodes to the tree:
 					genItem.Nodes.AddRange(sortedNodes.ToArray());
 				}
