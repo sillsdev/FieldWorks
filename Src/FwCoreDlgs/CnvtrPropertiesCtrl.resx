@@ -274,7 +274,7 @@
 	<value>cboConversion</value>
   </data>
   <data name="&gt;&gt;cboConversion.Type" xml:space="preserve">
-	<value>SIL.FieldWorks.Common.Controls.FwOverrideComboBox, FwControls, Version=4.9.0.27170, Culture=neutral, PublicKeyToken=null</value>
+	<value>SIL.FieldWorks.FwCoreDlgs.FwOverrideComboBox, FwCoreDlgs, Version=4.9.0.27170, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;cboConversion.Parent" xml:space="preserve">
 	<value>$this</value>
@@ -400,7 +400,7 @@
 	<value>cboConverter</value>
   </data>
   <data name="&gt;&gt;cboConverter.Type" xml:space="preserve">
-	<value>SIL.FieldWorks.Common.Controls.FwOverrideComboBox, FwControls, Version=4.9.0.27170, Culture=neutral, PublicKeyToken=null</value>
+	<value>SIL.FieldWorks.FwCoreDlgs.FwOverrideComboBox, FwCoreDlgs, Version=4.9.0.27170, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;cboConverter.Parent" xml:space="preserve">
 	<value>$this</value>
@@ -433,7 +433,7 @@
 	<value>cboSpec</value>
   </data>
   <data name="&gt;&gt;cboSpec.Type" xml:space="preserve">
-	<value>SIL.FieldWorks.Common.Controls.FwOverrideComboBox, FwControls, Version=4.9.0.27170, Culture=neutral, PublicKeyToken=null</value>
+	<value>SIL.FieldWorks.FwCoreDlgs.FwOverrideComboBox, FwCoreDlgs, Version=4.9.0.27170, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;cboSpec.Parent" xml:space="preserve">
 	<value>$this</value>

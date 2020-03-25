@@ -27,13 +27,13 @@ namespace LanguageExplorer.Controls.Styles
 			System.Windows.Forms.Label label5;
 			System.Windows.Forms.Label label6;
 			this.m_grpBullet = new System.Windows.Forms.GroupBox();
-			this.m_cboBulletScheme = new SIL.FieldWorks.Common.Controls.FwOverrideComboBox();
+			this.m_cboBulletScheme = new SIL.FieldWorks.FwCoreDlgs.FwOverrideComboBox();
 			this.m_grpNumber = new System.Windows.Forms.GroupBox();
 			this.m_nudStartAt = new DataUpDown();
 			this.m_tbTextAfter = new System.Windows.Forms.TextBox();
 			this.m_tbTextBefore = new System.Windows.Forms.TextBox();
 			this.m_chkStartAt = new System.Windows.Forms.CheckBox();
-			this.m_cboNumberScheme = new SIL.FieldWorks.Common.Controls.FwOverrideComboBox();
+			this.m_cboNumberScheme = new SIL.FieldWorks.FwCoreDlgs.FwOverrideComboBox();
 			this.m_rbNone = new System.Windows.Forms.RadioButton();
 			this.m_rbBullet = new System.Windows.Forms.RadioButton();
 			this.m_rbNumber = new System.Windows.Forms.RadioButton();
@@ -276,9 +276,9 @@ namespace LanguageExplorer.Controls.Styles
 
 		private System.Windows.Forms.RadioButton m_rbNone;
 		private System.Windows.Forms.RadioButton m_rbBullet;
-		private SIL.FieldWorks.Common.Controls.FwOverrideComboBox m_cboBulletScheme;
+		private SIL.FieldWorks.FwCoreDlgs.FwOverrideComboBox m_cboBulletScheme;
 		private System.Windows.Forms.RadioButton m_rbNumber;
-		private SIL.FieldWorks.Common.Controls.FwOverrideComboBox m_cboNumberScheme;
+		private SIL.FieldWorks.FwCoreDlgs.FwOverrideComboBox m_cboNumberScheme;
 		private System.Windows.Forms.TextBox m_tbTextAfter;
 		private System.Windows.Forms.TextBox m_tbTextBefore;
 		private System.Windows.Forms.Button m_btnFont;

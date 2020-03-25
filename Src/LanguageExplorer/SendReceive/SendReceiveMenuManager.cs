@@ -13,7 +13,6 @@ using System.Windows.Forms;
 using System.Xml.Linq;
 using LanguageExplorer.LIFT;
 using SIL.Code;
-using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FwCoreDlgs;
 using SIL.FieldWorks.Resources;

@@ -157,10 +157,6 @@
     <Reference Include="ViewsInterfaces">
       <HintPath>..\..\Output\Debug\ViewsInterfaces.dll</HintPath>
     </Reference>
-    <Reference Include="FwControls">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Release\FwControls.dll</HintPath>
-    </Reference>
     <Reference Include="FwCoreDlgs">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Release\FwCoreDlgs.dll</HintPath>

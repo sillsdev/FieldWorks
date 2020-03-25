@@ -181,7 +181,7 @@
 	<value>m_defaultFontComboBox</value>
   </data>
   <data name="&gt;&gt;m_defaultFontComboBox.Type" xml:space="preserve">
-	<value>SIL.FieldWorks.Common.Controls.FwOverrideComboBox, FwControls, Version=6.1.1.26907, Culture=neutral, PublicKeyToken=null</value>
+	<value>SIL.FieldWorks.FwCoreDlgs.FwOverrideComboBox, FwCoreDlgs, Version=6.1.1.26907, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;m_defaultFontComboBox.Parent" xml:space="preserve">
 	<value>$this</value>

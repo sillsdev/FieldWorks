@@ -44,7 +44,7 @@ namespace LanguageExplorer.Areas.Notebook
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ImportEncCvtrDlg));
 			this.m_lblDescription = new System.Windows.Forms.Label();
 			this.m_btnAddEC = new System.Windows.Forms.Button();
-			this.m_cbEC = new SIL.FieldWorks.Common.Controls.FwOverrideComboBox();
+			this.m_cbEC = new SIL.FieldWorks.FwCoreDlgs.FwOverrideComboBox();
 			this.m_lblEC = new System.Windows.Forms.Label();
 			this.m_btnHelp = new System.Windows.Forms.Button();
 			this.m_btnCancel = new System.Windows.Forms.Button();
@@ -118,7 +118,7 @@ namespace LanguageExplorer.Areas.Notebook
 
 		private System.Windows.Forms.Label m_lblDescription;
 		private System.Windows.Forms.Button m_btnAddEC;
-		private SIL.FieldWorks.Common.Controls.FwOverrideComboBox m_cbEC;
+		private SIL.FieldWorks.FwCoreDlgs.FwOverrideComboBox m_cbEC;
 		private System.Windows.Forms.Label m_lblEC;
 		private System.Windows.Forms.Button m_btnHelp;
 		private System.Windows.Forms.Button m_btnCancel;

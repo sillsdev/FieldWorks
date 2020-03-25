@@ -247,7 +247,7 @@
     <value>lineControl3</value>
   </data>
   <data name="&gt;&gt;lineControl3.Type" xml:space="preserve">
-    <value>SIL.FieldWorks.Common.Controls.LineControl, FwControls, Version=9.0.6.35194, Culture=neutral, PublicKeyToken=null</value>
+    <value>SIL.FieldWorks.FwCoreDlgs.LineControl, FwCoreDlgs, Version=9.0.6.35194, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;lineControl3.Parent" xml:space="preserve">
     <value>tpGeneral</value>
@@ -259,7 +259,7 @@
     <value>lineControl2</value>
   </data>
   <data name="&gt;&gt;lineControl2.Type" xml:space="preserve">
-    <value>SIL.FieldWorks.Common.Controls.LineControl, FwControls, Version=9.0.6.35194, Culture=neutral, PublicKeyToken=null</value>
+    <value>SIL.FieldWorks.FwCoreDlgs.LineControl, FwCoreDlgs, Version=9.0.6.35194, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;lineControl2.Parent" xml:space="preserve">
     <value>tpGeneral</value>
@@ -271,7 +271,7 @@
     <value>lineControl1</value>
   </data>
   <data name="&gt;&gt;lineControl1.Type" xml:space="preserve">
-    <value>SIL.FieldWorks.Common.Controls.LineControl, FwControls, Version=9.0.6.35194, Culture=neutral, PublicKeyToken=null</value>
+    <value>SIL.FieldWorks.FwCoreDlgs.LineControl, FwCoreDlgs, Version=9.0.6.35194, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;lineControl1.Parent" xml:space="preserve">
     <value>tpGeneral</value>
@@ -493,7 +493,7 @@
     <value>lineControl3</value>
   </data>
   <data name="&gt;&gt;lineControl3.Type" xml:space="preserve">
-    <value>SIL.FieldWorks.Common.Controls.LineControl, FwControls, Version=9.0.6.35194, Culture=neutral, PublicKeyToken=null</value>
+    <value>SIL.FieldWorks.FwCoreDlgs.LineControl, FwCoreDlgs, Version=9.0.6.35194, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;lineControl3.Parent" xml:space="preserve">
     <value>tpGeneral</value>
@@ -523,7 +523,7 @@
     <value>lineControl2</value>
   </data>
   <data name="&gt;&gt;lineControl2.Type" xml:space="preserve">
-    <value>SIL.FieldWorks.Common.Controls.LineControl, FwControls, Version=9.0.6.35194, Culture=neutral, PublicKeyToken=null</value>
+    <value>SIL.FieldWorks.FwCoreDlgs.LineControl, FwCoreDlgs, Version=9.0.6.35194, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;lineControl2.Parent" xml:space="preserve">
     <value>tpGeneral</value>
@@ -550,7 +550,7 @@
     <value>lineControl1</value>
   </data>
   <data name="&gt;&gt;lineControl1.Type" xml:space="preserve">
-    <value>SIL.FieldWorks.Common.Controls.LineControl, FwControls, Version=9.0.6.35194, Culture=neutral, PublicKeyToken=null</value>
+    <value>SIL.FieldWorks.FwCoreDlgs.LineControl, FwCoreDlgs, Version=9.0.6.35194, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;lineControl1.Parent" xml:space="preserve">
     <value>tpGeneral</value>

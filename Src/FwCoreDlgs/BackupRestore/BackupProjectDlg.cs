@@ -5,9 +5,8 @@
 using System;
 using System.IO;
 using System.Windows.Forms;
-using SIL.FieldWorks.Common.Controls;
-using SIL.FieldWorks.Common.Controls.FileDialog;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.FwCoreDlgs.FileDialog;
 using SIL.LCModel;
 using SIL.LCModel.DomainServices.BackupRestore;
 using SIL.Reporting;

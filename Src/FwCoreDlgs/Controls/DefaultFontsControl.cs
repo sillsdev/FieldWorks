@@ -7,7 +7,6 @@ using System.Drawing;
 using System.Drawing.Text;
 using System.Linq;
 using System.Windows.Forms;
-using SIL.FieldWorks.Common.Controls;
 using SIL.LCModel.Core.WritingSystems;
 using SIL.WritingSystems;
 
@@ -16,6 +15,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 	/// <summary />
 	public class DefaultFontsControl : UserControl
 	{
+
 		#region Member variables
 		private FwOverrideComboBox m_defaultFontComboBox;
 		private Label m_defaultFontLabel;
@@ -112,7 +112,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(DefaultFontsControl));
 			this.m_defaultFontLabel = new System.Windows.Forms.Label();
 			this.m_helpProvider = new System.Windows.Forms.HelpProvider();
-			this.m_defaultFontComboBox = new SIL.FieldWorks.Common.Controls.FwOverrideComboBox();
+			this.m_defaultFontComboBox = new FwOverrideComboBox();
 			this.m_defaultFontFeaturesButton = new SIL.FieldWorks.FwCoreDlgs.Controls.FontFeaturesButton();
 			this.m_enableGraphiteCheckBox = new System.Windows.Forms.CheckBox();
 			this.m_graphiteGroupBox = new System.Windows.Forms.GroupBox();

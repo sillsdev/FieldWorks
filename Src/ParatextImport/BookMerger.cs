@@ -5,15 +5,15 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using SIL.LCModel;
-using SIL.FieldWorks.Common.Controls;
-using SIL.LCModel.Utils;
 using System.Diagnostics;
-using SIL.LCModel.DomainServices;
+using System.Linq;
+using SIL.FieldWorks.FwCoreDlgs;
+using SIL.LCModel;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Core.Scripture;
 using SIL.LCModel.Core.Text;
-using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Utils;
 
 namespace ParatextImport
 {

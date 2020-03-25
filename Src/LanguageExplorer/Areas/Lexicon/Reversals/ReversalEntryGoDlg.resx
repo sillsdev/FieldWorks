@@ -198,7 +198,7 @@
 	<value>m_matchingObjectsBrowser</value>
   </data>
   <data name="&gt;&gt;m_matchingObjectsBrowser.Type" xml:space="preserve">
-	<value>SIL.FieldWorks.Common.Controls.MatchingObjectsBrowser, XMLViews, Version=1.0.3848.33603, Culture=neutral, PublicKeyToken=null</value>
+	<value>LanguageExplorer.Controls.XMLViews.MatchingObjectsBrowser, LanguageExplorer, Version=1.0.3848.33603, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;m_matchingObjectsBrowser.Parent" xml:space="preserve">
 	<value>$this</value>

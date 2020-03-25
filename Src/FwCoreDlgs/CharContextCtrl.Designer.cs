@@ -47,8 +47,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			this.btnScan = new System.Windows.Forms.Button();
 			this.lblScanMsg = new System.Windows.Forms.Label();
 			this.splitContainer = new System.Windows.Forms.SplitContainer();
-			this.pnlTokenGrid = new SIL.FieldWorks.Common.Controls.FwPanel();
-			this.pnlLowerGrid = new SIL.FieldWorks.Common.Controls.FwPanel();
+			this.pnlTokenGrid = new FwPanel();
+			this.pnlLowerGrid = new FwPanel();
 			this.gridContext = new SIL.FieldWorks.FwCoreDlgs.ContextGrid();
 			this.colRef = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.colContextBefore = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -250,8 +250,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private System.Windows.Forms.Button btnScan;
 		private System.Windows.Forms.Label lblScanMsg;
 		private System.Windows.Forms.SplitContainer splitContainer;
-		private SIL.FieldWorks.Common.Controls.FwPanel pnlTokenGrid;
-		private SIL.FieldWorks.Common.Controls.FwPanel pnlLowerGrid;
+		private FwPanel pnlTokenGrid;
+		private FwPanel pnlLowerGrid;
 		private ContextGrid gridContext;
 		private System.Windows.Forms.Panel pnlScan;
 		private System.Windows.Forms.ContextMenuStrip m_cmnuScan;

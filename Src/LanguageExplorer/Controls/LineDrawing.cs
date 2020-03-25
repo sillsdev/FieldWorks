@@ -6,7 +6,7 @@ using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
-using SIL.FieldWorks.Common.Controls;
+using SIL.FieldWorks.FwCoreDlgs;
 
 namespace LanguageExplorer.Controls
 {

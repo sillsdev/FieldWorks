@@ -427,7 +427,7 @@
 	<value>m_scriptName</value>
   </data>
   <data name="&gt;&gt;m_scriptName.Type" xml:space="preserve">
-	<value>SIL.FieldWorks.Common.Controls.FwOverrideComboBox, FwControls, Version=7.1.0.17469, Culture=neutral, PublicKeyToken=null</value>
+	<value>SIL.FieldWorks.FwCoreDlgs.FwOverrideComboBox, FwCoreDlgs, Version=7.1.0.17469, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;m_scriptName.Parent" xml:space="preserve">
 	<value>$this</value>
@@ -460,7 +460,7 @@
 	<value>m_variantName</value>
   </data>
   <data name="&gt;&gt;m_variantName.Type" xml:space="preserve">
-	<value>SIL.FieldWorks.Common.Controls.FwOverrideComboBox, FwControls, Version=7.1.0.17469, Culture=neutral, PublicKeyToken=null</value>
+	<value>SIL.FieldWorks.FwCoreDlgs.FwOverrideComboBox, FwCoreDlgs, Version=7.1.0.17469, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;m_variantName.Parent" xml:space="preserve">
 	<value>$this</value>
@@ -490,7 +490,7 @@
 	<value>m_regionName</value>
   </data>
   <data name="&gt;&gt;m_regionName.Type" xml:space="preserve">
-	<value>SIL.FieldWorks.Common.Controls.FwOverrideComboBox, FwControls, Version=7.1.0.17469, Culture=neutral, PublicKeyToken=null</value>
+	<value>SIL.FieldWorks.FwCoreDlgs.FwOverrideComboBox, FwCoreDlgs, Version=7.1.0.17469, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;m_regionName.Parent" xml:space="preserve">
 	<value>$this</value>

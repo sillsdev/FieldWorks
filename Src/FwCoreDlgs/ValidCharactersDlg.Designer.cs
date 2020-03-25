@@ -79,10 +79,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			this.label3 = new System.Windows.Forms.Label();
 			this.splitValidCharsOuter = new System.Windows.Forms.SplitContainer();
 			this.splitValidCharsInner = new System.Windows.Forms.SplitContainer();
-			this.pnlWordForming = new SIL.FieldWorks.Common.Controls.FwPanel();
+			this.pnlWordForming = new FwPanel();
 			this.chrGridWordForming = new CharacterGrid();
 			this.hlblWordForming = new HeaderLabel();
-			this.pnlOther = new SIL.FieldWorks.Common.Controls.FwPanel();
+			this.pnlOther = new FwPanel();
 			this.chrGridOther = new CharacterGrid();
 			this.hlblOther = new HeaderLabel();
 			this.pnlMoveButtons = new System.Windows.Forms.Panel();
@@ -877,8 +877,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private System.Windows.Forms.Label lblUnicodeValue;
 		private SIL.FieldWorks.FwCoreDlgs.Controls.FwTextBox txtUnicodeValue;
 		private System.Windows.Forms.Label label4;
-		private SIL.FieldWorks.Common.Controls.FwPanel pnlWordForming;
-		private SIL.FieldWorks.Common.Controls.FwPanel pnlOther;
+		private FwPanel pnlWordForming;
+		private FwPanel pnlOther;
 		private HeaderLabel hlblOther;
 		private HeaderLabel hlblWordForming;
 		private System.Windows.Forms.Button btnTreatAsPunct;

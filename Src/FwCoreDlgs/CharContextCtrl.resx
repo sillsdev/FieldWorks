@@ -226,7 +226,7 @@
     <value>pnlTokenGrid</value>
   </data>
   <data name="&gt;&gt;pnlTokenGrid.Type" xml:space="preserve">
-    <value>SIL.FieldWorks.Common.Controls.FwPanel, FwControls, Version=9.0.0.24246, Culture=neutral, PublicKeyToken=null</value>
+    <value>SIL.FieldWorks.FwCoreDlgs.FwPanel, FwCoreDlgs, Version=9.0.0.24246, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;pnlTokenGrid.Parent" xml:space="preserve">
     <value>splitContainer.Panel1</value>
@@ -319,7 +319,7 @@
     <value>pnlLowerGrid</value>
   </data>
   <data name="&gt;&gt;pnlLowerGrid.Type" xml:space="preserve">
-    <value>SIL.FieldWorks.Common.Controls.FwPanel, FwControls, Version=9.0.0.24246, Culture=neutral, PublicKeyToken=null</value>
+    <value>SIL.FieldWorks.FwCoreDlgs.FwPanel, FwCoreDlgs, Version=9.0.0.24246, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;pnlLowerGrid.Parent" xml:space="preserve">
     <value>splitContainer.Panel2</value>

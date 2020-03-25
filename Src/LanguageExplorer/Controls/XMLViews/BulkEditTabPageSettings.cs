@@ -5,9 +5,9 @@
 using System;
 using System.Reflection;
 using System.Xml.Linq;
-using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.ViewsInterfaces;
+using SIL.FieldWorks.FwCoreDlgs;
 
 namespace LanguageExplorer.Controls.XMLViews
 {

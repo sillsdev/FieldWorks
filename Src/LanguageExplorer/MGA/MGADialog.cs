@@ -10,8 +10,8 @@ using System.IO;
 using System.Text;
 using System.Windows.Forms;
 using System.Xml;
-using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.FwCoreDlgs;
 using SIL.LCModel;
 
 namespace LanguageExplorer.MGA
@@ -370,7 +370,7 @@ namespace LanguageExplorer.MGA
 			System.Windows.Forms.TableLayoutPanel tableLayoutPanel2;
 			this.splitContainerVertical = new System.Windows.Forms.SplitContainer();
 			this.groupBoxGlossComponents = new System.Windows.Forms.GroupBox();
-			this.comboGlossListItem = new SIL.FieldWorks.Common.Controls.FwOverrideComboBox();
+			this.comboGlossListItem = new SIL.FieldWorks.FwCoreDlgs.FwOverrideComboBox();
 			this.labelGlossListItem = new System.Windows.Forms.Label();
 			this.checkBoxShowUsed = new System.Windows.Forms.CheckBox();
 			this.buttonInfo = new System.Windows.Forms.Button();

@@ -5,7 +5,7 @@
 using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
-using SIL.FieldWorks.Common.Controls;
+using SIL.FieldWorks.FwCoreDlgs;
 using SIL.LCModel.DomainServices;
 
 namespace LanguageExplorer.Controls.Styles

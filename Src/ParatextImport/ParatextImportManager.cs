@@ -6,15 +6,15 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
-using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
+using SIL.FieldWorks.FwCoreDlgs;
 using SIL.LCModel;
-using SIL.LCModel.DomainServices;
-using SIL.Reporting;
-using SIL.LCModel.Utils;
 using SIL.LCModel.Core.Scripture;
+using SIL.LCModel.DomainServices;
 using SIL.LCModel.Infrastructure;
+using SIL.LCModel.Utils;
+using SIL.Reporting;
 
 namespace ParatextImport
 {

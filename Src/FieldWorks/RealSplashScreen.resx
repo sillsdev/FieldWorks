@@ -451,7 +451,7 @@
     <value>progressLine</value>
   </data>
   <data name="&gt;&gt;progressLine.Type" xml:space="preserve">
-    <value>SIL.FieldWorks.Common.Controls.ProgressLine, FwControls, Version=8.1.0.18021, Culture=neutral, PublicKeyToken=null</value>
+    <value>SIL.FieldWorks.FwCoreDlgs.ProgressLine, FwCoreDlgs, Version=8.1.0.18021, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;progressLine.Parent" xml:space="preserve">
     <value>m_panel</value>

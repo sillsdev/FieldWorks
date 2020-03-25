@@ -261,7 +261,7 @@
 	<value>m_cbWritingSystems</value>
   </data>
   <data name="&gt;&gt;m_cbWritingSystems.Type" xml:space="preserve">
-	<value>SIL.FieldWorks.Common.Controls.FwOverrideComboBox, FwControls, Version=4.1.0.9, Culture=neutral, PublicKeyToken=null</value>
+	<value>SIL.FieldWorks.FwCoreDlgs.FwOverrideComboBox, FwCoreDlgs, Version=4.1.0.9, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;m_cbWritingSystems.Parent" xml:space="preserve">
 	<value>$this</value>

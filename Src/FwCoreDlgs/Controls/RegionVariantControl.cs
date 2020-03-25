@@ -9,7 +9,6 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
-using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel.Core.WritingSystems;
 using SIL.WritingSystems;
@@ -91,9 +90,9 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			this.m_scriptNameLabel = new System.Windows.Forms.Label();
 			this.m_scriptAbbrevLabel = new System.Windows.Forms.Label();
 			this.m_scriptAbbrev = new System.Windows.Forms.TextBox();
-			this.m_scriptName = new SIL.FieldWorks.Common.Controls.FwOverrideComboBox();
-			this.m_variantName = new SIL.FieldWorks.Common.Controls.FwOverrideComboBox();
-			this.m_regionName = new SIL.FieldWorks.Common.Controls.FwOverrideComboBox();
+			this.m_scriptName = new FwOverrideComboBox();
+			this.m_variantName = new FwOverrideComboBox();
+			this.m_regionName = new FwOverrideComboBox();
 			this.SuspendLayout();
 			//
 			// m_regionAbbrev

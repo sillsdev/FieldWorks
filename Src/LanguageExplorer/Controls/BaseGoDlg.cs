@@ -10,8 +10,8 @@ using System.Linq;
 using System.Windows.Forms;
 using LanguageExplorer.Controls.XMLViews;
 using SIL.Code;
-using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.FwCoreDlgs;
 using SIL.FieldWorks.FwCoreDlgs.Controls;
 using SIL.FieldWorks.Resources;
 using SIL.LCModel;
@@ -536,7 +536,7 @@ namespace LanguageExplorer.Controls
 			this.m_panel1 = new System.Windows.Forms.Panel();
 			this.m_tbForm = new SIL.FieldWorks.FwCoreDlgs.Controls.FwTextBox();
 			this.m_formLabel = new System.Windows.Forms.Label();
-			this.m_cbWritingSystems = new SIL.FieldWorks.Common.Controls.FwOverrideComboBox();
+			this.m_cbWritingSystems = new SIL.FieldWorks.FwCoreDlgs.FwOverrideComboBox();
 			this.m_wsLabel = new System.Windows.Forms.Label();
 			this.m_fwTextBoxBottomMsg = new SIL.FieldWorks.FwCoreDlgs.Controls.FwTextBox();
 			this.m_objectsLabel = new System.Windows.Forms.Label();

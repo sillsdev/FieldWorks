@@ -136,6 +136,18 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="gtk-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f">
+      <HintPath>..\..\Lib\gtk-sharp.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="glib-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f">
+      <HintPath>..\..\Lib\glib-sharp.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="atk-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f">
+      <HintPath>..\..\Lib\atk-sharp.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="SIL.Core.Desktop">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\SIL.Core.Desktop.dll</HintPath>
@@ -149,6 +161,7 @@
       <HintPath>..\..\Output\Debug\SIL.Windows.Forms.WritingSystems.dll</HintPath>
     </Reference>
     <Reference Include="System.Data" />
+    <Reference Include="System.Design" />
     <Reference Include="ViewsInterfaces">
       <Name>ViewsInterfaces</Name>
       <SpecificVersion>False</SpecificVersion>
@@ -170,11 +183,6 @@
       <Name>SIL.LCModel</Name>
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\SIL.LCModel.dll</HintPath>
-    </Reference>
-    <Reference Include="FwControls">
-      <Name>FwControls</Name>
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Debug\FwControls.dll</HintPath>
     </Reference>
     <Reference Include="FwResources">
       <Name>FwResources</Name>
@@ -246,7 +254,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\CommonAssemblyInfo.cs">
-      <Link>CommonAssemblyInfo.cs</Link>
+      <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="AddCnvtrDlg.cs">
       <SubType>Form</SubType>
@@ -304,6 +312,13 @@
       <DependentUpon>RestoreProjectDlg.cs</DependentUpon>
     </Compile>
     <Compile Include="BackupRestore\RestoreProjectPresenter.cs" />
+    <Compile Include="BorderDrawing.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="BorderTypes.cs" />
+    <Compile Include="ButtonStyles.cs" />
+    <Compile Include="ButtonToggleStates.cs" />
+    <Compile Include="CancelException.cs" />
     <Compile Include="CharacterGrid.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -380,6 +395,24 @@
     <Compile Include="ConverterTrial.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Include="Design\FwButtonDesigner.cs" />
+    <Compile Include="FileDialog\FileDialogAdapter.cs" />
+    <Compile Include="FileDialog\FileDialogFactory.cs" />
+    <Compile Include="FileDialog\FileDialogStrings.Designer.cs">
+      <DependentUpon>FileDialogStrings.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="FileDialog\FolderBrowserDialogAdapter.cs" />
+    <Compile Include="FileDialog\IFileDialog.cs" />
+    <Compile Include="FileDialog\IFolderBrowserDialog.cs" />
+    <Compile Include="FileDialog\IOpenFileDialog.cs" />
+    <Compile Include="FileDialog\ISaveFileDialog.cs" />
+    <Compile Include="FileDialog\OpenFileDialogAdapter.cs" />
+    <Compile Include="FileDialog\SaveFileDialogAdapter.cs" />
+    <Compile Include="FwButton.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="FwCharacterCategorizer.cs" />
     <Compile Include="FwChooseAnthroListCtrl.cs">
       <SubType>UserControl</SubType>
@@ -406,6 +439,15 @@
     </Compile>
     <Compile Include="FwNewProjectProjectNameControl.Designer.cs">
       <DependentUpon>FwNewProjectProjectNameControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FwOverrideComboBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="FwPanel.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="FwTextPanel.cs">
+      <SubType>Component</SubType>
     </Compile>
     <Compile Include="FwWritingSystemSetupDlg.cs">
       <SubType>Form</SubType>
@@ -451,6 +493,13 @@
     <Compile Include="FwProjPropertiesDlg.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="ProgressDialogImpl.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ProgressDialogImpl.Designer.cs">
+      <DependentUpon>ProgressDialogImpl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ProgressDialogWithTask.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -463,7 +512,9 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Strings.resx</DependentUpon>
     </Compile>
+    <Compile Include="SunkenAppearances.cs" />
     <Compile Include="TextFileDataSource.cs" />
+    <Compile Include="TextLocation.cs" />
     <Compile Include="ValidCharactersDlg.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -520,6 +571,10 @@
     <EmbeddedResource Include="BackupRestore\RestoreProjectDlg.resx">
       <DependentUpon>RestoreProjectDlg.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="BorderDrawing.resx">
+      <DependentUpon>BorderDrawing.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="CharacterGrid.resx">
       <DependentUpon>CharacterGrid.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -567,6 +622,14 @@
     <EmbeddedResource Include="DeleteWritingSystemWarningDialog.resx">
       <DependentUpon>DeleteWritingSystemWarningDialog.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="FileDialog\FileDialogStrings.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>FileDialogStrings.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FwButton.resx">
+      <DependentUpon>FwButton.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="MergeWritingSystemDlg.resx">
       <DependentUpon>MergeWritingSystemDlg.cs</DependentUpon>
     </EmbeddedResource>
@@ -586,6 +649,10 @@
     </EmbeddedResource>
     <EmbeddedResource Include="FwProjPropertiesDlg.resx">
       <DependentUpon>FwProjPropertiesDlg.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ProgressDialogImpl.resx">
+      <DependentUpon>ProgressDialogImpl.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
@@ -609,7 +676,7 @@
       <DependentUpon>FwWritingSystemSetupDlg.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <Compile Include="AssemblyInfo.cs">
+    <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
     <EmbeddedResource Include="WizardStep.resx">
@@ -633,6 +700,18 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\MissingGlyph.png" />
+    <None Include="FileDialog\readme.txt" />
+    <EmbeddedResource Include="Resources\BorderDrawing.bmp" />
+    <Content Include="Resources\Checked.bmp" />
+    <Content Include="Resources\FWButtonMenuArrow.bmp" />
+    <Content Include="Resources\GreyChecked.bmp" />
+    <EmbeddedResource Include="Resources\HelpButton.ICO" />
+    <EmbeddedResource Include="Resources\InformationBar.ico" />
+    <EmbeddedResource Include="Resources\Persistence.bmp" />
+    <EmbeddedResource Include="Resources\SelectedOption.bmp" />
+    <Content Include="Resources\Unchecked.bmp" />
+    <EmbeddedResource Include="Resources\UnSelectedOption.bmp" />
+    <EmbeddedResource Include="Resources\WhatsThisHelpProvider.bmp" />
     <Content Include="Resources\WizardConnectToStep.png" />
     <Content Include="Resources\WizardStepComplete.png" />
     <None Include="Resources\WizardNotComplete.png" />

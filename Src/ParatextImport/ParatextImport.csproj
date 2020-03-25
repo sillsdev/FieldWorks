@@ -87,6 +87,10 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="FwCoreDlgs, Version=10.0.0.21125, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Output\Debug\FwCoreDlgs.dll</HintPath>
+    </Reference>
     <Reference Include="SIL.Core.Desktop">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\SIL.Core.Desktop.dll</HintPath>
@@ -105,10 +109,6 @@
     </Reference>
     <Reference Include="SIL.LCModel, Version=9.0.0.0, Culture=neutral, processorArchitecture=x86">
       <HintPath>..\..\Output\Debug\SIL.LCModel.dll</HintPath>
-      <SpecificVersion>False</SpecificVersion>
-    </Reference>
-    <Reference Include="FwControls, Version=5.5.0.19438, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\Output\Debug\FwControls.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
     </Reference>
     <Reference Include="FwResources, Version=5.5.0.19421, Culture=neutral, processorArchitecture=MSIL">

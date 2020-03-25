@@ -1039,4 +1039,20 @@ that also use the SIL Locale Data Repository</value>
     <value>{0} (Original)</value>
     <comment>{0} is an item in a list. There is a copy of this item in the list.</comment>
   </data>
+  <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <data name="CheckBox" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        iVBORw0KGgoAAAANSUhEUgAAABAAAAARCAYAAADUryzEAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6
+        JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAAMklEQVQ4T2MYVOA/GRgFYFNACKMAsCAx
+        AKYWpAkZjBowagAIIEsQi1EANgWE8IADBgYANI2adEjqiHIAAAAASUVORK5CYII=
+</value>
+  </data>
+  <data name="CheckBoxCheck" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        iVBORw0KGgoAAAANSUhEUgAAABAAAAARCAYAAADUryzEAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6
+        JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAAaUlEQVQ4T82M0QqAMAwD+/8/rZ0YuWzT
+        Dl/0ILA218Wv2F7EmAlVjGO5gtx2RMoP1MvNGI8fsNc7Y5hA1LE/YwwC35ob2BmXpDdDsDdM1MydQGcM
+        cj8LuRnj9qBHbjsiLFZjzIQqnxOxA2ISW7MPZ2v2AAAAAElFTkSuQmCC
+</value>
+  </data>
 </root>

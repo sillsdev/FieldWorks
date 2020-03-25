@@ -8,9 +8,8 @@ using System.Diagnostics;
 using System.Windows.Forms;
 using ECInterfaces;
 using Icu;
-using SIL.FieldWorks.Common.Controls;
-using SIL.FieldWorks.Common.Controls.FileDialog;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.FwCoreDlgs.FileDialog;
 using SIL.FieldWorks.Resources;
 using SilEncConverters40;
 
@@ -162,12 +161,12 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			this.lblConversion = new System.Windows.Forms.Label();
 			this.lblName = new System.Windows.Forms.Label();
 			this.lblConverter = new System.Windows.Forms.Label();
-			this.cboConversion = new SIL.FieldWorks.Common.Controls.FwOverrideComboBox();
+			this.cboConversion = new FwOverrideComboBox();
 			this.txtName = new System.Windows.Forms.TextBox();
 			this.btnMapFile = new System.Windows.Forms.Button();
 			this.txtMapFile = new System.Windows.Forms.TextBox();
-			this.cboConverter = new SIL.FieldWorks.Common.Controls.FwOverrideComboBox();
-			this.cboSpec = new SIL.FieldWorks.Common.Controls.FwOverrideComboBox();
+			this.cboConverter = new FwOverrideComboBox();
+			this.cboSpec = new FwOverrideComboBox();
 			this.btnModify = new System.Windows.Forms.Button();
 			this.btnMore = new System.Windows.Forms.Button();
 			this.SuspendLayout();

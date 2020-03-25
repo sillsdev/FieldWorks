@@ -7,8 +7,8 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Windows.Forms;
 using LanguageExplorer.Filters;
-using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.FwCoreDlgs;
 
 namespace LanguageExplorer.Controls.XMLViews
 {
@@ -162,7 +162,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		private void InitializeComponent()
 		{
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SimpleIntegerMatchDlg));
-			this.m_comboMatchType = new SIL.FieldWorks.Common.Controls.FwOverrideComboBox();
+			this.m_comboMatchType = new SIL.FieldWorks.FwCoreDlgs.FwOverrideComboBox();
 			this.m_labelAnd = new System.Windows.Forms.Label();
 			this.m_cancelButton = new System.Windows.Forms.Button();
 			this.m_okButton = new System.Windows.Forms.Button();

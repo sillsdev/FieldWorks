@@ -65,7 +65,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			this.m_FullCode = new System.Windows.Forms.Label();
 			this.lblFullCode = new System.Windows.Forms.Label();
 			this.lblSpellingDictionary = new System.Windows.Forms.Label();
-			this._spellingCombo = new SIL.FieldWorks.Common.Controls.FwOverrideComboBox();
+			this._spellingCombo = new FwOverrideComboBox();
 			this._fontTab = new System.Windows.Forms.TabPage();
 			this._defaultFontControl = new SIL.FieldWorks.FwCoreDlgs.Controls.DefaultFontsControl();
 			this._keyboardTab = new System.Windows.Forms.TabPage();
@@ -81,7 +81,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			this._convertersTab = new System.Windows.Forms.TabPage();
 			this.btnEncodingConverter = new System.Windows.Forms.Button();
 			this.m_lblEncodingConverter = new System.Windows.Forms.Label();
-			this._encodingConverterCombo = new SIL.FieldWorks.Common.Controls.FwOverrideComboBox();
+			this._encodingConverterCombo = new FwOverrideComboBox();
 			this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
 			this._helpBtn = new System.Windows.Forms.Button();
 			this._cancelBtn = new System.Windows.Forms.Button();
@@ -813,7 +813,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private System.Windows.Forms.Button btnValidChars;
 		private System.Windows.Forms.Button btnEncodingConverter;
 		private System.Windows.Forms.Label m_lblEncodingConverter;
-		private Common.Controls.FwOverrideComboBox _encodingConverterCombo;
+		private FwOverrideComboBox _encodingConverterCombo;
 		private Windows.Forms.WritingSystems.WSKeyboardControl _keyboardControl;
 		private Windows.Forms.WritingSystems.WSSortControl _sortControl;
 		private SIL.FieldWorks.FwCoreDlgs.Controls.CustomDigitEntryControl customDigits;
@@ -837,7 +837,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private System.Windows.Forms.Label m_FullCode;
 		private System.Windows.Forms.Label lblFullCode;
 		private System.Windows.Forms.Label lblSpellingDictionary;
-		private Common.Controls.FwOverrideComboBox _spellingCombo;
+		private FwOverrideComboBox _spellingCombo;
 		private System.Windows.Forms.TabPage _fontTab;
 		private SIL.FieldWorks.FwCoreDlgs.Controls.DefaultFontsControl _defaultFontControl;
 		private System.Windows.Forms.CheckBox _shareWithSldrCheckbox;

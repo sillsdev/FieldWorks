@@ -14,6 +14,7 @@ using Gecko;
 using Gecko.DOM;
 using LanguageExplorer.DictionaryConfiguration;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.FwCoreDlgs;
 using SIL.LCModel;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Utils;
@@ -796,7 +797,7 @@ namespace LanguageExplorer.Areas.Lexicon.DictionaryConfiguration
 			else
 			{
 				using (new WaitCursor(ParentForm))
-				using (var progressDlg = new SIL.FieldWorks.Common.Controls.ProgressDialogWithTask(ParentForm))
+				using (var progressDlg = new ProgressDialogWithTask(ParentForm))
 				{
 					progressDlg.AllowCancel = true;
 					progressDlg.CancelLabelText = LexiconResources.ksCancelingPublicationLabel;

@@ -8,8 +8,8 @@ using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using LanguageExplorer.SendReceive;
-using SIL.FieldWorks.Common.Controls.FileDialog;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.FwCoreDlgs.FileDialog;
 using SIL.FieldWorks.Resources;
 using SIL.LCModel;
 

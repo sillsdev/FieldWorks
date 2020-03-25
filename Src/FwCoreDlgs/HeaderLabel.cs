@@ -5,7 +5,6 @@
 using System.Drawing;
 using System.Windows.Forms;
 using System.Windows.Forms.VisualStyles;
-using SIL.FieldWorks.Common.Controls;
 using SIL.Windows.Forms;
 
 namespace SIL.FieldWorks.FwCoreDlgs

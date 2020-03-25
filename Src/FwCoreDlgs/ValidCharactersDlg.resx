@@ -1300,7 +1300,7 @@
     <value>chrGridWordForming</value>
   </data>
   <data name="&gt;&gt;chrGridWordForming.Type" xml:space="preserve">
-    <value>SIL.FieldWorks.Common.Controls.CharacterGrid, FwControls, Version=9.0.2.21367, Culture=neutral, PublicKeyToken=null</value>
+    <value>SIL.FieldWorks.FwCoreDlgs.CharacterGrid, FwCoreDlgs, Version=9.0.2.21367, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;chrGridWordForming.Parent" xml:space="preserve">
     <value>pnlWordForming</value>
@@ -1327,7 +1327,7 @@
     <value>hlblWordForming</value>
   </data>
   <data name="&gt;&gt;hlblWordForming.Type" xml:space="preserve">
-    <value>SIL.FieldWorks.Common.Controls.HeaderLabel, FwControls, Version=9.0.2.21367, Culture=neutral, PublicKeyToken=null</value>
+    <value>SIL.FieldWorks.FwCoreDlgs.HeaderLabel, FwCoreDlgs, Version=9.0.2.21367, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;hlblWordForming.Parent" xml:space="preserve">
     <value>pnlWordForming</value>
@@ -1351,7 +1351,7 @@
     <value>pnlWordForming</value>
   </data>
   <data name="&gt;&gt;pnlWordForming.Type" xml:space="preserve">
-    <value>SIL.FieldWorks.Common.Controls.FwPanel, FwControls, Version=9.0.2.21367, Culture=neutral, PublicKeyToken=null</value>
+    <value>SIL.FieldWorks.FwCoreDlgs.FwPanel, FwCoreDlgs, Version=9.0.2.21367, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;pnlWordForming.Parent" xml:space="preserve">
     <value>splitValidCharsInner.Panel1</value>
@@ -1393,7 +1393,7 @@
     <value>chrGridOther</value>
   </data>
   <data name="&gt;&gt;chrGridOther.Type" xml:space="preserve">
-    <value>SIL.FieldWorks.Common.Controls.CharacterGrid, FwControls, Version=9.0.2.21367, Culture=neutral, PublicKeyToken=null</value>
+    <value>SIL.FieldWorksFwCoreDlgs.CharacterGrid, FwCoreDlgs, Version=9.0.2.21367, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;chrGridOther.Parent" xml:space="preserve">
     <value>pnlOther</value>
@@ -1420,7 +1420,7 @@
     <value>hlblOther</value>
   </data>
   <data name="&gt;&gt;hlblOther.Type" xml:space="preserve">
-    <value>SIL.FieldWorks.Common.Controls.HeaderLabel, FwControls, Version=9.0.2.21367, Culture=neutral, PublicKeyToken=null</value>
+    <value>SIL.FieldWorks.FwCoreDlgs.HeaderLabel, FwCoreDlgs, Version=9.0.2.21367, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;hlblOther.Parent" xml:space="preserve">
     <value>pnlOther</value>
@@ -1444,7 +1444,7 @@
     <value>pnlOther</value>
   </data>
   <data name="&gt;&gt;pnlOther.Type" xml:space="preserve">
-    <value>SIL.FieldWorks.Common.Controls.FwPanel, FwControls, Version=9.0.2.21367, Culture=neutral, PublicKeyToken=null</value>
+    <value>SIL.FieldWorks.FwCoreDlgs.FwPanel, FwCoreDlgs, Version=9.0.2.21367, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;pnlOther.Parent" xml:space="preserve">
     <value>splitValidCharsInner.Panel2</value>

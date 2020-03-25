@@ -9,8 +9,8 @@ using System.Diagnostics;
 using System.Linq;
 using System.Windows.Forms;
 using System.Xml.Linq;
-using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.FwCoreDlgs;
 using SIL.LCModel;
 using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel.DomainServices;
@@ -715,7 +715,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			this.moveUpButton = new System.Windows.Forms.Button();
 			this.imageList2 = new System.Windows.Forms.ImageList(this.components);
 			this.moveDownButton = new System.Windows.Forms.Button();
-			this.wsCombo = new SIL.FieldWorks.Common.Controls.FwOverrideComboBox();
+			this.wsCombo = new SIL.FieldWorks.FwCoreDlgs.FwOverrideComboBox();
 			this.label3 = new System.Windows.Forms.Label();
 			this.optionsList = new System.Windows.Forms.ListView();
 			this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));

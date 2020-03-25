@@ -14,8 +14,8 @@ using System.Xml.Xsl;
 using Gecko;
 using LanguageExplorer.Controls;
 using LanguageExplorer.SfmToXml;
-using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.FwCoreDlgs;
 using SIL.LCModel;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Core.Text;
@@ -344,7 +344,7 @@ namespace LanguageExplorer.Impls
 			this.lblDestinationInFlex = new System.Windows.Forms.Label();
 			this.tvDestination = new System.Windows.Forms.TreeView();
 			this.blbLangDesc = new System.Windows.Forms.Label();
-			this.cbLangDesc = new SIL.FieldWorks.Common.Controls.FwOverrideComboBox();
+			this.cbLangDesc = new SIL.FieldWorks.FwCoreDlgs.FwOverrideComboBox();
 			this.btnAddLangDesc = new System.Windows.Forms.Button();
 			this.btnAddCustomField = new System.Windows.Forms.Button();
 			this.btnOK = new System.Windows.Forms.Button();
@@ -353,7 +353,7 @@ namespace LanguageExplorer.Impls
 			this.rbAbbrAbbr = new System.Windows.Forms.RadioButton();
 			this.lblAbbr = new System.Windows.Forms.Label();
 			this.panel5 = new System.Windows.Forms.Panel();
-			this.cbFunction = new SIL.FieldWorks.Common.Controls.FwOverrideComboBox();
+			this.cbFunction = new SIL.FieldWorks.FwCoreDlgs.FwOverrideComboBox();
 			this.lblFunction = new System.Windows.Forms.Label();
 			this.chkbxAutoField = new System.Windows.Forms.CheckBox();
 			this.buttonHelp = new System.Windows.Forms.Button();
