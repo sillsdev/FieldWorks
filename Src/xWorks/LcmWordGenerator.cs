@@ -1133,7 +1133,7 @@ namespace SIL.FieldWorks.XWorks
 			return content;
 		}
 
-		public IFragment GenerateAudioLinkContent(ConfigurableDictionaryNode config, string classname, string srcAttribute, string caption, string safeAudioId)
+		public IFragment GenerateAudioLinkContent(ConfigurableDictionaryNode config, ConfiguredLcmGenerator.GeneratorSettings settings, string classname, string srcAttribute, string caption, string safeAudioId)
 		{
 			// We are not planning to support audio and video content for Word Export.
 			return new DocFragment();
@@ -1252,7 +1252,7 @@ namespace SIL.FieldWorks.XWorks
 			return groupData;
 		}
 
-		public IFragment AddSenseData(ConfigurableDictionaryNode config, IFragment senseNumberSpan, Guid ownerGuid, IFragment senseContent, bool first)
+		public IFragment AddSenseData(ConfigurableDictionaryNode config, ConfiguredLcmGenerator.GeneratorSettings settings, IFragment senseNumberSpan, Guid ownerGuid, IFragment senseContent, bool first)
 		{
 			var senseData = new DocFragment();
 			WP.Paragraph newPara = null;
@@ -1311,7 +1311,7 @@ namespace SIL.FieldWorks.XWorks
 			return senseData;
 		}
 
-		public IFragment AddCollectionItem(ConfigurableDictionaryNode config, bool isBlock, string collectionItemClass, IFragment content, bool first)
+		public IFragment AddCollectionItem(ConfigurableDictionaryNode config, ConfiguredLcmGenerator.GeneratorSettings settings, bool isBlock, string collectionItemClass, IFragment content, bool first)
 		{
 			// Add the style to all the runs in the content fragment.
 			if (!string.IsNullOrEmpty(config.Style) &&
@@ -1354,7 +1354,7 @@ namespace SIL.FieldWorks.XWorks
 
 			return collData;
 		}
-		public IFragment AddProperty(ConfigurableDictionaryNode config, ReadOnlyPropertyTable propTable, string className, bool isBlockProperty, string content, string writingSystem)
+		public IFragment AddProperty(ConfigurableDictionaryNode config, ConfiguredLcmGenerator.GeneratorSettings settings, string className, bool isBlockProperty, string content, string writingSystem)
 		{
 			var propFrag = new DocFragment();
 			Run contentRun = null;
@@ -1368,7 +1368,7 @@ namespace SIL.FieldWorks.XWorks
 
 			// Create a run with the correct style.
 			var writer = CreateWriter(propFrag);
-			((WordFragmentWriter)writer).AddRun(Cache, config, propTable, writingSystem, true);
+			((WordFragmentWriter)writer).AddRun(Cache, config, settings.PropertyTable, writingSystem, true);
 
 			// Add the content to the run.
 			AddToRunContent(writer, content);
@@ -1410,7 +1410,7 @@ namespace SIL.FieldWorks.XWorks
 			return new WordFragmentWriter((DocFragment)frag);
 		}
 
-		public void StartMultiRunString(IFragmentWriter writer, ConfigurableDictionaryNode config, string writingSystem)
+		public void StartMultiRunString(IFragmentWriter writer, ConfigurableDictionaryNode config, ConfiguredLcmGenerator.GeneratorSettings settings, string writingSystem)
 		{
 			return;
 		}
@@ -1418,7 +1418,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			return;
 		}
-		public void StartBiDiWrapper(IFragmentWriter writer, ConfigurableDictionaryNode config, bool rightToLeft)
+		public void StartBiDiWrapper(IFragmentWriter writer, ConfigurableDictionaryNode config, ConfiguredLcmGenerator.GeneratorSettings settings, bool rightToLeft)
 		{
 			return;
 		}
@@ -1431,9 +1431,9 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		/// <param name="writer"></param>
 		/// <param name="writingSystem"></param>
-		public void StartRun(IFragmentWriter writer, ConfigurableDictionaryNode config, ReadOnlyPropertyTable propTable, string writingSystem, bool first)
+		public void StartRun(IFragmentWriter writer, ConfigurableDictionaryNode config, ConfiguredLcmGenerator.GeneratorSettings settings, string writingSystem, bool first)
 		{
-			((WordFragmentWriter)writer).AddRun(Cache, config, propTable, writingSystem, first);
+			((WordFragmentWriter)writer).AddRun(Cache, config, settings.PropertyTable, writingSystem, first);
 		}
 		public void EndRun(IFragmentWriter writer)
 		{
@@ -1646,7 +1646,7 @@ namespace SIL.FieldWorks.XWorks
 			wordWriter.CurrentTable = null;
 		}
 
-		public void StartEntry(IFragmentWriter writer, ConfigurableDictionaryNode node, string className, Guid entryGuid, int index, RecordClerk clerk)
+		public void StartEntry(IFragmentWriter writer, ConfigurableDictionaryNode node, ConfiguredLcmGenerator.GeneratorSettings settings, string className, Guid entryGuid, int index, RecordClerk clerk)
 		{
 			// Each entry starts a new paragraph. The paragraph will end whenever a child needs its own paragraph or
 			// when a data type exists that cannot be in a paragraph (Tables or nested paragraphs).
@@ -1782,7 +1782,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			return;
 		}
-		public void AddCollection(IFragmentWriter writer, ConfigurableDictionaryNode config, bool isBlockProperty, string className, IFragment content)
+		public void AddCollection(IFragmentWriter writer, ConfigurableDictionaryNode config, ConfiguredLcmGenerator.GeneratorSettings settings, bool isBlockProperty, string className, IFragment content)
 		{
 			string styleDisplayName = GetUniqueDisplayName(config, content);
 			// Add Before text.
@@ -1819,7 +1819,7 @@ namespace SIL.FieldWorks.XWorks
 				((WordFragmentWriter)writer).Insert(contents);
 			}
 		}
-		public IFragment AddImage(ConfigurableDictionaryNode config, string classAttribute, string srcAttribute, string pictureGuid)
+		public IFragment AddImage(ConfigurableDictionaryNode config, ConfiguredLcmGenerator.GeneratorSettings settings, string classAttribute, string srcAttribute, string pictureGuid)
 		{
 			DocFragment imageFrag = new DocFragment();
 			WordprocessingDocument wordDoc = imageFrag.DocFrag;
@@ -1865,7 +1865,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 			return docFrag;
 		}
-		public IFragment GenerateSenseNumber(ConfigurableDictionaryNode senseConfigNode, string formattedSenseNumber, string senseNumberWs)
+		public IFragment GenerateSenseNumber(ConfigurableDictionaryNode senseConfigNode, ConfiguredLcmGenerator.GeneratorSettings settings, string formattedSenseNumber, string senseNumberWs)
 		{
 			var senseOptions = (DictionaryNodeSenseOptions)senseConfigNode?.DictionaryNodeOptions;
 			string afterNumber = null;

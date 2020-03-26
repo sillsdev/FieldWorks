@@ -44,7 +44,7 @@ namespace SIL.FieldWorks.XWorks
 			return content;
 		}
 
-		public IFragment GenerateAudioLinkContent(ConfigurableDictionaryNode config, string classname, string srcAttribute, string caption,
+		public IFragment GenerateAudioLinkContent(ConfigurableDictionaryNode config, ConfiguredLcmGenerator.GeneratorSettings settings, string classname, string srcAttribute, string caption,
 			string safeAudioId)
 		{
 			/*"audio": {
@@ -117,14 +117,14 @@ namespace SIL.FieldWorks.XWorks
 			return new StringFragment();
 		}
 
-		public IFragment AddCollectionItem(ConfigurableDictionaryNode config, bool isBlock, string className, IFragment content, bool first)
+		public IFragment AddCollectionItem(ConfigurableDictionaryNode config, ConfiguredLcmGenerator.GeneratorSettings settings, bool isBlock, string className, IFragment content, bool first)
 		{
 			var fragment = new StringFragment();
 			fragment.StrBuilder.Append(content.IsNullOrEmpty() ? string.Empty : $"{{{content}}},");
 			return fragment;
 		}
 
-		public IFragment AddProperty(ConfigurableDictionaryNode config, ReadOnlyPropertyTable propTable, string className, bool isBlockProperty, string content, string writingSystem)
+		public IFragment AddProperty(ConfigurableDictionaryNode config, ConfiguredLcmGenerator.GeneratorSettings settings, string className, bool isBlockProperty, string content, string writingSystem)
 		{
 			var fragment = new StringFragment($"\"{className}\": \"{content}\",");
 			return fragment;
@@ -145,7 +145,7 @@ namespace SIL.FieldWorks.XWorks
 			return new JsonFragmentWriter(((StringFragment)bldr).StrBuilder);
 		}
 
-		public void StartMultiRunString(IFragmentWriter writer, ConfigurableDictionaryNode config, string writingSystem)
+		public void StartMultiRunString(IFragmentWriter writer, ConfigurableDictionaryNode config, ConfiguredLcmGenerator.GeneratorSettings settings, string writingSystem)
 		{
 		}
 
@@ -153,7 +153,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 		}
 
-		public void StartBiDiWrapper(IFragmentWriter writer, ConfigurableDictionaryNode config, bool rightToLeft)
+		public void StartBiDiWrapper(IFragmentWriter writer, ConfigurableDictionaryNode config, ConfiguredLcmGenerator.GeneratorSettings settings, bool rightToLeft)
 		{
 		}
 
@@ -161,7 +161,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 		}
 
-		public void StartRun(IFragmentWriter writer, ConfigurableDictionaryNode config, ReadOnlyPropertyTable propTable, string writingSystem, bool first)
+		public void StartRun(IFragmentWriter writer, ConfigurableDictionaryNode config, ConfiguredLcmGenerator.GeneratorSettings settings, string writingSystem, bool first)
 		{
 			var jsonWriter = (JsonFragmentWriter)writer;
 			jsonWriter.StartObject();
@@ -253,7 +253,7 @@ namespace SIL.FieldWorks.XWorks
 			// TODO: decide on a useful json representation for tables
 		}
 
-		public void StartEntry(IFragmentWriter xw, ConfigurableDictionaryNode config, string className, Guid entryGuid, int index, RecordClerk clerk)
+		public void StartEntry(IFragmentWriter xw, ConfigurableDictionaryNode config, ConfiguredLcmGenerator.GeneratorSettings settings, string className, Guid entryGuid, int index, RecordClerk clerk)
 		{
 			var jsonWriter = (JsonFragmentWriter)xw;
 			jsonWriter.StartObject();
@@ -292,7 +292,7 @@ namespace SIL.FieldWorks.XWorks
 			((JsonFragmentWriter)xw).EndObject();
 		}
 
-		public void AddCollection(IFragmentWriter writer, ConfigurableDictionaryNode config, bool isBlockProperty, string className, IFragment content)
+		public void AddCollection(IFragmentWriter writer, ConfigurableDictionaryNode config, ConfiguredLcmGenerator.GeneratorSettings settings, bool isBlockProperty, string className, IFragment content)
 		{
 			((JsonFragmentWriter)writer).InsertPropertyName(className);
 			BeginArray(writer);
@@ -335,7 +335,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		public IFragment AddImage(ConfigurableDictionaryNode config, string classAttribute, string srcAttribute, string pictureGuid)
+		public IFragment AddImage(ConfigurableDictionaryNode config, ConfiguredLcmGenerator.GeneratorSettings settings, string classAttribute, string srcAttribute, string pictureGuid)
 		{
 			var bldr = new StringBuilder();
 			var fragment = new StringFragment();
@@ -358,7 +358,7 @@ namespace SIL.FieldWorks.XWorks
 			return new StringFragment(captionContent.ToString());
 		}
 
-		public IFragment GenerateSenseNumber(ConfigurableDictionaryNode config, string formattedSenseNumber, string wsId)
+		public IFragment GenerateSenseNumber(ConfigurableDictionaryNode config, ConfiguredLcmGenerator.GeneratorSettings settings, string formattedSenseNumber, string wsId)
 		{
 			return new StringFragment(formattedSenseNumber);
 		}
@@ -435,7 +435,7 @@ namespace SIL.FieldWorks.XWorks
 			return new StringFragment($"\\u+0FFF\\u+0FFF\\u+0FFF{badStrBuilder}");
 		}
 
-		public IFragment AddSenseData(ConfigurableDictionaryNode config, IFragment senseNumberSpan, Guid ownerGuid, IFragment senseContent, bool first)
+		public IFragment AddSenseData(ConfigurableDictionaryNode config, ConfiguredLcmGenerator.GeneratorSettings settings, IFragment senseNumberSpan, Guid ownerGuid, IFragment senseContent, bool first)
 		{
 			var bldr = new StringBuilder();
 			var fragment = new StringFragment(bldr);
