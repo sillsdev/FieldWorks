@@ -1,9 +1,10 @@
-﻿// Copyright (c) 2015 SIL International
+// Copyright (c) 2015 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using Aga.Controls.Tree;
 using SIL.LCModel;
 
@@ -38,7 +39,7 @@ namespace SIL.FieldWorks.IText
 					object value;
 					if (values == null || !values.TryGetValue(complexFeat, out value))
 						value = null;
-					AddFeatures(node, complexFeat.TypeRA.FeaturesRS, (IDictionary<IFsFeatDefn, object>) value);
+					AddFeatures(node, complexFeat.TypeRA.FeaturesRS.Where(f => !features.Contains(f)), (IDictionary<IFsFeatDefn, object>) value);
 					parent.Nodes.Add(node);
 				}
 				else

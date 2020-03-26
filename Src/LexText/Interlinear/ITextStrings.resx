@@ -976,4 +976,8 @@ Click "Cancel" to abort this import.</value>
     <value>Old Testament</value>
     <comment>text for OT node in Scripture tree controls</comment>
   </data>
+  <data name="ComplexConcControl_NotAllParasParsed" xml:space="preserve">
+    <value>Not all paragraphs in {0} could be parsed</value>
+    <comment>Warning message in Complex Concordance tool when not all paragraphs in a text could be parsed</comment>
+  </data>
 </root>
