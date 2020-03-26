@@ -322,7 +322,8 @@ namespace SIL.FieldWorks.XWorks
 					var cache = propertyTable.GetValue<LcmCache>("cache");
 					if (cache.ServiceLocator.GetInstance<ICmObjectRepository>().TryGetObject(topLevelGuid, out obj))
 					{
-						clerk.OnJumpToRecord(obj.Hvo);
+						if (clerk.JumpToTargetWillChangeIndex(obj.Hvo))
+							clerk.OnJumpToRecord(obj.Hvo);
 					}
 				}
 			}

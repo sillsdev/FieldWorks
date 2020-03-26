@@ -1008,6 +1008,11 @@ namespace SIL.FieldWorks.XWorks
 			return true;	//we handled this.
 		}
 
+		public bool JumpToTargetWillChangeIndex(int hvoTarget)
+		{
+			return IndexOfObjOrChildOrParent(hvoTarget) != CurrentIndex;
+		}
+
 		/// <summary>
 		/// Find the index of hvoTarget in m_list; or, if it does not occur, the index of a child of hvoTarget.
 		/// </summary>
