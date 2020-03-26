@@ -19,7 +19,7 @@ namespace SIL.FieldWorks.XWorks {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class xWorksStrings {
@@ -147,6 +147,15 @@ namespace SIL.FieldWorks.XWorks {
         internal static string BeginCompressingDataForWebonary {
             get {
                 return ResourceManager.GetString("BeginCompressingDataForWebonary", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cannot Calculate Letter Headings.
+        /// </summary>
+        internal static string CantCalculateLetterHeadings {
+            get {
+                return ResourceManager.GetString("CantCalculateLetterHeadings", resourceCulture);
             }
         }
         
@@ -2257,6 +2266,15 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Your data is sorted by a field that does not allow us to calculate letter headings. Please change your sort column before uploading to Webonary..
+        /// </summary>
+        internal static string msgCantCalculateLetterHeadings {
+            get {
+                return ResourceManager.GetString("msgCantCalculateLetterHeadings", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to No views match the current publication..
         /// </summary>
         internal static string NoConfigsMatchPub {
@@ -2573,7 +2591,7 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to http://www.webonary.org/.
+        ///   Looks up a localized string similar to https://www.webonary.org/.
         /// </summary>
         internal static string toApplyForWebonaryAccountLink {
             get {
@@ -2669,6 +2687,15 @@ namespace SIL.FieldWorks.XWorks {
         internal static string WantContinue {
             get {
                 return ResourceManager.GetString("WantContinue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to https://www.webonary.org/{0}.
+        /// </summary>
+        internal static string WebonarySiteURLFormat {
+            get {
+                return ResourceManager.GetString("WebonarySiteURLFormat", resourceCulture);
             }
         }
         

@@ -52,7 +52,7 @@ namespace SIL.FieldWorks.XWorks
             this.passwordLabel = new System.Windows.Forms.Label();
             this.usernameLabel = new System.Windows.Forms.Label();
             this.siteNameLabel = new System.Windows.Forms.Label();
-            this.webonaryDomainLabel = new System.Windows.Forms.Label();
+            this.webonarySiteURLLabel = new System.Windows.Forms.Label();
             this.rememberPasswordCheckbox = new System.Windows.Forms.CheckBox();
             this.publicationGroupBox = new System.Windows.Forms.GroupBox();
             this.publicationSelectionTableLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
@@ -129,14 +129,14 @@ namespace SIL.FieldWorks.XWorks
             // settingsForWebonaryTableLayoutPanel
             // 
             resources.ApplyResources(this.settingsForWebonaryTableLayoutPanel, "settingsForWebonaryTableLayoutPanel");
-            this.settingsForWebonaryTableLayoutPanel.Controls.Add(this.webonaryPasswordTextbox, 1, 2);
-            this.settingsForWebonaryTableLayoutPanel.Controls.Add(this.webonaryUsernameTextbox, 1, 1);
-            this.settingsForWebonaryTableLayoutPanel.Controls.Add(this.webonarySiteNameTextbox, 2, 0);
-            this.settingsForWebonaryTableLayoutPanel.Controls.Add(this.passwordLabel, 0, 2);
-            this.settingsForWebonaryTableLayoutPanel.Controls.Add(this.usernameLabel, 0, 1);
+            this.settingsForWebonaryTableLayoutPanel.Controls.Add(this.webonaryPasswordTextbox, 1, 3);
+            this.settingsForWebonaryTableLayoutPanel.Controls.Add(this.webonaryUsernameTextbox, 1, 2);
+            this.settingsForWebonaryTableLayoutPanel.Controls.Add(this.webonarySiteNameTextbox, 1, 0);
+            this.settingsForWebonaryTableLayoutPanel.Controls.Add(this.passwordLabel, 0, 3);
+            this.settingsForWebonaryTableLayoutPanel.Controls.Add(this.usernameLabel, 0, 2);
             this.settingsForWebonaryTableLayoutPanel.Controls.Add(this.siteNameLabel, 0, 0);
-            this.settingsForWebonaryTableLayoutPanel.Controls.Add(this.webonaryDomainLabel, 1, 0);
-            this.settingsForWebonaryTableLayoutPanel.Controls.Add(this.rememberPasswordCheckbox, 2, 2);
+            this.settingsForWebonaryTableLayoutPanel.Controls.Add(this.webonarySiteURLLabel, 1, 1);
+            this.settingsForWebonaryTableLayoutPanel.Controls.Add(this.rememberPasswordCheckbox, 2, 3);
             this.settingsForWebonaryTableLayoutPanel.Name = "settingsForWebonaryTableLayoutPanel";
             // 
             // webonaryPasswordTextbox
@@ -156,6 +156,7 @@ namespace SIL.FieldWorks.XWorks
             resources.ApplyResources(this.webonarySiteNameTextbox, "webonarySiteNameTextbox");
             this.webonarySiteNameTextbox.Name = "webonarySiteNameTextbox";
             this.toolTip.SetToolTip(this.webonarySiteNameTextbox, resources.GetString("webonarySiteNameTextbox.ToolTip"));
+            this.webonarySiteNameTextbox.TextChanged += new System.EventHandler(this.siteNameBox_TextChanged);
             // 
             // passwordLabel
             // 
@@ -173,10 +174,11 @@ namespace SIL.FieldWorks.XWorks
             this.siteNameLabel.Name = "siteNameLabel";
             this.toolTip.SetToolTip(this.siteNameLabel, resources.GetString("siteNameLabel.ToolTip"));
             // 
-            // webonaryDomainLabel
+            // webonarySiteURLLabel
             // 
-            resources.ApplyResources(this.webonaryDomainLabel, "webonaryDomainLabel");
-            this.webonaryDomainLabel.Name = "webonaryDomainLabel";
+            resources.ApplyResources(this.webonarySiteURLLabel, "webonarySiteURLLabel");
+            this.settingsForWebonaryTableLayoutPanel.SetColumnSpan(this.webonarySiteURLLabel, 2);
+            this.webonarySiteURLLabel.Name = "webonarySiteURLLabel";
             // 
             // rememberPasswordCheckbox
             // 
@@ -298,7 +300,7 @@ namespace SIL.FieldWorks.XWorks
 		private System.Windows.Forms.Button publishButton;
 		private System.Windows.Forms.Button closeButton;
 		private System.Windows.Forms.Button helpButton;
-		private System.Windows.Forms.Label webonaryDomainLabel;
+		private System.Windows.Forms.Label webonarySiteURLLabel;
 		private System.Windows.Forms.TextBox outputLogTextbox;
 		private PasswordBox webonaryPasswordTextbox;
 		private System.Windows.Forms.CheckBox rememberPasswordCheckbox;

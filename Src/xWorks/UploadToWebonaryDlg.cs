@@ -1,4 +1,4 @@
-// Copyright (c) 2014-2016 SIL International
+// Copyright (c) 2014-2020 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -91,6 +91,11 @@ namespace SIL.FieldWorks.XWorks
 			explanationLabel.LinkArea = new LinkArea(explanationTextLinkStart, explanationTextLinkLength);
 		}
 
+		private void siteNameBox_TextChanged(object sender, EventArgs e)
+		{
+			webonarySiteURLLabel.Text = string.Format(xWorksStrings.WebonarySiteURLFormat, webonarySiteNameTextbox.Text);
+		}
+
 		private void UpdateEntriesToBePublishedLabel()
 		{
 			if (GetSelectedDictionaryModel() == null)
@@ -126,9 +131,8 @@ namespace SIL.FieldWorks.XWorks
 		{
 			if (!m_controller.IsSortingOnAlphaHeaders())
 			{
-				MessageBox.Show(
-					"Your data is sorted by a field that does not allow us to calculate letter headings. Please change your sort column before uploading to Webonary.",
-					"Letter Headings not Sorted", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+				MessageBox.Show(xWorksStrings.msgCantCalculateLetterHeadings,
+					xWorksStrings.CantCalculateLetterHeadings, MessageBoxButtons.OK, MessageBoxIcon.Warning);
 			}
 		}
 

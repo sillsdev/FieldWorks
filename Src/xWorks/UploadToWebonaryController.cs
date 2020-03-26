@@ -1,4 +1,4 @@
-// Copyright (c) 2014-2016 SIL International
+// Copyright (c) 2014-2020 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -165,8 +165,8 @@ namespace SIL.FieldWorks.XWorks
 		{
 			// To do local testing set the WEBONARYSERVER environment variable to something like 192.168.33.10
 			var server = Environment.GetEnvironmentVariable("WEBONARYSERVER");
-			server = string.IsNullOrEmpty(server) ? "www.webonary.org" : server;
-			return $"https://{server}/{siteName}/wp-json/webonary/import";
+			server = string.IsNullOrEmpty(server) ? "webonary.org" : server;
+			return string.Format("https://{0}.{1}/wp-json/webonary/import", siteName, server);
 		}
 
 		internal void UploadToWebonary(string zipFileToUpload, UploadToWebonaryModel model, IUploadToWebonaryView view)
