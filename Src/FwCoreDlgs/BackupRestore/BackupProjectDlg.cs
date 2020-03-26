@@ -4,11 +4,14 @@
 
 using System;
 using System.IO;
+using System.Linq;
+using System.Reflection;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FwCoreDlgs.FileDialog;
 using SIL.LCModel;
 using SIL.LCModel.DomainServices.BackupRestore;
+using SIL.LCModel.Utils;
 using SIL.Reporting;
 namespace SIL.FieldWorks.FwCoreDlgs.BackupRestore
 {
@@ -17,10 +20,9 @@ namespace SIL.FieldWorks.FwCoreDlgs.BackupRestore
 	/// This dialog forms the 'View' component in the Model m_presenter View pattern. The idea is to keep all
 	/// the logic in the BackupProjectPresenter; this class just provides a thin wrapper around the real controls.
 	/// </summary>
-	public partial class BackupProjectDlg : Form, IBackupProjectView
+	internal sealed partial class BackupProjectDlg : Form, IBackupProjectView
 	{
 		#region Member variables
-		private readonly LcmCache m_cache;
 		private readonly BackupProjectPresenter m_presenter;
 		private readonly IHelpTopicProvider m_helpTopicProvider;
 		#endregion
@@ -34,13 +36,12 @@ namespace SIL.FieldWorks.FwCoreDlgs.BackupRestore
 		}
 
 		/// <summary />
-		public BackupProjectDlg(LcmCache cache, IHelpTopicProvider helpTopicProvider)
+		internal BackupProjectDlg(LcmCache cache, IHelpTopicProvider helpTopicProvider)
 			: this()
 		{
-			m_cache = cache;
 			m_helpTopicProvider = helpTopicProvider;
 
-			m_presenter = new BackupProjectPresenter(this, m_cache);
+			m_presenter = new BackupProjectPresenter(this, cache);
 
 			//It should only be displayed if the SupportingFiles folder has content.
 			if (!m_presenter.SupportingFilesFolderContainsFiles)
@@ -75,7 +76,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.BackupRestore
 		/// <summary>
 		/// Path to the backup file, or null
 		/// </summary>
-		public string BackupFilePath { get; private set; }
+		internal string BackupFilePath { get; private set; }
 
 		#region Event handlers
 		private void m_browse_Click(object sender, EventArgs e)
@@ -234,5 +235,94 @@ namespace SIL.FieldWorks.FwCoreDlgs.BackupRestore
 			set => m_destinationFolder.Text = value;
 		}
 		#endregion
+
+		/// <summary>
+		/// Logic that drives the "Backup This Project" dialog.
+		/// </summary>
+		private sealed class BackupProjectPresenter
+		{
+			private readonly IBackupProjectView m_backupProjectView;
+			private readonly LcmCache m_cache;
+
+			/// <summary />
+			internal BackupProjectPresenter(IBackupProjectView backupProjectView, LcmCache cache)
+			{
+				m_cache = cache;
+				m_backupProjectView = backupProjectView;
+
+				//Older projects might not have this folder so when launching the backup dialog we want to create it.
+				Directory.CreateDirectory(LcmFileHelper.GetSupportingFilesDir(m_cache.ProjectId.ProjectFolder));
+			}
+
+			///<summary>
+			/// Generates the full path of the file to which backup settings should be persisted.
+			///</summary>
+			internal string PersistenceFilePath => Path.Combine(LcmFileHelper.GetBackupSettingsDir(m_cache.ProjectId.ProjectFolder), LcmFileHelper.ksBackupSettingsFilename);
+
+			///<summary>
+			/// If the SupportingFiles folder contains any files return true. Otherwise return false.
+			///</summary>
+			internal bool SupportingFilesFolderContainsFiles => ProjectBackupService.GenerateFileListFolderAndSubfolders(LcmFileHelper.GetSupportingFilesDir(m_cache.ProjectId.ProjectFolder)).Count > 0;
+
+			/// <summary>
+			/// Return true if the backup should be canceled to allow the user to correct the
+			/// comment or something because there are problems with the file name. May show various
+			/// messages to the user.
+			/// </summary>
+			/// <remarks>Ideally, showing the message boxes should be done directly from the dialog
+			/// box, not here in the Presenter.</remarks>
+			internal bool FileNameProblems(IWin32Window messageBoxOwner)
+			{
+				var versionInfoProvider = new VersionInfoProvider(Assembly.GetExecutingAssembly(), false);
+				var settings = new BackupProjectSettings(m_cache, m_backupProjectView, FwDirectoryFinder.DefaultBackupDirectory, versionInfoProvider.MajorVersion)
+				{
+					DestinationFolder = m_backupProjectView.DestinationFolder
+				};
+				if (settings.AdjustedComment.Trim() != settings.Comment.TrimEnd())
+				{
+					var format = FwCoreDlgs.ksCharactersNotPossible;
+					if (File.Exists(settings.ZipFileName))
+					{
+						format = FwCoreDlgs.ksCharactersNotPossibleOverwrite;
+					}
+					var displayComment = settings.Comment.Trim();
+					if (displayComment.Length > 255)
+					{
+						displayComment = displayComment.Substring(0, 255) + "...";
+					}
+					var msg = string.Format(format, settings.AdjustedComment, displayComment);
+					return MessageBox.Show(messageBoxOwner, msg, FwCoreDlgs.ksCommentWillBeAltered, MessageBoxButtons.OKCancel, File.Exists(settings.ZipFileName) ? MessageBoxIcon.Warning : MessageBoxIcon.Information) == DialogResult.Cancel;
+				}
+				if (File.Exists(settings.ZipFileName))
+				{
+					var msg = string.Format(FwCoreDlgs.ksOverwriteDetails, settings.ZipFileName);
+					return MessageBox.Show(messageBoxOwner, msg, FwCoreDlgs.ksOverwrite, MessageBoxButtons.OKCancel, MessageBoxIcon.Warning) == DialogResult.Cancel;
+				}
+				return false; // no problems!
+			}
+
+			/// <summary>
+			/// Backs up the project.
+			/// </summary>
+			/// <returns>The path to the backup file, or <c>null</c></returns>----------------------
+			internal string BackupProject(IThreadedProgress progressDlg)
+			{
+				var versionInfoProvider = new VersionInfoProvider(Assembly.GetExecutingAssembly(), false);
+				var settings = new BackupProjectSettings(m_cache, m_backupProjectView, FwDirectoryFinder.DefaultBackupDirectory, versionInfoProvider.MajorVersion)
+				{
+					DestinationFolder = m_backupProjectView.DestinationFolder
+				};
+				var backupService = new ProjectBackupService(m_cache, settings);
+				if (!backupService.BackupProject(progressDlg, out var backupFile))
+				{
+					if (MessageBox.Show(string.Format(FwCoreDlgs.ksCouldNotBackupSomeFiles, string.Join(", ", backupService.FailedFiles.Select(Path.GetFileName))), FwCoreDlgs.ksWarning, MessageBoxButtons.YesNo, MessageBoxIcon.Warning) != DialogResult.Yes)
+					{
+						File.Delete(backupFile);
+					}
+					backupFile = null;
+				}
+				return backupFile;
+			}
+		}
 	}
 }

@@ -5,10 +5,10 @@
 namespace SIL.FieldWorks.FwCoreDlgs
 {
 	/// <summary />
-	public class CnvtrTypeComboItem
+	internal sealed class CnvtrTypeComboItem
 	{
 		/// <summary />
-		public CnvtrTypeComboItem(string name, ConverterType type, string implementType)
+		internal CnvtrTypeComboItem(string name, ConverterType type, string implementType)
 		{
 			Name = name;
 			Type = type;
@@ -16,13 +16,13 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		}
 
 		/// <summary />
-		public string Name { get; }
+		internal string Name { get; }
 
 		/// <summary />
-		public ConverterType Type { get; }
+		internal ConverterType Type { get; }
 
 		/// <summary />
-		public string ImplementType { get; }
+		internal string ImplementType { get; }
 
 		/// <summary />
 		public override string ToString()

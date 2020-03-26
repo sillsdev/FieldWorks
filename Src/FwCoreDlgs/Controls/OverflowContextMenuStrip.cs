@@ -83,7 +83,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			}
 		}
 
-		internal static int GetTotalHeight(ToolStripItem item)
+		private static int GetTotalHeight(ToolStripItem item)
 		{
 			return item.Padding.Top + item.Margin.Top + item.Height + item.Margin.Bottom + item.Padding.Bottom;
 		}

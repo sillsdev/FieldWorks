@@ -32,13 +32,13 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 	/// the writing systems of any TsStrings it is asked to display. It will improve performance
 	/// to do this even if you are not using TsString data.
 	/// </summary>
-	public class FwListBox : Panel, IVwNotifyChange
+	internal class FwListBox : Panel, IVwNotifyChange
 	{
 		/// <summary />
 		public event EventHandler SelectedIndexChanged;
 		/// <summary>Sent when the user makes a choice, but it's the same index so
 		/// SelectedIndexChanged is not sent.</summary>
-		public event EventHandler SameItemSelected;
+		internal event EventHandler SameItemSelected;
 
 		/// <summary>The index actually selected.</summary>
 		protected int m_selectedIndex;
@@ -53,7 +53,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		/// the item hovered over. When it is true, changing the selected index does not trigger
 		/// events, but a MouseDown does.
 		/// </summary>
-		public bool Tracking { get; set; }
+		internal bool Tracking { get; set; }
 
 		/// <summary>
 		/// Gets the inner list box.
@@ -77,7 +77,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		internal Control TabStopControl { get; set; }
 
 		/// <summary />
-		public FwListBox()
+		internal FwListBox()
 		{
 			Items = new ObjectCollection(this);
 			InnerListBox = new InnerFwListBox(this) { Dock = DockStyle.Fill, ReadOnlyView = true };
@@ -130,12 +130,12 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		/// <summary>
 		/// Gets a value indicating whether this <see cref="FwListBox"/> is updating.
 		/// </summary>
-		public bool Updating { get; private set; }
+		internal bool Updating { get; private set; }
 
 		/// <summary>
 		/// Begins the update.
 		/// </summary>
-		public void BeginUpdate()
+		internal void BeginUpdate()
 		{
 			Updating = true;
 		}
@@ -143,7 +143,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		/// <summary>
 		/// Ends the update.
 		/// </summary>
-		public void EndUpdate()
+		internal void EndUpdate()
 		{
 			Updating = false;
 			if (Visible)
@@ -156,7 +156,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		/// Move the focus to the real view. (Used to capture the mouse also, but that
 		/// interferes with the scroll bar, so I'm using a filter instead.)
 		/// </summary>
-		public void FocusAndCapture()
+		internal void FocusAndCapture()
 		{
 			InnerListBox.Focus();
 		}
@@ -224,7 +224,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		/// Gets/sets the index that is highlighted. May be different from selected when
 		/// tracking mouse movement.
 		/// </summary>
-		public int HighlightedIndex
+		internal int HighlightedIndex
 		{
 			get => m_highlightedIndex;
 			set
@@ -281,7 +281,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		/// Get or set the Highlighted item. If nothing is highlighted, get returns null.
 		/// If the value passed is not in the list, an ArgumentOutOfRangeException is thrown.
 		/// </summary>
-		public object HighlightedItem
+		internal object HighlightedItem
 		{
 			get => GetItem(HighlightedIndex);
 			set
@@ -335,7 +335,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		/// <summary>
 		/// Scroll so that the selection can be seen.
 		/// </summary>
-		public void ScrollHighlightIntoView()
+		internal void ScrollHighlightIntoView()
 		{
 			if (!Visible || HighlightedIndex < 0)
 			{
@@ -354,7 +354,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		/// Return the selected ITsString, or null if no string is selected.
 		/// </summary>
 		[Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-		public ITsString SelectedTss
+		internal ITsString SelectedTss
 		{
 			get => m_selectedIndex < 0 ? null : TextOfItem(Items[m_selectedIndex]);
 			set
@@ -427,7 +427,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		/// this need not be set.
 		/// </summary>
 		[Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-		public virtual int WritingSystemCode
+		internal virtual int WritingSystemCode
 		{
 			get => InnerListBox.WritingSystemCode;
 			set => InnerListBox.WritingSystemCode = value;
@@ -488,7 +488,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		/// <summary>
 		/// Obtain the text corresponding to the specified item in your contents list.
 		/// </summary>
-		public virtual ITsString TextOfItem(object item)
+		internal virtual ITsString TextOfItem(object item)
 		{
 			// Enhance JohnT: use ValueItem and reflection to retrieve specified property.
 			if (item is ITsString result)

@@ -14,9 +14,9 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 	/// <summary>
 	/// For some reason the embedded text box never gets a layout unless we do this.
 	/// </summary>
-	public class ComboTextBox : InnerFwTextBox
+	internal sealed class ComboTextBox : InnerFwTextBox
 	{
-		FwComboBoxBase m_comboBox;
+		private FwComboBoxBase m_comboBox;
 
 		internal ComboTextBox(FwComboBoxBase comboBox)
 		{

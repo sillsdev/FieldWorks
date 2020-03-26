@@ -8,7 +8,7 @@ using SIL.Windows.Forms.Widgets;
 
 namespace SIL.FieldWorks.FwCoreDlgs
 {
-	public partial class AdvancedScriptRegionVariantView
+	partial class AdvancedScriptRegionVariantView
 	{
 
 

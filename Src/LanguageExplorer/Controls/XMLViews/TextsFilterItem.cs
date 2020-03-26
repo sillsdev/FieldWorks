@@ -14,16 +14,16 @@ namespace LanguageExplorer.Controls.XMLViews
 	/// for the Texts column in various tools in the Words area. It affords an additional way to get at the
 	/// texts chooser.
 	/// </summary>
-	public class TextsFilterItem : NoChangeFilterComboItem
+	internal sealed class TextsFilterItem : NoChangeFilterComboItem
 	{
 		private readonly IPublisher m_publisher;
 
-		public TextsFilterItem(ITsString tssName, IPublisher publisher) : base(tssName)
+		internal TextsFilterItem(ITsString tssName, IPublisher publisher) : base(tssName)
 		{
 			m_publisher = publisher;
 		}
 
-		public override bool Invoke()
+		internal override bool Invoke()
 		{
 			// Not sure this can happen but play safe.
 			if (m_publisher != null)

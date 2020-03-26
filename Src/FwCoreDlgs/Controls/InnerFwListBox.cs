@@ -251,10 +251,10 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		{
 			if (!char.IsControl(e.KeyChar))
 			{
-				if (Owner is ComboListBox)
+				if (Owner is ComboListBox comboListBox)
 				{
 					// Highlight list item based upon first character
-					((ComboListBox)Owner).HighlightItemStartingWith(e.KeyChar.ToString()); // closes the box
+					comboListBox.HighlightItemStartingWith(e.KeyChar.ToString()); // closes the box
 					e.Handled = true;
 				}
 			}

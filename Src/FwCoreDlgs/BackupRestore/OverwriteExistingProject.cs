@@ -12,7 +12,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.BackupRestore
 	/// a project over an existing project and give them the opportunity to backup the project
 	/// before doing the restore.
 	/// </summary>
-	public partial class OverwriteExistingProject : Form
+	internal sealed partial class OverwriteExistingProject : Form
 	{
 
 		#region Member Variables
@@ -29,7 +29,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.BackupRestore
 		}
 
 		/// <summary />
-		public OverwriteExistingProject(string projectPath, IHelpTopicProvider helpTopicProvider)
+		internal OverwriteExistingProject(string projectPath, IHelpTopicProvider helpTopicProvider)
 			: this()
 		{
 			m_helpTopicProvider = helpTopicProvider;
@@ -37,7 +37,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.BackupRestore
 		}
 
 		/// <summary />
-		public bool BackupBeforeOverwriting => m_checkbox_BackupFirst.Checked;
+		internal bool BackupBeforeOverwriting => m_checkbox_BackupFirst.Checked;
 
 		private void m_btnHelp_Click(object sender, System.EventArgs e)
 		{

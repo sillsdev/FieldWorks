@@ -7,18 +7,18 @@ using System;
 namespace SIL.FieldWorks.FwCoreDlgs
 {
 	/// <summary/>
-	public class SpellingDictionaryItem : Tuple<string, string>, IEquatable<SpellingDictionaryItem>
+	internal sealed class SpellingDictionaryItem : Tuple<string, string>, IEquatable<SpellingDictionaryItem>
 	{
 		/// <summary/>
-		public SpellingDictionaryItem(string item1, string item2) : base(item1, item2)
+		internal SpellingDictionaryItem(string item1, string item2) : base(item1, item2)
 		{
 		}
 
 		/// <summary/>
-		public string Name => Item1;
+		internal string Name => Item1;
 
 		/// <summary/>
-		public string Id => Item2;
+		internal string Id => Item2;
 
 		/// <summary/>
 		public override string ToString()

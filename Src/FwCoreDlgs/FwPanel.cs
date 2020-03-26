@@ -15,18 +15,18 @@ namespace SIL.FieldWorks.FwCoreDlgs
 	/// enabled and is a single line (painted using visual styles) when visual styles are
 	/// enabled.
 	/// </summary>
-	public sealed class FwPanel : FwTextPanel
+	internal sealed class FwPanel : FwTextPanel
 	{
 		private bool m_overrideBorderDrawing;
 
 		/// <summary />
-		public FwPanel()
+		internal FwPanel()
 		{
 			BorderStyle = (Application.VisualStyleState == VisualStyleState.NoneEnabled ? BorderStyle.Fixed3D : BorderStyle.FixedSingle);
 		}
 
 		/// <summary />
-		public new bool DoubleBuffered
+		internal new bool DoubleBuffered
 		{
 			get => base.DoubleBuffered;
 			set => base.DoubleBuffered = value;
@@ -57,7 +57,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		}
 
 		/// <summary />
-		public new BorderStyle BorderStyle
+		internal new BorderStyle BorderStyle
 		{
 			get => base.BorderStyle;
 			set
@@ -73,7 +73,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// Gets or sets a value indicating whether or not the background of the panel will
 		/// be painted using the visual style's explorer bar element.
 		/// </summary>
-		public bool PaintExplorerBarBackground { get; set; } = false;
+		internal bool PaintExplorerBarBackground { get; set; } = false;
 
 		/// <summary />
 		protected override void OnPaintBackground(PaintEventArgs e)

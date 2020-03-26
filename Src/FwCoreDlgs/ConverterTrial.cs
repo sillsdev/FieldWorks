@@ -262,7 +262,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			}
 		}
 
-		private void ConverterTest_Load(object sender, System.EventArgs e)
+		private void ConverterTest_Load(object sender, EventArgs e)
 		{
 			// This is a fall-back if the creator does not have a converters object.
 			// It is generally preferable for the creator to make one and pass it in.
@@ -309,7 +309,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					ec.EncodingIn = EncodingForm.LegacyString;
 					reader.BaseStream.Seek(0, SeekOrigin.Begin);
 					// read the lines of the input file, (optionally convert,) and write them out.
-					var sOutput = string.Empty;
+					string sOutput;
 					m_savedOutput = new StringBuilder();
 					m_svOutput.Clear(false);
 					m_fHasOutput = false;
@@ -367,7 +367,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			return marker + ec.Convert(remainder);
 		}
 
-		private void outputFontCombo_SelectedIndexChanged(object sender, System.EventArgs e)
+		private void outputFontCombo_SelectedIndexChanged(object sender, EventArgs e)
 		{
 			if (outputFontCombo.SelectedIndex >= 0) // valid selection item
 			{
@@ -378,7 +378,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <summary>
 		/// Handle clicking the save file button. Save the converted contents to a file.
 		/// </summary>
-		private void saveFileButton_Click(object sender, System.EventArgs e)
+		private void saveFileButton_Click(object sender, EventArgs e)
 		{
 			if (m_savedOutput == null)
 			{

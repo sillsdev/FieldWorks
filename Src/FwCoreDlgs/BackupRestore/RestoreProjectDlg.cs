@@ -15,7 +15,7 @@ using SIL.Reporting;
 namespace SIL.FieldWorks.FwCoreDlgs.BackupRestore
 {
 	/// <summary />
-	public partial class RestoreProjectDlg : Form
+	internal sealed partial class RestoreProjectDlg : Form
 	{
 		/// <summary>
 		/// Performs the requested actions and handles any IO or zip error by reporting them to
@@ -28,7 +28,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.BackupRestore
 		/// <returns>
 		/// 	<c>true</c> if successful (no exception caught); <c>false</c> otherwise
 		/// </returns>
-		public static bool HandleRestoreFileErrors(IWin32Window parentWindow, string zipFilename, Action action)
+		internal static bool HandleRestoreFileErrors(IWin32Window parentWindow, string zipFilename, Action action)
 		{
 			try
 			{
@@ -52,7 +52,6 @@ namespace SIL.FieldWorks.FwCoreDlgs.BackupRestore
 		private readonly RestoreProjectPresenter m_presenter;
 		private readonly string m_fmtUseOriginalName;
 		private IOpenFileDialog m_openFileDlg;
-		private char[] m_invalidCharArray;
 
 		#endregion
 
@@ -68,7 +67,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.BackupRestore
 		/// <param name="backupFileSettings">Specific backup file settings to use (dialog
 		/// controls to select a backup file will be disabled)</param>
 		/// <param name="helpTopicProvider">The help topic provider.</param>
-		public RestoreProjectDlg(BackupFileSettings backupFileSettings, IHelpTopicProvider helpTopicProvider)
+		internal RestoreProjectDlg(BackupFileSettings backupFileSettings, IHelpTopicProvider helpTopicProvider)
 			: this(helpTopicProvider)
 		{
 			m_lblBackupZipFile.Text = backupFileSettings.File;
@@ -80,7 +79,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.BackupRestore
 		}
 
 		/// <summary />
-		public RestoreProjectDlg(string defaultProjectName, IHelpTopicProvider helpTopicProvider)
+		internal RestoreProjectDlg(string defaultProjectName, IHelpTopicProvider helpTopicProvider)
 			: this(helpTopicProvider)
 		{
 			m_presenter = new RestoreProjectPresenter(this, defaultProjectName);
@@ -107,9 +106,9 @@ namespace SIL.FieldWorks.FwCoreDlgs.BackupRestore
 			GetIllegalProjectNameChars();
 		}
 
-		private void GetIllegalProjectNameChars()
+		private static void GetIllegalProjectNameChars()
 		{
-			m_invalidCharArray = MiscUtils.GetInvalidProjectNameChars(MiscUtils.FilenameFilterStrength.kFilterProjName).ToCharArray();
+			MiscUtils.GetInvalidProjectNameChars(MiscUtils.FilenameFilterStrength.kFilterProjName).ToCharArray();
 		}
 
 		#endregion
@@ -119,12 +118,12 @@ namespace SIL.FieldWorks.FwCoreDlgs.BackupRestore
 		/// <summary>
 		/// Gets or sets the restore settings.
 		/// </summary>
-		public RestoreProjectSettings Settings { get; }
+		internal RestoreProjectSettings Settings { get; }
 
 		/// <summary>
 		/// Path of the zip file that the user chose which contains a FieldWorks project backup.
 		/// </summary>
-		public string BackupZipFile
+		private string BackupZipFile
 		{
 			get => m_lblBackupZipFile.Text;
 			set
@@ -167,29 +166,17 @@ namespace SIL.FieldWorks.FwCoreDlgs.BackupRestore
 		///<summary>
 		/// Whether or not user wants externally linked files (pictures, media and other) files in the backup zipfile restored.
 		///</summary>
-		public bool LinkedFiles
-		{
-			get => m_linkedFiles.Checked;
-			set => m_linkedFiles.Checked = value;
-		}
+		private bool LinkedFiles => m_linkedFiles.Checked;
 
 		///<summary>
 		/// Whether or not user wants files in the SupportingFiles folder in the backup zipfile restored.
 		///</summary>
-		public bool SupportingFiles
-		{
-			get => m_supportingFiles.Checked;
-			set => m_supportingFiles.Checked = value;
-		}
+		private bool SupportingFiles => m_supportingFiles.Checked;
 
 		///<summary>
 		/// Whether or not user wants spell checking additions in the backup.
 		///</summary>
-		public bool SpellCheckAdditions
-		{
-			get => m_spellCheckAdditions.Checked;
-			set => m_spellCheckAdditions.Checked = value;
-		}
+		private bool SpellCheckAdditions => m_spellCheckAdditions.Checked;
 
 		/// <summary>
 		/// Sets the backup file settings and updates the dialog controls accordingly

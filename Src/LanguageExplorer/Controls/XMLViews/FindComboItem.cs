@@ -11,13 +11,13 @@ using SIL.LCModel.Core.KernelInterfaces;
 namespace LanguageExplorer.Controls.XMLViews
 {
 	/// <summary />
-	internal class FindComboItem : FilterComboItem
+	internal sealed class FindComboItem : FilterComboItem
 	{
 		private FwComboBox m_combo;
 		private BrowseViewer m_bv;
 
 		/// <summary />
-		public FindComboItem(ITsString tssName, FilterSortItem fsi, int ws, FwComboBox combo, BrowseViewer bv)
+		internal FindComboItem(ITsString tssName, FilterSortItem fsi, int ws, FwComboBox combo, BrowseViewer bv)
 			: base(tssName, null, fsi)
 		{
 			Ws = ws;
@@ -28,7 +28,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// Invokes this instance.
 		/// </summary>
-		public override bool Invoke()
+		internal override bool Invoke()
 		{
 			IVwStylesheet stylesheet = FwUtils.StyleSheetFromPropertyTable(m_bv.PropertyTable);
 			using (var dlg = new SimpleMatchDlg(m_combo.WritingSystemFactory, m_bv.PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider), Ws, stylesheet, m_bv.Cache))
@@ -92,7 +92,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// Gets or sets the matcher.
 		/// </summary>
-		public IMatcher Matcher
+		internal IMatcher Matcher
 		{
 			get => m_matcher;
 			set => m_matcher = value;

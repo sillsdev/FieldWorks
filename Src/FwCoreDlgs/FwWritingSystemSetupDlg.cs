@@ -19,14 +19,14 @@ using SIL.WritingSystems;
 namespace SIL.FieldWorks.FwCoreDlgs
 {
 	/// <summary/>
-	public partial class FwWritingSystemSetupDlg : Form
+	internal sealed partial class FwWritingSystemSetupDlg : Form
 	{
 		private FwWritingSystemSetupModel _model;
 		private IHelpTopicProvider _helpTopicProvider;
 		private IApp _app;
 
 		/// <summary/>
-		public FwWritingSystemSetupDlg(FwWritingSystemSetupModel model = null, IHelpTopicProvider helpTopicProvider = null, IApp app = null)
+		internal FwWritingSystemSetupDlg(FwWritingSystemSetupModel model = null, IHelpTopicProvider helpTopicProvider = null, IApp app = null)
 		{
 			InitializeComponent();
 			_helpTopicProvider = helpTopicProvider;
@@ -614,7 +614,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <summary>
 		/// Display a writing system dialog for the purpose of modifying a new project.
 		/// </summary>
-		public static bool ShowNewDialog(IWin32Window parentForm, WritingSystemManager wsManager, IWritingSystemContainer wsContainer, IHelpTopicProvider helpProvider, IApp app, FwWritingSystemSetupModel.ListType type, out IEnumerable<CoreWritingSystemDefinition> newWritingSystems)
+		internal static bool ShowNewDialog(IWin32Window parentForm, WritingSystemManager wsManager, IWritingSystemContainer wsContainer, IHelpTopicProvider helpProvider, IApp app, FwWritingSystemSetupModel.ListType type, out IEnumerable<CoreWritingSystemDefinition> newWritingSystems)
 		{
 			newWritingSystems = new List<CoreWritingSystemDefinition>();
 			var model = new FwWritingSystemSetupModel(wsContainer, type, wsManager);

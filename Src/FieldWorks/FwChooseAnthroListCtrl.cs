@@ -3,20 +3,21 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Windows.Forms;
+using SIL.FieldWorks.FwCoreDlgs;
 
-namespace SIL.FieldWorks.FwCoreDlgs
+namespace SIL.FieldWorks
 {
 	/// <summary>
 	/// This control is used during the new language project wizard to select the anthropology category
 	/// </summary>
-	public partial class FwChooseAnthroListCtrl : UserControl
+	internal sealed partial class FwChooseAnthroListCtrl : UserControl
 	{
 		private FwChooseAnthroListModel _model;
 
 		/// <summary>
 		/// Model can be null to allow for designer to work
 		/// </summary>
-		public FwChooseAnthroListCtrl(FwChooseAnthroListModel model = null)
+		internal FwChooseAnthroListCtrl(FwChooseAnthroListModel model = null)
 		{
 			InitializeComponent();
 			_model = model;
@@ -41,7 +42,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			if (m_radioCustom.Checked)
 			{
-				_model.CurrentList = FwChooseAnthroListModel.ListChoice.UserDef;
+				_model.CurrentList = ListChoice.UserDef;
 			}
 		}
 
@@ -49,7 +50,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			if (m_radioOCM.Checked)
 			{
-				_model.CurrentList = FwChooseAnthroListModel.ListChoice.OCM;
+				_model.CurrentList = ListChoice.OCM;
 			}
 		}
 
@@ -57,7 +58,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			if (m_radioFRAME.Checked)
 			{
-				_model.CurrentList = FwChooseAnthroListModel.ListChoice.FRAME;
+				_model.CurrentList = ListChoice.FRAME;
 			}
 		}
 	}

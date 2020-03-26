@@ -5,7 +5,7 @@
 namespace SIL.FieldWorks.FwCoreDlgs
 {
 	/// <summary />
-	public enum ConverterType
+	internal enum ConverterType
 	{
 		/// <summary />
 		ktypeCC,

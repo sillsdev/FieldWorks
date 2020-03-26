@@ -15,7 +15,7 @@ namespace LanguageExplorer.Controls
 	/// A line that can be used as progress bar. Progress is painted in foreground color.
 	/// </summary>
 	[Designer(typeof(ProgressLineDesigner))]
-	public partial class ProgressLine : LineControl
+	internal sealed partial class ProgressLine : LineControl
 	{
 		private int m_MinValue;
 		private int m_MaxValue = 100;
@@ -23,7 +23,7 @@ namespace LanguageExplorer.Controls
 		private Brush m_BackBrush;
 
 		/// <summary />
-		public ProgressLine()
+		internal ProgressLine()
 		{
 			InitializeComponent();
 			DoubleBuffered = true;
@@ -54,7 +54,7 @@ namespace LanguageExplorer.Controls
 		/// </summary>
 		[Description("The minimum value of the range of the control")]
 		[DefaultValue(0)]
-		public int MinValue
+		internal int MinValue
 		{
 			get => m_MinValue;
 			set
@@ -72,7 +72,7 @@ namespace LanguageExplorer.Controls
 		/// </summary>
 		[Description("The maximum value of the range of the control")]
 		[DefaultValue(100)]
-		public int MaxValue
+		internal int MaxValue
 		{
 			get => m_MaxValue;
 			set
@@ -90,7 +90,7 @@ namespace LanguageExplorer.Controls
 		/// </summary>
 		[Description("The current position of the progress line.")]
 		[DefaultValue(0)]
-		public int Value
+		internal int Value
 		{
 			get => m_Value;
 			set
@@ -120,7 +120,7 @@ namespace LanguageExplorer.Controls
 		/// </summary>
 		[Description("Indicates whether or not to restart with MinValue if Value exceeds MaxValue.")]
 		[DefaultValue(true)]
-		public bool WrapAround { get; set; } = true;
+		internal bool WrapAround { get; set; } = true;
 
 		/// <summary>
 		/// Gets or sets the step width.
@@ -132,7 +132,7 @@ namespace LanguageExplorer.Controls
 		/// <summary>
 		/// Gets the background brush.
 		/// </summary>
-		protected Brush BackgroundBrush
+		private Brush BackgroundBrush
 		{
 			get
 			{
@@ -148,7 +148,7 @@ namespace LanguageExplorer.Controls
 		/// <summary>
 		/// Increments by specified step.
 		/// </summary>
-		public void Increment(int nStep)
+		internal void Increment(int nStep)
 		{
 			Value += nStep;
 		}
@@ -156,7 +156,7 @@ namespace LanguageExplorer.Controls
 		/// <summary>
 		/// Performs a step.
 		/// </summary>
-		public void PerformStep()
+		internal void PerformStep()
 		{
 			Value += Step;
 		}

@@ -13,7 +13,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 	/// <summary>
 	/// Provides a common place for calls which utilize LCM's SharedBackendServices
 	/// </summary>
-	public static class SharedBackendServicesHelper
+	internal static class SharedBackendServicesHelper
 	{
 		/// <summary>
 		/// Display a warning indicating that it may be dangerous to change things in the dialog that
@@ -21,7 +21,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// be shown if, in fact, other applications currently have this project open. Return true to continue,
 		/// false to cancel opening the dialog.
 		/// </summary>
-		public static bool WarnOnOpeningSingleUserDialog(LcmCache cache)
+		internal static bool WarnOnOpeningSingleUserDialog(LcmCache cache)
 		{
 			return !SharedBackendServices.AreMultipleApplicationsConnected(cache)
 				   || ThreadHelper.ShowMessageBox(null, Strings.ksWarnOnOpeningSingleAppDialog.Replace("\\n", Environment.NewLine),
@@ -35,7 +35,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// to discard the changes. This is typically called in response to clicking an OK button in a dialog
 		/// which changes dangerous user settings.
 		/// </summary>
-		public static bool WarnOnConfirmingSingleUserChanges(LcmCache cache)
+		internal static bool WarnOnConfirmingSingleUserChanges(LcmCache cache)
 		{
 			return !SharedBackendServices.AreMultipleApplicationsConnected(cache)
 				   || ThreadHelper.ShowMessageBox(null, Strings.ksWarnOnConfirmingSingleAppChanges.Replace("\\n", Environment.NewLine),

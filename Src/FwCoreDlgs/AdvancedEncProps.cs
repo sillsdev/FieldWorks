@@ -2,25 +2,25 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System.Diagnostics;
 using System.Windows.Forms;
-using ECInterfaces;
 using SilEncConverters40;
 
 namespace SIL.FieldWorks.FwCoreDlgs
 {
 	/// <summary />
-	public class AdvancedEncProps : UserControl
+	internal sealed class AdvancedEncProps : UserControl
 	{
-		private System.Windows.Forms.ListView lvConverterInfo;
+		private ListView lvConverterInfo;
 		/// <summary>
 		/// Required designer variable.
 		/// </summary>
 		private System.ComponentModel.Container components = null;
 		/// <summary />
-		public EncConverters Converters { get; set; }
+		internal EncConverters Converters { get; set; }
 
 		/// <summary />
-		public AdvancedEncProps()
+		internal AdvancedEncProps()
 		{
 			// This call is required by the Windows.Forms Form Designer.
 			InitializeComponent();
@@ -29,7 +29,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <inheritdoc />
 		protected override void Dispose(bool disposing)
 		{
-			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			if (IsDisposed)
 			{
 				// No need to run it more than once.
@@ -94,7 +94,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		#endregion
 
 		/// <summary />
-		public void SelectMapping(string mapname)
+		internal void SelectMapping(string mapname)
 		{
 			var ec = Converters[mapname];
 			lvConverterInfo.Items.Clear();

@@ -25,23 +25,23 @@ namespace LanguageExplorer.Controls
 	/// <para>The key event is 'AfterSelect' which is triggered when an item in the popup tree
 	/// is selected.</para>
 	/// </remarks>
-	public class TreeCombo : FwComboBoxBase
+	internal sealed class TreeCombo : FwComboBoxBase
 	{
 		#region Events
 
 		/// <summary />
-		public event TreeViewEventHandler AfterSelect;
+		internal event TreeViewEventHandler AfterSelect;
 		/// <summary />
-		public event TreeViewCancelEventHandler BeforeSelect;
+		internal event TreeViewCancelEventHandler BeforeSelect;
 		/// <summary />
-		public event EventHandler TreeLoad;
+		internal event EventHandler TreeLoad;
 
 		#endregion Events
 
 		#region Construction and disposal
 
 		/// <summary />
-		public TreeCombo()
+		internal TreeCombo()
 		{
 			base.DropDownStyle = ComboBoxStyle.DropDownList;
 			TextBox.KeyPress += m_comboTextBox_KeyPress;
@@ -117,13 +117,13 @@ namespace LanguageExplorer.Controls
 		/// Get the main collection of Nodes. Manipulating this is the main way of
 		/// adding and removing items from the popup tree.
 		/// </summary>
-		public TreeNodeCollection Nodes => Tree.Nodes;
+		internal TreeNodeCollection Nodes => Tree.Nodes;
 
 		/// <summary>
 		/// Get the tree...this is mainly for methods that load the nodes.
 		/// </summary>
 		[Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-		public PopupTree Tree => m_dropDownBox as PopupTree;
+		internal PopupTree Tree => m_dropDownBox as PopupTree;
 
 		/// <summary>
 		/// We need to ensure the PopupTree is set to use the same font
@@ -190,7 +190,7 @@ namespace LanguageExplorer.Controls
 		/// Get/Set the selected node.
 		/// </summary>
 		[Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-		public TreeNode SelectedNode
+		internal TreeNode SelectedNode
 		{
 			get => Tree.SelectedNode;
 			set
@@ -243,7 +243,7 @@ namespace LanguageExplorer.Controls
 		/// <summary>
 		/// Sets the text but doesn't cause a focus.
 		/// </summary>
-		public void SetComboText(TreeNode node)
+		internal void SetComboText(TreeNode node)
 		{
 			if (node == null)
 			{

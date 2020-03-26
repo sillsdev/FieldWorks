@@ -13,14 +13,14 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 	/// <summary>
 	/// Control that draws a line
 	/// </summary>
-	public partial class LineControl : UserControl
+	internal partial class LineControl : UserControl
 	{
 		private Color m_foreColor2 = Color.Transparent;
 		private Brush m_brush;
 		private LinearGradientMode m_gradientMode = LinearGradientMode.Horizontal;
 
 		/// <summary />
-		public LineControl()
+		internal LineControl()
 		{
 			InitializeComponent();
 		}
@@ -51,7 +51,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		/// </summary>
 		[Category("Appearance")]
 		[Description("If set the line will display as linear gradient")]
-		public Color ForeColor2
+		internal Color ForeColor2
 		{
 			get => m_foreColor2;
 			set
@@ -66,7 +66,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		/// </summary>
 		[Category("Appearance")]
 		[Description("The linear gradient mode if ForeColor2 is set")]
-		public LinearGradientMode LinearGradientMode
+		internal LinearGradientMode LinearGradientMode
 		{
 			get => m_gradientMode;
 			set

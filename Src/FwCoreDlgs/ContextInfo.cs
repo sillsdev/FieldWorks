@@ -12,7 +12,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 	/// Class that enables the context grid to get the text before and after the character
 	/// being displayed.
 	/// </summary>
-	public class ContextInfo
+	internal sealed class ContextInfo
 	{
 		private ContextPosition m_position = ContextPosition.Undefined;
 
@@ -78,28 +78,28 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <summary>
 		/// Gets the reference (line number).
 		/// </summary>
-		public string Reference { get; private set; }
+		internal string Reference { get; private set; }
 
 		/// <summary>
 		/// Gets the character to which this context applies.
 		/// </summary>
-		public string Character { get; private set; }
+		internal string Character { get; private set; }
 
 		/// <summary>
 		/// Gets the context before the offset.
 		/// </summary>
-		public string Before { get; private set; }
+		internal string Before { get; private set; }
 
 		/// <summary>
 		/// Gets the context after the offset.
 		/// </summary>
-		public string After { get; private set; }
+		internal string After { get; private set; }
 
 		/// <summary>
 		/// Serves as a lookup key for the Context Info type. Note that this will return an
 		/// identical hash code for different ContextInfo objects whose Character and Position
 		/// are the same.
 		/// </summary>
-		public string Key => Character + (m_position == ContextPosition.Undefined ? string.Empty : m_position.ToString());
+		internal string Key => Character + (m_position == ContextPosition.Undefined ? string.Empty : m_position.ToString());
 	}
 }

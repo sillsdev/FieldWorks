@@ -19,13 +19,13 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 	/// ComboBox. Classes that extend this class provide an implementation of the drop down
 	/// box.
 	/// </summary>
-	public abstract class FwComboBoxBase : UserControl, IVwNotifyChange
+	internal abstract class FwComboBoxBase : UserControl, IVwNotifyChange
 	{
 		#region Events
 		/// <summary>
 		/// Occurs when about to drop down the list. May be used to set up the items, if that doesn't take too long.
 		/// </summary>
-		public event EventHandler DropDown;
+		internal event EventHandler DropDown;
 
 		#endregion Events
 
@@ -203,7 +203,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		/// Gets the state.
 		/// </summary>
 		[Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-		public ComboBoxState State
+		internal ComboBoxState State
 		{
 			get => m_state;
 			set
@@ -250,7 +250,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		/// <summary>
 		/// Gets or sets a value indicating whether the combo box has a border.
 		/// </summary>
-		public bool HasBorder
+		internal bool HasBorder
 		{
 			get => m_hasBorder;
 			set
@@ -280,7 +280,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		/// 	<IPermission class="System.Security.Permissions.FileIOPermission, mscorlib, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" version="1" Unrestricted="true"/>
 		/// </PermissionSet>
 		[Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-		public new BorderStyle BorderStyle
+		internal new BorderStyle BorderStyle
 		{
 			get => base.BorderStyle;
 			set
@@ -303,7 +303,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		/// 	<IPermission class="System.Security.Permissions.FileIOPermission, mscorlib, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" version="1" Unrestricted="true"/>
 		/// </PermissionSet>
 		[Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-		public new Padding Padding
+		internal new Padding Padding
 		{
 			get => m_textPadding;
 			set
@@ -316,7 +316,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		/// <summary>
 		/// Gets or sets a value indicating whether the combo box will use the visual style background.
 		/// </summary>
-		public bool UseVisualStyleBackColor
+		internal bool UseVisualStyleBackColor
 		{
 			get => m_useVisualStyleBackColor;
 			set
@@ -437,7 +437,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		}
 
 		/// <summary />
-		public static int ComboHeight => 21;
+		internal static int ComboHeight => 21;
 
 		/// <inheritdoc />
 		protected override Size DefaultSize => new Size(100, ComboHeight);
@@ -539,7 +539,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		}
 
 		/// <summary />
-		public int DropDownWidth
+		internal int DropDownWidth
 		{
 			get => m_dropDownBox.Form.Width;
 			set
@@ -550,7 +550,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		}
 
 		/// <summary />
-		public bool DroppedDown
+		internal bool DroppedDown
 		{
 			get => m_dropDownBox.Form.Visible;
 			set
@@ -600,7 +600,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		/// Gets the height of the preferred.
 		/// </summary>
 		[Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-		public int PreferredHeight
+		internal int PreferredHeight
 		{
 			get
 			{
@@ -637,7 +637,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		/// <summary>
 		/// Selects all of the text in the text box.
 		/// </summary>
-		public void SelectAll()
+		internal void SelectAll()
 		{
 			TextBox.SelectAll();
 		}
@@ -658,7 +658,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		/// true to adjust font height to fix text box. When set false, client will normally
 		/// call PreferredHeight and adjust control size to suit.
 		/// </summary>
-		public bool AdjustStringHeight
+		internal bool AdjustStringHeight
 		{
 			get => TextBox.AdjustStringHeight;
 			set => TextBox.AdjustStringHeight = value;
@@ -667,7 +667,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		/// <summary>
 		/// Adjust, figuring the stylesheet based on the main window of the mediator.
 		/// </summary>
-		public void AdjustForStyleSheet(Form parent, Control grower, IPropertyTable propertyTable)
+		internal void AdjustForStyleSheet(Form parent, Control grower, IPropertyTable propertyTable)
 		{
 			AdjustForStyleSheet(parent, grower, FwUtils.StyleSheetFromPropertyTable(propertyTable));
 		}
@@ -682,7 +682,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		/// Also, the height of the indicated form is increased, and any top level controls
 		/// which need it are adjusted appropriately.
 		/// </summary>
-		public void AdjustForStyleSheet(Form parent, Control grower, IVwStylesheet stylesheet)
+		internal void AdjustForStyleSheet(Form parent, Control grower, IVwStylesheet stylesheet)
 		{
 			if (StyleSheet == null)
 			{
@@ -794,7 +794,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 				if (m_dropDownBox.LaunchingForm == null)
 				{
 					Control parent = this;
-					var launcher = parent as Form;
+					Form launcher = null;
 					while (parent != null && launcher == null)
 					{
 						parent = parent.Parent;

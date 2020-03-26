@@ -199,7 +199,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			/// <summary>
 			/// Sets up the DummyValidCharactersDlg for testing.
 			/// </summary>
-			public DummyValidCharactersDlg()
+			internal DummyValidCharactersDlg()
 			{
 				MessageBoxText = new List<string>();
 			}

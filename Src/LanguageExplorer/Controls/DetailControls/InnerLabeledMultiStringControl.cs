@@ -14,7 +14,7 @@ using SIL.LCModel.DomainServices;
 
 namespace LanguageExplorer.Controls.DetailControls
 {
-	internal class InnerLabeledMultiStringControl : SimpleRootSite
+	internal sealed class InnerLabeledMultiStringControl : SimpleRootSite
 	{
 		private LabeledMultiStringVc m_vc;
 		private LcmCache m_realCache; // real one we get writing system info from
@@ -22,7 +22,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		internal const int khvoRoot = -3045; // arbitrary but recognizeable numbers for debugging.
 		internal const int kflid = 4554;
 
-		public InnerLabeledMultiStringControl(LcmCache cache, int wsMagic)
+		internal InnerLabeledMultiStringControl(LcmCache cache, int wsMagic)
 		{
 			m_realCache = cache;
 			m_sda = new TextBoxDataAccess { WritingSystemFactory = cache.WritingSystemFactory };
@@ -31,7 +31,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			IsTextBox = true;   // range selection not shown when not in focus
 		}
 
-		public InnerLabeledMultiStringControl(LcmCache cache, List<CoreWritingSystemDefinition> wsList)
+		internal InnerLabeledMultiStringControl(LcmCache cache, List<CoreWritingSystemDefinition> wsList)
 		{
 			// Ctor for use with a non-standard list of wss (like available UI languages)
 			m_realCache = cache;
@@ -72,7 +72,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// <summary>
 		/// Get the number of writing systems being displayed.
 		/// </summary>
-		public List<CoreWritingSystemDefinition> WritingSystems { get; private set; }
+		internal List<CoreWritingSystemDefinition> WritingSystems { get; private set; }
 
 		/// <summary></summary>
 		public override void MakeRoot()

@@ -18,7 +18,7 @@ using SIL.LCModel.Utils;
 namespace SIL.FieldWorks.FwCoreDlgs.Controls
 {
 	/// <summary />
-	public class LocaleMenuButton : Button
+	internal sealed class LocaleMenuButton : Button
 	{
 		private Container components;
 
@@ -40,7 +40,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		private string m_selectedLocale;
 
 		/// <summary />
-		public LocaleMenuButton()
+		internal LocaleMenuButton()
 		{
 			components = new Container();
 			Image = ResourceHelper.ButtonMenuArrowIcon;
@@ -67,7 +67,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		/// <summary>
 		/// Gets or sets the selected locale id.
 		/// </summary>
-		public string SelectedLocaleId
+		internal string SelectedLocaleId
 		{
 			get => m_selectedLocale;
 			set
@@ -107,7 +107,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		/// <summary>
 		/// Determine whether the specified locale is a custom one the user is allowed to modify.
 		/// </summary>
-		public bool IsCustomLocale(string localeId)
+		internal bool IsCustomLocale(string localeId)
 		{
 			using (var rbroot = new ResourceBundle(null, "en"))
 			using (var rbCustom = rbroot["Custom"])
@@ -127,15 +127,15 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		/// The locale to use for getting display names. If this is left blank the
 		/// system default locale is used.
 		/// </summary>
-		public string DisplayLocaleId { get; set; }
+		internal string DisplayLocaleId { get; set; }
 
 		/// <summary>Event that occurs when the user chooses a locale.</summary>
-		public event EventHandler LocaleSelected;
+		internal event EventHandler LocaleSelected;
 
 		/// <summary>
 		/// Handle the LocaleSelected event; by default just calls delegates.
 		/// </summary>
-		protected virtual void OnLocaleSelected(EventArgs ea)
+		private void OnLocaleSelected(EventArgs ea)
 		{
 			LocaleSelected?.Invoke(this, ea);
 		}
@@ -196,7 +196,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			{
 				var langid = kvp.Key;
 				var items = kvp.Value;
-				var lmdRootItem = items.FirstOrDefault(lmd => lmd.m_id == langid);
+				var lmdRootItem = items.FirstOrDefault(lmd => lmd.ID == langid);
 				// See if there is an item in the array list that matches the langid
 				if (lmdRootItem == null)
 				{
@@ -211,13 +211,13 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 					if (items.Count == 1)
 					{
 						// case 1
-						var lmdMenu = new LocaleMenuItemData(lmdRootItem.m_id, lmdRootItem.m_displayName);
+						var lmdMenu = new LocaleMenuItemData(lmdRootItem.ID, lmdRootItem.DisplayName);
 						m_mainItems.Add(lmdMenu);
 					}
 					else
 					{
 						// case 2
-						var lmdMenu = new LocaleMenuItemData(lmdRootItem.m_id, lmdRootItem.m_displayName) { m_subitems = items };
+						var lmdMenu = new LocaleMenuItemData(lmdRootItem.ID, lmdRootItem.DisplayName) { SubItems = items };
 						m_mainItems.Add(lmdMenu);
 					}
 				}
@@ -226,23 +226,23 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			// Sort the items in each menu.
 			m_mainItems.Sort();
 			var noneData = new LocaleMenuItemData(Strings.kstid_None, Strings.kstid_None);
-			var noneItem = new ToolStripMenuItem(noneData.m_displayName, null, ItemClickHandler);
+			var noneItem = new ToolStripMenuItem(noneData.DisplayName, null, ItemClickHandler);
 			menu.Items.Add(noneItem); // This goes strictly at the beginning, irrespective of sorting
 
 			foreach (var lmd in m_mainItems)
 			{
-				var mi = new ToolStripMenuItem(lmd.m_displayName, null, ItemClickHandler);
+				var mi = new ToolStripMenuItem(lmd.DisplayName, null, ItemClickHandler);
 				menu.Items.Add(mi);
 				m_itemData[mi] = lmd;
-				if (lmd.m_subitems != null)
+				if (lmd.SubItems != null)
 				{
 					mi.DropDownOpened += mi_Popup;
-					lmd.m_subitems.Sort();
+					lmd.SubItems.Sort();
 					// To make the system realize this item is a submenu, we have to
 					// add at least one item. To save time and space, we don't add the others
 					// until it pops up.
-					var lmdSub = lmd.m_subitems[0];
-					var miSub = new ToolStripMenuItem(lmdSub.m_displayName, null, ItemClickHandler);
+					var lmdSub = lmd.SubItems[0];
+					var miSub = new ToolStripMenuItem(lmdSub.DisplayName, null, ItemClickHandler);
 					mi.DropDownItems.Add(miSub);
 					m_itemData[miSub] = lmdSub;
 
@@ -276,8 +276,8 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 				return;
 			}
 			var lmd = m_itemData[mi];
-			m_selectedLocale = lmd.m_id;
-			Text = lmd.m_displayName;
+			m_selectedLocale = lmd.ID;
+			Text = lmd.DisplayName;
 			OnLocaleSelected(new EventArgs());
 		}
 
@@ -290,17 +290,45 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 				return; // already popped up, has items.
 			}
 			var lmd = m_itemData[miBase];
-			var lmdFirst = lmd.m_subitems[0];
-			foreach (var lmdSub in lmd.m_subitems)
+			var lmdFirst = lmd.SubItems[0];
+			foreach (var lmdSub in lmd.SubItems)
 			{
 				// Skip the first item as it was added earlier.
 				if (lmdSub == lmdFirst)
 				{
 					continue;
 				}
-				var miSub = new ToolStripMenuItem(lmdSub.m_displayName, null, ItemClickHandler);
+				var miSub = new ToolStripMenuItem(lmdSub.DisplayName, null, ItemClickHandler);
 				miBase.DropDownItems.Add(miSub);
 				m_itemData[miSub] = lmdSub;
+			}
+		}
+
+		private sealed class LocaleMenuItemData : IComparable<LocaleMenuItemData>
+		{
+			internal LocaleMenuItemData(string id, string displayName)
+			{
+				ID = id;
+				DisplayName = displayName;
+			}
+
+			/// <summary>
+			/// Locale id, as returned by Locale.getName. For submenus, this is the id
+			/// of the language, which is also the id of the base locale.
+			/// </summary>
+			internal string ID { get; }
+
+			/// <summary>
+			/// corresponding display name, from Locale.getDisplayName.
+			/// </summary>
+			internal string DisplayName { get; }
+
+			internal List<LocaleMenuItemData> SubItems { get; set; }
+
+			public int CompareTo(LocaleMenuItemData obj)
+			{
+				Debug.Assert(obj != null);
+				return DisplayName.CompareTo(obj.DisplayName);
 			}
 		}
 	}

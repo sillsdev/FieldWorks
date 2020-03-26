@@ -7,8 +7,10 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Windows.Forms;
+using LanguageExplorer.Controls;
 using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.FwCoreDlgs;
 using SIL.FieldWorks.FwCoreDlgs.Controls;
 using SIL.FieldWorks.FwCoreDlgs.FileDialog;
 using SIL.LCModel;
@@ -16,74 +18,72 @@ using SIL.LCModel.Core.Text;
 using SIL.LCModel.Infrastructure;
 using SIL.Lexicon;
 
-namespace SIL.FieldWorks.FwCoreDlgs
+namespace LanguageExplorer.Impls
 {
 	/// <summary />
-	public class FwProjPropertiesDlg : Form
+	internal sealed class FwProjPropertiesDlg : Form
 	{
 		/// <summary>
 		/// Occurs when the project properties change.
 		/// </summary>
-		public event EventHandler ProjectPropertiesChanged;
+		internal event EventHandler ProjectPropertiesChanged;
 
 		#region Data members
 		/// <summary>Index of the tab for general settings (project name, description</summary>
-		protected const int kGeneralTab = 0;
+		private const int kGeneralTab = 0;
 		/// <summary>Index of the tab for linked files settings</summary>
-		protected const int kExternalLinksTab = 1;
+		private const int kExternalLinksTab = 1;
 		/// <summary>Index of the tab for sharing settings</summary>
-		protected const int kSharingTab = 2;
+		private const int kSharingTab = 2;
 		private LcmCache m_cache;
 		private readonly ILangProject m_langProj;
 		private IHelpTopicProvider m_helpTopicProvider;
-		private readonly IApp m_app;
+		//private readonly IApp m_app;
 		/// <summary />
-		protected Label m_lblProjName;
+		private Label m_lblProjName;
 		/// <summary />
-		protected Label m_lblProjCreatedDate;
+		private Label m_lblProjCreatedDate;
 		/// <summary />
-		protected Label m_lblProjModifiedDate;
+		private Label m_lblProjModifiedDate;
 		/// <summary />
-		protected TextBox m_txtProjName;
+		private TextBox m_txtProjName;
 		/// <summary />
-		protected TextBox m_txtProjDescription;
+		private TextBox m_txtProjDescription;
 		/// <summary />
-		protected ToolTip m_toolTip;
+		private ToolTip m_toolTip;
 		private ContextMenuStrip m_cmnuAddWs;
 		private ToolStripMenuItem menuItem2;
 		private TextBox txtExtLnkEdit;
 		private IContainer components;
 		/// <summary>A change in writing systems has been made that may affect
 		/// current displays.</summary>
-		protected bool m_fWsChanged;
+		private bool m_fWsChanged;
 		/// <summary>A change in the project name has changed which may affect
 		/// title bars.</summary>
-		protected bool m_fProjNameChanged;
+		private bool m_fProjNameChanged;
 		private HelpProvider helpProvider1;
 		private TabControl m_tabControl;
 		/// <summary />
-		protected Button m_btnOK;
+		private Button m_btnOK;
 		/// <summary>A change in the LinkedFiles directory has been made.</summary>
-		protected bool m_fLinkedFilesChanged;
+		private bool m_fLinkedFilesChanged;
 		private TextBox m_tbLocation;
 		private Button btnLinkedFilesBrowse;
-		/// <summary>The project name when we entered the dialog.</summary>
-		protected string m_sOrigProjName;
 		/// <summary>The project description when we entered the dialog.</summary>
-		protected string m_sOrigDescription;
+		private string m_sOrigDescription;
 		private LinkLabel linkLbl_useDefaultFolder;
 		private string m_defaultLinkedFilesFolder;
 		private ProjectLexiconSettings m_projectLexiconSettings;
 		private CheckBox m_enableProjectSharingCheckBox;
 		private ProjectLexiconSettingsDataMapper m_projectLexiconSettingsDataMapper;
 		/// <summary>Read-only Property created for m_sOrigProjName</summary>
-		public string OriginalProjectName => m_sOrigProjName;
+		public string OriginalProjectName { get; private set; }
 		#endregion
 
 		#region Construction and initialization
 
 		/// <summary />
-		public FwProjPropertiesDlg()
+		internal FwProjPropertiesDlg()
 		{
 			// Required for Windows Form Designer support
 			InitializeComponent();
@@ -94,16 +94,14 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// LcmCache that encapsulates a DB connection.
 		/// </summary>
 		/// <param name="cache">Accessor for data cache and DB connection</param>
-		/// <param name="app">The application (can be <c>null</c>)</param>
 		/// <param name="helpTopicProvider">IHelpTopicProvider object used to get help
 		/// information</param>
-		public FwProjPropertiesDlg(LcmCache cache, IApp app, IHelpTopicProvider helpTopicProvider) : this()
+		internal FwProjPropertiesDlg(LcmCache cache, IHelpTopicProvider helpTopicProvider) : this()
 		{
 			Guard.AgainstNull(cache, nameof(cache));
 			m_cache = cache;
 			m_txtProjName.Enabled = true;
 			m_helpTopicProvider = helpTopicProvider;
-			m_app = app;
 			m_langProj = m_cache.LanguageProject;
 			InitializeProjectSharingTab();
 			InitializeGeneralTab();
@@ -123,7 +121,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private void InitializeGeneralTab()
 		{
 			m_txtProjName.TextChanged -= m_txtProjName_TextChanged;
-			m_txtProjName.Text = m_lblProjName.Text = m_sOrigProjName = m_cache.ProjectId.Name;
+			m_txtProjName.Text = m_lblProjName.Text = OriginalProjectName = m_cache.ProjectId.Name;
 			m_tbLocation.Text = m_cache.ProjectId.Path;
 			m_lblProjCreatedDate.Text = m_langProj.DateCreated.ToString("g");
 			m_lblProjModifiedDate.Text = m_langProj.DateModified.ToString("g");
@@ -540,12 +538,12 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		}
 		#endregion
 
-		#region Public methods
+		#region Internal methods
 
 		/// <summary>
 		/// Return true if something in the active writing system lists changed.
 		/// </summary>
-		public bool WritingSystemsChanged()
+		internal bool WritingSystemsChanged()
 		{
 			return m_fWsChanged;
 		}
@@ -553,7 +551,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <summary>
 		/// Return true if the project name changed.
 		/// </summary>
-		public bool ProjectNameChanged()
+		internal bool ProjectNameChanged()
 		{
 			return m_fProjNameChanged;
 		}
@@ -561,29 +559,21 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <summary>
 		/// Returns the current project name from the textbox.
 		/// </summary>
-		public string ProjectName => m_txtProjName.Text;
+		internal string ProjectName => m_txtProjName.Text;
 
 		/// <summary>
 		/// Return true if the LinkedFiles directory changed.
 		/// </summary>
-		public bool LinkedFilesChanged()
+		internal bool LinkedFilesChanged()
 		{
 			return m_fLinkedFilesChanged;
-		}
-
-		/// <summary>
-		/// Dispose of the dialog when done with it.
-		/// </summary>
-		public void DisposeDialog()
-		{
-			Dispose(true);
 		}
 		#endregion
 
 		#region Button Click Events
 
 		/// <summary />
-		protected void m_btnOK_Click(object sender, EventArgs e)
+		private void m_btnOK_Click(object sender, EventArgs e)
 		{
 			DialogResult = DialogResult.OK;
 			if (!DidProjectTabChange() && !DidLinkedFilesTabChange() && !DidSharingTabChange())
@@ -633,16 +623,16 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 		private bool DidProjectTabChange()
 		{
-			return m_txtProjName.Text != m_sOrigProjName || m_txtProjDescription.Text != m_sOrigDescription;
+			return m_txtProjName.Text != OriginalProjectName || m_txtProjDescription.Text != m_sOrigDescription;
 		}
 
 		/// <summary>
 		/// Saves the data in the dialog.
 		/// </summary>
-		protected void SaveInternal()
+		private void SaveInternal()
 		{
 			var userWs = m_cache.ServiceLocator.WritingSystemManager.UserWs;
-			m_fProjNameChanged = (m_txtProjName.Text != m_sOrigProjName);
+			m_fProjNameChanged = (m_txtProjName.Text != OriginalProjectName);
 			if (m_txtProjDescription.Text != m_sOrigDescription)
 			{
 				m_langProj.Description.set_String(userWs, TsStringUtils.MakeString(m_txtProjDescription.Text, userWs));

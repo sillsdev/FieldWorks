@@ -10,7 +10,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 	/// Useful little exception class that clients can throw as part of their processing the
 	/// Progress Dialog's cancel event.
 	/// </summary>
-	public class CancelException : Exception
+	public sealed class CancelException : Exception
 	{
 		/// <summary />
 		public CancelException(string msg)

@@ -21,7 +21,7 @@ namespace LanguageExplorer.LcmUi
 	/// set the PartOfSpeech of group of LexSenses (actually by creating or modifying an
 	/// MoStemMsa that is the MorphoSyntaxAnalysis of the sense).
 	/// </summary>
-	public abstract class BulkPosEditorBase : IBulkEditSpecControl, IFlexComponent, ITextChangedNotification, IDisposable
+	internal abstract class BulkPosEditorBase : IBulkEditSpecControl, IFlexComponent, ITextChangedNotification, IDisposable
 	{
 		#region Data members & event declarations
 

@@ -8,6 +8,7 @@ using System.ComponentModel;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.ScriptureUtils;
@@ -15,6 +16,7 @@ using SIL.FieldWorks.FwCoreDlgs.FileDialog;
 using SIL.FieldWorks.Resources;
 using SIL.LCModel;
 using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Core.Scripture;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel.Utils;
@@ -25,7 +27,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 	/// <summary>
 	/// Class to support displaying the context(s) for a character string.
 	/// </summary>
-	public partial class CharContextCtrl : UserControl
+	internal sealed partial class CharContextCtrl : UserControl
 	{
 		private const int kiColRef = 0;
 		private const int kiColContextBefore = 1;
@@ -33,25 +35,25 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private const int kiColContextAfter = 3;
 
 		/// <summary>When the current scripture project is scanned, then filename is null.</summary>
-		public delegate void BeforeTextTokenSubStringsLoadedHandler(string filename);
+		internal delegate void BeforeTextTokenSubStringsLoadedHandler(string filename);
 
 		/// <summary>Event fired before a data source is
 		/// read to get all the token substrings.</summary>
-		public event BeforeTextTokenSubStringsLoadedHandler BeforeTextTokenSubStringsLoaded;
+		internal event BeforeTextTokenSubStringsLoadedHandler BeforeTextTokenSubStringsLoaded;
 
 		/// <summary></summary>
-		public delegate void TextTokenSubStringsLoadedHandler(List<TextTokenSubstring> tokens);
+		internal delegate void TextTokenSubStringsLoadedHandler(List<TextTokenSubstring> tokens);
 
 		/// <summary>Event fired when a data source has been
 		/// read to get all the token substrings.</summary>
-		public event TextTokenSubStringsLoadedHandler TextTokenSubStringsLoaded;
+		internal event TextTokenSubStringsLoadedHandler TextTokenSubStringsLoaded;
 
 		/// <summary></summary>
-		public delegate void GetContextInfoHandler(int index, out string sKey, out string sConcordanceItem);
+		internal delegate void GetContextInfoHandler(int index, out string sKey, out string sConcordanceItem);
 
 		/// <summary>Event fired when the control needs a
 		/// list of context information.</summary>
-		public event GetContextInfoHandler GetContextInfo;
+		internal event GetContextInfoHandler GetContextInfo;
 
 		private string[] m_fileData;
 		private DataGridView m_tokenGrid;
@@ -68,7 +70,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private string m_currContextItem;
 
 		/// <summary />
-		public CharContextCtrl()
+		internal CharContextCtrl()
 		{
 			InitializeComponent();
 
@@ -89,7 +91,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <param name="app">The application.</param>
 		/// <param name="contextFont">The context font.</param>
 		/// <param name="tokenGrid">The token grid.</param>
-		public void Initialize(LcmCache cache, IWritingSystemContainer wsContainer, CoreWritingSystemDefinition ws, IApp app, Font contextFont, DataGridView tokenGrid)
+		internal void Initialize(LcmCache cache, IWritingSystemContainer wsContainer, CoreWritingSystemDefinition ws, IApp app, Font contextFont, DataGridView tokenGrid)
 		{
 			m_cache = cache;
 			m_wsContainer = wsContainer;
@@ -124,12 +126,12 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// "punctuation patterns", etc.).
 		/// patterns.
 		/// </summary>
-		public string DisplayedListName { get; set; }
+		internal string DisplayedListName { get; set; }
 
 		/// <summary>
 		/// Gets or sets the scan message label text.
 		/// </summary>
-		public string ScanMsgLabelText
+		internal string ScanMsgLabelText
 		{
 			get => lblScanMsg.Text;
 			set => lblScanMsg.Text = value;
@@ -139,7 +141,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// Gets/sets the token grid. If a tokenGrid is already in use, it will be cleared first.
 		/// </summary>
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-		public DataGridView TokenGrid
+		internal DataGridView TokenGrid
 		{
 			get => m_tokenGrid;
 			private set
@@ -165,7 +167,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 		/// <summary />
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-		public Font ContextFont
+		internal Font ContextFont
 		{
 			get => colContextAfter.DefaultCellStyle.Font;
 			private set
@@ -182,20 +184,20 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 		/// <summary />
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-		public CheckType CheckToRun { get; set; }
+		internal CheckType CheckToRun { get; set; }
 
 		#endregion
 
 		#region Public methods
 
 		/// <summary />
-		public void RefreshContextGrid()
+		internal void RefreshContextGrid()
 		{
 			m_tokenGrid_RowEnter(null, new DataGridViewCellEventArgs(m_tokenGrid.CurrentCellAddress.X, m_tokenGrid.CurrentCellAddress.Y));
 		}
 
 		/// <summary />
-		public void ResetContextLists()
+		internal void ResetContextLists()
 		{
 			m_contextInfoLists = new Dictionary<string, List<ContextInfo>>();
 			m_currContextInfoList = new List<ContextInfo>();
@@ -204,7 +206,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		}
 
 		/// <summary />
-		public void AddContextInfo(ContextInfo contextInfo)
+		internal void AddContextInfo(ContextInfo contextInfo)
 		{
 			if (!m_contextInfoLists.TryGetValue(contextInfo.Key, out var list))
 			{
@@ -222,7 +224,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// </summary>
 		private void gridContext_ClientSizeChanged(object sender, EventArgs e)
 		{
-			if (m_tokenGrid != null && m_tokenGrid.CurrentRow != null)
+			if (m_tokenGrid?.CurrentRow != null)
 			{
 				AdjustContextGridColumnWidths();
 			}
@@ -470,5 +472,198 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			}
 		}
 		#endregion
+
+		/// <summary>
+		/// A class representing a file that can be parsed to find characters
+		/// </summary>
+		private sealed class TextFileDataSource : IChecksDataSource
+		{
+			private string m_scrChecksDllFile;
+			private string m_scrCheck;
+			private List<ITextToken> m_tftList;
+			private Dictionary<string, string> m_params;
+
+			/// <summary />
+			/// <param name="scrChecksDllFile">The DLL that contains the CharactersCheck class</param>
+			/// <param name="scrCheck">Name of the scripture check to use</param>
+			/// <param name="fileData">An array of strings with the lines of data from the file.</param>
+			/// <param name="scrRefFormatString">Format string used to format scripture references.</param>
+			/// <param name="parameters">Checking parameters to send the check.</param>
+			/// <param name="categorizer">The character categorizer.</param>
+			internal TextFileDataSource(string scrChecksDllFile, string scrCheck, string[] fileData, string scrRefFormatString, Dictionary<string, string> parameters, CharacterCategorizer categorizer)
+			{
+				m_scrChecksDllFile = scrChecksDllFile;
+				m_scrCheck = scrCheck;
+				CharacterCategorizer = categorizer ?? new CharacterCategorizer();
+				m_params = parameters;
+				m_tftList = new List<ITextToken>();
+				var i = 1;
+				foreach (var line in fileData)
+				{
+					m_tftList.Add(new TextFileToken(line, i++, scrRefFormatString));
+				}
+			}
+
+			#region IChecksDataSource Members
+			/// <summary>
+			/// Gets the books present (not supported).
+			/// </summary>
+			public List<int> BooksPresent => throw new NotSupportedException();
+
+			/// <summary>
+			/// Gets the character categorizer.
+			/// </summary>
+			public CharacterCategorizer CharacterCategorizer { get; }
+
+			/// <summary>
+			/// Gets the parameter value.
+			/// </summary>
+			public string GetParameterValue(string key)
+			{
+				return m_params != null && m_params.TryGetValue(key, out var param) ? param : string.Empty;
+			}
+
+			/// <summary>
+			/// Gets the text (not supported).
+			/// </summary>
+			public bool GetText(int bookNum, int chapterNum)
+			{
+				throw new NotSupportedException();
+			}
+
+			/// <summary>
+			/// Saves this instance (not supported).
+			/// </summary>
+			public void Save()
+			{
+				throw new NotSupportedException();
+			}
+
+			/// <summary>
+			/// Sets the parameter value (not supported).
+			/// </summary>
+			public void SetParameterValue(string key, string value)
+			{
+				throw new NotSupportedException();
+			}
+
+			/// <summary>
+			/// Gets the text tokens.
+			/// </summary>
+			public IEnumerable<ITextToken> TextTokens => m_tftList;
+
+			/// <summary />
+			public string GetLocalizedString(string strToLocalize)
+			{
+				return strToLocalize;
+			}
+
+			#endregion
+
+			/// <summary>
+			/// Gets the references.
+			/// </summary>
+			internal List<TextTokenSubstring> GetReferences()
+			{
+				try
+				{
+					var asm = Assembly.LoadFile(m_scrChecksDllFile);
+					var type = asm.GetType("SIL.FieldWorks.Common.FwUtils." + m_scrCheck);
+					var scrCharInventoryBldr = (IScrCheckInventory)Activator.CreateInstance(type, this);
+					return scrCharInventoryBldr.GetReferences(m_tftList, string.Empty);
+				}
+				catch
+				{
+					return null;
+				}
+			}
+
+			/// <summary>
+			/// Text token object used for reading any, nondescript text file in order to discover
+			/// all the characters therein.
+			/// </summary>
+			private sealed class TextFileToken : ITextToken
+			{
+				private int m_iLine;
+				private string m_scrRefFmtString;
+
+				/// <summary />
+				internal TextFileToken(string text, int iLine, string scrRefFormatString)
+				{
+					Text = text;
+					m_iLine = iLine;
+					m_scrRefFmtString = scrRefFormatString;
+				}
+
+				#region ITextToken Members
+
+				/// <summary>
+				/// Not used.
+				/// </summary>
+				public bool IsNoteStart => false;
+
+				/// <summary>
+				/// Not used.
+				/// </summary>
+				public bool IsParagraphStart => true;
+
+				/// <summary>
+				/// Not used.
+				/// </summary>
+				public string Locale => null;
+
+				/// <summary>
+				/// Not used.
+				/// </summary>
+				public string ScrRefString
+				{
+					get => string.Format(m_scrRefFmtString, m_iLine);
+					set { }
+				}
+
+				/// <summary>
+				/// Not used.
+				/// </summary>
+				public string ParaStyleName => null;
+
+				/// <summary>
+				/// Not used.
+				/// </summary>
+				public string CharStyleName => null;
+
+				/// <summary>
+				/// Gets the text.
+				/// </summary>
+				public string Text { get; }
+
+				/// <summary>
+				/// Force the check to treat the text like verse text.
+				/// </summary>
+				public TextType TextType => TextType.Verse;
+
+				/// <summary />
+				public BCVRef MissingEndRef
+				{
+					get => null;
+					set { }
+				}
+
+				/// <summary />
+				public BCVRef MissingStartRef
+				{
+					get => null;
+					set { }
+				}
+
+				/// <summary>
+				/// Makes a deep copy of the specified text token.
+				/// </summary>
+				public ITextToken Clone()
+				{
+					return new TextFileToken(Text, m_iLine, m_scrRefFmtString);
+				}
+				#endregion
+			}
+		}
 	}
 }

@@ -13,7 +13,7 @@ namespace LanguageExplorer.Controls
 	/// <summary>
 	/// Handles a TreeCombo control for use with PartOfSpeech objects.
 	/// </summary>
-	public class POSPopupTreeManager : PopupTreeManager
+	internal class POSPopupTreeManager : PopupTreeManager
 	{
 		private const int kEmpty = 0;
 		private const int kLine = -1;
@@ -25,13 +25,13 @@ namespace LanguageExplorer.Controls
 		private string JumpToToolNamed => List.OwningFlid == LangProjectTags.kflidPartsOfSpeech ? AreaServices.PosEditMachineName : AreaServices.ReversalToolReversalIndexPOSMachineName;
 
 		/// <summary />
-		public POSPopupTreeManager(TreeCombo treeCombo, LcmCache cache, ICmPossibilityList list, int ws, bool useAbbr, FlexComponentParameters flexComponentParameters, Form parent)
+		internal POSPopupTreeManager(TreeCombo treeCombo, LcmCache cache, ICmPossibilityList list, int ws, bool useAbbr, FlexComponentParameters flexComponentParameters, Form parent)
 			: base(treeCombo, cache, flexComponentParameters, list, ws, useAbbr, parent)
 		{
 		}
 
 		/// <summary />
-		public POSPopupTreeManager(PopupTree popupTree, LcmCache cache, ICmPossibilityList list, int ws, bool useAbbr, FlexComponentParameters flexComponentParameters, Form parent)
+		internal POSPopupTreeManager(PopupTree popupTree, LcmCache cache, ICmPossibilityList list, int ws, bool useAbbr, FlexComponentParameters flexComponentParameters, Form parent)
 			: base(popupTree, cache, flexComponentParameters, list, ws, useAbbr, parent)
 		{
 		}
@@ -62,7 +62,7 @@ namespace LanguageExplorer.Controls
 		/// <summary>
 		/// Set this (before MakeMenuItems is called) to have an 'Any' menu item instead of 'Not sure'.
 		/// </summary>
-		public bool NotSureIsAny { get; set; }
+		internal bool NotSureIsAny { get; set; }
 
 		/// <summary>
 		/// Add an 'Any' item to the menu. If the current target is zero, it will be selected.

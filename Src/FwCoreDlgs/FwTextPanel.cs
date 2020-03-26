@@ -14,7 +14,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 	/// <summary>
 	/// Extends the panel control to support text, including text containing mnemonic specifiers.
 	/// </summary>
-	public class FwTextPanel : Panel
+	internal class FwTextPanel : Panel
 	{
 		private TextFormatFlags m_txtFmtFlags = TextFormatFlags.VerticalCenter |
 				TextFormatFlags.WordEllipsis | TextFormatFlags.SingleLine |
@@ -23,7 +23,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private Rectangle m_rcText;
 
 		/// <summary />
-		public FwTextPanel()
+		internal FwTextPanel()
 		{
 			DoubleBuffered = true;
 			SetStyle(ControlStyles.UseTextForAccessibility, true);
@@ -90,21 +90,21 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// the tab order (like a label).
 		/// </summary>
 		[Browsable(true)]
-		public bool MnemonicGeneratesClick { get; set; } = false;
+		internal bool MnemonicGeneratesClick { get; set; } = false;
 
 		/// <summary>
 		/// Gets or sets the control that receives focus when the label's text is contains a
 		/// mnemonic specifier. When this value is null, then focus is given to the next
 		/// control in the tab order.
 		/// </summary>
-		public Control ControlReceivingFocusOnMnemonic { get; set; } = null;
+		internal Control ControlReceivingFocusOnMnemonic { get; set; } = null;
 
 		/// <summary>
 		/// Gets or sets the text format flags used to draw the header label's text.
 		/// </summary>
 		[Browsable(false)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-		public TextFormatFlags TextFormatFlags
+		internal TextFormatFlags TextFormatFlags
 		{
 			get => m_txtFmtFlags;
 			set
@@ -115,7 +115,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		}
 
 		/// <summary />
-		public bool ClipTextForChildControls { get; set; } = true;
+		internal bool ClipTextForChildControls { get; set; } = true;
 
 		/// <summary>
 		/// Calculates the rectangle of the text when there are child controls. This method

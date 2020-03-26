@@ -17,7 +17,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 	/// <summary>
 	/// The merge writing systems dialog.
 	/// </summary>
-	public class MergeWritingSystemDlg : Form
+	internal sealed class MergeWritingSystemDlg : Form
 	{
 		private const string HelpTopic = "khtpProjPropsMergeWS";
 		private readonly string m_wsToMerge;
@@ -37,7 +37,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private IEnumerable<CoreWritingSystemDefinition> enumerable;
 
 		/// <summary />
-		public MergeWritingSystemDlg(LcmCache cache, string wsToMerge, IEnumerable<WSListItemModel> wss, IHelpTopicProvider helpTopicProvider)
+		internal MergeWritingSystemDlg(LcmCache cache, string wsToMerge, IEnumerable<WSListItemModel> wss, IHelpTopicProvider helpTopicProvider)
 		{
 			m_cache = cache;
 			m_wsToMerge = wsToMerge;
@@ -80,7 +80,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// Gets the selected writing system.
 		/// </summary>
 		/// <value>The selected writing system.</value>
-		public CoreWritingSystemDefinition SelectedWritingSystem => ((WSListItemModel) m_wsListBox.SelectedItem).WorkingWs;
+		internal CoreWritingSystemDefinition SelectedWritingSystem => ((WSListItemModel) m_wsListBox.SelectedItem).WorkingWs;
 
 		#region Windows Form Designer generated code
 		/// <summary>

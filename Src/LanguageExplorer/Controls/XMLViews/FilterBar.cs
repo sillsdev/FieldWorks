@@ -905,7 +905,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			/// <summary>
 			/// Invokes this instance.
 			/// </summary>
-			public override bool Invoke()
+			internal override bool Invoke()
 			{
 				using (var dlg = new SimpleDateMatchDlg(m_helpTopicProvider))
 				{
@@ -982,7 +982,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			/// <summary>
 			/// Invokes this instance.
 			/// </summary>
-			public override bool Invoke()
+			internal override bool Invoke()
 			{
 				using (var dlg = new SimpleIntegerMatchDlg(m_helpTopicProvider))
 				{

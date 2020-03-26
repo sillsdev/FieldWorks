@@ -22,7 +22,7 @@ namespace LanguageExplorer.Controls.XMLViews
 	/// Todo: for reasonable efficiency, need a way to preload the information needed to
 	/// evaluate filter for all items. This might be a method on RecordFilter.
 	/// </remarks>
-	public class FilterSortItem : IDisposable
+	internal sealed class FilterSortItem : IDisposable
 	{
 		private IStringFinder m_finder;
 		private FwComboBox m_combo;
@@ -32,7 +32,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		private readonly DisposableObjectsSet<RecordFilter> m_FiltersToDispose = new DisposableObjectsSet<RecordFilter>();
 
 		/// <summary />
-		public event FilterChangeHandler FilterChanged;
+		internal event FilterChangeHandler FilterChanged;
 
 		#region IDisposable & Co. implementation
 
@@ -87,7 +87,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		///
 		/// If subclasses override this method, they should call the base implementation.
 		/// </remarks>
-		protected virtual void Dispose(bool disposing)
+		private void Dispose(bool disposing)
 		{
 			Debug.WriteLineIf(!disposing, "****************** Missing Dispose() call for " + GetType().Name + ". ******************");
 			if (IsDisposed)
@@ -128,13 +128,13 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// Gets or sets the spec.
 		/// </summary>
-		public XElement Spec { get; set; }
+		internal XElement Spec { get; set; }
 
 		/// <summary>
 		/// Gets or sets the finder.
 		/// </summary>
 		/// <remarks>A Finder assigned here will be disposed by FilterSortItem.Dispose.</remarks>
-		public IStringFinder Finder
+		internal IStringFinder Finder
 		{
 			get => m_finder;
 			set
@@ -148,7 +148,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// Gets or sets the combo.
 		/// </summary>
 		/// <remarks>The Combo that gets set here will be disposed by FilterSortItem.</remarks>
-		public FwComboBox Combo
+		internal FwComboBox Combo
 		{
 			get => m_combo;
 			set
@@ -161,7 +161,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// Gets or sets the matcher.
 		/// </summary>
-		public IMatcher Matcher
+		internal IMatcher Matcher
 		{
 			get => m_matcher;
 			set
@@ -178,7 +178,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// Gets or sets the sorter.
 		/// </summary>
 		/// <remarks>A Sorter assigned here will be disposed by FilterSortItem.Dispose.</remarks>
-		public RecordSorter Sorter
+		internal RecordSorter Sorter
 		{
 			get => m_sorter;
 			set
@@ -193,7 +193,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		/// <value>The filter.</value>
 		/// <remarks>A Filter assigned here will be disposed by FilterSortItem.Dispose.</remarks>
-		public RecordFilter Filter
+		internal RecordFilter Filter
 		{
 			get => m_filter;
 			set
@@ -214,7 +214,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// filter and update your display accordingly, and answer true. Otherwise
 		/// answer false.
 		/// </summary>
-		public bool SetFromFilter(RecordFilter filter)
+		internal bool SetFromFilter(RecordFilter filter)
 		{
 			// Need to set even if set previously. Otherwise it doesn't refresh properly.
 			if (m_combo == null)

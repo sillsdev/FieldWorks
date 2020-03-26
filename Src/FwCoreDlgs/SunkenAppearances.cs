@@ -7,7 +7,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 	/// <summary>
 	/// Determines the appearance when the button is pressed
 	/// </summary>
-	public enum SunkenAppearances
+	internal enum SunkenAppearances
 	{
 		/// <summary>border is 1 pixel wide</summary>
 		Shallow,

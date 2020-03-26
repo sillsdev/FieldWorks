@@ -13,7 +13,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 	/// FwCharacterCategorizer categorizes characters based on the ICU and user overrides of
 	/// ICU for a particular writing system.
 	/// </summary>
-	public class FwCharacterCategorizer : CharacterCategorizer
+	internal sealed class FwCharacterCategorizer : CharacterCategorizer
 	{
 		#region Member variables
 		/// <summary>valid characters (used to determine word-forming characters)</summary>
@@ -23,7 +23,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <summary />
 		/// <param name="validChars">The valid characters. If null, will fall back on the
 		/// specified character property engine.</param>
-		public FwCharacterCategorizer(ValidCharacters validChars)
+		internal FwCharacterCategorizer(ValidCharacters validChars)
 		{
 			m_validChars = validChars;
 		}

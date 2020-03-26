@@ -31,10 +31,6 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		const int kfragRoot = 8002; // likewise.
 		const int khvoRoot = 7003; // likewise.
 		internal const string LineBreak = "\u2028";
-
-		// Neither of these caches are used by LcmCache.
-		// They are only used here.
-		internal ISilDataAccess m_DataAccess; // Another interface on m_CacheDa.
 		TextBoxVc m_vc;
 
 		internal int m_WritingSystem; // Writing system to use when Text is set.
@@ -59,7 +55,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		/// <summary />
 		public InnerFwTextBox()
 		{
-			m_DataAccess = new TextBoxDataAccess();
+			DataAccess = new TextBoxDataAccess();
 			// Check for the availability of the FwKernel COM DLL.  Too bad we have to catch an
 			// exception to make this check...
 			if (LicenseManager.UsageMode != LicenseUsageMode.Designtime)
@@ -68,7 +64,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 				// So many things blow up so badly if we don't have one of these that I finally decided to just
 				// make one, even though it won't always, perhaps not often, be the one we want.
 				CreateTempWritingSystemFactory();
-				m_DataAccess.WritingSystemFactory = WritingSystemFactory;
+				DataAccess.WritingSystemFactory = WritingSystemFactory;
 			}
 			IsTextBox = true;   // range selection not shown when not in focus
 		}
@@ -120,7 +116,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 
 			if (disposing)
 			{
-				m_DataAccess.RemoveNotification(this);
+				DataAccess.RemoveNotification(this);
 				m_editingHelper?.Dispose();
 				RootBox?.Close();
 				m_fIsDisposing = false;
@@ -129,7 +125,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			m_editingHelper = null;
 			m_vc = null;
 			m_controlID = null;
-			m_DataAccess = null;
+			DataAccess = null;
 			m_wsf = null;
 		}
 
@@ -194,9 +190,9 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 					base.WritingSystemFactory = value;
 					m_vc.SetWsfAndWs(value, WritingSystemCode);
 					// Enhance JohnT: Base class should probably do this.
-					if (m_DataAccess != null)
+					if (DataAccess != null)
 					{
-						m_DataAccess.WritingSystemFactory = value;
+						DataAccess.WritingSystemFactory = value;
 						RootBox?.Reconstruct();
 					}
 
@@ -257,15 +253,15 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		{
 			get
 			{
-				if (m_DataAccess == null || InDesigner)
+				if (DataAccess == null || InDesigner)
 				{
 					return null;
 				}
 				if (m_wsf == null)
 				{
-					m_DataAccess.WritingSystemFactory = WritingSystemFactory;
+					DataAccess.WritingSystemFactory = WritingSystemFactory;
 				}
-				var tss = m_DataAccess.get_StringProp(khvoRoot, ktagText);
+				var tss = DataAccess.get_StringProp(khvoRoot, ktagText);
 				// We need to return the TsString without font size because it won't set properly.
 				tss = TsStringUtils.RemoveIntProp(tss, (int)FwTextPropType.ktptFontSize);
 				// replace line breaks with new lines
@@ -279,11 +275,11 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 				// from being clipped by the height of the box.
 				if (tss != null && DoAdjustHeight)
 				{
-					m_DataAccess.SetString(khvoRoot, ktagText, FontHeightAdjuster.GetAdjustedTsString(tss, m_mpEditHeight, StyleSheet, WritingSystemFactory));
+					DataAccess.SetString(khvoRoot, ktagText, FontHeightAdjuster.GetAdjustedTsString(tss, m_mpEditHeight, StyleSheet, WritingSystemFactory));
 				}
 				else
 				{
-					m_DataAccess.SetString(khvoRoot, ktagText, tss);
+					DataAccess.SetString(khvoRoot, ktagText, tss);
 				}
 
 				if (RootBox != null && tss != null)
@@ -374,7 +370,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		/// <summary>
 		/// Accessor for data access object
 		/// </summary>
-		internal new ISilDataAccess DataAccess => m_DataAccess;
+		internal new ISilDataAccess DataAccess { get; private set; }
 
 		/// <summary>
 		/// Gets or sets the starting point of text selected in the text box.
@@ -517,10 +513,10 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 
 			base.MakeRoot();
 
-			RootBox.DataAccess = m_DataAccess;
+			RootBox.DataAccess = DataAccess;
 			RootBox.SetRootObject(khvoRoot, m_vc, kfragRoot, StyleSheet);
 			m_dxdLayoutWidth = kForceLayout; // Don't try to draw until we get OnSize and do layout.
-			m_DataAccess.AddNotification(this);
+			DataAccess.AddNotification(this);
 		}
 
 		/// <summary>
@@ -608,7 +604,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			{
 				return intIndex;
 			}
-			var tss = m_DataAccess.get_StringProp(khvoRoot, ktagText);
+			var tss = DataAccess.get_StringProp(khvoRoot, ktagText);
 			var hardBreakCount = SubstringCount(tss == null || tss.Length == 0 ? string.Empty : tss.Text.Substring(0, intIndex), LineBreak);
 			return intIndex + hardBreakCount * (Environment.NewLine.Length - LineBreak.Length);
 		}
@@ -882,7 +878,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		/// </summary>
 		internal bool AdjustHeight()
 		{
-			if (!DoAdjustHeight || m_DataAccess == null || Tss == null)
+			if (!DoAdjustHeight || DataAccess == null || Tss == null)
 			{
 				return false;
 			}
@@ -894,7 +890,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			RemoveNonRootNotifications(); // want to suppress any side effects and just update the view.
 			try
 			{
-				m_DataAccess.SetString(khvoRoot, ktagText, FontHeightAdjuster.GetAdjustedTsString(FontHeightAdjuster.GetUnadjustedTsString(Tss), m_mpEditHeight, StyleSheet, WritingSystemFactory));
+				DataAccess.SetString(khvoRoot, ktagText, FontHeightAdjuster.GetAdjustedTsString(FontHeightAdjuster.GetUnadjustedTsString(Tss), m_mpEditHeight, StyleSheet, WritingSystemFactory));
 
 			}
 			finally
@@ -930,7 +926,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		protected override void OnSizeChanged(EventArgs e)
 		{
 			base.OnSizeChanged(e);
-			if (m_DataAccess == null)
+			if (DataAccess == null)
 			{
 				return;
 			}
@@ -960,9 +956,9 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		/// </summary>
 		protected override void OnKeyDown(KeyEventArgs e)
 		{
-			if (Parent is FwTextBox)
+			if (Parent is FwTextBox fwTextBox)
 			{
-				((FwTextBox)Parent).HandleKeyDown(e);
+				fwTextBox.HandleKeyDown(e);
 				if (e.Handled)
 				{
 					return;

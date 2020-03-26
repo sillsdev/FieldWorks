@@ -7,7 +7,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 	/// <summary>
 	/// States of a button when button is a toggle button (i.e. ButtonToggles is true)
 	/// </summary>
-	public enum ButtonToggleStates
+	internal enum ButtonToggleStates
 	{
 		/// <summary />
 		Pushed,

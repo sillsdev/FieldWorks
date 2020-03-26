@@ -11,21 +11,21 @@ namespace SIL.FieldWorks.FwCoreDlgs
 	/// This class models a list item for a writing system.
 	/// The boolean indicates if the item is in the Current list and should be ticked in the UI.
 	/// </summary>
-	public class WSListItemModel : Tuple<bool, CoreWritingSystemDefinition, CoreWritingSystemDefinition>
+	internal sealed class WSListItemModel : Tuple<bool, CoreWritingSystemDefinition, CoreWritingSystemDefinition>
 	{
 		/// <summary/>
-		public WSListItemModel(bool isInCurrent, CoreWritingSystemDefinition originalWsDef, CoreWritingSystemDefinition workingWs) : base(isInCurrent, originalWsDef, workingWs)
+		internal WSListItemModel(bool isInCurrent, CoreWritingSystemDefinition originalWsDef, CoreWritingSystemDefinition workingWs) : base(isInCurrent, originalWsDef, workingWs)
 		{
 		}
 
 		/// <summary/>
-		public bool InCurrentList => Item1;
+		internal bool InCurrentList => Item1;
 
 		/// <summary/>
-		public CoreWritingSystemDefinition WorkingWs => Item3;
+		internal CoreWritingSystemDefinition WorkingWs => Item3;
 
 		/// <summary/>
-		public CoreWritingSystemDefinition OriginalWs => Item2;
+		internal CoreWritingSystemDefinition OriginalWs => Item2;
 
 		/// <summary/>
 		public override string ToString()

@@ -16,7 +16,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 	/// <summary>
 	/// Simulation of a regular .NET label control which uses a view to display the text.
 	/// </summary>
-	public class FwLabel : Control, IVwNotifyChange, ISupportInitialize
+	internal sealed class FwLabel : Control, IVwNotifyChange, ISupportInitialize
 	{
 		#region Data members
 		/// <summary>
@@ -35,7 +35,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		#region Construction
 
 		/// <summary />
-		public FwLabel()
+		internal FwLabel()
 		{
 			m_innerFwTextBox = new InnerFwTextBox { ReadOnlyView = true };
 			Padding = new Padding(1, 2, 1, 1);
@@ -169,15 +169,11 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		#endregion // Selection methods that are for a text box.
 
 		#region Properties
-		/// <summary>
-		/// Gets the root box.
-		/// </summary>
-		protected IVwRootBox RootBox => m_innerFwTextBox.RootBox;
 
 		/// <summary>
 		/// Set an ID string that can be used for debugging purposes to identify the control.
 		/// </summary>
-		public string controlID
+		internal string controlID
 		{
 			get => m_innerFwTextBox.m_controlID;
 			set => m_innerFwTextBox.m_controlID = value;
@@ -229,7 +225,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// The real string of the embedded control.
 		/// </summary>
 		[Browsable(false)]
-		public virtual ITsString Tss
+		internal ITsString Tss
 		{
 			get => m_innerFwTextBox.Tss;
 			set
@@ -244,7 +240,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// Gets or sets the text alignment.
 		/// </summary>
 		[Category("Appearance")]
-		public virtual System.Drawing.ContentAlignment TextAlign
+		internal System.Drawing.ContentAlignment TextAlign
 		{
 			get => m_contentAlignment;
 			set
@@ -264,7 +260,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 		/// <summary />
 		[Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-		public int WritingSystemCode
+		internal int WritingSystemCode
 		{
 			get => m_innerFwTextBox.WritingSystemCode;
 			set => m_innerFwTextBox.WritingSystemCode = value;
@@ -274,7 +270,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// The stylesheet used for the data being displayed.
 		/// </summary>
 		[Browsable(true), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-		public IVwStylesheet StyleSheet
+		internal IVwStylesheet StyleSheet
 		{
 			get => m_innerFwTextBox.StyleSheet;
 			set => m_innerFwTextBox.StyleSheet = value;
@@ -284,7 +280,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// The real WSF of the embedded control.
 		/// </summary>
 		[Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-		public ILgWritingSystemFactory WritingSystemFactory
+		internal ILgWritingSystemFactory WritingSystemFactory
 		{
 			get => m_innerFwTextBox.WritingSystemFactory;
 			set => m_innerFwTextBox.WritingSystemFactory = value;

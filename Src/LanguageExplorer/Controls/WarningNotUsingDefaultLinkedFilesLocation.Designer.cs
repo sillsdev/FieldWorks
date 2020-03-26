@@ -4,7 +4,7 @@
 
 using System.Diagnostics;
 
-namespace SIL.FieldWorks.FwCoreDlgs
+namespace LanguageExplorer.Controls
 {
 	partial class WarningNotUsingDefaultLinkedFilesLocation
 	{

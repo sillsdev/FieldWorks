@@ -27,7 +27,7 @@ namespace LanguageExplorer.Controls
 	///	Otherwise, the combo box will not be able to interpret the writing systems of any TsStrings it is asked to display.
 	///	It will improve performance to do this even if you are not using TsString data.
 	/// </summary>
-	public class FwComboBox : FwComboBoxBase, IComboList
+	internal sealed class FwComboBox : FwComboBoxBase, IComboList
 	{
 		/// <summary />
 		public event EventHandler SelectedIndexChanged;
@@ -37,7 +37,7 @@ namespace LanguageExplorer.Controls
 		/// <summary>
 		/// Construct one.
 		/// </summary>
-		public FwComboBox()
+		internal FwComboBox()
 		{
 			TextBox.KeyPress += m_comboTextBox_KeyPress;
 			m_button.KeyPress += m_button_KeyPress;
@@ -100,7 +100,7 @@ namespace LanguageExplorer.Controls
 		/// Make the list box accessible so its height can be adjusted.
 		/// </summary>
 		[Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-		public ComboListBox ListBox => m_dropDownBox as ComboListBox;
+		internal ComboListBox ListBox => m_dropDownBox as ComboListBox;
 
 		/// <summary>
 		/// The index of the item currently selected.
@@ -185,7 +185,7 @@ namespace LanguageExplorer.Controls
 		/// This is used (e.g., in filter bar) when the text we want to show in the combo
 		/// is something different from the text of the selected item.
 		/// </summary>
-		public void SetTssWithoutChangingSelectedIndex(ITsString tss)
+		internal void SetTssWithoutChangingSelectedIndex(ITsString tss)
 		{
 			base.Tss = tss;
 		}
@@ -234,7 +234,7 @@ namespace LanguageExplorer.Controls
 		/// This property contains the previous text box text string
 		/// </summary>
 		[Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-		public ITsString PreviousTextBoxText { get; set; }
+		internal ITsString PreviousTextBoxText { get; set; }
 
 		#endregion Properties
 
@@ -244,7 +244,7 @@ namespace LanguageExplorer.Controls
 		/// Add items to the FWComboBox but adjust the string so it
 		/// matches the Font size.
 		/// </summary>
-		public void AddItem(ITsString tss)
+		internal void AddItem(ITsString tss)
 		{
 			//first calculate things to we adjust the font to the correct size.
 			Items.Add(FontHeightAdjuster.GetAdjustedTsString(tss, FwTextBox.GetDympMaxHeight(TextBox), StyleSheet, WritingSystemFactory));
@@ -262,7 +262,7 @@ namespace LanguageExplorer.Controls
 		/// <summary>
 		/// Find the index where exactly this string occurs in the list, or -1 if it does not.
 		/// </summary>
-		public int FindStringExact(ITsString tss)
+		internal int FindStringExact(ITsString tss)
 		{
 			return ListBox.FindIndexOfTss(tss);
 		}
@@ -270,7 +270,7 @@ namespace LanguageExplorer.Controls
 		/// <summary>
 		/// Fire the SelectedIndexChanged event.
 		/// </summary>
-		protected void RaiseSelectedIndexChanged()
+		internal void RaiseSelectedIndexChanged()
 		{
 			SelectedIndexChanged?.Invoke(this, EventArgs.Empty);
 		}

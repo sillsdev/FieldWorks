@@ -270,13 +270,11 @@
     <Compile Include="Controls\FwListBoxTests.cs" />
     <Compile Include="Controls\FwTextBoxTests.cs" />
     <Compile Include="Controls\TestFontFeaturesButton.cs" />
-    <Compile Include="DummyProgressDlg.cs" />
     <Compile Include="FwCharacterCategorizerTests.cs" />
     <Compile Include="FwChooseAnthroListModelTests.cs" />
     <Compile Include="OpenFileDialogLinuxTests.cs" />
     <Compile Include="ProgressDlgTests.cs" />
     <Compile Include="RestoreProjectPresenterTests.cs" />
-    <Compile Include="TestWSContainer.cs" />
     <Compile Include="ValidCharactersDlgTests.cs" />
     <Compile Include="..\AssemblyInfoForTests.cs">
       <Link>AssemblyInfoForTests.cs</Link>

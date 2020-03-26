@@ -7,10 +7,9 @@ using System.IO;
 using System.Windows.Forms;
 using ECInterfaces;
 using NUnit.Framework;
-using SIL.FieldWorks.FwCoreDlgs;
 using SilEncConverters40;
 
-namespace AddConverterDlgTests
+namespace SIL.FieldWorks.FwCoreDlgs
 {
 	/// <summary>
 	/// Class for testing the CnvtrPropertiesCtrl
@@ -411,7 +410,7 @@ namespace AddConverterDlgTests
 		private sealed class DummyAddCnvtrDlg : AddCnvtrDlg
 		{
 			/// <summary />
-			public DummyAddCnvtrDlg()
+			internal DummyAddCnvtrDlg()
 				: base(null, null, null, null, false)
 			{
 			}

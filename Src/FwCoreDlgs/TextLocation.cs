@@ -7,7 +7,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 	/// <summary>
 	/// Determines where the text is drawn if outside of the button
 	/// </summary>
-	public enum TextLocation
+	internal enum TextLocation
 	{
 		/// <summary>Text is drawn below the button/image</summary>
 		Below = 0,

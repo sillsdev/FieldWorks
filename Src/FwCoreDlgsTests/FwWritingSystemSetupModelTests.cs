@@ -21,12 +21,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 {
 	class FwWritingSystemSetupModelTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
 	{
-
-		[SetUp]
-		public void SetUp()
-		{
-		}
-
 		[Test]
 		public void CanCreateModel()
 		{
@@ -515,8 +509,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			addMenuItems.First(item => item.MenuText.Contains("Audio")).ClickHandler.Invoke(this, new EventArgs());
 			testModel.SelectWs("en");
 			// SUT
-			var mergeTargets = testModel.MergeTargets;
-			Assert.That(mergeTargets.Count(), Is.EqualTo(1));
+			var mergeTargets = testModel.MergeTargets.ToList();
+			Assert.That(mergeTargets.Count, Is.EqualTo(1));
 			Assert.That(mergeTargets.First().WorkingWs.LanguageTag, Is.StringMatching("fr"));
 		}
 
@@ -667,7 +661,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			var container = new TestWSContainer(new [] { "en" }, new [] { "fr" });
 			var testModel = new FwWritingSystemSetupModel(container, type);
-			Assert.That(testModel.Title, Is.StringContaining(string.Format("{0} Writing System Properties", type)));
+			Assert.That(testModel.Title, Is.StringContaining($"{type} Writing System Properties"));
 		}
 
 		[Test]
@@ -1228,8 +1222,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 		private CoreWritingSystemDefinition GetOrCreateWs(string code)
 		{
-			CoreWritingSystemDefinition ws;
-			if (!Cache.ServiceLocator.WritingSystemManager.TryGet(code, out ws))
+			if (!Cache.ServiceLocator.WritingSystemManager.TryGet(code, out var ws))
 			{
 				ws = Cache.ServiceLocator.WritingSystemManager.Create(code);
 			}
@@ -1249,7 +1242,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			return false;
 		}
 
-		internal class TestWSContainer : IWritingSystemContainer
+		private sealed class TestWSContainer : IWritingSystemContainer
 		{
 			private IWritingSystemContainer _writingSystemContainerImplementation;
 
@@ -1258,7 +1251,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			private List<CoreWritingSystemDefinition> _curVern = new List<CoreWritingSystemDefinition>();
 			private List<CoreWritingSystemDefinition> _curAnaly = new List<CoreWritingSystemDefinition>();
 
-			public TestWSContainer(string[] vernacular, string[] analysis = null, string[] curVern = null, string[] curAnaly = null)
+			internal TestWSContainer(string[] vernacular, string[] analysis = null, string[] curVern = null, string[] curAnaly = null)
 			{
 				foreach (var lang in vernacular)
 				{
@@ -1300,7 +1293,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				Repo = new TestLdmlInXmlWritingSystemRepository();
 			}
 
-			public TestWSContainer(CoreWritingSystemDefinition[] vernacular)
+			internal TestWSContainer(CoreWritingSystemDefinition[] vernacular)
 			{
 				_vernacular.AddRange(vernacular);
 			}
@@ -1328,7 +1321,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			/// <summary>
 			/// Test repo
 			/// </summary>
-			public IWritingSystemRepository Repo { get; set; }
+			private IWritingSystemRepository Repo { get; }
 		}
 	}
 }

@@ -4,27 +4,28 @@
 
 using System.Drawing;
 using System.Windows.Forms;
+using SIL.FieldWorks.FwCoreDlgs;
 
-namespace SIL.FieldWorks.FwCoreDlgs
+namespace SIL.FieldWorks
 {
 	/// <summary/>
-	public partial class WizardStep : UserControl
+	internal sealed partial class WizardStep : UserControl
 	{
 		/// <summary/>
-		public WizardStep()
+		internal WizardStep()
 		{
 			InitializeComponent();
 		}
 
 		/// <summary/>
-		public void Bind(IWizardStep step, bool isFirst, bool isLast)
+		internal void Bind(IWizardStep step, bool isFirst, bool isLast)
 		{
 			_stepName.Text = step.StepName;
 			_optionalIndicator.Visible = step.IsOptional;
 
-			_statusImage.Image = step.IsComplete ? Properties.Resources.WizardStepComplete : Properties.Resources.WizardNotComplete;
-			_lineToNextImage.Image = Properties.Resources.WizardConnectToStep;
-			_lineToPreviousImage.Image = Properties.Resources.WizardConnectToStep;
+			_statusImage.Image = step.IsComplete ? FwCoreDlgs.Properties.Resources.WizardStepComplete : FwCoreDlgs.Properties.Resources.WizardNotComplete;
+			_lineToNextImage.Image = FwCoreDlgs.Properties.Resources.WizardConnectToStep;
+			_lineToPreviousImage.Image = FwCoreDlgs.Properties.Resources.WizardConnectToStep;
 
 			if (isFirst)
 			{

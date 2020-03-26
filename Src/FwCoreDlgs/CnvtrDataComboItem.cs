@@ -7,20 +7,20 @@ using ECInterfaces;
 namespace SIL.FieldWorks.FwCoreDlgs
 {
 	/// <summary />
-	public class CnvtrDataComboItem
+	internal sealed class CnvtrDataComboItem
 	{
 		/// <summary />
-		public CnvtrDataComboItem(string name, ConvType type)
+		internal CnvtrDataComboItem(string name, ConvType type)
 		{
 			Name = name;
 			Type = type;
 		}
 
 		/// <summary />
-		public string Name { get; set; }
+		internal string Name { get; set; }
 
 		/// <summary />
-		public ConvType Type { get; set; }
+		internal ConvType Type { get; set; }
 
 		/// <summary />
 		public override string ToString()

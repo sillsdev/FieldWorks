@@ -17,7 +17,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 	/// operations that change the contents of the list have to have side effects
 	/// on the control.
 	/// </summary>
-	public class ObjectCollection : IList, IDisposable
+	public sealed class ObjectCollection : IList, IDisposable
 	{
 		private ArrayList m_list;
 		private FwListBox m_owner;
@@ -25,16 +25,9 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		/// <summary>
 		/// Construct empty.
 		/// </summary>
-		public ObjectCollection(FwListBox owner)
+		internal ObjectCollection(FwListBox owner)
 		{
 			m_list = new ArrayList();
-			m_owner = owner;
-		}
-
-		/// <summary />
-		public ObjectCollection(FwListBox owner, object[] values)
-		{
-			m_list = new ArrayList(values);
 			m_owner = owner;
 		}
 
@@ -91,7 +84,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		///
 		/// If subclasses override this method, they should call the base implementation.
 		/// </remarks>
-		protected virtual void Dispose(bool disposing)
+		private void Dispose(bool disposing)
 		{
 			Debug.WriteLineIf(!disposing, "****************** Missing Dispose() call for " + GetType().Name + " ******************");
 			if (IsDisposed)
@@ -118,15 +111,15 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		bool IList.IsFixedSize => false;
 
 		/// <summary>Number of items.</summary>
-		public virtual int Count => m_list.Count;
+		public int Count => m_list.Count;
 
 		/// <summary>Always false; we don't support the DataSource approach. </summary>
-		public virtual bool IsReadOnly => false;
+		public bool IsReadOnly => false;
 
 		/// <summary>
 		/// Indexer. Set must modify the display.
 		/// </summary>
-		public virtual object this[int index]
+		public object this[int index]
 		{
 			get => m_list[index];
 			set
@@ -183,7 +176,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		/// <remarks>
 		/// Enhance JohnT: add the version that takes an ObjectCollection.
 		/// </remarks>
-		public virtual void Clear()
+		public void Clear()
 		{
 			var citems = m_list.Count;
 			ClearAllItems();
@@ -207,8 +200,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			foreach (var obj in m_list)
 			{
 				// Dispose items
-				var disposable = obj as IDisposable;
-				disposable?.Dispose();
+				(obj as IDisposable)?.Dispose();
 			}
 			m_list.Clear();
 		}
@@ -216,7 +208,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		/// <summary>
 		/// See if the item is present.
 		/// </summary>
-		public virtual bool Contains(object item)
+		public bool Contains(object item)
 		{
 			return m_list.Contains(item);
 		}
@@ -242,7 +234,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		/// <summary>
 		/// Get an enumerator for the list.
 		/// </summary>
-		public virtual IEnumerator GetEnumerator()
+		public IEnumerator GetEnumerator()
 		{
 			return m_list.GetEnumerator();
 		}
@@ -250,7 +242,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		/// <summary>
 		/// Find the zero-based position of the item, or -1 if not found.
 		/// </summary>
-		public virtual int IndexOf(object item)
+		public int IndexOf(object item)
 		{
 			return m_list.IndexOf(item);
 		}
@@ -258,7 +250,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		/// <summary>
 		/// Insert the specified item at the specified position.
 		/// </summary>
-		public virtual void Insert(int index, object item)
+		public void Insert(int index, object item)
 		{
 			m_list.Insert(index, item);
 			InsertItemAtIndex(index, item);
@@ -267,7 +259,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		/// <summary>
 		/// Shared function for Insert and Add.
 		/// </summary>
-		protected void InsertItemAtIndex(int index, object item)
+		private void InsertItemAtIndex(int index, object item)
 		{
 			var hvoNew = m_owner.DataAccess.MakeNewObject(InnerFwListBox.kclsItem, InnerFwListBox.khvoRoot, InnerFwListBox.ktagItems, index);
 			m_owner.DataAccess.SetString(hvoNew, InnerFwListBox.ktagText, m_owner.TextOfItem(item));
@@ -285,7 +277,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		}
 
 		/// <summary />
-		public virtual void Remove(object item)
+		public void Remove(object item)
 		{
 			var index = m_list.IndexOf(item);
 			if (index >= 0)
@@ -295,7 +287,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		}
 
 		/// <summary />
-		public virtual void RemoveAt(int index)
+		public void RemoveAt(int index)
 		{
 			m_list.RemoveAt(index);
 			var hvoObj = m_owner.DataAccess.get_VecItem(InnerFwListBox.khvoRoot, InnerFwListBox.ktagItems, index);

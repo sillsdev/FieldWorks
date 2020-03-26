@@ -44,7 +44,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				LoadProjectNameSetup = () => { },
 				LoadVernacularSetup = () => { },
 				LoadAnalysisSetup = () => { },
-				AnthroModel = new FwChooseAnthroListModel { CurrentList = FwChooseAnthroListModel.ListChoice.UserDef }
+				AnthroModel = new FwChooseAnthroListModel { CurrentList = ListChoice.UserDef }
 			};
 			try
 			{
@@ -494,7 +494,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				LoadVernacularSetup = () => { },
 				LoadAnalysisSetup = () => { },
 				ProjectName = dbName,
-				AnthroModel = new FwChooseAnthroListModel { CurrentList = FwChooseAnthroListModel.ListChoice.UserDef }
+				AnthroModel = new FwChooseAnthroListModel { CurrentList = ListChoice.UserDef }
 			};
 			testProject.Next();
 			testProject.SetDefaultWs(new LanguageInfo { LanguageTag = vernWs });
@@ -530,7 +530,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// </summary>
 		/// <param name="dbName">Name of the FW database to smoke</param>
 		/// <param name="failureIsFatal">If true, then failure to delete will fail tests.</param>
-		internal static void DestroyDb(string dbName, bool failureIsFatal)
+		private static void DestroyDb(string dbName, bool failureIsFatal)
 		{
 			try
 			{

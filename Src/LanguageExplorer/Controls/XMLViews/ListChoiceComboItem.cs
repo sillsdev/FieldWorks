@@ -8,7 +8,6 @@ using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Xml.Linq;
-using System.Xml.XPath;
 using LanguageExplorer.Filters;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
@@ -19,7 +18,7 @@ using SIL.Xml;
 namespace LanguageExplorer.Controls.XMLViews
 {
 	/// <summary />
-	public class ListChoiceComboItem : FilterComboItem
+	internal sealed class ListChoiceComboItem : FilterComboItem
 	{
 		private int m_hvoList; // root object of list.
 		private LcmCache m_cache;
@@ -37,7 +36,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		private string GetDisplayPropertyName => m_includeAbbr ? "LongName" : "ShortNameTSS";
 
 		/// <summary />
-		public ListChoiceComboItem(ITsString tssName, FilterSortItem fsi, LcmCache cache, IPropertyTable propertyTable, FwComboBox combo, bool fAtomic, Type filterType = null)
+		internal ListChoiceComboItem(ITsString tssName, FilterSortItem fsi, LcmCache cache, IPropertyTable propertyTable, FwComboBox combo, bool fAtomic, Type filterType = null)
 			: base(tssName, null, fsi)
 		{
 			m_colSpec = fsi.Spec;
@@ -67,12 +66,12 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// Gets or sets the leaf flid.
 		/// </summary>
-		public int LeafFlid { get; set; }
+		internal int LeafFlid { get; set; }
 
 		/// <summary>
 		/// Invokes this instance.
 		/// </summary>
-		public override bool Invoke()
+		internal override bool Invoke()
 		{
 			var labels = GetObjectLabelsForList();
 			var oldTargets = new int[0];

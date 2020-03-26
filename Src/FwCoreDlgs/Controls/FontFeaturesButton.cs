@@ -527,7 +527,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		private static int ConvertFontFeatureCodeToId(string fontFeature)
 		{
 			fontFeature = new string(fontFeature.ToCharArray().Reverse().ToArray());
-			var numbers = fontFeature.Select(x => Convert.ToByte(x)).ToArray();
+			var numbers = fontFeature.Select(Convert.ToByte).ToArray();
 			return BitConverter.ToInt32(numbers, 0);
 		}
 

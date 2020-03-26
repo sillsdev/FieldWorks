@@ -4,15 +4,15 @@
 
 using System.ComponentModel;
 using System.Windows.Forms;
+using SIL.FieldWorks.FwCoreDlgs;
 
-namespace SIL.FieldWorks.FwCoreDlgs
+namespace SIL.FieldWorks
 {
 	/// <summary/>
 	[Browsable(true)]
-	internal sealed partial class FwNewProjectProjectNameControl : UserControl
+	internal partial class FwNewProjectProjectNameControl : UserControl
 	{
 		private FwNewLangProjectModel _model;
-
 		/// <summary/>
 		internal FwNewProjectProjectNameControl(FwNewLangProjectModel model)
 		{

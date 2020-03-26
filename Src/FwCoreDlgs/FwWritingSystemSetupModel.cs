@@ -29,10 +29,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 	/// Presentation model for the WritingSystemConfiguration dialog. Handles one list worth of writing systems.
 	/// e.g. Analysis, or Vernacular
 	/// </summary>
-	public class FwWritingSystemSetupModel
+	internal sealed class FwWritingSystemSetupModel
 	{
 		/// <summary/>
-		public enum ListType
+		internal enum ListType
 		{
 			/// <summary/>
 			Vernacular,
@@ -43,7 +43,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		}
 
 		/// <summary/>
-		public List<WSListItemModel> WorkingList
+		internal List<WSListItemModel> WorkingList
 		{
 			get;
 			set;
@@ -71,78 +71,78 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		};
 
 		/// <summary/>
-		public readonly LcmCache Cache;
+		internal readonly LcmCache Cache;
 
 		private readonly IPublisher _publisher;
 
 		/// <summary/>
-		public event EventHandler WritingSystemListUpdated;
+		internal event EventHandler WritingSystemListUpdated;
 
 		/// <summary/>
-		public delegate void ShowMessageBoxDelegate(string message);
+		internal delegate void ShowMessageBoxDelegate(string message);
 
 		/// <summary/>
-		public delegate bool ChangeLanguageDelegate(out LanguageInfo info);
+		internal delegate bool ChangeLanguageDelegate(out LanguageInfo info);
 
 		/// <summary/>
-		public delegate void ValidCharacterDelegate();
+		internal delegate void ValidCharacterDelegate();
 
 		/// <summary/>
-		public delegate bool ModifyConvertersDelegate(string originalConverter, out string selectedConverter);
+		internal delegate bool ModifyConvertersDelegate(string originalConverter, out string selectedConverter);
 
 		/// <summary/>
-		public delegate bool ConfirmDeleteWritingSystemDelegate(string wsDisplayLabel);
+		internal delegate bool ConfirmDeleteWritingSystemDelegate(string wsDisplayLabel);
 
 		/// <summary/>
-		public delegate bool ConfirmMergeWritingSystemDelegate(string wsToMerge, out CoreWritingSystemDefinition wsTag);
+		internal delegate bool ConfirmMergeWritingSystemDelegate(string wsToMerge, out CoreWritingSystemDefinition wsTag);
 
 		/// <summary/>
-		public delegate void ImportTranslatedListDelegate(string icuLocaleToImport);
+		internal delegate void ImportTranslatedListDelegate(string icuLocaleToImport);
 
 		/// <summary/>
-		public delegate bool SharedWsChangeDelegate(string originalLanguage);
+		internal delegate bool SharedWsChangeDelegate(string originalLanguage);
 
 		/// <summary/>
-		public delegate bool AddNewVernacularLanguageDelegate();
+		internal delegate bool AddNewVernacularLanguageDelegate();
 
 		/// <summary/>
-		public delegate bool ChangeHomographWs(string newHomographWs);
+		internal delegate bool ChangeHomographWs(string newHomographWs);
 
 		/// <summary/>
-		public delegate bool ConfirmClearAdvancedDelegate();
+		internal delegate bool ConfirmClearAdvancedDelegate();
 
 		/// <summary/>
-		public ShowMessageBoxDelegate ShowMessageBox;
+		internal ShowMessageBoxDelegate ShowMessageBox;
 
 		/// <summary/>
-		public ChangeLanguageDelegate ShowChangeLanguage;
+		internal ChangeLanguageDelegate ShowChangeLanguage;
 
 		/// <summary/>
-		public ValidCharacterDelegate ShowValidCharsEditor;
+		internal ValidCharacterDelegate ShowValidCharsEditor;
 
 		/// <summary/>
-		public ModifyConvertersDelegate ShowModifyEncodingConverters;
+		internal ModifyConvertersDelegate ShowModifyEncodingConverters;
 
 		/// <summary/>
-		public ConfirmDeleteWritingSystemDelegate ConfirmDeleteWritingSystem;
+		internal ConfirmDeleteWritingSystemDelegate ConfirmDeleteWritingSystem;
 
 		/// <summary/>
-		public SharedWsChangeDelegate AcceptSharedWsChangeWarning;
+		internal SharedWsChangeDelegate AcceptSharedWsChangeWarning;
 
 		/// <summary/>
-		public AddNewVernacularLanguageDelegate AddNewVernacularLanguageWarning;
+		internal AddNewVernacularLanguageDelegate AddNewVernacularLanguageWarning;
 
 		/// <summary/>
-		public ChangeHomographWs ShouldChangeHomographWs;
+		internal ChangeHomographWs ShouldChangeHomographWs;
 
 		/// <summary/>
-		public ImportTranslatedListDelegate ImportListForNewWs;
+		internal ImportTranslatedListDelegate ImportListForNewWs;
 
 		/// <summary/>
-		public ConfirmMergeWritingSystemDelegate ConfirmMergeWritingSystem;
+		internal ConfirmMergeWritingSystemDelegate ConfirmMergeWritingSystem;
 
 		/// <summary/>
-		public ConfirmClearAdvancedDelegate ConfirmClearAdvanced;
+		internal ConfirmClearAdvancedDelegate ConfirmClearAdvanced;
 
 		private IWritingSystemContainer _wsContainer;
 		private ProjectLexiconSettingsDataMapper _projectLexiconSettingsDataMapper;
@@ -159,10 +159,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <summary>
 		/// event raised when the writing system has been changed by the presenter
 		/// </summary>
-		public event EventHandler OnCurrentWritingSystemChanged = delegate { };
+		internal event EventHandler OnCurrentWritingSystemChanged = delegate { };
 
 		/// <summary/>
-		public FwWritingSystemSetupModel(IWritingSystemContainer container, ListType type, IWritingSystemManager wsManager = null, LcmCache cache = null, IPublisher publisher = null)
+		internal FwWritingSystemSetupModel(IWritingSystemContainer container, ListType type, IWritingSystemManager wsManager = null, LcmCache cache = null, IPublisher publisher = null)
 		{
 			switch (type)
 			{
@@ -201,7 +201,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		}
 
 		/// <summary/>
-		public WritingSystemSetupModel CurrentWsSetupModel
+		internal WritingSystemSetupModel CurrentWsSetupModel
 		{
 			get => _currentWsSetupModel;
 			private set
@@ -267,25 +267,25 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <summary>
 		/// This is used to determine if the 'Advanced' checkbox should be shown under the writing system identity control
 		/// </summary>
-		public bool ShowAdvancedScriptRegionVariantCheckBox => CurrentWsSetupModel.SelectionForSpecialCombo == WritingSystemSetupModel.SelectionsForSpecialCombo.ScriptRegionVariant
-															   || ShowAdvancedScriptRegionVariantView;
+		internal bool ShowAdvancedScriptRegionVariantCheckBox => CurrentWsSetupModel.SelectionForSpecialCombo == WritingSystemSetupModel.SelectionsForSpecialCombo.ScriptRegionVariant
+																 || ShowAdvancedScriptRegionVariantView;
 
 		/// <summary>
 		/// This indicates if the Graphite Font options should be configurable
 		/// </summary>
-		public bool EnableGraphiteFontOptions => _currentWs?.DefaultFont != null && _currentWs.DefaultFont.Engines.HasFlag(FontEngines.Graphite);
+		internal bool EnableGraphiteFontOptions => _currentWs?.DefaultFont != null && _currentWs.DefaultFont.Engines.HasFlag(FontEngines.Graphite);
 
 		/// <summary/>
-		public bool CanMoveUp() => WorkingList.Count > 1 && WorkingList.First().WorkingWs != _currentWs;
+		internal bool CanMoveUp() => WorkingList.Count > 1 && WorkingList.First().WorkingWs != _currentWs;
 
 		/// <summary/>
-		public bool CanMoveDown() => WorkingList.Count > 1 && WorkingList.Last().WorkingWs != _currentWs;
+		internal bool CanMoveDown() => WorkingList.Count > 1 && WorkingList.Last().WorkingWs != _currentWs;
 
 		/// <summary/>
-		public bool CanMerge() => WorkingList.Count > 1 && !IsCurrentWsNew() && !IsPlainEnglish();
+		internal bool CanMerge() => WorkingList.Count > 1 && !IsCurrentWsNew() && !IsPlainEnglish();
 
 		/// <summary/>
-		public bool CanDelete()
+		internal bool CanDelete()
 		{
 			// The only remaining WS cannot be deleted from the list.
 			// Plain English is a required Analysis WS, but it can be removed from other lists.
@@ -302,7 +302,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		}
 
 		/// <summary/>
-		public void SelectWs(string wsTag)
+		internal void SelectWs(string wsTag)
 		{
 			// didn't change, no-op
 			if (wsTag == _currentWs.LanguageTag)
@@ -313,7 +313,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		}
 
 		/// <summary/>
-		public void SelectWs(int index)
+		internal void SelectWs(int index)
 		{
 			// didn't change, no-op
 			if (index == CurrentWritingSystemIndex)
@@ -331,7 +331,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		}
 
 		/// <summary/>
-		public void ToggleInCurrentList()
+		internal void ToggleInCurrentList()
 		{
 			var index = CurrentWritingSystemIndex;
 			var newListItem = new WSListItemModel(!WorkingList[index].InCurrentList, WorkingList[index].OriginalWs, WorkingList[index].WorkingWs);
@@ -341,7 +341,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		}
 
 		/// <summary/>
-		public void MoveUp()
+		internal void MoveUp()
 		{
 			var currentItem = WorkingList.Find(ws => ws.WorkingWs == _currentWs);
 			var currentIndex = WorkingList.IndexOf(currentItem);
@@ -355,7 +355,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		}
 
 		/// <summary/>
-		public void MoveDown()
+		internal void MoveDown()
 		{
 			var currentItem = WorkingList.Find(ws => ws.WorkingWs == _currentWs);
 			var currentIndex = WorkingList.IndexOf(currentItem);
@@ -369,13 +369,13 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		}
 
 		/// <summary/>
-		public bool IsListValid => IsAtLeastOneSelected && FirstDuplicateWs == null;
+		internal bool IsListValid => IsAtLeastOneSelected && FirstDuplicateWs == null;
 
 		/// <summary/>
-		public bool IsAtLeastOneSelected => WorkingList.Any(item => item.InCurrentList);
+		internal bool IsAtLeastOneSelected => WorkingList.Any(item => item.InCurrentList);
 
 		/// <returns>the DisplayLabel of the first duplicate WS; if there are no duplicates, <c>null</c></returns>
-		public string FirstDuplicateWs
+		internal string FirstDuplicateWs
 		{
 			get
 			{
@@ -393,17 +393,17 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		}
 
 		/// <summary/>
-		public string Title => $"{_listType.ToString()} Writing System Properties";
+		internal string Title => $"{_listType.ToString()} Writing System Properties";
 
 		/// <summary>
 		/// The code for just the language part of the language tag. e.g. the en in en-Latn-US
 		/// </summary>
-		public string LanguageCode => _currentWs?.Language.Iso3Code;
+		internal string LanguageCode => _currentWs?.Language.Iso3Code;
 
 		/// <summary>
 		/// The language name corresponding to just the language part of the tag e.g. French for fr-fonipa
 		/// </summary>
-		public string LanguageName
+		internal string LanguageName
 		{
 			get => _languageName;
 			set
@@ -422,19 +422,19 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <summary>
 		/// The descriptive name for the current writing system
 		/// </summary>
-		public string WritingSystemName => _currentWs.DisplayLabel;
+		internal string WritingSystemName => _currentWs.DisplayLabel;
 
 		/// <summary/>
-		public string EthnologueLabel => $"Ethnologue entry for {LanguageCode}";
+		internal string EthnologueLabel => $"Ethnologue entry for {LanguageCode}";
 
 		/// <summary/>
-		public string EthnologueLink => $"https://www.ethnologue.com/show_language.asp?code={LanguageCode}";
+		internal string EthnologueLink => $"https://www.ethnologue.com/show_language.asp?code={LanguageCode}";
 
 		/// <summary/>
-		public int CurrentWritingSystemIndex => WorkingList.FindIndex(ws => ws.WorkingWs == _currentWs);
+		internal int CurrentWritingSystemIndex => WorkingList.FindIndex(ws => ws.WorkingWs == _currentWs);
 
 		/// <summary/>
-		public void ChangeLanguage()
+		internal void ChangeLanguage()
 		{
 			if (_currentWs.Language.Code == "en")
 			{
@@ -487,7 +487,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <summary>
 		/// Save all the writing system changes into the container
 		/// </summary>
-		public void Save()
+		internal void Save()
 		{
 			// Update the writing system data
 			// when this dialog is called from the new language project dialog, there is no FDO cache,
@@ -697,12 +697,12 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		}
 
 		/// <summary/>
-		public List<WSMenuItemModel> GetAddMenuItems()
+		internal List<WSMenuItemModel> GetAddMenuItems()
 		{
 			var addIpaInputSystem = FwCoreDlgs.WritingSystemList_AddIpa;
 			var addAudioInputSystem = FwCoreDlgs.WritingSystemList_AddAudio;
 			var addDialect = FwCoreDlgs.WritingSystemList_AddDialect;
-			var addNewLanguage = "Add new language...";
+			const string addNewLanguage = "Add new language...";
 			var menuItemList = new List<WSMenuItemModel>();
 			if (!ListHasIpaForSelectedWs())
 			{
@@ -718,7 +718,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		}
 
 		/// <summary/>
-		public List<WSMenuItemModel> GetRightClickMenuItems()
+		internal List<WSMenuItemModel> GetRightClickMenuItems()
 		{
 			var deleteWritingSystem = FwCoreDlgs.WritingSystemList_DeleteWs;
 			var mergeWritingSystem = FwCoreDlgs.WritingSystemList_MergeWs;
@@ -870,13 +870,13 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		}
 
 		/// <summary/>
-		public void EditValidCharacters()
+		internal void EditValidCharacters()
 		{
 			ShowValidCharsEditor();
 		}
 
 		/// <summary/>
-		public List<string> GetEncodingConverters()
+		internal List<string> GetEncodingConverters()
 		{
 			var encodingConverters = new List<string> {FwCoreDlgs.kstidNone};
 			encodingConverters.AddRange(EncodingConverterKeys().Cast<string>());
@@ -884,7 +884,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		}
 
 		/// <summary/>
-		public void ModifyEncodingConverters()
+		internal void ModifyEncodingConverters()
 		{
 			var oldConverter = CurrentLegacyConverter;
 			if (ShowModifyEncodingConverters(oldConverter, out var selectedConverter))
@@ -901,7 +901,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		}
 
 		/// <summary/>
-		public string CurrentLegacyConverter
+		internal string CurrentLegacyConverter
 		{
 			get => _currentWs?.LegacyMapping;
 			set => _currentWs.LegacyMapping = value;
@@ -911,7 +911,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// Any writing system that existed before we started working and that is not the current writing system is
 		/// a potential merge target
 		/// </summary>
-		public IEnumerable<WSListItemModel> MergeTargets
+		internal IEnumerable<WSListItemModel> MergeTargets
 		{
 			get
 			{
@@ -922,12 +922,12 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <summary>
 		/// Are we displaying the share with SLDR setting
 		/// </summary>
-		public bool ShowSharingWithSldr => _listType == ListType.Vernacular;
+		internal bool ShowSharingWithSldr => _listType == ListType.Vernacular;
 
 		/// <summary>
 		/// Should the vernacular language data be shared with the SLDR
 		/// </summary>
-		public bool IsSharingWithSldr {
+		internal bool IsSharingWithSldr {
 			get => _projectLexiconSettings.AddWritingSystemsToSldr;
 			set => _projectLexiconSettings.AddWritingSystemsToSldr = value;
 		}
@@ -938,10 +938,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// or changing the selection state of a writing system.
 		/// </summary>
 		/// <remarks>We are not currently attempting to set back to false if a user undoes some work</remarks>
-		public bool CurrentWsListChanged { get; private set; }
+		internal bool CurrentWsListChanged { get; private set; }
 
 		/// <summary/>
-		public SpellingDictionaryItem SpellingDictionary
+		internal SpellingDictionaryItem SpellingDictionary
 		{
 			get => string.IsNullOrEmpty(_currentWs?.SpellCheckingId)
 					? new SpellingDictionaryItem(null, null) : new SpellingDictionaryItem(_currentWs.SpellCheckingId.Replace('_', '-'), _currentWs.SpellCheckingId);
@@ -955,7 +955,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		}
 
 		/// <summary/>
-		public SpellingDictionaryItem[] GetSpellingDictionaryComboBoxItems()
+		internal SpellingDictionaryItem[] GetSpellingDictionaryComboBoxItems()
 		{
 			var dictionaries = new List<SpellingDictionaryItem> { new SpellingDictionaryItem(FwCoreDlgs.ksWsNoDictionaryMatches, FwCoreDlgs.kstidNone) };
 			var spellCheckingDictionary = _currentWs.SpellCheckingId;
@@ -965,7 +965,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			}
 			var fDictionaryExistsForLanguage = false;
 			var fAlternateDictionaryExistsForLanguage = false;
-			dictionaries.AddRange(SpellingHelper.GetDictionaryIds().OrderBy(di => GetDictionaryName(di)).Select(languageId => new SpellingDictionaryItem(GetDictionaryName(languageId), languageId)));
+			dictionaries.AddRange(SpellingHelper.GetDictionaryIds().OrderBy(GetDictionaryName).Select(languageId => new SpellingDictionaryItem(GetDictionaryName(languageId), languageId)));
 			return dictionaries.ToArray();
 		}
 

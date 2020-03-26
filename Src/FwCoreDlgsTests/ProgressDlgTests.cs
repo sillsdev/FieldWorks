@@ -2,6 +2,7 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System.ComponentModel;
 using System.Threading;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwUtils;
@@ -67,10 +68,20 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// although that's not an incredibly exciting test.
 		/// </summary>
 		[Test]
-		[Category("DesktopRequired")]
+		[NUnit.Framework.Category("DesktopRequired")]
 		public void TestWithoutCancel()
 		{
 			Assert.AreEqual(10, (int)m_dlg.RunTask(false, BackgroundTask));
+		}
+
+		/// <summary />
+		private sealed class DummyProgressDlg : ProgressDialogWithTask
+		{
+			/// <summary />
+			internal DummyProgressDlg(ISynchronizeInvoke synchronizeInvoke)
+				: base(synchronizeInvoke)
+			{
+			}
 		}
 	}
 }

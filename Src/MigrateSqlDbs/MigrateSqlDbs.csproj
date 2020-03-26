@@ -94,7 +94,7 @@
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="FwCoreDlgs, Version=10.0.0.21125, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="FwCoreDlgs">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\FwCoreDlgs.dll</HintPath>
     </Reference>
@@ -102,7 +102,7 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\SIL.LCModel.dll</HintPath>
     </Reference>
-    <Reference Include="FwUtils, Version=6.9.4.25643, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="FwUtils">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\FwUtils.dll</HintPath>
     </Reference>

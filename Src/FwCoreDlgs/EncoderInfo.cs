@@ -7,28 +7,31 @@ using ECInterfaces;
 namespace SIL.FieldWorks.FwCoreDlgs
 {
 	/// <summary />
-	internal class EncoderInfo
+	internal sealed class EncoderInfo
 	{
 		/// <summary>The name of the encoding converter.</summary>
-		public string m_name = string.Empty;
+		internal string Name { get; }
+
 		/// <summary>The converter method, e.g. CC table, TecKit, etc.</summary>
-		public ConverterType m_method;
+		internal ConverterType Method { get; }
+
 		/// <summary>Name of the file containing the conversion table, etc.</summary>
-		public string m_fileName = string.Empty;
+		internal string FileName { get; }
+
 		/// <summary>Type of conversion, e.g. from legacy to Unicode.</summary>
-		public ConvType m_fromToType;
+		internal ConvType FromToType { get; }
 
 		/// <summary />
 		/// <param name="name">The name of the encoding converter.</param>
 		/// <param name="method">The method, e.g. CC table, TecKit, etc.</param>
 		/// <param name="fileName">Name of the file containing the conversion table, etc.</param>
 		/// <param name="fromToType">Type of conversion, e.g. from legacy to Unicode.</param>
-		public EncoderInfo(string name, ConverterType method, string fileName, ConvType fromToType)
+		internal EncoderInfo(string name, ConverterType method, string fileName, ConvType fromToType)
 		{
-			m_name = name;
-			m_method = method;
-			m_fileName = fileName;
-			m_fromToType = fromToType;
+			Name = name;
+			Method = method;
+			FileName = fileName;
+			FromToType = fromToType;
 		}
 	}
 }

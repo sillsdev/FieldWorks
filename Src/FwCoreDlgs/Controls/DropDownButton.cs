@@ -12,14 +12,14 @@ using SIL.FieldWorks.Resources;
 namespace SIL.FieldWorks.FwCoreDlgs.Controls
 {
 	/// <summary />
-	public class DropDownButton : Button
+	internal sealed class DropDownButton : Button
 	{
 		FwComboBoxBase m_comboBox;
 		bool m_isHot;
 		bool m_isPressed;
 
 		/// <summary />
-		public DropDownButton(FwComboBoxBase comboBox)
+		internal DropDownButton(FwComboBoxBase comboBox)
 		{
 			m_comboBox = comboBox;
 			if (Application.RenderWithVisualStyles)
@@ -123,7 +123,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		/// <summary>
 		/// Gets the height of the preferred.
 		/// </summary>
-		public int PreferredHeight
+		internal int PreferredHeight
 		{
 			get
 			{
@@ -142,7 +142,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		/// <summary>
 		/// Gets the width of the preferred.
 		/// </summary>
-		public int PreferredWidth => 17;
+		internal int PreferredWidth => 17;
 
 		/// <inheritdoc />
 		public override void NotifyDefault(bool value)

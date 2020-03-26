@@ -21,7 +21,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 	/// It is displayed using the Launch method. It is automatically hidden if the user clicks outside it
 	/// (and the click is absorbed in the process). The item the user is hovering over is highlighted.
 	/// </summary>
-	public class ComboListBox : FwListBox, IComboList, IDropDownBox
+	internal sealed class ComboListBox : FwListBox, IComboList, IDropDownBox
 	{
 		#region Data members
 
@@ -30,13 +30,13 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		// We track the form that was active when we launched, in hopes of working around
 		// a peculiar bug that brings another window to the front when we close on some
 		// systems (LT-2962).
-		Form m_mainFlexForm;
+		private Form m_mainFlexForm;
 		// This filter captures clicks outside the list box while it is displayed.
-		FwComboMessageFilter m_comboMessageFilter;
+		private FwComboMessageFilter m_comboMessageFilter;
 		// This flag determines whether we close the Dropdown List during a selection.
 		// Button control that can contain the button that is used to bring up the list
 		// This could be null / empty if not used.
-		ComboBoxState m_state = ComboBoxState.Normal;
+		private ComboBoxState m_state = ComboBoxState.Normal;
 
 		private bool m_activateOnShow;
 
@@ -47,7 +47,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		/// <summary>
 		/// Gets the state.
 		/// </summary>
-		public ComboBoxState State
+		internal ComboBoxState State
 		{
 			get => m_state;
 
@@ -61,7 +61,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		/// <summary>
 		/// Gets or sets a value indicating whether the combo box has a border.
 		/// </summary>
-		public bool HasBorder
+		internal bool HasBorder
 		{
 			get => BorderStyle != BorderStyle.None;
 			set => BorderStyle = value ? BorderStyle.FixedSingle : BorderStyle.None;

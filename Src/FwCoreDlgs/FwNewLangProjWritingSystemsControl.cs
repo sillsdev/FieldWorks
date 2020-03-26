@@ -10,20 +10,20 @@ using SIL.Windows.Forms.WritingSystems;
 namespace SIL.FieldWorks.FwCoreDlgs
 {
 	/// <summary/>
-	public partial class FwNewLangProjWritingSystemsControl : UserControl
+	internal sealed partial class FwNewLangProjWritingSystemsControl : UserControl
 	{
 		private FwNewLangProjectModel _model;
 
 		private FwWritingSystemSetupModel.ListType _listType;
 
 		/// <summary/>
-		public FwNewLangProjWritingSystemsControl() : this(null, FwWritingSystemSetupModel.ListType.Vernacular)
+		internal FwNewLangProjWritingSystemsControl() : this(null, FwWritingSystemSetupModel.ListType.Vernacular)
 		{
 			// for designer
 		}
 
 		/// <summary/>
-		public FwNewLangProjWritingSystemsControl(FwNewLangProjectModel model, FwWritingSystemSetupModel.ListType type)
+		internal FwNewLangProjWritingSystemsControl(FwNewLangProjectModel model, FwWritingSystemSetupModel.ListType type)
 		{
 			InitializeComponent();
 			if (type != FwWritingSystemSetupModel.ListType.Vernacular &&
@@ -60,7 +60,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			}
 		}
 
-		private void ChooseLanguageClick(object sender, System.EventArgs e)
+		private void ChooseLanguageClick(object sender, EventArgs e)
 		{
 			using (var langPicker = new LanguageLookupDialog())
 			{

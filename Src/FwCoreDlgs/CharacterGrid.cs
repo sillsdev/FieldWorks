@@ -423,14 +423,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			base.OnCellFormatting(e);
 			var cell = this[e.ColumnIndex, e.RowIndex];
-			if (cell?.Tag is Font)
-			{
-				e.CellStyle.Font = (Font)cell.Tag;
-			}
-			else
-			{
-				e.CellStyle.Font = Font;
-			}
+			e.CellStyle.Font = cell?.Tag is Font font ? font : Font;
 		}
 
 		/// <inheritdoc />
@@ -438,8 +431,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			base.OnCellPainting(e);
 
-			var img = this[e.ColumnIndex, e.RowIndex].Tag as Image;
-			if (img != null)
+			if (this[e.ColumnIndex, e.RowIndex].Tag is Image img)
 			{
 				// Paint the image that was found in the tag property.
 				var x = (e.CellBounds.Width - img.Width) / 2;
@@ -807,7 +799,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				Control = ctrl;
 				if (Control == null)
 				{
-					Common.FwUtils.FwUtils.ErrorBeep();
+					FwUtils.ErrorBeep();
 					return;
 				}
 				if (CharacterFont == null)

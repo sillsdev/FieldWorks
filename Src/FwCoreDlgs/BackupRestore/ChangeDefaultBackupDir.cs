@@ -12,7 +12,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.BackupRestore
 	/// If the user selects a location for FW backups which is not in the default location this dialog asks if
 	/// they want to change the default location.
 	/// </summary>
-	public partial class ChangeDefaultBackupDir : Form
+	internal sealed partial class ChangeDefaultBackupDir : Form
 	{
 		#region Member Variables
 
@@ -28,7 +28,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.BackupRestore
 		}
 
 		/// <summary />
-		public ChangeDefaultBackupDir(IHelpTopicProvider helpTopicProvider)
+		internal ChangeDefaultBackupDir(IHelpTopicProvider helpTopicProvider)
 			: this()
 		{
 			m_helpTopicProvider = helpTopicProvider;

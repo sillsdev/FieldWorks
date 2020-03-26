@@ -7,7 +7,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 	/// <summary>
 	/// Kinds of checks this control might run if activated.
 	/// </summary>
-	public enum CheckType
+	internal enum CheckType
 	{
 		/// <summary>Use PunctuationCheck</summary>
 		Punctuation,

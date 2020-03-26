@@ -12,10 +12,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 	/// <summary>
 	/// Implements a label control whose background appearance mimics that of a list view header.
 	/// </summary>
-	public sealed class HeaderLabel : FwTextPanel
+	internal sealed class HeaderLabel : FwTextPanel
 	{
 		/// <summary />
-		public HeaderLabel()
+		internal HeaderLabel()
 		{
 			// By default, don't hide mnemonic prefix.
 			TextFormatFlags &= ~TextFormatFlags.HidePrefix;
@@ -26,7 +26,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// right edge of the panel is painted the window background color. This is the
 		/// way a list view header is drawn... believe it or not.
 		/// </summary>
-		public bool ShowWindowBackgroundOnTopAndRightEdge { get; set; } = true;
+		internal bool ShowWindowBackgroundOnTopAndRightEdge { get; set; } = true;
 
 		/// <inheritdoc />
 		protected override void OnPaintBackground(PaintEventArgs e)

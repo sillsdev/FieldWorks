@@ -15,7 +15,7 @@ namespace LanguageExplorer.Controls
 	/// <summary>
 	/// Handles a TreeCombo control. Subclass must at least implement MakeMenuItems.
 	/// </summary>
-	public abstract class PopupTreeManager : IDisposable
+	internal abstract class PopupTreeManager : IDisposable
 	{
 		private const int kEmpty = 0;
 		private const int kLine = -1;

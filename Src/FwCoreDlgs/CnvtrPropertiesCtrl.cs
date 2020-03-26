@@ -16,32 +16,32 @@ using SilEncConverters40;
 namespace SIL.FieldWorks.FwCoreDlgs
 {
 	/// <summary />
-	public class CnvtrPropertiesCtrl : UserControl
+	internal class CnvtrPropertiesCtrl : UserControl
 	{
 		// Note: several of these controls are public in order to facilitate testing.
 		// Few of them are actually required by other classes
 		/// <summary></summary>
-		public FwOverrideComboBox cboConversion;
+		internal FwOverrideComboBox cboConversion;
 		/// <summary>name of the converter</summary>
-		public TextBox txtName;
+		internal TextBox txtName;
 		/// <summary />
-		public Button btnMapFile;
+		internal Button btnMapFile;
 		/// <summary />
-		public TextBox txtMapFile;
+		internal TextBox txtMapFile;
 		/// <summary />
-		public FwOverrideComboBox cboConverter;
+		internal FwOverrideComboBox cboConverter;
 		/// <summary />
-		public FwOverrideComboBox cboSpec;
+		internal FwOverrideComboBox cboSpec;
 		private IOpenFileDialog ofDlg = new OpenFileDialogAdapter();
 
 		/// <summary>Event handler when settings for a converter change.</summary>
-		public event EventHandler ConverterFileChanged;
+		internal event EventHandler ConverterFileChanged;
 		/// <summary>Event handler for updating a changed list of encoding converters.</summary>
-		public event EventHandler ConverterListChanged;
+		internal event EventHandler ConverterListChanged;
 		// Raised when a new converter is added or a modified one saved.
 		// The client should generally select the saved converter in the list.
 		/// <summary>Event handler for a saved encoding converters.</summary>
-		public event EventHandler ConverterSaved;
+		internal event EventHandler ConverterSaved;
 
 		private bool m_fOnlyUnicode;
 		/// <summary>The Encoding Converter may have changed and may need to be saved.</summary>
@@ -76,29 +76,29 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <summary>
 		/// Sets the application.
 		/// </summary>
-		public IApp Application { private get; set; }
+		internal IApp Application { private get; set; }
 
 		/// <summary>
 		/// Gets or sets the converters.
 		/// </summary>
-		public EncConverters Converters { get; set; }
+		internal EncConverters Converters { get; set; }
 
 		/// <summary>
 		/// Gets the current converter name.
 		/// </summary>
-		public string ConverterName => txtName.Text;
+		internal string ConverterName => txtName.Text;
 
 		/// <summary>
 		/// Gets or sets a value indicating whether the encoding converter may have changed.
 		/// </summary>
-		public bool ConverterChanged
+		internal bool ConverterChanged
 		{
 			get => DesignMode || m_fConverterChanged || m_undefinedList.ContainsKey(ConverterName);
 			set => m_fConverterChanged = value;
 		}
 
 		/// <summary />
-		public CnvtrPropertiesCtrl()
+		internal CnvtrPropertiesCtrl()
 		{
 			// This call is required by the Windows.Forms Form Designer.
 			InitializeComponent();
@@ -109,7 +109,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <summary>
 		/// If true, show and create only Unicode converters (both to and to/from).
 		/// </summary>
-		public bool OnlyUnicode
+		internal bool OnlyUnicode
 		{
 			get => m_fOnlyUnicode;
 			set
@@ -477,7 +477,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <summary>
 		/// Occurs on loading the Properties Tab
 		/// </summary>
-		public void CnvtrPropertiesCtrl_Load(object sender, EventArgs e)
+		internal void CnvtrPropertiesCtrl_Load(object sender, EventArgs e)
 		{
 			// This is a fall-back if the creator does not have a converters object.
 			// It is generally preferable for the creator to make one and pass it in.
@@ -593,7 +593,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// In the standard usage, this is called from the selection changed event
 		/// handler of the combo box that shows the installed mappings.
 		/// </summary>
-		public void SelectMapping(string mapname)
+		internal void SelectMapping(string mapname)
 		{
 			m_selectingMapping = true;
 			txtName.Text = mapname;
@@ -610,8 +610,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			{
 				if (m_undefinedList.TryGetValue(mapname, out undefinedEncoder))
 				{
-					convType = undefinedEncoder.m_fromToType;
-					implType = GetConverterStringForType(undefinedEncoder.m_method);
+					convType = undefinedEncoder.FromToType;
+					implType = GetConverterStringForType(undefinedEncoder.Method);
 				}
 				else
 				{
@@ -654,7 +654,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			}
 			// Retrieve this AFTER paths that set cboConverter.SelectedIndex, which has a side-effect
 			// (indirectly through setting txtMapFile.Text) of clearing m_specs.
-			m_specs = undefinedEncoder != null ? undefinedEncoder.m_fileName : conv.ConverterIdentifier;
+			m_specs = undefinedEncoder != null ? undefinedEncoder.FileName : conv.ConverterIdentifier;
 			if (m_supportedConverter)
 			{
 				// Fill in whatever specs control is visible.
@@ -711,7 +711,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// Something that happened in our control changed the list of mappings.
 		/// Notify anyone who cares.
 		/// </summary>
-		public void RaiseListChanged()
+		internal void RaiseListChanged()
 		{
 			OnConverterListChanged(new EventArgs());
 		}
@@ -736,7 +736,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <summary>
 		/// The converter has changed. Notify anyone who cares.
 		/// </summary>
-		public void RaiseConverterFileChanged()
+		internal void RaiseConverterFileChanged()
 		{
 			OnConverterFileChanged(new EventArgs());
 		}
@@ -804,7 +804,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// Enable/Disable everything in the pane
 		/// </summary>
 		/// <param name="toState">True if enabling, False if disabling.</param>
-		public void EnableEntirePane(bool toState)
+		internal void EnableEntirePane(bool toState)
 		{
 			if (lblSpecs.Enabled == toState)
 			{

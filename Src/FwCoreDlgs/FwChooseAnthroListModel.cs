@@ -10,32 +10,13 @@ namespace SIL.FieldWorks.FwCoreDlgs
 	/// <summary>
 	/// Presentation model for the FwChooseAnthroListCtrl
 	/// </summary>
-	public class FwChooseAnthroListModel
+	internal sealed class FwChooseAnthroListModel
 	{
-		/// <summary>
-		/// Enum representing the anthropology list options presented to the user
-		/// </summary>
-		public enum ListChoice
-		{
-			/// <summary>
-			/// Empty list, user defines later
-			/// </summary>
-			UserDef,
-			/// <summary>
-			/// Standard OCM list
-			/// </summary>
-			OCM,
-			/// <summary>
-			/// Enhanced OCM list ("FRAME")
-			/// </summary>
-			FRAME
-		}
+		/// <summary/>
+		internal ListChoice CurrentList = ListChoice.FRAME;
 
 		/// <summary/>
-		public ListChoice CurrentList = ListChoice.FRAME;
-
-		/// <summary/>
-		public string AnthroFileName
+		internal string AnthroFileName
 		{
 			get
 			{

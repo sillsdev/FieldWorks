@@ -15,7 +15,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 	/// <summary />
 	[Serializable]
 	[Designer(typeof(FwButtonDesigner))]
-	public sealed class FwButton : Button
+	internal sealed class FwButton : Button
 	{
 		/// <summary>
 		/// States that the button can have
@@ -47,7 +47,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <summary />
 		private SunkenAppearances m_SunkenAppearance = SunkenAppearances.Shallow;
 		/// <summary />
-		private FieldWorks.FwCoreDlgs.ButtonStyles m_Style = FieldWorks.FwCoreDlgs.ButtonStyles.Popup;
+		private ButtonStyles m_Style = ButtonStyles.Popup;
 		/// <summary>
 		/// This flag is only relevant when the button is a toggle button (i.e.
 		/// m_fButtonToggles = true). When this flag is true, it causes the button
@@ -65,7 +65,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private Container components = null;
 
 		/// <summary />
-		public FwButton()
+		internal FwButton()
 		{
 			SetStyle(ControlStyles.ResizeRedraw, true);
 			SetStyle(ControlStyles.SupportsTransparentBackColor, true);
@@ -110,7 +110,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// Press or release the button. If the button does not toggle, this method does nothing.
 		/// </summary>
 		/// <param name="fPressed">True if button should be shown pressed.</param>
-		public void PressButton(bool fPressed)
+		internal void PressButton(bool fPressed)
 		{
 			if (ButtonToggles && Pressed != fPressed)
 			{
@@ -119,7 +119,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				{
 					m_PaintState = ButtonStates.Down;
 				}
-				else if (ButtonStyle == FieldWorks.FwCoreDlgs.ButtonStyles.Popup)
+				else if (ButtonStyle == ButtonStyles.Popup)
 				{
 					m_PaintState = ButtonStates.Flat;
 				}
@@ -143,7 +143,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// the mouse is over it and a sunken single border when pressed. The standard style will
 		/// give the button a 3D beveled border, 2 pixels wide.
 		/// </remarks>
-		[DefaultValue(FieldWorks.FwCoreDlgs.ButtonStyles.Popup)]
+		[DefaultValue(ButtonStyles.Popup)]
 		[Category("Appearance")]
 		[Description("Determines the button's 3D style. The popup style will show a raised " +
 			"single border when the mouse is over it and a sunken single border when " +
@@ -151,13 +151,13 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			"wide. The raised style is equal to the standard style, except that the border " +
 			"is only 1 pixel wide.")]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Visible)]
-		public FieldWorks.FwCoreDlgs.ButtonStyles ButtonStyle
+		internal ButtonStyles ButtonStyle
 		{
 			get => m_Style;
 			set
 			{
 				m_Style = value;
-				m_dpBorderWidth = m_Style == FieldWorks.FwCoreDlgs.ButtonStyles.Standard ? 2 : 1;
+				m_dpBorderWidth = m_Style == ButtonStyles.Standard ? 2 : 1;
 				Invalidate();
 			}
 		}
@@ -171,7 +171,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		[DefaultValue(ContentAlignment.TopCenter)]
 		[Category("Appearance")]
 		[Description("Determines the alignment of the button if the button doesn't fill the whole control.")]
-		public ContentAlignment ButtonAlign { get; set; } = ContentAlignment.TopCenter;
+		internal ContentAlignment ButtonAlign { get; set; } = ContentAlignment.TopCenter;
 
 		/// <summary>
 		/// Sets or returns the button's appearance when pressed.
@@ -185,7 +185,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		[DefaultValue(SunkenAppearances.Shallow)]
 		[Category("Appearance")]
 		[Description("Determines how indented the button looks when pressed (ignored for popup button).")]
-		public SunkenAppearances SunkenAppearance
+		internal SunkenAppearances SunkenAppearance
 		{
 			get => m_SunkenAppearance;
 			set
@@ -206,7 +206,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		[DefaultValue(true)]
 		[Category("Appearance")]
 		[Description("Determines if the button's text will appear inside or outside the button area. If the ButtonHeight property is the full height of the control, this property is ignored.")]
-		public bool TextInButton
+		internal bool TextInButton
 		{
 			get => m_fTextInButton;
 			set
@@ -229,13 +229,13 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		[DefaultValue(false)]
 		[Category("Behavior")]
 		[Description("Determines if the button will maintain its state when pressed.")]
-		public bool ButtonToggles { get; set; }
+		internal bool ButtonToggles { get; set; }
 
 		/// <summary>
 		/// Gets a value indicating what toggle state the button is in.
 		/// </summary>
 		[Browsable(false)]
-		public FieldWorks.FwCoreDlgs.ButtonToggleStates ButtonToggleState => (ButtonToggles && Pressed ? FieldWorks.FwCoreDlgs.ButtonToggleStates.Pushed : FieldWorks.FwCoreDlgs.ButtonToggleStates.Unpushed);
+		internal ButtonToggleStates ButtonToggleState => (ButtonToggles && Pressed ? ButtonToggleStates.Pushed : ButtonToggleStates.Unpushed);
 
 		/// <summary>
 		/// Sets or returns the height, in pixels, of the button portion of the control.
@@ -250,7 +250,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <seealso cref="ButtonFillsControl"></seealso>
 		[Category("Layout")]
 		[Description("Determines the button's size. This property is ignored when the ButtonFillsControl property is true.")]
-		public Size ButtonSize
+		internal Size ButtonSize
 		{
 			get => m_ButtonSize;
 			set
@@ -277,7 +277,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		[DefaultValue(true)]
 		[Category("Layout")]
 		[Description("Determines if the button fills the entire control.")]
-		public bool ButtonFillsControl
+		internal bool ButtonFillsControl
 		{
 			get => m_fButtonFillsControl;
 			set
@@ -298,7 +298,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		[DefaultValue(TextLocation.Below)]
 		[Category("Appearance")]
 		[Description("Determines the position of the text relative to the button.")]
-		public TextLocation TextPosition { get; set; } = TextLocation.Below;
+		internal TextLocation TextPosition { get; set; } = TextLocation.Below;
 
 		/// <summary>
 		/// Gets or sets how the text should be trimmed if it is to long to fit
@@ -307,13 +307,13 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		[DefaultValue(StringTrimming.EllipsisCharacter)]
 		[Category("Appearance")]
 		[Description("Determines how the text should be trimmed if it is to long to fit on the button")]
-		public StringTrimming TextTrimming { get; set; } = StringTrimming.EllipsisCharacter;
+		internal StringTrimming TextTrimming { get; set; } = StringTrimming.EllipsisCharacter;
 
 		/// <summary>
 		/// Returns true if the buttons is pressed (locked down)
 		/// </summary>
 		[Browsable(false)]
-		public bool Pressed { get; private set; }
+		internal bool Pressed { get; private set; }
 
 		#endregion
 
@@ -392,20 +392,20 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			}
 			// If the button style is popup and the mouse isn't over the button then
 			// leave without drawing any border.
-			if (m_PaintState == ButtonStates.Flat && ButtonStyle == FieldWorks.FwCoreDlgs.ButtonStyles.Popup)
+			if (m_PaintState == ButtonStates.Flat && ButtonStyle == ButtonStyles.Popup)
 			{
 				return;
 			}
 			BorderTypes brdrType;
 
 			// Determine what type of border to draw for the button.
-			if (ButtonStyle == FieldWorks.FwCoreDlgs.ButtonStyles.Popup)
+			if (ButtonStyle == ButtonStyles.Popup)
 			{
 				brdrType = m_PaintState == ButtonStates.Up ? BorderTypes.SingleRaised : BorderTypes.SingleSunken;
 			}
 			else if (m_PaintState == ButtonStates.Up || m_PaintState == ButtonStates.Flat)
 			{
-				brdrType = ButtonStyle == FieldWorks.FwCoreDlgs.ButtonStyles.Raised ? BorderTypes.SingleRaised : BorderTypes.DoubleRaised;
+				brdrType = ButtonStyle == ButtonStyles.Raised ? BorderTypes.SingleRaised : BorderTypes.DoubleRaised;
 			}
 			else
 			{

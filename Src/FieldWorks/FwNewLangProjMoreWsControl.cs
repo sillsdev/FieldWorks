@@ -4,19 +4,20 @@
 
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.FwCoreDlgs;
 
-namespace SIL.FieldWorks.FwCoreDlgs
+namespace SIL.FieldWorks
 {
 	/// <summary>
 	/// Control to explain and allow the user to do more customization of the vernacular and analysis writing systems
 	/// </summary>
-	public partial class FwNewLangProjMoreWsControl : UserControl
+	internal sealed partial class FwNewLangProjMoreWsControl : UserControl
 	{
 		private readonly FwNewLangProjectModel _model;
 		private readonly IHelpTopicProvider _helpTopicProvider;
 
 		/// <summary/>
-		public FwNewLangProjMoreWsControl(FwNewLangProjectModel model = null, IHelpTopicProvider helpTopicProvider = null)
+		internal FwNewLangProjMoreWsControl(FwNewLangProjectModel model = null, IHelpTopicProvider helpTopicProvider = null)
 		{
 			InitializeComponent();
 			_model = model;

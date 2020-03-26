@@ -21,43 +21,43 @@ namespace SIL.FieldWorks.FwCoreDlgs
 	/// <summary>
 	/// Presentation model for the new language project wizard
 	/// </summary>
-	public class FwNewLangProjectModel
+	internal sealed class FwNewLangProjectModel
 	{
 		/// <summary/>
-		public delegate void LoadProjectNameSetupDelegate();
+		internal delegate void LoadProjectNameSetupDelegate();
 
 		/// <summary/>
-		public LoadProjectNameSetupDelegate LoadProjectNameSetup;
+		internal LoadProjectNameSetupDelegate LoadProjectNameSetup;
 
 		/// <summary/>
-		public delegate void LoadAnalysisSetupDelegate();
+		internal delegate void LoadAnalysisSetupDelegate();
 
 		/// <summary/>
-		public LoadAnalysisSetupDelegate LoadAnalysisSetup;
+		internal LoadAnalysisSetupDelegate LoadAnalysisSetup;
 
 		/// <summary/>
-		public delegate void LoadAnalysisSameAsVernacularDelegate();
+		internal delegate void LoadAnalysisSameAsVernacularDelegate();
 
 		/// <summary/>
-		public LoadAnalysisSameAsVernacularDelegate LoadAnalysisSameAsVernacularWarning;
+		internal LoadAnalysisSameAsVernacularDelegate LoadAnalysisSameAsVernacularWarning;
 
 		/// <summary/>
-		public delegate void LoadVernacularSetupDelegate();
+		internal delegate void LoadVernacularSetupDelegate();
 
 		/// <summary/>
-		public LoadVernacularSetupDelegate LoadVernacularSetup;
+		internal LoadVernacularSetupDelegate LoadVernacularSetup;
 
 		/// <summary/>
-		public delegate void LoadAnthropologySetupDelegate();
+		internal delegate void LoadAnthropologySetupDelegate();
 
 		/// <summary/>
-		public LoadAnthropologySetupDelegate LoadAnthropologySetup;
+		internal LoadAnthropologySetupDelegate LoadAnthropologySetup;
 
 		/// <summary/>
-		public delegate void LoadAdvancedWsSetupDelegate();
+		internal delegate void LoadAdvancedWsSetupDelegate();
 
 		/// <summary/>
-		public LoadAdvancedWsSetupDelegate LoadAdvancedWsSetup;
+		internal LoadAdvancedWsSetupDelegate LoadAdvancedWsSetup;
 
 		private enum NewProjStep
 		{
@@ -87,16 +87,16 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private IList<CoreWritingSystemDefinition> _curPron = new List<CoreWritingSystemDefinition>();
 
 		/// <summary/>
-		public IEnumerable<IWizardStep> Steps => _steps;
+		internal IEnumerable<IWizardStep> Steps => _steps;
 
 		/// <summary/>
-		public IWritingSystemContainer WritingSystemContainer { get; set; }
+		internal IWritingSystemContainer WritingSystemContainer { get; set; }
 
 		/// <summary/>
-		public WritingSystemManager WritingSystemManager { get; }
+		internal WritingSystemManager WritingSystemManager { get; }
 
 		/// <summary/>
-		public FwNewLangProjectModel(bool useMemoryWsManager = false)
+		internal FwNewLangProjectModel(bool useMemoryWsManager = false)
 		{
 			WritingSystemManager = useMemoryWsManager ? new WritingSystemManager() : new WritingSystemManager(SingletonsContainer.Get<CoreGlobalWritingSystemRepository>());
 			WritingSystemManager.GetOrSet("en", out var englishWs);
@@ -106,7 +106,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		}
 
 		/// <summary/>
-		public void Next()
+		internal void Next()
 		{
 			if (CurrentStepIsComplete())
 			{
@@ -174,7 +174,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		}
 
 		/// <summary/>
-		public void Back()
+		internal void Back()
 		{
 			_steps[(int)CurrentStep].IsCurrent = false;
 			--CurrentStep;
@@ -199,7 +199,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		}
 
 		/// <summary/>
-		public string ProjectName
+		internal string ProjectName
 		{
 			get => _projectName;
 			set
@@ -211,7 +211,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		}
 
 		/// <summary/>
-		public bool IsProjectNameValid
+		internal bool IsProjectNameValid
 		{
 			get
 			{
@@ -222,7 +222,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		}
 
 		/// <summary/>
-		public string InvalidProjectNameMessage
+		internal string InvalidProjectNameMessage
 		{
 			get
 			{
@@ -239,10 +239,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		}
 
 		/// <summary/>
-		public FwChooseAnthroListModel AnthroModel = new FwChooseAnthroListModel();
+		internal FwChooseAnthroListModel AnthroModel = new FwChooseAnthroListModel();
 
 		/// <summary/>
-		public string CreateNewLangProj(IThreadedProgress progressDialog, ISynchronizeInvoke threadHelper)
+		internal string CreateNewLangProj(IThreadedProgress progressDialog, ISynchronizeInvoke threadHelper)
 		{
 			try
 			{
@@ -279,7 +279,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <param name="projectName">The Project Name reference will be modified to remove illegal characters</param>
 		/// <param name="errorMessage"></param>
 		/// <returns><c>true</c> if the given project name is valid; otherwise, <c>false</c></returns>
-		public static bool CheckForSafeProjectName(ref string projectName, out string errorMessage)
+		internal static bool CheckForSafeProjectName(ref string projectName, out string errorMessage)
 		{
 			errorMessage = null;
 			// Don't allow illegal characters. () and [] have significance.
@@ -338,31 +338,31 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		}
 
 		/// <summary/>
-		public static bool CheckForUniqueProjectName(string projectName)
+		internal static bool CheckForUniqueProjectName(string projectName)
 		{
 			return ProjectInfo.GetProjectInfoByName(FwDirectoryFinder.ProjectsDirectory, projectName) == null;
 		}
 
 		/// <summary/>
-		public bool CanGoBack()
+		internal bool CanGoBack()
 		{
 			return CurrentStep > 0;
 		}
 
 		/// <summary/>
-		public bool CanGoNext()
+		internal bool CanGoNext()
 		{
 			return CurrentStepIsComplete() && (int)CurrentStep < _steps.Length - 1;
 		}
 
 		/// <summary/>
-		public bool CanFinish()
+		internal bool CanFinish()
 		{
 			return _steps.All(step => step.IsOptional || step.IsComplete);
 		}
 
 		/// <summary/>
-		public void SetDefaultWs(LanguageInfo selectedLanguage)
+		internal void SetDefaultWs(LanguageInfo selectedLanguage)
 		{
 			ICollection<CoreWritingSystemDefinition> allList;
 			IList<CoreWritingSystemDefinition> currentList;
@@ -423,42 +423,27 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			}
 			list.Insert(0, itemInList);
 		}
-	}
 
-	/// <summary/>
-	public interface IWizardStep
-	{
-		/// <summary/>
-		string StepName { get; set; }
 
 		/// <summary/>
-		bool IsOptional { get; set; }
-
-		/// <summary/>
-		bool IsCurrent { get; set; }
-
-		/// <summary/>
-		bool IsComplete { get; set; }
-	}
-
-	/// <summary/>
-	public class NewLangProjStep : IWizardStep
-	{
-		/// <summary/>
-		public NewLangProjStep(string name, bool optional, bool isCurrent = false)
+		private sealed class NewLangProjStep : IWizardStep
 		{
-			StepName = name;
-			IsOptional = optional;
-			IsCurrent = isCurrent;
-		}
+			/// <summary/>
+			internal NewLangProjStep(string name, bool optional, bool isCurrent = false)
+			{
+				StepName = name;
+				IsOptional = optional;
+				IsCurrent = isCurrent;
+			}
 
-		/// <summary/>
-		public string StepName { get; set; }
-		/// <summary/>
-		public bool IsOptional { get; set; }
-		/// <summary/>
-		public bool IsCurrent { get; set; }
-		/// <summary/>
-		public bool IsComplete { get; set; }
+			/// <summary/>
+			public string StepName { get; set; }
+			/// <summary/>
+			public bool IsOptional { get; set; }
+			/// <summary/>
+			public bool IsCurrent { get; set; }
+			/// <summary/>
+			public bool IsComplete { get; set; }
+		}
 	}
 }

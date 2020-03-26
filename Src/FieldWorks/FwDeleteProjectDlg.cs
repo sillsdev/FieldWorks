@@ -10,10 +10,10 @@ using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Resources;
 using SIL.LCModel;
 
-namespace SIL.FieldWorks.FwCoreDlgs
+namespace SIL.FieldWorks
 {
 	/// <summary />
-	public class FwDeleteProjectDlg : Form
+	internal sealed class FwDeleteProjectDlg : Form
 	{
 		private ListBox m_lstProjects;
 		private ListBox m_lstProjectsInUse;
@@ -26,7 +26,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private System.ComponentModel.Container components = null;
 
 		/// <summary />
-		public FwDeleteProjectDlg(ICollection<string> projectsOpen)
+		internal FwDeleteProjectDlg(ICollection<string> projectsOpen)
 		{
 			AccessibleName = GetType().Name;
 			InitializeComponent();
@@ -64,7 +64,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <summary>
 		/// Set the dialog properties object for dialogs that are created.
 		/// </summary>
-		public void SetDialogProperties(IHelpTopicProvider helpTopicProvider)
+		internal void SetDialogProperties(IHelpTopicProvider helpTopicProvider)
 		{
 			m_helpTopicProvider = helpTopicProvider;
 		}

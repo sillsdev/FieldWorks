@@ -11,7 +11,7 @@ using SIL.WritingSystems;
 namespace SIL.FieldWorks.FwCoreDlgs
 {
 	/// <summary/>
-	public class AdvancedScriptRegionVariantModel
+	internal sealed class AdvancedScriptRegionVariantModel
 	{
 		private FwWritingSystemSetupModel _model;
 		private ScriptListItem _currentScriptListItem;
@@ -21,9 +21,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private readonly VariantListItem _noneVariantListItem = new VariantListItem(null);
 		private readonly ScriptListItem _noneScriptListItem = new ScriptListItem(null);
 		private readonly RegionListItem _noneRegionListItem = new RegionListItem(null);
-
 		private delegate void ChangeCodeDelegate();
-		private event ChangeCodeDelegate ChangeCode = delegate { }; // add empty delegate!
+		private event ChangeCodeDelegate ChangeCode;
 
 		private void ChangeCodeValue()
 		{
@@ -61,7 +60,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		}
 
 		/// <summary/>
-		public string Code {
+		internal string Code
+		{
 			get => CurrentWs.LanguageTag;
 			set
 			{
@@ -98,7 +98,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		}
 
 		/// <summary/>
-		public ScriptListItem Script
+		internal ScriptListItem Script
 		{
 			get => _script;
 			set
@@ -116,7 +116,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		}
 
 		/// <summary/>
-		public string ScriptName
+		internal string ScriptName
 		{
 			get => CurrentWs.Script?.Name;
 			set
@@ -133,7 +133,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		}
 
 		/// <summary/>
-		public string ScriptCode
+		internal string ScriptCode
 		{
 			get => CurrentWs?.Script?.Code;
 			set
@@ -167,10 +167,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// If the Script is private use, but the code doesn't match any registered private use scripts then they have already customized
 		/// and we want to allow them to edit it.
 		/// </summary>
-		public bool EnableScriptCode => Script != null && (Script.Code == "Qaaa" || Script.IsPrivateUse && !StandardSubtags.IsPrivateUseScriptCode(ScriptCode));
+		internal bool EnableScriptCode => Script != null && (Script.Code == "Qaaa" || Script.IsPrivateUse && !StandardSubtags.IsPrivateUseScriptCode(ScriptCode));
 
 		/// <summary/>
-		public string RegionName
+		internal string RegionName
 		{
 			get => CurrentWs.Region?.Name;
 			set
@@ -187,7 +187,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		}
 
 		/// <summary/>
-		public RegionListItem Region
+		internal RegionListItem Region
 		{
 			get => _region;
 			set
@@ -205,10 +205,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		}
 
 		/// <summary/>
-		public bool EnableRegionCode => Region != null && (Region.Code == "QM" || Region.IsPrivateUse && !StandardSubtags.IsPrivateUseRegionCode(RegionCode));
+		internal bool EnableRegionCode => Region != null && (Region.Code == "QM" || Region.IsPrivateUse && !StandardSubtags.IsPrivateUseRegionCode(RegionCode));
 
 		/// <summary/>
-		public string RegionCode
+		internal string RegionCode
 		{
 			get => CurrentWs?.Region?.Code;
 			set
@@ -231,7 +231,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		}
 
 		/// <summary/>
-		public string StandardVariant
+		internal string StandardVariant
 		{
 			get
 			{
@@ -259,7 +259,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		}
 
 		/// <summary/>
-		public string OtherVariants
+		internal string OtherVariants
 		{
 			// return other variants including the first one if it is private use
 			get
@@ -308,7 +308,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		}
 
 		/// <summary/>
-		public IEnumerable<VariantListItem> GetStandardVariants()
+		internal IEnumerable<VariantListItem> GetStandardVariants()
 		{
 			yield return _noneVariantListItem;
 			foreach (var variant in StandardSubtags.RegisteredVariants)
@@ -329,7 +329,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		}
 
 		/// <summary/>
-		public IEnumerable<ScriptListItem> GetScripts()
+		internal IEnumerable<ScriptListItem> GetScripts()
 		{
 			yield return _noneScriptListItem;
 			// If the model represents a private use script code add it first in the list
@@ -348,7 +348,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		}
 
 		/// <summary/>
-		public IEnumerable<RegionListItem> GetRegions()
+		internal IEnumerable<RegionListItem> GetRegions()
 		{
 			yield return _noneRegionListItem;
 			// If the model represents a private use region code add it first in the list
@@ -365,149 +365,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				yield return new RegionListItem(region);
 			}
 			yield return new RegionListItem(_privateUseQMRegion);
-		}
-
-
-		/// <summary/>
-		public class ScriptListItem : IEquatable<ScriptListItem>
-		{
-			private readonly ScriptSubtag _script;
-
-			/// <summary/>
-			public ScriptListItem(ScriptSubtag script)
-			{
-				_script = script;
-			}
-
-			/// <summary/>
-			public string Name => _script?.Name;
-
-			/// <summary/>
-			public bool IsPrivateUse => _script != null && _script.IsPrivateUse;
-
-			/// <summary/>
-			public string Code => _script?.Code;
-
-			/// <summary/>
-			public string Label => _script == null ? "None" : string.Format("{0} ({1})", _script.Name, _script.Code);
-
-			/// <summary/>
-			public bool Equals(ScriptListItem other)
-			{
-				if (ReferenceEquals(null, other))
-				{
-					return false;
-				}
-				if (ReferenceEquals(this, other))
-				{
-					return true;
-				}
-				return _script == null == (other._script == null) &&
-					   (_script == null && other._script == null ||
-						_script.IsPrivateUse == other.IsPrivateUse &&
-						_script.Code == other.Code &&
-						_script.Name == other.Name);
-			}
-
-			/// <summary/>
-			public override bool Equals(object obj)
-			{
-				if (ReferenceEquals(null, obj))
-				{
-					return false;
-				}
-				if (ReferenceEquals(this, obj))
-				{
-					return true;
-				}
-				return obj.GetType() == GetType() && Equals((ScriptListItem)obj);
-			}
-
-			/// <summary/>
-			public override int GetHashCode()
-			{
-				return _script != null ? _script.GetHashCode() : 0;
-			}
-
-			/// <summary>Allow cast of a ScriptListItem to a ScriptSubtag</summary>
-			public static implicit operator ScriptSubtag(ScriptListItem item)
-			{
-				return item?._script;
-			}
-		}
-
-		/// <summary/>
-		public class RegionListItem : IEquatable<RegionListItem>
-		{
-			private RegionSubtag _region;
-
-			/// <summary/>
-			public RegionListItem(RegionSubtag region)
-			{
-				_region = region;
-			}
-
-			/// <summary/>
-			public string Name => _region?.Name;
-
-			/// <summary/>
-			public bool IsPrivateUse => _region != null && _region.IsPrivateUse;
-
-			/// <summary/>
-			public string Code => _region?.Code;
-
-			/// <summary/>
-			public string Label => _region == null ? "None" : $"{_region.Name} ({_region.Code})";
-
-			/// <summary>Allow cast of a RegionListItem to a RegionSubtag</summary>
-			public static implicit operator RegionSubtag(RegionListItem item)
-			{
-				return item?._region;
-			}
-
-			/// <summary/>
-			public bool Equals(RegionListItem other)
-			{
-				return !ReferenceEquals(null, other) && (ReferenceEquals(this, other) || Equals(_region, other._region));
-			}
-
-			/// <summary/>
-			public override bool Equals(object obj)
-			{
-				if (ReferenceEquals(null, obj)) return false;
-				if (ReferenceEquals(this, obj)) return true;
-				return obj.GetType() == GetType() && Equals((RegionListItem)obj);
-			}
-
-			/// <summary/>
-			public override int GetHashCode()
-			{
-				return _region != null ? _region.GetHashCode() : 0;
-			}
-		}
-
-		/// <summary/>
-		public class VariantListItem
-		{
-			private VariantSubtag _variant;
-
-			/// <summary/>
-			public VariantListItem(VariantSubtag variant)
-			{
-				_variant = variant;
-			}
-
-			/// <summary/>
-			public string Code => _variant?.Code;
-
-			/// <summary/>
-			public string Name => _variant == null ? "None" : _variant.Name;
-
-			/// <summary/>
-			public override string ToString()
-			{
-				return Code;
-			}
 		}
 
 		/// <summary/>

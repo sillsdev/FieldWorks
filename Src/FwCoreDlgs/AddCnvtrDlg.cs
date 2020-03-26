@@ -19,15 +19,15 @@ namespace SIL.FieldWorks.FwCoreDlgs
 	/// <summary>
 	/// The dialog for adding/configuring encoding converters
 	/// </summary>
-	public class AddCnvtrDlg : Form
+	internal class AddCnvtrDlg : Form
 	{
 		#region Constants
 		/// <summary>Index of the tab for encoding converters properties</summary>
-		protected const int kECProperties = 0;
+		private const int kECProperties = 0;
 		/// <summary>Index of the tab for encoding converters test</summary>
-		protected const int kECTest = 1;
+		private const int kECTest = 1;
 		/// <summary>Index of the tab for encoding converters advanced features</summary>
-		protected const int kECAdvanced = 2;
+		private const int kECAdvanced = 2;
 		#endregion
 
 		#region Member variables
@@ -43,16 +43,17 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private IHelpTopicProvider m_helpTopicProvider;
 		private IApp m_app;
 		/// <summary>properties tab</summary>
-		public CnvtrPropertiesCtrl m_cnvtrPropertiesCtrl;
+		internal CnvtrPropertiesCtrl m_cnvtrPropertiesCtrl;
 		/// <summary>advanced tab</summary>
 		private AdvancedEncProps m_advancedEncProps;
 		/// <summary>test tab</summary>
 		private ConverterTrial _converterTrial;
 		/// <summary>Encoding converters which have not yet been fully defined</summary>
 		private Dictionary<string, EncoderInfo> m_undefinedConverters = new Dictionary<string, EncoderInfo>();
-		internal bool m_fOnlyUnicode;
+		private bool m_fOnlyUnicode;
+		// internal because a test thinks it has to have direct access.
 		internal bool m_outsideDlgChangedCnvtrs;
-		internal bool m_currentlyAdding;
+		private bool m_currentlyAdding;
 		private bool m_fDiscardingChanges;
 		private bool m_fClosingDialog;
 		private bool m_transduceDialogOpen;
@@ -63,7 +64,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private string m_sConverterToAdd;
 		private ISet<string> m_WSInUse;
 		/// <summary>For testing</summary>
-		public string m_msg;
+		internal string m_msg;
 
 		/// <summary>
 		/// Stores the name of the EC to be deleted if it is renamed
@@ -80,29 +81,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <summary />
 		/// <param name="helpTopicProvider">help topic provider for the Help button</param>
 		/// <param name="app">The app.</param>
-		/// <param name="wsInUse">The ws in use.</param>
-		public AddCnvtrDlg(IHelpTopicProvider helpTopicProvider, IApp app, ISet<string> wsInUse)
-			: this(helpTopicProvider, app, null, wsInUse)
-		{
-		}
-
-		/// <summary />
-		/// <param name="helpTopicProvider">help topic provider for the Help button</param>
-		/// <param name="app">The app.</param>
-		/// <param name="encConverters">The enc converters.</param>
-		/// <param name="wsInUse">The ws in use.</param>
-		public AddCnvtrDlg(IHelpTopicProvider helpTopicProvider, IApp app, EncConverters encConverters, ISet<string> wsInUse)
-			: this(helpTopicProvider, app, encConverters, wsInUse, false)
-		{
-		}
-
-		/// <summary />
-		/// <param name="helpTopicProvider">help topic provider for the Help button</param>
-		/// <param name="app">The app.</param>
 		/// <param name="encConverters">The enc converters.</param>
 		/// <param name="wsInUse">The ws in use.</param>
 		/// <param name="onlyUnicodeCnvtrs">if set to <c>true</c> [only unicode CNVTRS].</param>
-		public AddCnvtrDlg(IHelpTopicProvider helpTopicProvider, IApp app, EncConverters encConverters, ISet<string> wsInUse, bool onlyUnicodeCnvtrs)
+		internal AddCnvtrDlg(IHelpTopicProvider helpTopicProvider, IApp app, EncConverters encConverters, ISet<string> wsInUse, bool onlyUnicodeCnvtrs)
 			: this(helpTopicProvider, app, encConverters, null, wsInUse, onlyUnicodeCnvtrs)
 		{
 		}
@@ -114,7 +96,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <param name="selectConv">Converter to be selected</param>
 		/// <param name="wsInUse">The ws in use.</param>
 		/// <param name="onlyUnicodeCnvtrs">If true, show and create only Unicode converters (both to and to/from).</param>
-		public AddCnvtrDlg(IHelpTopicProvider helpTopicProvider, IApp app, EncConverters encConverters, string selectConv, ISet<string> wsInUse, bool onlyUnicodeCnvtrs)
+		internal AddCnvtrDlg(IHelpTopicProvider helpTopicProvider, IApp app, EncConverters encConverters, string selectConv, ISet<string> wsInUse, bool onlyUnicodeCnvtrs)
 		{
 			// Set members
 			AccessibleName = GetType().Name;
@@ -163,7 +145,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <inheritdoc />
 		protected override void Dispose(bool disposing)
 		{
-			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			if (IsDisposed)
 			{
 				// No need to run it more than once.
@@ -358,7 +340,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <summary>
 		/// Handles the Click event of the btnAdd control.
 		/// </summary>
-		protected void btnAdd_Click(object sender, EventArgs e)
+		private void btnAdd_Click(object sender, EventArgs e)
 		{
 			if (AutoSave())
 			{
@@ -387,7 +369,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <summary>
 		/// Handles the Click event of the btnCopy control.
 		/// </summary>
-		protected void btnCopy_Click(object sender, EventArgs e)
+		private void btnCopy_Click(object sender, EventArgs e)
 		{
 			var goToNextIndex = SelectedConverterIndex + 1;
 			if (AutoSave())
@@ -406,7 +388,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <summary>
 		/// Handles the Click event of the btnDelete control.
 		/// </summary>
-		protected void btnDelete_Click(object sender, EventArgs e)
+		private void btnDelete_Click(object sender, EventArgs e)
 		{
 			var goToNextIndex = SelectedConverterIndex;// +1; //no, because the current EC is deleted
 			RemoveConverter(SelectedConverter);
@@ -417,7 +399,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <summary>
 		/// Handles the Click event of the btnClose control.
 		/// </summary>
-		protected void btnClose_Click(object sender, EventArgs e)
+		private void btnClose_Click(object sender, EventArgs e)
 		{
 			m_fClosingDialog = true;
 			if (m_undefinedConverters.Count > 0)
@@ -425,12 +407,14 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				// loop through all the encoding converters that are not fully defined.
 				for (; ;)
 				{
-					IEnumerator<KeyValuePair<string, EncoderInfo>> enumerator = m_undefinedConverters.GetEnumerator();
-					if (!enumerator.MoveNext())
+					using (IEnumerator<KeyValuePair<string, EncoderInfo>> enumerator = m_undefinedConverters.GetEnumerator())
 					{
-						break;
+						if (!enumerator.MoveNext())
+						{
+							break;
+						}
+						SelectedConverter = enumerator.Current.Value.Name;
 					}
-					SelectedConverter = enumerator.Current.Value.m_name;
 					if (!AutoSave())
 					{
 						m_fClosingDialog = false;
@@ -453,7 +437,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <summary>
 		/// Open the appropriate Help file for selected tab.
 		/// </summary>
-		protected void btnHelp_Click(object sender, System.EventArgs e)
+		private void btnHelp_Click(object sender, EventArgs e)
 		{
 			var helpTopicKey = new StringBuilder("khtpEC");
 			if (m_fOnlyUnicode)
@@ -479,7 +463,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <summary>
 		/// Handles the Load event of the AddCnvtrDlg control.
 		/// </summary>
-		private void AddCnvtrDlg_Load(object sender, System.EventArgs e)
+		private void AddCnvtrDlg_Load(object sender, EventArgs e)
 		{
 			m_currentlyLoading = true;
 			m_cnvtrPropertiesCtrl.ConverterListChanged += cnvtrPropertiesCtrl_ConverterListChanged;
@@ -494,7 +478,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <summary>
 		/// Reloads contents of the Available Converters ListBox
 		/// </summary>
-		public void RefreshListBox()
+		internal void RefreshListBox()
 		{
 			if (m_outsideDlgChangedCnvtrs)
 			{
@@ -529,7 +513,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			// Now add the converters that haven't been validated.
 			foreach (var info in m_undefinedConverters.Values)
 			{
-				availableCnvtrsListBox.Items.Add(info.m_name);
+				availableCnvtrsListBox.Items.Add(info.Name);
 			}
 		}
 
@@ -582,7 +566,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// Gets or sets the name of the currently selected converter, if any.
 		/// NOTE: This is also used to "return" the name of the user selected EC to a parent dialog.
 		/// </summary>
-		public string SelectedConverter
+		internal string SelectedConverter
 		{
 			set
 			{
@@ -610,7 +594,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// Gets or sets the index of the currently selected converter, if any.
 		/// Keep in mind, this changes because the listbox is set to autosort.
 		/// </summary>
-		public int SelectedConverterIndex
+		internal int SelectedConverterIndex
 		{
 			set
 			{
@@ -648,7 +632,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <summary>
 		/// Gets and Sets txtName in the CnvtrPropertiesCtrl as a specified string value.
 		/// </summary>
-		public string ConverterName
+		internal string ConverterName
 		{
 			get => m_cnvtrPropertiesCtrl.txtName.Text.Trim();
 			set => m_cnvtrPropertiesCtrl.txtName.Text = value;
@@ -835,7 +819,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <summary>
 		/// Remove the encoding converter.
 		/// </summary>
-		public void RemoveConverter(string converterToRemove)
+		internal void RemoveConverter(string converterToRemove)
 		{
 			// if the converter doesn't exist in the list of installed converters
 			if (!m_encConverters.ContainsKey(converterToRemove))
@@ -869,7 +853,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// the time to save (actually it's an install), then we'll save
 		/// </summary>
 		/// <returns><c>false</c> if we must give the user a chance to change something</returns>
-		public bool AutoSave()
+		internal bool AutoSave()
 		{
 			if (m_suppressAutosave || (CnvtrTypeComboItem)m_cnvtrPropertiesCtrl.cboConverter.SelectedItem == null)
 			{
@@ -958,7 +942,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <summary>
 		/// Set that the fields have not been changed by the user since the last load/save.
 		/// </summary>
-		public void SetUnchanged()
+		internal void SetUnchanged()
 		{
 			m_oldConverter = ConverterName; // store this name, so we can delete the EC if we rename it
 			m_cnvtrPropertiesCtrl.ConverterChanged = false;
@@ -972,7 +956,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <summary>
 		/// Informs this control of the writing systems which should not be deleted.
 		/// </summary>
-		public void InitWSInUse(ISet<string> wsInUse)
+		internal void InitWSInUse(ISet<string> wsInUse)
 		{
 			m_WSInUse = wsInUse;
 		}
@@ -1009,7 +993,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// Try to install ("add" or "save") the converter.
 		/// </summary>
 		/// <returns>True if the converter was installed, false otherwise</returns>
-		public bool InstallConverter()
+		internal bool InstallConverter()
 		{
 			if (string.IsNullOrEmpty(ConverterName))
 			{

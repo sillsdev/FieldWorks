@@ -15,15 +15,15 @@ namespace LanguageExplorer.Controls.XMLViews
 	/// It knows how to install its matcher into the filter and update things.
 	/// Subclasses may launch a dialog and create the matcher appropriately first.
 	/// </summary>
-	public class FilterComboItem : ITssValue, IDisposable
+	internal class FilterComboItem : ITssValue, IDisposable
 	{
 		/// <summary />
 		protected IMatcher m_matcher;
 		/// <summary />
-		internal FilterSortItem m_fsi;
+		protected FilterSortItem m_fsi;
 
 		/// <summary />
-		public FilterComboItem(ITsString tssName, IMatcher matcher, FilterSortItem fsi)
+		internal FilterComboItem(ITsString tssName, IMatcher matcher, FilterSortItem fsi)
 		{
 			AsTss = tssName;
 			m_matcher = matcher;
@@ -112,7 +112,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// Invokes this instance.
 		/// </summary>
-		public virtual bool Invoke()
+		internal virtual bool Invoke()
 		{
 			InvokeWithInstalledMatcher();
 			return true;

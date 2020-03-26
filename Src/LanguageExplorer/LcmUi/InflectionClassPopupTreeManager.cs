@@ -13,10 +13,10 @@ namespace LanguageExplorer.LcmUi
 	/// <summary>
 	/// Handles a TreeCombo control for use in selecting inflection classes.
 	/// </summary>
-	public class InflectionClassPopupTreeManager : PopupTreeManager
+	internal class InflectionClassPopupTreeManager : PopupTreeManager
 	{
 		/// <summary />
-		public InflectionClassPopupTreeManager(TreeCombo treeCombo, LcmCache cache, FlexComponentParameters flexComponentParameters, bool useAbbr, Form parent, int wsDisplay)
+		internal InflectionClassPopupTreeManager(TreeCombo treeCombo, LcmCache cache, FlexComponentParameters flexComponentParameters, bool useAbbr, Form parent, int wsDisplay)
 			: base(treeCombo, cache, flexComponentParameters, cache.LanguageProject.PartsOfSpeechOA, wsDisplay, useAbbr, parent)
 		{
 		}

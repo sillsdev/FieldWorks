@@ -6,17 +6,17 @@ using System;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwUtils;
 
-namespace SIL.FieldWorks.FwCoreDlgs
+namespace LanguageExplorer.Controls
 {
 	/// <summary>
 	/// Warn the user when they choose a custom location for linked files that Send/Receive will not send these files.
 	/// </summary>
-	public partial class WarningNotUsingDefaultLinkedFilesLocation : Form
+	internal sealed partial class WarningNotUsingDefaultLinkedFilesLocation : Form
 	{
 		private readonly IHelpTopicProvider m_helpTopicProvider;
 
 		/// <summary />
-		public WarningNotUsingDefaultLinkedFilesLocation(IHelpTopicProvider provider)
+		internal WarningNotUsingDefaultLinkedFilesLocation(IHelpTopicProvider provider)
 		{
 			InitializeComponent();
 			m_helpTopicProvider = provider;

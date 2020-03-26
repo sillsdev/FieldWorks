@@ -100,7 +100,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		protected override void OnDropDownClosed(EventArgs e)
 		{
 			base.OnDropDownClosed(e);
-			if (base.SelectedIndex == -1 && DropDownStyle == ComboBoxStyle.DropDownList && m_lastSelectedIndex >= 0 && m_lastSelectedIndex < base.Items.Count)
+			if (base.SelectedIndex == -1 && DropDownStyle == ComboBoxStyle.DropDownList && m_lastSelectedIndex >= 0 && m_lastSelectedIndex < Items.Count)
 			{
 				base.SelectedIndex = m_lastSelectedIndex;
 			}

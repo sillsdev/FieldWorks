@@ -10,17 +10,17 @@ namespace LanguageExplorer.Controls.XMLViews
 	/// This is a base class for filter combo items that don't actually involve a mather. Typically
 	/// (e.g., TextComboItem) the only purpose is for Invoke to launch a dialog.
 	/// </summary>
-	public class NoChangeFilterComboItem : FilterComboItem
+	internal class NoChangeFilterComboItem : FilterComboItem
 	{
 		/// <summary />
-		public NoChangeFilterComboItem(ITsString tssName) : base(tssName, null, null)
+		internal NoChangeFilterComboItem(ITsString tssName) : base(tssName, null, null)
 		{
 		}
 
 		/// <summary>
 		/// Default for this class is to do nothing.
 		/// </summary>
-		public override bool Invoke()
+		internal override bool Invoke()
 		{
 			return false; // no filter was applied.
 		}

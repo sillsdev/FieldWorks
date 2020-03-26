@@ -8,29 +8,26 @@ using System.Linq;
 using System.Windows.Forms;
 using SIL.Extensions;
 using SIL.Windows.Forms.WritingSystems.WSIdentifiers;
-using static SIL.FieldWorks.FwCoreDlgs.AdvancedScriptRegionVariantModel;
 
 namespace SIL.FieldWorks.FwCoreDlgs
 {
 	/// <summary/>
-	public partial class AdvancedScriptRegionVariantView : UserControl, ISelectableIdentifierOptions
+	internal sealed partial class AdvancedScriptRegionVariantView : UserControl, ISelectableIdentifierOptions
 	{
 		private AdvancedScriptRegionVariantModel _model;
+
 		/// <summary/>
-		public AdvancedScriptRegionVariantView(AdvancedScriptRegionVariantModel model = null)
+		internal AdvancedScriptRegionVariantView(AdvancedScriptRegionVariantModel model = null)
 		{
 			_model = model;
 			InitializeComponent();
 		}
 
+		#region ISelectableIdentifierOptions impl
 		/// <summary/>
 		public void Selected()
 		{
 			UpdateDisplayFromModel(null, null);
-		}
-
-		private static void UpdateDisplayFromModel(object o, EventArgs eventArgs)
-		{
 		}
 
 		/// <summary/>
@@ -42,6 +39,11 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		public void UnwireBeforeClosing()
 		{
 			RemoveAllEventHandlers();
+		}
+		#endregion
+
+		private static void UpdateDisplayFromModel(object o, EventArgs eventArgs)
+		{
 		}
 
 		private void RemoveAllEventHandlers()
@@ -84,7 +86,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		}
 
 		/// <summary/>
-		public void BindToModel(AdvancedScriptRegionVariantModel modelCurrentWsSetupModel)
+		internal void BindToModel(AdvancedScriptRegionVariantModel modelCurrentWsSetupModel)
 		{
 			_specialTypeComboBox.SelectedIndex = 0;
 			RemoveAllEventHandlers();
@@ -173,7 +175,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			}
 		}
 
-		private void _variantsTextBox_TextChanged(object sender, System.EventArgs e)
+		private void _variantsTextBox_TextChanged(object sender, EventArgs e)
 		{
 			if(_model.ValidateOtherVariants(_variantsTextBox.Text))
 			{

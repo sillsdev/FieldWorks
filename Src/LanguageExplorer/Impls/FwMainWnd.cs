@@ -2115,7 +2115,7 @@ namespace LanguageExplorer.Impls
 			var fDbRenamed = false;
 			var sProject = cache.ProjectId.Name;
 			var sLinkedFilesRootDir = cache.LangProject.LinkedFilesRootDir;
-			using (var dlg = new FwProjPropertiesDlg(cache, _flexApp, _flexApp))
+			using (var dlg = new FwProjPropertiesDlg(cache, _flexApp))
 			{
 				dlg.ProjectPropertiesChanged += ProjectProperties_Changed;
 				if (dlg.ShowDialog(this) != DialogResult.Abort)

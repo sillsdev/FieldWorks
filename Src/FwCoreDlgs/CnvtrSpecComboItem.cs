@@ -15,10 +15,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		}
 
 		/// <summary />
-		public string Name { get; set; }
+		internal string Name { get; set; }
 
 		/// <summary />
-		public string Specs { get; set; }
+		internal string Specs { get; set; }
 
 		/// <summary />
 		public override string ToString()

@@ -11,6 +11,7 @@ using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
 using System.Xml.Linq;
+using LanguageExplorer.Controls;
 using LanguageExplorer.LIFT;
 using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;

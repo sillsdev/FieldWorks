@@ -291,7 +291,6 @@
     <Compile Include="BackupRestore\BackupProjectDlg.Designer.cs">
       <DependentUpon>BackupProjectDlg.cs</DependentUpon>
     </Compile>
-    <Compile Include="BackupRestore\BackupProjectPresenter.cs" />
     <Compile Include="BackupRestore\ChangeDefaultBackupDir.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -328,7 +327,6 @@
     <Compile Include="CharContextCtrl.Designer.cs">
       <DependentUpon>CharContextCtrl.cs</DependentUpon>
     </Compile>
-    <Compile Include="CheckBoxColumnHeaderHandler.cs" />
     <Compile Include="CheckType.cs" />
     <Compile Include="CnvtrDataComboItem.cs" />
     <Compile Include="CnvtrPropertiesCtrl.cs">
@@ -385,12 +383,8 @@
     <Compile Include="Controls\LocaleMenuButton.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Controls\LocaleMenuItemData.cs" />
     <Compile Include="Controls\ObjectCollection.cs" />
     <Compile Include="Controls\OverflowContextMenuStrip.cs" />
-    <Compile Include="Controls\RegionVariantControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
     <Compile Include="Controls\TextBoxDataAccess.cs" />
     <Compile Include="ConverterTrial.cs">
       <SubType>UserControl</SubType>
@@ -414,20 +408,8 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="FwCharacterCategorizer.cs" />
-    <Compile Include="FwChooseAnthroListCtrl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="FwChooseAnthroListCtrl.Designer.cs">
-      <DependentUpon>FwChooseAnthroListCtrl.cs</DependentUpon>
-    </Compile>
     <Compile Include="FwChooseAnthroListModel.cs" />
     <Compile Include="FwNewLangProjectModel.cs" />
-    <Compile Include="FwNewLangProjMoreWsControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="FwNewLangProjMoreWsControl.Designer.cs">
-      <DependentUpon>FwNewLangProjMoreWsControl.cs</DependentUpon>
-    </Compile>
     <Compile Include="FwNewLangProjWritingSystemsControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -459,6 +441,8 @@
     <Compile Include="HeaderLabel.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="IWizardStep.cs" />
+    <Compile Include="ListChoice.cs" />
     <Compile Include="MergeWritingSystemDlg.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -473,7 +457,6 @@
     <Compile Include="ErrorMessage.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="ErrorMessageHandler.cs" />
     <Compile Include="FwLabel.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -487,12 +470,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>FWCoreDlgsErrors.resx</DependentUpon>
     </Compile>
-    <Compile Include="FwDeleteProjectDlg.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="FwProjPropertiesDlg.cs">
-      <SubType>Form</SubType>
-    </Compile>
     <Compile Include="ProgressDialogImpl.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -505,6 +482,8 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="RegionListItem.cs" />
+    <Compile Include="ScriptListItem.cs" />
     <Compile Include="SharedBackendServicesHelper.cs" />
     <Compile Include="SpellingDictionaryItem.cs" />
     <Compile Include="Strings.Designer.cs">
@@ -513,7 +492,6 @@
       <DependentUpon>Strings.resx</DependentUpon>
     </Compile>
     <Compile Include="SunkenAppearances.cs" />
-    <Compile Include="TextFileDataSource.cs" />
     <Compile Include="TextLocation.cs" />
     <Compile Include="ValidCharactersDlg.cs">
       <SubType>Form</SubType>
@@ -521,18 +499,7 @@
     <Compile Include="ValidCharactersDlg.Designer.cs">
       <DependentUpon>ValidCharactersDlg.cs</DependentUpon>
     </Compile>
-    <Compile Include="WarningNotUsingDefaultLinkedFilesLocation.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="WarningNotUsingDefaultLinkedFilesLocation.Designer.cs">
-      <DependentUpon>WarningNotUsingDefaultLinkedFilesLocation.cs</DependentUpon>
-    </Compile>
-    <Compile Include="WizardStep.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="WizardStep.Designer.cs">
-      <DependentUpon>WizardStep.cs</DependentUpon>
-    </Compile>
+    <Compile Include="VariantListItem.cs" />
     <Compile Include="WSListItemModel.cs" />
     <Compile Include="WSMenuItemModel.cs" />
     <EmbeddedResource Include="AddCnvtrDlg.resx">
@@ -611,10 +578,6 @@
       <DependentUpon>LocaleMenuButton.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Controls\RegionVariantControl.resx">
-      <DependentUpon>RegionVariantControl.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
     <EmbeddedResource Include="ConverterTrial.resx">
       <DependentUpon>ConverterTrial.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -643,14 +606,6 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>FWCoreDlgsErrors.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <EmbeddedResource Include="FwDeleteProjectDlg.resx">
-      <DependentUpon>FwDeleteProjectDlg.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="FwProjPropertiesDlg.resx">
-      <DependentUpon>FwProjPropertiesDlg.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
     <EmbeddedResource Include="ProgressDialogImpl.resx">
       <DependentUpon>ProgressDialogImpl.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -669,9 +624,6 @@
       <DependentUpon>ValidCharactersDlg.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="WarningNotUsingDefaultLinkedFilesLocation.resx">
-      <DependentUpon>WarningNotUsingDefaultLinkedFilesLocation.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="FwWritingSystemSetupDlg.resx">
       <DependentUpon>FwWritingSystemSetupDlg.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -679,9 +631,6 @@
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
-    <EmbeddedResource Include="WizardStep.resx">
-      <DependentUpon>WizardStep.cs</DependentUpon>
-    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\FwCopyRight.png" />

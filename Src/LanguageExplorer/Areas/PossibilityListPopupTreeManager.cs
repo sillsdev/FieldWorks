@@ -12,9 +12,9 @@ namespace LanguageExplorer.Areas
 	/// <summary>
 	/// This class implements PopupTreeManager for a possibility list.
 	/// </summary>
-	public class PossibilityListPopupTreeManager : PopupTreeManager
+	internal class PossibilityListPopupTreeManager : PopupTreeManager
 	{
-		public PossibilityListPopupTreeManager(TreeCombo treeCombo, LcmCache cache, FlexComponentParameters flexComponentParameters, ICmPossibilityList list, int ws, bool useAbbr, Form parent)
+		internal PossibilityListPopupTreeManager(TreeCombo treeCombo, LcmCache cache, FlexComponentParameters flexComponentParameters, ICmPossibilityList list, int ws, bool useAbbr, Form parent)
 			: base(treeCombo, cache, flexComponentParameters, list, ws, useAbbr, parent)
 		{
 		}

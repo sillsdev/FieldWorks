@@ -7,7 +7,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 	/// <summary>
 	/// Determines the style of the control.
 	/// </summary>
-	public enum ButtonStyles
+	internal enum ButtonStyles
 	{
 		/// <summary>Flat button, pops up when mouse is over it</summary>
 		Popup = 0,

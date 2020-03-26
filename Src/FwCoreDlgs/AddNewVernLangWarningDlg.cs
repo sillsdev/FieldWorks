@@ -12,12 +12,12 @@ namespace SIL.FieldWorks.FwCoreDlgs
 	/// Warning to scare users away from adding multiple vernacular languages.
 	/// Usually you want multiple writing systems of the same vernacular language
 	/// </summary>
-	public partial class AddNewVernLangWarningDlg : Form
+	internal sealed partial class AddNewVernLangWarningDlg : Form
 	{
 		private IHelpTopicProvider _helpTopicProvider;
 
 		/// <summary/>
-		public AddNewVernLangWarningDlg(IHelpTopicProvider helpTopicProvider)
+		internal AddNewVernLangWarningDlg(IHelpTopicProvider helpTopicProvider)
 		{
 			InitializeComponent();
 			_helpTopicProvider = helpTopicProvider;

@@ -16,7 +16,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.BackupRestore
 	/// <summary>
 	/// Logic that drives the "Restore Project" dialog.
 	/// </summary>
-	public class RestoreProjectPresenter
+	internal sealed class RestoreProjectPresenter
 	{
 		#region Data members
 		private readonly RestoreProjectDlg m_restoreProjectView;
@@ -30,7 +30,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.BackupRestore
 		/// General constructor (use for constrained mode where the backup file settings are
 		/// pre-determined)
 		/// </summary>
-		public RestoreProjectPresenter(RestoreProjectDlg restoreProjectView)
+		internal RestoreProjectPresenter(RestoreProjectDlg restoreProjectView)
 		{
 			m_restoreProjectView = restoreProjectView;
 		}
@@ -40,7 +40,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.BackupRestore
 		/// </summary>
 		/// <param name="restoreProjectView">The restore project view.</param>
 		/// <param name="defaultProjectName">Default name of the project.</param>
-		public RestoreProjectPresenter(RestoreProjectDlg restoreProjectView, string defaultProjectName)
+		internal RestoreProjectPresenter(RestoreProjectDlg restoreProjectView, string defaultProjectName)
 			: this(restoreProjectView)
 		{
 			BackupRepository = new BackupFileRepository(FwDirectoryFinder.DefaultBackupDirectory);
@@ -56,7 +56,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.BackupRestore
 		/// Set to true if the user is trying to Create a New Project from the backup, but a
 		/// project with that name already exists.
 		/// </summary>
-		public bool NewProjectNameAlreadyExists { get; }
+		internal bool NewProjectNameAlreadyExists { get; }
 
 		#endregion
 
@@ -117,7 +117,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.BackupRestore
 		/// <summary>
 		/// Restore to a Different Name is selected and no name entered
 		/// </summary>
-		public bool EmptyProjectName
+		internal bool EmptyProjectName
 		{
 			get => m_fEmptyProjectName;
 			set
@@ -157,7 +157,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.BackupRestore
 		/// <summary>
 		/// Gets the name of the default project to selected, usually the current project.
 		/// </summary>
-		public string DefaultProjectName =>
+		internal string DefaultProjectName =>
 			BackupRepository == null ? m_restoreProjectView.Settings.Backup.ProjectName
 				: !string.IsNullOrEmpty(m_defaultProjectName) && BackupRepository.AvailableProjectNames.Contains(m_defaultProjectName)
 					? m_defaultProjectName
@@ -166,6 +166,6 @@ namespace SIL.FieldWorks.FwCoreDlgs.BackupRestore
 		/// <summary>
 		/// Gets the backup file repository.
 		/// </summary>
-		public BackupFileRepository BackupRepository { get; }
+		internal BackupFileRepository BackupRepository { get; }
 	}
 }

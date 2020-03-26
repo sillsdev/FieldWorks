@@ -2,9 +2,13 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
+using SIL.LCModel;
+using SIL.LCModel.Core.WritingSystems;
 using SIL.WritingSystems;
+using SIL.WritingSystems.Tests;
 
 namespace SIL.FieldWorks.FwCoreDlgs
 {
@@ -115,7 +119,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			var fwWsModel = new FwWritingSystemSetupModel(new TestWSContainer(new[] { "fr" }, new[] { "en" }), FwWritingSystemSetupModel.ListType.Vernacular);
 			var model = new AdvancedScriptRegionVariantModel(fwWsModel);
-			model.Script = new AdvancedScriptRegionVariantModel.ScriptListItem(StandardSubtags.RegisteredScripts.First(s => s.Code == "Arab"));
+			model.Script = new ScriptListItem(StandardSubtags.RegisteredScripts.First(s => s.Code == "Arab"));
 			Assert.That(model.ScriptCode, Is.EqualTo("Arab"));
 			Assert.That(model.Code, Is.EqualTo("fr-Arab"));
 		}
@@ -126,7 +130,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			var fwWsModel = new FwWritingSystemSetupModel(new TestWSContainer(new[] { "fr-x-special" }, new[] { "en" }), FwWritingSystemSetupModel.ListType.Vernacular);
 			var model = new AdvancedScriptRegionVariantModel(fwWsModel);
-			model.Region = new AdvancedScriptRegionVariantModel.RegionListItem(StandardSubtags.RegisteredRegions.First(s => s.Code == "US"));
+			model.Region = new RegionListItem(StandardSubtags.RegisteredRegions.First(s => s.Code == "US"));
 			Assert.That(model.RegionCode, Is.EqualTo("US"));
 			Assert.That(model.Code, Is.EqualTo("fr-US-x-special"));
 		}
@@ -326,8 +330,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		[Test]
 		public void RegionListItem_Equals()
 		{
-			var regionOne = new AdvancedScriptRegionVariantModel.RegionListItem(new RegionSubtag("Qaaa"));
-			var regionTwo = new AdvancedScriptRegionVariantModel.RegionListItem(new RegionSubtag("Qaaa"));
+			var regionOne = new RegionListItem(new RegionSubtag("Qaaa"));
+			var regionTwo = new RegionListItem(new RegionSubtag("Qaaa"));
 			Assert.AreEqual(regionOne, regionTwo);
 		}
 
@@ -335,8 +339,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		[Test]
 		public void RegionListItem_NotEquals()
 		{
-			var regionOne = new AdvancedScriptRegionVariantModel.RegionListItem(new RegionSubtag("Qaaa"));
-			var regionTwo = new AdvancedScriptRegionVariantModel.RegionListItem(new RegionSubtag("Qaaa", "Booga"));
+			var regionOne = new RegionListItem(new RegionSubtag("Qaaa"));
+			var regionTwo = new RegionListItem(new RegionSubtag("Qaaa", "Booga"));
 			Assert.AreNotEqual(regionOne, regionTwo);
 		}
 
@@ -346,7 +350,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			var fwWsModel = new FwWritingSystemSetupModel(new TestWSContainer(new[] { "qaa-Qaaa-x-Kalaba-Kala-extra", "fr" }, new[] { "en" }), FwWritingSystemSetupModel.ListType.Vernacular);
 			var model = new AdvancedScriptRegionVariantModel(fwWsModel);
-			model.Script = new AdvancedScriptRegionVariantModel.ScriptListItem(new ScriptSubtag("Mala", "not Kala"));
+			model.Script = new ScriptListItem(new ScriptSubtag("Mala", "not Kala"));
 			Assert.That(model.Code, Is.EqualTo("qaa-Qaaa-x-Kalaba-Mala-extra"));
 		}
 
@@ -403,6 +407,84 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			var fwWsModel = new FwWritingSystemSetupModel(new TestWSContainer(new[] { "fr" }, new[] { "en" }), FwWritingSystemSetupModel.ListType.Vernacular);
 			var model = new AdvancedScriptRegionVariantModel(fwWsModel);
 			Assert.That(model.ValidateOtherVariants(code), Is.EqualTo(expectedResult));
+		}
+
+		/// <summary>
+		/// This test class adds some convenient methods for mocking an IWritingSystemContainer
+		/// </summary>
+		private sealed class TestWSContainer : IWritingSystemContainer
+		{
+			private IWritingSystemContainer _writingSystemContainerImplementation;
+			private List<CoreWritingSystemDefinition> _vernacular = new List<CoreWritingSystemDefinition>();
+			private List<CoreWritingSystemDefinition> _analysis = new List<CoreWritingSystemDefinition>();
+			private List<CoreWritingSystemDefinition> _curVern = new List<CoreWritingSystemDefinition>();
+			private List<CoreWritingSystemDefinition> _curAnaly = new List<CoreWritingSystemDefinition>();
+
+			internal TestWSContainer(string[] vernacular, string[] analysis = null, string[] curVern = null, string[] curAnaly = null)
+			{
+				foreach (var lang in vernacular)
+				{
+					var ws = new CoreWritingSystemDefinition(lang);
+					_vernacular.Add(ws);
+					if (curVern == null)
+					{
+						_curVern.Add(ws);
+					}
+				}
+				if (analysis != null)
+				{
+					foreach (var lang in analysis)
+					{
+						var ws = new CoreWritingSystemDefinition(lang);
+						_analysis.Add(ws);
+						if (curAnaly == null)
+						{
+							_curAnaly.Add(ws);
+						}
+					}
+				}
+				if (curVern != null)
+				{
+					foreach (var lang in curVern)
+					{
+						_curVern.Add(new CoreWritingSystemDefinition(lang));
+					}
+				}
+				if (curAnaly != null)
+				{
+					foreach (var lang in curAnaly)
+					{
+						_curAnaly.Add(new CoreWritingSystemDefinition(lang));
+					}
+				}
+				Repo = new TestLdmlInXmlWritingSystemRepository();
+			}
+
+			public void AddToCurrentAnalysisWritingSystems(CoreWritingSystemDefinition ws)
+			{
+				throw new System.NotSupportedException();
+			}
+
+			public void AddToCurrentVernacularWritingSystems(CoreWritingSystemDefinition ws)
+			{
+				throw new System.NotSupportedException();
+			}
+
+			public IEnumerable<CoreWritingSystemDefinition> AllWritingSystems { get; }
+			public ICollection<CoreWritingSystemDefinition> AnalysisWritingSystems => _analysis;
+
+			public ICollection<CoreWritingSystemDefinition> VernacularWritingSystems => _vernacular;
+			public IList<CoreWritingSystemDefinition> CurrentAnalysisWritingSystems => _curAnaly;
+			public IList<CoreWritingSystemDefinition> CurrentVernacularWritingSystems => _curVern;
+			public IList<CoreWritingSystemDefinition> CurrentPronunciationWritingSystems { get; }
+			public CoreWritingSystemDefinition DefaultAnalysisWritingSystem { get; set; }
+			public CoreWritingSystemDefinition DefaultVernacularWritingSystem { get; set; }
+			public CoreWritingSystemDefinition DefaultPronunciationWritingSystem { get; }
+
+			/// <summary>
+			/// Test repo
+			/// </summary>
+			private IWritingSystemRepository Repo { get; }
 		}
 	}
 }

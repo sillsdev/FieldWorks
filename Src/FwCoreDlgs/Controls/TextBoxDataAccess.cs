@@ -18,10 +18,11 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 	/// This is a custom implementation of the ISilDataAccess interface for use by custom
 	/// Views-enabled text boxes.
 	/// </summary>
-	internal class TextBoxDataAccess : SilDataAccessManagedBase
+	internal sealed class TextBoxDataAccess : SilDataAccessManagedBase
 	{
 		private readonly Dictionary<HvoFlidWSKey, ITsString> m_strings = new Dictionary<HvoFlidWSKey, ITsString>();
 		private ILgWritingSystemFactory m_wsf;
+		private TextBoxMetaDataCache m_mdc = new TextBoxMetaDataCache();
 
 		/// <summary>
 		/// Get the language writing system factory associated with the database associated with
@@ -97,8 +98,6 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		{
 			return true;
 		}
-
-		private TextBoxMetaDataCache m_mdc = new TextBoxMetaDataCache();
 
 		public override IFwMetaDataCache MetaDataCache
 		{
