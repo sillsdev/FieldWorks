@@ -969,6 +969,15 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Connecting to Webonary..
+        /// </summary>
+        internal static string ksConnectingToWebonary {
+            get {
+                return ResourceManager.GetString("ksConnectingToWebonary", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Ctrl+Click to jump.
         /// </summary>
         internal static string ksCtrlClickJumpTooltip {
@@ -1185,6 +1194,15 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to An error occurred uploading your data:{0}Unable to connect to Webonary. Please check your username and password and your Internet connection.{0}{1}:{2}.
+        /// </summary>
+        internal static string ksErrorCannotConnectToWebonary {
+            get {
+                return ResourceManager.GetString("ksErrorCannotConnectToWebonary", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Error.
         /// </summary>
         internal static string ksErrorCaption {
@@ -1203,11 +1221,101 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Error: Invalid characters found in site name..
+        /// </summary>
+        internal static string ksErrorInvalidCharacters {
+            get {
+                return ResourceManager.GetString("ksErrorInvalidCharacters", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Error: No Configuration specified..
+        /// </summary>
+        internal static string ksErrorNoConfiguration {
+            get {
+                return ResourceManager.GetString("ksErrorNoConfiguration", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Error: No Password specified..
+        /// </summary>
+        internal static string ksErrorNoPassword {
+            get {
+                return ResourceManager.GetString("ksErrorNoPassword", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Error: No Publication specified..
+        /// </summary>
+        internal static string ksErrorNoPublication {
+            get {
+                return ResourceManager.GetString("ksErrorNoPublication", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Error: No site name specified..
+        /// </summary>
+        internal static string ksErrorNoSiteName {
+            get {
+                return ResourceManager.GetString("ksErrorNoSiteName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Error: No username specified..
+        /// </summary>
+        internal static string ksErrorNoUsername {
+            get {
+                return ResourceManager.GetString("ksErrorNoUsername", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to No view was found..
         /// </summary>
         internal static string ksErrorNoViewOnPublication {
             get {
                 return ResourceManager.GetString("ksErrorNoViewOnPublication", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Error: User doesn&apos;t have permission to import data.
+        /// </summary>
+        internal static string ksErrorUserDoesntHavePermissionToImportData {
+            get {
+                return ResourceManager.GetString("ksErrorUserDoesntHavePermissionToImportData", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Error: Wrong username or password.
+        /// </summary>
+        internal static string ksErrorUsernameOrPassword {
+            get {
+                return ResourceManager.GetString("ksErrorUsernameOrPassword", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Error: There has been an error accessing Webonary. Is your site name correct?.
+        /// </summary>
+        internal static string ksErrorWebonarySiteName {
+            get {
+                return ResourceManager.GetString("ksErrorWebonarySiteName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Excluding {0}; {1} format is unsupported by Webonary..
+        /// </summary>
+        internal static string ksExcludingXXFormatUnsupported {
+            get {
+                return ResourceManager.GetString("ksExcludingXXFormatUnsupported", resourceCulture);
             }
         }
         
@@ -1791,6 +1899,15 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Response from server:.
+        /// </summary>
+        internal static string ksResponseFromServer {
+            get {
+                return ResourceManager.GetString("ksResponseFromServer", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to reversal.
         /// </summary>
         internal static string ksReversal {
@@ -2130,6 +2247,15 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Uploading to Webonary..
+        /// </summary>
+        internal static string ksUploadingToWebonary {
+            get {
+                return ResourceManager.GetString("ksUploadingToWebonary", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to user interface.
         /// </summary>
         internal static string ksUserInterface {
@@ -2190,6 +2316,24 @@ namespace SIL.FieldWorks.XWorks {
         internal static string ksWarning {
             get {
                 return ResourceManager.GetString("ksWarning", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Upload successful. Preparing your data for publication. This may take several minutes to a few hours depending on the size of your dictionary. You will receive an email when the process is complete. You can examine the progress on the admin page of your Webonary site. You may now safely close this dialog..
+        /// </summary>
+        internal static string ksWebonaryUploadSuccessful {
+            get {
+                return ResourceManager.GetString("ksWebonaryUploadSuccessful", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The upload was successful; however, there were errors processing your data..
+        /// </summary>
+        internal static string ksWebonaryUploadSuccessfulErrorProcessing {
+            get {
+                return ResourceManager.GetString("ksWebonaryUploadSuccessfulErrorProcessing", resourceCulture);
             }
         }
         

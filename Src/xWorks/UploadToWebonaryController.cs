@@ -121,7 +121,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				if (!IsSupportedWebonaryFile(file))
 				{
-					webonaryView.UpdateStatus(string.Format("Excluding {0},{1} format is unsupported by Webonary.",
+					webonaryView.UpdateStatus(string.Format(xWorksStrings.ksExcludingXXFormatUnsupported,
 						Path.GetFileName(file), Path.GetExtension(file)));
 					continue;
 				}
@@ -179,7 +179,7 @@ namespace SIL.FieldWorks.XWorks
 			if (view == null)
 				throw new ArgumentNullException("view");
 
-			view.UpdateStatus("Connecting to Webonary.");
+			view.UpdateStatus(xWorksStrings.ksConnectingToWebonary);
 			var targetURI = DestinationURI(model.SiteName);
 
 			using (var client = CreateWebClient())
@@ -198,13 +198,12 @@ namespace SIL.FieldWorks.XWorks
 				{
 					if (e.StatusCode == HttpStatusCode.Redirect)
 					{
-						view.UpdateStatus("Error: There has been an error accessing webonary. Is your sitename correct?");
+						view.UpdateStatus(xWorksStrings.ksErrorWebonarySiteName);
 					}
 					else
 					{
-						const string errorMessage = "Unable to connect to Webonary.  Please check your username and password and your Internet connection.";
-						view.UpdateStatus(string.Format("An error occurred uploading your data: {0}{1}{2}:{3}",
-							errorMessage, Environment.NewLine, e.StatusCode, e.Message));
+						view.UpdateStatus(string.Format(xWorksStrings.ksErrorCannotConnectToWebonary,
+							Environment.NewLine, e.StatusCode, e.Message));
 					}
 					view.SetStatusCondition(WebonaryStatusCondition.Error);
 					return;
@@ -213,40 +212,35 @@ namespace SIL.FieldWorks.XWorks
 
 				if (client.ResponseStatusCode == HttpStatusCode.Found)
 				{
-					view.UpdateStatus("Error: There has been an error accessing webonary. Is your sitename correct?");
+					view.UpdateStatus(xWorksStrings.ksErrorWebonarySiteName);
 					view.SetStatusCondition(WebonaryStatusCondition.Error);
 				}
 				else if (responseText.Contains("Upload successful"))
 				{
 					if (!responseText.Contains("error"))
 					{
-						view.UpdateStatus("Upload successful. " +
-							"Preparing your data for publication. " +
-							"This may take several minutes to a few hours depending on the size of your dictionary. " +
-							"You will receive an email when the process is complete. " +
-							"You can examine the progress on the admin page of your Webonary site. "+
-							"You may now safely close this dialog.");
+						view.UpdateStatus(xWorksStrings.ksWebonaryUploadSuccessful);
 						view.SetStatusCondition(WebonaryStatusCondition.Success);
 						return;
 					}
 
-					view.UpdateStatus("The upload was successful; however, there were errors processing your data.");
+					view.UpdateStatus(xWorksStrings.ksWebonaryUploadSuccessfulErrorProcessing);
 					view.SetStatusCondition(WebonaryStatusCondition.Error);
 				}
 
 				if (responseText.Contains("Wrong username or password"))
 				{
-					view.UpdateStatus("Error: Wrong username or password");
+					view.UpdateStatus(xWorksStrings.ksErrorUsernameOrPassword);
 					view.SetStatusCondition(WebonaryStatusCondition.Error);
 				}
 				else if (responseText.Contains("User doesn't have permission to import data"))
 				{
-					view.UpdateStatus("Error: User doesn't have permission to import data");
+					view.UpdateStatus(xWorksStrings.ksErrorUserDoesntHavePermissionToImportData);
 					view.SetStatusCondition(WebonaryStatusCondition.Error);
 				}
 				else // Unknown error, display the server response, but cut it off at 100 characters
 				{
-					view.UpdateStatus(string.Format("Response from server:{0}{1}{0}", Environment.NewLine,
+					view.UpdateStatus(string.Format("{0}{1}{2}{1}", xWorksStrings.ksResponseFromServer, Environment.NewLine,
 						responseText.Substring(0, Math.Min(100, responseText.Length))));
 				}
 			}
@@ -260,40 +254,40 @@ namespace SIL.FieldWorks.XWorks
 
 		public void UploadToWebonary(UploadToWebonaryModel model, IUploadToWebonaryView view)
 		{
-			view.UpdateStatus("Uploading to Webonary.");
+			view.UpdateStatus(xWorksStrings.ksUploadingToWebonary);
 			view.SetStatusCondition(WebonaryStatusCondition.None);
 
 			if (string.IsNullOrEmpty(model.SiteName))
 			{
-				view.UpdateStatus("Error: No site name specified.");
+				view.UpdateStatus(xWorksStrings.ksErrorNoSiteName);
 				view.SetStatusCondition(WebonaryStatusCondition.Error);
 				return;
 			}
 
 			if(string.IsNullOrEmpty(model.UserName))
 			{
-				view.UpdateStatus("Error: No username specified.");
+				view.UpdateStatus(xWorksStrings.ksErrorNoUsername);
 				view.SetStatusCondition(WebonaryStatusCondition.Error);
 				return;
 			}
 
 			if (string.IsNullOrEmpty(model.Password))
 			{
-				view.UpdateStatus("Error: No Password specified.");
+				view.UpdateStatus(xWorksStrings.ksErrorNoPassword);
 				view.SetStatusCondition(WebonaryStatusCondition.Error);
 				return;
 			}
 
 			if(string.IsNullOrEmpty(model.SelectedPublication))
 			{
-				view.UpdateStatus("Error: No Publication specified.");
+				view.UpdateStatus(xWorksStrings.ksErrorNoPublication);
 				view.SetStatusCondition(WebonaryStatusCondition.Error);
 				return;
 			}
 
 			if(string.IsNullOrEmpty(model.SelectedConfiguration))
 			{
-				view.UpdateStatus("Error: No Configuration specified.");
+				view.UpdateStatus(xWorksStrings.ksErrorNoConfiguration);
 				view.SetStatusCondition(WebonaryStatusCondition.Error);
 				return;
 			}
@@ -318,13 +312,13 @@ namespace SIL.FieldWorks.XWorks
 		internal static string UploadFilename(UploadToWebonaryModel basedOnModel, IUploadToWebonaryView view)
 		{
 			if (basedOnModel == null)
-				throw new ArgumentNullException("basedOnModel");
+				throw new ArgumentNullException(nameof(basedOnModel));
 			if (string.IsNullOrEmpty(basedOnModel.SiteName))
-				throw new ArgumentException("basedOnModel");
+				throw new ArgumentException(nameof(basedOnModel));
 			var disallowedCharacters = MiscUtils.GetInvalidProjectNameChars(MiscUtils.FilenameFilterStrength.kFilterProjName) + "_ $.%";
 			if (basedOnModel.SiteName.IndexOfAny(disallowedCharacters.ToCharArray()) >= 0)
 			{
-				view.UpdateStatus("Error: Invalid characters found in sitename.");
+				view.UpdateStatus(xWorksStrings.ksErrorInvalidCharacters);
 				view.SetStatusCondition(WebonaryStatusCondition.Error);
 				return null;
 			}
