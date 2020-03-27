@@ -1494,4 +1494,13 @@ you expect.</value>
   <data name="XMLConfigurationError" xml:space="preserve">
     <value>XML Configuration Error</value>
   </data>
+  <data name="HaveLaunchedFLEXFortyTimes" xml:space="preserve">
+    <value>You have launched FLEX 40 times.</value>
+  </data>
+  <data name="HaveLaunchedFLEXTenTimes" xml:space="preserve">
+    <value>You have launched FLEX 10 times.</value>
+  </data>
+  <data name="ThankYouForCheckingOutFlex" xml:space="preserve">
+    <value>Thank you for checking out this version of FieldWorks Language Explorer.</value>
+  </data>
 </root>

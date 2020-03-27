@@ -10,14 +10,14 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 	/// this dialog, dumbs down InsertEntryDlg, to use its states and logic for
 	/// creating a new entry immediately without trying to do matching Entries.
 	/// </summary>
-	internal class InsertEntryNow : InsertEntryDlg
+	internal sealed class InsertEntryNow : InsertEntryDlg
 	{
 		internal static InsertEntryDlg CreateInsertEntryDlg(bool fCreateEntryNow)
 		{
 			return fCreateEntryNow ? new InsertEntryNow() : new InsertEntryDlg();
 		}
 
-		public InsertEntryNow()
+		internal InsertEntryNow()
 		{
 			m_matchingEntriesGroupBox.Visible = false;
 		}

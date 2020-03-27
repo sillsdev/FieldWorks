@@ -211,11 +211,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AlphaOutlineTests.cs" />
-    <Compile Include="CharEnumeratorForByteArrayTests.cs" />
     <Compile Include="FontHeightAdjusterTests.cs" />
     <Compile Include="InterfacesTests.cs" />
-    <Compile Include="DisposableObjectsSetTests.cs" />
     <Compile Include="IVwCacheDaTests.cs" />
     <Compile Include="LcmExtensionsTests.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
@@ -223,7 +220,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="ReveralIndexServicesTests.cs" />
     <Compile Include="StringTableTests.cs" />
     <Compile Include="TempSFFileMaker.cs" />
     <Compile Include="TempSFFileMakerTests.cs" />
@@ -232,9 +228,6 @@
     <Compile Include="DummyFwRegistryHelper.cs" />
     <Compile Include="FwLinkArgsTests.cs" />
     <Compile Include="FwRegistryHelperTests.cs" />
-    <Compile Include="MatchedPairsTests.cs" />
-    <Compile Include="MeasurementUtilsTest.cs" />
-    <Compile Include="QuotationMarksTests.cs" />
     <Compile Include="ImagePictureTest.cs" />
     <Compile Include="..\AssemblyInfoForTests.cs">
       <Link>AssemblyInfoForTests.cs</Link>

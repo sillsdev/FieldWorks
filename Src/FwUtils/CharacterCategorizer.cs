@@ -18,15 +18,11 @@ namespace SIL.FieldWorks.Common.FwUtils
 		// Characters which are considered to be key forming in this
 		// project but are not considered so in Unicode.
 		// Do not include key medial punctuation in this list
-		string extraWordFormingCharacters = string.Empty;
+		private readonly string extraWordFormingCharacters = string.Empty;
 
 		// Characters which are considered to be diacritics in this
 		// project but are not considered so in Unicode.
-		string extraDiacriticCharacters = string.Empty;
-
-		string wordFormingCharacters = string.Empty;
-
-		//! should there be a list of digits?
+		private readonly string extraDiacriticCharacters = string.Empty;
 
 		/// <summary>
 		/// Use this constructor to default to Unicode character semantics.
@@ -41,13 +37,13 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// </summary>
 		public CharacterCategorizer(string wordFormingCharacters, string diacriticCharacters)
 		{
-			this.wordFormingCharacters = wordFormingCharacters;
+			WordFormingCharacters = wordFormingCharacters;
 			DiacriticCharacters = diacriticCharacters;
 
 			// Save any characters which have been defined to be key forming
 			// for this project but are not considered so in Unicode.
 			extraWordFormingCharacters = string.Empty;
-			foreach (var cc in this.wordFormingCharacters)
+			foreach (var cc in WordFormingCharacters)
 			{
 				if (char.IsWhiteSpace(cc))
 				{
@@ -81,7 +77,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 
 		// Characters in these ranges form a single character "key".
 		// These are (primarily?) ideograms.
-		public static char[] SingleCharacterWords = {
+		private static readonly char[] SingleCharacterWords = {
 				'\u2e80', '\u2fd0',
 				'\u3004', '\u3006',
 				'\u3012', '\u3013',
@@ -96,7 +92,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <summary>
 		/// Determines whether the specified character is a single character word.
 		/// </summary>
-		public virtual bool IsSingleCharacterWord(char cc)
+		public bool IsSingleCharacterWord(char cc)
 		{
 			for (var i = 0; cc >= SingleCharacterWords[i] && SingleCharacterWords[i] != '\uffff'; i += 2)
 			{
@@ -120,7 +116,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <summary>
 		/// Determines whether [is word medial punctuation] [the specified cc].
 		/// </summary>
-		public virtual bool IsWordMedialPunctuation(char cc)
+		protected virtual bool IsWordMedialPunctuation(char cc)
 		{
 			// Be careful to make sure that zwnj and zwj are included here for
 			// indic scripts since they should not break words.
@@ -149,7 +145,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// Diacritics always follow base characters in Unicode. In hacked fonts
 		/// this may not be true.
 		/// </summary>
-		public virtual bool DiacriticsFollowBaseCharacters()
+		public bool DiacriticsFollowBaseCharacters()
 		{
 			//! get from language data
 			return true;
@@ -181,25 +177,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 			return char.GetUnicodeCategory(ch) == UnicodeCategory.TitlecaseLetter;
 		}
 
-		/// <summary>
-		/// Toes the lower.
-		/// </summary>
-		public virtual string ToLower(string str)
-		{
-			return str.ToLower();
-		}
+		public string WordFormingCharacters { get; } = string.Empty;
 
-		/// <summary>
-		/// Toes the upper.
-		/// </summary>
-		public virtual string ToUpper(string str)
-		{
-			return str.ToUpper();
-		}
-
-		public virtual string WordFormingCharacters => wordFormingCharacters;
-
-		public string DiacriticCharacters { get; } = string.Empty;
+		private string DiacriticCharacters { get; } = string.Empty;
 
 		public virtual List<WordAndPunct> WordAndPuncts(string text)
 		{

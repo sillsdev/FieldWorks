@@ -561,6 +561,24 @@ namespace LanguageExplorer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to You have launched FLEX 40 times..
+        /// </summary>
+        internal static string HaveLaunchedFLEXFortyTimes {
+            get {
+                return ResourceManager.GetString("HaveLaunchedFLEXFortyTimes", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You have launched FLEX 10 times..
+        /// </summary>
+        internal static string HaveLaunchedFLEXTenTimes {
+            get {
+                return ResourceManager.GetString("HaveLaunchedFLEXTenTimes", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Insert {0}.
         /// </summary>
         internal static string Insert_0 {
@@ -3788,6 +3806,15 @@ namespace LanguageExplorer {
             get {
                 object obj = ResourceManager.GetObject("Text_And_Words", resourceCulture);
                 return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Thank you for checking out this version of FieldWorks Language Explorer..
+        /// </summary>
+        internal static string ThankYouForCheckingOutFlex {
+            get {
+                return ResourceManager.GetString("ThankYouForCheckingOutFlex", resourceCulture);
             }
         }
         

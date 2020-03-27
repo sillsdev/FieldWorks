@@ -25,6 +25,7 @@ using System.Xml;
 using System.Xml.Linq;
 using Gecko;
 using LanguageExplorer;
+using LanguageExplorer.Controls;
 using LanguageExplorer.LcmUi;
 using LanguageExplorer.SendReceive;
 using Microsoft.Win32;

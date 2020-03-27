@@ -78,7 +78,7 @@ namespace LanguageExplorer.Areas
 				return false;
 			}
 			// Try to create a sorter based on the current Reversal Index's WritingSystem
-			var newGuid = ReversalIndexServices.GetObjectGuidIfValid(PropertyTable, LanguageExplorerConstants.ReversalIndexGuid);
+			var newGuid = FwUtils.GetObjectGuidIfValid(PropertyTable, LanguageExplorerConstants.ReversalIndexGuid);
 			if (newGuid.Equals(Guid.Empty))
 			{
 				return false;
@@ -123,7 +123,7 @@ namespace LanguageExplorer.Areas
 
 		internal void ChangeOwningObjectIfPossible()
 		{
-			ChangeOwningObject(ReversalIndexServices.GetObjectGuidIfValid(PropertyTable, LanguageExplorerConstants.ReversalIndexGuid));
+			ChangeOwningObject(FwUtils.GetObjectGuidIfValid(PropertyTable, LanguageExplorerConstants.ReversalIndexGuid));
 		}
 
 		private void ChangeOwningObject(Guid newGuid)

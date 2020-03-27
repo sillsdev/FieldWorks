@@ -23,7 +23,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 
 		#region Construction, Initialization, and Disposal
 
-		public WordformGoDlg()
+		internal WordformGoDlg()
 		{
 			SetHelpTopic("khtpFindWordform");
 			InitializeComponent();

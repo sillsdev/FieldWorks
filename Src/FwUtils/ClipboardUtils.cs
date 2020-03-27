@@ -22,89 +22,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 			s_Clipboard = adapter;
 		}
 
-		#region ClipboardAdapter class
-		private sealed class ClipboardAdapter : IClipboard
-		{
-			#region IClipboard Members
-
-			/// <summary>
-			/// Indicates whether there is data on the Clipboard in the Text or UnicodeText format,
-			/// depending on the operating system.
-			/// </summary>
-			public bool ContainsText()
-			{
-				return Clipboard.ContainsText();
-			}
-
-			/// <summary>
-			/// Retrieves text data from the Clipboard in the Text or UnicodeText format, depending
-			/// on the operating system.
-			/// </summary>
-			public string GetText()
-			{
-				return Clipboard.GetText();
-			}
-
-			/// <summary>
-			/// Retrieves the data that is currently on the system Clipboard.
-			/// </summary>
-			/// <returns>
-			/// An IDataObject that represents the data currently on the Clipboard, or
-			/// <c>null</c> if there is no data on the Clipboard.
-			/// </returns>
-			public IDataObject GetDataObject()
-			{
-				return Clipboard.GetDataObject();
-			}
-
-			/// <summary>
-			/// Adds text data to the Clipboard in the Text or UnicodeText format, depending on the
-			/// operating system.
-			/// </summary>
-			public void SetText(string text)
-			{
-				Clipboard.SetText(text);
-			}
-
-			/// <summary>
-			/// Adds text data to the Clipboard in the format indicated by the specified
-			/// TextDataFormat value.
-			/// </summary>
-			public void SetText(string text, TextDataFormat format)
-			{
-				Clipboard.SetText(text, format);
-			}
-
-			/// <summary>
-			/// Places nonpersistent data on the system Clipboard.
-			/// </summary>
-			public void SetDataObject(object data)
-			{
-				Clipboard.SetDataObject(data);
-			}
-
-			/// <summary>
-			/// Places data on the system Clipboard and specifies whether the data should remain on
-			/// the Clipboard after the application exits.
-			/// </summary>
-			public void SetDataObject(object data, bool copy)
-			{
-				Clipboard.SetDataObject(data, copy);
-			}
-
-			/// <summary>
-			/// Places data on the system Clipboard and specifies whether the data should remain on
-			/// the Clipboard after the application exits.
-			/// </summary>
-			public void SetDataObject(object data, bool copy, int retries, int msDelay)
-			{
-				Clipboard.SetDataObject(data, copy, retries, msDelay);
-			}
-
-			#endregion
-		}
-		#endregion
-
 		/// <summary>
 		/// Indicates whether there is data on the Clipboard in the Text or UnicodeText format,
 		/// depending on the operating system.
@@ -186,5 +103,88 @@ namespace SIL.FieldWorks.Common.FwUtils
 		{
 			s_Clipboard.SetDataObject(data, copy, retries, msDelay);
 		}
+
+		#region ClipboardAdapter class
+		private sealed class ClipboardAdapter : IClipboard
+		{
+			#region IClipboard Members
+
+			/// <summary>
+			/// Indicates whether there is data on the Clipboard in the Text or UnicodeText format,
+			/// depending on the operating system.
+			/// </summary>
+			bool IClipboard.ContainsText()
+			{
+				return Clipboard.ContainsText();
+			}
+
+			/// <summary>
+			/// Retrieves text data from the Clipboard in the Text or UnicodeText format, depending
+			/// on the operating system.
+			/// </summary>
+			string IClipboard.GetText()
+			{
+				return Clipboard.GetText();
+			}
+
+			/// <summary>
+			/// Retrieves the data that is currently on the system Clipboard.
+			/// </summary>
+			/// <returns>
+			/// An IDataObject that represents the data currently on the Clipboard, or
+			/// <c>null</c> if there is no data on the Clipboard.
+			/// </returns>
+			IDataObject IClipboard.GetDataObject()
+			{
+				return Clipboard.GetDataObject();
+			}
+
+			/// <summary>
+			/// Adds text data to the Clipboard in the Text or UnicodeText format, depending on the
+			/// operating system.
+			/// </summary>
+			void IClipboard.SetText(string text)
+			{
+				Clipboard.SetText(text);
+			}
+
+			/// <summary>
+			/// Adds text data to the Clipboard in the format indicated by the specified
+			/// TextDataFormat value.
+			/// </summary>
+			void IClipboard.SetText(string text, TextDataFormat format)
+			{
+				Clipboard.SetText(text, format);
+			}
+
+			/// <summary>
+			/// Places nonpersistent data on the system Clipboard.
+			/// </summary>
+			void IClipboard.SetDataObject(object data)
+			{
+				Clipboard.SetDataObject(data);
+			}
+
+			/// <summary>
+			/// Places data on the system Clipboard and specifies whether the data should remain on
+			/// the Clipboard after the application exits.
+			/// </summary>
+			void IClipboard.SetDataObject(object data, bool copy)
+			{
+				Clipboard.SetDataObject(data, copy);
+			}
+
+			/// <summary>
+			/// Places data on the system Clipboard and specifies whether the data should remain on
+			/// the Clipboard after the application exits.
+			/// </summary>
+			void IClipboard.SetDataObject(object data, bool copy, int retries, int msDelay)
+			{
+				Clipboard.SetDataObject(data, copy, retries, msDelay);
+			}
+
+			#endregion
+		}
+		#endregion
 	}
 }

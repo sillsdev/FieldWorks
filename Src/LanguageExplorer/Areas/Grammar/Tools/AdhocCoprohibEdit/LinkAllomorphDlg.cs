@@ -11,7 +11,7 @@ using SIL.LCModel.Core.KernelInterfaces;
 
 namespace LanguageExplorer.Areas.Grammar.Tools.AdhocCoprohibEdit
 {
-	public class LinkAllomorphDlg : EntryGoDlg
+	internal sealed class LinkAllomorphDlg : EntryGoDlg
 	{
 		private Label label3;
 		private FwComboBox m_fwcbAllomorphs;
@@ -31,7 +31,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.AdhocCoprohibEdit
 		/// <summary>
 		/// Gets the database id of the selected object.
 		/// </summary>
-		public override ICmObject SelectedObject => m_cache.ServiceLocator.GetInstance<IMoFormRepository>().GetObject(((LAllomorph)m_fwcbAllomorphs.SelectedItem).HVO);
+		internal override ICmObject SelectedObject => m_cache.ServiceLocator.GetInstance<IMoFormRepository>().GetObject(((LAllomorph)m_fwcbAllomorphs.SelectedItem).HVO);
 		#endregion Properties
 
 		/// <summary>
@@ -39,7 +39,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.AdhocCoprohibEdit
 		/// the allomorphs combo box is made empty.
 		/// (This is a refinement of the dlg to act 'more correctly'.)
 		/// </summary>
-		protected void Form_TextChanged(object sender, EventArgs e)
+		private void Form_TextChanged(object sender, EventArgs e)
 		{
 			if (m_tbForm.Text.Length == 0)
 			{
@@ -50,7 +50,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.AdhocCoprohibEdit
 
 		#region	Construction and Destruction
 
-		public LinkAllomorphDlg()
+		internal LinkAllomorphDlg()
 		{
 			InitializeComponent();
 			SetHelpTopic("hktpInsertAllomorphChooseAllomorph");
@@ -81,7 +81,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.AdhocCoprohibEdit
 		/// <summary>
 		/// Set up the dlg in preparation to showing it.
 		/// </summary>
-		public void SetDlgInfo(LcmCache cache, ILexEntry startingEntry)
+		internal void SetDlgInfo(LcmCache cache, ILexEntry startingEntry)
 		{
 			Debug.Assert(startingEntry != null);
 			m_startingEntry = startingEntry;
@@ -92,7 +92,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.AdhocCoprohibEdit
 		/// <summary>
 		/// Common init of the dialog, whether or not we have a starting lex entry.
 		/// </summary>
-		public override void SetDlgInfo(LcmCache cache, WindowParams wp)
+		internal override void SetDlgInfo(LcmCache cache, WindowParams wp)
 		{
 			base.SetDlgInfo(cache, wp);
 			// This is needed to make the replacement MatchingEntriesBrowser visible:
@@ -271,13 +271,6 @@ namespace LanguageExplorer.Areas.Grammar.Tools.AdhocCoprohibEdit
 			private int Type { get; }
 
 			#region Construction & initialization
-
-			/// <summary />
-			public LAllomorph(int hvo, int type) : base(hvo)
-			{
-				Type = type;
-				AsTss = null;
-			}
 
 			public LAllomorph(IMoForm allo) : base(allo.Hvo)
 			{

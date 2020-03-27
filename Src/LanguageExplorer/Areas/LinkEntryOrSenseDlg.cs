@@ -13,7 +13,7 @@ using SIL.LCModel;
 
 namespace LanguageExplorer.Areas
 {
-	public class LinkEntryOrSenseDlg : EntryGoDlg
+	internal class LinkEntryOrSenseDlg : EntryGoDlg
 	{
 		private readonly List<ILexSense> m_senses;
 		private RadioButton m_rbEntry;
@@ -24,7 +24,7 @@ namespace LanguageExplorer.Areas
 
 		#region Properties
 
-		public bool SelectSensesOnly
+		internal bool SelectSensesOnly
 		{
 			set
 			{
@@ -49,7 +49,7 @@ namespace LanguageExplorer.Areas
 		/// <summary>
 		/// Gets the database id of the selected object.
 		/// </summary>
-		public override ICmObject SelectedObject
+		internal override ICmObject SelectedObject
 		{
 			get
 			{
@@ -87,7 +87,7 @@ namespace LanguageExplorer.Areas
 
 		#region	Construction and Destruction
 
-		public LinkEntryOrSenseDlg()
+		internal LinkEntryOrSenseDlg()
 		{
 			InitializeComponent();
 			ShowControlsBasedOnPanel1Position();    // used for sizing and display of some controls
@@ -122,14 +122,14 @@ namespace LanguageExplorer.Areas
 		/// <summary>
 		/// Set up the dlg in preparation to showing it.
 		/// </summary>
-		public void SetDlgInfo(LcmCache cache, ILexEntry startingEntry)
+		internal void SetDlgInfo(LcmCache cache, ILexEntry startingEntry)
 		{
 			m_startingEntry = startingEntry;
 			SetDlgInfo(cache, (WindowParams)null);
 		}
 
 		///  <summary />
-		public override void SetDlgInfo(LcmCache cache, WindowParams wp)
+		internal override void SetDlgInfo(LcmCache cache, WindowParams wp)
 		{
 			m_fwcbSenses.WritingSystemFactory = cache.LanguageWritingSystemFactoryAccessor;
 			base.SetDlgInfo(cache, wp);

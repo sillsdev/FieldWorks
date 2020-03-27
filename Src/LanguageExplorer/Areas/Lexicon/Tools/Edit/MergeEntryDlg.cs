@@ -20,7 +20,7 @@ using SIL.LCModel.Utils;
 
 namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 {
-	public class MergeEntryDlg : EntryGoDlg
+	internal sealed class MergeEntryDlg : EntryGoDlg
 	{
 		private PictureBox m_pictureBox;
 		private XElement m_parametersElement;
@@ -35,7 +35,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 		#region	Construction and Destruction
 
-		public MergeEntryDlg()
+		internal MergeEntryDlg()
 		{
 			InitializeComponent();
 			ShowControlsBasedOnPanel1Position();    // used for sizing and display of some controls
@@ -64,7 +64,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		/// <summary>
 		/// Set up the dlg in preparation to showing it.
 		/// </summary>
-		public void SetDlgInfo(LcmCache cache, XElement parametersElement, ILexEntry startingEntry, string title, string formlabel, string okbuttonlabel)
+		internal void SetDlgInfo(LcmCache cache, XElement parametersElement, ILexEntry startingEntry, string title, string formlabel, string okbuttonlabel)
 		{
 			Debug.Assert(startingEntry != null);
 			m_startingEntry = startingEntry;
@@ -179,9 +179,9 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		/// </summary>
 		private sealed class MergeEntrySearchEngine : EntryGoSearchEngine
 		{
-			public int CurrentEntryHvo { private get; set; }
+			internal int CurrentEntryHvo { private get; set; }
 
-			public MergeEntrySearchEngine(LcmCache cache) : base(cache)
+			internal MergeEntrySearchEngine(LcmCache cache) : base(cache)
 			{
 			}
 

@@ -12,12 +12,12 @@ namespace SIL.FieldWorks.Resources
 	/// <remarks>The non-static methods and fields are in a separate class so that clients can
 	/// use ResourceHelper without the need for a reference to Windows.Forms if all they need is
 	/// to get some strings.</remarks>
-	public partial class ResourceHelperImpl : Form
+	internal sealed partial class ResourceHelperImpl : Form
 	{
 		#region Construction and destruction
 
 		/// <summary />
-		public ResourceHelperImpl()
+		internal ResourceHelperImpl()
 		{
 			InitializeComponent();
 		}
@@ -25,7 +25,7 @@ namespace SIL.FieldWorks.Resources
 		/// <summary>
 		/// Dispose static member variables
 		/// </summary>
-		protected internal virtual void DisposeStaticMembers()
+		internal void DisposeStaticMembers()
 		{
 			if (ResourceHelper.s_stringResources != null)
 			{
@@ -56,11 +56,5 @@ namespace SIL.FieldWorks.Resources
 			base.Dispose(disposing);
 		}
 		#endregion
-
-		protected static ResourceHelperImpl Helper
-		{
-			get => ResourceHelper.Helper;
-			set => ResourceHelper.Helper = value;
-		}
 	}
 }

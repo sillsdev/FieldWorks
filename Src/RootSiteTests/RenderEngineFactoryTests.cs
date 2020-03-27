@@ -4,7 +4,6 @@
 
 using System.Windows.Forms;
 using NUnit.Framework;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Core.WritingSystems;

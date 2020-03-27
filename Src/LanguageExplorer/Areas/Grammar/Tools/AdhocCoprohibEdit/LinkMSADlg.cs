@@ -9,7 +9,7 @@ using SIL.LCModel;
 
 namespace LanguageExplorer.Areas.Grammar.Tools.AdhocCoprohibEdit
 {
-	public class LinkMSADlg : EntryGoDlg
+	internal sealed class LinkMSADlg : EntryGoDlg
 	{
 		private Label label3;
 		private FwComboBox m_fwcbFunctions;
@@ -29,12 +29,12 @@ namespace LanguageExplorer.Areas.Grammar.Tools.AdhocCoprohibEdit
 		/// <summary>
 		/// Gets the database id of the selected object.
 		/// </summary>
-		public override ICmObject SelectedObject => m_cache.ServiceLocator.GetInstance<IMoMorphSynAnalysisRepository>().GetObject(((LMsa)m_fwcbFunctions.SelectedItem).HVO);
+		internal override ICmObject SelectedObject => m_cache.ServiceLocator.GetInstance<IMoMorphSynAnalysisRepository>().GetObject(((LMsa)m_fwcbFunctions.SelectedItem).HVO);
 		#endregion Properties
 
 		#region	Construction and Destruction
 
-		public LinkMSADlg()
+		internal LinkMSADlg()
 		{
 			InitializeComponent();
 			ShowControlsBasedOnPanel1Position();    // used for sizing and display of some controls
@@ -64,7 +64,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.AdhocCoprohibEdit
 		/// <summary>
 		/// Set up the dlg in preparation to showing it.
 		/// </summary>
-		public void SetDlgInfo(LcmCache cache, ILexEntry startingEntry)
+		internal void SetDlgInfo(LcmCache cache, ILexEntry startingEntry)
 		{
 			Debug.Assert(startingEntry != null);
 			m_startingEntry = startingEntry;
@@ -85,7 +85,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.AdhocCoprohibEdit
 		/// <summary>
 		/// Set up the dlg in preparation to showing it.
 		/// </summary>
-		public override void SetDlgInfo(LcmCache cache, WindowParams wp)
+		internal override void SetDlgInfo(LcmCache cache, WindowParams wp)
 		{
 			base.SetDlgInfo(cache, wp);
 			// This is needed to make the replacement MatchingEntriesBrowser visible:
@@ -252,7 +252,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.AdhocCoprohibEdit
 		{
 			private readonly string m_name;
 
-			public LMsa(IMoMorphSynAnalysis msa) : base(msa.Hvo)
+			internal LMsa(IMoMorphSynAnalysis msa) : base(msa.Hvo)
 			{
 				m_name = msa.InterlinearName;
 			}

@@ -61,51 +61,6 @@ namespace SIL.FieldWorks.Common.FwUtils {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Abort.
-        /// </summary>
-        public static string Abort {
-            get {
-                return ResourceManager.GetString("Abort", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Cancel.
-        /// </summary>
-        public static string Cancel {
-            get {
-                return ResourceManager.GetString("Cancel", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Information dialogs you previously dismissed with &quot;do not show me this again&quot; will be shown again due to an error. Sorry!.
-        /// </summary>
-        public static string CannotRestoreSavedResponses {
-            get {
-                return ResourceManager.GetString("CannotRestoreSavedResponses", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Do not show this again..
-        /// </summary>
-        public static string DonTShowThisAgain {
-            get {
-                return ResourceManager.GetString("DonTShowThisAgain", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Ignore.
-        /// </summary>
-        public static string Ignore {
-            get {
-                return ResourceManager.GetString("Ignore", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to The help file could not be located..
         /// </summary>
         public static string ksCannotFindHelp {
@@ -371,24 +326,6 @@ namespace SIL.FieldWorks.Common.FwUtils {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to No.
-        /// </summary>
-        public static string No {
-            get {
-                return ResourceManager.GetString("No", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to OK.
-        /// </summary>
-        public static string Ok {
-            get {
-                return ResourceManager.GetString("Ok", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Punctuation in custom field name.
         /// </summary>
         public static string PunctInfieldNameCaption {
@@ -404,24 +341,6 @@ namespace SIL.FieldWorks.Common.FwUtils {
         public static string PunctInFieldNameWarning {
             get {
                 return ResourceManager.GetString("PunctInFieldNameWarning", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Retry.
-        /// </summary>
-        public static string Retry {
-            get {
-                return ResourceManager.GetString("Retry", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Yes.
-        /// </summary>
-        public static string Yes {
-            get {
-                return ResourceManager.GetString("Yes", resourceCulture);
             }
         }
     }

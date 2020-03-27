@@ -243,7 +243,7 @@ namespace LanguageExplorer
 						// For the reversal index tool, just getting the tool right isn't enough.  We
 						// also need to be showing the proper index.  (See FWR-1105.)
 						// 'guid' can be 'Guid.Empty'.
-						var guid = ReversalIndexServices.GetObjectGuidIfValid(_propertyTable, LanguageExplorerConstants.ReversalIndexGuid);
+						var guid = FwUtils.GetObjectGuidIfValid(_propertyTable, LanguageExplorerConstants.ReversalIndexGuid);
 						if (!guid.Equals(cmObject.Owner.Guid))
 						{
 							_propertyTable.SetProperty(LanguageExplorerConstants.ReversalIndexGuid, cmObject.Owner.Guid.ToString(), true, settingsGroup: SettingsGroup.LocalSettings);

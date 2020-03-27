@@ -27,7 +27,6 @@ using SIL.LCModel.Infrastructure;
 using SIL.LCModel.Utils;
 using SIL.Reporting;
 using SIL.Xml;
-using StyleInfo = LanguageExplorer.Controls.Styles.StyleInfo;
 
 namespace LanguageExplorer
 {

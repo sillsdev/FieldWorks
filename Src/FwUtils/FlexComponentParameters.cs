@@ -10,7 +10,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 	/// <summary>
 	/// Class that contains the three interfaces used in the IFlexComponent interface.
 	/// </summary>
-	public class FlexComponentParameters
+	public sealed class FlexComponentParameters
 	{
 		/// <summary />
 		public FlexComponentParameters(IPropertyTable propertyTable, IPublisher publisher, ISubscriber subscriber)

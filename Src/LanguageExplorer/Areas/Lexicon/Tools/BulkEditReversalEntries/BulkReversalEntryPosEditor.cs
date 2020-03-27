@@ -18,7 +18,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.BulkEditReversalEntries
 		{
 			get
 			{
-				var riGuid = ReversalIndexServices.GetObjectGuidIfValid(PropertyTable, LanguageExplorerConstants.ReversalIndexGuid);
+				var riGuid = FwUtils.GetObjectGuidIfValid(PropertyTable, LanguageExplorerConstants.ReversalIndexGuid);
 				if (riGuid.Equals(Guid.Empty))
 				{
 					return null;

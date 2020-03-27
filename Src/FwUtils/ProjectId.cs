@@ -16,7 +16,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 	/// exist)
 	/// </summary>
 	[Serializable]
-	public class ProjectId : ISerializable, IProjectIdentifier
+	public sealed class ProjectId : ISerializable, IProjectIdentifier
 	{
 		#region Constants
 		private const string kTypeSerializeName = "Type";
@@ -42,7 +42,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		}
 
 		/// <summary />
-		protected ProjectId(SerializationInfo info, StreamingContext context) :
+		private ProjectId(SerializationInfo info, StreamingContext context) :
 			this((BackendProviderType)info.GetValue(kTypeSerializeName, typeof(BackendProviderType)), info.GetString(kNameSerializeName))
 		{
 		}
@@ -58,8 +58,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 			Path = CleanUpNameForType(type, name);
 		}
 		#endregion
-
-		private static string s_localHostName;
 
 		#region Properties
 
@@ -155,7 +153,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// </summary>
 		/// <exception cref="StartupException">If invalid (e.g., project Name is not set, the
 		/// XML file can not be found, etc.)</exception>
-		public void AssertValid()
+		internal void AssertValid()
 		{
 			var ex = GetExceptionIfInvalid();
 			if (ex == null)
@@ -171,7 +169,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// FieldWorks project. No checking to see if the project is openable is actually done.
 		/// (For example, the file must exist, but it's contents are not checked.)
 		/// </summary>
-		public Exception GetExceptionIfInvalid()
+		internal Exception GetExceptionIfInvalid()
 		{
 			if (string.IsNullOrEmpty(Name))
 			{
@@ -202,7 +200,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// expected to be a newly restored XML project).
 		/// For example c:\TestLangProj.fwdata and c:\TestLangProj.fwdb would be equal.
 		/// </summary>
-		public bool IsSameLocalProject(ProjectId otherProjectId)
+		internal bool IsSameLocalProject(ProjectId otherProjectId)
 		{
 			return ProjectFolder.Equals(otherProjectId.ProjectFolder, StringComparison.InvariantCultureIgnoreCase) && ProjectInfo.ProjectsAreSame(Name, otherProjectId.Name);
 		}

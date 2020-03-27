@@ -21,7 +21,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 	/// </code>
 	/// This displays the wait cursor inside of the using block.
 	/// </example>
-	public class WaitCursor : IDisposable
+	public sealed class WaitCursor : IDisposable
 	{
 #if DEBUG_WAITCURSOR
 		static int s_depth = 0;		// counter used for debugging/tracing nested uses.
@@ -139,7 +139,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		///
 		/// If subclasses override this method, they should call the base implementation.
 		/// </remarks>
-		protected virtual void Dispose(bool disposing)
+		private void Dispose(bool disposing)
 		{
 			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			if (IsDisposed)

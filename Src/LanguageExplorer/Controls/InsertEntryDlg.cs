@@ -19,7 +19,6 @@ using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FwCoreDlgs;
 using SIL.FieldWorks.FwCoreDlgs.Controls;
-using SIL.FieldWorks.Resources;
 using SIL.LCModel;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Core.Text;
@@ -34,7 +33,7 @@ using SimpleMonitor = SIL.Collections.SimpleMonitor;
 namespace LanguageExplorer.Controls
 {
 	/// <summary />
-	public class InsertEntryDlg : Form, IFlexComponent
+	internal class InsertEntryDlg : Form, IFlexComponent
 	{
 		#region Data members
 

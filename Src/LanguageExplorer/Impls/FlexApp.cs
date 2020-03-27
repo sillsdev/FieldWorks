@@ -13,10 +13,10 @@ using System.Security;
 using System.Threading;
 using System.Windows.Forms;
 using LanguageExplorer.Controls;
+using LanguageExplorer.Controls.MessageBoxEx;
 using LanguageExplorer.Controls.XMLViews;
 using Microsoft.Win32;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.Common.FwUtils.MessageBoxEx;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Resources;
@@ -890,6 +890,10 @@ namespace LanguageExplorer.Impls
 		/// </summary>
 		public void DoApplicationInitialization(IProgress progressDlg)
 		{
+			// Usage report
+			UsageEmailDialog.DoTrivialUsageReport(ApplicationName, SettingsKey, FeedbackEmailAddress, LanguageExplorerResources.ThankYouForCheckingOutFlex, false, 1);
+			UsageEmailDialog.DoTrivialUsageReport(ApplicationName, SettingsKey, FeedbackEmailAddress, LanguageExplorerResources.HaveLaunchedFLEXTenTimes, true, 10);
+			UsageEmailDialog.DoTrivialUsageReport(ApplicationName, SettingsKey, FeedbackEmailAddress, LanguageExplorerResources.HaveLaunchedFLEXFortyTimes, true, 40);
 			InitializeMessageDialogs(progressDlg);
 			if (progressDlg != null)
 			{

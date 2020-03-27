@@ -9,35 +9,35 @@ namespace SIL.FieldWorks.Common.FwUtils
 	/// <summary>
 	/// Exception thrown during FieldWorks startup if something goes wrong
 	/// </summary>
-	public class StartupException : Exception
+	internal sealed class StartupException : Exception
 	{
 		/// <summary />
-		public StartupException(string message) : this(message, null)
+		internal StartupException(string message) : this(message, null)
 		{
 		}
 
 		/// <summary />
-		public StartupException(string message, Exception innerException) :
+		internal StartupException(string message, Exception innerException) :
 			this(message, innerException, true)
 		{
 		}
 
 		/// <summary />
-		public StartupException(string message, bool fReportToUser) :
+		internal StartupException(string message, bool fReportToUser) :
 			this(message, null, fReportToUser)
 		{
 		}
 
 		/// <summary />
-		public StartupException(string message, Exception innerException, bool fReportToUser) :
+		internal StartupException(string message, Exception innerException, bool fReportToUser) :
 			base(message, innerException)
 		{
 			ReportToUser = fReportToUser;
 		}
 
 		/// <summary>
-		/// Gets or sets a value indicating whether to report this error to the user or not.
+		/// Gets a value indicating whether to report this error to the user or not.
 		/// </summary>
-		public bool ReportToUser { get; }
+		internal bool ReportToUser { get; }
 	}
 }

@@ -14,7 +14,7 @@ using SIL.LCModel.Core.WritingSystems;
 
 namespace LanguageExplorer.Areas.Notebook
 {
-	public class RecordGoDlg : BaseGoDlg
+	internal sealed class RecordGoDlg : BaseGoDlg
 	{
 		public RecordGoDlg()
 		{
@@ -24,12 +24,12 @@ namespace LanguageExplorer.Areas.Notebook
 
 		protected override string PersistenceLabel => "RecordGo";
 
-		public override void SetDlgInfo(LcmCache cache, WindowParams wp)
+		internal override void SetDlgInfo(LcmCache cache, WindowParams wp)
 		{
 			SetDlgInfo(cache, wp, cache.DefaultAnalWs);
 		}
 
-		public override void SetDlgInfo(LcmCache cache, WindowParams wp, string form)
+		internal override void SetDlgInfo(LcmCache cache, WindowParams wp, string form)
 		{
 			SetDlgInfo(cache, wp, form, cache.DefaultAnalWs);
 		}

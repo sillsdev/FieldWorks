@@ -4,7 +4,7 @@
 
 using System.Diagnostics;
 using System.Windows.Forms;
-using SIL.FieldWorks.Common.FwUtils.MessageBoxEx;
+using LanguageExplorer.Controls.MessageBoxEx;
 
 namespace LanguageExplorer.Controls
 {

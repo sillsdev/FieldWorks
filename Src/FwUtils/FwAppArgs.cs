@@ -20,7 +20,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 	/// See the class comment on FwLinkArgs for details on how all the parts of hyperlinking work.
 	/// </summary>
 	[Serializable]
-	public class FwAppArgs : FwLinkArgs
+	public sealed class FwAppArgs : FwLinkArgs
 	{
 		#region Command-line switch constants
 		/// <summary>Command-line argument: Command-line usage help</summary>

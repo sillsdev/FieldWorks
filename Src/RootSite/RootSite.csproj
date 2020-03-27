@@ -225,12 +225,14 @@
     <Compile Include="AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="CharEnumeratorForByteArray.cs" />
     <Compile Include="CkBehavior.cs" />
     <Compile Include="DataUpdateMonitor.cs" />
     <Compile Include="EditingHelper.cs" />
     <Compile Include="FwBaseVc.cs" />
     <Compile Include="FwPasteFixTssEventArgs.cs" />
     <Compile Include="FwRightMouseClickEventArgs.cs" />
+    <Compile Include="GraphicsManager.cs" />
     <Compile Include="HoldGraphics.cs" />
     <Compile Include="IbusRootSiteEventHandler.cs" />
     <Compile Include="IChangeRootObject.cs" />

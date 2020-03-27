@@ -9,7 +9,7 @@ using SIL.LCModel.Utils;
 namespace SIL.FieldWorks.Common.FwUtils
 {
 	/// <summary />
-	public class TempSFFileMaker
+	internal sealed class TempSFFileMaker
 	{
 		private static readonly MockFileOS s_fileOs = new MockFileOS();
 
@@ -27,7 +27,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <param name="dataLines">Array of lines of SF text to write following the ID line.
 		/// This text should not include line-break characters.</param>
 		/// <returns>Name of file that was created</returns>
-		public string CreateFile(string sSILBookId, string[] dataLines)
+		internal string CreateFile(string sSILBookId, string[] dataLines)
 		{
 			return CreateFile(sSILBookId, dataLines, Encoding.ASCII, false);
 		}
@@ -43,7 +43,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <param name="fWriteByteOrderMark">Pass <c>true</c> to have the BOM written at the
 		/// beginning of a Unicode file (ignored if encoding is ASCII).</param>
 		/// <returns>Name of file that was created</returns>
-		public string CreateFile(string sSILBookId, string[] dataLines, Encoding encoding, bool fWriteByteOrderMark)
+		internal string CreateFile(string sSILBookId, string[] dataLines, Encoding encoding, bool fWriteByteOrderMark)
 		{
 			if (sSILBookId == null)
 			{
@@ -87,7 +87,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <param name="dataLines">Array of lines of SF text to write.
 		/// This text should not include line-break characters.</param>
 		/// <returns>Name of file that was created</returns>
-		public string CreateFileNoID(string[] dataLines)
+		internal string CreateFileNoID(string[] dataLines)
 		{
 			// Create a temporary file.
 			var fileName = FileUtils.GetTempFile("tmp");
@@ -114,7 +114,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// This text should not include line-break characters.</param>
 		/// <param name="extension">The extension.</param>
 		/// <returns>Name of file that was created</returns>
-		public string CreateFileNoID(string[] dataLines, string extension)
+		internal string CreateFileNoID(string[] dataLines, string extension)
 		{
 			// Create a temporary file.
 			var fileName = FileUtils.GetTempFile(extension);
@@ -143,7 +143,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <param name="encoding">The type of <see cref="Encoding"/> to be done</param>
 		/// <returns>The encoded characters as a byte array, including a final CR/LF sequence
 		/// </returns>
-		public static byte[] EncodeLine(string sLine, Encoding encoding)
+		internal static byte[] EncodeLine(string sLine, Encoding encoding)
 		{
 			var sIn = sLine + (char)13 + (char)10;
 			var bytes = new byte[sIn.Length * 2];

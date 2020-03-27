@@ -208,7 +208,6 @@
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="ActivationContextHelper.cs" />
-    <Compile Include="AlphaOutline.cs" />
     <Compile Include="ContextPosition.cs" />
     <Compile Include="ControlExtensions.cs" />
     <Compile Include="FontHeightAdjuster.cs" />
@@ -223,20 +222,15 @@
     <Compile Include="IFwApplicationSettings.cs" />
     <Compile Include="IIdleQueueProvider.cs" />
     <Compile Include="IMessageBox.cs" />
-    <Compile Include="InvalidComboInfo.cs" />
     <Compile Include="IReadonlyPropertyTable.cs" />
-    <Compile Include="IdleProcessingHelper.cs" />
     <Compile Include="IScrCheckInventory.cs" />
     <Compile Include="LcmExtensions.cs" />
     <Compile Include="LinkProperty.cs" />
-    <Compile Include="MatchedPairList.cs" />
     <Compile Include="MsrSysType.cs" />
-    <Compile Include="ParagraphContinuationMark.cs" />
     <Compile Include="ParagraphContinuationType.cs" />
+    <Compile Include="ProjectId.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="CharacterCategorizer.cs" />
-    <Compile Include="CharEnumeratorForByteArray.cs" />
-    <Compile Include="DisposableObjectsSet.cs" />
     <Compile Include="FLExBridgeHelper.cs" />
     <Compile Include="FlexComponentParameters.cs" />
     <Compile Include="GeneratedFwUtils.cs" />
@@ -255,7 +249,6 @@
       <DependentUpon>FwUtilsStrings.resx</DependentUpon>
     </Compile>
     <Compile Include="IHelpTopicProvider.cs" />
-    <Compile Include="InstallationException.cs" />
     <Compile Include="IPropertyRetriever.cs" />
     <Compile Include="IPropertyTable.cs" />
     <Compile Include="IPropertyTableProvider.cs" />
@@ -266,9 +259,7 @@
     <Compile Include="ISubscriberProvider.cs" />
     <Compile Include="ITextToken.cs" />
     <Compile Include="IReceiveSequentialMessages.cs" />
-    <Compile Include="MatchedPairs.cs" />
     <Compile Include="LinuxPackageUtils.cs" />
-    <Compile Include="MeasurementUtils.cs" />
     <Compile Include="MessageSequencer.cs" />
     <Compile Include="PictureHolder.cs" />
     <Compile Include="ProgressMessageArgs.cs" />
@@ -277,15 +268,11 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
-    <Compile Include="ProjectId.cs" />
     <Compile Include="PublisherParameterObject.cs" />
     <Compile Include="PuncPattern.cs" />
     <Compile Include="PuncPatternStatus.cs" />
     <Compile Include="PuncPatternsList.cs" />
-    <Compile Include="QuotationMarks.cs" />
-    <Compile Include="QuotationMarksList.cs" />
     <Compile Include="RecordErrorEventArgs.cs" />
-    <Compile Include="ReversalIndexServices.cs" />
     <Compile Include="Properties\Settings.cs" />
     <Compile Include="SettingsGroup.cs" />
     <Compile Include="ShowHelp.cs">
@@ -294,6 +281,7 @@
     <Compile Include="StartupException.cs" />
     <Compile Include="StringTable.cs" />
     <Compile Include="TextType.cs" />
+    <Compile Include="UserActivityMonitor.cs" />
     <Compile Include="VersionInfoProvider.cs" />
     <Compile Include="ViewsExtensions.cs" />
     <Compile Include="WordAndPunct.cs" />
@@ -307,7 +295,6 @@
     <Compile Include="ComponentsExtensionMethods.cs" />
     <Compile Include="TextTokenSubstring.cs" />
     <Compile Include="Win32Wrappers.cs" />
-    <Compile Include="UserActivityMonitor.cs" />
     <Compile Include="MessageBoxUtils.cs" />
     <Compile Include="ClipboardUtils.cs" />
     <Compile Include="ThreadHelper.cs" />
@@ -316,23 +303,8 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="ManagedPictureFactory.cs" />
-    <Compile Include="GraphicsManager.cs" />
     <Compile Include="Property.cs" />
     <Compile Include="WaitCursor.cs" />
-    <Compile Include="MessageBoxEx\MessageBoxEx.cs" />
-    <Compile Include="MessageBoxEx\MessageBoxExButton.cs" />
-    <Compile Include="MessageBoxEx\MessageBoxExButtons.cs" />
-    <Compile Include="MessageBoxEx\MessageBoxExForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="MessageBoxEx\MessageBoxExIcon.cs" />
-    <Compile Include="MessageBoxEx\MessageBoxExManager.cs" />
-    <Compile Include="MessageBoxEx\MessageBoxExResult.cs" />
-    <Compile Include="MessageBoxEx\TimeoutResult.cs" />
-    <EmbeddedResource Include="MessageBoxEx\MessageBoxExForm.resx">
-      <DependentUpon>MessageBoxExForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <Content Include="MessageBoxEx\Notes.txt" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
@@ -359,6 +331,7 @@
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <DistFiles>../../DistFiles</DistFiles>

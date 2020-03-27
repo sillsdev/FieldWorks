@@ -53,7 +53,7 @@ namespace LanguageExplorer.Controls.DetailControls
 					ws = wsContainer.DefaultPronunciationWritingSystem.Handle;
 					break;
 				case "reversal":
-					var riGuid = ReversalIndexServices.GetObjectGuidIfValid(propertyTable, LanguageExplorerConstants.ReversalIndexGuid);
+					var riGuid = FwUtils.GetObjectGuidIfValid(propertyTable, LanguageExplorerConstants.ReversalIndexGuid);
 					if (!riGuid.Equals(Guid.Empty))
 					{
 						IReversalIndex ri;

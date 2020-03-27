@@ -108,7 +108,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// 	<c>true</c> if the character is a word medial punctuation character;
 		/// 	otherwise, <c>false</c>.
 		/// </returns>
-		public override bool IsWordMedialPunctuation(char cc)
+		protected override bool IsWordMedialPunctuation(char cc)
 		{
 			// Be careful to make sure that zwnj and zwj are included here for
 			// indic scripts since they should not break words.

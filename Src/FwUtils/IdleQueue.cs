@@ -20,7 +20,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 	/// within individual methods and properties, but not across method and property calls.
 	/// </summary>
 	[Export(typeof(IdleQueue))]
-	public class IdleQueue : ICollection<IdleQueueTask>, IApplicationIdleEventHandler, IDisposable
+	public sealed class IdleQueue : ICollection<IdleQueueTask>, IApplicationIdleEventHandler, IDisposable
 	{
 		// Used to count the number of times we've been asked to suspend Idle processing.
 		private int _countSuspendIdleProcessing;

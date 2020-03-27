@@ -235,6 +235,7 @@
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Areas\TextsAndWords\Interlinear\TriStateTreeViewTests.cs" />
+    <Compile Include="Controls\AlphaOutlineTests.cs" />
     <Compile Include="CreateOverrideTests.cs" />
     <Compile Include="DeleteListHelper.cs" />
     <Compile Include="DeleteCustomListTestsBase.cs" />
@@ -257,6 +258,7 @@
     </Compile>
     <Compile Include="Areas\TextsAndWords\Interlinear\GlossToolLoadsGuessContentsTests.cs" />
     <Compile Include="DictionaryConfiguration\DictionaryConfigTestPresenter.cs" />
+    <Compile Include="DisposableObjectsSetTests.cs" />
     <Compile Include="Filters\ManyOnePathSortItemsPersistenceTests.cs" />
     <Compile Include="Impls\DummyFwFindReplaceDlg.cs">
       <SubType>Form</SubType>
@@ -264,8 +266,10 @@
     <Compile Include="Impls\FwFindReplaceDlgBaseTests.cs" />
     <Compile Include="Impls\FwFindReplaceDlgWithLiteralStringsTests.cs" />
     <Compile Include="Impls\FwFindReplaceDlgWithObjectsRepeatedInDisplayTests.cs" />
+    <Compile Include="MeasurementUtilsTest.cs" />
     <Compile Include="MGA\GlossListTreeViewTest.cs" />
     <Compile Include="ProgressStateTests.cs" />
+    <Compile Include="ReveralIndexServicesTests.cs" />
     <Compile Include="SendReceive\ObtainProjectMethodTests.cs" />
     <Compile Include="TestStyle.cs" />
     <Compile Include="Filters\DateTimeMatcherTests.cs" />

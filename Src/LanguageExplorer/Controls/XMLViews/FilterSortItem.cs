@@ -6,7 +6,6 @@ using System;
 using System.Diagnostics;
 using System.Xml.Linq;
 using LanguageExplorer.Filters;
-using SIL.FieldWorks.Common.FwUtils;
 
 namespace LanguageExplorer.Controls.XMLViews
 {

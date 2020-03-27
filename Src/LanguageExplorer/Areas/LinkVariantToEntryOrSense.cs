@@ -16,7 +16,7 @@ using SIL.LCModel.Infrastructure;
 
 namespace LanguageExplorer.Areas
 {
-	public partial class LinkVariantToEntryOrSense : LinkEntryOrSenseDlg
+	internal partial class LinkVariantToEntryOrSense : LinkEntryOrSenseDlg
 	{
 		private PossibilityListPopupTreeManager m_tcManager;
 		/// <summary>
@@ -33,7 +33,7 @@ namespace LanguageExplorer.Areas
 		/// </summary>
 		private bool m_fBackRefToVariant;
 
-		public LinkVariantToEntryOrSense()
+		internal LinkVariantToEntryOrSense()
 		{
 			InitializeComponent();
 		}
@@ -59,7 +59,7 @@ namespace LanguageExplorer.Areas
 		/// <summary>
 		/// Sets the DLG info.
 		/// </summary>
-		public void SetDlgInfo(LcmCache cache, ITsString tssVariantLexemeForm)
+		internal void SetDlgInfo(LcmCache cache, ITsString tssVariantLexemeForm)
 		{
 			m_tssVariantLexemeForm = tssVariantLexemeForm;
 			base.SetDlgInfo(cache, null);
@@ -138,11 +138,11 @@ namespace LanguageExplorer.Areas
 		/// in some contexts (e.g. "Insert Variant" in detail pane) we hide tcVariantTypes,
 		/// so the user can't select them.
 		/// </summary>
-		bool m_fGetVariantEntryTypeFromTreeCombo = true;
+		private bool m_fGetVariantEntryTypeFromTreeCombo = true;
 		/// <summary>
 		/// The VariantEntryType possibilty choice.
 		/// </summary>
-		public int SelectedVariantEntryTypeHvo
+		internal int SelectedVariantEntryTypeHvo
 		{
 			get
 			{
@@ -159,12 +159,12 @@ namespace LanguageExplorer.Areas
 		/// the variant LexEntryRef, that was created or found by the state of the dialog
 		/// after user clicks the OK button.
 		/// </summary>
-		public ILexEntryRef VariantEntryRefResult { get; private set; }
+		internal ILexEntryRef VariantEntryRefResult { get; private set; }
 
 		/// <summary>
 		/// indicates whether VariantEntryRefResult is new.
 		/// </summary>
-		public bool NewlyCreatedVariantEntryRefResult { get; private set; }
+		internal bool NewlyCreatedVariantEntryRefResult { get; private set; }
 
 		/// <summary>
 		/// If we get here without passing through btnOK_Click, and we're not canceling the
@@ -321,7 +321,7 @@ namespace LanguageExplorer.Areas
 			Close();
 		}
 
-		public override ICmObject SelectedObject
+		internal override ICmObject SelectedObject
 		{
 			get
 			{

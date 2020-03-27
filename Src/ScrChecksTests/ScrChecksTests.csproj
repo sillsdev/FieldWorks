@@ -134,7 +134,9 @@
     </Compile>
     <Compile Include="ChapterVerseTests.cs" />
     <Compile Include="CharactersCheckUnitTest.cs" />
+    <Compile Include="MatchedPairsTests.cs" />
     <Compile Include="QuotationCheckSilUnitTest.cs" />
+    <Compile Include="QuotationMarksTests.cs" />
     <Compile Include="ScrChecksTestBase.cs" />
     <Compile Include="DummyTextToken.cs" />
     <Compile Include="MatchedPairsCheckUnitTest.cs" />

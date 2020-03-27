@@ -8,7 +8,6 @@ using System.Xml.Linq;
 using LanguageExplorer;
 using LanguageExplorer.Filters;
 using NUnit.Framework;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.LCModel;
 using SIL.LCModel.Core.KernelInterfaces;

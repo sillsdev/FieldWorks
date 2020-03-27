@@ -10,19 +10,19 @@ namespace SIL.FieldWorks.Common.FwUtils
 	/// Facilitates the conversion of pixels to hiMetrics and vice versa.
 	/// HiMetric is 1/1000 of a cm.
 	/// </summary>
-	public class HiMetric
+	internal sealed class HiMetric
 	{
 		// definition taken from C++ views code
 		private const double HIMETRIC_INCH = 2540;
 
 		/// <summary />
-		public HiMetric(int pixels, int dpi)
+		internal HiMetric(int pixels, int dpi)
 		{
 			Value = (int)Math.Round(pixels*HIMETRIC_INCH / dpi);
 		}
 
 		/// <summary />
-		public HiMetric(int hiMetrix)
+		internal HiMetric(int hiMetrix)
 		{
 			Value = hiMetrix;
 		}
@@ -31,7 +31,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// Gets the value in pixels for a given dpi
 		/// </summary>
 		/// <returns>returns the value in pixels for a given dpi</returns>
-		public int GetPixels(int dpi)
+		internal int GetPixels(int dpi)
 		{
 			return (int)Math.Round(dpi * (double)Value / HIMETRIC_INCH);
 		}
@@ -39,6 +39,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <summary>
 		/// Gets the value in HiMetric.
 		/// </summary>
-		public int Value { get; }
+		internal int Value { get; }
 	}
 }

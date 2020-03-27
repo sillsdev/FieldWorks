@@ -11,7 +11,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 	/// <summary>
 	/// Alternative implementation for unit tests
 	/// </summary>
-	internal class DummyFwRegistryHelper : IFwRegistryHelper
+	internal sealed class DummyFwRegistryHelper : IFwRegistryHelper
 	{
 		internal const string FlexKeyName = "Language Explorer";
 		internal const string DirName = "TestDir";

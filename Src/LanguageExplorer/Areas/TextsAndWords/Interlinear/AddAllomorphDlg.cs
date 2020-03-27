@@ -9,7 +9,7 @@ using SIL.LCModel.Core.KernelInterfaces;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 {
-	public class AddAllomorphDlg : EntryGoDlg
+	internal sealed class AddAllomorphDlg : EntryGoDlg
 	{
 		private string m_formOrig;
 		private int m_hvoType;
@@ -38,19 +38,19 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// match the type of any existing MoMorph. This used to disable the OK
 		/// button, but now it's just a warning.
 		/// </summary>
-		public bool InconsistentType { get; protected set; }
+		internal bool InconsistentType { get; private set; }
 
 		/// <summary>
 		/// This flag is set when the dialog is used to add an allomorph and the
 		/// allomorph chosen already exists.
 		/// </summary>
-		public bool MatchingForm { get; protected set; }
+		internal bool MatchingForm { get; private set; }
 
 		#endregion Properties
 
 		#region	Construction and Destruction
 
-		public AddAllomorphDlg()
+		internal AddAllomorphDlg()
 		{
 			InitializeComponent();
 			SetHelpTopic("khtpFindEntryToAddAllomorph");
@@ -78,7 +78,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// <summary>
 		/// Set up the dlg in preparation to showing it.
 		/// </summary>
-		public void SetDlgInfo(LcmCache cache, WindowParams wp, ITsString tssform, int hvoType)
+		internal void SetDlgInfo(LcmCache cache, WindowParams wp, ITsString tssform, int hvoType)
 		{
 			SetDlgInfo(cache, wp, tssform);
 			m_formOrig = m_tbForm.Text;

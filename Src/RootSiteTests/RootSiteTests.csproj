@@ -237,6 +237,7 @@
     </Compile>
     <Compile Include="CacheInfo.cs" />
     <Compile Include="CacheUndoAction.cs" />
+    <Compile Include="CharEnumeratorForByteArrayTests.cs" />
     <Compile Include="ClipboardStub.cs" />
     <Compile Include="DummyRootBox.cs" />
     <Compile Include="DummySelectionHelper.cs" />

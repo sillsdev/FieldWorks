@@ -524,7 +524,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 					cache.LangProject.LexDbOA.ReversalIndexesOC.Remove(rev);
 				}
 				// Set up for the reversal index combo box or dropdown menu.
-				var reversalIndexGuid = ReversalIndexServices.GetObjectGuidIfValid(propertyTable, "ReversalIndexGuid");
+				var reversalIndexGuid = FwUtils.GetObjectGuidIfValid(propertyTable, "ReversalIndexGuid");
 				if (reversalIndexGuid == Guid.Empty)
 				{
 					// We haven't established the reversal index yet. Choose the first one available.

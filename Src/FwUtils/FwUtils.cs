@@ -12,6 +12,7 @@ using System.Media;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using System.Xml.Linq;
+using SIL.LCModel;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.WritingSystems;
@@ -675,6 +676,30 @@ namespace SIL.FieldWorks.Common.FwUtils
 			tpb.SetIntPropValues((int)FwTextPropType.ktptEditable, (int)FwTextPropVar.ktpvEnum, (int)TptEditable.ktptNotEditable);
 			tpb.SetStrPropValue((int)FwTextPropType.ktptNamedStyle, StyleServices.UiElementStylename);
 			return tpb.GetTextProps();
+		}
+
+		/// <summary>
+		/// Fetches the GUID value of the given property, having checked it is a valid object.
+		/// If it is not a valid object, the property is removed.
+		/// </summary>
+		public static Guid GetObjectGuidIfValid(IPropertyTable propertyTable, string key)
+		{
+			var sGuid = propertyTable.GetValue<string>(key);
+			if (string.IsNullOrEmpty(sGuid))
+			{
+				return Guid.Empty;
+			}
+			if (!Guid.TryParse(sGuid, out var guid))
+			{
+				return Guid.Empty;
+			}
+			var cache = propertyTable.GetValue<LcmCache>(FwUtils.cache);
+			if (cache.ServiceLocator.ObjectRepository.IsValidObjectId(guid))
+			{
+				return guid;
+			}
+			propertyTable.RemoveProperty(key);
+			return Guid.Empty;
 		}
 	}
 }

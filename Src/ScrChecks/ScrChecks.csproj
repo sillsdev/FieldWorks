@@ -93,6 +93,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\FwUtils.dll</HintPath>
     </Reference>
+    <Reference Include="SIL.LCModel.Utils, Version=9.0.0.565, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Output\Debug\SIL.LCModel.Utils.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
@@ -107,8 +111,11 @@
     </Compile>
     <Compile Include="ChapterVerseCheck.cs" />
     <Compile Include="CharactersCheck.cs" />
+    <Compile Include="MatchedPairList.cs" />
+    <Compile Include="MatchedPairs.cs" />
     <Compile Include="MatchedPairsCheck.cs" />
     <Compile Include="MixedCapitalizationCheck.cs" />
+    <Compile Include="ParagraphContinuationMark.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -132,6 +139,8 @@
     </Compile>
     <Compile Include="PunctuationCheck.cs" />
     <Compile Include="QuotationCheck.cs" />
+    <Compile Include="QuotationMarks.cs" />
+    <Compile Include="QuotationMarksList.cs" />
     <Compile Include="RepeatedWordsCheck.cs" />
     <Compile Include="StandardCheckIds.cs" />
     <Compile Include="StyleInfo.cs" />

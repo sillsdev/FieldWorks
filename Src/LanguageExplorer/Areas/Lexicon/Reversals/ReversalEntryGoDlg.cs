@@ -23,7 +23,7 @@ namespace LanguageExplorer.Areas.Lexicon.Reversals
 		private readonly HashSet<int> m_FilteredReversalEntryHvos = new HashSet<int>();
 
 		/// <summary />
-		public ReversalEntryGoDlg()
+		internal ReversalEntryGoDlg()
 		{
 			SetHelpTopic("khtpFindReversalEntry");
 			InitializeComponent();
@@ -32,10 +32,10 @@ namespace LanguageExplorer.Areas.Lexicon.Reversals
 		/// <summary>
 		/// Gets or sets the reversal index.
 		/// </summary>
-		public IReversalIndex ReversalIndex { get; set; }
+		internal IReversalIndex ReversalIndex { get; set; }
 
 		/// <summary />
-		public ICollection<int> FilteredReversalEntryHvos => m_FilteredReversalEntryHvos;
+		internal ICollection<int> FilteredReversalEntryHvos => m_FilteredReversalEntryHvos;
 
 		/// <summary />
 		protected override string PersistenceLabel => "ReversalEntryGo";
@@ -64,13 +64,13 @@ namespace LanguageExplorer.Areas.Lexicon.Reversals
 		}
 
 		/// <summary />
-		public override void SetDlgInfo(LcmCache cache, WindowParams wp)
+		internal override void SetDlgInfo(LcmCache cache, WindowParams wp)
 		{
 			SetDlgInfo(cache, wp, cache.ServiceLocator.WritingSystemManager.GetWsFromStr(ReversalIndex.WritingSystem));
 		}
 
 		/// <summary />
-		public override void SetDlgInfo(LcmCache cache, WindowParams wp, string form)
+		internal override void SetDlgInfo(LcmCache cache, WindowParams wp, string form)
 		{
 			SetDlgInfo(cache, wp, form, cache.ServiceLocator.WritingSystemManager.GetWsFromStr(ReversalIndex.WritingSystem));
 		}
@@ -148,9 +148,9 @@ namespace LanguageExplorer.Areas.Lexicon.Reversals
 			private readonly IReversalIndex m_reversalIndex;
 			private readonly IReversalIndexEntryRepository m_revEntryRepository;
 
-			public ICollection<int> FilteredEntryHvos { private get; set; }
+			internal ICollection<int> FilteredEntryHvos { private get; set; }
 
-			public ReversalEntrySearchEngine(LcmCache cache, IReversalIndex reversalIndex)
+			internal ReversalEntrySearchEngine(LcmCache cache, IReversalIndex reversalIndex)
 				: base(cache, SearchType.Prefix)
 			{
 				m_reversalIndex = reversalIndex;

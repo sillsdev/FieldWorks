@@ -16,7 +16,7 @@ using SIL.LCModel.DomainServices;
 
 namespace LanguageExplorer.Controls
 {
-	public class EntryGoDlg : BaseGoDlg
+	internal class EntryGoDlg : BaseGoDlg
 	{
 		protected bool m_fNewlyCreated;
 		protected ILexSense m_newSense;

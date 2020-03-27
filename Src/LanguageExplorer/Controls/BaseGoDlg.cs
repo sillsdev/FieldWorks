@@ -13,7 +13,6 @@ using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FwCoreDlgs;
 using SIL.FieldWorks.FwCoreDlgs.Controls;
-using SIL.FieldWorks.Resources;
 using SIL.LCModel;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Core.Text;
@@ -23,7 +22,7 @@ using SIL.Windows.Forms;
 namespace LanguageExplorer.Controls
 {
 	/// <summary/>
-	public abstract class BaseGoDlg : Form, IFlexComponent
+	internal abstract class BaseGoDlg : Form, IFlexComponent
 	{
 		#region	Data members
 
@@ -74,14 +73,9 @@ namespace LanguageExplorer.Controls
 		}
 
 		/// <summary>
-		/// Answer whether the OK button is currently enabled.
-		/// </summary>
-		public bool IsOkEnabled => m_btnOK.Enabled;
-
-		/// <summary>
 		/// Gets the database id of the selected object.
 		/// </summary>
-		public virtual ICmObject SelectedObject => m_selObject;
+		internal virtual ICmObject SelectedObject => m_selObject;
 		#endregion Properties
 
 		#region	Construction and Destruction
@@ -159,7 +153,7 @@ namespace LanguageExplorer.Controls
 		/// <summary>
 		/// Set up the dlg in preparation to showing it.
 		/// </summary>
-		public virtual void SetDlgInfo(LcmCache cache, WindowParams wp)
+		internal virtual void SetDlgInfo(LcmCache cache, WindowParams wp)
 		{
 			SetDlgInfo(cache, wp, cache.DefaultVernWs);
 		}
@@ -316,7 +310,7 @@ namespace LanguageExplorer.Controls
 		/// <summary>
 		/// Set the text for the OK button.
 		/// </summary>
-		public void SetOkButtonText(string text)
+		internal void SetOkButtonText(string text)
 		{
 			m_btnOK.Text = text;
 		}
@@ -410,7 +404,7 @@ namespace LanguageExplorer.Controls
 		/// <summary>
 		/// Set up the dlg in preparation to showing it.
 		/// </summary>
-		public virtual void SetDlgInfo(LcmCache cache, WindowParams wp, string form)
+		internal virtual void SetDlgInfo(LcmCache cache, WindowParams wp, string form)
 		{
 			SetDlgInfo(cache, wp, form, cache.DefaultVernWs);
 		}
@@ -422,7 +416,7 @@ namespace LanguageExplorer.Controls
 		}
 
 		///  <summary />
-		public void SetDlgInfo(LcmCache cache, WindowParams wp, ITsString tssform)
+		internal void SetDlgInfo(LcmCache cache, WindowParams wp, ITsString tssform)
 		{
 			SetDlgInfo(cache, wp, tssform.Text, TsStringUtils.GetWsAtOffset(tssform, 0));
 		}
@@ -455,7 +449,7 @@ namespace LanguageExplorer.Controls
 		/// <summary>
 		/// Sets the help topic ID for the window.  This is used in both the Help button and when the user hits F1
 		/// </summary>
-		public void SetHelpTopic(string helpTopic)
+		internal void SetHelpTopic(string helpTopic)
 		{
 			m_helpTopic = helpTopic;
 			if (m_helpTopicProvider != null)

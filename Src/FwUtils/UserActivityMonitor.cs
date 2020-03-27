@@ -14,7 +14,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 	/// This class is a message filter which can be installed in order to track when the user last
 	/// pressed a key or did any mouse action, including moving the mouse.
 	/// </summary>
-	public class UserActivityMonitor : IMessageFilter
+	public sealed class UserActivityMonitor : IMessageFilter
 	{
 		private const int Keydown = 128;
 		private IntPtr m_lastMousePosition;

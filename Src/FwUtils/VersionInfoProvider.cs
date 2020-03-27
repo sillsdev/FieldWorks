@@ -12,7 +12,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 	/// <summary>
 	/// Class for getting version information out of an assembly
 	/// </summary>
-	public class VersionInfoProvider
+	public sealed class VersionInfoProvider
 	{
 		private readonly Assembly m_assembly;
 		private readonly bool m_fShowSILInfo;

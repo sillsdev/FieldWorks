@@ -21,7 +21,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 	/// <summary>
 	/// Utility methods for FLExBridge interaction
 	/// </summary>
-	public class FLExBridgeHelper
+	public sealed class FLExBridgeHelper
 	{
 		#region These are the available '-v' parameter options:
 		/// <summary>
@@ -523,7 +523,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 	/// <summary>
 	/// Event args plus jump URL
 	/// </summary>
-	public class FLExJumpEventArgs : EventArgs
+	public sealed class FLExJumpEventArgs : EventArgs
 	{
 		/// <summary>
 		/// Set up event args with a URL to jump to.

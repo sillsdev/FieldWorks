@@ -21,9 +21,9 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 	/// TODO: refactor with LinkVariantToEntryOrSense to put all m_fBackRefToVariant logic here,
 	/// else allow GoDlg to support additional Variant matching logic.
 	/// </summary>
-	public class InsertVariantDlg : LinkVariantToEntryOrSense
+	internal sealed class InsertVariantDlg : LinkVariantToEntryOrSense
 	{
-		public InsertVariantDlg()
+		internal InsertVariantDlg()
 		{
 			// inherit some layout controls from GoDlg
 			InitializeSomeComponentsLikeGoDlg();
@@ -95,7 +95,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		}
 
 		/// <summary />
-		public void SetDlgInfo(LcmCache cache, IVariantComponentLexeme componentLexeme)
+		internal void SetDlgInfo(LcmCache cache, IVariantComponentLexeme componentLexeme)
 		{
 			SetDlgInfoForComponentLexeme(cache, componentLexeme);
 		}

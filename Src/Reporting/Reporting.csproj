@@ -177,9 +177,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>ReportingStrings.resx</DependentUpon>
     </Compile>
-    <Compile Include="UsageEmailDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
     <EmbeddedResource Include="ErrorReport.resx">
       <DependentUpon>ErrorReport.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -189,12 +186,7 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>ReportingStrings.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <EmbeddedResource Include="UsageEmailDialog.resx">
-      <DependentUpon>UsageEmailDialog.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
     <None Include="Resources\cc.png" />
-    <Content Include="Usage.ico" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">

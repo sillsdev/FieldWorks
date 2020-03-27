@@ -13,7 +13,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 	/// <summary>
 	/// Class that represents a sub-string of one or more consecutive source tokens
 	/// </summary>
-	public class TextTokenSubstring
+	public sealed class TextTokenSubstring
 	{
 		private List<ITextToken> m_tokens;
 		private string m_inventoryString;

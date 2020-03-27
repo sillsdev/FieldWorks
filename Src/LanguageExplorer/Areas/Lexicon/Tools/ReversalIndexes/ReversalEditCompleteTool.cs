@@ -456,7 +456,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 				var retVal = new Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>>(contextMenuStrip, menuItems);
 
 				// <menu inline="true" emptyAllowed="true" behavior="singlePropertyAtomicValue" list="ReversalIndexList" property="ReversalIndexPublicationLayout" />
-				var currentGuid = ReversalIndexServices.GetObjectGuidIfValid(_propertyTable, LanguageExplorerConstants.ReversalIndexGuid);
+				var currentGuid = FwUtils.GetObjectGuidIfValid(_propertyTable, LanguageExplorerConstants.ReversalIndexGuid);
 				if (currentGuid != Guid.Empty)
 				{
 					_currentReversalIndex = (IReversalIndex)_majorFlexComponentParameters.LcmCache.ServiceLocator.GetObject(currentGuid);

@@ -187,7 +187,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 		private void HandleReversalIndexGuid_Changed(object obj)
 		{
 			// 'obj' is a string of the guid.
-			var currentGuid = ReversalIndexServices.GetObjectGuidIfValid(_propertyTable, LanguageExplorerConstants.ReversalIndexGuid);
+			var currentGuid = FwUtils.GetObjectGuidIfValid(_propertyTable, LanguageExplorerConstants.ReversalIndexGuid);
 			if (currentGuid != Guid.Empty)
 			{
 				_currentReversalIndex = (IReversalIndex)_cache.ServiceLocator.GetObject(currentGuid);

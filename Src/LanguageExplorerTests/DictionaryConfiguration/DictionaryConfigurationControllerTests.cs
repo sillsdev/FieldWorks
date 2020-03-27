@@ -23,7 +23,6 @@ using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Infrastructure;
-using FileUtils = SIL.LCModel.Utils.FileUtils;
 
 namespace LanguageExplorerTests.DictionaryConfiguration
 {

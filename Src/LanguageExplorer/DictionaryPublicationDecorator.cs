@@ -421,7 +421,7 @@ namespace LanguageExplorer
 					return VecProp(Cache.LangProject.LexDbOA.Hvo, virtualFlid);
 				case "Reversal Index":
 					{
-						var reversalIndexGuid = ReversalIndexServices.GetObjectGuidIfValid(propertyTable, LanguageExplorerConstants.ReversalIndexGuid);
+						var reversalIndexGuid = FwUtils.GetObjectGuidIfValid(propertyTable, LanguageExplorerConstants.ReversalIndexGuid);
 						if (reversalIndexGuid != Guid.Empty)
 						{
 							if (Cache.ServiceLocator.GetObject(reversalIndexGuid) is IReversalIndex currentReversalIndex)

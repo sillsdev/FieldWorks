@@ -5,7 +5,6 @@
 using System;
 using System.Diagnostics;
 using SIL.Code;
-using SIL.FieldWorks.Common.FwUtils;
 
 namespace LanguageExplorer.Controls.DetailControls
 {

@@ -10,7 +10,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 	/// Class of object to be passed to the RecordError delegate, containing information about
 	/// the location and nature of the checking inconsistency.
 	/// </summary>
-	public class RecordErrorEventArgs : EventArgs
+	public sealed class RecordErrorEventArgs : EventArgs
 	{
 		/// <summary />
 		public RecordErrorEventArgs(TextTokenSubstring tts, Guid checkId)

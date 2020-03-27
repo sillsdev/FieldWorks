@@ -16,7 +16,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 	/// </summary>
 	/// <remarks>NOTE: only the methods that are currently used are implemented.</remarks>
 	[Guid("1bd4d91c-124b-11de-96cb-0019dbf4566e"), ClassInterface(ClassInterfaceType.None), TypeLibType(TypeLibTypeFlags.FCanCreate)]
-	public sealed class ImagePicture : IPicture, IDisposable, IPictureDisp, IComDisposable
+	internal sealed class ImagePicture : IPicture, IDisposable, IPictureDisp, IComDisposable
 	{
 		/// <summary>
 		/// Contains the image this is Rendered.
@@ -27,12 +27,12 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// Whether the ImagePicture is owned by native or managed code, to specify
 		/// who should dispose of it.
 		/// </summary>
-		public bool ReferenceOwnedByNative { get; set; }
+		internal bool ReferenceOwnedByNative { get; set; }
 
 		/// <summary>
 		/// Construct a ImagePicture from a C# Image object
 		/// </summary>
-		public static ImagePicture FromImage(Image img)
+		internal static ImagePicture FromImage(Image img)
 		{
 			var ret = new ImagePicture
 			{
@@ -45,7 +45,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <summary>
 		/// Construct a  ImagePicture from an array of bytes
 		/// </summary>
-		public static ImagePicture ImageBytes(byte[] pbData, int cbData)
+		internal static ImagePicture ImageBytes(byte[] pbData, int cbData)
 		{
 			using (var s = new MemoryStream(pbData, 0, cbData))
 			{
@@ -111,12 +111,12 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <summary>
 		/// Gets or sets the horizontal dpi.
 		/// </summary>
-		public int DpiX { get; set; } = 96;
+		internal int DpiX { get; set; } = 96;
 
 		/// <summary>
 		/// Gets or sets the vertical dpi.
 		/// </summary>
-		public int DpiY { get; set; } = 96;
+		internal int DpiY { get; set; } = 96;
 
 		#region IPicture Members
 
