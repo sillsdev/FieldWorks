@@ -36,6 +36,12 @@
 		<Feature Id="Azerbaijani" Title="Azerbaijani" Description="Allows the software to have an Azerbaijani user interface." Display="expand" Level="3" AllowAdvertise="no">
 			<ComponentGroupRef Id="azLocalization" />
 		</Feature>
+		<Feature Id="Bengali" Title="Bengali" Description="Allows the software to have a Bengali user interface." Display="expand" Level="3" AllowAdvertise="no">
+			<ComponentGroupRef Id="bnLocalization" />
+		</Feature>
+		<Feature Id="Burmese" Title="Burmese" Description="Allows the software to have a Burmese user interface." Display="expand" Level="3" AllowAdvertise="no">
+			<ComponentGroupRef Id="myLocalization" />
+		</Feature>
 		<Feature Id="Chinese" Title="Chinese" Description="Allows the software to have a Chinese user interface." Display="expand" Level="3" AllowAdvertise="no">
 			<Condition Level="1">UserLanguageID = 3076 OR UserLanguageID = 5124 OR UserLanguageID = 2052 OR UserLanguageID = 1028</Condition>
 			<ComponentGroupRef Id="zhLocalization" />

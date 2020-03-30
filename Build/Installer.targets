@@ -181,6 +181,7 @@
 			<!-- If you change this list, you must also update those listed at $(fwrt)\Localizations\ReadMe.md -->
 			<L10nFiles Include="$(OutputDirForConfig)\ar\**\*"/>
 			<L10nFiles Include="$(OutputDirForConfig)\az\**\*"/>
+			<L10nFiles Include="$(OutputDirForConfig)\bn\**\*"/>
 			<L10nFiles Include="$(OutputDirForConfig)\de\**\*"/>
 			<L10nFiles Include="$(OutputDirForConfig)\es\**\*"/>
 			<L10nFiles Include="$(OutputDirForConfig)\fa\**\*"/>
@@ -191,6 +192,7 @@
 			<L10nFiles Include="$(OutputDirForConfig)\km\**\*"/>
 			<L10nFiles Include="$(OutputDirForConfig)\ko\**\*"/>
 			<L10nFiles Include="$(OutputDirForConfig)\ms\**\*"/>
+			<L10nFiles Include="$(OutputDirForConfig)\my\**\*"/>
 			<L10nFiles Include="$(OutputDirForConfig)\ne\**\*"/>
 			<L10nFiles Include="$(OutputDirForConfig)\pt\**\*"/>
 			<L10nFiles Include="$(OutputDirForConfig)\ru\**\*"/>
@@ -289,10 +291,10 @@
 		<Message Text="Harvesting $(PatchPrefix) L10n"/>
 		<MakeDir Directories="$(L10nWxiDir)" Condition="!Exists('$(L10nWxiDir)')"/>
 		<ItemGroup>
-			<!-- If you change this list, you must also update those listed at $(fwrt)\Localizations\ReadMe.md -->
-			<TargetLocales Include="ar;az;de;es;fa;fr;hi;hu;id;km;ko;ms;ne;pt;ru;rw;sw;ta;te;th;tr;ur;vi;zh-CN"/>
+			<LocaleDirs Include="$([System.IO.Directory]::GetDirectories(&quot;$(L10nSrcDir)&quot;))"/>
 		</ItemGroup>
-		<MSBuild Projects="$(MSBuildProjectFullPath)" Properties="TargetLocale=%(TargetLocales.Identity)" Targets="HarvestOneL10n"/>
+		<MSBuild Projects="$(MSBuildProjectFullPath)" Targets="HarvestOneL10n"
+			Properties="LocaleDir=%(TargetLocales.Identity);TargetLocale=%(Filename)"/>
 	</Target>
 
 	<Target Name="HarvestOneL10n">
@@ -305,7 +307,7 @@
 			<KeyPathFixArg Condition="'$(FixKeyPath)'=='true'">-t $(InstallerDir)/BaseInstallerBuild/KeyPathFix.xsl</KeyPathFixArg>
 			<CommonHeatArgs>$(GuidGenArg) -scom -sreg -sfrag -srd -sw5150 -sw5151 $(KeyPathFixArg)</CommonHeatArgs>
 		</PropertyGroup>
-		<Exec Command="heat.exe dir $(L10nSrcDir)\$(TargetLocale) $(CommonHeatArgs) -cg $(SafeTargetLocale)Localization -dr $(SafeTargetLocale)L10NFOLDER -var wix.$(PatchPrefix)$(SafeTargetLocale)L10NDIR -out $(L10nWxiDir)\$(SafeTargetLocale)Harvest.wxs" />
+		<Exec Command="heat.exe dir $(LocaleDir) $(CommonHeatArgs) -cg $(SafeTargetLocale)Localization -dr $(SafeTargetLocale)L10NFOLDER -var wix.$(PatchPrefix)$(SafeTargetLocale)L10NDIR -out $(L10nWxiDir)\$(SafeTargetLocale)Harvest.wxs" />
 	</Target>
 
 	<!-- Write a table of files' metadata that can be used to verify that each file has been installed or patched correctly. -->
