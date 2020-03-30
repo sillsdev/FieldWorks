@@ -658,32 +658,4 @@
 			Key="$(BUILDAGENT_HKCU)SOFTWARE\SIL\EncodingConverterRepository\Registry"
 			Value="$(fwrt)/DistFiles/SIL/Repository/mappingRegistry.xml"/>
 	</Target>
-
-	<PropertyGroup>
-		<SldrUrl>https://ldml.api.sil.org/</SldrUrl>
-	</PropertyGroup>
-
-	<Target Name="updateTemplateLdmlFiles">
-		<DownloadFile Address="$(SldrUrl)bn" DownloadsDir="$(fwrt)/DistFiles/Templates" LocalFilename="bn.ldml"/>
-		<DownloadFile Address="$(SldrUrl)de" DownloadsDir="$(fwrt)/DistFiles/Templates" LocalFilename="de.ldml"/>
-		<DownloadFile Address="$(SldrUrl)en" DownloadsDir="$(fwrt)/DistFiles/Templates" LocalFilename="en.ldml"/>
-		<DownloadFile Address="$(SldrUrl)es" DownloadsDir="$(fwrt)/DistFiles/Templates" LocalFilename="es.ldml"/>
-		<DownloadFile Address="$(SldrUrl)fa" DownloadsDir="$(fwrt)/DistFiles/Templates" LocalFilename="fa.ldml"/>
-		<DownloadFile Address="$(SldrUrl)fr" DownloadsDir="$(fwrt)/DistFiles/Templates" LocalFilename="fr.ldml"/>
-		<!-- DownloadFile Address="$(SldrUrl)grc" DownloadsDir="$(fwrt)/DistFiles/Templates" LocalFilename="grc.ldml"/ -->
-		<!-- DownloadFile Address="$(SldrUrl)hbo" DownloadsDir="$(fwrt)/DistFiles/Templates" LocalFilename="hbo.ldml"/ -->
-		<DownloadFile Address="$(SldrUrl)hi" DownloadsDir="$(fwrt)/DistFiles/Templates" LocalFilename="hi.ldml"/>
-		<DownloadFile Address="$(SldrUrl)id" DownloadsDir="$(fwrt)/DistFiles/Templates" LocalFilename="id.ldml"/>
-		<DownloadFile Address="$(SldrUrl)km" DownloadsDir="$(fwrt)/DistFiles/Templates" LocalFilename="km.ldml"/>
-		<DownloadFile Address="$(SldrUrl)ko" DownloadsDir="$(fwrt)/DistFiles/Templates" LocalFilename="ko.ldml"/>
-		<DownloadFile Address="$(SldrUrl)ms" DownloadsDir="$(fwrt)/DistFiles/Templates" LocalFilename="ms.ldml"/>
-		<DownloadFile Address="$(SldrUrl)ne" DownloadsDir="$(fwrt)/DistFiles/Templates" LocalFilename="ne.ldml"/>
-		<DownloadFile Address="$(SldrUrl)pt" DownloadsDir="$(fwrt)/DistFiles/Templates" LocalFilename="pt.ldml"/>
-		<DownloadFile Address="$(SldrUrl)ru" DownloadsDir="$(fwrt)/DistFiles/Templates" LocalFilename="ru.ldml"/>
-		<DownloadFile Address="$(SldrUrl)te" DownloadsDir="$(fwrt)/DistFiles/Templates" LocalFilename="te.ldml"/>
-		<DownloadFile Address="$(SldrUrl)th" DownloadsDir="$(fwrt)/DistFiles/Templates" LocalFilename="th.ldml"/>
-		<DownloadFile Address="$(SldrUrl)tr" DownloadsDir="$(fwrt)/DistFiles/Templates" LocalFilename="tr.ldml"/>
-		<DownloadFile Address="$(SldrUrl)vi" DownloadsDir="$(fwrt)/DistFiles/Templates" LocalFilename="vi.ldml"/>
-		<DownloadFile Address="$(SldrUrl)zh-CN" DownloadsDir="$(fwrt)/DistFiles/Templates" LocalFilename="zh-CN.ldml"/>
-	</Target>
 </Project>

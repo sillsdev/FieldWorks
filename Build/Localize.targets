@@ -15,6 +15,7 @@
 	<Target Name="localize-binaries" DependsOnTargets="Initialize;processLanguages-binaries"/>
 
 	<PropertyGroup>
+		<SldrUrl>https://ldml.api.sil.org/</SldrUrl>
 		<L10nsBaseDir>$(fwrt)/Localizations</L10nsBaseDir>
 		<L10nsDirectory>$(L10nsBaseDir)/l10ns</L10nsDirectory>
 		<ListsDirectory>$(L10nsBaseDir)/lists</ListsDirectory>
@@ -58,7 +59,7 @@
 			Condition="!Exists('$(LcmSrcDir)')"/>
 	</Target>
 
-	<!-- Download translations from Crowdin -->
+	<!-- Download translations from Crowdin (and LDML files from SLDR) -->
 	<Target Name="downloadTranslatedFiles" Condition="'$(disableDownloads)'!='true'" DependsOnTargets="InstallOvercrowdin">
 		<ForceDelete Files="$(L10nsDirectory)"/>
 		<MakeDir Directories="$(DownloadsDir)"/>
@@ -70,6 +71,10 @@
 		</ItemGroup>
 		<MSBuild Projects="$(MSBuildProjectFullPath)" Targets="postProcessDownloadedTranslation"
 			Properties="LocaleDir=%(LocaleDirs.Identity);Locale=%(Filename)"/>
+		<MSBuild Projects="$(MSBuildProjectFullPath)" Targets="updateOneTemplateLdmlFile"
+			Properties="Locale=%(LocaleDirs.Filename)"/>
+		<MSBuild Projects="$(MSBuildProjectFullPath)" Targets="updateOneTemplateLdmlFile"
+			Properties="Locale=en"/>
 	</Target>
 
 	<!-- Each downloaded translation needs the following post-processing:
@@ -83,6 +88,10 @@
 			<TranslatedResxFiles Include="$(LocaleDir)/Localizations/LCM/**/*.resx"/>
 		</ItemGroup>
 		<Move SourceFiles="@(TranslatedResxFiles)" DestinationFolder="$(LocaleDir)/src/%(RecursiveDir)" />
+	</Target>
+
+	<Target Name="updateOneTemplateLdmlFile">
+		<DownloadFile Address="$(SldrUrl)$(Locale)" DownloadsDir="$(fwrt)/DistFiles/Templates" LocalFilename="$(Locale).ldml"/>
 	</Target>
 
 	<!-- Create and zip LocalizedLists-*.xml files to DistFiles/Templates -->
