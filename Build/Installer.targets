@@ -294,7 +294,7 @@
 			<LocaleDirs Include="$([System.IO.Directory]::GetDirectories(&quot;$(L10nSrcDir)&quot;))"/>
 		</ItemGroup>
 		<MSBuild Projects="$(MSBuildProjectFullPath)" Targets="HarvestOneL10n"
-			Properties="LocaleDir=%(TargetLocales.Identity);TargetLocale=%(Filename)"/>
+			Properties="LocaleDir=%(LocaleDirs.Identity);TargetLocale=%(Filename)"/>
 	</Target>
 
 	<Target Name="HarvestOneL10n">
