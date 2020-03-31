@@ -9,8 +9,6 @@ using System.Linq;
 using System.Windows.Forms;
 using LanguageExplorer.UtilityTools;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.Common.ViewsInterfaces;
-using SIL.FieldWorks.Language;
 using SIL.LCModel;
 using SIL.LCModel.Infrastructure;
 
@@ -81,7 +79,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 		private sealed class ReversalSubEntryIcuComparer : IComparer<IReversalIndexEntry>, IDisposable
 		{
 			private readonly int m_ws;
-			private readonly ManagedLgIcuCollator m_collator;
+			private ManagedLgIcuCollator m_collator;
 
 			/// <summary />
 			public ReversalSubEntryIcuComparer(LcmCache cache, string ws)
@@ -96,10 +94,11 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 			{
 				var xString = x.ReversalForm.get_String(m_ws);
 				var yString = y.ReversalForm.get_String(m_ws);
-				return m_collator.Compare(xString.Text, yString.Text, LgCollatingOptions.fcoIgnoreCase);
+				return m_collator.Compare(xString.Text, yString.Text);
 			}
 
 			#region disposal
+			private bool _isDisposed;
 			~ReversalSubEntryIcuComparer() { Dispose(false); }
 
 			/// <summary />
@@ -113,10 +112,18 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 			private void Dispose(bool disposing)
 			{
 				Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
+				if (_isDisposed)
+				{
+					// No need to run it more than once.
+					return;
+				}
 				if (disposing)
 				{
 					m_collator?.Dispose();
 				}
+				m_collator = null;
+
+				_isDisposed = true;
 			}
 			#endregion disposal
 		}

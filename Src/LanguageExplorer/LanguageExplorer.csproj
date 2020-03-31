@@ -221,10 +221,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Release\LibChorus.dll</HintPath>
     </Reference>
-    <Reference Include="ManagedLgIcuCollator">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Release\ManagedLgIcuCollator.dll</HintPath>
-    </Reference>
     <Reference Include="Microsoft.Practices.ServiceLocation">
       <HintPath>..\..\Output\Release\Microsoft.Practices.ServiceLocation.dll</HintPath>
     </Reference>
@@ -453,6 +449,7 @@
     <Compile Include="InstallationException.cs" />
     <Compile Include="IPersistAsXml.cs" />
     <Compile Include="IProgressDisplayer.cs" />
+    <Compile Include="ManagedLgIcuCollator.cs" />
     <Compile Include="MatchType.cs" />
     <Compile Include="ISeparatorMenuBundle.cs" />
     <Compile Include="ISeparatorToolStripBundle.cs" />

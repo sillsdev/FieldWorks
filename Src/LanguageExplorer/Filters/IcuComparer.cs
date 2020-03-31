@@ -2,11 +2,8 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System;
 using System.Collections;
 using System.Xml.Linq;
-using SIL.FieldWorks.Common.ViewsInterfaces;
-using SIL.FieldWorks.Language;
 using SIL.Xml;
 
 namespace LanguageExplorer.Filters
@@ -15,7 +12,7 @@ namespace LanguageExplorer.Filters
 	public class IcuComparer : IComparer, IPersistAsXml
 	{
 		/// <summary />
-		protected ILgCollatingEngine m_lce;
+		private ManagedLgIcuCollator _managedLgIcuCollator;
 
 		/// <summary>
 		/// Key for the Hashtable is a string. Value is a byte[].
@@ -47,15 +44,15 @@ namespace LanguageExplorer.Filters
 		/// </summary>
 		public void OpenCollatingEngine()
 		{
-			if (m_lce == null)
+			if (_managedLgIcuCollator == null)
 			{
-				m_lce = new ManagedLgIcuCollator();
+				_managedLgIcuCollator = new ManagedLgIcuCollator();
 			}
 			else
 			{
-				m_lce.Close();
+				_managedLgIcuCollator.Close();
 			}
-			m_lce.Open(WsCode);
+			_managedLgIcuCollator.Open(WsCode);
 		}
 
 		/// <summary>
@@ -63,12 +60,11 @@ namespace LanguageExplorer.Filters
 		/// </summary>
 		public void CloseCollatingEngine()
 		{
-			if (m_lce != null)
+			if (_managedLgIcuCollator != null)
 			{
-				m_lce.Close();
-				var disposable = m_lce as IDisposable;
-				disposable?.Dispose();
-				m_lce = null;
+				_managedLgIcuCollator.Close();
+				_managedLgIcuCollator?.Dispose();
+				_managedLgIcuCollator = null;
 			}
 			m_htskey?.Clear();
 		}
@@ -103,7 +99,7 @@ namespace LanguageExplorer.Filters
 			}
 			byte[] ka;
 			byte[] kb;
-			if (m_lce != null)
+			if (_managedLgIcuCollator != null)
 			{
 				var kaObj = m_htskey[a];
 				if (kaObj != null)
@@ -112,7 +108,7 @@ namespace LanguageExplorer.Filters
 				}
 				else
 				{
-					ka = (byte[])m_lce.get_SortKeyVariant(a, LgCollatingOptions.fcoDefault);
+					ka = (byte[])_managedLgIcuCollator.SortKeyVariant(a);
 					m_htskey.Add(a, ka);
 				}
 				var kbObj = m_htskey[b];
@@ -122,18 +118,18 @@ namespace LanguageExplorer.Filters
 				}
 				else
 				{
-					kb = (byte[])m_lce.get_SortKeyVariant(b, LgCollatingOptions.fcoDefault);
+					kb = (byte[])_managedLgIcuCollator.SortKeyVariant(b);
 					m_htskey.Add(b, kb);
 				}
 			}
 			else
 			{
 				OpenCollatingEngine();
-				ka = (byte[])m_lce.get_SortKeyVariant(a, LgCollatingOptions.fcoDefault);
-				kb = (byte[])m_lce.get_SortKeyVariant(b, LgCollatingOptions.fcoDefault);
+				ka = (byte[])_managedLgIcuCollator.SortKeyVariant(a);
+				kb = (byte[])_managedLgIcuCollator.SortKeyVariant(b);
 				CloseCollatingEngine();
 			}
-			// This is what m_lce.CompareVariant(ka,kb,...) would do.
+			// This is what _managedLgIcuCollator.CompareVariant(ka,kb,...) would do.
 			// Simulate strcmp on the two NUL-terminated byte strings.
 			// This avoids marshalling back and forth.
 			int nVal;
@@ -219,7 +215,7 @@ namespace LanguageExplorer.Filters
 					}
 				}
 			}
-			if (m_lce != that.m_lce)
+			if (_managedLgIcuCollator != that._managedLgIcuCollator)
 			{
 				return false;
 			}
@@ -237,9 +233,9 @@ namespace LanguageExplorer.Filters
 			{
 				hash += m_htskey.Count * 53;
 			}
-			if (m_lce != null)
+			if (_managedLgIcuCollator != null)
 			{
-				hash += m_lce.GetHashCode();
+				hash += _managedLgIcuCollator.GetHashCode();
 			}
 			if (WsCode != null)
 			{

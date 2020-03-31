@@ -10,8 +10,6 @@ using System.Windows.Forms;
 using ParatextImport;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.ScriptureUtils;
-using SIL.FieldWorks.Common.ViewsInterfaces;
-using SIL.FieldWorks.Language;
 using SIL.FieldWorks.Resources;
 using SIL.LCModel;
 using SIL.LCModel.Core.Scripture;
@@ -177,36 +175,43 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			// before actually adding them to the tree:
 			var foundFirstText = false;
 			// Create a collator ready for sorting:
-			var collator = new ManagedLgIcuCollator();
-			foreach (var tex in allTexts)
+			using (var collator = new ManagedLgIcuCollator())
 			{
-				if (tex.GenresRC.Any())
+				foreach (var tex in allTexts)
 				{
-					continue;
+					if (tex.GenresRC.Any())
+					{
+						continue;
+					}
+
+					var texItem = new TreeNode(tex.ChooserNameTS.Text)
+					{
+						Tag = tex.ContentsOA,
+						Name = "Text"
+					};
+					textsWithNoGenre.Add(texItem);
+					// LT-12179: If this is the first tex we've added, establish the collator's details
+					// according to the writing system at the start of the tex:
+					if (foundFirstText)
+					{
+						continue;
+					}
+
+					foundFirstText = true;
+					var ws1 = tex.ChooserNameTS.get_WritingSystemAt(0);
+					var wsEngine = m_cache.WritingSystemFactory.get_EngineOrNull(ws1);
+					collator.Open(wsEngine.Id);
 				}
-				var texItem = new TreeNode(tex.ChooserNameTS.Text)
+
+				if (!textsWithNoGenre.Any())
 				{
-					Tag = tex.ContentsOA,
-					Name = "Text"
-				};
-				textsWithNoGenre.Add(texItem);
-				// LT-12179: If this is the first tex we've added, establish the collator's details
-				// according to the writing system at the start of the tex:
-				if (foundFirstText)
-				{
-					continue;
+					return textsNode;
 				}
-				foundFirstText = true;
-				var ws1 = tex.ChooserNameTS.get_WritingSystemAt(0);
-				var wsEngine = m_cache.WritingSystemFactory.get_EngineOrNull(ws1);
-				collator.Open(wsEngine.Id);
+
+				// LT-12179: Order the TreeNodes alphabetically:
+				textsWithNoGenre.Sort((x, y) => collator.Compare(x.Text, y.Text));
 			}
-			if (!textsWithNoGenre.Any())
-			{
-				return textsNode;
-			}
-			// LT-12179: Order the TreeNodes alphabetically:
-			textsWithNoGenre.Sort((x, y) => collator.Compare(x.Text, y.Text, LgCollatingOptions.fcoIgnoreCase));
+
 			// Make a TreeNode for the texts with no known genre
 			var woGenreTreeNode = new TreeNode("No Genre", textsWithNoGenre.ToArray())
 			{
@@ -242,40 +247,46 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				var sortedNodes = new List<TreeNode>();
 				var foundFirstText = false;
 				// Create a collator ready for sorting:
-				var collator = new ManagedLgIcuCollator();
-				foreach (var tex in allTexts)
+				using (var collator = new ManagedLgIcuCollator())
 				{
-					// This tex may not have a genre or it may claim to be in more than one
-					if (!Enumerable.Contains(tex.GenresRC, gen))
+					foreach (var tex in allTexts)
 					{
-						continue;
+						// This tex may not have a genre or it may claim to be in more than one
+						if (!Enumerable.Contains(tex.GenresRC, gen))
+						{
+							continue;
+						}
+
+						var texItem = new TreeNode(tex.ChooserNameTS.Text)
+						{
+							Tag = tex.ContentsOA,
+							Name = "Text"
+						};
+						// LT-12179: Add the new TreeNode to the (not-yet-)sorted list:
+						sortedNodes.Add(texItem);
+						// LT-12179: If this is the first tex we've added, establish the collator's details
+						// according to the writing system at the start of the tex:
+						if (foundFirstText)
+						{
+							continue;
+						}
+
+						foundFirstText = true;
+						var ws1 = tex.ChooserNameTS.get_WritingSystemAt(0);
+						var wsEngine = gen.Cache.WritingSystemFactory.get_EngineOrNull(ws1);
+						collator.Open(wsEngine.Id);
 					}
-					var texItem = new TreeNode(tex.ChooserNameTS.Text)
-					{
-						Tag = tex.ContentsOA,
-						Name = "Text"
-					};
-					// LT-12179: Add the new TreeNode to the (not-yet-)sorted list:
-					sortedNodes.Add(texItem);
-					// LT-12179: If this is the first tex we've added, establish the collator's details
-					// according to the writing system at the start of the tex:
+
+					// LT-12179:
 					if (foundFirstText)
 					{
-						continue;
+						// Order the TreeNodes alphabetically:
+						sortedNodes.Sort((x, y) => collator.Compare(x.Text, y.Text));
+						// Add the TreeNodes to the tree:
+						genItem.Nodes.AddRange(sortedNodes.ToArray());
 					}
-					foundFirstText = true;
-					var ws1 = tex.ChooserNameTS.get_WritingSystemAt(0);
-					var wsEngine = gen.Cache.WritingSystemFactory.get_EngineOrNull(ws1);
-					collator.Open(wsEngine.Id);
 				}
-				// LT-12179:
-				if (foundFirstText)
-				{
-					// Order the TreeNodes alphabetically:
-					sortedNodes.Sort((x, y) => collator.Compare(x.Text, y.Text, LgCollatingOptions.fcoIgnoreCase));
-					// Add the TreeNodes to the tree:
-					genItem.Nodes.AddRange(sortedNodes.ToArray());
-				}
+
 				if (gen.SubPossibilitiesOS.Count > 0)
 				{   // Descend to the child genres regardless if there were texts assigned to this genre
 					LoadTextsFromGenres(genItem, gen.SubPossibilitiesOS, allTexts);

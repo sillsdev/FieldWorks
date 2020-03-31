@@ -266,6 +266,7 @@
     <Compile Include="Impls\FwFindReplaceDlgBaseTests.cs" />
     <Compile Include="Impls\FwFindReplaceDlgWithLiteralStringsTests.cs" />
     <Compile Include="Impls\FwFindReplaceDlgWithObjectsRepeatedInDisplayTests.cs" />
+    <Compile Include="ManagedLgIcuCollatorTests.cs" />
     <Compile Include="MeasurementUtilsTest.cs" />
     <Compile Include="MGA\GlossListTreeViewTest.cs" />
     <Compile Include="ProgressStateTests.cs" />
