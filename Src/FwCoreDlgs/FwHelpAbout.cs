@@ -333,9 +333,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				var gbTotal = lpTotalNumberOfBytes / BytesPerGiB;
 				edtAvailableDiskSpace.Text = string.Format(m_sAvailableDiskSpaceFmt, gbFree, gbTotal, strRoot);
 			}
-			catch
+			catch(Exception ex)
 			{
-				// ignore errors
+				Console.WriteLine("HelpAbout ignoring exception: " + ex.Message);
 			}
 		}
 		#endregion
