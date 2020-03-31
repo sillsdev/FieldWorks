@@ -155,10 +155,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\ibusdotnet.2.0.0.20771\lib\ibusdotnet.dll</HintPath>
     </Reference>
-    <Reference Include="ManagedVwDrawRootBuffered, Version=10.0.0.11571, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Debug\ManagedVwDrawRootBuffered.dll</HintPath>
-    </Reference>
     <Reference Include="SIL.Core.Desktop">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\SIL.Core.Desktop.dll</HintPath>
