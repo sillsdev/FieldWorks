@@ -8,22 +8,22 @@ namespace LCMBrowser
 	/// Class to hold custom fields in LCMBrowser
 	///  </summary>
 	///
-	public class CustomFields
+	internal sealed class CustomFields
 	{
 		///<summary />
-		public string Name;
+		internal string Name;
 
 		///<summary />
-		public int ClassID;
+		internal int ClassID;
 
 		///<summary />
-		public int FieldID;
+		internal int FieldID;
 
 		///<summary />
-		public string Type;
+		internal string Type;
 
 		///<summary/>
-		public CustomFields(string name, int classID, int fieldID, string type)
+		internal CustomFields(string name, int classID, int fieldID, string type)
 		{
 			Name = name;
 			ClassID = classID;

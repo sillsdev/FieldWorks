@@ -5,7 +5,7 @@
 namespace LCMBrowser
 {
 	/// <summary />
-	public interface IInspectorObject
+	internal interface IInspectorObject
 	{
 		/// <summary />
 		int Level { get; set; }

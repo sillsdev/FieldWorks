@@ -12,18 +12,18 @@ using System.Windows.Forms;
 namespace LCMBrowser
 {
 	/// <summary />
-	public partial class ColorPicker : UserControl
+	internal sealed partial class ColorPicker : UserControl
 	{
 		/// <summary />
-		public delegate void ColorPickedHandler(object sender, Color clrPicked);
+		internal delegate void ColorPickedHandler(object sender, Color clrPicked);
 		/// <summary />
-		public event ColorPickedHandler ColorPicked;
+		internal event ColorPickedHandler ColorPicked;
 
 		private Dictionary<Color, ToolStripButton> m_colorButtons;
 		private Color m_clrSelected;
 
 		/// <summary />
-		public ColorPicker()
+		internal ColorPicker()
 		{
 			InitializeComponent();
 
@@ -75,12 +75,12 @@ namespace LCMBrowser
 		/// <summary>
 		/// Gets the list of all colors from which to choose.
 		/// </summary>
-		public List<Color> Colors => m_colorButtons.Keys.ToList();
+		internal List<Color> Colors => m_colorButtons.Keys.ToList();
 
 		/// <summary>
 		/// Gets or sets the current color.
 		/// </summary>
-		public Color SelectedColor
+		internal Color SelectedColor
 		{
 			get => m_clrSelected;
 			set

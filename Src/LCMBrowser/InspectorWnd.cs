@@ -12,19 +12,19 @@ using WeifenLuo.WinFormsUI.Docking;
 namespace LCMBrowser
 {
 	/// <summary />
-	public partial class InspectorWnd : DockContent
+	internal sealed partial class InspectorWnd : DockContent
 	{
 		/// <summary />
-		public delegate bool WillObjDisappearOnRefreshHandler(object sender, IInspectorObject io);
+		internal delegate bool WillObjDisappearOnRefreshHandler(object sender, IInspectorObject io);
 		/// <summary />
-		public event WillObjDisappearOnRefreshHandler WillObjDisappearOnRefresh;
+		internal event WillObjDisappearOnRefreshHandler WillObjDisappearOnRefresh;
 
 		/// <summary />
-		public InspectorWnd()
+		internal InspectorWnd()
 		{
 			InitializeComponent();
-			gridInspector.CreateDefaultColumns();
-			gridInspector.ShadingColor = Properties.Settings.Default.UseShading ? Properties.Settings.Default.ShadeColor : Color.Empty;
+			InspectorGrid.CreateDefaultColumns();
+			InspectorGrid.ShadingColor = Properties.Settings.Default.UseShading ? Properties.Settings.Default.ShadeColor : Color.Empty;
 		}
 
 		/// <inheritdoc />
@@ -49,13 +49,13 @@ namespace LCMBrowser
 		/// <summary>
 		/// Gets the current inspector object.
 		/// </summary>
-		public IInspectorObject CurrentInspectorObject => InspectorList != null && InspectorList.Count > 0
-				&& gridInspector.CurrentCellAddress.Y >= 0 ? InspectorList[gridInspector.CurrentCellAddress.Y] : null;
+		internal IInspectorObject CurrentInspectorObject => InspectorList != null && InspectorList.Count > 0
+																				  && InspectorGrid.CurrentCellAddress.Y >= 0 ? InspectorList[InspectorGrid.CurrentCellAddress.Y] : null;
 
 		/// <summary>
 		/// Sets the top level object.
 		/// </summary>
-		public void SetTopLevelObject(object obj, IInspectorList list)
+		internal void SetTopLevelObject(object obj, IInspectorList list)
 		{
 			if (InspectorList != null)
 			{
@@ -65,7 +65,7 @@ namespace LCMBrowser
 
 			InspectorList = list;
 			InspectorList.Initialize(obj);
-			gridInspector.List = InspectorList;
+			InspectorGrid.List = InspectorList;
 
 			InspectorList.BeginItemExpanding += m_list_BeginItemExpanding;
 			InspectorList.EndItemExpanding += m_list_EndItemExpanding;
@@ -74,7 +74,7 @@ namespace LCMBrowser
 		/// <summary>
 		/// Handles the BeginItemExpanding event of the m_list control.
 		/// </summary>
-		void m_list_BeginItemExpanding(object sender, EventArgs e)
+		private void m_list_BeginItemExpanding(object sender, EventArgs e)
 		{
 			Cursor = Cursors.WaitCursor;
 		}
@@ -82,7 +82,7 @@ namespace LCMBrowser
 		/// <summary>
 		/// Handles the EndItemExpanding event of the m_list control.
 		/// </summary>
-		void m_list_EndItemExpanding(object sender, EventArgs e)
+		private void m_list_EndItemExpanding(object sender, EventArgs e)
 		{
 			Cursor = Cursors.Default;
 		}
@@ -90,12 +90,12 @@ namespace LCMBrowser
 		/// <summary>
 		/// Gets the inspector list.
 		/// </summary>
-		public IInspectorList InspectorList { get; private set; }
+		internal IInspectorList InspectorList { get; private set; }
 
 		/// <summary>
 		/// Gets the inspector grid.
 		/// </summary>
-		public InspectorGrid InspectorGrid => gridInspector;
+		internal InspectorGrid InspectorGrid { get; private set; }
 
 		/// <summary>
 		/// Handles the CellMouseDown event of the gridInspector control.
@@ -104,27 +104,27 @@ namespace LCMBrowser
 		{
 			if (e.Button == MouseButtons.Right && e.RowIndex >= 0 && e.RowIndex < InspectorList.Count)
 			{
-				gridInspector.CurrentCell = gridInspector[e.ColumnIndex, e.RowIndex];
+				InspectorGrid.CurrentCell = InspectorGrid[e.ColumnIndex, e.RowIndex];
 			}
 		}
 
 		/// <summary>
 		/// Refreshes the view.
 		/// </summary>
-		public void RefreshView()
+		internal void RefreshView()
 		{
 			// Get the object that's displayed in the first visible row of the grid.
-			var firstDisplayedObj = InspectorList[gridInspector.FirstDisplayedScrollingRowIndex];
+			var firstDisplayedObj = InspectorList[InspectorGrid.FirstDisplayedScrollingRowIndex];
 
 			// Get the current, selected row in the grid.
-			var currSelectedObj = gridInspector.CurrentObject;
+			var currSelectedObj = InspectorGrid.CurrentObject;
 			if (currSelectedObj != null && WillObjDisappearOnRefresh != null)
 			{
 				// Check if the selected object will disappear after refreshing the grid.
 				// If so, then save a reference to the selected object's parent object.
 				if (WillObjDisappearOnRefresh(this, currSelectedObj))
 				{
-					currSelectedObj = InspectorList.GetParent(gridInspector.CurrentCellAddress.Y);
+					currSelectedObj = InspectorList.GetParent(InspectorGrid.CurrentCellAddress.Y);
 				}
 			}
 
@@ -169,11 +169,11 @@ namespace LCMBrowser
 				}
 			}
 
-			gridInspector.SuspendLayout();
-			gridInspector.List = InspectorList;
-			gridInspector.FirstDisplayedScrollingRowIndex = firstRow;
-			gridInspector.CurrentCell = gridInspector[0, currRow];
-			gridInspector.ResumeLayout();
+			InspectorGrid.SuspendLayout();
+			InspectorGrid.List = InspectorList;
+			InspectorGrid.FirstDisplayedScrollingRowIndex = firstRow;
+			InspectorGrid.CurrentCell = InspectorGrid[0, currRow];
+			InspectorGrid.ResumeLayout();
 		}
 
 		/// <summary>
@@ -181,14 +181,14 @@ namespace LCMBrowser
 		/// This overload specifies the type of action that triggered this method.
 		/// This is needed because the key changes during adds, updates, and moves.
 		/// </summary>
-		public void RefreshView(string type)
+		internal void RefreshView(string type)
 		{
-			int mFirstDisplayIndex = 0, mCurrentDisplayIndex = 0;
+			var mCurrentDisplayIndex = 0;
 			// Get the object that's displayed in the first visible row of the grid.
-			mFirstDisplayIndex = gridInspector.FirstDisplayedScrollingRowIndex;
+			var mFirstDisplayIndex = InspectorGrid.FirstDisplayedScrollingRowIndex;
 
 			// Get the current, selected row in the grid.
-			var currSelectedObj = gridInspector.CurrentObject;
+			var currSelectedObj = InspectorGrid.CurrentObject;
 
 			// If type is "Up", "Down", or "Delete", use parent as the selected/current row.
 			// If so, then save a reference to the selected object's parent object.
@@ -248,11 +248,11 @@ namespace LCMBrowser
 				}
 			}
 
-			gridInspector.SuspendLayout();
-			gridInspector.List = InspectorList;
-			gridInspector.FirstDisplayedScrollingRowIndex = firstRow;
-			gridInspector.CurrentCell = gridInspector[0, currRow];
-			gridInspector.ResumeLayout();
+			InspectorGrid.SuspendLayout();
+			InspectorGrid.List = InspectorList;
+			InspectorGrid.FirstDisplayedScrollingRowIndex = firstRow;
+			InspectorGrid.CurrentCell = InspectorGrid[0, currRow];
+			InspectorGrid.ResumeLayout();
 		}
 	}
 }

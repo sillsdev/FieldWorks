@@ -13,7 +13,7 @@ using SIL.LCModel;
 namespace LCMBrowser
 {
 	/// <summary />
-	public static class LCMClassList
+	internal static class LCMClassList
 	{
 		private static Dictionary<Type, LCMClass> s_LCMClassesByType;
 		private static Assembly s_asmLCM;
@@ -56,7 +56,7 @@ namespace LCMBrowser
 		/// Reloads from the persisted storage, all LCM classes and the displayed state of
 		/// all their properties.
 		/// </summary>
-		public static void Reset()
+		internal static void Reset()
 		{
 			LoadAllLCMClasses();
 		}
@@ -157,7 +157,7 @@ namespace LCMBrowser
 		/// <summary>
 		/// Saves this instance.
 		/// </summary>
-		public static void Save()
+		internal static void Save()
 		{
 			XmlSerializationHelper.SerializeToFile(s_settingFileName, AllLcmClasses);
 		}
@@ -165,7 +165,7 @@ namespace LCMBrowser
 		/// <summary>
 		/// Gets the loaded LCM assembly.
 		/// </summary>
-		public static Assembly LCMAssembly
+		internal static Assembly LCMAssembly
 		{
 			get
 			{
@@ -182,27 +182,27 @@ namespace LCMBrowser
 		/// Gets or sets a value indicating whether or not to show CmObject properties for
 		/// classes derived from CmObject.
 		/// </summary>
-		public static bool ShowCmObjectProperties { get; set; } = false;
+		internal static bool ShowCmObjectProperties { get; set; } = false;
 
 		/// <summary>
 		/// Gets a list of all the LCM classes.
 		/// </summary>
-		public static List<string> AllLcmClassNames { get; private set; }
+		internal static List<string> AllLcmClassNames { get; private set; }
 
 		/// <summary>
 		/// Gets a list of all the LCM classes and their properties.
 		/// </summary>
-		public static List<LCMClass> AllLcmClasses { get; private set; }
+		internal static List<LCMClass> AllLcmClasses { get; private set; }
 
 		/// <summary>
 		/// Gets the cm object properties.
 		/// </summary>
-		public static List<string> CmObjectProperties { get; private set; }
+		internal static List<string> CmObjectProperties { get; private set; }
 
 		/// <summary>
 		/// Determines whether or not the specified property name is a CmObject property.
 		/// </summary>
-		public static bool IsCmObjectProperty(string propName)
+		internal static bool IsCmObjectProperty(string propName)
 		{
 			return CmObjectProperties.Contains(propName);
 		}
@@ -211,7 +211,7 @@ namespace LCMBrowser
 		/// Determines whether or not the specified property name of the specified object
 		/// should be displayed.
 		/// </summary>
-		public static bool IsPropertyDisplayed(ICmObject cmObj, string propName)
+		internal static bool IsPropertyDisplayed(ICmObject cmObj, string propName)
 		{
 			if (!ShowCmObjectProperties && IsCmObjectProperty(propName))
 			{
@@ -223,7 +223,7 @@ namespace LCMBrowser
 		/// <summary>
 		/// Gets the properties for the specified class.
 		/// </summary>
-		public static Type GetLCMClassType(string className)
+		internal static Type GetLCMClassType(string className)
 		{
 			return s_asmLCM.GetTypes().FirstOrDefault(type => type.Name == className);
 		}
@@ -231,12 +231,12 @@ namespace LCMBrowser
 		/// <summary>
 		/// Gets a list of all the repository types found in LCM.
 		/// </summary>
-		public static IEnumerable<Type> RepositoryTypes => s_asmLCM.GetTypes().Where(type => type.IsInterface && type.GetInterface("IRepository`1") != null);
+		internal static IEnumerable<Type> RepositoryTypes => s_asmLCM.GetTypes().Where(type => type.IsInterface && type.GetInterface("IRepository`1") != null);
 
 		/// <summary>
 		/// Gets the properties for the specified class.
 		/// </summary>
-		public static LCMClass GetLCMClassProperties(string className)
+		internal static LCMClass GetLCMClassProperties(string className)
 		{
 			var type = GetLCMClassType(className);
 			return type != null ? new LCMClass(type) : null;

@@ -12,7 +12,7 @@ using System.Text;
 namespace LCMBrowser
 {
 	/// <summary />
-	public class GenericInspectorObjectList : List<IInspectorObject>, IInspectorList
+	internal class GenericInspectorObjectList : List<IInspectorObject>, IInspectorList
 	{
 		/// <summary />
 		public event EventHandler BeginItemExpanding;
@@ -36,11 +36,11 @@ namespace LCMBrowser
 		/// <summary>
 		/// Toggles the object expansion.
 		/// </summary>
-		public virtual bool ToggleObjectExpansion(int index)
+		public bool ToggleObjectExpansion(int index)
 		{
 			if (index < 0 || index >= Count)
 			{
-				throw new ArgumentOutOfRangeException("index");
+				throw new ArgumentOutOfRangeException(nameof(index));
 			}
 			var currObj = this[index];
 			return currObj == null ? throw new NullReferenceException("currObj") : currObj.HasChildren && (IsExpanded(index) ? CollapseObject(index) : ExpandObject(index));
@@ -49,7 +49,7 @@ namespace LCMBrowser
 		/// <summary>
 		/// Collapses the object at the specified index.
 		/// </summary>
-		public virtual bool CollapseObject(int index)
+		public bool CollapseObject(int index)
 		{
 			var io = this[index];
 			var currLevel = io.Level;
@@ -68,7 +68,7 @@ namespace LCMBrowser
 		/// <summary>
 		/// Expands the specified object at the specified index.
 		/// </summary>
-		public virtual bool ExpandObject(int index)
+		public bool ExpandObject(int index)
 		{
 			var io = this[index];
 			var list = GetInspectorObjects(io, io.Level + 1);
@@ -139,7 +139,7 @@ namespace LCMBrowser
 		/// <summary>
 		/// Gets an inspector object for the specified property info., object and level.
 		/// </summary>
-		protected virtual IInspectorObject CreateInspectorObject(object obj, object owningObj, IInspectorObject ioParent, int level)
+		protected IInspectorObject CreateInspectorObject(object obj, object owningObj, IInspectorObject ioParent, int level)
 		{
 			return CreateInspectorObject(null, obj, owningObj, ioParent, level);
 		}
@@ -240,7 +240,7 @@ namespace LCMBrowser
 		/// <summary>
 		/// Cleanups the text for types that are generic lists.
 		/// </summary>
-		protected virtual string CleanupGenericListType(string type)
+		protected string CleanupGenericListType(string type)
 		{
 			if (string.IsNullOrWhiteSpace(type))
 			{
@@ -286,7 +286,7 @@ namespace LCMBrowser
 		/// <summary>
 		/// Cleans the type of the dictionary.
 		/// </summary>
-		private bool CleanDictionaryType(string dictType, ref string type)
+		private static bool CleanDictionaryType(string dictType, ref string type)
 		{
 			if (!type.StartsWith(dictType))
 			{
@@ -402,27 +402,10 @@ namespace LCMBrowser
 		}
 
 		/// <summary>
-		/// Gets the index of the IInspectorObject whose OriginalObject is equal to the
-		/// specified object.
-		/// </summary>
-		public int IndexOfOrig(object obj)
-		{
-			for (var i = 0; i < Count; i++)
-			{
-				if (this[i].OriginalObject == obj)
-				{
-					return i;
-				}
-			}
-
-			return -1;
-		}
-
-		/// <summary>
 		/// Gets the index of the IInspectorObject whose Object is equal to the specified
 		/// object.
 		/// </summary>
-		public int IndexOf(object obj)
+		protected int IndexOf(object obj)
 		{
 			for (var i = 0; i < Count; i++)
 			{
@@ -467,6 +450,78 @@ namespace LCMBrowser
 			return lx < long.MaxValue || ly < long.MaxValue ? (int)(lx - ly)
 				: m_sortAscending ? string.Compare(x.DisplayName, y.DisplayName, true)
 					: string.Compare(y.DisplayName, x.DisplayName, true);
+		}
+
+		/// <summary />
+		private sealed class GenericInspectorObject : IInspectorObject
+		{
+			/// <summary>
+			/// There are certain cases (e.g. when OriginalObject is a generic collection) in which
+			/// the object that's displayed is really a reconstituted version of OriginalObject.
+			/// This property stores the reconstituted object.
+			/// </summary>
+			public object Object { get; set; }
+
+			/// <summary />
+			public object OriginalObject { get; set; }
+
+			/// <summary />
+			public int Level { get; set; }
+
+			/// <summary />
+			public IInspectorList OwningList { get; set; }
+
+			/// <summary />
+			public IInspectorObject ParentInspectorObject { get; set; }
+
+			/// <summary />
+			public int Flid { get; set; }
+
+			/// <summary />
+			public string DisplayName { get; set; }
+
+			/// <summary />
+			public string DisplayValue { get; set; }
+
+			/// <summary />
+			public string DisplayType { get; set; }
+
+			/// <summary />
+			public bool HasChildren { get; set; }
+
+			/// <summary />
+			public object OwningObject { get; set; }
+
+			/// <summary>
+			/// Gets a value based on the sum of the hash codes for the OriginalObject, Level,
+			/// DisplayName, DisplayValue and DisplayType properties. This key should be the same
+			/// for two IInspectorObjects having the same values for those properties.
+			/// </summary>
+			public int Key
+			{
+				get
+				{
+					var key = Level.GetHashCode();
+					if (DisplayName != null)
+					{
+						key += DisplayName.GetHashCode();
+					}
+					if (DisplayType != null)
+					{
+						key += DisplayType.GetHashCode();
+					}
+					if (DisplayValue != null)
+					{
+						key += DisplayValue.GetHashCode();
+					}
+					for (var ioParent = ParentInspectorObject; ioParent != null; ioParent = ioParent.ParentInspectorObject)
+					{
+						key += ioParent.Key;
+					}
+
+					return key;
+				}
+			}
 		}
 	}
 }

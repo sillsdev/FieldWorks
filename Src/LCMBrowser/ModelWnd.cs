@@ -15,14 +15,14 @@ using WeifenLuo.WinFormsUI.Docking;
 namespace LCMBrowser
 {
 	/// <summary />
-	public partial class ModelWnd : DockContent
+	internal sealed partial class ModelWnd : DockContent
 	{
 		private LcmCache m_cache;
 		private readonly IFwMetaDataCacheManaged m_mdc;
 		private int m_sortCol;
 
 		/// <summary />
-		public ModelWnd()
+		internal ModelWnd()
 		{
 			InitializeComponent();
 
@@ -144,7 +144,7 @@ namespace LCMBrowser
 		/// <summary>
 		/// Refresh the lv (list view) control based on the tv (tree view) control.
 		/// </summary>
-		public void AfterSelectMethod()
+		internal void AfterSelectMethod()
 		{
 			var clid = (int)m_tvModel.SelectedNode.Tag;
 			// Get flids.
@@ -329,7 +329,7 @@ namespace LCMBrowser
 							holdSig = "StText";
 							break;
 						default:
-							MessageBox.Show($@"Type not recognized for signature for custom model fields.  Type: {cf.Type}");
+							MessageBox.Show($"Type not recognized for signature for custom model fields.  Type: {cf.Type}");
 							holdSig = "Unknown";
 							break;
 					}

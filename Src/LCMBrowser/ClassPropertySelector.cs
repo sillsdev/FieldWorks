@@ -10,24 +10,24 @@ using SIL.LCModel;
 namespace LCMBrowser
 {
 	/// <summary />
-	public partial class ClassPropertySelector : Form
+	internal sealed partial class ClassPropertySelector : Form
 	{
-		private string m_fmtMsg;
-		private bool m_showCmObjProps = true;
+		private readonly string _fmtMsg;
+		private readonly bool _showCmObjProps;
 		/// <summary />
 
-		public ClassPropertySelector()
+		private ClassPropertySelector()
 		{
 			InitializeComponent();
-			m_fmtMsg = lblMsg.Text;
-			m_showCmObjProps = LCMClassList.ShowCmObjectProperties;
+			_fmtMsg = lblMsg.Text;
+			_showCmObjProps = LCMClassList.ShowCmObjectProperties;
 			cboClass.Items.AddRange(LCMClassList.AllLcmClasses.ToArray());
 			cboClass.SelectedIndex = 0;
 			cboClass_SelectionChangeCommitted(null, null);
 		}
 		/// <summary />
 
-		public ClassPropertySelector(ICmObject obj) : this()
+		internal ClassPropertySelector(ICmObject obj) : this()
 		{
 			if (obj == null)
 			{
@@ -51,13 +51,13 @@ namespace LCMBrowser
 		private void cboClass_SelectionChangeCommitted(object sender, EventArgs e)
 		{
 			var clsProps = (LCMClass)cboClass.SelectedItem;
-			lblMsg.Text = string.Format(m_fmtMsg, clsProps.ClassName);
+			lblMsg.Text = string.Format(_fmtMsg, clsProps.ClassName);
 			gridProperties.CellValueChanged -= gridProperties_CellValueChanged;
 			gridProperties.Rows.Clear();
 
 			foreach (var prop in clsProps.Properties)
 			{
-				var fIsDisplayedCmObjProp = (m_showCmObjProps || !LCMClassList.IsCmObjectProperty(prop.Name));
+				var fIsDisplayedCmObjProp = (_showCmObjProps || !LCMClassList.IsCmObjectProperty(prop.Name));
 				var i = gridProperties.Rows.Add(prop.Displayed && fIsDisplayedCmObjProp, prop.Name, prop);
 				gridProperties.Rows[i].ReadOnly = !fIsDisplayedCmObjProp;
 			}
@@ -68,7 +68,7 @@ namespace LCMBrowser
 		/// <summary>
 		/// Handles the CellValueChanged event of the gridProperties control.
 		/// </summary>
-		void gridProperties_CellValueChanged(object sender, DataGridViewCellEventArgs e)
+		private void gridProperties_CellValueChanged(object sender, DataGridViewCellEventArgs e)
 		{
 			if (e.ColumnIndex != 0 || e.RowIndex < 0)
 			{
@@ -84,7 +84,7 @@ namespace LCMBrowser
 		/// </summary>
 		private void gridProperties_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
 		{
-			if (e.ColumnIndex != 1 || e.RowIndex < 0 || m_showCmObjProps)
+			if (e.ColumnIndex != 1 || e.RowIndex < 0 || _showCmObjProps)
 			{
 				return;
 			}

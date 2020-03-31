@@ -11,19 +11,19 @@ using System.Windows.Forms;
 namespace LCMBrowser
 {
 	/// <summary />
-	public partial class OptionsDlg : Form
+	internal sealed partial class OptionsDlg : Form
 	{
-		private Color m_clrText = SystemColors.WindowText;
+		private readonly Color m_clrText = SystemColors.WindowText;
 
 		/// <summary />
-		public OptionsDlg()
+		internal OptionsDlg()
 		{
 			InitializeComponent();
 			chkShade.CheckedChanged += chkShade_CheckedChanged;
 		}
 
 		/// <summary />
-		public OptionsDlg(Color clr) : this()
+		internal OptionsDlg(Color clr) : this()
 		{
 			clrPicker.SelectedColor = clr;
 		}
@@ -31,7 +31,7 @@ namespace LCMBrowser
 		/// <summary>
 		/// Gets or sets the color.
 		/// </summary>
-		public Color SelectedColor
+		internal Color SelectedColor
 		{
 			get => clrPicker.SelectedColor;
 			set
@@ -45,7 +45,7 @@ namespace LCMBrowser
 		/// <summary>
 		/// Gets or sets a value indicating whether shading is enabled.
 		/// </summary>
-		public bool ShadingEnabled
+		internal bool ShadingEnabled
 		{
 			get => chkShade.Checked;
 			set

@@ -478,43 +478,43 @@ namespace LCMBrowser
 		private ToolStripSeparator mnuWindowsSep;
 		private ToolStripSeparator tsSep1;
 		/// <summary />
-		protected ToolStripMenuItem mnuOpenFile;
+		private ToolStripMenuItem mnuOpenFile;
 		/// <summary />
-		protected ToolStrip m_navigationToolStrip;
+		private ToolStrip m_navigationToolStrip;
 		/// <summary />
-		protected StatusStrip m_statusStrip;
+		private StatusStrip m_statusStrip;
 		/// <summary />
-		protected MenuStrip m_mainMenu;
+		private MenuStrip m_mainMenu;
 		/// <summary />
-		protected ToolStripMenuItem mnuWindow;
+		private ToolStripMenuItem mnuWindow;
 		/// <summary />
-		protected ToolStripButton tsbShowObjInNewWnd;
+		private ToolStripButton tsbShowObjInNewWnd;
 		/// <summary />
-		protected ContextMenuStrip m_cmnuGrid;
+		private ContextMenuStrip m_cmnuGrid;
 		/// <summary />
-		protected ToolStripMenuItem mnuTools;
+		private ToolStripMenuItem mnuTools;
 		/// <summary />
-		protected ToolStripMenuItem mnuOptions;
+		private ToolStripMenuItem mnuOptions;
 		/// <summary />
-		protected ToolStripMenuItem mnuFile;
+		private ToolStripMenuItem mnuFile;
 		/// <summary />
-		protected ToolStripMenuItem mnuExit;
+		private ToolStripMenuItem mnuExit;
 		/// <summary />
-		protected ToolStripMenuItem mnuTileVertically;
+		private ToolStripMenuItem mnuTileVertically;
 		/// <summary />
-		protected ToolStripMenuItem mnuTileHorizontally;
+		private ToolStripMenuItem mnuTileHorizontally;
 		/// <summary />
-		protected ToolStripMenuItem mnuArrangeInline;
+		private ToolStripMenuItem mnuArrangeInline;
 		/// <summary />
-		protected ToolStripButton tsbOpen;
+		private ToolStripButton tsbOpen;
 		/// <summary />
-		protected ToolStripMenuItem cmnuShowInNewWindow;
+		private ToolStripMenuItem cmnuShowInNewWindow;
 		/// <summary />
-		protected ToolStripSeparator mnuFileSep1;
+		private ToolStripSeparator mnuFileSep1;
 		/// <summary />
-		protected ToolStripStatusLabel m_statuslabel;
+		private ToolStripStatusLabel m_statuslabel;
 		/// <summary />
-		protected ToolStripStatusLabel m_sblblLoadTime;
+		private ToolStripStatusLabel m_sblblLoadTime;
 		private ToolStripSeparator toolStripMenuItem1;
 		private ToolStripMenuItem cmnuAddObject;
 		private ToolStripMenuItem cmnuDeleteObject;

@@ -7,7 +7,7 @@ using System;
 namespace LCMBrowser
 {
 	/// <summary />
-	public interface IInspectorList
+	internal interface IInspectorList
 	{
 		/// <summary />
 		event EventHandler BeginItemExpanding;

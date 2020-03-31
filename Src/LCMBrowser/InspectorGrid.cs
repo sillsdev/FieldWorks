@@ -11,7 +11,7 @@ using System.Windows.Forms;
 namespace LCMBrowser
 {
 	/// <summary />
-	public class InspectorGrid : DataGridView
+	internal sealed class InspectorGrid : DataGridView
 	{
 		private const int m_kLeftVLineMargin = 5;
 		private int m_dxVLine;
@@ -23,7 +23,7 @@ namespace LCMBrowser
 		private IInspectorList m_list;
 
 		/// <summary />
-		public InspectorGrid()
+		internal InspectorGrid()
 		{
 			DoubleBuffered = true;
 			AllowUserToAddRows = false;
@@ -51,7 +51,7 @@ namespace LCMBrowser
 		}
 
 		/// <summary />
-		public InspectorGrid(IInspectorList list) : this()
+		internal InspectorGrid(IInspectorList list) : this()
 		{
 			List = list;
 		}
@@ -66,7 +66,7 @@ namespace LCMBrowser
 		/// <summary>
 		/// Gets or sets the list of IInspectorObject objects.
 		/// </summary>
-		public IInspectorList List
+		internal IInspectorList List
 		{
 			get => m_list;
 			set
@@ -84,7 +84,7 @@ namespace LCMBrowser
 		/// <summary>
 		/// Gets the current inspector object.
 		/// </summary>
-		public IInspectorObject CurrentObject
+		internal IInspectorObject CurrentObject
 		{
 			get
 			{
@@ -96,7 +96,7 @@ namespace LCMBrowser
 		/// <summary>
 		/// Gets or sets the color of the shading.
 		/// </summary>
-		public Color ShadingColor
+		internal Color ShadingColor
 		{
 			get => m_clrShading;
 			set
@@ -511,7 +511,7 @@ namespace LCMBrowser
 		/// <summary>
 		/// Creates the default columns.
 		/// </summary>
-		public void CreateDefaultColumns()
+		internal void CreateDefaultColumns()
 		{
 			var col = new DataGridViewTextBoxColumn
 			{
@@ -554,7 +554,7 @@ namespace LCMBrowser
 		/// returned color has the alpha channel set to completely opaque, but whose alpha
 		/// channel value appears to be the one specified.
 		/// </summary>
-		public static Color CalculateColor(Color front, Color back, int alpha)
+		internal static Color CalculateColor(Color front, Color back, int alpha)
 		{
 			// Use alpha blending to brighten the colors but don't use it
 			// directly. Instead derive an opaque color that we can use.

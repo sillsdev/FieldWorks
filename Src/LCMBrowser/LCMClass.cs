@@ -11,46 +11,27 @@ using System.Xml.Serialization;
 namespace LCMBrowser
 {
 	/// <summary />
-	public class LCMClass
+	internal sealed class LCMClass
 	{
 		private Type m_classType;
 		private string m_className;
 
 		/// <summary />
-		public LCMClass()
-		{
-		}
-
-		/// <summary />
-		public LCMClass(string className) : this()
+		internal LCMClass(string className)
 		{
 			ClassName = className;
 			InitPropsForType(m_classType);
 		}
 
 		/// <summary />
-		public LCMClass(Type type) : this(type.Name)
+		internal LCMClass(Type type) : this(type.Name)
 		{
 			InitPropsForType(type);
 		}
 
-		/// <summary>
-		/// Clones this instance.
-		/// </summary>
-		public LCMClass Clone()
-		{
-			// Make copies of all the class' properties.
-			var props = Properties.Select(clsProp => new LCMClassProperty { Name = clsProp.Name, Displayed = clsProp.Displayed }).ToList();
-			var cls = new LCMClass(m_classType)
-			{
-				Properties = props
-			};
-			return cls;
-		}
-
 		/// <summary />
 		[XmlAttribute]
-		public string ClassName
+		internal string ClassName
 		{
 			get => m_className;
 			set
@@ -62,12 +43,12 @@ namespace LCMBrowser
 
 		/// <summary />
 		[XmlElement("property")]
-		public List<LCMClassProperty> Properties { get; set; } = new List<LCMClassProperty>();
+		internal List<LCMClassProperty> Properties { get; set; } = new List<LCMClassProperty>();
 
 		/// <summary>
 		/// Gets the type of the class.
 		/// </summary>
-		public Type ClassType
+		internal Type ClassType
 		{
 			get
 			{
@@ -83,7 +64,7 @@ namespace LCMBrowser
 		/// <summary>
 		/// Initializes the Properties list for the specified type.
 		/// </summary>
-		public void InitPropsForType(Type type)
+		private void InitPropsForType(Type type)
 		{
 			Properties.Clear();
 			const BindingFlags flags = BindingFlags.Public | BindingFlags.Instance;
@@ -100,7 +81,7 @@ namespace LCMBrowser
 		/// <summary>
 		/// Determines whether or not the specified property is displayed.
 		/// </summary>
-		public bool IsPropertyDisplayed(string propName)
+		internal bool IsPropertyDisplayed(string propName)
 		{
 			return Properties.Where(prop => prop.Name == propName).Select(prop => prop.Displayed).FirstOrDefault();
 		}

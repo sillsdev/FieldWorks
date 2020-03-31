@@ -11,10 +11,10 @@ namespace LCMBrowser
 	/// Project identifier for use in the LCMBrowser.
 	/// NOTE: This project id doesn't NOT work for remote projects.
 	/// </summary>
-	public class BrowserProjectId : IProjectIdentifier
+	internal sealed class BrowserProjectId : IProjectIdentifier
 	{
 		/// <summary />
-		public BrowserProjectId(BackendProviderType type, string name)
+		internal BrowserProjectId(BackendProviderType type, string name)
 		{
 			Type = type;
 			Path = name;

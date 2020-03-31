@@ -11,17 +11,17 @@ namespace LCMBrowser
 	/// <summary>
 	/// The RealListChooser class is just an implementation of a ListBox.
 	/// </summary>
-	public partial class RealListChooser : Form
+	internal sealed partial class RealListChooser : Form
 	{
 		/// <summary>
 		/// This name of the selected class.
 		/// </summary>
-		public string m_chosenClass = string.Empty;
+		internal string ChosenClass { get; private set; } = string.Empty;
 
 		/// <summary />
 		/// <param name="name">The name of the listBox.</param>
 		/// <param name="list">The list of strings to be displayed inb the listBox.</param>
-		public RealListChooser(string name, List<string> list)
+		internal RealListChooser(string name, List<string> list)
 		{
 			InitializeComponent();
 			listBox.DataSource = list;
@@ -30,7 +30,7 @@ namespace LCMBrowser
 
 		private void btnOK_Click(object sender, EventArgs e)
 		{
-			m_chosenClass = listBox.SelectedItem.ToString();
+			ChosenClass = listBox.SelectedItem.ToString();
 			// Make an object of class newClassName and put it somewhere.
 			DialogResult = DialogResult.OK;
 			Close();
@@ -38,7 +38,7 @@ namespace LCMBrowser
 
 		private void btnCancel_Click(object sender, EventArgs e)
 		{
-			m_chosenClass = "Cancel";
+			ChosenClass = "Cancel";
 			DialogResult = DialogResult.Cancel;
 			Close();
 		}
