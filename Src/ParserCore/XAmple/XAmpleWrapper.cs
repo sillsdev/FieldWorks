@@ -7,7 +7,7 @@ using System.Diagnostics;
 
 namespace SIL.FieldWorks.WordWorks.Parser.XAmple
 {
-	public class XAmpleWrapper : IXAmpleWrapper, IDisposable
+	internal sealed class XAmpleWrapper : IXAmpleWrapper, IDisposable
 	{
 		private XAmpleDLLWrapper m_xample;
 		private static readonly object m_lockObject = new object();

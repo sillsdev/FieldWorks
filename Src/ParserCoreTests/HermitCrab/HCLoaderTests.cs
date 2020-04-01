@@ -45,37 +45,37 @@ namespace SIL.FieldWorks.WordWorks.Parser.HermitCrab
 		{
 			private readonly IList<Tuple<LoadErrorType, ICmObject>> m_loadErrors;
 
-			public TestHCLoadErrorLogger(IList<Tuple<LoadErrorType, ICmObject>> loadErrors)
+			internal TestHCLoadErrorLogger(IList<Tuple<LoadErrorType, ICmObject>> loadErrors)
 			{
 				m_loadErrors = loadErrors;
 			}
 
-			public void InvalidShape(string str, int errorPos, IMoMorphSynAnalysis msa)
+			void IHCLoadErrorLogger.InvalidShape(string str, int errorPos, IMoMorphSynAnalysis msa)
 			{
 				m_loadErrors.Add(Tuple.Create(LoadErrorType.InvalidShape, (ICmObject)msa));
 			}
 
-			public void InvalidAffixProcess(IMoAffixProcess affixProcess, bool isInvalidLhs, IMoMorphSynAnalysis msa)
+			void IHCLoadErrorLogger.InvalidAffixProcess(IMoAffixProcess affixProcess, bool isInvalidLhs, IMoMorphSynAnalysis msa)
 			{
 				m_loadErrors.Add(Tuple.Create(LoadErrorType.InvalidAffixProcess, (ICmObject)msa));
 			}
 
-			public void InvalidPhoneme(IPhPhoneme phoneme)
+			void IHCLoadErrorLogger.InvalidPhoneme(IPhPhoneme phoneme)
 			{
 				m_loadErrors.Add(Tuple.Create(LoadErrorType.InvalidPhoneme, (ICmObject)phoneme));
 			}
 
-			public void DuplicateGrapheme(IPhPhoneme phoneme)
+			void IHCLoadErrorLogger.DuplicateGrapheme(IPhPhoneme phoneme)
 			{
 				m_loadErrors.Add(Tuple.Create(LoadErrorType.DuplicateGrapheme, (ICmObject)phoneme));
 			}
 
-			public void InvalidEnvironment(IMoForm form, IPhEnvironment env, string reason, IMoMorphSynAnalysis msa)
+			void IHCLoadErrorLogger.InvalidEnvironment(IMoForm form, IPhEnvironment env, string reason, IMoMorphSynAnalysis msa)
 			{
 				m_loadErrors.Add(Tuple.Create(LoadErrorType.InvalidEnvironment, (ICmObject)msa));
 			}
 
-			public void InvalidReduplicationForm(IMoForm form, string reason, IMoMorphSynAnalysis msa)
+			void IHCLoadErrorLogger.InvalidReduplicationForm(IMoForm form, string reason, IMoMorphSynAnalysis msa)
 			{
 				m_loadErrors.Add(Tuple.Create(LoadErrorType.InvalidRedupForm, (ICmObject)msa));
 			}

@@ -4,11 +4,11 @@
 
 namespace SIL.FieldWorks.WordWorks.Parser
 {
-	public enum TaskPhase
+	internal enum TaskPhase
 	{
 		Started,
 		Working,
 		Finished,
 		ErrorEncountered
-	};
+	}
 }

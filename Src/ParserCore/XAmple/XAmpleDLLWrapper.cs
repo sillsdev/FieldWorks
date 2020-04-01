@@ -32,7 +32,7 @@ namespace SIL.FieldWorks.WordWorks.Parser.XAmple
 	public delegate string SpecAmpleGetTrace(IntPtr pSetupio);
 	public delegate int SpecAmpleThreadId();
 
-	public class XAmpleDLLWrapper : IDisposable
+	internal sealed class XAmpleDLLWrapper : IDisposable
 	{
 		[DllImport("xample.dll", CallingConvention = CallingConvention.Cdecl)]
 		internal static extern IntPtr AmpleCreateSetup();
@@ -217,10 +217,10 @@ namespace SIL.FieldWorks.WordWorks.Parser.XAmple
 #endif
 
 		/// <summary/>
-		public bool IsDisposed
+		private bool IsDisposed
 		{
 			get;
-			private set;
+			set;
 		}
 
 		/// <summary/>
@@ -231,15 +231,19 @@ namespace SIL.FieldWorks.WordWorks.Parser.XAmple
 		}
 
 		/// <summary/>
-		protected virtual void Dispose(bool fDisposing)
+		private void Dispose(bool disposing)
 		{
-			System.Diagnostics.Debug.WriteLineIf(!fDisposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
-			if (fDisposing && !IsDisposed)
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
+			if (IsDisposed)
+			{
+				// No need to run it more than once.
+				return;
+			}
+			if (disposing)
 			{
 				// dispose managed and unmanaged objects
-
+				RemoveSetup();
 			}
-			RemoveSetup();
 			IsDisposed = true;
 		}
 		#endregion
@@ -254,7 +258,7 @@ namespace SIL.FieldWorks.WordWorks.Parser.XAmple
 		public char Comment { get; set; }
 		public bool LastRunHadErrors { get; set; }
 
-		public string ParseString(string sInput)
+		internal string ParseString(string sInput)
 		{
 			var lpszResult = AmpleSetParameterDelegate(m_setup, "TraceAnalysis", "OFF");
 			ThrowIfError(lpszResult);
@@ -265,7 +269,7 @@ namespace SIL.FieldWorks.WordWorks.Parser.XAmple
 			return lpszResult;
 		}
 
-		public string TraceString(string input, string sSelectedMorphs)
+		internal string TraceString(string input, string sSelectedMorphs)
 		{
 			//Guarantee that tracing has been turned on to XML form
 			var lpszResult = AmpleSetParameterDelegate(m_setup, "TraceAnalysis", "XML");
@@ -288,7 +292,7 @@ namespace SIL.FieldWorks.WordWorks.Parser.XAmple
 			return m_ampleGetTrace(GetSetup());
 		}
 
-		protected void AssignDelegates()
+		private void AssignDelegates()
 		{
 			m_ampleReset = AmpleResetMarshaled;
 			m_ampleLoadControlFiles = AmpleLoadControlFilesMarshaled;
@@ -312,7 +316,7 @@ namespace SIL.FieldWorks.WordWorks.Parser.XAmple
 			AmpleRemoveSelectiveAnalysisMorphsDelegate = AmpleRemoveSelectiveAnalysisMorphMarshaled;
 		}
 
-		public void Init()
+		internal void Init()
 		{
 			// TODO: Currently we are using fixed DllImports.
 			AssignDelegates();
@@ -329,7 +333,7 @@ namespace SIL.FieldWorks.WordWorks.Parser.XAmple
 			}
 		}
 
-		public void LoadFiles(string lspzFixedFilesDir, string lspzDynamicFilesDir, string lspzDatabaseName)
+		internal void LoadFiles(string lspzFixedFilesDir, string lspzDynamicFilesDir, string lspzDatabaseName)
 		{
 			CheckPtr(m_setup);
 
@@ -357,7 +361,7 @@ namespace SIL.FieldWorks.WordWorks.Parser.XAmple
 			ThrowIfError(sResult, lpszGram);
 		}
 
-		public void SetParameter(string lspzName, string lspzValue)
+		internal void SetParameter(string lspzName, string lspzValue)
 		{
 			if (lspzName == "MaxAnalysesToReturn")
 			{
@@ -365,46 +369,41 @@ namespace SIL.FieldWorks.WordWorks.Parser.XAmple
 			}
 		}
 
-		public IntPtr GetSetup()
+		internal IntPtr GetSetup()
 		{
 			CheckPtr(m_setup);
 
 			return m_setup;
 		}
 
-		public void SetLogFile(string lpszPath)
+		internal void SetLogFile(string lpszPath)
 		{
 			throw new NotImplementedException();
 		}
 
-		public int GetAmpleThreadId()
+		internal int GetAmpleThreadId()
 		{
 			return Platform.IsWindows ? AmpleThreadId() : 0;
 		}
 
 		#region Protected members
-		protected SpecAmpleReset m_ampleReset;
-		protected SpecAmpleLoadControlFiles m_ampleLoadControlFiles;
-		protected SpecAmpleLoadDictionary m_ampleLoadDictionary;
-		protected SpecAmpleCreateSetup m_ampleCreateSetup;
-		protected SpecAmpleDeleteSetup m_ampleDeleteSetup;
-		protected SpecAmpleReportVersion m_ampleReportVersion;
-		protected SpecAmpleInitializeMorphChecking m_ampleInitializeMorphChecking;
-		protected SpecAmpleCheckMorphReferences m_ampleCheckMorphReferences;
-		protected SpecAmpleLoadGrammarFile m_ampleLoadGrammarFile;
-		protected SpecAmpleInitializeTrace m_ampleInitializeTrace;
-		protected SpecAmpleGetTrace m_ampleGetTrace;
-		protected SpecAmpleThreadId m_pfAmpleThreadId;
-		protected string m_logPath;
-		protected AmpleOptions m_options;
-		protected IntPtr m_setup;
+		private SpecAmpleReset m_ampleReset;
+		private SpecAmpleLoadControlFiles m_ampleLoadControlFiles;
+		private SpecAmpleLoadDictionary m_ampleLoadDictionary;
+		private SpecAmpleCreateSetup m_ampleCreateSetup;
+		private SpecAmpleDeleteSetup m_ampleDeleteSetup;
+		private SpecAmpleReportVersion m_ampleReportVersion;
+		private SpecAmpleInitializeMorphChecking m_ampleInitializeMorphChecking;
+		private SpecAmpleCheckMorphReferences m_ampleCheckMorphReferences;
+		private SpecAmpleLoadGrammarFile m_ampleLoadGrammarFile;
+		private SpecAmpleInitializeTrace m_ampleInitializeTrace;
+		private SpecAmpleGetTrace m_ampleGetTrace;
+		private SpecAmpleThreadId m_pfAmpleThreadId;
+		private string m_logPath;
+		private AmpleOptions m_options;
+		private IntPtr m_setup;
 
-		protected void CheckLogForErrors()
-		{
-			throw new NotImplementedException();
-		}
-
-		protected void ThrowIfError(string result, params string[] filenames)
+		private void ThrowIfError(string result, params string[] filenames)
 		{
 			// REVIEW JohnH(RandyR):
 			// Isn't the none in the XML supposed to have quote marks around it
@@ -426,13 +425,13 @@ namespace SIL.FieldWorks.WordWorks.Parser.XAmple
 			}
 		}
 
-		protected void CheckPtr(IntPtr p)
+		private void CheckPtr(IntPtr p)
 		{
 			if (p == IntPtr.Zero)
 				throw new ApplicationException("ptr should not Equals IntPtr.Zero");
 		}
 
-		protected void RemoveSetup()
+		private void RemoveSetup()
 		{
 			// just quit if we weren't initialized (or if we've already cleaned up)
 			if(m_setup == IntPtr.Zero)
@@ -455,7 +454,7 @@ namespace SIL.FieldWorks.WordWorks.Parser.XAmple
 			m_setup = IntPtr.Zero;
 		}
 
-		protected void SetOptions()
+		private void SetOptions()
 		{
 			var lpszComment = Comment.ToString();
 

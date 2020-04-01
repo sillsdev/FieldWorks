@@ -12,14 +12,14 @@ namespace SIL.FieldWorks.WordWorks.Parser
 {
 	/// <summary />
 	/// <remarks>Is public for testing purposes</remarks>
-	public class ParserModelChangeListener : DisposableBase, IVwNotifyChange
+	internal sealed class ParserModelChangeListener : DisposableBase, IVwNotifyChange
 	{
 		private readonly LcmCache m_cache;
 		private readonly object m_syncRoot = new object();
 		private bool m_changed;
 
 		/// <summary />
-		public ParserModelChangeListener(LcmCache cache)
+		internal ParserModelChangeListener(LcmCache cache)
 		{
 			Guard.AgainstNull(cache, nameof(cache));
 
@@ -40,7 +40,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			base.Dispose(disposing);
 		}
 
-		public bool ModelChanged
+		internal bool ModelChanged
 		{
 			get
 			{
@@ -52,7 +52,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		}
 
 		/// <summary />
-		public bool Reset()
+		internal bool Reset()
 		{
 			lock (m_syncRoot)
 			{

@@ -23,9 +23,9 @@ using SIL.Machine.Matching;
 
 namespace SIL.FieldWorks.WordWorks.Parser.HermitCrab
 {
-	public class HCLoader
+	internal sealed class HCLoader
 	{
-		public static Language Load(SpanFactory<ShapeNode> spanFactory, LcmCache cache, IHCLoadErrorLogger logger)
+		internal static Language Load(SpanFactory<ShapeNode> spanFactory, LcmCache cache, IHCLoadErrorLogger logger)
 		{
 			var loader = new HCLoader(spanFactory, cache, logger);
 			loader.LoadLanguage();
@@ -1220,7 +1220,7 @@ namespace SIL.FieldWorks.WordWorks.Parser.HermitCrab
 					}
 					else
 					{
-						throw new InvalidAffixProcessException(allo, true);
+						throw new InvalidAffixProcessException(true);
 					}
 				}
 				i++;
@@ -1235,7 +1235,7 @@ namespace SIL.FieldWorks.WordWorks.Parser.HermitCrab
 						{
 							if (!TryLoadSimpleContext(insertNc.ContentRA, out var ctxt))
 							{
-								throw new InvalidAffixProcessException(allo, false);
+								throw new InvalidAffixProcessException();
 							}
 							hcAllo.Rhs.Add(new InsertSimpleContext(ctxt));
 						}
@@ -1258,7 +1258,7 @@ namespace SIL.FieldWorks.WordWorks.Parser.HermitCrab
 								strRep = strRep.Trim();
 								if (string.IsNullOrEmpty(strRep))
 								{
-									throw new InvalidAffixProcessException(allo, false);
+									throw new InvalidAffixProcessException();
 								}
 								sb.Append(strRep);
 							}
@@ -1270,7 +1270,7 @@ namespace SIL.FieldWorks.WordWorks.Parser.HermitCrab
 						{
 							if (!TryLoadSimpleContext(modifyFromInput.ModificationRA, out var ctxt))
 							{
-								throw new InvalidAffixProcessException(allo, false);
+								throw new InvalidAffixProcessException();
 							}
 							var partName = (modifyFromInput.ContentRA.IndexInOwner + 1).ToString(CultureInfo.InvariantCulture);
 							hcAllo.Rhs.Add(new ModifyFromInput(partName, ctxt));
@@ -2600,6 +2600,24 @@ namespace SIL.FieldWorks.WordWorks.Parser.HermitCrab
 		{
 			representation = FormatForm(representation);
 			return new Segments(m_table, representation, Segment(representation));
+		}
+
+		private sealed class InvalidAffixProcessException : Exception
+		{
+			internal InvalidAffixProcessException(bool invalidLhs = false)
+			{
+				IsInvalidLhs = invalidLhs;
+			}
+
+			internal bool IsInvalidLhs { get; }
+		}
+
+		private sealed class InvalidReduplicationFormException : Exception
+		{
+			internal InvalidReduplicationFormException(string message)
+				: base(message)
+			{
+			}
 		}
 	}
 }

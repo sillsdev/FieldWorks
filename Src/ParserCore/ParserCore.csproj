@@ -195,12 +195,9 @@
     <Compile Include="..\CommonAssemblyInfo.cs">
       <Link>CommonAssemblyInfo.cs</Link>
     </Compile>
-    <Compile Include="FwXmlTraceManager.cs" />
     <Compile Include="HermitCrab\HCLoader.cs" />
     <Compile Include="HermitCrab\HCParser.cs" />
     <Compile Include="HermitCrab\IHCLoadErrorLogger.cs" />
-    <Compile Include="InvalidAffixProcessException.cs" />
-    <Compile Include="InvalidReduplicationFormException.cs" />
     <Compile Include="IParser.cs" />
     <Compile Include="ParseAnalysis.cs" />
     <Compile Include="ParseMorph.cs" />
@@ -220,16 +217,9 @@
     </Compile>
     <Compile Include="ParseResult.cs" />
     <Compile Include="ParserPriority.cs" />
-    <Compile Include="ParserScheduler.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="ParserUpdateEventArgs.cs" />
     <Compile Include="ParserXmlWriterExtensions.cs" />
     <Compile Include="TaskPhase.cs" />
     <Compile Include="TaskReport.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="ParserWorker.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="WordformUpdatedEventArgs.cs" />

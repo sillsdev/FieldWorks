@@ -10,7 +10,6 @@ using System.Linq;
 using System.Text;
 using System.Xml;
 using SIL.LCModel;
-using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.DomainServices;
 
 namespace SIL.FieldWorks.WordWorks.Parser
@@ -23,7 +22,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			return Tuple.Create(int.Parse(msaHvoParts[0]), msaHvoParts.Length == 2 ? int.Parse(msaHvoParts[1]) : 0);
 		}
 
-		public static void WriteMsaElement(this XmlWriter writer, LcmCache cache, string formID, string msaID, string type, string wordType)
+		internal static void WriteMsaElement(this XmlWriter writer, LcmCache cache, string formID, string msaID, string type, string wordType)
 		{
 			// Irregularly inflected forms can have a combination MSA hvo: the LexEntry hvo, a period, and an index to the LexEntryRef
 			var msaTuple = ProcessMsaHvo(msaID);
@@ -63,6 +62,85 @@ namespace SIL.FieldWorks.WordWorks.Parser
 					WriteInflMsaForLexEntryInflType(writer, wordType, (ILexEntryInflType)obj);
 					break;
 			}
+		}
+
+		internal static void WriteMorphInfoElements(this XmlWriter writer, LcmCache cache, string formID, string msaID, string wordType, string props)
+		{
+			var obj = cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(int.Parse(formID, CultureInfo.InvariantCulture));
+			var form = obj as IMoForm;
+			if (form == null)
+			{
+				// This is one of the null allomorphs we create when building the
+				// input for the parser in order to still get the Word Grammar to have something in any
+				// required slots in affix templates.
+				if (obj is ILexEntryInflType lexEntryInflType)
+				{
+					WriteLexEntryInflTypeElement(writer, wordType, lexEntryInflType);
+					return;
+				}
+			}
+			string shortName;
+			string alloform;
+			string gloss;
+			string citationForm;
+			if (form != null)
+			{
+				shortName = form.LongName;
+				var iFirstSpace = shortName.IndexOf(" (", StringComparison.Ordinal);
+				var iLastSpace = shortName.LastIndexOf("):", StringComparison.Ordinal) + 2;
+				alloform = shortName.Substring(0, iFirstSpace);
+				var msaTuple = ProcessMsaHvo(msaID);
+				var msaObj = cache.ServiceLocator.GetObject(msaTuple.Item1);
+				if (msaObj.ClassID == LexEntryTags.kClassId)
+				{
+					var entry = msaObj as ILexEntry;
+					Debug.Assert(entry != null);
+					if (entry.EntryRefsOS.Count > 0)
+					{
+						var lexEntryRef = entry.EntryRefsOS[msaTuple.Item2];
+						var sense = MorphServices.GetMainOrFirstSenseOfVariant(lexEntryRef);
+						var glossWs = cache.ServiceLocator.WritingSystemManager.Get(cache.DefaultAnalWs);
+						MorphServices.JoinGlossAffixesOfInflVariantTypes(lexEntryRef.VariantEntryTypesRS, glossWs, out var sbGlossPrepend, out var sbGlossAppend);
+						var sbGloss = sbGlossPrepend;
+						sbGloss.Append(sense.Gloss.BestAnalysisAlternative.Text);
+						sbGloss.Append(sbGlossAppend.Text);
+						gloss = sbGloss.Text;
+					}
+					else
+					{
+						gloss = ParserCoreStrings.ksUnknownGloss;
+					}
+				}
+				else
+				{
+					gloss = msaObj is IMoMorphSynAnalysis msa ? msa.GetGlossOfFirstSense() : shortName.Substring(iFirstSpace, iLastSpace - iFirstSpace).Trim();
+				}
+				citationForm = shortName.Substring(iLastSpace).Trim();
+				shortName = string.Format(ParserCoreStrings.ksX_Y_Z, alloform, gloss, citationForm);
+			}
+			else
+			{
+				alloform = ParserCoreStrings.ksUnknownMorpheme; // in case the user continues...
+				gloss = ParserCoreStrings.ksUnknownGloss;
+				citationForm = ParserCoreStrings.ksUnknownCitationForm;
+				shortName = string.Format(ParserCoreStrings.ksX_Y_Z, alloform, gloss, citationForm);
+				throw new ApplicationException(shortName);
+			}
+			writer.WriteElementString("shortName", shortName);
+			writer.WriteElementString("alloform", alloform);
+			switch (form.ClassID)
+			{
+				case MoStemAllomorphTags.kClassId:
+					WriteStemNameElement(writer, form, props);
+					break;
+				case MoAffixAllomorphTags.kClassId:
+					WriteAffixAlloFeatsElement(writer, form, props);
+					WriteStemNameAffixElement(writer, cache, props);
+					break;
+
+			}
+			writer.WriteElementString("gloss", gloss);
+			writer.WriteElementString("citationForm", citationForm);
 		}
 
 		/// <summary>
@@ -325,85 +403,6 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			}
 			writer.WriteAttributeString("slotAbbr", sSlotAbbr);
 			writer.WriteAttributeString("slotOptional", sSlotOptional);
-		}
-
-		public static void WriteMorphInfoElements(this XmlWriter writer, LcmCache cache, string formID, string msaID, string wordType, string props)
-		{
-			var obj = cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(int.Parse(formID, CultureInfo.InvariantCulture));
-			var form = obj as IMoForm;
-			if (form == null)
-			{
-				// This is one of the null allomorphs we create when building the
-				// input for the parser in order to still get the Word Grammar to have something in any
-				// required slots in affix templates.
-				if (obj is ILexEntryInflType lexEntryInflType)
-				{
-					WriteLexEntryInflTypeElement(writer, wordType, lexEntryInflType);
-					return;
-				}
-			}
-			string shortName;
-			string alloform;
-			string gloss;
-			string citationForm;
-			if (form != null)
-			{
-				shortName = form.LongName;
-				var iFirstSpace = shortName.IndexOf(" (", StringComparison.Ordinal);
-				var iLastSpace = shortName.LastIndexOf("):", StringComparison.Ordinal) + 2;
-				alloform = shortName.Substring(0, iFirstSpace);
-				var msaTuple = ProcessMsaHvo(msaID);
-				var msaObj = cache.ServiceLocator.GetObject(msaTuple.Item1);
-				if (msaObj.ClassID == LexEntryTags.kClassId)
-				{
-					var entry = msaObj as ILexEntry;
-					Debug.Assert(entry != null);
-					if (entry.EntryRefsOS.Count > 0)
-					{
-						var lexEntryRef = entry.EntryRefsOS[msaTuple.Item2];
-						var sense = MorphServices.GetMainOrFirstSenseOfVariant(lexEntryRef);
-						var glossWs = cache.ServiceLocator.WritingSystemManager.Get(cache.DefaultAnalWs);
-						MorphServices.JoinGlossAffixesOfInflVariantTypes(lexEntryRef.VariantEntryTypesRS, glossWs, out var sbGlossPrepend, out var sbGlossAppend);
-						var sbGloss = sbGlossPrepend;
-						sbGloss.Append(sense.Gloss.BestAnalysisAlternative.Text);
-						sbGloss.Append(sbGlossAppend.Text);
-						gloss = sbGloss.Text;
-					}
-					else
-					{
-						gloss = ParserCoreStrings.ksUnknownGloss;
-					}
-				}
-				else
-				{
-					gloss = msaObj is IMoMorphSynAnalysis msa ? msa.GetGlossOfFirstSense() : shortName.Substring(iFirstSpace, iLastSpace - iFirstSpace).Trim();
-				}
-				citationForm = shortName.Substring(iLastSpace).Trim();
-				shortName = string.Format(ParserCoreStrings.ksX_Y_Z, alloform, gloss, citationForm);
-			}
-			else
-			{
-				alloform = ParserCoreStrings.ksUnknownMorpheme; // in case the user continues...
-				gloss = ParserCoreStrings.ksUnknownGloss;
-				citationForm = ParserCoreStrings.ksUnknownCitationForm;
-				shortName = string.Format(ParserCoreStrings.ksX_Y_Z, alloform, gloss, citationForm);
-				throw new ApplicationException(shortName);
-			}
-			writer.WriteElementString("shortName", shortName);
-			writer.WriteElementString("alloform", alloform);
-			switch (form.ClassID)
-			{
-				case MoStemAllomorphTags.kClassId:
-					WriteStemNameElement(writer, form, props);
-					break;
-				case MoAffixAllomorphTags.kClassId:
-					WriteAffixAlloFeatsElement(writer, form, props);
-					WriteStemNameAffixElement(writer, cache, props);
-					break;
-
-			}
-			writer.WriteElementString("gloss", gloss);
-			writer.WriteElementString("citationForm", citationForm);
 		}
 
 		private static void WriteLexEntryInflTypeElement(XmlWriter writer, string wordType, ILexEntryInflType lexEntryInflType)

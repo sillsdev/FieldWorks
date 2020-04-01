@@ -9,16 +9,16 @@ using System.Linq;
 
 namespace SIL.FieldWorks.WordWorks.Parser
 {
-	public class ParseAnalysis : IEquatable<ParseAnalysis>
+	public sealed class ParseAnalysis : IEquatable<ParseAnalysis>
 	{
-		public ParseAnalysis(IEnumerable<ParseMorph> morphs)
+		internal ParseAnalysis(IEnumerable<ParseMorph> morphs)
 		{
 			Morphs = new ReadOnlyCollection<ParseMorph>(morphs.ToArray());
 		}
 
 		public ReadOnlyCollection<ParseMorph> Morphs { get; }
 
-		public bool IsValid
+		internal bool IsValid
 		{
 			get { return Morphs.All(morph => morph.IsValid); }
 		}

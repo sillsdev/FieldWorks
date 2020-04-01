@@ -10,20 +10,20 @@ namespace SIL.FieldWorks.WordWorks.Parser
 	/// <summary>
 	/// The event args for the WordformUpdated event.
 	/// </summary>
-	public class WordformUpdatedEventArgs : EventArgs
+	internal sealed class WordformUpdatedEventArgs : EventArgs
 	{
-		public WordformUpdatedEventArgs(IWfiWordform wordform, ParserPriority priority)
+		internal WordformUpdatedEventArgs(IWfiWordform wordform, ParserPriority priority)
 		{
 			Wordform = wordform;
 			Priority = priority;
 		}
 
-		public IWfiWordform Wordform
+		internal IWfiWordform Wordform
 		{
 			get;
 		}
 
-		public ParserPriority Priority
+		internal ParserPriority Priority
 		{
 			get;
 		}

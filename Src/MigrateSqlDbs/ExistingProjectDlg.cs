@@ -10,20 +10,20 @@ using SIL.FieldWorks.Common.FwUtils;
 namespace SIL.FieldWorks.MigrateSqlDbs.MigrateProjects
 {
 	/// <summary />
-	public partial class ExistingProjectDlg : Form
+	internal sealed partial class ExistingProjectDlg : Form
 	{
 		string m_fmtUseOriginal;
 		string m_projectName;
 
 		/// <summary />
-		public ExistingProjectDlg()
+		internal ExistingProjectDlg()
 		{
 			InitializeComponent();
 			m_fmtUseOriginal = m_rdoUseOriginalName.Text;
 		}
 
 		/// <summary />
-		public ExistingProjectDlg(string project)
+		internal ExistingProjectDlg(string project)
 			: this()
 		{
 			m_rdoUseOriginalName.Text = string.Format(m_fmtUseOriginal, project);
@@ -76,7 +76,7 @@ namespace SIL.FieldWorks.MigrateSqlDbs.MigrateProjects
 		/// <summary>
 		/// This is the name of the project to restore as.
 		/// </summary>
-		public string TargetProjectName => (m_rdoUseOriginalName.Checked) ? m_projectName : m_txtOtherProjectName.Text;
+		internal string TargetProjectName => (m_rdoUseOriginalName.Checked) ? m_projectName : m_txtOtherProjectName.Text;
 
 		private void m_btnHelp_Click(object sender, EventArgs e)
 		{

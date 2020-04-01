@@ -19,7 +19,7 @@ namespace SIL.FieldWorks.MigrateSqlDbs.MigrateProjects
 	/// allowing the user to choose any or all of them, and then converts the chosen projects
 	/// to version 7.0.
 	/// </summary>
-	public partial class MigrateProjects : Form
+	internal sealed partial class MigrateProjects : Form
 	{
 		ImportFrom6_0 m_importer;
 		List<string> m_projects;
@@ -76,13 +76,13 @@ namespace SIL.FieldWorks.MigrateSqlDbs.MigrateProjects
 		}
 
 		/// <summary />
-		public MigrateProjects()
+		internal MigrateProjects()
 		{
 			InitializeComponent();
 		}
 
 		/// <summary />
-		public MigrateProjects(ImportFrom6_0 importer, string version, List<string> projects, bool fAutoClose)
+		internal MigrateProjects(ImportFrom6_0 importer, string version, List<string> projects, bool fAutoClose)
 			: this()
 		{
 			m_importer = importer;
@@ -117,7 +117,7 @@ namespace SIL.FieldWorks.MigrateSqlDbs.MigrateProjects
 			{
 				if (m_clbProjects.GetItemChecked(i))
 				{
-					var proj = m_clbProjects.Items[i] as ProjectItem;
+					var proj = (ProjectItem)m_clbProjects.Items[i];
 					var status = ConvertProject(proj.Name);
 					switch (status)
 					{
@@ -180,7 +180,7 @@ namespace SIL.FieldWorks.MigrateSqlDbs.MigrateProjects
 						m_fTempMigrationDbExists = false;
 					}
 					var msg = string.Format(Properties.Resources.ksCreatingATemporaryCopy, proj);
-					var sErrorMsgFmt = String.Format(Properties.Resources.ksCreatingATemporaryCopyFailed, proj, "{0}", "{1}");
+					var sErrorMsgFmt = string.Format(Properties.Resources.ksCreatingATemporaryCopyFailed, proj, "{0}", "{1}");
 					fOk = m_importer.CopyToTempDatabase(proj, msg, sErrorMsgFmt);
 					if (!fOk)
 					{
@@ -250,7 +250,7 @@ namespace SIL.FieldWorks.MigrateSqlDbs.MigrateProjects
 		/// </summary>
 		/// <param name="dbName">Name of the database</param>
 		/// <returns>the version number of the specified database</returns>
-		protected virtual int GetDbVersion(string dbName)
+		private static int GetDbVersion(string dbName)
 		{
 			var version = -1;
 			using (var sqlConnection = new SqlConnection($"Server={Environment.MachineName}\\SILFW; Database={dbName}; User ID = sa; Password=inscrutable;" + "Connect Timeout = 30; Pooling=false;"))

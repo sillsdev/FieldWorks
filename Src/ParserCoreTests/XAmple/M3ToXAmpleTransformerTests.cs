@@ -15,6 +15,7 @@ using SIL.LCModel.Utils;
 namespace SIL.FieldWorks.WordWorks.Parser.XAmple
 {
 	/// <summary />
+	[TestFixture]
 	public class M3ToXAmpleTransformerTests
 	{
 		private string m_sM3FXTDump;
@@ -167,7 +168,7 @@ namespace SIL.FieldWorks.WordWorks.Parser.XAmple
 			File.Delete(sOutput);
 		}
 
-		private void CheckOutputEquals(string sExpectedResultFile, string sActualResultFile)
+		private static void CheckOutputEquals(string sExpectedResultFile, string sActualResultFile)
 		{
 			string sExpected, sActual;
 			using (var expected = new StreamReader(sExpectedResultFile))

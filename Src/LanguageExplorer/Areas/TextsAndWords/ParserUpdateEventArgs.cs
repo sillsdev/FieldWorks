@@ -3,20 +3,21 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using SIL.FieldWorks.WordWorks.Parser;
 
-namespace SIL.FieldWorks.WordWorks.Parser
+namespace LanguageExplorer.Areas.TextsAndWords
 {
 	/// <summary>
 	/// The event args for the ParserUpdate events.
 	/// </summary>
-	public class ParserUpdateEventArgs : EventArgs
+	internal sealed class ParserUpdateEventArgs : EventArgs
 	{
-		public ParserUpdateEventArgs(TaskReport task)
+		internal ParserUpdateEventArgs(TaskReport task)
 		{
 			Task = task;
 		}
 
-		public TaskReport Task
+		internal TaskReport Task
 		{
 			get;
 		}

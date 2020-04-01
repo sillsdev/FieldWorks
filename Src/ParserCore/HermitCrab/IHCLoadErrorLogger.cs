@@ -6,7 +6,7 @@ using SIL.LCModel;
 
 namespace SIL.FieldWorks.WordWorks.Parser.HermitCrab
 {
-	public interface IHCLoadErrorLogger
+	internal interface IHCLoadErrorLogger
 	{
 		void InvalidShape(string str, int errorPos, IMoMorphSynAnalysis msa);
 		void InvalidAffixProcess(IMoAffixProcess affixProcess, bool isInvalidLhs, IMoMorphSynAnalysis msa);

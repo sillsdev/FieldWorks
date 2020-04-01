@@ -12,10 +12,10 @@ namespace SIL.FieldWorks.MigrateSqlDbs.MigrateProjects
 	/// Warn the user that the old version of FieldWorks is too old, and provide links for
 	/// downloading the appropriate installers.
 	/// </summary>
-	public partial class FWVersionTooOld : Form
+	internal sealed partial class FWVersionTooOld : Form
 	{
 		/// <summary />
-		public FWVersionTooOld(string version)
+		internal FWVersionTooOld(string version)
 		{
 			InitializeComponent();
 			m_txtDescription.Text = string.Format(m_txtDescription.Text, version);

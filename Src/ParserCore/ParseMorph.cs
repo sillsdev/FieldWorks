@@ -7,14 +7,14 @@ using SIL.LCModel;
 
 namespace SIL.FieldWorks.WordWorks.Parser
 {
-	public class ParseMorph : IEquatable<ParseMorph>
+	public sealed class ParseMorph : IEquatable<ParseMorph>
 	{
-		public ParseMorph(IMoForm form, IMoMorphSynAnalysis msa)
+		internal ParseMorph(IMoForm form, IMoMorphSynAnalysis msa)
 			: this(form, msa, null)
 		{
 		}
 
-		public ParseMorph(IMoForm form, IMoMorphSynAnalysis msa, ILexEntryInflType inflType)
+		internal ParseMorph(IMoForm form, IMoMorphSynAnalysis msa, ILexEntryInflType inflType)
 		{
 			Form = form;
 			Msa = msa;
@@ -23,11 +23,11 @@ namespace SIL.FieldWorks.WordWorks.Parser
 
 		public IMoForm Form { get; }
 
-		public IMoMorphSynAnalysis Msa { get; }
+		internal IMoMorphSynAnalysis Msa { get; }
 
-		public ILexEntryInflType InflType { get; }
+		internal ILexEntryInflType InflType { get; }
 
-		public bool IsValid => Form.IsValidObject && Msa.IsValidObject && (InflType == null || InflType.IsValidObject);
+		internal bool IsValid => Form.IsValidObject && Msa.IsValidObject && (InflType == null || InflType.IsValidObject);
 
 		public bool Equals(ParseMorph other)
 		{

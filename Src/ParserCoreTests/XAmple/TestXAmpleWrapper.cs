@@ -11,14 +11,14 @@ namespace SIL.FieldWorks.WordWorks.Parser.XAmple
 	[TestFixture]
 	public class TestXAmpleWrapper
 	{
-		protected XAmpleWrapper InitHelper()
+		private static XAmpleWrapper InitHelper()
 		{
 			var xAmple = new XAmpleWrapper();
 			xAmple.Init();
 			return xAmple;
 		}
 
-		protected void LoadFilesHelper(XAmpleWrapper wrapper)
+		private static void LoadFilesHelper(IXAmpleWrapper wrapper)
 		{
 			var tempPath = Path.Combine(FwDirectoryFinder.SourceDirectory, "ParserCoreTests", "XAmple", "M3ToXAmpleTransformerTestsDataFiles");
 			var xPath = Path.Combine(FwDirectoryFinder.CodeDirectory, "Language Explorer", "Configuration", "Grammar");

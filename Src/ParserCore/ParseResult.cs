@@ -9,19 +9,19 @@ using System.Linq;
 
 namespace SIL.FieldWorks.WordWorks.Parser
 {
-	public class ParseResult : IEquatable<ParseResult>
+	public sealed class ParseResult : IEquatable<ParseResult>
 	{
-		public ParseResult(string errorMessage)
+		internal ParseResult(string errorMessage)
 			: this(Enumerable.Empty<ParseAnalysis>(), errorMessage)
 		{
 		}
 
-		public ParseResult(IEnumerable<ParseAnalysis> analyses)
+		internal ParseResult(IEnumerable<ParseAnalysis> analyses)
 			: this(analyses, null)
 		{
 		}
 
-		public ParseResult(IEnumerable<ParseAnalysis> analyses, string errorMessage)
+		internal ParseResult(IEnumerable<ParseAnalysis> analyses, string errorMessage)
 		{
 			Analyses = new ReadOnlyCollection<ParseAnalysis>(analyses.ToArray());
 			ErrorMessage = errorMessage;
@@ -29,9 +29,9 @@ namespace SIL.FieldWorks.WordWorks.Parser
 
 		public ReadOnlyCollection<ParseAnalysis> Analyses { get; }
 
-		public string ErrorMessage { get; }
+		internal string ErrorMessage { get; }
 
-		public bool IsValid
+		internal bool IsValid
 		{
 			get { return Analyses.All(analysis => analysis.IsValid); }
 		}

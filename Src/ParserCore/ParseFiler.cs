@@ -14,12 +14,12 @@ using SIL.LCModel.Infrastructure;
 namespace SIL.FieldWorks.WordWorks.Parser
 {
 	/// <summary />
-	public class ParseFiler
+	internal sealed class ParseFiler
 	{
 		/// <summary>
 		/// Occurs when a wordform is updated.
 		/// </summary>
-		public event EventHandler<WordformUpdatedEventArgs> WordformUpdated;
+		internal event EventHandler<WordformUpdatedEventArgs> WordformUpdated;
 
 		#region Data members
 
@@ -41,7 +41,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		#region Construction and Disposal
 
 		/// <summary />
-		public ParseFiler(LcmCache cache, Action<TaskReport> taskUpdateHandler, IdleQueue idleQueue, ICmAgent parserAgent)
+		internal ParseFiler(LcmCache cache, Action<TaskReport> taskUpdateHandler, IdleQueue idleQueue, ICmAgent parserAgent)
 		{
 			Guard.AgainstNull(cache, nameof(cache));
 			Guard.AgainstNull(taskUpdateHandler, nameof(taskUpdateHandler));
@@ -65,11 +65,11 @@ namespace SIL.FieldWorks.WordWorks.Parser
 
 		#endregion Construction and Disposal
 
-		#region Public methods
+		#region Internal methods
 		///  <summary>
 		///  Process the parse result.
 		///  </summary>
-		public bool ProcessParse(IWfiWordform wordform, ParserPriority priority, ParseResult parseResult)
+		internal bool ProcessParse(IWfiWordform wordform, ParserPriority priority, ParseResult parseResult)
 		{
 			lock (m_syncRoot)
 			{

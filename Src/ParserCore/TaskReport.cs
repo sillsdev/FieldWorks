@@ -10,7 +10,7 @@ using System.Xml.Linq;
 namespace SIL.FieldWorks.WordWorks.Parser
 {
 	/// <summary />
-	public sealed class TaskReport : IDisposable
+	internal sealed class TaskReport : IDisposable
 	{
 		private readonly Action<TaskReport> m_taskUpdate;
 		private string m_description;
@@ -22,7 +22,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		private bool m_isInDispose;
 
 		/// <summary />
-		public TaskReport(string description, Action<TaskReport> eventReceiver)
+		internal TaskReport(string description, Action<TaskReport> eventReceiver)
 			: this(description, (TaskReport)null)
 		{
 			m_taskUpdate = eventReceiver;
@@ -137,18 +137,18 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			InformListeners(TaskPhase.Finished);
 		}
 
-		public string Description => Phase == TaskPhase.ErrorEncountered ? string.Format(ParserCoreStrings.ksX_error, m_description) : m_description;
+		internal string Description => Phase == TaskPhase.ErrorEncountered ? string.Format(ParserCoreStrings.ksX_error, m_description) : m_description;
 
 		/// <summary>
 		/// this is used to hold the results of a trace request
 		/// </summary>
-		public XDocument Details { set; get; }
+		internal XDocument Details { set; get; }
 
-		public long DurationTicks => m_finish - m_start;
+		internal long DurationTicks => m_finish - m_start;
 
-		public float DurationSeconds => (float)(DurationTicks / 10000000.0);
+		internal float DurationSeconds => (float)(DurationTicks / 10000000.0);
 
-		public List<TaskReport> SubTasks { get; private set; }
+		internal List<TaskReport> SubTasks { get; private set; }
 
 		internal void InformListeners(TaskPhase phase)
 		{
@@ -174,7 +174,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		/// a message to pass to the client which is not quite an error, but which warrants telling the user in a
 		/// non intrusive fashion.
 		/// </summary>
-		public string NotificationMessage
+		internal string NotificationMessage
 		{
 			get => m_notificationMessage;
 			set
@@ -187,9 +187,9 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			}
 		}
 
-		public TaskPhase Phase { get; private set; }
+		internal TaskPhase Phase { get; private set; }
 
-		public string PhaseDescription
+		internal string PhaseDescription
 		{
 			get
 			{
@@ -208,10 +208,10 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			}
 		}
 
-		public TaskReport MostRecentTask => Phase == TaskPhase.ErrorEncountered || Phase == TaskPhase.Finished || SubTasks == null
+		internal TaskReport MostRecentTask => Phase == TaskPhase.ErrorEncountered || Phase == TaskPhase.Finished || SubTasks == null
 				? this : SubTasks[SubTasks.Count - 1].MostRecentTask;
 
-		public int Depth => m_owningTask?.Depth + 1 ?? 0;
+		internal int Depth => m_owningTask?.Depth + 1 ?? 0;
 
 		/// <summary>
 		/// This method was added because child TaskReport objects were

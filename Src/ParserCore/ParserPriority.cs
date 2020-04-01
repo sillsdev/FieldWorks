@@ -7,7 +7,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 	/// <summary>
 	/// The parser queue priority
 	/// </summary>
-	public enum ParserPriority
+	internal enum ParserPriority
 	{
 		ReloadGrammarAndLexicon = 0,
 		TryAWord = 1,

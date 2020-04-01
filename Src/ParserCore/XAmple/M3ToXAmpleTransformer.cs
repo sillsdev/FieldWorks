@@ -20,7 +20,7 @@ namespace SIL.FieldWorks.WordWorks.Parser.XAmple
 	/// Given an XML file representing an instance of a M3 grammar model,
 	/// transforms it into the format needed by XAmple.
 	/// </summary>
-	internal class M3ToXAmpleTransformer
+	internal sealed class M3ToXAmpleTransformer
 	{
 		private XslCompiledTransform m_gafawsTransform;
 		private XslCompiledTransform m_adctlTransform;
@@ -30,7 +30,7 @@ namespace SIL.FieldWorks.WordWorks.Parser.XAmple
 		private XslCompiledTransform m_grammarDebuggingTransform;
 
 		/// <summary />
-		public M3ToXAmpleTransformer(string database)
+		internal M3ToXAmpleTransformer(string database)
 		{
 			m_database = database;
 		}
@@ -45,7 +45,7 @@ namespace SIL.FieldWorks.WordWorks.Parser.XAmple
 
 		private XslCompiledTransform GrammarDebuggingTransform => m_grammarDebuggingTransform ?? (m_grammarDebuggingTransform = CreateTransform("FxtM3ParserToXAmpleWordGrammarDebuggingXSLT"));
 
-		public void PrepareTemplatesForXAmpleFiles(XDocument domModel, XDocument domTemplate)
+		internal void PrepareTemplatesForXAmpleFiles(XDocument domModel, XDocument domTemplate)
 		{
 			Debug.Assert(domTemplate.Root != null);
 			// get top level POS that has at least one template with slots
@@ -83,7 +83,7 @@ namespace SIL.FieldWorks.WordWorks.Parser.XAmple
 			}
 		}
 
-		private string ApplyGafawsAlgorithm(string gafawsFile)
+		private static string ApplyGafawsAlgorithm(string gafawsFile)
 		{
 			var gafawsInputFile = Path.Combine(Path.GetTempPath(), gafawsFile);
 			var pa = new PositionAnalyzer();
@@ -102,7 +102,7 @@ namespace SIL.FieldWorks.WordWorks.Parser.XAmple
 			}
 		}
 
-		public void MakeAmpleFiles(XDocument model)
+		internal void MakeAmpleFiles(XDocument model)
 		{
 			using (var writer = new StreamWriter(Path.Combine(Path.GetTempPath(), m_database + "adctl.txt")))
 			{
@@ -131,7 +131,7 @@ namespace SIL.FieldWorks.WordWorks.Parser.XAmple
 			return CreateTransform(xslName, "ApplicationTransforms");
 		}
 
-		public static XslCompiledTransform CreateTransform(string xslName, string assemblyName)
+		internal static XslCompiledTransform CreateTransform(string xslName, string assemblyName)
 		{
 			var transform = new XslCompiledTransform();
 			var type = Type.GetType($"{xslName},{assemblyName}");

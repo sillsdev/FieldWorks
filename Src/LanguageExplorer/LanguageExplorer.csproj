@@ -328,6 +328,7 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Areas\TextsAndWords\Interlinear\TriStateTreeViewCheckState.cs" />
+    <Compile Include="Areas\TextsAndWords\ParserUpdateEventArgs.cs" />
     <Compile Include="Areas\TextsAndWords\Tools\WordListConcordance\SubservientConcordanceRecordList.cs" />
     <Compile Include="Areas\TextsAndWords\IInterlinearConfigurator.cs" />
     <Compile Include="Areas\TextsAndWords\Interlinear\InterlinearTextServices.cs" />

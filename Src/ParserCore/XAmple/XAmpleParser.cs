@@ -17,7 +17,7 @@ using SIL.ObjectModel;
 
 namespace SIL.FieldWorks.WordWorks.Parser.XAmple
 {
-	public class XAmpleParser : DisposableBase, IParser
+	public sealed class XAmpleParser : DisposableBase, IParser
 	{
 		private static readonly char[] Digits = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' };
 		private XAmpleWrapper m_xample;

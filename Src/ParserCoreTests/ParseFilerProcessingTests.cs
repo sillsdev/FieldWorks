@@ -36,11 +36,11 @@ namespace SIL.FieldWorks.WordWorks.Parser
 
 		#region Non-test methods
 
-		protected ICmAgent ParserAgent => Cache.LanguageProject.DefaultParserAgent;
+		private ICmAgent ParserAgent => Cache.LanguageProject.DefaultParserAgent;
 
-		protected ICmAgent HumanAgent => Cache.LanguageProject.DefaultUserAgent;
+		private ICmAgent HumanAgent => Cache.LanguageProject.DefaultUserAgent;
 
-		protected IWfiWordform CheckAnnotationSize(string form, int expectedSize, bool isStarting)
+		private IWfiWordform CheckAnnotationSize(string form, int expectedSize, bool isStarting)
 		{
 			var servLoc = Cache.ServiceLocator;
 			var wf = FindOrCreateWordform(form);
@@ -61,25 +61,40 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			return wf;
 		}
 
-		protected IWfiWordform CheckAnalysisSize(string form, int expectedSize, bool isStarting)
+		private IWfiWordform CheckAnalysisSize(string form, int expectedSize, bool isStarting)
 		{
 			var wf = FindOrCreateWordform(form);
 			Assert.AreEqual(expectedSize, wf.AnalysesOC.Count, $"Wrong number of {(isStarting ? "starting" : "ending")} analyses for: {form}");
 			return wf;
 		}
 
-		protected void CheckEvaluationSize(IWfiAnalysis analysis, int expectedSize, bool isStarting, string additionalMessage)
+		private void CheckEvaluationSize(IWfiAnalysis analysis, int expectedSize, bool isStarting, string additionalMessage)
 		{
 			Assert.AreEqual(expectedSize, analysis.EvaluationsRC.Count, $"Wrong number of {(isStarting ? "starting" : "ending")} evaluations for analysis: {analysis.Hvo} ({additionalMessage})");
 		}
 
-		protected void ExecuteIdleQueue()
+		private void ExecuteIdleQueue()
 		{
 			foreach (var task in m_idleQueue)
 			{
 				task.Delegate(task.Parameter);
 			}
 			m_idleQueue.Clear();
+		}
+
+		/// <summary>
+		/// End the undoable UOW and Undo everything.
+		/// </summary>
+		private void UndoAll()
+		{
+			// Undo the UOW (or more than one of them, if the test made new ones).
+			while (m_actionHandler.CanUndo())
+			{
+				m_actionHandler.Undo();
+			}
+			// Need to 'Commit' to clear out redo stack,
+			// since nothing is really saved.
+			m_actionHandler.Commit();
 		}
 
 		#endregion // Non-tests
@@ -143,21 +158,6 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			{
 				base.TestTearDown();
 			}
-		}
-
-		/// <summary>
-		/// End the undoable UOW and Undo everything.
-		/// </summary>
-		protected void UndoAll()
-		{
-			// Undo the UOW (or more than one of them, if the test made new ones).
-			while (m_actionHandler.CanUndo())
-			{
-				m_actionHandler.Undo();
-			}
-			// Need to 'Commit' to clear out redo stack,
-			// since nothing is really saved.
-			m_actionHandler.Commit();
 		}
 
 		#endregion Setup and TearDown
