@@ -3473,7 +3473,6 @@ namespace SIL.FieldWorks
 					ErrorReporter.AddProperty("PackageVersion", string.Format("{0} {1}", packageVersion.Key, packageVersion.Value));
 				}
 			}
-			ErrorReporter.AddProperty("CLR version", Environment.Version.ToString());
 			ulong mem = MiscUtils.GetPhysicalMemoryBytes() / 1048576;
 			ErrorReporter.AddProperty("PhysicalMemory", mem + " Mb");
 			var processArch = Environment.Is64BitProcess ? 64 : 32;
@@ -3492,7 +3491,7 @@ namespace SIL.FieldWorks
 			ErrorReporter.AddProperty("UserDomainName", Environment.UserDomainName);
 			ErrorReporter.AddProperty("UserName", Environment.UserName);
 			ErrorReporter.AddProperty("SystemDirectory", Environment.SystemDirectory);
-			ErrorReporter.AddProperty("Culture", System.Globalization.CultureInfo.CurrentCulture.ToString());
+			ErrorReporter.AddProperty("Culture", CultureInfo.CurrentCulture.ToString());
 			using (Bitmap bm = new Bitmap(10, 10))
 			{
 
