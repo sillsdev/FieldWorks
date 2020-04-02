@@ -5,8 +5,8 @@
 using System;
 using System.Diagnostics;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.FwCoreDlgs;
 using SIL.LCModel.Utils;
-using SIL.Utils;
 
 namespace LanguageExplorer
 {

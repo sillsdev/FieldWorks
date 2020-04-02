@@ -578,6 +578,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			// Set this before creating the browse view class so that custom parts can be
 			// generated properly.
 			SortItemProvider = sortItemProvider;
+			MessageBoxTrigger = XmlUtils.GetOptionalAttributeValue(m_configParamsElement, "msgBoxTrigger", string.Empty);
 		}
 
 		/// <summary>

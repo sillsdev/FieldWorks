@@ -15,11 +15,12 @@ using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel.Utils;
 using SIL.PlatformUtilities;
 using SIL.Reporting;
+using SIL.Utils;
 
-namespace SIL.Utils
+namespace SIL.FieldWorks.FwCoreDlgs
 {
 	/// <summary />
-	public class ErrorReporter : Form
+	public sealed class ErrorReporter : Form
 	{
 		#region Member variables
 
@@ -33,7 +34,7 @@ namespace SIL.Utils
 		private Label lbl_EmailReport;
 
 		/// <summary>The subject for error report emails</summary>
-		protected static readonly string s_emailSubject = "Automated Error Report";
+		private static readonly string s_emailSubject = "Automated Error Report";
 
 		private readonly bool m_isLethal;
 		private readonly bool m_fReportDuplicateGuidsASAP;
@@ -43,7 +44,7 @@ namespace SIL.Utils
 		private bool m_showChips;
 
 		/// <summary />
-		protected static bool s_isOkToInteractWithUser = true;
+		private static bool s_isOkToInteractWithUser = true;
 		private LinkLabel viewDetailsLink;
 		private Button cancelButton;
 		private Label m_stepsLabel;
@@ -54,7 +55,7 @@ namespace SIL.Utils
 		/// <summary>
 		/// this is protected so that we can have a Singleton
 		/// </summary>
-		protected ErrorReporter(bool isLethal, string emailAddress, bool fReportDuplicateGuidsASAP = false, string errorText = "")
+		private ErrorReporter(bool isLethal, string emailAddress, bool fReportDuplicateGuidsASAP = false, string errorText = "")
 		{
 			ErrorReport.AddStandardProperties();
 			m_isLethal = isLethal;
@@ -365,7 +366,7 @@ namespace SIL.Utils
 		#region Methods
 
 		/// <summary />
-		protected string GatherData()
+		private string GatherData()
 		{
 			var sb = new StringBuilder(m_details.Text.Length + m_reproduce.Text.Length + 50);
 			sb.AppendLine(m_fUserReport ? (m_fSuggestion ? "Suggestion:" : "Problem Description:") : "To Reproduce:");
@@ -516,9 +517,9 @@ namespace SIL.Utils
 			}
 
 			detailsText.AppendLine("Additional information about the computer and project:");
-			foreach (var label in Reporting.ErrorReport.Properties.Keys)
+			foreach (var label in ErrorReport.Properties.Keys)
 			{
-				detailsText.AppendLine(label + ": " + Reporting.ErrorReport.Properties[label]);
+				detailsText.AppendLine(label + ": " + ErrorReport.Properties[label]);
 			}
 			if (innerMostException != null)
 			{
@@ -614,7 +615,7 @@ namespace SIL.Utils
 		}
 
 		/// <summary />
-		private void btnClose_Click(object sender, System.EventArgs e)
+		private void btnClose_Click(object sender, EventArgs e)
 		{
 			var body = GatherData();
 

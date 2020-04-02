@@ -9,8 +9,8 @@ using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.FwCoreDlgs;
 using SIL.LCModel.Core.Text;
-using SIL.Utils;
 
 // ReSharper disable LocalizableElement -- Justification: we're cheap, and the messages in this file are displayed only in an error state.
 

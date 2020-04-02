@@ -7,8 +7,8 @@ using System.Diagnostics;
 using System.Windows.Forms;
 using Microsoft.Win32;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.FwCoreDlgs;
 using SIL.Reporting;
-using SIL.Utils;
 
 namespace LanguageExplorer
 {

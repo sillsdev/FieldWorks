@@ -86,7 +86,7 @@ namespace LanguageExplorer.Controls
 		/// <summary>
 		/// Get/set string that will trigger a message box to show.
 		/// </summary>
-		public string MessageBoxTrigger { get; set; }
+		public string MessageBoxTrigger { get; set; } = string.Empty;
 
 		/// <summary>
 		/// Show the message box, if needed.

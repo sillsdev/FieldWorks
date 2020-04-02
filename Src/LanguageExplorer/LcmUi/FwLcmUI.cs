@@ -8,9 +8,9 @@ using System.IO;
 using System.Windows.Forms;
 using LanguageExplorer.LcmUi.Dialogs;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.FwCoreDlgs;
 using SIL.LCModel;
 using SIL.LCModel.Utils;
-using SIL.Utils;
 
 namespace LanguageExplorer.LcmUi
 {

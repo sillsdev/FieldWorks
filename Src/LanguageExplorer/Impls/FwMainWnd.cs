@@ -44,7 +44,6 @@ using SIL.LCModel.Infrastructure;
 using SIL.LCModel.Utils;
 using SIL.PlatformUtilities;
 using SIL.Reporting;
-using SIL.Utils;
 using File = System.IO.File;
 using FileUtils = SIL.LCModel.Utils.FileUtils;
 using Win32 = SIL.FieldWorks.Common.FwUtils.Win32;

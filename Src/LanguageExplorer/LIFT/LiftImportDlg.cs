@@ -23,7 +23,6 @@ using SIL.Lift.Migration;
 using SIL.Lift.Parsing;
 using SIL.Lift.Validation;
 using SIL.Reporting;
-using SIL.Utils;
 using FileUtils = SIL.LCModel.Utils.FileUtils;
 
 namespace LanguageExplorer.LIFT

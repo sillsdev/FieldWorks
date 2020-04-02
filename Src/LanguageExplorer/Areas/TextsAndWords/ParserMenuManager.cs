@@ -8,11 +8,11 @@ using System.Diagnostics;
 using System.Linq;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.FwCoreDlgs;
 using SIL.FieldWorks.WordWorks.Parser;
 using SIL.LCModel;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Infrastructure;
-using SIL.Utils;
 
 namespace LanguageExplorer.Areas.TextsAndWords
 {

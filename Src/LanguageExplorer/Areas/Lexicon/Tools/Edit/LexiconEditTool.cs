@@ -1437,7 +1437,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				}
 				else
 				{
-					pictureSlices.AddRange(_dataTree.Slices.Where(otherSlice => otherSlice is PictureSlice && !ReferenceEquals(slice, otherSlice)).Select(otherSlice => otherSlice as PictureSlice));
+					pictureSlices.AddRange(_dataTree.Slices.Select(otherSlice => otherSlice is PictureSlice && !ReferenceEquals(slice, otherSlice)).Cast<PictureSlice>());
 				}
 				foreach (var pictureSlice in pictureSlices.Where(pictureSlice => ReferenceEquals(pictureSlice.MyCmObject, slice.MyCmObject)))
 				{

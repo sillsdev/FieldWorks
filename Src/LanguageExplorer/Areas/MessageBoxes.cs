@@ -19,8 +19,9 @@ namespace LanguageExplorer.Areas
 		public static void ReportLexEntryCircularReference(ICmObject parent, ICmObject target, bool startedFromComplex)
 		{
 			MessageBox.Show(Form.ActiveForm, string.Format(startedFromComplex ? FwCoreDlgs.ksComponentIsComponent : FwCoreDlgs.ksComplexFormIsComponent,
-				target is ILexEntry ? FwCoreDlgs.ksEntry : FwCoreDlgs.ksSense, startedFromComplex
-					? ((ILexEntry)parent).HeadWord.Text : target.ShortName), FwCoreDlgs.ksWhichIsComponent, MessageBoxButtons.OK, MessageBoxIcon.Error);
+				target is ILexEntry ? FwCoreDlgs.ksEntry : FwCoreDlgs.ksSense,
+				startedFromComplex ? ((ILexEntry)parent).HeadWord.Text : target.ShortName),
+				FwCoreDlgs.ksWhichIsComponent, MessageBoxButtons.OK, MessageBoxIcon.Error);
 		}
 	}
 }

@@ -170,10 +170,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\DistFiles\PaToFdoInterfaces.dll</HintPath>
     </Reference>
-    <Reference Include="Reporting, Version=1.0.3664.19926, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Debug\Reporting.dll</HintPath>
-    </Reference>
     <Reference Include="RootSite, Version=6.1.1.19944, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\RootSite.dll</HintPath>

@@ -168,6 +168,7 @@ namespace LanguageExplorer.Areas
 			m_configurationParametersElement = configurationParametersElement;
 			Cache = cache;
 			MyRecordList = recordList;
+			MessageBoxTrigger = XmlUtils.GetOptionalAttributeValue(m_configurationParametersElement, "msgBoxTrigger", string.Empty);
 		}
 
 		public IPaneBar MainPaneBar

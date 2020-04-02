@@ -10,8 +10,8 @@ using System.Xml.Linq;
 using LanguageExplorer.Controls;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
+using SIL.FieldWorks.FwCoreDlgs;
 using SIL.LCModel;
-using SIL.Utils;
 
 namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 {

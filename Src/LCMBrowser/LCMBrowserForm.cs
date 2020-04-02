@@ -2481,14 +2481,14 @@ namespace LCMBrowser
 				{
 					switch (m_virtualFlag)
 					{
-						case false when obj.ToString().IndexOf("LexSenseRepository") > 0:
+						case false when obj.ToString().Contains("LexSenseRepository"):
 						{
 							var tmpObj = (ILexSense)io.Object;
 							io.DisplayValue = tmpObj.FullReferenceName.Text;
 							io.DisplayName = $"[{i++}]: {GetObjectOnly(tmpObj.ToString())}";
 							break;
 						}
-						case false when obj.ToString().IndexOf("LexEntryRepository") > 0:
+						case false when obj.ToString().Contains("LexEntryRepository"):
 						{
 							var tmpObj = (ILexEntry)io.Object;
 							io.DisplayValue = tmpObj.HeadWord.Text;

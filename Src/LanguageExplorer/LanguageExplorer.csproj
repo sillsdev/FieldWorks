@@ -248,10 +248,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Release\ParserCore.dll</HintPath>
     </Reference>
-    <Reference Include="Reporting">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Release\Reporting.dll</HintPath>
-    </Reference>
     <Reference Include="RootSite">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Release\RootSite.dll</HintPath>

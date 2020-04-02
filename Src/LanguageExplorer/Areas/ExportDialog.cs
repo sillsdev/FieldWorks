@@ -30,7 +30,6 @@ using SIL.LCModel.Utils;
 using SIL.Lift;
 using SIL.Lift.Validation;
 using SIL.Reporting;
-using SIL.Utils;
 using SIL.Windows.Forms;
 using SIL.Xml;
 using ReflectionHelper = SIL.LCModel.Utils.ReflectionHelper;

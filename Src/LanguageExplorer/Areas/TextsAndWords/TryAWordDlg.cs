@@ -12,9 +12,9 @@ using System.Windows.Forms;
 using System.Xml.Linq;
 using LanguageExplorer.Controls;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.FwCoreDlgs;
 using SIL.FieldWorks.FwCoreDlgs.Controls;
 using SIL.LCModel;
-using SIL.Utils;
 
 namespace LanguageExplorer.Areas.TextsAndWords
 {
