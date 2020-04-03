@@ -215,43 +215,35 @@ namespace SIL.FieldWorks.Common.RootSites
 		#region Properties
 
 		/// <summary>
-		/// print root sites are never used for editing, so this routine should never be called.
-		/// </summary>
-		public void RequestSelectionAtEndOfUow(IVwRootBox rootb, int ihvoRoot, int cvlsi, SelLevInfo[] rgvsli, int tagTextProp, int cpropPrevious, int ich, int wsAlt, bool fAssocPrev, ITsTextProps selProps)
-		{
-			throw new NotSupportedException();
-		}
-
-		/// <summary>
 		/// Gets the print rootsite's rootbox.
 		/// </summary>
-		public IVwRootBox RootBox { get; private set; }
+		internal IVwRootBox RootBox { get; private set; }
 
 		/// <summary>
 		/// Gets the print rootsite's print context.
 		/// </summary>
-		public IVwPrintContext PrintContext { get; private set; }
+		internal IVwPrintContext PrintContext { get; private set; }
 
 		/// <summary>
 		/// Gets the total number of pages in the view that could be printed. This should not be
 		/// confused with the number of pages the user wants to print.
 		/// </summary>
-		public int TotalNumberOfPages { get; private set; } = 0;
+		internal int TotalNumberOfPages { get; private set; }
 
 		/// <summary>
 		/// Gets the page number of the next page to print.
 		/// </summary>
-		public int NextPageToPrint { get; private set; } = 1;
+		internal int NextPageToPrint { get; private set; } = 1;
 
 		/// <summary>
 		/// Gets a flag indicating if there are more pages to print.
 		/// </summary>
-		public bool HasMorePages { get; private set; } = true;
+		internal bool HasMorePages { get; private set; } = true;
 
 		/// <summary>
 		/// Gets the printer settings.
 		/// </summary>
-		public PrinterSettings PrinterSettings { get; private set; }
+		internal PrinterSettings PrinterSettings { get; private set; }
 		#endregion
 
 		#region Misc. Methods
@@ -333,6 +325,14 @@ namespace SIL.FieldWorks.Common.RootSites
 		#endregion
 
 		#region IVwRootSite method implementations
+		/// <summary>
+		/// print root sites are never used for editing, so this routine should never be called.
+		/// </summary>
+		void IVwRootSite.RequestSelectionAtEndOfUow(IVwRootBox rootb, int ihvoRoot, int cvlsi, SelLevInfo[] rgvsli, int tagTextProp, int cpropPrevious, int ich, int wsAlt, bool fAssocPrev, ITsTextProps selProps)
+		{
+			throw new NotSupportedException();
+		}
+
 		/// <summary>
 		/// Adjust the scroll range when some lazy box got expanded. Needs to be done for both
 		/// panes if we have more than one.

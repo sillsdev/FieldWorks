@@ -36,7 +36,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 		private Rect m_rcPrimary;
 		private bool m_fInSizeChanged;
 
-		private bool IsEditable => XmlUtils.GetBooleanAttributeValue(m_configurationNode.Element("deParams"), "editable");
+		internal override bool IsEditable => XmlUtils.GetBooleanAttributeValue(m_configurationNode.Element("deParams"), "editable");
 
 		#region Construction
 

@@ -24,7 +24,7 @@ namespace SIL.FieldWorks.Common.RootSites
 	///	}
 	/// </code>
 	/// </example>
-	public class UndoTaskHelper : UnitOfWorkHelper
+	internal class UndoTaskHelper : UnitOfWorkHelper
 	{
 		private readonly IVwRootSite m_vwRootSite;
 		private UndoSelectionAction m_redoSelectionAction;
@@ -36,7 +36,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// </summary>
 		/// <param name="rootSite">The view (required)</param>
 		/// <param name="stid">String resource id used for Undo/Redo labels</param>
-		public UndoTaskHelper(IVwRootSite rootSite, string stid)
+		internal UndoTaskHelper(IVwRootSite rootSite, string stid)
 			: this(rootSite.RootBox.DataAccess.GetActionHandler(), rootSite, stid)
 		{
 		}
@@ -47,7 +47,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <param name="actionHandler">The IActionHandler to start the undo task on</param>
 		/// <param name="rootSite">The view (can be <c>null</c>)</param>
 		/// <param name="stid">String resource id used for Undo/Redo labels</param>
-		public UndoTaskHelper(IActionHandler actionHandler, IVwRootSite rootSite, string stid)
+		internal UndoTaskHelper(IActionHandler actionHandler, IVwRootSite rootSite, string stid)
 			: base(actionHandler)
 		{
 			m_vwRootSite = rootSite;
@@ -61,7 +61,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <param name="rootSite">The view (required)</param>
 		/// <param name="stUndo">Undo label</param>
 		/// <param name="stRedo">Redo label</param>
-		public UndoTaskHelper(IVwRootSite rootSite, string stUndo, string stRedo)
+		internal UndoTaskHelper(IVwRootSite rootSite, string stUndo, string stRedo)
 			: this(rootSite.RootBox.DataAccess.GetActionHandler(), rootSite, stUndo, stRedo)
 		{
 		}
@@ -73,7 +73,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <param name="rootSite">The view (can be <c>null</c>)</param>
 		/// <param name="stUndo">Undo label</param>
 		/// <param name="stRedo">Redo label</param>
-		public UndoTaskHelper(IActionHandler actionHandler, IVwRootSite rootSite, string stUndo, string stRedo) : base(actionHandler)
+		internal UndoTaskHelper(IActionHandler actionHandler, IVwRootSite rootSite, string stUndo, string stRedo) : base(actionHandler)
 		{
 			m_vwRootSite = rootSite;
 			Init(stUndo, stRedo);
@@ -149,7 +149,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			/// </param>
 			/// <param name="fForUndo"><c>true</c> for Undo, <c>false</c> for Redo.</param>
 			/// <param name="vwSel">The selection for the action</param>
-			public UndoSelectionAction(IVwRootSite rootSite, bool fForUndo, IVwSelection vwSel)
+			internal UndoSelectionAction(IVwRootSite rootSite, bool fForUndo, IVwSelection vwSel)
 			{
 				m_fForUndo = fForUndo;
 				m_selHelper = SelectionHelper.Create(vwSel, rootSite);
@@ -208,10 +208,10 @@ namespace SIL.FieldWorks.Common.RootSites
 				m_selHelper.RestoreSelectionAndScrollPos();
 				// Selecting the original rootsite handles the case where a command or subsequent user action caused
 				// a different pane to be focused, e.g. in the BT view
-				if (m_selHelper.RootSite is Control && ((Control)m_selHelper.RootSite).FindForm() == Form.ActiveForm)
+				if (m_selHelper.RootSite is Control rootSite && rootSite.FindForm() == Form.ActiveForm)
 				{
 					Logger.WriteEvent("Selecting " + m_selHelper.RootSite);
-					((Control)m_selHelper.RootSite).Select();
+					rootSite.Select();
 				}
 			}
 

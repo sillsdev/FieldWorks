@@ -17,14 +17,14 @@ namespace SIL.FieldWorks.Common.RootSites
 		public int End;
 		private readonly DummyRootBox m_rootBox;
 
-		public DummyVwSelection(DummyRootBox rootbox, int anchor, int end)
+		internal DummyVwSelection(DummyRootBox rootbox, int anchor, int end)
 		{
 			m_rootBox = rootbox;
 			Anchor = anchor;
 			End = end;
 		}
 
-		public string SelectionText
+		internal string SelectionText
 		{
 			get
 			{

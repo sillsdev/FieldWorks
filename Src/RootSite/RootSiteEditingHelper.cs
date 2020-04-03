@@ -22,7 +22,7 @@ using SIL.LCModel.Utils;
 namespace SIL.FieldWorks.Common.RootSites
 {
 	/// <summary />
-	public class RootSiteEditingHelper : EditingHelper
+	internal class RootSiteEditingHelper : EditingHelper
 	{
 		#region Constants
 		/// <summary>maximum number of spelling suggestions that will appear in the
@@ -43,7 +43,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <summary />
 		/// <param name="cache">The LCM Cache</param>
 		/// <param name="callbacks">implementation of <see cref="IEditingCallbacks"/></param>
-		public RootSiteEditingHelper(LcmCache cache, IEditingCallbacks callbacks)
+		internal RootSiteEditingHelper(LcmCache cache, IEditingCallbacks callbacks)
 			: base(callbacks)
 		{
 			Cache = cache;
@@ -54,12 +54,12 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// Setter, normally only used if the client view's cache was not yet set at the time
 		/// of creating the editing helper.
 		/// </summary>
-		public LcmCache Cache { get; protected internal set; }
+		internal LcmCache Cache { get; set; }
 
 		/// <summary>
 		/// Gets whether the current selection is in back translation data.
 		/// </summary>
-		public virtual bool IsBackTranslation
+		internal virtual bool IsBackTranslation
 		{
 			get
 			{
@@ -79,7 +79,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <summary>
 		/// Return the dictionary which should be used for the specified writing system.
 		/// </summary>
-		public ISpellEngine GetDictionary(int ws)
+		internal ISpellEngine GetDictionary(int ws)
 		{
 			return SpellingHelper.GetSpellChecker(ws, WritingSystemFactory);
 		}
@@ -102,7 +102,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// </summary>
 		/// <param name="cache">LCM cache representing the DB connection to use</param>
 		/// <param name="guid">The guid of the object in the DB</param>
-		public string TextRepOfObj(LcmCache cache, Guid guid)
+		internal string TextRepOfObj(LcmCache cache, Guid guid)
 		{
 			return cache.ServiceLocator.ObjectRepository.TryGetObject(guid, out var obj) && obj is IEmbeddedObject embeddedObject ? embeddedObject.TextRepresentation : null;
 		}
@@ -117,7 +117,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// letter)</param>
 		/// <param name="kodt">The object data type to use for embedding the new object
 		/// </param>
-		public virtual Guid MakeObjFromText(LcmCache cache, string sTextRep, IVwSelection selDst, out int kodt)
+		internal virtual Guid MakeObjFromText(LcmCache cache, string sTextRep, IVwSelection selDst, out int kodt)
 		{
 			// Keep trying different types of objects until one of them recognizes the string
 			try
@@ -180,7 +180,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <summary>
 		/// Overridable method to display a simple application message to the user.
 		/// </summary>
-		public virtual void DisplayMessage(string message)
+		internal virtual void DisplayMessage(string message)
 		{
 			MessageBox.Show(Control, message, Application.ProductName, MessageBoxButtons.OK);
 		}
@@ -188,7 +188,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <summary>
 		/// Gets text properties to apply to a picture caption.
 		/// </summary>
-		public virtual ITsTextProps CaptionProps => throw new NotSupportedException();
+		internal virtual ITsTextProps CaptionProps => throw new NotSupportedException();
 		#endregion
 
 		#region Overridden methods & properties
@@ -366,33 +366,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		}
 
 		/// <summary>
-		/// Gets a selection helper that represents an insertion point at the specified limit of
-		/// the current selection. Use this version instead of calling ReduceSelectionToIp
-		/// directly on the selection helper if you want it to work for selections which might
-		/// include iconic representations of ORC characters.
-		/// </summary>
-		/// <returns>A selection helper representing an IP, or <c>null</c> if the given
-		/// selection cannot be reduced to an IP</returns>
-		public SelectionHelper GetSelectionReducedToIp(SelLimitType selLimit)
-		{
-			var selHelper = CurrentSelection.ReduceSelectionToIp(SelLimitType.Top, false, false);
-			if (selHelper == null)
-			{
-				HandleFootnoteAnchorIconSelected(CurrentSelection.Selection, (hvo, flid, ws, ich) =>
-				{
-					selHelper = new SelectionHelper(CurrentSelection);
-					selHelper.IchAnchor = selHelper.IchEnd = ich;
-					var sel = selHelper.SetSelection(false, false);
-					if (sel == null)
-					{
-						selHelper = null;
-					}
-				});
-			}
-			return selHelper;
-		}
-
-		/// <summary>
 		/// Remove character formatting.
 		/// </summary>
 		public override void RemoveCharFormatting(bool removeAllStyles)
@@ -537,7 +510,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// </summary>
 		protected override void RestoreSelectionAtEndUow(IVwSelection sel, SelectionHelper helper)
 		{
-			new RequestSelectionByHelper((IActionHandlerExtensions)Cache.ActionHandlerAccessor, sel, helper);
+			RequestSelectionByHelper.SetupForPropChangedCompletedCall((IActionHandlerExtensions)Cache.ActionHandlerAccessor, helper, sel);
 		}
 
 		/// <summary>
@@ -688,7 +661,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// Applies the given URL as a hotlink to the currently selected text, if any, or
 		/// inserts a link to the URL.
 		/// </summary>
-		public void ConvertSelToLink(string clip, LcmStyleSheet stylesheet)
+		internal void ConvertSelToLink(string clip, LcmStyleSheet stylesheet)
 		{
 			var hyperlinkStyle = stylesheet.FindStyle(StyleServices.Hyperlink);
 			if (m_callbacks?.EditedRootBox == null || hyperlinkStyle == null)
@@ -757,7 +730,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// Indicate whether we can insert an LinkedFiles link. Currently this is the same as
 		/// the method called, but in case we think of more criteria...
 		/// </summary>
-		public bool CanInsertLinkToFile()
+		internal bool CanInsertLinkToFile()
 		{
 			return m_callbacks.EditedRootBox.DataAccess.GetActionHandler() != null && IsSelectionInOneFormattableProp();
 		}
@@ -767,7 +740,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// Requires a suitable selection and a URL in the clipboard.
 		/// A file name is acceptable as a URL.
 		/// </summary>
-		public bool CanPasteUrl()
+		internal bool CanPasteUrl()
 		{
 			return IsSelectionInOneFormattableProp() && (ClipboardContainsString() && !string.IsNullOrEmpty(GetClipboardAsString()));
 		}
@@ -775,7 +748,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <summary>
 		/// Paste the contents of the clipboard as a hot link.
 		/// </summary>
-		public bool PasteUrl(LcmStyleSheet stylesheet)
+		internal bool PasteUrl(LcmStyleSheet stylesheet)
 		{
 			if (!CanPasteUrl())
 			{

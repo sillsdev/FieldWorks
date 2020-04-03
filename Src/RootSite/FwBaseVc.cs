@@ -25,7 +25,7 @@ namespace SIL.FieldWorks.Common.RootSites
 	/// FwBaseVc is the base view constructor with low-level FW-specific methods that other
 	/// view constructors can use as a base.
 	/// </remarks>
-	public abstract class FwBaseVc : VwBaseVc
+	internal abstract class FwBaseVc : VwBaseVc
 	{
 		/// <summary>The view constructor's cache.</summary>
 		protected LcmCache m_cache;
@@ -58,7 +58,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <summary>
 		/// Gets or sets the LCM cache for the view constructor.
 		/// </summary>
-		public virtual LcmCache Cache
+		internal virtual LcmCache Cache
 		{
 			get => m_cache;
 			set
@@ -296,7 +296,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			}
 			// Not particularly true in the new architecture, since the WSes are loaded first, so get HVO 1.
 			// m_hvoLangProject = 1;	// true 99.999% of the time as of 11/24/2008
-			throw new ArgumentException("Probably an ownerless object", "hvo");
+			throw new ArgumentException("Probably an ownerless object", nameof(hvo));
 		}
 		#endregion
 

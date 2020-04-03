@@ -11,7 +11,7 @@ namespace SIL.FieldWorks.Common.RootSites
 	/// <summary>
 	/// Menu item subclass containing the information needed to correct a spelling error.
 	/// </summary>
-	public class SpellCorrectMenuItem : ToolStripMenuItem
+	internal sealed class SpellCorrectMenuItem : ToolStripMenuItem
 	{
 		private readonly IVwRootBox m_rootb;
 		private readonly int m_hvoObj;
@@ -22,7 +22,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		private readonly ITsString m_tssReplacement;
 
 		/// <summary />
-		public SpellCorrectMenuItem(IVwRootBox rootb, int hvoObj, int tag, int wsAlt, int ichMin, int ichLim, string text, ITsString tss)
+		internal SpellCorrectMenuItem(IVwRootBox rootb, int hvoObj, int tag, int wsAlt, int ichMin, int ichLim, string text, ITsString tss)
 			: base(text)
 		{
 			m_rootb = rootb;
@@ -42,7 +42,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		}
 
 		/// <summary />
-		public void DoIt()
+		internal void DoIt()
 		{
 			m_rootb.DataAccess.BeginUndoTask(RootSiteStrings.ksUndoCorrectSpelling, RootSiteStrings.ksRedoSpellingChange);
 			var tssInput = m_wsAlt == 0 ? m_rootb.DataAccess.get_StringProp(m_hvoObj, m_tag) : m_rootb.DataAccess.get_MultiStringAlt(m_hvoObj, m_tag, m_wsAlt);

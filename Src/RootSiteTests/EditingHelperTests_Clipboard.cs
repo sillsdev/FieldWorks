@@ -69,7 +69,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			incStrBldr.AppendTsString(TsStringUtils.MakeString("cucumber", wsEng));
 			EditingHelper.SetTsStringOnClipboard(incStrBldr.GetString(), false, wsManager);
 
-			var tss = m_basicView.EditingHelper.GetTsStringFromClipboard(wsManager);
+			var tss = BasicView.EditingHelper.GetTsStringFromClipboard(wsManager);
 			Assert.IsNotNull(tss, "Couldn't get TsString from clipboard");
 			Assert.AreEqual(2, tss.RunCount);
 			Assert.AreEqual("Gogomer ", tss.get_RunText(0));

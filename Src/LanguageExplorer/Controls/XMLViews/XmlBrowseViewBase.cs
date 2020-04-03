@@ -95,7 +95,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// It's better to return our SDA directly rather than going to the root box, because occasionally
 		/// when filtering or sorting we may need to obtain it before the root box is created.
 		/// </summary>
-		public override ISilDataAccess DataAccess => SpecialCache;
+		internal override ISilDataAccess DataAccess => SpecialCache;
 
 		/// <summary>
 		/// Return the VC. It has some important functions related to interpreting fragment IDs
@@ -1780,7 +1780,7 @@ namespace LanguageExplorer.Controls.XMLViews
 
 				if (disposing)
 				{
-					((XmlBrowseViewBase)m_rootSite)?.RestoreScrollPosition(null);
+					((XmlBrowseViewBase)MySimpleRootSite)?.RestoreScrollPosition(null);
 				}
 			}
 		}

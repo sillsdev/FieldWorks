@@ -9,24 +9,19 @@ using System.Windows.Forms;
 using FieldWorks.TestUtilities;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.ViewsInterfaces;
-using SIL.LCModel;
 using SIL.LCModel.Core.KernelInterfaces;
-using SIL.LCModel.Core.Text;
 
 namespace RootSite.TestUtilities
 {
 	/// <summary>
 	/// Implementation of a basic view for testing, similar to DraftView
 	/// </summary>
-	public class DummyBasicView : SIL.FieldWorks.Common.RootSites.RootSite
+	internal sealed class DummyBasicView : SIL.FieldWorks.Common.RootSites.RootSite
 	{
 		#region Data members
 		/// <summary />
-		protected System.ComponentModel.IContainer components;
-		/// <summary />
-		protected VwBaseVc m_basicViewVc;
-		/// <summary />
-		protected SelectionHelper m_SelectionHelper;
+		private System.ComponentModel.IContainer components;
+
 		/// <summary>Text for the first and third test paragraph (English)</summary>
 		internal const string kFirstParaEng = "This is the first test paragraph.";
 		/// <summary>Text for the second and fourth test paragraph (English).</summary>
@@ -40,14 +35,14 @@ namespace RootSite.TestUtilities
 		#region Constructor, Dispose, InitializeComponent
 
 		/// <summary />
-		public DummyBasicView() : base(null)
+		internal DummyBasicView() : base(null)
 		{
 			// This call is required by the Windows.Forms Form Designer.
 			InitializeComponent();
 		}
 
 		/// <summary />
-		public DummyBasicView(int hvoRoot, int flid) : base(null)
+		internal DummyBasicView(int hvoRoot, int flid) : base(null)
 		{
 			m_hvoRoot = hvoRoot;
 			m_flid = flid;
@@ -72,11 +67,11 @@ namespace RootSite.TestUtilities
 			if (disposing)
 			{
 				components?.Dispose();
-				var disposable = m_basicViewVc as IDisposable;
+				var disposable = ViewConstructor as IDisposable;
 				disposable?.Dispose();
 			}
-			m_basicViewVc = null;
-			m_SelectionHelper = null;
+			ViewConstructor = null;
+			SelectionHelper = null;
 		}
 
 		#region Component Designer generated code
@@ -101,7 +96,7 @@ namespace RootSite.TestUtilities
 		/// <summary>
 		/// Activates the view
 		/// </summary>
-		public virtual void ActivateView()
+		internal void ActivateView()
 		{
 			PerformLayout();
 			Show();
@@ -132,9 +127,9 @@ namespace RootSite.TestUtilities
 		/// <summary>
 		/// Calls the OnKeyDown method.
 		/// </summary>
-		public void CallOnKeyDown(KeyEventArgs e)
+		internal void CallOnKeyDown(KeyEventArgs e)
 		{
-			base.OnKeyDown(e);
+			OnKeyDown(e);
 		}
 		#endregion
 
@@ -150,10 +145,10 @@ namespace RootSite.TestUtilities
 			{
 				return;
 			}
-			if (m_SelectionHelper != null)
+			if (SelectionHelper != null)
 			{
-				m_SelectionHelper.SetSelection(this);
-				m_SelectionHelper = null;
+				SelectionHelper.SetSelection(this);
+				SelectionHelper = null;
 			}
 		}
 
@@ -177,47 +172,15 @@ namespace RootSite.TestUtilities
 		/// <summary>
 		/// Call the OnLayout methods
 		/// </summary>
-		public virtual void CallLayout()
+		internal void CallLayout()
 		{
 			OnLayout(new LayoutEventArgs(this, string.Empty));
 		}
 
 		/// <summary>
-		/// Add English paragraphs
-		/// </summary>
-		public void MakeEnglishParagraphs()
-		{
-			var wsf = m_cache.WritingSystemFactory;
-			var wsEng = wsf.GetWsFromStr("en");
-			AddParagraphsToLangProj(wsEng, kFirstParaEng, kSecondParaEng);
-		}
-
-		/// <summary>
-		/// Adds paragraphs to the database
-		/// </summary>
-		private void AddParagraphsToLangProj(int ws, string firstPara, string secondPara)
-		{
-			var servLoc = Cache.ServiceLocator;
-			var txt = servLoc.GetInstance<ITextFactory>().Create();
-			var text = servLoc.GetInstance<IStTextFactory>().Create();
-			txt.ContentsOA = text;
-			var stTxtParaFactory = servLoc.GetInstance<IStTxtParaFactory>();
-			var para1 = stTxtParaFactory.Create();
-			text.ParagraphsOS.Add(para1);
-			var para2 = stTxtParaFactory.Create();
-			text.ParagraphsOS.Add(para2);
-
-			var tss = TsStringUtils.MakeString(firstPara, ws);
-			para1.Contents = tss;
-
-			tss = TsStringUtils.MakeString(secondPara, ws);
-			para2.Contents = tss;
-		}
-
-		/// <summary>
 		/// Exposes the OnKillFocus method to testing.
 		/// </summary>
-		public void KillFocus(Control newWindow)
+		internal void KillFocus(Control newWindow)
 		{
 			OnKillFocus(newWindow, true);
 		}
@@ -235,19 +198,9 @@ namespace RootSite.TestUtilities
 		}
 
 		/// <summary>
-		/// Provides direct access to the base's MakeRoot() method.
-		/// </summary>
-		/// <remarks>This is needed in derived classes. See
-		/// Test\AcceptanceTests\Common\RootSite\DummyDraftView.cs</remarks>
-		protected void BaseMakeRoot()
-		{
-			base.MakeRoot();
-		}
-
-		/// <summary>
 		/// Makes a root box and initializes it with appropriate data
 		/// </summary>
-		public void MakeRoot(int hvoRoot, int flid)
+		internal void MakeRoot(int hvoRoot, int flid)
 		{
 			MakeRoot(hvoRoot, flid, 1);
 		}
@@ -258,7 +211,7 @@ namespace RootSite.TestUtilities
 		/// <param name="hvoRoot">Hvo of the root object</param>
 		/// <param name="flid">Flid in which hvoRoot contains a sequence of StTexts</param>
 		/// <param name="frag">Fragment for view constructor</param>
-		public void MakeRoot(int hvoRoot, int flid, int frag)
+		internal void MakeRoot(int hvoRoot, int flid, int frag)
 		{
 			if (m_cache == null || DesignMode)
 			{
@@ -267,11 +220,11 @@ namespace RootSite.TestUtilities
 			base.MakeRoot();
 
 			// Set up a new view constructor.
-			m_basicViewVc = CreateVc(flid);
-			m_basicViewVc.DefaultWs = m_cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Handle;
+			ViewConstructor = CreateVc(flid);
+			ViewConstructor.DefaultWs = m_cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Handle;
 
 			RootBox.DataAccess = m_cache.DomainDataByFlid;
-			RootBox.SetRootObject(hvoRoot, m_basicViewVc, frag, m_styleSheet);
+			RootBox.SetRootObject(hvoRoot, ViewConstructor, frag, m_styleSheet);
 
 			m_fRootboxMade = true;
 			m_dxdLayoutWidth = kForceLayout;
@@ -293,7 +246,7 @@ namespace RootSite.TestUtilities
 		/// <summary>
 		/// Creates the view constructor.
 		/// </summary>
-		protected virtual VwBaseVc CreateVc(int flid)
+		private VwBaseVc CreateVc(int flid)
 		{
 			return new DummyBasicViewVc(MyDisplayType, flid);
 		}
@@ -319,29 +272,23 @@ namespace RootSite.TestUtilities
 		/// <summary>
 		/// Gets or sets the type of boxes to display: lazy or non-lazy or both
 		/// </summary>
-		public DisplayType MyDisplayType { get; set; }
+		internal DisplayType MyDisplayType { get; set; }
 
 		/// <summary>
 		/// Gets the draft view's selection helper object
 		/// </summary>
-		public SelectionHelper SelectionHelper => m_SelectionHelper;
+		internal SelectionHelper SelectionHelper { get; private set; }
 
 		/// <summary>
 		/// Gets or sets a flag if OnLayout should be skipped.
 		/// </summary>
-		public bool SkipLayout { get; set; } = false;
+		internal bool SkipLayout { get; set; } = false;
 
 		/// <summary>
 		/// Gets the view constructor.
 		/// </summary>
-		public VwBaseVc ViewConstructor => m_basicViewVc;
+		internal VwBaseVc ViewConstructor { get; private set; }
 		#endregion
-
-		/// <summary />
-		public void CallRootSiteOnKeyDown(KeyEventArgs e)
-		{
-			OnKeyDown(e);
-		}
 
 		/// <summary>
 		/// Check for presence of proper paragraph properties.
@@ -354,7 +301,7 @@ namespace RootSite.TestUtilities
 		/// <param name="ihvoEnd">[out] End index of selection</param>
 		/// <returns>Return <c>false</c> if neither selection nor paragraph property. Otherwise
 		/// return <c>true</c>.</returns>
-		public bool IsParagraphProps(out IVwSelection vwsel, out int hvoText, out int tagText, out IVwPropertyStore[] vqvps, out int ihvoAnchor, out int ihvoEnd)
+		internal bool IsParagraphProps(out IVwSelection vwsel, out int hvoText, out int tagText, out IVwPropertyStore[] vqvps, out int ihvoAnchor, out int ihvoEnd)
 		{
 			vwsel = null;
 			hvoText = 0;
@@ -378,27 +325,16 @@ namespace RootSite.TestUtilities
 		/// <param name="vqttp">[out] The style rules</param>
 		/// <returns>Return false if there is neither a selection nor a paragraph property.
 		/// Otherwise return true.</returns>
-		public bool GetParagraphProps(out IVwSelection vwsel, out int hvoText,
+		internal bool GetParagraphProps(out IVwSelection vwsel, out int hvoText,
 			out int tagText, out IVwPropertyStore[] vqvps, out int ihvoFirst, out int ihvoLast, out ITsTextProps[] vqttp)
 		{
 			return EditingHelper.GetParagraphProps(out vwsel, out hvoText, out tagText, out vqvps, out ihvoFirst, out ihvoLast, out vqttp);
 		}
 
 		/// <summary>
-		/// Handle a key press.
-		/// </summary>
-		public void HandleKeyPress(char keyChar)
-		{
-			using (new HoldGraphics(this))
-			{
-				EditingHelper.HandleKeyPress(keyChar, ModifierKeys);
-			}
-		}
-
-		/// <summary>
 		/// Provides access to <see cref="SimpleRootSite.GetCoordRects"/>.
 		/// </summary>
-		public new void GetCoordRects(out Rectangle rcSrcRoot, out Rectangle rcDstRoot)
+		internal new void GetCoordRects(out Rectangle rcSrcRoot, out Rectangle rcDstRoot)
 		{
 			rcSrcRoot = Rectangle.Empty;
 			rcDstRoot = Rectangle.Empty;
@@ -408,15 +344,15 @@ namespace RootSite.TestUtilities
 		/// <summary>
 		/// Provides access to <see cref="SimpleRootSite.AdjustScrollRange1"/>.
 		/// </summary>
-		public bool AdjustScrollRange(int dxdSize, int dxdPosition, int dydSize, int dydPosition)
+		internal bool AdjustScrollRange(int dxdSize, int dxdPosition, int dydSize, int dydPosition)
 		{
-			return base.AdjustScrollRange1(dxdSize, dxdPosition, dydSize, dydPosition);
+			return AdjustScrollRange1(dxdSize, dxdPosition, dydSize, dydPosition);
 		}
 
 		/// <summary>
 		/// Provides access to <see cref="ScrollableControl.VScroll"/>
 		/// </summary>
-		public new bool VScroll
+		internal new bool VScroll
 		{
 			get => base.VScroll;
 			set => base.VScroll = value;
@@ -425,7 +361,7 @@ namespace RootSite.TestUtilities
 		/// <summary>
 		/// Provides access to <see cref="ScrollableControl.HScroll"/>
 		/// </summary>
-		public new bool HScroll
+		internal new bool HScroll
 		{
 			get => base.HScroll;
 			set => base.HScroll = value;
@@ -434,7 +370,7 @@ namespace RootSite.TestUtilities
 		/// <summary>
 		/// Gets the height of the selection.
 		/// </summary>
-		public int SelectionHeight
+		internal int SelectionHeight
 		{
 			get
 			{
@@ -457,7 +393,7 @@ namespace RootSite.TestUtilities
 		/// <summary>
 		/// Gets the width of the selection.
 		/// </summary>
-		public int SelectionWidth
+		internal int SelectionWidth
 		{
 			get
 			{
@@ -480,7 +416,7 @@ namespace RootSite.TestUtilities
 		/// <summary>
 		/// Provides access to EditingHelper.ApplyStyle
 		/// </summary>
-		public void ApplyStyle(string sStyleToApply)
+		internal void ApplyStyle(string sStyleToApply)
 		{
 			EditingHelper.ApplyStyle(sStyleToApply);
 		}
@@ -488,21 +424,13 @@ namespace RootSite.TestUtilities
 		/// <summary>
 		/// Provides access to <see cref="SimpleRootSite.OnMouseDown"/>
 		/// </summary>
-		public void CallOnMouseDown(MouseEventArgs e)
+		internal void CallOnMouseDown(MouseEventArgs e)
 		{
-			base.OnMouseDown(e);
-		}
-
-		/// <summary>
-		/// Provides access to <see cref="SimpleRootSite.OnMouseUp"/>
-		/// </summary>
-		public void CallOnMouseUp(MouseEventArgs e)
-		{
-			base.OnMouseUp(e);
+			OnMouseDown(e);
 		}
 
 		/// <summary />
-		public void SetRootBox(IVwRootBox rootb)
+		internal void SetRootBox(IVwRootBox rootb)
 		{
 			RootBox = rootb;
 		}

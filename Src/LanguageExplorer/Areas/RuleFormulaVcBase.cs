@@ -22,25 +22,25 @@ namespace LanguageExplorer.Areas
 	/// </summary>
 	internal abstract class RuleFormulaVcBase : PatternVcBase
 	{
-		public const int kfragContext = 100;
-		public const int kfragFeatNC = 101;
-		public const int kfragFeats = 102;
-		public const int kfragFeature = 103;
-		public const int kfragPlusVariable = 104;
-		public const int kfragMinusVariable = 105;
-		public const int kfragFeatureLine = 106;
-		public const int kfragPlusVariableLine = 107;
-		public const int kfragMinusVariableLine = 108;
-		public const int kfragIterCtxtMax = 109;
-		public const int kfragIterCtxtMin = 110;
-		public const int kfragNC = 111;
-		public const int kfragTerminalUnit = 112;
+		internal const int kfragContext = 100;
+		internal const int kfragFeatNC = 101;
+		internal const int kfragFeats = 102;
+		internal const int kfragFeature = 103;
+		internal const int kfragPlusVariable = 104;
+		internal const int kfragMinusVariable = 105;
+		internal const int kfragFeatureLine = 106;
+		internal const int kfragPlusVariableLine = 107;
+		internal const int kfragMinusVariableLine = 108;
+		internal const int kfragIterCtxtMax = 109;
+		internal const int kfragIterCtxtMin = 110;
+		internal const int kfragNC = 111;
+		internal const int kfragTerminalUnit = 112;
 		// variant frags
-		public const int kfragXVariable = 113;
+		internal const int kfragXVariable = 113;
 		// fake flids
-		public const int ktagFeature = -200;
-		public const int ktagVariable = -201;
-		public const int ktagXVariable = -202;
+		internal const int ktagFeature = -200;
+		internal const int ktagVariable = -201;
+		internal const int ktagXVariable = -202;
 		private static readonly string[] VariableNames = { "α", "β", "γ", "δ", "ε", "ζ", "η", "θ", "ι", "κ", "λ", "μ", "ν", "ξ", "ο", "π", "ρ", "σ", "τ", "υ", "φ", "χ", "ψ", "ω" };
 		protected ITsString m_infinity;
 		protected ITsString m_x;

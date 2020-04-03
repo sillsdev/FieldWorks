@@ -3058,5 +3058,253 @@ very simple minor adjustments. ;)"
 		{
 			_flexApp.RestartSpellChecking();
 		}
+
+		/// <summary>
+		/// ActiveViewHelper attempts to keep track of the active view (i.e. an IRootSite) of a form.
+		/// </summary>
+		private sealed class ActiveViewHelper : IDisposable
+		{
+			private Control _rootControl;
+			private List<IRootSite> _availableSites = new List<IRootSite>();
+			private IRootSite _activeSite;
+
+			#region Constructor
+
+			/// <summary>
+			/// Creates an ActiveViewHelper for the specified form.
+			/// </summary>
+			/// <param name="rootControl">Control to create an ActiveViewHelper for</param>
+			internal ActiveViewHelper(Control rootControl)
+			{
+				Debug.Assert(rootControl != null);
+				_rootControl = rootControl;
+				DeepAddControl(rootControl);
+			}
+
+			/// <summary>
+			/// See if the object has been disposed.
+			/// </summary>
+			private bool IsDisposed { get; set; }
+
+			/// <summary>
+			/// Finalizer, in case client doesn't dispose it.
+			/// Force Dispose(false) if not already called (i.e. m_isDisposed is true)
+			/// </summary>
+			/// <remarks>
+			/// In case some clients forget to dispose it directly.
+			/// </remarks>
+			~ActiveViewHelper()
+			{
+				Dispose(false);
+				// The base class finalizer is called automatically.
+			}
+
+			/// <summary>
+			///
+			/// </summary>
+			/// <remarks>Must not be virtual.</remarks>
+			public void Dispose()
+			{
+				Dispose(true);
+				// This object will be cleaned up by the Dispose method.
+				// Therefore, you should call GC.SuppressFinalize to
+				// take this object off the finalization queue
+				// and prevent finalization code for this object
+				// from executing a second time.
+				GC.SuppressFinalize(this);
+			}
+
+			/// <summary>
+			/// Executes in two distinct scenarios.
+			///
+			/// 1. If disposing is true, the method has been called directly
+			/// or indirectly by a user's code via the Dispose method.
+			/// Both managed and unmanaged resources can be disposed.
+			///
+			/// 2. If disposing is false, the method has been called by the
+			/// runtime from inside the finalizer and you should not reference (access)
+			/// other managed objects, as they already have been garbage collected.
+			/// Only unmanaged resources can be disposed.
+			/// </summary>
+			/// <param name="disposing"></param>
+			/// <remarks>
+			/// If any exceptions are thrown, that is fine.
+			/// If the method is being done in a finalizer, it will be ignored.
+			/// If it is thrown by client code calling Dispose,
+			/// it needs to be handled by fixing the bug.
+			///
+			/// If subclasses override this method, they should call the base implementation.
+			/// </remarks>
+			private void Dispose(bool disposing)
+			{
+				Debug.WriteLineIf(!disposing, "****************** Missing Dispose() call for " + GetType().Name + " ******************");
+				if (IsDisposed)
+				{
+					// No need to run it more than once.
+					return;
+				}
+
+				_activeSite = null;
+				if (disposing)
+				{
+					// Dispose managed resources here.
+					if (_rootControl != null)
+					{
+						DeepRemoveControl(_rootControl);
+					}
+					_availableSites?.Clear();
+				}
+
+				// Dispose unmanaged resources here, whether disposing is true or false.
+				_rootControl = null;
+				_availableSites = null;
+
+				IsDisposed = true;
+			}
+
+			#endregion IDisposable & Co. implementation
+
+			/// <summary>
+			/// This function attempts to determine whether a root site can really be seen
+			/// in the sense that it can reasonably receive commands (such as from the style
+			/// dialog). It doesn't check everything possible; for example, a control could
+			/// be visible in all the ways checked here and still covered by another control
+			/// or scrolled out of sight.
+			/// </summary>
+			private static bool IsReallyVisible(IRootSite site)
+			{
+				var control = site as Control;
+				if (control == null || !control.Visible)
+				{
+					return false;
+				}
+				// Unfortunately the above can somehow still be true for a control that is
+				// part of a disposed window. Check some more things to make sure.
+				if (!control.IsHandleCreated)
+				{
+					return false;
+				}
+				return (site as IVwRootSite)?.RootBox != null && !control.IsDisposed && control.TopLevelControl is Form;
+			}
+
+			#region Properties
+
+			/// <summary>
+			/// Gets the active view of the owner of this ActiveViewHelper, or null if there is
+			/// none.
+			/// </summary>
+			internal IRootSite ActiveView
+			{
+				get
+				{
+					foreach (var rootSite in _availableSites.ToList())
+					{
+						// Get rid of any deadbeat controls.
+						var control = (Control)rootSite;
+						if (control.IsDisposed || !control.IsHandleCreated || !(control.TopLevelControl is Form))
+						{
+							_availableSites.Remove(rootSite);
+							if (_activeSite == rootSite)
+							{
+								_activeSite = null;
+							}
+						}
+					}
+					if (_activeSite != null)
+					{
+						return !(_activeSite is Control) ? _activeSite : IsReallyVisible(_activeSite) ? _activeSite : null;
+					}
+					foreach (var site in _availableSites.Where(IsReallyVisible))
+					{
+						_activeSite = site;
+						return site;
+					}
+					return null;
+				}
+			}
+			#endregion
+
+			#region Event handlers
+			/// <summary>
+			/// Handler for when a control is added to a control. Runs <see cref="DeepAddControl"/>
+			/// on <c>e.Control</c>.
+			/// </summary>
+			private void ControlWasAdded(object sender, ControlEventArgs e)
+			{
+				DeepAddControl(e.Control);
+			}
+
+			/// <summary />
+			private void ControlWasRemoved(object sender, ControlEventArgs e)
+			{
+				DeepRemoveControl(e.Control);
+			}
+
+			/// <summary>
+			/// Handler for when a view gains focus.  This sets the active view to the view that got
+			/// focus.
+			/// </summary>
+			private void ViewGotFocus(object sender, EventArgs e)
+			{
+				_activeSite = sender as IRootSite;
+			}
+
+			#endregion
+
+			#region Private methods
+			/// <summary>
+			/// Recursively add handlers for the ControlAdded and GotFocus events of the specified
+			/// control and all its sub-controls.
+			/// </summary>
+			private void DeepAddControl(Control control)
+			{
+				// Before blindly adding the event handler, first remove it if there is already
+				// one subscribed. (This ensures that stray event handlers don't exist when controls
+				// are removed and re-added to a form.)
+				control.ControlAdded -= ControlWasAdded;
+				control.ControlRemoved -= ControlWasRemoved;
+				control.ControlAdded += ControlWasAdded;
+				control.ControlRemoved += ControlWasRemoved;
+
+				if (control is IRootSite rootSite)
+				{
+					// Before blindly adding the event handler, first remove it if there is
+					// already one subscribed
+					control.GotFocus -= ViewGotFocus;
+					control.GotFocus += ViewGotFocus;
+					_availableSites.Add(rootSite);
+				}
+
+				foreach (Control con in control.Controls)
+				{
+					DeepAddControl(con);
+				}
+			}
+
+			/// <summary>
+			/// Recursively remove handlers for the ControlAdded and GotFocus events of the specified
+			/// control and all its sub-controls.
+			/// </summary>
+			private void DeepRemoveControl(Control control)
+			{
+				control.ControlAdded -= ControlWasAdded;
+				control.ControlRemoved -= ControlWasRemoved;
+
+				if (control is IRootSite rootSite)
+				{
+					control.GotFocus -= ViewGotFocus;
+					_availableSites.Remove(rootSite);
+					if (_activeSite == control)
+					{
+						_activeSite = null;
+					}
+				}
+				foreach (Control childControl in control.Controls)
+				{
+					DeepRemoveControl(childControl);
+				}
+			}
+			#endregion
+		}
 	}
 }

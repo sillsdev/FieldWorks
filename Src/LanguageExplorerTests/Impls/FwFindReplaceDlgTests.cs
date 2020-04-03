@@ -21,7 +21,7 @@ namespace LanguageExplorerTests.Impls
 {
 	/// <summary />
 	[TestFixture]
-	public class FwFindReplaceDlgTests : FwFindReplaceDlgBaseTests
+	internal class FwFindReplaceDlgTests : FwFindReplaceDlgBaseTests
 	{
 		private CoreWritingSystemDefinition m_wsFr;
 		private CoreWritingSystemDefinition m_wsIpa;

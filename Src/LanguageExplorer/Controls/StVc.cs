@@ -157,7 +157,7 @@ namespace LanguageExplorer.Controls
 		/// Gets or sets the default writing system id for the view constructor. Only the setter
 		/// is overridden.
 		/// </summary>
-		public override int DefaultWs
+		internal override int DefaultWs
 		{
 			set
 			{
@@ -173,7 +173,7 @@ namespace LanguageExplorer.Controls
 		/// <summary>
 		/// Gets or sets the LCM cache for the view constructor.
 		/// </summary>
-		public override LcmCache Cache
+		internal override LcmCache Cache
 		{
 			get => base.Cache;
 			set

@@ -16,7 +16,7 @@ namespace SIL.FieldWorks.Common.RootSites
 	/// Used to keep track of references to a VwGraphics object. Also handles the setting of the
 	/// HDC in the VwGraphics.
 	/// </summary>
-	public sealed class GraphicsManager : IDisposable
+	internal sealed class GraphicsManager : IDisposable
 	{
 		private volatile int m_cactInitGraphics;
 		private Graphics m_graphics;
@@ -81,7 +81,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <summary>
 		/// Gets the VwGraphics object
 		/// </summary>
-		public IVwGraphics VwGraphics => m_vwGraphics;
+		internal IVwGraphics VwGraphics => m_vwGraphics;
 
 		/// <summary>
 		/// Make sure the graphics object has a DC. If it already has, increment a count,

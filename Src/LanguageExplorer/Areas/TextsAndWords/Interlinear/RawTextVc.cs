@@ -103,7 +103,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			return bldr.GetString();
 		}
 
-		public override ITsTextProps CaptionProps
+		internal override ITsTextProps CaptionProps
 		{
 			get
 			{

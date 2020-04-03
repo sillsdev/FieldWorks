@@ -161,7 +161,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 
 		public bool IsRightToLeft => Vc != null && Vc.RightToLeft;
 
-		protected override void GetScrollOffsets(out int dxd, out int dyd)
+		protected internal override void GetScrollOffsets(out int dxd, out int dyd)
 		{
 			base.GetScrollOffsets(out dxd, out dyd);
 			if (IsRightToLeft)

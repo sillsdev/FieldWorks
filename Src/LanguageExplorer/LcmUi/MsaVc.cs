@@ -16,9 +16,9 @@ namespace LanguageExplorer.LcmUi
 	/// Todo: Finish reworking this into MsaVc; clean up stuff related to interlinearName
 	/// above.
 	/// </summary>
-	public class MsaVc : CmAnalObjectVc
+	internal sealed class MsaVc : CmAnalObjectVc
 	{
-		public MsaVc(LcmCache cache)
+		internal MsaVc(LcmCache cache)
 			: base(cache)
 		{
 		}

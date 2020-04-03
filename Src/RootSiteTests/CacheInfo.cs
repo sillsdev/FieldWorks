@@ -4,10 +4,10 @@
 
 namespace SIL.FieldWorks.Common.RootSites
 {
-	public sealed class CacheInfo
+	internal sealed class CacheInfo
 	{
 		/// <summary />
-		public CacheInfo(ObjType type, int hvo, int flid, object obj)
+		internal CacheInfo(ObjType type, int hvo, int flid, object obj)
 		{
 			Type = type;
 			Hvo = hvo;
@@ -16,21 +16,21 @@ namespace SIL.FieldWorks.Common.RootSites
 		}
 
 		/// <summary />
-		public CacheInfo(ObjType type, int hvo, int flid, int ws, object obj)
+		internal CacheInfo(ObjType type, int hvo, int flid, int ws, object obj)
 			: this(type, hvo, flid, obj)
 		{
 			Ws = ws;
 		}
 
 		/// <summary />
-		public ObjType Type { get; }
+		internal ObjType Type { get; }
 		/// <summary />
-		public int Hvo { get; }
+		internal int Hvo { get; }
 		/// <summary />
-		public int Flid { get; }
+		internal int Flid { get; }
 		/// <summary />
-		public int Ws { get; }
+		internal int Ws { get; }
 		/// <summary />
-		public object Object { get; }
+		internal object Object { get; }
 	}
 }

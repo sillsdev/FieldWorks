@@ -9,9 +9,9 @@ using SIL.LCModel.Core.Text;
 
 namespace LanguageExplorer.LcmUi
 {
-	public class CmObjectVc : FwBaseVc
+	internal class CmObjectVc : FwBaseVc
 	{
-		public CmObjectVc(LcmCache cache)
+		internal CmObjectVc(LcmCache cache)
 		{
 			Cache = cache;
 		}

@@ -414,7 +414,7 @@ namespace LanguageExplorer.Areas
 		/// </summary>
 		private sealed class PatternEditingHelper : RootSiteEditingHelper
 		{
-			public PatternEditingHelper(LcmCache cache, IEditingCallbacks callbacks)
+			internal PatternEditingHelper(LcmCache cache, IEditingCallbacks callbacks)
 				: base(cache, callbacks)
 			{
 			}

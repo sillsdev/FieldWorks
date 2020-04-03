@@ -20,7 +20,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 	/// <summary>
 	/// The main body of the chart, containing the actual view of the charted words.
 	/// </summary>
-	public class ConstChartBody : RootSite
+	internal class ConstChartBody : RootSite
 	{
 		private InterlinLineChoices m_lineChoices;
 		private int m_hvoChart;

@@ -16,7 +16,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		/// <summary />
 		private ICmObject m_displayParent;
 
-		public LexReferencePairVc(LcmCache cache, int flid, string displayNameProperty)
+		internal LexReferencePairVc(LcmCache cache, int flid, string displayNameProperty)
 			: base(cache, flid, displayNameProperty)
 		{
 		}
@@ -45,7 +45,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		}
 
 		/// <summary />
-		public ICmObject DisplayParent
+		internal ICmObject DisplayParent
 		{
 			set => m_displayParent = value;
 		}

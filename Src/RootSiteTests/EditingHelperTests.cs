@@ -36,21 +36,21 @@ namespace SIL.FieldWorks.Common.RootSites
 			ShowForm(DisplayType.kBookTitle | DisplayType.kUseParaProperties | DisplayType.kOnlyDisplayContentsOnce);
 
 			// Make a selection from the top of the view to the bottom.
-			var sel0 = m_basicView.RootBox.MakeSimpleSel(true, false, false, false);
-			var sel1 = m_basicView.RootBox.MakeSimpleSel(false, false, false, false);
-			m_basicView.RootBox.MakeRangeSelection(sel0, sel1, true);
+			var sel0 = BasicView.RootBox.MakeSimpleSel(true, false, false, false);
+			var sel1 = BasicView.RootBox.MakeSimpleSel(false, false, false, false);
+			BasicView.RootBox.MakeRangeSelection(sel0, sel1, true);
 
 			// Copy the selection and then paste it at the start of the view.
-			Assert.IsTrue(m_basicView.EditingHelper.CopySelection());
+			Assert.IsTrue(BasicView.EditingHelper.CopySelection());
 			// Install a simple selection at the start of the view.
-			m_basicView.RootBox.MakeSimpleSel(true, true, false, true);
+			BasicView.RootBox.MakeSimpleSel(true, true, false, true);
 
 			// This is an illegal paste, so the paste will fail.
-			m_basicView.EditingHelper.PasteClipboard();
+			BasicView.EditingHelper.PasteClipboard();
 
 			// We expect the contents to remain unchanged.
 			Assert.AreEqual(2, m_cache.get_VecSize(hvoTitle, SimpleRootsiteTestsConstants.kflidTextParas));
-			Assert.IsNull(m_basicView.RequestedSelectionAtEndOfUow);
+			Assert.IsNull(BasicView.RequestedSelectionAtEndOfUow);
 		}
 
 		/// <summary>
@@ -74,17 +74,17 @@ namespace SIL.FieldWorks.Common.RootSites
 			ShowForm(DisplayType.kBookTitle | DisplayType.kUseParaProperties | DisplayType.kOnlyDisplayContentsOnce);
 
 			// Make a selection from the top of the view to the bottom.
-			var sel0 = m_basicView.RootBox.MakeSimpleSel(true, false, false, false);
-			var sel1 = m_basicView.RootBox.MakeSimpleSel(false, false, false, false);
-			m_basicView.RootBox.MakeRangeSelection(sel0, sel1, true);
+			var sel0 = BasicView.RootBox.MakeSimpleSel(true, false, false, false);
+			var sel1 = BasicView.RootBox.MakeSimpleSel(false, false, false, false);
+			BasicView.RootBox.MakeRangeSelection(sel0, sel1, true);
 
 			// Copy the selection and then paste it at the start of the view.
-			Assert.IsTrue(m_basicView.EditingHelper.CopySelection());
+			Assert.IsTrue(BasicView.EditingHelper.CopySelection());
 			// Install a simple selection at the start of the view.
-			m_basicView.RootBox.MakeSimpleSel(true, true, false, true);
+			BasicView.RootBox.MakeSimpleSel(true, true, false, true);
 
 			// This is a legal paste.
-			m_basicView.EditingHelper.PasteClipboard();
+			BasicView.EditingHelper.PasteClipboard();
 
 			// We expect the contents to change.
 			Assert.AreEqual(4, m_cache.get_VecSize(hvoTitle, SimpleRootsiteTestsConstants.kflidTextParas));
@@ -93,7 +93,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			Assert.AreEqual(hvoTitlePara1, m_cache.get_VecItem(hvoTitle, SimpleRootsiteTestsConstants.kflidTextParas, 2));
 			Assert.AreEqual(hvoTitlePara2, m_cache.get_VecItem(hvoTitle, SimpleRootsiteTestsConstants.kflidTextParas, 3));
 
-			Assert.IsNotNull(m_basicView.RequestedSelectionAtEndOfUow);
+			Assert.IsNotNull(BasicView.RequestedSelectionAtEndOfUow);
 		}
 		#endregion
 
@@ -107,18 +107,18 @@ namespace SIL.FieldWorks.Common.RootSites
 		public void GoToNextPara_NextInstanceOfSameParaContents()
 		{
 			ShowForm(Lng.English, DisplayType.kNormal | DisplayType.kDuplicateParagraphs);
-			m_basicView.Show();
-			m_basicView.RefreshDisplay();
+			BasicView.Show();
+			BasicView.RefreshDisplay();
 
-			m_SelectionHelper = new DummySelectionHelper(null, m_basicView);
+			m_SelectionHelper = new DummySelectionHelper(null, BasicView);
 			SetSelection(0, 0, 0, 0, 1, 6, 6, true);
 			var vwsel = m_SelectionHelper.SetSelection(true);
 			Assert.IsNotNull(vwsel, "No selection made");
-			Assert.IsTrue(m_basicView.IsSelectionVisible(null), "Selection is not visible");
-			m_basicView.EditingHelper.GoToNextPara();
+			Assert.IsTrue(BasicView.IsSelectionVisible(null), "Selection is not visible");
+			BasicView.EditingHelper.GoToNextPara();
 
 			// We expect that the selection will be at the start of the next paragraph.
-			var selectionHelper = SelectionHelper.GetSelectionInfo(null, m_basicView);
+			var selectionHelper = SelectionHelper.GetSelectionInfo(null, BasicView);
 			Assert.IsFalse(selectionHelper.IsRange);
 			CheckSelectionHelperValues(SelLimitType.Anchor, selectionHelper, 0, 2, 0, 0, false, 2,
 				SimpleRootsiteTestsConstants.kflidDocFootnotes, 0, 0, SimpleRootsiteTestsConstants.kflidTextParas, 0, 0);
@@ -133,18 +133,18 @@ namespace SIL.FieldWorks.Common.RootSites
 		public void GoToNextPara_NextText()
 		{
 			ShowForm(Lng.English, DisplayType.kNormal | DisplayType.kDuplicateParagraphs);
-			m_basicView.Show();
-			m_basicView.RefreshDisplay();
+			BasicView.Show();
+			BasicView.RefreshDisplay();
 
-			m_SelectionHelper = new DummySelectionHelper(null, m_basicView);
+			m_SelectionHelper = new DummySelectionHelper(null, BasicView);
 			SetSelection(0, 0, 1, 0, 2, 6, 6, true);
 			var vwsel = m_SelectionHelper.SetSelection(true);
 			Assert.IsNotNull(vwsel, "No selection made");
-			Assert.IsTrue(m_basicView.IsSelectionVisible(null), "Selection is not visible");
-			m_basicView.EditingHelper.GoToNextPara();
+			Assert.IsTrue(BasicView.IsSelectionVisible(null), "Selection is not visible");
+			BasicView.EditingHelper.GoToNextPara();
 
 			// We expect that the selection will be at the start of the next paragraph.
-			var selectionHelper = SelectionHelper.GetSelectionInfo(null, m_basicView);
+			var selectionHelper = SelectionHelper.GetSelectionInfo(null, BasicView);
 			Assert.IsFalse(selectionHelper.IsRange);
 			CheckSelectionHelperValues(SelLimitType.Anchor, selectionHelper, 0, 0, 0, 0, false, 2,
 				SimpleRootsiteTestsConstants.kflidDocFootnotes, 0, 1, SimpleRootsiteTestsConstants.kflidTextParas, 0, 0);
@@ -164,20 +164,20 @@ namespace SIL.FieldWorks.Common.RootSites
 			m_cache.CacheStringProp(hvoTitlePara, SimpleRootsiteTestsConstants.kflidParaContents, TsStringUtils.MakeString("The First Book of the Law given by Moses", m_wsFrn));
 
 			ShowForm(Lng.English, DisplayType.kNormal | DisplayType.kBookTitle);
-			m_basicView.Show();
-			m_basicView.RefreshDisplay();
+			BasicView.Show();
+			BasicView.RefreshDisplay();
 
 			// Set the IP at the beginning of the only (0th) instance of the only (0th) paragraph
 			// of the only (0th) instance of the second (1th) footnote of the book we're displaying.
-			m_SelectionHelper = new DummySelectionHelper(null, m_basicView);
+			m_SelectionHelper = new DummySelectionHelper(null, BasicView);
 			SetSelection(0, 1, 0, 0, 2, 0, 0, true);
 			var vwsel = m_SelectionHelper.SetSelection(true);
 			Assert.IsNotNull(vwsel, "No selection made");
-			Assert.IsTrue(m_basicView.IsSelectionVisible(null), "Selection is not visible");
-			m_basicView.EditingHelper.GoToNextPara();
+			Assert.IsTrue(BasicView.IsSelectionVisible(null), "Selection is not visible");
+			BasicView.EditingHelper.GoToNextPara();
 
 			// We expect that the selection will be at the start of the book title.
-			var selectionHelper = SelectionHelper.GetSelectionInfo(null, m_basicView);
+			var selectionHelper = SelectionHelper.GetSelectionInfo(null, BasicView);
 			Assert.IsFalse(selectionHelper.IsRange);
 			CheckSelectionHelperValues(SelLimitType.Anchor, selectionHelper, 0, 0, 0, 0, false, 2,
 				SimpleRootsiteTestsConstants.kflidDocTitle, 0, 0, SimpleRootsiteTestsConstants.kflidTextParas, 0, 0);
@@ -192,18 +192,18 @@ namespace SIL.FieldWorks.Common.RootSites
 		public void GoToNextPara_FirstFlidInNextObject()
 		{
 			ShowForm(Lng.English, DisplayType.kFootnoteDetailsSeparateParas);
-			m_basicView.Show();
-			m_basicView.RefreshDisplay();
+			BasicView.Show();
+			BasicView.RefreshDisplay();
 
-			m_SelectionHelper = new DummySelectionHelper(null, m_basicView);
+			m_SelectionHelper = new DummySelectionHelper(null, BasicView);
 			SetSelection(0, 0, 0, 0, 0, 0, 0, true);
 			var vwsel = m_SelectionHelper.SetSelection(true);
 			Assert.IsNotNull(vwsel, "No selection made");
-			Assert.IsTrue(m_basicView.IsSelectionVisible(null), "Selection is not visible");
-			m_basicView.EditingHelper.GoToNextPara();
+			Assert.IsTrue(BasicView.IsSelectionVisible(null), "Selection is not visible");
+			BasicView.EditingHelper.GoToNextPara();
 
 			// We expect that the selection will be at the start of the second footnote's marker.
-			var selectionHelper = SelectionHelper.GetSelectionInfo(null, m_basicView);
+			var selectionHelper = SelectionHelper.GetSelectionInfo(null, BasicView);
 			Assert.IsFalse(selectionHelper.IsRange);
 			CheckSelectionHelperValues(SelLimitType.Anchor, selectionHelper, 0, 0, 0, 0, false, 1,
 				-1, -1, -1, SimpleRootsiteTestsConstants.kflidDocFootnotes, 0, 1);
@@ -217,18 +217,18 @@ namespace SIL.FieldWorks.Common.RootSites
 		public void GoToNextPara_LastParaInView()
 		{
 			ShowForm(Lng.English, DisplayType.kNormal | DisplayType.kDuplicateParagraphs);
-			m_basicView.Show();
-			m_basicView.RefreshDisplay();
+			BasicView.Show();
+			BasicView.RefreshDisplay();
 
-			m_SelectionHelper = new DummySelectionHelper(null, m_basicView);
+			m_SelectionHelper = new DummySelectionHelper(null, BasicView);
 			SetSelection(0, 1, 1, 0, 2, 6, 0, true);
 			var vwsel = m_SelectionHelper.SetSelection(true);
 			Assert.IsNotNull(vwsel, "No selection made");
-			Assert.IsTrue(m_basicView.IsSelectionVisible(null), "Selection is not visible");
-			m_basicView.EditingHelper.GoToNextPara();
+			Assert.IsTrue(BasicView.IsSelectionVisible(null), "Selection is not visible");
+			BasicView.EditingHelper.GoToNextPara();
 
 			// We expect that the selection will be unchanged.
-			var selectionHelper = SelectionHelper.GetSelectionInfo(null, m_basicView);
+			var selectionHelper = SelectionHelper.GetSelectionInfo(null, BasicView);
 			Assert.IsTrue(selectionHelper.IsRange);
 			CheckSelectionHelperValues(SelLimitType.Anchor, selectionHelper, 0, 2, 6, 0, true, 2,
 				SimpleRootsiteTestsConstants.kflidDocFootnotes, 0, 1, SimpleRootsiteTestsConstants.kflidTextParas, 1, 0);
@@ -246,10 +246,10 @@ namespace SIL.FieldWorks.Common.RootSites
 		public void GoToNextPara_MultiParaRangeSelection()
 		{
 			ShowForm(Lng.English, DisplayType.kNormal | DisplayType.kDuplicateParagraphs);
-			m_basicView.Show();
-			m_basicView.RefreshDisplay();
+			BasicView.Show();
+			BasicView.RefreshDisplay();
 
-			m_SelectionHelper = new DummySelectionHelper(null, m_basicView);
+			m_SelectionHelper = new DummySelectionHelper(null, BasicView);
 
 			// Make a bottom-up selection, just to be sure we're not using the anchor instead of
 			// the top.
@@ -257,11 +257,11 @@ namespace SIL.FieldWorks.Common.RootSites
 			SetSelection(0, 1, 0, 0, 1, 12, 12, true); // Set anchor
 			var vwsel = m_SelectionHelper.SetSelection(true);
 			Assert.IsNotNull(vwsel, "No selection made");
-			m_basicView.EditingHelper.GoToNextPara();
+			BasicView.EditingHelper.GoToNextPara();
 
 			// We expect that the selection will be at the start of the second paragraph in
 			// the selected range.
-			var selectionHelper = SelectionHelper.GetSelectionInfo(null, m_basicView);
+			var selectionHelper = SelectionHelper.GetSelectionInfo(null, BasicView);
 			Assert.IsFalse(selectionHelper.IsRange);
 			CheckSelectionHelperValues(SelLimitType.Anchor, selectionHelper, 0, 0, 0, 0, false, 2,
 				SimpleRootsiteTestsConstants.kflidDocFootnotes, 0, 0, SimpleRootsiteTestsConstants.kflidTextParas, 1, 0);

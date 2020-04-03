@@ -17,7 +17,7 @@ namespace SIL.FieldWorks.Common.RootSites
 	/// <summary>
 	/// This class is used by root boxes to get render engines.
 	/// </summary>
-	public class RenderEngineFactory : DisposableBase, IRenderEngineFactory
+	internal sealed class RenderEngineFactory : DisposableBase, IRenderEngineFactory
 	{
 		private readonly Dictionary<ILgWritingSystem, Dictionary<Tuple<string, bool, bool>, GraphiteEngine>> m_graphiteEngines;
 		private readonly Dictionary<ILgWritingSystemFactory, IRenderEngine> m_nonGraphiteEngines;

@@ -290,6 +290,7 @@
     <Compile Include="Areas\Grammar\Tools\PhonologicalFeaturesAdvancedEdit\MasterPhonologicalFeatureListDlg.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="Areas\IChangeRootObject.cs" />
     <Compile Include="Areas\Lists\Tools\SharedListToolsUiWidgetMenuHelper.cs" />
     <Compile Include="Areas\Notebook\Tools\SharedNotebookToolsUiWidgetMenuHelper.cs" />
     <Compile Include="Areas\PartiallySharedForToolsWideMenuHelper.cs" />

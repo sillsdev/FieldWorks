@@ -10,14 +10,14 @@ namespace LanguageExplorer.LcmUi
 	/// <summary>
 	/// Special VC for classes that have name and abbreviation, both displayed in UI WS.
 	/// </summary>
-	public class CmNameAbbrObjVc : CmNamedObjVc
+	internal sealed class CmNameAbbrObjVc : CmNamedObjVc
 	{
-		protected int m_flidAbbr;
+		private readonly int _flidAbbr;
 
-		public CmNameAbbrObjVc(LcmCache cache, int flidName, int flidAbbr)
+		internal CmNameAbbrObjVc(LcmCache cache, int flidName, int flidAbbr)
 			: base(cache, flidName)
 		{
-			m_flidAbbr = flidAbbr;
+			_flidAbbr = flidAbbr;
 		}
 
 		public override void Display(IVwEnv vwenv, int hvo, int frag)
@@ -26,7 +26,7 @@ namespace LanguageExplorer.LcmUi
 			{
 				case (int)VcFrags.kfragShortName:
 					var wsUi = vwenv.DataAccess.WritingSystemFactory.UserWs;
-					vwenv.AddStringAltMember(m_flidAbbr, wsUi, this);
+					vwenv.AddStringAltMember(_flidAbbr, wsUi, this);
 					break;
 				default:
 					base.Display(vwenv, hvo, frag);

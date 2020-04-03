@@ -18,9 +18,9 @@ using SIL.Xml;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 {
-	internal class ConstChartVc : InterlinVc
+	internal sealed class ConstChartVc : InterlinVc
 	{
-		public const int kfragChart = 3000000; // should be distinct from ones used in InterlinVc
+		internal const int kfragChart = 3000000; // should be distinct from ones used in InterlinVc
 		internal const int kfragChartRow = 3000001;
 		internal const int kfragCellPart = 3000002;
 		internal const int kfragMovedTextCellPart = 3000003;
@@ -45,7 +45,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		internal ITsString m_sMovedTextAfter;
 		private bool m_fIsAnalysisWsGraphiteEnabled;
 
-		public ConstChartVc(ConstChartBody chart)
+		internal ConstChartVc(ConstChartBody chart)
 			: base(chart.Cache)
 		{
 			m_chart = chart;
@@ -202,7 +202,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		/// <summary>
 		/// Set the column widths (in millipoints).
 		/// </summary>
-		public void SetColWidths(VwLength[] widths)
+		internal void SetColWidths(VwLength[] widths)
 		{
 			m_colWidths = widths;
 		}
@@ -647,7 +647,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Discourse
 		}
 
 		// This used to be kAnnotationColor. I'm a little confused as to its actual meaning here.
-		readonly int kWordformColor = (int)ColorUtil.ConvertColorToBGR(Color.DarkGray);
+		private readonly int kWordformColor = (int)ColorUtil.ConvertColorToBGR(Color.DarkGray);
 
 		/// <summary>
 		/// A nasty kludge, but everything gray should also be underlined.

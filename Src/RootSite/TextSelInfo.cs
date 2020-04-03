@@ -15,24 +15,23 @@ namespace SIL.FieldWorks.Common.RootSites
 	/// the information cached in this object even after the underlying Selection
 	/// has changed state.
 	/// </summary>
-	public class TextSelInfo
+	internal sealed class TextSelInfo
 	{
-		ITsString m_tssA;
-		ITsString m_tssE;
-		bool m_fAssocPrev;
-		int m_ichA;
-		int m_ichE;
-		int m_hvoObjA;
-		int m_tagA;
-		int m_hvoObjE;
-		int m_tagE;
-		int m_wsE;
-		int m_wsA;
-		VwSelType m_selType;
+		private ITsString m_tssA;
+		private ITsString m_tssE;
+		private int m_ichA;
+		private int m_ichE;
+		private int m_hvoObjA;
+		private int m_tagA;
+		private int m_hvoObjE;
+		private int m_tagE;
+		private int m_wsE;
+		private int m_wsA;
+		private VwSelType m_selType;
 
 		/// <summary />
 		/// Initialize
-		public TextSelInfo(IVwSelection sel)
+		internal TextSelInfo(IVwSelection sel)
 		{
 			Selection = sel;
 			Init();
@@ -78,8 +77,8 @@ namespace SIL.FieldWorks.Common.RootSites
 			}
 			else
 			{
-				Selection.TextSelInfo(true, out m_tssE, out m_ichE, out m_fAssocPrev, out m_hvoObjE, out m_tagE, out m_wsE);
-				Selection.TextSelInfo(false, out m_tssA, out m_ichA, out m_fAssocPrev, out m_hvoObjA, out m_tagA, out m_wsA);
+				Selection.TextSelInfo(true, out m_tssE, out m_ichE, out _, out m_hvoObjE, out m_tagE, out m_wsE);
+				Selection.TextSelInfo(false, out m_tssA, out m_ichA, out _, out m_hvoObjA, out m_tagA, out m_wsA);
 			}
 			IsRange = Selection.IsRange;
 			m_selType = Selection.SelType;
@@ -88,7 +87,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <summary>
 		/// Construct a TextSelInfo from the current selection of the root box.
 		/// </summary>
-		public TextSelInfo(IVwRootBox rootbox)
+		internal TextSelInfo(IVwRootBox rootbox)
 		{
 			Selection = rootbox.Selection;
 			Init();
@@ -97,29 +96,29 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <summary>
 		/// Answer true if there is a selection and it has a range.
 		/// </summary>
-		public bool IsRange { get; private set; }
+		internal bool IsRange { get; private set; }
 
 		/// <summary>
 		/// The selection we're getting info about.
 		/// </summary>
-		public IVwSelection Selection { get; }
+		internal IVwSelection Selection { get; }
 
 		/// <summary>
 		/// The character index of the anchor. (0 if no selection)
 		/// </summary>
-		public int IchAnchor => m_ichA;
+		internal int IchAnchor => m_ichA;
 
 		/// <summary>
 		/// The character index of the end-point. (0 if no selection)
 		/// </summary>
-		public int IchEnd => m_ichE;
+		internal int IchEnd => m_ichE;
 
 		/// <summary>
 		/// The string in which the selection occurs...if there's a difference,
 		/// passing true gets the end-point string, false the anchor string.
 		/// Both null if no selection.
 		/// </summary>
-		public ITsString SelectedProperty(bool fEndPoint)
+		internal ITsString SelectedProperty(bool fEndPoint)
 		{
 			return fEndPoint ? m_tssE : m_tssA;
 		}
@@ -128,26 +127,26 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// The string in which the (anchor of) the selection occurs.
 		/// Null if no selection.
 		/// </summary>
-		public ITsString TssAnchor => m_tssA;
+		internal ITsString TssAnchor => m_tssA;
 
 		/// <summary>
 		/// The text of the string in which the (anchor of) the selection occurs.
 		/// Empty string if no selection.
 		/// </summary>
-		public string AnchorText => m_tssA == null ? string.Empty : m_tssA.Text;
+		internal string AnchorText => m_tssA == null ? string.Empty : m_tssA.Text;
 
 		/// <summary>
 		/// The length of the string in which the (anchor of) the selection occurs.
 		/// Zero if no selection.
 		/// </summary>
-		public int AnchorLength => m_tssA?.Length ?? 0;
+		internal int AnchorLength => m_tssA?.Length ?? 0;
 
 		/// <summary>
 		/// The id of the string property in which the selection occurs.
 		/// Pass true for the property in which the end point occurs, false for anchor.
 		/// Zero if no selection.
 		/// </summary>
-		public int Tag(bool fEndPoint)
+		internal int Tag(bool fEndPoint)
 		{
 			return fEndPoint ? m_tagE : m_tagA;
 		}
@@ -156,14 +155,14 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// The id of the string property in which the (anchor of) the selection occurs.
 		/// Zero if no selection.
 		/// </summary>
-		public int TagAnchor => m_tagA;
+		internal int TagAnchor => m_tagA;
 
 		/// <summary>
 		/// The id of the object that has the text property (Tag(fEndPoint) in which the
 		/// selection occurs.
 		/// Zero if no selection.
 		/// </summary>
-		public int Hvo(bool fEndPoint)
+		internal int Hvo(bool fEndPoint)
 		{
 			return fEndPoint ? m_hvoObjE : m_hvoObjA;
 		}
@@ -173,7 +172,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// (anchor of the) selection occurs.
 		/// Zero if no selection.
 		/// </summary>
-		public int HvoAnchor => m_hvoObjA;
+		internal int HvoAnchor => m_hvoObjA;
 
 		/// <summary>
 		/// The writing system alternative of the selection.
@@ -182,7 +181,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// an alternative in a multilingual alternative property, and is zero if there
 		/// is no selection or if the selected property is not multilingual.
 		/// </summary>
-		public int WsAlt(bool fEndPoint)
+		internal int WsAlt(bool fEndPoint)
 		{
 			return fEndPoint ? m_wsE : m_wsA;
 		}
@@ -190,16 +189,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <summary>
 		/// The anchor WsAlt.
 		/// </summary>
-		public int WsAltAnchor => m_wsA;
-
-		/// <summary>
-		/// This is relevant only for insertion points. It indicates whether the selection
-		/// associates with the previous or following character. (This can affect which character
-		/// properties are used if the user types when an IP is at the boundary between
-		/// character runs having different text properties, such as bold, italic, color, writing system,
-		/// style, etc.)
-		/// </summary>
-		public bool AssociatePrevChar => m_fAssocPrev;
+		internal int WsAltAnchor => m_wsA;
 
 		/// <summary>
 		/// Level 0 returns the same object as Hvo(fEndPoint).
@@ -207,7 +197,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// Level n returns the object which contains the display of ContainingObject(n-1, fEndPoint).
 		/// Returns 0 if there was no selection or level is too large.
 		/// </summary>
-		public int ContainingObject(int level, bool fEndPoint)
+		internal int ContainingObject(int level, bool fEndPoint)
 		{
 			if (Selection == null || level >= Selection.CLevels(fEndPoint))
 			{
@@ -220,7 +210,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <summary>
 		/// ContainingObject info about anchor.
 		/// </summary>
-		public int ContainingObject(int level)
+		internal int ContainingObject(int level)
 		{
 			return ContainingObject(level, false);
 		}
@@ -231,7 +221,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// Level 1 returns the id of the property of ContainingObject(n, fEndPoint) which contains ContainingObject(n-1, fEndPoint).
 		/// Returns 0 if there was no selection or level is too large.
 		/// </summary>
-		public int ContainingObjectTag(int level, bool fEndPoint)
+		internal int ContainingObjectTag(int level, bool fEndPoint)
 		{
 			if (Selection == null || level >= Selection.CLevels(fEndPoint))
 			{
@@ -244,7 +234,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <summary>
 		/// ContainingObjectTag info about anchor.
 		/// </summary>
-		public int ContainingObjectTag(int level)
+		internal int ContainingObjectTag(int level)
 		{
 			return ContainingObjectTag(level, false);
 		}
@@ -257,7 +247,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		///		in property ContainingObjectTag(n, fEndPoint) of object ContainingObject(n, fEndPoint).
 		/// Returns 0 if there was no selection or level is too large (or the relevant property is atomic).
 		/// </summary>
-		public int ContainingObjectIndex(int level, bool fEndPoint)
+		internal int ContainingObjectIndex(int level, bool fEndPoint)
 		{
 			if (Selection == null || level >= Selection.CLevels(fEndPoint))
 			{
@@ -270,7 +260,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <summary>
 		/// ContainingObjectIndex info about anchor.
 		/// </summary>
-		public int ContainingObjectIndex(int level)
+		internal int ContainingObjectIndex(int level)
 		{
 			return ContainingObjectIndex(level, false);
 		}
@@ -279,7 +269,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// The number of layers of containing objects in the selection
 		/// (Levels - 1 is the largest meaningful argument to pass to any of the containing object methods).
 		/// </summary>
-		public int Levels(bool fEndPoint)
+		internal int Levels(bool fEndPoint)
 		{
 			return Selection?.CLevels(fEndPoint) ?? 0;
 		}
@@ -287,11 +277,11 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <summary>
 		/// Return true if there is a selection and it is a text one (selection type is kstText).
 		/// </summary>
-		public bool IsText => Selection != null && m_selType == VwSelType.kstText;
+		internal bool IsText => Selection != null && m_selType == VwSelType.kstText;
 
 		/// <summary>
 		/// Return true if there is a selection and it is a picture one (selection type is kstPicture).
 		/// </summary>
-		public bool IsPicture => Selection != null && m_selType == VwSelType.kstPicture;
+		internal bool IsPicture => Selection != null && m_selType == VwSelType.kstPicture;
 	}
 }

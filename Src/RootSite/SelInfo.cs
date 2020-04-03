@@ -10,18 +10,18 @@ namespace SIL.FieldWorks.Common.RootSites
 {
 	/// <summary>Contains information about a selection</summary>
 	[Serializable]
-	public class SelInfo
+	internal sealed class SelInfo
 	{
 		/// <summary>Index of the root object</summary>
-		public int ihvoRoot;
+		internal int ihvoRoot;
 		/// <summary>Number of previous properties</summary>
-		public int cpropPrevious;
+		internal int cpropPrevious;
 		/// <summary>Character index</summary>
-		public int ich;
+		internal int ich;
 		/// <summary>Writing system</summary>
-		public int ws;
+		internal int ws;
 		/// <summary>The tag of the text property selected. </summary>
-		public int tagTextProp;
+		internal int tagTextProp;
 		/// <summary>
 		/// Text Props associated with the selection itself. This can be different
 		/// from the properties of the text where the selection is. This allows a
@@ -29,18 +29,18 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// will be applied if the user starts typing.
 		/// </summary>
 		[NonSerialized]
-		public ITsTextProps ttpSelProps;
+		internal ITsTextProps ttpSelProps;
 		/// <summary>IP associated with characters before current position</summary>
-		public bool fAssocPrev = true;
+		internal bool fAssocPrev = true;
 		/// <summary>Index of end HVO</summary>
-		public int ihvoEnd = -1;
+		internal int ihvoEnd = -1;
 		/// <summary>Level information</summary>
-		public SelLevInfo[] rgvsli = new SelLevInfo[0];
+		internal SelLevInfo[] rgvsli = new SelLevInfo[0];
 
 		/// <summary>
 		/// Creates a new object of type <see cref="SelInfo"/>.
 		/// </summary>
-		public SelInfo()
+		internal SelInfo()
 		{
 		}
 
@@ -48,7 +48,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// Copy constructor
 		/// </summary>
 		/// <param name="src">The source object</param>
-		public SelInfo(SelInfo src)
+		internal SelInfo(SelInfo src)
 		{
 			if (src == null)
 			{

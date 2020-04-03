@@ -4,7 +4,7 @@
 
 namespace SIL.FieldWorks.Common.RootSites
 {
-	public static class SimpleRootsiteTestsConstants
+	internal static class SimpleRootsiteTestsConstants
 	{
 		internal const int kclsidProject = 1;
 		internal const int kflidDocTitle = 1001;

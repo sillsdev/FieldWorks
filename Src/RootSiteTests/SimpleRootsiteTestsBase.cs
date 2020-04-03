@@ -28,8 +28,10 @@ namespace SIL.FieldWorks.Common.RootSites
 		protected FlexComponentParameters _flexComponentParameters;
 		/// <summary>The data cache</summary>
 		protected T m_cache;
+
 		/// <summary>The draft form</summary>
-		protected SimpleBasicView m_basicView;
+		internal SimpleBasicView BasicView { get; set; }
+
 		/// <summary />
 		protected int m_hvoRoot;
 		/// <summary>Fragment for view constructor</summary>
@@ -95,7 +97,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			// GrowToWord causes a Char Property Engine to be created, and the test runner
 			// fails if we don't shut the factory down.
 			m_cache.Dispose();
-			m_cache = default(T);
+			m_cache = default;
 		}
 
 		/// <summary>
@@ -109,8 +111,8 @@ namespace SIL.FieldWorks.Common.RootSites
 
 			var styleSheet = new SimpleStyleSheet(m_cache);
 
-			Assert.IsNull(m_basicView);
-			m_basicView = new SimpleBasicView
+			Assert.IsNull(BasicView);
+			BasicView = new SimpleBasicView
 			{
 				Cache = m_cache,
 				Visible = false,
@@ -118,7 +120,7 @@ namespace SIL.FieldWorks.Common.RootSites
 				WritingSystemFactory = m_wsManager
 			};
 			_flexComponentParameters = TestSetupServices.SetupTestTriumvirate();
-			m_basicView.InitializeFlexComponent(_flexComponentParameters);
+			BasicView.InitializeFlexComponent(_flexComponentParameters);
 		}
 
 		/// <summary>
@@ -128,8 +130,8 @@ namespace SIL.FieldWorks.Common.RootSites
 		[TearDown]
 		public virtual void TestTearDown()
 		{
-			m_basicView.Dispose();
-			m_basicView = null;
+			BasicView.Dispose();
+			BasicView = null;
 			TestSetupServices.DisposeTrash(_flexComponentParameters);
 			_flexComponentParameters = null;
 		}
@@ -139,16 +141,16 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// </summary>
 		protected void ShowForm(DisplayType display)
 		{
-			m_basicView.MyDisplayType = display;
+			BasicView.MyDisplayType = display;
 
 			// We don't actually want to show it, but we need to force the view to create the root
 			// box and lay it out so that various test stuff can happen properly.
-			m_basicView.Width = 300;
-			m_basicView.Height = 307 - 25;
-			m_basicView.MakeRoot(m_hvoRoot, SimpleRootsiteTestsConstants.kflidDocFootnotes, m_frag, m_wsEng);
-			m_basicView.CallLayout();
-			m_basicView.AutoScrollPosition = new Point(0, 0);
-			m_basicView.Visible = true;
+			BasicView.Width = 300;
+			BasicView.Height = 307 - 25;
+			BasicView.MakeRoot(m_hvoRoot, SimpleRootsiteTestsConstants.kflidDocFootnotes, m_frag, m_wsEng);
+			BasicView.CallLayout();
+			BasicView.AutoScrollPosition = new Point(0, 0);
+			BasicView.Visible = true;
 		}
 
 		/// <summary>

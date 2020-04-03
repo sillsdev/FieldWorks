@@ -14,19 +14,19 @@ namespace SIL.FieldWorks.Common.RootSites
 	/// Wraps a ITsString object so that it can be serialized to/from the clipboard
 	/// </summary>
 	[Serializable]
-	internal class TsStringWrapper : ISerializable
+	internal sealed class TsStringWrapper : ISerializable
 	{
 		[NonSerialized]
 		private readonly string m_Xml;
 
 		/// <summary />
-		public TsStringWrapper(ITsString tsString, ILgWritingSystemFactory writingSystemFactory)
+		internal TsStringWrapper(ITsString tsString, ILgWritingSystemFactory writingSystemFactory)
 		{
 			m_Xml = TsStringUtils.GetXmlRep(tsString, writingSystemFactory, 0);
 		}
 
 		/// <summary />
-		protected TsStringWrapper(SerializationInfo info, StreamingContext context)
+		private TsStringWrapper(SerializationInfo info, StreamingContext context)
 		{
 			if (info == null)
 			{
@@ -62,7 +62,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <summary>
 		/// Gets the data format that is used to store a ITsString on the clipboard.
 		/// </summary>
-		public static string TsStringFormat => DataFormats.GetFormat("TsString").Name;
+		internal static string TsStringFormat => DataFormats.GetFormat("TsString").Name;
 
 		/// <summary>
 		/// Gets the TsString that this instance wraps.
@@ -70,7 +70,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <param name="writingSystemFactory">The writing system factory which will be used to
 		/// add missing writing systems.</param>
 		/// <returns>A TsString object</returns>
-		public ITsString GetTsString(ILgWritingSystemFactory writingSystemFactory)
+		internal ITsString GetTsString(ILgWritingSystemFactory writingSystemFactory)
 		{
 			return TsStringSerializer.DeserializeTsStringFromXml(m_Xml, writingSystemFactory);
 		}
@@ -82,7 +82,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <param name="writingSystemFactory">The writing system factory which will be used to
 		/// add missing writing systems.</param>
 		/// <returns>A TsString object</returns>
-		public ITsString GetTsStringUsingWs(int ws, ILgWritingSystemFactory writingSystemFactory)
+		internal ITsString GetTsStringUsingWs(int ws, ILgWritingSystemFactory writingSystemFactory)
 		{
 			var tss = TsStringSerializer.DeserializeTsStringFromXml(m_Xml, writingSystemFactory);
 			if (tss.Length > 0)

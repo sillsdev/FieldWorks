@@ -21,8 +21,8 @@ namespace SIL.FieldWorks.Common.RootSites
 	[Serializable]
 	public class SelectionHelper
 	{
+
 		#region Data members
-		private SelInfo[] m_selInfo = new SelInfo[2];
 		private int m_iTop = -1;
 		private int m_ihvoEnd = -1;
 		private bool m_fEndSet;
@@ -67,8 +67,8 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <param name="src">The source object</param>
 		public SelectionHelper(SelectionHelper src)
 		{
-			m_selInfo[0] = new SelInfo(src.SelectionInfo[0]);
-			m_selInfo[1] = new SelInfo(src.SelectionInfo[1]);
+			SelectionInfo[0] = new SelInfo(src.SelectionInfo[0]);
+			SelectionInfo[1] = new SelInfo(src.SelectionInfo[1]);
 			m_iTop = src.m_iTop;
 			m_ihvoEnd = src.m_ihvoEnd;
 			m_vwSel = src.m_vwSel;
@@ -138,16 +138,16 @@ namespace SIL.FieldWorks.Common.RootSites
 			{
 				cvsli = 0;
 			}
-			if (m_selInfo[i] == null)
+			if (SelectionInfo[i] == null)
 			{
-				m_selInfo[i] = new SelInfo();
+				SelectionInfo[i] = new SelInfo();
 			}
 			using (var prgvsli = MarshalEx.ArrayToNative<SelLevInfo>(cvsli))
 			{
-				m_vwSel.AllSelEndInfo(fEnd, out m_selInfo[i].ihvoRoot, cvsli, prgvsli,
-					out m_selInfo[i].tagTextProp, out m_selInfo[i].cpropPrevious, out m_selInfo[i].ich,
-					out m_selInfo[i].ws, out m_selInfo[i].fAssocPrev, out m_selInfo[i].ttpSelProps);
-				m_selInfo[i].rgvsli = MarshalEx.NativeToArray<SelLevInfo>(prgvsli, cvsli);
+				m_vwSel.AllSelEndInfo(fEnd, out SelectionInfo[i].ihvoRoot, cvsli, prgvsli,
+					out SelectionInfo[i].tagTextProp, out SelectionInfo[i].cpropPrevious, out SelectionInfo[i].ich,
+					out SelectionInfo[i].ws, out SelectionInfo[i].fAssocPrev, out SelectionInfo[i].ttpSelProps);
+				SelectionInfo[i].rgvsli = MarshalEx.NativeToArray<SelLevInfo>(prgvsli, cvsli);
 			}
 
 			if (fEnd)
@@ -765,9 +765,9 @@ namespace SIL.FieldWorks.Common.RootSites
 				// No end information set, so use iAnchor as end
 				iEnd = iAnchor;
 			}
-			if (m_selInfo[iEnd] == null)
+			if (SelectionInfo[iEnd] == null)
 			{
-				m_selInfo[iEnd] = new SelInfo(m_selInfo[iAnchor]);
+				SelectionInfo[iEnd] = new SelInfo(SelectionInfo[iAnchor]);
 			}
 			// we want to pass fInstall=false to MakeTextSelection so that it doesn't notify
 			// the RootSite of the selection change.
@@ -775,31 +775,31 @@ namespace SIL.FieldWorks.Common.RootSites
 			try
 			{
 				vwSelAnchor = rootBox.MakeTextSelection(
-					m_selInfo[iAnchor].ihvoRoot, m_selInfo[iAnchor].rgvsli.Length,
-					m_selInfo[iAnchor].rgvsli, m_selInfo[iAnchor].tagTextProp,
-					m_selInfo[iAnchor].cpropPrevious, m_selInfo[iAnchor].ich, m_selInfo[iAnchor].ich,
-					m_selInfo[iAnchor].ws, m_selInfo[iAnchor].fAssocPrev, m_selInfo[iAnchor].ihvoEnd,
+					SelectionInfo[iAnchor].ihvoRoot, SelectionInfo[iAnchor].rgvsli.Length,
+					SelectionInfo[iAnchor].rgvsli, SelectionInfo[iAnchor].tagTextProp,
+					SelectionInfo[iAnchor].cpropPrevious, SelectionInfo[iAnchor].ich, SelectionInfo[iAnchor].ich,
+					SelectionInfo[iAnchor].ws, SelectionInfo[iAnchor].fAssocPrev, SelectionInfo[iAnchor].ihvoEnd,
 					null, false);
 			}
 			catch (Exception e)
 			{
-				Debug.Assert(m_selInfo[iEnd].rgvsli.Length > 0 || m_selInfo[iAnchor].rgvsli.Length == 0, "Making the anchor selection failed, this is probably an empty editable field.");
+				Debug.Assert(SelectionInfo[iEnd].rgvsli.Length > 0 || SelectionInfo[iAnchor].rgvsli.Length == 0, "Making the anchor selection failed, this is probably an empty editable field.");
 				throw;
 			}
 			IVwSelection vwSelEnd;
 			try
 			{
 				vwSelEnd = rootBox.MakeTextSelection(
-					m_selInfo[iEnd].ihvoRoot, m_selInfo[iEnd].rgvsli.Length,
-					m_selInfo[iEnd].rgvsli, m_selInfo[iEnd].tagTextProp,
-					m_selInfo[iEnd].cpropPrevious, m_selInfo[iEnd].ich, m_selInfo[iEnd].ich,
-					m_selInfo[iEnd].ws, m_selInfo[iEnd].fAssocPrev, m_selInfo[iEnd].ihvoEnd,
+					SelectionInfo[iEnd].ihvoRoot, SelectionInfo[iEnd].rgvsli.Length,
+					SelectionInfo[iEnd].rgvsli, SelectionInfo[iEnd].tagTextProp,
+					SelectionInfo[iEnd].cpropPrevious, SelectionInfo[iEnd].ich, SelectionInfo[iEnd].ich,
+					SelectionInfo[iEnd].ws, SelectionInfo[iEnd].fAssocPrev, SelectionInfo[iEnd].ihvoEnd,
 					null, false);
 
 			}
 			catch (Exception)
 			{
-				Debug.Assert(m_selInfo[iEnd].rgvsli.Length > 0 || m_selInfo[iAnchor].rgvsli.Length == 0, "The anchor has rgvsli but the end does not; since making the end selection failed, this is probably a mistake.");
+				Debug.Assert(SelectionInfo[iEnd].rgvsli.Length > 0 || SelectionInfo[iAnchor].rgvsli.Length == 0, "The anchor has rgvsli but the end does not; since making the end selection failed, this is probably a mistake.");
 				throw;
 			}
 			return rootBox.MakeRangeSelection(vwSelAnchor, vwSelEnd, fInstall);
@@ -827,11 +827,11 @@ namespace SIL.FieldWorks.Common.RootSites
 		{
 			const int iAnchor = 0;
 			rootSite.RequestSelectionAtEndOfUow(rootSite.RootBox,
-				m_selInfo[iAnchor].ihvoRoot, m_selInfo[iAnchor].rgvsli.Length,
-				m_selInfo[iAnchor].rgvsli, m_selInfo[iAnchor].tagTextProp,
-				m_selInfo[iAnchor].cpropPrevious, m_selInfo[iAnchor].ich,
-				m_selInfo[iAnchor].ws, m_selInfo[iAnchor].fAssocPrev,
-				m_selInfo[iAnchor].ttpSelProps);
+				SelectionInfo[iAnchor].ihvoRoot, SelectionInfo[iAnchor].rgvsli.Length,
+				SelectionInfo[iAnchor].rgvsli, SelectionInfo[iAnchor].tagTextProp,
+				SelectionInfo[iAnchor].cpropPrevious, SelectionInfo[iAnchor].ich,
+				SelectionInfo[iAnchor].ws, SelectionInfo[iAnchor].fAssocPrev,
+				SelectionInfo[iAnchor].ttpSelProps);
 		}
 
 		/// <summary>
@@ -936,13 +936,13 @@ namespace SIL.FieldWorks.Common.RootSites
 			{
 				try
 				{
-					if (m_selInfo[1] == null || m_selInfo[0] < m_selInfo[1])
+					if (SelectionInfo[1] == null || SelectionInfo[0] < SelectionInfo[1])
 					{
-						m_selInfo[1] = m_selInfo[0];
+						SelectionInfo[1] = SelectionInfo[0];
 					}
 					else
 					{
-						m_selInfo[0] = m_selInfo[1];
+						SelectionInfo[0] = SelectionInfo[1];
 					}
 				}
 				catch (ArgumentException)
@@ -950,7 +950,7 @@ namespace SIL.FieldWorks.Common.RootSites
 					// comparison failed due to selection points being at different text levels,
 					// e.g., section heading and section content. Assume first selection point
 					// is top
-					m_selInfo[1] = m_selInfo[0];
+					SelectionInfo[1] = SelectionInfo[0];
 				}
 				vwsel = SetSelection(rootsite, true, fMakeVisible);
 				if (vwsel != null)
@@ -1176,7 +1176,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <summary>
 		/// Gets the information about the selection
 		/// </summary>
-		protected internal SelInfo[] SelectionInfo => m_selInfo;
+		private SelInfo[] SelectionInfo { get; } = new SelInfo[2];
 
 		/// <summary>
 		/// Returns the index used for the appropriate limit type
@@ -1203,9 +1203,9 @@ namespace SIL.FieldWorks.Common.RootSites
 				default:
 					throw new ArgumentOutOfRangeException("Got unexpected SelLimitType");
 			}
-			if (m_selInfo[i] == null)
+			if (SelectionInfo[i] == null)
 			{
-				m_selInfo[i] = new SelInfo(m_selInfo[i == 0 ? 1 : 0]);
+				SelectionInfo[i] = new SelInfo(SelectionInfo[i == 0 ? 1 : 0]);
 			}
 			return i;
 		}
@@ -1313,10 +1313,10 @@ namespace SIL.FieldWorks.Common.RootSites
 		public virtual void SetNumberOfLevels(SelLimitType type, int value)
 		{
 			var iType = GetIndex(type);
-			m_selInfo[iType].rgvsli = new SelLevInfo[value];
+			SelectionInfo[iType].rgvsli = new SelLevInfo[value];
 			for (var i = 0; i < value; i++)
 			{
-				m_selInfo[iType].rgvsli[i] = new SelLevInfo();
+				SelectionInfo[iType].rgvsli[i] = new SelLevInfo();
 			}
 		}
 
@@ -1336,7 +1336,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <param name="type">Anchor or End</param>
 		private SelInfo GetSelInfo(SelLimitType type)
 		{
-			return m_selInfo[GetIndex(type)];
+			return SelectionInfo[GetIndex(type)];
 		}
 
 		/// <summary>
@@ -1534,20 +1534,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		{
 			get => GetSelProps(SelLimitType.End);
 			set => SetSelProps(SelLimitType.End, value);
-		}
-
-		/// <summary>
-		/// Get the text props for the text immediately before top of the selection.
-		/// </summary>
-		/// <returns>Text props associated with the character immediately before the top of the
-		/// selection, or null if there is no preceding character</returns>
-		public ITsTextProps PropsBefore
-		{
-			get
-			{
-				var ichTop = GetIch(SelLimitType.Top);
-				return ichTop <= 0 ? null : (GetTss(SelLimitType.Top))?.get_PropertiesAt(ichTop - 1);
-			}
 		}
 
 		/// <summary>

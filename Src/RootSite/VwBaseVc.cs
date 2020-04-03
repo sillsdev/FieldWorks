@@ -19,20 +19,20 @@ namespace SIL.FieldWorks.Common.RootSites
 	/// <remarks>
 	/// It raises a NotImplementedException for all methods (which returns E_NOTIMPL to the COM object).
 	/// </remarks>
-	public abstract class VwBaseVc : IVwViewConstructor
+	internal abstract class VwBaseVc : IVwViewConstructor
 	{
 		/// <summary>
 		/// The GenDate long format frag
 		/// </summary>
-		public const int kfragGenDateShort = 783459845;
+		internal const int kfragGenDateShort = 783459845;
 		/// <summary>
 		/// The GenDate short format frag
 		/// </summary>
-		public const int kfragGenDateLong = 783459846;
+		internal const int kfragGenDateLong = 783459846;
 		/// <summary>
 		/// The GenDate sort format frag
 		/// </summary>
-		public const int kfragGenDateSort = 783459847;
+		internal const int kfragGenDateSort = 783459847;
 		/// <summary>Default writing system used in this view.</summary>
 		protected int m_wsDefault;
 
@@ -51,17 +51,17 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <summary>
 		/// Gets the ITsTextProps to apply to the caption of pictures
 		/// </summary>
-		public virtual ITsTextProps CaptionProps => throw new NotSupportedException("Derived classes that support pictures should implement this.");
+		internal virtual ITsTextProps CaptionProps => throw new NotSupportedException("Derived classes that support pictures should implement this.");
 
 		/// <summary>
 		/// Gets/Sets a name for this VC for debugging purposes.
 		/// </summary>
-		public string Name { get; set; } = "Unknown VC";
+		internal string Name { get; set; } = "Unknown VC";
 
 		/// <summary>
 		/// Gets or sets the default writing system id for the view constructor.
 		/// </summary>
-		public virtual int DefaultWs
+		internal virtual int DefaultWs
 		{
 			get => m_wsDefault;
 			set => m_wsDefault = value;
@@ -226,7 +226,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <summary>
 		/// Get the object ID (HVO) that corresponds to the specified GUID.
 		/// </summary>
-		public int GetIdFromGuid(ISilDataAccess sda, ref System.Guid guid)
+		public int GetIdFromGuid(ISilDataAccess sda, ref Guid guid)
 		{
 			return sda.get_ObjFromGuid(guid);
 		}

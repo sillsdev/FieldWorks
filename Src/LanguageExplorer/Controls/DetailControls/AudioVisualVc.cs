@@ -15,17 +15,12 @@ namespace LanguageExplorer.Controls.DetailControls
 	/// <summary>
 	///  View constructor for creating the view details.
 	/// </summary>
-	public class AudioVisualVc : FwBaseVc
+	internal sealed class AudioVisualVc : FwBaseVc
 	{
-		protected int m_flid;
-		protected string m_displayNameProperty;
-
-		public AudioVisualVc(LcmCache cache, int flid, string displayNameProperty)
+		internal AudioVisualVc(LcmCache cache)
 		{
 			Debug.Assert(cache != null);
 			Cache = cache;
-			m_flid = flid;
-			m_displayNameProperty = displayNameProperty;
 		}
 
 		public override void Display(IVwEnv vwenv, int hvo, int frag)

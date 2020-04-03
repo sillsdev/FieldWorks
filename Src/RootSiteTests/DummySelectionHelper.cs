@@ -9,20 +9,20 @@ namespace SIL.FieldWorks.Common.RootSites
 	/// <summary>
 	/// SelectionHelper helper class that provides public constructors
 	/// </summary>
-	internal class DummySelectionHelper: SelectionHelper
+	internal sealed class DummySelectionHelper: SelectionHelper
 	{
 		/// <summary>
 		/// The default constructor must be followed by a call to SetSelection before it will
 		/// really be useful
 		/// </summary>
-		public DummySelectionHelper()
+		internal DummySelectionHelper()
 		{
 		}
 
 		/// <summary>
 		/// Create a selection helper based on an existing selection
 		/// </summary>
-		public DummySelectionHelper(IVwSelection vwSel, SimpleRootSite rootSite)
+		internal DummySelectionHelper(IVwSelection vwSel, SimpleRootSite rootSite)
 			: base(vwSel, rootSite)
 		{
 		}
@@ -30,7 +30,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <summary>
 		/// Copy constructor
 		/// </summary>
-		public DummySelectionHelper(SelectionHelper src)
+		internal DummySelectionHelper(SelectionHelper src)
 			: base(src)
 		{
 		}
@@ -38,12 +38,12 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <summary>
 		/// Gets the Y-position of the selection relative to the upper left corner of the view.
 		/// </summary>
-		public int IPTopY => m_dyIPTop;
+		internal int IPTopY => m_dyIPTop;
 
 		/// <summary>
 		/// Creates a new dummy selection helper
 		/// </summary>
-		public static DummySelectionHelper Create(SimpleRootSite rootSite)
+		internal static DummySelectionHelper Create(SimpleRootSite rootSite)
 		{
 			return new DummySelectionHelper(SelectionHelper.Create(null, rootSite));
 		}

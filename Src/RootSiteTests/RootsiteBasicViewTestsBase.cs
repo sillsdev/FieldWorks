@@ -14,7 +14,7 @@ namespace SIL.FieldWorks.Common.RootSites
 	/// Base class for tests that use <see cref="DummyBasicView"/>. This class is specific for
 	/// Rootsite tests.
 	/// </summary>
-	public class RootsiteBasicViewTestsBase : BasicViewTestsBase
+	internal class RootsiteBasicViewTestsBase : BasicViewTestsBase
 	{
 		/// <summary>Text for the first and third test paragraph (French)</summary>
 		internal const string kFirstParaFra = "C'est une paragraph en francais.";

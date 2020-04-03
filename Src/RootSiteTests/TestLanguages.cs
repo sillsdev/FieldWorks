@@ -8,7 +8,7 @@ namespace SIL.FieldWorks.Common.RootSites
 {
 	/// <summary>Defines the possible languages</summary>
 	[Flags]
-	public enum TestLanguages
+	internal enum TestLanguages
 	{
 		/// <summary>No paragraphs</summary>
 		None = 0,

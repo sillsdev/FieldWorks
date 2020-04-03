@@ -54,20 +54,5 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <returns>True if the selection was scrolled into view, false if this function did
 		/// nothing</returns>
 		bool ScrollSelectionToLocation(IVwSelection sel, int dyPos);
-
-		/// <summary>
-		/// Get the width available for laying things out in the view.
-		/// Return the layout width for the window, depending on whether or not there is a
-		/// scroll bar. If there is no scroll bar, we pretend that there is, so we don't have
-		/// to keep adjusting the width back and forth based on the toggling on and off of
-		/// vertical and horizontal scroll bars and their interaction.
-		/// The return result is in pixels.
-		/// The only common reason to override this is to answer instead a very large integer,
-		/// which has the effect of turning off line wrap, as everything apparently fits on
-		/// a line.
-		/// </summary>
-		/// <param name="prootb">The root box</param>
-		/// <returns>Width available for layout</returns>
-		int GetAvailWidth(IVwRootBox prootb);
 	}
 }

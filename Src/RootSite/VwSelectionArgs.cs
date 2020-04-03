@@ -10,7 +10,7 @@ namespace SIL.FieldWorks.Common.RootSites
 	/// <summary>
 	/// Class for passing rootbox and new selection to handler.
 	/// </summary>
-	public class VwSelectionArgs : EventArgs
+	public sealed class VwSelectionArgs : EventArgs
 	{
 		/// <summary />
 		public VwSelectionArgs(IVwRootBox rootb, IVwSelection vwsel)

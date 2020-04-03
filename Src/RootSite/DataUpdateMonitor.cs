@@ -20,7 +20,7 @@ namespace SIL.FieldWorks.Common.RootSites
 	/// </summary>
 	/// <remarks>The purpose of the DataUpdateMonitor is to fix real and potential crashes
 	/// resulting from processing windows messages when a data operation is in progress.</remarks>
-	public class DataUpdateMonitor : IDisposable
+	public sealed class DataUpdateMonitor : IDisposable
 	{
 		// Keys are ISilDataAccess objects, values are UpdateSemaphore objects
 		private static UpdateSemaphore s_updateSemaphore;
@@ -101,7 +101,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// it needs to be handled by fixing the bug.
 		/// If subclasses override this method, they should call the base implementation.
 		/// </remarks>
-		protected virtual void Dispose(bool disposing)
+		private void Dispose(bool disposing)
 		{
 			Debug.WriteLineIf(!disposing, "****************** Missing Dispose() call for " + GetType().Name + " ******************");
 			if (IsDisposed)

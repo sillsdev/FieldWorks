@@ -87,7 +87,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			}
 			base.MakeRoot();
 			RootBox.DataAccess = m_cache.DomainDataByFlid;
-			m_vc = new AudioVisualVc(m_cache, m_flid, "InternalPath");
+			m_vc = new AudioVisualVc(m_cache);
 			if (m_file != null)
 			{
 				RootBox.SetRootObject(m_file.Hvo, m_vc, kfragPathname, RootBox.Stylesheet);

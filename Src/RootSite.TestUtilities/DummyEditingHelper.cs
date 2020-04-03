@@ -11,13 +11,13 @@ using SIL.LCModel.Core.Text;
 namespace RootSite.TestUtilities
 {
 	/// <summary />
-	public class DummyEditingHelper : RootSiteEditingHelper
+	internal sealed class DummyEditingHelper : RootSiteEditingHelper
 	{
 		internal IVwSelection m_mockedSelection = null;
 		internal bool m_fOverrideGetParaPropStores = false;
 
 		/// <summary />
-		public DummyEditingHelper(LcmCache cache, IEditingCallbacks callbacks)
+		internal DummyEditingHelper(LcmCache cache, IEditingCallbacks callbacks)
 			: base(cache, callbacks)
 		{
 		}
@@ -43,10 +43,10 @@ namespace RootSite.TestUtilities
 			return GetTextFromClipboard(null, false, TsStringUtils.MakeProps("bla", 1));
 		}
 
-	/// <summary>
-	/// Gets the selection from the root box that is currently being edited (can be null).
-	/// </summary>
-	public override IVwSelection RootBoxSelection => m_mockedSelection ?? base.RootBoxSelection;
+		/// <summary>
+		/// Gets the selection from the root box that is currently being edited (can be null).
+		/// </summary>
+		public override IVwSelection RootBoxSelection => m_mockedSelection ?? base.RootBoxSelection;
 
 		/// <summary>
 		/// Gets an array of property stores, one for each paragraph in the given selection.
@@ -66,7 +66,7 @@ namespace RootSite.TestUtilities
 		/// <summary>
 		/// Gets the caption props.
 		/// </summary>
-		public override ITsTextProps CaptionProps
+		internal override ITsTextProps CaptionProps
 		{
 			get
 			{

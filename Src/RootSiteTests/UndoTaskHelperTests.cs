@@ -13,7 +13,7 @@ namespace SIL.FieldWorks.Common.RootSites
 	/// Tests the UndoTaskHelperTests class
 	/// </summary>
 	[TestFixture]
-	public class UndoTaskHelperTests : RootsiteDummyViewTestsBase
+	internal class UndoTaskHelperTests : RootsiteDummyViewTestsBase
 	{
 		public override void TestSetup()
 		{
@@ -174,13 +174,13 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <summary />
 		private sealed class DummyUndoTaskHelper : UndoTaskHelper
 		{
-			public static bool m_fRollbackAction = true;
-			public static bool m_fRollbackCalled;
+			internal static bool m_fRollbackAction = true;
+			internal static bool m_fRollbackCalled;
 
 			/// <summary>
 			/// Start the undo task
 			/// </summary>
-			public DummyUndoTaskHelper(IActionHandler actionHandler, RootSite rootSite, string stid)
+			internal DummyUndoTaskHelper(IActionHandler actionHandler, RootSite rootSite, string stid)
 				: base(actionHandler, rootSite, stid)
 			{
 			}
@@ -188,7 +188,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			/// <summary>
 			/// Start the undo task
 			/// </summary>
-			public DummyUndoTaskHelper(RootSite rootSite, string stid) : base(rootSite, stid)
+			internal DummyUndoTaskHelper(RootSite rootSite, string stid) : base(rootSite, stid)
 			{
 			}
 

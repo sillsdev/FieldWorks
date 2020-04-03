@@ -26,7 +26,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		public override void TestSetup()
 		{
 			base.TestSetup();
-			m_basicView.AutoScroll = true;
+			BasicView.AutoScroll = true;
 
 			ClipboardUtils.SetClipboardAdapter(new ClipboardStub());
 		}
@@ -37,7 +37,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		protected void CheckSelectionHelperValues(SelLimitType type, SelectionHelper selectionHelper, int ihvoRoot, int nPrevProps, int ich, int nWs,
 			bool fAssocPrev, int nLevels, int tag1, int cpropPrev1, int ihvo1, int tag0, int cpropPrev0, int ihvo0)
 		{
-			Assert.IsTrue(m_basicView.IsSelectionVisible(null), "Selection not visible");
+			Assert.IsTrue(BasicView.IsSelectionVisible(null), "Selection not visible");
 			Assert.AreEqual(ihvoRoot, selectionHelper.GetIhvoRoot(type), "ihvoRoot differs");
 			Assert.AreEqual(nPrevProps, selectionHelper.GetNumberOfPreviousProps(type), "nPrevProps differs");
 			Assert.AreEqual(ich, selectionHelper.GetIch(type), "ich differs");
@@ -111,12 +111,12 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <returns>The made selection</returns>
 		protected IVwSelection MakeSelection(int cPropPrevFootnoteVec, int iFootnote, int cPropPrevParaVec, int iPara, int ichAnchor, int ichEnd)
 		{
-			m_SelectionHelper = new DummySelectionHelper(null, m_basicView);
+			m_SelectionHelper = new DummySelectionHelper(null, BasicView);
 
 			SetSelection(cPropPrevFootnoteVec, iFootnote, cPropPrevParaVec, iPara, 0, ichAnchor, ichEnd, true);
 
 			// Now that all the preparation to set the IP is done, set it.
-			var vwsel = m_SelectionHelper.SetSelection(m_basicView, true, true);
+			var vwsel = m_SelectionHelper.SetSelection(BasicView, true, true);
 			Application.DoEvents();
 
 			return vwsel;
@@ -133,7 +133,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			Assert.AreEqual(selHelper.GetAssocPrev(SelLimitType.Anchor), selHelper.GetAssocPrev(SelLimitType.End), "Different association with previous character");
 			Assert.AreEqual(selHelper.GetNumberOfLevels(SelLimitType.Anchor), selHelper.GetNumberOfLevels(SelLimitType.End), "Different number of levels");
 			Assert.AreEqual(selHelper.GetWritingSystem(SelLimitType.Anchor), selHelper.GetWritingSystem(SelLimitType.End), "Different writing system");
-			Assert.IsTrue(m_basicView.IsSelectionVisible(null), "Selection not visible");
+			Assert.IsTrue(BasicView.IsSelectionVisible(null), "Selection not visible");
 		}
 	}
 }

@@ -11,11 +11,11 @@ namespace LanguageExplorer.LcmUi
 	/// Special VC for classes that have name flid. It is a MultiString property, and the default user
 	/// WS should be used to display it.
 	/// </summary>
-	public class CmNamedObjVc : CmObjectVc
+	internal class CmNamedObjVc : CmObjectVc
 	{
 		protected int m_flidName;
 
-		public CmNamedObjVc(LcmCache cache, int flidName)
+		internal CmNamedObjVc(LcmCache cache, int flidName)
 			: base(cache)
 		{
 			m_flidName = flidName;

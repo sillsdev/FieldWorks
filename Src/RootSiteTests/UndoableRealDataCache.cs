@@ -14,7 +14,7 @@ namespace SIL.FieldWorks.Common.RootSites
 	/// <summary>
 	/// Undoable real data cache.
 	/// </summary>
-	public class UndoableRealDataCache : IRealDataCache
+	public sealed class UndoableRealDataCache : IRealDataCache
 	{
 		private RealDataCache m_cache;
 		private bool m_isDirty;
@@ -620,7 +620,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			Dispose(false);
 		}
 
-		protected virtual void Dispose(bool disposing)
+		private void Dispose(bool disposing)
 		{
 			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + " ******");
 			if (disposing)

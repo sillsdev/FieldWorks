@@ -399,7 +399,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// Print method
 		/// </summary>
-		public override void Print(PrintDocument printDoc)
+		internal override void Print(PrintDocument printDoc)
 		{
 			ISilDataAccess oldSda = null;
 			var fPrintSelection = (printDoc.PrinterSettings.PrintRange == PrintRange.Selection);
@@ -479,7 +479,7 @@ namespace LanguageExplorer.Controls.XMLViews
 
 				base.Dispose(disposing);
 
-				if (!disposing || m_savedSelection == null || m_rootSite.RootBox.Height <= 0)
+				if (!disposing || m_savedSelection == null || MySimpleRootSite.RootBox.Height <= 0)
 				{
 					return;
 				}
@@ -555,7 +555,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			/// </summary>
 			private bool IsGoodRestore(IVwSelection restored, bool wasRange)
 			{
-				return restored.IsRange || !wasRange || !m_rootSite.ReadOnlyView;
+				return restored.IsRange || !wasRange || !MySimpleRootSite.ReadOnlyView;
 			}
 		}
 	}

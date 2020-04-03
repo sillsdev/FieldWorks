@@ -22,16 +22,17 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <summary>The selection that was at the top of the visible area and that will be
 		/// scrolled to be the top of the new visible area</summary>
 		protected readonly SelectionHelper m_topOfViewSelection;
+
 		/// <summary>The rootsite that will get the selection when restored</summary>
-		protected readonly SimpleRootSite m_rootSite;
+		internal SimpleRootSite MySimpleRootSite { get; }
 
 		/// <summary />
-		public SelectionRestorer(SimpleRootSite rootSite)
+		internal SelectionRestorer(SimpleRootSite rootSite)
 		{
 			// we can't use EditingHelper.CurrentSelection here because the scroll position
 			// of the selection may have changed.
 			m_savedSelection = SelectionHelper.Create(rootSite);
-			m_rootSite = rootSite;
+			MySimpleRootSite = rootSite;
 			rootSite.GetCoordRects(out var rcSrc, out var rcDst);
 			try
 			{
@@ -68,12 +69,12 @@ namespace SIL.FieldWorks.Common.RootSites
 		protected virtual void Dispose(bool disposing)
 		{
 			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
-			if (!disposing || IsDisposed || m_savedSelection == null || m_rootSite.RootBox.Height <= 0)
+			if (!disposing || IsDisposed || m_savedSelection == null || MySimpleRootSite.RootBox.Height <= 0)
 			{
 				return;
 			}
 
-			if (m_rootSite.ReadOnlyView)
+			if (MySimpleRootSite.ReadOnlyView)
 			{
 				// if we are a read-only view, then we can't make a writable selection
 				RestoreSelectionWhenReadOnly();
@@ -86,7 +87,7 @@ namespace SIL.FieldWorks.Common.RootSites
 				try
 				{
 					// Any selection is better than no selection...
-					m_rootSite.RootBox.MakeSimpleSel(true, true, false, true);
+					MySimpleRootSite.RootBox.MakeSimpleSel(true, true, false, true);
 				}
 				catch (COMException)
 				{
@@ -107,7 +108,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			var makeVisible = false;
 			if (m_topOfViewSelection != null)
 			{
-				var selTop = m_topOfViewSelection.SetSelection(m_rootSite, false, false);
+				var selTop = m_topOfViewSelection.SetSelection(MySimpleRootSite, false, false);
 				if (selTop != null && selTop.IsValid)
 				{
 					m_topOfViewSelection.RestoreScrollPos();
@@ -125,7 +126,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		{
 			try
 			{
-				m_rootSite.RootBox.MakeSimpleSel(true, false, false, true);
+				MySimpleRootSite.RootBox.MakeSimpleSel(true, false, false, true);
 			}
 			catch (COMException)
 			{

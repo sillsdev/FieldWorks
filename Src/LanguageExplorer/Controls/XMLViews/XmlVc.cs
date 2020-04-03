@@ -3603,7 +3603,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// Gets or sets the cache.
 		/// </summary>
-		public override LcmCache Cache
+		internal override LcmCache Cache
 		{
 			set
 			{

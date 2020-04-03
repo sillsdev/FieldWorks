@@ -17,7 +17,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		private readonly int m_hvoOwner;
 
 		/// <summary />
-		public LexReferenceTreeRootVc(LcmCache cache, int hvo, int flid, string displayNameProperty)
+		internal LexReferenceTreeRootVc(LcmCache cache, int hvo, int flid, string displayNameProperty)
 			: base(cache, flid, displayNameProperty)
 		{
 			m_hvoOwner = hvo;

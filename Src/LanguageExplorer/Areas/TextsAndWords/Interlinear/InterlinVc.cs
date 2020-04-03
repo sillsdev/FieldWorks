@@ -26,7 +26,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 	/// View constructor for InterlinView. Just to get something working, currently
 	/// it is just a literal.
 	/// </summary>
-	public class InterlinVc : FwBaseVc
+	internal class InterlinVc : FwBaseVc
 	{
 		#region Constants and other similar ints.
 

@@ -10,6 +10,8 @@ using System.Runtime.InteropServices;
 
 [assembly: ComVisible(false)]
 
+[assembly: InternalsVisibleTo("FwCoreDlgs")]
+[assembly: InternalsVisibleTo("LanguageExplorer")]
 [assembly: InternalsVisibleTo("LanguageExplorerTests")]
 [assembly: InternalsVisibleTo("RootSiteTests")]
-[assembly: InternalsVisibleTo("SimpleRootSiteTests")]
+[assembly: InternalsVisibleTo("RootSite.TestUtilities")]

@@ -27,17 +27,17 @@ namespace SIL.FieldWorks.Common.RootSites
 		{
 			ShowForm(Lng.English, DisplayType.kAll);
 
-			var selectionHelper = SelectionHelper.GetSelectionInfo(null, m_basicView);
+			var selectionHelper = SelectionHelper.GetSelectionInfo(null, BasicView);
 			Assert.IsNotNull(selectionHelper);
 
 			selectionHelper = SelectionHelper.GetSelectionInfo(null, null);
 			Assert.IsNull(selectionHelper);
 
-			var vwSel = m_basicView.RootBox.Selection;
+			var vwSel = BasicView.RootBox.Selection;
 			selectionHelper = SelectionHelper.GetSelectionInfo(vwSel, null);
 			Assert.IsNotNull(selectionHelper);
 
-			selectionHelper = SelectionHelper.GetSelectionInfo(vwSel, m_basicView);
+			selectionHelper = SelectionHelper.GetSelectionInfo(vwSel, BasicView);
 			Assert.IsNotNull(selectionHelper);
 		}
 
@@ -49,7 +49,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		{
 			ShowForm(Lng.English, DisplayType.kAll);
 
-			var selectionHelper = SelectionHelper.GetSelectionInfo(null, m_basicView);
+			var selectionHelper = SelectionHelper.GetSelectionInfo(null, BasicView);
 
 			Assert.AreEqual(2, selectionHelper.NumberOfLevels);
 			Assert.AreEqual(0, selectionHelper.IhvoRoot);
@@ -78,7 +78,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			// test with IP in same paragraph
 			MakeSelection(0, 2, 1, 0, 6, 6);
 
-			var selectionHelper = SelectionHelper.GetSelectionInfo(null, m_basicView);
+			var selectionHelper = SelectionHelper.GetSelectionInfo(null, BasicView);
 			CheckSelectionHelperValues(SelLimitType.Anchor, selectionHelper, 0, 0, 6, 0, true, 2,
 				SimpleRootsiteTestsConstants.kflidDocFootnotes, 0, 2, SimpleRootsiteTestsConstants.kflidTextParas, 1, 0);
 			CheckSelectionHelperValues(SelLimitType.End, selectionHelper, 0, 0, 6, 0, true, 2,
@@ -96,7 +96,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			// test with range in same paragraph
 			MakeSelection(0, 2, 1, 0, 6, 7);
 
-			var selectionHelper = SelectionHelper.GetSelectionInfo(null, m_basicView);
+			var selectionHelper = SelectionHelper.GetSelectionInfo(null, BasicView);
 			CheckSelectionHelperValues(SelLimitType.Anchor, selectionHelper, 0, 0, 6, 0, false, 2,
 				SimpleRootsiteTestsConstants.kflidDocFootnotes, 0, 2, SimpleRootsiteTestsConstants.kflidTextParas, 1, 0);
 			CheckSelectionHelperValues(SelLimitType.End, selectionHelper, 0, 0, 7, 0, true, 2,
@@ -112,15 +112,15 @@ namespace SIL.FieldWorks.Common.RootSites
 			ShowForm(Lng.English | Lng.French, DisplayType.kAll);
 
 			// test with range in different paragraphs
-			m_SelectionHelper = new DummySelectionHelper(null, m_basicView);
+			m_SelectionHelper = new DummySelectionHelper(null, BasicView);
 			SetSelection(0, 1, 1, 0, 0, 6, 6, true);
 			SetSelection(0, 2, 1, 0, 0, 3, 3, false);
 
 			var vwsel = m_SelectionHelper.SetSelection(true);
 			Assert.IsNotNull(vwsel, "No selection made");
-			Assert.IsTrue(m_basicView.IsSelectionVisible(null), "Selection is not visible");
+			Assert.IsTrue(BasicView.IsSelectionVisible(null), "Selection is not visible");
 
-			var selectionHelper = SelectionHelper.GetSelectionInfo(null, m_basicView);
+			var selectionHelper = SelectionHelper.GetSelectionInfo(null, BasicView);
 			CheckSelectionHelperValues(SelLimitType.Anchor, selectionHelper, 0, 0, 6, 0, false, 2,
 				SimpleRootsiteTestsConstants.kflidDocFootnotes, 0, 1, SimpleRootsiteTestsConstants.kflidTextParas, 1, 0);
 			CheckSelectionHelperValues(SelLimitType.End, selectionHelper, 0, 0, 3, 0, true, 2,
@@ -137,15 +137,15 @@ namespace SIL.FieldWorks.Common.RootSites
 			ShowForm(Lng.English | Lng.French, DisplayType.kAll);
 
 			// test with Anchor == End, but different LevelInfos!
-			m_SelectionHelper = new DummySelectionHelper(null, m_basicView);
+			m_SelectionHelper = new DummySelectionHelper(null, BasicView);
 			SetSelection(0, 1, 1, 0, 0, 6, 6, true);
 			SetSelection(0, 2, 1, 0, 0, 6, 6, false);
 
 			var vwsel = m_SelectionHelper.SetSelection(true);
 			Assert.IsNotNull(vwsel, "No selection made");
-			Assert.IsTrue(m_basicView.IsSelectionVisible(null), "Selection is not visible");
+			Assert.IsTrue(BasicView.IsSelectionVisible(null), "Selection is not visible");
 
-			var selectionHelper = SelectionHelper.GetSelectionInfo(null, m_basicView);
+			var selectionHelper = SelectionHelper.GetSelectionInfo(null, BasicView);
 			CheckSelectionHelperValues(SelLimitType.Anchor, selectionHelper, 0, 0, 6, 0, false, 2,
 				SimpleRootsiteTestsConstants.kflidDocFootnotes, 0, 1, SimpleRootsiteTestsConstants.kflidTextParas, 1, 0);
 			CheckSelectionHelperValues(SelLimitType.End, selectionHelper, 0, 0, 6, 0, true, 2,
@@ -189,12 +189,12 @@ namespace SIL.FieldWorks.Common.RootSites
 			var vwselFra = MakeSelection(0, 2, 1, 0, 3, 3);
 
 			// first try with anchor in English paragraph
-			vwsel = m_basicView.RootBox.MakeRangeSelection(vwselEng, vwselFra, true);
+			vwsel = BasicView.RootBox.MakeRangeSelection(vwselEng, vwselFra, true);
 			ws = SelectionHelper.GetFirstWsOfSelection(vwsel);
 			Assert.AreEqual(m_wsEng, ws);
 
 			// then with anchor in French paragraph
-			vwsel = m_basicView.RootBox.MakeRangeSelection(vwselFra, vwselEng, true);
+			vwsel = BasicView.RootBox.MakeRangeSelection(vwselFra, vwselEng, true);
 			ws = SelectionHelper.GetFirstWsOfSelection(vwsel);
 			Assert.AreEqual(m_wsEng, ws);
 		}
@@ -217,7 +217,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			ShowForm(Lng.Mixed, DisplayType.kAll);
 
 			MakeSelection(0, 0, 0, 0, 3, 3);
-			var helper = SelectionHelper.Create(m_basicView);
+			var helper = SelectionHelper.Create(BasicView);
 			helper.AssocPrev = true;
 			var ws = SelectionHelper.GetWsOfEntireSelection(helper.Selection);
 			Assert.AreEqual(m_wsEng, ws);
@@ -232,7 +232,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			ShowForm(Lng.Mixed, DisplayType.kAll);
 
 			var vwsel = MakeSelection(0, 0, 0, 0, 3, 3);
-			var helper = SelectionHelper.Create(m_basicView);
+			var helper = SelectionHelper.Create(BasicView);
 			helper.AssocPrev = false;
 			vwsel = helper.SetSelection(false);
 			var ws = SelectionHelper.GetWsOfEntireSelection(vwsel);
@@ -256,9 +256,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		#region ReduceSelectionToIp tests
 
 		/// <summary>
-		/// Tests the <see cref="SelectionHelper.ReduceSelectionToIp(
-		/// SelLimitType, bool, bool)">
-		/// SelectionHelper.ReduceSelectionToIp</see> method.
+		/// SelectionHelper.ReduceSelectionToIp method.
 		/// </summary>
 		[Test]
 		public void ReduceSelectionToIp()
@@ -268,25 +266,25 @@ namespace SIL.FieldWorks.Common.RootSites
 			// Selection in one paragraph
 			// Reduce to the end
 			var vwsel = MakeSelection(0, 0, 0, 0, 0, 3);
-			var selHelper = SelectionHelper.ReduceSelectionToIp(m_basicView, SelLimitType.End, true);
+			var selHelper = SelectionHelper.ReduceSelectionToIp(BasicView, SelLimitType.End, true);
 			Assert.AreEqual(3, selHelper.IchAnchor);
 			AssertSameAnchorAndEnd(selHelper);
 
 			// Reduce to the anchor
 			MakeSelection(0, 0, 0, 0, 0, 3);
-			selHelper = SelectionHelper.ReduceSelectionToIp(m_basicView, SelLimitType.Anchor, true);
+			selHelper = SelectionHelper.ReduceSelectionToIp(BasicView, SelLimitType.Anchor, true);
 			Assert.AreEqual(0, selHelper.IchAnchor);
 			AssertSameAnchorAndEnd(selHelper);
 
 			// Reduce to the top (same as anchor)
 			MakeSelection(0, 0, 0, 0, 0, 3);
-			selHelper = SelectionHelper.ReduceSelectionToIp(m_basicView, SelLimitType.Top, true);
+			selHelper = SelectionHelper.ReduceSelectionToIp(BasicView, SelLimitType.Top, true);
 			Assert.AreEqual(0, selHelper.IchAnchor);
 			AssertSameAnchorAndEnd(selHelper);
 
 			// Reduce to the bottom (same as end)
 			MakeSelection(0, 0, 0, 0, 0, 3);
-			selHelper = SelectionHelper.ReduceSelectionToIp(m_basicView, SelLimitType.Bottom, true);
+			selHelper = SelectionHelper.ReduceSelectionToIp(BasicView, SelLimitType.Bottom, true);
 			Assert.AreEqual(3, selHelper.IchAnchor);
 			AssertSameAnchorAndEnd(selHelper);
 
@@ -295,51 +293,51 @@ namespace SIL.FieldWorks.Common.RootSites
 			var vwselFra = MakeSelection(0, 2, 1, 0, 3, 3);
 
 			// Reduce to the anchor
-			m_basicView.RootBox.MakeRangeSelection(vwselEng, vwselFra, true);
-			selHelper = SelectionHelper.ReduceSelectionToIp(m_basicView, SelLimitType.Anchor, true);
+			BasicView.RootBox.MakeRangeSelection(vwselEng, vwselFra, true);
+			selHelper = SelectionHelper.ReduceSelectionToIp(BasicView, SelLimitType.Anchor, true);
 			Assert.AreEqual(0, selHelper.IchAnchor);
 			AssertSameAnchorAndEnd(selHelper);
 
 			// Reduce to the end
-			m_basicView.RootBox.MakeRangeSelection(vwselEng, vwselFra, true);
-			selHelper = SelectionHelper.ReduceSelectionToIp(m_basicView, SelLimitType.End, true);
+			BasicView.RootBox.MakeRangeSelection(vwselEng, vwselFra, true);
+			selHelper = SelectionHelper.ReduceSelectionToIp(BasicView, SelLimitType.End, true);
 			Assert.AreEqual(3, selHelper.IchAnchor);
 			AssertSameAnchorAndEnd(selHelper);
 
 			// Reduce to the top
-			m_basicView.RootBox.MakeRangeSelection(vwselEng, vwselFra, true);
-			selHelper = SelectionHelper.ReduceSelectionToIp(m_basicView, SelLimitType.Top, true);
+			BasicView.RootBox.MakeRangeSelection(vwselEng, vwselFra, true);
+			selHelper = SelectionHelper.ReduceSelectionToIp(BasicView, SelLimitType.Top, true);
 			Assert.AreEqual(0, selHelper.IchAnchor);
 			AssertSameAnchorAndEnd(selHelper);
 
 			// Reduce to the bottom
-			m_basicView.RootBox.MakeRangeSelection(vwselEng, vwselFra, true);
-			selHelper = SelectionHelper.ReduceSelectionToIp(m_basicView, SelLimitType.Bottom, true);
+			BasicView.RootBox.MakeRangeSelection(vwselEng, vwselFra, true);
+			selHelper = SelectionHelper.ReduceSelectionToIp(BasicView, SelLimitType.Bottom, true);
 			Assert.AreEqual(3, selHelper.IchAnchor);
 			AssertSameAnchorAndEnd(selHelper);
 
 			// now test with reverse selection made from bottom to top
 			// Reduce to the anchor
-			m_basicView.RootBox.MakeRangeSelection(vwselFra, vwselEng, true);
-			selHelper = SelectionHelper.ReduceSelectionToIp(m_basicView, SelLimitType.Anchor, true);
+			BasicView.RootBox.MakeRangeSelection(vwselFra, vwselEng, true);
+			selHelper = SelectionHelper.ReduceSelectionToIp(BasicView, SelLimitType.Anchor, true);
 			Assert.AreEqual(3, selHelper.IchAnchor);
 			AssertSameAnchorAndEnd(selHelper);
 
 			// Reduce to the end
-			m_basicView.RootBox.MakeRangeSelection(vwselFra, vwselEng, true);
-			selHelper = SelectionHelper.ReduceSelectionToIp(m_basicView, SelLimitType.End, true);
+			BasicView.RootBox.MakeRangeSelection(vwselFra, vwselEng, true);
+			selHelper = SelectionHelper.ReduceSelectionToIp(BasicView, SelLimitType.End, true);
 			Assert.AreEqual(0, selHelper.IchAnchor);
 			AssertSameAnchorAndEnd(selHelper);
 
 			// Reduce to the top
-			m_basicView.RootBox.MakeRangeSelection(vwselFra, vwselEng, true);
-			selHelper = SelectionHelper.ReduceSelectionToIp(m_basicView, SelLimitType.Top, true);
+			BasicView.RootBox.MakeRangeSelection(vwselFra, vwselEng, true);
+			selHelper = SelectionHelper.ReduceSelectionToIp(BasicView, SelLimitType.Top, true);
 			Assert.AreEqual(0, selHelper.IchAnchor);
 			AssertSameAnchorAndEnd(selHelper);
 
 			// Reduce to the bottom
-			m_basicView.RootBox.MakeRangeSelection(vwselFra, vwselEng, true);
-			selHelper = SelectionHelper.ReduceSelectionToIp(m_basicView, SelLimitType.Bottom, true);
+			BasicView.RootBox.MakeRangeSelection(vwselFra, vwselEng, true);
+			selHelper = SelectionHelper.ReduceSelectionToIp(BasicView, SelLimitType.Bottom, true);
 			Assert.AreEqual(3, selHelper.IchAnchor);
 			AssertSameAnchorAndEnd(selHelper);
 		}
@@ -357,18 +355,18 @@ namespace SIL.FieldWorks.Common.RootSites
 			// Test preparations
 			ShowForm(Lng.English | Lng.Empty, DisplayType.kAll);
 			MakeSelection(0, 0, 0, 0, 0, 0);
-			var oriSelection = DummySelectionHelper.Create(m_basicView);
+			var oriSelection = DummySelectionHelper.Create(BasicView);
 			var dyIpTopOri = oriSelection.IPTopY;
 
 			// scroll somewhere else and then restore the previous selection
-			m_basicView.ScrollToEnd();
+			BasicView.ScrollToEnd();
 			var fRet = oriSelection.RestoreSelectionAndScrollPos();
 
 			// Verify results
-			var newSelection = new DummySelectionHelper(null, m_basicView);
+			var newSelection = new DummySelectionHelper(null, BasicView);
 			Assert.IsTrue(fRet);
 			Assert.AreEqual(dyIpTopOri, newSelection.IPTopY);
-			Assert.AreEqual(0, m_basicView.ScrollPosition.Y);
+			Assert.AreEqual(0, BasicView.ScrollPosition.Y);
 		}
 
 		/// <summary>
@@ -383,19 +381,19 @@ namespace SIL.FieldWorks.Common.RootSites
 			MakeSelection(0, 3, 1, 0, 2, 2);
 
 			// remember position within window
-			var oriSelection = DummySelectionHelper.Create(m_basicView);
+			var oriSelection = DummySelectionHelper.Create(BasicView);
 			var dyIpTopOri = oriSelection.IPTopY;
-			var yScrollOri = m_basicView.ScrollPosition.Y;
+			var yScrollOri = BasicView.ScrollPosition.Y;
 
 			// scroll somewhere else and then restore the previous selection
-			m_basicView.ScrollToEnd();
+			BasicView.ScrollToEnd();
 			var fRet = oriSelection.RestoreSelectionAndScrollPos();
 
 			// Verify results
-			var newSelection = DummySelectionHelper.Create(m_basicView);
+			var newSelection = DummySelectionHelper.Create(BasicView);
 			Assert.IsTrue(fRet);
 			Assert.AreEqual(dyIpTopOri, newSelection.IPTopY);
-			Assert.AreEqual(yScrollOri, m_basicView.ScrollPosition.Y);
+			Assert.AreEqual(yScrollOri, BasicView.ScrollPosition.Y);
 		}
 
 		/// <summary>
@@ -407,23 +405,23 @@ namespace SIL.FieldWorks.Common.RootSites
 		{
 			// Test preparations
 			ShowForm(Lng.English | Lng.Empty, DisplayType.kAll);
-			m_basicView.CallOnMouseDown(new MouseEventArgs(MouseButtons.Left, 1, 10, m_basicView.ClientRectangle.Height, 0));
-			m_basicView.ScrollSelectionIntoView(null, VwScrollSelOpts.kssoNearTop);
-			var oriSelection = DummySelectionHelper.Create(m_basicView);
+			BasicView.CallOnMouseDown(new MouseEventArgs(MouseButtons.Left, 1, 10, BasicView.ClientRectangle.Height, 0));
+			BasicView.ScrollSelectionIntoView(null, VwScrollSelOpts.kssoNearTop);
+			var oriSelection = DummySelectionHelper.Create(BasicView);
 
 			// remember position within window
 			var dyIpTopOri = oriSelection.IPTopY;
-			var yScrollOri = m_basicView.ScrollPosition.Y;
+			var yScrollOri = BasicView.ScrollPosition.Y;
 
 			// scroll somewhere else and then restore the previous selection
-			m_basicView.ScrollToEnd();
+			BasicView.ScrollToEnd();
 			var fRet = oriSelection.RestoreSelectionAndScrollPos();
 
 			// Verify results
-			var newSelection = new DummySelectionHelper(null, m_basicView);
+			var newSelection = new DummySelectionHelper(null, BasicView);
 			Assert.IsTrue(fRet);
 			Assert.AreEqual(dyIpTopOri, newSelection.IPTopY);
-			Assert.AreEqual(yScrollOri, m_basicView.ScrollPosition.Y);
+			Assert.AreEqual(yScrollOri, BasicView.ScrollPosition.Y);
 		}
 		#endregion
 
@@ -436,10 +434,10 @@ namespace SIL.FieldWorks.Common.RootSites
 		{
 			// Setup
 			ShowForm(Lng.English | Lng.Empty, DisplayType.kAll);
-			m_SelectionHelper = new DummySelectionHelper(null, m_basicView);
+			m_SelectionHelper = new DummySelectionHelper(null, BasicView);
 			SetSelection(0, 1, 1, 0, 0, anchor, end, true);
 			m_SelectionHelper.SetSelection(true);
-			var selHelper = SelectionHelper.Create(m_basicView);
+			var selHelper = SelectionHelper.Create(BasicView);
 			selHelper.GetIch(SelLimitType.Top);
 
 			// Exercise

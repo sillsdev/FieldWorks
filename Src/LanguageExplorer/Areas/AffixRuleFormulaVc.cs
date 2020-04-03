@@ -14,15 +14,15 @@ using SIL.LCModel.Utils;
 
 namespace LanguageExplorer.Areas
 {
-	internal class AffixRuleFormulaVc : RuleFormulaVcBase
+	internal sealed class AffixRuleFormulaVc : RuleFormulaVcBase
 	{
-		public const int kfragRule = 200;
-		public const int kfragInput = 201;
-		public const int kfragRuleMapping = 202;
-		public const int kfragSpace = 203;
-		public const int ktagLeftEmpty = -300;
-		public const int ktagRightEmpty = -301;
-		public const int ktagIndex = -302;
+		internal const int kfragRule = 200;
+		internal const int kfragInput = 201;
+		internal const int kfragRuleMapping = 202;
+		internal const int kfragSpace = 203;
+		internal const int ktagLeftEmpty = -300;
+		internal const int ktagRightEmpty = -301;
+		internal const int ktagIndex = -302;
 		private IMoAffixProcess m_rule;
 		private readonly ITsTextProps m_headerProps;
 		private readonly ITsTextProps m_arrowProps;
@@ -35,7 +35,7 @@ namespace LanguageExplorer.Areas
 		private readonly ITsString m_doubleArrow;
 		private readonly ITsString m_space;
 
-		public AffixRuleFormulaVc(LcmCache cache, IPropertyTable propertyTable)
+		internal AffixRuleFormulaVc(LcmCache cache, IPropertyTable propertyTable)
 			: base(cache, propertyTable)
 		{
 			var tpb = TsStringUtils.MakePropsBldr();

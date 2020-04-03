@@ -10,16 +10,16 @@ using SIL.LCModel.Utils;
 
 namespace SIL.FieldWorks.Common.RootSites
 {
-	public class DummyRootBox : IVwRootBox
+	internal sealed class DummyRootBox : IVwRootBox
 	{
 		internal ISilDataAccess m_dummyDataAccess = new DummyDataAccess();
 		internal DummyVwSelection m_dummySelection;
 		internal SimpleRootSite m_dummySimpleRootSite;
 
 		// current total text.
-		public string Text = string.Empty;
+		internal string Text = string.Empty;
 
-		public DummyRootBox(SimpleRootSite srs)
+		internal DummyRootBox(SimpleRootSite srs)
 		{
 			m_dummySimpleRootSite = srs;
 			m_dummySelection = new DummyVwSelection(this, 0, 0);
@@ -67,11 +67,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		}
 
 		public void Deserialize(System.Runtime.InteropServices.ComTypes.IStream strm)
-		{
-			throw new NotSupportedException();
-		}
-
-		public void WriteWpx(System.Runtime.InteropServices.ComTypes.IStream strm)
 		{
 			throw new NotSupportedException();
 		}

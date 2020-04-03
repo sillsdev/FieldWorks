@@ -16,13 +16,13 @@ namespace LanguageExplorer.Controls.DetailControls
 	/// <summary>
 	///  View constructor for creating the view details.
 	/// </summary>
-	public class AtomicReferenceVc : FwBaseVc
+	internal class AtomicReferenceVc : FwBaseVc
 	{
 		protected int m_flid;
 		protected string m_displayNameProperty;
 		private string m_textStyle;
 
-		public AtomicReferenceVc(LcmCache cache, int flid, string displayNameProperty)
+		internal AtomicReferenceVc(LcmCache cache, int flid, string displayNameProperty)
 		{
 			Debug.Assert(cache != null);
 			Cache = cache;
@@ -136,7 +136,8 @@ namespace LanguageExplorer.Controls.DetailControls
 		{
 			return vwenv.DataAccess.get_ObjectProp(hvo, m_flid);
 		}
-		public string TextStyle
+
+		internal string TextStyle
 		{
 			get
 			{

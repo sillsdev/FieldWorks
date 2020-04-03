@@ -22,7 +22,7 @@ namespace SIL.FieldWorks.Common.RootSites
 	[Platform(Include = "Linux", Reason = "IbusRootSiteEventHandlerTests_Simple is Linux only")]
 	public class IbusRootSiteEventHandlerTests_Simple : SimpleRootsiteTestsBase<UndoableRealDataCache>
 	{
-		private IbusRootSiteEventHandler Handler => (IbusRootSiteEventHandler)m_basicView.RootSiteEventHandler;
+		private IbusRootSiteEventHandler Handler => (IbusRootSiteEventHandler)BasicView.RootSiteEventHandler;
 
 		public override void FixtureSetup()
 		{
@@ -38,21 +38,21 @@ namespace SIL.FieldWorks.Common.RootSites
 
 		private void ShowThisForm()
 		{
-			m_basicView.MyDisplayType = DisplayType.kNormal;
+			BasicView.MyDisplayType = DisplayType.kNormal;
 
 			// We don't actually want to show it, but we need to force the view to create the root
 			// box and lay it out so that various test stuff can happen properly.
-			m_basicView.Width = 300;
-			m_basicView.Height = 307 - 25;
-			m_basicView.MakeRoot(m_hvoRoot, SimpleRootsiteTestsConstants.kflidTextParas, 3, m_wsFrn);
-			m_basicView.CallLayout();
-			m_basicView.AutoScrollPosition = new Point(0, 0);
-			((SimpleActionHandler)m_cache.GetActionHandler()).RootBox = m_basicView.RootBox;
+			BasicView.Width = 300;
+			BasicView.Height = 307 - 25;
+			BasicView.MakeRoot(m_hvoRoot, SimpleRootsiteTestsConstants.kflidTextParas, 3, m_wsFrn);
+			BasicView.CallLayout();
+			BasicView.AutoScrollPosition = new Point(0, 0);
+			((SimpleActionHandler)m_cache.GetActionHandler()).RootBox = BasicView.RootBox;
 		}
 
 		private void SetSelection(int selectionStart, int selectionEnd)
 		{
-			var selHelper = m_basicView.EditingHelper.CurrentSelection;
+			var selHelper = BasicView.EditingHelper.CurrentSelection;
 			selHelper.IchAnchor = selectionStart;
 			selHelper.IchEnd = selectionEnd;
 			selHelper.SetSelection(true);
@@ -69,9 +69,9 @@ namespace SIL.FieldWorks.Common.RootSites
 			bldr.Replace(bldr.Length, bldr.Length, text, runStyle);
 			m_cache.SetString(hvoPara, SimpleRootsiteTestsConstants.kflidParaContents, bldr.GetString());
 			ShowThisForm();
-			m_basicView.Show();
-			m_basicView.RefreshDisplay();
-			m_basicView.Focus();
+			BasicView.Show();
+			BasicView.RefreshDisplay();
+			BasicView.Focus();
 			return hvoPara;
 		}
 
@@ -107,7 +107,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			Handler.OnUpdatePreeditText(new IBusText(composition), cursorPos);
 
 			// Verify
-			var selHelper = m_basicView.EditingHelper.CurrentSelection;
+			var selHelper = BasicView.EditingHelper.CurrentSelection;
 			Assert.That(GetTextFromView(hvoPara), Is.EqualTo(expectedText));
 			Assert.That(selHelper.IchAnchor, Is.EqualTo(expectedSelectionStart), "SelectionStart");
 			Assert.That(selHelper.IchEnd, Is.EqualTo(expectedSelectionEnd), "SelectionEnd");
@@ -134,7 +134,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			Handler.OnUpdatePreeditText(new IBusText(composition), cursorPos);
 
 			// Verify
-			var selHelper = m_basicView.EditingHelper.CurrentSelection;
+			var selHelper = BasicView.EditingHelper.CurrentSelection;
 			Assert.That(GetTextFromView(hvoPara), Is.EqualTo(expectedText));
 			Assert.That(selHelper.IchAnchor, Is.EqualTo(expectedSelectionStart), "SelectionStart");
 			Assert.That(selHelper.IchEnd, Is.EqualTo(expectedSelectionEnd), "SelectionEnd");
@@ -156,7 +156,7 @@ namespace SIL.FieldWorks.Common.RootSites
 
 			// Verify
 			Assert.That(ret, Is.EqualTo(expectedRetVal));
-			var selHelper = m_basicView.EditingHelper.CurrentSelection;
+			var selHelper = BasicView.EditingHelper.CurrentSelection;
 			Assert.That(GetTextFromView(hvoPara), Is.EqualTo(expectedText));
 			Assert.That(selHelper.IchAnchor, Is.EqualTo(expectedSelStart), "SelectionStart");
 			Assert.That(selHelper.IchEnd, Is.EqualTo(expectedSelEnd), "SelectionEnd");
@@ -187,7 +187,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			Handler.OnCommitText(new IBusText(commitText));
 
 			// Verify
-			var selHelper = m_basicView.EditingHelper.CurrentSelection;
+			var selHelper = BasicView.EditingHelper.CurrentSelection;
 			Assert.That(GetTextFromView(hvoPara), Is.EqualTo(expectedText));
 			Assert.That(selHelper.IchAnchor, Is.EqualTo(expectedSelectionStart), "SelectionStart");
 			Assert.That(selHelper.IchEnd, Is.EqualTo(expectedSelectionEnd), "SelectionEnd");
@@ -209,7 +209,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			Handler.OnCommitText(new IBusText("\u014B"));
 
 			// Verify
-			var selHelper = m_basicView.EditingHelper.CurrentSelection;
+			var selHelper = BasicView.EditingHelper.CurrentSelection;
 			Assert.That(GetTextFromView(hvoPara), Is.EqualTo("a\u014B"));
 			Assert.That(selHelper.IchAnchor, Is.EqualTo(2), "SelectionStart");
 			Assert.That(selHelper.IchEnd, Is.EqualTo(2), "SelectionEnd");
@@ -236,7 +236,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			Handler.OnCommitText(new IBusText("\u014B"));
 
 			// Verify
-			var selHelper = m_basicView.EditingHelper.CurrentSelection;
+			var selHelper = BasicView.EditingHelper.CurrentSelection;
 			Assert.That(GetTextFromView(hvoPara), Is.EqualTo("a\u014B"));
 			Assert.That(selHelper.IchAnchor, Is.EqualTo(2), "SelectionStart");
 			Assert.That(selHelper.IchEnd, Is.EqualTo(2), "SelectionEnd");
@@ -270,7 +270,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			Handler.OnDeleteSurroundingText(offset, nChars);
 
 			// Verify
-			var selHelper = m_basicView.EditingHelper.CurrentSelection;
+			var selHelper = BasicView.EditingHelper.CurrentSelection;
 			Assert.That(GetTextFromView(hvoPara), Is.EqualTo(expectedText));
 			Assert.That(selHelper.IchAnchor, Is.EqualTo(expectedCursorPos), "SelectionStart");
 			Assert.That(selHelper.IchEnd, Is.EqualTo(expectedCursorPos), "SelectionEnd");
@@ -290,7 +290,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			Handler.Reset();
 
 			// Verify
-			var selHelper = m_basicView.EditingHelper.CurrentSelection;
+			var selHelper = BasicView.EditingHelper.CurrentSelection;
 			Assert.That(GetTextFromView(hvoPara), Is.EqualTo("b"));
 			Assert.That(selHelper.IchAnchor, Is.EqualTo(selStart), "SelectionStart");
 			Assert.That(selHelper.IchEnd, Is.EqualTo(selEnd), "SelectionEnd");

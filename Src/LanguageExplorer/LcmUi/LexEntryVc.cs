@@ -17,7 +17,7 @@ namespace LanguageExplorer.LcmUi
 	/// Override to support kfragHeadword with a properly live display of the headword.
 	/// Also, the default of displaying the vernacular writing system can be overridden.
 	/// </summary>
-	public class LexEntryVc : CmVernObjectVc
+	internal sealed class LexEntryVc : CmVernObjectVc
 	{
 		/// <summary>
 		/// arbitrary.
@@ -26,21 +26,21 @@ namespace LanguageExplorer.LcmUi
 		/// <summary>
 		/// use with WfiMorphBundle to display the headword with variant info appended.
 		/// </summary>
-		public const int kfragEntryAndVariant = 9544;
+		internal const int kfragEntryAndVariant = 9544;
 		/// <summary>
 		/// use with EntryRef to display the variant type info
 		/// </summary>
-		public const int kfragVariantTypes = 9545;
+		internal const int kfragVariantTypes = 9545;
 		private int m_wsActual;
 
 		/// <summary />
-		public LexEntryVc(LcmCache cache)
+		internal LexEntryVc(LcmCache cache)
 			: base(cache)
 		{
 			WritingSystemCode = cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Handle;
 		}
 
-		public int WritingSystemCode { get; set; }
+		internal int WritingSystemCode { get; set; }
 
 		/// <summary>
 		/// Display a view of the LexEntry (or fragment thereof).
@@ -210,7 +210,7 @@ namespace LanguageExplorer.LcmUi
 		}
 
 		/// <summary />
-		public static ITsString GetLexEntryTss(LcmCache cache, int hvoEntryToDisplay, int wsVern, ILexEntryRef ler)
+		internal static ITsString GetLexEntryTss(LcmCache cache, int hvoEntryToDisplay, int wsVern, ILexEntryRef ler)
 		{
 			var vcEntry = new LexEntryVc(cache) { WritingSystemCode = wsVern };
 			var collector = new TsStringCollectorEnv(null, cache.MainCacheAccessor, hvoEntryToDisplay)

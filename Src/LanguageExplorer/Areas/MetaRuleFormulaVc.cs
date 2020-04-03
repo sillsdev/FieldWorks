@@ -13,13 +13,13 @@ using SIL.LCModel.Utils;
 
 namespace LanguageExplorer.Areas
 {
-	internal class MetaRuleFormulaVc : RuleFormulaVcBase
+	internal sealed class MetaRuleFormulaVc : RuleFormulaVcBase
 	{
-		public const int kfragRule = 200;
-		public const int ktagLeftEnv = -300;
-		public const int ktagRightEnv = -301;
-		public const int ktagLeftSwitch = -302;
-		public const int ktagRightSwitch = -303;
+		internal const int kfragRule = 200;
+		internal const int ktagLeftEnv = -300;
+		internal const int ktagRightEnv = -301;
+		internal const int ktagLeftSwitch = -302;
+		internal const int ktagRightSwitch = -303;
 		private readonly ITsTextProps m_inputCtxtProps;
 		private readonly ITsTextProps m_resultCtxtProps;
 		private readonly ITsTextProps m_colHeaderProps;
@@ -31,7 +31,7 @@ namespace LanguageExplorer.Areas
 		private readonly ITsString m_switchStr;
 		private IPhMetathesisRule m_rule;
 
-		public MetaRuleFormulaVc(LcmCache cache, IPropertyTable propertyTable)
+		internal MetaRuleFormulaVc(LcmCache cache, IPropertyTable propertyTable)
 			: base(cache, propertyTable)
 		{
 			var tpb = TsStringUtils.MakePropsBldr();

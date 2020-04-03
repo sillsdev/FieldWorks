@@ -22,7 +22,7 @@ namespace SIL.FieldWorks.Common.RootSites
 	/// <see cref="DummyBasicView">DummyBasicView</see> view to perform tests.
 	/// </summary>
 	[TestFixture]
-	public class MoreRootSiteTests : RootsiteBasicViewTestsBase
+	internal class MoreRootSiteTests : RootsiteBasicViewTestsBase
 	{
 		/// <summary />
 		public override void FixtureSetup()
@@ -854,8 +854,10 @@ namespace SIL.FieldWorks.Common.RootSites
 			ShowForm(TestLanguages.English, DisplayType.kNormal);
 			var mockedSelection = MockRepository.GenerateMock<IVwSelection>();
 			mockedSelection.Expect(s => s.IsValid).Return(true);
-			var changeInfo = new VwChangeInfo();
-			changeInfo.hvo = 0;
+			var changeInfo = new VwChangeInfo
+			{
+				hvo = 0
+			};
 			mockedSelection.Expect(s => s.CompleteEdits(out changeInfo)).IgnoreArguments().Return(true);
 			mockedSelection.Expect(s => s.CLevels(true)).Return(2);
 			mockedSelection.Expect(s => s.CLevels(false)).Return(2);
@@ -864,7 +866,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			mockedSelection.Expect(s => s.EndBeforeAnchor).Return(false);
 
 			var editingHelper = (DummyEditingHelper)m_basicView.EditingHelper;
-			editingHelper.m_mockedSelection = (IVwSelection)mockedSelection;
+			editingHelper.m_mockedSelection = mockedSelection;
 			editingHelper.m_fOverrideGetParaPropStores = true;
 			Assert.IsTrue(m_basicView.GetParagraphProps(out _, out _, out var tagText, out _, out _, out _, out var vttp));
 			Assert.AreEqual(CmPictureTags.kflidCaption, tagText);

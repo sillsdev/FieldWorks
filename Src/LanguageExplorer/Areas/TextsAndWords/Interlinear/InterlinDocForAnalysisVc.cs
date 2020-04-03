@@ -13,11 +13,11 @@ using SIL.LCModel.DomainServices;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 {
-	internal class InterlinDocForAnalysisVc : InterlinVc
+	internal sealed class InterlinDocForAnalysisVc : InterlinVc
 	{
 		private AnalysisOccurrence m_focusBoxOccurrence;
 
-		public InterlinDocForAnalysisVc(LcmCache cache)
+		internal InterlinDocForAnalysisVc(LcmCache cache)
 			: base(cache)
 		{
 			FocusBoxSize = new Size(100000, 50000); // If FocusBoxAnnotation is set, this gives the size of box to make. (millipoints)

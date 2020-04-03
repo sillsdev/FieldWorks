@@ -12,9 +12,9 @@ namespace LanguageExplorer.LcmUi
 	/// <summary>
 	/// Special VC for classes that should display in the default vernacular writing system.
 	/// </summary>
-	public class CmVernObjectVc : FwBaseVc
+	internal class CmVernObjectVc : FwBaseVc
 	{
-		public CmVernObjectVc(LcmCache cache)
+		internal CmVernObjectVc(LcmCache cache)
 		{
 			Cache = cache;
 		}

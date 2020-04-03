@@ -13,32 +13,32 @@ namespace SIL.FieldWorks.Common.RootSites
 	/// </summary>
 	internal sealed class CharEnumeratorForByteArray : IEnumerable<char>
 	{
-		private readonly byte[] m_data;
+		private readonly byte[] _data;
 
 		/// <summary />
 		internal CharEnumeratorForByteArray(byte[] data)
 		{
 			Guard.AgainstNull(data, nameof(data));
 
-			m_data = data;
+			_data = data;
 		}
 
 		#region IEnumerable<char> Members
 
 		/// <inheritdoc />
-		public IEnumerator<char> GetEnumerator()
+		IEnumerator<char> IEnumerable<char>.GetEnumerator()
 		{
-			for (var i = 0; i < m_data.Length - 1; i += 2)
+			for (var i = 0; i < _data.Length - 1; i += 2)
 			{
 				// ENHANCE: Need to change the byte order for Mac (or other big-endian) if we
 				// support them
-				yield return (char)(m_data[i] | m_data[i + 1] << 8);
+				yield return (char)(_data[i] | _data[i + 1] << 8);
 			}
 
-			if ((m_data.Length & 1) != 0)
+			if ((_data.Length & 1) != 0)
 			{
 				// We had an odd number of bytes, so return the last byte
-				yield return (char)m_data[m_data.Length - 1];
+				yield return (char)_data[_data.Length - 1];
 			}
 		}
 		#endregion
@@ -48,7 +48,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <inheritdoc />
 		IEnumerator IEnumerable.GetEnumerator()
 		{
-			return GetEnumerator();
+			return ((IEnumerable<char>)this).GetEnumerator();
 		}
 		#endregion
 	}

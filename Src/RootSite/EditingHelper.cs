@@ -3,7 +3,6 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Runtime.InteropServices;
@@ -50,7 +49,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		protected SelectionHelper m_currentSelection;
 
 		/// <summary>Event for changing properties of a pasted TsString</summary>
-		public event FwPasteFixTssEventHandler PasteFixTssEvent;
+		internal event FwPasteFixTssEventHandler PasteFixTssEvent;
 
 		private int _lastWritingSystemProcessed = int.MinValue;
 
@@ -66,7 +65,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		}
 
 		/// <summary />
-		public EditingHelper(IEditingCallbacks callbacks)
+		internal EditingHelper(IEditingCallbacks callbacks)
 		{
 			m_callbacks = callbacks;
 			Control = callbacks as UserControl;
@@ -146,28 +145,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		}
 
 		#region Writing system methods
-		/// <summary>
-		/// Get in the vector the list of writing system identifiers currently installed in the
-		/// writing system factory for the current root box. The current writing system for the
-		/// selection is duplicated as the first item in the array (this causes it to be found
-		/// first in searches).
-		/// </summary>
-		public List<int> GetWsList(out ILgWritingSystemFactory wsf)
-		{
-			// Get the writing system factory associated with the root box.
-			wsf = WritingSystemFactory;
-			var cws = wsf.NumberOfWs;
-			if (cws == 0)
-			{
-				return null;
-			}
-			using (var ptr = MarshalEx.ArrayToNative<int>(cws))
-			{
-				wsf.GetWritingSystems(ptr, cws);
-				var vwsT = MarshalEx.NativeToArray<int>(ptr, cws);
-				return cws == 1 && vwsT[0] == 0 ? null : new List<int>(vwsT);
-			}
-		}
 
 		/// <summary>
 		/// Set the writing system of the current selection.
@@ -701,7 +678,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			{
 				chw &= 0xffff; // OnExtendedKey only expects chw to contain the key info not the modifer info
 			}
-			if (Callbacks == null || Callbacks.EditedRootBox == null)
+			if (Callbacks?.EditedRootBox == null)
 			{
 				return false;
 			}
@@ -833,7 +810,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <summary>
 		/// Gets callbacks object.
 		/// </summary>
-		public IEditingCallbacks Callbacks => m_callbacks;
+		internal IEditingCallbacks Callbacks => m_callbacks;
 
 		/// <summary>
 		/// Gets control associated with callback object.
@@ -1026,43 +1003,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		#endregion
 
 		#region Style related methods
-		/// <summary>
-		/// If the current selection contains one run with a character style or multiple runs
-		/// with the same character style this method returns the character style; otherwise
-		/// returns the paragraph style unless multiple paragraphs are selected that have
-		/// different paragraph styles.
-		/// </summary>
-		/// <param name="styleName">Gets the styleName</param>
-		/// <returns>The styleType or -1 if no style type can be found or multiple style types
-		/// are in the selection.  Otherwise returns the styletype</returns>
-		public virtual int GetStyleNameFromSelection(out string styleName)
-		{
-			try
-			{
-				IVwSelection vwsel = null;
-				if (Callbacks?.EditedRootBox != null)
-				{
-					vwsel = Callbacks.EditedRootBox.Selection;
-				}
-				if (vwsel == null)
-				{
-					styleName = string.Empty;
-					return -1;
-				}
-				styleName = GetCharStyleNameFromSelection(vwsel);
-				if (!string.IsNullOrEmpty(styleName))
-				{
-					return (int)StyleType.kstCharacter;
-				}
-				styleName = GetParaStyleNameFromSelection();
-				return styleName != null ? (int)StyleType.kstParagraph : -1;
-			}
-			catch
-			{
-				styleName = string.Empty;
-				return -1;
-			}
-		}
 
 		/// <summary>
 		/// Gets the paragraph style name from the selection
@@ -2403,7 +2343,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <returns><c>true</c> if deleting was successful, otherwise <c>false</c>.</returns>
 		public void DeleteSelection()
 		{
-			if (Control == null || m_callbacks == null || m_callbacks.EditedRootBox == null || !m_callbacks.GotCacheOrWs)
+			if (Control == null || m_callbacks?.EditedRootBox == null || !m_callbacks.GotCacheOrWs)
 			{
 				return;
 			}
@@ -2578,7 +2518,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			}
 			catch (Exception e)
 			{
-				if (e is COMException && (uint)((COMException)e).ErrorCode == 0x80004005) // E_FAIL
+				if (e is COMException comException && (uint)comException.ErrorCode == 0x80004005) // E_FAIL
 				{
 					FwUtils.FwUtils.ErrorBeep();
 					return false;
@@ -2702,7 +2642,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <returns>true if we are in an editable location</returns>
 		public virtual bool CanEdit()
 		{
-			return Callbacks != null && Callbacks.EditedRootBox != null && CanEdit(Callbacks.EditedRootBox.Selection);
+			return Callbacks?.EditedRootBox != null && CanEdit(Callbacks.EditedRootBox.Selection);
 		}
 
 		/// <summary />
@@ -2754,7 +2694,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// </summary>
 		public void SelectAll()
 		{
-			if (m_callbacks == null || m_callbacks.EditedRootBox == null || !m_callbacks.GotCacheOrWs || Control == null)
+			if (m_callbacks?.EditedRootBox == null || !m_callbacks.GotCacheOrWs || Control == null)
 			{
 				return;
 			}
@@ -2789,7 +2729,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <returns>
 		/// 	an indication of how the paste should be handled.
 		/// </returns>
-		public virtual PasteStatus DeterminePasteWs(ILgWritingSystemFactory wsf, out int destWs)
+		internal virtual PasteStatus DeterminePasteWs(ILgWritingSystemFactory wsf, out int destWs)
 		{
 			destWs = -1;
 			return PasteStatus.PreserveWs;

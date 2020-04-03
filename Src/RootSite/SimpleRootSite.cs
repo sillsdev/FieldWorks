@@ -31,13 +31,13 @@ namespace SIL.FieldWorks.Common.RootSites
 	/// <summary>
 	/// Base class for hosting a view in an application.
 	/// </summary>
-	public class SimpleRootSite : UserControl, IVwRootSite, IRootSite, IFlexComponent, IEditingCallbacks, IReceiveSequentialMessages, IMessageFilter
+	internal class SimpleRootSite : UserControl, IVwRootSite, IRootSite, IFlexComponent, IEditingCallbacks, IReceiveSequentialMessages, IMessageFilter
 	{
 		/// <summary>
 		/// This event notifies you that the right mouse button was clicked,
 		/// and gives you the click location, and the selection at that point.
 		/// </summary>
-		public event FwRightMouseClickEventHandler RightMouseClickedEvent;
+		internal event FwRightMouseClickEventHandler RightMouseClickedEvent;
 
 		/// <summary>This event gets fired when the AutoScrollPosition value changes</summary>
 		public event ScrollPositionChanged VerticalScrollPositionChanged;
@@ -45,7 +45,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		#region Member variables
 		/// <summary>Value for the available width to tell the view that we want to do a
 		/// layout</summary>
-		public const int kForceLayout = -50000;
+		internal const int kForceLayout = -50000;
 		/// <summary>Tag we use for user prompts</summary>
 		/// <remarks>The process for setting up a user prompt has several aspects.
 		/// 1. When displaying the property, if it is empty, call vwenv.AddProp(SimpleRootSite.kTagUserPrompt, this, frag);
@@ -70,12 +70,12 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// and extend the selection to the whole property. The selection should not be extended while an IME composition
 		/// is in progress, since the user prompt is about to be replaced by the real property.
 		/// </remarks>
-		public const int kTagUserPrompt = 1000000001;
+		internal const int kTagUserPrompt = 1000000001;
 
 		/// <summary>Property for indicating user prompt strings.
 		/// This is an arbitrary number above 10,000.  Property numbers above 10,000 are
 		/// "user-defined" and will be ignored by the property store.</summary>
-		public const int ktptUserPrompt = 10537;
+		internal const int ktptUserPrompt = 10537;
 
 		/// <summary>If 0 we allow OnPaint to execute, if non-zero we don't perform OnPaint.
 		/// This is used to prevent redraws from happening while we do a RefreshDisplay.
@@ -163,14 +163,13 @@ namespace SIL.FieldWorks.Common.RootSites
 		//HWND m_hwndExtLinkTool;
 
 		private Timer m_Timer;
-		private int m_nHorizMargin = 2;
 
 		/// <summary>The style sheet</summary>
 		protected IVwStylesheet m_styleSheet;
 		/// <summary>
 		/// Supports the LayoutSizeChanged event by maintaining a list of who wants it.
 		/// </summary>
-		public event EventHandler LayoutSizeChanged;
+		internal event EventHandler LayoutSizeChanged;
 		/// <summary>
 		/// Flag used to prevent mouse move events from entering CallMouseMoveDrag multiple
 		/// times before prior ones have exited.  Otherwise we get lines displayed multiple
@@ -203,20 +202,20 @@ namespace SIL.FieldWorks.Common.RootSites
 		private ISubscriber m_subscriber;
 
 		/// <summary />
-		protected bool IsVertical => m_orientationManager.IsVertical;
+		protected bool IsVertical => OrientationManager.IsVertical;
 
 		/// <summary>
 		/// We suppress MouseMove when a paint is pending, since we don't want mousemoved to ask
 		/// about a lazy box under the cursor and start expanding things; this can lead to recursive
 		/// calls to paint, and hence to recursive calls to expand, and all kinds of pain (e.g., FWR-3103).
 		/// </summary>
-		public bool MouseMoveSuppressed { get; private set; }
+		internal bool MouseMoveSuppressed { get; private set; }
 
 		#endregion
 
 		#region Constructor, Dispose, Designer generated code
 		/// <inheritdoc />
-		public SimpleRootSite()
+		internal SimpleRootSite()
 		{
 			// This call is required by the Windows.Forms Form Designer.
 			InitializeComponent();
@@ -266,7 +265,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// classes as needed.
 		/// </summary>
 		/// <returns></returns>
-		protected virtual OrientationManager CreateOrientationManager()
+		private OrientationManager CreateOrientationManager()
 		{
 			return new OrientationManager(this);
 		}
@@ -394,18 +393,28 @@ namespace SIL.FieldWorks.Common.RootSites
 		#endregion
 
 		#region Properties
+
+		/// <summary>
+		/// Gets the (estimated) height of one line in pixels
+		/// </summary>
+		/// <remarks>
+		/// Should we use the selection text properties and stylesheet to get a more specific value?
+		/// (font height + 4pt?)
+		/// </remarks>
+		internal int LineHeight => (int)(14 * Math.Ceiling(Dpi.Y / (float)72));
+
 		/// <summary>
 		/// Gets an image that can be used to represent graphically an image that cannot be
 		/// found (similar to what IE does).
 		/// </summary>
-		public static Bitmap ImageNotFoundX => Properties.Resources.ImageNotFoundX;
+		internal static Bitmap ImageNotFoundX => Properties.Resources.ImageNotFoundX;
 
 		/// <summary>
 		/// Creates the graphics manager.
 		/// </summary>
 		/// <remarks>We do this in a method for testing.</remarks>
 		/// <returns>A new graphics manager.</returns>
-		protected virtual GraphicsManager CreateGraphicsManager()
+		private GraphicsManager CreateGraphicsManager()
 		{
 			return new GraphicsManager(this);
 		}
@@ -424,7 +433,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <summary>
 		/// Gets/sets whether or not to show range selections when focus is lost
 		/// </summary>
-		public virtual bool ShowRangeSelAfterLostFocus
+		internal virtual bool ShowRangeSelAfterLostFocus
 		{
 			get => m_fShowRangeSelAfterLostFocus;
 			set
@@ -440,7 +449,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <summary>
 		/// Gets/sets whether or not this is a "TextBox" (possibly embedded in a "ComboBox").
 		/// </summary>
-		public bool IsTextBox
+		internal bool IsTextBox
 		{
 			get => m_fIsTextBox;
 			set
@@ -459,23 +468,19 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// effect it becomes a vertical margin when displaying vertical text.
 		/// </summary>
 		[DefaultValue(2)]
-		protected internal virtual int HorizMargin
-		{
-			get => m_nHorizMargin;
-			set => m_nHorizMargin = value;
-		}
+		protected internal virtual int HorizMargin { get; set; } = 2;
 
 		/// <summary>
 		/// The paragraph style name for the current selection.
 		/// </summary>
 		[Browsable(false)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-		public virtual string CurrentParagraphStyle => DesignMode ? string.Empty : EditingHelper.GetParaStyleNameFromSelection();
+		internal virtual string CurrentParagraphStyle => DesignMode ? string.Empty : EditingHelper.GetParaStyleNameFromSelection();
 
 		/// <summary />
 		[Browsable(false)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-		public virtual bool AllowLayout
+		internal virtual bool AllowLayout
 		{
 			get => m_fAllowLayout;
 			set
@@ -507,19 +512,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <param name="selProps">The selection properties.</param>
 		public virtual void RequestSelectionAtEndOfUow(IVwRootBox rootb, int ihvoRoot, int cvlsi, SelLevInfo[] rgvsli,
 			int tagTextProp, int cpropPrevious, int ich, int wsAlt, bool fAssocPrev, ITsTextProps selProps)
-		{
-			throw new NotSupportedException("Method RequestSelectionAtEndOfUow is not supported in the base class.");
-		}
-
-		/// <summary>
-		/// If we need to make a selection, but we can't because edits haven't been updated in
-		/// the view, this method requests creation of a selection after the unit of work is
-		/// complete. It will also scroll the selection into view.
-		/// Derived classes should implement this if they have any hope of supporting multi-
-		/// paragraph editing.
-		/// </summary>
-		/// <param name="helper">The selection to restore</param>
-		public virtual void RequestVisibleSelectionAtEndOfUow(SelectionHelper helper)
 		{
 			throw new NotSupportedException("Method RequestSelectionAtEndOfUow is not supported in the base class.");
 		}
@@ -600,7 +592,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// If you call this before m_rootb is set (e.g., during an override of MakeRoot) and
 		/// set it to false, consider setting MaxParasToScan to zero on the root box.
 		/// </summary>
-		public bool ReadOnlyView
+		internal bool ReadOnlyView
 		{
 			get => !EditingHelper.Editable;
 			set
@@ -641,7 +633,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <summary>
 		/// Indicates that we expect the view to have an editable field.
 		/// </summary>
-		internal bool IsEditable => !ReadOnlyView;
+		internal virtual bool IsEditable => !ReadOnlyView;
 
 		/// <summary>
 		/// Gets or sets the zoom multiplier that magnifies (or shrinks) the view.
@@ -675,7 +667,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// Gets the data access (corresponds to a DB connection) for the rootbox of this
 		/// rootsite.
 		/// </summary>
-		public virtual ISilDataAccess DataAccess => RootBox?.DataAccess;
+		internal virtual ISilDataAccess DataAccess => RootBox?.DataAccess;
 
 		/// <summary>
 		/// Helper used for processing editing requests.
@@ -716,7 +708,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <summary>
 		/// Usually Cursors.IBeam; overridden in vertical windows.
 		/// </summary>
-		internal Cursor IBeamCursor => m_orientationManager.IBeamCursor;
+		internal Cursor IBeamCursor => OrientationManager.IBeamCursor;
 		#endregion // Properties
 
 		#region Implementation of IVwRootSite
@@ -783,7 +775,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			var top = MapYTo(ysTop, rcSrcRoot, rcDstRoot);
 			var right = MapXTo(xsLeft + xsWidth, rcSrcRoot, rcDstRoot);
 			var bottom = MapYTo(ysTop + ysHeight, rcSrcRoot, rcDstRoot);
-			CallInvalidateRect(m_orientationManager.RotateRectDstToPaint(new Rectangle(left, top, right - left, bottom - top)), true);
+			CallInvalidateRect(OrientationManager.RotateRectDstToPaint(new Rectangle(left, top, right - left, bottom - top)), true);
 		}
 
 		/// <summary>
@@ -1137,11 +1129,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		}
 
 		/// <summary>
-		/// We want to allow clients to tell whether we are showing the horizontal scroll bar.
-		/// </summary>
-		public bool IsHScrollVisible => WantHScroll && AutoScrollMinSize.Width > Width;
-
-		/// <summary>
 		/// Root site slaves sometimes need to suppress the effects of OnSizeChanged.
 		/// </summary>
 		public virtual bool SizeChangedSuppression
@@ -1257,15 +1244,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		}
 
 		/// <summary>
-		/// Gets the (estimated) height of one line in pixels
-		/// </summary>
-		/// <remarks>
-		/// Should we use the selection text properties and stylesheet to get a more specific value?
-		/// (font height + 4pt?)
-		/// </remarks>
-		public int LineHeight => (int)(14 * Math.Ceiling(Dpi.Y / (float)72));
-
-		/// <summary>
 		/// Return an indication of the behavior of some of the special keys (arrows, home,
 		/// end).
 		/// </summary>
@@ -1300,15 +1278,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// prematurely by something in the .NET framework.
 		/// </summary>
 		public virtual bool GotCacheOrWs => m_wsf != null;
-
-		/// <summary>
-		/// Gets the writing system for the HVO. This could either be the vernacular or
-		/// analysis writing system.
-		/// </summary>
-		public virtual int GetWritingSystemForHvo(int hvo)
-		{
-			throw new NotSupportedException();
-		}
 
 		/// <summary>
 		/// Perform any processing needed immediately prior to a paste operation.  This is very
@@ -1528,7 +1497,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// SimpleRootSite Print(pd) method, overridden by e.g. XmlSeqView.
 		/// Note: this does not implement the lower level IPrintRootSite.Print(pd).
 		/// </summary>
-		public virtual void Print(PrintDocument printDoc)
+		internal virtual void Print(PrintDocument printDoc)
 		{
 			if (RootBox == null || DataAccess == null)
 			{
@@ -1561,7 +1530,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// </summary>
 		/// <param name="sel">The selection used to get the IP's location. If
 		/// this value is null, the rootsite's current selection will be used.</param>
-		public int IPDistanceFromWindowTop(IVwSelection sel)
+		internal int IPDistanceFromWindowTop(IVwSelection sel)
 		{
 			if (sel == null && RootBox != null)
 			{
@@ -1583,34 +1552,9 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// Invalidate the pane because some lazy box expansion messed up the scroll position.
 		/// Made a separate method so we can override.
 		/// </summary>
-		public virtual void InvalidateForLazyFix()
+		internal virtual void InvalidateForLazyFix()
 		{
 			Invalidate();
-		}
-
-		/// <summary>
-		/// Scroll by the specified amount (positive is down, that is, added to the scroll offset).
-		/// If this would exceed the scroll range, move as far as possible. Update both actual display
-		/// and scroll bar position. (Can also scroll up, if dy is negative. Name is just to indicate
-		/// positive direction.)
-		/// </summary>
-		protected internal virtual void ScrollDown(int dy)
-		{
-			int xd, yd;
-			GetScrollOffsets(out xd, out yd);
-			var ydNew = yd + dy;
-			if (ydNew < 0)
-			{
-				ydNew = 0;
-			}
-			if (ydNew > DisplayRectangle.Height)
-			{
-				ydNew = DisplayRectangle.Height;
-			}
-			if (ydNew != yd)
-			{
-				ScrollPosition = new Point(xd, ydNew);
-			}
 		}
 
 		/// <summary>
@@ -1618,7 +1562,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// of the view programmatically (not in response to a Ctrl-End). The code for handling
 		/// Ctrl-End uses CallOnExtendedKey() in OnKeyDown() to handle setting the IP.
 		/// </summary>
-		public void GoToEnd()
+		internal void GoToEnd()
 		{
 			ScrollToEnd();
 			// The code for handling Ctrl-End doesn't do it this way:
@@ -2196,13 +2140,13 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// </summary>
 		internal int ConvertKeyValue(int keyValue)
 		{
-			return m_orientationManager.ConvertKeyValue(keyValue);
+			return OrientationManager.ConvertKeyValue(keyValue);
 		}
 
 		/// <summary>
 		/// Set the accessible name that the root box will return for this root site.
 		/// </summary>
-		public void SetAccessibleName(string name)
+		internal void SetAccessibleName(string name)
 		{
 			var acc = AccessibleRootObject as IAccessible;
 			acc?.set_accName(null, name);
@@ -2272,7 +2216,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// </summary>
 		protected override AccessibleObject CreateAccessibilityInstance()
 		{
-			AccessibleObject result = new AccessibilityWrapper(this, AccessibleRootObject as Accessibility.IAccessible);
+			AccessibleObject result = new AccessibilityWrapper(this, AccessibleRootObject as IAccessible);
 			return result;
 		}
 
@@ -2406,9 +2350,9 @@ namespace SIL.FieldWorks.Common.RootSites
 					var hwndOld = m.WParam;
 					Win32.GetWindowThreadProcessId(hwndOld, out var procIdOld);
 					Win32.GetWindowThreadProcessId(Handle, out var procIdThis);
-					if (procIdOld == procIdThis && RootBox != null && EditingHelper != null)
+					if (procIdOld == procIdThis && RootBox != null)
 					{
-						EditingHelper.SetKeyboardForSelection(RootBox.Selection);
+						EditingHelper?.SetKeyboardForSelection(RootBox.Selection);
 					}
 				}
 
@@ -2802,7 +2746,7 @@ namespace SIL.FieldWorks.Common.RootSites
 				}
 				using (new HoldGraphics(this))
 				{
-					var sel = (IVwSelection)RootBox.Selection;
+					var sel = RootBox.Selection;
 					// Use the existing selection if it covers the point clicked, and if it's
 					// either a range or editable.
 					if (sel != null && (sel.IsRange || SelectionHelper.IsEditable(sel)))
@@ -2933,7 +2877,7 @@ namespace SIL.FieldWorks.Common.RootSites
 					{
 						return true; //discard this event
 					}
-					using (var hg = new HoldGraphics(this))
+					using (new HoldGraphics(this))
 					{
 						GetCoordRects(out var rcSrcRoot, out var rcDstRoot);
 						return DoContextMenu(RootBox.Selection, pt, rcSrcRoot, rcDstRoot);
@@ -3023,27 +2967,6 @@ namespace SIL.FieldWorks.Common.RootSites
 					EditingHelper.OnKeyPress(e, modifiers);
 				}
 			}
-		}
-
-		/// <summary>
-		/// Checks input characters to see if they should be processsed. Static to allow
-		/// function to be shared with PublicationControl.
-		/// </summary>
-		public static bool IsIgnoredKey(KeyPressEventArgs e, Keys modifiers)
-		{
-			var ignoredKey = false;
-			if ((modifiers & Keys.Shift) == Keys.Shift && e.KeyChar == '\r')
-			{
-				ignoredKey = true;
-			}
-			else if ((modifiers & Keys.Control) == Keys.Control)
-			{
-				// only backspace, forward delete and control-M (same as return key) will be
-				// passed on for processing
-				ignoredKey = !(e.KeyChar == (int)VwSpecialChars.kscBackspace || e.KeyChar == (int)VwSpecialChars.kscDelForward || e.KeyChar == '\r');
-			}
-
-			return ignoredKey;
 		}
 
 		/// <summary>
@@ -3375,7 +3298,7 @@ namespace SIL.FieldWorks.Common.RootSites
 						}
 						else
 						{
-							m_orientationManager.DrawTheRoot(m_vdrb, RootBox, hdc, ClientRectangle, ColorUtil.ConvertColorToBGR(BackColor), true, ClientRectangle);
+							m_orientationManager.DrawTheRoot(m_vdrb, RootBox, hdc, ColorUtil.ConvertColorToBGR(BackColor), true, ClientRectangle);
 							m_haveCachedDrawForDisabledView = true;
 						}
 					}
@@ -3385,7 +3308,7 @@ namespace SIL.FieldWorks.Common.RootSites
 						// NOT (uint)(BackColor.ToArgb() & 0xffffff); this orders the components
 						// as RRGGBB where C++ View code using the RGB() function requires BBGGRR.
 						var rgbBackColor = ColorUtil.ConvertColorToBGR(BackColor);
-						m_orientationManager.DrawTheRoot(m_vdrb, RootBox, hdc, ClientRectangle, rgbBackColor, true,
+						m_orientationManager.DrawTheRoot(m_vdrb, RootBox, hdc, rgbBackColor, true,
 							Platform.IsMono ? Rectangle.Intersect(e.ClipRectangle, ClientRectangle) : e.ClipRectangle);
 					}
 				}
@@ -3689,9 +3612,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			// If nothing changed, avoid the infinite loop that happens when we change the selection
 			// and update the system keyboard, which in turn tells the program to change its writing system.
 			// (This is a problem on Windows 98.)
-			int wsTmp;
-			int var;
-			wsTmp = vttp[0].GetIntPropValues((int)FwTextPropType.ktptWs, out var);
+			var wsTmp = vttp[0].GetIntPropValues((int)FwTextPropType.ktptWs, out _);
 			if (wsTmp == wsMatch)
 			{
 				return;
@@ -3701,22 +3622,6 @@ namespace SIL.FieldWorks.Common.RootSites
 			vttp[0] = tpb.GetTextProps();
 			vwsel.SetSelectionProps(cttp, vttp);
 			SelectionChanged(RootBox, RootBox.Selection); // might NOT be vwsel any more
-		}
-
-		/// <summary>
-		/// get the writing systems we should consider as candidates to be selected whent the user makes an
-		/// external choice of keyboard. overridden in root site to use only active ones.
-		/// </summary>
-		protected virtual int[] GetPossibleWritingSystemsToSelectByInputLanguage(ILgWritingSystemFactory wsf)
-		{
-			var cws = wsf.NumberOfWs;
-			var vwsTemp = new int[0];
-			using (var ptr = MarshalEx.ArrayToNative<int>(cws))
-			{
-				wsf.GetWritingSystems(ptr, cws);
-				vwsTemp = MarshalEx.NativeToArray<int>(ptr, cws);
-			}
-			return vwsTemp;
 		}
 
 		#endregion // Other virtual methods
@@ -4170,131 +4075,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		{
 		}
 
-		/// <summary>
-		/// This function returns a selection that includes the entire LinkedFile link at the current
-		/// insertion point. It doesn't actually make the selection active.
-		/// If the return value is false, none of the paramters should be looked at.
-		/// If pfFoundLinkStyle is true, ppvwsel will contain the entire LinkedFiles Link string and
-		/// pbstrFile will contain the filename the LinkedFiles link is pointing to.
-		/// If pfFoundLinkStyle is false, the selection will still be valid, but it couldn't find
-		/// any LinkedFiles link at the current insertion point.
-		/// If ppt is not NULL, it will look for an LinkedFiles Link at that point. Otherwise,
-		/// the current insertion point will be used.
-		/// </summary>
-		protected bool GetExternalLinkSel(out bool fFoundLinkStyle, out IVwSelection vwselParam, out string strbFile, Point pt)
-		{
-			fFoundLinkStyle = false;
-			vwselParam = null;
-			strbFile = null;
-			if (RootBox == null)
-			{
-				return false;
-			}
-			IVwSelection vwsel;
-			if (!pt.IsEmpty)
-			{
-				Rectangle rcSrcRoot;
-				Rectangle rcDstRoot;
-				using (new HoldGraphics(this))
-				{
-					GetCoordRects(out rcSrcRoot, out rcDstRoot);
-				}
-				vwsel = RootBox.MakeSelAt(pt.X, pt.Y, rcSrcRoot, rcDstRoot, false);
-			}
-			else
-			{
-				vwsel = RootBox.Selection;
-			}
-			if (vwsel == null)
-			{
-				return false;
-			}
-			vwsel.TextSelInfo(false, out var tss, out var ich, out var fAssocPrev, out _, out _, out var ws);
-			// The following test is covering a bug in TextSelInfo until JohnT fixes it. If you right+click
-			// to the right of a tags field (with one tag), TextSelInfo returns a qtss with a null
-			// string and returns ich = length of the entire string. As a result get_RunAt fails
-			// below because it is asking for a run at a non-existent location.
-			if (tss == null)
-			{
-				return false;
-			}
-			var cch = tss.Length;
-			if (ich >= cch)
-			{
-				return false; // No string to check.
-			}
-			ITsTextProps ttp;
-			string sbstr;
-			var sbstrMain = string.Empty;
-			var crun = tss.RunCount;
-			var irun = tss.get_RunAt(ich);
-			int irunMin;
-			int irunLim;
-			for (irunMin = irun; irunMin >= 0; irunMin--)
-			{
-				ttp = tss.FetchRunInfo(irunMin, out _);
-				sbstr = ttp.GetStrPropValue((int)FwTextPropType.ktptObjData);
-				if (sbstr.Length == 0 || sbstr[0] != (byte)FwObjDataTypes.kodtExternalPathName)
-				{
-					break;
-				}
-				if (!fFoundLinkStyle)
-				{
-					fFoundLinkStyle = true;
-					sbstrMain = sbstr;
-				}
-				else if (!sbstr.Equals(sbstrMain))
-				{
-					// This LinkedFiles Link is different from the other one, so
-					// we've found the beginning.
-					break;
-				}
-			}
-			irunMin++;
-			// If fFoundLinkStyle is true, irunMin now points to the first run
-			// that has the LinkedFiles Link style.
-			// If fFoundLinkStyle is false, there's no point in looking at
-			// following runs.
-			if (!fFoundLinkStyle)
-			{
-				return true;
-			}
-			for (irunLim = irun + 1; irunLim < crun; irunLim++)
-			{
-				ttp = tss.FetchRunInfo(irunLim, out _);
-				sbstr = ttp.GetStrPropValue((int)FwTextPropType.ktptObjData);
-				if (sbstr.Length == 0 || sbstr[0] != (byte)FwObjDataTypes.kodtExternalPathName)
-				{
-					break;
-				}
-				if (!sbstr.Equals(sbstrMain))
-				{
-					// This LinkedFiles Link is different from the other one, so
-					// we've found the ending.
-					break;
-				}
-			}
-
-			// We can now calculate the character range of this TsString that has
-			// the LinkedFiles Link style applied to it.
-			var ichMin = tss.get_MinOfRun(irunMin);
-			var ichLim = tss.get_LimOfRun(irunLim - 1);
-
-			MessageBox.Show("This code needs work! I don't think that it works like it should!");
-
-			var cvsli = vwsel.CLevels(false);
-			cvsli--; // CLevels includes the string property itself, but AllTextSelInfo doesn't need it.
-
-			var rgvsli = SelLevInfo.AllTextSelInfo(vwsel, cvsli, out var ihvoRoot, out var tagTextProp, out var cpropPrevious, out _,
-				out _, out ws, out fAssocPrev, out var ihvoEnd, out ttp);
-
-			// This does not actually make the selection active.
-			RootBox.MakeTextSelection(ihvoRoot, cvsli, rgvsli, tagTextProp, cpropPrevious, ichMin, ichLim, ws, fAssocPrev, ihvoEnd, ttp, false);
-
-			strbFile = sbstrMain.Substring(1);
-			return true;
-		}
-
 		/// <summary />
 		protected virtual void Activate(VwSelectionState vss)
 		{
@@ -4320,7 +4100,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// </summary>
 		protected Point PixelToView(Point pt)
 		{
-			return m_orientationManager.RotatePointPaintToDst(pt);
+			return OrientationManager.RotatePointPaintToDst(pt);
 		}
 
 		/// <summary>
@@ -4342,69 +4122,6 @@ namespace SIL.FieldWorks.Common.RootSites
 			s_vstrDrawErrMsgs.Add(e.Message);
 
 			throw new ContinuableErrorException("Drawing Error", e);
-		}
-
-		/// <summary>
-		/// Add or remove the tag in the given overlay of the current string.
-		/// </summary>
-		/// <param name="fApplyTag">True to add the tag, false to remove it</param>
-		/// <param name="pvo">Overlay</param>
-		/// <param name="itag">Index of tag</param>
-		public void ModifyOverlay(bool fApplyTag, IVwOverlay pvo, int itag)
-		{
-			if (RootBox == null)
-			{
-				return;
-			}
-			Debug.WriteLine("WARNING: RootSite.ModifyOverlay() isn't tested yet");
-			string uid;
-			using (var arrayPtr = MarshalEx.StringToNative((int)VwConst1.kcchGuidRepLength + 1, true))
-			{
-				pvo.GetDbTagInfo(itag, out _, out _, out _, out _, out _, out _, arrayPtr);
-				uid = MarshalEx.NativeToString(arrayPtr, (int)VwConst1.kcchGuidRepLength, false);
-			}
-			if (EditingHelper.GetCharacterProps(out var vwsel, out var vttp, out _))
-			{
-				var cttp = vttp.Length;
-				for (var ittp = 0; ittp < cttp; ittp++)
-				{
-					var strGuid = vttp[ittp].GetStrPropValue((int)FwTextPropType.ktptTags);
-					// REVIEW (EberhardB): I'm not sure if this works
-					var cGuids = strGuid.Length / Marshal.SizeOf(typeof(Guid));
-					var guids = new List<string>();
-					for (var i = 0; i < cGuids; i++)
-					{
-						guids.Add(strGuid.Substring(i, Marshal.SizeOf(typeof(Guid))));
-					}
-					if (fApplyTag)
-					{
-						// Add the tag if it does not exist
-						if (guids.BinarySearch(uid) >= 0)
-						{
-							// The tag has already been applied to the textprop, so it doesn't
-							// need to be modified.
-							vttp[ittp] = null;
-							continue;
-						}
-						// We need to add the tag to the textprop.
-						guids.Add(uid);
-						guids.Sort();
-					}
-					else
-					{
-						// Remove the tag from the textprop.
-						guids.Remove(uid);
-					}
-					var tpb = vttp[ittp].GetBldr();
-					tpb.SetStrPropValue((int)FwTextPropType.ktptTags, guids.ToString());
-					vttp[ittp] = tpb.GetTextProps();
-				}
-				vwsel.SetSelectionProps(cttp, vttp);
-			}
-			if (FindForm() == Form.ActiveForm)
-			{
-				Focus();
-			}
 		}
 
 		/// <summary>
@@ -4698,31 +4415,6 @@ namespace SIL.FieldWorks.Common.RootSites
 
 		#endregion
 
-		#region Sequential message processing enforcement
-
-		/// <summary>
-		/// Begin a block of code which, even though it is not itself a message handler,
-		/// should not be interrupted by other messages that need to be sequential.
-		/// This may be called from within a message handler.
-		/// EndSequentialBlock must be called without fail (use try...finally) at the end
-		/// of the block that needs protection.
-		/// </summary>
-		public void BeginSequentialBlock()
-		{
-			(Form.ActiveForm as IApplicationIdleEventHandler)?.SuspendIdleProcessing();
-			Sequencer.BeginSequentialBlock();
-		}
-
-		/// <summary>
-		/// See BeginSequentialBlock.
-		/// </summary>
-		public void EndSequentialBlock()
-		{
-			Sequencer.EndSequentialBlock();
-			(Form.ActiveForm as IApplicationIdleEventHandler)?.ResumeIdleProcessing();
-		}
-		#endregion
-
 		#region IMessageFilter Members
 
 		/// <summary>
@@ -4762,31 +4454,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		}
 		#endregion
 
-		#region Implementation of IPropertyTableProvider
-
-		/// <summary>
-		/// Placement in the IPropertyTableProvider interface lets FwApp call IPropertyTable.DoStuff.
-		/// </summary>
-		public IPropertyTable PropertyTable { get; private set; }
-
-		#endregion
-
-		#region Implementation of IPublisherProvider
-
-		/// <summary>
-		/// Get the IPublisher.
-		/// </summary>
-		public IPublisher Publisher { get; private set; }
-
-		#endregion
-
-		#region Implementation of ISubscriberProvider
-
-		/// <summary>
-		/// Get the ISubscriber.
-		/// </summary>
-		public ISubscriber Subscriber { get; private set; }
-
+		#region Implementation of IFlexComponent
 		/// <summary>
 		/// Initialize a FLEx component with the basic interfaces.
 		/// </summary>
@@ -4816,6 +4484,33 @@ namespace SIL.FieldWorks.Common.RootSites
 				}
 			}
 		}
+
+		#endregion
+
+		#region Implementation of IPropertyTableProvider
+
+		/// <summary>
+		/// Placement in the IPropertyTableProvider interface lets FwApp call IPropertyTable.DoStuff.
+		/// </summary>
+		public IPropertyTable PropertyTable { get; private set; }
+
+		#endregion
+
+		#region Implementation of IPublisherProvider
+
+		/// <summary>
+		/// Get the IPublisher.
+		/// </summary>
+		public IPublisher Publisher { get; private set; }
+
+		#endregion
+
+		#region Implementation of ISubscriberProvider
+
+		/// <summary>
+		/// Get the ISubscriber.
+		/// </summary>
+		public ISubscriber Subscriber { get; private set; }
 
 		#endregion
 
@@ -5058,7 +4753,7 @@ namespace SIL.FieldWorks.Common.RootSites
 
 				private void Dispose(bool disposing)
 				{
-					System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
+					Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 					if (IsDisposed)
 					{
 						// No need to run it more than once.
@@ -5266,10 +4961,255 @@ namespace SIL.FieldWorks.Common.RootSites
 					rgptTransform[1] = new Point(rcpDraw.right, rcpDraw.bottom); // upper right of actual drawing maps to bottom right of rotated drawing.
 					rgptTransform[2] = new Point(rcpDraw.left, rcpDraw.top); // bottom left of actual drawing maps to top left of rotated drawing.
 
-					screen.DrawImage((Image)memoryBuffer.Bitmap, rgptTransform, new Rectangle(0, 0, rcp.Width, rcp.Height), GraphicsUnit.Pixel);
+					screen.DrawImage(memoryBuffer.Bitmap, rgptTransform, new Rectangle(0, 0, rcp.Width, rcp.Height), GraphicsUnit.Pixel);
 
 					qvg32.ReleaseDC();
 				}
+			}
+		}
+
+		/// <summary>
+		/// This class implements the DotNet Accessibility interface by wrapping the COM IAccessible interface
+		/// implemented by the root box.
+		/// </summary>
+		private sealed class AccessibilityWrapper : ControlAccessibleObject
+		{
+			private IAccessible m_comAccessible;
+			private SimpleRootSite m_rootSite; // If this is for the root, this is the SimpleRootSite; otherwise, null.
+			private string m_tempName = string.Empty;
+
+			/// <summary>
+			/// Get the IAccessible that we wrap. If we don't have one yet, see if it's possible to get it
+			/// from the rootsite. If so, tell it any accessibleName that has been set on this.
+			/// </summary>
+			private IAccessible AccessibleImpl
+			{
+				get
+				{
+					if (m_comAccessible == null)
+					{
+						m_comAccessible = m_rootSite.AccessibleRootObject as IAccessible;
+						m_comAccessible?.set_accName(null, m_tempName);
+					}
+					return m_comAccessible;
+				}
+			}
+
+			/// <summary>
+			/// Make one. The root site is used in case comAccessible is null, to keep trying for a valid
+			/// one later when the root box has been created.
+			/// </summary>
+			internal AccessibilityWrapper(SimpleRootSite rootSite, IAccessible comAccessible) : base(rootSite)
+			{
+				Debug.Assert(rootSite != null);
+				m_rootSite = rootSite;
+				m_comAccessible = comAccessible;
+			}
+
+			/// <summary>
+			/// One of many methods that delegate to the IAccessible, with a suitable default if it is null.
+			/// </summary>
+			public override int GetChildCount()
+			{
+				return AccessibleImpl?.accChildCount ?? 0;
+			}
+
+			/// <summary>
+			/// One of many methods that delegate to the IAccessible, with a suitable default if it is null.
+			/// </summary>
+			public override AccessibleObject GetChild(int index)
+			{
+				var child = AccessibleImpl?.get_accChild(index);
+				return child is IAccessible accessible ? MakeRelatedWrapper(accessible) : null;
+			}
+
+			/// <summary>
+			/// Used wherever we need a C# AccessibleObject for some child. Note that this is NOT
+			/// a wrapper for the whole contents of the rootsite, so we do NOT want to make one
+			/// with its IAccessible null, because that would turn around and retrieve the IAccessible
+			/// for the whole rootsite. I think we could make one with rootsite null, except that we
+			/// have an assertion to prevent that! So just return null if we don't actually have a
+			/// related IAccessible to wrap.
+			/// </summary>
+			private AccessibleObject MakeRelatedWrapper(IAccessible iAccessible)
+			{
+				return iAccessible == null ? null : new AccessibilityWrapper(m_rootSite, iAccessible);
+			}
+
+			/// <summary>
+			/// One of many methods that delegate to the IAccessible, with a suitable default if it is null.
+			/// </summary>
+			public override Rectangle Bounds
+			{
+				get
+				{
+					if (AccessibleImpl == null)
+					{
+						return new Rectangle(0, 0, 0, 0);
+					}
+					AccessibleImpl.accLocation(out var xLeft, out var yTop, out var dxWidth, out var dyHeight, null);
+					return new Rectangle(xLeft, yTop, dxWidth, dyHeight);
+				}
+			}
+
+			/// <summary>
+			/// One of many methods that delegate to the IAccessible, with a suitable default if it is null.
+			/// </summary>
+			public override string Description => AccessibleImpl == null ? string.Empty : AccessibleImpl.get_accDescription(null);
+
+			/// <summary>
+			/// One of many methods that delegate to the IAccessible, with a suitable default if it is null.
+			/// </summary>
+			public override AccessibleObject HitTest(int x, int y)
+			{
+				if (AccessibleImpl == null)
+				{
+					return null;
+				}
+				var target = AccessibleImpl.accHitTest(x, y);
+				return target is IAccessible accessible ? MakeRelatedWrapper(accessible) : target is int ? this : null;
+			}
+
+			// No point in wrapping DefaultAction, DoDefaultAction, GetFocused, GetSelection, KeyboardShortcut, HelpTopic, Select
+			// since they do nothing interesting in the Views implementation of IAccessible.
+
+
+			/// <summary>
+			/// One of many methods that delegate to the IAccessible, with a suitable default if it is null.
+			/// </summary>
+			public override string Name
+			{
+				get => AccessibleImpl == null ? m_tempName : AccessibleImpl.get_accName(null) ?? string.Empty;
+				set
+				{
+					if (AccessibleImpl == null)
+					{
+						m_tempName = value;
+					}
+					else
+					{
+						AccessibleImpl.set_accName(null, value);
+					}
+				}
+			}
+
+			/// <summary>
+			/// One of many methods that delegate to the IAccessible, with a suitable default if it is null.
+			/// </summary>
+			public override AccessibleObject Parent => AccessibleImpl == null ? null : AccessibleImpl.accParent is IAccessible accessible ? MakeRelatedWrapper(accessible) : m_rootSite?.Parent?.AccessibilityObject;
+
+			/// <summary>
+			/// One of many methods that delegate to the IAccessible, with a suitable default if it is null.
+			/// </summary>
+			public override AccessibleRole Role => (AccessibleRole?)AccessibleImpl?.get_accRole(null) ?? AccessibleRole.None;
+
+			/// <summary>
+			/// One of many methods that delegate to the IAccessible, with a suitable default if it is null.
+			/// </summary>
+			public override AccessibleStates State => (AccessibleStates?)AccessibleImpl?.get_accState(null) ?? AccessibleStates.None;
+
+			/// <summary>
+			/// One of many methods that delegate to the IAccessible, with a suitable default if it is null.
+			/// </summary>
+			public override string Value
+			{
+				get => AccessibleImpl == null ? string.Empty : AccessibleImpl.get_accValue(null);
+				set => throw new NotSupportedException();
+			}
+
+
+			/// <summary>
+			/// One of many methods that delegate to the IAccessible, with a suitable default if it is null.
+			/// Not directly tested so far...this will work provided the navdir enum uses the same values as the old C++ defines
+			/// for NAVDIR_DOWN etc.
+			/// /// </summary>
+			public override AccessibleObject Navigate(AccessibleNavigation navdir)
+			{
+				return AccessibleImpl?.accNavigate((int)navdir, null) is IAccessible accessible ? MakeRelatedWrapper(accessible) : null;
+			}
+		}
+
+		/// <summary>
+		/// Orientation manager contains methods implementing parts of SimpleRootSite that need to be different
+		/// when a view is oriented vertically. Subclasses handle non-standard orientations, while the default methods
+		/// in OrientationManager itself handle normal horizontal orientation.
+		/// </summary>
+		private sealed class OrientationManager
+		{
+			private readonly SimpleRootSite _site;
+
+			/// <summary />
+			internal OrientationManager(SimpleRootSite site)
+			{
+				_site = site;
+			}
+
+			/// <summary>
+			/// The width available for laying out a line of text, before subtracting margins. Normally this is the width of the pane,
+			/// but for vertical alignment it is the height.
+			/// </summary>
+			internal int GetAvailWidth()
+			{
+				// The default -4 allows two pixels right and left to keep data clear of the margins.
+				return _site.ClientRectangle.Width;
+			}
+
+			/// <summary>
+			/// The core of the Draw() method, where the rectangle actually gets painted.
+			/// Vertical views use a rotated drawing routine.
+			/// </summary>
+			internal void DrawTheRoot(IVwDrawRootBuffered vdrb, IVwRootBox rootb, IntPtr hdc, uint backColor, bool drawSel, Rectangle clipRect)
+			{
+				vdrb.DrawTheRoot(rootb, hdc, clipRect, backColor, drawSel, _site);
+			}
+
+			/// <summary>
+			/// Simply tells whether orientation is a vertical one. The default is not.
+			/// </summary>
+			public static bool IsVertical => false;
+
+			/// <summary>
+			/// Construct coord transformation rectangles. Height and width are dots per inch.
+			/// src origin is 0, dest origin is controlled by scrolling.
+			/// </summary>
+			internal void GetCoordRects(out Rectangle rcSrcRoot, out Rectangle rcDstRoot)
+			{
+				var dpi = _site.Dpi;
+				rcSrcRoot = Rectangle.FromLTRB(0, 0, dpi.X, dpi.Y);
+				_site.GetScrollOffsets(out var dxdScrollOffset, out var dydScrollOffset);
+				rcDstRoot = new Rectangle(-dxdScrollOffset + _site.HorizMargin, -dydScrollOffset, dpi.X, dpi.Y);
+			}
+
+			/// <summary>
+			/// The specified rectangle is in 'destination' coordinates. In a vertical view it requires rotation
+			/// in the same was that the drawing code rotates the actual pixels drawn.
+			/// </summary>
+			internal static Rectangle RotateRectDstToPaint(Rectangle rect)
+			{
+				return rect;
+			}
+
+			/// <summary>
+			/// The specified point is in 'paint' coordinates. In a vertical view it requires rotation
+			/// reversing way that the drawing code rotates the actual pixels drawn to get 'destination'
+			/// coordinates that the root box will interpret correctly.
+			/// </summary>
+			internal static Point RotatePointPaintToDst(Point pt)
+			{
+				return pt;
+			}
+
+			/// <summary>
+			/// Usually Cursors.IBeam.
+			/// </summary>
+			internal static Cursor IBeamCursor => Cursors.IBeam;
+
+			/// <summary>
+			/// Allow the orientation manager to convert arrow key codes. The default changes nothing.
+			/// </summary>
+			internal static int ConvertKeyValue(int keyValue)
+			{
+				return keyValue;
 			}
 		}
 	}

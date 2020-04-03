@@ -17,13 +17,13 @@ namespace SIL.FieldWorks.Common.RootSites
 	///		doStuff();
 	/// } // this uninitializes the graphics object
 	/// </example>
-	public class HoldGraphics : IDisposable
+	internal sealed class HoldGraphics : IDisposable
 	{
 		private SimpleRootSite m_parent;
 
 		/// <summary />
 		/// <param name="parent">Containing rootsite</param>
-		public HoldGraphics(SimpleRootSite parent)
+		internal HoldGraphics(SimpleRootSite parent)
 		{
 			if (parent.Disposing || parent.IsDisposed)
 			{
@@ -84,7 +84,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		///
 		/// If subclasses override this method, they should call the base implementation.
 		/// </remarks>
-		protected virtual void Dispose(bool disposing)
+		private void Dispose(bool disposing)
 		{
 			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			if (IsDisposed)

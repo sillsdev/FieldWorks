@@ -16,7 +16,7 @@ namespace SIL.FieldWorks.Common.RootSites
 	/// <summary>
 	/// Base class for tests that use <see cref="DummyBasicView"/>
 	/// </summary>
-	public class BasicViewTestsBase : ScrInMemoryLcmTestBase
+	internal class BasicViewTestsBase : ScrInMemoryLcmTestBase
 	{
 		/// <summary>The draft form</summary>
 		protected DummyBasicView m_basicView;

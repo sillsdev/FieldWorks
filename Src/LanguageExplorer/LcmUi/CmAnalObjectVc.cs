@@ -12,9 +12,9 @@ namespace LanguageExplorer.LcmUi
 	/// <summary>
 	/// Special VC for classes that should display in the default analysis writing system.
 	/// </summary>
-	public class CmAnalObjectVc : FwBaseVc
+	internal class CmAnalObjectVc : FwBaseVc
 	{
-		public CmAnalObjectVc(LcmCache cache)
+		internal CmAnalObjectVc(LcmCache cache)
 			: base(cache.DefaultAnalWs)
 		{
 			Cache = cache;

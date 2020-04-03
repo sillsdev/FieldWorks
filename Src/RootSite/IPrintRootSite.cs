@@ -10,7 +10,7 @@ namespace SIL.FieldWorks.Common.RootSites
 	/// Interface to allow standard error handling when printing IVwRootSites using
 	/// SimpleRootSite.PrintWithErrorHandling()
 	/// </summary>
-	public interface IPrintRootSite
+	internal interface IPrintRootSite
 	{
 		/// <summary>
 		/// Prints the given document

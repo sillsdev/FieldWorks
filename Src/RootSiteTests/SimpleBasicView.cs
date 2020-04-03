@@ -18,9 +18,9 @@ namespace SIL.FieldWorks.Common.RootSites
 	/// <summary>
 	/// Implementation of a basic view for testing, similar to DraftView
 	/// </summary>
-	public sealed class SimpleBasicView : SimpleRootSite
+	internal sealed class SimpleBasicView : SimpleRootSite
 	{
-		public ISilDataAccess Cache;
+		internal ISilDataAccess Cache;
 		/// <summary />
 		private IContainer components;
 		/// <summary>Text for the first and third test paragraph (English)</summary>
@@ -28,12 +28,12 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <summary>Text for the second and fourth test paragraph (English).</summary>
 		/// <remarks>This text needs to be shorter than the text for the first para!</remarks>
 		internal const string kSecondParaEng = "This is the 2nd test paragraph";
-		internal SelectionHelper RequestedSelectionAtEndOfUow = null;
+		internal SelectionHelper RequestedSelectionAtEndOfUow;
 
 		#region Constructor, Dispose, InitializeComponent
 
 		/// <summary />
-		public SimpleBasicView()
+		internal SimpleBasicView()
 		{
 			// This call is required by the Windows.Forms Form Designer.
 			InitializeComponent();
@@ -79,7 +79,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <summary>
 		/// Activates the view
 		/// </summary>
-		public void ActivateView()
+		internal void ActivateView()
 		{
 			PerformLayout();
 			Show();
@@ -148,7 +148,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <summary>
 		/// Call the OnLayout methods
 		/// </summary>
-		public void CallLayout()
+		internal void CallLayout()
 		{
 			OnLayout(new LayoutEventArgs(this, string.Empty));
 		}
@@ -158,76 +158,28 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <summary>
 		/// Gets or sets the type of boxes to display: lazy or non-lazy or both
 		/// </summary>
-		public DisplayType MyDisplayType { get; set; }
+		internal DisplayType MyDisplayType { get; set; }
 
 		/// <summary>
 		/// Gets the draft view's selection helper object
 		/// </summary>
-		public SelectionHelper SelectionHelper { get; private set; }
+		internal SelectionHelper SelectionHelper { get; private set; }
 
 		/// <summary>
 		/// Gets or sets a flag if OnLayout should be skipped.
 		/// </summary>
-		public bool SkipLayout { get; set; } = false;
+		internal bool SkipLayout { get; set; } = false;
 
 		/// <summary>
 		/// Gets the view constructor.
 		/// </summary>
-		public VwBaseVc ViewConstructor { get; private set; }
+		internal VwBaseVc ViewConstructor { get; private set; }
 		#endregion
-
-		/// <summary>
-		/// Check for presence of proper paragraph properties.
-		/// </summary>
-		/// <param name="vwsel">[out] The selection</param>
-		/// <param name="hvoText">[out] The HVO</param>
-		/// <param name="tagText">[out] The tag</param>
-		/// <param name="vqvps">[out] The paragraph properties</param>
-		/// <param name="ihvoAnchor">[out] Start index of selection</param>
-		/// <param name="ihvoEnd">[out] End index of selection</param>
-		/// <returns>Return <c>false</c> if neither selection nor paragraph property. Otherwise
-		/// return <c>true</c>.</returns>
-		public bool IsParagraphProps(out IVwSelection vwsel, out int hvoText, out int tagText, out IVwPropertyStore[] vqvps, out int ihvoAnchor, out int ihvoEnd)
-		{
-			vwsel = null;
-			hvoText = 0;
-			tagText = 0;
-			vqvps = null;
-			ihvoAnchor = 0;
-			ihvoEnd = 0;
-
-			return EditingHelper.IsParagraphProps(out vwsel, out hvoText, out tagText, out vqvps, out ihvoAnchor, out ihvoEnd);
-		}
-
-		/// <summary>
-		/// Get the view selection and paragraph properties.
-		/// </summary>
-		/// <param name="vwsel">[out] The selection</param>
-		/// <param name="hvoText">[out] The HVO</param>
-		/// <param name="tagText">[out] The tag</param>
-		/// <param name="vqvps">[out] The paragraph properties</param>
-		/// <param name="ihvoFirst">[out] Start index of selection</param>
-		/// <param name="ihvoLast">[out] End index of selection</param>
-		/// <param name="vqttp">[out] The style rules</param>
-		/// <returns>Return false if there is neither a selection nor a paragraph property.
-		/// Otherwise return true.</returns>
-		public bool GetParagraphProps(out IVwSelection vwsel, out int hvoText, out int tagText, out IVwPropertyStore[] vqvps,
-			out int ihvoFirst, out int ihvoLast, out ITsTextProps[] vqttp)
-		{
-			vwsel = null;
-			hvoText = 0;
-			tagText = 0;
-			vqvps = null;
-			ihvoFirst = 0;
-			ihvoLast = 0;
-			vqttp = null;
-			return EditingHelper.GetParagraphProps(out vwsel, out hvoText, out tagText, out vqvps, out ihvoFirst, out ihvoLast, out vqttp);
-		}
 
 		/// <summary>
 		/// Provides access to <see cref="SimpleRootSite.GetCoordRects"/>.
 		/// </summary>
-		public new void GetCoordRects(out Rectangle rcSrcRoot, out Rectangle rcDstRoot)
+		internal new void GetCoordRects(out Rectangle rcSrcRoot, out Rectangle rcDstRoot)
 		{
 			rcSrcRoot = Rectangle.Empty;
 			rcDstRoot = Rectangle.Empty;
@@ -237,7 +189,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <summary>
 		/// Provides access to <see cref="ScrollableControl.HScroll"/>
 		/// </summary>
-		public new bool HScroll
+		internal new bool HScroll
 		{
 			get => base.HScroll;
 			set => base.HScroll = value;
@@ -246,7 +198,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <summary>
 		/// Gets the height of the selection.
 		/// </summary>
-		public int SelectionHeight
+		internal int SelectionHeight
 		{
 			get
 			{
@@ -270,7 +222,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <summary>
 		/// Gets the width of the selection.
 		/// </summary>
-		public int SelectionWidth
+		internal int SelectionWidth
 		{
 			get
 			{
@@ -294,7 +246,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <summary>
 		/// Provides access to <see cref="SimpleRootSite.OnMouseDown"/>
 		/// </summary>
-		public void CallOnMouseDown(MouseEventArgs e)
+		internal void CallOnMouseDown(MouseEventArgs e)
 		{
 			OnMouseDown(e);
 		}
@@ -306,7 +258,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <param name="flid">Flid in which hvoRoot contains a sequence of StTexts</param>
 		/// <param name="frag">Fragment for view constructor</param>
 		/// <param name="hvoWs">The ID of thje default Writing System to use</param>
-		public void MakeRoot(int hvoRoot, int flid, int frag, int hvoWs)
+		internal void MakeRoot(int hvoRoot, int flid, int frag, int hvoWs)
 		{
 			if (Cache == null || DesignMode)
 			{
@@ -340,7 +292,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		}
 
 		/// <summary />
-		public void SetRootBox(IVwRootBox rootb)
+		internal void SetRootBox(IVwRootBox rootb)
 		{
 			RootBox = rootb;
 		}
@@ -379,10 +331,12 @@ namespace SIL.FieldWorks.Common.RootSites
 			Assert.AreEqual(RootBox, rootb);
 			Assert.IsNull(RequestedSelectionAtEndOfUow);
 
-			RequestedSelectionAtEndOfUow = new SelectionHelper();
-			RequestedSelectionAtEndOfUow.RootSite = this;
-			RequestedSelectionAtEndOfUow.IhvoRoot = ihvoRoot;
-			RequestedSelectionAtEndOfUow.NumberOfLevels = cvlsi;
+			RequestedSelectionAtEndOfUow = new SelectionHelper
+			{
+				RootSite = this,
+				IhvoRoot = ihvoRoot,
+				NumberOfLevels = cvlsi
+			};
 			RequestedSelectionAtEndOfUow.SetLevelInfo(SelLimitType.Anchor, rgvsli);
 			RequestedSelectionAtEndOfUow.TextPropId = tagTextProp;
 			RequestedSelectionAtEndOfUow.NumberOfPreviousProps = cpropPrevious;
@@ -399,7 +353,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			private int m_counter = 1;
 
 			/// <summary />
-			public SimpleViewVc(DisplayType display, int flid)
+			internal SimpleViewVc(DisplayType display, int flid)
 			{
 				m_displayType = display;
 				m_flid = flid;

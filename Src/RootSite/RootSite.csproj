@@ -213,11 +213,6 @@
     <Compile Include="..\CommonAssemblyInfo.cs">
       <Link>CommonAssemblyInfo.cs</Link>
     </Compile>
-    <Compile Include="AccessibilityWrapper.cs" />
-    <Compile Include="ActiveViewHelper.cs" />
-    <Compile Include="AddToDictMenuItem.cs">
-      <SubType>Component</SubType>
-    </Compile>
     <Compile Include="AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -231,7 +226,6 @@
     <Compile Include="GraphicsManager.cs" />
     <Compile Include="HoldGraphics.cs" />
     <Compile Include="IbusRootSiteEventHandler.cs" />
-    <Compile Include="IChangeRootObject.cs" />
     <Compile Include="IEditingCallbacks.cs" />
     <Compile Include="IHeightEstimator.cs">
       <SubType>Code</SubType>
@@ -243,7 +237,6 @@
     <Compile Include="ISelectionChangeNotifier.cs" />
     <Compile Include="ISuppressDefaultKeyboardOnKillFocus.cs" />
     <Compile Include="LocalLinkArgs.cs" />
-    <Compile Include="OrientationManager.cs" />
     <Compile Include="PasteStatus.cs" />
     <Compile Include="PrintRootSite.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
@@ -253,7 +246,6 @@
     </Compile>
     <Compile Include="RenderEngineFactory.cs" />
     <Compile Include="RequestSelectionByHelper.cs" />
-    <Compile Include="RequestSelectionHelper.cs" />
     <Compile Include="RootSite.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -273,7 +265,6 @@
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="SpellCheckServices.cs" />
-    <Compile Include="SpellCheckStatus.cs" />
     <Compile Include="SpellCorrectMenuItem.cs">
       <SubType>Component</SubType>
     </Compile>

@@ -13,7 +13,7 @@ namespace LanguageExplorerTests.Impls
 	/// TE Notes view) that are added by the view constructor.
 	/// </summary>
 	[TestFixture]
-	public class FwFindReplaceDlgWithLiteralStringsTests : FwFindReplaceDlgBaseTests
+	internal class FwFindReplaceDlgWithLiteralStringsTests : FwFindReplaceDlgBaseTests
 	{
 		/// <summary>
 		/// Create the dialog

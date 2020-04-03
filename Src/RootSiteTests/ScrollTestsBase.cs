@@ -90,12 +90,6 @@ namespace SIL.FieldWorks.Common.RootSites
 			private Point m_position = new Point(0, 0);
 
 			/// <summary />
-			public new IVwRootBox RootBox
-			{
-				set => base.RootBox = value;
-			}
-
-			/// <summary />
 			public override Point ScrollPosition
 			{
 				set => m_position = new Point(-value.X, -value.Y);

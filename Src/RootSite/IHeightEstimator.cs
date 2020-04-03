@@ -15,10 +15,5 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <param name="availableWidth"></param>
 		/// <returns>The estimated height for the specified object in points</returns>
 		int EstimateHeight(int hvo, int frag, int availableWidth);
-
-		/// <summary>
-		/// Gets the average paragraph height in points.
-		/// </summary>
-		int AverageParaHeight { get; }
 	}
 }

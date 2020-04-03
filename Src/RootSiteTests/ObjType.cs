@@ -4,7 +4,7 @@
 
 namespace SIL.FieldWorks.Common.RootSites
 {
-	public enum ObjType
+	internal enum ObjType
 	{
 		Object,
 		BasicTsString,

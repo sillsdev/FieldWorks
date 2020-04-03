@@ -15,7 +15,7 @@ namespace SIL.FieldWorks.Common.RootSites
 	/// and MANAGED_KEYBOARDING is, that is, on Mono but not on Windows. Thus, the code here is basically Mono/Linux-only.
 	/// </summary>
 	[Guid("830BAF1F-6F84-46EF-B63E-3C1BFDF9E83E")]
-	public class ViewInputManager : IViewInputMgr
+	public sealed class ViewInputManager : IViewInputMgr
 	{
 		private IVwRootBox m_rootb;
 

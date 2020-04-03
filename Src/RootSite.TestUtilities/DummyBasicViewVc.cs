@@ -15,32 +15,25 @@ namespace RootSite.TestUtilities
 	/// <summary>
 	/// The class that displays the draft view.
 	/// </summary>
-	public class DummyBasicViewVc : FwBaseVc
+	internal sealed class DummyBasicViewVc : FwBaseVc
 	{
 		private readonly DisplayType m_displayType;
 		private readonly int m_flid;
 		private int m_counter = 1;
 
 		/// <summary />
-		public DummyBasicViewVc() : this(DisplayType.kAll, kflidTestDummy)
-		{
-		}
-
-		/// <summary />
-		public DummyBasicViewVc(DisplayType display, int flid)
+		internal DummyBasicViewVc(DisplayType display, int flid)
 		{
 			m_displayType = display;
 			m_flid = flid;
 		}
 
 		/// <summary />
-		public const int kflidTestDummy = 999;
+		internal const int kMarginTop = 60000;
 		/// <summary />
-		public const int kMarginTop = 60000;
+		internal const int kdzmpInch = 72000;
 		/// <summary />
-		public const int kdzmpInch = 72000;
-		/// <summary />
-		public const int kEstimatedParaHeight = 30;
+		internal const int kEstimatedParaHeight = 30;
 
 		#region Overridden methods
 		/// <summary />

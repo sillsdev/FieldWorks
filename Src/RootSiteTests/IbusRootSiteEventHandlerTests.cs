@@ -714,7 +714,7 @@ namespace SIL.FieldWorks.Common.RootSites
 				// if space.
 				if (keySym == (uint)' ') // 0x0020
 				{
-					foreach (var c in buffer)
+					foreach (var dummy in buffer)
 					{
 						CommitText?.Invoke(new IBusText("\b")); // 0x0008
 					}
@@ -812,7 +812,7 @@ namespace SIL.FieldWorks.Common.RootSites
 				// if space.
 				if (keySym == (uint)' ') // 0x0020
 				{
-					foreach (var c in buffer)
+					foreach (var dummy in buffer)
 					{
 						const int mysteryValue = 22;
 						KeyEvent?.Invoke(0xFF00 | '\b', mysteryValue, 0); // 0x0008

@@ -26,7 +26,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 	/// RawTextPane displays an StText using the standard VC, except that if it is empty altogether,
 	/// we display a message. (Eventually.)
 	/// </summary>
-	public class RawTextPane : RootSite, IInterlinearTabControl, IHandleBookmark
+	internal sealed class RawTextPane : RootSite, IInterlinearTabControl, IHandleBookmark
 	{
 		XElement _configurationParameters;
 		private ShowSpaceDecorator _showSpaceDa;
@@ -145,7 +145,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		#region implemention of IChangeRootObject
 
-		public virtual void SetRoot(int hvo)
+		public void SetRoot(int hvo)
 		{
 			if (hvo != RootHvo || Vc == null)
 			{
@@ -634,7 +634,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			MakeTextSelectionAndScrollToView(ichMin, ichLim, ws, ipara, -1);// end in same prop
 		}
 
-		protected void MakeTextSelectionAndScrollToView(int ichMin, int ichLim, int ws, int ipara, int ihvoEnd)
+		private void MakeTextSelectionAndScrollToView(int ichMin, int ichLim, int ws, int ipara, int ihvoEnd)
 		{
 			var rgsli = new SelLevInfo[1];
 			// entry 0 says which StTextPara

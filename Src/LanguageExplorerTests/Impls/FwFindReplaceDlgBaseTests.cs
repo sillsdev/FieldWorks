@@ -14,7 +14,7 @@ using SIL.LCModel.Core.WritingSystems;
 namespace LanguageExplorerTests.Impls
 {
 	/// <summary />
-	public class FwFindReplaceDlgBaseTests : ScrInMemoryLcmTestBase
+	internal class FwFindReplaceDlgBaseTests : ScrInMemoryLcmTestBase
 	{
 		#region Data members
 		/// <summary></summary>

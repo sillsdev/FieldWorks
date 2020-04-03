@@ -13,10 +13,10 @@ using SIL.LCModel.Utils;
 
 namespace LanguageExplorer.Areas
 {
-	internal class RegRuleFormulaVc : RuleFormulaVcBase
+	internal sealed class RegRuleFormulaVc : RuleFormulaVcBase
 	{
-		public const int kfragRHS = 200;
-		public const int kfragRule = 201;
+		internal const int kfragRHS = 200;
+		internal const int kfragRule = 201;
 		private readonly ITsTextProps m_ctxtProps;
 		private readonly ITsTextProps m_charProps;
 		private readonly ITsString m_arrow;
@@ -24,7 +24,7 @@ namespace LanguageExplorer.Areas
 		private readonly ITsString m_underscore;
 		private IPhSegRuleRHS m_rhs;
 
-		public RegRuleFormulaVc(LcmCache cache, IPropertyTable propertyTable)
+		internal RegRuleFormulaVc(LcmCache cache, IPropertyTable propertyTable)
 			: base(cache, propertyTable)
 		{
 			var tpb = TsStringUtils.MakePropsBldr();

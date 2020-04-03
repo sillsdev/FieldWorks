@@ -21,7 +21,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 	/// InnerFwTextBox implements the main body of an FwTextBox. Has to be public so combo box
 	/// can return its text box.
 	/// </summary>
-	public class InnerFwTextBox : SimpleRootSite, IVwNotifyChange
+	internal class InnerFwTextBox : SimpleRootSite, IVwNotifyChange
 	{
 		#region Data members
 
@@ -1063,7 +1063,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 				m_innerFwTextBox.AdjustHeight();
 			}
 
-			protected override void OnCharAux(string stuInput, VwShiftStatus ss, Keys modifiers)
+			protected internal override void OnCharAux(string stuInput, VwShiftStatus ss, Keys modifiers)
 			{
 				if ((modifiers & Keys.Alt) != Keys.Alt && stuInput == "\r")
 				{
@@ -1079,7 +1079,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			/// pasted ITsString</param>
 			/// <param name="destWs">[out] The destination writing system.</param>
 			/// <returns>an indication of how the paste should be handled.</returns>
-			public override PasteStatus DeterminePasteWs(ILgWritingSystemFactory wsf, out int destWs)
+			internal override PasteStatus DeterminePasteWs(ILgWritingSystemFactory wsf, out int destWs)
 			{
 				destWs = m_innerFwTextBox.WritingSystemCode;
 				return PasteStatus.UseDestWs;

@@ -15,31 +15,31 @@ using SIL.LCModel.Core.Text;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 {
-	public class ComplexConcPatternVc : PatternVcBase
+	internal sealed class ComplexConcPatternVc : PatternVcBase
 	{
 		// normal frags
-		public const int kfragPattern = 100;
-		public const int kfragNode = 101;
+		internal const int kfragPattern = 100;
+		internal const int kfragNode = 101;
 		// variant frags
-		public const int kfragFeatureLine = 103;
-		public const int kfragNodeMax = 104;
-		public const int kfragNodeMin = 105;
-		public const int kfragOR = 106;
-		public const int kfragHash = 107;
+		internal const int kfragFeatureLine = 103;
+		internal const int kfragNodeMax = 104;
+		internal const int kfragNodeMin = 105;
+		internal const int kfragOR = 106;
+		internal const int kfragHash = 107;
 		// fake flids
-		public const int ktagType = -200;
-		public const int ktagForm = -201;
-		public const int ktagGloss = -202;
-		public const int ktagCategory = -203;
-		public const int ktagEntry = -204;
-		public const int ktagTag = -205;
-		public const int ktagInfl = -206;
+		internal const int ktagType = -200;
+		internal const int ktagForm = -201;
+		internal const int ktagGloss = -202;
+		internal const int ktagCategory = -203;
+		internal const int ktagEntry = -204;
+		internal const int ktagTag = -205;
+		internal const int ktagInfl = -206;
 		private readonly ITsString m_infinity;
 		private readonly ITsString m_or;
 		private readonly ITsString m_hash;
 		private IDictionary<IFsFeatDefn, object> m_curInflFeatures;
 
-		public ComplexConcPatternVc(LcmCache cache, IPropertyTable propertyTable)
+		internal ComplexConcPatternVc(LcmCache cache, IPropertyTable propertyTable)
 			: base(cache, propertyTable)
 		{
 			var userWs = m_cache.DefaultUserWs;
@@ -507,7 +507,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 			}
 		}
 
-		public ITsString CreateFeatureLine(ITsString name, ITsString value, bool negated)
+		private ITsString CreateFeatureLine(ITsString name, ITsString value, bool negated)
 		{
 			var featLine = TsStringUtils.MakeIncStrBldr();
 			featLine.AppendTsString(name);
@@ -523,7 +523,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 			return featLine.GetString();
 		}
 
-		public ITsString CreateFeatureLine(string name, ITsString value, bool negated)
+		private ITsString CreateFeatureLine(string name, ITsString value, bool negated)
 		{
 			return CreateFeatureLine(TsStringUtils.MakeString(name, m_cache.DefaultUserWs), value, negated);
 		}
@@ -533,12 +533,12 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 			return CreateFeatureLine(name, TsStringUtils.MakeString(value, ws), false);
 		}
 
-		private int GetMaxNumLines(IVwEnv vwenv)
+		private static int GetMaxNumLines(IVwEnv vwenv)
 		{
 			return GetNumLines(((ComplexConcPatternSda)vwenv.DataAccess).Root);
 		}
 
-		private int GetNumLines(ComplexConcPatternNode node)
+		private static int GetNumLines(ComplexConcPatternNode node)
 		{
 			switch (node)
 			{

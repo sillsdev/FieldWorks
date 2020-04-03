@@ -19,6 +19,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.ViewsInterfaces;
@@ -53,16 +54,16 @@ namespace SIL.FieldWorks.Common.RootSites
 	/// adds considerable functionality, such as stylesheets and find/replace). It requires
 	/// initialization with an LcmCache.
 	/// </summary>
-	public class RootSite : SimpleRootSite, IHeightEstimator, IRootSiteSlave
+	internal class RootSite : SimpleRootSite, IHeightEstimator, IRootSiteSlave
 	{
 		#region Member variables
 		/// <summary>The height in points of an average paragraph when the rootsite is
 		/// <c>kdxBaselineRootsiteWidth</c> wide</summary>
-		public const int kdypBaselineParagraphHeight = 12;
+		internal const int kdypBaselineParagraphHeight = 12;
 		/// <summary>The baseline width in pixels of a rootsite, used for storing height
 		/// estimates that are independent of the actual width of the rootsite.
 		/// </summary>
-		public const int kdxBaselineRootsiteWidth = 1500;
+		internal const int kdxBaselineRootsiteWidth = 1500;
 
 		/// <summary>The LCM cache</summary>
 		protected LcmCache m_cache;
@@ -84,7 +85,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		#endregion
 
 		/// <summary />
-		public RootSite()
+		internal RootSite()
 		{
 			base.AutoScroll = true;
 
@@ -98,7 +99,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// Initialize one. It doesn't have a scroll bar because the containing Group is
 		/// meant to handle scrolling.
 		/// </summary>
-		public RootSite(LcmCache cache) : this()
+		internal RootSite(LcmCache cache) : this()
 		{
 			Cache = cache; // make sure to set the property, not setting m_cache directly
 		}
@@ -158,7 +159,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			{
 				width = 1;
 			}
-			m_ParaHeightInPoints = kdxBaselineRootsiteWidth * AverageParaHeight / width;
+			m_ParaHeightInPoints = kdxBaselineRootsiteWidth * kdypBaselineParagraphHeight / width;
 		}
 
 		#region Properties
@@ -166,12 +167,12 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// Set to true if this view should be spell-checked. For now this just displays the red
 		/// squiggle if our spelling checker thinks a word is mis-spelled.
 		/// </summary>
-		public bool DoSpellCheck { get; set; } = false;
+		internal bool DoSpellCheck { get; set; } = false;
 
 		/// <summary>
 		/// Get the editing helper for RootSite.
 		/// </summary>
-		public RootSiteEditingHelper RootSiteEditingHelper => EditingHelper as RootSiteEditingHelper;
+		internal RootSiteEditingHelper RootSiteEditingHelper => EditingHelper as RootSiteEditingHelper;
 
 		/// <summary>
 		/// Gets a value indicating whether a selection is currently being changed.
@@ -202,11 +203,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		{
 			m_editingHelper.VwSelectionChanged += HandleSelectionChange;
 		}
-
-		/// <summary>
-		/// Gets the average paragraph height in points.
-		/// </summary>
-		public virtual int AverageParaHeight => kdypBaselineParagraphHeight;
 
 		/// <summary>
 		/// Override the getter to obtain a WSF from the LcmCache, if we don't have
@@ -471,7 +467,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <summary>
 		/// Restart the spell-checking process (e.g. when dictionary changed)
 		/// </summary>
-		public void RestartSpellChecking()
+		internal void RestartSpellChecking()
 		{
 			if (DoSpellCheck && RootBox != null)
 			{
@@ -561,27 +557,11 @@ namespace SIL.FieldWorks.Common.RootSites
 			SelLevInfo[] rgvsli, int tagTextProp, int cpropPrevious, int ich, int wsAlt, bool fAssocPrev, ITsTextProps selProps)
 		{
 			// Creating one hooks it up; it will free itself when invoked.
-			new RequestSelectionHelper((IActionHandlerExtensions)m_cache.ActionHandlerAccessor,
-				rootb, ihvoRoot, rgvsli, tagTextProp, cpropPrevious, ich, wsAlt, fAssocPrev,
-				selProps);
+			RequestSelectionHelper.SetupForPropChangedCompletedCall((IActionHandlerExtensions)m_cache.ActionHandlerAccessor,
+				rootb, ihvoRoot, rgvsli, tagTextProp, cpropPrevious, ich, wsAlt, fAssocPrev, selProps);
 
 			// We don't want to continue using the old, out-of-date selection.
 			rootb.DestroySelection();
-		}
-
-		/// <summary>
-		/// If we need to make a selection, but we can't because edits haven't been updated in
-		/// the view, this method requests creation of a selection after the unit of work is
-		/// complete. It will also scroll the selection into view.
-		/// Derived classes should implement this if they have any hope of supporting multi-
-		/// paragraph editing.
-		/// </summary>
-		public override void RequestVisibleSelectionAtEndOfUow(SelectionHelper helper)
-		{
-			new RequestSelectionByHelper((IActionHandlerExtensions)m_cache.ActionHandlerAccessor, helper);
-
-			// We don't want to continue using the old, out-of-date selection.
-			RootBox.DestroySelection();
 		}
 
 		/// <summary>
@@ -612,18 +592,6 @@ namespace SIL.FieldWorks.Common.RootSites
 			var vwselNew = args.Selection;
 			Debug.Assert(vwselNew != null);
 			HandleSelectionChange(rootb, vwselNew);
-		}
-
-		/// <summary>
-		/// Once we have a cache we can return a sensible list.
-		/// </summary>
-		protected override int[] GetPossibleWritingSystemsToSelectByInputLanguage(ILgWritingSystemFactory wsf)
-		{
-			var writingSystems = Cache.ServiceLocator.WritingSystems;
-			return writingSystems.CurrentAnalysisWritingSystems
-				.Union(writingSystems.CurrentVernacularWritingSystems)
-				.Union(writingSystems.CurrentPronunciationWritingSystems)
-				.Select(ws => ws.Handle).ToArray();
 		}
 
 		/// <summary>
@@ -662,15 +630,6 @@ namespace SIL.FieldWorks.Common.RootSites
 				CalculateAvgParaHeightInPoints();
 			}
 		}
-
-		/// <summary>
-		/// Gets the writing system for the HVO. This could either be the vernacular or
-		/// analysis writing system.
-		/// </summary>
-		public override int GetWritingSystemForHvo(int hvo)
-		{
-			return m_cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Handle;
-		}
 		#endregion
 
 		#region IHeightEstimator implementation
@@ -691,5 +650,79 @@ namespace SIL.FieldWorks.Common.RootSites
 			return (int)(10 * Zoom);
 		}
 		#endregion
+
+		/// <summary>
+		/// This class is a helper for implementing the RequestSelectionAtEndOfUow method.
+		/// </summary>
+		private static class RequestSelectionHelper
+		{
+			private static IVwRootBox m_rootb;
+			private static SelLevInfo[] m_rgvsli;
+			private static ITsTextProps m_selProps;
+			private static int m_ihvoRoot;
+			private static int m_tagTextProp;
+			private static int m_cpropPrevious;
+			private static int m_ich;
+			private static int m_wsAlt;
+			private static bool m_fAssocPrev;
+
+			/// <summary>
+			/// Make one and hook it up to be called at the appropriate time.
+			/// </summary>
+			internal static void SetupForPropChangedCompletedCall(IActionHandlerExtensions hookup, IVwRootBox rootb, int ihvoRoot, SelLevInfo[] rgvsli, int tagTextProp, int cpropPrevious, int ich, int wsAlt, bool fAssocPrev, ITsTextProps selProps)
+			{
+				m_rootb = rootb;
+				m_ihvoRoot = ihvoRoot;
+				m_rgvsli = rgvsli;
+				m_tagTextProp = tagTextProp;
+				m_cpropPrevious = cpropPrevious;
+				m_ich = ich;
+				m_wsAlt = wsAlt;
+				m_fAssocPrev = fAssocPrev;
+				m_selProps = selProps;
+				hookup.DoAtEndOfPropChanged(m_hookup_PropChangedCompleted);
+			}
+
+			private static void m_hookup_PropChangedCompleted()
+			{
+				try
+				{
+					if (m_rootb.Site != null)
+					{
+						m_rootb.MakeTextSelection(m_ihvoRoot, m_rgvsli.Length, m_rgvsli,
+							m_tagTextProp, m_cpropPrevious, m_ich, m_ich, m_wsAlt, m_fAssocPrev,
+							-1, m_selProps, true);
+					}
+				}
+				catch (COMException)
+				{
+					try
+					{
+						// Try again making the selection in a prompt
+						m_rootb.MakeTextSelection(m_ihvoRoot, m_rgvsli.Length, m_rgvsli,
+							SimpleRootSite.kTagUserPrompt, m_cpropPrevious, m_ich, m_ich, m_wsAlt,
+							m_fAssocPrev, -1, m_selProps, true);
+					}
+					catch (COMException)
+					{
+						Debug.WriteLine("Failed to make a selection at end of UOW.");
+						// Ignore any errors that happen when trying to set the selection. We really don't
+						// want a program to crash if it fails.
+					}
+				}
+				finally
+				{
+					m_rootb = null;
+					m_rgvsli = null;
+					m_selProps = null;
+					m_ihvoRoot = 0;
+					m_tagTextProp = 0;
+					m_cpropPrevious = 0;
+					m_ich = 0;
+					m_wsAlt = 0;
+					m_fAssocPrev = false;
+				}
+			}
+		}
 	}
 }

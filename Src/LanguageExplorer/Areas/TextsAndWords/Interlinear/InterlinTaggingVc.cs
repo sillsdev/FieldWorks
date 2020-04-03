@@ -17,7 +17,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 	/// <summary>
 	/// Modifications of InterlinVc for showing TextTag possibilities.
 	/// </summary>
-	internal class InterlinTaggingVc : InterlinVc
+	internal sealed class InterlinTaggingVc : InterlinVc
 	{
 		private int m_lenEndTag;
 		private int m_lenStartTag;
@@ -27,7 +27,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		private Dictionary<Tuple<ISegment, int>, ITsString[]> m_tagStrings; // Cache tag strings by ISegment and index
 
 		/// <summary />
-		public InterlinTaggingVc(LcmCache cache)
+		internal InterlinTaggingVc(LcmCache cache)
 			: base(cache)
 		{
 			m_cache = cache;

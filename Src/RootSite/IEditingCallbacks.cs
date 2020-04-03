@@ -65,11 +65,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		void ShowContextMenuAtIp(IVwRootBox rootb);
 
 		/// <summary>
-		/// Gets the (estimated) height of one line
-		/// </summary>
-		int LineHeight { get; }
-
-		/// <summary>
 		/// RootBox currently being edited.
 		/// </summary>
 		IVwRootBox EditedRootBox { get; }
@@ -80,26 +75,8 @@ namespace SIL.FieldWorks.Common.RootSites
 		bool GotCacheOrWs { get; }
 
 		/// <summary>
-		/// Gets the writing system for the HVO. This could either be the vernacular or
-		/// analysis writing system.
-		/// </summary>
-		/// <param name="hvo">HVO</param>
-		/// <returns>Writing system</returns>
-		int GetWritingSystemForHvo(int hvo);
-
-		/// <summary>
 		/// Perform any processing needed immediately prior to a paste operation.
 		/// </summary>
 		void PrePasteProcessing();
-
-		/// <summary>
-		/// If we need to make a selection, but we can't because edits haven't been updated in
-		/// the view, this method requests creation of a selection after the unit of work is
-		/// complete. It will also scroll the selection into view.
-		/// Derived classes should implement this if they have any hope of supporting multi-
-		/// paragraph editing.
-		/// </summary>
-		/// <param name="helper">The selection to restore</param>
-		void RequestVisibleSelectionAtEndOfUow(SelectionHelper helper);
 	}
 }

@@ -17,10 +17,10 @@ namespace SIL.FieldWorks.Common.RootSites
 	/// <summary>
 	/// Views code specific handler of IBus events
 	/// </summary>
-	public class IbusRootSiteEventHandler : IIbusEventHandler
+	internal sealed class IbusRootSiteEventHandler : IIbusEventHandler
 	{
 		/// <summary />
-		public IbusRootSiteEventHandler(SimpleRootSite simpleRootSite)
+		internal IbusRootSiteEventHandler(SimpleRootSite simpleRootSite)
 		{
 			AssociatedSimpleRootSite = simpleRootSite;
 		}

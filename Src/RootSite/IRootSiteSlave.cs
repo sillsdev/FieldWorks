@@ -20,26 +20,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		Point ScrollPosition { get; set; }
 
 		/// <summary>
-		/// Gets or sets the scrolling range for the control. When we're not the scrolling
-		/// controller then we're part of a group then gets or sets the scrolling
-		/// controller's value.
-		/// </summary>
-		Size ScrollMinSize { get; set; }
-
-		/// <summary>
-		/// Scroll to the top
-		/// </summary>
-		void ScrollToTop();
-
-		/// <summary>
-		/// Scroll to the bottom.
-		/// </summary>
-		void ScrollToEnd();
-
-		/// <summary>This event gets fired when the AutoScrollPosition value changes</summary>
-		event ScrollPositionChanged VerticalScrollPositionChanged;
-
-		/// <summary>
 		/// Gets or sets the zoom multiplier that magnifies (or shrinks) the view.
 		/// </summary>
 		float Zoom { get; set; }

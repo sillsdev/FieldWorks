@@ -159,13 +159,13 @@ namespace SIL.FieldWorks.Common.RootSites
 		private sealed class DummyPrintRootSite : PrintRootSite
 		{
 			/// <summary />
-			public DummyPrintRootSite(int totalPages, PrinterSettings psettings)
+			internal DummyPrintRootSite(int totalPages, PrinterSettings psettings)
 				: base(totalPages, psettings)
 			{
 			}
 
 			/// <summary />
-			public new void Advance()
+			internal new void Advance()
 			{
 				base.Advance();
 			}

@@ -8,8 +8,6 @@ namespace SIL.FieldWorks.Common.RootSites
 	/// <see cref="SimpleRootSite.ComplexKeyBehavior"/>
 	public enum CkBehavior
 	{
-		/// <summary>Physical order</summary>
-		Physical = 0,
 		/// <summary>Logical order</summary>
 		Logical = 1
 	}

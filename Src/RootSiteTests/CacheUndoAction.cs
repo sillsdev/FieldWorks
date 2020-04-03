@@ -9,14 +9,14 @@ using SIL.LCModel.Core.KernelInterfaces;
 
 namespace SIL.FieldWorks.Common.RootSites
 {
-	public class CacheUndoAction : IUndoAction
+	internal sealed class CacheUndoAction : IUndoAction
 	{
 		private IRealDataCache m_cache;
 		private CacheInfo m_before;
 		private CacheInfo m_after;
 
 		/// <summary />
-		public CacheUndoAction(IRealDataCache cache, CacheInfo before, CacheInfo after)
+		internal CacheUndoAction(IRealDataCache cache, CacheInfo before, CacheInfo after)
 		{
 			m_cache = cache;
 			m_before = before;
@@ -66,7 +66,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			}
 		}
 
-		public IVwRootBox RootBox { get; set; }
+		internal IVwRootBox RootBox { get; set; }
 
 		#region IUndoAction implementation
 

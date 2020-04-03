@@ -12,34 +12,34 @@ using SIL.LCModel.Core.Text;
 
 namespace LanguageExplorer.Areas
 {
-	public abstract class PatternVcBase : FwBaseVc
+	internal abstract class PatternVcBase : FwBaseVc
 	{
 		// variant frags
-		public const int kfragEmpty = 0;
-		public const int kfragLeftBracketUpHook = 1;
-		public const int kfragLeftBracketExt = 2;
-		public const int kfragLeftBracketLowHook = 3;
-		public const int kfragRightBracketUpHook = 4;
-		public const int kfragRightBracketExt = 5;
-		public const int kfragRightBracketLowHook = 6;
-		public const int kfragLeftBracket = 7;
-		public const int kfragRightBracket = 8;
-		public const int kfragLeftParenUpHook = 9;
-		public const int kfragLeftParenExt = 10;
-		public const int kfragLeftParenLowHook = 11;
-		public const int kfragRightParenUpHook = 12;
-		public const int kfragRightParenExt = 13;
-		public const int kfragRightParenLowHook = 14;
-		public const int kfragLeftParen = 15;
-		public const int kfragRightParen = 16;
-		public const int kfragQuestions = 17;
-		public const int kfragZeroWidthSpace = 18;
+		internal const int kfragEmpty = 0;
+		internal const int kfragLeftBracketUpHook = 1;
+		internal const int kfragLeftBracketExt = 2;
+		internal const int kfragLeftBracketLowHook = 3;
+		internal const int kfragRightBracketUpHook = 4;
+		internal const int kfragRightBracketExt = 5;
+		internal const int kfragRightBracketLowHook = 6;
+		internal const int kfragLeftBracket = 7;
+		internal const int kfragRightBracket = 8;
+		internal const int kfragLeftParenUpHook = 9;
+		internal const int kfragLeftParenExt = 10;
+		internal const int kfragLeftParenLowHook = 11;
+		internal const int kfragRightParenUpHook = 12;
+		internal const int kfragRightParenExt = 13;
+		internal const int kfragRightParenLowHook = 14;
+		internal const int kfragLeftParen = 15;
+		internal const int kfragRightParen = 16;
+		internal const int kfragQuestions = 17;
+		internal const int kfragZeroWidthSpace = 18;
 		// fake flids
-		public const int ktagLeftBoundary = -100;
-		public const int ktagRightBoundary = -101;
-		public const int ktagLeftNonBoundary = -102;
-		public const int ktagRightNonBoundary = -103;
-		public const int ktagInnerNonBoundary = -104;
+		internal const int ktagLeftBoundary = -100;
+		internal const int ktagRightBoundary = -101;
+		internal const int ktagLeftNonBoundary = -102;
+		internal const int ktagRightNonBoundary = -103;
+		internal const int ktagInnerNonBoundary = -104;
 		// spacing between contexts
 		protected const int PileMargin = 2000;
 		protected IPropertyTable m_propertyTable;

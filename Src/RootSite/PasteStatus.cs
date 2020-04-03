@@ -5,7 +5,7 @@
 namespace SIL.FieldWorks.Common.RootSites
 {
 	/// <summary>Paste status indicates how writing systems should be handled during a paste</summary>
-	public enum PasteStatus
+	internal enum PasteStatus
 	{
 		/// <summary>When pasting, use the writing system at the destination</summary>
 		UseDestWs,

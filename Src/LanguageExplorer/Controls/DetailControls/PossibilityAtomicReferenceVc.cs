@@ -12,11 +12,11 @@ namespace LanguageExplorer.Controls.DetailControls
 	/// <summary>
 	///  View constructor for creating the view details.
 	/// </summary>
-	public class PossibilityAtomicReferenceVc : AtomicReferenceVc
+	internal sealed class PossibilityAtomicReferenceVc : AtomicReferenceVc
 	{
 		private string m_textStyle;
 
-		public PossibilityAtomicReferenceVc(LcmCache cache, int flid, string displayNameProperty)
+		internal PossibilityAtomicReferenceVc(LcmCache cache, int flid, string displayNameProperty)
 			: base(cache, flid, displayNameProperty)
 		{
 		}

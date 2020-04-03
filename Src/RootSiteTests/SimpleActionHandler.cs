@@ -9,7 +9,7 @@ using SIL.LCModel.Core.KernelInterfaces;
 
 namespace SIL.FieldWorks.Common.RootSites
 {
-	public class SimpleActionHandler: IActionHandler
+	internal sealed class SimpleActionHandler: IActionHandler
 	{
 		private List<List<IUndoAction>> m_UndoTasks = new List<List<IUndoAction>>();
 		private List<IUndoAction> m_OpenTask;
