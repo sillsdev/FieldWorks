@@ -5,7 +5,7 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 {
 	///<summary>
 	///</summary>
-	public enum ErrorCodes
+	internal enum ErrorCodes
 	{
 		///<summary>Not specified - uninitialized</summary>
 		None = 1,

@@ -131,7 +131,6 @@
     </Compile>
     <Compile Include="ErrorCodes.cs" />
     <Compile Include="ErrorCodesExtensionMethods.cs" />
-    <Compile Include="IcuErrorCodes.cs" />
     <Compile Include="IcuLockedException.cs" />
     <Compile Include="LogFile.cs" />
     <Compile Include="Program.cs" />

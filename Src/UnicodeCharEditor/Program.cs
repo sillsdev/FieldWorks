@@ -19,11 +19,11 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 	/// <summary>
 	/// The main program for UnicodeCharEditor.
 	/// </summary>
-	static class Program
+	internal static class Program
 	{
 		/// <summary />
 		[STAThread]
-		static void Main(string[] args)
+		private static void Main(string[] args)
 		{
 			Form window = null;
 			var needCleanup = true;

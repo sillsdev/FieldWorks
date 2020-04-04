@@ -22,7 +22,7 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 	/// <summary>
 	/// Main window for the UnicodeCharEditor program.
 	/// </summary>
-	public partial class CharEditorWindow : Form, IHelpTopicProvider
+	internal sealed partial class CharEditorWindow : Form, IHelpTopicProvider
 	{
 		private static ResourceManager s_helpResources;
 
@@ -64,7 +64,7 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 		}
 
 		/// <summary />
-		public CharEditorWindow()
+		internal CharEditorWindow()
 		{
 			InitializeComponent();
 
@@ -352,8 +352,7 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 		{
 			try
 			{
-				int code;
-				if (int.TryParse(sCode, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out code))
+				if (int.TryParse(sCode, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out var code))
 				{
 					if (m_dictCustomChars.TryGetValue(code, out var charSpec))
 					{
@@ -393,7 +392,7 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 		/// <summary>
 		/// Get the full pathname of the standard (system-wide) custom characters file.
 		/// </summary>
-		public static string CustomCharsFile
+		internal static string CustomCharsFile
 		{
 			get
 			{

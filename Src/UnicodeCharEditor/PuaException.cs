@@ -5,15 +5,10 @@
 namespace SIL.FieldWorks.UnicodeCharEditor
 {
 	///<summary />
-	public class PuaException : UceException
+	internal sealed class PuaException : UceException
 	{
 		///<summary />
-		public PuaException(ErrorCodes errorCode) : base(errorCode, null)
-		{
-		}
-
-		///<summary />
-		public PuaException(ErrorCodes errorCode, string msg) : base(errorCode, msg)
+		internal PuaException(ErrorCodes errorCode, string msg) : base(errorCode, msg)
 		{
 		}
 	}

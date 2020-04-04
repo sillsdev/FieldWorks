@@ -6,7 +6,7 @@ using System.Text;
 namespace SIL.FieldWorks.UnicodeCharEditor
 {
 	/// <inheritdoc />
-	public abstract class UceException : Exception
+	internal abstract class UceException : Exception
 	{
 		/// <summary />
 		protected readonly ErrorCodes m_errorCode;

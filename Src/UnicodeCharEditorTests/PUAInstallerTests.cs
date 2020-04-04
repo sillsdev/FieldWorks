@@ -261,7 +261,7 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 				try
 				{
 					var baseDir = FwDirectoryFinder.DataDirectory;
-					zipIn = new ZipInputStream(File.OpenRead(Path.Combine(baseDir, string.Format("Icu{0}.zip", CustomIcu.Version))));
+					zipIn = new ZipInputStream(File.OpenRead(Path.Combine(baseDir, $"Icu{CustomIcu.Version}.zip")));
 				}
 				catch (Exception e1)
 				{

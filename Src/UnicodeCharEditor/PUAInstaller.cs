@@ -17,7 +17,7 @@ using SIL.PlatformUtilities;
 namespace SIL.FieldWorks.UnicodeCharEditor
 {
 	/// <summary />
-	public class PUAInstaller
+	internal sealed class PUAInstaller
 	{
 		private readonly Dictionary<int, PUACharacter> m_dictCustomChars = new Dictionary<int, PUACharacter>();
 		private string m_icuDir;
@@ -73,7 +73,7 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 		/// 6. Run "gennorm2" to create the actual binary files used by the ICU normalization functions.
 		/// </summary>
 		/// <param name="filename">Our XML file containing our PUA Defintions</param>
-		public void InstallPUACharacters(string filename)
+		internal void InstallPUACharacters(string filename)
 		{
 			try
 			{
@@ -211,9 +211,9 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 		private struct UndoFiles
 		{
 			///<summary />
-			public string m_backupFile;
+			internal string m_backupFile;
 			///<summary />
-			public string m_originalFile;
+			internal string m_originalFile;
 		}
 
 		private readonly List<UndoFiles> m_undoFileStack = new List<UndoFiles>();
@@ -233,7 +233,7 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 		/// were a problem.  If this method is called, there was no problem.  We're
 		/// just removing the backup file - much like a temp file at this point.
 		/// </summary>
-		public void RemoveBackupFiles()
+		private void RemoveBackupFiles()
 		{
 			LogFile.AddVerboseLine("Removing Undo Files --- Start");
 			for (var i = m_undoFileStack.Count; --i >= 0;)
@@ -252,7 +252,7 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 		/// <summary>
 		/// Copies the backup files over the source files and then deletes the backup files.
 		/// </summary>
-		public void RestoreFiles()
+		private void RestoreFiles()
 		{
 			for (var i = m_undoFileStack.Count; --i >= 0;)
 			{
@@ -279,7 +279,7 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 		/// DerivedBidiClass.txt, as well as other *.txt files in unidata to
 		/// create <i>icuprefix/</i>uprops.icu and other binary data files.
 		/// </summary>
-		public void RunICUTools(string icuDataDir, string nfcOverridesFileName, string nfkcOverridesFileName)
+		private void RunICUTools(string icuDataDir, string nfcOverridesFileName, string nfkcOverridesFileName)
 		{
 			// run commands similar to the following (with full paths in quotes)
 			//
@@ -358,7 +358,7 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 						LogFile.AddErrorLine(stdOutput);
 						LogFile.AddErrorLine(stdError);
 					}
-					if (ret == (int)IcuErrorCodes.FILE_ACCESS_ERROR)
+					if (ret == 4 /* Old IcuErrorCodes.FILE_ACCESS_ERROR value */)
 					{
 						throw new IcuLockedException(ErrorCodes.Gennorm, stdError);
 					}
@@ -531,7 +531,7 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 		private const string ksBackupFileSuffix = "_BAK";
 
 		///<summary />
-		public static void SafeFileCopyWithLogging(string inName, string outName, bool overwrite)
+		private static void SafeFileCopyWithLogging(string inName, string outName, bool overwrite)
 		{
 			try
 			{
@@ -544,7 +544,7 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 		}
 
 		///<summary />
-		public static void FileCopyWithLogging(string inName, string outName, bool overwrite)
+		private static void FileCopyWithLogging(string inName, string outName, bool overwrite)
 		{
 			var fi = new FileInfo(inName);
 			if (fi.Length > 0)
@@ -563,22 +563,21 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 
 		///<summary />
 		///<returns>whether the file was found and successfully deleted</returns>
-		public static bool SafeDeleteFile(string file)
+		private static void SafeDeleteFile(string file)
 		{
 			try
 			{
-				return DeleteFile(file);
+				DeleteFile(file);
 			}
 			catch (Exception e)
 			{
 				LogFile.AddVerboseLine($"ERROR: Unable to remove file: <{file}>: {e.Message}");
-				return false;
 			}
 		}
 
 		///<summary />
 		///<returns>whether the file was found and successfully deleted</returns>
-		public static bool DeleteFile(string file)
+		private static void DeleteFile(string file)
 		{
 			if (!File.Exists(file))
 			{
@@ -586,7 +585,8 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 				{
 					LogFile.AddVerboseLine($"Tried to delete file that didn't exist:<{file}>");
 				}
-				return false;
+
+				return;
 			}
 			File.SetAttributes(file, FileAttributes.Normal);
 			File.Delete(file);
@@ -594,7 +594,6 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 			{
 				LogFile.AddVerboseLine($"Removed file:<{file}>");
 			}
-			return true;
 		}
 
 		/// <summary>
@@ -661,7 +660,7 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 		/// <summary>
 		/// This method will create the "bak" backup of the original input file.
 		/// </summary>
-		public static string CreateBackupFile(string inputFilespec)
+		private static string CreateBackupFile(string inputFilespec)
 		{
 			return CreateXxFile(inputFilespec, ksBackupFileSuffix);
 		}
@@ -669,9 +668,9 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 		/// <summary>
 		/// Create the "original" (backup) copy of the file to be modified,  if it doesn't already exist.
 		/// </summary>
-		public static string BackupOrig(string inputFilespec)
+		private static void BackupOrig(string inputFilespec)
 		{
-			return CreateXxFile(inputFilespec, ksOriginal);
+			CreateXxFile(inputFilespec, ksOriginal);
 		}
 
 		/// <summary>This method appends 'nameSplice' to a file 'inputFilespec'.</summary>
@@ -679,7 +678,7 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 		/// <param name="nameSplice">The 'text' to append to the file name before the
 		/// extension.</param>
 		/// <returns>The new file name.</returns>
-		public static string CreateNewFileName(string inputFilespec, string nameSplice)
+		private static string CreateNewFileName(string inputFilespec, string nameSplice)
 		{
 			var index = inputFilespec.LastIndexOf('.');
 			string newName;

@@ -1,7 +1,6 @@
 // Copyright (c) 2013-2020 SIL International
 // This software is licensed under the MIT license (http://opensource.org/licenses/MIT)
 
-using System;
 using System.Text;
 
 namespace SIL.FieldWorks.UnicodeCharEditor
@@ -9,12 +8,12 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 	/// <summary>
 	/// Extension methods for ErrorCodes enum
 	/// </summary>
-	public static class ErrorCodesExtensionMethods
+	internal static class ErrorCodesExtensionMethods
 	{
 		/// <summary>
 		/// Gets the description for the error code
 		/// </summary>
-		public static string GetDescription(this ErrorCodes errorCode)
+		internal static string GetDescription(this ErrorCodes errorCode)
 		{
 			var bldr = new StringBuilder();
 			switch (errorCode)

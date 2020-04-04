@@ -12,7 +12,7 @@ using SIL.PlatformUtilities;
 namespace SIL.FieldWorks.UnicodeCharEditor
 {
 	/// <summary />
-	public static class LogFile
+	internal static class LogFile
 	{
 		#region Static methods to interact with the logging
 		/// <summary />
@@ -22,7 +22,7 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 		}
 
 		/// <summary />
-		public static void AddErrorLine(string line)
+		internal static void AddErrorLine(string line)
 		{
 			GetLogFile().AddLineX(line, true);
 		}
@@ -34,7 +34,7 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 		}
 
 		/// <summary />
-		public static void AddVerboseLine(string line)
+		internal static void AddVerboseLine(string line)
 		{
 			if (GetLogFile().VerboseLogging)
 			{
@@ -43,13 +43,13 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 		}
 
 		/// <summary />
-		public static bool IsLogging()
+		internal static bool IsLogging()
 		{
 			return GetLogFile().Logging;
 		}
 
 		/// <summary />
-		public static void Release()
+		internal static void Release()
 		{
 			if (!SingletonsContainer.Contains<LogFileImpl>())
 			{
@@ -64,19 +64,18 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 
 		private sealed class LogFileImpl : IDisposable
 		{
-			private readonly string m_sFileName;
 			private StreamWriter m_file;
 
-			public bool Logging { get; }
-			public bool VerboseLogging { get; }
+			internal bool Logging { get; }
+			internal bool VerboseLogging { get; }
 
-			#region public methods to do the work
+			#region Internal methods to do the work
 			public LogFileImpl()
 			{
 				Logging = false;
 				m_file = null;
 
-				m_sFileName = string.Empty;
+				var sFileName = string.Empty;
 				try
 				{
 					// Try to find the key.
@@ -104,10 +103,10 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 
 								if (Logging)    // logging is enabled
 								{
-									m_sFileName = (string)regKey.GetValue("InstallLanguageLog");
-									if (m_sFileName != null)
+									sFileName = (string)regKey.GetValue("InstallLanguageLog");
+									if (sFileName != null)
 									{
-										m_file = new StreamWriter(m_sFileName, true) { AutoFlush = true };
+										m_file = new StreamWriter(sFileName, true) { AutoFlush = true };
 									}
 									else
 									{
@@ -123,13 +122,13 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 				}
 				catch (Exception e)
 				{
-					Console.WriteLine(@"An error occurred: '{0}'", e);
-					m_sFileName = string.Empty;   // can't log with exception somewhere...
+					Console.WriteLine("An error occurred: '{0}'", e);
+					sFileName = string.Empty;   // can't log with exception somewhere...
 					Logging = false;
 				}
 			}
 
-			public void AddLineX(string line, bool echoToStdError)
+			internal void AddLineX(string line, bool echoToStdError)
 			{
 				var dateStamp = $"[{DateTime.Now}] ";
 				if (Platform.IsWindows)
@@ -152,7 +151,7 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 				}
 			}
 
-			public void Shutdown()
+			internal void Shutdown()
 			{
 				if (Logging)
 				{

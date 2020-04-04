@@ -19,7 +19,7 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 	/// <summary>
 	/// Dialog for editing the properties of a Unicode character.
 	/// </summary>
-	public class CustomCharDlg : Form
+	internal sealed class CustomCharDlg : Form
 	{
 		#region member variables
 
@@ -91,7 +91,7 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 		/// <summary>
 		/// Gets or sets the PUACharacter that this dialog is changing.
 		/// </summary>
-		public PUACharacter PUAChar
+		internal PUACharacter PUAChar
 		{
 			get => m_storedPuaChar;
 			set
@@ -104,7 +104,7 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 		/// <summary>
 		/// If <c>true</c> the dialog is being used to modify and existing PUACharacter.
 		/// </summary>
-		public bool Modify
+		internal bool Modify
 		{
 			get => m_modifyMode;
 			set
@@ -127,13 +127,13 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 		/// <summary>
 		/// Allows us to access information stored in the Writing System Properties Dialog
 		/// </summary>
-		public CharEditorWindow ParentDialog { get; set; }
+		internal CharEditorWindow ParentDialog { get; set; }
 		#endregion
 
 		#region construction/destruction
 
 		/// <summary />
-		public CustomCharDlg()
+		internal CustomCharDlg()
 		{
 			// Required for Windows Form Designer support
 			InitializeComponent();
@@ -159,7 +159,7 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 		/// <summary>
 		/// Set the dialog properties object for dialogs that are created.
 		/// </summary>
-		public void SetDialogProperties(IHelpTopicProvider helpTopicProvider)
+		internal void SetDialogProperties(IHelpTopicProvider helpTopicProvider)
 		{
 			m_helpTopicProvider = helpTopicProvider;
 
@@ -203,7 +203,7 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 		/// <summary>
 		/// Fills the input fields in the form with the data in the PUACharacter.
 		/// </summary>
-		public void FillFormFromPUACharacter(bool replaceCodepointToo)
+		internal void FillFormFromPUACharacter(bool replaceCodepointToo)
 		{
 			// If the character doesn't have all of its properties yet, fill them in
 			if (m_puaChar.Empty)
@@ -716,7 +716,7 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 
 			DontDisplayHiddenData(m_chBidiMirrored, m_puaChar.BidiMirrored, false);
 
-			DontDisplayHiddenData(m_cbNumericType, m_puaChar.NumericType, UcdProperty.GetInstance(Icu.Character.UNumericType.NONE));
+			DontDisplayHiddenData(m_cbNumericType, m_puaChar.NumericType, UcdProperty.GetInstance(Character.UNumericType.NONE));
 
 			DontDisplayHiddenData(m_cbCanonicalCombClass, m_puaChar.CanonicalCombiningClass, UcdProperty.GetInstance(0));
 
@@ -725,7 +725,7 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 				case 'N':
 					if (subClass == 'd')
 					{
-						m_cbNumericType.SelectedItem = UcdProperty.GetInstance(Icu.Character.UNumericType.DECIMAL);
+						m_cbNumericType.SelectedItem = UcdProperty.GetInstance(Character.UNumericType.DECIMAL);
 						m_cbNumericType.Enabled = false;
 					}
 					break;
@@ -1058,10 +1058,9 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 		/// Check to make sure that the decomposition field is not empty unless the
 		/// DecompositionType selected is "none"
 		/// </summary>
-		/// <returns></returns>
 		private ErrorMessage CheckEmptyDecomposition()
 		{
-			if (m_cbCompatabilityDecomposition.SelectedItem != UcdProperty.GetInstance(Icu.Character.UDecompositionType.NONE) && CodePointMatches(m_txtDecomposition))
+			if (m_cbCompatabilityDecomposition.SelectedItem != UcdProperty.GetInstance(Character.UDecompositionType.NONE) && CodePointMatches(m_txtDecomposition))
 			{
 				return ErrorMessage.mustEnterDecomp;
 			}
@@ -1217,7 +1216,7 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 		/// <summary>
 		/// Handles the Click event of the m_btnOK control.
 		/// </summary>
-		protected void m_btnOK_Click(object sender, EventArgs e)
+		private void m_btnOK_Click(object sender, EventArgs e)
 		{
 			// Assign all fields to the values that are currently being displayed.
 			m_puaChar.CodePoint = m_txtCodepoint.Text;
@@ -1515,7 +1514,7 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 		/// <summary>
 		/// Calls the ShowDialog method (so that we can prevent showing the dialog in the tests)
 		/// </summary>
-		public virtual DialogResult CallShowDialog()
+		internal DialogResult CallShowDialog()
 		{
 			return ShowDialog();
 		}
