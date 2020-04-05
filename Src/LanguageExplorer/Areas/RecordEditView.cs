@@ -419,8 +419,8 @@ namespace LanguageExplorer.Areas
 			// when switching panes, we want to give the focus to the CurrentSlice(if any)
 			if (MyDataTree?.CurrentSlice != null)
 			{
-				targetCandidates.Add(MyDataTree.CurrentSlice);
-				return MyDataTree.CurrentSlice.ContainsFocus ? MyDataTree.CurrentSlice : null;
+				targetCandidates.Add((Control)MyDataTree.CurrentSlice);
+				return MyDataTree.CurrentSlice.ContainsFocus ? (Control)MyDataTree.CurrentSlice : null;
 			}
 			return base.PopulateCtrlTabTargetCandidateList(targetCandidates);
 		}
@@ -512,15 +512,15 @@ namespace LanguageExplorer.Areas
 			{
 				return; // Don't bother; this edit view does not specify a print layout, or there's nothing to print.
 			}
-			var area = PropertyTable.GetValue<string>(AreaServices.AreaChoice);
+			var area = PropertyTable.GetValue<string>(LanguageExplorerConstants.AreaChoice);
 			string xmlParametersData;
 			string configureText = null;
 			switch (area)
 			{
-				case AreaServices.NotebookAreaMachineName:
+				case LanguageExplorerConstants.NotebookAreaMachineName:
 					xmlParametersData = AreaResources.NotebookDocumentParameters;
 					break;
-				case AreaServices.LexiconAreaMachineName:
+				case LanguageExplorerConstants.LexiconAreaMachineName:
 					xmlParametersData = AreaResources.LexiconClassifiedDictionaryParameters;
 					configureText = AreaResources.Classified_Dictionary;
 					break;

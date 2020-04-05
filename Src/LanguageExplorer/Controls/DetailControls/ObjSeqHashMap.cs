@@ -21,13 +21,13 @@ namespace LanguageExplorer.Controls.DetailControls
 	{
 		private readonly Hashtable m_table;
 		// These are slices looked up by type name. The same ones as m_table. This supports reuse for different objects.
-		private Dictionary<string, List<Slice>> m_slicesToReuse;
+		private Dictionary<string, List<ISlice>> m_slicesToReuse;
 
 		/// <summary />
 		public ObjSeqHashMap()
 		{
 			m_table = new Hashtable(new ListHashCodeProvider());
-			m_slicesToReuse = new Dictionary<string, List<Slice>>();
+			m_slicesToReuse = new Dictionary<string, List<ISlice>>();
 		}
 
 		/// <summary />
@@ -47,13 +47,13 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// <summary>
 		/// Return a collection of the slices in the collection
 		/// </summary>
-		public IEnumerable<Slice> Values
+		public IEnumerable<ISlice> Values
 		{
 			get
 			{
 				foreach (ICollection list in m_table.Values)
 				{
-					foreach (Slice item in list)
+					foreach (ISlice item in list)
 					{
 						yield return item;
 					}
@@ -68,7 +68,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// <summary>
 		/// Add the item to the list associated with this key.
 		/// </summary>
-		public void Add(IList keyList, Slice obj)
+		public void Add(IList keyList, ISlice obj)
 		{
 			var list = (ArrayList)m_table[keyList];
 			if (list == null)
@@ -80,7 +80,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			var key = obj.GetType().Name;
 			if (!m_slicesToReuse.TryGetValue(key, out var reusableSlices))
 			{
-				reusableSlices = new List<Slice>();
+				reusableSlices = new List<ISlice>();
 				m_slicesToReuse[key] = reusableSlices;
 			}
 			reusableSlices.Add(obj);
@@ -105,7 +105,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// Remove the argument object from the indicated collection.
 		/// Currently it is not considered an error if the object is not found, just nothing happens.
 		/// </summary>
-		public void Remove(IList keyList, Slice obj)
+		public void Remove(IList keyList, ISlice obj)
 		{
 			var list = (ArrayList)m_table[keyList];
 			list?.Remove(obj);
@@ -117,7 +117,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		}
 
 		/// <summary />
-		public Slice GetSliceToReuse(string className)
+		public ISlice GetSliceToReuse(string className)
 		{
 			if (!m_slicesToReuse.TryGetValue(className, out var reusableSlices))
 			{

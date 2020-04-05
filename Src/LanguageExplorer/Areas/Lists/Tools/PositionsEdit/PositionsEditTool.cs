@@ -21,7 +21,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.PositionsEdit
 	/// <summary>
 	/// ITool implementation for the "positionsEdit" tool in the "lists" area.
 	/// </summary>
-	[Export(AreaServices.ListsAreaMachineName, typeof(ITool))]
+	[Export(LanguageExplorerConstants.ListsAreaMachineName, typeof(ITool))]
 	internal sealed class PositionsEditTool : IListTool
 	{
 		private const string PositionList = "PositionList";
@@ -112,12 +112,12 @@ namespace LanguageExplorer.Areas.Lists.Tools.PositionsEdit
 		/// Get the internal name of the component.
 		/// </summary>
 		/// <remarks>NB: This is the machine friendly name, not the user friendly name.</remarks>
-		public string MachineName => AreaServices.PositionsEditMachineName;
+		public string MachineName => LanguageExplorerConstants.PositionsEditMachineName;
 
 		/// <summary>
 		/// User-visible localized component name.
 		/// </summary>
-		public string UiName => StringTable.Table.LocalizeLiteralValue(AreaServices.PositionsEditUiName);
+		public string UiName => StringTable.Table.LocalizeLiteralValue(LanguageExplorerConstants.PositionsEditUiName);
 
 		#endregion
 
@@ -126,7 +126,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.PositionsEdit
 		/// <summary>
 		/// Get the area for the tool.
 		/// </summary>
-		[field: Import(AreaServices.ListsAreaMachineName)]
+		[field: Import(LanguageExplorerConstants.ListsAreaMachineName)]
 		public IArea Area { get; private set; }
 
 		/// <summary>

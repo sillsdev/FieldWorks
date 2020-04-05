@@ -10,6 +10,7 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using System.Xml.Linq;
+using LanguageExplorer.Controls.DetailControls;
 using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
@@ -17,14 +18,14 @@ using SIL.LCModel.Application;
 
 namespace LanguageExplorer.Areas.Notebook
 {
-	[Export(AreaServices.NotebookAreaMachineName, typeof(IArea))]
+	[Export(LanguageExplorerConstants.NotebookAreaMachineName, typeof(IArea))]
 	[Export(typeof(IArea))]
 	internal sealed class NotebookArea : IArea
 	{
-		[ImportMany(AreaServices.NotebookAreaMachineName)]
+		[ImportMany(LanguageExplorerConstants.NotebookAreaMachineName)]
 		private IEnumerable<ITool> _myTools;
 		internal const string Records = "records";
-		private string PropertyNameForToolName => $"{AreaServices.ToolForAreaNamed_}{MachineName}";
+		private string PropertyNameForToolName => $"{LanguageExplorerConstants.ToolForAreaNamed_}{MachineName}";
 		private NotebookAreaMenuHelper _notebookAreaMenuHelper;
 		private Dictionary<string, ITool> _dictionaryOfAllTools;
 		[Import]
@@ -67,7 +68,7 @@ namespace LanguageExplorer.Areas.Notebook
 		/// </remarks>
 		public void Activate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
-			_propertyTable.SetDefault(PropertyNameForToolName, AreaServices.NotebookAreaDefaultToolMachineName, true);
+			_propertyTable.SetDefault(PropertyNameForToolName, LanguageExplorerConstants.NotebookAreaDefaultToolMachineName, true);
 
 			var areaUiWidgetParameterObject = new AreaUiWidgetParameterObject(this);
 			_notebookAreaMenuHelper = new NotebookAreaMenuHelper(majorFlexComponentParameters);
@@ -97,7 +98,7 @@ namespace LanguageExplorer.Areas.Notebook
 		/// </summary>
 		public void EnsurePropertiesAreCurrent()
 		{
-			_propertyTable.SetProperty(AreaServices.InitialArea, MachineName, true, settingsGroup: SettingsGroup.LocalSettings);
+			_propertyTable.SetProperty(LanguageExplorerConstants.InitialArea, MachineName, true, settingsGroup: SettingsGroup.LocalSettings);
 			PersistedOrDefaultTool.EnsurePropertiesAreCurrent();
 		}
 
@@ -109,12 +110,12 @@ namespace LanguageExplorer.Areas.Notebook
 		/// Get the internal name of the component.
 		/// </summary>
 		/// <remarks>NB: This is the machine friendly name, not the user friendly name.</remarks>
-		public string MachineName => AreaServices.NotebookAreaMachineName;
+		public string MachineName => LanguageExplorerConstants.NotebookAreaMachineName;
 
 		/// <summary>
 		/// User-visible localized component name.
 		/// </summary>
-		public string UiName => StringTable.Table.LocalizeLiteralValue(AreaServices.NotebookAreaUiName);
+		public string UiName => StringTable.Table.LocalizeLiteralValue(LanguageExplorerConstants.NotebookAreaUiName);
 
 		#endregion
 
@@ -125,7 +126,7 @@ namespace LanguageExplorer.Areas.Notebook
 		/// the persisted one is no longer available.
 		/// </summary>
 		/// <returns>The last persisted tool or the default tool for the area.</returns>
-		public ITool PersistedOrDefaultTool => _dictionaryOfAllTools.Values.First(tool => tool.MachineName == _propertyTable.GetValue(PropertyNameForToolName, AreaServices.NotebookAreaDefaultToolMachineName));
+		public ITool PersistedOrDefaultTool => _dictionaryOfAllTools.Values.First(tool => tool.MachineName == _propertyTable.GetValue(PropertyNameForToolName, LanguageExplorerConstants.NotebookAreaDefaultToolMachineName));
 
 		/// <summary>
 		/// Get all installed tools for the area.
@@ -139,9 +140,9 @@ namespace LanguageExplorer.Areas.Notebook
 					_dictionaryOfAllTools = new Dictionary<string, ITool>();
 					var myBuiltinToolsInOrder = new List<string>
 					{
-						AreaServices.NotebookEditToolMachineName,
-						AreaServices.NotebookBrowseToolMachineName,
-						AreaServices.NotebookDocumentToolMachineName
+						LanguageExplorerConstants.NotebookEditToolMachineName,
+						LanguageExplorerConstants.NotebookBrowseToolMachineName,
+						LanguageExplorerConstants.NotebookDocumentToolMachineName
 					};
 					foreach (var currentBuiltinTool in myBuiltinToolsInOrder.Select(toolName => _myTools.First(tool => tool.MachineName == toolName)))
 					{

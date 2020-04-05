@@ -26,7 +26,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Dictionary
 	/// <summary>
 	/// ITool implementation for the "lexiconDictionary" tool in the "lexicon" area.
 	/// </summary>
-	[Export(AreaServices.LexiconAreaMachineName, typeof(ITool))]
+	[Export(LanguageExplorerConstants.LexiconAreaMachineName, typeof(ITool))]
 	internal sealed class LexiconDictionaryTool : ITool
 	{
 		private LexiconDictionaryToolMenuHelper _toolMenuHelper;
@@ -138,12 +138,12 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Dictionary
 		/// Get the internal name of the component.
 		/// </summary>
 		/// <remarks>NB: This is the machine friendly name, not the user friendly name.</remarks>
-		public string MachineName => AreaServices.LexiconDictionaryMachineName;
+		public string MachineName => LanguageExplorerConstants.LexiconDictionaryMachineName;
 
 		/// <summary>
 		/// User-visible localized component name.
 		/// </summary>
-		public string UiName => StringTable.Table.LocalizeLiteralValue(AreaServices.LexiconDictionaryUiName);
+		public string UiName => StringTable.Table.LocalizeLiteralValue(LanguageExplorerConstants.LexiconDictionaryUiName);
 
 		#endregion
 
@@ -152,7 +152,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Dictionary
 		/// <summary>
 		/// Get the area for the tool.
 		/// </summary>
-		[field: Import(AreaServices.LexiconAreaMachineName)]
+		[field: Import(LanguageExplorerConstants.LexiconAreaMachineName)]
 		public IArea Area { get; private set; }
 
 		/// <summary>

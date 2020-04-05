@@ -22,7 +22,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.InterlinearEdit
 	/// <summary>
 	/// ITool implementation for the "interlinearEdit" tool in the "textsWords" area.
 	/// </summary>
-	[Export(AreaServices.TextAndWordsAreaMachineName, typeof(ITool))]
+	[Export(LanguageExplorerConstants.TextAndWordsAreaMachineName, typeof(ITool))]
 	internal sealed class InterlinearEditTool : ITool
 	{
 		private InterlinearEditToolMenuHelper _toolMenuHelper;
@@ -61,7 +61,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.InterlinearEdit
 		/// </remarks>
 		public void Activate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
-			majorFlexComponentParameters.FlexComponentParameters.PropertyTable.SetDefault($"{AreaServices.ToolForAreaNamed_}{Area.MachineName}", MachineName, true);
+			majorFlexComponentParameters.FlexComponentParameters.PropertyTable.SetDefault($"{LanguageExplorerConstants.ToolForAreaNamed_}{Area.MachineName}", MachineName, true);
 			if (_recordList == null)
 			{
 				_recordList = majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>(LanguageExplorerConstants.RecordListRepository).GetRecordList(TextAndWordsArea.InterlinearTexts, majorFlexComponentParameters.StatusBar, TextAndWordsArea.InterlinearTextsFactoryMethod);
@@ -141,12 +141,12 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.InterlinearEdit
 		/// Get the internal name of the component.
 		/// </summary>
 		/// <remarks>NB: This is the machine friendly name, not the user friendly name.</remarks>
-		public string MachineName => AreaServices.InterlinearEditMachineName;
+		public string MachineName => LanguageExplorerConstants.InterlinearEditMachineName;
 
 		/// <summary>
 		/// User-visible localized component name.
 		/// </summary>
-		public string UiName => StringTable.Table.LocalizeLiteralValue(AreaServices.InterlinearEditUiName);
+		public string UiName => StringTable.Table.LocalizeLiteralValue(LanguageExplorerConstants.InterlinearEditUiName);
 
 		#endregion
 
@@ -155,7 +155,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.InterlinearEdit
 		/// <summary>
 		/// Get the area for the tool.
 		/// </summary>
-		[field: Import(AreaServices.TextAndWordsAreaMachineName)]
+		[field: Import(LanguageExplorerConstants.TextAndWordsAreaMachineName)]
 		public IArea Area { get; private set; }
 
 		/// <summary>

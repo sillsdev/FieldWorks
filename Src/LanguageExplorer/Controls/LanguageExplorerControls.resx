@@ -1352,4 +1352,179 @@ Sorry, in this browser, opening the file via hyperlink presents a security risk.
     <value>Step {0} of {1}</value>
     <comment>Text and format of label on wizards indicating what step user is on out of total number of steps.</comment>
   </data>
+  <data name="Alphabetical_Order" xml:space="preserve">
+    <value>Alphabetical Order</value>
+  </data>
+  <data name="ksAffixRuleIndex" xml:space="preserve">
+    <value>Index</value>
+  </data>
+  <data name="ksAffixRuleInput" xml:space="preserve">
+    <value>Input</value>
+  </data>
+  <data name="ksAffixRuleNoOptsMsg" xml:space="preserve">
+    <value>No items can be inserted into a cell containing an X variable.</value>
+  </data>
+  <data name="ksAffixRuleRedoSetMappingFeatures" xml:space="preserve">
+    <value>Redo Set Modification Features</value>
+  </data>
+  <data name="ksAffixRuleRedoSetNC" xml:space="preserve">
+    <value>Redo Set Natural Class</value>
+  </data>
+  <data name="ksAffixRuleResult" xml:space="preserve">
+    <value>Result</value>
+  </data>
+  <data name="ksAffixRuleUndoSetMappingFeatures" xml:space="preserve">
+    <value>Undo Set Modification Features</value>
+  </data>
+  <data name="ksAffixRuleUndoSetNC" xml:space="preserve">
+    <value>Undo Set Natural Class</value>
+  </data>
+  <data name="ksErrorInEnvironment" xml:space="preserve">
+    <value>Error in Environment</value>
+    <comment>message box caption</comment>
+  </data>
+  <data name="ksIdentifyXEntry" xml:space="preserve">
+    <value>Add Reference ({0})</value>
+  </data>
+  <data name="ksMetaRuleInput" xml:space="preserve">
+    <value>Input</value>
+  </data>
+  <data name="ksMetaRuleLeftEnv" xml:space="preserve">
+    <value>Left environment</value>
+  </data>
+  <data name="ksMetaRuleNoOptsMsg" xml:space="preserve">
+    <value>The item in this cell must be removed before a new item can be inserted.</value>
+  </data>
+  <data name="ksMetaRuleResult" xml:space="preserve">
+    <value>Result</value>
+  </data>
+  <data name="ksMetaRuleRightEnv" xml:space="preserve">
+    <value>Right environment</value>
+  </data>
+  <data name="ksMetaRuleSwitch" xml:space="preserve">
+    <value>Switch these items</value>
+  </data>
+  <data name="ksRedoDeleteRef" xml:space="preserve">
+    <value>Redo Delete Reference</value>
+  </data>
+  <data name="ksRedoDeleteRelation" xml:space="preserve">
+    <value>Redo Delete Relation</value>
+  </data>
+  <data name="ksRedoEditRefSetDetails" xml:space="preserve">
+    <value>Redo Edit Reference Set Details</value>
+  </data>
+  <data name="ksRedoReplaceRef" xml:space="preserve">
+    <value>Redo Replace Reference</value>
+  </data>
+  <data name="ksRegRuleRedoSetOccurrence" xml:space="preserve">
+    <value>Redo Set occurrence</value>
+  </data>
+  <data name="ksRegRuleUndoSetOccurrence" xml:space="preserve">
+    <value>Undo Set occurrence</value>
+  </data>
+  <data name="ksReplaceXEntry" xml:space="preserve">
+    <value>Replace Reference</value>
+  </data>
+  <data name="ksRuleColOpt" xml:space="preserve">
+    <value>Column</value>
+  </data>
+  <data name="ksRuleEnvChooserName" xml:space="preserve">
+    <value>Environment</value>
+  </data>
+  <data name="ksRuleFeatsChooserTitle" xml:space="preserve">
+    <value>Set Phonological Features</value>
+  </data>
+  <data name="ksRuleFeaturesOpt" xml:space="preserve">
+    <value>Phonological Features</value>
+  </data>
+  <data name="ksRuleIndexOpt" xml:space="preserve">
+    <value>Index</value>
+  </data>
+  <data name="ksRuleMorphBdryOpt" xml:space="preserve">
+    <value>Morpheme Boundary (+)</value>
+  </data>
+  <data name="ksRuleNCChooserLink" xml:space="preserve">
+    <value>Edit the Natural Classes</value>
+  </data>
+  <data name="ksRuleNCFeatsName" xml:space="preserve">
+    <value>Created automatically for rule "{0}"</value>
+  </data>
+  <data name="ksRuleNCOpt" xml:space="preserve">
+    <value>Natural Class</value>
+  </data>
+  <data name="ksRulePhonemeChooserLink" xml:space="preserve">
+    <value>Edit the Phonemes</value>
+  </data>
+  <data name="ksRulePhonemeOpt" xml:space="preserve">
+    <value>Phoneme</value>
+  </data>
+  <data name="ksRuleRedoRemove" xml:space="preserve">
+    <value>Redo Remove from Rule</value>
+  </data>
+  <data name="ksRuleRedoUpdateEnv" xml:space="preserve">
+    <value>Redo Update Environment</value>
+  </data>
+  <data name="ksRuleUndoRemove" xml:space="preserve">
+    <value>Undo Remove from Rule</value>
+  </data>
+  <data name="ksRuleUndoUpdateEnv" xml:space="preserve">
+    <value>Undo Update Environment</value>
+  </data>
+  <data name="ksRuleVarOpt" xml:space="preserve">
+    <value>X Variable</value>
+  </data>
+  <data name="ksRuleWordBdryNoOptsMsg" xml:space="preserve">
+    <value>Items cannot be inserted outside of word boundaries.</value>
+  </data>
+  <data name="ksRuleWordBdryOpt" xml:space="preserve">
+    <value>Word Boundary (#)</value>
+  </data>
+  <data name="ksUndoDeleteRef" xml:space="preserve">
+    <value>Undo Delete Reference</value>
+  </data>
+  <data name="ksUndoDeleteRelation" xml:space="preserve">
+    <value>Undo Delete Relation</value>
+  </data>
+  <data name="ksUndoEditRefSetDetails" xml:space="preserve">
+    <value>Undo Edit Reference Set Details</value>
+  </data>
+  <data name="ksUndoReplaceRef" xml:space="preserve">
+    <value>Undo Replace Reference</value>
+  </data>
+  <data name="ks_Replace" xml:space="preserve">
+    <value>&amp;Replace</value>
+  </data>
+  <data name="Move_Left" xml:space="preserve">
+    <value>Move Left</value>
+  </data>
+  <data name="Move_Right" xml:space="preserve">
+    <value>Move Right</value>
+  </data>
+  <data name="NotebookRecordGoDlgParameters" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\NotebookRecordGoDlgParameters1.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="Occurs_exactly_once" xml:space="preserve">
+    <value>Occurs exactly once</value>
+  </data>
+  <data name="Occurs_one_or_more_times" xml:space="preserve">
+    <value>Occurs one or more times</value>
+  </data>
+  <data name="Occurs_zero_or_more_times" xml:space="preserve">
+    <value>Occurs zero or more times</value>
+  </data>
+  <data name="Set_Natural_Class" xml:space="preserve">
+    <value>Set Natural Class...</value>
+  </data>
+  <data name="Set_occurrence_min_and_max" xml:space="preserve">
+    <value>Set occurrence (min. and max.)...</value>
+  </data>
+  <data name="Set_Phonological_Features" xml:space="preserve">
+    <value>Set Phonological Features...</value>
+  </data>
+  <data name="Show_in_Natural_Classes_list" xml:space="preserve">
+    <value>Show in Natural Classes list</value>
+  </data>
+  <data name="Show_in_Phonemes_list" xml:space="preserve">
+    <value>Show in Phonemes list</value>
+  </data>
 </root>

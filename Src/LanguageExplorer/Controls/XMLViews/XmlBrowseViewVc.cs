@@ -84,7 +84,7 @@ namespace LanguageExplorer.Controls.XMLViews
 
 		#region Construction and initialization
 
-		internal string ColListId => $"{m_xbv.m_bv.PropertyTable.GetValue<string>(AreaServices.ToolChoice)}_{m_xbv.GetCorrespondingPropertyName("ColumnList")}";
+		internal string ColListId => $"{m_xbv.m_bv.PropertyTable.GetValue<string>(LanguageExplorerConstants.ToolChoice)}_{m_xbv.GetCorrespondingPropertyName("ColumnList")}";
 
 		/// <summary>
 		/// Gets or sets a value indicating whether [show enabled].

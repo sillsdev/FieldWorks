@@ -154,17 +154,17 @@ namespace LanguageExplorer
 		/// </summary>
 		internal static string GetDictionaryConfigurationBaseType(IPropertyRetriever propertyTable)
 		{
-			var toolChoice = propertyTable.GetValue<string>(AreaServices.ToolChoice);
+			var toolChoice = propertyTable.GetValue<string>(LanguageExplorerConstants.ToolChoice);
 			switch (toolChoice)
 			{
-				case AreaServices.ReversalBulkEditReversalEntriesMachineName:
-				case AreaServices.ReversalEditCompleteMachineName:
+				case LanguageExplorerConstants.ReversalBulkEditReversalEntriesMachineName:
+				case LanguageExplorerConstants.ReversalEditCompleteMachineName:
 					{
 						return LanguageExplorerResources.ReversalIndex;
 					}
-				case AreaServices.LexiconBrowseMachineName:
-				case AreaServices.LexiconDictionaryMachineName:
-				case AreaServices.LexiconEditMachineName:
+				case LanguageExplorerConstants.LexiconBrowseMachineName:
+				case LanguageExplorerConstants.LexiconDictionaryMachineName:
+				case LanguageExplorerConstants.LexiconEditMachineName:
 					{
 						return "Dictionary";
 					}
@@ -196,7 +196,7 @@ namespace LanguageExplorer
 		/// </summary>
 		internal static string GetProjectConfigurationDirectory(IPropertyTable propertyTable)
 		{
-			return GetProjectConfigurationDirectory(propertyTable.GetValue<LcmCache>(FwUtils.cache), GetInnermostConfigurationDirectory(propertyTable.GetValue<string>(AreaServices.ToolChoice)));
+			return GetProjectConfigurationDirectory(propertyTable.GetValue<LcmCache>(FwUtils.cache), GetInnermostConfigurationDirectory(propertyTable.GetValue<string>(LanguageExplorerConstants.ToolChoice)));
 		}
 
 		/// <remarks>Useful for querying about an area of FLEx that the user is not in.</remarks>
@@ -211,7 +211,7 @@ namespace LanguageExplorer
 		/// </summary>
 		internal static string GetDefaultConfigurationDirectory(IPropertyTable propertyTable)
 		{
-			return GetDefaultConfigurationDirectory(GetInnermostConfigurationDirectory(propertyTable.GetValue<string>(AreaServices.ToolChoice)));
+			return GetDefaultConfigurationDirectory(GetInnermostConfigurationDirectory(propertyTable.GetValue<string>(LanguageExplorerConstants.ToolChoice)));
 		}
 
 		/// <remarks>Useful for querying about an area of FLEx that the user is not in.</remarks>
@@ -243,7 +243,7 @@ namespace LanguageExplorer
 			}
 			if (innerConfigDir == null)
 			{
-				innerConfigDir = GetInnermostConfigurationDirectory(propertyTable.GetValue<string>(AreaServices.ToolChoice)) ?? LanguageExplorerConstants.RevIndexDir;
+				innerConfigDir = GetInnermostConfigurationDirectory(propertyTable.GetValue<string>(LanguageExplorerConstants.ToolChoice)) ?? LanguageExplorerConstants.RevIndexDir;
 			}
 			var isDictionary = innerConfigDir == DictionaryConfigurationDirectoryName;
 			var pubLayoutPropName = isDictionary ? "DictionaryPublicationLayout" : "ReversalIndexPublicationLayout";
@@ -413,12 +413,12 @@ namespace LanguageExplorer
 		{
 			switch (toolChoice)
 			{
-				case AreaServices.ReversalBulkEditReversalEntriesMachineName:
-				case AreaServices.ReversalEditCompleteMachineName:
+				case LanguageExplorerConstants.ReversalBulkEditReversalEntriesMachineName:
+				case LanguageExplorerConstants.ReversalEditCompleteMachineName:
 					return ReversalIndexConfigurationDirectoryName;
-				case AreaServices.LexiconBrowseMachineName:
-				case AreaServices.LexiconDictionaryMachineName:
-				case AreaServices.LexiconEditMachineName:
+				case LanguageExplorerConstants.LexiconBrowseMachineName:
+				case LanguageExplorerConstants.LexiconDictionaryMachineName:
+				case LanguageExplorerConstants.LexiconEditMachineName:
 					return DictionaryConfigurationDirectoryName;
 				default:
 					return null;

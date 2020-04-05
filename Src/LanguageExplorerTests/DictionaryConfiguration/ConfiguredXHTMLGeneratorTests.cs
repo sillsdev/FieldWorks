@@ -66,7 +66,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			_recordList = CreateRecordList();
 			_recordListRepositoryForTools.AddRecordList(_recordList);
 			_recordListRepositoryForTools.ActiveRecordList = _recordList;
-			_flexComponentParameters.PropertyTable.SetProperty(AreaServices.ToolChoice, AreaServices.LexiconDictionaryMachineName);
+			_flexComponentParameters.PropertyTable.SetProperty(LanguageExplorerConstants.ToolChoice, LanguageExplorerConstants.LexiconDictionaryMachineName);
 			Cache.ProjectId.Path = Path.Combine(DictionaryConfigurationServices.TestDataPath, "TestData.fwdata");
 			_wsEn = Cache.WritingSystemFactory.GetWsFromStr("en");
 			_wsFr = Cache.WritingSystemFactory.GetWsFromStr("fr");

@@ -21,7 +21,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.RestrictionsEdit
 	/// <summary>
 	/// ITool implementation for the "restrictionsEdit" tool in the "lists" area.
 	/// </summary>
-	[Export(AreaServices.ListsAreaMachineName, typeof(ITool))]
+	[Export(LanguageExplorerConstants.ListsAreaMachineName, typeof(ITool))]
 	internal sealed class RestrictionsEditTool : IListTool
 	{
 		private const string RestrictionsList = "RestrictionsList";
@@ -112,12 +112,12 @@ namespace LanguageExplorer.Areas.Lists.Tools.RestrictionsEdit
 		/// Get the internal name of the component.
 		/// </summary>
 		/// <remarks>NB: This is the machine friendly name, not the user friendly name.</remarks>
-		public string MachineName => AreaServices.RestrictionsEditMachineName;
+		public string MachineName => LanguageExplorerConstants.RestrictionsEditMachineName;
 
 		/// <summary>
 		/// User-visible localized component name.
 		/// </summary>
-		public string UiName => StringTable.Table.LocalizeLiteralValue(AreaServices.RestrictionsEditUiName);
+		public string UiName => StringTable.Table.LocalizeLiteralValue(LanguageExplorerConstants.RestrictionsEditUiName);
 
 		#endregion
 
@@ -126,7 +126,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.RestrictionsEdit
 		/// <summary>
 		/// Get the area for the tool.
 		/// </summary>
-		[field: Import(AreaServices.ListsAreaMachineName)]
+		[field: Import(LanguageExplorerConstants.ListsAreaMachineName)]
 		public IArea Area { get; private set; }
 
 		/// <summary>

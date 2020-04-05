@@ -16,12 +16,12 @@ namespace LanguageExplorer.Controls.DetailControls
 	/// </summary>
 	internal sealed class SliceLeftEdgeContextMenuFactory : IDisposable
 	{
-		private Dictionary<ContextMenuName, Func<Slice, ContextMenuName, Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>>>> _leftEdgeMenuCreatorMethods = new Dictionary<ContextMenuName, Func<Slice, ContextMenuName, Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>>>>();
+		private Dictionary<ContextMenuName, Func<ISlice, ContextMenuName, Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>>>> _leftEdgeMenuCreatorMethods = new Dictionary<ContextMenuName, Func<ISlice, ContextMenuName, Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>>>>();
 
 		/// <summary>
 		/// Get the ContextMenuStrip and a list of its ToolStripMenuItem items for the given menu for the given Slice.
 		/// </summary>
-		internal Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> GetLeftEdgeContextMenu(Slice slice, ContextMenuName ordinaryMenuId, bool addContextMenus = true)
+		internal Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> GetLeftEdgeContextMenu(ISlice slice, ContextMenuName ordinaryMenuId, bool addContextMenus = true)
 		{
 			var retval = _leftEdgeMenuCreatorMethods.ContainsKey(ordinaryMenuId) ? _leftEdgeMenuCreatorMethods[ordinaryMenuId].Invoke(slice, ordinaryMenuId) : null;
 			if (addContextMenus)
@@ -34,7 +34,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// <summary>
 		/// Register a method that can be used to create the Ordinary (blue triangle on left of slice) context menu and its menu items.
 		/// </summary>
-		internal void RegisterLeftEdgeContextMenuCreatorMethod(ContextMenuName leftEdgeContextMenuId, Func<Slice, ContextMenuName, Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>>> leftEdgeContextMenuCreatorMethod)
+		internal void RegisterLeftEdgeContextMenuCreatorMethod(ContextMenuName leftEdgeContextMenuId, Func<ISlice, ContextMenuName, Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>>> leftEdgeContextMenuCreatorMethod)
 		{
 			Require.That(leftEdgeContextMenuId != ContextMenuName.nullValue);
 			Guard.AgainstNull(leftEdgeContextMenuCreatorMethod, nameof(leftEdgeContextMenuCreatorMethod));

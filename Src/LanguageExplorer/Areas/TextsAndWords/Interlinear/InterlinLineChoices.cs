@@ -9,7 +9,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Text;
-using LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance;
+using LanguageExplorer.Controls.DetailControls;
 using LanguageExplorer.Controls.XMLViews;
 using LanguageExplorer.LcmUi;
 using SIL.FieldWorks.Common.FwUtils;
@@ -43,6 +43,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		internal LcmCache m_cache;
 		private readonly Dictionary<int, string> m_fieldNames = new Dictionary<int, string>();
 		private InterlinMode m_mode = InterlinMode.Analyze;
+		internal const int kfragFeatureLine = 103;
 
 		public InterlinLineChoices(ILangProject proj, int defaultVernacularWs, int defaultAnalysisWs)
 			: this(proj, defaultVernacularWs, defaultAnalysisWs, InterlinMode.Analyze)
@@ -217,16 +218,16 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				{
 					throw new Exception($"Unrecognized InterlinLineSpec: {parts[i]}");
 				}
-				var flid = int.Parse(flidAndWs[0]);
+				var flid = Int32.Parse(flidAndWs[0]);
 				var ws = wsf.GetWsFromStr(flidAndWs[1]);
 				// Some virtual Ids such as -61 and 103 create standard items. so, we need to add those items always
-				if (flid <= ComplexConcPatternVc.kfragFeatureLine || proj.Cache.GetManagedMetaDataCache().FieldExists(flid))
+				if (flid <= kfragFeatureLine || proj.Cache.GetManagedMetaDataCache().FieldExists(flid))
 				{
 					result.Add(flid, ws);
 				}
 				else
 				{
-					if (propertyTable != null && !string.IsNullOrEmpty(configPropName))
+					if (propertyTable != null && !String.IsNullOrEmpty(configPropName))
 					{
 						data = data.Replace("," + flid + "%", "");
 						propertyTable.SetProperty(configPropName, data, true);

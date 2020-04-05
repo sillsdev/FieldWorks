@@ -1213,15 +1213,6 @@ namespace LanguageExplorer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Create Reversal.
-        /// </summary>
-        internal static string ksCreateReversal {
-            get {
-                return ResourceManager.GetString("ksCreateReversal", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to You will now be taken to a new, custom grammatical category. Enter at least the name and abbreviation for the new category. Then, click the &quot;Back&quot; button on the toolbar to return to where you were working. The new category will then be available for you to choose..
         /// </summary>
         internal static string ksCreatingCustomGramCategory {
@@ -2204,15 +2195,6 @@ namespace LanguageExplorer {
         internal static string ksReassignHomographsCaution {
             get {
                 return ResourceManager.GetString("ksReassignHomographsCaution", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Recreate Reversal.
-        /// </summary>
-        internal static string ksRecreateReversal {
-            get {
-                return ResourceManager.GetString("ksRecreateReversal", resourceCulture);
             }
         }
         

@@ -11,6 +11,7 @@ using System.Globalization;
 using System.Linq;
 using System.Windows.Forms;
 using LanguageExplorer.Controls;
+using LanguageExplorer.Controls.DetailControls;
 using LanguageExplorer.LcmUi;
 using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;

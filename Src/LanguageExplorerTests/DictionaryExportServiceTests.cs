@@ -31,7 +31,7 @@ namespace LanguageExplorerTests
 			base.FixtureSetup();
 
 			_flexComponentParameters = TestSetupServices.SetupEverything(Cache, false);
-			_flexComponentParameters.PropertyTable.SetProperty(AreaServices.ToolChoice, AreaServices.LexiconDictionaryMachineName);
+			_flexComponentParameters.PropertyTable.SetProperty(LanguageExplorerConstants.ToolChoice, LanguageExplorerConstants.LexiconDictionaryMachineName);
 		}
 
 		public override void FixtureTeardown()

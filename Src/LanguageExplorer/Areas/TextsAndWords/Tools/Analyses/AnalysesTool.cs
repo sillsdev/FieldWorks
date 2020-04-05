@@ -29,7 +29,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 	/// <summary>
 	/// ITool implementation for the "Analyses" tool in the "textsWords" area.
 	/// </summary>
-	[Export(AreaServices.TextAndWordsAreaMachineName, typeof(ITool))]
+	[Export(LanguageExplorerConstants.TextAndWordsAreaMachineName, typeof(ITool))]
 	internal sealed class AnalysesTool : ITool
 	{
 		private AnalysesToolMenuHelper _toolMenuHelper;
@@ -134,12 +134,12 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 		/// Get the internal name of the component.
 		/// </summary>
 		/// <remarks>NB: This is the machine friendly name, not the user friendly name.</remarks>
-		public string MachineName => AreaServices.AnalysesMachineName;
+		public string MachineName => LanguageExplorerConstants.AnalysesMachineName;
 
 		/// <summary>
 		/// User-visible localized component name.
 		/// </summary>
-		public string UiName => StringTable.Table.LocalizeLiteralValue(AreaServices.AnalysesUiName);
+		public string UiName => StringTable.Table.LocalizeLiteralValue(LanguageExplorerConstants.AnalysesUiName);
 
 		#endregion
 
@@ -148,7 +148,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 		/// <summary>
 		/// Get the area for the tool.
 		/// </summary>
-		[field: Import(AreaServices.TextAndWordsAreaMachineName)]
+		[field: Import(LanguageExplorerConstants.TextAndWordsAreaMachineName)]
 		public IArea Area { get; private set; }
 
 		/// <summary>
@@ -294,7 +294,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 				#endregion Hotlinks menus
 			}
 
-			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_ParserProducedAnalysis(Slice slice, ContextMenuName contextMenuId)
+			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_ParserProducedAnalysis(ISlice slice, ContextMenuName contextMenuId)
 			{
 				Require.That(contextMenuId == ContextMenuName.mnuDataTree_ParserProducedAnalysis, $"Expected argument value of '{ContextMenuName.mnuDataTree_ParserProducedAnalysis.ToString()}', but got '{contextMenuId.ToString()}' instead.");
 
@@ -337,7 +337,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 				}
 			}
 
-			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_HumanDisapprovedAnalysis(Slice slice, ContextMenuName contextMenuId)
+			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_HumanDisapprovedAnalysis(ISlice slice, ContextMenuName contextMenuId)
 			{
 				Require.That(contextMenuId == ContextMenuName.mnuDataTree_HumanDisapprovedAnalysis, $"Expected argument value of '{ContextMenuName.mnuDataTree_HumanDisapprovedAnalysis.ToString()}', but got '{contextMenuId.ToString()}' instead.");
 
@@ -363,7 +363,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 				return new Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>>(contextMenuStrip, menuItems);
 			}
 
-			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_HumanApprovedAnalysis(Slice slice, ContextMenuName contextMenuId)
+			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_HumanApprovedAnalysis(ISlice slice, ContextMenuName contextMenuId)
 			{
 				Require.That(contextMenuId == ContextMenuName.mnuDataTree_HumanApprovedAnalysis, $"Expected argument value of '{ContextMenuName.mnuDataTree_HumanApprovedAnalysis.ToString()}', but got '{contextMenuId.ToString()}' instead.");
 
@@ -379,7 +379,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 				ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, ShowHumanApprovedAnalysisConc_Click, TextAndWordsResources.Assign_Analysis);
 				// <item command="CmdAnalysisJumpToConcordance" />
 				_analysisJumpToConcordanceMenu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _majorFlexComponentParameters.SharedEventHandlers.GetEventHandler(Command.CmdJumpToTool), AreaResources.Show_Analysis_in_Concordance);
-				_analysisJumpToConcordanceMenu.Tag = new List<object> { _majorFlexComponentParameters.FlexComponentParameters.Publisher, AreaServices.ConcordanceMachineName, _dataTree };
+				_analysisJumpToConcordanceMenu.Tag = new List<object> { _majorFlexComponentParameters.FlexComponentParameters.Publisher, LanguageExplorerConstants.ConcordanceMachineName, _dataTree };
 				Create_User_Opinion_Menu(contextMenuStrip);
 				// <item command="CmdDataTree_Insert_WordGloss" />
 				ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, Insert_WordGloss_Click, TextAndWordsResources.Add_Word_Gloss);
@@ -464,7 +464,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 				_dataTree.RefreshList(true);
 			}
 
-			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_MainWordform(Slice slice, ContextMenuName contextMenuId)
+			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_MainWordform(ISlice slice, ContextMenuName contextMenuId)
 			{
 				Require.That(contextMenuId == ContextMenuName.mnuDataTree_MainWordform, $"Expected argument value of '{ContextMenuName.mnuDataTree_MainWordform.ToString()}', but got '{contextMenuId.ToString()}' instead.");
 
@@ -487,7 +487,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 				return new Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>>(contextMenuStrip, menuItems);
 			}
 
-			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_HumanApprovedAnalysisSummary(Slice slice, ContextMenuName contextMenuId)
+			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_HumanApprovedAnalysisSummary(ISlice slice, ContextMenuName contextMenuId)
 			{
 				Require.That(contextMenuId == ContextMenuName.mnuDataTree_HumanApprovedAnalysisSummary, $"Expected argument value of '{ContextMenuName.mnuDataTree_HumanApprovedAnalysisSummary.ToString()}', but got '{contextMenuId.ToString()}' instead.");
 
@@ -507,7 +507,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 				return new Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>>(contextMenuStrip, menuItems);
 			}
 
-			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_WordformSpelling(Slice slice, ContextMenuName contextMenuId)
+			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_WordformSpelling(ISlice slice, ContextMenuName contextMenuId)
 			{
 				Require.That(contextMenuId == ContextMenuName.mnuDataTree_WordformSpelling, $"Expected argument value of '{ContextMenuName.mnuDataTree_WordformSpelling.ToString()}', but got '{contextMenuId.ToString()}' instead.");
 
@@ -527,7 +527,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 				return new Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>>(contextMenuStrip, menuItems);
 			}
 
-			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_WordGlossForm(Slice slice, ContextMenuName contextMenuId)
+			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_WordGlossForm(ISlice slice, ContextMenuName contextMenuId)
 			{
 				Require.That(contextMenuId == ContextMenuName.mnuDataTree_WordGlossForm, $"Expected argument value of '{ContextMenuName.mnuDataTree_WordGlossForm.ToString()}', but got '{contextMenuId.ToString()}' instead.");
 
@@ -587,7 +587,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 				ShowConcDlg(Gloss);
 			}
 
-			private List<Tuple<ToolStripMenuItem, EventHandler>> Create_mnuDataTree_MainWordform_Hotlinks(Slice slice, ContextMenuName hotlinksMenuId)
+			private List<Tuple<ToolStripMenuItem, EventHandler>> Create_mnuDataTree_MainWordform_Hotlinks(ISlice slice, ContextMenuName hotlinksMenuId)
 			{
 				Require.That(hotlinksMenuId == ContextMenuName.mnuDataTree_MainWordform_Hotlinks, $"Expected argument value of '{ContextMenuName.mnuDataTree_MainWordform_Hotlinks.ToString()}', but got '{hotlinksMenuId.ToString()}' instead.");
 
@@ -608,7 +608,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 				ShowConcDlg(Wordform);
 			}
 
-			private List<Tuple<ToolStripMenuItem, EventHandler>> Create_mnuDataTree_HumanApprovedAnalysisSummary_Hotlinks(Slice slice, ContextMenuName hotlinksMenuId)
+			private List<Tuple<ToolStripMenuItem, EventHandler>> Create_mnuDataTree_HumanApprovedAnalysisSummary_Hotlinks(ISlice slice, ContextMenuName hotlinksMenuId)
 			{
 				Require.That(hotlinksMenuId == ContextMenuName.mnuDataTree_HumanApprovedAnalysisSummary_Hotlinks, $"Expected argument value of '{ContextMenuName.mnuDataTree_HumanApprovedAnalysisSummary_Hotlinks.ToString()}', but got '{hotlinksMenuId.ToString()}' instead.");
 
@@ -624,7 +624,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 				return hotlinksMenuItemList;
 			}
 
-			private List<Tuple<ToolStripMenuItem, EventHandler>> Create_mnuDataTree_HumanApprovedAnalysis_Hotlinks(Slice slice, ContextMenuName hotlinksMenuId)
+			private List<Tuple<ToolStripMenuItem, EventHandler>> Create_mnuDataTree_HumanApprovedAnalysis_Hotlinks(ISlice slice, ContextMenuName hotlinksMenuId)
 			{
 				Require.That(hotlinksMenuId == ContextMenuName.mnuDataTree_HumanApprovedAnalysis_Hotlinks, $"Expected argument value of '{ContextMenuName.mnuDataTree_HumanApprovedAnalysis_Hotlinks.ToString()}', but got '{hotlinksMenuId.ToString()}' instead.");
 
@@ -726,7 +726,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 
 				// <command id="CmdWordformJumpToConcordance" label="Show Wordform in Concordance" message="JumpToTool">
 				_wordformJumpToConcordanceMenu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _majorFlexComponentParameters.SharedEventHandlers.GetEventHandler(Command.CmdJumpToTool), AreaResources.Show_Wordform_in_Concordance);
-				_wordformJumpToConcordanceMenu.Tag = new List<object> { _majorFlexComponentParameters.FlexComponentParameters.Publisher, AreaServices.ConcordanceMachineName, _recordList };
+				_wordformJumpToConcordanceMenu.Tag = new List<object> { _majorFlexComponentParameters.FlexComponentParameters.Publisher, LanguageExplorerConstants.ConcordanceMachineName, _recordList };
 
 				// <command id="CmdDeleteSelectedObject" label="Delete selected {0}" message="DeleteSelectedItem"/>
 				ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, CmdDeleteSelectedObject_Clicked, string.Format(AreaResources.Delete_selected_0, StringTable.Table.GetString("WfiWordform", StringTable.ClassNames)));

@@ -21,7 +21,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.ExtNoteTypeEdit
 	/// <summary>
 	/// ITool implementation for the "extNoteTypeEdit" tool in the "lists" area.
 	/// </summary>
-	[Export(AreaServices.ListsAreaMachineName, typeof(ITool))]
+	[Export(LanguageExplorerConstants.ListsAreaMachineName, typeof(ITool))]
 	internal sealed class ExtNoteTypeEditTool : IListTool
 	{
 		private const string ExtendedNoteTypes = "ExtendedNoteTypes";
@@ -112,12 +112,12 @@ namespace LanguageExplorer.Areas.Lists.Tools.ExtNoteTypeEdit
 		/// Get the internal name of the component.
 		/// </summary>
 		/// <remarks>NB: This is the machine friendly name, not the user friendly name.</remarks>
-		public string MachineName => AreaServices.ExtNoteTypeEditMachineName;
+		public string MachineName => LanguageExplorerConstants.ExtNoteTypeEditMachineName;
 
 		/// <summary>
 		/// User-visible localized component name.
 		/// </summary>
-		public string UiName => StringTable.Table.LocalizeLiteralValue(AreaServices.ExtNoteTypeEditUiName);
+		public string UiName => StringTable.Table.LocalizeLiteralValue(LanguageExplorerConstants.ExtNoteTypeEditUiName);
 
 		#endregion
 
@@ -126,7 +126,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.ExtNoteTypeEdit
 		/// <summary>
 		/// Get the area for the tool.
 		/// </summary>
-		[field: Import(AreaServices.ListsAreaMachineName)]
+		[field: Import(LanguageExplorerConstants.ListsAreaMachineName)]
 		public IArea Area { get; private set; }
 
 		/// <summary>

@@ -29,7 +29,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 	/// <summary>
 	/// ITool implementation for the "reversalEditComplete" tool in the "lexicon" area.
 	/// </summary>
-	[Export(AreaServices.LexiconAreaMachineName, typeof(ITool))]
+	[Export(LanguageExplorerConstants.LexiconAreaMachineName, typeof(ITool))]
 	internal sealed class ReversalEditCompleteTool : ITool
 	{
 		private ReversalEditCompleteToolMenuHelper _toolMenuHelper;
@@ -157,12 +157,12 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 		/// Get the internal name of the component.
 		/// </summary>
 		/// <remarks>NB: This is the machine friendly name, not the user friendly name.</remarks>
-		public string MachineName => AreaServices.ReversalEditCompleteMachineName;
+		public string MachineName => LanguageExplorerConstants.ReversalEditCompleteMachineName;
 
 		/// <summary>
 		/// User-visible localized component name.
 		/// </summary>
-		public string UiName => StringTable.Table.LocalizeLiteralValue(AreaServices.ReversalEditCompleteUiName);
+		public string UiName => StringTable.Table.LocalizeLiteralValue(LanguageExplorerConstants.ReversalEditCompleteUiName);
 
 		#endregion
 
@@ -171,7 +171,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 		/// <summary>
 		/// Get the area for the tool.
 		/// </summary>
-		[field: Import(AreaServices.LexiconAreaMachineName)]
+		[field: Import(LanguageExplorerConstants.LexiconAreaMachineName)]
 		public IArea Area { get; private set; }
 
 		/// <summary>
@@ -235,7 +235,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 				_dataTree.DataTreeSliceContextMenuParameterObject.HotlinksMenuFactory.RegisterHotlinksMenuCreatorMethod(ContextMenuName.mnuDataTree_InsertReversalSubentry_Hotlinks, Create_mnuDataTree_InsertReversalSubentry_Hotlinks);
 			}
 
-			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_MoveReversalIndexEntry(Slice slice, ContextMenuName contextMenuId)
+			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_MoveReversalIndexEntry(ISlice slice, ContextMenuName contextMenuId)
 			{
 				Require.That(contextMenuId == ContextMenuName.mnuDataTree_MoveReversalIndexEntry, $"Expected argument value of '{ContextMenuName.mnuDataTree_MoveReversalIndexEntry.ToString()}', but got '{contextMenuId.ToString()}' instead.");
 
@@ -390,7 +390,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 				AreaServices.MoveUpObjectInOwningSequence(_cache, _dataTree.CurrentSlice);
 			}
 
-			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_InsertReversalSubentry(Slice slice, ContextMenuName contextMenuId)
+			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_InsertReversalSubentry(ISlice slice, ContextMenuName contextMenuId)
 			{
 				Require.That(contextMenuId == ContextMenuName.mnuDataTree_InsertReversalSubentry, $"Expected argument value of '{ContextMenuName.mnuDataTree_InsertReversalSubentry.ToString()}', but got '{contextMenuId.ToString()}' instead.");
 
@@ -410,7 +410,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 				return new Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>>(contextMenuStrip, menuItems);
 			}
 
-			private List<Tuple<ToolStripMenuItem, EventHandler>> Create_mnuDataTree_InsertReversalSubentry_Hotlinks(Slice slice, ContextMenuName hotlinksMenuId)
+			private List<Tuple<ToolStripMenuItem, EventHandler>> Create_mnuDataTree_InsertReversalSubentry_Hotlinks(ISlice slice, ContextMenuName hotlinksMenuId)
 			{
 				Require.That(hotlinksMenuId == ContextMenuName.mnuDataTree_InsertReversalSubentry_Hotlinks, $"Expected argument value of '{ContextMenuName.mnuDataTree_InsertReversalSubentry_Hotlinks.ToString()}', but got '{hotlinksMenuId.ToString()}' instead.");
 
@@ -431,11 +431,11 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 				});
 			}
 
-			private static Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuReorderVector(Slice slice, ContextMenuName contextMenuId)
+			private static Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuReorderVector(ISlice slice, ContextMenuName contextMenuId)
 			{
-				Require.That(slice is ReferenceVectorSlice, $"Expected Slice class of 'ReferenceVectorSlice', but got on of class '{slice.GetType().Name}'.");
+				Require.That(slice is IReferenceVectorSlice, $"Expected Slice interface of 'IReferenceVectorSlice', but got on of class '{slice.GetType().Name}'.");
 
-				return ((ReferenceVectorSlice)slice).Create_mnuReorderVector(contextMenuId);
+				return ((IReferenceVectorSlice)slice).Create_mnuReorderVector(contextMenuId);
 			}
 
 			private void EditFindMenu_Click(object sender, EventArgs e)

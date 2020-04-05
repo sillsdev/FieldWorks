@@ -88,7 +88,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.CorpusStatistics
 
 			RebuildStatisticsTable();
 			//add our current state to the history system
-			PropertyTable.GetValue<LinkHandler>(LanguageExplorerConstants.LinkHandler).AddLinkToHistory(new FwLinkArgs(PropertyTable.GetValue<string>(AreaServices.ToolChoice), Guid.Empty));
+			PropertyTable.GetValue<LinkHandler>(LanguageExplorerConstants.LinkHandler).AddLinkToHistory(new FwLinkArgs(PropertyTable.GetValue<string>(LanguageExplorerConstants.ToolChoice), Guid.Empty));
 		}
 
 		#endregion
@@ -141,7 +141,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.CorpusStatistics
 		/// <summary>
 		/// The Area name that uses this control.
 		/// </summary>
-		public string AreaName => AreaServices.TextAndWordsAreaMachineName;
+		public string AreaName => LanguageExplorerConstants.TextAndWordsAreaMachineName;
 
 		#endregion
 

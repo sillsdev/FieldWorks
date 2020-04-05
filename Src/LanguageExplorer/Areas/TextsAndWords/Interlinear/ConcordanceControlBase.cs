@@ -111,7 +111,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			return true;
 		}
 
-		public string AreaName => AreaServices.TextAndWordsAreaMachineName;
+		public string AreaName => LanguageExplorerConstants.TextAndWordsAreaMachineName;
 
 		/// <summary>
 		/// Clean up any resources being used.

@@ -15,7 +15,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.CorpusStatistics
 	/// <summary>
 	/// ITool implementation for the "corpusStatistics" tool in the "textsWords" area.
 	/// </summary>
-	[Export(AreaServices.TextAndWordsAreaMachineName, typeof(ITool))]
+	[Export(LanguageExplorerConstants.TextAndWordsAreaMachineName, typeof(ITool))]
 	internal sealed class CorpusStatisticsTool : ITool
 	{
 		private CorpusStatisticsToolMenuHelper _toolMenuHelper;
@@ -83,12 +83,12 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.CorpusStatistics
 		/// Get the internal name of the component.
 		/// </summary>
 		/// <remarks>NB: This is the machine friendly name, not the user friendly name.</remarks>
-		public string MachineName => AreaServices.CorpusStatisticsMachineName;
+		public string MachineName => LanguageExplorerConstants.CorpusStatisticsMachineName;
 
 		/// <summary>
 		/// User-visible localized component name.
 		/// </summary>
-		public string UiName => StringTable.Table.LocalizeLiteralValue(AreaServices.CorpusStatisticsUiName);
+		public string UiName => StringTable.Table.LocalizeLiteralValue(LanguageExplorerConstants.CorpusStatisticsUiName);
 
 		#endregion
 
@@ -97,7 +97,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.CorpusStatistics
 		/// <summary>
 		/// Get the area for the tool.
 		/// </summary>
-		[field: Import(AreaServices.TextAndWordsAreaMachineName)]
+		[field: Import(LanguageExplorerConstants.TextAndWordsAreaMachineName)]
 		public IArea Area { get; private set; }
 
 		/// <summary>

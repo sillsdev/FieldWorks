@@ -237,7 +237,7 @@ namespace LanguageExplorer.Areas
 			SetSplitterDistance();
 		}
 
-		private string SplitterDistancePropertyName => $"MultiPaneSplitterDistance_{AreaName}_{PropertyTable.GetValue<string>(AreaServices.ToolChoice)}_{m_id}";
+		private string SplitterDistancePropertyName => $"MultiPaneSplitterDistance_{AreaName}_{PropertyTable.GetValue<string>(LanguageExplorerConstants.ToolChoice)}_{m_id}";
 
 		/// <summary />
 		protected override void OnSplitterMoved(object sender, SplitterEventArgs e)

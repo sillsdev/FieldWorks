@@ -5,8 +5,8 @@
 using System.IO;
 using System.Windows.Forms;
 using System.Xml;
-using LanguageExplorer.Areas.Lists.Tools.FeatureTypesAdvancedEdit;
 using LanguageExplorer.Controls;
+using LanguageExplorer.Controls.DetailControls.Slices;
 using LanguageExplorer.TestUtilities;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwUtils;

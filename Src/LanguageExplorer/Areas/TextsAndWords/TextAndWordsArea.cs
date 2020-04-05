@@ -23,11 +23,11 @@ namespace LanguageExplorer.Areas.TextsAndWords
 	/// <summary>
 	/// IArea implementation for the area: "textsWords".
 	/// </summary>
-	[Export(AreaServices.TextAndWordsAreaMachineName, typeof(IArea))]
+	[Export(LanguageExplorerConstants.TextAndWordsAreaMachineName, typeof(IArea))]
 	[Export(typeof(IArea))]
 	internal sealed class TextAndWordsArea : IArea
 	{
-		[ImportMany(AreaServices.TextAndWordsAreaMachineName)]
+		[ImportMany(LanguageExplorerConstants.TextAndWordsAreaMachineName)]
 		private IEnumerable<ITool> _myTools;
 		internal const string ConcordanceWords = "concordanceWords";
 		internal const string ConcOccurrences = "ConcOccurrences";
@@ -37,7 +37,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		internal const string ITexts_AddWordsToLexicon = "ITexts_AddWordsToLexicon";
 		internal const string ShowHiddenFields_interlinearEdit = "ShowHiddenFields_interlinearEdit";
 		internal const string InterlinearTab = "InterlinearTab";
-		private string PropertyNameForToolName => $"{AreaServices.ToolForAreaNamed_}{MachineName}";
+		private string PropertyNameForToolName => $"{LanguageExplorerConstants.ToolForAreaNamed_}{MachineName}";
 		private TextAndWordsAreaMenuHelper _textAndWordsAreaMenuHelper;
 		private bool _hasBeenActivated;
 		[Import]
@@ -74,7 +74,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		/// </remarks>
 		public void Activate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
-			_propertyTable.SetDefault(PropertyNameForToolName, AreaServices.TextAndWordsAreaDefaultToolMachineName, true);
+			_propertyTable.SetDefault(PropertyNameForToolName, LanguageExplorerConstants.TextAndWordsAreaDefaultToolMachineName, true);
 			if (!_hasBeenActivated)
 			{
 				// Respeller dlg uses these.
@@ -113,7 +113,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		/// </summary>
 		public void EnsurePropertiesAreCurrent()
 		{
-			_propertyTable.SetProperty(AreaServices.InitialArea, MachineName, true, settingsGroup: SettingsGroup.LocalSettings);
+			_propertyTable.SetProperty(LanguageExplorerConstants.InitialArea, MachineName, true, settingsGroup: SettingsGroup.LocalSettings);
 
 			PersistedOrDefaultTool.EnsurePropertiesAreCurrent();
 		}
@@ -126,12 +126,12 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		/// Get the internal name of the component.
 		/// </summary>
 		/// <remarks>NB: This is the machine friendly name, not the user friendly name.</remarks>
-		public string MachineName => AreaServices.TextAndWordsAreaMachineName;
+		public string MachineName => LanguageExplorerConstants.TextAndWordsAreaMachineName;
 
 		/// <summary>
 		/// User-visible localized component name.
 		/// </summary>
-		public string UiName => StringTable.Table.LocalizeLiteralValue(AreaServices.TextAndWordsAreaUiName);
+		public string UiName => StringTable.Table.LocalizeLiteralValue(LanguageExplorerConstants.TextAndWordsAreaUiName);
 
 		#endregion
 
@@ -142,7 +142,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		/// the persisted one is no longer available.
 		/// </summary>
 		/// <returns>The last persisted tool or the default tool for the area.</returns>
-		public ITool PersistedOrDefaultTool => _dictionaryOfAllTools.Values.First(tool => tool.MachineName == _propertyTable.GetValue(PropertyNameForToolName, AreaServices.TextAndWordsAreaDefaultToolMachineName));
+		public ITool PersistedOrDefaultTool => _dictionaryOfAllTools.Values.First(tool => tool.MachineName == _propertyTable.GetValue(PropertyNameForToolName, LanguageExplorerConstants.TextAndWordsAreaDefaultToolMachineName));
 
 		/// <summary>
 		/// Get all installed tools for the area.
@@ -156,13 +156,13 @@ namespace LanguageExplorer.Areas.TextsAndWords
 					_dictionaryOfAllTools = new Dictionary<string, ITool>();
 					var myBuiltinToolsInOrder = new List<string>
 					{
-						AreaServices.InterlinearEditMachineName,
-						AreaServices.ConcordanceMachineName,
-						AreaServices.ComplexConcordanceMachineName,
-						AreaServices.WordListConcordanceMachineName,
-						AreaServices.AnalysesMachineName,
-						AreaServices.BulkEditWordformsMachineName,
-						AreaServices.CorpusStatisticsMachineName
+						LanguageExplorerConstants.InterlinearEditMachineName,
+						LanguageExplorerConstants.ConcordanceMachineName,
+						LanguageExplorerConstants.ComplexConcordanceMachineName,
+						LanguageExplorerConstants.WordListConcordanceMachineName,
+						LanguageExplorerConstants.AnalysesMachineName,
+						LanguageExplorerConstants.BulkEditWordformsMachineName,
+						LanguageExplorerConstants.CorpusStatisticsMachineName
 					};
 					foreach (var toolName in myBuiltinToolsInOrder)
 					{
@@ -313,7 +313,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 
 			private void ViewIncorrectWords_Clicked(object sender, EventArgs e)
 			{
-				FwLinkArgs link = new FwAppArgs(_cache.ProjectId.Handle, AreaServices.AnalysesMachineName, ActiveWordform(_wordformRepos, _propertyTable));
+				FwLinkArgs link = new FwAppArgs(_cache.ProjectId.Handle, LanguageExplorerConstants.AnalysesMachineName, ActiveWordform(_wordformRepos, _propertyTable));
 				var additionalProps = link.LinkProperties;
 				additionalProps.Add(new LinkProperty(LanguageExplorerConstants.SuspendLoadListUntilOnChangeFilter, link.ToolName));
 				additionalProps.Add(new LinkProperty("LinkSetupInfo", "CorrectSpelling"));
@@ -325,7 +325,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 				// Without checking both the SpellingStatus and (virtual) FullConcordanceCount
 				// fields for the ActiveWordform() result, it's too likely that the user
 				// will get a puzzling "Target not found" message popping up.  See LT-8717.
-				FwLinkArgs link = new FwAppArgs(_cache.ProjectId.Handle, AreaServices.BulkEditWordformsMachineName, Guid.Empty);
+				FwLinkArgs link = new FwAppArgs(_cache.ProjectId.Handle, LanguageExplorerConstants.BulkEditWordformsMachineName, Guid.Empty);
 				var additionalProps = link.LinkProperties;
 				additionalProps.Add(new LinkProperty(LanguageExplorerConstants.SuspendLoadListUntilOnChangeFilter, link.ToolName));
 				additionalProps.Add(new LinkProperty("LinkSetupInfo", "ReviewUndecidedSpelling"));
@@ -337,7 +337,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 				((InterlinearTextsRecordList)_propertyTable.GetValue<IRecordListRepository>(LanguageExplorerConstants.RecordListRepository).ActiveRecordList).AddTexts();
 			}
 
-			private Tuple<bool, bool> CanCmdInsertText => new Tuple<bool, bool>(true, ActiveTool.MachineName == AreaServices.InterlinearEditMachineName);
+			private Tuple<bool, bool> CanCmdInsertText => new Tuple<bool, bool>(true, ActiveTool.MachineName == LanguageExplorerConstants.InterlinearEditMachineName);
 
 			private void CmdInsertText_Click(object sender, EventArgs e)
 			{
@@ -451,7 +451,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 				}
 			}
 
-			private bool InFriendliestTool => _area.ActiveTool.MachineName == AreaServices.AnalysesMachineName;
+			private bool InFriendliestTool => _area.ActiveTool.MachineName == LanguageExplorerConstants.AnalysesMachineName;
 
 			/// <summary>
 			/// Try to find a WfiWordform object corresponding the the focus selection.

@@ -24,7 +24,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools
 		/// </summary>
 		internal void AddFileMenusForExpectedTextAndWordsTools(ToolUiWidgetParameterObject toolUiWidgetParameterObject)
 		{
-			if (toolUiWidgetParameterObject.Tool.MachineName == AreaServices.ConcordanceMachineName)
+			if (toolUiWidgetParameterObject.Tool.MachineName == LanguageExplorerConstants.ConcordanceMachineName)
 			{
 				throw new InvalidOperationException($"'{toolUiWidgetParameterObject.Tool.MachineName}' is not expected to call this method.");
 			}

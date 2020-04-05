@@ -10,10 +10,10 @@ namespace LanguageExplorer.Controls.DetailControls
 
 	internal class CurrentSliceChangedEventArgs : EventArgs
 	{
-		public Slice PreviousSlice { get; }
-		public Slice CurrentSlice { get; }
+		public ISlice PreviousSlice { get; }
+		public ISlice CurrentSlice { get; }
 
-		internal CurrentSliceChangedEventArgs(Slice previousSlice, Slice currentSlice)
+		internal CurrentSliceChangedEventArgs(ISlice previousSlice, ISlice currentSlice)
 		{
 			PreviousSlice = previousSlice;
 			CurrentSlice = currentSlice;

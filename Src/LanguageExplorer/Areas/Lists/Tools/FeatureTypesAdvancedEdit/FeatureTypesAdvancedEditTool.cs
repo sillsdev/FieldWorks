@@ -26,7 +26,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.FeatureTypesAdvancedEdit
 	/// <remarks>
 	/// Oddly enough, this tool isn't a real list (e.g., nothing owned by ICmPossibilityList).
 	/// </remarks>
-	[Export(AreaServices.ListsAreaMachineName, typeof(ITool))]
+	[Export(LanguageExplorerConstants.ListsAreaMachineName, typeof(ITool))]
 	internal sealed class FeatureTypesAdvancedEditTool : IListTool
 	{
 		private FeatureTypesAdvancedEditMenuHelper _toolMenuHelper;
@@ -143,12 +143,12 @@ namespace LanguageExplorer.Areas.Lists.Tools.FeatureTypesAdvancedEdit
 		/// Get the internal name of the component.
 		/// </summary>
 		/// <remarks>NB: This is the machine friendly name, not the user friendly name.</remarks>
-		public string MachineName => AreaServices.FeatureTypesAdvancedEditMachineName;
+		public string MachineName => LanguageExplorerConstants.FeatureTypesAdvancedEditMachineName;
 
 		/// <summary>
 		/// User-visible localized component name.
 		/// </summary>
-		public string UiName => StringTable.Table.LocalizeLiteralValue(AreaServices.FeatureTypesAdvancedEditUiName);
+		public string UiName => StringTable.Table.LocalizeLiteralValue(LanguageExplorerConstants.FeatureTypesAdvancedEditUiName);
 
 		#endregion
 
@@ -157,7 +157,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.FeatureTypesAdvancedEdit
 		/// <summary>
 		/// Get the area for the tool.
 		/// </summary>
-		[field: Import(AreaServices.ListsAreaMachineName)]
+		[field: Import(LanguageExplorerConstants.ListsAreaMachineName)]
 		public IArea Area { get; private set; }
 
 		/// <summary>

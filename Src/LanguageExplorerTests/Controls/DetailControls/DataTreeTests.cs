@@ -9,6 +9,7 @@ using System.Windows.Forms;
 using System.Xml.Linq;
 using LanguageExplorer;
 using LanguageExplorer.Controls.DetailControls;
+using LanguageExplorer.Controls.DetailControls.Slices;
 using LanguageExplorer.Impls;
 using LanguageExplorer.TestUtilities;
 using LanguageExplorerTests.Impls;

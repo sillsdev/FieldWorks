@@ -2062,14 +2062,14 @@ namespace LanguageExplorer.Areas.Notebook
 				}
 				sw.WriteLine("</h3>");
 				WriteMessageLines(sw);
-				ListNewPossibilities(sw, LanguageExplorerControls.ksNewAnthropologyListItems, m_rgNewAnthroItem, AreaServices.AnthroEditMachineName);
-				ListNewPossibilities(sw, LanguageExplorerControls.ksNewConfidenceListItems, m_rgNewConfidence, AreaServices.ConfidenceEditMachineName);
-				ListNewPossibilities(sw, LanguageExplorerControls.ksNewLocationListItems, m_rgNewLocation, AreaServices.LocationsEditMachineName);
-				ListNewPossibilities(sw, LanguageExplorerControls.ksNewPeopleListItems, m_rgNewPeople, AreaServices.PeopleEditMachineName);
+				ListNewPossibilities(sw, LanguageExplorerControls.ksNewAnthropologyListItems, m_rgNewAnthroItem, LanguageExplorerConstants.AnthroEditMachineName);
+				ListNewPossibilities(sw, LanguageExplorerControls.ksNewConfidenceListItems, m_rgNewConfidence, LanguageExplorerConstants.ConfidenceEditMachineName);
+				ListNewPossibilities(sw, LanguageExplorerControls.ksNewLocationListItems, m_rgNewLocation, LanguageExplorerConstants.LocationsEditMachineName);
+				ListNewPossibilities(sw, LanguageExplorerControls.ksNewPeopleListItems, m_rgNewPeople, LanguageExplorerConstants.PeopleEditMachineName);
 				ListNewPossibilities(sw, LanguageExplorerControls.ksNewPhraseTagListItems, m_rgNewPhraseTag, string.Empty);
-				ListNewPossibilities(sw, LanguageExplorerControls.ksNewRecordTypeListItems, m_rgNewRecType, AreaServices.RecTypeEditMachineName);
-				ListNewPossibilities(sw, LanguageExplorerControls.ksNewRestrictionListItems, m_rgNewRestriction, AreaServices.RestrictionsEditMachineName);
-				ListNewPossibilities(sw, LanguageExplorerControls.ksNewStatusListItems, m_rgNewStatus, AreaServices.StatusEditMachineName);
+				ListNewPossibilities(sw, LanguageExplorerControls.ksNewRecordTypeListItems, m_rgNewRecType, LanguageExplorerConstants.RecTypeEditMachineName);
+				ListNewPossibilities(sw, LanguageExplorerControls.ksNewRestrictionListItems, m_rgNewRestriction, LanguageExplorerConstants.RestrictionsEditMachineName);
+				ListNewPossibilities(sw, LanguageExplorerControls.ksNewStatusListItems, m_rgNewStatus, LanguageExplorerConstants.StatusEditMachineName);
 				ListNewPossibilities(sw, LanguageExplorerControls.ksNewTimeOfDayListItems, m_rgNewTimeOfDay, string.Empty);
 				// now for custom lists...
 				foreach (var key in m_mapNewPossibilities.Keys)

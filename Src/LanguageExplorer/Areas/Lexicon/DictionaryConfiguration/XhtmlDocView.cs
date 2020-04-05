@@ -226,7 +226,7 @@ namespace LanguageExplorer.Areas.Lexicon.DictionaryConfiguration
 		private void JumpToRecord(object argument)
 		{
 			var hvoTarget = (int)argument;
-			if (hvoTarget <= 0 || PropertyTable.GetValue<string>(AreaServices.ToolChoice) != AreaServices.LexiconDictionaryMachineName)
+			if (hvoTarget <= 0 || PropertyTable.GetValue<string>(LanguageExplorerConstants.ToolChoice) != LanguageExplorerConstants.LexiconDictionaryMachineName)
 			{
 				return;
 			}
@@ -806,7 +806,7 @@ namespace LanguageExplorer.Areas.Lexicon.DictionaryConfiguration
 					{
 						if (progressDlg.IsCanceling)
 						{
-							Publisher.Publish(new PublisherParameterObject("SetToolFromName", AreaServices.LexiconEditMachineName));
+							Publisher.Publish(new PublisherParameterObject("SetToolFromName", LanguageExplorerConstants.LexiconEditMachineName));
 						}
 						else
 						{

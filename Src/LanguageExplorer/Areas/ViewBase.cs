@@ -205,7 +205,7 @@ namespace LanguageExplorer.Areas
 			return true;
 		}
 
-		public string AreaName => PropertyTable.GetValue<string>(AreaServices.AreaChoice);
+		public string AreaName => PropertyTable.GetValue<string>(LanguageExplorerConstants.AreaChoice);
 		#endregion // IMainContentControl implementation
 
 		#region ICtrlTabProvider implementation

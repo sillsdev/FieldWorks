@@ -231,7 +231,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 					var tssRef = segment.Paragraph.Reference(segment, segment.BeginOffset);
 					// convert the plain reference string into a link.
 					var tsb = tssRef.GetBldr();
-					var fwl = new FwLinkArgs(AreaServices.InterlinearEditMachineName, segment.Owner.Owner.Guid);
+					var fwl = new FwLinkArgs(LanguageExplorerConstants.InterlinearEditMachineName, segment.Owner.Owner.Guid);
 					tsb.SetStrPropValue(0, tsb.Length, (int)FwTextPropType.ktptObjData, (char)FwObjDataTypes.kodtExternalPathName + fwl.ToString());
 					tsb.SetStrPropValue(0, tsb.Length, (int)FwTextPropType.ktptNamedStyle, "Hyperlink");
 					newLexExample.Reference = tsb.GetString();

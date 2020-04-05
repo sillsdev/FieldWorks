@@ -21,7 +21,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.ConfidenceEdit
 	/// <summary>
 	/// ITool implementation for the "confidenceEdit" tool in the "lists" area.
 	/// </summary>
-	[Export(AreaServices.ListsAreaMachineName, typeof(ITool))]
+	[Export(LanguageExplorerConstants.ListsAreaMachineName, typeof(ITool))]
 	internal sealed class ConfidenceEditTool : IListTool
 	{
 		private const string ConfidenceList = "ConfidenceList";
@@ -112,12 +112,12 @@ namespace LanguageExplorer.Areas.Lists.Tools.ConfidenceEdit
 		/// Get the internal name of the component.
 		/// </summary>
 		/// <remarks>NB: This is the machine friendly name, not the user friendly name.</remarks>
-		public string MachineName => AreaServices.ConfidenceEditMachineName;
+		public string MachineName => LanguageExplorerConstants.ConfidenceEditMachineName;
 
 		/// <summary>
 		/// User-visible localized component name.
 		/// </summary>
-		public string UiName => StringTable.Table.LocalizeLiteralValue(AreaServices.ConfidenceEditUiName);
+		public string UiName => StringTable.Table.LocalizeLiteralValue(LanguageExplorerConstants.ConfidenceEditUiName);
 
 		#endregion
 
@@ -126,7 +126,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.ConfidenceEdit
 		/// <summary>
 		/// Get the area for the tool.
 		/// </summary>
-		[field: Import(AreaServices.ListsAreaMachineName)]
+		[field: Import(LanguageExplorerConstants.ListsAreaMachineName)]
 		public IArea Area { get; private set; }
 
 		/// <summary>

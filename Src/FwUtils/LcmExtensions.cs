@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -524,6 +525,103 @@ namespace SIL.FieldWorks.Common.FwUtils
 			s_reversalIndicesAreKnownToExist = true;
 		}
 
+		/// <summary>
+		/// Find the reversal index entry given by rgsForms, or if it doesn't exist, create
+		/// it.  In either case, return its hvo.
+		/// </summary>
+		public static int FindOrCreateReversalEntry(this IReversalIndex me, List<string> rgsForms, LcmCache cache)
+		{
+			var rgrieMatching = new List<List<IReversalIndexEntry>>(rgsForms.Count);
+			// This could be SLOOOOOOOOOOW!  But I don't see a better way of doing it...
+			for (var i = 0; i < rgsForms.Count; ++i)
+			{
+				rgrieMatching.Add(new List<IReversalIndexEntry>());
+			}
+			var wsIndex = cache.ServiceLocator.WritingSystemManager.GetWsFromStr(me.WritingSystem);
+			foreach (var rie in me.AllEntries)
+			{
+				var form = rie.ReversalForm.get_String(wsIndex).Text;
+				var idx = rgsForms.IndexOf(form);
+				if (idx >= 0)
+				{
+					rgrieMatching[idx].Add(rie);
+				}
+			}
+			var rghvoOwners = new List<int>(rgsForms.Count) { me.Hvo };
+			// The next two variables record the best partial match, if any.
+			var maxLevel = 0;
+			var maxOwner = me.Hvo;
+			var hvo = FindMatchingReversalEntry(rgsForms, rghvoOwners, rgrieMatching, 0, ref maxLevel, ref maxOwner);
+			if (hvo != 0)
+			{
+				return hvo;
+			}
+			cache.DomainDataByFlid.BeginUndoTask(FwUtilsStrings.ksCreateReversal, FwUtilsStrings.ksRecreateReversal);
+			// Create whatever we need to since we didn't find a full match.
+			var owner = cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(maxOwner);
+			Debug.Assert(maxLevel < rgsForms.Count);
+			var fact = cache.ServiceLocator.GetInstance<IReversalIndexEntryFactory>();
+			for (var i = maxLevel; i < rgsForms.Count; ++i)
+			{
+				var rie = fact.Create();
+				if (owner is IReversalIndex index)
+				{
+					index.EntriesOC.Add(rie);
+				}
+				else
+				{
+					Debug.Assert(owner is IReversalIndexEntry);
+					(owner as IReversalIndexEntry).SubentriesOS.Add(rie);
+				}
+				rie.ReversalForm.set_String(wsIndex, rgsForms[i]);
+				owner = rie;
+				hvo = rie.Hvo;
+			}
+			Debug.Assert(hvo != 0);
+			cache.DomainDataByFlid.EndUndoTask();
+			return hvo;
+		}
+
+		private static int FindMatchingReversalEntry(List<string> rgsForms, List<int> rghvoOwners, List<List<IReversalIndexEntry>> rgrieMatching, int idxForms, ref int maxLevel, ref int maxOwner)
+		{
+			foreach (var rie in rgrieMatching[idxForms])
+			{
+				Debug.Assert(rie.ReversalIndex.Hvo == rghvoOwners[0]);
+				if (rie.ReversalIndex.Hvo != rghvoOwners[0])
+				{
+					continue;
+				}
+
+				if (rie.Owner.Hvo != rghvoOwners[idxForms])
+				{
+					continue;
+				}
+				var level = idxForms + 1;
+				if (level < rgsForms.Count)
+				{
+					if (level > maxLevel)
+					{
+						maxLevel = level;
+						maxOwner = rie.Hvo;
+					}
+					// we have a match at this level: recursively check the next level.
+					rghvoOwners.Add(rie.Hvo);
+					var hvo = FindMatchingReversalEntry(rgsForms, rghvoOwners, rgrieMatching, level, ref maxLevel, ref maxOwner);
+					if (hvo != 0)
+					{
+						return hvo;
+					}
+					rghvoOwners.RemoveAt(level);
+				}
+				else
+				{
+					// We have a match all the way down: return the hvo.
+					return rie.Hvo;
+				}
+			}
+			return 0;
+		}
+
 		public static ICmPossibilityList GetTaggingList(this ILangProject me)
 		{
 			var result = me.TextMarkupTagsOA;
@@ -549,6 +647,27 @@ namespace SIL.FieldWorks.Common.FwUtils
 			var tsb = abbr.GetBldr();
 			tsb.SetProperties(0, tsb.Length, FwUtils.LanguageCodeTextProps(defaultWs));
 			return tsb.GetString();
+		}
+
+		/// <summary>
+		/// Finds the ISO3 code for the given writing system.
+		/// </summary>
+		/// <param name="ws"></param>
+		/// <returns>The ISO3 code, or <value>mis</value> if the code is not found.</returns>
+		public static string GetIso3Code(this CoreWritingSystemDefinition ws)
+		{
+			var iso3Code = ws.Language.Iso3Code;
+			if (!string.IsNullOrEmpty(iso3Code))
+			{
+				return iso3Code;
+			}
+			iso3Code = ws.Id;
+			// split the result, the iso3 code is in the first segment
+			var segments = iso3Code.Split('-');
+			iso3Code = segments[0];
+			// if the code is "Local" return uncoded code
+			return string.Compare(iso3Code, "q", StringComparison.OrdinalIgnoreCase) > 0 && string.Compare(iso3Code, "qu", StringComparison.OrdinalIgnoreCase) < 0
+				? "mis" : string.IsNullOrEmpty(iso3Code) || iso3Code.Length != 3 ? "mis" : iso3Code;
 		}
 
 		/// <summary>

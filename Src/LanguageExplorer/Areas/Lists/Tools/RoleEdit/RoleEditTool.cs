@@ -21,7 +21,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.RoleEdit
 	/// <summary>
 	/// ITool implementation for the "roleEdit" tool in the "lists" area.
 	/// </summary>
-	[Export(AreaServices.ListsAreaMachineName, typeof(ITool))]
+	[Export(LanguageExplorerConstants.ListsAreaMachineName, typeof(ITool))]
 	internal sealed class RoleEditTool : IListTool
 	{
 		private const string RoleList = "RoleList";
@@ -112,12 +112,12 @@ namespace LanguageExplorer.Areas.Lists.Tools.RoleEdit
 		/// Get the internal name of the component.
 		/// </summary>
 		/// <remarks>NB: This is the machine friendly name, not the user friendly name.</remarks>
-		public string MachineName => AreaServices.RoleEditMachineName;
+		public string MachineName => LanguageExplorerConstants.RoleEditMachineName;
 
 		/// <summary>
 		/// User-visible localized component name.
 		/// </summary>
-		public string UiName => StringTable.Table.LocalizeLiteralValue(AreaServices.RoleEditUiName);
+		public string UiName => StringTable.Table.LocalizeLiteralValue(LanguageExplorerConstants.RoleEditUiName);
 
 		#endregion
 
@@ -126,7 +126,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.RoleEdit
 		/// <summary>
 		/// Get the area for the tool.
 		/// </summary>
-		[field: Import(AreaServices.ListsAreaMachineName)]
+		[field: Import(LanguageExplorerConstants.ListsAreaMachineName)]
 		public IArea Area { get; private set; }
 
 		/// <summary>

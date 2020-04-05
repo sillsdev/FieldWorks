@@ -624,47 +624,11 @@ namespace LanguageExplorer.Areas.TextsAndWords {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Occurs exactly once.
-        /// </summary>
-        internal static string Occurs_exactly_once {
-            get {
-                return ResourceManager.GetString("Occurs_exactly_once", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Occurs one or more times.
-        /// </summary>
-        internal static string Occurs_one_or_more_times {
-            get {
-                return ResourceManager.GetString("Occurs_one_or_more_times", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Occurs zero or more times.
-        /// </summary>
-        internal static string Occurs_zero_or_more_times {
-            get {
-                return ResourceManager.GetString("Occurs_zero_or_more_times", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Set criteria....
         /// </summary>
         internal static string Set_criteria {
             get {
                 return ResourceManager.GetString("Set_criteria", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Set occurrence (min. and max.)....
-        /// </summary>
-        internal static string Set_occurrence_min_and_max {
-            get {
-                return ResourceManager.GetString("Set_occurrence_min_and_max", resourceCulture);
             }
         }
         

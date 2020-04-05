@@ -16,7 +16,7 @@ namespace LanguageExplorer.Impls
 	[Export(typeof(IAreaRepository))]
 	internal sealed class AreaRepository : IAreaRepository
 	{
-		private const string DefaultAreaMachineName = AreaServices.InitialAreaMachineName;
+		private const string DefaultAreaMachineName = LanguageExplorerConstants.InitialAreaMachineName;
 		[ImportMany]
 		private IEnumerable<IArea> _areas;
 		[Import]
@@ -30,7 +30,7 @@ namespace LanguageExplorer.Impls
 		/// the persisted one is no longer available.
 		/// </summary>
 		/// <returns>The last persisted area or the default area.</returns>
-		public IArea PersistedOrDefaultArea => GetArea(_propertyTable.GetValue(AreaServices.InitialArea, DefaultAreaMachineName, SettingsGroup.LocalSettings));
+		public IArea PersistedOrDefaultArea => GetArea(_propertyTable.GetValue(LanguageExplorerConstants.InitialArea, DefaultAreaMachineName, SettingsGroup.LocalSettings));
 
 		/// <summary>
 		/// Get the IArea that has the machine friendly "Name" for <paramref name="machineName"/>.
@@ -60,11 +60,11 @@ namespace LanguageExplorer.Impls
 					_dictionaryOfAllAreas = new Dictionary<string, IArea>();
 					var myBuiltinAreasInOrder = new List<string>
 					{
-						AreaServices.LexiconAreaMachineName,
-						AreaServices.TextAndWordsAreaMachineName,
-						AreaServices.GrammarAreaMachineName,
-						AreaServices.NotebookAreaMachineName,
-						AreaServices.ListsAreaMachineName
+						LanguageExplorerConstants.LexiconAreaMachineName,
+						LanguageExplorerConstants.TextAndWordsAreaMachineName,
+						LanguageExplorerConstants.GrammarAreaMachineName,
+						LanguageExplorerConstants.NotebookAreaMachineName,
+						LanguageExplorerConstants.ListsAreaMachineName
 					};
 					foreach (var areaMachineName in myBuiltinAreasInOrder)
 					{

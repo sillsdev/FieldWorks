@@ -22,7 +22,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Concordance
 	/// <summary>
 	/// ITool implementation for the "concordance" tool in the "textsWords" area.
 	/// </summary>
-	[Export(AreaServices.TextAndWordsAreaMachineName, typeof(ITool))]
+	[Export(LanguageExplorerConstants.TextAndWordsAreaMachineName, typeof(ITool))]
 	internal sealed class ConcordanceTool : ITool
 	{
 		private ConcordanceToolMenuHelper _toolMenuHelper;
@@ -151,12 +151,12 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Concordance
 		/// Get the internal name of the component.
 		/// </summary>
 		/// <remarks>NB: This is the machine friendly name, not the user friendly name.</remarks>
-		public string MachineName => AreaServices.ConcordanceMachineName;
+		public string MachineName => LanguageExplorerConstants.ConcordanceMachineName;
 
 		/// <summary>
 		/// User-visible localized component name.
 		/// </summary>
-		public string UiName => StringTable.Table.LocalizeLiteralValue(AreaServices.ConcordanceUiName);
+		public string UiName => StringTable.Table.LocalizeLiteralValue(LanguageExplorerConstants.ConcordanceUiName);
 
 		#endregion
 
@@ -165,7 +165,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Concordance
 		/// <summary>
 		/// Get the area for the tool.
 		/// </summary>
-		[field: Import(AreaServices.TextAndWordsAreaMachineName)]
+		[field: Import(LanguageExplorerConstants.TextAndWordsAreaMachineName)]
 		public IArea Area { get; private set; }
 
 		/// <summary>

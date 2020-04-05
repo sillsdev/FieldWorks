@@ -23,7 +23,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonologicalRuleEdit
 	/// <summary>
 	/// ITool implementation for the "PhonologicalRuleEdit" tool in the "grammar" area.
 	/// </summary>
-	[Export(AreaServices.GrammarAreaMachineName, typeof(ITool))]
+	[Export(LanguageExplorerConstants.GrammarAreaMachineName, typeof(ITool))]
 	internal sealed class PhonologicalRuleEditTool : ITool
 	{
 		private PhonologicalRuleEditToolMenuHelper _toolMenuHelper;
@@ -121,12 +121,12 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonologicalRuleEdit
 		/// Get the internal name of the component.
 		/// </summary>
 		/// <remarks>NB: This is the machine friendly name, not the user friendly name.</remarks>
-		public string MachineName => AreaServices.PhonologicalRuleEditMachineName;
+		public string MachineName => LanguageExplorerConstants.PhonologicalRuleEditMachineName;
 
 		/// <summary>
 		/// User-visible localized component name.
 		/// </summary>
-		public string UiName => StringTable.Table.LocalizeLiteralValue(AreaServices.PhonologicalRuleEditUiName);
+		public string UiName => StringTable.Table.LocalizeLiteralValue(LanguageExplorerConstants.PhonologicalRuleEditUiName);
 
 		#endregion
 
@@ -135,7 +135,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonologicalRuleEdit
 		/// <summary>
 		/// Get the area for the tool.
 		/// </summary>
-		[field: Import(AreaServices.GrammarAreaMachineName)]
+		[field: Import(LanguageExplorerConstants.GrammarAreaMachineName)]
 		public IArea Area { get; private set; }
 
 		/// <summary>

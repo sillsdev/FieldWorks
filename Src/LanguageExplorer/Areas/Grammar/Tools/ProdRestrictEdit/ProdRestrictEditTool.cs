@@ -23,7 +23,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.ProdRestrictEdit
 	/// <summary>
 	/// ITool implementation for the "ProdRestrictEdit" tool in the "grammar" area.
 	/// </summary>
-	[Export(AreaServices.GrammarAreaMachineName, typeof(ITool))]
+	[Export(LanguageExplorerConstants.GrammarAreaMachineName, typeof(ITool))]
 	internal sealed class ProdRestrictEditTool : ITool
 	{
 		private ProdRestrictEditToolMenuHelper _toolMenuHelper;
@@ -121,12 +121,12 @@ namespace LanguageExplorer.Areas.Grammar.Tools.ProdRestrictEdit
 		/// Get the internal name of the component.
 		/// </summary>
 		/// <remarks>NB: This is the machine friendly name, not the user friendly name.</remarks>
-		public string MachineName => AreaServices.ProdRestrictEditMachineName;
+		public string MachineName => LanguageExplorerConstants.ProdRestrictEditMachineName;
 
 		/// <summary>
 		/// User-visible localized component name.
 		/// </summary>
-		public string UiName => StringTable.Table.LocalizeLiteralValue(AreaServices.ProdRestrictEditUiName);
+		public string UiName => StringTable.Table.LocalizeLiteralValue(LanguageExplorerConstants.ProdRestrictEditUiName);
 
 		#endregion
 
@@ -135,7 +135,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.ProdRestrictEdit
 		/// <summary>
 		/// Get the area for the tool.
 		/// </summary>
-		[field: Import(AreaServices.GrammarAreaMachineName)]
+		[field: Import(LanguageExplorerConstants.GrammarAreaMachineName)]
 		public IArea Area { get; private set; }
 
 		/// <summary>

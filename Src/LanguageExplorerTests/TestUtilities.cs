@@ -92,5 +92,11 @@ namespace LanguageExplorerTests
 		{
 			return doc.Root.XPathSelectElement("//" + name);
 		}
+
+		/// <summary />
+		internal static XElement CreateXmlElementFromOuterXmlOf(string outerXml)
+		{
+			return XElement.Parse(outerXml);
+		}
 	}
 }

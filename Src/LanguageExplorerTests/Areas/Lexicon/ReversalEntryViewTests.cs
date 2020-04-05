@@ -6,6 +6,7 @@ using System;
 using System.Linq;
 using System.Windows.Forms;
 using LanguageExplorer.Areas.Lexicon.Tools.Edit;
+using LanguageExplorer.Controls.DetailControls.Slices;
 using NUnit.Framework;
 using SIL.LCModel;
 using SIL.LCModel.Core.KernelInterfaces;
@@ -84,14 +85,14 @@ namespace LanguageExplorerTests.Areas.Lexicon
 		/// </summary>
 		private sealed class DummyReversalIndexEntrySlice : ReversalIndexEntrySlice
 		{
-			public DummyReversalIndexEntrySlice(ICmObject obj) : base(obj)
+			internal DummyReversalIndexEntrySlice(ICmObject obj) : base(obj)
 			{
 			}
 
 			/// <summary>
 			/// Allows access to the view.
 			/// </summary>
-			public DummyReversalIndexEntrySliceView DummyControl { get; private set; }
+			internal DummyReversalIndexEntrySliceView DummyControl { get; private set; }
 
 			public override void FinishInit()
 			{
@@ -112,14 +113,14 @@ namespace LanguageExplorerTests.Areas.Lexicon
 		/// </summary>
 		private sealed class DummyReversalIndexEntrySliceView : ReversalIndexEntrySliceView
 		{
-			public DummyReversalIndexEntrySliceView(int hvo) : base(hvo)
+			internal DummyReversalIndexEntrySliceView(int hvo) : base(hvo)
 			{
 			}
 
 			/// <summary>
 			/// Gets the number of reversal index entries for a given reversal index.
 			/// </summary>
-			public int GetIndexSize(int hvoIndex)
+			internal int GetIndexSize(int hvoIndex)
 			{
 				return m_sdaRev.get_VecSize(hvoIndex, kFlidEntries);
 			}
@@ -127,7 +128,7 @@ namespace LanguageExplorerTests.Areas.Lexicon
 			/// <summary>
 			/// Exposes the OnKillFocus and OnLostFocus methods for testing purposes.
 			/// </summary>
-			public void KillFocus(Control newWindow)
+			internal void KillFocus(Control newWindow)
 			{
 				OnKillFocus(newWindow, false);
 				OnLostFocus(new EventArgs());
@@ -136,7 +137,7 @@ namespace LanguageExplorerTests.Areas.Lexicon
 			/// <summary>
 			/// Helper method to create a new empty dummy reversal index entry in the dummy cache.
 			/// </summary>
-			public void CacheNewDummyEntry(int hvoIndex, int ws)
+			internal void CacheNewDummyEntry(int hvoIndex, int ws)
 			{
 				var count = m_sdaRev.get_VecSize(hvoIndex, kFlidEntries);
 				m_sdaRev.CacheReplace(hvoIndex, kFlidEntries, count, count, new int[] { m_dummyId }, 1);
@@ -146,7 +147,7 @@ namespace LanguageExplorerTests.Areas.Lexicon
 			/// <summary>
 			/// Helper method to edit a TsString in the dummy cache at a given position.
 			/// </summary>
-			public void EditRevIndexEntryInCache(int hvoIndex, int index, int ws, ITsString tss)
+			internal void EditRevIndexEntryInCache(int hvoIndex, int index, int ws, ITsString tss)
 			{
 				var hvoEntry = m_sdaRev.get_VecItem(hvoIndex, kFlidEntries, index);
 				m_sdaRev.SetMultiStringAlt(hvoEntry, ReversalIndexEntryTags.kflidReversalForm, ws, tss);

@@ -492,78 +492,6 @@ namespace LanguageExplorer.Areas {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Index.
-        /// </summary>
-        internal static string ksAffixRuleIndex {
-            get {
-                return ResourceManager.GetString("ksAffixRuleIndex", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Input.
-        /// </summary>
-        internal static string ksAffixRuleInput {
-            get {
-                return ResourceManager.GetString("ksAffixRuleInput", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to No items can be inserted into a cell containing an X variable..
-        /// </summary>
-        internal static string ksAffixRuleNoOptsMsg {
-            get {
-                return ResourceManager.GetString("ksAffixRuleNoOptsMsg", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Redo Set Modification Features.
-        /// </summary>
-        internal static string ksAffixRuleRedoSetMappingFeatures {
-            get {
-                return ResourceManager.GetString("ksAffixRuleRedoSetMappingFeatures", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Redo Set Natural Class.
-        /// </summary>
-        internal static string ksAffixRuleRedoSetNC {
-            get {
-                return ResourceManager.GetString("ksAffixRuleRedoSetNC", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Result.
-        /// </summary>
-        internal static string ksAffixRuleResult {
-            get {
-                return ResourceManager.GetString("ksAffixRuleResult", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Undo Set Modification Features.
-        /// </summary>
-        internal static string ksAffixRuleUndoSetMappingFeatures {
-            get {
-                return ResourceManager.GetString("ksAffixRuleUndoSetMappingFeatures", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Undo Set Natural Class.
-        /// </summary>
-        internal static string ksAffixRuleUndoSetNC {
-            get {
-                return ResourceManager.GetString("ksAffixRuleUndoSetNC", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to All.
         /// </summary>
         internal static string ksAllEntries {
@@ -735,15 +663,6 @@ namespace LanguageExplorer.Areas {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Error in Environment.
-        /// </summary>
-        internal static string ksErrorInEnvironment {
-            get {
-                return ResourceManager.GetString("ksErrorInEnvironment", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Wordform.
         /// </summary>
         internal static string ksFldWordform {
@@ -907,60 +826,6 @@ namespace LanguageExplorer.Areas {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Input.
-        /// </summary>
-        internal static string ksMetaRuleInput {
-            get {
-                return ResourceManager.GetString("ksMetaRuleInput", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Left environment.
-        /// </summary>
-        internal static string ksMetaRuleLeftEnv {
-            get {
-                return ResourceManager.GetString("ksMetaRuleLeftEnv", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The item in this cell must be removed before a new item can be inserted..
-        /// </summary>
-        internal static string ksMetaRuleNoOptsMsg {
-            get {
-                return ResourceManager.GetString("ksMetaRuleNoOptsMsg", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Result.
-        /// </summary>
-        internal static string ksMetaRuleResult {
-            get {
-                return ResourceManager.GetString("ksMetaRuleResult", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Right environment.
-        /// </summary>
-        internal static string ksMetaRuleRightEnv {
-            get {
-                return ResourceManager.GetString("ksMetaRuleRightEnv", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Switch these items.
-        /// </summary>
-        internal static string ksMetaRuleSwitch {
-            get {
-                return ResourceManager.GetString("ksMetaRuleSwitch", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Minor entry not shown.
         /// </summary>
         internal static string ksMinorNotShown {
@@ -1105,15 +970,6 @@ namespace LanguageExplorer.Areas {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Redo Delete Reference.
-        /// </summary>
-        internal static string ksRedoDeleteRef {
-            get {
-                return ResourceManager.GetString("ksRedoDeleteRef", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Redo Removing Affix.
         /// </summary>
         internal static string ksRedoRemovingAffix {
@@ -1141,24 +997,6 @@ namespace LanguageExplorer.Areas {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Redo Set occurrence.
-        /// </summary>
-        internal static string ksRegRuleRedoSetOccurrence {
-            get {
-                return ResourceManager.GetString("ksRegRuleRedoSetOccurrence", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Undo Set occurrence.
-        /// </summary>
-        internal static string ksRegRuleUndoSetOccurrence {
-            get {
-                return ResourceManager.GetString("ksRegRuleUndoSetOccurrence", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Sense Subentries will be hidden.
         /// </summary>
         internal static string ksRootSenseOnSubentriesGoneDlgLabel {
@@ -1173,168 +1011,6 @@ namespace LanguageExplorer.Areas {
         internal static string ksRootSenseOnSubentriesGoneDlgText {
             get {
                 return ResourceManager.GetString("ksRootSenseOnSubentriesGoneDlgText", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Column.
-        /// </summary>
-        internal static string ksRuleColOpt {
-            get {
-                return ResourceManager.GetString("ksRuleColOpt", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Environment.
-        /// </summary>
-        internal static string ksRuleEnvChooserName {
-            get {
-                return ResourceManager.GetString("ksRuleEnvChooserName", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Set Phonological Features.
-        /// </summary>
-        internal static string ksRuleFeatsChooserTitle {
-            get {
-                return ResourceManager.GetString("ksRuleFeatsChooserTitle", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Phonological Features.
-        /// </summary>
-        internal static string ksRuleFeaturesOpt {
-            get {
-                return ResourceManager.GetString("ksRuleFeaturesOpt", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Index.
-        /// </summary>
-        internal static string ksRuleIndexOpt {
-            get {
-                return ResourceManager.GetString("ksRuleIndexOpt", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Morpheme Boundary (+).
-        /// </summary>
-        internal static string ksRuleMorphBdryOpt {
-            get {
-                return ResourceManager.GetString("ksRuleMorphBdryOpt", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Edit the Natural Classes.
-        /// </summary>
-        internal static string ksRuleNCChooserLink {
-            get {
-                return ResourceManager.GetString("ksRuleNCChooserLink", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Created automatically for rule &quot;{0}&quot;.
-        /// </summary>
-        internal static string ksRuleNCFeatsName {
-            get {
-                return ResourceManager.GetString("ksRuleNCFeatsName", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Natural Class.
-        /// </summary>
-        internal static string ksRuleNCOpt {
-            get {
-                return ResourceManager.GetString("ksRuleNCOpt", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Edit the Phonemes.
-        /// </summary>
-        internal static string ksRulePhonemeChooserLink {
-            get {
-                return ResourceManager.GetString("ksRulePhonemeChooserLink", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Phoneme.
-        /// </summary>
-        internal static string ksRulePhonemeOpt {
-            get {
-                return ResourceManager.GetString("ksRulePhonemeOpt", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Redo Remove from Rule.
-        /// </summary>
-        internal static string ksRuleRedoRemove {
-            get {
-                return ResourceManager.GetString("ksRuleRedoRemove", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Redo Update Environment.
-        /// </summary>
-        internal static string ksRuleRedoUpdateEnv {
-            get {
-                return ResourceManager.GetString("ksRuleRedoUpdateEnv", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Undo Remove from Rule.
-        /// </summary>
-        internal static string ksRuleUndoRemove {
-            get {
-                return ResourceManager.GetString("ksRuleUndoRemove", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Undo Update Environment.
-        /// </summary>
-        internal static string ksRuleUndoUpdateEnv {
-            get {
-                return ResourceManager.GetString("ksRuleUndoUpdateEnv", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to X Variable.
-        /// </summary>
-        internal static string ksRuleVarOpt {
-            get {
-                return ResourceManager.GetString("ksRuleVarOpt", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Items cannot be inserted outside of word boundaries..
-        /// </summary>
-        internal static string ksRuleWordBdryNoOptsMsg {
-            get {
-                return ResourceManager.GetString("ksRuleWordBdryNoOptsMsg", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Word Boundary (#).
-        /// </summary>
-        internal static string ksRuleWordBdryOpt {
-            get {
-                return ResourceManager.GetString("ksRuleWordBdryOpt", resourceCulture);
             }
         }
         
@@ -1440,15 +1116,6 @@ namespace LanguageExplorer.Areas {
         internal static string ksUndoChangeSlotName {
             get {
                 return ResourceManager.GetString("ksUndoChangeSlotName", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Undo Delete Reference.
-        /// </summary>
-        internal static string ksUndoDeleteRef {
-            get {
-                return ResourceManager.GetString("ksUndoDeleteRef", resourceCulture);
             }
         }
         
@@ -1576,29 +1243,11 @@ namespace LanguageExplorer.Areas {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Move Left.
-        /// </summary>
-        internal static string Move_Left {
-            get {
-                return ResourceManager.GetString("Move_Left", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Move Reversal Category.
         /// </summary>
         internal static string Move_Reversal_Category {
             get {
                 return ResourceManager.GetString("Move_Reversal_Category", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Move Right.
-        /// </summary>
-        internal static string Move_Right {
-            get {
-                return ResourceManager.GetString("Move_Right", resourceCulture);
             }
         }
         
@@ -1696,15 +1345,6 @@ namespace LanguageExplorer.Areas {
         internal static string Sense {
             get {
                 return ResourceManager.GetString("Sense", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Set Phonological Features....
-        /// </summary>
-        internal static string Set_Phonological_Features {
-            get {
-                return ResourceManager.GetString("Set_Phonological_Features", resourceCulture);
             }
         }
         
@@ -1817,29 +1457,11 @@ namespace LanguageExplorer.Areas {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Show in Natural Classes list.
-        /// </summary>
-        internal static string Show_in_Natural_Classes_list {
-            get {
-                return ResourceManager.GetString("Show_in_Natural_Classes_list", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Show in Phonemes Editor.
         /// </summary>
         internal static string Show_in_Phonemes_Editor {
             get {
                 return ResourceManager.GetString("Show_in_Phonemes_Editor", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Show in Phonemes list.
-        /// </summary>
-        internal static string Show_in_Phonemes_list {
-            get {
-                return ResourceManager.GetString("Show_in_Phonemes_list", resourceCulture);
             }
         }
         

@@ -422,9 +422,6 @@
   <data name="Add_another_Variant_Info_section_Tooltip" xml:space="preserve">
     <value>This Lexeme Form is also another kind of variant. Add the fields for me to specify the related form(s) and the variant type(s).</value>
   </data>
-  <data name="Alphabetical_Order" xml:space="preserve">
-    <value>Alphabetical Order</value>
-  </data>
   <data name="Move_Variant_Info_Down" xml:space="preserve">
     <value>Move Variant Info Down</value>
   </data>
@@ -494,33 +491,6 @@
   <data name="Delete_Variant_Info" xml:space="preserve">
     <value>Delete Variant Info</value>
   </data>
-  <data name="ksIdentifyXEntry" xml:space="preserve">
-    <value>Add Reference ({0})</value>
-  </data>
-  <data name="ksRedoDeleteRelation" xml:space="preserve">
-    <value>Redo Delete Relation</value>
-  </data>
-  <data name="ksRedoEditRefSetDetails" xml:space="preserve">
-    <value>Redo Edit Reference Set Details</value>
-  </data>
-  <data name="ksRedoReplaceRef" xml:space="preserve">
-    <value>Redo Replace Reference</value>
-  </data>
-  <data name="ksReplaceXEntry" xml:space="preserve">
-    <value>Replace Reference</value>
-  </data>
-  <data name="ksUndoDeleteRelation" xml:space="preserve">
-    <value>Undo Delete Relation</value>
-  </data>
-  <data name="ksUndoEditRefSetDetails" xml:space="preserve">
-    <value>Undo Edit Reference Set Details</value>
-  </data>
-  <data name="ksUndoReplaceRef" xml:space="preserve">
-    <value>Undo Replace Reference</value>
-  </data>
-  <data name="ks_Replace" xml:space="preserve">
-    <value>&amp;Replace</value>
-  </data>
   <data name="ksFindExampleSentenceDlgBrowseViewPaneTitle" xml:space="preserve">
     <value>Concordance</value>
   </data>
@@ -583,9 +553,6 @@
   </data>
   <data name="Insert_Sound_or_Movie" xml:space="preserve">
     <value>Insert _Sound or Movie</value>
-  </data>
-  <data name="Set_Natural_Class" xml:space="preserve">
-    <value>Set Natural Class...</value>
   </data>
   <data name="CreateNewReversalEntryTooltip" xml:space="preserve">
     <value>Create a new reversal entry.</value>

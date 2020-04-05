@@ -22,7 +22,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.SemanticDomainEdit
 	/// <summary>
 	/// ITool implementation for the "semanticDomainEdit" tool in the "lists" area.
 	/// </summary>
-	[Export(AreaServices.ListsAreaMachineName, typeof(ITool))]
+	[Export(LanguageExplorerConstants.ListsAreaMachineName, typeof(ITool))]
 	internal sealed class SemanticDomainEditTool : IListTool
 	{
 		private const string SemanticDomainList_ListArea = "SemanticDomainList_ListArea";
@@ -113,12 +113,12 @@ namespace LanguageExplorer.Areas.Lists.Tools.SemanticDomainEdit
 		/// Get the internal name of the component.
 		/// </summary>
 		/// <remarks>NB: This is the machine friendly name, not the user friendly name.</remarks>
-		public string MachineName => AreaServices.SemanticDomainEditMachineName;
+		public string MachineName => LanguageExplorerConstants.SemanticDomainEditMachineName;
 
 		/// <summary>
 		/// User-visible localized component name.
 		/// </summary>
-		public string UiName => StringTable.Table.LocalizeLiteralValue(AreaServices.SemanticDomainEditUiName);
+		public string UiName => StringTable.Table.LocalizeLiteralValue(LanguageExplorerConstants.SemanticDomainEditUiName);
 
 		#endregion
 
@@ -127,7 +127,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.SemanticDomainEdit
 		/// <summary>
 		/// Get the area for the tool.
 		/// </summary>
-		[field: Import(AreaServices.ListsAreaMachineName)]
+		[field: Import(LanguageExplorerConstants.ListsAreaMachineName)]
 		public IArea Area { get; private set; }
 
 		/// <summary>
@@ -221,7 +221,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.SemanticDomainEdit
 				_majorFlexComponentParameters.UiWidgetController.AddHandlers(toolUiWidgetParameterObject);
 			}
 
-			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_SubSemanticDomain(Slice slice, ContextMenuName contextMenuId)
+			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_SubSemanticDomain(ISlice slice, ContextMenuName contextMenuId)
 			{
 				Require.That(contextMenuId == ContextMenuName.mnuDataTree_SubSemanticDomain, $"Expected argument value of '{ContextMenuName.mnuDataTree_SubSemanticDomain.ToString()}', but got '{contextMenuId.ToString()}' instead.");
 
@@ -242,7 +242,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.SemanticDomainEdit
 				return new Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>>(contextMenuStrip, menuItems);
 			}
 
-			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_InsertQuestion(Slice slice, ContextMenuName contextMenuId)
+			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_InsertQuestion(ISlice slice, ContextMenuName contextMenuId)
 			{
 				Require.That(contextMenuId == ContextMenuName.mnuDataTree_InsertQuestion, $"Expected argument value of '{ContextMenuName.mnuDataTree_InsertQuestion.ToString()}', but got '{contextMenuId.ToString()}' instead.");
 
@@ -275,7 +275,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.SemanticDomainEdit
 				});
 			}
 
-			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_DeleteQuestion(Slice slice, ContextMenuName contextMenuId)
+			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_DeleteQuestion(ISlice slice, ContextMenuName contextMenuId)
 			{
 				Require.That(contextMenuId == ContextMenuName.mnuDataTree_DeleteQuestion, $"Expected argument value of '{ContextMenuName.mnuDataTree_DeleteQuestion.ToString()}', but got '{contextMenuId.ToString()}' instead.");
 

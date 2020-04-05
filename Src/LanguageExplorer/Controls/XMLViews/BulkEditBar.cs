@@ -1361,18 +1361,18 @@ namespace LanguageExplorer.Controls.XMLViews
 		private void m_helpButton_Click(object sender, EventArgs e)
 		{
 			var helpTopic = string.Empty;
-			switch (PropertyTable.GetValue<string>(AreaServices.ToolChoice))
+			switch (PropertyTable.GetValue<string>(LanguageExplorerConstants.ToolChoice))
 			{
-				case AreaServices.BulkEditEntriesOrSensesMachineName:
+				case LanguageExplorerConstants.BulkEditEntriesOrSensesMachineName:
 					helpTopic = "khtpBulkEditBarEntriesOrSenses";
 					break;
-				case AreaServices.ReversalBulkEditReversalEntriesMachineName:
+				case LanguageExplorerConstants.ReversalBulkEditReversalEntriesMachineName:
 					helpTopic = "khtpBulkEditBarReversalEntries";
 					break;
-				case AreaServices.BulkEditWordformsMachineName:
+				case LanguageExplorerConstants.BulkEditWordformsMachineName:
 					helpTopic = "khtpBulkEditBarWordforms";
 					break;
-				case AreaServices.BulkEditPhonemesMachineName:
+				case LanguageExplorerConstants.BulkEditPhonemesMachineName:
 					helpTopic = "khtpBulkEditBarPhonemes";
 					break;
 			}

@@ -347,14 +347,14 @@ namespace LanguageExplorer.Areas
 		/// </summary>
 		private Control EnsureViewInfo()
 		{
-			m_areaOrig = PropertyTable.GetValue<string>(AreaServices.AreaChoice);
+			m_areaOrig = PropertyTable.GetValue<string>(LanguageExplorerConstants.AreaChoice);
 			if (m_rgFxtTypes.Count == 0)
 			{
 				return null; // only non-Fxt exports available (like Discourse chart?)
 			}
 			Control mainControl;
 			var ft = m_rgFxtTypes[FxtIndex((string)m_exportItems[0].Tag)].m_ft;
-			if (m_areaOrig == AreaServices.NotebookAreaMachineName)
+			if (m_areaOrig == LanguageExplorerConstants.NotebookAreaMachineName)
 			{
 				if (ft != FxtTypes.kftConfigured) // Different from Configured Dictionary; Notebook uses a subclass of ExportDialog
 				{
@@ -857,7 +857,7 @@ namespace LanguageExplorer.Areas
 				Debug.WriteLine(s);
 #endif
 				m_ce = new ConfiguredExport(null, m_xvc.DataAccess, m_hvoRootObj);
-				var sBodyClass = m_areaOrig == AreaServices.NotebookAreaMachineName ? "notebookBody" : "dicBody";
+				var sBodyClass = m_areaOrig == LanguageExplorerConstants.NotebookAreaMachineName ? "notebookBody" : "dicBody";
 				m_ce.Initialize(m_cache, PropertyTable, w, ft.m_sDataType, ft.m_sFormat, outPath, sBodyClass);
 				m_ce.UpdateProgress += ce_UpdateProgress;
 				m_xvc.Display(m_ce, m_hvoRootObj, m_seqView.RootFrag);
@@ -1073,7 +1073,7 @@ namespace LanguageExplorer.Areas
 				case "LIFT":
 					ft.m_ft = FxtTypes.kftLift;
 					break;
-				case AreaServices.GrammarSketchMachineName:
+				case LanguageExplorerConstants.GrammarSketchMachineName:
 					ft.m_ft = FxtTypes.kftGrammarSketch;
 					break;
 				case "semanticDomains":

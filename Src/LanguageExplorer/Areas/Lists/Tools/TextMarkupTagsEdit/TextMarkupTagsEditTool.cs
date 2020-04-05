@@ -21,7 +21,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.TextMarkupTagsEdit
 	/// <summary>
 	/// ITool implementation for the "textMarkupTagsEdit" tool in the "lists" area.
 	/// </summary>
-	[Export(AreaServices.ListsAreaMachineName, typeof(ITool))]
+	[Export(LanguageExplorerConstants.ListsAreaMachineName, typeof(ITool))]
 	internal sealed class TextMarkupTagsEditTool : IListTool
 	{
 		private const string TextMarkupTagsList = "TextMarkupTagsList";
@@ -112,12 +112,12 @@ namespace LanguageExplorer.Areas.Lists.Tools.TextMarkupTagsEdit
 		/// Get the internal name of the component.
 		/// </summary>
 		/// <remarks>NB: This is the machine friendly name, not the user friendly name.</remarks>
-		public string MachineName => AreaServices.TextMarkupTagsEditMachineName;
+		public string MachineName => LanguageExplorerConstants.TextMarkupTagsEditMachineName;
 
 		/// <summary>
 		/// User-visible localized component name.
 		/// </summary>
-		public string UiName => StringTable.Table.LocalizeLiteralValue(AreaServices.TextMarkupTagsEditUiName);
+		public string UiName => StringTable.Table.LocalizeLiteralValue(LanguageExplorerConstants.TextMarkupTagsEditUiName);
 
 		#endregion
 
@@ -126,7 +126,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.TextMarkupTagsEdit
 		/// <summary>
 		/// Get the area for the tool.
 		/// </summary>
-		[field: Import(AreaServices.ListsAreaMachineName)]
+		[field: Import(LanguageExplorerConstants.ListsAreaMachineName)]
 		public IArea Area { get; private set; }
 
 		/// <summary>

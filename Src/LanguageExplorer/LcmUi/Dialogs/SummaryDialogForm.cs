@@ -339,7 +339,7 @@ namespace LanguageExplorer.LcmUi.Dialogs
 				return;
 			}
 			var cmo = m_cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvo);
-			var link = new FwAppArgs(m_cache.ProjectId.Handle, AreaServices.LexiconEditMachineName, cmo.Guid);
+			var link = new FwAppArgs(m_cache.ProjectId.Handle, LanguageExplorerConstants.LexiconEditMachineName, cmo.Guid);
 			var app = m_propertyTable.GetValue<IApp>(LanguageExplorerConstants.App);
 			app.HandleOutgoingLink(link);
 		}

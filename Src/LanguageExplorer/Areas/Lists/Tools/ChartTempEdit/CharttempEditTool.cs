@@ -22,7 +22,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.ChartTempEdit
 	/// <summary>
 	/// ITool implementation for the "charttempEdit" tool in the "lists" area.
 	/// </summary>
-	[Export(AreaServices.ListsAreaMachineName, typeof(ITool))]
+	[Export(LanguageExplorerConstants.ListsAreaMachineName, typeof(ITool))]
 	internal sealed class CharttempEditTool : IListTool
 	{
 		private const string DiscChartTemplateList = "DiscChartTemplateList";
@@ -113,12 +113,12 @@ namespace LanguageExplorer.Areas.Lists.Tools.ChartTempEdit
 		/// Get the internal name of the component.
 		/// </summary>
 		/// <remarks>NB: This is the machine friendly name, not the user friendly name.</remarks>
-		public string MachineName => AreaServices.CharttempEditMachineName;
+		public string MachineName => LanguageExplorerConstants.CharttempEditMachineName;
 
 		/// <summary>
 		/// User-visible localized component name.
 		/// </summary>
-		public string UiName => StringTable.Table.LocalizeLiteralValue(AreaServices.CharttempEditUiName);
+		public string UiName => StringTable.Table.LocalizeLiteralValue(LanguageExplorerConstants.CharttempEditUiName);
 
 		#endregion
 
@@ -127,7 +127,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.ChartTempEdit
 		/// <summary>
 		/// Get the area for the tool.
 		/// </summary>
-		[field: Import(AreaServices.ListsAreaMachineName)]
+		[field: Import(LanguageExplorerConstants.ListsAreaMachineName)]
 		public IArea Area { get; private set; }
 
 		/// <summary>

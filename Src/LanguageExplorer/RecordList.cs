@@ -1577,7 +1577,7 @@ namespace LanguageExplorer
 
 		private bool InDesiredTool(string desiredTool)
 		{
-			var toolChoice = PropertyTable.GetValue(AreaServices.ToolChoice, string.Empty);
+			var toolChoice = PropertyTable.GetValue(LanguageExplorerConstants.ToolChoice, string.Empty);
 			return !string.IsNullOrWhiteSpace(toolChoice) && toolChoice == desiredTool;
 		}
 

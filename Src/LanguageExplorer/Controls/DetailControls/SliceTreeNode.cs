@@ -43,7 +43,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		#endregion
 
 		protected bool m_inMenuButton = false;
-		private Slice m_myParentSlice;
+		private ISlice m_myParentSlice;
 		private SliceLeftEdgeContextMenuFactory _sliceLeftEdgeContextMenuFactory;
 		private ContextMenuName _leftEdgeContextMenuId;
 		private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> _leftEdgeContextMenu;
@@ -56,7 +56,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		public bool ShowPlusMinus { get; set; }
 
 		/// <summary />
-		internal SliceTreeNode(Slice myParentSlice, SliceLeftEdgeContextMenuFactory sliceLeftEdgeContextMenuFactory, ContextMenuName leftEdgeContextMenuId)
+		internal SliceTreeNode(ISlice myParentSlice, SliceLeftEdgeContextMenuFactory sliceLeftEdgeContextMenuFactory, ContextMenuName leftEdgeContextMenuId)
 		{
 			Guard.AgainstNull(myParentSlice, nameof(myParentSlice));
 
@@ -406,7 +406,7 @@ namespace LanguageExplorer.Controls.DetailControls
 					}
 					_leftEdgeContextMenu = _sliceLeftEdgeContextMenuFactory.GetLeftEdgeContextMenu(m_myParentSlice, _leftEdgeContextMenuId);
 					m_myParentSlice.PrepareToShowContextMenu();
-					_leftEdgeContextMenu?.Item1.Show(m_myParentSlice, mouseLocation);
+					_leftEdgeContextMenu?.Item1.Show(m_myParentSlice.AsUserControl, mouseLocation);
 					return;
 				}
 			}

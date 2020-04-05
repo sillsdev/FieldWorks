@@ -24,7 +24,7 @@ namespace LanguageExplorer.Controls.XMLViews
 	/// <summary>
 	/// A browse view that displays the results of a search.
 	/// </summary>
-	public class MatchingObjectsBrowser : UserControl, IFlexComponent
+	internal sealed class MatchingObjectsBrowser : UserControl, IFlexComponent
 	{
 		#region Events
 
@@ -114,7 +114,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// Initialize the control, creating the BrowseViewer among other things.
 		/// </summary>
-		public void Initialize(LcmCache cache, IVwStylesheet stylesheet, XElement configParamsElement, SearchEngine searchEngine)
+		internal void Initialize(LcmCache cache, IVwStylesheet stylesheet, XElement configParamsElement, SearchEngine searchEngine)
 		{
 			Initialize(cache, stylesheet, configParamsElement, searchEngine, null);
 		}
@@ -122,7 +122,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// Initialize the control, creating the BrowseViewer among other things.
 		/// </summary>
-		public void Initialize(LcmCache cache, IVwStylesheet stylesheet, XElement configParamsElement, SearchEngine searchEngine, CoreWritingSystemDefinition reversalWs)
+		internal void Initialize(LcmCache cache, IVwStylesheet stylesheet, XElement configParamsElement, SearchEngine searchEngine, CoreWritingSystemDefinition reversalWs)
 		{
 			m_cache = cache;
 			m_stylesheet = stylesheet;
@@ -152,7 +152,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// Searches the specified fields asynchronously.
 		/// </summary>
-		public void SearchAsync(IEnumerable<SearchField> fields)
+		internal void SearchAsync(IEnumerable<SearchField> fields)
 		{
 			// Start the search
 			m_searchEngine.SearchAsync(fields);
@@ -161,7 +161,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// respond to an up arrow key in the find select box
 		/// </summary>
-		public void SelectNext()
+		internal void SelectNext()
 		{
 			var i = m_bvMatches.SelectedIndex;
 			if (i != -1 && i + 1 < m_bvMatches.AllItems.Count)
@@ -173,7 +173,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// respond to a down arrow key in the find select box
 		/// </summary>
-		public void SelectPrevious()
+		internal void SelectPrevious()
 		{
 			var i = m_bvMatches.SelectedIndex;
 			if (i > 0)
@@ -189,7 +189,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// This comes from a single click on a row in the browse view.
 		/// </summary>
-		void m_bvMatches_SelectionChanged(object sender, FwObjectSelectionEventArgs e)
+		private void m_bvMatches_SelectionChanged(object sender, FwObjectSelectionEventArgs e)
 		{
 			SelectedObject = m_cache.ServiceLocator.GetObject(e.Hvo);
 			FireSelectionChanged();
@@ -198,7 +198,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// This comes from a double click on a row in the browse view.
 		/// </summary>
-		void m_bvMatches_SelectionMade(object sender, FwObjectSelectionEventArgs e)
+		private void m_bvMatches_SelectionMade(object sender, FwObjectSelectionEventArgs e)
 		{
 			SelectedObject = m_cache.ServiceLocator.GetObject(e.Hvo);
 			FireSelectionMade();
@@ -207,7 +207,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// This comes from modifying the browse view columns
 		/// </summary>
-		void m_bvMatches_ColumnsChanged(object sender, EventArgs e)
+		private void m_bvMatches_ColumnsChanged(object sender, EventArgs e)
 		{
 			if (e is ColumnWidthChangedEventArgs)
 			{

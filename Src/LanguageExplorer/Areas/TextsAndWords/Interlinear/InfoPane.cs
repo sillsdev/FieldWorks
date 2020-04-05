@@ -265,7 +265,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					DataTreeSliceContextMenuParameterObject.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ContextMenuName.mnuTextInfo_Notebook, Create_mnuTextInfo_Notebook);
 				}
 
-				private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuTextInfo_Notebook(Slice slice, ContextMenuName contextMenuId)
+				private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuTextInfo_Notebook(ISlice slice, ContextMenuName contextMenuId)
 				{
 					Require.That(contextMenuId == ContextMenuName.mnuTextInfo_Notebook, $"Expected argument value of '{ContextMenuName.mnuTextInfo_Notebook.ToString()}', but got '{contextMenuId.ToString()}' instead.");
 
@@ -296,7 +296,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					{
 						currentObject = ((IText)currentObject).AssociatedNotebookRecord;
 					}
-					LinkHandler.PublishFollowLinkMessage(Publisher, new FwLinkArgs(AreaServices.NotebookEditToolMachineName, currentObject.Guid));
+					LinkHandler.PublishFollowLinkMessage(Publisher, new FwLinkArgs(LanguageExplorerConstants.NotebookEditToolMachineName, currentObject.Guid));
 				}
 
 				protected override void SetDefaultCurrentSlice(bool suppressFocusChange)

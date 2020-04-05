@@ -7,12 +7,14 @@ using SIL.FieldWorks.Common.ViewsInterfaces;
 
 namespace LanguageExplorer.Controls.DetailControls
 {
-	internal class GhostStringSliceVc : FwBaseVc
+	internal sealed class GhostStringSliceVc : FwBaseVc
 	{
+		internal const int kflidFake = -2001;
+
 		public override void Display(IVwEnv vwenv, int hvo, int frag)
 		{
 			// The property is absolutely arbitrary because the ghost DA ignores it.
-			vwenv.AddStringProp(GhostStringSlice.kflidFake, this);
+			vwenv.AddStringProp(kflidFake, this);
 		}
 	}
 }

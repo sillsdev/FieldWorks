@@ -12371,7 +12371,7 @@ namespace LanguageExplorer.LIFT
 
 		internal static string LinkRef(ILexEntry le)
 		{
-			var link = new FwLinkArgs(AreaServices.LexiconEditMachineName, le.Guid);
+			var link = new FwLinkArgs(LanguageExplorerConstants.LexiconEditMachineName, le.Guid);
 			return XmlUtils.MakeSafeXmlAttribute(link.ToString());
 		}
 

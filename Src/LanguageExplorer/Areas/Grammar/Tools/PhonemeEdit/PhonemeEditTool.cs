@@ -24,7 +24,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonemeEdit
 	/// <summary>
 	/// ITool implementation for the "phonemeEdit" tool in the "grammar" area.
 	/// </summary>
-	[Export(AreaServices.GrammarAreaMachineName, typeof(ITool))]
+	[Export(LanguageExplorerConstants.GrammarAreaMachineName, typeof(ITool))]
 	internal sealed class PhonemeEditTool : ITool
 	{
 		private PhonemeEditToolMenuHelper _toolMenuHelper;
@@ -129,12 +129,12 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonemeEdit
 		/// Get the internal name of the component.
 		/// </summary>
 		/// <remarks>NB: This is the machine friendly name, not the user friendly name.</remarks>
-		public string MachineName => AreaServices.PhonemeEditMachineName;
+		public string MachineName => LanguageExplorerConstants.PhonemeEditMachineName;
 
 		/// <summary>
 		/// User-visible localized component name.
 		/// </summary>
-		public string UiName => StringTable.Table.LocalizeLiteralValue(AreaServices.PhonemeEditUiName);
+		public string UiName => StringTable.Table.LocalizeLiteralValue(LanguageExplorerConstants.PhonemeEditUiName);
 
 		#endregion
 
@@ -143,7 +143,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonemeEdit
 		/// <summary>
 		/// Get the area for the tool.
 		/// </summary>
-		[field: Import(AreaServices.GrammarAreaMachineName)]
+		[field: Import(LanguageExplorerConstants.GrammarAreaMachineName)]
 		public IArea Area { get; private set; }
 
 		/// <summary>
@@ -210,7 +210,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonemeEdit
 				_dataTree.DataTreeSliceContextMenuParameterObject.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ContextMenuName.mnuDataTree_Phoneme_Code, Create_mnuDataTree_Phoneme_Code);
 			}
 
-			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_Phoneme_Codes(Slice slice, ContextMenuName contextMenuId)
+			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_Phoneme_Codes(ISlice slice, ContextMenuName contextMenuId)
 			{
 				Require.That(contextMenuId == ContextMenuName.mnuDataTree_Phoneme_Codes, $"Expected argument value of '{ContextMenuName.mnuDataTree_Phoneme_Codes.ToString()}', but got '{contextMenuId.ToString()}' instead.");
 
@@ -230,7 +230,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonemeEdit
 				return new Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>>(contextMenuStrip, menuItems);
 			}
 
-			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_Phoneme_Code(Slice slice, ContextMenuName contextMenuId)
+			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_Phoneme_Code(ISlice slice, ContextMenuName contextMenuId)
 			{
 				Require.That(contextMenuId == ContextMenuName.mnuDataTree_Phoneme_Code, $"Expected argument value of '{ContextMenuName.mnuDataTree_Phoneme_Code.ToString()}', but got '{contextMenuId.ToString()}' instead.");
 

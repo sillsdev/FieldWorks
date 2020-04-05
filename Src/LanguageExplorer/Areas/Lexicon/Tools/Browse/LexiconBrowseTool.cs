@@ -20,7 +20,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Browse
 	/// <summary>
 	/// ITool implementation for the "lexiconBrowse" tool in the "lexicon" area.
 	/// </summary>
-	[Export(AreaServices.LexiconAreaMachineName, typeof(ITool))]
+	[Export(LanguageExplorerConstants.LexiconAreaMachineName, typeof(ITool))]
 	internal sealed class LexiconBrowseTool : ITool
 	{
 		private LexiconBrowseToolMenuHelper _toolMenuHelper;
@@ -103,12 +103,12 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Browse
 		/// Get the internal name of the component.
 		/// </summary>
 		/// <remarks>NB: This is the machine friendly name, not the user friendly name.</remarks>
-		public string MachineName => AreaServices.LexiconBrowseMachineName;
+		public string MachineName => LanguageExplorerConstants.LexiconBrowseMachineName;
 
 		/// <summary>
 		/// User-visible localized component name.
 		/// </summary>
-		public string UiName => StringTable.Table.LocalizeLiteralValue(AreaServices.LexiconBrowseUiName);
+		public string UiName => StringTable.Table.LocalizeLiteralValue(LanguageExplorerConstants.LexiconBrowseUiName);
 
 		#endregion
 
@@ -117,7 +117,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Browse
 		/// <summary>
 		/// Get the area for the tool.
 		/// </summary>
-		[field: Import(AreaServices.LexiconAreaMachineName)]
+		[field: Import(LanguageExplorerConstants.LexiconAreaMachineName)]
 		public IArea Area { get; private set; }
 
 		/// <summary>
@@ -179,7 +179,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Browse
 
 				// <item command="CmdEntryJumpToDefault" />
 				_jumpMenu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers.GetEventHandler(Command.CmdJumpToTool), AreaResources.ksShowEntryInLexicon);
-				_jumpMenu.Tag = new List<object> { _majorFlexComponentParameters.FlexComponentParameters.Publisher, AreaServices.LexiconBrowseMachineName, _recordList };
+				_jumpMenu.Tag = new List<object> { _majorFlexComponentParameters.FlexComponentParameters.Publisher, LanguageExplorerConstants.LexiconBrowseMachineName, _recordList };
 
 				ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, CmdEntryJumpToConcordance_Click, AreaResources.Show_Entry_In_Concordance);
 
@@ -199,7 +199,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Browse
 
 			private void CmdEntryJumpToConcordance_Click(object sender, EventArgs e)
 			{
-				LinkHandler.PublishFollowLinkMessage(_majorFlexComponentParameters.FlexComponentParameters.Publisher, new FwLinkArgs(AreaServices.ConcordanceMachineName, _recordList.CurrentObject.Guid));
+				LinkHandler.PublishFollowLinkMessage(_majorFlexComponentParameters.FlexComponentParameters.Publisher, new FwLinkArgs(LanguageExplorerConstants.ConcordanceMachineName, _recordList.CurrentObject.Guid));
 			}
 
 			#region Implementation of IDisposable

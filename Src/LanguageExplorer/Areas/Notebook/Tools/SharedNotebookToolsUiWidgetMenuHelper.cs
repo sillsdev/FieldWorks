@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Windows.Forms;
 using LanguageExplorer.Controls;
+using LanguageExplorer.Controls.DetailControls;
 using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
@@ -39,7 +40,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools
 
 		internal ContextMenuStrip CreateBrowseViewContextMenu()
 		{
-			Require.That(_tool == null || _tool.MachineName != AreaServices.NotebookDocumentToolMachineName, "The Notebook Document tool is not expected to call this method.");
+			Require.That(_tool == null || _tool.MachineName != LanguageExplorerConstants.NotebookDocumentToolMachineName, "The Notebook Document tool is not expected to call this method.");
 
 			// The actual menu declaration has a gazillion menu items, but only one of them is seen in this tool.
 			// Start: <menu id="mnuBrowseView" (partial) >

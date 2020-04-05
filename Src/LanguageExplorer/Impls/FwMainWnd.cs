@@ -902,8 +902,8 @@ namespace LanguageExplorer.Impls
 				_currentArea.ActiveTool = clickedTool;
 				var areaName = _currentArea.MachineName;
 				var toolName = _currentTool.MachineName;
-				PropertyTable.SetProperty($"{AreaServices.ToolForAreaNamed_}{areaName}", toolName, true, settingsGroup: SettingsGroup.LocalSettings);
-				PropertyTable.SetProperty(AreaServices.ToolChoice, _currentTool.MachineName, true, settingsGroup: SettingsGroup.LocalSettings);
+				PropertyTable.SetProperty($"{LanguageExplorerConstants.ToolForAreaNamed_}{areaName}", toolName, true, settingsGroup: SettingsGroup.LocalSettings);
+				PropertyTable.SetProperty(LanguageExplorerConstants.ToolChoice, _currentTool.MachineName, true, settingsGroup: SettingsGroup.LocalSettings);
 				// Do some logging.
 				Logger.WriteEvent("Switched to " + _currentTool.MachineName);
 				// Should we report a tool change?
@@ -937,7 +937,7 @@ namespace LanguageExplorer.Impls
 				ClearDuringTransition();
 				_currentArea?.Deactivate(_majorFlexComponentParameters);
 				_currentArea = clickedArea;
-				PropertyTable.SetProperty(AreaServices.AreaChoice, _currentArea.MachineName, true, settingsGroup: SettingsGroup.LocalSettings);
+				PropertyTable.SetProperty(LanguageExplorerConstants.AreaChoice, _currentArea.MachineName, true, settingsGroup: SettingsGroup.LocalSettings);
 				_currentArea.Activate(_majorFlexComponentParameters);
 			}
 		}
@@ -984,7 +984,7 @@ namespace LanguageExplorer.Impls
 			PropertyTable.SetDefault(SidebarWidthGlobal, 140, true, settingsGroup: SettingsGroup.GlobalSettings);
 			// This is the splitter distance for the record list/main content pair of controls.
 			PropertyTable.SetDefault(LanguageExplorerConstants.RecordListWidthGlobal, 200, true, settingsGroup: SettingsGroup.GlobalSettings);
-			PropertyTable.SetDefault(AreaServices.InitialArea, AreaServices.InitialAreaMachineName, true);
+			PropertyTable.SetDefault(LanguageExplorerConstants.InitialArea, LanguageExplorerConstants.InitialAreaMachineName, true);
 			PropertyTable.SetDefault(LanguageExplorerConstants.SuspendLoadingRecordUntilOnJumpToRecord, string.Empty);
 			PropertyTable.SetDefault(LanguageExplorerConstants.SuspendLoadListUntilOnChangeFilter, string.Empty);
 			// This property can be used to set the settingsGroup for context dependent properties. No need to persist it.
@@ -2211,7 +2211,7 @@ namespace LanguageExplorer.Impls
 			}
 		}
 
-		private Tuple<bool, bool> CanCmdRefresh => new Tuple<bool, bool>(true, _currentTool.MachineName != AreaServices.GrammarSketchMachineName);
+		private Tuple<bool, bool> CanCmdRefresh => new Tuple<bool, bool>(true, _currentTool.MachineName != LanguageExplorerConstants.GrammarSketchMachineName);
 
 		/// <summary>
 		/// This is the one (and should be only) handler for the user Refresh command.
@@ -2331,7 +2331,7 @@ namespace LanguageExplorer.Impls
 			ramp.ArchiveNow(this, MainMenuStrip.Font, Icon, filesToArchive, PropertyTable, _flexApp, Cache);
 		}
 
-		private Tuple<bool, bool> CanCmdUploadToWebonary => new Tuple<bool, bool>(true, _currentArea.MachineName == AreaServices.LexiconAreaMachineName);
+		private Tuple<bool, bool> CanCmdUploadToWebonary => new Tuple<bool, bool>(true, _currentArea.MachineName == LanguageExplorerConstants.LexiconAreaMachineName);
 
 		private void UploadToWebonary_Click(object sender, EventArgs e)
 		{

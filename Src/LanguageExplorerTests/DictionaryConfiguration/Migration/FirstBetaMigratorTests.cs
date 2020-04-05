@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using LanguageExplorer;
-using LanguageExplorer.Controls.XMLViews;
+using LanguageExplorer.Controls;
 using LanguageExplorer.DictionaryConfiguration;
 using LanguageExplorer.DictionaryConfiguration.Migration;
 using LanguageExplorer.TestUtilities;

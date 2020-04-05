@@ -5,6 +5,7 @@
 using System.Text;
 using LanguageExplorer.Archiving;
 using NUnit.Framework;
+using SIL.Archiving;
 using SIL.Keyboarding;
 using SIL.LCModel;
 

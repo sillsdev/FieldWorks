@@ -9,13 +9,13 @@ using LanguageExplorer.Controls.XMLViews;
 
 namespace LanguageExplorer.Controls.DetailControls
 {
-	internal class SummaryXmlView : XmlView
+	internal sealed class SummaryXmlView : XmlView
 	{
-		private SummarySlice m_slice;
+		private ISummarySlice _summarySlice;
 
-		public SummaryXmlView(int hvo, string label, SummarySlice slice) : base( hvo, label, false)
+		internal SummaryXmlView(int hvo, string label, ISummarySlice summarySlice) : base( hvo, label, false)
 		{
-			m_slice = slice;
+			_summarySlice = summarySlice;
 		}
 
 		#region IDisposable override
@@ -38,7 +38,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			}
 
 			// Dispose unmanaged resources here, whether disposing is true or false.
-			m_slice = null;
+			_summarySlice = null;
 		}
 
 		#endregion IDisposable override
@@ -52,20 +52,21 @@ namespace LanguageExplorer.Controls.DetailControls
 		{
 			if (e.Button == MouseButtons.Right)
 			{
-				m_slice.HandleMouseDown(new Point(e.X,e.Y));
+				_summarySlice.HandleMouseDown(new Point(e.X,e.Y));
 			}
 			else
 			{
-				m_slice.ContainingDataTree.CurrentSlice = m_slice;
+				_summarySlice.ContainingDataTree.CurrentSlice = _summarySlice;
 			}
 		}
+
 		public override void MakeRoot()
 		{
 			base.MakeRoot();
 			// pathologically (mainly during Refresh, it seems) the slice width may get set before
 			// the root box is created, and no further size adjustment may take place, in which case,
 			// when we have made the root, we need to adjust the width it occupies in the parent slice.
-			m_slice.AdjustMainViewWidth();
+			_summarySlice.AdjustMainViewWidth();
 		}
 
 		/// <summary>

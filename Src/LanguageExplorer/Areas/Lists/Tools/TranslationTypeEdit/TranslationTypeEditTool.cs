@@ -21,7 +21,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.TranslationTypeEdit
 	/// <summary>
 	/// ITool implementation for the "translationTypeEdit" tool in the "lists" area.
 	/// </summary>
-	[Export(AreaServices.ListsAreaMachineName, typeof(ITool))]
+	[Export(LanguageExplorerConstants.ListsAreaMachineName, typeof(ITool))]
 	internal sealed class TranslationTypeEditTool : IListTool
 	{
 		private const string TranslationTypeList = "TranslationTypeList";
@@ -112,12 +112,12 @@ namespace LanguageExplorer.Areas.Lists.Tools.TranslationTypeEdit
 		/// Get the internal name of the component.
 		/// </summary>
 		/// <remarks>NB: This is the machine friendly name, not the user friendly name.</remarks>
-		public string MachineName => AreaServices.TranslationTypeEditMachineName;
+		public string MachineName => LanguageExplorerConstants.TranslationTypeEditMachineName;
 
 		/// <summary>
 		/// User-visible localized component name.
 		/// </summary>
-		public string UiName => StringTable.Table.LocalizeLiteralValue(AreaServices.TranslationTypeEditUiName);
+		public string UiName => StringTable.Table.LocalizeLiteralValue(LanguageExplorerConstants.TranslationTypeEditUiName);
 
 		#endregion
 
@@ -126,7 +126,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.TranslationTypeEdit
 		/// <summary>
 		/// Get the area for the tool.
 		/// </summary>
-		[field: Import(AreaServices.ListsAreaMachineName)]
+		[field: Import(LanguageExplorerConstants.ListsAreaMachineName)]
 		public IArea Area { get; private set; }
 
 		/// <summary>

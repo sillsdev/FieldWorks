@@ -30,9 +30,9 @@ namespace LanguageExplorer.Areas
 			Guard.AgainstNull(area, nameof(areaUiWidgetParameterObject));
 			var supportedAreas = new HashSet<string>
 			{
-				AreaServices.LexiconAreaMachineName,
-				AreaServices.NotebookAreaMachineName,
-				AreaServices.TextAndWordsAreaMachineName
+				LanguageExplorerConstants.LexiconAreaMachineName,
+				LanguageExplorerConstants.NotebookAreaMachineName,
+				LanguageExplorerConstants.TextAndWordsAreaMachineName
 			};
 			Require.That(supportedAreas.Contains(area.MachineName), $"'{area.UiName}' does not allow custom fields.");
 
@@ -41,13 +41,13 @@ namespace LanguageExplorer.Areas
 			_publisher = _majorFlexComponentParameters.FlexComponentParameters.Publisher;
 			switch (area.MachineName)
 			{
-				case AreaServices.LexiconAreaMachineName:
+				case LanguageExplorerConstants.LexiconAreaMachineName:
 					_customFieldLocationType = CustomFieldLocationType.Lexicon;
 					break;
-				case AreaServices.NotebookAreaMachineName:
+				case LanguageExplorerConstants.NotebookAreaMachineName:
 					_customFieldLocationType = CustomFieldLocationType.Notebook;
 					break;
-				case AreaServices.TextAndWordsAreaMachineName:
+				case LanguageExplorerConstants.TextAndWordsAreaMachineName:
 					_customFieldLocationType = CustomFieldLocationType.Interlinear;
 					break;
 				default:

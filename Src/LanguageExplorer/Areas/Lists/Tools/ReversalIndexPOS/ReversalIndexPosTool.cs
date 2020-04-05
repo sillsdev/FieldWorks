@@ -24,7 +24,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 	/// <summary>
 	/// ITool implementation for the "reversalToolReversalIndexPOS" tool in the "lists" area.
 	/// </summary>
-	[Export(AreaServices.ListsAreaMachineName, typeof(ITool))]
+	[Export(LanguageExplorerConstants.ListsAreaMachineName, typeof(ITool))]
 	internal sealed class ReversalIndexPosTool : IListTool
 	{
 		private MultiPane _multiPane;
@@ -155,12 +155,12 @@ namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 		/// Get the internal name of the component.
 		/// </summary>
 		/// <remarks>NB: This is the machine friendly name, not the user friendly name.</remarks>
-		public string MachineName => AreaServices.ReversalToolReversalIndexPOSMachineName;
+		public string MachineName => LanguageExplorerConstants.ReversalToolReversalIndexPOSMachineName;
 
 		/// <summary>
 		/// User-visible localized component name.
 		/// </summary>
-		public string UiName => StringTable.Table.LocalizeLiteralValue(AreaServices.ReversalToolReversalIndexPOSUiName);
+		public string UiName => StringTable.Table.LocalizeLiteralValue(LanguageExplorerConstants.ReversalToolReversalIndexPOSUiName);
 
 		#endregion
 
@@ -169,7 +169,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 		/// <summary>
 		/// Get the area for the tool.
 		/// </summary>
-		[field: Import(AreaServices.ListsAreaMachineName)]
+		[field: Import(LanguageExplorerConstants.ListsAreaMachineName)]
 		public IArea Area { get; private set; }
 
 		/// <summary>
@@ -330,7 +330,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 				((ReversalListBase)_recordList).ChangeOwningObjectIfPossible();
 			}
 
-			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_MoveMainReversalPOS(Slice slice, ContextMenuName contextMenuId)
+			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_MoveMainReversalPOS(ISlice slice, ContextMenuName contextMenuId)
 			{
 				Require.That(contextMenuId == ContextMenuName.mnuDataTree_MoveMainReversalPOS, $"Expected argument value of '{ContextMenuName.mnuDataTree_MoveMainReversalPOS.ToString()}', but got '{contextMenuId.ToString()}' instead.");
 
@@ -379,7 +379,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 				return new Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>>(contextMenuStrip, menuItems);
 			}
 
-			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_MoveReversalPOS(Slice slice, ContextMenuName contextMenuId)
+			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_MoveReversalPOS(ISlice slice, ContextMenuName contextMenuId)
 			{
 				Require.That(contextMenuId == ContextMenuName.mnuDataTree_MoveReversalPOS, $"Expected argument value of '{ContextMenuName.mnuDataTree_MoveReversalPOS.ToString()}', but got '{contextMenuId.ToString()}' instead.");
 

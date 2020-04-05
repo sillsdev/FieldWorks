@@ -39,7 +39,7 @@ namespace LanguageExplorer.Areas
 
 			ChangeOwningObjectIfPossible();
 			Subscriber.Subscribe(LanguageExplorerConstants.ReversalIndexGuid, ReversalIndexGuid_Handler);
-			Subscriber.Subscribe(AreaServices.ToolForAreaNamed_ + AreaServices.LexiconAreaMachineName, JumpToIndex_Handler);
+			Subscriber.Subscribe(LanguageExplorerConstants.ToolForAreaNamed_ + LanguageExplorerConstants.LexiconAreaMachineName, JumpToIndex_Handler);
 		}
 
 		private void JumpToIndex_Handler(object obj)
@@ -171,7 +171,7 @@ namespace LanguageExplorer.Areas
 			if (disposing)
 			{
 				Subscriber.Unsubscribe(LanguageExplorerConstants.ReversalIndexGuid, ReversalIndexGuid_Handler);
-				Subscriber.Unsubscribe(AreaServices.ToolForAreaNamed_ + AreaServices.LexiconAreaMachineName, ReversalIndexGuid_Handler);
+				Subscriber.Unsubscribe(LanguageExplorerConstants.ToolForAreaNamed_ + LanguageExplorerConstants.LexiconAreaMachineName, ReversalIndexGuid_Handler);
 			}
 
 			base.Dispose(disposing);

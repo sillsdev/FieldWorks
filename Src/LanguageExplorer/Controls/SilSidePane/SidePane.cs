@@ -220,7 +220,7 @@ namespace LanguageExplorer.Controls.SilSidePane
 					Tag = area,
 					Name = area.MachineName
 				};
-				if (area.MachineName == AreaServices.ListsAreaMachineName)
+				if (area.MachineName == LanguageExplorerConstants.ListsAreaMachineName)
 				{
 					isListArea = true;
 					_listAreaTab = tab;

@@ -24,7 +24,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 	/// <summary>
 	/// ITool implementation for the "posEdit" tool in the "grammar" area.
 	/// </summary>
-	[Export(AreaServices.GrammarAreaMachineName, typeof(ITool))]
+	[Export(LanguageExplorerConstants.GrammarAreaMachineName, typeof(ITool))]
 	internal sealed class PosEditTool : ITool
 	{
 		private const string Categories_withTreeBarHandler = "categories_withTreeBarHandler";
@@ -62,7 +62,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 		/// </remarks>
 		public void Activate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
-			majorFlexComponentParameters.FlexComponentParameters.PropertyTable.SetDefault($"{AreaServices.ToolForAreaNamed_}{Area.MachineName}", MachineName, true);
+			majorFlexComponentParameters.FlexComponentParameters.PropertyTable.SetDefault($"{LanguageExplorerConstants.ToolForAreaNamed_}{Area.MachineName}", MachineName, true);
 			majorFlexComponentParameters.FlexComponentParameters.PropertyTable.SetDefault("PartsOfSpeech.posEdit.DataTree-Splitter", 200, true);
 			majorFlexComponentParameters.FlexComponentParameters.PropertyTable.SetDefault("PartsOfSpeech.posAdvancedEdit.DataTree-Splitter", 200, true);
 			if (_recordList == null)
@@ -108,12 +108,12 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 		/// Get the internal name of the component.
 		/// </summary>
 		/// <remarks>NB: This is the machine friendly name, not the user friendly name.</remarks>
-		public string MachineName => AreaServices.PosEditMachineName;
+		public string MachineName => LanguageExplorerConstants.PosEditMachineName;
 
 		/// <summary>
 		/// User-visible localized component name.
 		/// </summary>
-		public string UiName => StringTable.Table.LocalizeLiteralValue(AreaServices.PosEditUiName);
+		public string UiName => StringTable.Table.LocalizeLiteralValue(LanguageExplorerConstants.PosEditUiName);
 
 		#endregion
 
@@ -122,7 +122,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 		/// <summary>
 		/// Get the area for the tool.
 		/// </summary>
-		[field: Import(AreaServices.GrammarAreaMachineName)]
+		[field: Import(LanguageExplorerConstants.GrammarAreaMachineName)]
 		public IArea Area { get; private set; }
 
 		/// <summary>
@@ -213,7 +213,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 				_dataTree.DataTreeSliceContextMenuParameterObject.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ContextMenuName.mnuDataTree_MoStemName_Region, Create_mnuDataTree_MoStemName_Region);
 			}
 
-			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_POS_StemName(Slice slice, ContextMenuName contextMenuId)
+			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_POS_StemName(ISlice slice, ContextMenuName contextMenuId)
 			{
 				Require.That(contextMenuId == ContextMenuName.mnuDataTree_POS_StemName, $"Expected argument value of '{ContextMenuName.mnuDataTree_POS_StemName.ToString()}', but got '{contextMenuId.ToString()}' instead.");
 
@@ -233,7 +233,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 				return new Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>>(contextMenuStrip, menuItems);
 			}
 
-			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_MoStemName_Region(Slice slice, ContextMenuName contextMenuId)
+			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_MoStemName_Region(ISlice slice, ContextMenuName contextMenuId)
 			{
 				Require.That(contextMenuId == ContextMenuName.mnuDataTree_MoStemName_Region, $"Expected argument value of '{ContextMenuName.mnuDataTree_MoStemName_Region.ToString()}', but got '{contextMenuId.ToString()}' instead.");
 
@@ -253,7 +253,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 				return new Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>>(contextMenuStrip, menuItems);
 			}
 
-			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_MoStemName_Regions(Slice slice, ContextMenuName contextMenuId)
+			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_MoStemName_Regions(ISlice slice, ContextMenuName contextMenuId)
 			{
 				Require.That(contextMenuId == ContextMenuName.mnuDataTree_MoStemName_Regions, $"Expected argument value of '{ContextMenuName.mnuDataTree_MoStemName_Regions.ToString()}', but got '{contextMenuId.ToString()}' instead.");
 
@@ -278,7 +278,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 				_dataTree.CurrentSlice.HandleInsertCommand("Regions", FsFeatStrucTags.kClassName, FsFeatStrucTags.kClassName);
 			}
 
-			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_POS_StemNames(Slice slice, ContextMenuName contextMenuId)
+			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_POS_StemNames(ISlice slice, ContextMenuName contextMenuId)
 			{
 				Require.That(contextMenuId == ContextMenuName.mnuDataTree_POS_StemNames, $"Expected argument value of '{ContextMenuName.mnuDataTree_POS_StemNames.ToString()}', but got '{contextMenuId.ToString()}' instead.");
 
@@ -303,7 +303,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 				_dataTree.CurrentSlice.HandleInsertCommand("StemNames", MoStemNameTags.kClassName, PartOfSpeechTags.kClassName);
 			}
 
-			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_POS_InflectionClass_Subclasses(Slice slice, ContextMenuName contextMenuId)
+			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_POS_InflectionClass_Subclasses(ISlice slice, ContextMenuName contextMenuId)
 			{
 				Require.That(contextMenuId == ContextMenuName.mnuDataTree_POS_InflectionClass_Subclasses, $"Expected argument value of '{ContextMenuName.mnuDataTree_POS_InflectionClass_Subclasses.ToString()}', but got '{contextMenuId.ToString()}' instead.");
 
@@ -328,7 +328,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 				_dataTree.CurrentSlice.HandleInsertCommand("Subclasses", MoInflClassTags.kClassName, MoInflClassTags.kClassName);
 			}
 
-			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_POS_InflectionClass(Slice slice, ContextMenuName contextMenuId)
+			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_POS_InflectionClass(ISlice slice, ContextMenuName contextMenuId)
 			{
 				Require.That(contextMenuId == ContextMenuName.mnuDataTree_POS_InflectionClass, $"Expected argument value of '{ContextMenuName.mnuDataTree_POS_InflectionClass.ToString()}', but got '{contextMenuId.ToString()}' instead.");
 
@@ -348,7 +348,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 				return new Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>>(contextMenuStrip, menuItems);
 			}
 
-			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_POS_InflectionClasses(Slice slice, ContextMenuName contextMenuId)
+			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_POS_InflectionClasses(ISlice slice, ContextMenuName contextMenuId)
 			{
 				Require.That(contextMenuId == ContextMenuName.mnuDataTree_POS_InflectionClasses, $"Expected argument value of '{ContextMenuName.mnuDataTree_POS_InflectionClasses.ToString()}', but got '{contextMenuId.ToString()}' instead.");
 
@@ -373,7 +373,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 				_dataTree.CurrentSlice.HandleInsertCommand("InflectionClasses", MoInflClassTags.kClassName, PartOfSpeechTags.kClassName);
 			}
 
-			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_POS_AffixSlot(Slice slice, ContextMenuName contextMenuId)
+			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_POS_AffixSlot(ISlice slice, ContextMenuName contextMenuId)
 			{
 				Require.That(contextMenuId == ContextMenuName.mnuDataTree_POS_AffixSlot, $"Expected argument value of '{ContextMenuName.mnuDataTree_POS_AffixSlot.ToString()}', but got '{contextMenuId.ToString()}' instead.");
 
@@ -393,7 +393,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 				return new Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>>(contextMenuStrip, menuItems);
 			}
 
-			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_POS_AffixSlots(Slice slice, ContextMenuName contextMenuId)
+			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_POS_AffixSlots(ISlice slice, ContextMenuName contextMenuId)
 			{
 				Require.That(contextMenuId == ContextMenuName.mnuDataTree_POS_AffixSlots, $"Expected argument value of '{ContextMenuName.mnuDataTree_POS_AffixSlots.ToString()}', but got '{contextMenuId.ToString()}' instead.");
 
@@ -418,7 +418,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 				_dataTree.CurrentSlice.HandleInsertCommand("AffixSlots", MoInflAffixSlotTags.kClassName, PartOfSpeechTags.kClassName);
 			}
 
-			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_POS_AffixTemplates(Slice slice, ContextMenuName contextMenuId)
+			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_POS_AffixTemplates(ISlice slice, ContextMenuName contextMenuId)
 			{
 				Require.That(contextMenuId == ContextMenuName.mnuDataTree_POS_AffixTemplates, $"Expected argument value of '{ContextMenuName.mnuDataTree_POS_AffixTemplates.ToString()}', but got '{contextMenuId.ToString()}' instead.");
 
@@ -443,7 +443,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 				_dataTree.CurrentSlice.HandleInsertCommand("AffixTemplates", MoInflAffixTemplateTags.kClassName, PartOfSpeechTags.kClassName);
 			}
 
-			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_POS_AffixTemplate(Slice slice, ContextMenuName contextMenuId)
+			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_POS_AffixTemplate(ISlice slice, ContextMenuName contextMenuId)
 			{
 				Require.That(contextMenuId == ContextMenuName.mnuDataTree_POS_AffixTemplate, $"Expected argument value of '{ContextMenuName.mnuDataTree_POS_AffixTemplate.ToString()}', but got '{contextMenuId.ToString()}' instead.");
 

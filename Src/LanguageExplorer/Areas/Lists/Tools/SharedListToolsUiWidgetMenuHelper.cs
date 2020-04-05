@@ -61,26 +61,26 @@ namespace LanguageExplorer.Areas.Lists.Tools
 				// NB: Only the lists that contain CmPossibility instances (e.g., no sub-classes) can have a null option for 'commands'.
 				var plainVanillaToolNames = new HashSet<string>
 				{
-					AreaServices.ChartmarkEditMachineName,
-					AreaServices.CharttempEditMachineName,
-					AreaServices.ConfidenceEditMachineName,
-					AreaServices.DialectsListEditMachineName,
-					AreaServices.DomainTypeEditMachineName,
-					AreaServices.EducationEditMachineName,
-					AreaServices.ExtNoteTypeEditMachineName,
-					AreaServices.GenresEditMachineName,
-					AreaServices.LanguagesListEditMachineName,
-					AreaServices.PositionsEditMachineName,
-					AreaServices.PublicationsEditMachineName,
-					AreaServices.RecTypeEditMachineName,
-					AreaServices.RestrictionsEditMachineName,
-					AreaServices.RoleEditMachineName,
-					AreaServices.SenseTypeEditMachineName,
-					AreaServices.StatusEditMachineName,
-					AreaServices.TextMarkupTagsEditMachineName,
-					AreaServices.TimeOfDayEditMachineName,
-					AreaServices.TranslationTypeEditMachineName,
-					AreaServices.UsageTypeEditMachineName
+					LanguageExplorerConstants.ChartmarkEditMachineName,
+					LanguageExplorerConstants.CharttempEditMachineName,
+					LanguageExplorerConstants.ConfidenceEditMachineName,
+					LanguageExplorerConstants.DialectsListEditMachineName,
+					LanguageExplorerConstants.DomainTypeEditMachineName,
+					LanguageExplorerConstants.EducationEditMachineName,
+					LanguageExplorerConstants.ExtNoteTypeEditMachineName,
+					LanguageExplorerConstants.GenresEditMachineName,
+					LanguageExplorerConstants.LanguagesListEditMachineName,
+					LanguageExplorerConstants.PositionsEditMachineName,
+					LanguageExplorerConstants.PublicationsEditMachineName,
+					LanguageExplorerConstants.RecTypeEditMachineName,
+					LanguageExplorerConstants.RestrictionsEditMachineName,
+					LanguageExplorerConstants.RoleEditMachineName,
+					LanguageExplorerConstants.SenseTypeEditMachineName,
+					LanguageExplorerConstants.StatusEditMachineName,
+					LanguageExplorerConstants.TextMarkupTagsEditMachineName,
+					LanguageExplorerConstants.TimeOfDayEditMachineName,
+					LanguageExplorerConstants.TranslationTypeEditMachineName,
+					LanguageExplorerConstants.UsageTypeEditMachineName
 				};
 				Require.That(plainVanillaToolNames.Contains(_tool.MachineName));
 				commands = new HashSet<Command>
@@ -147,7 +147,7 @@ namespace LanguageExplorer.Areas.Lists.Tools
 			_dataTree.DataTreeSliceContextMenuParameterObject.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ContextMenuName.mnuDataTree_POS_SubPossibilities, Create_mnuDataTree_POS_SubPossibilities);
 		}
 
-		private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_DeletePossibility(Slice slice, ContextMenuName contextMenuId)
+		private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_DeletePossibility(ISlice slice, ContextMenuName contextMenuId)
 		{
 			Require.That(contextMenuId == ContextMenuName.mnuDataTree_DeletePossibility, $"Expected argument value of '{ContextMenuName.mnuDataTree_DeletePossibility.ToString()}', but got '{contextMenuId.ToString()}' instead.");
 
@@ -171,7 +171,7 @@ namespace LanguageExplorer.Areas.Lists.Tools
 			return new Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>>(contextMenuStrip, menuItems);
 		}
 
-		private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_SubPossibilities(Slice slice, ContextMenuName contextMenuId)
+		private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_SubPossibilities(ISlice slice, ContextMenuName contextMenuId)
 		{
 			Require.That(contextMenuId == ContextMenuName.mnuDataTree_SubPossibilities, $"Expected argument value of '{ContextMenuName.mnuDataTree_SubPossibilities.ToString()}', but got '{contextMenuId.ToString()}' instead.");
 
@@ -192,7 +192,7 @@ namespace LanguageExplorer.Areas.Lists.Tools
 			return new Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>>(contextMenuStrip, menuItems);
 		}
 
-		private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_POS_SubPossibilities(Slice slice, ContextMenuName contextMenuId)
+		private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_POS_SubPossibilities(ISlice slice, ContextMenuName contextMenuId)
 		{
 			Require.That(contextMenuId == ContextMenuName.mnuDataTree_POS_SubPossibilities, $"Expected argument value of '{ContextMenuName.mnuDataTree_POS_SubPossibilities.ToString()}', but got '{contextMenuId.ToString()}' instead.");
 

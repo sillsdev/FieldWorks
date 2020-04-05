@@ -22,7 +22,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.LocationsEdit
 	/// <summary>
 	/// ITool implementation for the "locationsEdit" tool in the "lists" area.
 	/// </summary>
-	[Export(AreaServices.ListsAreaMachineName, typeof(ITool))]
+	[Export(LanguageExplorerConstants.ListsAreaMachineName, typeof(ITool))]
 	internal sealed class LocationsEditTool : IListTool
 	{
 		private const string LocationList = "LocationList";
@@ -113,12 +113,12 @@ namespace LanguageExplorer.Areas.Lists.Tools.LocationsEdit
 		/// Get the internal name of the component.
 		/// </summary>
 		/// <remarks>NB: This is the machine friendly name, not the user friendly name.</remarks>
-		public string MachineName => AreaServices.LocationsEditMachineName;
+		public string MachineName => LanguageExplorerConstants.LocationsEditMachineName;
 
 		/// <summary>
 		/// User-visible localized component name.
 		/// </summary>
-		public string UiName => StringTable.Table.LocalizeLiteralValue(AreaServices.LocationsEditUiName);
+		public string UiName => StringTable.Table.LocalizeLiteralValue(LanguageExplorerConstants.LocationsEditUiName);
 
 		#endregion
 
@@ -127,7 +127,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.LocationsEdit
 		/// <summary>
 		/// Get the area for the tool.
 		/// </summary>
-		[field: Import(AreaServices.ListsAreaMachineName)]
+		[field: Import(LanguageExplorerConstants.ListsAreaMachineName)]
 		public IArea Area { get; private set; }
 
 		/// <summary>
@@ -204,7 +204,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.LocationsEdit
 				_majorFlexComponentParameters.UiWidgetController.AddHandlers(toolUiWidgetParameterObject);
 			}
 
-			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_SubLocation(Slice slice, ContextMenuName contextMenuId)
+			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_SubLocation(ISlice slice, ContextMenuName contextMenuId)
 			{
 				/*
 					// Used for CmLocation, but, unexpectedly, also for: LexEntryType

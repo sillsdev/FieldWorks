@@ -1,0 +1,163 @@
+// Copyright (c) 2009-2020 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
+
+using System;
+using System.Diagnostics;
+using System.Windows.Forms;
+using SIL.FieldWorks.Common.FwUtils;
+using SIL.LCModel;
+
+namespace LanguageExplorer.Controls.DetailControls.Slices
+{
+	/// <summary />
+	internal sealed class PhonologicalFeatureListDlgLauncher : ButtonLauncher
+	{
+		private PhonologicalFeatureListDlgLauncherView m_PhonologicalFeatureListDlgLauncherView;
+		private System.ComponentModel.IContainer components = null;
+
+		/// <summary />
+		internal PhonologicalFeatureListDlgLauncher()
+		{
+			InitializeComponent();
+		}
+
+		/// <summary>
+		/// Initialize the launcher.
+		/// </summary>
+		public override void Initialize(LcmCache cache, ICmObject obj, int flid, string fieldName, IPersistenceProvider persistProvider, string displayNameProperty, string displayWs)
+		{
+			base.Initialize(cache, obj, flid, fieldName, persistProvider, displayNameProperty, displayWs);
+			m_PhonologicalFeatureListDlgLauncherView.Init(PropertyTable.GetValue<LcmCache>(FwUtils.cache), obj as IFsFeatStruc);
+			if (Slice.MyCmObject.ClassID == PhPhonemeTags.kClassId)
+			{
+				m_PhonologicalFeatureListDlgLauncherView.Phoneme = Slice.MyCmObject as IPhPhoneme;
+			}
+		}
+
+		/// <summary>
+		/// Handle launching of the phonological feature editor.
+		/// </summary>
+		protected override void HandleChooser()
+		{
+			// grammar/phonemes/phonological features/[...] (click chooser button)
+			using (var dlg = new PhonologicalFeatureChooserDlg())
+			{
+				IFsFeatStruc originalFs = null;
+				var parentSlice = Slice;
+				var parentSliceClass = parentSlice.MyCmObject.ClassID;
+				var owningFlid = ((PhonologicalFeatureListDlgLauncherSlice)parentSlice).Flid;
+				switch (parentSliceClass)
+				{
+					case PhPhonemeTags.kClassId:
+						var phoneme = parentSlice.MyCmObject as IPhPhoneme;
+						if (phoneme.FeaturesOA != null)
+						{
+							originalFs = phoneme.FeaturesOA;
+						}
+						break;
+					case PhNCFeaturesTags.kClassId:
+						var features = parentSlice.MyCmObject as IPhNCFeatures;
+						if (features.FeaturesOA != null)
+						{
+							originalFs = features.FeaturesOA;
+						}
+						break;
+				}
+				var flexComponentParameters = new FlexComponentParameters(PropertyTable, Publisher, Subscriber);
+				if (originalFs == null)
+				{
+					dlg.SetDlgInfo(m_cache, flexComponentParameters, parentSlice.MyCmObject, owningFlid);
+				}
+				else
+				{
+					dlg.SetDlgInfo(m_cache, flexComponentParameters, originalFs);
+				}
+				var result = dlg.ShowDialog(parentSlice.FindForm());
+				if (result == DialogResult.OK)
+				{
+					if (dlg.FS != null)
+					{
+						m_obj = dlg.FS;
+						m_PhonologicalFeatureListDlgLauncherView.UpdateFS(dlg.FS);
+					}
+				}
+				else if (result != DialogResult.Cancel)
+				{
+					dlg.HandleJump();
+				}
+			}
+		}
+
+		/// <summary />
+		protected override void OnClick(object sender, EventArgs arguments)
+		{
+			HandleChooser();
+		}
+
+		/// <summary>
+		/// Clean up any resources being used.
+		/// </summary>
+		protected override void Dispose(bool disposing)
+		{
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
+			if (IsDisposed)
+			{
+				// No need to run it more than once.
+				return;
+			}
+
+			if (disposing)
+			{
+				components?.Dispose();
+			}
+
+			base.Dispose(disposing);
+		}
+
+		#region Designer generated code
+		/// <summary>
+		/// Required method for Designer support - do not modify
+		/// the contents of this method with the code editor.
+		/// </summary>
+		private void InitializeComponent()
+		{
+			this.m_PhonologicalFeatureListDlgLauncherView = new PhonologicalFeatureListDlgLauncherView();
+			this.m_panel.SuspendLayout();
+			this.SuspendLayout();
+			//
+			// m_PhonologicalFeatureListDlgLauncherView
+			//
+			this.m_PhonologicalFeatureListDlgLauncherView.BackColor = System.Drawing.SystemColors.Window;
+			this.m_PhonologicalFeatureListDlgLauncherView.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.m_PhonologicalFeatureListDlgLauncherView.DoSpellCheck = false;
+			this.m_PhonologicalFeatureListDlgLauncherView.IsTextBox = false;
+			this.m_PhonologicalFeatureListDlgLauncherView.Location = new System.Drawing.Point(0, 0);
+			this.m_PhonologicalFeatureListDlgLauncherView.Name = "m_PhonologicalFeatureListDlgLauncherView";
+			this.m_PhonologicalFeatureListDlgLauncherView.Phoneme = null;
+			this.m_PhonologicalFeatureListDlgLauncherView.ReadOnlyView = false;
+			this.m_PhonologicalFeatureListDlgLauncherView.ScrollMinSize = new System.Drawing.Size(0, 0);
+			this.m_PhonologicalFeatureListDlgLauncherView.ScrollPosition = new System.Drawing.Point(0, 0);
+			this.m_PhonologicalFeatureListDlgLauncherView.ShowRangeSelAfterLostFocus = false;
+			this.m_PhonologicalFeatureListDlgLauncherView.Size = new System.Drawing.Size(130, 24);
+			this.m_PhonologicalFeatureListDlgLauncherView.SizeChangedSuppression = false;
+			this.m_PhonologicalFeatureListDlgLauncherView.TabIndex = 0;
+			this.m_PhonologicalFeatureListDlgLauncherView.WritingSystemFactory = null;
+			this.m_PhonologicalFeatureListDlgLauncherView.WsPending = -1;
+			this.m_PhonologicalFeatureListDlgLauncherView.Zoom = 1F;
+			//
+			// PhonologicalFeatureListDlgLauncher
+			//
+			this.Controls.Add(this.m_PhonologicalFeatureListDlgLauncherView);
+			this.MainControl = this.m_PhonologicalFeatureListDlgLauncherView;
+			this.Name = "PhonologicalFeatureListDlgLauncher";
+			this.Size = new System.Drawing.Size(150, 24);
+			this.Controls.SetChildIndex(this.m_panel, 0);
+			this.Controls.SetChildIndex(this.m_PhonologicalFeatureListDlgLauncherView, 0);
+			this.m_panel.ResumeLayout(false);
+			this.ResumeLayout(false);
+
+		}
+		#endregion
+	}
+}

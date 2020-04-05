@@ -2,7 +2,7 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using LanguageExplorer.Areas.Lexicon.Tools.Edit;
+using LanguageExplorer.Controls.DetailControls.Slices;
 using NUnit.Framework;
 using SIL.LCModel;
 using SIL.LCModel.Core.Text;
@@ -74,19 +74,19 @@ namespace LanguageExplorerTests.Areas.Lexicon
 		/// </summary>
 		private sealed class TestLrtrl : LexReferenceTreeRootLauncher
 		{
-			public void SetTarget(ICmObject target)
+			internal void SetTarget(ICmObject target)
 			{
 				Target = target;
 			}
 
-			public void SetObject(ICmObject obj)
+			internal void SetObject(ICmObject obj)
 			{
 				m_obj = obj;
 			}
 
-			public ICmObject Child { get; set; }
+			internal ICmObject Child { get; set; }
 
-			internal override ICmObject GetChildObject()
+			protected override ICmObject GetChildObject()
 			{
 				return Child;
 			}

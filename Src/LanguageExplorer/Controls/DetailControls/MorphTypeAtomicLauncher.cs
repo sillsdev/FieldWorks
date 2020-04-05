@@ -362,7 +362,7 @@ namespace LanguageExplorer.Controls.DetailControls
 						break;
 					default:
 					{
-						if (slice is MSAReferenceComboBoxSlice)
+						if (slice is IMSAReferenceComboBoxSlice)
 						{
 							slice.Dispose();
 						}
@@ -374,7 +374,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			dtree.FixRecordList();
 			dtree.DoNotRefresh = false;
 			var sliceT = dtree.Slices[idx];
-			if (!(sliceT is MorphTypeAtomicReferenceSlice))
+			if (!(sliceT is IMorphTypeAtomicReferenceSlice))
 			{
 				return;
 			}

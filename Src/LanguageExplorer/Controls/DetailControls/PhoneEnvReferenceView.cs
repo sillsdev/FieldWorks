@@ -920,7 +920,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			return true;
 		}
 
-		private Slice MySlice => this.ParentOfType<Slice>();
+		private ISlice MySlice => this.GetSliceParent();
 
 		#endregion
 	}

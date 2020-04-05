@@ -22,7 +22,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.BulkEditPhonemes
 	/// <summary>
 	/// ITool implementation for the "bulkEditPhonemes" tool in the "grammar" area.
 	/// </summary>
-	[Export(AreaServices.GrammarAreaMachineName, typeof(ITool))]
+	[Export(LanguageExplorerConstants.GrammarAreaMachineName, typeof(ITool))]
 	internal sealed class BulkEditPhonemesTool : ITool
 	{
 		private BulkEditPhonemesToolMenuHelper _toolMenuHelper;
@@ -106,12 +106,12 @@ namespace LanguageExplorer.Areas.Grammar.Tools.BulkEditPhonemes
 		/// Get the internal name of the component.
 		/// </summary>
 		/// <remarks>NB: This is the machine friendly name, not the user friendly name.</remarks>
-		public string MachineName => AreaServices.BulkEditPhonemesMachineName;
+		public string MachineName => LanguageExplorerConstants.BulkEditPhonemesMachineName;
 
 		/// <summary>
 		/// User-visible localized component name.
 		/// </summary>
-		public string UiName => StringTable.Table.LocalizeLiteralValue(AreaServices.BulkEditPhonemesUiName);
+		public string UiName => StringTable.Table.LocalizeLiteralValue(LanguageExplorerConstants.BulkEditPhonemesUiName);
 
 		#endregion
 
@@ -120,7 +120,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.BulkEditPhonemes
 		/// <summary>
 		/// Get the area for the tool.
 		/// </summary>
-		[field: Import(AreaServices.GrammarAreaMachineName)]
+		[field: Import(LanguageExplorerConstants.GrammarAreaMachineName)]
 		public IArea Area { get; private set; }
 
 		/// <summary>
@@ -191,7 +191,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.BulkEditPhonemes
 
 			private void CmdPhonemeJumpToDefault_Clicked(object sender, EventArgs e)
 			{
-				LinkHandler.PublishFollowLinkMessage(_majorFlexComponentParameters.FlexComponentParameters.Publisher, new FwLinkArgs(AreaServices.PhonemeEditMachineName, _recordList.CurrentObject.Guid));
+				LinkHandler.PublishFollowLinkMessage(_majorFlexComponentParameters.FlexComponentParameters.Publisher, new FwLinkArgs(LanguageExplorerConstants.PhonemeEditMachineName, _recordList.CurrentObject.Guid));
 			}
 
 			#region Implementation of IDisposable

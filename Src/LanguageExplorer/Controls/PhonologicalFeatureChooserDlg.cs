@@ -719,14 +719,14 @@ namespace LanguageExplorer.Controls
 		private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
 		{
 			var guid = m_cache.LangProject.PhFeatureSystemOA.Guid;
-			m_link = new FwLinkArgs(AreaServices.PhonologicalFeaturesAdvancedEditMachineName, guid);
+			m_link = new FwLinkArgs(LanguageExplorerConstants.PhonologicalFeaturesAdvancedEditMachineName, guid);
 			m_btnCancel.PerformClick();
 			DialogResult = DialogResult.Ignore;
 		}
 
 		private void m_bnHelp_Click(object sender, EventArgs e)
 		{
-			if (_flexComponentParameters.PropertyTable.GetValue<string>(AreaServices.ToolChoice).Substring(0, 7) == "natural")
+			if (_flexComponentParameters.PropertyTable.GetValue<string>(LanguageExplorerConstants.ToolChoice).Substring(0, 7) == "natural")
 			{
 				m_helpTopic = "khtpChoose-Phonemes";
 			}

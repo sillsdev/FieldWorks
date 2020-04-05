@@ -11,7 +11,6 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using System.Xml.Linq;
-using LanguageExplorer.Areas;
 using LanguageExplorer.Filters;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
@@ -1648,7 +1647,7 @@ namespace LanguageExplorer.Controls.XMLViews
 
 		private string FormatColumnWidthPropertyName(int iCol)
 		{
-			return PropertyTable.GetValue<string>(AreaServices.ToolChoice) + "_" + BrowseView.GetCorrespondingPropertyName("Column") + "_" + iCol + "_Width";
+			return PropertyTable.GetValue<string>(LanguageExplorerConstants.ToolChoice) + "_" + BrowseView.GetCorrespondingPropertyName("Column") + "_" + iCol + "_Width";
 		}
 
 		/// <summary>
@@ -2903,7 +2902,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		#region IMainContentControl Members
 
 		/// <summary />
-		public string AreaName => PropertyTable.GetValue<string>(AreaServices.AreaChoice);
+		public string AreaName => PropertyTable.GetValue<string>(LanguageExplorerConstants.AreaChoice);
 
 		/// <summary>
 		/// This is called on a MasterRefresh

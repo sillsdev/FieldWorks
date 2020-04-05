@@ -618,10 +618,10 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			// <item command="CmdWordformJumpToAnalyses" defaultVisible="false" />
 			var activeRecordList = MyMajorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepository>(LanguageExplorerConstants.RecordListRepository).ActiveRecordList;
 			menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, ContextMenuStrip, jumpHandler, AreaResources.Show_in_Word_Analyses);
-			menu.Tag = new List<object> { MyMajorFlexComponentParameters.FlexComponentParameters.Publisher, AreaServices.AnalysesMachineName, activeRecordList };
+			menu.Tag = new List<object> { MyMajorFlexComponentParameters.FlexComponentParameters.Publisher, LanguageExplorerConstants.AnalysesMachineName, activeRecordList };
 			// <item command="CmdWordformJumpToConcordance" defaultVisible="false" />
 			menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, ContextMenuStrip, jumpHandler, AreaResources.Show_Wordform_in_Concordance);
-			menu.Tag = new List<object> { MyMajorFlexComponentParameters.FlexComponentParameters.Publisher, AreaServices.ConcordanceMachineName, activeRecordList };
+			menu.Tag = new List<object> { MyMajorFlexComponentParameters.FlexComponentParameters.Publisher, LanguageExplorerConstants.ConcordanceMachineName, activeRecordList };
 
 			// End: <menu id="mnuDataTree_Delete_Adhoc_Morpheme">
 			return true;

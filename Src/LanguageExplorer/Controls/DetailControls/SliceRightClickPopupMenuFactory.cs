@@ -13,12 +13,12 @@ namespace LanguageExplorer.Controls.DetailControls
 {
 	internal sealed class SliceRightClickPopupMenuFactory : IDisposable
 	{
-		private Dictionary<ContextMenuName, Func<Slice, ContextMenuName, Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>>>> _popupContextMenuCreatorMethods = new Dictionary<ContextMenuName, Func<Slice, ContextMenuName, Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>>>>();
+		private Dictionary<ContextMenuName, Func<ISlice, ContextMenuName, Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>>>> _popupContextMenuCreatorMethods = new Dictionary<ContextMenuName, Func<ISlice, ContextMenuName, Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>>>>();
 
 		/// <summary>
 		/// Get the ContextMenuStrip and a list of its ToolStripMenuItem items for the given right-click popup context menu for the given Slice.
 		/// </summary>
-		internal Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> GetPopupContextMenu(Slice slice, ContextMenuName ordinaryMenuId)
+		internal Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> GetPopupContextMenu(ISlice slice, ContextMenuName ordinaryMenuId)
 		{
 			return _popupContextMenuCreatorMethods.ContainsKey(ordinaryMenuId) ? _popupContextMenuCreatorMethods[ordinaryMenuId].Invoke(slice, ordinaryMenuId) : null;
 		}
@@ -26,7 +26,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// <summary>
 		/// Register a method that can be used to create the right-click popup context menu and its menu items.
 		/// </summary>
-		internal void RegisterPopupContextCreatorMethod(ContextMenuName popupContextMenuId, Func<Slice, ContextMenuName, Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>>> popupContextMenuCreatorMethod)
+		internal void RegisterPopupContextCreatorMethod(ContextMenuName popupContextMenuId, Func<ISlice, ContextMenuName, Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>>> popupContextMenuCreatorMethod)
 		{
 			Require.That(popupContextMenuId != ContextMenuName.nullValue);
 			Guard.AgainstNull(popupContextMenuCreatorMethod, nameof(popupContextMenuCreatorMethod));

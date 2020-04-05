@@ -128,7 +128,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		private void LexiconLookup_Clicked(object sender, EventArgs e)
 		{
-			AreaServices.LexiconLookup(Cache, new FlexComponentParameters(PropertyTable, Publisher, Subscriber), m_rtPane);
+			LanguageExplorerServices.LexiconLookup(Cache, new FlexComponentParameters(PropertyTable, Publisher, Subscriber), m_rtPane);
 		}
 
 		/// <summary>
@@ -1052,8 +1052,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		{
 			get
 			{
-				var toolChoice = PropertyTable.GetValue<string>(AreaServices.ToolChoice);
-				var menuIsVisible = m_rtPane != null && m_tabCtrl.SelectedIndex == (int)TabPageSelection.RawText && InFriendlyArea && toolChoice != AreaServices.WordListConcordanceMachineName;
+				var toolChoice = PropertyTable.GetValue<string>(LanguageExplorerConstants.ToolChoice);
+				var menuIsVisible = m_rtPane != null && m_tabCtrl.SelectedIndex == (int)TabPageSelection.RawText && InFriendlyArea && toolChoice != LanguageExplorerConstants.WordListConcordanceMachineName;
 				bool enabled;
 				if (menuIsVisible && m_rtPane.RootBox != null)
 				{
@@ -1183,7 +1183,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				guid = MyRecordList.CurrentObject.Guid;
 			}
 			// Not sure what will happen with guid == Guid.Empty on the link...
-			var link = new FwLinkArgs(PropertyTable.GetValue<string>(AreaServices.ToolChoice), guid, InterlinearTab.ToString());
+			var link = new FwLinkArgs(PropertyTable.GetValue<string>(LanguageExplorerConstants.ToolChoice), guid, InterlinearTab.ToString());
 			link.LinkProperties.Add(new LinkProperty(TextAndWordsArea.InterlinearTab, InterlinearTab.ToString()));
 			MyRecordList.SelectedRecordChanged(true, true); // make sure we update the record count in the Status bar.
 			PropertyTable.GetValue<LinkHandler>(LanguageExplorerConstants.LinkHandler).AddLinkToHistory(link);
@@ -1193,7 +1193,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// Determine if this is the correct place. [It's the only one that handles the message, and
 		/// it defaults to false, so it should be.]
 		/// </summary>
-		private bool InFriendlyArea => PropertyTable.GetValue<string>(AreaServices.AreaChoice) == AreaServices.TextAndWordsAreaMachineName;
+		private bool InFriendlyArea => PropertyTable.GetValue<string>(LanguageExplorerConstants.AreaChoice) == LanguageExplorerConstants.TextAndWordsAreaMachineName;
 
 		private void m_tabCtrl_Selected(object sender, TabControlEventArgs e)
 		{

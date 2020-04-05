@@ -310,10 +310,19 @@
     <Compile Include="Areas\CustomFieldLocationType.cs" />
     <Compile Include="Areas\FxtType.cs" />
     <Compile Include="Areas\FxtTypes.cs" />
-    <Compile Include="Areas\Grammar\Tools\AdhocCoprohibEdit\AdhocCoProhibAtomicReferenceDisabledSlice.cs">
+    <Compile Include="Controls\DetailControls\LexReferencePairView.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Areas\Grammar\Tools\AdhocCoprohibEdit\AdhocCoProhibVectorReferenceDisabledSlice.cs">
+    <Compile Include="Controls\DetailControls\Slices\AdhocCoProhibAtomicReferenceDisabledSlice.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\DetailControls\LexReferenceSequenceLauncher.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\DetailControls\RevEntrySensesCollectionReferenceView.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\DetailControls\Slices\AdhocCoProhibVectorReferenceDisabledSlice.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Areas\IdAndString.cs" />
@@ -336,6 +345,18 @@
     <Compile Include="Controls\ControlServices.cs" />
     <Compile Include="Controls\Designer\FwHelpButtonDesigner.cs" />
     <Compile Include="Controls\Designer\ProgressLineDesigner.cs" />
+    <Compile Include="IAtomicReferenceSlice.cs" />
+    <Compile Include="IDummyObjectSlice.cs" />
+    <Compile Include="IInterlinearSlice.cs" />
+    <Compile Include="IMorphTypeAtomicReferenceSlice.cs" />
+    <Compile Include="IMSAReferenceComboBoxSlice.cs" />
+    <Compile Include="IMultiStringSlice.cs" />
+    <Compile Include="IPictureSlice.cs" />
+    <Compile Include="IReferenceVectorSlice.cs" />
+    <Compile Include="ISlice.cs" />
+    <Compile Include="Controls\DetailControls\Slices\LexReferenceTreeBranchesSlice.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="Controls\FwHelpButton.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -344,17 +365,17 @@
     </Compile>
     <Compile Include="Controls\IFormReplacementNeeded.cs" />
     <Compile Include="Controls\IImportForm.cs" />
-    <Compile Include="Areas\InsertOption.cs" />
-    <Compile Include="Areas\IPhEnvSliceCommon.cs" />
+    <Compile Include="Controls\DetailControls\Slices\InsertOption.cs" />
+    <Compile Include="IPhEnvSliceCommon.cs" />
     <Compile Include="Areas\IPreferredTargetAdjuster.cs" />
     <Compile Include="Areas\Lexicon\ISemanticDomainTreeBarHandler.cs" />
     <Compile Include="Areas\Lexicon\Tools\SharedLexiconToolsUiWidgetHelper.cs" />
-    <Compile Include="Areas\Lexicon\LexReferenceUnidirectionalVc.cs" />
-    <Compile Include="Areas\Lexicon\Tools\Edit\ReversalEntryDataAccess.cs" />
-    <Compile Include="Areas\Lexicon\Tools\Edit\ReversalIndexEntrySliceView.cs">
+    <Compile Include="Controls\DetailControls\LexReferenceUnidirectionalVc.cs" />
+    <Compile Include="Controls\DetailControls\Slices\ReversalEntryDataAccess.cs" />
+    <Compile Include="Controls\DetailControls\Slices\ReversalIndexEntrySliceView.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Areas\Lexicon\Tools\Edit\ReversalIndexEntryVc.cs" />
+    <Compile Include="Controls\DetailControls\Slices\ReversalIndexEntryVc.cs" />
     <Compile Include="Areas\Lists\AddCustomListDlg.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -365,13 +386,12 @@
     <Compile Include="Areas\Lists\Tools\ExtNoteTypeEdit\ExtNoteTypeEditTool.cs" />
     <Compile Include="Areas\Lists\Tools\LanguagesListEdit\LanguagesListEditTool.cs" />
     <Compile Include="Areas\MainEntryFromSubEntryTargetAdjuster.cs" />
-    <Compile Include="Areas\MessageBoxes.cs" />
     <Compile Include="Areas\NullTargetAdjuster.cs" />
     <Compile Include="Areas\ReversalListBase.cs" />
     <Compile Include="Areas\Lexicon\Tools\Edit\ConcRecordList.cs" />
     <Compile Include="Areas\Lists\Tools\CustomListEdit\CustomListEditTool.cs" />
     <Compile Include="Areas\RightClickContextMenuManager.cs" />
-    <Compile Include="Areas\RuleInsertType.cs" />
+    <Compile Include="Controls\DetailControls\Slices\RuleInsertType.cs" />
     <Compile Include="Areas\TextsAndWords\Interlinear\IInterlinConfigurable.cs" />
     <Compile Include="Areas\TextsAndWords\Interlinear\MorphBreakHelperContextMenu.cs">
       <SubType>Component</SubType>
@@ -447,6 +467,11 @@
     <Compile Include="InstallationException.cs" />
     <Compile Include="IPersistAsXml.cs" />
     <Compile Include="IProgressDisplayer.cs" />
+    <Compile Include="IStringSlice.cs" />
+    <Compile Include="IStTextSlice.cs" />
+    <Compile Include="ISummarySlice.cs" />
+    <Compile Include="IViewSlice.cs" />
+    <Compile Include="LanguageExplorerServices.cs" />
     <Compile Include="ManagedLgIcuCollator.cs" />
     <Compile Include="MatchType.cs" />
     <Compile Include="ISeparatorMenuBundle.cs" />
@@ -461,6 +486,7 @@
     <Compile Include="MainToolBarsParameterObject.cs" />
     <Compile Include="MainUiWidget.cs" />
     <Compile Include="MeasurementUtils.cs" />
+    <Compile Include="MiscExtensions.cs" />
     <Compile Include="NullProgressState.cs" />
     <Compile Include="ProgressState.cs" />
     <Compile Include="ReversalIndexServices.cs" />
@@ -583,8 +609,8 @@
     <Compile Include="Controls\XMLViews\ICollectPicturePathsOnly.cs" />
     <Compile Include="Controls\XMLViews\TestCollectorEnv.cs" />
     <Compile Include="Impls\SharedEventHandlers.cs" />
-    <Compile Include="Areas\StringRepSliceVc.cs" />
-    <Compile Include="Areas\StringRepSliceView.cs">
+    <Compile Include="Controls\DetailControls\Slices\StringRepSliceVc.cs" />
+    <Compile Include="Controls\DetailControls\Slices\StringRepSliceView.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Areas\SubservientRecordList.cs" />
@@ -689,7 +715,7 @@
     <Compile Include="Areas\TextsAndWords\Tools\PartiallySharedTextsAndWordsToolsMenuHelper.cs" />
     <Compile Include="Areas\TreebarAvailability.cs" />
     <Compile Include="Areas\TreeBarHandlerAwareRecordList.cs" />
-    <Compile Include="Controls\DetailControls\AtomicReferenceDisabledSlice.cs">
+    <Compile Include="Controls\DetailControls\Slices\AtomicReferenceDisabledSlice.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Controls\DetailControls\AtomicReferenceVc.cs" />
@@ -704,47 +730,36 @@
     <Compile Include="Controls\DetailControls\AudioVisualView.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Controls\DetailControls\AutomicReferencePOSDisabledSlice.cs">
+    <Compile Include="Controls\DetailControls\Slices\AtomicReferencePOSDisabledSlice.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Controls\DetailControls\CheckboxRefreshSlice.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Controls\DetailControls\ConcSlice.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Controls\DetailControls\ConcView.cs">
+    <Compile Include="Controls\DetailControls\Slices\CheckboxRefreshSlice.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Controls\DetailControls\ContextInfo.cs" />
     <Compile Include="Controls\DetailControls\ContextVc.cs" />
     <Compile Include="Controls\DetailControls\CurrentSliceChangedEventHandler.cs" />
-    <Compile Include="Controls\DetailControls\CustomAtomicReferenceSlice.cs">
+    <Compile Include="Controls\DetailControls\Slices\CustomAtomicReferenceSlice.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Controls\DetailControls\CustomReferenceVectorSlice.cs">
+    <Compile Include="Controls\DetailControls\Slices\CustomReferenceVectorSlice.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Controls\DetailControls\DataTreeLayoutSuspensionHelper.cs" />
-    <Compile Include="Controls\DetailControls\DateSlice.cs">
+    <Compile Include="Controls\DetailControls\Slices\DateSlice.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Controls\DetailControls\DummyConcSlice.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Controls\DetailControls\DummyObjectSlice.cs">
+    <Compile Include="Controls\DetailControls\Slices\DummyObjectSlice.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Controls\DetailControls\ExpandCollapseButton.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Controls\DetailControls\GhostDaDecorator.cs" />
-    <Compile Include="Controls\DetailControls\GhostDataCacheDecorator.cs" />
-    <Compile Include="Areas\Notebook\GhostReferenceVectorLauncher.cs">
+    <Compile Include="Controls\DetailControls\Slices\GhostReferenceVectorLauncher.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Controls\DetailControls\GhostStringSliceVc.cs" />
-    <Compile Include="Controls\DetailControls\GhostStringSliceView.cs">
+    <Compile Include="Controls\DetailControls\Slices\GhostStringSliceView.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Controls\DetailControls\IConcPolicy.cs" />
@@ -760,7 +775,7 @@
     <Compile Include="Controls\DetailControls\InnerLabeledMultiStringViewVc.cs" />
     <Compile Include="Controls\DetailControls\INodeInfo.cs" />
     <Compile Include="Controls\DetailControls\INotifyControlInCurrentSlice.cs" />
-    <Compile Include="Controls\DetailControls\IntegerSlice.cs">
+    <Compile Include="Controls\DetailControls\Slices\IntegerSlice.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Controls\DetailControls\LabeledMultiStringVc.cs" />
@@ -792,7 +807,7 @@
     <Compile Include="Controls\DetailControls\PossibilityVectorReferenceVc.cs" />
     <Compile Include="Controls\DetailControls\PossibilityVectorReferenceViewMetaDataCacheDecorator.cs" />
     <Compile Include="Controls\DetailControls\PossibilityVectorReferenceViewSdaDecorator.cs" />
-    <Compile Include="Controls\DetailControls\ReferenceVectorDisabledSlice.cs">
+    <Compile Include="Controls\DetailControls\Slices\ReferenceVectorDisabledSlice.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Controls\DetailControls\SemanticDomainSelectionServices.cs" />
@@ -804,22 +819,14 @@
     <Compile Include="Controls\DetailControls\StringSliceView.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Controls\DetailControls\StTextView.cs">
+    <Compile Include="Controls\DetailControls\Slices\StTextView.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Controls\DetailControls\SummaryInfo.cs" />
-    <Compile Include="Controls\DetailControls\SummaryVc.cs" />
     <Compile Include="Controls\DetailControls\SummaryXmlView.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Controls\DetailControls\TreeItemState.cs" />
-    <Compile Include="Controls\DetailControls\TwoLevelConcSlice.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Controls\DetailControls\TwoLevelConcVc.cs" />
-    <Compile Include="Controls\DetailControls\TwoLevelConcView.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
     <Compile Include="Controls\DetailControls\TypeAheadSupportVc.cs" />
     <Compile Include="Controls\DetailControls\UnicodeStringSliceVc.cs" />
     <Compile Include="Controls\DetailControls\VectorReferenceVc.cs" />
@@ -851,21 +858,21 @@
     <Compile Include="Areas\Notebook\StringOptions.cs" />
     <Compile Include="Areas\Notebook\TextOptions.cs" />
     <Compile Include="Areas\Notebook\TopicsListOptions.cs" />
-    <Compile Include="Areas\Lists\Tools\FeatureTypesAdvancedEdit\FeatureSystemInflectionFeatureListDlg.cs">
+    <Compile Include="Controls\DetailControls\Slices\FeatureSystemInflectionFeatureListDlg.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Controls\FeatureTreeNode.cs" />
     <Compile Include="LIFT\ICmLiftObject.cs" />
-    <Compile Include="Areas\Lexicon\Tools\Edit\InsertVariantDlg.cs">
+    <Compile Include="Controls\DetailControls\InsertVariantDlg.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Areas\TextsAndWords\Interlinear\InterlinearMapping.cs" />
-    <Compile Include="Areas\InsertEventArgs.cs" />
-    <Compile Include="Areas\Grammar\Tools\AdhocCoprohibEdit\LObject.cs" />
+    <Compile Include="Controls\DetailControls\InsertEventArgs.cs" />
+    <Compile Include="Controls\DetailControls\LObject.cs" />
     <Compile Include="Controls\MasterCategory.cs" />
     <Compile Include="Controls\FeatureTreeNodeKind.cs" />
     <Compile Include="LIFT\MergeStyle.cs" />
-    <Compile Include="Areas\PossibilityListPopupTreeManager.cs" />
+    <Compile Include="Controls\DetailControls\PossibilityListPopupTreeManager.cs" />
     <Compile Include="LIFT\RangeNames.cs" />
     <Compile Include="Areas\TextsAndWords\Interlinear\Sfm2FlexTextBase.cs" />
     <Compile Include="Areas\TextsAndWords\Interlinear\Sfm2FlexTextMappingBase.cs" />
@@ -928,7 +935,7 @@
     <Compile Include="Controls\XMLViews\NonEmptyTargetOptions.cs" />
     <Compile Include="Controls\NullObjectLabel.cs" />
     <Compile Include="Controls\XMLViews\PropWs.cs" />
-    <Compile Include="Controls\XMLViews\SearchField.cs" />
+    <Compile Include="Controls\SearchField.cs" />
     <Compile Include="Controls\XMLViews\SelectionHighlighting.cs" />
     <Compile Include="Controls\XMLViews\SortCollectorEnv.cs" />
     <Compile Include="Controls\XMLViews\TypeSubClass.cs" />
@@ -1068,22 +1075,22 @@
     <Compile Include="Controls\DetailControls\AtomicReferenceLauncher.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Controls\DetailControls\AtomicReferencePOSSlice.cs">
+    <Compile Include="Controls\DetailControls\Slices\AtomicReferencePOSSlice.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Controls\DetailControls\AtomicReferenceSlice.cs">
+    <Compile Include="Controls\DetailControls\Slices\AtomicReferenceSlice.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Controls\DetailControls\AtomicReferenceView.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Controls\DetailControls\AtomicRefTypeAheadSlice.cs">
+    <Compile Include="Controls\DetailControls\Slices\AtomicRefTypeAheadSlice.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Controls\DetailControls\AudioVisualSlice.cs">
+    <Compile Include="Controls\DetailControls\Slices\AudioVisualSlice.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Controls\DetailControls\CheckboxSlice.cs">
+    <Compile Include="Controls\DetailControls\Slices\CheckboxSlice.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Controls\DetailControls\ButtonLauncher.cs">
@@ -1096,13 +1103,13 @@
     <Compile Include="Controls\DetailControls\DataTree.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Controls\DetailControls\DerivMSAReferenceSlice.cs">
+    <Compile Include="Controls\DetailControls\Slices\DerivMSAReferenceSlice.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Controls\DetailControls\EnumComboSlice.cs">
+    <Compile Include="Controls\DetailControls\Slices\EnumComboSlice.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Controls\DetailControls\FieldSlice.cs">
+    <Compile Include="Controls\DetailControls\Slices\FieldSlice.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Controls\DetailControls\FwCancelSearchButton.cs">
@@ -1114,66 +1121,63 @@
     <Compile Include="Controls\DetailControls\GenDateLauncher.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Controls\DetailControls\GenDateSlice.cs">
+    <Compile Include="Controls\DetailControls\Slices\GenDateSlice.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Areas\Notebook\GhostReferenceVectorSlice.cs">
+    <Compile Include="Controls\DetailControls\Slices\GhostReferenceVectorSlice.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Controls\DetailControls\GhostStringSlice.cs">
+    <Compile Include="Controls\DetailControls\Slices\GhostStringSlice.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Controls\DetailControls\ImageSlice.cs">
+    <Compile Include="Controls\DetailControls\Slices\ImageSlice.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Controls\DetailControls\InflMSAReferenceSlice.cs">
+    <Compile Include="Controls\DetailControls\Slices\InflMSAReferenceSlice.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Controls\DetailControls\LiteralMessageSlice.cs">
+    <Compile Include="Controls\DetailControls\Slices\LiteralMessageSlice.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Controls\DetailControls\MorphTypeAtomicLauncher.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Controls\DetailControls\MorphTypeAtomicReferenceSlice.cs">
+    <Compile Include="Controls\DetailControls\Slices\MorphTypeAtomicReferenceSlice.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Controls\DetailControls\MorphTypeChooser.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Controls\DetailControls\MSAReferenceComboBoxSlice.cs">
+    <Compile Include="Controls\DetailControls\Slices\MSAReferenceComboBoxSlice.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Controls\DetailControls\MultiLevelConcordanceDataTree.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Controls\DetailControls\MultiStringSlice.cs">
+    <Compile Include="Controls\DetailControls\Slices\MultiStringSlice.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Controls\DetailControls\ObjSeqHashMap.cs" />
     <Compile Include="Controls\DetailControls\PhoneEnvReferenceLauncher.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Controls\DetailControls\PhoneEnvReferenceSlice.cs">
+    <Compile Include="Controls\DetailControls\Slices\PhoneEnvReferenceSlice.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Controls\DetailControls\PhoneEnvReferenceView.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Controls\DetailControls\PictureSlice.cs">
+    <Compile Include="Controls\DetailControls\Slices\PictureSlice.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Controls\DetailControls\PossibilityAtomicReferenceLauncher.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Controls\DetailControls\PossibilityAtomicReferenceSlice.cs">
+    <Compile Include="Controls\DetailControls\Slices\PossibilityAtomicReferenceSlice.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Controls\DetailControls\PossibilityAtomicReferenceView.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Controls\DetailControls\PossibilityAutoComplete.cs" />
-    <Compile Include="Controls\DetailControls\PossibilityReferenceVectorSlice.cs">
+    <Compile Include="Controls\DetailControls\Slices\PossibilityReferenceVectorSlice.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Controls\DetailControls\PossibilityVectorReferenceLauncher.cs">
@@ -1182,16 +1186,16 @@
     <Compile Include="Controls\DetailControls\PossibilityVectorReferenceView.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Controls\DetailControls\ReferenceComboBoxSlice.cs">
+    <Compile Include="Controls\DetailControls\Slices\ReferenceComboBoxSlice.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Controls\DetailControls\ReferenceLauncher.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Controls\DetailControls\ReferenceSlice.cs">
+    <Compile Include="Controls\DetailControls\Slices\ReferenceSlice.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Controls\DetailControls\ReferenceVectorSlice.cs">
+    <Compile Include="Controls\DetailControls\Slices\ReferenceVectorSlice.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Controls\DetailControls\ReferenceViewBase.cs">
@@ -1205,7 +1209,7 @@
     <Compile Include="Controls\DetailControls\SemanticDomainReferenceLauncher.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Controls\DetailControls\SemanticDomainReferenceVectorSlice.cs">
+    <Compile Include="Controls\DetailControls\Slices\SemanticDomainReferenceVectorSlice.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Controls\DetailControls\SemanticDomainsChooser.cs">
@@ -1218,7 +1222,7 @@
     <Compile Include="Controls\DetailControls\SimpleListChooser.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Controls\DetailControls\Slice.cs">
+    <Compile Include="Controls\DetailControls\Slices\Slice.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Controls\DetailControls\SliceFactory.cs" />
@@ -1226,19 +1230,16 @@
     <Compile Include="Controls\DetailControls\SliceTreeNode.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Controls\DetailControls\StringSlice.cs">
+    <Compile Include="Controls\DetailControls\Slices\StringSlice.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Controls\DetailControls\StTextSlice.cs">
+    <Compile Include="Controls\DetailControls\Slices\StTextSlice.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Controls\DetailControls\SummaryCommandControl.cs">
+    <Compile Include="Controls\DetailControls\Slices\SummaryCommandControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Controls\DetailControls\SummarySlice.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Controls\DetailControls\TwoLevelConcordanceDataTree.cs">
+    <Compile Include="Controls\DetailControls\Slices\SummarySlice.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Controls\DetailControls\VectorReferenceLauncher.cs">
@@ -1247,10 +1248,10 @@
     <Compile Include="Controls\DetailControls\VectorReferenceView.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Controls\DetailControls\ViewPropertySlice.cs">
+    <Compile Include="Controls\DetailControls\Slices\ViewPropertySlice.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Controls\DetailControls\ViewSlice.cs">
+    <Compile Include="Controls\DetailControls\Slices\ViewSlice.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Controls\HtmlControl.cs">
@@ -1349,7 +1350,7 @@
     <Compile Include="DictionaryConfiguration\ConfigureHomographDlg.designer.cs">
       <DependentUpon>ConfigureHomographDlg.cs</DependentUpon>
     </Compile>
-    <Compile Include="Areas\ContextMenuRequestedEventArgs.cs" />
+    <Compile Include="Controls\DetailControls\ContextMenuRequestedEventArgs.cs" />
     <Compile Include="Areas\Notebook\AnthroFieldMappingDlg.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -1435,10 +1436,10 @@
     <Compile Include="Controls\InsertEntryDlg.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Areas\InsertionControl.cs">
+    <Compile Include="Controls\DetailControls\InsertionControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Areas\Notebook\InsertRecordDlg.cs">
+    <Compile Include="Controls\DetailControls\InsertRecordDlg.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="IPatternControl.cs" />
@@ -1460,7 +1461,7 @@
     <Compile Include="Impls\LexOptionsDlg.Designer.cs">
       <DependentUpon>LexOptionsDlg.cs</DependentUpon>
     </Compile>
-    <Compile Include="Areas\Lexicon\Tools\Edit\LexReferenceDetailsDlg.cs">
+    <Compile Include="Controls\DetailControls\LexReferenceDetailsDlg.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Controls\LanguageExplorerControls.Designer.cs">
@@ -1477,19 +1478,19 @@
     </Compile>
     <Compile Include="LIFT\FlexLiftMerger.cs" />
     <Compile Include="LIFT\CmLiftEntry.cs" />
-    <Compile Include="Areas\Grammar\Tools\AdhocCoprohibEdit\LinkAllomorphDlg.cs">
+    <Compile Include="Controls\DetailControls\LinkAllomorphDlg.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Areas\LinkEntryOrSenseDlg.cs">
+    <Compile Include="Controls\DetailControls\LinkEntryOrSenseDlg.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Areas\Grammar\Tools\AdhocCoprohibEdit\LinkMSADlg.cs">
+    <Compile Include="Controls\DetailControls\LinkMSADlg.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Areas\LinkVariantToEntryOrSense.cs">
+    <Compile Include="Controls\DetailControls\LinkVariantToEntryOrSense.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Areas\LinkVariantToEntryOrSense.Designer.cs">
+    <Compile Include="Controls\DetailControls\LinkVariantToEntryOrSense.Designer.cs">
       <DependentUpon>LinkVariantToEntryOrSense.cs</DependentUpon>
     </Compile>
     <Compile Include="Controls\MasterCategoryListDlg.cs">
@@ -1513,11 +1514,11 @@
     <Compile Include="Controls\MsaInflectionFeatureListDlg.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Areas\OccurrenceDlg.cs">
+    <Compile Include="Controls\DetailControls\OccurrenceDlg.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Areas\PatternVcBase.cs" />
-    <Compile Include="Areas\PatternView.cs">
+    <Compile Include="Controls\DetailControls\PatternVcBase.cs" />
+    <Compile Include="Controls\DetailControls\PatternView.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Controls\PhonologicalFeatureChooserDlg.cs">
@@ -1525,11 +1526,11 @@
     </Compile>
     <Compile Include="Controls\PopupTreeManager.cs" />
     <Compile Include="Controls\POSPopupTreeManager.cs" />
-    <Compile Include="Areas\Notebook\RecordGoDlg.cs">
+    <Compile Include="Controls\DetailControls\RecordGoDlg.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Areas\Notebook\RecordGoSearchEngine.cs" />
-    <Compile Include="Areas\RemoveItemsRequestedEventArgs.cs" />
+    <Compile Include="Controls\RecordGoSearchEngine.cs" />
+    <Compile Include="Controls\DetailControls\RemoveItemsRequestedEventArgs.cs" />
     <Compile Include="Areas\TextsAndWords\Interlinear\InterlinDestination.cs" />
     <Compile Include="Areas\TextsAndWords\Interlinear\SfmToTextsAndWordsMappingDlg.cs">
       <SubType>Form</SubType>
@@ -1566,9 +1567,9 @@
     </Compile>
     <Compile Include="Controls\XMLViews\GhostParentHelper.cs" />
     <Compile Include="Controls\XMLViews\LabelNode.cs" />
-    <Compile Include="Controls\XMLViews\LayoutCache.cs" />
+    <Compile Include="Controls\LayoutCache.cs" />
     <Compile Include="Controls\XMLViews\LayoutFinder.cs" />
-    <Compile Include="Controls\XMLViews\LayoutMerger.cs" />
+    <Compile Include="Controls\LayoutMerger.cs" />
     <Compile Include="Controls\XMLViews\MatchingObjectsBrowser.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -1582,8 +1583,8 @@
     <Compile Include="Controls\XMLViews\ReallySimpleListChooser.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Controls\XMLViews\SearchCompletedEventArgs.cs" />
-    <Compile Include="Controls\XMLViews\SearchEngine.cs" />
+    <Compile Include="Controls\SearchCompletedEventArgs.cs" />
+    <Compile Include="Controls\SearchEngine.cs" />
     <Compile Include="Controls\XMLViews\SimpleDateMatchDlg.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -2017,6 +2018,7 @@
     <Content Include="Resources\MergeAllomorphListParameters.xml" />
     <Content Include="Resources\MergeSenseListParameters.xml" />
     <Content Include="Resources\MergeWordGlossListParameters.xml" />
+    <None Include="Resources\NotebookRecordGoDlgParameters1.xml" />
     <Content Include="Resources\ReversalEntryMatchListParameters.xml" />
     <Content Include="Resources\SrcSentencesList.xml" />
     <None Include="Resources\WordformInSegmentsOccurrenceList.xml" />
@@ -2058,6 +2060,10 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\DetailControls\PicturePropertiesDialog.resx">
       <DependentUpon>PicturePropertiesDialog.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\DetailControls\RevEntrySensesCollectionReferenceView.resx">
+      <DependentUpon>RevEntrySensesCollectionReferenceView.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\FwComboBox.resx">
@@ -2306,10 +2312,6 @@
       <DependentUpon>MorphTypeChooser.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Controls\DetailControls\MultiLevelConcordanceDataTree.resx">
-      <DependentUpon>MultiLevelConcordanceDataTree.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
     <EmbeddedResource Include="Controls\DetailControls\PhoneEnvReferenceLauncher.resx">
       <DependentUpon>PhoneEnvReferenceLauncher.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -2339,7 +2341,7 @@
       <DependentUpon>SliceTreeNode.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Controls\DetailControls\SummaryCommandControl.resx">
+    <EmbeddedResource Include="Controls\DetailControls\Slices\SummaryCommandControl.resx">
       <DependentUpon>SummaryCommandControl.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
@@ -2422,11 +2424,11 @@
       <DependentUpon>InsertEntryDlg.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Areas\InsertionControl.resx">
+    <EmbeddedResource Include="Controls\DetailControls\InsertionControl.resx">
       <DependentUpon>InsertionControl.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Areas\Notebook\InsertRecordDlg.resx">
+    <EmbeddedResource Include="Controls\DetailControls\InsertRecordDlg.resx">
       <DependentUpon>InsertRecordDlg.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
@@ -2450,7 +2452,7 @@
       <DependentUpon>LexOptionsDlg.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Areas\Lexicon\Tools\Edit\LexReferenceDetailsDlg.resx">
+    <EmbeddedResource Include="Controls\DetailControls\LexReferenceDetailsDlg.resx">
       <DependentUpon>LexReferenceDetailsDlg.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
@@ -2463,19 +2465,19 @@
       <DependentUpon>LiftImportDlg.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Areas\Grammar\Tools\AdhocCoprohibEdit\LinkAllomorphDlg.resx">
+    <EmbeddedResource Include="Controls\DetailControls\LinkAllomorphDlg.resx">
       <DependentUpon>LinkAllomorphDlg.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Areas\LinkEntryOrSenseDlg.resx">
+    <EmbeddedResource Include="Controls\DetailControls\LinkEntryOrSenseDlg.resx">
       <DependentUpon>LinkEntryOrSenseDlg.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Areas\Grammar\Tools\AdhocCoprohibEdit\LinkMSADlg.resx">
+    <EmbeddedResource Include="Controls\DetailControls\LinkMSADlg.resx">
       <DependentUpon>LinkMSADlg.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Areas\LinkVariantToEntryOrSense.resx">
+    <EmbeddedResource Include="Controls\DetailControls\LinkVariantToEntryOrSense.resx">
       <DependentUpon>LinkVariantToEntryOrSense.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
@@ -2507,13 +2509,13 @@
       <DependentUpon>MsaInflectionFeatureListDlg.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Areas\OccurrenceDlg.resx">
+    <EmbeddedResource Include="Controls\DetailControls\OccurrenceDlg.resx">
       <DependentUpon>OccurrenceDlg.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\PhonologicalFeatureChooserDlg.resx">
       <DependentUpon>PhonologicalFeatureChooserDlg.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Areas\Notebook\RecordGoDlg.resx">
+    <EmbeddedResource Include="Controls\DetailControls\RecordGoDlg.resx">
       <DependentUpon>RecordGoDlg.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
@@ -2712,16 +2714,16 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>GrammarResources.resx</DependentUpon>
     </Compile>
-    <Compile Include="Areas\Grammar\Tools\AdhocCoprohibEdit\AdhocCoProhibAtomicLauncher.cs">
+    <Compile Include="Controls\DetailControls\AdhocCoProhibAtomicLauncher.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Areas\Grammar\Tools\AdhocCoprohibEdit\AdhocCoProhibAtomicReferenceSlice.cs">
+    <Compile Include="Controls\DetailControls\Slices\AdhocCoProhibAtomicReferenceSlice.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Areas\Grammar\Tools\AdhocCoprohibEdit\AdhocCoProhibVectorLauncher.cs">
+    <Compile Include="Controls\DetailControls\AdhocCoProhibVectorLauncher.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Areas\Grammar\Tools\AdhocCoprohibEdit\AdhocCoProhibVectorReferenceSlice.cs">
+    <Compile Include="Controls\DetailControls\Slices\AdhocCoProhibVectorReferenceSlice.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Areas\Grammar\Tools\BulkEditPhonemes\AssignFeaturesToPhonemes.cs">
@@ -2730,22 +2732,22 @@
     <Compile Include="Areas\Grammar\Tools\BulkEditPhonemes\AssignFeaturesToPhonemes.Designer.cs">
       <DependentUpon>AssignFeaturesToPhonemes.cs</DependentUpon>
     </Compile>
-    <Compile Include="Areas\Grammar\Tools\PhonemeEdit\BasicIPASymbolSlice.cs">
+    <Compile Include="Controls\DetailControls\Slices\BasicIPASymbolSlice.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Areas\Grammar\Tools\PhonemeEdit\RegRuleFormulaControl.cs">
+    <Compile Include="Controls\DetailControls\Slices\RegRuleFormulaControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Areas\Grammar\Tools\PhonemeEdit\RegRuleFormulaSlice.cs">
+    <Compile Include="Controls\DetailControls\Slices\RegRuleFormulaSlice.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Areas\Grammar\Tools\PosEdit\InflAffixTemplateSlice.cs">
+    <Compile Include="Controls\DetailControls\Slices\InflAffixTemplateSlice.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Areas\Grammar\Tools\PosEdit\MetaRuleFormulaControl.cs">
+    <Compile Include="Controls\DetailControls\Slices\MetaRuleFormulaControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Areas\Grammar\Tools\PosEdit\MetaRuleFormulaSlice.cs">
+    <Compile Include="Controls\DetailControls\Slices\MetaRuleFormulaSlice.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Areas\Lexicon\LexEntryChangeHandler.cs" />
@@ -2754,86 +2756,83 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>LexiconResources.resx</DependentUpon>
     </Compile>
-    <Compile Include="Areas\Lexicon\LexReferenceUnidirectionalLauncher.cs">
+    <Compile Include="Controls\DetailControls\LexReferenceUnidirectionalLauncher.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Areas\Lexicon\LexReferenceUnidirectionalSlice.cs">
+    <Compile Include="Controls\DetailControls\Slices\LexReferenceUnidirectionalSlice.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Areas\Lexicon\LexReferenceUnidirectionalView.cs">
+    <Compile Include="Controls\DetailControls\LexReferenceUnidirectionalView.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Areas\Lexicon\Tools\Edit\AffixRuleFormulaControl.cs">
+    <Compile Include="Controls\DetailControls\Slices\AffixRuleFormulaControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Areas\Lexicon\Tools\Edit\AffixRuleFormulaSlice.cs">
+    <Compile Include="Controls\DetailControls\Slices\AffixRuleFormulaSlice.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Areas\Lexicon\AllReversalEntriesRecordList.cs" />
     <Compile Include="Areas\Lexicon\CircularRefBreaker.cs" />
     <Compile Include="Areas\Lexicon\Tools\BulkEditReversalEntries\BulkReversalEntryPosEditor.cs" />
-    <Compile Include="Areas\Lexicon\Tools\Edit\AddComplexFormChooserCommand.cs" />
-    <Compile Include="Areas\Lexicon\Tools\Edit\AddPrimaryLexemeChooserCommand.cs" />
+    <Compile Include="Controls\DetailControls\AddComplexFormChooserCommand.cs" />
+    <Compile Include="Controls\DetailControls\AddPrimaryLexemeChooserCommand.cs" />
     <Compile Include="Areas\Lexicon\Tools\Edit\BasicPaneBarContainer.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Areas\Lexicon\Tools\Edit\ConcOccurrenceBrowseView.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Areas\Lexicon\Tools\Edit\EntrySequenceVectorReferenceView.cs">
+    <Compile Include="Controls\DetailControls\EntrySequenceVectorReferenceView.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Areas\Lexicon\Tools\Edit\GhostLexRefLauncher.cs">
+    <Compile Include="Controls\DetailControls\GhostLexRefLauncher.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Areas\Lexicon\Tools\Edit\ILexReferenceSlice.cs" />
+    <Compile Include="Controls\DetailControls\Slices\ILexReferenceSlice.cs" />
     <Compile Include="Areas\Lexicon\Tools\Edit\LexEntryTypeConverter.cs" />
     <Compile Include="Areas\Lexicon\Tools\Edit\LexEntryTypeConverters.cs" />
-    <Compile Include="Areas\Lexicon\Tools\Edit\LexReferenceCollectionVc.cs" />
-    <Compile Include="Areas\Lexicon\Tools\Edit\LexReferencePairVc.cs" />
-    <Compile Include="Areas\Lexicon\Tools\Edit\LexReferenceSequenceVc.cs" />
-    <Compile Include="Areas\Lexicon\Tools\Edit\LexReferenceTreeBranchesVc.cs" />
-    <Compile Include="Areas\Lexicon\Tools\Edit\LexReferenceTreeRootVc.cs" />
+    <Compile Include="Controls\DetailControls\LexReferenceCollectionVc.cs" />
+    <Compile Include="Controls\DetailControls\LexReferencePairVc.cs" />
+    <Compile Include="Controls\DetailControls\LexReferenceSequenceVc.cs" />
+    <Compile Include="Controls\DetailControls\LexReferenceTreeBranchesVc.cs" />
+    <Compile Include="Controls\DetailControls\LexReferenceTreeRootVc.cs" />
     <Compile Include="Areas\Lexicon\Tools\ReversalIndexes\ReversalIndexEntryChangeHandler.cs" />
     <Compile Include="Areas\Lists\ListResources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>ListResources.resx</DependentUpon>
     </Compile>
-    <Compile Include="Areas\Lists\Tools\FeatureTypesAdvancedEdit\FeatureSystemInflectionFeatureListDlgLauncher.cs">
+    <Compile Include="Controls\DetailControls\Slices\FeatureSystemInflectionFeatureListDlgLauncher.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Areas\Lists\Tools\FeatureTypesAdvancedEdit\FeatureSystemInflectionFeatureListDlgLauncherSlice.cs">
+    <Compile Include="Controls\DetailControls\Slices\FeatureSystemInflectionFeatureListDlgLauncherSlice.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Areas\Grammar\Tools\PosEdit\GoldEticGuidFixer.cs" />
     <Compile Include="Areas\Lexicon\DeleteEntriesSensesWithoutInterlinearization.cs" />
     <Compile Include="Areas\Lexicon\HomographResetter.cs" />
-    <Compile Include="Areas\Lexicon\Tools\Edit\GhostLexRefSlice.cs">
+    <Compile Include="Controls\DetailControls\Slices\GhostLexRefSlice.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Areas\Lexicon\Tools\Edit\LexEntryInflTypeConverter.cs" />
-    <Compile Include="Areas\Lexicon\Tools\Edit\ChorusMessageSlice.cs">
+    <Compile Include="Controls\DetailControls\Slices\ChorusMessageSlice.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Areas\Lexicon\Tools\ReversalIndexes\ReversalIndexEntryFormSlice.cs">
+    <Compile Include="Controls\DetailControls\Slices\ReversalIndexEntryFormSlice.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Areas\Lexicon\Tools\ReversalIndexes\SortReversalSubEntries.cs" />
     <Compile Include="Areas\Lexicon\Reversals\CommonReversalIndexMenuHelper.cs" />
     <Compile Include="Areas\Lists\Tools\ReversalIndexPOS\ReversalIndexPOSRecordList.cs" />
-    <Compile Include="Areas\AffixRuleFormulaVc.cs" />
-    <Compile Include="Areas\MetaRuleFormulaVc.cs" />
-    <Compile Include="Areas\RegRuleFormulaVc.cs" />
     <Compile Include="Areas\MultiPaneFactory.cs" />
     <Compile Include="Areas\MultiPaneParameters.cs" />
-    <Compile Include="Areas\Notebook\Tools\NotebookEdit\RecordReferenceVectorLauncher.cs">
+    <Compile Include="Controls\DetailControls\RecordReferenceVectorLauncher.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Areas\Notebook\Tools\NotebookEdit\RecordReferenceVectorSlice.cs">
+    <Compile Include="Controls\DetailControls\Slices\RecordReferenceVectorSlice.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Areas\Notebook\Tools\NotebookEdit\RoledParticipantsSlice.cs">
+    <Compile Include="Controls\DetailControls\Slices\RoledParticipantsSlice.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Areas\Notebook\NotebookResources.Designer.cs">
@@ -2842,16 +2841,16 @@
       <DependentUpon>NotebookResources.resx</DependentUpon>
     </Compile>
     <Compile Include="Areas\OverrideServices.cs" />
-    <Compile Include="Areas\PhEnvStrRepresentationSlice.cs">
+    <Compile Include="Controls\DetailControls\Slices\PhEnvStrRepresentationSlice.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Areas\RuleFormulaControl.cs">
+    <Compile Include="Controls\DetailControls\Slices\RuleFormulaControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Areas\RuleFormulaSlice.cs">
+    <Compile Include="Controls\DetailControls\Slices\RuleFormulaSlice.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Areas\RuleFormulaVcBase.cs" />
+    <Compile Include="Controls\DetailControls\Slices\RuleFormulaVcBase.cs" />
     <Compile Include="Areas\SplitterChildControlParameters.cs" />
     <Compile Include="Areas\TextsAndWords\ConcordanceDlg.cs">
       <SubType>Form</SubType>
@@ -2886,7 +2885,6 @@
     <Compile Include="Areas\TextsAndWords\Tools\ComplexConcordance\ComplexConcPatternModel.cs" />
     <Compile Include="Areas\TextsAndWords\Tools\ComplexConcordance\ComplexConcPatternNode.cs" />
     <Compile Include="Areas\TextsAndWords\Tools\ComplexConcordance\ComplexConcPatternSda.cs" />
-    <Compile Include="Areas\TextsAndWords\Tools\ComplexConcordance\ComplexConcPatternVc.cs" />
     <Compile Include="Areas\TextsAndWords\Tools\ComplexConcordance\ComplexConcTagNode.cs" />
     <Compile Include="Areas\TextsAndWords\Tools\ComplexConcordance\ComplexConcWordBdryNode.cs" />
     <Compile Include="Areas\TextsAndWords\Tools\ComplexConcordance\ComplexConcWordDlg.cs">
@@ -2987,7 +2985,7 @@
     <Compile Include="Areas\TextsAndWords\Interlinear\InterlinTaggingChild.Designer.cs">
       <DependentUpon>InterlinTaggingChild.cs</DependentUpon>
     </Compile>
-    <Compile Include="Areas\TextsAndWords\Interlinear\InterlinVc.cs" />
+    <Compile Include="Controls\DetailControls\InterlinVc.cs" />
     <Compile Include="Areas\TextsAndWords\Interlinear\InterlinViewDataCache.cs" />
     <Compile Include="Areas\TextsAndWords\Interlinear\ITextStrings.Designer.cs">
       <DependentUpon>ITextStrings.resx</DependentUpon>
@@ -3067,10 +3065,10 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>TextAndWordsResources.resx</DependentUpon>
     </Compile>
-    <Compile Include="Areas\TextsAndWords\Tools\Analyses\AnalysisInterlinearRS.cs">
+    <Compile Include="Controls\DetailControls\AnalysisInterlinearRS.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Areas\TextsAndWords\Tools\Analyses\InterlinearSlice.cs">
+    <Compile Include="Controls\DetailControls\Slices\InterlinearSlice.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Areas\TextsAndWords\Tools\Analyses\OneAnalysisSandbox.cs">
@@ -3093,7 +3091,7 @@
     <Compile Include="Areas\TextsAndWords\WordformGoDlg.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Areas\TextsAndWords\WordformGoSearchEngine.cs" />
+    <Compile Include="Controls\WordformGoSearchEngine.cs" />
     <Compile Include="Areas\TextsAndWords\WordImporter.cs" />
     <Compile Include="Areas\TextsAndWords\XAmpleTrace.cs" />
     <Compile Include="Areas\TextsAndWords\XAmpleWordGrammarDebugger.cs" />
@@ -3137,7 +3135,7 @@
     <Compile Include="Areas\Lexicon\Reversals\ReversalEntryGoDlg.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Areas\Lexicon\Tools\Edit\ReversalIndexEntrySlice.cs">
+    <Compile Include="Controls\DetailControls\Slices\ReversalIndexEntrySlice.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Areas\Lexicon\Tools\Edit\FindExampleSentenceDlg.cs">
@@ -3152,97 +3150,84 @@
     <Compile Include="Areas\Lexicon\LexEntryImages.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Areas\Lexicon\Tools\ReversalIndexes\RevEntrySensesCollectionReferenceLauncher.cs">
+    <Compile Include="Controls\DetailControls\RevEntrySensesCollectionReferenceLauncher.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Areas\Lexicon\Tools\ReversalIndexes\RevEntrySensesCollectionReferenceSlice.cs">
+    <Compile Include="Controls\DetailControls\Slices\RevEntrySensesCollectionReferenceSlice.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Areas\Lexicon\Tools\ReversalIndexes\RevEntrySensesCollectionReferenceView.cs">
+    <Compile Include="Controls\DetailControls\Slices\PhonologicalFeatureListDlgLauncher.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Areas\Grammar\Tools\PhonologicalFeaturesAdvancedEdit\PhonologicalFeatureListDlgLauncher.cs">
+    <Compile Include="Controls\DetailControls\Slices\PhonologicalFeatureListDlgLauncherSlice.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Areas\Grammar\Tools\PhonologicalFeaturesAdvancedEdit\PhonologicalFeatureListDlgLauncherSlice.cs">
+    <Compile Include="Controls\DetailControls\PhonologicalFeatureListDlgLauncherView.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Areas\Grammar\Tools\PhonologicalFeaturesAdvancedEdit\PhonologicalFeatureListDlgLauncherView.cs">
+    <Compile Include="Controls\DetailControls\Slices\MSADlgLauncher.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Areas\Grammar\MSADlgLauncher.cs">
+    <Compile Include="Controls\DetailControls\Slices\MSADlgLauncherSlice.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Areas\Grammar\MSADlgLauncherSlice.cs">
+    <Compile Include="Controls\DetailControls\Slices\MSADlglauncherView.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Areas\Grammar\MSADlglauncherView.cs">
+    <Compile Include="Controls\DetailControls\Slices\MsaInflectionFeatureListDlgLauncher.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Areas\Grammar\MsaInflectionFeatureListDlgLauncher.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Areas\Grammar\MsaInflectionFeatureListDlgLauncherSlice.cs">
+    <Compile Include="Controls\DetailControls\Slices\MsaInflectionFeatureListDlgLauncherSlice.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Areas\Grammar\MsaInflectionFeatureListDlgLauncherView.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Areas\Lexicon\Tools\Edit\EntrySequenceReferenceLauncher.cs">
+    <Compile Include="Controls\DetailControls\EntrySequenceReferenceLauncher.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Areas\Lexicon\Tools\Edit\EntrySequenceReferenceSlice.cs">
+    <Compile Include="Controls\DetailControls\Slices\EntrySequenceReferenceSlice.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Areas\Lexicon\Tools\Edit\LexReferenceCollectionLauncher.cs">
+    <Compile Include="Controls\DetailControls\LexReferenceCollectionLauncher.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Areas\Lexicon\Tools\Edit\LexReferenceCollectionSlice.cs">
+    <Compile Include="Controls\DetailControls\Slices\LexReferenceCollectionSlice.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Areas\Lexicon\Tools\Edit\LexReferenceCollectionView.cs">
+    <Compile Include="Controls\DetailControls\LexReferenceCollectionView.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Areas\Lexicon\Tools\Edit\LexReferenceMultiSlice.cs">
+    <Compile Include="Controls\DetailControls\Slices\LexReferenceMultiSlice.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Areas\Lexicon\Tools\Edit\LexReferencePairLauncher.cs">
+    <Compile Include="Controls\DetailControls\LexReferencePairLauncher.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Areas\Lexicon\Tools\Edit\LexReferencePairSlice.cs">
+    <Compile Include="Controls\DetailControls\Slices\LexReferencePairSlice.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Areas\Lexicon\Tools\Edit\LexReferencePairView.cs">
+    <Compile Include="Controls\DetailControls\Slices\LexReferenceSequenceSlice.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Areas\Lexicon\Tools\Edit\LexReferenceSequenceLauncher.cs">
+    <Compile Include="Controls\DetailControls\LexReferenceSequenceView.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Areas\Lexicon\Tools\Edit\LexReferenceSequenceSlice.cs">
+    <Compile Include="Controls\DetailControls\LexReferenceTreeBranchesLauncher.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Areas\Lexicon\Tools\Edit\LexReferenceSequenceView.cs">
+    <Compile Include="Controls\DetailControls\LexReferenceTreeBranchesView.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Areas\Lexicon\Tools\Edit\LexReferenceTreeBranchesLauncher.cs">
+    <Compile Include="Controls\DetailControls\Slices\LexReferenceTreeRootLauncher.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Areas\Lexicon\Tools\Edit\LexReferenceTreeBranchesSlice.cs">
+    <Compile Include="Controls\DetailControls\Slices\LexReferenceTreeRootSlice.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Areas\Lexicon\Tools\Edit\LexReferenceTreeBranchesView.cs">
+    <Compile Include="Controls\DetailControls\LexReferenceTreeRootView.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Areas\Lexicon\Tools\Edit\LexReferenceTreeRootLauncher.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Areas\Lexicon\Tools\Edit\LexReferenceTreeRootSlice.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Areas\Lexicon\Tools\Edit\LexReferenceTreeRootView.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Archiving\ArchivingExtensions.cs" />
     <Compile Include="Archiving\ReapRamp.cs" />
     <Compile Include="Areas\Grammar\GrammarArea.cs" />
     <Compile Include="Areas\Grammar\Tools\AdhocCoprohibEdit\AdhocCoprohibitionRuleEditTool.cs" />
@@ -3365,11 +3350,11 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>GrammarResources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <EmbeddedResource Include="Areas\Grammar\Tools\AdhocCoprohibEdit\AdhocCoProhibAtomicLauncher.resx">
+    <EmbeddedResource Include="Controls\DetailControls\AdhocCoProhibAtomicLauncher.resx">
       <DependentUpon>AdhocCoProhibAtomicLauncher.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Areas\Grammar\Tools\AdhocCoprohibEdit\AdhocCoProhibVectorLauncher.resx">
+    <EmbeddedResource Include="Controls\DetailControls\AdhocCoProhibVectorLauncher.resx">
       <DependentUpon>AdhocCoProhibVectorLauncher.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
@@ -3526,7 +3511,7 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>TextAndWordsResources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <EmbeddedResource Include="Areas\TextsAndWords\Tools\Analyses\AnalysisInterlinearRS.resx">
+    <EmbeddedResource Include="Controls\DetailControls\AnalysisInterlinearRS.resx">
       <DependentUpon>AnalysisInterlinearRS.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
@@ -3549,7 +3534,7 @@
       <DependentUpon>ReversalEntryGoDlg.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Areas\Lexicon\Tools\Edit\ReversalIndexEntrySlice.resx">
+    <EmbeddedResource Include="Controls\DetailControls\Slices\ReversalIndexEntrySlice.resx">
       <DependentUpon>ReversalIndexEntrySlice.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
@@ -3561,7 +3546,7 @@
       <DependentUpon>SwapLexemeWithAllomorphDlg.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Areas\Lexicon\Tools\ReversalIndexes\ReversalIndexEntryFormSlice.resx">
+    <EmbeddedResource Include="Controls\DetailControls\Slices\ReversalIndexEntryFormSlice.resx">
       <DependentUpon>ReversalIndexEntryFormSlice.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
@@ -3569,49 +3554,45 @@
       <DependentUpon>LexEntryImages.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Areas\Lexicon\Tools\ReversalIndexes\RevEntrySensesCollectionReferenceLauncher.resx">
+    <EmbeddedResource Include="Controls\DetailControls\RevEntrySensesCollectionReferenceLauncher.resx">
       <DependentUpon>RevEntrySensesCollectionReferenceLauncher.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Areas\Lexicon\Tools\ReversalIndexes\RevEntrySensesCollectionReferenceSlice.resx">
+    <EmbeddedResource Include="Controls\DetailControls\Slices\RevEntrySensesCollectionReferenceSlice.resx">
       <DependentUpon>RevEntrySensesCollectionReferenceSlice.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Areas\Lexicon\Tools\ReversalIndexes\RevEntrySensesCollectionReferenceView.resx">
-      <DependentUpon>RevEntrySensesCollectionReferenceView.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Areas\Grammar\Tools\PhonologicalFeaturesAdvancedEdit\PhonologicalFeatureListDlgLauncher.resx">
+    <EmbeddedResource Include="Controls\DetailControls\Slices\PhonologicalFeatureListDlgLauncher.resx">
       <DependentUpon>PhonologicalFeatureListDlgLauncher.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Areas\Grammar\Tools\PhonologicalFeaturesAdvancedEdit\PhonologicalFeatureListDlgLauncherSlice.resx">
+    <EmbeddedResource Include="Controls\DetailControls\Slices\PhonologicalFeatureListDlgLauncherSlice.resx">
       <DependentUpon>PhonologicalFeatureListDlgLauncherSlice.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Areas\Grammar\MSADlgLauncher.resx">
+    <EmbeddedResource Include="Controls\DetailControls\Slices\MSADlgLauncher.resx">
       <DependentUpon>MSADlgLauncher.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Areas\Grammar\MSADlgLauncherSlice.resx">
+    <EmbeddedResource Include="Controls\DetailControls\Slices\MSADlgLauncherSlice.resx">
       <DependentUpon>MSADlgLauncherSlice.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Areas\Grammar\MSADlglauncherView.resx">
+    <EmbeddedResource Include="Controls\DetailControls\Slices\MSADlglauncherView.resx">
       <DependentUpon>MSADlglauncherView.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Areas\Grammar\MsaInflectionFeatureListDlgLauncherSlice.resx">
+    <EmbeddedResource Include="Controls\DetailControls\Slices\MsaInflectionFeatureListDlgLauncherSlice.resx">
       <DependentUpon>MsaInflectionFeatureListDlgLauncherSlice.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Areas\Lexicon\Tools\Edit\EntrySequenceReferenceLauncher.resx">
+    <EmbeddedResource Include="Controls\DetailControls\EntrySequenceReferenceLauncher.resx">
       <DependentUpon>EntrySequenceReferenceLauncher.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Areas\Lexicon\Tools\Edit\LexReferenceTreeRootLauncher.resx">
+    <EmbeddedResource Include="Controls\DetailControls\Slices\LexReferenceTreeRootLauncher.resx">
       <DependentUpon>LexReferenceTreeRootLauncher.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Areas\Lexicon\Tools\Edit\LexReferenceTreeRootView.resx">
+    <EmbeddedResource Include="Controls\DetailControls\LexReferenceTreeRootView.resx">
       <DependentUpon>LexReferenceTreeRootView.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>

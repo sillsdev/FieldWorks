@@ -23,7 +23,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.NaturalClassEdit
 	/// <summary>
 	/// ITool implementation for the "naturalClassEdit" tool in the "grammar" area.
 	/// </summary>
-	[Export(AreaServices.GrammarAreaMachineName, typeof(ITool))]
+	[Export(LanguageExplorerConstants.GrammarAreaMachineName, typeof(ITool))]
 	internal sealed class NaturalClassEditTool : ITool
 	{
 		private NaturalClassEditToolMenuHelper _toolMenuHelper;
@@ -121,12 +121,12 @@ namespace LanguageExplorer.Areas.Grammar.Tools.NaturalClassEdit
 		/// Get the internal name of the component.
 		/// </summary>
 		/// <remarks>NB: This is the machine friendly name, not the user friendly name.</remarks>
-		public string MachineName => AreaServices.NaturalClassEditMachineName;
+		public string MachineName => LanguageExplorerConstants.NaturalClassEditMachineName;
 
 		/// <summary>
 		/// User-visible localized component name.
 		/// </summary>
-		public string UiName => StringTable.Table.LocalizeLiteralValue(AreaServices.NaturalClassEditUiName);
+		public string UiName => StringTable.Table.LocalizeLiteralValue(LanguageExplorerConstants.NaturalClassEditUiName);
 
 		#endregion
 
@@ -135,7 +135,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.NaturalClassEdit
 		/// <summary>
 		/// Get the area for the tool.
 		/// </summary>
-		[field: Import(AreaServices.GrammarAreaMachineName)]
+		[field: Import(LanguageExplorerConstants.GrammarAreaMachineName)]
 		public IArea Area { get; private set; }
 
 		/// <summary>

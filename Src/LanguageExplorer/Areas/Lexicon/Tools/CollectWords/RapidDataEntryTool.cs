@@ -23,7 +23,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.CollectWords
 	/// <summary>
 	/// ITool implementation for the "rapidDataEntry" tool in the "lexicon" area.
 	/// </summary>
-	[Export(AreaServices.LexiconAreaMachineName, typeof(ITool))]
+	[Export(LanguageExplorerConstants.LexiconAreaMachineName, typeof(ITool))]
 	internal sealed class RapidDataEntryTool : ITool
 	{
 		internal const string RDEwords = "RDEwords";
@@ -165,12 +165,12 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.CollectWords
 		/// Get the internal name of the component.
 		/// </summary>
 		/// <remarks>NB: This is the machine friendly name, not the user friendly name.</remarks>
-		public string MachineName => AreaServices.RapidDataEntryMachineName;
+		public string MachineName => LanguageExplorerConstants.RapidDataEntryMachineName;
 
 		/// <summary>
 		/// User-visible localized component name.
 		/// </summary>
-		public string UiName => StringTable.Table.LocalizeLiteralValue(AreaServices.RapidDataEntryUiName);
+		public string UiName => StringTable.Table.LocalizeLiteralValue(LanguageExplorerConstants.RapidDataEntryUiName);
 
 		#endregion
 
@@ -179,7 +179,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.CollectWords
 		/// <summary>
 		/// Get the area for the tool.
 		/// </summary>
-		[field: Import(AreaServices.LexiconAreaMachineName)]
+		[field: Import(LanguageExplorerConstants.LexiconAreaMachineName)]
 		public IArea Area { get; private set; }
 
 		/// <summary>
@@ -242,7 +242,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.CollectWords
 
 				// <item command="CmdEntryJumpToDefault" />
 				_jumpMenu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _majorFlexComponentParameters.SharedEventHandlers.GetEventHandler(Command.CmdJumpToTool), AreaResources.ksShowEntryInLexicon);
-				_jumpMenu.Tag = new List<object> { _majorFlexComponentParameters.FlexComponentParameters.Publisher, AreaServices.LexiconEditMachineName, _recordList };
+				_jumpMenu.Tag = new List<object> { _majorFlexComponentParameters.FlexComponentParameters.Publisher, LanguageExplorerConstants.LexiconEditMachineName, _recordList };
 
 				// End: <menu id="mnuBrowseView" (partial) >
 				_recordBrowseView.ContextMenuStrip = contextMenuStrip;

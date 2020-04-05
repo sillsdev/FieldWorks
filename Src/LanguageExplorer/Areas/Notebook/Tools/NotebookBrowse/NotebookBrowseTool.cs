@@ -18,7 +18,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookBrowse
 	/// <summary>
 	/// ITool implementation for the "notebookBrowse" tool in the "notebook" area.
 	/// </summary>
-	[Export(AreaServices.NotebookAreaMachineName, typeof(ITool))]
+	[Export(LanguageExplorerConstants.NotebookAreaMachineName, typeof(ITool))]
 	internal sealed class NotebookBrowseTool : ITool
 	{
 		private NotebookBrowseToolMenuHelper _toolMenuHelper;
@@ -99,12 +99,12 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookBrowse
 		/// Get the internal name of the component.
 		/// </summary>
 		/// <remarks>NB: This is the machine friendly name, not the user friendly name.</remarks>
-		public string MachineName => AreaServices.NotebookBrowseToolMachineName;
+		public string MachineName => LanguageExplorerConstants.NotebookBrowseToolMachineName;
 
 		/// <summary>
 		/// User-visible localized component name.
 		/// </summary>
-		public string UiName => StringTable.Table.LocalizeLiteralValue(AreaServices.NotebookBrowseToolUiName);
+		public string UiName => StringTable.Table.LocalizeLiteralValue(LanguageExplorerConstants.NotebookBrowseToolUiName);
 
 		#endregion
 
@@ -113,7 +113,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookBrowse
 		/// <summary>
 		/// Get the area for the tool.
 		/// </summary>
-		[field: Import(AreaServices.NotebookAreaMachineName)]
+		[field: Import(LanguageExplorerConstants.NotebookAreaMachineName)]
 		public IArea Area { get; private set; }
 
 		/// <summary>

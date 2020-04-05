@@ -733,9 +733,6 @@ If you click No, you will see various options for starting work in Language Expl
   <data name="ksStatisticsViewTotalSentencesText" xml:space="preserve">
     <value>Total number of sentences (segments):</value>
   </data>
-  <data name="ksRecreateReversal" xml:space="preserve">
-    <value>Recreate Reversal</value>
-  </data>
   <data name="ksConvertFormLoseEnvInfixLoc" xml:space="preserve">
     <value>The environment and infix position will be lost! Do you still want to continue?</value>
   </data>
@@ -1393,9 +1390,6 @@ This version of the program requires version {1}.</value>
   </data>
   <data name="ksConvertFormLoseInfixLocGramInfo" xml:space="preserve">
     <value>The infix position and some grammatical information will be lost! Do you still want to continue?</value>
-  </data>
-  <data name="ksCreateReversal" xml:space="preserve">
-    <value>Create Reversal</value>
   </data>
   <data name="ksUndoConvertIrregularlyInflectedFormVariants" xml:space="preserve">
     <value>Undo Convert variant types to irregularly inflected form variant types</value>

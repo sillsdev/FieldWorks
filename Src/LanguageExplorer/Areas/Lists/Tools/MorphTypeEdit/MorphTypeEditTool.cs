@@ -23,7 +23,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.MorphTypeEdit
 	/// ITool implementation for the "morphTypeEdit" tool in the "lists" area.
 	/// </summary>
 	/// <remarks>This list is closed for editing.</remarks>
-	[Export(AreaServices.ListsAreaMachineName, typeof(ITool))]
+	[Export(LanguageExplorerConstants.ListsAreaMachineName, typeof(ITool))]
 	internal sealed class MorphTypeEditTool : IListTool
 	{
 		private const string MorphTypeList = "MorphTypeList";
@@ -114,12 +114,12 @@ namespace LanguageExplorer.Areas.Lists.Tools.MorphTypeEdit
 		/// Get the internal name of the component.
 		/// </summary>
 		/// <remarks>NB: This is the machine friendly name, not the user friendly name.</remarks>
-		public string MachineName => AreaServices.MorphTypeEditMachineName;
+		public string MachineName => LanguageExplorerConstants.MorphTypeEditMachineName;
 
 		/// <summary>
 		/// User-visible localized component name.
 		/// </summary>
-		public string UiName => StringTable.Table.LocalizeLiteralValue(AreaServices.MorphTypeEditUiName);
+		public string UiName => StringTable.Table.LocalizeLiteralValue(LanguageExplorerConstants.MorphTypeEditUiName);
 
 		#endregion
 
@@ -128,7 +128,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.MorphTypeEdit
 		/// <summary>
 		/// Get the area for the tool.
 		/// </summary>
-		[field: Import(AreaServices.ListsAreaMachineName)]
+		[field: Import(LanguageExplorerConstants.ListsAreaMachineName)]
 		public IArea Area { get; private set; }
 
 		/// <summary>

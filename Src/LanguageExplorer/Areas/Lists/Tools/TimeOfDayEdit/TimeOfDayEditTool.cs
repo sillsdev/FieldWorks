@@ -21,7 +21,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.TimeOfDayEdit
 	/// <summary>
 	/// ITool implementation for the "timeOfDayEdit" tool in the "lists" area.
 	/// </summary>
-	[Export(AreaServices.ListsAreaMachineName, typeof(ITool))]
+	[Export(LanguageExplorerConstants.ListsAreaMachineName, typeof(ITool))]
 	internal sealed class TimeOfDayEditTool : IListTool
 	{
 		private const string TimeOfDayList = "TimeOfDayList";
@@ -112,12 +112,12 @@ namespace LanguageExplorer.Areas.Lists.Tools.TimeOfDayEdit
 		/// Get the internal name of the component.
 		/// </summary>
 		/// <remarks>NB: This is the machine friendly name, not the user friendly name.</remarks>
-		public string MachineName => AreaServices.TimeOfDayEditMachineName;
+		public string MachineName => LanguageExplorerConstants.TimeOfDayEditMachineName;
 
 		/// <summary>
 		/// User-visible localized component name.
 		/// </summary>
-		public string UiName => StringTable.Table.LocalizeLiteralValue(AreaServices.TimeOfDayEditUiName);
+		public string UiName => StringTable.Table.LocalizeLiteralValue(LanguageExplorerConstants.TimeOfDayEditUiName);
 
 		#endregion
 
@@ -126,7 +126,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.TimeOfDayEdit
 		/// <summary>
 		/// Get the area for the tool.
 		/// </summary>
-		[field: Import(AreaServices.ListsAreaMachineName)]
+		[field: Import(LanguageExplorerConstants.ListsAreaMachineName)]
 		public IArea Area { get; private set; }
 
 		/// <summary>

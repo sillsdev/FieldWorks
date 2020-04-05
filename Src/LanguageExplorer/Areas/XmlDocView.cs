@@ -720,7 +720,7 @@ namespace LanguageExplorer.Areas
 			m_currentObject = MyRecordList.CurrentObject;
 			m_currentIndex = currentIndex;
 			//add our current state to the history system
-			PropertyTable.GetValue<LinkHandler>(LanguageExplorerConstants.LinkHandler).AddLinkToHistory(new FwLinkArgs(PropertyTable.GetValue<string>(AreaServices.ToolChoice), MyRecordList.CurrentObject?.Guid ?? Guid.Empty));
+			PropertyTable.GetValue<LinkHandler>(LanguageExplorerConstants.LinkHandler).AddLinkToHistory(new FwLinkArgs(PropertyTable.GetValue<string>(LanguageExplorerConstants.ToolChoice), MyRecordList.CurrentObject?.Guid ?? Guid.Empty));
 			SelectAndScrollToCurrentRecord();
 			base.ShowRecord();
 		}
@@ -731,9 +731,9 @@ namespace LanguageExplorer.Areas
 		private void CheckJump(object argument)
 		{
 			var hvoTarget = (int)argument;
-			var toolChoice = PropertyTable.GetValue<string>(AreaServices.ToolChoice);
+			var toolChoice = PropertyTable.GetValue<string>(LanguageExplorerConstants.ToolChoice);
 			// Currently this (LT-11447) only applies to Dictionary view
-			if (hvoTarget <= 0 || toolChoice != AreaServices.LexiconDictionaryMachineName)
+			if (hvoTarget <= 0 || toolChoice != LanguageExplorerConstants.LexiconDictionaryMachineName)
 			{
 				return;
 			}

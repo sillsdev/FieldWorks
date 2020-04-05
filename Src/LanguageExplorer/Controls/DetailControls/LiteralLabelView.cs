@@ -12,9 +12,9 @@ namespace LanguageExplorer.Controls.DetailControls
 	{
 		private string m_text;
 		private LiteralLabelVc m_vc;
-		private SummarySlice m_slice;
+		private ISummarySlice m_slice;
 
-		public LiteralLabelView(string text, SummarySlice slice)
+		public LiteralLabelView(string text, ISummarySlice slice)
 		{
 			m_text = text;
 			m_slice = slice;

@@ -22,7 +22,7 @@ namespace LanguageExplorer.Controls
 		/// <summary>
 		/// Tries to find the tool to jump to, based on the owner of the POS list.
 		/// </summary>
-		private string JumpToToolNamed => List.OwningFlid == LangProjectTags.kflidPartsOfSpeech ? AreaServices.PosEditMachineName : AreaServices.ReversalToolReversalIndexPOSMachineName;
+		private string JumpToToolNamed => List.OwningFlid == LangProjectTags.kflidPartsOfSpeech ? LanguageExplorerConstants.PosEditMachineName : LanguageExplorerConstants.ReversalToolReversalIndexPOSMachineName;
 
 		/// <summary />
 		internal POSPopupTreeManager(TreeCombo treeCombo, LcmCache cache, ICmPossibilityList list, int ws, bool useAbbr, FlexComponentParameters flexComponentParameters, Form parent)

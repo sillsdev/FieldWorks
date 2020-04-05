@@ -12,12 +12,12 @@ namespace LanguageExplorer.Controls.DetailControls
 {
 	internal sealed class SliceHotlinksMenuFactory : IDisposable
 	{
-		private Dictionary<ContextMenuName, Func<Slice, ContextMenuName, List<Tuple<ToolStripMenuItem, EventHandler>>>> _hotLinksCreatorMethods = new Dictionary<ContextMenuName, Func<Slice, ContextMenuName, List<Tuple<ToolStripMenuItem, EventHandler>>>>();
+		private Dictionary<ContextMenuName, Func<ISlice, ContextMenuName, List<Tuple<ToolStripMenuItem, EventHandler>>>> _hotLinksCreatorMethods = new Dictionary<ContextMenuName, Func<ISlice, ContextMenuName, List<Tuple<ToolStripMenuItem, EventHandler>>>>();
 
 		/// <summary>
 		/// Get the list of ToolStripMenuItem items for the given menu for the given Slice.
 		/// </summary>
-		internal List<Tuple<ToolStripMenuItem, EventHandler>> GetHotlinksMenuItems(Slice slice, ContextMenuName hotlinksMenuId)
+		internal List<Tuple<ToolStripMenuItem, EventHandler>> GetHotlinksMenuItems(ISlice slice, ContextMenuName hotlinksMenuId)
 		{
 			return _hotLinksCreatorMethods.ContainsKey(hotlinksMenuId) ? _hotLinksCreatorMethods[hotlinksMenuId].Invoke(slice, hotlinksMenuId) : null;
 		}
@@ -25,7 +25,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// <summary>
 		/// Register a method that can be used to create the hotlinks ToolStripMenuItem items.
 		/// </summary>
-		internal void RegisterHotlinksMenuCreatorMethod(ContextMenuName hotlinksMenuId, Func<Slice, ContextMenuName, List<Tuple<ToolStripMenuItem, EventHandler>>> hotlinksMenuCreatorMethod)
+		internal void RegisterHotlinksMenuCreatorMethod(ContextMenuName hotlinksMenuId, Func<ISlice, ContextMenuName, List<Tuple<ToolStripMenuItem, EventHandler>>> hotlinksMenuCreatorMethod)
 		{
 			Require.That(hotlinksMenuId != ContextMenuName.nullValue);
 			Guard.AgainstNull(hotlinksMenuCreatorMethod, nameof(hotlinksMenuCreatorMethod));

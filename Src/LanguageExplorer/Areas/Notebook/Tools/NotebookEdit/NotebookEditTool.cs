@@ -28,7 +28,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 	/// <summary>
 	/// ITool implementation for the "notebookEdit" tool in the "notebook" area.
 	/// </summary>
-	[Export(AreaServices.NotebookAreaMachineName, typeof(ITool))]
+	[Export(LanguageExplorerConstants.NotebookAreaMachineName, typeof(ITool))]
 	internal sealed class NotebookEditTool : ITool
 	{
 		private NotebookEditToolMenuHelper _toolMenuHelper;
@@ -67,7 +67,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 		/// </remarks>
 		public void Activate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
-			majorFlexComponentParameters.FlexComponentParameters.PropertyTable.SetDefault($"{AreaServices.ToolForAreaNamed_}{Area.MachineName}", MachineName, true);
+			majorFlexComponentParameters.FlexComponentParameters.PropertyTable.SetDefault($"{LanguageExplorerConstants.ToolForAreaNamed_}{Area.MachineName}", MachineName, true);
 			if (_recordList == null)
 			{
 				_recordList = majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>(LanguageExplorerConstants.RecordListRepository).GetRecordList(NotebookArea.Records, majorFlexComponentParameters.StatusBar, NotebookArea.NotebookFactoryMethod);
@@ -143,12 +143,12 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 		/// Get the internal name of the component.
 		/// </summary>
 		/// <remarks>NB: This is the machine friendly name, not the user friendly name.</remarks>
-		public string MachineName => AreaServices.NotebookEditToolMachineName;
+		public string MachineName => LanguageExplorerConstants.NotebookEditToolMachineName;
 
 		/// <summary>
 		/// User-visible localized component name.
 		/// </summary>
-		public string UiName => StringTable.Table.LocalizeLiteralValue(AreaServices.NotebookEditToolUiName);
+		public string UiName => StringTable.Table.LocalizeLiteralValue(LanguageExplorerConstants.NotebookEditToolUiName);
 
 		#endregion
 
@@ -157,7 +157,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 		/// <summary>
 		/// Get the area for the tool.
 		/// </summary>
-		[field: Import(AreaServices.NotebookAreaMachineName)]
+		[field: Import(LanguageExplorerConstants.NotebookAreaMachineName)]
 		public IArea Area { get; private set; }
 
 		/// <summary>
@@ -189,7 +189,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 				Guard.AgainstNull(tool, nameof(tool));
 				Guard.AgainstNull(recordList, nameof(recordList));
 				Guard.AgainstNull(dataTree, nameof(dataTree));
-				Require.That(tool.MachineName == AreaServices.NotebookEditToolMachineName);
+				Require.That(tool.MachineName == LanguageExplorerConstants.NotebookEditToolMachineName);
 
 				_majorFlexComponentParameters = majorFlexComponentParameters;
 				_tool = tool;
@@ -261,7 +261,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 				var currentSliceAsStTextSlice = _dataTree.CurrentSliceAsStTextSlice;
 				if (currentSliceAsStTextSlice.RootSite.RootBox.Selection.GetSelectedWordPos(out var hvo, out var tag, out var ws, out var ichMin, out var ichLim))
 				{
-					LexEntryUi.DisplayOrCreateEntry(_majorFlexComponentParameters.LcmCache, hvo, tag, ws, ichMin, ichLim, currentSliceAsStTextSlice, _majorFlexComponentParameters.FlexComponentParameters, _majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider), "UserHelpFile");
+					LexEntryUi.DisplayOrCreateEntry(_majorFlexComponentParameters.LcmCache, hvo, tag, ws, ichMin, ichLim, (IWin32Window)currentSliceAsStTextSlice, _majorFlexComponentParameters.FlexComponentParameters, _majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider), "UserHelpFile");
 				}
 			}
 
@@ -365,7 +365,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 				#endregion Hotlinks menus
 			}
 
-			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_Participants(Slice slice, ContextMenuName contextMenuId)
+			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_Participants(ISlice slice, ContextMenuName contextMenuId)
 			{
 				Require.That(contextMenuId == ContextMenuName.mnuDataTree_Participants, $"Expected argument value of '{ContextMenuName.mnuDataTree_Participants.ToString()}', but got '{contextMenuId.ToString()}' instead.");
 
@@ -403,7 +403,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 				parentSlice.Expand();
 			}
 
-			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_SubRecords(Slice slice, ContextMenuName contextMenuId)
+			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_SubRecords(ISlice slice, ContextMenuName contextMenuId)
 			{
 				Require.That(contextMenuId == ContextMenuName.mnuDataTree_SubRecords, $"Expected argument value of '{ContextMenuName.mnuDataTree_SubRecords.ToString()}', but got '{contextMenuId.ToString()}' instead.");
 
@@ -423,7 +423,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 				return new Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>>(contextMenuStrip, menuItems);
 			}
 
-			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_SubRecordSummary(Slice slice, ContextMenuName contextMenuId)
+			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_SubRecordSummary(ISlice slice, ContextMenuName contextMenuId)
 			{
 				Require.That(contextMenuId == ContextMenuName.mnuDataTree_SubRecordSummary, $"Expected argument value of '{ContextMenuName.mnuDataTree_SubRecordSummary.ToString()}', but got '{contextMenuId.ToString()}' instead.");
 
@@ -586,7 +586,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 				return null;
 			}
 
-			private List<Tuple<ToolStripMenuItem, EventHandler>> Create_mnuDataTree_Subrecord_Hotlinks(Slice slice, ContextMenuName hotlinksMenuId)
+			private List<Tuple<ToolStripMenuItem, EventHandler>> Create_mnuDataTree_Subrecord_Hotlinks(ISlice slice, ContextMenuName hotlinksMenuId)
 			{
 				Require.That(hotlinksMenuId == ContextMenuName.mnuDataTree_Subrecord_Hotlinks, $"Expected argument value of '{ContextMenuName.mnuDataTree_Subrecord_Hotlinks.ToString()}', but got '{hotlinksMenuId.ToString()}' instead.");
 
@@ -598,7 +598,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 				return CommonHotlinksCreator();
 			}
 
-			private List<Tuple<ToolStripMenuItem, EventHandler>> Create_mnuDataTree_SubRecords_Hotlinks(Slice slice, ContextMenuName hotlinksMenuId)
+			private List<Tuple<ToolStripMenuItem, EventHandler>> Create_mnuDataTree_SubRecords_Hotlinks(ISlice slice, ContextMenuName hotlinksMenuId)
 			{
 				Require.That(hotlinksMenuId == ContextMenuName.mnuDataTree_SubRecords_Hotlinks, $"Expected argument value of '{ContextMenuName.mnuDataTree_SubRecords_Hotlinks.ToString()}', but got '{hotlinksMenuId.ToString()}' instead.");
 

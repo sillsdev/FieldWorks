@@ -16,7 +16,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.GrammarSketch
 	/// <summary>
 	/// ITool implementation for the "grammarSketch" tool in the "grammar" area.
 	/// </summary>
-	[Export(AreaServices.GrammarAreaMachineName, typeof(ITool))]
+	[Export(LanguageExplorerConstants.GrammarAreaMachineName, typeof(ITool))]
 	internal sealed class GrammarSketchTool : ITool
 	{
 		private GrammarSketchHtmlViewer _grammarSketchHtmlViewer;
@@ -88,12 +88,12 @@ namespace LanguageExplorer.Areas.Grammar.Tools.GrammarSketch
 		/// Get the internal name of the component.
 		/// </summary>
 		/// <remarks>NB: This is the machine friendly name, not the user friendly name.</remarks>
-		public string MachineName => AreaServices.GrammarSketchMachineName;
+		public string MachineName => LanguageExplorerConstants.GrammarSketchMachineName;
 
 		/// <summary>
 		/// User-visible localized component name.
 		/// </summary>
-		public string UiName => StringTable.Table.LocalizeLiteralValue(AreaServices.GrammarSketchUiName);
+		public string UiName => StringTable.Table.LocalizeLiteralValue(LanguageExplorerConstants.GrammarSketchUiName);
 
 		#endregion
 
@@ -102,7 +102,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.GrammarSketch
 		/// <summary>
 		/// Get the area for the tool.
 		/// </summary>
-		[field: Import(AreaServices.GrammarAreaMachineName)]
+		[field: Import(LanguageExplorerConstants.GrammarAreaMachineName)]
 		public IArea Area { get; private set; }
 
 		/// <summary>

@@ -271,7 +271,7 @@ namespace LanguageExplorerTests
 		[Test]
 		public void GetEntriesToPublish_WorksWithFrenchUI()
 		{
-			PropertyTable.SetProperty(AreaServices.ToolChoice, AreaServices.LexiconEditMachineName);
+			PropertyTable.SetProperty(LanguageExplorerConstants.ToolChoice, LanguageExplorerConstants.LexiconEditMachineName);
 
 			var englishEntries = m_decorator.GetEntriesToPublish(PropertyTable, ObjectListPublisher.OwningFlid);
 			Assert.That(englishEntries.Length, Is.GreaterThan(0));
@@ -289,7 +289,7 @@ namespace LanguageExplorerTests
 		public void GetSortedAndFilteredReversalEntries_ExcludesSubentriesAndUnpublishable()
 		{
 			// This test relies on the objects set up during the test FixtureSetup
-			PropertyTable.SetProperty(AreaServices.ToolChoice, AreaServices.ReversalEditCompleteMachineName);
+			PropertyTable.SetProperty(LanguageExplorerConstants.ToolChoice, LanguageExplorerConstants.ReversalEditCompleteMachineName);
 			PropertyTable.SetProperty("ReversalIndexGuid", m_revIndex.Guid.ToString());
 
 			Assert.AreEqual(6, m_revDecorator.VecProp(m_revIndex.Hvo, ObjectListPublisher.OwningFlid).Length, "there should be 6 Reversal Entries and Sub[sub]entries");
@@ -313,7 +313,7 @@ namespace LanguageExplorerTests
 		public void GetSortedAndFilteredReversalEntries_IncludesSenselessReversalEntries()
 		{
 			// This test relies on the objects set up during the test FixtureSetup
-			PropertyTable.SetProperty(AreaServices.ToolChoice, AreaServices.ReversalEditCompleteMachineName);
+			PropertyTable.SetProperty(LanguageExplorerConstants.ToolChoice, LanguageExplorerConstants.ReversalEditCompleteMachineName);
 			PropertyTable.SetProperty("ReversalIndexGuid", m_revIndex.Guid.ToString());
 
 			Assert.AreEqual(6, m_revDecorator.VecProp(m_revIndex.Hvo, ObjectListPublisher.OwningFlid).Length, "there should be 6 Reversal Entries and Sub[sub]entries");

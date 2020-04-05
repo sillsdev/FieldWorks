@@ -23,7 +23,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.EnvironmentEdit
 	/// <summary>
 	/// ITool implementation for the "EnvironmentEdit" tool in the "grammar" area.
 	/// </summary>
-	[Export(AreaServices.GrammarAreaMachineName, typeof(ITool))]
+	[Export(LanguageExplorerConstants.GrammarAreaMachineName, typeof(ITool))]
 	internal sealed class EnvironmentEditTool : ITool
 	{
 		private EnvironmentEditToolMenuHelper _toolMenuHelper;
@@ -120,12 +120,12 @@ namespace LanguageExplorer.Areas.Grammar.Tools.EnvironmentEdit
 		/// Get the internal name of the component.
 		/// </summary>
 		/// <remarks>NB: This is the machine friendly name, not the user friendly name.</remarks>
-		public string MachineName => AreaServices.EnvironmentEditMachineName;
+		public string MachineName => LanguageExplorerConstants.EnvironmentEditMachineName;
 
 		/// <summary>
 		/// User-visible localized component name.
 		/// </summary>
-		public string UiName => StringTable.Table.LocalizeLiteralValue(AreaServices.EnvironmentEditUiName);
+		public string UiName => StringTable.Table.LocalizeLiteralValue(LanguageExplorerConstants.EnvironmentEditUiName);
 
 		#endregion
 
@@ -134,7 +134,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.EnvironmentEdit
 		/// <summary>
 		/// Get the area for the tool.
 		/// </summary>
-		[field: Import(AreaServices.GrammarAreaMachineName)]
+		[field: Import(LanguageExplorerConstants.GrammarAreaMachineName)]
 		public IArea Area { get; private set; }
 
 		/// <summary>
@@ -225,7 +225,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.EnvironmentEdit
 				_dataTree.DataTreeSliceContextMenuParameterObject.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ContextMenuName.mnuDataTree_StringRepresentation_Insert, Create_mnuDataTree_StringRepresentation_Insert);
 			}
 
-			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_StringRepresentation_Insert(Slice slice, ContextMenuName contextMenuId)
+			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_StringRepresentation_Insert(ISlice slice, ContextMenuName contextMenuId)
 			{
 				Require.That(contextMenuId == ContextMenuName.mnuDataTree_StringRepresentation_Insert, $"Expected argument value of '{ContextMenuName.mnuDataTree_StringRepresentation_Insert.ToString()}', but got '{contextMenuId.ToString()}' instead.");
 

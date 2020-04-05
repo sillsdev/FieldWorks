@@ -21,7 +21,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.PublicationsEdit
 	/// <summary>
 	/// ITool implementation for the "publicationsEdit" tool in the "lists" area.
 	/// </summary>
-	[Export(AreaServices.ListsAreaMachineName, typeof(ITool))]
+	[Export(LanguageExplorerConstants.ListsAreaMachineName, typeof(ITool))]
 	internal sealed class PublicationsEditTool : IListTool
 	{
 		private const string PublicationList = "PublicationList";
@@ -32,7 +32,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.PublicationsEdit
 		private CollapsingSplitContainer _collapsingSplitContainer;
 		private PublicationsMenuHelper _toolMenuHelper;
 		private IRecordList _recordList;
-		[Import(AreaServices.ListsAreaMachineName)]
+		[Import(LanguageExplorerConstants.ListsAreaMachineName)]
 		private IArea _area;
 		private LcmCache _cache;
 
@@ -114,12 +114,12 @@ namespace LanguageExplorer.Areas.Lists.Tools.PublicationsEdit
 		/// Get the internal name of the component.
 		/// </summary>
 		/// <remarks>NB: This is the machine friendly name, not the user friendly name.</remarks>
-		public string MachineName => AreaServices.PublicationsEditMachineName;
+		public string MachineName => LanguageExplorerConstants.PublicationsEditMachineName;
 
 		/// <summary>
 		/// User-visible localized component name.
 		/// </summary>
-		public string UiName => StringTable.Table.LocalizeLiteralValue(AreaServices.PublicationsEditUiName);
+		public string UiName => StringTable.Table.LocalizeLiteralValue(LanguageExplorerConstants.PublicationsEditUiName);
 
 		#endregion
 

@@ -13,13 +13,13 @@ namespace LanguageExplorer.Areas.Grammar
 	/// <summary>
 	/// IArea implementation for the grammar area.
 	/// </summary>
-	[Export(AreaServices.GrammarAreaMachineName, typeof(IArea))]
+	[Export(LanguageExplorerConstants.GrammarAreaMachineName, typeof(IArea))]
 	[Export(typeof(IArea))]
 	internal sealed class GrammarArea : IArea
 	{
-		[ImportMany(AreaServices.GrammarAreaMachineName)]
+		[ImportMany(LanguageExplorerConstants.GrammarAreaMachineName)]
 		private IEnumerable<ITool> _myTools;
-		private string PropertyNameForToolName => $"{AreaServices.ToolForAreaNamed_}{MachineName}";
+		private string PropertyNameForToolName => $"{LanguageExplorerConstants.ToolForAreaNamed_}{MachineName}";
 
 		[Import]
 		private IPropertyTable _propertyTable;
@@ -51,7 +51,7 @@ namespace LanguageExplorer.Areas.Grammar
 		/// </remarks>
 		public void Activate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
-			_propertyTable.SetDefault(PropertyNameForToolName, AreaServices.GrammarAreaDefaultToolMachineName, true);
+			_propertyTable.SetDefault(PropertyNameForToolName, LanguageExplorerConstants.GrammarAreaDefaultToolMachineName, true);
 			// Do nothing registration, but required, before a grammar tool can be registered.
 			majorFlexComponentParameters.UiWidgetController.AddHandlers(new AreaUiWidgetParameterObject(this));
 		}
@@ -78,7 +78,7 @@ namespace LanguageExplorer.Areas.Grammar
 		/// </summary>
 		public void EnsurePropertiesAreCurrent()
 		{
-			_propertyTable.SetProperty(AreaServices.InitialArea, MachineName, true, settingsGroup: SettingsGroup.LocalSettings);
+			_propertyTable.SetProperty(LanguageExplorerConstants.InitialArea, MachineName, true, settingsGroup: SettingsGroup.LocalSettings);
 
 			PersistedOrDefaultTool.EnsurePropertiesAreCurrent();
 		}
@@ -91,12 +91,12 @@ namespace LanguageExplorer.Areas.Grammar
 		/// Get the internal name of the component.
 		/// </summary>
 		/// <remarks>NB: This is the machine friendly name, not the user friendly name.</remarks>
-		public string MachineName => AreaServices.GrammarAreaMachineName;
+		public string MachineName => LanguageExplorerConstants.GrammarAreaMachineName;
 
 		/// <summary>
 		/// User-visible localized component name.
 		/// </summary>
-		public string UiName => StringTable.Table.LocalizeLiteralValue(AreaServices.GrammarAreaUiName);
+		public string UiName => StringTable.Table.LocalizeLiteralValue(LanguageExplorerConstants.GrammarAreaUiName);
 
 		#endregion
 
@@ -107,7 +107,7 @@ namespace LanguageExplorer.Areas.Grammar
 		/// the persisted one is no longer available.
 		/// </summary>
 		/// <returns>The last persisted tool or the default tool for the area.</returns>
-		public ITool PersistedOrDefaultTool => _dictionaryOfAllTools.Values.First(tool => tool.MachineName == _propertyTable.GetValue(PropertyNameForToolName, AreaServices.GrammarAreaDefaultToolMachineName));
+		public ITool PersistedOrDefaultTool => _dictionaryOfAllTools.Values.First(tool => tool.MachineName == _propertyTable.GetValue(PropertyNameForToolName, LanguageExplorerConstants.GrammarAreaDefaultToolMachineName));
 
 		/// <summary>
 		/// Get all installed tools for the area.
@@ -121,20 +121,20 @@ namespace LanguageExplorer.Areas.Grammar
 					_dictionaryOfAllTools = new Dictionary<string, ITool>();
 					var myBuiltinToolsInOrder = new List<string>
 					{
-						AreaServices.PosEditMachineName,
-						AreaServices.CategoryBrowseMachineName,
-						AreaServices.CompoundRuleAdvancedEditMachineName,
-						AreaServices.PhonemeEditMachineName,
-						AreaServices.PhonologicalFeaturesAdvancedEditMachineName,
-						AreaServices.BulkEditPhonemesMachineName,
-						AreaServices.NaturalClassEditMachineName,
-						AreaServices.EnvironmentEditMachineName,
-						AreaServices.PhonologicalRuleEditMachineName,
-						AreaServices.AdhocCoprohibitionRuleEditMachineName,
-						AreaServices.FeaturesAdvancedEditMachineName,
-						AreaServices.ProdRestrictEditMachineName,
-						AreaServices.GrammarSketchMachineName,
-						AreaServices.LexiconProblemsMachineName
+						LanguageExplorerConstants.PosEditMachineName,
+						LanguageExplorerConstants.CategoryBrowseMachineName,
+						LanguageExplorerConstants.CompoundRuleAdvancedEditMachineName,
+						LanguageExplorerConstants.PhonemeEditMachineName,
+						LanguageExplorerConstants.PhonologicalFeaturesAdvancedEditMachineName,
+						LanguageExplorerConstants.BulkEditPhonemesMachineName,
+						LanguageExplorerConstants.NaturalClassEditMachineName,
+						LanguageExplorerConstants.EnvironmentEditMachineName,
+						LanguageExplorerConstants.PhonologicalRuleEditMachineName,
+						LanguageExplorerConstants.AdhocCoprohibitionRuleEditMachineName,
+						LanguageExplorerConstants.FeaturesAdvancedEditMachineName,
+						LanguageExplorerConstants.ProdRestrictEditMachineName,
+						LanguageExplorerConstants.GrammarSketchMachineName,
+						LanguageExplorerConstants.LexiconProblemsMachineName
 					};
 					foreach (var currentBuiltinTool in myBuiltinToolsInOrder.Select(toolName => _myTools.First(tool => tool.MachineName == toolName)))
 					{

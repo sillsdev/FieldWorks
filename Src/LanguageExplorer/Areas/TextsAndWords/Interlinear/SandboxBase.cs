@@ -11,6 +11,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using LanguageExplorer.Controls;
+using LanguageExplorer.Controls.DetailControls;
 using LanguageExplorer.LcmUi;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
@@ -2418,13 +2419,13 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			*/
 			var haveEarlyItem = false;
 			m_fHandlingRightClickMenu = true;
-			var currentToolMachineName = PropertyTable.GetValue<string>(AreaServices.ToolChoice);
+			var currentToolMachineName = PropertyTable.GetValue<string>(LanguageExplorerConstants.ToolChoice);
 			ToolStripMenuItem menu;
 			if (CanJumpToTool(currentToolMachineName, LexEntryTags.kClassName))
 			{
 				haveEarlyItem = true;
 				menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, ContextMenuStrip, SandboxJumpToTool_Clicked, AreaResources.ksShowEntryInLexicon);
-				menu.Tag = new List<object> { AreaServices.LexiconEditMachineName, LexEntryTags.kClassName };
+				menu.Tag = new List<object> { LanguageExplorerConstants.LexiconEditMachineName, LexEntryTags.kClassName };
 			}
 			/*
 			<item command="CmdWordformJumpToAnalyses" />
@@ -2436,7 +2437,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				haveEarlyItem = true;
 				menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, ContextMenuStrip, SandboxJumpToTool_Clicked, AreaResources.Show_in_Word_Analyses);
-				menu.Tag = new List<object> { AreaServices.AnalysesMachineName, WfiWordformTags.kClassName };
+				menu.Tag = new List<object> { LanguageExplorerConstants.AnalysesMachineName, WfiWordformTags.kClassName };
 			}
 			var concordanceMenuHolder = ToolStripMenuItemFactory.CreateBaseMenuForToolStripMenuItem(ContextMenuStrip, AreaResources.Show_Concordance_of);
 			/*
@@ -2448,7 +2449,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			if (CanJumpToTool(currentToolMachineName, WfiWordformTags.kClassName))
 			{
 				menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(menuItems, concordanceMenuHolder, SandboxJumpToTool_Clicked, AreaResources.ksFldWordform);
-				menu.Tag = new List<object> { AreaServices.ConcordanceMachineName, WfiWordformTags.kClassName };
+				menu.Tag = new List<object> { LanguageExplorerConstants.ConcordanceMachineName, WfiWordformTags.kClassName };
 			}
 			/*
 			<item command="CmdAnalysisJumpToConcordance" label="Analysis" />
@@ -2459,7 +2460,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			if (CanJumpToTool(currentToolMachineName, WfiAnalysisTags.kClassName))
 			{
 				menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(menuItems, concordanceMenuHolder, SandboxJumpToTool_Clicked, AreaResources.Analysis);
-				menu.Tag = new List<object> { AreaServices.ConcordanceMachineName, WfiAnalysisTags.kClassName };
+				menu.Tag = new List<object> { LanguageExplorerConstants.ConcordanceMachineName, WfiAnalysisTags.kClassName };
 			}
 			/*
 			<item command="CmdMorphJumpToConcordance" label="Morph" />
@@ -2470,7 +2471,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			if (CanJumpToTool(currentToolMachineName, MoFormTags.kClassName))
 			{
 				menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(menuItems, concordanceMenuHolder, SandboxJumpToTool_Clicked, AreaResources.Morph);
-				menu.Tag = new List<object> { AreaServices.ConcordanceMachineName, MoFormTags.kClassName };
+				menu.Tag = new List<object> { LanguageExplorerConstants.ConcordanceMachineName, MoFormTags.kClassName };
 			}
 			/*
 			<item command="CmdEntryJumpToConcordance" label="Entry" />
@@ -2481,7 +2482,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			if (CanJumpToTool(currentToolMachineName, LexEntryTags.kClassName))
 			{
 				menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(menuItems, concordanceMenuHolder, SandboxJumpToTool_Clicked, AreaResources.Entry);
-				menu.Tag = new List<object> { AreaServices.ConcordanceMachineName, LexEntryTags.kClassName };
+				menu.Tag = new List<object> { LanguageExplorerConstants.ConcordanceMachineName, LexEntryTags.kClassName };
 			}
 			/*
 			<item command="CmdSenseJumpToConcordance" label="Sense" />
@@ -2492,7 +2493,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			if (CanJumpToTool(currentToolMachineName, LexSenseTags.kClassName))
 			{
 				menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(menuItems, concordanceMenuHolder, SandboxJumpToTool_Clicked, AreaResources.Sense);
-				menu.Tag = new List<object> { AreaServices.ConcordanceMachineName, LexSenseTags.kClassName };
+				menu.Tag = new List<object> { LanguageExplorerConstants.ConcordanceMachineName, LexSenseTags.kClassName };
 			}
 			/*
 			<command id="CmdLexGramInfoJumpToConcordance" label="Lex. Gram. Info." message="JumpToTool">
@@ -2502,7 +2503,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			if (CanJumpToTool(currentToolMachineName, AreaServices.PartOfSpeechGramInfo))
 			{
 				menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(menuItems, concordanceMenuHolder, SandboxJumpToTool_Clicked, AreaResources.Lex_Gram_Info);
-				menu.Tag = new List<object> { AreaServices.ConcordanceMachineName, AreaServices.PartOfSpeechGramInfo, AreaServices.PartOfSpeechGramInfo };
+				menu.Tag = new List<object> { LanguageExplorerConstants.ConcordanceMachineName, AreaServices.PartOfSpeechGramInfo, AreaServices.PartOfSpeechGramInfo };
 			}
 			/*
 			<item command="CmdWordGlossJumpToConcordance" label="Word Gloss" />
@@ -2513,7 +2514,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			if (CanJumpToTool(currentToolMachineName, WfiGlossTags.kClassName))
 			{
 				menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(menuItems, concordanceMenuHolder, SandboxJumpToTool_Clicked, AreaResources.Word_Gloss);
-				menu.Tag = new List<object> { AreaServices.ConcordanceMachineName, WfiGlossTags.kClassName };
+				menu.Tag = new List<object> { LanguageExplorerConstants.ConcordanceMachineName, WfiGlossTags.kClassName };
 			}
 			/*
 			<command id="CmdWordPOSJumpToConcordance" label="Show Word Category in Concordance" message="JumpToTool">
@@ -2523,7 +2524,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			if (CanJumpToTool(currentToolMachineName, AreaServices.WordPartOfSpeech))
 			{
 				menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(menuItems, concordanceMenuHolder, SandboxJumpToTool_Clicked, AreaResources.Show_Word_Category_in_Concordance);
-				menu.Tag = new List<object> { AreaServices.ConcordanceMachineName, AreaServices.WordPartOfSpeech, AreaServices.WordPartOfSpeech };
+				menu.Tag = new List<object> { LanguageExplorerConstants.ConcordanceMachineName, AreaServices.WordPartOfSpeech, AreaServices.WordPartOfSpeech };
 			}
 			// </menu>  End of "Show Concordance of" menu.
 
@@ -2536,7 +2537,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			if (CanJumpToTool(currentToolMachineName, AreaServices.WordPartOfSpeech))
 			{
 				menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, ContextMenuStrip, SandboxJumpToTool_Clicked, AreaResources.Show_in_Category_Edit);
-				menu.Tag = new List<object> { AreaServices.PosEditMachineName, PartOfSpeechTags.kClassName };
+				menu.Tag = new List<object> { LanguageExplorerConstants.PosEditMachineName, PartOfSpeechTags.kClassName };
 			}
 			/*
 			<item command="CmdWordPOSJumpToDefault" />
@@ -2547,7 +2548,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			if (CanJumpToTool(currentToolMachineName, AreaServices.WordPartOfSpeech))
 			{
 				menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForToolStripMenuItem(menuItems, concordanceMenuHolder, SandboxJumpToTool_Clicked, AreaResources.Show_Word_Category_in_Category_Edit);
-				menu.Tag = new List<object> { AreaServices.PosEditMachineName, AreaServices.WordPartOfSpeech, AreaServices.WordPartOfSpeech };
+				menu.Tag = new List<object> { LanguageExplorerConstants.PosEditMachineName, AreaServices.WordPartOfSpeech, AreaServices.WordPartOfSpeech };
 			}
 			/*
 			<item command="CmdEndoCompoundRuleJumpToDefault" />
@@ -2558,7 +2559,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			if (CanJumpToTool(currentToolMachineName, MoEndoCompoundTags.kClassName))
 			{
 				menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, ContextMenuStrip, SandboxJumpToTool_Clicked, AreaResources.Show_in_Compound_Rules_Editor);
-				menu.Tag = new List<object> { AreaServices.CompoundRuleAdvancedEditMachineName, MoEndoCompoundTags.kClassName };
+				menu.Tag = new List<object> { LanguageExplorerConstants.CompoundRuleAdvancedEditMachineName, MoEndoCompoundTags.kClassName };
 			}
 			/*
 			<item command="CmdExoCompoundRuleJumpToDefault" />
@@ -2569,7 +2570,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			if (CanJumpToTool(currentToolMachineName, MoExoCompoundTags.kClassName))
 			{
 				menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, ContextMenuStrip, SandboxJumpToTool_Clicked, AreaResources.Show_in_Compound_Rules_Editor);
-				menu.Tag = new List<object> { AreaServices.CompoundRuleAdvancedEditMachineName, MoExoCompoundTags.kClassName };
+				menu.Tag = new List<object> { LanguageExplorerConstants.CompoundRuleAdvancedEditMachineName, MoExoCompoundTags.kClassName };
 			}
 			/*
 			<item command="CmdPhonemeJumpToDefault" />
@@ -2580,7 +2581,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			if (CanJumpToTool(currentToolMachineName, PhPhonemeTags.kClassName))
 			{
 				menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, ContextMenuStrip, SandboxJumpToTool_Clicked, AreaResources.Show_in_Phonemes_Editor);
-				menu.Tag = new List<object> { AreaServices.PhonemeEditMachineName, PhPhonemeTags.kClassName };
+				menu.Tag = new List<object> { LanguageExplorerConstants.PhonemeEditMachineName, PhPhonemeTags.kClassName };
 			}
 			/*
 			<item command="CmdNaturalClassJumpToDefault" />
@@ -2591,7 +2592,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			if (CanJumpToTool(currentToolMachineName, PhNCSegmentsTags.kClassName))
 			{
 				menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, ContextMenuStrip, SandboxJumpToTool_Clicked, AreaResources.Show_in_Natural_Classes_Editor);
-				menu.Tag = new List<object> { AreaServices.NaturalClassEditMachineName, PhNCSegmentsTags.kClassName };
+				menu.Tag = new List<object> { LanguageExplorerConstants.NaturalClassEditMachineName, PhNCSegmentsTags.kClassName };
 			}
 			/*
 			<item command="CmdEnvironmentsJumpToDefault" />
@@ -2602,7 +2603,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			if (CanJumpToTool(currentToolMachineName, PhEnvironmentTags.kClassName))
 			{
 				menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, ContextMenuStrip, SandboxJumpToTool_Clicked, AreaResources.Show_in_Environments_Editor);
-				menu.Tag = new List<object> { AreaServices.EnvironmentEditMachineName, PhEnvironmentTags.kClassName };
+				menu.Tag = new List<object> { LanguageExplorerConstants.EnvironmentEditMachineName, PhEnvironmentTags.kClassName };
 			}
 			if (realObject.CanDelete && (realObject is IWfiMorphBundle || realObject is IWfiAnalysis))
 			{
@@ -3962,7 +3963,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			// enable it (GetHvoForJumpToToolClass will return zero for class "PartOfSpeech" if there's no
 			// morpheme), when clicking ON the POS for the word, the PartOfSpeechUi object will enable it.
 			// So in this special case we have to claim to have handled the task but should NOT enable it.
-			if (activeToolMachineName == AreaServices.PosEditMachineName && className == PartOfSpeechTags.kClassName && m_hvoRightClickMorph == 0)
+			if (activeToolMachineName == LanguageExplorerConstants.PosEditMachineName && className == PartOfSpeechTags.kClassName && m_hvoRightClickMorph == 0)
 			{
 				return false;
 			}

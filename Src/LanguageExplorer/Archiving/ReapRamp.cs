@@ -208,7 +208,7 @@ namespace LanguageExplorer.Archiving
 			{
 				domains |= SilDomain.Ling_InterlinearizedText;
 			}
-			var cTexts = cache.LangProject.Texts.Count();
+			var cTexts = cache.LangProject.Texts.Count;
 			if (cTexts > 0)
 			{
 				domains |= SilDomain.Ling_Text;

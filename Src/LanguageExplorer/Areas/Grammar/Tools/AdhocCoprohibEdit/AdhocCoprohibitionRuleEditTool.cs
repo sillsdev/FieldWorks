@@ -45,7 +45,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.AdhocCoprohibEdit
 	/// allow individual constraints to be turned off in the parsing of such examples, in order to verify that the constraint works, and that
 	/// it is (still) needed. However, the need for such an attr is probably more general than this class; see my email of 18 Jan 2000.
 	/// </remarks>
-	[Export(AreaServices.GrammarAreaMachineName, typeof(ITool))]
+	[Export(LanguageExplorerConstants.GrammarAreaMachineName, typeof(ITool))]
 	internal sealed class AdhocCoprohibitionRuleEditTool : ITool
 	{
 		private AdhocCoprohibitionRuleEditToolMenuHelper _toolMenuHelper;
@@ -145,12 +145,12 @@ namespace LanguageExplorer.Areas.Grammar.Tools.AdhocCoprohibEdit
 		/// Get the internal name of the component.
 		/// </summary>
 		/// <remarks>NB: This is the machine friendly name, not the user friendly name.</remarks>
-		public string MachineName => AreaServices.AdhocCoprohibitionRuleEditMachineName;
+		public string MachineName => LanguageExplorerConstants.AdhocCoprohibitionRuleEditMachineName;
 
 		/// <summary>
 		/// User-visible localized component name.
 		/// </summary>
-		public string UiName => StringTable.Table.LocalizeLiteralValue(AreaServices.AdhocCoprohibitionRuleEditUiName);
+		public string UiName => StringTable.Table.LocalizeLiteralValue(LanguageExplorerConstants.AdhocCoprohibitionRuleEditUiName);
 
 		#endregion
 
@@ -159,7 +159,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.AdhocCoprohibEdit
 		/// <summary>
 		/// Get the area for the tool.
 		/// </summary>
-		[field: Import(AreaServices.GrammarAreaMachineName)]
+		[field: Import(LanguageExplorerConstants.GrammarAreaMachineName)]
 		public IArea Area { get; private set; }
 
 		/// <summary>
@@ -237,7 +237,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.AdhocCoprohibEdit
 				_dataTree.DataTreeSliceContextMenuParameterObject.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ContextMenuName.mnuDataTree_Delete_Adhoc_Group, Create_mnuDataTree_Delete_Adhoc_Group);
 			}
 
-			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_Delete_Adhoc_Morpheme(Slice slice, ContextMenuName contextMenuId)
+			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_Delete_Adhoc_Morpheme(ISlice slice, ContextMenuName contextMenuId)
 			{
 				Require.That(contextMenuId == ContextMenuName.mnuDataTree_Delete_Adhoc_Morpheme, $"Expected argument value of '{ContextMenuName.mnuDataTree_Delete_Adhoc_Morpheme.ToString()}', but got '{contextMenuId.ToString()}' instead.");
 
@@ -257,7 +257,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.AdhocCoprohibEdit
 				return new Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>>(contextMenuStrip, menuItems);
 			}
 
-			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_Delete_Adhoc_Allomorph(Slice slice, ContextMenuName contextMenuId)
+			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_Delete_Adhoc_Allomorph(ISlice slice, ContextMenuName contextMenuId)
 			{
 				Require.That(contextMenuId == ContextMenuName.mnuDataTree_Delete_Adhoc_Allomorph, $"Expected argument value of '{ContextMenuName.mnuDataTree_Delete_Adhoc_Allomorph.ToString()}', but got '{contextMenuId.ToString()}' instead.");
 
@@ -277,7 +277,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.AdhocCoprohibEdit
 				return new Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>>(contextMenuStrip, menuItems);
 			}
 
-			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_Delete_Adhoc_Group(Slice slice, ContextMenuName contextMenuId)
+			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_Delete_Adhoc_Group(ISlice slice, ContextMenuName contextMenuId)
 			{
 				Require.That(contextMenuId == ContextMenuName.mnuDataTree_Delete_Adhoc_Group, $"Expected argument value of '{ContextMenuName.mnuDataTree_Delete_Adhoc_Group.ToString()}', but got '{contextMenuId.ToString()}' instead.");
 
@@ -297,7 +297,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.AdhocCoprohibEdit
 				return new Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>>(contextMenuStrip, menuItems);
 			}
 
-			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_Adhoc_Group_Members(Slice slice, ContextMenuName contextMenuId)
+			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_Adhoc_Group_Members(ISlice slice, ContextMenuName contextMenuId)
 			{
 				Require.That(contextMenuId == ContextMenuName.mnuDataTree_Adhoc_Group_Members, $"Expected argument value of '{ContextMenuName.mnuDataTree_Adhoc_Group_Members.ToString()}', but got '{contextMenuId.ToString()}' instead.");
 

@@ -2,6 +2,7 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using LanguageExplorer;
 using LanguageExplorer.Areas;
 using NUnit.Framework;
 
@@ -16,7 +17,7 @@ namespace LanguageExplorerTests.Repository
 		[TestFixtureSetUp]
 		public override void FixtureSetup()
 		{
-			_areaMachineName = AreaServices.ListsAreaMachineName;
+			_areaMachineName = LanguageExplorerConstants.ListsAreaMachineName;
 
 			base.FixtureSetup();
 		}
@@ -42,36 +43,36 @@ namespace LanguageExplorerTests.Repository
 		/// <summary>
 		/// Make sure the Lists area has tools in the right order.
 		/// </summary>
-		[TestCase(AreaServices.DomainTypeEditUiName, 0, AreaServices.DomainTypeEditMachineName)]
-		[TestCase(AreaServices.AnthroEditUiName, 1, AreaServices.AnthroEditMachineName)]
-		[TestCase(AreaServices.ComplexEntryTypeEditUiName, 2, AreaServices.ComplexEntryTypeEditMachineName)]
-		[TestCase(AreaServices.ConfidenceEditUiName, 3, AreaServices.ConfidenceEditMachineName)]
-		[TestCase(AreaServices.DialectsListEditUiName, 4, AreaServices.DialectsListEditMachineName)]
-		[TestCase(AreaServices.EducationEditUiName, 5, AreaServices.EducationEditMachineName)]
-		[TestCase(AreaServices.ExtNoteTypeEditUiName, 6, AreaServices.ExtNoteTypeEditMachineName)]
-		[TestCase(AreaServices.FeatureTypesAdvancedEditUiName, 7, AreaServices.FeatureTypesAdvancedEditMachineName)]
-		[TestCase(AreaServices.GenresEditUiName, 8, AreaServices.GenresEditMachineName)]
-		[TestCase(AreaServices.LanguagesListEditUiName, 9, AreaServices.LanguagesListEditMachineName)]
-		[TestCase(AreaServices.LexRefEditUiName, 10, AreaServices.LexRefEditMachineName)]
-		[TestCase(AreaServices.LocationsEditUiName, 11, AreaServices.LocationsEditMachineName)]
-		[TestCase(AreaServices.MorphTypeEditUiName, 12, AreaServices.MorphTypeEditMachineName)]
-		[TestCase(AreaServices.RecTypeEditUiName, 13, AreaServices.RecTypeEditMachineName)]
-		[TestCase(AreaServices.PeopleEditUiName, 14, AreaServices.PeopleEditMachineName)]
-		[TestCase(AreaServices.PositionsEditUiName, 15, AreaServices.PositionsEditMachineName)]
-		[TestCase(AreaServices.PublicationsEditUiName, 16, AreaServices.PublicationsEditMachineName)]
-		[TestCase(AreaServices.RestrictionsEditUiName, 17, AreaServices.RestrictionsEditMachineName)]
-		[TestCase(AreaServices.ReversalToolReversalIndexPOSUiName, 18, AreaServices.ReversalToolReversalIndexPOSMachineName)]
-		[TestCase(AreaServices.RoleEditUiName, 19, AreaServices.RoleEditMachineName)]
-		[TestCase(AreaServices.SemanticDomainEditUiName, 20, AreaServices.SemanticDomainEditMachineName)]
-		[TestCase(AreaServices.SenseTypeEditUiName, 21, AreaServices.SenseTypeEditMachineName)]
-		[TestCase(AreaServices.StatusEditUiName, 22, AreaServices.StatusEditMachineName)]
-		[TestCase(AreaServices.ChartmarkEditUiName, 23, AreaServices.ChartmarkEditMachineName)]
-		[TestCase(AreaServices.CharttempEditUiName, 24, AreaServices.CharttempEditMachineName)]
-		[TestCase(AreaServices.TextMarkupTagsEditUiName, 25, AreaServices.TextMarkupTagsEditMachineName)]
-		[TestCase(AreaServices.TimeOfDayEditUiName, 26, AreaServices.TimeOfDayEditMachineName)]
-		[TestCase(AreaServices.TranslationTypeEditUiName, 27, AreaServices.TranslationTypeEditMachineName)]
-		[TestCase(AreaServices.UsageTypeEditUiName, 28, AreaServices.UsageTypeEditMachineName)]
-		[TestCase(AreaServices.VariantEntryTypeEditUiName, 29, AreaServices.VariantEntryTypeEditMachineName)]
+		[TestCase(LanguageExplorerConstants.DomainTypeEditUiName, 0, LanguageExplorerConstants.DomainTypeEditMachineName)]
+		[TestCase(LanguageExplorerConstants.AnthroEditUiName, 1, LanguageExplorerConstants.AnthroEditMachineName)]
+		[TestCase(LanguageExplorerConstants.ComplexEntryTypeEditUiName, 2, LanguageExplorerConstants.ComplexEntryTypeEditMachineName)]
+		[TestCase(LanguageExplorerConstants.ConfidenceEditUiName, 3, LanguageExplorerConstants.ConfidenceEditMachineName)]
+		[TestCase(LanguageExplorerConstants.DialectsListEditUiName, 4, LanguageExplorerConstants.DialectsListEditMachineName)]
+		[TestCase(LanguageExplorerConstants.EducationEditUiName, 5, LanguageExplorerConstants.EducationEditMachineName)]
+		[TestCase(LanguageExplorerConstants.ExtNoteTypeEditUiName, 6, LanguageExplorerConstants.ExtNoteTypeEditMachineName)]
+		[TestCase(LanguageExplorerConstants.FeatureTypesAdvancedEditUiName, 7, LanguageExplorerConstants.FeatureTypesAdvancedEditMachineName)]
+		[TestCase(LanguageExplorerConstants.GenresEditUiName, 8, LanguageExplorerConstants.GenresEditMachineName)]
+		[TestCase(LanguageExplorerConstants.LanguagesListEditUiName, 9, LanguageExplorerConstants.LanguagesListEditMachineName)]
+		[TestCase(LanguageExplorerConstants.LexRefEditUiName, 10, LanguageExplorerConstants.LexRefEditMachineName)]
+		[TestCase(LanguageExplorerConstants.LocationsEditUiName, 11, LanguageExplorerConstants.LocationsEditMachineName)]
+		[TestCase(LanguageExplorerConstants.MorphTypeEditUiName, 12, LanguageExplorerConstants.MorphTypeEditMachineName)]
+		[TestCase(LanguageExplorerConstants.RecTypeEditUiName, 13, LanguageExplorerConstants.RecTypeEditMachineName)]
+		[TestCase(LanguageExplorerConstants.PeopleEditUiName, 14, LanguageExplorerConstants.PeopleEditMachineName)]
+		[TestCase(LanguageExplorerConstants.PositionsEditUiName, 15, LanguageExplorerConstants.PositionsEditMachineName)]
+		[TestCase(LanguageExplorerConstants.PublicationsEditUiName, 16, LanguageExplorerConstants.PublicationsEditMachineName)]
+		[TestCase(LanguageExplorerConstants.RestrictionsEditUiName, 17, LanguageExplorerConstants.RestrictionsEditMachineName)]
+		[TestCase(LanguageExplorerConstants.ReversalToolReversalIndexPOSUiName, 18, LanguageExplorerConstants.ReversalToolReversalIndexPOSMachineName)]
+		[TestCase(LanguageExplorerConstants.RoleEditUiName, 19, LanguageExplorerConstants.RoleEditMachineName)]
+		[TestCase(LanguageExplorerConstants.SemanticDomainEditUiName, 20, LanguageExplorerConstants.SemanticDomainEditMachineName)]
+		[TestCase(LanguageExplorerConstants.SenseTypeEditUiName, 21, LanguageExplorerConstants.SenseTypeEditMachineName)]
+		[TestCase(LanguageExplorerConstants.StatusEditUiName, 22, LanguageExplorerConstants.StatusEditMachineName)]
+		[TestCase(LanguageExplorerConstants.ChartmarkEditUiName, 23, LanguageExplorerConstants.ChartmarkEditMachineName)]
+		[TestCase(LanguageExplorerConstants.CharttempEditUiName, 24, LanguageExplorerConstants.CharttempEditMachineName)]
+		[TestCase(LanguageExplorerConstants.TextMarkupTagsEditUiName, 25, LanguageExplorerConstants.TextMarkupTagsEditMachineName)]
+		[TestCase(LanguageExplorerConstants.TimeOfDayEditUiName, 26, LanguageExplorerConstants.TimeOfDayEditMachineName)]
+		[TestCase(LanguageExplorerConstants.TranslationTypeEditUiName, 27, LanguageExplorerConstants.TranslationTypeEditMachineName)]
+		[TestCase(LanguageExplorerConstants.UsageTypeEditUiName, 28, LanguageExplorerConstants.UsageTypeEditMachineName)]
+		[TestCase(LanguageExplorerConstants.VariantEntryTypeEditUiName, 29, LanguageExplorerConstants.VariantEntryTypeEditMachineName)]
 		public void AreaRepositoryHasAllListsToolsInCorrectOrder(string uiName, int idx, string expectedMachineName)
 		{
 			DoTests(uiName, idx, expectedMachineName);

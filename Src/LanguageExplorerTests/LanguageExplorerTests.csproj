@@ -105,6 +105,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\RootSite.TestUtilities.dll</HintPath>
     </Reference>
+    <Reference Include="SIL.Archiving, Version=6.0.0.0, Culture=neutral, processorArchitecture=AMD64">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Output\Debug\SIL.Archiving.dll</HintPath>
+    </Reference>
     <Reference Include="SIL.Core.Desktop, Version=4.1.0.0, Culture=neutral, PublicKeyToken=cab3c8c5232dfcf2, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\SIL.Core.Desktop.dll</HintPath>
@@ -237,8 +241,6 @@
     <Compile Include="Areas\TextsAndWords\Interlinear\TriStateTreeViewTests.cs" />
     <Compile Include="Controls\AlphaOutlineTests.cs" />
     <Compile Include="CreateOverrideTests.cs" />
-    <Compile Include="DeleteListHelper.cs" />
-    <Compile Include="DeleteCustomListTestsBase.cs" />
     <Compile Include="Areas\StandFormatExportTests.cs" />
     <Compile Include="Areas\TextsAndWords\Interlinear\TextsTriStateTreeViewTests.cs" />
     <Compile Include="Controls\CollectorEnvTests.cs" />
@@ -284,7 +286,7 @@
     <Compile Include="Controls\DetailControls\AtomicReferenceLauncherTests.cs" />
     <Compile Include="Controls\DetailControls\DataTreeTests.cs" />
     <Compile Include="Controls\DetailControls\PhoneEnvReferenceViewTests.cs" />
-    <Compile Include="Controls\DetailControls\SliceFactoryTests.cs" />
+    <Compile Include="MiscExtensionsTests.cs" />
     <Compile Include="Controls\DetailControls\SliceTests.cs" />
     <Compile Include="Controls\DetailControls\VectorReferenceLauncherTests.cs" />
     <Compile Include="Areas\TextsAndWords\Discourse\AdvancedMTDialogLogicTests.cs" />
@@ -405,10 +407,9 @@
     <Compile Include="DictionaryConfiguration\Migration\PreHistoricMigratorTests.cs" />
     <Compile Include="Controls\XMLViews\ConfiguredExportTests.cs" />
     <Compile Include="Controls\XMLViews\DhListViewTests.cs" />
-    <Compile Include="Controls\XMLViews\LayoutMergerTests.cs" />
+    <Compile Include="Controls\LayoutMergerTests.cs" />
     <Compile Include="Controls\XMLViews\SearchEngineTests.cs" />
     <Compile Include="Controls\XMLViews\TestColumnConfigureDialog.cs" />
-    <Compile Include="Controls\XMLViews\TestLayoutMerge.cs" />
     <Compile Include="Controls\XMLViews\TestManyOneBrowse.cs" />
     <Compile Include="Controls\XMLViews\TestNeededPropertyInfo.cs" />
     <Compile Include="Controls\XMLViews\TestObjectListPublisher.cs" />

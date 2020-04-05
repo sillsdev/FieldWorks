@@ -95,7 +95,7 @@ namespace LanguageExplorer.DictionaryConfiguration.Migration
 		/// <remarks>Must be called in an UndoableUnitOfWork.</remarks>
 		private void PerformMigrationUOW()
 		{
-			var tool = m_configDirSuffixBeingMigrated == DictionaryConfigurationServices.DictionaryConfigurationDirectoryName ? AreaServices.LexiconDictionaryMachineName : AreaServices.ReversalEditCompleteMachineName;
+			var tool = m_configDirSuffixBeingMigrated == DictionaryConfigurationServices.DictionaryConfigurationDirectoryName ? LanguageExplorerConstants.LexiconDictionaryMachineName : LanguageExplorerConstants.ReversalEditCompleteMachineName;
 			LegacyConfigurationUtils.BuildTreeFromLayoutAndParts(GetConfigureLayoutsNodeForTool(tool), this);
 		}
 
@@ -106,9 +106,9 @@ namespace LanguageExplorer.DictionaryConfiguration.Migration
 		{
 			switch (tool)
 			{
-				case AreaServices.LexiconDictionaryMachineName:
+				case LanguageExplorerConstants.LexiconDictionaryMachineName:
 					return XDocument.Parse(LexiconResources.LexiconDictionaryConfigureLayouts).Root;
-				case AreaServices.ReversalEditCompleteMachineName:
+				case LanguageExplorerConstants.ReversalEditCompleteMachineName:
 					return XDocument.Parse(LexiconResources.ReversalEditCompleteToolParameters).Root.Element("docview").Element("parameters").Element("configureLayouts");
 			}
 			return null;

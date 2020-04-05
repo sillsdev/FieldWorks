@@ -22,7 +22,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.LexRefEdit
 	/// <summary>
 	/// ITool implementation for the "lexRefEdit" tool in the "lists" area.
 	/// </summary>
-	[Export(AreaServices.ListsAreaMachineName, typeof(ITool))]
+	[Export(LanguageExplorerConstants.ListsAreaMachineName, typeof(ITool))]
 	internal sealed class LexRefEditTool : IListTool
 	{
 		private const string LexRefTypeList = "LexRefTypeList";
@@ -113,12 +113,12 @@ namespace LanguageExplorer.Areas.Lists.Tools.LexRefEdit
 		/// Get the internal name of the component.
 		/// </summary>
 		/// <remarks>NB: This is the machine friendly name, not the user friendly name.</remarks>
-		public string MachineName => AreaServices.LexRefEditMachineName;
+		public string MachineName => LanguageExplorerConstants.LexRefEditMachineName;
 
 		/// <summary>
 		/// User-visible localized component name.
 		/// </summary>
-		public string UiName => StringTable.Table.LocalizeLiteralValue(AreaServices.LexRefEditUiName);
+		public string UiName => StringTable.Table.LocalizeLiteralValue(LanguageExplorerConstants.LexRefEditUiName);
 
 		#endregion
 
@@ -127,7 +127,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.LexRefEdit
 		/// <summary>
 		/// Get the area for the tool.
 		/// </summary>
-		[field: Import(AreaServices.ListsAreaMachineName)]
+		[field: Import(LanguageExplorerConstants.ListsAreaMachineName)]
 		public IArea Area { get; private set; }
 
 		/// <summary>

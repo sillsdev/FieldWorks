@@ -16,13 +16,13 @@ using SIL.LCModel;
 
 namespace LanguageExplorer.Areas.Lists
 {
-	[Export(AreaServices.ListsAreaMachineName, typeof(IArea))]
+	[Export(LanguageExplorerConstants.ListsAreaMachineName, typeof(IArea))]
 	[Export(typeof(IArea))]
 	internal sealed class ListsArea : IListArea
 	{
-		[ImportMany(AreaServices.ListsAreaMachineName)]
+		[ImportMany(LanguageExplorerConstants.ListsAreaMachineName)]
 		private IEnumerable<ITool> _myBuiltinTools;
-		private string PropertyNameForToolName => $"{AreaServices.ToolForAreaNamed_}{MachineName}";
+		private string PropertyNameForToolName => $"{LanguageExplorerConstants.ToolForAreaNamed_}{MachineName}";
 		[Import]
 		private IPropertyTable _propertyTable;
 		private SortedDictionary<string, ITool> _sortedDictionaryOfAllTools;
@@ -57,7 +57,7 @@ namespace LanguageExplorer.Areas.Lists
 		/// </remarks>
 		public void Activate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
-			_propertyTable.SetDefault(PropertyNameForToolName, AreaServices.ListsAreaDefaultToolMachineName, true);
+			_propertyTable.SetDefault(PropertyNameForToolName, LanguageExplorerConstants.ListsAreaDefaultToolMachineName, true);
 			_listAreaMenuHelper = new ListAreaMenuHelper(majorFlexComponentParameters, this);
 		}
 
@@ -83,8 +83,8 @@ namespace LanguageExplorer.Areas.Lists
 		/// </summary>
 		public void EnsurePropertiesAreCurrent()
 		{
-			_propertyTable.SetProperty(AreaServices.InitialArea, MachineName, true, settingsGroup: SettingsGroup.LocalSettings);
-			var toolToPersist = ActiveTool ?? _sortedDictionaryOfAllTools.Values.First(tool => tool.MachineName == AreaServices.ListsAreaDefaultToolMachineName);
+			_propertyTable.SetProperty(LanguageExplorerConstants.InitialArea, MachineName, true, settingsGroup: SettingsGroup.LocalSettings);
+			var toolToPersist = ActiveTool ?? _sortedDictionaryOfAllTools.Values.First(tool => tool.MachineName == LanguageExplorerConstants.ListsAreaDefaultToolMachineName);
 			toolToPersist.EnsurePropertiesAreCurrent();
 		}
 
@@ -96,12 +96,12 @@ namespace LanguageExplorer.Areas.Lists
 		/// Get the internal name of the component.
 		/// </summary>
 		/// <remarks>NB: This is the machine friendly name, not the user friendly name.</remarks>
-		public string MachineName => AreaServices.ListsAreaMachineName;
+		public string MachineName => LanguageExplorerConstants.ListsAreaMachineName;
 
 		/// <summary>
 		/// User-visible localized component name.
 		/// </summary>
-		public string UiName => StringTable.Table.LocalizeLiteralValue(AreaServices.ListsAreaUiName);
+		public string UiName => StringTable.Table.LocalizeLiteralValue(LanguageExplorerConstants.ListsAreaUiName);
 
 		#endregion
 
@@ -117,14 +117,14 @@ namespace LanguageExplorer.Areas.Lists
 			get
 			{
 				var propertyNameForToolName = PropertyNameForToolName;
-				var propertyValue = _propertyTable.GetValue(propertyNameForToolName, AreaServices.ListsAreaDefaultToolMachineName);
+				var propertyValue = _propertyTable.GetValue(propertyNameForToolName, LanguageExplorerConstants.ListsAreaDefaultToolMachineName);
 				var retVal = _sortedDictionaryOfAllTools.Values.FirstOrDefault(tool => tool.MachineName == propertyValue);
 				if (retVal != null)
 				{
 					return retVal;
 				}
 				// How can this be? I've seen a case where the Guid in the name is not in any custom tool.
-				propertyValue = AreaServices.ListsAreaDefaultToolMachineName;
+				propertyValue = LanguageExplorerConstants.ListsAreaDefaultToolMachineName;
 				return _sortedDictionaryOfAllTools.Values.First(tool => tool.MachineName == propertyValue);
 			}
 		}

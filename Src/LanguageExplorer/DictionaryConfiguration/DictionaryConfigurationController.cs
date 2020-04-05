@@ -1500,7 +1500,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 						MasterRefreshRequired = false; // We're reloading the whole app, that's refresh enough
 						View.Close();
 
-						Publisher.Publish(new PublisherParameterObject("ReloadAreaTools", AreaServices.ListsAreaMachineName));
+						Publisher.Publish(new PublisherParameterObject("ReloadAreaTools", LanguageExplorerConstants.ListsAreaMachineName));
 					};
 					SetManagerTypeInfo(dialog);
 					dialog.ShowDialog(View as Form);

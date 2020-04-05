@@ -81,7 +81,7 @@ namespace LanguageExplorer.Areas.Lexicon
 		/// <summary>
 		/// Semantic Domains should be editable only in the Lists area.
 		/// </summary>
-		protected override bool Editable => AreaServices.ListsAreaMachineName.Equals(m_propertyTable.GetValue<string>(AreaServices.AreaChoice));
+		protected override bool Editable => LanguageExplorerConstants.ListsAreaMachineName.Equals(m_propertyTable.GetValue<string>(LanguageExplorerConstants.AreaChoice));
 
 		private FwTextBox CreateSearchBox()
 		{

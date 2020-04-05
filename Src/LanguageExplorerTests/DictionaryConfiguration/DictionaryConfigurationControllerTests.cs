@@ -752,7 +752,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		{
 			using (var testView = new TestConfigurableDictionaryView())
 			{
-				_propertyTable.SetProperty(AreaServices.ToolChoice, AreaServices.ReversalEditCompleteMachineName);
+				_propertyTable.SetProperty(LanguageExplorerConstants.ToolChoice, LanguageExplorerConstants.ReversalEditCompleteMachineName);
 				var projectPath = Path.Combine(LcmFileHelper.GetConfigSettingsDir(Cache.ProjectId.ProjectFolder), "Test", "test" + ReversalIndexServices.ConfigFileExtension);
 				//SUT
 				var controller = new DictionaryConfigurationController {View = testView, _model = _model };
@@ -768,7 +768,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			var defaultPath = string.Concat(Path.Combine(Path.Combine(FwDirectoryFinder.DefaultConfigurations, "Test"), "test"), ReversalIndexServices.ConfigFileExtension);
 			using (var testView = new TestConfigurableDictionaryView())
 			{
-				_propertyTable.SetProperty(AreaServices.ToolChoice, AreaServices.ReversalEditCompleteMachineName);
+				_propertyTable.SetProperty(LanguageExplorerConstants.ToolChoice, LanguageExplorerConstants.ReversalEditCompleteMachineName);
 				//SUT
 				var controller = new DictionaryConfigurationController { View = testView, _model = _model };
 				controller.InitializeFlexComponent(_flexComponentParameters);
@@ -1499,7 +1499,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			using (var testView = new TestConfigurableDictionaryView())
 			{
 				var entryWithHeadword = CreateLexEntryWithHeadword();
-				_propertyTable.SetProperty(AreaServices.ToolChoice, AreaServices.LexiconDictionaryMachineName);
+				_propertyTable.SetProperty(LanguageExplorerConstants.ToolChoice, LanguageExplorerConstants.LexiconDictionaryMachineName);
 				Cache.ProjectId.Path = DictionaryConfigurationServices.TestDataPath;
 				var dcc = new DictionaryConfigurationController(testView, entryWithHeadword);
 				dcc.InitializeFlexComponent(_flexComponentParameters);
@@ -1521,7 +1521,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			using (var testView = new TestConfigurableDictionaryView())
 			{
 				var entryWithHeadword = CreateLexEntryWithHeadword();
-				_propertyTable.SetProperty(AreaServices.ToolChoice, AreaServices.LexiconDictionaryMachineName);
+				_propertyTable.SetProperty(LanguageExplorerConstants.ToolChoice, LanguageExplorerConstants.LexiconDictionaryMachineName);
 				Cache.ProjectId.Path = DictionaryConfigurationServices.TestDataPath;
 				var dcc = new DictionaryConfigurationController(testView, entryWithHeadword);
 				dcc.InitializeFlexComponent(_flexComponentParameters);
@@ -1542,7 +1542,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			using (var testView = new TestConfigurableDictionaryView())
 			{
 				var entryWithHeadword = CreateLexEntryWithHeadword();
-				_propertyTable.SetProperty(AreaServices.ToolChoice, AreaServices.LexiconDictionaryMachineName);
+				_propertyTable.SetProperty(LanguageExplorerConstants.ToolChoice, LanguageExplorerConstants.LexiconDictionaryMachineName);
 				Cache.ProjectId.Path = DictionaryConfigurationServices.TestDataPath;
 				var dcc = new DictionaryConfigurationController(testView, entryWithHeadword);
 				dcc.InitializeFlexComponent(_flexComponentParameters);

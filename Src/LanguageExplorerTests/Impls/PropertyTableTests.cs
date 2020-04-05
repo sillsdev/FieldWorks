@@ -890,7 +890,7 @@ namespace LanguageExplorerTests.Impls
 				"LanguageExplorer.Areas.Lexicon.CircularRefBreaker",
 				"LanguageExplorer.Areas.TextsAndWords.Interlinear.AddAllomorphDlg",
 				"LanguageExplorer.Impls.RestoreDefaultsDlg",
-				"LanguageExplorer.Areas.Grammar.Tools.AdhocCoprohibEdit.AdhocCoProhibAtomicLauncher",
+				"LanguageExplorer.Controls.DetailControls.AdhocCoProhibAtomicLauncher",
 				"LanguageExplorer.Areas.TextsAndWords.ImportWordSetDlg",
 				"LanguageExplorer.LcmUi.PosFilter",
 				"LanguageExplorer.Controls.DetailControls.AtomicReferenceLauncher",

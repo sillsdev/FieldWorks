@@ -161,7 +161,7 @@ namespace LanguageExplorer.Areas
 				guid = MyRecordList.CurrentObject.Guid;
 			}
 			MyRecordList.SelectedRecordChanged(true, true); // make sure we update the record count in the Status bar.
-			PropertyTable.GetValue<LinkHandler>(LanguageExplorerConstants.LinkHandler).AddLinkToHistory(new FwLinkArgs(PropertyTable.GetValue<string>(AreaServices.ToolChoice), guid));
+			PropertyTable.GetValue<LinkHandler>(LanguageExplorerConstants.LinkHandler).AddLinkToHistory(new FwLinkArgs(PropertyTable.GetValue<string>(LanguageExplorerConstants.ToolChoice), guid));
 		}
 
 		/// <summary>

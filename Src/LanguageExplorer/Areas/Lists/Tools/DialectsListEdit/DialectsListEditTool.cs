@@ -21,7 +21,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.DialectsListEdit
 	/// <summary>
 	/// ITool implementation for the "dialectsListEdit" tool in the "lists" area.
 	/// </summary>
-	[Export(AreaServices.ListsAreaMachineName, typeof(ITool))]
+	[Export(LanguageExplorerConstants.ListsAreaMachineName, typeof(ITool))]
 	internal sealed class DialectsListEditTool : IListTool
 	{
 		private const string DialectsList = "DialectsList";
@@ -63,7 +63,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.DialectsListEdit
 		public void Activate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
 			_cache = majorFlexComponentParameters.LcmCache;
-			majorFlexComponentParameters.FlexComponentParameters.PropertyTable.SetDefault($"{AreaServices.ToolForAreaNamed_}{Area.MachineName}", MachineName, true);
+			majorFlexComponentParameters.FlexComponentParameters.PropertyTable.SetDefault($"{LanguageExplorerConstants.ToolForAreaNamed_}{Area.MachineName}", MachineName, true);
 			if (_recordList == null)
 			{
 				_recordList = majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>(LanguageExplorerConstants.RecordListRepository).GetRecordList(DialectsList, majorFlexComponentParameters.StatusBar, FactoryMethod);
@@ -107,12 +107,12 @@ namespace LanguageExplorer.Areas.Lists.Tools.DialectsListEdit
 		/// Get the internal name of the component.
 		/// </summary>
 		/// <remarks>NB: This is the machine friendly name, not the user friendly name.</remarks>
-		public string MachineName => AreaServices.DialectsListEditMachineName;
+		public string MachineName => LanguageExplorerConstants.DialectsListEditMachineName;
 
 		/// <summary>
 		/// User-visible localized component name.
 		/// </summary>
-		public string UiName => StringTable.Table.LocalizeLiteralValue(AreaServices.DialectsListEditUiName);
+		public string UiName => StringTable.Table.LocalizeLiteralValue(LanguageExplorerConstants.DialectsListEditUiName);
 
 		#endregion
 
@@ -121,7 +121,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.DialectsListEdit
 		/// <summary>
 		/// Get the area for the tool.
 		/// </summary>
-		[field: Import(AreaServices.ListsAreaMachineName)]
+		[field: Import(LanguageExplorerConstants.ListsAreaMachineName)]
 		public IArea Area { get; private set; }
 
 		/// <summary>

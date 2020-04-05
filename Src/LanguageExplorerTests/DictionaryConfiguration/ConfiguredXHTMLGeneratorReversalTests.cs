@@ -45,7 +45,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			base.TestSetup();
 
 			_flexComponentParameters = TestSetupServices.SetupEverything(Cache);
-			_flexComponentParameters.PropertyTable.SetProperty($"{AreaServices.ToolForAreaNamed_}{AreaServices.LexiconAreaMachineName}", AreaServices.ReversalEditCompleteMachineName);
+			_flexComponentParameters.PropertyTable.SetProperty($"{LanguageExplorerConstants.ToolForAreaNamed_}{LanguageExplorerConstants.LexiconAreaMachineName}", LanguageExplorerConstants.ReversalEditCompleteMachineName);
 			XHTMLStringBuilder = new StringBuilder();
 		}
 

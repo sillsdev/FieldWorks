@@ -23,7 +23,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.WordListConcordance
 	/// <summary>
 	/// ITool implementation for the "wordListConcordance" tool in the "textsWords" area.
 	/// </summary>
-	[Export(AreaServices.TextAndWordsAreaMachineName, typeof(ITool))]
+	[Export(LanguageExplorerConstants.TextAndWordsAreaMachineName, typeof(ITool))]
 	internal sealed class WordListConcordanceTool : ITool
 	{
 		private WordListConcordanceToolMenuHelper _toolMenuHelper;
@@ -160,12 +160,12 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.WordListConcordance
 		/// Get the internal name of the component.
 		/// </summary>
 		/// <remarks>NB: This is the machine friendly name, not the user friendly name.</remarks>
-		public string MachineName => AreaServices.WordListConcordanceMachineName;
+		public string MachineName => LanguageExplorerConstants.WordListConcordanceMachineName;
 
 		/// <summary>
 		/// User-visible localized component name.
 		/// </summary>
-		public string UiName => StringTable.Table.LocalizeLiteralValue(AreaServices.WordListConcordanceUiName);
+		public string UiName => StringTable.Table.LocalizeLiteralValue(LanguageExplorerConstants.WordListConcordanceUiName);
 
 		#endregion
 
@@ -174,7 +174,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.WordListConcordance
 		/// <summary>
 		/// Get the area for the tool.
 		/// </summary>
-		[field: Import(AreaServices.TextAndWordsAreaMachineName)]
+		[field: Import(LanguageExplorerConstants.TextAndWordsAreaMachineName)]
 		public IArea Area { get; private set; }
 
 		/// <summary>
@@ -278,7 +278,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.WordListConcordance
 
 			private void CmdWordformJumpToAnalyses_Click(object sender, EventArgs e)
 			{
-				LinkHandler.PublishFollowLinkMessage(_majorFlexComponentParameters.FlexComponentParameters.Publisher, new FwLinkArgs(AreaServices.AnalysesMachineName, _recordListProvidingOwner.CurrentObject.Guid));
+				LinkHandler.PublishFollowLinkMessage(_majorFlexComponentParameters.FlexComponentParameters.Publisher, new FwLinkArgs(LanguageExplorerConstants.AnalysesMachineName, _recordListProvidingOwner.CurrentObject.Guid));
 			}
 
 			private void CmdDeleteSelectedObject_Clicked(object sender, EventArgs e)

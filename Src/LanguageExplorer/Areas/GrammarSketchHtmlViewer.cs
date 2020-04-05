@@ -176,7 +176,7 @@ namespace LanguageExplorer.Areas
 			ShowSketch();
 
 			//add our current state to the history system
-			PropertyTable.GetValue<LinkHandler>(LanguageExplorerConstants.LinkHandler).AddLinkToHistory(new FwLinkArgs(PropertyTable.GetValue<string>(AreaServices.ToolChoice), Guid.Empty));
+			PropertyTable.GetValue<LinkHandler>(LanguageExplorerConstants.LinkHandler).AddLinkToHistory(new FwLinkArgs(PropertyTable.GetValue<string>(LanguageExplorerConstants.ToolChoice), Guid.Empty));
 		}
 
 		#endregion
@@ -580,7 +580,7 @@ namespace LanguageExplorer.Areas
 		}
 
 		/// <summary />
-		public string AreaName => AreaServices.GrammarAreaMachineName;
+		public string AreaName => LanguageExplorerConstants.GrammarAreaMachineName;
 		#endregion // IMainContentControl implementation
 
 		/// <summary />

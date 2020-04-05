@@ -5,10 +5,12 @@
 using System;
 using System.Windows.Forms;
 using LanguageExplorer.Areas;
+using LanguageExplorer.Areas.Lists;
 using NUnit.Framework;
 using SIL.LCModel;
 using SIL.LCModel.Core.Cellar;
 using SIL.LCModel.Core.Text;
+using SIL.LCModel.DomainServices;
 
 namespace LanguageExplorerTests.Areas.Lists
 {
@@ -16,9 +18,47 @@ namespace LanguageExplorerTests.Areas.Lists
 	/// Tests for the method object DeleteCustomList.
 	/// </summary>
 	[TestFixture]
-	public class DeleteCustomListTests : DeleteCustomListTestsBase
+	public sealed class DeleteCustomListTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
 	{
+		private ICmPossibilityListRepository m_listRepo;
+		private ICmPossibilityFactory m_possFact;
+		private ICmPossibilityList m_testList;
+		private DeleteListHelper m_helper;
+		private int m_userWs;
+
 		#region Setup and Helper Methods
+
+		protected override void CreateTestData()
+		{
+			base.CreateTestData();
+			var servLoc = Cache.ServiceLocator;
+			m_listRepo = servLoc.GetInstance<ICmPossibilityListRepository>();
+			m_possFact = servLoc.GetInstance<ICmPossibilityFactory>();
+			m_userWs = Cache.DefaultUserWs;
+			const string name = "Test Custom List";
+			const string description = "Test Custom list description";
+			var listName = TsStringUtils.MakeString(name, m_userWs);
+			var listDesc = TsStringUtils.MakeString(description, m_userWs);
+			m_testList = Cache.ServiceLocator.GetInstance<ICmPossibilityListFactory>().CreateUnowned(listName.Text, m_userWs);
+			m_testList.Name.set_String(m_userWs, listName);
+			m_testList.Description.set_String(m_userWs, listDesc);
+			// Set various properties of CmPossibilityList
+			m_testList.DisplayOption = (int)PossNameType.kpntNameAndAbbrev;
+			m_testList.PreventDuplicates = true;
+			m_testList.IsSorted = true;
+			m_testList.WsSelector = WritingSystemServices.kwsAnals;
+			m_testList.IsVernacular = false;
+			m_testList.Depth = 127;
+			m_helper = new DeleteListHelper(Cache);
+		}
+
+		private ICmCustomItem CreateCustomItemAddToList(ICmPossibilityList owningList, string itemName)
+		{
+			var item = Cache.ServiceLocator.GetInstance<ICmCustomItemFactory>().Create();
+			owningList.PossibilitiesOS.Add(item);
+			item.Name.set_String(m_userWs, TsStringUtils.MakeString(itemName, m_userWs));
+			return item;
+		}
 
 		private FieldDescription CreateCustomAtomicReferenceFieldInLexEntry(Guid listGuid)
 		{
@@ -369,6 +409,24 @@ namespace LanguageExplorerTests.Areas.Lists
 			// Verify
 			Assert.AreEqual(clists - 1, m_listRepo.Count, "'User' responded 'Yes'. Should have deleted the list.");
 			Assert.AreEqual(newPossName + "1", m_helper.PossNameInDlg, "Name of possibility found is not the one we put in there!");
+		}
+
+		private sealed class DeleteListHelper : DeleteCustomList
+		{
+			internal string PossNameInDlg { get; private set; }
+
+			internal DeleteListHelper(LcmCache cache) : base(cache)
+			{
+				PossNameInDlg = string.Empty;
+			}
+
+			protected override DialogResult CheckWithUser(string name)
+			{
+				PossNameInDlg = name;
+				return ExpectedTestResponse;
+			}
+
+			internal DialogResult ExpectedTestResponse { get; set; }
 		}
 	}
 }

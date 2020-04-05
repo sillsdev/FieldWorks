@@ -551,8 +551,8 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		{
 			get
 			{
-				var acceptableToolNames = new HashSet<string> { AreaServices.AnalysesMachineName, AreaServices.WordListConcordanceMachineName, AreaServices.BulkEditWordformsMachineName };
-				return acceptableToolNames.Contains(PropertyTable.GetValue<string>(AreaServices.ToolChoice, string.Empty));
+				var acceptableToolNames = new HashSet<string> { LanguageExplorerConstants.AnalysesMachineName, LanguageExplorerConstants.WordListConcordanceMachineName, LanguageExplorerConstants.BulkEditWordformsMachineName };
+				return acceptableToolNames.Contains(PropertyTable.GetValue<string>(LanguageExplorerConstants.ToolChoice, string.Empty));
 			}
 		}
 
@@ -561,7 +561,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			get
 			{
 				var acceptableTabNames = new HashSet<string> { "RawText", "Interlinearizer", "Gloss" };
-				return PropertyTable.GetValue<string>(AreaServices.ToolChoice) == AreaServices.InterlinearEditMachineName
+				return PropertyTable.GetValue<string>(LanguageExplorerConstants.ToolChoice) == LanguageExplorerConstants.InterlinearEditMachineName
 					   && acceptableTabNames.Contains(PropertyTable.GetValue(TextAndWordsArea.InterlinearTab, string.Empty));
 			}
 		}

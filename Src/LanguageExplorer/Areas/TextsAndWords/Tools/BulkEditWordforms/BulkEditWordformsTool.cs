@@ -21,7 +21,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.BulkEditWordforms
 	/// <summary>
 	/// ITool implementation for the "bulkEditWordforms" tool in the "textsWords" area.
 	/// </summary>
-	[Export(AreaServices.TextAndWordsAreaMachineName, typeof(ITool))]
+	[Export(LanguageExplorerConstants.TextAndWordsAreaMachineName, typeof(ITool))]
 	internal sealed class BulkEditWordformsTool : ITool
 	{
 		private BulkEditWordformsToolMenuHelper _toolMenuHelper;
@@ -114,12 +114,12 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.BulkEditWordforms
 		/// Get the internal name of the component.
 		/// </summary>
 		/// <remarks>NB: This is the machine friendly name, not the user friendly name.</remarks>
-		public string MachineName => AreaServices.BulkEditWordformsMachineName;
+		public string MachineName => LanguageExplorerConstants.BulkEditWordformsMachineName;
 
 		/// <summary>
 		/// User-visible localized component name.
 		/// </summary>
-		public string UiName => StringTable.Table.LocalizeLiteralValue(AreaServices.BulkEditWordformsUiName);
+		public string UiName => StringTable.Table.LocalizeLiteralValue(LanguageExplorerConstants.BulkEditWordformsUiName);
 
 		#endregion
 
@@ -128,7 +128,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.BulkEditWordforms
 		/// <summary>
 		/// Get the area for the tool.
 		/// </summary>
-		[field: Import(AreaServices.TextAndWordsAreaMachineName)]
+		[field: Import(LanguageExplorerConstants.TextAndWordsAreaMachineName)]
 		public IArea Area { get; private set; }
 
 		/// <summary>
@@ -201,12 +201,12 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.BulkEditWordforms
 
 				// <command id="CmdWordformJumpToAnalyses" label="Show in Word Analyses" message="JumpToTool">
 				var menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _majorFlexComponentParameters.SharedEventHandlers.GetEventHandler(Command.CmdJumpToTool), AreaResources.Show_in_Word_Analyses);
-				menu.Tag = new List<object> { _majorFlexComponentParameters.FlexComponentParameters.Publisher, AreaServices.AnalysesMachineName, _recordList };
+				menu.Tag = new List<object> { _majorFlexComponentParameters.FlexComponentParameters.Publisher, LanguageExplorerConstants.AnalysesMachineName, _recordList };
 				_jumpMenus.Add(menu);
 
 				// <command id="CmdWordformJumpToConcordance" label="Show Wordform in Concordance" message="JumpToTool">
 				menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _majorFlexComponentParameters.SharedEventHandlers.GetEventHandler(Command.CmdJumpToTool), AreaResources.Show_Wordform_in_Concordance);
-				menu.Tag = new List<object> { _majorFlexComponentParameters.FlexComponentParameters.Publisher, AreaServices.ConcordanceMachineName, _recordList };
+				menu.Tag = new List<object> { _majorFlexComponentParameters.FlexComponentParameters.Publisher, LanguageExplorerConstants.ConcordanceMachineName, _recordList };
 				_jumpMenus.Add(menu);
 
 				ToolStripMenuItemFactory.CreateToolStripSeparatorForContextMenuStrip(contextMenuStrip);

@@ -61,11 +61,11 @@ namespace LanguageExplorerTests.Repository
 		/// <summary>
 		/// Make sure the AreaRepository has the areas in the right order.
 		/// </summary>
-		[TestCase(AreaServices.LexiconAreaUiName, 0, AreaServices.LexiconAreaMachineName)]
-		[TestCase(AreaServices.TextAndWordsAreaUiName, 1, AreaServices.TextAndWordsAreaMachineName)]
-		[TestCase(AreaServices.GrammarAreaUiName, 2, AreaServices.GrammarAreaMachineName)]
-		[TestCase(AreaServices.NotebookAreaUiName, 3, AreaServices.NotebookAreaMachineName)]
-		[TestCase(AreaServices.ListsAreaUiName, 4, AreaServices.ListsAreaMachineName)]
+		[TestCase(LanguageExplorerConstants.LexiconAreaUiName, 0, LanguageExplorerConstants.LexiconAreaMachineName)]
+		[TestCase(LanguageExplorerConstants.TextAndWordsAreaUiName, 1, LanguageExplorerConstants.TextAndWordsAreaMachineName)]
+		[TestCase(LanguageExplorerConstants.GrammarAreaUiName, 2, LanguageExplorerConstants.GrammarAreaMachineName)]
+		[TestCase(LanguageExplorerConstants.NotebookAreaUiName, 3, LanguageExplorerConstants.NotebookAreaMachineName)]
+		[TestCase(LanguageExplorerConstants.ListsAreaUiName, 4, LanguageExplorerConstants.ListsAreaMachineName)]
 		public void AreaRepositoryHasAllToolsInCorrectOrder(string uiName, int idx, string expectedMachineName)
 		{
 			var area = _allAreas[uiName];

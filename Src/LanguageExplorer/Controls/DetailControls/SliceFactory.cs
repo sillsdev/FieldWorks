@@ -3,82 +3,26 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Collections;
+using System.Diagnostics;
 using System.IO;
 using System.Xml.Linq;
-using LanguageExplorer.Areas;
-using LanguageExplorer.Areas.Grammar;
-using LanguageExplorer.Areas.Grammar.Tools.AdhocCoprohibEdit;
-using LanguageExplorer.Areas.Grammar.Tools.PhonemeEdit;
-using LanguageExplorer.Areas.Grammar.Tools.PhonologicalFeaturesAdvancedEdit;
-using LanguageExplorer.Areas.Grammar.Tools.PosEdit;
-using LanguageExplorer.Areas.Lexicon;
-using LanguageExplorer.Areas.Lexicon.Tools.Edit;
-using LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes;
-using LanguageExplorer.Areas.Lists.Tools.FeatureTypesAdvancedEdit;
-using LanguageExplorer.Areas.Notebook;
-using LanguageExplorer.Areas.Notebook.Tools.NotebookEdit;
-using LanguageExplorer.Areas.TextsAndWords.Tools.Analyses;
 using LanguageExplorer.Controls.DetailControls.Resources;
+using LanguageExplorer.Controls.DetailControls.Slices;
 using LanguageExplorer.Controls.XMLViews;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Core.Cellar;
-using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.DomainServices;
 using SIL.Xml;
 
 namespace LanguageExplorer.Controls.DetailControls
 {
-	/// <summary></summary>
+	/// <summary />
 	internal static class SliceFactory
 	{
-		private static int GetWs(LcmCache cache, IPropertyTable propertyTable, XElement node, string sAttr = "ws")
-		{
-			var wsSpec = XmlUtils.GetOptionalAttributeValue(node, sAttr);
-			if (wsSpec == null)
-			{
-				return 0;
-			}
-			var wsContainer = cache.ServiceLocator.WritingSystems;
-			int ws;
-			switch (wsSpec)
-			{
-				case "vernacular":
-					ws = wsContainer.DefaultVernacularWritingSystem.Handle;
-					break;
-				case "analysis":
-					ws = wsContainer.DefaultAnalysisWritingSystem.Handle;
-					break;
-				case "pronunciation":
-					ws = wsContainer.DefaultPronunciationWritingSystem.Handle;
-					break;
-				case "reversal":
-					var riGuid = FwUtils.GetObjectGuidIfValid(propertyTable, LanguageExplorerConstants.ReversalIndexGuid);
-					if (!riGuid.Equals(Guid.Empty))
-					{
-						IReversalIndex ri;
-						if (cache.ServiceLocator.GetInstance<IReversalIndexRepository>().TryGetObject(riGuid, out ri))
-						{
-							ws = cache.ServiceLocator.WritingSystemManager.GetWsFromStr(ri.WritingSystem);
-						}
-						else
-						{
-							throw new ApplicationException("Couldn't find current reversal index.");
-						}
-					}
-					else
-					{
-						throw new ApplicationException("Couldn't find current reversal index.");
-					}
-					break;
-				default:
-					throw new ApplicationException($"ws must be 'vernacular', 'analysis', 'pronunciation',  or 'reversal': it said '{wsSpec}'.");
-			}
-			return ws;
-		}
-
 		/// <summary></summary>
-		internal static Slice Create(LcmCache cache, string editor, int flid, XElement node, ICmObject obj, IPersistenceProvider persistenceProvider, FlexComponentParameters flexComponentParameters, XElement caller, ObjSeqHashMap reuseMap, ISharedEventHandlers sharedEventHandlers)
+		internal static ISlice Create(LcmCache cache, string editor, int flid, XElement configurationElement, ICmObject obj, IPersistenceProvider persistenceProvider, FlexComponentParameters flexComponentParameters, XElement caller, ObjSeqHashMap reuseMap, ISharedEventHandlers sharedEventHandlers)
 		{
 			Slice newSlice;
 			var sliceWasRecyled = false;
@@ -93,21 +37,21 @@ namespace LanguageExplorer.Controls.DetailControls
 					{
 						if (flid == 0)
 						{
-							throw new ApplicationException("field attribute required for multistring " + node.GetOuterXml());
+							throw new ApplicationException("field attribute required for multistring " + configurationElement.GetOuterXml());
 						}
-						var wsSpec = XmlUtils.GetOptionalAttributeValue(node, "ws");
+						var wsSpec = XmlUtils.GetOptionalAttributeValue(configurationElement, "ws");
 						var wsMagic = WritingSystemServices.GetMagicWsIdFromName(wsSpec);
 						if (wsMagic == 0)
 						{
 							throw new ApplicationException($"ws must be 'all vernacular', 'all analysis', 'analysis vernacular', or 'vernacular analysis': it said '{wsSpec}'.");
 						}
-						var forceIncludeEnglish = XmlUtils.GetOptionalBooleanAttributeValue(node, "forceIncludeEnglish", false);
-						var spellCheck = XmlUtils.GetOptionalBooleanAttributeValue(node, "spell", true);
+						var forceIncludeEnglish = XmlUtils.GetOptionalBooleanAttributeValue(configurationElement, "forceIncludeEnglish", false);
+						var spellCheck = XmlUtils.GetOptionalBooleanAttributeValue(configurationElement, "spell", true);
 						// Either the part or the caller can specify that it isn't editable.
 						// (The part may 'know' this, e.g. because it's a virtual attr not capable of editing;
 						// more commonly the caller knows there isn't enough context for safe editing.
-						var editable = XmlUtils.GetOptionalBooleanAttributeValue(caller, "editable", true) && XmlUtils.GetOptionalBooleanAttributeValue(node, "editable", true);
-						var optionalWsSpec = XmlUtils.GetOptionalAttributeValue(node, "optionalWs");
+						var editable = XmlUtils.GetOptionalBooleanAttributeValue(caller, "editable", true) && XmlUtils.GetOptionalBooleanAttributeValue(configurationElement, "editable", true);
+						var optionalWsSpec = XmlUtils.GetOptionalAttributeValue(configurationElement, "optionalWs");
 						var wsMagicOptional = WritingSystemServices.GetMagicWsIdFromName(optionalWsSpec);
 						// Create a new slice everytime for the MultiStringSlice - There are display glitches with height when reused
 						newSlice = new MultiStringSlice(obj, flid, wsMagic, wsMagicOptional, forceIncludeEnglish, editable, spellCheck);
@@ -162,16 +106,16 @@ namespace LanguageExplorer.Controls.DetailControls
 					{
 						if (flid == 0)
 						{
-							throw new ApplicationException("field attribute required for basic properties " + node.GetOuterXml());
+							throw new ApplicationException("field attribute required for basic properties " + configurationElement.GetOuterXml());
 						}
-						var ws = GetWs(cache, flexComponentParameters.PropertyTable, node);
+						var ws = GetWs(flexComponentParameters.PropertyTable, configurationElement, cache);
 						newSlice = ws != 0 ? new StringSlice(obj, flid, ws) : new StringSlice(obj, flid);
-						var fShowWsLabel = XmlUtils.GetOptionalBooleanAttributeValue(node, "labelws", false);
+						var fShowWsLabel = XmlUtils.GetOptionalBooleanAttributeValue(configurationElement, "labelws", false);
 						if (fShowWsLabel)
 						{
 							((StringSlice)newSlice).ShowWsLabel = true;
 						}
-						var wsEmpty = GetWs(cache, flexComponentParameters.PropertyTable, node, "wsempty");
+						var wsEmpty = GetWs(flexComponentParameters.PropertyTable, configurationElement, cache, "wsempty");
 						if (wsEmpty != 0)
 						{
 							((StringSlice)newSlice).DefaultWs = wsEmpty;
@@ -180,9 +124,9 @@ namespace LanguageExplorer.Controls.DetailControls
 					}
 				case "jtview":
 					{
-						var layout = XmlUtils.GetOptionalAttributeValue(caller, "param") ?? XmlUtils.GetMandatoryAttributeValue(node, "layout");
+						var layout = XmlUtils.GetOptionalAttributeValue(caller, "param") ?? XmlUtils.GetMandatoryAttributeValue(configurationElement, "layout");
 						// Editable if BOTH the caller (part ref) AND the node itself (the slice) say so...or at least if neither says not.
-						var editable = XmlUtils.GetOptionalBooleanAttributeValue(caller, "editable", true) && XmlUtils.GetOptionalBooleanAttributeValue(node, "editable", true);
+						var editable = XmlUtils.GetOptionalBooleanAttributeValue(caller, "editable", true) && XmlUtils.GetOptionalBooleanAttributeValue(configurationElement, "editable", true);
 						newSlice = new ViewSlice(new XmlView(obj.Hvo, layout, editable));
 						break;
 					}
@@ -193,12 +137,12 @@ namespace LanguageExplorer.Controls.DetailControls
 					}
 				case "enumcombobox":
 					{
-						newSlice = new EnumComboSlice(cache, obj, flid, node.Element("deParams"));
+						newSlice = new EnumComboSlice(cache, obj, flid, configurationElement.Element("deParams"));
 						break;
 					}
 				case "referencecombobox":
 					{
-						newSlice = new ReferenceComboBoxSlice(cache, obj, flid, persistenceProvider);
+						newSlice = new ReferenceComboBoxSlice(cache, obj, flid);
 						break;
 					}
 				case "typeaheadrefatomic":
@@ -213,8 +157,8 @@ namespace LanguageExplorer.Controls.DetailControls
 					}
 				case "lit": // was "message"
 					{
-						var message = XmlUtils.GetMandatoryAttributeValue(node, "message");
-						var sTranslate = XmlUtils.GetOptionalAttributeValue(node, "translate", "");
+						var message = XmlUtils.GetMandatoryAttributeValue(configurationElement, "message");
+						var sTranslate = XmlUtils.GetOptionalAttributeValue(configurationElement, "translate", "");
 						if (sTranslate.Trim().ToLower() != "do not translate")
 						{
 							message = StringTable.Table.LocalizeLiteralValue(message);
@@ -231,7 +175,7 @@ namespace LanguageExplorer.Controls.DetailControls
 					{
 						try
 						{
-							newSlice = new ImageSlice(FwDirectoryFinder.CodeDirectory, XmlUtils.GetMandatoryAttributeValue(node, "param1"));
+							newSlice = new ImageSlice(FwDirectoryFinder.CodeDirectory, XmlUtils.GetMandatoryAttributeValue(configurationElement, "param1"));
 						}
 						catch (Exception error)
 						{
@@ -241,12 +185,12 @@ namespace LanguageExplorer.Controls.DetailControls
 					}
 				case "checkbox":
 					{
-						newSlice = new CheckboxSlice(cache, obj, flid, node);
+						newSlice = new CheckboxSlice(cache, obj, flid, configurationElement);
 						break;
 					}
 				case "checkboxwithrefresh":
 					{
-						newSlice = new CheckboxRefreshSlice(cache, obj, flid, node);
+						newSlice = new CheckboxRefreshSlice(cache, obj, flid, configurationElement);
 						break;
 					}
 				case "time":
@@ -285,7 +229,7 @@ namespace LanguageExplorer.Controls.DetailControls
 					}
 				case "atomicreferenceposdisabled":
 					{
-						newSlice = new AutomicReferencePOSDisabledSlice(cache, obj, flid, flexComponentParameters);
+						newSlice = new AtomicReferencePOSDisabledSlice(cache, obj, flid, flexComponentParameters);
 						break;
 					}
 
@@ -316,7 +260,7 @@ namespace LanguageExplorer.Controls.DetailControls
 					}
 				case "sttext":
 					{
-						newSlice = new StTextSlice(sharedEventHandlers, obj, flid, GetWs(cache, flexComponentParameters.PropertyTable, node));
+						newSlice = new StTextSlice(sharedEventHandlers, obj, flid, GetWs(flexComponentParameters.PropertyTable, configurationElement, cache));
 						break;
 					}
 				case "featuresysteminflectionfeaturelistdlglauncher":
@@ -371,7 +315,7 @@ namespace LanguageExplorer.Controls.DetailControls
 					}
 				case "interlinear":
 					{
-						newSlice = new InterlinearSlice(sharedEventHandlers);
+						newSlice = new InterlinearSlice();
 						break;
 					}
 				case "metaruleformula":
@@ -471,7 +415,7 @@ namespace LanguageExplorer.Controls.DetailControls
 					}
 				case "ghostvector":
 					{
-						newSlice = new GhostReferenceVectorSlice(cache, obj, node);
+						newSlice = new GhostReferenceVectorSlice(cache, obj, configurationElement);
 						break;
 					}
 				case null:  //grouping nodes do not necessarily have any editor
@@ -483,7 +427,7 @@ namespace LanguageExplorer.Controls.DetailControls
 					// case "integer": // added back in to behave as "int" above
 					throw new Exception("use of obsolete editor type (message->lit, integer->int)");
 				case "autocustom":
-					newSlice = MakeAutoCustomSlice(sharedEventHandlers, cache, obj, caller, node);
+					newSlice = MakeAutoCustomSlice(cache, obj, caller, sharedEventHandlers, configurationElement);
 					if (newSlice == null)
 					{
 						return null;
@@ -491,16 +435,15 @@ namespace LanguageExplorer.Controls.DetailControls
 					break;
 				case "defaultvectorreferencedisabled": // second most common.
 					{
-						var rvSlice = reuseMap.GetSliceToReuse("ReferenceVectorDisabledSlice") as ReferenceVectorDisabledSlice;
-						if (rvSlice == null)
+						if (!(reuseMap.GetSliceToReuse("ReferenceVectorDisabledSlice") is ReferenceVectorDisabledSlice referenceVectorDisabledSlice))
 						{
 							newSlice = new ReferenceVectorDisabledSlice(cache, obj, flid);
 						}
 						else
 						{
 							sliceWasRecyled = true;
-							newSlice = rvSlice;
-							rvSlice.Reuse(obj, flid);
+							newSlice = referenceVectorDisabledSlice;
+							referenceVectorDisabledSlice.Reuse(obj, flid);
 						}
 						break;
 					}
@@ -515,7 +458,7 @@ namespace LanguageExplorer.Controls.DetailControls
 						//is there a bitmap file that we can show for this editor?
 						//Such bitmaps belong in the distFiles xde directory
 						var fwCodeDir = FwDirectoryFinder.CodeDirectory;
-						var editorBitmapRelativePath = "xde/" + editor + ".bmp";
+						var editorBitmapRelativePath = $"xde/{editor}.bmp";
 						newSlice = File.Exists(Path.Combine(fwCodeDir, editorBitmapRelativePath))
 							? (Slice)new ImageSlice(fwCodeDir, editorBitmapRelativePath)
 							: new LiteralMessageSlice(string.Format(DetailControlsStrings.ksBadEditorType, editor));
@@ -532,161 +475,211 @@ namespace LanguageExplorer.Controls.DetailControls
 			return newSlice;
 		}
 
-		/// <summary>
-		/// This is invoked when a generated part ref (<part ref="Custom" param="fieldName"/>)
-		/// invokes the standard slice (<slice editor="autoCustom" />). It comes up with the
-		/// appropriate default slice for the custom field indicated in the param attribute of
-		/// the caller.
-		/// </summary>
-		private static Slice MakeAutoCustomSlice(ISharedEventHandlers sharedEventHandlers, LcmCache cache, ICmObject obj, XElement caller, XElement configurationNode)
+		internal static void MakeGhostSlice(DataTree dataTree, LcmCache cache, FlexComponentParameters flexComponentParameters, ArrayList path, XElement node, ObjSeqHashMap reuseMap, ICmObject obj, ISlice parentSlice, int flidEmptyProp, XElement caller, int indent, ref int insertPosition)
 		{
-			var mdc = cache.DomainDataByFlid.MetaDataCache;
-			var flid = GetCustomFieldFlid(caller, mdc, obj);
-			if (flid == 0)
+			if (parentSlice != null)
+			{
+				Debug.Assert(!parentSlice.IsDisposed, "AddSimpleNode parameter 'parentSlice' is Disposed!");
+			}
+			var slice = GetMatchingSlice(path, reuseMap);
+			if (slice == null)
+			{
+				slice = new GhostStringSlice(obj, flidEmptyProp, node, cache);
+				slice.InitializeFlexComponent(flexComponentParameters);
+				// Set the label and abbreviation (in that order...abbr defaults to label if not given.
+				// Note that we don't have a "caller" here, so we pass 'node' as both arguments...
+				// means it gets searched twice if not found, but that's fairly harmless.
+				slice.Label = dataTree.GetLabel(node, node, obj, "ghostLabel");
+				slice.Abbreviation = dataTree.GetLabelAbbr(node, node, obj, slice.Label, "ghostAbbr");
+				// Install new item at appropriate position and level.
+				slice.Indent = indent;
+				slice.MyCmObject = obj;
+				slice.Cache = cache;
+				// We need a copy since we continue to modify path, so make it as compact as possible.
+				slice.Key = path.ToArray();
+				slice.ConfigurationNode = node;
+				slice.CallerNode = caller;
+				SetNodeWeight(node, slice);
+				slice.FinishInit();
+				dataTree.InsertSlice(insertPosition, slice);
+			}
+			else
+			{
+				dataTree.EnsureValidIndexForReusedSlice(slice, insertPosition);
+			}
+			slice.ParentSlice = parentSlice;
+			insertPosition++;
+		}
+
+		internal static void SetNodeWeight(XElement node, ISlice slice)
+		{
+			var weightString = XmlUtils.GetOptionalAttributeValue(node, "weight", "field");
+			ObjectWeight weight;
+			switch (weightString)
+			{
+				case "heavy":
+					weight = ObjectWeight.heavy;
+					break;
+				case "light":
+					weight = ObjectWeight.light;
+					break;
+				case "normal":
+					weight = ObjectWeight.normal;
+					break;
+				case "field":
+					weight = ObjectWeight.field;
+					break;
+				default:
+					throw new FwConfigurationException("Invalid 'weight' value, should be heavy, normal, light, or field");
+			}
+			slice.Weight = weight;
+		}
+
+		/// <summary>
+		/// Look for a reusable slice that matches the current path. If found, remove from map and return;
+		/// otherwise, return null.
+		/// </summary>
+		internal static ISlice GetMatchingSlice(ArrayList path, ObjSeqHashMap reuseMap)
+		{
+			// Review JohnT(RandyR): I don't see how this can really work.
+			// The original path (the key) used to set this does not, (and cannot) change,
+			// but it is very common for slices to come and go, as they are inserted/deleted,
+			// or when the Show hidden control is changed.
+			// Those kinds of big changes will produce the input 'path' parm,
+			// which has little hope of matching that fixed original key, won't it.
+			// I can see how it would work when a simple F4 refresh is being done,
+			// since the count of slices should remain the same.
+			var list = reuseMap[path];
+			if (list.Count <= 0)
 			{
 				return null;
 			}
+			var slice = (ISlice)list[0];
+			reuseMap.Remove(path, slice);
+			return slice;
+
+		}
+
+		private static Slice MakeAutoCustomSlice(LcmCache cache, ICmObject obj, XElement caller, ISharedEventHandlers sharedEventHandlers, XElement configurationElement)
+		{
+			var mdc = cache.DomainDataByFlid.MetaDataCache;
+			if (!mdc.GetManagedMetaDataCache().TryGetFieldId(obj.ClassID, XmlUtils.GetMandatoryAttributeValue(caller, "param"), out var innerFlid))
+			{
+				return null;
+			}
+
 			Slice slice = null;
-			var type = (CellarPropertyType)mdc.GetFieldType(flid);
+			var type = (CellarPropertyType)mdc.GetFieldType(innerFlid);
 			switch (type)
 			{
 				case CellarPropertyType.String:
 				case CellarPropertyType.MultiUnicode:
 				case CellarPropertyType.MultiString:
-					var ws = mdc.GetFieldWs(flid);
+					var ws = mdc.GetFieldWs(innerFlid);
 					switch (ws)
 					{
 						case 0: // a desperate default.
 						case WritingSystemServices.kwsAnal:
-							slice = new StringSlice(obj, flid, cache.DefaultAnalWs);
+							slice = new StringSlice(obj, innerFlid, cache.DefaultAnalWs);
 							break;
 						case WritingSystemServices.kwsVern:
-							slice = new StringSlice(obj, flid, cache.DefaultVernWs);
+							slice = new StringSlice(obj, innerFlid, cache.DefaultVernWs);
 							break;
 						case WritingSystemServices.kwsAnals:
 						case WritingSystemServices.kwsVerns:
 						case WritingSystemServices.kwsAnalVerns:
 						case WritingSystemServices.kwsVernAnals:
-							slice = new MultiStringSlice(obj, flid, ws, 0, false, true, true);
+							slice = new MultiStringSlice(obj, innerFlid, ws, 0, false, true, true);
 							break;
 						default:
 							throw new Exception("unhandled ws code in MakeAutoCustomSlice");
 					}
+
 					break;
 				case CellarPropertyType.Integer:
-					slice = new IntegerSlice(cache, obj, flid);
+					slice = new IntegerSlice(cache, obj, innerFlid);
 					break;
 				case CellarPropertyType.GenDate:
-					slice = new GenDateSlice(cache, obj, flid);
+					slice = new GenDateSlice(cache, obj, innerFlid);
 					break;
 				case CellarPropertyType.OwningAtomic:
-					var dstClsid = mdc.GetDstClsId(flid);
+					var dstClsid = mdc.GetDstClsId(innerFlid);
 					if (dstClsid == StTextTags.kClassId)
 					{
-						slice = new StTextSlice(sharedEventHandlers, obj, flid, cache.DefaultAnalWs);
+						slice = new StTextSlice(sharedEventHandlers, obj, innerFlid, cache.DefaultAnalWs);
 					}
+
 					break;
 				case CellarPropertyType.ReferenceAtomic:
-					slice = new AtomicReferenceSlice(cache, obj, flid);
+					slice = new AtomicReferenceSlice(cache, obj, innerFlid);
 					break;
 				case CellarPropertyType.ReferenceCollection:
 				case CellarPropertyType.ReferenceSequence:
-					slice = new ReferenceVectorSlice(cache, obj, flid);
-					SetConfigurationDisplayPropertyIfNeeded(configurationNode, obj, flid, cache.MainCacheAccessor, cache.LangProject.Services, cache.MetaDataCacheAccessor);
+					slice = new ReferenceVectorSlice(cache, obj, innerFlid);
+					configurationElement.SetConfigurationDisplayPropertyIfNeeded(obj, innerFlid, cache.MainCacheAccessor, cache.LangProject.Services, cache.MetaDataCacheAccessor);
 					break;
 			}
+
 			if (slice == null)
 			{
 				throw new Exception("unhandled field type in MakeAutoCustomSlice");
 			}
-			slice.Label = mdc.GetFieldLabel(flid);
+
+			slice.Label = mdc.GetFieldLabel(innerFlid);
 			return slice;
 		}
 
-		/// <summary>
-		/// Set configuration displayProperty from cmObjectCustomFieldFlid set elements' OwningList DisplayOption.
-		///
-		/// If cmObjectCustomFieldFlid refers to a set of elements (in cmObject), then examine the setting on the owning list of the
-		/// elements to determine which property of each element to use when
-		/// displaying each element in a slice, and record that information in configurationNode. This information is used
-		/// in DetailControls.VectorReferenceVc.Display().
-		/// Addresses LT-15705.
-		/// </summary>
-		internal static void SetConfigurationDisplayPropertyIfNeeded(XElement configurationNode, ICmObject cmObject, int cmObjectCustomFieldFlid, ISilDataAccess mainCacheAccessor, ILcmServiceLocator lcmServiceLocator, IFwMetaDataCache metadataCache)
+		internal static ISlice CreateDummyObject(int indent, XElement node, ArrayList path, ICmObject obj, int flid, int cnt, string layoutOverride, string layoutChoiceField, XElement caller)
 		{
-			var fieldType = metadataCache.GetFieldType(cmObjectCustomFieldFlid);
-			if (!(fieldType == (int)CellarPropertyType.ReferenceCollection || fieldType == (int)CellarPropertyType.OwningCollection || fieldType == (int)CellarPropertyType.ReferenceSequence
-			      || fieldType == (int)CellarPropertyType.OwningSequence))
+			return new DummyObjectSlice(indent, node, path, obj, flid, cnt, layoutOverride, layoutChoiceField, caller);
+		}
+
+		private static int GetWs(IPropertyTable propertyTable, XElement configurationElement, LcmCache cache, string sAttr = "ws")
+		{
+			var wsSpec = XmlUtils.GetOptionalAttributeValue(configurationElement, sAttr);
+			if (wsSpec == null)
 			{
-				return;
+				return 0;
 			}
-			var element = FetchFirstElementFromSet(cmObject, cmObjectCustomFieldFlid, mainCacheAccessor, lcmServiceLocator);
-			if (element == null)
+
+			var wsContainer = cache.ServiceLocator.WritingSystems;
+			int ws;
+			switch (wsSpec)
 			{
-				return;
-			}
-			var displayOption = element.OwningList.DisplayOption;
-			string propertyNameToGetAndShow = null;
-			switch ((PossNameType)displayOption)
-			{
-				case PossNameType.kpntName:
-					propertyNameToGetAndShow = "ShortNameTSS";
+				case "vernacular":
+					ws = wsContainer.DefaultVernacularWritingSystem.Handle;
 					break;
-				case PossNameType.kpntNameAndAbbrev:
-					propertyNameToGetAndShow = "AbbrAndNameTSS";
+				case "analysis":
+					ws = wsContainer.DefaultAnalysisWritingSystem.Handle;
 					break;
-				case PossNameType.kpntAbbreviation:
-					propertyNameToGetAndShow = "AbbrevHierarchyString";
+				case "pronunciation":
+					ws = wsContainer.DefaultPronunciationWritingSystem.Handle;
+					break;
+				case "reversal":
+					var riGuid = FwUtils.GetObjectGuidIfValid(propertyTable, LanguageExplorerConstants.ReversalIndexGuid);
+					if (!riGuid.Equals(Guid.Empty))
+					{
+						IReversalIndex ri;
+						if (cache.ServiceLocator.GetInstance<IReversalIndexRepository>().TryGetObject(riGuid, out ri))
+						{
+							ws = cache.ServiceLocator.WritingSystemManager.GetWsFromStr(ri.WritingSystem);
+						}
+						else
+						{
+							throw new ApplicationException("Couldn't find current reversal index.");
+						}
+					}
+					else
+					{
+						throw new ApplicationException("Couldn't find current reversal index.");
+					}
+
 					break;
 				default:
-					break;
+					throw new ApplicationException($"ws must be 'vernacular', 'analysis', 'pronunciation',  or 'reversal': it said '{wsSpec}'.");
 			}
-			if (propertyNameToGetAndShow == null)
-			{
-				return;
-			}
-			SetDisplayPropertyInXMLConfiguration(configurationNode, propertyNameToGetAndShow);
-		}
 
-		/// <summary>
-		/// Edit or build XML in configurationNode to set displayProperty to displayPropertyValue.
-		/// Just update an existing deParams node's displayProperty attribute if there is one already.
-		/// </summary>
-		private static void SetDisplayPropertyInXMLConfiguration(XElement configurationElement, string displayPropertyValue)
-		{
-			var displayPropertyAttribute = new XAttribute("displayProperty", displayPropertyValue);
-			var deParamsElement = configurationElement.Element("deParams");
-			if (deParamsElement == null)
-			{
-				configurationElement.Add(new XElement("deParams", displayPropertyAttribute));
-				return;
-			}
-			if (deParamsElement.Attribute("displayProperty") == null)
-			{
-				deParamsElement.Add(displayPropertyAttribute);
-				return;
-			}
-			deParamsElement.Attribute("displayProperty").SetValue(displayPropertyValue);
-		}
-
-		/// <summary>
-		/// For a set of elements in cmObject that are referred to by setFlid, return the first element, or null.
-		/// </summary>
-		private static ICmPossibility FetchFirstElementFromSet(ICmObject cmObject, int setFlid, ISilDataAccess mainCacheAccessor, ILcmServiceLocator lcmServiceLocator)
-		{
-			var elementCount = mainCacheAccessor.get_VecSize(cmObject.Hvo, setFlid);
-			if (elementCount == 0)
-			{
-				return null;
-			}
-			var firstElementHvo = mainCacheAccessor.get_VecItem(cmObject.Hvo, setFlid, 0);
-			return lcmServiceLocator.GetObject(firstElementHvo) as ICmPossibility;
-		}
-
-		internal static int GetCustomFieldFlid(XElement caller, IFwMetaDataCache mdc, ICmObject obj)
-		{
-			mdc.GetManagedMetaDataCache().TryGetFieldId(obj.ClassID, XmlUtils.GetMandatoryAttributeValue(caller, "param"), out var flid);
-			return flid;
+			return ws;
 		}
 	}
 }

@@ -13,7 +13,6 @@ using System.Text;
 using System.Windows.Forms;
 using System.Xml.Linq;
 using System.Xml.XPath;
-using LanguageExplorer.Areas;
 using LanguageExplorer.Controls.XMLViews;
 using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
@@ -72,7 +71,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// <summary>allows us to interpret class and field names and trace superclasses.</summary>
 		protected IFwMetaDataCache m_mdc;
 		/// <summary />
-		protected Slice m_currentSlice;
+		protected ISlice m_currentSlice;
 		/// <summary>used to restore current slice during RefreshList()</summary>
 		private string m_currentSlicePartName;
 		/// <summary>used to restore current slice during RefreshList()</summary>
@@ -80,7 +79,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// <summary>used to restore current slice during RefreshList()</summary>
 		private bool m_fSetCurrentSliceNew;
 		/// <summary>used to restore current slice during RefreshList()</summary>
-		private Slice m_currentSliceNew;
+		private ISlice m_currentSliceNew;
 		/// <summary>used to restore current slice during RefreshList()</summary>
 		private string m_sPartNameProperty;
 		/// <summary>used to restore current slice during RefreshList()</summary>
@@ -131,7 +130,7 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		// Set during ConstructSlices, to suppress certain behaviors not safe at this point.
 		internal bool ConstructingSlices { get; private set; }
-		public List<Slice> Slices { get; }
+		public List<ISlice> Slices { get; }
 
 		#endregion Data members
 
@@ -177,7 +176,7 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		private ToolTip ToolTip => m_tooltip ?? (m_tooltip = new ToolTip { ShowAlways = true });
 
-		private void InsertSlice(int index, Slice slice)
+		internal void InsertSlice(int index, ISlice slice)
 		{
 			InstallSlice(slice, index);
 			ResetTabIndices(index);
@@ -192,7 +191,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			}
 		}
 
-		private void InstallSlice(Slice slice, int index)
+		private void InstallSlice(ISlice slice, int index)
 		{
 			Debug.Assert(index >= 0 && index <= Slices.Count);
 
@@ -212,7 +211,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// For some strange reason, the first Controls.SetChildIndex doesn't always put it in the specified index.
 		/// The second time seems to work okay though.
 		/// </summary>
-		private void ForceSliceIndex(Slice slice, int index)
+		private void ForceSliceIndex(ISlice slice, int index)
 		{
 			if (index >= Slices.Count || Slices[index] == slice)
 			{
@@ -222,7 +221,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			Slices.Insert(index, slice);
 		}
 
-		private void SetToolTip(Slice slice)
+		private void SetToolTip(ISlice slice)
 		{
 			if (slice.ToolTip != null)
 			{
@@ -236,7 +235,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			{
 				return; // Too early to do much;
 			}
-			var movedSlice = sender is Slice slice ? slice : (Slice)((SplitContainer)sender).Parent; // Have to move up one parent notch to get to the Slice.
+			var movedSlice = sender is ISlice slice ? slice : (ISlice)((SplitContainer)sender).Parent; // Have to move up one parent notch to get to the Slice.
 			if (m_currentSlice != movedSlice)
 			{
 				return; // Too early to do much;
@@ -259,7 +258,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			movedSlice.TakeFocus(true);
 		}
 
-		private void AdjustSliceSplitPosition(Slice otherSlice)
+		private void AdjustSliceSplitPosition(ISlice otherSlice)
 		{
 			var otherSliceSC = otherSlice.SplitCont;
 			// Remove and re-add event handler when setting the value for the other fellow.
@@ -277,9 +276,9 @@ namespace LanguageExplorer.Controls.DetailControls
 			}
 		}
 
-		protected void InsertSliceRange(int insertPosition, ISet<Slice> slices)
+		protected void InsertSliceRange(int insertPosition, ISet<ISlice> slices)
 		{
-			var indexableSlices = new List<Slice>(slices.ToArray());
+			var indexableSlices = new List<ISlice>(slices.ToArray());
 			for (var i = indexableSlices.Count - 1; i >= 0; --i)
 			{
 				InstallSlice(indexableSlices[i], insertPosition);
@@ -292,7 +291,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// other things to do like adding to or removing from container. This is mainly for messing
 		/// with dummy slices.
 		/// </summary>
-		internal void RawSetSlice(int index, Slice slice)
+		internal void RawSetSlice(int index, ISlice slice)
 		{
 			Debug.Assert(slice != Slices[index], "Can't replace the slice with itself.");
 
@@ -309,7 +308,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// <summary>
 		/// Removes a slice but does NOT clean up tooltips; caller should do that.
 		/// </summary>
-		private void RemoveSlice(Slice gonner)
+		private void RemoveSlice(ISlice gonner)
 		{
 			RemoveSlice(gonner, Slices.IndexOf(gonner), false);
 		}
@@ -318,22 +317,22 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// this should ONLY be called from slice.Dispose(). It makes sure that when a slice
 		/// is removed by disposing it directly it gets removed from the Slices collection.
 		/// </summary>
-		internal void RemoveDisposedSlice(Slice gonner)
+		internal void RemoveDisposedSlice(ISlice gonner)
 		{
 			Slices.Remove(gonner);
 		}
 
-		private void RemoveSlice(Slice gonner, int index, bool fixToolTips = true)
+		private void RemoveSlice(ISlice gonner, int index, bool fixToolTips = true)
 		{
 			gonner.AboutToDiscard();
 			gonner.SplitCont.SplitterMoved -= slice_SplitterMoved;
-			Controls.Remove(gonner);
+			Controls.Remove(gonner.AsUserControl);
 			Debug.Assert(Slices[index] == gonner);
 			Slices.RemoveAt(index);
 			// Reset CurrentSlice, if appropriate.
 			if (gonner == m_currentSlice)
 			{
-				Slice newCurrent = null;
+				ISlice newCurrent = null;
 				if (Slices.Count > index)
 				{
 					// Get the one at the same index (next one after the one being removed).
@@ -361,7 +360,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			// we have to remove them all and re-add the remaining ones
 			// in order to have it really turn loose of the SliceTreeNode.
 			// But, only do all of that, if it actually has a ToolTip.
-			var gonnerHasToolTip = fixToolTips && (gonner.ToolTip != null);
+			var gonnerHasToolTip = fixToolTips && gonner.ToolTip != null;
 			if (gonnerHasToolTip)
 			{
 				m_tooltip.RemoveAll();
@@ -408,14 +407,14 @@ namespace LanguageExplorer.Controls.DetailControls
 
 			ShowingAllFields = showingAllFields;
 			DataTreeSliceContextMenuParameterObject = new DataTreeSliceContextMenuParameterObject();
-			Slices = new List<Slice>();
+			Slices = new List<ISlice>();
 			_sharedEventHandlers = sharedEventHandlers;
 		}
 
 		/// <summary>
-		/// Get the current slice as StTextSlice, or null if the is no current slice or it isn't a StTextSlice.
+		/// Get the current slice as IStTextSlice, or null if the is no current slice or it isn't a IStTextSlice.
 		/// </summary>
-		internal StTextSlice CurrentSliceAsStTextSlice => CurrentSlice as StTextSlice;
+		internal IStTextSlice CurrentSliceAsStTextSlice => CurrentSlice as IStTextSlice;
 
 		/// <summary>
 		/// Get the root layout name.
@@ -492,7 +491,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </remarks>
 		/// <exception cref="ArgumentException">Thrown if trying to set the current slice to null.</exception>
 		[Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-		public Slice CurrentSlice
+		public ISlice CurrentSlice
 		{
 			get
 			{
@@ -517,7 +516,7 @@ namespace LanguageExplorer.Controls.DetailControls
 					m_currentSliceNew = value;
 					return;
 				}
-				Slice oldSlice = null;
+				ISlice oldSlice = null;
 				// Tell the old geezer it isn't current anymore.
 				if (m_currentSlice != null)
 				{
@@ -533,7 +532,7 @@ namespace LanguageExplorer.Controls.DetailControls
 				// Tell new guy it is current.
 				m_currentSlice.SetCurrentState(true);
 				var index = m_currentSlice.IndexInContainer;
-				ScrollControlIntoView(m_currentSlice);
+				ScrollControlIntoView(m_currentSlice.AsUserControl);
 				// Ensure that we can tab and shift-tab. This requires that at least one
 				// following and one prior slice be a tab stop, if possible.
 				for (var i = index + 1; i < Slices.Count; i++)
@@ -564,7 +563,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// the object of a header node which is one of the slice's parents (or the slice itself),
 		/// if possible, otherwise, the root object. May return null if the nearest Parent is disposed.
 		/// </summary>
-		private ICmObject DescendantForSlice(Slice slice)
+		private ICmObject DescendantForSlice(ISlice slice)
 		{
 			var loopSlice = slice;
 			while (loopSlice != null && !loopSlice.IsDisposed)
@@ -863,8 +862,8 @@ namespace LanguageExplorer.Controls.DetailControls
 			{
 				return;
 			}
-			var toolChoice = PropertyTable.GetValue<string>(AreaServices.ToolChoice);
-			var areaChoice = PropertyTable.GetValue<string>(AreaServices.AreaChoice);
+			var toolChoice = PropertyTable.GetValue<string>(LanguageExplorerConstants.ToolChoice);
+			var areaChoice = PropertyTable.GetValue<string>(LanguageExplorerConstants.AreaChoice);
 			m_sPartNameProperty = $"{areaChoice}${toolChoice}$CurrentSlicePartName";
 			m_sObjGuidProperty = $"{areaChoice}${toolChoice}$CurrentSliceObjectGuid";
 		}
@@ -1188,7 +1187,7 @@ namespace LanguageExplorer.Controls.DetailControls
 						}
 						if (m_currentSlice != null)
 						{
-							ScrollControlIntoView(m_currentSlice);
+							ScrollControlIntoView(m_currentSlice.AsUserControl);
 						}
 					}
 				}
@@ -1228,7 +1227,7 @@ namespace LanguageExplorer.Controls.DetailControls
 				{
 					m_currentSliceNew = null;
 				}
-				var dummySlices = new List<Slice>(Slices.Count);
+				var dummySlices = new List<ISlice>(Slices.Count);
 				foreach (var slice in Slices)
 				{
 					slice.Visible = false;
@@ -1297,7 +1296,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// Answer true if the two slices are displaying fields of the same object.
 		/// Review: should we require more strictly, that the full path of objects in their keys are the same?
 		/// </summary>
-		private static bool SameSourceObject(Slice first, Slice second)
+		private static bool SameSourceObject(ISlice first, ISlice second)
 		{
 			return first.MyCmObject.Hvo == second.MyCmObject.Hvo;
 		}
@@ -1305,7 +1304,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// <summary>
 		/// Answer true if the second slice is a 'child' of the first (common key)
 		/// </summary>
-		private static bool IsChildSlice(Slice first, Slice second)
+		private static bool IsChildSlice(ISlice first, ISlice second)
 		{
 			if (second.Key == null || second.Key.Length <= first.Key.Length)
 			{
@@ -1345,7 +1344,7 @@ namespace LanguageExplorer.Controls.DetailControls
 						continue;
 					}
 					// shouldn't be visible
-					Slice nextSlice = null;
+					ISlice nextSlice = null;
 					if (i < Slices.Count - 1)
 					{
 						nextSlice = Slices[i + 1];
@@ -1368,7 +1367,7 @@ namespace LanguageExplorer.Controls.DetailControls
 					}
 					//LT-11962 Improvements to display in Info tab.
 					// (remove the line directly below the Notebook Record header)
-					if (XmlUtils.GetOptionalBooleanAttributeValue(slice.ConfigurationNode, "skipSpacerLine", false) && slice is SummarySlice)
+					if (XmlUtils.GetOptionalBooleanAttributeValue(slice.ConfigurationNode, "skipSpacerLine", false) && slice is ISummarySlice)
 					{
 						continue;
 					}
@@ -1421,7 +1420,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// <returns>
 		/// updated insertPosition for next item after the ones inserted.
 		/// </returns>
-		public virtual int CreateSlicesFor(ICmObject obj, Slice parentSlice, string layoutName, string layoutChoiceField, int indent, int insertPosition, ArrayList path, ObjSeqHashMap reuseMap, XElement unifyWith)
+		public virtual int CreateSlicesFor(ICmObject obj, ISlice parentSlice, string layoutName, string layoutChoiceField, int indent, int insertPosition, ArrayList path, ObjSeqHashMap reuseMap, XElement unifyWith)
 		{
 			// NB: 'path' can hold either ints or XmlNodes, so a generic can't be used for it.
 			if (obj == null)
@@ -1541,31 +1540,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		}
 
 		/// <summary>
-		/// Look for a reusable slice that matches the current path. If found, remove from map and return;
-		/// otherwise, return null.
-		/// </summary>
-		private static Slice GetMatchingSlice(ArrayList path, ObjSeqHashMap reuseMap)
-		{
-			// Review JohnT(RandyR): I don't see how this can really work.
-			// The original path (the key) used to set this does not, (and cannot) change,
-			// but it is very common for slices to come and go, as they are inserted/deleted,
-			// or when the Show hidden control is changed.
-			// Those kinds of big changes will produce the input 'path' parm,
-			// which has little hope of matching that fixed original key, won't it.
-			// I can see how it would work when a simple F4 refresh is being done,
-			// since the count of slices should remain the same.
-			var list = reuseMap[path];
-			if (list.Count <= 0)
-			{
-				return null;
-			}
-			var slice = (Slice)list[0];
-			reuseMap.Remove(path, slice);
-			return slice;
-
-		}
-
-		/// <summary>
 		/// Apply a layout to an object, producing the specified slices.
 		/// </summary>
 		/// <param name="obj">The object we want a detail view of</param>
@@ -1579,7 +1553,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// <returns>
 		/// updated insertPosition for next item after the ones inserted.
 		/// </returns>
-		public int ApplyLayout(ICmObject obj, Slice parentSlice, XElement template, int indent, int insertPosition, ArrayList path, ObjSeqHashMap reuseMap)
+		public int ApplyLayout(ICmObject obj, ISlice parentSlice, XElement template, int indent, int insertPosition, ArrayList path, ObjSeqHashMap reuseMap)
 		{
 			return ApplyLayout(obj, parentSlice, template, indent, insertPosition, path, reuseMap, false, out _);
 		}
@@ -1588,7 +1562,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// This is the guts of ApplyLayout, but it has extra arguments to allow it to be used both to actually produce
 		/// slices, and just to query whether any slices will be produced.
 		/// </summary>
-		protected internal virtual int ApplyLayout(ICmObject obj, Slice parentSlice, XElement template, int indent, int insertPosition, ArrayList path, ObjSeqHashMap reuseMap, bool isTestOnly, out NodeTestResult testResult)
+		protected internal virtual int ApplyLayout(ICmObject obj, ISlice parentSlice, XElement template, int indent, int insertPosition, ArrayList path, ObjSeqHashMap reuseMap, bool isTestOnly, out NodeTestResult testResult)
 		{
 			var insPos = insertPosition;
 			testResult = NodeTestResult.kntrNothing;
@@ -1654,7 +1628,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// Process a top-level child of a layout (other than a comment).
 		/// Currently these are part nodes (with ref= indicating the part to use) and sublayout nodes.
 		/// </summary>
-		private NodeTestResult ProcessPartRefNode(XElement partRef, ArrayList path, ObjSeqHashMap reuseMap, ICmObject obj, Slice parentSlice, int indent, ref int insPos, bool isTestOnly)
+		private NodeTestResult ProcessPartRefNode(XElement partRef, ArrayList path, ObjSeqHashMap reuseMap, ICmObject obj, ISlice parentSlice, int indent, ref int insPos, bool isTestOnly)
 		{
 			var ntr = NodeTestResult.kntrNothing;
 			switch (partRef.Name.LocalName)
@@ -1730,7 +1704,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			return ntr;
 		}
 
-		internal NodeTestResult ProcessPartChildren(XElement part, ArrayList path, ObjSeqHashMap reuseMap, ICmObject obj, Slice parentSlice, int indent, ref int insPos, bool isTestOnly, string parameter, bool fVisIfData, XElement caller)
+		internal NodeTestResult ProcessPartChildren(XElement part, ArrayList path, ObjSeqHashMap reuseMap, ICmObject obj, ISlice parentSlice, int indent, ref int insPos, bool isTestOnly, string parameter, bool fVisIfData, XElement caller)
 		{
 			// The children of the part element must now be processed. Often there is only one.
 			foreach (var node in part.Elements())
@@ -1833,7 +1807,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// return true if any slices would be created.  Note that this method is recursive
 		/// indirectly through ProcessPartChildren().
 		/// </summary>
-		private NodeTestResult ProcessSubpartNode(XElement node, ArrayList path, ObjSeqHashMap reuseMap, ICmObject obj, Slice parentSlice, int indent, ref int insertPosition, bool fTestOnly, string parameter, bool fVisIfData, XElement caller)
+		private NodeTestResult ProcessSubpartNode(XElement node, ArrayList path, ObjSeqHashMap reuseMap, ICmObject obj, ISlice parentSlice, int indent, ref int insertPosition, bool fTestOnly, string parameter, bool fVisIfData, XElement caller)
 		{
 			var editor = XmlUtils.GetOptionalAttributeValue(node, "editor");
 			try
@@ -1851,9 +1825,9 @@ namespace LanguageExplorer.Controls.DetailControls
 					case "slice":
 						return AddSimpleNode(path, node, reuseMap, editor, flid, obj, parentSlice, indent, ref insertPosition, fTestOnly, fVisIfData, caller);
 					case "seq":
-						return AddSeqNode(path, node, reuseMap, flid, obj, parentSlice, indent + Slice.ExtraIndent(node), ref insertPosition, fTestOnly, parameter, fVisIfData, caller);
+						return AddSeqNode(path, node, reuseMap, flid, obj, parentSlice, indent + node.ExtraIndent(), ref insertPosition, fTestOnly, parameter, fVisIfData, caller);
 					case "obj":
-						return AddAtomicNode(path, node, reuseMap, flid, obj, parentSlice, indent + Slice.ExtraIndent(node), ref insertPosition, fTestOnly, parameter, fVisIfData, caller);
+						return AddAtomicNode(path, node, reuseMap, flid, obj, parentSlice, indent + node.ExtraIndent(), ref insertPosition, fTestOnly, parameter, fVisIfData, caller);
 					case "if":
 						if (XmlVc.ConditionPasses(node, obj.Hvo, Cache))
 						{
@@ -1985,7 +1959,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			return flid;
 		}
 
-		private NodeTestResult AddAtomicNode(ArrayList path, XElement node, ObjSeqHashMap reuseMap, int flid, ICmObject obj, Slice parentSlice, int indent, ref int insertPosition,
+		private NodeTestResult AddAtomicNode(ArrayList path, XElement node, ObjSeqHashMap reuseMap, int flid, ICmObject obj, ISlice parentSlice, int indent, ref int insertPosition,
 			bool fTestOnly, string layoutName, bool fVisIfData, XElement caller)
 		{
 			// Facilitate insertion of an expandable tree node representing an owned or ref'd object.
@@ -2021,47 +1995,11 @@ namespace LanguageExplorer.Controls.DetailControls
 				// No inner object...do we want a ghost slice?
 				if (XmlUtils.GetOptionalAttributeValue(node, "ghost") != null)
 				{
-					MakeGhostSlice(path, node, reuseMap, obj, parentSlice, flid, caller, indent, ref insertPosition);
+					SliceFactory.MakeGhostSlice(this, Cache, new FlexComponentParameters(PropertyTable, Publisher, Subscriber),  path, node, reuseMap, obj, parentSlice, flid, caller, indent, ref insertPosition);
 				}
 			}
 			path.RemoveAt(path.Count - 1);
 			return NodeTestResult.kntrNothing;
-		}
-
-		internal void MakeGhostSlice(ArrayList path, XElement node, ObjSeqHashMap reuseMap, ICmObject obj, Slice parentSlice, int flidEmptyProp, XElement caller, int indent, ref int insertPosition)
-		{
-			if (parentSlice != null)
-			{
-				Debug.Assert(!parentSlice.IsDisposed, "AddSimpleNode parameter 'parentSlice' is Disposed!");
-			}
-			var slice = GetMatchingSlice(path, reuseMap);
-			if (slice == null)
-			{
-				slice = new GhostStringSlice(obj, flidEmptyProp, node, Cache);
-				slice.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
-				// Set the label and abbreviation (in that order...abbr defaults to label if not given.
-				// Note that we don't have a "caller" here, so we pass 'node' as both arguments...
-				// means it gets searched twice if not found, but that's fairly harmless.
-				slice.Label = GetLabel(node, node, obj, "ghostLabel");
-				slice.Abbreviation = GetLabelAbbr(node, node, obj, slice.Label, "ghostAbbr");
-				// Install new item at appropriate position and level.
-				slice.Indent = indent;
-				slice.MyCmObject = obj;
-				slice.Cache = Cache;
-				// We need a copy since we continue to modify path, so make it as compact as possible.
-				slice.Key = path.ToArray();
-				slice.ConfigurationNode = node;
-				slice.CallerNode = caller;
-				SetNodeWeight(node, slice);
-				slice.FinishInit();
-				InsertSlice(insertPosition, slice);
-			}
-			else
-			{
-				EnsureValidIndexForReusedSlice(slice, insertPosition);
-			}
-			slice.ParentSlice = parentSlice;
-			insertPosition++;
 		}
 
 		/// <summary>
@@ -2113,7 +2051,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		private const int kInstantSliceMax = 20;
 
-		private NodeTestResult AddSeqNode(ArrayList path, XElement node, ObjSeqHashMap reuseMap, int flid, ICmObject obj, Slice parentSlice, int indent, ref int insertPosition, bool fTestOnly,
+		private NodeTestResult AddSeqNode(ArrayList path, XElement node, ObjSeqHashMap reuseMap, int flid, ICmObject obj, ISlice parentSlice, int indent, ref int insertPosition, bool fTestOnly,
 			string layoutName, bool fVisIfData, XElement caller)
 		{
 			if (flid == 0)
@@ -2144,7 +2082,7 @@ namespace LanguageExplorer.Controls.DetailControls
 				// Nothing in seq....do we want a ghost slice?
 				if (XmlUtils.GetOptionalAttributeValue(node, "ghost") != null)
 				{
-					MakeGhostSlice(path, node, reuseMap, obj, parentSlice, flid, caller, indent, ref insertPosition);
+					SliceFactory.MakeGhostSlice(this, Cache, new FlexComponentParameters(PropertyTable, Publisher, Subscriber), path, node, reuseMap, obj, parentSlice, flid, caller, indent, ref insertPosition);
 				}
 			}
 			else if (cobj < kInstantSliceMax || // This may be a little on the small side
@@ -2168,12 +2106,14 @@ namespace LanguageExplorer.Controls.DetailControls
 				var contents = SetupContents(flid, obj);
 				foreach (var hvo in contents)
 				{
-					var dos = new DummyObjectSlice(indent, node, (ArrayList)(path.Clone()), obj, flid, cnt, layoutOverride, layoutChoiceField, caller) { Cache = Cache, ParentSlice = parentSlice };
+					var dummyObjectSlice = SliceFactory.CreateDummyObject(indent, node, (ArrayList)path.Clone(), obj, flid, cnt, layoutOverride, layoutChoiceField, caller);
+					dummyObjectSlice.Cache = Cache;
+					dummyObjectSlice.ParentSlice = parentSlice;
 					path.Add(hvo);
 					// This is really important. Since some slices are invisible, all must be,
 					// or Show() will reorder them.
-					dos.Visible = false;
-					InsertSlice(insertPosition++, dos);
+					dummyObjectSlice.Visible = false;
+					InsertSlice(insertPosition++, dummyObjectSlice);
 					path.RemoveAt(path.Count - 1);
 					cnt++;
 				}
@@ -2267,7 +2207,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// <returns>
 		/// NodeTestResult, an enum showing if usable data is contained in the field
 		/// </returns>
-		private NodeTestResult AddSimpleNode(ArrayList path, XElement node, ObjSeqHashMap reuseMap, string editor, int flid, ICmObject obj, Slice parentSlice, int indent, ref int insPos,
+		private NodeTestResult AddSimpleNode(ArrayList path, XElement node, ObjSeqHashMap reuseMap, string editor, int flid, ICmObject obj, ISlice parentSlice, int indent, ref int insPos,
 			bool fTestOnly, bool fVisIfData, XElement caller)
 		{
 			var realSda = Cache.DomainDataByFlid;
@@ -2286,7 +2226,7 @@ namespace LanguageExplorer.Controls.DetailControls
 						case "autocustom":
 							if (flid == 0)
 							{
-								flid = SliceFactory.GetCustomFieldFlid(caller, realSda.MetaDataCache, obj);
+								realSda.MetaDataCache.GetManagedMetaDataCache().TryGetFieldId(obj.ClassID, XmlUtils.GetMandatoryAttributeValue(caller, "param"), out flid);
 							}
 							break;
 					}
@@ -2327,14 +2267,14 @@ namespace LanguageExplorer.Controls.DetailControls
 									}
 									// try one of the magic ones for multistring
 									var wsMagic = WritingSystemServices.GetMagicWsIdFromName(ws);
-									if (wsMagic == 0 && editor == "autocustom")
+									if (wsMagic == 0)
 									{
+										if (editor != "autocustom")
+										{
+											// not recognized, treat as visible
+											break;
+										}
 										wsMagic = realSda.MetaDataCache.GetFieldWs(flid);
-									}
-									if (wsMagic == 0 && editor != "autocustom")
-									{
-										// not recognized, treat as visible
-										break;
 									}
 									var rgws = WritingSystemServices.GetWritingSystemList(Cache, wsMagic, false).ToArray();
 									var anyNonEmpty = false;
@@ -2452,7 +2392,7 @@ namespace LanguageExplorer.Controls.DetailControls
 				return NodeTestResult.kntrSomething; // slices always produce something.
 			}
 			path.Add(node);
-			var slice = GetMatchingSlice(path, reuseMap);
+			var slice = SliceFactory.GetMatchingSlice(path, reuseMap);
 			if (slice == null)
 			{
 				slice = SliceFactory.Create(Cache, editor, flid, node, obj, PersistenceProvder, new FlexComponentParameters(PropertyTable, Publisher, Subscriber), caller, reuseMap, _sharedEventHandlers);
@@ -2479,7 +2419,7 @@ namespace LanguageExplorer.Controls.DetailControls
 				slice.ConfigurationNode = node;
 				slice.CallerNode = caller;
 				slice.OverrideBackColor(XmlUtils.GetOptionalAttributeValue(node, "backColor"));
-				SetNodeWeight(node, slice);
+				SliceFactory.SetNodeWeight(node, slice);
 				slice.FinishInit();
 				InsertSlice(insPos, slice);
 			}
@@ -2500,7 +2440,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// if not, it may have shifted position as a result of changing its sequence
 		/// order in the database (e.g. via OnMoveUpObjectInSequence).
 		/// </summary>
-		private void EnsureValidIndexForReusedSlice(Slice slice, int insertPosition)
+		internal void EnsureValidIndexForReusedSlice(ISlice slice, int insertPosition)
 		{
 			var reusedSliceIdx = slice.IndexInContainer;
 			if (insertPosition != reusedSliceIdx)
@@ -2514,7 +2454,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// <summary>
 		/// Get a label-like attribute for the slice.
 		/// </summary>
-		private string GetLabel(XElement caller, XElement node, ICmObject obj, string attr)
+		internal string GetLabel(XElement caller, XElement node, ICmObject obj, string attr)
 		{
 			var label = StringTable.Table.LocalizeAttributeValue(XmlUtils.GetOptionalAttributeValue(caller, attr, null) ?? XmlUtils.GetOptionalAttributeValue(node, attr, null)
 				?? XmlUtils.GetOptionalAttributeValue(caller, attr) ?? XmlUtils.GetOptionalAttributeValue(node, attr));
@@ -2524,7 +2464,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// <summary>
 		/// Find a suitable abbreviation for the given label.
 		/// </summary>
-		private string GetLabelAbbr(XElement caller, XElement node, ICmObject obj, string label, string attr)
+		internal string GetLabelAbbr(XElement caller, XElement node, ICmObject obj, string label, string attr)
 		{
 			// First see if we can find an explicit attribute value.
 			var abbr = GetLabel(caller, node, obj, attr);
@@ -2547,47 +2487,23 @@ namespace LanguageExplorer.Controls.DetailControls
 			return InterpretLabelAttribute(abbr, obj);
 		}
 
-		private static void SetNodeWeight(XElement node, Slice slice)
-		{
-			var weightString = XmlUtils.GetOptionalAttributeValue(node, "weight", "field");
-			ObjectWeight weight;
-			switch (weightString)
-			{
-				case "heavy":
-					weight = ObjectWeight.heavy;
-					break;
-				case "light":
-					weight = ObjectWeight.light;
-					break;
-				case "normal":
-					weight = ObjectWeight.normal;
-					break;
-				case "field":
-					weight = ObjectWeight.field;
-					break;
-				default:
-					throw new FwConfigurationException("Invalid 'weight' value, should be heavy, normal, light, or field");
-			}
-			slice.Weight = weight;
-		}
-
 		/// <summary>
 		/// Calls ApplyLayout for each child of the argument node.
 		/// </summary>
-		public int ApplyChildren(ICmObject obj, Slice parentSlice, XElement template, int indent, int insertPosition, ArrayList path, ObjSeqHashMap reuseMap)
+		public int ApplyChildren(ICmObject obj, ISlice parentSlice, XElement template, int indent, int insertPosition, ArrayList path, ObjSeqHashMap reuseMap)
 		{
 			return template.Elements().Where(node => node.Name != "ChangeRecordHandler").Aggregate(insertPosition, (current, node) => ApplyLayout(obj, parentSlice, node, indent, current, path, reuseMap));
 		}
 
 		// Must be overridden if nulls will be inserted into items; when real item is needed,
 		// this is called to create it.
-		public virtual Slice MakeEditorAt(int i)
+		public virtual ISlice MakeEditorAt(int i)
 		{
 			return null; // todo JohnT: return false;
 		}
 
 		// Get or create the real slice at index i.
-		public Slice FieldAt(int i)
+		public ISlice FieldAt(int i)
 		{
 			var slice = FieldOrDummyAt(i);
 			// Keep trying until we get a real slice. It's possible, for example, that the first object
@@ -2636,7 +2552,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// This version expands nulls but not dummy slices. Dummy slices
 		/// should know their indent.
 		/// </summary>
-		public Slice FieldOrDummyAt(int i)
+		public ISlice FieldOrDummyAt(int i)
 		{
 			var slice = Slices[i];
 			// This cannot ever be null now that we don't have the special SliceCollection class.
@@ -2895,7 +2811,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// Make a slice visible, either because it needs to be drawn, or because it needs to be
 		/// focused.
 		/// </summary>
-		internal static void MakeSliceVisible(Slice tci)
+		internal static void MakeSliceVisible(ISlice tci)
 		{
 			// It intersects the screen so it needs to be visible.
 			if (!tci.Visible)
@@ -2906,7 +2822,7 @@ namespace LanguageExplorer.Controls.DetailControls
 				// in the dotnet framework.
 				for (var i = 0; i < index; ++i)
 				{
-					Control ctrl = tci.ContainingDataTree.Slices[i];
+					Control ctrl = tci.ContainingDataTree.Slices[i].AsUserControl;
 					if (ctrl != null && !ctrl.Visible)
 					{
 						ctrl.Visible = true;
@@ -3097,7 +3013,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			GotoNextSliceAfterIndex(-1);
 		}
 
-		public Slice LastSlice => Slices.Any() ? Slices.Last() : null;
+		public ISlice LastSlice => Slices.Any() ? Slices.Last() : null;
 
 		/// <summary>
 		/// Moves the focus to the next visible slice in the tree
@@ -3207,9 +3123,9 @@ namespace LanguageExplorer.Controls.DetailControls
 			{
 				m_layoutState = LayoutStates.klsNormal;
 			}
-			ScrollControlIntoView(CurrentSlice);
+			ScrollControlIntoView(CurrentSlice.AsUserControl);
 			var previousSummaryIndex = CurrentSlice.IndexInContainer;
-			while (!(Slices[previousSummaryIndex] is SummarySlice))
+			while (!(Slices[previousSummaryIndex] is ISummarySlice))
 			{
 				previousSummaryIndex--;
 				if (previousSummaryIndex < 0)
@@ -3220,17 +3136,17 @@ namespace LanguageExplorer.Controls.DetailControls
 			var previousSummary = Slices[previousSummaryIndex];
 			if (previousSummary.Top < 0 && CurrentSlice.Bottom - previousSummary.Top < ClientRectangle.Height - 20)
 			{
-				ScrollControlIntoView(previousSummary);
+				ScrollControlIntoView(previousSummary.AsUserControl);
 			}
 			var lastChildIndex = CurrentSlice.IndexInContainer;
-			while (lastChildIndex < Slices.Count && Slice.StartsWith(Slices[lastChildIndex].Key, previousSummary.Key) && Slices[lastChildIndex].Bottom - previousSummary.Top < ClientRectangle.Height - 20)
+			while (lastChildIndex < Slices.Count && LanguageExplorerServices.StartsWith(Slices[lastChildIndex].Key, previousSummary.Key) && Slices[lastChildIndex].Bottom - previousSummary.Top < ClientRectangle.Height - 20)
 			{
 				lastChildIndex++;
 			}
 			lastChildIndex--;
 			if (lastChildIndex > CurrentSlice.IndexInContainer)
 			{
-				ScrollControlIntoView(Slices[lastChildIndex]);
+				ScrollControlIntoView(Slices[lastChildIndex].AsUserControl);
 			}
 		}
 
@@ -3238,7 +3154,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// Find the first slice in the list which is (still) one of your current, valid slices
 		/// and which is able to take focus, and give it the focus.
 		/// </summary>
-		internal void SelectFirstPossibleSlice(List<Slice> closeSlices)
+		internal void SelectFirstPossibleSlice(List<ISlice> closeSlices)
 		{
 			foreach (var slice in closeSlices)
 			{
@@ -3299,10 +3215,10 @@ namespace LanguageExplorer.Controls.DetailControls
 					var currentControl = PropertyTable.GetValue<IFwMainWnd>(FwUtils.window).FocusedControl;
 					while (currentControl != null && currentControl != this)
 					{
-						if (currentControl is Slice)
+						if (currentControl is ISlice)
 						{
 							// found the slice to
-							sliceToSetAsCurrent = currentControl as Slice;
+							sliceToSetAsCurrent = currentControl as ISlice;
 							if (sliceToSetAsCurrent.IsDisposed)
 							{
 								sliceToSetAsCurrent = null;     // shouldn't happen, but...
@@ -3326,14 +3242,16 @@ namespace LanguageExplorer.Controls.DetailControls
 					// more reliably than putting it at the beginning for some reason, and makes
 					// more sense in some circumstances (especially in the conversion from a ghost
 					// slice to a string type slice).
-					if (m_currentSlice is MultiStringSlice mss)
+					switch (m_currentSlice)
 					{
-						mss.SelectAt(mss.WritingSystemsSelectedForDisplay.First().Handle, 99999);
+						case IMultiStringSlice multiStringSlice:
+							multiStringSlice.SelectAt(multiStringSlice.WritingSystemsSelectedForDisplay.First().Handle, 99999);
+							break;
+						case IStringSlice stringSlice:
+							stringSlice.SelectAt(99999);
+							break;
 					}
-					else if (m_currentSlice is StringSlice)
-					{
-						((StringSlice)m_currentSlice).SelectAt(99999);
-					}
+
 					m_currentSlice.TakeFocus(false);
 				}
 			}
@@ -3365,7 +3283,7 @@ namespace LanguageExplorer.Controls.DetailControls
 				for (var islice = 0; islice < cslice; ++islice)
 				{
 					var slice = FieldOrDummyAt(islice);
-					if (slice is DummyObjectSlice && owners.Contains(slice.MyCmObject))
+					if (slice is IDummyObjectSlice && owners.Contains(slice.MyCmObject))
 					{
 						// This is what we want! Expand it!
 						slice = FieldAt(islice); // makes a real slice (and may create children, altering the total number).

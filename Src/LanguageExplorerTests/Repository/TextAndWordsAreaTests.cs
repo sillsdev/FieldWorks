@@ -2,6 +2,7 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using LanguageExplorer;
 using LanguageExplorer.Areas;
 using NUnit.Framework;
 
@@ -16,7 +17,7 @@ namespace LanguageExplorerTests.Repository
 		[TestFixtureSetUp]
 		public override void FixtureSetup()
 		{
-			_areaMachineName = AreaServices.TextAndWordsAreaMachineName;
+			_areaMachineName = LanguageExplorerConstants.TextAndWordsAreaMachineName;
 
 			base.FixtureSetup();
 		}
@@ -42,13 +43,13 @@ namespace LanguageExplorerTests.Repository
 		/// <summary>
 		/// Make sure the Text and Words area has tools in the right order.
 		/// </summary>
-		[TestCase(AreaServices.InterlinearEditUiName, 0, AreaServices.InterlinearEditMachineName)]
-		[TestCase(AreaServices.ConcordanceUiName, 1, AreaServices.ConcordanceMachineName)]
-		[TestCase(AreaServices.ComplexConcordanceUiName, 2, AreaServices.ComplexConcordanceMachineName)]
-		[TestCase(AreaServices.WordListConcordanceUiName, 3, AreaServices.WordListConcordanceMachineName)]
-		[TestCase(AreaServices.AnalysesUiName, 4, AreaServices.AnalysesMachineName)]
-		[TestCase(AreaServices.BulkEditWordformsUiName, 5, AreaServices.BulkEditWordformsMachineName)]
-		[TestCase(AreaServices.CorpusStatisticsUiName, 6, AreaServices.CorpusStatisticsMachineName)]
+		[TestCase(LanguageExplorerConstants.InterlinearEditUiName, 0, LanguageExplorerConstants.InterlinearEditMachineName)]
+		[TestCase(LanguageExplorerConstants.ConcordanceUiName, 1, LanguageExplorerConstants.ConcordanceMachineName)]
+		[TestCase(LanguageExplorerConstants.ComplexConcordanceUiName, 2, LanguageExplorerConstants.ComplexConcordanceMachineName)]
+		[TestCase(LanguageExplorerConstants.WordListConcordanceUiName, 3, LanguageExplorerConstants.WordListConcordanceMachineName)]
+		[TestCase(LanguageExplorerConstants.AnalysesUiName, 4, LanguageExplorerConstants.AnalysesMachineName)]
+		[TestCase(LanguageExplorerConstants.BulkEditWordformsUiName, 5, LanguageExplorerConstants.BulkEditWordformsMachineName)]
+		[TestCase(LanguageExplorerConstants.CorpusStatisticsUiName, 6, LanguageExplorerConstants.CorpusStatisticsMachineName)]
 		public void AreaRepositoryHasAllTextAndWordsToolsInCorrectOrder(string uiName, int idx, string expectedMachineName)
 		{
 			DoTests(uiName, idx, expectedMachineName);

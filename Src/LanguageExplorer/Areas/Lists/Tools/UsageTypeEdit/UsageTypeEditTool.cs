@@ -21,7 +21,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.UsageTypeEdit
 	/// <summary>
 	/// ITool implementation for the "usageTypeEdit" tool in the "lists" area.
 	/// </summary>
-	[Export(AreaServices.ListsAreaMachineName, typeof(ITool))]
+	[Export(LanguageExplorerConstants.ListsAreaMachineName, typeof(ITool))]
 	internal sealed class UsageTypeEditTool : IListTool
 	{
 		private const string UsageTypeList = "UsageTypeList";
@@ -112,12 +112,12 @@ namespace LanguageExplorer.Areas.Lists.Tools.UsageTypeEdit
 		/// Get the internal name of the component.
 		/// </summary>
 		/// <remarks>NB: This is the machine friendly name, not the user friendly name.</remarks>
-		public string MachineName => AreaServices.UsageTypeEditMachineName;
+		public string MachineName => LanguageExplorerConstants.UsageTypeEditMachineName;
 
 		/// <summary>
 		/// User-visible localized component name.
 		/// </summary>
-		public string UiName => StringTable.Table.LocalizeLiteralValue(AreaServices.UsageTypeEditUiName);
+		public string UiName => StringTable.Table.LocalizeLiteralValue(LanguageExplorerConstants.UsageTypeEditUiName);
 
 		#endregion
 
@@ -126,7 +126,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.UsageTypeEdit
 		/// <summary>
 		/// Get the area for the tool.
 		/// </summary>
-		[field: Import(AreaServices.ListsAreaMachineName)]
+		[field: Import(LanguageExplorerConstants.ListsAreaMachineName)]
 		public IArea Area { get; private set; }
 
 		/// <summary>

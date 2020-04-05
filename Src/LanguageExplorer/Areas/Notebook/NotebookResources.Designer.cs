@@ -222,24 +222,5 @@ namespace LanguageExplorer.Areas.Notebook {
                 return ResourceManager.GetString("NotebookEditRecordEditViewParameters", resourceCulture);
             }
         }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
-        ///&lt;parameters id=&quot;recordMatchList&quot; listItemsClass=&quot;RnGenericRec&quot; filterBar=&quot;false&quot; treeBarAvailability=&quot;NotAllowed&quot; defaultCursor=&quot;Arrow&quot; hscroll=&quot;true&quot; altTitleId=&quot;RnGenericRec-Plural&quot; editable=&quot;false&quot;&gt;
-        ///	&lt;columns&gt;
-        ///		&lt;column label=&quot;Record Type&quot; editable=&quot;false&quot; width=&quot;72000&quot;&gt;
-        ///			&lt;obj field=&quot;Type&quot; layout=&quot;Name&quot;/&gt;
-        ///		&lt;/column&gt;
-        ///		&lt;column label=&quot;Title&quot; editable=&quot;false&quot; width=&quot;196000&quot;&gt;
-        ///			&lt;string field=&quot;Title&quot;/&gt;
-        ///		&lt;/column&gt;
-        ///	&lt;/columns&gt;
-        ///&lt;/parameters&gt;.
-        /// </summary>
-        internal static string NotebookRecordGoDlgParameters {
-            get {
-                return ResourceManager.GetString("NotebookRecordGoDlgParameters", resourceCulture);
-            }
-        }
     }
 }

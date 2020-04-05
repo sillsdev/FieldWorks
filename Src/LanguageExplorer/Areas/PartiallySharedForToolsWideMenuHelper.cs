@@ -147,7 +147,7 @@ namespace LanguageExplorer.Areas
 
 		private static void HandleDeletion(object sender)
 		{
-			((Slice)((ToolStripMenuItem)sender).Tag).HandleDeleteCommand();
+			((ISlice)((ToolStripMenuItem)sender).Tag).HandleDeleteCommand();
 		}
 
 		private void Insert_Slash_Clicked(object sender, EventArgs e)
@@ -185,7 +185,7 @@ namespace LanguageExplorer.Areas
 			return (IPhEnvSliceCommon)((ToolStripMenuItem)sender).Tag;
 		}
 
-		internal static void CreateShowEnvironmentErrorMessageContextMenuStripMenus(Slice slice, List<Tuple<ToolStripMenuItem, EventHandler>> menuItems, ContextMenuStrip contextMenuStrip)
+		internal static void CreateShowEnvironmentErrorMessageContextMenuStripMenus(ISlice slice, List<Tuple<ToolStripMenuItem, EventHandler>> menuItems, ContextMenuStrip contextMenuStrip)
 		{
 			/*
 		      <item command="CmdShowEnvironmentErrorMessage" />
@@ -196,7 +196,7 @@ namespace LanguageExplorer.Areas
 			menu.Tag = slice;
 		}
 
-		internal static void CreateCommonEnvironmentContextMenuStripMenus(Slice slice, List<Tuple<ToolStripMenuItem, EventHandler>> menuItems, ContextMenuStrip contextMenuStrip)
+		internal static void CreateCommonEnvironmentContextMenuStripMenus(ISlice slice, List<Tuple<ToolStripMenuItem, EventHandler>> menuItems, ContextMenuStrip contextMenuStrip)
 		{
 			if (contextMenuStrip.Items.Count > 0)
 			{
@@ -340,7 +340,7 @@ namespace LanguageExplorer.Areas
 
 		private void CmdAddToLexicon_Clicked(object sender, EventArgs e)
 		{
-			AreaServices.AddToLexicon(_majorFlexComponentParameters.LcmCache, new FlexComponentParameters(PropertyTable, Publisher, Subscriber), ((DataTree)((ToolStripItem)sender).Tag).CurrentSliceAsStTextSlice);
+			LanguageExplorerServices.AddToLexicon(_majorFlexComponentParameters.LcmCache, new FlexComponentParameters(PropertyTable, Publisher, Subscriber), ((DataTree)((ToolStripItem)sender).Tag).CurrentSliceAsStTextSlice.RootSite);
 		}
 
 		internal void SetupCmdLexiconLookup(ToolUiWidgetParameterObject toolUiWidgetParameterObject, DataTree dataTree, Func<Tuple<bool, bool>> seeAndDo)
@@ -357,7 +357,7 @@ namespace LanguageExplorer.Areas
 
 		private void LexiconLookup_Clicked(object sender, EventArgs e)
 		{
-			AreaServices.LexiconLookup(_majorFlexComponentParameters.LcmCache, new FlexComponentParameters(PropertyTable, Publisher, Subscriber), ((DataTree)((ToolStripItem)sender).Tag).CurrentSliceAsStTextSlice);
+			LanguageExplorerServices.LexiconLookup(_majorFlexComponentParameters.LcmCache, new FlexComponentParameters(PropertyTable, Publisher, Subscriber), ((DataTree)((ToolStripItem)sender).Tag).CurrentSliceAsStTextSlice.RootSite);
 		}
 	}
 }

@@ -23,13 +23,13 @@ namespace LanguageExplorer.Areas.Lexicon
 	/// <summary>
 	/// IArea implementation for the main, and thus only required, Area: "lexicon".
 	/// </summary>
-	[Export(AreaServices.LexiconAreaMachineName, typeof(IArea))]
+	[Export(LanguageExplorerConstants.LexiconAreaMachineName, typeof(IArea))]
 	[Export(typeof(IArea))]
 	internal sealed class LexiconArea : IArea
 	{
-		[ImportMany(AreaServices.LexiconAreaMachineName)]
+		[ImportMany(LanguageExplorerConstants.LexiconAreaMachineName)]
 		private IEnumerable<ITool> _myTools;
-		private string PropertyNameForToolName => $"{AreaServices.ToolForAreaNamed_}{MachineName}";
+		private string PropertyNameForToolName => $"{LanguageExplorerConstants.ToolForAreaNamed_}{MachineName}";
 		internal const string SemanticDomainList_LexiconArea = "SemanticDomainList_LexiconArea";
 		private bool _hasBeenActivated;
 		[Import]
@@ -66,7 +66,7 @@ namespace LanguageExplorer.Areas.Lexicon
 		/// </remarks>
 		public void Activate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
-			_propertyTable.SetDefault(PropertyNameForToolName, AreaServices.LexiconAreaDefaultToolMachineName, true);
+			_propertyTable.SetDefault(PropertyNameForToolName, LanguageExplorerConstants.LexiconAreaDefaultToolMachineName, true);
 			if (!_hasBeenActivated)
 			{
 				// Restore HomographConfiguration settings.
@@ -105,7 +105,7 @@ namespace LanguageExplorer.Areas.Lexicon
 		/// </summary>
 		public void EnsurePropertiesAreCurrent()
 		{
-			_propertyTable.SetProperty(AreaServices.InitialArea, MachineName, true, settingsGroup: SettingsGroup.LocalSettings);
+			_propertyTable.SetProperty(LanguageExplorerConstants.InitialArea, MachineName, true, settingsGroup: SettingsGroup.LocalSettings);
 			var serviceLocator = _propertyTable.GetValue<LcmCache>(FwUtils.cache).ServiceLocator;
 			var hc = serviceLocator.GetInstance<HomographConfiguration>();
 			_propertyTable.SetProperty(LanguageExplorerConstants.HomographConfiguration, hc.PersistData, true);
@@ -120,12 +120,12 @@ namespace LanguageExplorer.Areas.Lexicon
 		/// Get the internal name of the component.
 		/// </summary>
 		/// <remarks>NB: This is the machine friendly name, not the user friendly name.</remarks>
-		public string MachineName => AreaServices.LexiconAreaMachineName;
+		public string MachineName => LanguageExplorerConstants.LexiconAreaMachineName;
 
 		/// <summary>
 		/// User-visible localized component name.
 		/// </summary>
-		public string UiName => StringTable.Table.LocalizeLiteralValue(AreaServices.LexiconAreaUiName);
+		public string UiName => StringTable.Table.LocalizeLiteralValue(LanguageExplorerConstants.LexiconAreaUiName);
 
 		#endregion
 
@@ -136,7 +136,7 @@ namespace LanguageExplorer.Areas.Lexicon
 		/// the persisted one is no longer available.
 		/// </summary>
 		/// <returns>The last persisted tool or the default tool for the area.</returns>
-		public ITool PersistedOrDefaultTool => _dictionaryOfAllTools.Values.First(tool => tool.MachineName == _propertyTable.GetValue(PropertyNameForToolName, AreaServices.LexiconAreaDefaultToolMachineName));
+		public ITool PersistedOrDefaultTool => _dictionaryOfAllTools.Values.First(tool => tool.MachineName == _propertyTable.GetValue(PropertyNameForToolName, LanguageExplorerConstants.LexiconAreaDefaultToolMachineName));
 
 		/// <summary>
 		/// Get all installed tools for the area.
@@ -150,14 +150,14 @@ namespace LanguageExplorer.Areas.Lexicon
 					_dictionaryOfAllTools = new Dictionary<string, ITool>();
 					var myBuiltinToolsInOrder = new List<string>
 					{
-						AreaServices.LexiconEditMachineName,
-						AreaServices.LexiconBrowseMachineName,
-						AreaServices.LexiconDictionaryMachineName,
-						AreaServices.RapidDataEntryMachineName,
-						AreaServices.LexiconClassifiedDictionaryMachineName,
-						AreaServices.BulkEditEntriesOrSensesMachineName,
-						AreaServices.ReversalEditCompleteMachineName,
-						AreaServices.ReversalBulkEditReversalEntriesMachineName
+						LanguageExplorerConstants.LexiconEditMachineName,
+						LanguageExplorerConstants.LexiconBrowseMachineName,
+						LanguageExplorerConstants.LexiconDictionaryMachineName,
+						LanguageExplorerConstants.RapidDataEntryMachineName,
+						LanguageExplorerConstants.LexiconClassifiedDictionaryMachineName,
+						LanguageExplorerConstants.BulkEditEntriesOrSensesMachineName,
+						LanguageExplorerConstants.ReversalEditCompleteMachineName,
+						LanguageExplorerConstants.ReversalBulkEditReversalEntriesMachineName
 					};
 					foreach (var toolName in myBuiltinToolsInOrder)
 					{

@@ -603,7 +603,7 @@ namespace LanguageExplorer.LcmUi
 								case DialogResult.Yes:
 									{
 										// go to m_highestPOS in editor
-										LinkHandler.PublishFollowLinkMessage(_flexComponentParameters.Publisher, new FwLinkArgs(AreaServices.PosEditMachineName, dlg.HighestPOS.Guid));
+										LinkHandler.PublishFollowLinkMessage(_flexComponentParameters.Publisher, new FwLinkArgs(LanguageExplorerConstants.PosEditMachineName, dlg.HighestPOS.Guid));
 										if (ParentForm != null && ParentForm.Modal)
 										{
 											// Close the dlg that opened the popup tree,

@@ -236,7 +236,7 @@ namespace LanguageExplorer.Impls
 			if (AsIPropertyRetriever.TryGetValue("currentContentControl", out string oldStringValue))
 			{
 				AsIPropertyTable.RemoveProperty("currentContentControl");
-				AsIPropertyTable.SetProperty(AreaServices.ToolChoice, oldStringValue, true, settingsGroup: SettingsGroup.LocalSettings);
+				AsIPropertyTable.SetProperty(LanguageExplorerConstants.ToolChoice, oldStringValue, true, settingsGroup: SettingsGroup.LocalSettings);
 			}
 			// This does not need to list every assimilated project, but only those that had persisted properties to upgrade.
 			var assimilatedAssemblies = new HashSet<string>

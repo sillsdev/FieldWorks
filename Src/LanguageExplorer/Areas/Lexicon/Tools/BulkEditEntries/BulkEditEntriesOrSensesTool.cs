@@ -21,7 +21,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.BulkEditEntries
 	/// <summary>
 	/// ITool implementation for the "bulkEditEntriesOrSenses" tool in the "lexicon" area.
 	/// </summary>
-	[Export(AreaServices.LexiconAreaMachineName, typeof(ITool))]
+	[Export(LanguageExplorerConstants.LexiconAreaMachineName, typeof(ITool))]
 	internal sealed class BulkEditEntriesOrSensesTool : ITool
 	{
 		private BulkEditEntriesOrSensesMenuHelper _toolMenuHelper;
@@ -106,12 +106,12 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.BulkEditEntries
 		/// Get the internal name of the component.
 		/// </summary>
 		/// <remarks>NB: This is the machine friendly name, not the user friendly name.</remarks>
-		public string MachineName => AreaServices.BulkEditEntriesOrSensesMachineName;
+		public string MachineName => LanguageExplorerConstants.BulkEditEntriesOrSensesMachineName;
 
 		/// <summary>
 		/// User-visible localized component name.
 		/// </summary>
-		public string UiName => StringTable.Table.LocalizeLiteralValue(AreaServices.BulkEditEntriesOrSensesUiName);
+		public string UiName => StringTable.Table.LocalizeLiteralValue(LanguageExplorerConstants.BulkEditEntriesOrSensesUiName);
 
 		#endregion
 
@@ -120,7 +120,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.BulkEditEntries
 		/// <summary>
 		/// Get the area for the tool.
 		/// </summary>
-		[field: Import(AreaServices.LexiconAreaMachineName)]
+		[field: Import(LanguageExplorerConstants.LexiconAreaMachineName)]
 		public IArea Area { get; private set; }
 
 		/// <summary>
@@ -322,18 +322,18 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.BulkEditEntries
 				// Show Entry in Lexicon: AreaResources.ksShowEntryInLexicon
 				// <command id="CmdEntryJumpToDefault" label="Show Entry in Lexicon" message="JumpToTool">
 				var menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, jumpEventHandler, AreaResources.ksShowEntryInLexicon);
-				menu.Tag = new List<object> { publisher, AreaServices.LexiconEditMachineName, _recordList };
+				menu.Tag = new List<object> { publisher, LanguageExplorerConstants.LexiconEditMachineName, _recordList };
 				_jumpMenus.Add(menu);
 
 				// Show Entry in Concordance: AreaResources.Show_Entry_In_Concordance
 				// <item command="CmdEntryJumpToConcordance"/>
 				menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, jumpEventHandler, AreaResources.Show_Entry_In_Concordance);
-				menu.Tag = new List<object> { publisher, AreaServices.ConcordanceMachineName, _recordList };
+				menu.Tag = new List<object> { publisher, LanguageExplorerConstants.ConcordanceMachineName, _recordList };
 				_jumpMenus.Add(menu);
 
 				// <command id="CmdSenseJumpToConcordance" label="Show Sense in Concordance" message="JumpToTool">
 				menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, jumpEventHandler, AreaResources.Show_Sense_in_Concordance);
-				menu.Tag = new List<object> { publisher, AreaServices.ConcordanceMachineName, _recordList };
+				menu.Tag = new List<object> { publisher, LanguageExplorerConstants.ConcordanceMachineName, _recordList };
 				_jumpMenus.Add(menu);
 
 				// End: <menu id="mnuBrowseView" (partial) >

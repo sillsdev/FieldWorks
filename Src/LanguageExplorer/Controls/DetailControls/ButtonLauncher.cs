@@ -34,17 +34,17 @@ namespace LanguageExplorer.Controls.DetailControls
 		private IContainer components;
 
 		#region Properties
-		protected Slice Slice
+		protected ISlice Slice
 		{
 			get
 			{
 				var parent = Parent;
-				while (!(parent is Slice))
+				while (!(parent is ISlice))
 				{
 					parent = parent.Parent;
 				}
-				Debug.Assert(parent is Slice);
-				return (Slice)parent;
+				Debug.Assert(parent is ISlice);
+				return (ISlice)parent;
 			}
 		}
 

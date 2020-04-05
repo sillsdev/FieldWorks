@@ -325,9 +325,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 		{
 			/// <summary>Pointer to a SID structure. </summary>
 			public readonly IntPtr Sid;
-			/// <summary>Specifies attributes of the SID. This value contains up to 32 one-bit
-			/// flags. Its meaning depends on the definition and use of the SID.</summary>
-			public int Attributes;
 		}
 
 		/// <summary>

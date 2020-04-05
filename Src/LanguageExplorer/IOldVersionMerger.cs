@@ -14,7 +14,7 @@ namespace LanguageExplorer
 	/// Enhance JohnT: We could pass null for current if there is no current node with that key. We could allow
 	/// returning null if no merge is possible.
 	/// </summary>
-	public interface IOldVersionMerger
+	internal interface IOldVersionMerger
 	{
 		/// <summary>
 		/// Do the merge.

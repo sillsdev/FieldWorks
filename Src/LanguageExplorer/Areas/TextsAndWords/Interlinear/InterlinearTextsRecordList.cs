@@ -152,7 +152,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			{
 				return false;
 			}
-			LinkHandler.PublishFollowLinkMessage(Publisher, new FwLinkArgs(AreaServices.InterlinearEditMachineName, CurrentObject.Guid));
+			LinkHandler.PublishFollowLinkMessage(Publisher, new FwLinkArgs(LanguageExplorerConstants.InterlinearEditMachineName, CurrentObject.Guid));
 			// This is a workable alternative (where link is the one created above), but means this code has to know about the FwXApp class.
 			//(FwXApp.App as FwXApp).OnIncomingLink(link);
 			// This alternative does NOT work; it produces a deadlock...I think the remote code is waiting for the target app

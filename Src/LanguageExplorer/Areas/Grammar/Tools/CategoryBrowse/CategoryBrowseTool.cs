@@ -21,7 +21,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.CategoryBrowse
 	/// <summary>
 	/// ITool implementation for the "categoryBrowse" tool in the "grammar" area.
 	/// </summary>
-	[Export(AreaServices.GrammarAreaMachineName, typeof(ITool))]
+	[Export(LanguageExplorerConstants.GrammarAreaMachineName, typeof(ITool))]
 	internal sealed class CategoryBrowseTool : ITool
 	{
 		private CategoryBrowseToolMenuHelper _toolMenuHelper;
@@ -97,12 +97,12 @@ namespace LanguageExplorer.Areas.Grammar.Tools.CategoryBrowse
 		/// Get the internal name of the component.
 		/// </summary>
 		/// <remarks>NB: This is the machine friendly name, not the user friendly name.</remarks>
-		public string MachineName => AreaServices.CategoryBrowseMachineName;
+		public string MachineName => LanguageExplorerConstants.CategoryBrowseMachineName;
 
 		/// <summary>
 		/// User-visible localized component name.
 		/// </summary>
-		public string UiName => StringTable.Table.LocalizeLiteralValue(AreaServices.CategoryBrowseUiName);
+		public string UiName => StringTable.Table.LocalizeLiteralValue(LanguageExplorerConstants.CategoryBrowseUiName);
 
 		#endregion
 
@@ -111,7 +111,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.CategoryBrowse
 		/// <summary>
 		/// Get the area for the tool.
 		/// </summary>
-		[field: Import(AreaServices.GrammarAreaMachineName)]
+		[field: Import(LanguageExplorerConstants.GrammarAreaMachineName)]
 		public IArea Area { get; private set; }
 
 		/// <summary>
@@ -178,10 +178,10 @@ namespace LanguageExplorer.Areas.Grammar.Tools.CategoryBrowse
 
 				// <command id="CmdPOSJumpToDefault" label="Show in Category Edit" message="JumpToTool">
 				_jumpMenu1 = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers.GetEventHandler(Command.CmdJumpToTool), AreaResources.Show_in_Category_Edit);
-				_jumpMenu1.Tag = new List<object> { _majorFlexComponentParameters.FlexComponentParameters.Publisher, AreaServices.PosEditMachineName, _recordList };
+				_jumpMenu1.Tag = new List<object> { _majorFlexComponentParameters.FlexComponentParameters.Publisher, LanguageExplorerConstants.PosEditMachineName, _recordList };
 				// <command id="CmdPOSJumpToConcordance" label="Show Category in Concordance" message="JumpToTool">
 				_jumpMenu2 = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers.GetEventHandler(Command.CmdJumpToTool), AreaResources.Show_Category_in_Concordance);
-				_jumpMenu2.Tag = new List<object> { _majorFlexComponentParameters.FlexComponentParameters.Publisher, AreaServices.ConcordanceMachineName, _recordList };
+				_jumpMenu2.Tag = new List<object> { _majorFlexComponentParameters.FlexComponentParameters.Publisher, LanguageExplorerConstants.ConcordanceMachineName, _recordList };
 				ToolStripMenuItemFactory.CreateToolStripSeparatorForContextMenuStrip(contextMenuStrip);
 				// <command id="CmdDeleteSelectedObject" label="Delete selected {0}" message="DeleteSelectedItem"/>
 				ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, CmdDeleteSelectedObject_Clicked, string.Format(AreaResources.Delete_selected_0, StringTable.Table.GetString("PartOfSpeech", StringTable.ClassNames)));

@@ -21,7 +21,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.ChartmarkEdit
 	/// <summary>
 	/// ITool implementation for the "chartmarkEdit" tool in the "lists" area.
 	/// </summary>
-	[Export(AreaServices.ListsAreaMachineName, typeof(ITool))]
+	[Export(LanguageExplorerConstants.ListsAreaMachineName, typeof(ITool))]
 	internal sealed class ChartmarkEditTool : IListTool
 	{
 		private const string DiscChartMarkerList = "DiscChartMarkerList";
@@ -112,12 +112,12 @@ namespace LanguageExplorer.Areas.Lists.Tools.ChartmarkEdit
 		/// Get the internal name of the component.
 		/// </summary>
 		/// <remarks>NB: This is the machine friendly name, not the user friendly name.</remarks>
-		public string MachineName => AreaServices.ChartmarkEditMachineName;
+		public string MachineName => LanguageExplorerConstants.ChartmarkEditMachineName;
 
 		/// <summary>
 		/// User-visible localized component name.
 		/// </summary>
-		public string UiName => StringTable.Table.LocalizeLiteralValue(AreaServices.ChartmarkEditUiName);
+		public string UiName => StringTable.Table.LocalizeLiteralValue(LanguageExplorerConstants.ChartmarkEditUiName);
 
 		#endregion
 
@@ -126,7 +126,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.ChartmarkEdit
 		/// <summary>
 		/// Get the area for the tool.
 		/// </summary>
-		[field: Import(AreaServices.ListsAreaMachineName)]
+		[field: Import(LanguageExplorerConstants.ListsAreaMachineName)]
 		public IArea Area { get; private set; }
 
 		/// <summary>

@@ -22,7 +22,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.AnthroEdit
 	/// <summary>
 	/// ITool implementation for the "anthroEdit" tool in the "lists" area.
 	/// </summary>
-	[Export(AreaServices.ListsAreaMachineName, typeof(ITool))]
+	[Export(LanguageExplorerConstants.ListsAreaMachineName, typeof(ITool))]
 	internal sealed class AnthroEditTool : IListTool
 	{
 		private const string AnthropologyList = "AnthropologyList";
@@ -113,12 +113,12 @@ namespace LanguageExplorer.Areas.Lists.Tools.AnthroEdit
 		/// Get the internal name of the component.
 		/// </summary>
 		/// <remarks>NB: This is the machine friendly name, not the user friendly name.</remarks>
-		public string MachineName => AreaServices.AnthroEditMachineName;
+		public string MachineName => LanguageExplorerConstants.AnthroEditMachineName;
 
 		/// <summary>
 		/// User-visible localized component name.
 		/// </summary>
-		public string UiName => StringTable.Table.LocalizeLiteralValue(AreaServices.AnthroEditUiName);
+		public string UiName => StringTable.Table.LocalizeLiteralValue(LanguageExplorerConstants.AnthroEditUiName);
 
 		#endregion
 
@@ -127,7 +127,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.AnthroEdit
 		/// <summary>
 		/// Get the area for the tool.
 		/// </summary>
-		[field: Import(AreaServices.ListsAreaMachineName)]
+		[field: Import(LanguageExplorerConstants.ListsAreaMachineName)]
 		public IArea Area { get; private set; }
 
 		/// <summary>
@@ -202,7 +202,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.AnthroEdit
 				_majorFlexComponentParameters.UiWidgetController.AddHandlers(toolUiWidgetParameterObject);
 			}
 
-			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_SubAnthroCategory(Slice slice, ContextMenuName contextMenuId)
+			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_SubAnthroCategory(ISlice slice, ContextMenuName contextMenuId)
 			{
 				Require.That(contextMenuId == ContextMenuName.mnuDataTree_SubAnthroCategory, $"Expected argument value of '{ContextMenuName.mnuDataTree_SubAnthroCategory.ToString()}', but got '{contextMenuId.ToString()}' instead.");
 

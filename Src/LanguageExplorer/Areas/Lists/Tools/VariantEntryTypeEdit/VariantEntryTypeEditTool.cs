@@ -22,7 +22,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.VariantEntryTypeEdit
 	/// <summary>
 	/// ITool implementation for the "variantEntryTypeEdit" tool in the "lists" area.
 	/// </summary>
-	[Export(AreaServices.ListsAreaMachineName, typeof(ITool))]
+	[Export(LanguageExplorerConstants.ListsAreaMachineName, typeof(ITool))]
 	internal sealed class VariantEntryTypeEditTool : IListTool
 	{
 		private const string VariantEntryTypeList = "VariantEntryTypeList";
@@ -113,12 +113,12 @@ namespace LanguageExplorer.Areas.Lists.Tools.VariantEntryTypeEdit
 		/// Get the internal name of the component.
 		/// </summary>
 		/// <remarks>NB: This is the machine friendly name, not the user friendly name.</remarks>
-		public string MachineName => AreaServices.VariantEntryTypeEditMachineName;
+		public string MachineName => LanguageExplorerConstants.VariantEntryTypeEditMachineName;
 
 		/// <summary>
 		/// User-visible localized component name.
 		/// </summary>
-		public string UiName => StringTable.Table.LocalizeLiteralValue(AreaServices.VariantEntryTypeEditUiName);
+		public string UiName => StringTable.Table.LocalizeLiteralValue(LanguageExplorerConstants.VariantEntryTypeEditUiName);
 
 		#endregion
 
@@ -127,7 +127,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.VariantEntryTypeEdit
 		/// <summary>
 		/// Get the area for the tool.
 		/// </summary>
-		[field: Import(AreaServices.ListsAreaMachineName)]
+		[field: Import(LanguageExplorerConstants.ListsAreaMachineName)]
 		public IArea Area { get; private set; }
 
 		/// <summary>
@@ -206,7 +206,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.VariantEntryTypeEdit
 				_majorFlexComponentParameters.UiWidgetController.AddHandlers(toolUiWidgetParameterObject);
 			}
 
-			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_SubVariantEntryType(Slice slice, ContextMenuName contextMenuId)
+			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_SubVariantEntryType(ISlice slice, ContextMenuName contextMenuId)
 			{
 				Require.That(contextMenuId == ContextMenuName.mnuDataTree_SubVariantEntryType, $"Expected argument value of '{ContextMenuName.mnuDataTree_SubVariantEntryType.ToString()}', but got '{contextMenuId.ToString()}' instead.");
 

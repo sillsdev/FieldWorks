@@ -713,7 +713,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			var menu = new ContextMenuStrip();
 			var item = new ToolStripMenuItem(AreaResources.ksShowEntryInLexicon);
 			menu.Items.Add(item);
-			item.Click += (sender, args) => LinkHandler.PublishFollowLinkMessage(Publisher, new FwLinkArgs(AreaServices.LexiconEditMachineName, target.Guid));
+			item.Click += (sender, args) => LinkHandler.PublishFollowLinkMessage(Publisher, new FwLinkArgs(LanguageExplorerConstants.LexiconEditMachineName, target.Guid));
 			menu.Show(this, pt);
 			return base.OnRightMouseUp(pt, rcSrcRoot, rcDstRoot);
 		}

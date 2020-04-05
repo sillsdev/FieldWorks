@@ -22,7 +22,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.LexiconProblems
 	/// <summary>
 	/// ITool implementation for the "lexiconProblems" tool in the "grammar" area.
 	/// </summary>
-	[Export(AreaServices.GrammarAreaMachineName, typeof(ITool))]
+	[Export(LanguageExplorerConstants.GrammarAreaMachineName, typeof(ITool))]
 	internal sealed class LexiconProblemsTool : ITool
 	{
 		private const string LexProblems = "lexProblems";
@@ -103,12 +103,12 @@ namespace LanguageExplorer.Areas.Grammar.Tools.LexiconProblems
 		/// Get the internal name of the component.
 		/// </summary>
 		/// <remarks>NB: This is the machine friendly name, not the user friendly name.</remarks>
-		public string MachineName => AreaServices.LexiconProblemsMachineName;
+		public string MachineName => LanguageExplorerConstants.LexiconProblemsMachineName;
 
 		/// <summary>
 		/// User-visible localized component name.
 		/// </summary>
-		public string UiName => StringTable.Table.LocalizeLiteralValue(AreaServices.LexiconProblemsUiName);
+		public string UiName => StringTable.Table.LocalizeLiteralValue(LanguageExplorerConstants.LexiconProblemsUiName);
 
 		#endregion
 
@@ -117,7 +117,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.LexiconProblems
 		/// <summary>
 		/// Get the area for the tool.
 		/// </summary>
-		[field: Import(AreaServices.GrammarAreaMachineName)]
+		[field: Import(LanguageExplorerConstants.GrammarAreaMachineName)]
 		public IArea Area { get; private set; }
 
 		/// <summary>

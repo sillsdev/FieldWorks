@@ -2,6 +2,7 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using LanguageExplorer;
 using LanguageExplorer.Areas;
 using NUnit.Framework;
 
@@ -16,7 +17,7 @@ namespace LanguageExplorerTests.Repository
 		[TestFixtureSetUp]
 		public override void FixtureSetup()
 		{
-			_areaMachineName = AreaServices.NotebookAreaMachineName;
+			_areaMachineName = LanguageExplorerConstants.NotebookAreaMachineName;
 
 			base.FixtureSetup();
 		}
@@ -42,9 +43,9 @@ namespace LanguageExplorerTests.Repository
 		/// <summary>
 		/// Make sure the Notebook area has tools in the right order.
 		/// </summary>
-		[TestCase(AreaServices.NotebookEditToolUiName, 0, AreaServices.NotebookEditToolMachineName)]
-		[TestCase(AreaServices.NotebookBrowseToolUiName, 1, AreaServices.NotebookBrowseToolMachineName)]
-		[TestCase(AreaServices.NotebookDocumentToolUiName, 2, AreaServices.NotebookDocumentToolMachineName)]
+		[TestCase(LanguageExplorerConstants.NotebookEditToolUiName, 0, LanguageExplorerConstants.NotebookEditToolMachineName)]
+		[TestCase(LanguageExplorerConstants.NotebookBrowseToolUiName, 1, LanguageExplorerConstants.NotebookBrowseToolMachineName)]
+		[TestCase(LanguageExplorerConstants.NotebookDocumentToolUiName, 2, LanguageExplorerConstants.NotebookDocumentToolMachineName)]
 		public void AreaRepositoryHasAllNotebookToolsInCorrectOrder(string uiName, int idx, string expectedMachineName)
 		{
 			DoTests(uiName, idx, expectedMachineName);

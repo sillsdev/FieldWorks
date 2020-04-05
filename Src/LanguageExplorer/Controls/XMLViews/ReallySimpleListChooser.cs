@@ -2175,7 +2175,7 @@ namespace LanguageExplorer.Controls.XMLViews
 				chooser.Cache = cache;
 				chooser.SetObjectAndFlid(0, 0);
 				chooser.SetHelpTopic("khtpChooseNaturalClass");
-				chooser.InitializeRaw(propertyTable, publisher, subscriber, sTitle, sDescription, sJumpLabel, AreaServices.NaturalClassEditMachineName, "analysis vernacular");
+				chooser.InitializeRaw(propertyTable, publisher, subscriber, sTitle, sDescription, sJumpLabel, LanguageExplorerConstants.NaturalClassEditMachineName, "analysis vernacular");
 				var res = chooser.ShowDialog();
 				if (DialogResult.Cancel == res)
 				{

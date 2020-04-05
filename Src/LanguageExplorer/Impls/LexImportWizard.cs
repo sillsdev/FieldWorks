@@ -4594,7 +4594,7 @@ namespace LanguageExplorer.Impls
 			private string LinkRef(int hvo)
 			{
 				var repo = m_cache.ServiceLocator.GetInstance<ICmObjectRepository>();
-				return !repo.IsValidObjectId(hvo) ? null : new FwLinkArgs(AreaServices.LexiconEditMachineName, repo.GetObject(hvo).Guid).ToString();
+				return !repo.IsValidObjectId(hvo) ? null : new FwLinkArgs(LanguageExplorerConstants.LexiconEditMachineName, repo.GetObject(hvo).Guid).ToString();
 			}
 
 			/// <summary>

@@ -98,7 +98,7 @@ namespace LanguageExplorer.Areas
 
 		#endregion
 
-		private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> PopupContextMenuCreatorMethod_mnuReferenceChoices(Slice slice, ContextMenuName contextMenuId)
+		private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> PopupContextMenuCreatorMethod_mnuReferenceChoices(ISlice slice, ContextMenuName contextMenuId)
 		{
 			Require.That(contextMenuId == ContextMenuName.mnuReferenceChoices, $"Expected argument value of '{ContextMenuName.mnuReferenceChoices.ToString()}', but got '{contextMenuId.ToString()}' instead.");
 
@@ -126,7 +126,7 @@ namespace LanguageExplorer.Areas
 				    </command>
 			*/
 			var wantSeparator = false;
-			ConditionallyAddJumpToToolMenuItem_Overload_Also_Rans(contextMenuStrip, menuItems, slice, AreaServices.LexiconEditMachineName, ref wantSeparator, LexEntryTags.kClassName, AreaResources.ksShowEntryInLexicon);
+			ConditionallyAddJumpToToolMenuItem_Overload_Also_Rans(contextMenuStrip, menuItems, slice, LanguageExplorerConstants.LexiconEditMachineName, ref wantSeparator, LexEntryTags.kClassName, AreaResources.ksShowEntryInLexicon);
 
 			/*
 		      <item command="CmdRecordJumpToDefault" />
@@ -134,7 +134,7 @@ namespace LanguageExplorer.Areas
 				      <parameters tool="notebookEdit" className="RnGenericRec" />
 				    </command>
 			*/
-			ConditionallyAddJumpToToolMenuItem_Overload_Also_Rans(contextMenuStrip, menuItems, slice, AreaServices.NotebookEditToolMachineName, ref wantSeparator, RnGenericRecTags.kClassName, AreaResources.Show_Record_in_Notebook);
+			ConditionallyAddJumpToToolMenuItem_Overload_Also_Rans(contextMenuStrip, menuItems, slice, LanguageExplorerConstants.NotebookEditToolMachineName, ref wantSeparator, RnGenericRecTags.kClassName, AreaResources.Show_Record_in_Notebook);
 
 			/*
 		      <item command="CmdAnalysisJumpToConcordance" />
@@ -142,7 +142,7 @@ namespace LanguageExplorer.Areas
 				      <parameters tool="concordance" className="WfiAnalysis" />
 				    </command>
 			*/
-			ConditionallyAddJumpToToolMenuItem_Overload_Also_Rans(contextMenuStrip, menuItems, slice, AreaServices.ConcordanceMachineName, ref wantSeparator, WfiAnalysisTags.kClassName, AreaResources.Show_Analysis_in_Concordance);
+			ConditionallyAddJumpToToolMenuItem_Overload_Also_Rans(contextMenuStrip, menuItems, slice, LanguageExplorerConstants.ConcordanceMachineName, ref wantSeparator, WfiAnalysisTags.kClassName, AreaResources.Show_Analysis_in_Concordance);
 
 			/*
 		      <item label="-" translate="do not translate" />
@@ -156,7 +156,7 @@ namespace LanguageExplorer.Areas
 				  <parameters tool="concordance" className="MoForm" />
 				</command>
 			*/
-			ConditionallyAddJumpToToolMenuItem_Overload_Also_Rans(contextMenuStrip, menuItems, slice, AreaServices.ConcordanceMachineName, ref wantSeparator, MoFormTags.kClassName, AreaResources.Show_Lexeme_Form_in_Concordance, separatorInsertLocation);
+			ConditionallyAddJumpToToolMenuItem_Overload_Also_Rans(contextMenuStrip, menuItems, slice, LanguageExplorerConstants.ConcordanceMachineName, ref wantSeparator, MoFormTags.kClassName, AreaResources.Show_Lexeme_Form_in_Concordance, separatorInsertLocation);
 
 			/*
 		      <item command="CmdEntryJumpToConcordance" />
@@ -164,7 +164,7 @@ namespace LanguageExplorer.Areas
 			      <parameters tool="concordance" className="LexEntry" />
 			    </command>
 			*/
-			ConditionallyAddJumpToToolMenuItem_Overload_Also_Rans(contextMenuStrip, menuItems, slice, AreaServices.ConcordanceMachineName, ref wantSeparator, LexEntryTags.kClassName, AreaResources.Show_Entry_In_Concordance, separatorInsertLocation);
+			ConditionallyAddJumpToToolMenuItem_Overload_Also_Rans(contextMenuStrip, menuItems, slice, LanguageExplorerConstants.ConcordanceMachineName, ref wantSeparator, LexEntryTags.kClassName, AreaResources.Show_Entry_In_Concordance, separatorInsertLocation);
 
 			/*
 		      <item command="CmdSenseJumpToConcordance" />
@@ -172,7 +172,7 @@ namespace LanguageExplorer.Areas
 				      <parameters tool="concordance" className="LexSense" />
 				    </command>
 			*/
-			ConditionallyAddJumpToToolMenuItem_Overload_Also_Rans(contextMenuStrip, menuItems, slice, AreaServices.ConcordanceMachineName, ref wantSeparator, LexSenseTags.kClassName, AreaResources.Show_Sense_in_Concordance, separatorInsertLocation);
+			ConditionallyAddJumpToToolMenuItem_Overload_Also_Rans(contextMenuStrip, menuItems, slice, LanguageExplorerConstants.ConcordanceMachineName, ref wantSeparator, LexSenseTags.kClassName, AreaResources.Show_Sense_in_Concordance, separatorInsertLocation);
 
 			/*
 		      <item command="CmdJumpToAcademicDomainList" />
@@ -180,7 +180,7 @@ namespace LanguageExplorer.Areas
 				      <parameters tool="domainTypeEdit" className="CmPossibility" ownerClass="LexDb" ownerField="DomainTypes" />
 				    </command>
 			*/
-			ConditionallyAddJumpToToolMenuItem_Overload_Jump_To_PossibilityList(contextMenuStrip, menuItems, _cache.LanguageProject.LexDbOA.DomainTypesOA, slice, AreaServices.DomainTypeEditMachineName, ref wantSeparator, separatorInsertLocation: separatorInsertLocation);
+			ConditionallyAddJumpToToolMenuItem_Overload_Jump_To_PossibilityList(contextMenuStrip, menuItems, _cache.LanguageProject.LexDbOA.DomainTypesOA, slice, LanguageExplorerConstants.DomainTypeEditMachineName, ref wantSeparator, separatorInsertLocation: separatorInsertLocation);
 
 			/*
 		      <item command="CmdJumpToAnthroList" />
@@ -188,7 +188,7 @@ namespace LanguageExplorer.Areas
 				      <parameters tool="anthroEdit" className="CmAnthroItem" ownerClass="LangProject" ownerField="AnthroList" />
 				    </command>
 			*/
-			ConditionallyAddJumpToToolMenuItem_Overload_Jump_To_PossibilityList(contextMenuStrip, menuItems, _cache.LanguageProject.AnthroListOA, slice, AreaServices.AnthroEditMachineName, ref wantSeparator, CmAnthroItemTags.kClassName, separatorInsertLocation: separatorInsertLocation);
+			ConditionallyAddJumpToToolMenuItem_Overload_Jump_To_PossibilityList(contextMenuStrip, menuItems, _cache.LanguageProject.AnthroListOA, slice, LanguageExplorerConstants.AnthroEditMachineName, ref wantSeparator, CmAnthroItemTags.kClassName, separatorInsertLocation: separatorInsertLocation);
 
 			ToolStripMenuItem menu;
 			if (CanJumpToToolAndFilterAnthroItem)
@@ -204,10 +204,10 @@ namespace LanguageExplorer.Areas
 					ToolStripMenuItemFactory.CreateToolStripSeparatorForContextMenuStrip(contextMenuStrip, separatorInsertLocation);
 					wantSeparator = false;
 				}
-				if (_currentTool.MachineName != AreaServices.LexiconEditMachineName)
+				if (_currentTool.MachineName != LanguageExplorerConstants.LexiconEditMachineName)
 				{
 					menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, JumpToToolAndFilterAnthroItem, AreaResources.Filter_for_Lexical_Entries_with_this_category);
-					menu.Tag = AreaServices.LexiconEditMachineName;
+					menu.Tag = LanguageExplorerConstants.LexiconEditMachineName;
 				}
 
 				/*
@@ -216,10 +216,10 @@ namespace LanguageExplorer.Areas
 						  <parameters tool="notebookEdit" className="CmAnthroItem" ownerClass="LangProject" ownerField="AnthroList" />
 						</command>
 				*/
-				if (_currentTool.MachineName != AreaServices.NotebookEditToolMachineName)
+				if (_currentTool.MachineName != LanguageExplorerConstants.NotebookEditToolMachineName)
 				{
 					menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, JumpToToolAndFilterAnthroItem, AreaResources.Filter_for_Notebook_Records_with_this_category);
-					menu.Tag = AreaServices.NotebookEditToolMachineName;
+					menu.Tag = LanguageExplorerConstants.NotebookEditToolMachineName;
 				}
 			}
 
@@ -229,7 +229,7 @@ namespace LanguageExplorer.Areas
 				      <parameters tool="confidenceEdit" className="CmPossibility" ownerClass="LangProject" ownerField="ConfidenceLevels" />
 				    </command>
 			*/
-			ConditionallyAddJumpToToolMenuItem_Overload_Jump_To_PossibilityList(contextMenuStrip, menuItems, _cache.LanguageProject.ConfidenceLevelsOA, slice, AreaServices.ConfidenceEditMachineName, ref wantSeparator, separatorInsertLocation: separatorInsertLocation);
+			ConditionallyAddJumpToToolMenuItem_Overload_Jump_To_PossibilityList(contextMenuStrip, menuItems, _cache.LanguageProject.ConfidenceLevelsOA, slice, LanguageExplorerConstants.ConfidenceEditMachineName, ref wantSeparator, separatorInsertLocation: separatorInsertLocation);
 
 			/*
 		      <item command="CmdJumpToDialectLabelsList" />
@@ -237,7 +237,7 @@ namespace LanguageExplorer.Areas
 				      <parameters tool="dialectsListEdit" className="CmPossibility" ownerClass="LexDb" ownerField="DialectLabels" />
 				    </command>
 			*/
-			ConditionallyAddJumpToToolMenuItem_Overload_Jump_To_PossibilityList(contextMenuStrip, menuItems, _cache.LanguageProject.LexDbOA.DialectLabelsOA, slice, AreaServices.DialectsListEditMachineName, ref wantSeparator, separatorInsertLocation: separatorInsertLocation);
+			ConditionallyAddJumpToToolMenuItem_Overload_Jump_To_PossibilityList(contextMenuStrip, menuItems, _cache.LanguageProject.LexDbOA.DialectLabelsOA, slice, LanguageExplorerConstants.DialectsListEditMachineName, ref wantSeparator, separatorInsertLocation: separatorInsertLocation);
 
 			/*
 		      <item command="CmdJumpToDiscChartMarkerList" />
@@ -245,7 +245,7 @@ namespace LanguageExplorer.Areas
 				      <parameters tool="chartmarkEdit" className="CmPossibility" ownerClass="DsDiscourseData" ownerField="ChartMarkers" />
 				    </command>
 			*/
-			ConditionallyAddJumpToToolMenuItem_Overload_Jump_To_PossibilityList(contextMenuStrip, menuItems, _cache.LanguageProject.DiscourseDataOA.ChartMarkersOA, slice, AreaServices.ChartmarkEditMachineName, ref wantSeparator, separatorInsertLocation: separatorInsertLocation);
+			ConditionallyAddJumpToToolMenuItem_Overload_Jump_To_PossibilityList(contextMenuStrip, menuItems, _cache.LanguageProject.DiscourseDataOA.ChartMarkersOA, slice, LanguageExplorerConstants.ChartmarkEditMachineName, ref wantSeparator, separatorInsertLocation: separatorInsertLocation);
 
 			/*
 		      <item command="CmdJumpToDiscChartTemplateList" />
@@ -253,7 +253,7 @@ namespace LanguageExplorer.Areas
 				      <parameters tool="charttempEdit" className="CmPossibility" ownerClass="DsDiscourseData" ownerField="ConstChartTempl" />
 				    </command>
 			*/
-			ConditionallyAddJumpToToolMenuItem_Overload_Jump_To_PossibilityList(contextMenuStrip, menuItems, _cache.LanguageProject.DiscourseDataOA.ConstChartTemplOA, slice, AreaServices.CharttempEditMachineName, ref wantSeparator, separatorInsertLocation: separatorInsertLocation);
+			ConditionallyAddJumpToToolMenuItem_Overload_Jump_To_PossibilityList(contextMenuStrip, menuItems, _cache.LanguageProject.DiscourseDataOA.ConstChartTemplOA, slice, LanguageExplorerConstants.CharttempEditMachineName, ref wantSeparator, separatorInsertLocation: separatorInsertLocation);
 
 			/*
 		      <item command="CmdJumpToEducationList" />
@@ -261,7 +261,7 @@ namespace LanguageExplorer.Areas
 				      <parameters tool="educationEdit" className="CmPossibility" ownerClass="LangProject" ownerField="Education" />
 				    </command>
 			*/
-			ConditionallyAddJumpToToolMenuItem_Overload_Jump_To_PossibilityList(contextMenuStrip, menuItems, _cache.LanguageProject.EducationOA, slice, AreaServices.EducationEditMachineName, ref wantSeparator, separatorInsertLocation: separatorInsertLocation);
+			ConditionallyAddJumpToToolMenuItem_Overload_Jump_To_PossibilityList(contextMenuStrip, menuItems, _cache.LanguageProject.EducationOA, slice, LanguageExplorerConstants.EducationEditMachineName, ref wantSeparator, separatorInsertLocation: separatorInsertLocation);
 
 			/*
 		      <item command="CmdJumpToRoleList" />
@@ -269,7 +269,7 @@ namespace LanguageExplorer.Areas
 				      <parameters tool="roleEdit" className="CmPossibility" ownerClass="LangProject" ownerField="Roles" />
 				    </command>
 			*/
-			ConditionallyAddJumpToToolMenuItem_Overload_Jump_To_PossibilityList(contextMenuStrip, menuItems, _cache.LanguageProject.RolesOA, slice, AreaServices.RoleEditMachineName, ref wantSeparator, separatorInsertLocation: separatorInsertLocation);
+			ConditionallyAddJumpToToolMenuItem_Overload_Jump_To_PossibilityList(contextMenuStrip, menuItems, _cache.LanguageProject.RolesOA, slice, LanguageExplorerConstants.RoleEditMachineName, ref wantSeparator, separatorInsertLocation: separatorInsertLocation);
 
 			/*
 		      <item command="CmdJumpToExtNoteTypeList" />
@@ -277,7 +277,7 @@ namespace LanguageExplorer.Areas
 				      <parameters tool="extNoteTypeEdit" className="CmPossibility" ownerClass="LexDb" ownerField="ExtendedNoteTypes" />
 				    </command>
 			*/
-			ConditionallyAddJumpToToolMenuItem_Overload_Jump_To_PossibilityList(contextMenuStrip, menuItems, _cache.LanguageProject.LexDbOA.ExtendedNoteTypesOA, slice, AreaServices.ExtNoteTypeEditMachineName, ref wantSeparator, separatorInsertLocation: separatorInsertLocation);
+			ConditionallyAddJumpToToolMenuItem_Overload_Jump_To_PossibilityList(contextMenuStrip, menuItems, _cache.LanguageProject.LexDbOA.ExtendedNoteTypesOA, slice, LanguageExplorerConstants.ExtNoteTypeEditMachineName, ref wantSeparator, separatorInsertLocation: separatorInsertLocation);
 
 			/*
 		      <item command="CmdJumpToComplexEntryTypeList" />
@@ -285,7 +285,7 @@ namespace LanguageExplorer.Areas
 				      <parameters tool="complexEntryTypeEdit" className="LexEntryType" ownerClass="LexDb" ownerField="ComplexEntryTypes" />
 				    </command>
 			*/
-			ConditionallyAddJumpToToolMenuItem_Overload_Jump_To_PossibilityList(contextMenuStrip, menuItems, _cache.LanguageProject.LexDbOA.ComplexEntryTypesOA, slice, AreaServices.ComplexEntryTypeEditMachineName, ref wantSeparator, LexEntryTypeTags.kClassName, AreaResources.Show_in_Complex_Form_Types_list, separatorInsertLocation);
+			ConditionallyAddJumpToToolMenuItem_Overload_Jump_To_PossibilityList(contextMenuStrip, menuItems, _cache.LanguageProject.LexDbOA.ComplexEntryTypesOA, slice, LanguageExplorerConstants.ComplexEntryTypeEditMachineName, ref wantSeparator, LexEntryTypeTags.kClassName, AreaResources.Show_in_Complex_Form_Types_list, separatorInsertLocation);
 
 			/*
 		      <item command="CmdJumpToVariantEntryTypeList" />
@@ -293,7 +293,7 @@ namespace LanguageExplorer.Areas
 				      <parameters tool="variantEntryTypeEdit" className="LexEntryType" ownerClass="LexDb" ownerField="VariantEntryTypes" />
 				    </command>
 			*/
-			ConditionallyAddJumpToToolMenuItem_Overload_Jump_To_PossibilityList(contextMenuStrip, menuItems, _cache.LanguageProject.LexDbOA.VariantEntryTypesOA, slice, AreaServices.VariantEntryTypeEditMachineName, ref wantSeparator, LexEntryTypeTags.kClassName, AreaResources.Show_in_Variant_Types_list, separatorInsertLocation);
+			ConditionallyAddJumpToToolMenuItem_Overload_Jump_To_PossibilityList(contextMenuStrip, menuItems, _cache.LanguageProject.LexDbOA.VariantEntryTypesOA, slice, LanguageExplorerConstants.VariantEntryTypeEditMachineName, ref wantSeparator, LexEntryTypeTags.kClassName, AreaResources.Show_in_Variant_Types_list, separatorInsertLocation);
 
 			/*
 		      <item command="CmdJumpToTextMarkupTagsList" />
@@ -301,7 +301,7 @@ namespace LanguageExplorer.Areas
 				      <parameters tool="textMarkupTagsEdit" className="CmPossibility" ownerClass="LangProject" ownerField="TextMarkupTags" />
 				    </command>
 			*/
-			ConditionallyAddJumpToToolMenuItem_Overload_Jump_To_PossibilityList(contextMenuStrip, menuItems, _cache.LanguageProject.TextMarkupTagsOA, slice, AreaServices.TextMarkupTagsEditMachineName, ref wantSeparator, separatorInsertLocation: separatorInsertLocation);
+			ConditionallyAddJumpToToolMenuItem_Overload_Jump_To_PossibilityList(contextMenuStrip, menuItems, _cache.LanguageProject.TextMarkupTagsOA, slice, LanguageExplorerConstants.TextMarkupTagsEditMachineName, ref wantSeparator, separatorInsertLocation: separatorInsertLocation);
 
 			/*
 		      <item command="CmdJumpToLexRefTypeList" />
@@ -309,7 +309,7 @@ namespace LanguageExplorer.Areas
 				      <parameters tool="lexRefEdit" className="LexRefType" ownerClass="LexDb" ownerField="References" />
 				    </command>
 			*/
-			ConditionallyAddJumpToToolMenuItem_Overload_Jump_To_PossibilityList(contextMenuStrip, menuItems, _cache.LanguageProject.LexDbOA.ReferencesOA, slice, AreaServices.LexRefEditMachineName, ref wantSeparator, LexRefTypeTags.kClassName, separatorInsertLocation: separatorInsertLocation);
+			ConditionallyAddJumpToToolMenuItem_Overload_Jump_To_PossibilityList(contextMenuStrip, menuItems, _cache.LanguageProject.LexDbOA.ReferencesOA, slice, LanguageExplorerConstants.LexRefEditMachineName, ref wantSeparator, LexRefTypeTags.kClassName, separatorInsertLocation: separatorInsertLocation);
 
 			/*
 		      <item command="CmdJumpToLanguagesList" />
@@ -317,7 +317,7 @@ namespace LanguageExplorer.Areas
 				      <parameters tool="languagesListEdit" className="CmPossibility" ownerClass="LexDb" ownerField="Languages" />
 				    </command>
 			*/
-			ConditionallyAddJumpToToolMenuItem_Overload_Jump_To_PossibilityList(contextMenuStrip, menuItems, _cache.LanguageProject.LexDbOA.LanguagesOA, slice, AreaServices.LanguagesListEditMachineName, ref wantSeparator, separatorInsertLocation: separatorInsertLocation);
+			ConditionallyAddJumpToToolMenuItem_Overload_Jump_To_PossibilityList(contextMenuStrip, menuItems, _cache.LanguageProject.LexDbOA.LanguagesOA, slice, LanguageExplorerConstants.LanguagesListEditMachineName, ref wantSeparator, separatorInsertLocation: separatorInsertLocation);
 
 			/*
 		      <item command="CmdJumpToLocationList" />
@@ -325,7 +325,7 @@ namespace LanguageExplorer.Areas
 				      <parameters tool="locationsEdit" className="CmLocation" ownerClass="LangProject" ownerField="Locations" />
 				    </command>
 			*/
-			ConditionallyAddJumpToToolMenuItem_Overload_Jump_To_PossibilityList(contextMenuStrip, menuItems, _cache.LanguageProject.LocationsOA, slice, AreaServices.LocationsEditMachineName, ref wantSeparator, CmLocationTags.kClassName, separatorInsertLocation: separatorInsertLocation);
+			ConditionallyAddJumpToToolMenuItem_Overload_Jump_To_PossibilityList(contextMenuStrip, menuItems, _cache.LanguageProject.LocationsOA, slice, LanguageExplorerConstants.LocationsEditMachineName, ref wantSeparator, CmLocationTags.kClassName, separatorInsertLocation: separatorInsertLocation);
 
 			/*
 		      <item command="CmdJumpToPublicationList" />
@@ -333,7 +333,7 @@ namespace LanguageExplorer.Areas
 				      <parameters tool="publicationsEdit" className="CmPossibility" ownerClass="LexDb" ownerField="PublicationTypes" />
 				    </command>
 			*/
-			ConditionallyAddJumpToToolMenuItem_Overload_Jump_To_PossibilityList(contextMenuStrip, menuItems, _cache.LanguageProject.LexDbOA.PublicationTypesOA, slice, AreaServices.PublicationsEditMachineName, ref wantSeparator, separatorInsertLocation: separatorInsertLocation);
+			ConditionallyAddJumpToToolMenuItem_Overload_Jump_To_PossibilityList(contextMenuStrip, menuItems, _cache.LanguageProject.LexDbOA.PublicationTypesOA, slice, LanguageExplorerConstants.PublicationsEditMachineName, ref wantSeparator, separatorInsertLocation: separatorInsertLocation);
 
 			/*
 		      <item command="CmdJumpToMorphTypeList" />
@@ -341,7 +341,7 @@ namespace LanguageExplorer.Areas
 				      <parameters tool="morphTypeEdit" className="MoMorphType" ownerClass="LexDb" ownerField="MorphTypes" />
 				    </command>
 			*/
-			ConditionallyAddJumpToToolMenuItem_Overload_Jump_To_PossibilityList(contextMenuStrip, menuItems, _cache.LanguageProject.LexDbOA.MorphTypesOA, slice, AreaServices.MorphTypeEditMachineName, ref wantSeparator, MoMorphTypeTags.kClassName, AreaResources.Show_in_Morpheme_Types_list, separatorInsertLocation);
+			ConditionallyAddJumpToToolMenuItem_Overload_Jump_To_PossibilityList(contextMenuStrip, menuItems, _cache.LanguageProject.LexDbOA.MorphTypesOA, slice, LanguageExplorerConstants.MorphTypeEditMachineName, ref wantSeparator, MoMorphTypeTags.kClassName, AreaResources.Show_in_Morpheme_Types_list, separatorInsertLocation);
 
 			/*
 		      <item command="CmdJumpToPeopleList" />
@@ -349,7 +349,7 @@ namespace LanguageExplorer.Areas
 				      <parameters tool="peopleEdit" className="CmPerson" ownerClass="LangProject" ownerField="People" />
 				    </command>
 			*/
-			ConditionallyAddJumpToToolMenuItem_Overload_Jump_To_PossibilityList(contextMenuStrip, menuItems, _cache.LanguageProject.PeopleOA, slice, AreaServices.PeopleEditMachineName, ref wantSeparator, CmPersonTags.kClassName, separatorInsertLocation: separatorInsertLocation);
+			ConditionallyAddJumpToToolMenuItem_Overload_Jump_To_PossibilityList(contextMenuStrip, menuItems, _cache.LanguageProject.PeopleOA, slice, LanguageExplorerConstants.PeopleEditMachineName, ref wantSeparator, CmPersonTags.kClassName, separatorInsertLocation: separatorInsertLocation);
 
 			/*
 		      <item command="CmdJumpToPositionList" />
@@ -357,7 +357,7 @@ namespace LanguageExplorer.Areas
 				      <parameters tool="positionsEdit" className="CmPossibility" ownerClass="LangProject" ownerField="Positions" />
 				    </command>
 			*/
-			ConditionallyAddJumpToToolMenuItem_Overload_Jump_To_PossibilityList(contextMenuStrip, menuItems, _cache.LanguageProject.PositionsOA, slice, AreaServices.PositionsEditMachineName, ref wantSeparator, separatorInsertLocation: separatorInsertLocation);
+			ConditionallyAddJumpToToolMenuItem_Overload_Jump_To_PossibilityList(contextMenuStrip, menuItems, _cache.LanguageProject.PositionsOA, slice, LanguageExplorerConstants.PositionsEditMachineName, ref wantSeparator, separatorInsertLocation: separatorInsertLocation);
 
 			/*
 		      <item command="CmdJumpToRestrictionsList" />
@@ -365,7 +365,7 @@ namespace LanguageExplorer.Areas
 				      <parameters tool="restrictionsEdit" className="CmPossibility" ownerClass="LangProject" ownerField="Restrictions" />
 				    </command>
 			*/
-			ConditionallyAddJumpToToolMenuItem_Overload_Jump_To_PossibilityList(contextMenuStrip, menuItems, _cache.LanguageProject.RestrictionsOA, slice, AreaServices.RestrictionsEditMachineName, ref wantSeparator, separatorInsertLocation: separatorInsertLocation);
+			ConditionallyAddJumpToToolMenuItem_Overload_Jump_To_PossibilityList(contextMenuStrip, menuItems, _cache.LanguageProject.RestrictionsOA, slice, LanguageExplorerConstants.RestrictionsEditMachineName, ref wantSeparator, separatorInsertLocation: separatorInsertLocation);
 
 			/*
 		      <item command="CmdJumpToSemanticDomainList" />
@@ -373,7 +373,7 @@ namespace LanguageExplorer.Areas
 				      <parameters tool="semanticDomainEdit" className="CmSemanticDomain" ownerClass="LangProject" ownerField="SemanticDomainList" />
 				    </command>
 			*/
-			ConditionallyAddJumpToToolMenuItem_Overload_Jump_To_PossibilityList(contextMenuStrip, menuItems, _cache.LanguageProject.SemanticDomainListOA, slice, AreaServices.SemanticDomainEditMachineName, ref wantSeparator, CmSemanticDomainTags.kClassName, separatorInsertLocation: separatorInsertLocation);
+			ConditionallyAddJumpToToolMenuItem_Overload_Jump_To_PossibilityList(contextMenuStrip, menuItems, _cache.LanguageProject.SemanticDomainListOA, slice, LanguageExplorerConstants.SemanticDomainEditMachineName, ref wantSeparator, CmSemanticDomainTags.kClassName, separatorInsertLocation: separatorInsertLocation);
 
 			/*
 		      <item command="CmdJumpToGenreList" />
@@ -381,7 +381,7 @@ namespace LanguageExplorer.Areas
 				      <parameters tool="genresEdit" className="CmPossibility" ownerClass="LangProject" ownerField="GenreList" />
 				    </command>
 			*/
-			ConditionallyAddJumpToToolMenuItem_Overload_Jump_To_PossibilityList(contextMenuStrip, menuItems, _cache.LanguageProject.GenreListOA, slice, AreaServices.GenresEditMachineName, ref wantSeparator, separatorInsertLocation: separatorInsertLocation);
+			ConditionallyAddJumpToToolMenuItem_Overload_Jump_To_PossibilityList(contextMenuStrip, menuItems, _cache.LanguageProject.GenreListOA, slice, LanguageExplorerConstants.GenresEditMachineName, ref wantSeparator, separatorInsertLocation: separatorInsertLocation);
 
 			/*
 		      <item command="CmdJumpToSenseTypeList" />
@@ -389,7 +389,7 @@ namespace LanguageExplorer.Areas
 				      <parameters tool="senseTypeEdit" className="CmPossibility" ownerClass="LexDb" ownerField="SenseTypes" />
 				    </command>
 			*/
-			ConditionallyAddJumpToToolMenuItem_Overload_Jump_To_PossibilityList(contextMenuStrip, menuItems, _cache.LanguageProject.LexDbOA.SenseTypesOA, slice, AreaServices.SenseTypeEditMachineName, ref wantSeparator, separatorInsertLocation: separatorInsertLocation);
+			ConditionallyAddJumpToToolMenuItem_Overload_Jump_To_PossibilityList(contextMenuStrip, menuItems, _cache.LanguageProject.LexDbOA.SenseTypesOA, slice, LanguageExplorerConstants.SenseTypeEditMachineName, ref wantSeparator, separatorInsertLocation: separatorInsertLocation);
 
 			/*
 		      <item command="CmdJumpToStatusList" />
@@ -397,7 +397,7 @@ namespace LanguageExplorer.Areas
 				      <parameters tool="statusEdit" className="CmPossibility" ownerClass="LangProject" ownerField="Status" />
 				    </command>
 			*/
-			ConditionallyAddJumpToToolMenuItem_Overload_Jump_To_PossibilityList(contextMenuStrip, menuItems, _cache.LanguageProject.StatusOA, slice, AreaServices.StatusEditMachineName, ref wantSeparator, separatorInsertLocation: separatorInsertLocation);
+			ConditionallyAddJumpToToolMenuItem_Overload_Jump_To_PossibilityList(contextMenuStrip, menuItems, _cache.LanguageProject.StatusOA, slice, LanguageExplorerConstants.StatusEditMachineName, ref wantSeparator, separatorInsertLocation: separatorInsertLocation);
 
 			/*
 		      <item command="CmdJumpToTranslationTypeList" />
@@ -405,7 +405,7 @@ namespace LanguageExplorer.Areas
 				      <parameters tool="translationTypeEdit" className="CmPossibility" ownerClass="LangProject" ownerField="TranslationTags" />
 				    </command>
 			*/
-			ConditionallyAddJumpToToolMenuItem_Overload_Jump_To_PossibilityList(contextMenuStrip, menuItems, _cache.LanguageProject.TranslationTagsOA, slice, AreaServices.TranslationTypeEditMachineName, ref wantSeparator, separatorInsertLocation: separatorInsertLocation);
+			ConditionallyAddJumpToToolMenuItem_Overload_Jump_To_PossibilityList(contextMenuStrip, menuItems, _cache.LanguageProject.TranslationTagsOA, slice, LanguageExplorerConstants.TranslationTypeEditMachineName, ref wantSeparator, separatorInsertLocation: separatorInsertLocation);
 
 			/*
 		      <item command="CmdJumpToUsageTypeList" />
@@ -413,7 +413,7 @@ namespace LanguageExplorer.Areas
 				      <parameters tool="usageTypeEdit" className="CmPossibility" ownerClass="LexDb" ownerField="UsageTypes" />
 				    </command>
 			*/
-			ConditionallyAddJumpToToolMenuItem_Overload_Jump_To_PossibilityList(contextMenuStrip, menuItems, _cache.LanguageProject.LexDbOA.UsageTypesOA, slice, AreaServices.UsageTypeEditMachineName, ref wantSeparator, separatorInsertLocation: separatorInsertLocation);
+			ConditionallyAddJumpToToolMenuItem_Overload_Jump_To_PossibilityList(contextMenuStrip, menuItems, _cache.LanguageProject.LexDbOA.UsageTypesOA, slice, LanguageExplorerConstants.UsageTypeEditMachineName, ref wantSeparator, separatorInsertLocation: separatorInsertLocation);
 
 			/*
 		      <item command="CmdJumpToRecordTypeList" />
@@ -421,7 +421,7 @@ namespace LanguageExplorer.Areas
 				      <parameters tool="recTypeEdit" className="CmPossibility" ownerClass="RnResearchNbk" ownerField="RecTypes" />
 				    </command>
 			*/
-			ConditionallyAddJumpToToolMenuItem_Overload_Jump_To_PossibilityList(contextMenuStrip, menuItems, _cache.LanguageProject.ResearchNotebookOA.RecTypesOA, slice, AreaServices.RecTypeEditMachineName, ref wantSeparator, separatorInsertLocation: separatorInsertLocation);
+			ConditionallyAddJumpToToolMenuItem_Overload_Jump_To_PossibilityList(contextMenuStrip, menuItems, _cache.LanguageProject.ResearchNotebookOA.RecTypesOA, slice, LanguageExplorerConstants.RecTypeEditMachineName, ref wantSeparator, separatorInsertLocation: separatorInsertLocation);
 
 			/*
 		      <item command="CmdJumpToTimeOfDayList" />
@@ -429,7 +429,7 @@ namespace LanguageExplorer.Areas
 				      <parameters tool="timeOfDayEdit" className="CmPossibility" ownerClass="LangProject" ownerField="TimeOfDay" />
 				    </command>
 			*/
-			ConditionallyAddJumpToToolMenuItem_Overload_Jump_To_PossibilityList(contextMenuStrip, menuItems, _cache.LanguageProject.TimeOfDayOA, slice, AreaServices.TimeOfDayEditMachineName, ref wantSeparator, separatorInsertLocation: separatorInsertLocation);
+			ConditionallyAddJumpToToolMenuItem_Overload_Jump_To_PossibilityList(contextMenuStrip, menuItems, _cache.LanguageProject.TimeOfDayOA, slice, LanguageExplorerConstants.TimeOfDayEditMachineName, ref wantSeparator, separatorInsertLocation: separatorInsertLocation);
 
 			/*
 		      <item label="-" translate="do not translate" />
@@ -457,7 +457,7 @@ namespace LanguageExplorer.Areas
 					menuIsChecked = ler.PrimaryLexemesRS.Contains(target); // LT-11292
 				}
 			}
-			visibleAndEnabled = visibleAndEnabled && _currentTool.MachineName == AreaServices.LexiconEditMachineName;
+			visibleAndEnabled = visibleAndEnabled && _currentTool.MachineName == LanguageExplorerConstants.LexiconEditMachineName;
 			if (visibleAndEnabled)
 			{
 				if (wantSeparator)
@@ -489,7 +489,7 @@ namespace LanguageExplorer.Areas
 				menu.Checked = menuIsChecked;
 			}
 
-			if (slice is ReferenceVectorSlice referenceVectorSlice)
+			if (slice is IReferenceVectorSlice referenceVectorSlice)
 			{
 				/*
 				  <item command="CmdMoveTargetToPreviousInSequence" />
@@ -504,7 +504,7 @@ namespace LanguageExplorer.Areas
 						wantSeparator = false;
 					}
 					// <command id="CmdMoveTargetToPreviousInSequence" label="Move Left" message="MoveTargetDownInSequence"/>
-					menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers.GetEventHandler(Command.CmdMoveTargetToPreviousInSequence), AreaResources.Move_Left);
+					menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers.GetEventHandler(Command.CmdMoveTargetToPreviousInSequence), LanguageExplorerControls.Move_Left);
 					menu.Enabled = enabled;
 				}
 
@@ -520,7 +520,7 @@ namespace LanguageExplorer.Areas
 						ToolStripMenuItemFactory.CreateToolStripSeparatorForContextMenuStrip(contextMenuStrip, separatorInsertLocation);
 					}
 					// <command id="CmdMoveTargetToNextInSequence" label="Move Right" message="MoveTargetUpInSequence"/>
-					menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers.GetEventHandler(Command.CmdMoveTargetToNextInSequence), AreaResources.Move_Right);
+					menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers.GetEventHandler(Command.CmdMoveTargetToNextInSequence), LanguageExplorerControls.Move_Right);
 					menu.Enabled = enabled;
 				}
 			}
@@ -592,7 +592,7 @@ namespace LanguageExplorer.Areas
 			}
 		}
 
-		private void Can_Do_VisibleComplexForm(Slice slice, ILexEntry complexFormEntry, out bool visibleAndEnabled, out bool menuIsChecked)
+		private void Can_Do_VisibleComplexForm(ISlice slice, ILexEntry complexFormEntry, out bool visibleAndEnabled, out bool menuIsChecked)
 		{
 			visibleAndEnabled = false;
 			menuIsChecked = false;
@@ -661,11 +661,11 @@ namespace LanguageExplorer.Areas
 			}
 		}
 
-		private void ConditionallyAddJumpToToolMenuItem_Overload_Also_Rans(ContextMenuStrip contextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>> menuItems, Slice slice, string targetToolName, ref bool wantSeparator, string className, string menuLabel, int separatorInsertLocation = 0)
+		private void ConditionallyAddJumpToToolMenuItem_Overload_Also_Rans(ContextMenuStrip contextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>> menuItems, ISlice slice, string targetToolName, ref bool wantSeparator, string className, string menuLabel, int separatorInsertLocation = 0)
 		{
 			// 6 users in PopupContextMenuCreatorMethod_mnuReferenceChoices
 			var selectedObject = _recordList.CurrentObject;
-			if (slice is ReferenceVectorSlice asReferenceVectorSlice)
+			if (slice is IReferenceVectorSlice asReferenceVectorSlice)
 			{
 				// Dig out selected item in slice.
 				var vectorReferenceLauncher = (VectorReferenceLauncher)asReferenceVectorSlice.Control;
@@ -674,7 +674,7 @@ namespace LanguageExplorer.Areas
 			}
 			else
 			{
-				if (slice is AtomicReferenceSlice asAtomicReferenceSlice)
+				if (slice is IAtomicReferenceSlice asAtomicReferenceSlice)
 				{
 					// Dig out selected item in slice.
 					var atomicReferenceLauncher = (AtomicReferenceLauncher)asAtomicReferenceSlice.Control;
@@ -696,7 +696,7 @@ namespace LanguageExplorer.Areas
 		/// <summary>
 		/// Used only for possibility lists and possibilities.
 		/// </summary>
-		private void ConditionallyAddJumpToToolMenuItem_Overload_Jump_To_PossibilityList(ContextMenuStrip contextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>> menuItems, ICmPossibilityList listToJumpTo, Slice slice, string targetToolName, ref bool wantSeparator, string className = CmPossibilityTags.kClassName, string menuLabel = null, int separatorInsertLocation = 0)
+		private void ConditionallyAddJumpToToolMenuItem_Overload_Jump_To_PossibilityList(ContextMenuStrip contextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>> menuItems, ICmPossibilityList listToJumpTo, ISlice slice, string targetToolName, ref bool wantSeparator, string className = CmPossibilityTags.kClassName, string menuLabel = null, int separatorInsertLocation = 0)
 		{
 			// 28 users in PopupContextMenuCreatorMethod_mnuReferenceChoices
 			Guard.AgainstNull(listToJumpTo, nameof(listToJumpTo));
@@ -706,15 +706,14 @@ namespace LanguageExplorer.Areas
 				menuLabel = string.Format(AreaResources.Show_in_0_list, listToJumpTo.ShortName);
 			}
 			var selectedObject = _recordList.CurrentObject as ICmPossibility; // Most likely it is null.
-			var asReferenceVectorSlice = slice as ReferenceVectorSlice; // May be null.
-			if (asReferenceVectorSlice != null)
+			if (slice is IReferenceVectorSlice asReferenceVectorSlice)
 			{
 				// Dig out selected item in slice.
 				var vectorReferenceLauncher = (VectorReferenceLauncher)asReferenceVectorSlice.Control;
 				var vectorReferenceView = (VectorReferenceView)vectorReferenceLauncher.MainControl;
 				selectedObject = vectorReferenceView.SelectedObject as ICmPossibility;
 			}
-			if (slice is AtomicReferenceSlice asAtomicReferenceSlice)
+			if (slice is IAtomicReferenceSlice asAtomicReferenceSlice)
 			{
 				// Dig out selected item in slice.
 				var atomicReferenceLauncher = (AtomicReferenceLauncher)asAtomicReferenceSlice.Control;
@@ -738,7 +737,7 @@ namespace LanguageExplorer.Areas
 
 		#region "mnuEnvReferenceChoices"
 
-		private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> PopupContextMenuCreatorMethod_mnuEnvReferenceChoices(Slice slice, ContextMenuName contextMenuId)
+		private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> PopupContextMenuCreatorMethod_mnuEnvReferenceChoices(ISlice slice, ContextMenuName contextMenuId)
 		{
 			Require.That(contextMenuId == ContextMenuName.mnuEnvReferenceChoices, $"Expected argument value of '{ContextMenuName.mnuEnvReferenceChoices.ToString()}', but got '{contextMenuId.ToString()}' instead.");
 
@@ -759,7 +758,7 @@ namespace LanguageExplorer.Areas
 						</command>
 				*/
 				var menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _sharedEventHandlers.GetEventHandler(Command.CmdJumpToTool), AreaResources.Show_in_Environments_list);
-				menu.Tag = new List<object> { _flexComponentParameters.Publisher, AreaServices.EnvironmentEditMachineName, _dataTree };
+				menu.Tag = new List<object> { _flexComponentParameters.Publisher, LanguageExplorerConstants.EnvironmentEditMachineName, _dataTree };
 			}
 
 			PartiallySharedForToolsWideMenuHelper.CreateShowEnvironmentErrorMessageContextMenuStripMenus(slice, menuItems, contextMenuStrip);
@@ -776,7 +775,7 @@ namespace LanguageExplorer.Areas
 			get
 			{
 				var currentSlice = _dataTree.CurrentSlice;
-				return (_currentTool.MachineName != AreaServices.EnvironmentEditMachineName || currentSlice.MyCmObject != _recordList.CurrentObject) && !currentSlice.MyCmObject.IsOwnedBy(_recordList.CurrentObject) && (currentSlice.MyCmObject.ClassID == PhEnvironmentTags.kClassId || _dataTree.Cache.DomainDataByFlid.MetaDataCache.GetBaseClsId(currentSlice.MyCmObject.ClassID) == PhEnvironmentTags.kClassId);
+				return (_currentTool.MachineName != LanguageExplorerConstants.EnvironmentEditMachineName || currentSlice.MyCmObject != _recordList.CurrentObject) && !currentSlice.MyCmObject.IsOwnedBy(_recordList.CurrentObject) && (currentSlice.MyCmObject.ClassID == PhEnvironmentTags.kClassId || _dataTree.Cache.DomainDataByFlid.MetaDataCache.GetBaseClsId(currentSlice.MyCmObject.ClassID) == PhEnvironmentTags.kClassId);
 			}
 		}
 

@@ -5,6 +5,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using LanguageExplorer.Controls;
 using LanguageExplorer.Controls.XMLViews;
 using NUnit.Framework;
 using SIL.LCModel;

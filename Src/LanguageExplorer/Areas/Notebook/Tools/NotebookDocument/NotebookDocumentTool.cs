@@ -21,7 +21,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookDocument
 	/// <summary>
 	/// ITool implementation for the "notebookDocument" tool in the "notebook" area.
 	/// </summary>
-	[Export(AreaServices.NotebookAreaMachineName, typeof(ITool))]
+	[Export(LanguageExplorerConstants.NotebookAreaMachineName, typeof(ITool))]
 	internal sealed class NotebookDocumentTool : ITool
 	{
 		private NotebookDocumentToolMenuHelper _toolMenuHelper;
@@ -99,12 +99,12 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookDocument
 		/// Get the internal name of the component.
 		/// </summary>
 		/// <remarks>NB: This is the machine friendly name, not the user friendly name.</remarks>
-		public string MachineName => AreaServices.NotebookDocumentToolMachineName;
+		public string MachineName => LanguageExplorerConstants.NotebookDocumentToolMachineName;
 
 		/// <summary>
 		/// User-visible localized component name.
 		/// </summary>
-		public string UiName => StringTable.Table.LocalizeLiteralValue(AreaServices.NotebookDocumentToolUiName);
+		public string UiName => StringTable.Table.LocalizeLiteralValue(LanguageExplorerConstants.NotebookDocumentToolUiName);
 
 		#endregion
 
@@ -113,7 +113,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookDocument
 		/// <summary>
 		/// Get the area for the tool.
 		/// </summary>
-		[field: Import(AreaServices.NotebookAreaMachineName)]
+		[field: Import(LanguageExplorerConstants.NotebookAreaMachineName)]
 		public IArea Area { get; private set; }
 
 		/// <summary>

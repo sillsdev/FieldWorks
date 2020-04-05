@@ -79,6 +79,15 @@ namespace SIL.FieldWorks.Common.FwUtils {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Create Reversal.
+        /// </summary>
+        public static string ksCreateReversal {
+            get {
+                return ResourceManager.GetString("ksCreateReversal", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to A deleted object.
         /// </summary>
         public static string ksDeletedObject {
@@ -177,6 +186,15 @@ namespace SIL.FieldWorks.Common.FwUtils {
         public static string ksPtCommunicationProblem {
             get {
                 return ResourceManager.GetString("ksPtCommunicationProblem", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Recreate Reversal.
+        /// </summary>
+        public static string ksRecreateReversal {
+            get {
+                return ResourceManager.GetString("ksRecreateReversal", resourceCulture);
             }
         }
         
