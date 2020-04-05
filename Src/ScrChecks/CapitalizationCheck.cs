@@ -62,13 +62,6 @@ namespace SILUBS.ScriptureChecks
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Gets the name of the check.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public string CheckName { get { return Localize("Capitalization"); } }
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
 		/// The unique identifier of the check. This should never be changed!
 		/// </summary>
 		/// ------------------------------------------------------------------------------------

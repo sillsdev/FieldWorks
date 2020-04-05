@@ -256,7 +256,6 @@ namespace SIL.FieldWorks.WordWorks.Parser.XAmple
 		public SpecAmpleAddSelectiveAnalysisMorphs AmpleAddSelectiveAnalysisMorphsDelegate { get; set; }
 		public SpecAmpleRemoveSelectiveAnalysisMorphs AmpleRemoveSelectiveAnalysisMorphsDelegate { get; set; }
 		public char Comment { get; set; }
-		public bool LastRunHadErrors { get; set; }
 
 		internal string ParseString(string sInput)
 		{

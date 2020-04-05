@@ -12,14 +12,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 	public interface IScrCheckInventory : IScriptureCheck
 	{
 		/// <summary>
-		/// The name of the basic unit that this check covers as it occurs in the
-		/// inventory for this check (e.g. "Words"). Empty string if none. After
-		/// replacing any spaces with underscores, this can also be used as a key
-		/// for looking up a localized string if the application supports localization.
-		/// </summary>
-		string InventoryColumnHeader { get; }
-
-		/// <summary>
 		/// Inventory form queries this to know how what status to give each item
 		/// in the inventory. Inventory form updates this if user has changed the status
 		/// of any item.

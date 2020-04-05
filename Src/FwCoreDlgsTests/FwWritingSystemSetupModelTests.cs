@@ -158,8 +158,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		public void AdvancedConfiguration_NonGraphiteFont_GraphiteFontOptionsAreDisabled()
 		{
 			var englishWithDefaultScript = new CoreWritingSystemDefinition("en");
-			var notGraphite = new FontDefinition("Calibre");
-			notGraphite.Engines = FontEngines.None;
+			var notGraphite = new FontDefinition("Calibre")
+			{
+				Engines = FontEngines.None
+			};
 			englishWithDefaultScript.Fonts.Add(notGraphite);
 			var container = new TestWSContainer(new [] { englishWithDefaultScript });
 			var testModel = new FwWritingSystemSetupModel(container, FwWritingSystemSetupModel.ListType.Vernacular);
@@ -270,11 +272,13 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			var warned = false;
 			var container = new TestWSContainer(new[] { "en" });
-			var testModel = new FwWritingSystemSetupModel(container, FwWritingSystemSetupModel.ListType.Vernacular);
-			testModel.AddNewVernacularLanguageWarning = () =>
+			var testModel = new FwWritingSystemSetupModel(container, FwWritingSystemSetupModel.ListType.Vernacular)
 			{
-				warned = true;
-				return false;
+				AddNewVernacularLanguageWarning = () =>
+				{
+					warned = true;
+					return false;
+				}
 			};
 			var addLanguageMenu = testModel.GetAddMenuItems().First(item => item.MenuText.Contains("Add new language"));
 			addLanguageMenu.ClickHandler.Invoke(null, null); // 'click' on the menu item
@@ -286,16 +290,18 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			var warned = false;
 			var container = new TestWSContainer(new[] { "en" }, new []{ "fr" });
-			var testModel = new FwWritingSystemSetupModel(container, FwWritingSystemSetupModel.ListType.Analysis);
-			testModel.AddNewVernacularLanguageWarning = () =>
+			var testModel = new FwWritingSystemSetupModel(container, FwWritingSystemSetupModel.ListType.Analysis)
 			{
-				warned = true;
-				return false;
-			};
-			testModel.ShowChangeLanguage = (out LanguageInfo info) =>
-			{
-				info = null;
-				return false;
+				AddNewVernacularLanguageWarning = () =>
+				{
+					warned = true;
+					return false;
+				},
+				ShowChangeLanguage = (out LanguageInfo info) =>
+				{
+					info = null;
+					return false;
+				}
 			};
 			var addLanguageMenu = testModel.GetAddMenuItems().First(item => item.MenuText.Contains("Add new language"));
 			addLanguageMenu.ClickHandler.Invoke(null, null); // 'click' on the menu item
@@ -518,8 +524,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		public void WritingSystemList_AddItems_AddAudio_CustomNameUsed()
 		{
 			var container = new TestWSContainer(new[] { "en", "fr" });
-			var testModel = new FwWritingSystemSetupModel(container, FwWritingSystemSetupModel.ListType.Vernacular);
-			testModel.LanguageName = "Testing";
+			var testModel = new FwWritingSystemSetupModel(container, FwWritingSystemSetupModel.ListType.Vernacular)
+			{
+				LanguageName = "Testing"
+			};
 			var addMenuItems = testModel.GetAddMenuItems();
 			// SUT
 			// Add an audio writing system because it currently doesn't require a cache to create properly
@@ -532,8 +540,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		public void WritingSystemList_AddItems_AddVariation_CustomNameUsed()
 		{
 			var container = new TestWSContainer(new[] { "en", "fr" });
-			var testModel = new FwWritingSystemSetupModel(container, FwWritingSystemSetupModel.ListType.Vernacular);
-			testModel.LanguageName = "Testing";
+			var testModel = new FwWritingSystemSetupModel(container, FwWritingSystemSetupModel.ListType.Vernacular)
+			{
+				LanguageName = "Testing"
+			};
 			var origEnIndex = testModel.CurrentWritingSystemIndex;
 			var addMenuItems = testModel.GetAddMenuItems();
 			// SUT
@@ -578,9 +588,11 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			mockWsManager.Expect(manager => manager.Replace(Arg<CoreWritingSystemDefinition>.Is.Anything)).WhenCalled(a => { }).Repeat.Once();
 
 			var container = new TestWSContainer(new[] { "en" });
-			var testModel = new FwWritingSystemSetupModel(container, FwWritingSystemSetupModel.ListType.Vernacular, mockWsManager);
+			var testModel = new FwWritingSystemSetupModel(container, FwWritingSystemSetupModel.ListType.Vernacular, mockWsManager)
+			{
+				ImportListForNewWs = import => { }
+			};
 			// no-op handling of importing lists for new writing system
-			testModel.ImportListForNewWs = import => { };
 			var french = new CoreWritingSystemDefinition("fr");
 			testModel.WorkingList.Add(new WSListItemModel(true, null, french));
 
@@ -849,8 +861,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		public void Converters_NoEncodingConverters_ReturnsListWithOnlyNone()
 		{
 			var container = new TestWSContainer(new[] { "en", "fr" });
-			var testModel = new FwWritingSystemSetupModel(container, FwWritingSystemSetupModel.ListType.Vernacular);
-			testModel.EncodingConverterKeys = () => new string[] { };
+			var testModel = new FwWritingSystemSetupModel(container, FwWritingSystemSetupModel.ListType.Vernacular)
+			{
+				EncodingConverterKeys = () => new string[] { }
+			};
 			var converters = testModel.GetEncodingConverters();
 			Assert.AreEqual(1, converters.Count);
 			Assert.That(converters.First(), Is.StringMatching("\\<None\\>"));
@@ -990,8 +1004,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		public void CurrentWsListChanged_DeleteSelected_Returns_True()
 		{
 			var container = new TestWSContainer(new[] { "en", "fr", "en-Zxxx-x-audio" });
-			var testModel = new FwWritingSystemSetupModel(container, FwWritingSystemSetupModel.ListType.Vernacular);
-			testModel.ConfirmDeleteWritingSystem = label => { return true; };
+			var testModel = new FwWritingSystemSetupModel(container, FwWritingSystemSetupModel.ListType.Vernacular)
+			{
+				ConfirmDeleteWritingSystem = label => true
+			};
 			var menu = testModel.GetRightClickMenuItems();
 			menu.First(ws => ws.MenuText.Contains("Delete")).ClickHandler(this, EventArgs.Empty);
 			Assert.IsTrue(testModel.CurrentWsListChanged);
@@ -1004,8 +1020,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		public void CurrentWsListChanged_DeleteSelected_SaveDoesNotCrashWithNoCache()
 		{
 			var container = new TestWSContainer(new[] { "en", "fr" });
-			var testModel = new FwWritingSystemSetupModel(container, FwWritingSystemSetupModel.ListType.Vernacular, new WritingSystemManager());
-			testModel.ConfirmDeleteWritingSystem = label => { return true; };
+			var testModel = new FwWritingSystemSetupModel(container, FwWritingSystemSetupModel.ListType.Vernacular, new WritingSystemManager())
+			{
+				ConfirmDeleteWritingSystem = label => true
+			};
 			var menu = testModel.GetRightClickMenuItems();
 			menu.First(ws => ws.MenuText.Contains("Delete")).ClickHandler(this, EventArgs.Empty);
 			Assert.DoesNotThrow(() => testModel.Save());
@@ -1022,7 +1040,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			var container = new TestWSContainer(new[] { "es", "fr" });
 			var testModel = new FwWritingSystemSetupModel(container, FwWritingSystemSetupModel.ListType.Vernacular, new WritingSystemManager())
 			{
-				ConfirmDeleteWritingSystem = label => { return true; },
+				ConfirmDeleteWritingSystem = label => true,
 				ConfirmMergeWritingSystem = (string merge, out CoreWritingSystemDefinition tag) =>
 				{
 					tag = container.CurrentVernacularWritingSystems.First();
@@ -1041,7 +1059,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			var container = new TestWSContainer(new[] { "en", "fr", "en-Zxxx-x-audio" }, null, new[] { "en", "en-Zxxx-x-audio" });
 			var testModel = new FwWritingSystemSetupModel(container, FwWritingSystemSetupModel.ListType.Vernacular);
 			testModel.SelectWs("fr");
-			testModel.ConfirmDeleteWritingSystem = label => { return true; };
+			testModel.ConfirmDeleteWritingSystem = label => true;
 			var menu = testModel.GetRightClickMenuItems();
 			menu.First(ws => ws.MenuText.Contains("Delete")).ClickHandler(this, EventArgs.Empty);
 			Assert.IsFalse(testModel.CurrentWsListChanged);

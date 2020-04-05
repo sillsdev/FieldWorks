@@ -25,7 +25,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <summary>
 		/// Resets the registry helper. NOTE: should only be used from unit tests!
 		/// </summary>
-		public static void Reset()
+		internal static void Reset()
 		{
 			RegistryHelperImpl = new FwRegistryHelperImpl();
 		}
@@ -33,7 +33,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <summary>
 		/// Sets the registry helper. NOTE: Should only be used from unit tests!
 		/// </summary>
-		public static void SetRegistryHelper(IFwRegistryHelper helper)
+		internal static void SetRegistryHelper(IFwRegistryHelper helper)
 		{
 			RegistryHelperImpl = helper;
 		}
@@ -78,9 +78,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 			public RegistryKey FieldWorksRegistryKeyLocalMachine => RegistryHelper.SettingsKeyLocalMachine(FieldWorksRegistryKeyName);
 
 			/// <inheritdoc />
-			public RegistryKey LocalMachineHive => Registry.LocalMachine;
-
-			/// <inheritdoc />
 			/// <remarks>This key is not opened for write access because it will fail on
 			/// non-administrator logins. 32bit registry section on a 64bit machine is checked first
 			/// and then the 'normal' registry location.
@@ -93,9 +90,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 					return RegistryHelper.CompanyKeyLocalMachine?.OpenSubKey(flexBridgeKey) ?? RegistryHelper.CompanyKeyLocalMachineOld32Bit?.OpenSubKey(flexBridgeKey);
 				}
 			}
-
-			/// <inheritdoc />
-			public RegistryKey FieldWorksRegistryKeyLocalMachineForWriting => RegistryHelper.SettingsKeyLocalMachineForWriting(FieldWorksRegistryKeyName);
 
 			/// <inheritdoc />
 			public RegistryKey FieldWorksRegistryKey => RegistryHelper.SettingsKey(FieldWorksRegistryKeyName);
@@ -140,11 +134,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// non-administrator logins.
 		/// </summary>
 		public static RegistryKey FieldWorksRegistryKeyLocalMachine => RegistryHelperImpl.FieldWorksRegistryKeyLocalMachine;
-
-		/// <summary>
-		/// Get LocalMachine hive. (Overridable for unit tests.)
-		/// </summary>
-		public static RegistryKey LocalMachineHive => RegistryHelperImpl.LocalMachineHive;
 
 		/// <summary>
 		/// Gets the read-only local machine Registry key for FieldWorksBridge.

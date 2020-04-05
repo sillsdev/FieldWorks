@@ -467,13 +467,13 @@ namespace SIL.FieldWorks.PaObjects
 			public IPaMultiString Label { get; }
 
 			/// <inheritdoc />
-			public string AbsoluteInternalPath { get; set; }
+			public string AbsoluteInternalPath { get; }
 
 			/// <inheritdoc />
-			public string InternalPath { get; set; }
+			public string InternalPath { get; }
 
 			/// <inheritdoc />
-			public string OriginalPath { get; set; }
+			public string OriginalPath { get; }
 
 			#endregion
 

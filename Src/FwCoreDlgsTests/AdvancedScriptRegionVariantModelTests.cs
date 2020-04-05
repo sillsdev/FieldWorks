@@ -44,8 +44,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		public void SetCodeToLangOnlyReturnsEmptyScriptRegionVariant()
 		{
 			var fwWsModel = new FwWritingSystemSetupModel(new TestWSContainer(new[] { "qaa-Qaaa-QM-fonipa-x-Scrp-ST-extra" }, new[] { "en" }), FwWritingSystemSetupModel.ListType.Vernacular);
-			var model = new AdvancedScriptRegionVariantModel(fwWsModel);
-			model.Code = "qaa";
+			var model = new AdvancedScriptRegionVariantModel(fwWsModel)
+			{
+				Code = "qaa"
+			};
 			Assert.That(model.ScriptCode, Is.Null);
 			Assert.That(model.ScriptName, Is.Null);
 			Assert.That(model.Script.Code, Is.Null);
@@ -61,8 +63,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		public void CodeSetToFullSILCustomFillsInAllData()
 		{
 			var fwWsModel = new FwWritingSystemSetupModel(new TestWSContainer(new[] { "qaa" }, new[] { "en" }), FwWritingSystemSetupModel.ListType.Vernacular);
-			var model = new AdvancedScriptRegionVariantModel(fwWsModel);
-			model.Code = "qaa-Qaaa-QM-fonipa-x-kal-Kala-KA-extra1-extra2";
+			var model = new AdvancedScriptRegionVariantModel(fwWsModel)
+			{
+				Code = "qaa-Qaaa-QM-fonipa-x-kal-Kala-KA-extra1-extra2"
+			};
 			Assert.That(model.Script.Code, Is.EqualTo("Kala"));
 			Assert.That(model.Script.IsPrivateUse, Is.True);
 			Assert.That(model.ScriptCode, Is.EqualTo("Kala"));
@@ -89,8 +93,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		public void CodeSetToFullNonSILCustomFillsInAllData()
 		{
 			var fwWsModel = new FwWritingSystemSetupModel(new TestWSContainer(new[] { "qaa" }, new[] { "en" }), FwWritingSystemSetupModel.ListType.Vernacular);
-			var model = new AdvancedScriptRegionVariantModel(fwWsModel);
-			model.Code = "qaa-Qaax-QX-fonipa-x-kal-Kala-KA-extra1-extra2";
+			var model = new AdvancedScriptRegionVariantModel(fwWsModel)
+			{
+				Code = "qaa-Qaax-QX-fonipa-x-kal-Kala-KA-extra1-extra2"
+			};
 			Assert.That(model.ScriptCode, Is.EqualTo("Qaax")); // Not Qaaa so the Kala is just a custom variant
 			Assert.That(model.RegionCode, Is.EqualTo("QX")); // Not QM so KA is just a custom variant
 			Assert.That(model.StandardVariant, Is.EqualTo("fonipa"));
@@ -104,8 +110,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		public void CodeRemovingPUCodesWorks()
 		{
 			var fwWsModel = new FwWritingSystemSetupModel(new TestWSContainer(new[] { "fr-Qaaa-QM-x-Cust-CT" }, new[] { "en" }), FwWritingSystemSetupModel.ListType.Vernacular);
-			var model = new AdvancedScriptRegionVariantModel(fwWsModel);
-			model.RegionName = "CustomRegion";
+			var model = new AdvancedScriptRegionVariantModel(fwWsModel)
+			{
+				RegionName = "CustomRegion"
+			};
 			Assert.That(model.RegionCode, Is.EqualTo("CT"));
 			Assert.That(model.ScriptCode, Is.EqualTo("Cust"));
 			model.Code = "fr-Qaaa-QM";
@@ -118,8 +126,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		public void SetScriptUpdatesCodeAndScriptCode()
 		{
 			var fwWsModel = new FwWritingSystemSetupModel(new TestWSContainer(new[] { "fr" }, new[] { "en" }), FwWritingSystemSetupModel.ListType.Vernacular);
-			var model = new AdvancedScriptRegionVariantModel(fwWsModel);
-			model.Script = new ScriptListItem(StandardSubtags.RegisteredScripts.First(s => s.Code == "Arab"));
+			var model = new AdvancedScriptRegionVariantModel(fwWsModel)
+			{
+				Script = new ScriptListItem(StandardSubtags.RegisteredScripts.First(s => s.Code == "Arab"))
+			};
 			Assert.That(model.ScriptCode, Is.EqualTo("Arab"));
 			Assert.That(model.Code, Is.EqualTo("fr-Arab"));
 		}
@@ -129,8 +139,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		public void SetRegionUpdatesCodeAndRegionCode()
 		{
 			var fwWsModel = new FwWritingSystemSetupModel(new TestWSContainer(new[] { "fr-x-special" }, new[] { "en" }), FwWritingSystemSetupModel.ListType.Vernacular);
-			var model = new AdvancedScriptRegionVariantModel(fwWsModel);
-			model.Region = new RegionListItem(StandardSubtags.RegisteredRegions.First(s => s.Code == "US"));
+			var model = new AdvancedScriptRegionVariantModel(fwWsModel)
+			{
+				Region = new RegionListItem(StandardSubtags.RegisteredRegions.First(s => s.Code == "US"))
+			};
 			Assert.That(model.RegionCode, Is.EqualTo("US"));
 			Assert.That(model.Code, Is.EqualTo("fr-US-x-special"));
 		}
@@ -140,8 +152,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		public void SetRegionCodeDoesNotBlankOutRegion()
 		{
 			var fwWsModel = new FwWritingSystemSetupModel(new TestWSContainer(new[] { "fr-Qaaa-QM-x-Cust-CT" }, new[] { "en" }), FwWritingSystemSetupModel.ListType.Vernacular);
-			var model = new AdvancedScriptRegionVariantModel(fwWsModel);
-			model.RegionName = "CustReg";
+			var model = new AdvancedScriptRegionVariantModel(fwWsModel)
+			{
+				RegionName = "CustReg"
+			};
 			model.Region = model.GetRegions().First(r => r.Name == "CustReg");
 			Assert.That(model.Region.Label, Is.EqualTo("CustReg (CT)"));
 			model.RegionCode = "CM";
@@ -153,8 +167,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		public void SetScriptCodeDoesNotBlankOutScript()
 		{
 			var fwWsModel = new FwWritingSystemSetupModel(new TestWSContainer(new[] { "fr-Qaaa-QM-x-Cust-CT" }, new[] { "en" }), FwWritingSystemSetupModel.ListType.Vernacular);
-			var model = new AdvancedScriptRegionVariantModel(fwWsModel);
-			model.ScriptName = "CustScr";
+			var model = new AdvancedScriptRegionVariantModel(fwWsModel)
+			{
+				ScriptName = "CustScr"
+			};
 			model.Script = model.GetScripts().First(r => r.Name == "CustScr");
 			Assert.That(model.Script.Label, Is.EqualTo("CustScr (Cust)"));
 			model.ScriptCode = "Crud";
@@ -203,9 +219,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		public void SetCustomRegionCodeToRealCodeDoesNotLoseCustomStatus()
 		{
 			var fwWsModel = new FwWritingSystemSetupModel(new TestWSContainer(new[] { "fr-QM-x-CT" }, new[] { "en" }), FwWritingSystemSetupModel.ListType.Vernacular);
-			var model = new AdvancedScriptRegionVariantModel(fwWsModel);
-			model.RegionName = "South Texas";
-			model.RegionCode = "CM";
+			var model = new AdvancedScriptRegionVariantModel(fwWsModel)
+			{
+				RegionName = "South Texas", RegionCode = "CM"
+			};
 			Assert.That(model.RegionName, Is.EqualTo("South Texas"));
 			Assert.That(model.Code, Is.EqualTo("fr-QM-x-CM"));
 		}
@@ -215,8 +232,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		public void SetScriptToQaaaDoesNotLoseCustomCodeOrName()
 		{
 			var fwWsModel = new FwWritingSystemSetupModel(new TestWSContainer(new[] { "fr-Qaaa-x-Cust" }, new[] { "en" }), FwWritingSystemSetupModel.ListType.Vernacular);
-			var model = new AdvancedScriptRegionVariantModel(fwWsModel);
-			model.ScriptName = "SouthernDrawn";
+			var model = new AdvancedScriptRegionVariantModel(fwWsModel)
+			{
+				ScriptName = "SouthernDrawn"
+			};
 			model.Script = model.GetScripts().First(r => r.Code == "Qaaa");
 			Assert.That(model.ScriptCode, Is.EqualTo("Cust"));
 			Assert.That(model.ScriptName, Is.EqualTo("SouthernDrawn"));
@@ -241,8 +260,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		public void SetScriptNameUpdatesModel()
 		{
 			var fwWsModel = new FwWritingSystemSetupModel(new TestWSContainer(new[] { "qaa-Qaaa-x-kal-Kala" }, new[] { "en" }), FwWritingSystemSetupModel.ListType.Vernacular);
-			var model = new AdvancedScriptRegionVariantModel(fwWsModel);
-			model.ScriptName = "Kalabanolized";
+			var model = new AdvancedScriptRegionVariantModel(fwWsModel)
+			{
+				ScriptName = "Kalabanolized"
+			};
 			Assert.That(model.ScriptCode, Is.EqualTo("Kala"));
 			Assert.That(fwWsModel.CurrentWsSetupModel.CurrentIso15924Script.Name, Is.EqualTo("Kalabanolized"));
 		}
@@ -349,8 +370,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		public void ScriptItemChange_UpdatesCode()
 		{
 			var fwWsModel = new FwWritingSystemSetupModel(new TestWSContainer(new[] { "qaa-Qaaa-x-Kalaba-Kala-extra", "fr" }, new[] { "en" }), FwWritingSystemSetupModel.ListType.Vernacular);
-			var model = new AdvancedScriptRegionVariantModel(fwWsModel);
-			model.Script = new ScriptListItem(new ScriptSubtag("Mala", "not Kala"));
+			var model = new AdvancedScriptRegionVariantModel(fwWsModel)
+			{
+				Script = new ScriptListItem(new ScriptSubtag("Mala", "not Kala"))
+			};
 			Assert.That(model.Code, Is.EqualTo("qaa-Qaaa-x-Kalaba-Mala-extra"));
 		}
 
@@ -359,8 +382,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		public void StandardVariantChange_UpdatesCode()
 		{
 			var fwWsModel = new FwWritingSystemSetupModel(new TestWSContainer(new[] { "de-DE", "fr" }, new[] { "en" }), FwWritingSystemSetupModel.ListType.Vernacular);
-			var model = new AdvancedScriptRegionVariantModel(fwWsModel);
-			model.StandardVariant = "fonipa";
+			var model = new AdvancedScriptRegionVariantModel(fwWsModel)
+			{
+				StandardVariant = "fonipa"
+			};
 			Assert.That(model.Code, Is.EqualTo("de-DE-fonipa"));
 		}
 
@@ -369,8 +394,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		public void StandardVariantChange_SetToNull_Removes_AndUpdatesCode()
 		{
 			var fwWsModel = new FwWritingSystemSetupModel(new TestWSContainer(new[] { "de-DE-fonipa", "fr" }, new[] { "en" }), FwWritingSystemSetupModel.ListType.Vernacular);
-			var model = new AdvancedScriptRegionVariantModel(fwWsModel);
-			model.StandardVariant = null;
+			var model = new AdvancedScriptRegionVariantModel(fwWsModel)
+			{
+				StandardVariant = null
+			};
 			Assert.That(model.Code, Is.EqualTo("de-DE"));
 		}
 
@@ -380,8 +407,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			// Including fonipa sets the StandardVariant
 			var fwWsModel = new FwWritingSystemSetupModel(new TestWSContainer(new[] { "de-DE-fonipa", "fr" }, new[] { "en" }), FwWritingSystemSetupModel.ListType.Vernacular);
-			var model = new AdvancedScriptRegionVariantModel(fwWsModel);
-			model.OtherVariants = "x-special";
+			var model = new AdvancedScriptRegionVariantModel(fwWsModel)
+			{
+				OtherVariants = "x-special"
+			};
 			Assert.That(model.Code, Is.EqualTo("de-DE-fonipa-x-special"));
 		}
 
@@ -391,8 +420,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			// Including fonipa sets the StandardVariant
 			var fwWsModel = new FwWritingSystemSetupModel(new TestWSContainer(new[] { "de-DE", "fr" }, new[] { "en" }), FwWritingSystemSetupModel.ListType.Vernacular);
-			var model = new AdvancedScriptRegionVariantModel(fwWsModel);
-			model.OtherVariants = "x-special";
+			var model = new AdvancedScriptRegionVariantModel(fwWsModel)
+			{
+				OtherVariants = "x-special"
+			};
 			Assert.That(model.Code, Is.EqualTo("de-DE-x-special"));
 		}
 

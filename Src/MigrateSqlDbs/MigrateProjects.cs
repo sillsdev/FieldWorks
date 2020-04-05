@@ -22,7 +22,6 @@ namespace SIL.FieldWorks.MigrateSqlDbs.MigrateProjects
 	internal sealed partial class MigrateProjects : Form
 	{
 		ImportFrom6_0 m_importer;
-		List<string> m_projects;
 		bool m_fAutoClose;
 		bool m_fTempMigrationDbExists;
 		int m_cChecked;
@@ -86,14 +85,13 @@ namespace SIL.FieldWorks.MigrateSqlDbs.MigrateProjects
 			: this()
 		{
 			m_importer = importer;
-			m_projects = projects;
 			m_fAutoClose = fAutoClose;
 			if (m_fAutoClose)
 			{
 				m_btnClose.Text = Properties.Resources.ksSkip;
 			}
 			Text = string.Format(Text, version);
-			foreach (var proj in m_projects)
+			foreach (var proj in projects)
 			{
 				if (proj == ImportFrom6_0.TempDatabaseName)
 				{

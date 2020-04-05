@@ -126,8 +126,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		[Test]
 		public void DefaultBackupFile_BackupsForOtherProjectsButNotCurrent()
 		{
-			var backupSettings = new BackupProjectSettings(Cache, null, FwDirectoryFinder.DefaultBackupDirectory, "Version: 1.0");
-			backupSettings.ProjectName = "AAA";
+			var backupSettings = new BackupProjectSettings(Cache, null, FwDirectoryFinder.DefaultBackupDirectory, "Version: 1.0")
+			{
+				ProjectName = "AAA"
+			};
 			var backupFileName1 = backupSettings.ZipFileName;
 			m_fileOs.AddExistingFile(backupFileName1);
 			backupSettings.ProjectName = "ZZZ";

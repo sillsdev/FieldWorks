@@ -59,11 +59,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public static string FieldWorksExe => ExeOrDllPath("FieldWorks.exe");
 
 		/// <summary>
-		/// Gets the full path of the FW Language Explorer dynamic load library.
-		/// </summary>
-		public static string LanguageExplorerDll => ExeOrDllPath("LanguageExplorer.dll");
-
-		/// <summary>
 		/// Gets the full path of the Migrate SQL databases executable.
 		/// </summary>
 		public static string MigrateSqlDbsExe => ExeOrDllPath("MigrateSqlDbs.exe");
@@ -333,7 +328,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 					var src = Path.Combine(fw, "Src");
 					if (!Directory.Exists(src))
 					{
-						throw new ApplicationException(@"Could not find the Src directory.  Was expecting it at: " + src);
+						throw new ApplicationException("Could not find the Src directory.  Was expecting it at: " + src);
 					}
 					m_srcdir = src;
 				}
@@ -348,7 +343,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		{
 			get
 			{
-				var directory = GetCodeSubDirectory(@"Editorial Checks");
+				var directory = GetCodeSubDirectory("Editorial Checks");
 				if (!Directory.Exists(directory))
 				{
 					throw new ApplicationException(string.Format(ResourceHelper.GetResourceString("kstidUnableToFindEditorialChecks"), directory));
@@ -437,14 +432,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public static bool IsSubFolderOfProjectsDirectory(string path)
 		{
 			return !string.IsNullOrEmpty(path) && Path.GetDirectoryName(path) == ProjectsDirectory;
-		}
-
-		/// <summary>
-		/// Gets the path for storing user-specific application data.
-		/// </summary>
-		public static string UserAppDataFolder(string appName)
-		{
-			return Path.Combine(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), CompanyName), appName);
 		}
 
 		/// <summary>

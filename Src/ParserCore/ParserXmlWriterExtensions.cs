@@ -30,7 +30,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			switch (obj.GetType().Name)
 			{
 				default:
-					throw new ApplicationException(string.Format("Invalid MSA type: {0}.", obj.GetType().Name));
+					throw new ApplicationException($"Invalid MSA type: {obj.GetType().Name}.");
 				case "MoStemMsa":
 					WriteStemMsaXmlElement(writer, (IMoStemMsa)obj, Enumerable.Empty<ILexEntryRef>());
 					break;

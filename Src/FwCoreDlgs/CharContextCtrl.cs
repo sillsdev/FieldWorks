@@ -505,10 +505,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			}
 
 			#region IChecksDataSource Members
-			/// <summary>
-			/// Gets the books present (not supported).
-			/// </summary>
-			public List<int> BooksPresent => throw new NotSupportedException();
 
 			/// <summary>
 			/// Gets the character categorizer.

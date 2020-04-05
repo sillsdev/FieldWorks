@@ -12,7 +12,5 @@ namespace SIL.FieldWorks.Common.FwUtils
 	{
 		/// <summary>E-mail address for bug reports, etc.</summary>
 		string SupportEmailAddress { get; }
-		/// <summary>E-mail address for feedback reports, kudos, etc.</summary>
-		string FeedbackEmailAddress { get; }
 	}
 }

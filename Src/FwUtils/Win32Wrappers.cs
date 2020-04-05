@@ -1375,9 +1375,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 			{
 				var enumType = MonoWinFormsAssembly.GetType("System.Windows.Forms.Msg");
 				s_postMessage = XplatUI.GetMethod("PostMessage",
-					System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static,
+					BindingFlags.NonPublic | BindingFlags.Static,
 					null,
-					new Type[] { typeof(IntPtr), enumType, typeof(IntPtr), typeof(IntPtr) },
+					new[] { typeof(IntPtr), enumType, typeof(IntPtr), typeof(IntPtr) },
 					null);
 			}
 			return (bool)s_postMessage.Invoke(null, new object[] { hWnd, (int)msg, wParam, lParam });
@@ -3401,8 +3401,10 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// </summary>
 		public static Font GetCaptionFont()
 		{
-			var ncm = new NONCLIENTMETRICS();
-			ncm.cbSize = Marshal.SizeOf(typeof(NONCLIENTMETRICS));
+			var ncm = new NONCLIENTMETRICS
+			{
+				cbSize = Marshal.SizeOf(typeof(NONCLIENTMETRICS))
+			};
 			try
 			{
 				var result = !Platform.IsWindows || SystemParametersInfo(SPI_GETNONCLIENTMETRICS, ncm.cbSize, ref ncm, 0);

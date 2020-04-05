@@ -301,7 +301,7 @@ namespace SIL.FieldWorks.LexicalProvider
 					var entries = (m_cache.ServiceLocator.GetInstance<ILexEntryRepository>()
 						.AllInstances()
 						.Select(dbEntry => new { dbEntry, morphType = dbEntry.PrimaryMorphType })
-						.Where(t => @t.morphType != null)
+						.Where(t => t.morphType != null)
 						.Select(t => CreateEntryFromDbEntry(GetLexemeTypeForMorphType(t.morphType), t.dbEntry))).ToList();
 					// Get all the wordforms in the database
 					entries.AddRange(m_cache.ServiceLocator.GetInstance<IWfiWordformRepository>().AllInstances().Select(CreateEntryFromDbWordform));
@@ -776,7 +776,7 @@ namespace SIL.FieldWorks.LexicalProvider
 					/// <inheritdoc />
 					bool IPropertyRetriever.TryGetValue<T>(string name, out T propertyValue, SettingsGroup settingsGroup)
 					{
-						return AsIPropertyRetriever.TryGetValue<T>(name, out propertyValue);
+						return AsIPropertyRetriever.TryGetValue(name, out propertyValue);
 					}
 
 					/// <inheritdoc />

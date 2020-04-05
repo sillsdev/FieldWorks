@@ -100,16 +100,6 @@ namespace SILUBS.ScriptureChecks
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// The full name of the check, e.g. "Punctuation". After replacing any spaces
-		/// with underscores, this can also be used as a key for looking up a localized
-		/// string if the application supports localization.  If this is ever changed,
-		/// DO NOT change the CheckId!
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public string CheckName { get { return Localize("Punctuation Patterns"); } }
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
 		/// The unique identifier of the check. This should never be changed!
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
@@ -139,17 +129,6 @@ namespace SILUBS.ScriptureChecks
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		public string Description { get { return Localize("Checks for potential inconsistencies in the use of punctuation."); } }
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// This is the column header of the first column when you create an
-		/// inventory of this type of error.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public string InventoryColumnHeader
-		{
-			get { return Localize("Punctuation"); }
-		}
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>

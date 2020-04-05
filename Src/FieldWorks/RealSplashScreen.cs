@@ -426,12 +426,6 @@ namespace SIL.FieldWorks
 		ISynchronizeInvoke IProgress.SynchronizeInvoke => this;
 
 		/// <summary>
-		/// Gets the form displaying the progress (used for message box owners, etc). If the progress
-		/// is not associated with a visible Form, then this returns its owning form, if any.
-		/// </summary>
-		private Form Form => this;
-
-		/// <summary>
 		/// Gets or sets a value indicating whether this progress is indeterminate.
 		/// </summary>
 		bool IProgress.IsIndeterminate

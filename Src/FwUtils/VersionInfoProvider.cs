@@ -72,8 +72,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 				ParseInformationalVersion(assembly, out var productVersion, out _);
 				if (string.IsNullOrEmpty(productVersion))
 				{
-					var fileVersion = Attribute.GetCustomAttribute(assembly, typeof(AssemblyFileVersionAttribute)) as AssemblyFileVersionAttribute;
-					if (fileVersion != null)
+					if (Attribute.GetCustomAttribute(assembly, typeof(AssemblyFileVersionAttribute)) is AssemblyFileVersionAttribute fileVersion)
                     {
 						productVersion = fileVersion.Version;
                     }

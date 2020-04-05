@@ -20,13 +20,7 @@ namespace SIL.FieldWorks
 		private const int ErrorUnknownProduct = 1605;
 
 		[DllImport("msi.dll", CharSet = CharSet.Unicode, SetLastError = true)]
-		private static extern int MsiGetProductInfo(string product, string property, StringBuilder valueBuf, ref Int32 cchValueBuf);
-
-		[DllImport("msi.dll", CharSet = CharSet.Unicode)]
-		internal static extern uint MsiOpenProduct(string szProduct, out int hProduct);
-
-		[DllImport("msi.dll", CharSet = CharSet.Unicode)]
-		internal static extern uint MsiGetFeatureInfo(int hProduct, string szFeature, out uint lpAttributes, StringBuilder lpTitleBuf, ref uint cchTitleBuf, StringBuilder lpHelpBuf, ref uint cchHelpBuf);
+		private static extern int MsiGetProductInfo(string product, string property, StringBuilder valueBuf, ref int cchValueBuf);
 
 		/// <summary>
 		/// Check the installer status to see if FW is installed on the user's machine.

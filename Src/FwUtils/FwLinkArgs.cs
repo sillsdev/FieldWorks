@@ -164,7 +164,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		{
 			if (string.IsNullOrEmpty(args.m_toolName) || args.m_toolName == "default" || args.TargetGuid == Guid.Empty || args.Tag == null)
 			{
-				throw new ArgumentException($"Invalid FwLinkArgs.");
+				throw new ArgumentException("Invalid FwLinkArgs.");
 			}
 		}
 
@@ -323,7 +323,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 				return url;
 			}
 			var query = HttpUtility.UrlDecode(url.Substring(kFwUrlPrefix.Length));
-			var properties = query.Split(new char[] { '&' }, StringSplitOptions.RemoveEmptyEntries);
+			var properties = query.Split(new[] { '&' }, StringSplitOptions.RemoveEmptyEntries);
 			var idxDatabase = -1;
 			string urlDatabase = null;
 			for (var i = 0; i < properties.Length; ++i)

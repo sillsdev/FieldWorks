@@ -227,17 +227,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 			return allPossibilities;
 		}
 
-		public static string GetPossibilityDisplayName(this ICmPossibilityList me)
-		{
-			var listName = me.Owner != null ? me.Cache.DomainDataByFlid.MetaDataCache.GetFieldName(me.OwningFlid) : me.Name.BestAnalysisVernacularAlternative.Text;
-			var itemsTypeName = StringTable.Table.GetString(listName, StringTable.PossibilityListItemTypeNames);
-			if (itemsTypeName != $"*{listName}*")
-			{
-				return itemsTypeName;
-			}
-			return me.PossibilitiesOS.Count > 0 ? StringTable.Table.GetString(me.PossibilitiesOS[0].GetType().Name, StringTable.ClassNames) : itemsTypeName;
-		}
-
 		private static List<ICmPossibility> AllPossibilities(this ICmPossibility me)
 		{
 			var allSubPossibilities = new List<ICmPossibility>();
@@ -287,18 +276,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 				}
 			}
 			return false; // no punctuation in custom fields.
-		}
-
-		public static bool TryGetFieldId(this IFwMetaDataCacheManaged me, string className, string fieldName, out int flid, bool includeBaseClasses = true)
-		{
-			if (me.FieldExists(className, fieldName, includeBaseClasses))
-			{
-				var classId = me.GetClassId(className);
-				flid = me.GetFieldId2(classId, fieldName, includeBaseClasses);
-				return true;
-			}
-			flid = 0;
-			return false;
 		}
 
 		public static bool TryGetFieldId(this IFwMetaDataCacheManaged me, int classId, string fieldName, out int flid, bool includeBaseClasses = true)

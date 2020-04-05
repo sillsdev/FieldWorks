@@ -55,13 +55,13 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				testProject.SetDefaultWs(new LanguageInfo { LanguageTag = "de" });
 				using (var threadHelper = new ThreadHelper())
 				{
-					testProject.CreateNewLangProj(new LCModel.DummyProgressDlg(), threadHelper);
+					testProject.CreateNewLangProj(new DummyProgressDlg(), threadHelper);
 				}
 				Assert.IsTrue(DbExists(DbName));
 				// despite of the name is DummyProgressDlg no real dialog (doesn't derive from Control), so
 				// we don't need a 'using'
 				cache = LcmCache.CreateCacheFromExistingData(new TestProjectId(BackendProviderType.kXMLWithMemoryOnlyWsMgr, DbFilename(DbName)), "en", new DummyLcmUI(),
-					FwDirectoryFinder.LcmDirectories, new LcmSettings(), new LCModel.DummyProgressDlg());
+					FwDirectoryFinder.LcmDirectories, new LcmSettings(), new DummyProgressDlg());
 				CheckInitialSetOfPartsOfSpeech(cache);
 				Assert.AreEqual(2, cache.ServiceLocator.WritingSystems.AnalysisWritingSystems.Count);
 				Assert.AreEqual("German", cache.ServiceLocator.WritingSystems.AnalysisWritingSystems.First().LanguageName);
@@ -501,7 +501,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			testProject.Next();
 			using (var threadHelper = new ThreadHelper())
 			{
-				testProject.CreateNewLangProj(new LCModel.DummyProgressDlg(), threadHelper);
+				testProject.CreateNewLangProj(new DummyProgressDlg(), threadHelper);
 			}
 		}
 

@@ -188,7 +188,6 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		public void TwoAnalyses()
 		{
 			var catsTest = CheckAnalysisSize("catsTEST", 0, true);
-			var ldb = Cache.LanguageProject.LexDbOA;
 			ParseResult result = null;
 			UndoableUnitOfWorkHelper.Do("Undo stuff", "Redo stuff", m_actionHandler, () =>
 			{
@@ -398,7 +397,6 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		public void LexEntryInflTypeTwoAnalyses()
 		{
 			var creb = CheckAnalysisSize("crebTEST", 0, true);
-			var ldb = Cache.LanguageProject.LexDbOA;
 			ParseResult result = null;
 			UndoableUnitOfWorkHelper.Do("Undo stuff", "Redo stuff", m_actionHandler, () =>
 			{
@@ -491,7 +489,6 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		public void LexEntryInflTypeAnalysisWithNullForSlotFiller()
 		{
 			var brubs = CheckAnalysisSize("brubsTEST", 0, true);
-			var ldb = Cache.LanguageProject.LexDbOA;
 			ParseResult result = null;
 			UndoableUnitOfWorkHelper.Do("Undo stuff", "Redo stuff", m_actionHandler, () =>
 			{

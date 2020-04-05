@@ -37,13 +37,11 @@ namespace SIL.FieldWorks.Common.FwUtils
 			m_wsManager = new WritingSystemManager();
 
 			// English
-			CoreWritingSystemDefinition enWs;
-			m_wsManager.GetOrSet("en", out enWs);
+			m_wsManager.GetOrSet("en", out var enWs);
 			m_hvoEnglishWs = enWs.Handle;
 			Assert.IsTrue(m_hvoEnglishWs > 0, "Should have gotten an hvo for the English WS");
 			// German
-			CoreWritingSystemDefinition deWs;
-			m_wsManager.GetOrSet("de", out deWs);
+			m_wsManager.GetOrSet("de", out var deWs);
 			m_hvoGermanWs = deWs.Handle;
 			Assert.IsTrue(m_hvoGermanWs > 0, "Should have gotten an hvo for the German WS");
 			Assert.IsTrue(m_hvoEnglishWs != m_hvoGermanWs, "Writing systems should have different IDs");

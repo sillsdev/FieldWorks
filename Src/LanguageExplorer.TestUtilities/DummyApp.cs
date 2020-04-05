@@ -38,8 +38,6 @@ namespace LanguageExplorer.TestUtilities
 
 		public string SupportEmailAddress => throw new NotSupportedException();
 
-		public string FeedbackEmailAddress => throw new NotSupportedException();
-
 		public bool PreFilterMessage(ref Message m)
 		{
 			throw new NotSupportedException();

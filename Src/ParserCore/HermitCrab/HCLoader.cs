@@ -1204,7 +1204,7 @@ namespace SIL.FieldWorks.WordWorks.Parser.HermitCrab
 			var i = 1;
 			foreach (var ctxtOrVar in allo.InputOS)
 			{
-				if (ctxtOrVar is IPhVariable var)
+				if (ctxtOrVar is IPhVariable)
 				{
 					var pattern = new Pattern<Word, ShapeNode>(i.ToString(CultureInfo.InvariantCulture), AnyStar());
 					pattern.Freeze();
@@ -2534,11 +2534,11 @@ namespace SIL.FieldWorks.WordWorks.Parser.HermitCrab
 		{
 			return constraints
 				.Select(constraint => new { constraint, varName = variables[constraint] })
-				.Select(@t => new
+				.Select(t => new
 				{
-					@t, feat = m_language.PhonologicalFeatureSystem.GetFeature<SymbolicFeature>("feat" + @t.constraint.FeatureRA.Hvo)
+					t, feat = m_language.PhonologicalFeatureSystem.GetFeature<SymbolicFeature>("feat" + t.constraint.FeatureRA.Hvo)
 				})
-				.Select(@t => new SymbolicFeatureValue(@t.feat, @t.@t.varName, agree));
+				.Select(t => new SymbolicFeatureValue(t.feat, t.t.varName, agree));
 		}
 
 		private bool TryLoadSimpleContext(IPhNaturalClass naturalClass, out SimpleContext ctxt)

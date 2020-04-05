@@ -32,7 +32,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// Flex Bridge returns 'true', if data changes came in from the S/R, otherwise, 'false' for no changes.</para>
 		/// <para>The '-u' option  (required) will give the user name.</para>
 		/// </remarks>
-		public const string SendReceive = @"send_receive";
+		public const string SendReceive = "send_receive";
 		/// <summary>
 		/// constant for launching the bridge in Send and Receive mode for Lift data
 		/// </summary>
@@ -41,7 +41,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// Flex Bridge returns 'true', if data changes came in from the S/R, otherwise, 'false' for no changes.</para>
 		/// <para>The '-u' option  (required) will give the user name.</para>
 		/// </remarks>
-		public const string SendReceiveLift = @"send_receive_lift";
+		public const string SendReceiveLift = "send_receive_lift";
 
 		/// <summary>
 		/// constant for launching the bridge in Obtain project mode
@@ -51,7 +51,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <para>Returns the pathname to either the 'fwdata' xml file or the lift file, if FLEx Bridge was able to get a clone. Returns null, if no clone was created.</para>
 		/// <para>The '-u' option  (required) will give the user name.</para>
 		/// </remarks>
-		public const string Obtain = @"obtain";
+		public const string Obtain = "obtain";
 		/// <summary>
 		/// constant for launching the bridge in Obtain project mode, but only tries to get a new Lift repository for an extant FW project.
 		/// </summary>
@@ -60,7 +60,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <para>Returns the pathname to the lift file, if FLEx Bridge was able to get a clone. Returns null, if no clone was created.</para>
 		/// <para>The '-u' option  (required) will give the user name.</para>
 		/// </remarks>
-		public const string ObtainLift = @"obtain_lift";
+		public const string ObtainLift = "obtain_lift";
 
 		/// <summary>
 		/// constant for launching the bridge in the Conflict\Notes Viewer mode
@@ -71,7 +71,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// As the user selects some note, a call back to FLEx will be done, with the URL for the item to jump to.</para>
 		/// <para>The '-u' option  (required) will give the user name.</para>
 		/// </remarks>
-		public const string ConflictViewer = @"view_notes";
+		public const string ConflictViewer = "view_notes";
 
 		/// <summary>
 		/// constant for launching the bridge in the Lift Conflict\Notes Viewer mode
@@ -82,7 +82,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// As the user selects some note, a call back to FLEx will be done, with the URL for the item to jump to.</para>
 		/// <para>The '-u' option  (required) will give the user name.</para>
 		/// </remarks>
-		public const string LiftConflictViewer = @"view_notes_lift";
+		public const string LiftConflictViewer = "view_notes_lift";
 
 		/// <summary>
 		/// constant for launching the bridge in the undo export mode
@@ -92,7 +92,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <para>Flex Bridge restores the local working folder to what is in the lift repository, including deleting any new files.</para>
 		/// <para>The '-u' option  (required) will give the user name.</para>
 		/// </remarks>
-		public const string UndoExportLift = @"undo_export_lift";
+		public const string UndoExportLift = "undo_export_lift";
 
 		/// <summary>
 		/// constant for launching the bridge in the move lift mode
@@ -104,7 +104,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <para>This option must also use the '-g' command line argument which gives FLEx Bridge the language project's guid,
 		/// which is used to find the correct lift repository.</para>
 		/// </remarks>
-		public const string MoveLift = @"move_lift";
+		public const string MoveLift = "move_lift";
 
 		/// <summary>
 		/// constant for launching the bridge in the "Check for Updates" mode
@@ -112,7 +112,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <remarks>
 		/// <para>Instruct FLEx Bridge to show its "Check for Updates" information.</para>
 		/// </remarks>
-		public const string CheckForUpdates = @"check_for_updates";
+		public const string CheckForUpdates = "check_for_updates";
 
 		/// <summary>
 		/// constant for launching the bridge in the "About FLEx Bridge" mode
@@ -120,7 +120,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <remarks>
 		/// <para>Instruct FLEx Bridge to show its "About" information.</para>
 		/// </remarks>
-		public const string AboutFLExBridge = @"about_flex_bridge";
+		public const string AboutFLExBridge = "about_flex_bridge";
 
 		#endregion End of available '-v' parameter options:
 
@@ -128,14 +128,14 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// constant for locating the nested lift repository (within the "OtherRepositories" path of a project).
 		/// See also SIL.FieldWorks.LCM.LcmFileHelper.OtherRepositories
 		/// </summary>
-		public const string LIFT = @"LIFT";
+		public const string LIFT = "LIFT";
 
 		/// <summary>
 		/// Event to enabled FLExBridgeListener to find out when the Conflict Report title was clicked.
 		/// </summary>
 		public static event JumpEventHandler FLExJumpUrlChanged;
 
-		private const string FLExBridgeName = @"FLExBridge.exe";
+		private const string FLExBridgeName = "FLExBridge.exe";
 
 		private static object _waitObject = new object();
 		private static bool _flexBridgeTerminated;
@@ -498,7 +498,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <remarks>Called when the connection with FLExBridge terminates (currently ~15 seconds after the user closes the FB window)</remarks>
 		static void CleanupHost()
 		{
-			Console.WriteLine(@"FLExBridgeHelper.CleanupHost()");
+			Console.WriteLine("FLExBridgeHelper.CleanupHost()");
 			if (_noBlockerHostAndCallback != null)
 			{
 				KillTheHost(_noBlockerHostAndCallback.Item1);
@@ -509,7 +509,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 
 		static void SignalCompletion()
 		{
-			Console.WriteLine(@"FLExBridgeHelper.SignalCompletion()");
+			Console.WriteLine("FLExBridgeHelper.SignalCompletion()");
 			_flexBridgeTerminated = true;
 		}
 		#endregion

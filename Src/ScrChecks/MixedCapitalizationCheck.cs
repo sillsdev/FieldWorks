@@ -87,13 +87,6 @@ namespace SILUBS.ScriptureChecks
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		///
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public string CheckName { get { return Localize("Mixed Capitalization"); } }
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
 		/// The unique identifier of the check. This should never be changed!
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
@@ -123,17 +116,6 @@ namespace SILUBS.ScriptureChecks
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		public string Description { get { return Localize("Checks for words with a potentially invalid mix of uppercase and lowercase letters."); } }
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// This is the column header of the first column when you create an
-		/// inventory of this type of error.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public string InventoryColumnHeader
-		{
-			get { return Localize("Mixed Capitalization Word"); }
-		}
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>

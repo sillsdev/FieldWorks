@@ -86,18 +86,12 @@ namespace SIL.FieldWorks.Common.FwUtils
 
 		private enum FcMatchKind
 		{
-			FcMatchPattern,
-			FcMatchFont,
-			FcMatchScan
+			FcMatchPattern
 		};
 
 		private enum FcResult
 		{
-			FcResultMatch,
-			FcResultNoMatch,
-			FcResultTypeMismatch,
-			FcResultNoId,
-			FcResultOutOfMemory
+			FcResultMatch
 		}
 		[DllImport("libfontconfig.so.1")]
 		static extern IntPtr FcPatternCreate();
@@ -209,14 +203,14 @@ namespace SIL.FieldWorks.Common.FwUtils
 				using (var machineKey = RegistryHelper.CompanyKeyLocalMachine)
 				{
 					string dir = null;
-					if (userKey != null && userKey.GetValue(icuDirValueName) != null)
+					if (userKey?.GetValue(icuDirValueName) != null)
 					{
-						dir = userKey.GetValue(icuDirValueName, dir) as string;
+						dir = userKey.GetValue(icuDirValueName, null) as string;
 					}
-					else if (machineKey != null && machineKey.GetValue(icuDirValueName) != null)
+					else if (machineKey?.GetValue(icuDirValueName) != null)
 					{
 
-						dir = machineKey.GetValue(icuDirValueName, dir) as string;
+						dir = machineKey.GetValue(icuDirValueName, null) as string;
 					}
 					if (!string.IsNullOrEmpty(dir))
 					{
@@ -225,37 +219,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 				}
 			}
 			CustomIcu.InitIcuDataDir();
-		}
-
-		/// <summary>
-		/// Translate mouse buttons received from a Win API mouse message to .NET mouse buttons
-		/// </summary>
-		/// <param name="winMouseButtons">Windows mouse buttons</param>
-		/// <returns>.NET mouse buttons</returns>
-		public static MouseButtons TranslateMouseButtons(Win32.MouseButtons winMouseButtons)
-		{
-			var mouseButton = MouseButtons.None;
-			if ((winMouseButtons & Win32.MouseButtons.MK_LBUTTON) == Win32.MouseButtons.MK_LBUTTON)
-			{
-				mouseButton |= MouseButtons.Left;
-			}
-			if ((winMouseButtons & Win32.MouseButtons.MK_RBUTTON) == Win32.MouseButtons.MK_RBUTTON)
-			{
-				mouseButton |= MouseButtons.Right;
-			}
-			if ((winMouseButtons & Win32.MouseButtons.MK_MBUTTON) == Win32.MouseButtons.MK_MBUTTON)
-			{
-				mouseButton |= MouseButtons.Middle;
-			}
-			if ((winMouseButtons & Win32.MouseButtons.MK_XBUTTON1) == Win32.MouseButtons.MK_XBUTTON1)
-			{
-				mouseButton |= MouseButtons.XButton1;
-			}
-			if ((winMouseButtons & Win32.MouseButtons.MK_XBUTTON2) == Win32.MouseButtons.MK_XBUTTON2)
-			{
-				mouseButton |= MouseButtons.XButton2;
-			}
-			return mouseButton;
 		}
 
 		/// <summary>
@@ -339,18 +302,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 
 		private enum TOKEN_INFORMATION_CLASS
 		{
-			TokenUser = 1,
-			TokenGroups,
-			TokenPrivileges,
-			TokenOwner,
-			TokenPrimaryGroup,
-			TokenDefaultDacl,
-			TokenSource,
-			TokenType,
-			TokenImpersonationLevel,
-			TokenStatistics,
-			TokenRestrictedSids,
-			TokenSessionId
+			TokenUser = 1
 		}
 
 		/// <summary>The TOKEN_USER structure identifies the user associated with an access token.</summary>
@@ -552,50 +504,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 				return sDir.Substring(idx + 1);
 			}
 			return sDir;
-		}
-
-		/// <summary>
-		/// Check whether the given TextBox contains a valid project name.  If not, remove the
-		/// invalid character and complain to the user.
-		/// </summary>
-		public static bool CheckForValidProjectName(TextBox tb)
-		{
-			// Don't allow illegal characters. () and [] have significance.
-			// [] are typically used as delimiters for file names in SQL queries. () are used in older
-			// backup file names and as such, they can cause grief when trying to restore. Old example:
-			// Jim's (old) backup (Jim_s (old) backup) ....zip. The file name was Jim_s (old) backup.mdf.
-			var sIllegalChars = MiscUtils.GetInvalidProjectNameChars(MiscUtils.FilenameFilterStrength.kFilterProjName);
-			var illegalChars = sIllegalChars.ToCharArray();
-			var sProjName = tb.Text;
-			var illegalPos = sProjName.IndexOfAny(illegalChars);
-			if (illegalPos < 0)
-			{
-				return true;
-			}
-			var selectionPos = illegalPos;
-			while (illegalPos >= 0)
-			{
-				sProjName = sProjName.Remove(illegalPos, 1);
-				selectionPos = illegalPos;
-				illegalPos = sProjName.IndexOfAny(illegalChars);
-			}
-			// show the message
-			// Remove characters that can not be keyboarded (below code point 32). The
-			// user doesn't need to be warned about these since they can't be entered
-			// via keyboard.
-			var sIllegalCharsKeyboard = sIllegalChars;
-			for (var n = 0; n < 32; n++)
-			{
-				var index = sIllegalCharsKeyboard.IndexOf((char)n);
-				if (index >= 0)
-				{
-					sIllegalCharsKeyboard = sIllegalCharsKeyboard.Remove(index, 1);
-				}
-			}
-			MessageBox.Show(null, string.Format(FwUtilsStrings.ksIllegalNameMsg, sIllegalCharsKeyboard), FwUtilsStrings.ksIllegalNameExplanation, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-			tb.Text = sProjName;
-			tb.Select(selectionPos, 0);
-			return false;
 		}
 
 		/// <summary>

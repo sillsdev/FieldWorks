@@ -38,20 +38,14 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <inheritdoc />
 		public RegistryKey FieldWorksRegistryKeyLocalMachine => GetTestKey("FieldWorksRegistryKLM");
 
-		/// <inheritdoc />
-		public RegistryKey LocalMachineHive => GetTestKey("HKLM");
-
 		/// <summary />
-		private RegistryKey GetTestKey(string keyName)
+		private static RegistryKey GetTestKey(string keyName)
 		{
 			return Registry.CurrentUser.CreateSubKey(@"Software\SIL\FieldWorks\UnitTests\HelperFW\" + keyName);
 		}
 
 		/// <inheritdoc />
 		public RegistryKey FieldWorksBridgeRegistryKeyLocalMachine => throw new NotSupportedException();
-
-		/// <inheritdoc />
-		public RegistryKey FieldWorksRegistryKeyLocalMachineForWriting => throw new NotSupportedException();
 
 		/// <inheritdoc />
 		public RegistryKey FieldWorksRegistryKey => FieldWorksVersionlessRegistryKey.CreateSubKey(FwRegistryHelper.FieldWorksRegistryKeyName);

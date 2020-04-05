@@ -100,16 +100,6 @@ namespace SILUBS.ScriptureChecks
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Gets the name of the check.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public string CheckName
-		{
-			get {return Localize("Chapter and Verse Numbers"); }
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
 		/// The unique identifier of the check. This should never be changed!
 		/// </summary>
 		/// ------------------------------------------------------------------------------------

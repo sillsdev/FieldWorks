@@ -101,7 +101,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		[Test]
 		public void StringListXmlNode()
 		{
-			var doc = XDocument.Parse(@"<stringList group='InPng/InMyYard' ids='   MyPapaya, MyPineapple  '/>");
+			var doc = XDocument.Parse("<stringList group='InPng/InMyYard' ids='   MyPapaya, MyPineapple  '/>");
 			var node = doc.Root;
 			var strings = m_table.GetStringsFromStringListNode(node);
 			Assert.AreEqual(2, strings.Length);

@@ -98,10 +98,9 @@ namespace LanguageExplorer.Impls
 		#region non-interface properties
 
 		/// <summary>
-		/// Guid for the application (used for uniquely identifying DB items that "belong" to
-		///		this app.
+		/// E-mail address for feedback reports, kudos, etc.
 		/// </summary>
-		private static Guid AppGuid => new Guid("E716C901-3171-421f-83E1-3E012DEC9489");
+		private string FeedbackEmailAddress => "FLEXUsage@sil.org";
 		/// <summary>
 		/// The name of the Language Explorer registry subkey (Even though this is the same as
 		/// FwDirectoryFinder.ksFlexFolderName and FwUtils.ksFlexAppName, PLEASE do not use them interchangeably.
@@ -202,11 +201,6 @@ namespace LanguageExplorer.Impls
 		/// E-mail address for bug reports, etc.
 		/// </summary>
 		public string SupportEmailAddress => LanguageExplorerResources.kstidSupportEmail;
-
-		/// <summary>
-		/// E-mail address for feedback reports, kudos, etc.
-		/// </summary>
-		public string FeedbackEmailAddress => "FLEXUsage@sil.org";
 
 		#endregion IFeedbackInfoProvider interface implementation
 

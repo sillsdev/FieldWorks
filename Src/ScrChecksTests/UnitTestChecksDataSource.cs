@@ -73,16 +73,6 @@ namespace SILUBS.ScriptureChecks
 			}
 		}
 
-		public List<int> BooksPresent
-		{
-			get
-			{
-				List<int> present = new List<int>();
-				present.Add(1);
-				return present;
-			}
-		}
-
 		public bool GetText(int bookNum, int chapterNum)
 		{
 			return true;

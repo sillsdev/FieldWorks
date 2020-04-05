@@ -21,6 +21,25 @@ namespace LCMBrowser
 		private bool m_sortAscending = true;
 
 		/// <summary>
+		/// Collapses the object at the specified index.
+		/// </summary>
+		private bool CollapseObject(int index)
+		{
+			var io = this[index];
+			var currLevel = io.Level;
+			var count = 0;
+			for (var i = index + 1; i < Count && this[i].Level > currLevel; i++, count++)
+			{
+			}
+			if (count == 0)
+			{
+				return false;
+			}
+			RemoveRange(index + 1, count);
+			return true;
+		}
+
+		/// <summary>
 		/// Initializes the list using the specified top level object.
 		/// </summary>
 		public virtual void Initialize(object topLevelObj)
@@ -44,25 +63,6 @@ namespace LCMBrowser
 			}
 			var currObj = this[index];
 			return currObj == null ? throw new NullReferenceException("currObj") : currObj.HasChildren && (IsExpanded(index) ? CollapseObject(index) : ExpandObject(index));
-		}
-
-		/// <summary>
-		/// Collapses the object at the specified index.
-		/// </summary>
-		public bool CollapseObject(int index)
-		{
-			var io = this[index];
-			var currLevel = io.Level;
-			var count = 0;
-			for (var i = index + 1; i < Count && this[i].Level > currLevel; i++, count++)
-			{
-			}
-			if (count == 0)
-			{
-				return false;
-			}
-			RemoveRange(index + 1, count);
-			return true;
 		}
 
 		/// <summary>

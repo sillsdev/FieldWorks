@@ -213,7 +213,7 @@ namespace SIL.FieldWorks.WordWorks.Parser.HermitCrab
 						writer.WriteStartElement("NatClassPhonemeMismatch");
 						writer.WriteElementString("ClassName", natClass.Name.BestAnalysisAlternative.Text);
 						writer.WriteElementString("ClassAbbeviation", natClass.Abbreviation.BestAnalysisAlternative.Text);
-						writer.WriteElementString("ImpliedPhonologicalFeatures", feats.Count == 0 ? "" : string.Format("[{0}]", string.Join(" ", feats.Select(v => string.Format("{0}:{1}", GetFeatureString(v), GetValueString(v))))));
+						writer.WriteElementString("ImpliedPhonologicalFeatures", feats.Count == 0 ? "" : $"[{string.Join(" ", feats.Select(v => $"{GetFeatureString(v)}:{GetValueString(v)}"))}]");
 						writer.WriteElementString("PredictedPhonemes", string.Join(" ", predictedPhonemes.Select(p => p.Name.BestVernacularAlternative.Text)));
 						writer.WriteElementString("ActualPhonemes", string.Join(" ", natClass.SegmentsRC.Select(p => p.Name.BestVernacularAlternative.Text)));
 						writer.WriteEndElement();
@@ -399,7 +399,7 @@ namespace SIL.FieldWorks.WordWorks.Parser.HermitCrab
 
 		internal static XElement CreateAllomorphElement(string name, IMoForm form, IMoMorphSynAnalysis msa, ILexEntryInflType inflType, bool circumfix)
 		{
-			var morphTypeGuid = circumfix ? MoMorphTypeTags.kguidMorphCircumfix : (form.MorphTypeRA == null ? Guid.Empty : form.MorphTypeRA.Guid);
+			var morphTypeGuid = circumfix ? MoMorphTypeTags.kguidMorphCircumfix : form.MorphTypeRA?.Guid ?? Guid.Empty;
 			var elem = new XElement(name, new XAttribute("id", form.Hvo), new XAttribute("type", GetMorphTypeString(morphTypeGuid)),
 				new XElement("Form", circumfix ? form.OwnerOfClass<ILexEntry>().HeadWord.Text : form.GetFormWithMarkers(form.Cache.DefaultVernWs)),
 				new XElement("LongName", form.LongName));

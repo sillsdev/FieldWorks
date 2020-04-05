@@ -95,25 +95,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 		}
 
 		/// <summary>
-		/// Compares punctuation pattern contexts.
-		/// </summary>
-		public static int ContextComparer(PuncPattern x, PuncPattern y)
-		{
-			switch (x)
-			{
-				case null when y == null:
-					return 0;
-				case null:
-					return -1;
-			}
-			if (y == null)
-			{
-				return 1;
-			}
-			return s_sortAscending ? x.ContextPos.CompareTo(y.ContextPos) : y.ContextPos.CompareTo(x.ContextPos);
-		}
-
-		/// <summary>
 		/// Compares punctuation pattern counts.
 		/// </summary>
 		public static int CountComparer(PuncPattern x, PuncPattern y)

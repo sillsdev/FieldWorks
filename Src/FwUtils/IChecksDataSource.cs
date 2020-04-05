@@ -51,17 +51,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 		IEnumerable<ITextToken> TextTokens { get; }
 
 		/// <summary>
-		/// Return a list of the book numbers present.
-		/// This list is used as an argument to GetText above when retrieving the
-		/// data for each book.
-		/// The book number is arbitrary as long as BooksPresent/GetText agree.
-		/// This list should be in ascending order (because TextInventory.AddReference
-		/// can be implemented more efficiently if this is so --- and it gets called
-		/// a zillion times when building a character inventory).
-		/// </summary>
-		List<int> BooksPresent { get; }
-
-		/// <summary>
 		/// Get information about characters and words.
 		/// This is needed for platform such as Paratext which allow the user to
 		/// override some character info. Platform which don't allow this can mostly

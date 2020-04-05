@@ -37,11 +37,6 @@ namespace LCMBrowser
 		bool IsExpanded(int index);
 
 		/// <summary>
-		/// Collapses the object at the specified index.
-		/// </summary>
-		bool CollapseObject(int index);
-
-		/// <summary>
 		/// Expands the specified object at the specified index.
 		/// </summary>
 		/// <param name="index">The index of the object to expand.</param>

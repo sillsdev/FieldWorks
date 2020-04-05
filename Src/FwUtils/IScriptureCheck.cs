@@ -22,14 +22,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 		void Check(IEnumerable<ITextToken> toks, RecordErrorHandler record);
 
 		/// <summary>
-		/// The full name of the check, e.g. "Repeated Words". After replacing any spaces
-		/// with underscores, this can also be used as a key for looking up a localized
-		/// string if the application supports localization.  If this is ever changed,
-		/// DO NOT change the CheckId!
-		/// </summary>
-		string CheckName { get; }
-
-		/// <summary>
 		/// The unique identifier of the check. This should never be changed!
 		/// </summary>
 		Guid CheckId { get; }

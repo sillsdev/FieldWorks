@@ -90,16 +90,6 @@ namespace SILUBS.ScriptureChecks
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Gets the name of the check.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public string CheckName
-		{
-			get { return m_checksDataSource.GetLocalizedString("Characters"); }
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
 		/// The unique identifier of the check. This should never be changed!
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
@@ -134,17 +124,6 @@ namespace SILUBS.ScriptureChecks
 		public string Description
 		{
 			get { return m_checksDataSource.GetLocalizedString("Checks for potentially invalid characters."); }
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// This is the column header of the first column when you create an
-		/// inventory of this type of error.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public string InventoryColumnHeader
-		{
-			get { return m_checksDataSource.GetLocalizedString("Character"); }
 		}
 		#endregion
 

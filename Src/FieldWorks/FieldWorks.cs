@@ -1424,25 +1424,6 @@ namespace SIL.FieldWorks
 		}
 
 		/// <summary>
-		/// Opens the specified project by starting a new FieldWorks.exe process.
-		/// </summary>
-		/// <param name="projectName">The name of the project.</param>
-		/// <param name="otherArgs">Other command-line arguments to pass to the new FieldWorks
-		/// process.</param>
-		/// <returns>The new process if started, otherwise, null</returns>
-		internal static Process OpenProjectWithRealNewProcess(string projectName, params string[] otherArgs)
-		{
-			Logger.WriteEvent($"Starting new FieldWorks.exe process for project {projectName}");
-			var args = new List<string>
-			{
-				"-" + FwAppArgs.kProject,
-				projectName
-			};
-			args.AddRange(otherArgs);
-			return StartFwAppAndGetProcess(args.ToArray());
-		}
-
-		/// <summary>
 		/// Rename the database.
 		/// </summary>
 		/// <param name="dbNewName">new basename desired</param>
