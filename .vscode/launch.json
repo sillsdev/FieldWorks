@@ -81,6 +81,7 @@
       "request": "launch",
       "program": "${workspaceRoot}/Output/Debug/FieldWorks.exe",
       "cwd": "${workspaceRoot}"
+      "preLaunchTask": "build recent"
     },
     {
       "name": "Launch FW from flatpak (to attach debugger)",
