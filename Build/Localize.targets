@@ -11,13 +11,14 @@
 
 	<!-- Localize strings-en.xml, lists, and all resx files -->
 	<Target Name="localize" DependsOnTargets="localize-source;localize-binaries"/>
-	<Target Name="localize-source" DependsOnTargets="Initialize;downloadTranslatedFiles;zipLocalizedLists;processLanguages-source"/>
+	<Target Name="localize-source" DependsOnTargets="Initialize;downloadTranslatedFiles;copyLibL10ns;zipLocalizedLists;processLanguages-source"/>
 	<Target Name="localize-binaries" DependsOnTargets="Initialize;processLanguages-binaries"/>
 
 	<PropertyGroup>
 		<SldrUrl>https://ldml.api.sil.org/</SldrUrl>
 		<L10nsBaseDir>$(fwrt)/Localizations</L10nsBaseDir>
 		<L10nsDirectory>$(L10nsBaseDir)/l10ns</L10nsDirectory>
+		<LibL10nsDirectory>$(dir-fwdistfiles)/CommonLocalizations</LibL10nsDirectory>
 		<ListsDirectory>$(L10nsBaseDir)/lists</ListsDirectory>
 		<MessagesPot>$(L10nsBaseDir)/messages.pot</MessagesPot>
 		<LcmRootDir>$(LcmLocalArtifactsDir)/../..</LcmRootDir>
@@ -75,6 +76,16 @@
 			Properties="Locale=%(LocaleDirs.Filename)"/>
 		<MSBuild Projects="$(MSBuildProjectFullPath)" Targets="updateOneTemplateLdmlFile"
 			Properties="Locale=en"/>
+	</Target>
+
+	<Target Name="copyLibL10ns">
+	<ItemGroup>
+		<XliffFiles Include="$(fwrt)/packages/SIL.Chorus.l10ns.3.0.0*/content/**/*.xlf"/>
+		<XliffFiles Include="$(fwrt)/packages/libpalaso.l10ns.6.0.0*/content/**/*.xlf"/>
+	</ItemGroup>
+	  <Copy SourceFiles="@(XliffFiles)"
+			DestinationFiles="@(XliffFiles->'$(LibL10nsDirectory)/%(Filename)%(Extension)')"
+			SkipUnchangedFiles="true"/>
 	</Target>
 
 	<!-- Each downloaded translation needs the following post-processing:
@@ -137,6 +148,7 @@
 	<!-- Copy translated .resx files and strings-<locale>.xml to their destinations -->
 	<Target Name="processLanguages-source" DependsOnTargets="VerifyLcmCloned">
 	<!-- Process source for liblcm -->
+	<Message Text="LcmRootDir = $(LcmRootDir)" />
 	<!-- Passing RootDir as SrcFolder because LCM stores common assembly info in its root dir. -->
 		<LocalizeFieldWorks
 			RootDirectory="$(LcmRootDir)"
