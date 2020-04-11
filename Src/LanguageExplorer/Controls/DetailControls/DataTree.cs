@@ -6,6 +6,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.ComponentModel.Composition.Hosting;
 using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
@@ -61,6 +62,7 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		#region Data members
 
+		private ISliceFactory _sliceFactory;
 		/// <summary>
 		/// Use this to do the Add/RemoveNotifications, since it can be used in the unmanaged section of Dispose.
 		/// (If m_sda is COM, that is.)
@@ -409,6 +411,10 @@ namespace LanguageExplorer.Controls.DetailControls
 			DataTreeSliceContextMenuParameterObject = new DataTreeSliceContextMenuParameterObject();
 			Slices = new List<ISlice>();
 			_sharedEventHandlers = sharedEventHandlers;
+			using (var container = new CompositionContainer(new AssemblyCatalog(typeof(ISliceFactory).Assembly)))
+			{
+				_sliceFactory = container.GetExport<ISliceFactory>().Value;
+			}
 		}
 
 		/// <summary>
@@ -1995,7 +2001,7 @@ namespace LanguageExplorer.Controls.DetailControls
 				// No inner object...do we want a ghost slice?
 				if (XmlUtils.GetOptionalAttributeValue(node, "ghost") != null)
 				{
-					SliceFactory.MakeGhostSlice(this, Cache, new FlexComponentParameters(PropertyTable, Publisher, Subscriber),  path, node, reuseMap, obj, parentSlice, flid, caller, indent, ref insertPosition);
+					_sliceFactory.MakeGhostSlice(this, Cache, new FlexComponentParameters(PropertyTable, Publisher, Subscriber),  path, node, reuseMap, obj, parentSlice, flid, caller, indent, ref insertPosition);
 				}
 			}
 			path.RemoveAt(path.Count - 1);
@@ -2082,7 +2088,7 @@ namespace LanguageExplorer.Controls.DetailControls
 				// Nothing in seq....do we want a ghost slice?
 				if (XmlUtils.GetOptionalAttributeValue(node, "ghost") != null)
 				{
-					SliceFactory.MakeGhostSlice(this, Cache, new FlexComponentParameters(PropertyTable, Publisher, Subscriber), path, node, reuseMap, obj, parentSlice, flid, caller, indent, ref insertPosition);
+					_sliceFactory.MakeGhostSlice(this, Cache, new FlexComponentParameters(PropertyTable, Publisher, Subscriber), path, node, reuseMap, obj, parentSlice, flid, caller, indent, ref insertPosition);
 				}
 			}
 			else if (cobj < kInstantSliceMax || // This may be a little on the small side
@@ -2106,7 +2112,7 @@ namespace LanguageExplorer.Controls.DetailControls
 				var contents = SetupContents(flid, obj);
 				foreach (var hvo in contents)
 				{
-					var dummyObjectSlice = SliceFactory.CreateDummyObject(indent, node, (ArrayList)path.Clone(), obj, flid, cnt, layoutOverride, layoutChoiceField, caller);
+					var dummyObjectSlice = _sliceFactory.CreateDummyObject(indent, node, (ArrayList)path.Clone(), obj, flid, cnt, layoutOverride, layoutChoiceField, caller);
 					dummyObjectSlice.Cache = Cache;
 					dummyObjectSlice.ParentSlice = parentSlice;
 					path.Add(hvo);
@@ -2392,10 +2398,10 @@ namespace LanguageExplorer.Controls.DetailControls
 				return NodeTestResult.kntrSomething; // slices always produce something.
 			}
 			path.Add(node);
-			var slice = SliceFactory.GetMatchingSlice(path, reuseMap);
+			var slice = _sliceFactory.GetMatchingSlice(path, reuseMap);
 			if (slice == null)
 			{
-				slice = SliceFactory.Create(Cache, editor, flid, node, obj, PersistenceProvder, new FlexComponentParameters(PropertyTable, Publisher, Subscriber), caller, reuseMap, _sharedEventHandlers);
+				slice = _sliceFactory.Create(Cache, editor, flid, node, obj, PersistenceProvder, new FlexComponentParameters(PropertyTable, Publisher, Subscriber), caller, reuseMap, _sharedEventHandlers);
 				if (slice == null)
 				{
 					// One way this can happen in TestLangProj is with a part ref for a custom field that
@@ -2419,7 +2425,7 @@ namespace LanguageExplorer.Controls.DetailControls
 				slice.ConfigurationNode = node;
 				slice.CallerNode = caller;
 				slice.OverrideBackColor(XmlUtils.GetOptionalAttributeValue(node, "backColor"));
-				SliceFactory.SetNodeWeight(node, slice);
+				_sliceFactory.SetNodeWeight(node, slice);
 				slice.FinishInit();
 				InsertSlice(insPos, slice);
 			}

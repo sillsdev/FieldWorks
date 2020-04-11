@@ -10,7 +10,7 @@ namespace LanguageExplorer
 	/// <summary>
 	/// Interface for a record bar.
 	/// </summary>
-	public interface IRecordBar : IDisposable
+	internal interface IRecordBar : IDisposable
 	{
 		/// <summary>
 		/// Get the TreeView control, or null, if using a ListView.

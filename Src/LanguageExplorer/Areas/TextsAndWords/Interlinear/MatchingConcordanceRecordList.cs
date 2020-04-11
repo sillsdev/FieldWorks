@@ -2,7 +2,6 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Windows.Forms;
@@ -20,9 +19,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 	/// </summary>
 	internal class MatchingConcordanceRecordList : InterlinearTextsRecordList
 	{
-		internal const string OccurrencesOfSelectedUnit = "OccurrencesOfSelectedUnit";
-		internal const string ComplexConcOccurrencesOfSelectedUnit = "complexConcOccurrencesOfSelectedUnit";
-
 		ConcordanceControlBase _concordanceControl;
 
 		/// <summary>
@@ -130,8 +126,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		{
 			var acceptedRecordListIds = new HashSet<string>
 			{
-				OccurrencesOfSelectedUnit,
-				ComplexConcOccurrencesOfSelectedUnit
+				LanguageExplorerConstants.OccurrencesOfSelectedUnit, LanguageExplorerConstants.ComplexConcOccurrencesOfSelectedUnit
 			};
 			Require.That(acceptedRecordListIds.Contains(recordListId), $"I don't know how to create a record list with an ID of '{recordListId}'.");
 			/*

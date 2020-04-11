@@ -2,6 +2,7 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System.Drawing;
 using System.Windows.Forms;
 using System.Xml.Linq;
 using SIL.LCModel;
@@ -105,6 +106,14 @@ namespace LanguageExplorer
 				}
 				me = myParent;
 			}
+		}
+
+		/// <summary>
+		///  Convert a .NET color to the type understood by Views code and other Win32 stuff.
+		/// </summary>
+		internal static uint RGB(this Color me)
+		{
+			return LanguageExplorerServices.RGB(me.R, me.G, me.B);
 		}
 	}
 }

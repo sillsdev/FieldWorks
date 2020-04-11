@@ -12,6 +12,7 @@ using System.Windows.Forms;
 using System.Xml.Linq;
 using Gecko;
 using Gecko.DOM;
+using LanguageExplorer.Controls.DetailControls;
 using LanguageExplorer.DictionaryConfiguration;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FwCoreDlgs;
@@ -234,7 +235,7 @@ namespace LanguageExplorer.Areas.Lexicon.DictionaryConfiguration
 			// the current Publication layout or Configuration view.
 			if (!IsObjectVisible(hvoTarget, out var xrc))
 			{
-				AreaServices.GiveSimpleWarning(PropertyTable.GetValue<Form>(FwUtils.window), PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider).HelpFile, xrc);
+				LanguageExplorerServices.GiveSimpleWarning(PropertyTable.GetValue<Form>(FwUtils.window), PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider).HelpFile, xrc);
 			}
 		}
 
@@ -939,7 +940,7 @@ namespace LanguageExplorer.Areas.Lexicon.DictionaryConfiguration
 			var pubNameTitlePiece = GetCurrentPublication();
 			if (pubNameTitlePiece == LanguageExplorerResources.AllEntriesPublication)
 			{
-				pubNameTitlePiece = AreaResources.ksAllEntries;
+				pubNameTitlePiece = LanguageExplorerResources.ksAllEntries;
 			}
 			titleStr = $"{pubNameTitlePiece} {titleStr}";
 			var isReversalIndex = DictionaryConfigurationServices.GetDictionaryConfigurationType(PropertyTable) == LanguageExplorerResources.ReversalIndex;

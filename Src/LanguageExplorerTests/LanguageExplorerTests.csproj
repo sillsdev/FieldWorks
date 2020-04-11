@@ -225,7 +225,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Archiving\ArchivingTests.cs" />
-    <Compile Include="Areas\TextsAndWords\Discourse\MockRibbon.cs" />
+    <Compile Include="Controls\DetailControls\MockRibbon.cs" />
     <Compile Include="Areas\TextsAndWords\Interlinear\InterlinearExporterTestsBase.cs" />
     <Compile Include="Areas\TextsAndWords\Interlinear\InterlinearExporterTestsForELAN.cs" />
     <Compile Include="Areas\TextsAndWords\Interlinear\LLIMergeExtension.cs" />
@@ -238,11 +238,11 @@
     <Compile Include="Areas\TextsAndWords\Interlinear\TestableFocusBox.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Areas\TextsAndWords\Interlinear\TriStateTreeViewTests.cs" />
+    <Compile Include="Controls\TriStateTreeViewTests.cs" />
     <Compile Include="Controls\AlphaOutlineTests.cs" />
     <Compile Include="CreateOverrideTests.cs" />
     <Compile Include="Areas\StandFormatExportTests.cs" />
-    <Compile Include="Areas\TextsAndWords\Interlinear\TextsTriStateTreeViewTests.cs" />
+    <Compile Include="Controls\TextsTriStateTreeViewTests.cs" />
     <Compile Include="Controls\CollectorEnvTests.cs" />
     <Compile Include="Controls\DetailControls\InnerLabeledMultiStringViewTests.cs" />
     <Compile Include="Controls\StVcTests.cs" />
@@ -287,22 +287,21 @@
     <Compile Include="Controls\DetailControls\DataTreeTests.cs" />
     <Compile Include="Controls\DetailControls\PhoneEnvReferenceViewTests.cs" />
     <Compile Include="MiscExtensionsTests.cs" />
-    <Compile Include="Controls\DetailControls\SliceTests.cs" />
+    <Compile Include="Controls\DetailControls\Slices\SliceTests.cs" />
     <Compile Include="Controls\DetailControls\VectorReferenceLauncherTests.cs" />
-    <Compile Include="Areas\TextsAndWords\Discourse\AdvancedMTDialogLogicTests.cs" />
-    <Compile Include="Areas\TextsAndWords\Discourse\ConstChartRowDecoratorTests.cs" />
-    <Compile Include="Areas\TextsAndWords\Discourse\ConstituentChartDatabaseTests.cs" />
-    <Compile Include="Areas\TextsAndWords\Discourse\ConstituentChartTests.cs" />
-    <Compile Include="Areas\TextsAndWords\Discourse\DiscourseExportTests.cs" />
-    <Compile Include="Areas\TextsAndWords\Discourse\DiscourseTestHelper.cs" />
-    <Compile Include="Areas\TextsAndWords\Discourse\InMemoryDiscourseTestBase.cs" />
-    <Compile Include="Areas\TextsAndWords\Discourse\InMemoryLogicTest.cs" />
-    <Compile Include="Areas\TextsAndWords\Discourse\InMemoryMovedTextTests.cs" />
-    <Compile Include="Areas\TextsAndWords\Discourse\InMemoryMoveEditTests.cs" />
-    <Compile Include="Areas\TextsAndWords\Discourse\InterlinRibbonTests.cs" />
-    <Compile Include="Areas\TextsAndWords\Discourse\LogicTest.cs" />
-    <Compile Include="Areas\TextsAndWords\Discourse\NotifyChangeSpy.cs" />
-    <Compile Include="Areas\TextsAndWords\Discourse\TestCCLogic.cs" />
+    <Compile Include="Controls\DetailControls\AdvancedMTDialogLogicTests.cs" />
+    <Compile Include="Controls\DetailControls\ConstChartRowDecoratorTests.cs" />
+    <Compile Include="Controls\DetailControls\ConstituentChartDatabaseTests.cs" />
+    <Compile Include="Controls\DetailControls\ConstituentChartTests.cs" />
+    <Compile Include="Controls\DetailControls\DiscourseExportTests.cs" />
+    <Compile Include="Controls\DetailControls\DiscourseTestHelper.cs" />
+    <Compile Include="Controls\DetailControls\InMemoryDiscourseTestBase.cs" />
+    <Compile Include="Controls\DetailControls\InMemoryLogicTest.cs" />
+    <Compile Include="Controls\DetailControls\InMemoryMovedTextTests.cs" />
+    <Compile Include="Controls\DetailControls\InMemoryMoveEditTests.cs" />
+    <Compile Include="Controls\DetailControls\InterlinRibbonTests.cs" />
+    <Compile Include="Controls\DetailControls\LogicTest.cs" />
+    <Compile Include="Controls\DetailControls\TestCCLogic.cs" />
     <Compile Include="Repository\GrammarAreaTests.cs" />
     <Compile Include="Areas\Grammar\GoldEticGuidFixerTests.cs" />
     <Compile Include="Areas\TextsAndWords\Interlinear\AddWordsToLexiconTests.cs" />
@@ -312,16 +311,16 @@
     <Compile Include="Areas\TextsAndWords\Interlinear\ImportInterlinearAnalysesTests.cs" />
     <Compile Include="Areas\TextsAndWords\Interlinear\FocusBoxControllerTests.cs" />
     <Compile Include="Areas\TextsAndWords\Interlinear\InterlinearExporterTests.cs" />
-    <Compile Include="Areas\TextsAndWords\Interlinear\InterlinLineChoicesTests.cs" />
+    <Compile Include="Controls\DetailControls\InterlinLineChoicesTests.cs" />
     <Compile Include="Areas\TextsAndWords\Interlinear\InterlinSfmImportTests.cs" />
     <Compile Include="Areas\TextsAndWords\Interlinear\InterlinTaggingTests.cs" />
-    <Compile Include="Areas\TextsAndWords\Interlinear\MorphemeBreakerTests.cs" />
+    <Compile Include="Controls\DetailControls\MorphemeBreakerTests.cs" />
     <Compile Include="Areas\TextsAndWords\Interlinear\SandboxBaseTests.cs" />
-    <Compile Include="Areas\TextsAndWords\Interlinear\ShowSpaceDecoratorTests.cs" />
-    <Compile Include="Areas\TextsAndWords\Interlinear\TestTaggingChild.cs">
+    <Compile Include="Controls\DetailControls\ShowSpaceDecoratorTests.cs" />
+    <Compile Include="Controls\DetailControls\TestTaggingChild.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Areas\TextsAndWords\Interlinear\WordBreakGuesserTests.cs" />
+    <Compile Include="Controls\DetailControls\WordBreakGuesserTests.cs" />
     <Compile Include="LanguageExplorerTestsResources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -379,9 +378,9 @@
     <Compile Include="DictionaryExportServiceTests.cs" />
     <Compile Include="DictionaryConfiguration\DictionaryNodeOptionsTests.cs" />
     <Compile Include="DictionaryPublicationDecoratorTests.cs" />
-    <Compile Include="Areas\ExportDialogTests.cs" />
+    <Compile Include="Controls\ExportDialogTests.cs" />
     <Compile Include="DictionaryConfiguration\HeadwordNumbersControllerTests.cs" />
-    <Compile Include="DictionaryConfiguration\InterestingTextsTests.cs" />
+    <Compile Include="InterestingTextsTests.cs" />
     <Compile Include="DictionaryConfiguration\ItemClickedTests.cs" />
     <Compile Include="DictionaryConfiguration\TempGuidOn.cs" />
     <Compile Include="DictionaryConfiguration\UnicodeCharacterEditingHelperTests.cs" />
@@ -490,6 +489,7 @@
       <Link>Properties\AssemblyInfoForTests.cs</Link>
     </Compile>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="BuildInclude.targets" />
 </Project>

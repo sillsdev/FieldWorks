@@ -5,7 +5,6 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
 using System.Xml.Linq;
@@ -565,61 +564,6 @@ namespace LanguageExplorer.LcmUi
 		public virtual void MoveUnderlyingObjectToCopyOfOwner()
 		{
 			MessageBox.Show(PropertyTable.GetValue<Form>(FwUtils.window), LcmUiStrings.ksCannotMoveObjectToCopy, LcmUiStrings.ksBUG);
-		}
-
-		/// <summary>
-		///  Convert a .NET color to the type understood by Views code and other Win32 stuff.
-		/// </summary>
-		public static uint RGB(Color c)
-		{
-			return RGB(c.R, c.G, c.B);
-		}
-
-		/// <summary>
-		/// Make a standard Win32 color from three components.
-		/// </summary>
-		public static uint RGB(int r, int g, int b)
-		{
-			return (uint)((byte)r | ((byte)(g) << 8) | ((byte)b << 16));
-
-		}
-
-		/// <summary />
-		/// <param name="singlePropertySequenceValue"></param>
-		/// <param name="cacheForCheckingValidity">null, if you don't care about checking the validity of the items in singlePropertySequenceValue,
-		/// otherwise, pass in a cache to check validity.</param>
-		/// <param name="expectedClassId">if you pass a cache, you can also use this too make sure the object matches an expected class,
-		/// otherwise it just checks that the object exists in the database (or is a valid virtual object)</param>
-		/// <returns></returns>
-		public static List<int> ParseSinglePropertySequenceValueIntoHvos(string singlePropertySequenceValue, LcmCache cacheForCheckingValidity, int expectedClassId)
-		{
-			var hvos = new List<int>();
-			if (string.IsNullOrEmpty(singlePropertySequenceValue))
-			{
-				return hvos;
-			}
-			var cache = cacheForCheckingValidity;
-			foreach (var sHvo in singlePropertySequenceValue.Split(','))
-			{
-				int hvo;
-				if (!int.TryParse(sHvo, out hvo))
-				{
-					continue;
-				}
-				if (cache == null)
-				{
-					continue;
-				}
-				if (!cache.ServiceLocator.GetInstance<ICmObjectRepository>().TryGetObject(hvo, out var obj))
-				{
-					continue;
-				}
-				if (obj.IsValidObject)
-				{
-					hvos.Add(hvo);
-				}
-			}
-			return hvos;
 		}
 
 		#endregion Other methods

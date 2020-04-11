@@ -782,16 +782,16 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		{
 			m_cbLine.Items.Clear();
 			m_cbLine.Items.Add(new ConcordLine(ITextStrings.ksBaseline, WritingSystemServices.kwsVerns, ConcordanceLines.kBaseline));
-			m_cbLine.Items.Add(new ConcordLine(ITextStrings.ksWord, WritingSystemServices.kwsVerns, ConcordanceLines.kWord));
-			m_cbLine.Items.Add(new ConcordLine(ITextStrings.ksMorphemes, WritingSystemServices.kwsVerns, ConcordanceLines.kMorphemes));
+			m_cbLine.Items.Add(new ConcordLine(LanguageExplorerResources.ksWord, WritingSystemServices.kwsVerns, ConcordanceLines.kWord));
+			m_cbLine.Items.Add(new ConcordLine(LanguageExplorerResources.ksMorphemes, WritingSystemServices.kwsVerns, ConcordanceLines.kMorphemes));
 			m_cbLine.Items.Add(new ConcordLine(ITextStrings.ksLexEntry, WritingSystemServices.kwsVerns, ConcordanceLines.kLexEntry));
-			m_cbLine.Items.Add(new ConcordLine(ITextStrings.ksLexGloss, WritingSystemServices.kwsAnals, ConcordanceLines.kLexGloss));
-			m_cbLine.Items.Add(new ConcordLine(AreaResources.Lex_Gram_Info, WritingSystemServices.kwsAnals, ConcordanceLines.kGramCategory));
-			m_cbLine.Items.Add(new ConcordLine(ITextStrings.ksWordGloss, WritingSystemServices.kwsAnals, ConcordanceLines.kWordGloss));
-			m_cbLine.Items.Add(new ConcordLine(ITextStrings.ksWordCat, WritingSystemServices.kwsAnals, ConcordanceLines.kWordCategory));
-			m_cbLine.Items.Add(new ConcordLine(ITextStrings.ksFreeTranslation, WritingSystemServices.kwsAnals, ConcordanceLines.kFreeTranslation));
-			m_cbLine.Items.Add(new ConcordLine(ITextStrings.ksLiteralTranslation, WritingSystemServices.kwsAnals, ConcordanceLines.kLiteralTranslation));
-			m_cbLine.Items.Add(new ConcordLine(ITextStrings.ksNote, WritingSystemServices.kwsAnals, ConcordanceLines.kNote));
+			m_cbLine.Items.Add(new ConcordLine(LanguageExplorerResources.ksLexGloss, WritingSystemServices.kwsAnals, ConcordanceLines.kLexGloss));
+			m_cbLine.Items.Add(new ConcordLine(LanguageExplorerResources.Lex_Gram_Info, WritingSystemServices.kwsAnals, ConcordanceLines.kGramCategory));
+			m_cbLine.Items.Add(new ConcordLine(LanguageExplorerResources.ksWordGloss, WritingSystemServices.kwsAnals, ConcordanceLines.kWordGloss));
+			m_cbLine.Items.Add(new ConcordLine(LanguageExplorerResources.ksWordCat, WritingSystemServices.kwsAnals, ConcordanceLines.kWordCategory));
+			m_cbLine.Items.Add(new ConcordLine(LanguageExplorerResources.ksFreeTranslation, WritingSystemServices.kwsAnals, ConcordanceLines.kFreeTranslation));
+			m_cbLine.Items.Add(new ConcordLine(LanguageExplorerResources.ksLiteralTranslation, WritingSystemServices.kwsAnals, ConcordanceLines.kLiteralTranslation));
+			m_cbLine.Items.Add(new ConcordLine(LanguageExplorerResources.ksNote, WritingSystemServices.kwsAnals, ConcordanceLines.kNote));
 			m_cbLine.Items.Add(new ConcordLine(ITextStrings.ksTagging, WritingSystemServices.kwsAnals, ConcordanceLines.kTags));
 			m_cbLine.SelectedIndex = 0;
 		}
@@ -1476,7 +1476,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					case WfiAnalysisTags.kClassId:
 					case PartOfSpeechTags.kClassId:
 					case WfiGlossTags.kClassId:
-						if (((string)tag[1]).Equals(AreaServices.WordPartOfSpeech))
+						if (((string)tag[1]).Equals(LanguageExplorerConstants.WordPartOfSpeech))
 						{
 							InitializeConcordanceSearchWordPOS(target);
 						}
@@ -1489,7 +1489,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					case MoInflAffMsaTags.kClassId:
 					case MoDerivAffMsaTags.kClassId:
 					case MoUnclassifiedAffixMsaTags.kClassId:
-						if (((string)tag[1]).Equals(AreaServices.PartOfSpeechGramInfo))
+						if (((string)tag[1]).Equals(LanguageExplorerConstants.PartOfSpeechGramInfo))
 						{
 							Debug.Assert(target is IMoMorphSynAnalysis);
 							InitializeConcordanceSearch(target, ((IMoMorphSynAnalysis)target).InterlinearNameTSS);

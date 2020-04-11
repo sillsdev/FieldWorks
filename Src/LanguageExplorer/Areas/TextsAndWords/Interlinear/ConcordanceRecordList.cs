@@ -29,7 +29,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		/// <summary />
 		internal ConcordanceRecordList(StatusBar statusBar, ILangProject languageProject, ConcDecorator decorator)
-			: base(TextAndWordsArea.ConcordanceWords, statusBar, decorator, false, new VectorPropertyParameterObject(languageProject, "Wordforms", ObjectListPublisher.OwningFlid), new RecordFilterParameterObject(new WordsUsedOnlyElsewhereFilter(languageProject.Cache)))
+			: base(LanguageExplorerConstants.ConcordanceWords, statusBar, decorator, false, new VectorPropertyParameterObject(languageProject, "Wordforms", ObjectListPublisher.OwningFlid), new RecordFilterParameterObject(new WordsUsedOnlyElsewhereFilter(languageProject.Cache)))
 		{
 			_filterProvider = new WfiRecordFilterListProvider();
 		}

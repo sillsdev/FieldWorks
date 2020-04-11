@@ -9,8 +9,8 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Xml.Linq;
-using LanguageExplorer.Areas.TextsAndWords.Interlinear;
 using LanguageExplorer.Controls;
+using LanguageExplorer.Controls.DetailControls;
 using LanguageExplorer.Controls.PaneBar;
 using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
@@ -71,7 +71,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.WordListConcordance
 			var recordListRepository = majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>(LanguageExplorerConstants.RecordListRepository);
 			if (_recordListProvidingOwner == null)
 			{
-				_recordListProvidingOwner = recordListRepository.GetRecordList(TextAndWordsArea.ConcordanceWords, majorFlexComponentParameters.StatusBar, TextAndWordsArea.ConcordanceWordsFactoryMethod);
+				_recordListProvidingOwner = recordListRepository.GetRecordList(LanguageExplorerConstants.ConcordanceWords, majorFlexComponentParameters.StatusBar, TextAndWordsArea.ConcordanceWordsFactoryMethod);
 			}
 			if (_subservientRecordList == null)
 			{
@@ -88,14 +88,14 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.WordListConcordance
 				SecondControlParameters = new SplitterChildControlParameters() // Control (InterlinMasterNoTitleBar) added below. Leave Label null.
 			};
 			var interlinMasterPaneBar = new PaneBar();
-			var panelButtonAddWordsToLexicon = new PanelButton(majorFlexComponentParameters.FlexComponentParameters, null, TextAndWordsArea.ITexts_AddWordsToLexicon, TextAndWordsResources.Add_Words_to_Lexicon, TextAndWordsResources.Add_Words_to_Lexicon)
+			var panelButtonAddWordsToLexicon = new PanelButton(majorFlexComponentParameters.FlexComponentParameters, null, LanguageExplorerConstants.ITexts_AddWordsToLexicon, TextAndWordsResources.Add_Words_to_Lexicon, TextAndWordsResources.Add_Words_to_Lexicon)
 			{
 				Dock = DockStyle.Right,
 				Visible = false
 			};
 			var paneBarButtons = new Dictionary<string, PanelButton>
 			{
-				{ TextAndWordsArea.ITexts_AddWordsToLexicon, panelButtonAddWordsToLexicon}
+				{ LanguageExplorerConstants.ITexts_AddWordsToLexicon, panelButtonAddWordsToLexicon}
 			};
 			interlinMasterPaneBar.AddControls(new List<Control> { panelButtonAddWordsToLexicon });
 			var root = XDocument.Parse(TextAndWordsResources.WordListConcordanceToolParameters).Root;
@@ -265,12 +265,12 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.WordListConcordance
 				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(3);
 
 				// <item command="CmdWordformJumpToAnalyses"/> AreaServices.AnalysesMachineName
-				ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, CmdWordformJumpToAnalyses_Click, AreaResources.Show_in_Word_Analyses);
+				ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, CmdWordformJumpToAnalyses_Click, LanguageExplorerResources.Show_in_Word_Analyses);
 
 				// <item label="-" translate="do not translate"/>
 				ToolStripMenuItemFactory.CreateToolStripSeparatorForContextMenuStrip(contextMenuStrip);
 				// <command id="CmdDeleteSelectedObject" label="Delete selected {0}" message="DeleteSelectedItem"/>
-				ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, CmdDeleteSelectedObject_Clicked, string.Format(AreaResources.Delete_selected_0, StringTable.Table.GetString("WfiWordform", StringTable.ClassNames)));
+				ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, CmdDeleteSelectedObject_Clicked, string.Format(LanguageExplorerResources.Delete_selected_0, StringTable.Table.GetString("WfiWordform", StringTable.ClassNames)));
 
 				// End: <menu id="mnuBrowseView" (partial) >
 				_mainRecordBrowseView.ContextMenuStrip = contextMenuStrip;

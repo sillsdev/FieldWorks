@@ -9,6 +9,7 @@ using System.Windows.Forms;
 using System.Xml.Linq;
 using Gecko;
 using LanguageExplorer.Areas.Lexicon.DictionaryConfiguration;
+using LanguageExplorer.Controls.DetailControls;
 using LanguageExplorer.DictionaryConfiguration;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;

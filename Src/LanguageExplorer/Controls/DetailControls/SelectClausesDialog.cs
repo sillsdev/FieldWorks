@@ -1,0 +1,42 @@
+// Copyright (c) 2008-2020 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
+
+using System;
+using System.Collections.Generic;
+using System.Windows.Forms;
+
+namespace LanguageExplorer.Controls.DetailControls
+{
+	internal sealed partial class SelectClausesDialog : Form
+	{
+		internal SelectClausesDialog()
+		{
+			InitializeComponent();
+		}
+
+		internal void SetRows(List<RowMenuItem> items)
+		{
+			m_rowsCombo.Items.Clear();
+			m_rowsCombo.Items.AddRange(items.ToArray());
+		}
+
+		internal RowMenuItem SelectedRow
+		{
+			get => (RowMenuItem)m_rowsCombo.SelectedItem;
+			set => m_rowsCombo.SelectedItem = value;
+		}
+
+		private void m_OkButton_Click(object sender, EventArgs e)
+		{
+			DialogResult = DialogResult.OK;
+			Close();
+		}
+
+		private void m_cancelButton_Click(object sender, EventArgs e)
+		{
+			DialogResult = DialogResult.Cancel;
+			Close();
+		}
+	}
+}

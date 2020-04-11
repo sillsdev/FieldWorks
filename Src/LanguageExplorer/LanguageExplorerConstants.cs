@@ -93,6 +93,16 @@ namespace LanguageExplorer
 		internal const string BulkEditWordformsUiName = "Bulk Edit Wordforms";
 		internal const string CorpusStatisticsMachineName = "corpusStatistics";
 		internal const string CorpusStatisticsUiName = "Statistics";
+
+		internal const string ITexts_AddWordsToLexicon = "ITexts_AddWordsToLexicon";
+		internal const string TextSelectedWord = "TextSelectedWord";
+		internal const string InterlinearTexts = "interlinearTexts";
+		internal const string ShowHiddenFields_interlinearEdit = "ShowHiddenFields_interlinearEdit";
+		internal const string InterlinearTab = "InterlinearTab";
+		internal const string InterlinearTextsRecordList = "InterlinearTextsRecordList";
+		internal const string ConcordanceWords = "concordanceWords";
+		internal const string OccurrencesOfSelectedUnit = "OccurrencesOfSelectedUnit";
+		internal const string ComplexConcOccurrencesOfSelectedUnit = "complexConcOccurrencesOfSelectedUnit";
 		#endregion Text and Words area
 
 		#region Grammar area
@@ -209,6 +219,10 @@ namespace LanguageExplorer
 
 
 		#region Misc
+		internal const string PartOfSpeechGramInfo = "PartOfSpeechGramInfo";
+		internal const string WordPartOfSpeech = "WordPartOfSpeech";
+		internal const string RecordListOwningObjChanged = "RecordListOwningObjChanged";
+		internal const string InterestingTexts = "InterestingTexts";
 
 		/// <summary>
 		/// File extension for dictionary configuration files.

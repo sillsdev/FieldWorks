@@ -3,6 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Diagnostics;
+using LanguageExplorer.Controls.DetailControls;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 {
@@ -20,7 +21,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		{
 			InitCombo();
 			ComboList.Text = StrFromTss(m_caches.DataAccess.get_MultiStringAlt(m_hvoSbWord, SandboxBase.ktagSbWordForm, m_sandbox.RawWordformWs));
-			ComboList.Items.Add(ITextStrings.ksEditMorphBreaks_);
+			ComboList.Items.Add(LanguageExplorerResources.ksEditMorphBreaks_);
 		}
 
 		/// <inheritdoc />

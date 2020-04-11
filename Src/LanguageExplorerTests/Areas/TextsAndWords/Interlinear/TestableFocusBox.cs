@@ -6,6 +6,7 @@ using System;
 using System.Diagnostics;
 using System.Windows.Forms;
 using LanguageExplorer.Areas.TextsAndWords.Interlinear;
+using LanguageExplorer.Controls.DetailControls;
 using SIL.LCModel;
 using SIL.LCModel.DomainServices;
 
@@ -13,10 +14,6 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 {
 	internal sealed class TestableFocusBox : FocusBoxController
 	{
-		internal TestableFocusBox()
-		{
-		}
-
 		protected override void Dispose(bool disposing)
 		{
 			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");

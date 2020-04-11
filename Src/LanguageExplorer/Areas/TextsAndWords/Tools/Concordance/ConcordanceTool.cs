@@ -11,6 +11,7 @@ using System.Windows.Forms;
 using System.Xml.Linq;
 using LanguageExplorer.Areas.TextsAndWords.Interlinear;
 using LanguageExplorer.Controls;
+using LanguageExplorer.Controls.DetailControls;
 using LanguageExplorer.Controls.PaneBar;
 using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
@@ -65,7 +66,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Concordance
 		{
 			if (_recordList == null)
 			{
-				_recordList = majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>(LanguageExplorerConstants.RecordListRepository).GetRecordList(MatchingConcordanceRecordList.OccurrencesOfSelectedUnit, majorFlexComponentParameters.StatusBar, MatchingConcordanceRecordList.FactoryMethod);
+				_recordList = majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>(LanguageExplorerConstants.RecordListRepository).GetRecordList(LanguageExplorerConstants.OccurrencesOfSelectedUnit, majorFlexComponentParameters.StatusBar, MatchingConcordanceRecordList.FactoryMethod);
 			}
 			_toolMenuHelper = new ConcordanceToolMenuHelper(majorFlexComponentParameters, this);
 			var mainConcordanceContainerParameters = new MultiPaneParameters
@@ -80,14 +81,14 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Concordance
 				SecondControlParameters = new SplitterChildControlParameters() // Control (PaneBarContainer+InterlinMasterNoTitleBar) added below. Leave Label null.
 			};
 			var interlinMasterPaneBar = new PaneBar();
-			var panelButtonAddWordsToLexicon = new PanelButton(majorFlexComponentParameters.FlexComponentParameters, null, TextAndWordsArea.ITexts_AddWordsToLexicon, TextAndWordsResources.Add_Words_to_Lexicon, TextAndWordsResources.Add_Words_to_Lexicon)
+			var panelButtonAddWordsToLexicon = new PanelButton(majorFlexComponentParameters.FlexComponentParameters, null, LanguageExplorerConstants.ITexts_AddWordsToLexicon, TextAndWordsResources.Add_Words_to_Lexicon, TextAndWordsResources.Add_Words_to_Lexicon)
 			{
 				Dock = DockStyle.Right,
 				Visible = false
 			};
 			var paneBarButtons = new Dictionary<string, PanelButton>
 			{
-				{ TextAndWordsArea.ITexts_AddWordsToLexicon, panelButtonAddWordsToLexicon}
+				{ LanguageExplorerConstants.ITexts_AddWordsToLexicon, panelButtonAddWordsToLexicon}
 			};
 			interlinMasterPaneBar.AddControls(new List<Control> { panelButtonAddWordsToLexicon });
 			var root = XDocument.Parse(TextAndWordsResources.ConcordanceToolParameters).Root;

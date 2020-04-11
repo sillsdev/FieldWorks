@@ -109,7 +109,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			parserMenuDictionary.Add(Command.CmdChooseXAmpleParser, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(ChooseParser_Click, () => UiWidgetServices.CanSeeAndDo));
 			parserMenuDictionary.Add(Command.CmdChooseHCParser, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(ChooseParser_Click, () => UiWidgetServices.CanSeeAndDo));
 			parserMenuDictionary.Add(Command.CmdEditParserParameters, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(EditParserParameters_Click, () => UiWidgetServices.CanSeeAndDo));
-			Subscriber.Subscribe(TextAndWordsArea.TextSelectedWord, TextSelectedWord_Handler);
+			Subscriber.Subscribe(LanguageExplorerConstants.TextSelectedWord, TextSelectedWord_Handler);
 			Subscriber.Subscribe(LanguageExplorerConstants.StopParser, StopParser_Handler);
 			UpdateStatusPanelProgress();
 		}
@@ -429,7 +429,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 				{
 					_recordList.RecordChanged -= RecordListRecordChanged;
 				}
-				Subscriber.Unsubscribe(TextAndWordsArea.TextSelectedWord, TextSelectedWord_Handler);
+				Subscriber.Unsubscribe(LanguageExplorerConstants.TextSelectedWord, TextSelectedWord_Handler);
 				Subscriber.Unsubscribe(LanguageExplorerConstants.StopParser, StopParser_Handler);
 
 				if (m_timer != null)
@@ -562,7 +562,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			{
 				var acceptableTabNames = new HashSet<string> { "RawText", "Interlinearizer", "Gloss" };
 				return PropertyTable.GetValue<string>(LanguageExplorerConstants.ToolChoice) == LanguageExplorerConstants.InterlinearEditMachineName
-					   && acceptableTabNames.Contains(PropertyTable.GetValue(TextAndWordsArea.InterlinearTab, string.Empty));
+					   && acceptableTabNames.Contains(PropertyTable.GetValue(LanguageExplorerConstants.InterlinearTab, string.Empty));
 			}
 		}
 

@@ -9,7 +9,6 @@ using System.Linq;
 using System.Windows.Forms;
 using LanguageExplorer.Controls;
 using LanguageExplorer.Controls.DetailControls;
-using LanguageExplorer.DictionaryConfiguration;
 using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
@@ -33,8 +32,6 @@ namespace LanguageExplorer.Areas
 		#region Random strings
 		internal const string Default = "Default";
 		internal const string ShortName = "ShortName";
-		internal const string PartOfSpeechGramInfo = "PartOfSpeechGramInfo";
-		internal const string WordPartOfSpeech = "WordPartOfSpeech";
 		internal const string OwningField = "field";
 		internal const string ClassName = "className";
 		internal const string OwnerClassName = "ownerClassName";
@@ -46,8 +43,6 @@ namespace LanguageExplorer.Areas
 		internal const string Promote = "Promote";
 		internal const string List_Item = "List Item";
 		internal const string Subitem = "Subitem";
-		internal const string InterestingTexts = "InterestingTexts";
-		internal const string RecordListOwningObjChanged = "RecordListOwningObjChanged";
 		internal const string EntriesOrChildren = "entriesOrChildren";
 		#endregion Random strings
 
@@ -136,38 +131,6 @@ namespace LanguageExplorer.Areas
 					break;
 			}
 			return changed;
-		}
-
-		/// <summary>
-		/// Tell the user why we aren't jumping to his record
-		/// </summary>
-		internal static void GiveSimpleWarning(Form form, string helpFile, ExclusionReasonCode xrc)
-		{
-			string caption;
-			string reason;
-			string shlpTopic;
-			switch (xrc)
-			{
-				case ExclusionReasonCode.NotInPublication:
-					caption = AreaResources.ksEntryNotPublished;
-					reason = AreaResources.ksEntryNotPublishedReason;
-					shlpTopic = "User_Interface/Menus/Edit/Find_a_lexical_entry.htm";
-					break;
-				case ExclusionReasonCode.ExcludedHeadword:
-					caption = AreaResources.ksMainNotShown;
-					reason = AreaResources.ksMainNotShownReason;
-					shlpTopic = "khtpMainEntryNotShown";
-					break;
-				case ExclusionReasonCode.ExcludedMinorEntry:
-					caption = AreaResources.ksMinorNotShown;
-					reason = AreaResources.ksMinorNotShownReason;
-					shlpTopic = "khtpMinorEntryNotShown";
-					break;
-				default:
-					throw new ArgumentException("Unknown ExclusionReasonCode");
-			}
-			// TODO-Linux: Help is not implemented on Mono
-			MessageBox.Show(form, string.Format(AreaResources.ksSelectedEntryNotInDict, reason), caption, MessageBoxButtons.OK, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1, 0, helpFile, HelpNavigator.Topic, shlpTopic);
 		}
 
 		internal static void ResetMainPossibilityInsertUiWidgetsText(UiWidgetController uiWidgetController, string newText, string newToolTipText = null)

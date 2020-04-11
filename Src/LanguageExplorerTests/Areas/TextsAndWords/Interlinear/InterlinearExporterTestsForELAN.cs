@@ -6,7 +6,7 @@ using System;
 using System.IO;
 using System.Xml;
 using System.Xml.Schema;
-using LanguageExplorer.Areas.TextsAndWords.Interlinear;
+using LanguageExplorer.Controls.DetailControls;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;

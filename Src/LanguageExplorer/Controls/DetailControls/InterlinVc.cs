@@ -8,7 +8,6 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Text;
-using LanguageExplorer.Areas.TextsAndWords.Interlinear;
 using LanguageExplorer.LcmUi;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
@@ -150,12 +149,12 @@ namespace LanguageExplorer.Controls.DetailControls
 			Decorator = new InterlinViewDataCache(m_cache);
 			PreferredVernWs = cache.DefaultVernWs;
 			m_selfFlid = m_cache.MetaDataCacheAccessor.GetFieldId2(CmObjectTags.kClassId, "Self", false);
-			m_tssMissingAnalysis = TsStringUtils.MakeString(ITextStrings.ksStars, m_wsAnalysis);
-			m_tssMissingGlossAppend = TsStringUtils.MakeString(MorphServices.kDefaultSeparatorLexEntryInflTypeGlossAffix + ITextStrings.ksStars, m_wsAnalysis);
+			m_tssMissingAnalysis = TsStringUtils.MakeString(LanguageExplorerResources.ksStars, m_wsAnalysis);
+			m_tssMissingGlossAppend = TsStringUtils.MakeString(MorphServices.kDefaultSeparatorLexEntryInflTypeGlossAffix + LanguageExplorerResources.ksStars, m_wsAnalysis);
 			m_tssMissingGlossPrepend = TsStringUtils.MakeString("", m_wsAnalysis);
 			m_tssEmptyAnalysis = TsStringUtils.EmptyString(m_wsAnalysis);
-			m_tssMissingVernacular = TsStringUtils.MakeString(ITextStrings.ksStars, cache.DefaultVernWs);
-			m_tssEmptyPara = TsStringUtils.MakeString(ITextStrings.ksEmptyPara, m_wsAnalysis);
+			m_tssMissingVernacular = TsStringUtils.MakeString(LanguageExplorerResources.ksStars, cache.DefaultVernWs);
+			m_tssEmptyPara = TsStringUtils.MakeString(LanguageExplorerResources.ksEmptyPara, m_wsAnalysis);
 			m_tssSpace = TsStringUtils.MakeString(" ", m_wsAnalysis);
 			m_msaVc = new MsaVc(m_cache);
 			m_vernWss = WritingSystemServices.GetAllWritingSystems(m_cache, "all vernacular", null, 0, 0);
@@ -239,17 +238,17 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// <summary>
 		/// Background color indicating a guess that has been approved by a human for use somewhere.
 		/// </summary>
-		public static int ApprovedGuessColor => (int)CmObjectUi.RGB(200, 255, 255);
+		public static int ApprovedGuessColor => (int)LanguageExplorerServices.RGB(200, 255, 255);
 
 		/// <summary>
 		/// Background color indicating there are multiple possible human approved guesses
 		/// </summary>
-		public static int MultipleApprovedGuessColor => (int)CmObjectUi.RGB(255, 255, 50);
+		public static int MultipleApprovedGuessColor => (int)LanguageExplorerServices.RGB(255, 255, 50);
 
 		/// <summary>
 		/// Background color for a guess that no human has ever endorsed directly.
 		/// </summary>
-		public static int MachineGuessColor => (int)CmObjectUi.RGB(254, 240, 206);
+		public static int MachineGuessColor => (int)LanguageExplorerServices.RGB(254, 240, 206);
 
 		/// <summary>
 		/// </summary>
@@ -275,7 +274,7 @@ namespace LanguageExplorer.Controls.DetailControls
 				m_wsVernForDisplay = value;
 				m_tssEmptyVern = TsStringUtils.EmptyString(value);
 				RightToLeft = m_wsManager.Get(value).RightToLeftScript;
-				m_tssMissingVernacular = TsStringUtils.MakeString(ITextStrings.ksStars, value);
+				m_tssMissingVernacular = TsStringUtils.MakeString(LanguageExplorerResources.ksStars, value);
 			}
 		}
 
@@ -645,7 +644,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			switch (LineChoices[lineChoiceIndex].Flid)
 			{
 				case InterlinLineChoices.kflidFreeTrans:
-					label = ITextStrings.ksFree_;
+					label = LanguageExplorerResources.ksFree_;
 					flid = SegmentTags.kflidFreeTranslation;
 					if (exporter != null)
 					{
@@ -653,7 +652,7 @@ namespace LanguageExplorer.Controls.DetailControls
 					}
 					break;
 				case InterlinLineChoices.kflidLitTrans:
-					label = ITextStrings.ksLit_;
+					label = LanguageExplorerResources.ksLit_;
 					flid = SegmentTags.kflidLiteralTranslation;
 					if (exporter != null)
 					{
@@ -661,7 +660,7 @@ namespace LanguageExplorer.Controls.DetailControls
 					}
 					break;
 				case InterlinLineChoices.kflidNote:
-					label = ITextStrings.ksNote_;
+					label = LanguageExplorerResources.ksNote_;
 					flid = NoteTags.kflidContent;
 					if (exporter != null)
 					{
@@ -1006,7 +1005,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			tsbSegNum.ReplaceTsString(0, tsbSegNum.Length, TsStringUtils.MakeString(sbSegNum.ToString(), m_cache.DefaultUserWs));
 			tsbSegNum.SetIntPropValues(0, tsbSegNum.Length, (int)FwTextPropType.ktptBold, (int)FwTextPropVar.ktpvEnum, (int)FwTextToggleVal.kttvForceOn);
 			vwenv.set_IntProperty((int)FwTextPropType.ktptMarginTrailing, (int)FwTextPropVar.ktpvMilliPoint, 10000);
-			vwenv.set_IntProperty((int)FwTextPropType.ktptForeColor, (int)FwTextPropVar.ktpvDefault, (int)CmObjectUi.RGB(SystemColors.ControlText));
+			vwenv.set_IntProperty((int)FwTextPropType.ktptForeColor, (int)FwTextPropVar.ktpvDefault, (int)SystemColors.ControlText.RGB());
 			try
 			{
 				IsAddingSegmentReference = true;
@@ -1787,7 +1786,7 @@ namespace LanguageExplorer.Controls.DetailControls
 					// In this case, frag is the writing system we really want the user to type.
 					// We put a zero-width space in that WS at the start of the string since that is the
 					// WS the user will end up typing in.
-					var bldr = TsStringUtils.MakeString(ITextStrings.ksEmptyFreeTransPrompt, m_cache.DefaultUserWs).GetBldr();
+					var bldr = TsStringUtils.MakeString(LanguageExplorerResources.ksEmptyFreeTransPrompt, m_cache.DefaultUserWs).GetBldr();
 					bldr.SetIntPropValues(0, bldr.Length, (int)FwTextPropType.ktptSpellCheck, (int)FwTextPropVar.ktpvEnum, (int)SpellingModes.ksmDoNotCheck);
 					bldr.Replace(0, 0, "\u200B", null);
 					// This dummy property should always be set on a user prompt. It allows certain formatting commands to be

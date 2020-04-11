@@ -4,6 +4,7 @@
 
 using System.Diagnostics;
 using System.Windows.Forms;
+using LanguageExplorer.Controls.DetailControls;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 {

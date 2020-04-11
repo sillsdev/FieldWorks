@@ -8,7 +8,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Windows.Forms;
-using LanguageExplorer.Areas;
 using SIL.Code;
 
 namespace LanguageExplorer.Controls.SilSidePane

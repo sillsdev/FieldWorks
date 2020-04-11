@@ -10,7 +10,7 @@ namespace LanguageExplorer
 	/// Interface for creating method objects that can be passed into DoCreateAndInsert
 	/// in order to create an object, insert them into our list, and adjust CurrentIndex in one operation.
 	/// </summary>
-	public interface ICreateAndInsert<out TObject>
+	internal interface ICreateAndInsert<out TObject>
 		where TObject : ICmObject
 	{
 		TObject Create();

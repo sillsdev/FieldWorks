@@ -4,6 +4,7 @@
 
 using System.Diagnostics;
 using LanguageExplorer.Areas.TextsAndWords.Interlinear;
+using LanguageExplorer.Controls.DetailControls;
 using SIL.LCModel;
 using SIL.LCModel.Core.KernelInterfaces;
 

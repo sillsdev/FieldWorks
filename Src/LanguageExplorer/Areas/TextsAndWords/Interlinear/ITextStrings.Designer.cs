@@ -61,15 +61,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Approve Analysis.
-        /// </summary>
-        internal static string ApproveAnalysis {
-            get {
-                return ResourceManager.GetString("ApproveAnalysis", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Break selected phrase into words..
         /// </summary>
         internal static string Break_selected_phrase_into_words {
@@ -124,101 +115,11 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to insert Note.
-        /// </summary>
-        internal static string InsertNote {
-            get {
-                return ResourceManager.GetString("InsertNote", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to OK will create an empty text.
-        /// </summary>
-        internal static string kOkbtnEmptySelection {
-            get {
-                return ResourceManager.GetString("kOkbtnEmptySelection", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to OK will create an empty text assigned to these genres.
-        /// </summary>
-        internal static string kOkbtnGenreSelection {
-            get {
-                return ResourceManager.GetString("kOkbtnGenreSelection", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to No texts are selected.
-        /// </summary>
-        internal static string kOkbtnNoTextSelection {
-            get {
-                return ResourceManager.GetString("kOkbtnNoTextSelection", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Accept entire analysis (Ctrl-TAB).
         /// </summary>
         internal static string ksAcceptEntireAnalysis {
             get {
                 return ResourceManager.GetString("ksAcceptEntireAnalysis", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Add Line.
-        /// </summary>
-        internal static string ksAddLine {
-            get {
-                return ResourceManager.GetString("ksAddLine", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to     Add New Sense....
-        /// </summary>
-        internal static string ksAddNewSense_ {
-            get {
-                return ResourceManager.GetString("ksAddNewSense_", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Add New Sense for {0} ....
-        /// </summary>
-        internal static string ksAddNewSenseForX_ {
-            get {
-                return ResourceManager.GetString("ksAddNewSenseForX_", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Add Writing System.
-        /// </summary>
-        internal static string ksAddWS {
-            get {
-                return ResourceManager.GetString("ksAddWS", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Allomorph of....
-        /// </summary>
-        internal static string ksAllomorphOf_ {
-            get {
-                return ResourceManager.GetString("ksAllomorphOf_", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Are you sure you want to add the {0} allomorph ({1}) to this entry?.
-        /// </summary>
-        internal static string ksAreYouSureAddZtoX {
-            get {
-                return ResourceManager.GetString("ksAreYouSureAddZtoX", resourceCulture);
             }
         }
         
@@ -268,87 +169,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to base.
-        /// </summary>
-        internal static string ksBaselineAbbr {
-            get {
-                return ResourceManager.GetString("ksBaselineAbbr", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to This tab shows the contents of the current text (editable only in the Texts Edit tool)..
-        /// </summary>
-        internal static string ksBaseLineNotEditable {
-            get {
-                return ResourceManager.GetString("ksBaseLineNotEditable", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to bst. an.
-        /// </summary>
-        internal static string ksBstAn {
-            get {
-                return ResourceManager.GetString("ksBstAn", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to bst. vn.
-        /// </summary>
-        internal static string ksBstVn {
-            get {
-                return ResourceManager.GetString("ksBstVn", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Cannot add allomorph.
-        /// </summary>
-        internal static string ksCannotAddAllomorph {
-            get {
-                return ResourceManager.GetString("ksCannotAddAllomorph", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Cannot add Variant.
-        /// </summary>
-        internal static string ksCannotAddVariant {
-            get {
-                return ResourceManager.GetString("ksCannotAddVariant", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Cannot create new entry.
-        /// </summary>
-        internal static string ksCannotCreateNewEntry {
-            get {
-                return ResourceManager.GetString("ksCannotCreateNewEntry", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to In this tool, we do not allow deleting parts of Scripture sections. Please use Translation Editor to edit Scripture..
-        /// </summary>
-        internal static string ksCannotDeleteScripture {
-            get {
-                return ResourceManager.GetString("ksCannotDeleteScripture", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to This wordform cannot be deleted..
-        /// </summary>
-        internal static string ksCannotDeleteWordform {
-            get {
-                return ResourceManager.GetString("ksCannotDeleteWordform", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Cannot hide field.
         /// </summary>
         internal static string ksCannotHideField {
@@ -363,15 +183,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear {
         internal static string ksCannotLaunchX {
             get {
                 return ResourceManager.GetString("ksCannotLaunchX", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Can&apos;t Redo Changes in this Analysis.
-        /// </summary>
-        internal static string ksCannotRedoChangesHere {
-            get {
-                return ResourceManager.GetString("ksCannotRedoChangesHere", resourceCulture);
             }
         }
         
@@ -412,29 +223,11 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Configure Interlinear....
-        /// </summary>
-        internal static string ksConfigureLinkText {
-            get {
-                return ResourceManager.GetString("ksConfigureLinkText", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Conversion map error.
         /// </summary>
         internal static string ksConvMapError {
             get {
                 return ResourceManager.GetString("ksConvMapError", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Create New Entry....
-        /// </summary>
-        internal static string ksCreateNewEntry_ {
-            get {
-                return ResourceManager.GetString("ksCreateNewEntry_", resourceCulture);
             }
         }
         
@@ -457,29 +250,11 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Delete Note.
-        /// </summary>
-        internal static string ksDeleteNote {
-            get {
-                return ResourceManager.GetString("ksDeleteNote", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Delete this Wordform.
         /// </summary>
         internal static string ksDeleteThisWordform {
             get {
                 return ResourceManager.GetString("ksDeleteThisWordform", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Edit Morph Breaks....
-        /// </summary>
-        internal static string ksEditMorphBreaks_ {
-            get {
-                return ResourceManager.GetString("ksEditMorphBreaks_", resourceCulture);
             }
         }
         
@@ -493,65 +268,11 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &lt;Empty&gt;.
-        /// </summary>
-        internal static string ksEmpty {
-            get {
-                return ResourceManager.GetString("ksEmpty", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Press Enter to copy in Word Glosses, or start typing..
-        /// </summary>
-        internal static string ksEmptyFreeTransPrompt {
-            get {
-                return ResourceManager.GetString("ksEmptyFreeTransPrompt", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to An empty paragraph.
-        /// </summary>
-        internal static string ksEmptyPara {
-            get {
-                return ResourceManager.GetString("ksEmptyPara", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Encoding Converter &apos;{0}&apos; failed: &apos;{1}&apos;.
         /// </summary>
         internal static string ksEncConvFailed {
             get {
                 return ResourceManager.GetString("ksEncConvFailed", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to ].
-        /// </summary>
-        internal static string ksEndTagSymbol {
-            get {
-                return ResourceManager.GetString("ksEndTagSymbol", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Enter or paste your text here, then click &quot;Show Interlinear.&quot;.
-        /// </summary>
-        internal static string ksEnterOrPasteHere {
-            get {
-                return ResourceManager.GetString("ksEnterOrPasteHere", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Error.
-        /// </summary>
-        internal static string ksError {
-            get {
-                return ResourceManager.GetString("ksError", resourceCulture);
             }
         }
         
@@ -597,24 +318,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear {
         internal static string ksExportErrorMsg {
             get {
                 return ResourceManager.GetString("ksExportErrorMsg", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Exporting....
-        /// </summary>
-        internal static string ksExporting_ {
-            get {
-                return ResourceManager.GetString("ksExporting_", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Export Interlinear.
-        /// </summary>
-        internal static string ksExportInterlinear {
-            get {
-                return ResourceManager.GetString("ksExportInterlinear", resourceCulture);
             }
         }
         
@@ -808,47 +511,11 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Free .
-        /// </summary>
-        internal static string ksFree_ {
-            get {
-                return ResourceManager.GetString("ksFree_", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Free Translation.
-        /// </summary>
-        internal static string ksFreeTranslation {
-            get {
-                return ResourceManager.GetString("ksFreeTranslation", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to FT .
         /// </summary>
         internal static string ksFT {
             get {
                 return ResourceManager.GetString("ksFT", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Lex. Gloss.
-        /// </summary>
-        internal static string ksGloss {
-            get {
-                return ResourceManager.GetString("ksGloss", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Hide {0}.
-        /// </summary>
-        internal static string ksHideLine {
-            get {
-                return ResourceManager.GetString("ksHideLine", resourceCulture);
             }
         }
         
@@ -1064,65 +731,11 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Lex. Entries.
-        /// </summary>
-        internal static string ksLexEntries {
-            get {
-                return ResourceManager.GetString("ksLexEntries", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Lex. Entry.
         /// </summary>
         internal static string ksLexEntry {
             get {
                 return ResourceManager.GetString("ksLexEntry", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Lex. Gloss.
-        /// </summary>
-        internal static string ksLexGloss {
-            get {
-                return ResourceManager.GetString("ksLexGloss", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Lex./Word Cat..
-        /// </summary>
-        internal static string ksLexWordCat {
-            get {
-                return ResourceManager.GetString("ksLexWordCat", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Lex./Word Gloss.
-        /// </summary>
-        internal static string ksLexWordGloss {
-            get {
-                return ResourceManager.GetString("ksLexWordGloss", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Lit. .
-        /// </summary>
-        internal static string ksLit_ {
-            get {
-                return ResourceManager.GetString("ksLit_", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Literal Translation.
-        /// </summary>
-        internal static string ksLiteralTranslation {
-            get {
-                return ResourceManager.GetString("ksLiteralTranslation", resourceCulture);
             }
         }
         
@@ -1298,33 +911,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Morphemes.
-        /// </summary>
-        internal static string ksMorphemes {
-            get {
-                return ResourceManager.GetString("ksMorphemes", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Move Down.
-        /// </summary>
-        internal static string ksMoveDown {
-            get {
-                return ResourceManager.GetString("ksMoveDown", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Move Up.
-        /// </summary>
-        internal static string ksMoveUp {
-            get {
-                return ResourceManager.GetString("ksMoveUp", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to At least one field must be specified as containing Baseline text.
         /// </summary>
         internal static string ksMustHaveBaseline {
@@ -1339,87 +925,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear {
         internal static string ksNamelessText {
             get {
                 return ResourceManager.GetString("ksNamelessText", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to You must have at least one field showing.
-        /// </summary>
-        internal static string ksNeedOneField {
-            get {
-                return ResourceManager.GetString("ksNeedOneField", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to You cannot hide the Word line in this view.
-        /// </summary>
-        internal static string ksNeedWordLine {
-            get {
-                return ResourceManager.GetString("ksNeedWordLine", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to New analysis.
-        /// </summary>
-        internal static string ksNewAnalysis {
-            get {
-                return ResourceManager.GetString("ksNewAnalysis", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to    New word gloss.
-        /// </summary>
-        internal static string ksNewWordGloss {
-            get {
-                return ResourceManager.GetString("ksNewWordGloss", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to New word gloss.
-        /// </summary>
-        internal static string ksNewWordGloss2 {
-            get {
-                return ResourceManager.GetString("ksNewWordGloss2", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to there is no form!.
-        /// </summary>
-        internal static string ksNoForm {
-            get {
-                return ResourceManager.GetString("ksNoForm", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to no morphemes.
-        /// </summary>
-        internal static string ksNoMorphemes {
-            get {
-                return ResourceManager.GetString("ksNoMorphemes", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Note.
-        /// </summary>
-        internal static string ksNote {
-            get {
-                return ResourceManager.GetString("ksNote", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Note .
-        /// </summary>
-        internal static string ksNote_ {
-            get {
-                return ResourceManager.GetString("ksNote_", resourceCulture);
             }
         }
         
@@ -1523,15 +1028,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Problem.
-        /// </summary>
-        internal static string ksProblem {
-            get {
-                return ResourceManager.GetString("ksProblem", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Process.
         /// </summary>
         internal static string ksProcess {
@@ -1546,24 +1042,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear {
         internal static string ksQuestions {
             get {
                 return ResourceManager.GetString("ksQuestions", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Redo add allomorph.
-        /// </summary>
-        internal static string ksRedoAddAllomorph {
-            get {
-                return ResourceManager.GetString("ksRedoAddAllomorph", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to redo add allomorph to similar entry.
-        /// </summary>
-        internal static string ksRedoAddAllomorphToSimilarEntry {
-            get {
-                return ResourceManager.GetString("ksRedoAddAllomorphToSimilarEntry", resourceCulture);
             }
         }
         
@@ -1595,65 +1073,11 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Redo Add Sense.
-        /// </summary>
-        internal static string ksRedoAddSense {
-            get {
-                return ResourceManager.GetString("ksRedoAddSense", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Redo add Text Tag.
-        /// </summary>
-        internal static string ksRedoAddTextTag {
-            get {
-                return ResourceManager.GetString("ksRedoAddTextTag", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Redo Break Phrase into Words.
         /// </summary>
         internal static string ksRedoBreakPhrase {
             get {
                 return ResourceManager.GetString("ksRedoBreakPhrase", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Redo {0}.
-        /// </summary>
-        internal static string ksRedoCommand {
-            get {
-                return ResourceManager.GetString("ksRedoCommand", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Redo remove Text Tag.
-        /// </summary>
-        internal static string ksRedoDeleteTextTag {
-            get {
-                return ResourceManager.GetString("ksRedoDeleteTextTag", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Redo Guess Word Breaks.
-        /// </summary>
-        internal static string ksRedoGuessWordBreaks {
-            get {
-                return ResourceManager.GetString("ksRedoGuessWordBreaks", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Redo Insert Invisible Space.
-        /// </summary>
-        internal static string ksRedoInsertInvisibleSpace {
-            get {
-                return ResourceManager.GetString("ksRedoInsertInvisibleSpace", resourceCulture);
             }
         }
         
@@ -1685,15 +1109,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Redo insert Translation.
-        /// </summary>
-        internal static string ksRedoSetTransFromWordGlosses {
-            get {
-                return ResourceManager.GetString("ksRedoSetTransFromWordGlosses", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Save Settings?.
         /// </summary>
         internal static string ksSaveSettingsCaption {
@@ -1708,15 +1123,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear {
         internal static string ksSectionHeading {
             get {
                 return ResourceManager.GetString("ksSectionHeading", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The selected lexical entry ({0}) is a {1}..
-        /// </summary>
-        internal static string ksSelectedLexEntryXisaY {
-            get {
-                return ResourceManager.GetString("ksSelectedLexEntryXisaY", resourceCulture);
             }
         }
         
@@ -1757,15 +1163,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Select the texts to be exported into a single document..
-        /// </summary>
-        internal static string ksSelectSectionsExported {
-            get {
-                return ResourceManager.GetString("ksSelectSectionsExported", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to There was a problem with the import. The system reported {0}..
         /// </summary>
         internal static string ksSfmImportProblem {
@@ -1784,15 +1181,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to {0} of {1} Texts.
-        /// </summary>
-        internal static string ksSomeTexts {
-            get {
-                return ResourceManager.GetString("ksSomeTexts", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Specify Concordance Criteria.
         /// </summary>
         internal static string ksSpecifyConcordanceCriteria {
@@ -1807,24 +1195,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear {
         internal static string ksSpecifyConcordanceCriteria_ {
             get {
                 return ResourceManager.GetString("ksSpecifyConcordanceCriteria_", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to ***.
-        /// </summary>
-        internal static string ksStars {
-            get {
-                return ResourceManager.GetString("ksStars", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to [.
-        /// </summary>
-        internal static string ksStartTagSymbol {
-            get {
-                return ResourceManager.GetString("ksStartTagSymbol", resourceCulture);
             }
         }
         
@@ -1852,33 +1222,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear {
         internal static string ksTexts {
             get {
                 return ResourceManager.GetString("ksTexts", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Bible.
-        /// </summary>
-        internal static string kstidBibleNode {
-            get {
-                return ResourceManager.GetString("kstidBibleNode", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to New Testament.
-        /// </summary>
-        internal static string kstidNtNode {
-            get {
-                return ResourceManager.GetString("kstidNtNode", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Old Testament.
-        /// </summary>
-        internal static string kstidOtNode {
-            get {
-                return ResourceManager.GetString("kstidOtNode", resourceCulture);
             }
         }
         
@@ -1955,33 +1298,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The filter is being turned off so that you can see the new text..
-        /// </summary>
-        internal static string ksTurningOffFilter {
-            get {
-                return ResourceManager.GetString("ksTurningOffFilter", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Undo add allomorph.
-        /// </summary>
-        internal static string ksUndoAddAllomorph {
-            get {
-                return ResourceManager.GetString("ksUndoAddAllomorph", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to undo add allomorph to similar entry.
-        /// </summary>
-        internal static string ksUndoAddAllomorphToSimilarEntry {
-            get {
-                return ResourceManager.GetString("ksUndoAddAllomorphToSimilarEntry", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Undo insert Free Translation.
         /// </summary>
         internal static string ksUndoAddFreeformTranslation {
@@ -2009,74 +1325,11 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Undo Add Sense.
-        /// </summary>
-        internal static string ksUndoAddSense {
-            get {
-                return ResourceManager.GetString("ksUndoAddSense", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Undo add Text Tag.
-        /// </summary>
-        internal static string ksUndoAddTextTag {
-            get {
-                return ResourceManager.GetString("ksUndoAddTextTag", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Undo all changes in this Analysis.
-        /// </summary>
-        internal static string ksUndoAllChangesHere {
-            get {
-                return ResourceManager.GetString("ksUndoAllChangesHere", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Undo Break Phrase into Words.
         /// </summary>
         internal static string ksUndoBreakPhrase {
             get {
                 return ResourceManager.GetString("ksUndoBreakPhrase", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Undo {0}.
-        /// </summary>
-        internal static string ksUndoCommand {
-            get {
-                return ResourceManager.GetString("ksUndoCommand", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Undo remove Text Tag.
-        /// </summary>
-        internal static string ksUndoDeleteTextTag {
-            get {
-                return ResourceManager.GetString("ksUndoDeleteTextTag", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Undo Guess Word Breaks.
-        /// </summary>
-        internal static string ksUndoGuessWordBreaks {
-            get {
-                return ResourceManager.GetString("ksUndoGuessWordBreaks", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Undo Insert Invisible Space.
-        /// </summary>
-        internal static string ksUndoInsertInvisibleSpace {
-            get {
-                return ResourceManager.GetString("ksUndoInsertInvisibleSpace", resourceCulture);
             }
         }
         
@@ -2108,15 +1361,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Undo insert Translation.
-        /// </summary>
-        internal static string ksUndoSetTransFromWordGlosses {
-            get {
-                return ResourceManager.GetString("ksUndoSetTransFromWordGlosses", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Unhandled Error.
         /// </summary>
         internal static string ksUnhandledError {
@@ -2126,29 +1370,11 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Unknown.
-        /// </summary>
-        internal static string ksUnknown {
-            get {
-                return ResourceManager.GetString("ksUnknown", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Use this when you suspect the program does not have its analysis of texts aligned with the text. One thing that could cause this was using the Change Spelling command in FLEx 7.0 through 7.2.2. One symptom is an incorrect Word List Concordance, where what is highlighted for an occurrence is not the selected word..
         /// </summary>
         internal static string ksUseClearParseIsCurrentWhen {
             get {
                 return ResourceManager.GetString("ksUseClearParseIsCurrentWhen", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Use default analysis.
-        /// </summary>
-        internal static string ksUseDefaultAnalysis {
-            get {
-                return ResourceManager.GetString("ksUseDefaultAnalysis", resourceCulture);
             }
         }
         
@@ -2171,15 +1397,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Variant of....
-        /// </summary>
-        internal static string ksVariantOf_ {
-            get {
-                return ResourceManager.GetString("ksVariantOf_", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Warning.
         /// </summary>
         internal static string ksWarning {
@@ -2189,38 +1406,11 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Word.
-        /// </summary>
-        internal static string ksWord {
-            get {
-                return ResourceManager.GetString("ksWord", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Word Cat..
-        /// </summary>
-        internal static string ksWordCat {
-            get {
-                return ResourceManager.GetString("ksWordCat", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Merge was unable to merge some wordforms because they have inconsistent forms in other writing systems: {0}.
         /// </summary>
         internal static string ksWordformMergeFailures {
             get {
                 return ResourceManager.GetString("ksWordformMergeFailures", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Word Gloss.
-        /// </summary>
-        internal static string ksWordGloss {
-            get {
-                return ResourceManager.GetString("ksWordGloss", resourceCulture);
             }
         }
         
@@ -2239,24 +1429,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear {
         internal static string ksXMLParsingProblem4 {
             get {
                 return ResourceManager.GetString("ksXMLParsingProblem4", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Redo insert text.
-        /// </summary>
-        internal static string RedoInsertText {
-            get {
-                return ResourceManager.GetString("RedoInsertText", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Undo insert text.
-        /// </summary>
-        internal static string UndoInsertText {
-            get {
-                return ResourceManager.GetString("UndoInsertText", resourceCulture);
             }
         }
     }

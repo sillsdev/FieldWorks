@@ -9,8 +9,8 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Xml.Linq;
-using LanguageExplorer.Areas.TextsAndWords.Interlinear;
 using LanguageExplorer.Controls;
+using LanguageExplorer.Controls.DetailControls;
 using LanguageExplorer.Controls.PaneBar;
 using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
@@ -64,7 +64,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.InterlinearEdit
 			majorFlexComponentParameters.FlexComponentParameters.PropertyTable.SetDefault($"{LanguageExplorerConstants.ToolForAreaNamed_}{Area.MachineName}", MachineName, true);
 			if (_recordList == null)
 			{
-				_recordList = majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>(LanguageExplorerConstants.RecordListRepository).GetRecordList(TextAndWordsArea.InterlinearTexts, majorFlexComponentParameters.StatusBar, TextAndWordsArea.InterlinearTextsFactoryMethod);
+				_recordList = majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>(LanguageExplorerConstants.RecordListRepository).GetRecordList(LanguageExplorerConstants.InterlinearTexts, majorFlexComponentParameters.StatusBar, LanguageExplorerServices.InterlinearTextsFactoryMethod);
 			}
 			var multiPaneParameters = new MultiPaneParameters
 			{
@@ -83,15 +83,15 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.InterlinearEdit
 				Dock = DockStyle.Right,
 				Visible = false
 			};
-			var panelButtonAddWordsToLexicon = new PanelButton(majorFlexComponentParameters.FlexComponentParameters, null, TextAndWordsArea.ITexts_AddWordsToLexicon, TextAndWordsResources.Add_Words_to_Lexicon, TextAndWordsResources.Add_Words_to_Lexicon)
+			var panelButtonAddWordsToLexicon = new PanelButton(majorFlexComponentParameters.FlexComponentParameters, null, LanguageExplorerConstants.ITexts_AddWordsToLexicon, TextAndWordsResources.Add_Words_to_Lexicon, TextAndWordsResources.Add_Words_to_Lexicon)
 			{
 				Dock = DockStyle.Right,
 				Visible = false
 			};
 			var paneBarButtons = new Dictionary<string, PanelButton>
 			{
-				{ TextAndWordsArea.ShowHiddenFields_interlinearEdit, panelButtonShowHiddenFields },
-				{ TextAndWordsArea.ITexts_AddWordsToLexicon, panelButtonAddWordsToLexicon}
+				{ LanguageExplorerConstants.ShowHiddenFields_interlinearEdit, panelButtonShowHiddenFields },
+				{ LanguageExplorerConstants.ITexts_AddWordsToLexicon, panelButtonAddWordsToLexicon}
 			};
 			interlinMasterPaneBar.AddControls(new List<Control> { panelButtonShowHiddenFields, panelButtonAddWordsToLexicon });
 			var root = XDocument.Parse(TextAndWordsResources.InterlinearEditToolParameters).Root;
@@ -210,7 +210,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.InterlinearEdit
 				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(1);
 
 				// <command id="CmdDeleteSelectedObject" label="Delete selected {0}" message="DeleteSelectedItem"/>
-				ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, CmdDeleteSelectedObject_Clicked, string.Format(AreaResources.Delete_selected_0, StringTable.Table.GetString("StText", StringTable.ClassNames)));
+				ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, CmdDeleteSelectedObject_Clicked, string.Format(LanguageExplorerResources.Delete_selected_0, StringTable.Table.GetString("StText", StringTable.ClassNames)));
 
 				// End: <menu id="mnuBrowseView" (partial) >
 				_recordBrowseView.ContextMenuStrip = contextMenuStrip;

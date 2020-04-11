@@ -183,9 +183,6 @@
     <value>Redo changing {0} to {1}</value>
     <comment>old spelling, new spelling</comment>
   </data>
-  <data name="ksRedoEditAnalysis" xml:space="preserve">
-    <value>ksRedoEditAnalysis</value>
-  </data>
   <data name="ksSearchingOccurrences" xml:space="preserve">
     <value>Searching Scripture for occurrences of the word</value>
     <comment>longer explanation goes with ksFindingOccurrences</comment>
@@ -196,9 +193,6 @@
   <data name="ksUndoChangeSpelling" xml:space="preserve">
     <value>Undo changing {0} to {1}</value>
     <comment>old spelling, new spelling</comment>
-  </data>
-  <data name="ksUndoEditAnalysis" xml:space="preserve">
-    <value>Undo Edit Analysis</value>
   </data>
   <data name="ksUpdateMonoMorphemicLexicalEntries" xml:space="preserve">
     <value>Update lexical entries of mono-morphemic analyses</value>
@@ -332,11 +326,5 @@
   </data>
   <data name="Texts" xml:space="preserve">
     <value>Texts</value>
-  </data>
-  <data name="Show_Record_in_Notebook" xml:space="preserve">
-    <value>Show Record in Notebook</value>
-  </data>
-  <data name="ConstituentChartStyleInfo" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\..\Resources\ConstituentChartStyleInfo.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
   </data>
 </root>

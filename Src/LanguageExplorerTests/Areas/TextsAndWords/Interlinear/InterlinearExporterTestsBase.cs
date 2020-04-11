@@ -5,7 +5,7 @@
 using System.IO;
 using System.Xml;
 using System.Xml.Xsl;
-using LanguageExplorer.Areas.TextsAndWords.Interlinear;
+using LanguageExplorer.Controls;
 using LanguageExplorer.Controls.DetailControls;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwUtils;

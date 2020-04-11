@@ -8,7 +8,6 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using LanguageExplorer.Areas;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.ViewsInterfaces;
@@ -711,7 +710,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			}
 			// We have a valid (real, not temporary fake) LexEntry and will put up the context menu
 			var menu = new ContextMenuStrip();
-			var item = new ToolStripMenuItem(AreaResources.ksShowEntryInLexicon);
+			var item = new ToolStripMenuItem(LanguageExplorerResources.ksShowEntryInLexicon);
 			menu.Items.Add(item);
 			item.Click += (sender, args) => LinkHandler.PublishFollowLinkMessage(Publisher, new FwLinkArgs(LanguageExplorerConstants.LexiconEditMachineName, target.Guid));
 			menu.Show(this, pt);

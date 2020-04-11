@@ -518,7 +518,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			}
 			if (!gotBaseline)
 			{
-				MessageBox.Show(this, ITextStrings.ksMustHaveBaseline, ITextStrings.ksError, MessageBoxButtons.OK, MessageBoxIcon.Error);
+				MessageBox.Show(this, ITextStrings.ksMustHaveBaseline, LanguageExplorerResources.ksError, MessageBoxButtons.OK, MessageBoxIcon.Error);
 				return false;
 			}
 			return true;
@@ -577,7 +577,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			if (m_firstNewText != null)
 			{
 				// try to select it.
-				var recordList = m_propertyTable.GetValue<IRecordListRepository>(LanguageExplorerConstants.RecordListRepository).GetRecordList(TextAndWordsArea.InterlinearTexts);
+				var recordList = m_propertyTable.GetValue<IRecordListRepository>(LanguageExplorerConstants.RecordListRepository).GetRecordList(LanguageExplorerConstants.InterlinearTexts);
 				recordList?.JumpToRecord(m_firstNewText.ContentsOA.Hvo);
 			}
 		}
@@ -657,7 +657,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			catch (IOException ex)
 			{
 				var msg = string.Format(ITextStrings.ksErrorWritingSettings, path, ex.Message);
-				MessageBox.Show(this, msg, ITextStrings.ksError, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+				MessageBox.Show(this, msg, LanguageExplorerResources.ksError, MessageBoxButtons.OK, MessageBoxIcon.Warning);
 			}
 		}
 
@@ -685,13 +685,13 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			catch (IOException ex)
 			{
 				var msg = string.Format(ITextStrings.ksErrorReadingSettings, path, ex.Message);
-				MessageBox.Show(this, msg, ITextStrings.ksError, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+				MessageBox.Show(this, msg, LanguageExplorerResources.ksError, MessageBoxButtons.OK, MessageBoxIcon.Warning);
 				return new List<InterlinearMapping>();
 			}
 			catch (InvalidOperationException ex)
 			{
 				var msg = string.Format(ITextStrings.ksErrorReadingSettings, path, ex.Message + ". " + (ex.InnerException?.Message ?? string.Empty));
-				MessageBox.Show(this, msg, ITextStrings.ksError, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+				MessageBox.Show(this, msg, LanguageExplorerResources.ksError, MessageBoxButtons.OK, MessageBoxIcon.Warning);
 				return new List<InterlinearMapping>();
 			}
 		}

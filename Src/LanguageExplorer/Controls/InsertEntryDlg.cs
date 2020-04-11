@@ -90,7 +90,7 @@ namespace LanguageExplorer.Controls
 		/// <summary>
 		/// Registry key for settings for this Dialog.
 		/// </summary>
-		public RegistryKey SettingsKey
+		internal RegistryKey SettingsKey
 		{
 			get
 			{
@@ -279,7 +279,7 @@ namespace LanguageExplorer.Controls
 			return string.IsNullOrEmpty(s) ? string.Empty : s.Trim();
 		}
 
-		public ITsString TssGloss
+		internal ITsString TssGloss
 		{
 			// REVIEW: trim?
 			get => msGloss == null ? m_tbGloss.Tss : msGloss.Value(m_cache.DefaultAnalWs);
@@ -301,7 +301,7 @@ namespace LanguageExplorer.Controls
 		/// Used to initialize other WSs of the gloss line during startup.
 		/// Only works for WSs that are displayed (current analysis WSs).
 		/// </summary>
-		public void SetInitialGloss(int ws, ITsString tss)
+		internal void SetInitialGloss(int ws, ITsString tss)
 		{
 			if (msGloss == null)
 			{
@@ -316,12 +316,12 @@ namespace LanguageExplorer.Controls
 			}
 		}
 
-		public IPartOfSpeech POS
+		internal IPartOfSpeech POS
 		{
 			set => m_msaGroupBox.StemPOS = value;
 		}
 
-		public MsaType MsaType
+		internal MsaType MsaType
 		{
 			get => m_msaGroupBox?.MSAType ?? MsaType.kStem;
 			set
@@ -332,7 +332,8 @@ namespace LanguageExplorer.Controls
 				}
 			}
 		}
-		public IMoInflAffixSlot Slot
+
+		internal IMoInflAffixSlot Slot
 		{
 			get => m_msaGroupBox?.Slot;
 			set
@@ -351,7 +352,7 @@ namespace LanguageExplorer.Controls
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-		public InsertEntryDlg()
+		internal InsertEntryDlg()
 		{
 			InitializeComponent();
 			AccessibleName = GetType().Name;
@@ -682,7 +683,7 @@ namespace LanguageExplorer.Controls
 		/// <summary>
 		/// Initialize an InsertEntryDlg from something like an "Insert Major Entry menu".
 		/// </summary>
-		public void SetDlgInfo(LcmCache cache, ITsString tssForm)
+		internal void SetDlgInfo(LcmCache cache, ITsString tssForm)
 		{
 			var helpTopicProvider = PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider);
 			if (helpTopicProvider != null)
@@ -723,7 +724,7 @@ namespace LanguageExplorer.Controls
 		/// <summary>
 		/// Initialize an InsertEntryDlg from something like an "Insert Major Entry menu".
 		/// </summary>
-		public void SetDlgInfo(LcmCache cache, IPersistenceProvider persistProvider)
+		internal void SetDlgInfo(LcmCache cache, IPersistenceProvider persistProvider)
 		{
 			Guard.AgainstNull(persistProvider, nameof(persistProvider));
 
@@ -733,7 +734,7 @@ namespace LanguageExplorer.Controls
 		/// <summary>
 		/// Initialize the dialog.
 		/// </summary>
-		public void SetDlgInfo(LcmCache cache, IMoMorphType morphType, MsaType msaType, IMoInflAffixSlot slot, MorphTypeFilterType filter)
+		internal void SetDlgInfo(LcmCache cache, IMoMorphType morphType, MsaType msaType, IMoInflAffixSlot slot, MorphTypeFilterType filter)
 		{
 			SetDlgInfo(cache, morphType, 0, filter);
 			m_msaGroupBox.MSAType = msaType;
@@ -751,7 +752,7 @@ namespace LanguageExplorer.Controls
 		/// <summary>
 		/// Disable these two controls (for use when creating an entry for a particular slot)
 		/// </summary>
-		public void DisableAffixTypeMainPosAndSlot()
+		internal void DisableAffixTypeMainPosAndSlot()
 		{
 			m_msaGroupBox.DisableAffixTypeMainPosAndSlot();
 		}
@@ -784,7 +785,7 @@ namespace LanguageExplorer.Controls
 		/// <summary>
 		/// Get the results from the dlg.
 		/// </summary>
-		public void GetDialogInfo(out ILexEntry entry, out bool newlyCreated)
+		internal void GetDialogInfo(out ILexEntry entry, out bool newlyCreated)
 		{
 			entry = m_entry;
 			newlyCreated = m_fNewlyCreated;
@@ -860,7 +861,7 @@ namespace LanguageExplorer.Controls
 		/// Changes the text of "Use Similar Entry" link to indicate that in this context it will lead
 		/// to adding an allomorph to the similar entry (unless it already has an appropriate one, of course).
 		/// </summary>
-		public void ChangeUseSimilarToCreateAllomorph()
+		internal void ChangeUseSimilarToCreateAllomorph()
 		{
 			m_linkSimilarEntry.Text = LanguageExplorerControls.ksAddAllomorphToSimilarEntry;
 		}
@@ -868,7 +869,7 @@ namespace LanguageExplorer.Controls
 		/// <summary>
 		/// Sets the help topic ID for the window.  This is used in both the Help button and when the user hits F1
 		/// </summary>
-		public void SetHelpTopic(string helpTopic)
+		internal void SetHelpTopic(string helpTopic)
 		{
 			s_helpTopic = helpTopic;
 			var helpTopicProvider = PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider);
@@ -1636,7 +1637,7 @@ namespace LanguageExplorer.Controls
 				IsComplexForm = fIsComplexForm;
 			}
 
-			public bool IsComplexForm { get; }
+			internal bool IsComplexForm { get; }
 
 			public override string ToString()
 			{
@@ -1651,7 +1652,7 @@ namespace LanguageExplorer.Controls
 		{
 			private readonly Virtuals m_virtuals;
 
-			public InsertEntrySearchEngine(LcmCache cache)
+			internal InsertEntrySearchEngine(LcmCache cache)
 				: base(cache, SearchType.Prefix)
 			{
 				m_virtuals = Cache.ServiceLocator.GetInstance<Virtuals>();

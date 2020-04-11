@@ -9,7 +9,6 @@ using System.Windows.Forms;
 using System.Xml.Linq;
 using LanguageExplorer;
 using LanguageExplorer.Controls.DetailControls;
-using LanguageExplorer.Controls.DetailControls.Slices;
 using LanguageExplorer.Impls;
 using LanguageExplorer.TestUtilities;
 using LanguageExplorerTests.Impls;
@@ -123,6 +122,7 @@ namespace LanguageExplorerTests.Controls.DetailControls
 					m_parent.Close();
 					m_parent.Dispose();
 				}
+				m_dtree?.Dispose();
 				_dummyWindow.Dispose();
 				TestSetupServices.DisposeTrash(_flexComponentParameters);
 
@@ -149,7 +149,7 @@ namespace LanguageExplorerTests.Controls.DetailControls
 			m_dtree.Initialize(Cache, false, m_layouts, m_parts);
 			m_dtree.ShowObject(m_entry, "CfOnly", null, m_entry, false);
 			Assert.AreEqual(1, m_dtree.Controls.Count);
-			Assert.AreEqual("CitationForm", (m_dtree.Controls[0] as Slice).Label);
+			Assert.AreEqual("CitationForm", ((ISlice)m_dtree.Controls[0]).Label);
 			// Enhance JohnT: there are more things we could test about this slice,
 			// such as the presence and contents and initial selection of the view,
 			// but this round of tests is mainly aimed at the process of interpreting
@@ -163,8 +163,8 @@ namespace LanguageExplorerTests.Controls.DetailControls
 			m_dtree.Initialize(Cache, false, m_layouts, m_parts);
 			m_dtree.ShowObject(m_entry, "CfAndBib", null, m_entry, false);
 			Assert.AreEqual(2, m_dtree.Controls.Count);
-			Assert.AreEqual("CitationForm", (m_dtree.Controls[0] as Slice).Label);
-			Assert.AreEqual("Bibliography", (m_dtree.Controls[1] as Slice).Label);
+			Assert.AreEqual("CitationForm", ((ISlice)m_dtree.Controls[0]).Label);
+			Assert.AreEqual("Bibliography", ((ISlice)m_dtree.Controls[1]).Label);
 		}
 
 		/// <summary />
@@ -177,19 +177,19 @@ namespace LanguageExplorerTests.Controls.DetailControls
 			Assert.AreEqual(3, m_dtree.Controls.Count);
 			// 1) Test that labels that are not in "LabelAbbreviations" stringTable
 			//		are abbreviated by being truncated to 4 characters.
-			Assert.AreEqual("CitationForm", (m_dtree.Controls[0] as Slice).Label);
-			var abbr1 = StringTable.Table.GetString((m_dtree.Controls[0] as Slice).Label, StringTable.LabelAbbreviations);
-			Assert.AreEqual(abbr1, "*" + (m_dtree.Controls[0] as Slice).Label + "*");   // verify it's not in the table.
-			Assert.AreEqual("Cita", (m_dtree.Controls[0] as Slice).Abbreviation);       // verify truncation took place.
+			Assert.AreEqual("CitationForm", ((ISlice)m_dtree.Controls[0]).Label);
+			var abbr1 = StringTable.Table.GetString(((ISlice)m_dtree.Controls[0]).Label, StringTable.LabelAbbreviations);
+			Assert.AreEqual(abbr1, "*" + ((ISlice)m_dtree.Controls[0]).Label + "*");   // verify it's not in the table.
+			Assert.AreEqual("Cita", ((ISlice)m_dtree.Controls[0]).Abbreviation);       // verify truncation took place.
 																						// 2) Test that a label in "LabelAbbreviations" defaults to its string table entry.
-			Assert.AreEqual("Citation Form", (m_dtree.Controls[1] as Slice).Label);
-			var abbr2 = StringTable.Table.GetString((m_dtree.Controls[1] as Slice).Label, StringTable.LabelAbbreviations);
-			Assert.IsFalse(abbr2 == "*" + (m_dtree.Controls[1] as Slice).Label + "*"); // verify it IS in the table
-			Assert.AreEqual(abbr2, (m_dtree.Controls[1] as Slice).Abbreviation);        // should be identical
+			Assert.AreEqual("Citation Form", ((ISlice)m_dtree.Controls[1]).Label);
+			var abbr2 = StringTable.Table.GetString(((ISlice)m_dtree.Controls[1]).Label, StringTable.LabelAbbreviations);
+			Assert.IsFalse(abbr2 == "*" + ((ISlice)m_dtree.Controls[1]).Label + "*"); // verify it IS in the table
+			Assert.AreEqual(abbr2, ((ISlice)m_dtree.Controls[1]).Abbreviation);        // should be identical
 																						// 3) Test that a label with an "abbr" attribute overrides default abbreviation.
-			Assert.AreEqual("Citation Form", (m_dtree.Controls[2] as Slice).Label);
-			Assert.AreEqual((m_dtree.Controls[2] as Slice).Abbreviation, "!?");
-			Assert.IsFalse(abbr2 == (m_dtree.Controls[2] as Slice).Abbreviation);
+			Assert.AreEqual("Citation Form", ((ISlice)m_dtree.Controls[2]).Label);
+			Assert.AreEqual(((ISlice)m_dtree.Controls[2]).Abbreviation, "!?");
+			Assert.IsFalse(abbr2 == ((ISlice)m_dtree.Controls[2]).Abbreviation);
 		}
 
 		/// <summary />
@@ -205,7 +205,7 @@ namespace LanguageExplorerTests.Controls.DetailControls
 				m_dtree.Initialize(Cache, false, m_layouts, m_parts);
 				m_dtree.ShowObject(m_entry, "CfAndBib", null, m_entry, false);
 				Assert.AreEqual(1, m_dtree.Controls.Count);
-				Assert.AreEqual("CitationForm", (m_dtree.Controls[0] as Slice).Label);
+				Assert.AreEqual("CitationForm", ((ISlice)m_dtree.Controls[0]).Label);
 			}
 			finally
 			{
@@ -221,10 +221,10 @@ namespace LanguageExplorerTests.Controls.DetailControls
 			m_dtree.Initialize(Cache, false, m_layouts, m_parts);
 			m_dtree.ShowObject(m_entry, "Nested-Expanded", null, m_entry, false);
 			Assert.AreEqual(3, m_dtree.Controls.Count);
-			Assert.AreEqual("Header", (m_dtree.Controls[0] as Slice).Label);
-			Assert.AreEqual("Citation form", (m_dtree.Controls[1] as Slice).Label);
-			Assert.AreEqual("Bibliography", (m_dtree.Controls[2] as Slice).Label);
-			Assert.AreEqual(0, (m_dtree.Controls[1] as Slice).Indent); // was 1, but indent currently suppressed.
+			Assert.AreEqual("Header", ((ISlice)m_dtree.Controls[0]).Label);
+			Assert.AreEqual("Citation form", (m_dtree.Controls[1] as ISlice).Label);
+			Assert.AreEqual("Bibliography", (m_dtree.Controls[2] as ISlice).Label);
+			Assert.AreEqual(0, (m_dtree.Controls[1] as ISlice).Indent); // was 1, but indent currently suppressed.
 		}
 
 		/// <summary>Remove duplicate custom field placeholder parts</summary>
@@ -283,9 +283,9 @@ namespace LanguageExplorerTests.Controls.DetailControls
 			// slices for sense 2.
 			Assert.AreEqual(3, m_dtree.Controls.Count);
 			//Assert.AreEqual("Senses", (m_dtree.Controls[0] as Slice).Label);
-			Assert.AreEqual("Gloss", (m_dtree.Controls[0] as Slice).Label);
-			Assert.AreEqual("Gloss", (m_dtree.Controls[1] as Slice).Label);
-			Assert.AreEqual("ScientificName", (m_dtree.Controls[2] as Slice).Label);
+			Assert.AreEqual("Gloss", ((ISlice)m_dtree.Controls[0]).Label);
+			Assert.AreEqual("Gloss", ((ISlice)m_dtree.Controls[1]).Label);
+			Assert.AreEqual("ScientificName", ((ISlice)m_dtree.Controls[2]).Label);
 			m_parent.Close();
 			m_parent.Dispose();
 			m_parent = null;
@@ -329,8 +329,8 @@ namespace LanguageExplorerTests.Controls.DetailControls
 			m_dtree.ShowObject(m_entry, "OptSensesEty", null, m_entry, false);
 			// When the etymology has something we get two more.
 			Assert.AreEqual(5, m_dtree.Controls.Count);
-			Assert.AreEqual("Form", (m_dtree.Controls[3] as Slice).Label);
-			Assert.AreEqual("Source Language Notes", (m_dtree.Controls[4] as Slice).Label);
+			Assert.AreEqual("Form", ((ISlice)m_dtree.Controls[3]).Label);
+			Assert.AreEqual("Source Language Notes", ((ISlice)m_dtree.Controls[4]).Label);
 		}
 	}
 }

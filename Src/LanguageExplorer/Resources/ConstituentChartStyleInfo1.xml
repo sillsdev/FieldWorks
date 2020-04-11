@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+	<normal fontsize="105%" color="Black" underline="none"/>
+	<gloss fontsize="90%" color="DarkGray"/>
+	<speech fontsize="100%" color="Green" undercolor="Green" underline="dotted" brackets="[]"/>
+	<song fontsize="100%" color="DarkMagenta" brackets="[]" undercolor="Plum"/>
+	<dependent fontsize="100%" color="blue" brackets="[]"/>
+	<speechMkr color="Green" brackets="[]"/>
+	<songMkr color="DarkMagenta" brackets="[]"/>
+	<dependentMkr color="Blue" brackets="[]"/>
+	<movedText color="Red"/>
+	<movedTextMkr color="DeepPink"/>
+	<movedText2 color="Red" undercolor="Red" underline="single"/>
+	<movedText2Mkr color="DeepPink" undercolor="DeepPink" underline="single"/>
+	<marker color="Orange" brackets="()"/>
+</root>

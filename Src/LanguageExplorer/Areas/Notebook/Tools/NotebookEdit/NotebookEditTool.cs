@@ -77,7 +77,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 			_recordBrowseView = new RecordBrowseView(NotebookArea.LoadDocument(NotebookResources.NotebookEditBrowseParameters).Root, majorFlexComponentParameters.LcmCache, _recordList, majorFlexComponentParameters.UiWidgetController);
 			// NB: The constructor will create the ToolUiWidgetParameterObject instance and register events.
 			_toolMenuHelper = new NotebookEditToolMenuHelper(majorFlexComponentParameters, this, _recordList, _dataTree, _recordBrowseView);
-			var recordEditView = new RecordEditView(XElement.Parse(NotebookResources.NotebookEditRecordEditViewParameters), XDocument.Parse(AreaResources.VisibilityFilter_All), majorFlexComponentParameters.LcmCache, _recordList, _dataTree, majorFlexComponentParameters.UiWidgetController);
+			var recordEditView = new RecordEditView(XElement.Parse(NotebookResources.NotebookEditRecordEditViewParameters), XDocument.Parse(LanguageExplorerResources.VisibilityFilter_All), majorFlexComponentParameters.LcmCache, _recordList, _dataTree, majorFlexComponentParameters.UiWidgetController);
 			var mainMultiPaneParameters = new MultiPaneParameters
 			{
 				Orientation = Orientation.Vertical,

@@ -8,8 +8,6 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using LanguageExplorer.Areas;
-using LanguageExplorer.Areas.Grammar;
 using LanguageExplorer.Controls.XMLViews;
 using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
@@ -146,15 +144,15 @@ namespace LanguageExplorer.Controls.DetailControls.Slices
 				Cache = PropertyTable.GetValue<LcmCache>(FwUtils.cache);
 				var handlers = new Dictionary<string, Tuple<EventHandler<EventArgs>, string>>
 				{
-					{ InflTemplateAddInflAffixMsa, new Tuple<EventHandler<EventArgs>, string>(InflTemplateAddInflAffixMsa_Clicked, GrammarResources.Add_inflectional_affix_es_to_XXX)},
-					{ InflTemplateInsertSlotBefore, new Tuple<EventHandler<EventArgs>, string>(InflTemplateInsertSlotBefore_Clicked, GrammarResources.Insert_Slot_before_XXX)},
-					{ InflTemplateInsertSlotAfter, new Tuple<EventHandler<EventArgs>, string>(InflTemplateInsertSlotAfter_Clicked, GrammarResources.Insert_Slot_after_XXX)},
-					{ InflTemplateMoveSlotLeft, new Tuple<EventHandler<EventArgs>, string>(InflTemplateMoveSlotLeft_Clicked, GrammarResources.Move_XXX_back_one_Slot)},
-					{ InflTemplateMoveSlotRight, new Tuple<EventHandler<EventArgs>, string>(InflTemplateMoveSlotRight_Clicked, GrammarResources.Move_XXX_forward_one_Slot)},
-					{ InflTemplateToggleSlotOptionality, new Tuple<EventHandler<EventArgs>, string>(InflTemplateToggleSlotOptionality_Clicked, GrammarResources.Change_Optionality_of_XXX_Slot)},
-					{ InflTemplateRemoveSlot, new Tuple<EventHandler<EventArgs>, string>(InflTemplateRemoveSlot_Clicked, GrammarResources.Remove_XXX_Slot)},
-					{ InflTemplateRemoveInflAffixMsa, new Tuple<EventHandler<EventArgs>, string>(InflTemplateRemoveInflAffixMsa_Clicked, GrammarResources.Remove_YYY_from_XXX)},
-					{ JumpToTool, new Tuple<EventHandler<EventArgs>, string>(JumpToTool_Clicked, AreaResources.ksShowEntryInLexicon)},
+					{ InflTemplateAddInflAffixMsa, new Tuple<EventHandler<EventArgs>, string>(InflTemplateAddInflAffixMsa_Clicked, LanguageExplorerResources.Add_inflectional_affix_es_to_XXX)},
+					{ InflTemplateInsertSlotBefore, new Tuple<EventHandler<EventArgs>, string>(InflTemplateInsertSlotBefore_Clicked, LanguageExplorerResources.Insert_Slot_before_XXX)},
+					{ InflTemplateInsertSlotAfter, new Tuple<EventHandler<EventArgs>, string>(InflTemplateInsertSlotAfter_Clicked, LanguageExplorerResources.Insert_Slot_after_XXX)},
+					{ InflTemplateMoveSlotLeft, new Tuple<EventHandler<EventArgs>, string>(InflTemplateMoveSlotLeft_Clicked, LanguageExplorerResources.Move_XXX_back_one_Slot)},
+					{ InflTemplateMoveSlotRight, new Tuple<EventHandler<EventArgs>, string>(InflTemplateMoveSlotRight_Clicked, LanguageExplorerResources.Move_XXX_forward_one_Slot)},
+					{ InflTemplateToggleSlotOptionality, new Tuple<EventHandler<EventArgs>, string>(InflTemplateToggleSlotOptionality_Clicked, LanguageExplorerResources.Change_Optionality_of_XXX_Slot)},
+					{ InflTemplateRemoveSlot, new Tuple<EventHandler<EventArgs>, string>(InflTemplateRemoveSlot_Clicked, LanguageExplorerResources.Remove_XXX_Slot)},
+					{ InflTemplateRemoveInflAffixMsa, new Tuple<EventHandler<EventArgs>, string>(InflTemplateRemoveInflAffixMsa_Clicked, LanguageExplorerResources.Remove_YYY_from_XXX)},
+					{ JumpToTool, new Tuple<EventHandler<EventArgs>, string>(JumpToTool_Clicked, LanguageExplorerResources.ksShowEntryInLexicon)},
 					{ InflAffixTemplateHelp, new Tuple<EventHandler<EventArgs>, string>(InflAffixTemplateHelp_Clicked, LanguageExplorerResources.ksHelp)}
 				};
 				_menuHandler = new InflAffixTemplateMenuHandler(PropertyTable, this, handlers, PropertyTable.GetValue<Form>(FwUtils.window));
@@ -319,7 +317,7 @@ namespace LanguageExplorer.Controls.DetailControls.Slices
 			{
 				var slot = _clickedCmObject as IMoInflAffixSlot;
 				GetAffixSequenceContainingSlot(slot, out var seq, out var index);
-				var baseText = DetermineSlotContextMenuItemLabel(moveLeft ? GrammarResources.Move_XXX_back_one_Slot : GrammarResources.Move_XXX_forward_one_Slot).Text;
+				var baseText = DetermineSlotContextMenuItemLabel(moveLeft ? LanguageExplorerResources.Move_XXX_back_one_Slot : LanguageExplorerResources.Move_XXX_forward_one_Slot).Text;
 				UowHelpers.UndoExtension(baseText, Cache.ServiceLocator.GetInstance<IActionHandler>(), () =>
 				{
 					seq.RemoveAt(index);
@@ -336,8 +334,8 @@ namespace LanguageExplorer.Controls.DetailControls.Slices
 					return;
 				}
 				var slotName = slot.Name.BestAnalysisVernacularAlternative.Text;
-				var undoText = string.Format(AreaResources.ksUndoChangeOptionalityOfSlot, slotName);
-				var redoText = string.Format(AreaResources.ksRedoChangeOptionalityOfSlot, slotName);
+				var undoText = string.Format(LanguageExplorerResources.ksUndoChangeOptionalityOfSlot, slotName);
+				var redoText = string.Format(LanguageExplorerResources.ksRedoChangeOptionalityOfSlot, slotName);
 				using (var helper = new UndoableUnitOfWorkHelper(Cache.ActionHandlerAccessor, undoText, redoText))
 				{
 					slot.Optional = !slot.Optional;
@@ -350,7 +348,7 @@ namespace LanguageExplorer.Controls.DetailControls.Slices
 			{
 				GetAffixSequenceContainingSlot(_clickedCmObject as IMoInflAffixSlot, out var seq, out var index);
 				var baseUowText = seq[index].Name.BestAnalysisVernacularAlternative.Text;
-				using (var helper = new UndoableUnitOfWorkHelper(m_cache.ActionHandlerAccessor, string.Format(AreaResources.ksUndoRemovingSlot, baseUowText), string.Format(AreaResources.ksRedoRemovingSlot, baseUowText)))
+				using (var helper = new UndoableUnitOfWorkHelper(m_cache.ActionHandlerAccessor, string.Format(LanguageExplorerResources.ksUndoRemovingSlot, baseUowText), string.Format(LanguageExplorerResources.ksRedoRemovingSlot, baseUowText)))
 				{
 					seq.RemoveAt(index);
 					helper.RollBack = false;
@@ -373,7 +371,7 @@ namespace LanguageExplorer.Controls.DetailControls.Slices
 				{
 					return; // play it safe
 				}
-				UndoableUnitOfWorkHelper.Do(AreaResources.ksUndoRemovingAffix, AreaResources.ksRedoRemovingAffix, Cache.ActionHandlerAccessor, () =>
+				UndoableUnitOfWorkHelper.Do(LanguageExplorerResources.ksUndoRemovingAffix, LanguageExplorerResources.ksRedoRemovingAffix, Cache.ActionHandlerAccessor, () =>
 				{
 					if (OtherInflAffixMsasExist(lex, inflMsa))
 					{
@@ -403,7 +401,7 @@ namespace LanguageExplorer.Controls.DetailControls.Slices
 					{
 						if (chooser.ChosenObjects != null && chooser.ChosenObjects.Any())
 						{
-							UndoableUnitOfWorkHelper.Do(AreaResources.ksUndoAddAffixes, AreaResources.ksRedoAddAffixes, Cache.ActionHandlerAccessor, () =>
+							UndoableUnitOfWorkHelper.Do(LanguageExplorerResources.ksUndoAddAffixes, LanguageExplorerResources.ksRedoAddAffixes, Cache.ActionHandlerAccessor, () =>
 							{
 								foreach (var obj in chooser.ChosenObjects)
 								{
@@ -651,7 +649,7 @@ namespace LanguageExplorer.Controls.DetailControls.Slices
 			private static IPartOfSpeech GetHighestPOS(IPartOfSpeech pos, out string topPOS)
 			{
 				IPartOfSpeech result = null;
-				topPOS = AreaResources.ksQuestions;
+				topPOS = LanguageExplorerResources.ksQuestions;
 				ICmObject obj = pos;
 				while (obj.ClassID == PartOfSpeechTags.kClassId)
 				{
@@ -671,7 +669,7 @@ namespace LanguageExplorer.Controls.DetailControls.Slices
 			{
 				flid = GetAffixSequenceContainingSlot(_clickedCmObject as IMoInflAffixSlot, out var seq, out var index);
 				var iOffset = before ? 0 : 1;
-				UndoableUnitOfWorkHelper.Do(AreaResources.ksUndoAddSlot, AreaResources.ksRedoAddSlot, Cache.ActionHandlerAccessor, () => seq.Insert(index + iOffset, chosenSlot));
+				UndoableUnitOfWorkHelper.Do(LanguageExplorerResources.ksUndoAddSlot, LanguageExplorerResources.ksRedoAddSlot, Cache.ActionHandlerAccessor, () => seq.Insert(index + iOffset, chosenSlot));
 				// The views system numbers visually, so adjust index for RTL vernacular writing system.
 				ihvo = index + iOffset;
 				if (IsRTL())
@@ -687,14 +685,14 @@ namespace LanguageExplorer.Controls.DetailControls.Slices
 					flid = MoInflAffixTemplateTags.kflidPrefixSlots;
 					// The views system numbers visually, so adjust index for RTL vernacular writing system.
 					ihvo = IsRTL() ? 0 : _template.PrefixSlotsRS.Count;
-					UndoableUnitOfWorkHelper.Do(AreaResources.ksUndoAddSlot, AreaResources.ksRedoAddSlot, Cache.ActionHandlerAccessor, () => _template.PrefixSlotsRS.Add(chosenSlot));
+					UndoableUnitOfWorkHelper.Do(LanguageExplorerResources.ksUndoAddSlot, LanguageExplorerResources.ksRedoAddSlot, Cache.ActionHandlerAccessor, () => _template.PrefixSlotsRS.Add(chosenSlot));
 				}
 				else
 				{
 					flid = MoInflAffixTemplateTags.kflidSuffixSlots;
 					// The views system numbers visually, so adjust index for RTL vernacular writing system.
 					ihvo = IsRTL() ? _template.SuffixSlotsRS.Count : 0;
-					UndoableUnitOfWorkHelper.Do(AreaResources.ksUndoAddSlot, AreaResources.ksRedoAddSlot, Cache.ActionHandlerAccessor, () => _template.SuffixSlotsRS.Insert(0, chosenSlot));
+					UndoableUnitOfWorkHelper.Do(LanguageExplorerResources.ksUndoAddSlot, LanguageExplorerResources.ksRedoAddSlot, Cache.ActionHandlerAccessor, () => _template.SuffixSlotsRS.Insert(0, chosenSlot));
 				}
 			}
 
@@ -801,7 +799,7 @@ namespace LanguageExplorer.Controls.DetailControls.Slices
 				// of the template.  See LT-13932.
 				if (_template.IsValidObject && !AllSlotNamesOk)
 				{
-					UndoableUnitOfWorkHelper.Do(AreaResources.ksUndoChangeSlotName, AreaResources.ksRedoChangeSlotName, Cache.ActionHandlerAccessor, () =>
+					UndoableUnitOfWorkHelper.Do(LanguageExplorerResources.ksUndoChangeSlotName, LanguageExplorerResources.ksRedoChangeSlotName, Cache.ActionHandlerAccessor, () =>
 					{
 						foreach (var slot in _template.PrefixSlotsRS)
 						{
@@ -947,7 +945,7 @@ namespace LanguageExplorer.Controls.DetailControls.Slices
 			{
 				if (slot == null)
 				{
-					return TsStringUtils.MakeString(AreaResources.ksQuestions, Cache.DefaultUserWs);
+					return TsStringUtils.MakeString(LanguageExplorerResources.ksQuestions, Cache.DefaultUserWs);
 				}
 				if (slot.Name.AnalysisDefaultWritingSystem.Text == _newSlotName)
 				{

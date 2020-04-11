@@ -126,7 +126,7 @@ namespace LanguageExplorer.Areas
 				    </command>
 			*/
 			var wantSeparator = false;
-			ConditionallyAddJumpToToolMenuItem_Overload_Also_Rans(contextMenuStrip, menuItems, slice, LanguageExplorerConstants.LexiconEditMachineName, ref wantSeparator, LexEntryTags.kClassName, AreaResources.ksShowEntryInLexicon);
+			ConditionallyAddJumpToToolMenuItem_Overload_Also_Rans(contextMenuStrip, menuItems, slice, LanguageExplorerConstants.LexiconEditMachineName, ref wantSeparator, LexEntryTags.kClassName, LanguageExplorerResources.ksShowEntryInLexicon);
 
 			/*
 		      <item command="CmdRecordJumpToDefault" />
@@ -484,7 +484,7 @@ namespace LanguageExplorer.Areas
 					ToolStripMenuItemFactory.CreateToolStripSeparatorForContextMenuStrip(contextMenuStrip, separatorInsertLocation);
 					wantSeparator = false;
 				}
-				menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, VisibleComplexForm_Clicked, AreaResources.ksReferencedComplexForm);
+				menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, VisibleComplexForm_Clicked, LanguageExplorerResources.ksReferencedComplexForm);
 				menu.Tag = target;
 				menu.Checked = menuIsChecked;
 			}

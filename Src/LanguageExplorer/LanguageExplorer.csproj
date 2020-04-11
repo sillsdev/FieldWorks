@@ -290,7 +290,7 @@
     <Compile Include="Areas\Grammar\Tools\PhonologicalFeaturesAdvancedEdit\MasterPhonologicalFeatureListDlg.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Areas\IChangeRootObject.cs" />
+    <Compile Include="Controls\DetailControls\IChangeRootObject.cs" />
     <Compile Include="Areas\Lists\Tools\SharedListToolsUiWidgetMenuHelper.cs" />
     <Compile Include="Areas\Notebook\Tools\SharedNotebookToolsUiWidgetMenuHelper.cs" />
     <Compile Include="Areas\PartiallySharedForToolsWideMenuHelper.cs" />
@@ -301,18 +301,17 @@
     <Compile Include="Areas\ConfigParentNode.Designer.cs">
       <DependentUpon>ConfigParentNode.cs</DependentUpon>
     </Compile>
-    <Compile Include="Areas\ConfigSenseLayout.cs">
+    <Compile Include="Controls\ConfigSenseLayout.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Areas\ConfigSenseLayout.Designer.cs">
+    <Compile Include="Controls\ConfigSenseLayout.Designer.cs">
       <DependentUpon>ConfigSenseLayout.cs</DependentUpon>
     </Compile>
     <Compile Include="Areas\CustomFieldLocationType.cs" />
-    <Compile Include="Areas\FxtType.cs" />
-    <Compile Include="Areas\FxtTypes.cs" />
     <Compile Include="Controls\DetailControls\LexReferencePairView.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Include="Controls\DetailControls\ShowSpaceDecorator.cs" />
     <Compile Include="Controls\DetailControls\Slices\AdhocCoProhibAtomicReferenceDisabledSlice.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -327,17 +326,18 @@
     </Compile>
     <Compile Include="Areas\IdAndString.cs" />
     <Compile Include="Areas\Lexicon\Reversals\ReversalServices.cs" />
-    <Compile Include="Areas\ProgressDialogWorkingOn.cs">
+    <Compile Include="Controls\FxtType.cs" />
+    <Compile Include="Controls\FxtTypes.cs" />
+    <Compile Include="Controls\ProgressDialogWorkingOn.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Areas\TextsAndWords\Interlinear\TriStateTreeView.cs">
+    <Compile Include="Controls\TriStateTreeView.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Areas\TextsAndWords\Interlinear\TriStateTreeViewCheckState.cs" />
+    <Compile Include="Controls\TriStateTreeViewCheckState.cs" />
     <Compile Include="Areas\TextsAndWords\ParserUpdateEventArgs.cs" />
     <Compile Include="Areas\TextsAndWords\Tools\WordListConcordance\SubservientConcordanceRecordList.cs" />
-    <Compile Include="Areas\TextsAndWords\IInterlinearConfigurator.cs" />
-    <Compile Include="Areas\TextsAndWords\Interlinear\InterlinearTextServices.cs" />
+    <Compile Include="Controls\DetailControls\IInterlinearConfigurator.cs" />
     <Compile Include="AreaUiWidgetParameterObject.cs" />
     <Compile Include="Command.cs" />
     <Compile Include="ContextMenuName.cs" />
@@ -345,12 +345,14 @@
     <Compile Include="Controls\ControlServices.cs" />
     <Compile Include="Controls\Designer\FwHelpButtonDesigner.cs" />
     <Compile Include="Controls\Designer\ProgressLineDesigner.cs" />
+    <Compile Include="Controls\DetailControls\ISliceFactory.cs" />
     <Compile Include="IAtomicReferenceSlice.cs" />
     <Compile Include="IDummyObjectSlice.cs" />
     <Compile Include="IInterlinearSlice.cs" />
     <Compile Include="IMorphTypeAtomicReferenceSlice.cs" />
     <Compile Include="IMSAReferenceComboBoxSlice.cs" />
     <Compile Include="IMultiStringSlice.cs" />
+    <Compile Include="InterestingTextsChangedArgs.cs" />
     <Compile Include="IPictureSlice.cs" />
     <Compile Include="IReferenceVectorSlice.cs" />
     <Compile Include="ISlice.cs" />
@@ -367,7 +369,7 @@
     <Compile Include="Controls\IImportForm.cs" />
     <Compile Include="Controls\DetailControls\Slices\InsertOption.cs" />
     <Compile Include="IPhEnvSliceCommon.cs" />
-    <Compile Include="Areas\IPreferredTargetAdjuster.cs" />
+    <Compile Include="Controls\IPreferredTargetAdjuster.cs" />
     <Compile Include="Areas\Lexicon\ISemanticDomainTreeBarHandler.cs" />
     <Compile Include="Areas\Lexicon\Tools\SharedLexiconToolsUiWidgetHelper.cs" />
     <Compile Include="Controls\DetailControls\LexReferenceUnidirectionalVc.cs" />
@@ -385,18 +387,18 @@
     <Compile Include="Areas\Lists\Tools\DialectsListEdit\DialectsListEditTool.cs" />
     <Compile Include="Areas\Lists\Tools\ExtNoteTypeEdit\ExtNoteTypeEditTool.cs" />
     <Compile Include="Areas\Lists\Tools\LanguagesListEdit\LanguagesListEditTool.cs" />
-    <Compile Include="Areas\MainEntryFromSubEntryTargetAdjuster.cs" />
-    <Compile Include="Areas\NullTargetAdjuster.cs" />
+    <Compile Include="Controls\MainEntryFromSubEntryTargetAdjuster.cs" />
+    <Compile Include="Controls\NullTargetAdjuster.cs" />
     <Compile Include="Areas\ReversalListBase.cs" />
     <Compile Include="Areas\Lexicon\Tools\Edit\ConcRecordList.cs" />
     <Compile Include="Areas\Lists\Tools\CustomListEdit\CustomListEditTool.cs" />
     <Compile Include="Areas\RightClickContextMenuManager.cs" />
     <Compile Include="Controls\DetailControls\Slices\RuleInsertType.cs" />
-    <Compile Include="Areas\TextsAndWords\Interlinear\IInterlinConfigurable.cs" />
-    <Compile Include="Areas\TextsAndWords\Interlinear\MorphBreakHelperContextMenu.cs">
+    <Compile Include="Controls\DetailControls\IInterlinConfigurable.cs" />
+    <Compile Include="Controls\MorphBreakHelperContextMenu.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Areas\XDumper.cs" />
+    <Compile Include="Controls\XDumper.cs" />
     <Compile Include="Controls\CollectorEnv.cs" />
     <Compile Include="Controls\DetailControls\SfmFileReader.cs" />
     <Compile Include="Controls\FileLocationChoice.cs" />
@@ -616,90 +618,79 @@
     <Compile Include="Areas\SubservientRecordList.cs" />
     <Compile Include="Areas\TemporaryRecordList.cs" />
     <Compile Include="Areas\TextsAndWords\CaptionParaFragment.cs" />
-    <Compile Include="Areas\TextsAndWords\Discourse\AdvancedMTDialogLogic.cs" />
-    <Compile Include="Areas\TextsAndWords\Discourse\CChartSentenceElements.cs" />
-    <Compile Include="Areas\TextsAndWords\Discourse\ChartHeaderView.cs">
+    <Compile Include="Controls\DetailControls\AdvancedMTDialogLogic.cs" />
+    <Compile Include="Controls\DetailControls\CChartSentenceElements.cs" />
+    <Compile Include="Controls\DetailControls\ChartHeaderView.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Areas\TextsAndWords\Discourse\ColumnMenuItem.cs" />
-    <Compile Include="Areas\TextsAndWords\Discourse\ConstChartVc.cs" />
-    <Compile Include="Areas\TextsAndWords\Discourse\DecoratorMethodTypes.cs" />
-    <Compile Include="Areas\TextsAndWords\Discourse\DialogInterlinRibbon.cs">
+    <Compile Include="Controls\DetailControls\ColumnMenuItem.cs" />
+    <Compile Include="Controls\DetailControls\ConstChartVc.cs" />
+    <Compile Include="Controls\DetailControls\DecoratorMethodTypes.cs" />
+    <Compile Include="Controls\DetailControls\DialogInterlinRibbon.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Areas\TextsAndWords\Discourse\FindWhereToAddResult.cs" />
-    <Compile Include="Areas\TextsAndWords\Discourse\IInterlinRibbon.cs" />
-    <Compile Include="Areas\TextsAndWords\Discourse\RowColPossibilityMenuItem.cs">
+    <Compile Include="Controls\DetailControls\FindWhereToAddResult.cs" />
+    <Compile Include="Controls\DetailControls\IInterlinRibbon.cs" />
+    <Compile Include="Controls\DetailControls\RowColPossibilityMenuItem.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Areas\TextsAndWords\Discourse\RowMenuItem.cs" />
-    <Compile Include="Areas\TextsAndWords\Discourse\RowModifiedEventArgs.cs" />
-    <Compile Include="Areas\TextsAndWords\Discourse\StoredMethod.cs" />
-    <Compile Include="Areas\TextsAndWords\Interlinear\AddLineMenuItem.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Areas\TextsAndWords\Interlinear\AddWritingSystemMenuItem.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="Controls\DetailControls\RowMenuItem.cs" />
+    <Compile Include="Controls\DetailControls\RowModifiedEventArgs.cs" />
+    <Compile Include="Controls\DetailControls\StoredMethod.cs" />
     <Compile Include="Areas\TextsAndWords\Interlinear\AnnotationInfo.cs" />
     <Compile Include="Areas\TextsAndWords\Interlinear\AnnotationInfo2.cs" />
     <Compile Include="Areas\TextsAndWords\Interlinear\AnnotationMoveHelper.cs" />
-    <Compile Include="Areas\TextsAndWords\Interlinear\BlueCircleButton.cs">
+    <Compile Include="Controls\DetailControls\BlueCircleButton.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Areas\TextsAndWords\Interlinear\BlueCircleButton.Designer.cs">
+    <Compile Include="Controls\DetailControls\BlueCircleButton.Designer.cs">
       <DependentUpon>BlueCircleButton.cs</DependentUpon>
     </Compile>
-    <Compile Include="Areas\TextsAndWords\Interlinear\CreateAndInsertStText.cs" />
-    <Compile Include="Areas\TextsAndWords\Interlinear\EditableInterlinLineChoices.cs" />
-    <Compile Include="Areas\TextsAndWords\Interlinear\IAnalysisControlInternal.cs" />
-    <Compile Include="Areas\TextsAndWords\Interlinear\IComboHandler.cs" />
-    <Compile Include="Areas\TextsAndWords\Interlinear\IHandleBookmark.cs" />
-    <Compile Include="Areas\TextsAndWords\Interlinear\IhLexWordGloss.cs" />
+    <Compile Include="Controls\DetailControls\EditableInterlinLineChoices.cs" />
+    <Compile Include="Controls\DetailControls\IAnalysisControlInternal.cs" />
+    <Compile Include="Controls\DetailControls\IComboHandler.cs" />
+    <Compile Include="Controls\DetailControls\IHandleBookmark.cs" />
+    <Compile Include="Controls\DetailControls\IhLexWordGloss.cs" />
     <Compile Include="Areas\TextsAndWords\Interlinear\IhMissingMorphs.cs" />
-    <Compile Include="Areas\TextsAndWords\Interlinear\IhMissingWordPos.cs" />
-    <Compile Include="Areas\TextsAndWords\Interlinear\IhMorphEntry.cs" />
-    <Compile Include="Areas\TextsAndWords\Interlinear\IhMorphForm.cs" />
+    <Compile Include="Controls\DetailControls\IhMissingWordPos.cs" />
+    <Compile Include="Controls\DetailControls\IhMorphEntry.cs" />
+    <Compile Include="Controls\DetailControls\IhMorphForm.cs" />
     <Compile Include="Areas\TextsAndWords\Interlinear\IhSbWordForm.cs" />
-    <Compile Include="Areas\TextsAndWords\Interlinear\IhWordGloss.cs" />
-    <Compile Include="Areas\TextsAndWords\Interlinear\IhWordPos.cs" />
-    <Compile Include="Areas\TextsAndWords\Interlinear\IInterlinearTabControl.cs" />
+    <Compile Include="Controls\DetailControls\IhWordGloss.cs" />
+    <Compile Include="Controls\DetailControls\IhWordPos.cs" />
+    <Compile Include="Controls\DetailControls\IInterlinearTabControl.cs" />
     <Compile Include="Areas\TextsAndWords\Interlinear\ImportAnalysesLevel.cs" />
     <Compile Include="Areas\TextsAndWords\Interlinear\ImportInterlinearOptions.cs" />
-    <Compile Include="Areas\TextsAndWords\Interlinear\InsertEntryNow.cs">
+    <Compile Include="Controls\InsertEntryNow.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Areas\TextsAndWords\Interlinear\InterlinComboHandler.cs" />
-    <Compile Include="Areas\TextsAndWords\Interlinear\InterlinComboHandlerActionComboItem.cs" />
-    <Compile Include="Areas\TextsAndWords\Interlinear\InterlinDocForAnalysisVc.cs" />
-    <Compile Include="Areas\TextsAndWords\Interlinear\InterlinearExporterForElan.cs" />
-    <Compile Include="Areas\TextsAndWords\Interlinear\InterlinearTextsRecordList.cs" />
-    <Compile Include="Areas\TextsAndWords\Interlinear\InterlinLineSpec.cs" />
-    <Compile Include="Areas\TextsAndWords\Interlinear\InterlinMode.cs" />
-    <Compile Include="Areas\TextsAndWords\Interlinear\InterlinTaggingVc.cs" />
-    <Compile Include="Areas\TextsAndWords\Interlinear\InterlinViewCacheLoader.cs" />
-    <Compile Include="Areas\TextsAndWords\Interlinear\IParaDataLoader.cs" />
-    <Compile Include="Areas\TextsAndWords\Interlinear\ISelectOccurrence.cs" />
-    <Compile Include="Areas\TextsAndWords\Interlinear\ISetupLineChoices.cs" />
-    <Compile Include="Areas\TextsAndWords\Interlinear\IStTextBookmark.cs" />
-    <Compile Include="Areas\TextsAndWords\Interlinear\IStyleSheet.cs" />
+    <Compile Include="Controls\DetailControls\InterlinComboHandler.cs" />
+    <Compile Include="Controls\DetailControls\InterlinComboHandlerActionComboItem.cs" />
+    <Compile Include="Controls\DetailControls\InterlinDocForAnalysisVc.cs" />
+    <Compile Include="InterlinearTextsRecordList.cs" />
+    <Compile Include="Controls\DetailControls\InterlinLineSpec.cs" />
+    <Compile Include="Controls\DetailControls\InterlinMode.cs" />
+    <Compile Include="Controls\DetailControls\InterlinTaggingVc.cs" />
+    <Compile Include="Controls\DetailControls\InterlinViewCacheLoader.cs" />
+    <Compile Include="IParaDataLoader.cs" />
+    <Compile Include="Controls\DetailControls\ISelectOccurrence.cs" />
+    <Compile Include="Controls\DetailControls\ISetupLineChoices.cs" />
+    <Compile Include="Controls\DetailControls\IStTextBookmark.cs" />
+    <Compile Include="Controls\DetailControls\IStyleSheet.cs" />
     <Compile Include="Areas\TextsAndWords\Interlinear\LanguageMapping.cs" />
-    <Compile Include="Areas\TextsAndWords\Interlinear\LineOption.cs" />
+    <Compile Include="Controls\DetailControls\LineOption.cs" />
     <Compile Include="Areas\TextsAndWords\Interlinear\MatchingConcordanceRecordList.cs" />
-    <Compile Include="Areas\TextsAndWords\Interlinear\MorphComboItem.cs" />
-    <Compile Include="Areas\TextsAndWords\Interlinear\MorphItem.cs" />
-    <Compile Include="Areas\TextsAndWords\Interlinear\MorphItemOptions.cs" />
-    <Compile Include="Areas\TextsAndWords\Interlinear\NonUndoableCreateAndInsertStText.cs" />
-    <Compile Include="Areas\TextsAndWords\Interlinear\ParaDataUpdateTracker.cs" />
-    <Compile Include="Areas\TextsAndWords\Interlinear\RawTextVc.cs" />
-    <Compile Include="Areas\TextsAndWords\Interlinear\SandboxChangedEventArgs.cs" />
-    <Compile Include="Areas\TextsAndWords\Interlinear\SandboxEditMonitor.cs" />
-    <Compile Include="Areas\TextsAndWords\Interlinear\SandboxEditMonitorHelper.cs" />
-    <Compile Include="Areas\TextsAndWords\Interlinear\TabPageSelection.cs" />
+    <Compile Include="Controls\DetailControls\MorphComboItem.cs" />
+    <Compile Include="Controls\DetailControls\MorphItem.cs" />
+    <Compile Include="Controls\DetailControls\MorphItemOptions.cs" />
+    <Compile Include="Controls\DetailControls\RawTextVc.cs" />
+    <Compile Include="Controls\DetailControls\SandboxChangedEventArgs.cs" />
+    <Compile Include="Controls\DetailControls\SandboxEditMonitor.cs" />
+    <Compile Include="Controls\DetailControls\SandboxEditMonitorHelper.cs" />
+    <Compile Include="Controls\DetailControls\TabPageSelection.cs" />
     <Compile Include="Areas\TextsAndWords\Interlinear\TextCreationParams.cs" />
-    <Compile Include="Areas\TextsAndWords\Interlinear\TitleContentsVc.cs" />
-    <Compile Include="Areas\TextsAndWords\Interlinear\UndoableCreateAndInsertStText.cs" />
-    <Compile Include="Areas\TextsAndWords\Interlinear\UpdateMorphEntryAction.cs" />
+    <Compile Include="Controls\DetailControls\TitleContentsVc.cs" />
+    <Compile Include="Controls\DetailControls\UpdateMorphEntryAction.cs" />
     <Compile Include="Areas\TextsAndWords\ParaChangeInfo.cs" />
     <Compile Include="Areas\TextsAndWords\RespellingMdc.cs" />
     <Compile Include="Areas\TextsAndWords\RespellingSda.cs" />
@@ -713,7 +704,7 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Areas\TextsAndWords\Tools\PartiallySharedTextsAndWordsToolsMenuHelper.cs" />
-    <Compile Include="Areas\TreebarAvailability.cs" />
+    <Compile Include="Controls\DetailControls\TreebarAvailability.cs" />
     <Compile Include="Areas\TreeBarHandlerAwareRecordList.cs" />
     <Compile Include="Controls\DetailControls\Slices\AtomicReferenceDisabledSlice.cs">
       <SubType>UserControl</SubType>
@@ -858,7 +849,7 @@
     <Compile Include="Areas\Notebook\StringOptions.cs" />
     <Compile Include="Areas\Notebook\TextOptions.cs" />
     <Compile Include="Areas\Notebook\TopicsListOptions.cs" />
-    <Compile Include="Controls\DetailControls\Slices\FeatureSystemInflectionFeatureListDlg.cs">
+    <Compile Include="Controls\DetailControls\FeatureSystemInflectionFeatureListDlg.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Controls\FeatureTreeNode.cs" />
@@ -1070,7 +1061,7 @@
     <Compile Include="IUndoRedoHandler.cs" />
     <Compile Include="LanguageExplorerCompositionServices.cs" />
     <Compile Include="Controls\DetailControls\DataTreeSliceContextMenuParameterObject.cs" />
-    <Compile Include="Areas\TextsAndWords\CachePair.cs" />
+    <Compile Include="Controls\DetailControls\CachePair.cs" />
     <Compile Include="ConsoleProgress.cs" />
     <Compile Include="Controls\DetailControls\AtomicReferenceLauncher.cs">
       <SubType>UserControl</SubType>
@@ -1225,7 +1216,7 @@
     <Compile Include="Controls\DetailControls\Slices\Slice.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Controls\DetailControls\SliceFactory.cs" />
+    <Compile Include="Controls\DetailControls\Slices\SliceFactory.cs" />
     <Compile Include="Controls\DetailControls\SliceFilter.cs" />
     <Compile Include="Controls\DetailControls\SliceTreeNode.cs">
       <SubType>UserControl</SubType>
@@ -1257,10 +1248,10 @@
     <Compile Include="Controls\HtmlControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Areas\TextsAndWords\Interlinear\AddAllomorphDlg.cs">
+    <Compile Include="Controls\DetailControls\AddAllomorphDlg.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Areas\TextsAndWords\Interlinear\AddNewSenseDlg.cs">
+    <Compile Include="Controls\AddNewSenseDlg.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Controls\AddWritingSystemButton.cs">
@@ -1275,7 +1266,7 @@
     <Compile Include="LcmUi\BrowseViewerPhonologicalFeatures.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="LcmUi\BulkPosEditorBase.cs" />
+    <Compile Include="Controls\XMLViews\BulkPosEditorBase.cs" />
     <Compile Include="LcmUi\CmAnalObjectVc.cs" />
     <Compile Include="LcmUi\CmNameAbbrObjVc.cs" />
     <Compile Include="LcmUi\CmNamedObjVc.cs" />
@@ -1856,22 +1847,21 @@
     <Compile Include="Areas\Lexicon\Tools\BulkEditEntries\EntriesOrChildClassesRecordList.cs" />
     <Compile Include="DictionaryConfiguration\Direction.cs" />
     <Compile Include="DictionaryConfiguration\ExclusionReasonCode.cs" />
-    <Compile Include="Areas\ExportDialog.cs">
+    <Compile Include="Controls\ExportDialog.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Areas\ExportSemanticDomainsDlg.cs">
+    <Compile Include="Controls\ExportSemanticDomainsDlg.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Areas\ExportSemanticDomainsDlg.Designer.cs">
+    <Compile Include="Controls\ExportSemanticDomainsDlg.Designer.cs">
       <DependentUpon>ExportSemanticDomainsDlg.cs</DependentUpon>
     </Compile>
-    <Compile Include="Areas\ExportTranslatedListsDlg.cs">
+    <Compile Include="Controls\ExportTranslatedListsDlg.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Areas\ExportTranslatedListsDlg.Designer.cs">
+    <Compile Include="Controls\ExportTranslatedListsDlg.Designer.cs">
       <DependentUpon>ExportTranslatedListsDlg.cs</DependentUpon>
     </Compile>
-    <Compile Include="Areas\FileStreamXmlResolver.cs" />
     <Compile Include="DictionaryConfiguration\GeneratorSettings.cs" />
     <Compile Include="DictionaryConfiguration\HeadWordNumbersController.cs" />
     <Compile Include="DictionaryConfiguration\HeadWordNumbersDlg.cs">
@@ -1896,25 +1886,23 @@
     <Compile Include="DictionaryConfiguration\ImageHolder.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Areas\InterestingTextList.cs" />
-    <Compile Include="Areas\InterestingTextsChangedArgs.cs" />
-    <Compile Include="Areas\InterestingTextsDecorator.cs" />
+    <Compile Include="InterestingTextList.cs" />
+    <Compile Include="InterestingTextsDecorator.cs" />
     <Compile Include="IRecordListRepository.cs" />
     <Compile Include="IRecordListRepositoryForTools.cs" />
     <Compile Include="IRecordList.cs" />
     <Compile Include="ITreeBarHandler.cs" />
     <Compile Include="DictionaryConfiguration\IParaOption.cs" />
-    <Compile Include="Areas\InterestingTextsMdc.cs" />
-    <Compile Include="Areas\ISetRootHvo.cs" />
+    <Compile Include="ISetRootHvo.cs" />
     <Compile Include="Impls\IUploadToWebonaryView.cs" />
     <Compile Include="Impls\IWebonaryClient.cs" />
     <Compile Include="DictionaryConfiguration\LayoutLevels.cs" />
     <Compile Include="DictionaryConfiguration\LayoutTreeNode.cs" />
     <Compile Include="DictionaryConfiguration\LegacyConfigurationUtils.cs" />
-    <Compile Include="Areas\LiftExportMessageDlg.cs">
+    <Compile Include="Controls\LiftExportMessageDlg.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Areas\LiftExportMessageDlg.Designer.cs">
+    <Compile Include="Controls\LiftExportMessageDlg.Designer.cs">
       <DependentUpon>LiftExportMessageDlg.cs</DependentUpon>
     </Compile>
     <Compile Include="LinkHandler.cs" />
@@ -1936,7 +1924,7 @@
     </Compile>
     <Compile Include="DictionaryConfiguration\SaveFile.cs" />
     <Compile Include="DictionaryConfiguration\StyleTypes.cs" />
-    <Compile Include="Areas\TranslatedListsExporter.cs" />
+    <Compile Include="Controls\TranslatedListsExporter.cs" />
     <Compile Include="DictionaryConfiguration\SwitchConfigurationEventArgs.cs" />
     <Compile Include="Areas\TreeBarHandler.cs" />
     <Compile Include="Areas\RecordBrowseView.cs">
@@ -1946,13 +1934,13 @@
     <Compile Include="Areas\Lexicon\Tools\Edit\RecordDocView.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Areas\RecordEditView.cs">
+    <Compile Include="Controls\DetailControls\RecordEditView.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="RecordList.cs" />
     <Compile Include="RecordNavigationEventArgs.cs" />
     <Compile Include="RecordNavigationInfo.cs" />
-    <Compile Include="Areas\RecordView.cs">
+    <Compile Include="Controls\DetailControls\RecordView.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="SelectObjectEventArgs.cs" />
@@ -1987,13 +1975,13 @@
     <Compile Include="Areas\Lexicon\DictionaryConfiguration\XmlDiagnosticsDlg.Designer.cs">
       <DependentUpon>XmlDiagnosticsDlg.cs</DependentUpon>
     </Compile>
-    <Compile Include="Areas\XmlDocConfigureDlg.cs">
+    <Compile Include="Controls\XmlDocConfigureDlg.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Areas\XmlDocConfigureDlg.Designer.cs">
+    <Compile Include="Controls\XmlDocConfigureDlg.Designer.cs">
       <DependentUpon>XmlDocConfigureDlg.cs</DependentUpon>
     </Compile>
-    <Compile Include="Areas\XmlDocView.cs">
+    <Compile Include="Controls\XmlDocView.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Areas\Lexicon\Tools\Edit\XmlDocItemView.cs">
@@ -2004,21 +1992,27 @@
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
     </Compile>
-    <Compile Include="Areas\ViewBase.cs">
+    <Compile Include="Controls\DetailControls\ViewBase.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <None Include="Resources\VisibilityFilter_All1.xml" />
     <None Include="images\FwContorls\ExplorerBar_Collapse_Glyph.png" />
     <None Include="images\FwContorls\ExplorerBar_Epand_Glyph.png" />
     <Content Include="Controls\MessageBoxEx\Notes.txt" />
     <Content Include="images\Usage.ico" />
     <Content Include="Resources\AnalysisInSegmentsOccurrenceList.xml" />
     <None Include="Resources\ConstituentChartStyleInfo.xml" />
+    <None Include="Resources\ConstituentChartStyleInfo1.xml" />
     <Content Include="Resources\GlossInSegmentsOccurrenceList.xml" />
     <None Include="Resources\MergeReversalEntryListParameters.xml" />
+    <None Include="Resources\MatchingEntriesParameters1.xml" />
+    <None Include="Resources\LexiconClassifiedDictionaryParameters1.xml" />
+    <None Include="Resources\GrammarSketchTransforms1.xml" />
     <Content Include="Resources\MergeAllomorphListParameters.xml" />
     <Content Include="Resources\MergeSenseListParameters.xml" />
     <Content Include="Resources\MergeWordGlossListParameters.xml" />
     <None Include="Resources\NotebookRecordGoDlgParameters1.xml" />
+    <None Include="Resources\NotebookDocumentParameters1.xml" />
     <Content Include="Resources\ReversalEntryMatchListParameters.xml" />
     <Content Include="Resources\SrcSentencesList.xml" />
     <None Include="Resources\WordformInSegmentsOccurrenceList.xml" />
@@ -2036,18 +2030,18 @@
       <DependentUpon>ConfigParentNode.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Areas\ConfigSenseLayout.resx">
+    <EmbeddedResource Include="Controls\ConfigSenseLayout.resx">
       <DependentUpon>ConfigSenseLayout.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Areas\Grammar\Tools\PhonologicalFeaturesAdvancedEdit\MasterPhonologicalFeatureListDlg.resx">
       <DependentUpon>MasterPhonologicalFeatureListDlg.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Areas\ProgressDialogWorkingOn.resx">
+    <EmbeddedResource Include="Controls\ProgressDialogWorkingOn.resx">
       <DependentUpon>ProgressDialogWorkingOn.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Areas\TextsAndWords\Interlinear\TriStateTreeView.resx">
+    <EmbeddedResource Include="Controls\TriStateTreeView.resx">
       <DependentUpon>TriStateTreeView.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
@@ -2353,11 +2347,11 @@
       <DependentUpon>VectorReferenceView.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Areas\TextsAndWords\Interlinear\AddAllomorphDlg.resx">
+    <EmbeddedResource Include="Controls\DetailControls\AddAllomorphDlg.resx">
       <DependentUpon>AddAllomorphDlg.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Areas\TextsAndWords\Interlinear\AddNewSenseDlg.resx">
+    <EmbeddedResource Include="Controls\AddNewSenseDlg.resx">
       <DependentUpon>AddNewSenseDlg.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
@@ -2626,14 +2620,14 @@
     <EmbeddedResource Include="DictionaryConfiguration\DictionaryDetailsView\SenseOptionsView.resx">
       <DependentUpon>SenseOptionsView.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Areas\ExportDialog.resx">
+    <EmbeddedResource Include="Controls\ExportDialog.resx">
       <DependentUpon>ExportDialog.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Areas\ExportSemanticDomainsDlg.resx">
+    <EmbeddedResource Include="Controls\ExportSemanticDomainsDlg.resx">
       <DependentUpon>ExportSemanticDomainsDlg.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Areas\ExportTranslatedListsDlg.resx">
+    <EmbeddedResource Include="Controls\ExportTranslatedListsDlg.resx">
       <DependentUpon>ExportTranslatedListsDlg.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
@@ -2644,7 +2638,7 @@
       <DependentUpon>ImageHolder.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Areas\LiftExportMessageDlg.resx">
+    <EmbeddedResource Include="Controls\LiftExportMessageDlg.resx">
       <DependentUpon>LiftExportMessageDlg.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
@@ -2652,11 +2646,11 @@
       <DependentUpon>RecordBrowseView.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Areas\RecordEditView.resx">
+    <EmbeddedResource Include="Controls\DetailControls\RecordEditView.resx">
       <DependentUpon>RecordEditView.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Areas\RecordView.resx">
+    <EmbeddedResource Include="Controls\DetailControls\RecordView.resx">
       <DependentUpon>RecordView.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
@@ -2667,11 +2661,11 @@
     <EmbeddedResource Include="Areas\Lexicon\DictionaryConfiguration\XmlDiagnosticsDlg.resx">
       <DependentUpon>XmlDiagnosticsDlg.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Areas\XmlDocConfigureDlg.resx">
+    <EmbeddedResource Include="Controls\XmlDocConfigureDlg.resx">
       <DependentUpon>XmlDocConfigureDlg.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Areas\XmlDocView.resx">
+    <EmbeddedResource Include="Controls\XmlDocView.resx">
       <DependentUpon>XmlDocView.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
@@ -2680,7 +2674,7 @@
       <LastGenOutput>DictionaryConfigurationStrings.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Areas\ViewBase.resx">
+    <EmbeddedResource Include="Controls\DetailControls\ViewBase.resx">
       <DependentUpon>ViewBase.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
@@ -2773,7 +2767,7 @@
     </Compile>
     <Compile Include="Areas\Lexicon\AllReversalEntriesRecordList.cs" />
     <Compile Include="Areas\Lexicon\CircularRefBreaker.cs" />
-    <Compile Include="Areas\Lexicon\Tools\BulkEditReversalEntries\BulkReversalEntryPosEditor.cs" />
+    <Compile Include="Controls\XMLViews\BulkReversalEntryPosEditor.cs" />
     <Compile Include="Controls\DetailControls\AddComplexFormChooserCommand.cs" />
     <Compile Include="Controls\DetailControls\AddPrimaryLexemeChooserCommand.cs" />
     <Compile Include="Areas\Lexicon\Tools\Edit\BasicPaneBarContainer.cs">
@@ -2825,7 +2819,7 @@
     <Compile Include="Areas\Lexicon\Reversals\CommonReversalIndexMenuHelper.cs" />
     <Compile Include="Areas\Lists\Tools\ReversalIndexPOS\ReversalIndexPOSRecordList.cs" />
     <Compile Include="Areas\MultiPaneFactory.cs" />
-    <Compile Include="Areas\MultiPaneParameters.cs" />
+    <Compile Include="Controls\MultiPaneParameters.cs" />
     <Compile Include="Controls\DetailControls\RecordReferenceVectorLauncher.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -2851,7 +2845,7 @@
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Controls\DetailControls\Slices\RuleFormulaVcBase.cs" />
-    <Compile Include="Areas\SplitterChildControlParameters.cs" />
+    <Compile Include="Controls\SplitterChildControlParameters.cs" />
     <Compile Include="Areas\TextsAndWords\ConcordanceDlg.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -2859,11 +2853,11 @@
     <Compile Include="Areas\TextsAndWords\ImportWordSetDlg.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Areas\TextsAndWords\Interlinear\ChooseAnalysisHander.cs" />
-    <Compile Include="Areas\TextsAndWords\Interlinear\ChooseTextWritingSystemDlg.cs">
+    <Compile Include="Controls\DetailControls\ChooseAnalysisHander.cs" />
+    <Compile Include="Controls\ChooseTextWritingSystemDlg.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Areas\TextsAndWords\Interlinear\ChooseTextWritingSystemDlg.Designer.cs">
+    <Compile Include="Controls\ChooseTextWritingSystemDlg.Designer.cs">
       <DependentUpon>ChooseTextWritingSystemDlg.cs</DependentUpon>
     </Compile>
     <Compile Include="Areas\TextsAndWords\Tools\ComplexConcordance\ClosedFeatureNode.cs" />
@@ -2905,52 +2899,52 @@
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Areas\TextsAndWords\Interlinear\ConcordanceRecordList.cs" />
-    <Compile Include="Areas\TextsAndWords\Interlinear\ConfigureInterlinDialog.cs">
+    <Compile Include="Controls\DetailControls\ConfigureInterlinDialog.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Areas\TextsAndWords\Interlinear\CreateAllomorphTypeMismatchDlg.cs">
+    <Compile Include="Controls\DetailControls\CreateAllomorphTypeMismatchDlg.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Areas\TextsAndWords\Interlinear\DuplicateAnalysisFixer.cs" />
     <Compile Include="Areas\TextsAndWords\Interlinear\DuplicateWordformFixer.cs" />
-    <Compile Include="Areas\TextsAndWords\Interlinear\EditMorphBreaksDlg.cs">
+    <Compile Include="Controls\EditMorphBreaksDlg.cs">
       <SubType>Form</SubType>
     </Compile>
     <Content Include="Areas\TextsAndWords\Interlinear\FlexInterlinear-generated.cs" />
     <Compile Include="Areas\TextsAndWords\Interlinear\FlexInterlinear.cs" />
-    <Compile Include="Areas\TextsAndWords\Interlinear\FilterTextsDialog.cs">
+    <Compile Include="FilterTextsDialog.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Areas\TextsAndWords\Interlinear\FocusBoxController.cs">
+    <Compile Include="Controls\DetailControls\FocusBoxController.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Areas\TextsAndWords\Interlinear\FocusBoxController.Designer.cs">
+    <Compile Include="Controls\DetailControls\FocusBoxController.Designer.cs">
       <DependentUpon>FocusBoxController.cs</DependentUpon>
     </Compile>
     <Compile Include="Areas\TextsAndWords\Interlinear\InterlinearImageHolder.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Areas\TextsAndWords\Tools\ComplexConcordance\InflFeatureTreeModel.cs" />
-    <Compile Include="Areas\TextsAndWords\Interlinear\InfoPane.cs">
+    <Compile Include="Controls\DetailControls\InfoPane.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Areas\TextsAndWords\Interlinear\InterAreaBookmark.cs" />
-    <Compile Include="Areas\TextsAndWords\Interlinear\InterlinDocForAnalysis.cs">
+    <Compile Include="Controls\DetailControls\InterAreaBookmark.cs" />
+    <Compile Include="Controls\DetailControls\InterlinDocForAnalysis.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Areas\TextsAndWords\Interlinear\InterlinDocForAnalysis.Designer.cs">
+    <Compile Include="Controls\DetailControls\InterlinDocForAnalysis.Designer.cs">
       <DependentUpon>InterlinDocForAnalysis.cs</DependentUpon>
     </Compile>
-    <Compile Include="Areas\TextsAndWords\Interlinear\InterlinDocRootSiteBase.cs">
+    <Compile Include="Controls\DetailControls\InterlinDocRootSiteBase.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Areas\TextsAndWords\Interlinear\InterlinDocRootSiteBase.Designer.cs">
+    <Compile Include="Controls\DetailControls\InterlinDocRootSiteBase.Designer.cs">
       <DependentUpon>InterlinDocRootSiteBase.cs</DependentUpon>
     </Compile>
-    <Compile Include="Areas\TextsAndWords\Interlinear\InterlinearExportDialog.cs">
+    <Compile Include="Controls\InterlinearExportDialog.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Areas\TextsAndWords\Interlinear\InterlinearExporter.cs" />
+    <Compile Include="Controls\InterlinearExporter.cs" />
     <Compile Include="Areas\TextsAndWords\Interlinear\InterlinearImportDlg.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -2963,30 +2957,30 @@
     <Compile Include="Areas\TextsAndWords\Interlinear\InterlinearSfmImportWizard.Designer.cs">
       <DependentUpon>InterlinearSfmImportWizard.cs</DependentUpon>
     </Compile>
-    <Compile Include="Areas\TextsAndWords\Interlinear\InterlinLineChoices.cs" />
-    <Compile Include="Areas\TextsAndWords\Interlinear\InterlinMaster.cs">
+    <Compile Include="Controls\DetailControls\InterlinLineChoices.cs" />
+    <Compile Include="Controls\DetailControls\InterlinMaster.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Areas\TextsAndWords\Interlinear\InterlinMaster.Designer.cs">
+    <Compile Include="Controls\DetailControls\InterlinMaster.Designer.cs">
       <DependentUpon>InterlinMaster.cs</DependentUpon>
     </Compile>
-    <Compile Include="Areas\TextsAndWords\Interlinear\InterlinMasterBase.cs">
+    <Compile Include="Controls\DetailControls\InterlinMasterBase.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Areas\TextsAndWords\Interlinear\InterlinPrintChild.cs">
+    <Compile Include="Controls\DetailControls\InterlinPrintChild.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Areas\TextsAndWords\Interlinear\InterlinPrintChild.Designer.cs">
+    <Compile Include="Controls\DetailControls\InterlinPrintChild.Designer.cs">
       <DependentUpon>InterlinPrintChild.cs</DependentUpon>
     </Compile>
-    <Compile Include="Areas\TextsAndWords\Interlinear\InterlinTaggingChild.cs">
+    <Compile Include="Controls\DetailControls\InterlinTaggingChild.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Areas\TextsAndWords\Interlinear\InterlinTaggingChild.Designer.cs">
+    <Compile Include="Controls\DetailControls\InterlinTaggingChild.Designer.cs">
       <DependentUpon>InterlinTaggingChild.cs</DependentUpon>
     </Compile>
     <Compile Include="Controls\DetailControls\InterlinVc.cs" />
-    <Compile Include="Areas\TextsAndWords\Interlinear\InterlinViewDataCache.cs" />
+    <Compile Include="InterlinViewDataCache.cs" />
     <Compile Include="Areas\TextsAndWords\Interlinear\ITextStrings.Designer.cs">
       <DependentUpon>ITextStrings.resx</DependentUpon>
       <AutoGen>True</AutoGen>
@@ -2998,7 +2992,7 @@
     </Compile>
     <Compile Include="Areas\TextsAndWords\Interlinear\ParseIsCurrentFixer.cs" />
     <Compile Include="Areas\TextsAndWords\Tools\ComplexConcordance\PossibilityComboController.cs" />
-    <Compile Include="Areas\TextsAndWords\Interlinear\RawTextPane.cs">
+    <Compile Include="Controls\DetailControls\RawTextPane.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Areas\TextsAndWords\Interlinear\InterlinearResources.Designer.cs">
@@ -3006,29 +3000,28 @@
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
     </Compile>
-    <Compile Include="Areas\TextsAndWords\Interlinear\Sandbox.cs">
+    <Compile Include="Controls\DetailControls\Sandbox.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Areas\TextsAndWords\Interlinear\IhMissingEntry.cs" />
-    <Compile Include="Areas\TextsAndWords\Interlinear\SandboxBase.cs">
+    <Compile Include="Controls\DetailControls\IhMissingEntry.cs" />
+    <Compile Include="Controls\DetailControls\SandboxBase.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Areas\TextsAndWords\Interlinear\SandboxBase.designer.cs">
+    <Compile Include="Controls\DetailControls\SandboxBase.designer.cs">
       <DependentUpon>SandboxBase.cs</DependentUpon>
     </Compile>
-    <Compile Include="Areas\TextsAndWords\Interlinear\GetRealAnalysisMethod.cs" />
-    <Compile Include="Areas\TextsAndWords\Interlinear\MorphemeBreaker.cs" />
+    <Compile Include="Controls\DetailControls\GetRealAnalysisMethod.cs" />
+    <Compile Include="Controls\DetailControls\MorphemeBreaker.cs" />
     <Compile Include="Areas\TextsAndWords\Interlinear\Sfm2FlexText.cs" />
-    <Compile Include="Areas\TextsAndWords\Interlinear\ShowSpaceDecorator.cs" />
     <Compile Include="Areas\TextsAndWords\Tools\ComplexConcordance\SymbolicValue.cs" />
     <Compile Include="Controls\XMLViews\TextsFilterItem.cs" />
-    <Compile Include="Areas\TextsAndWords\Interlinear\TextsTriStateTreeView.cs">
+    <Compile Include="Controls\TextsTriStateTreeView.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Areas\TextsAndWords\Interlinear\TitleContentsPane.cs">
+    <Compile Include="Controls\DetailControls\TitleContentsPane.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Areas\TextsAndWords\Interlinear\WordBreakGuesser.cs" />
+    <Compile Include="Controls\DetailControls\WordBreakGuesser.cs" />
     <Compile Include="Areas\TextsAndWords\Interlinear\WordsSfmImportWizard.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -3071,10 +3064,10 @@
     <Compile Include="Controls\DetailControls\Slices\InterlinearSlice.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Areas\TextsAndWords\Tools\Analyses\OneAnalysisSandbox.cs">
+    <Compile Include="Controls\DetailControls\OneAnalysisSandbox.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Areas\TextsAndWords\Tools\Analyses\OneAnalysisSandbox.Designer.cs">
+    <Compile Include="Controls\DetailControls\OneAnalysisSandbox.Designer.cs">
       <DependentUpon>OneAnalysisSandbox.cs</DependentUpon>
     </Compile>
     <Compile Include="Areas\TextsAndWords\Tools\Analyses\ParserAnalysisRemover.cs" />
@@ -3180,7 +3173,7 @@
     <Compile Include="Controls\DetailControls\Slices\MsaInflectionFeatureListDlgLauncherSlice.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Areas\Grammar\MsaInflectionFeatureListDlgLauncherView.cs">
+    <Compile Include="Controls\DetailControls\MsaInflectionFeatureListDlgLauncherView.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Controls\DetailControls\EntrySequenceReferenceLauncher.cs">
@@ -3236,7 +3229,7 @@
     <Compile Include="Areas\Grammar\Tools\CompoundRuleAdvancedEdit\CompoundRuleAdvancedEditTool.cs" />
     <Compile Include="Areas\Grammar\Tools\EnvironmentEdit\EnvironmentEditTool.cs" />
     <Compile Include="Areas\Grammar\Tools\FeaturesAdvancedEdit\FeaturesAdvancedEditTool.cs" />
-    <Compile Include="Areas\GrammarSketchHtmlViewer.cs">
+    <Compile Include="Controls\GrammarSketchHtmlViewer.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Areas\TextsAndWords\Tools\CorpusStatistics\StatisticsView.cs">
@@ -3331,7 +3324,7 @@
     <Compile Include="Impls\FlexApp.cs" />
     <Compile Include="SILErrorReportingAdapter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Areas\RecordBar.cs">
+    <Compile Include="Controls\RecordBar.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="SendReceive\LiftImportFailureServices.cs" />
@@ -3373,14 +3366,14 @@
       <LastGenOutput>NotebookResources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Areas\RecordBar.resx">
+    <EmbeddedResource Include="Controls\RecordBar.resx">
       <DependentUpon>RecordBar.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <Compile Include="Areas\MultiPane.cs">
+    <Compile Include="Controls\MultiPane.cs">
       <SubType>Component</SubType>
     </Compile>
-    <EmbeddedResource Include="Areas\MultiPane.resx">
+    <EmbeddedResource Include="Controls\MultiPane.resx">
       <DependentUpon>MultiPane.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
@@ -3392,7 +3385,7 @@
       <DependentUpon>ImportWordSetDlg.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Areas\TextsAndWords\Interlinear\ChooseTextWritingSystemDlg.resx">
+    <EmbeddedResource Include="Controls\ChooseTextWritingSystemDlg.resx">
       <DependentUpon>ChooseTextWritingSystemDlg.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
@@ -3406,10 +3399,10 @@
     <EmbeddedResource Include="Areas\TextsAndWords\Tools\ComplexConcordance\ComplexConcWordDlg.resx">
       <DependentUpon>ComplexConcWordDlg.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Areas\TextsAndWords\Interlinear\FilterTextsDialog.resx">
+    <EmbeddedResource Include="FilterTextsDialog.resx">
       <DependentUpon>FilterTextsDialog.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Areas\TextsAndWords\Interlinear\TextsTriStateTreeView.resx">
+    <EmbeddedResource Include="Controls\TextsTriStateTreeView.resx">
       <DependentUpon>TextsTriStateTreeView.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
@@ -3417,19 +3410,19 @@
       <DependentUpon>ConcordanceControl.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Areas\TextsAndWords\Interlinear\ConfigureInterlinDialog.resx">
+    <EmbeddedResource Include="Controls\DetailControls\ConfigureInterlinDialog.resx">
       <DependentUpon>ConfigureInterlinDialog.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Areas\TextsAndWords\Interlinear\CreateAllomorphTypeMismatchDlg.resx">
+    <EmbeddedResource Include="Controls\DetailControls\CreateAllomorphTypeMismatchDlg.resx">
       <DependentUpon>CreateAllomorphTypeMismatchDlg.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Areas\TextsAndWords\Interlinear\EditMorphBreaksDlg.resx">
+    <EmbeddedResource Include="Controls\EditMorphBreaksDlg.resx">
       <DependentUpon>EditMorphBreaksDlg.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Areas\TextsAndWords\Interlinear\FocusBoxController.resx">
+    <EmbeddedResource Include="Controls\DetailControls\FocusBoxController.resx">
       <DependentUpon>FocusBoxController.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
@@ -3437,15 +3430,15 @@
       <DependentUpon>InterlinearImageHolder.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Areas\TextsAndWords\Interlinear\InfoPane.resx">
+    <EmbeddedResource Include="Controls\DetailControls\InfoPane.resx">
       <DependentUpon>InfoPane.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Areas\TextsAndWords\Interlinear\InterlinDocForAnalysis.resx">
+    <EmbeddedResource Include="Controls\DetailControls\InterlinDocForAnalysis.resx">
       <DependentUpon>InterlinDocForAnalysis.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Areas\TextsAndWords\Interlinear\InterlinDocRootSiteBase.resx">
+    <EmbeddedResource Include="Controls\DetailControls\InterlinDocRootSiteBase.resx">
       <DependentUpon>InterlinDocRootSiteBase.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
@@ -3457,15 +3450,15 @@
       <DependentUpon>InterlinearSfmImportWizard.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Areas\TextsAndWords\Interlinear\InterlinMaster.resx">
+    <EmbeddedResource Include="Controls\DetailControls\InterlinMaster.resx">
       <DependentUpon>InterlinMaster.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Areas\TextsAndWords\Interlinear\InterlinPrintChild.resx">
+    <EmbeddedResource Include="Controls\DetailControls\InterlinPrintChild.resx">
       <DependentUpon>InterlinPrintChild.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Areas\TextsAndWords\Interlinear\InterlinTaggingChild.resx">
+    <EmbeddedResource Include="Controls\DetailControls\InterlinTaggingChild.resx">
       <DependentUpon>InterlinTaggingChild.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
@@ -3483,7 +3476,7 @@
       <LastGenOutput>InterlinearResources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Areas\TextsAndWords\Interlinear\Sandbox.resx">
+    <EmbeddedResource Include="Controls\DetailControls\Sandbox.resx">
       <DependentUpon>Sandbox.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
@@ -3653,56 +3646,56 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Areas\TextsAndWords\Discourse\AdvancedMTDialog.cs">
+    <Compile Include="Controls\DetailControls\AdvancedMTDialog.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Areas\TextsAndWords\Discourse\AdvancedMTDialog.Designer.cs">
+    <Compile Include="Controls\DetailControls\AdvancedMTDialog.Designer.cs">
       <DependentUpon>AdvancedMTDialog.cs</DependentUpon>
     </Compile>
-    <Compile Include="Areas\TextsAndWords\Discourse\ChartLocation.cs" />
-    <Compile Include="Areas\TextsAndWords\Discourse\ConstChartBody.cs">
+    <Compile Include="Controls\DetailControls\ChartLocation.cs" />
+    <Compile Include="Controls\DetailControls\ConstChartBody.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Areas\TextsAndWords\Discourse\ConstChartRowDecorator.cs" />
-    <Compile Include="Areas\TextsAndWords\Discourse\ConstituentChart.cs">
+    <Compile Include="Controls\DetailControls\ConstChartRowDecorator.cs" />
+    <Compile Include="Controls\DetailControls\ConstituentChart.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Areas\TextsAndWords\Discourse\ConstituentChart.Designer.cs">
+    <Compile Include="Controls\DetailControls\ConstituentChart.Designer.cs">
       <DependentUpon>ConstituentChart.cs</DependentUpon>
     </Compile>
-    <Compile Include="Areas\TextsAndWords\Discourse\ConstituentChartLogic.cs" />
-    <Compile Include="Areas\TextsAndWords\Discourse\DiscourseExporter.cs" />
-    <Compile Include="Areas\TextsAndWords\Discourse\InterlinRibbon.cs">
+    <Compile Include="Controls\DetailControls\ConstituentChartLogic.cs" />
+    <Compile Include="Controls\DetailControls\DiscourseExporter.cs" />
+    <Compile Include="Controls\DetailControls\InterlinRibbon.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Areas\TextsAndWords\Discourse\InterlinRibbonDecorator.cs" />
-    <Compile Include="Areas\TextsAndWords\Discourse\SelectClausesDialog.cs">
+    <Compile Include="Controls\DetailControls\InterlinRibbonDecorator.cs" />
+    <Compile Include="Controls\DetailControls\SelectClausesDialog.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Areas\TextsAndWords\Discourse\SelectClausesDialog.Designer.cs">
+    <Compile Include="Controls\DetailControls\SelectClausesDialog.Designer.cs">
       <DependentUpon>SelectClausesDialog.cs</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Areas\TextsAndWords\Discourse\AdvancedMTDialog.resx">
+    <EmbeddedResource Include="Controls\DetailControls\AdvancedMTDialog.resx">
       <DependentUpon>AdvancedMTDialog.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Areas\TextsAndWords\Discourse\ConstChartBody.resx">
+    <EmbeddedResource Include="Controls\DetailControls\ConstChartBody.resx">
       <DependentUpon>ConstChartBody.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Areas\TextsAndWords\Discourse\ConstituentChart.resx">
+    <EmbeddedResource Include="Controls\DetailControls\ConstituentChart.resx">
       <DependentUpon>ConstituentChart.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Areas\TextsAndWords\Discourse\SelectClausesDialog.resx">
+    <EmbeddedResource Include="Controls\DetailControls\SelectClausesDialog.resx">
       <DependentUpon>SelectClausesDialog.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Areas\GrammarSketchHtmlViewer.resx">
+    <EmbeddedResource Include="Controls\GrammarSketchHtmlViewer.resx">
       <DependentUpon>GrammarSketchHtmlViewer.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>

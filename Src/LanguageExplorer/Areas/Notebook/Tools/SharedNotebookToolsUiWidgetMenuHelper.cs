@@ -51,7 +51,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools
 			var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(1);
 
 			// <command id="CmdDeleteSelectedObject" label="Delete selected {0}" message="DeleteSelectedItem"/>
-			ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, DeleteSelectedBrowseViewObject_Clicked, string.Format(AreaResources.Delete_selected_0, StringTable.Table.GetString("RnGenericRec", StringTable.ClassNames)));
+			ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, DeleteSelectedBrowseViewObject_Clicked, string.Format(LanguageExplorerResources.Delete_selected_0, StringTable.Table.GetString("RnGenericRec", StringTable.ClassNames)));
 
 			// End: <menu id="mnuBrowseView" (partial) >
 			return contextMenuStrip;
@@ -59,7 +59,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools
 
 		private void DeleteSelectedBrowseViewObject_Clicked(object sender, EventArgs e)
 		{
-			_recordList.DeleteRecord(string.Format(AreaResources.Delete_selected_0, StringTable.Table.GetString("RnGenericRec", StringTable.ClassNames)), StatusBarPanelServices.GetStatusBarProgressPanel(_majorFlexComponentParameters.StatusBar));
+			_recordList.DeleteRecord(string.Format(LanguageExplorerResources.Delete_selected_0, StringTable.Table.GetString("RnGenericRec", StringTable.ClassNames)), StatusBarPanelServices.GetStatusBarProgressPanel(_majorFlexComponentParameters.StatusBar));
 		}
 
 		internal void SetupToolUiWidgets(ToolUiWidgetParameterObject toolUiWidgetParameterObject, HashSet<Command> commands)

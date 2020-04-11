@@ -5,6 +5,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using LanguageExplorer;
 using LanguageExplorer.Areas;
 using LanguageExplorer.Areas.TextsAndWords;
 using LanguageExplorer.Controls.XMLViews;
@@ -53,11 +54,11 @@ namespace LanguageExplorerTests.Areas.TextsAndWords
 					Assert.AreEqual(UndoResult.kuresSuccess, m_actionHandler.Undo());
 				}
 				Assert.AreEqual(0, m_actionHandler.UndoableSequenceCount);
-				var interestingTextlist = _flexComponentParameters.PropertyTable.GetValue<InterestingTextList>(AreaServices.InterestingTexts);
+				var interestingTextlist = _flexComponentParameters.PropertyTable.GetValue<InterestingTextList>(LanguageExplorerConstants.InterestingTexts);
 				if (interestingTextlist != null)
 				{
 					Cache.ServiceLocator.GetInstance<ISilDataAccessManaged>().RemoveNotification(interestingTextlist);
-					_flexComponentParameters.PropertyTable.RemoveProperty(AreaServices.InterestingTexts);
+					_flexComponentParameters.PropertyTable.RemoveProperty(LanguageExplorerConstants.InterestingTexts);
 				}
 				_flexComponentParameters.PropertyTable.RemoveProperty(FwUtils.cache);
 				TestSetupServices.DisposeTrash(_flexComponentParameters);
@@ -302,7 +303,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords
 			});
 			var rsda = new RespellingSda(Cache, Cache.ServiceLocator);
 			var dummyTextList = MockRepository.GenerateStub<InterestingTextList>(_flexComponentParameters.PropertyTable, Cache.ServiceLocator.GetInstance<ITextRepository>(),
-			Cache.ServiceLocator.GetInstance<IStTextRepository>());
+			Cache.ServiceLocator.GetInstance<IStTextRepository>(), true);
 			dummyTextList.Stub(t1 => t1.InterestingTexts).Return(new[] { stText });
 			ReflectionHelper.SetField(rsda, "m_interestingTexts", dummyTextList);
 			rsda.InitializeFlexComponent(_flexComponentParameters);

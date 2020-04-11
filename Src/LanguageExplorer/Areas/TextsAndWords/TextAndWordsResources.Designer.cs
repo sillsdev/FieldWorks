@@ -222,24 +222,6 @@ namespace LanguageExplorer.Areas.TextsAndWords {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;
-        ///&lt;root&gt;
-        ///	&lt;normal fontsize=&quot;105%&quot; color=&quot;Black&quot; underline=&quot;none&quot;/&gt;
-        ///	&lt;gloss fontsize=&quot;90%&quot; color=&quot;DarkGray&quot;/&gt;
-        ///	&lt;speech fontsize=&quot;100%&quot; color=&quot;Green&quot; undercolor=&quot;Green&quot; underline=&quot;dotted&quot; brackets=&quot;[]&quot;/&gt;
-        ///	&lt;song fontsize=&quot;100%&quot; color=&quot;DarkMagenta&quot; brackets=&quot;[]&quot; undercolor=&quot;Plum&quot;/&gt;
-        ///	&lt;dependent fontsize=&quot;100%&quot; color=&quot;blue&quot; brackets=&quot;[]&quot;/&gt;
-        ///	&lt;speechMkr color=&quot;Green&quot; brackets=&quot;[]&quot;/&gt;
-        ///	&lt;songMkr color=&quot;DarkMagenta&quot; brackets=&quot;[]&quot;/&gt;
-        ///	&lt;dependentMkr color=&quot;Blue&quot; brackets=&quot;[]&quot;/ [rest of string was truncated]&quot;;.
-        /// </summary>
-        internal static string ConstituentChartStyleInfo {
-            get {
-                return ResourceManager.GetString("ConstituentChartStyleInfo", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Delete Analysis....
         /// </summary>
         internal static string Delete_Analysis {
@@ -561,15 +543,6 @@ namespace LanguageExplorer.Areas.TextsAndWords {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to ksRedoEditAnalysis.
-        /// </summary>
-        internal static string ksRedoEditAnalysis {
-            get {
-                return ResourceManager.GetString("ksRedoEditAnalysis", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Searching Scripture for occurrences of the word.
         /// </summary>
         internal static string ksSearchingOccurrences {
@@ -597,15 +570,6 @@ namespace LanguageExplorer.Areas.TextsAndWords {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Undo Edit Analysis.
-        /// </summary>
-        internal static string ksUndoEditAnalysis {
-            get {
-                return ResourceManager.GetString("ksUndoEditAnalysis", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Update lexical entries of mono-morphemic analyses.
         /// </summary>
         internal static string ksUpdateMonoMorphemicLexicalEntries {
@@ -629,15 +593,6 @@ namespace LanguageExplorer.Areas.TextsAndWords {
         internal static string Set_criteria {
             get {
                 return ResourceManager.GetString("Set_criteria", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Show Record in Notebook.
-        /// </summary>
-        internal static string Show_Record_in_Notebook {
-            get {
-                return ResourceManager.GetString("Show_Record_in_Notebook", resourceCulture);
             }
         }
         

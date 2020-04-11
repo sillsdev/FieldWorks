@@ -146,7 +146,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 		internal static void HandleDomRightClick(GeckoWebBrowser browser, DomMouseEventArgs e, GeckoElement element, FlexComponentParameters flexComponentParameters, string configObjectName, LcmCache cache, IRecordList activeRecordList)
 		{
 			var classList = DictionaryConfigurationServices.GetClassListFromGeckoElement(element, out var topLevelGuid, out var entryElement);
-			var label = string.Format(AreaResources.ksConfigure, DictionaryConfigurationServices.GetDictionaryConfigurationType(flexComponentParameters.PropertyTable));
+			var label = string.Format(LanguageExplorerResources.ksConfigure, DictionaryConfigurationServices.GetDictionaryConfigurationType(flexComponentParameters.PropertyTable));
 			s_contextMenu?.Dispose();
 			s_contextMenu = new ContextMenuStrip();
 			var item = new DisposableToolStripMenuItem(label);

@@ -7,6 +7,8 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Xml.Linq;
+using LanguageExplorer.Controls;
+using LanguageExplorer.Controls.DetailControls;
 using LanguageExplorer.Controls.XMLViews;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.ViewsInterfaces;
@@ -82,7 +84,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			{
 				m_configObjectName = StringTable.Table.LocalizeAttributeValue(XmlUtils.GetOptionalAttributeValue(m_xnSpec, "configureObjectName", null));
 			}
-			var label = string.IsNullOrEmpty(nodePath) ? string.Format(AreaResources.ksConfigure, m_configObjectName) : string.Format(AreaResources.ksConfigureIn, nodePath.Split(':')[3], m_configObjectName);
+			var label = string.IsNullOrEmpty(nodePath) ? string.Format(LanguageExplorerResources.ksConfigure, m_configObjectName) : string.Format(LanguageExplorerResources.ksConfigureIn, nodePath.Split(':')[3], m_configObjectName);
 			m_contextMenu = new ContextMenuStrip();
 			var item = new ToolStripMenuItem(label);
 			m_contextMenu.Items.Add(item);

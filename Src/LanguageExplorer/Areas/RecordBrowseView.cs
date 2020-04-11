@@ -8,6 +8,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Windows.Forms;
 using System.Xml.Linq;
+using LanguageExplorer.Controls.DetailControls;
 using LanguageExplorer.Controls.XMLViews;
 using LanguageExplorer.Filters;
 using SIL.Code;
@@ -125,7 +126,7 @@ namespace LanguageExplorer.Areas
 				BrowseViewer.BrowseView.RootBox.DestroySelection();
 			}
 			Subscriber.Subscribe(LanguageExplorerConstants.ConsideringClosing, ConsideringClosing_Handler);
-			Subscriber.Subscribe(AreaServices.RecordListOwningObjChanged, RecordListOwningObjChanged_Message_Handler);
+			Subscriber.Subscribe(LanguageExplorerConstants.RecordListOwningObjChanged, RecordListOwningObjChanged_Message_Handler);
 			ShowRecord();
 		}
 
@@ -145,7 +146,7 @@ namespace LanguageExplorer.Areas
 
 			if (disposing)
 			{
-				Subscriber.Unsubscribe(AreaServices.RecordListOwningObjChanged, RecordListOwningObjChanged_Message_Handler);
+				Subscriber.Unsubscribe(LanguageExplorerConstants.RecordListOwningObjChanged, RecordListOwningObjChanged_Message_Handler);
 				Subscriber.Unsubscribe(LanguageExplorerConstants.ConsideringClosing, ConsideringClosing_Handler);
 				// Next 3 calls assume MyRecordList is not null. I (RBR) wonder if the assumption is good?
 				PersistSortSequence();
@@ -451,7 +452,7 @@ namespace LanguageExplorer.Areas
 					// which reversal index was being shown. If the 'titleId.StartsWith("Reversal")' in the 'if'
 					// above is removed then the Word List Concordance shows the word being concorded in the
 					// right pane title bar.
-					titleStr = string.Format(AreaResources.ksXReversalIndex, MyRecordList.OwningObject.ShortName, titleStr);
+					titleStr = string.Format(LanguageExplorerResources.ksXReversalIndex, MyRecordList.OwningObject.ShortName, titleStr);
 				}
 			}
 			else if (MyRecordList.OwningObject != null)

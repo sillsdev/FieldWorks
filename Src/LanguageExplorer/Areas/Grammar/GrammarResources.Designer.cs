@@ -79,15 +79,6 @@ namespace LanguageExplorer.Areas.Grammar {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Add inflectional affix(es) to XXX.
-        /// </summary>
-        internal static string Add_inflectional_affix_es_to_XXX {
-            get {
-                return ResourceManager.GetString("Add_inflectional_affix_es_to_XXX", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
         ///&lt;root&gt;
         ///	&lt;browseview&gt;
@@ -123,15 +114,6 @@ namespace LanguageExplorer.Areas.Grammar {
         internal static string BulkEditPhonemesToolParameters {
             get {
                 return ResourceManager.GetString("BulkEditPhonemesToolParameters", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Change Optionality of XXX Slot.
-        /// </summary>
-        internal static string Change_Optionality_of_XXX_Slot {
-            get {
-                return ResourceManager.GetString("Change_Optionality_of_XXX_Slot", resourceCulture);
             }
         }
         
@@ -307,7 +289,7 @@ namespace LanguageExplorer.Areas.Grammar {
         ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
         ///&lt;parameters id=&quot;POSList&quot; field=&quot;PartsOfSpeech&quot; altTitleId=&quot;PartOfSpeech-Plural&quot; filterBar=&quot;true&quot; editable=&quot;false&quot;&gt;
         ///&lt;!-- Please increment BrowseViewer.kBrowseViewVersion when you change these specs,
-        /// so that XmlBrowseViewVc can invalidate obsoleted columns that have been saved in each current control&apos;s ColumnList --&gt;
+        /// so that XmlBrowseViewBaseVc can invalidate obsoleted columns that have been saved in each current control&apos;s ColumnList --&gt;
         ///	&lt;columns&gt;
         ///		&lt;column label=&quot;Name&quot; width=&quot;16%&quot; layout=&quot;Name&quot; ws=&quot;$ws=best analysis&quot; field=&quot;Name&quot; /&gt;
         ///		&lt;column label=&quot;Abbreviation&quot; width=&quot;16%&quot; la [rest of string was truncated]&quot;;.
@@ -315,20 +297,6 @@ namespace LanguageExplorer.Areas.Grammar {
         internal static string GrammarCategoryBrowserParameters {
             get {
                 return ResourceManager.GetString("GrammarCategoryBrowserParameters", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
-        ///&lt;transforms&gt;
-        ///	&lt;transform progressPrompt=&quot;Processing data, step 1 of 2&quot; stylesheetName=&quot;FxtM3MorphologySketch&quot; stylesheetAssembly=&quot;ApplicationTransforms&quot; ext=&quot;xml&quot; saveResult=&quot;true&quot; saveResultPrompt=&quot;Also save as an XLingPaper file&quot; replaceDOCTYPE=&quot;lingPaper PUBLIC &amp;quot;-//XMLmind//DTD XLingPap//EN&amp;quot; &amp;quot;XLingPap.dtd&amp;quot;&quot;&gt;
-        ///		&lt;xsltParameters&gt;
-        ///			&lt;!-- the value of &quot;TransformDirectory&quot; is a special key the FxtViewer.dll knows about --&gt;
-        ///			&lt;param name=&quot;sWordW [rest of string was truncated]&quot;;.
-        /// </summary>
-        internal static string GrammarSketchTransforms {
-            get {
-                return ResourceManager.GetString("GrammarSketchTransforms", resourceCulture);
             }
         }
         
@@ -513,24 +481,6 @@ namespace LanguageExplorer.Areas.Grammar {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Insert Slot after XXX.
-        /// </summary>
-        internal static string Insert_Slot_after_XXX {
-            get {
-                return ResourceManager.GetString("Insert_Slot_after_XXX", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Insert Slot before XXX.
-        /// </summary>
-        internal static string Insert_Slot_before_XXX {
-            get {
-                return ResourceManager.GetString("Insert_Slot_before_XXX", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Insert Stem Name.
         /// </summary>
         internal static string Insert_Stem_Name {
@@ -549,24 +499,6 @@ namespace LanguageExplorer.Areas.Grammar {
         internal static string LexiconProblemsParameters {
             get {
                 return ResourceManager.GetString("LexiconProblemsParameters", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Move XXX back one Slot.
-        /// </summary>
-        internal static string Move_XXX_back_one_Slot {
-            get {
-                return ResourceManager.GetString("Move_XXX_back_one_Slot", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Move XXX forward one Slot.
-        /// </summary>
-        internal static string Move_XXX_forward_one_Slot {
-            get {
-                return ResourceManager.GetString("Move_XXX_forward_one_Slot", resourceCulture);
             }
         }
         
@@ -660,24 +592,6 @@ namespace LanguageExplorer.Areas.Grammar {
         internal static string ProdRestrictEditToolParameters {
             get {
                 return ResourceManager.GetString("ProdRestrictEditToolParameters", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Remove XXX Slot.
-        /// </summary>
-        internal static string Remove_XXX_Slot {
-            get {
-                return ResourceManager.GetString("Remove_XXX_Slot", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Remove YYY from XXX.
-        /// </summary>
-        internal static string Remove_YYY_from_XXX {
-            get {
-                return ResourceManager.GetString("Remove_YYY_from_XXX", resourceCulture);
             }
         }
     }

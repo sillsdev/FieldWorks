@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Windows.Forms;
 using LanguageExplorer;
 using LanguageExplorer.Areas.TextsAndWords.Interlinear;
+using LanguageExplorer.Controls.DetailControls;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Core.KernelInterfaces;

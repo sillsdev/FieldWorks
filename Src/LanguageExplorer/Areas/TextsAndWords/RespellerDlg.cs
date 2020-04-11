@@ -193,7 +193,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		internal bool SetDlgInfo(StatusBar statusBar)
 		{
 			_statusBar = statusBar;
-			m_concordanceRecordList = (ConcordanceRecordList)PropertyTable.GetValue<IRecordListRepository>(LanguageExplorerConstants.RecordListRepository).GetRecordList(TextAndWordsArea.ConcordanceWords);
+			m_concordanceRecordList = (ConcordanceRecordList)PropertyTable.GetValue<IRecordListRepository>(LanguageExplorerConstants.RecordListRepository).GetRecordList(LanguageExplorerConstants.ConcordanceWords);
 			// various things trigger change record and would prevent Undo
 			m_concordanceRecordList.SuppressSaveOnChangeRecord = true;
 			//We need to re-parse the interesting texts so that the rows in the dialog show all the occurrences (make sure it is up to date)

@@ -12,8 +12,6 @@ using System.Reflection;
 using System.Windows.Forms;
 using System.Xml.Linq;
 using ECInterfaces;
-using LanguageExplorer.Areas;
-using LanguageExplorer.Areas.Lexicon.Tools.BulkEditReversalEntries;
 using LanguageExplorer.Filters;
 using LanguageExplorer.Impls;
 using LanguageExplorer.LcmUi;

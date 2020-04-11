@@ -6,8 +6,6 @@ using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
 using System.Xml.Linq;
-using LanguageExplorer.Areas.Lexicon;
-using LanguageExplorer.Controls.XMLViews;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Core.Text;
@@ -58,7 +56,7 @@ namespace LanguageExplorer.Controls
 		protected override void InitializeMatchingObjects()
 		{
 			var searchEngine = SearchEngine.Get(PropertyTable, "EntryGoSearchEngine", () => new EntryGoSearchEngine(m_cache));
-			m_matchingObjectsBrowser.Initialize(m_cache, FwUtils.StyleSheetFromPropertyTable(PropertyTable), XDocument.Parse(LexiconResources.MatchingEntriesParameters).Root, searchEngine);
+			m_matchingObjectsBrowser.Initialize(m_cache, FwUtils.StyleSheetFromPropertyTable(PropertyTable), XDocument.Parse(LanguageExplorerResources.MatchingEntriesParameters).Root, searchEngine);
 			m_matchingObjectsBrowser.ColumnsChanged += m_matchingObjectsBrowser_ColumnsChanged;
 			// start building index
 			var selectedWs = (CoreWritingSystemDefinition)m_cbWritingSystems.SelectedItem;

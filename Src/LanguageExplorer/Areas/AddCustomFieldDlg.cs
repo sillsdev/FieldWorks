@@ -82,7 +82,7 @@ namespace LanguageExplorer.Areas
 				case CustomFieldLocationType.Lexicon:
 					// If you add classes here which have subclasses,  a change is also needed in BasicCustomPropertyFixer (FixFwDataDll).
 					m_locationComboBox.Items.Add(new IdAndString<int>(LexEntryTags.kClassId, AreaResources.Entry));
-					m_locationComboBox.Items.Add(new IdAndString<int>(LexSenseTags.kClassId, AreaResources.Sense));
+					m_locationComboBox.Items.Add(new IdAndString<int>(LexSenseTags.kClassId, LanguageExplorerResources.Sense));
 					m_locationComboBox.Items.Add(new IdAndString<int>(LexExampleSentenceTags.kClassId, AreaResources.ExampleSentence));
 					m_locationComboBox.Items.Add(new IdAndString<int>(MoFormTags.kClassId, AreaResources.Allomorph));
 					break;

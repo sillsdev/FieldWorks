@@ -321,7 +321,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.BulkEditEntries
 				var jumpEventHandler = _majorFlexComponentParameters.SharedEventHandlers.GetEventHandler(Command.CmdJumpToTool);
 				// Show Entry in Lexicon: AreaResources.ksShowEntryInLexicon
 				// <command id="CmdEntryJumpToDefault" label="Show Entry in Lexicon" message="JumpToTool">
-				var menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, jumpEventHandler, AreaResources.ksShowEntryInLexicon);
+				var menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, jumpEventHandler, LanguageExplorerResources.ksShowEntryInLexicon);
 				menu.Tag = new List<object> { publisher, LanguageExplorerConstants.LexiconEditMachineName, _recordList };
 				_jumpMenus.Add(menu);
 

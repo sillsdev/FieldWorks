@@ -89,9 +89,9 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.CollectWords
 			_collapsingSplitContainer.SecondCollapseZone = CollapsingSplitContainerFactory.BasicSecondCollapseZoneWidth;
 			_collapsingSplitContainer.Dock = DockStyle.Fill;
 			_collapsingSplitContainer.Orientation = Orientation.Vertical;
-			_collapsingSplitContainer.FirstLabel = AreaResources.ksRecordListLabel;
+			_collapsingSplitContainer.FirstLabel = LanguageExplorerResources.ksRecordListLabel;
 			_collapsingSplitContainer.FirstControl = recordBar;
-			_collapsingSplitContainer.SecondLabel = AreaResources.ksMainContentLabel;
+			_collapsingSplitContainer.SecondLabel = LanguageExplorerResources.ksMainContentLabel;
 			_collapsingSplitContainer.SplitterDistance = _propertyTable.GetValue<int>(LanguageExplorerConstants.RecordListWidthGlobal, SettingsGroup.GlobalSettings);
 			var showHiddenFieldsPropertyName = UiWidgetServices.CreateShowHiddenFieldsPropertyName(MachineName);
 			var recordEditViewPaneBar = new PaneBar();
@@ -241,7 +241,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.CollectWords
 				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(3);
 
 				// <item command="CmdEntryJumpToDefault" />
-				_jumpMenu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _majorFlexComponentParameters.SharedEventHandlers.GetEventHandler(Command.CmdJumpToTool), AreaResources.ksShowEntryInLexicon);
+				_jumpMenu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, _majorFlexComponentParameters.SharedEventHandlers.GetEventHandler(Command.CmdJumpToTool), LanguageExplorerResources.ksShowEntryInLexicon);
 				_jumpMenu.Tag = new List<object> { _majorFlexComponentParameters.FlexComponentParameters.Publisher, LanguageExplorerConstants.LexiconEditMachineName, _recordList };
 
 				// End: <menu id="mnuBrowseView" (partial) >

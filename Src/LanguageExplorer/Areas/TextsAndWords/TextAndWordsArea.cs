@@ -29,14 +29,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 	{
 		[ImportMany(LanguageExplorerConstants.TextAndWordsAreaMachineName)]
 		private IEnumerable<ITool> _myTools;
-		internal const string ConcordanceWords = "concordanceWords";
 		internal const string ConcOccurrences = "ConcOccurrences";
-		internal const string InterlinearTexts = "interlinearTexts";
-		internal const string InterlinearTextsRecordList = "InterlinearTextsRecordList";
-		internal const string TextSelectedWord = "TextSelectedWord";
-		internal const string ITexts_AddWordsToLexicon = "ITexts_AddWordsToLexicon";
-		internal const string ShowHiddenFields_interlinearEdit = "ShowHiddenFields_interlinearEdit";
-		internal const string InterlinearTab = "InterlinearTab";
 		private string PropertyNameForToolName => $"{LanguageExplorerConstants.ToolForAreaNamed_}{MachineName}";
 		private TextAndWordsAreaMenuHelper _textAndWordsAreaMenuHelper;
 		private bool _hasBeenActivated;
@@ -82,8 +75,8 @@ namespace LanguageExplorer.Areas.TextsAndWords
 				_propertyTable.SetDefault("UpdateLexiconIfPossible", true, true, settingsGroup: SettingsGroup.GlobalSettings);
 				_propertyTable.SetDefault("CopyAnalysesToNewSpelling", true, true, settingsGroup: SettingsGroup.GlobalSettings);
 				_propertyTable.SetDefault("MaintainCaseOnChangeSpelling", true, true, settingsGroup: SettingsGroup.GlobalSettings);
-				_propertyTable.SetDefault(ITexts_AddWordsToLexicon, false, true);
-				_propertyTable.SetDefault(ShowHiddenFields_interlinearEdit, false, true);
+				_propertyTable.SetDefault(LanguageExplorerConstants.ITexts_AddWordsToLexicon, false, true);
+				_propertyTable.SetDefault(LanguageExplorerConstants.ShowHiddenFields_interlinearEdit, false, true);
 				_propertyTable.SetDefault("ITexts_ShowAddWordsToLexiconDlg", true, true);
 				_propertyTable.SetDefault("ITexts-ScriptureIds", string.Empty, true);
 				_hasBeenActivated = true;
@@ -200,7 +193,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 
 		internal static IRecordList ConcordanceWordsFactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string recordListId, StatusBar statusBar)
 		{
-			Require.That(recordListId == ConcordanceWords, $"I don't know how to create a record list with an ID of '{recordListId}', as I can only create one with an id of '{ConcordanceWords}'.");
+			Require.That(recordListId == LanguageExplorerConstants.ConcordanceWords, $"I don't know how to create a record list with an ID of '{recordListId}', as I can only create one with an id of '{LanguageExplorerConstants.ConcordanceWords}'.");
 			/*
             <clerk id="concordanceWords">
               <dynamicloaderinfo assemblyPath="ITextDll.dll" class="SIL.FieldWorks.IText.InterlinearTextsRecordClerk" />
@@ -221,45 +214,6 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			var concDecorator = new ConcDecorator(cache.ServiceLocator);
 			concDecorator.InitializeFlexComponent(flexComponentParameters);
 			return new ConcordanceRecordList(statusBar, cache.LanguageProject, concDecorator);
-		}
-
-		internal static IRecordList InterlinearTextsFactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string recordListId, StatusBar statusBar)
-		{
-			Require.That(recordListId == InterlinearTexts, $"I don't know how to create a record list with an ID of '{recordListId}', as I can only create one with an id of '{InterlinearTexts}'.");
-			/*
-            <clerk id="interlinearTexts">
-              <dynamicloaderinfo assemblyPath="ITextDll.dll" class="SIL.FieldWorks.IText.InterlinearTextsRecordClerk" />
-              <recordList owner="LangProject" property="InterestingTexts">
-                <!-- We use a decorator here so it can override certain virtual properties and limit occurrences to interesting texts. -->
-                <decoratorClass assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.InterestingTextsDecorator" />
-              </recordList>
-              <filterMethods />
-              <sortMethods />
-            </clerk>
-			*/
-			return CreateInterlinearTextsRecordList(InterlinearTexts, statusBar, cache.ServiceLocator, flexComponentParameters.PropertyTable, cache.LangProject);
-		}
-
-		internal static IRecordList InterlinearTextsForInfoPaneFactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string recordListId, StatusBar statusBar)
-		{
-			Require.That(recordListId == InterlinearTextsRecordList, $"I don't know how to create a record list with an ID of '{recordListId}', as I can only create one with an id of '{InterlinearTextsRecordList}'.");
-			/*
-            <clerk id="InterlinearTextsRecordClerk">
-              <dynamicloaderinfo assemblyPath="ITextDll.dll" class="SIL.FieldWorks.IText.InterlinearTextsRecordClerk" />
-              <recordList owner="LangProject" property="InterestingTexts">
-                <!-- We use a decorator here so it can override certain virtual properties and limit occurrences to interesting texts. -->
-                <decoratorClass assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.InterestingTextsDecorator" />
-              </recordList>
-              <filterMethods />
-              <sortMethods />
-            </clerk>
-			*/
-			return CreateInterlinearTextsRecordList(InterlinearTextsRecordList, statusBar, cache.ServiceLocator, flexComponentParameters.PropertyTable, cache.LangProject);
-		}
-
-		private static IRecordList CreateInterlinearTextsRecordList(string listId, StatusBar statusBar, ILcmServiceLocator serviceLocator, IPropertyTable propertyTable, ILangProject langProject)
-		{
-			return new InterlinearTextsRecordList(listId, statusBar, new InterestingTextsDecorator(serviceLocator, propertyTable), false, new VectorPropertyParameterObject(langProject, AreaServices.InterestingTexts, InterestingTextsDecorator.kflidInterestingTexts));
 		}
 
 		private sealed class TextAndWordsAreaMenuHelper : IDisposable

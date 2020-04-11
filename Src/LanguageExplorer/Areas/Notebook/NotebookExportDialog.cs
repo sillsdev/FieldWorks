@@ -101,7 +101,7 @@ namespace LanguageExplorer.Areas.Notebook
 						}
 						else
 						{
-							var msg = AreaResources.ErrorExporting_ProbablyBug + Environment.NewLine + e.InnerException.Message;
+							var msg = LanguageExplorerResources.ErrorExporting_ProbablyBug + Environment.NewLine + e.InnerException.Message;
 							MessageBox.Show(this, msg);
 						}
 					}
@@ -148,7 +148,7 @@ namespace LanguageExplorer.Areas.Notebook
 			progress.Position = 0;
 			progress.Minimum = 0;
 			progress.Maximum = cXslts;
-			progress.Message = AreaResources.ProcessingIntoFinalForm;
+			progress.Message = LanguageExplorerResources.ProcessingIntoFinalForm;
 			var basePath = Path.GetDirectoryName(fxtPath);
 			for (var ix = 0; ix < cXslts; ++ix)
 			{

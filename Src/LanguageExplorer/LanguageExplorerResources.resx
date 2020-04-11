@@ -1497,4 +1497,605 @@ you expect.</value>
   <data name="ThankYouForCheckingOutFlex" xml:space="preserve">
     <value>Thank you for checking out this version of FieldWorks Language Explorer.</value>
   </data>
+  <data name="Add_inflectional_affix_es_to_XXX" xml:space="preserve">
+    <value>Add inflectional affix(es) to XXX</value>
+  </data>
+  <data name="Analysis" xml:space="preserve">
+    <value>Analysis</value>
+  </data>
+  <data name="ApproveAnalysis" xml:space="preserve">
+    <value>Approve Analysis</value>
+  </data>
+  <data name="Change_Optionality_of_XXX_Slot" xml:space="preserve">
+    <value>Change Optionality of XXX Slot</value>
+  </data>
+  <data name="Classified_Dictionary" xml:space="preserve">
+    <value>Classified Dictionary...</value>
+  </data>
+  <data name="ConstituentChartStyleInfo" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\ConstituentChartStyleInfo1.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="CtrlClick" xml:space="preserve">
+    <value>(Ctrl-Click)</value>
+    <comment>String (typcially with leading space) that gets appended to one item in certain right-click menus to indicate the one that will be activated by ctrl-click.</comment>
+  </data>
+  <data name="Delete_selected_0" xml:space="preserve">
+    <value>Delete selected {0}</value>
+  </data>
+  <data name="ErrorExporting_ProbablyBug" xml:space="preserve">
+    <value>An error occurred while exporting your data. This could be the result of an error in an FXT file, an output file that is locked, or a bug in the FieldWorks code.</value>
+  </data>
+  <data name="ExportTo0" xml:space="preserve">
+    <value>Export to {0}</value>
+  </data>
+  <data name="GrammarSketchTransforms" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\GrammarSketchTransforms1.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="InsertNote" xml:space="preserve">
+    <value>insert Note</value>
+  </data>
+  <data name="Insert_Slot_after_XXX" xml:space="preserve">
+    <value>Insert Slot after XXX</value>
+  </data>
+  <data name="Insert_Slot_before_XXX" xml:space="preserve">
+    <value>Insert Slot before XXX</value>
+  </data>
+  <data name="kOkbtnEmptySelection" xml:space="preserve">
+    <value>OK will create an empty text</value>
+  </data>
+  <data name="kOkbtnGenreSelection" xml:space="preserve">
+    <value>OK will create an empty text assigned to these genres</value>
+  </data>
+  <data name="kOkbtnNoTextSelection" xml:space="preserve">
+    <value>No texts are selected</value>
+  </data>
+  <data name="ksAddLine" xml:space="preserve">
+    <value>Add Line</value>
+    <comment>Used in Interlinear context menu</comment>
+  </data>
+  <data name="ksAddNewSenseForX_" xml:space="preserve">
+    <value>Add New Sense for {0} ...</value>
+  </data>
+  <data name="ksAddNewSense_" xml:space="preserve">
+    <value>    Add New Sense...</value>
+    <comment>note indentation by leading spaces</comment>
+  </data>
+  <data name="ksAddWS" xml:space="preserve">
+    <value>Add Writing System</value>
+    <comment>Used in Interlinear context menu</comment>
+  </data>
+  <data name="ksAllEntries" xml:space="preserve">
+    <value>All</value>
+    <comment>Used in Dictionary View pane when no Dictionary Publication is selected.</comment>
+  </data>
+  <data name="ksAllomorphOf_" xml:space="preserve">
+    <value>Allomorph of...</value>
+  </data>
+  <data name="ksAreYouSureAddZtoX" xml:space="preserve">
+    <value>Are you sure you want to add the {0} allomorph ({1}) to this entry?</value>
+  </data>
+  <data name="ksBaselineAbbr" xml:space="preserve">
+    <value>base</value>
+  </data>
+  <data name="ksBaseLineNotEditable" xml:space="preserve">
+    <value>This tab shows the contents of the current text (editable only in the Texts Edit tool).</value>
+  </data>
+  <data name="ksBefore" xml:space="preserve">
+    <value>Before:</value>
+  </data>
+  <data name="ksBstAn" xml:space="preserve">
+    <value>bst. an</value>
+    <comment>short for Best Analysis (writing system)</comment>
+  </data>
+  <data name="ksBstVn" xml:space="preserve">
+    <value>bst. vn</value>
+    <comment>short for Best Vernacular (writing system)</comment>
+  </data>
+  <data name="ksCanBeConfiguredInMoreDetail" xml:space="preserve">
+    <value>{0} can be configured in more detail.</value>
+  </data>
+  <data name="ksCannotAddAllomorph" xml:space="preserve">
+    <value>Cannot add allomorph</value>
+  </data>
+  <data name="ksCannotAddVariant" xml:space="preserve">
+    <value>Cannot add Variant</value>
+  </data>
+  <data name="ksCannotCreateNewEntry" xml:space="preserve">
+    <value>Cannot create new entry</value>
+  </data>
+  <data name="ksCannotDeleteScripture" xml:space="preserve">
+    <value>In this tool, we do not allow deleting parts of Scripture sections. Please use Translation Editor to edit Scripture.</value>
+  </data>
+  <data name="ksCannotDeleteWordform" xml:space="preserve">
+    <value>This wordform cannot be deleted.</value>
+  </data>
+  <data name="ksCannotRedoChangesHere" xml:space="preserve">
+    <value>Can't Redo Changes in this Analysis</value>
+  </data>
+  <data name="ksCharacterStyleForBefore" xml:space="preserve">
+    <value>Character Style for Before string:</value>
+  </data>
+  <data name="ksChooseLIFTExportFolder" xml:space="preserve">
+    <value>Choose or create a folder (with your project name) for FLEx to put all the files into for this LIFT export.  Any LIFT data in an existing folder will be overwritten.</value>
+  </data>
+  <data name="ksChooseLIFTFolderTitle" xml:space="preserve">
+    <value>Choose where to save the files that constitute a LIFT export</value>
+  </data>
+  <data name="ksConfigure" xml:space="preserve">
+    <value>Configure {0} View...</value>
+    <comment>Parameter is either Dictionary or Reversal Index</comment>
+  </data>
+  <data name="ksConfigureIn" xml:space="preserve">
+    <value>Configure {0} in {1} View...</value>
+    <comment>{0} is a node in the dictionary configure dialog, {1} is the kind of document we are configuring (Dictionary, Reversal Index, Classified Dictionary, etc.).</comment>
+  </data>
+  <data name="ksConfigureLinkText" xml:space="preserve">
+    <value>Configure Interlinear...</value>
+    <comment>Used in Interlinear context menu</comment>
+  </data>
+  <data name="ksCreateNewEntry_" xml:space="preserve">
+    <value>Create New Entry...</value>
+  </data>
+  <data name="ksCtrlClickJumpTooltip" xml:space="preserve">
+    <value>Ctrl+Click to jump</value>
+    <comment>Message shows in Dictionary view when mouse is over a link to another entry.</comment>
+  </data>
+  <data name="ksDeleteNote" xml:space="preserve">
+    <value>Delete Note</value>
+  </data>
+  <data name="ksDictionaryView" xml:space="preserve">
+    <value>Choose dictionary view to configure:</value>
+  </data>
+  <data name="ksEditMorphBreaks_" xml:space="preserve">
+    <value>Edit Morph Breaks...</value>
+  </data>
+  <data name="ksEmpty" xml:space="preserve">
+    <value>&lt;Empty&gt;</value>
+  </data>
+  <data name="ksEmptyPara" xml:space="preserve">
+    <value>An empty paragraph</value>
+  </data>
+  <data name="ksEndTagSymbol" xml:space="preserve">
+    <value>]</value>
+  </data>
+  <data name="ksEnterOrPasteHere" xml:space="preserve">
+    <value>Enter or paste your text here, then click "Show Interlinear."</value>
+  </data>
+  <data name="ksEntryNotPublished" xml:space="preserve">
+    <value>Entry not published</value>
+    <comment>Used in Dictionary view warning dialogs.</comment>
+  </data>
+  <data name="ksEntryNotPublishedReason" xml:space="preserve">
+    <value>because it is currently set not to be published at all in this publication</value>
+    <comment>Used in Dictionary view warning dialogs.</comment>
+  </data>
+  <data name="ksError1" xml:space="preserve">
+    <value>Error</value>
+  </data>
+  <data name="ksExporting_" xml:space="preserve">
+    <value>Exporting...</value>
+  </data>
+  <data name="ksExportInterlinear" xml:space="preserve">
+    <value>Export Interlinear</value>
+  </data>
+  <data name="ksFldWordform" xml:space="preserve">
+    <value>Wordform</value>
+    <comment>name for SFM import field; name matches enumeration member name</comment>
+  </data>
+  <data name="ksFreeTranslation" xml:space="preserve">
+    <value>Free Translation</value>
+  </data>
+  <data name="ksGloss" xml:space="preserve">
+    <value>Lex. Gloss</value>
+    <comment>note indentation formed by leading spaces</comment>
+  </data>
+  <data name="ksHideLine" xml:space="preserve">
+    <value>Hide {0}</value>
+    <comment>Used in Interlinear context menu</comment>
+  </data>
+  <data name="ksHierarchyLabel" xml:space="preserve">
+    <value>{0}: {1}</value>
+  </data>
+  <data name="ksHierarchyLabel2" xml:space="preserve">
+    <value>{0}:
+  {1}</value>
+  </data>
+  <data name="ksIllegalXmlChars" xml:space="preserve">
+    <value>Characters with hexadecimal values 0x0 through 0x1f are illegal in XML documents and have been removed.</value>
+  </data>
+  <data name="ksLexEntries" xml:space="preserve">
+    <value>Lex. Entries</value>
+    <comment>short for Lexical Entries</comment>
+  </data>
+  <data name="ksLexGloss" xml:space="preserve">
+    <value>Lex. Gloss</value>
+  </data>
+  <data name="ksLexWordCat" xml:space="preserve">
+    <value>Lex./Word Cat.</value>
+  </data>
+  <data name="ksLexWordGloss" xml:space="preserve">
+    <value>Lex./Word Gloss</value>
+    <comment>this label is used when in "Add Word to Lexicon" mode</comment>
+  </data>
+  <data name="ksLIFTAlreadyExists" xml:space="preserve">
+    <value>There is already a project in that folder.  Click “OK” to overwrite the lexicon in that project, or “Cancel” to abort.</value>
+  </data>
+  <data name="ksLiftExportBugReport" xml:space="preserve">
+    <value>Language Explorer's LIFT export has a bug that will prevent interchange with WeSay.  Please report this to the developers, sending both the exported LIFT file and (if possible) a backup of the current project.</value>
+  </data>
+  <data name="ksLIFTFolderNotEmpty" xml:space="preserve">
+    <value>The selected folder is not empty, but does not contain a lexicon.  Do you want to continue?</value>
+  </data>
+  <data name="ksLiteralTranslation" xml:space="preserve">
+    <value>Literal Translation</value>
+  </data>
+  <data name="ksMainNotShown" xml:space="preserve">
+    <value>Main entry not shown</value>
+    <comment>Used in Dictionary view warning dialogs.</comment>
+  </data>
+  <data name="ksMainNotShownReason" xml:space="preserve">
+    <value>because it is currently set not to be shown with a main entry in this publication</value>
+    <comment>Used in Dictionary view warning dialogs.</comment>
+  </data>
+  <data name="ksMinorNotShown" xml:space="preserve">
+    <value>Minor entry not shown</value>
+    <comment>Used in Dictionary view warning dialogs.</comment>
+  </data>
+  <data name="ksMinorNotShownReason" xml:space="preserve">
+    <value>because it is currently set not to be shown with a minor entry</value>
+    <comment>Used in Dictionary view warning dialogs.</comment>
+  </data>
+  <data name="ksMorphemes" xml:space="preserve">
+    <value>Morphemes</value>
+  </data>
+  <data name="ksMoveDown" xml:space="preserve">
+    <value>Move Down</value>
+    <comment>Used in Interlinear context menu</comment>
+  </data>
+  <data name="ksMoveUp" xml:space="preserve">
+    <value>Move Up</value>
+    <comment>Used in Interlinear context menu</comment>
+  </data>
+  <data name="ksNeedOneField" xml:space="preserve">
+    <value>You must have at least one field showing</value>
+  </data>
+  <data name="ksNeedWordLine" xml:space="preserve">
+    <value>You cannot hide the Word line in this view</value>
+  </data>
+  <data name="ksNewAnalysis" xml:space="preserve">
+    <value>New analysis</value>
+  </data>
+  <data name="ksNewWordGloss" xml:space="preserve">
+    <value>   New word gloss</value>
+    <comment>note indentation formed by leading spaces</comment>
+  </data>
+  <data name="ksNewWordGloss2" xml:space="preserve">
+    <value>New word gloss</value>
+    <comment>no leading spaces for indentation</comment>
+  </data>
+  <data name="ksNoForm" xml:space="preserve">
+    <value>there is no form!</value>
+  </data>
+  <data name="ksNoMorphemes" xml:space="preserve">
+    <value>no morphemes</value>
+  </data>
+  <data name="ksNone" xml:space="preserve">
+    <value>None</value>
+    <comment>Used in Description on the General tab of the Style dialog box</comment>
+  </data>
+  <data name="ksNote" xml:space="preserve">
+    <value>Note</value>
+  </data>
+  <data name="ksParagraphStyle" xml:space="preserve">
+    <value>Paragraph Style</value>
+  </data>
+  <data name="ksParagraphStyleForBefore" xml:space="preserve">
+    <value>Paragraph Style for Before header:</value>
+  </data>
+  <data name="ksProblem" xml:space="preserve">
+    <value>Problem</value>
+  </data>
+  <data name="ksPublicationEntries" xml:space="preserve">
+    <value>{0} {1}</value>
+    <comment>Used in Dictionary View pane, {0} is publication name, {1} is Entries (localized).</comment>
+  </data>
+  <data name="ksRedoAddAffixes" xml:space="preserve">
+    <value>Redo Adding Affixes</value>
+  </data>
+  <data name="ksRedoAddAllomorph" xml:space="preserve">
+    <value>Redo add allomorph</value>
+  </data>
+  <data name="ksRedoAddAllomorphToSimilarEntry" xml:space="preserve">
+    <value>redo add allomorph to similar entry</value>
+  </data>
+  <data name="ksRedoAddSense" xml:space="preserve">
+    <value>Redo Add Sense</value>
+  </data>
+  <data name="ksRedoAddSlot" xml:space="preserve">
+    <value>Redo Adding Slot</value>
+  </data>
+  <data name="ksRedoAddTextTag" xml:space="preserve">
+    <value>Redo add Text Tag</value>
+  </data>
+  <data name="ksRedoChangeOptionalityOfSlot" xml:space="preserve">
+    <value>Redo Change Optionality of {0} Slot</value>
+  </data>
+  <data name="ksRedoChangeSlotName" xml:space="preserve">
+    <value>Redo Removing Affix</value>
+  </data>
+  <data name="ksRedoCommand" xml:space="preserve">
+    <value>Redo {0}</value>
+  </data>
+  <data name="ksRedoDeleteTextTag" xml:space="preserve">
+    <value>Redo remove Text Tag</value>
+  </data>
+  <data name="ksRedoEditAnalysis" xml:space="preserve">
+    <value>ksRedoEditAnalysis</value>
+  </data>
+  <data name="ksRedoGuessWordBreaks" xml:space="preserve">
+    <value>Redo Guess Word Breaks</value>
+  </data>
+  <data name="ksRedoInsertInvisibleSpace" xml:space="preserve">
+    <value>Redo Insert Invisible Space</value>
+  </data>
+  <data name="ksRedoRemovingAffix" xml:space="preserve">
+    <value>Redo Removing Affix</value>
+  </data>
+  <data name="ksRedoRemovingSlot" xml:space="preserve">
+    <value>Redo Removing the {0} Slot</value>
+  </data>
+  <data name="ksRedoSetTransFromWordGlosses" xml:space="preserve">
+    <value>Redo insert Translation</value>
+    <comment>(from concatenating word glosses)</comment>
+  </data>
+  <data name="ksReferencedComplexForm" xml:space="preserve">
+    <value>Referenced Complex Form</value>
+  </data>
+  <data name="ksRootSenseOnSubentriesGoneDlgLabel" xml:space="preserve">
+    <value>Sense Subentries will be hidden</value>
+  </data>
+  <data name="ksRootSenseOnSubentriesGoneDlgText" xml:space="preserve">
+    <value>Language Explorer does not yet have the capability to display subentries of senses when the senses are not themselves shown in separate paragraphs.</value>
+  </data>
+  <data name="ksSelectedEntryNotInDict" xml:space="preserve">
+    <value>The entry you have selected is not shown in Dictionary view, {0}.</value>
+  </data>
+  <data name="ksSelectedLexEntryXisaY" xml:space="preserve">
+    <value>The selected lexical entry ({0}) is a {1}.</value>
+  </data>
+  <data name="ksSelectSectionsExported" xml:space="preserve">
+    <value>Select the texts to be exported into a single document.</value>
+  </data>
+  <data name="ksShowEntryInLexicon" xml:space="preserve">
+    <value>Show Entry in Lexicon</value>
+    <comment>popup menu item in Collect Words view</comment>
+  </data>
+  <data name="ksSomeTexts" xml:space="preserve">
+    <value>{0} of {1} Texts</value>
+    <comment>Used for status bar message when some non-Scripture texts are excluded.</comment>
+  </data>
+  <data name="ksStars1" xml:space="preserve">
+    <value>***</value>
+    <comment>signals missing value</comment>
+  </data>
+  <data name="ksStartTagSymbol" xml:space="preserve">
+    <value>[</value>
+  </data>
+  <data name="kstidBibleNode" xml:space="preserve">
+    <value>Bible</value>
+    <comment>text for Entire Bible node in Scripture tree controls</comment>
+  </data>
+  <data name="kstidNtNode" xml:space="preserve">
+    <value>New Testament</value>
+    <comment>text for NT node in Scripture tree controls</comment>
+  </data>
+  <data name="kstidOtNode" xml:space="preserve">
+    <value>Old Testament</value>
+    <comment>text for OT node in Scripture tree controls</comment>
+  </data>
+  <data name="kstidUnspecified" xml:space="preserve">
+    <value>(unspecified)</value>
+    <comment>Used in Font combo box</comment>
+  </data>
+  <data name="ksTitle" xml:space="preserve">
+    <value>Title</value>
+  </data>
+  <data name="ksTurningOffFilter" xml:space="preserve">
+    <value>The filter is being turned off so that you can see the new text.</value>
+  </data>
+  <data name="ksUndoAddAffixes" xml:space="preserve">
+    <value>Undo Adding Affixes</value>
+  </data>
+  <data name="ksUndoAddAllomorph" xml:space="preserve">
+    <value>Undo add allomorph</value>
+  </data>
+  <data name="ksUndoAddAllomorphToSimilarEntry" xml:space="preserve">
+    <value>undo add allomorph to similar entry</value>
+  </data>
+  <data name="ksUndoAddSense" xml:space="preserve">
+    <value>Undo Add Sense</value>
+  </data>
+  <data name="ksUndoAddSlot" xml:space="preserve">
+    <value>Undo Adding Slot</value>
+  </data>
+  <data name="ksUndoAddTextTag" xml:space="preserve">
+    <value>Undo add Text Tag</value>
+  </data>
+  <data name="ksUndoAllChangesHere" xml:space="preserve">
+    <value>Undo all changes in this Analysis</value>
+  </data>
+  <data name="ksUndoChangeOptionalityOfSlot" xml:space="preserve">
+    <value>Undo Change Optionality of {0} Slot</value>
+  </data>
+  <data name="ksUndoChangeSlotName" xml:space="preserve">
+    <value>Undo changing slot name</value>
+  </data>
+  <data name="ksUndoCommand" xml:space="preserve">
+    <value>Undo {0}</value>
+  </data>
+  <data name="ksUndoDeleteTextTag" xml:space="preserve">
+    <value>Undo remove Text Tag</value>
+  </data>
+  <data name="ksUndoEditAnalysis" xml:space="preserve">
+    <value>Undo Edit Analysis</value>
+  </data>
+  <data name="ksUndoGuessWordBreaks" xml:space="preserve">
+    <value>Undo Guess Word Breaks</value>
+  </data>
+  <data name="ksUndoInsertInvisibleSpace" xml:space="preserve">
+    <value>Undo Insert Invisible Space</value>
+  </data>
+  <data name="ksUndoRemovingAffix" xml:space="preserve">
+    <value>Undo Removing Affix</value>
+  </data>
+  <data name="ksUndoRemovingSlot" xml:space="preserve">
+    <value>Undo Removing the {0} Slot</value>
+  </data>
+  <data name="ksUndoSetTransFromWordGlosses" xml:space="preserve">
+    <value>Undo insert Translation</value>
+    <comment>(from concatenating word glosses)</comment>
+  </data>
+  <data name="ksUnknown" xml:space="preserve">
+    <value>Unknown</value>
+  </data>
+  <data name="ksUnspecified" xml:space="preserve">
+    <value>(unspecified)</value>
+  </data>
+  <data name="ksUseDefaultAnalysis" xml:space="preserve">
+    <value>Use default analysis</value>
+  </data>
+  <data name="ksValidatingOutputFile" xml:space="preserve">
+    <value>Validating output file {0}</value>
+  </data>
+  <data name="ksVariantOf_" xml:space="preserve">
+    <value>Variant of...</value>
+  </data>
+  <data name="ksWarning1" xml:space="preserve">
+    <value>Warning</value>
+  </data>
+  <data name="ksWord" xml:space="preserve">
+    <value>Word</value>
+  </data>
+  <data name="ksWordCat" xml:space="preserve">
+    <value>Word Cat.</value>
+    <comment>short for Word Category</comment>
+  </data>
+  <data name="ksWordGloss" xml:space="preserve">
+    <value>Word Gloss</value>
+  </data>
+  <data name="ksWritingSystems" xml:space="preserve">
+    <value>Writing systems:</value>
+  </data>
+  <data name="ksXReversalIndex" xml:space="preserve">
+    <value>{0} {1}</value>
+    <comment>Used in Reversal Index. {0} is writing system name, {1} is Reversal Index.</comment>
+  </data>
+  <data name="LexiconClassifiedDictionaryParameters" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\LexiconClassifiedDictionaryParameters1.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="Lex_Gram_Info" xml:space="preserve">
+    <value>Lex. Gram. Info.</value>
+    <comment>short for Grammatical Information; note indentation formed by leading spaces</comment>
+  </data>
+  <data name="MatchingEntriesParameters" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\MatchingEntriesParameters1.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+    <comment>Do Not Localize</comment>
+  </data>
+  <data name="Morph" xml:space="preserve">
+    <value>Morph</value>
+  </data>
+  <data name="Move_XXX_back_one_Slot" xml:space="preserve">
+    <value>Move XXX back one Slot</value>
+  </data>
+  <data name="Move_XXX_forward_one_Slot" xml:space="preserve">
+    <value>Move XXX forward one Slot</value>
+  </data>
+  <data name="NoDescriptionForItem" xml:space="preserve">
+    <value>There is no description available for this item.</value>
+  </data>
+  <data name="NotebookDocumentParameters" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\NotebookDocumentParameters1.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="ProcessingIntoFinalForm" xml:space="preserve">
+    <value>Processing exported data into final form</value>
+  </data>
+  <data name="RedoInsertText" xml:space="preserve">
+    <value>Redo insert text</value>
+  </data>
+  <data name="Remove_XXX_Slot" xml:space="preserve">
+    <value>Remove XXX Slot</value>
+  </data>
+  <data name="Remove_YYY_from_XXX" xml:space="preserve">
+    <value>Remove YYY from XXX</value>
+  </data>
+  <data name="Sense" xml:space="preserve">
+    <value>Sense</value>
+  </data>
+  <data name="Show_Concordance_of" xml:space="preserve">
+    <value>Show Concordance of</value>
+  </data>
+  <data name="Show_in_Category_Edit" xml:space="preserve">
+    <value>Show in Category Edit</value>
+  </data>
+  <data name="Show_in_Compound_Rules_Editor" xml:space="preserve">
+    <value>Show in Compound Rules Editor</value>
+  </data>
+  <data name="Show_in_Environments_Editor" xml:space="preserve">
+    <value>Show in Environments Editor</value>
+  </data>
+  <data name="Show_in_Natural_Classes_Editor" xml:space="preserve">
+    <value>Show in Natural Classes Editor</value>
+  </data>
+  <data name="Show_in_Phonemes_Editor" xml:space="preserve">
+    <value>Show in Phonemes Editor</value>
+  </data>
+  <data name="Show_in_Word_Analyses" xml:space="preserve">
+    <value>Show in Word Analyses</value>
+  </data>
+  <data name="Show_Record_in_Notebook" xml:space="preserve">
+    <value>Show Record in Notebook</value>
+  </data>
+  <data name="Show_Wordform_in_Concordance" xml:space="preserve">
+    <value>Show Wordform in Concordance</value>
+  </data>
+  <data name="Show_Word_Category_in_Category_Edit" xml:space="preserve">
+    <value>Show Word Category in Category Edit</value>
+  </data>
+  <data name="Show_Word_Category_in_Concordance" xml:space="preserve">
+    <value>Show Word Category in Concordance</value>
+  </data>
+  <data name="String1" xml:space="preserve">
+    <value />
+  </data>
+  <data name="UndoInsertText" xml:space="preserve">
+    <value>Undo insert text</value>
+  </data>
+  <data name="VisibilityFilter_All" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\VisibilityFilter_All1.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="Word_Gloss" xml:space="preserve">
+    <value>Word Gloss</value>
+  </data>
+  <data name="ksEmptyFreeTransPrompt" xml:space="preserve">
+    <value>Press Enter to copy in Word Glosses, or start typing.</value>
+    <comment>Prompt displayed in empty free translations.</comment>
+  </data>
+  <data name="ksFree_" xml:space="preserve">
+    <value>Free </value>
+    <comment>short for Free Translation; there is a trailing space</comment>
+  </data>
+  <data name="ksLit_" xml:space="preserve">
+    <value>Lit. </value>
+    <comment>short for Literal Translation; there is a trailing space</comment>
+  </data>
+  <data name="ksMainContentLabel" xml:space="preserve">
+    <value>Main Content</value>
+  </data>
+  <data name="ksNote_" xml:space="preserve">
+    <value>Note </value>
+    <comment>there is a trailing space</comment>
+  </data>
+  <data name="ksRecordListLabel" xml:space="preserve">
+    <value>Record List</value>
+  </data>
 </root>

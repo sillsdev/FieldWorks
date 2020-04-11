@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<parameters area="notebook" altTitleId="RnGenericRec-Plural" persistContext="notebook" backColor="White" layout="publishRecord" layoutProperty="NotebookPublicationLayout" editable="false" configureObjectName="Document" findHelpId="khtpFindNotebook" >
+	<configureLayouts>
+		<layoutType label="Notebook Records" layout="publishRecord">
+			<configure class="RnGenericRec" label="Record" layout="publishRecord" />
+		</layoutType>
+	</configureLayouts>
+</parameters>

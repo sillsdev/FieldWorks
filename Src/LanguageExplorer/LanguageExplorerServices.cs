@@ -5,7 +5,9 @@
 using System;
 using System.Windows.Forms;
 using LanguageExplorer.Controls;
+using LanguageExplorer.DictionaryConfiguration;
 using LanguageExplorer.LcmUi;
+using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FwCoreDlgs;
@@ -15,6 +17,46 @@ namespace LanguageExplorer
 {
 	internal static class LanguageExplorerServices
 	{
+		/// <summary>
+		/// Make a standard Win32 color from three components.
+		/// </summary>
+		internal static uint RGB(int r, int g, int b)
+		{
+			return (uint)((byte)r | ((byte)g << 8) | ((byte)b << 16));
+		}
+
+		/// <summary>
+		/// Tell the user why we aren't jumping to his record
+		/// </summary>
+		internal static void GiveSimpleWarning(Form form, string helpFile, ExclusionReasonCode xrc)
+		{
+			string caption;
+			string reason;
+			string shlpTopic;
+			switch (xrc)
+			{
+				case ExclusionReasonCode.NotInPublication:
+					caption = LanguageExplorerResources.ksEntryNotPublished;
+					reason = LanguageExplorerResources.ksEntryNotPublishedReason;
+					shlpTopic = "User_Interface/Menus/Edit/Find_a_lexical_entry.htm";
+					break;
+				case ExclusionReasonCode.ExcludedHeadword:
+					caption = LanguageExplorerResources.ksMainNotShown;
+					reason = LanguageExplorerResources.ksMainNotShownReason;
+					shlpTopic = "khtpMainEntryNotShown";
+					break;
+				case ExclusionReasonCode.ExcludedMinorEntry:
+					caption = LanguageExplorerResources.ksMinorNotShown;
+					reason = LanguageExplorerResources.ksMinorNotShownReason;
+					shlpTopic = "khtpMinorEntryNotShown";
+					break;
+				default:
+					throw new ArgumentException("Unknown ExclusionReasonCode");
+			}
+			// TODO-Linux: Help is not implemented on Mono
+			MessageBox.Show(form, string.Format(LanguageExplorerResources.ksSelectedEntryNotInDict, reason), caption, MessageBoxButtons.OK, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1, 0, helpFile, HelpNavigator.Topic, shlpTopic);
+		}
+
 		internal static void LexiconLookup(LcmCache cache, FlexComponentParameters flexComponentParameters, RootSite rootSite)
 		{
 			rootSite.RootBox.Selection.GetWordLimitsOfSelection(out var ichMin, out var ichLim, out var hvo, out var tag, out var ws, out _);
@@ -91,6 +133,45 @@ namespace LanguageExplorer
 				}
 			}
 			return true;
+		}
+
+		internal static IRecordList InterlinearTextsFactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string recordListId, StatusBar statusBar)
+		{
+			Require.That(recordListId == LanguageExplorerConstants.InterlinearTexts, $"I don't know how to create a record list with an ID of '{recordListId}', as I can only create one with an id of '{LanguageExplorerConstants.InterlinearTexts}'.");
+			/*
+            <clerk id="interlinearTexts">
+              <dynamicloaderinfo assemblyPath="ITextDll.dll" class="SIL.FieldWorks.IText.InterlinearTextsRecordClerk" />
+              <recordList owner="LangProject" property="InterestingTexts">
+                <!-- We use a decorator here so it can override certain virtual properties and limit occurrences to interesting texts. -->
+                <decoratorClass assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.InterestingTextsDecorator" />
+              </recordList>
+              <filterMethods />
+              <sortMethods />
+            </clerk>
+			*/
+			return CreateInterlinearTextsRecordList(LanguageExplorerConstants.InterlinearTexts, statusBar, cache.ServiceLocator, flexComponentParameters.PropertyTable, cache.LangProject);
+		}
+
+		internal static IRecordList InterlinearTextsForInfoPaneFactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string recordListId, StatusBar statusBar)
+		{
+			Require.That(recordListId == LanguageExplorerConstants.InterlinearTextsRecordList, $"I don't know how to create a record list with an ID of '{recordListId}', as I can only create one with an id of '{LanguageExplorerConstants.InterlinearTextsRecordList}'.");
+			/*
+            <clerk id="InterlinearTextsRecordClerk">
+              <dynamicloaderinfo assemblyPath="ITextDll.dll" class="SIL.FieldWorks.IText.InterlinearTextsRecordClerk" />
+              <recordList owner="LangProject" property="InterestingTexts">
+                <!-- We use a decorator here so it can override certain virtual properties and limit occurrences to interesting texts. -->
+                <decoratorClass assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.InterestingTextsDecorator" />
+              </recordList>
+              <filterMethods />
+              <sortMethods />
+            </clerk>
+			*/
+			return CreateInterlinearTextsRecordList(LanguageExplorerConstants.InterlinearTextsRecordList, statusBar, cache.ServiceLocator, flexComponentParameters.PropertyTable, cache.LangProject);
+		}
+
+		private static IRecordList CreateInterlinearTextsRecordList(string listId, StatusBar statusBar, ILcmServiceLocator serviceLocator, IPropertyTable propertyTable, ILangProject langProject)
+		{
+			return new InterlinearTextsRecordList(listId, statusBar, new InterestingTextsDecorator(serviceLocator, propertyTable), false, new VectorPropertyParameterObject(langProject, LanguageExplorerConstants.InterestingTexts, InterestingTextsDecorator.kflidInterestingTexts));
 		}
 	}
 }

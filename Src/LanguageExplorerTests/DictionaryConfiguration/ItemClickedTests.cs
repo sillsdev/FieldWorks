@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using LanguageExplorer;
 using LanguageExplorer.Areas;
+using LanguageExplorer.Controls;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.ViewsInterfaces;

@@ -5,7 +5,6 @@
 using System.Collections.Generic;
 using System.Windows.Forms;
 using System.Xml.Linq;
-using LanguageExplorer.Areas;
 using LanguageExplorer.Controls.DetailControls;
 using LanguageExplorer.Controls.PaneBar;
 using SIL.FieldWorks.Common.FwUtils;
@@ -66,9 +65,9 @@ namespace LanguageExplorer.Controls
 			newCollapsingSplitContainer.SuspendLayout();
 			newCollapsingSplitContainer.Orientation = verticalSplitter ? Orientation.Vertical : Orientation.Horizontal;
 			newCollapsingSplitContainer.FirstControl = recordBar;
-			newCollapsingSplitContainer.FirstLabel = AreaResources.ksRecordListLabel;
+			newCollapsingSplitContainer.FirstLabel = LanguageExplorerResources.ksRecordListLabel;
 			newCollapsingSplitContainer.SecondControl = panel2ChildControlAsControl;
-			newCollapsingSplitContainer.SecondLabel = AreaResources.ksMainContentLabel;
+			newCollapsingSplitContainer.SecondLabel = LanguageExplorerResources.ksMainContentLabel;
 			parentSplitterPanelControl.Controls.Add(newCollapsingSplitContainer);
 			newCollapsingSplitContainer.Dock = DockStyle.Fill;
 			paneBarContainer.InitializeFlexComponent(flexComponentParameters);

@@ -5,8 +5,6 @@
 using System;
 using System.Diagnostics;
 using System.Windows.Forms;
-using LanguageExplorer.Areas;
-using LanguageExplorer.Areas.Grammar;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 
@@ -19,7 +17,7 @@ namespace LanguageExplorer.Controls.DetailControls.Slices
 		private System.ComponentModel.IContainer components = null;
 
 		/// <summary />
-		public MsaInflectionFeatureListDlgLauncher()
+		internal MsaInflectionFeatureListDlgLauncher()
 		{
 			InitializeComponent();
 			Height = m_panel.Height;
@@ -150,7 +148,7 @@ namespace LanguageExplorer.Controls.DetailControls.Slices
 		/// </summary>
 		private void InitializeComponent()
 		{
-			this.m_msaInflectionFeatureListDlgLauncherView = new LanguageExplorer.Areas.Grammar.MsaInflectionFeatureListDlgLauncherView();
+			this.m_msaInflectionFeatureListDlgLauncherView = new MsaInflectionFeatureListDlgLauncherView();
 			this.m_panel.SuspendLayout();
 			this.SuspendLayout();
 			//
