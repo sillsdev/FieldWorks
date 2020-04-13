@@ -8,6 +8,23 @@
 # - INSTALLED: when running an installed package
 # - PACKAGING: while building the package
 
+# Unset things from incoming environment to avoid unexpected behaviour, such
+# as when FW is run from PT. Restore path to something basic.
+unset LD_LIBRARY_PATH \
+  LD_PRELOAD \
+  PATH \
+  MONO_ENABLE_SHM \
+  MONO_IOMAP \
+  MONO_WINFORMS_XIM_STYLE \
+  MOZ_ASSUME_USER_NS \
+  MOZ_LIBDIR TEXINPUTS \
+  USE_GTK_DIALOGS \
+  WINFORMS_FONT_OVERRIDE_EXPLICITLY_SET \
+  WINFORMS_STYLE_TITLEBAR_COLOR_1 \
+  WINFORMS_STYLE_TITLEBAR_COLOR_2 \
+  WINFORMS_STYLE_TITLEBAR_VERTICAL_GRADIENT
+export PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin"
+
 BASE=$(pwd)
 COM=$(dirname "${BASE}")/libcom/COM
 ARCH=$(uname -m)
