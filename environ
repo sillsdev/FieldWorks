@@ -9,7 +9,8 @@
 # - PACKAGING: while building the package
 
 # Unset things from incoming environment to avoid unexpected behaviour, such
-# as when FW is run from PT. Restore path to something basic.
+# as when FW is run from PT. Restore path to something basic, along with the
+# dotnet tools path, if present.
 unset LD_LIBRARY_PATH \
   LD_PRELOAD \
   PATH \
@@ -24,6 +25,10 @@ unset LD_LIBRARY_PATH \
   WINFORMS_STYLE_TITLEBAR_COLOR_2 \
   WINFORMS_STYLE_TITLEBAR_VERTICAL_GRADIENT
 export PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin"
+DOTNET_TOOLS_PATHER="/etc/profile.d/dotnet-cli-tools-bin-path.sh"
+if [ -f "${DOTNET_TOOLS_PATHER}" ]; then
+  . "${DOTNET_TOOLS_PATHER}"
+fi
 
 BASE=$(pwd)
 COM=$(dirname "${BASE}")/libcom/COM
