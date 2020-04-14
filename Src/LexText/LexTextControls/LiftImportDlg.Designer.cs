@@ -1,4 +1,4 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2020 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -44,6 +44,7 @@ namespace SIL.FieldWorks.LexText.Controls
             this.btnBrowse = new System.Windows.Forms.Button();
             this.tbPath = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
+            this.openFileDialog1 = new OpenFileDialogAdapter();
             this.panel1 = new System.Windows.Forms.Panel();
             this.btnBackup = new System.Windows.Forms.Button();
             this.tbBackup = new System.Windows.Forms.TextBox();
