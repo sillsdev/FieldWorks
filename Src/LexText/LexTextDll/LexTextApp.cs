@@ -408,8 +408,13 @@ namespace SIL.FieldWorks.XWorks.LexText
 					if (dlg is LexOptionsDlg)
 					{
 						LexOptionsDlg loDlg = dlg as LexOptionsDlg;
-						if ((oldWsUser != Cache.WritingSystemFactory.UserWs) || loDlg.PluginsUpdated)
-							ReplaceMainWindow(wndActive);
+						if (oldWsUser != Cache.WritingSystemFactory.UserWs ||
+							loDlg.PluginsUpdated)
+						{
+							wndActive.SaveSettings();
+							MessageBoxUtils.Show(wndActive, LexTextStrings.LexTextApp_RestartToChangeUI_Content,
+								LexTextStrings.LexTextApp_RestartToChangeUI_Title, MessageBoxButtons.OK);
+						}
 					}
 					else if (dlg is LinguaLinksImportDlg || dlg is InterlinearImportDlg ||
 							 dlg is LexImportWizard || dlg is NotebookImportWiz || dlg is LiftImportDlg)

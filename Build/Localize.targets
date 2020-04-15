@@ -18,7 +18,7 @@
 		<SldrUrl>https://ldml.api.sil.org/</SldrUrl>
 		<L10nsBaseDir>$(fwrt)/Localizations</L10nsBaseDir>
 		<L10nsDirectory>$(L10nsBaseDir)/l10ns</L10nsDirectory>
-		<LibL10nsDirectory>$(dir-fwdistfiles)/CommonLocalizations</LibL10nsDirectory>
+		<LibL10nsDirectory>$(fwrt)/DistFiles/CommonLocalizations</LibL10nsDirectory>
 		<ListsDirectory>$(L10nsBaseDir)/lists</ListsDirectory>
 		<MessagesPot>$(L10nsBaseDir)/messages.pot</MessagesPot>
 		<LcmRootDir>$(LcmLocalArtifactsDir)/../..</LcmRootDir>

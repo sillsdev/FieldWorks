@@ -21,6 +21,7 @@ using System.Text;
 using System.Threading;
 using System.Windows.Forms;
 using Gecko;
+using L10NSharp;
 using Microsoft.Win32;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Controls.FileDialog;
@@ -164,6 +165,7 @@ namespace SIL.FieldWorks
 				Logger.WriteEvent("Starting app");
 				SetGlobalExceptionHandler();
 				SetupErrorReportInformation();
+				InitializeLocalizationManager();
 
 				// Invoke does nothing directly, but causes BroadcastEventWindow to be initialized
 				// on this thread to prevent race conditions on shutdown.See TE-975
@@ -823,6 +825,7 @@ namespace SIL.FieldWorks
 
 				SetupErrorPropertiesNeedingCache(cache);
 				EnsureDefaultCollationsPresent(cache);
+				SetLocalizationLanguage(cache);
 				return cache;
 			}
 		}
@@ -3522,6 +3525,33 @@ namespace SIL.FieldWorks
 			{
 				ErrorReporter.AddProperty("ProjectModified", "unknown--probably not a local file");
 				ErrorReporter.AddProperty("ProjectFileSize", "unknown--probably not a local file");
+			}
+		}
+
+		internal static void InitializeLocalizationManager()
+		{
+			var installedL10nBaseDir = FwDirectoryFinder.GetCodeSubDirectory("CommonLocalizations");
+			var userL10nBaseDir = "CommonLocalizations";
+			var fieldWorksFolder = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+			var versionObj = Assembly.LoadFrom(Path.Combine(fieldWorksFolder ?? string.Empty, "Chorus.exe")).GetName().Version;
+			var version = $"{versionObj.Major}.{versionObj.Minor}.{versionObj.Build}";
+			LocalizationManager.Create(TranslationMemory.XLiff, CultureInfo.CurrentUICulture.TwoLetterISOLanguageName,
+				"Chorus", "Chorus", version, installedL10nBaseDir, userL10nBaseDir, null, "flex_localization@sil.org", "Chorus", "LibChorus");
+
+			var uiLanguageId = LocalizationManager.UILanguageId;
+
+			versionObj = Assembly.GetAssembly(typeof(ErrorReport)).GetName().Version;
+			version = $"{versionObj.Major}.{versionObj.Minor}.{versionObj.Build}";
+			LocalizationManager.Create(TranslationMemory.XLiff, uiLanguageId, "Palaso", "Palaso", version, installedL10nBaseDir,
+				userL10nBaseDir, null, "flex_localization@sil.org", "SIL.Windows.Forms");
+		}
+
+		internal static void SetLocalizationLanguage(LcmCache cache)
+		{
+			var langFromCache = cache.ServiceLocator.WritingSystemManager.UserWritingSystem.Id;
+			if (langFromCache != LocalizationManager.UILanguageId)
+			{
+				LocalizationManager.SetUILanguage(langFromCache, true);
 			}
 		}
 
