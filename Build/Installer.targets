@@ -148,6 +148,8 @@
 			<OutputDirForConfig>$(fwrt)\Output\$(Configuration)</OutputDirForConfig>
 		</PropertyGroup>
 		<ItemGroup>
+			<DeveloperFiles Include="$(fwrt)\DistFiles\CommonLocalizations\.gitignore"/>
+			<DeveloperFiles Include="$(fwrt)\DistFiles\CommonLocalizations\README.md"/>
 			<DeveloperFiles Include="$(fwrt)\DistFiles\DropTEC.exe"/>
 			<DeveloperFiles Include="$(fwrt)\DistFiles\Fonts\Raw\**\*"/>
 			<DeveloperFiles Include="$(fwrt)\DistFiles\Helps\.git\**\*"/>
