@@ -377,9 +377,15 @@ Fw-build-package-fdo: check-have-build-dependencies
 		&& $(BUILD_TOOL) /t:refreshTargets \
 		&& $(BUILD_TOOL) '/t:build4package-fdo' /property:config=release /property:packaging=yes
 
+RestoreNuGetPackages:
+	. environ \
+		&& cd Build \
+		&& $(BUILD_TOOL) /t:RestoreNuGetPackages /property:config=release \
+			/property:packaging=yes
+
 # Begin localization section
 
-localize-source:
+localize-source: RestoreNuGetPackages
 	. environ && \
 	(cd Build && $(BUILD_TOOL) /t:localize-source /property:config=release /property:packaging=yes)
 	# Remove symbolic links from Output - we don't want those in the source package
