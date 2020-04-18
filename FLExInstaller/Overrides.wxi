@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Include>
+	<!-- Set the projects dir to what the user had chosen before. Look in 32bit registry since FieldWorks 8 was only 32bit. -->
+	<Property Id="REGDATAFOLDER" Value="">
+		<RegistrySearch Id="REGDATAFOLDER" Key="SOFTWARE\SIL\FieldWorks\8" Name="ProjectsDir" Root="HKLM" Type="raw" Win64="no"/>
+	</Property>
 	<Property Id="REGISTRYKEY" Value="SIL\$(var.SafeApplicationName)\$(var.MajorVersion)"/>
 	<Property Id="APPFOLDERREGSZNAME" Value="RootCodeDir"/>
 	<Property Id="DATAFOLDERREGSZNAME" Value="ProjectsDir"/>
