@@ -1,4 +1,4 @@
-// Copyright (c) 2010-2019 SIL International
+// Copyright (c) 2010-2020 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -3481,9 +3481,7 @@ namespace SIL.FieldWorks
 			var processArch = Environment.Is64BitProcess ? 64 : 32;
 			var osArch = Environment.Is64BitOperatingSystem ? 64 : 32;
 			ErrorReporter.AddProperty("Architecture", $"{processArch}-bit process on a {osArch}-bit OS");
-			ulong diskSize;
-			ulong diskFree;
-			int cDisks = MiscUtils.GetDiskDriveStats(out diskSize, out diskFree);
+			int cDisks = MiscUtils.GetDiskDriveStats(out ulong diskSize, out ulong diskFree);
 			diskFree /= 1073742;  // 1024*1024*1024/1000 matches drive properties in Windows
 			diskSize /= 1073742;
 			ErrorReporter.AddProperty("LocalDiskCount", cDisks.ToString());
@@ -3530,20 +3528,30 @@ namespace SIL.FieldWorks
 
 		internal static void InitializeLocalizationManager()
 		{
-			var installedL10nBaseDir = FwDirectoryFinder.GetCodeSubDirectory("CommonLocalizations");
-			var userL10nBaseDir = "CommonLocalizations";
-			var fieldWorksFolder = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-			var versionObj = Assembly.LoadFrom(Path.Combine(fieldWorksFolder ?? string.Empty, "Chorus.exe")).GetName().Version;
-			var version = $"{versionObj.Major}.{versionObj.Minor}.{versionObj.Build}";
-			LocalizationManager.Create(TranslationMemory.XLiff, CultureInfo.CurrentUICulture.TwoLetterISOLanguageName,
-				"Chorus", "Chorus", version, installedL10nBaseDir, userL10nBaseDir, null, "flex_localization@sil.org", "Chorus", "LibChorus");
+			try
+			{
+				// ReSharper disable InconsistentNaming
+				var installedL10nBaseDir = FwDirectoryFinder.GetCodeSubDirectory("CommonLocalizations");
+				const string userL10nBaseDir = "CommonLocalizations";
+				// ReSharper restore InconsistentNaming
+				var fieldWorksFolder = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+				var versionObj = Assembly.LoadFrom(Path.Combine(fieldWorksFolder ?? string.Empty, "Chorus.exe")).GetName().Version;
+				var version = $"{versionObj.Major}.{versionObj.Minor}.{versionObj.Build}";
+				LocalizationManager.Create(TranslationMemory.XLiff, CultureInfo.CurrentUICulture.TwoLetterISOLanguageName,
+					"Chorus", "Chorus", version, installedL10nBaseDir, userL10nBaseDir, null, "flex_localization@sil.org", "Chorus", "LibChorus");
 
-			var uiLanguageId = LocalizationManager.UILanguageId;
+				var uiLanguageId = LocalizationManager.UILanguageId;
 
-			versionObj = Assembly.GetAssembly(typeof(ErrorReport)).GetName().Version;
-			version = $"{versionObj.Major}.{versionObj.Minor}.{versionObj.Build}";
-			LocalizationManager.Create(TranslationMemory.XLiff, uiLanguageId, "Palaso", "Palaso", version, installedL10nBaseDir,
-				userL10nBaseDir, null, "flex_localization@sil.org", "SIL.Windows.Forms");
+				versionObj = Assembly.GetAssembly(typeof(ErrorReport)).GetName().Version;
+				version = $"{versionObj.Major}.{versionObj.Minor}.{versionObj.Build}";
+				LocalizationManager.Create(TranslationMemory.XLiff, uiLanguageId, "Palaso", "Palaso", version, installedL10nBaseDir,
+					userL10nBaseDir, null, "flex_localization@sil.org", "SIL.Windows.Forms");
+			}
+			catch (Exception e)
+			{
+				SafelyReportException(new FileNotFoundException(
+					"There was a problem setting up localizations for some dialogs, probably because they were not installed", e), null, false);
+			}
 		}
 
 		internal static void SetLocalizationLanguage(LcmCache cache)
@@ -3861,5 +3869,4 @@ namespace SIL.FieldWorks
 		#endregion
 	}
 	#endregion
-
 }

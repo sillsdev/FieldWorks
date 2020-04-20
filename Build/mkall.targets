@@ -512,7 +512,7 @@
 		<DownloadedFiles Include="$(DownloadsDir)/SIL.HermitCrab.dll"/>
 	</ItemGroup>
 
-	<Target Name="CopyDlls" DependsOnTargets="downloadDlls">
+	<Target Name="CopyDlls" DependsOnTargets="downloadDlls;copyLibL10ns">
 		<!-- .Net assemblies -->
 		<Copy SourceFiles="$(fwrt)/DistFiles/LinqBridge.dll" DestinationFolder="$(dir-outputBase)"
 				SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true"/>
