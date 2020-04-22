@@ -1,4 +1,4 @@
-# Copyright (c) 2007-2013 SIL International
+# Copyright (c) 2007-2020 SIL International
 # This software is licensed under the LGPL, version 2.1 or later
 # (http://www.gnu.org/licenses/lgpl-2.1.html)
 #
@@ -145,9 +145,11 @@ install-tree: fieldworks-flex.1.gz unicodechareditor.1.gz install-tree-fdo
 	rm -f $(DESTDIR)/usr/lib/fieldworks/libTECkit{,_Compiler}*.so
 	rm -Rf $(DESTDIR)/usr/lib/share/fieldworks/Icu54/tools
 	rm -f $(DESTDIR)/usr/lib/share/fieldworks/Icu54/Keyboards
-	# Remove localization data that came from "DistFiles/Language Explorer", which is handled separately by l10n-install
+	# Remove localization data that came from "DistFiles/CommonLocalizations" and "DistFiles/Language Explorer", which is handled separately by l10n-install
+	rm -f $(DESTDIR)/usr/share/fieldworks/CommonLocalizations/*.*
 	rm -f $(DESTDIR)/usr/share/fieldworks/Language\ Explorer/Configuration/strings-*.xml
-	# Except we still want strings-en.xml :-)
+	# Except we still want English :-)
+	install -m 644 DistFiles/CommonLocalizations/*.en.xlf $(DESTDIR)/usr/share/fieldworks/CommonLocalizations
 	install -m 644 DistFiles/Language\ Explorer/Configuration/strings-en.xml $(DESTDIR)/usr/share/fieldworks/Language\ Explorer/Configuration
 
 install-menuentries:
@@ -401,7 +403,9 @@ l10n-all:
 l10n-clean:
 	# We don't want to remove strings-en.xml
 	for LOCALE in $(LOCALIZATIONS); do \
-		rm -rf "$(BUILD_ROOT)/Output/{Debug,Release}/$$LOCALE" "$(BUILD_ROOT)/DistFiles/Language Explorer/Configuration/strings-$$LOCALE.xml" ;\
+		rm -rf "$(BUILD_ROOT)/Output/{Debug,Release}/$$LOCALE" \
+			"$(BUILD_ROOT)/DistFiles/CommonLocalizations/*.$$LOCALE.xlf" \
+			"$(BUILD_ROOT)/DistFiles/Language Explorer/Configuration/strings-$$LOCALE.xml" ;\
 	done
 
 l10n-install:
@@ -411,6 +415,7 @@ l10n-install:
 		DESTINATION=$(DESTDIR)/usr/lib/fieldworks-l10n-$${LOCALE,,} ;\
 		install -d $$DESTINATION ;\
 		install -m 644 Output/Release/$$LOCALE/*.dll $$DESTINATION/ ;\
+		install -m 644 "$(BUILD_ROOT)/DistFiles/CommonLocalizations/*.$$LOCALE.xlf" $$DESTINATION/ ;\
 		install -m 644 "$(BUILD_ROOT)/DistFiles/Language Explorer/Configuration/strings-$$LOCALE.xml" $$DESTINATION/ ;\
 		ln -sf ../fieldworks-l10n-$${LOCALE,,} $(DESTDIR)/usr/lib/fieldworks/$$LOCALE ;\
 		ln -sf ../../../../lib/fieldworks-l10n-$${LOCALE,,}/strings-$$LOCALE.xml "$(DESTDIR)/usr/share/fieldworks/Language Explorer/Configuration/strings-$$LOCALE.xml" ;\
