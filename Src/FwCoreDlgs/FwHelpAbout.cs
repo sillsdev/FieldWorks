@@ -320,6 +320,11 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 				var strRoot = Path.GetPathRoot(Application.ExecutablePath);
 
+				if (MiscUtils.IsUnix)
+				{
+					return;
+				}
+
 				// Set the memory information
 				var memStatEx = new Win32.MemoryStatusEx();
 				memStatEx.dwLength = (uint)Marshal.SizeOf(memStatEx);
