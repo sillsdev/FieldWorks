@@ -335,7 +335,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			}
 			catch(Exception ex)
 			{
-				Console.WriteLine("HelpAbout ignoring exception: " + ex.Message);
+				Console.WriteLine("HelpAbout ignoring exception: " + ex);
 			}
 		}
 		#endregion
