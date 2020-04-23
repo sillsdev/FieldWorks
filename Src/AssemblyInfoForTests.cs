@@ -25,9 +25,6 @@ using SIL.TestUtilities;
 // Redirect HKCU if environment variable BUILDAGENT_SUBKEY is set
 [assembly: RedirectHKCU]
 
-// Allow creating COM objects from manifest file
-[assembly: CreateComObjectsFromManifest]
-
 // Initialize a do-nothing keyboard controller
 [assembly: InitializeNoOpKeyboardController]
 
@@ -43,3 +40,6 @@ using SIL.TestUtilities;
 
 // Initialize ICU
 [assembly: InitializeIcu(IcuVersion = 54)]
+
+// Allow creating COM objects from manifest file important that it comes after InitializeIcu
+[assembly: CreateComObjectsFromManifest]

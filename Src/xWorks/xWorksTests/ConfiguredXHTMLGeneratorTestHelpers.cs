@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2014-2017 SIL International
+// Copyright (c) 2014-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -130,7 +130,7 @@ namespace SIL.FieldWorks.XWorks
 			return entry;
 		}
 
-		private static int EnsureWritingSystemSetup(LcmCache cache, string wsStr, bool isVernacular)
+		internal static int EnsureWritingSystemSetup(LcmCache cache, string wsStr, bool isVernacular)
 		{
 			var wsFact = cache.WritingSystemFactory;
 			var result = wsFact.GetWsFromStr(wsStr);
@@ -336,9 +336,9 @@ namespace SIL.FieldWorks.XWorks
 				lexRef.TargetsRS.Add(senseOrEntry);
 		}
 
-		private ICmPossibility CreatePublicationType(string name)
+		internal static ICmPossibility CreatePublicationType(string name, LcmCache cache)
 		{
-			return DictionaryConfigurationImportController.AddPublicationType(name, Cache);
+			return DictionaryConfigurationImportController.AddPublicationType(name, cache);
 		}
 
 		private static void AddHeadwordToEntry(ILexEntry entry, string headword, int wsId)
@@ -347,7 +347,7 @@ namespace SIL.FieldWorks.XWorks
 			entry.CitationForm.set_String(wsId, TsStringUtils.MakeString(headword, wsId));
 		}
 
-		private static ILexPronunciation AddPronunciationToEntry(ILexEntry entry, string content, int wsId, LcmCache cache)
+		internal static ILexPronunciation AddPronunciationToEntry(ILexEntry entry, string content, int wsId, LcmCache cache)
 		{
 			var pronunciation = cache.ServiceLocator.GetInstance<ILexPronunciationFactory>().Create();
 			entry.PronunciationsOS.Add(pronunciation);
@@ -355,7 +355,7 @@ namespace SIL.FieldWorks.XWorks
 			return pronunciation;
 		}
 
-		private static void AddSenseToEntry(ILexEntry entry, string gloss, int wsId, LcmCache cache, string definition = null)
+		internal static void AddSenseToEntry(ILexEntry entry, string gloss, int wsId, LcmCache cache, string definition = null)
 		{
 			var senseFactory = cache.ServiceLocator.GetInstance<ILexSenseFactory>();
 			var sense = senseFactory.Create();
@@ -402,16 +402,16 @@ namespace SIL.FieldWorks.XWorks
 			subSensesOne.Gloss.set_String(m_wsEn, TsStringUtils.MakeString(gloss, m_wsEn));
 		}
 
-		private ILexExampleSentence AddExampleToSense(ILexSense sense, string content, string translation = null)
+		internal static ILexExampleSentence AddExampleToSense(ILexSense sense, string content, LcmCache cache, int vern, int analy, string translation = null)
 		{
-			var exampleFact = Cache.ServiceLocator.GetInstance<ILexExampleSentenceFactory>();
+			var exampleFact = cache.ServiceLocator.GetInstance<ILexExampleSentenceFactory>();
 			var example = exampleFact.Create(new Guid(), sense);
-			example.Example.set_String(m_wsFr, TsStringUtils.MakeString(content, m_wsFr));
+			example.Example.set_String(vern, TsStringUtils.MakeString(content, vern));
 			if (translation != null)
 			{
-				var type = Cache.ServiceLocator.GetInstance<ICmPossibilityRepository>().GetObject(CmPossibilityTags.kguidTranFreeTranslation);
-				var cmTranslation = Cache.ServiceLocator.GetInstance<ICmTranslationFactory>().Create(example, type);
-				cmTranslation.Translation.set_String(m_wsEn, TsStringUtils.MakeString(translation, m_wsEn));
+				var type = cache.ServiceLocator.GetInstance<ICmPossibilityRepository>().GetObject(CmPossibilityTags.kguidTranFreeTranslation);
+				var cmTranslation = cache.ServiceLocator.GetInstance<ICmTranslationFactory>().Create(example, type);
+				cmTranslation.Translation.set_String(analy, TsStringUtils.MakeString(translation, analy));
 				example.TranslationsOC.Add(cmTranslation);
 			}
 			return example;
@@ -556,9 +556,9 @@ namespace SIL.FieldWorks.XWorks
 			return listOptions;
 		}
 
-		public DictionaryNodeOptions GetFullyEnabledListOptions(DictionaryNodeListOptions.ListIds listName)
+		public static DictionaryNodeOptions GetFullyEnabledListOptions(DictionaryNodeListOptions.ListIds listName, LcmCache cache)
 		{
-			return GetFullyEnabledListOptions(Cache, listName);
+			return GetFullyEnabledListOptions(cache, listName);
 		}
 
 		public static DictionaryNodeOptions GetFullyEnabledListOptions(LcmCache cache, DictionaryNodeListOptions.ListIds listName)
