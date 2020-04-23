@@ -145,6 +145,9 @@ install-tree: fieldworks-flex.1.gz unicodechareditor.1.gz install-tree-fdo
 	rm -f $(DESTDIR)/usr/lib/fieldworks/libTECkit{,_Compiler}*.so
 	rm -Rf $(DESTDIR)/usr/lib/share/fieldworks/Icu54/tools
 	rm -f $(DESTDIR)/usr/lib/share/fieldworks/Icu54/Keyboards
+	# Windows dll and exe files.
+	rm -f $(DESTDIR)/usr/lib/fieldworks/{aspell-15,iconv,libglib-2.0-0,libglib-2.0-0-vs8,libgmodule-2.0-0,libgmodule-2.0-0-vs8,TextFormStorage,unicows,wrtXML,xample32,xample64,XceedZip,xmlparse_u}.dll
+	rm -f $(DESTDIR)/usr/lib/fieldworks/{SFconv,TxtConvvs_piaredist,ZEdit}.exe
 	# Remove localization data that came from "DistFiles/CommonLocalizations" (if any) and "DistFiles/Language Explorer", which is handled separately by l10n-install
 	rm -rf $(DESTDIR)/usr/share/fieldworks/CommonLocalizations
 	rm -f $(DESTDIR)/usr/share/fieldworks/Language\ Explorer/Configuration/strings-*.xml
