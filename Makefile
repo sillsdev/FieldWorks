@@ -145,10 +145,11 @@ install-tree: fieldworks-flex.1.gz unicodechareditor.1.gz install-tree-fdo
 	rm -f $(DESTDIR)/usr/lib/fieldworks/libTECkit{,_Compiler}*.so
 	rm -Rf $(DESTDIR)/usr/lib/share/fieldworks/Icu54/tools
 	rm -f $(DESTDIR)/usr/lib/share/fieldworks/Icu54/Keyboards
-	# Remove localization data that came from "DistFiles/CommonLocalizations" and "DistFiles/Language Explorer", which is handled separately by l10n-install
-	rm -f $(DESTDIR)/usr/share/fieldworks/CommonLocalizations/*.*
+	# Remove localization data that came from "DistFiles/CommonLocalizations" (if any) and "DistFiles/Language Explorer", which is handled separately by l10n-install
+	rm -rf $(DESTDIR)/usr/share/fieldworks/CommonLocalizations
 	rm -f $(DESTDIR)/usr/share/fieldworks/Language\ Explorer/Configuration/strings-*.xml
 	# Except we still want English :-)
+	mkdir -p "$(DESTDIR)/usr/share/fieldworks/CommonLocalizations"
 	install -m 644 DistFiles/CommonLocalizations/*.en.xlf $(DESTDIR)/usr/share/fieldworks/CommonLocalizations
 	install -m 644 DistFiles/Language\ Explorer/Configuration/strings-en.xml $(DESTDIR)/usr/share/fieldworks/Language\ Explorer/Configuration
 
