@@ -1,4 +1,4 @@
-// Copyright (c) 2010-2019 SIL International
+// Copyright (c) 2010-2020 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -21,6 +21,7 @@ using System.Text;
 using System.Threading;
 using System.Windows.Forms;
 using Gecko;
+using L10NSharp;
 using Microsoft.Win32;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Controls.FileDialog;
@@ -140,9 +141,8 @@ namespace SIL.FieldWorks
 			// Add lib/{x86,x64} to PATH so that C++ code can find ICU dlls
 			var newPath = $"{pathName}{Path.PathSeparator}{Environment.GetEnvironmentVariable("PATH")}";
 			Environment.SetEnvironmentVariable("PATH", newPath);
-
 			Icu.Wrapper.ConfineIcuVersions(54);
-			Icu.Wrapper.Init();
+			// ICU will be initialized further down (by calling FwUtils.InitializeIcu())
 			LcmCache.NewerWritingSystemFound += ComplainToUserAboutNewWs;
 			FwRegistryHelper.Initialize();
 
@@ -165,6 +165,7 @@ namespace SIL.FieldWorks
 				Logger.WriteEvent("Starting app");
 				SetGlobalExceptionHandler();
 				SetupErrorReportInformation();
+				InitializeLocalizationManager();
 
 				// Invoke does nothing directly, but causes BroadcastEventWindow to be initialized
 				// on this thread to prevent race conditions on shutdown.See TE-975
@@ -824,6 +825,7 @@ namespace SIL.FieldWorks
 
 				SetupErrorPropertiesNeedingCache(cache);
 				EnsureDefaultCollationsPresent(cache);
+				SetLocalizationLanguage(cache);
 				return cache;
 			}
 		}
@@ -3479,15 +3481,12 @@ namespace SIL.FieldWorks
 					ErrorReporter.AddProperty("PackageVersion", string.Format("{0} {1}", packageVersion.Key, packageVersion.Value));
 				}
 			}
-			ErrorReporter.AddProperty("CLR version", Environment.Version.ToString());
 			ulong mem = MiscUtils.GetPhysicalMemoryBytes() / 1048576;
 			ErrorReporter.AddProperty("PhysicalMemory", mem + " Mb");
 			var processArch = Environment.Is64BitProcess ? 64 : 32;
 			var osArch = Environment.Is64BitOperatingSystem ? 64 : 32;
 			ErrorReporter.AddProperty("Architecture", $"{processArch}-bit process on a {osArch}-bit OS");
-			ulong diskSize;
-			ulong diskFree;
-			int cDisks = MiscUtils.GetDiskDriveStats(out diskSize, out diskFree);
+			int cDisks = MiscUtils.GetDiskDriveStats(out ulong diskSize, out ulong diskFree);
 			diskFree /= 1073742;  // 1024*1024*1024/1000 matches drive properties in Windows
 			diskSize /= 1073742;
 			ErrorReporter.AddProperty("LocalDiskCount", cDisks.ToString());
@@ -3498,7 +3497,7 @@ namespace SIL.FieldWorks
 			ErrorReporter.AddProperty("UserDomainName", Environment.UserDomainName);
 			ErrorReporter.AddProperty("UserName", Environment.UserName);
 			ErrorReporter.AddProperty("SystemDirectory", Environment.SystemDirectory);
-			ErrorReporter.AddProperty("Culture", System.Globalization.CultureInfo.CurrentCulture.ToString());
+			ErrorReporter.AddProperty("Culture", CultureInfo.CurrentCulture.ToString());
 			using (Bitmap bm = new Bitmap(10, 10))
 			{
 
@@ -3529,6 +3528,43 @@ namespace SIL.FieldWorks
 			{
 				ErrorReporter.AddProperty("ProjectModified", "unknown--probably not a local file");
 				ErrorReporter.AddProperty("ProjectFileSize", "unknown--probably not a local file");
+			}
+		}
+
+		internal static void InitializeLocalizationManager()
+		{
+			try
+			{
+				// ReSharper disable InconsistentNaming
+				var installedL10nBaseDir = FwDirectoryFinder.GetCodeSubDirectory("CommonLocalizations");
+				const string userL10nBaseDir = "CommonLocalizations";
+				// ReSharper restore InconsistentNaming
+				var fieldWorksFolder = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+				var versionObj = Assembly.LoadFrom(Path.Combine(fieldWorksFolder ?? string.Empty, "Chorus.exe")).GetName().Version;
+				var version = $"{versionObj.Major}.{versionObj.Minor}.{versionObj.Build}";
+				LocalizationManager.Create(TranslationMemory.XLiff, CultureInfo.CurrentUICulture.TwoLetterISOLanguageName,
+					"Chorus", "Chorus", version, installedL10nBaseDir, userL10nBaseDir, null, "flex_localization@sil.org", "Chorus", "LibChorus");
+
+				var uiLanguageId = LocalizationManager.UILanguageId;
+
+				versionObj = Assembly.GetAssembly(typeof(ErrorReport)).GetName().Version;
+				version = $"{versionObj.Major}.{versionObj.Minor}.{versionObj.Build}";
+				LocalizationManager.Create(TranslationMemory.XLiff, uiLanguageId, "Palaso", "Palaso", version, installedL10nBaseDir,
+					userL10nBaseDir, null, "flex_localization@sil.org", "SIL.Windows.Forms");
+			}
+			catch (Exception e)
+			{
+				SafelyReportException(new FileNotFoundException(
+					"There was a problem setting up localizations for some dialogs, probably because they were not installed", e), null, false);
+			}
+		}
+
+		internal static void SetLocalizationLanguage(LcmCache cache)
+		{
+			var langFromCache = cache.ServiceLocator.WritingSystemManager.UserWritingSystem.Id;
+			if (langFromCache != LocalizationManager.UILanguageId)
+			{
+				LocalizationManager.SetUILanguage(langFromCache, true);
 			}
 		}
 
@@ -3838,5 +3874,4 @@ namespace SIL.FieldWorks
 		#endregion
 	}
 	#endregion
-
 }

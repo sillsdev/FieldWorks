@@ -78,7 +78,7 @@ namespace SIL.FieldWorks.IText
 			text.ContentsOA = sttext1;
 			var para1_1 = sl.GetInstance<IStTxtParaFactory>().Create();
 			sttext1.ParagraphsOS.Add(para1_1);
-			var para1_1Contents = TsStringUtils.MakeString("Sentence one. Sentence 2.",
+			var para1_1Contents = TsStringUtils.MakeString(para1Content,
 				wsf.get_Engine("en").Handle);
 			para1_1.Contents = para1_1Contents;
 			ParagraphParser.ParseText(sttext1);

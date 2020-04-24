@@ -95,7 +95,7 @@ namespace SIL.FieldWorks.Common.Controls
 			LcmCache cache;
 
 			// Default to the enhanced OCM file list
-			var anthroListFile = FwDirectoryFinder.ksOCMFrameFilename;
+			var anthroListFile = Path.Combine(FwDirectoryFinder.TemplateDirectory, FwDirectoryFinder.ksOCMFrameFilename);
 
 			using (var progressDlg = new ProgressDialogWithTask(parent))
 			{

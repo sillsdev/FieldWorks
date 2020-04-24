@@ -7,7 +7,7 @@
 	<PropertyGroup>
 		<ApplicationName>FieldWorks Language Explorer</ApplicationName>
 		<SafeApplicationName>FieldWorks</SafeApplicationName> <!-- should not contain any spaces or illegal filename characters -->
-		<CopyrightYear>2018</CopyrightYear>
+		<CopyrightYear>2020</CopyrightYear>
 		<Manufacturer>SIL International</Manufacturer>
 	</PropertyGroup>
 
@@ -24,7 +24,7 @@
 
 	<!-- $(ApplicationName) 1.0.0.X ($(ApplicationName) build)-->
 	<PropertyGroup>
-		<ProductIdGuid>9C8A25B6-8540-429E-9B27-EF5A3C6EDE24</ProductIdGuid>
+		<ProductIdGuid>A3BC4DAA-16AF-4A0B-BAA5-B01C852EF1DF</ProductIdGuid>
 	</PropertyGroup>
 
 	<!-- $(ApplicationName) 1.0.1.X ($(ApplicationName) build)-->
@@ -148,6 +148,8 @@
 			<OutputDirForConfig>$(fwrt)\Output\$(Configuration)</OutputDirForConfig>
 		</PropertyGroup>
 		<ItemGroup>
+			<DeveloperFiles Include="$(fwrt)\DistFiles\CommonLocalizations\.gitignore"/>
+			<DeveloperFiles Include="$(fwrt)\DistFiles\CommonLocalizations\README.md"/>
 			<DeveloperFiles Include="$(fwrt)\DistFiles\DropTEC.exe"/>
 			<DeveloperFiles Include="$(fwrt)\DistFiles\Fonts\Raw\**\*"/>
 			<DeveloperFiles Include="$(fwrt)\DistFiles\Helps\.git\**\*"/>
@@ -179,20 +181,30 @@
 			<InstallerResources Include="$(fwrt)\resources\App.ico"/>
 			<InstallerResources Include="$(fwrt)\resources\Installer.ico"/>
 			<!-- If you change this list, you must also update those listed at $(fwrt)\Localizations\ReadMe.md -->
+			<L10nFiles Include="$(OutputDirForConfig)\ar\**\*"/>
 			<L10nFiles Include="$(OutputDirForConfig)\az\**\*"/>
+			<L10nFiles Include="$(OutputDirForConfig)\bn\**\*"/>
+			<L10nFiles Include="$(OutputDirForConfig)\de\**\*"/>
 			<L10nFiles Include="$(OutputDirForConfig)\es\**\*"/>
 			<L10nFiles Include="$(OutputDirForConfig)\fa\**\*"/>
 			<L10nFiles Include="$(OutputDirForConfig)\fr\**\*"/>
 			<L10nFiles Include="$(OutputDirForConfig)\hi\**\*"/>
 			<L10nFiles Include="$(OutputDirForConfig)\hu\**\*"/>
 			<L10nFiles Include="$(OutputDirForConfig)\id\**\*"/>
+			<L10nFiles Include="$(OutputDirForConfig)\km\**\*"/>
 			<L10nFiles Include="$(OutputDirForConfig)\ko\**\*"/>
 			<L10nFiles Include="$(OutputDirForConfig)\ms\**\*"/>
+			<L10nFiles Include="$(OutputDirForConfig)\my\**\*"/>
+			<L10nFiles Include="$(OutputDirForConfig)\ne\**\*"/>
 			<L10nFiles Include="$(OutputDirForConfig)\pt\**\*"/>
-			<L10nFiles Include="$(OutputDirForConfig)\ro\**\*"/>
 			<L10nFiles Include="$(OutputDirForConfig)\ru\**\*"/>
+			<L10nFiles Include="$(OutputDirForConfig)\rw\**\*"/>
+			<L10nFiles Include="$(OutputDirForConfig)\sw\**\*"/>
+			<L10nFiles Include="$(OutputDirForConfig)\ta\**\*"/>
 			<L10nFiles Include="$(OutputDirForConfig)\te\**\*"/>
+			<L10nFiles Include="$(OutputDirForConfig)\th\**\*"/>
 			<L10nFiles Include="$(OutputDirForConfig)\tr\**\*"/>
+			<L10nFiles Include="$(OutputDirForConfig)\ur\**\*"/>
 			<L10nFiles Include="$(OutputDirForConfig)\vi\**\*"/>
 			<L10nFiles Include="$(OutputDirForConfig)\zh-CN\**\*"/>
 			<!-- no need to install the following; most are installed by merge modules -->
@@ -281,10 +293,10 @@
 		<Message Text="Harvesting $(PatchPrefix) L10n"/>
 		<MakeDir Directories="$(L10nWxiDir)" Condition="!Exists('$(L10nWxiDir)')"/>
 		<ItemGroup>
-			<!-- If you change this list, you must also update those listed at $(fwrt)\Localizations\ReadMe.md -->
-			<TargetLocales Include="az;es;fa;fr;hi;hu;id;ko;ms;pt;ro;ru;te;tr;vi;zh-CN"/>
+			<LocaleDirs Include="$([System.IO.Directory]::GetDirectories(&quot;$(L10nSrcDir)&quot;))"/>
 		</ItemGroup>
-		<MSBuild Projects="$(MSBuildProjectFullPath)" Properties="TargetLocale=%(TargetLocales.Identity)" Targets="HarvestOneL10n"/>
+		<MSBuild Projects="$(MSBuildProjectFullPath)" Targets="HarvestOneL10n"
+			Properties="LocaleDir=%(LocaleDirs.Identity);TargetLocale=%(Filename)"/>
 	</Target>
 
 	<Target Name="HarvestOneL10n">
@@ -297,7 +309,7 @@
 			<KeyPathFixArg Condition="'$(FixKeyPath)'=='true'">-t $(InstallerDir)/BaseInstallerBuild/KeyPathFix.xsl</KeyPathFixArg>
 			<CommonHeatArgs>$(GuidGenArg) -scom -sreg -sfrag -srd -sw5150 -sw5151 $(KeyPathFixArg)</CommonHeatArgs>
 		</PropertyGroup>
-		<Exec Command="heat.exe dir $(L10nSrcDir)\$(TargetLocale) $(CommonHeatArgs) -cg $(SafeTargetLocale)Localization -dr $(SafeTargetLocale)L10NFOLDER -var wix.$(PatchPrefix)$(SafeTargetLocale)L10NDIR -out $(L10nWxiDir)\$(SafeTargetLocale)Harvest.wxs" />
+		<Exec Command="heat.exe dir $(LocaleDir) $(CommonHeatArgs) -cg $(SafeTargetLocale)Localization -dr $(SafeTargetLocale)L10NFOLDER -var wix.$(PatchPrefix)$(SafeTargetLocale)L10NDIR -out $(L10nWxiDir)\$(SafeTargetLocale)Harvest.wxs" />
 	</Target>
 
 	<!-- Write a table of files' metadata that can be used to verify that each file has been installed or patched correctly. -->
@@ -337,10 +349,10 @@
 		<PropertyGroup>
 			<WixLibsDir>$(InstallerDir)/libs/</WixLibsDir>
 		</PropertyGroup>
-		<!-- .NET 4.6.1 -->
-		<DownloadFile Address="https://download.microsoft.com/download/E/4/1/E4173890-A24A-4936-9FC9-AF930FE3FA40/NDP461-KB3102436-x86-x64-AllOS-ENU.exe"
-			LocalFilename="NDP461-KB3102436-x86-x64-AllOS-ENU.exe"
-			Condition="!Exists('$(WixLibsDir)/NDP461-KB3102436-x86-x64-AllOS-ENU.exe')" DownloadsDir="$(WixLibsDir)" />
+		<!-- .NET 4.8 -->
+		<DownloadFile Address="https://go.microsoft.com/fwlink/?linkid=2088631"
+			LocalFilename="ndp48-x86-x64-allos-enu.exe"
+			Condition="!Exists('$(WixLibsDir)/ndp48-x86-x64-allos-enu.exe')" DownloadsDir="$(WixLibsDir)" />
 		<!-- 32-bit VC redistributables -->
 		<DownloadFile Address="https://download.microsoft.com/download/1/1/1/1116b75a-9ec3-481a-a3c8-1777b5381140/vcredist_x86.exe"
 			LocalFilename="vcredist_2008_x86.exe"

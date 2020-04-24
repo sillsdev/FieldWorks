@@ -106,6 +106,12 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			numberSettingsCombo.Enabled = numberSettingsCombo.Visible = true;
 			customDigits.Enabled = model.CurrentNumberingSystemDefinition.IsCustom;
 			numberSettingsCombo.SelectedIndexChanged += NumberSettingsComboOnSelectedIndexChanged;
+			customDigits.CustomDigitsChanged += CustomDigits_CustomDigitsChanged;
+		}
+
+		private void CustomDigits_CustomDigitsChanged(object sender, EventArgs e)
+		{
+			_model.CurrentWsSetupModel.CurrentNumberingSystemDefinition = NumberingSystemDefinition.CreateCustomSystem(customDigits.GetDigits());
 		}
 
 		private void BindHeader(FwWritingSystemSetupModel model)

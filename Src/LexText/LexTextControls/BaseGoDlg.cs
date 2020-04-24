@@ -17,6 +17,7 @@ using SIL.FieldWorks.Common.Widgets;
 using SIL.LCModel;
 using SIL.FieldWorks.Resources;
 using SIL.Windows.Forms;
+using SIL.Windows.Forms.Widgets;
 using XCore;
 
 namespace SIL.FieldWorks.LexText.Controls
@@ -66,7 +67,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		protected Label m_formLabel;
 		protected FwTextBox m_tbForm;
 		protected FwOverrideComboBox m_cbWritingSystems;
-		protected Label m_wsLabel;
+		protected BetterLabel m_wsLabel;
 		protected FwTextBox m_fwTextBoxBottomMsg;
 		protected Label m_objectsLabel;
 
@@ -629,7 +630,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			this.m_tbForm = new SIL.FieldWorks.Common.Widgets.FwTextBox();
 			this.m_formLabel = new System.Windows.Forms.Label();
 			this.m_cbWritingSystems = new SIL.FieldWorks.Common.Controls.FwOverrideComboBox();
-			this.m_wsLabel = new System.Windows.Forms.Label();
+			this.m_wsLabel = new SIL.Windows.Forms.Widgets.BetterLabel();
 			this.m_fwTextBoxBottomMsg = new SIL.FieldWorks.Common.Widgets.FwTextBox();
 			this.m_objectsLabel = new System.Windows.Forms.Label();
 			this.m_matchingObjectsBrowser = new SIL.FieldWorks.Common.Controls.MatchingObjectsBrowser();

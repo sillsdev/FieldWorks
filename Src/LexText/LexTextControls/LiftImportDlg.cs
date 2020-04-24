@@ -16,7 +16,6 @@ using System.Threading;
 using System.Windows.Forms;
 using System.Xml;
 using SIL.FieldWorks.Common.Controls;
-using SIL.FieldWorks.Common.Controls.FileDialog;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.LCModel;
@@ -40,13 +39,11 @@ namespace SIL.FieldWorks.LexText.Controls
 		private XCore.PropertyTable m_propertyTable;
 		private IThreadedProgress m_progressDlg;
 		string m_sLogFile;		// name of HTML log file (if successful).
-		private OpenFileDialogAdapter openFileDialog1;
 
 		private FlexLiftMerger.MergeStyle m_msImport = FlexLiftMerger.MergeStyle.MsKeepOld;
 
 		public LiftImportDlg()
 		{
-			openFileDialog1 = new OpenFileDialogAdapter();
 			InitializeComponent();
 			openFileDialog1.Title = LexTextControls.openFileDialog1_Title;
 			openFileDialog1.Filter = FileUtils.FileDialogFilterCaseInsensitiveCombinations(

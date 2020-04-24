@@ -1,0 +1,9 @@
+# Copyright (c) 2020 SIL International
+# This software is licensed under the LGPL, version 2.1 or later
+# (http://www.gnu.org/licenses/lgpl-2.1.html)
+
+# Hasso 2020.02: Tests for localization tasks contain a lot of special characters.
+# For some reason, Visual Studio 2017 (15.9.17, 15.9.28307.905) is garbling them w/o BOM.
+[*Tests.cs]
+charset = utf-8-bom
+trim_trailing_whitespace = true

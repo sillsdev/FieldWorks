@@ -6,6 +6,28 @@
 # - INSTALLED: when running an installed package
 # - PACKAGING: while building the package
 
+# Unset things from incoming environment to avoid unexpected behaviour, such
+# as when FW is run from PT. Restore path to something basic, along with the
+# dotnet tools path, if present.
+unset LD_LIBRARY_PATH \
+  LD_PRELOAD \
+  PATH \
+  MONO_ENABLE_SHM \
+  MONO_IOMAP \
+  MONO_WINFORMS_XIM_STYLE \
+  MOZ_ASSUME_USER_NS \
+  MOZ_LIBDIR TEXINPUTS \
+  USE_GTK_DIALOGS \
+  WINFORMS_FONT_OVERRIDE_EXPLICITLY_SET \
+  WINFORMS_STYLE_TITLEBAR_COLOR_1 \
+  WINFORMS_STYLE_TITLEBAR_COLOR_2 \
+  WINFORMS_STYLE_TITLEBAR_VERTICAL_GRADIENT
+export PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin"
+DOTNET_TOOLS_PATHER="/etc/profile.d/dotnet-cli-tools-bin-path.sh"
+if [ -f "${DOTNET_TOOLS_PATHER}" ]; then
+  . "${DOTNET_TOOLS_PATHER}"
+fi
+
 BASE=$(pwd)
 COM=$(dirname "${BASE}")/libcom/COM
 ARCH=$(uname -m)
@@ -63,6 +85,7 @@ then
 	PATH="${BASE}/icu-bin:${PATH}"
 	LD_LIBRARY_PATH="${BASE}:${BASE}/lib:${LD_LIBRARY_PATH}"
 	MONO_REGISTRY_PATH="${HOME}/.config/fieldworks/registry"
+	MONO_HELP_VIEWER=${BASE}/launch-xchm
 else
 	COMPONENTS_MAP_PATH="${BASE}/Output_${ARCH}/${BUILD}"
 	FW_ROOT="${BASE}/DistFiles"
@@ -70,6 +93,7 @@ else
 	FW_ROOTCODE="${BASE}/DistFiles"
 	ICU_DATA="${BASE}/DistFiles/Icu54"
 	MONO_REGISTRY_PATH="${BASE}/Output_${ARCH}/registry"
+	MONO_HELP_VIEWER=${BASE}/Lib/linux/launch-xchm
 fi
 
 if [ "$RUNMODE" != "PACKAGING" -a "$RUNMODE" != "INSTALLED" ]
@@ -101,6 +125,7 @@ export \
 	FW_ROOT FW_ROOTCODE FW_ROOTDATA \
 	ICU_DATA \
 	FLEXBRIDGEDIR \
+	MONO_HELP_VIEWER \
 	MONO_PATH MONO_REGISTRY_PATH \
 	MONO_PREFIX MONO_GAC_PREFIX \
 	MONO_RUNTIME MONO_DEBUG MONO_ENV_OPTIONS \

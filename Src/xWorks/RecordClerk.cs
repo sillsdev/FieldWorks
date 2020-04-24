@@ -1008,6 +1008,11 @@ namespace SIL.FieldWorks.XWorks
 			return true;	//we handled this.
 		}
 
+		public bool JumpToTargetWillChangeIndex(int hvoTarget)
+		{
+			return IndexOfObjOrChildOrParent(hvoTarget) != CurrentIndex;
+		}
+
 		/// <summary>
 		/// Find the index of hvoTarget in m_list; or, if it does not occur, the index of a child of hvoTarget.
 		/// </summary>
@@ -1403,8 +1408,8 @@ namespace SIL.FieldWorks.XWorks
 			// example, XmlBrowseRDEView.cs to handle the message instead.
 
 			// Note from RandyR: One of these days we should probably subclass this object, and perhaps the record list more.
-			// The "reversalEntries" clerk wants to handle the message, even though it isn't the primary clerk.
-			// The m_shouldHandleDeletion member was also added, so the "reversalEntries" clerk's primary clerk
+			// The "AllReversalEntries" clerk wants to handle the message, even though it isn't the primary clerk.
+			// The m_shouldHandleDeletion member was also added, so the "AllReversalEntries" clerk's primary clerk
 			// would not handle the message, and delete an entire reversal index.
 			if (ShouldNotHandleDeletionMessage)
 				return false;
@@ -1455,7 +1460,7 @@ namespace SIL.FieldWorks.XWorks
 
 		private bool ShouldNotHandleDeletionMessage
 		{
-			get { return Id != "reversalEntries" && (!Editable || !IsPrimaryClerk || !m_shouldHandleDeletion); }
+			get { return Id != "AllReversalEntries" && (!Editable || !IsPrimaryClerk || !m_shouldHandleDeletion); }
 		}
 
 		public bool OnDeleteRecord(object commandObject)
@@ -1466,8 +1471,8 @@ namespace SIL.FieldWorks.XWorks
 			// example, XmlBrowseRDEView.cs to handle the message instead.
 
 			// Note from RandyR: One of these days we should probably subclass this object, and perhaps the record list more.
-			// The "reversalEntries" clerk wants to handle the message, even though it isn't the primary clerk.
-			// The m_shouldHandleDeletion member was also added, so the "reversalEntries" clerk's primary clerk
+			// The "AllReversalEntries" clerk wants to handle the message, even though it isn't the primary clerk.
+			// The m_shouldHandleDeletion member was also added, so the "AllReversalEntries" clerk's primary clerk
 			// would not handle the message, and delete an entire reversal index.
 			if (ShouldNotHandleDeletionMessage)
 				return false;

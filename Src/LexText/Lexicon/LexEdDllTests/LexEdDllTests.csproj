@@ -8,6 +8,7 @@
     <ProjectGuid>{FF8DCF7B-AD60-415E-BF2A-FC9B3D7F4A1A}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
+    <AppConfig>..\..\..\AppForTests.config</AppConfig>
     <RootNamespace>LexEdDllTests</RootNamespace>
     <AssemblyName>LexEdDllTests</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>

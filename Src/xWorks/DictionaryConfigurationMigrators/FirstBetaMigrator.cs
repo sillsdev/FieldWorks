@@ -9,11 +9,9 @@ using System.Linq;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.Linq;
-using SIL.LCModel.Utils;
 using XCore;
 using DCM = SIL.FieldWorks.XWorks.DictionaryConfigurationMigrator;
 using System.Xml.Linq;
-using System.Text.RegularExpressions;
 
 namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 {
@@ -355,30 +353,8 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 					if (wsValue == Path.GetFileNameWithoutExtension(fName))
 						continue;
 
-					if (!File.Exists(newFName))
-					{
-						File.Move(fName, newFName);
-					}
-					else
-					{
-						string[] files = Directory.GetFiles(Path.GetDirectoryName(fName));
-						int count = 0;
-						for (int i = 0; i < files.Length; i++)
-						{
-							if (Path.GetFileNameWithoutExtension(files[i]).StartsWith(wsValue))
-							{
-								Match m = Regex.Match(Path.GetFileName(files[i]), wsValue + @"\d*\.");
-								if (m.Success)
-								{
-									count++;
-								}
-							}
-						}
-
-						newFName = String.Format("{0}{1}{2}", wsValue, count, DictionaryConfigurationModel.FileExtension);
-						newFName = Path.Combine(Path.GetDirectoryName(fName), newFName);
-						File.Move(fName, newFName);
-					}
+					newFName = FwUtils.GetUniqueFilename(Path.GetDirectoryName(fName), newFName);
+					File.Move(fName, newFName);
 				}
 			}
 		}

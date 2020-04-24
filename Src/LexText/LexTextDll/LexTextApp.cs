@@ -372,6 +372,21 @@ namespace SIL.FieldWorks.XWorks.LexText
 
 			FwXWindow wndActive = formActive as FwXWindow;
 			IFwExtension dlg = null;
+			if (((classInfo as System.Xml.XmlElement)?.Attributes["class"]?.Value ?? "").Contains(
+				"LinguaLinks"))
+			{
+				// Message is deliberately not localized. We expect this to affect maybe one person every couple of years based on recent
+				// occurrences. Doubt it's worth translating.
+				// The reason for the disabling is that model changes require significant changes to the Import code,
+				// and we don't think it's worth the effort. What few LinguaLinks projects still require import can be handled
+				// by installing a version 7 FieldWorks, importing, and then migrating.
+				// (For example, the currently generated stage 5 XML assumes Senses still reference ReveralEntries, rather than the
+				// current opposite link; and there were problems importing texts even in FLEx 8 (LT-2084)).
+				MessageBox.Show(
+					@"Fieldworks no longer supports import of LinguaLinks data. For any remaining projects that need this, our support staff can help convert your data. Please send a message to flex_errors@sil.org",
+					"Sorry", MessageBoxButtons.OK, MessageBoxIcon.Information);
+				return true;
+			}
 			try
 			{
 				try
@@ -393,8 +408,13 @@ namespace SIL.FieldWorks.XWorks.LexText
 					if (dlg is LexOptionsDlg)
 					{
 						LexOptionsDlg loDlg = dlg as LexOptionsDlg;
-						if ((oldWsUser != Cache.WritingSystemFactory.UserWs) || loDlg.PluginsUpdated)
-							ReplaceMainWindow(wndActive);
+						if (oldWsUser != Cache.WritingSystemFactory.UserWs ||
+							loDlg.PluginsUpdated)
+						{
+							wndActive.SaveSettings();
+							MessageBoxUtils.Show(wndActive, LexTextStrings.LexTextApp_RestartToChangeUI_Content,
+								LexTextStrings.LexTextApp_RestartToChangeUI_Title, MessageBoxButtons.OK);
+						}
 					}
 					else if (dlg is LinguaLinksImportDlg || dlg is InterlinearImportDlg ||
 							 dlg is LexImportWizard || dlg is NotebookImportWiz || dlg is LiftImportDlg)

@@ -21,7 +21,6 @@ using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Controls.FileDialog;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.Common.ScriptureUtils;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.LCModel;
 using SIL.FieldWorks.Resources;
@@ -626,7 +625,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			AccessibleName = GetType().Name;
 
 			m_openFileDialog = new OpenFileDialogAdapter();
-			m_openFileDialog.InitialDirectory = ScriptureProvider.SettingsDirectory; // to import from language files from Paratext or Toolbox
 			m_openFileDialog.Title = FwCoreDlgs.kstidLanguageFileBrowser;
 
 			splitContainerOuter.Panel2MinSize = splitValidCharsOuter.Left +

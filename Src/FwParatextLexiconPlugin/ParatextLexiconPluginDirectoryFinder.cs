@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015-2017 SIL International
+// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -63,7 +63,7 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 			using (RegistryKey machineKey = ParatextLexiconPluginRegistryHelper.FieldWorksRegistryKeyLocalMachine)
 			{
 				var registryKey = userKey;
-				if (userKey == null || userKey.GetValue(registryValue) == null)
+				if (userKey?.GetValue(registryValue) == null)
 				{
 					registryKey = machineKey;
 				}
@@ -74,7 +74,7 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 
 		private static string GetDirectory(RegistryKey registryKey, string registryValue, string defaultDir)
 		{
-			string rootDir = (registryKey == null) ? null : registryKey.GetValue(registryValue, null) as string;
+			string rootDir = registryKey?.GetValue(registryValue, null) as string;
 
 			if (string.IsNullOrEmpty(rootDir) && !string.IsNullOrEmpty(defaultDir))
 				rootDir = defaultDir;

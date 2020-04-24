@@ -1,11 +1,13 @@
-﻿// Copyright (c) 2015-2017 SIL International
+// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Xml;
 using NUnit.Framework;
 using SIL.LCModel.Core.WritingSystems;
@@ -152,6 +154,78 @@ namespace XMLViewsTests
 					Assert.AreEqual(mapChars.Count, 0, "Too many characters found equivalents");
 					Assert.AreEqual(ignoreSet.Count, 1, "Ignorable character not parsed from rule");
 					Assert.IsTrue(ignoreSet.Contains('\uA78C'.ToString(CultureInfo.InvariantCulture)));
+				}
+			}
+		}
+
+		[Test]
+		public void XHTMLExportGetDigraphMapsFromICUSortRules_UnicodeTertiaryIgnorableWithNoSpacesWorks()
+		{
+			CoreWritingSystemDefinition ws = Cache.LangProject.DefaultVernacularWritingSystem;
+			ws.DefaultCollation = new IcuRulesCollationDefinition("standard") { IcuRules = "&[last tertiary ignorable]=\\uA78C" };
+
+			var exporter = new ConfiguredExport(null, null, 0);
+			string output;
+			using (var stream = new MemoryStream())
+			{
+				using (var writer = new StreamWriter(stream))
+				{
+					exporter.Initialize(Cache, m_propertyTable, writer, null, "xhtml", null, "dicBody");
+					Dictionary<string, string> mapChars = null;
+					ISet<string> ignoreSet = null;
+					ISet<string> data = null;
+					Assert.DoesNotThrow(() => data = exporter.GetDigraphs(ws.Id, out mapChars, out ignoreSet));
+					Assert.AreEqual(mapChars.Count, 0, "Too many characters found equivalents");
+					Assert.AreEqual(ignoreSet.Count, 1, "Ignorable character not parsed from rule");
+					Assert.IsTrue(ignoreSet.Contains('\uA78C'.ToString(CultureInfo.InvariantCulture)));
+				}
+			}
+		}
+
+		[Test]
+		public void XHTMLExportGetDigraphMapsFromICUSortRules_TertiaryIgnorableMultipleLinesWorks()
+		{
+			CoreWritingSystemDefinition ws = Cache.LangProject.DefaultVernacularWritingSystem;
+			ws.DefaultCollation = new IcuRulesCollationDefinition("standard") { IcuRules = "&[last tertiary ignorable] = '!'\r\n&[last tertiary ignorable]='?'" };
+
+			var exporter = new ConfiguredExport(null, null, 0);
+			string output;
+			using (var stream = new MemoryStream())
+			{
+				using (var writer = new StreamWriter(stream))
+				{
+					exporter.Initialize(Cache, m_propertyTable, writer, null, "xhtml", null, "dicBody");
+					Dictionary<string, string> mapChars = null;
+					ISet<string> ignoreSet = null;
+					ISet<string> data = null;
+					Assert.DoesNotThrow(() => data = exporter.GetDigraphs(ws.Id, out mapChars, out ignoreSet));
+					Assert.AreEqual(mapChars.Count, 0, "Too many characters found equivalents");
+					Assert.AreEqual(ignoreSet.Count, 2, "Ignorable character not parsed from rule");
+					CollectionAssert.AreEquivalent(ignoreSet, new [] {"!", "?"});
+				}
+			}
+		}
+
+		[Test]
+		public void XHTMLExportGetDigraphMapsFromICUSortRules_TertiaryIgnorableMixedSpacingWorks()
+		{
+			CoreWritingSystemDefinition ws = Cache.LangProject.DefaultVernacularWritingSystem;
+			ws.DefaultCollation = new IcuRulesCollationDefinition("standard") { IcuRules = "&[last tertiary ignorable]= '!'\r\n&[last tertiary ignorable] ='?'" };
+
+			var exporter = new ConfiguredExport(null, null, 0);
+			string output;
+			using (var stream = new MemoryStream())
+			{
+				using (var writer = new StreamWriter(stream))
+				{
+					exporter.Initialize(Cache, m_propertyTable, writer, null, "xhtml", null, "dicBody");
+					Dictionary<string, string> mapChars = null;
+					ISet<string> ignoreSet = null;
+					ISet<string> data = null;
+					Assert.DoesNotThrow(() => data = exporter.GetDigraphs(ws.Id, out mapChars, out ignoreSet));
+					Assert.AreEqual(mapChars.Count, 0, "Too many characters found equivalents");
+					Assert.AreEqual(ignoreSet.Count, 2, "Ignorable character not parsed from rule");
+					CollectionAssert.AreEquivalent(ignoreSet, new[] { "!", "?" });
 				}
 			}
 		}

@@ -72,19 +72,24 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				}
 				else
 				{
-					ICmPossibility[] possibilities = m_autoComplete.Possibilities.ToArray();
-					if (possibilities.Length == 1)
-					{
-						if (possibilities[0] != Target)
-							AddItem(possibilities[0]);
-					}
-					else
-					{
-						UpdateDisplayFromDatabase();
-					}
+					UpdateAutoComplete();
 				}
 			}
 			m_autoComplete.Hide();
+		}
+
+		protected virtual void UpdateAutoComplete()
+		{
+			ICmPossibility[] possibilities = m_autoComplete.Possibilities.ToArray();
+			if (possibilities.Length == 1)
+			{
+				if (possibilities[0].Equals(Target))
+					AddItem(possibilities[0]);
+			}
+			else
+			{
+				UpdateDisplayFromDatabase();
+			}
 		}
 
 		#endregion // Overrides
@@ -104,9 +109,14 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			return new PossibilityAtomicReferenceView();
 		}
 
-		private void HandlePossibilitySelected(object sender, EventArgs e)
+		protected ICmPossibility AutoCompleteSelectedPossibility
 		{
-			ICmPossibility poss = m_autoComplete.SelectedPossibility;
+			get { return m_autoComplete.SelectedPossibility; }
+		}
+
+		protected virtual void HandlePossibilitySelected(object sender, EventArgs e)
+		{
+			ICmPossibility poss = AutoCompleteSelectedPossibility;
 			if (poss != Target)
 				AddItem(poss);
 			else

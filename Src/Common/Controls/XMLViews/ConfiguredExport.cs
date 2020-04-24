@@ -146,7 +146,7 @@ namespace SIL.FieldWorks.Common.Controls
 
 			base.AddObj(hvoItem, vc, frag);
 
-			WriteClassEndTag(hvoItem, ccOld);
+			WriteClassEndTag(ccOld);
 
 			if (m_fCancel)
 				throw new CancelException(XMLViewsStrings.ConfiguredExportHasBeenCancelled);
@@ -171,7 +171,7 @@ namespace SIL.FieldWorks.Common.Controls
 
 			WriteDestClassEndTag(tag);
 
-			WriteFieldEndTag(tag, ccOld);
+			WriteFieldEndTag(ccOld);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -188,7 +188,7 @@ namespace SIL.FieldWorks.Common.Controls
 
 			base.AddObjVec(tag, vc, frag);
 
-			WriteFieldEndTag(tag, ccOld);
+			WriteFieldEndTag(ccOld);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -213,7 +213,7 @@ namespace SIL.FieldWorks.Common.Controls
 
 				vc.Display(this, hvoItem, frag);
 
-				WriteClassEndTag(hvoItem, ccPrev);
+				WriteClassEndTag(ccPrev);
 				CloseTheObject();
 				if (Finished)
 					break;
@@ -222,7 +222,7 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 
 			CloseProp();
-			WriteFieldEndTag(tag, ccOld);
+			WriteFieldEndTag(ccOld);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -239,7 +239,7 @@ namespace SIL.FieldWorks.Common.Controls
 
 			base.AddProp(tag, vc, frag);
 
-			WriteFieldEndTag(tag, ccOld);
+			WriteFieldEndTag(ccOld);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -256,7 +256,7 @@ namespace SIL.FieldWorks.Common.Controls
 			ITsString tss = DataAccess.get_StringProp(CurrentObject(), tag);
 			WriteTsString(tss, TabsToIndent());
 
-			WriteFieldEndTag(tag, ccOld);
+			WriteFieldEndTag(ccOld);
 		}
 
 		private string WritingSystemId(int ws)
@@ -295,7 +295,7 @@ namespace SIL.FieldWorks.Common.Controls
 			else
 				m_writer.WriteLine("<AUni ws=\"{0}\">{1}</AUni>",
 					sWs, XmlUtils.MakeSafeXml(sText));
-			WriteFieldEndTag(tag, ccOld);
+			WriteFieldEndTag(ccOld);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -328,7 +328,7 @@ namespace SIL.FieldWorks.Common.Controls
 				}
 			}
 
-			WriteFieldEndTag(tag, ccOld);
+			WriteFieldEndTag(ccOld);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -345,7 +345,7 @@ namespace SIL.FieldWorks.Common.Controls
 			IndentLine();
 			m_writer.WriteLine("<Integer val=\"{0}\"/>", n);
 
-			WriteFieldEndTag(tag, ccOld);
+			WriteFieldEndTag(ccOld);
 		}
 
 		/// <summary>
@@ -483,11 +483,10 @@ namespace SIL.FieldWorks.Common.Controls
 
 		private int TabsToIndent()
 		{
-			int cTabs = 0;
-			for (int i = 0; i < m_rgElementTags.Count; ++i)
+			var cTabs = 0;
+			foreach (var s in m_rgElementTags)
 			{
-				string s = m_rgElementTags[i];
-				if (s != null && s.Length > 0)
+				if (!string.IsNullOrEmpty(s))
 					++cTabs;
 			}
 			return cTabs;
@@ -510,27 +509,45 @@ namespace SIL.FieldWorks.Common.Controls
 			int clid = obj.ClassID;
 			string sClass = m_sda.MetaDataCache.GetClassName(clid);
 			IndentLine();
+			var objGuid = obj.Guid; // LT-19976 XHTML export has been changed to use guid instead of hvo
 			if (m_cc == CurrentContext.insideLink)
 			{
 				sClass = sClass + "Link";
-				var targetItem = hvoItem;
-				if (obj is ILexSense)
+				var targetHvo = hvoItem;
+				var targetGuid = objGuid;
+				if (obj is ILexSense lexSense)
 				{
 					// We want the link to go to the containing lex entry.
 					// This has two advantages: first, the user can see the whole entry, rather than part of it
 					// being scrolled off the top of the screen;
 					// Secondly, some senses (e.g., of variants) may not be shown in the HTML at all, resulting in bad links (LT-11099)
-					targetItem = ((ILexSense) obj).Entry.Hvo;
+					if (m_sFormat == "xhtml")
+						targetGuid = lexSense.Entry.Guid;
+					else
+						targetHvo = lexSense.Entry.Hvo;
 				}
-				m_writer.WriteLine("<{0} target=\"hvo{1}\">", sClass, targetItem);
+				m_writer.WriteLine("<{0} target=\"{1}{2}\">",
+					sClass,
+					m_sFormat == "xhtml" ? "g" : "hvo",
+					m_sFormat == "xhtml" ? targetGuid.ToString() : targetHvo.ToString());
 			}
 			else
 			{
-				if (clid == LexEntryTags.kClassId && m_sFormat == "xhtml")
-					WriteEntryLetterHeadIfNeeded(hvoItem);
-				else if (clid == ReversalIndexEntryTags.kClassId && m_sFormat == "xhtml")
-					WriteReversalLetterHeadIfNeeded(hvoItem);
-				m_writer.WriteLine("<{0} id=\"hvo{1}\">", sClass, hvoItem);
+				if (m_sFormat == "xhtml")
+				{
+					switch (clid) // "default" case drops through on purpose
+					{
+						case LexEntryTags.kClassId:
+							WriteEntryLetterHeadIfNeeded(hvoItem);
+							break;
+						case ReversalIndexEntryTags.kClassId:
+							WriteReversalLetterHeadIfNeeded(hvoItem);
+							break;
+					}
+					m_writer.WriteLine("<{0} id=\"g{1}\">", sClass, objGuid);
+				}
+				else
+					m_writer.WriteLine("<{0} id=\"hvo{1}\">", sClass, hvoItem);
 			}
 			m_rgElementTags.Add(sClass);
 			m_rgClassNames.Add(sClass);
@@ -540,7 +557,7 @@ namespace SIL.FieldWorks.Common.Controls
 		private void WriteEntryLetterHeadIfNeeded(int hvoItem)
 		{
 			string sEntry = StringServices.ShortName1Static(m_cache.ServiceLocator.GetInstance<ILexEntryRepository>().GetObject(hvoItem));
-			if (String.IsNullOrEmpty(sEntry))
+			if (string.IsNullOrEmpty(sEntry))
 				return;
 			if (m_sWsVern == null)
 				m_sWsVern = m_cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Id;
@@ -767,7 +784,8 @@ namespace SIL.FieldWorks.Common.Controls
 					for (int i = 0; i < individualRules.Length; ++i)
 					{
 						var rule = individualRules[i];
-						RemoveICUEscapeChars(ref rule);
+						// prepare rule for parsing by dropping certain whitespace and handling ICU Escape chars
+						NormalizeRule(ref rule);
 						// This is a valid rule that specifies that the digraph aa should be ignored
 						// [last tertiary ignorable] = \u02bc = aa
 						// This may never happen, but some single characters should be ignored or they will
@@ -825,18 +843,18 @@ namespace SIL.FieldWorks.Common.Controls
 
 		private static string ProcessAdvancedSyntacticalElements(ISet<string> chIgnoreSet, string rule)
 		{
-			const string ignorableEndMarker = "ignorable] = ";
+			const string ignorableEndMarker = "ignorable]";
 			const string beforeBegin = "[before ";
 			// parse out the ignorables and add them to the ignore list
 			int ignorableBracketEnd = rule.IndexOf(ignorableEndMarker);
 			if(ignorableBracketEnd > -1)
 			{
 				ignorableBracketEnd += ignorableEndMarker.Length; // skip over the search target
-				string[] chars = rule.Substring(ignorableBracketEnd).Split(new[] { " = " },
-																				  StringSplitOptions.RemoveEmptyEntries);
-				if(chars.Length > 0)
+				var charsToIgnore = rule.Substring(ignorableBracketEnd).Split(new[] { "=" },
+					StringSplitOptions.RemoveEmptyEntries);
+				if(charsToIgnore.Length > 0)
 				{
-					foreach(var ch in chars)
+					foreach(var ch in charsToIgnore)
 						chIgnoreSet.Add(ch);
 				}
 				// the ignorable section could be at the end of other parts of a rule so strip it off the end
@@ -913,6 +931,14 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 		}
 
+		private static void NormalizeRule(ref string rule)
+		{
+			// drop carriage returns and spaces around '='
+			rule = rule.TrimEnd('\r', '\n');
+			rule = rule.Replace(" =", "=").Replace("= ", "=");
+			RemoveICUEscapeChars(ref rule);
+		}
+
 		private static void RemoveICUEscapeChars(ref string sRule)
 		{
 			const string quoteEscape = @"!@#quote#@!";
@@ -951,7 +977,7 @@ namespace SIL.FieldWorks.Common.Controls
 			WriteLetterHeadIfNeeded(sEntry, m_sWsRevIdx);
 		}
 
-		private void WriteClassEndTag(int hvoItem, CurrentContext ccOld)
+		private void WriteClassEndTag(CurrentContext ccOld)
 		{
 			m_cc = ccOld;
 
@@ -1116,7 +1142,7 @@ namespace SIL.FieldWorks.Common.Controls
 			return string.Format("{0:x}", Convert.ToInt32(c));
 		}
 
-		private void WriteFieldEndTag(int flid, CurrentContext ccOld)
+		private void WriteFieldEndTag(CurrentContext ccOld)
 		{
 			m_cc = ccOld;
 

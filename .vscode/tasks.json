@@ -4,6 +4,15 @@
   "version": "2.0.0",
   "tasks": [
     {
+      "label": "build recent",
+      "type": "shell",
+      "command": "Build/build-recent",
+      "group": "build",
+      "problemMatcher": [
+        "$msCompile"
+      ]
+    },
+    {
       "label": "remakefw",
       "type": "shell",
       "command": "cd Build && build.bat /t:remakefw",

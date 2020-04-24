@@ -8229,7 +8229,7 @@ namespace SIL.FieldWorks.XWorks
 			CssGeneratorTests.PopulateFieldsForTesting(model);
 			string xhtmlPath = null;
 			const string pagesDivXPath = "//div[@class='pages']";
-			const string pageButtonXPath = "//div[@class='pages']/span[@class='pagebutton']";
+			const string pageButtonXPath = "//div[@class='pages']/span[@class='pagebutton' and @lang='fr']";
 			try
 			{
 				xhtmlPath = ConfiguredXHTMLGenerator.SavePreviewHtmlWithStyles(new[] { firstAEntry.Hvo, secondAEntry.Hvo, bEntry.Hvo }, pubEverything, model, m_propertyTable, entriesPerPage: 1);

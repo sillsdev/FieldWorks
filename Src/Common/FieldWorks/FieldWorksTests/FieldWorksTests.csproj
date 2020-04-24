@@ -10,6 +10,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>SIL.FieldWorks</RootNamespace>
     <AssemblyName>FieldWorksTests</AssemblyName>
+    <AppConfig>..\..\..\StaAppForTests.config</AppConfig>
     <FileUpgradeFlags>
     </FileUpgradeFlags>
     <OldToolsVersion>3.5</OldToolsVersion>
@@ -149,7 +150,6 @@
     <Reference Include="System.Windows.Forms" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
     <Compile Include="..\..\..\AssemblyInfoForTests.cs">
       <Link>AssemblyInfoForTests.cs</Link>
     </Compile>

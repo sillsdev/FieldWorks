@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2014-2017 SIL International
+// Copyright (c) 2014-2020 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -435,7 +435,7 @@ namespace SIL.FieldWorks.XWorks
 					}
 				};
 				controller.UploadToWebonary("fakefile.zip", view.Model, view);
-				Assert.That(view.StatusStrings.Any(s => s.Contains("Error: There has been an error accessing webonary. Is your sitename correct?")));
+				Assert.That(view.StatusStrings.Any(s => s.Contains(xWorksStrings.ksErrorWebonarySiteName)));
 			}
 
 			// Test with an exception which indicates a redirect should happen
@@ -453,14 +453,14 @@ namespace SIL.FieldWorks.XWorks
 					}
 				};
 				controller.UploadToWebonary("fakefile.zip", view.Model, view);
-				Assert.That(view.StatusStrings.Any(s => s.Contains("Error: There has been an error accessing webonary. Is your sitename correct?")));
+				Assert.That(view.StatusStrings.Any(s => s.Contains(xWorksStrings.ksErrorWebonarySiteName)));
 			}
 		}
 
 		[Test]
 		public void UploadToWebonaryReportsLackingPermissionsToUpload()
 		{
-			var ex = new WebonaryClient.WebonaryException(new WebException("Unable to connect to Webonary.  Please check your username and password and your Internet connection."));
+			var ex = new WebonaryClient.WebonaryException(new WebException("Unable to connect to Webonary. Please check your username and password and your Internet connection."));
 			ex.StatusCode = HttpStatusCode.BadRequest;
 			using (var controller = new MockUploadToWebonaryController(Cache, m_propertyTable, m_mediator, ex, null))
 			{
@@ -474,7 +474,7 @@ namespace SIL.FieldWorks.XWorks
 					}
 				};
 				controller.UploadToWebonary("../../Src/xWorks/xWorksTests/lubwisi-d-new.zip", view.Model, view);
-				Assert.That(view.StatusStrings.Any(s => s.Contains("Unable to connect to Webonary.  Please check your username and password and your Internet connection.")));
+				Assert.That(view.StatusStrings.Any(s => s.Contains("Unable to connect to Webonary. Please check your username and password and your Internet connection.")));
 			}
 		}
 
@@ -668,7 +668,7 @@ namespace SIL.FieldWorks.XWorks
 			var result = UploadToWebonaryController.UploadFilename(model, view);
 
 			Assert.That(result, Is.Null, "Fail on invalid characters.");
-			Assert.That(view.StatusStrings.Any(s => s.Contains("Invalid characters found in sitename")), "Inform that there was a problem");
+			Assert.That(view.StatusStrings.Any(s => s.Contains(xWorksStrings.ksErrorInvalidCharacters)), "Inform that there was a problem");
 		}
 
 		[Test]

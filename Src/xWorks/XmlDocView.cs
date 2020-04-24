@@ -1323,7 +1323,7 @@ namespace SIL.FieldWorks.XWorks
 
 			display.Enabled = false;
 			// Don't claim to have handled it if the clerk is holding reversal entries.
-			return Clerk.Id != "reversalEntries";
+			return Clerk.Id != "AllReversalEntries";
 		}
 
 		/// <summary>
@@ -1370,7 +1370,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			CheckDisposed();
 
-			if (Clerk.Id == "reversalEntries")
+			if (Clerk.Id == "AllReversalEntries")
 			{
 				return false; // Let the clerk do it.
 			}

@@ -272,7 +272,7 @@ Main template
 						<xsl:with-param name="allos" select="$allos"/>
 					</xsl:call-template>
 					<xsl:call-template name="CircumfixMCCs">
-						<xsl:with-param name="morphname" select="@dst"/>
+						<xsl:with-param name="morphname" select="@Id"/>
 					</xsl:call-template>
 				</xsl:if>
 				<xsl:if test="contains($sTypes, 'infix')">

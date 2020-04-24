@@ -10,6 +10,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>SIL.FieldWorks.Discourse</RootNamespace>
     <AssemblyName>DiscourseTests</AssemblyName>
+    <AppConfig>..\..\..\AppForTests.config</AppConfig>
     <FileUpgradeFlags>
     </FileUpgradeFlags>
     <OldToolsVersion>3.5</OldToolsVersion>

@@ -1792,25 +1792,30 @@ namespace SIL.FieldWorks.Common.Controls
 			if (!fInstalledNewSelection)
 			{
 				// Try something else.
-				vwselNew = m_rootb.MakeTextSelInObj(0,
-					1, rgvsli, 0, null,	//1, rgvsli,
-					true, // fInitial
-					false, // fEdit
-					false, // fRange
-					false, // fWholeObj
-					true); // fInstall
-				fInstalledNewSelection = true;
-				if (vwselNew == null)
+				try
 				{
-					// not much we can do to handle errors, but don't let the program die just
+					vwselNew = m_rootb.MakeTextSelInObj(0,
+						1, rgvsli, 0, null,
+						fInitial: true,
+						fEdit: false,
+						fRange: false,
+						fWholeObj: false,
+						fInstall: true);
+					if (vwselNew != null)
+						fInstalledNewSelection = true;
+				}
+				catch
+				{
+					// Not much we can do to handle errors, but don't let the program die just
 					// because the display hasn't yet been laid out, so selections can't fully be
 					// created and displayed.
-					fInstalledNewSelection = false;
-					Debug.WriteLine("XmlBrowseViewBase::SetDefaultInsertionPointInRow: Caught exception while trying to scroll a non-editable object into view.");
+					// Or (LT-20118) the display is laid out, but the previously-selected item has been deleted.
 				}
 			}
 			if (vwselNew != null && fInstalledNewSelection)
 				MakeSelectionVisible(vwselNew, true, true, true);
+			else
+				Debug.WriteLine("XmlBrowseViewBase::SetDefaultInsertionPointInRow: Caught exception while trying to scroll a non-editable object into view.");
 			return fInstalledNewSelection;
 		}
 

@@ -384,5 +384,23 @@ namespace SIL.FieldWorks.XWorks.LexText {
                 return ResourceManager.GetString("ksWhenToTransduceCitForms", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Restart FieldWorks to complete the User Interface language change..
+        /// </summary>
+        public static string LexTextApp_RestartToChangeUI_Content {
+            get {
+                return ResourceManager.GetString("LexTextApp_RestartToChangeUI_Content", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to User Interface Language Changed.
+        /// </summary>
+        public static string LexTextApp_RestartToChangeUI_Title {
+            get {
+                return ResourceManager.GetString("LexTextApp_RestartToChangeUI_Title", resourceCulture);
+            }
+        }
     }
 }
