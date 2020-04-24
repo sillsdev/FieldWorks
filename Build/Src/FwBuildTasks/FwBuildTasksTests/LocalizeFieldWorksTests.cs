@@ -17,6 +17,7 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 	[TestFixture]
 	public class LocalizeFieldWorksTests
 	{
+		// ReSharper disable InconsistentNaming
 		InstrumentedLocalizeFieldWorks m_sut;
 		private string m_rootPath;
 		private string m_l10nFolder;
@@ -29,6 +30,7 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 		private string m_FieldWorksPropertiesFolder;
 		private string m_FieldWorksTestsFolder;
 		private string m_sideBarFolder;
+		// ReSharper restore InconsistentNaming
 
 		private const string LocaleEs = "es";
 		private const string SampleStringEn = "A category";
@@ -75,6 +77,7 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 		}
 
 		/// <summary>Sets up the bare minimum to test localization: strings.**.xml, a project (FDO), and assembly info</summary>
+		// ReSharper disable once InconsistentNaming
 		private void SimpleSetupFDO(string locale, string localizedStringsXml = "safe sample text", string localizedProjStrings = "safe sample text")
 		{
 			CreateStringsXml(m_sut.StringsXmlSourcePath(locale), localizedStringsXml);
@@ -266,8 +269,8 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 			// The Assembly Linker should be run (once for each desired project) with expected arguments.
 			Assert.That(InstrumentedProjectLocalizer.LinkerPath.Count, Is.EqualTo(4));
 			VerifyLinkerArgs(Path.Combine(m_sut.OutputFolder, "Release", "es", "FDO.resources.dll"), new[] {
-				new EmbedInfo(Path.Combine(m_sut.OutputFolder, "es", "FDO", "SIL.FDO.FDO-strings.es.resources"),
-							  "SIL.FDO.FDO-strings.es.resources")
+				new EmbedInfo(Path.Combine(m_sut.OutputFolder, "es", "FDO", $"{FdoNamespace}.{FdoStringsFilenameNoExt}.es.resources"),
+							  $"{FdoNamespace}.{FdoStringsFilenameNoExt}.es.resources")
 				});
 			VerifyLinkerArgs(Path.Combine(m_sut.OutputFolder, "Release", "es", "FieldWorks.resources.dll"), new[] {
 				new EmbedInfo(Path.Combine(m_sut.OutputFolder, "es", "Common", "FieldWorks", "SIL.FieldWorks.FieldWorks-strings.es.resources"),
@@ -467,7 +470,7 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 
 		[Test]
 		[Ignore("Crowdin does this better than we used to, and it's now harder for us to match localized with original strings")]
-		// ENHANCE (Hasso) 2019.12: Crowdin warns localizers of both extra and missings args (only when the original string has args). Should we?
+		// ENHANCE (Hasso) 2019.12: Crowdin warns localizers of both extra and missing args (only when the original string has args). Should we?
 		// see <c>Localizer.CheckMsgidAndMsgstr</c>
 		public void ExtraStringArgInMsgStrReported()
 		{
@@ -484,7 +487,6 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 		public void AddedOrMissingStringsReported()
 		{
 			// TODO (Hasso) 2019.12: test the following cases:
-			// - a resx file has not been localized
 			// - a resx file is missing strings that the original has
 			// - a resx file has strings that the original does not
 			throw new NotImplementedException();
@@ -548,12 +550,25 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 		public void ErrorsReportedInProjStringsResX()
 		{
 			SimpleSetupFDO(LocaleGe, localizedProjStrings: "test {o}");
-			var badResXFilePath = Path.Combine(m_l10nFolder, "Src", "FDO", $"FDO-strings.{LocaleGe}.resx");
+			var badResXFilePath = Path.Combine(m_l10nFolder, "Src", "FDO", $"{FdoStringsFilenameNoExt}.{LocaleGe}.resx");
 
 			var result = m_sut.Execute();
 
 			Assert.That(result, Is.False);
 			Assert.That(m_sut.ErrorMessages, Is.StringContaining(badResXFilePath));
+		}
+
+		[Test]
+		public void TolerateMissingResx()
+		{
+			SimpleSetupFDO(LocaleGe);
+			File.Delete(Path.Combine(m_l10nFolder, "Src", "FDO", $"{FdoStringsFilenameNoExt}.{LocaleGe}.resx"));
+
+			var result = m_sut.Execute();
+
+			Assert.That(result, Is.True, "should have succeeded");
+			Assert.That(File.Exists(Path.Combine(m_sut.OutputFolder, LocaleGe, "FDO", $"{FdoNamespace}.{FdoStringsFilenameNoExt}.{LocaleGe}.resx")),
+				"resx file should exist");
 		}
 
 		[Test]

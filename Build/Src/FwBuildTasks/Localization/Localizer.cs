@@ -25,7 +25,7 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 		public readonly List<string> Errors = new List<string>();
 
 		/// <summary>the directory of localizations currently being processed (includes the locale subdirectory)</summary>
-		internal string CurrentLocaleDir { get; private set; } // REVIEW (Hasso) 2019.11: better name?
+		internal string CurrentLocaleDir { get; private set; }
 
 		internal string Locale { get; set; }
 
@@ -46,7 +46,7 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 				Errors.Add(message);
 		}
 
-		public void ProcessFile()
+		public void Process()
 		{
 			try
 			{
@@ -169,7 +169,7 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 				if (!CollectInterestingProjects(subfolder, projectFolderCollector))
 					return false;
 			}
-			//for Mono 2.10.4, Directory.EnumerateFiles(...) seems to see only writeable files???
+			//for Mono 2.10.4, Directory.EnumerateFiles(...) seems to see only writable files???
 			//var projectFiles = Directory.EnumerateFiles(root, "*.csproj");
 			var projectFiles = Directory.GetFiles(root, "*.csproj");
 			if (projectFiles.Length > 1)

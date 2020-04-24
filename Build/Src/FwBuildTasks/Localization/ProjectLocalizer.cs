@@ -118,7 +118,8 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 				}
 				else
 				{
-					Options.LogError($"{Options.Locale} resx not found at {localizedResxSourcePath}");
+					File.Copy(resxFile, localizedResxPath, overwrite: true);
+					Options.LogMessage(MessageImportance.Normal, $"copying original English resx to {localizedResxPath}");
 				}
 			}
 		}

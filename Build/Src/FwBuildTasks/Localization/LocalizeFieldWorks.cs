@@ -13,7 +13,7 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 {
 	/// <summary>
 	/// This class implements a complex process required to generate various resource DLLs for
-	/// the localization of fieldworks and liblcm. The main input of the process is a set of files kept
+	/// the localization of FieldWorks and liblcm. The main input of the process is a set of files kept
 	/// under Localizations/l10ns/[locale], which are translated versions of resx and other files
 	/// in FieldWorks for the specified [locale] (e.g., fr, es, zh-CN).
 	///
@@ -160,7 +160,7 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 			{
 				// Process current l10n dir:
 				var localizer = CreateLocalizer(currentDir);
-				localizer.ProcessFile();
+				localizer.Process();
 
 				// Slot current localizer into array at index matching current language.
 				// This allows us to output any errors in a coherent manner.
