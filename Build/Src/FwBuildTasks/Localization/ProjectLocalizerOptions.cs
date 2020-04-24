@@ -27,10 +27,10 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 
 		private readonly Localizer _localizer;
 
-		/// <returns><c>true</c> if the given string has errors in string.Format variables</returns>
-		internal bool CheckForErrors(string filename, string localizedText)
+		/// <returns><c>true</c> if the localized string has errors; <c>false</c> if it looks good</returns>
+		internal bool HasErrors(string filename, string localizedText, string originalText)
 		{
-			return _localizer.CheckForErrors(filename, localizedText);
+			return _localizer.HasErrors(filename, localizedText, originalText);
 		}
 
 		public void LogError(string message)

@@ -5,6 +5,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml.Linq;
@@ -117,12 +118,11 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 			{
 				// check for errors
 				var xmlDoc = XDocument.Load(localizedXmlSourcePath);
-				// ReSharper disable once AssignNullToNotNullAttribute -- there will always be a root
-				var elts = xmlDoc.Root.XPathSelectElements("/strings/group/string");
 				var hasErrors = false;
-				foreach (var elt in elts)
+				// ReSharper disable once AssignNullToNotNullAttribute -- there will always be a root
+				foreach (var elt in xmlDoc.Root.XPathSelectElements("/strings//group/string"))
 				{
-					if (CheckForErrors(localizedXmlSourcePath, elt.Attribute("txt")?.Value))
+					if (HasErrors(localizedXmlSourcePath, elt.Attribute("txt")?.Value))
 						hasErrors = true;
 				}
 				if (hasErrors)
@@ -183,28 +183,33 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 		}
 
 
-		/// <returns><c>true</c> if the given string has errors in string.Format variables</returns>
-		internal bool CheckForErrors(string filename, string localizedText)
+		/// <returns><c>true</c> if the given string has errors in string.Format variables or other obvious places</returns>
+		internal bool HasErrors(string filename, string localizedText, string originalText = null)
 		{
-			const string MistypedSubMarker1InFile0 =
+			if (string.IsNullOrWhiteSpace(localizedText)){
+				if (string.IsNullOrWhiteSpace(originalText))
+					return false; // an empty string has no errors
+				LogError($"{filename} contains an empty string as a translation for '{originalText.Substring(0, Math.Min(originalText.Length, 100))}'");
+				return true;
+			}
+			const string mistypedSubMarker1InFile0 =
 				"{0} contains a suspicious string ({1}) that is probably a mis-typed string substitution marker ";
-			if (string.IsNullOrEmpty(localizedText?.Trim()))
-				return false; // an empty string has no errors
+			const string messedUpBraces1InFile0 = mistypedSubMarker1InFile0 + "with braces messed up";
 			// Check for translator using a look-alike character in place of digit 0 or 1 in string.Format control string.
-			return CheckForError(filename, localizedText, new Regex("{[oOlLiI]}"),
-					MistypedSubMarker1InFile0 + "using a letter in place of digit 0 or 1") ||
-				CheckForError(filename, localizedText, new Regex("[{}][0-9]{1-2}{"), MistypedSubMarker1InFile0 + "with braces messed up") ||
-				CheckForError(filename, localizedText, new Regex("}[0-9]{1-2}[{}]"), MistypedSubMarker1InFile0 + "with braces messed up") ||
-				CheckForError(filename, localizedText, new Regex("{[^}]+{"), MistypedSubMarker1InFile0 + "with braces messed up") ||
-				CheckForError(filename, localizedText, new Regex("}[^{]+}"), MistypedSubMarker1InFile0 + "with braces messed up") ||
-				CheckForError(filename, localizedText, new Regex("^[^{]*[0-9]}"), MistypedSubMarker1InFile0 + "with a missing opening brace") ||
-				CheckForError(filename, localizedText, new Regex("{[0-9][^}]*$"), MistypedSubMarker1InFile0 + "with a missing closing brace");
-			// TODO (Hasso) 2019.12: if (!CheckMsgidAndMsgstr(englishText, localizedText)) return true;
+			return HasError(filename, localizedText, new Regex("{[oOlLiI]}"), mistypedSubMarker1InFile0 + "using a letter in place of digit 0 or 1") ||
+				HasError(filename, localizedText, new Regex("[{}][0-9]{1-2}{"), messedUpBraces1InFile0) ||
+				HasError(filename, localizedText, new Regex("}[0-9]{1-2}[{}]"), messedUpBraces1InFile0) ||
+				HasError(filename, localizedText, new Regex("{[^}]+{"), messedUpBraces1InFile0) ||
+				HasError(filename, localizedText, new Regex("}[^{]+}"), messedUpBraces1InFile0) ||
+				HasError(filename, localizedText, new Regex("^[^{]*[0-9]}"), mistypedSubMarker1InFile0 + "with a missing opening brace") ||
+				HasError(filename, localizedText, new Regex("{[0-9][^}]*$"), mistypedSubMarker1InFile0 + "with a missing closing brace") ||
+				originalText != null &&
+					(HasAddedOrRemovedFormatMarkers(filename, localizedText, originalText) ||
+					HasCorruptColorString(filename, localizedText, originalText));
 		}
 
 		/// <returns><c>true</c> if the given string matches the pattern (has errors)</returns>
-		private bool CheckForError(string filename, string localizedText, Regex pattern,
-			string message)
+		private bool HasError(string filename, string localizedText, Regex pattern, string message)
 		{
 			var matches = pattern.Matches(localizedText);
 			if (matches.Count == 0)
@@ -213,25 +218,50 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 			return true;
 		}
 
-		private bool CheckMsgidAndMsgstr(string msgid, string msgstr)
+		/// <remarks>
+		/// ENHANCE (Hasso) 2020.04: report removed markers
+		/// ENHANCE (Hasso) 2020.04: report added markers in the middle of an incomplete range, for example, if the original string is
+		/// <c>{1}, {2}, {5}!</c>, then the translation should not be allowed to include <c>{3}, sir!</c>
+		/// </remarks>
+		/// <returns><c>true</c> if the localized text has different formatting markers than the original text (has errors)</returns>
+		private bool HasAddedOrRemovedFormatMarkers(string filename, string localizedText, string originalText)
 		{
-			// allow empty data without complaint
-			if (string.IsNullOrEmpty(msgid) && string.IsNullOrEmpty(msgstr))
-				return true;
+			// both are empty; obviously, nothing was added or removed :-)
+			if (string.IsNullOrEmpty(originalText) && string.IsNullOrEmpty(localizedText))
+				return false;
 
 			var argRegEx = new Regex("{[0-9]}");
-			var maxArg = -1;
-			foreach (Match idmatch in argRegEx.Matches(msgid))
-				maxArg = Math.Max(maxArg, Convert.ToInt32(idmatch.Value[1]));
-			foreach (Match strmatch in argRegEx.Matches(msgstr))
-			{
-				if (Convert.ToInt32(strmatch.Value[1]) <= maxArg)
-					continue;
-
-				// TODO (Hasso) 2019.12: LogError(
-				//	$"{CurrentFile} contains a key/value pair where the value ({msgstr}) has more arguments than the key ({msgid})");
+			// ReSharper disable once AssignNullToNotNullAttribute - originalText is checked for null before calling
+			var maxArg = (from Match oMatch in argRegEx.Matches(originalText) select Convert.ToInt32(oMatch.Value[1])).Concat(new[] {-1}).Max();
+			if (!argRegEx.Matches(localizedText).Cast<Match>().Any(lMatch => Convert.ToInt32(lMatch.Value[1]) > maxArg))
 				return false;
+
+			LogError($"{filename} contains a value ({localizedText}) that has more arguments than the original ({originalText})");
+			return true;
+		}
+
+		/// <returns><c>true</c> if the file is ColorStrings.resx and the trailing ",r,g,b" has changed from the original text</returns>
+		private bool HasCorruptColorString(string filename, string localizedText, string originalText)
+		{
+			if (!new Regex(@"ColorStrings\...(...)?\.resx$").IsMatch(filename) || originalText == "Custom")
+				return false;
+			var origParts = originalText.Split(',');
+			var locParts = localizedText.Split(',');
+
+			// Four parts: RGB + localized name
+			if (locParts.Length == 4)
+			{
+				var i = 1;
+				for (; i <= 3; i++)
+				{
+					if (origParts[origParts.Length - i] != locParts[locParts.Length - i])
+						break;
+				}
+				// i == 4 if we made it through R, G, and B without finding changes
+				if (i == 4)
+					return false;
 			}
+			LogError($"{filename} contains a color string '{localizedText}' whose RGB value is missing or doesn't match '{originalText}'");
 			return true;
 		}
 	}

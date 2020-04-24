@@ -11,6 +11,7 @@ using System.Xml.Linq;
 using Microsoft.Build.Framework;
 using NUnit.Framework;
 using SIL.FieldWorks.Build.Tasks.Localization;
+// ReSharper disable StringLiteralTypo - they're not all English
 
 namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 {
@@ -43,6 +44,7 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 		private const string FieldWorksStringsFilenameNoExt = "FieldWorks-strings";
 		private const string MoreStringsFilenameNoExt = "Properties.more strings";
 		private const string FdoStringsFilenameNoExt = "FDO-strings";
+		private const string ColorStringsFilenameNoExt = "ColorStrings";
 
 		[SetUp]
 		public void Setup()
@@ -205,24 +207,40 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 			return CreateLocalizedResXFor(projectFolder, fileNameNoExt, locale, localizedText);
 		}
 
-		private string CreateLocalizedResXFor(string projectFolder,
-			string fileNameNoExt, string locale, string localizedText)
+		/// <summary>creates an English and a localized version of the same ResX file</summary>
+		/// <returns>the path to the localized version of the ResX file</returns>
+		private string CreateLocalizedResX(string projectFolder, string fileNameNoExt,
+			string locale, string englishText, string localizedText, string englishText2, string localizedText2)
 		{
-			return CreateResX(projectFolder.Replace(m_rootPath, m_l10nFolder), $"{fileNameNoExt}.{locale}.resx", localizedText);
+			CreateResX(projectFolder, fileNameNoExt, englishText, "ksTwo", englishText2);
+			return CreateLocalizedResXFor(projectFolder, fileNameNoExt, locale, localizedText, "ksTwo", localizedText2);
 		}
 
-		private static string CreateResX(string folder, string fileName, string textValue)
+		private string CreateLocalizedResXFor(string projectFolder,
+			string fileNameNoExt, string locale, string localizedText,
+			string dataName2 = null, string textValue2 = null)
 		{
-			var doc = new XDocument(
-				new XElement("root",
-					new XElement("data",
-						new XAttribute("name", "ksTest"),
-						new XElement("value",
-							new XText(textValue)))));
+			return CreateResX(projectFolder.Replace(m_rootPath, m_l10nFolder), $"{fileNameNoExt}.{locale}.resx", localizedText, dataName2, textValue2);
+		}
+
+		private static string CreateResX(string folder, string fileName, string textValue, string dataName2 = null, string textValue2 = null)
+		{
+			var doc = new XDocument(new XElement("root", CreateDataElement("ksTest", textValue)));
+			if (!string.IsNullOrWhiteSpace(dataName2))
+			{
+				doc.Root.Add(CreateDataElement(dataName2, textValue2));
+			}
 			var path = Path.ChangeExtension(Path.Combine(folder, fileName), "resx");
 			Directory.CreateDirectory(folder);
 			doc.Save(path);
 			return path;
+		}
+
+		private static XElement CreateDataElement(string name, string textValue)
+		{
+			return new XElement("data",
+				new XAttribute("name", name),
+				new XElement("value", new XText(textValue)));
 		}
 
 		/// <summary>
@@ -469,9 +487,23 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 		}
 
 		[Test]
-		[Ignore("Crowdin does this better than we used to, and it's now harder for us to match localized with original strings")]
-		// ENHANCE (Hasso) 2019.12: Crowdin warns localizers of both extra and missing args (only when the original string has args). Should we?
-		// see <c>Localizer.CheckMsgidAndMsgstr</c>
+		public void ClearedStringsReported()
+		{
+			const string orig = "original string";
+			var badResXFilePath = SimpleSetupWithResX(LocaleGe, orig, string.Empty);
+
+			var result = m_sut.Execute();
+
+			Assert.That(result, Is.False);
+			Assert.That(m_sut.ErrorMessages, Is.StringContaining(badResXFilePath));
+			Assert.That(m_sut.ErrorMessages, Is.StringContaining(orig));
+		}
+
+		/// <remarks>
+		/// ENHANCE (Hasso) 2019.12: Crowdin warns localizers of both extra and missing args (only when the original string has args). Should we?
+		/// <see cref="Localizer.HasAddedOrRemovedFormatMarkers"/>
+		/// </remarks>
+		[Test]
 		public void ExtraStringArgInMsgStrReported()
 		{
 			var badResXFilePath = SimpleSetupWithResX(LocaleGe, "test {0} {1}", "test {2} {1} {0}");
@@ -480,6 +512,23 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 
 			Assert.That(result, Is.False);
 			Assert.That(m_sut.ErrorMessages, Is.StringContaining(badResXFilePath));
+		}
+
+		[TestCase(ColorStringsFilenameNoExt, "White,255,255,255", "Weiß,225,123,0", false, "mismatched RGB")]
+		[TestCase(ColorStringsFilenameNoExt, "White,255,255,255", "Weiß,225,255", false, "missing RGB (actually, just B)")]
+		[TestCase(ColorStringsFilenameNoExt, "White,255,255,255", "Weiß,255,255,255", true, "matching RGB")]
+		[TestCase(ColorStringsFilenameNoExt, "Light Orange,255,153,0", "Hellorange,255,153,0", true, "matching RGB")]
+		[TestCase(ColorStringsFilenameNoExt, "Custom", "Benutzerdefiniert", true, "Custom; no RGB")]
+		[TestCase("unremarkable", "White,255,255,255", "Weiß,225,123,0", true, "file shouldn't be checked")]
+		public void ColorStringsCorruptedReported(string filename, string original, string localized, bool result, string message)
+		{
+			SimpleSetupFDO(LocaleGe);
+			CreateLocalizedResX(m_FdoFolder, filename, LocaleGe, original, localized);
+
+			Assert.AreEqual(result, m_sut.Execute(), message);
+
+			if (!result)
+				Assert.That(m_sut.ErrorMessages, Is.StringContaining("color"));
 		}
 
 		[Test]
@@ -556,6 +605,36 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 
 			Assert.That(result, Is.False);
 			Assert.That(m_sut.ErrorMessages, Is.StringContaining(badResXFilePath));
+		}
+
+		[Test]
+		public void AllBadStringsReportedInResx()
+		{
+			const string badString1 = "{o}";
+			const string badString2 = "{9{";
+			SimpleSetupFDO(LocaleGe);
+			CreateLocalizedResX(m_FdoFolder, "badFile", LocaleGe, "test {0}", badString1, "test {9}", badString2);
+
+
+			Assert.False(m_sut.Execute());
+
+			Assert.That(m_sut.ErrorMessages, Is.StringContaining(badString1));
+			Assert.That(m_sut.ErrorMessages, Is.StringContaining(badString2));
+		}
+
+		[Test]
+		public void DuplicateStringsReportedInResx()
+		{
+			const string dupStringId = "ksTest";
+			const string badFileNoExt = "badFile";
+			SimpleSetupFDO(LocaleGe);
+			var badFileName = CreateResX(m_FdoFolder, badFileNoExt, "unimportant", dupStringId, "unimportant");
+			CreateLocalizedResXFor(m_FdoFolder, badFileNoExt, LocaleGe, "egal", dupStringId, "völlig egal");
+
+			Assert.False(m_sut.Execute());
+
+			Assert.That(m_sut.ErrorMessages, Is.StringContaining(dupStringId));
+			Assert.That(m_sut.ErrorMessages, Is.StringContaining(badFileName));
 		}
 
 		[Test]
