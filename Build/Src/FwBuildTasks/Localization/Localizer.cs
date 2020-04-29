@@ -184,7 +184,7 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 
 
 		/// <returns><c>true</c> if the given string has errors in string.Format variables or other obvious places</returns>
-		internal bool HasErrors(string filename, string localizedText, string originalText = null)
+		internal bool HasErrors(string filename, string localizedText, string originalText = null, string comment = null)
 		{
 			if (string.IsNullOrWhiteSpace(localizedText)){
 				if (string.IsNullOrWhiteSpace(originalText))
@@ -204,7 +204,7 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 				HasError(filename, localizedText, new Regex("^[^{]*[0-9]}"), mistypedSubMarker1InFile0 + "with a missing opening brace") ||
 				HasError(filename, localizedText, new Regex("{[0-9][^}]*$"), mistypedSubMarker1InFile0 + "with a missing closing brace") ||
 				originalText != null &&
-					(HasAddedOrRemovedFormatMarkers(filename, localizedText, originalText) ||
+					(HasAddedOrRemovedFormatMarkers(filename, localizedText, originalText, comment) ||
 					HasCorruptColorString(filename, localizedText, originalText));
 		}
 
@@ -218,26 +218,37 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 			return true;
 		}
 
-		/// <remarks>
-		/// ENHANCE (Hasso) 2020.04: report removed markers
-		/// ENHANCE (Hasso) 2020.04: report added markers in the middle of an incomplete range, for example, if the original string is
-		/// <c>{1}, {2}, {5}!</c>, then the translation should not be allowed to include <c>{3}, sir!</c>
-		/// </remarks>
 		/// <returns><c>true</c> if the localized text has different formatting markers than the original text (has errors)</returns>
-		private bool HasAddedOrRemovedFormatMarkers(string filename, string localizedText, string originalText)
+		private bool HasAddedOrRemovedFormatMarkers(string filename, string localizedText, string originalText, string comment)
 		{
-			// both are empty; obviously, nothing was added or removed :-)
-			if (string.IsNullOrEmpty(originalText) && string.IsNullOrEmpty(localizedText))
-				return false;
-
+			const int verifiableArgs = 10;
 			var argRegEx = new Regex("{[0-9]}");
-			// ReSharper disable once AssignNullToNotNullAttribute - originalText is checked for null before calling
-			var maxArg = (from Match oMatch in argRegEx.Matches(originalText) select Convert.ToInt32(oMatch.Value[1])).Concat(new[] {-1}).Max();
-			if (!argRegEx.Matches(localizedText).Cast<Match>().Any(lMatch => Convert.ToInt32(lMatch.Value[1]) > maxArg))
-				return false;
+			var argCounts = new int[verifiableArgs];
 
-			LogError($"{filename} contains a value ({localizedText}) that has more arguments than the original ({originalText})");
-			return true;
+			// count how many of each argument we have in the original text
+			foreach (Match match in argRegEx.Matches(originalText))
+			{
+				argCounts[match.Value[1] - '0']++;
+			}
+
+			// count down for each argument in the localized tet
+			foreach (Match match in argRegEx.Matches(localizedText))
+			{
+				argCounts[match.Value[1] - '0']--;
+			}
+
+			// If the original and localized texts have the same arguments, all counts should be zero (unless an argument is optional)
+			for (var i = 0; i < verifiableArgs; i++)
+			{
+				if (argCounts[i] != 0 && (comment == null || !comment.Contains($"{{{i}}}") || !comment.Contains("optional")))
+				{
+					LogError($"{filename} contains a value ({localizedText}) that has different arguments than the original ({originalText})");
+					return true;
+
+				}
+			}
+
+			return false;
 		}
 
 		/// <returns><c>true</c> if the file is ColorStrings.resx and the trailing ",r,g,b" has changed from the original text</returns>

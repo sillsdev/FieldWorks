@@ -28,9 +28,9 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 		private readonly Localizer _localizer;
 
 		/// <returns><c>true</c> if the localized string has errors; <c>false</c> if it looks good</returns>
-		internal bool HasErrors(string filename, string localizedText, string originalText)
+		internal bool HasErrors(string filename, string localizedText, string originalText, string comment)
 		{
-			return _localizer.HasErrors(filename, localizedText, originalText);
+			return _localizer.HasErrors(filename, localizedText, originalText, comment);
 		}
 
 		public void LogError(string message)

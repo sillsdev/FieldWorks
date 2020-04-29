@@ -154,19 +154,35 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 		/// <returns><c>true</c> if the given ResX file has errors in string.Format variables</returns>
 		private bool CheckResXForErrors(string resxPath, string originalResxPath)
 		{
-			var localizedElements = LocalizableElements(resxPath);
-			var originalElements = LocalizableElements(originalResxPath);
+			var originalElements = LocalizableElements(originalResxPath, out var comments);
+			var localizedElements = LocalizableElements(resxPath, out _);
 
 			var hasErrors = false;
-			foreach (var _ in localizedElements.Where(element => Options.HasErrors(resxPath, element.Value, originalElements[element.Key])))
+			foreach (var key in originalElements.Keys.Where(key => !localizedElements.ContainsKey(key)))
+			{
+				Options.LogError($"{resxPath} is missing a data element named '{key}'");
+				hasErrors = true;
+			}
+
+			if (hasErrors || originalElements.Count != localizedElements.Count)
+			{
+				foreach (var key in localizedElements.Keys.Where(key => !originalElements.ContainsKey(key)))
+				{
+					Options.LogError($"{resxPath} contains a data element named '{key}' that is not present in the original file");
+					hasErrors = true;
+				}
+			}
+
+			foreach (var _ in localizedElements.Where(elt => Options.HasErrors(resxPath, elt.Value, originalElements[elt.Key], comments[elt.Key])))
 			{
 				hasErrors = true;
 			}
+
 			return hasErrors;
 		}
 
 		[SuppressMessage("ReSharper", "PossibleNullReferenceException", Justification = "R# doesn't recognize that x.Attribute('name') *is* checked for null")]
-		private Dictionary<string, string> LocalizableElements(string resxPath)
+		private Dictionary<string, string> LocalizableElements(string resxPath, out Dictionary<string, string> comments)
 		{
 			// (resx data elements that are localizable strings have no type attribute,
 			// have no mimetype attribute, and have a name that doesn't start with '>>' or '$this')
@@ -175,6 +191,7 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 							!x.Attribute("name").Value.StartsWith(">>") &&
 							!x.Attribute("name").Value.StartsWith("$this"));
 			var dict = new Dictionary<string, string>();
+			comments = new Dictionary<string, string>();
 			foreach (var element in localizableElements)
 			{
 				var key = element.Attribute("name").Value;
@@ -185,6 +202,7 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 				else
 				{
 					dict.Add(key, element.Element("value")?.Value);
+					comments.Add(key, element.Element("comment")?.Value);
 				}
 			}
 			return dict;

@@ -201,10 +201,10 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 		/// <summary>creates an English and a localized version of the same ResX file</summary>
 		/// <returns>the path to the localized version of the ResX file</returns>
 		private string CreateLocalizedResX(string projectFolder, string fileNameNoExt,
-			string locale = LocaleEs, string englishText = SampleStringEn, string localizedText = SampleStringEs)
+			string locale = LocaleEs, string englishText = SampleStringEn, string localizedText = SampleStringEs, string comment = null)
 		{
-			CreateResX(projectFolder, fileNameNoExt, englishText);
-			return CreateLocalizedResXFor(projectFolder, fileNameNoExt, locale, localizedText);
+			CreateResX(projectFolder, fileNameNoExt, englishText, comment);
+			return CreateLocalizedResXFor(projectFolder, fileNameNoExt, locale, localizedText, comment);
 		}
 
 		/// <summary>creates an English and a localized version of the same ResX file</summary>
@@ -212,23 +212,25 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 		private string CreateLocalizedResX(string projectFolder, string fileNameNoExt,
 			string locale, string englishText, string localizedText, string englishText2, string localizedText2)
 		{
-			CreateResX(projectFolder, fileNameNoExt, englishText, "ksTwo", englishText2);
-			return CreateLocalizedResXFor(projectFolder, fileNameNoExt, locale, localizedText, "ksTwo", localizedText2);
+			CreateResX(projectFolder, fileNameNoExt, englishText, dataName2: "ksTwo", textValue2: englishText2);
+			return CreateLocalizedResXFor(projectFolder, fileNameNoExt, locale, localizedText, dataName2: "ksTwo", textValue2: localizedText2);
 		}
 
 		private string CreateLocalizedResXFor(string projectFolder,
-			string fileNameNoExt, string locale, string localizedText,
-			string dataName2 = null, string textValue2 = null)
+			string fileNameNoExt, string locale, string localizedText, string comment = null,
+			string dataName2 = null, string textValue2 = null, string comment2 = null)
 		{
-			return CreateResX(projectFolder.Replace(m_rootPath, m_l10nFolder), $"{fileNameNoExt}.{locale}.resx", localizedText, dataName2, textValue2);
+			return CreateResX(projectFolder.Replace(m_rootPath, m_l10nFolder), $"{fileNameNoExt}.{locale}.resx",
+				localizedText, dataName2: dataName2, textValue2: textValue2);
 		}
 
-		private static string CreateResX(string folder, string fileName, string textValue, string dataName2 = null, string textValue2 = null)
+		private static string CreateResX(string folder, string fileName, string textValue, string comment = null,
+			string dataName2 = null, string textValue2 = null, string comment2 = null)
 		{
-			var doc = new XDocument(new XElement("root", CreateDataElement("ksTest", textValue)));
+			var doc = new XDocument(new XElement("root", CreateDataElement("ksTest", textValue, comment)));
 			if (!string.IsNullOrWhiteSpace(dataName2))
 			{
-				doc.Root.Add(CreateDataElement(dataName2, textValue2));
+				doc.Root.Add(CreateDataElement(dataName2, textValue2, comment2));
 			}
 			var path = Path.ChangeExtension(Path.Combine(folder, fileName), "resx");
 			Directory.CreateDirectory(folder);
@@ -236,11 +238,12 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 			return path;
 		}
 
-		private static XElement CreateDataElement(string name, string textValue)
+		private static XElement CreateDataElement(string name, string textValue, string comment)
 		{
 			return new XElement("data",
 				new XAttribute("name", name),
-				new XElement("value", new XText(textValue)));
+				new XElement("value", new XText(textValue)),
+				new XElement("comment", comment == null ? null : new XText(comment)));
 		}
 
 		/// <summary>
@@ -484,6 +487,7 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 
 			Assert.That(result, Is.False);
 			Assert.That(m_sut.ErrorMessages, Is.StringContaining(badResXFilePath));
+			Assert.That(m_sut.ErrorMessages, Is.StringContaining("inside out"));
 		}
 
 		[Test]
@@ -500,18 +504,34 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 		}
 
 		/// <remarks>
-		/// ENHANCE (Hasso) 2019.12: Crowdin warns localizers of both extra and missing args (only when the original string has args). Should we?
+		/// ENHANCE (Hasso) 2020.04: [TestCase("test {22}", "test {21}")]
 		/// <see cref="Localizer.HasAddedOrRemovedFormatMarkers"/>
 		/// </remarks>
-		[Test]
-		public void ExtraStringArgInMsgStrReported()
+		[TestCase("test {0} {1}", "test {2} {1} {0}")]
+		[TestCase("test {0} {1} {2}", "test {0} {2}")]
+		[TestCase("test {0} {2}", "test {0} {1} {2}")]
+		[TestCase("{1}, {2}, {5}!", "{3}, sir!")]
+		public void ExtraOrMissingStringArgsReported(string english, string localized)
 		{
-			var badResXFilePath = SimpleSetupWithResX(LocaleGe, "test {0} {1}", "test {2} {1} {0}");
+			var badResXFilePath = SimpleSetupWithResX(LocaleGe, english, localized);
 
-			var result = m_sut.Execute();
+			Assert.False(m_sut.Execute());
 
-			Assert.That(result, Is.False);
 			Assert.That(m_sut.ErrorMessages, Is.StringContaining(badResXFilePath));
+		}
+
+		/// <remarks>
+		/// Most line separator characters are marked as optional. The more common case is that extra line separator characters are added.
+		/// </remarks>
+		[TestCase("test {0} {1} {2}", "test {0} {2}", "{1}")]
+		[TestCase("first line{0}second line", "first line{0}second line{0}extra line", "{0}")]
+		public void LineSeparatorsAreOptional(string english, string localized, string newlineArg)
+		{
+			SimpleSetupFDO(LocaleGe);
+			CreateLocalizedResX(m_FdoFolder, "unbreakable", LocaleGe, english, localized,
+				$"{newlineArg} is a line separator character.  It is optional.");
+
+			Assert.True(m_sut.Execute(), m_sut.ErrorMessages);
 		}
 
 		[TestCase(ColorStringsFilenameNoExt, "White,255,255,255", "Weiß,225,123,0", false, "mismatched RGB")]
@@ -532,13 +552,33 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 		}
 
 		[Test]
-		[Ignore("not yet implemented")]
-		public void AddedOrMissingStringsReported()
+		public void AddedStringsReported()
 		{
-			// TODO (Hasso) 2019.12: test the following cases:
-			// - a resx file is missing strings that the original has
-			// - a resx file has strings that the original does not
-			throw new NotImplementedException();
+			const string badFilenameBase = "bad";
+			const string extraDataName = "extraData";
+			SimpleSetupFDO(LocaleGe);
+			CreateResX(m_FdoFolder, badFilenameBase, "some text");
+			var badFile = CreateLocalizedResXFor(m_FdoFolder, badFilenameBase, LocaleGe, "just fine", dataName2: extraDataName, textValue2: "not fine");
+
+			Assert.False(m_sut.Execute());
+
+			Assert.That(m_sut.ErrorMessages, Is.StringContaining(badFile));
+			Assert.That(m_sut.ErrorMessages, Is.StringContaining(extraDataName));
+		}
+
+		[Test]
+		public void MissingStringsReported()
+		{
+			const string badFilenameBase = "bad";
+			const string extraDataName = "extraData";
+			SimpleSetupFDO(LocaleGe);
+			CreateResX(m_FdoFolder, badFilenameBase, "some text", dataName2: extraDataName, textValue2: "you can't find me!");
+			var badFile = CreateLocalizedResXFor(m_FdoFolder, badFilenameBase, LocaleGe, "only one");
+
+			Assert.False(m_sut.Execute());
+
+			Assert.That(m_sut.ErrorMessages, Is.StringContaining(badFile));
+			Assert.That(m_sut.ErrorMessages, Is.StringContaining(extraDataName));
 		}
 
 		[Test]
@@ -628,8 +668,8 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 			const string dupStringId = "ksTest";
 			const string badFileNoExt = "badFile";
 			SimpleSetupFDO(LocaleGe);
-			var badFileName = CreateResX(m_FdoFolder, badFileNoExt, "unimportant", dupStringId, "unimportant");
-			CreateLocalizedResXFor(m_FdoFolder, badFileNoExt, LocaleGe, "egal", dupStringId, "völlig egal");
+			var badFileName = CreateResX(m_FdoFolder, badFileNoExt, "unimportant", dataName2: dupStringId, textValue2: "unimportant");
+			CreateLocalizedResXFor(m_FdoFolder, badFileNoExt, LocaleGe, "egal", dataName2: dupStringId, textValue2: "völlig egal");
 
 			Assert.False(m_sut.Execute());
 
