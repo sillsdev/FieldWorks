@@ -147,7 +147,7 @@ install-tree: fieldworks-flex.1.gz unicodechareditor.1.gz install-tree-fdo
 	rm -f $(DESTDIR)/usr/lib/share/fieldworks/Icu54/Keyboards
 	# Windows dll and exe files.
 	rm -f $(DESTDIR)/usr/lib/fieldworks/{aspell-15,iconv,libglib-2.0-0,libglib-2.0-0-vs8,libgmodule-2.0-0,libgmodule-2.0-0-vs8,TextFormStorage,unicows,wrtXML,xample32,xample64,XceedZip,xmlparse_u}.dll
-	rm -f $(DESTDIR)/usr/lib/fieldworks/{SFconv,TxtConvvs_piaredist,ZEdit}.exe
+	rm -f $(DESTDIR)/usr/lib/fieldworks/{SFconv,TxtConv,vs_piaredist,ZEdit}.exe
 	# Remove localization data that came from "DistFiles/Language Explorer", which is handled separately by l10n-install
 	rm -f $(DESTDIR)/usr/share/fieldworks/Language\ Explorer/Configuration/strings-*.xml
 	# Except we still want English :-) (this also seems like a sensible place to install English .xlf files for common libraries)
