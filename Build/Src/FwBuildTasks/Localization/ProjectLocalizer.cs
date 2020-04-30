@@ -5,6 +5,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -111,14 +112,15 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 				Directory.CreateDirectory(Path.GetDirectoryName(localizedResxPath));
 				if (File.Exists(localizedResxSourcePath))
 				{
-					if (CheckResXForErrors(localizedResxSourcePath))
+					if (CheckResXForErrors(localizedResxSourcePath, resxFile))
 						continue;
 					File.Copy(localizedResxSourcePath, localizedResxPath, overwrite: true);
 					Options.LogMessage(MessageImportance.Low, "copying {0} resx to {1}", Options.Locale, localizedResxPath);
 				}
 				else
 				{
-					Options.LogError($"{Options.Locale} resx not found at {localizedResxSourcePath}");
+					File.Copy(resxFile, localizedResxPath, overwrite: true);
+					Options.LogMessage(MessageImportance.Normal, $"copying original English resx to {localizedResxPath}");
 				}
 			}
 		}
@@ -126,6 +128,7 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 		private string GetLocalizedResxPath(ResourceInfo resourceInfo, string resxPath)
 		{
 			var resxFileName = Path.GetFileNameWithoutExtension(resxPath);
+			// ReSharper disable once PossibleNullReferenceException
 			var partialDir = Path.GetDirectoryName(resxPath.Substring(Options.SrcFolder.Length + 1));
 			var projectPartialDir = resourceInfo.ProjectFolder.Substring(Options.SrcFolder.Length + 1);
 			var outputFolder = Path.Combine(Options.OutputFolder, Options.Locale, partialDir);
@@ -141,6 +144,7 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 		private string GetLocalizedResxSourcePath(string resxPath)
 		{
 			var resxFileName = Path.GetFileNameWithoutExtension(resxPath);
+			// ReSharper disable once PossibleNullReferenceException
 			var partialDir = Path.GetDirectoryName(resxPath.Substring(Options.RootDir.Length + 1));
 			var sourceFolder = Path.Combine(Options.CurrentLocaleDir, partialDir);
 			var fileName = $"{resxFileName}.{Options.Locale}.resx";
@@ -148,25 +152,60 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 		}
 
 		/// <returns><c>true</c> if the given ResX file has errors in string.Format variables</returns>
-		private bool CheckResXForErrors(string resxPath)
+		private bool CheckResXForErrors(string resxPath, string originalResxPath)
 		{
-			var resx = XDocument.Load(resxPath);
-			// ReSharper disable PossibleNullReferenceException -- R# doesn't recognize that x.Attribute("name") *is* checked for null
-			// Select from the root the elements with localizable strings
-			// (resx data elements that are translatable strings have no type attribute,
-			// have no mimetype attribute, and have a name that doesn't start with '>>' or '$this')
-			var stringValues = resx.Root.XPathSelectElements("/*/data[not(@type) and not(@mimetype)]")
-				.Where(x => x.Attribute("name") != null && !x.Attribute("name").Value.StartsWith(">>") &&
-							!x.Attribute("name").Value.StartsWith("$this")).ToArray();
-			// ReSharper restore PossibleNullReferenceException
+			var originalElements = LocalizableElements(originalResxPath, out var comments);
+			var localizedElements = LocalizableElements(resxPath, out _);
 
 			var hasErrors = false;
-			foreach (var elementToUpdate in stringValues)
+			foreach (var key in originalElements.Keys.Where(key => !localizedElements.ContainsKey(key)))
 			{
-				if (Options.CheckForErrors(resxPath, elementToUpdate.Element("value")?.Value))
-					hasErrors = true;
+				Options.LogError($"{resxPath} is missing a data element named '{key}'");
+				hasErrors = true;
 			}
+
+			if (hasErrors || originalElements.Count != localizedElements.Count)
+			{
+				foreach (var key in localizedElements.Keys.Where(key => !originalElements.ContainsKey(key)))
+				{
+					Options.LogError($"{resxPath} contains a data element named '{key}' that is not present in the original file");
+					hasErrors = true;
+				}
+			}
+
+			foreach (var _ in localizedElements.Where(elt => Options.HasErrors(resxPath, elt.Value, originalElements[elt.Key], comments[elt.Key])))
+			{
+				hasErrors = true;
+			}
+
 			return hasErrors;
+		}
+
+		[SuppressMessage("ReSharper", "PossibleNullReferenceException", Justification = "R# doesn't recognize that x.Attribute('name') *is* checked for null")]
+		private Dictionary<string, string> LocalizableElements(string resxPath, out Dictionary<string, string> comments)
+		{
+			// (resx data elements that are localizable strings have no type attribute,
+			// have no mimetype attribute, and have a name that doesn't start with '>>' or '$this')
+			var localizableElements = XDocument.Load(resxPath).Root.XPathSelectElements("/*/data[not(@type) and not(@mimetype)]")
+				.Where(x => x.Attribute("name") != null &&
+							!x.Attribute("name").Value.StartsWith(">>") &&
+							!x.Attribute("name").Value.StartsWith("$this"));
+			var dict = new Dictionary<string, string>();
+			comments = new Dictionary<string, string>();
+			foreach (var element in localizableElements)
+			{
+				var key = element.Attribute("name").Value;
+				if (dict.ContainsKey(key))
+				{
+					Options.LogError($"Duplicate key {key} in {resxPath}");
+				}
+				else
+				{
+					dict.Add(key, element.Element("value")?.Value);
+					comments.Add(key, element.Element("comment")?.Value);
+				}
+			}
+			return dict;
 		}
 
 		private void CreateResourceAssemblies(ResourceInfo resourceInfo)
