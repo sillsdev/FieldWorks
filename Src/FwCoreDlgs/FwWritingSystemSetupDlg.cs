@@ -20,7 +20,7 @@ using SIL.WritingSystems;
 
 namespace SIL.FieldWorks.FwCoreDlgs
 {
-	/// <summary/>
+	/// <remarks>TODO (Hasso) 2020.05: Make Localizable</remarks>
 	public partial class FwWritingSystemSetupDlg : Form
 	{
 		private FwWritingSystemSetupModel _model;

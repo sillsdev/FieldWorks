@@ -117,4 +117,283 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <assembly alias="mscorlib" name="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="m_lblAnthroHeader.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <data name="m_lblAnthroHeader.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Microsoft Sans Serif, 10pt, style=Bold</value>
+  </data>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="m_lblAnthroHeader.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="m_lblAnthroHeader.Location" type="System.Drawing.Point, System.Drawing">
+    <value>13, 14</value>
+  </data>
+  <data name="m_lblAnthroHeader.Size" type="System.Drawing.Size, System.Drawing">
+    <value>288, 17</value>
+  </data>
+  <data name="m_lblAnthroHeader.TabIndex" type="System.Int32, mscorlib">
+    <value>12</value>
+  </data>
+  <data name="m_lblAnthroHeader.Text" xml:space="preserve">
+    <value>Choose list of anthropology categories</value>
+  </data>
+  <data name="&gt;&gt;m_lblAnthroHeader.Name" xml:space="preserve">
+    <value>m_lblAnthroHeader</value>
+  </data>
+  <data name="&gt;&gt;m_lblAnthroHeader.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_lblAnthroHeader.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;m_lblAnthroHeader.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="m_tbDescription.Location" type="System.Drawing.Point, System.Drawing">
+    <value>16, 39</value>
+  </data>
+  <data name="m_tbDescription.Multiline" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="m_tbDescription.Size" type="System.Drawing.Size, System.Drawing">
+    <value>458, 28</value>
+  </data>
+  <data name="m_tbDescription.TabIndex" type="System.Int32, mscorlib">
+    <value>10</value>
+  </data>
+  <data name="m_tbDescription.Text" xml:space="preserve">
+    <value>In Notebook, you will use a list of anthropology categories to catalog your observations.</value>
+  </data>
+  <data name="&gt;&gt;m_tbDescription.Name" xml:space="preserve">
+    <value>m_tbDescription</value>
+  </data>
+  <data name="&gt;&gt;m_tbDescription.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_tbDescription.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;m_tbDescription.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="_choicesLayout.ColumnCount" type="System.Int32, mscorlib">
+    <value>2</value>
+  </data>
+  <data name="m_radioFRAME.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="m_radioFRAME.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="m_radioFRAME.Location" type="System.Drawing.Point, System.Drawing">
+    <value>3, 3</value>
+  </data>
+  <data name="m_radioFRAME.Size" type="System.Drawing.Size, System.Drawing">
+    <value>14, 13</value>
+  </data>
+  <data name="m_radioFRAME.TabIndex" type="System.Int32, mscorlib">
+    <value>2</value>
+  </data>
+  <data name="&gt;&gt;m_radioFRAME.Name" xml:space="preserve">
+    <value>m_radioFRAME</value>
+  </data>
+  <data name="&gt;&gt;m_radioFRAME.Type" xml:space="preserve">
+    <value>System.Windows.Forms.RadioButton, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_radioFRAME.Parent" xml:space="preserve">
+    <value>_choicesLayout</value>
+  </data>
+  <data name="&gt;&gt;m_radioFRAME.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="customDescription.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="customDescription.Location" type="System.Drawing.Point, System.Drawing">
+    <value>37, 66</value>
+  </data>
+  <data name="customDescription.Multiline" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="customDescription.Size" type="System.Drawing.Size, System.Drawing">
+    <value>496, 31</value>
+  </data>
+  <data name="customDescription.TabIndex" type="System.Int32, mscorlib">
+    <value>9</value>
+  </data>
+  <data name="customDescription.Text" xml:space="preserve">
+    <value>Create my own set of anthropology categories (start with an empty list)</value>
+  </data>
+  <data name="&gt;&gt;customDescription.Name" xml:space="preserve">
+    <value>customDescription</value>
+  </data>
+  <data name="&gt;&gt;customDescription.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;customDescription.Parent" xml:space="preserve">
+    <value>_choicesLayout</value>
+  </data>
+  <data name="&gt;&gt;customDescription.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="ocmDescription.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="ocmDescription.Location" type="System.Drawing.Point, System.Drawing">
+    <value>37, 41</value>
+  </data>
+  <data name="ocmDescription.Multiline" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="ocmDescription.Size" type="System.Drawing.Size, System.Drawing">
+    <value>496, 19</value>
+  </data>
+  <data name="ocmDescription.TabIndex" type="System.Int32, mscorlib">
+    <value>10</value>
+  </data>
+  <data name="ocmDescription.Text" xml:space="preserve">
+    <value>Standard OCM anthropology categories</value>
+  </data>
+  <data name="&gt;&gt;ocmDescription.Name" xml:space="preserve">
+    <value>ocmDescription</value>
+  </data>
+  <data name="&gt;&gt;ocmDescription.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;ocmDescription.Parent" xml:space="preserve">
+    <value>_choicesLayout</value>
+  </data>
+  <data name="&gt;&gt;ocmDescription.ZOrder" xml:space="preserve">
+    <value>2</value>
+  </data>
+  <data name="m_radioOCM.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="m_radioOCM.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="m_radioOCM.Location" type="System.Drawing.Point, System.Drawing">
+    <value>3, 41</value>
+  </data>
+  <data name="m_radioOCM.Size" type="System.Drawing.Size, System.Drawing">
+    <value>14, 13</value>
+  </data>
+  <data name="m_radioOCM.TabIndex" type="System.Int32, mscorlib">
+    <value>3</value>
+  </data>
+  <data name="&gt;&gt;m_radioOCM.Name" xml:space="preserve">
+    <value>m_radioOCM</value>
+  </data>
+  <data name="&gt;&gt;m_radioOCM.Type" xml:space="preserve">
+    <value>System.Windows.Forms.RadioButton, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_radioOCM.Parent" xml:space="preserve">
+    <value>_choicesLayout</value>
+  </data>
+  <data name="&gt;&gt;m_radioOCM.ZOrder" xml:space="preserve">
+    <value>3</value>
+  </data>
+  <data name="m_radioCustom.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="m_radioCustom.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="m_radioCustom.Location" type="System.Drawing.Point, System.Drawing">
+    <value>3, 66</value>
+  </data>
+  <data name="m_radioCustom.Size" type="System.Drawing.Size, System.Drawing">
+    <value>14, 13</value>
+  </data>
+  <data name="m_radioCustom.TabIndex" type="System.Int32, mscorlib">
+    <value>4</value>
+  </data>
+  <data name="&gt;&gt;m_radioCustom.Name" xml:space="preserve">
+    <value>m_radioCustom</value>
+  </data>
+  <data name="&gt;&gt;m_radioCustom.Type" xml:space="preserve">
+    <value>System.Windows.Forms.RadioButton, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_radioCustom.Parent" xml:space="preserve">
+    <value>_choicesLayout</value>
+  </data>
+  <data name="&gt;&gt;m_radioCustom.ZOrder" xml:space="preserve">
+    <value>4</value>
+  </data>
+  <data name="frameDescription.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="frameDescription.Location" type="System.Drawing.Point, System.Drawing">
+    <value>37, 3</value>
+  </data>
+  <data name="frameDescription.Multiline" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="frameDescription.Size" type="System.Drawing.Size, System.Drawing">
+    <value>496, 32</value>
+  </data>
+  <data name="frameDescription.TabIndex" type="System.Int32, mscorlib">
+    <value>11</value>
+  </data>
+  <data name="frameDescription.Text" xml:space="preserve">
+    <value>Enhanced Outline of Cultural Materials (OCM), which includes additional codes to better differentiate social, religious, and ethnomusicology topics (recommended)</value>
+  </data>
+  <data name="&gt;&gt;frameDescription.Name" xml:space="preserve">
+    <value>frameDescription</value>
+  </data>
+  <data name="&gt;&gt;frameDescription.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;frameDescription.Parent" xml:space="preserve">
+    <value>_choicesLayout</value>
+  </data>
+  <data name="&gt;&gt;frameDescription.ZOrder" xml:space="preserve">
+    <value>5</value>
+  </data>
+  <data name="_choicesLayout.Location" type="System.Drawing.Point, System.Drawing">
+    <value>16, 73</value>
+  </data>
+  <data name="_choicesLayout.RowCount" type="System.Int32, mscorlib">
+    <value>3</value>
+  </data>
+  <data name="_choicesLayout.Size" type="System.Drawing.Size, System.Drawing">
+    <value>536, 100</value>
+  </data>
+  <data name="_choicesLayout.TabIndex" type="System.Int32, mscorlib">
+    <value>11</value>
+  </data>
+  <data name="&gt;&gt;_choicesLayout.Name" xml:space="preserve">
+    <value>_choicesLayout</value>
+  </data>
+  <data name="&gt;&gt;_choicesLayout.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TableLayoutPanel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;_choicesLayout.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;_choicesLayout.ZOrder" xml:space="preserve">
+    <value>2</value>
+  </data>
+  <data name="_choicesLayout.LayoutSettings" type="System.Windows.Forms.TableLayoutSettings, System.Windows.Forms">
+    <value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="m_radioFRAME" Row="0" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="customDescription" Row="2" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="ocmDescription" Row="1" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="m_radioOCM" Row="1" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="m_radioCustom" Row="2" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="frameDescription" Row="0" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;/Controls&gt;&lt;Columns Styles="Absolute,34,Percent,100" /&gt;&lt;Rows Styles="Absolute,38,Absolute,25,Absolute,25" /&gt;&lt;/TableLayoutSettings&gt;</value>
+  </data>
+  <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
+  <data name="$this.AutoScaleDimensions" type="System.Drawing.SizeF, System.Drawing">
+    <value>6, 13</value>
+  </data>
+  <data name="$this.Size" type="System.Drawing.Size, System.Drawing">
+    <value>566, 259</value>
+  </data>
+  <data name="&gt;&gt;$this.Name" xml:space="preserve">
+    <value>FwChooseAnthroListCtrl</value>
+  </data>
+  <data name="&gt;&gt;$this.Type" xml:space="preserve">
+    <value>System.Windows.Forms.UserControl, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
 </root>
