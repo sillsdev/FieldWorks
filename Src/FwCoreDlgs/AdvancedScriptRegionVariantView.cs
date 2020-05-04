@@ -1,3 +1,7 @@
+// Copyright (c) 2019-2020 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
+
 using System;
 using System.Drawing;
 using System.Linq;
@@ -19,22 +23,15 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			InitializeComponent();
 		}
 
+		#region ISelectableIdentifierOptions implementation
 		/// <summary/>
 		public void Selected()
 		{
-			this.UpdateDisplayFromModel((object)null, (EventArgs)null);
-		}
-
-		private void UpdateDisplayFromModel(object o, EventArgs eventArgs)
-		{
-			;
 		}
 
 		/// <summary/>
 		public void MoveDataFromViewToModel()
 		{
-			if (this._updatingFromModel)
-				return;
 		}
 
 		/// <summary/>
@@ -42,10 +39,12 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			RemoveAllEventHandlers();
 		}
+		#endregion ISelectableIdentifierOptions implementation
 
 		private void RemoveAllEventHandlers()
 		{
 			// disconnect all change event handlers
+			_abbreviation.TextChanged -= _abbreviationTextBox_TextChanged;
 			_scriptChooser.SelectedIndexChanged -= _scriptChooser_SelectedIndexChanged;
 			_regionChooser.SelectedIndexChanged -= _regionChooser_SelectedIndexChanged;
 			_standardVariantCombo.SelectedIndexChanged -= _standardVariantCombo_SelectedIndexChanged;
@@ -60,6 +59,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private void AddAllEventHandlers()
 		{
 			// Reconnect all change event handlers
+			_abbreviation.TextChanged += _abbreviationTextBox_TextChanged;
 			_scriptChooser.SelectedIndexChanged += _scriptChooser_SelectedIndexChanged;
 			_regionChooser.SelectedIndexChanged += _regionChooser_SelectedIndexChanged;
 			_standardVariantCombo.SelectedIndexChanged += _standardVariantCombo_SelectedIndexChanged;
@@ -101,7 +101,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			var scripts = _model.GetScripts().ToArray();
 			foreach (var scriptChoice in scripts)
 			{
-				_scriptChooser.Items.Add(new ScriptChoiceView(scriptChoice.Label, scriptChoice));
+				_scriptChooser.Items.Add(new ScriptChoiceView(scriptChoice));
 			}
 
 			if (_model.Script != null)
@@ -114,7 +114,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			var modelRegions = _model.GetRegions().ToArray();
 			foreach (var regionChoice in modelRegions)
 			{
-				_regionChooser.Items.Add(new RegionChoiceView(regionChoice.Label, regionChoice));
+				_regionChooser.Items.Add(new RegionChoiceView(regionChoice));
 			}
 
 			if (_model.Region != null)
@@ -126,7 +126,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			var standardVariants = _model.GetStandardVariants().ToArray();
 			foreach (var variant in standardVariants)
 			{
-				_standardVariantCombo.Items.Add(new VariantChoiceView(variant.Name, variant));
+				_standardVariantCombo.Items.Add(new VariantChoiceView(variant));
 			}
 
 			// _model.StandardVariant can be null in which case we will select 'None'
@@ -142,7 +142,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 		private class ScriptChoiceView : Tuple<string, ScriptListItem>
 		{
-			public ScriptChoiceView(string label, ScriptListItem scriptChoice) : base(label, scriptChoice)
+			public ScriptChoiceView(ScriptListItem scriptChoice) : base(scriptChoice.Label, scriptChoice)
 			{
 			}
 
@@ -154,7 +154,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 		private class RegionChoiceView : Tuple<string, RegionListItem>
 		{
-			public RegionChoiceView(string label, RegionListItem regionListItem) : base(label, regionListItem)
+			public RegionChoiceView(RegionListItem regionListItem) : base(regionListItem.Label, regionListItem)
 			{
 			}
 
@@ -166,7 +166,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 		private class VariantChoiceView : Tuple<string, VariantListItem>
 		{
-			public VariantChoiceView(string label, VariantListItem variant): base(variant.Name, variant)
+			public VariantChoiceView(VariantListItem variant): base(variant.Name, variant)
 			{
 			}
 
@@ -176,7 +176,13 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			}
 		}
 
-		private void _variantsTextBox_TextChanged(object sender, System.EventArgs e)
+		private void _abbreviationTextBox_TextChanged(object sender, EventArgs e)
+		{
+			_model.Abbreviation = _abbreviation.Text;
+			BindToModel(_model);
+		}
+
+		private void _variantsTextBox_TextChanged(object sender, EventArgs e)
 		{
 			if(_model.ValidateOtherVariants(_variantsTextBox.Text))
 			{
