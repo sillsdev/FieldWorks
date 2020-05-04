@@ -88,7 +88,7 @@ namespace SIL.FieldWorks.XWorks
 			return model;
 		}
 
-		private static ConfigurableDictionaryNode CreatePictureModel()
+		internal static ConfigurableDictionaryNode CreatePictureModel()
 		{
 			var thumbNailNode = new ConfigurableDictionaryNode
 			{
@@ -280,20 +280,20 @@ namespace SIL.FieldWorks.XWorks
 		/// If refTypeReverseName is specified, generates a Ref of an Asymmetric Type (EntryOrSenseTree) with the specified reverse name;
 		/// otherwise, generates a Ref of a Symmetric Type (EntryOrSenseSequence).
 		/// </summary>
-		private void CreateLexicalReference(ICmObject mainEntry, ICmObject referencedForm, string refTypeName, string refTypeReverseName = null)
+		internal static void CreateLexicalReference(LcmCache cache, ICmObject mainEntry, ICmObject referencedForm, string refTypeName, string refTypeReverseName = null)
 		{
-			CreateLexicalReference(mainEntry, referencedForm, null, refTypeName, refTypeReverseName);
+			CreateLexicalReference(cache, mainEntry, referencedForm, null, refTypeName, refTypeReverseName);
 		}
 
-		private void CreateLexicalReference(ICmObject firstEntry, ICmObject secondEntry, ICmObject thirdEntry, string refTypeName, string refTypeReverseName = null)
+		private static void CreateLexicalReference(LcmCache cache, ICmObject firstEntry, ICmObject secondEntry, ICmObject thirdEntry, string refTypeName, string refTypeReverseName = null)
 		{
-			var lrt = CreateLexRefType(LexRefTypeTags.MappingTypes.kmtEntryOrSenseSequence, refTypeName, "", refTypeReverseName, "");
+			var lrt = CreateLexRefType(cache, LexRefTypeTags.MappingTypes.kmtEntryOrSenseSequence, refTypeName, "", refTypeReverseName, "");
 			if (!string.IsNullOrEmpty(refTypeReverseName))
 			{
-				lrt.ReverseName.set_String(Cache.DefaultAnalWs, refTypeReverseName);
+				lrt.ReverseName.set_String(cache.DefaultAnalWs, refTypeReverseName);
 				lrt.MappingType = (int)MappingTypes.kmtEntryOrSenseTree;
 			}
-			var lexRef = Cache.ServiceLocator.GetInstance<ILexReferenceFactory>().Create();
+			var lexRef = cache.ServiceLocator.GetInstance<ILexReferenceFactory>().Create();
 			lrt.MembersOC.Add(lexRef);
 			lexRef.TargetsRS.Add(firstEntry);
 			lexRef.TargetsRS.Add(secondEntry);
@@ -301,26 +301,26 @@ namespace SIL.FieldWorks.XWorks
 				lexRef.TargetsRS.Add(thirdEntry);
 		}
 
-		private ILexRefType CreateLexRefType(LexRefTypeTags.MappingTypes type, string name, string abbr, string revName, string revAbbr)
+		private static ILexRefType CreateLexRefType(LcmCache cache, LexRefTypeTags.MappingTypes type, string name, string abbr, string revName, string revAbbr)
 		{
-			if (Cache.LangProject.LexDbOA.ReferencesOA == null)
+			if (cache.LangProject.LexDbOA.ReferencesOA == null)
 			{
-				Cache.LangProject.LexDbOA.ReferencesOA = Cache.ServiceLocator.GetInstance<ICmPossibilityListFactory>().Create();
+				cache.LangProject.LexDbOA.ReferencesOA = cache.ServiceLocator.GetInstance<ICmPossibilityListFactory>().Create();
 			}
-			var referencePossibilities = Cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS;
+			var referencePossibilities = cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS;
 			if (referencePossibilities.Any(r => r.Name.BestAnalysisAlternative.Text == name))
 			{
 				return referencePossibilities.First(r => r.Name.BestAnalysisAlternative.Text == name) as ILexRefType;
 			}
-			var lrt = Cache.ServiceLocator.GetInstance<ILexRefTypeFactory>().Create();
+			var lrt = cache.ServiceLocator.GetInstance<ILexRefTypeFactory>().Create();
 			referencePossibilities.Add(lrt);
 			lrt.MappingType = (int)type;
-			lrt.Name.set_String(m_wsEn, name);
-			lrt.Abbreviation.set_String(m_wsEn, abbr);
+			lrt.Name.set_String(cache.DefaultAnalWs, name);
+			lrt.Abbreviation.set_String(cache.DefaultAnalWs, abbr);
 			if (!string.IsNullOrEmpty(revName))
-				lrt.ReverseName.set_String(m_wsEn, revName);
+				lrt.ReverseName.set_String(cache.DefaultAnalWs, revName);
 			if (!string.IsNullOrEmpty(revAbbr))
-				lrt.ReverseAbbreviation.set_String(m_wsEn, revAbbr);
+				lrt.ReverseAbbreviation.set_String(cache.DefaultAnalWs, revAbbr);
 			return lrt;
 		}
 
@@ -341,7 +341,7 @@ namespace SIL.FieldWorks.XWorks
 			return DictionaryConfigurationImportController.AddPublicationType(name, cache);
 		}
 
-		private static void AddHeadwordToEntry(ILexEntry entry, string headword, int wsId)
+		internal static void AddHeadwordToEntry(ILexEntry entry, string headword, int wsId)
 		{
 			// The headword field is special: it uses Citation if available, or LexemeForm if Citation isn't filled in
 			entry.CitationForm.set_String(wsId, TsStringUtils.MakeString(headword, wsId));

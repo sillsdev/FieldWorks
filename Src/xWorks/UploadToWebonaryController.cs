@@ -96,7 +96,15 @@ namespace SIL.FieldWorks.XWorks
 			webonaryView.UpdateStatus(String.Format(xWorksStrings.ExportingEntriesToWebonary, model.SelectedPublication, model.SelectedConfiguration));
 			var xhtmlPath = Path.Combine(tempDirectoryToCompress, "configured.xhtml");
 			var configuration = model.Configurations[model.SelectedConfiguration];
-			m_exportService.ExportDictionaryContent(xhtmlPath, configuration);
+			var exportAsJson = Environment.GetEnvironmentVariable("WEBONARY_API");
+			if (string.IsNullOrEmpty(exportAsJson))
+			{
+				m_exportService.ExportDictionaryContent(xhtmlPath, configuration);
+			}
+			else
+			{
+				m_exportService.ExportDictionaryContentJson(xhtmlPath, configuration);
+			}
 			webonaryView.UpdateStatus(xWorksStrings.ExportingEntriesToWebonaryCompleted);
 		}
 

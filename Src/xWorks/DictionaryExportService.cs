@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2016 SIL International
+// Copyright (c) 2016 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -289,6 +289,20 @@ namespace SIL.FieldWorks.XWorks
 				// Don't publish the property change: doing so may refresh the Dictionary (or Reversal) preview in the main window;
 				// we want to activate the Publication for export purposes only.
 				m_propertyTable.SetProperty("SelectedPublication", publication, false);
+			}
+		}
+
+		public void ExportDictionaryContentJson(string xhtmlPath, DictionaryConfigurationModel configuration, IThreadedProgress progress = null)
+		{
+			using (ClerkActivator.ActivateClerkMatchingExportType(DictionaryType, m_propertyTable, m_mediator))
+			{
+				configuration = configuration ?? new DictionaryConfigurationModel(
+					DictionaryConfigurationListener.GetCurrentConfiguration(m_propertyTable, "Dictionary"), m_cache);
+				int[] entriesToSave;
+				var publicationDecorator = ConfiguredXHTMLGenerator.GetPublicationDecoratorAndEntries(m_propertyTable, out entriesToSave, DictionaryType);
+				if (progress != null)
+					progress.Maximum = entriesToSave.Length;
+				LcmJsonGenerator.SavePublishedJsonWithStyles(entriesToSave, publicationDecorator, int.MaxValue, configuration, m_propertyTable, xhtmlPath, progress);
 			}
 		}
 	}

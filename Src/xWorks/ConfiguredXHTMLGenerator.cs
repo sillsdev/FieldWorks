@@ -238,7 +238,7 @@ namespace SIL.FieldWorks.XWorks
 			return xhtmlPath;
 		}
 
-		private static bool IsNormalRtl(ReadOnlyPropertyTable propertyTable)
+		internal static bool IsNormalRtl(ReadOnlyPropertyTable propertyTable)
 		{
 			// Right-to-Left for the overall layout is determined by Dictionary-Normal
 			var dictionaryNormalStyle = new ExportStyleInfo(FontHeightAdjuster.StyleSheetFromPropertyTable(propertyTable).Styles["Dictionary-Normal"]);
@@ -338,7 +338,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// Method to copy the custom Css file from Project folder to the Temp folder for Fieldworks preview
 		/// </summary>
-		private static string CopyCustomCssToTempFolder(string projectPath, string xhtmlPath, string custCssFileName)
+		internal static string CopyCustomCssToTempFolder(string projectPath, string xhtmlPath, string custCssFileName)
 		{
 			if (xhtmlPath == null || projectPath == null)
 				return string.Empty;
@@ -581,7 +581,7 @@ namespace SIL.FieldWorks.XWorks
 		/// This method uses a ThreadPool to execute the given individualActions in parallel.
 		/// It waits for all the individualActions to complete and then returns.
 		/// </summary>
-		private static void SpawnEntryGenerationThreadsAndWait(List<Action> individualActions, IThreadedProgress progress)
+		internal static void SpawnEntryGenerationThreadsAndWait(List<Action> individualActions, IThreadedProgress progress)
 		{
 			var actionCount = individualActions.Count;
 			//Note that our COM classes all implement the STA threading model, while the ThreadPool always uses MTA model threads.
@@ -1099,7 +1099,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			lock (s_reportedNodes)
 			{
-				Debug.WriteLine(msg);
+//				Debug.WriteLine(msg);
 				if (s_reportedNodes.Contains(config))
 					return;
 				s_reportedNodes.Add(config);
@@ -1858,15 +1858,21 @@ namespace SIL.FieldWorks.XWorks
 						innerBldr.Append(GenerateCollectionItemContent(config, pubDecorator, lexEntRef, collectionOwner, settings, typeNode));
 					}
 				}
-				// Display the Type iff there were refs of this Type (and we are factoring)
-				if (innerBldr.Length > 0 && typeNode != null)
+
+				if (innerBldr.Length > 0)
 				{
 					var lexEntryType = lexEntryTypes.First(t => t.Guid.Equals(typeGuid));
-					bldr.Append(settings.ContentGenerator.WriteProcessedObject(false,
-						GenerateCollectionItemContent(typeNode, pubDecorator, lexEntryType,
-							lexEntryType.Owner, settings), GetClassNameAttributeForConfig(typeNode)));
+					// Display the Type iff there were refs of this Type (and we are factoring)
+					var generateLexType = typeNode != null;
+					var lexTypeContent = generateLexType
+						? GenerateCollectionItemContent(typeNode, pubDecorator, lexEntryType,
+							lexEntryType.Owner, settings)
+						: null;
+					var className = generateLexType ? GetClassNameAttributeForConfig(typeNode) : null;
+					var refsByType = settings.ContentGenerator.AddLexReferences(generateLexType,
+						lexTypeContent, className, innerBldr.ToString());
+					bldr.Append(refsByType);
 				}
-				bldr.Append(innerBldr);
 			}
 		}
 
@@ -2136,7 +2142,7 @@ namespace SIL.FieldWorks.XWorks
 		private static string GenerateSenseContent(ConfigurableDictionaryNode config, DictionaryPublicationDecorator publicationDecorator,
 			object item, bool isThisSenseNumbered, GeneratorSettings settings, bool isSameGrammaticalInfo, SenseInfo info)
 		{
-			var senseNumberSpan = GenerateSenseNumberSpanIfNeeded(config, isThisSenseNumbered, ref info);
+			var senseNumberSpan = GenerateSenseNumberSpanIfNeeded(config, isThisSenseNumbered, ref info, settings);
 			var bldr = new StringBuilder();
 			if (config.ReferencedOrDirectChildren != null)
 			{
@@ -2244,6 +2250,7 @@ namespace SIL.FieldWorks.XWorks
 			// The collection of ILexReferences has already been sorted by type,
 			// so we'll now group all the targets by LexRefType and sort their targets alphabetically before generating XHTML
 			var organizedRefs = SortAndFilterLexRefsAndTargets(collection, cmOwner, config);
+
 			// Now that we have things in the right order, try outputting one type at a time
 			foreach (var referenceList in organizedRefs)
 			{
@@ -2328,7 +2335,7 @@ namespace SIL.FieldWorks.XWorks
 			var xBldr = new StringBuilder();
 			using (var xw = settings.ContentGenerator.CreateWriter(xBldr))
 			{
-				settings.ContentGenerator.BeginObjectProperty(xw, IsBlockProperty(config), GetCollectionItemClassAttribute(config));
+				settings.ContentGenerator.BeginCrossReference(xw, IsBlockProperty(config), GetCollectionItemClassAttribute(config));
 				var targetInfo = referenceList.FirstOrDefault();
 				if (targetInfo == null)
 					return string.Empty;
@@ -2381,7 +2388,7 @@ namespace SIL.FieldWorks.XWorks
 							throw new NotImplementedException("The field " + child.FieldDescription + " is not supported on Cross References or Lexical Relations. Supported fields are OwnerType and ConfigTargets");
 					}
 				}
-				settings.ContentGenerator.EndObject(xw); // config
+				settings.ContentGenerator.EndCrossReference(xw); // config
 				xw.Flush();
 			}
 			return xBldr.ToString();
@@ -2407,7 +2414,7 @@ namespace SIL.FieldWorks.XWorks
 			return complexEntryRef;
 		}
 
-		private static string GenerateSenseNumberSpanIfNeeded(ConfigurableDictionaryNode senseConfigNode, bool isThisSenseNumbered, ref SenseInfo info)
+		private static string GenerateSenseNumberSpanIfNeeded(ConfigurableDictionaryNode senseConfigNode, bool isThisSenseNumbered, ref SenseInfo info, GeneratorSettings settings)
 		{
 			if (!isThisSenseNumbered)
 				return string.Empty;
@@ -2417,16 +2424,7 @@ namespace SIL.FieldWorks.XWorks
 			var formattedSenseNumber = GetSenseNumber(senseOptions.NumberingStyle, ref info);
 			if (string.IsNullOrEmpty(formattedSenseNumber))
 				return string.Empty;
-			var bldr = new StringBuilder();
-			using (var xw = XmlWriter.Create(bldr, new XmlWriterSettings { ConformanceLevel = ConformanceLevel.Fragment }))
-			{
-				xw.WriteStartElement("span");
-				xw.WriteAttributeString("class", "sensenumber");
-				xw.WriteString(formattedSenseNumber);
-				xw.WriteEndElement();
-				xw.Flush();
-				return bldr.ToString();
-			}
+			return settings.ContentGenerator.GenerateSenseNumber(formattedSenseNumber);
 		}
 
 		private static string GetSenseNumber(string numberingStyle, ref SenseInfo info)
@@ -2694,8 +2692,8 @@ namespace SIL.FieldWorks.XWorks
 				if (!TsStringUtils.IsNullOrEmpty((ITsString)propertyValue))
 				{
 					var content = GenerateXHTMLForString((ITsString)propertyValue, config, settings, guid);
-					if (!String.IsNullOrEmpty(content))
-						return settings.ContentGenerator.WriteProcessedObject(false, content, GetClassNameAttributeForConfig(config));
+					if (!string.IsNullOrEmpty(content))
+						return settings.ContentGenerator.WriteProcessedCollection(false, content, GetClassNameAttributeForConfig(config));
 				}
 				return String.Empty;
 			}
@@ -3460,6 +3458,44 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
+		public string GenerateSenseNumber(string formattedSenseNumber)
+		{
+			var bldr = new StringBuilder();
+			using (var xw = XmlWriter.Create(bldr, new XmlWriterSettings { ConformanceLevel = ConformanceLevel.Fragment }))
+			{
+				xw.WriteStartElement("span");
+				xw.WriteAttributeString("class", "sensenumber");
+				xw.WriteString(formattedSenseNumber);
+				xw.WriteEndElement();
+				xw.Flush();
+				return bldr.ToString();
+			}
+		}
+
+		public string AddLexReferences(bool generateLexType, string lexTypeContent, string className,
+			string referencesContent)
+		{
+			var bldr = new StringBuilder(100);
+			// Generate the factored ref types element
+			if (generateLexType)
+			{
+				bldr.Append(WriteProcessedObject(false, lexTypeContent, className));
+			}
+			// Then add all the contents for the LexReferences (e.g. headwords)
+			bldr.Append(referencesContent);
+			return bldr.ToString();
+		}
+
+		public void BeginCrossReference(IFragmentWriter writer, bool isBlockProperty, string classAttribute)
+		{
+			BeginObjectProperty(writer, isBlockProperty, classAttribute);
+		}
+
+		public void EndCrossReference(IFragmentWriter writer)
+		{
+			EndObject(writer);
+		}
+
 		public string AddCollectionItem(bool isBlock, string collectionItemClass, string content)
 		{
 			var bldr = new StringBuilder();
@@ -3547,8 +3583,15 @@ namespace SIL.FieldWorks.XWorks
 		void WriteProcessedContents(IFragmentWriter writer, string contents);
 		string AddImage(string classAttribute, string srcAttribute, string pictureGuid);
 		string AddImageCaption(string captionContent);
+		string GenerateSenseNumber(string formattedSenseNumber);
+		string AddLexReferences(bool generateLexType, string lexTypeContent, string className, string referencesContent);
+		void BeginCrossReference(IFragmentWriter writer, bool isBlockProperty, string classAttribute);
+		void EndCrossReference(IFragmentWriter writer);
 	}
 
+	/// <summary>
+	/// A disposable writer for generating a fragment of a larger document.
+	/// </summary>
 	public interface IFragmentWriter : IDisposable
 	{
 		void Flush();

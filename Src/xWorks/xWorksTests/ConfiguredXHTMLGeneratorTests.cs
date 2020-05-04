@@ -533,7 +533,7 @@ namespace SIL.FieldWorks.XWorks
 			AddHeadwordToEntry(compareReferencedEntry, "bEN", m_wsEn);
 
 			const string comRefTypeName = "Compare";
-			var comRefType = CreateLexRefType(LexRefTypeTags.MappingTypes.kmtEntryCollection, comRefTypeName, "cf", string.Empty, string.Empty);
+			var comRefType = CreateLexRefType(Cache, LexRefTypeTags.MappingTypes.kmtEntryCollection, comRefTypeName, "cf", string.Empty, string.Empty);
 
 			CreateLexReference(comRefType, new List<ICmObject> { mainEntry, compareReferencedEntry });
 
@@ -3800,7 +3800,7 @@ namespace SIL.FieldWorks.XWorks
 			var otherMainEntry = CreateInterestingLexEntry(Cache);
 			const string refTypeName = "TestRefType";
 			CreateComplexForm(Cache, mainEntry, referencedEntry, true);
-			CreateLexicalReference(otherMainEntry, referencedEntry, refTypeName);
+			CreateLexicalReference(Cache, otherMainEntry, referencedEntry, refTypeName);
 
 			var refType = Cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.First(poss => poss.Name.BestAnalysisAlternative.Text == refTypeName);
 			Assert.IsNotNull(refType);
@@ -3896,7 +3896,7 @@ namespace SIL.FieldWorks.XWorks
 			var mainEntry = CreateInterestingLexEntry(Cache);
 			var referencedEntry = CreateInterestingLexEntry(Cache);
 			const string refTypeName = "TestRefType";
-			CreateLexicalReference(mainEntry, referencedEntry, refTypeName);
+			CreateLexicalReference(Cache, mainEntry, referencedEntry, refTypeName);
 			var refType = Cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.First(poss => poss.Name.BestAnalysisAlternative.Text == refTypeName);
 			Assert.IsNotNull(refType);
 
@@ -3941,7 +3941,7 @@ namespace SIL.FieldWorks.XWorks
 			var mainEntry = CreateInterestingLexEntry(Cache);
 			var referencedEntry = CreateInterestingLexEntry(Cache);
 			const string refTypeName = "TestRefType";
-			CreateLexicalReference(mainEntry, referencedEntry, refTypeName);
+			CreateLexicalReference(Cache, mainEntry, referencedEntry, refTypeName);
 			var refType = Cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.First(poss => poss.Name.BestAnalysisAlternative.Text == refTypeName);
 			Assert.IsNotNull(refType);
 
@@ -3993,7 +3993,7 @@ namespace SIL.FieldWorks.XWorks
 			var mainEntry = CreateInterestingLexEntry(Cache);
 			var referencedEntry = CreateInterestingLexEntry(Cache);
 			const string refTypeName = "TestRefType";
-			CreateLexicalReference(mainEntry, referencedEntry, refTypeName);
+			CreateLexicalReference(Cache, mainEntry, referencedEntry, refTypeName);
 			var refType = Cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.First(poss => poss.Name.BestAnalysisAlternative.Text == refTypeName);
 			Assert.IsNotNull(refType);
 
@@ -4049,7 +4049,7 @@ namespace SIL.FieldWorks.XWorks
 			var mainEntry = CreateInterestingLexEntry(Cache);
 			var referencedEntry = CreateInterestingLexEntry(Cache);
 			const string refTypeName = "TestRefType";
-			CreateLexicalReference(mainEntry, referencedEntry, refTypeName);
+			CreateLexicalReference(Cache, mainEntry, referencedEntry, refTypeName);
 			var refType = Cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.First(poss => poss.Name.BestAnalysisAlternative.Text == refTypeName);
 			Assert.IsNotNull(refType);
 
@@ -4094,7 +4094,7 @@ namespace SIL.FieldWorks.XWorks
 			var referencedEntry = CreateInterestingLexEntry(Cache);
 			const string refTypeName = "TestRefType";
 			const string refTypeRevName = "epyTfeRtseT";
-			CreateLexicalReference(mainEntry, referencedEntry, refTypeName, refTypeRevName);
+			CreateLexicalReference(Cache, mainEntry, referencedEntry, refTypeName, refTypeRevName);
 			var refType = Cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.First(poss => poss.Name.BestAnalysisAlternative.Text == refTypeName);
 			Assert.IsNotNull(refType);
 
@@ -4139,7 +4139,7 @@ namespace SIL.FieldWorks.XWorks
 			var referencedEntry = CreateInterestingLexEntry(Cache);
 			const string refTypeName = "TestRefType";
 			const string refTypeRevName = "sURsyoT";
-			CreateLexicalReference(mainEntry, referencedEntry, refTypeName, refTypeRevName);
+			CreateLexicalReference(Cache, mainEntry, referencedEntry, refTypeName, refTypeRevName);
 			var refType = Cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.First(poss => poss.Name.BestAnalysisAlternative.Text == refTypeName);
 			Assert.IsNotNull(refType);
 
@@ -4184,7 +4184,7 @@ namespace SIL.FieldWorks.XWorks
 			var referencedEntry = CreateInterestingLexEntry(Cache);
 			const string refTypeName = "TestRefType";
 			const string refTypeRevName = "sURsyoT";
-			CreateLexicalReference(mainEntry.SensesOS.First(), referencedEntry, refTypeName, refTypeRevName);
+			CreateLexicalReference(Cache, mainEntry.SensesOS.First(), referencedEntry, refTypeName, refTypeRevName);
 			var refType = Cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.First(poss => poss.Name.BestAnalysisAlternative.Text == refTypeName);
 			Assert.IsNotNull(refType);
 
@@ -4235,8 +4235,8 @@ namespace SIL.FieldWorks.XWorks
 			var referencedEntry2 = CreateInterestingLexEntry(Cache);
 			const string refTypeName = "TestRefType";
 			const string refTypeRevName = "sURsyoT";
-			CreateLexicalReference(mainEntry.SensesOS.First(), referencedEntry1, refTypeName, refTypeRevName);
-			CreateLexicalReference(mainEntry.SensesOS.First(), referencedEntry2, refTypeName, refTypeRevName);
+			CreateLexicalReference(Cache, mainEntry.SensesOS.First(), referencedEntry1, refTypeName, refTypeRevName);
+			CreateLexicalReference(Cache, mainEntry.SensesOS.First(), referencedEntry2, refTypeName, refTypeRevName);
 			var refType1 = Cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.First(poss => poss.Name.BestAnalysisAlternative.Text == refTypeName);
 			Assert.IsNotNull(refType1);
 			var nameNode = new ConfigurableDictionaryNode
@@ -4282,7 +4282,7 @@ namespace SIL.FieldWorks.XWorks
 			var referencedEntry = CreateInterestingLexEntry(Cache);
 			const string refTypeName = "TestRefType";
 			const string refTypeRevName = "sURsyoT";
-			CreateLexicalReference(mainEntry, referencedEntry.SensesOS.First(), refTypeName, refTypeRevName);
+			CreateLexicalReference(Cache, mainEntry, referencedEntry.SensesOS.First(), refTypeName, refTypeRevName);
 			var refType = Cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.First(poss => poss.Name.BestAnalysisAlternative.Text == refTypeName);
 			Assert.IsNotNull(refType);
 
@@ -4335,8 +4335,8 @@ namespace SIL.FieldWorks.XWorks
 			const string comRefTypeRevName = "cp";
 			const string etyRefTypeName = "Etymology";
 			const string etyRefTypeRevName = "ety";
-			CreateLexicalReference(mainEntry, compareReferencedEntry, comRefTypeName, comRefTypeRevName);
-			CreateLexicalReference(mainEntry, etymologyReferencedEntry, etyRefTypeName, etyRefTypeRevName);
+			CreateLexicalReference(Cache, mainEntry, compareReferencedEntry, comRefTypeName, comRefTypeRevName);
+			CreateLexicalReference(Cache, mainEntry, etymologyReferencedEntry, etyRefTypeName, etyRefTypeRevName);
 			var comRefType =
 				Cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.First(
 					poss => poss.Name.BestAnalysisAlternative.Text == comRefTypeName);
@@ -4401,7 +4401,7 @@ namespace SIL.FieldWorks.XWorks
 			var legEntry = CreateInterestingLexEntry(Cache, thirdWord, "leg");
 			const string refTypeName = "Part";
 			const string refTypeRevName = "Whole";
-			CreateLexicalReference(bodyEntry, armEntry.SensesOS.First(), legEntry.SensesOS.First(), refTypeName, refTypeRevName);
+			CreateLexicalReference(Cache, bodyEntry, armEntry.SensesOS.First(), legEntry.SensesOS.First(), refTypeName, refTypeRevName);
 			var refType = Cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.First(poss => poss.Name.BestAnalysisAlternative.Text == refTypeName);
 			Assert.IsNotNull(refType);
 
@@ -4479,7 +4479,7 @@ namespace SIL.FieldWorks.XWorks
 			var legEntry = CreateInterestingLexEntry(Cache, "jambe", "leg");
 			const string refTypeName = "Part";
 			const string refTypeRevName = "Whole";
-			CreateLexicalReference(firstEntry, firstEntry.SensesOS[0].SensesOS[0], legEntry.SensesOS.First(), refTypeName, refTypeRevName);
+			CreateLexicalReference(Cache, firstEntry, firstEntry.SensesOS[0].SensesOS[0], legEntry.SensesOS.First(), refTypeName, refTypeRevName);
 			var refType = Cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.First(poss => poss.Name.BestAnalysisAlternative.Text == refTypeName);
 			Assert.IsNotNull(refType);
 
@@ -4544,7 +4544,7 @@ namespace SIL.FieldWorks.XWorks
 			AddSenseToEntry(firstEntry, "b2", m_wsEn, Cache);
 			const string refTypeName = "Part";
 			const string refTypeRevName = "Whole";
-			CreateLexicalReference(firstEntry.SensesOS[0], firstEntry.SensesOS[1], refTypeName, refTypeRevName);
+			CreateLexicalReference(Cache, firstEntry.SensesOS[0], firstEntry.SensesOS[1], refTypeName, refTypeRevName);
 			var refType = Cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.First(poss => poss.Name.BestAnalysisAlternative.Text == refTypeName);
 			Assert.IsNotNull(refType);
 
@@ -4782,7 +4782,7 @@ namespace SIL.FieldWorks.XWorks
 			var mainEntry = CreateInterestingLexEntry(Cache);
 			var referencedEntry = CreateInterestingLexEntry(Cache);
 			const string refTypeName = "TestRefType";
-			CreateLexicalReference(mainEntry, referencedEntry, refTypeName);
+			CreateLexicalReference(Cache, mainEntry, referencedEntry, refTypeName);
 			var notComplexTypePoss = Cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.First(refType => refType.Name.BestAnalysisAlternative.Text == refTypeName);
 			Assert.IsNotNull(notComplexTypePoss);
 			var entryReferenceNode = new ConfigurableDictionaryNode
@@ -4818,7 +4818,7 @@ namespace SIL.FieldWorks.XWorks
 			var mainEntry = CreateInterestingLexEntry(Cache);
 			var referencedEntry = CreateInterestingLexEntry(Cache);
 			const string refTypeName = "TestRefType";
-			CreateLexicalReference(mainEntry, referencedEntry, refTypeName, "ReverseName");
+			CreateLexicalReference(Cache, mainEntry, referencedEntry, refTypeName, "ReverseName");
 			var notComplexTypePoss = Cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.First(refType => refType.Name.BestAnalysisAlternative.Text == refTypeName);
 			Assert.IsNotNull(notComplexTypePoss);
 			var entryReferenceNode = new ConfigurableDictionaryNode
@@ -4858,7 +4858,7 @@ namespace SIL.FieldWorks.XWorks
 			var mainEntry = CreateInterestingLexEntry(Cache);
 			var referencedEntry = CreateInterestingLexEntry(Cache);
 			const string refTypeName = "TestRefType";
-			CreateLexicalReference(mainEntry, referencedEntry, refTypeName, "ReverseName");
+			CreateLexicalReference(Cache, mainEntry, referencedEntry, refTypeName, "ReverseName");
 			var notComplexTypePoss = Cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.First(refType => refType.Name.BestAnalysisAlternative.Text == refTypeName);
 			Assert.IsNotNull(notComplexTypePoss);
 			var entryReferenceNode = new ConfigurableDictionaryNode
@@ -4898,7 +4898,7 @@ namespace SIL.FieldWorks.XWorks
 			var mainEntry = CreateInterestingLexEntry(Cache);
 			var referencedEntry = CreateInterestingLexEntry(Cache);
 			const string refTypeName = "TestRefType";
-			CreateLexicalReference(mainEntry, referencedEntry, refTypeName, "ReverseName");
+			CreateLexicalReference(Cache, mainEntry, referencedEntry, refTypeName, "ReverseName");
 			var notComplexTypePoss = Cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.First(refType => refType.Name.BestAnalysisAlternative.Text == refTypeName);
 			Assert.IsNotNull(notComplexTypePoss);
 			var entryReferenceNode = new ConfigurableDictionaryNode
@@ -4941,7 +4941,7 @@ namespace SIL.FieldWorks.XWorks
 			lrt.Name.set_String(Cache.DefaultAnalWs, "NotOurTestRefType");
 
 			const string refTypeName = "TestRefType";
-			CreateLexicalReference(mainEntry, referencedEntry, refTypeName);
+			CreateLexicalReference(Cache, mainEntry, referencedEntry, refTypeName);
 			var notComplexTypePoss = Cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.First(refType => refType.Name.BestAnalysisAlternative.Text != refTypeName);
 			Assert.IsNotNull(notComplexTypePoss);
 			var entryReferenceNode = new ConfigurableDictionaryNode
@@ -4973,7 +4973,7 @@ namespace SIL.FieldWorks.XWorks
 			var mainEntry = CreateInterestingLexEntry(Cache);
 			var referencedEntry = CreateInterestingLexEntry(Cache);
 			const string refTypeName = "TestRefType";
-			CreateLexicalReference(mainEntry, referencedEntry, refTypeName);
+			CreateLexicalReference(Cache, mainEntry, referencedEntry, refTypeName);
 			var notComplexTypePoss = Cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.First(refType => refType.Name.BestAnalysisAlternative.Text == refTypeName);
 			Assert.IsNotNull(notComplexTypePoss);
 			var entryReferenceNode = new ConfigurableDictionaryNode
@@ -5916,7 +5916,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				var testEntry = CreateInterestingLexEntry(Cache);
 				var refdEntry = CreateInterestingLexEntry(Cache);
-				CreateLexicalReference(testEntry, refdEntry, refType);
+				CreateLexicalReference(Cache, testEntry, refdEntry, refType);
 				var lexrefType = Cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.First(
 						r => r.Name.BestAnalysisAlternative.Text == refType);
 				crossRefs.DictionaryNodeOptions = new DictionaryNodeListOptions
@@ -5980,7 +5980,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				var testEntry = CreateInterestingLexEntry(Cache);
 				var refdEntry = CreateInterestingLexEntry(Cache);
-				CreateLexicalReference(testEntry, refdEntry.SensesOS[0], refType);
+				CreateLexicalReference(Cache, testEntry, refdEntry.SensesOS[0], refType);
 				var lexrefType = Cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.First(
 						r => r.Name.BestAnalysisAlternative.Text == refType);
 				crossRefs.DictionaryNodeOptions = new DictionaryNodeListOptions
@@ -8784,7 +8784,7 @@ namespace SIL.FieldWorks.XWorks
 			var compareReferencedEntry2 = CreateInterestingLexEntry(Cache, "a", "a comparable");
 			var compareReferencedEntry3 = CreateInterestingLexEntry(Cache, "c", "c comparable");
 			const string comRefTypeName = "Compare";
-			var comRefType = CreateLexRefType(LexRefTypeTags.MappingTypes.kmtEntryCollection, comRefTypeName, "cf", string.Empty, string.Empty);
+			var comRefType = CreateLexRefType(Cache, LexRefTypeTags.MappingTypes.kmtEntryCollection, comRefTypeName, "cf", string.Empty, string.Empty);
 			if (SeparateReferences)
 			{
 				const string Guid1 = "11111111-f1ac-4950-8562-4d617e0ace18";
@@ -8821,7 +8821,7 @@ namespace SIL.FieldWorks.XWorks
 			var compareReferencedEntry4 = CreateInterestingLexEntry(Cache, "ba", "ba comparable");
 			var compareReferencedEntry5 = CreateInterestingLexEntry(Cache, "ca", "ca comparable");
 			const string comRefTypeName = "Compare";
-			var comRefType = CreateLexRefType(LexRefTypeTags.MappingTypes.kmtEntryCollection, comRefTypeName, "cf", string.Empty, string.Empty);
+			var comRefType = CreateLexRefType(Cache, LexRefTypeTags.MappingTypes.kmtEntryCollection, comRefTypeName, "cf", string.Empty, string.Empty);
 			CreateLexReference(comRefType, new List<ICmObject> { mainEntry, compareReferencedEntry3, compareReferencedEntry2 });
 			CreateLexReference(comRefType, new List<ICmObject> { mainEntry, compareReferencedEntry5, compareReferencedEntry4, compareReferencedEntry1 });
 			Assert.IsNotNull(comRefType);
@@ -8846,10 +8846,10 @@ namespace SIL.FieldWorks.XWorks
 			var blueEntry = CreateInterestingLexEntry(Cache, "bleu", "blue");
 			var midAlphabetEntry = CreateInterestingLexEntry(Cache, "omega", "middle of the Roman alphabet; we're not testing Greek :-)");
 			const string colorTypeName = "Color";
-			var colorType = CreateLexRefType(LexRefTypeTags.MappingTypes.kmtEntrySequence, colorTypeName, "col", string.Empty, string.Empty);
+			var colorType = CreateLexRefType(Cache, LexRefTypeTags.MappingTypes.kmtEntrySequence, colorTypeName, "col", string.Empty, string.Empty);
 			CreateLexReference(colorType, new List<ICmObject> { alphaEntry, redEntry, greenEntry, blueEntry });
 			const string greekTypeName = "Greek";
-			var greekType = CreateLexRefType(LexRefTypeTags.MappingTypes.kmtEntrySequence, greekTypeName, "grk", string.Empty, string.Empty);
+			var greekType = CreateLexRefType(Cache, LexRefTypeTags.MappingTypes.kmtEntrySequence, greekTypeName, "grk", string.Empty, string.Empty);
 			CreateLexReference(greekType, new List<ICmObject> { alphaEntry, midAlphabetEntry });
 
 			var mainEntryNode = ModelForCrossReferences(new[] { colorType.Guid.ToString(), greekType.Guid.ToString() });
@@ -8874,7 +8874,7 @@ namespace SIL.FieldWorks.XWorks
 			var curlyEntry = CreateInterestingLexEntry(Cache, "Curly");
 			var moeEntry = CreateInterestingLexEntry(Cache, "Moe");
 			const string characterTypeName = "Character";
-			var characterType = CreateLexRefType(LexRefTypeTags.MappingTypes.kmtEntryUnidirectional, characterTypeName, "char", string.Empty, string.Empty);
+			var characterType = CreateLexRefType(Cache, LexRefTypeTags.MappingTypes.kmtEntryUnidirectional, characterTypeName, "char", string.Empty, string.Empty);
 			CreateLexReference(characterType, new List<ICmObject> { stoogesEntry, larryEntry, curlyEntry, moeEntry });
 
 			var mainEntryNode = ModelForCrossReferences(new[] { characterType.Guid + ":f" });
@@ -8948,14 +8948,14 @@ namespace SIL.FieldWorks.XWorks
 			var armEntry = CreateInterestingLexEntry(Cache, "bras", "arm");
 			var legEntry = CreateInterestingLexEntry(Cache, "jambe", "leg");
 
-			var antonyms = CreateLexRefType(LexRefTypeTags.MappingTypes.kmtEntryPair, "Antonym", "ant", null, null);
+			var antonyms = CreateLexRefType(Cache, LexRefTypeTags.MappingTypes.kmtEntryPair, "Antonym", "ant", null, null);
 			CreateLexReference(antonyms, new[] { manEntry, womanEntry });
 			CreateLexReference(antonyms, new[] { manEntry, boyEntry });
 			CreateLexReference(antonyms, new[] { manEntry, thingEntry });
 			CreateLexReference(antonyms, new[] { manEntry, beastEntry });
 			CreateLexReference(antonyms, new[] { familyEntry, individualEntry });
 
-			var wholeparts = CreateLexRefType(LexRefTypeTags.MappingTypes.kmtEntryTree, "Part", "pt", "Whole", "wh");
+			var wholeparts = CreateLexRefType(Cache, LexRefTypeTags.MappingTypes.kmtEntryTree, "Part", "pt", "Whole", "wh");
 			CreateLexReference(wholeparts, new[] { familyEntry, manEntry, womanEntry, boyEntry, girlEntry });
 			// Girl is both a whole and a part, but has no other refs. When these targets are alphabetized by headword, their types alternate.
 			CreateLexReference(wholeparts, new[] { girlEntry, armEntry, legEntry });
