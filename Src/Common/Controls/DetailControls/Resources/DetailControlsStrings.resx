@@ -140,6 +140,9 @@
   <data name="ksDelete" xml:space="preserve">
     <value>Delete</value>
   </data>
+  <data name="ksEMPTY" xml:space="preserve">
+    <value>&lt;EMPTY&gt;</value>
+  </data>
   <data name="ksEnterNumber" xml:space="preserve">
     <value>Please enter a whole number</value>
   </data>

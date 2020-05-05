@@ -119,6 +119,7 @@
   </resheader>
   <data name="DisplayButtonsInThisOrder" xml:space="preserve">
 	<value>Display buttons in this order</value>
+	<comment>label on the list view for configuring the order of the buttons</comment>
   </data>
   <data name="MoveUp" xml:space="preserve">
 	<value>Move &amp;Up</value>
@@ -128,6 +129,7 @@
   </data>
   <data name="Reset" xml:space="preserve">
 	<value>&amp;Reset</value>
+	<comment>Button on the Navigation Pane Options dialog. Resets the order.</comment>
   </data>
   <data name="OK" xml:space="preserve">
 	<value>OK</value>
@@ -137,6 +139,7 @@
   </data>
   <data name="NavigationPaneOptions" xml:space="preserve">
 	<value>Navigation Pane Options</value>
+	<comment>dialog title</comment>
   </data>
   <data name="ConfigureButtons" xml:space="preserve">
 	<value>Configure buttons</value>

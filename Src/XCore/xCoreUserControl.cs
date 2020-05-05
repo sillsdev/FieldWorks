@@ -69,8 +69,9 @@ namespace XCore
 		/// <summary>
 		/// Override this property to change the default name for a control if none of the looked
 		/// up fields are in the configuration parameters.
+		/// REVIEW (Hasso) 2020.05: What is the purpose of this? These names are neither accessible nor localizable.
+		/// There is a lot of work yet to do to make our software accessible to screen readers.
 		/// </summary>
-		///
 		private string m_AccNameDefault = "XCoreUserControl";
 		protected string AccNameDefault
 		{
