@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml;
+using Newtonsoft.Json.Linq;
 using SIL.LCModel;
 using SIL.LCModel.Utils;
 using XCore;
@@ -292,17 +293,14 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		public void ExportDictionaryContentJson(string xhtmlPath, DictionaryConfigurationModel configuration, IThreadedProgress progress = null)
+		public JObject ExportDictionaryContentJson(string siteName, IEnumerable<DictionaryConfigurationModel> reversals, DictionaryConfigurationModel configuration)
 		{
 			using (ClerkActivator.ActivateClerkMatchingExportType(DictionaryType, m_propertyTable, m_mediator))
 			{
-				configuration = configuration ?? new DictionaryConfigurationModel(
-					DictionaryConfigurationListener.GetCurrentConfiguration(m_propertyTable, "Dictionary"), m_cache);
 				int[] entriesToSave;
-				var publicationDecorator = ConfiguredXHTMLGenerator.GetPublicationDecoratorAndEntries(m_propertyTable, out entriesToSave, DictionaryType);
-				if (progress != null)
-					progress.Maximum = entriesToSave.Length;
-				LcmJsonGenerator.SavePublishedJsonWithStyles(entriesToSave, publicationDecorator, int.MaxValue, configuration, m_propertyTable, xhtmlPath, progress);
+				ConfiguredXHTMLGenerator.GetPublicationDecoratorAndEntries(m_propertyTable, out entriesToSave, DictionaryType);
+
+				return LcmJsonGenerator.GenerateDictionaryMetaData(siteName, reversals, entriesToSave, m_cache);
 			}
 		}
 	}

@@ -6,9 +6,11 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Text;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using SIL.FieldWorks.Common.Controls;
 using SIL.LCModel;
 using SIL.LCModel.Utils;
 using XCore;
@@ -455,6 +457,80 @@ namespace SIL.FieldWorks.XWorks
 				cssWriter.Write(CssGenerator.GenerateCssFromConfiguration(configuration, readOnlyPropertyTable));
 				cssWriter.Flush();
 			}
+		}
+
+		public static JObject GenerateDictionaryMetaData(string siteName, IEnumerable<DictionaryConfigurationModel> reversals, int[] entryHvos, LcmCache cache)
+		{
+			dynamic dictionaryMetaData = new JObject();
+			dictionaryMetaData._id = siteName;
+			dynamic mainLanguageData = new JObject();
+			mainLanguageData.lang = cache.LangProject.DefaultAnalysisWritingSystem.Id;
+			//mainLanguageData.title = NEWFIELDFORTITLE?
+			mainLanguageData.letters = JArray.FromObject(GenerateLetterHeaders(entryHvos, cache));
+			dictionaryMetaData.mainLanguage = mainLanguageData;
+			if (reversals.Any())
+			{
+				var reversalArray = new JArray();
+				foreach (var reversal in reversals)
+				{
+					dynamic revJson = new JObject();
+					revJson.lang = reversal.WritingSystem;
+					revJson.title = reversal.Label;
+					revJson.letters = new JArray(); // Generate letter headers from reversal and pass to this method
+					revJson.cssFiles = new JArray(new[] { "reversal_lang.css" });
+					reversalArray.Add(revJson);
+				}
+				dictionaryMetaData.reversalLanguages = reversalArray;
+			}
+
+			mainLanguageData.partsOfSpeech = new JArray();//GeneratePartsOfSpeech(cache);
+			mainLanguageData.semanticDomains = new JArray();//GenerateSemanticDomains(cache);
+			return dictionaryMetaData;
+		}
+
+		private static JArray GenerateSemanticDomains(LcmCache cache, ReadOnlyPropertyTable propTable, string exportPath)
+		{
+			// WIP
+			var abbreviation = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "Abbreviation",
+				CSSClassNameOverride = "key"
+			};
+			var webonarySemDomConfig = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "SemanticDomainListOA",
+				Children = new List<ConfigurableDictionaryNode> { abbreviation }
+			};
+			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(cache, propTable, true, true, exportPath, false, true)
+			{
+				ContentGenerator = new LcmJsonGenerator()
+			};
+			return null;
+		}
+
+		private static JArray GeneratePartsOfSpeech(LcmCache cache)
+		{
+			throw new NotImplementedException();
+		}
+
+		private static List<string> GenerateLetterHeaders(int[] entriesToSave, LcmCache cache)
+		{
+			// These maps act as a cache to improve performance for discovering the index character for each headword
+			var wsDigraphMap = new Dictionary<string, ISet<string>>();
+			var wsCharEquivalentMap = new Dictionary<string, Dictionary<string, string>>();
+			var wsIngorableMap = new Dictionary<string, ISet<string>>();
+			var wsString = cache.WritingSystemFactory.GetStrFromWs(cache.DefaultVernWs);
+			var letters = new List<string>();
+			foreach (var entryHvo in entriesToSave)
+			{
+				var entry = cache.ServiceLocator.GetObject(entryHvo);
+				var firstLetter = ConfiguredExport.GetLeadChar(((ILexEntry)entry).HomographForm, wsString, wsDigraphMap, wsCharEquivalentMap, wsIngorableMap,
+					cache);
+				if (letters.Contains(firstLetter))
+					continue;
+				letters.Add(firstLetter);
+			}
+			return letters;
 		}
 	}
 }

@@ -736,6 +736,17 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
+		[Test]
+		public void GenerateDictionaryMetaDataForApi_OneEntryGetsLetterHeads()
+		{
+			var testEntry = ConfiguredXHTMLGeneratorTests.CreateInterestingLexEntry(Cache);
+			var siteName = "test";
+			var json = LcmJsonGenerator.GenerateDictionaryMetaData(siteName, new List<DictionaryConfigurationModel>(), new []{ testEntry.Hvo }, Cache);
+			var expectedResults = @"{""_id"":""" + siteName + @""",""mainLanguage"":{""lang"":""en"",""letters"":[""c""],""partsOfSpeech"":[],""semanticDomains"":[]}}";
+			var expected = (JObject)JsonConvert.DeserializeObject(expectedResults, new JsonSerializerSettings { Formatting = Formatting.None });
+			VerifyJson(json.ToString(), expected);
+		}
+
 		/// <summary>
 		/// Verifies the json data generated is equivalent to the expected result
 		/// </summary>

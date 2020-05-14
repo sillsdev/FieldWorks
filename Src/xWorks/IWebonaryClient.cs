@@ -14,5 +14,9 @@ namespace SIL.FieldWorks.XWorks
 		WebHeaderCollection Headers { get; }
 		byte[] UploadFileToWebonary(string address, string fileName);
 		HttpStatusCode ResponseStatusCode { get; }
+
+		#region WebonaryApiV1
+		string PostDictionaryMetadata(string address, string postBody);
+		#endregion
 	}
 }

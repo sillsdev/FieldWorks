@@ -820,6 +820,11 @@ namespace SIL.FieldWorks.XWorks
 				}
 
 				public HttpStatusCode ResponseStatusCode { get; private set; }
+
+				public string PostDictionaryMetadata(string address, string postBody)
+				{
+					throw new NotSupportedException();
+				}
 			}
 
 			internal override string DestinationURI(string siteName)
