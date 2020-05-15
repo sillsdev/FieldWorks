@@ -785,9 +785,9 @@ namespace SIL.FieldWorks.XWorks
 			public class MockWebonaryClient : IWebonaryClient
 			{
 				private readonly WebonaryClient.WebonaryException _exceptionResponse;
-				private readonly byte[] _responseContents;
+				private readonly object _responseContents;
 
-				public MockWebonaryClient(WebonaryClient.WebonaryException exceptionResponse, byte[] responseContents, HttpStatusCode responseStatus)
+				public MockWebonaryClient(WebonaryClient.WebonaryException exceptionResponse, object responseContents, HttpStatusCode responseStatus)
 				{
 					_exceptionResponse = exceptionResponse;
 					_responseContents = responseContents;
@@ -812,18 +812,35 @@ namespace SIL.FieldWorks.XWorks
 				}
 
 				public WebHeaderCollection Headers { get; private set; }
-				public byte[] UploadFileToWebonary(string address, string fileName)
+
+				public byte[] UploadFileToWebonary(string address, string fileName, string method = null)
 				{
 					if (_exceptionResponse != null)
 						throw _exceptionResponse;
-					return _responseContents;
+					return (byte[])_responseContents;
 				}
 
 				public HttpStatusCode ResponseStatusCode { get; private set; }
 
 				public string PostDictionaryMetadata(string address, string postBody)
 				{
-					throw new NotSupportedException();
+					if (_exceptionResponse != null)
+						throw _exceptionResponse;
+					return (string)_responseContents;
+				}
+
+				public string PostEntry(string address, string postBody)
+				{
+					if (_exceptionResponse != null)
+						throw _exceptionResponse;
+					return (string)_responseContents;
+				}
+
+				public string GetSignedUrl(string address, string filePath)
+				{
+					if (_exceptionResponse != null)
+						throw _exceptionResponse;
+					return (string)_responseContents;
 				}
 			}
 

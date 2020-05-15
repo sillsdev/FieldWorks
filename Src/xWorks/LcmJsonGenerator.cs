@@ -385,7 +385,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		public static void SavePublishedJsonWithStyles(int[] entriesToSave, DictionaryPublicationDecorator publicationDecorator, int maxValue,
+		public static List<JArray> SavePublishedJsonWithStyles(int[] entriesToSave, DictionaryPublicationDecorator publicationDecorator, int batchSize,
 			DictionaryConfigurationModel configuration, PropertyTable propertyTable, string jsonPath, IThreadedProgress progress)
 		{
 			var entryCount = entriesToSave.Length;
@@ -434,6 +434,7 @@ namespace SIL.FieldWorks.XWorks
 				if (progress != null)
 					progress.Message = xWorksStrings.ksArrangingDisplayFragments;
 				var stringBuilder = new StringBuilder(100);
+				// TODO: Do this in a loop for the entries array split into batchSize
 				using (var jsonStringWriter = new StringWriter(stringBuilder))
 				using (var jsonWriter = new JsonTextWriter(jsonStringWriter))
 				{
@@ -446,16 +447,14 @@ namespace SIL.FieldWorks.XWorks
 					jsonWriter.WriteEndArray();
 					jsonWriter.Flush();
 				}
-				File.WriteAllText(jsonPath + ".raw.json", stringBuilder.ToString());
 				var expected = (JArray)JsonConvert.DeserializeObject(stringBuilder.ToString(), new JsonSerializerSettings { Formatting = Newtonsoft.Json.Formatting.None });
-
-				File.WriteAllText(jsonPath, expected.ToString(Formatting.None));
 
 				if (progress != null)
 					progress.Message = xWorksStrings.ksGeneratingStyleInfo;
 
 				cssWriter.Write(CssGenerator.GenerateCssFromConfiguration(configuration, readOnlyPropertyTable));
 				cssWriter.Flush();
+				return new List<JArray> {expected};
 			}
 		}
 

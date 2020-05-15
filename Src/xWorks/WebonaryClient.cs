@@ -34,11 +34,11 @@ namespace SIL.FieldWorks.XWorks
 		/// Wraps the UploadFile from WebClient to provide status accessor and allow mocking returns for the unit tests.
 		/// </summary>
 		/// <exception cref="WebonaryException"></exception>
-		public byte[] UploadFileToWebonary(string address, string fileName)
+		public byte[] UploadFileToWebonary(string address, string fileName, string method = null)
 		{
 			try
 			{
-				return UploadFile(address, fileName);
+				return UploadFile(address, method, fileName);
 			}
 			catch (WebException ex)
 			{
@@ -54,6 +54,24 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		public string PostDictionaryMetadata(string address, string postBody)
+		{
+			return PostToWebonaryApi(address, postBody);
+		}
+
+		public string PostEntry(string address, string postBody)
+		{
+			return PostToWebonaryApi(address, postBody);
+		}
+
+		public string GetSignedUrl(string address, string filePath)
+		{
+			dynamic urlBody = new JObject();
+			urlBody.objectId = filePath;
+			urlBody.action = "putObject";
+			return PostToWebonaryApi(address, urlBody.ToString());
+		}
+
+		private string PostToWebonaryApi(string address, string postBody)
 		{
 			try
 			{

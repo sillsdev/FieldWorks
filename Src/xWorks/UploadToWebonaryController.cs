@@ -12,6 +12,7 @@ using XCore;
 using System.Net;
 using System.Reflection;
 using System.Text;
+using System.Web;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using SIL.Code;
@@ -127,7 +128,7 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		private static void RecursivelyAddFilesToZip(ZipFile zipFile, string dirToCompress, string dirInZip, IUploadToWebonaryView webonaryView)
 		{
-			foreach(var file in Directory.EnumerateFiles(dirToCompress))
+			foreach (var file in Directory.EnumerateFiles(dirToCompress))
 			{
 				if (!IsSupportedWebonaryFile(file))
 				{
@@ -138,9 +139,39 @@ namespace SIL.FieldWorks.XWorks
 				zipFile.AddFile(file, dirInZip);
 				webonaryView.UpdateStatus(Path.GetFileName(file));
 			}
-			foreach(var dir in Directory.EnumerateDirectories(dirToCompress))
+			foreach (var dir in Directory.EnumerateDirectories(dirToCompress))
 			{
 				RecursivelyAddFilesToZip(zipFile, dir, Path.Combine(dirInZip, Path.GetFileName(dir.TrimEnd(Path.DirectorySeparatorChar))), webonaryView);
+			}
+		}
+		/// <summary>
+		/// This method will recurse into a directory and add files into the zip file with their relative path
+		/// to the original dirToCompress.
+		/// </summary>
+		private void RecursivelyPutFilesToWebonary(UploadToWebonaryModel model, string dirToCompress, string dirInZip, IUploadToWebonaryView webonaryView)
+		{
+			foreach (var file in Directory.EnumerateFiles(dirToCompress))
+			{
+				if (!IsSupportedWebonaryFile(file))
+				{
+					webonaryView.UpdateStatus(string.Format(xWorksStrings.ksExcludingXXFormatUnsupported,
+						Path.GetFileName(file), Path.GetExtension(file)));
+					continue;
+				}
+				dynamic fileToSign = new JObject();
+				// ReSharper disable once AssignNullToNotNullAttribute - This file has a filename, the OS told us so.
+				var relativeFilePath = Path.Combine(model.SiteName, dirInZip, Path.GetFileName(file));
+				if (MiscUtils.IsWindows)
+					relativeFilePath = relativeFilePath.Replace('\\', '/');
+				fileToSign.objectId = relativeFilePath;
+				fileToSign.action = "putObject";
+				var signedUrl = PostContentToWebonary(model, webonaryView, "post/file", fileToSign);
+				UploadFileToWebonary(signedUrl, file, webonaryView);
+				webonaryView.UpdateStatus(Path.GetFileName(file));
+			}
+			foreach (var dir in Directory.EnumerateDirectories(dirToCompress))
+			{
+				RecursivelyPutFilesToWebonary(model, dir, Path.Combine(dirInZip, Path.GetFileName(dir.TrimEnd(Path.DirectorySeparatorChar))), webonaryView);
 			}
 		}
 
@@ -187,7 +218,7 @@ namespace SIL.FieldWorks.XWorks
 			// To do local testing set the WEBONARYSERVER environment variable to something like 192.168.33.10
 			var server = Environment.GetEnvironmentVariable("WEBONARYSERVER");
 			server = string.IsNullOrEmpty(server) ? "webonary.org" : server;
-			return string.Format("https://cloud-api.{0}/v1/{1}/{2}", server, apiEndpoint, siteName);
+			return $"https://cloud-api.{server}/v1/{apiEndpoint}/{siteName}?client=Flex&version='{Assembly.GetExecutingAssembly().GetName().Version}'";
 		}
 
 		internal void UploadToWebonary(string zipFileToUpload, UploadToWebonaryModel model, IUploadToWebonaryView view)
@@ -213,63 +244,50 @@ namespace SIL.FieldWorks.XWorks
 				}
 				catch (WebonaryClient.WebonaryException e)
 				{
-					if (e.StatusCode == HttpStatusCode.Redirect)
-					{
-						view.UpdateStatus(xWorksStrings.ksErrorWebonarySiteName);
-					}
-					else
-					{
-						view.UpdateStatus(string.Format(xWorksStrings.ksErrorCannotConnectToWebonary,
-							Environment.NewLine, e.StatusCode, e.Message));
-					}
-					view.SetStatusCondition(WebonaryStatusCondition.Error);
+					UpdateViewWithWebonaryException(view, e);
 					return;
 				}
 				var responseText = Encoding.ASCII.GetString(response);
 
-				if (client.ResponseStatusCode == HttpStatusCode.Found)
-				{
-					view.UpdateStatus(xWorksStrings.ksErrorWebonarySiteName);
-					view.SetStatusCondition(WebonaryStatusCondition.Error);
-				}
-				else if (responseText.Contains("Upload successful"))
-				{
-					if (!responseText.Contains("error"))
-					{
-						view.UpdateStatus(xWorksStrings.ksWebonaryUploadSuccessful);
-						view.SetStatusCondition(WebonaryStatusCondition.Success);
-						return;
-					}
-
-					view.UpdateStatus(xWorksStrings.ksWebonaryUploadSuccessfulErrorProcessing);
-					view.SetStatusCondition(WebonaryStatusCondition.Error);
-				}
-
-				if (responseText.Contains("Wrong username or password"))
-				{
-					view.UpdateStatus(xWorksStrings.ksErrorUsernameOrPassword);
-					view.SetStatusCondition(WebonaryStatusCondition.Error);
-				}
-				else if (responseText.Contains("User doesn't have permission to import data"))
-				{
-					view.UpdateStatus(xWorksStrings.ksErrorUserDoesntHavePermissionToImportData);
-					view.SetStatusCondition(WebonaryStatusCondition.Error);
-				}
-				else // Unknown error, display the server response, but cut it off at 100 characters
-				{
-					view.UpdateStatus(string.Format("{0}{1}{2}{1}", xWorksStrings.ksResponseFromServer, Environment.NewLine,
-						responseText.Substring(0, Math.Min(100, responseText.Length))));
-				}
+				UpdateViewWithWebonaryResponse(view, client, responseText);
 			}
 		}
 
-		private void PostMetaDataToWebonary(UploadToWebonaryModel model, IUploadToWebonaryView view, JObject postContent)
+		internal void UploadFileToWebonary(string signedUrl, string fileName, IUploadToWebonaryView view)
+		{
+			if (view == null)
+				throw new ArgumentNullException("view");
+
+			view.UpdateStatus(xWorksStrings.ksConnectingToWebonary);
+			using (var client = CreateWebClient())
+			{
+				client.Headers.Add("Content-Type", MimeMapping.GetMimeMapping(fileName));
+				client.Headers.Add("user-agent", string.Format("FieldWorks Language Explorer v.{0}", Assembly.GetExecutingAssembly().GetName().Version));
+				client.Headers[HttpRequestHeader.Accept] = "*/*";
+
+				byte[] response = null;
+				try
+				{
+					response = client.UploadFileToWebonary(signedUrl, fileName, "PUT");
+				}
+				catch (WebonaryClient.WebonaryException e)
+				{
+					UpdateViewWithWebonaryException(view, e);
+					return;
+				}
+				var responseText = Encoding.ASCII.GetString(response);
+
+				UpdateViewWithWebonaryResponse(view, client, responseText);
+			}
+		}
+
+		private string PostContentToWebonary(UploadToWebonaryModel model, IUploadToWebonaryView view, string apiEndpoint, JContainer postContent)
 		{
 			Guard.AgainstNull(model, "model");
 			Guard.AgainstNull(view, "view");
 
 			view.UpdateStatus(xWorksStrings.ksConnectingToWebonary);
-			var targetURI = DestinationApiURI(model.SiteName, "post/dictionary");
+			var targetURI = DestinationApiURI(model.SiteName, apiEndpoint);
 
 			using (var client = CreateWebClient())
 			{
@@ -285,52 +303,63 @@ namespace SIL.FieldWorks.XWorks
 				}
 				catch (WebonaryClient.WebonaryException e)
 				{
-					if (e.StatusCode == HttpStatusCode.Redirect)
-					{
-						view.UpdateStatus(xWorksStrings.ksErrorWebonarySiteName);
-					}
-					else
-					{
-						view.UpdateStatus(string.Format(xWorksStrings.ksErrorCannotConnectToWebonary,
-							Environment.NewLine, e.StatusCode, e.Message));
-					}
-					view.SetStatusCondition(WebonaryStatusCondition.Error);
+					UpdateViewWithWebonaryException(view, e);
+					return string.Empty;
+				}
+
+				return response;
+			}
+		}
+
+		private static void UpdateViewWithWebonaryException(IUploadToWebonaryView view, WebonaryClient.WebonaryException e)
+		{
+			if (e.StatusCode == HttpStatusCode.Redirect)
+			{
+				view.UpdateStatus(xWorksStrings.ksErrorWebonarySiteName);
+			}
+			else
+			{
+				view.UpdateStatus(string.Format(xWorksStrings.ksErrorCannotConnectToWebonary,
+					Environment.NewLine, e.StatusCode, e.Message));
+			}
+
+			view.SetStatusCondition(WebonaryStatusCondition.Error);
+		}
+
+		private static void UpdateViewWithWebonaryResponse(IUploadToWebonaryView view, IWebonaryClient client, string responseText)
+		{
+			if (client.ResponseStatusCode == HttpStatusCode.Found)
+			{
+				view.UpdateStatus(xWorksStrings.ksErrorWebonarySiteName);
+				view.SetStatusCondition(WebonaryStatusCondition.Error);
+			}
+			else if (responseText.Contains("Upload successful"))
+			{
+				if (!responseText.Contains("error"))
+				{
+					view.UpdateStatus(xWorksStrings.ksWebonaryUploadSuccessful);
+					view.SetStatusCondition(WebonaryStatusCondition.Success);
 					return;
 				}
 
-				if (client.ResponseStatusCode == HttpStatusCode.Found)
-				{
-					view.UpdateStatus(xWorksStrings.ksErrorWebonarySiteName);
-					view.SetStatusCondition(WebonaryStatusCondition.Error);
-				}
-				else if (response.Contains("Upload successful"))
-				{
-					if (!response.Contains("error"))
-					{
-						view.UpdateStatus(xWorksStrings.ksWebonaryUploadSuccessful);
-						view.SetStatusCondition(WebonaryStatusCondition.Success);
-						return;
-					}
+				view.UpdateStatus(xWorksStrings.ksWebonaryUploadSuccessfulErrorProcessing);
+				view.SetStatusCondition(WebonaryStatusCondition.Error);
+			}
 
-					view.UpdateStatus(xWorksStrings.ksWebonaryUploadSuccessfulErrorProcessing);
-					view.SetStatusCondition(WebonaryStatusCondition.Error);
-				}
-
-				if (response.Contains("Wrong username or password"))
-				{
-					view.UpdateStatus(xWorksStrings.ksErrorUsernameOrPassword);
-					view.SetStatusCondition(WebonaryStatusCondition.Error);
-				}
-				else if (response.Contains("User doesn't have permission to import data"))
-				{
-					view.UpdateStatus(xWorksStrings.ksErrorUserDoesntHavePermissionToImportData);
-					view.SetStatusCondition(WebonaryStatusCondition.Error);
-				}
-				else // Unknown error, display the server response, but cut it off at 100 characters
-				{
-					view.UpdateStatus(string.Format("{0}{1}{2}{1}", xWorksStrings.ksResponseFromServer, Environment.NewLine,
-						response.Substring(0, Math.Min(100, response.Length))));
-				}
+			if (responseText.Contains("Wrong username or password"))
+			{
+				view.UpdateStatus(xWorksStrings.ksErrorUsernameOrPassword);
+				view.SetStatusCondition(WebonaryStatusCondition.Error);
+			}
+			else if (responseText.Contains("User doesn't have permission to import data"))
+			{
+				view.UpdateStatus(xWorksStrings.ksErrorUserDoesntHavePermissionToImportData);
+				view.SetStatusCondition(WebonaryStatusCondition.Error);
+			}
+			else // Unknown error, display the server response, but cut it off at 100 characters
+			{
+				view.UpdateStatus(string.Format("{0}{1}{2}{1}", xWorksStrings.ksResponseFromServer, Environment.NewLine,
+					responseText.Substring(0, Math.Min(100, responseText.Length))));
 			}
 		}
 
@@ -386,7 +415,13 @@ namespace SIL.FieldWorks.XWorks
 			if (useJsonApi)
 			{
 				var postContent = GenerateDictionaryMetadataContent(model);
-				PostMetaDataToWebonary(model, view, postContent);
+				PostContentToWebonary(model, view, "post/dictionary",postContent);
+				var entries = m_exportService.ExportConfiguredJson(tempDirectoryForExport, model.Configurations[model.SelectedConfiguration]);
+				foreach (var entryBatch in entries)
+				{
+					PostContentToWebonary(model, view, "post/entry", entryBatch);
+				}
+				RecursivelyPutFilesToWebonary(model, tempDirectoryForExport, "", view);
 			}
 			else
 			{

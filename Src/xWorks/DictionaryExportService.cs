@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Xml;
 using Newtonsoft.Json.Linq;
@@ -103,6 +104,13 @@ namespace SIL.FieldWorks.XWorks
 			if (progress != null)
 				progress.Maximum = entriesToSave.Length;
 			ConfiguredXHTMLGenerator.SavePublishedHtmlWithStyles(entriesToSave, publicationDecorator, int.MaxValue, configuration, m_propertyTable, xhtmlPath, progress);
+		}
+
+		public List<JArray> ExportConfiguredJson(string folderPath, DictionaryConfigurationModel configuration)
+		{
+			int[] entriesToSave;
+			var publicationDecorator = ConfiguredXHTMLGenerator.GetPublicationDecoratorAndEntries(m_propertyTable, out entriesToSave, DictionaryType);
+			return LcmJsonGenerator.SavePublishedJsonWithStyles(entriesToSave, publicationDecorator, int.MaxValue, configuration, m_propertyTable, Path.Combine(folderPath, "configured.json"), null);
 		}
 
 		private sealed class ClerkActivator : IDisposable

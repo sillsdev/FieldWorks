@@ -170,6 +170,7 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\SIL.Core.Desktop.dll</HintPath>
     </Reference>
+    <Reference Include="System.Web" />
     <Reference Include="ViewsInterfaces, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
       <HintPath>..\..\Output\Debug\ViewsInterfaces.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>

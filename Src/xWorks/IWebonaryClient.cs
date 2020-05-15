@@ -12,11 +12,19 @@ namespace SIL.FieldWorks.XWorks
 	public interface IWebonaryClient : IDisposable
 	{
 		WebHeaderCollection Headers { get; }
-		byte[] UploadFileToWebonary(string address, string fileName);
+		byte[] UploadFileToWebonary(string address, string fileName, string method = null);
 		HttpStatusCode ResponseStatusCode { get; }
 
 		#region WebonaryApiV1
 		string PostDictionaryMetadata(string address, string postBody);
+		string PostEntry(string address, string postBody);
+		/// <summary>
+		/// This method returns a temporary url that can be used to upload a file to an AWS S3 bucket.
+		/// </summary>
+		/// <param name="address">The url for the request</param>
+		/// <param name="filePath">The relative file path for the upload</param>
+		/// <returns></returns>
+		string GetSignedUrl(string address, string filePath);
 		#endregion
 	}
 }
