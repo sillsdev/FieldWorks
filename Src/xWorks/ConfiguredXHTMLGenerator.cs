@@ -671,7 +671,7 @@ namespace SIL.FieldWorks.XWorks
 		/// field for ILexEntry and IReversalIndexEntry. Get the headword starting from entry-type-agnostic.
 		/// </summary>
 		/// <returns>the "headword" in NFD (the heading letter must be normalized to NFC before writing to XHTML, per LT-18177)</returns>
-		private static string GetHeadwordForLetterHead(ICmObject entry)
+		internal static string GetHeadwordForLetterHead(ICmObject entry)
 		{
 			var lexEntry = entry as ILexEntry;
 			if (lexEntry == null)
@@ -1657,6 +1657,8 @@ namespace SIL.FieldWorks.XWorks
 		private static string GenerateXHTMLForCollection(object collectionField, ConfigurableDictionaryNode config,
 			DictionaryPublicationDecorator pubDecorator, object collectionOwner, GeneratorSettings settings, SenseInfo info = new SenseInfo())
 		{
+			// To be used for things like shared grammatical info
+			var sharedCollectionInfo = string.Empty;
 			var bldr = new StringBuilder();
 			IEnumerable collection;
 			if (collectionField is IEnumerable)
@@ -1675,7 +1677,7 @@ namespace SIL.FieldWorks.XWorks
 
 			if (config.DictionaryNodeOptions is DictionaryNodeSenseOptions)
 			{
-				bldr.Append(GenerateXHTMLForSenses(config, pubDecorator, settings, collection, info));
+				bldr.Append(GenerateXHTMLForSenses(config, pubDecorator, settings, collection, info, ref sharedCollectionInfo));
 			}
 			else
 			{
@@ -1731,10 +1733,10 @@ namespace SIL.FieldWorks.XWorks
 				}
 			}
 
-			if (bldr.Length > 0)
+			if (bldr.Length > 0 || sharedCollectionInfo.Length > 0)
 			{
 				return config.DictionaryNodeOptions is DictionaryNodeSenseOptions ?
-					settings.ContentGenerator.WriteProcessedObject(false, bldr.ToString(), GetClassNameAttributeForConfig(config)) :
+					settings.ContentGenerator.WriteProcessedSenses(false, bldr.ToString(), GetClassNameAttributeForConfig(config), sharedCollectionInfo) :
 					settings.ContentGenerator.WriteProcessedCollection(false, bldr.ToString(), GetClassNameAttributeForConfig(config));
 			}
 			return string.Empty;
@@ -1957,7 +1959,7 @@ namespace SIL.FieldWorks.XWorks
 		/// This method will generate the XHTML that represents a senses collection and its contents
 		/// </summary>
 		private static string GenerateXHTMLForSenses(ConfigurableDictionaryNode config, DictionaryPublicationDecorator publicationDecorator,
-			GeneratorSettings settings, IEnumerable senseCollection, SenseInfo info)
+			GeneratorSettings settings, IEnumerable senseCollection, SenseInfo info, ref string sharedGramInfo)
 		{
 			// Check whether all the senses have been excluded from publication.  See https://jira.sil.org/browse/LT-15697.
 			var filteredSenseCollection = new List<ILexSense>();
@@ -1970,15 +1972,14 @@ namespace SIL.FieldWorks.XWorks
 			}
 			if (filteredSenseCollection.Count == 0)
 				return string.Empty;
-			var bldr = new StringBuilder();
 			var isSubsense = config.Parent != null && config.FieldDescription == config.Parent.FieldDescription;
 			string lastGrammaticalInfo, langId;
 			var isSameGrammaticalInfo = IsAllGramInfoTheSame(config, filteredSenseCollection, isSubsense, out lastGrammaticalInfo, out langId);
 			if (isSameGrammaticalInfo && !isSubsense)
 			{
-				bldr.Append(InsertGramInfoBeforeSenses(filteredSenseCollection.First(),
+				sharedGramInfo = InsertGramInfoBeforeSenses(filteredSenseCollection.First(),
 					config.ReferencedOrDirectChildren.FirstOrDefault(e => e.FieldDescription == "MorphoSyntaxAnalysisRA" && e.IsEnabled),
-					publicationDecorator, settings));
+					publicationDecorator, settings);
 			}
 			//sensecontent sensenumber sense morphosyntaxanalysis mlpartofspeech en
 			info.SenseCounter = 0; // This ticker is more efficient than computing the index for each sense individually
@@ -1990,13 +1991,12 @@ namespace SIL.FieldWorks.XWorks
 			// is determined, the answer for all sibling senses is the same as for the first sense in the collection.
 			// So calculating outside the loop for performance.
 			var isThisSenseNumbered = ShouldThisSenseBeNumbered(filteredSenseCollection[0], config, filteredSenseCollection);
-			bldr.Append(settings.ContentGenerator.BeginSenseCollection());
+			var bldr = new StringBuilder();
 			foreach (var item in filteredSenseCollection)
 			{
 				info.SenseCounter++;
 				bldr.Append(GenerateSenseContent(config, publicationDecorator, item, isThisSenseNumbered, settings, isSameGrammaticalInfo, info));
 			}
-			bldr.Append(settings.ContentGenerator.EndSenseCollection());
 			return bldr.ToString();
 		}
 
@@ -3496,6 +3496,11 @@ namespace SIL.FieldWorks.XWorks
 			EndObject(writer);
 		}
 
+		public string WriteProcessedSenses(bool isBlock, string sensesContent, string classAttribute, string sharedGramInfo)
+		{
+			return WriteProcessedObject(isBlock, sharedGramInfo + sensesContent, classAttribute);
+		}
+
 		public string AddCollectionItem(bool isBlock, string collectionItemClass, string content)
 		{
 			var bldr = new StringBuilder();
@@ -3585,8 +3590,9 @@ namespace SIL.FieldWorks.XWorks
 		string AddImageCaption(string captionContent);
 		string GenerateSenseNumber(string formattedSenseNumber);
 		string AddLexReferences(bool generateLexType, string lexTypeContent, string className, string referencesContent);
-		void BeginCrossReference(IFragmentWriter writer, bool isBlockProperty, string classAttribute);
+		void BeginCrossReference(IFragmentWriter writer, bool isBlockProperty, string className);
 		void EndCrossReference(IFragmentWriter writer);
+		string WriteProcessedSenses(bool isBlock, string senseContent, string className, string sharedCollectionInfo);
 	}
 
 	/// <summary>

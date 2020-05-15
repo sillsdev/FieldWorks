@@ -14,7 +14,6 @@ using SIL.FieldWorks.Common.Controls;
 using SIL.LCModel;
 using SIL.LCModel.Utils;
 using XCore;
-using Formatting = Newtonsoft.Json.Formatting;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -26,6 +25,12 @@ namespace SIL.FieldWorks.XWorks
 	/// </summary>
 	public class LcmJsonGenerator : ILcmContentGenerator
 	{
+		private LcmCache Cache { get; }
+		public LcmJsonGenerator(LcmCache cache)
+		{
+			Cache = cache;
+		}
+
 		public string GenerateWsPrefixWithString(ConfiguredXHTMLGenerator.GeneratorSettings settings,
 			bool displayAbbreviation, int wsId, string content)
 		{
@@ -173,6 +178,14 @@ namespace SIL.FieldWorks.XWorks
 			var jsonWriter = (JsonFragmentWriter)xw;
 			jsonWriter.StartObject();
 			jsonWriter.InsertJsonProperty("guid", entryGuid.ToString());
+			// get the index character (letter header) for this entry
+			var entry = Cache.ServiceLocator.GetObject(entryGuid);
+			var indexChar = ConfiguredExport.GetLeadChar(ConfiguredXHTMLGenerator.GetHeadwordForLetterHead(entry),
+				ConfiguredXHTMLGenerator.GetWsForEntryType(entry, Cache),
+				new Dictionary<string, ISet<string>>(),
+				new Dictionary<string, Dictionary<string, string>>(),
+				new Dictionary<string, ISet<string>>(), Cache);
+			jsonWriter.InsertJsonProperty("letterHead", indexChar);
 			jsonWriter.InsertRawJson(",");
 		}
 
@@ -284,6 +297,14 @@ namespace SIL.FieldWorks.XWorks
 		{
 			EndObject(writer);
 			((JsonFragmentWriter)writer).InsertRawJson(",");
+		}
+
+		/// <summary>
+		/// Generates data for all senses of an entry. For better processing of json add sharedGramInfo as a separate property object
+		/// </summary>
+		public string WriteProcessedSenses(bool isBlock, string sensesContent, string classAttribute, string sharedGramInfo)
+		{
+			return $"{sharedGramInfo}{WriteProcessedCollection(isBlock, sensesContent, classAttribute)}";
 		}
 
 		public string AddSenseData(string senseNumberSpan, bool isBlock, Guid ownerGuid,
@@ -405,7 +426,7 @@ namespace SIL.FieldWorks.XWorks
 					custCssPath = ConfiguredXHTMLGenerator.CopyCustomCssToTempFolder(configDir, jsonPath, cssName);
 				}
 				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(cache, readOnlyPropertyTable, true, true, Path.GetDirectoryName(jsonPath),
-					ConfiguredXHTMLGenerator.IsNormalRtl(readOnlyPropertyTable), Path.GetFileName(cssPath) == "configured.css") { ContentGenerator = new LcmJsonGenerator()};
+					ConfiguredXHTMLGenerator.IsNormalRtl(readOnlyPropertyTable), Path.GetFileName(cssPath) == "configured.css") { ContentGenerator = new LcmJsonGenerator(cache)};
 				var entryContents = new Tuple<ICmObject, StringBuilder>[entryCount];
 				var entryActions = new List<Action>();
 				// For every entry in the page generate an action that will produce the xhtml document fragment for that entry
@@ -502,7 +523,7 @@ namespace SIL.FieldWorks.XWorks
 			};
 			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(cache, propTable, true, true, exportPath, false, true)
 			{
-				ContentGenerator = new LcmJsonGenerator()
+				ContentGenerator = new LcmJsonGenerator(cache)
 			};
 			return null;
 		}

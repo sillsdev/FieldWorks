@@ -40,7 +40,7 @@ namespace SIL.FieldWorks.XWorks
 		private const string DictionaryNormal = "Dictionary-Normal";
 
 		private ConfiguredXHTMLGenerator.GeneratorSettings DefaultSettings => new ConfiguredXHTMLGenerator.GeneratorSettings(Cache,
-			new ReadOnlyPropertyTable(m_propertyTable), true, false, null) { ContentGenerator = new LcmJsonGenerator() };
+			new ReadOnlyPropertyTable(m_propertyTable), true, false, null) { ContentGenerator = new LcmJsonGenerator(Cache) };
 
 		private DictionaryPublicationDecorator DefaultDecorator => new DictionaryPublicationDecorator(Cache,
 			(ISilDataAccessManaged)Cache.MainCacheAccessor, Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries);
@@ -158,8 +158,7 @@ namespace SIL.FieldWorks.XWorks
 			//SUT
 			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entry, mainEntryNode, null, DefaultSettings);
 			Console.WriteLine(result);
-			var expectedResult = @"{""guid"":""" + entry.Guid + @""",""senses"": {
-				""sensesData"": [{""guid"":""" + entry.Guid + @""",""gloss"": [{""lang"":""en"",""value"":""gloss""}]},]}}";
+			var expectedResult = @"{""guid"":""" + entry.Guid + @""",""letterHead"": ""c"",""senses"": [{""guid"":""" + entry.Guid + @""",""gloss"": [{""lang"":""en"",""value"":""gloss""}]},]}";
 			//This assert is dependent on the specific entry data created in CreateInterestingLexEntry
 			var expected = (JObject)JsonConvert.DeserializeObject(expectedResult);
 			VerifyJson(result, expected);
@@ -191,9 +190,8 @@ namespace SIL.FieldWorks.XWorks
 			//SUT
 			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entry, mainEntryNode, null, DefaultSettings);
 
-			var expectedResults = @"{""guid"":""" + entry.Guid + @""",""senses"": {
-				""sensesData"": [{""guid"":""" + entry.Guid + @""",
-				""definitionorgloss"": [{""lang"":""en"",""value"":""gloss""},{""lang"":""es"",""value"":""definition""}]}]}}";
+			var expectedResults = @"{""guid"":""" + entry.Guid + @""",""letterHead"": ""c"",""senses"": [{""guid"":""" + entry.Guid + @""",
+				""definitionorgloss"": [{""lang"":""en"",""value"":""gloss""},{""lang"":""es"",""value"":""definition""}]}]}";
 			//This assert is dependent on the specific entry data created in CreateInterestingLexEntry
 			var expected = (JObject)JsonConvert.DeserializeObject(expectedResults);
 			VerifyJson(result, expected);
@@ -253,14 +251,13 @@ namespace SIL.FieldWorks.XWorks
 			secondSense.MorphoSyntaxAnalysisRA = secondMsa;
 			secondMsa.PartOfSpeechRA = pos;
 
-			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null) { ContentGenerator = new LcmJsonGenerator() };
+			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null) { ContentGenerator = new LcmJsonGenerator(Cache) };
 			//SUT
 			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entry, mainEntryNode, null, settings);
 			Console.WriteLine(result);
-			var expectedResults = @"{""guid"":""" + entry.Guid + @""",
-				""senses"": {""msas"": {""mlpartofspeech"": [{""lang"":""en"",""value"":""Blah""}]},
-				""sensesData"": [{""guid"":""" + entry.Guid + @""",""gloss"": [{""lang"":""en"",""value"":""gloss""}]},
-				{""guid"":""" + entry.Guid + @""",""gloss"": [{""lang"":""en"",""value"":""second sense""}]}]}}";
+			var expectedResults = @"{""guid"":""" + entry.Guid + @""",""letterHead"": ""c"",
+				""msas"": {""mlpartofspeech"": [{""lang"":""en"",""value"":""Blah""}]}, ""senses"": [{""guid"":""" + entry.Guid + @""",""gloss"": [{""lang"":""en"",""value"":""gloss""}]},
+				{""guid"":""" + entry.Guid + @""",""gloss"": [{""lang"":""en"",""value"":""second sense""}]}]}";
 			var expected = (JObject)JsonConvert.DeserializeObject(expectedResults, new JsonSerializerSettings { Formatting = Formatting.None });
 			VerifyJson(result, expected);
 		}
@@ -306,7 +303,7 @@ namespace SIL.FieldWorks.XWorks
 
 			//SUT
 			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entry, mainEntryNode, null, settings);
-			var expectedResults = @"{""guid"":""" + entry.Guid + @""",""pictures"": [{""guid"":""" + sensePic.Guid +
+			var expectedResults = @"{""guid"":""" + entry.Guid + @""",""letterHead"": ""c"",""pictures"": [{""guid"":""" + sensePic.Guid +
 								  @""",""src"":""pictures/picture"",""sensenumber"": [{""lang"":""en"",""value"":""1""}],""caption"": [{""lang"":""en"",""value"":""caption""}]}]}";
 			var expected = (JObject)JsonConvert.DeserializeObject(expectedResults, new JsonSerializerSettings { Formatting = Formatting.None });
 			VerifyJson(result, expected);
@@ -510,9 +507,9 @@ namespace SIL.FieldWorks.XWorks
 			//SUT
 			var output = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entryEntry, mainEntryNode, pubMain, DefaultSettings);
 			Assert.IsNotNullOrEmpty(output);
-			var expectedResults = "{\"guid\":\"" + entryEntry.Guid +
-								  "\",\"entry\": [{\"lang\":\"fr\",\"value\":\"entry\"}],\"senses\": {\"sensesData\": [{\"guid\":\"" +
-								  entryEntry.Guid + "\",\"definitionorgloss\": [{\"lang\":\"en\",\"value\":\"entry\"}]}]}," +
+			var expectedResults = "{\"guid\":\"" + entryEntry.Guid + "\",\"letterHead\": \"e\"," +
+								  "\"entry\": [{\"lang\":\"fr\",\"value\":\"entry\"}],\"senses\": [{\"guid\":\"" +
+								  entryEntry.Guid + "\",\"definitionorgloss\": [{\"lang\":\"en\",\"value\":\"entry\"}]}]," +
 								  "\"subentries\": [{\"subentry\": [{\"lang\":\"fr\",\"value\":\"mainsubentry\"}]}]," +
 								  "\"variantformentrybackrefs\": [{\"references\":[{\"headword\": [{\"lang\":\"fr\",\"guid\": \"" + bizarroVariant.Guid +
 								  "\", \"value\":\"bizarre\"}]}]}]}";
@@ -547,7 +544,7 @@ namespace SIL.FieldWorks.XWorks
 			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entryOne, mainEntryNode, null, DefaultSettings);
 
 			var expectedResults = @"{""guid"": """ + entryOne.Guid +
-								  @""", ""headword"": [{""audio"": { ""id"": ""gTest_Audi_o"", ""src"": ""AudioVisual/Test Audi'o.wav""}}]}";
+								  @""",""letterHead"": ""c"", ""headword"": [{""audio"": { ""id"": ""gTest_Audi_o"", ""src"": ""AudioVisual/Test Audi'o.wav""}}]}";
 			var expected = (JObject)JsonConvert.DeserializeObject(expectedResults, new JsonSerializerSettings { Formatting = Formatting.None });
 			VerifyJson(result, expected);
 		}
@@ -574,9 +571,9 @@ namespace SIL.FieldWorks.XWorks
 			ConfiguredXHTMLGeneratorTests.AddSenseToEntry(testEntry, "second gloss", m_wsEn, Cache);
 			//SUT
 			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, DefaultDecorator, DefaultSettings);
-			var expectedResults = @"{""guid"":""" + testEntry.Guid + @""",""senses"":{""sensesData"":[{""senseNumber"":""1"",
+			var expectedResults = @"{""guid"":""" + testEntry.Guid + @""",""letterHead"": ""c"",""senses"":[{""senseNumber"":""1"",
 				""guid"":""" + testEntry.Guid + @""",""gloss"":[{""lang"":""en"",""value"":""gloss""}]},
-				{""senseNumber"":""2"",""guid"":""" + testEntry.Guid + @""",""gloss"":[{""lang"":""en"",""value"":""second gloss""}]}]}}";
+				{""senseNumber"":""2"",""guid"":""" + testEntry.Guid + @""",""gloss"":[{""lang"":""en"",""value"":""second gloss""}]}]}";
 			var expected = (JObject)JsonConvert.DeserializeObject(expectedResults, new JsonSerializerSettings { Formatting = Formatting.None });
 			VerifyJson(result, expected);
 		}
@@ -603,7 +600,7 @@ namespace SIL.FieldWorks.XWorks
 			entry.Bibliography.set_String(m_wsFr, multiRunString);
 			//SUT
 			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entry, mainEntryNode, null, DefaultSettings);
-			var expectedResults = @"{""guid"":""" + entry.Guid + @""",""bib"": [{""lang"":""fr"",""value"":""French with ""},
+			var expectedResults = @"{""guid"":""" + entry.Guid + @""",""letterHead"": ""c"",""bib"": [{""lang"":""fr"",""value"":""French with ""},
 				{""lang"":""en"",""value"":""English""},{""lang"":""fr"",""value"":"" embedded""}]}";
 			var expected = (JObject)JsonConvert.DeserializeObject(expectedResults, new JsonSerializerSettings { Formatting = Formatting.None });
 			VerifyJson(result, expected);
@@ -650,7 +647,7 @@ namespace SIL.FieldWorks.XWorks
 
 			//SUT
 			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(mainEntry, mainEntryNode, null, DefaultSettings);
-			var expectedResults = @"{""guid"":""" + mainEntry.Guid + @""",
+			var expectedResults = @"{""guid"":""" + mainEntry.Guid + @""",""letterHead"": ""c"",
 				""sensesos"": [{""lexsensereferences"": [{""ownertype_name"": [{""lang"":""en"",""value"":""TestRefType""}]}]}]}";
 			var expected = (JObject)JsonConvert.DeserializeObject(expectedResults, new JsonSerializerSettings { Formatting = Formatting.None });
 			VerifyJson(result, expected);
@@ -671,11 +668,11 @@ namespace SIL.FieldWorks.XWorks
 
 			//SUT
 			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entryOne, mainEntryNode, null, DefaultSettings);
-			var expectedResults = @"{""guid"":""" + entryOne.Guid + @""",""homographnumber"": ""1""}";
+			var expectedResults = @"{""guid"":""" + entryOne.Guid + @""",""letterHead"": ""c"",""homographnumber"": ""1""}";
 			var expected = (JObject)JsonConvert.DeserializeObject(expectedResults, new JsonSerializerSettings { Formatting = Formatting.None });
 			VerifyJson(result, expected);
 			result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entryTwo, mainEntryNode, null, DefaultSettings);
-			expectedResults = @"{""guid"":""" + entryTwo.Guid + @""",""homographnumber"": ""2""}";
+			expectedResults = @"{""guid"":""" + entryTwo.Guid + @""",""letterHead"": ""c"",""homographnumber"": ""2""}";
 			expected = (JObject)JsonConvert.DeserializeObject(expectedResults, new JsonSerializerSettings { Formatting = Formatting.None });
 			VerifyJson(result, expected);
 
@@ -723,7 +720,7 @@ namespace SIL.FieldWorks.XWorks
 				var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, DefaultSettings);
 
 				// Bug: The second filename should be different after the export with relative path settings (fix later)
-				var expectedResults = @"{""guid"":""" + testEntry.Guid + @""",""pictures"": [{""guid"":""" + sensePic.Guid + @""",""src"":""pictures/" + fileName + @"""},
+				var expectedResults = @"{""guid"":""" + testEntry.Guid + @""",""letterHead"": ""c"",""pictures"": [{""guid"":""" + sensePic.Guid + @""",""src"":""pictures/" + fileName + @"""},
 					{""guid"":""" + sensePic2.Guid + @""",""src"":""pictures/" + fileName + @"""}],}";
 				var expected = (JObject)JsonConvert.DeserializeObject(expectedResults, new JsonSerializerSettings { Formatting = Formatting.None });
 				VerifyJson(result, expected);
