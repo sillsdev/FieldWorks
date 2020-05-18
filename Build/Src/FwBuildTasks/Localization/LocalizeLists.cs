@@ -30,28 +30,6 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 		private const string LexicalTypes = "LexicalTypes.xlf";
 		private const string SemanticDomains = "SemanticDomains.xlf";
 		private const string AnthropologyCategories = "AnthropologyCategories.xlf";
-		private const string XliffBody = @"<?xml version='1.0'?>
-			<xliff version='1.2' xmlns:sil='software.sil.org'>
-				<file source-language='EN' datatype='plaintext' original='{0}'>
-					<body>
-					</body>
-				</file>
-			</xliff>";
-		private const string EmptyGroup = "<group id='{0}'></group>";
-		private const string TransUnitTemplate = "<trans-unit id='{0}'><source>{1}</source></trans-unit>";
-		private const string FinalTargetTemplate = "<target state='final'>{0}</target>";
-		private const string TransUnit = "trans-unit";
-		private static readonly string[] AcceptableTranslationStates = { "translated", "final" };
-		private static readonly XmlNamespaceManager NameSpaceManager = MakeNamespaceManager();
-
-		private static readonly XNamespace SilNamespace = "software.sil.org";
-		private static XmlNamespaceManager MakeNamespaceManager()
-		{
-			var nsm = new XmlNamespaceManager(new NameTable());
-			nsm.AddNamespace("sil", "software.sil.org");
-			return nsm;
-		}
-
 
 		/// <remarks>
 		/// NB: for those of you wondering why these are in such a ridiculous order,
@@ -216,12 +194,12 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 
 		internal static XDocument ConvertListToXliff(string listFileName, XDocument listsDoc, string targetLang)
 		{
-			var xliffDoc = XDocument.Parse(string.Format(XliffBody, listFileName));
+			var xliffDoc = XDocument.Parse(string.Format(XliffUtils.BodyTemplate, listFileName));
 			if (targetLang != null)
 			{
 				xliffDoc.XPathSelectElement("/xliff/file").SetAttributeValue("target-language", targetLang);
 			}
-			var bodyElem = xliffDoc.XPathSelectElement("/xliff/file/body", NameSpaceManager);
+			var bodyElem = xliffDoc.XPathSelectElement("/xliff/file/body", XliffUtils.NameSpaceManager);
 			foreach (var list in listsDoc.XPathSelectElements("/Lists/List"))
 			{
 				var listId = GetListId(list);
@@ -254,13 +232,13 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 			{
 				return;
 			}
-			var transUnit = XElement.Parse(string.Format(TransUnitTemplate, baseId + item.IdSuffix, SecurityElement.Escape(source)));
+			var transUnit = XElement.Parse(string.Format(XliffUtils.TransUnitTemplate, baseId + item.IdSuffix, SecurityElement.Escape(source)));
 			if (targetLang != null)
 			{
 				var target = sourceElem.XPathSelectElement($"AUni[@ws='{targetLang}']")?.Value;
 				if (!string.IsNullOrWhiteSpace(target))
 				{
-					transUnit.Add(XElement.Parse(string.Format(FinalTargetTemplate, SecurityElement.Escape(target))));
+					transUnit.Add(XElement.Parse(string.Format(XliffUtils.FinalTargetTemplate, SecurityElement.Escape(target))));
 				}
 			}
 			group.Add(transUnit);
@@ -275,7 +253,7 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 			}
 
 			var possibilitiesId = baseId + PossMap.IdSuffix;
-			var possibilitiesGroup = XElement.Parse(string.Format(EmptyGroup, possibilitiesId));
+			var possibilitiesGroup = XElement.Parse(string.Format(XliffUtils.EmptyGroup, possibilitiesId));
 			AddPossibilitiesToGroup(possibilityType, possibilitiesElement, baseId, possibilitiesId, possibilitiesGroup, targetLang);
 			group.Add(possibilitiesGroup);
 		}
@@ -292,7 +270,7 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 			}
 
 			var questionsId = baseId + QuestionsMap.IdSuffix;
-			var questionsGroup = XElement.Parse(string.Format(EmptyGroup, questionsId));
+			var questionsGroup = XElement.Parse(string.Format(XliffUtils.EmptyGroup, questionsId));
 			AddQuestionsToGroup(questionsElement, questionsId, questionsGroup, targetLang);
 			group.Add(questionsGroup);
 		}
@@ -304,7 +282,7 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 			foreach (var question in questionElement)
 			{
 				var possId = questionsId + "_" + questionIndex;
-				var questionGroup = XElement.Parse(string.Format(EmptyGroup, possId));
+				var questionGroup = XElement.Parse(string.Format(XliffUtils.EmptyGroup, possId));
 				ConvertAUniToXliff(question, questionGroup, possId, QuestionMap, targetLang);
 				ConvertAUniToXliff(question, questionGroup, possId, ExWordsMap, targetLang);
 				ConvertAStrToXliff(question, questionGroup, possId, ExSentencesMap, targetLang);
@@ -327,11 +305,11 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 			// with multiple runs, and it is a royal pain to translate. In fact, no previous translators have bothered preserving run breaks.
 			// The run is in a subgroup all by itself because we started by preserving runs, and we didn't feel like removing the extra group.
 			var groupId = possId + item.IdSuffix;
-			var groupNode = XElement.Parse(string.Format(EmptyGroup, groupId));
-			var transUnit = XElement.Parse(string.Format(TransUnitTemplate, groupId + "_0", SecurityElement.Escape(source)));
+			var groupNode = XElement.Parse(string.Format(XliffUtils.EmptyGroup, groupId));
+			var transUnit = XElement.Parse(string.Format(XliffUtils.TransUnitTemplate, groupId + "_0", SecurityElement.Escape(source)));
 				if (!string.IsNullOrWhiteSpace(target))
 				{
-					transUnit.Add(XElement.Parse(string.Format(FinalTargetTemplate, SecurityElement.Escape(target))));
+					transUnit.Add(XElement.Parse(string.Format(XliffUtils.FinalTargetTemplate, SecurityElement.Escape(target))));
 				}
 			groupNode.Add(transUnit);
 			ownerGroup.Add(groupNode);
@@ -361,7 +339,7 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 			}
 
 			var possibilitiesId = parentId + SubPosMap.IdSuffix;
-			var possibilitiesGroup = XElement.Parse(string.Format(EmptyGroup, possibilitiesId));
+			var possibilitiesGroup = XElement.Parse(string.Format(XliffUtils.EmptyGroup, possibilitiesId));
 			AddPossibilitiesToGroup(possibilityType, possibilitiesElement, baseId, possibilitiesId, possibilitiesGroup, targetLang);
 			group.Add(possibilitiesGroup);
 		}
@@ -376,17 +354,17 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 			var possIndex = 0;
 			foreach (var possibility in possibilityElements)
 			{
-				// If there is a GUID, use it as the key rather than the index (LT-20251).
+				// If there is a GUID, use it as the key rather than using the index (LT-20251).
 				// ENHANCE (Hasso) 2020.06: fall back to the English abbreviation before the index (need to sanitize Abbrevs)
 				var guidAtt = possibility.Attribute(GuidMap.AttName);
 				var possId = guidAtt == null ? $"{groupId}_{possIndex}" : $"{baseId}_{guidAtt.Value}";
-				var possGroup = XElement.Parse(string.Format(EmptyGroup, possId));
+				var possGroup = XElement.Parse(string.Format(XliffUtils.EmptyGroup, possId));
 				if (handleSubtypes && possibility.Name != possibilityType)
 				{
 					var typeElem = XElement.Load(new XmlTextReader(
 						$"<sil:type>{possibility.Name}</sil:type>",
 						XmlNodeType.Element,
-						new XmlParserContext(null, NameSpaceManager, null, XmlSpace.None)));
+						new XmlParserContext(null, XliffUtils.NameSpaceManager, null, XmlSpace.None)));
 					possGroup.Add(typeElem);
 
 				}
@@ -417,7 +395,7 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 				var attElemString = $"<sil:{attMap.SilEltName}>{SecurityElement.Escape(attValue)}</sil:{attMap.SilEltName}>";
 				var attElement = XElement.Load(new XmlTextReader(attElemString,
 					XmlNodeType.Element,
-					new XmlParserContext(null, NameSpaceManager, null, XmlSpace.None)));
+					new XmlParserContext(null, XliffUtils.NameSpaceManager, null, XmlSpace.None)));
 				targetElement.Add(attElement);
 			}
 		}
@@ -455,7 +433,7 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 				throw new ArgumentException("All documents must share the same target language", nameof(xliffDocs));
 			}
 			var listsElement = localizedLists.Root;
-			var masterDoc = XDocument.Parse(string.Format(XliffBody, "master.xlf"));
+			var masterDoc = XDocument.Parse(string.Format(XliffUtils.BodyTemplate, "master.xlf"));
 			masterDoc.XPathSelectElement("/xliff/file").Add(new XAttribute("target-language", targetLanguage));
 			var masterBody = masterDoc.XPathSelectElement("/xliff/file/body");
 			foreach (var xliffDocument in xliffDocs)
@@ -511,7 +489,7 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 			var subGroup = group.Elements("group").FirstOrDefault(g => g.Attribute("id") != null && g.Attribute("id").Value == id);
 			if (subGroup == null)
 				return;
-			var elements = subGroup.Elements(TransUnit).Where(tu => tu.Attribute("id")?.Value.StartsWith(id) ?? false);
+			var elements = subGroup.Elements(XliffUtils.TransUnit).Where(tu => tu.Attribute("id")?.Value.StartsWith(id) ?? false);
 			// ReSharper disable PossibleMultipleEnumeration
 			if (elements.Any())
 			{
@@ -561,7 +539,7 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 			var sourceRun = XElement.Parse("<Run ws='en'/>");
 			var targetRun = XElement.Parse($"<Run ws='{targetLanguage}'/>");
 			sourceRun.Add(xliffSource?.Value);
-			if(IsTranslated(xliffTarget))
+			if(XliffUtils.IsTranslated(xliffTarget))
 			{
 				targetRun.Add(xliffTarget?.Value);
 			}
@@ -573,7 +551,7 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 			string targetLanguage, ConversionMap item)
 		{
 			var id = group.Attribute("id")?.Value + item.IdSuffix;
-			var transUnit = group.Elements(TransUnit).FirstOrDefault(tu => tu.Attribute("id")?.Value == id);
+			var transUnit = group.Elements(XliffUtils.TransUnit).FirstOrDefault(tu => tu.Attribute("id")?.Value == id);
 			if (transUnit == null)
 			{
 				return;
@@ -583,18 +561,13 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 			var target = XElement.Parse($"<AUni ws='{targetLanguage}'/>");
 			source.Add(transUnit.Element("source")?.Value);
 			var xliffTarget = transUnit.Element("target");
-			if (IsTranslated(xliffTarget))
+			if (XliffUtils.IsTranslated(xliffTarget))
 			{
 				target.Add(xliffTarget.Value);
 			}
 			destElement.Add(source);
 			destElement.Add(target);
 			listElement.Add(destElement);
-		}
-
-		private static bool IsTranslated(XElement target)
-		{
-			return AcceptableTranslationStates.Contains(target?.Attribute("state")?.Value);
 		}
 
 		private static void ConvertPossibilitiesFromXLiff(XElement group, XElement listElement, string targetLanguage)
@@ -614,7 +587,7 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 
 		private static void ConvertPossibilityFromXliff(XElement possItem, string itemClass, XElement possGroup, string targetLanguage)
 		{
-			var possElem = XElement.Parse($"<{possItem.Element(SilNamespace + "type")?.Value ?? itemClass}/>");
+			var possElem = XElement.Parse($"<{possItem.Element(XliffUtils.SilNamespace + "type")?.Value ?? itemClass}/>");
 			ConvertAttributeFromXliff(GuidMap, possItem, possElem);
 			ConvertSourceAndTargetToAUnis(possItem, possElem, targetLanguage, NameMap);
 			ConvertSourceAndTargetToAUnis(possItem, possElem, targetLanguage, AbbrMap);
@@ -633,7 +606,7 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 		/// </summary>
 		private static void ConvertAttributeFromXliff(AttConversionMap attMap, XElement source, XElement target, XElement optionalTarget = null)
 		{
-			var attElem = source.Element(SilNamespace + attMap.SilEltName);
+			var attElem = source.Element(XliffUtils.SilNamespace + attMap.SilEltName);
 			if (attElem != null)
 			{
 				target.SetAttributeValue(attMap.AttName, attElem.Value);
@@ -673,36 +646,12 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 		public string XliffFile => Item4;
 	}
 
-	internal struct ConversionMap
-	{
-		public ConversionMap(string elementName, string idSuffix)
-		{
-			ElementName = elementName;
-			IdSuffix = idSuffix;
-		}
-
-		public string ElementName { get; }
-		public string IdSuffix { get; }
-	}
-
-	internal struct AttConversionMap
-	{
-		public AttConversionMap(string attName, string silEltName)
-		{
-			AttName = attName;
-			SilEltName = silEltName;
-		}
-
-		public string AttName { get; }
-		public string SilEltName { get; }
-	}
-
 	internal struct SubTypeMap
 	{
-		public SubTypeMap(string SuperType, string SubType)
+		public SubTypeMap(string superType, string subType)
 		{
-			this.SuperType = SuperType;
-			this.SubType = SubType;
+			SuperType = superType;
+			SubType = subType;
 		}
 
 		public string SuperType { get; }

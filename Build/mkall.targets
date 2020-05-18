@@ -419,6 +419,8 @@
 
 		<LcmDistFiles Include="Styles.dtd" />
 
+		<!-- GOLDEtic.xml is copied so that developers can use grammatical categories without building localizations.
+			Building localizations will overwrite this file with the latest translations. -->
 		<LcmTemplatesFiles Include="Templates/GOLDEtic.xml" />
 		<LcmTemplatesFiles Include="Templates/NewLangProj.fwdata" />
 		<LcmTemplatesFiles Include="Templates/POS.xml" />

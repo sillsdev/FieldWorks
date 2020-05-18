@@ -3,6 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Security;
@@ -18,6 +19,7 @@ using SIL.TestUtilities;
 namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 {
 	[TestFixture]
+	[SuppressMessage("ReSharper", "StringLiteralTypo", Justification = "many are abbreviations and other languages")]
 	internal class LocalizeListsTests
 	{
 		[Test]
@@ -543,7 +545,7 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 			const string idBase = "LangProject_SemanticDomainList_";
 			const string poss0Id = idBase + guid;
 			const string xpathToPoss0 = "//group/group[@id='" + poss0Id + "']";
-			const string target = "/target[@state='final']";
+			const string target = "/target[@state='" + XliffUtils.State.Final + "']";
 			AssertThatXmlIn.String(xliff).HasSpecifiedNumberOfMatchesForXpath(
 				xpathToPoss0 + "/trans-unit[@id='" + poss0Id + "_Name']" + target + "[text()='" + name + "']", 1, true);
 			AssertThatXmlIn.String(xliff).HasSpecifiedNumberOfMatchesForXpath(
@@ -592,16 +594,16 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 						<group id='LangProject_GenreList'>
 							<trans-unit id='LangProject_GenreList_Name'>
 								<source>{englishName}</source>
-								<target state='final'>{targetName}</target>
+								<target state='{XliffUtils.State.Final}' >{targetName}</target>
 							</trans-unit>
 							<trans-unit id='LangProject_GenreList_Abbr'>
 								<source>gnrs</source>
-								<target state='needs-translation'>gnrs</target>
+								<target state='{XliffUtils.State.NeedsTranslation}'>gnrs</target>
 							</trans-unit>
 							<group id='LangProject_GenreList_Desc'>
 								<trans-unit id='LangProject_GenreList_Desc_0'>
 									<source>{englishDescription}</source>
-									<target state='translated'>{translatedDescription}</target>
+									<target state='{XliffUtils.State.Translated}'>{translatedDescription}</target>
 								</trans-unit>
 							</group>
 						</group>
@@ -627,9 +629,9 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 				$"/Lists/List/Description/AStr[@ws='{targLangNormalized}']/Run[text()='{translatedDescription}']", 1);
 		}
 
-		[TestCase("needs-translation", 0)]
-		[TestCase("translated", 1)]
-		[TestCase("final", 1)]
+		[TestCase(XliffUtils.State.NeedsTranslation, 0)]
+		[TestCase(XliffUtils.State.Translated, 1)]
+		[TestCase(XliffUtils.State.Final, 1)]
 		public void ConvertXliffToLists_TranslationStateChecked(string transState, int isTranslated)
 		{
 			const string targetLang = "de";
