@@ -745,7 +745,7 @@ namespace SIL.FieldWorks.XWorks
 			var testEntry = ConfiguredXHTMLGeneratorTests.CreateInterestingLexEntry(Cache);
 			var siteName = "test";
 			var json = LcmJsonGenerator.GenerateDictionaryMetaData(siteName, new List<DictionaryConfigurationModel>(), new []{ testEntry.Hvo }, Cache);
-			var expectedResults = @"{""_id"":""" + siteName + @""",""mainLanguage"":{""lang"":""en"",""letters"":[""c""],""partsOfSpeech"":[],""semanticDomains"":[]}}";
+			var expectedResults = @"{""_id"":""" + siteName + @""",""mainLanguage"":{""lang"":""en"",""letters"":[""c""]},""partsOfSpeech"":[],""semanticDomains"":[]}";
 			var expected = (JObject)JsonConvert.DeserializeObject(expectedResults, new JsonSerializerSettings { Formatting = Formatting.None });
 			VerifyJson(json.ToString(), expected);
 		}
@@ -766,9 +766,8 @@ namespace SIL.FieldWorks.XWorks
 			noun.Name.set_String(m_wsEn, "noun");
 			var siteName = "test";
 			var json = LcmJsonGenerator.GenerateDictionaryMetaData(siteName, new List<DictionaryConfigurationModel>(), new[] { testEntry.Hvo }, Cache);
-			var expectedResults = @"{""_id"":""test"",""mainLanguage"":{""lang"":""en"",""letters"":[""c""],
-				""partsOfSpeech"":[{""abbreviation"":""n"",""name"":""noun"",""guid"":""" + noun.Guid + @"""}],
-				""semanticDomains"":[{""abbreviation"":""9.0"",""name"":""CustomDomain"",""guid"":""" + domainOne.Guid + @"""}]}}";
+			var expectedResults = @"{""_id"":""test"",""mainLanguage"":{""lang"":""en"",""letters"":[""c""]},""partsOfSpeech"":[{""lang"":""en"",""abbreviation"":""n"",""name"":""noun"",""guid"":""" + noun.Guid + @"""}],
+				""semanticDomains"":[{""lang"":""en"",""abbreviation"":""9.0"",""name"":""CustomDomain"",""guid"":""" + domainOne.Guid + @"""}]}";
 			var expected = (JObject)JsonConvert.DeserializeObject(expectedResults, new JsonSerializerSettings { Formatting = Formatting.None });
 			VerifyJson(json.ToString(), expected);
 		}

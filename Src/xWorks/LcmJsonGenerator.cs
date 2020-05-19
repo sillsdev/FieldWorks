@@ -493,8 +493,10 @@ namespace SIL.FieldWorks.XWorks
 				dictionaryMetaData.reversalLanguages = reversalArray;
 			}
 
-			mainLanguageData.partsOfSpeech = GenerateProjectOwnedList(cache.LangProject.PartsOfSpeechOA.ReallyReallyAllPossibilities, cache.LangProject.DefaultAnalysisWritingSystem.Handle);
-			mainLanguageData.semanticDomains = GenerateProjectOwnedList(cache.LangProject.SemanticDomainListOA.ReallyReallyAllPossibilities, cache.LangProject.DefaultAnalysisWritingSystem.Handle);
+			dictionaryMetaData.partsOfSpeech = GenerateProjectOwnedList(cache.LangProject.PartsOfSpeechOA.ReallyReallyAllPossibilities,
+				cache.LangProject.DefaultAnalysisWritingSystem.Handle, cache.LangProject.DefaultAnalysisWritingSystem.Id);
+			dictionaryMetaData.semanticDomains = GenerateProjectOwnedList(cache.LangProject.SemanticDomainListOA.ReallyReallyAllPossibilities,
+				cache.LangProject.DefaultAnalysisWritingSystem.Handle, cache.LangProject.DefaultAnalysisWritingSystem.Id);
 			return dictionaryMetaData;
 		}
 
@@ -503,7 +505,7 @@ namespace SIL.FieldWorks.XWorks
 		/// The object contains the guid, name, and abbreviation for the given ws.
 		/// It is assumed there is no internal style that is needed when using a list for metadata.
 		/// </summary>
-		private static JArray GenerateProjectOwnedList(ISet<ICmPossibility> flattenedList, int wsId)
+		private static JArray GenerateProjectOwnedList(ISet<ICmPossibility> flattenedList, int wsId, string wsLabel)
 		{
 			var listArray = new JArray();
 			foreach (var poss in flattenedList)
@@ -511,6 +513,7 @@ namespace SIL.FieldWorks.XWorks
 				dynamic listItem = new JObject();
 				var abbreviation = poss.Abbreviation.get_String(wsId);
 				var name = poss.Name.get_String(wsId);
+				listItem.lang = wsLabel;
 				listItem.abbreviation = abbreviation.Text;
 				listItem.name = name.Text;
 				listItem.guid = poss.Guid;
