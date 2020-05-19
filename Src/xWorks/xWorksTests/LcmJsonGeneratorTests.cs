@@ -654,23 +654,31 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void GenerateJsonForEntry_HomographNumbersGeneratesCorrectResult()
 		{
+			var citationForm = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "CitationForm",
+				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new[] { "fr" })
+			};
 			var homographNum = new ConfigurableDictionaryNode { FieldDescription = "HomographNumber" };
 			var mainEntryNode = new ConfigurableDictionaryNode
 			{
-				Children = new List<ConfigurableDictionaryNode> { homographNum },
+				Children = new List<ConfigurableDictionaryNode> { homographNum, citationForm },
 				FieldDescription = "LexEntry"
 			};
+
 			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 			var entryOne = ConfiguredXHTMLGeneratorTests.CreateInterestingLexEntry(Cache);
 			var entryTwo = ConfiguredXHTMLGeneratorTests.CreateInterestingLexEntry(Cache);
 
 			//SUT
 			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entryOne, mainEntryNode, null, DefaultSettings);
-			var expectedResults = @"{""guid"":""" + entryOne.Guid + @""",""letterHead"": ""c"",""homographnumber"": ""1""}";
+			var expectedResults = @"{""guid"":""" + entryOne.Guid + @""",""letterHead"": ""c"",""homographnumber"": ""1"",
+				""citationform"": [{""lang"":""fr"",""value"":""Citation""}]}";
 			var expected = (JObject)JsonConvert.DeserializeObject(expectedResults, new JsonSerializerSettings { Formatting = Formatting.None });
 			VerifyJson(result, expected);
 			result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entryTwo, mainEntryNode, null, DefaultSettings);
-			expectedResults = @"{""guid"":""" + entryTwo.Guid + @""",""letterHead"": ""c"",""homographnumber"": ""2""}";
+			expectedResults = @"{""guid"":""" + entryTwo.Guid + @""",""letterHead"": ""c"",""homographnumber"": ""2"",
+				""citationform"": [{""lang"":""fr"",""value"":""Citation""}]}";
 			expected = (JObject)JsonConvert.DeserializeObject(expectedResults, new JsonSerializerSettings { Formatting = Formatting.None });
 			VerifyJson(result, expected);
 

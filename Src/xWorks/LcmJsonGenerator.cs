@@ -110,7 +110,7 @@ namespace SIL.FieldWorks.XWorks
 
 		public string AddProperty(string className, bool isBlockProperty, string content)
 		{
-			return $"\"{className}\": \"{content}\"";
+			return $"\"{className}\": \"{content}\",";
 		}
 
 		public IFragmentWriter CreateWriter(StringBuilder bldr)

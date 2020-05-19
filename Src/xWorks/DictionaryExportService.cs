@@ -108,8 +108,7 @@ namespace SIL.FieldWorks.XWorks
 
 		public List<JArray> ExportConfiguredJson(string folderPath, DictionaryConfigurationModel configuration)
 		{
-			int[] entriesToSave;
-			var publicationDecorator = ConfiguredXHTMLGenerator.GetPublicationDecoratorAndEntries(m_propertyTable, out entriesToSave, DictionaryType);
+			var publicationDecorator = ConfiguredXHTMLGenerator.GetPublicationDecoratorAndEntries(m_propertyTable, out var entriesToSave, DictionaryType);
 			return LcmJsonGenerator.SavePublishedJsonWithStyles(entriesToSave, publicationDecorator, int.MaxValue, configuration, m_propertyTable, Path.Combine(folderPath, "configured.json"), null);
 		}
 

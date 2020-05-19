@@ -146,11 +146,11 @@ namespace SIL.FieldWorks.XWorks
 		}
 		/// <summary>
 		/// This method will recurse into a directory and add files into the zip file with their relative path
-		/// to the original dirToCompress.
+		/// to the original dirToUpload.
 		/// </summary>
-		private void RecursivelyPutFilesToWebonary(UploadToWebonaryModel model, string dirToCompress, string dirInZip, IUploadToWebonaryView webonaryView)
+		private void RecursivelyPutFilesToWebonary(UploadToWebonaryModel model, string dirToUpload, IUploadToWebonaryView webonaryView, string subFolder = "")
 		{
-			foreach (var file in Directory.EnumerateFiles(dirToCompress))
+			foreach (var file in Directory.EnumerateFiles(dirToUpload))
 			{
 				if (!IsSupportedWebonaryFile(file))
 				{
@@ -160,7 +160,7 @@ namespace SIL.FieldWorks.XWorks
 				}
 				dynamic fileToSign = new JObject();
 				// ReSharper disable once AssignNullToNotNullAttribute - This file has a filename, the OS told us so.
-				var relativeFilePath = Path.Combine(model.SiteName, dirInZip, Path.GetFileName(file));
+				var relativeFilePath = Path.Combine(model.SiteName, subFolder, Path.GetFileName(file));
 				if (MiscUtils.IsWindows)
 					relativeFilePath = relativeFilePath.Replace('\\', '/');
 				fileToSign.objectId = relativeFilePath;
@@ -169,9 +169,9 @@ namespace SIL.FieldWorks.XWorks
 				UploadFileToWebonary(signedUrl, file, webonaryView);
 				webonaryView.UpdateStatus(Path.GetFileName(file));
 			}
-			foreach (var dir in Directory.EnumerateDirectories(dirToCompress))
+			foreach (var dir in Directory.EnumerateDirectories(dirToUpload))
 			{
-				RecursivelyPutFilesToWebonary(model, dir, Path.Combine(dirInZip, Path.GetFileName(dir.TrimEnd(Path.DirectorySeparatorChar))), webonaryView);
+				RecursivelyPutFilesToWebonary(model, dir, webonaryView, Path.Combine(subFolder, Path.GetFileName(dir.TrimEnd(Path.DirectorySeparatorChar))));
 			}
 		}
 
@@ -223,9 +223,9 @@ namespace SIL.FieldWorks.XWorks
 
 		internal void UploadToWebonary(string zipFileToUpload, UploadToWebonaryModel model, IUploadToWebonaryView view)
 		{
-			Guard.AgainstNull(zipFileToUpload, "zipFileToUpload");
-			Guard.AgainstNull(model, "model");
-			Guard.AgainstNull(view, "view");
+			Guard.AgainstNull(zipFileToUpload, nameof(zipFileToUpload));
+			Guard.AgainstNull(model, nameof(model));
+			Guard.AgainstNull(view, nameof(view));
 
 			view.UpdateStatus(xWorksStrings.ksConnectingToWebonary);
 			var targetURI = DestinationURI(model.SiteName);
@@ -255,8 +255,7 @@ namespace SIL.FieldWorks.XWorks
 
 		internal void UploadFileToWebonary(string signedUrl, string fileName, IUploadToWebonaryView view)
 		{
-			if (view == null)
-				throw new ArgumentNullException("view");
+			Guard.AgainstNull(view, nameof(view));
 
 			view.UpdateStatus(xWorksStrings.ksConnectingToWebonary);
 			using (var client = CreateWebClient())
@@ -283,8 +282,8 @@ namespace SIL.FieldWorks.XWorks
 
 		private string PostContentToWebonary(UploadToWebonaryModel model, IUploadToWebonaryView view, string apiEndpoint, JContainer postContent)
 		{
-			Guard.AgainstNull(model, "model");
-			Guard.AgainstNull(view, "view");
+			Guard.AgainstNull(model, nameof(model));
+			Guard.AgainstNull(view, nameof(view));
 
 			view.UpdateStatus(xWorksStrings.ksConnectingToWebonary);
 			var targetURI = DestinationApiURI(model.SiteName, apiEndpoint);
@@ -421,7 +420,7 @@ namespace SIL.FieldWorks.XWorks
 				{
 					PostContentToWebonary(model, view, "post/entry", entryBatch);
 				}
-				RecursivelyPutFilesToWebonary(model, tempDirectoryForExport, "", view);
+				RecursivelyPutFilesToWebonary(model, tempDirectoryForExport, view);
 			}
 			else
 			{
