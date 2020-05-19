@@ -485,7 +485,7 @@ namespace SIL.FieldWorks.XWorks
 			dictionaryMetaData._id = siteName;
 			dynamic mainLanguageData = new JObject();
 			mainLanguageData.lang = cache.LangProject.DefaultAnalysisWritingSystem.Id;
-			//mainLanguageData.title = NEWFIELDFORTITLE?
+			//mainLanguageData.title = Enhance: Add new field to dialog for title?
 			mainLanguageData.letters = JArray.FromObject(GenerateLetterHeaders(entryHvos, cache));
 			dictionaryMetaData.mainLanguage = mainLanguageData;
 			if (reversals.Any())
@@ -503,34 +503,30 @@ namespace SIL.FieldWorks.XWorks
 				dictionaryMetaData.reversalLanguages = reversalArray;
 			}
 
-			mainLanguageData.partsOfSpeech = new JArray();//GeneratePartsOfSpeech(cache);
-			mainLanguageData.semanticDomains = new JArray();//GenerateSemanticDomains(cache);
+			mainLanguageData.partsOfSpeech = GenerateProjectOwnedList(cache.LangProject.PartsOfSpeechOA.ReallyReallyAllPossibilities, cache.LangProject.DefaultAnalysisWritingSystem.Handle);
+			mainLanguageData.semanticDomains = GenerateProjectOwnedList(cache.LangProject.SemanticDomainListOA.ReallyReallyAllPossibilities, cache.LangProject.DefaultAnalysisWritingSystem.Handle);
 			return dictionaryMetaData;
 		}
 
-		private static JArray GenerateSemanticDomains(LcmCache cache, ReadOnlyPropertyTable propTable, string exportPath)
+		/// <summary>
+		/// This method generates a JArray with one object for each list item.
+		/// The object contains the guid, name, and abbreviation for the given ws.
+		/// It is assumed there is no internal style that is needed when using a list for metadata.
+		/// </summary>
+		private static JArray GenerateProjectOwnedList(ISet<ICmPossibility> flattenedList, int wsId)
 		{
-			// WIP
-			var abbreviation = new ConfigurableDictionaryNode
+			var listArray = new JArray();
+			foreach (var poss in flattenedList)
 			{
-				FieldDescription = "Abbreviation",
-				CSSClassNameOverride = "key"
-			};
-			var webonarySemDomConfig = new ConfigurableDictionaryNode
-			{
-				FieldDescription = "SemanticDomainListOA",
-				Children = new List<ConfigurableDictionaryNode> { abbreviation }
-			};
-			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(cache, propTable, true, true, exportPath, false, true)
-			{
-				ContentGenerator = new LcmJsonGenerator(cache)
-			};
-			return null;
-		}
-
-		private static JArray GeneratePartsOfSpeech(LcmCache cache)
-		{
-			throw new NotImplementedException();
+				dynamic listItem = new JObject();
+				var abbreviation = poss.Abbreviation.get_String(wsId);
+				var name = poss.Name.get_String(wsId);
+				listItem.abbreviation = abbreviation.Text;
+				listItem.name = name.Text;
+				listItem.guid = poss.Guid;
+				listArray.Add(listItem);
+			}
+			return listArray;
 		}
 
 		private static List<string> GenerateLetterHeaders(int[] entriesToSave, LcmCache cache)

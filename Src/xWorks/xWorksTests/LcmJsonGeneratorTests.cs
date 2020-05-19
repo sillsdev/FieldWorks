@@ -6,7 +6,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Xml;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -20,7 +19,6 @@ using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel.DomainImpl;
 using SIL.LCModel.DomainServices;
-using SIL.TestUtilities;
 using XCore;
 using Formatting = Newtonsoft.Json.Formatting;
 
@@ -740,6 +738,29 @@ namespace SIL.FieldWorks.XWorks
 			var siteName = "test";
 			var json = LcmJsonGenerator.GenerateDictionaryMetaData(siteName, new List<DictionaryConfigurationModel>(), new []{ testEntry.Hvo }, Cache);
 			var expectedResults = @"{""_id"":""" + siteName + @""",""mainLanguage"":{""lang"":""en"",""letters"":[""c""],""partsOfSpeech"":[],""semanticDomains"":[]}}";
+			var expected = (JObject)JsonConvert.DeserializeObject(expectedResults, new JsonSerializerSettings { Formatting = Formatting.None });
+			VerifyJson(json.ToString(), expected);
+		}
+
+		[Test]
+		public void GenerateDictionaryMetaDataForApi_SemDomAndPOSPopulated()
+		{
+			var testEntry = ConfiguredXHTMLGeneratorTests.CreateInterestingLexEntry(Cache);
+			var possFact = Cache.ServiceLocator.GetInstance<ICmPossibilityFactory>();
+			Cache.LangProject.SemanticDomainListOA = Cache.ServiceLocator.GetInstance<ICmPossibilityListFactory>().Create();
+			var domainOne = possFact.Create();
+			var noun = possFact.Create();
+			Cache.LangProject.SemanticDomainListOA.PossibilitiesOS.Add(domainOne);
+			Cache.LangProject.PartsOfSpeechOA.PossibilitiesOS.Add(noun);
+			domainOne.Abbreviation.set_String(m_wsEn, "9.0");
+			domainOne.Name.set_String(m_wsEn, "CustomDomain");
+			noun.Abbreviation.set_String(m_wsEn, "n");
+			noun.Name.set_String(m_wsEn, "noun");
+			var siteName = "test";
+			var json = LcmJsonGenerator.GenerateDictionaryMetaData(siteName, new List<DictionaryConfigurationModel>(), new[] { testEntry.Hvo }, Cache);
+			var expectedResults = @"{""_id"":""test"",""mainLanguage"":{""lang"":""en"",""letters"":[""c""],
+				""partsOfSpeech"":[{""abbreviation"":""n"",""name"":""noun"",""guid"":""" + noun.Guid + @"""}],
+				""semanticDomains"":[{""abbreviation"":""9.0"",""name"":""CustomDomain"",""guid"":""" + domainOne.Guid + @"""}]}}";
 			var expected = (JObject)JsonConvert.DeserializeObject(expectedResults, new JsonSerializerSettings { Formatting = Formatting.None });
 			VerifyJson(json.ToString(), expected);
 		}
