@@ -358,9 +358,9 @@ namespace SIL.FieldWorks.XWorks
 					return;
 				var oldCurPageRange = new Tuple<int, int>(int.Parse(currentPageButton.Attributes["startIndex"].NodeValue), int.Parse(currentPageButton.Attributes["endIndex"].NodeValue));
 				var oldAdjPageRange = new Tuple<int, int>(int.Parse(adjacentPageButton.Attributes["startIndex"].NodeValue), int.Parse(adjacentPageButton.Attributes["endIndex"].NodeValue));
-				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, new ReadOnlyPropertyTable(m_propertyTable), false, false, "", isNormalRightToLeft);
-				var entries = ConfiguredXHTMLGenerator.GenerateNextFewEntries(PublicationDecorator, entriesToPublish, GetCurrentConfiguration(false), settings, oldCurPageRange,
-					oldAdjPageRange, ConfiguredXHTMLGenerator.EntriesToAddCount, out newCurPageRange, out newAdjPageRange);
+				var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, new ReadOnlyPropertyTable(m_propertyTable), false, false, "", isNormalRightToLeft);
+				var entries = LcmXhtmlGenerator.GenerateNextFewEntries(PublicationDecorator, entriesToPublish, GetCurrentConfiguration(false), settings, oldCurPageRange,
+					oldAdjPageRange, ConfiguredLcmGenerator.EntriesToAddCount, out newCurPageRange, out newAdjPageRange);
 				// Load entries above the first entry
 				foreach (var entry in entries)
 				{
@@ -391,9 +391,9 @@ namespace SIL.FieldWorks.XWorks
 					return;
 				var currentPageRange = new Tuple<int, int>(int.Parse(currentPageButton.Attributes["startIndex"].NodeValue), int.Parse(currentPageButton.Attributes["endIndex"].NodeValue));
 				var adjacentPageRange = new Tuple<int, int>(int.Parse(adjPage.Attributes["startIndex"].NodeValue), int.Parse(adjPage.Attributes["endIndex"].NodeValue));
-				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, new ReadOnlyPropertyTable(m_propertyTable), false, false, "", isNormalRightToLeft);
-				var entries = ConfiguredXHTMLGenerator.GenerateNextFewEntries(PublicationDecorator, entriesToPublish, GetCurrentConfiguration(false), settings, currentPageRange,
-					adjacentPageRange, ConfiguredXHTMLGenerator.EntriesToAddCount, out newCurrentPageRange, out newAdjPageRange);
+				var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, new ReadOnlyPropertyTable(m_propertyTable), false, false, "", isNormalRightToLeft);
+				var entries = LcmXhtmlGenerator.GenerateNextFewEntries(PublicationDecorator, entriesToPublish, GetCurrentConfiguration(false), settings, currentPageRange,
+					adjacentPageRange, ConfiguredLcmGenerator.EntriesToAddCount, out newCurrentPageRange, out newAdjPageRange);
 				// Load entries above the lower navigation buttons
 				foreach (var entry in entries)
 				{
@@ -529,7 +529,7 @@ namespace SIL.FieldWorks.XWorks
 		/// but we shouldn't be returning links for those. And throwing doesn't affect whether audio is played, anyway.
 		/// </exception>
 		/// <remarks>
-		/// <see cref="ConfiguredXHTMLGenerator"/> generates subentry headwords in Audio Writing Systems
+		/// <see cref="ConfiguredLcmGenerator"/> generates subentry headwords in Audio Writing Systems
 		/// as media links, *not* links to that entry (as other WS's are)
 		/// </remarks>
 		private static Guid GetGuidFromEntryLink(GeckoElement element)
@@ -1134,11 +1134,11 @@ namespace SIL.FieldWorks.XWorks
 			if (progress != null)
 			{
 				progress.Minimum = 0;
-				var entryCount = ConfiguredXHTMLGenerator.EntriesPerPage;
+				var entryCount = LcmXhtmlGenerator.EntriesPerPage;
 				progress.Maximum = entryCount + 1 + entryCount / 100;
 				progress.Position++;
 			}
-			var xhtmlPath = ConfiguredXHTMLGenerator.SavePreviewHtmlWithStyles(entriesToPublish, publicationDecorator, configuration, m_propertyTable, progress);
+			var xhtmlPath = LcmXhtmlGenerator.SavePreviewHtmlWithStyles(entriesToPublish, publicationDecorator, configuration, m_propertyTable, progress);
 			var end = DateTime.Now;
 			System.Diagnostics.Debug.WriteLine(string.Format("saving xhtml/css took {0}", end - start));
 			return xhtmlPath;

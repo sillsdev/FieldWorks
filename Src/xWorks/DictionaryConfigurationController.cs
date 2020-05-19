@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2014-2017 SIL International
+// Copyright (c) 2014-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -224,7 +224,7 @@ namespace SIL.FieldWorks.XWorks
 			//_propertyTable should be null only for unit tests which don't need styles
 			if (_propertyTable == null || _previewEntry == null || !_previewEntry.IsValidObject)
 				return;
-			View.PreviewData = ConfiguredXHTMLGenerator.GenerateEntryHtmlWithStyles(_previewEntry, _model, _allEntriesPublicationDecorator, _propertyTable);
+			View.PreviewData = LcmXhtmlGenerator.GenerateEntryHtmlWithStyles(_previewEntry, _model, _allEntriesPublicationDecorator, _propertyTable);
 			if(_isHighlighted)
 				View.HighlightContent(View.TreeControl.Tree.SelectedNode.Tag as ConfigurableDictionaryNode, Cache);
 		}
@@ -1307,11 +1307,11 @@ namespace SIL.FieldWorks.XWorks
 		{
 			Type unneeded;
 			// The class that contains the type information for the field we are inspecting
-			var lookupClass = ConfiguredXHTMLGenerator.GetTypeForConfigurationNode(parent, cache, out unneeded);
+			var lookupClass = ConfiguredLcmGenerator.GetTypeForConfigurationNode(parent, cache, out unneeded);
 			// If the node describes a collection we may want to add the custom field node if the collection is of
 			// the type that the field is added to. (e.g. Senses, ExampleSentences)
-			if(ConfiguredXHTMLGenerator.GetPropertyTypeForConfigurationNode(parent, cache) ==
-				ConfiguredXHTMLGenerator.PropertyType.CollectionType)
+			if(ConfiguredLcmGenerator.GetPropertyTypeForConfigurationNode(parent, cache) ==
+				ConfiguredLcmGenerator.PropertyType.CollectionType)
 			{
 				if(lookupClass.IsGenericType)
 				{

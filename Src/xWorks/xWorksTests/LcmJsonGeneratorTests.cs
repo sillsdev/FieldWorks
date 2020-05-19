@@ -37,7 +37,7 @@ namespace SIL.FieldWorks.XWorks
 
 		private const string DictionaryNormal = "Dictionary-Normal";
 
-		private ConfiguredXHTMLGenerator.GeneratorSettings DefaultSettings => new ConfiguredXHTMLGenerator.GeneratorSettings(Cache,
+		private ConfiguredLcmGenerator.GeneratorSettings DefaultSettings => new ConfiguredLcmGenerator.GeneratorSettings(Cache,
 			new ReadOnlyPropertyTable(m_propertyTable), true, false, null) { ContentGenerator = new LcmJsonGenerator(Cache) };
 
 		private DictionaryPublicationDecorator DefaultDecorator => new DictionaryPublicationDecorator(Cache,
@@ -154,7 +154,7 @@ namespace SIL.FieldWorks.XWorks
 			var entry = ConfiguredXHTMLGeneratorTests.CreateInterestingLexEntry(Cache);
 
 			//SUT
-			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entry, mainEntryNode, null, DefaultSettings);
+			var result = ConfiguredLcmGenerator.GenerateXHTMLForEntry(entry, mainEntryNode, null, DefaultSettings);
 			Console.WriteLine(result);
 			var expectedResult = @"{""guid"":""" + entry.Guid + @""",""letterHead"": ""c"",""senses"": [{""guid"":""" + entry.Guid + @""",""gloss"": [{""lang"":""en"",""value"":""gloss""}]},]}";
 			//This assert is dependent on the specific entry data created in CreateInterestingLexEntry
@@ -186,7 +186,7 @@ namespace SIL.FieldWorks.XWorks
 			var wsEs = ConfiguredXHTMLGeneratorTests.EnsureWritingSystemSetup(Cache, "es", false);
 			entry.SensesOS.First().Definition.set_String(wsEs, "definition");
 			//SUT
-			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entry, mainEntryNode, null, DefaultSettings);
+			var result = ConfiguredLcmGenerator.GenerateXHTMLForEntry(entry, mainEntryNode, null, DefaultSettings);
 
 			var expectedResults = @"{""guid"":""" + entry.Guid + @""",""letterHead"": ""c"",""senses"": [{""guid"":""" + entry.Guid + @""",
 				""definitionorgloss"": [{""lang"":""en"",""value"":""gloss""},{""lang"":""es"",""value"":""definition""}]}]}";
@@ -249,9 +249,9 @@ namespace SIL.FieldWorks.XWorks
 			secondSense.MorphoSyntaxAnalysisRA = secondMsa;
 			secondMsa.PartOfSpeechRA = pos;
 
-			var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null) { ContentGenerator = new LcmJsonGenerator(Cache) };
+			var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null) { ContentGenerator = new LcmJsonGenerator(Cache) };
 			//SUT
-			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entry, mainEntryNode, null, settings);
+			var result = ConfiguredLcmGenerator.GenerateXHTMLForEntry(entry, mainEntryNode, null, settings);
 			Console.WriteLine(result);
 			var expectedResults = @"{""guid"":""" + entry.Guid + @""",""letterHead"": ""c"",
 				""msas"": {""mlpartofspeech"": [{""lang"":""en"",""value"":""Blah""}]}, ""senses"": [{""guid"":""" + entry.Guid + @""",""gloss"": [{""lang"":""en"",""value"":""gloss""}]},
@@ -300,7 +300,7 @@ namespace SIL.FieldWorks.XWorks
 			var settings = DefaultSettings;
 
 			//SUT
-			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entry, mainEntryNode, null, settings);
+			var result = ConfiguredLcmGenerator.GenerateXHTMLForEntry(entry, mainEntryNode, null, settings);
 			var expectedResults = @"{""guid"":""" + entry.Guid + @""",""letterHead"": ""c"",""pictures"": [{""guid"":""" + sensePic.Guid +
 								  @""",""src"":""pictures/picture"",""sensenumber"": [{""lang"":""en"",""value"":""1""}],""caption"": [{""lang"":""en"",""value"":""caption""}]}]}";
 			var expected = (JObject)JsonConvert.DeserializeObject(expectedResults, new JsonSerializerSettings { Formatting = Formatting.None });
@@ -503,7 +503,7 @@ namespace SIL.FieldWorks.XWorks
 			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 
 			//SUT
-			var output = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entryEntry, mainEntryNode, pubMain, DefaultSettings);
+			var output = ConfiguredLcmGenerator.GenerateXHTMLForEntry(entryEntry, mainEntryNode, pubMain, DefaultSettings);
 			Assert.IsNotNullOrEmpty(output);
 			var expectedResults = "{\"guid\":\"" + entryEntry.Guid + "\",\"letterHead\": \"e\"," +
 								  "\"entry\": [{\"lang\":\"fr\",\"value\":\"entry\"}],\"senses\": [{\"guid\":\"" +
@@ -539,7 +539,7 @@ namespace SIL.FieldWorks.XWorks
 			const string audioFileName = "Test Audi'o.wav";
 			senseaudio.Form.set_String(wsEnAudio.Handle, TsStringUtils.MakeString(audioFileName, wsEnAudio.Handle));
 			//SUT
-			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entryOne, mainEntryNode, null, DefaultSettings);
+			var result = ConfiguredLcmGenerator.GenerateXHTMLForEntry(entryOne, mainEntryNode, null, DefaultSettings);
 
 			var expectedResults = @"{""guid"": """ + entryOne.Guid +
 								  @""",""letterHead"": ""c"", ""headword"": [{""audio"": { ""id"": ""gTest_Audi_o"", ""src"": ""AudioVisual/Test Audi'o.wav""}}]}";
@@ -568,7 +568,7 @@ namespace SIL.FieldWorks.XWorks
 			var testEntry = ConfiguredXHTMLGeneratorTests.CreateInterestingLexEntry(Cache);
 			ConfiguredXHTMLGeneratorTests.AddSenseToEntry(testEntry, "second gloss", m_wsEn, Cache);
 			//SUT
-			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, DefaultDecorator, DefaultSettings);
+			var result = ConfiguredLcmGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, DefaultDecorator, DefaultSettings);
 			var expectedResults = @"{""guid"":""" + testEntry.Guid + @""",""letterHead"": ""c"",""senses"":[{""senseNumber"":""1"",
 				""guid"":""" + testEntry.Guid + @""",""gloss"":[{""lang"":""en"",""value"":""gloss""}]},
 				{""senseNumber"":""2"",""guid"":""" + testEntry.Guid + @""",""gloss"":[{""lang"":""en"",""value"":""second gloss""}]}]}";
@@ -597,7 +597,7 @@ namespace SIL.FieldWorks.XWorks
 			var multiRunString = frenchString.Insert(12, englishStr);
 			entry.Bibliography.set_String(m_wsFr, multiRunString);
 			//SUT
-			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entry, mainEntryNode, null, DefaultSettings);
+			var result = ConfiguredLcmGenerator.GenerateXHTMLForEntry(entry, mainEntryNode, null, DefaultSettings);
 			var expectedResults = @"{""guid"":""" + entry.Guid + @""",""letterHead"": ""c"",""bib"": [{""lang"":""fr"",""value"":""French with ""},
 				{""lang"":""en"",""value"":""English""},{""lang"":""fr"",""value"":"" embedded""}]}";
 			var expected = (JObject)JsonConvert.DeserializeObject(expectedResults, new JsonSerializerSettings { Formatting = Formatting.None });
@@ -644,7 +644,7 @@ namespace SIL.FieldWorks.XWorks
 			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 
 			//SUT
-			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(mainEntry, mainEntryNode, null, DefaultSettings);
+			var result = ConfiguredLcmGenerator.GenerateXHTMLForEntry(mainEntry, mainEntryNode, null, DefaultSettings);
 			var expectedResults = @"{""guid"":""" + mainEntry.Guid + @""",""letterHead"": ""c"",
 				""sensesos"": [{""lexsensereferences"": [{""ownertype_name"": [{""lang"":""en"",""value"":""TestRefType""}]}]}]}";
 			var expected = (JObject)JsonConvert.DeserializeObject(expectedResults, new JsonSerializerSettings { Formatting = Formatting.None });
@@ -671,12 +671,12 @@ namespace SIL.FieldWorks.XWorks
 			var entryTwo = ConfiguredXHTMLGeneratorTests.CreateInterestingLexEntry(Cache);
 
 			//SUT
-			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entryOne, mainEntryNode, null, DefaultSettings);
+			var result = ConfiguredLcmGenerator.GenerateXHTMLForEntry(entryOne, mainEntryNode, null, DefaultSettings);
 			var expectedResults = @"{""guid"":""" + entryOne.Guid + @""",""letterHead"": ""c"",""homographnumber"": ""1"",
 				""citationform"": [{""lang"":""fr"",""value"":""Citation""}]}";
 			var expected = (JObject)JsonConvert.DeserializeObject(expectedResults, new JsonSerializerSettings { Formatting = Formatting.None });
 			VerifyJson(result, expected);
-			result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entryTwo, mainEntryNode, null, DefaultSettings);
+			result = ConfiguredLcmGenerator.GenerateXHTMLForEntry(entryTwo, mainEntryNode, null, DefaultSettings);
 			expectedResults = @"{""guid"":""" + entryTwo.Guid + @""",""letterHead"": ""c"",""homographnumber"": ""2"",
 				""citationform"": [{""lang"":""fr"",""value"":""Citation""}]}";
 			expected = (JObject)JsonConvert.DeserializeObject(expectedResults, new JsonSerializerSettings { Formatting = Formatting.None });
@@ -723,7 +723,7 @@ namespace SIL.FieldWorks.XWorks
 			try
 			{
 				//SUT
-				var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, DefaultSettings);
+				var result = ConfiguredLcmGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, DefaultSettings);
 
 				// Bug: The second filename should be different after the export with relative path settings (fix later)
 				var expectedResults = @"{""guid"":""" + testEntry.Guid + @""",""letterHead"": ""c"",""pictures"": [{""guid"":""" + sensePic.Guid + @""",""src"":""pictures/" + fileName + @"""},

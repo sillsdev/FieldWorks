@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2012-2016 SIL International
+// Copyright (c) 2012-2016 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -596,7 +596,7 @@ namespace SIL.FieldWorks.XWorks
 
 		/// <summary>
 		/// Return whether this object is explicitly excluded by the publication filtering.
-		/// This is needed by ConfiguredXHTMLGenerator, which uses reflection to obtain data internally.
+		/// This is needed by ConfiguredLcmGenerator, which uses reflection to obtain data internally.
 		/// </summary>
 		internal bool IsExcludedObject(ICmObject item)
 		{

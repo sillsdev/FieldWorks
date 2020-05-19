@@ -190,7 +190,7 @@ namespace SIL.FieldWorks.XWorks
 					var wsaudioRule = new StyleRule {Value = String.Format("a.{0}:after", aws.LanguageTag)};
 					wsaudioRule.Declarations.Properties.Add(new Property("content")
 					{
-						Term = new PrimitiveTerm(UnitType.String, ConfiguredXHTMLGenerator.LoudSpeaker)
+						Term = new PrimitiveTerm(UnitType.String, ConfiguredLcmGenerator.LoudSpeaker)
 					});
 					styleSheet.Rules.Add(wsaudioRule);
 					wsaudioRule = new StyleRule {Value = String.Format("a.{0}", aws.LanguageTag)};
@@ -665,7 +665,7 @@ namespace SIL.FieldWorks.XWorks
 					var betweenSelector = String.Format("{0}> {1}>{2}+{2}:before", parentSelector, collectionSelector, itemSelector);
 					ConfigurableDictionaryNode dummy;
 					// use default (class-named) between selector for factored references, because "span+span" erroneously matches Type spans
-					if (configNode.DictionaryNodeOptions != null && !ConfiguredXHTMLGenerator.IsFactoredReference(configNode, out dummy))
+					if (configNode.DictionaryNodeOptions != null && !ConfiguredLcmGenerator.IsFactoredReference(configNode, out dummy))
 					{
 						var wsOptions = configNode.DictionaryNodeOptions as DictionaryNodeWritingSystemOptions;
 						var senseOptions = configNode.DictionaryNodeOptions as DictionaryNodeSenseOptions;
@@ -763,7 +763,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var parent = configNode.Parent;
 			ConfigurableDictionaryNode typeNode;
-			return parent != null && ConfiguredXHTMLGenerator.IsFactoredReference(parent, out typeNode) && ReferenceEquals(typeNode, configNode);
+			return parent != null && ConfiguredLcmGenerator.IsFactoredReference(parent, out typeNode) && ReferenceEquals(typeNode, configNode);
 		}
 
 		/// <summary>
@@ -800,25 +800,25 @@ namespace SIL.FieldWorks.XWorks
 		/// <returns></returns>
 		private static string SelectClassName(ConfigurableDictionaryNode configNode, LcmCache cache = null)
 		{
-			var type = ConfiguredXHTMLGenerator.GetPropertyTypeForConfigurationNode(configNode, cache);
+			var type = ConfiguredLcmGenerator.GetPropertyTypeForConfigurationNode(configNode, cache);
 			return SelectClassName(configNode, type);
 		}
 
-		private static string SelectClassName(ConfigurableDictionaryNode configNode, ConfiguredXHTMLGenerator.PropertyType type)
+		private static string SelectClassName(ConfigurableDictionaryNode configNode, ConfiguredLcmGenerator.PropertyType type)
 		{
 			switch(type)
 			{
-				case ConfiguredXHTMLGenerator.PropertyType.CollectionType:
+				case ConfiguredLcmGenerator.PropertyType.CollectionType:
 				{
 					// for collections we generate a css selector to match each item e.g '.senses .sense'
 					return string.Format(".{0} .{1}", GetClassAttributeForConfig(configNode), GetClassAttributeForCollectionItem(configNode));
 				}
-				case ConfiguredXHTMLGenerator.PropertyType.CmPictureType:
+				case ConfiguredLcmGenerator.PropertyType.CmPictureType:
 				{
 					return " img"; // Pictures are written out as img tags
 				}
-				case ConfiguredXHTMLGenerator.PropertyType.PrimitiveType:
-				case ConfiguredXHTMLGenerator.PropertyType.MoFormType:
+				case ConfiguredLcmGenerator.PropertyType.PrimitiveType:
+				case ConfiguredLcmGenerator.PropertyType.MoFormType:
 				{
 					// for multi-lingual strings each language's string will have the contents generated in a span
 					if(configNode.DictionaryNodeOptions is DictionaryNodeWritingSystemOptions)
@@ -868,8 +868,8 @@ namespace SIL.FieldWorks.XWorks
 		/// </remarks>
 		private static string SelectBareClassName(ConfigurableDictionaryNode configNode, LcmCache cache = null)
 		{
-			var type = ConfiguredXHTMLGenerator.GetPropertyTypeForConfigurationNode(configNode, cache);
-			if (type == ConfiguredXHTMLGenerator.PropertyType.CollectionType)
+			var type = ConfiguredLcmGenerator.GetPropertyTypeForConfigurationNode(configNode, cache);
+			if (type == ConfiguredLcmGenerator.PropertyType.CollectionType)
 				return "." + GetClassAttributeForConfig(configNode);
 			return SelectClassName(configNode, type);
 		}

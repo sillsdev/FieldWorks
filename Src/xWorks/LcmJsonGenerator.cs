@@ -19,7 +19,7 @@ namespace SIL.FieldWorks.XWorks
 {
 	/// <summary>
 	/// This class generates a json representation of a configured dictionary.
-	/// The functions are driven by the ConfiguredLCMGenerator. The goal is to provide
+	/// The functions are driven by the ConfiguredLcmGenerator. The goal is to provide
 	/// a robust implementation that will always generate correct .json given any <code>LCMCache</code> and
 	/// <code>DictionaryConfigurationModel</code>
 	/// </summary>
@@ -31,7 +31,7 @@ namespace SIL.FieldWorks.XWorks
 			Cache = cache;
 		}
 
-		public string GenerateWsPrefixWithString(ConfiguredXHTMLGenerator.GeneratorSettings settings,
+		public string GenerateWsPrefixWithString(ConfiguredLcmGenerator.GeneratorSettings settings,
 			bool displayAbbreviation, int wsId, string content)
 		{
 			return content;
@@ -85,19 +85,9 @@ namespace SIL.FieldWorks.XWorks
 			return $"{content}";
 		}
 
-		public string BeginSenseCollection()
-		{
-			return "\"sensesData\": [";
-		}
-
-		public string EndSenseCollection()
-		{
-			return "]";
-		}
-
 		public string GenerateGroupingNode(object field, ConfigurableDictionaryNode config,
-			DictionaryPublicationDecorator publicationDecorator, ConfiguredXHTMLGenerator.GeneratorSettings settings,
-			Func<object, ConfigurableDictionaryNode, DictionaryPublicationDecorator, ConfiguredXHTMLGenerator.GeneratorSettings, string> childContentGenerator)
+			DictionaryPublicationDecorator publicationDecorator, ConfiguredLcmGenerator.GeneratorSettings settings,
+			Func<object, ConfigurableDictionaryNode, DictionaryPublicationDecorator, ConfiguredLcmGenerator.GeneratorSettings, string> childContentGenerator)
 		{
 			//TODO: Decide how to handle grouping nodes in the json api
 			return string.Empty;
@@ -180,8 +170,8 @@ namespace SIL.FieldWorks.XWorks
 			jsonWriter.InsertJsonProperty("guid", entryGuid.ToString());
 			// get the index character (letter header) for this entry
 			var entry = Cache.ServiceLocator.GetObject(entryGuid);
-			var indexChar = ConfiguredExport.GetLeadChar(ConfiguredXHTMLGenerator.GetHeadwordForLetterHead(entry),
-				ConfiguredXHTMLGenerator.GetWsForEntryType(entry, Cache),
+			var indexChar = ConfiguredExport.GetLeadChar(ConfiguredLcmGenerator.GetHeadwordForLetterHead(entry),
+				ConfiguredLcmGenerator.GetWsForEntryType(entry, Cache),
 				new Dictionary<string, ISet<string>>(),
 				new Dictionary<string, Dictionary<string, string>>(),
 				new Dictionary<string, ISet<string>>(), Cache);
@@ -423,10 +413,10 @@ namespace SIL.FieldWorks.XWorks
 				if (!string.IsNullOrEmpty(projType))
 				{
 					var cssName = projType == "Dictionary" ? "ProjectDictionaryOverrides.css" : "ProjectReversalOverrides.css";
-					custCssPath = ConfiguredXHTMLGenerator.CopyCustomCssToTempFolder(configDir, jsonPath, cssName);
+					custCssPath = LcmXhtmlGenerator.CopyCustomCssToTempFolder(configDir, jsonPath, cssName);
 				}
-				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(cache, readOnlyPropertyTable, true, true, Path.GetDirectoryName(jsonPath),
-					ConfiguredXHTMLGenerator.IsNormalRtl(readOnlyPropertyTable), Path.GetFileName(cssPath) == "configured.css") { ContentGenerator = new LcmJsonGenerator(cache)};
+				var settings = new ConfiguredLcmGenerator.GeneratorSettings(cache, readOnlyPropertyTable, true, true, Path.GetDirectoryName(jsonPath),
+					ConfiguredLcmGenerator.IsNormalRtl(readOnlyPropertyTable), Path.GetFileName(cssPath) == "configured.css") { ContentGenerator = new LcmJsonGenerator(cache)};
 				var entryContents = new Tuple<ICmObject, StringBuilder>[entryCount];
 				var entryActions = new List<Action>();
 				// For every entry in the page generate an action that will produce the xhtml document fragment for that entry
@@ -439,7 +429,7 @@ namespace SIL.FieldWorks.XWorks
 
 					var generateEntryAction = new Action(() =>
 					{
-						var entryContent = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entry, configuration, publicationDecorator, settings);
+						var entryContent = ConfiguredLcmGenerator.GenerateXHTMLForEntry(entry, configuration, publicationDecorator, settings);
 						entryStringBuilder.Append(entryContent);
 						if (progress != null)
 							progress.Position++;
@@ -450,7 +440,7 @@ namespace SIL.FieldWorks.XWorks
 				if (progress != null)
 					progress.Message = xWorksStrings.ksGeneratingDisplayFragments;
 				// Generate all the document fragments (in parallel)
-				ConfiguredXHTMLGenerator.SpawnEntryGenerationThreadsAndWait(entryActions, progress);
+				ConfiguredLcmGenerator.SpawnEntryGenerationThreadsAndWait(entryActions, progress);
 				// Generate the letter headers and insert the document fragments into the full xhtml file
 				if (progress != null)
 					progress.Message = xWorksStrings.ksArrangingDisplayFragments;

@@ -111,7 +111,7 @@ namespace SIL.FieldWorks.XWorks
 		[TestFixtureTearDown]
 		public override void FixtureTeardown()
 		{
-			ConfiguredXHTMLGenerator.AssemblyFile = "SIL.LCModel";
+			ConfiguredLcmGenerator.AssemblyFile = "SIL.LCModel";
 			base.FixtureTeardown();
 			Dispose();
 		}
@@ -171,7 +171,7 @@ namespace SIL.FieldWorks.XWorks
 				mockView.Model.Configurations = testConfig;
 				mockView.Model.Reversals = reversalConfig;
 				// Build model sufficient to generate xhtml and css
-				ConfiguredXHTMLGenerator.AssemblyFile = "SIL.LCModel";
+				ConfiguredLcmGenerator.AssemblyFile = "SIL.LCModel";
 				var mainHeadwordNode = new ConfigurableDictionaryNode
 				{
 					FieldDescription = "HeadWord",
@@ -698,7 +698,7 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		public UploadToWebonaryModel SetUpModel()
 		{
-			ConfiguredXHTMLGenerator.AssemblyFile = "xWorksTests";
+			ConfiguredLcmGenerator.AssemblyFile = "xWorksTests";
 
 			var testConfig = new Dictionary<string, DictionaryConfigurationModel>();
 			testConfig["Test Config"] = new DictionaryConfigurationModel

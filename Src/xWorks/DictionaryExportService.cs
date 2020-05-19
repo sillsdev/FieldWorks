@@ -34,7 +34,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			int[] entries;
 			using(ClerkActivator.ActivateClerkMatchingExportType(DictionaryType, m_propertyTable, m_mediator))
-				ConfiguredXHTMLGenerator.GetPublicationDecoratorAndEntries(m_propertyTable, out entries, DictionaryType);
+				ConfiguredLcmGenerator.GetPublicationDecoratorAndEntries(m_propertyTable, out entries, DictionaryType);
 			return entries.Count(e => IsGenerated(m_cache, config, e));
 		}
 
@@ -45,9 +45,9 @@ namespace SIL.FieldWorks.XWorks
 		internal static bool IsGenerated(LcmCache cache, DictionaryConfigurationModel config, int hvo)
 		{
 			var entry = (ILexEntry)cache.ServiceLocator.GetObject(hvo);
-			if (ConfiguredXHTMLGenerator.IsMainEntry(entry, config))
-				return config.Parts[0].IsEnabled && (!entry.ComplexFormEntryRefs.Any() || ConfiguredXHTMLGenerator.IsListItemSelectedForExport(config.Parts[0], entry));
-			return entry.PublishAsMinorEntry && config.Parts.Skip(1).Any(part => ConfiguredXHTMLGenerator.IsListItemSelectedForExport(part, entry));
+			if (ConfiguredLcmGenerator.IsMainEntry(entry, config))
+				return config.Parts[0].IsEnabled && (!entry.ComplexFormEntryRefs.Any() || ConfiguredLcmGenerator.IsListItemSelectedForExport(config.Parts[0], entry));
+			return entry.PublishAsMinorEntry && config.Parts.Skip(1).Any(part => ConfiguredLcmGenerator.IsListItemSelectedForExport(part, entry));
 		}
 
 		/// <summary>
@@ -71,7 +71,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			int[] entries;
 			using (ReversalIndexActivator.ActivateReversalIndex(ri.Guid, m_propertyTable))
-				ConfiguredXHTMLGenerator.GetPublicationDecoratorAndEntries(m_propertyTable, out entries, ReversalType);
+				ConfiguredLcmGenerator.GetPublicationDecoratorAndEntries(m_propertyTable, out entries, ReversalType);
 			return entries.Length;
 		}
 
@@ -100,15 +100,15 @@ namespace SIL.FieldWorks.XWorks
 		private void ExportConfiguredXhtml(string xhtmlPath, DictionaryConfigurationModel configuration, string exportType, IThreadedProgress progress)
 		{
 			int[] entriesToSave;
-			var publicationDecorator = ConfiguredXHTMLGenerator.GetPublicationDecoratorAndEntries(m_propertyTable, out entriesToSave, exportType);
+			var publicationDecorator = ConfiguredLcmGenerator.GetPublicationDecoratorAndEntries(m_propertyTable, out entriesToSave, exportType);
 			if (progress != null)
 				progress.Maximum = entriesToSave.Length;
-			ConfiguredXHTMLGenerator.SavePublishedHtmlWithStyles(entriesToSave, publicationDecorator, int.MaxValue, configuration, m_propertyTable, xhtmlPath, progress);
+			LcmXhtmlGenerator.SavePublishedHtmlWithStyles(entriesToSave, publicationDecorator, int.MaxValue, configuration, m_propertyTable, xhtmlPath, progress);
 		}
 
 		public List<JArray> ExportConfiguredJson(string folderPath, DictionaryConfigurationModel configuration)
 		{
-			var publicationDecorator = ConfiguredXHTMLGenerator.GetPublicationDecoratorAndEntries(m_propertyTable, out var entriesToSave, DictionaryType);
+			var publicationDecorator = ConfiguredLcmGenerator.GetPublicationDecoratorAndEntries(m_propertyTable, out var entriesToSave, DictionaryType);
 			return LcmJsonGenerator.SavePublishedJsonWithStyles(entriesToSave, publicationDecorator, int.MaxValue, configuration, m_propertyTable, Path.Combine(folderPath, "configured.json"), null);
 		}
 
@@ -305,7 +305,7 @@ namespace SIL.FieldWorks.XWorks
 			using (ClerkActivator.ActivateClerkMatchingExportType(DictionaryType, m_propertyTable, m_mediator))
 			{
 				int[] entriesToSave;
-				ConfiguredXHTMLGenerator.GetPublicationDecoratorAndEntries(m_propertyTable, out entriesToSave, DictionaryType);
+				ConfiguredLcmGenerator.GetPublicationDecoratorAndEntries(m_propertyTable, out entriesToSave, DictionaryType);
 
 				return LcmJsonGenerator.GenerateDictionaryMetaData(siteName, reversals, entriesToSave, m_cache);
 			}

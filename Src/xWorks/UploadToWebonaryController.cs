@@ -49,7 +49,7 @@ namespace SIL.FieldWorks.XWorks
 			var clerk = m_propertyTable.GetValue<RecordClerk>("ActiveClerk", null);
 			int[] entriesToSave;
 			var publicationDecorator =
-				ConfiguredXHTMLGenerator.GetPublicationDecoratorAndEntries(m_propertyTable, out entriesToSave, "Dictionary");
+				ConfiguredLcmGenerator.GetPublicationDecoratorAndEntries(m_propertyTable, out entriesToSave, "Dictionary");
 			return RecordClerk.IsClerkSortingByHeadword(clerk);
 		}
 

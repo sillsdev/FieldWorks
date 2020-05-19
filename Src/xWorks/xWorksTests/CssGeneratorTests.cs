@@ -81,16 +81,16 @@ namespace SIL.FieldWorks.XWorks
 		[SetUp]
 		public void ResetAssemblyFile()
 		{
-			ConfiguredXHTMLGenerator.AssemblyFile = "SIL.LCModel";
+			ConfiguredLcmGenerator.AssemblyFile = "SIL.LCModel";
 			if (!m_styleSheet.Styles.Contains("FooStyle"))
 			{
 				GenerateStyle("FooStyle");
 			}
 		}
 
-		private ConfiguredXHTMLGenerator.GeneratorSettings DefaultSettings
+		private ConfiguredLcmGenerator.GeneratorSettings DefaultSettings
 		{
-			get { return new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null); }
+			get { return new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null); }
 		}
 
 		[Test]
@@ -1000,7 +1000,7 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void GenerateCssForConfiguration_ConfigWithCharStyleWorks()
 		{
-			ConfiguredXHTMLGenerator.AssemblyFile = "xWorksTests";
+			ConfiguredLcmGenerator.AssemblyFile = "xWorksTests";
 			GenerateStyle("Dictionary-Headword");
 			var headwordNode = new ConfigurableDictionaryNode
 			{
@@ -1021,7 +1021,7 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void GenerateCssForConfiguration_CharStyleWsOverrideWorks()
 		{
-			ConfiguredXHTMLGenerator.AssemblyFile = "xWorksTests";
+			ConfiguredLcmGenerator.AssemblyFile = "xWorksTests";
 			var style = GenerateStyle("WsStyleTest");
 			var fontInfo = new FontInfo();
 			fontInfo.m_italic.ExplicitValue = false; //override the italic value to false
@@ -1049,7 +1049,7 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void GenerateCssForConfiguration_ConfigWithParaStyleWorks()
 		{
-			ConfiguredXHTMLGenerator.AssemblyFile = "xWorksTests";
+			ConfiguredLcmGenerator.AssemblyFile = "xWorksTests";
 			GenerateParagraphStyle("Dictionary-Paragraph-Border");
 			var minorEntryNode = new ConfigurableDictionaryNode
 			{
@@ -1111,7 +1111,7 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void GenerateCssForStyleName_DefaultVernMagicConfigResultsInRealLanguageCss()
 		{
-			ConfiguredXHTMLGenerator.AssemblyFile = "xWorksTests";
+			ConfiguredLcmGenerator.AssemblyFile = "xWorksTests";
 			GenerateParagraphStyle("VernacularStyle");
 			var testNode = new ConfigurableDictionaryNode
 			{
@@ -1135,7 +1135,7 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void GenerateCssForStyleName_DefaultAnalysisMagicConfigResultsInRealLanguageCss()
 		{
-			ConfiguredXHTMLGenerator.AssemblyFile = "xWorksTests";
+			ConfiguredLcmGenerator.AssemblyFile = "xWorksTests";
 			GenerateParagraphStyle("AnalysisStyle");
 			var testNode = new ConfigurableDictionaryNode
 			{
@@ -1195,7 +1195,7 @@ namespace SIL.FieldWorks.XWorks
 			using (var XHTMLWriter = XmlWriter.Create(xhtmResult))
 			{
 				XHTMLWriter.WriteStartElement("body");
-				var content = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entry, testNode, null, DefaultSettings);
+				var content = ConfiguredLcmGenerator.GenerateXHTMLForEntry(entry, testNode, null, DefaultSettings);
 				XHTMLWriter.WriteRaw(content);
 				XHTMLWriter.WriteEndElement();
 				XHTMLWriter.Flush();
@@ -1237,7 +1237,7 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(cssResult, Is.Not.StringContaining(".headword"));
 			Assert.That(cssResult, Contains.Substring(".tailwind"));
 
-			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entry, testParentNode, null, DefaultSettings);
+			var result = ConfiguredLcmGenerator.GenerateXHTMLForEntry(entry, testParentNode, null, DefaultSettings);
 			const string positiveTest = "//*[@class='tailwind']";
 			const string negativeTest = "//*[@class='headword']";
 			AssertThatXmlIn.String(result).HasNoMatchForXpath(negativeTest);
@@ -1278,7 +1278,7 @@ namespace SIL.FieldWorks.XWorks
 			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
 			Assert.That(cssResult, Contains.Substring(".lexentry> .senses .sense> .gloss"));
 
-			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entry, testEntryNode, null, DefaultSettings);
+			var result = ConfiguredLcmGenerator.GenerateXHTMLForEntry(entry, testEntryNode, null, DefaultSettings);
 			const string positiveTest = "/*[@class='lexentry']/span[@class='senses']/span[@class='sense']/span[@class='gloss']";
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(positiveTest, 1);
 		}
@@ -1286,7 +1286,7 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void GenerateCssForConfiguration_CharStyleSubscriptWorks()
 		{
-			ConfiguredXHTMLGenerator.AssemblyFile = "xWorksTests";
+			ConfiguredLcmGenerator.AssemblyFile = "xWorksTests";
 			var style = GenerateStyle("subscript");
 			var fontInfo = new FontInfo();
 			fontInfo.m_superSub.ExplicitValue = FwSuperscriptVal.kssvSub;
@@ -1313,7 +1313,7 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void GenerateCssForConfiguration_CharStyleSuperscriptWorks()
 		{
-			ConfiguredXHTMLGenerator.AssemblyFile = "xWorksTests";
+			ConfiguredLcmGenerator.AssemblyFile = "xWorksTests";
 			var style = GenerateStyle("superscript");
 			var fontInfo = new FontInfo();
 			fontInfo.m_superSub.ExplicitValue = FwSuperscriptVal.kssvSuper;
@@ -1340,7 +1340,7 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void GenerateCssForConfiguration_CharStyleBasicUnderlineWorks()
 		{
-			ConfiguredXHTMLGenerator.AssemblyFile = "xWorksTests";
+			ConfiguredLcmGenerator.AssemblyFile = "xWorksTests";
 			var style = GenerateStyle("underline");
 			var fontInfo = new FontInfo();
 			fontInfo.m_underline.ExplicitValue = FwUnderlineType.kuntSingle;
@@ -1366,7 +1366,7 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void GenerateCssForConfiguration_CharStyleDoubleUnderlineWorks()
 		{
-			ConfiguredXHTMLGenerator.AssemblyFile = "xWorksTests";
+			ConfiguredLcmGenerator.AssemblyFile = "xWorksTests";
 			var style = GenerateStyle("doubleline");
 			var fontInfo = new FontInfo();
 			fontInfo.m_underline.ExplicitValue = FwUnderlineType.kuntDouble;
@@ -1392,7 +1392,7 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void GenerateCssForConfiguration_CharStyleDashedUnderlineWorks()
 		{
-			ConfiguredXHTMLGenerator.AssemblyFile = "xWorksTests";
+			ConfiguredLcmGenerator.AssemblyFile = "xWorksTests";
 			var style = GenerateStyle("dashed");
 			var fontInfo = new FontInfo();
 			fontInfo.m_underline.ExplicitValue = FwUnderlineType.kuntDashed;
@@ -1418,7 +1418,7 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void GenerateCssForConfiguration_CharStyleStrikethroughWorks()
 		{
-			ConfiguredXHTMLGenerator.AssemblyFile = "xWorksTests";
+			ConfiguredLcmGenerator.AssemblyFile = "xWorksTests";
 			var style = GenerateStyle("strike");
 			var fontInfo = new FontInfo();
 			fontInfo.m_underline.ExplicitValue = FwUnderlineType.kuntStrikethrough;
@@ -1444,7 +1444,7 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void GenerateCssForConfiguration_CharStyleDottedUnderlineWorks()
 		{
-			ConfiguredXHTMLGenerator.AssemblyFile = "xWorksTests";
+			ConfiguredLcmGenerator.AssemblyFile = "xWorksTests";
 			var style = GenerateStyle("dotted");
 			var fontInfo = new FontInfo();
 			fontInfo.m_underline.ExplicitValue = FwUnderlineType.kuntDotted;
@@ -1470,7 +1470,7 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void GenerateCssForConfiguration_CharStyleDisableSuperWorks()
 		{
-			ConfiguredXHTMLGenerator.AssemblyFile = "xWorksTests";
+			ConfiguredLcmGenerator.AssemblyFile = "xWorksTests";
 			var style = GenerateStyle("notsosuper");
 			var fontInfo = new FontInfo();
 			fontInfo.m_superSub.ExplicitValue = FwSuperscriptVal.kssvOff;
@@ -1578,7 +1578,7 @@ namespace SIL.FieldWorks.XWorks
 			};
 			var refTypeNode = new ConfigurableDictionaryNode
 			{
-				FieldDescription = ConfiguredXHTMLGenerator.LookupComplexEntryType,
+				FieldDescription = ConfiguredLcmGenerator.LookupComplexEntryType,
 				CSSClassNameOverride = "complexformtypes",
 				Children = new List<ConfigurableDictionaryNode> { revAbbrevNode }
 			};
@@ -2583,7 +2583,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			TestStyle style = GenerateStyle("Normal");
 			style.SetExplicitParaIntProp((int)FwTextPropType.ktptLeadingIndent, 0, LeadingIndent);
-			ConfiguredXHTMLGenerator.AssemblyFile = "xWorksTests";
+			ConfiguredLcmGenerator.AssemblyFile = "xWorksTests";
 			var pictureFileNode = new ConfigurableDictionaryNode { FieldDescription = "PictureFileRA" };
 			var senseNumberNode = new ConfigurableDictionaryNode { FieldDescription = "SenseNumberTSS"};
 			var captionNode = new ConfigurableDictionaryNode { FieldDescription = "Caption", Style = "Normal" };
@@ -2633,7 +2633,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			TestStyle style = GenerateStyle("Normal");
 			style.SetExplicitParaIntProp((int)FwTextPropType.ktptLeadingIndent, 0, LeadingIndent);
-			ConfiguredXHTMLGenerator.AssemblyFile = "xWorksTests";
+			ConfiguredLcmGenerator.AssemblyFile = "xWorksTests";
 			var pictureFileNode = new ConfigurableDictionaryNode { FieldDescription = "PictureFileRA" };
 			var senseNumberNode = new ConfigurableDictionaryNode
 			{
@@ -2704,7 +2704,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			TestStyle style = GenerateStyle("Normal");
 			style.SetExplicitParaIntProp((int)FwTextPropType.ktptLeadingIndent, 0, LeadingIndent);
-			ConfiguredXHTMLGenerator.AssemblyFile = "xWorksTests";
+			ConfiguredLcmGenerator.AssemblyFile = "xWorksTests";
 
 			var memberNode = new ConfigurableDictionaryNode
 			{
@@ -2754,7 +2754,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			TestStyle style = GenerateStyle("Normal");
 			style.SetExplicitParaIntProp((int)FwTextPropType.ktptLeadingIndent, 0, LeadingIndent);
-			ConfiguredXHTMLGenerator.AssemblyFile = "xWorksTests";
+			ConfiguredLcmGenerator.AssemblyFile = "xWorksTests";
 
 			var captionNode = new ConfigurableDictionaryNode { FieldDescription = "Caption", Style = "Normal" };
 			var headwordNode = new ConfigurableDictionaryNode {

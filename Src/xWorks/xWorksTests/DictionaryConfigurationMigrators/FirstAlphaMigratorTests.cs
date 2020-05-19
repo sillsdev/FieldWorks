@@ -688,7 +688,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			var cfTypeNodeWithRevAbbr2 = cfTypeNodeWithRevAbbr.DeepCloneUnderSameParent();
 
 			var cfTypeNodeLookup = cfTypeNodeWithRevAbbr.DeepCloneUnderSameParent();
-			cfTypeNodeLookup.FieldDescription = ConfiguredXHTMLGenerator.LookupComplexEntryType;
+			cfTypeNodeLookup.FieldDescription = ConfiguredLcmGenerator.LookupComplexEntryType;
 
 			var cfTypeNodeLookup2 = cfTypeNodeLookup.DeepCloneUnderSameParent();
 

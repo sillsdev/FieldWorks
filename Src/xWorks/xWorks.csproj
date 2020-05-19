@@ -333,7 +333,7 @@
     <Compile Include="Archiving\ArchivingExtensions.cs" />
     <Compile Include="Archiving\ReapRamp.cs" />
     <Compile Include="ConfigurableDictionaryNode.cs" />
-    <Compile Include="ConfiguredXHTMLGenerator.cs" />
+    <Compile Include="ConfiguredLcmGenerator.cs" />
     <Compile Include="HeadWordNumbersController.cs" />
     <Compile Include="HeadWordNumbersDlg.cs">
       <SubType>Form</SubType>
@@ -419,7 +419,9 @@
     <Compile Include="IDictionaryConfigurationView.cs" />
     <Compile Include="DictionaryNodeOptions.cs" />
     <Compile Include="GlobalSettingServices.cs" />
+    <Compile Include="ILcmContentGenerator.cs" />
     <Compile Include="LcmJsonGenerator.cs" />
+    <Compile Include="LcmXhtmlGenerator.cs" />
     <Compile Include="ReversalIndexServices.cs" />
     <Compile Include="SilErrorReportingAdapter.cs" />
     <Compile Include="IDictionaryDetailsView.cs" />
