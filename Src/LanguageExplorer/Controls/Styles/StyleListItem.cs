@@ -136,8 +136,8 @@ namespace LanguageExplorer.Controls.Styles
 		/// Compare a StyleListItem to another item.
 		/// </summary>
 		/// <param name="obj">StyleListItem to compare to</param>
-		/// <returns>less than 0 if this item is less than obj, 0 if they are equal, and
-		/// greater than 0 if this item is greater than obj</returns>
+		/// <returns>less than 0 if this item is less than obj, 0 if they are equal or if they are of completely different types,
+		/// and greater than 0 if this item is greater than obj</returns>
 		public int CompareTo(object obj)
 		{
 			return !(obj is StyleListItem other) ? 0 : Name.CompareTo(other.Name);

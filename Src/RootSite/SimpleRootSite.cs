@@ -1919,7 +1919,7 @@ namespace SIL.FieldWorks.Common.RootSites
 							if (rcIdeal.Width > ClientRectangle.Width && !fEndBeforeAnchor)
 							{
 								// Is it bigger than the screen?
-								dx = rcIdeal.Width > ClientRectangle.Width ? rcIdeal.Right - xdRight : rcIdeal.Left - xdLeft;
+								dx = rcIdeal.Right - xdRight;
 							}
 							else
 							{

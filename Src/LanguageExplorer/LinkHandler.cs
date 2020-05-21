@@ -231,8 +231,10 @@ namespace LanguageExplorer
 				{
 					_propertyTable.SetProperty(LanguageExplorerConstants.SuspendLoadingRecordUntilOnJumpToRecord, $"{_activeFwLinkArgs.ToolName},{_activeFwLinkArgs.TargetGuid}", settingsGroup: SettingsGroup.LocalSettings);
 				}
-				var messages = new List<PublisherParameterObject>();
-				messages.Add(new PublisherParameterObject(LanguageExplorerConstants.SetToolFromName, _activeFwLinkArgs.ToolName));
+				var messages = new List<PublisherParameterObject>
+				{
+					new PublisherParameterObject(LanguageExplorerConstants.SetToolFromName, _activeFwLinkArgs.ToolName)
+				};
 				// Note: It can be Guid.Empty in cases where it was never set,
 				// or more likely, when the HVO was set to -1.
 				if (_activeFwLinkArgs.TargetGuid != Guid.Empty)

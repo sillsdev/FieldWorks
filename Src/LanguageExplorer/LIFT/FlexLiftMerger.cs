@@ -1914,11 +1914,7 @@ namespace LanguageExplorer.LIFT
 				return;
 			}
 			var sPosName = range.Substring(0, idx);
-			if (!m_dictPos.TryGetValue(sPosName, out var poss))
-			{
-				return;
-			}
-			if (!(poss is IPartOfSpeech pos))
+			if (!m_dictPos.TryGetValue(sPosName, out var poss) || !(poss is IPartOfSpeech pos))
 			{
 				return;
 			}
@@ -1974,7 +1970,7 @@ namespace LanguageExplorer.LIFT
 			//if the header field we are processing is a custom field, then create it.
 			if (IsCustomField(tag, description, out var typeFlid))
 			{
-				FindOrCreateCustomField(tag, description, typeFlid, out var idk);
+				FindOrCreateCustomField(tag, description, typeFlid, out _);
 				key = typeFlid + tag;
 			}
 			// We may need this information later, but don't do anything for now except save it.
@@ -4859,34 +4855,38 @@ namespace LanguageExplorer.LIFT
 
 		private void StoreMsaExceptionFeatures(List<ICmPossibility> rgpossProdRestrict, List<ICmPossibility> rgpossFromProdRestrict, IMoMorphSynAnalysis msaSense)
 		{
-			if (msaSense is IMoStemMsa msaStem)
+			switch (msaSense)
 			{
-				foreach (var poss in rgpossProdRestrict)
+				case IMoStemMsa msaStem:
 				{
-					msaStem.ProdRestrictRC.Add(poss);
-				}
-				return;
-			}
-			if (msaSense is IMoInflAffMsa msaInfl)
-			{
-				foreach (var poss in rgpossProdRestrict)
-				{
-					msaInfl.FromProdRestrictRC.Add(poss);
-				}
-				return;
-			}
-			if (msaSense is IMoDerivAffMsa msaDeriv)
-			{
-				foreach (var poss in rgpossProdRestrict)
-				{
-					msaDeriv.ToProdRestrictRC.Add(poss);
-				}
-				if (rgpossFromProdRestrict != null)
-				{
-					foreach (var poss in rgpossFromProdRestrict)
+					foreach (var poss in rgpossProdRestrict)
 					{
-						msaDeriv.FromProdRestrictRC.Add(poss);
+						msaStem.ProdRestrictRC.Add(poss);
 					}
+					return;
+				}
+				case IMoInflAffMsa msaInfl:
+				{
+					foreach (var poss in rgpossProdRestrict)
+					{
+						msaInfl.FromProdRestrictRC.Add(poss);
+					}
+					return;
+				}
+				case IMoDerivAffMsa msaDeriv:
+				{
+					foreach (var poss in rgpossProdRestrict)
+					{
+						msaDeriv.ToProdRestrictRC.Add(poss);
+					}
+					if (rgpossFromProdRestrict != null)
+					{
+						foreach (var poss in rgpossFromProdRestrict)
+						{
+							msaDeriv.FromProdRestrictRC.Add(poss);
+						}
+					}
+					return;
 				}
 			}
 		}

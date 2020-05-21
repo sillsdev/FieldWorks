@@ -682,7 +682,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 		/// <returns>the "headword" in NFD (the heading letter must be normalized to NFC before writing to XHTML, per LT-18177)</returns>
 		private static string GetHeadwordForLetterHead(ICmObject entry)
 		{
-			return !(entry is ILexEntry lexEntry) ? (entry as IReversalIndexEntry)?.ReversalForm.BestAnalysisAlternative.Text.TrimStart() ?? string.Empty : lexEntry.HomographForm.TrimStart();
+			return (entry as ILexEntry)?.HomographForm.TrimStart() ?? (entry as IReversalIndexEntry)?.ReversalForm.BestAnalysisAlternative.Text.TrimStart() ?? string.Empty;
 		}
 
 		/// <summary>
@@ -1209,6 +1209,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 			{
 				parentNodeType = parentNodeType.GetGenericArguments()[0];
 			}
+			// Strip off the interface designation since custom fields are added to concrete classes (true option).
 			return parentNodeType.IsInterface ? parentNodeType.Name.Substring(1) : parentNodeType.Name;
 		}
 
@@ -1381,7 +1382,9 @@ namespace LanguageExplorer.DictionaryConfiguration
 
 		private static bool AreFilesIdentical(string source, string destination, bool isWavExport)
 		{
-			return !isWavExport ? FileUtils.AreFilesIdentical(source, destination) : WavConverter.AlreadyExists(source, destination) == SaveFile.IdenticalExists;
+			return isWavExport
+				? WavConverter.AlreadyExists(source, destination) == SaveFile.IdenticalExists
+				: FileUtils.AreFilesIdentical(source, destination);
 		}
 
 		private static string MakeSafeFilePath(string filePath)

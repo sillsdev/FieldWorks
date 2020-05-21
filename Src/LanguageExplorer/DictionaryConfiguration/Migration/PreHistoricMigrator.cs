@@ -980,10 +980,10 @@ namespace LanguageExplorer.DictionaryConfiguration.Migration
 			{
 				return false;
 			}
-			// if the font doesn't match
-			return (!string.IsNullOrEmpty(node.NumFont) || !fontInfo.FontName.ValueIsSet)
-				   && (string.IsNullOrEmpty(node.NumFont) || fontInfo.FontName.ValueIsSet)
-				   && (!fontInfo.FontName.ValueIsSet || string.Compare(node.NumFont, fontInfo.FontName.Value, StringComparison.Ordinal) == 0);
+			// whether the fonts match
+			return string.IsNullOrEmpty(node.NumFont) && !fontInfo.FontName.ValueIsSet
+					|| !string.IsNullOrEmpty(node.NumFont) && fontInfo.FontName.ValueIsSet
+					&& node.NumFont.Equals(fontInfo.FontName.Value, StringComparison.Ordinal);
 		}
 
 		private List<DictionaryNodeOption> MigrateWsOptions(string wsLabel)

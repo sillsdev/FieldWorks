@@ -2951,14 +2951,9 @@ namespace LCMBrowser
 							continue;
 						}
 					}
-					switch (m_virtualFlag)
+					if (m_virtualFlag == false && (flid >= 20000000 && flid < 30000000 || _mdc.get_IsVirtual(flid)))
 					{
-						case false when flid >= 20000000 && flid < 30000000:
-							props.RemoveAt(i);
-							continue;
-						case false when _mdc.get_IsVirtual(flid):
-							props.RemoveAt(i);
-							break;
+						props.RemoveAt(i);
 					}
 				}
 			}

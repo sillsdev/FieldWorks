@@ -699,7 +699,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 				// add types that do not exist already
 				foreach (var pos in possibilities)
 				{
-					if (options.Any(x => x.Id == pos.ToString() + ":f" || x.Id == pos.ToString() + ":r"))
+					if (options.Any(x => x.Id == $"{pos}:f" || x.Id == $"{pos}:r"))
 					{
 						continue;
 					}
@@ -710,12 +710,12 @@ namespace LanguageExplorer.DictionaryConfiguration
 						{
 							options.Add(new DictionaryNodeOption
 							{
-								Id = pos + ":f",
+								Id = $"{pos}:f",
 								IsEnabled = !isDuplicate
 							});
 							options.Add(new DictionaryNodeOption
 							{
-								Id = pos + ":r",
+								Id = $"{pos}:r",
 								IsEnabled = !isDuplicate
 							});
 						}
@@ -1317,22 +1317,10 @@ namespace LanguageExplorer.DictionaryConfiguration
 			{
 				return;
 			}
-			ConfigurableDictionaryNode topNode = null;
-			// Search through the configuration trees associated with each toplevel TreeNode to find
-			// the best match.  If no match is found, give up.
-			foreach (TreeNode node in View.TreeControl.Tree.Nodes)
-			{
-				if (!(node.Tag is ConfigurableDictionaryNode configNode))
-				{
-					continue;
-				}
-				var cssClass = CssGenerator.GetClassAttributeForConfig(configNode);
-				if (classList[0].Split(' ').Contains(cssClass))
-				{
-					topNode = configNode;
-					break;
-				}
-			}
+			// Search through the configuration trees associated with each top-level TreeNode to find the best match.
+			var topNode = View?.TreeControl?.Tree?.Nodes.Cast<TreeNode>().Select(node => node.Tag).OfType<ConfigurableDictionaryNode>()
+				.FirstOrDefault(configNode => classList[0].Split(' ').Contains(CssGenerator.GetClassAttributeForConfig(configNode)));
+			// If no match is found, give up.
 			if (topNode == null)
 			{
 				return;

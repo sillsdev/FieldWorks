@@ -317,7 +317,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		}
 
 		/// <summary>
-		/// Checks input characters to see if they should be processsed. Static to allow
+		/// Checks input characters to see if they should be processed. Static to allow
 		/// function to be shared with PublicationControl.
 		/// </summary>
 		/// <param name="e"></param>
@@ -326,21 +326,14 @@ namespace SIL.FieldWorks.Common.RootSites
 		public static bool IsIgnoredKey(KeyPressEventArgs e, Keys modifiers)
 		{
 			var ignoredKey = false;
-			switch (modifiers & Keys.Alt)
+			// For some languages, Alt is commonly used for keyboard input.  See LT-4182.
+			if ((modifiers & Keys.Alt) != Keys.Alt && (modifiers & Keys.Control) == Keys.Control)
 			{
-				case Keys.Alt:
-					// For some languages, Alt is commonly used for keyboard input.  See LT-4182.
-					break;
-				default:
-				{
-					if ((modifiers & Keys.Control) == Keys.Control)
-					{
-						// control-backspace, control-forward delete and control-M (same as return
-						// key) will be passed on for processing
-						ignoredKey = !(e.KeyChar == (int)VwSpecialChars.kscBackspace || e.KeyChar == (int)VwSpecialChars.kscDelForward || e.KeyChar == '\r');
-					}
-					break;
-				}
+				// control-backspace, control-forward delete and control-M (same as return
+				// key) will be passed on for processing
+				ignoredKey = !(e.KeyChar == (int)VwSpecialChars.kscBackspace
+							   || e.KeyChar == (int)VwSpecialChars.kscDelForward
+							   || e.KeyChar == '\r');
 			}
 			// Ignore control characters (most can only be generated using control key, see above; but Escape otherwise gets through...)
 			// One day we might want to allow tab, though I don't think it comes through this method anyway...

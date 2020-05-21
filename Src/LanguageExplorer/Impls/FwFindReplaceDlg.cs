@@ -1443,12 +1443,9 @@ namespace LanguageExplorer.Impls
 			base.OnActivated(e);
 			// TODO (TimS): possibly make ShowRangeSelAfterLostFocus an interface method so
 			// other apps (i.e. DN) can do this.
-			if (m_vwRootsite is SimpleRootSite simpleRootSite)
+			if (m_vwRootsite is SimpleRootSite simpleRootSite && !simpleRootSite.IsDisposed)
 			{
-				if (!simpleRootSite.IsDisposed)
-				{
-					simpleRootSite.ShowRangeSelAfterLostFocus = true;
-				}
+				simpleRootSite.ShowRangeSelAfterLostFocus = true;
 			}
 			if (m_initialActivate)
 			{
@@ -1472,12 +1469,9 @@ namespace LanguageExplorer.Impls
 			base.OnDeactivate(e);
 			// TODO (TimS): possibly make ShowRangeSelAfterLostFocus an interface method so
 			// other apps (i.e. DN) can do this.
-			if (m_vwRootsite is SimpleRootSite simpleRootSite)
+			if (m_vwRootsite is SimpleRootSite simpleRootSite && !simpleRootSite.IsDisposed)
 			{
-				if (!simpleRootSite.IsDisposed)
-				{
-					simpleRootSite.ShowRangeSelAfterLostFocus = false;
-				}
+				simpleRootSite.ShowRangeSelAfterLostFocus = false;
 			}
 		}
 

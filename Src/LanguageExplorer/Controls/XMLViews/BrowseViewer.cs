@@ -94,7 +94,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// (the one the user clicked on); in this case, client should generate PropChanged as needed
 		/// to update the display. When the user does something like CheckAll, a list is sent; in this case,
 		/// AFTER invoking the event, the browse view does a Reconstruct, so generating PropChanged is not
-		/// necessary (or helpfull, unless some other view also needs updating).
+		/// necessary (or helpful, unless some other view also needs updating).
 		/// </summary>
 		public event CheckBoxChangedEventHandler CheckBoxChanged;
 		/// <summary>

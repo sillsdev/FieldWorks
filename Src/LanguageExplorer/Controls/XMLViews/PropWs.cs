@@ -27,14 +27,9 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <returns>
 		/// true if the specified <see cref="T:System.Object"/> is equal to the current <see cref="T:System.Object"/>; otherwise, false.
 		/// </returns>
-		/// <exception cref="T:System.NullReferenceException">The <paramref name="obj"/> parameter is null.</exception>
 		public override bool Equals(object obj)
 		{
-			if (!(obj is PropWs propWs))
-			{
-				return false;
-			}
-			return propWs.Flid == Flid && propWs.Ws == Ws;
+			return obj is PropWs propWs && propWs.Flid == Flid && propWs.Ws == Ws;
 		}
 
 		/// <summary>

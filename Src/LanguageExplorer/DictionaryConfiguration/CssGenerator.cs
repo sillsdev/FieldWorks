@@ -1390,9 +1390,9 @@ namespace LanguageExplorer.DictionaryConfiguration
 			}
 			var sizeProp = new Property("font-size")
 			{
+				//58% is what OpenOffice does
 				Term = new PrimitiveTerm(UnitType.Ident, "58%")
 			};
-			//58% is what OpenOffice does
 			declaration.Add(sizeProp);
 			if (fontValue != FwSuperscriptVal.kssvOff)
 			{

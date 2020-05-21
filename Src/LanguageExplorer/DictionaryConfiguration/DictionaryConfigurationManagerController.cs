@@ -143,10 +143,8 @@ namespace LanguageExplorer.DictionaryConfiguration
 		private void ReLoadPublications()
 		{
 			_publications = DictionaryConfigurationController.GetAllPublications(_cache);
-			foreach (var item in _publications.Select(publication => new ListViewItem { Text = publication }))
-			{
-				_view.publicationsListView.Items.Add(item);
-			}
+			_view.publicationsListView.Items.Clear();
+			_view.publicationsListView.Items.AddRange(_publications.Select(publication => new ListViewItem { Text = publication }).ToArray());
 		}
 
 		/// <summary>

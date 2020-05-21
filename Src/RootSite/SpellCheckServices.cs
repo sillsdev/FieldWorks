@@ -251,7 +251,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			{
 				return MakeWssSuggestions(tssWord, wss, rootb, hvoObj, tag, wsAlt, ichMin, ichLim);
 			}
-			var result = MakeEmbeddedNscSuggestion(ref tssWord, styles, rootb, hvoObj, tag, wsAlt, ichMin, ichLim, out var keepOrcs);
+			var result = MakeEmbeddedNscSuggestion(ref tssWord, styles, rootb, hvoObj, tag, wsAlt, ichMin, ichLim, out var orcsTokeep);
 			if (result.Count > 0)
 			{
 				return result;
@@ -278,9 +278,9 @@ namespace SIL.FieldWorks.Common.RootSites
 			foreach (var suggest in suggestions)
 			{
 				var replacement = TsStringUtils.MakeString(suggest, wsText);
-				if (keepOrcs != null)
+				if (orcsTokeep != null)
 				{
-					var bldrRep = keepOrcs.GetBldr();
+					var bldrRep = orcsTokeep.GetBldr();
 					bldrRep.ReplaceTsString(0, 0, replacement);
 					replacement = bldrRep.GetString();
 				}

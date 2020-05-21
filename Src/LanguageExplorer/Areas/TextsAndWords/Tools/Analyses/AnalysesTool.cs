@@ -215,7 +215,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 				}
 			}
 
-			private IWfiGloss Gloss => CurrentSliceObject is IWfiGloss gloss ? gloss : null;
+			private IWfiGloss Gloss => CurrentSliceObject as IWfiGloss;
 
 			internal AnalysesToolMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, ITool tool, RecordBrowseView recordBrowseView, IRecordList recordList, DataTree dataTree)
 			{
