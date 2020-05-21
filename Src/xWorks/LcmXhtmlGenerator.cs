@@ -930,5 +930,63 @@ namespace SIL.FieldWorks.XWorks
 				return bldr.ToString();
 			}
 		}
+
+		/// <summary>
+		/// The new webonary api takes json data for the entries and stores it in MongoDB. To use the css that we
+		/// generate from FLEx that data needs to be retrieved and plugged into xhtml which has the same structure
+		/// that our css generator expects. This method generates a template with placeholders for the data.
+		/// We generate a template specific to the configuration we use to upload and make one template per model Part
+		/// </summary>
+		public static List<string> GenerateXHTMLTemplatesForConfigurationModel(DictionaryConfigurationModel model)
+		{
+			var xhtmlTemplates = new List<string>();
+			foreach (var part in model.Parts.Where(pt => pt.IsEnabled))
+			{
+				xhtmlTemplates.Add(GenerateXHTMLTemplateForConfigNode(part));
+			}
+			return xhtmlTemplates;
+		}
+
+		private static string GenerateXHTMLTemplateForConfigNode(ConfigurableDictionaryNode node, string pathToField = null, bool isReferenceNode = false)
+		{
+			var bldr = new StringBuilder();
+			var importantThing = CssGenerator.GetClassAttributeForConfig(node);
+			var pathToFieldRoot = pathToField == null ? "" : $"{pathToField}{(string.IsNullOrEmpty(pathToField) ? "" : ".")}{importantThing}";
+			using (var xw = XmlWriter.Create(bldr, new XmlWriterSettings { ConformanceLevel = ConformanceLevel.Fragment }))
+			{
+				xw.WriteStartElement(ConfiguredLcmGenerator.IsBlockProperty(node) ? "div" : "span");
+				xw.WriteAttributeString("class", CssGenerator.GetClassAttributeForConfig(node));
+
+				var wsOpts = node.DictionaryNodeOptions as DictionaryNodeWritingSystemOptions;
+				if (wsOpts != null)
+				{
+					foreach (var lang in wsOpts.Options.Where(opt => opt.IsEnabled))
+					{
+						xw.WriteStartElement("span");
+						xw.WriteAttributeString("lang", lang.Id);
+						xw.WriteRaw(WrapInAnchorElementIfHeadword(node, pathToFieldRoot, $"%{pathToFieldRoot}.[lang={lang.Id}].value%"));
+						xw.WriteEndElement();
+					}
+				}
+
+				if (node.ReferencedOrDirectChildren != null)
+				{
+					// Avoid infinite recursion (needs improvement)
+					var childCollection = isReferenceNode ? node.Children : node.ReferencedOrDirectChildren;
+					foreach (var child in childCollection)
+					{
+						xw.WriteRaw(GenerateXHTMLTemplateForConfigNode(child, pathToFieldRoot, isReferenceNode || !string.IsNullOrEmpty(child.ReferenceItem)));
+					}
+				}
+				xw.WriteEndElement();
+				xw.Flush();
+				return bldr.ToString();
+			}
+		}
+
+		private static string WrapInAnchorElementIfHeadword(ConfigurableDictionaryNode node, string pathToFieldRoot, string templateContent)
+		{
+			return !node.IsHeadWord ? templateContent : $"<a href='%{pathToFieldRoot}.guid%'>{templateContent}</a>";
+		}
 	}
 }

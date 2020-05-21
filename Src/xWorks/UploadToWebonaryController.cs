@@ -104,11 +104,10 @@ namespace SIL.FieldWorks.XWorks
 			webonaryView.UpdateStatus(xWorksStrings.ExportingEntriesToWebonaryCompleted);
 		}
 
-		private JObject GenerateDictionaryMetadataContent(UploadToWebonaryModel model)
+		private JObject GenerateDictionaryMetadataContent(UploadToWebonaryModel model, IEnumerable<string> templateFileNames)
 		{
-			return m_exportService.ExportDictionaryContentJson(model.SiteName,
-				model.Reversals.Where(kvp => model.SelectedReversals.Contains(kvp.Key)).Select(kvp => kvp.Value),
-				model.Configurations[model.SelectedConfiguration]);
+			return m_exportService.ExportDictionaryContentJson(model.SiteName, templateFileNames,
+				model.Reversals.Where(kvp => model.SelectedReversals.Contains(kvp.Key)).Select(kvp => kvp.Value));
 		}
 
 		internal static void CompressExportedFiles(string tempDirectoryToCompress, string zipFileToUpload, IUploadToWebonaryView webonaryView)
@@ -413,9 +412,11 @@ namespace SIL.FieldWorks.XWorks
 			var useJsonApi = !string.IsNullOrEmpty(Environment.GetEnvironmentVariable("WEBONARY_API"));
 			if (useJsonApi)
 			{
-				var postContent = GenerateDictionaryMetadataContent(model);
+				var configuration = model.Configurations[model.SelectedConfiguration];
+				var templateFileNames = GenerateConfigurationTemplates(configuration, tempDirectoryForExport);
+				var postContent = GenerateDictionaryMetadataContent(model, templateFileNames);
 				PostContentToWebonary(model, view, "post/dictionary",postContent);
-				var entries = m_exportService.ExportConfiguredJson(tempDirectoryForExport, model.Configurations[model.SelectedConfiguration]);
+				var entries = m_exportService.ExportConfiguredJson(tempDirectoryForExport, configuration);
 				foreach (var entryBatch in entries)
 				{
 					PostContentToWebonary(model, view, "post/entry", entryBatch);
@@ -434,6 +435,22 @@ namespace SIL.FieldWorks.XWorks
 				CompressExportedFiles(tempDirectoryForExport, zipFileToUpload, view);
 				UploadToWebonary(zipFileToUpload, model, view);
 			}
+		}
+
+		private string[] GenerateConfigurationTemplates(DictionaryConfigurationModel configuration, string tempDirectoryForExport)
+		{
+			var partFileNames = configuration.Parts.Where(pt => pt.IsEnabled).Select(c => CssGenerator.GetClassAttributeForConfig(c) + ".xhtml").ToArray();
+			var partTemplates = LcmXhtmlGenerator.GenerateXHTMLTemplatesForConfigurationModel(configuration);
+			if (partTemplates.Count != partFileNames.Count())
+			{
+				throw new ApplicationException("Programming error generating xhtml templates from a configuration.");
+			}
+
+			for (var i = 0; i < partTemplates.Count; ++i)
+			{
+				File.WriteAllText(Path.Combine(tempDirectoryForExport, partFileNames[i]), partTemplates[i]);
+			}
+			return partFileNames;
 		}
 
 		/// <summary>

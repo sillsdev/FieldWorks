@@ -469,7 +469,11 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		public static JObject GenerateDictionaryMetaData(string siteName, IEnumerable<DictionaryConfigurationModel> reversals, int[] entryHvos, LcmCache cache)
+		public static JObject GenerateDictionaryMetaData(string siteName,
+			IEnumerable<string> tempateFileNames,
+			IEnumerable<DictionaryConfigurationModel> reversals,
+			int[] entryHvos,
+			LcmCache cache)
 		{
 			dynamic dictionaryMetaData = new JObject();
 			dictionaryMetaData._id = siteName;
@@ -497,6 +501,7 @@ namespace SIL.FieldWorks.XWorks
 				cache.LangProject.DefaultAnalysisWritingSystem.Handle, cache.LangProject.DefaultAnalysisWritingSystem.Id);
 			dictionaryMetaData.semanticDomains = GenerateProjectOwnedList(cache.LangProject.SemanticDomainListOA.ReallyReallyAllPossibilities,
 				cache.LangProject.DefaultAnalysisWritingSystem.Handle, cache.LangProject.DefaultAnalysisWritingSystem.Id);
+			dictionaryMetaData.xhtmlTemplates = JArray.FromObject(tempateFileNames);
 			return dictionaryMetaData;
 		}
 

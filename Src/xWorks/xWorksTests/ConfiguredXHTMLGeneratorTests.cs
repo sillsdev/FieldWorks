@@ -168,46 +168,6 @@ namespace SIL.FieldWorks.XWorks
 		private const string TestVariantName = "Crazy Variant";
 
 		[Test]
-		public void GeneratorSettings_NullArgsThrowArgumentNull()
-		{
-			// ReSharper disable AccessToDisposedClosure // Justification: Assert calls lambdas immediately, so XHTMLWriter is not used after being disposed
-			// ReSharper disable ObjectCreationAsStatement // Justification: We expect the constructor to throw, so there's no created object to assign anywhere :)
-			Assert.Throws(typeof(ArgumentNullException), () => new ConfiguredLcmGenerator.GeneratorSettings(Cache, (PropertyTable)null, false, false, null));
-			Assert.Throws(typeof(ArgumentNullException), () => new ConfiguredLcmGenerator.GeneratorSettings(null, new ReadOnlyPropertyTable(m_propertyTable), false, false, null));
-			// ReSharper restore ObjectCreationAsStatement
-			// ReSharper restore AccessToDisposedClosure
-		}
-
-		[Test]
-		public void GenerateXHTMLForEntry_NullArgsThrowArgumentNull()
-		{
-			var mainEntryNode = new ConfigurableDictionaryNode();
-			var factory = Cache.ServiceLocator.GetInstance<ILexEntryFactory>();
-			var entry = factory.Create();
-			var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, new ReadOnlyPropertyTable(m_propertyTable), false, false, null);
-			//SUT
-			Assert.Throws(typeof(ArgumentNullException), () => ConfiguredLcmGenerator.GenerateXHTMLForEntry(null, mainEntryNode, null, settings));
-			Assert.Throws(typeof(ArgumentNullException), () => ConfiguredLcmGenerator.GenerateXHTMLForEntry(entry, (ConfigurableDictionaryNode)null, null, settings));
-			Assert.Throws(typeof(ArgumentNullException), () => ConfiguredLcmGenerator.GenerateXHTMLForEntry(entry, mainEntryNode, null, null));
-		}
-
-		[Test]
-		public void GenerateXHTMLForEntry_BadConfigurationThrows()
-		{
-			var mainEntryNode = new ConfigurableDictionaryNode();
-			var entry = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create();
-			var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, new ReadOnlyPropertyTable(m_propertyTable), false, false, null);
-			//SUT
-			//Test a blank main node description
-			Assert.That(() => ConfiguredLcmGenerator.GenerateXHTMLForEntry(entry, mainEntryNode, null, settings),
-				Throws.InstanceOf<ArgumentException>().With.Message.Contains("Invalid configuration"));
-			//Test a configuration with a valid but incorrect type
-			mainEntryNode.FieldDescription = "LexSense";
-			Assert.That(() => ConfiguredLcmGenerator.GenerateXHTMLForEntry(entry, mainEntryNode, null, settings),
-				Throws.InstanceOf<ArgumentException>().With.Message.Contains("doesn't configure this type"));
-		}
-
-		[Test]
 		public void GenerateXHTMLForEntry_HeadwordConfigurationGeneratesCorrectResult()
 		{
 			var headwordNode = new ConfigurableDictionaryNode
@@ -9726,6 +9686,69 @@ namespace SIL.FieldWorks.XWorks
 			var tsResult = TsStringUtils.MakeString(result, Cache.DefaultAnalWs);
 			Assert.False(TsStringUtils.IsNullOrEmpty(tsResult), "Results should have been generated");
 			Assert.That(tsResult.get_IsNormalizedForm(FwNormalizationMode.knmNFC), "Resulting XHTML should be NFComposed");
+		}
+
+		[Test]
+		public void GenerateXHTMLTemplate_OnlyGeneratesSelectedParts()
+		{
+			var headwordNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "MLHeadWord",
+				CSSClassNameOverride = "headword",
+				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "fr" })
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				Children = new List<ConfigurableDictionaryNode> { headwordNode },
+				FieldDescription = "LexEntry"
+			};
+			var model = new DictionaryConfigurationModel
+			{
+				Parts = new List<ConfigurableDictionaryNode> { mainEntryNode }
+			};
+			CssGeneratorTests.PopulateFieldsForTesting(model);
+			var unselectedPart = new ConfigurableDictionaryNode
+			{
+				Children = new List<ConfigurableDictionaryNode> { headwordNode },
+				FieldDescription = "LexEntry",
+				CSSClassNameOverride = "minorentry"
+			};
+			model.Parts.Add(unselectedPart);
+			var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, new ReadOnlyPropertyTable(m_propertyTable), false, false, null, isTemplate: true);
+			var entry = CreateInterestingLexEntry(Cache);
+			//SUT
+			var result = LcmXhtmlGenerator.GenerateXHTMLTemplatesForConfigurationModel(model);
+			const string expectedTemplate = "/div[@class='lexentry']";
+			Assert.That(result.Count(), Is.EqualTo(1));
+			// verify the one result matches the selected node
+			AssertThatXmlIn.String(result[0]).HasSpecifiedNumberOfMatchesForXpath(expectedTemplate, 1);
+		}
+
+		[Test]
+		public void GenerateXHTMLTemplate_HeadWordWorks()
+		{
+			var headwordNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "MLHeadWord",
+				CSSClassNameOverride = "headword",
+				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "fr" })
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				Children = new List<ConfigurableDictionaryNode> { headwordNode },
+				FieldDescription = "LexEntry"
+			};
+			var model = new DictionaryConfigurationModel
+			{
+				Parts = new List<ConfigurableDictionaryNode> { mainEntryNode }
+			};
+			CssGeneratorTests.PopulateFieldsForTesting(model);
+			var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, new ReadOnlyPropertyTable(m_propertyTable), false, false, null, isTemplate: true);
+			var entry = CreateInterestingLexEntry(Cache);
+			//SUT
+			var result = LcmXhtmlGenerator.GenerateXHTMLTemplatesForConfigurationModel(model);
+			const string expectedTemplate = "/div[@class='lexentry']/span[@class='headword']/span[@lang='fr']/a[@href='%headword.guid%' and text()='%headword.[lang=fr].value%']";
+			AssertThatXmlIn.String(result[0]).HasSpecifiedNumberOfMatchesForXpath(expectedTemplate, 1);
 		}
 	}
 }

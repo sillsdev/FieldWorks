@@ -300,14 +300,14 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		public JObject ExportDictionaryContentJson(string siteName, IEnumerable<DictionaryConfigurationModel> reversals, DictionaryConfigurationModel configuration)
+		public JObject ExportDictionaryContentJson(string siteName, IEnumerable<string> templateFileNames, IEnumerable<DictionaryConfigurationModel> reversals)
 		{
 			using (ClerkActivator.ActivateClerkMatchingExportType(DictionaryType, m_propertyTable, m_mediator))
 			{
 				int[] entriesToSave;
 				ConfiguredLcmGenerator.GetPublicationDecoratorAndEntries(m_propertyTable, out entriesToSave, DictionaryType);
 
-				return LcmJsonGenerator.GenerateDictionaryMetaData(siteName, reversals, entriesToSave, m_cache);
+				return LcmJsonGenerator.GenerateDictionaryMetaData(siteName, templateFileNames, reversals, entriesToSave, m_cache);
 			}
 		}
 	}

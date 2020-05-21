@@ -13,6 +13,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading;
 using System.Xml;
+using SIL.Code;
 using SIL.LCModel.Core.Cellar;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.WritingSystems;
@@ -215,10 +216,10 @@ namespace SIL.FieldWorks.XWorks
 		/// <remarks>the configuration node must match the entry type</remarks>
 		internal static string GenerateXHTMLForEntry(ICmObject entry, ConfigurableDictionaryNode configuration, DictionaryPublicationDecorator publicationDecorator, GeneratorSettings settings)
 		{
-			if (settings == null || entry == null || configuration == null)
-			{
-				throw new ArgumentNullException();
-			}
+			Guard.AgainstNull(settings, nameof(settings));
+			Guard.AgainstNull(configuration, nameof(configuration));
+			Guard.AgainstNull(entry, nameof(entry));
+
 			// ReSharper disable LocalizableElement, because seriously, who cares about localized exceptions?
 			if (string.IsNullOrEmpty(configuration.FieldDescription))
 			{
@@ -2520,7 +2521,7 @@ namespace SIL.FieldWorks.XWorks
 			return "g" + audioId.Replace(" ", "_").Replace("'", "_");
 		}
 
-		private static bool IsBlockProperty(ConfigurableDictionaryNode config)
+		internal static bool IsBlockProperty(ConfigurableDictionaryNode config)
 		{
 			//TODO: Improve this logic to deal with subentries if necessary
 			return config.FieldDescription.Equals("LexEntry") || config.DictionaryNodeOptions is DictionaryNodePictureOptions;
@@ -2589,13 +2590,14 @@ namespace SIL.FieldWorks.XWorks
 		public class GeneratorSettings
 		{
 			public ILcmContentGenerator ContentGenerator = new LcmXhtmlGenerator();
-			public LcmCache Cache { get; private set; }
-			public ReadOnlyPropertyTable PropertyTable { get; private set; }
-			public bool UseRelativePaths { get; private set; }
-			public bool CopyFiles { get; private set; }
-			public string ExportPath { get; private set; }
-			public bool RightToLeft { get; private set; }
-			public bool IsWebExport { get; private set; }
+			public LcmCache Cache { get; }
+			public ReadOnlyPropertyTable PropertyTable { get; }
+			public bool UseRelativePaths { get; }
+			public bool CopyFiles { get; }
+			public string ExportPath { get; }
+			public bool RightToLeft { get; }
+			public bool IsWebExport { get; }
+			public bool IsTemplate { get; }
 
 			public GeneratorSettings(LcmCache cache, PropertyTable propertyTable, bool relativePaths,bool copyFiles, string exportPath, bool rightToLeft = false, bool isWebExport = false)
 				: this(cache, propertyTable == null ? null : new ReadOnlyPropertyTable(propertyTable), relativePaths, copyFiles, exportPath, rightToLeft, isWebExport)
@@ -2603,7 +2605,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 
 
-			public GeneratorSettings(LcmCache cache, ReadOnlyPropertyTable propertyTable, bool relativePaths, bool copyFiles, string exportPath, bool rightToLeft = false, bool isWebExport = false)
+			public GeneratorSettings(LcmCache cache, ReadOnlyPropertyTable propertyTable, bool relativePaths, bool copyFiles, string exportPath, bool rightToLeft = false, bool isWebExport = false, bool isTemplate = false)
 			{
 				if (cache == null || propertyTable == null)
 				{
@@ -2616,6 +2618,7 @@ namespace SIL.FieldWorks.XWorks
 				ExportPath = exportPath;
 				RightToLeft = rightToLeft;
 				IsWebExport = isWebExport;
+				IsTemplate = isTemplate;
 			}
 		}
 
