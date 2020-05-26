@@ -14,6 +14,7 @@ using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel.DomainServices;
 using SIL.LCModel.Utils;
 using XCore;
 
@@ -937,17 +938,17 @@ namespace SIL.FieldWorks.XWorks
 		/// that our css generator expects. This method generates a template with placeholders for the data.
 		/// We generate a template specific to the configuration we use to upload and make one template per model Part
 		/// </summary>
-		public static List<string> GenerateXHTMLTemplatesForConfigurationModel(DictionaryConfigurationModel model)
+		public static List<string> GenerateXHTMLTemplatesForConfigurationModel(DictionaryConfigurationModel model, LcmCache cache)
 		{
 			var xhtmlTemplates = new List<string>();
 			foreach (var part in model.Parts.Where(pt => pt.IsEnabled))
 			{
-				xhtmlTemplates.Add(GenerateXHTMLTemplateForConfigNode(part));
+				xhtmlTemplates.Add(GenerateXHTMLTemplateForConfigNode(part, cache));
 			}
 			return xhtmlTemplates;
 		}
 
-		private static string GenerateXHTMLTemplateForConfigNode(ConfigurableDictionaryNode node, string pathToField = null, bool isReferenceNode = false)
+		private static string GenerateXHTMLTemplateForConfigNode(ConfigurableDictionaryNode node, LcmCache cache, string pathToField = null, bool isReferenceNode = false)
 		{
 			var bldr = new StringBuilder();
 			var importantThing = CssGenerator.GetClassAttributeForConfig(node);
@@ -960,11 +961,62 @@ namespace SIL.FieldWorks.XWorks
 				var wsOpts = node.DictionaryNodeOptions as DictionaryNodeWritingSystemOptions;
 				if (wsOpts != null)
 				{
+					var allSelectedLangs = new List<string>();
 					foreach (var lang in wsOpts.Options.Where(opt => opt.IsEnabled))
 					{
+						var magicWs = WritingSystemServices.GetMagicWsIdFromName(lang.Id);
+						if (magicWs == 0)
+						{
+							allSelectedLangs.Add(lang.Id);
+						}
+						else
+						{
+							switch (magicWs)
+							{
+								case WritingSystemServices.kwsAnal:
+								case WritingSystemServices.kwsAnals:
+								case WritingSystemServices.kwsFirstAnal:
+								{
+									allSelectedLangs.AddRange(cache.LangProject.CurAnalysisWss.Split(' '));
+									break;
+								}
+								case WritingSystemServices.kwsVern:
+								case WritingSystemServices.kwsVerns:
+								case WritingSystemServices.kwsFirstVern:
+								{
+									allSelectedLangs.AddRange(cache.LangProject.CurVernWss.Split(' '));
+									break;
+								}
+								case WritingSystemServices.kwsPronunciation:
+								case WritingSystemServices.kwsPronunciations:
+								case WritingSystemServices.kwsFirstPronunciation:
+								{
+									allSelectedLangs.AddRange(cache.LangProject.CurPronunWss.Split(' '));
+									break;
+								}
+								case WritingSystemServices.kwsAnalVerns:
+								case WritingSystemServices.kwsFirstAnalOrVern:
+								{
+									allSelectedLangs.AddRange(cache.LangProject.CurAnalysisWss.Split(' '));
+									allSelectedLangs.AddRange(cache.LangProject.CurVernWss.Split(' '));
+									break;
+								}
+								case WritingSystemServices.kwsVernAnals:
+								case WritingSystemServices.kwsFirstVernOrAnal:
+								{
+									allSelectedLangs.AddRange(cache.LangProject.CurVernWss.Split(' '));
+									allSelectedLangs.AddRange(cache.LangProject.CurAnalysisWss.Split(' '));
+									break;
+								}
+							}
+						}
+					}
+
+					foreach (var lang in allSelectedLangs)
+					{
 						xw.WriteStartElement("span");
-						xw.WriteAttributeString("lang", lang.Id);
-						xw.WriteRaw(WrapInAnchorElementIfHeadword(node, pathToFieldRoot, $"%{pathToFieldRoot}.[lang={lang.Id}].value%"));
+						xw.WriteAttributeString("lang", lang);
+						xw.WriteRaw(WrapInAnchorElementIfHeadword(node, pathToFieldRoot, $"%{pathToFieldRoot}.[lang={lang}].value%"));
 						xw.WriteEndElement();
 					}
 				}
@@ -975,7 +1027,7 @@ namespace SIL.FieldWorks.XWorks
 					var childCollection = isReferenceNode ? node.Children : node.ReferencedOrDirectChildren;
 					foreach (var child in childCollection)
 					{
-						xw.WriteRaw(GenerateXHTMLTemplateForConfigNode(child, pathToFieldRoot, isReferenceNode || !string.IsNullOrEmpty(child.ReferenceItem)));
+						xw.WriteRaw(GenerateXHTMLTemplateForConfigNode(child, cache, pathToFieldRoot, isReferenceNode || !string.IsNullOrEmpty(child.ReferenceItem)));
 					}
 				}
 				xw.WriteEndElement();

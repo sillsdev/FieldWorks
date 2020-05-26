@@ -413,7 +413,7 @@ namespace SIL.FieldWorks.XWorks
 			if (useJsonApi)
 			{
 				var configuration = model.Configurations[model.SelectedConfiguration];
-				var templateFileNames = GenerateConfigurationTemplates(configuration, tempDirectoryForExport);
+				var templateFileNames = GenerateConfigurationTemplates(configuration, m_cache, tempDirectoryForExport);
 				var postContent = GenerateDictionaryMetadataContent(model, templateFileNames);
 				PostContentToWebonary(model, view, "post/dictionary",postContent);
 				var entries = m_exportService.ExportConfiguredJson(tempDirectoryForExport, configuration);
@@ -437,10 +437,10 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		private string[] GenerateConfigurationTemplates(DictionaryConfigurationModel configuration, string tempDirectoryForExport)
+		private string[] GenerateConfigurationTemplates(DictionaryConfigurationModel configuration, LcmCache cache, string tempDirectoryForExport)
 		{
 			var partFileNames = configuration.Parts.Where(pt => pt.IsEnabled).Select(c => CssGenerator.GetClassAttributeForConfig(c) + ".xhtml").ToArray();
-			var partTemplates = LcmXhtmlGenerator.GenerateXHTMLTemplatesForConfigurationModel(configuration);
+			var partTemplates = LcmXhtmlGenerator.GenerateXHTMLTemplatesForConfigurationModel(configuration, cache);
 			if (partTemplates.Count != partFileNames.Count())
 			{
 				throw new ApplicationException("Programming error generating xhtml templates from a configuration.");

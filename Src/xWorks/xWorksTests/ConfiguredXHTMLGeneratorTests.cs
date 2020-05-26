@@ -9717,7 +9717,7 @@ namespace SIL.FieldWorks.XWorks
 			var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, new ReadOnlyPropertyTable(m_propertyTable), false, false, null, isTemplate: true);
 			var entry = CreateInterestingLexEntry(Cache);
 			//SUT
-			var result = LcmXhtmlGenerator.GenerateXHTMLTemplatesForConfigurationModel(model);
+			var result = LcmXhtmlGenerator.GenerateXHTMLTemplatesForConfigurationModel(model, Cache);
 			const string expectedTemplate = "/div[@class='lexentry']";
 			Assert.That(result.Count(), Is.EqualTo(1));
 			// verify the one result matches the selected node
@@ -9746,9 +9746,44 @@ namespace SIL.FieldWorks.XWorks
 			var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, new ReadOnlyPropertyTable(m_propertyTable), false, false, null, isTemplate: true);
 			var entry = CreateInterestingLexEntry(Cache);
 			//SUT
-			var result = LcmXhtmlGenerator.GenerateXHTMLTemplatesForConfigurationModel(model);
+			var result = LcmXhtmlGenerator.GenerateXHTMLTemplatesForConfigurationModel(model, Cache);
 			const string expectedTemplate = "/div[@class='lexentry']/span[@class='headword']/span[@lang='fr']/a[@href='%headword.guid%' and text()='%headword.[lang=fr].value%']";
 			AssertThatXmlIn.String(result[0]).HasSpecifiedNumberOfMatchesForXpath(expectedTemplate, 1);
+		}
+
+		[Test]
+		public void GenerateXHTMLTemplate_MagicAnalysisWsIdWorks()
+		{
+			var headwordAll = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "MLHeadWord",
+				CSSClassNameOverride = "all",
+				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "all analysis" })
+			};
+			var headwordBest = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "MLHeadWord",
+				CSSClassNameOverride = "headword",
+				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "best analysis" })
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				Children = new List<ConfigurableDictionaryNode> { headwordAll, headwordBest },
+				FieldDescription = "LexEntry"
+			};
+			var model = new DictionaryConfigurationModel
+			{
+				Parts = new List<ConfigurableDictionaryNode> { mainEntryNode }
+			};
+			CssGeneratorTests.PopulateFieldsForTesting(model);
+			var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, new ReadOnlyPropertyTable(m_propertyTable), false, false, null, isTemplate: true);
+			var entry = CreateInterestingLexEntry(Cache);
+			//SUT
+			var result = LcmXhtmlGenerator.GenerateXHTMLTemplatesForConfigurationModel(model, Cache);
+			const string expectedTemplate = "/div[@class='lexentry']/span[@class='all']/span[@lang='en' and text()='%all.[lang=en].value%']";
+			const string expectedHwTemplate = "/div[@class='lexentry']/span[@class='headword']/span[@lang='en']/a[@href='%headword.guid%' and text()='%headword.[lang=en].value%']";
+			AssertThatXmlIn.String(result[0]).HasSpecifiedNumberOfMatchesForXpath(expectedTemplate, 1);
+			AssertThatXmlIn.String(result[0]).HasSpecifiedNumberOfMatchesForXpath(expectedHwTemplate, 1);
 		}
 	}
 }
