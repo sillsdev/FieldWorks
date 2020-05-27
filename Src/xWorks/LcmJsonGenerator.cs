@@ -48,7 +48,7 @@ namespace SIL.FieldWorks.XWorks
 			dynamic audioObject = new JObject();
 			audioObject.id = safeAudioId;
 			audioObject.src = srcAttribute.Replace("\\", "/"); // expecting relative paths only
-			return WriteProcessedObject(false, audioObject.ToString(), "audio");
+			return WriteProcessedObject(false, audioObject.ToString(), "value");
 		}
 
 		public string WriteProcessedObject(bool isBlock, string elementContent, string className)
@@ -295,6 +295,11 @@ namespace SIL.FieldWorks.XWorks
 		public string WriteProcessedSenses(bool isBlock, string sensesContent, string classAttribute, string sharedGramInfo)
 		{
 			return $"{sharedGramInfo}{WriteProcessedCollection(isBlock, sensesContent, classAttribute)}";
+		}
+
+		public string AddAudioWsContent(string wsId, Guid linkTarget, string fileContent)
+		{
+			return $"{{\"guid\":\"{linkTarget}\",\"lang\":\"{wsId}\",{fileContent}}}";
 		}
 
 		public string AddSenseData(string senseNumberSpan, bool isBlock, Guid ownerGuid,

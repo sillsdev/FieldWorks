@@ -542,7 +542,7 @@ namespace SIL.FieldWorks.XWorks
 			var result = ConfiguredLcmGenerator.GenerateXHTMLForEntry(entryOne, mainEntryNode, null, DefaultSettings);
 
 			var expectedResults = @"{""guid"": """ + entryOne.Guid +
-								  @""",""letterHead"": ""c"", ""headword"": [{""audio"": { ""id"": ""gTest_Audi_o"", ""src"": ""AudioVisual/Test Audi'o.wav""}}]}";
+								  @""",""letterHead"": ""c"", ""headword"": [{""guid"": """ + entryOne.Guid + @""", ""lang"":""en-Zxxx-x-audio"", ""value"": {""id"": ""gTest_Audi_o"", ""src"": ""AudioVisual/Test Audi'o.wav""}}]}";
 			var expected = (JObject)JsonConvert.DeserializeObject(expectedResults, new JsonSerializerSettings { Formatting = Formatting.None });
 			VerifyJson(result, expected);
 		}

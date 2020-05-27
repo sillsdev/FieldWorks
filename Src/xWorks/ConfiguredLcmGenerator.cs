@@ -2374,7 +2374,8 @@ namespace SIL.FieldWorks.XWorks
 				{
 					var audioId = fieldText.Substring(0, fieldText.IndexOf(".", StringComparison.Ordinal));
 					var srcAttr = GenerateSrcAttributeForMediaFromFilePath(fieldText, "AudioVisual", settings);
-					var content = GenerateXHTMLForAudioFile(writingSystem, audioId, srcAttr, string.Empty, settings);
+					var fileContent = GenerateXHTMLForAudioFile(writingSystem, audioId, srcAttr, string.Empty, settings);
+					var content = GenerateAudioWsContent(writingSystem, linkTarget, fileContent, settings);
 					if (!string.IsNullOrEmpty(content))
 						return settings.ContentGenerator.WriteProcessedObject(false, content, null);
 				}
@@ -2441,11 +2442,18 @@ namespace SIL.FieldWorks.XWorks
 							badStrBuilder.Append(unicodeChars.GetTextElement());
 						}
 					}
+					//FIXME: The error content here needs to come from the settings.ContentGenerator implementation (won't work for json)
 					return string.Format("<span>\u0FFF\u0FFF\u0FFF<!-- Error generating content for string: '{0}' invalid surrogate pairs replaced with \\u0fff --></span>",
 						badStrBuilder);
 				}
 			}
 			return string.Empty;
+		}
+
+		private static string GenerateAudioWsContent(string wsId,
+			Guid linkTarget, string fileContent, GeneratorSettings settings)
+		{
+			return settings.ContentGenerator.AddAudioWsContent(wsId, linkTarget, fileContent);
 		}
 
 		private static void GenerateRunWithPossibleLink(GeneratorSettings settings, string writingSystem, IFragmentWriter writer, string style,

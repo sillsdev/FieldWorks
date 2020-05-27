@@ -882,6 +882,12 @@ namespace SIL.FieldWorks.XWorks
 			return WriteProcessedObject(isBlock, sharedGramInfo + sensesContent, classAttribute);
 		}
 
+		public string AddAudioWsContent(string className, Guid linkTarget, string fileContent)
+		{
+			// No additional wrapping required for the xhtml
+			return fileContent;
+		}
+
 		public string AddCollectionItem(bool isBlock, string collectionItemClass, string content)
 		{
 			var bldr = new StringBuilder();
