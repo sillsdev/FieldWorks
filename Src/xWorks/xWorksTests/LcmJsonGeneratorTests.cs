@@ -156,7 +156,7 @@ namespace SIL.FieldWorks.XWorks
 			//SUT
 			var result = ConfiguredLcmGenerator.GenerateXHTMLForEntry(entry, mainEntryNode, null, DefaultSettings);
 			Console.WriteLine(result);
-			var expectedResult = @"{""guid"":""" + entry.Guid + @""",""letterHead"": ""c"",""senses"": [{""guid"":""" + entry.Guid + @""",""gloss"": [{""lang"":""en"",""value"":""gloss""}]},]}";
+			var expectedResult = @"{""xhtmlTemplate"": ""lexentry"",""guid"":""" + entry.Guid + @""",""letterHead"": ""c"",""senses"": [{""guid"":""" + entry.Guid + @""",""gloss"": [{""lang"":""en"",""value"":""gloss""}]},]}";
 			//This assert is dependent on the specific entry data created in CreateInterestingLexEntry
 			var expected = (JObject)JsonConvert.DeserializeObject(expectedResult);
 			VerifyJson(result, expected);
@@ -188,7 +188,7 @@ namespace SIL.FieldWorks.XWorks
 			//SUT
 			var result = ConfiguredLcmGenerator.GenerateXHTMLForEntry(entry, mainEntryNode, null, DefaultSettings);
 
-			var expectedResults = @"{""guid"":""" + entry.Guid + @""",""letterHead"": ""c"",""senses"": [{""guid"":""" + entry.Guid + @""",
+			var expectedResults = @"{""xhtmlTemplate"": ""lexentry"",""guid"":""" + entry.Guid + @""",""letterHead"": ""c"",""senses"": [{""guid"":""" + entry.Guid + @""",
 				""definitionorgloss"": [{""lang"":""en"",""value"":""gloss""},{""lang"":""es"",""value"":""definition""}]}]}";
 			//This assert is dependent on the specific entry data created in CreateInterestingLexEntry
 			var expected = (JObject)JsonConvert.DeserializeObject(expectedResults);
@@ -253,7 +253,7 @@ namespace SIL.FieldWorks.XWorks
 			//SUT
 			var result = ConfiguredLcmGenerator.GenerateXHTMLForEntry(entry, mainEntryNode, null, settings);
 			Console.WriteLine(result);
-			var expectedResults = @"{""guid"":""" + entry.Guid + @""",""letterHead"": ""c"",
+			var expectedResults = @"{""xhtmlTemplate"": ""lexentry"",""guid"":""" + entry.Guid + @""",""letterHead"": ""c"",
 				""msas"": {""mlpartofspeech"": [{""lang"":""en"",""value"":""Blah""}]}, ""senses"": [{""guid"":""" + entry.Guid + @""",""gloss"": [{""lang"":""en"",""value"":""gloss""}]},
 				{""guid"":""" + entry.Guid + @""",""gloss"": [{""lang"":""en"",""value"":""second sense""}]}]}";
 			var expected = (JObject)JsonConvert.DeserializeObject(expectedResults, new JsonSerializerSettings { Formatting = Formatting.None });
@@ -301,7 +301,7 @@ namespace SIL.FieldWorks.XWorks
 
 			//SUT
 			var result = ConfiguredLcmGenerator.GenerateXHTMLForEntry(entry, mainEntryNode, null, settings);
-			var expectedResults = @"{""guid"":""" + entry.Guid + @""",""letterHead"": ""c"",""pictures"": [{""guid"":""" + sensePic.Guid +
+			var expectedResults = @"{""xhtmlTemplate"": ""lexentry"",""guid"":""" + entry.Guid + @""",""letterHead"": ""c"",""pictures"": [{""guid"":""" + sensePic.Guid +
 								  @""",""src"":""pictures/picture"",""sensenumber"": [{""lang"":""en"",""value"":""1""}],""caption"": [{""lang"":""en"",""value"":""caption""}]}]}";
 			var expected = (JObject)JsonConvert.DeserializeObject(expectedResults, new JsonSerializerSettings { Formatting = Formatting.None });
 			VerifyJson(result, expected);
@@ -505,7 +505,7 @@ namespace SIL.FieldWorks.XWorks
 			//SUT
 			var output = ConfiguredLcmGenerator.GenerateXHTMLForEntry(entryEntry, mainEntryNode, pubMain, DefaultSettings);
 			Assert.IsNotNullOrEmpty(output);
-			var expectedResults = "{\"guid\":\"" + entryEntry.Guid + "\",\"letterHead\": \"e\"," +
+			var expectedResults = "{\"xhtmlTemplate\": \"lexentry\",\"guid\":\"" + entryEntry.Guid + "\",\"letterHead\": \"e\"," +
 								  "\"entry\": [{\"lang\":\"fr\",\"value\":\"entry\"}],\"senses\": [{\"guid\":\"" +
 								  entryEntry.Guid + "\",\"definitionorgloss\": [{\"lang\":\"en\",\"value\":\"entry\"}]}]," +
 								  "\"subentries\": [{\"subentry\": [{\"lang\":\"fr\",\"value\":\"mainsubentry\"}]}]," +
@@ -541,7 +541,7 @@ namespace SIL.FieldWorks.XWorks
 			//SUT
 			var result = ConfiguredLcmGenerator.GenerateXHTMLForEntry(entryOne, mainEntryNode, null, DefaultSettings);
 
-			var expectedResults = @"{""guid"": """ + entryOne.Guid +
+			var expectedResults = @"{""xhtmlTemplate"": ""lexentry"",""guid"": """ + entryOne.Guid +
 								  @""",""letterHead"": ""c"", ""headword"": [{""guid"": """ + entryOne.Guid + @""", ""lang"":""en-Zxxx-x-audio"", ""value"": {""id"": ""gTest_Audi_o"", ""src"": ""AudioVisual/Test Audi'o.wav""}}]}";
 			var expected = (JObject)JsonConvert.DeserializeObject(expectedResults, new JsonSerializerSettings { Formatting = Formatting.None });
 			VerifyJson(result, expected);
@@ -569,7 +569,7 @@ namespace SIL.FieldWorks.XWorks
 			ConfiguredXHTMLGeneratorTests.AddSenseToEntry(testEntry, "second gloss", m_wsEn, Cache);
 			//SUT
 			var result = ConfiguredLcmGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, DefaultDecorator, DefaultSettings);
-			var expectedResults = @"{""guid"":""" + testEntry.Guid + @""",""letterHead"": ""c"",""senses"":[{""senseNumber"":""1"",
+			var expectedResults = @"{""xhtmlTemplate"": ""lexentry"",""guid"":""" + testEntry.Guid + @""",""letterHead"": ""c"",""senses"":[{""senseNumber"":""1"",
 				""guid"":""" + testEntry.Guid + @""",""gloss"":[{""lang"":""en"",""value"":""gloss""}]},
 				{""senseNumber"":""2"",""guid"":""" + testEntry.Guid + @""",""gloss"":[{""lang"":""en"",""value"":""second gloss""}]}]}";
 			var expected = (JObject)JsonConvert.DeserializeObject(expectedResults, new JsonSerializerSettings { Formatting = Formatting.None });
@@ -598,7 +598,7 @@ namespace SIL.FieldWorks.XWorks
 			entry.Bibliography.set_String(m_wsFr, multiRunString);
 			//SUT
 			var result = ConfiguredLcmGenerator.GenerateXHTMLForEntry(entry, mainEntryNode, null, DefaultSettings);
-			var expectedResults = @"{""guid"":""" + entry.Guid + @""",""letterHead"": ""c"",""bib"": [{""lang"":""fr"",""value"":""French with ""},
+			var expectedResults = @"{""xhtmlTemplate"": ""lexentry"",""guid"":""" + entry.Guid + @""",""letterHead"": ""c"",""bib"": [{""lang"":""fr"",""value"":""French with ""},
 				{""lang"":""en"",""value"":""English""},{""lang"":""fr"",""value"":"" embedded""}]}";
 			var expected = (JObject)JsonConvert.DeserializeObject(expectedResults, new JsonSerializerSettings { Formatting = Formatting.None });
 			VerifyJson(result, expected);
@@ -645,7 +645,7 @@ namespace SIL.FieldWorks.XWorks
 
 			//SUT
 			var result = ConfiguredLcmGenerator.GenerateXHTMLForEntry(mainEntry, mainEntryNode, null, DefaultSettings);
-			var expectedResults = @"{""guid"":""" + mainEntry.Guid + @""",""letterHead"": ""c"",
+			var expectedResults = @"{""xhtmlTemplate"": ""lexentry"",""guid"":""" + mainEntry.Guid + @""",""letterHead"": ""c"",
 				""sensesos"": [{""lexsensereferences"": [{""ownertype_name"": [{""lang"":""en"",""value"":""TestRefType""}]}]}]}";
 			var expected = (JObject)JsonConvert.DeserializeObject(expectedResults, new JsonSerializerSettings { Formatting = Formatting.None });
 			VerifyJson(result, expected);
@@ -672,12 +672,12 @@ namespace SIL.FieldWorks.XWorks
 
 			//SUT
 			var result = ConfiguredLcmGenerator.GenerateXHTMLForEntry(entryOne, mainEntryNode, null, DefaultSettings);
-			var expectedResults = @"{""guid"":""" + entryOne.Guid + @""",""letterHead"": ""c"",""homographnumber"": ""1"",
+			var expectedResults = @"{""xhtmlTemplate"": ""lexentry"",""guid"":""" + entryOne.Guid + @""",""letterHead"": ""c"",""homographnumber"": ""1"",
 				""citationform"": [{""lang"":""fr"",""value"":""Citation""}]}";
 			var expected = (JObject)JsonConvert.DeserializeObject(expectedResults, new JsonSerializerSettings { Formatting = Formatting.None });
 			VerifyJson(result, expected);
 			result = ConfiguredLcmGenerator.GenerateXHTMLForEntry(entryTwo, mainEntryNode, null, DefaultSettings);
-			expectedResults = @"{""guid"":""" + entryTwo.Guid + @""",""letterHead"": ""c"",""homographnumber"": ""2"",
+			expectedResults = @"{""xhtmlTemplate"": ""lexentry"",""guid"":""" + entryTwo.Guid + @""",""letterHead"": ""c"",""homographnumber"": ""2"",
 				""citationform"": [{""lang"":""fr"",""value"":""Citation""}]}";
 			expected = (JObject)JsonConvert.DeserializeObject(expectedResults, new JsonSerializerSettings { Formatting = Formatting.None });
 			VerifyJson(result, expected);
@@ -726,7 +726,7 @@ namespace SIL.FieldWorks.XWorks
 				var result = ConfiguredLcmGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, DefaultSettings);
 
 				// Bug: The second filename should be different after the export with relative path settings (fix later)
-				var expectedResults = @"{""guid"":""" + testEntry.Guid + @""",""letterHead"": ""c"",""pictures"": [{""guid"":""" + sensePic.Guid + @""",""src"":""pictures/" + fileName + @"""},
+				var expectedResults = @"{""xhtmlTemplate"": ""lexentry"",""guid"":""" + testEntry.Guid + @""",""letterHead"": ""c"",""pictures"": [{""guid"":""" + sensePic.Guid + @""",""src"":""pictures/" + fileName + @"""},
 					{""guid"":""" + sensePic2.Guid + @""",""src"":""pictures/" + fileName + @"""}],}";
 				var expected = (JObject)JsonConvert.DeserializeObject(expectedResults, new JsonSerializerSettings { Formatting = Formatting.None });
 				VerifyJson(result, expected);
@@ -737,6 +737,76 @@ namespace SIL.FieldWorks.XWorks
 				File.Delete(filePath1);
 				File.Delete(filePath2);
 			}
+		}
+
+		[Test]
+		public void GenerateJsonForEntry_MinorComplexForm_TemplateTypeCorrect_GeneratesGloss()
+		{
+			var wsEn = Cache.WritingSystemFactory.GetWsFromStr("en");
+			var lexentry = ConfiguredXHTMLGeneratorTests.CreateInterestingLexEntry(Cache);
+			ConfiguredXHTMLGeneratorTests.AddSenseToEntry(lexentry, "gloss2", wsEn, Cache);
+			ConfiguredXHTMLGeneratorTests.AddSenseToEntry(lexentry, string.Empty, wsEn, Cache);
+			lexentry.SummaryDefinition.SetAnalysisDefaultWritingSystem("MainEntrySummaryDefn");
+			lexentry.SensesOS[0].Definition.SetAnalysisDefaultWritingSystem("MainEntryS1Defn");
+			lexentry.SensesOS[2].Definition.SetAnalysisDefaultWritingSystem("MainEntryS3Defn");
+
+			var subentry1 = ConfiguredXHTMLGeneratorTests.CreateInterestingLexEntry(Cache);
+			ConfiguredXHTMLGeneratorTests.CreateComplexForm(Cache, lexentry, subentry1, true); // subentry references main ILexEntry
+
+			var subentry2 = ConfiguredXHTMLGeneratorTests.CreateInterestingLexEntry(Cache);
+			ConfiguredXHTMLGeneratorTests.CreateComplexForm(Cache, lexentry.SensesOS[1], subentry2, true); // subentry references 2nd ILexSense
+
+			var subentry3 = ConfiguredXHTMLGeneratorTests.CreateInterestingLexEntry(Cache);
+			ConfiguredXHTMLGeneratorTests.CreateComplexForm(Cache, lexentry.SensesOS[2], subentry3, true); // subentry references 3rd ILexSense
+
+			var glossOrSummDefnNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "GlossOrSummary",
+				Label = "Gloss (or Summary Definition)",
+				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new[] { "analysis" })
+			};
+			var refentryNode = new ConfigurableDictionaryNode
+			{
+				Children = new List<ConfigurableDictionaryNode> { glossOrSummDefnNode },
+				FieldDescription = "ConfigReferencedEntries",
+				Label = "Referenced Entries",
+				CSSClassNameOverride = "referencedentries"
+			};
+			var ComponentsNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "ComplexFormEntryRefs",
+				Label = "Components",
+				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetFullyEnabledListOptions(DictionaryNodeListOptions.ListIds.Complex, Cache),
+				Children = new List<ConfigurableDictionaryNode> { refentryNode }
+			};
+			var minorEntryNode = new ConfigurableDictionaryNode
+			{
+				Children = new List<ConfigurableDictionaryNode> { ComponentsNode },
+				FieldDescription = "LexEntry",
+				CSSClassNameOverride = "minorentrycomplex",
+			};
+			CssGeneratorTests.PopulateFieldsForTesting(minorEntryNode);
+;
+			//SUT
+			var result = ConfiguredLcmGenerator.GenerateXHTMLForEntry(subentry1, minorEntryNode, null, DefaultSettings);
+			var expectedResults = @"{""xhtmlTemplate"":""minorentrycomplex"",""guid"":""" + subentry1.Guid + @""",""letterHead"": ""c"",
+				""complexformentryrefs"": [{""referencedentries"": [{""glossorsummary"": [{""lang"":""en"",""value"":""MainEntrySummaryDefn""}]}]}]}";
+			var expected = (JObject)JsonConvert.DeserializeObject(expectedResults, new JsonSerializerSettings { Formatting = Formatting.None });
+			VerifyJson(result, expected);
+
+			//SUT
+			var result2 = ConfiguredLcmGenerator.GenerateXHTMLForEntry(subentry2, minorEntryNode, null, DefaultSettings);
+			expectedResults = @"{""xhtmlTemplate"":""minorentrycomplex"",""guid"":""" + subentry2.Guid + @""",""letterHead"": ""c"",
+				""complexformentryrefs"": [{""referencedentries"": [{""glossorsummary"": [{""lang"":""en"",""value"":""gloss2""}]}]}]}";
+			expected = (JObject)JsonConvert.DeserializeObject(expectedResults, new JsonSerializerSettings { Formatting = Formatting.None });
+			VerifyJson(result2, expected);
+
+			//SUT
+			var result3 = ConfiguredLcmGenerator.GenerateXHTMLForEntry(subentry3, minorEntryNode, null, DefaultSettings);
+			expectedResults = @"{""xhtmlTemplate"": ""minorentrycomplex"",""guid"":""" + subentry3.Guid + @""",""letterHead"": ""c"",
+				""complexformentryrefs"": [{""referencedentries"": [{""glossorsummary"": [{""lang"":""en"",""value"":""MainEntryS3Defn""}]}]}]}";
+			expected = (JObject)JsonConvert.DeserializeObject(expectedResults, new JsonSerializerSettings { Formatting = Formatting.None });
+			VerifyJson(result3, expected);
 		}
 
 		[Test]

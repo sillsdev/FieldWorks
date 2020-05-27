@@ -167,6 +167,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var jsonWriter = (JsonFragmentWriter)xw;
 			jsonWriter.StartObject();
+			jsonWriter.InsertJsonProperty("xhtmlTemplate", className);
 			jsonWriter.InsertJsonProperty("guid", entryGuid.ToString());
 			// get the index character (letter header) for this entry
 			var entry = Cache.ServiceLocator.GetObject(entryGuid);
