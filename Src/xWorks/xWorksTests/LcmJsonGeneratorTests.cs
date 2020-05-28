@@ -843,6 +843,35 @@ namespace SIL.FieldWorks.XWorks
 			VerifyJson(json.ToString(), expected);
 		}
 
+		[Test]
+		public void SavePublishedJsonWithStyles_DisplayXhtmlPopulated()
+		{
+			var citationForm = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "CitationForm",
+				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new[] { "fr" })
+			};
+			var homographNum = new ConfigurableDictionaryNode { FieldDescription = "HomographNumber" };
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				Children = new List<ConfigurableDictionaryNode> { homographNum, citationForm },
+				FieldDescription = "LexEntry"
+			};
+
+			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
+			var testEntry = ConfiguredXHTMLGeneratorTests.CreateInterestingLexEntry(Cache);
+			var results = LcmJsonGenerator.SavePublishedJsonWithStyles(new[] { testEntry.Hvo },
+				DefaultDecorator, 1,
+				new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { mainEntryNode } },
+				m_propertyTable, "test.json", null);
+			var expectedResults = @"{""xhtmlTemplate"":""lexentry"",""guid"":""" + testEntry.Guid + @""",""letterHead"":""c"",
+				""homographnumber"":""0"",""citationform"":[{""lang"":""fr"",""value"":""Citation""}],
+				""displayXhtml"":""<div class=\""lexentry\"" id=\""g" + testEntry.Guid + @"\""><span class=\""homographnumber\"">0</span><span class=\""citationform\""><span lang=\""fr\"">Citation</span></span></div>""}";
+			var expected = (JObject)JsonConvert.DeserializeObject(expectedResults, new JsonSerializerSettings { Formatting = Formatting.None });
+			VerifyJson(results[0][0].ToString(Formatting.None), expected);
+
+		}
+
 		/// <summary>
 		/// Verifies the json data generated is equivalent to the expected result
 		/// </summary>

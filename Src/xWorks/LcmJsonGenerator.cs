@@ -402,28 +402,30 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
+		/// <summary>
+		/// This method will generate a list of arrays of json entries.
+		/// Each array will contain the number of entries given to batchSize except possibly the last one.
+		/// <remarks>
+		/// Due to time constraints webonary version 1.5 will need the xhtml to display the entries correctly on Webonary.
+		/// This is an engineering compromise and should be removed when work happens on webonary 2.0
+		/// The template which is being generated is the direction to move and the displayXhtml property should be deprecated.
+		/// </remarks>
+		/// </summary>
 		public static List<JArray> SavePublishedJsonWithStyles(int[] entriesToSave, DictionaryPublicationDecorator publicationDecorator, int batchSize,
 			DictionaryConfigurationModel configuration, PropertyTable propertyTable, string jsonPath, IThreadedProgress progress)
 		{
 			var entryCount = entriesToSave.Length;
 			var cssPath = Path.ChangeExtension(jsonPath, "css");
-			var configDir = Path.GetDirectoryName(configuration.FilePath);
-			var clerk = propertyTable.GetValue<RecordClerk>("ActiveClerk", null);
 			var cache = propertyTable.GetValue<LcmCache>("cache", null);
 			// Don't display letter headers if we're showing a preview in the Edit tool or we're not sorting by headword
 			using (var cssWriter = new StreamWriter(cssPath, false, Encoding.UTF8))
 			{
 				var readOnlyPropertyTable = new ReadOnlyPropertyTable(propertyTable);
-				var custCssPath = string.Empty;
-				var projType = string.IsNullOrEmpty(configDir) ? null : new DirectoryInfo(configDir).Name;
-				if (!string.IsNullOrEmpty(projType))
-				{
-					var cssName = projType == "Dictionary" ? "ProjectDictionaryOverrides.css" : "ProjectReversalOverrides.css";
-					custCssPath = LcmXhtmlGenerator.CopyCustomCssToTempFolder(configDir, jsonPath, cssName);
-				}
 				var settings = new ConfiguredLcmGenerator.GeneratorSettings(cache, readOnlyPropertyTable, true, true, Path.GetDirectoryName(jsonPath),
 					ConfiguredLcmGenerator.IsNormalRtl(readOnlyPropertyTable), Path.GetFileName(cssPath) == "configured.css") { ContentGenerator = new LcmJsonGenerator(cache)};
-				var entryContents = new Tuple<ICmObject, StringBuilder>[entryCount];
+				var displayXhtmlSettings = new ConfiguredLcmGenerator.GeneratorSettings(cache, readOnlyPropertyTable, true, true, Path.GetDirectoryName(jsonPath),
+						ConfiguredLcmGenerator.IsNormalRtl(readOnlyPropertyTable), Path.GetFileName(cssPath) == "configured.css");
+				var entryContents = new Tuple<ICmObject, StringBuilder, StringBuilder>[entryCount];
 				var entryActions = new List<Action>();
 				// For every entry in the page generate an action that will produce the xhtml document fragment for that entry
 				for (var i = 0; i < entryCount; ++i)
@@ -431,12 +433,17 @@ namespace SIL.FieldWorks.XWorks
 					var hvo = entriesToSave[i];
 					var entry = cache.ServiceLocator.GetObject(hvo);
 					var entryStringBuilder = new StringBuilder(100);
-					entryContents[i] = new Tuple<ICmObject, StringBuilder>(entry, entryStringBuilder);
+					var displayXhtmlBuilder = new StringBuilder(100);
+					entryContents[i] = new Tuple<ICmObject, StringBuilder, StringBuilder>(entry, entryStringBuilder, displayXhtmlBuilder);
 
 					var generateEntryAction = new Action(() =>
 					{
-						var entryContent = ConfiguredLcmGenerator.GenerateXHTMLForEntry(entry, configuration, publicationDecorator, settings);
+						var entryContent = ConfiguredLcmGenerator.GenerateXHTMLForEntry(entry, configuration,
+							publicationDecorator, settings);
 						entryStringBuilder.Append(entryContent);
+						var displayXhtmlContent = ConfiguredLcmGenerator.GenerateXHTMLForEntry(entry, configuration,
+							publicationDecorator, displayXhtmlSettings);
+						displayXhtmlBuilder.Append(displayXhtmlContent);
 						if (progress != null)
 							progress.Position++;
 					});
@@ -458,7 +465,9 @@ namespace SIL.FieldWorks.XWorks
 					jsonWriter.WriteStartArray();
 					foreach (var entryData in entryContents)
 					{
-						jsonWriter.WriteRaw(entryData.Item2.ToString());
+						dynamic entryObject = JsonConvert.DeserializeObject(entryData.Item2.ToString());
+						entryObject.displayXhtml = entryData.Item3.ToString();
+						jsonWriter.WriteRaw(entryObject.ToString());
 						jsonWriter.WriteRaw(",");
 					}
 					jsonWriter.WriteEndArray();
