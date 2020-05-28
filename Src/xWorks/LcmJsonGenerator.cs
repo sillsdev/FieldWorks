@@ -458,29 +458,35 @@ namespace SIL.FieldWorks.XWorks
 				if (progress != null)
 					progress.Message = xWorksStrings.ksArrangingDisplayFragments;
 				var stringBuilder = new StringBuilder(100);
-				// TODO: Do this in a loop for the entries array split into batchSize
-				using (var jsonStringWriter = new StringWriter(stringBuilder))
-				using (var jsonWriter = new JsonTextWriter(jsonStringWriter))
+				// split the array into batch size chunks using fancy inscrutable linq
+				var batchedContents = entryContents.Select((s, i) => entryContents.Skip(i * batchSize).Take(batchSize)).Where(a => a.Any());
+				var generatedEntries = new List<JArray>();
+				foreach (var batch in batchedContents)
 				{
-					jsonWriter.WriteStartArray();
-					foreach (var entryData in entryContents)
+					using (var jsonStringWriter = new StringWriter(stringBuilder))
+					using (var jsonWriter = new JsonTextWriter(jsonStringWriter))
 					{
-						dynamic entryObject = JsonConvert.DeserializeObject(entryData.Item2.ToString());
-						entryObject.displayXhtml = entryData.Item3.ToString();
-						jsonWriter.WriteRaw(entryObject.ToString());
-						jsonWriter.WriteRaw(",");
+						jsonWriter.WriteStartArray();
+						foreach (var entryData in batch)
+						{
+							dynamic entryObject = JsonConvert.DeserializeObject(entryData.Item2.ToString());
+							entryObject.displayXhtml = entryData.Item3.ToString();
+							jsonWriter.WriteRaw(entryObject.ToString());
+							jsonWriter.WriteRaw(",");
+						}
+						jsonWriter.WriteEndArray();
+						jsonWriter.Flush();
 					}
-					jsonWriter.WriteEndArray();
-					jsonWriter.Flush();
+					generatedEntries.Add((JArray)JsonConvert.DeserializeObject(stringBuilder.ToString(), new JsonSerializerSettings { Formatting = Formatting.None }));
+					stringBuilder.Clear();
 				}
-				var expected = (JArray)JsonConvert.DeserializeObject(stringBuilder.ToString(), new JsonSerializerSettings { Formatting = Newtonsoft.Json.Formatting.None });
 
 				if (progress != null)
 					progress.Message = xWorksStrings.ksGeneratingStyleInfo;
 
 				cssWriter.Write(CssGenerator.GenerateCssFromConfiguration(configuration, readOnlyPropertyTable));
 				cssWriter.Flush();
-				return new List<JArray> {expected};
+				return generatedEntries;
 			}
 		}
 

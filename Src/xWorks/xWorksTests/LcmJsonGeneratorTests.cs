@@ -869,7 +869,35 @@ namespace SIL.FieldWorks.XWorks
 				""displayXhtml"":""<div class=\""lexentry\"" id=\""g" + testEntry.Guid + @"\""><span class=\""homographnumber\"">0</span><span class=\""citationform\""><span lang=\""fr\"">Citation</span></span></div>""}";
 			var expected = (JObject)JsonConvert.DeserializeObject(expectedResults, new JsonSerializerSettings { Formatting = Formatting.None });
 			VerifyJson(results[0][0].ToString(Formatting.None), expected);
+		}
 
+		[Test]
+		public void SavePublishedJsonWithStyles_BatchingWorks()
+		{
+			var citationForm = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "CitationForm",
+				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new[] { "fr" })
+			};
+			var homographNum = new ConfigurableDictionaryNode { FieldDescription = "HomographNumber" };
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				Children = new List<ConfigurableDictionaryNode> { homographNum, citationForm },
+				FieldDescription = "LexEntry"
+			};
+
+			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
+			var testEntry = ConfiguredXHTMLGeneratorTests.CreateInterestingLexEntry(Cache);
+			var testEntry2 = ConfiguredXHTMLGeneratorTests.CreateInterestingLexEntry(Cache);
+			var testEntry3 = ConfiguredXHTMLGeneratorTests.CreateInterestingLexEntry(Cache);
+			var testBatchSize = 2;
+			var results = LcmJsonGenerator.SavePublishedJsonWithStyles(new[] { testEntry.Hvo, testEntry2.Hvo, testEntry3.Hvo },
+				DefaultDecorator, testBatchSize,
+				new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { mainEntryNode } },
+				m_propertyTable, "test.json", null);
+			Assert.That(results.Count, Is.EqualTo(2)); // 3 entries makes 2 batches at batchSize of 2
+			Assert.That(results[0].Count, Is.EqualTo(testBatchSize)); // one full batch of 2
+			Assert.That(results[1].Count, Is.EqualTo(1)); // one lonely entry in the last batch
 		}
 
 		/// <summary>
