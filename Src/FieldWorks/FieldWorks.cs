@@ -37,7 +37,6 @@ using SIL.FieldWorks.FwCoreDlgs;
 using SIL.FieldWorks.FwCoreDlgs.BackupRestore;
 using SIL.FieldWorks.FwCoreDlgs.FileDialog;
 using SIL.FieldWorks.LexicalProvider;
-using SIL.FieldWorks.PaObjects;
 using SIL.FieldWorks.Resources;
 using SIL.Keyboarding;
 using SIL.LCModel;
@@ -77,7 +76,6 @@ namespace SIL.FieldWorks
 		#region Constants
 		private const int kStartingPort = 9628; // Pretty arbitrary, but this is what TE used to use.
 		private const string kFwRemoteRequest = "FW_RemoteRequest";
-		internal const string kPaRemoteRequest = "PA_RemoteRequest";
 		#endregion
 
 		#region Static variables
@@ -3098,7 +3096,6 @@ namespace SIL.FieldWorks
 					ChannelServices.RegisterChannel(instanceListener, false);
 					RemotingConfiguration.ApplicationName = FwUtils.ksSuiteName;
 					RemotingConfiguration.RegisterWellKnownServiceType(typeof(RemoteRequest), kFwRemoteRequest, WellKnownObjectMode.Singleton);
-					RemotingConfiguration.RegisterWellKnownServiceType(typeof(PaRemoteRequest), kPaRemoteRequest, WellKnownObjectMode.Singleton);
 
 					fFoundAvailablePort = true;
 					s_serviceChannel = instanceListener;

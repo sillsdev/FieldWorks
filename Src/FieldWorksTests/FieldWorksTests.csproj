@@ -162,7 +162,6 @@
       <Link>AssemblyInfoForTests.cs</Link>
     </Compile>
     <Compile Include="FieldWorksTests.cs" />
-    <Compile Include="PaObjectsTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">

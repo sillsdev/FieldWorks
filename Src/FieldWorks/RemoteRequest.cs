@@ -6,7 +6,7 @@ using System;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwUtils;
 
-namespace SIL.FieldWorks.PaObjects
+namespace SIL.FieldWorks
 {
 	/// <summary>
 	/// Handle requests from other instances of TE
