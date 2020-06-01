@@ -34,6 +34,27 @@ Elements to ignore or are handled elsewhere
 		</free>
 	</xsl:template>
 	<!--
+		- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+		OutputGlossWithPrependOrAppend
+		Output a gloss with any prepended or appended material
+		Parameters: sType = type of item to use
+		sLang = language id currently being used
+		- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+	-->
+	<xsl:template name="OutputGlossWithPrependOrAppend">
+		<xsl:param name="sType"/>
+		<xsl:param name="sLang"/>
+		<xsl:variable name="sGlossPrepend" select="normalize-space(item[@type='glsPrepend' and @lang=$sLang])"/>
+		<xsl:if test="string-length($sGlossPrepend) &gt; 0">
+			<xsl:value-of select="$sGlossPrepend"/>
+		</xsl:if>
+		<xsl:value-of select="normalize-space(item[@type=$sType and @lang=$sLang])"/>
+		<xsl:variable name="sGlossAppend" select="normalize-space(item[@type='glsAppend' and @lang=$sLang])"/>
+		<xsl:if test="string-length($sGlossAppend) &gt; 0">
+			<xsl:value-of select="$sGlossAppend"/>
+		</xsl:if>
+	</xsl:template>
+	<!--
 	  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 	  OutputInterlinearContent
 	  Output the content of an interlinear portion
@@ -372,6 +393,7 @@ OutputMorphs
 					<xsl:if test="@guid=$sEnclitic">
 						<xsl:text>=</xsl:text>
 					</xsl:if>
+					<!--<object type="tGrammaticalGloss">-->
 					<xsl:choose>
 						<xsl:when test="@guid=$sEnclitic">
 							<xsl:value-of select="substring-after(normalize-space(item[@type=$sType and @lang=$sLang]), '=')"/>
@@ -380,9 +402,13 @@ OutputMorphs
 							<xsl:value-of select="substring-before(normalize-space(item[@type=$sType and @lang=$sLang]), '=')"/>
 						</xsl:when>
 						<xsl:otherwise>
-							<xsl:value-of select="normalize-space(item[@type=$sType and @lang=$sLang])"/>
+							<xsl:call-template name="OutputGlossWithPrependOrAppend">
+								<xsl:with-param name="sType" select="$sType"/>
+								<xsl:with-param name="sLang" select="$sLang"/>
+							</xsl:call-template>
 						</xsl:otherwise>
 					</xsl:choose>
+					<!--					</object>-->
 					<xsl:if test="@guid=$sProclitic">
 						<xsl:text>=</xsl:text>
 					</xsl:if>
@@ -397,19 +423,17 @@ OutputMorphs
 					</xsl:if>
 				</xsl:when>
 				<xsl:otherwise>
-					<xsl:if test="$sType='gls'">
-						<xsl:variable name="sGlossPrepend" select="normalize-space(item[@type='glsPrepend' and @lang=$sLang])"/>
-						<xsl:if test="string-length($sGlossPrepend) &gt; 0">
-							<xsl:value-of select="$sGlossPrepend"/>
-						</xsl:if>
-					</xsl:if>
-					<xsl:value-of select="normalize-space(item[@type=$sType and @lang=$sLang])"/>
-					<xsl:if test="$sType='gls'">
-						<xsl:variable name="sGlossAppend" select="normalize-space(item[@type='glsAppend' and @lang=$sLang])"/>
-						<xsl:if test="string-length($sGlossAppend) &gt; 0">
-							<xsl:value-of select="$sGlossAppend"/>
-						</xsl:if>
-					</xsl:if>
+					<xsl:choose>
+						<xsl:when test="$sType='gls'">
+							<xsl:call-template name="OutputGlossWithPrependOrAppend">
+								<xsl:with-param name="sType" select="$sType"/>
+								<xsl:with-param name="sLang" select="$sLang"/>
+							</xsl:call-template>
+						</xsl:when>
+						<xsl:otherwise>
+							<xsl:value-of select="normalize-space(item[@type=$sType and @lang=$sLang])"/>
+						</xsl:otherwise>
+					</xsl:choose>
 				</xsl:otherwise>
 			</xsl:choose>
 			<xsl:if test="$sType='cf'">
