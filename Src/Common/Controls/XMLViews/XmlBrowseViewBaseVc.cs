@@ -1602,6 +1602,13 @@ namespace SIL.FieldWorks.Common.Controls
 		/// ------------------------------------------------------------------------------------
 		public override void Display(IVwEnv vwenv, int hvo, int frag)
 		{
+			// 10 years of errors prove we can't get this right. Let's stop crashing but still encourage developers to fix it.
+			if (m_cache == null || !m_cache.ServiceLocator.IsValidObjectId(hvo))
+			{
+				Debug.Assert(m_cache != null && m_cache.ServiceLocator.IsValidObjectId(hvo),
+					"Trying to display a row for an invalid object. Some recent operation failed to cause this browse view's record list to refresh");
+				return;
+			}
 			switch (frag)
 			{
 				case kfragRoot:
