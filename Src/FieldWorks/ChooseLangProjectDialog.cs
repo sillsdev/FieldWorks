@@ -188,19 +188,18 @@ namespace SIL.FieldWorks
 		private void OpenFwDataProjectLinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
 		{
 			// Use 'el cheapo' .Net dlg to find LangProj.
-			using (var dlg = new OpenFileDialogAdapter())
+			using (IOpenFileDialog dlg = new OpenFileDialogAdapter())
 			{
-				var dlgAsIFileDialog = (IFileDialog)dlg;
 				Hide();
-				dlgAsIFileDialog.CheckFileExists = true;
-				dlgAsIFileDialog.InitialDirectory = FwDirectoryFinder.ProjectsDirectory;
-				dlgAsIFileDialog.RestoreDirectory = true;
-				dlgAsIFileDialog.Title = Properties.Resources.ksChooseLangProjectDialogTitle;
-				dlgAsIFileDialog.ValidateNames = true;
-				((IOpenFileDialog)dlgAsIFileDialog).Multiselect = false;
-				dlgAsIFileDialog.Filter = ResourceHelper.FileFilter(FileFilterType.FieldWorksProjectFiles);
-				DialogResult = dlgAsIFileDialog.ShowDialog(Owner);
-				Project = dlgAsIFileDialog.FileName;
+				dlg.CheckFileExists = true;
+				dlg.InitialDirectory = FwDirectoryFinder.ProjectsDirectory;
+				dlg.RestoreDirectory = true;
+				dlg.Title = Properties.Resources.ksChooseLangProjectDialogTitle;
+				dlg.ValidateNames = true;
+				dlg.Multiselect = false;
+				dlg.Filter = ResourceHelper.FileFilter(FileFilterType.FieldWorksProjectFiles);
+				DialogResult = dlg.ShowDialog(Owner);
+				Project = dlg.FileName;
 			}
 		}
 

@@ -184,17 +184,16 @@ namespace LanguageExplorer.Areas.TextsAndWords
 
 		private void btnChooseFiles_Click(object sender, System.EventArgs e)
 		{
-			using (var dlg = new OpenFileDialogAdapter())
+			using (IOpenFileDialog dlg = new OpenFileDialogAdapter())
 			{
-				var dlgAsIOpenFileDialog = (IOpenFileDialog)dlg;
-				dlgAsIOpenFileDialog.Multiselect = true;
-				dlgAsIOpenFileDialog.Filter = ResourceHelper.FileFilter(FileFilterType.Text);
-				if (dlgAsIOpenFileDialog.ShowDialog(this) != DialogResult.OK)
+				dlg.Multiselect = true;
+				dlg.Filter = ResourceHelper.FileFilter(FileFilterType.Text);
+				if (dlg.ShowDialog(this) != DialogResult.OK)
 				{
 					return;
 				}
-				tbFileNames.Lines = dlgAsIOpenFileDialog.FileNames;
-				_paths = dlgAsIOpenFileDialog.FileNames;
+				tbFileNames.Lines = dlg.FileNames;
+				_paths = dlg.FileNames;
 			}
 		}
 		/// <summary>

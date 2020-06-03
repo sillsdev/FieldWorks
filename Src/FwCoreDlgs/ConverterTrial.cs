@@ -3,6 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing.Text;
 using System.IO;
@@ -41,7 +42,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private ToolTip toolTipInputFile;
 		private Button convertButton;
 		private Button saveFileButton;
-		private System.ComponentModel.IContainer components;
+		private IContainer components;
 
 		/// <summary />
 		internal EncConverters Converters { get; set; }
@@ -92,8 +93,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			{
 				components?.Dispose();
 
-				(saveFileDialog as IDisposable)?.Dispose();
-				(ofDlg as IDisposable)?.Dispose();
+				saveFileDialog?.Dispose();
+				ofDlg?.Dispose();
 			}
 			base.Dispose(disposing);
 		}

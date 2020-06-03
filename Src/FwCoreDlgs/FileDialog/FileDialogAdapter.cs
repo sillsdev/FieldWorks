@@ -12,7 +12,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.FileDialog
 	/// <summary>
 	/// File dialog adapter.
 	/// </summary>
-	public abstract class FileDialogAdapter : IFileDialog, IDisposable
+	public abstract class FileDialogAdapter : IFileDialog
 	{
 		/// <summary/>
 		protected IFileDialog _dlg;
@@ -185,8 +185,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.FileDialog
 
 			if (disposing)
 			{
-				var disposable = _dlg as IDisposable;
-				disposable?.Dispose();
+				_dlg?.Dispose();
 			}
 			_dlg = null;
 			IsDisposed = true;

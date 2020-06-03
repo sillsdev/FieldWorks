@@ -33,21 +33,20 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		private void m_btnBrowse_Click(object sender, EventArgs e)
 		{
-			using (var dlg = new OpenFileDialogAdapter())
+			using (IOpenFileDialog dlg = new OpenFileDialogAdapter())
 			{
-				var dlgAsIOpenFileDialog = (IOpenFileDialog)dlg;
-				dlgAsIOpenFileDialog.DefaultExt = "flextext";
-				dlgAsIOpenFileDialog.Filter = ResourceHelper.BuildFileFilter(FileFilterType.FLExText, FileFilterType.XML, FileFilterType.AllFiles);
-				dlgAsIOpenFileDialog.FilterIndex = 1;
-				dlgAsIOpenFileDialog.CheckFileExists = true;
-				dlgAsIOpenFileDialog.Multiselect = false;
+				dlg.DefaultExt = "flextext";
+				dlg.Filter = ResourceHelper.BuildFileFilter(FileFilterType.FLExText, FileFilterType.XML, FileFilterType.AllFiles);
+				dlg.FilterIndex = 1;
+				dlg.CheckFileExists = true;
+				dlg.Multiselect = false;
 				if (!string.IsNullOrEmpty(m_tbFilename.Text) && !string.IsNullOrEmpty(m_tbFilename.Text.Trim()))
 				{
-					dlgAsIOpenFileDialog.FileName = m_tbFilename.Text;
+					dlg.FileName = m_tbFilename.Text;
 				}
-				if (dlgAsIOpenFileDialog.ShowDialog() == DialogResult.OK)
+				if (dlg.ShowDialog() == DialogResult.OK)
 				{
-					m_tbFilename.Text = dlgAsIOpenFileDialog.FileName;
+					m_tbFilename.Text = dlg.FileName;
 				}
 			}
 		}

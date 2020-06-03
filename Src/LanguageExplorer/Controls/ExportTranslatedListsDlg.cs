@@ -161,19 +161,18 @@ namespace LanguageExplorer.Controls
 
 		private void m_btnBrowse_Click(object sender, EventArgs e)
 		{
-			using (var dlg = new SaveFileDialogAdapter())
+			using (ISaveFileDialog dlg = new SaveFileDialogAdapter())
 			{
-				var dlgAsISaveFileDialog = (ISaveFileDialog)dlg;
-				dlgAsISaveFileDialog.AddExtension = true;
-				dlgAsISaveFileDialog.DefaultExt = string.IsNullOrEmpty(m_defaultExt) ? ".xml" : m_defaultExt;
-				dlgAsISaveFileDialog.Filter = string.IsNullOrEmpty(m_filter) ? "*.xml" : m_filter;
-				dlgAsISaveFileDialog.Title = string.Format(LanguageExplorerResources.ExportTo0, string.IsNullOrEmpty(m_titleFrag) ? "Translated List" : m_titleFrag);
-				dlgAsISaveFileDialog.InitialDirectory = m_propertyTable.GetValue("ExportDir", Environment.GetFolderPath(Environment.SpecialFolder.Personal));
-				if (dlgAsISaveFileDialog.ShowDialog(this) != DialogResult.OK)
+				dlg.AddExtension = true;
+				dlg.DefaultExt = string.IsNullOrEmpty(m_defaultExt) ? ".xml" : m_defaultExt;
+				dlg.Filter = string.IsNullOrEmpty(m_filter) ? "*.xml" : m_filter;
+				dlg.Title = string.Format(LanguageExplorerResources.ExportTo0, string.IsNullOrEmpty(m_titleFrag) ? "Translated List" : m_titleFrag);
+				dlg.InitialDirectory = m_propertyTable.GetValue("ExportDir", Environment.GetFolderPath(Environment.SpecialFolder.Personal));
+				if (dlg.ShowDialog(this) != DialogResult.OK)
 				{
 					return;
 				}
-				m_tbFilepath.Text = dlgAsISaveFileDialog.FileName;
+				m_tbFilepath.Text = dlg.FileName;
 				EnableExportButton();
 			}
 		}

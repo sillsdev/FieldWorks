@@ -31,7 +31,7 @@ namespace LanguageExplorer.Areas.Notebook
 			if (disposing)
 			{
 				components?.Dispose();
-				(openFileDialog as IDisposable)?.Dispose();
+				openFileDialog?.Dispose();
 			}
 			base.Dispose(disposing);
 		}

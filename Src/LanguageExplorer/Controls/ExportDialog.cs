@@ -508,19 +508,18 @@ namespace LanguageExplorer.Controls
 							ProcessWebonaryExport();
 							return;
 						default:
-							using (var dlg = new SaveFileDialogAdapter())
+							using (ISaveFileDialog dlg = new SaveFileDialogAdapter())
 							{
-								var dlgAsISaveFileDialog = (ISaveFileDialog)dlg;
-								dlgAsISaveFileDialog.AddExtension = true;
-								dlgAsISaveFileDialog.DefaultExt = m_exportItems[0].SubItems[2].Text;
-								dlgAsISaveFileDialog.Filter = m_exportItems[0].SubItems[3].Text;
-								dlgAsISaveFileDialog.Title = string.Format(LanguageExplorerResources.ExportTo0, m_exportItems[0].SubItems[1].Text);
-								dlgAsISaveFileDialog.InitialDirectory = PropertyTable.GetValue("ExportDir", Environment.GetFolderPath(Environment.SpecialFolder.Personal));
-								if (dlgAsISaveFileDialog.ShowDialog(this) != DialogResult.OK)
+								dlg.AddExtension = true;
+								dlg.DefaultExt = m_exportItems[0].SubItems[2].Text;
+								dlg.Filter = m_exportItems[0].SubItems[3].Text;
+								dlg.Title = string.Format(LanguageExplorerResources.ExportTo0, m_exportItems[0].SubItems[1].Text);
+								dlg.InitialDirectory = PropertyTable.GetValue("ExportDir", Environment.GetFolderPath(Environment.SpecialFolder.Personal));
+								if (dlg.ShowDialog(this) != DialogResult.OK)
 								{
 									return;
 								}
-								sFileName = dlgAsISaveFileDialog.FileName;
+								sFileName = dlg.FileName;
 								sDirectory = Path.GetDirectoryName(sFileName);
 							}
 							break;

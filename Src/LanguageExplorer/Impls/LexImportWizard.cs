@@ -15,7 +15,6 @@ using System.Windows.Forms;
 using System.Xml;
 using System.Xml.Linq;
 using System.Xml.Xsl;
-using LanguageExplorer.Areas;
 using LanguageExplorer.Controls;
 using LanguageExplorer.Controls.DetailControls;
 using LanguageExplorer.SfmToXml;
@@ -246,6 +245,7 @@ namespace LanguageExplorer.Impls
 			if (disposing)
 			{
 				components?.Dispose();
+				openFileDialog?.Dispose();
 			}
 			base.Dispose(disposing);
 		}

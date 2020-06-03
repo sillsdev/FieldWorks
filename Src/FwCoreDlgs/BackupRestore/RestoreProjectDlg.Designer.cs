@@ -28,7 +28,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.BackupRestore
 			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			if (disposing)
 			{
-				(m_openFileDlg as IDisposable)?.Dispose();
+				m_openFileDlg?.Dispose();
 				components?.Dispose();
 			}
 			m_openFileDlg = null;

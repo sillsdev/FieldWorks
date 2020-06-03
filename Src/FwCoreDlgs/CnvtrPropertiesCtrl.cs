@@ -4,7 +4,9 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
+using System.Text;
 using System.Windows.Forms;
 using ECInterfaces;
 using Icu;
@@ -71,7 +73,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <summary>
 		/// Required designer variable.
 		/// </summary>
-		private System.ComponentModel.Container components;
+		private Container components;
 
 		/// <summary>
 		/// Sets the application.
@@ -140,7 +142,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			if (disposing)
 			{
 				components?.Dispose();
-				(ofDlg as IDisposable)?.Dispose();
+				ofDlg?.Dispose();
 			}
 			ofDlg = null;
 			components = null;
@@ -286,7 +288,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <summary>
 		/// This provides a reasonable sort order for Code Pages supported as encodings.
 		/// </summary>
-		private int CompareEncInfo(System.Text.EncodingInfo x, System.Text.EncodingInfo y)
+		private int CompareEncInfo(EncodingInfo x, EncodingInfo y)
 		{
 			// EncodingInfo.DisplayName is marked with MonoTODO since it simply returns Name,
 			// but this doesn't matter in this case.
@@ -366,8 +368,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 						cboSpec.Items.Clear();
 						// we'll cheat and take advantage of our knowledge that CodePage converters
 						// are built using C# System.Text.Encoding related classes.
-						var encodings = new List<System.Text.EncodingInfo>();
-						encodings.AddRange(System.Text.Encoding.GetEncodings());
+						var encodings = new List<EncodingInfo>();
+						encodings.AddRange(Encoding.GetEncodings());
 						encodings.Sort(CompareEncInfo);
 						foreach (var enc in encodings)
 						{
@@ -878,47 +880,39 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private bool AutoConfigureEx(IEncConverter rIEncConverter, ConvType eConversionTypeFilter, ref string strFriendlyName, string strLhsEncodingID, string strRhsEncodingID)
 		{
 			const string strTempConverterPrefix = "Temporary converter: ";
-			try
+			// get the configuration interface for this type
+			var rConfigurator = rIEncConverter.Configurator;
+			// call its Configure method to do the UI
+			if (rConfigurator.Configure(Converters, strFriendlyName, eConversionTypeFilter, strLhsEncodingID, strRhsEncodingID))
 			{
-				// get the configuration interface for this type
-				var rConfigurator = rIEncConverter.Configurator;
-				// call its Configure method to do the UI
-				if (rConfigurator.Configure(Converters, strFriendlyName, eConversionTypeFilter, strLhsEncodingID, strRhsEncodingID))
+				// if this is just a temporary converter (i.e. it isn't being added permanently to the
+				//  repository), then just make up a name so the caller can use it.
+				if (!rConfigurator.IsInRepository)
 				{
-					// if this is just a temporary converter (i.e. it isn't being added permanently to the
-					//  repository), then just make up a name so the caller can use it.
-					if (!rConfigurator.IsInRepository)
-					{
-						var dt = DateTime.Now;
-						strFriendlyName = strTempConverterPrefix + $"id: '{rConfigurator.ConverterIdentifier}', created on '{dt.ToLongDateString()}' at '{dt.ToLongTimeString()}'";
-						// in this case, the Configurator didn't update the name
-						rIEncConverter.Name = strFriendlyName;
-						// one final thing missing: for this 'client', we have to put it into the 'this' collection
-						AddToCollection(rIEncConverter, strFriendlyName);
-					}
-					else
-					{
-						// else, if it was in the repository, then it should also be (have been) updated in
-						//  the collection already, so just get its name so we can return it.
-						strFriendlyName = rConfigurator.ConverterFriendlyName;
-					}
-					return true;
+					var dt = DateTime.Now;
+					strFriendlyName = strTempConverterPrefix + $"id: '{rConfigurator.ConverterIdentifier}', created on '{dt.ToLongDateString()}' at '{dt.ToLongTimeString()}'";
+					// in this case, the Configurator didn't update the name
+					rIEncConverter.Name = strFriendlyName;
+					// one final thing missing: for this 'client', we have to put it into the 'this' collection
+					AddToCollection(rIEncConverter, strFriendlyName);
 				}
-				if (rConfigurator.IsInRepository && !string.IsNullOrEmpty(rConfigurator.ConverterFriendlyName))
+				else
 				{
-					// if the user added it to the repository and then *cancelled* it (i.e. so Configure
-					//  returns false), then it *still* is in the repository and we should therefore return
-					//  true.
+					// else, if it was in the repository, then it should also be (have been) updated in
+					//  the collection already, so just get its name so we can return it.
 					strFriendlyName = rConfigurator.ConverterFriendlyName;
-					return true;
 				}
+				return true;
 			}
-			catch
+			if (rConfigurator.IsInRepository && !string.IsNullOrEmpty(rConfigurator.ConverterFriendlyName))
 			{
-#if DEBUG
-				throw;
-#endif
+				// if the user added it to the repository and then *cancelled* it (i.e. so Configure
+				//  returns false), then it *still* is in the repository and we should therefore return
+				//  true.
+				strFriendlyName = rConfigurator.ConverterFriendlyName;
+				return true;
 			}
+
 			return false;
 		}
 

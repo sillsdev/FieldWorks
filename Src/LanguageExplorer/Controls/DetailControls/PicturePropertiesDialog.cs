@@ -682,22 +682,21 @@ namespace LanguageExplorer.Controls.DetailControls
 		private DialogResult ShowChoosePictureDlg()
 		{
 			var dialogResult = DialogResult.None;
-			using (var dlg = new OpenFileDialogAdapter())
+			using (IOpenFileDialog dlg = new OpenFileDialogAdapter())
 			{
-				var dlgAsIOpenFileDialog = (IOpenFileDialog)dlg;
-				dlgAsIOpenFileDialog.InitialDirectory = (m_grpFileLocOptions.Visible) ? m_txtDestination.Text : s_defaultPicturesFolder;
-				dlgAsIOpenFileDialog.Filter = ResourceHelper.BuildFileFilter(FileFilterType.AllImage, FileFilterType.AllFiles);
-				dlgAsIOpenFileDialog.FilterIndex = 1;
-				dlgAsIOpenFileDialog.Title = FwCoreDlgs.kstidInsertPictureChooseFileCaption;
-				dlgAsIOpenFileDialog.RestoreDirectory = true;
-				dlgAsIOpenFileDialog.CheckFileExists = true;
-				dlgAsIOpenFileDialog.CheckPathExists = true;
+				dlg.InitialDirectory = (m_grpFileLocOptions.Visible) ? m_txtDestination.Text : s_defaultPicturesFolder;
+				dlg.Filter = ResourceHelper.BuildFileFilter(FileFilterType.AllImage, FileFilterType.AllFiles);
+				dlg.FilterIndex = 1;
+				dlg.Title = FwCoreDlgs.kstidInsertPictureChooseFileCaption;
+				dlg.RestoreDirectory = true;
+				dlg.CheckFileExists = true;
+				dlg.CheckPathExists = true;
 				while (dialogResult != DialogResult.OK && dialogResult != DialogResult.Cancel)
 				{
-					dialogResult = dlgAsIOpenFileDialog.ShowDialog(m_app?.ActiveMainWindow);
+					dialogResult = dlg.ShowDialog(m_app?.ActiveMainWindow);
 					if (dialogResult == DialogResult.OK)
 					{
-						var file = dlgAsIOpenFileDialog.FileName;
+						var file = dlg.FileName;
 						if (string.IsNullOrEmpty(file))
 						{
 							return DialogResult.Cancel;

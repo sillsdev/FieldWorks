@@ -2,8 +2,6 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System;
-
 namespace LanguageExplorer.LIFT
 {
 	partial class LiftImportDlg
@@ -28,7 +26,7 @@ namespace LanguageExplorer.LIFT
 			if (disposing)
 			{
 				components?.Dispose();
-				((IDisposable)openFileDialog1)?.Dispose();
+				openFileDialog1?.Dispose();
 			}
 			base.Dispose(disposing);
 		}

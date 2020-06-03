@@ -650,7 +650,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 			if (disposing)
 			{
-				(m_openFileDialog as IDisposable)?.Dispose();
+				m_openFileDialog?.Dispose();
 				m_fntForSpecialChar?.Dispose();
 				m_validCharsGridMngr?.Dispose();
 				m_chkBoxColHdrHandler?.Dispose();

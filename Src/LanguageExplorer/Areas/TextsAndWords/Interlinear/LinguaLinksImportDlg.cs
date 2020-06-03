@@ -140,7 +140,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 			if (disposing)
 			{
 				components?.Dispose();
-				(openFileDialog as IDisposable)?.Dispose();
+				openFileDialog?.Dispose();
 			}
 			base.Dispose(disposing);
 		}

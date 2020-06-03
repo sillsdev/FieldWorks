@@ -501,30 +501,29 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 						lexEntry.PronunciationsOS.Add(_cache.ServiceLocator.GetInstance<ILexPronunciationFactory>().Create());
 					}
 					var firstPronunciation = lexEntry.PronunciationsOS[0];
-					using (var dlg = new OpenFileDialogAdapter())
+					using (IOpenFileDialog dlg = new OpenFileDialogAdapter())
 					{
-						var dlgAsIOpenFileDialog = (IOpenFileDialog)dlg;
-						dlgAsIOpenFileDialog.InitialDirectory = _propertyTable.GetValue(insertMediaFileLastDirectory, _cache.LangProject.LinkedFilesRootDir);
-						dlgAsIOpenFileDialog.Filter = ResourceHelper.BuildFileFilter(FileFilterType.AllAudio, FileFilterType.AllVideo, FileFilterType.AllFiles);
-						dlgAsIOpenFileDialog.FilterIndex = 1;
-						if (string.IsNullOrEmpty(dlgAsIOpenFileDialog.Title) || dlgAsIOpenFileDialog.Title == "*kstidInsertMediaChooseFileCaption*")
+						dlg.InitialDirectory = _propertyTable.GetValue(insertMediaFileLastDirectory, _cache.LangProject.LinkedFilesRootDir);
+						dlg.Filter = ResourceHelper.BuildFileFilter(FileFilterType.AllAudio, FileFilterType.AllVideo, FileFilterType.AllFiles);
+						dlg.FilterIndex = 1;
+						if (string.IsNullOrEmpty(dlg.Title) || dlg.Title == "*kstidInsertMediaChooseFileCaption*")
 						{
-							dlgAsIOpenFileDialog.Title = LexiconResources.ChooseSoundOrMovieFile;
+							dlg.Title = LexiconResources.ChooseSoundOrMovieFile;
 						}
-						dlgAsIOpenFileDialog.RestoreDirectory = true;
-						dlgAsIOpenFileDialog.CheckFileExists = true;
-						dlgAsIOpenFileDialog.CheckPathExists = true;
-						dlgAsIOpenFileDialog.Multiselect = true;
+						dlg.RestoreDirectory = true;
+						dlg.CheckFileExists = true;
+						dlg.CheckPathExists = true;
+						dlg.Multiselect = true;
 						var dialogResult = DialogResult.None;
 						var helpProvider = _propertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider);
 						var linkedFilesRootDir = _cache.LangProject.LinkedFilesRootDir;
 						var mediaFactory = _cache.ServiceLocator.GetInstance<ICmMediaFactory>();
 						while (dialogResult != DialogResult.OK && dialogResult != DialogResult.Cancel)
 						{
-							dialogResult = dlgAsIOpenFileDialog.ShowDialog();
+							dialogResult = dlg.ShowDialog();
 							if (dialogResult == DialogResult.OK)
 							{
-								var fileNames = MoveOrCopyFilesController.MoveCopyOrLeaveMediaFiles(dlgAsIOpenFileDialog.FileNames, linkedFilesRootDir, helpProvider);
+								var fileNames = MoveOrCopyFilesController.MoveCopyOrLeaveMediaFiles(dlg.FileNames, linkedFilesRootDir, helpProvider);
 								var mediaFolderName = StringTable.Table.GetString("kstidMediaFolder");
 								if (string.IsNullOrEmpty(mediaFolderName) || mediaFolderName == "*kstidMediaFolder*")
 								{
@@ -537,7 +536,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 									media.MediaFileRA = DomainObjectServices.FindOrCreateFile(DomainObjectServices.FindOrCreateFolder(_cache, LangProjectTags.kflidMedia, mediaFolderName), fileName);
 								}
 								createdMediaFile = true;
-								var selectedFileName = dlgAsIOpenFileDialog.FileNames.FirstOrDefault(f => !String.IsNullOrEmpty(f));
+								var selectedFileName = dlg.FileNames.FirstOrDefault(f => !String.IsNullOrEmpty(f));
 								if (selectedFileName != null)
 								{
 									_propertyTable.SetProperty(insertMediaFileLastDirectory, Path.GetDirectoryName(selectedFileName), true);

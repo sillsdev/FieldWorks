@@ -361,18 +361,17 @@ namespace LanguageExplorer.DictionaryConfiguration
 		/// </summary>
 		public void OnBrowse()
 		{
-			using (var openDialog = new OpenFileDialogAdapter())
+			using (IOpenFileDialog openDialog = new OpenFileDialogAdapter())
 			{
-				var openDialogAsIOpenFileDialog = (IOpenFileDialog)openDialog;
-				openDialogAsIOpenFileDialog.Title = DictionaryConfigurationStrings.kstidChooseFile;
-				openDialogAsIOpenFileDialog.Filter = DictionaryConfigurationStrings.kstidZipFiles + "|*.zip";
-				openDialogAsIOpenFileDialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-				var result = openDialogAsIOpenFileDialog.ShowDialog(_view);
+				openDialog.Title = DictionaryConfigurationStrings.kstidChooseFile;
+				openDialog.Filter = DictionaryConfigurationStrings.kstidZipFiles + "|*.zip";
+				openDialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+				var result = openDialog.ShowDialog(_view);
 				if (result != DialogResult.OK)
 				{
 					return;
 				}
-				var importFilePath = openDialogAsIOpenFileDialog.FileName;
+				var importFilePath = openDialog.FileName;
 				_view.importPathTextBox.Text = importFilePath;
 			}
 		}

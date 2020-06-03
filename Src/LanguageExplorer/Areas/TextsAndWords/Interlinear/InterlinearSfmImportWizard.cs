@@ -132,16 +132,15 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		private string GetFiles(string currentFiles)
 		{
-			using (var openFileDialog = new OpenFileDialogAdapter())
+			using (IOpenFileDialog openFileDialog = new OpenFileDialogAdapter())
 			{
-				var openFileDialogAsIOpenFileDialog = (IOpenFileDialog)openFileDialog;
-				openFileDialogAsIOpenFileDialog.Filter = ResourceHelper.BuildFileFilter(FileFilterType.InterlinearSfm, FileFilterType.AllFiles);
-				openFileDialogAsIOpenFileDialog.CheckFileExists = true;
-				openFileDialogAsIOpenFileDialog.Multiselect = true; // can import multiple files
+				openFileDialog.Filter = ResourceHelper.BuildFileFilter(FileFilterType.InterlinearSfm, FileFilterType.AllFiles);
+				openFileDialog.CheckFileExists = true;
+				openFileDialog.Multiselect = true; // can import multiple files
 				var files = SplitPaths(currentFiles);
 				var dir = string.Empty;
 				var initialFileName = string.Empty;
-				openFileDialogAsIOpenFileDialog.FileName = string.Empty;
+				openFileDialog.FileName = string.Empty;
 				if (files.Length > 0)
 				{
 					var firstFilePath = files[0].Trim();
@@ -161,28 +160,28 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 				}
 				if (Directory.Exists(dir))
 				{
-					openFileDialogAsIOpenFileDialog.InitialDirectory = dir;
+					openFileDialog.InitialDirectory = dir;
 				}
 				// It doesn't seem to be possible to open the dialog with more than one file selected.
 				// However there will often be only one so that's at least somewhat helpful.
-				openFileDialogAsIOpenFileDialog.FileName = initialFileName;
-				openFileDialogAsIOpenFileDialog.Title = ITextStrings.ksSelectInterlinFile;
+				openFileDialog.FileName = initialFileName;
+				openFileDialog.Title = ITextStrings.ksSelectInterlinFile;
 				while (true) // loop until approved set of files or cancel
 				{
-					if (openFileDialogAsIOpenFileDialog.ShowDialog() != DialogResult.OK)
+					if (openFileDialog.ShowDialog() != DialogResult.OK)
 					{
 						return currentFiles;
 					}
-					var badFiles = openFileDialogAsIOpenFileDialog.FileNames.Where(fileName => !new IsSfmFile(fileName).IsValid).ToList();
+					var badFiles = openFileDialog.FileNames.Where(fileName => !new IsSfmFile(fileName).IsValid).ToList();
 					if (!badFiles.Any())
 					{
-						return JoinPaths(openFileDialogAsIOpenFileDialog.FileNames);
+						return JoinPaths(openFileDialog.FileNames);
 					}
 					var msg = string.Format(ITextStrings.ksInvalidInterlinearFiles, string.Join(", ", badFiles.ToArray()));
 					var dr = MessageBox.Show(this, msg, ITextStrings.ksPossibleInvalidFile, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning);
 					if (dr == DialogResult.Yes)
 					{
-						return JoinPaths(openFileDialogAsIOpenFileDialog.FileNames);
+						return JoinPaths(openFileDialog.FileNames);
 					}
 					if (dr == DialogResult.No)
 					{
@@ -245,12 +244,11 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 
 		private string GetFile(string currentFile, string pathForInitialDirectory, FileFilterType[] types, bool checkFileExists, string title, Func<string, bool> isValidFile)
 		{
-			using (var openFileDialog = new OpenFileDialogAdapter())
+			using (IOpenFileDialog openFileDialog = new OpenFileDialogAdapter())
 			{
-				var openFileDialogAsIOpenFileDialog = (IOpenFileDialog)openFileDialog;
-				openFileDialogAsIOpenFileDialog.Filter = ResourceHelper.BuildFileFilter(types);
-				openFileDialogAsIOpenFileDialog.CheckFileExists = checkFileExists;
-				openFileDialogAsIOpenFileDialog.Multiselect = false;
+				openFileDialog.Filter = ResourceHelper.BuildFileFilter(types);
+				openFileDialog.CheckFileExists = checkFileExists;
+				openFileDialog.Multiselect = false;
 				var done = false;
 				while (!done)
 				{
@@ -266,28 +264,28 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					}
 					if (Directory.Exists(dir))
 					{
-						openFileDialogAsIOpenFileDialog.InitialDirectory = dir;
+						openFileDialog.InitialDirectory = dir;
 					}
 					if (File.Exists(currentFile))
 					{
-						openFileDialogAsIOpenFileDialog.FileName = currentFile;
+						openFileDialog.FileName = currentFile;
 					}
 					else
 					{
-						openFileDialogAsIOpenFileDialog.FileName = string.Empty;
+						openFileDialog.FileName = string.Empty;
 					}
-					openFileDialogAsIOpenFileDialog.Title = title;
-					if (openFileDialogAsIOpenFileDialog.ShowDialog() == DialogResult.OK)
+					openFileDialog.Title = title;
+					if (openFileDialog.ShowDialog() == DialogResult.OK)
 					{
-						if (isValidFile(openFileDialogAsIOpenFileDialog.FileName))
+						if (isValidFile(openFileDialog.FileName))
 						{
-							return openFileDialogAsIOpenFileDialog.FileName;
+							return openFileDialog.FileName;
 						}
-						var dr = MessageBox.Show(this, string.Format(ITextStrings.ksInvalidFileAreYouSure, openFileDialogAsIOpenFileDialog.FileName), ITextStrings.ksPossibleInvalidFile, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning);
+						var dr = MessageBox.Show(this, string.Format(ITextStrings.ksInvalidFileAreYouSure, openFileDialog.FileName), ITextStrings.ksPossibleInvalidFile, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning);
 						switch (dr)
 						{
 							case DialogResult.Yes:
-								return openFileDialogAsIOpenFileDialog.FileName;
+								return openFileDialog.FileName;
 							case DialogResult.No:
 								continue;
 						}
