@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2020 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -22,6 +22,20 @@ namespace SIL.FieldWorks.XWorks.LexEd
 	{
 		private ChorusSystem m_chorusSystem;
 		NotesBarView m_notesBar;
+
+		protected override void Dispose(bool disposing)
+		{
+			if (!IsDisposed && disposing)
+			{
+				m_chorusSystem?.Dispose();
+				// m_notesBar is stored in Control, which is disposed by base.Dispose.
+			}
+
+			m_chorusSystem = null;
+			m_notesBar = null;
+
+			base.Dispose(disposing);
+		}
 
 		/// <summary>
 		/// The user that we want MessageSlice (and FLExBridge) to consider to be the current user,
@@ -59,7 +73,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			var analWs = Cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem;
 			var msgWs = new ChorusWritingSystem(analWs.LanguageName, analWs.Id, analWs.DefaultFontName, 12);
 			m_notesBar.MessageWritingSystem = msgWs;
-			this.Control = m_notesBar;
+			Control = m_notesBar;
 		}
 
 		// The notes bar expects to store notes about a particular file. Our notes are currently about the lexicon,
