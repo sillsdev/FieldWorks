@@ -17,7 +17,8 @@ namespace SIL.FieldWorks.XWorks
 
 		#region WebonaryApiV1
 		string PostDictionaryMetadata(string address, string postBody);
-		string PostEntry(string address, string postBody);
+		string PostEntry(string address, string postBody, bool isReversal);
+		byte[] DeleteContent(string targetURI);
 		/// <summary>
 		/// This method returns a temporary url that can be used to upload a file to an AWS S3 bucket.
 		/// </summary>
@@ -26,5 +27,6 @@ namespace SIL.FieldWorks.XWorks
 		/// <returns></returns>
 		string GetSignedUrl(string address, string filePath);
 		#endregion
+
 	}
 }

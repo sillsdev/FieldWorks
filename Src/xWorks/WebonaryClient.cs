@@ -58,9 +58,33 @@ namespace SIL.FieldWorks.XWorks
 			return PostToWebonaryApi(address, postBody);
 		}
 
-		public string PostEntry(string address, string postBody)
+		public string PostEntry(string address, string postBody, bool isReversal)
 		{
+			if (isReversal)
+			{
+				// reversals use the same api as entry but with one extra parameter to indicate the type
+				return PostToWebonaryApi(address, postBody, "&entryType=reversalindexentry");
+			}
 			return PostToWebonaryApi(address, postBody);
+		}
+
+		public byte[] DeleteContent(string targetURI)
+		{
+			try
+			{
+				return UploadData(targetURI, "DELETE", Encoding.GetBytes(""));
+			}
+			catch (WebException ex)
+			{
+				if (ex.Response == null)
+					throw new WebonaryException("WebException with null response stream.", ex);
+				using (var stream = ex.Response.GetResponseStream())
+				using (var reader = new StreamReader(stream))
+				{
+					var response = reader.ReadToEnd();
+					throw new WebonaryException(response, ex);
+				}
+			}
 		}
 
 		public string GetSignedUrl(string address, string filePath)
@@ -71,11 +95,11 @@ namespace SIL.FieldWorks.XWorks
 			return PostToWebonaryApi(address, urlBody.ToString());
 		}
 
-		private string PostToWebonaryApi(string address, string postBody)
+		private string PostToWebonaryApi(string address, string postBody, string extraArgs = "")
 		{
 			try
 			{
-				return UploadString(address, postBody);
+				return UploadString(address + extraArgs, postBody);
 			}
 			catch (WebException ex)
 			{

@@ -5,6 +5,7 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using ExCSS;
@@ -1619,6 +1620,38 @@ namespace SIL.FieldWorks.XWorks
 			public float Margin { get; private set; }
 			public float TextIndent { get; private set; }
 			public ConfigurableDictionaryNode Ancestor { get; private set; }
+		}
+
+		/// <summary>
+		/// Method to copy the custom Css file from Project folder to the Temp folder for FieldWorks preview and export
+		/// </summary>
+		/// <param name="projectPath">path where the custom css file should be found</param>
+		/// <param name="exportPath">destination folder for the copy</param>
+		/// <param name="custCssFileName"></param>
+		/// <returns>full path to the custom css file or empty string if no copy happened</returns>
+		internal static string CopyCustomCssToTempFolder(string projectPath, string exportPath, string custCssFileName)
+		{
+			if (exportPath == null || projectPath == null)
+				return string.Empty;
+			var custCssProjectPath = Path.Combine(projectPath, custCssFileName);
+			if (!File.Exists(custCssProjectPath))
+				return string.Empty;
+			var custCssTempPath = Path.Combine(exportPath, custCssFileName);
+			File.Copy(custCssProjectPath, custCssTempPath, true);
+			return custCssTempPath;
+		}
+
+		public static string CopyCustomCssAndGetPath(string destinationFolder, string configDir)
+		{
+			string custCssPath = string.Empty;
+			var projType = string.IsNullOrEmpty(configDir) ? null : new DirectoryInfo(configDir).Name;
+			if (!string.IsNullOrEmpty(projType))
+			{
+				var cssName = projType == "Dictionary" ? "ProjectDictionaryOverrides.css" : "ProjectReversalOverrides.css";
+				custCssPath = CopyCustomCssToTempFolder(configDir, destinationFolder, cssName);
+			}
+
+			return custCssPath;
 		}
 	}
 }

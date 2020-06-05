@@ -494,6 +494,8 @@ namespace SIL.FieldWorks.XWorks
 			IEnumerable<string> tempateFileNames,
 			IEnumerable<DictionaryConfigurationModel> reversals,
 			int[] entryHvos,
+			string configPath,
+			string exportPath,
 			LcmCache cache)
 		{
 			dynamic dictionaryMetaData = new JObject();
@@ -502,6 +504,14 @@ namespace SIL.FieldWorks.XWorks
 			mainLanguageData.lang = cache.LangProject.DefaultAnalysisWritingSystem.Id;
 			//mainLanguageData.title = Enhance: Add new field to dialog for title?
 			mainLanguageData.letters = JArray.FromObject(GenerateLetterHeaders(entryHvos, cache));
+			var customDictionaryCss = CssGenerator.CopyCustomCssAndGetPath(exportPath, configPath);
+			var cssFiles = new JArray();
+			cssFiles.Add("configured.css");
+			if (!string.IsNullOrEmpty(customDictionaryCss))
+			{
+				cssFiles.Add(customDictionaryCss);
+			}
+			mainLanguageData.cssFiles = cssFiles;
 			dictionaryMetaData.mainLanguage = mainLanguageData;
 			if (reversals.Any())
 			{
@@ -512,7 +522,8 @@ namespace SIL.FieldWorks.XWorks
 					revJson.lang = reversal.WritingSystem;
 					revJson.title = reversal.Label;
 					revJson.letters = new JArray(); // Generate letter headers from reversal and pass to this method
-					revJson.cssFiles = new JArray(new[] { "reversal_lang.css" });
+					var custReversalCss = CssGenerator.CopyCustomCssAndGetPath(exportPath, Path.GetDirectoryName(reversal.FilePath));
+					revJson.cssFiles = new JArray(new object[] { $"reversal_{reversal.WritingSystem}.css", custReversalCss });
 					reversalArray.Add(revJson);
 				}
 				dictionaryMetaData.reversalLanguages = reversalArray;
@@ -553,13 +564,13 @@ namespace SIL.FieldWorks.XWorks
 			// These maps act as a cache to improve performance for discovering the index character for each headword
 			var wsDigraphMap = new Dictionary<string, ISet<string>>();
 			var wsCharEquivalentMap = new Dictionary<string, Dictionary<string, string>>();
-			var wsIngorableMap = new Dictionary<string, ISet<string>>();
+			var wsIgnorableMap = new Dictionary<string, ISet<string>>();
 			var wsString = cache.WritingSystemFactory.GetStrFromWs(cache.DefaultVernWs);
 			var letters = new List<string>();
 			foreach (var entryHvo in entriesToSave)
 			{
 				var entry = cache.ServiceLocator.GetObject(entryHvo);
-				var firstLetter = ConfiguredExport.GetLeadChar(((ILexEntry)entry).HomographForm, wsString, wsDigraphMap, wsCharEquivalentMap, wsIngorableMap,
+				var firstLetter = ConfiguredExport.GetLeadChar(((ILexEntry)entry).HomographForm, wsString, wsDigraphMap, wsCharEquivalentMap, wsIgnorableMap,
 					cache);
 				if (letters.Contains(firstLetter))
 					continue;

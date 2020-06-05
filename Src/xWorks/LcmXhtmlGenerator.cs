@@ -68,21 +68,6 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
-		/// Method to copy the custom Css file from Project folder to the Temp folder for Fieldworks preview
-		/// </summary>
-		internal static string CopyCustomCssToTempFolder(string projectPath, string xhtmlPath, string custCssFileName)
-		{
-			if (xhtmlPath == null || projectPath == null)
-				return String.Empty;
-			var custCssProjectPath = Path.Combine(projectPath, custCssFileName);
-			if (!File.Exists(custCssProjectPath))
-				return String.Empty;
-			var custCssTempPath = Path.Combine(Path.GetDirectoryName(xhtmlPath), custCssFileName);
-			File.Copy(custCssProjectPath, custCssTempPath, true);
-			return custCssTempPath;
-		}
-
-		/// <summary>
 		/// Saves the generated content into the given xhtml and css file paths for all the entries in
 		/// the given collection.
 		/// </summary>
@@ -100,13 +85,7 @@ namespace SIL.FieldWorks.XWorks
 			using (var cssWriter = new StreamWriter(cssPath, false, Encoding.UTF8))
 			{
 				var readOnlyPropertyTable = new ReadOnlyPropertyTable(propertyTable);
-				var custCssPath = String.Empty;
-				var projType = String.IsNullOrEmpty(configDir) ? null : new DirectoryInfo(configDir).Name;
-				if (!String.IsNullOrEmpty(projType))
-				{
-					var cssName = projType == "Dictionary" ? "ProjectDictionaryOverrides.css" : "ProjectReversalOverrides.css";
-					custCssPath = CopyCustomCssToTempFolder(configDir, xhtmlPath, cssName);
-				}
+				var custCssPath = CssGenerator.CopyCustomCssAndGetPath(Path.GetDirectoryName(xhtmlPath), configDir);
 				var settings = new ConfiguredLcmGenerator.GeneratorSettings(cache, readOnlyPropertyTable, true, true, Path.GetDirectoryName(xhtmlPath),
 					ConfiguredLcmGenerator.IsNormalRtl(readOnlyPropertyTable), Path.GetFileName(cssPath) == "configured.css");
 				GenerateOpeningHtml(cssPath, custCssPath, settings, xhtmlWriter);

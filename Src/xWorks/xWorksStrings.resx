@@ -1195,4 +1195,8 @@ If you are not the one designated user who adds fields, or you are making some o
     <value>Reset this view</value>
     <comment>Used in Dictionary Config Mgr dialog</comment>
   </data>
+  <data name="UploadToWebonary_DeletingProjFiles" xml:space="preserve">
+    <value>Server deleting project files{0}{1}</value>
+    <comment>Displayed when upload to webonary is deleting a project with many files</comment>
+  </data>
 </root>

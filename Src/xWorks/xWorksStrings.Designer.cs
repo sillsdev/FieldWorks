@@ -2816,6 +2816,15 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Server deleting project files{0}{1}.
+        /// </summary>
+        internal static string UploadToWebonary_DeletingProjFiles {
+            get {
+                return ResourceManager.GetString("UploadToWebonary_DeletingProjFiles", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Exporting entries for the {0} publication using the {1} view.
         /// </summary>
         internal static string UploadToWebonaryController_ExportDictionaryContent_Exporting_entries_for_the__0__publication_using_the__1__configuration {

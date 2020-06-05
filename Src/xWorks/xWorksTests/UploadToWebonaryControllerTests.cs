@@ -684,6 +684,50 @@ namespace SIL.FieldWorks.XWorks
 			Assert.AreEqual("Main Dictionary", m_propertyTable.GetStringProperty("SelectedPublication", null), "Didn't reset publication");
 		}
 
+		[Test]
+		public void DeleteDictionaryHandles404()
+		{
+			// Test with an exception which indicates a redirect should happen
+			var redirectException = new WebonaryClient.WebonaryException(new WebException("File Not Found"));
+			redirectException.StatusCode = HttpStatusCode.NotFound;
+			using (var controller = new MockUploadToWebonaryController(Cache, m_propertyTable, m_mediator, redirectException, new byte[0], HttpStatusCode.NotFound))
+			{
+				var view = new MockWebonaryDlg()
+				{
+					Model = new UploadToWebonaryModel(m_propertyTable)
+					{
+						SiteName = "test-india",
+						UserName = "software",
+						Password = "4APItesting"
+					}
+				};
+				controller.DeleteContentFromWebonary(view.Model, view, "delete/dictionary");
+				Assert.That(!view.StatusStrings.Any(s => s.ToLower().Contains("exception")));
+			}
+		}
+
+		[Test]
+		public void DeleteDictionaryResponseReturnedAsString()
+		{
+			var responseString = "Deleted 1000 files";
+			var response = Encoding.UTF8.GetBytes(responseString);
+			// Test with an exception which indicates a redirect should happen
+			using (var controller = new MockUploadToWebonaryController(Cache, m_propertyTable, m_mediator, null, response))
+			{
+				var view = new MockWebonaryDlg()
+				{
+					Model = new UploadToWebonaryModel(m_propertyTable)
+					{
+						SiteName = "test-india",
+						UserName = "software",
+						Password = "4APItesting"
+					}
+				};
+				var result = controller.DeleteContentFromWebonary(view.Model, view, "delete/dictionary");
+				Assert.That(result, Is.StringContaining(responseString));
+			}
+		}
+
 		#region Helpers
 		/// <summary/>
 		private MockWebonaryDlg SetUpView()
@@ -811,36 +855,47 @@ namespace SIL.FieldWorks.XWorks
 					Dispose(false);
 				}
 
-				public WebHeaderCollection Headers { get; private set; }
+				public WebHeaderCollection Headers { get; }
 
 				public byte[] UploadFileToWebonary(string address, string fileName, string method = null)
 				{
-					if (_exceptionResponse != null)
-						throw _exceptionResponse;
-					return (byte[])_responseContents;
+					return MockByteArrayResponse();
 				}
 
-				public HttpStatusCode ResponseStatusCode { get; private set; }
+				public HttpStatusCode ResponseStatusCode { get; }
 
 				public string PostDictionaryMetadata(string address, string postBody)
 				{
-					if (_exceptionResponse != null)
-						throw _exceptionResponse;
-					return (string)_responseContents;
+					return MockStringResponse();
 				}
 
-				public string PostEntry(string address, string postBody)
+				public string PostEntry(string address, string postBody, bool isReversal)
 				{
-					if (_exceptionResponse != null)
-						throw _exceptionResponse;
-					return (string)_responseContents;
+					return MockStringResponse();
+				}
+
+				public byte[] DeleteContent(string targetURI)
+				{
+					return MockByteArrayResponse();
 				}
 
 				public string GetSignedUrl(string address, string filePath)
 				{
+					return MockStringResponse();
+				}
+
+				private string MockStringResponse()
+				{
 					if (_exceptionResponse != null)
 						throw _exceptionResponse;
 					return (string)_responseContents;
+				}
+
+				private byte[] MockByteArrayResponse()
+				{
+					if (_exceptionResponse != null)
+						throw _exceptionResponse;
+					return (byte[])_responseContents;
 				}
 			}
 

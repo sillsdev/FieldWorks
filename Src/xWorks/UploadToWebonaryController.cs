@@ -104,10 +104,13 @@ namespace SIL.FieldWorks.XWorks
 			webonaryView.UpdateStatus(xWorksStrings.ExportingEntriesToWebonaryCompleted);
 		}
 
-		private JObject GenerateDictionaryMetadataContent(UploadToWebonaryModel model, IEnumerable<string> templateFileNames)
+		private JObject GenerateDictionaryMetadataContent(UploadToWebonaryModel model,
+			IEnumerable<string> templateFileNames, string tempDirectoryForExport)
 		{
 			return m_exportService.ExportDictionaryContentJson(model.SiteName, templateFileNames,
-				model.Reversals.Where(kvp => model.SelectedReversals.Contains(kvp.Key)).Select(kvp => kvp.Value));
+				model.Reversals.Where(kvp => model.SelectedReversals.Contains(kvp.Key)).Select(kvp => kvp.Value),
+				model.Configurations[model.SelectedConfiguration].FilePath,
+				tempDirectoryForExport);
 		}
 
 		internal static void CompressExportedFiles(string tempDirectoryToCompress, string zipFileToUpload, IUploadToWebonaryView webonaryView)
@@ -165,6 +168,11 @@ namespace SIL.FieldWorks.XWorks
 				fileToSign.objectId = relativeFilePath;
 				fileToSign.action = "putObject";
 				var signedUrl = PostContentToWebonary(model, webonaryView, "post/file", fileToSign);
+				if (signedUrl == null)
+				{
+					webonaryView.UpdateStatus($"Failed to upload {relativeFilePath}");
+					continue;
+				}
 				UploadFileToWebonary(signedUrl, file, webonaryView);
 				webonaryView.UpdateStatus(Path.GetFileName(file));
 			}
@@ -309,6 +317,68 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
+		internal string DeleteContentFromWebonary(UploadToWebonaryModel model, IUploadToWebonaryView view, string apiEndpoint)
+		{
+			Guard.AgainstNull(model, nameof(model));
+			Guard.AgainstNull(view, nameof(view));
+
+			view.UpdateStatus(xWorksStrings.ksConnectingToWebonary);
+			var targetURI = DestinationApiURI(model.SiteName, apiEndpoint);
+
+			using (var client = CreateWebClient())
+			{
+				var credentials = string.Format("{0}:{1}", model.UserName, model.Password);
+				client.Headers.Add("Authorization", "Basic " + Convert.ToBase64String(new UTF8Encoding().GetBytes(credentials)) + "=");
+				client.Headers.Add("user-agent", string.Format("FieldWorks Language Explorer v.{0}", Assembly.GetExecutingAssembly().GetName().Version));
+				client.Headers[HttpRequestHeader.Accept] = "*/*";
+
+				string response;
+				try
+				{
+					response = Encoding.UTF8.GetString(client.DeleteContent(targetURI));
+				}
+				catch (WebonaryClient.WebonaryException e)
+				{
+					if (e.StatusCode == HttpStatusCode.NotFound)
+						return string.Empty;
+					UpdateViewWithWebonaryException(view, e);
+					return string.Empty;
+				}
+
+				return response;
+			}
+		}
+
+		private string PostEntriesToWebonary(UploadToWebonaryModel model, IUploadToWebonaryView view, string apiEndpoint, JContainer postContent, bool isReversal)
+		{
+			Guard.AgainstNull(model, nameof(model));
+			Guard.AgainstNull(view, nameof(view));
+
+			view.UpdateStatus(xWorksStrings.ksConnectingToWebonary);
+			var targetURI = DestinationApiURI(model.SiteName, apiEndpoint);
+
+			using (var client = CreateWebClient())
+			{
+				var credentials = string.Format("{0}:{1}", model.UserName, model.Password);
+				client.Headers.Add("Authorization", "Basic " + Convert.ToBase64String(new UTF8Encoding().GetBytes(credentials)) + "=");
+				client.Headers.Add("user-agent", string.Format("FieldWorks Language Explorer v.{0}", Assembly.GetExecutingAssembly().GetName().Version));
+				client.Headers[HttpRequestHeader.Accept] = "*/*";
+
+				string response;
+				try
+				{
+					response = client.PostEntry(targetURI, postContent.ToString(Formatting.None), isReversal);
+				}
+				catch (WebonaryClient.WebonaryException e)
+				{
+					UpdateViewWithWebonaryException(view, e);
+					return string.Empty;
+				}
+
+				return response;
+			}
+		}
+
 		private static void UpdateViewWithWebonaryException(IUploadToWebonaryView view, WebonaryClient.WebonaryException e)
 		{
 			if (e.StatusCode == HttpStatusCode.Redirect)
@@ -412,14 +482,22 @@ namespace SIL.FieldWorks.XWorks
 			var useJsonApi = !string.IsNullOrEmpty(Environment.GetEnvironmentVariable("WEBONARY_API"));
 			if (useJsonApi)
 			{
+				var deleteResponse = DeleteContentFromWebonary(model, view, "delete/dictionary");
+				if (deleteResponse != String.Empty)
+				{
+					view.UpdateStatus(string.Format(xWorksStrings.UploadToWebonary_DeletingProjFiles, Environment.NewLine, deleteResponse));
+				}
 				var configuration = model.Configurations[model.SelectedConfiguration];
 				var templateFileNames = GenerateConfigurationTemplates(configuration, m_cache, tempDirectoryForExport);
-				var postContent = GenerateDictionaryMetadataContent(model, templateFileNames);
-				PostContentToWebonary(model, view, "post/dictionary",postContent);
+				var postContent = GenerateDictionaryMetadataContent(model, templateFileNames, tempDirectoryForExport);
+				PostContentToWebonary(model, view, "post/dictionary", postContent);
 				var entries = m_exportService.ExportConfiguredJson(tempDirectoryForExport, configuration);
-				foreach (var entryBatch in entries)
+				PostEntriesToWebonary(model, view, entries, false);
+
+				foreach (var selectedReversal in model.SelectedReversals)
 				{
-					PostContentToWebonary(model, view, "post/entry", entryBatch);
+					entries = m_exportService.ExportConfiguredReversalJson(tempDirectoryForExport, model.Reversals[selectedReversal].WritingSystem, model.Reversals[selectedReversal]);
+					PostEntriesToWebonary(model, view, entries, true);
 				}
 				RecursivelyPutFilesToWebonary(model, tempDirectoryForExport, view);
 			}
@@ -434,6 +512,14 @@ namespace SIL.FieldWorks.XWorks
 				ExportOtherFilesContent(tempDirectoryForExport, model, view);
 				CompressExportedFiles(tempDirectoryForExport, zipFileToUpload, view);
 				UploadToWebonary(zipFileToUpload, model, view);
+			}
+		}
+
+		private void PostEntriesToWebonary(UploadToWebonaryModel model, IUploadToWebonaryView view, List<JArray> entries, bool isReversal)
+		{
+			foreach (var entryBatch in entries)
+			{
+				PostEntriesToWebonary(model, view, "post/entry", entryBatch, isReversal);
 			}
 		}
 
