@@ -109,9 +109,13 @@ namespace SIL.FieldWorks.XWorks
 
 		public List<JArray> ExportConfiguredJson(string folderPath, DictionaryConfigurationModel configuration)
 		{
-			var publicationDecorator = ConfiguredLcmGenerator.GetPublicationDecoratorAndEntries(m_propertyTable, out var entriesToSave, DictionaryType);
-			return LcmJsonGenerator.SavePublishedJsonWithStyles(entriesToSave, publicationDecorator, BatchSize, configuration, m_propertyTable,
-				Path.Combine(folderPath, "configured.json"), null);
+			using (ClerkActivator.ActivateClerkMatchingExportType(DictionaryType, m_propertyTable, m_mediator))
+			{
+				var publicationDecorator = ConfiguredLcmGenerator.GetPublicationDecoratorAndEntries(m_propertyTable,
+					out var entriesToSave, DictionaryType);
+				return LcmJsonGenerator.SavePublishedJsonWithStyles(entriesToSave, publicationDecorator, BatchSize, configuration, m_propertyTable,
+					Path.Combine(folderPath, "configured.json"), null);
+			}
 		}
 
 		public List<JArray> ExportConfiguredReversalJson(string folderPath, string reversalWs, out int[] entryIds,
