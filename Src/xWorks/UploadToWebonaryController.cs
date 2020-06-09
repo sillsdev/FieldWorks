@@ -47,9 +47,6 @@ namespace SIL.FieldWorks.XWorks
 		public bool IsSortingOnAlphaHeaders()
 		{
 			var clerk = m_propertyTable.GetValue<RecordClerk>("ActiveClerk", null);
-			int[] entriesToSave;
-			var publicationDecorator =
-				ConfiguredLcmGenerator.GetPublicationDecoratorAndEntries(m_propertyTable, out entriesToSave, "Dictionary");
 			return RecordClerk.IsClerkSortingByHeadword(clerk);
 		}
 

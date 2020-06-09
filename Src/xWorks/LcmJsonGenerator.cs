@@ -151,7 +151,7 @@ namespace SIL.FieldWorks.XWorks
 
 		public void BeginLink(IFragmentWriter writer, Guid destination)
 		{
-			((JsonFragmentWriter)writer).InsertJsonProperty("guid", destination.ToString());
+			((JsonFragmentWriter)writer).InsertJsonProperty("guid", "g" + destination);
 		}
 
 		public void EndLink(IFragmentWriter writer)
@@ -168,7 +168,7 @@ namespace SIL.FieldWorks.XWorks
 			var jsonWriter = (JsonFragmentWriter)xw;
 			jsonWriter.StartObject();
 			jsonWriter.InsertJsonProperty("xhtmlTemplate", className);
-			jsonWriter.InsertJsonProperty("guid", entryGuid.ToString());
+			jsonWriter.InsertJsonProperty("guid", "g" + entryGuid);
 			// get the index character (letter header) for this entry
 			var entry = Cache.ServiceLocator.GetObject(entryGuid);
 			var indexChar = ConfiguredExport.GetLeadChar(ConfiguredLcmGenerator.GetHeadwordForLetterHead(entry),
@@ -233,7 +233,7 @@ namespace SIL.FieldWorks.XWorks
 			using (var xw = new JsonTextWriter(sw))
 			{
 				xw.WritePropertyName("guid");
-				xw.WriteValue(pictureGuid);
+				xw.WriteValue("g" + pictureGuid);
 				xw.WritePropertyName("src");
 				xw.WriteValue(srcAttribute.Replace("\\", "/")); // expecting relative paths only
 				xw.Flush();
@@ -300,7 +300,7 @@ namespace SIL.FieldWorks.XWorks
 
 		public string AddAudioWsContent(string wsId, Guid linkTarget, string fileContent)
 		{
-			return $"{{\"guid\":\"{linkTarget}\",\"lang\":\"{wsId}\",{fileContent}}}";
+			return $"{{\"guid\":\"g{linkTarget}\",\"lang\":\"{wsId}\",{fileContent}}}";
 		}
 
 		public string AddSenseData(string senseNumberSpan, bool isBlock, Guid ownerGuid,
@@ -317,7 +317,7 @@ namespace SIL.FieldWorks.XWorks
 					xw.WriteValue(senseNumberSpan);
 				}
 				xw.WritePropertyName("guid");
-				xw.WriteValue(ownerGuid);
+				xw.WriteValue("g" + ownerGuid);
 				xw.WriteRaw("," + senseContent.TrimEnd(','));
 				xw.WriteEndObject();
 				xw.WriteRaw(",");
@@ -558,7 +558,7 @@ namespace SIL.FieldWorks.XWorks
 				listItem.lang = wsLabel;
 				listItem.abbreviation = abbreviation.Text;
 				listItem.name = name.Text;
-				listItem.guid = poss.Guid;
+				listItem.guid = "g" + poss.Guid;
 				listArray.Add(listItem);
 			}
 			return listArray;
