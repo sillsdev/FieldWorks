@@ -489,16 +489,20 @@ namespace SIL.FieldWorks.XWorks
 				}
 				var configuration = model.Configurations[model.SelectedConfiguration];
 				var templateFileNames = GenerateConfigurationTemplates(configuration, m_cache, tempDirectoryForExport);
-				var postContent = GenerateDictionaryMetadataContent(model, templateFileNames, tempDirectoryForExport);
-				PostContentToWebonary(model, view, "post/dictionary", postContent);
+				var metadataContent = GenerateDictionaryMetadataContent(model, templateFileNames, tempDirectoryForExport);
 				var entries = m_exportService.ExportConfiguredJson(tempDirectoryForExport, configuration);
 				PostEntriesToWebonary(model, view, entries, false);
 
 				foreach (var selectedReversal in model.SelectedReversals)
 				{
-					entries = m_exportService.ExportConfiguredReversalJson(tempDirectoryForExport, model.Reversals[selectedReversal].WritingSystem, model.Reversals[selectedReversal]);
+					int[] entryIds;
+					var writingSystem = model.Reversals[selectedReversal].WritingSystem;
+					entries = m_exportService.ExportConfiguredReversalJson(tempDirectoryForExport, writingSystem, out entryIds, model.Reversals[selectedReversal]);
 					PostEntriesToWebonary(model, view, entries, true);
+					var reversalLetters = LcmJsonGenerator.GenerateReversalLetterHeaders(model.SiteName, writingSystem, entryIds, m_cache);
+					AddReversalHeadword(metadataContent, writingSystem, reversalLetters);
 				}
+				PostContentToWebonary(model, view, "post/dictionary", metadataContent);
 				RecursivelyPutFilesToWebonary(model, tempDirectoryForExport, view);
 			}
 			else
@@ -513,6 +517,13 @@ namespace SIL.FieldWorks.XWorks
 				CompressExportedFiles(tempDirectoryForExport, zipFileToUpload, view);
 				UploadToWebonary(zipFileToUpload, model, view);
 			}
+		}
+
+		private void AddReversalHeadword(JObject metaData, string writingSystem, JArray reversalLetters)
+		{
+			var reversals = (JArray)metaData["reversalLanguages"];
+			var reversalToUpdate = reversals.First(reversal => (string)((JObject)reversal)["lang"] == writingSystem);
+			reversalToUpdate["letters"] = reversalLetters;
 		}
 
 		private void PostEntriesToWebonary(UploadToWebonaryModel model, IUploadToWebonaryView view, List<JArray> entries, bool isReversal)

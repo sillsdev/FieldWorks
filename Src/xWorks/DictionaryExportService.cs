@@ -8,6 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Xml;
 using Newtonsoft.Json.Linq;
+using SIL.Code;
 using SIL.LCModel;
 using SIL.LCModel.Utils;
 using XCore;
@@ -100,8 +101,7 @@ namespace SIL.FieldWorks.XWorks
 
 		private void ExportConfiguredXhtml(string xhtmlPath, DictionaryConfigurationModel configuration, string exportType, IThreadedProgress progress)
 		{
-			int[] entriesToSave;
-			var publicationDecorator = ConfiguredLcmGenerator.GetPublicationDecoratorAndEntries(m_propertyTable, out entriesToSave, exportType);
+			var publicationDecorator = ConfiguredLcmGenerator.GetPublicationDecoratorAndEntries(m_propertyTable, out var entriesToSave, exportType);
 			if (progress != null)
 				progress.Maximum = entriesToSave.Length;
 			LcmXhtmlGenerator.SavePublishedHtmlWithStyles(entriesToSave, publicationDecorator, int.MaxValue, configuration, m_propertyTable, xhtmlPath, progress);
@@ -114,17 +114,17 @@ namespace SIL.FieldWorks.XWorks
 				Path.Combine(folderPath, "configured.json"), null);
 		}
 
-		public List<JArray> ExportConfiguredReversalJson(string folderPath, string reversalWs = null, DictionaryConfigurationModel configuration = null,
-			IThreadedProgress progress = null)
+		public List<JArray> ExportConfiguredReversalJson(string folderPath, string reversalWs, out int[] entryIds,
+			DictionaryConfigurationModel configuration = null, IThreadedProgress progress = null)
 		{
+			Guard.AgainstNull(reversalWs, nameof(reversalWs));
 			using (ClerkActivator.ActivateClerkMatchingExportType(ReversalType, m_propertyTable, m_mediator))
-			using (ReversalIndexActivator.ActivateReversalIndex(reversalWs, m_propertyTable,
-				m_cache))
+			using (ReversalIndexActivator.ActivateReversalIndex(reversalWs, m_propertyTable, m_cache))
 			{
 				var publicationDecorator = ConfiguredLcmGenerator.GetPublicationDecoratorAndEntries(m_propertyTable,
-						out var entriesToSave, ReversalType);
-				return LcmJsonGenerator.SavePublishedJsonWithStyles(entriesToSave, publicationDecorator, BatchSize, configuration, m_propertyTable,
-					Path.Combine(folderPath, reversalWs + ".json"), null);
+						out entryIds, ReversalType);
+				return LcmJsonGenerator.SavePublishedJsonWithStyles(entryIds, publicationDecorator, BatchSize,
+					configuration, m_propertyTable, Path.Combine(folderPath, $"reversal_{reversalWs}.json"), null);
 			}
 		}
 

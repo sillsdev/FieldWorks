@@ -491,7 +491,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		public static JObject GenerateDictionaryMetaData(string siteName,
-			IEnumerable<string> tempateFileNames,
+			IEnumerable<string> templateFileNames,
 			IEnumerable<DictionaryConfigurationModel> reversals,
 			int[] entryHvos,
 			string configPath,
@@ -521,9 +521,8 @@ namespace SIL.FieldWorks.XWorks
 					dynamic revJson = new JObject();
 					revJson.lang = reversal.WritingSystem;
 					revJson.title = reversal.Label;
-					revJson.letters = new JArray(); // Generate letter headers from reversal and pass to this method
 					var custReversalCss = CssGenerator.CopyCustomCssAndGetPath(exportPath, Path.GetDirectoryName(reversal.FilePath));
-					revJson.cssFiles = new JArray(new object[] { $"reversal_{reversal.WritingSystem}.css", custReversalCss });
+					revJson.cssFiles = new JArray(new object[] { $"reversal_{reversal.WritingSystem}.css", Path.GetFileName(custReversalCss) });
 					reversalArray.Add(revJson);
 				}
 				dictionaryMetaData.reversalLanguages = reversalArray;
@@ -533,8 +532,14 @@ namespace SIL.FieldWorks.XWorks
 				cache.LangProject.DefaultAnalysisWritingSystem.Handle, cache.LangProject.DefaultAnalysisWritingSystem.Id);
 			dictionaryMetaData.semanticDomains = GenerateProjectOwnedList(cache.LangProject.SemanticDomainListOA.ReallyReallyAllPossibilities,
 				cache.LangProject.DefaultAnalysisWritingSystem.Handle, cache.LangProject.DefaultAnalysisWritingSystem.Id);
-			dictionaryMetaData.xhtmlTemplates = JArray.FromObject(tempateFileNames);
+			dictionaryMetaData.xhtmlTemplates = JArray.FromObject(templateFileNames);
 			return dictionaryMetaData;
+		}
+
+
+		public static JArray GenerateReversalLetterHeaders(string siteName, string writingSystem, int[] entryIds, LcmCache cache)
+		{
+			return JArray.FromObject(GenerateLetterHeaders(entryIds, cache));
 		}
 
 		/// <summary>
@@ -570,8 +575,8 @@ namespace SIL.FieldWorks.XWorks
 			foreach (var entryHvo in entriesToSave)
 			{
 				var entry = cache.ServiceLocator.GetObject(entryHvo);
-				var firstLetter = ConfiguredExport.GetLeadChar(((ILexEntry)entry).HomographForm, wsString, wsDigraphMap, wsCharEquivalentMap, wsIgnorableMap,
-					cache);
+				var firstLetter = ConfiguredExport.GetLeadChar(ConfiguredLcmGenerator.GetHeadwordForLetterHead(entry),
+					wsString, wsDigraphMap, wsCharEquivalentMap, wsIgnorableMap, cache);
 				if (letters.Contains(firstLetter))
 					continue;
 				letters.Add(firstLetter);
