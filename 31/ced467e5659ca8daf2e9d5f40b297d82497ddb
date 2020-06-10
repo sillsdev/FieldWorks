@@ -1,0 +1,8 @@
+Verified+1: Jenkins CI <jenkins@sil.org>
+Verified-Linux+1: Jenkins CI <jenkins@sil.org>
+Code-Review+2: Raymond Luong <raymond_luong@sil.org>
+Submitted-by: Jason Naylor <jason_naylor@sil.org>
+Submitted-at: Wed, 10 Jun 2020 21:53:10 +0000
+Reviewed-on: https://gerrit.lsdev.sil.org/c/FieldWorks/+/7521
+Project: FieldWorks
+Branch: refs/heads/develop
