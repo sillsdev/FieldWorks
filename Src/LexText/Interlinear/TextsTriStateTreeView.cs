@@ -193,7 +193,6 @@ namespace SIL.FieldWorks.IText
 			// LT-12179: Create a List for collecting selected tree nodes which we will later sort
 			// before actually adding them to the tree:
 			var foundFirstText = false;
-			CollationDefinition wsCollator = null;
 			foreach (var tex in allTexts)
 			{
 				if (tex.GenresRC.Any())
@@ -214,16 +213,15 @@ namespace SIL.FieldWorks.IText
 					continue;
 				}
 				foundFirstText = true;
-				wsCollator = GetCollatorFromTextNameWs(tex);
 			}
 
 			if (!textsWithNoGenre.Any())
 			{
 				return textsNode;
 			}
-			// if the text name writing system didn't give us a collator to use then default to system
-			if (wsCollator == null)
-				wsCollator = new SystemCollationDefinition();
+			// Just grab a system collator since text titles can be in various languages. Sorting by any one ws is going to
+			// do something wrong part of the time anyhow.
+			var wsCollator = new SystemCollationDefinition();
 			// LT-12179: Order the TreeNodes alphabetically:
 			try
 			{
@@ -244,13 +242,6 @@ namespace SIL.FieldWorks.IText
 			};
 			textsNode.Nodes.Add(woGenreTreeNode);
 			return textsNode;
-		}
-
-		private static CollationDefinition GetCollatorFromTextNameWs(LCModel.IText text)
-		{
-			var ws1 = text.ChooserNameTS.get_WritingSystemAt(0);
-			var wsEngine = text.Cache?.WritingSystemFactory.get_EngineOrNull(ws1);
-			return (wsEngine as WritingSystemDefinition)?.DefaultCollation;
 		}
 
 		/// <summary>
@@ -279,7 +270,6 @@ namespace SIL.FieldWorks.IText
 				// before actually adding them to the tree:
 				var sortedNodes = new List<TreeNode>();
 				var foundFirstText = false;
-				CollationDefinition wsCollator = null;
 
 				foreach (var tex in allTexts)
 				{   // This tex may not have a genre or it may claim to be in more than one
@@ -303,12 +293,10 @@ namespace SIL.FieldWorks.IText
 						continue;
 					}
 					foundFirstText = true;
-					wsCollator = GetCollatorFromTextNameWs(tex);
 				}
 
-				// if the text name writing system didn't give us a collator to use then default to system
-				if(wsCollator == null)
-					wsCollator = new SystemCollationDefinition();
+				// Always use the system collation definition. Texts have different writing systems anyhow.
+				var wsCollator = new SystemCollationDefinition();
 
 				// LT-12179:
 				if (foundFirstText)
