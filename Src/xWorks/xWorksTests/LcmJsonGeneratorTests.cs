@@ -819,7 +819,7 @@ namespace SIL.FieldWorks.XWorks
 			var testEntry = ConfiguredXHTMLGeneratorTests.CreateInterestingLexEntry(Cache);
 			var siteName = "test";
 			var json = LcmJsonGenerator.GenerateDictionaryMetaData(siteName, new[] { "mainentry.xhtml" }, new List<DictionaryConfigurationModel>(), new []{ testEntry.Hvo }, null, null, Cache);
-			var expectedResults = @"{""_id"":""" + siteName + @""",""mainLanguage"":{""lang"":""en"",""letters"":[""c""],""cssFiles"":[""configured.css""]},""partsOfSpeech"":[],""semanticDomains"":[],
+			var expectedResults = @"{""_id"":""" + siteName + @""",""mainLanguage"":{""lang"":""fr"",""letters"":[""c""],""cssFiles"":[""configured.css""]},""partsOfSpeech"":[],""semanticDomains"":[],
 				""xhtmlTemplates"": [""mainentry.xhtml""]}";
 			var expected = (JObject)JsonConvert.DeserializeObject(expectedResults, new JsonSerializerSettings { Formatting = Formatting.None });
 			VerifyJson(json.ToString(), expected);
@@ -842,7 +842,7 @@ namespace SIL.FieldWorks.XWorks
 			var siteName = "test";
 			var json = LcmJsonGenerator.GenerateDictionaryMetaData(siteName, new []{ "mainentry.xhtml" },
 				new List<DictionaryConfigurationModel>(), new[] { testEntry.Hvo }, null, null, Cache);
-			var expectedResults = @"{""_id"":""test"",""mainLanguage"":{""lang"":""en"",""letters"":[""c""],""cssFiles"":[""configured.css""]},
+			var expectedResults = @"{""_id"":""test"",""mainLanguage"":{""lang"":""fr"",""letters"":[""c""],""cssFiles"":[""configured.css""]},
 				""partsOfSpeech"":[{""lang"":""en"",""abbreviation"":""n"",""name"":""noun"",""guid"":""g" + noun.Guid + @"""}],
 				""semanticDomains"":[{""lang"":""en"",""abbreviation"":""9.0"",""name"":""CustomDomain"",""guid"":""g" + domainOne.Guid + @"""}],
 				""xhtmlTemplates"": [""mainentry.xhtml""]}";

@@ -486,7 +486,9 @@ namespace SIL.FieldWorks.XWorks
 				}
 				var configuration = model.Configurations[model.SelectedConfiguration];
 				var templateFileNames = GenerateConfigurationTemplates(configuration, m_cache, tempDirectoryForExport);
+				view.UpdateStatus(xWorksStrings.UploadToWebonary_PreparingDataForWebonary);
 				var metadataContent = GenerateDictionaryMetadataContent(model, templateFileNames, tempDirectoryForExport);
+				view.UpdateStatus(xWorksStrings.UploadToWebonary_FinishedDataProp);
 				var entries = m_exportService.ExportConfiguredJson(tempDirectoryForExport, configuration);
 				PostEntriesToWebonary(model, view, entries, false);
 

@@ -281,14 +281,17 @@ namespace SIL.FieldWorks.XWorks
 			// or maximized the form, and later reduces the height or unmaximizes the form
 			// after clicking Publish.
 
-			var allButTheLogRowHeight = this.tableLayoutPanel.GetRowHeights().Sum() - this.tableLayoutPanel.GetRowHeights().Last();
-			var fudge = this.Height - this.tableLayoutPanel.Height;
-			var minimumFormHeightToShowLog = allButTheLogRowHeight + this.outputLogTextbox.MinimumSize.Height + fudge;
+			var allButTheLogRowHeight = tableLayoutPanel.GetRowHeights().Sum() - tableLayoutPanel.GetRowHeights().Last();
+			var fudge = Height - tableLayoutPanel.Height;
+			var minimumFormHeightToShowLog = allButTheLogRowHeight + outputLogTextbox.MinimumSize.Height + fudge;
 			if (MiscUtils.IsUnix)
 				minimumFormHeightToShowLog += m_additionalMinimumHeightForMono;
-			this.MinimumSize = new Size(this.MinimumSize.Width, minimumFormHeightToShowLog);
+			MinimumSize = new Size(MinimumSize.Width, minimumFormHeightToShowLog);
 
-			m_controller.UploadToWebonary(Model, this);
+			using (new WaitCursor(this))
+			{
+				m_controller.UploadToWebonary(Model, this);
+			}
 		}
 
 		private void helpButton_Click(object sender, EventArgs e)

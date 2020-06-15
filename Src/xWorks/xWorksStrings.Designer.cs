@@ -2825,6 +2825,24 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Finished preparing data..
+        /// </summary>
+        internal static string UploadToWebonary_FinishedDataProp {
+            get {
+                return ResourceManager.GetString("UploadToWebonary_FinishedDataProp", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Preparing data to send to webonary (this could take some time)....
+        /// </summary>
+        internal static string UploadToWebonary_PreparingDataForWebonary {
+            get {
+                return ResourceManager.GetString("UploadToWebonary_PreparingDataForWebonary", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Exporting entries for the {0} publication using the {1} view.
         /// </summary>
         internal static string UploadToWebonaryController_ExportDictionaryContent_Exporting_entries_for_the__0__publication_using_the__1__configuration {

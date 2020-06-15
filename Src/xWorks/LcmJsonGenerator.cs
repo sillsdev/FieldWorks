@@ -501,7 +501,7 @@ namespace SIL.FieldWorks.XWorks
 			dynamic dictionaryMetaData = new JObject();
 			dictionaryMetaData._id = siteName;
 			dynamic mainLanguageData = new JObject();
-			mainLanguageData.lang = cache.LangProject.DefaultAnalysisWritingSystem.Id;
+			mainLanguageData.lang = cache.LangProject.DefaultVernacularWritingSystem.Id;
 			//mainLanguageData.title = Enhance: Add new field to dialog for title?
 			mainLanguageData.letters = JArray.FromObject(GenerateLetterHeaders(entryHvos, cache));
 			var customDictionaryCss = CssGenerator.CopyCustomCssAndGetPath(exportPath, configPath);

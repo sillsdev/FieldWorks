@@ -1199,4 +1199,12 @@ If you are not the one designated user who adds fields, or you are making some o
     <value>Server deleting project files{0}{1}</value>
     <comment>Displayed when upload to webonary is deleting a project with many files</comment>
   </data>
+  <data name="UploadToWebonary_PreparingDataForWebonary" xml:space="preserve">
+    <value>Preparing data to send to webonary (this could take some time)...</value>
+    <comment>Message displayed in Upload to Webonary when content is being generated</comment>
+  </data>
+  <data name="UploadToWebonary_FinishedDataProp" xml:space="preserve">
+    <value>Finished preparing data.</value>
+    <comment>Message displayed in Upload to Webonary when data generation is complete</comment>
+  </data>
 </root>
