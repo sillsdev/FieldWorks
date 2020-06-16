@@ -1116,7 +1116,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <summary/>
 		public SpellingDictionaryItem[] GetSpellingDictionaryComboBoxItems()
 		{
-			var dictionaries = new List<SpellingDictionaryItem> { new SpellingDictionaryItem(FwCoreDlgs.ksWsNoDictionaryMatches, FwCoreDlgs.kstidNone) };
+			// Do not localize this data string
+			const string idForNoDictionary = "<None>";
+			var dictionaries = new List<SpellingDictionaryItem> { new SpellingDictionaryItem(FwCoreDlgs.ksWsNoDictionaryMatches, idForNoDictionary) };
 
 			string spellCheckingDictionary = _currentWs.SpellCheckingId;
 			if (string.IsNullOrEmpty(spellCheckingDictionary))
