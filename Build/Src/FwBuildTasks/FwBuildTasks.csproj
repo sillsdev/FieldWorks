@@ -57,7 +57,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="SIL.TestUtilities">
-      <HintPath>..\..\..\Output\Debug\SIL.TestUtilities.dll</HintPath>
+      <HintPath>..\..\..\Downloads\SIL.TestUtilities.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />

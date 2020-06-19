@@ -276,7 +276,7 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 
 			var possibilitiesId = baseId + PossMap.IdSuffix;
 			var possibilitiesGroup = XElement.Parse(string.Format(EmptyGroup, possibilitiesId));
-			AddPossibilitiesToGroup(possibilityType, possibilitiesElement, possibilitiesId, possibilitiesGroup, targetLang);
+			AddPossibilitiesToGroup(possibilityType, possibilitiesElement, baseId, possibilitiesId, possibilitiesGroup, targetLang);
 			group.Add(possibilitiesGroup);
 		}
 
@@ -351,7 +351,8 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 			return aStrBuilder.ToString();
 		}
 
-		private static void ConvertSubPossibilities(XElement owner, XElement group, string possibilityType, string baseId, string targetLang)
+		private static void ConvertSubPossibilities(XElement owner, XElement group, string possibilityType,
+			string baseId, string parentId, string targetLang)
 		{
 			var possibilitiesElement = owner.Element(SubPosMap.ElementName);
 			if (possibilitiesElement == null) // No Possibilities found, no work to do
@@ -359,23 +360,26 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 				return;
 			}
 
-			var possibilitiesId = baseId + SubPosMap.IdSuffix;
+			var possibilitiesId = parentId + SubPosMap.IdSuffix;
 			var possibilitiesGroup = XElement.Parse(string.Format(EmptyGroup, possibilitiesId));
-			AddPossibilitiesToGroup(possibilityType, possibilitiesElement, possibilitiesId, possibilitiesGroup, targetLang);
+			AddPossibilitiesToGroup(possibilityType, possibilitiesElement, baseId, possibilitiesId, possibilitiesGroup, targetLang);
 			group.Add(possibilitiesGroup);
 		}
 
 		private static void AddPossibilitiesToGroup(string possibilityType, XElement possibilitiesElement,
-			string possibilitiesId, XElement possibilitiesGroup, string targetLang)
+			string baseId, string groupId, XElement possibilitiesGroup, string targetLang)
 		{
 			var handleSubtypes = possibilityType == SubtypesMap.SuperType;
 			var possibilityElements = handleSubtypes
 				? possibilitiesElement.Elements().Where(e => e.Name == SubtypesMap.SuperType || e.Name == SubtypesMap.SubType)
 				: possibilitiesElement.Elements(possibilityType);
-			int possIndex = 0;
+			var possIndex = 0;
 			foreach (var possibility in possibilityElements)
 			{
-				var possId = possibilitiesId + "_" + possIndex;
+				// If there is a GUID, use it as the key rather than the index (LT-20251).
+				// ENHANCE (Hasso) 2020.06: fall back to the English abbreviation before the index (need to sanitize Abbrevs)
+				var guidAtt = possibility.Attribute(GuidMap.AttName);
+				var possId = guidAtt == null ? $"{groupId}_{possIndex}" : $"{baseId}_{guidAtt.Value}";
 				var possGroup = XElement.Parse(string.Format(EmptyGroup, possId));
 				if (handleSubtypes && possibility.Name != possibilityType)
 				{
@@ -395,7 +399,8 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 				ConvertAUniToXliff(possibility, possGroup, possId, GlsAppendMap, targetLang);
 				ConvertAStrToXliff(possibility, possGroup, possId, DescMap, targetLang);
 				ConvertQuestions(possibility, possGroup, possId, targetLang);
-				ConvertSubPossibilities(possibility, possGroup, possibilityType, possId, targetLang);
+				ConvertSubPossibilities(possibility, possGroup, possibilityType,
+					guidAtt == null ? possId : baseId, possId, targetLang);
 				possibilitiesGroup.Add(possGroup);
 				++possIndex;
 			}
@@ -599,8 +604,7 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 			if (xliffPossGroup == null)
 				return;
 			var possGroup = XElement.Parse($"<{PossMap.ElementName}/>");
-			var xliffPossibilities = xliffPossGroup.Elements("group").Where(g => g.Attribute("id") != null
-															&& g.Attribute("id").Value.StartsWith(possibilitiesId));
+			var xliffPossibilities = xliffPossGroup.Elements("group").Where(g => g.Attribute("id") != null);
 			foreach (var possItem in xliffPossibilities)
 			{
 				ConvertPossibilityFromXliff(possItem, listElement.Attribute("itemClass").Value, possGroup, targetLanguage);
@@ -645,8 +649,7 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 			if (xliffPossGroup == null)
 				return;
 			var possGroup = XElement.Parse($"<{SubPosMap.ElementName}/>");
-			var xliffPossibilities = xliffPossGroup.Elements("group").Where(g => g.Attribute("id") != null
-																	&& g.Attribute("id").Value.StartsWith(possibilitiesId));
+			var xliffPossibilities = xliffPossGroup.Elements("group").Where(g => g.Attribute("id") != null);
 			foreach (var possItem in xliffPossibilities)
 			{
 				ConvertPossibilityFromXliff(possItem, itemClass, possGroup, targetLanguage);
