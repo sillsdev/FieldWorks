@@ -8,7 +8,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 	/// Enum representing the anthropology list options presented to the user
 	/// </summary>
 	/// <remarks>This has to be public, because some test has a required public test that uses this class in "TestCase" mode.</remarks>
-	public enum ListChoice
+	public enum AnthroListChoice
 	{
 		/// <summary>
 		/// Empty list, user defines later

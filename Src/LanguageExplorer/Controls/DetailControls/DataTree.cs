@@ -632,7 +632,17 @@ namespace LanguageExplorer.Controls.DetailControls
 			}
 		}
 
-		public ICmObject Root { get; protected set; }
+		private ICmObject _rootObject;
+		private bool _rootChanged;
+		public ICmObject Root
+		{
+			get => _rootObject;
+			protected set
+			{
+				_rootChanged = !ReferenceEquals(_rootObject, value);
+				_rootObject = value;
+			}
+		}
 
 		public ICmObject Descendant { get; protected set; }
 
@@ -1016,7 +1026,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			}
 			m_sda = null;
 			m_currentSlice = null;
-			Root = null;
+			_rootObject = null;
 			Cache = null;
 			m_mdc = null;
 			m_rch = null;
@@ -1114,7 +1124,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// If the DataTree's slices call this method, they should use 'false',
 		/// or they will be disposed when this call returns to them.
 		/// </remarks>
-		public virtual void RefreshList(bool differentObject)
+		public void RefreshList(bool differentObject)
 		{
 			if (m_fDoNotRefresh)
 			{
@@ -1292,9 +1302,10 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// Refresh. The DataTree needs to reconstruct the list of controls, and returns true to indicate that
 		/// children need not be refreshed.
 		/// </summary>
-		public virtual bool RefreshDisplay()
+		public bool RefreshDisplay()
 		{
-			RefreshList(true);
+			RefreshList(_rootChanged);
+			_rootChanged = false;
 			return true;
 		}
 
@@ -1426,7 +1437,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// <returns>
 		/// updated insertPosition for next item after the ones inserted.
 		/// </returns>
-		public virtual int CreateSlicesFor(ICmObject obj, ISlice parentSlice, string layoutName, string layoutChoiceField, int indent, int insertPosition, ArrayList path, ObjSeqHashMap reuseMap, XElement unifyWith)
+		public int CreateSlicesFor(ICmObject obj, ISlice parentSlice, string layoutName, string layoutChoiceField, int indent, int insertPosition, ArrayList path, ObjSeqHashMap reuseMap, XElement unifyWith)
 		{
 			// NB: 'path' can hold either ints or XmlNodes, so a generic can't be used for it.
 			if (obj == null)
@@ -1568,7 +1579,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// This is the guts of ApplyLayout, but it has extra arguments to allow it to be used both to actually produce
 		/// slices, and just to query whether any slices will be produced.
 		/// </summary>
-		protected internal virtual int ApplyLayout(ICmObject obj, ISlice parentSlice, XElement template, int indent, int insertPosition, ArrayList path, ObjSeqHashMap reuseMap, bool isTestOnly, out NodeTestResult testResult)
+		protected internal int ApplyLayout(ICmObject obj, ISlice parentSlice, XElement template, int indent, int insertPosition, ArrayList path, ObjSeqHashMap reuseMap, bool isTestOnly, out NodeTestResult testResult)
 		{
 			var insPos = insertPosition;
 			testResult = NodeTestResult.kntrNothing;
@@ -2501,9 +2512,8 @@ namespace LanguageExplorer.Controls.DetailControls
 			return template.Elements().Where(node => node.Name != "ChangeRecordHandler").Aggregate(insertPosition, (current, node) => ApplyLayout(obj, parentSlice, node, indent, current, path, reuseMap));
 		}
 
-		// Must be overridden if nulls will be inserted into items; when real item is needed,
-		// this is called to create it.
-		public virtual ISlice MakeEditorAt(int i)
+		/// <summary />
+		public ISlice MakeEditorAt(int i)
 		{
 			return null; // todo JohnT: return false;
 		}

@@ -128,7 +128,6 @@ namespace LanguageExplorer.Controls.DetailControls
 				}
 				finally
 				{
-					SpellCheckServices.UnwireEventHandlers(menu);
 					foreach (var item in menu.Items)
 					{
 						if (!(item is ToolStripMenuItem asToolStripMenuItem) || asToolStripMenuItem.Text != LanguageExplorerResources.ksDeleteNote)

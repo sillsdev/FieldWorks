@@ -590,9 +590,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			var container = new TestWSContainer(new[] { "en" });
 			var testModel = new FwWritingSystemSetupModel(container, FwWritingSystemSetupModel.ListType.Vernacular, mockWsManager)
 			{
+				// no-op handling of importing lists for new writing system
 				ImportListForNewWs = import => { }
 			};
-			// no-op handling of importing lists for new writing system
 			var french = new CoreWritingSystemDefinition("fr");
 			testModel.WorkingList.Add(new WSListItemModel(true, null, french));
 

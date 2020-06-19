@@ -10,13 +10,13 @@ namespace SIL.FieldWorks.FwCoreDlgs
 	public class FwChooseAnthroListModelTests
 	{
 		/// <summary/>
-		[TestCase(ListChoice.OCM, "OCM.xml")]
-		[TestCase(ListChoice.FRAME, "OCM-Frame.xml")]
-		public void AnthroFileNameReturnsCorrectData(ListChoice choice, string expectedFileName)
+		[TestCase(AnthroListChoice.OCM, "OCM.xml")]
+		[TestCase(AnthroListChoice.FRAME, "OCM-Frame.xml")]
+		public void AnthroFileNameReturnsCorrectData(AnthroListChoice choice, string expectedFileName)
 		{
 			var model = new FwChooseAnthroListModel
 			{
-				CurrentList = choice
+				CurrentAnthroListChoice = choice
 			};
 			Assert.That(model.AnthroFileName, Is.StringEnding(expectedFileName));
 		}
@@ -27,7 +27,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			var model = new FwChooseAnthroListModel
 			{
-				CurrentList = ListChoice.UserDef
+				CurrentAnthroListChoice = AnthroListChoice.UserDef
 			};
 			Assert.That(model.AnthroFileName, Is.Null);
 		}

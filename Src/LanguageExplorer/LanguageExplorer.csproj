@@ -411,7 +411,6 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Controls\LineTypes.cs" />
-    <Compile Include="Controls\MessageBoxEx\MessageBoxExButtons.cs" />
     <Compile Include="Controls\MessageBoxEx\MessageBoxExForm.cs">
       <SubType>Form</SubType>
     </Compile>

@@ -63,7 +63,7 @@ namespace LanguageExplorer.Filters
 			if (_managedLgIcuCollator != null)
 			{
 				_managedLgIcuCollator.Close();
-				_managedLgIcuCollator?.Dispose();
+				_managedLgIcuCollator.Dispose();
 				_managedLgIcuCollator = null;
 			}
 			m_htskey?.Clear();

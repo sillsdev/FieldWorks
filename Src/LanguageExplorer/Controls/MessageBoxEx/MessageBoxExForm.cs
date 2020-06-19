@@ -530,10 +530,11 @@ namespace LanguageExplorer.Controls.MessageBoxEx
 			{
 				return;
 			}
+			const string ok = "OK";
 			var okButton = new MessageBoxExButton
 			{
-				Text = MessageBoxExButtons.OK.ToString(),
-				Value = MessageBoxExButtons.OK.ToString()
+				Text = ok,
+				Value = ok
 			};
 			Buttons.Add(okButton);
 		}
@@ -672,13 +673,11 @@ namespace LanguageExplorer.Controls.MessageBoxEx
 					return;
 				}
 				//See if standard cancel button is present
-				foreach (var button in Buttons)
+				const string cancel = "Cancel";
+				foreach (var button in Buttons.Where(button => button.Text == cancel && button.Value == cancel))
 				{
-					if (button.Text == MessageBoxExButtons.Cancel.ToString() && button.Value == MessageBoxExButtons.Cancel.ToString())
-					{
-						_cancelButton = button;
-						return;
-					}
+					_cancelButton = button;
+					return;
 				}
 
 				//Standard cancel button is not present, Disable

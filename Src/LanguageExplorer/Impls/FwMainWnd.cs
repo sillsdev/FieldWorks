@@ -2430,44 +2430,6 @@ namespace LanguageExplorer.Impls
 			}
 		}
 
-		private void SetupEditUndoAndRedoMenus()
-		{
-			// Set basic values on the pessimistic side.
-			var ah = Cache.DomainDataByFlid.GetActionHandler();
-			string rawUndoText;
-			var undoEnabled = ah.UndoableSequenceCount > 0;
-			var redoEnabled = ah.RedoableSequenceCount > 0;
-			string rawRedoText;
-			// Q: Is the focused control an instance of IUndoRedoHandler
-			if (FocusedControl is IUndoRedoHandler asIUndoRedoHandler)
-			{
-				// A1: Yes: Let it set up the text and enabled state for both menus.
-				// The handler may opt to not fret about, or or the other,
-				// so this method may need to deal with in the end, after all.
-				rawUndoText = asIUndoRedoHandler.UndoText;
-				undoEnabled = asIUndoRedoHandler.UndoEnabled(undoEnabled);
-				rawRedoText = asIUndoRedoHandler.RedoText;
-				redoEnabled = asIUndoRedoHandler.RedoEnabled(redoEnabled);
-			}
-			else
-			{
-				// A2: No: Deal with it here.
-				// Normal undo processing.
-				var baseUndo = undoEnabled ? ah.GetUndoText() : LanguageExplorerResources.Undo;
-				rawUndoText = string.IsNullOrEmpty(baseUndo) ? LanguageExplorerResources.Undo : baseUndo;
-				// Normal Redo processing.
-				var baseRedo = redoEnabled ? ah.GetRedoText() : LanguageExplorerResources.Redo;
-				rawRedoText = string.IsNullOrEmpty(baseRedo) ? LanguageExplorerResources.Redo : baseRedo;
-			}
-			undoToolStripMenuItem.Text = FwUtils.ReplaceUnderlineWithAmpersand(rawUndoText);
-			undoToolStripMenuItem.Enabled = undoEnabled;
-			redoToolStripMenuItem.Text = FwUtils.ReplaceUnderlineWithAmpersand(rawRedoText);
-			redoToolStripMenuItem.Enabled = redoEnabled;
-			// Standard toolstrip buttons.
-			Toolbar_CmdUndo.Enabled = undoEnabled;
-			Toolbar_CmdRedo.Enabled = redoEnabled;
-		}
-
 		private Tuple<bool, bool> CanCmdPasteHyperlink => new Tuple<bool, bool>(true, EditingHelper is RootSiteEditingHelper editHelper && editHelper.CanPasteUrl() && editHelper.CanInsertLinkToFile());
 
 		private void Edit_Paste_Hyperlink(object sender, EventArgs e)
@@ -2570,7 +2532,7 @@ very simple minor adjustments. ;)"
 				// Set basic values on the pessimistic side.
 				var ah = Cache.DomainDataByFlid.GetActionHandler();
 				string rawUndoText;
-				var undoEnabled = ah.UndoableSequenceCount > 0;
+				var undoEnabled = ah.CanUndo();
 				// Q: Is the focused control an instance of IUndoRedoHandler
 				if (FocusedControl is IUndoRedoHandler asIUndoRedoHandler)
 				{
@@ -2631,7 +2593,7 @@ very simple minor adjustments. ;)"
 			{
 				// Set basic values on the pessimistic side.
 				var ah = Cache.DomainDataByFlid.GetActionHandler();
-				var redoEnabled = ah.RedoableSequenceCount > 0;
+				var redoEnabled = ah.CanRedo();
 				string rawRedoText;
 				// Q: Is the focused control an instance of IUndoRedoHandler
 				if (FocusedControl is IUndoRedoHandler asIUndoRedoHandler)
@@ -2658,14 +2620,11 @@ very simple minor adjustments. ;)"
 		private void Edit_Redo_Click(object sender, EventArgs e)
 		{
 			var focusedControl = FocusedControl;
-			if (focusedControl is IUndoRedoHandler asIUndoRedoHandler)
+			if (focusedControl is IUndoRedoHandler asIUndoRedoHandler && asIUndoRedoHandler.HandleRedo(sender, e))
 			{
-				if (asIUndoRedoHandler.HandleRedo(sender, e))
-				{
-					return;
-				}
+				return;
 			}
-			// For all the bother, the IUndoRedoHandler impl couldn't be bothered, so do it here.
+			// For all that, the IUndoRedoHandler impl couldn't be bothered, so do it here.
 			var ah = Cache.DomainDataByFlid.GetActionHandler();
 			using (new WaitCursor(this))
 			{

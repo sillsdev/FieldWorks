@@ -21,20 +21,6 @@ namespace LanguageExplorer.Controls.MessageBoxEx
 	{
 		#region Fields
 		private static readonly Dictionary<string, MessageBoxEx> s_messageBoxes = new Dictionary<string, MessageBoxEx>();
-		private static readonly Dictionary<string, string> s_standardButtonsText = new Dictionary<string, string>();
-		#endregion
-
-		#region Static ctor
-		static MessageBoxExManager()
-		{
-			s_standardButtonsText[MessageBoxExButtons.OK.ToString()] = MessageBoxExResources.Ok;
-			s_standardButtonsText[MessageBoxExButtons.Cancel.ToString()] = MessageBoxExResources.Cancel;
-			s_standardButtonsText[MessageBoxExButtons.Yes.ToString()] = MessageBoxExResources.Yes;
-			s_standardButtonsText[MessageBoxExButtons.No.ToString()] = MessageBoxExResources.No;
-			s_standardButtonsText[MessageBoxExButtons.Abort.ToString()] = MessageBoxExResources.Abort;
-			s_standardButtonsText[MessageBoxExButtons.Retry.ToString()] = MessageBoxExResources.Retry;
-			s_standardButtonsText[MessageBoxExButtons.Ignore.ToString()] = MessageBoxExResources.Ignore;
-		}
 		#endregion
 
 		#region Methods

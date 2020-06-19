@@ -733,7 +733,7 @@ namespace LanguageExplorerTests.Controls.XMLViews
 			/// <summary />
 			public int OnExtendedKey(int chw, VwShiftStatus ss, int nFlags)
 			{
-				throw new NotImplementedException();
+				throw new NotSupportedException();
 			}
 
 			/// <summary />

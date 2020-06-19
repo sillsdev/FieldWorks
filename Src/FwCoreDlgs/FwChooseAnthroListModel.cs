@@ -13,7 +13,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 	internal sealed class FwChooseAnthroListModel
 	{
 		/// <summary/>
-		internal ListChoice CurrentList = ListChoice.FRAME;
+		internal AnthroListChoice CurrentAnthroListChoice = AnthroListChoice.FRAME;
 
 		/// <summary/>
 		internal string AnthroFileName
@@ -21,14 +21,14 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			get
 			{
 				string sFile = null;
-				switch (CurrentList)
+				switch (CurrentAnthroListChoice)
 				{
-					case ListChoice.UserDef:
+					case AnthroListChoice.UserDef:
 						break;
-					case ListChoice.OCM:
+					case AnthroListChoice.OCM:
 						sFile = Path.Combine(FwDirectoryFinder.TemplateDirectory, FwDirectoryFinder.ksOCMListFilename);
 						break;
-					case ListChoice.FRAME:
+					case AnthroListChoice.FRAME:
 						sFile = Path.Combine(FwDirectoryFinder.TemplateDirectory, FwDirectoryFinder.ksOCMFrameFilename);
 						break;
 				}

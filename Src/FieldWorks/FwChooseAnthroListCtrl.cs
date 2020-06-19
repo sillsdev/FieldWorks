@@ -42,7 +42,7 @@ namespace SIL.FieldWorks
 		{
 			if (m_radioCustom.Checked)
 			{
-				_model.CurrentList = ListChoice.UserDef;
+				_model.CurrentAnthroListChoice = AnthroListChoice.UserDef;
 			}
 		}
 
@@ -50,7 +50,7 @@ namespace SIL.FieldWorks
 		{
 			if (m_radioOCM.Checked)
 			{
-				_model.CurrentList = ListChoice.OCM;
+				_model.CurrentAnthroListChoice = AnthroListChoice.OCM;
 			}
 		}
 
@@ -58,7 +58,7 @@ namespace SIL.FieldWorks
 		{
 			if (m_radioFRAME.Checked)
 			{
-				_model.CurrentList = ListChoice.FRAME;
+				_model.CurrentAnthroListChoice = AnthroListChoice.FRAME;
 			}
 		}
 	}

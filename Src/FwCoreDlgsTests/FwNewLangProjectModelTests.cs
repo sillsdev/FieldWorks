@@ -44,7 +44,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				LoadProjectNameSetup = () => { },
 				LoadVernacularSetup = () => { },
 				LoadAnalysisSetup = () => { },
-				AnthroModel = new FwChooseAnthroListModel { CurrentList = ListChoice.UserDef }
+				AnthroModel = new FwChooseAnthroListModel { CurrentAnthroListChoice = AnthroListChoice.UserDef }
 			};
 			try
 			{
@@ -494,7 +494,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				LoadVernacularSetup = () => { },
 				LoadAnalysisSetup = () => { },
 				ProjectName = dbName,
-				AnthroModel = new FwChooseAnthroListModel { CurrentList = ListChoice.UserDef }
+				AnthroModel = new FwChooseAnthroListModel { CurrentAnthroListChoice = AnthroListChoice.UserDef }
 			};
 			testProject.Next();
 			testProject.SetDefaultWs(new LanguageInfo { LanguageTag = vernWs });

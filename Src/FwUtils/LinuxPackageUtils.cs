@@ -16,8 +16,8 @@ namespace SIL.FieldWorks.Common.FwUtils
 	{
 		private enum DpkgListFields
 		{
-			Name,
-			Version
+			Name = 1,
+			Version = 2
 		}
 
 		/// <summary>

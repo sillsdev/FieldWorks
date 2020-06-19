@@ -677,9 +677,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			}
 			// using these keys suppresses prior input lang change.
 			Callbacks.WsPending = -1;
-			// sets the arrow direction to physical or logical based on LTR or RTL
-			var nFlags = Callbacks.ComplexKeyBehavior(chw, ss);
-			var retVal = Callbacks.EditedRootBox.OnExtendedKey(chw, ss, (int)nFlags);
+			var retVal = Callbacks.EditedRootBox.OnExtendedKey(chw, ss, 1);
 			Marshal.ThrowExceptionForHR(retVal); // Don't ignore error HRESULTs
 			return retVal != 1;
 		}

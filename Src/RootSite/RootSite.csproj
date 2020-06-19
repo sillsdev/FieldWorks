@@ -151,9 +151,11 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Accessibility" />
-    <Reference Include="ibusdotnet, Version=2.0.0.20771, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\ibusdotnet.2.0.0.20771\lib\ibusdotnet.dll</HintPath>
+    <Reference Include="ibusdotnet, Version=2.0.0.0, Culture=neutral, PublicKeyToken=c9ab93f7b23223fb">
+      <HintPath>..\..\packages\ibusdotnet.2.0.3\lib\net461\ibusdotnet.dll</HintPath>
+    </Reference>
+    <Reference Include="NDesk.DBus, Version=1.0.0.0, Culture=neutral, PublicKeyToken=f6716e4f9b2ed099">
+      <HintPath>..\..\packages\NDesk.DBus.0.15.0\lib\NDesk.DBus.dll</HintPath>
     </Reference>
     <Reference Include="SIL.Core.Desktop">
       <SpecificVersion>False</SpecificVersion>
@@ -217,7 +219,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="CharEnumeratorForByteArray.cs" />
-    <Compile Include="CkBehavior.cs" />
     <Compile Include="DataUpdateMonitor.cs" />
     <Compile Include="EditingHelper.cs" />
     <Compile Include="FwBaseVc.cs" />
@@ -265,9 +266,6 @@
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="SpellCheckServices.cs" />
-    <Compile Include="SpellCorrectMenuItem.cs">
-      <SubType>Component</SubType>
-    </Compile>
     <Compile Include="TextSelInfo.cs" />
     <Compile Include="TsStringWrapper.cs" />
     <Compile Include="UndoTaskHelper.cs" />

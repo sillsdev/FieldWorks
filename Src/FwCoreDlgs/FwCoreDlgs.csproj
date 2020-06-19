@@ -445,7 +445,7 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="IWizardStep.cs" />
-    <Compile Include="ListChoice.cs" />
+    <Compile Include="AnthroListChoice.cs" />
     <Compile Include="MergeWritingSystemDlg.cs">
       <SubType>Form</SubType>
     </Compile>
