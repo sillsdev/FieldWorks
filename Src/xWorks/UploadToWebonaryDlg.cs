@@ -320,17 +320,18 @@ namespace SIL.FieldWorks.XWorks
 			{
 				case WebonaryStatusCondition.Success:
 					// Green
-					newColor = System.Drawing.ColorTranslator.FromHtml("#b8ffaa");
+					newColor = ColorTranslator.FromHtml("#b8ffaa");
 					break;
 				case WebonaryStatusCondition.Error:
 					// Red
-					newColor = System.Drawing.ColorTranslator.FromHtml("#ffaaaa");
+					newColor = ColorTranslator.FromHtml("#ffaaaa");
 					break;
 				case WebonaryStatusCondition.None:
-				default:
 					// Grey
-					newColor = System.Drawing.ColorTranslator.FromHtml("#dcdad5");
+					newColor = ColorTranslator.FromHtml("#dcdad5");
 					break;
+				default:
+					throw new ArgumentException("Unhandled WebonaryStatusCondition", nameof(condition));
 			}
 			outputLogTextbox.BackColor = newColor;
 		}

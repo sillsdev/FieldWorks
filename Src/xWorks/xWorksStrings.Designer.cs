@@ -1735,6 +1735,15 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Preparing data to send to webonary (this could take some time)....
+        /// </summary>
+        internal static string ksPreparingDataForWebonary {
+            get {
+                return ResourceManager.GetString("ksPreparingDataForWebonary", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Preparing to display the publication view.
         /// </summary>
         internal static string ksPreparingPublicationDisplay {
@@ -1776,6 +1785,24 @@ namespace SIL.FieldWorks.XWorks {
         internal static string ksPublicationEntries {
             get {
                 return ResourceManager.GetString("ksPublicationEntries", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Failed to upload {0}..
+        /// </summary>
+        internal static string ksPutFilesToWebonaryFailed {
+            get {
+                return ResourceManager.GetString("ksPutFilesToWebonaryFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Uploaded {0}..
+        /// </summary>
+        internal static string ksPutFilesToWebonaryUploaded {
+            get {
+                return ResourceManager.GetString("ksPutFilesToWebonaryUploaded", resourceCulture);
             }
         }
         
@@ -2338,6 +2365,15 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Finished preparing data..
+        /// </summary>
+        internal static string ksWebonaryFinishedDataPrep {
+            get {
+                return ResourceManager.GetString("ksWebonaryFinishedDataPrep", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Upload successful. Preparing your data for publication. This may take several minutes to a few hours depending on the size of your dictionary. You will receive an email when the process is complete. You can examine the progress on the admin page of your Webonary site. You may now safely close this dialog..
         /// </summary>
         internal static string ksWebonaryUploadSuccessful {
@@ -2821,24 +2857,6 @@ namespace SIL.FieldWorks.XWorks {
         internal static string UploadToWebonary_DeletingProjFiles {
             get {
                 return ResourceManager.GetString("UploadToWebonary_DeletingProjFiles", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Finished preparing data..
-        /// </summary>
-        internal static string UploadToWebonary_FinishedDataProp {
-            get {
-                return ResourceManager.GetString("UploadToWebonary_FinishedDataProp", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Preparing data to send to webonary (this could take some time)....
-        /// </summary>
-        internal static string UploadToWebonary_PreparingDataForWebonary {
-            get {
-                return ResourceManager.GetString("UploadToWebonary_PreparingDataForWebonary", resourceCulture);
             }
         }
         

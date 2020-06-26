@@ -32,7 +32,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// This action creates the WebClient for accessing webonary. Protected to enable a mock client for unit testing.
 		/// </summary>
-		protected Func<IWebonaryClient> CreateWebClient = () => new WebonaryClient();
+		protected Func<IWebonaryClient> CreateWebClient = () => new WebonaryClient { Encoding = Encoding.UTF8 };
 
 		public PropertyTable PropertyTable { private get; set; }
 
@@ -147,8 +147,9 @@ namespace SIL.FieldWorks.XWorks
 		/// This method will recurse into a directory and add files into the zip file with their relative path
 		/// to the original dirToUpload.
 		/// </summary>
-		private void RecursivelyPutFilesToWebonary(UploadToWebonaryModel model, string dirToUpload, IUploadToWebonaryView webonaryView, string subFolder = "")
+		private bool RecursivelyPutFilesToWebonary(UploadToWebonaryModel model, string dirToUpload, IUploadToWebonaryView webonaryView, string subFolder = "")
 		{
+			bool allFilesSucceeded = true;
 			foreach (var file in Directory.EnumerateFiles(dirToUpload))
 			{
 				if (!IsSupportedWebonaryFile(file))
@@ -167,16 +168,19 @@ namespace SIL.FieldWorks.XWorks
 				var signedUrl = PostContentToWebonary(model, webonaryView, "post/file", fileToSign);
 				if (signedUrl == null)
 				{
-					webonaryView.UpdateStatus($"Failed to upload {relativeFilePath}");
-					continue;
+					webonaryView.UpdateStatus(string.Format(xWorksStrings.ksPutFilesToWebonaryFailed, relativeFilePath));
+					return false;
 				}
-				UploadFileToWebonary(signedUrl, file, webonaryView);
-				webonaryView.UpdateStatus(Path.GetFileName(file));
+				allFilesSucceeded &= UploadFileToWebonary(signedUrl, file, webonaryView);
+				webonaryView.UpdateStatus(string.Format(xWorksStrings.ksPutFilesToWebonaryUploaded, Path.GetFileName(file)));
 			}
+
 			foreach (var dir in Directory.EnumerateDirectories(dirToUpload))
 			{
-				RecursivelyPutFilesToWebonary(model, dir, webonaryView, Path.Combine(subFolder, Path.GetFileName(dir.TrimEnd(Path.DirectorySeparatorChar))));
+				allFilesSucceeded &= RecursivelyPutFilesToWebonary(model, dir, webonaryView, Path.Combine(subFolder, Path.GetFileName(dir.TrimEnd(Path.DirectorySeparatorChar))));
 			}
+
+			return allFilesSucceeded;
 		}
 
 		/// <summary>
@@ -257,7 +261,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		internal void UploadFileToWebonary(string signedUrl, string fileName, IUploadToWebonaryView view)
+		internal bool UploadFileToWebonary(string signedUrl, string fileName, IUploadToWebonaryView view)
 		{
 			Guard.AgainstNull(view, nameof(view));
 
@@ -276,12 +280,14 @@ namespace SIL.FieldWorks.XWorks
 				catch (WebonaryClient.WebonaryException e)
 				{
 					UpdateViewWithWebonaryException(view, e);
-					return;
+					return false;
 				}
 				var responseText = Encoding.ASCII.GetString(response);
-
+#if DEBUG
 				UpdateViewWithWebonaryResponse(view, client, responseText);
+#endif
 			}
+			return true;
 		}
 
 		private string PostContentToWebonary(UploadToWebonaryModel model, IUploadToWebonaryView view, string apiEndpoint, JContainer postContent)
@@ -346,7 +352,18 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		private string PostEntriesToWebonary(UploadToWebonaryModel model, IUploadToWebonaryView view, string apiEndpoint, JContainer postContent, bool isReversal)
+		private bool PostEntriesToWebonary(UploadToWebonaryModel model, IUploadToWebonaryView view, List<JArray> entries, bool isReversal)
+		{
+			var allPostsSucceeded = true;
+			foreach (var entryBatch in entries)
+			{
+				allPostsSucceeded &= PostEntriesToWebonary(model, view, "post/entry", entryBatch, isReversal);
+			}
+
+			return allPostsSucceeded;
+		}
+
+		private bool PostEntriesToWebonary(UploadToWebonaryModel model, IUploadToWebonaryView view, string apiEndpoint, JContainer postContent, bool isReversal)
 		{
 			Guard.AgainstNull(model, nameof(model));
 			Guard.AgainstNull(view, nameof(view));
@@ -369,10 +386,12 @@ namespace SIL.FieldWorks.XWorks
 				catch (WebonaryClient.WebonaryException e)
 				{
 					UpdateViewWithWebonaryException(view, e);
-					return string.Empty;
+					return false;
 				}
-
-				return response;
+#if DEBUG
+				view.UpdateStatus(response);
+#endif
+				return true;
 			}
 		}
 
@@ -480,29 +499,35 @@ namespace SIL.FieldWorks.XWorks
 			if (useJsonApi)
 			{
 				var deleteResponse = DeleteContentFromWebonary(model, view, "delete/dictionary");
-				if (deleteResponse != String.Empty)
+				if (deleteResponse != string.Empty)
 				{
 					view.UpdateStatus(string.Format(xWorksStrings.UploadToWebonary_DeletingProjFiles, Environment.NewLine, deleteResponse));
 				}
 				var configuration = model.Configurations[model.SelectedConfiguration];
 				var templateFileNames = GenerateConfigurationTemplates(configuration, m_cache, tempDirectoryForExport);
-				view.UpdateStatus(xWorksStrings.UploadToWebonary_PreparingDataForWebonary);
+				view.UpdateStatus(xWorksStrings.ksPreparingDataForWebonary);
 				var metadataContent = GenerateDictionaryMetadataContent(model, templateFileNames, tempDirectoryForExport);
-				view.UpdateStatus(xWorksStrings.UploadToWebonary_FinishedDataProp);
+				view.UpdateStatus(xWorksStrings.ksWebonaryFinishedDataPrep);
 				var entries = m_exportService.ExportConfiguredJson(tempDirectoryForExport, configuration);
-				PostEntriesToWebonary(model, view, entries, false);
+				var allRequestsSucceeded = PostEntriesToWebonary(model, view, entries, false);
 
 				foreach (var selectedReversal in model.SelectedReversals)
 				{
 					int[] entryIds;
 					var writingSystem = model.Reversals[selectedReversal].WritingSystem;
 					entries = m_exportService.ExportConfiguredReversalJson(tempDirectoryForExport, writingSystem, out entryIds, model.Reversals[selectedReversal]);
-					PostEntriesToWebonary(model, view, entries, true);
+					allRequestsSucceeded &= PostEntriesToWebonary(model, view, entries, true);
 					var reversalLetters = LcmJsonGenerator.GenerateReversalLetterHeaders(model.SiteName, writingSystem, entryIds, m_cache);
 					AddReversalHeadword(metadataContent, writingSystem, reversalLetters);
 				}
-				PostContentToWebonary(model, view, "post/dictionary", metadataContent);
-				RecursivelyPutFilesToWebonary(model, tempDirectoryForExport, view);
+				allRequestsSucceeded &= RecursivelyPutFilesToWebonary(model, tempDirectoryForExport, view);
+				var postResult = PostContentToWebonary(model, view, "post/dictionary", metadataContent);
+				allRequestsSucceeded &= !string.IsNullOrEmpty(postResult);
+				if (allRequestsSucceeded)
+				{
+					view.UpdateStatus(xWorksStrings.ksWebonaryUploadSuccessful);
+					view.SetStatusCondition(WebonaryStatusCondition.Success);
+				}
 			}
 			else
 			{
@@ -523,14 +548,6 @@ namespace SIL.FieldWorks.XWorks
 			var reversals = (JArray)metaData["reversalLanguages"];
 			var reversalToUpdate = reversals.First(reversal => (string)((JObject)reversal)["lang"] == writingSystem);
 			reversalToUpdate["letters"] = reversalLetters;
-		}
-
-		private void PostEntriesToWebonary(UploadToWebonaryModel model, IUploadToWebonaryView view, List<JArray> entries, bool isReversal)
-		{
-			foreach (var entryBatch in entries)
-			{
-				PostEntriesToWebonary(model, view, "post/entry", entryBatch, isReversal);
-			}
 		}
 
 		private string[] GenerateConfigurationTemplates(DictionaryConfigurationModel configuration, LcmCache cache, string tempDirectoryForExport)
