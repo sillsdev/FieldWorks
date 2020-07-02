@@ -6954,12 +6954,12 @@ namespace SIL.FieldWorks.XWorks
 
 			var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
 			//SUT
-			var result = ConfiguredLcmGenerator.GenerateXHTMLForMainEntry(idiom, mainEntryNode, null, settings);
+			var result = ConfiguredLcmGenerator.GenerateXHTMLForMainEntry(idiom, mainEntryNode, null, settings, 0);
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath("/div[@class='lexentry']/span[@class='headword']", 1);
 
 			var complexOptions = (DictionaryNodeListOptions)mainEntryNode.DictionaryNodeOptions;
 			complexOptions.Options[0].IsEnabled = false;
-			result = ConfiguredLcmGenerator.GenerateXHTMLForMainEntry(idiom, mainEntryNode, null, settings);
+			result = ConfiguredLcmGenerator.GenerateXHTMLForMainEntry(idiom, mainEntryNode, null, settings, 1);
 			Assert.IsEmpty(result);
 		}
 

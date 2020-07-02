@@ -741,7 +741,7 @@ namespace SIL.FieldWorks.XWorks
 			xw.WriteEndElement();
 		}
 
-		public void BeginEntry(IFragmentWriter writer, string className, Guid entryGuid)
+		public void BeginEntry(IFragmentWriter writer, string className, Guid entryGuid, int index)
 		{
 			var xw = ((XmlFragmentWriter)writer).Writer;
 			xw.WriteStartElement("div");

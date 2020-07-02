@@ -36,7 +36,7 @@ namespace SIL.FieldWorks.XWorks
 		void EndLink(IFragmentWriter writer);
 		void AddToRunContent(IFragmentWriter writer, string txtContent);
 		void AddLineBreakInRunContent(IFragmentWriter writer);
-		void BeginEntry(IFragmentWriter writer, string className, Guid entryGuid);
+		void BeginEntry(IFragmentWriter writer, string className, Guid entryGuid, int index);
 		void AddEntryData(IFragmentWriter writer, List<string> pieces);
 		void EndEntry(IFragmentWriter writer);
 		void AddCollection(IFragmentWriter writer, bool isBlockProperty, string className, string content);

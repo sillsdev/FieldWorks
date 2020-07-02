@@ -168,31 +168,31 @@ namespace SIL.FieldWorks.XWorks
 		/// Minor Entry configuration node.
 		/// </summary>
 		public static string GenerateXHTMLForEntry(ICmObject entryObj, DictionaryConfigurationModel configuration,
-			DictionaryPublicationDecorator publicationDecorator, GeneratorSettings settings)
+			DictionaryPublicationDecorator publicationDecorator, GeneratorSettings settings, int index = -1)
 		{
 			if (IsMainEntry(entryObj, configuration))
-				return GenerateXHTMLForMainEntry(entryObj, configuration.Parts[0], publicationDecorator, settings);
+				return GenerateXHTMLForMainEntry(entryObj, configuration.Parts[0], publicationDecorator, settings, index);
 
 			var entry = (ILexEntry)entryObj;
 			return entry.PublishAsMinorEntry
-				? GenerateXHTMLForMinorEntry(entry, configuration, publicationDecorator, settings)
+				? GenerateXHTMLForMinorEntry(entry, configuration, publicationDecorator, settings, index)
 				: string.Empty;
 		}
 
 		public static string GenerateXHTMLForMainEntry(ICmObject entry, ConfigurableDictionaryNode configuration,
-			DictionaryPublicationDecorator publicationDecorator, GeneratorSettings settings)
+			DictionaryPublicationDecorator publicationDecorator, GeneratorSettings settings, int index)
 		{
 			if (configuration.DictionaryNodeOptions != null && ((ILexEntry)entry).ComplexFormEntryRefs.Any() && !IsListItemSelectedForExport(configuration, entry))
 				return string.Empty;
-			return GenerateXHTMLForEntry(entry, configuration, publicationDecorator, settings);
+			return GenerateXHTMLForEntry(entry, configuration, publicationDecorator, settings, index);
 		}
 
 		private static string GenerateXHTMLForMinorEntry(ICmObject entry, DictionaryConfigurationModel configuration,
-			DictionaryPublicationDecorator publicationDecorator, GeneratorSettings settings)
+			DictionaryPublicationDecorator publicationDecorator, GeneratorSettings settings, int index)
 		{
-			// LT-15232: show minor entries using only the first applicable Minor Entry node (not more than once)
+			// LT-15232: show minor entries using only the last applicable Minor Entry node (not more than once)
 			var applicablePart = configuration.Parts.Skip(1).LastOrDefault(part => IsListItemSelectedForExport(part, entry));
-			return applicablePart == null ? string.Empty : GenerateXHTMLForEntry(entry, applicablePart, publicationDecorator, settings);
+			return applicablePart == null ? string.Empty : GenerateXHTMLForEntry(entry, applicablePart, publicationDecorator, settings, index);
 		}
 
 		/// <summary>
@@ -214,7 +214,8 @@ namespace SIL.FieldWorks.XWorks
 
 		/// <summary>Generates XHTML for an ICmObject for a specific ConfigurableDictionaryNode</summary>
 		/// <remarks>the configuration node must match the entry type</remarks>
-		internal static string GenerateXHTMLForEntry(ICmObject entry, ConfigurableDictionaryNode configuration, DictionaryPublicationDecorator publicationDecorator, GeneratorSettings settings)
+		internal static string GenerateXHTMLForEntry(ICmObject entry, ConfigurableDictionaryNode configuration,
+			DictionaryPublicationDecorator publicationDecorator, GeneratorSettings settings, int index = -1)
 		{
 			Guard.AgainstNull(settings, nameof(settings));
 			Guard.AgainstNull(configuration, nameof(configuration));
@@ -243,7 +244,7 @@ namespace SIL.FieldWorks.XWorks
 			var bldr = new StringBuilder();
 			using (var xw = settings.ContentGenerator.CreateWriter(bldr))
 			{
-				settings.ContentGenerator.BeginEntry(xw, GetClassNameAttributeForConfig(configuration), entry.Guid);
+				settings.ContentGenerator.BeginEntry(xw, GetClassNameAttributeForConfig(configuration), entry.Guid, index);
 				settings.ContentGenerator.AddEntryData(xw, pieces);
 				settings.ContentGenerator.EndEntry(xw);
 				xw.Flush();

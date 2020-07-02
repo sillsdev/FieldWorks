@@ -163,7 +163,7 @@ namespace SIL.FieldWorks.XWorks
 			throw new NotImplementedException("Line breaks in strings aren't supported in the json generator yet.");
 		}
 
-		public void BeginEntry(IFragmentWriter xw, string className, Guid entryGuid)
+		public void BeginEntry(IFragmentWriter xw, string className, Guid entryGuid, int index)
 		{
 			var jsonWriter = (JsonFragmentWriter)xw;
 			jsonWriter.StartObject();
@@ -177,6 +177,7 @@ namespace SIL.FieldWorks.XWorks
 				new Dictionary<string, Dictionary<string, string>>(),
 				new Dictionary<string, ISet<string>>(), Cache);
 			jsonWriter.InsertJsonProperty("letterHead", indexChar);
+			jsonWriter.InsertJsonProperty("sortIndex", index);
 			jsonWriter.InsertRawJson(",");
 		}
 
@@ -396,6 +397,12 @@ namespace SIL.FieldWorks.XWorks
 				jsonWriter.WriteValue(propValue);
 			}
 
+			public void InsertJsonProperty(string propName, int propValue)
+			{
+				jsonWriter.WritePropertyName(propName);
+				jsonWriter.WriteValue(propValue);
+			}
+
 			public void InsertRawJson(string jsonContent)
 			{
 				jsonWriter.WriteRaw(jsonContent);
@@ -407,10 +414,14 @@ namespace SIL.FieldWorks.XWorks
 		/// Each array will contain the number of entries given to batchSize except possibly the last one.
 		/// <remarks>
 		/// Due to time constraints webonary version 1.5 will need the xhtml to display the entries correctly on Webonary.
-		/// This is an engineering compromise and should be removed when work happens on webonary 2.0
+		/// This is an engineering compromise and should be removed when work happens on webonary 2.0.
 		/// The template which is being generated is the direction to move and the displayXhtml property should be deprecated.
 		/// </remarks>
 		/// </summary>
+		/// <remarks>
+		/// Webonary processes entries in parallel and therefore needs to have a sort index on each entry. Perhaps in the future, Webonary
+		/// could index the entries after upload and before processing.
+		/// </remarks>
 		public static List<JArray> SavePublishedJsonWithStyles(int[] entriesToSave, DictionaryPublicationDecorator publicationDecorator, int batchSize,
 			DictionaryConfigurationModel configuration, PropertyTable propertyTable, string jsonPath, IThreadedProgress progress)
 		{
@@ -430,6 +441,7 @@ namespace SIL.FieldWorks.XWorks
 				// For every entry in the page generate an action that will produce the xhtml document fragment for that entry
 				for (var i = 0; i < entryCount; ++i)
 				{
+					var index = i;
 					var hvo = entriesToSave[i];
 					var entry = cache.ServiceLocator.GetObject(hvo);
 					var entryStringBuilder = new StringBuilder(100);
@@ -439,10 +451,10 @@ namespace SIL.FieldWorks.XWorks
 					var generateEntryAction = new Action(() =>
 					{
 						var entryContent = ConfiguredLcmGenerator.GenerateXHTMLForEntry(entry, configuration,
-							publicationDecorator, settings);
+							publicationDecorator, settings, index);
 						entryStringBuilder.Append(entryContent);
 						var displayXhtmlContent = ConfiguredLcmGenerator.GenerateXHTMLForEntry(entry, configuration,
-							publicationDecorator, displayXhtmlSettings);
+							publicationDecorator, displayXhtmlSettings, index);
 						displayXhtmlBuilder.Append(displayXhtmlContent);
 						if (progress != null)
 							progress.Position++;
