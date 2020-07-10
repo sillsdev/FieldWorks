@@ -212,10 +212,7 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		internal virtual string DestinationURI(string siteName)
 		{
-			// To do local testing set the WEBONARYSERVER environment variable to something like 192.168.33.10
-			var server = Environment.GetEnvironmentVariable("WEBONARYSERVER");
-			server = string.IsNullOrEmpty(server) ? "webonary.org" : server;
-			return string.Format("https://{0}/{1}/wp-json/webonary/import", server, siteName);
+			return $"https://{Server}/{siteName}/wp-json/webonary/import";
 		}
 
 		/// <summary>
@@ -223,11 +220,20 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		internal virtual string DestinationApiURI(string siteName, string apiEndpoint)
 		{
-			// To do local testing set the WEBONARYSERVER environment variable to something like 192.168.33.10
-			var server = Environment.GetEnvironmentVariable("WEBONARYSERVER");
-			server = string.IsNullOrEmpty(server) ? "webonary.org" : server;
-			return $"https://cloud-api.{server}/v1/{apiEndpoint}/{siteName}?client=Flex&version='{Assembly.GetExecutingAssembly().GetName().Version}'";
+			return $"https://cloud-api.{Server}/v1/{apiEndpoint}/{siteName}?client=Flex&version='{Assembly.GetExecutingAssembly().GetName().Version}'";
 		}
+
+		internal static string Server
+		{
+			get
+			{
+				// For local testing, set the WEBONARYSERVER environment variable to something like 192.168.33.10
+				var server = Environment.GetEnvironmentVariable("WEBONARYSERVER");
+				return string.IsNullOrEmpty(server) ? "webonary.org" : server;
+			}
+		}
+
+		internal static bool UseJsonApi => !string.IsNullOrEmpty(Environment.GetEnvironmentVariable("WEBONARY_API"));
 
 		internal void UploadToWebonary(string zipFileToUpload, UploadToWebonaryModel model, IUploadToWebonaryView view)
 		{
@@ -495,8 +501,7 @@ namespace SIL.FieldWorks.XWorks
 
 			var tempDirectoryForExport = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
 			Directory.CreateDirectory(tempDirectoryForExport);
-			var useJsonApi = !string.IsNullOrEmpty(Environment.GetEnvironmentVariable("WEBONARY_API"));
-			if (useJsonApi)
+			if (UseJsonApi)
 			{
 				var deleteResponse = DeleteContentFromWebonary(model, view, "delete/dictionary");
 				if (deleteResponse != string.Empty)

@@ -2898,15 +2898,6 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to https://www.webonary.org/{0}.
-        /// </summary>
-        internal static string WebonarySiteURLFormat {
-            get {
-                return ResourceManager.GetString("WebonarySiteURLFormat", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to You are resetting the following to factory defaults:.
         /// </summary>
         internal static string YouAreResetting {
