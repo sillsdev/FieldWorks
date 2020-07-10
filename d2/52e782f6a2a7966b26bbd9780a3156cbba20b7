@@ -1,0 +1,9 @@
+Verified+1: Jenkins CI <jenkins@sil.org>
+Verified-Linux+1: Jenkins CI <jenkins@sil.org>
+Code-Review+2: Randy Regnier <rbregnier@gmail.com>
+Code-Review+2: Ken Zook <ken_zook@sil.org>
+Submitted-by: Hasso Pape <hasso_pape@sil.org>
+Submitted-at: Fri, 10 Jul 2020 17:55:26 +0000
+Reviewed-on: https://gerrit.lsdev.sil.org/c/FieldWorks/+/7575
+Project: FieldWorks
+Branch: refs/heads/release/9.0
