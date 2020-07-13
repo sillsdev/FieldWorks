@@ -479,7 +479,7 @@ namespace SIL.FieldWorks.XWorks
 					using (var jsonWriter = new JsonTextWriter(jsonStringWriter))
 					{
 						jsonWriter.WriteStartArray();
-						foreach (var entryData in batch)
+						foreach (var entryData in batch.Where(ed => ed.Item2.Length > 0))
 						{
 							dynamic entryObject = JsonConvert.DeserializeObject(entryData.Item2.ToString());
 							entryObject.displayXhtml = entryData.Item3.ToString();

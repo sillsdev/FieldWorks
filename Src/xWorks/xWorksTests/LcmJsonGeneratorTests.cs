@@ -946,6 +946,22 @@ namespace SIL.FieldWorks.XWorks
 			Assert.AreEqual(2, jsonResult2.sortIndex.Value);
 		}
 
+		[Test]
+		public void SavePublishedJsonWithStyles_HiddenMinorEntry_DoesNotThrow()
+		{
+			var configModel = ConfiguredXHTMLGeneratorTests.CreateInterestingConfigurationModel(Cache, m_propertyTable);
+			var mainEntry = ConfiguredXHTMLGeneratorTests.CreateInterestingLexEntry(Cache);
+			var minorEntry = ConfiguredXHTMLGeneratorTests.CreateInterestingLexEntry(Cache);
+			ConfiguredXHTMLGeneratorTests.CreateVariantForm(Cache, mainEntry, minorEntry);
+			ConfiguredXHTMLGeneratorTests.SetPublishAsMinorEntry(minorEntry, false);
+
+			var result = LcmJsonGenerator.SavePublishedJsonWithStyles(new[] { minorEntry.Hvo },
+				DefaultDecorator, 1, configModel, m_propertyTable, "test.json", null);
+
+			Assert.AreEqual(1, result.Count, "batches");
+			Assert.AreEqual(0, result[0].Count, "entries");
+		}
+
 		/// <summary>
 		/// Verifies the json data generated is equivalent to the expected result
 		/// </summary>
