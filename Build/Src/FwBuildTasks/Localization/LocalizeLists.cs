@@ -576,13 +576,17 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 			var xliffPossGroup = group.Elements("group").FirstOrDefault(g => g.Attribute("id") != null && g.Attribute("id").Value == possibilitiesId);
 			if (xliffPossGroup == null)
 				return;
-			var possGroup = XElement.Parse($"<{PossMap.ElementName}/>");
+			var possGroup = new XElement(PossMap.ElementName);
 			var xliffPossibilities = xliffPossGroup.Elements("group").Where(g => g.Attribute("id") != null);
 			foreach (var possItem in xliffPossibilities)
 			{
 				ConvertPossibilityFromXliff(possItem, listElement.Attribute("itemClass").Value, possGroup, targetLanguage);
 			}
-			listElement.Add(possGroup);
+
+			if(possGroup.HasElements)
+			{
+				listElement.Add(possGroup);
+			}
 		}
 
 		private static void ConvertPossibilityFromXliff(XElement possItem, string itemClass, XElement possGroup, string targetLanguage)

@@ -675,8 +675,11 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 				$"/Lists/List/Description/AStr[@ws='{targetLang}']/Run[@ws='{targetLang}' and text()='{translatedDescription}']", isTranslated);
 		}
 
+		/// <remarks>
+		/// LCM chokes on self-closing &lt;Possibilities /&gt; tags and skips importing the following list. LT-20294
+		/// </remarks>
 		[Test]
-		public void ConvertXliffToLists_EmptyPossGroupCreatesPossibilitiesElement()
+		public void ConvertXliffToLists_EmptyPossGroupDoesNotCreatePossibilitiesElement()
 		{
 			var listsElement = XElement.Parse("<Lists/>");
 			var xliffXml = @"<xliff version='1.2' xmlns:sil='software.sil.org'>
@@ -694,7 +697,7 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 					</body></file></xliff>";
 			LocalizeLists.ConvertXliffToLists(XDocument.Parse(xliffXml), listsElement);
 			// Verify Possibilities element created
-			AssertThatXmlIn.String(listsElement.ToString()).HasSpecifiedNumberOfMatchesForXpath("/Lists/List[@owner='LexDb']/Possibilities", 1);
+			AssertThatXmlIn.String(listsElement.ToString()).HasNoMatchForXpath("/Lists/List[@owner='LexDb']/Possibilities");
 		}
 
 		[Test]
