@@ -339,40 +339,6 @@ namespace SIL.FieldWorks.XWorks
 			return OnDisplayInsertPicture(commandObject, ref display);
 		}
 
-		public bool OnDeleteMediaFile(object cmd)
-		{
-			var obj = m_dataEntryForm.CurrentSlice.Object;
-			var media = obj as ICmMedia;
-			if (media != null)
-			{
-				UndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(
-					xWorksStrings.ksUndoDeleteMediaLink,
-					xWorksStrings.ksRedoDeleteMediaLink,
-					Cache.ActionHandlerAccessor,
-					() =>
-					{
-						if (CmObjectUi.ConsiderDeletingRelatedFile(media.MediaFileRA, m_mediator, m_propertyTable))
-						{
-							Cache.DomainDataByFlid.DeleteObj(media.Hvo);
-						}
-					});
-			}
-			return true;
-		}
-
-		/// <summary>
-		/// Check whether or not to display the "Delete This Media Link" command.
-		/// </summary>
-		/// <param name="commandObject"></param>
-		/// <param name="display"></param>
-		/// <returns></returns>
-		public virtual bool OnDisplayDeleteMediaFile(object commandObject,
-			ref UIItemDisplayProperties display)
-		{
-			display.Enabled = true;
-			return true;
-		}
-
 		public bool OnDataTreeHelp(object cmd)
 		{
 			string helpTopicID = null;
