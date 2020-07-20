@@ -354,7 +354,7 @@ namespace SIL.FieldWorks.IText
 		/// If using lazy initialization, fill this in to make sure the relevant part of the
 		/// tree is built so that the specified tag can be checked.
 		/// </summary>
-		/// <param name="tag">The object that better be the Tag of some node </param>
+		/// <param name="tag">Some object owned at some level by an IScrBook that is the Tag of some node</param>
 		/// ------------------------------------------------------------------------------------
 		protected override void FillInIfHidden(object tag)
 		{
