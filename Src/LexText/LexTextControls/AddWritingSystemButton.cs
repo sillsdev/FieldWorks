@@ -1,4 +1,4 @@
-// Copyright (c) 2010-2017 SIL International
+// Copyright (c) 2010-2020 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -29,7 +29,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		LcmCache m_cache;
 		private HashSet<string> m_existingWsIds;
 		public event EventHandler WritingSystemAdded;
-		CoreWritingSystemDefinition m_wsNew;
+		private CoreWritingSystemDefinition m_wsNew;
 		private IHelpTopicProvider m_helpTopicProvider;
 		private IApp m_app;
 
@@ -162,12 +162,11 @@ namespace SIL.FieldWorks.LexText.Controls
 
 			if (selectedMI.Text == LexTextControls.ks_DefineNew_)
 			{
-				IEnumerable<CoreWritingSystemDefinition> newWritingSystems;
-				if (FwWritingSystemSetupDlg.ShowNewDialog(FindForm(), m_cache.ServiceLocator.WritingSystemManager, m_cache.ServiceLocator.WritingSystems,
-					m_helpTopicProvider, m_app, isAnalysis ? FwWritingSystemSetupModel.ListType.Analysis : FwWritingSystemSetupModel.ListType.Vernacular,
-					out newWritingSystems))
+				if (FwWritingSystemSetupDlg.ShowNewDialog(FindForm(), m_cache, m_helpTopicProvider, m_app,
+					isAnalysis ? FwWritingSystemSetupModel.ListType.Analysis : FwWritingSystemSetupModel.ListType.Vernacular,
+					out var newWritingSystems))
 				{
-					ws = newWritingSystems.First();
+					ws = newWritingSystems.FirstOrDefault();
 				}
 			}
 			else

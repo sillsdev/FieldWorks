@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2017 SIL International
+// Copyright (c) 2015-2020 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -12,7 +12,6 @@ using SIL.FieldWorks.Common.RootSites;
 using SIL.LCModel;
 using SIL.FieldWorks.FwCoreDlgs;
 using SilEncConverters40;
-using SIL.LCModel.Core.WritingSystems;
 // for the encoding converters
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
@@ -86,6 +85,8 @@ namespace SIL.FieldWorks.LexText.Controls
 			}
 		}
 
+
+		// REVIEW (Hasso) this is kept updated, but its contents are never read.
 		private readonly Dictionary<string, WsInfo> m_wsInfo;	// hash of wsInfo
 		private string m_blankEC = Sfm2Xml.STATICS.AlreadyInUnicode;
 //		private WsInfo m_wsiDefault;
@@ -384,16 +385,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			tbLangDesc.Text = m_LangDesc;
 
 			// initialize the 'ws' combo box and the AddWs button with the data from the DB
-			foreach (CoreWritingSystemDefinition ws in m_cache.ServiceLocator.WritingSystemManager.WritingSystems)
-			{
-				var wsi = new WsInfo(ws.DisplayLabel, ws.Id, ws.LegacyMapping);
-				m_wsInfo.Add(wsi.KEY, wsi);
-				cbWS.Items.Add(wsi);
-			}
-
-			cbWS.Sorted = false;
-			var wsiIgnore = new WsInfo();
-			cbWS.Items.Add(wsiIgnore);
+			ReloadWsCombo();
 			btnAddWS.Initialize(m_cache, m_helpTopicProvider, m_app, m_cache.ServiceLocator.WritingSystemManager.WritingSystems);
 
 			// select the proper index if there is a valid writing system
@@ -416,6 +408,23 @@ namespace SIL.FieldWorks.LexText.Controls
 					index = 0;
 			}
 			cbEC.SelectedIndex = index;
+		}
+
+		private void ReloadWsCombo()
+		{
+			m_wsInfo.Clear();
+			cbWS.ClearItems();
+			cbWS.Sorted = true;
+			foreach (var ws in m_cache.ServiceLocator.WritingSystemManager.WritingSystems)
+			{
+				var wsi = new WsInfo(ws.DisplayLabel, ws.Id, ws.LegacyMapping);
+				m_wsInfo.Add(wsi.KEY, wsi);
+				cbWS.Items.Add(wsi);
+			}
+
+			cbWS.Sorted = false;
+			// Add the special "ignore" WsInfo
+			cbWS.Items.Add(new WsInfo());
 		}
 
 		/// <summary>
@@ -443,23 +452,17 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		private void btnAddWS_WritingSystemAdded(object sender, EventArgs e)
 		{
-			CoreWritingSystemDefinition ws = btnAddWS.NewWritingSystem;
+			var ws = btnAddWS.NewWritingSystem;
 			if (ws != null)
 			{
-				string mapName = ws.LegacyMapping;
-				var wsi = new WsInfo(ws.DisplayLabel, ws.Id, mapName);
-				m_wsInfo.Add(wsi.KEY, wsi);
+				ReloadWsCombo();
 
-				// now select it for the ws combo box
-				int index = cbWS.Items.Add(wsi);
-				cbWS.SelectedIndex = index;
+				var mapName = ws.LegacyMapping;
+				// select the new ws in the combo
+				cbWS.SelectedIndex = cbWS.FindStringExact(new WsInfo(ws.DisplayLabel, ws.Id, mapName).ToString());
 
 				// now if there's an encoding converter for the ws, select it
-				if (String.IsNullOrEmpty(mapName))
-					index = cbEC.FindStringExact(m_blankEC);
-				else
-					index = cbEC.Items.Add(mapName);
-				cbEC.SelectedIndex = index;
+				cbEC.SelectedIndex = string.IsNullOrEmpty(mapName) ? cbEC.FindStringExact(m_blankEC) : cbEC.Items.Add(mapName);
 			}
 		}
 
