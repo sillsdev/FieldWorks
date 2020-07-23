@@ -1,0 +1,8 @@
+Code-Review+2: Jason Naylor <jason_naylor@sil.org>
+Verified+1: Jenkins CI <jenkins@sil.org>
+Verified-Linux+1: Jenkins CI <jenkins@sil.org>
+Submitted-by: Jason Naylor <jason_naylor@sil.org>
+Submitted-at: Thu, 23 Jul 2020 19:59:27 +0000
+Reviewed-on: https://gerrit.lsdev.sil.org/c/FieldWorks/+/7588
+Project: FieldWorks
+Branch: refs/heads/release/9.0
