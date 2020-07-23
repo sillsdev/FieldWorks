@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.ObjectModel;
@@ -66,7 +67,7 @@ namespace SIL.FieldWorks.Common.RootSites
 
 					string fontFeatures = null;
 					if (fontName == ws.DefaultFontName)
-						fontFeatures = ws.DefaultFontFeatures;
+						fontFeatures = GraphiteFontFeatures.ConvertFontFeatureCodesToIds(ws.DefaultFontFeatures);
 					graphiteEngine.InitRenderer(vg, fontFeatures);
 					// check if the font is a valid Graphite font
 					if (graphiteEngine.FontIsValid)
