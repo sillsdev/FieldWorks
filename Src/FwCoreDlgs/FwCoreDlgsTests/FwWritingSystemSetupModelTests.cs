@@ -22,11 +22,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 	class FwWritingSystemSetupModelTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
 	{
 
-		[SetUp]
-		public void SetUp()
-		{
-		}
-
 		[Test]
 		public void CanCreateModel()
 		{
@@ -658,6 +653,64 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			testModel.MoveDown();
 			testModel.Save();
 			Assert.True(writingSystemListUpdatedCalled, "WritingSystemListUpdated should have been called after this change");
+		}
+
+		[Test]
+		public void Model_WritingSystemChanged_CalledOnAbbrevChange()
+		{
+			var writingSystemChanged = false;
+			var mockWsManager = MockRepository.GenerateMock<IWritingSystemManager>();
+
+			var container = new TestWSContainer(new[] { "fr" });
+			var testModel = new FwWritingSystemSetupModel(container,
+				FwWritingSystemSetupModel.ListType.Vernacular, mockWsManager);
+			testModel.WritingSystemUpdated += (sender, args) =>
+			{
+				writingSystemChanged = true;
+			};
+			// Make a change that should notify listeners (refresh the lexicon view for instance)
+			testModel.CurrentWsSetupModel.CurrentAbbreviation = "fra";
+			testModel.Save();
+			Assert.True(writingSystemChanged, "WritingSystemUpdated should have been called after this change");
+		}
+
+		[Test]
+		public void Model_WritingSystemChanged_CalledOnWsIdChange()
+		{
+			var writingSystemChanged = false;
+			var mockWsManager = MockRepository.GenerateMock<IWritingSystemManager>();
+
+			var container = new TestWSContainer(new[] { "fr" });
+			var testModel = new FwWritingSystemSetupModel(container,
+				FwWritingSystemSetupModel.ListType.Vernacular, mockWsManager);
+			testModel.WritingSystemUpdated += (sender, args) =>
+			{
+				writingSystemChanged = true;
+			};
+			// Make a change that should notify listeners (refresh the lexicon view for instance)
+			testModel.CurrentWsSetupModel.CurrentRegion = "US";
+			testModel.Save();
+			Assert.True(writingSystemChanged, "WritingSystemUpdated should have been called after this change");
+		}
+
+		[Test]
+		public void Model_WritingSystemChanged_NotCalledOnIrrelevantChange()
+		{
+			var writingSystemChanged = false;
+			var mockWsManager = MockRepository.GenerateMock<IWritingSystemManager>();
+
+			var container = new TestWSContainer(new[] { "fr" });
+			var testModel = new FwWritingSystemSetupModel(container,
+				FwWritingSystemSetupModel.ListType.Vernacular, mockWsManager);
+			testModel.WritingSystemUpdated += (sender, args) =>
+			{
+				writingSystemChanged = true;
+			};
+			// Make a change that should notify listeners (refresh the lexicon view for instance)
+			// ReSharper disable once StringLiteralTypo - Leave me alone ReSharper, it's French!
+			testModel.CurrentWsSetupModel.CurrentSpellCheckingId = "aucun";
+			testModel.Save();
+			Assert.False(writingSystemChanged, "WritingSystemUpdated should not have been called after this change");
 		}
 
 		[TestCase(FwWritingSystemSetupModel.ListType.Vernacular)]

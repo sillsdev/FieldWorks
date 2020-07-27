@@ -80,6 +80,11 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <summary/>
 		public event EventHandler WritingSystemListUpdated;
 
+		/// <summary>
+		/// This event is fired only when the id or abbreviation for a writing system changes
+		/// </summary>
+		public event EventHandler WritingSystemUpdated;
+
 		/// <summary/>
 		public delegate void ShowMessageBoxDelegate(string message);
 
@@ -660,6 +665,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					}
 					else if (workingWs.IsChanged)
 					{
+						var didAbbrevOrIdChange = origWs.Abbreviation != workingWs.Abbreviation;
 						var oldId = origWs.Id;
 						var oldHandle = origWs.Handle;
 						// copy the working writing system content into the original writing system
@@ -672,6 +678,11 @@ namespace SIL.FieldWorks.FwCoreDlgs
 							{
 								WritingSystemServices.UpdateWritingSystemId(Cache, origWs, oldHandle, oldId);
 							}
+							didAbbrevOrIdChange = true;
+						}
+						if (didAbbrevOrIdChange)
+						{
+							WritingSystemUpdated?.Invoke(this, EventArgs.Empty);
 						}
 						_mediator?.SendMessage("WritingSystemUpdated", origWs.Id);
 					}
