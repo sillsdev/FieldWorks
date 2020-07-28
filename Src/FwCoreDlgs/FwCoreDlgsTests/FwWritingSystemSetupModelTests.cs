@@ -1256,6 +1256,34 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			Assert.NotNull(constructedItem, "A default item matching the ws id should be in the list.");
 		}
 
+		[Test]
+		public void MergeWritingSystemTest_MergeWorks()
+		{
+			Cache.LangProject.CurrentAnalysisWritingSystems.Clear();
+			var gb = GetOrCreateWs("en-GB");
+			var en = GetOrCreateWs("en");
+			var fr = GetOrCreateWs("fr");
+			Cache.LangProject.CurrentAnalysisWritingSystems.Add(gb);
+			Cache.LangProject.CurrentAnalysisWritingSystems.Add(en);
+			Cache.LangProject.CurrentVernacularWritingSystems.Add(fr);
+			var entryFactory = Cache.ServiceLocator.GetInstance<ILexEntryFactory>();
+			var entry = entryFactory.Create();
+			entry.SummaryDefinition.set_String(gb.Handle, "Queens English");
+			Cache.ActionHandlerAccessor.EndUndoTask();
+			var container = new TestWSContainer(new[] { "fr" }, new [] {"en-GB", "en"});
+			var testModel = new FwWritingSystemSetupModel(container, FwWritingSystemSetupModel.ListType.Analysis, Cache.ServiceLocator.WritingSystemManager, Cache);
+			testModel.ConfirmMergeWritingSystem = (string merge, out CoreWritingSystemDefinition tag) =>
+			{
+				tag = container.CurrentAnalysisWritingSystems.First(ws => ws.Id == "en");
+				return true;
+			};
+			testModel.SelectWs("en-GB");
+			testModel.GetRightClickMenuItems().First(item => item.MenuText == "Merge...").ClickHandler.Invoke(null, null);
+			testModel.Save();
+			Assert.That(entry.SummaryDefinition.get_String(en.Handle).Text, Is.StringStarting("Queens English"));
+		}
+
+
 		/// <summary>
 		/// Adds en and fr to Current Vernacular and sets en as Homograph WS.
 		/// The client must call <c>Cache.ActionHandlerAccessor.EndUndoTask()</c> after this and any additional setup.

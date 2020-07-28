@@ -641,6 +641,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					default:
 						throw new NotImplementedException($"{_listType} not yet supported.");
 				}
+
 				// Track the new writing systems for importing translated lists
 				var newWritingSystems = new List<CoreWritingSystemDefinition>();
 				// Adjust the homograph writing system after possibly interacting with the user
@@ -702,7 +703,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				// Handle any merged writing systems
 				foreach (var mergedWs in _mergedWritingSystems)
 				{
-					WritingSystemServices.MergeWritingSystems(Cache, mergedWs.Key, mergedWs.Value);
+					WritingSystemServices.MergeWritingSystems(Cache, _wsManager.Get(mergedWs.Key.Id), _wsManager.Get(mergedWs.Value.Id));
 				}
 				// Save all the changes to the current writing systems
 				_wsManager.Save();
@@ -811,7 +812,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				currentWritingSystems.Remove(deleteCandidate);
 				allWritingSystems.Remove(deleteCandidate);
 				// The cache will be null while creating a new project, in which case we aren't really deleting anything
-				if (!otherWritingSystems.Contains(deleteCandidate) && Cache != null)
+				if (!otherWritingSystems.Contains(deleteCandidate)
+					&& !_mergedWritingSystems.Keys.Contains(deleteCandidate)
+					&& Cache != null)
 				{
 					WritingSystemServices.DeleteWritingSystem(Cache, deleteCandidate);
 					deletedWsIds.Add(deleteCandidate.Id);
