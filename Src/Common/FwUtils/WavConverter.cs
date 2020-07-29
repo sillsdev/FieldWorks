@@ -5,6 +5,7 @@ using System;
 using System.IO;
 using System.Security.Cryptography;
 using System.Diagnostics;
+using System.Windows.Forms;
 using NAudio.Lame;
 using NAudio.Wave;
 using SIL.PlatformUtilities;
@@ -59,14 +60,47 @@ namespace SIL.FieldWorks.Common.FwUtils
 
 		private static void ConvertBytesToMp3_Windows(byte[] wavBytes, string destinationFilePath)
 		{
-			using (var outputStream = new MemoryStream())
-			using (var inputStream = new MemoryStream(wavBytes))
-			using (var fileReader = new WaveFileReader(inputStream))
-			using (var fileWriter = new LameMP3FileWriter(outputStream, fileReader.WaveFormat, 128))
+			// Larry Hayashi's recommended lame settings
+			// "lame.exe" -V 8 -b 16 -F -B -a -m m -q 1
+			// -a (downmix) not supported by NAudio.Lame yet
+			// -b 16 (minimum bitrate) not supported by NAudio.Lame yet
+			// -q 1 (algorithm quality) not supported by NAudio.Lame yet
+			// -B (maximum bitrate) not supported by NAudio.Lame and should have an arg
+			// -F (strictly enforce minimum bitrate) not supported by NAudio.Lame
+			var lameConfig = new LameConfig
 			{
-				fileReader.CopyTo(fileWriter);
-				var mp3Bytes = outputStream.ToArray();
-				SaveBytes(destinationFilePath, mp3Bytes);
+				Preset = LAMEPreset.V8, // -V 8
+				Mode = MPEGMode.Mono, // -m m
+				//MinimumBitRate = 16,
+				//MaximumBitRate = 128,
+				//ForceMinimum = true,
+				//VBRAlgorithmQuality = 1
+			};
+			try
+			{
+				using (var outputStream = new MemoryStream())
+				using (var inputStream = new MemoryStream(wavBytes))
+				using (var fileReader = new WaveFileReader(inputStream))
+				using (var fileWriter = new LameMP3FileWriter(outputStream, fileReader.WaveFormat, lameConfig))
+				{
+					fileWriter.OnProgress += (writer, bytes, outputBytes, finished) =>
+					{
+						if (finished)
+						{
+							var mp3Bytes = outputStream.ToArray();
+							SaveBytes(destinationFilePath, mp3Bytes);
+						}
+					};
+					fileReader.CopyTo(fileWriter);
+					fileWriter.Flush();
+				}
+			}
+			catch (ArgumentException e)
+			{
+				MessageBoxUtils.Show(null, string.Format(FwUtilsStrings.ConvertBytesToMp3_BadWavFile,
+					Path.GetFileName(destinationFilePath),
+					Environment.NewLine,
+					e.Message), string.Empty, MessageBoxButtons.OK, MessageBoxIcon.Warning);
 			}
 		}
 
@@ -79,8 +113,8 @@ namespace SIL.FieldWorks.Common.FwUtils
 				{
 					WindowStyle = ProcessWindowStyle.Hidden,
 					FileName = "/bin/bash",
-					Arguments = string.Format("-c 'lame -h {0} {1}'", sourceFilePath,
-						destinationFilePath),
+					Arguments =
+						$"-c 'lame -V 8 -b 16 -F -B -a -m m -q 1 {sourceFilePath} {destinationFilePath}'",
 					UseShellExecute = false,
 					CreateNoWindow = true
 				};

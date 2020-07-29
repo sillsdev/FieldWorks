@@ -600,10 +600,10 @@
 			<NuGottenFiles Include="$(GeckoDir)/build/Geckofx-Core.dll.config" Condition="'$(OS)'!='Windows_NT'"/>
 			<NuGottenFiles Include="$(GeckoDir)/content/**/*.*"/>
 			<NuGottenFiles Include="$(fwrt)/packages/DotNetZip.1.13.3/lib/net40/*.*"/>
-			<NuGottenFiles Include="$(fwrt)/packages/NAudio.1.7.3/lib/net35/NAudio.dll"/>
-			<NuGottenFiles Include="$(fwrt)/packages/NAudio.Lame.1.0.4/lib/net20/NAudio.Lame.dll"/>
-			<NuGottenFiles Condition="'$(OS)'=='Windows_NT' AND '$(arch)'!='x64'" Include="$(fwrt)/packages/NAudio.Lame.1.0.4/content/libmp3lame.32.dll"/>
-			<NuGottenFiles Condition="'$(OS)'=='Windows_NT' AND '$(arch)'=='x64'" Include="$(fwrt)/packages/NAudio.Lame.1.0.4/content/libmp3lame.64.dll"/>
+			<NuGottenFiles Include="$(fwrt)/packages/NAudio.1.10.0/lib/net35/NAudio.dll"/>
+			<NuGottenFiles Include="$(fwrt)/packages/NAudio.Lame.1.1.5/lib/netstandard2.0/NAudio.Lame.dll"/>
+			<NuGottenFiles Condition="'$(OS)'=='Windows_NT' AND '$(arch)'!='x64'" Include="$(fwrt)/packages/NAudio.Lame.1.1.5/build/libmp3lame.32.dll"/>
+			<NuGottenFiles Condition="'$(OS)'=='Windows_NT' AND '$(arch)'=='x64'" Include="$(fwrt)/packages/NAudio.Lame.1.1.5/build/libmp3lame.64.dll"/>
 			<NuGottenFiles Include="$(fwrt)/packages/Newtonsoft.Json.12.0.3/lib/net45/Newtonsoft.Json.dll"/>
 			<NuGottenFiles Include="$(fwrt)/packages/Microsoft.Extensions.DependencyModel.2.0.4/lib/net451/Microsoft.Extensions.DependencyModel.dll"/>
 			<NuGottenFiles Include="$(fwrt)/packages/icu.net.2.5.4/lib/net451/icu.net.dll"/>
