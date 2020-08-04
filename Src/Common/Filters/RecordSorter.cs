@@ -2222,10 +2222,10 @@ namespace SIL.FieldWorks.Filters
 		/// An ICURulesCollationDefinition with empty rules was causing access violations in ICU. (LT-20268)
 		/// This method supports the band-aid fallback to SystemCollationDefinition.
 		/// </summary>
-		/// <returns>true if the CollationDefinition is a RulesCollationDefinition with non empty rules</returns>
+		/// <returns>true if the CollationDefinition is a RulesCollationDefinition with valid non empty rules</returns>
 		private bool HasValidRules(CollationDefinition cd)
 		{
-			return cd is RulesCollationDefinition ? !string.IsNullOrEmpty(((RulesCollationDefinition)cd).CollationRules) : true;
+			return cd is RulesCollationDefinition ? !string.IsNullOrEmpty(((RulesCollationDefinition)cd).CollationRules) && cd.IsValid : true;
 		}
 
 		#region IPersistAsXml Members
