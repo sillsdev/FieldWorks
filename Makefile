@@ -130,7 +130,6 @@ install-tree: fieldworks-flex.1.gz unicodechareditor.1.gz install-tree-fdo
 	install -m 644 Lib/linux/fieldworks.sh $(DESTDIR)/etc/profile.d
 	# Install content and plug-ins
 	install -m 644 DistFiles/*.{txt,reg} $(DESTDIR)/usr/share/fieldworks
-	install -D -m 644 "DistFiles/Language Explorer/Movies/notfound.html" "$(DESTDIR)/usr/share/fieldworks/Language Explorer/Movies/notfound.html"
 	cp -pdr DistFiles/{"Editorial Checks",EncodingConverters} $(DESTDIR)/usr/share/fieldworks
 	cp -pdr DistFiles/{Helps,Fonts,Graphite,Keyboards,"Language Explorer",Parts} $(DESTDIR)/usr/share/fieldworks
 	# Install man pages

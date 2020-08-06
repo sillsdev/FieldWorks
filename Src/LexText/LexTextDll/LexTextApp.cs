@@ -699,48 +699,10 @@ namespace SIL.FieldWorks.XWorks.LexText
 		{
 			CheckDisposed();
 
-			try
-			{
-				var pathMoviesPage = string.Format(FwDirectoryFinder.CodeDirectory +
-					"{0}Language Explorer{0}Movies{0}Demo Movies.html",
-					Path.DirectorySeparatorChar);
-				if (!File.Exists(pathMoviesPage))
-				{
-					// No movies installed; show the placeholder page with instructions to download
-					pathMoviesPage = string.Format(FwDirectoryFinder.CodeDirectory +
-						"{0}Language Explorer{0}Movies{0}notfound.html",
-						Path.DirectorySeparatorChar);
-				}
-				if (!File.Exists(pathMoviesPage))
-				{
-					// The placeholder page is also missing. Throwing an error will show the user a helpful dialog in the catch block
-					throw new FileNotFoundException();
-				}
+			const string moviesUrl = "https://software.sil.org/fieldworks/download/demo-movies/index-of-demo-movies/";
 
-
-				OpenDocument<Win32Exception>(pathMoviesPage, win32Err => {
-					if (win32Err.NativeErrorCode == 1155)
-					{
-						// The user has the movie files, but does not have a file association for .html files.
-						// Try to launch Internet Explorer directly:
-						using (Process.Start("IExplore.exe", pathMoviesPage))
-						{
-						}
-					}
-					else
-					{
-						throw win32Err;
-					}
-				});
-			}
-			catch (Exception)
-			{
-				// Some other unforeseen error:
-				MessageBox.Show(null, string.Format(LexTextStrings.ksErrorCannotLaunchMovies,
-					string.Format(
-						FwDirectoryFinder.CodeDirectory + "{0}Language Explorer{0}Movies",
-						Path.DirectorySeparatorChar)), LexTextStrings.ksError);
-			}
+			OpenDocument(moviesUrl, e =>
+				MessageBox.Show(null, string.Format(LexTextStrings.ksErrorCannotOpenMovies, moviesUrl), LexTextStrings.ksError));
 
 			return true;
 		}

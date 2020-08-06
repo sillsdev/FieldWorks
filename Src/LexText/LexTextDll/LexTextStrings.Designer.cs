@@ -214,11 +214,11 @@ namespace SIL.FieldWorks.XWorks.LexText {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to An error occurred trying to launch the movies. You could try to launch them yourself. They are located in this folder: {0}.
+        ///   Looks up a localized string similar to An error occurred trying to open the movies at the following URL. Try again with your web browser. {0}.
         /// </summary>
-        public static string ksErrorCannotLaunchMovies {
+        public static string ksErrorCannotOpenMovies {
             get {
-                return ResourceManager.GetString("ksErrorCannotLaunchMovies", resourceCulture);
+                return ResourceManager.GetString("ksErrorCannotOpenMovies", resourceCulture);
             }
         }
         

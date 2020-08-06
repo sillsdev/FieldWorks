@@ -160,9 +160,8 @@
 			<DeveloperFiles Include="$(fwrt)\DistFiles\Helps\Translation Editor\**\*"/>
 			<!-- End: No longer want TE helps, but they are not yet removed from the Helps repo. -->
 			<DeveloperFiles Include="$(fwrt)\DistFiles\Icu54.zip"/>
-			<!-- Exclude demo movies to save bandwidth. Do package notfound.html, a webpage telling the user how to download movies. -->
-			<DeveloperFiles Include="$(fwrt)\DistFiles\Language Explorer\Movies\**\*"
-				Exclude="$(fwrt)\DistFiles\Language Explorer\Movies\notfound.html"/>
+			<!-- Exclude old demo movies. The current movies are online. -->
+			<DeveloperFiles Include="$(fwrt)\DistFiles\Language Explorer\Movies\**\*"/>
 			<DeveloperFiles Include="$(fwrt)\DistFiles\libxample32.so"/> <!-- Linux file -->
 			<DeveloperFiles Include="$(fwrt)\DistFiles\libxample64.so"/> <!-- Linux file -->
 			<DeveloperFiles Include="$(fwrt)\DistFiles\Linux\**\*"/>
