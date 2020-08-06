@@ -151,6 +151,7 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Output\Debug\NAudio.dll</HintPath>
     </Reference>
+    <Reference Include="netstandard" />
     <Reference Include="NAudio.Lame, Version=1.1.5.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Output\Debug\NAudio.Lame.dll</HintPath>
