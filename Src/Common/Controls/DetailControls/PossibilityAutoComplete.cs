@@ -94,9 +94,9 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 		protected virtual void OnItemSelected(EventArgs e)
 		{
-			m_listBox.HideForm();
-			if (PossibilitySelected != null)
-				PossibilitySelected(this, e);
+			if(!m_listBox.IsDisposed)
+				m_listBox.HideForm();
+			PossibilitySelected?.Invoke(this, e);
 		}
 
 		private void HandleSelectedIndexChanged(object sender, EventArgs e)
