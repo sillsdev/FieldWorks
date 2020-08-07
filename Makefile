@@ -414,12 +414,13 @@ l10n-clean:
 
 l10n-install:
 	install -d $(DESTDIR)/usr/lib/fieldworks
+	install -d $(DESTDIR)/usr/share/fieldworks/CommonLocalizations
 	install -d "$(DESTDIR)/usr/share/fieldworks/Language Explorer/Configuration"
 	for LOCALE in $(LOCALIZATIONS); do \
 		DESTINATION=$(DESTDIR)/usr/lib/fieldworks-l10n-$${LOCALE,,} ;\
 		install -d $$DESTINATION ;\
 		install -m 644 Output/Release/$$LOCALE/*.dll $$DESTINATION/ ;\
-		install -m 644 "$(BUILD_ROOT)/DistFiles/CommonLocalizations/*.$$LOCALE.xlf" $$DESTINATION/ ;\
+		install -m 644 "$(BUILD_ROOT)/DistFiles/CommonLocalizations/*.$$LOCALE.xlf" $(DESTDIR)/usr/share/fieldworks/CommonLocalizations ;\
 		install -m 644 "$(BUILD_ROOT)/DistFiles/Language Explorer/Configuration/strings-$$LOCALE.xml" $$DESTINATION/ ;\
 		ln -sf ../fieldworks-l10n-$${LOCALE,,} $(DESTDIR)/usr/lib/fieldworks/$$LOCALE ;\
 		ln -sf ../../../../lib/fieldworks-l10n-$${LOCALE,,}/strings-$$LOCALE.xml "$(DESTDIR)/usr/share/fieldworks/Language Explorer/Configuration/strings-$$LOCALE.xml" ;\
