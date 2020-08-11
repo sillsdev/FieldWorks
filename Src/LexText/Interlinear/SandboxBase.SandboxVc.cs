@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015-2017 SIL International
+// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -706,14 +706,6 @@ namespace SIL.FieldWorks.IText
 				vwenv.CloseParagraph();
 			}
 
-			private void SetEditabilityOfNextFlowObject(IVwEnv vwenv, bool fEditable)
-			{
-				if (fEditable)
-					MakeNextFlowObjectEditable(vwenv);
-				else
-					MakeNextFlowObjectReadOnly(vwenv);
-			}
-
 			private void MakeNextFlowObjectReadOnly(IVwEnv vwenv)
 			{
 				vwenv.set_IntProperty(
@@ -773,17 +765,6 @@ namespace SIL.FieldWorks.IText
 				}
 			}
 
-			// Return the width of the arrow picture (in mm, unfortunately).
-			internal int ArrowPicWidth
-			{
-				get
-				{
-					CheckDisposed();
-					return m_PulldownArrowPic.Picture.Width;
-				}
-			}
-
-
 			/// <summary>
 			/// Add to the vwenv a display of property tag of object hvo, which stores an
 			/// SbNamedObj.  If the property is non-null, display the name of the SbNamedObj.
@@ -830,6 +811,5 @@ namespace SIL.FieldWorks.IText
 				m_choices = choices;
 			}
 		}
-
 	}
 }
