@@ -6281,9 +6281,9 @@
 <CmAnthroItem guid="42ABA886-B95A-4369-84B1-4A755FECE7DF">
 <BackColor><Integer val="65280"/></BackColor>
 <UnderColor><Integer val="-1073741824"/></UnderColor>
-<HelpId><Uni>Sibs</Uni></HelpId>
+<HelpId><Uni>Clans</Uni></HelpId>
 <Name>
-<AUni ws="en">Sibs</AUni>
+<AUni ws="en">Clans</AUni>
 </Name>
 <Abbreviation>
 <AUni ws="en">614</AUni>
