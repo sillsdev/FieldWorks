@@ -243,6 +243,7 @@ namespace SIL.FieldWorks.Common.RootSites
 
 		private bool m_fSuppressNextWritingSystemHvoChanged;
 		private bool m_fSuppressNextBestStyleNameChanged;
+		private long m_TimestampOfLastGotFocus;
 
 		/// <summary>Flag to prevent reentrancy while setting keyboard.</summary>
 		private bool m_fSettingKeyboards;
@@ -3029,12 +3030,32 @@ namespace SIL.FieldWorks.Common.RootSites
 				ActivateDefaultKeyboard();
 		}
 
-		private static bool ShouldRestoreKeyboardSwitchingTo(Control newFocusedControl, bool fIsChildWindow)
+		private bool ShouldRestoreKeyboardSwitchingTo(Control newFocusedControl, bool fIsChildWindow)
 		{
 			// On Linux we want to restore the default keyboard if we're switching to another
 			// application. On Windows the OS will take care of switching the keyboard.
-			if (Platform.IsUnix && newFocusedControl == null)
-				return true;
+			if (Platform.IsUnix)
+			{
+				var timeStamp = m_TimestampOfLastGotFocus;
+				m_TimestampOfLastGotFocus = 0;
+
+				if (newFocusedControl == null)
+				{
+					var nowTicks = DateTime.Now.Ticks;
+
+					// Console.WriteLine($"Timestamp={timeStamp}, DateTime.Now.Ticks={nowTicks}, diff={nowTicks - timeStamp}");
+
+					// If we get a LostFocus event within 0.5s after getting focus we assume this
+					// is caused by switching the keyboard. The downside is that if the user
+					// clicks in a field (which causes a keyboard switch) and then clicks on
+					// another app within 0.5s we miss switching the keyboard back to the default.
+					// But we assume that this will rarely happen. This hack fixes LT-19289.
+					if (timeStamp + 5000000 < nowTicks) // 0.5s
+						return true;
+
+					return false;
+				}
+			}
 
 			if (newFocusedControl is IRootSite)
 				return false;
@@ -3048,6 +3069,13 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// </summary>
 		internal void GotFocus()
 		{
+			// Console.WriteLine(string.Format("EditingHelper.GotFocus: {0} ({1}), Name={2}",
+			// 	m_control, m_control.Handle, m_control.Name));
+
+			if (Platform.IsGnomeShell)
+			{
+				m_TimestampOfLastGotFocus = DateTime.Now.Ticks;
+			}
 		}
 		#endregion
 

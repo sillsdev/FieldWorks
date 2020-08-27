@@ -33,6 +33,18 @@
 				"MONO_TRACE_LISTENER": "Console.Out"
 			}
 		},
+		// Remote debugging - helpful when debugging keyboarding problems
+		// address is the IP address of the remote machine
+		// In the VM start the process with:
+		// mono --debug --debugger-agent="address=10.3.0.58:10000,transport=dt_socket,server=y" /full/path/on/VM/to/fw/Output_x86_64/Debug/FieldWorks.exe
+		// Then attach to VM
+		{
+			"name": "Attach to VM",
+			"type": "mono",
+			"request": "attach",
+			"address": "10.3.0.58",
+			"port": 10000
+		},
 		*/
 		{
 			"name": "Launch FW",
