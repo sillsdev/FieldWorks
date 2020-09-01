@@ -352,7 +352,7 @@ namespace SIL.FieldWorks.XWorks
 			// The order of the next two lines has been changed because the loading of the UI
 			// properly depends on m_viewHelper being initialized.  Why this was not so with DNB
 			// I do not know.
-			// Here is the orginal order (along with a comment between them that seemed to imply this
+			// Here is the original order (along with a comment between them that seemed to imply this
 			// new order could be a problem, but no obvious ones have appeared in my testing.
 
 		   /*

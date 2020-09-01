@@ -965,7 +965,7 @@ namespace SIL.FieldWorks
 					// needed after doing a save.
 					Thread.Sleep(2000);
 					s_renameSuccessful = s_cache.RenameDatabase(s_renameNewName);
-			}
+				}
 			}
 			finally
 			{
