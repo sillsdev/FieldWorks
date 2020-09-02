@@ -2433,15 +2433,13 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				slice.Object = obj;
 				slice.Cache = m_cache;
 				slice.Mediator = m_mediator;
-				slice.PropTable = parentSlice != null ? parentSlice?.PropTable : this.Slices[0].PropTable;
+				// A ghost string slice with no property table is a good way to cause crashes, do our level best to find an appropriate one
+				slice.PropTable = parentSlice != null ? parentSlice.PropTable : Slices.Count > 0 ? Slices[0].PropTable : PropTable;
 
 				// We need a copy since we continue to modify path, so make it as compact as possible.
 				slice.Key = path.ToArray();
 				slice.ConfigurationNode = node;
 				slice.CallerNode = caller;
-				// don't mess with this, the obj/seq node would not have a meaningful back color override
-				// for the slice. If we need it invent a new attribute.
-				//slice.OverrideBackColor(XmlUtils.GetOptionalAttributeValue(node, "backColor"));
 
 				// dubious...should the string slice really get the context menu for the object?
 				slice.ShowContextMenu += OnShowContextMenu;
@@ -2450,8 +2448,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				SetNodeWeight(node, slice);
 
 				slice.FinishInit();
-				// Now done in Slice.ctor
-				//slice.Visible = false; // don't show it until we position and size it.
 				InsertSliceAndRegisterWithContextHelp(insertPosition, slice);
 			}
 			else

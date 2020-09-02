@@ -1006,8 +1006,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			var variants = new List<VariantSubtag> { WellKnownSubtags.IpaVariant };
 			variants.AddRange(_currentWs.Variants.Where(variant => variant != WellKnownSubtags.AudioPrivateUse));
-			var cleanScript = _currentWs.Script == null || _currentWs.Script.Code == WellKnownSubtags.AudioScript ? null : _currentWs.Script;
-			var ipaLanguageTag = IetfLanguageTag.Create(_currentWs.Language, cleanScript, _currentWs.Region, variants);
+			// The script for ipa is not meaningful, we drop any script here to discourage its use
+			var ipaLanguageTag = IetfLanguageTag.Create(_currentWs.Language, null, _currentWs.Region, variants);
 			CoreWritingSystemDefinition wsDef;
 			if (!_wsManager.TryGet(ipaLanguageTag, out wsDef))
 			{
