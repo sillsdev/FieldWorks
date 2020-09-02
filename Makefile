@@ -108,6 +108,7 @@ install-tree-fdo:
 	rm -f $(DESTDIR)/usr/lib/fieldworks/libTECkit{,_Compiler}*.so
 
 install-tree: fieldworks-flex.1.gz unicodechareditor.1.gz install-tree-fdo
+	[ -z "$${FW_PACKAGE_DEBUG}" ] || find "$(BUILD_ROOT)" "$(DESTDIR)"
 	# Create directories
 	install -d $(DESTDIR)/usr/bin
 	install -d $(DESTDIR)/usr/lib/fieldworks
@@ -376,6 +377,7 @@ Fw-build-package: check-have-build-dependencies
 		&& $(BUILD_TOOL) /t:refreshTargets \
 		&& $(BUILD_TOOL) '/t:remakefw' /property:config=release /property:Platform=$(PLATFORM) /property:packaging=yes \
 		&& ./multitry $(BUILD_TOOL) '/t:localize-binaries' /property:config=release /property:packaging=yes
+	[ -z "$${FW_PACKAGE_DEBUG}" ] || find "$(BUILD_ROOT)" "$(DESTDIR)"
 
 Fw-build-package-fdo: check-have-build-dependencies
 	cd $(BUILD_ROOT)/Build \
@@ -412,6 +414,7 @@ l10n-clean:
 	done
 
 l10n-install:
+	[ -z "$${FW_PACKAGE_DEBUG}" ] || find "$(BUILD_ROOT)" "$(DESTDIR)"
 	install -d $(DESTDIR)/usr/lib/fieldworks
 	install -d $(DESTDIR)/usr/share/fieldworks/CommonLocalizations
 	install -d "$(DESTDIR)/usr/share/fieldworks/Language Explorer/Configuration"
@@ -426,5 +429,6 @@ l10n-install:
 		ln -sf ../../../lib/fieldworks-l10n-$${LOCALE,,}/Chorus.$$LOCALE.xlf "$(DESTDIR)/usr/share/fieldworks/CommonLocalizations/Chorus.$$LOCALE.xlf" ;\
 		ln -sf ../../../../lib/fieldworks-l10n-$${LOCALE,,}/strings-$$LOCALE.xml "$(DESTDIR)/usr/share/fieldworks/Language Explorer/Configuration/strings-$$LOCALE.xml" ;\
 	done
+	[ -z "$${FW_PACKAGE_DEBUG}" ] || ls -l "$(DESTDIR)/usr/share/fieldworks/CommonLocalizations"
 
 # End localization section
