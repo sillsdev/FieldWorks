@@ -377,7 +377,7 @@ Fw-build-package: check-have-build-dependencies
 		&& $(BUILD_TOOL) /t:refreshTargets \
 		&& $(BUILD_TOOL) '/t:remakefw' /property:config=release /property:Platform=$(PLATFORM) /property:packaging=yes \
 		&& ./multitry $(BUILD_TOOL) '/t:localize-binaries' /property:config=release /property:packaging=yes
-	[ -z "$${FW_PACKAGE_DEBUG}" ] || find "$(BUILD_ROOT)" "$(DESTDIR)"
+	[ -z "$${FW_PACKAGE_DEBUG}" ] || find "$(BUILD_ROOT)/.."
 
 Fw-build-package-fdo: check-have-build-dependencies
 	cd $(BUILD_ROOT)/Build \
