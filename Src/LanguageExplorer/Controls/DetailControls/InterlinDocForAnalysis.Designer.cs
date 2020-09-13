@@ -31,7 +31,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			{
 				if (ExistingFocusBox != null)
 				{
-					var window = PropertyTable?.GetValue<IFwMainWnd>(FwUtils.window);
+					var window = PropertyTable?.GetValue<IFwMainWnd>(FwUtilsConstants.window);
 					if (window != null)
 					{
 						var idleQueue = window.IdleQueue;

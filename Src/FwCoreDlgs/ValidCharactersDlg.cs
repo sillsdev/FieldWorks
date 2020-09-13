@@ -15,7 +15,6 @@ using System.Windows.Forms;
 using System.Windows.Forms.VisualStyles;
 using Icu;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.Common.ScriptureUtils;
 using SIL.FieldWorks.FwCoreDlgs.Controls;
 using SIL.FieldWorks.FwCoreDlgs.FileDialog;
 using SIL.FieldWorks.Resources;
@@ -550,9 +549,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			AccessibleName = GetType().Name;
 
 			m_openFileDialog = new OpenFileDialogAdapter();
-			m_openFileDialog.InitialDirectory = ScriptureProvider.SettingsDirectory;
 			m_openFileDialog.Title = FwCoreDlgs.kstidLanguageFileBrowser;
-			// to import from language files from Paratext or Toolbox
 			splitContainerOuter.Panel2MinSize = splitValidCharsOuter.Left + (btnTreatAsWrdForming.Right - btnTreatAsPunct.Left);
 
 			// Save the format string for these labels in their tags.
@@ -1098,7 +1095,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				textbox.Tag = "Error";
 				return;
 			}
-
 
 			lbl.Text = chrCode == 0 ? string.Empty : string.Format((string)lbl.Tag, chrCode);
 			textbox.Tag = null;

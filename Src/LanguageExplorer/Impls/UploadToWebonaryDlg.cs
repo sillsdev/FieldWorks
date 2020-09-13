@@ -85,6 +85,13 @@ namespace LanguageExplorer.Impls
 			explanationLabel.LinkArea = new LinkArea(explanationTextLinkStart, explanationTextLinkLength);
 		}
 
+		private void siteNameBox_TextChanged(object sender, EventArgs e)
+		{
+			var subDomain = UploadToWebonaryController.UseJsonApi ? "cloud-api" : "www";
+			// ReSharper disable once LocalizableElement -- this is the *world-wide* web, not a LAN.
+			webonarySiteURLLabel.Text = $"https://{subDomain}.{UploadToWebonaryController.Server}/{webonarySiteNameTextbox.Text}";
+		}
+
 		private void UpdateEntriesToBePublishedLabel()
 		{
 			if (GetSelectedDictionaryModel() == null)
@@ -121,8 +128,8 @@ namespace LanguageExplorer.Impls
 		{
 			if (!m_controller.IsSortingOnAlphaHeaders)
 			{
-				MessageBox.Show("Your data is sorted by a field that does not allow us to calculate letter headings. Please change your sort column before uploading to Webonary.",
-					"Letter Headings not Sorted", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+				MessageBox.Show(LanguageExplorerResources.msgCantCalculateLetterHeadings,
+					LanguageExplorerResources.CantCalculateLetterHeadings, MessageBoxButtons.OK, MessageBoxIcon.Warning);
 			}
 		}
 
@@ -284,7 +291,10 @@ namespace LanguageExplorer.Impls
 				minimumFormHeightToShowLog += m_additionalMinimumHeightForMono;
 			}
 			MinimumSize = new Size(MinimumSize.Width, minimumFormHeightToShowLog);
-			m_controller.UploadToWebonary(Model, this);
+			using (new WaitCursor(this))
+			{
+				m_controller.UploadToWebonary(Model, this);
+			}
 		}
 
 		private void helpButton_Click(object sender, EventArgs e)
@@ -320,10 +330,11 @@ namespace LanguageExplorer.Impls
 					newColor = ColorTranslator.FromHtml("#ffaaaa");
 					break;
 				case WebonaryStatusCondition.None:
-				default:
 					// Grey
 					newColor = ColorTranslator.FromHtml("#dcdad5");
 					break;
+				default:
+					throw new ArgumentException("Unhandled WebonaryStatusCondition", nameof(condition));
 			}
 			outputLogTextbox.BackColor = newColor;
 		}

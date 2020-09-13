@@ -112,7 +112,7 @@ namespace LanguageExplorer.Controls
 			m_sHelpTopic = sHelpTopic;
 			if (m_helpTopicProvider != null)
 			{
-				m_helpProvider.HelpNamespace = Path.Combine(FwDirectoryFinder.CodeDirectory, m_helpTopicProvider.GetHelpString("UserHelpFile"));
+				m_helpProvider.HelpNamespace = Path.Combine(FwDirectoryFinder.CodeDirectory, m_helpTopicProvider.GetHelpString(FwUtilsConstants.UserHelpFile));
 				m_helpProvider.SetHelpKeyword(this, m_helpTopicProvider.GetHelpString(m_sHelpTopic));
 				m_helpProvider.SetHelpNavigator(this, HelpNavigator.Topic);
 			}

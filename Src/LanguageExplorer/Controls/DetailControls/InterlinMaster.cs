@@ -1091,7 +1091,7 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		internal void HandleFindAndReplace(bool doReplace)
 		{
-			PropertyTable.GetValue<IApp>(LanguageExplorerConstants.App)?.ShowFindReplaceDialog(doReplace, m_rtPane, Cache, PropertyTable.GetValue<Form>(FwUtils.window));
+			PropertyTable.GetValue<IApp>(LanguageExplorerConstants.App)?.ShowFindReplaceDialog(doReplace, m_rtPane, Cache, PropertyTable.GetValue<Form>(FwUtilsConstants.window));
 		}
 
 		/// <summary>

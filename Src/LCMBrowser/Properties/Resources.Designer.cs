@@ -158,14 +158,5 @@ namespace LCMBrowser.Properties {
                 return ResourceManager.GetString("String", resourceCulture);
             }
         }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to \Helps\FieldWorks_Language_Explorer_Help.chm.
-        /// </summary>
-        internal static string UserHelpFile {
-            get {
-                return ResourceManager.GetString("UserHelpFile", resourceCulture);
-            }
-        }
     }
 }

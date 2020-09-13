@@ -81,7 +81,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 			SetTextBoxValue(m_node.Form, m_formTextBox, m_formWsComboBox, true);
 			SetTextBoxValue(m_node.Gloss, m_glossTextBox, m_glossWsComboBox, false);
 			m_catPopupTreeManager = new PossibilityComboController(m_categoryComboBox, m_cache, m_cache.LanguageProject.PartsOfSpeechOA,
-				m_cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle, false, flexComponentParameters, propertyTable.GetValue<Form>(FwUtils.window));
+				m_cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle, false, flexComponentParameters, propertyTable.GetValue<Form>(FwUtilsConstants.window));
 			if (m_node.Category != null)
 			{
 				m_categoryNotCheckBox.Checked = m_node.NegateCategory;

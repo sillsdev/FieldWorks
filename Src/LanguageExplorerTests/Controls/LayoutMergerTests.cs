@@ -29,7 +29,7 @@ namespace LanguageExplorerTests.Controls
 			keyAttrs["group"] = new[] { "label" };
 			keyAttrs["part"] = new[] { "ref" };
 
-			m_testPathMerge = Path.Combine(FwDirectoryFinder.SourceDirectory, "LanguageExplorerTests", "Controls", "XMLViews", "LayoutMergerTestData");
+			m_testPathMerge = Path.Combine(FwDirectoryFinder.SourceDirectory, TestUtilities.LanguageExplorerTests, "Controls", "XMLViews", "LayoutMergerTestData");
 			m_inventory = new Inventory(new[] { m_testPathMerge }, "*.fwlayout", "/LayoutInventory/*", keyAttrs, "InventoryMergeTests", "projectPath")
 			{
 				Merger = new LayoutMerger()
@@ -47,7 +47,7 @@ namespace LanguageExplorerTests.Controls
 			var cLayoutsOrig = m_inventory.GetElements("layout").Count();
 			var files = new List<string>
 			{
-				Path.Combine(FwDirectoryFinder.SourceDirectory, "LanguageExplorerTests", "Controls", "XMLViews", "LayoutMergerTestData", "My_Stem-based_LexEntry_Layouts.xml")
+				Path.Combine(FwDirectoryFinder.SourceDirectory, TestUtilities.LanguageExplorerTests, "Controls", "XMLViews", "LayoutMergerTestData", "My_Stem-based_LexEntry_Layouts.xml")
 			};
 			m_inventory.AddElementsFromFiles(files, 0, true);
 			Assert.AreEqual(cTypesOrig + 1, m_inventory.GetLayoutTypes().Count, "The merge should have added one new layout type.");

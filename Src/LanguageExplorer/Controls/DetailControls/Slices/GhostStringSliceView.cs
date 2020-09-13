@@ -78,7 +78,7 @@ namespace LanguageExplorer.Controls.DetailControls.Slices
 
 			if (disposing)
 			{
-				PropertyTable?.GetValue<IFwMainWnd>(FwUtils.window)?.IdleQueue?.Remove(SwitchToRealOnIdle);
+				PropertyTable?.GetValue<IFwMainWnd>(FwUtilsConstants.window)?.IdleQueue?.Remove(SwitchToRealOnIdle);
 			}
 
 			base.Dispose(disposing);
@@ -151,7 +151,7 @@ namespace LanguageExplorer.Controls.DetailControls.Slices
 			base.HandleSelectionChange(prootb, vwselNew);
 			if (tssTyped.Length != 0)
 			{
-				PropertyTable.GetValue<IFwMainWnd>(FwUtils.window).IdleQueue.Add(IdleQueuePriority.High, SwitchToRealOnIdle);
+				PropertyTable.GetValue<IFwMainWnd>(FwUtilsConstants.window).IdleQueue.Add(IdleQueuePriority.High, SwitchToRealOnIdle);
 			}
 		}
 

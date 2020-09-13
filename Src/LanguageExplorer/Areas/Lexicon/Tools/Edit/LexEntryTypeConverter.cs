@@ -48,7 +48,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		/// </summary>
 		public override void Process()
 		{
-			m_cache = m_dlg.PropertyTable.GetValue<LcmCache>(FwUtils.cache);
+			m_cache = m_dlg.PropertyTable.GetValue<LcmCache>(FwUtilsConstants.cache);
 			UndoableUnitOfWorkHelper.Do(LanguageExplorerResources.ksUndoConvertVariants, LanguageExplorerResources.ksRedoConvertVariants,
 				m_cache.ActionHandlerAccessor, () => ShowDialogAndConvert(LexEntryTypeTags.kClassId));
 

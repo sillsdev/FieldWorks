@@ -40,7 +40,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			m_displayNameProperty = displayNameProperty;
 			m_displayWs = displayWs;
 			_propertyTable = propertyTable;
-			m_listBox = new ComboListBox(_propertyTable.GetValue<Form>(FwUtils.window))
+			m_listBox = new ComboListBox(_propertyTable.GetValue<Form>(FwUtilsConstants.window))
 			{
 				DropDownStyle = ComboBoxStyle.DropDownList,
 				ActivateOnShow = false
@@ -91,7 +91,7 @@ namespace LanguageExplorer.Controls.DetailControls
 
 			if (disposing)
 			{
-				_propertyTable.GetValue<IFwMainWnd>(FwUtils.window).IdleQueue.Remove(PerformUpdate);
+				_propertyTable.GetValue<IFwMainWnd>(FwUtilsConstants.window).IdleQueue.Remove(PerformUpdate);
 			}
 			base.Dispose(disposing);
 		}
@@ -173,7 +173,7 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		public void Update(ITsString tss)
 		{
-			_propertyTable.GetValue<IFwMainWnd>(FwUtils.window).IdleQueue.Add(IdleQueuePriority.Low, PerformUpdate, tss);
+			_propertyTable.GetValue<IFwMainWnd>(FwUtilsConstants.window).IdleQueue.Add(IdleQueuePriority.Low, PerformUpdate, tss);
 		}
 
 		private bool PerformUpdate(object param)

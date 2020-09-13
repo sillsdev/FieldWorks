@@ -16,6 +16,10 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 	{
 		private TextBox[] _digitControls = new TextBox[10];
 		private Font _font;
+		/// <summary>
+		/// Raised when one of the digits changes
+		/// </summary>
+		public event EventHandler CustomDigitsChanged;
 
 		/// <summary />
 		public CustomDigitEntryControl()
@@ -24,15 +28,28 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			{
 				var digitBox = new TextBox { Size = new Size(30, 30) };
 				_digitControls[i] = digitBox;
-				digitBox.KeyDown += DigitBoxOnKeyPress;
+				digitBox.KeyDown += DigitBoxOnKeyDown;
+				digitBox.KeyUp += DigitBox_KeyUp;
 				Controls.Add(digitBox);
 			}
 		}
 
-		private static void DigitBoxOnKeyPress(object sender, KeyEventArgs keyEventArgs)
+		private void DigitBox_KeyUp(object sender, KeyEventArgs e)
+		{
+			// Currently, if there aren't exactly 10, it gets reset to default.
+			// Probably better to leave things unchanged.
+			// This is done on Key UP so the effect of the key press has already happened.
+			if (GetDigits().Length == 10)
+			{
+				CustomDigitsChanged.Invoke(this, new EventArgs());
+			}
+		}
+
+		private void DigitBoxOnKeyDown(object sender, KeyEventArgs keyEventArgs)
 		{
 			// Reset to the default background color when the user starts editing
-			if (sender is TextBox digitBox)
+			var digitBox = sender as TextBox;
+			if (digitBox != null)
 			{
 				digitBox.BackColor = Color.Empty;
 			}

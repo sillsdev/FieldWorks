@@ -266,7 +266,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					case UnauthorizedAccessException _:
 					case ApplicationException _:
 					case LcmInitializationException _:
-						MessageBoxUtils.Show(string.Format(FwCoreDlgs.kstidErrorNewDb, e.Message), FwUtils.ksSuiteName);
+						MessageBoxUtils.Show(string.Format(FwCoreDlgs.kstidErrorNewDb, e.Message), FwUtilsConstants.ksSuiteName);
 						break;
 					default:
 						throw new Exception(FwCoreDlgs.kstidErrApp, e);

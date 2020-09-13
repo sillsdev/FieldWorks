@@ -91,7 +91,7 @@ namespace LanguageExplorer.Areas.Lexicon.Reversals
 			{
 				dlg.InitializeFlexComponent(_majorFlexComponentParameters.FlexComponentParameters);
 				dlg.ReversalIndex = Entry.ReversalIndex;
-				var cache = _majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<LcmCache>(FwUtils.cache);
+				var cache = _majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<LcmCache>(FwUtilsConstants.cache);
 				dlg.SetDlgInfo(cache, null);
 				if (dlg.ShowDialog() == DialogResult.OK)
 				{

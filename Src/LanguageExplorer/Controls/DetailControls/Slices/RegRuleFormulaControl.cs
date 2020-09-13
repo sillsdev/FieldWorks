@@ -192,7 +192,7 @@ namespace LanguageExplorer.Controls.DetailControls.Slices
 				GetContextOccurrence(out min, out max);
 				using (var dlg = new OccurrenceDlg(PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider), min, max, false))
 				{
-					if (dlg.ShowDialog(PropertyTable.GetValue<Form>(FwUtils.window)) == DialogResult.OK)
+					if (dlg.ShowDialog(PropertyTable.GetValue<Form>(FwUtilsConstants.window)) == DialogResult.OK)
 					{
 						min = dlg.Minimum;
 						max = dlg.Maximum;

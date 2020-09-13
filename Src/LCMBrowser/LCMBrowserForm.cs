@@ -11,7 +11,6 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Resources;
 using System.Windows.Forms;
 using LanguageExplorer.Controls;
 using LanguageExplorer.Controls.DetailControls;
@@ -33,7 +32,7 @@ namespace LCMBrowser
 	/// <summary>
 	/// LCMBrowserForm Class
 	/// </summary>
-	internal sealed partial class LCMBrowserForm : Form, IHelpTopicProvider
+	internal sealed partial class LCMBrowserForm : Form
 	{
 		#region Data members
 
@@ -77,8 +76,6 @@ namespace LCMBrowser
 		private ToolStripTextBox m_tstxtGuidSrch;
 		private ToolStripLabel m_tslblGuidSrch;
 		private ISilDataAccessManaged m_silDataAccessManaged;
-		private static ResourceManager s_helpResources;
-		private string m_sHelpTopic = "khtpMainLCMBrowser";
 
 		#endregion Data members
 
@@ -115,32 +112,6 @@ namespace LCMBrowser
 		}
 
 		#endregion Construction
-
-		#region Implementation of IHelpTopicProvider
-
-		///<summary>
-		/// Get the indicated help string.
-		/// </summary>
-		public string GetHelpString(string sPropName)
-		{
-			if (string.IsNullOrWhiteSpace(sPropName))
-			{
-				return "NullStringID";
-			}
-			if (s_helpResources == null)
-			{
-				s_helpResources = new ResourceManager("LCMBrowser.Properties.Resources", Assembly.GetExecutingAssembly());
-			}
-
-			return s_helpResources.GetString(sPropName);
-		}
-
-		///<summary>
-		/// Get the name of the help file.
-		/// </summary>
-		public string HelpFile => Path.Combine(FwDirectoryFinder.CodeDirectory, GetHelpString("UserHelpFile"));
-
-		#endregion
 
 		/// <summary>
 		/// Raises the <see cref="E:System.Windows.Forms.Form.Load"/> event.
@@ -291,7 +262,7 @@ namespace LCMBrowser
 				// Init backend data provider
 				// TODO: Get the correct ICU local for the user writing system
 
-				var ui = new FwLcmUI(this, this);
+				var ui = new FwLcmUI(HelpTopicProviderBase.Instance, this);
 				if (isMemoryBEP)
 				{
 					m_cache = LcmCache.CreateCacheWithNewBlankLangProj(new BrowserProjectId(bepType, null), "en", "en", "en", ui,

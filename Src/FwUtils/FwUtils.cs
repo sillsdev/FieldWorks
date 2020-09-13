@@ -28,49 +28,11 @@ namespace SIL.FieldWorks.Common.FwUtils
 	public static partial class FwUtils
 	{
 		/// <summary>
-		/// Shared string value.
-		/// </summary>
-		public const string WritingSystemHvo = "WritingSystemHvo";
-		/// <summary>
-		/// Shared string value.
-		/// </summary>
-		public const string AboutToFollowLink = "AboutToFollowLink";
-		/// <summary>
-		/// The name of the overarching umbrella application that will one day conquer the world:
-		/// "FieldWorks"
-		/// </summary>
-		public const string ksSuiteName = "FieldWorks";
-		/// <summary>
-		/// The name of the Language Explorer folder (Even though this is the same as
-		/// FwDirectoryFinder.ksFlexFolderName and FwSubKey.LexText, PLEASE do not use them interchangeably.
-		/// Use the one that is correct for your context, in case they need to be changed later.)
-		/// </summary>
-		public const string ksFlexAppName = "Language Explorer";
-
-		/// <summary />
-		public const string FlexStyleSheet = "FlexStyleSheet";
-
-		/// <summary />
-		public const string window = "window";
-
-		/// <summary />
-		public const string cache = "cache";
-
-		/// <summary />
-		public const string HandleLocalHotlink = "HandleLocalHotlink";
-
-		/// <summary />
-		public const string AppSettings = "AppSettings";
-
-		/// <summary />
-		public const char kStyleNamesDelimiter = '\uFFFD';
-
-		/// <summary>
 		/// Generates a name suitable for use as a pipe name from the specified project handle.
 		/// </summary>
 		public static string GeneratePipeHandle(string handle)
 		{
-			const string ksSuiteIdPrefix = ksSuiteName + ":";
+			const string ksSuiteIdPrefix = FwUtilsConstants.ksSuiteName + ":";
 			return (handle.StartsWith(ksSuiteIdPrefix) ? string.Empty : ksSuiteIdPrefix) + handle.Replace('/', ':').Replace('\\', ':');
 		}
 
@@ -198,6 +160,8 @@ namespace SIL.FieldWorks.Common.FwUtils
 			{
 				// We read the registry value and set an environment variable ICU_DATA here so that
 				// FwKernelInterfaces.dll is independent of WinForms.
+				// ENHANCE: store data directory somewhere else other than registry (user.config
+				// file?) and use that.
 				var icuDirValueName = $"Icu{CustomIcu.Version}DataDir";
 				using (var userKey = RegistryHelper.CompanyKey)
 				using (var machineKey = RegistryHelper.CompanyKeyLocalMachine)
@@ -218,6 +182,8 @@ namespace SIL.FieldWorks.Common.FwUtils
 					}
 				}
 			}
+			// ICU_DATA should point to the directory that contains nfc_fw.nrm and nfkc_fw.nrm
+			// (i.e. icudt54l).
 			CustomIcu.InitIcuDataDir();
 		}
 
@@ -480,11 +446,35 @@ namespace SIL.FieldWorks.Common.FwUtils
 		}
 
 		/// <summary>
+		/// If necessary, append a number to make the filename unique, maintaining original extension.
+		/// </summary>
+		/// <param name="directoryPath">Path to directory where unique filename is needed</param>
+		/// <param name="desiredFilename">Seed name with which to begin</param>
+		/// <returns>A unique path/filename within <paramref name="directoryPath"/>.
+		/// It may have a number appended to <paramref name="desiredFilename"/>, or it may be <paramref name="desiredFilename"/>.
+		/// </returns>
+		/// <remarks>Patterned off of SIL.IO.PathHelper.GetUniqueFolderPath(), which unfortunately only applies to folders.
+		/// This maybe fits better in Folders.cs, but again, it's not folders, but files.</remarks>
+		public static string GetUniqueFilename(string directoryPath, string desiredFilename)
+		{
+			var i = 0;
+			Debug.Assert(Directory.Exists(directoryPath), "Param 'directoryPath' doesn't lead to a valid directory.");
+			var extension = Path.GetExtension(desiredFilename);
+			var nameNoExtension = Path.GetFileNameWithoutExtension(desiredFilename);
+			var filename = Path.Combine(directoryPath, desiredFilename);
+			while (File.Exists(filename))
+			{
+				filename = Path.Combine(directoryPath, $"{nameNoExtension}{++i}{extension}");
+			}
+			return filename;
+		}
+
+		/// <summary>
 		/// Get the stylesheet from an IPropertyRetriever.
 		/// </summary>
 		public static LcmStyleSheet StyleSheetFromPropertyTable(IPropertyRetriever propertyTable)
 		{
-			return propertyTable.GetValue<LcmStyleSheet>(FlexStyleSheet);
+			return propertyTable.GetValue<LcmStyleSheet>(FwUtilsConstants.FlexStyleSheet);
 		}
 
 		/// <summary>
@@ -598,8 +588,8 @@ namespace SIL.FieldWorks.Common.FwUtils
 			{
 				return Guid.Empty;
 			}
-			var cache = propertyTable.GetValue<LcmCache>(FwUtils.cache);
-			if (cache.ServiceLocator.ObjectRepository.IsValidObjectId(guid))
+			var lcmCache = propertyTable.GetValue<LcmCache>(FwUtilsConstants.cache);
+			if (lcmCache.ServiceLocator.ObjectRepository.IsValidObjectId(guid))
 			{
 				return guid;
 			}

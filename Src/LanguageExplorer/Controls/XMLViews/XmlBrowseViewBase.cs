@@ -191,7 +191,7 @@ namespace LanguageExplorer.Controls.XMLViews
 					// Nobody home, so quit.
 					m_hvoOldSel = 0;
 					m_selectedIndex = -1;
-					PropertyTable.GetValue<IFwMainWnd>(FwUtils.window).IdleQueue.Add(IdleQueuePriority.Medium, FireSelectionChanged);
+					PropertyTable.GetValue<IFwMainWnd>(FwUtilsConstants.window).IdleQueue.Add(IdleQueuePriority.Medium, FireSelectionChanged);
 					return;
 				}
 				// objectCount > 0.
@@ -277,7 +277,7 @@ namespace LanguageExplorer.Controls.XMLViews
 					}
 				}
 				Update();
-				PropertyTable.GetValue<IFwMainWnd>(FwUtils.window).IdleQueue.Add(IdleQueuePriority.Medium, FireSelectionChanged);
+				PropertyTable.GetValue<IFwMainWnd>(FwUtilsConstants.window).IdleQueue.Add(IdleQueuePriority.Medium, FireSelectionChanged);
 			}
 		}
 
@@ -875,7 +875,7 @@ namespace LanguageExplorer.Controls.XMLViews
 
 			if (disposing)
 			{
-				var idleQueue = PropertyTable?.GetValue<IFwMainWnd>(FwUtils.window)?.IdleQueue;
+				var idleQueue = PropertyTable?.GetValue<IFwMainWnd>(FwUtilsConstants.window)?.IdleQueue;
 				if (idleQueue != null)
 				{
 					idleQueue.Remove(RemoveRootBoxSelectionOnIdle);
@@ -1391,27 +1391,33 @@ namespace LanguageExplorer.Controls.XMLViews
 			if (!fInstalledNewSelection)
 			{
 				// Try something else.
-				vwselNew = RootBox.MakeTextSelInObj(0,
-					1, rgvsli, 0, null, //1, rgvsli,
-					true, // fInitial
-					false, // fEdit
-					false, // fRange
-					false, // fWholeObj
-					true); // fInstall
-				fInstalledNewSelection = true;
-				if (vwselNew == null)
+				try
 				{
-					// not much we can do to handle errors, but don't let the program die just
+					vwselNew = RootBox.MakeTextSelInObj(0,
+						1, rgvsli, 0, null,
+						fInitial: true,
+						fEdit: false,
+						fRange: false,
+						fWholeObj: false,
+						fInstall: true);
+					if (vwselNew != null)
+						fInstalledNewSelection = true;
+				}
+				catch
+				{
+					// Not much we can do to handle errors, but don't let the program die just
 					// because the display hasn't yet been laid out, so selections can't fully be
 					// created and displayed.
-					fInstalledNewSelection = false;
-					Debug.WriteLine("XmlBrowseViewBase::SetDefaultInsertionPointInRow: Caught exception while trying to scroll a non-editable object into view.");
+					// Or (LT-20118) the display is laid out, but the previously-selected item has been deleted.
 				}
 			}
-
 			if (vwselNew != null && fInstalledNewSelection)
 			{
 				MakeSelectionVisible(vwselNew, true, true, true);
+			}
+			else
+			{
+				Debug.WriteLine("XmlBrowseViewBase::SetDefaultInsertionPointInRow: Caught exception while trying to scroll a non-editable object into view.");
 			}
 			return fInstalledNewSelection;
 		}
@@ -1538,7 +1544,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		protected override void HandleSelectionChange(IVwRootBox prootb, IVwSelection vwselNew)
 		{
 			base.HandleSelectionChange(prootb, vwselNew);
-			PropertyTable.GetValue<IFwMainWnd>(FwUtils.window).IdleQueue.Add(IdleQueuePriority.Medium, RemoveRootBoxSelectionOnIdle);
+			PropertyTable.GetValue<IFwMainWnd>(FwUtilsConstants.window).IdleQueue.Add(IdleQueuePriority.Medium, RemoveRootBoxSelectionOnIdle);
 		}
 
 		private bool RemoveRootBoxSelectionOnIdle(object parameter)
@@ -1660,7 +1666,7 @@ namespace LanguageExplorer.Controls.XMLViews
 				}
 				if (SelectedObject != m_hvoOldSel)
 				{
-					PropertyTable.GetValue<IFwMainWnd>(FwUtils.window).IdleQueue.Add(IdleQueuePriority.Medium, FireSelectionChanged);
+					PropertyTable.GetValue<IFwMainWnd>(FwUtilsConstants.window).IdleQueue.Add(IdleQueuePriority.Medium, FireSelectionChanged);
 				}
 			}
 			else if (RootBox != null && hvo > 0 && SelectedObject > 0)
@@ -1690,7 +1696,7 @@ namespace LanguageExplorer.Controls.XMLViews
 					// Reconstruct the current row (by pretending to replace the object),
 					// preserving the selection if any (otherwise, the selection disappears
 					// after each letter typed in a browse view...FWR-690).
-					PropertyTable.GetValue<IFwMainWnd>(FwUtils.window).IdleQueue.Add(IdleQueuePriority.Medium, UpdateSelectedRow);
+					PropertyTable.GetValue<IFwMainWnd>(FwUtilsConstants.window).IdleQueue.Add(IdleQueuePriority.Medium, UpdateSelectedRow);
 				}
 			}
 		}

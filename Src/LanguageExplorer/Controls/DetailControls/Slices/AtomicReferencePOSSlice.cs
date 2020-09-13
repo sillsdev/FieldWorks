@@ -85,7 +85,7 @@ namespace LanguageExplorer.Controls.DetailControls.Slices
 						break;
 				}
 				Tree.WritingSystemCode = ws;
-				m_pOSPopupTreeManager = new POSPopupTreeManager(Tree, Cache, list, ws, false, flexComponentParameters, flexComponentParameters.PropertyTable.GetValue<Form>(FwUtils.window));
+				m_pOSPopupTreeManager = new POSPopupTreeManager(Tree, Cache, list, ws, false, flexComponentParameters, flexComponentParameters.PropertyTable.GetValue<Form>(FwUtilsConstants.window));
 				m_pOSPopupTreeManager.AfterSelect += m_pOSPopupTreeManager_AfterSelect;
 			}
 			try

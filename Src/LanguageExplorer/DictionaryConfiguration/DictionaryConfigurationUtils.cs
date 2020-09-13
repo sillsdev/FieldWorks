@@ -83,7 +83,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 		/// </summary>
 		public static void SetReversalIndexGuidBasedOnReversalIndexConfiguration(IPropertyTable propertyTable, LcmCache cache)
 		{
-			var reversalIndexConfiguration = propertyTable.GetValue("ReversalIndexPublicationLayout", String.Empty);
+			var reversalIndexConfiguration = propertyTable.GetValue("ReversalIndexPublicationLayout", string.Empty);
 			if (string.IsNullOrEmpty(reversalIndexConfiguration))
 			{
 				return;
@@ -108,29 +108,40 @@ namespace LanguageExplorer.DictionaryConfiguration
 		/// <remarks>internal so that it can be re-used by the XhtmlRecordDocView</remarks>
 		internal static void HandleDomLeftClick(IRecordList recordList, ICmObjectRepository objectRepository, DomMouseEventArgs e, GeckoElement element)
 		{
-			var topLevelGuid = DictionaryConfigurationServices.GetHrefFromGeckoDomElement(element);
-			if (topLevelGuid == Guid.Empty)
+			// the destination is either the target of a link to another entry
+			// or the entry being clicked (when the user clicks anywhere in an entry that is not currently selected)
+			var destinationGuid = DictionaryConfigurationServices.GetGuidFromEntryLink(element);
+			if (destinationGuid == Guid.Empty)
 			{
-				DictionaryConfigurationServices.GetClassListFromGeckoElement(element, out topLevelGuid, out _);
+				DictionaryConfigurationServices.GetClassListFromGeckoElement(element, out destinationGuid, out _);
 			}
-			if (topLevelGuid != Guid.Empty)
+			// If we don't have a destination GUID, the user may have clicked a video player. We can't handle that,
+			// and if we say we did, we will prevent the user from operating the video controls.
+			if (destinationGuid == Guid.Empty)
 			{
-				var currentObj = recordList.CurrentObject;
-				if (currentObj != null && currentObj.Guid == topLevelGuid)
+				return;
+			}
+			var currentObj = recordList.CurrentObject;
+			if (currentObj != null && currentObj.Guid == destinationGuid)
+			{
+				// don't need to jump: we're already here. If this is an Anchor element, it's probably a link to a video;
+				// return without setting e.Handled = true; Gecko will open the link
+				if (element is GeckoAnchorElement)
 				{
-					// don't need to jump, we're already here...
-					// unless this is a video link
-					if (element is GeckoAnchorElement)
-					{
-						return; // don't handle the click; gecko will jump to the link
-					}
+					// don't handle the click; gecko will jump to the link
+					return;
 				}
-				else
+			}
+			else
+			{
+				// Jump only if we need to; unnecessary refreshes prevent audio from playing when the user clicks an audio link (LT-19967)
+				if (objectRepository.TryGetObject(destinationGuid, out var obj))
 				{
-					if (objectRepository.TryGetObject(topLevelGuid, out var obj))
-					{
-						recordList.JumpToRecord(obj.Hvo);
-					}
+					recordList.JumpToRecord(obj.Hvo);
+				}
+				else if (element is GeckoAnchorElement)
+				{
+					return;
 				}
 			}
 			e.Handled = true;
@@ -176,7 +187,6 @@ namespace LanguageExplorer.DictionaryConfiguration
 			{
 				return;
 			}
-
 			s_contextMenu.Close();
 			DisposeContextMenu(null, null);
 		}
@@ -207,7 +217,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 			// 4 is used further down
 			var cache = (LcmCache)tagObjects[5];
 			var activeRecordList = (RecordList)tagObjects[6];
-			var mainWindow = propertyTable.GetValue<IFwMainWnd>(FwUtils.window);
+			var mainWindow = propertyTable.GetValue<IFwMainWnd>(FwUtilsConstants.window);
 			ICmObject current = null;
 			if (guid != Guid.Empty && cache != null && cache.ServiceLocator.ObjectRepository.IsValidObjectId(guid))
 			{
@@ -232,7 +242,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 			var guid = (Guid)tagObjects[2];
 			using (var dlg = new XmlDiagnosticsDlg(element, guid))
 			{
-				dlg.ShowDialog(propTable.GetValue<IWin32Window>(FwUtils.window));
+				dlg.ShowDialog(propTable.GetValue<IWin32Window>(FwUtilsConstants.window));
 			}
 		}
 	}

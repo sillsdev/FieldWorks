@@ -64,8 +64,6 @@ namespace LanguageExplorer.Controls.DetailControls
 			var labels = ObjectLabel.CreateObjectLabels(m_cache, m_obj.ReferenceTargetCandidates(m_flid), m_displayNameProperty, displayWs);
 			using (var chooser = GetChooser(labels))
 			{
-				var fMadeMorphTypeChange = false;
-				var entry = (ILexEntry)m_obj.Owner;
 				chooser.InitializeExtras(m_configurationNode, PropertyTable, Publisher, Subscriber);
 				chooser.SetObjectAndFlid(m_obj.Hvo, m_flid);
 				chooser.SetHelpTopic(Slice.GetChooserHelpTopicID());
@@ -77,78 +75,93 @@ namespace LanguageExplorer.Controls.DetailControls
 				{
 					return;
 				}
-				var selected = (IMoMorphType)chooser.ChosenOne.Object;
-				var original = Target as IMoMorphType;
-				var sUndo = StringTable.Table.GetStringWithXPath("ChangeLexemeMorphTypeUndo", m_ksPath);
-				var sRedo = StringTable.Table.GetStringWithXPath("ChangeLexemeMorphTypeRedo", m_ksPath);
-				var fRemoveComponents = false;
-				if (selected.Guid == MoMorphTypeTags.kguidMorphRoot || selected.Guid == MoMorphTypeTags.kguidMorphBoundRoot)
+				MakeMorphTypeChange((IMoMorphType)chooser.ChosenOne.Object);
+			}
+		}
+
+		private void MakeMorphTypeChange(IMoMorphType selected)
+		{
+			var entry = (ILexEntry)m_obj.Owner;
+			var original = Target as IMoMorphType;
+			var sUndo = StringTable.Table.GetStringWithXPath("ChangeLexemeMorphTypeUndo", m_ksPath);
+			var sRedo = StringTable.Table.GetStringWithXPath("ChangeLexemeMorphTypeRedo", m_ksPath);
+			var fRemoveComponents = false;
+			if (selected.Guid == MoMorphTypeTags.kguidMorphRoot || selected.Guid == MoMorphTypeTags.kguidMorphBoundRoot)
+			{
+				// changing to root...not allowed to have complex forms.
+				foreach (var ler in entry.EntryRefsOS)
 				{
-					// changing to root...not allowed to have complex forms.
-					foreach (var ler in entry.EntryRefsOS)
+					if (ler.RefType == LexEntryRefTags.krtComplexForm)
 					{
-						if (ler.RefType == LexEntryRefTags.krtComplexForm)
+						fRemoveComponents = true;
+						// If there are no components we will delete without asking...but must then check for more
+						// complex forms that DO have components.
+						if (ler.ComponentLexemesRS.Any())
 						{
-							fRemoveComponents = true;
-							// If there are no components we will delete without asking...but must then check for more
-							// complex forms that DO have components.
-							if (ler.ComponentLexemesRS.Count > 0)
+							// TODO-Linux: Help is not implemented in Mono
+							if (MessageBox.Show(FindForm(), DetailControlsStrings.ksRootNoComponentsMessage, DetailControlsStrings.ksRootNoComponentsCaption, MessageBoxButtons.YesNo,
+									MessageBoxIcon.Question, MessageBoxDefaultButton.Button1, 0, PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider).HelpFile,
+									HelpNavigator.Topic, "/Using_Tools/Lexicon_tools/Lexicon_Edit/change_the_morph_type.htm") != DialogResult.Yes)
 							{
-								// TODO-Linux: Help is not implemented in Mono
-								if (MessageBox.Show(FindForm(), DetailControlsStrings.ksRootNoComponentsMessage, DetailControlsStrings.ksRootNoComponentsCaption, MessageBoxButtons.YesNo,
-										MessageBoxIcon.Question, MessageBoxDefaultButton.Button1, 0, PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider).HelpFile,
-										HelpNavigator.Topic, "/Using_Tools/Lexicon_tools/Lexicon_Edit/change_the_morph_type.htm") != DialogResult.Yes)
-								{
-									return;
-								}
-								break;
+								return;
 							}
+							break;
 						}
 					}
 				}
-				UndoableUnitOfWorkHelper.Do(sUndo, sRedo, entry, () =>
+			}
+			UndoableUnitOfWorkHelper.Do(sUndo, sRedo, entry, () =>
+			{
+				if (fRemoveComponents)
 				{
-					if (fRemoveComponents)
+					foreach (var ler in entry.EntryRefsOS.Where(entryRef => entryRef.RefType == LexEntryRefTags.krtComplexForm))
 					{
-						foreach (var ler in entry.EntryRefsOS.Where(entryRef => entryRef.RefType == LexEntryRefTags.krtComplexForm))
-						{
-							entry.EntryRefsOS.Remove(ler);
-						}
+						entry.EntryRefsOS.Remove(ler);
 					}
-					if (IsStemType(original) || m_obj is IMoStemAllomorph)
+				}
+				if (IsStemType(original) || m_obj is IMoStemAllomorph)
+				{
+					if (IsStemType(selected))
 					{
-						if (IsStemType(selected))
-						{
-							Target = selected;
-						}
-						else
-						{
-							//have to switch from stem to affix
-							fMadeMorphTypeChange = ChangeStemToAffix(entry, selected);
-						}
+						Target = selected;
 					}
 					else
 					{
-						// original is affix variety
-						if (IsStemType(selected))
-						{
-							//have to switch from affix to stem
-							fMadeMorphTypeChange = ChangeAffixToStem(entry, selected);
-						}
-						else
-						{
-							Target = selected;
-						}
+						//have to switch from stem to affix
+						ChangeStemToAffix(entry, selected);
 					}
-					if (selected.Guid == MoMorphTypeTags.kguidMorphPhrase)
+				}
+				else
+				{
+					// original is affix variety
+					if (IsStemType(selected))
 					{
-						var ler = m_cache.ServiceLocator.GetInstance<ILexEntryRefFactory>().Create();
-						entry.EntryRefsOS.Add(ler);
-						ler.RefType = LexEntryRefTags.krtComplexForm;
-						ler.HideMinorEntry = 1;
+						//have to switch from affix to stem
+						 ChangeAffixToStem(entry, selected);
 					}
-				});
-			}
+					else
+					{
+						Target = selected;
+					}
+				}
+				if (selected.Guid == MoMorphTypeTags.kguidMorphPhrase)
+				{
+					var ler = m_cache.ServiceLocator.GetInstance<ILexEntryRefFactory>().Create();
+					entry.EntryRefsOS.Add(ler);
+					ler.RefType = LexEntryRefTags.krtComplexForm;
+					ler.HideMinorEntry = 1;
+				}
+			});
+		}
+
+		protected override void UpdateAutoComplete()
+		{
+			// Do nothing here.
+		}
+
+		protected override void HandlePossibilitySelected(object sender, EventArgs e)
+		{
+			MakeMorphTypeChange((IMoMorphType)AutoCompleteSelectedPossibility);
 		}
 
 		protected override bool AllowEmptyItem => false;
@@ -156,7 +169,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// <summary>
 		/// Change the affix to a stem (possibly)
 		/// </summary>
-		private bool ChangeAffixToStem(ILexEntry entry, IMoMorphType type)
+		private void ChangeAffixToStem(ILexEntry entry, IMoMorphType type)
 		{
 			if (!(m_obj is IMoAffixForm affix))
 			{
@@ -169,11 +182,10 @@ namespace LanguageExplorer.Controls.DetailControls
 			}
 			if (CheckForAffixDataLoss(affix, rgmsaOld))
 			{
-				return false;
+				return;
 			}
 			var stem = m_cache.ServiceLocator.GetInstance<IMoStemAllomorphFactory>().Create();
 			SwapValues(entry, affix, stem, type, rgmsaOld); // may cause slice/button to be disposed...
-			return true;
 		}
 
 		private static bool CheckForAffixDataLoss(IMoAffixForm affix, List<IMoMorphSynAnalysis> rgmsaAffix)

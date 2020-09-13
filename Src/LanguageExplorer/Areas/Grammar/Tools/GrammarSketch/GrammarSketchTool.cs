@@ -135,7 +135,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.GrammarSketch
 				using (var dlg = new ExportDialog(_majorFlexComponentParameters))
 				{
 					dlg.InitializeFlexComponent(_majorFlexComponentParameters.FlexComponentParameters);
-					dlg.ShowDialog(_majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<Form>(FwUtils.window));
+					dlg.ShowDialog(_majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<Form>(FwUtilsConstants.window));
 				}
 			}
 

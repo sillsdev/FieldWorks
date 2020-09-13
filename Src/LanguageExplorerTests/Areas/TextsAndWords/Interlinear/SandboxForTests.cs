@@ -135,7 +135,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 					tagIcon = ktagWordPosIcon;
 					break;
 			}
-			return InterlinComboHandler.MakeCombo(propertyTable?.GetValue<Form>(FwUtils.window), propertyTable?.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider), tagIcon, this, morphIndex) as InterlinComboHandler;
+			return InterlinComboHandler.MakeCombo(propertyTable?.GetValue<Form>(FwUtilsConstants.window), propertyTable?.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider), tagIcon, this, morphIndex) as InterlinComboHandler;
 		}
 
 		internal List<int> GetComboItems(IPropertyTable propertyTable, int flid, int morphIndex)

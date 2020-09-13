@@ -33,7 +33,7 @@ namespace LanguageExplorer.Controls.DetailControls.Slices
 		/// </summary>
 		public override void FinishInit()
 		{
-			MyStringRepSliceView.Cache = PropertyTable.GetValue<LcmCache>(FwUtils.cache);
+			MyStringRepSliceView.Cache = PropertyTable.GetValue<LcmCache>(FwUtilsConstants.cache);
 			MyStringRepSliceView.ResetValidator();
 			if (MyStringRepSliceView.RootBox == null)
 			{

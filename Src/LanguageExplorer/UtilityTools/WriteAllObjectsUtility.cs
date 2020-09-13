@@ -45,7 +45,7 @@ namespace LanguageExplorer.UtilityTools
 		/// <summary />
 		public void Process()
 		{
-			var cache = _utilityDlg.PropertyTable.GetValue<LcmCache>(FwUtils.cache);
+			var cache = _utilityDlg.PropertyTable.GetValue<LcmCache>(FwUtilsConstants.cache);
 			cache.ExportEverythingAsModified();
 		}
 

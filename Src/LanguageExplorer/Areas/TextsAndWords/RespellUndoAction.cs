@@ -550,15 +550,17 @@ namespace LanguageExplorer.Areas.TextsAndWords
 				// to update the ConcDecorator state, then close the UOW which triggers other PropChanged effects.
 				// We have to use SendMessage so the ConcDecorator gets that updated before the record list using it
 				// tries to re-read the list.
-				if (wfOld.CanDelete)
+				if (wfOld.IsValidObject)
 				{
-					wfOld.Delete();
+					if (wfOld.CanDelete)
+					{
+						wfOld.Delete();
+					}
+					else
+					{
+						publisher.Publish(new PublisherParameterObject(LanguageExplorerConstants.ItemDataModified, wfOld));
+					}
 				}
-				else
-				{
-					publisher.Publish(new PublisherParameterObject("ItemDataModified", wfOld));
-				}
-				publisher.Publish(new PublisherParameterObject("ItemDataModified", wfNew));
 				uuow.RollBack = false;
 			}
 		}

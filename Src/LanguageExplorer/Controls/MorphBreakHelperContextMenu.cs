@@ -150,7 +150,7 @@ namespace LanguageExplorer.Controls
 
 		private void showHelp(object sender, EventArgs e)
 		{
-			ShowHelp.ShowHelpTopic(m_helpTopicProvider, "UserHelpFile", "khtpEditMorphBreaks");
+			ShowHelp.ShowHelpTopic(m_helpTopicProvider, FwUtilsConstants.UserHelpFile, "khtpEditMorphBreaks");
 		}
 	}
 }

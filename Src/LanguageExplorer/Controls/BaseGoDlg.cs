@@ -18,6 +18,7 @@ using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.WritingSystems;
 using SIL.Windows.Forms;
+using SIL.Windows.Forms.Widgets;
 
 namespace LanguageExplorer.Controls
 {
@@ -50,7 +51,7 @@ namespace LanguageExplorer.Controls
 		protected Label m_formLabel;
 		protected FwTextBox m_tbForm;
 		protected FwOverrideComboBox m_cbWritingSystems;
-		protected Label m_wsLabel;
+		protected BetterLabel m_wsLabel;
 		protected FwTextBox m_fwTextBoxBottomMsg;
 		protected Label m_objectsLabel;
 
@@ -531,7 +532,7 @@ namespace LanguageExplorer.Controls
 			this.m_tbForm = new SIL.FieldWorks.FwCoreDlgs.Controls.FwTextBox();
 			this.m_formLabel = new System.Windows.Forms.Label();
 			this.m_cbWritingSystems = new SIL.FieldWorks.FwCoreDlgs.FwOverrideComboBox();
-			this.m_wsLabel = new System.Windows.Forms.Label();
+			this.m_wsLabel = new SIL.Windows.Forms.Widgets.BetterLabel();
 			this.m_fwTextBoxBottomMsg = new SIL.FieldWorks.FwCoreDlgs.Controls.FwTextBox();
 			this.m_objectsLabel = new System.Windows.Forms.Label();
 			this.m_matchingObjectsBrowser = new LanguageExplorer.Controls.XMLViews.MatchingObjectsBrowser();

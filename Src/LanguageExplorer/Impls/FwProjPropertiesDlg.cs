@@ -727,7 +727,7 @@ namespace LanguageExplorer.Impls
 					break;
 			}
 
-			ShowHelp.ShowHelpTopic(m_helpTopicProvider, "UserHelpFile", topicKey);
+			ShowHelp.ShowHelpTopic(m_helpTopicProvider, FwUtilsConstants.UserHelpFile, topicKey);
 		}
 		#endregion
 

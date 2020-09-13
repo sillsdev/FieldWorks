@@ -40,7 +40,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		internal void Init(int hvo, IPatternControl patternControl, PatternVcBase vc, int rootFrag, ISilDataAccess sda)
 		{
 			m_patternControl = patternControl;
-			Cache = PropertyTable.GetValue<LcmCache>(FwUtils.cache);
+			Cache = PropertyTable.GetValue<LcmCache>(FwUtilsConstants.cache);
 			m_hvo = hvo;
 			m_vc = vc;
 			m_sda = sda;

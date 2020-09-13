@@ -320,7 +320,7 @@ namespace LanguageExplorer.DictionaryConfiguration.Migration
 								if (n.FieldDescription.Contains("EntryType"))
 								{
 									var parentFd = n.Parent.FieldDescription;
-									if (n.FieldDescription == ConfiguredXHTMLGenerator.LookupComplexEntryType || isReversal && (n.FieldDescription == "VariantEntryTypesRS" || n.FieldDescription == "ComplexEntryTypesRS"))
+									if (n.FieldDescription == ConfiguredLcmGenerator.LookupComplexEntryType || isReversal && (n.FieldDescription == "VariantEntryTypesRS" || n.FieldDescription == "ComplexEntryTypesRS"))
 									{
 										if (parentFd == "ComplexFormEntryRefs")
 										{

@@ -70,6 +70,24 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Not all paragraphs in {0} could be parsed.
+        /// </summary>
+        internal static string ComplexConcControl_NotAllParasParsed {
+            get {
+                return ResourceManager.GetString("ComplexConcControl_NotAllParasParsed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Results may be incomplete..
+        /// </summary>
+        internal static string ComplexConcControl_ResultsMayBeIncomplete {
+            get {
+                return ResourceManager.GetString("ComplexConcControl_ResultsMayBeIncomplete", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to For the category: .
         /// </summary>
         internal static string ConcordanceSearchCatLabel {

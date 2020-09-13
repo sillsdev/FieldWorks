@@ -367,7 +367,7 @@ namespace LanguageExplorer.Controls.XMLViews
 				m_sda = value.DomainDataByFlid;
 				m_cache = value;
 				m_mdc = value.DomainDataByFlid.MetaDataCache;
-				m_layouts = new LayoutCache(m_mdc, m_cache.ProjectId.Name, m_app?.ApplicationName ?? FwUtils.ksFlexAppName, m_cache.ProjectId.ProjectFolder);
+				m_layouts = new LayoutCache(m_mdc, m_cache.ProjectId.Name, m_app?.ApplicationName ?? FwUtilsConstants.ksFlexAppName, m_cache.ProjectId.ProjectFolder);
 				// The VC is set after the cache when created by the view, but it uses a
 				// 'real' VC that already has a cache.
 				// When the VC is created by restoring a persisted layout finder, the cache

@@ -282,8 +282,13 @@ namespace LanguageExplorer.Areas.Lexicon.DictionaryConfiguration
 
 		private static IEnumerable<GeckoElement> FindMatchingSpans(ConfigurableDictionaryNode selectedNode, GeckoElement parent, ConfigurableDictionaryNode topLevelNode, IFwMetaDataCacheManaged metaDataCacheAccessor)
 		{
+			var elements = new List<GeckoElement>();
 			var desiredClass = CssGenerator.GetClassAttributeForConfig(selectedNode);
-			if (ConfiguredXHTMLGenerator.IsCollectionNode(selectedNode, metaDataCacheAccessor))
+			if (ConfiguredLcmGenerator.IsCollectionNode(selectedNode, metaDataCacheAccessor))
+			{
+				desiredClass = CssGenerator.GetClassAttributeForCollectionItem(selectedNode);
+			}
+			foreach (var span in parent.GetElementsByTagName("span"))
 			{
 				desiredClass = CssGenerator.GetClassAttributeForCollectionItem(selectedNode);
 			}

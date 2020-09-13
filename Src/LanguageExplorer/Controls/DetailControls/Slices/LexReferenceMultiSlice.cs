@@ -700,7 +700,7 @@ namespace LanguageExplorer.Controls.DetailControls.Slices
 		/// It's just as easy for this class to find its own index.</remarks>
 		public override void Expand(int iSlice)
 		{
-			using (new DataTreeLayoutSuspensionHelper(PropertyTable.GetValue<IFwMainWnd>(FwUtils.window), ContainingDataTree))
+			using (new DataTreeLayoutSuspensionHelper(PropertyTable.GetValue<IFwMainWnd>(FwUtilsConstants.window), ContainingDataTree))
 			{
 				XElement caller = null;
 				if (Key.Length > 1)
@@ -725,7 +725,7 @@ namespace LanguageExplorer.Controls.DetailControls.Slices
 			{
 				throw new FwConfigurationException("Slice:GetObjectHvoForMenusToOperateOn is either messed up or should not have been called, because it could not find the object to be deleted.", ConfigurationNode);
 			}
-			var mainWindow = PropertyTable.GetValue<Form>(FwUtils.window);
+			var mainWindow = PropertyTable.GetValue<Form>(FwUtilsConstants.window);
 			using (new WaitCursor(mainWindow))
 			using (var dlg = new ConfirmDeleteObjectDlg(PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider)))
 			{
@@ -788,7 +788,7 @@ namespace LanguageExplorer.Controls.DetailControls.Slices
 			{
 				throw new FwConfigurationException("Slice:GetObjectHvoForMenusToOperateOn is either messed up or should not have been called, because it could not find the object to be deleted.", ConfigurationNode);
 			}
-			var mainWindow = PropertyTable.GetValue<Form>(FwUtils.window);
+			var mainWindow = PropertyTable.GetValue<Form>(FwUtilsConstants.window);
 			using (new WaitCursor(mainWindow))
 			using (var dlg = new ConfirmDeleteObjectDlg(PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider)))
 			{

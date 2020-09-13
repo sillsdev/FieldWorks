@@ -9,7 +9,6 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
-using LanguageExplorer.Areas;
 using LanguageExplorer.Controls.XMLViews;
 using LanguageExplorer.DictionaryConfiguration.DictionaryDetailsView;
 using SIL.Code;
@@ -57,8 +56,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 		/// Flag whether we're highlighting the affected node in the preview area.
 		/// </summary>
 		private bool _isHighlighted;
-
-		private LcmCache Cache => PropertyTable.GetValue<LcmCache>(FwUtils.cache);
+		private LcmCache Cache => PropertyTable.GetValue<LcmCache>(FwUtilsConstants.cache);
 
 		/// <summary>
 		/// The view to display the model in
@@ -158,7 +156,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 			{
 				MasterRefreshRequired = true;
 			}
-			View.PreviewData = ConfiguredXHTMLGenerator.GenerateEntryHtmlWithStyles(_previewEntry, _model, _allEntriesPublicationDecorator, PropertyTable, Cache);
+			View.PreviewData = LcmXhtmlGenerator.GenerateEntryHtmlWithStyles(_previewEntry, _model, _allEntriesPublicationDecorator, PropertyTable);
 			if (_isHighlighted)
 			{
 				View.HighlightContent(View.TreeControl.Tree.SelectedNode.Tag as ConfigurableDictionaryNode, Cache.GetManagedMetaDataCache());
@@ -260,6 +258,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 		{
 			_previewEntry = previewEntry;
 			View = view;
+			// NB: Stuff from 'afar' does what is done in InitializeFlexComponent in the new world, so be sure to not merge it in here!
 		}
 
 		private void SetManagerTypeInfo(DictionaryConfigurationManagerDlg dialog)
@@ -1056,10 +1055,10 @@ namespace LanguageExplorer.DictionaryConfiguration
 		public static string GetLookupClassForCustomFieldParent(ConfigurableDictionaryNode parent, LcmCache cache)
 		{
 			// The class that contains the type information for the field we are inspecting
-			var lookupClass = ConfiguredXHTMLGenerator.GetTypeForConfigurationNode(parent, cache.GetManagedMetaDataCache(), out _);
+			var lookupClass = ConfiguredLcmGenerator.GetTypeForConfigurationNode(parent, cache.GetManagedMetaDataCache(), out _);
 			// If the node describes a collection we may want to add the custom field node if the collection is of
 			// the type that the field is added to. (e.g. Senses, ExampleSentences)
-			if (ConfiguredXHTMLGenerator.GetPropertyTypeForConfigurationNode(parent, cache.GetManagedMetaDataCache()) == PropertyType.CollectionType)
+			if (ConfiguredLcmGenerator.GetPropertyTypeForConfigurationNode(parent, cache.GetManagedMetaDataCache()) == PropertyType.CollectionType)
 			{
 				if (lookupClass.IsGenericType)
 				{
@@ -1313,10 +1312,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 			{
 				return;
 			}
-			if (View?.TreeControl?.Tree == null)
-			{
-				return;
-			}
+
 			// Search through the configuration trees associated with each top-level TreeNode to find the best match.
 			var topNode = View?.TreeControl?.Tree?.Nodes.Cast<TreeNode>().Select(node => node.Tag).OfType<ConfigurableDictionaryNode>()
 				.FirstOrDefault(configNode => classList[0].Split(' ').Contains(CssGenerator.GetClassAttributeForConfig(configNode)));
@@ -1461,7 +1457,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 			Publisher = flexComponentParameters.Publisher;
 			Subscriber = flexComponentParameters.Subscriber;
 
-			var cache = PropertyTable.GetValue<LcmCache>(FwUtils.cache);
+			var cache = PropertyTable.GetValue<LcmCache>(FwUtilsConstants.cache);
 			_allEntriesPublicationDecorator = new DictionaryPublicationDecorator(cache, cache.GetManagedSilDataAccess(), cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries);
 			if (_previewEntry == null)
 			{
@@ -1487,8 +1483,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 						SaveModel();
 						MasterRefreshRequired = false; // We're reloading the whole app, that's refresh enough
 						View.Close();
-
-						Publisher.Publish(new PublisherParameterObject("ReloadAreaTools", LanguageExplorerConstants.ListsAreaMachineName));
+						Publisher.Publish(new PublisherParameterObject(LanguageExplorerConstants.ReloadAreaTools, LanguageExplorerConstants.ListsAreaMachineName));
 					};
 					SetManagerTypeInfo(dialog);
 					dialog.ShowDialog(View as Form);

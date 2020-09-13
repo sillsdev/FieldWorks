@@ -33,7 +33,7 @@ namespace LanguageExplorerTests.Controls.DetailControls.Slices
 
 			_flexComponentParameters = TestSetupServices.SetupTestTriumvirate();
 			_dummyWindow = new DummyFwMainWnd();
-			_flexComponentParameters.PropertyTable.SetProperty(FwUtils.window, _dummyWindow);
+			_flexComponentParameters.PropertyTable.SetProperty(FwUtilsConstants.window, _dummyWindow);
 		}
 		#endregion
 

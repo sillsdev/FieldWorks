@@ -29,7 +29,7 @@ namespace LanguageExplorer.Controls.DetailControls
 
 			if (disposing)
 			{
-				PropertyTable?.GetValue<IFwMainWnd>(FwUtils.window)?.IdleQueue?.Remove(PostponedUpdateWordforms);
+				PropertyTable?.GetValue<IFwMainWnd>(FwUtilsConstants.window)?.IdleQueue?.Remove(PostponedUpdateWordforms);
 				components?.Dispose();
 				MyMajorFlexComponentParameters?.UiWidgetController.RemoveUserControlHandlers(this);
 				// Do this, before calling base.

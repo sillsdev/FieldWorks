@@ -1683,7 +1683,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 
 				_migrator.CopyNewDefaultsIntoConvertedModel(convertedMinorEntry, defaultMinorEntry);
 				string cssResults = null;
-				Assert.DoesNotThrow(() => cssResults = CssGenerator.GenerateCssFromConfiguration(convertedMinorEntry, Cache, _lcmStyleSheet));
+				Assert.DoesNotThrow(() => cssResults = CssGenerator.GenerateCssFromConfiguration(convertedMinorEntry, new ReadOnlyPropertyTable(_flexComponentParameters.PropertyTable)));
 				Assert.That(cssResults, Is.StringContaining(HwBefore));
 				Assert.That(cssResults, Is.StringContaining(HwBetween));
 				Assert.That(cssResults, Is.StringContaining(HwAfter));
@@ -1827,7 +1827,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 			var complexFormTypeNode = new ConfigurableDictionaryNode
 			{
 				Label = "Complex Form Type",
-				FieldDescription = ConfiguredXHTMLGenerator.LookupComplexEntryType,
+				FieldDescription = ConfiguredLcmGenerator.LookupComplexEntryType,
 				Children = new List<ConfigurableDictionaryNode> { abbreviation }
 			};
 			var subentriesNode = new ConfigurableDictionaryNode

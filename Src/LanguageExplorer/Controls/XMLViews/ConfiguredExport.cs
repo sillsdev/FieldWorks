@@ -430,33 +430,51 @@ namespace LanguageExplorer.Controls.XMLViews
 			var clid = obj.ClassID;
 			var sClass = DataAccess.MetaDataCache.GetClassName(clid);
 			IndentLine();
+			var objGuid = obj.Guid; // LT-19976 XHTML export has been changed to use guid instead of hvo
 			if (m_cc == CurrentContext.insideLink)
 			{
 				sClass = sClass + "Link";
-				var targetItem = hvoItem;
-				if (obj is ILexSense)
+				var targetHvo = hvoItem;
+				var targetGuid = objGuid;
+				if (obj is ILexSense lexSense)
 				{
 					// We want the link to go to the containing lex entry.
 					// This has two advantages: first, the user can see the whole entry, rather than part of it
 					// being scrolled off the top of the screen;
 					// Secondly, some senses (e.g., of variants) may not be shown in the HTML at all, resulting in bad links (LT-11099)
-					targetItem = ((ILexSense)obj).Entry.Hvo;
+					if (m_sFormat == "xhtml")
+					{
+						targetGuid = lexSense.Entry.Guid;
+					}
+					else
+					{
+						targetHvo = lexSense.Entry.Hvo;
+					}
 				}
-				m_writer.WriteLine("<{0} target=\"hvo{1}\">", sClass, targetItem);
+				m_writer.WriteLine("<{0} target=\"{1}{2}\">",
+					sClass,
+					m_sFormat == "xhtml" ? "g" : "hvo",
+					m_sFormat == "xhtml" ? targetGuid.ToString() : targetHvo.ToString());
 			}
 			else
 			{
-				switch (clid)
+				if (m_sFormat == "xhtml")
 				{
-					case LexEntryTags.kClassId when m_sFormat == "xhtml":
-						WriteEntryLetterHeadIfNeeded(hvoItem);
-						break;
-					case ReversalIndexEntryTags.kClassId when m_sFormat == "xhtml":
-						WriteReversalLetterHeadIfNeeded(hvoItem);
-						break;
+					switch (clid) // "default" case drops through on purpose
+					{
+						case LexEntryTags.kClassId:
+							WriteEntryLetterHeadIfNeeded(hvoItem);
+							break;
+						case ReversalIndexEntryTags.kClassId:
+							WriteReversalLetterHeadIfNeeded(hvoItem);
+							break;
+					}
+					m_writer.WriteLine("<{0} id=\"g{1}\">", sClass, objGuid);
 				}
-
-				m_writer.WriteLine("<{0} id=\"hvo{1}\">", sClass, hvoItem);
+				else
+				{
+					m_writer.WriteLine("<{0} id=\"hvo{1}\">", sClass, hvoItem);
+				}
 			}
 			m_rgElementTags.Add(sClass);
 			m_rgClassNames.Add(sClass);
@@ -537,7 +555,20 @@ namespace LanguageExplorer.Controls.XMLViews
 			// List of characters to ignore in creating letter heads.
 			var sortChars = GetDigraphs(sWs, wsDigraphMap, wsCharEquivalentMap, wsIgnorableCharMap, cache, out var mapChars, out var chIgnoreList);
 			var sEntry = string.Empty;
-			sEntry = chIgnoreList != null ? sEntryPre.Where(ch => !chIgnoreList.Contains(ch.ToString(CultureInfo.InvariantCulture))).Aggregate(sEntry, (current, ch) => current + ch) : sEntryPre;
+			if (chIgnoreList != null) // this list was built in GetDigraphs()
+			{
+				foreach (var ch in sEntryPre)
+				{
+					if (!(chIgnoreList.Contains(ch.ToString(CultureInfo.InvariantCulture))))
+					{
+						sEntry += ch;
+					}
+				}
+			}
+			else
+			{
+				sEntry = sEntryPre;
+			}
 			if (string.IsNullOrEmpty(sEntry))
 			{
 				return string.Empty; // check again
@@ -549,15 +580,25 @@ namespace LanguageExplorer.Controls.XMLViews
 			// with the representative of its equivalence class// replace subsorting chars by their main sort char. a << 'a << ^a, etc. are replaced by a.
 			do
 			{
-				sEntry = map.Keys.Aggregate(sEntry, (current, key) => current.Replace(key, map[key]));
+				foreach (var key in map.Keys)
+				{
+					sEntry = sEntry.Replace(key, map[key]);
+				}
 				fChanged = sEntryT != sEntry;
 				if (sEntry.Length > sEntryT.Length && map == mapChars)
 				{
 					// Rules like a -> a' repeat infinitely! To truncate this eliminate any rule whose output contains an input.
 					map = new Dictionary<string, string>(mapChars);
-					foreach (var kvp in mapChars.Where(kvp => mapChars.Keys.Any(key1 => kvp.Value.Contains(key1))))
+					foreach (var kvp in mapChars)
 					{
-						map.Remove(kvp.Key);
+						foreach (var key1 in mapChars.Keys)
+						{
+							if (kvp.Value.Contains(key1))
+							{
+								map.Remove(kvp.Key);
+								break;
+							}
+						}
 					}
 				}
 				sEntryT = sEntry;
@@ -640,9 +681,8 @@ namespace LanguageExplorer.Controls.XMLViews
 			// Collect the digraph and character equivalence maps and the ignorable character set
 			// the first time through. There after, these maps and lists are just retrieved.
 			chIgnoreSet = new HashSet<string>(); // if ignorable chars get through they can become letter heads! LT-11172
-			ISet<string> digraphs;
 			// Are the maps and ignorables already setup for the taking?
-			if (wsDigraphMap.TryGetValue(sWs, out digraphs))
+			if (wsDigraphMap.TryGetValue(sWs, out var digraphs))
 			{
 				// knows about ws, so already knows character equivalence classes
 				mapChars = wsCharEquivalentMap[sWs];
@@ -657,7 +697,9 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				if (!string.IsNullOrEmpty(simpleCollation.SimpleRules))
 				{
-					foreach (var part in simpleCollation.SimpleRules.Replace(" ", "=").Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries))
+					var rules = simpleCollation.SimpleRules.Replace(" ", "=");
+					var primaryParts = rules.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
+					foreach (var part in primaryParts)
 					{
 						BuildDigraphSet(part, sWs, wsDigraphMap);
 						MapRuleCharsToPrimary(part, sWs, wsCharEquivalentMap);
@@ -675,67 +717,16 @@ namespace LanguageExplorer.Controls.XMLViews
 					var individualRules = icuCollation.IcuRules.Split(new[] { '&' }, StringSplitOptions.RemoveEmptyEntries);
 					foreach (var individualRule in individualRules)
 					{
-						string[] primaryParts;
+						// prepare rule for parsing by dropping certain whitespace and handling ICU Escape chars
 						var rule = individualRule;
-						RemoveICUEscapeChars(ref rule);
+						NormalizeRule(ref rule);
 						// This is a valid rule that specifies that the digraph aa should be ignored
 						// [last tertiary ignorable] = \u02bc = aa
 						// This may never happen, but some single characters should be ignored or they will
 						// will be confused for digraphs with following characters.)))
 						if (rule.Contains("["))
 						{
-							RemoveICUEscapeChars(ref rule);
-							// This is a valid rule that specifies that the digraph aa should be ignored
-							// [last tertiary ignorable] = \u02bc = aa
-							// This may never happen, but some single characters should be ignored or they will
-							// will be confused for digraphs with following characters.)))
-							if (rule.Contains("["))
-							{
-								rule = ProcessAdvancedSyntacticalElements(chIgnoreSet, rule);
-							}
-							if (string.IsNullOrEmpty(rule.Trim()))
-							{
-								continue;
-							}
-							rule = rule.Replace("<<<", "=");
-							rule = rule.Replace("<<", "=");
-							// If the rule contains one or more expansions ('/') remove the expansion portions
-							if (rule.Contains("/"))
-							{
-								var isExpansion = false;
-								var newRule = new StringBuilder();
-								for (var ruleIndex = 0; ruleIndex <= rule.Length - 1; ruleIndex++)
-								{
-									switch (rule.Substring(ruleIndex, 1))
-									{
-										case "/":
-											isExpansion = true;
-											break;
-										case "=":
-										case "<":
-											isExpansion = false;
-											break;
-									}
-									if (!isExpansion)
-									{
-										newRule.Append(rule.Substring(ruleIndex, 1));
-									}
-								}
-								rule = newRule.ToString();
-							}
-							// "&N<ng<<<Ng<ny<<<Ny" => "&N<ng=Ng<ny=Ny"
-							// "&N<�<<<�" => "&N<�=�"
-							// There are other issues we are not handling proplerly such as the next line
-							// &N<\u006e\u0067
-							primaryParts = rule.Split('<');
-							foreach (var part in primaryParts)
-							{
-								if (rule.Contains("<"))
-								{
-									BuildDigraphSet(part, sWs, wsDigraphMap);
-								}
-								MapRuleCharsToPrimary(part, sWs, wsCharEquivalentMap);
-							}
+							rule = ProcessAdvancedSyntacticalElements(chIgnoreSet, rule);
 						}
 						if (string.IsNullOrEmpty(rule.Trim()))
 						{
@@ -743,14 +734,40 @@ namespace LanguageExplorer.Controls.XMLViews
 						}
 						rule = rule.Replace("<<<", "=");
 						rule = rule.Replace("<<", "=");
+						// If the rule contains one or more expansions ('/') remove the expansion portions
+						if (rule.Contains("/"))
+						{
+							var isExpansion = false;
+							var newRule = new StringBuilder();
+							for (var ruleIndex = 0; ruleIndex <= rule.Length - 1; ruleIndex++)
+							{
+								if (rule.Substring(ruleIndex, 1) == "/")
+								{
+									isExpansion = true;
+								}
+								else if (rule.Substring(ruleIndex, 1) == "=" ||
+										 rule.Substring(ruleIndex, 1) == "<")
+								{
+									isExpansion = false;
+								}
+								if (!isExpansion)
+								{
+									newRule.Append(rule.Substring(ruleIndex, 1));
+								}
+							}
+							rule = newRule.ToString();
+						}
 						// "&N<ng<<<Ng<ny<<<Ny" => "&N<ng=Ng<ny=Ny"
 						// "&N<�<<<�" => "&N<�=�"
 						// There are other issues we are not handling proplerly such as the next line
 						// &N<\u006e\u0067
-						primaryParts = rule.Split('<');
+						var primaryParts = rule.Split('<');
 						foreach (var part in primaryParts)
 						{
-							BuildDigraphSet(part, sWs, wsDigraphMap);
+							if (rule.Contains("<"))
+							{
+								BuildDigraphSet(part, sWs, wsDigraphMap);
+							}
 							MapRuleCharsToPrimary(part, sWs, wsCharEquivalentMap);
 						}
 					}
@@ -768,17 +785,17 @@ namespace LanguageExplorer.Controls.XMLViews
 
 		private static string ProcessAdvancedSyntacticalElements(ISet<string> chIgnoreSet, string rule)
 		{
-			const string ignorableEndMarker = "ignorable] = ";
+			const string ignorableEndMarker = "ignorable]";
 			const string beforeBegin = "[before ";
 			// parse out the ignorables and add them to the ignore list
 			var ignorableBracketEnd = rule.IndexOf(ignorableEndMarker);
 			if (ignorableBracketEnd > -1)
 			{
 				ignorableBracketEnd += ignorableEndMarker.Length; // skip over the search target
-				var chars = rule.Substring(ignorableBracketEnd).Split(new[] { " = " }, StringSplitOptions.RemoveEmptyEntries);
-				if (chars.Length > 0)
+				var charsToIgnore = rule.Substring(ignorableBracketEnd).Split(new[] { "=" }, StringSplitOptions.RemoveEmptyEntries);
+				if (charsToIgnore.Length > 0)
 				{
-					foreach (var ch in chars)
+					foreach (var ch in charsToIgnore)
 					{
 						chIgnoreSet.Add(ch);
 					}
@@ -843,23 +860,30 @@ namespace LanguageExplorer.Controls.XMLViews
 					continue;
 				}
 				sGraph = CustomIcu.GetIcuNormalizer(FwNormalizationMode.knmNFD).Normalize(sGraph);
-				if (sGraph.Length <= 1)
+				if (sGraph.Length > 1)
 				{
-					continue;
-				}
-				sGraph = Icu.UnicodeString.ToLower(sGraph, ws);
-				if (!wsDigraphsMap.ContainsKey(ws))
-				{
-					wsDigraphsMap.Add(ws, new HashSet<string> { sGraph });
-				}
-				else
-				{
-					if (!wsDigraphsMap[ws].Contains(sGraph))
+					sGraph = Icu.UnicodeString.ToLower(sGraph, ws);
+					if (!wsDigraphsMap.ContainsKey(ws))
 					{
-						wsDigraphsMap[ws].Add(sGraph);
+						wsDigraphsMap.Add(ws, new HashSet<string> { sGraph });
+					}
+					else
+					{
+						if (!wsDigraphsMap[ws].Contains(sGraph))
+						{
+							wsDigraphsMap[ws].Add(sGraph);
+						}
 					}
 				}
 			}
+		}
+
+		private static void NormalizeRule(ref string rule)
+		{
+			// drop carriage returns and spaces around '='
+			rule = rule.TrimEnd('\r', '\n');
+			rule = rule.Replace(" =", "=").Replace("= ", "=");
+			RemoveICUEscapeChars(ref rule);
 		}
 
 		private static void RemoveICUEscapeChars(ref string sRule)
@@ -888,8 +912,10 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				return;     // subentries shouldn't trigger letter head change!
 			}
-			var ws = m_cache.ServiceLocator.WritingSystemManager.Get(((IReversalIndex)objOwner).WritingSystem);
-			var sEntry = ((IReversalIndexEntry)obj).ReversalForm.get_String(ws.Handle).Text;
+			var entry = (IReversalIndexEntry)obj;
+			var idx = (IReversalIndex)objOwner;
+			var ws = m_cache.ServiceLocator.WritingSystemManager.Get(idx.WritingSystem);
+			var sEntry = entry.ReversalForm.get_String(ws.Handle).Text;
 			if (string.IsNullOrEmpty(sEntry))
 			{
 				return;
@@ -1016,14 +1042,17 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				return;
 			}
-			if (m_cache.ServiceLocator.GetInstance<ICmObjectRepository>().TryGetObject(hvo, out var cmObject))
+			try
 			{
-				sClass = cmObject.ClassName + "Link";
+				sClass = m_cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvo).ClassName + "Link";
 				var sOut = $"<{sClass} target=\"hvo{hvo}\">";
 				IndentLine();
 				m_writer.WriteLine(sOut);
 				m_rgClassNames[iTopClass] = sClass;
 				m_rgElementTags[iTopElem] = sClass;
+			}
+			catch
+			{
 			}
 		}
 
@@ -1034,14 +1063,15 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				sClass = DataAccess.MetaDataCache.GetClassName(clid);
 			}
-			string sXml;
+
 			var sClass2 = string.Empty;
 			var iTopClass = m_rgClassNames.Count - 1;
 			if (iTopClass >= 0)
 			{
 				sClass2 = m_rgClassNames[iTopClass];
 			}
-			return !string.IsNullOrEmpty(sClass) ? $"{sClass}_{MakeStringValidXmlElement(sField)}" : $"{sClass2}_{MakeStringValidXmlElement(sField)}";
+			var safeField = MakeStringValidXmlElement(sField);
+			return !string.IsNullOrEmpty(sClass) ? $"{sClass}_{safeField}" : $"{sClass2}_{safeField}";
 		}
 
 		/// <summary>
@@ -1055,10 +1085,11 @@ namespace LanguageExplorer.Controls.XMLViews
 		{
 			// Anything followed by one illegal character followed by anything; must match whole string.
 			var pattern = new Regex(@"^(.*)([^\-:_.A-Za-z0-9\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u02FF\u0370-\u037D\u037f-\u1FFF"
-				+ @"\u200C-\u200D\u2070-\u218F\u2C00-\u2FEF\u3001-\uD7FF\uF900-\uFDCF\uFDF0-\uFFFD"
-				+ @"\u00B7\u0300-\u036F\u203F-\u2040])(.*)$");
+									+ @"\u200C-\u200D\u2070-\u218F\u2C00-\u2FEF\u3001-\uD7FF\uF900-\uFDCF\uFDF0-\uFFFD"
+									+ @"\u00B7\u0300-\u036F\u203F-\u2040])"
+									+ @"(.*)$");
 			var result = input;
-			for (; ; )
+			for (; ;)
 			{
 				var match = pattern.Match(result);
 				if (!match.Success)
@@ -1071,7 +1102,11 @@ namespace LanguageExplorer.Controls.XMLViews
 
 		private static string MakeValueForXmlElement(char c)
 		{
-			return c == ' ' ? "_" : $"{Convert.ToInt32(c):x}";
+			if (c == ' ')
+			{
+				return "_"; // friendlier than hex.
+}
+			return string.Format("{0:x}", Convert.ToInt32(c));
 		}
 
 		private void WriteFieldEndTag(CurrentContext ccOld)
@@ -1181,7 +1216,7 @@ namespace LanguageExplorer.Controls.XMLViews
 				AddString(tss);
 				return;
 			}
-			var tag = XmlUtils.GetOptionalAttributeValue(delimitNode, "number"); // optional normally, but then this is not called
+			var tag = delimitNode.Attribute("number").Value; // optional normally, but then this is not called
 			int ich;
 			for (ich = 0; ich < tag.Length; ich++)
 			{
@@ -1232,16 +1267,16 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				return;
 			}
-			string cssClass;
-			if (!m_mapXnToCssClass.TryGetValue(frag, out cssClass))
+			if (!m_mapXnToCssClass.TryGetValue(frag, out var cssClass))
 			{
 				cssClass = XmlUtils.GetOptionalAttributeValue(frag, "css", null);
 				// Note that an empty string for cssClass means we explicitly don't want to output anything.
 				if (cssClass == null && frag.Parent != null && frag.Parent.Name == "layout"
-				    && (XmlUtils.GetOptionalAttributeValue(frag, "before") != null || XmlUtils.GetOptionalAttributeValue(frag, "after") != null
-													|| XmlUtils.GetOptionalAttributeValue(frag, "sep") != null
-													|| XmlUtils.GetOptionalAttributeValue(frag, "number") != null
-													|| XmlUtils.GetOptionalAttributeValue(frag, "style") != null))
+				    && (XmlUtils.GetOptionalAttributeValue(frag, "before") != null
+						|| XmlUtils.GetOptionalAttributeValue(frag, "after") != null
+						|| XmlUtils.GetOptionalAttributeValue(frag, "sep") != null
+						|| XmlUtils.GetOptionalAttributeValue(frag, "number") != null
+						|| XmlUtils.GetOptionalAttributeValue(frag, "style") != null))
 				{
 					var sb = new StringBuilder(XmlUtils.GetOptionalAttributeValue(frag.Parent, "class", string.Empty));
 					if (sb.Length > 0)
@@ -1271,19 +1306,19 @@ namespace LanguageExplorer.Controls.XMLViews
 						var wsNew = XmlUtils.GetOptionalAttributeValue(frag, "ws");
 						if (!string.IsNullOrEmpty(wsOld) && !string.IsNullOrEmpty(wsNew) && wsOld != wsNew)
 						{
-							var tryCssClass = cssClass + "-" + wsNew;
+							var tryCssClass = $"{cssClass}-{wsNew}";
 							if (m_xhtml.TryGetNodeFromCssClass(tryCssClass, out oldNode))
 							{
 								// another level of duplicate!
 								throw new FwConfigurationException($"Two distinct XML nodes are using the same cssClass ({cssClass}) and writing system ({wsNew}) in the same export:"
-								                                   + Environment.NewLine + oldNode + Environment.NewLine + frag);
+								                                   + Environment.NewLine + oldNode.GetOuterXml() + Environment.NewLine + frag.GetOuterXml());
 							}
 							cssClass = tryCssClass; // This is a unique key we will use as the css class for these items.
 						}
 						else
 						{
 							throw new FwConfigurationException($"Two distinct XML nodes are using the same cssClass ({cssClass}) in the same export with the same (or no) writing system:"
-								+ Environment.NewLine + oldNode + Environment.NewLine + frag);
+								+ Environment.NewLine + oldNode.GetOuterXml() + Environment.NewLine + frag.GetOuterXml());
 						}
 					}
 					m_xhtml.MapCssClassToXElement(cssClass, frag);
@@ -1320,7 +1355,16 @@ namespace LanguageExplorer.Controls.XMLViews
 
 		private static string GetFlowType(XElement frag)
 		{
-			return XmlUtils.GetOptionalAttributeValue(frag, "flowType", null) ?? (XmlUtils.GetOptionalBooleanAttributeValue(frag, "showasindentedpara", false) ? "para" : null);
+			var flowType = XmlUtils.GetOptionalAttributeValue(frag, "flowType", null);
+			if (flowType == null)
+			{
+				var fShowAsPara = XmlUtils.GetOptionalBooleanAttributeValue(frag, "showasindentedpara", false);
+				if (fShowAsPara)
+				{
+					return "para";
+				}
+			}
+			return flowType;
 		}
 
 		/// <summary>

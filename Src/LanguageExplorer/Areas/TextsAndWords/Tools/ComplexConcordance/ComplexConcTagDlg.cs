@@ -49,7 +49,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 			m_node = node;
 			m_tagComboBox.WritingSystemFactory = m_cache.LanguageWritingSystemFactoryAccessor;
 			m_posPopupTreeManager = new PossibilityComboController(m_tagComboBox, m_cache, m_cache.LanguageProject.TextMarkupTagsOA,
-				m_cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle, false, flexComponentParameters, flexComponentParameters.PropertyTable.GetValue<Form>(FwUtils.window));
+				m_cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle, false, flexComponentParameters, flexComponentParameters.PropertyTable.GetValue<Form>(FwUtilsConstants.window));
 			m_posPopupTreeManager.LoadPopupTree(m_node.Tag?.Hvo ?? 0);
 			m_helpTopicProvider = flexComponentParameters.PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider);
 			m_helpProvider.HelpNamespace = m_helpTopicProvider.HelpFile;

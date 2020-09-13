@@ -649,7 +649,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 				using (var ctrl = new ConcordanceDlg(_majorFlexComponentParameters.StatusBar, concordOnObject))
 				{
 					ctrl.InitializeFlexComponent(_majorFlexComponentParameters.FlexComponentParameters);
-					ctrl.ShowDialog(_propertyTable.GetValue<Form>(FwUtils.window));
+					ctrl.ShowDialog(_propertyTable.GetValue<Form>(FwUtilsConstants.window));
 				}
 			}
 
@@ -667,7 +667,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.Analyses
 					dlg.Initialize(tssWord, morphs, _cache.MainCacheAccessor.WritingSystemFactory, _cache, _dataTree.StyleSheet);
 					// Making the form active fixes problems like LT-2619.
 					// I'm (RandyR) not sure what adverse impact might show up by doing this.
-					var mainWnd = _propertyTable.GetValue<Form>(FwUtils.window);
+					var mainWnd = _propertyTable.GetValue<Form>(FwUtilsConstants.window);
 					mainWnd.Activate();
 					if (dlg.ShowDialog(mainWnd) == DialogResult.OK)
 					{

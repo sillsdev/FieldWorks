@@ -261,7 +261,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
 				var currentSliceAsStTextSlice = _dataTree.CurrentSliceAsStTextSlice;
 				if (currentSliceAsStTextSlice.RootSite.RootBox.Selection.GetSelectedWordPos(out var hvo, out var tag, out var ws, out var ichMin, out var ichLim))
 				{
-					LexEntryUi.DisplayOrCreateEntry(_majorFlexComponentParameters.LcmCache, hvo, tag, ws, ichMin, ichLim, (IWin32Window)currentSliceAsStTextSlice, _majorFlexComponentParameters.FlexComponentParameters, _majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider), "UserHelpFile");
+					LexEntryUi.DisplayOrCreateEntry(_majorFlexComponentParameters.LcmCache, hvo, tag, ws, ichMin, ichLim, (IWin32Window)currentSliceAsStTextSlice, _majorFlexComponentParameters.FlexComponentParameters, _majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider), FwUtilsConstants.UserHelpFile);
 				}
 			}
 

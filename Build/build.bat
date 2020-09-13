@@ -15,7 +15,7 @@ cd ..
 set PATH=%cd%\DistFiles;%cd%\Bin;%WIX%\bin;%PATH%
 popd
 
-for /f "usebackq tokens=1* delims=: " %%i in (`vswhere -latest -requires Microsoft.Component.MSBuild`) do (
+for /f "usebackq tokens=1* delims=: " %%i in (`vswhere -version "[15.0,15.999)" -requires Microsoft.Component.MSBuild`) do (
   if /i "%%i"=="installationPath" set InstallDir=%%j
   if /i "%%i"=="catalog_productLineVersion" set VSVersion=%%j
 )

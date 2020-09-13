@@ -543,7 +543,7 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 			}
 			if (s_helpResources == null)
 			{
-				s_helpResources = new ResourceManager("SIL.FieldWorks.UnicodeCharEditor.Properties.Resources", Assembly.GetExecutingAssembly());
+				s_helpResources = new ResourceManager("SIL.FieldWorks.UnicodeCharEditor.HelpTopicPaths", Assembly.GetExecutingAssembly());
 			}
 			return s_helpResources.GetString(sPropName);
 		}
@@ -551,7 +551,7 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 		/// <summary>
 		/// Get the name of the help file.
 		/// </summary>
-		public string HelpFile => Path.Combine(FwDirectoryFinder.CodeDirectory, GetHelpString("UserHelpFile"));
+		public string HelpFile => Path.Combine(FwDirectoryFinder.CodeDirectory, GetHelpString(FwUtilsConstants.UserHelpFile));
 
 		#endregion
 	}

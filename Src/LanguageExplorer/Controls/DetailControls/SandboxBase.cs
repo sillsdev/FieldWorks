@@ -732,7 +732,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		protected override void OnHandleCreated(EventArgs e)
 		{
 			base.OnHandleCreated(e);
-			var activeForm = PropertyTable.GetValue<IFwMainWnd>(FwUtils.window);
+			var activeForm = PropertyTable.GetValue<IFwMainWnd>(FwUtilsConstants.window);
 			if (MiscUtils.IsMono && activeForm != null)
 			{
 				activeForm.DesiredControl = this;
@@ -746,7 +746,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		protected override void OnHandleDestroyed(EventArgs e)
 		{
 			base.OnHandleDestroyed(e);
-			var activeForm = PropertyTable.GetValue<IFwMainWnd>(FwUtils.window);
+			var activeForm = PropertyTable.GetValue<IFwMainWnd>(FwUtilsConstants.window);
 			if (MiscUtils.IsMono && activeForm != null)
 			{
 				activeForm.DesiredControl = null;
@@ -815,7 +815,7 @@ namespace LanguageExplorer.Controls.DetailControls
 
 			if (disposing)
 			{
-				var activeForm = PropertyTable.GetValue<IFwMainWnd>(FwUtils.window);
+				var activeForm = PropertyTable.GetValue<IFwMainWnd>(FwUtilsConstants.window);
 				if (MiscUtils.IsMono && activeForm != null)
 				{
 					activeForm.DesiredControl = null;
@@ -1133,7 +1133,7 @@ namespace LanguageExplorer.Controls.DetailControls
 				{
 					return fGuessing != 0;
 				}
-				MessageBox.Show(FindForm() ?? PropertyTable.GetValue<IWin32Window>(FwUtils.window), bldrError.ToString().Trim(), LanguageExplorerResources.ksWarning, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+				MessageBox.Show(FindForm() ?? PropertyTable.GetValue<IWin32Window>(FwUtilsConstants.window), bldrError.ToString().Trim(), LanguageExplorerResources.ksWarning, MessageBoxButtons.OK, MessageBoxIcon.Warning);
 			}
 			else
 			{
@@ -1887,7 +1887,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			HideCombos();
 			// No matter what, we are fixin to get rid of the old value.
 			DisposeComboHandler();
-			m_ComboHandler = !m_fInMouseDrag ? InterlinComboHandler.MakeCombo(PropertyTable.GetValue<Form>(FwUtils.window), PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider), vwselNew, this, fMouseDown) : null;
+			m_ComboHandler = !m_fInMouseDrag ? InterlinComboHandler.MakeCombo(PropertyTable.GetValue<Form>(FwUtilsConstants.window), PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider), vwselNew, this, fMouseDown) : null;
 			m_fMakingCombo = false;
 			m_fLockCombo = false; // nothing typed in it yet.
 			if (m_ComboHandler == null)
@@ -3511,7 +3511,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			{
 				existingGloss = Caches.MainCache.ServiceLocator.GetInstance<IWfiGlossRepository>().GetObject(WordGlossHvo);
 			}
-			return new GetRealAnalysisMethod(PropertyTable.GetValue<Form>(FwUtils.window),
+			return new GetRealAnalysisMethod(PropertyTable.GetValue<Form>(FwUtilsConstants.window),
 				PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider), this, Caches,
 				kSbWord, CurrentAnalysisTree, GetWfiAnalysisOfAnalysis(), existingGloss, InterlinLineChoices, FormOfWordform, fWantOnlyWfiAnalysis);
 		}

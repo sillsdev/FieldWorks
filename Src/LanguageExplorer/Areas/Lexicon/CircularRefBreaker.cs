@@ -64,7 +64,7 @@ namespace LanguageExplorer.Areas.Lexicon
 		/// <summary />
 		public void Process()
 		{
-			var cache = m_dlg.PropertyTable.GetValue<LcmCache>(FwUtils.cache);
+			var cache = m_dlg.PropertyTable.GetValue<LcmCache>(FwUtilsConstants.cache);
 			Process(cache);
 			// Show the message returned from running the circular reference breaker service.
 			MessageBox.Show(Report, LanguageExplorerResources.ksCircularRefsFixed);

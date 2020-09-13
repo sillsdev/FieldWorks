@@ -10,6 +10,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>LanguageExplorerTests</RootNamespace>
     <AssemblyName>LanguageExplorerTests</AssemblyName>
+    <AppConfig>..\AppForTests.config</AppConfig>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -96,6 +97,11 @@
     <Reference Include="LanguageExplorer.TestUtilities">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\LanguageExplorer.TestUtilities.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Output\Debug\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="ParserCore">
       <SpecificVersion>False</SpecificVersion>
@@ -308,6 +314,7 @@
     <Compile Include="Areas\TextsAndWords\Interlinear\BIRDFormatImportTests.cs" />
     <Compile Include="Areas\TextsAndWords\Interlinear\ComboHandlerTests.cs" />
     <Compile Include="Areas\TextsAndWords\Interlinear\ComplexConcPatternModelTests.cs" />
+    <Compile Include="Areas\TextsAndWords\Interlinear\ConcordanceControlTests.cs" />
     <Compile Include="Areas\TextsAndWords\Interlinear\ImportInterlinearAnalysesTests.cs" />
     <Compile Include="Areas\TextsAndWords\Interlinear\FocusBoxControllerTests.cs" />
     <Compile Include="Areas\TextsAndWords\Interlinear\InterlinearExporterTests.cs" />
@@ -363,6 +370,7 @@
     <Compile Include="DictionaryConfiguration\ConfiguredXHTMLGeneratorReversalTests.cs" />
     <Compile Include="DictionaryConfiguration\ConfiguredXHTMLGeneratorTestHelpers.cs" />
     <Compile Include="DictionaryConfiguration\ConfiguredXHTMLGeneratorTests.cs" />
+    <Compile Include="DictionaryConfiguration\ConfiguredLcmGeneratorTests.cs" />
     <Compile Include="DictionaryConfiguration\CssGeneratorTests.cs" />
     <Compile Include="Areas\Lists\CustomListDlgTests.cs" />
     <Compile Include="Areas\Lists\DeleteCustomListTests.cs" />
@@ -382,6 +390,7 @@
     <Compile Include="DictionaryConfiguration\HeadwordNumbersControllerTests.cs" />
     <Compile Include="InterestingTextsTests.cs" />
     <Compile Include="DictionaryConfiguration\ItemClickedTests.cs" />
+    <Compile Include="DictionaryConfiguration\LcmJsonGeneratorTests.cs" />
     <Compile Include="DictionaryConfiguration\TempGuidOn.cs" />
     <Compile Include="DictionaryConfiguration\UnicodeCharacterEditingHelperTests.cs" />
     <Compile Include="DictionaryConfiguration\WavConverterTests.cs" />
@@ -422,7 +431,6 @@
     <Compile Include="Controls\XMLViews\XmlVcTests.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
     <None Include="BuildInclude.targets" />
     <None Include="Controls\DetailControls\Test.fwlayout" />
     <None Include="Areas\TextsAndWords\Interlinear\FlexTextImport\FlexTextExportOutput.flextext" />

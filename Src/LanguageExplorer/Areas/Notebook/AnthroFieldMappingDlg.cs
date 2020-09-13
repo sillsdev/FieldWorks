@@ -228,7 +228,7 @@ namespace LanguageExplorer.Areas.Notebook
 		{
 			using (var dlg = new AddCustomFieldDlg(m_propertyTable, m_publisher, CustomFieldLocationType.Notebook))
 			{
-				if (dlg.ShowCustomFieldWarning(m_propertyTable.GetValue<Form>(FwUtils.window)))
+				if (dlg.ShowCustomFieldWarning(m_propertyTable.GetValue<Form>(FwUtilsConstants.window)))
 				{
 					dlg.ShowDialog();
 				}

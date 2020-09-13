@@ -107,6 +107,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>.\..\Output\Debug\NAudio.Lame.dll</HintPath>
     </Reference>
+    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Output\Debug\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="ParatextImport, Version=10.0.0.29576, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\ParatextImport.dll</HintPath>
@@ -157,6 +161,7 @@
     <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Design" />
     <Reference Include="System.Security" />
+    <Reference Include="System.Web" />
     <Reference Include="ViewsInterfaces">
       <HintPath>..\..\Output\Debug\ViewsInterfaces.dll</HintPath>
     </Reference>
@@ -346,10 +351,15 @@
     <Compile Include="Controls\Designer\FwHelpButtonDesigner.cs" />
     <Compile Include="Controls\Designer\ProgressLineDesigner.cs" />
     <Compile Include="Controls\DetailControls\ISliceFactory.cs" />
+    <Compile Include="DictionaryConfiguration\IFragmentWriter.cs" />
+    <Compile Include="DictionaryConfiguration\LcmJsonGenerator.cs" />
+    <Compile Include="DictionaryConfiguration\LcmXhtmlGenerator.cs" />
+    <Compile Include="DictionaryConfiguration\SenseInfo.cs" />
     <Compile Include="IAtomicReferenceSlice.cs" />
     <Compile Include="IDummyObjectSlice.cs" />
     <Compile Include="IInterlinearSlice.cs" />
     <Compile Include="IMorphTypeAtomicReferenceSlice.cs" />
+    <Compile Include="PublicationActivator.cs" />
     <Compile Include="IMSAReferenceComboBoxSlice.cs" />
     <Compile Include="IMultiStringSlice.cs" />
     <Compile Include="InterestingTextsChangedArgs.cs" />
@@ -490,6 +500,7 @@
     <Compile Include="MiscExtensions.cs" />
     <Compile Include="NullProgressState.cs" />
     <Compile Include="ProgressState.cs" />
+    <Compile Include="RecordListActivator.cs" />
     <Compile Include="ReversalIndexServices.cs" />
     <Compile Include="RuntimeConfigurationException.cs" />
     <Compile Include="SendReceive\ObtainedProjectType.cs" />
@@ -1738,7 +1749,7 @@
     </Compile>
     <Compile Include="Areas\ConcDecorator.cs" />
     <Compile Include="DictionaryConfiguration\ConfigurableDictionaryNode.cs" />
-    <Compile Include="DictionaryConfiguration\ConfiguredXHTMLGenerator.cs" />
+    <Compile Include="DictionaryConfiguration\ConfiguredLcmGenerator.cs" />
     <Compile Include="DictionaryConfiguration\CssGenerator.cs" />
     <Compile Include="Areas\Lists\CustomListDlg.cs">
       <SubType>Form</SubType>
@@ -1882,6 +1893,7 @@
     <Compile Include="IFlexMacro.cs" />
     <Compile Include="DictionaryConfiguration\IHeadwordNumbersView.cs" />
     <Compile Include="DictionaryConfiguration\ILayoutConverter.cs" />
+    <Compile Include="DictionaryConfiguration\ILcmContentGenerator.cs" />
     <Compile Include="DictionaryConfiguration\ImageHolder.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -2986,9 +2998,6 @@
       <DesignTime>True</DesignTime>
     </Compile>
     <Compile Include="Areas\TextsAndWords\Interlinear\LinguaLinksImport.cs" />
-    <Compile Include="Areas\TextsAndWords\Interlinear\LinguaLinksImportDlg.cs">
-      <SubType>Form</SubType>
-    </Compile>
     <Compile Include="Areas\TextsAndWords\Interlinear\ParseIsCurrentFixer.cs" />
     <Compile Include="Areas\TextsAndWords\Tools\ComplexConcordance\PossibilityComboController.cs" />
     <Compile Include="Controls\DetailControls\RawTextPane.cs">
@@ -3464,10 +3473,6 @@
     <EmbeddedResource Include="Areas\TextsAndWords\Interlinear\ITextStrings.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>ITextStrings.Designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Areas\TextsAndWords\Interlinear\LinguaLinksImportDlg.resx">
-      <DependentUpon>LinguaLinksImportDlg.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Areas\TextsAndWords\Interlinear\InterlinearResources.resx">

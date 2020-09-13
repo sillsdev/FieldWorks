@@ -278,7 +278,7 @@ namespace LanguageExplorer.Controls.DetailControls.Slices
 
 		private void ExpandNewNode(IRnRoledPartic roledPartic)
 		{
-			using (new DataTreeLayoutSuspensionHelper(PropertyTable.GetValue<IFwMainWnd>(FwUtils.window), ContainingDataTree))
+			using (new DataTreeLayoutSuspensionHelper(PropertyTable.GetValue<IFwMainWnd>(FwUtilsConstants.window), ContainingDataTree))
 			{
 				XElement caller = null;
 				if (Key.Length > 1)
@@ -296,7 +296,7 @@ namespace LanguageExplorer.Controls.DetailControls.Slices
 		/// </summary>
 		public override void Expand(int iSlice)
 		{
-			using (new DataTreeLayoutSuspensionHelper(PropertyTable.GetValue<IFwMainWnd>(FwUtils.window), ContainingDataTree))
+			using (new DataTreeLayoutSuspensionHelper(PropertyTable.GetValue<IFwMainWnd>(FwUtilsConstants.window), ContainingDataTree))
 			{
 				XElement caller = null;
 				if (Key.Length > 1)

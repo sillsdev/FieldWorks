@@ -16,6 +16,7 @@ using SIL.LCModel.Core.Scripture;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Infrastructure;
+using SIL.WritingSystems;
 
 namespace LanguageExplorer.Controls
 {
@@ -174,44 +175,41 @@ namespace LanguageExplorer.Controls
 			// LT-12179: Create a List for collecting selected tree nodes which we will later sort
 			// before actually adding them to the tree:
 			var foundFirstText = false;
-			// Create a collator ready for sorting:
-			using (var collator = new ManagedLgIcuCollator())
+			CollationDefinition wsCollator = null;
+			foreach (var tex in allTexts)
 			{
-				foreach (var tex in allTexts)
+				if (tex.GenresRC.Any())
 				{
-					if (tex.GenresRC.Any())
-					{
-						continue;
-					}
-
-					var texItem = new TreeNode(tex.ChooserNameTS.Text)
-					{
-						Tag = tex.ContentsOA,
-						Name = "Text"
-					};
-					textsWithNoGenre.Add(texItem);
-					// LT-12179: If this is the first tex we've added, establish the collator's details
-					// according to the writing system at the start of the tex:
-					if (foundFirstText)
-					{
-						continue;
-					}
-
-					foundFirstText = true;
-					var ws1 = tex.ChooserNameTS.get_WritingSystemAt(0);
-					var wsEngine = m_cache.WritingSystemFactory.get_EngineOrNull(ws1);
-					collator.Open(wsEngine.Id);
+					continue;
 				}
-
-				if (!textsWithNoGenre.Any())
+				var texItem = new TreeNode(tex.ChooserNameTS.Text)
 				{
-					return textsNode;
-				}
+					Tag = tex.ContentsOA,
+					Name = "Text"
+				};
+				textsWithNoGenre.Add(texItem);
 
-				// LT-12179: Order the TreeNodes alphabetically:
-				textsWithNoGenre.Sort((x, y) => collator.Compare(x.Text, y.Text));
+				// LT-12179: If this is the first tex we've added, establish the collator's details
+				// according to the writing system at the start of the tex:
+				if (foundFirstText)
+				{
+					continue;
+				}
+				foundFirstText = true;
+				wsCollator = GetCollatorFromTextNameWs(tex);
 			}
 
+			if (!textsWithNoGenre.Any())
+			{
+				return textsNode;
+			}
+			// if the text name writing system didn't give us a collator to use then default to system
+			if (wsCollator == null)
+			{
+				wsCollator = new SystemCollationDefinition();
+			}
+			// LT-12179: Order the TreeNodes alphabetically:
+			textsWithNoGenre.Sort((x, y) => wsCollator.Collator.Compare(x.Text, y.Text));
 			// Make a TreeNode for the texts with no known genre
 			var woGenreTreeNode = new TreeNode("No Genre", textsWithNoGenre.ToArray())
 			{
@@ -219,6 +217,13 @@ namespace LanguageExplorer.Controls
 			};
 			textsNode.Nodes.Add(woGenreTreeNode);
 			return textsNode;
+		}
+
+		private static CollationDefinition GetCollatorFromTextNameWs(IText text)
+		{
+			var ws1 = text.ChooserNameTS.get_WritingSystemAt(0);
+			var wsEngine = text.Cache?.WritingSystemFactory.get_EngineOrNull(ws1);
+			return (wsEngine as WritingSystemDefinition)?.DefaultCollation;
 		}
 
 		/// <summary>
@@ -246,45 +251,44 @@ namespace LanguageExplorer.Controls
 				// before actually adding them to the tree:
 				var sortedNodes = new List<TreeNode>();
 				var foundFirstText = false;
-				// Create a collator ready for sorting:
-				using (var collator = new ManagedLgIcuCollator())
+				CollationDefinition wsCollator = null;
+				foreach (var tex in allTexts)
 				{
-					foreach (var tex in allTexts)
+					// This tex may not have a genre or it may claim to be in more than one
+					if (!Enumerable.Contains(tex.GenresRC, gen))
 					{
-						// This tex may not have a genre or it may claim to be in more than one
-						if (!Enumerable.Contains(tex.GenresRC, gen))
-						{
-							continue;
-						}
-
-						var texItem = new TreeNode(tex.ChooserNameTS.Text)
-						{
-							Tag = tex.ContentsOA,
-							Name = "Text"
-						};
-						// LT-12179: Add the new TreeNode to the (not-yet-)sorted list:
-						sortedNodes.Add(texItem);
-						// LT-12179: If this is the first tex we've added, establish the collator's details
-						// according to the writing system at the start of the tex:
-						if (foundFirstText)
-						{
-							continue;
-						}
-
-						foundFirstText = true;
-						var ws1 = tex.ChooserNameTS.get_WritingSystemAt(0);
-						var wsEngine = gen.Cache.WritingSystemFactory.get_EngineOrNull(ws1);
-						collator.Open(wsEngine.Id);
+						continue;
 					}
-
-					// LT-12179:
+					var texItem = new TreeNode(tex.ChooserNameTS.Text)
+					{
+						Tag = tex.ContentsOA,
+						Name = "Text"
+					};
+					// LT-12179: Add the new TreeNode to the (not-yet-)sorted list:
+					sortedNodes.Add(texItem);
+					// LT-12179: If this is the first tex we've added, establish the collator's details
+					// according to the writing system at the start of the tex:
 					if (foundFirstText)
 					{
-						// Order the TreeNodes alphabetically:
-						sortedNodes.Sort((x, y) => collator.Compare(x.Text, y.Text));
-						// Add the TreeNodes to the tree:
-						genItem.Nodes.AddRange(sortedNodes.ToArray());
+						continue;
 					}
+					foundFirstText = true;
+					wsCollator = GetCollatorFromTextNameWs(tex);
+				}
+
+				// if the text name writing system didn't give us a collator to use then default to system
+				if(wsCollator == null)
+				{
+					wsCollator = new SystemCollationDefinition();
+				}
+
+				// LT-12179:
+				if (foundFirstText)
+				{
+					// Order the TreeNodes alphabetically:
+					sortedNodes.Sort((x, y) => wsCollator.Collator.Compare(x.Text, y.Text));
+					// Add the TreeNodes to the tree:
+					genItem.Nodes.AddRange(sortedNodes.ToArray());
 				}
 
 				if (gen.SubPossibilitiesOS.Count > 0)
@@ -624,19 +628,33 @@ namespace LanguageExplorer.Controls
 				importSettings = m_scr.FindOrCreateDefaultImportSettings(TypeOfImport.Paratext6, m_scriptureStylesheet, FwDirectoryFinder.FlexStylesPath);
 				importSettings.ParatextScrProj = m_associatedPtText.Name;
 				importSettings.StartRef = new BCVRef(bookNum, 0, 0);
+				importSettings.EndRef = new BCVRef(bookNum, 0, 0);
 				importSettings.ParatextBTProj = btProject.Name;
 				importSettings.ImportTranslation = false;
 				importSettings.ImportBackTranslation = true;
 				ParatextHelper.LoadProjectMappings(importSettings);
 				var importMap = importSettings.GetMappingListForDomain(ImportDomain.Main);
-				var figureInfo = importMap[@"\fig"];
-				if (figureInfo != null)
+				// Check for corrupted import settings, clear them out if they are bad.
+				if (importMap == null)
 				{
-					figureInfo.IsExcluded = true;
+					m_scr.DefaultImportSettings = null;
+					m_scr.ImportSettingsOC.Clear();
+					importSettings = null;
 				}
-				importSettings.SaveSettings();
+				else
+				{
+					var figureInfo = importMap[@"\fig"];
+					if (figureInfo != null)
+					{
+						figureInfo.IsExcluded = true;
+					}
+					importSettings.SaveSettings();
+				}
 			});
-			ParatextImportManager.ImportParatext(owningForm, m_cache, importSettings, m_scriptureStylesheet, App);
+			if (importSettings != null)
+			{
+				ParatextImportManager.ImportParatext(owningForm, m_cache, importSettings, m_scriptureStylesheet, App);
+			}
 		}
 
 		// Class to sort the Genre's before they are displayed.

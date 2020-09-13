@@ -47,7 +47,7 @@ namespace SILUBS.ScriptureChecks
 			m_dataSource.SetParameterValue("MatchedPairs", kMatchedPairXml1);
 			m_dataSource.SetParameterValue("IntroductionOutlineStyles", "io");
 			m_dataSource.SetParameterValue("PoeticStyles",
-				"q1" + FwUtils.kStyleNamesDelimiter.ToString() + "q2");
+				"q1" + FwUtilsConstants.kStyleNamesDelimiter.ToString() + "q2");
 			m_check = new MatchedPairsCheck(m_dataSource);
 		}
 
@@ -348,7 +348,7 @@ namespace SILUBS.ScriptureChecks
 			m_dataSource = new TestChecksDataSource();
 			m_check = new MatchedPairsCheck(m_dataSource);
 			m_dataSource.SetParameterValue("PoeticStyles", "Citation Line1" +
-				FwUtils.kStyleNamesDelimiter.ToString() + "Citation Line2");
+				FwUtilsConstants.kStyleNamesDelimiter.ToString() + "Citation Line2");
 		}
 		#endregion
 

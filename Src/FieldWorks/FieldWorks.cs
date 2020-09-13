@@ -24,6 +24,7 @@ using System.Windows.Forms;
 using System.Xml;
 using System.Xml.Linq;
 using Gecko;
+using L10NSharp;
 using LanguageExplorer;
 using LanguageExplorer.Controls;
 using LanguageExplorer.LcmUi;
@@ -117,14 +118,13 @@ namespace SIL.FieldWorks
 
 			FwUtils.InCrashedState = false;
 			Thread.CurrentThread.Name = "Main thread";
-			Logger.Init(FwUtils.ksSuiteName);
+			Logger.Init(FwUtilsConstants.ksSuiteName);
 			var pathName = Path.Combine(DirectoryOfThisAssembly, "lib", Environment.Is64BitProcess ? "x64" : "x86");
 			// Add lib/{x86,x64} to PATH so that C++ code can find ICU dlls
 			var newPath = $"{pathName}{Path.PathSeparator}{Environment.GetEnvironmentVariable("PATH")}";
 			Environment.SetEnvironmentVariable("PATH", newPath);
-
 			Icu.Wrapper.ConfineIcuVersions(54);
-			Icu.Wrapper.Init();
+			// ICU will be initialized further down (by calling FwUtils.InitializeIcu())
 			LcmCache.NewerWritingSystemFound += ComplainToUserAboutNewWs;
 			FwRegistryHelper.Initialize();
 
@@ -149,6 +149,7 @@ namespace SIL.FieldWorks
 				Logger.WriteEvent("Starting app");
 				SetGlobalExceptionHandler();
 				SetupErrorReportInformation();
+				InitializeLocalizationManager();
 
 				// Invoke does nothing directly, but causes BroadcastEventWindow to be initialized
 				// on this thread to prevent race conditions on shutdown.See TE-975
@@ -331,7 +332,7 @@ namespace SIL.FieldWorks
 			}
 			catch (ApplicationException ex)
 			{
-				MessageBox.Show(ex.Message, FwUtils.ksSuiteName);
+				MessageBox.Show(ex.Message, FwUtilsConstants.ksSuiteName);
 				return 2;
 			}
 			catch (Exception ex)
@@ -785,6 +786,7 @@ namespace SIL.FieldWorks
 
 				SetupErrorPropertiesNeedingCache(cache);
 				EnsureDefaultCollationsPresent(cache);
+				SetLocalizationLanguage(cache);
 				return cache;
 			}
 		}
@@ -1344,7 +1346,7 @@ namespace SIL.FieldWorks
 						Cache.Dispose();
 						Cache = null;
 					}
-					Logger.Init(FwUtils.ksSuiteName);
+					Logger.Init(FwUtilsConstants.ksSuiteName);
 					projectId = ShowWelcomeDialog(args, app, projectId, e);
 				}
 			}
@@ -2631,7 +2633,7 @@ namespace SIL.FieldWorks
 					s_activeMainWnd.Publisher.Publish(new PublisherParameterObject("MigrateOldConfigurations"));
 				}
 				EnsureValidReversalIndexConfigFile(s_flexApp.Cache);
-				s_activeMainWnd.PropertyTable.SetProperty(FwUtils.AppSettings, s_appSettings);
+				s_activeMainWnd.PropertyTable.SetProperty(FwUtilsConstants.AppSettings, s_appSettings);
 			}
 			catch (StartupException ex)
 			{
@@ -3094,7 +3096,7 @@ namespace SIL.FieldWorks
 					// Set up the server channel.
 					var instanceListener = new TcpChannel(dict, null, null);
 					ChannelServices.RegisterChannel(instanceListener, false);
-					RemotingConfiguration.ApplicationName = FwUtils.ksSuiteName;
+					RemotingConfiguration.ApplicationName = FwUtilsConstants.ksSuiteName;
 					RemotingConfiguration.RegisterWellKnownServiceType(typeof(RemoteRequest), kFwRemoteRequest, WellKnownObjectMode.Singleton);
 
 					fFoundAvailablePort = true;
@@ -3278,8 +3280,7 @@ namespace SIL.FieldWorks
 		/// <summary>
 		/// Gets a HelpTopicProvider for the specified application if possible. Falls back to
 		/// getting the HelpTopicProvider for another application if the requested one is not
-		/// installed. Will not return null (but it could throw an exception if no FW app is
-		/// installed).
+		/// installed. Will not return null.
 		/// </summary>
 		internal static IHelpTopicProvider GetHelpTopicProvider()
 		{
@@ -3334,7 +3335,6 @@ namespace SIL.FieldWorks
 					ErrorReporter.AddProperty("PackageVersion", $"{packageVersion.Key} {packageVersion.Value}");
 				}
 			}
-			ErrorReporter.AddProperty("CLR version", Environment.Version.ToString());
 			var mem = MiscUtils.GetPhysicalMemoryBytes() / 1048576;
 			ErrorReporter.AddProperty("PhysicalMemory", mem + " Mb");
 			var processArch = Environment.Is64BitProcess ? 64 : 32;
@@ -3378,6 +3378,43 @@ namespace SIL.FieldWorks
 			{
 				ErrorReporter.AddProperty("ProjectModified", "unknown--probably not a local file");
 				ErrorReporter.AddProperty("ProjectFileSize", "unknown--probably not a local file");
+			}
+		}
+
+		internal static void InitializeLocalizationManager()
+		{
+			try
+			{
+				// ReSharper disable InconsistentNaming
+				var installedL10nBaseDir = FwDirectoryFinder.GetCodeSubDirectory("CommonLocalizations");
+				const string userL10nBaseDir = "CommonLocalizations";
+				// ReSharper restore InconsistentNaming
+				var fieldWorksFolder = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+				var versionObj = Assembly.LoadFrom(Path.Combine(fieldWorksFolder ?? string.Empty, "Chorus.exe")).GetName().Version;
+				var version = $"{versionObj.Major}.{versionObj.Minor}.{versionObj.Build}";
+				LocalizationManager.Create(TranslationMemory.XLiff, CultureInfo.CurrentUICulture.TwoLetterISOLanguageName,
+					"Chorus", "Chorus", version, installedL10nBaseDir, userL10nBaseDir, null, "flex_localization@sil.org", "Chorus", "LibChorus");
+
+				var uiLanguageId = LocalizationManager.UILanguageId;
+
+				versionObj = Assembly.GetAssembly(typeof(ErrorReport)).GetName().Version;
+				version = $"{versionObj.Major}.{versionObj.Minor}.{versionObj.Build}";
+				LocalizationManager.Create(TranslationMemory.XLiff, uiLanguageId, "Palaso", "Palaso", version, installedL10nBaseDir,
+					userL10nBaseDir, null, "flex_localization@sil.org", "SIL.Windows.Forms");
+			}
+			catch (Exception e)
+			{
+				SafelyReportException(new FileNotFoundException(
+					"There was a problem setting up localizations for some dialogs, probably because they were not installed", e), null, false);
+			}
+		}
+
+		internal static void SetLocalizationLanguage(LcmCache cache)
+		{
+			var langFromCache = cache.ServiceLocator.WritingSystemManager.UserWritingSystem.Id;
+			if (langFromCache != LocalizationManager.UILanguageId)
+			{
+				LocalizationManager.SetUILanguage(langFromCache, true);
 			}
 		}
 

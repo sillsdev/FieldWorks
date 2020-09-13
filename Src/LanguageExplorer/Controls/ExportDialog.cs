@@ -366,9 +366,6 @@ namespace LanguageExplorer.Controls
 				switch (ft)
 				{
 					case FxtTypes.kftClassifiedDict:
-						// Should match the tool in DistFiles/Language Explorer/Configuration/RDE/toolConfiguration.xml, the value attribute in
-						// <tool label="Classified Dictionary" value="lexiconClassifiedDictionary" icon="DocumentView">.
-						// We use this to create that tool and base this export on its objects and saved configuration.
 						mainControl = new XmlDocView(XElement.Parse(LanguageExplorerResources.LexiconClassifiedDictionaryParameters), m_cache, m_recordList, _majorFlexComponentParameters.UiWidgetController);
 						break;
 					case FxtTypes.kftGrammarSketch:
@@ -1324,7 +1321,7 @@ namespace LanguageExplorer.Controls
 			var cssDialog = Path.Combine(PathwayInstallDirectory, "CssDialog.dll");
 			var sf = ReflectionHelper.CreateObject(cssDialog, "SIL.PublishingSolution.Contents", null);
 			Debug.Assert(sf != null);
-			var cache = PropertyTable.GetValue<LcmCache>(FwUtils.cache);
+			var cache = PropertyTable.GetValue<LcmCache>(FwUtilsConstants.cache);
 			ReflectionHelper.SetProperty(sf, "DatabaseName", cache.ProjectId.Name);
 			var fContentsExists = SelectOption("ReversalIndexXHTML");
 			if (fContentsExists)
@@ -1563,7 +1560,7 @@ namespace LanguageExplorer.Controls
 			Publisher = flexComponentParameters.Publisher;
 			Subscriber = flexComponentParameters.Subscriber;
 
-			m_cache = PropertyTable.GetValue<LcmCache>(FwUtils.cache);
+			m_cache = PropertyTable.GetValue<LcmCache>(FwUtilsConstants.cache);
 			AccessibleName = GetType().Name;
 			// Figure out where to locate the dlg.
 			var obj = SettingsKey.GetValue("InsertX");

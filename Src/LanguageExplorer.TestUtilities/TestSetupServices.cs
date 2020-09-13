@@ -41,17 +41,17 @@ namespace LanguageExplorer.TestUtilities
 			DirectoryUtilities.CopyDirectoryContents(Path.Combine(FwDirectoryFinder.SourceDirectory, "LanguageExplorer.TestUtilities", "DictionaryConfiguration", "TestData"), baseDir);
 			var flexComponentParameters = SetupTestTriumvirate();
 			var propertyTable = flexComponentParameters.PropertyTable;
-			propertyTable.SetProperty(FwUtils.cache, cache);
+			propertyTable.SetProperty(FwUtilsConstants.cache, cache);
 			propertyTable.SetProperty(LanguageExplorerConstants.RecordListRepository, new RecordListRepository(cache, flexComponentParameters));
 			if (includeStylesheet)
 			{
 				var styleSheet = new LcmStyleSheet();
 				styleSheet.Init(cache, cache.LanguageProject.Hvo, LangProjectTags.kflidStyles);
-				propertyTable.SetProperty(FwUtils.FlexStyleSheet, styleSheet);
+				propertyTable.SetProperty(FwUtilsConstants.FlexStyleSheet, styleSheet);
 			}
 			if (includeFwApplicationSettings)
 			{
-				propertyTable.SetProperty(FwUtils.AppSettings, new TestFwApplicationSettings());
+				propertyTable.SetProperty(FwUtilsConstants.AppSettings, new TestFwApplicationSettings());
 			}
 			return flexComponentParameters;
 		}

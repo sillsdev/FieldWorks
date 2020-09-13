@@ -8,7 +8,6 @@ using System.Windows.Forms;
 using LanguageExplorer.Controls;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
-using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel.Utils;
 using SIL.PlatformUtilities;
 
@@ -46,13 +45,13 @@ namespace LanguageExplorer.Impls
 		{
 			base.OnLoad(e);
 			m_autoOpenCheckBox.Checked = AutoOpenLastProject;
-			var appSettings = m_propertyTable.GetValue<IFwApplicationSettings>(FwUtils.AppSettings);
+			var appSettings = m_propertyTable.GetValue<IFwApplicationSettings>(FwUtilsConstants.AppSettings);
 			m_okToPingCheckBox.Checked = appSettings.Reporting.OkToPingBasicUsageData;
 		}
 
 		private void m_btnOK_Click(object sender, EventArgs e)
 		{
-			var appSettings = m_propertyTable.GetValue<IFwApplicationSettings>(FwUtils.AppSettings);
+			var appSettings = m_propertyTable.GetValue<IFwApplicationSettings>(FwUtilsConstants.AppSettings);
 			appSettings.Reporting.OkToPingBasicUsageData = m_okToPingCheckBox.Checked;
 			NewUserWs = m_userInterfaceChooser.NewUserWs;
 			if (m_sUserWs != NewUserWs)
@@ -117,7 +116,7 @@ namespace LanguageExplorer.Impls
 			m_helpTopicProvider = m_propertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider);
 			m_sUserWs = m_cache.ServiceLocator.WritingSystemManager.UserWritingSystem.Id;
 			NewUserWs = m_sUserWs;
-			var appSettings = m_propertyTable.GetValue<IFwApplicationSettings>(FwUtils.AppSettings);
+			var appSettings = m_propertyTable.GetValue<IFwApplicationSettings>(FwUtilsConstants.AppSettings);
 			updateGlobalWS.Checked = !appSettings.UpdateGlobalWSStore;
 			m_userInterfaceChooser.Init(m_sUserWs);
 			if (m_helpTopicProvider == null)

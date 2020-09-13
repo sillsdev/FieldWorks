@@ -2125,7 +2125,7 @@ namespace LanguageExplorer.Controls.XMLViews
 
 		private void buttonHelp_Click(object sender, EventArgs e)
 		{
-			ShowHelp.ShowHelpTopic(m_helpTopicProvider, "UserHelpFile", m_helpTopic);
+			ShowHelp.ShowHelpTopic(m_helpTopicProvider, FwUtilsConstants.UserHelpFile, m_helpTopic);
 		}
 
 		/// <summary>

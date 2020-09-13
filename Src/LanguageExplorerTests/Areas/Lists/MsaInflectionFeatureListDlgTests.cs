@@ -34,7 +34,7 @@ namespace LanguageExplorerTests.Areas.Lists
 		{
 			// Set up the xml fs description
 			var doc = new XmlDocument();
-			doc.Load(Path.Combine(FwDirectoryFinder.SourceDirectory, "LanguageExplorerTests", "Controls", "FeatureSystem2.xml"));
+			doc.Load(Path.Combine(FwDirectoryFinder.SourceDirectory, TestUtilities.LanguageExplorerTests, "Controls", "FeatureSystem2.xml"));
 			var itemNeut = doc.SelectSingleNode("//item[@id='vNeut']");
 			// Add the feature for first time
 			var msfs = _langProject.MsFeatureSystemOA;
@@ -167,7 +167,7 @@ namespace LanguageExplorerTests.Areas.Lists
 		{
 			// Set up sample data
 			CreateFeatureSystem();
-			var dir = Path.Combine(FwDirectoryFinder.SourceDirectory, "LanguageExplorerTests", "Controls");
+			var dir = Path.Combine(FwDirectoryFinder.SourceDirectory, TestUtilities.LanguageExplorerTests, "Controls");
 			// Set up the xml fs description
 			var doc = new XmlDocument();
 			var sFile = Path.Combine(dir, "FeatureSystem2.xml");

@@ -19,7 +19,6 @@ namespace LanguageExplorer
 	/// </summary>
 	internal static class ReversalIndexServices
 	{
-		internal const string ConfigFileExtension = ".fwdictconfig";
 		internal const string RevIndexDir = "ReversalIndex";
 		internal const string ConfigDir = "ConfigurationSettings";
 		internal const string AllIndexesFileName = "AllReversalIndexes";
@@ -32,13 +31,13 @@ namespace LanguageExplorer
 		/// </summary>
 		internal static void CreateOrRemoveReversalIndexConfigurationFiles(WritingSystemManager wsMgr, LcmCache cache, string defaultConfigDir, string projectsDir, string originalProjectName)
 		{
-			var defaultWsFilePath = Path.Combine(defaultConfigDir, RevIndexDir, AllIndexesFileName + ConfigFileExtension);
+			var defaultWsFilePath = Path.Combine(defaultConfigDir, RevIndexDir, AllIndexesFileName + LanguageExplorerConstants.DictionaryConfigurationFileExtension);
 			var newWsFilePath = Path.Combine(projectsDir, originalProjectName, ConfigDir, RevIndexDir);
 			var analysisWsArray = cache.LangProject.AnalysisWss.Trim().Replace("  ", " ").Split(' ');
 			if (Directory.Exists(newWsFilePath))
 			{
 				//Delete old Configuration Files for WS's that are no longer part of this project
-				var files = Directory.GetFiles(newWsFilePath, "*" + ConfigFileExtension, SearchOption.AllDirectories);
+				var files = Directory.GetFiles(newWsFilePath, "*" + LanguageExplorerConstants.DictionaryConfigurationFileExtension, SearchOption.AllDirectories);
 				foreach (var file in files)
 				{
 					GetWsAttributeFromFile(file, out var wsAtt);
@@ -61,7 +60,7 @@ namespace LanguageExplorer
 					continue;
 				}
 				var curWsLabel = wsMgr.Get(curWs).DisplayLabel;
-				var newWsCompleteFilePath = Path.Combine(newWsFilePath, curWs + ConfigFileExtension);
+				var newWsCompleteFilePath = Path.Combine(newWsFilePath, curWs + LanguageExplorerConstants.DictionaryConfigurationFileExtension);
 				if (File.Exists(newWsCompleteFilePath))
 				{
 					var configDoc = GetWsAttributeFromFile(newWsCompleteFilePath, out var wsAtt);

@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015-2017 SIL International
+// Copyright (c) 2015-2020 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -16,14 +16,22 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 			FileVersion = _localizer.FileVersion;
 			InformationVersion = _localizer.InformationVersion;
 			Locale = _localizer.Locale;
+			CurrentLocaleDir = _localizer.CurrentLocaleDir;
 		}
 
 		public string Version { get; }
 		public string FileVersion { get; }
 		public string InformationVersion { get; }
 		public string Locale { get; }
+		public string CurrentLocaleDir { get; }
 
 		private readonly Localizer _localizer;
+
+		/// <returns><c>true</c> if the localized string has errors; <c>false</c> if it looks good</returns>
+		internal bool HasErrors(string filename, string localizedText, string originalText, string comment)
+		{
+			return _localizer.HasErrors(filename, localizedText, originalText, comment);
+		}
 
 		public void LogError(string message)
 		{

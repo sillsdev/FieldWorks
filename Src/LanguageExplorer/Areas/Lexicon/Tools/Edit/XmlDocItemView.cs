@@ -106,7 +106,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		{
 			using (var dlg = new XmlDocConfigureDlg())
 			{
-				var mainWindow = PropertyTable.GetValue<IFwMainWnd>(FwUtils.window);
+				var mainWindow = PropertyTable.GetValue<IFwMainWnd>(FwUtilsConstants.window);
 				// If this is optional and defaults to DictionaryPublicationLayout,
 				// it messes up our Dictionary when we make something else configurable (like Classified Dictionary).
 				var sProp = XmlUtils.GetOptionalAttributeValue(m_xnSpec, "layoutProperty");

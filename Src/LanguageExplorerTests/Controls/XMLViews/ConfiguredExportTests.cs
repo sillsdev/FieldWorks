@@ -31,7 +31,7 @@ namespace LanguageExplorerTests.Controls.XMLViews
 		{
 			base.TestSetup();
 
-			_flexComponentParameters = TestSetupServices.SetupTestTriumvirate();
+			_flexComponentParameters = TestSetupServices.SetupEverything(Cache, includeFwApplicationSettings: true);
 		}
 
 		/// <summary>
@@ -84,8 +84,6 @@ namespace LanguageExplorerTests.Controls.XMLViews
 			}
 		}
 
-#if RANDYTODO
-		// TODO: Figure out why it fails, since the long awaited merge.
 		[Test]
 		public void XHTMLExportGetDigraphMapsFromICUSortRules_TestSecondaryTertiaryShouldNotGenerateHeader()
 		{
@@ -108,7 +106,6 @@ namespace LanguageExplorerTests.Controls.XMLViews
 				Assert.AreEqual(mapChars["gz"], "f");
 			}
 		}
-#endif
 
 		[Test]
 		public void XHTMLExportGetDigraphMapsFromICUSortRules_TertiaryIgnorableDoesNotCrash()
@@ -156,6 +153,77 @@ namespace LanguageExplorerTests.Controls.XMLViews
 					Assert.AreEqual(mapChars.Count, 0, "Too many characters found equivalents");
 					Assert.AreEqual(ignoreSet.Count, 1, "Ignorable character not parsed from rule");
 					Assert.IsTrue(ignoreSet.Contains('\uA78C'.ToString(CultureInfo.InvariantCulture)));
+				}
+			}
+		}
+
+		[Test]
+		public void XHTMLExportGetDigraphMapsFromICUSortRules_UnicodeTertiaryIgnorableWithNoSpacesWorks()
+		{
+			var ws = Cache.LangProject.DefaultVernacularWritingSystem;
+			ws.DefaultCollation = new IcuRulesCollationDefinition("standard") { IcuRules = "&[last tertiary ignorable]=\\uA78C" };
+
+			var exporter = new ConfiguredExport(null, null, 0);
+			string output;
+			using (var stream = new MemoryStream())
+			{
+				using (var writer = new StreamWriter(stream))
+				{
+					exporter.Initialize(Cache, _flexComponentParameters.PropertyTable, writer, null, "xhtml", null, "dicBody");
+					Dictionary<string, string> mapChars = null;
+					ISet<string> ignoreSet = null;
+					ISet<string> data = null;
+					Assert.DoesNotThrow(() => data = exporter.GetDigraphs(ws.Id, out mapChars, out ignoreSet));
+					Assert.AreEqual(mapChars.Count, 0, "Too many characters found equivalents");
+					Assert.AreEqual(ignoreSet.Count, 1, "Ignorable character not parsed from rule");
+					Assert.IsTrue(ignoreSet.Contains('\uA78C'.ToString(CultureInfo.InvariantCulture)));
+				}
+			}
+		}
+
+		[Test]
+		public void XHTMLExportGetDigraphMapsFromICUSortRules_TertiaryIgnorableMultipleLinesWorks()
+		{
+			var ws = Cache.LangProject.DefaultVernacularWritingSystem;
+			ws.DefaultCollation = new IcuRulesCollationDefinition("standard") { IcuRules = "&[last tertiary ignorable] = '!'\r\n&[last tertiary ignorable]='?'" };
+
+			var exporter = new ConfiguredExport(null, null, 0);
+			string output;
+			using (var stream = new MemoryStream())
+			{
+				using (var writer = new StreamWriter(stream))
+				{
+					exporter.Initialize(Cache, _flexComponentParameters.PropertyTable, writer, null, "xhtml", null, "dicBody");
+					Dictionary<string, string> mapChars = null;
+					ISet<string> ignoreSet = null;
+					ISet<string> data = null;
+					Assert.DoesNotThrow(() => data = exporter.GetDigraphs(ws.Id, out mapChars, out ignoreSet));
+					Assert.AreEqual(mapChars.Count, 0, "Too many characters found equivalents");
+					Assert.AreEqual(ignoreSet.Count, 2, "Ignorable character not parsed from rule");
+					CollectionAssert.AreEquivalent(ignoreSet, new [] {"!", "?"});
+				}
+			}
+		}
+
+		[Test]
+		public void XHTMLExportGetDigraphMapsFromICUSortRules_TertiaryIgnorableMixedSpacingWorks()
+		{
+			var ws = Cache.LangProject.DefaultVernacularWritingSystem;
+			ws.DefaultCollation = new IcuRulesCollationDefinition("standard") { IcuRules = "&[last tertiary ignorable]= '!'\r\n&[last tertiary ignorable] ='?'" };
+
+			var exporter = new ConfiguredExport(null, null, 0);
+			string output;
+			using (var stream = new MemoryStream())
+			{
+				using (var writer = new StreamWriter(stream))
+				{
+					exporter.Initialize(Cache, _flexComponentParameters.PropertyTable, writer, null, "xhtml", null, "dicBody");
+					Dictionary<string, string> mapChars = null;
+					ISet<string> ignoreSet = null;
+					Assert.DoesNotThrow(() => exporter.GetDigraphs(ws.Id, out mapChars, out ignoreSet));
+					Assert.AreEqual(mapChars.Count, 0, "Too many characters found equivalents");
+					Assert.AreEqual(ignoreSet.Count, 2, "Ignorable character not parsed from rule");
+					CollectionAssert.AreEquivalent(ignoreSet, new[] { "!", "?" });
 				}
 			}
 		}

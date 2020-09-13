@@ -5,11 +5,12 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Windows.Forms;
-using LanguageExplorer.Areas.Lexicon;
-using LanguageExplorer.Areas.Lexicon.Reversals;
 using LanguageExplorer.DictionaryConfiguration;
+using Newtonsoft.Json.Linq;
+using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Utils;
@@ -18,27 +19,26 @@ namespace LanguageExplorer
 {
 	internal class DictionaryExportService
 	{
-		private readonly IPropertyTable m_propertyTable;
+		private readonly IPropertyTable _propertyTable;
 		private LcmCache Cache { get; }
 		private IRecordList MyRecordList { get; }
-		private StatusBar _statusBar;
-		private const string DictionaryType = "Dictionary";
-		private const string ReversalType = "Reversal Index";
+		private readonly StatusBar _statusBar;
+		private const int BatchSize = 50; // number of entries to send to Webonary in a single post
 
 		public DictionaryExportService(LcmCache cache, IRecordList activeRecordList, IPropertyTable propertyTable, StatusBar statusBar)
 		{
 			Cache = cache;
 			MyRecordList = activeRecordList;
-			m_propertyTable = propertyTable;
+			_propertyTable = propertyTable;
 			_statusBar = statusBar;
 		}
 
 		public int CountDictionaryEntries(DictionaryConfigurationModel config)
 		{
 			int[] entries;
-			using (RecordListActivator.ActivateRecordListMatchingExportType(DictionaryType, _statusBar, m_propertyTable))
+			using (RecordListActivator.ActivateRecordListMatchingExportType(LanguageExplorerConstants.DictionaryType, _statusBar, _propertyTable))
 			{
-				ConfiguredXHTMLGenerator.GetPublicationDecoratorAndEntries(m_propertyTable, out entries, DictionaryType, Cache, MyRecordList);
+				ConfiguredLcmGenerator.GetPublicationDecoratorAndEntries(_propertyTable, out entries, LanguageExplorerConstants.DictionaryType, Cache, MyRecordList);
 			}
 			return entries.Count(e => IsGenerated(Cache, config, e));
 		}
@@ -50,11 +50,11 @@ namespace LanguageExplorer
 		internal static bool IsGenerated(LcmCache cache, DictionaryConfigurationModel config, int hvo)
 		{
 			var entry = (ILexEntry)cache.ServiceLocator.GetObject(hvo);
-			if (ConfiguredXHTMLGenerator.IsMainEntry(entry, config))
+			if (ConfiguredLcmGenerator.IsMainEntry(entry, config))
 			{
-				return config.Parts[0].IsEnabled && (!entry.ComplexFormEntryRefs.Any() || ConfiguredXHTMLGenerator.IsListItemSelectedForExport(config.Parts[0], entry));
+				return config.Parts[0].IsEnabled && (!entry.ComplexFormEntryRefs.Any() || ConfiguredLcmGenerator.IsListItemSelectedForExport(config.Parts[0], entry));
 			}
-			return entry.PublishAsMinorEntry && config.Parts.Skip(1).Any(part => ConfiguredXHTMLGenerator.IsListItemSelectedForExport(part, entry));
+			return entry.PublishAsMinorEntry && config.Parts.Skip(1).Any(part => ConfiguredLcmGenerator.IsListItemSelectedForExport(part, entry));
 		}
 
 		/// <summary>
@@ -63,7 +63,7 @@ namespace LanguageExplorer
 		/// </summary>
 		public SortedDictionary<string, int> GetCountsOfReversalIndexes(IEnumerable<string> selectedReversalIndexes)
 		{
-			using (RecordListActivator.ActivateRecordListMatchingExportType(ReversalType, _statusBar, m_propertyTable))
+			using (RecordListActivator.ActivateRecordListMatchingExportType(LanguageExplorerConstants.ReversalType, _statusBar, _propertyTable))
 			{
 				var relevantReversalIndexesAndTheirCounts = Cache.ServiceLocator.GetInstance<IReversalIndexRepository>().AllInstances()
 					.Select(repo => Cache.ServiceLocator.GetObject(repo.Guid) as IReversalIndex)
@@ -75,150 +75,77 @@ namespace LanguageExplorer
 
 		internal int CountReversalIndexEntries(IReversalIndex ri)
 		{
-			using (ReversalIndexActivator.ActivateReversalIndex(ri.Guid, m_propertyTable, MyRecordList))
+			using (ReversalIndexActivator.ActivateReversalIndex(ri.Guid, _propertyTable, MyRecordList))
 			{
-				ConfiguredXHTMLGenerator.GetPublicationDecoratorAndEntries(m_propertyTable, out var entries, ReversalType, Cache, MyRecordList);
+				ConfiguredLcmGenerator.GetPublicationDecoratorAndEntries(_propertyTable, out var entries, LanguageExplorerConstants.ReversalType, Cache, MyRecordList);
 				return entries.Length;
 			}
 		}
 
 		public void ExportDictionaryContent(string xhtmlPath, DictionaryConfigurationModel configuration = null, IThreadedProgress progress = null)
 		{
-			using (RecordListActivator.ActivateRecordListMatchingExportType(DictionaryType, _statusBar, m_propertyTable))
+			using (RecordListActivator.ActivateRecordListMatchingExportType(LanguageExplorerConstants.DictionaryType, _statusBar, _propertyTable))
 			{
-				configuration = configuration ?? new DictionaryConfigurationModel(DictionaryConfigurationServices.GetCurrentConfiguration(m_propertyTable, "Dictionary"), Cache);
-				ExportConfiguredXhtml(xhtmlPath, configuration, DictionaryType, progress);
+				configuration = configuration ?? new DictionaryConfigurationModel(DictionaryConfigurationServices.GetCurrentConfiguration(_propertyTable, "Dictionary"), Cache);
+				ExportConfiguredXhtml(xhtmlPath, configuration, LanguageExplorerConstants.DictionaryType, progress);
 			}
 		}
 
 		public void ExportReversalContent(string xhtmlPath, string reversalWs = null, DictionaryConfigurationModel configuration = null, IThreadedProgress progress = null)
 		{
-			using (RecordListActivator.ActivateRecordListMatchingExportType(ReversalType, _statusBar, m_propertyTable))
-			using (ReversalIndexActivator.ActivateReversalIndex(reversalWs, m_propertyTable, Cache, MyRecordList))
+			using (RecordListActivator.ActivateRecordListMatchingExportType(LanguageExplorerConstants.ReversalType, _statusBar, _propertyTable))
+			using (ReversalIndexActivator.ActivateReversalIndex(reversalWs, _propertyTable, Cache, MyRecordList))
 			{
-				configuration = configuration ?? new DictionaryConfigurationModel(DictionaryConfigurationServices.GetCurrentConfiguration(m_propertyTable, "ReversalIndex"), Cache);
-				ExportConfiguredXhtml(xhtmlPath, configuration, ReversalType, progress);
+				configuration = configuration ?? new DictionaryConfigurationModel(DictionaryConfigurationServices.GetCurrentConfiguration(_propertyTable, "ReversalIndex"), Cache);
+				ExportConfiguredXhtml(xhtmlPath, configuration, LanguageExplorerConstants.ReversalType, progress);
 			}
 		}
 
 		private void ExportConfiguredXhtml(string xhtmlPath, DictionaryConfigurationModel configuration, string exportType, IThreadedProgress progress)
 		{
-			var publicationDecorator = ConfiguredXHTMLGenerator.GetPublicationDecoratorAndEntries(m_propertyTable, out var entriesToSave, exportType, Cache, MyRecordList);
+			var publicationDecorator = ConfiguredLcmGenerator.GetPublicationDecoratorAndEntries(_propertyTable, out var entriesToSave, exportType, Cache, MyRecordList);
 			if (progress != null)
 			{
 				progress.Maximum = entriesToSave.Length;
 			}
-			ConfiguredXHTMLGenerator.SavePublishedHtmlWithStyles(entriesToSave, publicationDecorator, Int32.MaxValue, configuration, m_propertyTable, Cache, MyRecordList, xhtmlPath, progress);
+			LcmXhtmlGenerator.SavePublishedHtmlWithStyles(entriesToSave, publicationDecorator, int.MaxValue, configuration, _propertyTable, Cache, MyRecordList, xhtmlPath, progress);
 		}
 
-		private sealed class RecordListActivator : IDisposable
+		public List<JArray> ExportConfiguredJson(string folderPath, DictionaryConfigurationModel configuration)
 		{
-			private static IRecordList s_dictionaryRecordList;
-			private static IRecordList s_reversalIndexRecordList;
-			private IRecordList m_currentRecordList;
-			private IRecordListRepository _recordListRepository;
-			private bool _isDisposed;
-
-			private RecordListActivator(IRecordListRepository recordListRepository, IRecordList currentRecordList)
+			using (var recordListActivator = RecordListActivator.ActivateRecordListMatchingExportType(LanguageExplorerConstants.DictionaryType, _statusBar, _propertyTable))
 			{
-				_recordListRepository = recordListRepository;
-				_recordListRepository.ActiveRecordList = null;
-				m_currentRecordList = currentRecordList;
+				var publicationDecorator = ConfiguredLcmGenerator.GetPublicationDecoratorAndEntries(_propertyTable, out var entriesToSave,
+					LanguageExplorerConstants.DictionaryType, Cache, recordListActivator.ActiveRecordList);
+				return LcmJsonGenerator.SavePublishedJsonWithStyles(entriesToSave, publicationDecorator, BatchSize, configuration, _propertyTable,
+					Path.Combine(folderPath, "configured.json"), null);
 			}
+		}
 
-			#region disposal
-			public void Dispose()
+		public List<JArray> ExportConfiguredReversalJson(string folderPath, string reversalWs, out int[] entryIds,
+			DictionaryConfigurationModel configuration = null, IThreadedProgress progress = null)
+		{
+			Guard.AgainstNull(reversalWs, nameof(reversalWs));
+			using (var recordListActivator = RecordListActivator.ActivateRecordListMatchingExportType(LanguageExplorerConstants.ReversalType, _statusBar, _propertyTable))
+			using (ReversalIndexActivator.ActivateReversalIndex(reversalWs, _propertyTable, Cache, MyRecordList))
 			{
-				Dispose(true);
-				GC.SuppressFinalize(this);
-			}
-
-			private void Dispose(bool disposing)
-			{
-				Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + " ******");
-				if (_isDisposed)
-				{
-					// No need to run it more than once.
-					return;
-				}
-
-				if (disposing)
-				{
-					s_dictionaryRecordList?.BecomeInactive();
-					s_reversalIndexRecordList?.BecomeInactive();
-					_recordListRepository.ActiveRecordList = m_currentRecordList;
-				}
-				m_currentRecordList = null;
-				_recordListRepository = null;
-
-				_isDisposed = true;
-			}
-
-			~RecordListActivator()
-			{
-				Dispose(false);
-			}
-			#endregion disposal
-
-			private static void CacheRecordList(string recordListType, IRecordList recordList)
-			{
-				switch (recordListType)
-				{
-					case DictionaryType:
-						s_dictionaryRecordList = recordList;
-						break;
-					case ReversalType:
-						s_reversalIndexRecordList = recordList;
-						break;
-				}
-			}
-
-			internal static RecordListActivator ActivateRecordListMatchingExportType(string exportType, StatusBar statusBar, IPropertyTable propertyTable)
-			{
-				var isDictionary = exportType == DictionaryType;
-				var recordListId = isDictionary ? LanguageExplorerConstants.Entries : LanguageExplorerConstants.AllReversalEntries;
-				var activeRecordListRepository = propertyTable.GetValue<IRecordListRepositoryForTools>(LanguageExplorerConstants.RecordListRepository);
-				var activeRecordList = activeRecordListRepository.ActiveRecordList;
-				if (activeRecordList != null && activeRecordList.Id == recordListId)
-				{
-					return null; // No need to juggle record lists if the one we want is already active
-				}
-				var tempRecordList = isDictionary ? s_dictionaryRecordList : s_reversalIndexRecordList;
-				if (tempRecordList == null)
-				{
-					tempRecordList = isDictionary ? activeRecordListRepository.GetRecordList(LanguageExplorerConstants.Entries, statusBar, LexiconArea.EntriesFactoryMethod) : activeRecordListRepository.GetRecordList(LanguageExplorerConstants.AllReversalEntries, statusBar, ReversalServices.AllReversalEntriesFactoryMethod);
-					CacheRecordList(exportType, tempRecordList);
-				}
-				var retval = new RecordListActivator(activeRecordListRepository, activeRecordList);
-				if (!tempRecordList.IsSubservientRecordList)
-				{
-					if (propertyTable.GetValue<IRecordListRepository>(LanguageExplorerConstants.RecordListRepository).ActiveRecordList != tempRecordList)
-					{
-						// Some tests may not have a window.
-						if (propertyTable.TryGetValue<Form>(FwUtils.window, out var form))
-						{
-							RecordListServices.SetRecordList(form.Handle, tempRecordList);
-						}
-					}
-					tempRecordList.ActivateUI(false);
-				}
-				tempRecordList.UpdateList(true, true);
-				return retval; // ensure the current active record list is reactivated after we use another record list temporarily.
+				var publicationDecorator = ConfiguredLcmGenerator.GetPublicationDecoratorAndEntries(_propertyTable, out entryIds, LanguageExplorerConstants.ReversalType, Cache, recordListActivator.ActiveRecordList);
+				return LcmJsonGenerator.SavePublishedJsonWithStyles(entryIds, publicationDecorator, BatchSize, configuration, _propertyTable, Path.Combine(folderPath, $"reversal_{reversalWs}.json"), null);
 			}
 		}
 
 		private sealed class ReversalIndexActivator : IDisposable
 		{
-			private readonly string m_sCurrentRevIdxGuid;
-			private readonly IPropertyTable m_propertyTable;
-			private readonly IRecordList m_recordList;
+			private readonly string _currentRevIdxGuid;
+			private readonly IPropertyTable _propertyTable;
+			private readonly IRecordList _recordList;
 			private bool _isDisposed;
 
 			private ReversalIndexActivator(string currentRevIdxGuid, IPropertyTable propertyTable, IRecordList recordList)
 			{
-				m_sCurrentRevIdxGuid = currentRevIdxGuid;
-				m_propertyTable = propertyTable;
-				m_recordList = recordList;
+				_currentRevIdxGuid = currentRevIdxGuid;
+				_propertyTable = propertyTable;
+				_recordList = recordList;
 			}
 
 			#region disposal
@@ -239,7 +166,7 @@ namespace LanguageExplorer
 
 				if (disposing)
 				{
-					ActivateReversalIndexIfNeeded(m_sCurrentRevIdxGuid, m_propertyTable, m_recordList, out _);
+					ActivateReversalIndexIfNeeded(_currentRevIdxGuid, _propertyTable, _recordList, out _);
 				}
 
 				_isDisposed = true;

@@ -72,7 +72,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords
 		[TestFixtureSetUp]
 		public void FixtureSetup()
 		{
-			_baseTestPath = Path.Combine(FwDirectoryFinder.SourceDirectory, "LanguageExplorerTests", "Areas", "TextsAndWords");
+			_baseTestPath = Path.Combine(FwDirectoryFinder.SourceDirectory, TestUtilities.LanguageExplorerTests, "Areas", "TextsAndWords");
 			m_sTestPath = Path.Combine(_baseTestPath, "WordGrammarDebuggingInputsAndResults");
 			SetUpMasterTransform();
 			CreateResultTransform("M3FXTDump.xml", out m_sResultTransform);

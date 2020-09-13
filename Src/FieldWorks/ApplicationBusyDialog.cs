@@ -70,7 +70,7 @@ namespace SIL.FieldWorks
 		/// </summary>
 		public void WaitForOtherApp()
 		{
-			Text = FwUtils.ksSuiteName;
+			Text = FwUtilsConstants.ksSuiteName;
 			switch (m_whatToWaitFor)
 			{
 				case WaitFor.WindowToActivate:

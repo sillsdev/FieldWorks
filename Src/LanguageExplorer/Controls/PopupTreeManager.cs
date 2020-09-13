@@ -84,7 +84,7 @@ namespace LanguageExplorer.Controls
 					}
 					if (parent == null)
 					{
-						parent = _flexComponentParameters.PropertyTable.GetValue<Form>(FwUtils.window);
+						parent = _flexComponentParameters.PropertyTable.GetValue<Form>(FwUtilsConstants.window);
 					}
 				}
 				if (parent == null)

@@ -2013,7 +2013,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				var allomorph = (IMoForm)slice.MyCmObject;
 				if (CheckForFormDataLoss(allomorph))
 				{
-					var mainWindow = _propertyTable.GetValue<Form>(FwUtils.window);
+					var mainWindow = _propertyTable.GetValue<Form>(FwUtilsConstants.window);
 					IMoForm newForm = null;
 					using (new WaitCursor(mainWindow))
 					{
@@ -2182,7 +2182,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 				var allomorph = (IMoForm)_dataTree.CurrentSlice.MyCmObject;
 				if (CheckForFormDataLoss(allomorph))
 				{
-					var mainWindow = _propertyTable.GetValue<Form>(FwUtils.window);
+					var mainWindow = _propertyTable.GetValue<Form>(FwUtilsConstants.window);
 					IMoForm newForm = null;
 					using (new WaitCursor(mainWindow))
 					{

@@ -151,7 +151,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			if (disposing)
 			{
 				Subscriber.Unsubscribe(LanguageExplorerConstants.ConsideringClosing, ConsideringClosing_Handler);
-				PropertyTable.GetValue<IFwMainWnd>(FwUtils.window)?.IdleQueue.Remove(ShowRecordOnIdle);
+				PropertyTable.GetValue<IFwMainWnd>(FwUtilsConstants.window)?.IdleQueue.Remove(ShowRecordOnIdle);
 				components?.Dispose();
 				_uiWidgetController.RemoveUserControlHandlers(this);
 				if (MyDataTree != null)
@@ -182,7 +182,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			// persist record lists's CurrentIndex in a db specific way
 			var propName = MyRecordList.PersistedIndexProperty;
 			PropertyTable.SetProperty(propName, MyRecordList.CurrentIndex, true, settingsGroup: SettingsGroup.LocalSettings);
-			var window = PropertyTable.GetValue<IFwMainWnd>(FwUtils.window);
+			var window = PropertyTable.GetValue<IFwMainWnd>(FwUtilsConstants.window);
 			using (new IdleProcessingHelper(window))
 			{
 				ShowRecord(e.RecordNavigationInfo);
@@ -273,7 +273,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		{
 			if (!rni.SkipShowRecord)
 			{
-				PropertyTable.GetValue<IFwMainWnd>(FwUtils.window).IdleQueue.Add(IdleQueuePriority.High, ShowRecordOnIdle, rni);
+				PropertyTable.GetValue<IFwMainWnd>(FwUtilsConstants.window).IdleQueue.Add(IdleQueuePriority.High, ShowRecordOnIdle, rni);
 			}
 		}
 

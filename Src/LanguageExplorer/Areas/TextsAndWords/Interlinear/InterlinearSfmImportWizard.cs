@@ -571,7 +571,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 					Close();
 				}
 			}
-			m_propertyTable.GetValue<IFwMainWnd>(FwUtils.window).RefreshAllViews();
+			m_propertyTable.GetValue<IFwMainWnd>(FwUtilsConstants.window).RefreshAllViews();
 			if (m_firstNewText != null)
 			{
 				// try to select it.

@@ -95,6 +95,12 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			numberSettingsCombo.Enabled = numberSettingsCombo.Visible = true;
 			customDigits.Enabled = model.CurrentNumberingSystemDefinition.IsCustom;
 			numberSettingsCombo.SelectedIndexChanged += NumberSettingsComboOnSelectedIndexChanged;
+			customDigits.CustomDigitsChanged += CustomDigits_CustomDigitsChanged;
+		}
+
+		private void CustomDigits_CustomDigitsChanged(object sender, EventArgs e)
+		{
+			_model.CurrentWsSetupModel.CurrentNumberingSystemDefinition = NumberingSystemDefinition.CreateCustomSystem(customDigits.GetDigits());
 		}
 
 		private void BindHeader(FwWritingSystemSetupModel model)
@@ -565,12 +571,12 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					break;
 				}
 			}
-			ShowHelp.ShowHelpTopic(_helpTopicProvider, "UserHelpFile", helpTopic);
+			ShowHelp.ShowHelpTopic(_helpTopicProvider, FwUtilsConstants.UserHelpFile, helpTopic);
 		}
 
 		private void WritingListHelpClick(object sender, EventArgs e)
 		{
-			ShowHelp.ShowHelpTopic(_helpTopicProvider, "UserHelpFile", "khtpProjectProperties_WritingSystem_List");
+			ShowHelp.ShowHelpTopic(_helpTopicProvider, FwUtilsConstants.UserHelpFile, "khtpProjectProperties_WritingSystem_List");
 		}
 
 		private void ShareWithSldrCheckboxCheckChanged(object sender, EventArgs e)

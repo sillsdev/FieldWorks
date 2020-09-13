@@ -14,6 +14,7 @@ using NUnit.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.IO;
 using SIL.LCModel;
+using SIL.LCModel.Utils;
 
 namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 {
@@ -45,7 +46,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 
 			_flexComponentParameters = TestSetupServices.SetupEverything(Cache);
 
-			LayoutCache.InitializePartInventories(Cache.ProjectId.Name, FwUtils.ksFlexAppName, Cache.ProjectId.Path);
+			LayoutCache.InitializePartInventories(Cache.ProjectId.Name, FwUtilsConstants.ksFlexAppName, Cache.ProjectId.Path);
 		}
 
 		public override void TestTearDown()
@@ -93,7 +94,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 
 #if RANDYTODO
 		// TODO: This one fails for some reason.
-		// TODO: And, when it runs, MigrateOldConfigurationsIfNeeded_PreservesOrderOfBibliographies also fails, so they are tired together somehow.
+		// TODO: And, when it runs, MigrateOldConfigurationsIfNeeded_PreservesOrderOfBibliographies also fails, so they are tied together somehow.
 		[Test]
 		public void MigrateOldConfigurationsIfNeeded_MatchesLabelsWhenUIIsLocalized()
 		{
@@ -104,7 +105,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 			pathsToL10NStrings["group[@id = 'LocalizedAttributes']/"] = localizedPartLabels;
 
 			var configSettingsDir = LcmFileHelper.GetConfigSettingsDir(Path.GetDirectoryName(Cache.ProjectId.Path));
-			var newConfigFilePath = Path.Combine(configSettingsDir, DictionaryConfigurationServices.DictionaryConfigurationDirectoryName, "Lexeme" + ReversalIndexServices.ConfigFileExtension);
+			var newConfigFilePath = Path.Combine(configSettingsDir, DictionaryConfigurationServices.DictionaryConfigurationDirectoryName, "Lexeme" + LanguageExplorerConstants.DictionaryConfigurationFileExtension);
 			try
 			{
 				Assert.False(File.Exists(newConfigFilePath), "should not yet be migrated");

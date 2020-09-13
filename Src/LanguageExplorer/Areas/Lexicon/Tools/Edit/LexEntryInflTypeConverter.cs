@@ -46,7 +46,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 		/// </summary>
 		public override void Process()
 		{
-			m_cache = m_dlg.PropertyTable.GetValue<LcmCache>(FwUtils.cache);
+			m_cache = m_dlg.PropertyTable.GetValue<LcmCache>(FwUtilsConstants.cache);
 			UndoableUnitOfWorkHelper.Do(LanguageExplorerResources.ksUndoConvertIrregularlyInflectedFormVariants, LanguageExplorerResources.ksRedoConvertIrregularlyInflectedFormVariants,
 										m_cache.ActionHandlerAccessor, () => ShowDialogAndConvert(LexEntryInflTypeTags.kClassId));
 		}

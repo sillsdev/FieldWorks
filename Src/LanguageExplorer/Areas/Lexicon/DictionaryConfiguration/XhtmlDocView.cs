@@ -235,7 +235,7 @@ namespace LanguageExplorer.Areas.Lexicon.DictionaryConfiguration
 			// the current Publication layout or Configuration view.
 			if (!IsObjectVisible(hvoTarget, out var xrc))
 			{
-				LanguageExplorerServices.GiveSimpleWarning(PropertyTable.GetValue<Form>(FwUtils.window), PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider).HelpFile, xrc);
+				LanguageExplorerServices.GiveSimpleWarning(PropertyTable.GetValue<Form>(FwUtilsConstants.window), PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider).HelpFile, xrc);
 			}
 		}
 
@@ -351,8 +351,8 @@ namespace LanguageExplorer.Areas.Lexicon.DictionaryConfiguration
 				var oldCurPageRange = new Tuple<int, int>(int.Parse(currentPageButton.Attributes["startIndex"].NodeValue), int.Parse(currentPageButton.Attributes["endIndex"].NodeValue));
 				var oldAdjPageRange = new Tuple<int, int>(int.Parse(adjacentPageButton.Attributes["startIndex"].NodeValue), int.Parse(adjacentPageButton.Attributes["endIndex"].NodeValue));
 				var settings = new GeneratorSettings(Cache, new ReadOnlyPropertyTable(PropertyTable), false, false, string.Empty, isNormalRightToLeft);
-				var entries = ConfiguredXHTMLGenerator.GenerateNextFewEntries(PublicationDecorator, entriesToPublish, GetCurrentConfiguration(false), settings, oldCurPageRange,
-					oldAdjPageRange, ConfiguredXHTMLGenerator.EntriesToAddCount, out var newCurPageRange, out var newAdjPageRange);
+				var entries = LcmXhtmlGenerator.GenerateNextFewEntries(PublicationDecorator, entriesToPublish, GetCurrentConfiguration(false), settings, oldCurPageRange,
+					oldAdjPageRange, ConfiguredLcmGenerator.EntriesToAddCount, out var newCurPageRange, out var newAdjPageRange);
 				// Load entries above the first entry
 				foreach (var entry in entries)
 				{
@@ -382,8 +382,8 @@ namespace LanguageExplorer.Areas.Lexicon.DictionaryConfiguration
 				var currentPageRange = new Tuple<int, int>(int.Parse(currentPageButton.Attributes["startIndex"].NodeValue), int.Parse(currentPageButton.Attributes["endIndex"].NodeValue));
 				var adjacentPageRange = new Tuple<int, int>(int.Parse(adjPage.Attributes["startIndex"].NodeValue), int.Parse(adjPage.Attributes["endIndex"].NodeValue));
 				var settings = new GeneratorSettings(Cache, new ReadOnlyPropertyTable(PropertyTable), false, false, string.Empty, isNormalRightToLeft);
-				var entries = ConfiguredXHTMLGenerator.GenerateNextFewEntries(PublicationDecorator, entriesToPublish, GetCurrentConfiguration(false), settings, currentPageRange,
-					adjacentPageRange, ConfiguredXHTMLGenerator.EntriesToAddCount, out var newCurrentPageRange, out var newAdjPageRange);
+				var entries = LcmXhtmlGenerator.GenerateNextFewEntries(PublicationDecorator, entriesToPublish, GetCurrentConfiguration(false), settings, currentPageRange,
+					adjacentPageRange, ConfiguredLcmGenerator.EntriesToAddCount, out var newCurrentPageRange, out var newAdjPageRange);
 				// Load entries above the lower navigation buttons
 				foreach (var entry in entries)
 				{
@@ -464,7 +464,7 @@ namespace LanguageExplorer.Areas.Lexicon.DictionaryConfiguration
 			// Tell the record list it is active so it will update the list of entries. Pass false as we have no toolbar to update.
 			if (!MyRecordList.IsSubservientRecordList && PropertyTable.GetValue<IRecordListRepository>(LanguageExplorerConstants.RecordListRepository).ActiveRecordList != MyRecordList)
 			{
-				RecordListServices.SetRecordList(PropertyTable.GetValue<Form>(FwUtils.window).Handle, MyRecordList);
+				RecordListServices.SetRecordList(PropertyTable.GetValue<Form>(FwUtilsConstants.window).Handle, MyRecordList);
 			}
 			// Update the entry list if necessary
 			if (!MyRecordList.ListLoadingSuppressed && MyRecordList.RequestedLoadWhileSuppressed)
@@ -691,7 +691,7 @@ namespace LanguageExplorer.Areas.Lexicon.DictionaryConfiguration
 			{
 				return;
 			}
-			if (MyRecordList.Id == "AllReversalEntries")
+			if (MyRecordList.Id == LanguageExplorerConstants.AllReversalEntries)
 			{
 				if (!(MyRecordList.CurrentObject is IReversalIndexEntry reversalEntry))
 				{
@@ -842,11 +842,11 @@ namespace LanguageExplorer.Areas.Lexicon.DictionaryConfiguration
 			if (progress != null)
 			{
 				progress.Minimum = 0;
-				const int entryCount = ConfiguredXHTMLGenerator.EntriesPerPage;
+				const int entryCount = LcmXhtmlGenerator.EntriesPerPage;
 				progress.Maximum = entryCount + 1 + entryCount / 100;
 				progress.Position++;
 			}
-			var xhtmlPath = ConfiguredXHTMLGenerator.SavePreviewHtmlWithStyles(entriesToPublish, publicationDecorator, configuration, PropertyTable, Cache, MyRecordList, progress);
+			var xhtmlPath = LcmXhtmlGenerator.SavePreviewHtmlWithStyles(entriesToPublish, publicationDecorator, configuration, PropertyTable, Cache, MyRecordList, progress);
 #if DEBUG
 			var end = DateTime.Now;
 			Debug.WriteLine($"saving xhtml/css took {end - start}");

@@ -43,7 +43,7 @@ namespace LanguageExplorerTests.Controls.DetailControls
 			{
 				["part"] = new[] { "id" }
 			};
-			return new Inventory(new[] { Path.Combine(FwDirectoryFinder.SourceDirectory, "LanguageExplorerTests", "Controls", "DetailControls") }, "*Parts.xml", "/PartInventory/bin/*", keyAttrs, "DetailTreeTests", Path.GetTempPath());
+			return new Inventory(new[] { Path.Combine(FwDirectoryFinder.SourceDirectory, TestUtilities.LanguageExplorerTests, "Controls", "DetailControls") }, "*Parts.xml", "/PartInventory/bin/*", keyAttrs, "DetailTreeTests", Path.GetTempPath());
 		}
 
 		internal static Inventory GenerateLayouts()
@@ -54,7 +54,7 @@ namespace LanguageExplorerTests.Controls.DetailControls
 				["group"] = new[] { "label" },
 				["part"] = new[] { "ref" }
 			};
-			return new Inventory(new[] { Path.Combine(FwDirectoryFinder.SourceDirectory, "LanguageExplorerTests", "Controls", "DetailControls") }, "*.fwlayout", "/LayoutInventory/*", keyAttrs, "DetailTreeTests", Path.GetTempPath());
+			return new Inventory(new[] { Path.Combine(FwDirectoryFinder.SourceDirectory, TestUtilities.LanguageExplorerTests, "Controls", "DetailControls") }, "*.fwlayout", "/LayoutInventory/*", keyAttrs, "DetailTreeTests", Path.GetTempPath());
 		}
 
 		/// <summary>
@@ -98,7 +98,7 @@ namespace LanguageExplorerTests.Controls.DetailControls
 			m_dtree = new DataTree(new SharedEventHandlers(), false);
 			SetupPubSubAndPropertyTable();
 			_dummyWindow = new DummyFwMainWnd();
-			_flexComponentParameters.PropertyTable.SetProperty(FwUtils.window, _dummyWindow);
+			_flexComponentParameters.PropertyTable.SetProperty(FwUtilsConstants.window, _dummyWindow);
 			m_dtree.InitializeFlexComponent(_flexComponentParameters);
 			m_parent = new Form();
 			m_parent.Controls.Add(m_dtree);
@@ -259,7 +259,7 @@ namespace LanguageExplorerTests.Controls.DetailControls
 			m_parent.Close();
 			m_parent.Dispose();
 			m_parent = null;
-			_flexComponentParameters.PropertyTable.RemoveProperty(FwUtils.window);
+			_flexComponentParameters.PropertyTable.RemoveProperty(FwUtilsConstants.window);
 			_dummyWindow.Dispose();
 			_dummyWindow = null;
 
@@ -271,7 +271,7 @@ namespace LanguageExplorerTests.Controls.DetailControls
 
 			SetupPubSubAndPropertyTable();
 			_dummyWindow = new DummyFwMainWnd();
-			_flexComponentParameters.PropertyTable.SetProperty(FwUtils.window, _dummyWindow);
+			_flexComponentParameters.PropertyTable.SetProperty(FwUtilsConstants.window, _dummyWindow);
 			m_parent = new Form();
 			m_dtree = new DataTree(new SharedEventHandlers(), false);
 			m_dtree.InitializeFlexComponent(_flexComponentParameters);
@@ -289,7 +289,7 @@ namespace LanguageExplorerTests.Controls.DetailControls
 			m_parent.Close();
 			m_parent.Dispose();
 			m_parent = null;
-			_flexComponentParameters.PropertyTable.RemoveProperty(FwUtils.window);
+			_flexComponentParameters.PropertyTable.RemoveProperty(FwUtilsConstants.window);
 			_dummyWindow.Dispose();
 			_dummyWindow = null;
 
@@ -298,7 +298,7 @@ namespace LanguageExplorerTests.Controls.DetailControls
 
 			SetupPubSubAndPropertyTable();
 			_dummyWindow = new DummyFwMainWnd();
-			_flexComponentParameters.PropertyTable.SetProperty(FwUtils.window, _dummyWindow);
+			_flexComponentParameters.PropertyTable.SetProperty(FwUtilsConstants.window, _dummyWindow);
 			m_parent = new Form();
 			m_dtree = new DataTree(new SharedEventHandlers(), false);
 			m_dtree.InitializeFlexComponent(_flexComponentParameters);
@@ -311,7 +311,7 @@ namespace LanguageExplorerTests.Controls.DetailControls
 			m_parent.Close();
 			m_parent.Dispose();
 			m_parent = null;
-			_flexComponentParameters.PropertyTable.RemoveProperty(FwUtils.window);
+			_flexComponentParameters.PropertyTable.RemoveProperty(FwUtilsConstants.window);
 			_dummyWindow.Dispose();
 			_dummyWindow = null;
 
@@ -320,7 +320,7 @@ namespace LanguageExplorerTests.Controls.DetailControls
 
 			SetupPubSubAndPropertyTable();
 			_dummyWindow = new DummyFwMainWnd();
-			_flexComponentParameters.PropertyTable.SetProperty(FwUtils.window, _dummyWindow);
+			_flexComponentParameters.PropertyTable.SetProperty(FwUtilsConstants.window, _dummyWindow);
 			m_parent = new Form();
 			m_dtree = new DataTree(new SharedEventHandlers(), false);
 			m_dtree.InitializeFlexComponent(_flexComponentParameters);

@@ -263,7 +263,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			m_idToDisplayCommand.Clear();
 			m_idToDisplayCommand[kRootFragId] = rootCommand;
 			m_displayCommandToId.Clear();
-			LayoutCache = new LayoutCache(m_mdc, m_cache.ProjectId.Name, TheApp?.ApplicationName ?? FwUtils.ksFlexAppName, m_cache.ProjectId.ProjectFolder);
+			LayoutCache = new LayoutCache(m_mdc, m_cache.ProjectId.Name, TheApp?.ApplicationName ?? FwUtilsConstants.ksFlexAppName, m_cache.ProjectId.ProjectFolder);
 			// We could reset the next id, but that's arbitrary, so why bother?
 		}
 
@@ -3613,7 +3613,7 @@ namespace LanguageExplorer.Controls.XMLViews
 				}
 				base.Cache = value;
 				DataAccess = m_cache.DomainDataByFlid;
-				LayoutCache = new LayoutCache(m_mdc, m_cache.ProjectId.Name, TheApp?.ApplicationName ?? FwUtils.ksFlexAppName, m_cache.ProjectId.ProjectFolder);
+				LayoutCache = new LayoutCache(m_mdc, m_cache.ProjectId.Name, TheApp?.ApplicationName ?? FwUtilsConstants.ksFlexAppName, m_cache.ProjectId.ProjectFolder);
 			}
 		}
 

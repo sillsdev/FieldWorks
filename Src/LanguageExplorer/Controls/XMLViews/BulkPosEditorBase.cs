@@ -218,7 +218,7 @@ namespace LanguageExplorer.Controls.XMLViews
 					m_cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle,
 					false,
 					new FlexComponentParameters(PropertyTable, Publisher, Subscriber),
-					PropertyTable.GetValue<Form>(FwUtils.window));
+					PropertyTable.GetValue<Form>(FwUtilsConstants.window));
 				m_pOSPopupTreeManager.AfterSelect += m_pOSPopupTreeManager_AfterSelect;
 			}
 			m_pOSPopupTreeManager.LoadPopupTree(0);

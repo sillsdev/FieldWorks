@@ -267,6 +267,11 @@ namespace LanguageExplorer
 		internal const string StopParser = "StopParser";
 		internal const string ConsideringClosing = "ConsideringClosing";
 		internal const string DelayedRefreshList = "DelayedRefreshList";
+		internal const string ItemDataModified = "ItemDataModified";
+		internal const string DictionaryType = "Dictionary";
+		internal const string ReversalType = "Reversal Index";
+		internal const string ReloadAreaTools = "ReloadAreaTools";
+
 		#endregion Misc
 	}
 }

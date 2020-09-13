@@ -45,6 +45,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 
 		public bool IsPatternEmpty => Root.IsLeaf || (Root.Children.Count == 1 && Root.Children[0] is ComplexConcWordBdryNode);
 
+		public bool CouldNotParseAllParagraphs { get; private set; }
+
 		public ComplexConcPatternNode GetNode(int hvo)
 		{
 			return m_sda.Nodes[hvo];
@@ -99,6 +101,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 
 		public IEnumerable<IParaFragment> Search(IStText text)
 		{
+			CouldNotParseAllParagraphs = false;
 			if (IsPatternEmpty)
 			{
 				return Enumerable.Empty<IParaFragment>();
@@ -106,47 +109,58 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 			var matches = new List<IParaFragment>();
 			foreach (var para in text.ParagraphsOS.OfType<IStTxtPara>())
 			{
-				IParaFragment lastFragment = null;
-				var data = new ComplexConcParagraphData(m_spanFactory, m_featSys, para);
-				var match = m_matcher.Match(data);
-				while (match.Success)
+				try
 				{
-					if (match.Span.Start == match.Span.End && ((FeatureSymbol)match.Span.Start.Annotation.FeatureStruct.GetValue<SymbolicFeatureValue>("type")).ID == "bdry")
+					IParaFragment lastFragment = null;
+					var data = new ComplexConcParagraphData(m_spanFactory, m_featSys, para);
+					var match = m_matcher.Match(data);
+					while (match.Success)
 					{
-						match = match.NextMatch();
-						continue;
-					}
-					var startNode = match.Span.Start;
-					if (((FeatureSymbol)startNode.Annotation.FeatureStruct.GetValue<SymbolicFeatureValue>("type")).ID == "bdry")
-					{
-						startNode = startNode.Next;
-					}
-					var startAnn = startNode.Annotation;
-					if (((FeatureSymbol)startAnn.FeatureStruct.GetValue<SymbolicFeatureValue>("type")).ID == "morph")
-					{
-						startAnn = startAnn.Parent;
-					}
-					var startAnalysis = (Tuple<IAnalysis, int, int>)startAnn.Data;
-					var endNode = match.Span.End;
-					if (((FeatureSymbol)endNode.Annotation.FeatureStruct.GetValue<SymbolicFeatureValue>("type")).ID == "bdry")
-					{
-						endNode = endNode.Prev;
-					}
-					var endAnn = endNode.Annotation;
-					if (((FeatureSymbol)endAnn.FeatureStruct.GetValue<SymbolicFeatureValue>("type")).ID == "morph")
-					{
-						endAnn = endAnn.Parent;
-					}
-					Debug.Assert(startNode.CompareTo(endNode) <= 0);
-					var endAnalysis = (Tuple<IAnalysis, int, int>)endAnn.Data;
-					if (lastFragment != null && lastFragment.GetMyBeginOffsetInPara() == startAnalysis.Item2 && lastFragment.GetMyEndOffsetInPara() == endAnalysis.Item3)
-					{
+						if (match.Span.Start == match.Span.End && ((FeatureSymbol)match.Span.Start.Annotation.FeatureStruct
+								.GetValue<SymbolicFeatureValue>("type")).ID == "bdry")
+						{
+							match = match.NextMatch();
+							continue;
+						}
+						var startNode = match.Span.Start;
+						if (((FeatureSymbol)startNode.Annotation.FeatureStruct.GetValue<SymbolicFeatureValue>("type")).ID == "bdry")
+						{
+							startNode = startNode.Next;
+						}
+						var startAnn = startNode.Annotation;
+						if (((FeatureSymbol)startAnn.FeatureStruct.GetValue<SymbolicFeatureValue>("type")).ID == "morph")
+						{
+							startAnn = startAnn.Parent;
+						}
+						var startAnalysis = (Tuple<IAnalysis, int, int>)startAnn.Data;
+						var endNode = match.Span.End;
+						if (((FeatureSymbol)endNode.Annotation.FeatureStruct.GetValue<SymbolicFeatureValue>("type")).ID == "bdry")
+						{
+							endNode = endNode.Prev;
+						}
+						var endAnn = endNode.Annotation;
+						if (((FeatureSymbol)endAnn.FeatureStruct.GetValue<SymbolicFeatureValue>("type")).ID == "morph")
+						{
+							endAnn = endAnn.Parent;
+						}
+						Debug.Assert(startNode.CompareTo(endNode) <= 0);
+						var endAnalysis = (Tuple<IAnalysis, int, int>)endAnn.Data;
+						if (lastFragment != null &&
+							lastFragment.GetMyBeginOffsetInPara() == startAnalysis.Item2 &&
+							lastFragment.GetMyEndOffsetInPara() == endAnalysis.Item3)
+						{
+							match = GetNextMatch(match);
+							continue;
+						}
+						var seg = para.SegmentsOS.Last(s => s.BeginOffset <= startAnalysis.Item2);
+						lastFragment = new ParaFragment(seg, startAnalysis.Item2, endAnalysis.Item3, startAnalysis.Item1);
+						matches.Add(lastFragment);
 						match = GetNextMatch(match);
-						continue;
 					}
-					lastFragment = new ParaFragment(para.SegmentsOS.Last(s => s.BeginOffset <= startAnalysis.Item2), startAnalysis.Item2, endAnalysis.Item3, startAnalysis.Item1);
-					matches.Add(lastFragment);
-					match = GetNextMatch(match);
+				}
+				catch (InvalidOperationException)
+				{
+					CouldNotParseAllParagraphs = true;
 				}
 			}
 

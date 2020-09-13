@@ -63,7 +63,7 @@ namespace LanguageExplorer.Controls.XMLViews
 
 			if (disposing)
 			{
-				PropertyTable?.GetValue<IFwMainWnd>(FwUtils.window)?.IdleQueue?.Remove(FocusMeAgain);
+				PropertyTable?.GetValue<IFwMainWnd>(FwUtilsConstants.window)?.IdleQueue?.Remove(FocusMeAgain);
 				Subscriber.Unsubscribe(GetCorrespondingPropertyName("readOnlyBrowse"), SetSelectedRowHighlighting);
 			}
 
@@ -274,7 +274,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			// possible slice. We need to do it one more time for it to stick.
 			// Try five times to really get the focus!
 			m_idleFocusCount = 5;
-			PropertyTable.GetValue<IFwMainWnd>(FwUtils.window).IdleQueue.Add(IdleQueuePriority.High, FocusMeAgain);
+			PropertyTable.GetValue<IFwMainWnd>(FwUtilsConstants.window).IdleQueue.Add(IdleQueuePriority.High, FocusMeAgain);
 		}
 
 		private int m_idleFocusCount;

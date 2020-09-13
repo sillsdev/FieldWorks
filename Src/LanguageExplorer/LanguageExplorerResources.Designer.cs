@@ -215,11 +215,29 @@ namespace LanguageExplorer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Cancel.
+        /// </summary>
+        internal static string Cancel {
+            get {
+                return ResourceManager.GetString("Cancel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Could not locate the tool named &apos;{0}&apos;..
         /// </summary>
         internal static string CannotFindToolNamed0 {
             get {
                 return ResourceManager.GetString("CannotFindToolNamed0", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cannot Calculate Letter Headings.
+        /// </summary>
+        internal static string CantCalculateLetterHeadings {
+            get {
+                return ResourceManager.GetString("CantCalculateLetterHeadings", resourceCulture);
             }
         }
         
@@ -1488,6 +1506,15 @@ namespace LanguageExplorer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Connecting to Webonary..
+        /// </summary>
+        internal static string ksConnectingToWebonary {
+            get {
+                return ResourceManager.GetString("ksConnectingToWebonary", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Warning!.
         /// </summary>
         internal static string ksConvertFormLoseCaption {
@@ -1920,6 +1947,15 @@ namespace LanguageExplorer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to An error occurred uploading your data:{0}Unable to connect to Webonary. Please check your username and password and your Internet connection.{0}{1}:{2}.
+        /// </summary>
+        internal static string ksErrorCannotConnectToWebonary {
+            get {
+                return ResourceManager.GetString("ksErrorCannotConnectToWebonary", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to An error occurred trying to launch the movies. You could try to launch them yourself. They are located in this folder: {0}.
         /// </summary>
         internal static string ksErrorCannotLaunchMovies {
@@ -1947,11 +1983,65 @@ namespace LanguageExplorer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Error: Invalid characters found in site name..
+        /// </summary>
+        internal static string ksErrorInvalidCharacters {
+            get {
+                return ResourceManager.GetString("ksErrorInvalidCharacters", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Error loading resource strings: {0}.
         /// </summary>
         internal static string ksErrorLoadingResourceStrings {
             get {
                 return ResourceManager.GetString("ksErrorLoadingResourceStrings", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Error: No Configuration specified..
+        /// </summary>
+        internal static string ksErrorNoConfiguration {
+            get {
+                return ResourceManager.GetString("ksErrorNoConfiguration", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Error: No Password specified..
+        /// </summary>
+        internal static string ksErrorNoPassword {
+            get {
+                return ResourceManager.GetString("ksErrorNoPassword", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Error: No Publication specified..
+        /// </summary>
+        internal static string ksErrorNoPublication {
+            get {
+                return ResourceManager.GetString("ksErrorNoPublication", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Error: No site name specified..
+        /// </summary>
+        internal static string ksErrorNoSiteName {
+            get {
+                return ResourceManager.GetString("ksErrorNoSiteName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Error: No username specified..
+        /// </summary>
+        internal static string ksErrorNoUsername {
+            get {
+                return ResourceManager.GetString("ksErrorNoUsername", resourceCulture);
             }
         }
         
@@ -1970,6 +2060,42 @@ namespace LanguageExplorer {
         internal static string ksErrorsFoundOrFixed {
             get {
                 return ResourceManager.GetString("ksErrorsFoundOrFixed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Error: User doesn&apos;t have permission to import data.
+        /// </summary>
+        internal static string ksErrorUserDoesntHavePermissionToImportData {
+            get {
+                return ResourceManager.GetString("ksErrorUserDoesntHavePermissionToImportData", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Error: Wrong username or password.
+        /// </summary>
+        internal static string ksErrorUsernameOrPassword {
+            get {
+                return ResourceManager.GetString("ksErrorUsernameOrPassword", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Error: There has been an error accessing Webonary. Is your site name correct?.
+        /// </summary>
+        internal static string ksErrorWebonarySiteName {
+            get {
+                return ResourceManager.GetString("ksErrorWebonarySiteName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Excluding {0}; {1} format is unsupported by Webonary..
+        /// </summary>
+        internal static string ksExcludingXXFormatUnsupported {
+            get {
+                return ResourceManager.GetString("ksExcludingXXFormatUnsupported", resourceCulture);
             }
         }
         
@@ -3006,6 +3132,15 @@ namespace LanguageExplorer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Preparing data to send to webonary (this could take some time)....
+        /// </summary>
+        internal static string ksPreparingDataForWebonary {
+            get {
+                return ResourceManager.GetString("ksPreparingDataForWebonary", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Mark as Preposed from.
         /// </summary>
         internal static string ksPreposeFromMenuItem {
@@ -3038,6 +3173,24 @@ namespace LanguageExplorer {
         internal static string ksPublicationEntries {
             get {
                 return ResourceManager.GetString("ksPublicationEntries", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Failed to upload {0}..
+        /// </summary>
+        internal static string ksPutFilesToWebonaryFailed {
+            get {
+                return ResourceManager.GetString("ksPutFilesToWebonaryFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Uploaded {0}..
+        /// </summary>
+        internal static string ksPutFilesToWebonaryUploaded {
+            get {
+                return ResourceManager.GetString("ksPutFilesToWebonaryUploaded", resourceCulture);
             }
         }
         
@@ -3614,6 +3767,15 @@ namespace LanguageExplorer {
         internal static string ksRemovingCircularComponentLexeme {
             get {
                 return ResourceManager.GetString("ksRemovingCircularComponentLexeme", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Response from server:.
+        /// </summary>
+        internal static string ksResponseFromServer {
+            get {
+                return ResourceManager.GetString("ksResponseFromServer", resourceCulture);
             }
         }
         
@@ -4643,6 +4805,15 @@ namespace LanguageExplorer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Uploading to Webonary..
+        /// </summary>
+        internal static string ksUploadingToWebonary {
+            get {
+                return ResourceManager.GetString("ksUploadingToWebonary", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Use default analysis.
         /// </summary>
         internal static string ksUseDefaultAnalysis {
@@ -4739,6 +4910,33 @@ namespace LanguageExplorer {
         internal static string ksWarningSortReversalSubentries {
             get {
                 return ResourceManager.GetString("ksWarningSortReversalSubentries", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Finished preparing data..
+        /// </summary>
+        internal static string ksWebonaryFinishedDataPrep {
+            get {
+                return ResourceManager.GetString("ksWebonaryFinishedDataPrep", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Upload successful. Preparing your data for publication. This may take several minutes to a few hours depending on the size of your dictionary. You will receive an email when the process is complete. You can examine the progress on the admin page of your Webonary site. You may now safely close this dialog..
+        /// </summary>
+        internal static string ksWebonaryUploadSuccessful {
+            get {
+                return ResourceManager.GetString("ksWebonaryUploadSuccessful", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The upload was successful; however, there were errors processing your data..
+        /// </summary>
+        internal static string ksWebonaryUploadSuccessfulErrorProcessing {
+            get {
+                return ResourceManager.GetString("ksWebonaryUploadSuccessfulErrorProcessing", resourceCulture);
             }
         }
         
@@ -5089,6 +5287,15 @@ namespace LanguageExplorer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Your data is sorted by a field that does not allow us to calculate letter headings. Please change your sort column before uploading to Webonary..
+        /// </summary>
+        internal static string msgCantCalculateLetterHeadings {
+            get {
+                return ResourceManager.GetString("msgCantCalculateLetterHeadings", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to There is no description available for this item..
         /// </summary>
         internal static string NoDescriptionForItem {
@@ -5120,6 +5327,15 @@ namespace LanguageExplorer {
         internal static string NotebookDocumentParameters {
             get {
                 return ResourceManager.GetString("NotebookDocumentParameters", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to OK.
+        /// </summary>
+        internal static string OK {
+            get {
+                return ResourceManager.GetString("OK", resourceCulture);
             }
         }
         
@@ -5479,7 +5695,7 @@ namespace LanguageExplorer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to http://www.webonary.org/.
+        ///   Looks up a localized string similar to https://www.webonary.org/.
         /// </summary>
         internal static string toApplyForWebonaryAccountLink {
             get {
@@ -5529,6 +5745,15 @@ namespace LanguageExplorer {
         internal static string UndoInsertText {
             get {
                 return ResourceManager.GetString("UndoInsertText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Server deleting project files{0}{1}.
+        /// </summary>
+        internal static string UploadToWebonary_DeletingProjFiles {
+            get {
+                return ResourceManager.GetString("UploadToWebonary_DeletingProjFiles", resourceCulture);
             }
         }
         

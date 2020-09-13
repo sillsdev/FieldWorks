@@ -50,7 +50,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 			base.TestSetup();
 
 			_flexComponentParameters = TestSetupServices.SetupEverything(Cache);
-			LayoutCache.InitializePartInventories(Cache.ProjectId.Name, FwUtils.ksFlexAppName, Cache.ProjectId.Path);
+			LayoutCache.InitializePartInventories(Cache.ProjectId.Name, FwUtilsConstants.ksFlexAppName, Cache.ProjectId.Path);
 			_logger = new SimpleLogger();
 			_migrator = new FirstBetaMigrator("Test App Version", Cache, _logger);
 		}
@@ -108,6 +108,41 @@ name='Stem-based (complex forms as main entries)' version='8' lastModified='2016
 				File.WriteAllText(actualFilePath, content);
 				_migrator.MigrateIfNeeded(); // SUT
 				Assert.IsTrue(File.Exists(convertedFilePath));
+			}
+		}
+
+		[Test]
+		public void MigrateFrom83Alpha_CopiesReversalConfigsCorrectly()
+		{
+			using (var tempFolder = TemporaryFolder.TrackExisting(Path.GetDirectoryName(Cache.ProjectId.Path)))
+			{
+				var configLocations = LcmFileHelper.GetConfigSettingsDir(tempFolder.Path);
+				configLocations = Path.Combine(configLocations, "ReversalIndex");
+				Directory.CreateDirectory(configLocations);
+				const string content1 =
+					@"<DictionaryConfiguration xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xmlns:xsd='http://www.w3.org/2001/XMLSchema'
+name='French Reversal Index' writingSystem='fr' version='21' lastModified='2020-03-11' allPublications='true' isRootBased='false'>
+  <ConfigurationItem name='Reversal Entry' isEnabled='true' style='Reversal-Normal' styleType='paragraph' field='ReversalIndexEntry' cssClassNameOverride='reversalindexentry'/>
+</DictionaryConfiguration>";
+				var filePath1 = Path.Combine(configLocations, "fr" + LanguageExplorerConstants.DictionaryConfigurationFileExtension);
+				File.WriteAllText(filePath1, content1);
+				const string content2 =
+					@"<DictionaryConfiguration xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xmlns:xsd='http://www.w3.org/2001/XMLSchema'
+name='French Reversal Index 2' writingSystem='fr' version='21' lastModified='2020-03-11' allPublications='true' isRootBased='false'>
+  <ConfigurationItem name='Reversal Entry' isEnabled='true' style='Reversal-Normal' styleType='paragraph' field='ReversalIndexEntry' cssClassNameOverride='reversalindexentry'/>
+</DictionaryConfiguration>";
+				var filePath2 = Path.Combine(configLocations, "fr2" + LanguageExplorerConstants.DictionaryConfigurationFileExtension);
+				File.WriteAllText(filePath2, content2);
+				const string content3 =
+					@"<DictionaryConfiguration xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xmlns:xsd='http://www.w3.org/2001/XMLSchema'
+name='French Reversal Index 3' writingSystem='fr' version='21' lastModified='2020-03-11' allPublications='true' isRootBased='false'>
+  <ConfigurationItem name='Reversal Entry' isEnabled='true' style='Reversal-Normal' styleType='paragraph' field='ReversalIndexEntry' cssClassNameOverride='reversalindexentry'/>
+</DictionaryConfiguration>";
+				var filePath3 = Path.Combine(configLocations, "fr3" + LanguageExplorerConstants.DictionaryConfigurationFileExtension);
+				File.WriteAllText(filePath3, content3);
+				_migrator.MigrateIfNeeded(); // SUT
+				var todoList = DictionaryConfigurationServices.GetConfigsNeedingMigration(Cache, DictionaryConfigurationServices.VersionCurrent);
+				Assert.IsTrue(todoList.Count == 0, "Should have already migrated everything");
 			}
 		}
 

@@ -5,7 +5,7 @@
 using System;
 using System.Windows.Forms;
 
-namespace SIL.FieldWorks.XWorks.LexText
+namespace LanguageExplorer.Images
 {
 	/// <summary>
 	/// Summary description for ImageHolder.

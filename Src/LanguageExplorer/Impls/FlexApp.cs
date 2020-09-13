@@ -397,7 +397,7 @@ namespace LanguageExplorer.Impls
 		/// <summary>
 		/// Gets the name of the application.
 		/// </summary>
-		public string ApplicationName => FwUtils.ksFlexAppName;
+		public string ApplicationName => FwUtilsConstants.ksFlexAppName;
 
 		/// <summary>
 		/// A picture holder that may be used to retrieve various useful pictures.

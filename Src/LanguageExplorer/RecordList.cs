@@ -331,7 +331,7 @@ namespace LanguageExplorer
 			Publisher = flexComponentParameters.Publisher;
 			Subscriber = flexComponentParameters.Subscriber;
 
-			m_cache = PropertyTable.GetValue<LcmCache>(FwUtils.cache);
+			m_cache = PropertyTable.GetValue<LcmCache>(FwUtilsConstants.cache);
 			CurrentIndex = -1;
 			m_hvoCurrent = 0;
 			m_oldLength = 0;
@@ -551,7 +551,7 @@ namespace LanguageExplorer
 			{
 				if (PropertyTable.GetValue<IRecordListRepository>(LanguageExplorerConstants.RecordListRepository).ActiveRecordList != this)
 				{
-					RecordListServices.SetRecordList(PropertyTable.GetValue<Form>(FwUtils.window).Handle, this);
+					RecordListServices.SetRecordList(PropertyTable.GetValue<Form>(FwUtilsConstants.window).Handle, this);
 				}
 			}
 			if (IsActiveInGui)
@@ -813,6 +813,11 @@ namespace LanguageExplorer
 			JumpToIndex(index, suppressFocusChange);
 		}
 
+		public bool JumpToTargetWillChangeIndex(int hvoTarget)
+		{
+			return IndexOfObjOrChildOrParent(hvoTarget) != CurrentIndex;
+		}
+
 		/// <summary>
 		/// This may be set to suppress automatic reloading of the list. When set false again, if the list
 		/// would have been reloaded at least once, it will be at that point. Use ListModificationInProgress instead
@@ -911,7 +916,7 @@ namespace LanguageExplorer
 		/// </summary>
 		public virtual void OnChangeFilter(FilterChangeEventArgs args)
 		{
-			using (new WaitCursor(PropertyTable.GetValue<Form>(FwUtils.window)))
+			using (new WaitCursor(PropertyTable.GetValue<Form>(FwUtilsConstants.window)))
 			{
 				Logger.WriteEvent("Changing filter.");
 				// if our record list is in the state of suspending loading the list, reset it now.
@@ -1052,7 +1057,7 @@ namespace LanguageExplorer
 				{
 					dlg.SetDlgInfo(thingToDelete, m_cache, PropertyTable, TsStringUtils.MakeString(LcmUiStrings.ksCannotDeleteItem, m_cache.DefaultUserWs));
 				}
-				var window = PropertyTable.GetValue<Form>(FwUtils.window);
+				var window = PropertyTable.GetValue<Form>(FwUtilsConstants.window);
 				if (DialogResult.Yes == dlg.ShowDialog(window))
 				{
 					using (new WaitCursor(window))
@@ -1077,7 +1082,7 @@ namespace LanguageExplorer
 							SuppressSaveOnChangeRecord = false;
 						}
 					}
-					PropertyTable.GetValue<IFwMainWnd>(FwUtils.window).RefreshAllViews();
+					PropertyTable.GetValue<IFwMainWnd>(FwUtilsConstants.window).RefreshAllViews();
 				}
 			}
 			return true; //we handled this, no need to ask anyone else.
@@ -1166,7 +1171,7 @@ namespace LanguageExplorer
 
 		public virtual bool OnRefresh(object argument)
 		{
-			using (new WaitCursor(PropertyTable.GetValue<Form>(FwUtils.window)))
+			using (new WaitCursor(PropertyTable.GetValue<Form>(FwUtilsConstants.window)))
 			{
 				_recordChangeHandler?.Fixup(false);     // no need to recursively refresh!
 				ReloadList();
@@ -1377,7 +1382,7 @@ namespace LanguageExplorer
 		/// </summary>
 		public bool ShouldNotModifyList => m_reloadingList || m_deletingObject;
 
-		public bool ShouldNotHandleDeletionMessage => Id != "AllReversalEntries" && (!Editable || !IsPrimaryRecordList || !_shouldHandleDeletion);
+		public bool ShouldNotHandleDeletionMessage => Id != LanguageExplorerConstants.AllReversalEntries && (!Editable || !IsPrimaryRecordList || !_shouldHandleDeletion);
 
 		public bool SkipShowRecord { get; set; }
 
@@ -1878,7 +1883,7 @@ namespace LanguageExplorer
 
 		private void RegisterMessageHandlers()
 		{
-			var window = PropertyTable.GetValue<IFwMainWnd>(FwUtils.window);
+			var window = PropertyTable.GetValue<IFwMainWnd>(FwUtilsConstants.window);
 			var recordBarControl = window?.RecordBarControl; // Tests may not have a window.
 			if (recordBarControl != null)
 			{
@@ -1894,7 +1899,7 @@ namespace LanguageExplorer
 		{
 			Subscriber.Unsubscribe(CurrentFilterPropertyTableId, CurrentFilterPropertyTableId_Handler);
 			Subscriber.Unsubscribe(LanguageExplorerConstants.JumpToRecord, JumpToRecord);
-			var window = PropertyTable.GetValue<IFwMainWnd>(FwUtils.window);
+			var window = PropertyTable.GetValue<IFwMainWnd>(FwUtilsConstants.window);
 			// Some tests don't have a window or RecordBarControl.
 			var recordBarControl = window?.RecordBarControl;
 			if (recordBarControl != null)
@@ -2596,7 +2601,7 @@ namespace LanguageExplorer
 				// Hopefully we don't rebuild the list every time; usually this can only be changed in another view.
 				// In case we DO have a concordance active in one window while editing another, if this isn't the
 				// active window postpone until it is.
-				var window = PropertyTable.GetValue<Form>(FwUtils.window);
+				var window = PropertyTable.GetValue<Form>(FwUtilsConstants.window);
 				if (window != Form.ActiveForm)
 				{
 					RequestedLoadWhileSuppressed = true;
@@ -3045,7 +3050,7 @@ namespace LanguageExplorer
 				}
 				m_requestedLoadWhileSuppressed = true;
 				// it's possible that we'll want to reload once we become the main active window (cf. LT-9251)
-				var window = PropertyTable.GetValue<Form>(FwUtils.window);
+				var window = PropertyTable.GetValue<Form>(FwUtilsConstants.window);
 				var app = PropertyTable.GetValue<IApp>(LanguageExplorerConstants.App);
 				if (window != null && app != null && window != app.ActiveMainWindow)
 				{
@@ -3378,7 +3383,7 @@ namespace LanguageExplorer
 
 		protected void OnChangeSorter()
 		{
-			using (new WaitCursor(PropertyTable.GetValue<Form>(FwUtils.window)))
+			using (new WaitCursor(PropertyTable.GetValue<Form>(FwUtilsConstants.window)))
 			{
 				Logger.WriteEvent($"Sorter changed: {Sorter?.ToString() ?? "(no sorter)"}");
 				SorterChangedByList?.Invoke(this, EventArgs.Empty);

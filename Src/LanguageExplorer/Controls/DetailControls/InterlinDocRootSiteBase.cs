@@ -993,7 +993,7 @@ namespace LanguageExplorer.Controls.DetailControls
 					if (analysis.HasWordform && RootStText.UniqueWordforms().Contains(analysis.Wordform))
 					{
 						m_wordformsToUpdate.Add(analysis.Wordform);
-						PropertyTable.GetValue<IFwMainWnd>(FwUtils.window).IdleQueue.Add(IdleQueuePriority.High, PostponedUpdateWordforms);
+						PropertyTable.GetValue<IFwMainWnd>(FwUtilsConstants.window).IdleQueue.Add(IdleQueuePriority.High, PostponedUpdateWordforms);
 					}
 					break;
 				case WfiWordformTags.kflidAnalyses:
@@ -1001,7 +1001,7 @@ namespace LanguageExplorer.Controls.DetailControls
 					if (RootStText.UniqueWordforms().Contains(wordform))
 					{
 						m_wordformsToUpdate.Add(wordform);
-						PropertyTable.GetValue<IFwMainWnd>(FwUtils.window).IdleQueue.Add(IdleQueuePriority.High, PostponedUpdateWordforms);
+						PropertyTable.GetValue<IFwMainWnd>(FwUtilsConstants.window).IdleQueue.Add(IdleQueuePriority.High, PostponedUpdateWordforms);
 					}
 					break;
 			}

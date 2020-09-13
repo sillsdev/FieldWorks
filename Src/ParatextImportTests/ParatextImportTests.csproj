@@ -11,6 +11,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>ParatextImport</RootNamespace>
     <AssemblyName>ParatextImportTests</AssemblyName>
+	<AppConfig>..\AppForTests.config</AppConfig>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SccProjectName>
@@ -234,7 +235,6 @@
     <Compile Include="VerseIteratorTests.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
     <EmbeddedResource Include="EncTest.map" />
   </ItemGroup>
   <ItemGroup>

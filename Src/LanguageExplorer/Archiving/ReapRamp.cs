@@ -10,7 +10,6 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
-using L10NSharp;
 using SIL.Archiving;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Resources;
@@ -29,7 +28,6 @@ namespace LanguageExplorer.Archiving
 	/// </summary>
 	internal sealed class ReapRamp
 	{
-		private static ILocalizationManager s_localizationMgr;
 		private DateTime m_earliest = DateTime.MaxValue;
 		private DateTime m_latest = DateTime.MinValue;
 
@@ -83,21 +81,8 @@ namespace LanguageExplorer.Archiving
 			}
 			AddMetsPairs(model, viProvider.ShortNumericAppVersion, cache);
 
-			const string localizationMgrId = "Archiving";
-
-			if (s_localizationMgr == null)
-			{
-				s_localizationMgr = LocalizationManager.Create(TranslationMemory.Tmx, uiLocale, localizationMgrId, viProvider.ProductName, viProvider.NumericAppVersion,
-					FwDirectoryFinder.GetCodeSubDirectory("ArchivingLocalizations"), Path.Combine(Application.CompanyName, appName), localizationDialogIcon,
-					"FLExDevteam@sil.org", "SIL.Archiving");
-			}
-			else
-			{
-				LocalizationManager.SetUILanguage(uiLocale, true);
-			}
-
 			// create the dialog
-			using (var dlg = new ArchivingDlg(model, localizationMgrId, dialogFont, new FormSettings()))
+			using (var dlg = new ArchivingDlg(model, "Palaso", dialogFont, new FormSettings()))
 			using (var reportingAdapter = new SILErrorReportingAdapter(dlg, propertyTable))
 			{
 				ErrorReport.SetErrorReporter(reportingAdapter);

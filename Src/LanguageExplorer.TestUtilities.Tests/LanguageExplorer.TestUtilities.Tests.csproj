@@ -12,6 +12,7 @@
     <AssemblyKeyContainerName>
     </AssemblyKeyContainerName>
     <AssemblyName>LanguageExplorer.TestUtilities.Tests</AssemblyName>
+	<AppConfig>..\AppForTests.config</AppConfig>
     <AssemblyOriginatorKeyFile>
     </AssemblyOriginatorKeyFile>
     <DefaultClientScript>JScript</DefaultClientScript>
@@ -182,7 +183,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
     <None Include="TestModel.xsd">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

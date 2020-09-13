@@ -94,7 +94,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			Publisher = flexComponentParameters.Publisher;
 			Subscriber = flexComponentParameters.Subscriber;
 
-			m_cache = PropertyTable.GetValue<LcmCache>(FwUtils.cache);
+			m_cache = PropertyTable.GetValue<LcmCache>(FwUtilsConstants.cache);
 			m_sda = m_cache.MainCacheAccessor;
 			_parserMenu.DropDownOpening += ParserMenu_DropDownOpening;
 			var parserMenuDictionary = _globalUiWidgetParameterObject.GlobalMenuItems[MainMenu.Parser];
@@ -272,7 +272,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 				{
 					return false;
 				}
-				var window = PropertyTable.GetValue<IIdleQueueProvider>(FwUtils.window);
+				var window = PropertyTable.GetValue<IIdleQueueProvider>(FwUtilsConstants.window);
 				Connection = new ParserConnection(m_cache, window.IdleQueue);
 			}
 			m_sda?.AddNotification(this);
@@ -484,7 +484,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			{
 				var md = m_cache.LangProject.MorphologicalDataOA;
 				dlg.SetDlgInfo(ParserUIStrings.ksParserParameters, md.ParserParameters);
-				if (dlg.ShowDialog(PropertyTable.GetValue<Form>(FwUtils.window)) != DialogResult.OK)
+				if (dlg.ShowDialog(PropertyTable.GetValue<Form>(FwUtilsConstants.window)) != DialogResult.OK)
 				{
 					return;
 				}
@@ -620,7 +620,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 					}
 				};
 				m_dialog.SetDlgInfo(_sharedEventHandlers, CurrentWordform, this);
-				var form = PropertyTable.GetValue<Form>(FwUtils.window);
+				var form = PropertyTable.GetValue<Form>(FwUtilsConstants.window);
 				m_dialog.Show(form);
 				// This allows Keyman to work correctly on initial typing.
 				// Marc Durdin suggested switching to a different window and back.

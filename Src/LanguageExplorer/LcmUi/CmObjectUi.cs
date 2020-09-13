@@ -227,7 +227,7 @@ namespace LanguageExplorer.LcmUi
 		/// </summary>
 		internal static CmObjectUi MakeLcmModelUiObject(IPropertyTable propertyTable, IPublisher publisher, int classId, int hvoOwner, int flid, int insertionPosition)
 		{
-			var cache = propertyTable.GetValue<LcmCache>(FwUtils.cache);
+			var cache = propertyTable.GetValue<LcmCache>(FwUtilsConstants.cache);
 			switch (classId)
 			{
 				default:
@@ -326,7 +326,7 @@ namespace LanguageExplorer.LcmUi
 			if (disposing)
 			{
 				// Dispose managed resources here.
-				PropertyTable?.GetValue<IFwMainWnd>(FwUtils.window).IdleQueue.Remove(TryToDeleteFile);
+				PropertyTable?.GetValue<IFwMainWnd>(FwUtilsConstants.window).IdleQueue.Remove(TryToDeleteFile);
 				(m_vc as IDisposable)?.Dispose();
 			}
 
@@ -403,7 +403,7 @@ namespace LanguageExplorer.LcmUi
 			}
 			else
 			{
-				var mainWindow = PropertyTable.GetValue<Form>(FwUtils.window);
+				var mainWindow = PropertyTable.GetValue<Form>(FwUtilsConstants.window);
 				using (new WaitCursor(mainWindow))
 				{
 					using (var dlg = new ConfirmDeleteObjectDlg(PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider)))
@@ -478,7 +478,7 @@ namespace LanguageExplorer.LcmUi
 				app.PictureHolder.ReleasePicture(file.AbsoluteInternalPath);
 			}
 			var fileToDelete = file.AbsoluteInternalPath;
-			propertyTable.GetValue<IFwMainWnd>(FwUtils.window).IdleQueue.Add(IdleQueuePriority.Low, TryToDeleteFile, fileToDelete);
+			propertyTable.GetValue<IFwMainWnd>(FwUtilsConstants.window).IdleQueue.Add(IdleQueuePriority.Low, TryToDeleteFile, fileToDelete);
 			return false;
 		}
 
@@ -519,7 +519,7 @@ namespace LanguageExplorer.LcmUi
 		/// </summary>
 		public void MergeUnderlyingObject(bool fLoseNoTextData)
 		{
-			var mainWindow = PropertyTable.GetValue<Form>(FwUtils.window);
+			var mainWindow = PropertyTable.GetValue<Form>(FwUtilsConstants.window);
 			using (new WaitCursor(mainWindow))
 			using (var dlg = new MergeObjectDlg(PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider)))
 			{
@@ -563,7 +563,7 @@ namespace LanguageExplorer.LcmUi
 		/// <summary />
 		public virtual void MoveUnderlyingObjectToCopyOfOwner()
 		{
-			MessageBox.Show(PropertyTable.GetValue<Form>(FwUtils.window), LcmUiStrings.ksCannotMoveObjectToCopy, LcmUiStrings.ksBUG);
+			MessageBox.Show(PropertyTable.GetValue<Form>(FwUtilsConstants.window), LcmUiStrings.ksCannotMoveObjectToCopy, LcmUiStrings.ksBUG);
 		}
 
 		#endregion Other methods

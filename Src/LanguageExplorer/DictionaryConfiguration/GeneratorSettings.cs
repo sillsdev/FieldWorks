@@ -9,10 +9,11 @@ using SIL.LCModel;
 namespace LanguageExplorer.DictionaryConfiguration
 {
 	/// <summary>
-	/// Settings used while generating XHTML output by ConfiguredXHTMLGenerator
+	/// Settings used while generating XHTML output by ConfiguredLcmLGenerator
 	/// </summary>
-	internal sealed class GeneratorSettings
+	public sealed class GeneratorSettings
 	{
+		internal ILcmContentGenerator ContentGenerator = new LcmXhtmlGenerator();
 		internal LcmCache Cache { get; }
 		internal IReadonlyPropertyTable ReadOnlyPropertyTable { get; }
 		internal bool UseRelativePaths { get; }
@@ -20,13 +21,14 @@ namespace LanguageExplorer.DictionaryConfiguration
 		internal string ExportPath { get; }
 		internal bool RightToLeft { get; }
 		internal bool IsWebExport { get; }
+		internal bool IsTemplate { get; }
 
 		internal GeneratorSettings(LcmCache cache, IPropertyTable propertyTable, bool relativePaths, bool copyFiles, string exportPath, bool rightToLeft = false, bool isWebExport = false)
 			: this(cache, propertyTable == null ? null : new ReadOnlyPropertyTable(propertyTable), relativePaths, copyFiles, exportPath, rightToLeft, isWebExport)
 		{
 		}
 
-		internal GeneratorSettings(LcmCache cache, IReadonlyPropertyTable readOnlyPropertyTable, bool relativePaths, bool copyFiles, string exportPath, bool rightToLeft = false, bool isWebExport = false)
+		internal GeneratorSettings(LcmCache cache, IReadonlyPropertyTable readOnlyPropertyTable, bool relativePaths, bool copyFiles, string exportPath, bool rightToLeft = false, bool isWebExport = false, bool isTemplate = false)
 		{
 			Guard.AgainstNull(cache, nameof(cache));
 			Guard.AgainstNull(readOnlyPropertyTable, nameof(readOnlyPropertyTable));
@@ -38,6 +40,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 			ExportPath = exportPath;
 			RightToLeft = rightToLeft;
 			IsWebExport = isWebExport;
+			IsTemplate = isTemplate;
 		}
 	}
 }

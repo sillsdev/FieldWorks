@@ -34,7 +34,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Interlinear
 		/// <returns></returns>
 		protected virtual IText CreateText()
 		{
-			return LoadTestText(Path.Combine(FwDirectoryFinder.SourceDirectory, "LanguageExplorerTests", "Areas", "TextsAndWords", "Interlinear", "InterlinearExporterTests.xml"), 1, new XmlDocument());
+			return LoadTestText(Path.Combine(FwDirectoryFinder.SourceDirectory, TestUtilities.LanguageExplorerTests, "Areas", "TextsAndWords", "Interlinear", "InterlinearExporterTests.xml"), 1, new XmlDocument());
 		}
 
 		public override void TestTearDown()

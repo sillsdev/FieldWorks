@@ -151,7 +151,7 @@ namespace LanguageExplorer.Controls.DetailControls.Slices
 		public override void Install(DataTree parentDataTree)
 		{
 			base.Install(parentDataTree);
-			RuleFormulaControl.Initialize(PropertyTable.GetValue<LcmCache>(FwUtils.cache), MyCmObject, -1, LanguageExplorerControls.ksRuleEnvChooserName, ContainingDataTree.PersistenceProvder, null, null);
+			RuleFormulaControl.Initialize(PropertyTable.GetValue<LcmCache>(FwUtilsConstants.cache), MyCmObject, -1, LanguageExplorerControls.ksRuleEnvChooserName, ContainingDataTree.PersistenceProvder, null, null);
 			RuleFormulaControl.InsertionControl.Hide();
 			RuleFormulaControl.InsertionControl.SizeChanged += InsertionControl_SizeChanged;
 		}

@@ -114,7 +114,7 @@ namespace LanguageExplorer.Controls
 		/// <summary>
 		/// LCM cache.
 		/// </summary>
-		private LcmCache Cache => m_cache ?? (m_cache = PropertyTable.GetValue<LcmCache>(FwUtils.cache));
+		private LcmCache Cache => m_cache ?? (m_cache = PropertyTable.GetValue<LcmCache>(FwUtilsConstants.cache));
 
 		#endregion // Properties
 

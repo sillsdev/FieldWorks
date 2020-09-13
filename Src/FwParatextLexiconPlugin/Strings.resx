@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -118,7 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="ksConflictingSaveText" xml:space="preserve">
-    <value>ParaTExt cannot save changes to the lexicon, because they conflict with changes made by another user or application. The conflicting changes will be reverted.</value>
+    <value>Paratext cannot save changes to the lexicon, because they conflict with changes made by another user or application. The conflicting changes will be reverted.</value>
   </data>
   <data name="ksConflictingSaveCaption" xml:space="preserve">
     <value>Cannot Save Lexicon</value>
@@ -160,19 +160,19 @@
     <value>Cannot Restore Linked Files</value>
   </data>
   <data name="ksCannotRestoreLinkedFilesToOriginalLocationText" xml:space="preserve">
-    <value>ParaTExt cannot restore the linked files to their original location. If you choose to restore the linked files, they will be placed inside the project folder. Do you wish to restore the linked files anyway? </value>
+    <value>Paratext cannot restore the linked files to their original location. If you choose to restore the linked files, they will be placed inside the project folder. Do you wish to restore the linked files anyway? </value>
   </data>
   <data name="ksRestoreLinkedFilesInProjectFolderCaption" xml:space="preserve">
     <value>Linked Files Folder</value>
   </data>
   <data name="ksRestoreLinkedFilesInProjectFolderText" xml:space="preserve">
-    <value>The Linked Files folder was not previously stored in the project folder. Would you like ParaTExt to restore the linked files within the project folder?</value>
+    <value>The Linked Files folder was not previously stored in the project folder. Would you like Paratext to restore the linked files within the project folder?</value>
   </data>
   <data name="ksErrorCaption" xml:space="preserve">
     <value>Error</value>
   </data>
   <data name="ksProjectOpen" xml:space="preserve">
-    <value>The selected project is currently open in FieldWorks Language Explorer. The project must be closed in order to associate it with a ParaTExt project.</value>
+    <value>The selected project is currently open in FieldWorks Language Explorer. The project must be closed in order to associate it with a Paratext project.</value>
   </data>
   <data name="ksOther" xml:space="preserve">
     <value>Other</value>

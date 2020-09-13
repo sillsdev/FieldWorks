@@ -65,7 +65,7 @@ namespace LanguageExplorer.Controls.DetailControls.Slices
 		{
 			var ctrl = new ReversalIndexEntrySliceView(MyCmObject.Hvo)
 			{
-				Cache = PropertyTable.GetValue<LcmCache>(FwUtils.cache)
+				Cache = PropertyTable.GetValue<LcmCache>(FwUtilsConstants.cache)
 			};
 			ctrl.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 			Control = ctrl;

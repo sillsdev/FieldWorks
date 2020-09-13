@@ -180,7 +180,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// </summary>
 		protected override void AddProperties(StringBuilder bldr)
 		{
-			bldr.AppendFormat("{0}={1}", kProjectUri, Database);
+			bldr.AppendFormat("{0}={1}&", kProjectUri, Database);
 			base.AddProperties(bldr);
 		}
 

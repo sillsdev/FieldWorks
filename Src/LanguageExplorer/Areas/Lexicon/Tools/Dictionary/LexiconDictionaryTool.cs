@@ -252,7 +252,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Dictionary
 				ToolStripMenuItem currentToolStripMenuItem;
 
 				// 1. <menu list="Configurations" inline="true" emptyAllowed="true" behavior="singlePropertyAtomicValue" property="DictionaryPublicationLayout"/>
-				var allConfigurations = DictionaryConfigurationUtils.GatherBuiltInAndUserConfigurations(_propertyTable.GetValue<LcmCache>(FwUtils.cache), _configureObjectName);
+				var allConfigurations = DictionaryConfigurationUtils.GatherBuiltInAndUserConfigurations(_propertyTable.GetValue<LcmCache>(FwUtilsConstants.cache), _configureObjectName);
 				DocView.SplitConfigurationsByPublication(allConfigurations, DocView.GetCurrentPublication(), out var hasPub, out var doesNotHavePub);
 				// Add menu items that display the configuration name and send PropChanges with
 				// the configuration path.

@@ -1,4 +1,4 @@
-# Copyright (c) 2007-2013 SIL International
+# Copyright (c) 2007-2020 SIL International
 # This software is licensed under the LGPL, version 2.1 or later
 # (http://www.gnu.org/licenses/lgpl-2.1.html)
 #
@@ -6,6 +6,7 @@
 #
 #	MarkS - 2007-08-08
 
+BUILD_TOOL = msbuild
 ICU_VERSION = 54
 BUILD_ROOT = $(shell pwd)
 include $(BUILD_ROOT)/Bld/_names.mak
@@ -63,7 +64,7 @@ clean: \
 	manpage-clean \
 
 idl: idl-do
-# extracting the GUIDs is now done with a xbuild target, please run 'xbuild /t:generateLinuxIdlFiles'
+# extracting the GUIDs is now done with a msbuild target, please run 'msbuild /t:generateLinuxIdlFiles'
 
 idl-do:
 	$(MAKE) -C$(SRC)/Common/ViewsInterfaces -f IDLMakefile all
@@ -124,7 +125,7 @@ install-tree: fieldworks-flex.1.gz unicodechareditor.1.gz install-tree-fdo
 	install Bin/WriteKey.exe $(DESTDIR)/usr/lib/fieldworks
 	install Lib/linux/fieldworks-flex $(DESTDIR)/usr/bin
 	install Lib/linux/unicodechareditor $(DESTDIR)/usr/bin
-	install Lib/linux/{cpol-action,run-app,extract-userws.xsl} $(DESTDIR)/usr/lib/fieldworks
+	install Lib/linux/{cpol-action,run-app,extract-userws.xsl,launch-xchm} $(DESTDIR)/usr/lib/fieldworks
 	install -m 644 environ{,-xulrunner} $(DESTDIR)/usr/lib/fieldworks
 	install -m 644 Lib/linux/fieldworks.sh $(DESTDIR)/etc/profile.d
 	# Install content and plug-ins
@@ -144,9 +145,14 @@ install-tree: fieldworks-flex.1.gz unicodechareditor.1.gz install-tree-fdo
 	rm -f $(DESTDIR)/usr/lib/fieldworks/libTECkit{,_Compiler}*.so
 	rm -Rf $(DESTDIR)/usr/lib/share/fieldworks/Icu54/tools
 	rm -f $(DESTDIR)/usr/lib/share/fieldworks/Icu54/Keyboards
+	# Windows dll and exe files.
+	rm -f $(DESTDIR)/usr/lib/fieldworks/{aspell-15,iconv,libglib-2.0-0,libglib-2.0-0-vs8,libgmodule-2.0-0,libgmodule-2.0-0-vs8,TextFormStorage,unicows,wrtXML,xample32,xample64,XceedZip,xmlparse_u}.dll
+	rm -f $(DESTDIR)/usr/lib/fieldworks/{SFconv,TxtConv,vs_piaredist,ZEdit}.exe
 	# Remove localization data that came from "DistFiles/Language Explorer", which is handled separately by l10n-install
 	rm -f $(DESTDIR)/usr/share/fieldworks/Language\ Explorer/Configuration/strings-*.xml
-	# Except we still want strings-en.xml :-)
+	# Except we still want English :-) (this also seems like a sensible place to install English .xlf files for common libraries)
+	mkdir -p "$(DESTDIR)/usr/share/fieldworks/CommonLocalizations"
+	install -m 644 DistFiles/CommonLocalizations/*.en.xlf $(DESTDIR)/usr/share/fieldworks/CommonLocalizations
 	install -m 644 DistFiles/Language\ Explorer/Configuration/strings-en.xml $(DESTDIR)/usr/share/fieldworks/Language\ Explorer/Configuration
 
 install-menuentries:
@@ -352,43 +358,57 @@ Unit++-clean: unit++-clean
 ComponentsMap: COM-all COM-install libFwKernel libLanguage libViews libCellar DbAccess ComponentsMap-nodep
 
 ComponentsMap-nodep:
-# the info gets now added by the xbuild/msbuild process.
+# the info gets now added by the msbuild process.
 
 ComponentsMap-clean:
 	$(RM) $(OUT_DIR)/components.map
 
-# As of 2017-03-27, localize is more likely to crash running on mono 3 than to actually have a real localization problem. So try it a few times so that a random crash doesn't fail a packaging job that has been running for over an hour.
-Fw-build-package:
-	. environ && \
-	cd $(BUILD_ROOT)/Build \
-		&& xbuild /t:refreshTargets \
-		&& xbuild '/t:remakefw' /property:config=release /property:Platform=$(PLATFORM) /property:packaging=yes \
-		&& ./multitry xbuild '/t:localize-binaries' /property:config=release /property:packaging=yes
+check-have-build-dependencies:
+	$(BUILD_ROOT)/Build/Agent/install-deps --verify
 
-Fw-build-package-fdo:
+# As of 2017-03-27, localize is more likely to crash running on mono 3 than to actually have a real localization problem. So try it a few times so that a random crash doesn't fail a packaging job that has been running for over an hour.
+# Make the lcm artifacts dir so it is a valid path for later processing appending things like '/..'.
+Fw-build-package: check-have-build-dependencies
+	export LcmLocalArtifactsDir="$(BUILD_ROOT)/../liblcm/artifacts/Release" \
+		&& mkdir -p $$LcmLocalArtifactsDir \
+		&& . environ \
+		&& cd $(BUILD_ROOT)/Build \
+		&& $(BUILD_TOOL) /t:refreshTargets \
+		&& $(BUILD_TOOL) '/t:remakefw' /property:config=release /property:Platform=$(PLATFORM) /property:packaging=yes \
+		&& ./multitry $(BUILD_TOOL) '/t:localize-binaries' /property:config=release /property:packaging=yes
+
+Fw-build-package-fdo: check-have-build-dependencies
 	cd $(BUILD_ROOT)/Build \
-		&& xbuild /t:refreshTargets \
-		&& xbuild '/t:build4package-fdo' /property:config=release /property:packaging=yes
+		&& $(BUILD_TOOL) /t:refreshTargets \
+		&& $(BUILD_TOOL) '/t:build4package-fdo' /property:config=release /property:packaging=yes
+
+RestoreNuGetPackages:
+	. environ \
+		&& cd Build \
+		&& $(BUILD_TOOL) /t:RestoreNuGetPackages /property:config=release \
+			/property:packaging=yes
 
 # Begin localization section
 
-localize-source:
+localize-source: RestoreNuGetPackages
 	. environ && \
-	(cd Build && xbuild /t:localize-source /property:config=release /property:packaging=yes)
+	(cd Build && $(BUILD_TOOL) /t:localize-source /property:config=release /property:packaging=yes)
 	# Remove symbolic links from Output - we don't want those in the source package
 	find Output -type l -delete
 	# Copy localization files to Localizations folder so that they survive a 'clean'
 	cp -a Output Localizations/
 
-LOCALIZATIONS := $(shell ls $(BUILD_ROOT)/Localizations/messages.*.po | sed 's/.*messages\.\(.*\)\.po/\1/')
+LOCALIZATIONS := $(shell ls $(BUILD_ROOT)/Localizations/l10ns/*/messages.*.po | sed 's/.*messages\.\(.*\)\.po/\1/')
 
 l10n-all:
-	(cd $(BUILD_ROOT)/Build && xbuild /t:localize-binaries)
+	(cd $(BUILD_ROOT)/Build && $(BUILD_TOOL) /t:localize-binaries)
 
 l10n-clean:
 	# We don't want to remove strings-en.xml
 	for LOCALE in $(LOCALIZATIONS); do \
-		rm -rf "$(BUILD_ROOT)/Output/{Debug,Release}/$$LOCALE" "$(BUILD_ROOT)/DistFiles/Language Explorer/Configuration/strings-$$LOCALE.xml" ;\
+		rm -rf "$(BUILD_ROOT)/Output/{Debug,Release}/$$LOCALE" \
+			"$(BUILD_ROOT)/DistFiles/CommonLocalizations/*.$$LOCALE.xlf" \
+			"$(BUILD_ROOT)/DistFiles/Language Explorer/Configuration/strings-$$LOCALE.xml" ;\
 	done
 
 l10n-install:
@@ -398,6 +418,7 @@ l10n-install:
 		DESTINATION=$(DESTDIR)/usr/lib/fieldworks-l10n-$${LOCALE,,} ;\
 		install -d $$DESTINATION ;\
 		install -m 644 Output/Release/$$LOCALE/*.dll $$DESTINATION/ ;\
+		install -m 644 "$(BUILD_ROOT)/DistFiles/CommonLocalizations/*.$$LOCALE.xlf" $$DESTINATION/ ;\
 		install -m 644 "$(BUILD_ROOT)/DistFiles/Language Explorer/Configuration/strings-$$LOCALE.xml" $$DESTINATION/ ;\
 		ln -sf ../fieldworks-l10n-$${LOCALE,,} $(DESTDIR)/usr/lib/fieldworks/$$LOCALE ;\
 		ln -sf ../../../../lib/fieldworks-l10n-$${LOCALE,,}/strings-$$LOCALE.xml "$(DESTDIR)/usr/share/fieldworks/Language Explorer/Configuration/strings-$$LOCALE.xml" ;\

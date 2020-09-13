@@ -3,7 +3,6 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using LanguageExplorer;
-using LanguageExplorer.Impls;
 using LanguageExplorer.TestUtilities;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwUtils;
@@ -26,7 +25,7 @@ namespace LanguageExplorerTests.Impls
 				using (var statusBar = StatusBarPanelServices.CreateStatusBarFor_TESTS())
 				{
 					var recordListRepository = flexComponentParameters.PropertyTable.GetValue<IRecordListRepository>(LanguageExplorerConstants.RecordListRepository);
-					flexComponentParameters.PropertyTable.SetProperty(FwUtils.window, dummyWindow);
+					flexComponentParameters.PropertyTable.SetProperty(FwUtilsConstants.window, dummyWindow);
 
 					// Test 1. Make sure a bogus record list isn't in the repository.
 					Assert.IsNull(recordListRepository.GetRecordList("bogusRecordListId"));

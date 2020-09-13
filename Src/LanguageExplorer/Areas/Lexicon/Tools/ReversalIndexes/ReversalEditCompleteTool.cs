@@ -344,7 +344,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 						m_btnText = LanguageExplorerResources.ks_MoveEntry,
 						m_title = LanguageExplorerResources.ksMoveRevEntry
 					};
-					var cache = _propertyTable.GetValue<LcmCache>(FwUtils.cache);
+					var cache = _propertyTable.GetValue<LcmCache>(FwUtilsConstants.cache);
 					dlg.SetDlgInfo(cache, wp);
 					if (dlg.ShowDialog() == DialogResult.OK)
 					{

@@ -10,6 +10,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>FieldWorks.TestUtilities.Tests</RootNamespace>
     <AssemblyName>FieldWorks.TestUtilities.Tests</AssemblyName>
+	<AppConfig>..\AppForTests.config</AppConfig>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>false</Deterministic>
@@ -110,9 +111,6 @@
     </Compile>
     <Compile Include="FwApplicationSettingsTests.cs" />
     <Compile Include="TestFwStylesheetTests.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />

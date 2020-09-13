@@ -54,7 +54,7 @@ namespace LanguageExplorer.SendReceive
 			StopParser(publisher);
 			//Give all forms the opportunity to save any uncommitted data
 			//(important for analysis sandboxes)
-			var activeForm = propertyTable.GetValue<Form>(FwUtils.window);
+			var activeForm = propertyTable.GetValue<Form>(FwUtilsConstants.window);
 			activeForm?.ValidateChildren(ValidationConstraints.Enabled);
 			//Commit all the data in the cache and save to disk
 			ProjectLockingService.UnlockCurrentProject(cache);
@@ -76,7 +76,7 @@ namespace LanguageExplorer.SendReceive
 		{
 			if (!string.IsNullOrEmpty(e.JumpUrl))
 			{
-				publisher.Publish(new PublisherParameterObject(FwUtils.HandleLocalHotlink, new LocalLinkArgs { Link = e.JumpUrl }));
+				publisher.Publish(new PublisherParameterObject(FwUtilsConstants.HandleLocalHotlink, new LocalLinkArgs { Link = e.JumpUrl }));
 			}
 		}
 

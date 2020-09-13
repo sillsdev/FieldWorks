@@ -360,8 +360,7 @@ namespace LanguageExplorer
 			}
 			foreach (var obj in Publication.ReferringObjects)
 			{
-				var entry = obj as ILexEntry;
-				if (entry == null || entry.DoNotPublishInRC.Contains(Publication))
+				if (!(obj is ILexEntry entry) || entry.DoNotPublishInRC.Contains(Publication))
 				{
 					m_excludedItems.Add(obj.Hvo);
 					switch (obj)
@@ -586,7 +585,7 @@ namespace LanguageExplorer
 
 		/// <summary>
 		/// Return whether this object is explicitly excluded by the publication filtering.
-		/// This is needed by ConfiguredXHTMLGenerator, which uses reflection to obtain data internally.
+		/// This is needed by ConfiguredLcmGenerator, which uses reflection to obtain data internally.
 		/// </summary>
 		internal bool IsExcludedObject(ICmObject item)
 		{

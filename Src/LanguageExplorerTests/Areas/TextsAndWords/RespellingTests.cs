@@ -60,7 +60,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords
 					Cache.ServiceLocator.GetInstance<ISilDataAccessManaged>().RemoveNotification(interestingTextlist);
 					_flexComponentParameters.PropertyTable.RemoveProperty(LanguageExplorerConstants.InterestingTexts);
 				}
-				_flexComponentParameters.PropertyTable.RemoveProperty(FwUtils.cache);
+				_flexComponentParameters.PropertyTable.RemoveProperty(FwUtilsConstants.cache);
 				TestSetupServices.DisposeTrash(_flexComponentParameters);
 				_flexComponentParameters = null;
 			}

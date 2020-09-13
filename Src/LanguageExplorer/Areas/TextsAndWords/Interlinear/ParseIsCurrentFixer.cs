@@ -47,7 +47,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		/// </summary>
 		public void Process()
 		{
-			var cache = m_dlg.PropertyTable.GetValue<LcmCache>(FwUtils.cache);
+			var cache = m_dlg.PropertyTable.GetValue<LcmCache>(FwUtilsConstants.cache);
 			UndoableUnitOfWorkHelper.Do(ITextStrings.ksUndoMergeWordforms, ITextStrings.ksRedoMergeWordforms, cache.ActionHandlerAccessor, () => ClearFlags(cache, m_dlg.ProgressBar));
 
 		}

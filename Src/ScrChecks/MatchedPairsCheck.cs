@@ -419,10 +419,10 @@ namespace SILUBS.ScriptureChecks
 		public StyleCategorizer(string customPoeticStyles, string customIntroOutlineStyles)
 		{
 			m_poeticStyles = new List<string>(
-				customPoeticStyles.Split(FwUtils.kStyleNamesDelimiter));
+				customPoeticStyles.Split(FwUtilsConstants.kStyleNamesDelimiter));
 
 			m_introOutlineStyles = new List<string>(
-				customIntroOutlineStyles.Split(FwUtils.kStyleNamesDelimiter));
+				customIntroOutlineStyles.Split(FwUtilsConstants.kStyleNamesDelimiter));
 		}
 
 		/// ------------------------------------------------------------------------------------

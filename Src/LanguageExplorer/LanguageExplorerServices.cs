@@ -62,7 +62,7 @@ namespace LanguageExplorer
 			rootSite.RootBox.Selection.GetWordLimitsOfSelection(out var ichMin, out var ichLim, out var hvo, out var tag, out var ws, out _);
 			if (ichLim > ichMin)
 			{
-				LexEntryUi.DisplayOrCreateEntry(cache, hvo, tag, ws, ichMin, ichLim, flexComponentParameters.PropertyTable.GetValue<IWin32Window>(FwUtils.window), flexComponentParameters, flexComponentParameters.PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider), "UserHelpFile");
+				LexEntryUi.DisplayOrCreateEntry(cache, hvo, tag, ws, ichMin, ichLim, flexComponentParameters.PropertyTable.GetValue<IWin32Window>(FwUtilsConstants.window), flexComponentParameters, flexComponentParameters.PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider), FwUtilsConstants.UserHelpFile);
 			}
 		}
 
@@ -92,7 +92,7 @@ namespace LanguageExplorer
 			{
 				dlg.InitializeFlexComponent(flexComponentParameters);
 				dlg.SetDlgInfo(lcmCache, tssForm);
-				if (dlg.ShowDialog(flexComponentParameters.PropertyTable.GetValue<Form>(FwUtils.window)) == DialogResult.OK)
+				if (dlg.ShowDialog(flexComponentParameters.PropertyTable.GetValue<Form>(FwUtilsConstants.window)) == DialogResult.OK)
 				{
 					// is there anything special we want to do, such as jump to the new entry?
 				}

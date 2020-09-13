@@ -181,17 +181,6 @@
 	  <Output TaskParameter="Value" PropertyName="computername"/>
 	</ComputerName>
 
-	<CreateProperty Condition="'$(OS)'!='Windows_NT'" Value="false">
-	  <Output TaskParameter="Value" PropertyName="haveTEAdapterLibrary"/>
-	</CreateProperty>
-	<CreateProperty Condition="'$(OS)'=='Windows_NT'" Value="Exists('$(dir-fwdistfiles)\TeUIAdapters.dll')">
-	  <Output TaskParameter="Value" PropertyName="haveTEAdapterLibrary"/>
-	</CreateProperty>
-
-	<PathCombine BasePath="$(dir-fwoutput)" SubPath="WWData">
-	  <Output TaskParameter="Value" PropertyName="dir-wwoutput"/>
-	</PathCombine>
-
 	<CreateProperty Condition="'$(OS)'=='Windows_NT'" Value="$(dir-SampleData)">
 	  <Output TaskParameter="Value" PropertyName="dir-safecopy"/>
 	</CreateProperty>

@@ -8,7 +8,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
-using LanguageExplorer.Areas;
 using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
@@ -53,7 +52,7 @@ namespace LanguageExplorer
 			_cache = cache;
 			_propertyTable.SetProperty(LanguageExplorerConstants.LinkHandler, this);
 			_subscriber.Subscribe(FollowLink, FollowLink_Handler);
-			_subscriber.Subscribe(FwUtils.HandleLocalHotlink, HandleLocalHotlink_Handler);
+			_subscriber.Subscribe(FwUtilsConstants.HandleLocalHotlink, HandleLocalHotlink_Handler);
 			// CmdHistoryBack and CmdHistoryForward are on the standard tool strip
 			var standardToolBarDictionary = globalUiWidgetParameterObject.GlobalToolBarItems[ToolBar.Standard];
 			standardToolBarDictionary.Add(Command.CmdHistoryBack, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(HistoryBack_Clicked, ()=> CanCmdHistoryBack));
@@ -267,7 +266,7 @@ namespace LanguageExplorer
 		{
 			publisher.Publish(new List<PublisherParameterObject>
 			{
-				new PublisherParameterObject(FwUtils.AboutToFollowLink),
+				new PublisherParameterObject(FwUtilsConstants.AboutToFollowLink),
 				new PublisherParameterObject(FollowLink, linkArgsForJump)
 			});
 		}
@@ -341,7 +340,7 @@ namespace LanguageExplorer
 			{
 				_propertyTable.RemoveProperty(LanguageExplorerConstants.LinkHandler);
 				_subscriber.Unsubscribe(FollowLink, FollowLink_Handler);
-				_subscriber.Unsubscribe(FwUtils.HandleLocalHotlink, HandleLocalHotlink_Handler);
+				_subscriber.Unsubscribe(FwUtilsConstants.HandleLocalHotlink, HandleLocalHotlink_Handler);
 				_backStack?.Clear();
 				_forwardStack?.Clear();
 			}

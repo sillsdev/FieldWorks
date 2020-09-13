@@ -152,27 +152,27 @@ namespace LanguageExplorer.Areas
 
 		private void Insert_Slash_Clicked(object sender, EventArgs e)
 		{
-			UowHelpers.UndoExtension(AreaResources.ksInsertEnvironmentSlash, PropertyTable.GetValue<LcmCache>(FwUtils.cache).ActionHandlerAccessor, () => SenderTagAsIPhEnvSliceCommon(sender).InsertSlash());
+			UowHelpers.UndoExtension(AreaResources.ksInsertEnvironmentSlash, PropertyTable.GetValue<LcmCache>(FwUtilsConstants.cache).ActionHandlerAccessor, () => SenderTagAsIPhEnvSliceCommon(sender).InsertSlash());
 		}
 
 		private void Insert_Underscore_Clicked(object sender, EventArgs e)
 		{
-			UowHelpers.UndoExtension(AreaResources.ksInsertEnvironmentBar, PropertyTable.GetValue<LcmCache>(FwUtils.cache).ActionHandlerAccessor, () => SenderTagAsIPhEnvSliceCommon(sender).InsertEnvironmentBar());
+			UowHelpers.UndoExtension(AreaResources.ksInsertEnvironmentBar, PropertyTable.GetValue<LcmCache>(FwUtilsConstants.cache).ActionHandlerAccessor, () => SenderTagAsIPhEnvSliceCommon(sender).InsertEnvironmentBar());
 		}
 
 		private void Insert_NaturalClass_Clicked(object sender, EventArgs e)
 		{
-			UowHelpers.UndoExtension(AreaResources.ksInsertNaturalClass, PropertyTable.GetValue<LcmCache>(FwUtils.cache).ActionHandlerAccessor, () => SenderTagAsIPhEnvSliceCommon(sender).InsertNaturalClass());
+			UowHelpers.UndoExtension(AreaResources.ksInsertNaturalClass, PropertyTable.GetValue<LcmCache>(FwUtilsConstants.cache).ActionHandlerAccessor, () => SenderTagAsIPhEnvSliceCommon(sender).InsertNaturalClass());
 		}
 
 		private void Insert_OptionalItem_Clicked(object sender, EventArgs e)
 		{
-			UowHelpers.UndoExtension(AreaResources.ksInsertOptionalItem, PropertyTable.GetValue<LcmCache>(FwUtils.cache).ActionHandlerAccessor, () => SenderTagAsIPhEnvSliceCommon(sender).InsertOptionalItem());
+			UowHelpers.UndoExtension(AreaResources.ksInsertOptionalItem, PropertyTable.GetValue<LcmCache>(FwUtilsConstants.cache).ActionHandlerAccessor, () => SenderTagAsIPhEnvSliceCommon(sender).InsertOptionalItem());
 		}
 
 		private void Insert_HashMark_Clicked(object sender, EventArgs e)
 		{
-			UowHelpers.UndoExtension(AreaResources.ksInsertWordBoundary, PropertyTable.GetValue<LcmCache>(FwUtils.cache).ActionHandlerAccessor, () => SenderTagAsIPhEnvSliceCommon(sender).InsertHashMark());
+			UowHelpers.UndoExtension(AreaResources.ksInsertWordBoundary, PropertyTable.GetValue<LcmCache>(FwUtilsConstants.cache).ActionHandlerAccessor, () => SenderTagAsIPhEnvSliceCommon(sender).InsertHashMark());
 		}
 
 		private static void ShowEnvironmentError_Clicked(object sender, EventArgs e)
@@ -318,7 +318,7 @@ namespace LanguageExplorer.Areas
 			{
 				var propertyTable = _majorFlexComponentParameters.FlexComponentParameters.PropertyTable;
 				dlg.SetDlginfo(_majorFlexComponentParameters.LcmCache.LanguageProject.PartsOfSpeechOA, propertyTable, true, selectedCategoryOwner);
-				dlg.ShowDialog(propertyTable.GetValue<Form>(FwUtils.window));
+				dlg.ShowDialog(propertyTable.GetValue<Form>(FwUtilsConstants.window));
 				newPossibility = dlg.SelectedPOS;
 			}
 			if (newPossibility != null)

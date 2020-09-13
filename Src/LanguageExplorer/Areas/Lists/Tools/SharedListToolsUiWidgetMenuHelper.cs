@@ -223,7 +223,7 @@ namespace LanguageExplorer.Areas.Lists.Tools
 				var selectedCategoryOwner = _recordList.CurrentObject?.Owner;
 				var propertyTable = _majorFlexComponentParameters.FlexComponentParameters.PropertyTable;
 				dlg.SetDlginfo(_list, propertyTable, true, selectedCategoryOwner as IPartOfSpeech);
-				dlg.ShowDialog(propertyTable.GetValue<Form>(FwUtils.window));
+				dlg.ShowDialog(propertyTable.GetValue<Form>(FwUtilsConstants.window));
 			}
 		}
 

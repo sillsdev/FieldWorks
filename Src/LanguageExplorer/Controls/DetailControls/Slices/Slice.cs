@@ -1264,7 +1264,7 @@ namespace LanguageExplorer.Controls.DetailControls.Slices
 		/// and the caller often has the info already, especially in loops expanding many children.</remarks>
 		public virtual void Expand(int iSlice)
 		{
-			using (new DataTreeLayoutSuspensionHelper(PropertyTable.GetValue<IFwMainWnd>(FwUtils.window), ContainingDataTree))
+			using (new DataTreeLayoutSuspensionHelper(PropertyTable.GetValue<IFwMainWnd>(FwUtilsConstants.window), ContainingDataTree))
 			{
 				try
 				{
@@ -1316,7 +1316,7 @@ namespace LanguageExplorer.Controls.DetailControls.Slices
 			{
 				iNextSliceNotChild++;
 			}
-			using (new DataTreeLayoutSuspensionHelper(PropertyTable.GetValue<IFwMainWnd>(FwUtils.window), ContainingDataTree))
+			using (new DataTreeLayoutSuspensionHelper(PropertyTable.GetValue<IFwMainWnd>(FwUtilsConstants.window), ContainingDataTree))
 			{
 				var count = iNextSliceNotChild - iSlice - 1;
 				while (count > 0)

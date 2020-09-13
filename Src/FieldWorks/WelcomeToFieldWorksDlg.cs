@@ -57,7 +57,7 @@ namespace SIL.FieldWorks
 			m_helpTopicProvider = helpTopicProvider;
 			_helpProvider = new HelpProvider
 			{
-				HelpNamespace = FwDirectoryFinder.CodeDirectory + m_helpTopicProvider.GetHelpString("UserHelpFile")
+				HelpNamespace = FwDirectoryFinder.CodeDirectory + m_helpTopicProvider.GetHelpString(FwUtilsConstants.UserHelpFile)
 			};
 			_helpProvider.SetHelpKeyword(this, m_helpTopicProvider.GetHelpString(_helpTopic));
 			_helpProvider.SetHelpNavigator(this, HelpNavigator.Topic);

@@ -686,7 +686,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		{
 			if (GetSelectedWordPos(RootBox.Selection, out var hvo, out var tag, out var ws, out var ichMin, out var ichLim))
 			{
-				LexEntryUi.DisplayOrCreateEntry(m_cache, hvo, tag, ws, ichMin, ichLim, this, new FlexComponentParameters(PropertyTable, Publisher, Subscriber), PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider), "UserHelpFile");
+				LexEntryUi.DisplayOrCreateEntry(m_cache, hvo, tag, ws, ichMin, ichLim, this, new FlexComponentParameters(PropertyTable, Publisher, Subscriber), PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider), FwUtilsConstants.UserHelpFile);
 			}
 		}
 

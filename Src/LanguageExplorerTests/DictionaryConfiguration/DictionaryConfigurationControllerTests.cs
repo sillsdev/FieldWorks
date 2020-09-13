@@ -9,7 +9,6 @@ using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using LanguageExplorer;
-using LanguageExplorer.Areas;
 using LanguageExplorer.Controls.XMLViews;
 using LanguageExplorer.DictionaryConfiguration;
 using LanguageExplorer.TestUtilities;
@@ -753,7 +752,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			using (var testView = new TestConfigurableDictionaryView())
 			{
 				_propertyTable.SetProperty(LanguageExplorerConstants.ToolChoice, LanguageExplorerConstants.ReversalEditCompleteMachineName);
-				var projectPath = Path.Combine(LcmFileHelper.GetConfigSettingsDir(Cache.ProjectId.ProjectFolder), "Test", "test" + ReversalIndexServices.ConfigFileExtension);
+				var projectPath = Path.Combine(LcmFileHelper.GetConfigSettingsDir(Cache.ProjectId.ProjectFolder), "Test", "test" + LanguageExplorerConstants.DictionaryConfigurationFileExtension);
 				//SUT
 				var controller = new DictionaryConfigurationController {View = testView, _model = _model };
 				controller.InitializeFlexComponent(_flexComponentParameters);
@@ -765,7 +764,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		[Test]
 		public void GetProjectConfigLocationForPath_DefaultLocResultsInProjectPath()
 		{
-			var defaultPath = string.Concat(Path.Combine(Path.Combine(FwDirectoryFinder.DefaultConfigurations, "Test"), "test"), ReversalIndexServices.ConfigFileExtension);
+			var defaultPath = string.Concat(Path.Combine(Path.Combine(FwDirectoryFinder.DefaultConfigurations, "Test"), "test"), LanguageExplorerConstants.DictionaryConfigurationFileExtension);
 			using (var testView = new TestConfigurableDictionaryView())
 			{
 				_propertyTable.SetProperty(LanguageExplorerConstants.ToolChoice, LanguageExplorerConstants.ReversalEditCompleteMachineName);
@@ -775,7 +774,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 				Assert.IsFalse(defaultPath.StartsWith(LcmFileHelper.GetConfigSettingsDir(Cache.ProjectId.ProjectFolder)));
 				var result = controller.GetProjectConfigLocationForPath(defaultPath);
 				Assert.IsTrue(result.StartsWith(LcmFileHelper.GetConfigSettingsDir(Cache.ProjectId.ProjectFolder)));
-				Assert.IsTrue(result.EndsWith(string.Concat(Path.Combine("Test", "test"), ReversalIndexServices.ConfigFileExtension)));
+				Assert.IsTrue(result.EndsWith(string.Concat(Path.Combine("Test", "test"), LanguageExplorerConstants.DictionaryConfigurationFileExtension)));
 			}
 		}
 
@@ -1387,7 +1386,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		{
 			using (var testView = new TestConfigurableDictionaryView())
 			{
-				FileUtils.EnsureDirectoryExists(DictionaryConfigurationServices.GetProjectConfigurationDirectory(Cache, "Dictionary"));
+				SIL.LCModel.Utils.FileUtils.EnsureDirectoryExists(DictionaryConfigurationServices.GetProjectConfigurationDirectory(Cache, "Dictionary"));
 				var controller = new DictionaryConfigurationController
 				{
 					_model = new DictionaryConfigurationModel
@@ -1396,7 +1395,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 					},
 					View = testView
 				};
-				_propertyTable.SetProperty(AreaServices.ToolChoice, AreaServices.LexiconDictionaryMachineName);
+				_propertyTable.SetProperty(LanguageExplorerConstants.ToolChoice, LanguageExplorerConstants.LexiconDictionaryMachineName);
 				controller._dictionaryConfigurations = new List<DictionaryConfigurationModel> { controller._model };
 				controller.InitializeFlexComponent(_flexComponentParameters);
 				// SUT

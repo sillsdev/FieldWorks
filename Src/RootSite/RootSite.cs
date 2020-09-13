@@ -127,7 +127,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			}
 			if (disposing)
 			{
-				PropertyTable?.GetValue<IIdleQueueProvider>(FwUtils.FwUtils.window)?.IdleQueue?.Remove(SpellCheckOnIdle);
+				PropertyTable?.GetValue<IIdleQueueProvider>(FwUtils.FwUtilsConstants.window)?.IdleQueue?.Remove(SpellCheckOnIdle);
 			}
 
 			base.Dispose(disposing);
@@ -488,7 +488,7 @@ namespace SIL.FieldWorks.Common.RootSites
 				RootBox.SetSpellingRepository(SpellingHelper.GetCheckerInstance);
 				if (!RootBox.IsSpellCheckComplete())
 				{
-					PropertyTable?.GetValue<IIdleQueueProvider>(FwUtils.FwUtils.window).IdleQueue.Add(IdleQueuePriority.Low, SpellCheckOnIdle);
+					PropertyTable?.GetValue<IIdleQueueProvider>(FwUtils.FwUtilsConstants.window).IdleQueue.Add(IdleQueuePriority.Low, SpellCheckOnIdle);
 				}
 			}
 		}

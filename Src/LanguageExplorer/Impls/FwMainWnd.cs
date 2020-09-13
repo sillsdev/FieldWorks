@@ -1028,11 +1028,11 @@ namespace LanguageExplorer.Impls
 			_temporaryPropertyNames.Clear();
 			_temporaryPropertyNames.AddRange(new[]
 			{
-				FwUtils.window,
+				FwUtilsConstants.window,
 				LanguageExplorerConstants.App,
-				FwUtils.cache,
+				FwUtilsConstants.cache,
 				LanguageExplorerConstants.HelpTopicProvider,
-				FwUtils.FlexStyleSheet,
+				FwUtilsConstants.FlexStyleSheet,
 				LanguageExplorerConstants.LinkHandler,
 				LanguageExplorerConstants.MajorFlexComponentParameters,
 				LanguageExplorerConstants.RecordListRepository
@@ -1042,19 +1042,19 @@ namespace LanguageExplorer.Impls
 			{
 				switch (key)
 				{
-					case FwUtils.window:
+					case FwUtilsConstants.window:
 						PropertyTable.SetProperty(key, this);
 						break;
 					case LanguageExplorerConstants.App:
 						PropertyTable.SetProperty(key, _flexApp);
 						break;
-					case FwUtils.cache:
+					case FwUtilsConstants.cache:
 						PropertyTable.SetProperty(key, Cache);
 						break;
 					case LanguageExplorerConstants.HelpTopicProvider:
 						PropertyTable.SetProperty(key, _flexApp);
 						break;
-					case FwUtils.FlexStyleSheet:
+					case FwUtilsConstants.FlexStyleSheet:
 						PropertyTable.SetProperty(key, _stylesheet);
 						break;
 					case LanguageExplorerConstants.LinkHandler:
@@ -2196,7 +2196,7 @@ namespace LanguageExplorer.Impls
 
 		private void SetWindowTitle()
 		{
-			Text = $@"{_flexApp.Cache.ProjectId.UiName} - {FwUtils.ksSuiteName}";
+			Text = $@"{_flexApp.Cache.ProjectId.UiName} - {FwUtilsConstants.ksSuiteName}";
 		}
 
 		private void ProjectProperties_Changed(object sender, EventArgs eventArgs)

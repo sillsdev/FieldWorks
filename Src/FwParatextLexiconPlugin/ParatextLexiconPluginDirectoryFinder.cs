@@ -41,7 +41,7 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 			using (RegistryKey machineKey = ParatextLexiconPluginRegistryHelper.FieldWorksRegistryKeyLocalMachine)
 			{
 				var registryKey = userKey;
-				if (userKey == null || userKey.GetValue(registryValue) == null)
+				if (userKey?.GetValue(registryValue) == null)
 				{
 					registryKey = machineKey;
 				}
@@ -52,7 +52,7 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 
 		private static string GetDirectory(RegistryKey registryKey, string registryValue, string defaultDir)
 		{
-			string rootDir = (registryKey == null) ? null : registryKey.GetValue(registryValue, null) as string;
+			string rootDir = registryKey?.GetValue(registryValue, null) as string;
 
 			if (string.IsNullOrEmpty(rootDir) && !string.IsNullOrEmpty(defaultDir))
 				rootDir = defaultDir;

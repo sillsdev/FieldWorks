@@ -8,7 +8,6 @@ using System.Linq;
 using System.Text;
 using System.Xml;
 using LanguageExplorer;
-using LanguageExplorer.Areas;
 using LanguageExplorer.DictionaryConfiguration;
 using LanguageExplorer.TestUtilities;
 using NUnit.Framework;
@@ -70,6 +69,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		[Test]
 		public void GenerateXHTMLForEntry_LexemeFormConfigurationGeneratesCorrectResult()
 		{
+			ConfiguredLcmGenerator.AssemblyFile = "SIL.LCModel";
 			var reversalFormNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "ReversalForm",
@@ -84,7 +84,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 			var entry = CreateInterestingEnglishReversalEntry();
 			//SUT
-			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entry, mainEntryNode, null, DefaultSettings);
+			var result = ConfiguredLcmGenerator.GenerateXHTMLForEntry(entry, mainEntryNode, null, DefaultSettings);
 			const string frenchLexForm = "/div[@class='reversalindexentry']/span[@class='reversalform']/span[@lang='en' and text()='ReversalForm']";
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(frenchLexForm, 1);
 		}
@@ -103,6 +103,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		[Test]
 		public void GenerateXHTMLForEntry_PrimaryEntryReferencesWork_ComplexFormOfEntry()
 		{
+			ConfiguredLcmGenerator.AssemblyFile = "SIL.LCModel";
 			var mainRevEntryNode = PreparePrimaryEntryReferencesConfigSetup();
 			var reversalEntry = CreateInterestingEnglishReversalEntry("spokesmanRevForm", "porte-parole", "spokesman:gloss");
 			var sense = reversalEntry.SensesRS.First();
@@ -110,7 +111,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			paroleEntry.SummaryDefinition.SetAnalysisDefaultWritingSystem("summDefn");
 			ConfiguredXHTMLGeneratorTests.CreateComplexForm(Cache, paroleEntry, sense.Owner as ILexEntry, true);
 			//SUT
-			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(reversalEntry, mainRevEntryNode, null, DefaultSettings);
+			var result = ConfiguredLcmGenerator.GenerateXHTMLForEntry(reversalEntry, mainRevEntryNode, null, DefaultSettings);
 			const string headwordXpath = senseXpath + "/span[@class='headword']/span[@lang='fr']//a[text()='porte-parole']";
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(headwordXpath, 1);
 			const string refTypeXpath = entryRefTypeXpath + "/span[@class='abbreviation']/span[@lang='en' and text()='comp. of']";
@@ -123,13 +124,14 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		[Test]
 		public void GenerateXHTMLForEntry_PrimaryEntryReferencesWork_ComplexFormOfSense()
 		{
+			ConfiguredLcmGenerator.AssemblyFile = "SIL.LCModel";
 			var mainRevEntryNode = PreparePrimaryEntryReferencesConfigSetup();
 			var reversalEntry = CreateInterestingEnglishReversalEntry("spokesmanRevForm", "porte-parole", "spokesman:gloss");
 			var sense = reversalEntry.SensesRS.First();
 			var paroleEntry = ConfiguredXHTMLGeneratorTests.CreateInterestingLexEntry(Cache, "parole", "speech");
 			ConfiguredXHTMLGeneratorTests.CreateComplexForm(Cache, paroleEntry.SensesOS[0], sense.Owner as ILexEntry, true);
 			//SUT
-			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(reversalEntry, mainRevEntryNode, null, DefaultSettings);
+			var result = ConfiguredLcmGenerator.GenerateXHTMLForEntry(reversalEntry, mainRevEntryNode, null, DefaultSettings);
 			const string refTypeXpath = entryRefTypeXpath + "/span[@class='abbreviation']/span[@lang='en' and text()='comp. of']";
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(refTypeXpath, 1);
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(refHeadwordXpath, 1);
@@ -140,13 +142,14 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		[Test]
 		public void GenerateXHTMLForEntry_PrimaryEntryReferencesWork_VariantFormOfSense()
 		{
+			ConfiguredLcmGenerator.AssemblyFile = "SIL.LCModel";
 			var mainRevEntryNode = PreparePrimaryEntryReferencesConfigSetup();
 			var reversalEntry = CreateInterestingEnglishReversalEntry("speechRevForm", "parol", "speech:gloss");
 			var variantEntry = reversalEntry.SensesRS.First().Owner as ILexEntry;
 			var paroleEntry = ConfiguredXHTMLGeneratorTests.CreateInterestingLexEntry(Cache, "parole", "speech");
 			ConfiguredXHTMLGeneratorTests.CreateVariantForm(Cache, paroleEntry.SensesOS[0], variantEntry, "Spelling Variant");
 			//SUT
-			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(reversalEntry, mainRevEntryNode, null, DefaultSettings);
+			var result = ConfiguredLcmGenerator.GenerateXHTMLForEntry(reversalEntry, mainRevEntryNode, null, DefaultSettings);
 			const string refTypeXpath = entryRefTypeXpath + "/span[@class='abbreviation']/span[@lang='en' and text()='sp. var. of']";
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(refTypeXpath, 1);
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(refHeadwordXpath, 1);
@@ -157,6 +160,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		[Test]
 		public void GenerateXHTMLForEntry_PrimaryEntryReferencesWork_VariantFormOfEntry()
 		{
+			ConfiguredLcmGenerator.AssemblyFile = "SIL.LCModel";
 			var mainRevEntryNode = PreparePrimaryEntryReferencesConfigSetup();
 			var reversalEntry = CreateInterestingEnglishReversalEntry("speechRevForm", "parol", "speech:gloss");
 			var variantEntry = reversalEntry.SensesRS.First().Owner as ILexEntry;
@@ -164,7 +168,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			paroleEntry.SummaryDefinition.SetAnalysisDefaultWritingSystem("summDefn");
 			ConfiguredXHTMLGeneratorTests.CreateVariantForm(Cache, paroleEntry, variantEntry, "Spelling Variant");
 			//SUT
-			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(reversalEntry, mainRevEntryNode, null, DefaultSettings);
+			var result = ConfiguredLcmGenerator.GenerateXHTMLForEntry(reversalEntry, mainRevEntryNode, null, DefaultSettings);
 			const string refTypeXpath = entryRefTypeXpath + "/span[@class='abbreviation']/span[@lang='en' and text()='sp. var. of']";
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(refTypeXpath, 1);
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(refHeadwordXpath, 1);
@@ -175,6 +179,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		[Test]
 		public void GenerateXHTMLForEntry_PrimaryEntryReferences_Ordered()
 		{
+			ConfiguredLcmGenerator.AssemblyFile = "SIL.LCModel";
 			var mainRevEntryNode = PreparePrimaryEntryReferencesConfigSetup();
 			var reversalEntry = CreateInterestingEnglishReversalEntry();
 			var primaryEntry = reversalEntry.SensesRS.First().Entry;
@@ -189,7 +194,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			using (ConfiguredXHTMLGeneratorTests.CreateVariantForm(Cache, refer4, primaryEntry, new Guid("00000000-0000-0000-dddd-000000000000"), null)) // no Variant Type
 			using (ConfiguredXHTMLGeneratorTests.CreateVariantForm(Cache, refer5, primaryEntry, new Guid("00000000-0000-0000-eeee-000000000000"), "Spelling Variant"))
 			{
-				var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(reversalEntry, mainRevEntryNode, null, DefaultSettings); // SUT
+				var result = ConfiguredLcmGenerator.GenerateXHTMLForEntry(reversalEntry, mainRevEntryNode, null, DefaultSettings); // SUT
 				var assertIt = AssertThatXmlIn.String(result);
 				assertIt.HasSpecifiedNumberOfMatchesForXpath(entryRefTypeXpath, 3); // should be one Complex Form Type and two Variant Types.
 				const string headwordBit = "/span[@class='headword']/span[@lang='fr']/a[text()='{1}']";
@@ -283,7 +288,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 				// SUT
 				string last = null;
 				XHTMLWriter.WriteStartElement("TestElement");
-				Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateLetterHeaderIfNeeded(entry, ref last, XHTMLWriter, DefaultSettings));
+				Assert.DoesNotThrow(() => LcmXhtmlGenerator.GenerateLetterHeaderIfNeeded(entry, ref last, XHTMLWriter, DefaultSettings));
 				XHTMLWriter.WriteEndElement();
 				XHTMLWriter.Flush();
 				const string letterHeaderToMatch = "//div[@class='letHead']/span[@class='letter' and @lang='en' and text()='R r']";
@@ -301,7 +306,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 				// SUT
 				var last = "A a";
 				XHTMLWriter.WriteStartElement("TestElement");
-				Assert.DoesNotThrow(() => ConfiguredXHTMLGenerator.GenerateLetterHeaderIfNeeded(entry, ref last, XHTMLWriter, DefaultSettings));
+				Assert.DoesNotThrow(() => LcmXhtmlGenerator.GenerateLetterHeaderIfNeeded(entry, ref last, XHTMLWriter, DefaultSettings));
 				XHTMLWriter.WriteEndElement();
 				XHTMLWriter.Flush();
 				const string letterHeaderToMatch = "//div[@class='letHead']/span[@class='letter' and @lang='en' and text()='R r']";
@@ -318,8 +323,8 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 				// SUT
 				var last = "A a";
 				XHTMLWriter.WriteStartElement("TestElement");
-				ConfiguredXHTMLGenerator.GenerateLetterHeaderIfNeeded(entry, ref last, XHTMLWriter, DefaultSettings);
-				ConfiguredXHTMLGenerator.GenerateLetterHeaderIfNeeded(entry, ref last, XHTMLWriter, DefaultSettings);
+				LcmXhtmlGenerator.GenerateLetterHeaderIfNeeded(entry, ref last, XHTMLWriter, DefaultSettings);
+				LcmXhtmlGenerator.GenerateLetterHeaderIfNeeded(entry, ref last, XHTMLWriter, DefaultSettings);
 				XHTMLWriter.WriteEndElement();
 				XHTMLWriter.Flush();
 				const string letterHeaderToMatch = "//div[@class='letHead']/span[@class='letter' and @lang='en' and text()='R r']";
@@ -333,6 +338,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		[Test]
 		public void GenerateXHTMLForEntry_ReversalStringGeneratesContent()
 		{
+			ConfiguredLcmGenerator.AssemblyFile = "SIL.LCModel";
 			var formNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "ReversalForm",
@@ -357,9 +363,9 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			var entryHeadWord = rie.SensesRS.First().Entry.HeadWord;
 
 			//SUT
-			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(rie, reversalNode, null, DefaultSettings);
-			var reversalFormDataPath = string.Format("/div[@class='reversalindexentry']/span[@class='reversalform']/span[text()='{0}']", TsStringUtils.Compose(rie.LongName));
-			var entryDataPath = string.Format("//span[text()='{0}']", entryHeadWord.get_NormalizedForm(FwNormalizationMode.knmNFC).Text);
+			var result = ConfiguredLcmGenerator.GenerateXHTMLForEntry(rie, reversalNode, null, DefaultSettings);
+			var reversalFormDataPath = $"/div[@class='reversalindexentry']/span[@class='reversalform']/span[text()='{TsStringUtils.Compose(rie.LongName)}']";
+			var entryDataPath = $"//span[text()='{entryHeadWord.get_NormalizedForm(FwNormalizationMode.knmNFC).Text}']";
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(reversalFormDataPath, 1);
 			AssertThatXmlIn.String(result).HasNoMatchForXpath(entryDataPath);
 		}
@@ -367,6 +373,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		[Test]
 		public void GenerateXHTMLForEntry_SenseNumbersGeneratedForMultipleReferencedSenses()
 		{
+			ConfiguredLcmGenerator.AssemblyFile = "SIL.LCModel";
 			var headwordNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "ReversalName",
@@ -416,7 +423,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			var testEntry = CreateInterestingEnglishReversalEntry();
 			AddSenseToReversaEntry(testEntry, "second gloss", m_wsEn, Cache);
 			//SUT
-			var xhtml = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, DefaultSettings);
+			var xhtml = ConfiguredLcmGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, DefaultSettings);
 			const string senseNumberOne = "/div[@class='reversalindexentry']/span[@class='sensesrs']/span[@class='sensecontent']/span[@class='sensesr' and preceding-sibling::span[@class='sensenumber' and text()='1']]//span[@lang='en' and text()='gloss']";
 			const string senseNumberTwo = "/div[@class='reversalindexentry']/span[@class='sensesrs']/span[@class='sensecontent']/span[@class='sensesr' and preceding-sibling::span[@class='sensenumber' and text()='2']]//span[@lang='en' and text()='second gloss']";
 			//This assert is dependent on the specific entry data created in CreateInterestingEnglishReversalEntry
@@ -432,6 +439,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		[Test]
 		public void GenerateXHTMLForEntry_VernacularFormWithSubSenses()
 		{
+			ConfiguredLcmGenerator.AssemblyFile = "SIL.LCModel";
 			var headwordNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "ReversalName",
@@ -478,7 +486,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			var testEntry = CreateInterestingEnglishReversalEntry();
 			AddSingleSubSenseToSense(testEntry, "second gloss", m_wsEn, Cache);
 			//SUT
-			var xhtml = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, DefaultSettings);
+			var xhtml = ConfiguredLcmGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, DefaultSettings);
 			// REVIEW (Hasso) 2016.03: we should probably do something about the leading space in the Sense Number Run, as it is currently in addition to the "between" space.
 			const string subSenseOneOne = "/div[@class='reversalindexentry']/span[@class='sensesrs']/span[@class='sensecontent']/span[@class='sensesr']/span[@class='headword']/span/span/a[text()='1.1']";
 			AssertThatXmlIn.String(xhtml).HasSpecifiedNumberOfMatchesForXpath(subSenseOneOne, 1);
@@ -487,6 +495,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		[Test]
 		public void GenerateXHTMLForEntry_VernacularFormWithSubSensesinReversalSubEntry()
 		{
+			ConfiguredLcmGenerator.AssemblyFile = "SIL.LCModel";
 			var headwordNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "ReversalName",
@@ -540,7 +549,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 			var testEntry = CreateInterestingEnglishSubReversalEntryWithSubSense();
 			//SUT
-			var xhtml = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, DefaultSettings);
+			var xhtml = ConfiguredLcmGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, DefaultSettings);
 			const string subSenseOneOne = "/div[@class='reversalindexentry']/span[@class='subentries']/span[@class='subentry']/span[@class='sensesrs']/span[@class='sensecontent']/span[@class='sensesr']/span[@class='headword']/span/span/a[text()='1.1']";
 			AssertThatXmlIn.String(xhtml).HasSpecifiedNumberOfMatchesForXpath(subSenseOneOne, 1);
 		}
@@ -548,6 +557,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		[Test]
 		public void GenerateXHTMLForEntry_SameGramInfoCollapsesOnDemand()
 		{
+			ConfiguredLcmGenerator.AssemblyFile = "SIL.LCModel";
 			var defOrGlossNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "DefinitionOrGloss",
@@ -658,7 +668,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			testEntry.SensesRS.Add(entry1.SensesOS.First());
 			testEntry.SensesRS.Add(entry2.SensesOS.First());
 
-			var xhtml = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, settings);
+			var xhtml = ConfiguredLcmGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, settings);
 			// check that the sense gram info appears once before the rest of the sense information.
 			Assert.IsNotNullOrEmpty(xhtml);
 			const string sharedGramInfo = "/div[@class='reversalindexentry']/span[@class='sensesrs']/span[@class='sharedgrammaticalinfo']/span[@class='morphosyntaxanalysis']/span[@class='partofspeech']/span[@lang='en' and text()='n']";
@@ -670,7 +680,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			entry2.MorphoSyntaxAnalysesOC.Add(msa2a);
 			msa2a.PartOfSpeechRA = verb;
 			entry2.SensesOS.First().MorphoSyntaxAnalysisRA = msa2a;
-			xhtml = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, settings);
+			xhtml = ConfiguredLcmGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, settings);
 			// check that the sense gram info appears separately for both senses.
 			AssertThatXmlIn.String(xhtml).HasSpecifiedNumberOfMatchesForXpath(sharedGramInfo, 0);
 			AssertThatXmlIn.String(xhtml).HasSpecifiedNumberOfMatchesForXpath(separateGramInfo, 2);

@@ -8,7 +8,6 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using Gecko;
-using LanguageExplorer.Areas;
 using LanguageExplorer.DictionaryConfiguration;
 using LanguageExplorer.DictionaryConfiguration.Migration;
 using LanguageExplorer.Impls;
@@ -196,7 +195,7 @@ namespace LanguageExplorer
 		/// </summary>
 		internal static string GetProjectConfigurationDirectory(IPropertyTable propertyTable)
 		{
-			return GetProjectConfigurationDirectory(propertyTable.GetValue<LcmCache>(FwUtils.cache), GetInnermostConfigurationDirectory(propertyTable.GetValue<string>(LanguageExplorerConstants.ToolChoice)));
+			return GetProjectConfigurationDirectory(propertyTable.GetValue<LcmCache>(FwUtilsConstants.cache), GetInnermostConfigurationDirectory(propertyTable.GetValue<string>(LanguageExplorerConstants.ToolChoice)));
 		}
 
 		/// <remarks>Useful for querying about an area of FLEx that the user is not in.</remarks>
@@ -248,7 +247,7 @@ namespace LanguageExplorer
 			var isDictionary = innerConfigDir == DictionaryConfigurationDirectoryName;
 			var pubLayoutPropName = isDictionary ? "DictionaryPublicationLayout" : "ReversalIndexPublicationLayout";
 			var currentConfig = propertyTable.GetValue(pubLayoutPropName, string.Empty);
-			var cache = propertyTable.GetValue<LcmCache>(FwUtils.cache);
+			var cache = propertyTable.GetValue<LcmCache>(FwUtilsConstants.cache);
 			if (!string.IsNullOrEmpty(currentConfig) && File.Exists(currentConfig))
 			{
 				SetConfigureHomographParameters(currentConfig, cache);
@@ -346,9 +345,23 @@ namespace LanguageExplorer
 			return classList;
 		}
 
-		internal static Guid GetHrefFromGeckoDomElement(GeckoElement element)
+		/// <summary>
+		/// Gets the GUID from a Gecko DOM Element that represents a link to an entry (or sense?).
+		/// If the passed element is not a link, or if it a link to play a file, Guid.Empty is returned.
+		/// </summary>
+		/// <exception cref="FormatException">
+		/// If the href happens to start with a GUID but have extra text at the end (this should happen only for audio writing systems,
+		/// but we shouldn't be returning links for those. And throwing doesn't affect whether audio is played, anyway.
+		/// </exception>
+		/// <remarks>
+		/// <see cref="ConfiguredLcmGenerator"/> generates subentry headwords in Audio Writing Systems
+		/// as media links, *not* links to that entry (as other WS's are)
+		/// </remarks>
+		internal static Guid GetGuidFromEntryLink(GeckoElement element)
 		{
-			if (!element.HasAttribute("href"))
+			// A link to somewhere must have an 'href' and must not have an 'onclick' attribute. If I recall correctly, we have to put an 'href' on
+			// media links to get the hotlink hand to appear, but we don't want them to actually go anywhere, as this prevents playing the media.
+			if (!element.HasAttribute("href") || element.HasAttribute("onclick"))
 			{
 				return Guid.Empty;
 			}
@@ -461,7 +474,7 @@ namespace LanguageExplorer
 		internal static void ShowUploadToWebonaryDialog(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
 			var propertyTable = majorFlexComponentParameters.FlexComponentParameters.PropertyTable;
-			var cache = propertyTable.GetValue<LcmCache>(FwUtils.cache);
+			var cache = propertyTable.GetValue<LcmCache>(FwUtilsConstants.cache);
 			var publications = cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS.Select(p => p.Name.BestAnalysisAlternative.Text).ToList();
 			var projectConfigDir = GetProjectConfigurationDirectory(majorFlexComponentParameters.LcmCache, DictionaryConfigurationDirectoryName);
 			var defaultConfigDir = GetDefaultConfigurationDirectory(DictionaryConfigurationDirectoryName);

@@ -13,7 +13,6 @@ using LanguageExplorer.Controls;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FwCoreDlgs;
 using SIL.FieldWorks.FwCoreDlgs.BackupRestore;
-using SIL.FieldWorks.FwCoreDlgs.FileDialog;
 using SIL.FieldWorks.Resources;
 using SIL.IO;
 using SIL.LCModel;
@@ -33,12 +32,10 @@ namespace LanguageExplorer.LIFT
 		private IPropertyTable m_propertyTable;
 		private IThreadedProgress m_progressDlg;
 		private string m_sLogFile;      // name of HTML log file (if successful).
-		private IOpenFileDialog openFileDialog1;
 		private MergeStyle m_msImport = MergeStyle.MsKeepOld;
 
 		public LiftImportDlg()
 		{
-			openFileDialog1 = new OpenFileDialogAdapter();
 			InitializeComponent();
 			openFileDialog1.Title = LanguageExplorerControls.openFileDialog1_Title;
 			openFileDialog1.Filter = FileUtils.FileDialogFilterCaseInsensitiveCombinations(LanguageExplorerControls.openFileDialog1_Filter);

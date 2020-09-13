@@ -63,7 +63,7 @@ namespace LanguageExplorer.Areas
 			m_propertyTable = propertyTable;
 			m_publisher = publisher;
 			m_customFieldLocationType = customFieldLocationType;
-			m_cache = m_propertyTable.GetValue<LcmCache>(FwUtils.cache);
+			m_cache = m_propertyTable.GetValue<LcmCache>(FwUtilsConstants.cache);
 			m_layouts = Inventory.GetInventory("layouts", m_cache.ProjectId.Name);
 			InitializeComponent();
 			AccessibleName = GetType().Name;
@@ -656,7 +656,7 @@ namespace LanguageExplorer.Areas
 			if (changed)
 			{
 				// only fire the 'big gun' if something has actually changed
-				m_propertyTable.GetValue<IFwMainWnd>(FwUtils.window).RefreshAllViews();
+				m_propertyTable.GetValue<IFwMainWnd>(FwUtilsConstants.window).RefreshAllViews();
 			}
 			DialogResult = DialogResult.OK;
 		}

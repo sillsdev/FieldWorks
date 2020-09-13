@@ -41,6 +41,7 @@ namespace LanguageExplorer
 		bool IsSubservientRecordList { get; }
 		void JumpToIndex(int index, bool suppressFocusChange = false);
 		void JumpToRecord(int jumpToHvo, bool suppressFocusChange = false);
+		bool JumpToTargetWillChangeIndex(int hvoTarget);
 		bool ListLoadingSuppressed { get; set; }
 		bool ListLoadingSuppressedNoSideEffects { get; set; }
 		bool ListModificationInProgress { get; set; }

@@ -740,7 +740,7 @@ namespace LanguageExplorer.Controls
 			// the current Publication layout or Configuration view.
 			if (!IsObjectVisible(hvoTarget, out var xrc))
 			{
-				LanguageExplorerServices.GiveSimpleWarning(PropertyTable.GetValue<Form>(FwUtils.window), PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider).HelpFile, xrc);
+				LanguageExplorerServices.GiveSimpleWarning(PropertyTable.GetValue<Form>(FwUtilsConstants.window), PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider).HelpFile, xrc);
 			}
 		}
 
@@ -900,7 +900,7 @@ namespace LanguageExplorer.Controls
 				{
 					if (PropertyTable.GetValue<IRecordListRepository>(LanguageExplorerConstants.RecordListRepository).ActiveRecordList != MyRecordList)
 					{
-						RecordListServices.SetRecordList(PropertyTable.GetValue<Form>(FwUtils.window).Handle, MyRecordList);
+						RecordListServices.SetRecordList(PropertyTable.GetValue<Form>(FwUtilsConstants.window).Handle, MyRecordList);
 					}
 				}
 				// Enhance JohnT: could use logic similar to RecordView.InitBase to load persisted list contents (filtered and sorted).
@@ -997,7 +997,7 @@ namespace LanguageExplorer.Controls
 			using (var dlg = new XmlDocConfigureDlg())
 			{
 				var sProp = XmlUtils.GetOptionalAttributeValue(m_configurationParametersElement, "layoutProperty", "DictionaryPublicationLayout");
-				var mainWindow = PropertyTable.GetValue<IFwMainWnd>(FwUtils.window);
+				var mainWindow = PropertyTable.GetValue<IFwMainWnd>(FwUtilsConstants.window);
 				dlg.SetConfigDlgInfo(m_configurationParametersElement, Cache, StyleSheet, mainWindow, PropertyTable, Publisher, sProp);
 				dlg.SetActiveNode(nodePath);
 				if (dlg.ShowDialog(this) == DialogResult.OK)

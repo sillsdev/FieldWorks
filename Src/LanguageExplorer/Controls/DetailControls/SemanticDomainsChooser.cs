@@ -212,7 +212,7 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		private void buttonHelp_Click(object sender, EventArgs e)
 		{
-			ShowHelp.ShowHelpTopic(HelpTopicProvider, "UserHelpFile", m_helpTopic);
+			ShowHelp.ShowHelpTopic(HelpTopicProvider, FwUtilsConstants.UserHelpFile, m_helpTopic);
 		}
 	}
 }

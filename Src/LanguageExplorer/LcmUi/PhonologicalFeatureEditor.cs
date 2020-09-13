@@ -204,7 +204,7 @@ namespace LanguageExplorer.LcmUi
 						m_closedFeature = featDefns.First() as IFsClosedFeature;
 					}
 				}
-				m_PhonologicalFeatureTreeManager = new PhonologicalFeaturePopupTreeManager(m_tree, m_cache, false, new FlexComponentParameters(PropertyTable, m_publisher, _subscriber), PropertyTable.GetValue<Form>(FwUtils.window),
+				m_PhonologicalFeatureTreeManager = new PhonologicalFeaturePopupTreeManager(m_tree, m_cache, false, new FlexComponentParameters(PropertyTable, m_publisher, _subscriber), PropertyTable.GetValue<Form>(FwUtilsConstants.window),
 																						   m_displayWs, m_closedFeature);
 				m_PhonologicalFeatureTreeManager.AfterSelect += m_PhonFeaturePopupTreeManager_AfterSelect;}
 			m_PhonologicalFeatureTreeManager.LoadPopupTree(0);

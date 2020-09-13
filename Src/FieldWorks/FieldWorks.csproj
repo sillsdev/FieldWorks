@@ -109,6 +109,10 @@
     <Reference Include="Mono.Posix">
       <HintPath>..\..\packages\Mono.Posix-4.5.4.5.0\lib\net45\Mono.Posix.dll</HintPath>
     </Reference>
+    <Reference Include="L10NSharp, Version=4.1.0.0, Culture=neutral, PublicKeyToken=fd0b3e309a5b7c28, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Output\Debug\L10NSharp.dll</HintPath>
+    </Reference>
     <Reference Include="LanguageExplorer, Version=10.0.0.37221, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\LanguageExplorer.dll</HintPath>
@@ -396,7 +400,6 @@
     <None Include="Resources\wait22trans.gif" />
     <Content Include="SmallBookOnCube.ico" />
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="BuildInclude.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.

@@ -249,7 +249,7 @@ namespace LanguageExplorer.Impls
 			tabControls_SelectedIndexChanged(null, new EventArgs());
 			if (m_helpTopicProvider != null) // Will be null when running tests
 			{
-				helpProvider.HelpNamespace = FwDirectoryFinder.CodeDirectory + m_helpTopicProvider.GetHelpString("UserHelpFile");
+				helpProvider.HelpNamespace = FwDirectoryFinder.CodeDirectory + m_helpTopicProvider.GetHelpString(FwUtilsConstants.UserHelpFile);
 			}
 			SetCheckboxStates(vwPattern);
 			_regexContextContextMenuFind?.Dispose();

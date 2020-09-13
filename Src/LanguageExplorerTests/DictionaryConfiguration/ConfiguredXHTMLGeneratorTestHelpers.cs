@@ -11,42 +11,42 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 
 	public enum FormType { Specified, Unspecified, None }
 
-	internal class TestRootClass
+	public class TestRootClass
 	{
 		public ITestInterface RootMember { get; set; }
 		public TestNonInterface ConcreteMember { get; set; }
 	}
 
-	internal interface ITestInterface : ITestBaseOne, ITestBaseTwo
+	public interface ITestInterface : ITestBaseOne, ITestBaseTwo
 	{
 		string TestString { get; }
 	}
 
-	internal interface ITestBaseOne
+	public interface ITestBaseOne
 	{
 		IMoForm TestMoForm { get; }
 	}
 
-	internal interface ITestBaseTwo : ITestGrandParent
+	public interface ITestBaseTwo : ITestGrandParent
 	{
 		ICmObject TestIcmObject { get; }
 	}
 
-	internal class TestNonInterface
+	public class TestNonInterface
 	{
 		// ReSharper disable UnusedMember.Local // Justification: called by reflection
 		private string TestNonInterfaceString { get; set; }
 		// ReSharper restore UnusedMember.Local
 	}
 
-	internal interface ITestGrandParent
+	public interface ITestGrandParent
 	{
 		Stack<TestRootClass> TestCollection { get; }
 	}
 
 	/// <summary />
 	/// <remarks>Used by reflection</remarks>
-	internal class TestPictureClass
+	public class TestPictureClass
 	{
 		public ILcmList<ICmPicture> Pictures { get; set; }
 	}

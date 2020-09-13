@@ -59,7 +59,7 @@ namespace LanguageExplorer.Areas.Lexicon
 		/// </summary>
 		public void Process()
 		{
-			var cache = m_dlg.PropertyTable.GetValue<LcmCache>(FwUtils.cache);
+			var cache = m_dlg.PropertyTable.GetValue<LcmCache>(FwUtilsConstants.cache);
 			var homographWsId = cache.LanguageProject.HomographWs;
 			var homographWs = cache.ServiceLocator.WritingSystems.AllWritingSystems.Where(ws => ws.Id == homographWsId);
 			var homographWsLabel = homographWs.First().DisplayLabel;

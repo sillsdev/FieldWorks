@@ -185,7 +185,7 @@ namespace LanguageExplorer.LcmUi
 		{
 			if (m_InflectionFeatureTreeManager == null)
 			{
-				m_InflectionFeatureTreeManager = new InflectionFeaturePopupTreeManager(m_tree, m_cache, false, new FlexComponentParameters(PropertyTable, m_publisher, _subscriber), PropertyTable.GetValue<Form>(FwUtils.window), m_displayWs);
+				m_InflectionFeatureTreeManager = new InflectionFeaturePopupTreeManager(m_tree, m_cache, false, new FlexComponentParameters(PropertyTable, m_publisher, _subscriber), PropertyTable.GetValue<Form>(FwUtilsConstants.window), m_displayWs);
 				m_InflectionFeatureTreeManager.AfterSelect += m_pOSPopupTreeManager_AfterSelect;
 			}
 			m_InflectionFeatureTreeManager.LoadPopupTree(0);

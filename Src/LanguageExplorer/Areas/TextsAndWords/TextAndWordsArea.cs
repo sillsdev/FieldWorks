@@ -341,7 +341,22 @@ namespace LanguageExplorer.Areas.TextsAndWords
 				if (!InFriendliestTool)
 				{
 					// See LT-8641.
-					LaunchRespellerDlgOnWord(ActiveWord);
+					using (new ListUpdateHelper(new ListUpdateHelperParameterObject { MyRecordList = _propertyTable.GetValue<IRecordListRepository>(LanguageExplorerConstants.RecordListRepository).ActiveRecordList }))
+					{
+						// Launch the Respeller Dlg.
+						using (var dlg = new RespellerDlg())
+						{
+							dlg.InitializeFlexComponent(_majorFlexComponentParameters.FlexComponentParameters);
+							if (dlg.SetDlgInfo(WordformApplicationServices.GetWordformForForm(_cache, ActiveWord)))
+							{
+								dlg.ShowDialog((Form)_propertyTable.GetValue<IFwMainWnd>(FwUtilsConstants.window));
+							}
+							else
+							{
+								MessageBox.Show(TextAndWordsResources.ksCannotRespellWordform);
+							}
+						}
+					}
 					return;
 				}
 				var recordList = (IRecordList)((ToolStripMenuItem)sender).Tag;
@@ -353,7 +368,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 						dlg.InitializeFlexComponent(_majorFlexComponentParameters.FlexComponentParameters);
 						if (dlg.SetDlgInfo(_majorFlexComponentParameters.StatusBar))
 						{
-							dlg.ShowDialog((Form)_majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IFwMainWnd>(FwUtils.window));
+							dlg.ShowDialog((Form)_majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IFwMainWnd>(FwUtilsConstants.window));
 							changesWereMade = dlg.ChangesWereMade;
 						}
 						else
@@ -385,26 +400,6 @@ namespace LanguageExplorer.Areas.TextsAndWords
 				}
 			}
 
-			private void LaunchRespellerDlgOnWord(ITsString tss)
-			{
-				using (new ListUpdateHelper(new ListUpdateHelperParameterObject { MyRecordList = _propertyTable.GetValue<IRecordListRepository>(LanguageExplorerConstants.RecordListRepository).ActiveRecordList }))
-				{
-					// Launch the Respeller Dlg.
-					using (var dlg = new RespellerDlg())
-					{
-						dlg.InitializeFlexComponent(_majorFlexComponentParameters.FlexComponentParameters);
-						if (dlg.SetDlgInfo(WordformApplicationServices.GetWordformForForm(_cache, tss)))
-						{
-							dlg.ShowDialog((Form)_propertyTable.GetValue<IFwMainWnd>(FwUtils.window));
-						}
-						else
-						{
-							MessageBox.Show(TextAndWordsResources.ksCannotRespellWordform);
-						}
-					}
-				}
-			}
-
 			private bool InFriendliestTool => _area.ActiveTool.MachineName == LanguageExplorerConstants.AnalysesMachineName;
 
 			/// <summary>
@@ -421,7 +416,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 						// we should be able to get our info from the current record list.
 						// but return null if we can't get the info, otherwise we allow the user to
 						// bring up the change spelling dialog and crash because no wordform can be found (LT-8766).
-						return ((_propertyTable.GetValue<IRecordListRepository>(LanguageExplorerConstants.RecordListRepository).ActiveRecordList)?.CurrentObject as IWfiWordform)?.Form?.BestVernacularAlternative;
+						return (_propertyTable.GetValue<IRecordListRepository>(LanguageExplorerConstants.RecordListRepository).ActiveRecordList?.CurrentObject as IWfiWordform)?.Form?.BestVernacularAlternative;
 					}
 					var window = _majorFlexComponentParameters.MainWindow;
 					var roots = window.ActiveView?.AllRootBoxes();
@@ -433,7 +428,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 					if (tssWord != null)
 					{
 						// Check for a valid vernacular writing system.  (See LT-8892.)
-						var cache = _propertyTable.GetValue<LcmCache>(FwUtils.cache);
+						var cache = _propertyTable.GetValue<LcmCache>(FwUtilsConstants.cache);
 						var wsObj = cache.ServiceLocator.WritingSystemManager.Get(TsStringUtils.GetWsAtOffset(tssWord, 0));
 						if (cache.ServiceLocator.WritingSystems.VernacularWritingSystems.Contains(wsObj))
 						{

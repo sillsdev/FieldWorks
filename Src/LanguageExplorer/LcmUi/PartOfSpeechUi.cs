@@ -38,7 +38,7 @@ namespace LanguageExplorer.LcmUi
 			{
 				var newOwner = cache.ServiceLocator.GetInstance<IPartOfSpeechRepository>().GetObject(hvoOwner);
 				dlg.SetDlginfo(newOwner.OwningList, propertyTable, true, newOwner);
-				switch (dlg.ShowDialog(propertyTable.GetValue<Form>(FwUtils.window)))
+				switch (dlg.ShowDialog(propertyTable.GetValue<Form>(FwUtilsConstants.window)))
 				{
 					case DialogResult.OK: // Fall through.
 					case DialogResult.Yes:

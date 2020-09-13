@@ -65,7 +65,7 @@ namespace LanguageExplorer.Controls.DetailControls.Slices
 
 		public void Init(int ws)
 		{
-			Cache = PropertyTable.GetValue<LcmCache>(FwUtils.cache);
+			Cache = PropertyTable.GetValue<LcmCache>(FwUtilsConstants.cache);
 			StyleSheet = FwUtils.StyleSheetFromPropertyTable(PropertyTable);
 			m_vc = new StVc("Normal", ws)
 			{
@@ -129,7 +129,7 @@ namespace LanguageExplorer.Controls.DetailControls.Slices
 
 		protected override bool DoContextMenu(IVwSelection invSel, Point pt, Rectangle rcSrcRoot, Rectangle rcDstRoot)
 		{
-			var mainWind = PropertyTable.GetValue<IFwMainWnd>(FwUtils.window);
+			var mainWind = PropertyTable.GetValue<IFwMainWnd>(FwUtilsConstants.window);
 			var sel = RootBox?.Selection;
 			if (mainWind == null || sel == null)
 			{

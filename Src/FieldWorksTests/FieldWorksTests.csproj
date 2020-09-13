@@ -11,6 +11,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>SIL.FieldWorks</RootNamespace>
     <AssemblyName>FieldWorksTests</AssemblyName>
+    <AppConfig>..\StaAppForTests.config</AppConfig>
     <FileUpgradeFlags>
     </FileUpgradeFlags>
     <OldToolsVersion>3.5</OldToolsVersion>
@@ -157,7 +158,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="RealSplashScreenTests.cs" />
-    <None Include="App.config" />
     <Compile Include="..\AssemblyInfoForTests.cs">
       <Link>AssemblyInfoForTests.cs</Link>
     </Compile>

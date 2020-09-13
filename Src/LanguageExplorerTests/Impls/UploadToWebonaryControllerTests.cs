@@ -82,7 +82,7 @@ namespace LanguageExplorerTests.Impls
 		{
 			try
 			{
-				ConfiguredXHTMLGenerator.AssemblyFile = "SIL.LCModel";
+				ConfiguredLcmGenerator.AssemblyFile = "SIL.LCModel";
 				Dispose();
 			}
 			catch (Exception err)
@@ -161,7 +161,7 @@ namespace LanguageExplorerTests.Impls
 				mockView.Model.Configurations = testConfig;
 				mockView.Model.Reversals = reversalConfig;
 				// Build model sufficient to generate xhtml and css
-				ConfiguredXHTMLGenerator.AssemblyFile = "SIL.LCModel";
+				ConfiguredLcmGenerator.AssemblyFile = "SIL.LCModel";
 				var mainHeadwordNode = new ConfigurableDictionaryNode
 				{
 					FieldDescription = "HeadWord",
@@ -316,7 +316,7 @@ namespace LanguageExplorerTests.Impls
 					}
 				};
 				controller.UploadToWebonary("fakefile.zip", view.Model, view);
-				Assert.That(view.StatusStrings.Any(s => s.Contains("Error: There has been an error accessing webonary. Is your sitename correct?")));
+				Assert.That(view.StatusStrings.Any(s => s.Contains(LanguageExplorerResources.ksErrorWebonarySiteName)));
 			}
 
 			// Test with an exception which indicates a redirect should happen
@@ -336,7 +336,7 @@ namespace LanguageExplorerTests.Impls
 					}
 				};
 				controller.UploadToWebonary("fakefile.zip", view.Model, view);
-				Assert.That(view.StatusStrings.Any(s => s.Contains("Error: There has been an error accessing webonary. Is your sitename correct?")));
+				Assert.That(view.StatusStrings.Any(s => s.Contains(LanguageExplorerResources.ksErrorWebonarySiteName)));
 			}
 		}
 
@@ -535,7 +535,7 @@ namespace LanguageExplorerTests.Impls
 			// SUT
 			var result = UploadToWebonaryController.UploadFilename(model, view);
 			Assert.That(result, Is.Null, "Fail on invalid characters.");
-			Assert.That(view.StatusStrings.Any(s => s.Contains("Invalid characters found in sitename")), "Inform that there was a problem");
+			Assert.That(view.StatusStrings.Any(s => s.Contains(LanguageExplorerResources.ksErrorInvalidCharacters)), "Inform that there was a problem");
 		}
 
 		[Test]
@@ -549,6 +549,50 @@ namespace LanguageExplorerTests.Impls
 				Assert.AreEqual("Wiktionary", _flexComponentParameters.PropertyTable.GetValue<string>("SelectedPublication", null), "Didn't activate temp publication");
 			}
 			Assert.AreEqual("Main Dictionary", _flexComponentParameters.PropertyTable.GetValue<string>("SelectedPublication", null), "Didn't reset publication");
+		}
+
+		[Test]
+		public void DeleteDictionaryHandles404()
+		{
+			// Test with an exception which indicates a redirect should happen
+			var redirectException = new WebonaryClient.WebonaryException(new WebException("File Not Found"));
+			redirectException.StatusCode = HttpStatusCode.NotFound;
+			using (var controller = new MockUploadToWebonaryController(Cache, m_propertyTable, m_mediator, redirectException, new byte[0], HttpStatusCode.NotFound))
+			{
+				var view = new MockWebonaryDlg()
+				{
+					Model = new UploadToWebonaryModel(m_propertyTable)
+					{
+						SiteName = "test-india",
+						UserName = "software",
+						Password = "4APItesting"
+					}
+				};
+				controller.DeleteContentFromWebonary(view.Model, view, "delete/dictionary");
+				Assert.That(!view.StatusStrings.Any(s => s.ToLower().Contains("exception")));
+			}
+		}
+
+		[Test]
+		public void DeleteDictionaryResponseReturnedAsString()
+		{
+			var responseString = "Deleted 1000 files";
+			var response = Encoding.UTF8.GetBytes(responseString);
+			// Test with an exception which indicates a redirect should happen
+			using (var controller = new MockUploadToWebonaryController(Cache, m_propertyTable, m_mediator, null, response))
+			{
+				var view = new MockWebonaryDlg()
+				{
+					Model = new UploadToWebonaryModel(m_propertyTable)
+					{
+						SiteName = "test-india",
+						UserName = "software",
+						Password = "4APItesting"
+					}
+				};
+				var result = controller.DeleteContentFromWebonary(view.Model, view, "delete/dictionary");
+				Assert.That(result, Is.StringContaining(responseString));
+			}
 		}
 
 		#region Helpers
@@ -566,7 +610,7 @@ namespace LanguageExplorerTests.Impls
 		/// </summary>
 		public UploadToWebonaryModel SetUpModel()
 		{
-			ConfiguredXHTMLGenerator.AssemblyFile = "LanguageExplorerTests";
+			ConfiguredLcmGenerator.AssemblyFile = TestUtilities.LanguageExplorerTests;
 			var testConfig = new Dictionary<string, DictionaryConfigurationModel>();
 			testConfig["Test Config"] = new DictionaryConfigurationModel
 			{
@@ -574,7 +618,7 @@ namespace LanguageExplorerTests.Impls
 				{
 					new ConfigurableDictionaryNode
 					{
-						FieldDescription = "LanguageExplorerTests.DictionaryConfiguration.TestRootClass"
+						FieldDescription = TestUtilities.LanguageExplorerTests_DictionaryConfiguration_TestRootClass
 					}
 				}
 			};
@@ -649,9 +693,9 @@ namespace LanguageExplorerTests.Impls
 			private sealed class MockWebonaryClient : IWebonaryClient
 			{
 				private readonly WebonaryException _exceptionResponse;
-				private readonly byte[] _responseContents;
+				private readonly object _responseContents;
 
-				internal MockWebonaryClient(WebonaryException exceptionResponse, byte[] responseContents, HttpStatusCode responseStatus)
+				internal MockWebonaryClient(WebonaryException exceptionResponse, object responseContents, HttpStatusCode responseStatus)
 				{
 					_exceptionResponse = exceptionResponse;
 					_responseContents = responseContents;
@@ -675,17 +719,48 @@ namespace LanguageExplorerTests.Impls
 					Dispose(false);
 				}
 
-				public WebHeaderCollection Headers { get; private set; }
-				public byte[] UploadFileToWebonary(string address, string fileName)
+				public WebHeaderCollection Headers { get; }
+
+				public byte[] UploadFileToWebonary(string address, string fileName, string method = null)
 				{
-					if (_exceptionResponse != null)
-					{
-						throw _exceptionResponse;
-					}
-					return _responseContents;
+					return MockByteArrayResponse();
 				}
 
-				public HttpStatusCode ResponseStatusCode { get; private set; }
+				public HttpStatusCode ResponseStatusCode { get; }
+
+				public string PostDictionaryMetadata(string address, string postBody)
+				{
+					return MockStringResponse();
+				}
+
+				public string PostEntry(string address, string postBody, bool isReversal)
+				{
+					return MockStringResponse();
+				}
+
+				public byte[] DeleteContent(string targetURI)
+				{
+					return MockByteArrayResponse();
+				}
+
+				public string GetSignedUrl(string address, string filePath)
+				{
+					return MockStringResponse();
+				}
+
+				private string MockStringResponse()
+				{
+					if (_exceptionResponse != null)
+						throw _exceptionResponse;
+					return (string)_responseContents;
+				}
+
+				private byte[] MockByteArrayResponse()
+				{
+					if (_exceptionResponse != null)
+						throw _exceptionResponse;
+					return (byte[])_responseContents;
+				}
 			}
 
 			internal override string DestinationURI(string siteName)

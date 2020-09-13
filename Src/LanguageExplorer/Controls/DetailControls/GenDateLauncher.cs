@@ -43,7 +43,7 @@ namespace LanguageExplorer.Controls.DetailControls
 					currentGenDate = new GenDate(GenDate.PrecisionType.Exact, now.Month, now.Day, now.Year, true);
 				}
 				dlg.GenericDate = currentGenDate;
-				if (dlg.ShowDialog(PropertyTable.GetValue<IWin32Window>(FwUtils.window)) != DialogResult.OK)
+				if (dlg.ShowDialog(PropertyTable.GetValue<IWin32Window>(FwUtilsConstants.window)) != DialogResult.OK)
 				{
 					return;
 				}

@@ -98,7 +98,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			{
 				m_helpProvider = new HelpProvider
 				{
-					HelpNamespace = FwDirectoryFinder.CodeDirectory + m_helpTopicProvider.GetHelpString("UserHelpFile")
+					HelpNamespace = FwDirectoryFinder.CodeDirectory + m_helpTopicProvider.GetHelpString(FwUtilsConstants.UserHelpFile)
 				};
 				m_helpProvider.SetHelpKeyword(this, m_helpTopicProvider.GetHelpString(s_helpTopic));
 				m_helpProvider.SetHelpNavigator(this, HelpNavigator.Topic);

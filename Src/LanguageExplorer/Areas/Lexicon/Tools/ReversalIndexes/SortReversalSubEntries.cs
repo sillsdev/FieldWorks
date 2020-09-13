@@ -46,7 +46,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 		/// <summary />
 		public void Process()
 		{
-			var cache = m_dlg.PropertyTable.GetValue<LcmCache>(FwUtils.cache);
+			var cache = m_dlg.PropertyTable.GetValue<LcmCache>(FwUtilsConstants.cache);
 			NonUndoableUnitOfWorkHelper.DoSomehow(cache.ActionHandlerAccessor, () =>
 			{
 				SortReversalSubEntriesInPlace(cache);

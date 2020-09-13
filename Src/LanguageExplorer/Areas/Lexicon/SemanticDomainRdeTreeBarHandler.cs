@@ -46,7 +46,7 @@ namespace LanguageExplorer.Areas.Lexicon
 		void ISemanticDomainTreeBarHandler.FinishInitialization(IPaneBar paneBar)
 		{
 			m_titleBar = paneBar;
-			_recordBar = m_propertyTable.GetValue<IFwMainWnd>(FwUtils.window).RecordBarControl;
+			_recordBar = m_propertyTable.GetValue<IFwMainWnd>(FwUtilsConstants.window).RecordBarControl;
 			if (_recordBar == null)
 			{
 				return;
@@ -189,7 +189,7 @@ namespace LanguageExplorer.Areas.Lexicon
 		/// </summary>
 		protected override void UpdateHeaderVisibility()
 		{
-			var window = m_propertyTable.GetValue<IFwMainWnd>(FwUtils.window);
+			var window = m_propertyTable.GetValue<IFwMainWnd>(FwUtilsConstants.window);
 			if (window == null)
 			{
 				return;

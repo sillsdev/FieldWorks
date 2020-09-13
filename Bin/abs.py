@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 #
 #	$Id$
@@ -31,7 +31,7 @@ import os
 import sys
 
 if len(sys.argv) != 2 or "--help" == sys.argv[1]:
-	print "Usage:", sys.argv[0], "relative_path"
+	print("Usage:", sys.argv[0], "relative_path")
 	sys.exit(1)
 
-print os.path.abspath(sys.argv[1])
+print(os.path.abspath(sys.argv[1]))

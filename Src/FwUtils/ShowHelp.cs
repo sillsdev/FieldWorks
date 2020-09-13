@@ -17,7 +17,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// </summary>
 		public static void ShowHelpTopic(IHelpTopicProvider helpTopicProvider, string helpTopicKey)
 		{
-			ShowHelpTopic(helpTopicProvider, "UserHelpFile", helpTopicKey);
+			ShowHelpTopic(helpTopicProvider, FwUtilsConstants.UserHelpFile, helpTopicKey);
 		}
 
 		/// <summary>

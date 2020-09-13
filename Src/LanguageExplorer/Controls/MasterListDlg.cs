@@ -343,7 +343,7 @@ namespace LanguageExplorer.Controls
 
 		void m_bnHelp_Click(object sender, EventArgs e)
 		{
-			ShowHelp.ShowHelpTopic(m_helpTopicProvider, "UserHelpFile", s_helpTopic);
+			ShowHelp.ShowHelpTopic(m_helpTopicProvider, FwUtilsConstants.UserHelpFile, s_helpTopic);
 		}
 
 		protected void m_tvMasterList_AfterSelect(object sender, TreeViewEventArgs e)

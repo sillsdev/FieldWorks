@@ -12,7 +12,6 @@ using LanguageExplorer.DictionaryConfiguration.Migration;
 using NUnit.Framework;
 using SIL.IO;
 using SIL.LCModel;
-using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel.DomainServices;
 
 namespace LanguageExplorerTests.DictionaryConfiguration.Migration
@@ -918,7 +917,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 			};
 			var cfTypeNodeWithRevAbbr2 = cfTypeNodeWithRevAbbr.DeepCloneUnderSameParent();
 			var cfTypeNodeLookup = cfTypeNodeWithRevAbbr.DeepCloneUnderSameParent();
-			cfTypeNodeLookup.FieldDescription = ConfiguredXHTMLGenerator.LookupComplexEntryType;
+			cfTypeNodeLookup.FieldDescription = ConfiguredLcmGenerator.LookupComplexEntryType;
 			var cfTypeNodeLookup2 = cfTypeNodeLookup.DeepCloneUnderSameParent();
 			var cfTypeNodeWithAbbr = new ConfigurableDictionaryNode
 			{

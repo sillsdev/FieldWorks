@@ -17,6 +17,10 @@ namespace LanguageExplorerTests
 	/// </summary>
 	internal static class TestUtilities
 	{
+		internal const string LanguageExplorerTests = "LanguageExplorerTests";
+		internal const string LanguageExplorerTests_DictionaryConfiguration_TestRootClass = "LanguageExplorerTests.DictionaryConfiguration.TestRootClass";
+		internal const string LanguageExplorerTests_DictionaryConfiguration_TestPictureClass = "LanguageExplorerTests.DictionaryConfiguration.TestPictureClass";
+
 		/// <summary>
 		/// Use by converting code that doesn't have proper access such as
 		///     alpha._bravo.charlie(delta); // _bravo is an inaccessible private field

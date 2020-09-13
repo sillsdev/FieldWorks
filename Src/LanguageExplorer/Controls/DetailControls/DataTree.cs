@@ -129,6 +129,8 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		private bool m_fDoNotRefresh;
 		private bool m_fPostponedClearAllSlices;
+		private ICmObject _rootObject;
+		private bool _rootChanged;
 
 		// Set during ConstructSlices, to suppress certain behaviors not safe at this point.
 		internal bool ConstructingSlices { get; private set; }
@@ -632,14 +634,18 @@ namespace LanguageExplorer.Controls.DetailControls
 			}
 		}
 
-		private ICmObject _rootObject;
-		private bool _rootChanged;
 		public ICmObject Root
 		{
 			get => _rootObject;
 			protected set
 			{
-				_rootChanged = !ReferenceEquals(_rootObject, value);
+				if (ReferenceEquals(_rootObject, value))
+				{
+					// Setting to same root (even if old and new values are null).
+					_rootChanged = false;
+					return;
+				}
+				_rootChanged = true;
 				_rootObject = value;
 			}
 		}
@@ -686,7 +692,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			}
 			// Find the first parent IRecordListOwner object (if any) that
 			// owns an IRecordListUpdater.
-			var rlo = PropertyTable.GetValue<IRecordListOwner>(FwUtils.window);
+			var rlo = PropertyTable.GetValue<IRecordListOwner>(FwUtilsConstants.window);
 			if (rlo != null)
 			{
 				m_rlu = rlo.FindRecordListUpdater(m_listName);
@@ -772,7 +778,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			m_currentSliceNew = null;
 			m_fSetCurrentSliceNew = false;
 			MonoIgnoreUpdates();
-			using (new DataTreeLayoutSuspensionHelper(PropertyTable.GetValue<IFwMainWnd>(FwUtils.window), this))
+			using (new DataTreeLayoutSuspensionHelper(PropertyTable.GetValue<IFwMainWnd>(FwUtilsConstants.window), this))
 			{
 				try
 				{
@@ -821,7 +827,7 @@ namespace LanguageExplorer.Controls.DetailControls
 					// allow OnReadyToSetCurrentSlice to focus first possible control.
 					m_fCurrentContentControlObjectTriggered = true;
 					// Tests have no IdleQueue.
-					PropertyTable.GetValue<IFwMainWnd>(FwUtils.window).IdleQueue?.Add(IdleQueuePriority.High, OnReadyToSetCurrentSlice, suppressFocusChange);
+					PropertyTable.GetValue<IFwMainWnd>(FwUtilsConstants.window).IdleQueue?.Add(IdleQueuePriority.High, OnReadyToSetCurrentSlice, suppressFocusChange);
 					// prevent setting focus in slice until we're all setup (cf.
 					m_fSuspendSettingCurrentSlice = true;
 				}
@@ -957,7 +963,7 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		private void InitializeAdvanced()
 		{
-			using (new DataTreeLayoutSuspensionHelper(PropertyTable.GetValue<IFwMainWnd>(FwUtils.window), this))
+			using (new DataTreeLayoutSuspensionHelper(PropertyTable.GetValue<IFwMainWnd>(FwUtilsConstants.window), this))
 			{
 				// NB: The ArrayList created here can hold disparate objects, such as XmlNodes and ints.
 				if (Root != null)
@@ -983,7 +989,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			{
 				Subscriber.Unsubscribe(LanguageExplorerConstants.ShowHiddenFields, ShowHiddenFields_Handler);
 				Subscriber.Unsubscribe(LanguageExplorerConstants.DelayedRefreshList, DelayedRefreshList_Handler);
-				var idleQueue = PropertyTable?.GetValue<IFwMainWnd>(FwUtils.window)?.IdleQueue;
+				var idleQueue = PropertyTable?.GetValue<IFwMainWnd>(FwUtilsConstants.window)?.IdleQueue;
 				if (idleQueue != null)
 				{
 					idleQueue.Remove(DoPostponedFocusSlice);
@@ -1132,7 +1138,7 @@ namespace LanguageExplorer.Controls.DetailControls
 				m_fPostponedClearAllSlices |= differentObject;
 				return;
 			}
-			var fwMainWnd = PropertyTable.GetValue<IFwMainWnd>(FwUtils.window);
+			var fwMainWnd = PropertyTable.GetValue<IFwMainWnd>(FwUtilsConstants.window);
 			using (new WaitCursor((Form)fwMainWnd))
 			{
 				try
@@ -1215,7 +1221,7 @@ namespace LanguageExplorer.Controls.DetailControls
 					m_fSetCurrentSliceNew = false;
 					if (m_currentSliceNew != null)
 					{
-						PropertyTable.GetValue<IFwMainWnd>(FwUtils.window).IdleQueue.Add(IdleQueuePriority.High, OnReadyToSetCurrentSlice, (object)false);
+						PropertyTable.GetValue<IFwMainWnd>(FwUtilsConstants.window).IdleQueue.Add(IdleQueuePriority.High, OnReadyToSetCurrentSlice, (object)false);
 						// prevent setting focus in slice until we're all setup (cf.
 						m_fSuspendSettingCurrentSlice = true;
 					}
@@ -3095,7 +3101,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		public void OnFocusFirstPossibleSlice(object arg)
 		{
-			PropertyTable.GetValue<IFwMainWnd>(FwUtils.window).IdleQueue.Add(IdleQueuePriority.Medium, DoPostponedFocusSlice);
+			PropertyTable.GetValue<IFwMainWnd>(FwUtilsConstants.window).IdleQueue.Add(IdleQueuePriority.Medium, DoPostponedFocusSlice);
 		}
 
 		private bool DoPostponedFocusSlice(object parameter)
@@ -3228,7 +3234,7 @@ namespace LanguageExplorer.Controls.DetailControls
 				if (ContainsFocus)
 				{
 					// see if we can find the parent slice for focusedControl
-					var currentControl = PropertyTable.GetValue<IFwMainWnd>(FwUtils.window).FocusedControl;
+					var currentControl = PropertyTable.GetValue<IFwMainWnd>(FwUtilsConstants.window).FocusedControl;
 					while (currentControl != null && currentControl != this)
 					{
 						if (currentControl is ISlice)

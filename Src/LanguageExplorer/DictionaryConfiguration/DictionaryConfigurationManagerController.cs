@@ -612,7 +612,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 		{
 			_view.Close();
 			ConfigurationViewImported?.Invoke();
-			PropertyTable.GetValue<IFwMainWnd>(FwUtils.window).RefreshAllViews();
+			PropertyTable.GetValue<IFwMainWnd>(FwUtilsConstants.window).RefreshAllViews();
 		}
 
 		public bool IsConfigurationACustomizedOriginal(DictionaryConfigurationModel configuration)
@@ -684,7 +684,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 			Publisher = flexComponentParameters.Publisher;
 			Subscriber = flexComponentParameters.Subscriber;
 
-			_cache = PropertyTable.GetValue<LcmCache>(FwUtils.cache);
+			_cache = PropertyTable.GetValue<LcmCache>(FwUtilsConstants.cache);
 			if (!PropertyTable.GetValue("SkipSomeTestInitialization", false))
 			{
 				// Populate lists of configurations and publications

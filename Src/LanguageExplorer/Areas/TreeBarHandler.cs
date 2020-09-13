@@ -43,7 +43,7 @@ namespace LanguageExplorer.Areas
 			Guard.AgainstNull(propertyTable, nameof(propertyTable));
 
 			m_propertyTable = propertyTable;
-			m_cache = m_propertyTable.GetValue<LcmCache>(FwUtils.cache);
+			m_cache = m_propertyTable.GetValue<LcmCache>(FwUtilsConstants.cache);
 			m_expand = expand;
 			m_hierarchical = hierarchical;
 			m_includeAbbr = includeAbbr;
@@ -93,7 +93,7 @@ namespace LanguageExplorer.Areas
 
 		public void UpdateSelection(ICmObject currentObject)
 		{
-			var tree = m_propertyTable.GetValue<IFwMainWnd>(FwUtils.window).TreeStyleRecordList;
+			var tree = m_propertyTable.GetValue<IFwMainWnd>(FwUtilsConstants.window).TreeStyleRecordList;
 			if (currentObject == null)
 			{
 				if (tree != null)
@@ -258,7 +258,7 @@ namespace LanguageExplorer.Areas
 				return; // Been here. Done that.
 			}
 			MyRecordList = recordList;
-			var window = m_propertyTable.GetValue<IFwMainWnd>(FwUtils.window);
+			var window = m_propertyTable.GetValue<IFwMainWnd>(FwUtilsConstants.window);
 			var recordBarControl = window.RecordBarControl;
 			if (recordBarControl == null)
 			{
@@ -520,7 +520,7 @@ namespace LanguageExplorer.Areas
 			var hvoMove = (int)sourceItem.Tag;
 			var hvoDest = 0;
 			int flidDest;
-			var cache = m_propertyTable.GetValue<LcmCache>(FwUtils.cache);
+			var cache = m_propertyTable.GetValue<LcmCache>(FwUtilsConstants.cache);
 			var move = cache.ServiceLocator.GetObject(hvoMove);
 			var moveLabel = sourceItem.Text;
 			TreeNodeCollection newSiblings;

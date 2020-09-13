@@ -67,7 +67,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 			if (disposing)
 			{
-				PropertyTable.GetValue<IFwMainWnd>(FwUtils.window).IdleQueue.Remove(ShowRecordOnIdle);
+				PropertyTable.GetValue<IFwMainWnd>(FwUtilsConstants.window).IdleQueue.Remove(ShowRecordOnIdle);
 				_uiWidgetController.RemoveUserControlHandlers(this);
 			}
 
@@ -169,7 +169,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 					return;
 				}
 				var configuration = new DictionaryConfigurationModel(configurationFile, Cache);
-				var xhtmlPath = ConfiguredXHTMLGenerator.SavePreviewHtmlWithStyles(new[] { cmo.Hvo }, null, configuration, PropertyTable, Cache, MyRecordList);
+				var xhtmlPath = LcmXhtmlGenerator.SavePreviewHtmlWithStyles(new[] { cmo.Hvo }, null, configuration, PropertyTable, Cache, MyRecordList);
 				m_mainView.Url = new Uri(xhtmlPath);
 				m_mainView.Refresh(WebBrowserRefreshOption.Completely);
 			}
@@ -198,7 +198,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			{
 				gb.Document?.Body.SetAttribute("style", "background-color:#DEDEDE");
 			}
-			var idleQueue = PropertyTable.GetValue<IFwMainWnd>(FwUtils.window).IdleQueue;
+			var idleQueue = PropertyTable.GetValue<IFwMainWnd>(FwUtilsConstants.window).IdleQueue;
 			if (!idleQueue.Contains(ShowRecordOnIdle))
 			{
 				idleQueue.Add(IdleQueuePriority.High, ShowRecordOnIdle);

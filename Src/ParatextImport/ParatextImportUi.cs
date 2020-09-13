@@ -296,7 +296,7 @@ namespace ParatextImport
 				{
 					string sMsg = string.Format(Properties.Resources.kstidConfirmStopImport, m_importer.PrevBook);
 
-					if (MessageBox.Show(sMsg, FwUtils.ksFlexAppName,
+					if (MessageBox.Show(sMsg, FwUtilsConstants.ksFlexAppName,
 										MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.No)
 					{
 						// the user does not wish to cancel the import, so cancel the event

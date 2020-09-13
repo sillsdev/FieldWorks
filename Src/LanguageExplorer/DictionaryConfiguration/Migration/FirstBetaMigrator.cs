@@ -6,7 +6,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text.RegularExpressions;
 using System.Xml.Linq;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
@@ -356,19 +355,8 @@ namespace LanguageExplorer.DictionaryConfiguration.Migration
 				{
 					continue;
 				}
-				if (!File.Exists(newFName))
-				{
-					File.Move(fName, newFName);
-				}
-				else
-				{
-					var count = (Directory.GetFiles(Path.GetDirectoryName(fName))
-						.Where(file => Path.GetFileNameWithoutExtension(file).StartsWith(wsValue))
-						.Select(file => Regex.Match(Path.GetFileName(file), wsValue + @"\d*\."))).Count(m => m.Success);
-					newFName = $"{wsValue}{count}{LanguageExplorerConstants.DictionaryConfigurationFileExtension}";
-					newFName = Path.Combine(Path.GetDirectoryName(fName), newFName);
-					File.Move(fName, newFName);
-				}
+				newFName = FwUtils.GetUniqueFilename(Path.GetDirectoryName(fName), newFName);
+				File.Move(fName, newFName);
 			}
 		}
 

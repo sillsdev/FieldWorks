@@ -57,7 +57,7 @@ namespace LanguageExplorer
 
 		protected override void ReportCannotDelete()
 		{
-			MessageBox.Show(PropertyTable.GetValue<Form>(FwUtils.window), CurrentObject is IWfiWordform ? LanguageExplorerResources.ksCannotDeleteWordform : LanguageExplorerResources.ksCannotDeleteScripture, LanguageExplorerResources.ksError, MessageBoxButtons.OK, MessageBoxIcon.Error);
+			MessageBox.Show(PropertyTable.GetValue<Form>(FwUtilsConstants.window), CurrentObject is IWfiWordform ? LanguageExplorerResources.ksCannotDeleteWordform : LanguageExplorerResources.ksCannotDeleteScripture, LanguageExplorerResources.ksError, MessageBoxButtons.OK, MessageBoxIcon.Error);
 		}
 
 		protected override bool AddItemToList(int hvoItem)
@@ -79,7 +79,7 @@ namespace LanguageExplorer
 
 			using (var dlg = new FilterTextsDialog(PropertyTable.GetValue<IApp>(LanguageExplorerConstants.App), m_cache, interestingTextsList.InterestingTexts.ToList(), PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider)))
 			{
-				if (dlg.ShowDialog(PropertyTable.GetValue<Form>(FwUtils.window)) != DialogResult.OK)
+				if (dlg.ShowDialog(PropertyTable.GetValue<Form>(FwUtilsConstants.window)) != DialogResult.OK)
 				{
 					return true;
 				}

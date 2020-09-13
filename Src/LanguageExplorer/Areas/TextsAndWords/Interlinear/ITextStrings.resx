@@ -628,4 +628,8 @@ Click "Cancel" to abort this import.</value>
   <data name="Break_selected_phrase_into_words" xml:space="preserve">
     <value>Break selected phrase into words.</value>
   </data>
+  <data name="ComplexConcControl_NotAllParasParsed" xml:space="preserve">
+    <value>Not all paragraphs in {0} could be parsed</value>
+    <comment>Warning message in Complex Concordance tool when not all paragraphs in a text could be parsed</comment>
+  </data>
 </root>

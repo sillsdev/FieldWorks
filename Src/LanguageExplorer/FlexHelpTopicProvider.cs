@@ -24,9 +24,9 @@ namespace LanguageExplorer
 		/// <summary>
 		/// Gets a help file URL or topic
 		/// </summary>
-		string IHelpTopicProvider.GetHelpString(string stid)
+		string IHelpTopicProvider.GetHelpString(string id)
 		{
-			if (string.IsNullOrWhiteSpace(stid))
+			if (string.IsNullOrWhiteSpace(id))
 			{
 				return "NullStringID";
 			}
@@ -35,13 +35,13 @@ namespace LanguageExplorer
 				s_helpResources = new ResourceManager("LanguageExplorer.HelpTopicPaths", Assembly.GetExecutingAssembly());
 			}
 			// First try to find it in our resource file. If that doesn't work, try the more general one
-			return s_helpResources.GetString(stid) ?? ResourceHelper.GetHelpString(stid);
+			return s_helpResources.GetString(id) ?? ResourceHelper.GetHelpString(id);
 		}
 
 		/// <summary>
 		/// The HTML help file (.chm) for the app.
 		/// </summary>
-		string IHelpTopicProvider.HelpFile => FwDirectoryFinder.CodeDirectory + AsIHelpTopicProvider.GetHelpString("UserHelpFile");
+		string IHelpTopicProvider.HelpFile => FwDirectoryFinder.CodeDirectory + AsIHelpTopicProvider.GetHelpString(FwUtilsConstants.UserHelpFile);
 
 		#endregion
 	}

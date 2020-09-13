@@ -114,7 +114,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			PropertyTable = flexComponentParameters.PropertyTable;
 			Publisher = flexComponentParameters.Publisher;
 			Subscriber = flexComponentParameters.Subscriber;
-			m_cache = PropertyTable.GetValue<LcmCache>(FwUtils.cache);
+			m_cache = PropertyTable.GetValue<LcmCache>(FwUtilsConstants.cache);
 		}
 
 		#endregion
@@ -219,7 +219,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 				m_cbCopyAnalyses.Click += m_cbCopyAnalyses_Click;
 				m_cbMaintainCase.Checked = PropertyTable.GetValue<bool>("MaintainCaseOnChangeSpelling");
 				m_cbMaintainCase.Click += m_cbMaintainCase_Click;
-				m_cache = PropertyTable.GetValue<LcmCache>(FwUtils.cache);
+				m_cache = PropertyTable.GetValue<LcmCache>(FwUtilsConstants.cache);
 				// We need to use the 'best vern' ws,
 				// since that is what is showing in the Words-Analyses detail edit control.
 				// Access to this respeller dlg is currently (Jan. 2008) only via a context menu in the detail edit pane.
@@ -578,7 +578,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		{
 			if (ChangesWereMade)
 			{
-				PropertyTable.GetValue<IFwMainWnd>(FwUtils.window).RefreshAllViews();
+				PropertyTable.GetValue<IFwMainWnd>(FwUtilsConstants.window).RefreshAllViews();
 			}
 			Close();
 		}
@@ -629,13 +629,23 @@ namespace LanguageExplorer.Areas.TextsAndWords
 				m_respellUndoaction.DoIt(Publisher);
 				// On the other hand, we don't want to update the new wordform until after DoIt...it might not exist before,
 				// and we won't be messing up any existing occurrences.
-				Publisher.Publish(new PublisherParameterObject("ItemDataModified", m_cache.ServiceLocator.GetObject(m_respellUndoaction.NewWordform)));
+				Publisher.Publish(new PublisherParameterObject(LanguageExplorerConstants.ItemDataModified, m_cache.ServiceLocator.GetObject(m_respellUndoaction.NewWordform)));
 				ChangesWereMade = true;
 				m_respellUndoaction.RemoveChangedItems(m_enabledItems, m_sourceSentences.BrowseViewer.PreviewEnabledTag);
 				// If everything changed remember the new wordform.
 				if (m_respellUndoaction.AllChanged)
 				{
-					m_hvoNewWordform = m_respellUndoaction.NewWordform;
+					var newWordform = m_respellUndoaction.RepoWf.GetObject(m_respellUndoaction.NewWordform);
+					m_hvoNewWordform = newWordform.Hvo;
+					// LT-20118 avoid crash due to Refresh trying to find possibly deleted old hvo.
+					// This is sure a complicated way to do this, but if we don't and the old wordform goes away,
+					// there will still be a selection out there referencing the old hvo.
+					if (PropertyTable.GetValue<IFwMainWnd>(FwUtilsConstants.window).ActiveView is RecordBrowseView recordBrowseView)
+					{
+						var browseView = recordBrowseView?.BrowseViewer?.BrowseView;
+						browseView?.RootBox?.DestroySelection();
+					}
+					Publisher.Publish(new PublisherParameterObject(LanguageExplorerConstants.TextSelectedWord, newWordform));
 				}
 				if (m_previewOn)
 				{

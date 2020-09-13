@@ -33,7 +33,7 @@ namespace LanguageExplorerTests.Areas
 		[Test]
 		public void ConfiguredDictionary_FsFeatStruc_LT5655()
 		{
-			var expectedResultsPath = Path.Combine(FwDirectoryFinder.SourceDirectory, "LanguageExplorerTests", "Areas", "ExpectedResults");
+			var expectedResultsPath = Path.Combine(FwDirectoryFinder.SourceDirectory, TestUtilities.LanguageExplorerTests, "Areas", "ExpectedResults");
 			var sXmlPhase2 = Path.Combine(expectedResultsPath, "Phase2-Sena3-bo-ConfiguredDictionary.xml");
 			var sXsltSfm = Path.Combine(FwDirectoryFinder.FlexFolder, "Export Templates", "ConfiguredSfm.xsl");
 			var sAnswerFile = Path.Combine(expectedResultsPath, "Sena3-bo-ConfiguredDictionary.sfm");

@@ -72,7 +72,7 @@ namespace LanguageExplorer
 
 		private void GetCache()
 		{
-			Cache = m_propertyTable.GetValue<LcmCache>(FwUtils.cache);
+			Cache = m_propertyTable.GetValue<LcmCache>(FwUtilsConstants.cache);
 		}
 
 		internal List<IStText> CoreTexts

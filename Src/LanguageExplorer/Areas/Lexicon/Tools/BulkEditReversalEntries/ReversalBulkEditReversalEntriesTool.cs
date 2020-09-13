@@ -254,7 +254,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.BulkEditReversalEntries
 
 			private void ConfigureDictionary_Clicked(object sender, EventArgs e)
 			{
-				var mainWindow = _propertyTable.GetValue<IFwMainWnd>(FwUtils.window);
+				var mainWindow = _propertyTable.GetValue<IFwMainWnd>(FwUtilsConstants.window);
 				if (DictionaryConfigurationDlg.ShowDialog(_majorFlexComponentParameters.FlexComponentParameters, (Form)mainWindow, _recordList?.CurrentObject, "khtpConfigureReversalIndex", LanguageExplorerResources.Dictionary))
 				{
 					mainWindow.RefreshAllViews();

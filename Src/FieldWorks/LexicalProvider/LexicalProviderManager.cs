@@ -268,7 +268,7 @@ namespace SIL.FieldWorks.LexicalProvider
 						IPropertyTable propertyTable = new MyDoAlmostNothingPropertyTable();
 						var styleSheet = FwUtils.StyleSheetFromPropertyTable(propertyTable);
 						styleSheet.Init(FieldWorks.Cache, FieldWorks.Cache.LanguageProject.Hvo, LangProjectTags.kflidStyles);
-						LexEntryUi.DisplayEntries(FieldWorks.Cache, null, new FlexComponentParameters(propertyTable, publisher, subscriber), new FlexHelpTopicProvider(), "UserHelpFile", tss, null);
+						LexEntryUi.DisplayEntries(FieldWorks.Cache, null, new FlexComponentParameters(propertyTable, publisher, subscriber), new FlexHelpTopicProvider(), FwUtilsConstants.UserHelpFile, tss, null);
 					});
 				}
 
@@ -288,7 +288,7 @@ namespace SIL.FieldWorks.LexicalProvider
 					{
 						var styleSheet = new LcmStyleSheet();
 						styleSheet.Init(FieldWorks.Cache, FieldWorks.Cache.LanguageProject.Hvo, LangProjectTags.kflidStyles);
-						LexEntryUi.DisplayRelatedEntries(FieldWorks.Cache, null, styleSheet, new FlexHelpTopicProvider(), "UserHelpFile", TsStringUtils.MakeString(entry, FieldWorks.Cache.DefaultVernWs), true);
+						LexEntryUi.DisplayRelatedEntries(FieldWorks.Cache, null, styleSheet, new FlexHelpTopicProvider(), FwUtilsConstants.UserHelpFile, TsStringUtils.MakeString(entry, FieldWorks.Cache.DefaultVernWs), true);
 					});
 				}
 

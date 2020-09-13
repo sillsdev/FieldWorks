@@ -125,7 +125,7 @@ namespace LanguageExplorer.Areas
 		{
 			if (_haveSubscribed)
 			{
-				Subscriber.Unsubscribe("ItemDataModified", ItemDataModified_Handler);
+				Subscriber.Unsubscribe(LanguageExplorerConstants.ItemDataModified, ItemDataModified_Handler);
 				_haveSubscribed = false;
 			}
 			base.RemoveNotification(nchng);
@@ -153,7 +153,7 @@ namespace LanguageExplorer.Areas
 			if (!_haveSubscribed)
 			{
 				// Only do it one time.
-				Subscriber.Subscribe("ItemDataModified", ItemDataModified_Handler);
+				Subscriber.Subscribe(LanguageExplorerConstants.ItemDataModified, ItemDataModified_Handler);
 				_haveSubscribed = true;
 			}
 			m_interestingTexts.InterestingTextsChanged += m_interestingTexts_InterestingTextsChanged;
@@ -574,7 +574,7 @@ namespace LanguageExplorer.Areas
 			m_values.Clear(); // Forget all we know about occurrences, since the texts they are based on have changed.
 			var oldSize = m_services.GetInstance<IWfiWordformRepository>().AllInstances().Count();
 			// Force everything to be redisplayed by pretending all the wordforms were replaced.
-			SendPropChanged(PropertyTable.GetValue<LcmCache>(FwUtils.cache).LanguageProject.Hvo, ObjectListPublisher.OwningFlid, 0, oldSize, oldSize);
+			SendPropChanged(PropertyTable.GetValue<LcmCache>(FwUtilsConstants.cache).LanguageProject.Hvo, ObjectListPublisher.OwningFlid, 0, oldSize, oldSize);
 		}
 
 		/// <summary>

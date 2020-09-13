@@ -56,12 +56,12 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 
 		public static RegistryKey FieldWorksRegistryKey
 		{
-			get { return RegistryHelper.SettingsKey(FWMajorVersion); }
+			get { return RegistryHelper.SettingsKey(FWMajorVersion) ?? RegistryHelper.SettingsKeyOld32Bit(FWMajorVersion); }
 		}
 
 		public static RegistryKey FieldWorksRegistryKeyLocalMachine
 		{
-			get { return RegistryHelper.SettingsKeyLocalMachine(FWMajorVersion); }
+			get { return RegistryHelper.SettingsKeyLocalMachine(FWMajorVersion) ?? RegistryHelper.SettingsKeyLocalMachineOld32Bit(FWMajorVersion); }
 		}
 	}
 }

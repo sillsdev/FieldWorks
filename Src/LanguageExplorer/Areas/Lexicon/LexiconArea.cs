@@ -9,7 +9,6 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using LanguageExplorer.Areas.TextsAndWords.Interlinear;
 using LanguageExplorer.Filters;
 using LanguageExplorer.LIFT;
 using SIL.Code;
@@ -106,7 +105,7 @@ namespace LanguageExplorer.Areas.Lexicon
 		public void EnsurePropertiesAreCurrent()
 		{
 			_propertyTable.SetProperty(LanguageExplorerConstants.InitialArea, MachineName, true, settingsGroup: SettingsGroup.LocalSettings);
-			var serviceLocator = _propertyTable.GetValue<LcmCache>(FwUtils.cache).ServiceLocator;
+			var serviceLocator = _propertyTable.GetValue<LcmCache>(FwUtilsConstants.cache).ServiceLocator;
 			var hc = serviceLocator.GetInstance<HomographConfiguration>();
 			_propertyTable.SetProperty(LanguageExplorerConstants.HomographConfiguration, hc.PersistData, true);
 			PersistedOrDefaultTool.EnsurePropertiesAreCurrent();
@@ -263,10 +262,15 @@ namespace LanguageExplorer.Areas.Lexicon
 
 			private void ImportLinguaLinksData_Clicked(object sender, EventArgs e)
 			{
-				using (var importWizardDlg = new LinguaLinksImportDlg())
-				{
-					AreaServices.HandleDlg(importWizardDlg, _majorFlexComponentParameters.LcmCache, _majorFlexComponentParameters.FlexApp, _majorFlexComponentParameters.MainWindow, _majorFlexComponentParameters.FlexComponentParameters.PropertyTable, _majorFlexComponentParameters.FlexComponentParameters.Publisher);
-				}
+				// Message is deliberately not localized. We expect this to affect maybe one person every couple of years based on recent
+				// occurrences. Doubt it's worth translating.
+				// The reason for the disabling is that model changes require significant changes to the Import code,
+				// and we don't think it's worth the effort. What few LinguaLinks projects still require import can be handled
+				// by installing a version 7 FieldWorks, importing, and then migrating.
+				// (For example, the currently generated stage 5 XML assumes Senses still reference ReveralEntries, rather than the
+				// current opposite link; and there were problems importing texts even in FLEx 8 (LT-2084)).
+				MessageBox.Show(@"Fieldworks no longer supports import of LinguaLinks data. For any remaining projects that need this, our support staff can help convert your data. Please send a message to flex_errors@sil.org",
+					"Sorry", MessageBoxButtons.OK, MessageBoxIcon.Information);
 			}
 
 			private void ImportLiftData_Clicked(object sender, EventArgs e)

@@ -63,7 +63,7 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		public void Init(ICmFile obj, int flid)
 		{
-			m_cache = PropertyTable.GetValue<LcmCache>(FwUtils.cache);
+			m_cache = PropertyTable.GetValue<LcmCache>(FwUtilsConstants.cache);
 			m_file = obj;
 			m_flid = flid;
 			if (RootBox == null)

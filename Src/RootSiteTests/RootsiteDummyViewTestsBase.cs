@@ -8,7 +8,6 @@ using LanguageExplorer.TestUtilities;
 using RootSite.TestUtilities;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
-using SIL.LCModel.DomainServices;
 using SIL.LCModel.Infrastructure;
 
 namespace SIL.FieldWorks.Common.RootSites
@@ -46,7 +45,7 @@ namespace SIL.FieldWorks.Common.RootSites
 
 			Debug.Assert(m_basicView == null, "m_basicView is not null.");
 			_flexComponentParameters = TestSetupServices.SetupEverything(Cache);
-			m_basicView = new DummyBasicView { Cache = Cache, Visible = false, StyleSheet = _flexComponentParameters.PropertyTable.GetValue<LcmStyleSheet>(FwUtils.FwUtils.FlexStyleSheet) };
+			m_basicView = new DummyBasicView { Cache = Cache, Visible = false, StyleSheet = FwUtils.FwUtils.StyleSheetFromPropertyTable(_flexComponentParameters.PropertyTable) };
 			m_basicView.InitializeFlexComponent(_flexComponentParameters);
 		}
 

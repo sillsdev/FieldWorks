@@ -90,11 +90,17 @@ namespace LanguageExplorer.Impls
 				};
 				Controls.Add(packageVersionLabel);
 				Controls.Add(versionInformation);
-				foreach (var info in LinuxPackageUtils.FindInstalledPackages("fieldworks").Concat(LinuxPackageUtils.FindInstalledPackages("fieldworks-applications"))
-					.Concat(LinuxPackageUtils.FindInstalledPackages("fieldworks-enc-converters")).Concat(LinuxPackageUtils.FindInstalledPackages("flexbridge"))
-					.Concat(LinuxPackageUtils.FindInstalledPackages("fieldworks-l10n-*")).Concat(LinuxPackageUtils.FindInstalledPackages("mono4-sil"))
-					.Concat(LinuxPackageUtils.FindInstalledPackages("libgdiplus4-sil")).Concat(LinuxPackageUtils.FindInstalledPackages("gtk-sharp4-sil"))
-					.Concat(LinuxPackageUtils.FindInstalledPackages("mono-basic4-sil")).Concat(LinuxPackageUtils.FindInstalledPackages("chmsee")).Concat(LinuxPackageUtils.FindInstalledPackages("pathway")))
+				foreach (var info in LinuxPackageUtils.FindInstalledPackages("fieldworks")
+					.Concat(LinuxPackageUtils.FindInstalledPackages("fieldworks-applications"))
+					.Concat(LinuxPackageUtils.FindInstalledPackages("fieldworks-enc-converters"))
+					.Concat(LinuxPackageUtils.FindInstalledPackages("flexbridge"))
+					.Concat(LinuxPackageUtils.FindInstalledPackages("fieldworks-l10n-*"))
+					.Concat(LinuxPackageUtils.FindInstalledPackages("mono*-sil"))
+					.Concat(LinuxPackageUtils.FindInstalledPackages("libgdiplus*-sil"))
+					.Concat(LinuxPackageUtils.FindInstalledPackages("gtk-sharp*-sil"))
+					.Concat(LinuxPackageUtils.FindInstalledPackages("mono-basic*-sil"))
+					.Concat(LinuxPackageUtils.FindInstalledPackages("xchm"))
+					.Concat(LinuxPackageUtils.FindInstalledPackages("pathway")))
 				{
 					versionInformation.AppendText($"{info.Key} {info.Value}{Environment.NewLine}");
 				}
@@ -279,6 +285,12 @@ namespace LanguageExplorer.Impls
 				// Set the title bar text
 				Text = string.Format(m_sTitleFmt, viProvider.ProductName);
 				var strRoot = Path.GetPathRoot(Application.ExecutablePath);
+
+				if (MiscUtils.IsUnix)
+				{
+					return;
+				}
+
 				// Set the memory information
 				var memStatEx = new Win32.MemoryStatusEx();
 				memStatEx.dwLength = (uint)Marshal.SizeOf(memStatEx);
@@ -290,9 +302,9 @@ namespace LanguageExplorer.Impls
 				var gbTotal = lpTotalNumberOfBytes / BytesPerGiB;
 				edtAvailableDiskSpace.Text = string.Format(m_sAvailableDiskSpaceFmt, gbFree, gbTotal, strRoot);
 			}
-			catch
+			catch(Exception ex)
 			{
-				// ignore errors
+				Console.WriteLine("HelpAbout ignoring exception: " + ex);
 			}
 		}
 		#endregion

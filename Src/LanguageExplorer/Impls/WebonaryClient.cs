@@ -5,6 +5,7 @@
 using System;
 using System.IO;
 using System.Net;
+using Newtonsoft.Json.Linq;
 
 namespace LanguageExplorer.Impls
 {
@@ -31,11 +32,76 @@ namespace LanguageExplorer.Impls
 		/// <summary>
 		/// Wraps the UploadFile from WebClient to provide status accessor and allow mocking returns for the unit tests.
 		/// </summary>
-		public byte[] UploadFileToWebonary(string address, string fileName)
+		public byte[] UploadFileToWebonary(string address, string fileName, string method = null)
 		{
 			try
 			{
-				return UploadFile(address, fileName);
+				return UploadFile(address, method, fileName);
+			}
+			catch (WebException ex)
+			{
+				if (ex.Response == null)
+				{
+					throw new WebonaryException("WebException with null response stream.", ex);
+				}
+				using (var stream = ex.Response.GetResponseStream())
+				using (var reader = new StreamReader(stream))
+				{
+					var response = reader.ReadToEnd();
+					throw new WebonaryException(response, ex);
+				}
+			}
+		}
+
+		public string PostDictionaryMetadata(string address, string postBody)
+		{
+			return PostToWebonaryApi(address, postBody);
+		}
+
+		public string PostEntry(string address, string postBody, bool isReversal)
+		{
+			if (isReversal)
+			{
+				// reversals use the same api as entry but with one extra parameter to indicate the type
+				return PostToWebonaryApi(address, postBody, "&entryType=reversalindexentry");
+			}
+			return PostToWebonaryApi(address, postBody);
+		}
+
+		public byte[] DeleteContent(string targetURI)
+		{
+			try
+			{
+				return UploadData(targetURI, "DELETE", Encoding.GetBytes(""));
+			}
+			catch (WebException ex)
+			{
+				if (ex.Response == null)
+				{
+					throw new WebonaryException("WebException with null response stream.", ex);
+				}
+				using (var stream = ex.Response.GetResponseStream())
+				using (var reader = new StreamReader(stream))
+				{
+					var response = reader.ReadToEnd();
+					throw new WebonaryException(response, ex);
+				}
+			}
+		}
+
+		public string GetSignedUrl(string address, string filePath)
+		{
+			dynamic urlBody = new JObject();
+			urlBody.objectId = filePath;
+			urlBody.action = "putObject";
+			return PostToWebonaryApi(address, urlBody.ToString());
+		}
+
+		private string PostToWebonaryApi(string address, string postBody, string extraArgs = "")
+		{
+			try
+			{
+				return UploadString(address + extraArgs, postBody);
 			}
 			catch (WebException ex)
 			{

@@ -24,11 +24,17 @@ namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 		public LanguageMapping(ListViewItem.ListViewSubItemCollection subItems)
 		{
 			Debug.Assert(subItems.Count == 5);
-			LlCode = subItems[LinguaLinksImportDlg.kLlCode].Text;
-			LlName = subItems[LinguaLinksImportDlg.kLlName].Text;
-			FwCode = subItems[LinguaLinksImportDlg.kFwCode].Text;
-			FwName = subItems[LinguaLinksImportDlg.kFwName].Text;
-			EncodingConverter = subItems[LinguaLinksImportDlg.kec].Text;
+			LlCode = subItems[kLlCode].Text;
+			LlName = subItems[kLlName].Text;
+			FwCode = subItems[kFwCode].Text;
+			FwName = subItems[kFwName].Text;
+			EncodingConverter = subItems[kec].Text;
 		}
+
+		private const int kLlName = 0;
+		private const int kFwName = 1;
+		private const int kec = 2;
+		private const int kLlCode = 3;
+		private const int kFwCode = 4;
 	}
 }

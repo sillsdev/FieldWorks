@@ -3112,8 +3112,8 @@ namespace LanguageExplorerTests.LIFT
 		[Test]
 		public void TestLdmlMigration()
 		{
-			var testLiftDataSource = Path.Combine(FwDirectoryFinder.SourceDirectory, "LanguageExplorerTests", "LIFT", "LDML-11723");
-			var testLiftDataPath = Path.Combine(FwDirectoryFinder.SourceDirectory, "LanguageExplorerTests", "LIFT", "LDML-11723-test");
+			var testLiftDataSource = Path.Combine(FwDirectoryFinder.SourceDirectory, TestUtilities.LanguageExplorerTests, "LIFT", "LDML-11723");
+			var testLiftDataPath = Path.Combine(FwDirectoryFinder.SourceDirectory, TestUtilities.LanguageExplorerTests, "LIFT", "LDML-11723-test");
 
 			var sLiftDataFile = Path.Combine(testLiftDataPath, "LDML-11723.lift");
 			var sLiftRangesFile = Path.Combine(testLiftDataPath, "LDML-11723.lift-ranges");

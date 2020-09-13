@@ -141,7 +141,7 @@ namespace LanguageExplorer.Controls.DetailControls.Slices
 			{
 				base.InitializeFlexComponent(flexComponentParameters);
 
-				Cache = PropertyTable.GetValue<LcmCache>(FwUtils.cache);
+				Cache = PropertyTable.GetValue<LcmCache>(FwUtilsConstants.cache);
 				var handlers = new Dictionary<string, Tuple<EventHandler<EventArgs>, string>>
 				{
 					{ InflTemplateAddInflAffixMsa, new Tuple<EventHandler<EventArgs>, string>(InflTemplateAddInflAffixMsa_Clicked, LanguageExplorerResources.Add_inflectional_affix_es_to_XXX)},
@@ -155,7 +155,7 @@ namespace LanguageExplorer.Controls.DetailControls.Slices
 					{ JumpToTool, new Tuple<EventHandler<EventArgs>, string>(JumpToTool_Clicked, LanguageExplorerResources.ksShowEntryInLexicon)},
 					{ InflAffixTemplateHelp, new Tuple<EventHandler<EventArgs>, string>(InflAffixTemplateHelp_Clicked, LanguageExplorerResources.ksHelp)}
 				};
-				_menuHandler = new InflAffixTemplateMenuHandler(PropertyTable, this, handlers, PropertyTable.GetValue<Form>(FwUtils.window));
+				_menuHandler = new InflAffixTemplateMenuHandler(PropertyTable, this, handlers, PropertyTable.GetValue<Form>(FwUtilsConstants.window));
 				SetStringTableValues();
 				if (RootBox == null)
 				{
@@ -1105,7 +1105,7 @@ namespace LanguageExplorer.Controls.DetailControls.Slices
 						_comboListBox = new ComboListBox(_mainFlexForm)
 						{
 							// Since we may initialize with TsStrings, need to set WSF.
-							WritingSystemFactory = _propertyTable.GetValue<LcmCache>(FwUtils.cache).LanguageWritingSystemFactoryAccessor,
+							WritingSystemFactory = _propertyTable.GetValue<LcmCache>(FwUtilsConstants.cache).LanguageWritingSystemFactoryAccessor,
 							DropDownStyle = ComboBoxStyle.DropDownList,
 							StyleSheet = FwUtils.StyleSheetFromPropertyTable(_propertyTable)
 						};

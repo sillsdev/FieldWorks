@@ -40,7 +40,7 @@ namespace LanguageExplorerTests.Controls.XMLViews
 		private WritingSystemManager m_wsManager;
 		private IVwCacheDa m_cda;
 
-		private static string PathToXmlViewsTests => Path.Combine(FwDirectoryFinder.SourceDirectory, "LanguageExplorerTests", "Controls", "XMLViews");
+		private static string PathToXmlViewsTests => Path.Combine(FwDirectoryFinder.SourceDirectory, TestUtilities.LanguageExplorerTests, "Controls", "XMLViews");
 
 		/// <summary>
 		/// Create objects required for testing.

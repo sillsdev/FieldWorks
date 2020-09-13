@@ -1458,7 +1458,7 @@ you expect.</value>
     <value>Extension</value>
   </data>
   <data name="toApplyForWebonaryAccountLink" xml:space="preserve">
-    <value>http://www.webonary.org/</value>
+    <value>https://www.webonary.org/</value>
     <comment>URL in toApplyForWebonaryAccountExplanation.</comment>
   </data>
   <data name="ksDeleteEntriesSensesWarning" xml:space="preserve">
@@ -2097,5 +2097,91 @@ you expect.</value>
   </data>
   <data name="ksRecordListLabel" xml:space="preserve">
     <value>Record List</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="OK" xml:space="preserve">
+    <value>OK</value>
+  </data>
+  <data name="CantCalculateLetterHeadings" xml:space="preserve">
+    <value>Cannot Calculate Letter Headings</value>
+  </data>
+  <data name="ksConnectingToWebonary" xml:space="preserve">
+    <value>Connecting to Webonary.</value>
+  </data>
+  <data name="ksErrorCannotConnectToWebonary" xml:space="preserve">
+    <value>An error occurred uploading your data:{0}Unable to connect to Webonary. Please check your username and password and your Internet connection.{0}{1}:{2}</value>
+    <comment>Message displayed in Upload to Webonary dialog when there is an error connecting. {0} is a newline; {1} is the HTTP status code (e.g. 404); {2} is the error message.</comment>
+  </data>
+  <data name="ksErrorInvalidCharacters" xml:space="preserve">
+    <value>Error: Invalid characters found in site name.</value>
+    <comment>Message displayed in Upload to Webonary dialog when the user enters invalid characters in the site name.</comment>
+  </data>
+  <data name="ksErrorNoConfiguration" xml:space="preserve">
+    <value>Error: No Configuration specified.</value>
+  </data>
+  <data name="ksErrorNoPassword" xml:space="preserve">
+    <value>Error: No Password specified.</value>
+  </data>
+  <data name="ksErrorNoPublication" xml:space="preserve">
+    <value>Error: No Publication specified.</value>
+  </data>
+  <data name="ksErrorNoSiteName" xml:space="preserve">
+    <value>Error: No site name specified.</value>
+  </data>
+  <data name="ksErrorNoUsername" xml:space="preserve">
+    <value>Error: No username specified.</value>
+  </data>
+  <data name="ksErrorUserDoesntHavePermissionToImportData" xml:space="preserve">
+    <value>Error: User doesn't have permission to import data</value>
+    <comment>Message displayed in Upload to Webonary dialog</comment>
+  </data>
+  <data name="ksErrorUsernameOrPassword" xml:space="preserve">
+    <value>Error: Wrong username or password</value>
+  </data>
+  <data name="ksErrorWebonarySiteName" xml:space="preserve">
+    <value>Error: There has been an error accessing Webonary. Is your site name correct?</value>
+    <comment>Message displayed in the Upload to Webonary dialog when the site name (as in webonary.org/&lt;sitename&gt;) is incorrect.</comment>
+  </data>
+  <data name="ksExcludingXXFormatUnsupported" xml:space="preserve">
+    <value>Excluding {0}; {1} format is unsupported by Webonary.</value>
+    <comment>Message displayed in the Upload to Webonary dialog when the dictionary contains unsupported files. {0} is the filename; {1} is the file's extension.</comment>
+  </data>
+  <data name="ksPutFilesToWebonaryFailed" xml:space="preserve">
+    <value>Failed to upload {0}.</value>
+    <comment>Status text displayed when a file fails to upload to webonary</comment>
+  </data>
+  <data name="ksPutFilesToWebonaryUploaded" xml:space="preserve">
+    <value>Uploaded {0}.</value>
+    <comment>Status text printed when a file is uploaded to webonary successfully</comment>
+  </data>
+  <data name="ksResponseFromServer" xml:space="preserve">
+    <value>Response from server:</value>
+    <comment>Message displayed in Upload to Webonary dialog when FLEx does not understand the server's response. A portion of the response is displayed on the following line.</comment>
+  </data>
+  <data name="ksUploadingToWebonary" xml:space="preserve">
+    <value>Uploading to Webonary.</value>
+  </data>
+  <data name="ksWebonaryUploadSuccessful" xml:space="preserve">
+    <value>Upload successful. Preparing your data for publication. This may take several minutes to a few hours depending on the size of your dictionary. You will receive an email when the process is complete. You can examine the progress on the admin page of your Webonary site. You may now safely close this dialog.</value>
+  </data>
+  <data name="ksWebonaryUploadSuccessfulErrorProcessing" xml:space="preserve">
+    <value>The upload was successful; however, there were errors processing your data.</value>
+  </data>
+  <data name="msgCantCalculateLetterHeadings" xml:space="preserve">
+    <value>Your data is sorted by a field that does not allow us to calculate letter headings. Please change your sort column before uploading to Webonary.</value>
+  </data>
+  <data name="ksPreparingDataForWebonary" xml:space="preserve">
+    <value>Preparing data to send to webonary (this could take some time)...</value>
+    <comment>Message displayed in Upload to Webonary when content is being generated</comment>
+  </data>
+  <data name="ksWebonaryFinishedDataPrep" xml:space="preserve">
+    <value>Finished preparing data.</value>
+    <comment>Message displayed in Upload to Webonary when data generation is complete</comment>
+  </data>
+  <data name="UploadToWebonary_DeletingProjFiles" xml:space="preserve">
+    <value>Server deleting project files{0}{1}</value>
+    <comment>Displayed when upload to webonary is deleting a project with many files</comment>
   </data>
 </root>

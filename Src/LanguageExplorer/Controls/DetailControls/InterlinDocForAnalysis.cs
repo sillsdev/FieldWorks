@@ -404,7 +404,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			}
 			if (fMakeDefaultSelection)
 			{
-				PropertyTable.GetValue<IFwMainWnd>(FwUtils.window).IdleQueue.Add(IdleQueuePriority.Medium, FocusBox.MakeDefaultSelection);
+				PropertyTable.GetValue<IFwMainWnd>(FwUtilsConstants.window).IdleQueue.Add(IdleQueuePriority.Medium, FocusBox.MakeDefaultSelection);
 			}
 		}
 

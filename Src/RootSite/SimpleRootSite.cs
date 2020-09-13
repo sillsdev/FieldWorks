@@ -296,8 +296,8 @@ namespace SIL.FieldWorks.Common.RootSites
 			{
 				if (Subscriber != null)
 				{
-					Subscriber.Unsubscribe(FwUtils.FwUtils.AboutToFollowLink, AboutToFollowLink);
-					Subscriber.Unsubscribe(FwUtils.FwUtils.WritingSystemHvo, WritingSystemHvo_Changed);
+					Subscriber.Unsubscribe(FwUtils.FwUtilsConstants.AboutToFollowLink, AboutToFollowLink);
+					Subscriber.Unsubscribe(FwUtils.FwUtilsConstants.WritingSystemHvo, WritingSystemHvo_Changed);
 				}
 				if (ContextMenuStrip != null)
 				{
@@ -2372,8 +2372,8 @@ namespace SIL.FieldWorks.Common.RootSites
 			if (Subscriber != null)
 			{
 				// Tests have no subscriber.
-				Subscriber.Subscribe(FwUtils.FwUtils.AboutToFollowLink, AboutToFollowLink);
-				Subscriber.Subscribe(FwUtils.FwUtils.WritingSystemHvo, WritingSystemHvo_Changed);
+				Subscriber.Subscribe(FwUtils.FwUtilsConstants.AboutToFollowLink, AboutToFollowLink);
+				Subscriber.Subscribe(FwUtils.FwUtilsConstants.WritingSystemHvo, WritingSystemHvo_Changed);
 			}
 		}
 
@@ -2383,8 +2383,8 @@ namespace SIL.FieldWorks.Common.RootSites
 			if (Subscriber != null)
 			{
 				// Tests have no subscriber.
-				Subscriber.Unsubscribe(FwUtils.FwUtils.AboutToFollowLink, AboutToFollowLink);
-				Subscriber.Unsubscribe(FwUtils.FwUtils.WritingSystemHvo, WritingSystemHvo_Changed);
+				Subscriber.Unsubscribe(FwUtils.FwUtilsConstants.AboutToFollowLink, AboutToFollowLink);
+				Subscriber.Unsubscribe(FwUtils.FwUtilsConstants.WritingSystemHvo, WritingSystemHvo_Changed);
 			}
 			base.OnLostFocus(e);
 			if (m_printMenu != null)
@@ -4451,7 +4451,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			if (!SuppressPrintHandling)
 			{
 				// Get the "Print" menu from the window's "File" menu, and wire up the Print_Click handler and enable the menu.
-				var mainWindow = PropertyTable.GetValue<Form>(FwUtils.FwUtils.window);
+				var mainWindow = PropertyTable.GetValue<Form>(FwUtils.FwUtilsConstants.window);
 				// Many tests have no window.
 				if (mainWindow != null)
 				{
@@ -4500,7 +4500,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			if (!Focused)
 			{
 				// Not my problem.
-				Subscriber.Unsubscribe(FwUtils.FwUtils.AboutToFollowLink, AboutToFollowLink);
+				Subscriber.Unsubscribe(FwUtils.FwUtilsConstants.AboutToFollowLink, AboutToFollowLink);
 				return;
 			}
 			IsFollowLinkMsgPending = true;
@@ -4514,7 +4514,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			if (!Focused)
 			{
 				// Not my problem.
-				Subscriber.Unsubscribe(FwUtils.FwUtils.WritingSystemHvo, WritingSystemHvo_Changed);
+				Subscriber.Unsubscribe(FwUtils.FwUtilsConstants.WritingSystemHvo, WritingSystemHvo_Changed);
 				return;
 			}
 			ReallyHandleWritingSystemHvo_Changed(newValue);

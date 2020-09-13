@@ -1961,7 +1961,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			// which may be good if the combo can handle it; i.e. there is no *one* ws so
 			// we shouldn't show one in the combo
 			var ws = SelectionHelper.GetWsOfEntireSelection(rootbox.Selection);
-			var s = rs.PropertyTable.GetValue(FwUtils.FwUtils.WritingSystemHvo, "-1");
+			var s = rs.PropertyTable.GetValue(FwUtils.FwUtilsConstants.WritingSystemHvo, "-1");
 			var oldWritingSystemHvo = int.Parse(s);
 			if (oldWritingSystemHvo == ws)
 			{
@@ -1972,9 +1972,9 @@ namespace SIL.FieldWorks.Common.RootSites
 			// As of 28JUN2019, there are only two known subscribers for "WritingSystemHvo":
 			//	1. SimpleRootSite (which calls the method "WritingSystemHvoChanged", below, and
 			//	2. WritingSystemListHandler, which updates the toolbar combobox to the newly selected WS.
-			if (rs.PropertyTable.GetValue<string>(FwUtils.FwUtils.WritingSystemHvo) != ws.ToString())
+			if (rs.PropertyTable.GetValue<string>(FwUtils.FwUtilsConstants.WritingSystemHvo) != ws.ToString())
 			{
-				rs.PropertyTable.SetProperty(FwUtils.FwUtils.WritingSystemHvo, ws.ToString(), doBroadcastIfChanged: true);
+				rs.PropertyTable.SetProperty(FwUtils.FwUtilsConstants.WritingSystemHvo, ws.ToString(), doBroadcastIfChanged: true);
 			}
 		}
 

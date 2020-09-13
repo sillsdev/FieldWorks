@@ -65,10 +65,18 @@ namespace LanguageExplorer.Controls.DetailControls
 				}
 				else
 				{
+					UpdateAutoComplete();
+				}
+			}
+			m_autoComplete.Hide();
+		}
+
+		protected virtual void UpdateAutoComplete()
+		{
 					var possibilities = m_autoComplete.Possibilities.ToArray();
 					if (possibilities.Length == 1)
 					{
-						if (possibilities[0] != Target)
+						if (possibilities[0].Equals(Target))
 						{
 							AddItem(possibilities[0]);
 						}
@@ -77,9 +85,6 @@ namespace LanguageExplorer.Controls.DetailControls
 					{
 						UpdateDisplayFromDatabase();
 					}
-				}
-			}
-			m_autoComplete.Hide();
 		}
 
 		#endregion // Overrides
@@ -98,9 +103,11 @@ namespace LanguageExplorer.Controls.DetailControls
 			return new PossibilityAtomicReferenceView();
 		}
 
-		private void HandlePossibilitySelected(object sender, EventArgs e)
+		protected ICmPossibility AutoCompleteSelectedPossibility => m_autoComplete.SelectedPossibility;
+
+		protected virtual void HandlePossibilitySelected(object sender, EventArgs e)
 		{
-			var poss = m_autoComplete.SelectedPossibility;
+			var poss = AutoCompleteSelectedPossibility;
 			if (poss != Target)
 			{
 				AddItem(poss);

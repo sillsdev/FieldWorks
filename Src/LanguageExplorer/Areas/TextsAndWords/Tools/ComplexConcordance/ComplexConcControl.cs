@@ -239,6 +239,12 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 				foreach (var text in ConcDecorator.InterestingTexts)
 				{
 					matches.AddRange(PatternModel.Search(text));
+					if (PatternModel.CouldNotParseAllParagraphs)
+					{
+						MessageBox.Show(string.Format(ITextStrings.ComplexConcControl_NotAllParasParsed, text.ChooserNameTS.Text),
+							ITextStrings.ComplexConcControl_ResultsMayBeIncomplete, MessageBoxButtons.OK,
+							MessageBoxIcon.Warning);
+					}
 				}
 			}
 			return matches;
@@ -626,7 +632,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 					{
 						var morphNode = new ComplexConcMorphNode();
 						dlg.SetDlgInfo(m_cache, flexComponentParameters, morphNode);
-						if (dlg.ShowDialog(PropertyTable.GetValue<Form>(FwUtils.window)) == DialogResult.OK)
+						if (dlg.ShowDialog(PropertyTable.GetValue<Form>(FwUtilsConstants.window)) == DialogResult.OK)
 						{
 							node = morphNode;
 						}
@@ -637,7 +643,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 					{
 						var wordNode = new ComplexConcWordNode();
 						dlg.SetDlgInfo(m_cache, flexComponentParameters, wordNode);
-						if (dlg.ShowDialog(PropertyTable.GetValue<Form>(FwUtils.window)) == DialogResult.OK)
+						if (dlg.ShowDialog(PropertyTable.GetValue<Form>(FwUtilsConstants.window)) == DialogResult.OK)
 						{
 							node = wordNode;
 						}
@@ -648,7 +654,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 					{
 						var tagNode = new ComplexConcTagNode();
 						dlg.SetDlgInfo(m_cache, flexComponentParameters, tagNode);
-						if (dlg.ShowDialog(PropertyTable.GetValue<Form>(FwUtils.window)) == DialogResult.OK)
+						if (dlg.ShowDialog(PropertyTable.GetValue<Form>(FwUtilsConstants.window)) == DialogResult.OK)
 						{
 							node = tagNode;
 						}
@@ -750,7 +756,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 				using (var dlg = new OccurrenceDlg(PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider), min, max, paren))
 				{
 					dlg.SetHelpTopic("khtpCtxtOccurComplexConcordance");
-					if (dlg.ShowDialog(PropertyTable.GetValue<Form>(FwUtils.window)) == DialogResult.OK)
+					if (dlg.ShowDialog(PropertyTable.GetValue<Form>(FwUtilsConstants.window)) == DialogResult.OK)
 					{
 						min = dlg.Minimum;
 						max = dlg.Maximum;
@@ -785,7 +791,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 		{
 			var nodes = CurrentNodes;
 			var wordNode = nodes[0] as ComplexConcWordNode;
-			var fwMainWnd = PropertyTable.GetValue<Form>(FwUtils.window);
+			var fwMainWnd = PropertyTable.GetValue<Form>(FwUtilsConstants.window);
 			var flexComponentParameters = new FlexComponentParameters(PropertyTable, Publisher, Subscriber);
 			if (wordNode != null)
 			{

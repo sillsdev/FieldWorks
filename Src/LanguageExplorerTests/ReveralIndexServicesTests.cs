@@ -42,13 +42,13 @@ namespace LanguageExplorerTests
 				var riConfigDir = Path.Combine(tfProject.Path, ReversalIndexServices.ConfigDir, ReversalIndexServices.RevIndexDir);
 				FileUtils.EnsureDirectoryExists(riConfigDir);
 
-				var crazyFilename = Path.Combine(riConfigDir, "FilenameHasNoWS" + ReversalIndexServices.ConfigFileExtension);
+				var crazyFilename = Path.Combine(riConfigDir, "FilenameHasNoWS" + LanguageExplorerConstants.DictionaryConfigurationFileExtension);
 				CreateDummyConfigForWS(crazyFilename, analWss[0]);
 				var nonExtantWsFilename = GetFilenameForWs(riConfigDir, nonExtantWs);
 				CreateDummyConfigForWS(nonExtantWsFilename, nonExtantWs);
 				var wrongWsFilename = GetFilenameForWs(riConfigDir, analWss[1]);
 				CreateDummyConfigForWS(wrongWsFilename, analWss[2]);
-				var allReversalsFilename = Path.Combine(riConfigDir, ReversalIndexServices.AllIndexesFileName + ReversalIndexServices.ConfigFileExtension);
+				var allReversalsFilename = Path.Combine(riConfigDir, ReversalIndexServices.AllIndexesFileName + LanguageExplorerConstants.DictionaryConfigurationFileExtension);
 				CreateDummyConfigForWS(allReversalsFilename, "");
 				// A file with the expected name that the user had modified
 				var normalFilename = GetFilenameForWs(riConfigDir, analWss[2]);
@@ -83,7 +83,7 @@ namespace LanguageExplorerTests
 
 		private string GetFilenameForWs(string riConfigDir, string ws)
 		{
-			return Path.Combine(riConfigDir, WSMgr.Get(ws).LanguageTag + ReversalIndexServices.ConfigFileExtension);
+			return Path.Combine(riConfigDir, WSMgr.Get(ws).LanguageTag + LanguageExplorerConstants.DictionaryConfigurationFileExtension);
 		}
 
 		private void CreateDummyConfigForWS(string filename, string ws)
