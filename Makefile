@@ -415,7 +415,7 @@ l10n-clean:
 	done
 
 l10n-install:
-	if [ "$(FW_PACKAGE_DEBUG)" = "true" ]; then find "$(BUILD_ROOT)" "$(DESTDIR)"; fi
+	if [ "$(FW_PACKAGE_DEBUG)" = "true" ]; then find "Output/Release" "$(BUILD_ROOT)/DistFiles"/ "$(DESTDIR)/usr"; fi
 	install -d $(DESTDIR)/usr/lib/fieldworks
 	install -d $(DESTDIR)/usr/share/fieldworks/CommonLocalizations
 	install -d "$(DESTDIR)/usr/share/fieldworks/Language Explorer/Configuration"
@@ -430,6 +430,6 @@ l10n-install:
 		ln -sf ../../../lib/fieldworks-l10n-$${LOCALE,,}/Chorus.$$LOCALE.xlf "$(DESTDIR)/usr/share/fieldworks/CommonLocalizations/Chorus.$$LOCALE.xlf" ;\
 		ln -sf ../../../../lib/fieldworks-l10n-$${LOCALE,,}/strings-$$LOCALE.xml "$(DESTDIR)/usr/share/fieldworks/Language Explorer/Configuration/strings-$$LOCALE.xml" ;\
 	done
-	if [ "$(FW_PACKAGE_DEBUG)" = "true" ]; then ls -l "$(DESTDIR)/usr/share/fieldworks/CommonLocalizations"; fi
+	if [ "$(FW_PACKAGE_DEBUG)" = "true" ]; then ls -l "$(DESTDIR)/usr/share/fieldworks/CommonLocalizations"; find "$(BUILD_ROOT)/Distfiles" fi
 
 # End localization section
