@@ -415,7 +415,7 @@ l10n-clean:
 	done
 
 l10n-install:
-	if [ "$(FW_PACKAGE_DEBUG)" = "true" ]; then find "Output/Release" "$(BUILD_ROOT)/DistFiles"/ "$(DESTDIR)/usr"; fi
+	if [ "$(FW_PACKAGE_DEBUG)" = "true" ]; then find "$(BUILD_ROOT)/DistFiles" "$(DESTDIR)"; fi
 	install -d $(DESTDIR)/usr/lib/fieldworks
 	install -d $(DESTDIR)/usr/share/fieldworks/CommonLocalizations
 	install -d "$(DESTDIR)/usr/share/fieldworks/Language Explorer/Configuration"
@@ -423,12 +423,15 @@ l10n-install:
 		DESTINATION=$(DESTDIR)/usr/lib/fieldworks-l10n-$${LOCALE,,} ;\
 		install -d $$DESTINATION ;\
 		install -m 644 Output/Release/$$LOCALE/*.dll $$DESTINATION/ ;\
-		install -m 644 "$(BUILD_ROOT)/DistFiles/CommonLocalizations/*.$$LOCALE.xlf" $$DESTINATION/ ;\
+		ls -al $(BUILD_ROOT)/DistFiles/CommonLocalizations || true ;\
+		install -m 644 "$(BUILD_ROOT)/DistFiles/CommonLocalizations/Palaso.$$LOCALE.xlf" $$DESTINATION/ ;\
+		install -m 644 "$(BUILD_ROOT)/DistFiles/CommonLocalizations/Chorus.$$LOCALE.xlf" $$DESTINATION/ ;\
 		install -m 644 "$(BUILD_ROOT)/DistFiles/Language Explorer/Configuration/strings-$$LOCALE.xml" $$DESTINATION/ ;\
 		ln -sf ../fieldworks-l10n-$${LOCALE,,} $(DESTDIR)/usr/lib/fieldworks/$$LOCALE ;\
 		ln -sf ../../../lib/fieldworks-l10n-$${LOCALE,,}/Palaso.$$LOCALE.xlf "$(DESTDIR)/usr/share/fieldworks/CommonLocalizations/Palaso.$$LOCALE.xlf" ;\
 		ln -sf ../../../lib/fieldworks-l10n-$${LOCALE,,}/Chorus.$$LOCALE.xlf "$(DESTDIR)/usr/share/fieldworks/CommonLocalizations/Chorus.$$LOCALE.xlf" ;\
 		ln -sf ../../../../lib/fieldworks-l10n-$${LOCALE,,}/strings-$$LOCALE.xml "$(DESTDIR)/usr/share/fieldworks/Language Explorer/Configuration/strings-$$LOCALE.xml" ;\
+		find lib/fieldworks-l10n-$${LOCALE,,} || true; find "$$DESTINATION" || true ;\
 	done
 	if [ "$(FW_PACKAGE_DEBUG)" = "true" ]; then ls -l "$(DESTDIR)/usr/share/fieldworks/CommonLocalizations"; find "$(BUILD_ROOT)/Distfiles" fi
 
