@@ -6,7 +6,7 @@
 #
 #	MarkS - 2007-08-08
 
-FW_PACKAGE_DEBUG = true
+FW_PACKAGE_DEBUG = false
 BUILD_TOOL = msbuild
 ICU_VERSION = 54
 BUILD_ROOT = $(shell pwd)
@@ -423,7 +423,6 @@ l10n-install:
 		DESTINATION=$(DESTDIR)/usr/lib/fieldworks-l10n-$${LOCALE,,} ;\
 		install -d $$DESTINATION ;\
 		install -m 644 Output/Release/$$LOCALE/*.dll $$DESTINATION/ ;\
-		ls -al $(BUILD_ROOT)/DistFiles/CommonLocalizations || true ;\
 		install -m 644 "$(BUILD_ROOT)/DistFiles/CommonLocalizations/Palaso.$$LOCALE.xlf" $$DESTINATION/ ;\
 		install -m 644 "$(BUILD_ROOT)/DistFiles/CommonLocalizations/Chorus.$$LOCALE.xlf" $$DESTINATION/ ;\
 		install -m 644 "$(BUILD_ROOT)/DistFiles/Language Explorer/Configuration/strings-$$LOCALE.xml" $$DESTINATION/ ;\
@@ -431,7 +430,6 @@ l10n-install:
 		ln -sf ../../../lib/fieldworks-l10n-$${LOCALE,,}/Palaso.$$LOCALE.xlf "$(DESTDIR)/usr/share/fieldworks/CommonLocalizations/Palaso.$$LOCALE.xlf" ;\
 		ln -sf ../../../lib/fieldworks-l10n-$${LOCALE,,}/Chorus.$$LOCALE.xlf "$(DESTDIR)/usr/share/fieldworks/CommonLocalizations/Chorus.$$LOCALE.xlf" ;\
 		ln -sf ../../../../lib/fieldworks-l10n-$${LOCALE,,}/strings-$$LOCALE.xml "$(DESTDIR)/usr/share/fieldworks/Language Explorer/Configuration/strings-$$LOCALE.xml" ;\
-		find lib/fieldworks-l10n-$${LOCALE,,} || true; find "$$DESTINATION" || true ;\
 	done
 	if [ "$(FW_PACKAGE_DEBUG)" = "true" ]; then ls -l "$(DESTDIR)/usr/share/fieldworks/CommonLocalizations"; find "$(BUILD_ROOT)/Distfiles" fi
 
