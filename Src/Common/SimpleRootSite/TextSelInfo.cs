@@ -67,10 +67,10 @@ namespace SIL.FieldWorks.Common.RootSites
 				bool fAssocPrev;
 				int ihvoEnd;
 				ITsTextProps ttpBogus;
-				// Main array of information retrived from sel that made combo.
+				// Main array of information retrieved from sel that made combo.
 				SelLevInfo[] rgvsli;
 
-				// Analysis can now be zero (e.g., displaying alterate case form for non-existent WfiWordform)
+				// Analysis can now be zero (e.g., displaying alternate case form for non-existent WfiWordform)
 				// and I don't believe it's a problem for the code below (JohnT).
 				//				if (sandbox.Analysis == 0)
 				//				{

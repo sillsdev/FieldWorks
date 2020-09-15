@@ -11,8 +11,8 @@ using SIL.Windows.Forms.Keyboarding;
 namespace SIL.FieldWorks.Common.RootSites
 {
 	/// <summary>
-	/// Connects a view (rootbox) with keyboards. This class gets created by the VwRootBox when ENABLE_TSF is not defined
-	/// and MANAGED_KEYBOARDING is, that is, on Mono but not on Windows. Thus, the code here is basically Mono/Linux-only.
+	/// Connects a view (rootbox) with keyboards. This class gets created by the VwRootBox on
+	/// Linux. Windows uses an unmanaged implementation (VwTextStore).
 	/// </summary>
 	[Guid("830BAF1F-6F84-46EF-B63E-3C1BFDF9E83E")]
 	public class ViewInputManager: IViewInputMgr

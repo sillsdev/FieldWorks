@@ -1559,7 +1559,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		#region Properties
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Gets wheter or not the selection is a range selection
+		/// Gets whether or not the selection is a range selection
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		public virtual bool IsRange
@@ -1582,7 +1582,7 @@ namespace SIL.FieldWorks.Common.RootSites
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Gets wheter or not the selection is valid
+		/// Gets whether or not the selection is valid
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		public virtual bool IsValid
@@ -1711,7 +1711,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the index of the root object for the given limit of the selection. This
-		/// is 0 for views that don't display mutliple root objects).
+		/// is 0 for views that don't display multiple root objects).
 		/// </summary>
 		/// <param name="type">Anchor or End</param>
 		/// ------------------------------------------------------------------------------------
@@ -1723,7 +1723,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Sets the index of the root object for the given limit of the selection. This
-		/// is 0 for views that don't display mutliple root objects).
+		/// is 0 for views that don't display multiple root objects).
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		public virtual void SetIhvoRoot(SelLimitType type, int value)
@@ -1733,7 +1733,7 @@ namespace SIL.FieldWorks.Common.RootSites
 
 		/// -----------------------------------------------------------------------------------
 		/// <summary>
-		/// Gets or sets the index of the root object (for views that display mutliple root
+		/// Gets or sets the index of the root object (for views that display multiple root
 		/// objects). Default is 0.
 		/// </summary>
 		/// -----------------------------------------------------------------------------------
@@ -1964,7 +1964,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <summary>
 		/// Get the text props for the text immediately before top of the selection.
 		/// </summary>
-		/// <returns>Text props associated with the charcter immediately before the top of the
+		/// <returns>Text props associated with the character immediately before the top of the
 		/// selection, or null if there is no preceding character</returns>
 		/// ------------------------------------------------------------------------------------
 		public ITsTextProps PropsBefore
@@ -1983,7 +1983,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <summary>
 		/// Get the text props for the text immediately after the bottom of the selection.
 		/// </summary>
-		/// <returns>Text props associated with the charcter immediately after the bottom of the
+		/// <returns>Text props associated with the character immediately after the bottom of the
 		/// selection, or null if there is no following character</returns>
 		/// ------------------------------------------------------------------------------------
 		public ITsTextProps PropsAfter
