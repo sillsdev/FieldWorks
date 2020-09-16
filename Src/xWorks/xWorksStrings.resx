@@ -1189,4 +1189,10 @@ If you are not the one designated user who adds fields, or you are making some o
     <value>Reset this view</value>
     <comment>Used in Dictionary Config Mgr dialog</comment>
   </data>
+  <data name="ImportTranslatedGramCats" xml:space="preserve">
+    <value>Update Grammatical Categories</value>
+  </data>
+  <data name="ImportTranslatedGramCatsPrompt" xml:space="preserve">
+    <value>Importing translated grammatical category content will update all grammatical categories (parts of speech) in this project with the latest translations for all Analysis Writing Systems, including English.</value>
+  </data>
 </root>
