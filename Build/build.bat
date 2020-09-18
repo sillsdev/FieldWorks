@@ -23,6 +23,7 @@ for /f "usebackq tokens=1* delims=: " %%i in (`vswhere -version "[15.0,15.999)" 
 if "%arch%" == "" set arch=x86
 call "%InstallDir%\VC\Auxiliary\Build\vcvarsall.bat" %arch% 8.1
 
+
 if "%arch%" == "x86" IF "%VSVersion%" GEQ "2019" (set MsBuild="%InstallDir%\MSBuild\Current\Bin\msbuild.exe") else (set MsBuild="%InstallDir%\MSBuild\15.0\Bin\msbuild.exe")
 if "%arch%" == "x64" if "%VSVersion%" GEQ "2019" (set MsBuild="%InstallDir%\MSBuild\Current\Bin\amd64\msbuild.exe") else (set MsBuild="%InstallDir%\MSBuild\15.0\Bin\amd64\msbuild.exe")
 
@@ -31,8 +32,14 @@ set VALUE_NAME=InstallationFolder
 
 REG QUERY %KEY_NAME% /S /v %VALUE_NAME%
 FOR /F "tokens=2* delims= " %%1 IN (
-  'REG QUERY %KEY_NAME% /v InstallationFolder') DO SET pInstallDir=%%2bin\%arch%;
-SET PATH=%PATH%;%pInstallDir%
+  'REG QUERY %KEY_NAME% /v %VALUE_NAME%') DO SET pInstallDir=%%2
+SET PATH=%PATH%;%pInstallDir%bin\%arch%;
+
+set VALUE_NAME=ProductVersion
+REG QUERY %KEY_NAME% /S /v %VALUE_NAME%
+FOR /F "tokens=2* delims= " %%1 IN (
+  'REG QUERY %KEY_NAME% /v %VALUE_NAME%') DO SET Win10SdkUcrtPath=%pInstallDir%Include\%%2.0\ucrt
+
 REM allow typelib registration in redirected registry key even with limited permissions
 set OAPERUSERTLIBREG=1
 

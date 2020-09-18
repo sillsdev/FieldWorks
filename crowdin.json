@@ -25,7 +25,14 @@
     },
     {
       "source": "Localizations/lists/*.xlf",
-      "translation": "/%locale%/Lists/%file_name%.%locale%.%file_extension%"
+      "translation": "/%locale%/Lists/%file_name%.%locale%.%file_extension%",
+      "ignore": [
+        "Localizations/lists/GOLDEtic*.xlf"
+      ]
+    },
+    {
+      "source": "Localizations/lists/GOLDEtic.en.xlf",
+      "translation": "/%locale%/Lists/GOLDEtic/GOLDEtic.%locale%.xlf",
     },
     {
       "source": "Localizations/LCM/**/*.resx",

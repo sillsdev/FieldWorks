@@ -94,9 +94,9 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 		protected virtual void OnItemSelected(EventArgs e)
 		{
-			m_listBox.HideForm();
-			if (PossibilitySelected != null)
-				PossibilitySelected(this, e);
+			if(!m_listBox.IsDisposed)
+				m_listBox.HideForm();
+			PossibilitySelected?.Invoke(this, e);
 		}
 
 		private void HandleSelectedIndexChanged(object sender, EventArgs e)
@@ -188,7 +188,11 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 						if (ShouldAbort())
 							return false;
 
-						m_listBox.Items.Add(ObjectLabel.CreateObjectLabel(m_cache, poss, m_displayNameProperty, m_displayWs));
+						var autoCompleteItem = ObjectLabel.CreateObjectLabel(m_cache, poss, m_displayNameProperty, m_displayWs);
+						if (m_listBox.Items.OfType<ObjectLabel>().All(item => !ReferenceEquals(item.Object, autoCompleteItem.Object)))
+						{
+							m_listBox.Items.Add(autoCompleteItem);
+						}
 					}
 				}
 				finally

@@ -5,12 +5,6 @@
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{EB9B92B3-FF87-4766-90F8-626D88194528}</ProjectGuid>
-    <SccProjectName>
-    </SccProjectName>
-    <SccLocalPath>
-    </SccLocalPath>
-    <SccProvider>
-    </SccProvider>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ApplicationIcon>LT.ico</ApplicationIcon>
@@ -50,7 +44,7 @@
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
     <TargetFrameworkProfile />
-    <SccAuxPath />
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <OutputPath>..\..\..\Output\Debug\</OutputPath>
@@ -173,7 +167,7 @@
       <Name>ViewsInterfaces</Name>
       <HintPath>..\..\..\Output\Debug\ViewsInterfaces.dll</HintPath>
     </Reference>
-    <Reference Include="DnbXCoreAdapterLibrary">
+    <Reference Include="FlexUIAdapter">
       <Name>FlexUIAdapter</Name>
       <HintPath>..\..\..\Output\Debug\FlexUIAdapter.dll</HintPath>
     </Reference>
@@ -201,10 +195,6 @@
     <Reference Include="xCoreInterfaces">
       <Name>xCoreInterfaces</Name>
       <HintPath>..\..\..\Output\Debug\xCoreInterfaces.dll</HintPath>
-    </Reference>
-    <Reference Include="xCoreOpenSourceAdapter">
-      <Name>xCoreOpenSourceAdapter</Name>
-      <HintPath>..\..\..\Output\Debug\xCoreOpenSourceAdapter.dll</HintPath>
     </Reference>
     <Reference Include="xWorks">
       <Name>xWorks</Name>

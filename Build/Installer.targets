@@ -24,13 +24,8 @@
 
 	<!-- $(ApplicationName) 1.0.0.X ($(ApplicationName) build)-->
 	<PropertyGroup>
-		<ProductIdGuid>A3BC4DAA-16AF-4A0B-BAA5-B01C852EF1DF</ProductIdGuid>
+		<ProductIdGuid>1619DAC6-E9EB-48D4-83E6-5FC6E84E02AD</ProductIdGuid>
 	</PropertyGroup>
-
-	<!-- $(ApplicationName) 1.0.1.X ($(ApplicationName) build)-->
-	<!-- <PropertyGroup>
-	<! -	<ProductIdGuid>E4789AE1-EE7A-4488-88E2-BD3B633DFA1E</ProductIdGuid>
-	<! - </PropertyGroup> -->
 
 	<!-- ########################################################################################################## -->
 	<!-- ### UPGRADE CODE GUID definition : This value must be the same for every version of this product.      ### -->
@@ -160,9 +155,8 @@
 			<DeveloperFiles Include="$(fwrt)\DistFiles\Helps\Translation Editor\**\*"/>
 			<!-- End: No longer want TE helps, but they are not yet removed from the Helps repo. -->
 			<DeveloperFiles Include="$(fwrt)\DistFiles\Icu54.zip"/>
-			<!-- Exclude demo movies to save bandwidth. Do package notfound.html, a webpage telling the user how to download movies. -->
-			<DeveloperFiles Include="$(fwrt)\DistFiles\Language Explorer\Movies\**\*"
-				Exclude="$(fwrt)\DistFiles\Language Explorer\Movies\notfound.html"/>
+			<!-- Exclude old demo movies. The current movies are online. -->
+			<DeveloperFiles Include="$(fwrt)\DistFiles\Language Explorer\Movies\**\*"/>
 			<DeveloperFiles Include="$(fwrt)\DistFiles\libxample32.so"/> <!-- Linux file -->
 			<DeveloperFiles Include="$(fwrt)\DistFiles\libxample64.so"/> <!-- Linux file -->
 			<DeveloperFiles Include="$(fwrt)\DistFiles\Linux\**\*"/>

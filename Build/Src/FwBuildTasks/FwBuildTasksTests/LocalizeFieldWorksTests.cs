@@ -534,6 +534,20 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 			Assert.True(m_sut.Execute(), m_sut.ErrorMessages);
 		}
 
+		/// <summary>
+		/// Some localizations use the same String.Format argument more than once to increase clarity
+		/// (for example, if the language doesn't use pronouns the same way as English)
+		/// </summary>
+		[Test]
+		public void DuplicatedStringArgsAcceptable()
+		{
+			SimpleSetupWithResX(LocaleGe,
+				"{0} fell and the king couldn't put him together again",
+				"{0} fell and the king couldn't put {0} together again");
+
+			Assert.True(m_sut.Execute(), m_sut.ErrorMessages);
+		}
+
 		[TestCase(ColorStringsFilenameNoExt, "White,255,255,255", "Weiß,225,123,0", false, "mismatched RGB")]
 		[TestCase(ColorStringsFilenameNoExt, "White,255,255,255", "Weiß,225,255", false, "missing RGB (actually, just B)")]
 		[TestCase(ColorStringsFilenameNoExt, "White,255,255,255", "Weiß,255,255,255", true, "matching RGB")]

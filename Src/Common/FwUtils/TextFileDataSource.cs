@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015 SIL International
+// Copyright (c) 2015 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -169,8 +169,11 @@ namespace SIL.FieldWorks.Common.FwUtils
 		{
 			try
 			{
+				// If this whole valid characters area wasn't such a mess I'd move this bit into a unit
+				// testable chunk to make sure the reflection didn't break again. If this breaks again
+				// maybe it will encourage us to fix the whole mess. -jn 7/2020
 				Assembly asm = Assembly.LoadFile(m_scrChecksDllFile);
-				Type type = asm.GetType("SIL.FieldWorks.Common.FwUtils." + m_scrCheck);
+				Type type = asm.GetType("SILUBS.ScriptureChecks." + m_scrCheck);
 				IScrCheckInventory scrCharInventoryBldr =
 					Activator.CreateInstance(type, this) as IScrCheckInventory;
 

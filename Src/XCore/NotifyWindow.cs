@@ -554,6 +554,20 @@ namespace XCore
 		#region P/Invoke
 		// DrawThemeBackground()
 		protected const Int32 WP_CLOSEBUTTON = 18;
+
+		private void InitializeComponent()
+		{
+			this.SuspendLayout();
+			//
+			// NotifyWindow
+			//
+			this.ClientSize = new System.Drawing.Size(284, 261);
+			this.Name = "NotifyWindow";
+			this.ShowIcon = false;
+			this.ResumeLayout(false);
+
+		}
+
 		protected const Int32 CBS_NORMAL = 1;
 		protected const Int32 CBS_HOT = 2;
 		protected const Int32 CBS_PUSHED = 3;

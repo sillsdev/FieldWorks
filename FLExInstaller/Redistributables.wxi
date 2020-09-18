@@ -13,6 +13,7 @@
 				  SourceFile="..\libs\FLExBridge_Offline.exe"
 				  InstallCommand="/Q /norestart"
 				  DetectCondition="FLExBridge">
+				<ExitCode Value="1638" Behavior="success"/> <!-- Don't fail if newer version is installed -->
 			</ExePackage>
 		</PackageGroup>
 	</Fragment>

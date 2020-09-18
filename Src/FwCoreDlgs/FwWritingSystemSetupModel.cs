@@ -80,6 +80,11 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <summary/>
 		public event EventHandler WritingSystemListUpdated;
 
+		/// <summary>
+		/// This event is fired only when the id or abbreviation for a writing system changes
+		/// </summary>
+		public event EventHandler WritingSystemUpdated;
+
 		/// <summary/>
 		public delegate void ShowMessageBoxDelegate(string message);
 
@@ -636,6 +641,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					default:
 						throw new NotImplementedException($"{_listType} not yet supported.");
 				}
+
 				// Track the new writing systems for importing translated lists
 				var newWritingSystems = new List<CoreWritingSystemDefinition>();
 				// Adjust the homograph writing system after possibly interacting with the user
@@ -660,6 +666,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					}
 					else if (workingWs.IsChanged)
 					{
+						var didAbbrevOrIdChange = origWs.Abbreviation != workingWs.Abbreviation;
 						var oldId = origWs.Id;
 						var oldHandle = origWs.Handle;
 						// copy the working writing system content into the original writing system
@@ -672,6 +679,11 @@ namespace SIL.FieldWorks.FwCoreDlgs
 							{
 								WritingSystemServices.UpdateWritingSystemId(Cache, origWs, oldHandle, oldId);
 							}
+							didAbbrevOrIdChange = true;
+						}
+						if (didAbbrevOrIdChange)
+						{
+							WritingSystemUpdated?.Invoke(this, EventArgs.Empty);
 						}
 						_mediator?.SendMessage("WritingSystemUpdated", origWs.Id);
 					}
@@ -691,7 +703,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				// Handle any merged writing systems
 				foreach (var mergedWs in _mergedWritingSystems)
 				{
-					WritingSystemServices.MergeWritingSystems(Cache, mergedWs.Key, mergedWs.Value);
+					WritingSystemServices.MergeWritingSystems(Cache, _wsManager.Get(mergedWs.Key.Id), _wsManager.Get(mergedWs.Value.Id));
 				}
 				// Save all the changes to the current writing systems
 				_wsManager.Save();
@@ -800,7 +812,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				currentWritingSystems.Remove(deleteCandidate);
 				allWritingSystems.Remove(deleteCandidate);
 				// The cache will be null while creating a new project, in which case we aren't really deleting anything
-				if (!otherWritingSystems.Contains(deleteCandidate) && Cache != null)
+				if (!otherWritingSystems.Contains(deleteCandidate)
+					&& !_mergedWritingSystems.Keys.Contains(deleteCandidate)
+					&& Cache != null)
 				{
 					WritingSystemServices.DeleteWritingSystem(Cache, deleteCandidate);
 					deletedWsIds.Add(deleteCandidate.Id);
@@ -992,8 +1006,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			var variants = new List<VariantSubtag> { WellKnownSubtags.IpaVariant };
 			variants.AddRange(_currentWs.Variants.Where(variant => variant != WellKnownSubtags.AudioPrivateUse));
-			var cleanScript = _currentWs.Script == null || _currentWs.Script.Code == WellKnownSubtags.AudioScript ? null : _currentWs.Script;
-			var ipaLanguageTag = IetfLanguageTag.Create(_currentWs.Language, cleanScript, _currentWs.Region, variants);
+			// The script for ipa is not meaningful, we drop any script here to discourage its use
+			var ipaLanguageTag = IetfLanguageTag.Create(_currentWs.Language, null, _currentWs.Region, variants);
 			CoreWritingSystemDefinition wsDef;
 			if (!_wsManager.TryGet(ipaLanguageTag, out wsDef))
 			{
@@ -1116,7 +1130,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <summary/>
 		public SpellingDictionaryItem[] GetSpellingDictionaryComboBoxItems()
 		{
-			var dictionaries = new List<SpellingDictionaryItem> { new SpellingDictionaryItem(FwCoreDlgs.ksWsNoDictionaryMatches, FwCoreDlgs.kstidNone) };
+			// Do not localize this data string
+			const string idForNoDictionary = "<None>";
+			var dictionaries = new List<SpellingDictionaryItem> { new SpellingDictionaryItem(FwCoreDlgs.ksWsNoDictionaryMatches, idForNoDictionary) };
 
 			string spellCheckingDictionary = _currentWs.SpellCheckingId;
 			if (string.IsNullOrEmpty(spellCheckingDictionary))

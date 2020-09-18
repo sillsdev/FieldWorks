@@ -7,4 +7,9 @@
 CHMPATH="$(awk -F:: '{print $1}' <<< ${1})"
 PAGEPATH="$(awk -F:: '{print $2}' <<< ${1})"
 
-xchm "file:${CHMPATH}#xchm:${PAGEPATH}"
+if [ "$PAGEPATH" = "" ]
+then
+	xchm "${CHMPATH}"
+else
+	xchm "file:${CHMPATH}#xchm:${PAGEPATH}"
+fi

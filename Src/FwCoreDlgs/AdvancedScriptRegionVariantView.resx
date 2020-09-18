@@ -354,76 +354,76 @@
     <value>3</value>
   </data>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="betterLabel5.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+  <data name="_specialLabel.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Left, Right</value>
   </data>
-  <data name="betterLabel5.Enabled" type="System.Boolean, mscorlib">
+  <data name="_specialLabel.Enabled" type="System.Boolean, mscorlib">
     <value>False</value>
   </data>
-  <data name="betterLabel5.Font" type="System.Drawing.Font, System.Drawing">
+  <data name="_specialLabel.Font" type="System.Drawing.Font, System.Drawing">
     <value>Segoe UI, 9pt</value>
   </data>
-  <data name="betterLabel5.Location" type="System.Drawing.Point, System.Drawing">
+  <data name="_specialLabel.Location" type="System.Drawing.Point, System.Drawing">
     <value>13, 59</value>
   </data>
-  <data name="betterLabel5.Multiline" type="System.Boolean, mscorlib">
+  <data name="_specialLabel.Multiline" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
-  <data name="betterLabel5.Size" type="System.Drawing.Size, System.Drawing">
+  <data name="_specialLabel.Size" type="System.Drawing.Size, System.Drawing">
     <value>71, 15</value>
   </data>
-  <data name="betterLabel5.TabIndex" type="System.Int32, mscorlib">
+  <data name="_specialLabel.TabIndex" type="System.Int32, mscorlib">
     <value>21</value>
   </data>
-  <data name="betterLabel5.Text" xml:space="preserve">
+  <data name="_specialLabel.Text" xml:space="preserve">
     <value>Special:</value>
   </data>
-  <data name="&gt;&gt;betterLabel5.Name" xml:space="preserve">
-    <value>betterLabel5</value>
+  <data name="&gt;&gt;_specialLabel.Name" xml:space="preserve">
+    <value>_specialLabel</value>
   </data>
-  <data name="&gt;&gt;betterLabel5.Type" xml:space="preserve">
+  <data name="&gt;&gt;_specialLabel.Type" xml:space="preserve">
     <value>SIL.Windows.Forms.Widgets.BetterLabel, SIL.Windows.Forms, Version=6.0.0.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
-  <data name="&gt;&gt;betterLabel5.Parent" xml:space="preserve">
+  <data name="&gt;&gt;_specialLabel.Parent" xml:space="preserve">
     <value>$this</value>
   </data>
-  <data name="&gt;&gt;betterLabel5.ZOrder" xml:space="preserve">
+  <data name="&gt;&gt;_specialLabel.ZOrder" xml:space="preserve">
     <value>4</value>
   </data>
-  <data name="betterLabel4.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+  <data name="_abbrLabel.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Left, Right</value>
   </data>
-  <data name="betterLabel4.Enabled" type="System.Boolean, mscorlib">
+  <data name="_abbrLabel.Enabled" type="System.Boolean, mscorlib">
     <value>False</value>
   </data>
-  <data name="betterLabel4.Font" type="System.Drawing.Font, System.Drawing">
+  <data name="_abbrLabel.Font" type="System.Drawing.Font, System.Drawing">
     <value>Segoe UI, 9pt</value>
   </data>
-  <data name="betterLabel4.Location" type="System.Drawing.Point, System.Drawing">
+  <data name="_abbrLabel.Location" type="System.Drawing.Point, System.Drawing">
     <value>13, 24</value>
   </data>
-  <data name="betterLabel4.Multiline" type="System.Boolean, mscorlib">
+  <data name="_abbrLabel.Multiline" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
-  <data name="betterLabel4.Size" type="System.Drawing.Size, System.Drawing">
+  <data name="_abbrLabel.Size" type="System.Drawing.Size, System.Drawing">
     <value>71, 15</value>
   </data>
-  <data name="betterLabel4.TabIndex" type="System.Int32, mscorlib">
+  <data name="_abbrLabel.TabIndex" type="System.Int32, mscorlib">
     <value>20</value>
   </data>
-  <data name="betterLabel4.Text" xml:space="preserve">
+  <data name="_abbrLabel.Text" xml:space="preserve">
     <value>Abbreviation</value>
   </data>
-  <data name="&gt;&gt;betterLabel4.Name" xml:space="preserve">
-    <value>betterLabel4</value>
+  <data name="&gt;&gt;_abbrLabel.Name" xml:space="preserve">
+    <value>_abbrLabel</value>
   </data>
-  <data name="&gt;&gt;betterLabel4.Type" xml:space="preserve">
+  <data name="&gt;&gt;_abbrLabel.Type" xml:space="preserve">
     <value>SIL.Windows.Forms.Widgets.BetterLabel, SIL.Windows.Forms, Version=6.0.0.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
-  <data name="&gt;&gt;betterLabel4.Parent" xml:space="preserve">
+  <data name="&gt;&gt;_abbrLabel.Parent" xml:space="preserve">
     <value>$this</value>
   </data>
-  <data name="&gt;&gt;betterLabel4.ZOrder" xml:space="preserve">
+  <data name="&gt;&gt;_abbrLabel.ZOrder" xml:space="preserve">
     <value>5</value>
   </data>
   <data name="_scriptLabel.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">

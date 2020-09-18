@@ -1,15 +1,17 @@
-// Copyright (c) 2004-2015 SIL International
+// Copyright (c) 2004-2020 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.LCModel;
+using SIL.LCModel.DomainServices;
 using XCore;
 
 namespace SIL.FieldWorks.IText
@@ -25,13 +27,11 @@ namespace SIL.FieldWorks.IText
 		/// <summary>
 		/// If the dialog is being used for exporting multiple texts at a time,
 		/// then the tree must be pruned to show only those texts (and scripture books)
-		/// that were previously selected for interlinearization. The following
-		/// three variables allow this pruning to take place at the appropriate time.
-		/// The m_selectedText variable indicates which text should be intially checked,
-		/// as per LT-12177.
+		/// that were previously selected for interlinearization.
+		/// This pruning must take place at the appropriate time.
+		/// If this property is not set, the tree will not be pruned.
 		/// </summary>
-		private IEnumerable<IStText> m_textsToShow;
-		private IStText m_selectedText;
+		public IEnumerable<IStText> TextsToShow { private get; set; }
 
 		#region Constructor/Destructor
 
@@ -43,7 +43,7 @@ namespace SIL.FieldWorks.IText
 		/// </summary>
 		/// <param name="app"></param>
 		/// <param name="cache">The cache.</param>
-		/// <param name="objList">A list of texts and books to check as an array of hvos</param>
+		/// <param name="objList">A list of texts and books to check as an array of IStTexts</param>
 		/// <param name="helpTopicProvider">The help topic provider.</param>
 		/// ------------------------------------------------------------------------------------
 		public FilterTextsDialog(IApp app, LcmCache cache, IStText[] objList, IHelpTopicProvider helpTopicProvider) : base(app, cache, objList, helpTopicProvider)
@@ -55,11 +55,12 @@ namespace SIL.FieldWorks.IText
 
 		#region Overrides
 		/// <summary>
-		/// Load all texts.
+		/// Load all texts. Prune if necessary.
 		/// </summary>
 		protected override void LoadTexts()
 		{
 			m_treeTexts.LoadAllTexts();
+			PruneToTextsToShowIfAny();
 		}
 
 
@@ -119,31 +120,29 @@ namespace SIL.FieldWorks.IText
 
 		#endregion
 
-		#region Public Methods
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Remove all nodes that aren't in our list of interestingTexts from the tree (m_textsToShow).
-		/// Initially select the one specified (m_selectedText).
+		/// If TextsToShow is not null, remove all nodes that aren't in that list.
 		/// </summary>
-		/// <param name="interestingTexts">The list of texts to display in the dialog.</param>
-		/// <param name="selectedText">The text that should be initially checked in the dialog.</param>
-		/// ------------------------------------------------------------------------------------
-		public void PruneToInterestingTextsAndSelect(IEnumerable<IStText> interestingTexts, IStText selectedText)
+		private void PruneToTextsToShowIfAny()
 		{
-			m_textsToShow = interestingTexts;
-			m_selectedText = selectedText;
+			if (TextsToShow == null)
+				return;
+
 			// ToList() is absolutely necessary to keep from changing node collection while looping!
 			var unusedNodes = m_treeTexts.Nodes.Cast<TreeNode>().Where(PruneChild).ToList();
 			foreach (var treeNode in unusedNodes)
 				m_treeTexts.Nodes.Remove(treeNode);
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Prune all of this node's children, then return true if this node should be removed.
-		/// If this node is to be selected, set its CheckState properly, otherwise uncheck it.
+		/// Select the first node that is to be checked (so it is in the user's view if the list is long).
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
+		/// <remarks>
+		/// Pruning happens before exporting texts. Only those texts selected for display are available for export.
+		/// Hasso 2020.07: To permit lazy loading of scripture sections, scripture is pruned with book granularity. That is, if any portion of a book
+		/// is selected to show, the entire book will be available to select.
+		/// </remarks>
 		private bool PruneChild(TreeNode node)
 		{
 			if (node.Nodes.Count > 0)
@@ -153,33 +152,40 @@ namespace SIL.FieldWorks.IText
 				foreach (var subTreeNode in unused)
 					node.Nodes.Remove(subTreeNode);
 			}
-			if (node.Tag != null)
+
+			switch (node.Tag)
 			{
-				if (node.Tag is IStText)
+				case IStText text when !TextsToShow.Contains(text):
+					return true;
+				case IStText text:
 				{
-					if (!m_textsToShow.Contains(node.Tag as IStText))
-						return true;
-					if (node.Tag == m_selectedText)
+					if (text == m_objList[0])
 					{
 						m_treeTexts.SelectedNode = node;
-						m_treeTexts.SetChecked(node, TriStateTreeView.CheckState.Checked);
 					}
-					else
-						m_treeTexts.SetChecked(node, TriStateTreeView.CheckState.Unchecked);
+					return false;
 				}
-				else
-				{
-					if (node.Nodes.Count == 0)
-						return true; // Delete Genres and Books with no texts
-				}
-			}
-			else
-			{
-				// Usually this condition means 'No Genre', but could also be Testament node
-				if (node.Nodes.Count == 0)
+				// Scripture books have only a dummy child node until they are expanded, so prune books based on the texts they own.
+				case IScrBook book when TextsToShow.All(txt => txt.OwnerOfClass<IScrBook>() != book):
 					return true;
+				case IScrBook book:
+				{
+					if (m_objList[0].OwnerOfClass<IScrBook>() == book)
+					{
+						// Expand this book and highlight the selected section
+						m_treeTexts.CheckNodeByTag(m_objList[0], TriStateTreeView.CheckState.Checked);
+						m_treeTexts.SelectedNode = node.Nodes.Cast<TreeNode>().FirstOrDefault(n => n.Tag == m_objList[0]);
+					}
+					return false;
+				}
+				default:
+				{
+					// Any other Tag is a Genre.
+					// Null Tag could mean 'No Genre', Bible, Old or New Testament, or a dummy node that will be replaced when its parent is expanded.
+					// Remove Genres, etc., with no texts, but preserve dummy nodes so their parents can be expanded.
+					return node.Nodes.Count == 0 && node.Name != TextsTriStateTreeView.ksDummyName;
+				}
 			}
-			return false; // Keep this node!
 		}
 
 		/// <summary>
@@ -190,8 +196,8 @@ namespace SIL.FieldWorks.IText
 			get { return m_treeViewLabel.Text; }
 			set { m_treeViewLabel.Text = value; }
 		}
-		#endregion
 
+		[SuppressMessage("ReSharper", "RedundantNameQualifier", Justification = "Required for designer support")]
 		private void InitializeComponent()
 		{
 			var resources = new System.ComponentModel.ComponentResourceManager(typeof(FilterAllTextsDialog));
@@ -216,6 +222,7 @@ namespace SIL.FieldWorks.IText
 			resources.ApplyResources(this, "$this");
 			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Sizable;
 			this.Name = "FilterTextsDialog";
+			// ReSharper disable once PossibleNullReferenceException
 			this.m_helpProvider.SetShowHelp(this, ((bool)(resources.GetObject("$this.ShowHelp"))));
 			this.Controls.SetChildIndex(this.m_btnOK, 0);
 			this.m_btnOK.Click += this.OnOk;

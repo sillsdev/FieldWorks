@@ -31,7 +31,7 @@
 		<command id="CmdInsertMediaFile" label="_Sound or Movie" message="InsertMediaFile">
 			<parameters field="MediaFiles" className="LexPronunciation"/>
 		</command>
-		<command id="CmdDeleteMediaFile" label="Delete this Media Link" message="DeleteMediaFile" icon="Delete">
+		<command id="CmdDeleteMediaFile" label="Delete this Media Link" message="DataTreeDelete" icon="Delete">
 			<parameters className="CmMedia"/>
 		</command>
 		<command id="CmdInsertVariant" label="_Variant" message="InsertItemViaBackrefVector">

@@ -303,7 +303,6 @@ namespace SIL.FieldWorks.IText
 		/// </summary>
 		internal class UndoRedoApproveAnalysis : UndoActionBase
 		{
-			readonly LcmCache m_cache;
 			readonly InterlinDocForAnalysis m_interlinDoc;
 			readonly AnalysisOccurrence m_oldOccurrence;
 			AnalysisOccurrence m_newOccurrence;
@@ -312,7 +311,6 @@ namespace SIL.FieldWorks.IText
 				AnalysisOccurrence newAnnotation)
 			{
 				m_interlinDoc = interlinDoc;
-				m_cache = m_interlinDoc.Cache;
 				m_oldOccurrence = oldAnnotation;
 				m_newOccurrence = newAnnotation;
 			}
@@ -321,7 +319,7 @@ namespace SIL.FieldWorks.IText
 
 			private bool IsUndoable()
 			{
-				return m_oldOccurrence != null && m_oldOccurrence.IsValid;
+				return m_oldOccurrence != null && m_oldOccurrence.IsValid && m_interlinDoc.IsFocusBoxInstalled;
 			}
 
 			public override bool Redo()

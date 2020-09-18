@@ -682,6 +682,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		private readonly int m_tag;
 		private readonly int m_wsAlt;
 		private readonly IVwRootBox m_rootb;
+		private readonly ISilDataAccess m_dataAccess;
 
 		public UndoAddToSpellDictAction(int wsText, string word, IVwRootBox rootb,
 			int hvoObj, int tag, int wsAlt)
@@ -692,6 +693,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			m_tag = tag;
 			m_wsAlt = wsAlt;
 			m_rootb = rootb;
+			m_dataAccess = rootb?.DataAccess;
 		}
 
 		#region IUndoAction Members
@@ -707,14 +709,19 @@ namespace SIL.FieldWorks.Common.RootSites
 
 		public bool IsRedoable
 		{
-			get { return true; }
+			get { return m_dataAccess != null; }
 		}
 
 		public bool Redo()
 		{
-			SpellingHelper.SetSpellingStatus(m_word, m_wsText, m_rootb.DataAccess.WritingSystemFactory, true);
-			m_rootb.PropChanged(m_hvoObj, m_tag, m_wsAlt, 1, 1);
-			return true;
+			if (m_rootb != null && m_dataAccess != null)
+			{
+				SpellingHelper.SetSpellingStatus(m_word, m_wsText, m_dataAccess.WritingSystemFactory, true);
+				m_rootb.PropChanged(m_hvoObj, m_tag, m_wsAlt, 1, 1);
+				return true;
+			}
+
+			return false;
 		}
 
 		public bool SuppressNotification
@@ -724,9 +731,14 @@ namespace SIL.FieldWorks.Common.RootSites
 
 		public bool Undo()
 		{
-			SpellingHelper.SetSpellingStatus(m_word, m_wsText, m_rootb.DataAccess.WritingSystemFactory, false);
-			m_rootb.PropChanged(m_hvoObj, m_tag, m_wsAlt, 1, 1);
-			return true;
+			if (m_rootb != null && m_dataAccess != null)
+			{
+				SpellingHelper.SetSpellingStatus(m_word, m_wsText, m_dataAccess.WritingSystemFactory, false);
+				m_rootb.PropChanged(m_hvoObj, m_tag, m_wsAlt, 1, 1);
+				return true;
+			}
+
+			return false;
 		}
 
 		#endregion

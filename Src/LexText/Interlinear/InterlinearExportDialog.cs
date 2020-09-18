@@ -1,4 +1,4 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2020 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 using System;
@@ -21,9 +21,7 @@ using SIL.Utils;
 
 namespace SIL.FieldWorks.IText
 {
-	/// <summary>
-	/// Summary description for InterlinearExportDialog.
-	/// </summary>
+	/// <summary/>
 	public class InterlinearExportDialog : ExportDialog
 	{
 		private List<XmlNode> m_ddNodes = new List<XmlNode>(8); // Saves XML nodes used to configure items.
@@ -31,7 +29,6 @@ namespace SIL.FieldWorks.IText
 		InterlinVc m_vc;
 		LCModel.IText m_text;
 		List<ICmObject> m_objs = new List<ICmObject>();
-		private event EventHandler OnLaunchFilterScrScriptureSectionsDialog;
 
 		public InterlinearExportDialog(Mediator mediator, PropertyTable propertyTable, ICmObject objRoot, InterlinVc vc)
 			: base(mediator, propertyTable)
@@ -42,8 +39,8 @@ namespace SIL.FieldWorks.IText
 			m_helpTopic = "khtpExportInterlinear";
 			columnHeader1.Text = ITextStrings.ksFormat;
 			columnHeader2.Text = ITextStrings.ksExtension;
+			// ReSharper disable once VirtualMemberCallInConstructor
 			Text = ITextStrings.ksExportInterlinear;
-			OnLaunchFilterScrScriptureSectionsDialog += LaunchFilterTextsDialog;
 		}
 
 		protected override string ConfigurationFilePath
@@ -68,46 +65,28 @@ namespace SIL.FieldWorks.IText
 		}
 
 		/// <summary>
-		/// If the selected text is from Scripture, pop up a selection dialog to allow the user to
-		/// export more than one section (maybe even more than one book!) to a single file.
+		/// Allow the user to export more than one to a single file (LT-11483)
 		/// </summary>
 		/// <returns>true iff export can proceed to choosing an output file</returns>
 		protected override bool PrepareForExport()
 		{
 			m_objs.Clear();
-			//if (m_objRoot.OwningFlid != TextTags.kflidContents) // MDL LT-11483
-			if (OnLaunchFilterScrScriptureSectionsDialog != null)
-				OnLaunchFilterScrScriptureSectionsDialog(this, EventArgs.Empty);
-			return m_objs.Count > 0;
-		}
-
-		/// <summary>
-		/// Launch the appropriate dialog, depending on IsOkToDisplayScriptureIfPresent (currently always true).
-		/// Note that this means even the SE edition of FW requires ScrControls.dll. This is the price of making
-		/// even the SE edition able to work with Paratext, which we want to do because it was not obvious to
-		/// users that they needed the BTE edition if using Paratext rather than TE.
-		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="args"></param>
-		private void LaunchFilterTextsDialog(object sender, EventArgs args)
-		{
 			var interestingTextsList = InterestingTextsDecorator.GetInterestingTextList(m_mediator, m_propertyTable, m_cache.ServiceLocator);
-			var textsToChooseFrom = new List<IStText>(interestingTextsList.InterestingTexts);
+			var textsToShow = interestingTextsList.InterestingTexts;
 			var isOkToDisplayScripture = m_cache.ServiceLocator.GetInstance<IScrBookRepository>().AllInstances().Any();
 			if (!isOkToDisplayScripture)
 			{   // Mustn't show any Scripture, so remove scripture from the list
-				textsToChooseFrom = textsToChooseFrom.Where(text => !ScriptureServices.ScriptureIsResponsibleFor(text)).ToList();
+				textsToShow = textsToShow.Where(text => !ScriptureServices.ScriptureIsResponsibleFor(text));
 			}
-			var interestingTexts = textsToChooseFrom.ToArray();
-			using (var dlg = new FilterTextsDialog(m_propertyTable.GetValue<IApp>("App"), m_cache, interestingTexts, m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider")))
+			var selectedTexts = new[] { (IStText)m_objRoot };
+			using (var dlg = new FilterTextsDialog(m_propertyTable.GetValue<IApp>("App"), m_cache, selectedTexts, m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider")))
 			{
-				// LT-12181: Was 'PruneToSelectedTexts(text) and most others were deleted.
-				// We want 'PruneToInterestingTextsAndSelect(interestingTexts, selectedText)'
-				dlg.PruneToInterestingTextsAndSelect(interestingTexts, (IStText)m_objRoot);
+				dlg.TextsToShow = textsToShow.ToList();
 				dlg.TreeViewLabel = ITextStrings.ksSelectSectionsExported;
 				if (dlg.ShowDialog(this) == DialogResult.OK)
 					m_objs.AddRange(dlg.GetListOfIncludedTexts());
 			}
+			return m_objs.Count > 0;
 		}
 
 		/// <summary>Export the data according to specifications.</summary>

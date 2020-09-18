@@ -172,11 +172,26 @@
 		<Component Id="RegisterICUFolder" Guid="FD94075E-CB26-4C7A-ADF4-B920FC1B25D1">
 			<RegistryValue Name="ICU54DataDir" Root="HKLM"  Key="Software\SIL" Type="string" KeyPath="yes" Value="[OVRHARVESTDATAFOLDER]\Icu54" />
 		</Component>
+		<!-- Paratext is currently only a 32-bit application. Because FieldWorks is available as a 64-bit application,
+			write these folder locations to both registry spaces so that Paratext can find them. -->
+		<?if $(sys.BUILDARCH) = x64 ?>
+		<Component Id='RegKeys32' Guid='5B50B537-2A4A-47AC-9041-F296E9B3E310'>
+			<RegistryKey Root='HKLM' Key='SOFTWARE\WOW6432Node\[REGISTRYKEY]' ForceDeleteOnUninstall='yes'>
+				<RegistryValue Name="[DATAFOLDERREGSZNAME]" Type='string' Value='[DATAFOLDER]' KeyPath='yes'/>
+				<RegistryValue Name="[HARVESTDATAFOLDERREGSZNAME]" Type='string' Value='[OVRHARVESTDATAFOLDER]'/>
+				<RegistryValue Name="[APPFOLDERREGSZNAME]" Type='string' Value='[APPFOLDER]'/>
+			</RegistryKey>
+		</Component>
+		<?endif?>
 	</DirectoryRef>
+
 
 	<ComponentGroup Id="Miscelanea">
 		<ComponentRef Id="vs_piaredist.exe"/>
 		<ComponentRef Id="RegisterICUFolder"/>
+		<?if $(sys.BUILDARCH) = x64 ?>
+		<ComponentRef Id='RegKeys32'/>
+		<?endif?>
 	</ComponentGroup>
 
 	<!-- These WixVariables insert the source directory into the harvest files (because Heat apparently can't) -->

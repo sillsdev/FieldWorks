@@ -152,28 +152,37 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 		}
 
 		/// <returns><c>true</c> if the given ResX file has errors in string.Format variables</returns>
+		/// <remarks>
+		/// ENHANCE (Hasso) 2020.06: tolerate extra localized elements?
+		/// This would allow all GitHub branches to be build from the same branch in Crowdin.
+		/// </remarks>
 		private bool CheckResXForErrors(string resxPath, string originalResxPath)
 		{
-			//var originalElements = LocalizableElements(originalResxPath, out var comments);
+			var originalElements = LocalizableElements(originalResxPath, out var comments);
 			var localizedElements = LocalizableElements(resxPath, out _);
 
 			var hasErrors = false;
-			//foreach (var key in originalElements.Keys.Where(key => !localizedElements.ContainsKey(key)))
+			//foreach (var key in localizedElements.Keys.Where(key => !originalElements.ContainsKey(key)))
 			//{
-			//	Options.LogError($"{resxPath} is missing a data element named '{key}'");
+			//	Options.LogError($"{resxPath} contains a data element named '{key}' that is not present in the original file");
 			//	hasErrors = true;
 			//}
 
-			//if (hasErrors || originalElements.Count != localizedElements.Count)
+			if (hasErrors)
+			{
+				return true;
+			}
+
+			//if (originalElements.Count != localizedElements.Count)
 			//{
-			//	foreach (var key in localizedElements.Keys.Where(key => !originalElements.ContainsKey(key)))
+			//	foreach (var key in originalElements.Keys.Where(key => !localizedElements.ContainsKey(key)))
 			//	{
-			//		Options.LogError($"{resxPath} contains a data element named '{key}' that is not present in the original file");
+			//		Options.LogError($"{resxPath} is missing a data element named '{key}'");
 			//		hasErrors = true;
 			//	}
 			//}
 
-			foreach (var _ in localizedElements.Where(elt => Options.HasErrors(resxPath, elt.Value, null, null)))
+			foreach (var _ in localizedElements.Where(elt => Options.HasErrors(resxPath, elt.Value, originalElements[elt.Key], comments[elt.Key])))
 			{
 				hasErrors = true;
 			}

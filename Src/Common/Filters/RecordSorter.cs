@@ -2210,13 +2210,23 @@ namespace SIL.FieldWorks.Filters
 			{
 				m_ws = m_cache.ServiceLocator.WritingSystemManager.Get(m_wsId);
 			}
-			if (!m_ws.DefaultCollation.IsValid && m_ws.DefaultCollation.Type.ToLower() == "system")
+			if (!HasValidRules(m_ws.DefaultCollation) || !m_ws.DefaultCollation.IsValid && m_ws.DefaultCollation.Type.ToLower() == "system")
 			{
 				m_ws.DefaultCollation = new SystemCollationDefinition();
 			}
 			return m_ws.DefaultCollation.Collator.Compare(x, y);
 		}
 		#endregion
+
+		/// <summary>
+		/// An ICURulesCollationDefinition with empty rules was causing access violations in ICU. (LT-20268)
+		/// This method supports the band-aid fallback to SystemCollationDefinition.
+		/// </summary>
+		/// <returns>true if the CollationDefinition is a RulesCollationDefinition with valid non empty rules</returns>
+		private bool HasValidRules(CollationDefinition cd)
+		{
+			return cd is RulesCollationDefinition ? !string.IsNullOrEmpty(((RulesCollationDefinition)cd).CollationRules) && cd.IsValid : true;
+		}
 
 		#region IPersistAsXml Members
 

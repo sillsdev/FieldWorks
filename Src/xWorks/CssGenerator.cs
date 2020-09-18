@@ -9,6 +9,7 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using ExCSS;
+using SIL.Extensions;
 using SIL.FieldWorks.Common.Framework;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Core.Text;
@@ -1294,6 +1295,7 @@ namespace SIL.FieldWorks.XWorks
 			AddInfoFromWsOrDefaultValue(wsFontInfo.m_fontColor, defaultFontInfo.FontColor, "color", declaration);
 			AddInfoFromWsOrDefaultValue(wsFontInfo.m_backColor, defaultFontInfo.BackColor, "background-color", declaration);
 			AddInfoFromWsOrDefaultValue(wsFontInfo.m_superSub, defaultFontInfo.SuperSub, declaration);
+			AddFontFeaturesFromWsOrDefaultValue(wsFontInfo.m_features, defaultFontInfo.Features, declaration);
 
 			AddInfoForUnderline(wsFontInfo, defaultFontInfo, declaration);
 		}
@@ -1356,6 +1358,35 @@ namespace SIL.FieldWorks.XWorks
 			var fontProp = new Property(propName);
 			fontProp.Term = new PrimitiveTerm(termType, MilliPtToPt(fontValue));
 			declaration.Add(fontProp);
+		}
+
+		/// <summary>
+		/// Generates css from string style values using writing system overrides where appropriate
+		/// </summary>
+		/// <param name="wsFontInfo"></param>
+		/// <param name="defaultFontInfo"></param>
+		/// <param name="propName"></param>
+		/// <param name="declaration"></param>
+		private static void AddFontFeaturesFromWsOrDefaultValue(InheritableStyleProp<string> wsFontInfo, IStyleProp<string> defaultFontInfo,
+			StyleDeclaration declaration)
+		{
+			if (!GetFontValue(wsFontInfo, defaultFontInfo, out var fontValue))
+				return;
+			var fontProp = new Property("font-feature-settings");
+			fontProp.Term = ConvertToCssFeatures(fontValue);
+			declaration.Add(fontProp);
+		}
+
+		/// <summary>
+		/// Converts values similar to 'Eng=2,smcp=1' into '"Eng" 2,"smcp" 1
+		/// see web documentation for "font-feature-settings" css attribute
+		/// </summary>
+		/// <remarks>ExCss doesn't support this type of attribute well so we build it by hand</remarks>
+		private static Term ConvertToCssFeatures(string fontValue)
+		{
+			var features = fontValue.Split(',');
+			var terms = features.Select(f => $"\"{f.Replace("=", "\" ")}");
+			return new PrimitiveTerm(UnitType.Unknown, string.Join(",", terms));
 		}
 
 		/// <summary>

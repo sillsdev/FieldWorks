@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -787,6 +787,8 @@ namespace SIL.FieldWorks.IText
 			}
 			set
 			{
+				if (Vc == null)
+					return;
 				((InterlinDocForAnalysisVc)Vc).FocusBoxOccurrence = value;
 				m_propertyTable.SetProperty("TextSelectedWord",
 					value != null && value.HasWordform ? value.Analysis.Wordform : null,
@@ -1861,6 +1863,11 @@ namespace SIL.FieldWorks.IText
 		/// <returns>true, if it could hide the sandbox. false, if it was not installed.</returns>
 		internal override bool TryHideFocusBoxAndUninstall()
 		{
+			if (Vc == null)
+			{
+				// we're pretty well hidden already if we don't have a view
+				return false;
+			}
 			if (!IsFocusBoxInstalled)
 			{
 				SelectedOccurrence = null;

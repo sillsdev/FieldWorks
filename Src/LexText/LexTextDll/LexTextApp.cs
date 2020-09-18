@@ -699,50 +699,11 @@ namespace SIL.FieldWorks.XWorks.LexText
 		{
 			CheckDisposed();
 
-			try
-			{
-				string pathMovies = String.Format(FwDirectoryFinder.CodeDirectory +
-					"{0}Language Explorer{0}Movies{0}Demo Movies.html",
-					Path.DirectorySeparatorChar);
+			const string moviesUrl = "https://software.sil.org/fieldworks/download/demo-movies/index-of-demo-movies/";
 
-				OpenDocument<Win32Exception>(pathMovies, (win32err) => {
-					if (win32err.NativeErrorCode == 1155)
-					{
-						// The user has the movie files, but does not have a file association for .html files.
-						// Try to launch Internet Explorer directly:
-						using (Process.Start("IExplore.exe", pathMovies))
-						{
-						}
-					}
-					else
-					{
-						// User probably does not have movies. Try to launch the "no movies" web page:
-						string pathNoMovies = String.Format(FwDirectoryFinder.CodeDirectory +
-							"{0}Language Explorer{0}Movies{0}notfound.html",
-							Path.DirectorySeparatorChar);
+			OpenDocument(moviesUrl, e =>
+				MessageBox.Show(null, string.Format(LexTextStrings.ksErrorCannotOpenMovies, moviesUrl), LexTextStrings.ksError));
 
-						OpenDocument<Win32Exception>(pathNoMovies, (win32err2) => {
-							if (win32err2.NativeErrorCode == 1155)
-							{
-								// The user does not have a file association for .html files.
-								// Try to launch Internet Explorer directly:
-								using (Process.Start("IExplore.exe", pathNoMovies))
-								{
-								}
-							}
-							else
-								throw win32err2;
-						});
-						}
-				});
-					}
-			catch (Exception)
-			{
-				// Some other unforeseen error:
-				MessageBox.Show(null, String.Format(LexTextStrings.ksErrorCannotLaunchMovies,
-					String.Format(FwDirectoryFinder.CodeDirectory + "{0}Language Explorer{0}Movies",
-					Path.DirectorySeparatorChar)), LexTextStrings.ksError);
-			}
 			return true;
 		}
 

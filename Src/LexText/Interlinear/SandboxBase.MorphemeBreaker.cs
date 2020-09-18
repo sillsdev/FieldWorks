@@ -829,13 +829,6 @@ namespace SIL.FieldWorks.IText
 			return m_morphString;
 		}
 
-		private static bool IsBaseWordPhrase(string baseWord)
-		{
-
-			bool fBaseWordIsPhrase = baseWord.IndexOfAny(Common.FwUtils.Unicode.SpaceChars) != -1;
-			return fBaseWordIsPhrase;
-		}
-
 		/// <summary>
 		/// Handle an otherwise-difficult backspace (joining morphemes by deleting a 'space')
 		/// Return true if successful.

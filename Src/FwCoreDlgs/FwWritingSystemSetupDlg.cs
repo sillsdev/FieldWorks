@@ -1,4 +1,4 @@
-// Copyright (c) 2019 SIL International
+// Copyright (c) 2019-2020 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -20,7 +20,7 @@ using SIL.WritingSystems;
 
 namespace SIL.FieldWorks.FwCoreDlgs
 {
-	/// <summary/>
+	/// <remarks>TODO (Hasso) 2020.05: Make Localizable</remarks>
 	public partial class FwWritingSystemSetupDlg : Form
 	{
 		private FwWritingSystemSetupModel _model;
@@ -661,23 +661,19 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		#endregion
 
 
-		/// <summary>
-		/// Display a writing system dialog for the purpose of modifying a new project.
-		/// </summary>
-		public static bool ShowNewDialog(IWin32Window parentForm, WritingSystemManager wsManager, IWritingSystemContainer wsContainer, IHelpTopicProvider helpProvider, IApp app, FwWritingSystemSetupModel.ListType type, out IEnumerable<CoreWritingSystemDefinition> newWritingSystems)
+		/// <summary/>
+		public static bool ShowNewDialog(IWin32Window parentForm, LcmCache cache, IHelpTopicProvider helpProvider, IApp app,
+			FwWritingSystemSetupModel.ListType type, out IEnumerable<CoreWritingSystemDefinition> newWritingSystems)
 		{
 			newWritingSystems = new List<CoreWritingSystemDefinition>();
-			var model = new FwWritingSystemSetupModel(wsContainer, type, wsManager);
+			var model = new FwWritingSystemSetupModel(cache.ServiceLocator.WritingSystems, type, cache.ServiceLocator.WritingSystemManager, cache);
+			var oldWsSet = new HashSet<WSListItemModel>(model.WorkingList);
 			using (var dlg = new FwWritingSystemSetupDlg(model, helpProvider, app))
 			{
 				dlg.ShowDialog(parentForm);
 				if (dlg.DialogResult == DialogResult.OK)
 				{
-					foreach (var item in model.WorkingList)
-					{
-						((List<CoreWritingSystemDefinition>)newWritingSystems).Add(item.WorkingWs);
-					}
-
+					newWritingSystems = model.WorkingList.Where(item => !oldWsSet.Contains(item)).Select(item => item.WorkingWs);
 					return true;
 				}
 			}

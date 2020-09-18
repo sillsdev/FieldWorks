@@ -217,8 +217,8 @@ Would you like to do this now?</value>
     <value>Characters within words</value>
     <comment>Caption for message box.</comment>
   </data>
-  <data name="ksErrorCannotLaunchMovies" xml:space="preserve">
-    <value>An error occurred trying to launch the movies. You could try to launch them yourself. They are located in this folder: {0}</value>
+  <data name="ksErrorCannotOpenMovies" xml:space="preserve">
+    <value>An error occurred trying to open the movies at the following URL. Try again with your web browser. {0}</value>
   </data>
   <data name="kstidSupportEmail" xml:space="preserve">
     <value>FlexErrors@sil.org</value>

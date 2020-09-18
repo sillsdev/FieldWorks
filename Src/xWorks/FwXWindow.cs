@@ -352,7 +352,7 @@ namespace SIL.FieldWorks.XWorks
 			// The order of the next two lines has been changed because the loading of the UI
 			// properly depends on m_viewHelper being initialized.  Why this was not so with DNB
 			// I do not know.
-			// Here is the orginal order (along with a comment between them that seemed to imply this
+			// Here is the original order (along with a comment between them that seemed to imply this
 			// new order could be a problem, but no obvious ones have appeared in my testing.
 
 		   /*
@@ -1277,6 +1277,18 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
+		/// Performs a refresh. Intended for use with an event handler in the <code>FwWritingSystemSetupModel</code>.
+		/// </summary>
+		private void OnWritingSystemUpdated(object param, EventArgs args)
+		{
+			if (m_app is FwXApp)
+			{
+				((FwXApp)m_app).OnMasterRefresh(null);
+			}
+		}
+
+
+		/// <summary>
 		/// Method which set the index to the WS property
 		/// </summary>
 		/// <param name="selectedWsObj">selected writing system</param>
@@ -1323,13 +1335,7 @@ namespace SIL.FieldWorks.XWorks
 		/// ------------------------------------------------------------------------------------
 		public bool OnVernWritingSystemProperties(object arg)
 		{
-			CheckDisposed();
-
-
-			var model = new FwWritingSystemSetupModel(Cache.LangProject, FwWritingSystemSetupModel.ListType.Vernacular, Cache.ServiceLocator.WritingSystemManager, Cache);
-			model.WritingSystemListUpdated += OnWritingSystemListChanged;
-			var view = new FwWritingSystemSetupDlg(model, m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), m_app);
-			view.ShowDialog(this);
+			ShowWsPropsDialog(FwWritingSystemSetupModel.ListType.Vernacular);
 			return true;
 		}
 
@@ -1338,12 +1344,7 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		public bool OnAnalyWritingSystemProperties(object arg)
 		{
-			CheckDisposed();
-
-			var model = new FwWritingSystemSetupModel(Cache.LangProject, FwWritingSystemSetupModel.ListType.Analysis, Cache.ServiceLocator.WritingSystemManager, Cache);
-			model.WritingSystemListUpdated += OnWritingSystemListChanged;
-			var view = new FwWritingSystemSetupDlg(model, m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), m_app);
-			view.ShowDialog(this);
+			ShowWsPropsDialog(FwWritingSystemSetupModel.ListType.Analysis);
 			return true;
 		}
 
@@ -1478,6 +1479,17 @@ namespace SIL.FieldWorks.XWorks
 					return (bool)mi.Invoke(focusControl, args);
 			}
 			return false;
+		}
+
+		private void ShowWsPropsDialog(FwWritingSystemSetupModel.ListType type)
+		{
+			CheckDisposed();
+
+			var model = new FwWritingSystemSetupModel(Cache.LangProject, type, Cache.ServiceLocator.WritingSystemManager, Cache);
+			model.WritingSystemListUpdated += OnWritingSystemListChanged;
+			model.WritingSystemUpdated += OnWritingSystemUpdated;
+			var view = new FwWritingSystemSetupDlg(model, m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), m_app);
+			view.ShowDialog(this);
 		}
 
 		private Control GetFocusControl()

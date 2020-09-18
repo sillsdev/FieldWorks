@@ -1,21 +1,12 @@
-// Copyright (c) 2003-2015 SIL International
+// Copyright (c) 2003-2020 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: VectorReferenceLauncher.cs
-// Responsibility: Steve McConnel (was RandyR)
-// Last reviewed:
-//
-// <remarks>
-// </remarks>
 
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using SIL.LCModel.Core.KernelInterfaces;
-using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.LCModel;
-using SIL.LCModel.Utils;
 using XCore;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls
@@ -26,6 +17,24 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 		private PossibilityAutoComplete m_autoComplete;
 
+		private PossibilityAutoComplete AutoComplete
+		{
+			get => m_autoComplete;
+			set
+			{
+				if (m_autoComplete != null)
+				{
+					m_autoComplete.PossibilitySelected -= HandlePossibilitySelected;
+					m_autoComplete.Dispose();
+				}
+				m_autoComplete = value;
+				if (m_autoComplete != null)
+				{
+					m_autoComplete.PossibilitySelected += HandlePossibilitySelected;
+				}
+			}
+		}
+
 		#endregion // Data Members
 
 		#region Construction, Initialization, and Disposal
@@ -35,15 +44,13 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// </summary>
 		protected override void Dispose(bool disposing)
 		{
-			//Debug.WriteLineIf(!disposing, "****************** " + GetType().Name + " 'disposing' is false. ******************");
 			// Must not be run more than once.
 			if (IsDisposed)
 				return;
 
 			if (disposing)
 			{
-				m_autoComplete.PossibilitySelected -= HandlePossibilitySelected;
-				m_autoComplete.Dispose();
+				AutoComplete = null; // The Property will automatically unwire event handlers and dispose itself
 				m_cache.DomainDataByFlid.RemoveNotification(this);
 			}
 
@@ -57,9 +64,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			CheckDisposed();
 			base.Initialize(cache, obj, flid, fieldName, persistProvider, mediator, propertyTable, displayNameProperty, displayWs);
 
-			m_autoComplete = new PossibilityAutoComplete(cache, mediator, propertyTable, (ICmPossibilityList) obj.ReferenceTargetOwner(flid),
+			AutoComplete = new PossibilityAutoComplete(cache, mediator, propertyTable, (ICmPossibilityList) obj.ReferenceTargetOwner(flid),
 				m_vectorRefView, displayNameProperty, displayWs);
-			m_autoComplete.PossibilitySelected += HandlePossibilitySelected;
 			m_vectorRefView.RootBox.DataAccess.AddNotification(this);
 		}
 
@@ -76,7 +82,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			base.OnLeave(e);
 			if (m_vectorRefView != null && m_vectorRefView.RootBox != null)
 			{
-				ICmPossibility[] possibilities = m_autoComplete.Possibilities.ToArray();
+				ICmPossibility[] possibilities = AutoComplete.Possibilities.ToArray();
 				if (possibilities.Length == 1)
 				{
 					ICmObject selected = m_vectorRefView.SelectedObject;
@@ -100,7 +106,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 					UpdateDisplayFromDatabase();
 				}
 			}
-			m_autoComplete.Hide();
+			AutoComplete.Hide();
 		}
 
 		#endregion // Overrides
@@ -113,12 +119,12 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		public void PropChanged(int hvo, int tag, int ivMin, int cvIns, int cvDel)
 		{
 			if (tag == PossibilityVectorReferenceView.kflidFake)
-				m_autoComplete.Update(m_vectorRefView.RootBox.DataAccess.get_StringProp(hvo, tag));
+				AutoComplete.Update(m_vectorRefView.RootBox.DataAccess.get_StringProp(hvo, tag));
 		}
 
 		private void HandlePossibilitySelected(object sender, EventArgs e)
 		{
-			ICmPossibility poss = m_autoComplete.SelectedPossibility;
+			ICmPossibility poss = AutoComplete.SelectedPossibility;
 			ICmObject curObj = m_vectorRefView.SelectedObject;
 			if (curObj == null)
 			{

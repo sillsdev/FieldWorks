@@ -46,7 +46,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			var x = new MorphTypeChooser(m_persistProvider, labels, m_fieldName, m_obj, m_displayNameProperty,
 				m_flid, sShowAllTypes, m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"));
 			x.Cache = m_cache;
-			x.NullLabel.DisplayName  = XmlUtils.GetOptionalAttributeValue(m_configurationNode, "nullLabel", "<EMPTY>");
+			x.NullLabel.DisplayName  = XmlUtils.GetOptionalAttributeValue(m_configurationNode, "nullLabel", DetailControlsStrings.ksEMPTY);
 			return x;
 		}
 

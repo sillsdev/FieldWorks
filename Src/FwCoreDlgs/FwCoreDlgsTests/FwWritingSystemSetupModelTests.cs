@@ -22,11 +22,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 	class FwWritingSystemSetupModelTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
 	{
 
-		[SetUp]
-		public void SetUp()
-		{
-		}
-
 		[Test]
 		public void CanCreateModel()
 		{
@@ -660,6 +655,64 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			Assert.True(writingSystemListUpdatedCalled, "WritingSystemListUpdated should have been called after this change");
 		}
 
+		[Test]
+		public void Model_WritingSystemChanged_CalledOnAbbrevChange()
+		{
+			var writingSystemChanged = false;
+			var mockWsManager = MockRepository.GenerateMock<IWritingSystemManager>();
+
+			var container = new TestWSContainer(new[] { "fr" });
+			var testModel = new FwWritingSystemSetupModel(container,
+				FwWritingSystemSetupModel.ListType.Vernacular, mockWsManager);
+			testModel.WritingSystemUpdated += (sender, args) =>
+			{
+				writingSystemChanged = true;
+			};
+			// Make a change that should notify listeners (refresh the lexicon view for instance)
+			testModel.CurrentWsSetupModel.CurrentAbbreviation = "fra";
+			testModel.Save();
+			Assert.True(writingSystemChanged, "WritingSystemUpdated should have been called after this change");
+		}
+
+		[Test]
+		public void Model_WritingSystemChanged_CalledOnWsIdChange()
+		{
+			var writingSystemChanged = false;
+			var mockWsManager = MockRepository.GenerateMock<IWritingSystemManager>();
+
+			var container = new TestWSContainer(new[] { "fr" });
+			var testModel = new FwWritingSystemSetupModel(container,
+				FwWritingSystemSetupModel.ListType.Vernacular, mockWsManager);
+			testModel.WritingSystemUpdated += (sender, args) =>
+			{
+				writingSystemChanged = true;
+			};
+			// Make a change that should notify listeners (refresh the lexicon view for instance)
+			testModel.CurrentWsSetupModel.CurrentRegion = "US";
+			testModel.Save();
+			Assert.True(writingSystemChanged, "WritingSystemUpdated should have been called after this change");
+		}
+
+		[Test]
+		public void Model_WritingSystemChanged_NotCalledOnIrrelevantChange()
+		{
+			var writingSystemChanged = false;
+			var mockWsManager = MockRepository.GenerateMock<IWritingSystemManager>();
+
+			var container = new TestWSContainer(new[] { "fr" });
+			var testModel = new FwWritingSystemSetupModel(container,
+				FwWritingSystemSetupModel.ListType.Vernacular, mockWsManager);
+			testModel.WritingSystemUpdated += (sender, args) =>
+			{
+				writingSystemChanged = true;
+			};
+			// Make a change that should notify listeners (refresh the lexicon view for instance)
+			// ReSharper disable once StringLiteralTypo - Leave me alone ReSharper, it's French!
+			testModel.CurrentWsSetupModel.CurrentSpellCheckingId = "aucun";
+			testModel.Save();
+			Assert.False(writingSystemChanged, "WritingSystemUpdated should not have been called after this change");
+		}
+
 		[TestCase(FwWritingSystemSetupModel.ListType.Vernacular)]
 		[TestCase(FwWritingSystemSetupModel.ListType.Analysis)]
 		public void WritingSystemTitle_ChangesByType(FwWritingSystemSetupModel.ListType type)
@@ -1202,6 +1255,34 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			var constructedItem = menuItems.FirstOrDefault(item => item.Id == "auc_Latn_PR");
 			Assert.NotNull(constructedItem, "A default item matching the ws id should be in the list.");
 		}
+
+		[Test]
+		public void MergeWritingSystemTest_MergeWorks()
+		{
+			Cache.LangProject.CurrentAnalysisWritingSystems.Clear();
+			var gb = GetOrCreateWs("en-GB");
+			var en = GetOrCreateWs("en");
+			var fr = GetOrCreateWs("fr");
+			Cache.LangProject.CurrentAnalysisWritingSystems.Add(gb);
+			Cache.LangProject.CurrentAnalysisWritingSystems.Add(en);
+			Cache.LangProject.CurrentVernacularWritingSystems.Add(fr);
+			var entryFactory = Cache.ServiceLocator.GetInstance<ILexEntryFactory>();
+			var entry = entryFactory.Create();
+			entry.SummaryDefinition.set_String(gb.Handle, "Queens English");
+			Cache.ActionHandlerAccessor.EndUndoTask();
+			var container = new TestWSContainer(new[] { "fr" }, new [] {"en-GB", "en"});
+			var testModel = new FwWritingSystemSetupModel(container, FwWritingSystemSetupModel.ListType.Analysis, Cache.ServiceLocator.WritingSystemManager, Cache);
+			testModel.ConfirmMergeWritingSystem = (string merge, out CoreWritingSystemDefinition tag) =>
+			{
+				tag = container.CurrentAnalysisWritingSystems.First(ws => ws.Id == "en");
+				return true;
+			};
+			testModel.SelectWs("en-GB");
+			testModel.GetRightClickMenuItems().First(item => item.MenuText == "Merge...").ClickHandler.Invoke(null, null);
+			testModel.Save();
+			Assert.That(entry.SummaryDefinition.get_String(en.Handle).Text, Is.StringStarting("Queens English"));
+		}
+
 
 		/// <summary>
 		/// Adds en and fr to Current Vernacular and sets en as Homograph WS.

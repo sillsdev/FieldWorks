@@ -3116,6 +3116,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			this.Controls.Add(this.btnQuickFinish);
 			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Sizable;
 			this.Name = "LexImportWizard";
+			this.ShowIcon = false;
 			this.ShowInTaskbar = false;
 			this.StepNames = new string[] {
 				resources.GetString("$this.StepNames"),

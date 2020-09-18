@@ -1602,6 +1602,16 @@ namespace SIL.FieldWorks.Common.Controls
 		/// ------------------------------------------------------------------------------------
 		public override void Display(IVwEnv vwenv, int hvo, int frag)
 		{
+			// LT-19688: Some operations fail to cause the browse view's record list to refresh (e.g. bulk delete all lexical entries).
+			//           In these cases, `hvo` will be positive and invalid
+			// LT-20254: Complex Concordance results are displayed using "invalid" negative hvo's.
+			// 10 years of errors prove we can't get this right. Let's stop crashing but still encourage developers to fix it.
+			if (m_cache == null || (hvo > 0 && !m_cache.ServiceLocator.IsValidObjectId(hvo)))
+			{
+				Debug.Assert(m_cache != null && m_cache.ServiceLocator.IsValidObjectId(hvo),
+					"Trying to display a row for an invalid object. Some recent operation failed to cause this browse view's record list to refresh");
+				return;
+			}
 			switch (frag)
 			{
 				case kfragRoot:
