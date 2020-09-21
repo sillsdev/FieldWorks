@@ -16,6 +16,7 @@ using SIL.LCModel.DomainServices;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.ObjectModel;
+using SIL.PlatformUtilities;
 
 namespace SIL.FieldWorks.IText
 {
@@ -772,7 +773,7 @@ namespace SIL.FieldWorks.IText
 				ichSel = selInfo.IchEnd;
 				hvoObj = selInfo.Hvo(true);
 				tag = selInfo.Tag(true);
-				if (Environment.OSVersion.Platform == PlatformID.Win32NT && ichSel != selInfo.IchAnchor)
+				if (Platform.IsWindows && ichSel != selInfo.IchAnchor)
 				{
 					// TSF also replaces our carefully created selection, adjusted carefully to follow the
 					// inserted character, with one of its own choosing after we return, so flag that we'll
@@ -794,7 +795,6 @@ namespace SIL.FieldWorks.IText
 			int cmorphs = m_sda.get_VecSize(m_hvoSbWord, SandboxBase.ktagSbWordMorphs);
 			for (int imorph = 0; imorph < cmorphs; ++imorph)
 			{
-				int hvoMorph = m_sda.get_VecItem(m_hvoSbWord, SandboxBase.ktagSbWordMorphs, imorph);
 				if (imorph != 0)
 				{
 					builder.ReplaceTsString(builder.Length, builder.Length, space);
@@ -802,15 +802,19 @@ namespace SIL.FieldWorks.IText
 					if (fBaseWordIsPhrase)
 						builder.ReplaceTsString(builder.Length, builder.Length, space);
 				}
-				int hvoMorphForm = sda.get_ObjectProp(hvoMorph, SandboxBase.ktagSbMorphForm);
+
+				int hvoMorph = m_sda.get_VecItem(m_hvoSbWord, SandboxBase.ktagSbWordMorphs, imorph);
 				if (hvoMorph == hvoObj && tag == SandboxBase.ktagSbMorphPrefix)
 					m_ichSel = builder.Length + ichSel;
 				builder.ReplaceTsString(builder.Length, builder.Length,
 					sda.get_StringProp(hvoMorph, SandboxBase.ktagSbMorphPrefix));
+
+				int hvoMorphForm = sda.get_ObjectProp(hvoMorph, SandboxBase.ktagSbMorphForm);
 				if (hvoMorphForm == hvoObj && tag == SandboxBase.ktagSbNamedObjName)
 					m_ichSel = builder.Length + ichSel;
 				builder.ReplaceTsString(builder.Length, builder.Length,
 					sda.get_MultiStringAlt(hvoMorphForm, SandboxBase.ktagSbNamedObjName, ws));
+
 				if (hvoMorph == hvoObj && tag == SandboxBase.ktagSbMorphPostfix)
 					m_ichSel = builder.Length + ichSel;
 				builder.ReplaceTsString(builder.Length, builder.Length,
