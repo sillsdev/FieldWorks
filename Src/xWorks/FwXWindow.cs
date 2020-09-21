@@ -1490,8 +1490,11 @@ namespace SIL.FieldWorks.XWorks
 			var model = new FwWritingSystemSetupModel(Cache.LangProject, type, Cache.ServiceLocator.WritingSystemManager, Cache);
 			model.WritingSystemListUpdated += OnWritingSystemListChanged;
 			model.WritingSystemUpdated += OnWritingSystemUpdated;
-			var view = new FwWritingSystemSetupDlg(model, m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), m_app);
-			view.ShowDialog(this);
+			using (var view = new FwWritingSystemSetupDlg(model,
+				m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), m_app))
+			{
+				view.ShowDialog(this);
+			}
 		}
 
 		private Control GetFocusControl()
