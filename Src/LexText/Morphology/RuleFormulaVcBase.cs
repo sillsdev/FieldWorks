@@ -4,10 +4,13 @@
 
 using System;
 using System.Collections.Generic;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
 using SIL.FieldWorks.LexText.Controls;
+using XCore;
 
 namespace SIL.FieldWorks.XWorks.MorphologyEditor
 {
@@ -47,13 +50,13 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		protected ITsString m_infinity;
 		protected ITsString m_x;
 
-		protected RuleFormulaVcBase(FdoCache cache, XCore.Mediator mediator)
-			: base(cache, mediator)
+		protected RuleFormulaVcBase(LcmCache cache, PropertyTable propertyTable)
+			: base(cache, propertyTable)
 		{
-			ITsStrFactory tsf = m_cache.TsStrFactory;
 			int userWs = m_cache.DefaultUserWs;
-			m_infinity = tsf.MakeString("\u221e", userWs);
-			m_x = tsf.MakeString("X", userWs);
+			m_propertyTable = propertyTable;
+			m_infinity = TsStringUtils.MakeString("\u221e", userWs);
+			m_x = TsStringUtils.MakeString("X", userWs);
 		}
 
 		/// <summary>
@@ -350,7 +353,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 				case kfragIterCtxtMax:
 					// if the max value is -1, it indicates that it is infinite
 					int i = m_cache.DomainDataByFlid.get_IntProp(vwenv.CurrentObject(), tag);
-					tss = i == -1 ? m_infinity : m_cache.TsStrFactory.MakeString(Convert.ToString(i), m_cache.DefaultUserWs);
+					tss = i == -1 ? m_infinity : TsStringUtils.MakeString(Convert.ToString(i), m_cache.DefaultUserWs);
 					break;
 
 				case kfragXVariable:
@@ -371,7 +374,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 
 		ITsString CreateFeatureLine(IFsClosedValue value)
 		{
-			ITsIncStrBldr featLine = TsIncStrBldrClass.Create();
+			ITsIncStrBldr featLine = TsStringUtils.MakeIncStrBldr();
 			featLine.AppendTsString(value.ValueRA != null ? value.ValueRA.Abbreviation.BestAnalysisAlternative : m_questions);
 			featLine.Append(" ");
 			featLine.AppendTsString(value.FeatureRA != null ? value.FeatureRA.Abbreviation.BestAnalysisAlternative : m_questions);
@@ -384,10 +387,10 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			if (varIndex == -1)
 				return m_questions;
 
-			ITsIncStrBldr varLine = TsIncStrBldrClass.Create();
+			ITsIncStrBldr varLine = TsStringUtils.MakeIncStrBldr();
 			if (!polarity)
-				varLine.AppendTsString(m_cache.TsStrFactory.MakeString("-", m_cache.DefaultUserWs));
-			varLine.AppendTsString(m_cache.TsStrFactory.MakeString(VariableNames[varIndex], m_cache.DefaultUserWs));
+				varLine.AppendTsString(TsStringUtils.MakeString("-", m_cache.DefaultUserWs));
+			varLine.AppendTsString(TsStringUtils.MakeString(VariableNames[varIndex], m_cache.DefaultUserWs));
 			varLine.Append(" ");
 			varLine.AppendTsString(var.FeatureRA == null ? m_questions : var.FeatureRA.Abbreviation.BestAnalysisAlternative);
 			return varLine.GetString();
@@ -533,7 +536,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 					}
 					int fontHeight = GetFontHeight(m_cache.DefaultUserWs);
 					int superSubHeight = (fontHeight * 2) / 3;
-					ITsPropsBldr tpb = TsPropsBldrClass.Create();
+					ITsPropsBldr tpb = TsStringUtils.MakePropsBldr();
 					tpb.SetIntPropValues((int)FwTextPropType.ktptFontSize, (int)FwTextPropVar.ktpvMilliPoint, superSubHeight);
 					len += GetMinMaxWidth(ctxt, tpb.GetTextProps(), vwenv);
 				}
@@ -545,11 +548,10 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 
 		int GetMinMaxWidth(IPhIterationContext ctxt, ITsTextProps props, IVwEnv vwenv)
 		{
-			var tsf = m_cache.TsStrFactory;
 			var userWs = m_cache.DefaultUserWs;
-			int minWidth = GetStrWidth(tsf.MakeString(Convert.ToString(ctxt.Minimum), userWs),
+			int minWidth = GetStrWidth(TsStringUtils.MakeString(Convert.ToString(ctxt.Minimum), userWs),
 				props, vwenv);
-			ITsString maxStr = ctxt.Maximum == -1 ? m_infinity : tsf.MakeString(Convert.ToString(ctxt.Maximum), userWs);
+			ITsString maxStr = ctxt.Maximum == -1 ? m_infinity : TsStringUtils.MakeString(Convert.ToString(ctxt.Maximum), userWs);
 			int maxWidth = GetStrWidth(maxStr, props, vwenv);
 			return Math.Max(minWidth, maxWidth);
 		}
@@ -649,7 +651,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 
 		int GetVariablesWidth(IPhSimpleContextNC ctxt, IVwEnv vwenv, bool polarity)
 		{
-			IFdoReferenceSequence<IPhFeatureConstraint> vars = polarity ? ctxt.PlusConstrRS : ctxt.MinusConstrRS;
+			ILcmReferenceSequence<IPhFeatureConstraint> vars = polarity ? ctxt.PlusConstrRS : ctxt.MinusConstrRS;
 			int maxLen = 0;
 			foreach (IPhFeatureConstraint var in vars)
 			{

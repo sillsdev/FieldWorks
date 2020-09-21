@@ -1,29 +1,17 @@
-// Copyright (c) 2007-2013 SIL International
+// Copyright (c) 2007-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: FwGeneralTab.cs
-// Responsibility: TE Team
-//
-// <remarks>
-// </remarks>
 
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Drawing;
-using System.Data;
-using System.Text;
 using System.Windows.Forms;
-using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.Common.Controls;
-using SIL.Utils;
+using SIL.LCModel.Core.Text;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using SIL.FieldWorks.Resources;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.LCModel.DomainServices;
 using SIL.FieldWorks.Common.RootSites;
 
 namespace SIL.FieldWorks.FwCoreDlgControls
@@ -33,7 +21,7 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 	///
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
-	public partial class FwGeneralTab : UserControl, IFWDisposable, IStylesTab
+	public partial class FwGeneralTab : UserControl, IStylesTab
 	{
 		#region Member variables
 		// reference from FwStylesDlg
@@ -61,8 +49,6 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 		}
 		#endregion
 
-		#region IFWDisposable Members
-
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// This method throws an ObjectDisposedException if IsDisposed returns
@@ -80,8 +66,6 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 					string.Format("'{0}' in use after being disposed.", GetType().Name));
 			}
 		}
-
-		#endregion
 
 		#region IStylesTab Members
 

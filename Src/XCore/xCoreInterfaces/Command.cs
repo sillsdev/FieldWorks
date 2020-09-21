@@ -1,18 +1,15 @@
-// Copyright (c) 2003-2013 SIL International
+// Copyright (c) 2003-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: Commands.cs
-// Authorship History: John Hatton
 
 using System;
-using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
-using System.Xml;
 using System.Collections;
-using System.Globalization;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Windows.Forms;
-
+using System.Xml;
+using SIL.FieldWorks.Common.FwUtils;
+using SIL.Reporting;
 using SIL.Utils;
 
 namespace XCore
@@ -20,9 +17,7 @@ namespace XCore
 	/// <summary>
 	/// Summary description for Commands.
 	/// </summary>
-	[SuppressMessage("Gendarme.Rules.Correctness", "DisposableFieldsShouldBeDisposedRule",
-		Justification = "variable is a reference; it is owned by parent")]
-	public class CommandSet : Hashtable, IFWDisposable
+	public class CommandSet : Hashtable, IDisposable
 	{
 		protected Mediator m_mediator;
 		/// -----------------------------------------------------------------------------------
@@ -134,8 +129,6 @@ namespace XCore
 
 		#endregion IDisposable & Co. implementation
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "command is added to collection and disposed there")]
 		public void Init(XmlNode windowNode)
 		{
 			CheckDisposed();
@@ -213,9 +206,7 @@ namespace XCore
 		string RedoText { get; }
 	}
 
-	[SuppressMessage("Gendarme.Rules.Correctness", "DisposableFieldsShouldBeDisposedRule",
-		Justification = "variable is a reference; it is owned by parent")]
-	public class Command : IFWDisposable, ICommandUndoRedoText
+	public class Command : IDisposable, ICommandUndoRedoText
 	{
 		#region Fields
 		protected Mediator m_mediator;
@@ -228,7 +219,7 @@ namespace XCore
 		protected string m_valueString;
 		protected string m_messageString;
 		private bool m_oneAtATime;	// true if only one instance of a given command can run at a time
-		private static Set<string> m_OneAtATimeSet = new Set<string>();	// set of current commands that are 'oneatatime'
+		private static HashSet<string> m_OneAtATimeSet = new HashSet<string>();	// set of current commands that are 'oneatatime'
 		// add the ability to trace (dynamically) flow of commands through the system
 		private TraceSwitch m_traceCMDSwitch = new TraceSwitch("Command.Trace", "Flow of each command", "Off");
 
@@ -256,10 +247,21 @@ namespace XCore
 
 		public string Message
 		{
-			get { return m_messageString; }
+			get
+			{
+				CheckDisposed();
+				return m_messageString;
+			}
 		}
 
-		public bool OneAtATime { get { CheckDisposed(); return m_oneAtATime; } }
+		public bool OneAtATime
+		{
+			get
+			{
+				CheckDisposed();
+				return m_oneAtATime;
+			}
+		}
 
 		/// <summary>
 		/// A string to be inserted later into a toolTip associated with the command.
@@ -301,6 +303,7 @@ namespace XCore
 		{
 			get
 			{
+				CheckDisposed();
 				string text = ToolTip;
 				if (text.EndsWith("..."))
 					text = text.Remove(text.Length - 3);
@@ -373,7 +376,7 @@ namespace XCore
 			}
 		}
 
-		public System.Windows.Forms.Keys Shortcut
+		public Keys Shortcut
 		{
 			get
 			{
@@ -470,12 +473,12 @@ namespace XCore
 					}
 					catch (Exception e)
 					{
-						throw new ConfigurationException("The System.Windows.Forms.KeysConverter() did not understand this key description:"
+						throw new SIL.Utils.ConfigurationException("The System.Windows.Forms.KeysConverter() did not understand this key description:"
 							+ sc + ".", m_configurationNode, e);
 					}
 					return keys;
 				}
-				else
+
 					return Keys.None;
 			}
 		}
@@ -487,12 +490,9 @@ namespace XCore
 		{
 			m_mediator = mediator;
 			m_configurationNode = commandNode;
-			StringTable tbl = null;
-			if (mediator != null && mediator.HasStringTable)
-				tbl = mediator.StringTbl;
 			m_id = XmlUtils.GetAttributeValue(commandNode, "id");
-			m_label = XmlUtils.GetLocalizedAttributeValue(tbl, commandNode, "label", null);
-			m_tooltip = XmlUtils.GetLocalizedAttributeValue(tbl, commandNode, "tooltip", null);
+			m_label = XmlUtils.GetLocalizedAttributeValue(commandNode, "label", null);
+			m_tooltip = XmlUtils.GetLocalizedAttributeValue(commandNode, "tooltip", null);
 			m_shortcut = XmlUtils.GetAttributeValue(commandNode,"shortcut");
 			m_messageString = XmlUtils.GetAttributeValue(commandNode,"message");
 			m_valueString = XmlUtils.GetAttributeValue(commandNode,"value");
@@ -685,7 +685,7 @@ namespace XCore
 		/// Get a value of a mandatory attribute of a <parameters> element
 		/// </summary>
 		/// <param name="attributeName">the name of the attribute</param>
-		/// <exception cref="ConfigurationException">in the parameter is not found</exception>
+		/// <exception cref="System.Configuration.ConfigurationException">in the parameter is not found</exception>
 		/// <returns></returns>
 		///<remarks> this version assumes the element containing attribute is named "parameters"</remarks>
 		public string GetParameter(string attributeName)
@@ -693,7 +693,7 @@ namespace XCore
 			CheckDisposed();
 			string result = GetParameter(attributeName, null);
 			if (result == null)
-				throw new ConfigurationException("The command '"+this.Id+"' must have a parameter attribute named '"+attributeName +"'.",this.ConfigurationNode);
+				throw new SIL.Utils.ConfigurationException("The command '"+this.Id+"' must have a parameter attribute named '"+attributeName +"'.",this.ConfigurationNode);
 			return result;
 		}
 

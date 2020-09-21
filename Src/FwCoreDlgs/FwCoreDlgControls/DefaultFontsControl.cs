@@ -1,13 +1,6 @@
-// Copyright (c) 2006-2013 SIL International
+// Copyright (c) 2006-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: DefaultFontControl.cs
-// Responsibility: TE Team
-//
-// <remarks>
-// </remarks>
-// ---------------------------------------------------------------------------------------------
 
 using System;
 using System.Collections.Generic;
@@ -15,17 +8,16 @@ using System.Drawing;
 using System.Drawing.Text;
 using System.Linq;
 using System.Windows.Forms;
-
-using SIL.CoreImpl;
-using SIL.Utils;
+using SIL.LCModel.Core.WritingSystems;
 using SIL.FieldWorks.Common.Controls;
+using SIL.WritingSystems;
 
 namespace SIL.FieldWorks.FwCoreDlgControls
 {
 	/// <summary>
 	/// Summary description for DefaultFontsControl.
 	/// </summary>
-	public class DefaultFontsControl : UserControl, IFWDisposable
+	public class DefaultFontsControl : UserControl
 	{
 		#region Member variables
 		private FwOverrideComboBox m_defaultFontComboBox;
@@ -36,7 +28,7 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 		private FontFeaturesButton m_defaultFontFeaturesButton;
 		private HelpProvider m_helpProvider;
 
-		private IWritingSystem m_ws;
+		private CoreWritingSystemDefinition m_ws;
 		private CheckBox m_enableGraphiteCheckBox;
 		private GroupBox m_graphiteGroupBox;
 		#endregion
@@ -114,7 +106,7 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 		/// from which they will be initialized.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public IWritingSystem WritingSystem
+		public CoreWritingSystemDefinition WritingSystem
 		{
 			get
 			{
@@ -146,6 +138,15 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 			{
 				CheckDisposed();
 				m_defaultFontComboBox.Text = value;
+			}
+		}
+
+		internal ComboBox DefaultFontComboBox
+		{
+			get
+			{
+				CheckDisposed();
+				return m_defaultFontComboBox;
 			}
 		}
 
@@ -240,7 +241,7 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 
 			// setup controls for default font
 			SetFontInCombo(m_defaultFontComboBox, m_ws.DefaultFontName);
-			m_defaultFontFeaturesButton.WritingSystemFactory = m_ws.WritingSystemManager;
+			m_defaultFontFeaturesButton.WritingSystemFactory = m_ws.WritingSystemFactory;
 			m_defaultFontFeaturesButton.FontName = m_defaultFontComboBox.Text;
 			m_defaultFontFeaturesButton.FontFeatures = m_ws.DefaultFontFeatures;
 
@@ -292,13 +293,19 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 			if (oldFont != m_defaultFontComboBox.Text)
 			{
 				// Finding a font missing should not result in persisting a font name change
-				if(String.Format(FwCoreDlgControls.kstidMissingFontFmt, oldFont) != m_defaultFontComboBox.Text)
+				if (string.Format(FwCoreDlgControls.kstidMissingFontFmt, oldFont) != m_defaultFontComboBox.Text)
 				{
-					m_ws.DefaultFontName = m_defaultFontComboBox.Text;
+					FontDefinition font;
+					if (!m_ws.Fonts.TryGet(m_defaultFontComboBox.Text, out font))
+						font = new FontDefinition(m_defaultFontComboBox.Text);
+					m_ws.DefaultFont = font;
 				}
-				m_ws.DefaultFontFeatures = "";
-				m_defaultFontFeaturesButton.FontName = m_defaultFontComboBox.Text;
-				m_defaultFontFeaturesButton.FontFeatures = "";
+
+				if (m_ws.DefaultFont != null)
+				{
+					m_defaultFontFeaturesButton.FontName = m_defaultFontComboBox.Text;
+					m_defaultFontFeaturesButton.FontFeatures = m_ws.DefaultFont.Features;
+				}
 
 				bool isGraphiteFont = m_defaultFontFeaturesButton.IsGraphiteFont;
 				m_graphiteGroupBox.Enabled = isGraphiteFont;
@@ -319,7 +326,7 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 		{
 			if (m_ws == null)
 				return;
-			m_ws.DefaultFontFeatures = m_defaultFontFeaturesButton.FontFeatures;
+			m_ws.DefaultFont.Features = m_defaultFontFeaturesButton.FontFeatures;
 		}
 
 		private void m_enableGraphiteCheckBox_Click(object sender, EventArgs e)

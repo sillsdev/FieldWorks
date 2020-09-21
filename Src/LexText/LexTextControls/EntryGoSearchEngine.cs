@@ -5,11 +5,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.LCModel.Core.Text;
 using SIL.FieldWorks.Common.Controls;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainImpl;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel;
+using SIL.LCModel.DomainImpl;
 
 namespace SIL.FieldWorks.LexText.Controls
 {
@@ -20,7 +20,7 @@ namespace SIL.FieldWorks.LexText.Controls
 	{
 		private readonly Virtuals m_virtuals;
 
-		public EntryGoSearchEngine(FdoCache cache)
+		public EntryGoSearchEngine(LcmCache cache)
 			: base(cache, SearchType.FullText)
 		{
 			m_virtuals = Cache.ServiceLocator.GetInstance<Virtuals>();
@@ -75,7 +75,7 @@ namespace SIL.FieldWorks.LexText.Controls
 							yield return dffn;
 					}
 					break;
-
+/*
 				case LexSenseTags.kflidReversalEntries:
 					foreach (ILexSense sense in entry.SensesOS)
 					{
@@ -87,7 +87,7 @@ namespace SIL.FieldWorks.LexText.Controls
 						}
 					}
 					break;
-
+					*/
 				default:
 					throw new ArgumentException("Unrecognized field.", "field");
 			}
@@ -113,7 +113,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				case LexSenseTags.kflidSenses:
 				case LexSenseTags.kflidGloss:
 				case LexSenseTags.kflidDefinition:
-				case LexSenseTags.kflidReversalEntries:
+//				case LexSenseTags.kflidReversalEntries:
 				case ReversalIndexEntryTags.kflidReversalForm:
 					return true;
 			}
@@ -129,7 +129,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				case LexEntryTags.kflidAlternateForms:
 				case LexSenseTags.kflidGloss:
 				case LexSenseTags.kflidDefinition:
-				case LexSenseTags.kflidReversalEntries:
+//				case LexSenseTags.kflidReversalEntries:
 					return true;
 			}
 

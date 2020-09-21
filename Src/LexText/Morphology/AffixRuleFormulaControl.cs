@@ -5,13 +5,14 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Xml;
 using System.Windows.Forms;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.FieldWorks.Common.COMInterfaces;
+using System.Xml;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.Utils;
+using SIL.LCModel;
+using SIL.LCModel.Infrastructure;
+using SIL.LCModel.Utils;
+using XCore;
 
 namespace SIL.FieldWorks.XWorks.MorphologyEditor
 {
@@ -99,13 +100,13 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			}
 		}
 
-		public override void Initialize(FdoCache cache, ICmObject obj, int flid, string fieldName, IPersistenceProvider persistProvider,
-			XCore.Mediator mediator, string displayNameProperty, string displayWs)
+		public override void Initialize(LcmCache cache, ICmObject obj, int flid, string fieldName, IPersistenceProvider persistProvider,
+			XCore.Mediator mediator, PropertyTable propertyTable, string displayNameProperty, string displayWs)
 		{
 			CheckDisposed();
-			base.Initialize(cache, obj, flid, fieldName, persistProvider, mediator, displayNameProperty, displayWs);
+			base.Initialize(cache, obj, flid, fieldName, persistProvider, mediator, propertyTable, displayNameProperty, displayWs);
 
-			m_view.Init(mediator, obj.Hvo, this, new AffixRuleFormulaVc(cache, mediator), AffixRuleFormulaVc.kfragRule, cache.MainCacheAccessor);
+			m_view.Init(mediator, propertyTable, obj.Hvo, this, new AffixRuleFormulaVc(cache, propertyTable), AffixRuleFormulaVc.kfragRule, cache.MainCacheAccessor);
 
 			m_view.SelectionChanged += SelectionChanged;
 
@@ -763,7 +764,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 					switch (obj.ClassID)
 					{
 						case MoCopyFromInputTags.kClassId:
-							featChooser.SetDlgInfo(m_cache, m_mediator);
+							featChooser.SetDlgInfo(m_cache, m_mediator, m_propertyTable);
 							if (featChooser.ShowDialog() == DialogResult.OK)
 							{
 								// create a new natural class behind the scenes
@@ -789,7 +790,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 
 						case MoModifyFromInputTags.kClassId:
 							var modify = (IMoModifyFromInput) obj;
-							featChooser.SetDlgInfo(m_cache, m_mediator, modify.ModificationRA.FeaturesOA);
+							featChooser.SetDlgInfo(m_cache, m_mediator, m_propertyTable, modify.ModificationRA.FeaturesOA);
 							if (featChooser.ShowDialog() == DialogResult.OK)
 							{
 								if (modify.ModificationRA.FeaturesOA.FeatureSpecsOC.Count == 0)

@@ -4,16 +4,14 @@
 //
 // File: ExportTranslatedListsDlg.cs
 // Responsibility: mcconnel
-
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Windows.Forms;
-
-using SIL.CoreImpl;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.FieldWorks.Common.Controls.FileDialog;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
-using SIL.Utils.FileDialog;
+using SIL.LCModel;
 using XCore;
 
 namespace SIL.FieldWorks.XWorks
@@ -26,8 +24,8 @@ namespace SIL.FieldWorks.XWorks
 	/// ----------------------------------------------------------------------------------------
 	public partial class ExportTranslatedListsDlg : Form
 	{
-		Mediator m_mediator;
-		FdoCache m_cache;
+		private PropertyTable m_propertyTable;
+		LcmCache m_cache;
 		string m_titleFrag;
 		string m_defaultExt;
 		string m_filter;
@@ -59,10 +57,10 @@ namespace SIL.FieldWorks.XWorks
 		/// Initialize the dialog with all needed information.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public void Initialize(Mediator mediator, FdoCache cache, string titleFrag,
+		public void Initialize(PropertyTable propertyTable, LcmCache cache, string titleFrag,
 			string defaultExt, string filter)
 		{
-			m_mediator = mediator;
+			m_propertyTable = propertyTable;
 			m_cache = cache;
 			m_titleFrag = titleFrag;
 			m_defaultExt = defaultExt;
@@ -91,13 +89,13 @@ namespace SIL.FieldWorks.XWorks
 		{
 			get
 			{
-				List<int> list = new List<int>(m_lvWritingSystems.CheckedItems.Count);
+				var list = new List<int>(m_lvWritingSystems.CheckedItems.Count);
 				foreach (var item in m_lvWritingSystems.CheckedItems)
 				{
 					Debug.Assert(item is ListViewItem);
-					ListViewItem lvi = item as ListViewItem;
-					Debug.Assert(lvi.Tag is IWritingSystem);
-					list.Add((lvi.Tag as IWritingSystem).Handle);
+					var lvi = item as ListViewItem;
+					Debug.Assert(lvi.Tag is CoreWritingSystemDefinition);
+					list.Add(((CoreWritingSystemDefinition) lvi.Tag).Handle);
 				}
 				return list;
 			}
@@ -112,7 +110,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			get
 			{
-				List<ICmPossibilityList> list = new List<ICmPossibilityList>(m_lvLists.CheckedItems.Count);
+				var list = new List<ICmPossibilityList>(m_lvLists.CheckedItems.Count);
 				foreach (var item in m_lvLists.CheckedItems)
 				{
 					Debug.Assert(item is ListViewItem);
@@ -126,7 +124,7 @@ namespace SIL.FieldWorks.XWorks
 
 		private void FillInLists()
 		{
-			ICmPossibilityListRepository repo = m_cache.ServiceLocator.GetInstance<ICmPossibilityListRepository>();
+			var repo = m_cache.ServiceLocator.GetInstance<ICmPossibilityListRepository>();
 			foreach (var list in repo.AllInstances())
 			{
 				if (list.Owner != null &&
@@ -166,9 +164,9 @@ namespace SIL.FieldWorks.XWorks
 			m_columnWs.Width = m_lvWritingSystems.Width - 25;
 		}
 
-		private ListViewItem CreateListViewItemForWs(IWritingSystem xws)
+		private ListViewItem CreateListViewItemForWs(CoreWritingSystemDefinition xws)
 		{
-			ListViewItem lvi = new ListViewItem();
+			var lvi = new ListViewItem();
 			lvi.Text = xws.DisplayLabel;
 			lvi.Tag = xws;
 			lvi.Checked = xws.Handle == m_cache.DefaultAnalWs;
@@ -184,7 +182,7 @@ namespace SIL.FieldWorks.XWorks
 				dlg.Filter = String.IsNullOrEmpty(m_filter) ? "*.xml" : m_filter;
 				dlg.Title = String.Format(xWorksStrings.ExportTo0,
 					String.IsNullOrEmpty(m_titleFrag) ? "Translated List" : m_titleFrag);
-				dlg.InitialDirectory = m_mediator.PropertyTable.GetStringProperty("ExportDir",
+				dlg.InitialDirectory = m_propertyTable.GetStringProperty("ExportDir",
 					Environment.GetFolderPath(Environment.SpecialFolder.Personal));
 				if (dlg.ShowDialog(this) != DialogResult.OK)
 					return;
@@ -238,7 +236,7 @@ namespace SIL.FieldWorks.XWorks
 
 		private void m_btnHelp_Click(object sender, EventArgs e)
 		{
-			ShowHelp.ShowHelpTopic(m_mediator.HelpTopicProvider, "khtpExportTranslatedListsDlg");
+			ShowHelp.ShowHelpTopic(m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), "khtpExportTranslatedListsDlg");
 		}
 
 		private void m_btnSelectAll_Click(object sender, EventArgs e)

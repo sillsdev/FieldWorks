@@ -8,7 +8,7 @@
 // --------------------------------------------------------------------------------------------
 using System.Drawing;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using XCore;
 
 namespace SIL.FieldWorks.Common.Framework
@@ -19,7 +19,7 @@ namespace SIL.FieldWorks.Common.Framework
 	/// and to allow different apps to implement their main windows totally differently.
 	/// </summary>
 	/// ------------------------------------------------------------------------------------
-	public interface IFwMainWnd
+	public interface IFwMainWnd : IxWindow
 	{
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -33,7 +33,7 @@ namespace SIL.FieldWorks.Common.Framework
 		/// Gets the data objects cache.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		FdoCache Cache { get; }
+		LcmCache Cache { get; }
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -41,13 +41,6 @@ namespace SIL.FieldWorks.Common.Framework
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		FwApp App { get; }
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Gets the Mediater for the window.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		Mediator Mediator { get; }
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>

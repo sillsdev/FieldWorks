@@ -5,9 +5,8 @@
 // Original author: MarkS 2013-01-30 ConstituentChartTests.cs
 
 using NUnit.Framework;
-using SIL.FieldWorks.FDO.FDOTests;
-using SIL.FieldWorks.FDO;
-using SIL.Utils;
+using SIL.LCModel;
+using SIL.LCModel.Utils;
 
 namespace SIL.FieldWorks.Discourse
 {
@@ -16,7 +15,7 @@ namespace SIL.FieldWorks.Discourse
 	public class FakeConstituentChart : ConstituentChart
 	{
 		/// <summary/>
-		public FakeConstituentChart(FdoCache cache) : base(cache)
+		public FakeConstituentChart(LcmCache cache) : base(cache)
 		{
 		}
 

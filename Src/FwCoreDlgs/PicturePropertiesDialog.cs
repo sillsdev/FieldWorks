@@ -1,24 +1,25 @@
-// Copyright (c) 2004-2013 SIL International
+// Copyright (c) 2004-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using System.Drawing;
 using System.ComponentModel;
-using System.Windows.Forms;
-using System.IO;
 using System.Diagnostics;
+using System.Drawing;
+using System.IO;
+using System.Windows.Forms;
+using SIL.LCModel.Core.Text;
+using SIL.FieldWorks.Common.Controls;
+using SIL.FieldWorks.Common.Controls.FileDialog;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.Widgets;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.Common.Controls;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
 using SIL.FieldWorks.Resources;
-using SIL.Utils;
-using SIL.Utils.FileDialog;
-using XCore;
+using SIL.Reporting;
+using SIL.LCModel.Utils;
 
 namespace SIL.FieldWorks.FwCoreDlgs
 {
@@ -27,7 +28,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 	/// Dialog for editing picture properties
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
-	public class PicturePropertiesDialog : Form, IFWDisposable
+	public class PicturePropertiesDialog : Form
 	{
 		#region Member variables
 		private const string s_helpTopic = "khtpPictureProperties";
@@ -37,7 +38,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private string m_filePath;
 		private PictureBox m_picPreview;
 		private Label lblFilename;
-		private readonly FdoCache m_cache;
+		private readonly LcmCache m_cache;
 		private readonly ICmPicture m_initialPicture;
 		private readonly IHelpTopicProvider m_helpTopicProvider;
 		private readonly IApp m_app;
@@ -72,13 +73,13 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <summary>
 		/// Initializes a new instance of the <see cref="T:PicturePropertiesDialog"/> class.
 		/// </summary>
-		/// <param name="cache">The FdoCache to use</param>
+		/// <param name="cache">The LcmCache to use</param>
 		/// <param name="initialPicture">The CmPicture object to set all of the dialog
 		/// properties to, or null to edit a new picture</param>
 		/// <param name="helpTopicProvider">typically IHelpTopicProvider.App</param>
 		/// <param name="app">The application</param>
 		/// ------------------------------------------------------------------------------------
-		public PicturePropertiesDialog(FdoCache cache, ICmPicture initialPicture,
+		public PicturePropertiesDialog(LcmCache cache, ICmPicture initialPicture,
 			IHelpTopicProvider helpTopicProvider, IApp app)
 			: this(cache, initialPicture, helpTopicProvider, app, false)
 		{
@@ -88,19 +89,19 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <summary>
 		/// Initializes a new instance of the <see cref="T:PicturePropertiesDialog"/> class.
 		/// </summary>
-		/// <param name="cache">The FdoCache to use</param>
+		/// <param name="cache">The LcmCache to use</param>
 		/// <param name="initialPicture">The CmPicture object to set all of the dialog
 		/// properties to, or null to edit a new picture</param>
 		/// <param name="helpTopicProvider">typically IHelpTopicProvider.App</param>
 		/// <param name="app">The application</param>
 		/// <param name="fAnalysis">true to use analysis writign system for caption</param>
 		/// ------------------------------------------------------------------------------------
-		public PicturePropertiesDialog(FdoCache cache, ICmPicture initialPicture,
+		public PicturePropertiesDialog(LcmCache cache, ICmPicture initialPicture,
 			IHelpTopicProvider helpTopicProvider, IApp app, bool fAnalysis)
 		{
 			// ReSharper disable LocalizableElement
 			if (cache == null)
-				throw(new ArgumentNullException("cache", "The FdoCache cannot be null"));
+				throw(new ArgumentNullException("cache", "The LcmCache cannot be null"));
 			// ReSharper restore LocalizableElement
 
 			Logger.WriteEvent("Opening 'Picture Properties' dialog");
@@ -129,7 +130,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <summary>
 		/// Convert the text box for the caption to a multilingual string control.
 		/// </summary>
-		public void UseMultiStringCaption(FdoCache cache, int wsMagic, IVwStylesheet stylesheet)
+		public void UseMultiStringCaption(LcmCache cache, int wsMagic, IVwStylesheet stylesheet)
 		{
 			m_lmscCaption = new LabeledMultiStringControl(cache, wsMagic, stylesheet);
 			m_txtCaption.Hide();
@@ -786,8 +787,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			// We can only leave the file where it is if we're working locally. If we don't copy
 			// (or move) to the project folder other users can't see it.
-			var okToLeave = m_cache.ProjectId.IsLocal;
-			m_rbLeave.Enabled = okToLeave;
+			m_rbLeave.Enabled = true;
 			switch (s_defaultFileLocChoiceForSession)
 			{
 				case FileLocationChoice.Copy:
@@ -797,13 +797,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					m_rbMove.Checked = true;
 					break;
 				case FileLocationChoice.Leave:
-					if (!okToLeave)
-					{
-						// User has somehow been in the habit of leaving files (can this even happen?)
-						// but now can't...Copy seems safest as the fall-back.
-						m_rbCopy.Checked = true;
-						break;
-					}
 					m_rbLeave.Checked = true;
 					break;
 			}
@@ -867,8 +860,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// ------------------------------------------------------------------------------------
 		private ITsString MakeEmptyCaptionString()
 		{
-			ITsStrFactory factory = TsStrFactoryClass.Create();
-			return factory.MakeString(string.Empty, m_captionWs);
+			return TsStringUtils.EmptyString(m_captionWs);
 		}
 
 		/// ------------------------------------------------------------------------------------

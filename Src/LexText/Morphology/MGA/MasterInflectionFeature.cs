@@ -1,12 +1,11 @@
-﻿// Copyright (c) 2015 SIL International
+﻿// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Xml;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel;
+using SIL.LCModel.Infrastructure;
 using SIL.Utils;
 
 namespace SIL.FieldWorks.LexText.Controls.MGA
@@ -23,7 +22,7 @@ namespace SIL.FieldWorks.LexText.Controls.MGA
 		/// figure out if the feature represented by the node is already in the database
 		/// </summary>
 		/// <param name="cache">database cache</param>
-		public override void DetermineInDatabase(FdoCache cache)
+		public override void DetermineInDatabase(LcmCache cache)
 		{
 			XmlNode item = m_node.SelectSingleNode(".");
 			string sId = XmlUtils.GetOptionalAttributeValue(item, "id");
@@ -60,7 +59,7 @@ namespace SIL.FieldWorks.LexText.Controls.MGA
 				}
 			}
 		}
-		public override void AddToDatabase(FdoCache cache)
+		public override void AddToDatabase(LcmCache cache)
 		{
 			if (m_fInDatabase)
 				return; // It's already in the database, so nothing more can be done.

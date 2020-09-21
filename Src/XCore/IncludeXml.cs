@@ -1,10 +1,6 @@
-// Copyright (c) 2003-2013 SIL International
+// Copyright (c) 2003-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: IncludeXml.cs
-// History: John Hatton
-// Last reviewed:
 //
 // <remarks>
 //		Someday, the WWW3C XML inclusion standard will become available.  If that
@@ -18,13 +14,14 @@
 using System;
 using System.Xml;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.IO;
 
-using SIL.Utils;
+using SIL.LCModel.Utils;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.PlatformUtilities;
+using SIL.Utils;
 
 namespace XCore
 {
@@ -72,16 +69,15 @@ namespace XCore
 		/// <param name="cachedDoms"></param>=
 		/// <param name="parentPath"></param>=
 		/// <param name="dom"></param>=
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
-		protected void ProcessDom(Dictionary<string, XmlDocument> cachedDoms, string parentPath, XmlDocument dom)
+		protected void ProcessDom(Dictionary<string, XmlDocument> cachedDoms, string parentPath,
+			XmlDocument dom)
 		{
 			XmlNode nodeForError = null;
 			string baseFile = "";
 			XmlNode baseNode = dom.SelectSingleNode("//includeBase");
 			if (baseNode != null)
 			{
-				baseFile = XmlUtils.GetManditoryAttributeValue(baseNode,"path");
+				baseFile = XmlUtils.GetMandatoryAttributeValue(baseNode, "path");
 				//now that we have read it, remove it, so that it does not violate the schema of
 				//the output file.
 				baseNode.ParentNode.RemoveChild(baseNode);
@@ -89,28 +85,20 @@ namespace XCore
 
 			try
 			{
-#if !__MonoCS__
 				foreach (XmlNode includeNode in dom.SelectNodes("//include"))
 				{
-#else
-				// TODO-Linux: work around for mono bug https://bugzilla.novell.com/show_bug.cgi?id=495693
-				XmlNodeList includeList = dom.SelectNodes("//include");
-				for(int j = includeList.Count - 1; j >= 0; --j)
-				{
-					XmlNode includeNode = includeList[j];
-					if (includeNode == null)
-						continue;
-#endif
 					nodeForError = includeNode;
 					ReplaceNode(cachedDoms, parentPath, includeNode, baseFile);
 				}
 			}
 			catch (Exception error)
 			{
-				throw new ApplicationException("Error while processing <include> element:" + nodeForError.OuterXml, error);
+				throw new ApplicationException(
+					"Error while processing <include> element:" + nodeForError.OuterXml, error);
 			}
 
-			Debug.Assert(dom.SelectSingleNode("//include") == null, "some <include> node was not handled");
+			Debug.Assert(dom.SelectSingleNode("//include") == null,
+				"some <include> node was not handled");
 		}
 
 		/// <summary>
@@ -128,8 +116,6 @@ namespace XCore
 		/// </summary>
 		/// <param name="includeNode">include" node, possibly containing "overrides" nodes</param>
 		/// <returns>true if we processed an "overrides" node.</returns>
-		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
-			Justification="See TODO-Linux comment")]
 		private static bool HandleIncludeOverrides(XmlNode includeNode)
 		{
 			XmlNode parentNode = includeNode.ParentNode;
@@ -272,7 +258,7 @@ namespace XCore
 				/* Any fragments (extensions or standard) will be added before the <include>
 				 * element. Aftwerwards, the <include> element will be removed.
 				 */
-				string query = XmlUtils.GetManditoryAttributeValue(includeNode, "query");
+				string query = XmlUtils.GetMandatoryAttributeValue(includeNode, "query");
 				foreach (string innerPath in paths)
 				{
 					XmlDocumentFragment fragment;
@@ -389,8 +375,6 @@ namespace XCore
 			return CreateFragmentWithTargetNodes(query, document);
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		private static XmlDocumentFragment CreateFragmentWithTargetNodes(string query, XmlDocument document)
 		{
 			//find the nodes specified in the XML query
@@ -412,8 +396,6 @@ namespace XCore
 		/// the node that it references, from the same file. This is used by PNG branch report filter system.
 		/// </summary>
 		/// <param name="dom"></param>=
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		public void ProcessCopyElements(XmlDocument dom)
 		{
 			XmlNode nodeForError = null;
@@ -443,7 +425,7 @@ namespace XCore
 		/// <param name="targetNode"></param>
 		protected void CopyElement(XmlDocument dom, XmlNode copyInstructionNode)
 		{
-			string id = XmlUtils.GetManditoryAttributeValue(copyInstructionNode, "idref");
+			string id = XmlUtils.GetMandatoryAttributeValue(copyInstructionNode, "idref");
 			XmlNode node =	copyInstructionNode.OwnerDocument.SelectSingleNode("//*[@id='" + id + "']");
 			if (node == null)
 				throw new ApplicationException ("Could not find an element in this file with the id of '" + id + "', in order to do the <copyElement> .");

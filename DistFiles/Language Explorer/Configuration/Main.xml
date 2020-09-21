@@ -45,7 +45,7 @@
 
 		<command id="CmdClose" label="_Close" message="CloseWindow"/>
 		<command id="CmdFirstRecord" label="_First" icon="firstRecord" message="FirstRecord"/>
-		<command id="CmdDeleteRecord" label="_Delete {0}..." message="DeleteRecord" icon="Delete" shortcut="Ctrl+Del"/>
+		<command id="CmdDeleteRecord" label="_Delete {0}..." message="DeleteRecord" icon="Delete"/>
 		<command id="CmdLastRecord" label="_Last" icon="lastRecord" message="LastRecord"/>
 		<command id="CmdPreviousRecord" label="_Previous" icon="previousRecord" message="PreviousRecord" shortcut="Alt+P"/>
 		<command id="CmdNextRecord" label="_Next" icon="nextRecord" message="NextRecord" shortcut="Alt+N"/>
@@ -56,7 +56,7 @@
 
 		<!-- F5 doesn't seem to work with the open source adapter -->
 		<command id="CmdProjectProperties" label="Field_Works Project Properties..." message="FileProjectProperties"/>
-		<command id="CmdProjectSharingLocation" label="Project Locations and Sharing..." message="FileProjectSharingLocation"/>
+		<command id="CmdProjectLocation" label="Project Locations..." message="FileProjectLocation"/>
 		<command id="CmdDeleteProject" label="_Delete Project..." message="DeleteProject" icon="Delete"/>
 		<command id="CmdCreateProjectShortcut" label="_Create Shortcut on Desktop" message="CreateShortcut"/>
 		<command id="CmdNewLangProject" label="_New FieldWorks Project..." message="NewLangProject" icon="NewProject"/>
@@ -117,7 +117,8 @@
 		<command id="CmdShowCharMap" label="Special _character..." message="ShowCharMap" icon="SpecialCharacter"/>
 		<command id="CmdFormatStyle" label="_Styles..." message="FormatStyle"/>
 		<command id="CmdFormatApplyStyle" label="_Apply Style..." message="FormatApplyStyle"/>
-		<command id="CmdWritingSystemProperties" label="Se_t up Writing Systems..." message="WritingSystemProperties"/>
+		<command id="CmdVernacularWritingSystemProperties" label="Set up _Vernacular Writing Systems..." message="VernWritingSystemProperties"/>
+		<command id="CmdAnalysisWritingSystemProperties" label="Set up _Analysis Writing Systems..." message="AnalyWritingSystemProperties"/>
 		<command id="CmdBackup" label="_Back up this Project..." message="BackupThisProject"/>
 		<command id="CmdRestoreFromBackup" label="_Restore a Project..." message="RestoreAProject"/>
 		<!-- this will require something dynamic unless we somehow make a way to define it specifically in the
@@ -138,7 +139,7 @@
 		<command id="CmdHelpAbout" label="_About Language Explorer..." message="HelpAbout"/>
 		<command id="CmdHelpLanguageExplorer" label="_Language Explorer..." message="HelpLanguageExplorer" shortcut="F1"/>
 		<command id="CmdHelpTraining" label="_Training" message="HelpTraining" />
-		<command id="CmdHelpDemoMovies" label="_Demo Movies..." message="HelpDemoMovies"/>
+		<command id="CmdHelpDemoMovies" label="_Demo Movies (Online)..." message="HelpDemoMovies"/>
 		<!-- LT-15886 <command id="CmdHelpCheckForUpdates" label="Check for _Updates..." message="HelpCheckForUpdates"/> -->
 		<command id="CmdHelpReportBug" label="_Report a Problem..." message="HelpReportProblem"/>
 		<command id="CmdHelpMakeSuggestion" label="_Make a Suggestion..." message="HelpMakeSuggestion"/>
@@ -253,67 +254,6 @@
 		<include path="Notebook/areaConfiguration.xml" query="root/commands/*"/>
 		<include path="Lists/areaConfiguration.xml" query="root/commands/*"/>
 		<include path="Extensions/*/MainConfigurationExtension.xml" query="root/commands/*"/>
-		<!-- Commands to launch the various movies-->
-		<command id="CmdHelpDemoWelcome" label="_Welcome" message="HelpDemoMovies">
-			<parameters file="1-welcome"/>
-		</command>
-		<command id="CmdHelpDemoOverview" label="_Overview" message="HelpDemoMovies">
-			<parameters file="2-overview"/>
-		</command>
-		<command id="CmdHelpDemoConfigColumns" label="_Configuring columns" message="HelpDemoMovies">
-			<parameters file="3-configcolumns"/>
-		</command>
-		<command id="CmdHelpDemoFilter" label="_Filtering" message="HelpDemoMovies">
-			<parameters file="4-filter"/>
-		</command>
-		<command id="CmdHelpDemoSort" label="_Sorting" message="HelpDemoMovies">
-			<parameters file="5-sort"/>
-		</command>
-		<command id="CmdHelpDemoFields" label="Fi_elds" message="HelpDemoMovies">
-			<parameters file="6-fields"/>
-		</command>
-		<command id="CmdHelpDemoNewEntry" label="_New entry" message="HelpDemoMovies">
-			<parameters file="7-newentry"/>
-		</command>
-		<command id="CmdHelpDemoFindEntry" label="_Find entry" message="HelpDemoMovies">
-			<parameters file="8-findentry"/>
-		</command>
-		<command id="CmdHelpDemoGramInfo" label="_Grammatical info. (POS)" message="HelpDemoMovies">
-			<parameters file="9-graminfo"/>
-		</command>
-		<command id="CmdHelpDemoLexRel" label="_Lexical relations" message="HelpDemoMovies">
-			<parameters file="10-lexrel"/>
-		</command>
-		<command id="CmdHelpDemoSubentry" label="_Subentry (derivative)" message="HelpDemoMovies">
-			<parameters file="11-subentry"/>
-		</command>
-		<command id="CmdHelpDemoMinor" label="_Minor entry (variant)" message="HelpDemoMovies">
-			<parameters file="12-minor"/>
-		</command>
-		<command id="CmdHelpDemoCategorized" label="_Collect Words" message="HelpDemoMovies">
-			<parameters file="13-categorized"/>
-		</command>
-		<command id="CmdHelpDemoBulkList" label="_Bulk Edit (list choice)" message="HelpDemoMovies">
-			<parameters file="14-bulklist"/>
-		</command>
-		<command id="CmdHelpDemoBulkCopy" label="Bulk _Edit (copy)" message="HelpDemoMovies">
-			<parameters file="15-bulkcopy"/>
-		</command>
-		<command id="CmdHelpDemoBulkClick" label="Bulk Edit (c_lick copy)" message="HelpDemoMovies">
-			<parameters file="16-bulkclick"/>
-		</command>
-		<command id="CmdHelpDemoText" label="_Interlinearizing" message="HelpDemoMovies">
-			<parameters file="17-Text"/>
-		</command>
-		<command id="CmdHelpDemoWords" label="Words (_assign analysis)" message="HelpDemoMovies">
-			<parameters file="18-words"/>
-		</command>
-		<command id="CmdHelpDemoGrammar" label="_Grammar (new template)" message="HelpDemoMovies">
-			<parameters file="19-grammar"/>
-		</command>
-		<command id="CmdHelpDemoPlayAll" label="_Play all (32 minutes)" message="HelpDemoMovies">
-			<parameters file="Play_all"/>
-		</command>
 		<command id="CmdAddToLexicon" label="Add to Dictionary..." message="AddToLexicon" icon="majorEntry"/>
 		<command id="CmdConfigureXmlDocView" label="{0}" message="ConfigureXmlDocView"/>
 		<!-- F1 is omitted because used for Help-->
@@ -457,7 +397,7 @@
 				<item command="CmdBackup"/>
 				<item command="CmdRestoreFromBackup"/>
 				<item label="-" translate="do not translate"/>
-				<item command ="CmdProjectSharingLocation"/>
+				<item command ="CmdProjectLocation"/>
 				<item command="CmdDeleteProject"/>
 				<item command="CmdCreateProjectShortcut"/>
 			</menu>
@@ -583,7 +523,8 @@
 			<item command="CmdFormatStyle"/>
 			<item command="CmdFormatApplyStyle"/>
 			<menu id="WritingSystemMenu" label="_Writing System" list="WritingSystemList" behavior="singlePropertyAtomicValue" property="WritingSystemHvo"/>
-			<item command="CmdWritingSystemProperties"/>
+			<item command="CmdVernacularWritingSystemProperties"/>
+			<item command="CmdAnalysisWritingSystemProperties"/>
 		</menu>
 		<!-- Reworked Tools menu [LT-9852] June '09	-->
 		<menu id="Tools" label="_Tools">
@@ -599,7 +540,8 @@
 				<item command="CmdRestoreDefaults"/>
 				<item label="-" translate="do not translate"/>
 				<!-- This Setup Writing Systems... is a copy of the one on the Format menu -->
-				<item command="CmdWritingSystemProperties"/>
+				<item command="CmdVernacularWritingSystemProperties"/>
+				<item command="CmdAnalysisWritingSystemProperties"/>
 				<item command="CmdAddCustomField" defaultVisible="false"/>
 			</menu>
 			<!-- Area-specific Tools (other than Configure menu) go here. -->

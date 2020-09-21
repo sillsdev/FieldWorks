@@ -4,9 +4,8 @@
 //
 // File: IBackupProjectView.cs
 // Responsibility: FW Team
-
 using System;
-using SIL.FieldWorks.FDO.DomainServices.BackupRestore;
+using SIL.LCModel.DomainServices.BackupRestore;
 
 namespace SIL.FieldWorks.FwCoreDlgs.BackupRestore
 {

@@ -7,17 +7,15 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
 using NUnit.Framework;
-using SIL.FieldWorks.Test.TestUtils;
-using SIL.FieldWorks.FDO.FDOTests;
 using Rhino.Mocks;
 using SIL.FieldWorks.Common.RootSites;
 using System.Windows.Forms;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.Utils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
 
 namespace SIL.FieldWorks.Common.Framework
 {
@@ -66,7 +64,7 @@ namespace SIL.FieldWorks.Common.Framework
 				out Arg<Rect>.Out(new Rect()).Dummy,
 				out Arg<Rect>.Out(new Rect()).Dummy));
 
-			ITsPropsBldr ttpBldr = (ITsPropsBldr)TsPropsBldrClass.Create();
+			ITsPropsBldr ttpBldr = TsStringUtils.MakePropsBldr();
 			ttpBldr.SetIntPropValues((int)FwTextPropType.ktptWs, -1, 911);
 			m_ttpNormal = ttpBldr.GetTextProps();
 			ttpBldr.SetStrPropValue((int)FwTextPropType.ktptNamedStyle, "Hyperlink");
@@ -487,9 +485,9 @@ namespace SIL.FieldWorks.Common.Framework
 		[Test]
 		public void AddHyperlink()
 		{
-			ITsStrBldr strBldr = TsStrBldrClass.Create();
+			ITsStrBldr strBldr = TsStringUtils.MakeStrBldr();
 
-			FwStyleSheet mockStylesheet = MockRepository.GenerateStub<FwStyleSheet>();
+			LcmStyleSheet mockStylesheet = MockRepository.GenerateStub<LcmStyleSheet>();
 			IStStyle mockHyperlinkStyle = MockRepository.GenerateStub<IStStyle>();
 			mockHyperlinkStyle.Name = StyleServices.Hyperlink;
 			mockHyperlinkStyle.Stub(x => x.InUse).Return(true);
@@ -500,7 +498,7 @@ namespace SIL.FieldWorks.Common.Framework
 			Assert.AreEqual(1, strBldr.RunCount);
 			Assert.AreEqual("Click Here", strBldr.get_RunText(0));
 			ITsTextProps props = strBldr.get_Properties(0);
-			FdoTestHelper.VerifyHyperlinkPropsAreCorrect(props, Cache.DefaultAnalWs, "www.google.com");
+			LcmTestHelper.VerifyHyperlinkPropsAreCorrect(props, Cache.DefaultAnalWs, "www.google.com");
 		}
 
 		#region Helper methods
@@ -554,7 +552,7 @@ namespace SIL.FieldWorks.Common.Framework
 		private void SimulateHyperlinkFollowedByText(SelectionHelper selHelper,
 			ITsTextProps ttpFollowingText, IchPosition start, IchPosition end)
 		{
-			ITsStrBldr bldr = (ITsStrBldr)TsStrBldrClass.Create();
+			ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
 			bldr.Replace(0, 0, "Google", m_ttpHyperlink);
 			bldr.Replace(bldr.Length, bldr.Length, "some more text", ttpFollowingText);
 			selHelper.Stub(selH => selH.GetTss(Arg<SelectionHelper.SelLimitType>.Is.Anything))
@@ -610,7 +608,7 @@ namespace SIL.FieldWorks.Common.Framework
 		private void SimulateTextFollowedByHyperlink(SelectionHelper selHelper,
 			ITsTextProps ttpPrecedingText, IchPosition start, IchPosition end)
 		{
-			ITsStrBldr bldr = (ITsStrBldr)TsStrBldrClass.Create();
+			ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
 			bldr.Replace(bldr.Length, bldr.Length, "some plain text", ttpPrecedingText);
 			bldr.Replace(0, 0, "Google", m_ttpHyperlink);
 			selHelper.Stub(selH => selH.GetTss(Arg<SelectionHelper.SelLimitType>.Is.Anything))
@@ -650,7 +648,7 @@ namespace SIL.FieldWorks.Common.Framework
 		private void SimulateHyperlinkOnly(SelectionHelper selHelper,
 			IchPosition start, IchPosition end)
 		{
-			ITsStrBldr bldr = (ITsStrBldr)TsStrBldrClass.Create();
+			ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
 			bldr.Replace(0, 0, "Google", m_ttpHyperlink);
 			selHelper.Stub(selH => selH.GetTss(Arg<SelectionHelper.SelLimitType>.Is.Anything))
 				.Return(bldr.GetString());

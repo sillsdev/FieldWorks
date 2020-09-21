@@ -13,7 +13,8 @@ using System;
 using System.Collections;
 using System.Windows.Forms;
 
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
+using XCore;
 
 namespace SIL.FieldWorks.Common.Controls
 {
@@ -27,9 +28,11 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <summary></summary>
 		protected string m_sLabel;
 		/// <summary></summary>
-		protected FdoCache m_cache;
+		protected LcmCache m_cache;
 		/// <summary></summary>
-		protected XCore.Mediator m_mediator;
+		protected Mediator m_mediator;
+		/// <summary></summary>
+		protected PropertyTable m_propertyTable;
 
 #if WhenFigureOutWhatThisShouldBe
 		protected string m_sHelp;
@@ -43,21 +46,23 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="fCloseBeforeExecuting">if set to <c>true</c> [f close before executing].</param>
 		/// <param name="sLabel">The s label.</param>
 		/// <param name="mediator">The mediator.</param>
+		/// <param name="propertyTable"></param>
 		/// ------------------------------------------------------------------------------------
-		public ChooserCommand(FdoCache cache, bool fCloseBeforeExecuting, string sLabel,
-			XCore.Mediator mediator)
+		protected ChooserCommand(LcmCache cache, bool fCloseBeforeExecuting, string sLabel,
+			Mediator mediator, PropertyTable propertyTable)
 		{
 			m_cache = cache;
 			m_fShouldCloseBeforeExecuting = fCloseBeforeExecuting;
 			m_sLabel = sLabel + "  ";  // Extra spaces are just a hack to keep the label from being truncated - I have no idea why it is being truncated
 			m_mediator = mediator;
+			m_propertyTable = propertyTable;
 		}
 
 		//properties
 		/// <summary>
 		/// Indicates whether or not the chooser dialog should close before executing the link command
 		/// </summary>
-		public FdoCache Cache
+		public LcmCache Cache
 		{
 			get
 			{

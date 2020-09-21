@@ -1,4 +1,4 @@
-// Copyright (c) 2002-2013 SIL International
+// Copyright (c) 2002-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 //
@@ -7,6 +7,7 @@
 
 using System;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.LCModel.Utils;
 using SIL.Utils;
 
 namespace SIL.FieldWorks.Common.Framework
@@ -244,18 +245,6 @@ namespace SIL.FieldWorks.Common.Framework
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Get/set the hostname of the server of the last project opened in the application
-		/// (empty/null if local)
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public string LatestServer
-		{
-			get { return m_latestServer.Value; }
-			set { m_latestServer.Value = value; }
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
 		/// Gets or sets the value in the registry for the sidebar's visibility.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
@@ -335,6 +324,7 @@ namespace SIL.FieldWorks.Common.Framework
 			ErrorReporter.AddProperty("DisableSplashScreenSetting", DisableSplashScreenSetting.ToString());
 			ErrorReporter.AddProperty("MeasurementUnitSetting", ((MsrSysType)MeasurementUnitSetting).ToString());
 			ErrorReporter.AddProperty("BackupDirectorySetting", FwDirectoryFinder.DefaultBackupDirectory);
+			ErrorReporter.AddProperty("ProjectsDirectorySetting", FwDirectoryFinder.ProjectsDirectory);
 		}
 	}
 }

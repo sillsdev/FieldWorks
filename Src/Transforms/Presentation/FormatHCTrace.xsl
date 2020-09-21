@@ -819,7 +819,7 @@ function Toggle(node, path, imgOffset)
 								</xsl:call-template>
 							</xsl:when>
 							<xsl:when test="@type = 'requiredInflType'">
-								<xsl:text>This null affix can only attach to an irregulary inflected form.</xsl:text>
+								<xsl:text>This null affix can only attach to an irregularly inflected form.</xsl:text>
 							</xsl:when>
 							<xsl:when test="@type = 'excludedInflType'">
 								<xsl:text>This affix cannot attach to an irregularly inflected form.</xsl:text>

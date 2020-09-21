@@ -21,7 +21,7 @@ namespace TestGenericLib
 	class TestUtilXml : public unitpp::suite
 	{
 // already defined in TestUtilString.h, but for whatever reason MSVC doesn't pick it up
-#if WIN32
+#if defined(WIN32) || defined(WIN64)
 #define LATIN_CAPITAL_A L"\x0041"
 #define COMBINING_DIAERESIS L"\x0308" // cc 230
 #define COMBINING_MACRON L"\x0304" // cc 230
@@ -61,7 +61,7 @@ namespace TestGenericLib
 		{
 			StrUni stu = L"[&lt;abc&gt;def&lt;ghi&gt;jkl&quot;mno&apos;pqr&#32;stu&#x20;vwx&amp;"
 				L"z&apos;&quot;&amp;quot;&amp;apos;&amp;amp;&#x25000;]";
-#ifdef WIN32
+#if defined(_WIN32) || defined(_M_X64)
 			StrUni stuConv = L"[<abc>def<ghi>jkl\"mno'pqr stu vwx&z'\"&quot;&apos;&amp;"
 				L"\xD854\xDC00]";
 #else

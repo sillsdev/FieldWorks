@@ -1,21 +1,16 @@
-// Copyright (c) 2004-2013 SIL International
+// Copyright (c) 2004-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: TriStateTreeView.cs
-// Responsibility: Eberhard Beilharz/Tim Steenwyk
 
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using System.Windows.Forms.VisualStyles;
-
-using SIL.Utils;
+using SIL.PlatformUtilities;
 
 namespace SIL.FieldWorks.Common.Controls
 {
@@ -29,7 +24,7 @@ namespace SIL.FieldWorks.Common.Controls
 	/// can have a separate image list for states.
 	/// </remarks>
 	/// ----------------------------------------------------------------------------------------
-	public class TriStateTreeView : TreeView, IFWDisposable
+	public class TriStateTreeView : TreeView
 	{
 		private System.Windows.Forms.ImageList m_TriStateImages;
 		private System.ComponentModel.IContainer components;
@@ -314,30 +309,33 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			base.OnClick (e);
 
-#if !__MonoCS__
-			TV_HITTESTINFO hitTestInfo = new TV_HITTESTINFO();
-			hitTestInfo.pt = PointToClient(Control.MousePosition);
-			SendMessage(Handle, TreeViewMessages.TVM_HITTEST,
-				0, ref hitTestInfo);
-			if ((hitTestInfo.flags & TVHit.OnItemIcon) == TVHit.OnItemIcon)
+			if (Platform.IsMono)
 			{
-				TreeNode node = GetNodeAt(hitTestInfo.pt);
+				// The SendMessage determines whether we've hit the node proper or the
+				// +/- box to expand or collapse.  We'll try to check this by looking
+				// at the X location ourselves.  (See FWNX-468.)
+				Point pt = PointToClient(Control.MousePosition);
+				TreeNode node = GetNodeAt(pt); // This uses only the Y location.
 				if (node != null)
-					ChangeNodeState(node);
+				{
+					var bounds = node.Bounds; // This gives the text area of the node.
+					if (pt.X >= bounds.X - 20 && pt.X < bounds.X)
+						ChangeNodeState(node);
+				}
 			}
-#else
-			// The SendMessage determines whether we've hit the node proper or the
-			// +/- box to expand or collapse.  We'll try to check this by looking
-			// at the X location ourselves.  (See FWNX-468.)
-			Point pt = PointToClient(Control.MousePosition);
-			TreeNode node = GetNodeAt(pt);	// This uses only the Y location.
-			if (node != null)
+			else
 			{
-				var bounds = node.Bounds;	// This gives the text area of the node.
-				if (pt.X >= bounds.X - 20 && pt.X < bounds.X)
-					ChangeNodeState(node);
+				TV_HITTESTINFO hitTestInfo = new TV_HITTESTINFO();
+				hitTestInfo.pt = PointToClient(Control.MousePosition);
+				SendMessage(Handle, TreeViewMessages.TVM_HITTEST,
+					0, ref hitTestInfo);
+				if ((hitTestInfo.flags & TVHit.OnItemIcon) == TVHit.OnItemIcon)
+				{
+					TreeNode node = GetNodeAt(hitTestInfo.pt);
+					if (node != null)
+						ChangeNodeState(node);
+				}
 			}
-#endif
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -403,6 +401,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// ------------------------------------------------------------------------------------
 		protected void ChangeNodeState(TreeNode node)
 		{
+			if (node == null) return;
 			BeginUpdate();
 			try
 			{
@@ -667,8 +666,6 @@ namespace SIL.FieldWorks.Common.Controls
 		/// is a Flags enum).
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
-			Justification="See TODO-Linux comment")]
 		public TreeNode[] GetNodesOfTypeWithState(Type nodeType, CheckState state)
 		{
 			CheckDisposed();

@@ -3,15 +3,11 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 //
 // Original author: MarkS 2010-08-03 SliceTests.cs
-
 using System.Collections;
 using System.Windows.Forms;
 using System.Xml;
 using NUnit.Framework;
-
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.FDOTests;
-using SIL.Utils;
+using SIL.LCModel;
 using XCore;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls
@@ -23,6 +19,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		private DataTree m_DataTree;
 		private Slice m_Slice;
 		private Mediator m_Mediator;
+		private PropertyTable m_propertyTable;
 
 		/// <summary/>
 		public override void TestTearDown()
@@ -41,6 +38,11 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			{
 				m_Mediator.Dispose();
 				m_Mediator = null;
+			}
+			if (m_propertyTable != null)
+			{
+				m_propertyTable.Dispose();
+				m_propertyTable = null;
 			}
 
 			base.TestTearDown();
@@ -78,7 +80,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		}
 
 		/// <summary>Helper</summary>
-		private static Slice GenerateSlice(FdoCache cache, DataTree datatree)
+		private static Slice GenerateSlice(LcmCache cache, DataTree datatree)
 		{
 			var slice = new Slice();
 			var parts = DataTreeTests.GenerateParts();
@@ -128,15 +130,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			m_Slice.CreateIndentedNodes(caller, obj, indent, ref insPos, path, reuseMap, node);
 		}
 
-		/// <summary>Helper</summary>
-		private Mediator GenerateMediator()
-		{
-			var mediator = new Mediator();
-			mediator.StringTbl = new StringTable("../../DistFiles/Language Explorer/Configuration");
-			mediator.PropertyTable.SetProperty("cache", Cache);
-			return mediator;
-		}
-
 		/// <remarks>
 		/// Currently just enough to compile and run.
 		/// </remarks>
@@ -148,8 +141,11 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			m_Slice = GenerateSlice(Cache, m_DataTree);
 			m_Slice.Key = GeneratePath().ToArray();
 			m_Slice.Object = obj;
-			m_Mediator = GenerateMediator();
+			m_Mediator = new Mediator();
 			m_Slice.Mediator = m_Mediator;
+			m_propertyTable = new PropertyTable(m_Mediator);
+			m_Slice.PropTable = m_propertyTable;
+			m_propertyTable.SetProperty("cache", Cache, false);
 
 			m_Slice.Expand();
 		}
@@ -167,10 +163,37 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			m_Slice = GenerateSlice(Cache, m_DataTree);
 			m_Slice.Key = GeneratePath().ToArray();
 			m_Slice.Object = obj;
-			m_Mediator = GenerateMediator();
+			m_Mediator = new Mediator();
 			m_Slice.Mediator = m_Mediator;
+			m_propertyTable = new PropertyTable(m_Mediator);
+			m_Slice.PropTable = m_propertyTable;
+			m_propertyTable.SetProperty("cache", Cache, false);
 
 			m_Slice.Collapse();
+		}
+		/// <summary>
+		/// Create a DataTree with a GhostStringSlice object. Test to ensure that the PropTable is not null.
+		/// </summary>
+		[Test]
+		public void CreateGhostStringSlice_ParentSliceNotNull()
+		{
+			var path = GeneratePath();
+			var reuseMap = new ObjSeqHashMap();
+			var obj = Cache.ServiceLocator.GetInstance<IMoStemAllomorphFactory>().Create();
+			m_DataTree = new DataTree();
+			m_Slice = GenerateSlice(Cache, m_DataTree);
+			m_Mediator = new Mediator();
+			m_Slice.Mediator = m_Mediator;
+			m_propertyTable = new PropertyTable(m_Mediator);
+			m_Slice.PropTable = m_propertyTable;
+			var node = CreateXmlElementFromOuterXmlOf("<seq field=\"Pronunciations\" layout=\"Normal\" ghost=\"Form\" ghostWs=\"pronunciation\" ghostLabel=\"Pronunciation\" menu=\"mnuDataTree-Pronunciation\" />");
+			int indent = 0;
+			int insertPosition = 0;
+			int flidEmptyProp = 5002031;    // runtime flid of ghost field
+			m_DataTree.MakeGhostSlice(path, node, reuseMap, obj, m_Slice, flidEmptyProp, null, indent, ref insertPosition);
+			var ghostSlice = m_DataTree.Slices[0];
+			Assert.NotNull(ghostSlice);
+			Assert.AreEqual(ghostSlice.PropTable, m_Slice.PropTable);
 		}
 	}
 }

@@ -1,20 +1,17 @@
-// Copyright (c) 2014-2016 SIL International
+// Copyright (c) 2014-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
-using SIL.CoreImpl.Properties;
+using SIL.FieldWorks.Common.FwUtils;
 using XCore;
 
 namespace SIL.FieldWorks.XWorks
 {
-	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
-		Justification="Mediator is a reference")]
 
 	public class UploadToWebonaryModel
 	{
@@ -52,7 +49,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				if (!string.IsNullOrEmpty(m_selectedConfiguration))
 					return m_selectedConfiguration;
-				var pathToCurrentConfiguration = DictionaryConfigurationListener.GetCurrentConfiguration(Mediator,
+				var pathToCurrentConfiguration = DictionaryConfigurationListener.GetCurrentConfiguration(PropertyTable,
 					DictionaryConfigurationListener.DictionaryConfigurationDirectoryName);
 				var curConfig =  Configurations.Values.FirstOrDefault(config => pathToCurrentConfiguration.Equals(config.FilePath));
 				return curConfig == null ? null : curConfig.Label;
@@ -68,11 +65,11 @@ namespace SIL.FieldWorks.XWorks
 		public Dictionary<string, DictionaryConfigurationModel> Configurations { get; set; }
 		public Dictionary<string, DictionaryConfigurationModel> Reversals { get; set; }
 
-		private Mediator Mediator { get; set; }
+		private PropertyTable PropertyTable { get; set; }
 
-		public UploadToWebonaryModel(Mediator mediator)
+		public UploadToWebonaryModel(PropertyTable propertyTable)
 		{
-			Mediator = mediator;
+			PropertyTable = propertyTable;
 			LoadFromSettings();
 		}
 
@@ -96,50 +93,48 @@ namespace SIL.FieldWorks.XWorks
 			return decryptMe;
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "projectSettings is a reference")]
 		private void LoadFromSettings()
 		{
-			if(!string.IsNullOrEmpty(Settings.Default.WebonaryPass))
+			if (PropertyTable != null)
 			{
-				RememberPassword = true;
-				Password = DecryptPassword(Settings.Default.WebonaryPass);
-			}
-			UserName = Settings.Default.WebonaryUser;
-			if(Mediator != null)
-			{
-				var projectSettings = Mediator.PropertyTable;
-				SiteName = projectSettings.GetStringProperty(WebonarySite, null);
-				SelectedPublication = projectSettings.GetStringProperty(WebonaryPublication, null);
-				SelectedConfiguration = projectSettings.GetStringProperty(WebonaryConfiguration, null);
-				SelectedReversals = SplitReversalSettingString(projectSettings.GetStringProperty(WebonaryReversals, null));
+				var appSettings = PropertyTable.GetValue<FwApplicationSettingsBase>("AppSettings");
+				if (!string.IsNullOrEmpty(appSettings.WebonaryPass))
+				{
+					RememberPassword = true;
+					Password = DecryptPassword(appSettings.WebonaryPass);
+				}
+				UserName = appSettings.WebonaryUser;
+
+				SiteName = PropertyTable.GetStringProperty(WebonarySite, null);
+				SelectedPublication = PropertyTable.GetStringProperty(WebonaryPublication, null);
+				SelectedConfiguration = PropertyTable.GetStringProperty(WebonaryConfiguration, null);
+				SelectedReversals = SplitReversalSettingString(PropertyTable.GetStringProperty(WebonaryReversals, null));
 			}
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "projectSettings is a reference")]
 		internal void SaveToSettings()
 		{
-			Settings.Default.WebonaryPass = RememberPassword ? EncryptPassword(Password) : null;
-			Settings.Default.WebonaryUser = UserName;
+			var appSettings = PropertyTable.GetValue<FwApplicationSettingsBase>("AppSettings");
+			appSettings.WebonaryPass = RememberPassword ? EncryptPassword(Password) : null;
+			appSettings.WebonaryUser = UserName;
 
-			var projectSettings = Mediator.PropertyTable;
-			projectSettings.SetProperty(WebonarySite, SiteName, false);
-			projectSettings.SetPropertyPersistence(WebonarySite, true);
-			projectSettings.SetProperty(WebonaryReversals, CombineReversalSettingStrings(SelectedReversals), false);
-			projectSettings.SetPropertyPersistence(WebonaryReversals, true);
+			PropertyTable.SetProperty(WebonarySite, SiteName, false);
+			PropertyTable.SetPropertyPersistence(WebonarySite, true);
+			PropertyTable.SetProperty(WebonaryReversals, CombineReversalSettingStrings(Reversals.Keys), false);
+			PropertyTable.SetProperty(WebonaryReversals, CombineReversalSettingStrings(SelectedReversals), false);
+			PropertyTable.SetPropertyPersistence(WebonaryReversals, true);
 			if(m_selectedConfiguration != null)
 			{
-				projectSettings.SetProperty(WebonaryConfiguration, m_selectedConfiguration, false);
-				projectSettings.SetPropertyPersistence(WebonaryConfiguration, true);
+				PropertyTable.SetProperty(WebonaryConfiguration, m_selectedConfiguration, PropertyTable.SettingsGroup.LocalSettings, false);
+				PropertyTable.SetPropertyPersistence(WebonaryConfiguration, true, PropertyTable.SettingsGroup.LocalSettings);
 			}
 			if (m_selectedPublication != null)
 			{
-				projectSettings.SetProperty(WebonaryPublication, m_selectedPublication, false);
-				projectSettings.SetPropertyPersistence(WebonaryPublication, true);
+				PropertyTable.SetProperty(WebonaryPublication, m_selectedPublication, PropertyTable.SettingsGroup.LocalSettings, false);
+				PropertyTable.SetPropertyPersistence(WebonaryPublication, true, PropertyTable.SettingsGroup.LocalSettings);
 			}
-			projectSettings.SaveGlobalSettings();
-			Settings.Default.Save();
+			PropertyTable.SaveGlobalSettings();
+			appSettings.Save();
 		}
 
 		/// <summary>

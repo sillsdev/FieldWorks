@@ -1,27 +1,13 @@
-// Copyright (c) 2002-2013 SIL International
+// Copyright (c) 2002-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: FwButton.cs
-// Responsibility: DavidO
-// Last reviewed:
-//
-// Implementation of FwButton
-//
 
 using System;
-using System.Collections;
 using System.ComponentModel;
-using System.ComponentModel.Design;
-using System.ComponentModel.Design.Serialization;
 using System.Drawing;
-using System.Data;
 using System.Windows.Forms;
-using System.Diagnostics;
-
 using Fw = SIL.FieldWorks.Common;
 using SIL.FieldWorks.Common.Drawing;
-using SIL.Utils;
 
 namespace SIL.FieldWorks.Common.Controls
 {
@@ -73,7 +59,7 @@ namespace SIL.FieldWorks.Common.Controls
 	/// ENHANCE EberhardB: Show Tooltip if text is to long to fit in button
 	[Serializable]
 	[Designer("SIL.FieldWorks.Common.Controls.Design.FwButtonDesigner")]
-	public class FwButton : Button, IFWDisposable
+	public class FwButton : Button
 	{
 		/// <summary>
 		/// States that the button can have

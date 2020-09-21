@@ -1,24 +1,18 @@
-// Copyright (c) 2009-2013 SIL International
+// Copyright (c) 2009-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: TaggingTests.cs
-// Responsibility: MartinG
-//
-// <remarks>
-// </remarks>
 
 using System.Collections.Generic;
+using System.IO;
 using System.Windows.Forms;
 using System.Xml;
 using NUnit.Framework;
-using SIL.CoreImpl;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.FDOTests;
-using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.Utils;
-using SIL.FieldWorks.FDO.DomainServices;
-using System.Diagnostics.CodeAnalysis;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.FieldWorks.Common.FwUtils;
+using SIL.LCModel;
+using SIL.LCModel.Infrastructure;
+using SIL.LCModel.DomainServices;
+using SIL.WritingSystems;
 
 namespace SIL.FieldWorks.IText
 {
@@ -30,9 +24,9 @@ namespace SIL.FieldWorks.IText
 	[TestFixture]
 	public class InterlinTaggingTests : InterlinearTestBase
 	{
-		private FDO.IText m_text1;
+		private LCModel.IText m_text1;
 		private XmlDocument m_textsDefn;
-		private IWritingSystem m_wsXkal;
+		private CoreWritingSystemDefinition m_wsXkal;
 		private ICmPossibilityList m_textMarkupTags;
 		private TestTaggingChild m_tagChild;
 		private IStTxtPara m_para1;
@@ -101,13 +95,14 @@ namespace SIL.FieldWorks.IText
 		{
 			// setup default vernacular ws.
 			m_wsXkal = Cache.ServiceLocator.WritingSystemManager.Set("qaa-x-kal");
-			m_wsXkal.DefaultFontName = "Times New Roman";
+			m_wsXkal.DefaultFont = new FontDefinition("Times New Roman");
 			Cache.ServiceLocator.WritingSystems.VernacularWritingSystems.Add(m_wsXkal);
 			Cache.ServiceLocator.WritingSystems.CurrentVernacularWritingSystems.Insert(0, m_wsXkal);
 			m_textsDefn = new XmlDocument();
 			m_tagRepo = Cache.ServiceLocator.GetInstance<ITextTagRepository>();
-			ConfigurationFilePath("Language Explorer/Configuration/Words/AreaConfiguration.xml");
-			m_text1 = LoadTestText("FDO/FDOTests/TestData/ParagraphParserTestTexts.xml", 1, m_textsDefn);
+			string textDefinitionsPath = Path.Combine(FwDirectoryFinder.SourceDirectory, "LexText", "Interlinear", "ITextDllTests",
+				"ParagraphParserTestTexts.xml");
+			m_text1 = LoadTestText(textDefinitionsPath, 1, m_textsDefn);
 			m_para1 = m_text1.ContentsOA.ParagraphsOS[0] as IStTxtPara;
 			ParseTestText();
 
@@ -232,8 +227,6 @@ namespace SIL.FieldWorks.IText
 		/// </summary>
 		/// <param name="expectedStates">The expected checked state array (one per subitem).</param>
 		/// <param name="menu1">The menu.</param>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "item is a reference")]
 		private static void AssertMenuCheckState(bool[] expectedStates, ToolStripItemCollection menu1)
 		{
 			Assert.AreEqual(expectedStates.Length, menu1.Count,
@@ -258,7 +251,7 @@ namespace SIL.FieldWorks.IText
 			// This may eventually fail because there are no occurrences selected.
 			// Should we even make the menu if nothing is selected?
 
-			using (ContextMenuStrip strip = new ContextMenuStrip())
+			using (var strip = new ContextMenuStrip())
 			{
 				m_tagChild.CallMakeContextMenuForTags(strip, m_textMarkupTags);
 
@@ -596,7 +589,7 @@ namespace SIL.FieldWorks.IText
 		[Test]
 		public void DeleteTagAnnot_SetOfTwo()
 		{
-			var tagsToDelete = new Set<ITextTag>();
+			var tagsToDelete = new HashSet<ITextTag>();
 
 			// Setup the SelectedWordforms property for first tag
 			var tempList = new List<AnalysisOccurrence> {m_occurrences[0], m_occurrences[1]};

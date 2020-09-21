@@ -7,7 +7,7 @@ using System.Net;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.Utils;
+using SIL.LCModel.Utils;
 using XCore;
 
 namespace SIL.FieldWorks.XWorks.LexEd

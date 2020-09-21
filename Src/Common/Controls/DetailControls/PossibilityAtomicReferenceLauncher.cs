@@ -4,12 +4,11 @@
 //
 // File: AtomicReferenceLauncher.cs
 // Responsibility: RandyR
-
 using System;
 using System.Linq;
 using System.Xml;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel;
 using SIL.Utils;
 using XCore;
 
@@ -41,14 +40,14 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			base.Dispose(disposing);
 		}
 
-		public override void Initialize(FdoCache cache, ICmObject obj, int flid,
-			string fieldName, IPersistenceProvider persistProvider, Mediator mediator, string displayNameProperty, string displayWs)
+		public override void Initialize(LcmCache cache, ICmObject obj, int flid,
+			string fieldName, IPersistenceProvider persistProvider, Mediator mediator, PropertyTable propertyTable, string displayNameProperty, string displayWs)
 		{
 			CheckDisposed();
 
-			base.Initialize(cache, obj, flid, fieldName, persistProvider, mediator, displayNameProperty, displayWs);
+			base.Initialize(cache, obj, flid, fieldName, persistProvider, mediator, propertyTable, displayNameProperty, displayWs);
 
-			m_autoComplete = new PossibilityAutoComplete(cache, mediator, (ICmPossibilityList) obj.ReferenceTargetOwner(flid),
+			m_autoComplete = new PossibilityAutoComplete(cache, mediator, propertyTable, (ICmPossibilityList) obj.ReferenceTargetOwner(flid),
 				m_atomicRefView, displayNameProperty, displayWs);
 			m_autoComplete.PossibilitySelected += HandlePossibilitySelected;
 			m_atomicRefView.RootBox.DataAccess.AddNotification(this);
@@ -73,19 +72,24 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				}
 				else
 				{
-					ICmPossibility[] possibilities = m_autoComplete.Possibilities.ToArray();
-					if (possibilities.Length == 1)
-					{
-						if (possibilities[0] != Target)
-							AddItem(possibilities[0]);
-					}
-					else
-					{
-						UpdateDisplayFromDatabase();
-					}
+					UpdateAutoComplete();
 				}
 			}
 			m_autoComplete.Hide();
+		}
+
+		protected virtual void UpdateAutoComplete()
+		{
+			ICmPossibility[] possibilities = m_autoComplete.Possibilities.ToArray();
+			if (possibilities.Length == 1)
+			{
+				if (possibilities[0].Equals(Target))
+					AddItem(possibilities[0]);
+			}
+			else
+			{
+				UpdateDisplayFromDatabase();
+			}
 		}
 
 		#endregion // Overrides
@@ -105,9 +109,14 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			return new PossibilityAtomicReferenceView();
 		}
 
-		private void HandlePossibilitySelected(object sender, EventArgs e)
+		protected ICmPossibility AutoCompleteSelectedPossibility
 		{
-			ICmPossibility poss = m_autoComplete.SelectedPossibility;
+			get { return m_autoComplete.SelectedPossibility; }
+		}
+
+		protected virtual void HandlePossibilitySelected(object sender, EventArgs e)
+		{
+			ICmPossibility poss = AutoCompleteSelectedPossibility;
 			if (poss != Target)
 				AddItem(poss);
 			else

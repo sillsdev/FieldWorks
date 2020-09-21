@@ -4,36 +4,33 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using NUnit.Framework;
-using Palaso.IO;
-using Palaso.Linq;
-using Palaso.TestUtilities;
-using SIL.CoreImpl;
+using SIL.IO;
+using SIL.Linq;
+using SIL.TestUtilities;
+using SIL.LCModel.Core.Cellar;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Widgets;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FDO.FDOTests;
-using SIL.Utils;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Utils;
 using XCore;
 
 namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 {
-	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule", Justification="Cache is a reference")]
-	[SuppressMessage("ReSharper", "InconsistentNaming")]
 	public class PreHistoricMigratorTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
 	{
 		private PreHistoricMigrator m_migrator;
+		private PropertyTable m_propertyTable;
 		private Mediator m_mediator;
 		private FwXApp m_application;
 		private string m_configFilePath;
 		private MockFwXWindow m_window;
-		private FwStyleSheet m_styleSheet;
+		private LcmStyleSheet m_styleSheet;
 
 		// Set up Custom Fields at the Fixture level, since disposing one in one test disposes them all in all tests
 		private const string CustomFieldChangedLabel = "Custom Label";
@@ -60,10 +57,10 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			m_configFilePath = Path.Combine(FwDirectoryFinder.CodeDirectory, m_application.DefaultConfigurationPathname);
 			m_window = new MockFwXWindow(m_application, m_configFilePath);
 			m_window.Init(Cache); // initializes Mediator values
-			m_mediator = m_window.Mediator;
+			m_propertyTable = m_window.PropTable;
 			m_window.LoadUI(m_configFilePath); // actually loads UI here; needed for non-null stylesheet
 
-			m_styleSheet = FontHeightAdjuster.StyleSheetFromMediator(m_mediator);
+			m_styleSheet = FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable);
 
 			m_cf1 = new CustomFieldForTest(Cache, CustomFieldChangedLabel, CustomFieldOriginalName, Cache.MetaDataCacheAccessor.GetClassId("LexEntry"),
 				CellarPropertyType.ReferenceCollection, Guid.Empty);
@@ -86,14 +83,16 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			m_cf4.Dispose();
 			m_window.Dispose();
 			m_application.Dispose();
-			m_mediator.Dispose();
+			m_propertyTable.Dispose();
+			if(m_mediator != null)
+				m_mediator.Dispose();
 			FwRegistrySettings.Release();
 		}
 
 		[SetUp]
 		public void SetUp()
 		{
-			m_migrator = new PreHistoricMigrator(Cache, m_mediator);
+			m_migrator = new PreHistoricMigrator(Cache, m_mediator, m_propertyTable);
 		}
 
 		///<summary/>
@@ -1697,7 +1696,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 
 				m_migrator.CopyNewDefaultsIntoConvertedModel(convertedMinorEntry, defaultMinorEntry);
 				string cssResults = null;
-				Assert.DoesNotThrow(()=>cssResults = CssGenerator.GenerateCssFromConfiguration(convertedMinorEntry, m_mediator));
+				Assert.DoesNotThrow(()=>cssResults = CssGenerator.GenerateCssFromConfiguration(convertedMinorEntry, new ReadOnlyPropertyTable(m_propertyTable)));
 				Assert.That(cssResults, Is.StringContaining(HwBefore));
 				Assert.That(cssResults, Is.StringContaining(HwBetween));
 				Assert.That(cssResults, Is.StringContaining(HwAfter));
@@ -2060,8 +2059,8 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 		[Test]
 		[TestCase("publishReversal", "All Reversal Indexes (original)", "AllReversalIndexes")]
 		[TestCase("publishReversal#All RU93", "Copy of All Reversal Indexes", "Copy of All Reversal Indexes-AllReversalIndexes-#All RU93")]
-		[TestCase("publishReversal-en", "English (original)", "English")]
-		[TestCase("publishReversal-en#Engli704", "Copy of English", "Copy of English-English-#Engli704")]
+		[TestCase("publishReversal-en", "English (original)", "en")]
+		[TestCase("publishReversal-en#Engli704", "Copy of English", "Copy of English-en-#Engli704")]
 		public void CopyDefaultsIntoConvertedModel_PicksSensibleNameForReversalIndexes(string oldLayout, string oldLabel, string newFileName)
 		{
 			var node = new ConfigurableDictionaryNode { Label = "Reversal Entry" };
@@ -2331,43 +2330,43 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 		[Test]
 		public void ConfigsNeedMigratingFromPre83_ReturnsFalseIfNewReversalConfigsExist()
 		{
-			var newRevIdxConfigLoc = Path.Combine(FdoFileHelper.GetConfigSettingsDir(Path.GetDirectoryName(Cache.ProjectId.Path)),
+			var newRevIdxConfigLoc = Path.Combine(LcmFileHelper.GetConfigSettingsDir(Path.GetDirectoryName(Cache.ProjectId.Path)),
 				DictionaryConfigurationListener.ReversalIndexConfigurationDirectoryName);
 			Directory.CreateDirectory(newRevIdxConfigLoc);
 			File.AppendAllText(Path.Combine(newRevIdxConfigLoc, "SomeConfig" + DictionaryConfigurationModel.FileExtension), "Foo");
 			Assert.That(!m_migrator.ConfigsNeedMigratingFromPre83(), "If current configs exist no migration should be needed."); // SUT
-			DirectoryUtilities.DeleteDirectoryRobust(newRevIdxConfigLoc);
+			RobustIO.DeleteDirectoryAndContents(newRevIdxConfigLoc);
 		}
 
 		///<summary/>
 		[Test]
 		public void ConfigsNeedMigratingFromPre83_ReturnsFalseIfNewDictionaryConfigsExist()
 		{
-			var newDictConfigLoc = Path.Combine(FdoFileHelper.GetConfigSettingsDir(Path.GetDirectoryName(Cache.ProjectId.Path)),
+			var newDictConfigLoc = Path.Combine(LcmFileHelper.GetConfigSettingsDir(Path.GetDirectoryName(Cache.ProjectId.Path)),
 				DictionaryConfigurationListener.DictionaryConfigurationDirectoryName);
 			Directory.CreateDirectory(newDictConfigLoc);
 			File.AppendAllText(Path.Combine(newDictConfigLoc, "SomeConfig" + DictionaryConfigurationModel.FileExtension), "Foo");
 			Assert.That(!m_migrator.ConfigsNeedMigratingFromPre83(), "If current configs exist no migration should be needed."); // SUT
-			DirectoryUtilities.DeleteDirectoryRobust(newDictConfigLoc);
+			RobustIO.DeleteDirectoryAndContents(newDictConfigLoc);
 		}
 
 		///<summary/>
 		[Test]
 		public void ConfigsNeedMigratingFromPre83_ReturnsFalseIfNoNewConfigsAndNoOldConfigs()
 		{
-			var newDictConfigLoc = Path.Combine(FdoFileHelper.GetConfigSettingsDir(Path.GetDirectoryName(Cache.ProjectId.Path)),
+			var newDictConfigLoc = Path.Combine(LcmFileHelper.GetConfigSettingsDir(Path.GetDirectoryName(Cache.ProjectId.Path)),
 				DictionaryConfigurationListener.DictionaryConfigurationDirectoryName);
 			Directory.CreateDirectory(newDictConfigLoc);
 			Directory.EnumerateFiles(newDictConfigLoc).ForEach(File.Delete);
 			Assert.That(!m_migrator.ConfigsNeedMigratingFromPre83(), "With no new or old configs no migration should be needed."); // SUT
-			DirectoryUtilities.DeleteDirectoryRobust(newDictConfigLoc);
+			RobustIO.DeleteDirectoryAndContents(newDictConfigLoc);
 		}
 
 		///<summary/>
 		[Test]
 		public void ConfigsNeedMigratingFromPre83_ReturnsTrueIfNoNewConfigsAndOneOldConfig()
 		{
-			var configSettingsDir = FdoFileHelper.GetConfigSettingsDir(Path.GetDirectoryName(Cache.ProjectId.Path));
+			var configSettingsDir = LcmFileHelper.GetConfigSettingsDir(Path.GetDirectoryName(Cache.ProjectId.Path));
 			var newDictConfigLoc = Path.Combine(configSettingsDir, "Dictionary");
 			Directory.CreateDirectory(newDictConfigLoc);
 			Directory.EnumerateFiles(newDictConfigLoc).ForEach(File.Delete);
@@ -2377,7 +2376,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 				File.AppendAllText(tempFwLayoutPath, "LayoutFoo");
 				Assert.That(m_migrator.ConfigsNeedMigratingFromPre83(), "There is an old config, a migration is needed."); // SUT
 			}
-			DirectoryUtilities.DeleteDirectoryRobust(newDictConfigLoc);
+			RobustIO.DeleteDirectoryAndContents(newDictConfigLoc);
 		}
 
 		/// <summary>

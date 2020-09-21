@@ -7,23 +7,19 @@
 //
 // <remarks>
 // </remarks>
-
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
-
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Resources;
-using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.CoreImpl;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
-using System.Diagnostics.CodeAnalysis;
 
 namespace SIL.FieldWorks.Common.Framework
 {
@@ -53,7 +49,7 @@ namespace SIL.FieldWorks.Common.Framework
 		/// <param name="cache">The DB connection</param>
 		/// <param name="callbacks">implementation of <see cref="IEditingCallbacks"/></param>
 		/// ------------------------------------------------------------------------------------
-		public FwEditingHelper(FdoCache cache, IEditingCallbacks callbacks)
+		public FwEditingHelper(LcmCache cache, IEditingCallbacks callbacks)
 			: base(cache, callbacks)
 		{
 		}
@@ -119,10 +115,6 @@ namespace SIL.FieldWorks.Common.Framework
 			try
 			{
 				base.HandleSelectionChange(prootb, vwselNew);
-				if (TheMainWnd == null)
-					return;
-				TheMainWnd.UpdateStyleComboBoxValue(Callbacks as IRootSite);
-				TheMainWnd.UpdateWritingSystemSelectorForSelection(Callbacks.EditedRootBox);
 			}
 			catch(COMException e)
 			{
@@ -257,15 +249,14 @@ namespace SIL.FieldWorks.Common.Framework
 		/// </returns>
 		/// ------------------------------------------------------------------------------------
 		public static bool AddHyperlink(ITsStrBldr strBldr, int ws, string sLinkText, string sUrl,
-			FwStyleSheet stylesheet)
+			LcmStyleSheet stylesheet)
 		{
 			var hyperlinkStyle = stylesheet.FindStyle(StyleServices.Hyperlink);
 			if (hyperlinkStyle == null)
 				return false;
 
 			if (stylesheet != null && stylesheet.Cache != null && stylesheet.Cache.ProjectId != null)
-				sUrl = FwLinkArgs.FixSilfwUrlForCurrentProject(sUrl, stylesheet.Cache.ProjectId.Name,
-					stylesheet.Cache.ProjectId.ServerName);
+				sUrl = FwLinkArgs.FixSilfwUrlForCurrentProject(sUrl, stylesheet.Cache.ProjectId.Name);
 			int ichStart = strBldr.Length;
 			strBldr.Replace(ichStart, ichStart, sLinkText, StyleUtils.CharStyleTextProps(null, ws));
 			StringServices.MarkTextInBldrAsHyperlink(strBldr, ichStart, strBldr.Length,
@@ -275,52 +266,6 @@ namespace SIL.FieldWorks.Common.Framework
 		#endregion
 
 		#region Public Properties
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Gets the containing Main Window, an FwMainWnd.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public virtual FwMainWnd TheMainWnd
-		{
-			get
-			{
-				CheckDisposed();
-				return Control.FindForm() as FwMainWnd;
-			}
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Gets the containing Client Window, as an ISelectableView.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "ctrl is a reference")]
-		public virtual ISelectableView TheClientWnd
-		{
-			get
-			{
-				CheckDisposed();
-
-				// In TeMainWnd draft views, the individual panes are created and then they are
-				// added to the client window and their ownership reassigned to the client window.
-				// This property is called before ownership is reassigned, so attempting to use a
-				// saved m_theClientWnd here produces an incorrect result.
-				//if (m_theClientWnd != null)
-				//	return m_theClientWnd;
-
-				Control ctrl = Control;
-				while (ctrl != null)
-				{
-					if (ctrl is ISelectableView && !(ctrl.Parent is ISelectableView))
-						return (ISelectableView)ctrl;
-
-					ctrl = ctrl.Parent;
-				}
-
-				return null;
-			}
-		}
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -472,8 +417,7 @@ namespace SIL.FieldWorks.Common.Framework
 			if (propTag == SimpleRootSite.kTagUserPrompt)
 			{
 				ich = 0;
-				ITsStrFactory factory = m_cache.TsStrFactory;
-				tss = factory.MakeString(string.Empty, m_cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Handle);
+				tss = TsStringUtils.EmptyString(m_cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Handle);
 				propTag = StTxtParaTags.kflidContents;
 				helper.SetTextPropId(SelectionHelper.SelLimitType.Anchor, StTxtParaTags.kflidContents);
 				helper.SetTextPropId(SelectionHelper.SelLimitType.End, StTxtParaTags.kflidContents);

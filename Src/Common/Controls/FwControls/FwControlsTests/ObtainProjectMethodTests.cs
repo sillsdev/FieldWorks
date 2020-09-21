@@ -1,14 +1,13 @@
-﻿// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System;
 using System.IO;
 using System.Reflection;
 using System.Xml;
 using NUnit.Framework;
-using SIL.FieldWorks.FDO;
-using SIL.Utils;
+using SIL.LCModel;
+using SIL.LCModel.Utils;
 
 namespace SIL.FieldWorks.Common.Controls
 {
@@ -136,19 +135,6 @@ namespace SIL.FieldWorks.Common.Controls
 
 		/// <summary/>
 		[Test]
-		public void CallPickAnthro_PickAnthroListCanBeFound()
-		{
-			var flags = (BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static);
-			var type = ReflectionHelper.GetType(ObtainProjectMethod.PickAnthroDll,
-															ObtainProjectMethod.PickAnthroClass);
-			Assert.NotNull(type, "Class used for PickAnthroList moved.");
-			var method = type.GetMethod(ObtainProjectMethod.PickAnthroMethod,
-												 new [] { typeof(String), typeof(XCore.IHelpTopicProvider) });
-			Assert.NotNull(method, "Method name changed, or parameters changed.");
-		}
-
-		/// <summary/>
-		[Test]
 		public void CallImportObtainedLexicon_ImportObtainedLexiconCanBeFound()
 		{
 			var flags = (BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static);
@@ -156,7 +142,7 @@ namespace SIL.FieldWorks.Common.Controls
 															ObtainProjectMethod.ImportLexiconClass);
 			Assert.NotNull(type, "Class used for ImportObtainedLexicon moved.");
 			var method = type.GetMethod(ObtainProjectMethod.ImportLexiconMethod,
-												 new[] { typeof(FdoCache), typeof(string), typeof(System.Windows.Forms.Form) });
+												 new[] { typeof(LcmCache), typeof(string), typeof(System.Windows.Forms.Form) });
 			Assert.NotNull(method, "Method name changed, or parameters changed.");
 		}
 	}

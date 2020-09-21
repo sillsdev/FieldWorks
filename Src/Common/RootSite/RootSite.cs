@@ -1,9 +1,6 @@
-// Copyright (c) 2002-2013 SIL International
+// Copyright (c) 2002-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: RootSite.cs
-// Responsibility: TE Team
 //
 // <remarks>
 // Implementation of RootSite (formerly AfVwRootSite and AfVwScrollWndBase).
@@ -14,32 +11,27 @@
 //
 // The original RootSite class contained most of the code of this file, but this was later
 // refactored to enable a distinction between a SimpleRootSite that does not know what cache
-// is being used for the view, and RootSite which has an FdoCache member variable.
+// is being used for the view, and RootSite which has an LcmCache member variable.
 // </remarks>
 
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Linq;
 using System.Runtime.InteropServices;
-#if !__MonoCS__
-using System.Windows.Automation.Provider;
-#endif
 using System.Windows.Forms;
-using Palaso.WritingSystems;
-using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.FieldWorks.FDO.Infrastructure.Impl;
-using SIL.Utils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Application;
+using SIL.LCModel.Core.Cellar;
+using SIL.LCModel.Core.SpellChecking;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
+using SIL.LCModel.Infrastructure;
+using SIL.LCModel;
+using SIL.LCModel.Application;
 using XCore;
-using SIL.FieldWorks.Resources;
 
 // How to debug COM reference counts:
 // a) create a global variable that contains a file handle:
@@ -77,7 +69,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		public const int kdxBaselineRootsiteWidth = 1500;
 
 		/// <summary>The FDO cache</summary>
-		protected FdoCache m_fdoCache;
+		protected LcmCache m_cache;
 		/// <summary>
 		/// the group root site that controls this one.
 		/// May also be null, in which case it behaves like an ordinary root site.
@@ -105,9 +97,9 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// meant to handle scrolling.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public RootSite(FdoCache cache) : this()
+		public RootSite(LcmCache cache) : this()
 		{
-			Cache = cache; // make sure to set the property, not setting m_fdoCache directly
+			Cache = cache; // make sure to set the property, not setting m_cache directly
 		}
 
 		/// <summary>
@@ -125,10 +117,6 @@ namespace SIL.FieldWorks.Common.RootSites
 
 			InitializeComponent();
 
-#if !__MonoCS__
-			UIAutomationServerProviderFactory = () => new SimpleRootSiteDataProvider(this,
-				fragmentRoot => RootSiteServices.CreateUIAutomationControls(fragmentRoot, RootBox));
-#endif
 			// RootSite shouldn't handle tabs like a control
 			AcceptsTab = true;
 			AcceptsReturn = true;
@@ -169,7 +157,7 @@ namespace SIL.FieldWorks.Common.RootSites
 				//if (m_group != null)
 				//	m_group.Dispose();
 			}
-			m_fdoCache = null;
+			m_cache = null;
 			m_group = null;
 		}
 
@@ -239,9 +227,9 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <summary>
 		/// With access to the cache, we can limit this to writing sytems the user might plausibly want for this project.
 		/// </summary>
-		protected override IWritingSystemDefinition[] PlausibleWritingSystems
+		protected override CoreWritingSystemDefinition[] PlausibleWritingSystems
 		{
-			get { return m_fdoCache.ServiceLocator.WritingSystems.AllWritingSystems.Cast<IWritingSystemDefinition>().ToArray(); }
+			get { return m_cache.ServiceLocator.WritingSystems.AllWritingSystems.ToArray(); }
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -251,7 +239,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// ------------------------------------------------------------------------------------
 		protected override EditingHelper CreateEditingHelper()
 		{
-			return new RootSiteEditingHelper(m_fdoCache, this);
+			return new RootSiteEditingHelper(m_cache, this);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -280,7 +268,7 @@ namespace SIL.FieldWorks.Common.RootSites
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Override the getter to obtain a WSF from the FdoCache, if we don't have
+		/// Override the getter to obtain a WSF from the LcmCache, if we don't have
 		/// one set independently, as is usually the case for this class.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
@@ -290,8 +278,8 @@ namespace SIL.FieldWorks.Common.RootSites
 			{
 				CheckDisposed();
 
-				if (m_wsf == null && m_fdoCache != null)
-					return m_fdoCache.WritingSystemFactory;
+				if (m_wsf == null && m_cache != null)
+					return m_cache.WritingSystemFactory;
 				return m_wsf;
 			}
 		}
@@ -309,7 +297,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			get
 			{
 				CheckDisposed();
-				return m_fdoCache != null;
+				return m_cache != null;
 			}
 		}
 
@@ -324,7 +312,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		{
 			CheckDisposed();
 
-			return RootSiteEditingHelper.TextRepOfObj(m_fdoCache, _guid);
+			return RootSiteEditingHelper.TextRepOfObj(m_cache, _guid);
 		}
 
 		/// -----------------------------------------------------------------------------------
@@ -356,7 +344,7 @@ namespace SIL.FieldWorks.Common.RootSites
 				if (flid == 0) // can happen for e.g. icons
 					return false;
 
-				// Don't use FdoCache here, it doesn't know about decorators.
+				// Don't use LcmCache here, it doesn't know about decorators.
 				var mdc = m_rootb.DataAccess.MetaDataCache;
 				if (mdc == null)
 					mdc = Cache.MetaDataCacheAccessor;		// better than null!
@@ -471,12 +459,16 @@ namespace SIL.FieldWorks.Common.RootSites
 						}
 					}
 				}
-				string oldBest = m_mediator.PropertyTable.GetStringProperty("BestStyleName", null);
-				if (oldBest != bestStyle)
+				// Handles the case where m_propertyTable is null because the parent slice is null
+				if (m_propertyTable != null)
 				{
-					EditingHelper.SuppressNextBestStyleNameChanged = true;
-					m_mediator.PropertyTable.SetProperty("BestStyleName", bestStyle);
-					m_mediator.PropertyTable.SetPropertyPersistence("BestStyleName", false);
+					string oldBest = m_propertyTable.GetStringProperty("BestStyleName", null);
+					if (oldBest != bestStyle)
+					{
+						EditingHelper.SuppressNextBestStyleNameChanged = true;
+						m_propertyTable.SetProperty("BestStyleName", bestStyle, true);
+						m_propertyTable.SetPropertyPersistence("BestStyleName", false);
+					}
 				}
 				return bestStyle;
 			}
@@ -567,26 +559,26 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <summary>
 		/// Gets or sets the FDO cache
 		/// </summary>
-		/// <value>A <see cref="FdoCache"/></value>
+		/// <value>A <see cref="LcmCache"/></value>
 		/// -----------------------------------------------------------------------------------
 		[Browsable(false)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-		public virtual FdoCache Cache
+		public virtual LcmCache Cache
 		{
 			get
 			{
 				CheckDisposed();
-				return m_fdoCache;
+				return m_cache;
 			}
 			set
 			{
 				CheckDisposed();
 
-				m_fdoCache = value;
-				if (m_fdoCache != null)
+				m_cache = value;
+				if (m_cache != null)
 				{
 					if (m_editingHelper is RootSiteEditingHelper)
-						RootSiteEditingHelper.Cache = m_fdoCache;
+						RootSiteEditingHelper.Cache = m_cache;
 				}
 			}
 		}
@@ -886,7 +878,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			bool fAssocPrev, ITsTextProps selProps)
 		{
 			// Creating one hooks it up; it will free itself when invoked.
-			new RequestSelectionHelper((IActionHandlerExtensions)m_fdoCache.ActionHandlerAccessor,
+			new RequestSelectionHelper((IActionHandlerExtensions)m_cache.ActionHandlerAccessor,
 				rootb, ihvoRoot, rgvsli, tagTextProp, cpropPrevious, ich, wsAlt, fAssocPrev,
 				selProps);
 
@@ -906,7 +898,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// ------------------------------------------------------------------------------------
 		public override void RequestVisibleSelectionAtEndOfUow(SelectionHelper helper)
 		{
-			new RequestSelectionByHelper((IActionHandlerExtensions)m_fdoCache.ActionHandlerAccessor, helper);
+			new RequestSelectionByHelper((IActionHandlerExtensions)m_cache.ActionHandlerAccessor, helper);
 
 			// We don't want to continue using the old, out-of-date selection.
 			RootBox.DestroySelection();
@@ -1011,7 +1003,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		{
 			CheckDisposed();
 
-			return RootSiteEditingHelper.MakeObjFromText(m_fdoCache, bstrText, _selDst, out kodt);
+			return RootSiteEditingHelper.MakeObjFromText(m_cache, bstrText, _selDst, out kodt);
 		}
 
 		// Commented out this method as part of fix for TE-3537. We have to adjust the scroll
@@ -1155,7 +1147,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		{
 			CheckDisposed();
 
-			return m_fdoCache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Handle;
+			return m_cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Handle;
 		}
 		#endregion
 
@@ -1183,134 +1175,6 @@ namespace SIL.FieldWorks.Common.RootSites
 	}
 	#endregion
 
-	#region RootSiteServices class
-	/// <summary>
-	///
-	/// </summary>
-	public static class RootSiteServices
-	{
-		/// <summary>
-		/// Creates the UI automation edit controls.
-		/// </summary>
-		/// <param name="rawElementProviderRoot">The raw element provider root.</param>
-		/// <param name="rootBox">The root box.</param>
-		/// <returns></returns>
-		public static IList<IRawElementProviderFragment> CreateUIAutomationEditControls(IChildControlNavigation rawElementProviderRoot,
-			IVwRootBox rootBox)
-		{
-			var editControls = new List<IRawElementProviderFragment>();
-			foreach (var selection in CollectorEnvServices.CollectEditableSelectionPoints(rootBox))
-			{
-				var editControl = CreateEditControl(rawElementProviderRoot, rootBox, selection);
-				editControls.Add(editControl);
-			}
-			return editControls;
-		}
-
-		private static SimpleRootSiteEditControl CreateEditControl(IChildControlNavigation rawElementProviderRoot,
-			IVwRootBox rootBox, IVwSelection selection)
-		{
-				if (!selection.IsRange)
-					selection.ExtendToStringBoundaries();
-			return new SimpleRootSiteEditControl(rawElementProviderRoot,
-					rootBox.Site as SimpleRootSite, selection, "");
-		}
-
-		/// <summary>
-		/// Creates the UI automation edit controls.
-		/// </summary>
-		/// <param name="rawElementProviderRoot"></param>
-		/// <param name="rootBox">The root box.</param>
-		/// <param name="vc"></param>
-		/// <param name="sda"></param>
-		/// <param name="hvoRoot"></param>
-		/// <param name="fragRoot"></param>
-		/// <returns></returns>
-		public static IList<IRawElementProviderFragment> CreateUIAutomationEditControls(IChildControlNavigation rawElementProviderRoot,
-			IVwRootBox rootBox,
-			IVwViewConstructor vc, ISilDataAccess sda, int hvoRoot, int fragRoot)
-		{
-			var editControls = new List<IRawElementProviderFragment>();
-			foreach (var selection in CollectorEnvServices.CollectEditableSelectionPoints(rootBox))
-			{
-				var editControl = CreateEditControl(rawElementProviderRoot, rootBox, selection);
-				editControls.Add(editControl);
-			}
-			return editControls;
-		}
-
-		/// <summary>
-		/// Creates the UI automation image controls.
-		/// </summary>
-		/// <param name="rawElementProviderRoot">The raw element provider root.</param>
-		/// <param name="rootBox">The root box.</param>
-		/// <returns></returns>
-		public static IList<IRawElementProviderFragment> CreateUIAutomationImageControls(IChildControlNavigation rawElementProviderRoot,
-			IVwRootBox rootBox)
-		{
-			var imageControls = new List<IRawElementProviderFragment>();
-			foreach (var selection in CollectorEnvServices.CollectPictureSelectionPoints(rootBox))
-			{
-				var imageControl = new ImageControl(rawElementProviderRoot,
-					rootBox.Site as SimpleRootSite, selection);
-				imageControls.Add(imageControl);
-			}
-			return imageControls;
-		}
-
-		/// <summary>
-		/// Creates the UI automation controls for both images and edit boxes.
-		/// </summary>
-		/// <param name="rawElementProviderRoot">The raw element provider root.</param>
-		/// <param name="rootBox">The root box.</param>
-		/// <returns></returns>
-		public static IList<IRawElementProviderFragment> CreateUIAutomationControls(IChildControlNavigation rawElementProviderRoot,
-			IVwRootBox rootBox)
-		{
-			var controls = new List<IRawElementProviderFragment>();
-			foreach (var selection in CollectorEnvServices.CollectPictureAndEditSelectionPoints(rootBox))
-			{
-				IRawElementProviderFragment control = null;
-				if (selection.SelType == VwSelType.kstPicture)
-				{
-					control = new ImageControl(rawElementProviderRoot,
-														rootBox.Site as SimpleRootSite, selection);
-				}
-				else if (selection.SelType == VwSelType.kstText && selection.IsEditable)
-				{
-					control = CreateEditControl(rawElementProviderRoot, rootBox, selection);
-				}
-
-				if (control != null)
-					controls.Add(control);
-			}
-			return controls;
-		}
-
-#if !__MonoCS__
-		/// <summary>
-		/// Creates the UI automation invoke buttons.
-		/// </summary>
-		/// <param name="provider">The provider.</param>
-		/// <param name="rootBox">The root box.</param>
-		/// <param name="invokeAction"></param>
-		/// <returns></returns>
-		public static IList<IRawElementProviderFragment> CreateUIAutomationInvokeButtons
-			(IChildControlNavigation provider, IVwRootBox rootBox, Action<IVwSelection> invokeAction)
-		{
-			var buttonControls = new List<IRawElementProviderFragment>();
-			foreach (var selection in CollectorEnvServices.CollectPictureSelectionPoints(rootBox))
-			{
-				var buttonControl = new UiaInvokeButton(provider,
-					rootBox.Site as SimpleRootSite, selection, "Drop Down Button", invokeAction);
-				buttonControls.Add(buttonControl);
-			}
-			return buttonControls;
-		}
-#endif
-	}
-	#endregion
-
 	#region Class RootSiteGroup
 	/// ------------------------------------------------------------------------------------
 	/// <summary>
@@ -1320,7 +1184,7 @@ namespace SIL.FieldWorks.Common.RootSites
 	/// </summary>
 	/// ------------------------------------------------------------------------------------
 	public class RootSiteGroup : Control, IRootSite, IxCoreColleague, IHeightEstimator,
-		IFWDisposable, IRootSiteGroup
+		IRootSiteGroup
 	{
 		#region Member variables
 		// m_slaves holds RootSite objects.
@@ -1356,7 +1220,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <param name="viewTypeId">An identifier for a group of views that share the same
 		/// height estimates</param>
 		/// ------------------------------------------------------------------------------------
-		public RootSiteGroup(FdoCache cache, int viewTypeId)
+		public RootSiteGroup(LcmCache cache, int viewTypeId)
 		{
 			// NOTE: This ParagraphCounter is shared among multiple views (i.e. references to
 			// the same counter will be used in each RootSiteGroup with the same cache and
@@ -1696,8 +1560,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// </summary>
 		/// <returns></returns>
 		/// ------------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="FindForm() returns a reference")]
 		public virtual IVwRootSite CastAsIVwRootSite()
 		{
 			CheckDisposed();
@@ -1870,17 +1732,18 @@ namespace SIL.FieldWorks.Common.RootSites
 		#endregion
 
 		#region IxCoreColleague Members
+
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Not used
 		/// </summary>
 		/// <param name="mediator"></param>
+		/// <param name="propertyTable"></param>
 		/// <param name="configurationParameters"></param>
 		/// ------------------------------------------------------------------------------------
-		public void Init(Mediator mediator, System.Xml.XmlNode configurationParameters)
+		public void Init(Mediator mediator, PropertyTable propertyTable, System.Xml.XmlNode configurationParameters)
 		{
 			CheckDisposed();
-
 		}
 
 		/// ------------------------------------------------------------------------------------

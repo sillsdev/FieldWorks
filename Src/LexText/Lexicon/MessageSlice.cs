@@ -1,20 +1,17 @@
-﻿// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2020 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Xml;
 using Chorus;
 using Chorus.UI.Notes.Bar;
-using Palaso.Progress;
 using SIL.FieldWorks.Common.Framework.DetailControls;
-using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
+using SIL.Progress;
 
 namespace SIL.FieldWorks.XWorks.LexEd
 {
@@ -25,6 +22,20 @@ namespace SIL.FieldWorks.XWorks.LexEd
 	{
 		private ChorusSystem m_chorusSystem;
 		NotesBarView m_notesBar;
+
+		protected override void Dispose(bool disposing)
+		{
+			if (!IsDisposed && disposing)
+			{
+				m_chorusSystem?.Dispose();
+				// m_notesBar is stored in Control, which is disposed by base.Dispose.
+			}
+
+			m_chorusSystem = null;
+			m_notesBar = null;
+
+			base.Dispose(disposing);
+		}
 
 		/// <summary>
 		/// The user that we want MessageSlice (and FLExBridge) to consider to be the current user,
@@ -57,12 +68,12 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			m_notesBar.SetTargetObject(m_obj);
 			// Set the writing systems for the NoteDetailDialog.  (See FWNX-1239.)
 			var vernWs = Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
-			var labelWs = new ChorusWritingSystem(vernWs.LanguageName, vernWs.RFC5646, vernWs.DefaultFontName, 12);
+			var labelWs = new ChorusWritingSystem(vernWs.LanguageName, vernWs.Id, vernWs.DefaultFontName, 12);
 			m_notesBar.LabelWritingSystem = labelWs;
 			var analWs = Cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem;
-			var msgWs = new ChorusWritingSystem (analWs.LanguageName, analWs.RFC5646, analWs.DefaultFontName, 12);
+			var msgWs = new ChorusWritingSystem(analWs.LanguageName, analWs.Id, analWs.DefaultFontName, 12);
 			m_notesBar.MessageWritingSystem = msgWs;
-			this.Control = m_notesBar;
+			Control = m_notesBar;
 		}
 
 		// The notes bar expects to store notes about a particular file. Our notes are currently about the lexicon,
@@ -72,7 +83,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		// since it has no unpredictable content; we just create it any time this slice wants it, if it does
 		// not already exist. The content does not matter; it is just a hint of the file purpose in case
 		// someone finds it in a browser.
-		private static string GetDataFilePath(FdoCache cache)
+		private static string GetDataFilePath(LcmCache cache)
 		{
 			var dataFilePath = Path.Combine(cache.ProjectId.ProjectFolder, FLExBridgeListener.FakeLexiconFileName);
 			if (!File.Exists(dataFilePath))
@@ -95,7 +106,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		/// </summary>
 		/// <param name="cache"></param>
 		/// <returns></returns>
-		private static IEnumerable<string> GetAdditionalLexiconFilePaths(FdoCache cache)
+		private static IEnumerable<string> GetAdditionalLexiconFilePaths(LcmCache cache)
 		{
 			var results = new List<string>();
 			var lexiconFolder = Path.Combine(cache.ProjectId.ProjectFolder, "Linguistics", "Lexicon");

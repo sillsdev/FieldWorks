@@ -25,7 +25,7 @@ Last reviewed:
 
 #include "testViews.h"
 
-#ifdef WIN32
+#if defined(_WIN32) || defined(_M_X64)
 #undef ENABLE_TSF
 #define ENABLE_TSF
 
@@ -34,30 +34,30 @@ namespace TestViews
 
 #define assert_exception(msg, hrValue, func) \
 		{ \
-			HRESULT hr = S_OK; \
+			HRESULT hr_ex = S_OK; \
 			try \
 			{ \
 				(func); \
 			} \
 			catch (Throwable& thr) \
 			{ \
-				hr = thr.Result(); \
+				hr_ex = thr.Result(); \
 			} \
-			unitpp::assert_eq((msg), (hrValue), hr); \
+			unitpp::assert_eq((msg), (hrValue), hr_ex); \
 		}
 
 #define assert_exceptionHr(msg, hrValue, func) \
 		{ \
-			HRESULT hr = S_OK; \
+			HRESULT hr_ex = S_OK; \
 			try \
 			{ \
 				CheckHr(func); \
 			} \
 			catch (Throwable& thr) \
 			{ \
-				hr = thr.Result(); \
+				hr_ex = thr.Result(); \
 			} \
-			unitpp::assert_eq((msg), (hrValue), hr); \
+			unitpp::assert_eq((msg), (hrValue), hr_ex); \
 		}
 
 	//******************************************************************************************
@@ -405,7 +405,7 @@ namespace TestViews
 		STDMETHOD(OnLockGranted)(DWORD dwLockFlags)
 		{
 			HRESULT hr;
-			IgnoreHr(hr = m_qtsa->SetText(0, m_ichStart, m_ichEnd, m_pszText, wcslen(m_pszText),
+			IgnoreHr(hr = m_qtsa->SetText(0, m_ichStart, m_ichEnd, m_pszText, (int)wcslen(m_pszText),
 				m_pttc));
 			return hr;
 		}
@@ -440,7 +440,7 @@ namespace TestViews
 		STDMETHOD(OnLockGranted)(DWORD dwLockFlags)
 		{
 			HRESULT hr;
-			IgnoreHr(hr = m_qtsa->InsertTextAtSelection(m_dwFlags, m_pszText, wcslen(m_pszText),
+			IgnoreHr(hr = m_qtsa->InsertTextAtSelection(m_dwFlags, m_pszText, (int)wcslen(m_pszText),
 				m_pichStart, m_pichEnd, m_pChange));
 			return hr;
 		}
@@ -617,6 +617,7 @@ namespace TestViews
 		bool m_fTestable; // true if we can initialize TSF thread manager.
 		// Created by fixture setup
 		ISilDataAccessPtr m_qsda;
+		IRenderEngineFactoryPtr m_qref;
 		VwCacheDaPtr m_qcda;
 		ITsStrFactoryPtr m_qtsf;
 		IVwGraphicsWin32Ptr m_qvg32;
@@ -1164,22 +1165,26 @@ namespace TestViews
 				return;
 			MakeStringList2();
 			TS_RUNINFO tri;
-			const ULONG kcch1 = 30;
-			OLECHAR rgch1[kcch1 + 1];
-			ULONG cch;
+			const ULONG kcch1RequestedChars = 24;
+			OLECHAR rgch1Buffer[kcch1RequestedChars + 1];
+			ULONG cchExpectedReturnLength;
 
 			// Need some selection to start with as it determines which paragraph.
 			IVwSelectionPtr qselTemp;
 			CheckHr(m_qrootb->MakeSimpleSel(true, true, false, true, &qselTemp));
-			cch = min( kcch1, (ULONG)wcslen(s_rgpsz1[0]));
-			LockGetText lgt1(m_qtxs, 0, -1, rgch1, kcch1 + 1, &tri, 1);
+			cchExpectedReturnLength = min(kcch1RequestedChars, (ULONG)wcslen(s_rgpsz2[0]));
+			unitpp::assert_true("Unit test not set up correctly, buffer should be smaller than the data.", wcslen(s_rgpsz2[0]) > wcslen(rgch1Buffer));
+
+			// SUT
+			LockGetText lgt1(m_qtxs, 0, -1, rgch1Buffer, kcch1RequestedChars + 1, &tri, 1);
+
 			unitpp::assert_eq("Should succeed", S_OK, lgt1.m_hrLock);
-			unitpp::assert_eq("GetText(0,-1) lim ichNext", (LONG)cch, lgt1.m_ichNext);
-			unitpp::assert_true("GetText(0,-1) lim rgch1",
-				wcsncmp(rgch1, s_rgpsz1[0], cch) == 0);
-			unitpp::assert_eq("GetText(0,-1) lim cchOut", cch, lgt1.m_cchOut);
+			unitpp::assert_eq("GetText(0,-1) lim ichNext", (LONG)cchExpectedReturnLength, lgt1.m_ichNext);
+			unitpp::assert_true("GetText(0,-1) lim rgch1Buffer",
+				wcsncmp(rgch1Buffer, s_rgpsz2[0], cchExpectedReturnLength) == 0);
+			unitpp::assert_eq("GetText(0,-1) lim cchOut", cchExpectedReturnLength, lgt1.m_cchOut);
 			unitpp::assert_eq("GetText(0,-1) lim ctriOut", (ULONG)1, lgt1.m_ctriOut);
-			unitpp::assert_eq("GetText(0,-1) lim  run count", cch, tri.uCount);
+			unitpp::assert_eq("GetText(0,-1) lim run count", cchExpectedReturnLength, tri.uCount);
 			unitpp::assert_eq("GetText(0,-1) lim run type", TS_RT_PLAIN, tri.type);
 		}
 
@@ -1200,7 +1205,7 @@ namespace TestViews
 			IVwSelectionPtr qselTemp;
 			CheckHr(m_qrootb->MakeSimpleSel(true, true, false, true, &qselTemp));
 
-			cch = wcslen(s_rgpsz1[0]);
+			cch = (ULONG)wcslen(s_rgpsz1[0]);
 			LockGetText lgt2(m_qtxs, 0, -1, rgch2, kcch2, &tri, 1);
 			unitpp::assert_eq("Should succeed", S_OK, lgt2.m_hrLock);
 			unitpp::assert_eq("GetText(0,-1) ichNext", (LONG)cch, lgt2.m_ichNext);
@@ -1222,7 +1227,6 @@ namespace TestViews
 				return;
 			MakeStringList2();
 			TS_RUNINFO tri;
-			ULONG cch;
 			const int kcch2 = 1000;
 			OLECHAR rgch2[kcch2];
 
@@ -1230,15 +1234,19 @@ namespace TestViews
 			IVwSelectionPtr qselTemp;
 			CheckHr(m_qrootb->MakeSimpleSel(true, true, false, true, &qselTemp));
 
-			cch = 10 - 2;
-			LockGetText lgt3(m_qtxs, 2, 10, rgch2, kcch2, &tri, 1);
+			int firstChar = 2;
+			int lastChar = 10;
+			ULONG lengthOfCharsToFetch = lastChar - firstChar;
+			int expectedNext = 10;
+
+			LockGetText lgt3(m_qtxs, firstChar, lastChar, rgch2, kcch2, &tri, 1);
 			unitpp::assert_eq("Should succeed", S_OK, lgt3.m_hrLock);
-			unitpp::assert_eq("GetText(2,10) ichNext", (LONG)10, lgt3.m_ichNext);
+			unitpp::assert_eq("GetText(2,10) ichNext", (LONG)expectedNext, lgt3.m_ichNext);
 			unitpp::assert_true("GetText(2,10) rgch2",
-				wcsncmp(rgch2, s_rgpsz1[0] + 2, cch) == 0);
-			unitpp::assert_eq("GetText(2,10) cchOut", cch, lgt3.m_cchOut);
+				wcsncmp(rgch2, s_rgpsz1[0] + 2, lengthOfCharsToFetch) == 0);
+			unitpp::assert_eq("GetText(2,10) cchOut", lengthOfCharsToFetch, lgt3.m_cchOut);
 			unitpp::assert_eq("GetText(2,10) ctriOut", (ULONG)1, lgt3.m_ctriOut);
-			unitpp::assert_eq("GetText(2,10) run count", cch, tri.uCount);
+			unitpp::assert_eq("GetText(2,10) run count", lengthOfCharsToFetch, tri.uCount);
 			unitpp::assert_eq("GetText(2,10) run type", TS_RT_PLAIN, tri.type);
 		}
 
@@ -1252,20 +1260,24 @@ namespace TestViews
 				return;
 			MakeStringList2();
 			TS_RUNINFO tri;
-			ULONG cch;
 			const int kcch2 = 1000;
 			OLECHAR rgch2[kcch2];
 
 			// Need some selection to start with as it determines which paragraph.
 			IVwSelectionPtr qselTemp;
 			CheckHr(m_qrootb->MakeSimpleSel(true, true, false, true, &qselTemp));
-			cch = 0;
-			LockGetText lgt4(m_qtxs, 3, 3, rgch2, kcch2, &tri, 1);
+
+			int firstChar = 3;
+			int lastChar = 3;
+			ULONG lengthOfCharactersToFetch = lastChar - firstChar;
+			int expectedNext = lastChar;
+
+			LockGetText lgt4(m_qtxs, firstChar, lastChar, rgch2, kcch2, &tri, 1);
 			unitpp::assert_eq("Should succeed", S_OK, lgt4.m_hrLock);
-			unitpp::assert_eq("GetText(3,3) ichNext", (LONG)3, lgt4.m_ichNext);
-			unitpp::assert_eq("GetText(3,3) cchOut", cch, lgt4.m_cchOut);
+			unitpp::assert_eq("GetText(3,3) ichNext", (LONG)expectedNext, lgt4.m_ichNext);
+			unitpp::assert_eq("GetText(3,3) cchOut", lengthOfCharactersToFetch, lgt4.m_cchOut);
 			unitpp::assert_eq("GetText(3,3) ctriOut", (ULONG)1, lgt4.m_ctriOut);
-			unitpp::assert_eq("GetText(3,3) run count", cch, tri.uCount);
+			unitpp::assert_eq("GetText(3,3) run count", lengthOfCharactersToFetch, tri.uCount);
 			unitpp::assert_eq("GetText(3,3) run type", TS_RT_PLAIN, tri.type);
 		}
 
@@ -1285,7 +1297,7 @@ namespace TestViews
 			// Need some selection to start with as it determines which paragraph.
 			IVwSelectionPtr qselTemp;
 			CheckHr(m_qrootb->MakeSimpleSel(true, true, false, true, &qselTemp));
-			ULONG cchDocLen =  wcslen(s_rgpsz1[0]);
+			ULONG cchDocLen =  (ULONG)wcslen(s_rgpsz1[0]);
 			cch = 0;
 			LockGetText lgt5(m_qtxs, cchDocLen, cchDocLen, rgch2, kcch2, &tri, 1);
 			unitpp::assert_eq("Should succeed", S_OK, lgt5.m_hrLock);
@@ -1362,7 +1374,11 @@ namespace TestViews
 			stu.Format(L"%s%n", s_rgpsz2[0]);
 			stu.Append(s_rgpsz2[4], 10);
 			cch = stu.Length();
-			LockGetText lgt8(m_qtxs, 0, s_cchPara1 + s_cchParaBreak + 10, rgch2, kcch2, &tri,
+			int firstChar = 0;
+			int lastChar = s_cchPara1 + s_cchParaBreak + 10;
+			unitpp::assert_eq("Unit test error", cch, (ULONG)(lastChar - firstChar));
+			// SUT
+			LockGetText lgt8(m_qtxs, firstChar, lastChar, rgch2, kcch2, &tri,
 				1);
 			unitpp::assert_eq("Should succeed", S_OK, lgt8.m_hrLock);
 			unitpp::assert_eq("GetText(MakeSelLong) ichNext", (LONG)cch, lgt8.m_ichNext);
@@ -1440,25 +1456,28 @@ namespace TestViews
 				return;
 			MakeStringList2();
 			TS_RUNINFO tri;
-			ULONG cch;
 			const int kcch2 = 1000;
 			OLECHAR rgch2[kcch2];
 
 			StrUni stu;
 			MakeSelLong();
-			stu.Assign(s_rgpsz2[4] + 1, 9);
-			cch = stu.Length();
+			int firstChar = s_cchPara1 + s_cchParaBreak + 1;
+			int lastChar = s_cchPara1 + s_cchParaBreak + 10;
+			ULONG lengthOfCharactersToFetch = lastChar - firstChar;
+			stu.Assign(s_rgpsz2[4] + 1, lengthOfCharactersToFetch);
+			ULONG expectedNext = lastChar;
+			// SUT
 			LockGetText lgt11(m_qtxs,
-				s_cchPara1 + s_cchParaBreak + 1, s_cchPara1 + s_cchParaBreak + 10,
+				firstChar, lastChar,
 				rgch2, kcch2, &tri, 1);
 			unitpp::assert_eq("Should succeed", S_OK, lgt11.m_hrLock);
 			unitpp::assert_eq("GetText(MakeSelLong) ichNext",
-				(LONG)(s_cchPara1 + s_cchParaBreak + 10), lgt11.m_ichNext);
+				(LONG)expectedNext, lgt11.m_ichNext);
 			unitpp::assert_true("GetText(MakeSelLong) text",
-				wcsncmp(rgch2, stu.Chars(), cch) == 0);
-			unitpp::assert_eq("GetText(MakeSelLong) cchOut", cch, lgt11.m_cchOut);
+				wcsncmp(rgch2, stu.Chars(), lengthOfCharactersToFetch) == 0);
+			unitpp::assert_eq("GetText(MakeSelLong) cchOut", lengthOfCharactersToFetch, lgt11.m_cchOut);
 			unitpp::assert_eq("GetText(MakeSelLong) ctriOut", (ULONG)1, lgt11.m_ctriOut);
-			unitpp::assert_eq("GetText(MakeSelLong) run count", cch, tri.uCount);
+			unitpp::assert_eq("GetText(MakeSelLong) run count", lengthOfCharactersToFetch, tri.uCount);
 			unitpp::assert_eq("GetText(MakeSelLong) run type", TS_RT_PLAIN, tri.type);
 		}
 
@@ -1487,8 +1506,8 @@ namespace TestViews
 			IVwSelectionPtr qselTemp;
 			CheckHr(m_qrootb->MakeSimpleSel(true, true, false, true, &qselTemp));
 
-			cchNfd = wcslen(s_rgpsz3[0]);
-			ULONG cchNfc = wcslen(s_rgpszExpected3);
+			cchNfd = (ULONG)wcslen(s_rgpsz3[0]);
+			ULONG cchNfc = (ULONG)wcslen(s_rgpszExpected3);
 			LockGetText lgt(m_qtxs, 0, -1, rgch2, kcch2, tri, 10);
 			unitpp::assert_eq("Should succeed", S_OK, lgt.m_hrLock);
 			unitpp::assert_eq("GetText(0,-1) ichNext", (LONG)cchNfc, lgt.m_ichNext);
@@ -1499,6 +1518,153 @@ namespace TestViews
 			unitpp::assert_eq("GetText(0,-1) run 0 count",
 				s_triExpected3[0].uCount, tri[0].uCount);
 			unitpp::assert_eq("GetText(0,-1) run 0 type", s_triExpected3[0].type, tri[0].type);
+		}
+
+		/*--------------------------------------------------------------------------------------
+		Test VwTextStore::GetText(): Should return correct Out and Next information even if
+		using NFC and the buffer is smaller than the NFD data. See LT-19134.
+		--------------------------------------------------------------------------------------*/
+		void testGetText_SmallBufferNfc()
+		{
+			if (!m_fTestable)
+				return;
+
+			static const OLECHAR * data[] = {
+				L"\x1112\x1161\x11ab \x1112\x1161\x11ab \x1112\x1161\x11ab \x1112\x1161\x11ab \x1112\x1161\x11ab \x1112\x1161\x11ab",
+				NULL
+			};
+			static const OLECHAR dataInNFC[] = L"\xd55c \xd55c \xd55c \xd55c \xd55c \xd55c";
+
+			MakeStringList(data);
+			TS_RUNINFO tri[10];
+			// Buffer is smaller than the NFD data. Choosing buffer length 15 so it includes the
+			// first 4 clumps of characters in data, but is not identical to the size of an NFC
+			// version of the data (to make values clear when debugging).
+			const int kcch2BufferLength = 15;
+			OLECHAR rgch2Buffer[kcch2BufferLength];
+			// The expected output would be implementation dependent, but our implementation
+			// will give this.
+			static const OLECHAR expected[] = L"\xd55c \xd55c \xd55c \xd55c \xd55c \xd55c";
+
+			// Need some selection to start with as it determines which paragraph.
+			IVwSelectionPtr qselTemp;
+			CheckHr(m_qrootb->MakeSimpleSel(true, true, false, true, &qselTemp));
+
+			// The doc at https://msdn.microsoft.com/en-us/library/windows/desktop/ms538433(v=vs.85).aspx
+			// doesn't explicitly discuss NFD and NFC. It may be implementation dependent whether
+			// a GetText method considers all of its NFD data or just the first 'Buffer.Length'
+			// bytes of its NFD data, when providing NFC output.
+			// In our case, we will use the following.
+			ULONG cchLengthOfExpectedNfc = 11;
+
+			unitpp::assert_true("Unit test not set up correctly, buffer should be smaller than the data.", kcch2BufferLength < wcslen(data[0]));
+
+			// SUT
+			LockGetText lgt(m_qtxs, 0, -1, rgch2Buffer, kcch2BufferLength, tri, 10);
+
+			unitpp::assert_eq("Should succeed", S_OK, lgt.m_hrLock);
+			// This could be GetText implementation dependent.
+			unitpp::assert_eq("GetText(0,-1) ichNext", (LONG)cchLengthOfExpectedNfc,  lgt.m_ichNext);
+			// This will not only be implementation dependent, but unpredictable.
+			unitpp::assert_eq("GetText(0,-1) cchOut", cchLengthOfExpectedNfc, lgt.m_cchOut);
+			unitpp::assert_true("GetText(0,-1) rgch2Buffer",
+				wcsncmp(rgch2Buffer, expected, cchLengthOfExpectedNfc) == 0);
+		}
+
+		/*--------------------------------------------------------------------------------------
+		Test VwTextStore::GetText(): Should return correct Out and Next information even if
+		using NFC and the buffer is smaller than the data in NFC. See LT-19134.
+		--------------------------------------------------------------------------------------*/
+		void testGetText_SmallerBufferNfc()
+		{
+			if (!m_fTestable)
+				return;
+
+			static const OLECHAR * data[] = {
+				L"\x1112\x1161\x11ab \x1112\x1161\x11ab \x1112\x1161\x11ab \x1112\x1161\x11ab \x1112\x1161\x11ab \x1112\x1161\x11ab",
+				NULL
+			};
+			static const OLECHAR dataInNFC[] = L"\xd55c \xd55c \xd55c \xd55c \xd55c \xd55c";
+
+			MakeStringList(data);
+			TS_RUNINFO tri[10];
+			// Buffer is smaller than the NFD data, and smaller than an NFC representation of
+			// that data.
+			const int kcch2BufferLength = 7;
+			OLECHAR rgch2Buffer[kcch2BufferLength];
+			// The expected output would be implementation dependent, but our implementation
+			// will give this.
+			static const OLECHAR expected[] = L"\xd55c \xd55c \xd55c ";
+			// Only 6 characters because of a null terminator in the buffer.
+			ULONG cchLengthOfExpectedNfc = 6;
+
+			// Need some selection to start with as it determines which paragraph.
+			IVwSelectionPtr qselTemp;
+			CheckHr(m_qrootb->MakeSimpleSel(true, true, false, true, &qselTemp));
+
+			unitpp::assert_true("Unit test not set up correctly to test what it is intending to, buffer should be smaller than the data.",
+				kcch2BufferLength < wcslen(data[0]));
+			unitpp::assert_true("Unit test not set up correctly to test what it is intending to, buffer should be smaller than the data in NFC.",
+				kcch2BufferLength < wcslen(dataInNFC));
+
+			// SUT
+			LockGetText lgt(m_qtxs, 0, -1, rgch2Buffer, kcch2BufferLength, tri, 10);
+
+			unitpp::assert_eq("Should succeed", S_OK, lgt.m_hrLock);
+			unitpp::assert_eq("GetText(0,-1) ichNext", (LONG)cchLengthOfExpectedNfc, lgt.m_ichNext);
+			unitpp::assert_eq("GetText(0,-1) cchOut", cchLengthOfExpectedNfc, lgt.m_cchOut);
+			unitpp::assert_true("GetText(0,-1) rgch2Buffer",
+				wcsncmp(rgch2Buffer, expected, cchLengthOfExpectedNfc) == 0);
+		}
+
+		/*--------------------------------------------------------------------------------------
+		Test VwTextStore::GetText(): Should return good values even if
+		using NFC and the buffer is a length that would break up a set of combining NFD
+		characters, if it were holding the original data.
+		--------------------------------------------------------------------------------------*/
+		void testGetText_SplitNFD()
+		{
+			if (!m_fTestable)
+				return;
+
+			static const OLECHAR * data[] = {
+				L"\x0073\x0323\x0307 \x0073\x0323\x0307 \x0073\x0323\x0307 \x0073\x0323\x0307 \x0073\x0323\x0307",
+				NULL
+			};
+			static const OLECHAR dataInNFC[] = L"\x1e69 \x1e69 \x1e69 \x1e69 \x1e69";
+
+			MakeStringList(data);
+			TS_RUNINFO tri[10];
+			// This needn't mean anything. But 6 is part-way into the second group of combining
+			// characters, if we look 6 characters into 'data'. Let's not have this mess up our
+			// output.
+			const int kcch2BufferLength = 6;
+			OLECHAR rgch2Buffer[kcch2BufferLength];
+			static const OLECHAR expected[] = L"\x1e69 \x1e69 \x1e69";
+			// Only 5 characters because of a null terminator in the buffer.
+			ULONG cchLengthOfExpectedNfc = 5;
+
+			// Need some selection to start with as it determines which paragraph.
+			IVwSelectionPtr qselTemp;
+			CheckHr(m_qrootb->MakeSimpleSel(true, true, false, true, &qselTemp));
+
+			// SUT
+			LockGetText lgt(m_qtxs, 0, -1, rgch2Buffer, kcch2BufferLength, tri, 10);
+
+			unitpp::assert_eq("Should succeed", S_OK, lgt.m_hrLock);
+			unitpp::assert_eq("GetText(0,-1) ichNext", (LONG)cchLengthOfExpectedNfc, lgt.m_ichNext);
+			unitpp::assert_eq("GetText(0,-1) cchOut", cchLengthOfExpectedNfc, lgt.m_cchOut);
+			unitpp::assert_true("GetText(0,-1) rgch2Buffer",
+				wcsncmp(rgch2Buffer, expected, cchLengthOfExpectedNfc) == 0);
+
+			// Test when setting a specific ending value, rather than -1.
+			// SUT 2
+			LockGetText lgt2(m_qtxs, 0, 19, rgch2Buffer, kcch2BufferLength, tri, 10);
+			unitpp::assert_eq("Should succeed", S_OK, lgt2.m_hrLock);
+			unitpp::assert_eq("GetText ichNext", (LONG)cchLengthOfExpectedNfc, lgt2.m_ichNext);
+			unitpp::assert_eq("GetText cchOut", cchLengthOfExpectedNfc, lgt2.m_cchOut);
+			unitpp::assert_true("GetText rgch2Buffer",
+				wcsncmp(rgch2Buffer, expected, cchLengthOfExpectedNfc) == 0);
 		}
 
 		/*--------------------------------------------------------------------------------------
@@ -1519,8 +1685,8 @@ namespace TestViews
 			IVwSelectionPtr qselTemp;
 			CheckHr(m_qrootb->MakeSimpleSel(true, true, false, true, &qselTemp));
 
-			cchNfd = wcslen(s_rgpsz3[0]);
-			ULONG cchNfc = wcslen(s_rgpszExpected3);
+			cchNfd = (ULONG)wcslen(s_rgpsz3[0]);
+			ULONG cchNfc = (ULONG)wcslen(s_rgpszExpected3);
 			LockGetText lgt(m_qtxs, 0, -1, rgch2, kcch2, NULL, 0);
 			unitpp::assert_eq("Should succeed", S_OK, lgt.m_hrLock);
 			unitpp::assert_eq("GetText(0,-1) ichNext", (LONG)cchNfc, lgt.m_ichNext);
@@ -1552,17 +1718,17 @@ namespace TestViews
 			CheckHr(m_qrootb->MakeSimpleSel(true, true, false, true, &qselTemp));
 
 			const OLECHAR * pszText1 = L"This is a test.";
-			int cchText1 = wcslen(pszText1);
-			int s_cchPara1 = wcslen(s_rgpsz1[0]);
-			LockSetText xlst1(m_qtxs, 0, s_cchPara1, pszText1, &ttc1);
+			int cchText1 = (int)wcslen(pszText1);
+			int cchPara1 = (int)wcslen(s_rgpsz1[0]);
+			LockSetText xlst1(m_qtxs, 0, cchPara1, pszText1, &ttc1);
 			unitpp::assert_eq("SetText(0, lim) acpStart", 0, ttc1.acpStart);
-			unitpp::assert_eq("SetText(0, lim) acpOldEnd", s_cchPara1, ttc1.acpOldEnd);
+			unitpp::assert_eq("SetText(0, lim) acpOldEnd", cchPara1, ttc1.acpOldEnd);
 			unitpp::assert_eq("SetText(0, lim) acpNewEnd", cchText1, ttc1.acpNewEnd);
 			VerifySelection(0, 0, cchText1, "SetText(0, lim)");
 			VerifyParaContents(0, pszText1, "SetText(0, lim)");
 
 			const OLECHAR * pszText2 = L"abcde";
-			int cchText2 = wcslen(pszText2);
+			int cchText2 = (int)wcslen(pszText2);
 			StrUni stuContents(pszText2);
 			stuContents.Append(pszText1);
 			LockSetText xlst2(m_qtxs, 0, 0, pszText2, &ttc1);
@@ -1573,7 +1739,7 @@ namespace TestViews
 			VerifyParaContents(0, stuContents.Chars(), "SetText(0, 0)");
 
 			const OLECHAR * pszText3 = L" xyz ";
-			int cchText3 = wcslen(pszText3);
+			int cchText3 = (int)wcslen(pszText3);
 			stuContents.Replace(cchText2, cchText2, pszText3, cchText3);
 			LockSetText xlst3(m_qtxs, cchText2, -1, pszText3, &ttc1);
 			unitpp::assert_eq("SetText(5, -1) acpStart", cchText2, ttc1.acpStart);
@@ -1591,7 +1757,7 @@ namespace TestViews
 			VerifyParaContents(0, stuContents.Chars(), "SetText(5,10)");
 
 			const OLECHAR * pszText5 = L"Hello World";
-			int cchText5 = wcslen(pszText5);
+			int cchText5 = (int)wcslen(pszText5);
 			int cchPara = stuContents.Length();
 			stuContents.Replace(cchPara, cchPara, pszText5, cchText5);
 			LockSetText xlst5(m_qtxs, cchPara, cchPara, pszText5, &ttc1);
@@ -1799,7 +1965,7 @@ namespace TestViews
 				(LONG)-1, ttc.acpNewEnd);
 
 			OLECHAR * pszText2 = L"This is a test.";
-			LONG cchText2 = wcslen(pszText2);
+			LONG cchText2 = (LONG)wcslen(pszText2);
 			ichStart = -1;
 			ichEnd = -1;
 			LockInsertTextAtSelection litas2(m_qtxs, TS_IAS_NOQUERY, pszText2,
@@ -1819,7 +1985,7 @@ namespace TestViews
 			VerifyParaContents(0, stu.Chars(), "InsertTextAtSelection(TS_IAS_NOQUERY) text");
 
 			OLECHAR * pszText3 = L"This is still a test.";
-			LONG cchText3 = wcslen(pszText3);
+			LONG cchText3 = (LONG)wcslen(pszText3);
 			ichStart = -1;
 			ichEnd = -1;
 			ttc.acpStart = -1;
@@ -2137,9 +2303,9 @@ namespace TestViews
 			LockGetTextExt lgte1(m_qtxs, tvc, 5, 6, &rc, &fClipped);
 			VerifyEqualRects(rcSel, rc, "GetTextExt 5, 6");
 
-			int s_cchPara1 = wcslen(s_rgpsz1[0]);
-			LockGetTextExt lgte2(m_qtxs, tvc, 0, s_cchPara1, &rc, &fClipped);
-			MakeSelection(0, 0, s_cchPara1, false, false, &qsel);
+			int cchPara1 = (int)wcslen(s_rgpsz1[0]);
+			LockGetTextExt lgte2(m_qtxs, tvc, 0, cchPara1, &rc, &fClipped);
+			MakeSelection(0, 0, cchPara1, false, false, &qsel);
 			CheckHr(qsel->Location(hg.m_qvg, hg.m_rcSrcRoot, hg.m_rcDstRoot, &rcSel,
 				&rcSecondary, &fSplit, &fEndBeforeAnchor));
 			ClientRectToScreen(rcSel);
@@ -2194,9 +2360,9 @@ namespace TestViews
 			CheckHr(hr = m_qtxs->GetActiveView(&tvc));
 
 			VwTextSelectionPtr qsel;
-			int s_cchPara1 = wcslen(s_rgpsz1[0]);
+			int cchPara1 = (int)wcslen(s_rgpsz1[0]);
 			// First select all the first paragraph, then get its bounds.
-			MakeSelection(0, 0, s_cchPara1, false, true, &qsel);
+			MakeSelection(0, 0, cchPara1, false, true, &qsel);
 			HoldGraphics hg(m_qrootb);
 			RECT rcSel;
 			RECT rcSecondary;
@@ -2231,7 +2397,7 @@ namespace TestViews
 			RECT rc;
 
 			// Make a selection that covers the entire text.
-			Make2ParaSel(0, 0, 4, wcslen(s_rgpsz2[4]));
+			Make2ParaSel(0, 0, 4, (int)wcslen(s_rgpsz2[4]));
 			CheckHr(m_qrootb->Selection()->Location(hg.m_qvg, hg.m_rcSrcRoot, hg.m_rcDstRoot,
 				&rcSel, &rcSecondary, &fSplit, &fEndBeforeAnchor));
 			ClientRectToScreen(rcSel);
@@ -2277,7 +2443,7 @@ namespace TestViews
 			CheckHr(m_qrootb->MakeSimpleSel(true, true, false, true, &qselTemp));
 
 			unitpp::assert_true("Got wrong index for out-of-bounds condition",
-				(unsigned)ptxs->CallAcpToLog(99) > wcslen(s_rgpsz3[0]));
+				(unsigned)ptxs->CallAcpToLog(99) > (int)wcslen(s_rgpsz3[0]));
 		}
 
 		/*--------------------------------------------------------------------------------------
@@ -2337,7 +2503,7 @@ namespace TestViews
 			CheckHr(m_qrootb->MakeSimpleSel(true, true, false, true, &qselTemp));
 
 			unitpp::assert_true("Got wrong index for out-of-bounds condition",
-				(unsigned)ptxs->CallLogToAcp(99) > wcslen(s_rgpszExpected3));
+				(unsigned)ptxs->CallLogToAcp(99) > (int)wcslen(s_rgpszExpected3));
 		}
 
 		/*--------------------------------------------------------------------------------------
@@ -2666,11 +2832,14 @@ namespace TestViews
 				return;
 			}
 			CreateTestWritingSystemFactory();
+			m_qtsf.CreateInstance(CLSID_TsStrFactory);
 			m_qcda.Attach(NewObj VwCacheDa());
+			CheckHr(m_qcda->putref_TsStrFactory(m_qtsf));
 			CheckHr(m_qcda->QueryInterface(IID_ISilDataAccess, (void **)&m_qsda));
 			CheckHr(m_qsda->putref_WritingSystemFactory(g_qwsf));
 
-			m_qtsf.CreateInstance(CLSID_TsStrFactory);
+			m_qref.Attach(NewObj MockRenderEngineFactory);
+
 			m_qvg32.CreateInstance(CLSID_VwGraphicsWin32);
 			// Create a dummy background window (never visible) to host the view.
 			// This is mainly important for the functions that use screen coordinates,
@@ -2697,11 +2866,11 @@ namespace TestViews
 			m_qdrs->SetGraphics(m_qvg32);
 			s_stuParaBreak.Format(L"%n");
 			s_cchParaBreak = s_stuParaBreak.Length();
-			s_cchPara1 = wcslen(s_rgpsz1[0]);
-			s_cchPara2 = wcslen(s_rgpsz1[1]);
-			s_cchPara3 = wcslen(s_rgpsz2[2]);
-			s_cchPara4 = wcslen(s_rgpsz2[3]);
-			s_cchPara5 = wcslen(s_rgpsz2[4]);
+			s_cchPara1 = (LONG)wcslen(s_rgpsz1[0]);
+			s_cchPara2 = (LONG)wcslen(s_rgpsz1[1]);
+			s_cchPara3 = (LONG)wcslen(s_rgpsz2[2]);
+			s_cchPara4 = (LONG)wcslen(s_rgpsz2[3]);
+			s_cchPara5 = (LONG)wcslen(s_rgpsz2[4]);
 		}
 
 		/*--------------------------------------------------------------------------------------
@@ -2712,6 +2881,7 @@ namespace TestViews
 			if (!m_fTestable)
 				return;
 			m_qtsf.Clear();
+			m_qref.Clear();
 			m_qsda.Clear();
 			m_qcda.Clear();
 			if (m_qvg32)
@@ -2735,6 +2905,8 @@ namespace TestViews
 			// Make the root box and initialize it.
 			VwRootBox::CreateCom(NULL, IID_IVwRootBox, (void **) &m_qrootb);
 			CheckHr(m_qrootb->putref_DataAccess(m_qsda));
+			CheckHr(m_qrootb->putref_RenderEngineFactory(m_qref));
+			CheckHr(m_qrootb->putref_TsStrFactory(m_qtsf));
 			CheckHr(m_qrootb->SetRootObject(m_hvoRoot, m_qvc, kfragStText, NULL));
 			CheckHr(m_qrootb->SetSite(m_qdrs));
 			m_qdrs->SetRootBox(m_qrootb);

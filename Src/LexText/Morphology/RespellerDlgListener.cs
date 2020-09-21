@@ -7,16 +7,18 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Windows.Forms;
 using System.Xml;
-
-using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel;
+using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.Filters;
-using SIL.Utils;
+using SIL.LCModel.Utils;
 using XCore;
-using SIL.FieldWorks.FDO.Application;
+using SIL.LCModel.Application;
 
 namespace SIL.FieldWorks.XWorks.MorphologyEditor
 {
@@ -55,37 +57,21 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 				// we should be able to get our info from the current record clerk.
 				// but return null if we can't get the info, otherwise we allow the user to
 				// bring up the change spelling dialog and crash because no wordform can be found (LT-8766).
-				var clerk = m_mediator.PropertyTable.GetValue("ActiveClerk") as RecordClerk;
-				if (clerk == null || clerk.CurrentObject == null)
-					return null;
-				var wfiWordform = clerk.CurrentObject as IWfiWordform;
-				if (wfiWordform == null)
-					return null;
-				var tssVern = wfiWordform.Form.BestVernacularAlternative;
+				var clerk = m_propertyTable.GetValue<RecordClerk>("ActiveClerk");
+				var tssVern = (clerk?.CurrentObject as IWfiWordform)?.Form?.BestVernacularAlternative;
 				return tssVern;
 			}
-			var app = (IApp)m_mediator.PropertyTable.GetValue("App");
-			if (app == null)
+			var app = m_propertyTable.GetValue<IApp>("App");
+			var roots = (app?.ActiveMainWindow as FwXWindow)?.ActiveView?.AllRootBoxes();
+			if (roots == null || roots.Count < 1 || roots[0] == null)
 				return null;
-			var window = app.ActiveMainWindow as FwXWindow;
-			if (window == null)
-				return null;
-			var activeView = window.ActiveView;
-			if (activeView == null)
-				return null;
-			var roots = activeView.AllRootBoxes();
-			if (roots.Count < 1)
-				return null;
-			var helper = SelectionHelper.Create(roots[0].Site);
-			if (helper == null)
-				return null;
-			var tssWord = helper.SelectedWord;
+			var tssWord = SelectionHelper.Create(roots[0].Site)?.SelectedWord;
 			if (tssWord != null)
 			{
 				// Check for a valid vernacular writing system.  (See LT-8892.)
 				var ws = TsStringUtils.GetWsAtOffset(tssWord, 0);
-				var cache = (FdoCache)m_mediator.PropertyTable.GetValue("cache");
-				IWritingSystem wsObj = cache.ServiceLocator.WritingSystemManager.Get(ws);
+				var cache = m_propertyTable.GetValue<LcmCache>("cache");
+				CoreWritingSystemDefinition wsObj = cache.ServiceLocator.WritingSystemManager.Get(ws);
 				if (cache.ServiceLocator.WritingSystems.VernacularWritingSystems.Contains(wsObj))
 					return tssWord;
 			}
@@ -122,17 +108,16 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 				LaunchRespellerDlgOnWord(ActiveWord());
 				return true;
 			}
-			var clerk = m_mediator.PropertyTable.GetValue("ActiveClerk") as RecordClerk;
+			var clerk = m_propertyTable.GetValue<RecordClerk>("ActiveClerk");
 			using (var luh = new RecordClerk.ListUpdateHelper(clerk))
 			{
 				var changesWereMade = false;
 				// Launch the Respeller Dlg.
 				using (var dlg = new RespellerDlg())
 				{
-					var xwindow = m_mediator.PropertyTable.GetValue("window") as XWindow;
-					if (dlg.SetDlgInfo(m_mediator, m_configurationParameters))
+					if (dlg.SetDlgInfo(m_mediator, m_propertyTable, m_configurationParameters))
 					{
-						dlg.ShowDialog(xwindow);
+						dlg.ShowDialog(m_propertyTable.GetValue<XWindow>("window"));
 						changesWereMade = dlg.ChangesWereMade;
 					}
 					else
@@ -168,17 +153,16 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			if (tss == null || string.IsNullOrEmpty(tss.Text))
 				return;
 
-			var cache = m_mediator.PropertyTable.GetValue("cache") as FdoCache;
+			var cache = m_propertyTable.GetValue<LcmCache>("cache");
 			var wordform = WordformApplicationServices.GetWordformForForm(cache, tss);
-			using (var luh = new RecordClerk.ListUpdateHelper(m_mediator.PropertyTable.GetValue("ActiveClerk") as RecordClerk))
+			using (var luh = new RecordClerk.ListUpdateHelper(m_propertyTable.GetValue<RecordClerk>("ActiveClerk")))
 			{
 				// Launch the Respeller Dlg.
 				using (var dlg = new RespellerDlg())
 				{
-					var xwindow = m_mediator.PropertyTable.GetValue("window") as XWindow;
-					if (dlg.SetDlgInfo(wordform, m_mediator, m_configurationParameters))
+					if (dlg.SetDlgInfo(wordform, m_mediator, m_propertyTable, m_configurationParameters))
 					{
-						dlg.ShowDialog(xwindow);
+						dlg.ShowDialog(m_propertyTable.GetValue<XWindow>("window"));
 					}
 					else
 					{
@@ -200,7 +184,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		{
 			get
 			{
-				return (m_mediator.PropertyTable.GetStringProperty("areaChoice", null) == "textsWords");
+				return (m_propertyTable?.GetStringProperty("areaChoice", null) == "textsWords");
 			}
 		}
 
@@ -212,7 +196,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		{
 			get
 			{
-				return InFriendlyArea && m_mediator.PropertyTable.GetStringProperty("ToolForAreaNamed_textsWords", null) == "Analyses";
+				return InFriendlyArea && m_propertyTable?.GetStringProperty("ToolForAreaNamed_textsWords", null) == "Analyses";
 			}
 		}
 	}
@@ -234,10 +218,10 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 
 	public class OccurrenceComparer : IComparer
 	{
-		private readonly FdoCache m_cache;
+		private readonly LcmCache m_cache;
 		private ISilDataAccessManaged m_sda;
 
-		public OccurrenceComparer(FdoCache cache, ISilDataAccessManaged sda)
+		public OccurrenceComparer(LcmCache cache, ISilDataAccessManaged sda)
 		{
 			m_cache = cache;
 			m_sda = sda;
@@ -321,8 +305,8 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 
 	public class OccurrenceSorter : RecordSorter
 	{
-		private FdoCache m_cache;
-		public override FdoCache Cache
+		private LcmCache m_cache;
+		public override LcmCache Cache
 		{
 			set
 			{
@@ -366,12 +350,12 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 
 	public class RespellerRecordList : RecordList
 	{
-		public override void Init(FdoCache cache, Mediator mediator, XmlNode recordListNode)
+		public override void Init(LcmCache cache, Mediator mediator, PropertyTable propertyTable, XmlNode recordListNode)
 		{
 			CheckDisposed();
 
 			// <recordList class="WfiWordform" field="Occurrences"/>
-			BaseInit(cache, mediator, recordListNode);
+			BaseInit(cache, mediator, propertyTable, recordListNode);
 			IFwMetaDataCache mdc = VirtualListPublisher.MetaDataCache;
 			m_flid = mdc.GetFieldId2(WfiWordformTags.kClassId, "Occurrences", false);
 			Sorter = new OccurrenceSorter
@@ -423,7 +407,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		/// Find an extant wordform,
 		/// or create one (with nonundoable UOW), if one does not exist.
 		/// </summary>
-		public static IWfiWordform GetWordformForForm(FdoCache cache, ITsString form)
+		public static IWfiWordform GetWordformForForm(LcmCache cache, ITsString form)
 		{
 			var servLoc = cache.ServiceLocator;
 			var wordformRepos = servLoc.GetInstance<IWfiWordformRepository>();

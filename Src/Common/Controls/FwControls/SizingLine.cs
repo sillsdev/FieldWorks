@@ -1,22 +1,11 @@
-// Copyright (c) 2003-2013 SIL International
+// Copyright (c) 2003-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: SizingLine.cs
-// Responsibility: TeTeam
-// Last reviewed:
-//
-// <remarks>
-// </remarks>
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Windows.Forms;
-
-using SIL.Utils;
 
 namespace SIL.FieldWorks.Common.Controls
 {
@@ -26,7 +15,7 @@ namespace SIL.FieldWorks.Common.Controls
 	/// will end up.
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
-	public class SizingLine : Label, IFWDisposable
+	public class SizingLine : Label
 	{
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -57,11 +46,14 @@ namespace SIL.FieldWorks.Common.Controls
 				throw new ObjectDisposedException(String.Format("'{0}' in use after being disposed.", GetType().Name));
 		}
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		///
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
+		/// <summary/>
+		protected override void Dispose(bool disposing)
+		{
+			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + ". ******");
+			base.Dispose(disposing);
+		}
+
+		/// <summary/>
 		protected override void OnPaint(PaintEventArgs e)
 		{
 			using (HatchBrush br = new HatchBrush(HatchStyle.Percent50, Color.Black, BackColor))

@@ -1,13 +1,6 @@
-// Copyright (c) 2003-2013 SIL International
+// Copyright (c) 2003-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: XmlUtilsTest.cs
-// Responsibility: Andy Black
-// Last reviewed:
-//
-// <remarks>
-// </remarks>
 
 using NUnit.Framework;
 
@@ -17,19 +10,8 @@ namespace SIL.Utils
 	/// Summary description for XmlUtilsTest.
 	/// </summary>
 	[TestFixture]
-	public class XmlUtilsTest : TestBaseForTestsThatCreateTempFilesBasedOnResources
+	public class XmlUtilsTest
 	{
-		/// <summary>
-		/// Location of test files
-		/// </summary>
-		protected string m_sTestPath;
-
-		[TestFixtureSetUp]
-		public void FixtureSetUp()
-		{
-			m_sTestPath = CreateTempTestFiles(typeof(Properties.Resources), "TransformTestFiles");
-		}
-
 		/// <summary>
 		///
 		/// </summary>
@@ -62,16 +44,6 @@ namespace SIL.Utils
 
 			sFixed = XmlUtils.MakeSafeXmlAttribute("abc&def\r\nghi\u001Fjkl\u007F\u009Fmno");
 			Assert.AreEqual("abc&amp;def&#xD;&#xA;ghi&#x1F;jkl&#x7F;&#x9F;mno", sFixed, "Second Test of MakeSafeXmlAttribute");
-		}
-
-		[Test]
-		public void DecodeXmlAttributeTest()
-		{
-			string sFixed = XmlUtils.DecodeXmlAttribute("abc&amp;def&lt;ghi&gt;jkl&quot;mno&apos;pqr&amp;stu");
-			Assert.AreEqual("abc&def<ghi>jkl\"mno'pqr&stu", sFixed, "First Test of DecodeXmlAttribute");
-
-			sFixed = XmlUtils.DecodeXmlAttribute("abc&amp;def&#xD;&#xA;ghi&#x1F;jkl&#x7F;&#x9F;mno");
-			Assert.AreEqual("abc&def\r\nghi\u001Fjkl\u007F\u009Fmno", sFixed, "Second Test of DecodeXmlAttribute");
 		}
 	}
 }

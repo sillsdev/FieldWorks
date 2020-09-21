@@ -1,28 +1,26 @@
-// Copyright (c) 2008-2013 SIL International
+// Copyright (c) 2008-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: LiftMerger.cs
-// Responsibility: SteveMc (original version by John Hatton as extension)
 
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Xml;
-using Palaso.Lift;
-using Palaso.Lift.Parsing;
-using Palaso.WritingSystems;
-using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.Lift;
+using SIL.Lift.Parsing;
+using SIL.LCModel.Core.Cellar;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Application;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.LCModel;
+using SIL.LCModel.Application;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Utils;
 using SIL.Utils;
 
 namespace SIL.FieldWorks.LexText.Controls
@@ -33,12 +31,11 @@ namespace SIL.FieldWorks.LexText.Controls
 	/// </summary>
 	public partial class FlexLiftMerger : ILexiconMerger<LiftObject, CmLiftEntry, CmLiftSense, CmLiftExample>
 	{
-		readonly FdoCache m_cache;
-		readonly ITsPropsFactory m_tpf = TsPropsFactoryClass.Create();
+		readonly LcmCache m_cache;
 		ITsString m_tssEmpty;
 		readonly GuidConverter m_gconv = (GuidConverter)TypeDescriptor.GetConverter(typeof(Guid));
 		public const string LiftDateTimeFormat = "yyyy-MM-ddTHH:mm:ssK";	// wants UTC, but works with Local
-		private readonly IWritingSystemManager m_wsManager;
+		private readonly WritingSystemManager m_wsManager;
 
 		readonly Regex m_regexGuid = new Regex(
 			"[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}",
@@ -122,10 +119,10 @@ namespace SIL.FieldWorks.LexText.Controls
 			new Dictionary<object, Dictionary<MuElement, List<IReversalIndexEntry>>>();
 
 		/// <summary>Set of guids for elements/senses that were found in the LIFT file.</summary>
-		readonly Set<Guid> m_setUnchangedEntry = new Set<Guid>();
+		private readonly HashSet<Guid> m_setUnchangedEntry = new HashSet<Guid>();
 
-		readonly Set<Guid> m_setChangedEntry = new Set<Guid>();
-		readonly Set<int> m_deletedObjects = new Set<int>();
+		private readonly HashSet<Guid> m_setChangedEntry = new HashSet<Guid>();
+		private readonly HashSet<int> m_deletedObjects = new HashSet<int>();
 
 		public enum MergeStyle
 		{
@@ -142,7 +139,7 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		bool m_fTrustModTimes;
 
-		readonly List<IWritingSystem> m_addedWss = new List<IWritingSystem>();
+		readonly List<CoreWritingSystemDefinition> m_addedWss = new List<CoreWritingSystemDefinition>();
 
 		// Repositories and factories for interacting with the project.
 
@@ -195,11 +192,11 @@ namespace SIL.FieldWorks.LexText.Controls
 		IFsComplexValueFactory m_factFsComplexValue;
 
 		#region Constructors and other initialization methods
-		public FlexLiftMerger(FdoCache cache, MergeStyle msImport, bool fTrustModTimes)
+		public FlexLiftMerger(LcmCache cache, MergeStyle msImport, bool fTrustModTimes)
 		{
 			m_cSensesAdded = 0;
 			m_cache = cache;
-			m_tssEmpty = cache.TsStrFactory.EmptyString(cache.DefaultUserWs);
+			m_tssEmpty = TsStringUtils.EmptyString(cache.DefaultUserWs);
 			m_msImport = msImport;
 			m_fTrustModTimes = fTrustModTimes;
 			m_wsManager = cache.ServiceLocator.WritingSystemManager;
@@ -308,9 +305,9 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <summary>
 		///
 		/// </summary>
-		/// <param name="entries">This is IEnumerable to capture similarity of IFdoOwningCollection and IFdoOwningSequence.
-		/// It is IFdoOwningCollection for entries owned by ReversalIndex and
-		/// IFdoOwningSequence for entries owned by Subentries of a ReversalIndexEntry</param>
+		/// <param name="entries">This is IEnumerable to capture similarity of ILcmOwningCollection and ILcmOwningSequence.
+		/// It is ILcmOwningCollection for entries owned by ReversalIndex and
+		/// ILcmOwningSequence for entries owned by Subentries of a ReversalIndexEntry</param>
 		/// <param name="mapToRIEs"></param>
 		private void InitializeReversalMap(IEnumerable<IReversalIndexEntry> entries,
 			Dictionary<MuElement, List<IReversalIndexEntry>> mapToRIEs)
@@ -382,8 +379,6 @@ namespace SIL.FieldWorks.LexText.Controls
 			}
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		private void LoadCategoryCatalog()
 		{
 			string sPath = System.IO.Path.Combine(FwDirectoryFinder.CodeDirectory,
@@ -403,8 +398,6 @@ namespace SIL.FieldWorks.LexText.Controls
 			}
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		private void LoadCategoryNode(XmlNode node, string id, string parent)
 		{
 			var cat = new EticCategory {Id = id, ParentId = parent};
@@ -448,8 +441,8 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		private bool IsVoiceWritingSystem(int wsString)
 		{
-			var wsEngine = m_wsManager.get_EngineOrNull(wsString);
-			return wsEngine is WritingSystemDefinition && ((WritingSystemDefinition)wsEngine).IsVoice;
+			var wsEngine = (CoreWritingSystemDefinition) m_wsManager.get_EngineOrNull(wsString);
+			return wsEngine.IsVoice;
 		}
 
 		#region ILexiconMerger<LiftObject, LiftEntry, LiftSense, LiftExample> Members
@@ -492,7 +485,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			CollectGuidsFromDeletedSenses(le.SensesOS);
 		}
 
-		private void CollectGuidsFromDeletedSenses(IFdoOwningSequence<ILexSense> senses)
+		private void CollectGuidsFromDeletedSenses(ILcmOwningSequence<ILexSense> senses)
 		{
 			foreach (var ls in senses)
 			{
@@ -763,8 +756,6 @@ namespace SIL.FieldWorks.LexText.Controls
 					relationTypeName, targetId, extensible.GetType().Name));
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		private static void FillInExtensibleElementsFromRawXml(LiftObject obj, string rawXml)
 		{
 			if (rawXml.IndexOf("<trait") > 0 ||
@@ -811,11 +802,9 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// </summary>
 		/// <param name="node"></param>
 		/// <returns>lift field with contents safe-XML</returns>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		private static LiftField CreateLiftFieldFromXml(XmlNode node)
 		{
-			string fieldType = XmlUtils.GetManditoryAttributeValue(node, "type");
+			string fieldType = XmlUtils.GetMandatoryAttributeValue(node, "type");
 			string priorFieldWithSameTag = String.Format("preceding-sibling::field[@type='{0}']", fieldType);
 			if (node.SelectSingleNode(priorFieldWithSameTag) != null)
 			{
@@ -845,8 +834,6 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// </summary>
 		/// <param name="node"></param>
 		/// <returns>safe-XML</returns>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		private static LiftMultiText CreateLiftMultiTextFromXml(XmlNode node)
 		{
 			LiftMultiText text = new LiftMultiText();
@@ -888,8 +875,6 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// </summary>
 		/// <param name="node"></param>
 		/// <returns></returns>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		private static LiftTrait CreateLiftTraitFromXml(XmlNode node)
 		{
 			LiftTrait trait = new LiftTrait();
@@ -1098,8 +1083,6 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <param name="abbrev">safe-xml</param>
 		/// <param name="rawXml"></param>
 		/// <param name="featSystem"></param>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		private void ProcessFeatureDefinition(string id, string guidAttr, string parent,
 			LiftMultiText description, LiftMultiText label, LiftMultiText abbrev, string rawXml,
 			IFsFeatureSystem featSystem)
@@ -1332,15 +1315,13 @@ namespace SIL.FieldWorks.LexText.Controls
 			}
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		private void MergeInMultiUnicode(IMultiUnicode mu, XmlNode xnField)
 		{
 			int ws = 0;
 			string val = null;
 			foreach (XmlNode xn in xnField.SelectNodes("form"))
 			{
-				string sLang = XmlUtils.GetManditoryAttributeValue(xn, "lang");
+				string sLang = XmlUtils.GetMandatoryAttributeValue(xn, "lang");
 				ws = GetWsFromLiftLang(sLang);
 				XmlNode xnText = xnField.SelectSingleNode("text");
 				if (xnText != null)
@@ -1430,8 +1411,6 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <param name="abbrev">safe-XML</param>
 		/// <param name="rawXml"></param>
 		/// <param name="featSystem"></param>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		private void ProcessFeatureStrucType(string id, string guidAttr, string parent,
 			LiftMultiText description, LiftMultiText label, LiftMultiText abbrev, string rawXml,
 			IFsFeatureSystem featSystem)
@@ -1453,10 +1432,10 @@ namespace SIL.FieldWorks.LexText.Controls
 				switch (name)
 				{
 					case "catalog-source-id":
-						sCatalogId = XmlUtils.GetManditoryAttributeValue(xn, "value");
+						sCatalogId = XmlUtils.GetMandatoryAttributeValue(xn, "value");
 						break;
 					case "feature":
-						rgsFeatures.Add(XmlUtils.GetManditoryAttributeValue(xn, "value"));
+						rgsFeatures.Add(XmlUtils.GetMandatoryAttributeValue(xn, "value"));
 						break;
 				}
 			}
@@ -1524,8 +1503,6 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <param name="label">safe-XML</param>
 		/// <param name="abbrev">safe-XML</param>
 		/// <param name="rawXml"></param>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		private void ProcessFeatureValue(string range, string id, string guidAttr, string parent,
 			LiftMultiText description, LiftMultiText label, LiftMultiText abbrev, string rawXml)
 		{
@@ -1706,7 +1683,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				IFsClosedFeature featClosed = feat as IFsClosedFeature;
 				if (featClosed != null)
 				{
-					Set<string> setIds = new Set<string>();
+					var setIds = new HashSet<string>();
 					for (int i = 0; i < featClosed.Abbreviation.StringCount; ++i)
 					{
 						int ws;
@@ -1748,8 +1725,6 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <param name="label">safe-XML</param>
 		/// <param name="abbrev">safe-XML</param>
 		/// <param name="rawXml"></param>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		private void ProcessStemName(string range, string id, string guidAttr, string parent,
 			LiftMultiText description, LiftMultiText label, LiftMultiText abbrev, string rawXml)
 		{
@@ -2055,7 +2030,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			MergeEntryEtymologies(le, entry);
 			ProcessEntryRelations(le, entry);
 			Dictionary<CmLiftSense, ILexSense> map = new Dictionary<CmLiftSense, ILexSense>();
-			Set<int> setUsed = new Set<int>();
+			var setUsed = new HashSet<int>();
 			foreach (CmLiftSense sense in entry.Senses)
 			{
 				ILexSense ls = FindExistingSense(le.SensesOS, sense);
@@ -2092,7 +2067,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			FinishProcessingEntry(le);
 		}
 
-		private ILexSense FindExistingSense(IFdoOwningSequence<ILexSense> rgsenses, CmLiftSense sense)
+		private ILexSense FindExistingSense(ILcmOwningSequence<ILexSense> rgsenses, CmLiftSense sense)
 		{
 			if (sense.CmObject == null)
 				return null;
@@ -2194,7 +2169,8 @@ namespace SIL.FieldWorks.LexText.Controls
 				int clsid = 0;
 				if (mf == null)
 				{
-					string form = Icu.Normalize(XmlUtils.DecodeXml(entry.LexicalForm.FirstValue.Value.Text), Icu.UNormalizationMode.UNORM_NFD);
+					string form = CustomIcu.GetIcuNormalizer(FwNormalizationMode.knmNFD)
+						.Normalize(XmlUtils.DecodeXml(entry.LexicalForm.FirstValue.Value.Text));
 					IMoMorphType mmt = FindMorphType(ref form, out clsid,
 						le.Guid, LexEntryTags.kflidLexemeForm);
 					if (mmt.IsAffixType)
@@ -2811,7 +2787,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			var ich = 0;
 			ParaData para = null;
 			var fNewPara = true;
-			ITsIncStrBldr tisb = TsIncStrBldrClass.Create();
+			ITsIncStrBldr tisb = TsStringUtils.MakeIncStrBldr();
 			tisb.SetIntPropValues((int) FwTextPropType.ktptWs, 0, wsText);
 			var wsCurrent = wsText;
 			string styleCurrent = null;
@@ -3076,7 +3052,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				if (tssForm.Text != realForm)
 				{
 					// make a new tsString with the old ws.
-					tssRealForm = TsStringUtils.MakeTss(realForm,
+					tssRealForm = TsStringUtils.MakeString(realForm,
 						TsStringUtils.GetWsAtOffset(tssForm, 0));
 				}
 				else
@@ -3260,7 +3236,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			newForm = form;
 		}
 
-		private static void AddEnvironmentIfNeeded(List<IPhEnvironment> rgnew, IFdoReferenceCollection<IPhEnvironment> rgenv)
+		private static void AddEnvironmentIfNeeded(List<IPhEnvironment> rgnew, ILcmReferenceCollection<IPhEnvironment> rgenv)
 		{
 			if (rgenv != null && rgnew != null)
 			{
@@ -3372,7 +3348,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				int ws = GetWsFromLiftLang(lang);
 				if (ws != 0)
 				{
-					IWritingSystem wsObj = GetExistingWritingSystem(ws);
+					CoreWritingSystemDefinition wsObj = GetExistingWritingSystem(ws);
 					if (!m_cache.ServiceLocator.WritingSystems.CurrentPronunciationWritingSystems.Contains(wsObj))
 						m_cache.ServiceLocator.WritingSystems.CurrentPronunciationWritingSystems.Add(wsObj);
 				}
@@ -3392,7 +3368,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			// give up and store relative path Pictures/filename (even though it doesn't exist)
 			string sPath = Path.Combine(Path.GetDirectoryName(m_sLiftFile),
 				String.Format("audio{0}{1}", Path.DirectorySeparatorChar, sFile));
-			sPath = CopyFileToLinkedFiles(sFile, sPath, FdoFileHelper.ksMediaDir);
+			sPath = CopyFileToLinkedFiles(sFile, sPath, LcmFileHelper.ksMediaDir);
 			if (!File.Exists(sPath) && !String.IsNullOrEmpty(m_cache.LangProject.LinkedFilesRootDir))
 			{
 				sPath = Path.Combine(m_cache.LangProject.LinkedFilesRootDir, sFile);
@@ -3465,7 +3441,7 @@ namespace SIL.FieldWorks.LexText.Controls
 								ICmFolderFactory factFolder = m_cache.ServiceLocator.GetInstance<ICmFolderFactory>();
 								cmfMedia = factFolder.Create();
 								m_cache.LangProject.MediaOC.Add(cmfMedia);
-								cmfMedia.Name.UserDefaultWritingSystem = m_cache.TsStrFactory.MakeString(CmFolderTags.LocalMedia, m_cache.DefaultUserWs);
+								cmfMedia.Name.UserDefaultWritingSystem = TsStringUtils.MakeString(CmFolderTags.LocalMedia, m_cache.DefaultUserWs);
 							}
 							ICmFile file = null;
 							foreach (ICmFile cf in cmfMedia.FilesOC)
@@ -3516,7 +3492,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <param name="sFile"></param>
 		/// <param name="lmtLabel">safe-XML</param>
 		/// <returns></returns>
-		private ICmMedia FindMatchingMedia(IFdoOwningSequence<ICmMedia> rgmedia, string sFile,
+		private ICmMedia FindMatchingMedia(ILcmOwningSequence<ICmMedia> rgmedia, string sFile,
 			LiftMultiText lmtLabel)
 		{
 			ICmMedia mediaMatching = null;
@@ -4014,7 +3990,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			ProcessSenseTraits(ls, sense);
 
 			Dictionary<CmLiftSense, ILexSense> map = new Dictionary<CmLiftSense, ILexSense>();
-			Set<int> setUsed = new Set<int>();
+			var setUsed = new HashSet<int>();
 			foreach (CmLiftSense sub in sense.Subsenses)
 			{
 				ILexSense lsSub = FindExistingSense(ls.SensesOS, sub);
@@ -4064,7 +4040,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				CreateExampleTranslations(les, expl);
 				ProcessExampleNotes(les, expl);
 				if (TsStringIsNullOrEmpty(les.Reference) && !String.IsNullOrEmpty(expl.Source))
-					les.Reference = m_cache.TsStrFactory.MakeString(expl.Source, m_cache.DefaultAnalWs);
+					les.Reference = TsStringUtils.MakeString(expl.Source, m_cache.DefaultAnalWs);
 				ProcessExampleFields(les, expl);
 				ProcessExampleTraits(les, expl);
 				StoreExampleResidue(les, expl);
@@ -4074,7 +4050,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		private void MergeSenseExamples(ILexSense ls, CmLiftSense sense)
 		{
 			Dictionary<CmLiftExample, ILexExampleSentence> map = new Dictionary<CmLiftExample, ILexExampleSentence>();
-			Set<int> setUsed = new Set<int>();
+			var setUsed = new HashSet<int>();
 			foreach (CmLiftExample expl in sense.Examples)
 			{
 				ILexExampleSentence les = FindingMatchingExampleSentence(ls, expl);
@@ -4106,7 +4082,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				ProcessExampleFields(les, expl);
 				ProcessExampleTraits(les, expl);
 				if (TsStringIsNullOrEmpty(les.Reference) && !String.IsNullOrEmpty(expl.Source))
-					les.Reference = m_cache.TsStrFactory.MakeString(expl.Source, m_cache.DefaultAnalWs);
+					les.Reference = TsStringUtils.MakeString(expl.Source, m_cache.DefaultAnalWs);
 			}
 		}
 
@@ -4181,7 +4157,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			return false;
 		}
 
-		private ILexExampleSentence FindExampleSentence(IFdoOwningSequence<ILexExampleSentence> rgexamples, CmLiftExample expl)
+		private ILexExampleSentence FindExampleSentence(ILcmOwningSequence<ILexExampleSentence> rgexamples, CmLiftExample expl)
 		{
 			List<ILexExampleSentence> matches = new List<ILexExampleSentence>();
 			int cMatches = 0;
@@ -4258,7 +4234,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			return String.IsNullOrEmpty(sItem) && !fTypeFound;
 		}
 
-		private int TranslationsMatch(IFdoOwningCollection<ICmTranslation> oldList, List<LiftTranslation> newList)
+		private int TranslationsMatch(ILcmOwningCollection<ICmTranslation> oldList, List<LiftTranslation> newList)
 		{
 			if (oldList.Count == 0 || newList.Count == 0)
 				return 0;
@@ -4284,8 +4260,8 @@ namespace SIL.FieldWorks.LexText.Controls
 //			}
 //			else
 //			{
-//				string sOldNorm = Icu.Normalize(sOld, Icu.UNormalizationMode.UNORM_NFD);
-//				string sNewNorm = Icu.Normalize(sNew, Icu.UNormalizationMode.UNORM_NFD);
+//				string sOldNorm = CustomIcu.GetIcuNormalizer(FwNormalizationMode.knmNFD).Normalize(sOld);
+//				string sNewNorm = CustomIcu.GetIcuNormalizer(FwNormalizationMode.knmNFD).Normalize(sNew);
 //				return sOldNorm == sNewNorm;
 //			}
 //		}
@@ -4307,7 +4283,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		private void MergeExampleTranslations(ILexExampleSentence les, CmLiftExample expl)
 		{
 			Dictionary<LiftTranslation, ICmTranslation> map = new Dictionary<LiftTranslation, ICmTranslation>();
-			Set<int> setUsed = new Set<int>();
+			var setUsed = new HashSet<int>();
 			AddNewWsToAnalysis();
 			foreach (LiftTranslation tran in expl.Translations)
 			{
@@ -4369,7 +4345,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			return false;
 		}
 
-		private ICmTranslation FindExampleTranslation(IFdoOwningCollection<ICmTranslation> rgtranslations,
+		private ICmTranslation FindExampleTranslation(ILcmOwningCollection<ICmTranslation> rgtranslations,
 			LiftTranslation tran)
 		{
 			ICmTranslation ctMatch = null;
@@ -4674,7 +4650,7 @@ namespace SIL.FieldWorks.LexText.Controls
 					m_factCmPossibility = m_cache.ServiceLocator.GetInstance<ICmPossibilityFactory>();
 				poss = m_factCmPossibility.Create();
 				m_cache.LangProject.MorphologicalDataOA.ProdRestrictOA.PossibilitiesOS.Add(poss);
-				ITsString tss = m_cache.TsStrFactory.MakeString(sValue, m_cache.DefaultAnalWs);
+				ITsString tss = TsStringUtils.MakeString(sValue, m_cache.DefaultAnalWs);
 				poss.Name.AnalysisDefaultWritingSystem = tss;
 				poss.Abbreviation.AnalysisDefaultWritingSystem = tss;
 				m_rgnewExceptFeat.Add(poss);
@@ -5721,7 +5697,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			}
 			string sPath = Path.Combine(Path.GetDirectoryName(m_sLiftFile),
 				String.Format("pictures{0}{1}", Path.DirectorySeparatorChar, ssFile));
-			sPath = CopyFileToLinkedFiles(ssFile, sPath, FdoFileHelper.ksPicturesDir);
+			sPath = CopyFileToLinkedFiles(ssFile, sPath, LcmFileHelper.ksPicturesDir);
 			if (!File.Exists(sPath) && !String.IsNullOrEmpty(m_cache.LangProject.LinkedFilesRootDir))
 			{
 				sPath = Path.Combine(m_cache.LangProject.LinkedFilesRootDir, sFile);
@@ -5807,7 +5783,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		private void MergeSenseIllustrations(ILexSense ls, CmLiftSense sense)
 		{
 			Dictionary<LiftUrlRef, ICmPicture> map = new Dictionary<LiftUrlRef, ICmPicture>();
-			Set<int> setUsed = new Set<int>();
+			var setUsed = new HashSet<int>();
 			AddNewWsToBothVernAnal();
 			foreach (LiftUrlRef uref in sense.Illustrations)
 			{
@@ -5858,7 +5834,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <param name="sFile"></param>
 		/// <param name="lmtLabel">safe-XML</param>
 		/// <returns></returns>
-		private ICmPicture FindPicture(IFdoOwningSequence<ICmPicture> rgpictures, string sFile,
+		private ICmPicture FindPicture(ILcmOwningSequence<ICmPicture> rgpictures, string sFile,
 			LiftMultiText lmtLabel)
 		{
 			ICmPicture pictMatching = null;
@@ -5967,8 +5943,8 @@ namespace SIL.FieldWorks.LexText.Controls
 			foreach (CmLiftReversal rev in sense.Reversals)
 			{
 				IReversalIndexEntry rie = ProcessReversal(rev);
-				if (rie != null && rie.ReversalForm.StringCount != 0 && !ls.ReversalEntriesRC.Contains(rie))
-					ls.ReversalEntriesRC.Add(rie);
+				if (rie != null && rie.ReversalForm.StringCount != 0 && !rie.SensesRS.Contains(ls))
+					rie.SensesRS.Add(ls);
 			}
 		}
 
@@ -6018,7 +5994,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <returns></returns>
 		private IReversalIndexEntry FindOrCreateMatchingReversal(LiftMultiText form,
 			Dictionary<MuElement, List<IReversalIndexEntry>> mapToRIEs,
-			IFdoOwningCollection<IReversalIndexEntry> entriesOS)
+			ILcmOwningCollection<IReversalIndexEntry> entriesOS)
 		{
 			IReversalIndexEntry rie;
 			var rgmue = FindAnyMatchingReversal(form, mapToRIEs, out rie);
@@ -6043,13 +6019,12 @@ namespace SIL.FieldWorks.LexText.Controls
 				int ws = GetWsFromLiftLang(key);
 				string sNew = form[key].Text; // safe XML
 				string sNewNorm; // safe XML (NFD)
-				if (String.IsNullOrEmpty(sNew))
-					sNewNorm = sNew;
-				else
-					sNewNorm = Icu.Normalize(sNew, Icu.UNormalizationMode.UNORM_NFD);
+				var icuNormalizer = CustomIcu.GetIcuNormalizer(FwNormalizationMode.knmNFD);
+				sNewNorm = string.IsNullOrEmpty(sNew) ? string.Empty : icuNormalizer.Normalize(sNew);
+
 				// LiftMultiText parameter may have come in with escaped characters which need to be
 				// converted to plain text before comparing with existing entries
-				MuElement mue = new MuElement(ws, Icu.Normalize(XmlUtils.DecodeXml(sNewNorm), Icu.UNormalizationMode.UNORM_NFD));
+				MuElement mue = new MuElement(ws, icuNormalizer.Normalize(XmlUtils.DecodeXml(sNewNorm)));
 				if (rie == null && mapToRIEs.TryGetValue(mue, out rgrie))
 				{
 					foreach (IReversalIndexEntry rieT in rgrie)
@@ -6075,7 +6050,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <returns></returns>
 		private IReversalIndexEntry FindOrCreateMatchingReversal(LiftMultiText form,
 			Dictionary<MuElement, List<IReversalIndexEntry>> mapToRIEs,
-			IFdoOwningSequence<IReversalIndexEntry> entriesOS)
+			ILcmOwningSequence<IReversalIndexEntry> entriesOS)
 		{
 			IReversalIndexEntry rie;
 			var rgmue = FindAnyMatchingReversal(form, mapToRIEs, out rie);

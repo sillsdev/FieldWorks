@@ -1,4 +1,4 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -8,7 +8,7 @@ using XAmpleManagedWrapper;
 namespace XAmpleManagedWrapperTests
 {
 	[TestFixture]
-	public class TestXAmpleWrapper: SIL.FieldWorks.Test.TestUtils.BaseTest
+	public class TestXAmpleWrapper
 	{
 		protected XAmpleWrapper InitHelper()
 		{
@@ -71,15 +71,22 @@ namespace XAmpleManagedWrapperTests
 		}
 
 		[Test]
-		public void TestAmpleThreadId()
+		[Platform(Include = "Win")]
+		public void TestAmpleThreadId_Windows()
 		{
 			using (var xAmple = InitHelper())
 			{
-#if __MonoCS__
-				Assert.AreEqual(0, xAmple.AmpleThreadId);
-#else
-				Assert.AreNotEqual(0, xAmple.AmpleThreadId);
-#endif
+				Assert.That(xAmple.AmpleThreadId, Is.Not.EqualTo(0));
+			}
+		}
+
+		[Test]
+		[Platform(Exclude = "Win")]
+		public void TestAmpleThreadId_Linux()
+		{
+			using (var xAmple = InitHelper())
+			{
+				Assert.That(xAmple.AmpleThreadId, Is.EqualTo(0));
 			}
 		}
 	}

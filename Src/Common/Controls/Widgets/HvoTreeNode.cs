@@ -3,13 +3,9 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using System.Diagnostics;
 using System.Windows.Forms;
-using System.Collections.Generic;
-
-using SIL.Utils;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel;
 
 namespace SIL.FieldWorks.Common.Widgets
 {

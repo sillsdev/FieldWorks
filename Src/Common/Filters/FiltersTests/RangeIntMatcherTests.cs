@@ -3,11 +3,8 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 //
 
-using System;
 using NUnit.Framework;
-using SIL.CoreImpl;
-using SIL.FieldWorks.Test.TestUtils;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.LCModel.Core.Text;
 
 namespace SIL.FieldWorks.Filters
 {
@@ -17,17 +14,9 @@ namespace SIL.FieldWorks.Filters
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
 	[TestFixture]
-	public class RangeIntMatcherTests : BaseTest
+	public class RangeIntMatcherTests
 	{
 		public const int WsDummy = 987654321;
-		private ITsStrFactory m_tsf;
-
-		[SetUp]
-		public void SetUp()
-		{
-			m_tsf = TsStrFactoryClass.Create();
-		}
-
 
 		/// <summary>
 		/// Tests larger than int.MaxValue
@@ -36,7 +25,7 @@ namespace SIL.FieldWorks.Filters
 		public void LongMaxValueTest()
 		{
 			RangeIntMatcher rangeIntMatch = new RangeIntMatcher(0, long.MaxValue);
-			var tssLabel = m_tsf.MakeString("9223372036854775807", WsDummy);
+			var tssLabel = TsStringUtils.MakeString("9223372036854775807", WsDummy);
 			Assert.IsTrue(rangeIntMatch.Matches(tssLabel));
 		}
 
@@ -47,7 +36,7 @@ namespace SIL.FieldWorks.Filters
 		public void MatchesIfOneInListMatches()
 		{
 			RangeIntMatcher rangeIntMatch = new RangeIntMatcher(2, 2);
-			var tssLabel = m_tsf.MakeString("0 1 2", WsDummy);
+			var tssLabel = TsStringUtils.MakeString("0 1 2", WsDummy);
 			Assert.IsTrue(rangeIntMatch.Matches(tssLabel));
 		}
 
@@ -55,7 +44,7 @@ namespace SIL.FieldWorks.Filters
 		public void DoesNotMatchIfNoneInListMatch()
 		{
 			RangeIntMatcher rangeIntMatch = new RangeIntMatcher(3, 3);
-			var tssLabel = m_tsf.MakeString("0 1 2", WsDummy);
+			var tssLabel = TsStringUtils.MakeString("0 1 2", WsDummy);
 			Assert.IsFalse(rangeIntMatch.Matches(tssLabel));
 		}
 
@@ -63,7 +52,7 @@ namespace SIL.FieldWorks.Filters
 		public void OutOfRangeDoesNotThrow()
 		{
 			RangeIntMatcher rangeIntMatch = new RangeIntMatcher(3, 3);
-			var tssLabel = m_tsf.MakeString("999999999999999999999999", WsDummy);
+			var tssLabel = TsStringUtils.MakeString("999999999999999999999999", WsDummy);
 			Assert.IsFalse(rangeIntMatch.Matches(tssLabel));
 		}
 
@@ -71,7 +60,7 @@ namespace SIL.FieldWorks.Filters
 		public void EmptyStringDoesNotThrow()
 		{
 			RangeIntMatcher rangeIntMatch = new RangeIntMatcher(3, 3);
-			var tssLabel = m_tsf.EmptyString(WsDummy);
+			var tssLabel = TsStringUtils.EmptyString(WsDummy);
 			Assert.IsFalse(rangeIntMatch.Matches(tssLabel));
 		}
 	}

@@ -14,11 +14,10 @@
 
 using System;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;
-
+using SIL.FieldWorks.Common.FwUtils;
+using SIL.LCModel;
 using SIL.Utils;
-using SIL.FieldWorks.FDO;
 using XCore;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls
@@ -50,7 +49,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// <param name="cache">The cache.</param>
 		/// <param name="obj">The obj.</param>
 		/// <param name="flid">The flid.</param>
-		protected ReferenceVectorSlice(Control control, FdoCache cache, ICmObject obj, int flid)
+		protected ReferenceVectorSlice(Control control, LcmCache cache, ICmObject obj, int flid)
 			: base(control, cache, obj, flid)
 		{
 		}
@@ -61,7 +60,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// <param name="cache">The cache.</param>
 		/// <param name="obj">The obj.</param>
 		/// <param name="flid">The flid.</param>
-		public ReferenceVectorSlice(FdoCache cache, ICmObject obj, int flid)
+		public ReferenceVectorSlice(LcmCache cache, ICmObject obj, int flid)
 			: this(new VectorReferenceLauncher(), cache, obj, flid)
 		{
 		}
@@ -129,7 +128,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			CheckDisposed();
 
 			var vrl = (VectorReferenceLauncher)Control;
-			vrl.Initialize(m_cache, m_obj, m_flid, m_fieldName, m_persistenceProvider, Mediator,
+			vrl.Initialize(m_cache, m_obj, m_flid, m_fieldName, m_persistenceProvider, Mediator, m_propertyTable,
 				DisplayNameProperty,
 				BestWsName); // TODO: Get better default 'best ws'.
 			vrl.ConfigurationNode = ConfigurationNode;
@@ -171,16 +170,12 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			return true;
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="GetView() returns a reference")]
 		public bool OnAlphabeticalOrder(object args)
 		{
 			GetView().RemoveOrdering();
 			return true;
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="GetView() returns a reference")]
 		public virtual bool OnDisplayAlphabeticalOrder(object commandObject, ref UIItemDisplayProperties display)
 		{
 			display.Enabled = display.Visible = GetView().RootPropertySupportsVirtualOrdering();
@@ -275,18 +270,13 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			CheckDisposed();
 			if (Control != null)
 			{
-				Mediator mediator = Mediator;
-				if (mediator != null) // paranoia and unit testing
+				if (Mediator != null) // paranoia and unit testing
 				{
-					StringTable tbl = null;
-					if (mediator.HasStringTable)
-						tbl = mediator.StringTbl;
-					string caption = XmlUtils.GetLocalizedAttributeValue(tbl,
-						ConfigurationNode, "label", "");
+					string caption = XmlUtils.GetLocalizedAttributeValue(ConfigurationNode, "label", "");
 					var vrl = (VectorReferenceLauncher)Control;
-					mediator.SendMessage("RegisterHelpTargetWithId",
+					Mediator.SendMessage("RegisterHelpTargetWithId",
 						new object[]{vrl.Controls[1], caption, HelpId}, false);
-					mediator.SendMessage("RegisterHelpTargetWithId",
+					Mediator.SendMessage("RegisterHelpTargetWithId",
 						new object[]{vrl.Controls[0], caption, HelpId, "Button"}, false);
 				}
 			}
@@ -317,7 +307,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 	}
 	public class ReferenceVectorDisabledSlice : ReferenceVectorSlice
 	{
-		public ReferenceVectorDisabledSlice(FdoCache cache, ICmObject obj, int flid)
+		public ReferenceVectorDisabledSlice(LcmCache cache, ICmObject obj, int flid)
 			: base(cache, obj, flid)
 		{
 		}

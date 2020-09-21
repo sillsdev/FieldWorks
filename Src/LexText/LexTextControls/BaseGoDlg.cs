@@ -1,43 +1,44 @@
-// Copyright (c) 2003-2014 SIL International
+// Copyright (c) 2003-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: BaseGoDlg.cs
-// Responsibility: Randy Regnier
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using System.Diagnostics;
-
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.Resources;
-using SIL.Utils;
-using XCore;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.Common.FwUtils;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.WritingSystems;
 using SIL.FieldWorks.Common.Controls;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Widgets;
-using SIL.CoreImpl;
+using SIL.LCModel;
+using SIL.FieldWorks.Resources;
+using SIL.Windows.Forms;
+using SIL.Windows.Forms.Widgets;
+using XCore;
 
 namespace SIL.FieldWorks.LexText.Controls
 {
 	/// <summary/>
-	public class BaseGoDlg : Form, IFWDisposable
+	public class BaseGoDlg : Form
 	{
 		#region	Data members
 
-		protected FdoCache m_cache;
+		protected LcmCache m_cache;
 		protected IHelpTopicProvider m_helpTopicProvider;
 		protected ICmObject m_selObject;
 		protected HashSet<int> m_vernHvos;
 		protected HashSet<int> m_analHvos;
-		protected ITsStrFactory m_tsf;
 		/// <summary>
 		/// </summary>
 		protected Mediator m_mediator;
+
+		/// <summary>
+		/// </summary>
+		protected XCore.PropertyTable m_propertyTable;
 		/// <summary>
 		/// Optional configuration parameters.
 		/// </summary>
@@ -66,7 +67,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		protected Label m_formLabel;
 		protected FwTextBox m_tbForm;
 		protected FwOverrideComboBox m_cbWritingSystems;
-		protected Label m_wsLabel;
+		protected BetterLabel m_wsLabel;
 		protected FwTextBox m_fwTextBoxBottomMsg;
 		protected Label m_objectsLabel;
 
@@ -213,7 +214,6 @@ namespace SIL.FieldWorks.LexText.Controls
 			{
 			}
 			m_cache = null;
-			m_tsf = null;
 
 			base.Dispose(disposing);
 		}
@@ -224,30 +224,32 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <param name="cache">FDO cache.</param>
 		/// <param name="wp">Strings used for various items in this dialog.</param>
 		/// <param name="mediator"></param>
-		public virtual void SetDlgInfo(FdoCache cache, WindowParams wp, Mediator mediator)
+		/// <param name="propertyTable"></param>
+		public virtual void SetDlgInfo(LcmCache cache, WindowParams wp, Mediator mediator, XCore.PropertyTable propertyTable)
 		{
-			SetDlgInfo(cache, wp, mediator, cache.DefaultVernWs);
+			SetDlgInfo(cache, wp, mediator, propertyTable, cache.DefaultVernWs);
 		}
 
-		protected virtual void SetDlgInfo(FdoCache cache, WindowParams wp, Mediator mediator, int ws)
+		protected virtual void SetDlgInfo(LcmCache cache, WindowParams wp, Mediator mediator, XCore.PropertyTable propertyTable, int ws)
 		{
 			CheckDisposed();
 
 			Debug.Assert(cache != null);
 			m_cache = cache;
-			m_tsf = cache.TsStrFactory; // do this very early, other initializers may depend on it.
 
 			m_mediator = mediator;
+			m_propertyTable = propertyTable;
 
-			if (m_mediator != null)
+			if (m_propertyTable != null)
 			{
 				// Reset window location.
 				// Get location to the stored values, if any.
-				object locWnd = m_mediator.PropertyTable.GetValue(PersistenceLabel + "DlgLocation");
-				object szWnd = m_mediator.PropertyTable.GetValue(PersistenceLabel + "DlgSize");
-				if (locWnd != null && szWnd != null)
+				if (m_propertyTable.PropertyExists(PersistenceLabel + "DlgLocation")
+					&& m_propertyTable.PropertyExists(PersistenceLabel + "DlgSize"))
 				{
-					var rect = new Rectangle((Point)locWnd, (Size)szWnd);
+					var locWnd = m_propertyTable.GetValue<Point>(PersistenceLabel + "DlgLocation");
+					var szWnd = m_propertyTable.GetValue<Size>(PersistenceLabel + "DlgSize");
+					var rect = new Rectangle(locWnd, szWnd);
 
 					//grow it if it's too small.  This will happen when we add new controls to the dialog box.
 					if (rect.Width < m_btnHelp.Left + m_btnHelp.Width + 30)
@@ -256,14 +258,12 @@ namespace SIL.FieldWorks.LexText.Controls
 					if (rect.Height < m_btnHelp.Top + m_btnHelp.Height + 50)
 						rect.Height = m_btnHelp.Top + m_btnHelp.Height + 50;
 
-					//rect.Height = 600;
-
-					ScreenUtils.EnsureVisibleRect(ref rect);
+					ScreenHelper.EnsureVisibleRect(ref rect);
 					DesktopBounds = rect;
 					StartPosition = FormStartPosition.Manual;
 				}
 
-				m_helpTopicProvider = m_mediator.HelpTopicProvider;
+				m_helpTopicProvider = m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider");
 				if (m_helpTopicProvider != null)
 				{
 					m_helpProvider.HelpNamespace = m_helpTopicProvider.HelpFile;
@@ -274,14 +274,14 @@ namespace SIL.FieldWorks.LexText.Controls
 
 			SetupBasicTextProperties(wp);
 
-			IVwStylesheet stylesheet = FontHeightAdjuster.StyleSheetFromMediator(mediator);
+			IVwStylesheet stylesheet = FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable);
 			// Set font, writing system factory, and writing system code for the Lexical Form
 			// edit box.  Also set an empty string with the proper writing system.
 			m_tbForm.Font = new Font(cache.ServiceLocator.WritingSystemManager.Get(ws).DefaultFontName, 10);
 			m_tbForm.WritingSystemFactory = cache.WritingSystemFactory;
 			m_tbForm.WritingSystemCode = ws;
 			m_tbForm.AdjustStringHeight = false;
-			m_tbForm.Tss = m_tsf.MakeString("", ws);
+			m_tbForm.Tss = TsStringUtils.EmptyString(ws);
 			m_tbForm.StyleSheet = stylesheet;
 
 			// Setup the fancy message text box.
@@ -296,7 +296,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			m_vernHvos.UnionWith(vernList);
 			LoadWritingSystemCombo();
 			int iWs = vernList.IndexOf(ws);
-			IWritingSystem currentWs;
+			CoreWritingSystemDefinition currentWs;
 			if (iWs < 0)
 			{
 				List<int> analList = cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems.Select(wsObj => wsObj.Handle).ToList();
@@ -327,7 +327,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			// we've set WSF on all the controls.
 			m_cbWritingSystems.SelectedIndexChanged += m_cbWritingSystems_SelectedIndexChanged;
 
-			InitializeMatchingObjects(cache, mediator);
+			InitializeMatchingObjects(cache);
 
 			// Adjust things if the form box needs to grow to accommodate its style.
 			int oldHeight = m_tbForm.Height;
@@ -401,10 +401,10 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		protected virtual void LoadWritingSystemCombo()
 		{
-			foreach (IWritingSystem ws in m_cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems)
+			foreach (CoreWritingSystemDefinition ws in m_cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems)
 				m_cbWritingSystems.Items.Add(ws);
 
-			foreach (IWritingSystem ws in m_cache.ServiceLocator.WritingSystems.CurrentVernacularWritingSystems)
+			foreach (CoreWritingSystemDefinition ws in m_cache.ServiceLocator.WritingSystems.CurrentVernacularWritingSystems)
 			{
 				if (!m_cbWritingSystems.Items.Contains(ws))
 					m_cbWritingSystems.Items.Add(ws);
@@ -438,7 +438,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			}
 		}
 
-		protected virtual void InitializeMatchingObjects(FdoCache cache, Mediator mediator)
+		protected virtual void InitializeMatchingObjects(LcmCache cache)
 		{
 			// override.
 		}
@@ -486,16 +486,17 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <param name="cache">FDO cache.</param>
 		/// <param name="wp">Strings used for various items in this dialog.</param>
 		/// <param name="mediator"></param>
+		/// <param name="propertyTable"></param>
 		/// <param name="form">Form to use in main text edit box.</param>
-		public virtual void SetDlgInfo(FdoCache cache, WindowParams wp, Mediator mediator, string form)
+		public virtual void SetDlgInfo(LcmCache cache, WindowParams wp, Mediator mediator, XCore.PropertyTable propertyTable, string form)
 		{
 			CheckDisposed();
-			SetDlgInfo(cache, wp, mediator, form, cache.DefaultVernWs);
+			SetDlgInfo(cache, wp, mediator, propertyTable, form, cache.DefaultVernWs);
 		}
 
-		protected void SetDlgInfo(FdoCache cache, WindowParams wp, Mediator mediator, string form, int ws)
+		protected void SetDlgInfo(LcmCache cache, WindowParams wp, Mediator mediator, XCore.PropertyTable propertyTable, string form, int ws)
 		{
-			SetDlgInfo(cache, wp, mediator, ws);
+			SetDlgInfo(cache, wp, mediator, propertyTable, ws);
 			Form = form;
 		}
 
@@ -505,11 +506,12 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <param name="cache"></param>
 		/// <param name="wp"></param>
 		/// <param name="mediator"></param>
+		/// <param name="propertyTable"></param>
 		/// <param name="tssform">establishes the ws of the dialog.</param>
-		public void SetDlgInfo(FdoCache cache, WindowParams wp, Mediator mediator, ITsString tssform)
+		public void SetDlgInfo(LcmCache cache, WindowParams wp, Mediator mediator, XCore.PropertyTable propertyTable, ITsString tssform)
 		{
 			CheckDisposed();
-			SetDlgInfo(cache, wp, mediator, tssform.Text, TsStringUtils.GetWsAtOffset(tssform, 0));
+			SetDlgInfo(cache, wp, mediator, propertyTable, tssform.Text, TsStringUtils.GetWsAtOffset(tssform, 0));
 		}
 
 		#endregion Construction and Destruction
@@ -530,7 +532,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <returns>DefaultUserWritingSystem integer</returns>
 		protected int SetupBottomMsg()
 		{
-			IWritingSystem userWs = m_cache.ServiceLocator.WritingSystemManager.UserWritingSystem;
+			CoreWritingSystemDefinition userWs = m_cache.ServiceLocator.WritingSystemManager.UserWritingSystem;
 			m_fwTextBoxBottomMsg.Font = new Font(userWs.DefaultFontName, 10);
 			m_fwTextBoxBottomMsg.WritingSystemFactory = m_cache.WritingSystemFactory;
 			m_fwTextBoxBottomMsg.WritingSystemCode = userWs.Handle;
@@ -577,7 +579,7 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		protected void ResetForm()
 		{
-			m_tbForm.Tss = m_tsf.MakeString("", m_tbForm.WritingSystemCode);
+			m_tbForm.Tss = TsStringUtils.EmptyString(m_tbForm.WritingSystemCode);
 			m_tbForm.Select();
 		}
 
@@ -628,7 +630,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			this.m_tbForm = new SIL.FieldWorks.Common.Widgets.FwTextBox();
 			this.m_formLabel = new System.Windows.Forms.Label();
 			this.m_cbWritingSystems = new SIL.FieldWorks.Common.Controls.FwOverrideComboBox();
-			this.m_wsLabel = new System.Windows.Forms.Label();
+			this.m_wsLabel = new SIL.Windows.Forms.Widgets.BetterLabel();
 			this.m_fwTextBoxBottomMsg = new SIL.FieldWorks.Common.Widgets.FwTextBox();
 			this.m_objectsLabel = new System.Windows.Forms.Label();
 			this.m_matchingObjectsBrowser = new SIL.FieldWorks.Common.Controls.MatchingObjectsBrowser();
@@ -833,9 +835,11 @@ namespace SIL.FieldWorks.LexText.Controls
 			// Save location.
 			if (m_mediator != null)
 			{
-				m_mediator.PropertyTable.SetProperty(PersistenceLabel + "DlgLocation", Location);
+				var propName = PersistenceLabel + "DlgLocation";
+				m_propertyTable.SetProperty(propName, Location, true);
 				var sz = new Size(0, m_delta);
-				m_mediator.PropertyTable.SetProperty(PersistenceLabel + "DlgSize", Size - sz);
+				propName = PersistenceLabel + "DlgSize";
+				m_propertyTable.SetProperty(propName, Size - sz, true);
 			}
 		}
 

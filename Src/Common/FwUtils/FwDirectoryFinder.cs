@@ -1,8 +1,6 @@
-// Copyright (c) 2003-2014 SIL International
+// Copyright (c) 2003-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: FwDirectoryFinder.cs
 //
 // <remarks>
 // To find the current user's "My Documents" folder, use something like:
@@ -16,11 +14,10 @@ using System.Diagnostics;
 using System.Reflection;
 using System.Security;
 using Microsoft.Win32;
-using SIL.CoreImpl;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using SIL.FieldWorks.Resources;
-using SIL.Utils;
-using System.Diagnostics.CodeAnalysis;
+using SIL.LCModel.Utils;
+using SIL.PlatformUtilities;
 
 namespace SIL.FieldWorks.Common.FwUtils
 {
@@ -30,53 +27,35 @@ namespace SIL.FieldWorks.Common.FwUtils
 	public static class FwDirectoryFinder
 	{
 		/// <summary>
-		/// The name of the Translation Editor folder (Even though this is the same as
-		/// FwUtils.ksTeAppName and FwSubKey.TE, PLEASE do not use them interchangeably. Use
-		/// the one that is correct for your context, in case they need to be changed later.)
-		/// </summary>
-		public const string ksTeFolderName = FwUtils.ksTeAppName;
-		/// <summary>
 		/// The name of the Language Explorer folder (Even though this is the same as
-		/// FwUtils.ksFlexAppName and FwSubKey.LexText, PLEASE do not use them interchangeably.
+		/// FwSubKey.LexText, PLEASE do not use it interchangeably.
 		/// Use the one that is correct for your context, in case they need to be changed later.)
 		/// </summary>
-		public const string ksFlexFolderName = FwUtils.ksFlexAppName;
+		public const string ksFlexFolderName = "Language Explorer";
 
+		/// <summary>The style sheet for all FLEx styles (including scripture).</summary>
+		public const string kFlexStylesFilename = "FlexStyles.xml";
 
-		/// <summary>The Scripture-specific stylesheet (ideally, this would be in a TE-specific place, but FDO needs it)</summary>
-		public const string kTeStylesFilename = "TeStyles.xml";
+		/// <summary>The filename standard OCM list.</summary>
+		public const string ksOCMListFilename = "OCM.xml";
 
-		/// <summary>The name of the folder containing global writing systems.
-		/// Also see SIL.FieldWorks.FDO.FdoFileHelper.ksWritingSystemsDir
-		/// for the project-level directory.</summary>
-		private const string ksWritingSystemsDir = "WritingSystemStore";
+		/// <summary>The filename for the enhanced OCM list ("FRAME").</summary>
+		public const string ksOCMFrameFilename = "OCM-Frame.xml";
 
-		private const string ksBiblicaltermsLocFilePrefix = "BiblicalTerms-";
-		private const string ksBiblicaltermsLocFileExtension = ".xml";
 		private const string ksProjectsDir = "ProjectsDir";
 
-		private static readonly IFdoDirectories s_fdoDirs = new FwFdoDirectories();
+		private const string CompanyName = "SIL";
+
+		private static readonly ILcmDirectories s_lcmDirs = new FwLcmDirectories();
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Gets the full path of the Scripture-specific stylesheet.
-		/// This should NOT be in the TE folder, because it is used by the SE edition, when
-		/// doing minimal scripture initialization in order to include Paratext texts.
+		/// Gets the full path of the FLEx style sheet.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public static string TeStylesPath
+		public static string FlexStylesPath
 		{
-			get { return Path.Combine(CodeDirectory, kTeStylesFilename); }
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Gets the full path of the folder where TE-specific files are installed.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public static string TeFolder
-		{
-			get { return GetCodeSubDirectory(ksTeFolderName); }
+			get { return Path.Combine(CodeDirectory, ksFlexFolderName, kFlexStylesFilename); }
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -95,26 +74,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public static string FlexBridgeFolder
 		{
 			get { return GetFLExBridgeFolderPath(); }
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Gets the full path of the Translation Editor executable.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public static string TeExe
-		{
-			get { return ExeOrDllPath("TE.exe"); }
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Gets the full path of the Translation Editor dynamic load library.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public static string TeDll
-		{
-			get { return ExeOrDllPath("TeDll.dll"); }
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -161,21 +120,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public static string ConverterConsoleExe
 		{
 			get { return ExeOrDllPath("ConverterConsole.exe"); }
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Gets the full path of the config file
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public static string RemotingTcpServerConfigFile
-		{
-			get
-			{
-				if (MiscUtils.RunningTests)
-					return ExeOrDllPath("remoting_tcp_server_tests.config");
-				return ExeOrDllPath("remoting_tcp_server.config");
-			}
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -235,10 +179,8 @@ namespace SIL.FieldWorks.Common.FwUtils
 			// but not in the code folder structure.
 			// Sure hope the caller can handle it.
 
-#if __MonoCS__
-			else if (!Directory.Exists(retval)) // previous Substring(1) causes problem for 'full path' in Linux
+			else if (!Platform.IsWindows && !Directory.Exists(retval)) // previous Substring(1) causes problem for 'full path' in Linux
 				return subDirectory;
-#endif
 
 			return retval;
 		}
@@ -257,14 +199,12 @@ namespace SIL.FieldWorks.Common.FwUtils
 			return GetSubDirectory(CodeDirectory, subDirectory);
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "FwRegistryHelper.FieldWorksBridgeRegistryKeyLocalMachine returns a reference")]
 		private static string GetFLExBridgeFolderPath()
 		{
 			// Setting a Local Machine registry value is problematic for Linux/Mono.  (FWNX-1180)
 			// Try an alternative way of finding FLExBridge first.
 			var dir = Environment.GetEnvironmentVariable("FLEXBRIDGEDIR");
-			if (!String.IsNullOrEmpty(dir) && Directory.Exists(dir))
+			if (!string.IsNullOrEmpty(dir) && Directory.Exists(dir))
 				return dir;
 			var key = FwRegistryHelper.FieldWorksBridgeRegistryKeyLocalMachine;
 			if (key != null)
@@ -385,8 +325,8 @@ namespace SIL.FieldWorks.Common.FwUtils
 		{
 			get
 			{
-				string defaultDir = Path.Combine(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), DirectoryFinder.CompanyName),
-					string.Format("FieldWorks {0}", FwUtils.SuiteVersion));
+				string defaultDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), CompanyName,
+					$"FieldWorks {FwUtils.SuiteVersion}");
 				return GetDirectory("RootCodeDir", defaultDir);
 			}
 		}
@@ -400,10 +340,8 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <exception cref="ApplicationException">If an installation directory could not be
 		/// found.</exception>
 		/// ------------------------------------------------------------------------------------
-		public static string DataDirectory
-		{
-			get { return GetDirectory(ksRootDataDir, DirectoryFinder.CommonAppDataFolder(ksFieldWorks)); }
-		}
+		public static string DataDirectory => GetDirectory(ksRootDataDir,
+			Path.Combine(LcmFileHelper.CommonApplicationData, CompanyName, ksFieldWorks));
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -413,10 +351,8 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <exception cref="ApplicationException">If an installation directory could not be
 		/// found.</exception>
 		/// ------------------------------------------------------------------------------------
-		public static string DataDirectoryLocalMachine
-		{
-			get { return GetDirectoryLocalMachine(ksRootDataDir, DirectoryFinder.CommonAppDataFolder(ksFieldWorks)); }
-		}
+		public static string DataDirectoryLocalMachine => GetDirectoryLocalMachine(ksRootDataDir,
+			Path.Combine(LcmFileHelper.CommonApplicationData, CompanyName, ksFieldWorks));
 
 		private static string m_srcdir;
 
@@ -429,7 +365,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		{
 			get
 			{
-				if (!String.IsNullOrEmpty(m_srcdir))
+				if (!string.IsNullOrEmpty(m_srcdir))
 					return m_srcdir;
 				if (MiscUtils.IsUnix)
 				{
@@ -460,7 +396,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 					{
 						throw new ApplicationException(
 							string.Format(@"You need to have the registry key {0}\RootCodeDir pointing at your DistFiles dir.",
-							FwRegistryHelper.FieldWorksRegistryKeyLocalMachine.Name));
+							FwRegistryHelper.FieldWorksRegistryKeyLocalMachine?.Name));
 					}
 					string fw = Directory.GetParent(rootDir).FullName;
 					string src = Path.Combine(fw, "Src");
@@ -523,17 +459,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 					throw new InstallationException(e);
 				}
 #endif
-			}
-		}
-
-		/// <summary>
-		/// Gets the legacy wordforming character overrides file.
-		/// </summary>
-		public static string LegacyWordformingCharOverridesFile
-		{
-			get
-			{
-				return Path.Combine(CodeDirectory, "WordFormingCharOverrides.xml");
 			}
 		}
 
@@ -601,6 +526,34 @@ namespace SIL.FieldWorks.Common.FwUtils
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
+		/// Gets the path for storing user-specific application data.
+		/// </summary>
+		/// <param name="appName">Name of the application.</param>
+		/// ------------------------------------------------------------------------------------
+		public static string UserAppDataFolder(string appName)
+		{
+			string path = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+			return Path.Combine(Path.Combine(path, CompanyName), appName);
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Gets the path for storing common application data that might be shared between
+		/// multiple applications and multiple users on the same machine.
+		///
+		/// On Windows this returns a subdirectory of
+		/// Environment.SpecialFolder.CommonApplicationData (C:\ProgramData),on Linux
+		/// /var/lib/fieldworks.
+		/// </summary>
+		/// <param name="appName">Name of the application.</param>
+		/// ------------------------------------------------------------------------------------
+		public static string CommonAppDataFolder(string appName)
+		{
+			return Path.Combine(Path.Combine(LcmFileHelper.CommonApplicationData, CompanyName), appName);
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
 		/// Gets the default directory for Backup files. This is per-user.
 		/// </summary>
 		/// <exception cref="SecurityException">If setting this value and the user does not have
@@ -630,23 +583,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Gets the biblical key terms localization files.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public static string[] KeyTermsLocalizationFiles
-		{
-			get
-			{
-				// SE version doesn't install the TE folder.
-				if (!Directory.Exists(TeFolder))
-					return new string[]{""};
-				return Directory.GetFiles(TeFolder, ksBiblicaltermsLocFilePrefix + "*" +
-					ksBiblicaltermsLocFileExtension, SearchOption.TopDirectoryOnly);
-			}
-		}
-
 		/// <summary>
 		/// Location of the DefaultConfigurations folder (root for  Dictionary, Reversal, and other default configurations)
 		/// </summary>
@@ -655,53 +591,25 @@ namespace SIL.FieldWorks.Common.FwUtils
 			get { return Path.Combine(FlexFolder, "DefaultConfigurations"); }
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Returns the file name containing the localization of the key terms list for the
-		/// given ICU locale.
+		/// Gets the LCM directories service.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public static string GetKeyTermsLocFilename(string locale)
+		public static ILcmDirectories LcmDirectories
 		{
-			return Path.Combine(TeFolder, ksBiblicaltermsLocFilePrefix + locale +
-				ksBiblicaltermsLocFileExtension);
+			get { return s_lcmDirs; }
 		}
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Extracts the locale identifier (string) from a key terms localization file name.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public static string GetLocaleFromKeyTermsLocFile(string locFilename)
-		{
-			return Path.GetFileName(locFilename).Replace(ksBiblicaltermsLocFilePrefix,
-				String.Empty).Replace(ksBiblicaltermsLocFileExtension, String.Empty);
-		}
-
-		/// <summary>
-		/// Gets the FDO directories service.
-		/// </summary>
-		public static IFdoDirectories FdoDirectories
-		{
-			get { return s_fdoDirs; }
-		}
-
-		private class FwFdoDirectories : IFdoDirectories
+		private class FwLcmDirectories : ILcmDirectories
 		{
 			/// <summary>
 			/// Gets the projects directory.
 			/// </summary>
-			string IFdoDirectories.ProjectsDirectory
+			string ILcmDirectories.ProjectsDirectory
 			{
 				get { return ProjectsDirectory; }
 			}
 
-			string IFdoDirectories.DefaultProjectsDirectory
-			{
-				get { return ProjectsDirectoryLocalMachine; }
-			}
-
-			string IFdoDirectories.TemplateDirectory
+			string ILcmDirectories.TemplateDirectory
 			{
 				get { return TemplateDirectory; }
 			}

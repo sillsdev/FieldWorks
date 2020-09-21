@@ -1,23 +1,17 @@
-// Copyright (c) 2009-2013 SIL International
+// Copyright (c) 2009-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: FocusBoxController.ApproveAndMove.cs
-// Responsibility: pyle
-//
-// <remarks>
-// </remarks>
 
 using System.Collections.Generic;
 using System.Linq;
-using SIL.Utils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Infrastructure;
 using System.Diagnostics;
-using SIL.FieldWorks.Common.COMInterfaces;
 using XCore;
-using SIL.CoreImpl;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.ObjectModel;
 
 namespace SIL.FieldWorks.IText
 {
@@ -246,13 +240,13 @@ namespace SIL.FieldWorks.IText
 			ITsString tssBaselineCbaForm;
 			if (BaselineFormDiffersFromAnalysisWord(occurrence, out tssBaselineCbaForm))
 			{
-				//m_fdoCache.VwCacheDaAccessor.CacheStringProp(hvoAnnotation,
-				//									 InterlinVc.TwficRealFormTag(m_fdoCache),
+				//m_cache.VwCacheDaAccessor.CacheStringProp(hvoAnnotation,
+				//									 InterlinVc.TwficRealFormTag(m_cache),
 				//									 tssBaselineCbaForm);
 			}
 		}
 
-		internal class UndoRedoApproveAndMoveHelper : FwDisposableBase
+		internal class UndoRedoApproveAndMoveHelper : DisposableBase
 		{
 			internal UndoRedoApproveAndMoveHelper(FocusBoxController focusBox,
 				AnalysisOccurrence occBeforeApproveAndMove, AnalysisOccurrence occAfterApproveAndMove)
@@ -266,7 +260,7 @@ namespace SIL.FieldWorks.IText
 				AddUndoRedoAction(OccurrenceBeforeApproveAndMove, null);
 			}
 
-			FdoCache Cache { get; set; }
+			LcmCache Cache { get; set; }
 			FocusBoxController FocusBox { get; set; }
 			AnalysisOccurrence OccurrenceBeforeApproveAndMove { get; set; }
 			AnalysisOccurrence OccurrenceAfterApproveAndMove { get; set; }
@@ -296,6 +290,12 @@ namespace SIL.FieldWorks.IText
 				OccurrenceBeforeApproveAndMove = null;
 				OccurrenceAfterApproveAndMove = null;
 			}
+
+			protected override void Dispose(bool disposing)
+			{
+				Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + " ******");
+				base.Dispose(disposing);
+			}
 		}
 
 		/// <summary>
@@ -303,7 +303,6 @@ namespace SIL.FieldWorks.IText
 		/// </summary>
 		internal class UndoRedoApproveAnalysis : UndoActionBase
 		{
-			readonly FdoCache m_cache;
 			readonly InterlinDocForAnalysis m_interlinDoc;
 			readonly AnalysisOccurrence m_oldOccurrence;
 			AnalysisOccurrence m_newOccurrence;
@@ -312,7 +311,6 @@ namespace SIL.FieldWorks.IText
 				AnalysisOccurrence newAnnotation)
 			{
 				m_interlinDoc = interlinDoc;
-				m_cache = m_interlinDoc.Cache;
 				m_oldOccurrence = oldAnnotation;
 				m_newOccurrence = newAnnotation;
 			}
@@ -321,7 +319,7 @@ namespace SIL.FieldWorks.IText
 
 			private bool IsUndoable()
 			{
-				return m_oldOccurrence != null && m_oldOccurrence.IsValid;
+				return m_oldOccurrence != null && m_oldOccurrence.IsValid && m_interlinDoc.IsFocusBoxInstalled;
 			}
 
 			public override bool Redo()

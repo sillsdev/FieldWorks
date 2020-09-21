@@ -6,11 +6,13 @@ using System;
 using System.Drawing;
 using System.Diagnostics;
 
-using SIL.CoreImpl;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.FieldWorks.Common.ViewsInterfaces;
+using SIL.LCModel.DomainServices;
 
 namespace SIL.FieldWorks.IText
 {
@@ -128,20 +130,17 @@ namespace SIL.FieldWorks.IText
 		{
 			CheckDisposed();
 
-			if (m_fdoCache == null || DesignMode /*|| m_hvoRoot == 0*/)
+			if (m_cache == null || DesignMode /*|| m_hvoRoot == 0*/)
 				return;
 
-			m_rootb = VwRootBoxClass.Create();
-			m_rootb.SetSite(this);
+			base.MakeRoot();
 
-			m_vc = new TitleContentsVc(m_fdoCache);
+			m_vc = new TitleContentsVc(m_cache);
 			SetupVc();
 
-			m_rootb.DataAccess = m_fdoCache.MainCacheAccessor;
+			m_rootb.DataAccess = m_cache.MainCacheAccessor;
 
-			m_rootb.SetRootObject(m_hvoRoot, m_vc, (int)TitleContentsVc.kfragRoot, m_styleSheet);
-
-			base.MakeRoot();
+			m_rootb.SetRootObject(m_hvoRoot, m_vc, TitleContentsVc.kfragRoot, m_styleSheet);
 
 			//TODO:
 			//ptmw->RegisterRootBox(qrootb);
@@ -159,8 +158,8 @@ namespace SIL.FieldWorks.IText
 
 		public override bool RefreshDisplay()
 		{
-			if (m_fdoCache != null && m_vc != null)
-				m_vc.SetupWritingSystemsForTitle(m_fdoCache);
+			if (m_cache != null && m_vc != null)
+				m_vc.SetupWritingSystemsForTitle(m_cache);
 			return base.RefreshDisplay();
 		}
 
@@ -216,22 +215,21 @@ namespace SIL.FieldWorks.IText
 		int m_dxWsLabWidth = 0; // width of writing system labels.
 		ITsTextProps m_ttpBold;
 		ITsTextProps m_ttpDataCellProps;
-		IWritingSystem[] m_writingSystems;
+		CoreWritingSystemDefinition[] m_writingSystems;
 		ITsString[] m_WsLabels;
 		ITsTextProps m_ttpWsLabel;
-		int m_editBackColor = (int)SIL.Utils.ColorUtil.ConvertColorToBGR(Color.FromKnownColor(KnownColor.Window));
+		int m_editBackColor = (int)ColorUtil.ConvertColorToBGR(Color.FromKnownColor(KnownColor.Window));
 
-		public TitleContentsVc(FdoCache cache)
+		public TitleContentsVc(LcmCache cache)
 		{
 			int wsUser = cache.DefaultUserWs;
-			ITsStrFactory tsf = TsStrFactoryClass.Create();
-			m_tssTitle = tsf.MakeString(ITextStrings.ksTitle, wsUser);
-			ITsPropsBldr tpb = TsPropsBldrClass.Create();
+			m_tssTitle = TsStringUtils.MakeString(ITextStrings.ksTitle, wsUser);
+			ITsPropsBldr tpb = TsStringUtils.MakePropsBldr();
 			tpb.SetIntPropValues((int)FwTextPropType.ktptBold,
 				(int)FwTextPropVar.ktpvEnum,
 				(int)FwTextToggleVal.kttvForceOn);
 			m_ttpBold = tpb.GetTextProps();
-			tpb = TsPropsBldrClass.Create();
+			tpb = TsStringUtils.MakePropsBldr();
 			// Set some padding all around.
 			tpb.SetIntPropValues((int)FwTextPropType.ktptPadTop,
 				(int) FwTextPropVar.ktpvMilliPoint, 1000);
@@ -251,10 +249,10 @@ namespace SIL.FieldWorks.IText
 			SetupWritingSystemsForTitle(cache);
 		}
 
-		internal void SetupWritingSystemsForTitle(FdoCache cache)
+		internal void SetupWritingSystemsForTitle(LcmCache cache)
 		{
 			m_ttpWsLabel = WritingSystemServices.AbbreviationTextProperties;
-			m_writingSystems = new IWritingSystem[2];
+			m_writingSystems = new CoreWritingSystemDefinition[2];
 			m_writingSystems[0] = cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
 			m_writingSystems[1] = cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem;
 			m_WsLabels = new ITsString[m_writingSystems.Length];
@@ -270,9 +268,9 @@ namespace SIL.FieldWorks.IText
 				//m_WsLabels[i] = LgWritingSystem.UserAbbr(cache, m_writingSystems[i].Hvo);
 				// For now (August 2008), try English abbreviation before UI writing system.
 				// (See LT-8185.)
-				m_WsLabels[i] = cache.TsStrFactory.MakeString(m_writingSystems[i].Abbreviation, cache.DefaultUserWs);
+				m_WsLabels[i] = TsStringUtils.MakeString(m_writingSystems[i].Abbreviation, cache.DefaultUserWs);
 				if (String.IsNullOrEmpty(m_WsLabels[i].Text))
-					m_WsLabels[i] = cache.TsStrFactory.MakeString(m_writingSystems[i].Abbreviation, cache.DefaultUserWs);
+					m_WsLabels[i] = TsStringUtils.MakeString(m_writingSystems[i].Abbreviation, cache.DefaultUserWs);
 			}
 		}
 

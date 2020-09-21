@@ -17,7 +17,7 @@ using System.Runtime.InteropServices;
 using System.Collections;
 using System.Drawing.Text;
 
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 
 namespace SIL.FieldWorks.Common.RootSites
 {

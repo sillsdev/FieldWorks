@@ -1,21 +1,12 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System;
-using System.Collections;
-using System.ComponentModel;
-using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
-using System.Drawing;
-using System.Data;
-using System.Windows.Forms;
-
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using SIL.FieldWorks.FdoUi;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.Framework.DetailControls;
-using SIL.Utils;
+using SIL.LCModel.Core.KernelInterfaces;
 
 namespace SIL.FieldWorks.XWorks.LexEd
 {
@@ -34,7 +25,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 		protected override VectorReferenceVc CreateVectorReferenceVc()
 		{
-			LexReferenceSequenceVc vc = new LexReferenceSequenceVc(m_fdoCache, m_rootFlid, m_displayNameProperty, m_displayWs);
+			LexReferenceSequenceVc vc = new LexReferenceSequenceVc(m_cache, m_rootFlid, m_displayNameProperty, m_displayWs);
 			if (m_displayParent != null)
 				vc.DisplayParent = m_displayParent;
 			return vc;
@@ -59,8 +50,6 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		/// <param name="where"></param>
 		/// <param name="hvo"></param>
 		/// <returns></returns>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="See comment above 'new ReferenceSequenceUi()'")]
 		protected override bool HandleRightClickOnObject(int hvo)
 		{
 			if (hvo == 0)
@@ -73,7 +62,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			if (ui != null)
 			{
 				//Debug.WriteLine("hvo=" + hvo.ToString() + " " + ui.Object.ShortName + "  " + ui.Object.ToString());
-				return ui.HandleRightClick(Mediator, this, true);
+				return ui.HandleRightClick(Mediator, m_propertyTable, this, true);
 			}
 
 			return false;
@@ -105,7 +94,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 #if WANTPORTMULTI
 			for (int i = 0; i < hvos.Length; ++i)
 			{
-				ICmObject cmo = m_fdoCache.GetObject(hvos[i]);
+				ICmObject cmo = m_cache.GetObject(hvos[i]);
 				(cmo as ICmObject).UpdateTimestampForVirtualChange();
 			}
 #endif
@@ -132,7 +121,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		/// <summary>
 		/// Constructor for the Vector Reference View Constructor Class.
 		/// </summary>
-		public LexReferenceSequenceVc(FdoCache cache, int flid, string displayNameProperty, string displayWs)
+		public LexReferenceSequenceVc(LcmCache cache, int flid, string displayNameProperty, string displayWs)
 			: base (cache, flid, displayNameProperty, displayWs)
 		{
 		}

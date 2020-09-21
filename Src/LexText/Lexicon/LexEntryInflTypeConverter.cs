@@ -1,18 +1,18 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Framework.DetailControls;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.FieldWorks.Common.FwUtils;
+using SIL.LCModel;
+using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.FwCoreDlgs;
-using SIL.Utils;
+using XCore;
 using ProgressBarWrapper = SIL.FieldWorks.FdoUi.ProgressBarWrapper;
 
 namespace SIL.FieldWorks.XWorks.LexEd
@@ -20,12 +20,10 @@ namespace SIL.FieldWorks.XWorks.LexEd
 	/// <summary>
 	/// Summary description for LexEntryTypeConverter.
 	/// </summary>
-	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
-		Justification="m_dlg and m_cache are references")]
 	public abstract class LexEntryTypeConverters : IUtility
 	{
 		protected UtilityDlg m_dlg;
-		protected FdoCache m_cache;
+		protected LcmCache m_cache;
 		protected int m_flid;
 		protected ICmObject m_obj;
 		protected const string s_helpTopic = "khtpToolsConvertVariants";
@@ -105,26 +103,21 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		/// <summary>
 		/// Overridden to provide a chooser with multiple selections (checkboxes and all).
 		/// </summary>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "mediator is a reference")]
 		protected SimpleListChooser GetChooser(IEnumerable<ObjectLabel> labels, int classId)
 		{
 			var contents = from lexEntryType in m_cache.LangProject.LexDbOA.VariantEntryTypesOA.ReallyReallyAllPossibilities
 						   where lexEntryType.ClassID == classId
 						   select lexEntryType;
-			var mediator = m_dlg.Mediator;
-			var persistProvider =(IPersistenceProvider) mediator.PropertyTable.GetValue("persistProvider");
-			string fieldName = mediator.StringTbl.GetString("VariantEntryTypes", "PossibilityListItemTypeNames");
+			var persistProvider = m_dlg.PropTable.GetValue<IPersistenceProvider>("persistProvider");
+			string fieldName = StringTable.Table.GetString("VariantEntryTypes", "PossibilityListItemTypeNames");
 			return new SimpleListChooser(persistProvider,
 										 labels,
 										 fieldName,
 										 m_cache,
 										 contents,
-										 mediator.HelpTopicProvider);
+										 m_dlg.PropTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"));
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="m_dlg.FindForm() returns a reference")]
 		protected void ShowDialogAndConvert(int targetClassId)
 		{
 			// maybe there's a better way, but
@@ -198,8 +191,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		/// </summary>
 		public override void Process()
 		{
-			Debug.Assert(m_dlg != null);
-						m_cache = (FdoCache) m_dlg.Mediator.PropertyTable.GetValue("cache");
+			m_cache = m_dlg.PropTable.GetValue<LcmCache>("cache");
 			UndoableUnitOfWorkHelper.Do(LexEdStrings.ksUndoConvertIrregularlyInflectedFormVariants, LexEdStrings.ksRedoConvertIrregularlyInflectedFormVariants,
 										m_cache.ActionHandlerAccessor,
 										() => ShowDialogAndConvert(LexEntryInflTypeTags.kClassId));
@@ -251,8 +243,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		/// </summary>
 		public override void Process()
 		{
-			Debug.Assert(m_dlg != null);
-			m_cache = (FdoCache)m_dlg.Mediator.PropertyTable.GetValue("cache");
+			m_cache = m_dlg.PropTable.GetValue<LcmCache>("cache");
 			UndoableUnitOfWorkHelper.Do(LexEdStrings.ksUndoConvertVariants, LexEdStrings.ksRedoConvertVariants,
 										m_cache.ActionHandlerAccessor,
 										() => ShowDialogAndConvert(LexEntryTypeTags.kClassId));

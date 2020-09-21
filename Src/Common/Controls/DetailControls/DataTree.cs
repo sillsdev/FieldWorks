@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2016 SIL International
+// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -7,21 +7,23 @@ using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using System.Xml;
-using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.LCModel.Core.Cellar;
+using SIL.LCModel.Core.WritingSystems;
 using SIL.FieldWorks.Common.Controls;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Infrastructure;
+using SIL.LCModel.Utils;
+using SIL.PlatformUtilities;
 using SIL.Utils;
 using XCore;
 
@@ -50,7 +52,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 	/// System.Windows.Forms.Panel
 	/// System.Windows.Forms.ContainerControl
 	/// System.Windows.Forms.UserControl
-	public class DataTree : UserControl, IFWDisposable, IVwNotifyChange, IxCoreColleague, IRefreshableRoot
+	public class DataTree : UserControl, IVwNotifyChange, IxCoreColleague, IRefreshableRoot
 	{
 		/// <summary>
 		/// Occurs when the current slice changes
@@ -67,7 +69,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// </summary>
 		private ISilDataAccess m_sda;
 		/// <summary></summary>
-		protected FdoCache m_cache;
+		protected LcmCache m_cache;
 		/// <summary>use SetContextMenuHandler() to subscribe to this event (if you want to provide a Context menu for this DataTree)</summary>
 		protected event SliceShowMenuRequestHandler ShowContextMenuEvent;
 		/// <summary>the descendent object that is being displayed</summary>
@@ -120,15 +122,15 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		protected HashSet<Tuple<int, int>> m_monitoredProps = new HashSet<Tuple<int, int>>();
 		// Number of times DeepSuspendLayout has been called without matching DeepResumeLayout.
 		protected int m_cDeepSuspendLayoutCount;
-		protected StringTable m_stringTable;
 		protected IPersistenceProvider m_persistenceProvider = null;
-		protected FwStyleSheet m_styleSheet;
+		protected LcmStyleSheet m_styleSheet;
 		protected bool m_fShowAllFields = false;
 		protected ToolTip m_tooltip; // used for slice tree nodes. All tooltips are cleared when we switch records!
 		protected LayoutStates m_layoutState = LayoutStates.klsNormal;
 		protected int m_dxpLastRightPaneWidth = -1;  // width of right pane (if any) the last time we did a layout.
 		// to allow slices to handle events (e.g. InflAffixTemplateSlice)
 		protected Mediator m_mediator;
+		protected PropertyTable m_propertyTable;
 		protected IRecordChangeHandler m_rch = null;
 		protected IRecordListUpdater m_rlu = null;
 		protected string m_listName;
@@ -246,8 +248,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			}
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "sc is a reference")]
 		private void InstallSlice(Slice slice, int index)
 		{
 			Debug.Assert(index >= 0 && index <= Slices.Count);
@@ -324,8 +324,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			movedSlice.TakeFocus();
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "otherSliceSC is a reference")]
 		private void AdjustSliceSplitPosition(Slice otherSlice)
 		{
 			SplitContainer otherSliceSC = otherSlice.SplitCont;
@@ -344,7 +342,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			}
 		}
 
-		protected void InsertSliceRange(int insertPosition, Set<Slice> slices)
+		protected void InsertSliceRange(int insertPosition, ISet<Slice> slices)
 		{
 			var indexableSlices = new List<Slice>(slices.ToArray());
 			for (int i = indexableSlices.Count - 1; i >= 0; --i)
@@ -506,14 +504,14 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// Otherwise, the datatree will automatically load it when first requested
 		/// (provided it has a cache by that time).
 		/// </summary>
-		public FwStyleSheet StyleSheet
+		public LcmStyleSheet StyleSheet
 		{
 			get
 			{
 				CheckDisposed();
 				if (m_styleSheet == null && m_cache != null)
 				{
-					m_styleSheet = new FwStyleSheet();
+					m_styleSheet = new LcmStyleSheet();
 					m_styleSheet.Init(m_cache, m_cache.LanguageProject.Hvo,
 						LangProjectTags.kflidStyles);
 				}
@@ -589,6 +587,16 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			{
 				CheckDisposed();
 				return m_mediator;
+			}
+		}
+
+		/// <summary />
+		public PropertyTable PropTable
+		{
+			get
+			{
+				CheckDisposed();
+				return m_propertyTable;
 			}
 		}
 
@@ -693,8 +701,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// if possible, otherwise, the root object. May return null if the nearest Parent is disposed.
 		/// </summary>
 		/// <returns></returns>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "loopSlice is a reference")]
 		private ICmObject DescendantForSlice(Slice slice)
 		{
 			var loopSlice = slice;
@@ -810,7 +816,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			{
 				// Find the first parent IRecordListOwner object (if any) that
 				// owns an IRecordListUpdater.
-				var rlo = m_mediator.PropertyTable.GetValue("window") as IRecordListOwner;
+				var rlo = m_propertyTable.GetValue<IRecordListOwner>("window");
 				if (rlo != null)
 					m_rlu = rlo.FindRecordListUpdater(m_listName);
 			}
@@ -823,8 +829,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// Note: This value is a base value and should never include the LabelIndent offset.
 		/// Each Slice will add its own Label length, when its SplitterDistance is set.
 		/// </remarks>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "sc is a reference")]
 		public int SliceSplitPositionBase
 		{
 			get
@@ -889,24 +893,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			}
 		}
 
-		public StringTable StringTbl
-		{
-			get
-			{
-				CheckDisposed();
-				if (m_stringTable != null)
-					return m_stringTable;
-				if (m_mediator != null)
-					return m_mediator.StringTbl;
-				return null;
-			}
-			set
-			{
-				CheckDisposed();
-				m_stringTable = value;
-			}
-		}
-
 		public IPersistenceProvider PersistenceProvder
 		{
 			set
@@ -923,22 +909,23 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 		private void MonoIgnoreUpdates()
 		{
-			#if __MonoCS__
+#if USEIGNOREUPDATES
 			// static method call to get reasonable performance from mono
-			// IgnoreUpdates is custom functionaily added to mono's winforms
+			// IgnoreUpdates is custom functionality added to mono's winforms
+			// (commit 3233f63ece7e922d03a115ce8d8524e8554be19d)
 
 			// Stops all winforms Size events
 			Control.IgnoreUpdates();
-			#endif
+#endif
 		}
 
 		private void MonoResumeUpdates()
 		{
-			#if __MonoCS__
+#if USEIGNOREUPDATES
 			// static method call to get reasonable performance from mono
 			// Resumes all winforms Size events
 			Control.UnignoreUpdates();
-			#endif
+#endif
 		}
 
 		/// <summary>
@@ -956,24 +943,20 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			if (m_root == root && layoutName == m_rootLayoutName && layoutChoiceField == m_layoutChoiceField && m_descendant == descendant)
 				return;
 
-			if (m_mediator != null) // May be null during testing or maybe some other strange state
-			{
-				string toolName = m_mediator.PropertyTable.GetStringProperty("currentContentControl", null);
-
-				// Initialize our internal state with the state of the PropertyTable
-				m_fShowAllFields = m_mediator.PropertyTable.GetBoolProperty("ShowHiddenFields-" + toolName, false, PropertyTable.SettingsGroup.LocalSettings);
-				m_mediator.PropertyTable.SetPropertyPersistence("ShowHiddenFields-" + toolName, true, PropertyTable.SettingsGroup.LocalSettings);
-				m_mediator.PropertyTable.SetDefault("ShowHiddenFields", m_fShowAllFields, false, PropertyTable.SettingsGroup.LocalSettings);
-				SetCurrentSlicePropertyNames();
-				m_currentSlicePartName = m_mediator.PropertyTable.GetStringProperty(m_sPartNameProperty, null, PropertyTable.SettingsGroup.LocalSettings);
-				m_currentSliceObjGuid = (Guid) m_mediator.PropertyTable.GetValue(m_sObjGuidProperty, Guid.Empty, PropertyTable.SettingsGroup.LocalSettings);
-				m_mediator.PropertyTable.SetProperty(m_sPartNameProperty, null, false, PropertyTable.SettingsGroup.LocalSettings);
-				m_mediator.PropertyTable.SetProperty(m_sObjGuidProperty, Guid.Empty, false, PropertyTable.SettingsGroup.LocalSettings);
-				m_mediator.PropertyTable.SetPropertyPersistence(m_sPartNameProperty, true, PropertyTable.SettingsGroup.LocalSettings);
-				m_mediator.PropertyTable.SetPropertyPersistence(m_sObjGuidProperty, true, PropertyTable.SettingsGroup.LocalSettings);
-				m_currentSliceNew = null;
-				m_fSetCurrentSliceNew = false;
-			}
+			string toolName = m_propertyTable.GetStringProperty("currentContentControl", null);
+			// Initialize our internal state with the state of the PropertyTable
+			m_fShowAllFields = m_propertyTable.GetBoolProperty("ShowHiddenFields-" + toolName, false, PropertyTable.SettingsGroup.LocalSettings);
+			m_propertyTable.SetPropertyPersistence("ShowHiddenFields-" + toolName, true, PropertyTable.SettingsGroup.LocalSettings);
+			m_propertyTable.SetDefault("ShowHiddenFields", m_fShowAllFields, PropertyTable.SettingsGroup.LocalSettings, false);
+			SetCurrentSlicePropertyNames();
+			m_currentSlicePartName = m_propertyTable.GetStringProperty(m_sPartNameProperty, null, PropertyTable.SettingsGroup.LocalSettings);
+			m_currentSliceObjGuid = m_propertyTable.GetValue(m_sObjGuidProperty, PropertyTable.SettingsGroup.LocalSettings, Guid.Empty);
+			m_propertyTable.SetProperty(m_sPartNameProperty, null, PropertyTable.SettingsGroup.LocalSettings, false);
+			m_propertyTable.SetProperty(m_sObjGuidProperty, Guid.Empty, PropertyTable.SettingsGroup.LocalSettings, false);
+			m_propertyTable.SetPropertyPersistence(m_sPartNameProperty, true, PropertyTable.SettingsGroup.LocalSettings);
+			m_propertyTable.SetPropertyPersistence(m_sObjGuidProperty, true, PropertyTable.SettingsGroup.LocalSettings);
+			m_currentSliceNew = null;
+			m_fSetCurrentSliceNew = false;
 
 			MonoIgnoreUpdates();
 
@@ -1070,18 +1053,10 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		{
 			if (String.IsNullOrEmpty(m_sPartNameProperty) || String.IsNullOrEmpty(m_sObjGuidProperty))
 			{
-				if (m_mediator != null)
-				{
-					string sTool = m_mediator.PropertyTable.GetStringProperty("currentContentControl", String.Empty);
-					string sArea = m_mediator.PropertyTable.GetStringProperty("areaChoice", String.Empty);
-					m_sPartNameProperty = String.Format("{0}${1}$CurrentSlicePartName", sArea, sTool);
-					m_sObjGuidProperty = String.Format("{0}${1}$CurrentSliceObjectGuid", sArea, sTool);
-				}
-				else
-				{
-					m_sPartNameProperty = "$$CurrentSlicePartName";
-					m_sObjGuidProperty = "$$CurrentSliceObjectGuid";
-				}
+				string sTool = m_propertyTable.GetStringProperty("currentContentControl", String.Empty);
+				string sArea = m_propertyTable.GetStringProperty("areaChoice", String.Empty);
+				m_sPartNameProperty = String.Format("{0}${1}$CurrentSlicePartName", sArea, sTool);
+				m_sObjGuidProperty = String.Format("{0}${1}$CurrentSliceObjectGuid", sArea, sTool);
 			}
 		}
 
@@ -1170,7 +1145,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// initialization for when you don't actually know what you want to show yet
 		/// (and aren't going to use XML)
 		/// </summary>
-		protected void InitializeBasic(FdoCache cache, bool fHasSplitter)
+		protected void InitializeBasic(LcmCache cache, bool fHasSplitter)
 		{
 			// This has to be created before we start adding slices, so they can be put into it.
 			// (Otherwise we would normally do this in initializeComponent.)
@@ -1186,7 +1161,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// <param name="fHasSplitter">if set to <c>true</c> [f has splitter].</param>
 		/// <param name="layouts">The layouts.</param>
 		/// <param name="parts">The parts.</param>
-		public void Initialize(FdoCache cache, bool fHasSplitter, Inventory layouts, Inventory parts)
+		public void Initialize(LcmCache cache, bool fHasSplitter, Inventory layouts, Inventory parts)
 		{
 			CheckDisposed();
 			m_layoutInventory = layouts;
@@ -1287,7 +1262,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			m_partInventory = null;
 			m_sliceFilter = null;
 			m_monitoredProps = null;
-			m_stringTable = null;
 			m_persistenceProvider = null;
 			m_styleSheet = null; // We may have made it, or been given it.
 			m_tooltip = null;
@@ -1643,8 +1617,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// This actually handles Paint for the contained control that has the slice controls in it.
 		/// </summary>
 		/// <param name="pea">The <see cref="System.Windows.Forms.PaintEventArgs"/> instance containing the event data.</param>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "gr is a reference")]
 		void HandlePaintLinesBetweenSlices(PaintEventArgs pea)
 		{
 			Graphics gr = pea.Graphics;
@@ -1727,7 +1699,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		}
 
 		/// <summary></summary>
-		public FdoCache Cache
+		public LcmCache Cache
 		{
 			get
 			{
@@ -2046,7 +2018,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				case "part":
 					// If the previously selected slice doesn't display in this refresh, we try for the next
 					// visible slice instead.  So m_fSetCurrentSliceNew might still be set.  See LT-9010.
-					string partName = XmlUtils.GetManditoryAttributeValue(partRef, "ref");
+					string partName = XmlUtils.GetMandatoryAttributeValue(partRef, "ref");
 					if (!m_fSetCurrentSliceNew && m_currentSlicePartName != null && obj.Guid == m_currentSliceObjGuid)
 					{
 						for (int clid = obj.ClassID; clid != 0; clid = m_mdc.GetBaseClsId(clid))
@@ -2127,7 +2099,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// </summary>
 		private void EnsureCustomFields(ICmObject obj, XmlNode parent, XmlNode insertAfter)
 		{
-			var interestingClasses = new Set<int>();
+			var interestingClasses = new HashSet<int>();
 			int clsid = obj.ClassID;
 			while (clsid != 0)
 			{
@@ -2341,7 +2313,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 						ResetRecordListUpdater();
 						// m_rlu may still be null, but that appears to be just fine.
 						m_rch.Setup(obj, m_rlu, m_cache);
-						Debug.Assert(m_rch != null && !m_rch.IsDisposed);
 						return NodeTestResult.kntrNothing;
 				}
 			}
@@ -2439,7 +2410,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			return NodeTestResult.kntrNothing;
 		}
 
-		void MakeGhostSlice(ArrayList path, XmlNode node, ObjSeqHashMap reuseMap, ICmObject obj, Slice parentSlice,
+		internal void MakeGhostSlice(ArrayList path, XmlNode node, ObjSeqHashMap reuseMap, ICmObject obj, Slice parentSlice,
 			int flidEmptyProp, XmlNode caller, int indent, ref int insertPosition)
 		{
 			// It's a really bad idea to add it to the path, since it kills
@@ -2462,15 +2433,13 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				slice.Object = obj;
 				slice.Cache = m_cache;
 				slice.Mediator = m_mediator;
-
+				// A ghost string slice with no property table is a good way to cause crashes, do our level best to find an appropriate one
+				slice.PropTable = parentSlice != null ? parentSlice.PropTable : Slices.Count > 0 ? Slices[0].PropTable : PropTable;
 
 				// We need a copy since we continue to modify path, so make it as compact as possible.
 				slice.Key = path.ToArray();
 				slice.ConfigurationNode = node;
 				slice.CallerNode = caller;
-				// don't mess with this, the obj/seq node would not have a meaningful back color override
-				// for the slice. If we need it invent a new attribute.
-				//slice.OverrideBackColor(XmlUtils.GetOptionalAttributeValue(node, "backColor"));
 
 				// dubious...should the string slice really get the context menu for the object?
 				slice.ShowContextMenu += OnShowContextMenu;
@@ -2479,8 +2448,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				SetNodeWeight(node, slice);
 
 				slice.FinishInit();
-				// Now done in Slice.ctor
-				//slice.Visible = false; // don't show it until we position and size it.
 				InsertSliceAndRegisterWithContextHelp(insertPosition, slice);
 			}
 			else
@@ -2624,7 +2591,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			return contents;
 		}
 
-		private readonly Set<string> m_setInvalidFields = new Set<string>();
+		private readonly HashSet<string> m_setInvalidFields = new HashSet<string>();
 		/// <summary>
 		/// This seems a bit clumsy, but the metadata cache now throws an exception if the class
 		/// id/field name pair isn't valid for GetFieldId2().  Limiting this to only one throw
@@ -2787,7 +2754,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 										break; // not recognized, treat as visible
 									var rgws = WritingSystemServices.GetWritingSystemList(m_cache, wsMagic, false).ToArray();
 									bool anyNonEmpty = false;
-									foreach (IWritingSystem wsInst in rgws)
+									foreach (CoreWritingSystemDefinition wsInst in rgws)
 									{
 										if (realSda.get_MultiStringAlt(obj.Hvo, flid, wsInst.Handle).Length != 0)
 										{
@@ -2891,7 +2858,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			Slice slice = GetMatchingSlice(path, reuseMap);
 			if (slice == null)
 			{
-				slice = SliceFactory.Create(m_cache, editor, flid, node, obj, StringTbl, PersistenceProvder, m_mediator, caller, reuseMap);
+				slice = SliceFactory.Create(m_cache, editor, flid, node, obj, PersistenceProvder, m_mediator, m_propertyTable, caller, reuseMap);
 				if (slice == null)
 				{
 					// One way this can happen in TestLangProj is with a part ref for a custom field that
@@ -2908,13 +2875,12 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				slice.Indent = indent;
 				slice.Object = obj;
 				slice.Cache = m_cache;
-				slice.StringTbl = StringTbl;
 				slice.PersistenceProvider = PersistenceProvder;
 
 				// We need a copy since we continue to modify path, so make it as compact as possible.
 				slice.Key = path.ToArray();
 				// old code just set mediator, nothing ever set m_configurationParams. Maybe the two are redundant and should merge?
-				slice.Init(m_mediator, null);
+				slice.Init(m_mediator, m_propertyTable, null);
 				slice.ConfigurationNode = node;
 				slice.CallerNode = caller;
 				slice.OverrideBackColor(XmlUtils.GetOptionalAttributeValue(node, "backColor"));
@@ -2971,10 +2937,10 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		private string GetLabel(XmlNode caller, XmlNode node, ICmObject obj, string attr)
 		{
 			string label;
-			if (Mediator != null && Mediator.HasStringTable)
+			if (Mediator != null)
 			{
-				label = XmlUtils.GetLocalizedAttributeValue(Mediator.StringTbl, caller, attr, null) ??
-						XmlUtils.GetLocalizedAttributeValue(Mediator.StringTbl, node, attr, null);
+				label = XmlUtils.GetLocalizedAttributeValue(caller, attr, null) ??
+						XmlUtils.GetLocalizedAttributeValue(node, attr, null);
 			}
 			else
 			{
@@ -3000,9 +2966,9 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				return abbr;
 
 			// Otherwise, see if we can map the label to an abbreviation in the StringTable
-			if (label != null && StringTbl != null)
+			if (label != null)
 			{
-				abbr = StringTbl.GetString(label, "LabelAbbreviations");
+				abbr = StringTable.Table.GetString(label, "LabelAbbreviations");
 				if (abbr == "*" + label + "*")
 					abbr = null;	// couldn't find it in the StringTable, reset it to null.
 			}
@@ -3104,8 +3070,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		}
 
 		// Get or create the real slice at index i.
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "slice is a reference")]
 		public Slice FieldAt(int i)
 		{
 			CheckDisposed();
@@ -3186,27 +3150,25 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		public bool PrepareToGoAway()
 		{
 			CheckDisposed();
-			if (m_mediator != null && m_mediator.PropertyTable != null)
+
+			string sCurrentPartName = null;
+			Guid guidCurrentObj = Guid.Empty;
+			if (m_currentSlice != null)
 			{
-				string sCurrentPartName = null;
-				Guid guidCurrentObj = Guid.Empty;
-				if (m_currentSlice != null)
+				if (m_currentSlice.ConfigurationNode != null &&
+					m_currentSlice.ConfigurationNode.ParentNode != null)
 				{
-					if (m_currentSlice.ConfigurationNode != null &&
-						m_currentSlice.ConfigurationNode.ParentNode != null)
-					{
-						sCurrentPartName = XmlUtils.GetAttributeValue(m_currentSlice.ConfigurationNode.ParentNode,
-							"id", String.Empty);
-					}
-					if (m_currentSlice.Object != null)
-						guidCurrentObj = m_currentSlice.Object.Guid;
+					sCurrentPartName = XmlUtils.GetAttributeValue(m_currentSlice.ConfigurationNode.ParentNode,
+						"id", String.Empty);
 				}
-				SetCurrentSlicePropertyNames();
-				m_mediator.PropertyTable.SetProperty(m_sPartNameProperty, sCurrentPartName, false, PropertyTable.SettingsGroup.LocalSettings);
-				m_mediator.PropertyTable.SetProperty(m_sObjGuidProperty, guidCurrentObj, false, PropertyTable.SettingsGroup.LocalSettings);
-				m_mediator.PropertyTable.SetPropertyPersistence(m_sPartNameProperty, true, PropertyTable.SettingsGroup.LocalSettings);
-				m_mediator.PropertyTable.SetPropertyPersistence(m_sObjGuidProperty, true, PropertyTable.SettingsGroup.LocalSettings);
+				if (m_currentSlice.Object != null)
+					guidCurrentObj = m_currentSlice.Object.Guid;
 			}
+			SetCurrentSlicePropertyNames();
+			m_propertyTable.SetProperty(m_sPartNameProperty, sCurrentPartName, PropertyTable.SettingsGroup.LocalSettings, false);
+			m_propertyTable.SetProperty(m_sObjGuidProperty, guidCurrentObj, PropertyTable.SettingsGroup.LocalSettings, false);
+			m_propertyTable.SetPropertyPersistence(m_sPartNameProperty, true, PropertyTable.SettingsGroup.LocalSettings);
+			m_propertyTable.SetPropertyPersistence(m_sObjGuidProperty, true, PropertyTable.SettingsGroup.LocalSettings);
 			return true;
 		}
 
@@ -3300,10 +3262,10 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			int minHeight = GetMinFieldHeight();
 			int desiredWidth = ClientRectangle.Width;
 
-#if __MonoCS__ // FWNX-370: work around https://bugzilla.novell.com/show_bug.cgi?id=609596
-			if (VerticalScroll.Visible)
+			// FWNX-370: work around https://bugzilla.novell.com/show_bug.cgi?id=609596
+			if (Platform.IsMono && VerticalScroll.Visible)
 				desiredWidth -= SystemInformation.VerticalScrollBarWidth;
-#endif
+
 			Point oldPos = AutoScrollPosition;
 			var desiredScrollPosition = new Point(-oldPos.X, -oldPos.Y);
 
@@ -3463,8 +3425,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		//	@param nInd The indent level we want.
 		//	@param idfe An index to the current field. We start looking at the next field.
 		//	@return The index of the next field or 0 if none.
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="FieldOrDummyAt() returns a reference")]
 		public int NextFieldAtIndent(int nInd, int iStart)
 		{
 			CheckDisposed();
@@ -3489,8 +3449,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		//	@param nInd The indent level we want.
 		//	@param idfe An index to the current field. We start looking at the previous field.
 		//	@return The index of the desired field or 0 if none.
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="FieldOrDummyAt() returns a reference")]
 		public int PrevFieldAtIndent(int nInd, int iStart)
 		{
 			CheckDisposed();
@@ -3686,10 +3644,11 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 		#region IxCoreColleague implementation
 
-		public void Init(Mediator mediator, XmlNode configurationParameters)
+		public void Init(Mediator mediator, PropertyTable propertyTable, XmlNode configurationParameters)
 		{
 			CheckDisposed();
 			m_mediator = mediator;
+			m_propertyTable = propertyTable;
 			m_sliceSplitPositionBase = XmlUtils.GetOptionalIntegerValue(configurationParameters,
 				"defaultLabelWidth", m_sliceSplitPositionBase);
 			// This needs to happen AFTER we set the configuration sliceSplitPositionBase, otherwise,
@@ -3743,15 +3702,15 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		public virtual bool OnDisplayShowHiddenFields(object commandObject, ref UIItemDisplayProperties display)
 		{
 			CheckDisposed();
-			bool fAllow = Mediator.PropertyTable.GetBoolProperty("AllowShowNormalFields", true);
+			bool fAllow = m_propertyTable.GetBoolProperty("AllowShowNormalFields", true);
 			display.Enabled = display.Visible = fAllow;
 
 			if (display.Enabled)
 			{
 				// The boolProperty of this menu item isn't the real one, so we control the checked status
 				// from here.  See the OnPropertyChanged method for how changes are handled.
-				string toolName = m_mediator.PropertyTable.GetStringProperty("currentContentControl", null);
-				display.Checked = m_mediator.PropertyTable.GetBoolProperty("ShowHiddenFields-" + toolName, false, PropertyTable.SettingsGroup.LocalSettings);
+				string toolName = m_propertyTable.GetStringProperty("currentContentControl", null);
+				display.Checked = m_propertyTable.GetBoolProperty("ShowHiddenFields-" + toolName, false, PropertyTable.SettingsGroup.LocalSettings);
 			}
 
 			return true; //we've handled this
@@ -3876,8 +3835,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				return;
 			var hvo = obj.Hvo;
 
-			FwLinkArgs link = new FwAppArgs(FwUtils.FwUtils.ksFlexAppName, Cache.ProjectId.Handle,
-											Cache.ProjectId.ServerName, toolToJumpTo, Guid.Empty);
+			FwLinkArgs link = new FwAppArgs(Cache.ProjectId.Handle, toolToJumpTo, Guid.Empty);
 			List<Property> additionalProps = link.PropertyTableEntries;
 			additionalProps.Add(new Property("SuspendLoadListUntilOnChangeFilter", link.ToolName));
 			additionalProps.Add(new Property("LinkSetupInfo", linkSetupInfo));
@@ -3886,23 +3844,13 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		}
 
 		/// <summary>
-		/// Converts a List of integers into a comma-delimited string of numbers.
-		/// </summary>
-		/// <param name="hvoList"></param>
-		/// <returns></returns>
-		private string ConvertHvoListToString(List<int> hvoList)
-		{
-			return hvoList.ToString(",");
-		}
-
-		/// <summary>
 		/// Common logic shared between OnDisplayJumpToTool and OnJumpToTool.
 		/// forEnableOnly is true when called from OnDisplayJumpToTool.
 		/// </summary>
 		internal Guid GetGuidForJumpToTool(Command cmd, bool forEnableOnly, out string tool)
 		{
-			tool = XmlUtils.GetManditoryAttributeValue(cmd.Parameters[0], "tool");
-			string className = XmlUtils.GetManditoryAttributeValue(cmd.Parameters[0], "className");
+			tool = XmlUtils.GetMandatoryAttributeValue(cmd.Parameters[0], "tool");
+			string className = XmlUtils.GetMandatoryAttributeValue(cmd.Parameters[0], "className");
 			ICmObject targetObject;
 			if (CurrentSlice == null)
 				targetObject = Root;
@@ -4033,17 +3981,17 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				// The only place this occurs is when the status is changed from the "View" menu.
 				// We'll have to translate this to the real property based on the current tool.
 
-				string toolName = m_mediator.PropertyTable.GetStringProperty("currentContentControl", null);
+				string toolName = m_propertyTable.GetStringProperty("currentContentControl", null);
 				name = "ShowHiddenFields-" + toolName;
 
 				// Invert the status of the real property
-				bool oldShowValue = m_mediator.PropertyTable.GetBoolProperty(name, false, PropertyTable.SettingsGroup.LocalSettings);
-				m_mediator.PropertyTable.SetProperty(name, !oldShowValue, true, PropertyTable.SettingsGroup.LocalSettings); // update the pane bar check box.
+				bool oldShowValue = m_propertyTable.GetBoolProperty(name, false, PropertyTable.SettingsGroup.LocalSettings);
+				m_propertyTable.SetProperty(name, !oldShowValue, PropertyTable.SettingsGroup.LocalSettings, true); // update the pane bar check box.
 				HandleShowHiddenFields(!oldShowValue);
 			}
 			else if (name.StartsWith("ShowHiddenFields-"))
 			{
-				bool fShowAllFields = m_mediator.PropertyTable.GetBoolProperty(name, false, PropertyTable.SettingsGroup.LocalSettings);
+				bool fShowAllFields = m_propertyTable.GetBoolProperty(name, false, PropertyTable.SettingsGroup.LocalSettings);
 				HandleShowHiddenFields(fShowAllFields);
 			}
 			else if (name == "currentContentControlObject")
@@ -4160,8 +4108,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// <summary>
 		/// Invoked by a slice when the user does something to bring up a context menu
 		/// </summary>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="See TODO comment.")]
 		public void OnShowContextMenu(object sender, TreeNodeEventArgs e)
 		{
 			CheckDisposed();
@@ -4278,8 +4224,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// <summary>
 		/// Focus the first slice that can take focus.
 		/// </summary>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="FieldOrDummyAt() and FieldAt() return a reference.")]
 		protected bool FocusFirstPossibleSlice()
 		{
 			int cslice = Slices.Count;
@@ -4330,11 +4274,11 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			if (m_cache == null || m_root == null)
 				return display.Enabled = false;
 			var command = (Command)commandObject;
-			string className = XmlUtils.GetManditoryAttributeValue(command.Parameters[0], "className");
+			string className = XmlUtils.GetMandatoryAttributeValue(command.Parameters[0], "className");
 			if (className != m_root.ClassName)
 				return display.Enabled = false;
 			string restrictToTool = XmlUtils.GetOptionalAttributeValue(command.Parameters[0], "restrictToTool");
-			if (restrictToTool != null && restrictToTool != m_mediator.PropertyTable.GetStringProperty("currentContentControl", String.Empty))
+			if (restrictToTool != null && restrictToTool != m_propertyTable.GetStringProperty("currentContentControl", String.Empty))
 				return display.Enabled = false;
 			return display.Enabled = true;
 		}
@@ -4348,17 +4292,17 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			CheckDisposed();
 
 			var command = (Command)argument;
-			string className = XmlUtils.GetManditoryAttributeValue(command.Parameters[0], "className");
+			string className = XmlUtils.GetMandatoryAttributeValue(command.Parameters[0], "className");
 			if (className != m_root.ClassName)
 				return false;
 			string restrictToTool = XmlUtils.GetOptionalAttributeValue(command.Parameters[0], "restrictToTool");
-			if (restrictToTool != null && restrictToTool != m_mediator.PropertyTable.GetStringProperty("currentContentControl", String.Empty))
+			if (restrictToTool != null && restrictToTool != m_propertyTable.GetStringProperty("currentContentControl", String.Empty))
 				return false;
 			string fieldName = XmlUtils.GetOptionalAttributeValue(command.Parameters[0], "fieldName");
 			if (String.IsNullOrEmpty(fieldName))
 				return false;
 			int flid = m_mdc.GetFieldId(className, fieldName, true);
-			int insertPos = Slice.InsertObjectIntoVirtualBackref(m_cache, m_mediator,
+			int insertPos = Slice.InsertObjectIntoVirtualBackref(m_cache, m_mediator, m_propertyTable,
 				m_root.Hvo, m_root.ClassID, flid);
 			return insertPos >= 0;
 		}
@@ -4371,7 +4315,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			CheckDisposed();
 
 			var command = (Command)commandObject;
-			string className = XmlUtils.GetManditoryAttributeValue(command.Parameters[0], "className");
+			string className = XmlUtils.GetMandatoryAttributeValue(command.Parameters[0], "className");
 			bool fIsValid = false;
 			if (className == "RnGenericRec")
 			{
@@ -4437,12 +4381,11 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		{
 
 			var helpTopic = "khtpDataNotebook-ChooseOwnerOfDemotedRecord";
-			XCore.PersistenceProvider persistProvider =
-				new PersistenceProvider(m_mediator.PropertyTable);
-			var labels = ObjectLabel.CreateObjectLabels(m_cache, records.Cast<ICmObject>(),
+			var persistProvider = new PersistenceProvider(m_mediator, m_propertyTable);
+			var labels = ObjectLabel.CreateObjectLabels(m_cache, records,
 					"ShortName", m_cache.WritingSystemFactory.GetStrFromWs(m_cache.DefaultAnalWs));
 			using (var dlg = new ReallySimpleListChooser(persistProvider, labels,
-				String.Empty, m_mediator.HelpTopicProvider))
+				String.Empty, m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider")))
 			{
 				dlg.Text = sTitle;
 				dlg.SetHelpTopic(helpTopic);

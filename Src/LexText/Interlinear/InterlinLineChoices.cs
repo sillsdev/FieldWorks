@@ -1,3 +1,6 @@
+// Copyright (c) 2015-2018 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
 // NOTE: whenever this class is updated to include the tagging line(s), InterlinClipboardHelper
 // (in InterlinDocView.cs) has to be fixed.  It currently hacks up a solution for a single
 // tagging line when it thinks it needs to do so.
@@ -5,16 +8,21 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using SIL.CoreImpl;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
 using SIL.FieldWorks.FdoUi;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.Utils;
+using SIL.LCModel.Utils;
 using System.Drawing;
 using System.Diagnostics;
+using System.Linq;
 using System.Text;
+using SIL.LCModel.Core.Cellar;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.WritingSystems;
 using SIL.FieldWorks.Common.Controls;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Infrastructure;
+using XCore;
 
 namespace SIL.FieldWorks.IText
 {
@@ -31,7 +39,7 @@ namespace SIL.FieldWorks.IText
 		internal int m_wsDefVern; // The default vernacular writing system.
 		internal int m_wsDefAnal; // The default analysis writing system.
 		internal ILangProject m_proj;	// provides more ws info.
-		internal FdoCache m_cache;
+		internal LcmCache m_cache;
 		Dictionary<int, string> m_fieldNames = new Dictionary<int, string>();
 		InterlinMode m_mode = InterlinMode.Analyze;
 
@@ -40,16 +48,16 @@ namespace SIL.FieldWorks.IText
 		{
 		}
 
-		public InterlinLineChoices(FdoCache cache, int defaultVernacularWs, int defaultAnalysisWs)
+		public InterlinLineChoices(LcmCache cache, int defaultVernacularWs, int defaultAnalysisWs)
 			: this(cache, defaultVernacularWs, defaultAnalysisWs, InterlinMode.Analyze)
 		{
 		}
 
-		public InterlinLineChoices(FdoCache cache, int defaultVernacularWs, int defaultAnalysisWs, InterlinMode mode)
+		public InterlinLineChoices(LcmCache cache, int defaultVernacularWs, int defaultAnalysisWs, InterlinMode mode)
 		{
-			this.Mode = mode;
-			InitFieldNames(mode);
 			m_cache = cache;
+			this.Mode = mode;
+			UpdateFieldNamesFromLines(mode);
 			m_wsDefVern = defaultVernacularWs;
 			if (defaultAnalysisWs == WritingSystemServices.kwsAnal)
 				m_wsDefAnal = m_cache.DefaultAnalWs;
@@ -76,7 +84,7 @@ namespace SIL.FieldWorks.IText
 					return;
 				m_mode = value;
 				// recompute labels for flids
-				InitFieldNames(m_mode);
+				UpdateFieldNamesFromLines(m_mode);
 			}
 		}
 
@@ -158,16 +166,8 @@ namespace SIL.FieldWorks.IText
 			return builder.ToString();
 		}
 
-		/// <summary>
-		///
-		/// </summary>
-		/// <param name="data"></param>
-		/// <param name="wsf"></param>
-		/// <param name="proj"></param>
-		/// <param name="defVern">Typically you want to pass in LgWritingSystemTags.kwsVernInParagraph</param>
-		/// <param name="defAnalysis"></param>
-		/// <returns></returns>
-		public static InterlinLineChoices Restore(string data, ILgWritingSystemFactory wsf, ILangProject proj, int defVern, int defAnalysis)
+		/// <remarks>The typical value for defAnalysis is LgWritingSystemTags.kwsVernInParagraph</remarks>
+		public static InterlinLineChoices Restore(string data, ILgWritingSystemFactory wsf, ILangProject proj, int defVern, int defAnalysis, InterlinMode mode = InterlinMode.Analyze, PropertyTable propertyTable = null, string configPropName = "")
 		{
 			Debug.Assert(defVern != 0);
 			Debug.Assert(defAnalysis != 0);
@@ -193,7 +193,18 @@ namespace SIL.FieldWorks.IText
 					throw new Exception("Unrecognized InterlinLineSpec: " + parts[i]);
 				int flid = Int32.Parse(flidAndWs[0]);
 				int ws = wsf.GetWsFromStr(flidAndWs[1]);
-				result.Add(flid, ws);
+				// Some virtual Ids such as -61 and 103 create standard items. so, we need to add those items always
+				if (flid <= ComplexConcPatternVc.kfragFeatureLine || ((IFwMetaDataCacheManaged)proj.Cache.MetaDataCacheAccessor).FieldExists(flid))
+					result.Add(flid, ws);
+				else
+				{
+					if (propertyTable != null && !string.IsNullOrEmpty(configPropName))
+					{
+						data = data.Replace("," + flid + "%", "");
+						propertyTable.SetProperty(configPropName, data, false);
+						propertyTable.SetPropertyPersistence(configPropName, true);
+					}
+				}
 			}
 			return result;
 		}
@@ -342,26 +353,26 @@ namespace SIL.FieldWorks.IText
 		public const int kflidLitTrans = InterlinVc.ktagSegmentLit;
 		public const int kflidNote = InterlinVc.ktagSegmentNote;
 
-		private void InitFieldNames(InterlinMode mode)
+		private LineOption[] UpdateFieldNamesFromLines(InterlinMode mode)
 		{
 			LineOption[] options = LineOptions(mode);
 			m_fieldNames.Clear();
 			foreach (LineOption opt in options)
 				m_fieldNames[opt.Flid] = opt.ToString();
+			return options;
 		}
 
 		/// <summary>
-		/// Get the standard list of lines.
-		/// Note: could be static, but maybe better not in case we add custom fields or something?
-		/// Besides it is only guaranteed to exist once an instance exists.
+		/// Get the standard list of lines. Also updates the member variable storing the line names.
 		/// </summary>
 		internal LineOption[] LineOptions()
 		{
-			return LineOptions(m_mode);
+			return UpdateFieldNamesFromLines(m_mode);
 		}
 
 		private LineOption[] LineOptions(InterlinMode mode)
 		{
+			var customLineOptions = GetCustomLineOptions(mode);
 			return new LineOption[] {
 				 new LineOption(kflidWord, ITextStrings.ksWord),
 				 new LineOption(kflidMorphemes, ITextStrings.ksMorphemes),
@@ -375,7 +386,31 @@ namespace SIL.FieldWorks.IText
 				 new LineOption(kflidFreeTrans, ITextStrings.ksFreeTranslation),
 				 new LineOption(kflidLitTrans, ITextStrings.ksLiteralTranslation),
 				 new LineOption(kflidNote, ITextStrings.ksNote)
-			};
+			}.Union(customLineOptions).ToArray();
+		}
+
+		private List<LineOption> GetCustomLineOptions(InterlinMode mode)
+		{
+			var customLineOptions = new List<LineOption>();
+			switch (mode)
+			{
+				case InterlinMode.Analyze:
+				case InterlinMode.Gloss:
+					if (m_cache != null)
+					{
+						var classId = m_cache.MetaDataCacheAccessor.GetClassId("Segment");
+						var mdc = (IFwMetaDataCacheManaged)m_cache.MetaDataCacheAccessor;
+						foreach (int flid in mdc.GetFields(classId, false, (int)CellarPropertyTypeFilter.All))
+						{
+							if (!mdc.IsCustom(flid))
+								continue;
+							customLineOptions.Add(new LineOption(flid, mdc.GetFieldLabel(flid)));
+						}
+					}
+					break;
+			}
+
+			return customLineOptions;
 		}
 
 		/// <summary>
@@ -549,10 +584,8 @@ namespace SIL.FieldWorks.IText
 		}
 
 		/// <summary>
-		/// Answer an array list of integers, the writing systems we care about for the view.
+		/// A list of integers representing the writing systems we care about for the view.
 		/// </summary>
-		/// <param name="flid"></param>
-		/// <returns></returns>
 		public List<int> WritingSystems
 		{
 			get
@@ -573,7 +606,7 @@ namespace SIL.FieldWorks.IText
 		/// </summary>
 		/// <param name="index"></param>
 		/// <returns></returns>
-		public int[] AdjacentWssAtIndex(int index)
+		public int[] AdjacentWssAtIndex(int index, int hvo)
 		{
 			int first = index;
 			int lim = index + 1;
@@ -581,7 +614,14 @@ namespace SIL.FieldWorks.IText
 				lim++;
 			int[] result = new int[lim - first];
 			for (int i = first; i < lim; i++)
-				result[i - first] = this[i].WritingSystem;
+			{
+				var wsId = this[i].WritingSystem;
+				if (wsId < 0) // if this is a magic writing system
+				{
+					wsId = WritingSystemServices.ActualWs(m_cache, wsId, hvo, this[i].Flid);
+				}
+				result[i - first] = wsId;
+			}
 			return result;
 		}
 		/// <summary>
@@ -717,7 +757,18 @@ namespace SIL.FieldWorks.IText
 					fWordLevel = false;
 					break;
 				default:
-					throw new Exception("Adding unknown field to interlinear");
+					var mdc = (IFwMetaDataCacheManaged) m_cache.MetaDataCacheAccessor;
+					if (mdc.FieldExists(flid))
+					{
+						if (!mdc.IsCustom(flid))
+						{
+							throw new Exception("Adding unknown field to interlinear");
+						}
+						ws = mdc.GetFieldWs(flid);
+					}
+					fWordLevel = false;
+					comboContent = ColumnConfigureDialog.WsComboContent.kwccAnalAndVern;
+					break;
 			}
 			InterlinLineSpec spec = new InterlinLineSpec();
 			spec.ComboContent = comboContent;
@@ -787,14 +838,14 @@ namespace SIL.FieldWorks.IText
 		/// <returns></returns>
 		private bool MatchingWritingSystem(int wsConfig, int ws, bool fExact)
 		{
-			FdoCache cache = m_cache;
+			LcmCache cache = m_cache;
 			if (wsConfig == ws)
 				return true;
 			if (fExact)
 				return false;
 			if (m_proj == null)
 				return false;
-			IWritingSystem wsObj = m_cache.ServiceLocator.WritingSystemManager.Get(ws);
+			CoreWritingSystemDefinition wsObj = m_cache.ServiceLocator.WritingSystemManager.Get(ws);
 			switch (wsConfig)
 			{
 				case WritingSystemServices.kwsAnal:
@@ -1220,26 +1271,24 @@ namespace SIL.FieldWorks.IText
 		}
 
 		/// <summary>
-		/// Get the actual ws of the WritingSystem based on the given hvo.
-		/// If the WritingSystem is not magic, it'll just return WritingSystem.
+		/// Get the actual ws of the WritingSystem based on the given hvo, if it refers to a non-empty alternative;
+		/// otherwise, get the actual ws for wsFallback
 		/// </summary>
-		/// <param name="cache"></param>
-		/// <param name="hvo"></param>
-		/// <param name="wsPreferred">the ws to prefer over the standard sequence in current writing systems list. also used as a default
-		/// if no alternative ws can be found.</param>
-		/// <returns></returns>
-		public int GetActualWs(FdoCache cache, int hvo, int wsPreferred)
+		public int GetActualWs(LcmCache cache, int hvo, int wsFallback)
 		{
-			int wsActual = 0;
-			if (this.StringFlid == -1)
+			if (StringFlid == -1)
 			{
 				// we depend upon someone else to determine the ws.
 				return 0;
 			}
-			ITsString tssActual;
-			if (WritingSystemServices.TryWs(cache, WritingSystem, wsPreferred, hvo, StringFlid, out wsActual, out tssActual))
-				return wsActual;
-			return wsPreferred;
+			int wsActual;
+			ITsString dummy;
+			// While displaying the morph bundle, we need the ws used by the Form. If we can't get the Form from the MoForm, we
+			// substitute with the Form stored in the WfiMorphBundle. But our system incorrectly assumes that this object
+			// is a MoForm, so we specify that if our object is a WfiMorphBundle, use the relevant flid.
+			int flid = cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvo) is IWfiMorphBundle ? WfiMorphBundleTags.kflidForm : StringFlid;
+			WritingSystemServices.TryWs(cache, WritingSystem, wsFallback, hvo, flid, out wsActual, out dummy);
+			return wsActual;
 		}
 
 		public bool LexEntryLevel
@@ -1275,14 +1324,18 @@ namespace SIL.FieldWorks.IText
 			return MemberwiseClone();
 		}
 
-		public ITsString WsLabel(FdoCache cache)
+		public ITsString WsLabel(LcmCache cache)
 		{
 			if (m_tssWsLabel == null)
 			{
 				string label;
-				if (m_ws == WritingSystemServices.kwsFirstAnal)
+				if (m_ws == WritingSystemServices.kwsFirstAnal || m_ws == WritingSystemServices.kwsAnal)
 				{
 					label = ITextStrings.ksBstAn;
+				}
+				else if (m_ws == WritingSystemServices.kwsFirstVern || m_ws == WritingSystemServices.kwsVern)
+				{
+					label = ITextStrings.ksBstVn;
 				}
 				else if (m_ws == WritingSystemServices.kwsVernInParagraph)
 				{
@@ -1290,10 +1343,10 @@ namespace SIL.FieldWorks.IText
 				}
 				else
 				{
-					IWritingSystem wsAnalysis = cache.ServiceLocator.WritingSystemManager.Get(m_ws);
+					CoreWritingSystemDefinition wsAnalysis = cache.ServiceLocator.WritingSystemManager.Get(m_ws);
 					label = wsAnalysis.Abbreviation;
 				}
-				ITsStrBldr tsb = TsStrBldrClass.Create();
+				ITsStrBldr tsb = TsStringUtils.MakeStrBldr();
 				tsb.Replace(0, tsb.Length, label, WsListManager.LanguageCodeTextProps(cache.DefaultUserWs));
 				m_tssWsLabel = tsb.GetString();
 			}

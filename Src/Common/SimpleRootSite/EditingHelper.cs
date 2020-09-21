@@ -1,4 +1,4 @@
-// Copyright (c) 2002-2013 SIL International
+// Copyright (c) 2002-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -10,14 +10,17 @@ using System.Globalization;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
-using Palaso.UI.WindowsForms.Keyboarding;
-using Palaso.WritingSystems;
-using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.LCModel.Core.Cellar;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites.Properties;
-using SIL.Utils;
-using System.Diagnostics.CodeAnalysis;
-using Palaso.PlatformUtilities;
+using SIL.Keyboarding;
+using SIL.PlatformUtilities;
+using SIL.Reporting;
+using SIL.LCModel.Utils;
 
 namespace SIL.FieldWorks.Common.RootSites
 {
@@ -205,7 +208,7 @@ namespace SIL.FieldWorks.Common.RootSites
 	/// root box that has focus.
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
-	public class EditingHelper : IFWDisposable, ISelectionChangeNotifier
+	public class EditingHelper : IDisposable, ISelectionChangeNotifier
 	{
 		#region Events
 		/// <summary>
@@ -240,6 +243,7 @@ namespace SIL.FieldWorks.Common.RootSites
 
 		private bool m_fSuppressNextWritingSystemHvoChanged;
 		private bool m_fSuppressNextBestStyleNameChanged;
+		private long m_TimestampOfLastGotFocus;
 
 		/// <summary>Flag to prevent reentrancy while setting keyboard.</summary>
 		private bool m_fSettingKeyboards;
@@ -256,18 +260,6 @@ namespace SIL.FieldWorks.Common.RootSites
 			PreserveWs,
 			/// <summary>Cancel paste operation.</summary>
 			CancelPaste
-		}
-		/// <summary>The action that initiated creation of the <see cref="WordEventArgs"/></summary>
-		private enum WordEventSource
-		{
-			/// <summary>View loses focus</summary>
-			LoseFocus,
-			/// <summary>User clicked with the mouse</summary>
-			MouseClick,
-			/// <summary>User pressed any button</summary>
-			KeyDown,
-			/// <summary>User entered a character</summary>
-			Character,
 		}
 		/// <summary>Behavior of certain keys like arrow key, home, end...</summary>
 		/// <see cref="SimpleRootSite.ComplexKeyBehavior"/>
@@ -307,7 +299,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <summary>
 		/// True, if the object has been disposed.
 		/// </summary>
-		private bool m_isDisposed = false;
+		private bool m_isDisposed;
 
 		/// <summary>
 		/// See if the object has been disposed.
@@ -368,7 +360,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// </remarks>
 		protected virtual void Dispose(bool disposing)
 		{
-			Debug.WriteLineIf(!disposing, "****************** Missing Dispose() call for " + GetType().Name + "******************");
+			Debug.WriteLineIf(!disposing, "****************** Missing Dispose() call for " + GetType().Name + " ******************");
 			// Must not be run more than once.
 			if (m_isDisposed)
 				return;
@@ -769,62 +761,6 @@ namespace SIL.FieldWorks.Common.RootSites
 
 		/// -----------------------------------------------------------------------------------
 		/// <summary>
-		/// Returns <c>true</c> if the action ends a word
-		/// </summary>
-		/// <remarks>The default implementation ends a word when losing the focus,
-		/// when the user clicks with the mouse, when the user presses one of the cursor,
-		/// page-up/down, home, end, backspace, del keys, or when he entered a non-wordforming
-		/// character</remarks>
-		/// <param name="args">Information about what action happened and what key
-		/// was pressed</param>
-		/// <returns><c>true</c> if the action ended a word, otherwise <c>false</c></returns>
-		/// -----------------------------------------------------------------------------------
-		private bool IsWordBreak(WordEventArgs args)
-		{
-			switch (args.Source)
-			{
-			case WordEventSource.LoseFocus:
-			case WordEventSource.MouseClick:
-				return true;
-			case WordEventSource.KeyDown:
-			{
-				switch (args.Key)
-				{
-				case Keys.Left:
-				case Keys.Up:
-				case Keys.Right:
-				case Keys.Down:
-				case Keys.PageDown:
-				case Keys.PageUp:
-				case Keys.End:
-				case Keys.Home:
-				case Keys.Delete:
-				case Keys.Back:
-					return true;
-				default:
-					return false;
-				}
-			}
-			case WordEventSource.Character:
-			{
-				ILgCharacterPropertyEngine charProps = null;
-				try
-				{
-					charProps = LgIcuCharPropEngineClass.Create();
-					return !charProps.get_IsWordForming(args.Char);
-				}
-				finally
-				{
-					if (charProps != null && Marshal.IsComObject(charProps))
-						Marshal.ReleaseComObject(charProps);
-				}
-			}
-			}
-			return false;
-		}
-
-		/// -----------------------------------------------------------------------------------
-		/// <summary>
 		/// Handle a key press.
 		/// Caller should ensure this is wrapped in a UOW (typically done in an override of
 		/// OnKeyPress in RootSiteEditingHelper, since SimpleRootSite does not have access
@@ -838,13 +774,6 @@ namespace SIL.FieldWorks.Common.RootSites
 			CheckDisposed();
 			// REVIEW (EberhardB): .NETs Unicode character type is 16bit, whereas AppCore used
 			// 32bit (int), so how do we handle this?
-
-			//	TODO 1735(JohnT): handle surrogates! Currently we ignore them.
-			if (char.GetUnicodeCategory(keyChar) == UnicodeCategory.Surrogate)
-			{
-				MessageBox.Show("DEBUG: Got a surrogate!");
-				return;
-			}
 
 			if (Callbacks != null && Callbacks.EditedRootBox != null)
 			{
@@ -904,17 +833,31 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// -----------------------------------------------------------------------------------
 		protected void CollectTypedInput(char chsFirst, StringBuilder buffer)
 		{
+			bool needToVerifySurrogates = char.IsSurrogate(chsFirst);
 			// The first character goes into the buffer
 			buffer.Append(chsFirst);
-#if !__MonoCS__
+
+			if (Platform.IsMono)
+				return;
+
 			// Note: When/if porting to MONO, the following block of code can be removed
 			// and still work.
 			if (chsFirst < ' ' || chsFirst == (char)VwSpecialChars.kscDelForward)
 				return;
 
+			if (Control == null)
+				return;
+
 			// We need to disable type-ahead when using a Keyman keyboard since it can
 			// mess with the keyboard functionality. (FWR-2205)
-			if (Control == null || KeyboardHelper.ActiveKeymanKeyboard != string.Empty)
+			bool activeKbIsKeyMan = false;
+			if (Keyboard.Controller != null && Keyboard.Controller.ActiveKeyboard != null)
+			{
+				activeKbIsKeyMan =
+					Keyboard.Controller.ActiveKeyboard.Format == KeyboardFormat.Keyman ||
+					Keyboard.Controller.ActiveKeyboard.Format == KeyboardFormat.CompiledKeyman;
+			}
+			if (activeKbIsKeyMan)
 				return;
 
 			// Collect any characters that are currently in the message queue
@@ -982,6 +925,7 @@ namespace SIL.FieldWorks.Common.RootSites
 							buffer.Append(nextChar);
 							return; // only one del currently allowed.
 						default:
+							needToVerifySurrogates = needToVerifySurrogates || char.IsSurrogate(nextChar);
 							// regular characters get added to the buffer
 							buffer.Append(nextChar);
 							break;
@@ -990,10 +934,29 @@ namespace SIL.FieldWorks.Common.RootSites
 				else
 					break;
 			}
-#endif
-			// Shows that the buffering is working
-			//			if (buffer.Length > 1)
-			//				Debug.WriteLine("typeahead : >" + buffer + "< len = " + buffer.Length);
+
+			// If there were surrogate characters in the typed input verify that they are all matched pairs
+			// and clear out the buffer if they are not.
+			if (needToVerifySurrogates)
+			{
+				for (var i = 0; i < buffer.Length; ++i)
+				{
+					// if we see a trailing surrogate first, or if we see a leading surrogate with no trailing surrogate
+					// then alert and clear the buffer.
+					if (char.IsLowSurrogate(buffer[i]) ||
+						char.IsHighSurrogate(buffer[i]) && (i == buffer.Length || !char.IsLowSurrogate(buffer[i + 1])))
+					{
+						MessageBox.Show("Unmatched surrogate found in key presses.");
+						buffer.Clear();
+						break;
+					}
+					if (char.IsHighSurrogate(buffer[i]))
+					{
+						// If we get here we had a valid pair so skip the second half
+						++i;
+					}
+				}
+			}
 		}
 
 		/// <summary>
@@ -1144,9 +1107,8 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// -----------------------------------------------------------------------------------
 		protected virtual bool CallOnExtendedKey(int chw, VwShiftStatus ss)
 		{
-#if __MonoCS__
-			chw &= 0xffff; // OnExtenedKey only expectes chw to contain the key info not the modifer info
-#endif
+			if (Platform.IsMono)
+				chw &= 0xffff; // OnExtendedKey only expects chw to contain the key info not the modifer info
 
 			if (Callbacks == null || Callbacks.EditedRootBox == null)
 			{
@@ -1154,7 +1116,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			}
 			Callbacks.WsPending = -1; // using these keys suppresses prior input lang change.
 			// sets the arrow direction to physical or logical based on LTR or RTL
-			EditingHelper.CkBehavior nFlags = Callbacks.ComplexKeyBehavior(chw, ss);
+			CkBehavior nFlags = Callbacks.ComplexKeyBehavior(chw, ss);
 
 			int retVal = Callbacks.EditedRootBox.OnExtendedKey(chw, ss, (int)nFlags);
 			Marshal.ThrowExceptionForHR(retVal); // Don't ignore error HRESULTs
@@ -1552,7 +1514,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <param name="wsf"></param>
 		/// <returns></returns>
 		/// ------------------------------------------------------------------------------------
-		static public System.Drawing.Font GetFontForNormalStyle(int hvoWs, IVwStylesheet styleSheet,
+		public static Font GetFontForNormalStyle(int hvoWs, IVwStylesheet styleSheet,
 			ILgWritingSystemFactory wsf)
 		{
 			ITsTextProps ttpNormal = styleSheet.NormalFontStyle;
@@ -1560,7 +1522,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			if (ttpNormal != null)
 				styleName = ttpNormal.GetStrPropValue((int)FwTextPropType.ktptNamedStyle);
 
-			ITsPropsBldr ttpBldr = TsPropsBldrClass.Create();
+			ITsPropsBldr ttpBldr = TsStringUtils.MakePropsBldr();
 			ttpBldr.SetStrPropValue((int)FwTextPropType.ktptNamedStyle, styleName);
 			ttpBldr.SetIntPropValues((int)FwTextPropType.ktptWs, 0, hvoWs);
 			ITsTextProps ttp = ttpBldr.GetTextProps();
@@ -1580,7 +1542,7 @@ namespace SIL.FieldWorks.Common.RootSites
 					break; // null termination
 				bldr.Append(Convert.ToChar(ch));
 			}
-			return new System.Drawing.Font(bldr.ToString(), (float)(dympHeight / 1000.0));
+			return new Font(bldr.ToString(), (float)(dympHeight / 1000.0));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1651,8 +1613,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		public virtual int GetStyleNameFromSelection(out string styleName)
 		{
 			CheckDisposed();
-			styleName = null;
-
 			try
 			{
 				IVwSelection vwsel = null;
@@ -1666,7 +1626,7 @@ namespace SIL.FieldWorks.Common.RootSites
 
 				styleName = GetCharStyleNameFromSelection(vwsel);
 
-				if (styleName != null && styleName != string.Empty)
+				if (!string.IsNullOrEmpty(styleName))
 					return (int)StyleType.kstCharacter;
 
 				styleName = GetParaStyleNameFromSelection();
@@ -1914,7 +1874,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <param name="vttpHard">[out] Vector of text props for hard formatting</param>
 		/// <param name="vvpsSoft">[out] Vector of prop stores for soft formatting</param>
 		/// <param name="fRet">[out] <c>false</c> if there is neither a selection nor a
-		/// paragraph property; otherwise false.</param>
+		/// paragraph property; otherwise true.</param>
 		/// <returns><c>false</c> if method exited because <paramref name='fRet'/> is
 		/// <c>false</c> or there are no TsTextProps in the paragraph, otherwise <c>true</c>
 		/// </returns>
@@ -1924,10 +1884,8 @@ namespace SIL.FieldWorks.Common.RootSites
 			out IVwPropertyStore[] vvps, out int ihvoFirst, out int ihvoLast,
 			out ITsTextProps[] vttpHard, out IVwPropertyStore[] vvpsSoft, out bool fRet)
 		{
-			vwsel = null;
-			hvoText = tagText = ihvoFirst = ihvoLast = 0;
-			vttp = vttpHard = null;
-			vvps = vvpsSoft = null;
+			vttpHard = null;
+			vvpsSoft = null;
 			fRet = true;
 
 			// Get the paragraph properties from the selection. If there is neither a selection
@@ -1941,10 +1899,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			// If there are no TsTextProps for the paragraph(s), return true. There is nothing
 			// to format.
 			if (0 == vttp.Length)
-			{
-				fRet = true;
 				return false;
-			}
 
 			int cttp = vttp.Length;
 			using (ArrayPtr ptrHard = MarshalEx.ArrayToNative<ITsTextProps>(cttp))
@@ -2277,7 +2232,7 @@ namespace SIL.FieldWorks.Common.RootSites
 				return fRet;
 
 			// Make a new TsTextProps object, and set its NamedStyle.
-			ITsPropsBldr tpb = TsPropsBldrClass.Create();
+			ITsPropsBldr tpb = TsStringUtils.MakePropsBldr();
 			tpb.SetStrPropValue((int)FwTextPropType.ktptNamedStyle, strNewVal);
 			ITsTextProps newProps = tpb.GetTextProps();
 
@@ -2602,7 +2557,7 @@ namespace SIL.FieldWorks.Common.RootSites
 				string strStyle;
 				strStyle = ttpHard.GetStrPropValue((int)FwTextPropType.ktptNamedStyle);
 				ITsPropsBldr tpbStyle;
-				tpbStyle = TsPropsBldrClass.Create();
+				tpbStyle = TsStringUtils.MakePropsBldr();
 				tpbStyle.SetStrPropValue((int)FwTextPropType.ktptNamedStyle, strStyle);
 				ITsTextProps ttpStyle;
 				ttpStyle = tpbStyle.GetTextProps();
@@ -2610,7 +2565,7 @@ namespace SIL.FieldWorks.Common.RootSites
 				vpsSoftPlusStyle = vpsSoft.get_DerivedPropertiesForTtp(ttpStyle);
 
 				ITsPropsBldr tpbEnc;
-				tpbEnc = TsPropsBldrClass.Create();
+				tpbEnc = TsStringUtils.MakePropsBldr();
 
 				ITsString tss;
 				tss = sda.get_StringProp(hvoPara, ParagraphContentsTag);
@@ -2748,7 +2703,7 @@ namespace SIL.FieldWorks.Common.RootSites
 				default:
 					// Ignore.
 					continue;
-				};
+				}
 
 				if (nValHard == nValSoft && nVarHard == nVarSoft)
 				{
@@ -2859,8 +2814,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <param name="rootbox"></param>
 		/// <param name="selection"></param>
 		/// ------------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "SimpleRootSite.Mediator returns a reference")]
 		private void SetWritingSystemPropertyFromSelection(IVwRootBox rootbox,
 			IVwSelection selection)
 		{
@@ -2868,26 +2821,23 @@ namespace SIL.FieldWorks.Common.RootSites
 			// If we need this in print layout, consider adding the mediator to the Callbacks
 			// interface.
 			SimpleRootSite rs = rootbox.Site as SimpleRootSite;
-			if(rs != null && rs.Mediator != null && selection != null)
+			if(rs != null && rs.Mediator != null && rs.PropTable != null && selection != null)
 			{
 				// int ws = SelectionHelper.GetFirstWsOfSelection(rootbox.Selection);
 				// Review: Or should it be this? But it returns 0 if there are multiple ws's...
 				// which may be good if the combo can handle it; i.e. there is no *one* ws so
 				// we shouldn't show one in the combo
 				int ws = SelectionHelper.GetWsOfEntireSelection(rootbox.Selection);
-				string s = (string)rs.Mediator.PropertyTable.GetValue("WritingSystemHvo", "-1");
+				string s = rs.PropTable.GetValue("WritingSystemHvo", "-1");
 				int oldWritingSystemHvo = int.Parse(s);
 				if (oldWritingSystemHvo != ws)
 				{
-					rs.Mediator.PropertyTable.SetProperty("WritingSystemHvo", ws.ToString());
-					rs.Mediator.PropertyTable.SetPropertyPersistence("WritingSystemHvo", false);
+					rs.PropTable.SetProperty("WritingSystemHvo", ws.ToString(), true);
+					rs.PropTable.SetPropertyPersistence("WritingSystemHvo", false);
 					m_fSuppressNextWritingSystemHvoChanged = true;
 				}
 			}
 		}
-
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "SimpleRootSite.Mediator returns a reference")]
 		internal void WritingSystemHvoChanged()
 		{
 			if (m_fSuppressNextWritingSystemHvoChanged)
@@ -2906,9 +2856,9 @@ namespace SIL.FieldWorks.Common.RootSites
 			// modify the data.
 			if (rs != null && !rs.WasFocused())
 				return; //e.g, the dictionary preview pane isn't focussed and shouldn't respond.
-			if (rs.RootBox == null || rs.RootBox.Selection == null)
+			if (rs == null || rs.RootBox == null || rs.RootBox.Selection == null)
 				return;
-			string s = (string)rs.Mediator.PropertyTable.GetValue("WritingSystemHvo", "-1");
+			string s = rs.PropTable == null ? "-1" : rs.PropTable.GetValue("WritingSystemHvo", "-1");
 			rs.Focus();
 			int writingSystemHvo = int.Parse(s);
 			// will get zero when the selection contains multiple ws's and the ws is
@@ -2924,11 +2874,10 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <summary>
 		/// Set the keyboard to match the writing system.
 		/// </summary>
-		/// <param name="palasoWs">writing system object</param>
 		/// -----------------------------------------------------------------------------------
-		protected void SetKeyboardForWs(IWritingSystemDefinition palasoWs)
+		protected void SetKeyboardForWs(CoreWritingSystemDefinition ws)
 		{
-			if (Callbacks == null || palasoWs == null)
+			if (Callbacks == null || ws == null)
 			{
 				ActivateDefaultKeyboard();
 				return;
@@ -2940,8 +2889,8 @@ namespace SIL.FieldWorks.Common.RootSites
 			try
 			{
 				m_fSettingKeyboards = true;
-				if (palasoWs.LocalKeyboard != null)
-					palasoWs.LocalKeyboard.Activate();
+				if (ws.LocalKeyboard != null)
+					ws.LocalKeyboard.Activate();
 			}
 			catch
 			{
@@ -2969,7 +2918,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			if (Callbacks == null || !Callbacks.GotCacheOrWs || WritingSystemFactory == null)
 				return; // Can't do anything useful, so let's not do anything at all.
 
-			var ws = ((IWritingSystemManager)WritingSystemFactory).Get(newWs) as IWritingSystemDefinition;
+			CoreWritingSystemDefinition ws = ((WritingSystemManager) WritingSystemFactory).Get(newWs);
 			SetKeyboardForWs(ws);
 		}
 
@@ -2990,11 +2939,11 @@ namespace SIL.FieldWorks.Common.RootSites
 				return;
 
 			//JohnT: was, LgWritingSystemFactoryClass.Create();
-			IWritingSystemDefinition ws = null;
+			CoreWritingSystemDefinition ws = null;
 
-			var writingSystemManager = WritingSystemFactory as IWritingSystemManager;
+			var writingSystemManager = WritingSystemFactory as WritingSystemManager;
 			if (writingSystemManager != null) // this sometimes happened in our tests when the window got/lost focus
-				ws = writingSystemManager.Get(nWs) as IWritingSystemDefinition;
+				ws = writingSystemManager.Get(nWs);
 
 			SetKeyboardForWs(ws);
 
@@ -3008,8 +2957,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// Activates the default keyboard.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "Keyboard controller needs to be initialized/disposed elsewhere")]
 		private void ActivateDefaultKeyboard()
 		{
 			Keyboard.Controller.ActivateDefaultKeyboard();
@@ -3023,9 +2970,6 @@ namespace SIL.FieldWorks.Common.RootSites
 			get { return m_fSuppressNextBestStyleNameChanged; }
 			set { m_fSuppressNextBestStyleNameChanged = value; }
 		}
-
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "SimpleRootSite.Mediator returns a reference")]
 		internal void BestStyleNameChanged()
 		{
 			if (m_fSuppressNextBestStyleNameChanged)
@@ -3046,7 +2990,7 @@ namespace SIL.FieldWorks.Common.RootSites
 				return; //e.g, the dictionary preview pane isn't focussed and shouldn't respond.
 			if (rs == null || rs.RootBox == null || rs.RootBox.Selection == null)
 				return;
-			string styleName = rs.Mediator.PropertyTable.GetStringProperty("BestStyleName", null);
+			string styleName = rs.PropTable == null ? null : rs.PropTable.GetStringProperty("BestStyleName", null);
 			if (styleName == null)
 				return;
 			rs.Focus();
@@ -3086,12 +3030,32 @@ namespace SIL.FieldWorks.Common.RootSites
 				ActivateDefaultKeyboard();
 		}
 
-		private static bool ShouldRestoreKeyboardSwitchingTo(Control newFocusedControl, bool fIsChildWindow)
+		private bool ShouldRestoreKeyboardSwitchingTo(Control newFocusedControl, bool fIsChildWindow)
 		{
 			// On Linux we want to restore the default keyboard if we're switching to another
 			// application. On Windows the OS will take care of switching the keyboard.
-			if (Platform.IsUnix && newFocusedControl == null)
-				return true;
+			if (Platform.IsUnix)
+			{
+				var timeStamp = m_TimestampOfLastGotFocus;
+				m_TimestampOfLastGotFocus = 0;
+
+				if (newFocusedControl == null)
+				{
+					var nowTicks = DateTime.Now.Ticks;
+
+					// Console.WriteLine($"Timestamp={timeStamp}, DateTime.Now.Ticks={nowTicks}, diff={nowTicks - timeStamp}");
+
+					// If we get a LostFocus event within 0.5s after getting focus we assume this
+					// is caused by switching the keyboard. The downside is that if the user
+					// clicks in a field (which causes a keyboard switch) and then clicks on
+					// another app within 0.5s we miss switching the keyboard back to the default.
+					// But we assume that this will rarely happen. This hack fixes LT-19289.
+					if (timeStamp + 5000000 < nowTicks) // 0.5s
+						return true;
+
+					return false;
+				}
+			}
 
 			if (newFocusedControl is IRootSite)
 				return false;
@@ -3105,6 +3069,13 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// </summary>
 		internal void GotFocus()
 		{
+			// Console.WriteLine(string.Format("EditingHelper.GotFocus: {0} ({1}), Name={2}",
+			// 	m_control, m_control.Handle, m_control.Name));
+
+			if (Platform.IsGnomeShell)
+			{
+				m_TimestampOfLastGotFocus = DateTime.Now.Ticks;
+			}
 		}
 		#endregion
 
@@ -3491,7 +3462,7 @@ namespace SIL.FieldWorks.Common.RootSites
 					// Avoid possible crashes if we know we can't paste.  (See LT-11150 and LT-11219.)
 					if (vwsel == null || !vwsel.IsValid || tss == null)
 					{
-						MiscUtils.ErrorBeep();
+						FwUtils.FwUtils.ErrorBeep();
 						return false;
 					}
 					// ENHANCE (FWR-1732):
@@ -3507,7 +3478,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			{
 				if (e is COMException && (uint)((COMException)e).ErrorCode == 0x80004005) // E_FAIL
 				{
-					MiscUtils.ErrorBeep();
+					FwUtils.FwUtils.ErrorBeep();
 					return false;
 				}
 				Logger.WriteError(e); // TE-6908/LT-6781
@@ -3538,16 +3509,14 @@ namespace SIL.FieldWorks.Common.RootSites
 			if (!fCanFormat && tss != null)
 			{
 				// remove formatting from the TsString
-				ITsStrFactory tsf = TsStrFactoryClass.Create();
 				string str = tss.Text;
-				tss = tsf.MakeStringWithPropsRgch(str, str.Length, ttpSel);
+				tss = TsStringUtils.MakeString(str, ttpSel);
 			}
 
 			if (tss == null)
 			{	// all else didn't work, so try with an ordinary string
 				string str = ClipboardUtils.GetText();
-				ITsStrFactory tsf = TsStrFactoryClass.Create();
-				tss = tsf.MakeStringWithPropsRgch(str, str.Length, ttpSel);
+				tss = TsStringUtils.MakeString(str, ttpSel);
 			}
 
 			return tss;
@@ -3626,8 +3595,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// </summary>
 		/// <returns>Returns <c>true</c> if copying is possible.</returns>
 		/// -----------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "ArrayPtr.Null is a reference")]
 		public virtual bool CanCopy()
 		{
 			CheckDisposed();
@@ -3789,70 +3756,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		{
 			destWs = -1;
 			return PasteStatus.PreserveWs;
-		}
-		#endregion
-
-		#region WordEventArgs struct
-		/// ----------------------------------------------------------------------------------------
-		/// <summary>
-		/// Holds the arguments for the IsWordBreak method.
-		/// </summary>
-		/// ----------------------------------------------------------------------------------------
-		private struct WordEventArgs
-		{
-			/// <summary>The source that kicked off the method</summary>
-			public EditingHelper.WordEventSource Source;
-			/// <summary>Character that user typed</summary>
-			/// <remarks>Only valid if <see cref="Source"/> is
-			/// <see cref="EditingHelper.WordEventSource.Character"/></remarks>
-			public char Char;
-			/// <summary>Key that user pressed</summary>
-			/// <remarks>Only valid if <see cref="Source"/> is
-			/// <see cref="EditingHelper.WordEventSource.KeyDown"/></remarks>
-			public Keys Key;
-
-			/// <summary>
-			/// Initializes the struct for a <see cref="EditingHelper.WordEventSource.LoseFocus"/>
-			/// or <see cref="EditingHelper.WordEventSource.MouseClick"/>
-			/// </summary>
-			/// <param name="source">The source that kicked off the method</param>
-			public WordEventArgs(EditingHelper.WordEventSource source)
-				: this(source, char.MinValue, Keys.None)
-			{
-			}
-
-			/// <summary>
-			/// Initializes the struct for a <see cref="EditingHelper.WordEventSource.Character"/>
-			/// </summary>
-			/// <param name="source">The source that kicked off the method</param>
-			/// <param name="c">The character that the user entered</param>
-			public WordEventArgs(EditingHelper.WordEventSource source, char c)
-				: this(source, c, Keys.None)
-			{
-			}
-
-			/// <summary>
-			/// Initializes the struct for a <see cref="EditingHelper.WordEventSource.KeyDown"/>
-			/// </summary>
-			/// <param name="source">The source that kicked off the method</param>
-			/// <param name="key">The key that the user pressed</param>
-			public WordEventArgs(EditingHelper.WordEventSource source, Keys key)
-				: this(source, char.MinValue, key)
-			{
-			}
-
-			/// <summary>
-			/// Initalizes all fields
-			/// </summary>
-			/// <param name="source">The source that kicked off the method</param>
-			/// <param name="c">The character that the user entered</param>
-			/// <param name="key">The key that the user pressed</param>
-			public WordEventArgs(EditingHelper.WordEventSource source, char c, Keys key)
-			{
-				Source = source;
-				Key = key;
-				Char = c;
-			}
 		}
 		#endregion
 	}

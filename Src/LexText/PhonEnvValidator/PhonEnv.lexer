@@ -1,5 +1,0 @@
-%lexer
-%namespace SIL.FieldWorks.FDO.Validation
-[/\[\]()_#]	%TOKEN
-[ \t\n\r]	;
-[^/\[\]()_# \t\n\r]+	%Ident

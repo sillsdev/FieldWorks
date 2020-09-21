@@ -93,7 +93,7 @@ namespace TestViews
 		void AddString(IVwEnv* pvwenv, OLECHAR * pszText)
 		{
 			ITsStringPtr qtss;
-			m_qtsf->MakeStringRgch(pszText, wcslen(pszText), g_wsEng, &qtss);
+			m_qtsf->MakeStringRgch(pszText, (int)wcslen(pszText), g_wsEng, &qtss);
 			pvwenv->AddString(qtss);
 		}
 		void AddCell(IVwEnv* pvwenv, OLECHAR * pszText)
@@ -401,6 +401,7 @@ namespace TestViews
 		VwTextSelectionPtr m_qzvwsel;
 		IVwCacheDaPtr m_qcda;
 		ISilDataAccessPtr m_qsda;
+		IRenderEngineFactoryPtr m_qref;
 		ITsStrFactoryPtr m_qtsf;
 		IVwViewConstructorPtr m_qvc;
 		VwRootBoxPtr m_qrootb;
@@ -416,7 +417,7 @@ namespace TestViews
 		void VerifyOrcData(ITsString * ptss, int ich, const OLECHAR * pszText,
 			const OLECHAR * pszData, OLECHAR chType)
 		{
-			int cchText = wcslen(pszText);
+			int cchText = (int)wcslen(pszText);
 			ITsTextPropsPtr qttpOrc;
 			TsRunInfo tri;
 			ptss->FetchRunInfoAt(ich, &tri, &qttpOrc);
@@ -437,7 +438,7 @@ namespace TestViews
 		void VerifyStyleName(ITsString * ptss, int ich, const OLECHAR * pszText,
 			const OLECHAR * pszExpectedStyleName)
 		{
-			int cchText = wcslen(pszText);
+			int cchText = (int)wcslen(pszText);
 			ITsTextPropsPtr qttpRun;
 			TsRunInfo tri;
 			ptss->FetchRunInfoAt(ich, &tri, &qttpRun);
@@ -457,7 +458,7 @@ namespace TestViews
 		void VerifyExtLink(ITsString * ptss, int ich, const OLECHAR * pszText,
 			const OLECHAR * pszData, const OLECHAR * pszExpectedStyleName)
 		{
-			int cchText = wcslen(pszText);
+			int cchText = (int)wcslen(pszText);
 			ITsTextPropsPtr qttpRun;
 			TsRunInfo tri;
 			ptss->FetchRunInfoAt(ich, &tri, &qttpRun);
@@ -517,12 +518,12 @@ namespace TestViews
 			m_qcda->CacheStringProp(khvoOrigPara1, kflidStTxtPara_Contents, qtss);
 
 			// Now make it the paragraphs of an StText.
-			HVO hvoRoot = 101;
+			HVO hvoRootBox = 101;
 			HVO hvoPara = khvoOrigPara1;
-			m_qcda->CacheVecProp(hvoRoot, kflidStText_Paragraphs, &hvoPara, 1);
+			m_qcda->CacheVecProp(hvoRootBox, kflidStText_Paragraphs, &hvoPara, 1);
 
 			m_qvc.Attach(NewObj DummyParaVc());
-			m_qrootb->SetRootObject(hvoRoot, m_qvc, kfragStText, NULL);
+			m_qrootb->SetRootObject(hvoRootBox, m_qvc, kfragStText, NULL);
 		}
 
 		// Tests that clearing the typing properties clears the object data for
@@ -626,8 +627,8 @@ namespace TestViews
 			StrUni stuGuid1((OLECHAR *)&g_GuidForMakeObjFromText1, 8);
 			StrUni stuGuid2((OLECHAR *)&g_GuidForMakeObjFromText2, 8);
 			HVO hvoFirstPara;
-			HVO hvoRoot = 101;
-			m_qsda->get_VecItem(hvoRoot, kflidStText_Paragraphs, 0, &hvoFirstPara);
+			HVO hvoRootBox = 101;
+			m_qsda->get_VecItem(hvoRootBox, kflidStText_Paragraphs, 0, &hvoFirstPara);
 			m_qsda->get_StringProp(hvoFirstPara, kflidStTxtPara_Contents, &qtssResult);
 			VerifyOrcData(qtssResult, 5, OleStringLiteral(L"\xfffc"), stuGuid1.Chars(), kodtOwnNameGuidHot);
 			VerifyOrcData(qtssResult, 10, OleStringLiteral(L"\xfffc"), stuGuid2.Chars(), kodtOwnNameGuidHot);
@@ -652,11 +653,11 @@ namespace TestViews
 
 			// Now make them the paragraphs of an StText.
 			HVO rghvo[2] = {khvoOrigPara1, khvoOrigPara2};
-			HVO hvoRoot = 101;
-			m_qcda->CacheVecProp(hvoRoot, kflidStText_Paragraphs, rghvo, 2);
+			HVO hvoRootBox = 101;
+			m_qcda->CacheVecProp(hvoRootBox, kflidStText_Paragraphs, rghvo, 2);
 
 			m_qvc.Attach(NewObj DummyParaVc());
-			m_qrootb->SetRootObject(hvoRoot, m_qvc, kfragStText, NULL);
+			m_qrootb->SetRootObject(hvoRootBox, m_qvc, kfragStText, NULL);
 
 			// Put insertion point at the beginning of the view
 			IVwSelectionPtr qselTemp;
@@ -672,7 +673,7 @@ namespace TestViews
 
 			HVO hvoPara2;
 			HVO trans2;
-			m_qsda->get_VecItem(hvoRoot, kflidStText_Paragraphs, 1, &hvoPara2);
+			m_qsda->get_VecItem(hvoRootBox, kflidStText_Paragraphs, 1, &hvoPara2);
 			unitpp::assert_true("didn't get a paragraph", hvoPara2);
 			m_qsda->get_ObjectProp(hvoPara2, kflidStTxtPara_Translations, &trans2);
 
@@ -682,15 +683,15 @@ namespace TestViews
 
 		void DoPasteTest(OLECHAR * pszInput, OLECHAR * pszPaste, int ichSel, OLECHAR * pszResult)
 		{
-			HVO hvoRoot = 101;
+			HVO hvoRootBox = 101;
 			ITsStringPtr qtss;
 			// Create test data in a temporary cache.
 			StrUni stuPara1(pszInput);
 			m_qtsf->MakeString(stuPara1.Bstr(), g_wsEng, &qtss);
-			m_qcda->CacheStringProp(hvoRoot, kflidStTxtPara_Contents, qtss);
+			m_qcda->CacheStringProp(hvoRootBox, kflidStTxtPara_Contents, qtss);
 
 			m_qvc.Attach(NewObj DummyParaVc());
-			m_qrootb->SetRootObject(hvoRoot, m_qvc, kfragStTxtPara2, NULL);
+			m_qrootb->SetRootObject(hvoRootBox, m_qvc, kfragStTxtPara2, NULL);
 
 			// Put insertion point at the beginning of the view
 			IVwSelectionPtr qselTemp;
@@ -705,7 +706,7 @@ namespace TestViews
 			m_qzvwsel->ReplaceWithTsString(qtss);
 
 			ITsStringPtr qtssResult;
-			m_qsda->get_StringProp(hvoRoot, kflidStTxtPara_Contents, &qtssResult);
+			m_qsda->get_StringProp(hvoRootBox, kflidStTxtPara_Contents, &qtssResult);
 			SmartBstr bstrResult;
 			qtssResult->get_Text(&bstrResult);
 			unitpp::assert_true( "result of paste", wcscmp(bstrResult.Chars(),
@@ -721,47 +722,47 @@ namespace TestViews
 			// Start, mid, end, with crlf at end of input.
 			DoPasteTest(pszInput, pszPaste1, 0, OleStringLiteral(L"This is the pasted TextThis is the input text"));
 			DoPasteTest(pszInput, pszPaste1, 4, OleStringLiteral(L"ThisThis is the pasted Text is the input text"));
-			DoPasteTest(pszInput, pszPaste1, wcslen(pszInput), OleStringLiteral(L"This is the input textThis is the pasted Text"));
+			DoPasteTest(pszInput, pszPaste1, (int)wcslen(pszInput), OleStringLiteral(L"This is the input textThis is the pasted Text"));
 
 			// Same with just cr
 			OLECHAR * pszPaste2 = OleStringLiteral(L"This is the pasted Text\r");
 			DoPasteTest(pszInput, pszPaste2, 0, OleStringLiteral(L"This is the pasted TextThis is the input text"));
 			DoPasteTest(pszInput, pszPaste2, 4, OleStringLiteral(L"ThisThis is the pasted Text is the input text"));
-			DoPasteTest(pszInput, pszPaste2, wcslen(pszInput), OleStringLiteral(L"This is the input textThis is the pasted Text"));
+			DoPasteTest(pszInput, pszPaste2, (int)wcslen(pszInput), OleStringLiteral(L"This is the input textThis is the pasted Text"));
 
 			// And with linefeed
 			OLECHAR * pszPaste3 = OleStringLiteral(L"This is the pasted Text\n");
 			DoPasteTest(pszInput, pszPaste3, 0, OleStringLiteral(L"This is the pasted TextThis is the input text"));
 			DoPasteTest(pszInput, pszPaste3, 4, OleStringLiteral(L"ThisThis is the pasted Text is the input text"));
-			DoPasteTest(pszInput, pszPaste3, wcslen(pszInput), OleStringLiteral(L"This is the input textThis is the pasted Text"));
+			DoPasteTest(pszInput, pszPaste3, (int)wcslen(pszInput), OleStringLiteral(L"This is the input textThis is the pasted Text"));
 
 			// Similar sequence, with newline in middle of pasted text. It gets turned into a space, so we get the exact same answers.
 			OLECHAR * pszPaste4 = OleStringLiteral(L"This is the\r\npasted Text");
 			DoPasteTest(pszInput, pszPaste4, 0, OleStringLiteral(L"This is the pasted TextThis is the input text"));
 			DoPasteTest(pszInput, pszPaste4, 4, OleStringLiteral(L"ThisThis is the pasted Text is the input text"));
-			DoPasteTest(pszInput, pszPaste4, wcslen(pszInput), OleStringLiteral(L"This is the input textThis is the pasted Text"));
+			DoPasteTest(pszInput, pszPaste4, (int)wcslen(pszInput), OleStringLiteral(L"This is the input textThis is the pasted Text"));
 			OLECHAR * pszPaste5 = OleStringLiteral(L"This is the\rpasted Text");
 			DoPasteTest(pszInput, pszPaste5, 0, OleStringLiteral(L"This is the pasted TextThis is the input text"));
 			DoPasteTest(pszInput, pszPaste5, 4, OleStringLiteral(L"ThisThis is the pasted Text is the input text"));
-			DoPasteTest(pszInput, pszPaste5, wcslen(pszInput), OleStringLiteral(L"This is the input textThis is the pasted Text"));
+			DoPasteTest(pszInput, pszPaste5, (int)wcslen(pszInput), OleStringLiteral(L"This is the input textThis is the pasted Text"));
 			OLECHAR * pszPaste6 = OleStringLiteral(L"This is the\npasted Text");
 			DoPasteTest(pszInput, pszPaste6, 0, OleStringLiteral(L"This is the pasted TextThis is the input text"));
 			DoPasteTest(pszInput, pszPaste6, 4, OleStringLiteral(L"ThisThis is the pasted Text is the input text"));
-			DoPasteTest(pszInput, pszPaste6, wcslen(pszInput), OleStringLiteral(L"This is the input textThis is the pasted Text"));
+			DoPasteTest(pszInput, pszPaste6, (int)wcslen(pszInput), OleStringLiteral(L"This is the input textThis is the pasted Text"));
 
 			// Similar sequence, with newline at start of pasted text. It gets turned into a space, so we get an extra space.
 			OLECHAR * pszPaste7 = OleStringLiteral(L"\r\nThis is the pasted Text");
 			DoPasteTest(pszInput, pszPaste7, 0, OleStringLiteral(L" This is the pasted TextThis is the input text"));
 			DoPasteTest(pszInput, pszPaste7, 4, OleStringLiteral(L"This This is the pasted Text is the input text"));
-			DoPasteTest(pszInput, pszPaste7, wcslen(pszInput), OleStringLiteral(L"This is the input text This is the pasted Text"));
+			DoPasteTest(pszInput, pszPaste7, (int)wcslen(pszInput), OleStringLiteral(L"This is the input text This is the pasted Text"));
 			OLECHAR * pszPaste8 = OleStringLiteral(L"\rThis is the pasted Text");
 			DoPasteTest(pszInput, pszPaste8, 0, OleStringLiteral(L" This is the pasted TextThis is the input text"));
 			DoPasteTest(pszInput, pszPaste8, 4, OleStringLiteral(L"This This is the pasted Text is the input text"));
-			DoPasteTest(pszInput, pszPaste8, wcslen(pszInput), OleStringLiteral(L"This is the input text This is the pasted Text"));
+			DoPasteTest(pszInput, pszPaste8, (int)wcslen(pszInput), OleStringLiteral(L"This is the input text This is the pasted Text"));
 			OLECHAR * pszPaste9 = OleStringLiteral(L"\nThis is the pasted Text");
 			DoPasteTest(pszInput, pszPaste9, 0, OleStringLiteral(L" This is the pasted TextThis is the input text"));
 			DoPasteTest(pszInput, pszPaste9, 4, OleStringLiteral(L"This This is the pasted Text is the input text"));
-			DoPasteTest(pszInput, pszPaste9, wcslen(pszInput), OleStringLiteral(L"This is the input text This is the pasted Text"));
+			DoPasteTest(pszInput, pszPaste9, (int)wcslen(pszInput), OleStringLiteral(L"This is the input text This is the pasted Text"));
 
 			// Try a few special cases with multiple newlines.
 			OLECHAR * pszPaste10 = OleStringLiteral(L"This\r\nis\rthe\npasted Text\r\n\n\n\r\r\r\n");
@@ -788,11 +789,11 @@ namespace TestViews
 
 			// Now make them the paragraphs of an StText.
 			HVO rghvo[2] = {khvoOrigPara1, khvoOrigPara2};
-			HVO hvoRoot = 101;
-			m_qcda->CacheVecProp(hvoRoot, kflidStText_Paragraphs, rghvo, 2);
+			HVO hvoRootBox = 101;
+			m_qcda->CacheVecProp(hvoRootBox, kflidStText_Paragraphs, rghvo, 2);
 
 			m_qvc.Attach(NewObj DummyParaVc());
-			m_qrootb->SetRootObject(hvoRoot, m_qvc, kfragStText, NULL);
+			m_qrootb->SetRootObject(hvoRootBox, m_qvc, kfragStText, NULL);
 
 			//VwPropertyStorePtr qvwps = NewObj VwPropertyStore;
 			wchar chw = (wchar)13;
@@ -809,7 +810,7 @@ namespace TestViews
 			m_qzvwsel->OnTyping(m_qvg32, &chw, 1, kfssNone, &encPending);
 			m_qdrs->SimulateEndUnitOfWork();
 			int chvoPara;
-			m_qsda->get_VecSize(hvoRoot, kflidStText_Paragraphs, &chvoPara);
+			m_qsda->get_VecSize(hvoRootBox, kflidStText_Paragraphs, &chvoPara);
 			unitpp::assert_true("Should have three paragraphs now", chvoPara == 3);
 			// Check that we are in the second paragraph now.
 			int ich;
@@ -866,11 +867,11 @@ namespace TestViews
 
 			// Now make them the paragraphs of an StText.
 			HVO rghvo[2] = {khvoOrigPara1, khvoOrigPara2};
-			HVO hvoRoot = 101;
-			m_qcda->CacheVecProp(hvoRoot, kflidStText_Paragraphs, rghvo, 2);
+			HVO hvoRootBox = 101;
+			m_qcda->CacheVecProp(hvoRootBox, kflidStText_Paragraphs, rghvo, 2);
 
 			m_qvc.Attach(NewObj DummyParaVc());
-			m_qrootb->SetRootObject(hvoRoot, m_qvc, kfragStText, NULL);
+			m_qrootb->SetRootObject(hvoRootBox, m_qvc, kfragStText, NULL);
 			HRESULT hr = m_qrootb->Layout(m_qvg32, 300);
 			unitpp::assert_eq("testTypeShiftEnter Layout succeeded", S_OK, hr);
 			VwPrepDrawResult xpdr;
@@ -899,7 +900,7 @@ namespace TestViews
 			m_qzvwsel->OnTyping(m_qvg32, &chw, 1, kfssNone, &encPending);
 			m_qdrs->SimulateEndUnitOfWork();
 			int chvoPara;
-			m_qsda->get_VecSize(hvoRoot, kflidStText_Paragraphs, &chvoPara);
+			m_qsda->get_VecSize(hvoRootBox, kflidStText_Paragraphs, &chvoPara);
 			unitpp::assert_true("Should have two paragraphs still", chvoPara == 2);
 
 			// Check that we are in the first paragraph still.
@@ -1035,11 +1036,11 @@ namespace TestViews
 
 			// Now make them the paragraphs of an StText.
 			HVO rghvo[1] = {khvoOrigPara1};
-			HVO hvoRoot = 101;
-			m_qcda->CacheVecProp(hvoRoot, kflidStText_Paragraphs, rghvo, 1);
+			HVO hvoRootBox = 101;
+			m_qcda->CacheVecProp(hvoRootBox, kflidStText_Paragraphs, rghvo, 1);
 
 			m_qvc.Attach(NewObj DummyParaVc());
-			m_qrootb->SetRootObject(hvoRoot, m_qvc, kfragStText, NULL);
+			m_qrootb->SetRootObject(hvoRootBox, m_qvc, kfragStText, NULL);
 			HRESULT hr;
 			CheckHr(hr = m_qrootb->Layout(m_qvg32, 300));
 			unitpp::assert_eq("testTypeCtrlBackspace Layout succeeded", S_OK, hr);
@@ -1079,7 +1080,7 @@ namespace TestViews
 			}
 
 			int chvoPara;
-			m_qsda->get_VecSize(hvoRoot, kflidStText_Paragraphs, &chvoPara);
+			m_qsda->get_VecSize(hvoRootBox, kflidStText_Paragraphs, &chvoPara);
 			unitpp::assert_true("Should have a paragraph still", chvoPara == 1);
 
 			// Check that we are in the first paragraph still.
@@ -1145,7 +1146,7 @@ namespace TestViews
 		// space without a following character.
 		void testTypeCtrlBackspace_AtEnd()
 		{
-			int len = strlen("This is a test. test two");
+			int len = (int)strlen("This is a test. test two");
 			TypeCtrlBackspaceWorker(len, len - 4, "This is a test. test", true);
 		}
 
@@ -1202,11 +1203,11 @@ namespace TestViews
 
 			// Now make them the paragraphs of an StText.
 			HVO rghvo[1] = {khvoOrigPara1};
-			HVO hvoRoot = 101;
-			m_qcda->CacheVecProp(hvoRoot, kflidStText_Paragraphs, rghvo, 1);
+			HVO hvoRootBox = 101;
+			m_qcda->CacheVecProp(hvoRootBox, kflidStText_Paragraphs, rghvo, 1);
 
 			m_qvc.Attach(NewObj DummyParaVc());
-			m_qrootb->SetRootObject(hvoRoot, m_qvc, kfragStText, NULL);
+			m_qrootb->SetRootObject(hvoRootBox, m_qvc, kfragStText, NULL);
 			HRESULT hr;
 			CheckHr(hr = m_qrootb->Layout(m_qvg32, 300));
 			unitpp::assert_eq("testTypeCtrlBackspace Layout succeeded", S_OK, hr);
@@ -1233,7 +1234,7 @@ namespace TestViews
 			m_qdrs->SimulateEndUnitOfWork();
 
 			int chvoPara;
-			m_qsda->get_VecSize(hvoRoot, kflidStText_Paragraphs, &chvoPara);
+			m_qsda->get_VecSize(hvoRootBox, kflidStText_Paragraphs, &chvoPara);
 			unitpp::assert_true("Should have a paragraph still", chvoPara == 1);
 
 			// Check that we are in the first paragraph still.
@@ -1276,11 +1277,11 @@ namespace TestViews
 
 			// Now make them the paragraphs of an StText.
 			HVO rghvo[1] = {khvoOrigPara1};
-			HVO hvoRoot = 101;
-			m_qcda->CacheVecProp(hvoRoot, kflidStText_Paragraphs, rghvo, 1);
+			HVO hvoRootBox = 101;
+			m_qcda->CacheVecProp(hvoRootBox, kflidStText_Paragraphs, rghvo, 1);
 
 			m_qvc.Attach(NewObj DummyParaVc());
-			m_qrootb->SetRootObject(hvoRoot, m_qvc, kfragStText, NULL);
+			m_qrootb->SetRootObject(hvoRootBox, m_qvc, kfragStText, NULL);
 			HRESULT hr;
 			CheckHr(hr = m_qrootb->Layout(m_qvg32, 300));
 			unitpp::assert_eq("testTypeCtrlBackspace Layout succeeded", S_OK, hr);
@@ -1307,7 +1308,7 @@ namespace TestViews
 			m_qdrs->SimulateEndUnitOfWork();
 
 			int chvoPara;
-			m_qsda->get_VecSize(hvoRoot, kflidStText_Paragraphs, &chvoPara);
+			m_qsda->get_VecSize(hvoRootBox, kflidStText_Paragraphs, &chvoPara);
 			unitpp::assert_true("Should have a paragraph still", chvoPara == 1);
 
 			// Check that we are in the first paragraph still.
@@ -1351,11 +1352,11 @@ namespace TestViews
 
 			// Now make it the paragraph of an StText.
 			HVO rghvo[1] = {khvoOrigPara1};
-			HVO hvoRoot = 101;
-			m_qcda->CacheVecProp(hvoRoot, kflidStText_Paragraphs, rghvo, 1);
+			HVO hvoRootBox = 101;
+			m_qcda->CacheVecProp(hvoRootBox, kflidStText_Paragraphs, rghvo, 1);
 
 			m_qvc.Attach(NewObj DummyParaVc());
-			m_qrootb->SetRootObject(hvoRoot, m_qvc, kfragStText, NULL);
+			m_qrootb->SetRootObject(hvoRootBox, m_qvc, kfragStText, NULL);
 			HRESULT hr;
 			CheckHr(hr = m_qrootb->Layout(m_qvg32, 300));
 			unitpp::assert_eq("testTypeCtrlRightArrow_TwoWS Layout succeeded", S_OK, hr);
@@ -1407,11 +1408,11 @@ namespace TestViews
 
 			// Now make it the paragraph of an StText.
 			HVO rghvo[1] = {khvoOrigPara1};
-			HVO hvoRoot = 101;
-			m_qcda->CacheVecProp(hvoRoot, kflidStText_Paragraphs, rghvo, 1);
+			HVO hvoRootBox = 101;
+			m_qcda->CacheVecProp(hvoRootBox, kflidStText_Paragraphs, rghvo, 1);
 
 			m_qvc.Attach(NewObj DummyParaVc());
-			m_qrootb->SetRootObject(hvoRoot, m_qvc, kfragStText, NULL);
+			m_qrootb->SetRootObject(hvoRootBox, m_qvc, kfragStText, NULL);
 			HRESULT hr;
 			CheckHr(hr = m_qrootb->Layout(m_qvg32, 300));
 			unitpp::assert_eq("testTypeCtrlRightArrow_ThreeWordsTwoWS_a Layout succeeded", S_OK, hr);
@@ -1463,11 +1464,11 @@ namespace TestViews
 
 			// Now make it the paragraph of an StText.
 			HVO rghvo[1] = {khvoOrigPara1};
-			HVO hvoRoot = 101;
-			m_qcda->CacheVecProp(hvoRoot, kflidStText_Paragraphs, rghvo, 1);
+			HVO hvoRootBox = 101;
+			m_qcda->CacheVecProp(hvoRootBox, kflidStText_Paragraphs, rghvo, 1);
 
 			m_qvc.Attach(NewObj DummyParaVc());
-			m_qrootb->SetRootObject(hvoRoot, m_qvc, kfragStText, NULL);
+			m_qrootb->SetRootObject(hvoRootBox, m_qvc, kfragStText, NULL);
 			HRESULT hr;
 			CheckHr(hr = m_qrootb->Layout(m_qvg32, 300));
 			unitpp::assert_eq("testTypeCtrlRightArrow_TwoWordsTwoWS_b Layout succeeded", S_OK, hr);
@@ -1518,11 +1519,11 @@ namespace TestViews
 
 			// Now make it the paragraph of an StText.
 			HVO rghvo[1] = {khvoOrigPara1};
-			HVO hvoRoot = 101;
-			m_qcda->CacheVecProp(hvoRoot, kflidStText_Paragraphs, rghvo, 1);
+			HVO hvoRootBox = 101;
+			m_qcda->CacheVecProp(hvoRootBox, kflidStText_Paragraphs, rghvo, 1);
 
 			m_qvc.Attach(NewObj DummyParaVc());
-			m_qrootb->SetRootObject(hvoRoot, m_qvc, kfragStText, NULL);
+			m_qrootb->SetRootObject(hvoRootBox, m_qvc, kfragStText, NULL);
 			HRESULT hr;
 			CheckHr(hr = m_qrootb->Layout(m_qvg32, 300));
 			unitpp::assert_eq("testTypeCtrlLeftArrow_TwoWS Layout succeeded", S_OK, hr);
@@ -1576,11 +1577,11 @@ namespace TestViews
 
 			// Now make it the paragraph of an StText.
 			HVO rghvo[1] = {khvoOrigPara1};
-			HVO hvoRoot = 101;
-			m_qcda->CacheVecProp(hvoRoot, kflidStText_Paragraphs, rghvo, 1);
+			HVO hvoRootBox = 101;
+			m_qcda->CacheVecProp(hvoRootBox, kflidStText_Paragraphs, rghvo, 1);
 
 			m_qvc.Attach(NewObj DummyParaVc());
-			m_qrootb->SetRootObject(hvoRoot, m_qvc, kfragStText, NULL);
+			m_qrootb->SetRootObject(hvoRootBox, m_qvc, kfragStText, NULL);
 			HRESULT hr;
 			CheckHr(hr = m_qrootb->Layout(m_qvg32, 300));
 			unitpp::assert_eq("testTypeCtrlLeftArrow_TwoWordTwoWS_a Layout succeeded", S_OK, hr);
@@ -1634,11 +1635,11 @@ namespace TestViews
 
 			// Now make it the paragraph of an StText.
 			HVO rghvo[1] = {khvoOrigPara1};
-			HVO hvoRoot = 101;
-			m_qcda->CacheVecProp(hvoRoot, kflidStText_Paragraphs, rghvo, 1);
+			HVO hvoRootBox = 101;
+			m_qcda->CacheVecProp(hvoRootBox, kflidStText_Paragraphs, rghvo, 1);
 
 			m_qvc.Attach(NewObj DummyParaVc());
-			m_qrootb->SetRootObject(hvoRoot, m_qvc, kfragStText, NULL);
+			m_qrootb->SetRootObject(hvoRootBox, m_qvc, kfragStText, NULL);
 			HRESULT hr;
 			CheckHr(hr = m_qrootb->Layout(m_qvg32, 300));
 			unitpp::assert_eq("testTypeCtrlLeftArrow_TwoWordTwoWS_b Layout succeeded", S_OK, hr);
@@ -1746,11 +1747,11 @@ namespace TestViews
 
 			// Now make them the paragraphs of an StText.
 			HVO rghvo[2] = {khvoOrigPara1, khvoOrigPara2};
-			HVO hvoRoot = 101;
-			m_qcda->CacheVecProp(hvoRoot, kflidStText_Paragraphs, rghvo, 2);
+			HVO hvoRootBox = 101;
+			m_qcda->CacheVecProp(hvoRootBox, kflidStText_Paragraphs, rghvo, 2);
 
 			m_qvc.Attach(NewObj DummyParaVc());
-			m_qrootb->SetRootObject(hvoRoot, m_qvc, kfragStText, NULL);
+			m_qrootb->SetRootObject(hvoRootBox, m_qvc, kfragStText, NULL);
 			HRESULT hr = m_qrootb->Layout(m_qvg32, 300);
 			unitpp::assert_eq("testAllSelEndInfo Layout succeeded", S_OK, hr);
 
@@ -1759,7 +1760,7 @@ namespace TestViews
 			m_qrootb->MakeSimpleSel(true, true, false, true, &qselTemp);
 
 			// Call AllSelEndInfo
-			int ihvoRoot;
+			int ihvoRootBox;
 			VwSelLevInfo rgvsli[1];
 			PropTag tagTextProp;
 			int cpropPrevious;
@@ -1767,24 +1768,24 @@ namespace TestViews
 			int ws;
 			ComBool fAssocPrev;
 			ITsTextPropsPtr qttpIns;
-			hr = qselTemp->AllSelEndInfo(true, &ihvoRoot,
+			hr = qselTemp->AllSelEndInfo(true, &ihvoRootBox,
 				1, rgvsli, &tagTextProp, &cpropPrevious,
 				&ich, &ws, &fAssocPrev, &qttpIns);
 			unitpp::assert_eq("AllSelEndInfo worked for IP at start(end)", S_OK, hr);
 			VerifyFontSize(qttpIns, 20000, "IP at start (end)");
-			hr = qselTemp->AllSelEndInfo(false, &ihvoRoot,
+			hr = qselTemp->AllSelEndInfo(false, &ihvoRootBox,
 				1, rgvsli, &tagTextProp, &cpropPrevious,
 				&ich, &ws, &fAssocPrev, &qttpIns);
 			unitpp::assert_eq("AllSelEndInfo worked for IP at start(begin)", S_OK, hr);
 			VerifyFontSize(qttpIns, 20000, "IP at start (begin)");
 
 			m_qrootb->MakeSimpleSel(false, true, false, true, &qselTemp);
-			hr = qselTemp->AllSelEndInfo(true, &ihvoRoot,
+			hr = qselTemp->AllSelEndInfo(true, &ihvoRootBox,
 				1, rgvsli, &tagTextProp, &cpropPrevious,
 				&ich, &ws, &fAssocPrev, &qttpIns);
 			unitpp::assert_eq("AllSelEndInfo worked for IP at end(end)", S_OK, hr);
 			VerifyFontSize(qttpIns, 50000, "IP at end (end)");
-			hr = qselTemp->AllSelEndInfo(false, &ihvoRoot,
+			hr = qselTemp->AllSelEndInfo(false, &ihvoRootBox,
 				1, rgvsli, &tagTextProp, &cpropPrevious,
 				&ich, &ws, &fAssocPrev, &qttpIns);
 			unitpp::assert_eq("AllSelEndInfo worked for IP at start(begin)", S_OK, hr);
@@ -1793,12 +1794,12 @@ namespace TestViews
 			// Select all the first paragraph.
 			VwTextSelectionPtr qselRange;
 			MakeSelection(0, 0, cch1, true, false, &qselRange);
-			hr = qselRange->AllSelEndInfo(true, &ihvoRoot,
+			hr = qselRange->AllSelEndInfo(true, &ihvoRootBox,
 				1, rgvsli, &tagTextProp, &cpropPrevious,
 				&ich, &ws, &fAssocPrev, &qttpIns);
 			unitpp::assert_eq("AllSelEndInfo worked end of first para", S_OK, hr);
 			VerifyFontSize(qttpIns, 30000, "end of first para");
-			hr = qselRange->AllSelEndInfo(false, &ihvoRoot,
+			hr = qselRange->AllSelEndInfo(false, &ihvoRootBox,
 				1, rgvsli, &tagTextProp, &cpropPrevious,
 				&ich, &ws, &fAssocPrev, &qttpIns);
 			unitpp::assert_eq("AllSelEndInfo worked start of first para", S_OK, hr);
@@ -1806,12 +1807,12 @@ namespace TestViews
 
 			// Select from near start of second para backwards into first.
 			MakeSelection(1, 2, cch1-2, true, false, &qselRange, 0);
-			hr = qselRange->AllSelEndInfo(true, &ihvoRoot,
+			hr = qselRange->AllSelEndInfo(true, &ihvoRootBox,
 				1, rgvsli, &tagTextProp, &cpropPrevious,
 				&ich, &ws, &fAssocPrev, &qttpIns);
 			unitpp::assert_eq("AllSelEndInfo worked 2nd back to first", S_OK, hr);
 			VerifyFontSize(qttpIns, 30000, "2nd back to first end");
-			hr = qselRange->AllSelEndInfo(false, &ihvoRoot,
+			hr = qselRange->AllSelEndInfo(false, &ihvoRootBox,
 				1, rgvsli, &tagTextProp, &cpropPrevious,
 				&ich, &ws, &fAssocPrev, &qttpIns);
 			unitpp::assert_eq("AllSelEndInfo worked start of first para", S_OK, hr);
@@ -1819,14 +1820,14 @@ namespace TestViews
 
 			// Pathological selection from end of first to start of second
 			MakeSelection(0, cch1, 0, true, false, &qselRange, 1);
-			hr = qselRange->AllSelEndInfo(true, &ihvoRoot,
+			hr = qselRange->AllSelEndInfo(true, &ihvoRootBox,
 				1, rgvsli, &tagTextProp, &cpropPrevious,
 				&ich, &ws, &fAssocPrev, &qttpIns);
 			unitpp::assert_eq("AllSelEndInfo worked pathological", S_OK, hr);
 			// We currently get a null result, because there's no selected text.
 			// I'm not sure that's the best answer, so don't verify it.
 			//VerifyFontSize(qttpIns, 40000, "pathological end");
-			hr = qselRange->AllSelEndInfo(false, &ihvoRoot,
+			hr = qselRange->AllSelEndInfo(false, &ihvoRootBox,
 				1, rgvsli, &tagTextProp, &cpropPrevious,
 				&ich, &ws, &fAssocPrev, &qttpIns);
 			unitpp::assert_eq("AllSelEndInfo worked pathological begin", S_OK, hr);
@@ -2024,38 +2025,67 @@ namespace TestViews
 			//	MUSICAL_SYMBOL_SEMIBREVIS_WHITE MUSICAL_SYMBOL_COMBINING_STEM OleStringLiteral(L" sentence 1."));
 		}
 
-		// WANTPORT: We can no longer delete multiple characters, but if there isn't another relevant test
-		// we should perhaps think about one that ends in the middle of a surrogate.
-		//void testMultipleCharDeletions_DelEndsInSurrogate()
-		//{
-		//	// More tests for backspace and delete cases.
-		//	CreateTestDataForMultiCharDeletetions();
-		//	int wspend = -1;
+		// Tests pressing the delete key when the IP is before a surrogate pair
+		void testDeleteOfSurrogatePair()
+		{
+			// Create test data
+			ITsStringPtr qtss;
+			ITsStringPtr qtssT;
+			// Make a string which will be the content of our paragraph.
+			StrUni stuPara1(L"This is a" EXAMPLE_SURROGATE_PAIR L" problem if we can't delete " EXAMPLE_SURROGATE_PAIR);
+			m_qtsf->MakeString(stuPara1.Bstr(), g_wsEng, &qtss);
+			m_qcda->CacheStringProp(khvoOrigPara1, kflidStTxtPara_Contents, qtss);
 
-		//	// Delete 11 characters (which will end up in the middle of a surrogate pair)
-		//	m_qrootb->MakeSimpleSel(true, true, false, true, NULL);
-		//	HRESULT hr = m_qrootb->OnTyping(m_qvg32, NULL, 0, 11, L'\0', &wspend);
-		//	unitpp::assert_eq("OnTyping(..., NULL, 0, 11, NUL,...) [2] failed", S_OK, hr);
-		//	VerifyParaContents(0, OleStringLiteral(L" sentence 1."));
-		//}
+			// Now make them the paragraphs of an StText.
+			HVO rghvo[1] = { khvoOrigPara1 };
+			HVO hvoRootBox = 101;
+			m_qcda->CacheVecProp(hvoRootBox, kflidStText_Paragraphs, rghvo, 1);
 
+			m_qvc.Attach(NewObj DummyParaVc());
+			m_qrootb->SetRootObject(hvoRootBox, m_qvc, kfragStText, NULL);
+			HRESULT hr = m_qrootb->Layout(m_qvg32, 300);
+			unitpp::assert_eq("Layout failed", S_OK, hr);
+			int wspend = -1;
 
-		// WANTPORT: We can no longer delete multiple characters, but if there isn't another relevant test
-		// we should perhaps think about one that ends in the middle of a surrogate.
-		//void testMultipleCharDeletions_BackspaceEndsInSurrogate()
-		//{
-		//	// More tests for backspace and delete cases.
-		//	CreateTestDataForMultiCharDeletetions();
+			// Delete just after 'a'
+			MakeSelection(0, 9, 9, true, true, NULL);
+			m_qdrs->SimulateBeginUnitOfWork();
+			hr = m_qrootb->OnTyping(m_qvg32, m_stuDelForward.Bstr(), kfssNone, &wspend);
+			m_qdrs->SimulateEndUnitOfWork();
+			unitpp::assert_eq("OnTyping(..., delete, ...) failed", S_OK, hr);
+			VerifyParaContents(0, OleStringLiteral(L"This is a problem if we can't delete " EXAMPLE_SURROGATE_PAIR));
+		}
 
-		//	int wspend;
-		//	// Delete (backspace over) the last 13 chars of the doc.
-		//	m_qrootb->MakeSimpleSel(false, true, false, true, NULL);
-		//	HRESULT hr = m_qrootb->OnTyping(m_qvg32, NULL, 13, 0, L'\0', &wspend);
-		//	unitpp::assert_eq("OnTyping(..., NULL, 13, 0, NUL,...) [3] failed", S_OK, hr);
-		//	VerifyParaContents(0,
-		//		L"This is a" COMBINING_DIAERESIS COMBINING_MACRON OleStringLiteral(L" ")
-		//		MUSICAL_SYMBOL_SEMIBREVIS_WHITE);
-		//}
+		// Tests pressing the delete key when the IP is one simple char before a surrogate pair
+		void testDeleteOfCharBeforeSurrogate()
+		{
+			// Create test data
+			ITsStringPtr qtss;
+			ITsStringPtr qtssT;
+			// Make a string which will be the content of our paragraph.
+			StrUni stuPara1(L"This is a" EXAMPLE_SURROGATE_PAIR L" problem if we can't delete 'a'");
+			m_qtsf->MakeString(stuPara1.Bstr(), g_wsEng, &qtss);
+			m_qcda->CacheStringProp(khvoOrigPara1, kflidStTxtPara_Contents, qtss);
+
+			// Now make them the paragraphs of an StText.
+			HVO rghvo[1] = { khvoOrigPara1 };
+			HVO hvoRootBox = 101;
+			m_qcda->CacheVecProp(hvoRootBox, kflidStText_Paragraphs, rghvo, 1);
+
+			m_qvc.Attach(NewObj DummyParaVc());
+			m_qrootb->SetRootObject(hvoRootBox, m_qvc, kfragStText, NULL);
+			HRESULT hr = m_qrootb->Layout(m_qvg32, 300);
+			unitpp::assert_eq("Layout failed", S_OK, hr);
+			int wspend = -1;
+
+			// Delete in front of the first "a"
+			MakeSelection(0, 8, 8, true, true, NULL);
+			m_qdrs->SimulateBeginUnitOfWork();
+			hr = m_qrootb->OnTyping(m_qvg32, m_stuDelForward.Bstr(), kfssNone, &wspend);
+			m_qdrs->SimulateEndUnitOfWork();
+			unitpp::assert_eq("OnTyping(..., delete, ...) failed", S_OK, hr);
+			VerifyParaContents(0, OleStringLiteral(L"This is " EXAMPLE_SURROGATE_PAIR " problem if we can't delete 'a'"));
+		}
 
 		// Tests pressing the delete key when the IP is in front of the base character (TE-6382)
 		void testDeleteInFrontOfBaseCharacter()
@@ -2071,11 +2101,75 @@ namespace TestViews
 
 			// Now make them the paragraphs of an StText.
 			HVO rghvo[1] = {khvoOrigPara1};
-			HVO hvoRoot = 101;
-			m_qcda->CacheVecProp(hvoRoot, kflidStText_Paragraphs, rghvo, 1);
+			HVO hvoRootBox = 101;
+			m_qcda->CacheVecProp(hvoRootBox, kflidStText_Paragraphs, rghvo, 1);
 
 			m_qvc.Attach(NewObj DummyParaVc());
-			m_qrootb->SetRootObject(hvoRoot, m_qvc, kfragStText, NULL);
+			m_qrootb->SetRootObject(hvoRootBox, m_qvc, kfragStText, NULL);
+			HRESULT hr = m_qrootb->Layout(m_qvg32, 300);
+			unitpp::assert_eq("Layout failed", S_OK, hr);
+			int wspend = -1;
+
+			// Delete in front of the first "a"
+			MakeSelection(0, 8, 8, true, true, NULL);
+			m_qdrs->SimulateBeginUnitOfWork();
+			hr = m_qrootb->OnTyping(m_qvg32, m_stuDelForward.Bstr(), kfssNone, &wspend);
+			m_qdrs->SimulateEndUnitOfWork();
+			unitpp::assert_eq("OnTyping(..., delete, ...) failed", S_OK, hr);
+			VerifyParaContents(0, OleStringLiteral(L"This is  first test paragraph"));
+		}
+
+		// Tests pressing the delete key when the IP is in front of the base character
+		void testDeleteInFrontOfSurrogateCharWithSurrogateDiacritic()
+		{
+			// Create test data
+			ITsStringPtr qtss;
+			ITsStringPtr qtssT;
+			// Make a string which will be the content of our paragraph.
+			StrUni stuPara1(L"This is an" EXAMPLE_SURROGATE_PAIR SURROGATE_PAIR_DIACRITIC
+				L" ugly test case");
+			m_qtsf->MakeString(stuPara1.Bstr(), g_wsEng, &qtss);
+			m_qcda->CacheStringProp(khvoOrigPara1, kflidStTxtPara_Contents, qtss);
+
+			// Now make them the paragraphs of an StText.
+			HVO rghvo[1] = { khvoOrigPara1 };
+			HVO hvoRootBox = 101;
+			m_qcda->CacheVecProp(hvoRootBox, kflidStText_Paragraphs, rghvo, 1);
+
+			m_qvc.Attach(NewObj DummyParaVc());
+			m_qrootb->SetRootObject(hvoRootBox, m_qvc, kfragStText, NULL);
+			HRESULT hr = m_qrootb->Layout(m_qvg32, 300);
+			unitpp::assert_eq("Layout failed", S_OK, hr);
+			int wspend = -1;
+
+			// Delete in front of the EXAMPLE_SURROGATE_PAIR
+			MakeSelection(0, 10, 10, true, true, NULL);
+			m_qdrs->SimulateBeginUnitOfWork();
+			hr = m_qrootb->OnTyping(m_qvg32, m_stuDelForward.Bstr(), kfssNone, &wspend);
+			m_qdrs->SimulateEndUnitOfWork();
+			unitpp::assert_eq("OnTyping(..., delete, ...) failed", S_OK, hr);
+			VerifyParaContents(0, OleStringLiteral(L"This is an ugly test case"));
+		}
+
+		// Tests pressing the delete key when the IP is in front of the base character
+		void testDeleteInFrontOfBaseCharWithSurrogateDiacritic()
+		{
+			// Create test data
+			ITsStringPtr qtss;
+			ITsStringPtr qtssT;
+			// Make a string which will be the content of our paragraph.
+			StrUni stuPara1(L"This is a" SURROGATE_PAIR_DIACRITIC COMBINING_MACRON SURROGATE_PAIR_DIACRITIC
+				L" first test paragraph");
+			m_qtsf->MakeString(stuPara1.Bstr(), g_wsEng, &qtss);
+			m_qcda->CacheStringProp(khvoOrigPara1, kflidStTxtPara_Contents, qtss);
+
+			// Now make them the paragraphs of an StText.
+			HVO rghvo[1] = { khvoOrigPara1 };
+			HVO hvoRootBox = 101;
+			m_qcda->CacheVecProp(hvoRootBox, kflidStText_Paragraphs, rghvo, 1);
+
+			m_qvc.Attach(NewObj DummyParaVc());
+			m_qrootb->SetRootObject(hvoRootBox, m_qvc, kfragStText, NULL);
 			HRESULT hr = m_qrootb->Layout(m_qvg32, 300);
 			unitpp::assert_eq("Layout failed", S_OK, hr);
 			int wspend = -1;
@@ -2104,11 +2198,11 @@ namespace TestViews
 
 			// Now make them the paragraphs of an StText.
 			HVO rghvo[1] = {khvoOrigPara1};
-			HVO hvoRoot = 101;
-			m_qcda->CacheVecProp(hvoRoot, kflidStText_Paragraphs, rghvo, 1);
+			HVO hvoRootBox = 101;
+			m_qcda->CacheVecProp(hvoRootBox, kflidStText_Paragraphs, rghvo, 1);
 
 			m_qvc.Attach(NewObj DummyParaVc());
-			m_qrootb->SetRootObject(hvoRoot, m_qvc, kfragStText, NULL);
+			m_qrootb->SetRootObject(hvoRootBox, m_qvc, kfragStText, NULL);
 			HRESULT hr = m_qrootb->Layout(m_qvg32, 300);
 			unitpp::assert_eq("Layout failed", S_OK, hr);
 			int wspend = -1;
@@ -2137,11 +2231,11 @@ namespace TestViews
 
 			// Now make them the paragraphs of an StText.
 			HVO rghvo[1] = {khvoOrigPara1};
-			HVO hvoRoot = 101;
-			m_qcda->CacheVecProp(hvoRoot, kflidStText_Paragraphs, rghvo, 1);
+			HVO hvoRootBox = 101;
+			m_qcda->CacheVecProp(hvoRootBox, kflidStText_Paragraphs, rghvo, 1);
 
 			m_qvc.Attach(NewObj DummyParaVc());
-			m_qrootb->SetRootObject(hvoRoot, m_qvc, kfragStText, NULL);
+			m_qrootb->SetRootObject(hvoRootBox, m_qvc, kfragStText, NULL);
 			HRESULT hr = m_qrootb->Layout(m_qvg32, 300);
 			unitpp::assert_eq("Layout failed", S_OK, hr);
 			int wspend = -1;
@@ -2495,7 +2589,7 @@ namespace TestViews
 			{
 				HVO hvo = hvoFirst + i;
 				rghvoItem[i] = hvo;
-				m_qtsf->MakeStringRgch(prgpszStrings[i], wcslen(prgpszStrings[i]), g_wsEng, &qtss);
+				m_qtsf->MakeStringRgch(prgpszStrings[i], (int)wcslen(prgpszStrings[i]), g_wsEng, &qtss);
 				m_qcda->CacheStringProp(hvo, kflidStrings, qtss);
 			}
 			m_qcda->CacheVecProp(hvoParent, kflidItems, rghvoItem, citem);
@@ -2521,7 +2615,7 @@ namespace TestViews
 			m_qcda->CacheVecProp(khvoBook, kflidStText_Paragraphs, rghvoPara, 2);
 
 			OLECHAR * pszFt = OleStringLiteral(L"I see my green mat");
-			m_qtsf->MakeStringRgch(pszFt, wcslen(pszFt), g_wsEng, &qtss);
+			m_qtsf->MakeStringRgch(pszFt, (int)wcslen(pszFt), g_wsEng, &qtss);
 			m_qcda->CacheStringProp(khvoParaMin, kflidFt, qtss);
 
 			OLECHAR * rgpszWords[] = {OleStringLiteral(L"yalola"), OleStringLiteral(L"nihimbilira")};
@@ -2538,9 +2632,9 @@ namespace TestViews
 			{
 				HVO hvoWfic = khvoWficMin + iwfic;
 				rghvoWfic[iwfic] = hvoWfic;
-				m_qtsf->MakeStringRgch(rgpszWords[iwfic], wcslen(rgpszWords[iwfic]), g_wsEng, &qtss);
+				m_qtsf->MakeStringRgch(rgpszWords[iwfic], (int)wcslen(rgpszWords[iwfic]), g_wsEng, &qtss);
 				m_qcda->CacheStringProp(hvoWfic, kflidWficForm, qtss);
-				m_qtsf->MakeStringRgch(rgpszWordGlosses[iwfic],wcslen(rgpszWordGlosses[iwfic]), g_wsEng, &qtss);
+				m_qtsf->MakeStringRgch(rgpszWordGlosses[iwfic], (int)wcslen(rgpszWordGlosses[iwfic]), g_wsEng, &qtss);
 				m_qcda->CacheStringProp(hvoWfic, kflidWficGloss, qtss);
 			}
 			m_qcda->CacheVecProp(khvoParaMin, kflidWfics, rghvoWfic, 2);
@@ -2578,7 +2672,7 @@ namespace TestViews
 			CheckHr(qselRange->GetSelectionString(&qtss,  sep.Bstr()));
 			qtss->get_Text(&sbstr);
 
-#ifdef WIN32
+#if defined(WIN32) || defined(_M_X64)
 #define nwln L"\r\n"
 #else
 #define nwln L"\n"
@@ -3135,6 +3229,8 @@ namespace TestViews
 			m_qvc.Clear();
 			VwRootBox::CreateCom(NULL, CLSID_VwRootBox, (void **)&m_qrootb);
 			m_qrootb->putref_DataAccess(m_qsda);
+			m_qrootb->putref_RenderEngineFactory(m_qref);
+			m_qrootb->putref_TsStrFactory(m_qtsf);
 			m_qrootb->SetSite(m_qdrs);
 			m_qdrs->SetRootBox(m_qrootb);
 
@@ -3170,8 +3266,9 @@ namespace TestViews
 			// Set the default font for French to Charis SIL
 			ILgWritingSystemPtr qws;
 			CheckHr(g_qwsf->get_EngineOrNull(g_wsFrn, &qws));
+			MockLgWritingSystem* mws = dynamic_cast<MockLgWritingSystem*>(qws.Ptr());
 			StrUni stuCharis(L"Charis SIL");
-			qws->put_DefaultFontName(stuCharis.Bstr());
+			mws->put_DefaultFontName(stuCharis.Bstr());
 
 			// Set up a simple stylesheet
 			StrUni stuChapterStyleName(L"Chapter Number");
@@ -3216,6 +3313,8 @@ namespace TestViews
 			m_qvc.Clear();
 			VwRootBox::CreateCom(NULL, CLSID_VwRootBox, (void **)&m_qrootb);
 			m_qrootb->putref_DataAccess(m_qsda);
+			m_qrootb->putref_RenderEngineFactory(m_qref);
+			m_qrootb->putref_TsStrFactory(m_qtsf);
 			m_qrootb->SetSite(m_qdrs);
 			m_qdrs->SetRootBox(m_qrootb);
 
@@ -3238,8 +3337,9 @@ namespace TestViews
 			// Set the default font for French to Charis SIL
 			ILgWritingSystemPtr qws;
 			CheckHr(g_qwsf->get_EngineOrNull(g_wsFrn, &qws));
+			MockLgWritingSystem* mws = dynamic_cast<MockLgWritingSystem*>(qws.Ptr());
 			StrUni stuCharis(L"Charis SIL");
-			qws->put_DefaultFontName(stuCharis.Bstr());
+			mws->put_DefaultFontName(stuCharis.Bstr());
 
 			// Set up a simple stylesheet
 			StrUni stuChapterStyleName(L"Chapter Number");
@@ -3360,13 +3460,16 @@ namespace TestViews
 			// <default font> for French (Times New Roman).
 			ILgWritingSystemPtr qws;
 			CheckHr(g_qwsf->get_EngineOrNull(g_wsEng, &qws));
+			MockLgWritingSystem* mws = dynamic_cast<MockLgWritingSystem*>(qws.Ptr());
 			StrUni stuCharis(L"Charis SIL");
-			qws->put_DefaultFontName(stuCharis.Bstr());
+			mws->put_DefaultFontName(stuCharis.Bstr());
 
 			m_qrootb.Clear();
 			m_qvc.Clear();
 			VwRootBox::CreateCom(NULL, CLSID_VwRootBox, (void **)&m_qrootb);
 			m_qrootb->putref_DataAccess(m_qsda);
+			m_qrootb->putref_RenderEngineFactory(m_qref);
+			m_qrootb->putref_TsStrFactory(m_qtsf);
 			m_qrootb->SetSite(m_qdrs);
 			m_qdrs->SetRootBox(m_qrootb);
 
@@ -3442,6 +3545,8 @@ namespace TestViews
 			m_qvc.Clear();
 			VwRootBox::CreateCom(NULL, CLSID_VwRootBox, (void **)&m_qrootb);
 			m_qrootb->putref_DataAccess(m_qsda);
+			m_qrootb->putref_RenderEngineFactory(m_qref);
+			m_qrootb->putref_TsStrFactory(m_qtsf);
 			m_qrootb->SetSite(m_qdrs);
 			m_qdrs->SetRootBox(m_qrootb);
 
@@ -3483,6 +3588,8 @@ namespace TestViews
 			m_qvc.Clear();
 			VwRootBox::CreateCom(NULL, CLSID_VwRootBox, (void **)&m_qrootb);
 			m_qrootb->putref_DataAccess(m_qsda);
+			m_qrootb->putref_RenderEngineFactory(m_qref);
+			m_qrootb->putref_TsStrFactory(m_qtsf);
 			m_qrootb->SetSite(m_qdrs);
 			m_qdrs->SetRootBox(m_qrootb);
 
@@ -3555,11 +3662,11 @@ namespace TestViews
 			SetTextProp(qtssT, cch1-3, cch1, ktptWs, ktpvDefault, g_wsFrn, &qtss);
 			m_qcda->CacheStringProp(khvoOrigPara1, kflidStTxtPara_Contents, qtss);
 			HVO rghvo[1] = { khvoOrigPara1 };
-			HVO hvoRoot = 101;
-			m_qcda->CacheVecProp(hvoRoot, kflidStText_Paragraphs, rghvo, 1);
+			HVO hvoRootBox = 101;
+			m_qcda->CacheVecProp(hvoRootBox, kflidStText_Paragraphs, rghvo, 1);
 
 			m_qvc.Attach(NewObj DummyParaVc());
-			m_qrootb->SetRootObject(hvoRoot, m_qvc, kfragStText, NULL);
+			m_qrootb->SetRootObject(hvoRootBox, m_qvc, kfragStText, NULL);
 			HRESULT hr = m_qrootb->Layout(m_qvg32, 300);
 			unitpp::assert_eq("testExpandToWord: Layout hr", S_OK, hr);
 
@@ -3930,11 +4037,11 @@ namespace TestViews
 
 			// Now make it the paragraph of an StText.
 			HVO rghvo[1] = {khvoOrigPara1};
-			HVO hvoRoot = 101;
-			CheckHr(m_qcda->CacheVecProp(hvoRoot, kflidStText_Paragraphs, rghvo, 1));
+			HVO hvoRootBox = 101;
+			CheckHr(m_qcda->CacheVecProp(hvoRootBox, kflidStText_Paragraphs, rghvo, 1));
 
 			m_qvc.Attach(NewObj DummyParaVc());
-			CheckHr(m_qrootb->SetRootObject(hvoRoot, m_qvc, kfragStText, NULL));
+			CheckHr(m_qrootb->SetRootObject(hvoRootBox, m_qvc, kfragStText, NULL));
 
 			// Put insertion point at the beginning of the view
 			IVwSelectionPtr qselTemp;
@@ -3969,11 +4076,11 @@ namespace TestViews
 
 			// Now make it the paragraph of an StText.
 			HVO rghvo[2] = {khvoOrigPara1, khvoOrigPara2};
-			HVO hvoRoot = 101;
-			CheckHr(m_qcda->CacheVecProp(hvoRoot, kflidStText_Paragraphs, rghvo, 2));
+			HVO hvoRootBox = 101;
+			CheckHr(m_qcda->CacheVecProp(hvoRootBox, kflidStText_Paragraphs, rghvo, 2));
 
 			m_qvc.Attach(NewObj DummySquishedVc());
-			CheckHr(m_qrootb->SetRootObject(hvoRoot, m_qvc, kfragStText, NULL));
+			CheckHr(m_qrootb->SetRootObject(hvoRootBox, m_qvc, kfragStText, NULL));
 
 			// Put insertion point at the beginning of the view
 			IVwSelectionPtr qselTemp;
@@ -4010,11 +4117,11 @@ namespace TestViews
 
 			// Now make it the paragraph of an StText.
 			HVO rghvo[2] = {khvoOrigPara1, khvoOrigPara2};
-			HVO hvoRoot = 101;
-			CheckHr(m_qcda->CacheVecProp(hvoRoot, kflidStText_Paragraphs, rghvo, 2));
+			HVO hvoRootBox = 101;
+			CheckHr(m_qcda->CacheVecProp(hvoRootBox, kflidStText_Paragraphs, rghvo, 2));
 
 			m_qvc.Attach(NewObj DummySquishedVc());
-			CheckHr(m_qrootb->SetRootObject(hvoRoot, m_qvc, kfragStText, NULL));
+			CheckHr(m_qrootb->SetRootObject(hvoRootBox, m_qvc, kfragStText, NULL));
 
 			// Put insertion point at the beginning of the view
 			IVwSelectionPtr qselTemp;
@@ -4039,10 +4146,12 @@ namespace TestViews
 			m_stuBackspace = StrUni(L"\b");
 			m_stuDelForward = StrUni(L"\x7f");
 			CreateTestWritingSystemFactory();
+			m_qtsf.CreateInstance(CLSID_TsStrFactory);
 			m_qcda.Attach(NewObj DummyCache());
+			m_qcda->putref_TsStrFactory(m_qtsf);
 			m_qcda->QueryInterface(IID_ISilDataAccess, (void **)&m_qsda);
 			m_qsda->putref_WritingSystemFactory(g_qwsf);
-			m_qtsf.CreateInstance(CLSID_TsStrFactory);
+			m_qref.Attach(NewObj MockRenderEngineFactory);
 			// Now make the root box and view constructor and Graphics object.
 			VwRootBox::CreateCom(NULL, CLSID_VwRootBox, (void **)&m_qrootb);
 			m_hdc = 0;
@@ -4050,6 +4159,8 @@ namespace TestViews
 			m_hdc = GetTestDC();
 			m_qvg32->Initialize(m_hdc);
 			m_qrootb->putref_DataAccess(m_qsda);
+			m_qrootb->putref_RenderEngineFactory(m_qref);
+			m_qrootb->putref_TsStrFactory(m_qtsf);
 			m_qdrs.Attach(NewObj DummyRootSite());
 			m_rcSrc = Rect(0, 0, 96, 96);
 			m_qdrs->SetRects(m_rcSrc, m_rcSrc);
@@ -4061,6 +4172,7 @@ namespace TestViews
 		{
 			m_qzvwsel.Clear();
 			m_qcda.Clear();
+			m_qref.Clear();
 			m_qsda.Clear();
 			m_qtsf.Clear();
 			m_qvc.Clear();

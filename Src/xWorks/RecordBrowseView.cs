@@ -1,20 +1,19 @@
 // Copyright (c) 2003-2015 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Windows.Forms;
 using System.Xml;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.Widgets;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Application;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel;
+using SIL.LCModel.Application;
+using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.FdoUi;
 using SIL.FieldWorks.Filters;
 using SIL.Utils;
@@ -232,7 +231,11 @@ namespace SIL.FieldWorks.XWorks
 				{
 					CmObjectUi ui = CmObjectUi.MakeUi(Cache, hvo); // Disposes of itself when menu closes since true passed in lext line.
 					if (ui != null)
-						e.EventHandled = ui.HandleRightClick(m_mediator, sender, true, "mnuBrowseView");
+					{
+						ui.Mediator = m_mediator;
+						ui.PropTable = m_propertyTable;
+						e.EventHandled = ui.HandleRightClick(m_mediator, m_propertyTable, sender, true, "mnuBrowseView");
+					}
 				}
 			}
 		}
@@ -269,14 +272,15 @@ namespace SIL.FieldWorks.XWorks
 			// to display an out-of-date list containing deleted objects, all kinds of things may go wrong.
 			if (XmlUtils.GetOptionalBooleanAttributeValue(m_configurationParameters, "forceReloadListOnInitOrChangeRoot", false))
 			{
-				m_mediator.PropertyTable.SetProperty(Clerk.Id + "_AlwaysRecomputeVirtualOnReloadList", true);
+				m_propertyTable.SetProperty(Clerk.Id + "_AlwaysRecomputeVirtualOnReloadList", true, true);
 				// (EricP) when called by RecordView.InitBase() in the context of ListUpdateHelper.ClearBrowseListUntilReload
 				// the list does not get reloaded until ListUpdateHelper is disposed, but the views property
 				// will get cleared to prevent these views from accessing invalid objects.
 				Clerk.UpdateList(false, true);
 			}
 
-			m_browseViewer = CreateBrowseViewer(m_configurationParameters, hvo, m_fakeFlid, Cache, m_mediator,
+			m_browseViewer = CreateBrowseViewer(m_configurationParameters, hvo, m_fakeFlid, Cache,
+				m_mediator, m_propertyTable,
 				Clerk.SortItemProvider, Clerk.VirtualListPublisher);
 			m_browseViewer.SortersCompatible += Clerk.AreSortersCompatible;
 			// If possible make it use the style sheet appropriate for its main window.
@@ -317,10 +321,10 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		void SetupLinkScripture()
 		{
-			string booksWanted = m_mediator.PropertyTable.GetStringProperty("LinkScriptureBooksWanted", null);
+			string booksWanted = m_propertyTable.GetStringProperty("LinkScriptureBooksWanted", null);
 			if (booksWanted == null)
 				return;
-			m_mediator.PropertyTable.RemoveProperty("LinkScriptureBooksWanted");
+			m_propertyTable.RemoveProperty("LinkScriptureBooksWanted");
 			if (booksWanted != "all")
 				return; // Enhance JohnT: accept a list of books in some form or other.
 			var books = Cache.LanguageProject.TranslatedScriptureOA.ScriptureBooksOS;
@@ -334,7 +338,7 @@ namespace SIL.FieldWorks.XWorks
 				}
 			}
 
-			var interestingTexts = InterestingTextsDecorator.GetInterestingTextList(m_mediator, Cache.ServiceLocator);
+			var interestingTexts = InterestingTextsDecorator.GetInterestingTextList(m_mediator, m_propertyTable, Cache.ServiceLocator);
 			interestingTexts.SetInterestingTexts(texts);
 		}
 
@@ -362,12 +366,13 @@ namespace SIL.FieldWorks.XWorks
 			base.OnParentChanged(e);
 		}
 
-		protected virtual BrowseViewer CreateBrowseViewer(XmlNode nodeSpec, int hvoRoot, int fakeFlid, FdoCache cache, Mediator mediator,
+		protected virtual BrowseViewer CreateBrowseViewer(XmlNode nodeSpec, int hvoRoot, int fakeFlid, LcmCache cache,
+			Mediator mediator, PropertyTable propertyTable,
 			ISortItemProvider sortItemProvider,ISilDataAccessManaged sda)
 		{
 			return new BrowseViewer(nodeSpec,
 						 hvoRoot, fakeFlid,
-						 cache, mediator, sortItemProvider, sda);
+						 cache, mediator, propertyTable, sortItemProvider, sda);
 		}
 
 		private void SetStyleSheet()
@@ -375,7 +380,7 @@ namespace SIL.FieldWorks.XWorks
 			if (m_browseViewer == null || m_browseViewer.StyleSheet != null)
 				return;
 
-			m_browseViewer.StyleSheet = FontHeightAdjuster.StyleSheetFromMediator(m_mediator);
+			m_browseViewer.StyleSheet = FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable);
 		}
 
 		/// <summary>
@@ -410,7 +415,7 @@ namespace SIL.FieldWorks.XWorks
 				"altTitleId");
 			if (titleId != null)
 			{
-				XmlViewsUtils.TryFindString(StringTbl, "AlternativeTitles", titleId, out titleStr);
+				XmlViewsUtils.TryFindString("AlternativeTitles", titleId, out titleStr);
 				// if they specified an altTitleId, but it wasn't found, they need to do something,
 				// so just return *titleId*
 				if (Clerk.OwningObject != null && titleId.StartsWith("Reversal") &&
@@ -434,7 +439,7 @@ namespace SIL.FieldWorks.XWorks
 			if (String.IsNullOrEmpty(titleStr))
 			{
 				XmlViewsUtils.TryFindPluralFormFromFlid(Clerk.VirtualListPublisher.MetaDataCache,
-					StringTbl, Clerk.OwningFlid, out titleStr);
+					Clerk.OwningFlid, out titleStr);
 			}
 
 			bool fBaseCalled = false;
@@ -486,7 +491,7 @@ namespace SIL.FieldWorks.XWorks
 				return;
 			int currentIndex = clerk.CurrentIndex;
 
-			int storedIndex = m_mediator.PropertyTable.GetIntProperty(Clerk.PersistedIndexProperty, currentIndex, PropertyTable.SettingsGroup.LocalSettings);
+			int storedIndex = m_propertyTable.GetIntProperty(Clerk.PersistedIndexProperty, currentIndex, PropertyTable.SettingsGroup.LocalSettings);
 			if (storedIndex != currentIndex && storedIndex >= 0 && !clerk.HasEmptyList)
 			{
 				try
@@ -589,16 +594,18 @@ namespace SIL.FieldWorks.XWorks
 		#endregion // Other methods
 
 		#region IxCoreColleague implementation
+
 		/// <summary>
 		/// Initialize this as an IxCoreColleague
 		/// </summary>
 		/// <param name="mediator"></param>
+		/// <param name="propertyTable"></param>
 		/// <param name="configurationParameters"></param>
-		public override void Init(Mediator mediator, XmlNode configurationParameters)
+		public override void Init(Mediator mediator, PropertyTable propertyTable, XmlNode configurationParameters)
 		{
 			CheckDisposed();
-			InitBase(mediator, configurationParameters);
-			m_browseViewer.Init(mediator, configurationParameters);
+			InitBase(mediator, propertyTable, configurationParameters);
+			m_browseViewer.Init(mediator, propertyTable, configurationParameters);
 			m_fullyInitialized = true;
 			// These have to be done here, rather than in SetupDataContext(),
 			// or the record clerk resets its current object,
@@ -778,8 +785,8 @@ namespace SIL.FieldWorks.XWorks
 		private void m_browseViewer_SelectedIndexChanged(object sender, EventArgs e)
 		{
 			string propName = Clerk.PersistedIndexProperty;
-			m_mediator.PropertyTable.SetProperty(propName, Clerk.CurrentIndex, PropertyTable.SettingsGroup.LocalSettings);
-			m_mediator.PropertyTable.SetPropertyPersistence(propName, true, PropertyTable.SettingsGroup.LocalSettings);
+			m_propertyTable.SetProperty(propName, Clerk.CurrentIndex, PropertyTable.SettingsGroup.LocalSettings, true);
+			m_propertyTable.SetPropertyPersistence(propName, true, PropertyTable.SettingsGroup.LocalSettings);
 		}
 
 		/// <summary>
@@ -840,12 +847,13 @@ namespace SIL.FieldWorks.XWorks
 	public class RecordBrowseActiveView : RecordBrowseView
 	{
 
-		protected override BrowseViewer CreateBrowseViewer(XmlNode nodeSpec, int hvoRoot, int fakeFlid, FdoCache cache, Mediator mediator,
-					ISortItemProvider sortItemProvider, ISilDataAccessManaged sda)
+		protected override BrowseViewer CreateBrowseViewer(XmlNode nodeSpec, int hvoRoot, int fakeFlid, LcmCache cache,
+			Mediator mediator, PropertyTable propertyTable,
+			ISortItemProvider sortItemProvider, ISilDataAccessManaged sda)
 		{
 			var viewer = new BrowseActiveViewer(nodeSpec,
 						 hvoRoot, fakeFlid,
-						 cache, mediator, sortItemProvider, sda);
+						 cache, mediator, propertyTable, sortItemProvider, sda);
 			viewer.CheckBoxActiveChanged += OnCheckBoxActiveChanged;
 			return viewer;
 		}
@@ -869,14 +877,14 @@ namespace SIL.FieldWorks.XWorks
 				ICmObject obj = Cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvo);
 				switch (obj.ClassID)
 				{
-					case FDO.PhRegularRuleTags.kClassId: // fall through
-					case FDO.PhMetathesisRuleTags.kClassId:
-						var segmentRule = obj as FDO.IPhSegmentRule;
+					case PhRegularRuleTags.kClassId: // fall through
+					case PhMetathesisRuleTags.kClassId:
+						var segmentRule = obj as IPhSegmentRule;
 						segmentRule.Disabled = !segmentRule.Disabled;
 						break;
-					case FDO.MoEndoCompoundTags.kClassId: // fall through
-					case FDO.MoExoCompoundTags.kClassId:
-						var compoundRule = obj as FDO.IMoCompoundRule;
+					case MoEndoCompoundTags.kClassId: // fall through
+					case MoExoCompoundTags.kClassId:
+						var compoundRule = obj as IMoCompoundRule;
 						compoundRule.Disabled = !compoundRule.Disabled;
 						break;
 				}

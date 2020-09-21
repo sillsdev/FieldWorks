@@ -1,22 +1,16 @@
-// Copyright (c) 2006-2013 SIL International
+// Copyright (c) 2006-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: FwBulletsTab.cs
-// Responsibility: TE Team
-//
-// <remarks>
-// </remarks>
 
 using System;
 using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
-
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.LCModel.Core.Text;
 using SIL.FieldWorks.Common.Controls;
-using SIL.Utils;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.DomainServices;
+using SIL.PlatformUtilities;
 
 namespace SIL.FieldWorks.FwCoreDlgControls
 {
@@ -25,7 +19,7 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 	///
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
-	public partial class FwBulletsTab : UserControl, IFWDisposable, IStylesTab
+	public partial class FwBulletsTab : UserControl, IStylesTab
 	{
 		#region Member Data
 		/// <summary>
@@ -50,7 +44,7 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 		private bool m_DefaultTextDirectionRtoL = false;
 		private BulletInfo m_currentStyleBulletInfo;
 		private StyleInfo m_StyleInfo;
-		private FwStyleSheet m_styleSheet;
+		private LcmStyleSheet m_styleSheet;
 		/// <summary>Font info used when bullets is checked</summary>
 		private FontInfo m_BulletsFontInfo;
 		/// <summary>Font info used when numbered is checked</summary>
@@ -123,7 +117,7 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 		/// Sets the style sheet
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public FwStyleSheet StyleSheet
+		public LcmStyleSheet StyleSheet
 		{
 			set { m_styleSheet = value; }
 		}
@@ -139,15 +133,18 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 		public void UpdateForStyle(StyleInfo styleInfo)
 		{
 			CheckDisposed();
-#if __MonoCS__
-			// On Mono, the sequence of events when changing styles can cause this to be
-			// called even when switching to a character style.  See FWNX-870.
-			if (!styleInfo.IsParagraphStyle)
-				return;
-#endif
+
+			if (Platform.IsMono)
+			{
+				// On Mono, the sequence of events when changing styles can cause this to be
+				// called even when switching to a character style.  See FWNX-870.
+				if (!styleInfo.IsParagraphStyle)
+					return;
+			}
+
 			m_dontUpdateInheritance = true;
 
-			bool fDifferentStyle = m_StyleInfo == null ? true : (styleInfo.Name != m_StyleInfo.Name);
+			bool fDifferentStyle = m_StyleInfo == null || styleInfo.Name != m_StyleInfo.Name;
 
 			// Don't use a 0 size bullet. Fixes FWNX-575.
 			if (styleInfo != null && styleInfo.IBullet != null)
@@ -434,7 +431,7 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 				m_chkStartAt.Checked = true;
 
 			UpdateBulletInfo(ref m_currentStyleBulletInfo);
-			ITsPropsBldr propsBldr = TsPropsBldrClass.Create();
+			ITsPropsBldr propsBldr = TsStringUtils.MakePropsBldr();
 			m_currentStyleBulletInfo.ConvertAsTextProps(propsBldr);
 			propsBldr.SetIntPropValues((int)FwTextPropType.ktptSpaceBefore,
 					(int)FwTextPropVar.ktpvMilliPoint, 6000);

@@ -25,8 +25,12 @@ Description:
 // any other headers (not precompiled)
 
 using namespace std;
-
+#pragma warning(push)
+#pragma warning(disable: 4458) // declaration of 'type' hides class member
 #include "IcuCommon.h"
+#pragma warning(pop)
+
+TsViewCookie VwTextStore::m_nextId = 0;
 
 #undef THIS_FILE
 DEFINE_THIS_FILE
@@ -153,6 +157,8 @@ VwTextStore::VwTextStore(VwRootBox * prootb)
 	if (!fpTracing)
 		fopen_s(&fpTracing, "C:\\FW\\TraceTSF.debug", "a");
 #endif
+
+	m_id = ++m_nextId;
 }
 
 /*----------------------------------------------------------------------------------------------
@@ -674,10 +680,19 @@ STDMETHODIMP VwTextStore::SetSelection(ULONG ulCount, const TS_SELECTION_ACP * p
 }
 
 /*----------------------------------------------------------------------------------------------
-	Return information about the text at a specified character position.
+	Return information about the text at a specified 'application character position', which can
+	mean its position among the characters as NFC or NFD depending on the situation.
+	pacpNext and pcchPlainOut may be based on an NFC or NFD interpretation of the text,
+	depending on the situation.
 	See MSDN for details (ITextStoreACP::GetText).
+	@param acpStart the position of the first character to get.
+	@param acpEnd ending character position. the position just past the last character to get.
+	@param pchPlain is a character buffer to receive output.
+	@param cchPlainReq is the number of characters that can be written into pchPlain, including a null terminator.
+	@param pcchPlainOut is the number of characters written to pchPlain, not includung any null terminator.
+	@param pacpNext is the next character position after the last character included in the current request.
 ----------------------------------------------------------------------------------------------*/
-STDMETHODIMP VwTextStore::GetText(LONG acpFirst, LONG acpLast, WCHAR * pchPlain,
+STDMETHODIMP VwTextStore::GetText(LONG acpStart, LONG acpEnd, WCHAR * pchPlain,
 	ULONG cchPlainReq, ULONG * pcchPlainOut, TS_RUNINFO * prgRunInfo, ULONG ulRunInfoReq,
 	ULONG * pulRunInfoOut, LONG * pacpNext)
 {
@@ -691,7 +706,7 @@ STDMETHODIMP VwTextStore::GetText(LONG acpFirst, LONG acpLast, WCHAR * pchPlain,
 #ifdef TRACING_TSF
 	StrAnsi sta;
 	sta.Format("VwTextStore::GetText(%d, %d, %d, ..., %d, ...)%n",
-		acpFirst, acpLast, cchPlainReq, ulRunInfoReq);
+		acpStart, acpEnd, cchPlainReq, ulRunInfoReq);
 	TraceTSF(sta.Chars());
 #endif
 	// Caller must have a lock.
@@ -702,46 +717,48 @@ STDMETHODIMP VwTextStore::GetText(LONG acpFirst, LONG acpLast, WCHAR * pchPlain,
 	bool fDoRunInfo = ulRunInfoReq > 0;
 
 	int cchTotalNfd = TextLength();
-	int ichFirst = AcpToLog(acpFirst);
-	int ichLast;
-	if (acpLast == -1)
+	int ichStart = AcpToLog(acpStart);
+	int ichEnd;
+	if (acpEnd == -1)
 	{
-		acpLast = LogToAcp(cchTotalNfd);
-		ichLast = min(ichFirst + (int)cchPlainReq, cchTotalNfd);
+		acpEnd = LogToAcp(cchTotalNfd);
+		ichEnd = cchTotalNfd;
 	}
-	else if (acpLast - acpFirst > (LONG)cchPlainReq)
+	else if (acpEnd - acpStart > (LONG)cchPlainReq)
 	{
-		acpLast = acpFirst + cchPlainReq;
-		ichLast = AcpToLog(acpFirst + cchPlainReq);
+		acpEnd = acpStart + cchPlainReq;
+		ichEnd = AcpToLog(acpEnd);
 	}
 	else
-		ichLast = AcpToLog(acpLast);
+		ichEnd = AcpToLog(acpEnd);
 
 	// validate the start and end positions.
-	if (ichFirst < 0 || ichFirst > cchTotalNfd)
+	if (ichStart < 0 || ichStart > cchTotalNfd)
 		ThrowHr(WarnHr(TS_E_INVALIDPOS));
-	if (ichLast < ichFirst || ichLast > cchTotalNfd)
+	if (ichEnd < ichStart || ichEnd > cchTotalNfd)
 		ThrowHr(WarnHr(TS_E_INVALIDPOS));
 
 	// are we at the end of the document?
-	if (ichFirst == cchTotalNfd && cchTotalNfd > 0)
+	if (ichStart == cchTotalNfd && cchTotalNfd > 0)
 	{
 		// *pcchPlainOut and *pulRunInfoOut are already set to 0
 		*pacpNext = LogToAcp(cchTotalNfd);
 		return S_OK;
 	}
 
-	ULONG cchPlainNfc = acpLast - acpFirst;
-	int cchReq = ichLast - ichFirst;
+	ULONG cchPlainNfc = acpEnd - acpStart;
+	int cchReq = ichEnd - ichStart;
+	int outputLength = 0;
 	if (fDoText && cchReq)
 	{
 		// determine if the current IME requires NFD or NFC and return the text in the
 		// appropriate form
 		if (IsNfdIMEActive())
 		{
-			cchReq = RetrieveText(ichFirst, ichLast, cchPlainReq, pchPlain);
+			cchReq = RetrieveText(ichStart, ichEnd, cchPlainReq, pchPlain);
 			if (ulRunInfoReq > 0)
 				*pulRunInfoOut = SetOrAppendRunInfo(prgRunInfo, ulRunInfoReq, 0, TS_RT_PLAIN, cchReq);
+			outputLength = cchReq;
 		}
 		else
 		{
@@ -749,14 +766,15 @@ STDMETHODIMP VwTextStore::GetText(LONG acpFirst, LONG acpLast, WCHAR * pchPlain,
 			// decomposed form (NFD), Korean IME doesn't work properly (LT-8829).
 			wchar* pchPlainNfd;
 			StrUni stuPlain;
-			int cchPlainNfdReq = ichLast - ichFirst;
+			int cchPlainNfdReq = ichEnd - ichStart;
 			// We need a buffer large enough for cchPlainNfdReq characters plus NULL
 			stuPlain.SetSize(cchPlainNfdReq + 1, &pchPlainNfd);
-			cchReq = RetrieveText(ichFirst, ichLast, cchPlainNfdReq + 1, pchPlainNfd);
+			cchReq = RetrieveText(ichStart, ichEnd, cchPlainNfdReq + 1, pchPlainNfd);
 			// If we leave the buffer size, stuPlain.Length() reports a wrong length
 			stuPlain.SetSize(cchReq, &pchPlainNfd);
 			NormalizeText(stuPlain, pchPlain, cchPlainReq, &cchPlainNfc, prgRunInfo,
 				ulRunInfoReq, pulRunInfoOut);
+			outputLength = cchPlainNfc;
 		}
 	}
 	else // empty text or we're not interested in the text
@@ -780,10 +798,10 @@ STDMETHODIMP VwTextStore::GetText(LONG acpFirst, LONG acpLast, WCHAR * pchPlain,
 	}
 	// Set the number of characters returned.
 	if (pcchPlainOut)
-		*pcchPlainOut = cchPlainNfc;
-	// Set the index of the next character to fetch.
+		*pcchPlainOut = outputLength;
+	// Set the acp location of the next character to fetch.
 	if (pacpNext)
-		*pacpNext = acpFirst + cchPlainNfc;
+		*pacpNext = acpStart + outputLength;
 
 #ifdef TRACING_TSF
 	StrUni stu;
@@ -811,7 +829,7 @@ STDMETHODIMP VwTextStore::GetText(LONG acpFirst, LONG acpLast, WCHAR * pchPlain,
 }
 
 /*----------------------------------------------------------------------------------------------
-	Retrieve the text from the text source
+	Retrieve the text from the text source. Retrieves characters starting from ichFirst to but not including ichLast. The pchPlainNfd output will have a null terminator.
 	Returns length of text.
 ----------------------------------------------------------------------------------------------*/
 int VwTextStore::RetrieveText(int ichFirst, int ichLast, int cbufPlainReq,
@@ -866,9 +884,12 @@ int VwTextStore::RetrieveText(int ichFirst, int ichLast, int cbufPlainReq,
 
 /*----------------------------------------------------------------------------------------------
 	Normalize the text to NFC. For parameters see VwTextStore::GetText.
-	@param pchTextNfd - The text in NFD
+	@param stuText - The text in NFD
+	@param pchPlain will hold the output. It will be null terminated.
+	@param cchPlainReq is the number of characters that can be written into pchPlain, including the null terminator.
+	@param pcchPlainOut [out] is the number of characters copied into pchPlain. It excludes the null terminator.
 ----------------------------------------------------------------------------------------------*/
-void VwTextStore::NormalizeText(StrUni & stuText, WCHAR* pchPlain, ULONG cchPlainReq,
+void VwTextStore::NormalizeText(StrUni & stuText, WCHAR * pchPlain, ULONG cchPlainReq,
 	ULONG * pcchPlainOut, TS_RUNINFO * prgRunInfo, ULONG ulRunInfoReq, ULONG * pulRunInfoOut)
 {
 	StrUtil::NormalizeStrUni(stuText, UNORM_NFC);
@@ -1050,7 +1071,7 @@ STDMETHODIMP VwTextStore::RequestSupportedAttrs(DWORD dwFlags, ULONG cFilterAttr
 	// some Japanese text, then clicking in text in another language (or another window
 	// or application) and back in the Japanese, the Language bar is in Japanese characters
 	// and does not work; nor does the IME.
-#if WIN32
+#if defined(WIN32) || defined(WIN64)
 	static const GUID Guid_Japanese_Bug =
 		{ 0x372e0716, 0x974f, 0x40ac, { 0xa0, 0x88, 0x08, 0xcd, 0xc9, 0x2e, 0xbf, 0xbc } };
 #else
@@ -1167,8 +1188,8 @@ STDMETHODIMP VwTextStore::GetActiveView(TsViewCookie * pvcView)
 
 	if (!s_qttmThreadMgr)
 		ThrowHr(WarnHr(E_UNEXPECTED));
-	Assert(sizeof(TsViewCookie) >= sizeof(VwTextStore *));
-	*pvcView = reinterpret_cast<TsViewCookie>(this);
+	Assert(sizeof(TsViewCookie) == sizeof(int));
+	*pvcView = (TsViewCookie) m_id;
 
 #ifdef TRACING_TSF
 	StrAnsi sta;
@@ -1249,7 +1270,7 @@ STDMETHODIMP VwTextStore::GetTextExt(TsViewCookie vcView, LONG acpStart, LONG ac
 	HDC hdc;
 	CheckHr(qvg32->GetDeviceContext(&hdc));
 	HWND hwnd = ::WindowFromDC(hdc);
-	if (reinterpret_cast<TsViewCookie>(this) != vcView)
+	if ((TsViewCookie) m_id != vcView)
 		ThrowHr(WarnHr(E_NOTIMPL)); // Probably another view, but we only support the current.
 
 	Rect rcSel(0,0,0,0); // default if no selection: top left of window.
@@ -1257,11 +1278,11 @@ STDMETHODIMP VwTextStore::GetTextExt(TsViewCookie vcView, LONG acpStart, LONG ac
 	{
 		Rect rcSecondary;
 		ComBool fSplit;
-		ComBool fEndBeforeAnchor;
+		ComBool fEBAIgnored;
 		CheckHr(qsel->Location(hg.m_qvg, hg.m_rcSrcRoot, hg.m_rcDstRoot, &rcSel,
-			&rcSecondary, &fSplit, &fEndBeforeAnchor));
+			&rcSecondary, &fSplit, &fEBAIgnored));
 	}
-#if WIN32
+#if defined(WIN32) || defined(WIN64)
 	rcSel.ClientToScreen(hwnd);
 #else
 	// TODO-Linux: Awaiting VwTextStore rewrite for Linux
@@ -1308,9 +1329,8 @@ STDMETHODIMP VwTextStore::GetWnd(TsViewCookie vcView, HWND * phwnd)
 
 	if (!s_qttmThreadMgr)
 		ThrowHr(WarnHr(E_UNEXPECTED));
-
-	Assert(sizeof(TsViewCookie) >= sizeof(VwTextStore *));
-	if (reinterpret_cast<TsViewCookie>(this) != vcView)
+	Assert(sizeof(TsViewCookie) == sizeof(int));
+	if ((TsViewCookie) m_id != vcView)
 		ThrowHr(WarnHr(E_INVALIDARG));
 	HoldScreenGraphics hg(m_qrootb);
 	IVwGraphicsWin32Ptr qvg32;
@@ -2222,7 +2242,7 @@ COLORREF InterpretTfDaColor(TF_DA_COLOR tdc, COLORREF current)
 {
 	if (tdc.type == TF_CT_SYSCOLOR)
 	{
-#if WIN32
+#if defined(WIN32) || defined(WIN64)
 		return GetSysColor(tdc.nIndex);
 #else //WIN32
 		if(tdc.nIndex == COLOR_3DFACE)

@@ -1,18 +1,16 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Windows.Forms;
-using System.Diagnostics;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel;
 using SIL.FieldWorks.Filters;
 using SIL.FieldWorks.Common.Widgets;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.Utils;
 using SIL.FieldWorks.FwCoreDlgs;
-using XCore;
 
 namespace SIL.FieldWorks.Common.Controls
 {
@@ -21,7 +19,7 @@ namespace SIL.FieldWorks.Common.Controls
 	/// should match the whole, start, end, or anywhere in the target. It knows how to
 	/// make a matcher consistent with what the user entered.
 	/// </summary>
-	public class SimpleMatchDlg : Form, IFWDisposable
+	public class SimpleMatchDlg : Form
 	{
 		private RadioButton m_anywhereButton;
 		private RadioButton m_atStartButton;
@@ -48,7 +46,7 @@ namespace SIL.FieldWorks.Common.Controls
 		private IHelpTopicProvider m_helpTopicProvider;
 
 		private IVwPattern m_ivwpattern;
-		private FdoCache m_cache;
+		private LcmCache m_cache;
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -61,7 +59,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="cache"></param>
 		/// ------------------------------------------------------------------------------------
 		public SimpleMatchDlg(ILgWritingSystemFactory wsf, IHelpTopicProvider helpTopicProvider,
-			int ws, IVwStylesheet ss, FdoCache cache)
+			int ws, IVwStylesheet ss, LcmCache cache)
 		{
 			//
 			// Required for Windows Form Designer support

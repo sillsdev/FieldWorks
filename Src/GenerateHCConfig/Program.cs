@@ -1,20 +1,21 @@
-﻿using System;
-using System.Diagnostics.CodeAnalysis;
+// Copyright (c) 2016-2018 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
+
+using System;
 using System.IO;
-using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.FDO;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.WordWorks.Parser;
 using SIL.HermitCrab;
+using SIL.LCModel;
+using SIL.LCModel.Utils;
 using SIL.Machine.Annotations;
-using SIL.Utils;
+using SIL.WritingSystems;
 
 namespace GenerateHCConfig
 {
 	internal class Program
 	{
-		[SuppressMessage("Gendarme.Rules.Portability", "ExitCodeIsLimitedOnUnixRule",
-			Justification = "Appears to be a bug in Gendarme...not recognizing that 0 and 1 are in correct range (0..255)")]
 		static int Main(string[] args)
 		{
 			if (args.Length < 2)
@@ -29,20 +30,21 @@ namespace GenerateHCConfig
 				return 1;
 			}
 
-			RegistryHelper.CompanyName = DirectoryFinder.CompanyName;
-			Icu.InitIcuDataDir();
+			FwRegistryHelper.Initialize();
+			FwUtils.InitializeIcu();
+			Sldr.Initialize();
 			var synchronizeInvoke = new SingleThreadedSynchronizeInvoke();
 			var spanFactory = new ShapeSpanFactory();
 
 			var projectId = new ProjectIdentifier(args[0]);
 			var logger = new ConsoleLogger(synchronizeInvoke);
 			var dirs = new NullFdoDirectories();
-			var settings = new FdoSettings {DisableDataMigration = true};
+			var settings = new LcmSettings {DisableDataMigration = true};
 			var progress = new NullThreadedProgress(synchronizeInvoke);
 			Console.WriteLine("Loading FieldWorks project...");
 			try
 			{
-				using (FdoCache cache = FdoCache.CreateCacheFromExistingData(projectId, "en", logger, dirs, settings, progress))
+				using (LcmCache cache = LcmCache.CreateCacheFromExistingData(projectId, "en", logger, dirs, settings, progress))
 				{
 					Language language = HCLoader.Load(spanFactory, cache, logger);
 					Console.WriteLine("Loading completed.");
@@ -52,14 +54,14 @@ namespace GenerateHCConfig
 				}
 				return 0;
 			}
-			catch (FdoFileLockedException)
+			catch (LcmFileLockedException)
 			{
 				Console.WriteLine("Loading failed.");
 				Console.WriteLine("The FieldWorks project is currently open in another application.");
 				Console.WriteLine("Close the application and try to run this command again.");
 				return 1;
 			}
-			catch (FdoDataMigrationForbiddenException)
+			catch (LcmDataMigrationForbiddenException)
 			{
 				Console.WriteLine("Loading failed.");
 				Console.WriteLine("The FieldWorks project was created with an older version of FLEx.");

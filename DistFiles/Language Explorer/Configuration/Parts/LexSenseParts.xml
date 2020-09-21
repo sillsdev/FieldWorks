@@ -373,7 +373,7 @@
 		</part>
 		<part id="LexSense-Jt-ReversalEntriesForSense" type="jtview">
 			<para>
-		<seq field="ReversalEntries" layout="ReversalForm" sep="; " checkForEmptyItems="true"/>
+		<seq field="ReferringReversalIndexEntries" layout="ReversalForm" sep="; " checkForEmptyItems="true"/>
 			</para>
 		</part>
 	<part id="LexSense-Jt-ReversalEntriesForSenseEdit" type="jtview">
@@ -424,7 +424,7 @@
 			</slice>
 		</part>
 		<part id="LexSense-Detail-ReversalEntries" type="detail">
-			<slice field="ReversalEntries" label="Reversal Entries" editor="Custom" assemblyPath="LexEdDll.dll"
+			<slice field="ReferringReversalIndexEntries" label="Reversal Entries" editor="Custom" assemblyPath="LexEdDll.dll"
 				class="SIL.FieldWorks.XWorks.LexEd.ReversalIndexEntrySlice" menu="mnuDataTree-Help"
 				tooltip="Translation equivalent used in the finder list (Reversal Index)."/>
 		</part>

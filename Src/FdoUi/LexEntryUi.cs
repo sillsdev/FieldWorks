@@ -6,27 +6,23 @@
 // Responsibility: ?
 // Last reviewed: Steve Miller (FindEntryForWordform only)
 // --------------------------------------------------------------------------------------------
-
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Globalization;
-using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using System.Xml;
-using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.RootSites;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
 using SIL.FieldWorks.FdoUi.Dialogs;
-using SIL.FieldWorks.Resources;
-using SIL.Utils;
 using SIL.FieldWorks.LexText.Controls;
+using SIL.LCModel.DomainImpl;
 using XCore;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.CoreImpl;
-using SIL.FieldWorks.FDO.DomainImpl;
 
 namespace SIL.FieldWorks.FdoUi
 {
@@ -87,7 +83,7 @@ namespace SIL.FieldWorks.FdoUi
 		/// <param name="ichLim"></param>
 		/// <returns>LexEntry or null.</returns>
 		/// ------------------------------------------------------------------------------------
-		public static LexEntryUi FindEntryForWordform(FdoCache cache, int hvoSrc, int tagSrc,
+		public static LexEntryUi FindEntryForWordform(LcmCache cache, int hvoSrc, int tagSrc,
 			int ichMin, int ichLim)
 		{
 			ITsString tssContext = cache.DomainDataByFlid.get_StringProp(hvoSrc, tagSrc);
@@ -104,7 +100,7 @@ namespace SIL.FieldWorks.FdoUi
 		/// <param name="tssWf"></param>
 		/// <param name="wfa"></param>
 		/// <returns></returns>
-		public static List<ILexEntry> FindEntriesForWordformUI(FdoCache cache, ITsString tssWf, IWfiAnalysis wfa)
+		public static List<ILexEntry> FindEntriesForWordformUI(LcmCache cache, ITsString tssWf, IWfiAnalysis wfa)
 		{
 			bool duplicates = false;
 			List<ILexEntry> retval = cache.ServiceLocator.GetInstance<ILexEntryRepository>().FindEntriesForWordform(cache, tssWf, wfa, ref duplicates);
@@ -126,52 +122,10 @@ namespace SIL.FieldWorks.FdoUi
 		/// <param name="tssWf"></param>
 		/// <returns></returns>
 		/// ------------------------------------------------------------------------------------
-		public static LexEntryUi FindEntryForWordform(FdoCache cache, ITsString tssWf)
+		public static LexEntryUi FindEntryForWordform(LcmCache cache, ITsString tssWf)
 		{
 			ILexEntry matchingEntry = cache.ServiceLocator.GetInstance<ILexEntryRepository>().FindEntryForWordform(cache, tssWf);
 			return matchingEntry == null ? null : new LexEntryUi(matchingEntry);
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Create the mediator if it doesn't already exist.  Ensure that the string table in
-		/// the mediator is loaded from the Flex string table.
-		/// </summary>
-		/// <param name="mediator"></param>
-		/// <param name="fRestoreStringTable">output flag that we should restore the original string table</param>
-		/// <param name="stOrig">output is the original string table</param>
-		/// ------------------------------------------------------------------------------------
-		protected static Mediator EnsureValidMediator(Mediator mediator,
-			out bool fRestoreStringTable, out StringTable stOrig)
-		{
-			if (mediator == null)
-			{
-				mediator = new Mediator();
-				fRestoreStringTable = false;
-				stOrig = null;
-			}
-			else
-			{
-				try
-				{
-					stOrig = mediator.StringTbl;
-					// Check whether this is the Flex string table: look for a lexicon type
-					// string and compare the value with what is produced when it's not found.
-					string s = stOrig.GetString("MoCompoundRule-Plural", "AlternativeTitles");
-					fRestoreStringTable = (s == "*MoCompoundRule-Plural*");
-				}
-				catch
-				{
-					stOrig = null;
-					fRestoreStringTable = true;
-				}
-			}
-			if (fRestoreStringTable || stOrig == null)
-			{
-				string dir = Path.Combine(FwDirectoryFinder.FlexFolder, "Configuration");
-				mediator.StringTbl = new StringTable(dir);
-			}
-			return mediator;
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -186,11 +140,12 @@ namespace SIL.FieldWorks.FdoUi
 		/// <param name="ichLim"></param>
 		/// <param name="owner"></param>
 		/// <param name="mediator"></param>
+		/// <param name="propertyTable"></param>
 		/// <param name="helpProvider"></param>
 		/// <param name="helpFileKey">string key to get the help file name</param>
 		/// ------------------------------------------------------------------------------------
-		public static void DisplayOrCreateEntry(FdoCache cache, int hvoSrc, int tagSrc, int wsSrc,
-			int ichMin, int ichLim, IWin32Window owner, Mediator mediator,
+		public static void DisplayOrCreateEntry(LcmCache cache, int hvoSrc, int tagSrc, int wsSrc,
+			int ichMin, int ichLim, IWin32Window owner, Mediator mediator, PropertyTable propertyTable,
 			IHelpTopicProvider helpProvider, string helpFileKey)
 		{
 			ITsString tssContext = cache.DomainDataByFlid.get_StringProp(hvoSrc, tagSrc);
@@ -237,15 +192,14 @@ namespace SIL.FieldWorks.FdoUi
 						wfa = (anal as IWfiGloss).OwnerOfClass<IWfiAnalysis>();
 				}
 			}
-			DisplayEntries(cache, owner, mediator, helpProvider, helpFileKey, tssWf, wfa);
+			DisplayEntries(cache, owner, mediator, propertyTable, helpProvider, helpFileKey, tssWf, wfa);
 		}
 
-		internal static void DisplayEntry(FdoCache cache, IWin32Window owner, Mediator mediatorIn,
+		internal static void DisplayEntry(LcmCache cache, IWin32Window owner, Mediator mediator, PropertyTable propertyTable,
 			IHelpTopicProvider helpProvider, string helpFileKey, ITsString tssWfIn)
 		{
 			ITsString tssWf = tssWfIn;
 			LexEntryUi leui = null;
-			Mediator mediator = null;
 			try
 			{
 				leui = FindEntryForWordform(cache, tssWf);
@@ -260,89 +214,63 @@ namespace SIL.FieldWorks.FdoUi
 					int wsWf = TsStringUtils.GetWsAtOffset(tssWf, 0);
 					//use that to get the locale for the WS, which is used for
 					string wsLocale = cache.ServiceLocator.WritingSystemManager.Get(wsWf).IcuLocale;
-					string sLower = Icu.ToLower(tssWf.Text, wsLocale);
+					string sLower = Icu.UnicodeString.ToLower(tssWf.Text, wsLocale);
 					ITsTextProps ttp = tssWf.get_PropertiesAt(0);
-					tssWf = cache.TsStrFactory.MakeStringWithPropsRgch(sLower, sLower.Length, ttp);
+					tssWf = TsStringUtils.MakeString(sLower, ttp);
 					leui = FindEntryForWordform(cache, tssWf);
 				}
 
-				// Ensure that we have a valid mediator with the proper string table.
-				bool fRestore;
-				StringTable stOrig;
-				mediator = EnsureValidMediator(mediatorIn, out fRestore, out stOrig);
-				FdoCache cache2 = (FdoCache)mediator.PropertyTable.GetValue("cache");
-				if (cache2 != cache)
-					mediator.PropertyTable.SetProperty("cache", cache);
-				EnsureWindowConfiguration(mediator);
-				IVwStylesheet styleSheet = GetStyleSheet(cache, mediator);
+				EnsureWindowConfiguration(propertyTable);
+				IVwStylesheet styleSheet = GetStyleSheet(cache, propertyTable);
 				if (leui == null)
 				{
-					ILexEntry entry = ShowFindEntryDialog(cache, mediator, tssWf, owner);
+					ILexEntry entry = ShowFindEntryDialog(cache, mediator, propertyTable, tssWf, owner);
 					if (entry == null)
 					{
-						// Restore the original string table in the mediator if needed.
-						if (fRestore)
-							mediator.StringTbl = stOrig;
 						return;
 					}
 					leui = new LexEntryUi(entry);
 				}
 				if (mediator != null)
 					leui.Mediator = mediator;
+				if (propertyTable != null)
+					leui.PropTable = propertyTable;
 				leui.ShowSummaryDialog(owner, tssWf, helpProvider, helpFileKey, styleSheet);
-				// Restore the original string table in the mediator if needed.
-				if (fRestore)
-					mediator.StringTbl = stOrig;
 			}
 			finally
 			{
 				if (leui != null)
 					leui.Dispose();
-				if (mediator != mediatorIn)
-					mediator.Dispose();
 			}
 		}
 
 		// Currently only called from WCF (11/21/2013 - AP)
-		public static void DisplayEntry(FdoCache cache, Mediator mediatorIn,
+		public static void DisplayEntry(LcmCache cache, Mediator mediatorIn, PropertyTable propertyTable,
 			IHelpTopicProvider helpProvider, string helpFileKey, ITsString tssWfIn, IWfiAnalysis wfa)
 		{
-			DisplayEntries(cache, null, mediatorIn, helpProvider, helpFileKey, tssWfIn, wfa);
+			DisplayEntries(cache, null, mediatorIn, propertyTable, helpProvider, helpFileKey, tssWfIn, wfa);
 		}
 
-		internal static void DisplayEntries(FdoCache cache, IWin32Window owner, Mediator mediatorIn,
+		internal static void DisplayEntries(LcmCache cache, IWin32Window owner, Mediator mediator, PropertyTable propertyTable,
 			IHelpTopicProvider helpProvider, string helpFileKey, ITsString tssWfIn, IWfiAnalysis wfa)
 		{
 			ITsString tssWf = tssWfIn;
 			var entries = FindEntriesForWordformUI(cache, tssWf, wfa);
 
-			StringTable stOrig;
-			Mediator mediator;
-			IVwStylesheet styleSheet;
-			bool fRestore = EnsureFlexTypeSetup(cache, mediatorIn, out stOrig, out mediator, out styleSheet);
-			try
-			{
-
+			IVwStylesheet styleSheet = GetStyleSheet(cache, propertyTable);
 				if (entries == null || entries.Count == 0)
 				{
-					ILexEntry entry = ShowFindEntryDialog(cache, mediator, tssWf, owner);
+				ILexEntry entry = ShowFindEntryDialog(cache, mediator, propertyTable, tssWf, owner);
 					if (entry == null)
 						return;
 					entries = new List<ILexEntry>(1);
 					entries.Add(entry);
 				}
-				DisplayEntriesRecursive(cache, owner, mediator, styleSheet, helpProvider, helpFileKey, entries, tssWf);
+			DisplayEntriesRecursive(cache, owner, mediator, propertyTable, styleSheet, helpProvider, helpFileKey, entries, tssWf);
 			}
-			finally
-			{
-				// Restore the original string table in the mediator if needed.
-				if (fRestore)
-					mediator.StringTbl = stOrig;
-			}
-		}
 
-		private static void DisplayEntriesRecursive(FdoCache cache, IWin32Window owner,
-			Mediator mediator, IVwStylesheet stylesheet,
+		private static void DisplayEntriesRecursive(LcmCache cache, IWin32Window owner,
+			Mediator mediator, PropertyTable propertyTable, IVwStylesheet stylesheet,
 			IHelpTopicProvider helpProvider, string helpFileKey,
 			List<ILexEntry> entries, ITsString tssWf)
 		{
@@ -353,7 +281,7 @@ namespace SIL.FieldWorks.FdoUi
 			{
 				using (var sdform = new SummaryDialogForm(new List<int>(entries.Select(le => le.Hvo)), tssWf,
 														helpProvider, helpFileKey,
-														stylesheet, cache, mediator))
+														stylesheet, cache, mediator, propertyTable))
 				{
 					SetCurrentModalForm(sdform);
 					if (owner == null)
@@ -367,7 +295,7 @@ namespace SIL.FieldWorks.FdoUi
 				{
 					// Look for another entry to display.  (If the user doesn't select another
 					// entry, loop back and redisplay the current entry.)
-					var entry = ShowFindEntryDialog(cache, mediator, tssWf, owner);
+					var entry = ShowFindEntryDialog(cache, mediator, propertyTable, tssWf, owner);
 					if (entry != null)
 					{
 						// We need a list that contains the entry we found to display on the
@@ -406,33 +334,16 @@ namespace SIL.FieldWorks.FdoUi
 			(sender as Form).TopMost = false;
 		}
 
-		private static bool EnsureFlexTypeSetup(FdoCache cache, Mediator mediatorIn, out StringTable stOrig, out Mediator mediator, out IVwStylesheet styleSheet)
-		{
-			// Ensure that we have a valid mediator with the proper string table.
-			bool fRestore = false;
-			stOrig = null;
-			mediator = EnsureValidMediator(mediatorIn, out fRestore, out stOrig);
-			FdoCache cache2 = (FdoCache)mediator.PropertyTable.GetValue("cache");
-			if (cache2 != cache)
-				mediator.PropertyTable.SetProperty("cache", cache);
-			EnsureWindowConfiguration(mediator);
-			styleSheet = GetStyleSheet(cache, mediator);
-			return fRestore;
-		}
-
 		/// <summary>
-		/// Determine a stylesheet from a mediator, or create a new one. Currently this is done
+		/// Determine a stylesheet from a PropertyTable, or create a new one. Currently this is done
 		/// by looking for the main window and seeing whether it has a StyleSheet property that
 		/// returns one. (We use reflection because the relevant classes are in DLLs we can't
 		/// reference.)
 		/// </summary>
-		/// <param name="mediator"></param>
 		/// <returns></returns>
-		private static IVwStylesheet StyleSheetFromMediator(Mediator mediator)
+		private static IVwStylesheet StyleSheetFromPropertyTable(PropertyTable propertyTable)
 		{
-			if (mediator == null)
-				return null;
-			Form mainWindow = mediator.PropertyTable.GetValue("window") as Form;
+			Form mainWindow = propertyTable.GetValue<Form>("window");
 			if (mainWindow == null)
 				return null;
 			System.Reflection.PropertyInfo pi = mainWindow.GetType().GetProperty("StyleSheet");
@@ -441,23 +352,23 @@ namespace SIL.FieldWorks.FdoUi
 			return pi.GetValue(mainWindow, null) as IVwStylesheet;
 		}
 
-		private static IVwStylesheet GetStyleSheet(FdoCache cache, Mediator mediator)
+		private static IVwStylesheet GetStyleSheet(LcmCache cache, PropertyTable propertyTable)
 		{
-			IVwStylesheet vss = StyleSheetFromMediator(mediator);
+			IVwStylesheet vss = StyleSheetFromPropertyTable(propertyTable);
 			if (vss != null)
 				return vss;
 			// Get a style sheet for the Language Explorer, and store it in the
 			// (new) mediator.
-			FwStyleSheet styleSheet = new FwStyleSheet();
+			LcmStyleSheet styleSheet = new LcmStyleSheet();
 			styleSheet.Init(cache, cache.LanguageProject.Hvo, LangProjectTags.kflidStyles);
-			mediator.PropertyTable.SetProperty("FwStyleSheet", styleSheet);
-			mediator.PropertyTable.SetPropertyPersistence("FwStyleSheet", false);
+			propertyTable.SetProperty("LcmStyleSheet", styleSheet, true);
+			propertyTable.SetPropertyPersistence("LcmStyleSheet", false);
 			return styleSheet;
 		}
 
-		private static void EnsureWindowConfiguration(Mediator mediator)
+		private static void EnsureWindowConfiguration(PropertyTable propertyTable)
 		{
-			XmlNode xnWindow = (XmlNode)mediator.PropertyTable.GetValue("WindowConfiguration");
+			XmlNode xnWindow = propertyTable.GetValue<XmlNode>("WindowConfiguration");
 			if (xnWindow == null)
 			{
 				string configFile = FwDirectoryFinder.GetCodeFile("Language Explorer/Configuration/Main.xml");
@@ -465,16 +376,16 @@ namespace SIL.FieldWorks.FdoUi
 				// files (true argument) but just trust that we put enough in the installer to make it work.
 				XmlDocument configuration = XWindow.LoadConfigurationWithIncludes(configFile, true);
 				XmlNode windowConfigurationNode = configuration.SelectSingleNode("window");
-				mediator.PropertyTable.SetProperty("WindowConfiguration", windowConfigurationNode);
-				mediator.PropertyTable.SetPropertyPersistence("WindowConfiguration", false);
+				propertyTable.SetProperty("WindowConfiguration", windowConfigurationNode, true);
+				propertyTable.SetPropertyPersistence("WindowConfiguration", false);
 			}
 		}
 
 		// Currently only called from WCF (11/21/2013 - AP)
-		public static void DisplayRelatedEntries(FdoCache cache, Mediator mediatorIn,
+		public static void DisplayRelatedEntries(LcmCache cache, Mediator mediatorIn, PropertyTable propertyTable,
 			IHelpTopicProvider helpProvider, string helpFileKey, ITsString tss)
 		{
-			DisplayRelatedEntries(cache, null, mediatorIn, helpProvider, helpFileKey, tss, true);
+			DisplayRelatedEntries(cache, null, mediatorIn, propertyTable, helpProvider, helpFileKey, tss, true);
 		}
 
 		/// ------------------------------------------------------------
@@ -484,15 +395,16 @@ namespace SIL.FieldWorks.FdoUi
 		/// </summary>
 		/// <param name="cache">The cache.</param>
 		/// <param name="owner">The owning window.</param>
-		/// <param name="mediatorIn">The mediator.</param>
+		/// <param name="mediator">The mediator.</param>
+		/// <param name="propertyTable"></param>
 		/// <param name="helpProvider">The help provider.</param>
 		/// <param name="helpFileKey">The help file key.</param>
 		/// <param name="tssWf">The ITsString for the word form.</param>
 		/// <param name="hideInsertButton"></param>
 		/// ------------------------------------------------------------
 		// Currently only called from WCF (11/21/2013 - AP)
-		public static void DisplayRelatedEntries(FdoCache cache, IWin32Window owner,
-			Mediator mediatorIn, IHelpTopicProvider helpProvider, string helpFileKey, ITsString tssWf,
+		public static void DisplayRelatedEntries(LcmCache cache, IWin32Window owner,
+			Mediator mediator, PropertyTable propertyTable, IHelpTopicProvider helpProvider, string helpFileKey, ITsString tssWf,
 			bool hideInsertButton)
 		{
 			if (tssWf == null || tssWf.Length == 0)
@@ -513,17 +425,12 @@ namespace SIL.FieldWorks.FdoUi
 				IVwCacheDa cdaTemp;
 				if (!RelatedWords.LoadDomainAndRelationInfo(cache, hvoEntry, out domains, out lexrels, out cdaTemp, owner))
 					return;
-				StringTable stOrig;
-				Mediator mediator;
-				IVwStylesheet styleSheet;
-				bool fRestore = EnsureFlexTypeSetup(cache, mediatorIn, out stOrig, out mediator, out styleSheet);
+				IVwStylesheet styleSheet = GetStyleSheet(cache, propertyTable);
 				using (RelatedWords rw = new RelatedWords(cache, null, hvoEntry, domains, lexrels, cdaTemp, styleSheet,
-					mediatorIn, hideInsertButton))
+					mediator, hideInsertButton))
 				{
 					rw.ShowDialog(owner);
 				}
-				if (fRestore)
-					mediator.StringTbl = stOrig;
 			}
 		}
 
@@ -535,12 +442,13 @@ namespace SIL.FieldWorks.FdoUi
 		/// <param name="cache">The cache.</param>
 		/// <param name="sel">The sel.</param>
 		/// <param name="owner">The owner.</param>
-		/// <param name="mediatorIn"></param>
+		/// <param name="mediator"></param>
+		/// <param name="propertyTable"></param>
 		/// <param name="helpProvider"></param>
 		/// <param name="helpFileKey"></param>
 		/// ------------------------------------------------------------------------------------
-		public static void DisplayRelatedEntries(FdoCache cache, IVwSelection sel, IWin32Window owner,
-			Mediator mediatorIn, IHelpTopicProvider helpProvider, string helpFileKey)
+		public static void DisplayRelatedEntries(LcmCache cache, IVwSelection sel, IWin32Window owner,
+			Mediator mediator, PropertyTable propertyTable, IHelpTopicProvider helpProvider, string helpFileKey)
 		{
 			if (sel == null)
 				return;
@@ -574,16 +482,11 @@ namespace SIL.FieldWorks.FdoUi
 				IVwCacheDa cdaTemp;
 				if (!RelatedWords.LoadDomainAndRelationInfo(cache, hvoEntry, out domains, out lexrels, out cdaTemp, owner))
 					return;
-				StringTable stOrig;
-				Mediator mediator;
-				IVwStylesheet styleSheet;
-				bool fRestore = EnsureFlexTypeSetup(cache, mediatorIn, out stOrig, out mediator, out styleSheet);
-				using (RelatedWords rw = new RelatedWords(cache, sel3, hvoEntry, domains, lexrels, cdaTemp, styleSheet, mediatorIn, false))
+				IVwStylesheet styleSheet = GetStyleSheet(cache, propertyTable);
+				using (RelatedWords rw = new RelatedWords(cache, sel3, hvoEntry, domains, lexrels, cdaTemp, styleSheet, mediator, false))
 				{
 					rw.ShowDialog(owner);
 				}
-				if (fRestore)
-					mediator.StringTbl = stOrig;
 			}
 		}
 
@@ -604,19 +507,14 @@ namespace SIL.FieldWorks.FdoUi
 		/// </summary>
 		/// <param name="cache">The cache.</param>
 		/// <param name="mediator">The mediator.</param>
+		/// <param name="propertyTable"></param>
 		/// <param name="tssForm">The TSS form.</param>
 		/// <param name="owner">The owner.</param>
 		/// <returns>The HVO of the selected or created entry</returns>
 		/// ------------------------------------------------------------------------------------
-		internal static ILexEntry ShowFindEntryDialog(FdoCache cache, Mediator mediator,
+		internal static ILexEntry ShowFindEntryDialog(LcmCache cache, Mediator mediator, PropertyTable propertyTable,
 			ITsString tssForm, IWin32Window owner)
 		{
-			// Ensure that we have a valid mediator with the proper string table.
-			bool fRestore = false;
-			StringTable stOrig = null;
-			mediator = EnsureValidMediator(mediator, out fRestore, out stOrig);
-			try
-			{
 				using (EntryGoDlg entryGoDlg = new EntryGoDlg())
 				{
 					// Temporarily set TopMost to true so it will launch above any calling app (e.g. Paratext)
@@ -631,7 +529,7 @@ namespace SIL.FieldWorks.FdoUi
 					if (owner == null)
 						entryGoDlg.StartPosition = FormStartPosition.CenterScreen;
 					entryGoDlg.Owner = owner as Form;
-					entryGoDlg.SetDlgInfo(cache, wp, mediator, tssForm);
+				entryGoDlg.SetDlgInfo(cache, wp, mediator, propertyTable, tssForm);
 					entryGoDlg.SetHelpTopic("khtpFindInDictionary");
 					if (entryGoDlg.ShowDialog() == DialogResult.OK)
 					{
@@ -640,13 +538,6 @@ namespace SIL.FieldWorks.FdoUi
 						return entry;
 					}
 				}
-			}
-			finally
-			{
-				// Restore the original string table in the mediator if needed.
-				if (fRestore)
-					mediator.StringTbl = stOrig;
-			}
 			return null;
 		}
 
@@ -667,7 +558,7 @@ namespace SIL.FieldWorks.FdoUi
 			}
 			if (otherButtonClicked)
 			{
-				var entry = ShowFindEntryDialog(this.Object.Cache, this.Mediator, tssWf, owner);
+				var entry = ShowFindEntryDialog(Object.Cache, Mediator, m_propertyTable, tssWf, owner);
 				if (entry != null)
 				{
 					using (var leuiNew = new LexEntryUi(entry))
@@ -718,7 +609,7 @@ namespace SIL.FieldWorks.FdoUi
 		/// </summary>
 		/// <param name="cache"></param>
 		/// ------------------------------------------------------------------------------------
-		public LexEntryVc(FdoCache cache)
+		public LexEntryVc(LcmCache cache)
 			: base(cache)
 		{
 			m_ws = cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Handle;
@@ -786,9 +677,9 @@ namespace SIL.FieldWorks.FdoUi
 						if (tssVariantTypeRevAbbr != null && tssVariantTypeRevAbbr.Length > 0)
 						{
 							if (fNeedInitialPlus)
-								vwenv.AddString(TsStringUtils.MakeTss("+", m_cache.DefaultUserWs));
+								vwenv.AddString(TsStringUtils.MakeString("+", m_cache.DefaultUserWs));
 							else
-								vwenv.AddString(TsStringUtils.MakeTss(",", m_cache.DefaultUserWs));
+								vwenv.AddString(TsStringUtils.MakeString(",", m_cache.DefaultUserWs));
 							vwenv.AddString(tssVariantTypeRevAbbr);
 							fNeedInitialPlus = false;
 						}
@@ -827,6 +718,14 @@ namespace SIL.FieldWorks.FdoUi
 						sPrefix = sda.get_UnicodeProp(hvoType, MoMorphTypeTags.kflidPrefix);
 					}
 
+					// Show homograph number if non-zero.
+					int defUserWs = m_cache.WritingSystemFactory.UserWs;
+					int nHomograph = sda.get_IntProp(hvo, LexEntryTags.kflidHomographNumber);
+					var hc = m_cache.ServiceLocator.GetInstance<HomographConfiguration>();
+					//Insert HomographNumber when position is Before
+					if (hc.HomographNumberBefore)
+						InsertHomographNumber(vwenv, hc, nHomograph, defUserWs);
+
 					// LexEntry.ShortName1; basically tries for form of the lexeme form, then the citation form.
 					bool fGotLabel = false;
 					int wsActual = 0;
@@ -838,7 +737,7 @@ namespace SIL.FieldWorks.FdoUi
 							m_wsActual = wsActual;
 							fGotLabel = true;
 							if (sPrefix != null)
-								vwenv.AddString(TsStringUtils.MakeTss(sPrefix, wsActual));
+								vwenv.AddString(TsStringUtils.MakeString(sPrefix, wsActual));
 							vwenv.AddObjProp(LexEntryTags.kflidLexemeForm, this, kfragFormForm);
 						}
 					}
@@ -849,50 +748,56 @@ namespace SIL.FieldWorks.FdoUi
 						{
 							m_wsActual = wsActual;
 							if (sPrefix != null)
-								vwenv.AddString(TsStringUtils.MakeTss(sPrefix, wsActual));
+								vwenv.AddString(TsStringUtils.MakeString(sPrefix, wsActual));
 							vwenv.AddStringAltMember(LexEntryTags.kflidCitationForm, wsActual, this);
 							fGotLabel = true;
 						}
 					}
-					int defUserWs = m_cache.WritingSystemFactory.UserWs;
+
 					if (!fGotLabel)
 					{
 						// If that fails just show two questions marks.
 						if (sPrefix != null)
-							vwenv.AddString(TsStringUtils.MakeTss(sPrefix, wsActual));
-						vwenv.AddString(m_cache.TsStrFactory.MakeString(FdoUiStrings.ksQuestions, defUserWs));	// was "??", not "???"
+							vwenv.AddString(TsStringUtils.MakeString(sPrefix, wsActual));
+						vwenv.AddString(TsStringUtils.MakeString(FdoUiStrings.ksQuestions, defUserWs));	// was "??", not "???"
 					}
 
 					// If we have a lexeme form type show the appropriate postfix.
 					if (hvoType != 0)
 					{
-						vwenv.AddString(TsStringUtils.MakeTss(
+						vwenv.AddString(TsStringUtils.MakeString(
 							sda.get_UnicodeProp(hvoType, MoMorphTypeTags.kflidPostfix), wsActual));
 					}
 
-					// Show homograph number if non-zero.
-					int nHomograph = sda.get_IntProp(hvo,
-						LexEntryTags.kflidHomographNumber);
-					vwenv.NoteDependency(new[] { hvo }, new[] { LexEntryTags.kflidHomographNumber }, 1);
-					if (nHomograph > 0)
-					{
-						// Use a string builder to embed the properties in with the TsString.
-						// this allows our TsStringCollectorEnv to properly encode the superscript.
-						// ideally, TsStringCollectorEnv could be made smarter to handle SetIntPropValues
-						// since AppendTss treats the given Tss as atomic.
-						ITsIncStrBldr tsBldr = TsIncStrBldrClass.Create();
-						tsBldr.SetIntPropValues((int) FwTextPropType.ktptSuperscript,
-							(int) FwTextPropVar.ktpvEnum,
-							(int) FwSuperscriptVal.kssvSub);
-						tsBldr.SetIntPropValues((int) FwTextPropType.ktptBold,
-							(int) FwTextPropVar.ktpvEnum,
-							(int) FwTextToggleVal.kttvForceOn);
-						tsBldr.SetIntPropValues((int) FwTextPropType.ktptWs,
-							(int) FwTextPropVar.ktpvDefault, defUserWs);
-						var hc = m_cache.ServiceLocator.GetInstance<HomographConfiguration>();
-						StringServices.InsertHomographNumber(tsBldr, nHomograph, hc, HomographConfiguration.HeadwordVariant.Main, m_cache);
-						vwenv.AddString(tsBldr.GetString());
-					}
+					vwenv.NoteDependency(new[] {hvo}, new[] {LexEntryTags.kflidHomographNumber}, 1);
+					//Insert HomographNumber when position is After
+					if (!hc.HomographNumberBefore)
+						InsertHomographNumber(vwenv, hc, nHomograph, defUserWs);
+		}
+
+		/// <summary>
+		/// Method to insert the homograph number with settings into the Text
+		/// </summary>
+		private void InsertHomographNumber(IVwEnv vwenv, HomographConfiguration hc, int nHomograph, int defUserWs)
+		{
+			if (nHomograph <= 0)
+				return;
+
+			// Use a string builder to embed the properties in with the TsString.
+			// this allows our TsStringCollectorEnv to properly encode the superscript.
+			// ideally, TsStringCollectorEnv could be made smarter to handle SetIntPropValues
+			// since AppendTss treats the given Tss as atomic.
+			ITsIncStrBldr tsBldr = TsStringUtils.MakeIncStrBldr();
+			tsBldr.SetIntPropValues((int) FwTextPropType.ktptSuperscript,
+				(int) FwTextPropVar.ktpvEnum,
+				(int) FwSuperscriptVal.kssvSub);
+			tsBldr.SetIntPropValues((int) FwTextPropType.ktptBold,
+				(int) FwTextPropVar.ktpvEnum,
+				(int) FwTextToggleVal.kttvForceOn);
+			tsBldr.SetIntPropValues((int) FwTextPropType.ktptWs,
+				(int) FwTextPropVar.ktpvDefault, defUserWs);
+			StringServices.InsertHomographNumber(tsBldr, nHomograph, hc, HomographConfiguration.HeadwordVariant.Main, m_cache);
+			vwenv.AddString(tsBldr.GetString());
 		}
 
 		/// <summary>
@@ -903,7 +808,7 @@ namespace SIL.FieldWorks.FdoUi
 		/// <param name="wsVern"></param>
 		/// <param name="ler"></param>
 		/// <returns></returns>
-		static public ITsString GetLexEntryTss(FdoCache cache, int hvoEntryToDisplay, int wsVern, ILexEntryRef ler)
+		static public ITsString GetLexEntryTss(LcmCache cache, int hvoEntryToDisplay, int wsVern, ILexEntryRef ler)
 		{
 			LexEntryVc vcEntry = new LexEntryVc(cache);
 			vcEntry.WritingSystemCode = wsVern;
@@ -923,7 +828,7 @@ namespace SIL.FieldWorks.FdoUi
 		/// <returns></returns>
 		static public ITsString GetLexEntryTss(IWfiMorphBundle morphBundle, int wsVern)
 		{
-			FdoCache cache = morphBundle.Cache;
+			LcmCache cache = morphBundle.Cache;
 			LexEntryVc vcEntry = new LexEntryVc(cache);
 			vcEntry.WritingSystemCode = wsVern;
 			TsStringCollectorEnv collector = new TsStringCollectorEnv(null, cache.MainCacheAccessor, morphBundle.Hvo);

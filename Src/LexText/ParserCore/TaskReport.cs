@@ -1,26 +1,18 @@
-// Copyright (c) 2002-2013 SIL International
+// Copyright (c) 2002-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: TaskReport.cs
-// Responsibility: John Hatton
-// Last reviewed:
-//
-// <remarks>
-// </remarks>
 
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Xml.Linq;
-using SIL.Utils;
 
 namespace SIL.FieldWorks.WordWorks.Parser
 {
 	/// <summary>
 	/// Summary description for TaskReport.
 	/// </summary>
-	public sealed class TaskReport : IFWDisposable
+	public sealed class TaskReport : IDisposable
 	{
 		public enum TaskPhase {Started, Working, Finished, ErrorEncountered};
 

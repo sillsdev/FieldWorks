@@ -5,7 +5,6 @@
 using System;
 using System.Xml;
 using NUnit.Framework;
-using SIL.Utils;
 
 namespace XCore
 {
@@ -59,7 +58,7 @@ namespace XCore
 
 		public IxCoreColleague[] GetMessageTargets () { return null;}
 
-		public void Init (Mediator mediator, XmlNode configurationParameters)
+		public void Init(Mediator mediator, PropertyTable propertyTable, XmlNode configurationParameters)
 		{}
 	}
 

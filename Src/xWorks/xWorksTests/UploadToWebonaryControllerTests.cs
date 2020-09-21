@@ -1,10 +1,9 @@
-﻿// Copyright (c) 2014-2016 SIL International
+// Copyright (c) 2014-2020 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -13,14 +12,13 @@ using System.Text.RegularExpressions;
 using System.Xml;
 using Ionic.Zip;
 using NUnit.Framework;
-using Palaso.IO;
-using SIL.CoreImpl;
+using SIL.LCModel.Core.Text;
+using SIL.IO;
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Widgets;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FDO.FDOTests;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
 using SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators;
 using XCore;
 // ReSharper disable InconsistentNaming
@@ -32,13 +30,13 @@ namespace SIL.FieldWorks.XWorks
 		private FwXApp m_application;
 		private FwXWindow m_window;
 		private Mediator m_mediator;
-		private FwStyleSheet m_styleSheet;
+		private PropertyTable m_propertyTable;
+		private LcmStyleSheet m_styleSheet;
 		private StyleInfoTable m_owningTable;
 		private RecordClerk m_Clerk;
 
 		#region Environment
 		[TestFixtureSetUp]
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule", Justification = "Clerk disposed in TearDown")]
 		public override void FixtureSetup()
 		{
 			base.FixtureSetup();
@@ -48,6 +46,9 @@ namespace SIL.FieldWorks.XWorks
 			var configFilePath = Path.Combine(FwDirectoryFinder.CodeDirectory, m_application.DefaultConfigurationPathname);
 			m_window = new MockFwXWindow(m_application, configFilePath);
 			((MockFwXWindow)m_window).Init(Cache); // initializes Mediator values
+			m_propertyTable = m_window.PropTable;
+			m_propertyTable.SetProperty("AppSettings", new FwApplicationSettings(), false);
+			m_propertyTable.SetPropertyPersistence("AppSettings", false);
 			m_mediator = m_window.Mediator;
 			m_mediator.AddColleague(new StubContentControlProvider());
 			m_window.LoadUI(configFilePath);
@@ -58,6 +59,11 @@ namespace SIL.FieldWorks.XWorks
 					<clerk id='entries'>
 						<recordList owner='LexDb' property='Entries'/>
 					</clerk>
+					<clerk id='AllReversalEntries'>
+						<recordList owner = 'ReversalIndex' property='AllEntries'>
+						<dynamicloaderinfo assemblyPath = 'LexEdDll.dll' class='SIL.FieldWorks.XWorks.LexEd.AllReversalEntriesRecordList'/>
+						</recordList>
+					</clerk>
 				</clerks>
 				<tools>
 					<tool label='Dictionary' value='lexiconDictionary' icon='DocumentView'>
@@ -66,18 +72,33 @@ namespace SIL.FieldWorks.XWorks
 							<parameters area='lexicon' clerk='entries' layout='Bartholomew' layoutProperty='DictionaryPublicationLayout' editable='false' configureObjectName='Dictionary'/>
 						</control>
 					</tool>
+					<tool label='ReversalIndex' value='lexiconReversalIndex' icon='DocumentView'>
+						<control>
+							<dynamicloaderinfo assemblyPath='xWorks.dll' class='SIL.FieldWorks.XWorks.RecordEditView'/>
+							<parameters area = 'lexicon' clerk = 'AllReversalEntries' layout = 'Normal' treeBarAvailability = 'NotAllowed' emptyTitleId = 'No-ReversalIndexEntries' />
+						</control>
+					</tool>
 				</tools>
 			</root>";
 			var doc = new XmlDocument();
 			doc.LoadXml(reversalIndexClerk);
+
 			XmlNode clerkNode = doc.SelectSingleNode("//tools/tool[@label='Dictionary']//parameters[@area='lexicon']");
-			m_Clerk = RecordClerkFactory.CreateClerk(m_mediator, clerkNode, false);
-			m_mediator.PropertyTable.SetProperty("ActiveClerk", m_Clerk);
-			m_mediator.PropertyTable.SetProperty("ToolForAreaNamed_lexicon", "lexiconDictionary");
+			m_Clerk = RecordClerkFactory.CreateClerk(m_mediator, m_propertyTable, clerkNode, false);
+			m_propertyTable.SetProperty("ActiveClerk", m_Clerk, false);
+
+			clerkNode = doc.SelectSingleNode("//tools/tool[@label='ReversalIndex']//parameters[@area='lexicon']");
+			m_Clerk = RecordClerkFactory.CreateClerk(m_mediator, m_propertyTable, clerkNode, false);
+			m_propertyTable.SetProperty("ActiveClerk", m_Clerk, false);
+
+			m_propertyTable.SetProperty("ToolForAreaNamed_lexicon", "lexiconDictionary", false);
 			Cache.ProjectId.Path = Path.Combine(FwDirectoryFinder.SourceDirectory, "xWorks/xWorksTests/TestData/");
 			// setup style sheet and style to allow the css to generate during the UploadToWebonaryController driven export
-			m_styleSheet = FontHeightAdjuster.StyleSheetFromMediator(m_mediator);
-			m_owningTable = new StyleInfoTable("AbbySomebody", (IWritingSystemManager)Cache.WritingSystemFactory);
+			m_styleSheet = FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable);
+
+			Cache.ServiceLocator.GetInstance<IReversalIndexRepository>().FindOrCreateIndexForWs(Cache.DefaultAnalWs);
+
+			m_owningTable = new StyleInfoTable("AbbySomebody", Cache.ServiceLocator.WritingSystemManager);
 			var fontInfo = new FontInfo();
 			var letHeadStyle = new TestStyle(fontInfo, Cache) { Name = CssGenerator.LetterHeadingStyleName, IsParagraphStyle = false };
 			var dictNormStyle = new TestStyle(fontInfo, Cache) { Name = CssGenerator.DictionaryNormal, IsParagraphStyle = true };
@@ -90,7 +111,7 @@ namespace SIL.FieldWorks.XWorks
 		[TestFixtureTearDown]
 		public override void FixtureTeardown()
 		{
-			ConfiguredXHTMLGenerator.AssemblyFile = "FDO";
+			ConfiguredXHTMLGenerator.AssemblyFile = "SIL.LCModel";
 			base.FixtureTeardown();
 			Dispose();
 		}
@@ -101,14 +122,11 @@ namespace SIL.FieldWorks.XWorks
 			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			if (disposing)
 			{
-				if(m_Clerk != null)
-				   m_Clerk.Dispose();
-				if (m_application != null)
-					m_application.Dispose();
-				if (m_window != null)
-					m_window.Dispose();
-				if (m_mediator != null)
-					m_mediator.Dispose();
+				m_Clerk?.Dispose();
+				m_application?.Dispose();
+				m_window?.Dispose();
+				m_mediator?.Dispose();
+				m_propertyTable?.Dispose();
 			}
 		}
 
@@ -120,6 +138,12 @@ namespace SIL.FieldWorks.XWorks
 		public void Dispose()
 		{
 			Dispose(true);
+			// This object will be cleaned up by the Dispose method.
+			// Therefore, you should call GC.SupressFinalize to
+			// take this object off the finalization queue
+			// and prevent finalization code for this object
+			// from executing a second time.
+			GC.SuppressFinalize(this);
 		}
 		#endregion disposal
 		#endregion Environment
@@ -143,9 +167,11 @@ namespace SIL.FieldWorks.XWorks
 			{
 				var mockView = SetUpView();
 				var testConfig = new Dictionary<string, DictionaryConfigurationModel>();
+				var reversalConfig = new Dictionary<string, DictionaryConfigurationModel>();
 				mockView.Model.Configurations = testConfig;
+				mockView.Model.Reversals = reversalConfig;
 				// Build model sufficient to generate xhtml and css
-				ConfiguredXHTMLGenerator.AssemblyFile = "FDO";
+				ConfiguredXHTMLGenerator.AssemblyFile = "SIL.LCModel";
 				var mainHeadwordNode = new ConfigurableDictionaryNode
 				{
 					FieldDescription = "HeadWord",
@@ -161,17 +187,49 @@ namespace SIL.FieldWorks.XWorks
 				var model = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { mainEntryNode } };
 				CssGeneratorTests.PopulateFieldsForTesting(model);
 				testConfig["Test Config"] = model;
+
+				var reversalFormNode = new ConfigurableDictionaryNode
+				{
+					FieldDescription = "ReversalForm",
+					//DictionaryNodeOptions = CXGTests.GetWsOptionsForLanguages(new[] { "en" }),
+					DictionaryNodeOptions = new DictionaryNodeWritingSystemOptions
+					{
+						WsType = DictionaryNodeWritingSystemOptions.WritingSystemType.Reversal,
+						Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
+						{
+							new DictionaryNodeListOptions.DictionaryNodeOption {Id = "en"}
+						},
+						DisplayWritingSystemAbbreviations = false
+					},
+					Label = "Reversal Form"
+				};
+				var reversalEntryNode = new ConfigurableDictionaryNode
+				{
+					Children = new List<ConfigurableDictionaryNode> { reversalFormNode },
+					FieldDescription = "ReversalIndexEntry"
+				};
+				model = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { reversalEntryNode } };
+				CssGeneratorTests.PopulateFieldsForTesting(model);
+				reversalConfig["English"] = model;
+				model.Label = "English";
+				model.WritingSystem = "en";
+				List<string> reversalLanguage = new List<string>();
+				reversalLanguage.Add("English");
+				mockView.Model.SelectedReversals = reversalLanguage;
+
 				// create entry sufficient to generate xhtml and css
 				var factory = Cache.ServiceLocator.GetInstance<ILexEntryFactory>();
 				var entry = factory.Create();
 				var wsFr = Cache.WritingSystemFactory.GetWsFromStr("fr");
-				entry.CitationForm.set_String(wsFr, Cache.TsStrFactory.MakeString("Headword", wsFr));
+				entry.CitationForm.set_String(wsFr, TsStringUtils.MakeString("Headword", wsFr));
 				//SUT
 				Assert.DoesNotThrow(() => controller.UploadToWebonary(mockView.Model, mockView));
 
 				// The names of the files being sent to webonary are listed while logging the zip
 				Assert.That(mockView.StatusStrings.Any(s => s.Contains("configured.xhtml")), "xhtml not logged as compressed");
 				Assert.That(mockView.StatusStrings.Any(s => s.Contains("configured.css")), "css not logged as compressed");
+				Assert.That(mockView.StatusStrings.Any(s => s.Contains("reversal_en.xhtml")), "reversal_enxhtml not logged as compressed");
+				Assert.That(mockView.StatusStrings.Any(s => s.Contains("Exporting entries for English reversal")), "English reversal not exported");
 			}
 		}
 
@@ -269,11 +327,11 @@ namespace SIL.FieldWorks.XWorks
 		[Ignore("Used for manual testing against a real Webonary instance")]
 		public void RealUploadWithBadDataReportsErrorInProcessing()
 		{
-			using (var controller = new MockUploadToWebonaryController(Cache, m_mediator))
+			using (var controller = new MockUploadToWebonaryController(Cache, m_propertyTable, m_mediator))
 			{
 				var view = new MockWebonaryDlg
 				{
-					Model = new UploadToWebonaryModel(m_mediator)
+					Model = new UploadToWebonaryModel(m_propertyTable)
 					{
 						UserName = "webonary",
 						Password = "webonary"
@@ -296,7 +354,7 @@ namespace SIL.FieldWorks.XWorks
 		[Ignore("Takes too long to timeout. Enable if want to test.")]
 		public void RealUploadToWebonaryHandlesNetworkErrors()
 		{
-			using (var controller = new MockUploadToWebonaryController(Cache, m_mediator))
+			using (var controller = new MockUploadToWebonaryController(Cache, m_propertyTable, m_mediator))
 			{
 				var view = new MockWebonaryDlg();
 				var filepath = "../../Src/xWorks/xWorksTests/lubwisi-d-new.zip";
@@ -329,10 +387,10 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void UploadToWebonaryThrowsOnNullInput()
 		{
-			using (var controller = new MockUploadToWebonaryController(Cache, m_mediator, null, null))
+			using (var controller = new MockUploadToWebonaryController(Cache, m_propertyTable, m_mediator, null, null))
 			{
 				var view = new MockWebonaryDlg();
-				var model = new UploadToWebonaryModel(m_mediator);
+				var model = new UploadToWebonaryModel(m_propertyTable);
 				Assert.Throws<ArgumentNullException>(() => controller.UploadToWebonary(null, model, view));
 				Assert.Throws<ArgumentNullException>(() => controller.UploadToWebonary("notNull", null, view));
 				Assert.Throws<ArgumentNullException>(() => controller.UploadToWebonary("notNull", model, null));
@@ -343,11 +401,11 @@ namespace SIL.FieldWorks.XWorks
 		public void UploadToWebonaryReportsFailedAuthentication()
 		{
 			var responseText = Encoding.UTF8.GetBytes("Wrong username or password.\nauthentication failed\n");
-			using (var controller = new MockUploadToWebonaryController(Cache, m_mediator, null, responseText))
+			using (var controller = new MockUploadToWebonaryController(Cache, m_propertyTable, m_mediator, null, responseText))
 			{
 				var view = new MockWebonaryDlg()
 				{
-					Model = new UploadToWebonaryModel(m_mediator)
+					Model = new UploadToWebonaryModel(m_propertyTable)
 					{
 						UserName = "nouser",
 						Password = "nopassword"
@@ -365,11 +423,11 @@ namespace SIL.FieldWorks.XWorks
 		public void UploadToWebonaryReportsIncorrectSiteName()
 		{
 			// Test for a successful response indicating that a redirect should happen
-			using (var controller = new MockUploadToWebonaryController(Cache, m_mediator, null, new byte[] {}, HttpStatusCode.Found))
+			using (var controller = new MockUploadToWebonaryController(Cache, m_propertyTable, m_mediator, null, new byte[] {}, HttpStatusCode.Found))
 			{
 				var view = new MockWebonaryDlg()
 				{
-					Model = new UploadToWebonaryModel(m_mediator)
+					Model = new UploadToWebonaryModel(m_propertyTable)
 					{
 						SiteName = "test",
 						UserName = "software",
@@ -377,17 +435,17 @@ namespace SIL.FieldWorks.XWorks
 					}
 				};
 				controller.UploadToWebonary("fakefile.zip", view.Model, view);
-				Assert.That(view.StatusStrings.Any(s => s.Contains("Error: There has been an error accessing webonary. Is your sitename correct?")));
+				Assert.That(view.StatusStrings.Any(s => s.Contains(xWorksStrings.ksErrorWebonarySiteName)));
 			}
 
 			// Test with an exception which indicates a redirect should happen
 			var redirectException = new WebonaryClient.WebonaryException(new WebException("Redirected."));
 			redirectException.StatusCode = HttpStatusCode.Redirect;
-			using (var controller = new MockUploadToWebonaryController(Cache, m_mediator, redirectException, new byte[] { }))
+			using (var controller = new MockUploadToWebonaryController(Cache, m_propertyTable, m_mediator, redirectException, new byte[] { }))
 			{
 				var view = new MockWebonaryDlg()
 				{
-					Model = new UploadToWebonaryModel(m_mediator)
+					Model = new UploadToWebonaryModel(m_propertyTable)
 					{
 						SiteName = "test",
 						UserName = "software",
@@ -395,20 +453,20 @@ namespace SIL.FieldWorks.XWorks
 					}
 				};
 				controller.UploadToWebonary("fakefile.zip", view.Model, view);
-				Assert.That(view.StatusStrings.Any(s => s.Contains("Error: There has been an error accessing webonary. Is your sitename correct?")));
+				Assert.That(view.StatusStrings.Any(s => s.Contains(xWorksStrings.ksErrorWebonarySiteName)));
 			}
 		}
 
 		[Test]
 		public void UploadToWebonaryReportsLackingPermissionsToUpload()
 		{
-			var ex = new WebonaryClient.WebonaryException(new WebException("Unable to connect to Webonary.  Please check your username and password and your Internet connection."));
+			var ex = new WebonaryClient.WebonaryException(new WebException("Unable to connect to Webonary. Please check your username and password and your Internet connection."));
 			ex.StatusCode = HttpStatusCode.BadRequest;
-			using (var controller = new MockUploadToWebonaryController(Cache, m_mediator, ex, null))
+			using (var controller = new MockUploadToWebonaryController(Cache, m_propertyTable, m_mediator, ex, null))
 			{
 				var view = new MockWebonaryDlg()
 				{
-					Model = new UploadToWebonaryModel(m_mediator)
+					Model = new UploadToWebonaryModel(m_propertyTable)
 					{
 						SiteName = "test-india",
 						UserName = "software",
@@ -416,7 +474,7 @@ namespace SIL.FieldWorks.XWorks
 					}
 				};
 				controller.UploadToWebonary("../../Src/xWorks/xWorksTests/lubwisi-d-new.zip", view.Model, view);
-				Assert.That(view.StatusStrings.Any(s => s.Contains("Unable to connect to Webonary.  Please check your username and password and your Internet connection.")));
+				Assert.That(view.StatusStrings.Any(s => s.Contains("Unable to connect to Webonary. Please check your username and password and your Internet connection.")));
 			}
 		}
 
@@ -424,11 +482,11 @@ namespace SIL.FieldWorks.XWorks
 		public void UploadToWebonaryReportsSuccess()
 		{
 			var success = "Upload successful.";
-			using (var controller = new MockUploadToWebonaryController(Cache, m_mediator, null, Encoding.UTF8.GetBytes(success)))
+			using (var controller = new MockUploadToWebonaryController(Cache, m_propertyTable, m_mediator, null, Encoding.UTF8.GetBytes(success)))
 			{
 				var view = new MockWebonaryDlg()
 				{
-					Model = new UploadToWebonaryModel(m_mediator)
+					Model = new UploadToWebonaryModel(m_propertyTable)
 					{
 						UserName = "webonary",
 						Password = "webonary"
@@ -444,11 +502,11 @@ namespace SIL.FieldWorks.XWorks
 		public void UploadToWebonaryErrorInProcessingHandled()
 		{
 			var webonaryProcessingErrorContent = Encoding.UTF8.GetBytes("Error processing data: bad data.");
-			using (var controller = new MockUploadToWebonaryController(Cache, m_mediator, null, webonaryProcessingErrorContent))
+			using (var controller = new MockUploadToWebonaryController(Cache, m_propertyTable, m_mediator, null, webonaryProcessingErrorContent))
 			{
 				var view = new MockWebonaryDlg
 				{
-					Model = new UploadToWebonaryModel(m_mediator)
+					Model = new UploadToWebonaryModel(m_propertyTable)
 					{
 						UserName = "webonary",
 						Password = "webonary"
@@ -478,6 +536,8 @@ namespace SIL.FieldWorks.XWorks
 
 			Assert.True(UploadToWebonaryController.IsSupportedWebonaryFile("foo.mp3"));
 			Assert.True(UploadToWebonaryController.IsSupportedWebonaryFile("foo.MP4")); // avoid failure because of capitalization
+			Assert.True(UploadToWebonaryController.IsSupportedWebonaryFile("foo.wav"));
+			Assert.True(UploadToWebonaryController.IsSupportedWebonaryFile("foo.webm"));
 
 			Assert.False(UploadToWebonaryController.IsSupportedWebonaryFile("foo.wmf"));
 			Assert.False(UploadToWebonaryController.IsSupportedWebonaryFile("foo.tif"));
@@ -486,7 +546,6 @@ namespace SIL.FieldWorks.XWorks
 			Assert.False(UploadToWebonaryController.IsSupportedWebonaryFile("foo.pcx"));
 			Assert.False(UploadToWebonaryController.IsSupportedWebonaryFile("foo.cgm"));
 
-			Assert.False(UploadToWebonaryController.IsSupportedWebonaryFile("foo.wav"));
 			Assert.False(UploadToWebonaryController.IsSupportedWebonaryFile("foo.snd"));
 			Assert.False(UploadToWebonaryController.IsSupportedWebonaryFile("foo.au"));
 			Assert.False(UploadToWebonaryController.IsSupportedWebonaryFile("foo.aif"));
@@ -562,7 +621,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 			finally
 			{
-				DirectoryUtilities.DeleteDirectoryRobust(tempDirectoryToCompress);
+				RobustIO.DeleteDirectoryAndContents(tempDirectoryToCompress);
 			}
 		}
 
@@ -610,20 +669,20 @@ namespace SIL.FieldWorks.XWorks
 			var result = UploadToWebonaryController.UploadFilename(model, view);
 
 			Assert.That(result, Is.Null, "Fail on invalid characters.");
-			Assert.That(view.StatusStrings.Any(s => s.Contains("Invalid characters found in sitename")), "Inform that there was a problem");
+			Assert.That(view.StatusStrings.Any(s => s.Contains(xWorksStrings.ksErrorInvalidCharacters)), "Inform that there was a problem");
 		}
 
 		[Test]
 		public void ResetsProptablesPublicationOnExit()
 		{
-			var originalPub = m_mediator.PropertyTable.GetStringProperty("SelectedPublication", "Main Dictionary");
-			m_mediator.PropertyTable.SetProperty("SelectedPublication", originalPub); // just in case we fell back on the default
-			using (var controller = new MockUploadToWebonaryController(Cache, m_mediator))
+			var originalPub = m_propertyTable.GetStringProperty("SelectedPublication", "Main Dictionary");
+			m_propertyTable.SetProperty("SelectedPublication", originalPub, false); // just in case we fell back on the default
+			using (var controller = new MockUploadToWebonaryController(Cache, m_propertyTable, m_mediator))
 			{
 				controller.ActivatePublication("Wiktionary");
-				Assert.AreEqual("Wiktionary", m_mediator.PropertyTable.GetStringProperty("SelectedPublication", null), "Didn't activate temp publication");
+				Assert.AreEqual("Wiktionary", m_propertyTable.GetStringProperty("SelectedPublication", null), "Didn't activate temp publication");
 			}
-			Assert.AreEqual("Main Dictionary", m_mediator.PropertyTable.GetStringProperty("SelectedPublication", null), "Didn't reset publication");
+			Assert.AreEqual("Main Dictionary", m_propertyTable.GetStringProperty("SelectedPublication", null), "Didn't reset publication");
 		}
 
 		#region Helpers
@@ -650,7 +709,7 @@ namespace SIL.FieldWorks.XWorks
 				}
 			};
 
-			return new UploadToWebonaryModel(m_mediator)
+			return new UploadToWebonaryModel(m_propertyTable)
 			{
 				SiteName = "site",
 				UserName = "user",
@@ -666,7 +725,7 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		public UploadToWebonaryController SetUpController()
 		{
-			return new MockUploadToWebonaryController(Cache, m_mediator, null, Encoding.UTF8.GetBytes("Upload successful"));
+			return new MockUploadToWebonaryController(Cache, m_propertyTable, m_mediator, null, Encoding.UTF8.GetBytes("Upload successful"));
 		}
 
 		internal class MockWebonaryDlg : IUploadToWebonaryView
@@ -707,18 +766,16 @@ namespace SIL.FieldWorks.XWorks
 			/// <summary>
 			/// This constructor should be used in tests that will actually hit a server, and are marked [ByHand]
 			/// </summary>
-			/// <param name="cache"></param>
-			/// <param name="mediator"></param>
-			public MockUploadToWebonaryController(FdoCache cache, Mediator mediator)
-				: base(cache, mediator)
+			public MockUploadToWebonaryController(LcmCache cache, PropertyTable propertyTable, Mediator mediator)
+				: base(cache, propertyTable, mediator)
 			{
 			}
 
 			/// <summary>
 			/// Tests using this constructor do not need to be marked [ByHand]; an exception, response, and response code can all be set.
 			/// </summary>
-			public MockUploadToWebonaryController(FdoCache cache, Mediator mediator, WebonaryClient.WebonaryException exceptionResponse,
-				byte[] responseContents, HttpStatusCode responseStatus = HttpStatusCode.OK) : base(cache, mediator)
+			public MockUploadToWebonaryController(LcmCache cache, PropertyTable propertyTable, Mediator mediator, WebonaryClient.WebonaryException exceptionResponse,
+				byte[] responseContents, HttpStatusCode responseStatus = HttpStatusCode.OK) : base(cache, propertyTable, mediator)
 			{
 				CreateWebClient = () => new MockWebonaryClient(exceptionResponse, responseContents, responseStatus);
 			}
@@ -726,7 +783,6 @@ namespace SIL.FieldWorks.XWorks
 			/// <summary>
 			/// Fake web client to allow unit testing of controller code without needing to connect to a server
 			/// </summary>
-			[SuppressMessage("Gendarme.Rules.Design", "UseCorrectDisposeSignaturesRule", Justification = "Nothing to dispose in this Mock")]
 			public class MockWebonaryClient : IWebonaryClient
 			{
 				private readonly WebonaryClient.WebonaryException _exceptionResponse;
@@ -740,7 +796,21 @@ namespace SIL.FieldWorks.XWorks
 					ResponseStatusCode = responseStatus;
 				}
 
-				public void Dispose() {}
+				public void Dispose()
+				{
+					Dispose(true);
+					GC.SuppressFinalize(this);
+				}
+
+				protected virtual void Dispose(bool disposing)
+				{
+					System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + " ******");
+				}
+
+				~MockWebonaryClient()
+				{
+					Dispose(false);
+				}
 
 				public WebHeaderCollection Headers { get; private set; }
 				public byte[] UploadFileToWebonary(string address, string fileName)

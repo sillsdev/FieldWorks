@@ -1,13 +1,13 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Collections.Generic;
 using System.Linq;
-using SIL.CoreImpl;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.PaToFdoInterfaces;
-using SIL.FieldWorks.FDO;
-using SIL.Utils;
+using SIL.LCModel;
 
 namespace SIL.FieldWorks.PaObjects
 {
@@ -20,7 +20,7 @@ namespace SIL.FieldWorks.PaObjects
 		/// collection of PaWritingSystem objects.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		internal static string GetWritingSystemsAsXml(IFdoServiceLocator svcloc)
+		internal static string GetWritingSystemsAsXml(ILcmServiceLocator svcloc)
 		{
 			var wsList = new List<PaWritingSystem>();
 
@@ -43,7 +43,7 @@ namespace SIL.FieldWorks.PaObjects
 		}
 
 		/// ------------------------------------------------------------------------------------
-		private PaWritingSystem(IWritingSystem lgws, IFdoServiceLocator svcloc, bool isVern,
+		private PaWritingSystem(CoreWritingSystemDefinition lgws, ILcmServiceLocator svcloc, bool isVern,
 			bool isAnal)
 		{
 			Id = lgws.Id;

@@ -10,8 +10,8 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.Utils;
+using SIL.FieldWorks.Common.ViewsInterfaces;
+using SIL.LCModel.Utils;
 using SIL.Utils.FileDialog;
 
 namespace VwGraphicsReplayer

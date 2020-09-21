@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -11,14 +11,14 @@ using System.Windows.Forms;
 using System.Xml;
 using System.Xml.Schema;
 using NUnit.Framework;
-using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.FDOTests;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel;
+using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.IText.FlexInterlinModel;
-using SIL.Utils;
+using SIL.LCModel.Utils;
 
 namespace SIL.FieldWorks.IText
 {
@@ -311,7 +311,7 @@ namespace SIL.FieldWorks.IText
 			Assert.DoesNotThrow(() => ReadXmlForValidation(xmlReader));
 		}
 
-		bool DummyCheckAndAddLanguagesInternal(FdoCache cache, Interlineartext interlinText, ILgWritingSystemFactory wsFactory, IThreadedProgress progress)
+		bool DummyCheckAndAddLanguagesInternal(LcmCache cache, Interlineartext interlinText, ILgWritingSystemFactory wsFactory, IThreadedProgress progress)
 		{
 			return true;
 		}
@@ -336,7 +336,7 @@ namespace SIL.FieldWorks.IText
 			using (var fileStream = new FileStream(file, FileMode.Open, FileAccess.Read))
 			{
 				LinguaLinksImport li = new LinguaLinksImport(Cache, null, null);
-				FDO.IText text = null;
+				LCModel.IText text = null;
 				var options = new LinguaLinksImport.ImportInterlinearOptions{Progress = new DummyProgressDlg(),
 					BirdData = fileStream, AllottedProgress = 0,
 					CheckAndAddLanguages = DummyCheckAndAddLanguagesInternal };
@@ -353,10 +353,10 @@ namespace SIL.FieldWorks.IText
 		public void ImportWordsWithMultipleWss()
 		{
 			var wsEn = Cache.WritingSystemFactory.GetWsFromStr("en");
-			IWritingSystem wsWbl;
+			CoreWritingSystemDefinition wsWbl;
 			Cache.ServiceLocator.WritingSystemManager.GetOrSet("wbl-Arab-AF", out wsWbl);
 			wsWbl.RightToLeftScript = true;
-			IWritingSystem wsWblIpa;
+			CoreWritingSystemDefinition wsWblIpa;
 			Cache.ServiceLocator.WritingSystemManager.GetOrSet("wbl-Qaaa-AF-fonipa-x-Zipa", out wsWblIpa);
 
 			const string xml =
@@ -399,7 +399,7 @@ namespace SIL.FieldWorks.IText
 					AllottedProgress = 0,
 					CheckAndAddLanguages = DummyCheckAndAddLanguagesInternal
 				};
-				FDO.IText importedText = null;
+				LCModel.IText importedText = null;
 				var li = new BIRDFormatImportTests.LLIMergeExtension(Cache, null, null);
 				var result = li.ImportInterlinear(options, ref importedText);
 				Assert.True(result, "ImportInterlinear was not successful.");
@@ -434,7 +434,7 @@ namespace SIL.FieldWorks.IText
 									 "</interlinear-text></document>";
 
 			var li = new LinguaLinksImport(Cache, null, null);
-			FDO.IText text = null;
+			LCModel.IText text = null;
 			using(var stream = new MemoryStream(Encoding.ASCII.GetBytes(xml.ToCharArray())))
 			{
 				Assert.DoesNotThrow(()=> li.ImportInterlinear(new DummyProgressDlg(), stream, 0, ref text));
@@ -444,6 +444,257 @@ namespace SIL.FieldWorks.IText
 					var imported = firstEntry.Current;
 					//The empty ugly text imported as its empty ugly self
 					Assert.AreEqual(imported.Guid.ToString(), textGuid);
+				}
+			}
+		}
+
+		[Test]
+		public void TestImportMergeFlexTextWithSegnumItem()
+		{
+			string phraseGuid = "b405f3c0-58e1-4492-8a40-e955774a6911";
+			string firstXml = "<document version=\"2\">" +
+									"<interlinear-text guid=\"bcabf849-473c-4902-957b-8de378248b7f\">" +
+									"<item type=\"title\" lang=\"en\">My Green Mat</item>" +
+									"<item type=\"comment\" lang=\"en\">This is a story about a green mat as told by my language assistant.</item>" +
+									"<paragraphs><paragraph guid=\"a122d9bb-2d43-4e4c-b74f-6fe44d1c6cb2\">" +
+									"<phrases><phrase guid=\" " + phraseGuid + "\">" +
+									"<item type=\"segnum\" lang =\"en\">1.1</item>" +
+									"<words><word guid=\"45e6f056-98ac-45d6-858e-59450993f268\">" +
+									"<item type =\"txt\" lang=\"qaa-x-kal\">pus</item>" +
+									"</word></words></phrase></phrases></paragraph></paragraphs></interlinear-text></document>";
+
+			// The same with one extra word
+			string secondXml = "<document version=\"2\">" +
+									"<interlinear-text guid=\"bcabf849-473c-4902-957b-8de378248b7f\">" +
+									"<item type=\"title\" lang=\"en\">My Green Mat</item>" +
+									"<item type=\"comment\" lang=\"en\">This is a story about a green mat as told by my language assistant.</item>" +
+									"<paragraphs><paragraph guid=\"a122d9bb-2d43-4e4c-b74f-6fe44d1c6cb2\">" +
+									"<phrases><phrase guid=\"" + phraseGuid + "\">" +
+									"<item type=\"segnum\" lang =\"en\">1.1</item>" +
+									"<words><word guid=\"45e6f056-98ac-45d6-858e-59450993f268\">" +
+									"<item type =\"txt\" lang=\"qaa-x-kal\">pus</item></word>" +
+									"<word guid=\"936b326e-a83d-4c08-94cc-449d0a3380d0\">" +
+									"<item type= \"txt\" lang=\"qaa-x-kal\">yalola</item>" +
+									"</word></words></phrase></phrases></paragraph></paragraphs></interlinear-text></document>";
+
+			LLIMergeExtension li = new LLIMergeExtension(Cache, null, null);
+			LCModel.IText text = null;
+			using (var firstStream = new MemoryStream(Encoding.ASCII.GetBytes(firstXml.ToCharArray())))
+			{
+				bool result = li.ImportInterlinear(new DummyProgressDlg(), firstStream, 0, ref text);
+				Assert.AreEqual(0, li.NumTimesDlgShown, "The user should not have been prompted to merge on the initial import.");
+				Assert.True(result);
+				var contentGuid = text.ContentsOA.Guid;
+				var para = text.ContentsOA.ParagraphsOS[0] as IStTxtPara;
+				var paraGuid = para.Guid;
+				var wordGuid = para.SegmentsOS[0].AnalysesRS[0].Guid;
+				using (var secondStream = new MemoryStream(Encoding.ASCII.GetBytes(secondXml.ToCharArray())))
+				{
+					bool mergeResult = li.ImportInterlinear(new DummyProgressDlg(), secondStream, 0, ref text);
+					Assert.AreEqual(1, li.NumTimesDlgShown, "The user should have been prompted to merge the text with the same Guid.");
+					Assert.True(mergeResult);
+					Assert.True(text.ContentsOA.Guid.Equals(contentGuid), "The merge should not have changed the content objects.");
+					Assert.True(text.ContentsOA.ParagraphsOS.Count.Equals(1));
+					var mergedPara = text.ContentsOA.ParagraphsOS[0] as IStTxtPara;
+					Assert.True(mergedPara.Guid.Equals(paraGuid));
+					Assert.True(mergedPara.SegmentsOS.Count.Equals(1));
+					Assert.True(mergedPara.SegmentsOS[0].Guid.Equals(new Guid(phraseGuid)));
+					var analyses = mergedPara.SegmentsOS[0].AnalysesRS;
+					// There should be two analyses, the first should match the guid created on the original import
+					Assert.True(analyses.Count.Equals(2));
+					Assert.True(analyses[0].Guid.Equals(wordGuid));
+					Assert.AreEqual("pus yalola", mergedPara.Contents.Text, "The contents of the paragraph do not match the words.");
+				}
+			}
+		}
+
+		[Test]
+		public void TestMergeFlexTextPhraseWithoutGuidMergesIntoParagraphOfSibling()
+		{
+			string phraseGuid = "b405f3c0-58e1-4492-8a40-e955774a6911";
+			string firstXml = "<document version=\"2\">" +
+								"<interlinear-text guid=\"bcabf849-473c-4902-957b-8de378248b7f\">" +
+								"<item type=\"title\" lang=\"en\">My Green Mat</item>" +
+								"<item type=\"comment\" lang=\"en\">This is a story about a green mat as told by my language assistant.</item>" +
+								"<paragraphs><paragraph guid=\"a122d9bb-2d43-4e4c-b74f-6fe44d1c6cb2\">" +
+								"<phrases><phrase><words><word><item type=\"txt\" lang=\"qaa-x-kal\">hesyla</item></word></words></phrase>" +
+								"<phrase guid=\"" + phraseGuid + "\">" +
+								"<words><word guid=\"45e6f056-98ac-45d6-858e-59450993f268\">" +
+								"<item type=\"txt\" lang=\"qaa-x-kal\">pus</item>" +
+								"</word></words></phrase></phrases></paragraph></paragraphs></interlinear-text></document>";
+
+			// The same with an additional phrase with no guid
+			string secondXml = "<document version=\"2\">" +
+								"<interlinear-text guid=\"bcabf849-473c-4902-957b-8de378248b7f\">" +
+								"<item type=\"title\" lang=\"en\">My Green Mat</item>" +
+								"<item type=\"comment\" lang=\"en\">This is a story about a green mat as told by my language assistant.</item>" +
+								"<paragraphs><paragraph guid=\"a122d9bb-2d43-4e4c-b74f-6fe44d1c6cb2\">" +
+								"<phrases><phrase><words><word><item type=\"txt\" lang=\"qaa-x-kal\">hesyla</item></word></words></phrase>" +
+								"<phrase guid=\"" + phraseGuid + "\">" +
+								"<words><word guid=\"45e6f056-98ac-45d6-858e-59450993f268\">" +
+								"<item type=\"txt\" lang=\"qaa-x-kal\">pus</item>" +
+								"</word></words></phrase>" +
+								"<phrase><words><word guid=\"d14460dc-75b3-466c-9818-8c31b99d8662\">" +
+								"<item type=\"txt\" lang=\"qaa-x-kal\">nihimbilira</item>" +
+								"</word></words></phrase></phrases></paragraph></paragraphs></interlinear-text></document>";
+
+			LLIMergeExtension li = new LLIMergeExtension(Cache, null, null);
+			LCModel.IText text = null;
+			using (var firstStream = new MemoryStream(Encoding.ASCII.GetBytes(firstXml.ToCharArray())))
+			{
+				bool result = li.ImportInterlinear(new DummyProgressDlg(), firstStream, 0, ref text);
+				Assert.AreEqual(0, li.NumTimesDlgShown, "The user should not have been prompted to merge on the initial import.");
+				Assert.True(result);
+				var contentGuid = text.ContentsOA.Guid;
+				var para = text.ContentsOA.ParagraphsOS[0] as IStTxtPara;
+				Assert.AreEqual("hesyla\x00a7 pus", para.Contents.Text, "The contents of the paragraph does not match the words.");
+				var paraGuid = para.Guid;
+				Assert.True(para.SegmentsOS.Count.Equals(2));
+				var createdSegmentGuid = para.SegmentsOS[0].Guid;
+				var segGuid = para.SegmentsOS[1].Guid;
+				var wordGuid = para.SegmentsOS[0].AnalysesRS[0].Guid;
+				using (var secondStream = new MemoryStream(Encoding.ASCII.GetBytes(secondXml.ToCharArray())))
+				{
+					bool mergeResult = li.ImportInterlinear(new DummyProgressDlg(), secondStream, 0, ref text);
+					Assert.AreEqual(1, li.NumTimesDlgShown, "The user should have been prompted to merge the text with the same Guid.");
+					Assert.True(mergeResult);
+					Assert.True(text.ContentsOA.Guid.Equals(contentGuid), "The merge should not have changed the content objects.");
+					Assert.True(text.ContentsOA.ParagraphsOS.Count.Equals(1));
+					var mergedPara = text.ContentsOA.ParagraphsOS[0] as IStTxtPara;
+					Assert.True(mergedPara.Guid.Equals(paraGuid));
+					Assert.True(mergedPara.SegmentsOS.Count.Equals(3));
+					Assert.True(mergedPara.SegmentsOS[0].Guid.Equals(createdSegmentGuid));
+					Assert.True(mergedPara.SegmentsOS[1].Guid.Equals(segGuid));
+					Assert.False(mergedPara.SegmentsOS[2].Guid.Equals(segGuid));
+					var analyses = mergedPara.SegmentsOS[0].AnalysesRS;
+					Assert.True(analyses.Count.Equals(1));
+					Assert.True(analyses[0].Guid.Equals(wordGuid));
+					Assert.AreEqual("hesyla\x00a7 pus\x00A7 nihimbilira", para.Contents.Text, "The contents of the paragraph does not match the words.");
+				}
+			}
+		}
+
+		[Test]
+		public void TestMergeFlexTextNewParagraphCreatesNewParagraph_OriginalIsUnchanged()
+		{
+			string firstPhraseGuid = "b405f3c0-58e1-4492-8a40-e955774a6911";
+			string firstXml = "<document version=\"2\">" +
+								"<interlinear-text guid=\"bcabf849-473c-4902-957b-8de378248b7f\">" +
+								"<item type=\"title\" lang=\"en\">My Green Mat</item>" +
+								"<item type=\"comment\" lang=\"en\">This is a story about a green mat as told by my language assistant.</item>" +
+								"<paragraphs><paragraph guid=\"a122d9bb-2d43-4e4c-b74f-6fe44d1c6cb2\">" +
+								"<phrases><phrase guid=\"" + firstPhraseGuid + "\">" +
+								"<words><word guid=\"45e6f056-98ac-45d6-858e-59450993f268\">" +
+								"<item type =\"txt\" lang=\"qaa-x-kal\">pus</item>" +
+								"</word></words></phrase></phrases></paragraph></paragraphs></interlinear-text></document>";
+
+			// The same interlinear text, but a brand new paragraph, phrase and word.
+			string secondPhraseGuid = "f1fe4d4a-58e1-4492-8a40-e955774a6911";
+			string secondXml = "<document version=\"2\">" +
+								"<interlinear-text guid=\"bcabf849-473c-4902-957b-8de378248b7f\">" +
+								"<item type=\"title\" lang=\"en\">My Green Mat</item>" +
+								"<item type=\"comment\" lang=\"en\">This is a story about a green mat as told by my language assistant.</item>" +
+								"<paragraphs><paragraph guid=\"a0734bac-a9fc-489f-9beb-6563fb2f53f6\">" +
+								"<phrases><phrase guid=\"" + secondPhraseGuid + "\">" +
+								"<words><word guid=\"d14460dc-75b3-466c-9818-8c31b99d8662\">" +
+								"<item type=\"txt\" lang=\"qaa-x-kal\">nihimbilira</item>" +
+								"</word></words></phrase></phrases></paragraph></paragraphs></interlinear-text></document>";
+
+			LLIMergeExtension li = new LLIMergeExtension(Cache, null, null);
+			LCModel.IText text = null;
+			using (var firstStream = new MemoryStream(Encoding.ASCII.GetBytes(firstXml.ToCharArray())))
+			{
+				bool result = li.ImportInterlinear(new DummyProgressDlg(), firstStream, 0, ref text);
+				Assert.AreEqual(0, li.NumTimesDlgShown, "The user should not have been prompted to merge on the initial import.");
+				Assert.True(result);
+				var contentGuid = text.ContentsOA.Guid;
+				var originalPara = text.ContentsOA.ParagraphsOS[0] as IStTxtPara;
+				var originalParaGuid = originalPara.Guid;
+				var originalWordGuid = originalPara.SegmentsOS[0].AnalysesRS[0].Guid;
+				using (var secondStream = new MemoryStream(Encoding.ASCII.GetBytes(secondXml.ToCharArray())))
+				{
+					bool mergeResult = li.ImportInterlinear(new DummyProgressDlg(), secondStream, 0, ref text);
+					Assert.AreEqual(1, li.NumTimesDlgShown, "The user should have been prompted to merge the text with the same Guid.");
+					Assert.True(mergeResult);
+					Assert.True(text.ContentsOA.Guid.Equals(contentGuid), "The merge should not have changed the content objects.");
+					Assert.True(text.ContentsOA.ParagraphsOS.Count.Equals(2));
+					// Check that the first paragraph remains unchanged
+					var firstPara = text.ContentsOA.ParagraphsOS[0] as IStTxtPara;
+					Assert.True(firstPara.Guid.Equals(originalParaGuid));
+					Assert.True(firstPara.SegmentsOS.Count.Equals(1));
+					Assert.True(firstPara.SegmentsOS[0].Guid.Equals(new Guid(firstPhraseGuid)));
+					var firstAnalyses = firstPara.SegmentsOS[0].AnalysesRS;
+					Assert.True(firstAnalyses.Count.Equals(1));
+					Assert.True(firstAnalyses[0].Guid.Equals(originalWordGuid));
+					Assert.AreEqual("pus", firstPara.Contents.Text, "The contents of the first paragraph do not match the words.");
+					// Check that the second paragraph was merged correctly
+					var secondPara = text.ContentsOA.ParagraphsOS[1] as IStTxtPara;
+					Assert.False(secondPara.Guid.Equals(originalParaGuid));
+					Assert.True(secondPara.SegmentsOS.Count.Equals(1));
+					Assert.True(secondPara.SegmentsOS[0].Guid.Equals(new Guid(secondPhraseGuid)));
+					var secondAnalyses = secondPara.SegmentsOS[0].AnalysesRS;
+					Assert.True(secondAnalyses.Count.Equals(1));
+					Assert.False(secondAnalyses[0].Guid.Equals(originalWordGuid));
+					Assert.AreEqual("nihimbilira", secondPara.Contents.Text, "The contents of the second paragraph do not match the words.");
+				}
+			}
+		}
+
+		[Test]
+		public void TestMergeFlexText_NotesWithMatchingContentMerges()
+		{
+			const string commonNote = "Note in both xml.";
+			const string commonXml = "<document version=\"2\">" +
+								"<interlinear-text guid=\"bcabf849-473c-4902-957b-8de378248b7f\">" +
+								"<item type=\"title\" lang=\"en\">My Green Mat</item>" +
+								"<item type=\"comment\" lang=\"en\">This is a story about a green mat as told by my language assistant.</item>" +
+								"<paragraphs><paragraph guid=\"a122d9bb-2d43-4e4c-b74f-6fe44d1c6cb2\">" +
+								"<phrases><phrase guid=\"b405f3c0-58e1-4492-8a40-e955774a6911\">" +
+								"<words><word guid=\"45e6f056-98ac-45d6-858e-59450993f268\">" +
+								"<item type=\"txt\" lang=\"qaa-x-kal\">pus</item>" +
+								"</word></words><item type=\"note\" lang=\"en\">" + commonNote + "</item>";
+			string firstXml = commonXml + "<item type=\"note\" lang=\"en\">Note in first xml.</item>" +
+								"<item type=\"note\" lang=\"fr\">Une note pour le premier xml.</item>" +
+								"</phrase></phrases></paragraph></paragraphs></interlinear-text></document>";
+			// Missing the second and third note and adds a fourth note."
+			string secondXml = commonXml + "<item type=\"note\" lang=\"fr\">Une note pour les deux xml.</item>" +
+								"<item type=\"note\" lang=\"en\">Note in second xml.</item>" +
+								"</phrase></phrases></paragraph></paragraphs></interlinear-text></document>";
+
+			int wsFr = Cache.WritingSystemFactory.GetWsFromStr("fr");
+			int wsEng = Cache.WritingSystemFactory.GetWsFromStr("en");
+			LLIMergeExtension li = new LLIMergeExtension(Cache, null, null);
+			LCModel.IText text = null;
+			using (var firstStream = new MemoryStream(Encoding.ASCII.GetBytes(firstXml.ToCharArray())))
+			{
+				bool result = li.ImportInterlinear(new DummyProgressDlg(), firstStream, 0, ref text);
+				Assert.AreEqual(0, li.NumTimesDlgShown, "The user should not have been prompted to merge on the initial import.");
+				Assert.True(result);
+				IStTxtPara para = text.ContentsOA.ParagraphsOS[0] as IStTxtPara;
+				Assert.AreEqual(3, para.SegmentsOS[0].NotesOS.Count);
+				Assert.AreEqual(commonNote, para.SegmentsOS[0].NotesOS[0].Content.get_String(wsEng).Text);
+				Assert.AreEqual("Note in first xml.", para.SegmentsOS[0].NotesOS[1].Content.get_String(wsEng).Text);
+				Assert.AreEqual("Une note pour le premier xml.", para.SegmentsOS[0].NotesOS[2].Content.get_String(wsFr).Text);
+
+				// Put some French content into the first note. Doing it here instead of in the above xml will update
+				// the first note to have both languages, rather than creating a new note with French content.
+				ITsString tss = TsStringUtils.MakeString("Une note pour les deux xml.", wsFr);
+				NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor,
+					() => { para.SegmentsOS[0].NotesOS[0].Content.set_String(wsFr, tss); });
+				Assert.AreEqual("Une note pour les deux xml.", para.SegmentsOS[0].NotesOS[0].Content.get_String(wsFr).Text);
+				using (var secondStream = new MemoryStream(Encoding.ASCII.GetBytes(secondXml.ToCharArray())))
+				{
+					bool mergeResult = li.ImportInterlinear(new DummyProgressDlg(), secondStream, 0, ref text);
+					Assert.AreEqual(1, li.NumTimesDlgShown, "User should have been prompted to merge the text.");
+					Assert.True(mergeResult);
+					Assert.AreEqual(4, para.SegmentsOS[0].NotesOS.Count);
+					// The first three notes should remain unchanged.
+					Assert.AreEqual(commonNote, para.SegmentsOS[0].NotesOS[0].Content.get_String(wsEng).Text, "The first note's Eng content should not have changed.");
+					Assert.AreEqual("Une note pour les deux xml.", para.SegmentsOS[0].NotesOS[0].Content.get_String(wsFr).Text, "The first note's Fr content should not have changed.");
+					Assert.AreEqual("Note in first xml.", para.SegmentsOS[0].NotesOS[1].Content.get_String(wsEng).Text, "The second note should not have changed.");
+					Assert.AreEqual("Une note pour le premier xml.", para.SegmentsOS[0].NotesOS[2].Content.get_String(wsFr).Text, "The third note should note have changed.");
+					// The addition of a fourth note should be the only change.
+					Assert.AreEqual("Note in second xml.", para.SegmentsOS[0].NotesOS[3].Content.get_String(wsEng).Text, "A new note should have been added.");
 				}
 			}
 		}
@@ -465,7 +716,7 @@ namespace SIL.FieldWorks.IText
 			"</words></phrase></phrases></paragraph></paragraphs></interlinear-text></document>";
 
 			LinguaLinksImport li = new LinguaLinksImport(Cache, null, null);
-			FDO.IText text = null;
+			LCModel.IText text = null;
 			using (var stream = new MemoryStream(Encoding.ASCII.GetBytes(xml.ToCharArray())))
 			{
 				li.ImportInterlinear(new DummyProgressDlg(), stream, 0, ref text);
@@ -508,7 +759,7 @@ namespace SIL.FieldWorks.IText
 			// ---------------------
 
 			LinguaLinksImport li = new LinguaLinksImport(Cache, null, null);
-			FDO.IText text = null;
+			LCModel.IText text = null;
 			using (var stream = new MemoryStream(Encoding.ASCII.GetBytes(xml.ToCharArray())))
 			{
 				li.ImportInterlinear(new DummyProgressDlg(), stream, 0, ref text);
@@ -562,7 +813,7 @@ namespace SIL.FieldWorks.IText
 			// --------------------------
 
 			LinguaLinksImport li = new LinguaLinksImport(Cache, null, null);
-			FDO.IText text = null;
+			LCModel.IText text = null;
 			using (var stream = new MemoryStream(Encoding.ASCII.GetBytes(xml.ToCharArray())))
 			{
 				li.ImportInterlinear(new DummyProgressDlg(), stream, 0, ref text);
@@ -602,7 +853,7 @@ namespace SIL.FieldWorks.IText
 			"</words></phrase></phrases></paragraph></paragraphs></interlinear-text></document>";
 
 			LinguaLinksImport li = new LinguaLinksImport(Cache, null, null);
-			FDO.IText text = null;
+			LCModel.IText text = null;
 			using (var stream = new MemoryStream(Encoding.ASCII.GetBytes(xml.ToCharArray())))
 			{
 				li.ImportInterlinear(new DummyProgressDlg(), stream, 0, ref text);
@@ -639,7 +890,7 @@ namespace SIL.FieldWorks.IText
 			"</words></phrase></phrases></paragraph></paragraphs></interlinear-text></document>";
 
 			LinguaLinksImport li = new LinguaLinksImport(Cache, null, null);
-			FDO.IText text = null;
+			LCModel.IText text = null;
 			using (var stream = new MemoryStream(Encoding.ASCII.GetBytes(xml.ToCharArray())))
 			{
 				li.ImportInterlinear(new DummyProgressDlg(), stream, 0, ref text);
@@ -662,7 +913,7 @@ namespace SIL.FieldWorks.IText
 			"<paragraphs><paragraph/></paragraphs></interlinear-text></document>";
 
 			LinguaLinksImport li = new LinguaLinksImport(Cache, null, null);
-			FDO.IText text = null;
+			LCModel.IText text = null;
 			using (var stream = new MemoryStream(Encoding.ASCII.GetBytes(xml.ToCharArray())))
 			{
 				li.ImportInterlinear(new DummyProgressDlg(), stream, 0, ref text);
@@ -690,7 +941,7 @@ namespace SIL.FieldWorks.IText
 				@"<media-files offset-type=""milliseconds""><media guid=""FFFFFFFF-FFFF-FFFF-FFFF-FFFFFFFFFFFF"" location=""file:\\test.wav""/></media-files></interlinear-text></document>";
 
 			LinguaLinksImport li = new LinguaLinksImport(Cache, null, null);
-			FDO.IText text = null;
+			LCModel.IText text = null;
 			using (var stream = new MemoryStream(Encoding.ASCII.GetBytes(xml.ToCharArray())))
 			{
 				li.ImportInterlinear(new DummyProgressDlg(), stream, 0, ref text);
@@ -722,7 +973,7 @@ namespace SIL.FieldWorks.IText
 				@"<media-files offset-type=""milliseconds""><media guid=""FFFFFFFF-FFFF-FFFF-FFFF-FFFFFFFFFFFF"" location=""file:\\test.wav""/></media-files></interlinear-text></document>";
 
 			var li = new LLIMergeExtension(Cache, null, null);
-			FDO.IText text = null;
+			LCModel.IText text = null;
 			using (var firstStream = new MemoryStream(Encoding.ASCII.GetBytes(firstxml.ToCharArray())))
 			{
 				li.ImportInterlinear(new DummyProgressDlg(), firstStream, 0, ref text);
@@ -769,8 +1020,8 @@ namespace SIL.FieldWorks.IText
 				@"<media-files offset-type=""milliseconds""><media guid=""FFFFFFFF-FFFF-FFFF-FFFF-FFFFFFFFFFFF"" location=""file:\\test.wav""/></media-files></interlinear-text></document>";
 
 			var li = new LLINomergeExtension(Cache, null, null);
-			FDO.IText firstText = null;
-			FDO.IText secondText = null;
+			LCModel.IText firstText = null;
+			LCModel.IText secondText = null;
 			using (var firstStream = new MemoryStream(Encoding.ASCII.GetBytes(importxml.ToCharArray())))
 			{
 				li.ImportInterlinear(new DummyProgressDlg(), firstStream, 0, ref firstText);
@@ -826,7 +1077,7 @@ namespace SIL.FieldWorks.IText
 			/// <param name="tempDir">The temp directory.</param>
 			/// <param name="rootDir">The root directory.</param>
 			/// ------------------------------------------------------------------------------------
-			public LLIMergeExtension(FdoCache cache, string tempDir, string rootDir) : base(cache, tempDir, rootDir)
+			public LLIMergeExtension(LcmCache cache, string tempDir, string rootDir) : base(cache, tempDir, rootDir)
 			{
 				NumTimesDlgShown = 0;
 			}
@@ -845,7 +1096,7 @@ namespace SIL.FieldWorks.IText
 			public int NumTimesDlgShown { get; private set; }
 
 			/// <summary/>
-			public LLINomergeExtension(FdoCache cache, string tempDir, string rootDir) : base(cache, tempDir, rootDir)
+			public LLINomergeExtension(LcmCache cache, string tempDir, string rootDir) : base(cache, tempDir, rootDir)
 			{
 				NumTimesDlgShown = 0;
 			}
@@ -869,7 +1120,7 @@ namespace SIL.FieldWorks.IText
 			"<media-files offset-type=\"milliseconds\"><media guid=\"FFFFFFFF-FFFF-FFFF-FFFF-FFFFFFFFFFFF\" location=\"file:\\\\test.wav\"/></media-files></interlinear-text></document>";
 
 			LinguaLinksImport li = new LinguaLinksImport(Cache, null, null);
-			FDO.IText text = null;
+			LCModel.IText text = null;
 			using (var stream = new MemoryStream(Encoding.ASCII.GetBytes(xml.ToCharArray())))
 			{
 				li.ImportInterlinear(new DummyProgressDlg(), stream, 0, ref text);
@@ -904,7 +1155,7 @@ namespace SIL.FieldWorks.IText
 			Assert.NotNull(newPerson);
 
 			LinguaLinksImport li = new LinguaLinksImport(Cache, null, null);
-			FDO.IText text = null;
+			LCModel.IText text = null;
 			using (var stream = new MemoryStream(Encoding.ASCII.GetBytes(xml.ToCharArray())))
 			{
 				li.ImportInterlinear(new DummyProgressDlg(), stream, 0, ref text);
@@ -914,7 +1165,7 @@ namespace SIL.FieldWorks.IText
 			}
 		}
 
-		private static void VerifyMediaLink(FDO.IText imported)
+		private static void VerifyMediaLink(LCModel.IText imported)
 		{
 			var mediaFilesContainer = imported.MediaFilesOA;
 			var para = imported.ContentsOA[0];

@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2016-2017 SIL International
+// Copyright (c) 2016-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -6,12 +6,12 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Palaso.Linq;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
-using SIL.Utils;
+using SIL.LCModel;
+using SIL.Linq;
 using XCore;
 using DCM = SIL.FieldWorks.XWorks.DictionaryConfigurationMigrator;
+using System.Xml.Linq;
 
 namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 {
@@ -25,21 +25,21 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 		{
 		}
 
-		public FirstBetaMigrator(FdoCache cache, SimpleLogger logger)
+		public FirstBetaMigrator(LcmCache cache, SimpleLogger logger)
 		{
 			Cache = cache;
 			m_logger = logger;
 		}
 
-		public FdoCache Cache { get; set; }
+		public LcmCache Cache { get; set; }
 
-		public void MigrateIfNeeded(SimpleLogger logger, Mediator mediator, string appVersion)
+		public void MigrateIfNeeded(SimpleLogger logger, PropertyTable propertyTable, string appVersion)
 		{
 			m_logger = logger;
-			Cache = (FdoCache)mediator.PropertyTable.GetValue("cache");
+			Cache = propertyTable.GetValue<LcmCache>("cache");
 			var foundOne = string.Format("{0}: Configuration was found in need of migration. - {1}",
 				appVersion, DateTime.Now.ToString("yyyy MMM d h:mm:ss"));
-			var configSettingsDir = FdoFileHelper.GetConfigSettingsDir(Cache.ProjectId.ProjectFolder);
+			var configSettingsDir = LcmFileHelper.GetConfigSettingsDir(Cache.ProjectId.ProjectFolder);
 			var dictionaryConfigLoc = Path.Combine(configSettingsDir, DictionaryConfigurationListener.DictionaryConfigurationDirectoryName);
 			var stemPath = Path.Combine(dictionaryConfigLoc, "Stem" + DictionaryConfigurationModel.FileExtension);
 			var lexemePath = Path.Combine(dictionaryConfigLoc, "Lexeme" + DictionaryConfigurationModel.FileExtension);
@@ -47,6 +47,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			{
 				File.Move(stemPath, lexemePath);
 			}
+			RenameReversalConfigFiles(configSettingsDir);
 			foreach (var config in DCM.GetConfigsNeedingMigration(Cache, DCM.VersionCurrent))
 			{
 				m_logger.WriteLine(foundOne);
@@ -188,11 +189,57 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 					goto case 18;
 				case 18:
 					RemoveReferencedHeadwordSubField(oldConfigPart);
+					goto case 19;
+				case 19:
+					ChangeReferringsensesToSenses(oldConfigPart);
+					goto case 20;
+				case 20:
+					UseConfigReferencedEntriesAsPrimary(oldConfigPart);
+					goto case 21;
+				case 21:
+					MigrateNewChildNodesAndOptionsInto(oldConfigPart, currentDefaultConfigPart);
 					break;
 				default:
 					logger.WriteLine(string.Format(
 						"Unable to migrate {0}: no migration instructions for version {1}", oldConfigPart.Label, oldVersion));
 					break;
+			}
+		}
+
+		/// <summary>LT-18920: Change Referringsenses to Senses for all the reversal index configurations.</summary>
+		private static void ChangeReferringsensesToSenses(ConfigurableDictionaryNode part)
+		{
+			if (part.FieldDescription == "ReversalIndexEntry" || part.FieldDescription == "SubentriesOS")
+			{
+				DCM.PerformActionOnNodes(part.Children, node =>
+				{
+					if (node.FieldDescription == "ReferringSenses")
+					{
+						node.FieldDescription = "SensesRS";
+					}
+				});
+			}
+		}
+
+		private static void UseConfigReferencedEntriesAsPrimary(ConfigurableDictionaryNode part)
+		{
+			if (part.FieldDescription == "ReversalIndexEntry" || part.FieldDescription == "SubentriesOS")
+			{
+				DCM.PerformActionOnNodes(part.Children, node =>
+				{
+					if (node.DisplayLabel == "Primary Entry References" && node.FieldDescription == "EntryRefsWithThisMainSense")
+					{
+						node.FieldDescription = "MainEntryRefs";
+						node.HideCustomFields = true;
+						node.Before = "  (";
+						node.After = ")";
+					}
+					if (node.DisplayLabel == "Primary Entry(s)" && node.FieldDescription == "PrimarySensesOrEntries")
+					{
+						node.FieldDescription = "ConfigReferencedEntries";
+						node.CSSClassNameOverride = "referencedentries";
+					}
+				});
 			}
 		}
 
@@ -280,6 +327,71 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 				if (node.FieldDescription == "MorphoSyntaxAnalyses")
 					node.Children.RemoveAll(child => child.FieldDescription != "MLPartOfSpeech");
 			});
+		}
+
+		/// <summary>
+		/// Renames the .fwdictconfig files in the ReversalIndex Folder
+		/// For ex. english.fwdictconfig to en.fwdictconfig
+		/// </summary>
+		/// <param name="configSettingsDir"></param>
+		private static void RenameReversalConfigFiles(string configSettingsDir)
+		{
+			var reversalIndexConfigLoc = Path.Combine(configSettingsDir, DictionaryConfigurationListener.ReversalIndexConfigurationDirectoryName);
+			var dictConfigFiles = new List<string>(DCM.ConfigFilesInDir(reversalIndexConfigLoc));
+			string newFName = string.Empty;
+			string wsValue = string.Empty;
+			int version = 0;
+
+			// Rename all the reversals based on the ws id (the user's  name for copies is still stored inside the file)
+			foreach (string fName in dictConfigFiles)
+			{
+				wsValue = GetWritingSystemNameAndVersion(fName, out version);
+				if(!string.IsNullOrEmpty(wsValue) && version < DCM.VersionCurrent)
+				{
+					newFName = Path.Combine(Path.GetDirectoryName(fName), wsValue + DictionaryConfigurationModel.FileExtension);
+
+					if (wsValue == Path.GetFileNameWithoutExtension(fName))
+						continue;
+
+					newFName = FwUtils.GetUniqueFilename(Path.GetDirectoryName(fName), newFName);
+					File.Move(fName, newFName);
+				}
+			}
+		}
+
+		/// <summary>
+		/// Reads the .fwdictconfig config file and gets the writing system name and version
+		/// </summary>
+		/// <param name="fileName"></param>
+		/// <param name="version"></param>
+		/// <returns></returns>
+		private static string GetWritingSystemNameAndVersion(string fileName, out int version)
+		{
+			string wsName = string.Empty;
+			version = 0;
+			try
+			{
+				XDocument xDoc = XDocument.Load(fileName);
+				XElement rootElement = xDoc.Root;
+				if (rootElement != null)
+				{
+					XAttribute writingSystemAttribute = rootElement.Attribute("writingSystem");
+					if (writingSystemAttribute != null)
+					{
+						wsName = writingSystemAttribute.Value.ToString();
+					}
+					XAttribute versionAttribute = rootElement.Attribute("version");
+					if (versionAttribute != null)
+					{
+						version = Convert.ToInt32(versionAttribute.Value);
+					}
+				}
+			}
+			catch (Exception e)
+			{
+				wsName = string.Empty;
+			}
+			return wsName;
 		}
 
 		/// <summary>

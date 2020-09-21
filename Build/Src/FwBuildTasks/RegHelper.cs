@@ -1,3 +1,7 @@
+// Copyright (c) 2015 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
+
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -18,13 +22,19 @@ namespace SIL.FieldWorks.Build.Tasks
 		private bool IsDisposed { get; set; }
 		public static string TmpRegistryKeyHKCR { get; private set; }
 		public static string TmpRegistryKeyHKLM { get; private set; }
-		private static readonly UIntPtr HKEY_CLASSES_ROOT = new UIntPtr(0x80000000);
-		private static readonly UIntPtr HKEY_CURRENT_USER = new UIntPtr(0x80000001);
-		private static readonly UIntPtr HKEY_LOCAL_MACHINE = new UIntPtr(0x80000002);
+		private static UIntPtr HKEY_CLASSES_ROOT = new UIntPtr(0x80000000);
+		private static UIntPtr HKEY_CURRENT_USER = new UIntPtr(0x80000001);
+		private static UIntPtr HKEY_LOCAL_MACHINE = new UIntPtr(0x80000002);
 
 		/// <summary/>
-		public RegHelper(TaskLoggingHelper log)
+		public RegHelper(TaskLoggingHelper log, string platform)
 		{
+			if (platform.Contains("64"))
+			{
+				HKEY_CLASSES_ROOT = new UIntPtr(0xFFFFFFFF80000000UL);
+				HKEY_CURRENT_USER = new UIntPtr(0xFFFFFFFF80000001UL);
+				HKEY_LOCAL_MACHINE = new UIntPtr(0xFFFFFFFF80000002UL);
+			}
 			m_Log = log;
 		}
 

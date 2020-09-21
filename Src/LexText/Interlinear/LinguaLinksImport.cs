@@ -11,23 +11,22 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using System.IO;
 using System.Windows.Forms;
 using System.Xml;
 using System.Xml.XPath;
 using System.Xml.Xsl;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using ECInterfaces;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.IText.FlexInterlinModel;
-using SIL.Utils;
+using SIL.LCModel.Utils;
 using SilEncConverters40;
-using SIL.FieldWorks.FDO.Application.ApplicationServices;
+using SIL.LCModel.Application.ApplicationServices;
 using System.Xml.Serialization;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.KernelInterfaces;
 
 
 namespace SIL.FieldWorks.IText
@@ -49,7 +48,7 @@ namespace SIL.FieldWorks.IText
 		private string m_nextInput;
 		private string m_sTempDir;
 		private string m_sRootDir;
-		private FdoCache m_cache;
+		private LcmCache m_cache;
 		private string m_LinguaLinksXmlFileName;
 
 		public delegate void ErrorHandler(object sender, string message, string caption);
@@ -63,7 +62,7 @@ namespace SIL.FieldWorks.IText
 		/// <param name="tempDir">The temp directory.</param>
 		/// <param name="rootDir">The root directory.</param>
 		/// ------------------------------------------------------------------------------------
-		public LinguaLinksImport(FdoCache cache, string tempDir, string rootDir)
+		public LinguaLinksImport(LcmCache cache, string tempDir, string rootDir)
 		{
 			m_cache = cache;
 			m_sTempDir = tempDir;
@@ -220,18 +219,15 @@ namespace SIL.FieldWorks.IText
 		internal void ImportWordsFrag(Word[] words, ImportAnalysesLevel analysesLevel)
 		{
 			s_importOptions = new ImportInterlinearOptions {AnalysesLevel = analysesLevel};
-			var tsStrFactory = m_cache.ServiceLocator.GetInstance<ITsStrFactory>();
 			NonUndoableUnitOfWorkHelper.Do(m_cache.ActionHandlerAccessor, () =>
 			{
 				foreach (var word in words)
 				{
-					CreateWordAnalysisStack(m_cache, word, tsStrFactory);
+					CreateWordAnalysisStack(m_cache, word);
 				}
 			});
 		}
 
-		[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
-			Justification="BirdData is a reference")]
 		public class ImportInterlinearOptions
 		{
 			public IThreadedProgress Progress;
@@ -240,14 +236,14 @@ namespace SIL.FieldWorks.IText
 			/// </summary>
 			public Stream BirdData;
 			public int AllottedProgress;
-			public Func<FdoCache, Interlineartext, ILgWritingSystemFactory, IThreadedProgress, bool> CheckAndAddLanguages;
+			public Func<LcmCache, Interlineartext, ILgWritingSystemFactory, IThreadedProgress, bool> CheckAndAddLanguages;
 			public ImportAnalysesLevel AnalysesLevel;
 		}
 
 		/// <summary>
 		/// The first text created by ImportInterlinear.
 		/// </summary>
-		public FDO.IText FirstNewText { get; set; }
+		public LCModel.IText FirstNewText { get; set; }
 		/// <summary>
 		/// Import a file which looks like a FieldWorks interlinear XML export.
 		/// </summary>
@@ -260,14 +256,14 @@ namespace SIL.FieldWorks.IText
 			Debug.Assert(parameters.Length == 1);
 			using (var stream = new FileStream((string) parameters[0], FileMode.Open, FileAccess.Read))
 			{
-				FDO.IText firstNewText = null;
+				LCModel.IText firstNewText = null;
 				retValue = ImportInterlinear(dlg, stream, 100, ref firstNewText);
 				FirstNewText = firstNewText;
 			}
 			return retValue;
 		}
 
-		public bool ImportInterlinear(IThreadedProgress progress, Stream birdData, int allottedProgress, ref FDO.IText firstNewText)
+		public bool ImportInterlinear(IThreadedProgress progress, Stream birdData, int allottedProgress, ref LCModel.IText firstNewText)
 		{
 			return ImportInterlinear(new ImportInterlinearOptions { Progress = progress, BirdData = birdData, AllottedProgress = allottedProgress },
 				ref firstNewText);
@@ -281,7 +277,7 @@ namespace SIL.FieldWorks.IText
 		/// <param name="options"></param>
 		/// <param name="firstNewText"></param>
 		/// <returns>return false to abort merge</returns>
-		public bool ImportInterlinear(ImportInterlinearOptions options, ref FDO.IText firstNewText)
+		public bool ImportInterlinear(ImportInterlinearOptions options, ref LCModel.IText firstNewText)
 		{
 			IThreadedProgress progress = options.Progress;
 			Stream birdData = options.BirdData;
@@ -311,12 +307,12 @@ namespace SIL.FieldWorks.IText
 					{
 						step++;
 						ILangProject langProject = m_cache.LangProject;
-						FDO.IText newText = null;
+						LCModel.IText newText = null;
 						if (!String.IsNullOrEmpty(interlineartext.guid))
 						{
 							ICmObject repoObj;
 							m_cache.ServiceLocator.ObjectRepository.TryGetObject(new Guid(interlineartext.guid), out repoObj);
-							newText = repoObj as FDO.IText;
+							newText = repoObj as LCModel.IText;
 							if (newText != null && ShowPossibleMergeDialog(progress) == DialogResult.Yes)
 							{
 								continueMerge = MergeTextWithBIRDDoc(ref newText,
@@ -379,7 +375,7 @@ namespace SIL.FieldWorks.IText
 		/// <param name="progress"></param>
 		/// <param name="version"></param>
 		/// <returns>true if operation completed, false if the import operation should be aborted</returns>
-		private bool PopulateTextIfPossible(ImportInterlinearOptions options, ref FDO.IText newText, Interlineartext interlineartext,
+		private bool PopulateTextIfPossible(ImportInterlinearOptions options, ref LCModel.IText newText, Interlineartext interlineartext,
 												IThreadedProgress progress, int version)
 		{
 			if (!PopulateTextFromBIRDDoc(ref newText,
@@ -449,7 +445,7 @@ namespace SIL.FieldWorks.IText
 		/// </summary>
 		/// <param name="progress"></param>
 		/// <returns></returns>
-		virtual protected DialogResult ShowPossibleMergeDialog(IThreadedProgress progress)
+		protected virtual DialogResult ShowPossibleMergeDialog(IThreadedProgress progress)
 		{							//we need to invoke the dialog on the main thread so we can use the progress dialog as the parent.
 			//otherwise the message box can be displayed behind everything
 			IAsyncResult asyncResult = progress.SynchronizeInvoke.BeginInvoke(new ShowDialogAboveProgressbarDelegate(ShowDialogAboveProgressbar),
@@ -463,44 +459,41 @@ namespace SIL.FieldWorks.IText
 			return (DialogResult)progress.SynchronizeInvoke.EndInvoke(asyncResult);
 		}
 
-		private static ITsString GetSpaceAdjustedPunctString(ILgWritingSystemFactory wsFactory, ITsStrFactory tsStrFactory,
-															 item item, ITsString wordString, char space, bool followsWord)
+		private static ITsString GetSpaceAdjustedPunctString(ILgWritingSystemFactory wsFactory, item item, ITsString wordString, char space, bool followsWord)
 		{
-			if(item.Value.Length > 0)
+			if (item.Value.Length > 0)
 			{
 				var index = 0;
-				ITsString tempValue = AdjustPunctStringForCharacter(wsFactory, tsStrFactory, item, wordString, item.Value[index], index, space, followsWord);
+				ITsString tempValue = AdjustPunctStringForCharacter(wsFactory, item, wordString, item.Value[index], index, space, followsWord);
 				if(item.Value.Length > 1)
 				{
 					index = item.Value.Length - 1;
-					tempValue = AdjustPunctStringForCharacter(wsFactory, tsStrFactory, item, tempValue, item.Value[index], index, space, followsWord);
+					tempValue = AdjustPunctStringForCharacter(wsFactory, item, tempValue, item.Value[index], index, space, followsWord);
 				}
 				return tempValue;
 			}
 			return wordString;
 		}
 
-		private static ITsString AdjustPunctStringForCharacter(
-			ILgWritingSystemFactory wsFactory, ITsStrFactory tsStrFactory,
-			item item, ITsString wordString, char punctChar, int index,
+		private static ITsString AdjustPunctStringForCharacter(ILgWritingSystemFactory wsFactory, item item, ITsString wordString, char punctChar, int index,
 			char space, bool followsWord)
 		{
 			bool spaceBefore = false;
 			bool spaceAfter = false;
 			bool spaceHere = false;
 			char quote = '"';
-			var charType = Icu.GetCharType(punctChar);
+			var charType = Icu.Character.GetCharType(punctChar);
 			switch (charType)
 			{
-				case Icu.UCharCategory.U_END_PUNCTUATION:
-				case Icu.UCharCategory.U_FINAL_PUNCTUATION:
+				case Icu.Character.UCharCategory.END_PUNCTUATION:
+				case Icu.Character.UCharCategory.FINAL_PUNCTUATION:
 					spaceAfter = true;
 					break;
-				case Icu.UCharCategory.U_START_PUNCTUATION:
-				case Icu.UCharCategory.U_INITIAL_PUNCTUATION:
+				case Icu.Character.UCharCategory.START_PUNCTUATION:
+				case Icu.Character.UCharCategory.INITIAL_PUNCTUATION:
 					spaceBefore = true;
 					break;
-				case Icu.UCharCategory.U_OTHER_PUNCTUATION: //handle special characters
+				case Icu.Character.UCharCategory.OTHER_PUNCTUATION: //handle special characters
 					if(wordString.Text.LastIndexOfAny(new[] {',','.',';',':','?','!',quote}) == wordString.Length - 1) //treat as ending characters
 					{
 						spaceAfter = punctChar != '"' || wordString.Length > 1; //quote characters are extra special, if we find them on their own
@@ -522,7 +515,7 @@ namespace SIL.FieldWorks.IText
 				ILgWritingSystem wsEngine;
 				if (TryGetWsEngine(wsFactory, item.lang, out wsEngine))
 				{
-					wordBuilder.ReplaceTsString(0, 0, tsStrFactory.MakeString("" + space,
+					wordBuilder.ReplaceTsString(0, 0, TsStringUtils.MakeString("" + space,
 						wsEngine.Handle));
 				}
 				wordString = wordBuilder.GetString();
@@ -532,7 +525,7 @@ namespace SIL.FieldWorks.IText
 				ILgWritingSystem wsEngine;
 				if (TryGetWsEngine(wsFactory, item.lang, out wsEngine))
 				{
-					wordBuilder.ReplaceTsString(index, index, tsStrFactory.MakeString("" + space,
+					wordBuilder.ReplaceTsString(index, index, TsStringUtils.MakeString("" + space,
 						wsEngine.Handle));
 				}
 				wordString = wordBuilder.GetString();
@@ -543,7 +536,7 @@ namespace SIL.FieldWorks.IText
 				if (TryGetWsEngine(wsFactory, item.lang, out wsEngine))
 				{
 					wordBuilder.ReplaceTsString(wordBuilder.Length, wordBuilder.Length,
-						tsStrFactory.MakeString("" + space, wsEngine.Handle));
+						TsStringUtils.MakeString("" + space, wsEngine.Handle));
 				}
 				wordString = wordBuilder.GetString();
 			}
@@ -1615,7 +1608,7 @@ namespace SIL.FieldWorks.IText
 					{
 						for (int i = 0; i < s.Length; ++i)
 						{
-							if (Icu.IsNumeric(s[i]))
+							if (Icu.Character.IsNumeric(s[i]))
 							{
 								rgwfDel.Add(wf);
 								break;

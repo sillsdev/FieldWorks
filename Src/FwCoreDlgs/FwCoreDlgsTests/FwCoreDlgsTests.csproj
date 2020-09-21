@@ -1,16 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="15.0">
   <PropertyGroup>
     <ProjectType>Local</ProjectType>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{5AF62195-86FD-404C-ABB6-498D3E4AC5C8}</ProjectGuid>
-    <SccProjectName>
-    </SccProjectName>
-    <SccLocalPath>
-    </SccLocalPath>
-    <SccProvider>
-    </SccProvider>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ApplicationIcon>
@@ -36,7 +30,7 @@
     <SccAuxPath>
     </SccAuxPath>
     <OldToolsVersion>3.5</OldToolsVersion>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -55,7 +49,7 @@
     <TargetFrameworkProfile />
     <AppConfig>..\..\AppForTests.config</AppConfig>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <OutputPath>..\..\..\Output\Debug\</OutputPath>
     <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
     <BaseAddress>285212672</BaseAddress>
@@ -76,10 +70,10 @@
     <DebugType>full</DebugType>
     <ErrorReport>prompt</ErrorReport>
     <UseVSHostingProcess>true</UseVSHostingProcess>
-    <PlatformTarget>x86</PlatformTarget>
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
     <OutputPath>..\..\..\Output\Release\</OutputPath>
     <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
     <BaseAddress>285212672</BaseAddress>
@@ -101,29 +95,84 @@
     <DebugType>full</DebugType>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
-    <PlatformTarget>x86</PlatformTarget>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x64' ">
+    <OutputPath>..\..\..\Output\Debug\</OutputPath>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <BaseAddress>285212672</BaseAddress>
+    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+    <ConfigurationOverrideFile>
+    </ConfigurationOverrideFile>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DocumentationFile>..\..\..\Output\Debug\FwCoreDlgsTests.xml</DocumentationFile>
+    <DebugSymbols>true</DebugSymbols>
+    <FileAlignment>4096</FileAlignment>
+    <NoStdLib>false</NoStdLib>
+    <NoWarn>168,169,219,414,649,1635,1702,1701</NoWarn>
+    <Optimize>false</Optimize>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <RemoveIntegerChecks>false</RemoveIntegerChecks>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <WarningLevel>4</WarningLevel>
+    <DebugType>full</DebugType>
+    <ErrorReport>prompt</ErrorReport>
+    <UseVSHostingProcess>true</UseVSHostingProcess>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x64' ">
+    <OutputPath>..\..\..\Output\Release\</OutputPath>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <BaseAddress>285212672</BaseAddress>
+    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+    <ConfigurationOverrideFile>
+    </ConfigurationOverrideFile>
+    <DefineConstants>TRACE</DefineConstants>
+    <DocumentationFile>
+    </DocumentationFile>
+    <DebugSymbols>true</DebugSymbols>
+    <FileAlignment>4096</FileAlignment>
+    <NoStdLib>false</NoStdLib>
+    <NoWarn>168,169,219,414,649,1635,1702,1701</NoWarn>
+    <Optimize>true</Optimize>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <RemoveIntegerChecks>false</RemoveIntegerChecks>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <WarningLevel>4</WarningLevel>
+    <DebugType>full</DebugType>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="BasicUtils, Version=4.1.1.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="Rhino.Mocks, Version=3.6.0.0, Culture=neutral, PublicKeyToken=0b3305902db7183f, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Output\Debug\BasicUtils.dll</HintPath>
+      <HintPath>..\..\..\..\..\libpalaso\output\Debug\Rhino.Mocks.dll</HintPath>
     </Reference>
-    <Reference Include="BasicUtilsTests, Version=6.1.1.30962, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="SIL.LCModel.Core.Tests, Version=9.0.0.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Output\Debug\BasicUtilsTests.dll</HintPath>
+      <HintPath>..\..\..\Output\Debug\SIL.LCModel.Core.Tests.dll</HintPath>
     </Reference>
-    <Reference Include="COMInterfaces">
-      <Name>COMInterfaces</Name>
+    <Reference Include="SIL.TestUtilities, Version=3.1.0.0, Culture=neutral, PublicKeyToken=cab3c8c5232dfcf2, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Output\Debug\COMInterfaces.dll</HintPath>
+      <HintPath>..\..\..\Output\Debug\SIL.TestUtilities.dll</HintPath>
     </Reference>
-    <Reference Include="COMInterfacesTests, Version=6.1.1.14450, Culture=neutral, processorArchitecture=x86">
+    <Reference Include="SIL.LCModel.Utils.Tests, Version=9.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Output\Debug\COMInterfacesTests.dll</HintPath>
+      <HintPath>..\..\..\Output\Debug\SIL.LCModel.Utils.Tests.dll</HintPath>
     </Reference>
-    <Reference Include="CoreImpl, Version=6.1.0.19674, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="SIL.WritingSystems.Tests">
+      <HintPath>..\..\..\Output\Debug\SIL.WritingSystems.Tests.dll</HintPath>
+    </Reference>
+    <Reference Include="ViewsInterfaces">
+      <Name>ViewsInterfaces</Name>
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Output\Debug\CoreImpl.dll</HintPath>
+      <HintPath>..\..\..\Output\Debug\ViewsInterfaces.dll</HintPath>
+    </Reference>
+    <Reference Include="SIL.LCModel.Core, Version=9.0.0.0, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Output\Debug\SIL.LCModel.Core.dll</HintPath>
     </Reference>
     <Reference Include="ECInterfaces, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485, processorArchitecture=x86" Condition="'$(OS)'!='Unix'">
       <SpecificVersion>False</SpecificVersion>
@@ -133,15 +182,14 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>/usr/lib/fieldworks/ECInterfaces.dll</HintPath>
     </Reference>
-    <Reference Include="FDO">
-      <Name>FDO</Name>
+    <Reference Include="SIL.LCModel">
+      <Name>SIL.LCModel</Name>
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Output\Debug\FDO.dll</HintPath>
+      <HintPath>..\..\..\Output\Debug\SIL.LCModel.dll</HintPath>
     </Reference>
-    <Reference Include="FDOTests">
-      <Name>FDOTests</Name>
+    <Reference Include="SIL.LCModel.Tests">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Output\Debug\FDOTests.dll</HintPath>
+      <HintPath>..\..\..\Output\Debug\SIL.LCModel.Tests.dll</HintPath>
     </Reference>
     <Reference Include="FwControls">
       <Name>FwControls</Name>
@@ -171,15 +219,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Output\Debug\FwUtilsTests.dll</HintPath>
     </Reference>
-    <Reference Include="ICSharpCode.SharpZipLib, Version=0.85.5.452, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Lib\debug\ICSharpCode.SharpZipLib.dll</HintPath>
-    </Reference>
-    <Reference Include="NMock">
-      <Name>NMock</Name>
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Bin\nmock\NMock.dll</HintPath>
-    </Reference>
     <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\DistFiles\Microsoft.Practices.ServiceLocation.dll</HintPath>
@@ -187,17 +226,6 @@
     <Reference Include="nunit.framework, Version=2.5.3.9345, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77">
       <HintPath>..\..\..\packages\NUnit.2.6.4\lib\nunit.framework.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
-    </Reference>
-    <Reference Include="Palaso, Version=1.5.162.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Downloads\Palaso.dll</HintPath>
-    </Reference>
-    <Reference Include="PalasoUIWindowsForms, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-    </Reference>
-    <Reference Include="Rhino.Mocks, Version=3.6.0.0, Culture=neutral, PublicKeyToken=0b3305902db7183f, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Bin\Rhino\Rhino.Mocks.dll</HintPath>
     </Reference>
     <Reference Include="RootSite">
       <Name>RootSite</Name>
@@ -208,13 +236,17 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Output\Debug\RootSiteTests.dll</HintPath>
     </Reference>
-    <Reference Include="ScrUtilsInterfaces, Version=6.9.0.27229, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="SIL.Core, Version=2.6.0.0, Culture=neutral, PublicKeyToken=cab3c8c5232dfcf2, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Output\Debug\ScrUtilsInterfaces.dll</HintPath>
+      <HintPath>..\..\..\Output\Debug\SIL.Core.dll</HintPath>
     </Reference>
-    <Reference Include="SharedScrUtils, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="SIL.Windows.Forms.WritingSystems, Version=2.6.0.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Output\Debug\SharedScrUtils.dll</HintPath>
+      <HintPath>..\..\..\Output\Debug\SIL.Windows.Forms.WritingSystems.dll</HintPath>
+    </Reference>
+    <Reference Include="SIL.WritingSystems">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Output\Debug\SIL.WritingSystems.dll</HintPath>
     </Reference>
     <Reference Include="SilEncConverters40, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485, processorArchitecture=x86" Condition="'$(OS)'!='Unix'">
       <SpecificVersion>False</SpecificVersion>
@@ -224,9 +256,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>/usr/lib/fieldworks/SilEncConverters40.dll</HintPath>
     </Reference>
-    <Reference Include="SilUtils, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="SIL.LCModel.Utils, Version=9.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Output\Debug\SilUtils.dll</HintPath>
+      <HintPath>..\..\..\Output\Debug\SIL.LCModel.Utils.dll</HintPath>
     </Reference>
     <Reference Include="SimpleRootSite">
       <Name>SimpleRootSite</Name>
@@ -237,20 +269,9 @@
       <Name>System</Name>
     </Reference>
     <Reference Include="System.Core" />
-    <Reference Include="System.Data">
-      <Name>System.Data</Name>
-    </Reference>
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms">
       <Name>System.Windows.Forms</Name>
-    </Reference>
-    <Reference Include="System.Xml">
-      <Name>System.XML</Name>
-    </Reference>
-    <Reference Include="TestUtils">
-      <Name>TestUtils</Name>
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Output\Debug\TestUtils.dll</HintPath>
     </Reference>
     <Reference Include="Widgets">
       <Name>Widgets</Name>
@@ -263,32 +284,23 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\..\FDO\FDOTests\FwSetupFixtureClass.cs">
-      <Link>FwSetupFixtureClass.cs</Link>
-    </Compile>
+    <Compile Include="AdvancedScriptRegionVariantModelTests.cs" />
     <Compile Include="CnvtrPropertiesCtrlTests.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="CharContextCtrlTests.cs" />
+    <Compile Include="FwCharacterCategorizerTests.cs" />
+    <Compile Include="FwChooseAnthroListModelTests.cs" />
     <Compile Include="RestoreProjectPresenterTests.cs" />
-    <Compile Include="ValidCharactersDlgTests.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="FindReplaceCollectorEnvTests.cs" />
+    <Compile Include="TestWSContainer.cs" />
+    <Compile Include="ValidCharactersDlgTests.cs" />
+    <Compile Include="FindCollectorEnvTests.cs" />
     <Compile Include="FwFindReplaceDlgTests.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="FwNewLangProjectTests.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="FwProjPropertiesDlgTests.cs">
-      <SubType>Form</SubType>
-    </Compile>
+    <Compile Include="FwNewLangProjectModelTests.cs" />
     <Compile Include="FwStylesDlgTests.cs" />
-    <Compile Include="PunctuationDlgTests.cs" />
-    <Compile Include="WritingSystemPropertiesDialogTests.cs">
-      <SubType>Form</SubType>
-    </Compile>
+    <Compile Include="FwWritingSystemSetupModelTests.cs" />
     <Compile Include="RealSplashScreenTests.cs" />
     <Compile Include="FwFontDialogTests.cs" />
     <Compile Include="FwHelpAboutTests.cs" />

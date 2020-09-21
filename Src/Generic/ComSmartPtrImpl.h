@@ -17,7 +17,7 @@ Last reviewed:
 #error "Need to include ComSmartPtr.h first"
 #endif
 
-#if !WIN32
+#if !defined(_WIN32) && !defined(_M_X64)
 _COM_SMARTPTR_TYPEDEF(IErrorInfo, __uuidof(IErrorInfo));
 #endif
 

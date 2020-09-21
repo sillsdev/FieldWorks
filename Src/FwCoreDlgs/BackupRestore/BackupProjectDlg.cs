@@ -4,18 +4,16 @@
 //
 // File: BackupProjectDlg.cs
 // Responsibility: FW Team
-
 using System;
 using System.IO;
-using System.Media;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.Controls;
+using SIL.FieldWorks.Common.Controls.FileDialog;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
-using SIL.Utils;
-using SIL.Utils.FileDialog;
-using XCore;
-using SIL.FieldWorks.FDO.DomainServices.BackupRestore;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices.BackupRestore;
+using SIL.Reporting;
+using SIL.LCModel.Utils;
 
 namespace SIL.FieldWorks.FwCoreDlgs.BackupRestore
 {
@@ -27,7 +25,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.BackupRestore
 	public partial class BackupProjectDlg : Form, IBackupProjectView
 	{
 		#region Member variables
-		private readonly FdoCache m_cache;
+		private readonly LcmCache m_cache;
 		private readonly BackupProjectPresenter m_presenter;
 		private readonly IHelpTopicProvider m_helpTopicProvider;
 		#endregion
@@ -48,17 +46,15 @@ namespace SIL.FieldWorks.FwCoreDlgs.BackupRestore
 		/// Initializes a new instance of the <see cref="BackupProjectDlg"/> class.
 		/// </summary>
 		/// <param name="cache">The cache.</param>
-		/// <param name="appAbbrev">The command-line abbreviation for the application displaying
-		/// this backup dialog box.</param>
 		/// <param name="helpTopicProvider">The help topic provider.</param>
 		/// ------------------------------------------------------------------------------------
-		public BackupProjectDlg(FdoCache cache, string appAbbrev,
+		public BackupProjectDlg(LcmCache cache,
 			IHelpTopicProvider helpTopicProvider) : this()
 		{
 			m_cache = cache;
 			m_helpTopicProvider = helpTopicProvider;
 
-			m_presenter = new BackupProjectPresenter(this, appAbbrev, m_cache);
+			m_presenter = new BackupProjectPresenter(this, m_cache);
 
 			//It should only be displayed if the SupportingFiles folder has content.
 			if (!m_presenter.SupportingFilesFolderContainsFiles)
@@ -183,7 +179,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.BackupRestore
 		{
 			if (m_destinationFolder.Text.IndexOfAny(Path.GetInvalidPathChars()) != -1)
 			{
-				MiscUtils.ErrorBeep();
+				FwUtils.ErrorBeep();
 				var fixText = m_destinationFolder.Text;
 				for (; ; )
 				{

@@ -1,18 +1,9 @@
-// Copyright (c) 2003-2013 SIL International
+// Copyright (c) 2003-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: MockupDialogLauncher.cs
-// Responsibility:
-// Last reviewed:
-//
-// <remarks>
-// </remarks>
 
 using System;
-using System.Diagnostics;
 using System.Xml;
-
 using SIL.Utils;
 
 namespace XCore
@@ -20,19 +11,11 @@ namespace XCore
 	/// <summary>
 	/// Summary description for MockupDialog.
 	/// </summary>
-	[XCore.MediatorDispose]
-	public class MockupDialogLauncher : IxCoreColleague, IFWDisposable
+	[MediatorDispose]
+	public class MockupDialogLauncher : IxCoreColleague, IDisposable
 	{
 		protected Mediator m_mediator;
-
-		/// -----------------------------------------------------------------------------------
-		/// <summary>
-		/// Initializes a new instance of the <see cref="MockupDialog"/> class.
-		/// </summary>
-		/// -----------------------------------------------------------------------------------
-		public MockupDialogLauncher()
-		{
-		}
+		protected PropertyTable m_propertyTable;
 
 		#region IDisposable & Co. implementation
 		// Region last reviewed: never
@@ -136,12 +119,14 @@ namespace XCore
 		/// Initialize this has an IxCoreColleague
 		/// </summary>
 		/// <param name="mediator"></param>
+		/// <param name="propertyTable"></param>
 		/// <param name="configurationParameters"></param>
-		public void Init(Mediator mediator, XmlNode configurationParameters)
+		public void Init(Mediator mediator, PropertyTable propertyTable, XmlNode configurationParameters)
 		{
 			CheckDisposed();
 
 			m_mediator = mediator;
+			m_propertyTable = propertyTable;
 			mediator.AddColleague(this);
 		}
 

@@ -6,15 +6,15 @@
 // Responsibility: FieldWorks Team
 
 using System;
+using System.Linq;
 #if DEBUG
 using System.Diagnostics;
 #endif
-using System.Linq;
 
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.Common.Controls;
-using SIL.Utils;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.LCModel;
+using SIL.Reporting;
+using SIL.LCModel.Utils;
 #if !DEBUG
 using SIL.FieldWorks.Resources;
 #endif
@@ -39,7 +39,7 @@ namespace SIL.FieldWorks.Common.Framework
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// The path where the settings file is found.
-		/// For example, @"\Translation Editor\Testyles.xml"
+		/// For example, @"\Language Explorer\TeStyles.xml"
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		protected abstract string ResourceFilePathFromFwInstall { get; }
@@ -54,17 +54,17 @@ namespace SIL.FieldWorks.Common.Framework
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Gets the FdoCache
+		/// Gets the LcmCache
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		protected abstract FdoCache Cache { get; }
+		protected abstract LcmCache Cache { get; }
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the resource list in which the CmResources are owned.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		protected abstract IFdoOwningCollection<ICmResource> ResourceList { get; }
+		protected abstract ILcmOwningCollection<ICmResource> ResourceList { get; }
 
 		#endregion
 

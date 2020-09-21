@@ -1,24 +1,26 @@
-﻿// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
-using System.Windows.Forms;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.Utils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
-using XCore;
-using SIL.CoreImpl;
-using SIL.FieldWorks.FDO.Application;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Windows.Forms;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
+using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.Common.RootSites;
+using SIL.LCModel;
+using SIL.LCModel.Application;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Infrastructure;
+using SIL.LCModel.Utils;
+using SIL.PlatformUtilities;
+using XCore;
 
 namespace SIL.FieldWorks.IText
 {
@@ -182,7 +184,7 @@ namespace SIL.FieldWorks.IText
 		/// </summary>
 		protected override void MakeVc()
 		{
-			m_vc = new InterlinDocForAnalysisVc(m_fdoCache);
+			m_vc = new InterlinDocForAnalysisVc(m_cache);
 		}
 
 		#region Overrides of RootSite
@@ -454,10 +456,13 @@ namespace SIL.FieldWorks.IText
 		protected override void OnPaint(PaintEventArgs e)
 		{
 			base.OnPaint(e);
-#if !__MonoCS__ // FWNX-419
+
+			if (Platform.IsMono)
+				return;
+
+			// FWNX-419
 			if (!MouseMoveSuppressed && IsFocusBoxInstalled)
 				MoveFocusBoxIntoPlace(true);
-#endif
 		}
 
 		/// <summary>
@@ -782,9 +787,13 @@ namespace SIL.FieldWorks.IText
 			}
 			set
 			{
-				((InterlinDocForAnalysisVc) m_vc).FocusBoxOccurrence = value;
-				m_mediator.PropertyTable.SetProperty("TextSelectedWord", value != null && value.HasWordform ? value.Analysis.Wordform : null);
-				m_mediator.PropertyTable.SetPropertyPersistence("TextSelectedWord", false);
+				if (m_vc == null)
+					return;
+				((InterlinDocForAnalysisVc)m_vc).FocusBoxOccurrence = value;
+				m_propertyTable.SetProperty("TextSelectedWord",
+					value != null && value.HasWordform ? value.Analysis.Wordform : null,
+					true);
+				m_propertyTable.SetPropertyPersistence("TextSelectedWord", false);
 			}
 		}
 
@@ -837,7 +846,7 @@ namespace SIL.FieldWorks.IText
 
 		internal InterlinLineChoices.InterlinMode GetSelectedLineChoiceMode()
 		{
-			return m_mediator.PropertyTable.GetBoolProperty(InterlinDocForAnalysis.ksPropertyAddWordsToLexicon, false) ?
+			return m_propertyTable.GetBoolProperty(ksPropertyAddWordsToLexicon, false) ?
 				InterlinLineChoices.InterlinMode.GlossAddWordsToLexicon : InterlinLineChoices.InterlinMode.Gloss;
 		}
 
@@ -1460,13 +1469,10 @@ namespace SIL.FieldWorks.IText
 			ISegment seg;
 			if (!CanAddWordGlosses(out seg, out ws))
 				return;
-			int wsText = WritingSystemServices.ActualWs(Cache, WritingSystemServices.kwsVernInParagraph,
-				m_hvoRoot, StTextTags.kflidParagraphs);
 
-			ITsStrBldr bldr = TsStrBldrClass.Create();
-			ITsStrFactory tsf = TsStrFactoryClass.Create();
+			ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
 			bool fOpenPunc = false;
-			ITsString space = TsStringUtils.MakeTss(" ", ws);
+			ITsString space = TsStringUtils.MakeString(" ", ws);
 			foreach (var analysis in seg.AnalysesRS)
 			{
 				ITsString insert = null;
@@ -1622,9 +1628,9 @@ namespace SIL.FieldWorks.IText
 							// Adjacent WSS of the same annotation count as only ONE object in the display.
 							// So we advance i over as many items in m_choices as there are adjacent Wss
 							// of the same flid.
-							i += choices.AdjacentWssAtIndex(i).Length;
+							i += choices.AdjacentWssAtIndex(i, hvoSeg).Length;
 						}
-						int[] rgws = choices.AdjacentWssAtIndex(idx);
+						int[] rgws = choices.AdjacentWssAtIndex(idx, hvoSeg);
 						for (int i = 0; i < rgws.Length; ++i)
 						{
 							if (rgws[i] == wsField)
@@ -1848,7 +1854,7 @@ namespace SIL.FieldWorks.IText
 
 		protected virtual FocusBoxController CreateFocusBoxInternal()
 		{
-			return new FocusBoxControllerForDisplay(m_mediator, m_styleSheet, LineChoices, m_vc.RightToLeft);
+			return new FocusBoxControllerForDisplay(m_mediator, m_propertyTable, m_styleSheet, LineChoices, m_vc.RightToLeft);
 		}
 
 		/// <summary>
@@ -1857,6 +1863,11 @@ namespace SIL.FieldWorks.IText
 		/// <returns>true, if it could hide the sandbox. false, if it was not installed.</returns>
 		internal override bool TryHideFocusBoxAndUninstall()
 		{
+			if (m_vc == null)
+			{
+				// we're pretty well hidden already if we don't have a view
+				return false;
+			}
 			if (!IsFocusBoxInstalled)
 			{
 				SelectedOccurrence = null;
@@ -1979,18 +1990,20 @@ namespace SIL.FieldWorks.IText
 			{
 				pt = PixelToView(new Point(e.X, e.Y));
 				GetCoordRects(out rcSrcRoot, out rcDstRoot);
-#if __MonoCS__
-				// Adjust the destination to the original scroll position.  This completes
-				// the fix for FWNX-794/851.
-				rcDstRoot.Location = m_ptScrollPos;
-#endif
+
+				if (Platform.IsMono)
+				{
+					// Adjust the destination to the original scroll position.  This completes
+					// the fix for FWNX-794/851.
+					rcDstRoot.Location = m_ptScrollPos;
+				}
+
 				IVwSelection sel = RootBox.MakeSelAt(pt.X, pt.Y, rcSrcRoot, rcDstRoot, false);
 				if (sel == null || !HandleClickSelection(sel, false, false))
 					base.OnMouseDown(e);
 			}
 		}
 
-#if __MonoCS__
 		/// <summary>
 		/// The Mono runtime changes the scroll position to the currently existing control
 		/// before passing on to the OnMouseDown method.  This works fine for statically defined
@@ -2008,15 +2021,15 @@ namespace SIL.FieldWorks.IText
 		/// to compile FieldWorks.
 		/// </remarks>
 		private Point m_ptScrollPos;
-#endif
 
 		public override void OriginalWndProc(ref Message msg)
 		{
-#if __MonoCS__
-			// When handling a left mouse button down event, save the original scroll position.
-			if (msg.Msg == (int)Win32.WinMsgs.WM_LBUTTONDOWN)
-				m_ptScrollPos = AutoScrollPosition;
-#endif
+			if (Platform.IsMono)
+			{
+				// When handling a left mouse button down event, save the original scroll position.
+				if (msg.Msg == (int)Win32.WinMsgs.WM_LBUTTONDOWN)
+					m_ptScrollPos = AutoScrollPosition;
+			}
 			base.OriginalWndProc(ref msg);
 		}
 
@@ -2349,7 +2362,7 @@ namespace SIL.FieldWorks.IText
 
 	public class InterlinDocForAnalysisVc : InterlinVc
 	{
-		public InterlinDocForAnalysisVc(FdoCache cache)
+		public InterlinDocForAnalysisVc(LcmCache cache)
 			: base(cache)
 		{
 			FocusBoxSize = new Size(100000, 50000); // If FocusBoxAnnotation is set, this gives the size of box to make. (millipoints)
@@ -2400,9 +2413,10 @@ namespace SIL.FieldWorks.IText
 					// first line of text) an appropriate distance from the top of the Sandbox. This aligns it's
 					// top line of text properly.
 					// Enhance JohnT: 90% of font height is not always exactly right, but it's the closest
-					// I can get wihtout a new API to get the exact ascent of the font.
+					// I can get without a new API to get the exact ascent of the font.
+					var wsSeg = TsStringUtils.GetWsAtOffset(FocusBoxOccurrence.Segment.BaselineText, 0);
 					int dympBaseline = Common.Widgets.FontHeightAdjuster.
-						GetFontHeightForStyle("Normal", m_stylesheet, m_wsVernForDisplay,
+						GetFontHeightForStyle("Normal", m_stylesheet, wsSeg,
 						m_cache.LanguageWritingSystemFactoryAccessor) * 9 / 10;
 					uint transparent = 0xC0000000; // FwTextColor.kclrTransparent won't convert to uint
 					vwenv.AddSimpleRect((int)transparent,

@@ -12,14 +12,15 @@
 
 using System;
 using System.Windows.Forms;
-using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.Framework.DetailControls.Resources;
-using SIL.Utils;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Utils;
 using SIL.FieldWorks.Common.Widgets;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.LexText.Controls;
 using XCore;
 
@@ -46,11 +47,11 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// <param name="flid">The field identifier for the attribute we are displaying.</param>
 		/// <param name="persistenceProvider">The persistence provider.</param>
 		/// ------------------------------------------------------------------------------------
-		public MSAReferenceComboBoxSlice(FdoCache cache, ICmObject obj, int flid,
+		public MSAReferenceComboBoxSlice(LcmCache cache, ICmObject obj, int flid,
 			IPersistenceProvider persistenceProvider)
 			: base(new UserControl(), cache, obj, flid)
 		{
-			IWritingSystem defAnalWs = m_cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem;
+			CoreWritingSystemDefinition defAnalWs = m_cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem;
 			m_persistProvider = persistenceProvider;
 			m_tree = new TreeCombo();
 			m_tree.WritingSystemFactory = cache.WritingSystemFactory;
@@ -90,13 +91,13 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				base.Mediator = value;
 
 				//Set the stylesheet so that the font size for the...
-				IVwStylesheet stylesheet = FontHeightAdjuster.StyleSheetFromMediator(m_mediator);
+				IVwStylesheet stylesheet = FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable);
 				m_tree.StyleSheet = stylesheet;
 				var list = m_cache.LanguageProject.PartsOfSpeechOA;
 
 				m_MSAPopupTreeManager = new MSAPopupTreeManager(m_tree, m_cache, list,
-					m_tree.WritingSystemCode, true, m_mediator,
-					(Form)m_mediator.PropertyTable.GetValue("window"));
+					m_tree.WritingSystemCode, true, m_mediator, m_propertyTable,
+					m_propertyTable.GetValue<Form>("window"));
 				m_MSAPopupTreeManager.AfterSelect += m_MSAPopupTreeManager_AfterSelect;
 				m_MSAPopupTreeManager.Sense = m_obj as ILexSense;
 				m_MSAPopupTreeManager.PersistenceProvider = m_persistProvider;

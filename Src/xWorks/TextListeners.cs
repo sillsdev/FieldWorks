@@ -1,17 +1,17 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Xml;
-
-using SIL.CoreImpl;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
 using XCore;
-using SIL.Utils;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -20,9 +20,10 @@ namespace SIL.FieldWorks.XWorks
 	/// </summary>
 	/// <remarks>TODO: make an xcore property for controlling the current WritingSystemSet.</remarks>
 	[MediatorDispose]
-	public class WritingSystemListHandler : IxCoreColleague, IFWDisposable
+	public class WritingSystemListHandler : IxCoreColleague, IDisposable
 	{
 		protected Mediator m_mediator;
+		protected PropertyTable m_propertyTable;
 
 		public enum WritingSystemSet {All, AllCurrent, AllAnalysis, AllVernacular, CurrentAnalysis, CurrentVernacular, CurrentPronounciation};
 		private WritingSystemSet m_currentSet = WritingSystemSet.AllCurrent;
@@ -135,17 +136,19 @@ namespace SIL.FieldWorks.XWorks
 
 		#endregion IDisposable & Co. implementation
 
-		public void Init(Mediator mediator, XmlNode configurationParameters)
+		public void Init(Mediator mediator, PropertyTable propertyTable, XmlNode configurationParameters)
 		{
 			CheckDisposed();
 
 			m_mediator = mediator;
-			mediator.AddColleague(this);
-			FdoCache cache = (FdoCache) m_mediator.PropertyTable.GetValue("cache");
+			m_propertyTable = propertyTable;
+			m_mediator.AddColleague(this);
+			LcmCache cache = m_propertyTable.GetValue<LcmCache>("cache");
 			//don't know just what good having this default is, but it's at least safer
-			mediator.PropertyTable.SetProperty("WritingSystemHvo",
-				cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle.ToString());
-			mediator.PropertyTable.SetPropertyPersistence("WritingSystemHvo", false);
+			m_propertyTable.SetProperty("WritingSystemHvo",
+				cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle.ToString(),
+				true);
+			m_propertyTable.SetPropertyPersistence("WritingSystemHvo", false);
 		}
 
 		/// <summary>
@@ -229,7 +232,7 @@ namespace SIL.FieldWorks.XWorks
 			CheckDisposed();
 
 			display.List.Clear();
-			FdoCache cache = (FdoCache) m_mediator.PropertyTable.GetValue("cache");
+			LcmCache cache = m_propertyTable.GetValue<LcmCache>("cache");
 			string wsSet = parameter as string;
 			WritingSystemSet setToUse = m_currentSet;
 			if (wsSet != null)
@@ -259,7 +262,7 @@ namespace SIL.FieldWorks.XWorks
 				default:
 					throw new NotImplementedException("That writing system set needs to be implemented");
 				case WritingSystemSet.All:
-					AddWritingSystemList(display, cache.ServiceLocator.WritingSystemManager.LocalWritingSystems);
+					AddWritingSystemList(display, cache.ServiceLocator.WritingSystemManager.WritingSystems);
 					break;
 				case WritingSystemSet.AllCurrent:
 					AddWritingSystemList(display, cache.ServiceLocator.WritingSystems.AllWritingSystems);
@@ -273,16 +276,16 @@ namespace SIL.FieldWorks.XWorks
 				case WritingSystemSet.CurrentPronounciation:
 					AddWritingSystemList(display, cache.ServiceLocator.WritingSystems.CurrentPronunciationWritingSystems);
 					string sValue = DomainObjectServices.JoinIds(cache.ServiceLocator.WritingSystems.CurrentPronunciationWritingSystems.Select(ws => ws.Handle).ToArray(), ",");
-					m_mediator.PropertyTable.SetProperty("PronunciationWritingSystemHvos", sValue);
+					m_propertyTable.SetProperty("PronunciationWritingSystemHvos", sValue, true);
 					break;
 			}
 			return true;//we handled this, no need to ask anyone else.
 		}
-		private static void AddWritingSystemList(UIListDisplayProperties display, IEnumerable<IWritingSystem> list)
+		private static void AddWritingSystemList(UIListDisplayProperties display, IEnumerable<CoreWritingSystemDefinition> list)
 		{
-			foreach (IWritingSystem ws in list)
+			foreach (CoreWritingSystemDefinition ws in list)
 			{
-				display.List.Add(ws.DisplayLabel, ws.Handle.ToString(), null, null);
+				display.List.Add(ws.DisplayLabel, ws.Handle.ToString(CultureInfo.InvariantCulture), null, null);
 			}
 		}
 	}
@@ -290,13 +293,13 @@ namespace SIL.FieldWorks.XWorks
 	/// Dummy handler to disable displaying the combined styles combobox by default.
 	/// </summary>
 	[MediatorDispose]
-	public class CombinedStylesListHandler : IxCoreColleague, IFWDisposable
+	public class CombinedStylesListHandler : IxCoreColleague, IDisposable
 	{
 		public enum StylesSet { All, CharacterOnly };
 
 		protected Mediator m_mediator;
 
-		#region IFWDisposable Members
+		#region IDisposable Members
 
 		/// <summary>
 		/// Check to see if the object has been disposed.
@@ -328,10 +331,6 @@ namespace SIL.FieldWorks.XWorks
 			Dispose(false);
 		}
 #endif
-
-		#endregion
-
-		#region IDisposable Members
 
 		/// <summary>
 		/// Clean up everything that we've been using.
@@ -400,7 +399,7 @@ namespace SIL.FieldWorks.XWorks
 			return new IxCoreColleague[] { this };
 		}
 
-		public void Init(Mediator mediator, XmlNode configurationParameters)
+		public void Init(Mediator mediator, PropertyTable propertyTable, XmlNode configurationParameters)
 		{
 			CheckDisposed();
 

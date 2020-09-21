@@ -13,14 +13,11 @@ using System.Collections;
 using System.Windows.Forms;
 using System.Diagnostics;
 using NUnit.Framework;
-using SIL.CoreImpl;
-using SIL.FieldWorks.Resources;
-using SIL.Utils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.FDOTests;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Utils;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
 
 namespace SIL.FieldWorks.FwCoreDlgControls
 {
@@ -35,7 +32,7 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 		private ComboBox m_stylesComboBox;
 		private StyleComboListHelper m_styleListHelper;
 		private ILangProject m_lp;
-		private FwStyleSheet m_styleSheet;
+		private LcmStyleSheet m_styleSheet;
 		private const string kStyleName = "Words Of Christ";
 
 		#region Test setup and tear-down
@@ -65,7 +62,7 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 			var captionStyle = AddTestStyle("Caption", ContextValues.Internal,
 				StructureValues.Body, FunctionValues.Prose, false,
 				m_lp.StylesOC);
-			m_styleSheet = new FwStyleSheet();
+			m_styleSheet = new LcmStyleSheet();
 			m_styleSheet.Init(Cache, m_lp.Hvo,
 				LangProjectTags.kflidStyles);
 

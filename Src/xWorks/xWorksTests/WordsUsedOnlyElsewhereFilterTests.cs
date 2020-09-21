@@ -4,14 +4,12 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using NUnit.Framework;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Application;
-using SIL.FieldWorks.FDO.FDOTests;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel;
+using SIL.LCModel.Application;
+using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.Filters;
 
 namespace SIL.FieldWorks.XWorks
@@ -35,8 +33,7 @@ namespace SIL.FieldWorks.XWorks
 				() =>
 					{
 						var wfTry = MakeWordform("try");
-						ISegment seg1;
-						var text1 = MakeText("try it out", out seg1);
+						ISegment seg1 = MakeText("try it out");
 						seg1.AnalysesRS.Add(wfTry);
 						Assert.That(wfTry.FullConcordanceCount, Is.EqualTo(1));
 						ManyOnePathSortItem itemTry = new ManyOnePathSortItem(wfTry);
@@ -59,7 +56,7 @@ namespace SIL.FieldWorks.XWorks
 
 		private ITsString MakeVernTss(string content)
 		{
-			return Cache.TsStrFactory.MakeString(content, Cache.DefaultVernWs);
+			return TsStringUtils.MakeString(content, Cache.DefaultVernWs);
 		}
 
 		IWfiWordform MakeWordform(string form)
@@ -69,7 +66,7 @@ namespace SIL.FieldWorks.XWorks
 			return wf;
 		}
 
-		IText MakeText(string content, out ISegment seg)
+		ISegment MakeText(string content)
 		{
 			var text = Cache.ServiceLocator.GetInstance<ITextFactory>().Create();
 			//Cache.LangProject.TextsOC.Add(text);
@@ -78,9 +75,9 @@ namespace SIL.FieldWorks.XWorks
 			var para = Cache.ServiceLocator.GetInstance<IStTxtParaFactory>().Create();
 			stText.ParagraphsOS.Add(para);
 			para.Contents = MakeVernTss(content);
-			seg = Cache.ServiceLocator.GetInstance<ISegmentFactory>().Create();
+			ISegment seg = Cache.ServiceLocator.GetInstance<ISegmentFactory>().Create();
 			para.SegmentsOS.Add(seg);
-			return text;
+			return seg;
 		}
 	}
 
@@ -121,7 +118,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 	}
 
-	class FakeMdc : FdoMetaDataCacheDecoratorBase
+	class FakeMdc : LcmMetaDataCacheDecoratorBase
 	{
 		public FakeMdc(IFwMetaDataCacheManaged metaDataCache) : base(metaDataCache)
 		{

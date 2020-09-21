@@ -85,85 +85,87 @@ namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 			this.groupBoxSenseNumber = new System.Windows.Forms.GroupBox();
 			this.labelParentSenseNumberStyle = new System.Windows.Forms.Label();
 			this.dropDownParentSenseNumberStyle = new System.Windows.Forms.ComboBox();
+			this.senseStructureVerticalFlow = new System.Windows.Forms.FlowLayoutPanel();
 			this.groupBoxSenseNumber.SuspendLayout();
+			this.senseStructureVerticalFlow.SuspendLayout();
 			this.SuspendLayout();
-			//
+			// 
 			// checkBoxSenseInPara
-			//
+			// 
 			resources.ApplyResources(this.checkBoxSenseInPara, "checkBoxSenseInPara");
 			this.checkBoxSenseInPara.Name = "checkBoxSenseInPara";
 			this.checkBoxSenseInPara.UseVisualStyleBackColor = true;
-			//
+			// 
 			// checkBoxShowGrammarFirst
-			//
+			// 
 			resources.ApplyResources(this.checkBoxShowGrammarFirst, "checkBoxShowGrammarFirst");
 			this.checkBoxShowGrammarFirst.Name = "checkBoxShowGrammarFirst";
 			this.checkBoxShowGrammarFirst.UseVisualStyleBackColor = true;
-			//
+			// 
 			// checkBoxFirstSenseInline
-			//
+			// 
 			resources.ApplyResources(this.checkBoxFirstSenseInline, "checkBoxFirstSenseInline");
 			this.checkBoxFirstSenseInline.Name = "checkBoxFirstSenseInline";
 			this.checkBoxFirstSenseInline.UseVisualStyleBackColor = true;
-			//
+			// 
 			// labelStyle
-			//
+			// 
 			resources.ApplyResources(this.labelStyle, "labelStyle");
 			this.labelStyle.Name = "labelStyle";
-			//
+			// 
 			// labelAfter
-			//
+			// 
 			resources.ApplyResources(this.labelAfter, "labelAfter");
 			this.labelAfter.Name = "labelAfter";
-			//
+			// 
 			// labelNumberingStyle
-			//
+			// 
 			resources.ApplyResources(this.labelNumberingStyle, "labelNumberingStyle");
 			this.labelNumberingStyle.Name = "labelNumberingStyle";
-			//
+			// 
 			// labelBefore
-			//
+			// 
 			resources.ApplyResources(this.labelBefore, "labelBefore");
 			this.labelBefore.Name = "labelBefore";
-			//
+			// 
 			// dropDownNumberingStyle
-			//
+			// 
 			resources.ApplyResources(this.dropDownNumberingStyle, "dropDownNumberingStyle");
 			this.dropDownNumberingStyle.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this.dropDownNumberingStyle.FormattingEnabled = true;
 			this.dropDownNumberingStyle.Name = "dropDownNumberingStyle";
-			//
+			// 
 			// textBoxAfter
-			//
+			// 
 			resources.ApplyResources(this.textBoxAfter, "textBoxAfter");
 			this.textBoxAfter.Name = "textBoxAfter";
-			//
+			// 
 			// textBoxBefore
-			//
+			// 
 			resources.ApplyResources(this.textBoxBefore, "textBoxBefore");
 			this.textBoxBefore.Name = "textBoxBefore";
-			//
+			// 
 			// checkBoxNumberSingleSense
-			//
+			// 
 			resources.ApplyResources(this.checkBoxNumberSingleSense, "checkBoxNumberSingleSense");
 			this.checkBoxNumberSingleSense.Name = "checkBoxNumberSingleSense";
 			this.checkBoxNumberSingleSense.UseVisualStyleBackColor = false;
-			//
+			// 
 			// dropDownStyle
-			//
+			// 
 			resources.ApplyResources(this.dropDownStyle, "dropDownStyle");
 			this.dropDownStyle.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this.dropDownStyle.FormattingEnabled = true;
 			this.dropDownStyle.Name = "dropDownStyle";
-			//
+			// 
 			// buttonStyles
-			//
+			// 
 			resources.ApplyResources(this.buttonStyles, "buttonStyles");
 			this.buttonStyles.Name = "buttonStyles";
 			this.buttonStyles.UseVisualStyleBackColor = true;
-			//
+			// 
 			// groupBoxSenseNumber
-			//
+			// 
 			this.groupBoxSenseNumber.Controls.Add(this.labelParentSenseNumberStyle);
 			this.groupBoxSenseNumber.Controls.Add(this.dropDownParentSenseNumberStyle);
 			this.groupBoxSenseNumber.Controls.Add(this.buttonStyles);
@@ -179,32 +181,40 @@ namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 			resources.ApplyResources(this.groupBoxSenseNumber, "groupBoxSenseNumber");
 			this.groupBoxSenseNumber.Name = "groupBoxSenseNumber";
 			this.groupBoxSenseNumber.TabStop = false;
-			//
+			// 
 			// labelParentSenseNumberStyle
-			//
+			// 
 			resources.ApplyResources(this.labelParentSenseNumberStyle, "labelParentSenseNumberStyle");
 			this.labelParentSenseNumberStyle.Name = "labelParentSenseNumberStyle";
-			//
+			// 
 			// dropDownParentSenseNumberStyle
-			//
+			// 
 			this.dropDownParentSenseNumberStyle.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this.dropDownParentSenseNumberStyle.FormattingEnabled = true;
 			resources.ApplyResources(this.dropDownParentSenseNumberStyle, "dropDownParentSenseNumberStyle");
 			this.dropDownParentSenseNumberStyle.Name = "dropDownParentSenseNumberStyle";
-			//
+			// 
+			// senseOrderingAndFormattingOptionsVerticalFlow
+			// 
+			resources.ApplyResources(this.senseStructureVerticalFlow, "senseStructureVerticalFlow");
+			this.senseStructureVerticalFlow.Controls.Add(this.checkBoxShowGrammarFirst);
+			this.senseStructureVerticalFlow.Controls.Add(this.checkBoxSenseInPara);
+			this.senseStructureVerticalFlow.Controls.Add(this.checkBoxFirstSenseInline);
+			this.senseStructureVerticalFlow.Name = "senseStructureVerticalFlow";
+			// 
 			// SenseOptionsView
-			//
+			// 
 			resources.ApplyResources(this, "$this");
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.Controls.Add(this.groupBoxSenseNumber);
-			this.Controls.Add(this.checkBoxFirstSenseInline);
-			this.Controls.Add(this.checkBoxSenseInPara);
-			this.Controls.Add(this.checkBoxShowGrammarFirst);
+			this.Controls.Add(this.senseStructureVerticalFlow);
 			this.MaximumSize = new System.Drawing.Size(0, 193);
 			this.MinimumSize = new System.Drawing.Size(305, 220);
 			this.Name = "SenseOptionsView";
 			this.groupBoxSenseNumber.ResumeLayout(false);
 			this.groupBoxSenseNumber.PerformLayout();
+			this.senseStructureVerticalFlow.ResumeLayout(false);
+			this.senseStructureVerticalFlow.PerformLayout();
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -228,5 +238,6 @@ namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 		private System.Windows.Forms.GroupBox groupBoxSenseNumber;
 		private System.Windows.Forms.Label labelParentSenseNumberStyle;
 		private System.Windows.Forms.ComboBox dropDownParentSenseNumberStyle;
+		private System.Windows.Forms.FlowLayoutPanel senseStructureVerticalFlow;
 	}
 }

@@ -1,16 +1,16 @@
-﻿// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2020 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections.Generic;
 using System.IO;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.LexText.Controls;
-using SIL.Utils;
+using SIL.LCModel.Utils;
 
 namespace SIL.FieldWorks.IText
 {
+	/// <remarks>TODO (Hasso) 2020.05: make localizable</remarks>
 	public partial class WordsSfmImportWizard : InterlinearSfmImportWizard
 	{
 		public WordsSfmImportWizard()

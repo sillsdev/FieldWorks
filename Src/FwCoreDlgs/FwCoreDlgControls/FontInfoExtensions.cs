@@ -4,10 +4,10 @@
 
 using System;
 using System.Text;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.DomainServices;
 using SIL.FieldWorks.Resources;
-using SIL.Utils;
 
 namespace SIL.FieldWorks.FwCoreDlgControls
 {

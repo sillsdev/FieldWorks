@@ -7,9 +7,9 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Diagnostics;
-using SIL.CoreImpl;
+using SIL.LCModel.Core.WritingSystems;
 using SIL.FieldWorks.Common.Widgets;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using XCore;
 
 namespace SIL.FieldWorks.LexText.Controls
@@ -145,15 +145,16 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// </summary>
 		/// <param name="cache">FDO cache.</param>
 		/// <param name="mediator">Mediator used to restore saved siz and location info.</param>
+		/// <param name="propertyTable"></param>
 		/// <param name="startingEntry">Entry that cannot be used as a match in this dlg.</param>
-		public void SetDlgInfo(FdoCache cache, Mediator mediator, ILexEntry startingEntry)
+		public void SetDlgInfo(LcmCache cache, Mediator mediator, XCore.PropertyTable propertyTable, ILexEntry startingEntry)
 		{
 			CheckDisposed();
 
 			//Debug.Assert(startingEntry != null);
 			m_startingEntry = startingEntry;
 
-			SetDlgInfo(cache, null, mediator);
+			SetDlgInfo(cache, null, mediator, propertyTable);
 		}
 
 		/// <summary>
@@ -162,19 +163,20 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <param name="cache"></param>
 		/// <param name="wp"></param>
 		/// <param name="mediator"></param>
-		public override void SetDlgInfo(FdoCache cache, WindowParams wp, Mediator mediator)
+		/// <param name="propertyTable"></param>
+		public override void SetDlgInfo(LcmCache cache, WindowParams wp, Mediator mediator, XCore.PropertyTable propertyTable)
 		{
 			CheckDisposed();
 
 			m_fwcbSenses.WritingSystemFactory = cache.LanguageWritingSystemFactoryAccessor;
 
-			base.SetDlgInfo(cache, wp, mediator);
+			base.SetDlgInfo(cache, wp, mediator, propertyTable);
 			// This is needed to make the replacement MatchingEntriesBrowser visible:
 			Controls.SetChildIndex(m_matchingObjectsBrowser, 0);
 
 			//Set the senses control so that it conforms to the size of the
 			//DefaultAnalysisWritingSystem
-			IWritingSystem defAnalWs = cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem;
+			CoreWritingSystemDefinition defAnalWs = cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem;
 			m_fwcbSenses.WritingSystemCode = defAnalWs.Handle;
 			// the default font is set to size 100, so that when adding strings to the control
 			// this becomes a limit.

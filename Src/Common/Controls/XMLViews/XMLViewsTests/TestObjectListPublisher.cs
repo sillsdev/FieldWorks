@@ -4,12 +4,11 @@
 
 using System.Linq;
 using NUnit.Framework;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Application;
-using SIL.FieldWorks.FDO.CoreTests;
-using SIL.FieldWorks.FDO.FDOTests;
+using SIL.LCModel;
+using SIL.LCModel.Application;
 using SIL.FieldWorks.Common.Controls;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel.Infrastructure;
+using SIL.LCModel.Infrastructure.Impl;
 
 namespace SIL.FieldWorks.XWorks
 {

@@ -1,34 +1,25 @@
-// Copyright (c) 2003-2013 SIL International
+// Copyright (c) 2003-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: InflAffixTemplateControl.cs
-// Responsibility: Andy Black
-// Last reviewed:
-//
-// <remarks>
-// </remarks>
 
 using System;
-using System.Xml;
-using System.Drawing;
-using System.Diagnostics;
-using System.Windows.Forms;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Drawing;
 using System.Linq;
-
+using System.Windows.Forms;
+using System.Xml;
+using SIL.LCModel.Core.Text;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Framework.DetailControls;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.Common.Framework;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel;
+using SIL.LCModel.Infrastructure;
 using SIL.Utils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FdoUi;
 using XCore;
-using System.Diagnostics.CodeAnalysis;
 
 namespace SIL.FieldWorks.XWorks.MorphologyEditor
 {
@@ -37,9 +28,9 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 	/// </summary>
 	public class InflAffixTemplateControl : XmlView
 	{
-		ICmObject m_obj = null;		// item clicked
-		IMoInflAffixSlot m_slot = null;		// slot to which chosen MSA belongs
-		IMoInflAffixTemplate m_template = null;
+		ICmObject m_obj;		// item clicked
+		IMoInflAffixSlot m_slot;		// slot to which chosen MSA belongs
+		IMoInflAffixTemplate m_template;
 		string m_sStem;
 		string m_sSlotChooserTitle;
 		string m_sSlotChooserInstructionalText;
@@ -56,8 +47,8 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 
 		protected event InflAffixTemplateEventHandler ShowContextMenu;
 
-		public InflAffixTemplateControl(FdoCache cache, int hvoRoot, XmlNode xnSpec, StringTable stringTable)
-			: base(hvoRoot, XmlUtils.GetAttributeValue(xnSpec, "layout"), stringTable, true)
+		public InflAffixTemplateControl(LcmCache cache, int hvoRoot, XmlNode xnSpec)
+			: base(hvoRoot, XmlUtils.GetAttributeValue(xnSpec, "layout"), true)
 		{
 			m_xnSpec = xnSpec["deParams"];
 			Cache = cache;
@@ -96,24 +87,24 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			OnLostFocus(new EventArgs());
 		}
 
-		public void SetStringTableValues(StringTable stringTable)
+		public void SetStringTableValues()
 		{
 			CheckDisposed();
 
-			m_sStem = stringTable.GetString("Stem", "Linguistics/Morphology/TemplateTable");
+			m_sStem = StringTable.Table.GetString("Stem", "Linguistics/Morphology/TemplateTable");
 
-			m_sSlotChooserTitle = stringTable.GetString("SlotChooserTitle", "Linguistics/Morphology/TemplateTable");
-			m_sSlotChooserInstructionalText = stringTable.GetString("SlotChooserInstructionalText", "Linguistics/Morphology/TemplateTable");
-			m_sObligatorySlot = stringTable.GetString("ObligatorySlot", "Linguistics/Morphology/TemplateTable");
-			m_sOptionalSlot = stringTable.GetString("OptionalSlot", "Linguistics/Morphology/TemplateTable");
+			m_sSlotChooserTitle = StringTable.Table.GetString("SlotChooserTitle", "Linguistics/Morphology/TemplateTable");
+			m_sSlotChooserInstructionalText = StringTable.Table.GetString("SlotChooserInstructionalText", "Linguistics/Morphology/TemplateTable");
+			m_sObligatorySlot = StringTable.Table.GetString("ObligatorySlot", "Linguistics/Morphology/TemplateTable");
+			m_sOptionalSlot = StringTable.Table.GetString("OptionalSlot", "Linguistics/Morphology/TemplateTable");
 
-			m_sNewSlotName = stringTable.GetString("NewSlotName", "Linguistics/Morphology/TemplateTable");
-			m_sUnnamedSlotName = stringTable.GetString("UnnamedSlotName", "Linguistics/Morphology/TemplateTable");
+			m_sNewSlotName = StringTable.Table.GetString("NewSlotName", "Linguistics/Morphology/TemplateTable");
+			m_sUnnamedSlotName = StringTable.Table.GetString("UnnamedSlotName", "Linguistics/Morphology/TemplateTable");
 
-			m_sInflAffixChooserTitle = stringTable.GetString("InflAffixChooserTitle", "Linguistics/Morphology/TemplateTable");
-			m_sInflAffixChooserInstructionalTextReq = stringTable.GetString("InflAffixChooserInstructionalTextReq", "Linguistics/Morphology/TemplateTable");
-			m_sInflAffixChooserInstructionalTextOpt = stringTable.GetString("InflAffixChooserInstructionalTextOpt", "Linguistics/Morphology/TemplateTable");
-			m_sInflAffix = stringTable.GetString("InflAffix", "Linguistics/Morphology/TemplateTable");
+			m_sInflAffixChooserTitle = StringTable.Table.GetString("InflAffixChooserTitle", "Linguistics/Morphology/TemplateTable");
+			m_sInflAffixChooserInstructionalTextReq = StringTable.Table.GetString("InflAffixChooserInstructionalTextReq", "Linguistics/Morphology/TemplateTable");
+			m_sInflAffixChooserInstructionalTextOpt = StringTable.Table.GetString("InflAffixChooserInstructionalTextOpt", "Linguistics/Morphology/TemplateTable");
+			m_sInflAffix = StringTable.Table.GetString("InflAffix", "Linguistics/Morphology/TemplateTable");
 
 		}
 
@@ -162,8 +153,8 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			else
 			{
 				IVwSelection sel = RootBox.MakeSelAt(pt.X, pt.Y,
-					new SIL.Utils.Rect(rcSrcRoot.Left, rcSrcRoot.Top, rcSrcRoot.Right, rcSrcRoot.Bottom),
-					new SIL.Utils.Rect(rcDstRoot.Left, rcDstRoot.Top, rcDstRoot.Right, rcDstRoot.Bottom),
+					new Rect(rcSrcRoot.Left, rcSrcRoot.Top, rcSrcRoot.Right, rcSrcRoot.Bottom),
+					new Rect(rcDstRoot.Left, rcDstRoot.Top, rcDstRoot.Right, rcDstRoot.Bottom),
 					false);
 				if (sel == null)
 					return base.OnRightMouseUp(pt, rcSrcRoot, rcDstRoot); // no object, so quit and let base handle it
@@ -192,8 +183,6 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		/// The slice is no longer a direct parent, so hunt for it up the Parent chain.
 		/// </summary>
 		/// <returns></returns>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "ctl is a reference")]
 		private Slice FindParentSlice()
 		{
 			Control ctl = this.Parent;
@@ -259,7 +248,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 
 		private void HandleMove(Command cmd, bool bLeft)
 		{
-			IFdoReferenceSequence<IMoInflAffixSlot> seq;
+			ILcmReferenceSequence<IMoInflAffixSlot> seq;
 			int index;
 			var slot = m_obj as IMoInflAffixSlot;
 			GetAffixSequenceContainingSlot(slot, out seq, out index);
@@ -303,10 +292,10 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		{
 			CheckDisposed();
 
-			IFdoReferenceSequence<IMoInflAffixSlot> seq;
+			ILcmReferenceSequence<IMoInflAffixSlot> seq;
 			int index;
 			GetAffixSequenceContainingSlot(m_obj as IMoInflAffixSlot, out seq, out index);
-			using (UndoableUnitOfWorkHelper helper = new UndoableUnitOfWorkHelper(m_fdoCache.ActionHandlerAccessor,
+			using (UndoableUnitOfWorkHelper helper = new UndoableUnitOfWorkHelper(m_cache.ActionHandlerAccessor,
 				String.Format(MEStrings.ksUndoRemovingSlot, seq[index].Name.BestAnalysisVernacularAlternative.Text),
 				String.Format(MEStrings.ksRedoRemovingSlot, seq[index].Name.BestAnalysisVernacularAlternative.Text)))
 			{
@@ -321,7 +310,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			CheckDisposed();
 
 			Command command = (XCore.Command)commandObject;
-			string tool = XmlUtils.GetManditoryAttributeValue(command.Parameters[0], "tool");
+			string tool = XmlUtils.GetMandatoryAttributeValue(command.Parameters[0], "tool");
 			var inflMsa = m_obj as IMoInflAffMsa;
 			m_mediator.PostMessage("FollowLink", new FwLinkArgs(tool, inflMsa.Owner.Guid));
 			return true; // handled this
@@ -505,11 +494,11 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 				}
 			}
 			var labels = ObjectLabel.CreateObjectLabels(Cache, candidates.OrderBy(iafmsa => iafmsa.Owner.ShortName), null);
-			XCore.PersistenceProvider persistProvider = new PersistenceProvider(m_mediator.PropertyTable);
+			XCore.PersistenceProvider persistProvider = new PersistenceProvider(m_mediator, m_propertyTable);
 			var aiForceMultipleChoices = new ICmObject[0];
 			var chooser = new SimpleListChooser(persistProvider, labels,
 				m_ChooseInflectionalAffixHelpTopic, Cache, aiForceMultipleChoices,
-				m_mediator.HelpTopicProvider);
+				m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"));
 			chooser.SetHelpTopic("khtpChoose-Grammar-InflAffixTemplateControl");
 			chooser.SetFontForDialog(new int[] { Cache.DefaultVernWs, Cache.DefaultAnalWs }, StyleSheet, WritingSystemFactory);
 			chooser.Cache = Cache;
@@ -521,12 +510,12 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			else
 				chooser.InstructionalText = m_sInflAffixChooserInstructionalTextReq;
 			chooser.AddLink(m_sInflAffix, SimpleListChooser.LinkType.kDialogLink,
-				new MakeInflAffixEntryChooserCommand(Cache, true, m_sInflAffix, fIsPrefixSlot, slot, m_mediator));
+				new MakeInflAffixEntryChooserCommand(Cache, true, m_sInflAffix, fIsPrefixSlot, slot, m_mediator, m_propertyTable));
 			chooser.SetObjectAndFlid(slot.Hvo, slot.OwningFlid);
 			string sGuiControl = XmlUtils.GetOptionalAttributeValue(cmd.ConfigurationNode, "guicontrol");
 			if (!String.IsNullOrEmpty(sGuiControl))
 			{
-				chooser.ReplaceTreeView(m_mediator, sGuiControl);
+				chooser.ReplaceTreeView(m_mediator, m_propertyTable, sGuiControl);
 			}
 			return chooser;
 		}
@@ -630,10 +619,9 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			else
 				slotFlid = MoInflAffixTemplateTags.kflidSuffixSlots;
 			var labels = ObjectLabel.CreateObjectLabels(Cache, m_template.ReferenceTargetCandidates(slotFlid), null);
-			PersistenceProvider persistProvider =
-				new PersistenceProvider(m_mediator.PropertyTable);
+			PersistenceProvider persistProvider = new PersistenceProvider(m_mediator, m_propertyTable);
 			SimpleListChooser chooser = new SimpleListChooser(persistProvider, labels,
-				m_ChooseSlotHelpTopic, m_mediator.HelpTopicProvider);
+				m_ChooseSlotHelpTopic, m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"));
 			chooser.SetHelpTopic("khtpChoose-Grammar-InflAffixTemplateControl");
 			chooser.Cache = Cache;
 			chooser.TextParamHvo = m_template.Owner.Hvo;
@@ -644,11 +632,11 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			string sLabel = String.Format(m_sObligatorySlot, sTopPOS);
 			chooser.AddLink(sLabel, SimpleListChooser.LinkType.kSimpleLink,
 				new MakeInflAffixSlotChooserCommand(Cache, true, sLabel, pos.Hvo,
-				false, m_mediator));
+				false, m_mediator, m_propertyTable));
 			sLabel = String.Format(m_sOptionalSlot, sTopPOS);
 			chooser.AddLink(sLabel, SimpleListChooser.LinkType.kSimpleLink,
 				new MakeInflAffixSlotChooserCommand(Cache, true, sLabel, pos.Hvo, true,
-				m_mediator));
+				m_mediator, m_propertyTable));
 			chooser.SetObjectAndFlid(pos.Hvo, MoInflAffixTemplateTags.kflidSlots);
 			return chooser;
 		}
@@ -674,7 +662,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 
 		private void HandleInsertAroundSlot(bool fBefore, IMoInflAffixSlot chosenSlot, out int flid, out int ihvo)
 		{
-			IFdoReferenceSequence<IMoInflAffixSlot> seq;
+			ILcmReferenceSequence<IMoInflAffixSlot> seq;
 			int index;
 			flid = GetAffixSequenceContainingSlot(m_obj as IMoInflAffixSlot, out seq, out index);
 			int iOffset = (fBefore) ? 0 : 1;
@@ -712,7 +700,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			}
 		}
 
-		private int GetAffixSequenceContainingSlot(IMoInflAffixSlot slot, out IFdoReferenceSequence<IMoInflAffixSlot> seq, out int index)
+		private int GetAffixSequenceContainingSlot(IMoInflAffixSlot slot, out ILcmReferenceSequence<IMoInflAffixSlot> seq, out int index)
 		{
 			index = m_template.PrefixSlotsRS.IndexOf(slot);
 			if (index >= 0)
@@ -898,7 +886,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		{
 			CheckDisposed();
 
-			ShowHelp.ShowHelpTopic(m_mediator.HelpTopicProvider, m_ChooseInflectionalAffixHelpTopic);
+			ShowHelp.ShowHelpTopic(m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), m_ChooseInflectionalAffixHelpTopic);
 			return true;
 		}
 
@@ -1134,7 +1122,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			}
 			else if (m_obj.ClassID == MoInflAffixTemplateTags.kClassId)
 			{
-				var tssStem = Cache.TsStrFactory.MakeString(m_sStem, Cache.DefaultUserWs);
+				var tssStem = TsStringUtils.MakeString(m_sStem, Cache.DefaultUserWs);
 				return DoXXXReplace(sLabel, tssStem);
 			}
 			else
@@ -1209,8 +1197,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			CheckDisposed();
 			if (m_obj.ClassID == MoInflAffMsaTags.kClassId)
 			{
-				ITsStrFactory tsf = TsStrFactoryClass.Create();
-				return tsf.MakeString(sLabel, Cache.DefaultUserWs);
+				return TsStringUtils.MakeString(sLabel, Cache.DefaultUserWs);
 			}
 			else
 			{
@@ -1231,13 +1218,13 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 				m_obj.ClassID == MoInflAffixTemplateTags.kClassId)
 			{
 				// Display help only if there's a topic linked to the generated ID in the resource file.
-				if (m_mediator.HelpTopicProvider.GetHelpString(m_ChooseInflectionalAffixHelpTopic) != null)
-					return Cache.TsStrFactory.MakeString(sLabel, Cache.DefaultUserWs);
+				if (m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider").GetHelpString(m_ChooseInflectionalAffixHelpTopic) != null)
+					return TsStringUtils.MakeString(sLabel, Cache.DefaultUserWs);
 			}
 			return null;
 		}
 
-		private bool SetEnabledIfFindSlotInSequence(IFdoReferenceSequence<IMoInflAffixSlot> slots, out bool fEnabled, bool bIsLeft)
+		private bool SetEnabledIfFindSlotInSequence(ILcmReferenceSequence<IMoInflAffixSlot> slots, out bool fEnabled, bool bIsLeft)
 		{
 			var index = slots.IndexOf(m_obj as IMoInflAffixSlot);
 			if (index >= 0)
@@ -1299,7 +1286,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			}
 			else
 			{
-				return Cache.TsStrFactory.MakeString(MEStrings.ksQuestions, Cache.DefaultUserWs);
+				return TsStringUtils.MakeString(MEStrings.ksQuestions, Cache.DefaultUserWs);
 			}
 		}
 
@@ -1315,8 +1302,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 
 		private ITsString DoReplaceToken(string sSource, ITsString tssReplace, string sToken)
 		{
-			ITsStrFactory tsf = TsStrFactoryClass.Create();
-			ITsString tss = tsf.MakeString(sSource, Cache.DefaultUserWs);
+			ITsString tss = TsStringUtils.MakeString(sSource, Cache.DefaultUserWs);
 			return DoReplaceToken(tss, tssReplace, sToken);
 		}
 

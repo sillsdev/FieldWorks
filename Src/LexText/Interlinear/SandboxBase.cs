@@ -1,24 +1,28 @@
+// Copyright (c) 2015-2018 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
+
 //#define TraceMouseCalls		// uncomment this line to trace mouse messages
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using System.Diagnostics;
 using System.Text;
-
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.Utils;
+using SIL.LCModel.Utils;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.FdoUi;
 using SIL.FieldWorks.Common.Widgets;
 using XCore;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.CoreImpl;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Infrastructure;
+using SIL.LCModel.Core.Cellar;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.KernelInterfaces;
 
 namespace SIL.FieldWorks.IText
 {
@@ -174,7 +178,7 @@ namespace SIL.FieldWorks.IText
 		protected SandboxVc m_vc;
 		private Point m_LastMouseMovePos;
 		// Rectangle containing last selection passed to ShowComboForSelection.
-		private SIL.Utils.Rect m_locLastShowCombo;
+		private Rect m_locLastShowCombo;
 		// True during calls to MakeCombo to suppress selected index changed effects.
 		private bool m_fMakingCombo = false;
 		// True when the user has started editing text in the combo. Blocks moving and
@@ -328,7 +332,7 @@ namespace SIL.FieldWorks.IText
 		/// <returns></returns>
 		static internal bool IsPhrase(string word)
 		{
-			return !String.IsNullOrEmpty(word) && word.IndexOfAny(Unicode.SpaceChars) != -1;
+			return !String.IsNullOrEmpty(word) && word.IndexOfAny(Common.FwUtils.Unicode.SpaceChars) != -1;
 		}
 
 		/// <summary>
@@ -991,7 +995,7 @@ namespace SIL.FieldWorks.IText
 			AcceptsTab = true;
 		}
 
-		public SandboxBase(FdoCache cache, Mediator mediator, IVwStylesheet ss, InterlinLineChoices choices)
+		public SandboxBase(LcmCache cache, Mediator mediator, PropertyTable propertyTable, IVwStylesheet ss, InterlinLineChoices choices)
 			: this()
 		{
 			// Override things from InitializeComponent()
@@ -1001,6 +1005,7 @@ namespace SIL.FieldWorks.IText
 			m_caches.MainCache = cache;
 			Cache = cache;
 			m_mediator = mediator;
+			m_propertyTable = propertyTable;
 			// We need to set this for various inherited things to work,
 			// for example, automatically setting the correct keyboard.
 			WritingSystemFactory = cache.LanguageWritingSystemFactoryAccessor;
@@ -1009,20 +1014,12 @@ namespace SIL.FieldWorks.IText
 			m_stylesheet = ss; // this is really redundant now it inherits a StyleSheet property.
 			StyleSheet = ss;
 			m_editMonitor = new SandboxEditMonitor(this); // after creating sec cache.
-			if (mediator != null && mediator.PropertyTable != null)
-			{
-				mediator.PropertyTable.SetProperty("FirstControlToHandleMessages", this, false, PropertyTable.SettingsGroup.LocalSettings);
-				mediator.PropertyTable.SetPropertyPersistence("FirstControlToHandleMessages", false);
-			}
-
-#if !__MonoCS__
-			UIAutomationServerProviderFactory = () => new SimpleRootSiteDataProvider(this,
-				fragmentRoot => RootSiteServices.CreateUIAutomationInvokeButtons(fragmentRoot, RootBox, OpenComboBox));
-#endif
+			m_propertyTable.SetProperty("FirstControlToHandleMessages", this, PropertyTable.SettingsGroup.LocalSettings, false);
+			m_propertyTable.SetPropertyPersistence("FirstControlToHandleMessages", false);
 		}
 
-		public SandboxBase(FdoCache cache, Mediator mediator, IVwStylesheet ss, InterlinLineChoices choices, int hvoAnalysis)
-			: this(cache, mediator, ss, choices)
+		public SandboxBase(LcmCache cache, Mediator mediator, PropertyTable propertyTable, IVwStylesheet ss, InterlinLineChoices choices, int hvoAnalysis)
+			: this(cache, mediator, propertyTable, ss, choices)
 		{
 			// finish setup with the WordBundleAnalysis
 			LoadForWordBundleAnalysis(hvoAnalysis);
@@ -1079,14 +1076,15 @@ namespace SIL.FieldWorks.IText
 
 		private void SubscribeToRootSiteEventHandlerEvents()
 		{
-#if __MonoCS__
-			var ibusRootSiteEventHandler = m_rootSiteEventHandler as IbusRootSiteEventHandler;
-			if (ibusRootSiteEventHandler != null)
+			if (MiscUtils.IsMono)
 			{
-				ibusRootSiteEventHandler.PreeditOpened += OnPreeditOpened;
-				ibusRootSiteEventHandler.PreeditClosed += OnPreeditClosed;
+				var ibusRootSiteEventHandler = m_rootSiteEventHandler as IbusRootSiteEventHandler;
+				if (ibusRootSiteEventHandler != null)
+				{
+					ibusRootSiteEventHandler.PreeditOpened += OnPreeditOpened;
+					ibusRootSiteEventHandler.PreeditClosed += OnPreeditClosed;
+				}
 			}
-#endif
 		}
 
 		private void OnPreeditOpened (object sender, EventArgs e)
@@ -1161,17 +1159,17 @@ namespace SIL.FieldWorks.IText
 			}
 		}
 
-		/// <summary>
+		///  <summary>
 		///
-		/// </summary>
-		/// <param name="hvoSbWord">either m_hvoSbWord, m_hvoPrevSbWordb, or m_hvoNextSbWord
-		/// </param>
-		/// <param name="fAdjustCase">If true, may adjust case of morpheme when
-		/// proposing whole word as default morpheme breakdown.</param>
-		/// <returns>true if any guessing is involved.</returns>
+		///  </summary>
+		///  <param name="hvoSbWord">either m_hvoSbWord, m_hvoPrevSbWordb, or m_hvoNextSbWord
+		///  </param>
+		///  <param name="fLookForDefaults"></param>
+		///  <param name="fAdjustCase">If true, may adjust case of morpheme when
+		///  proposing whole word as default morpheme breakdown.</param>
+		///  <returns>true if any guessing is involved.</returns>
 		private bool LoadRealDataIntoSec1(int hvoSbWord, bool fLookForDefaults, bool fAdjustCase)
 		{
-			ITsStrFactory tsf = TsStrFactoryClass.Create();
 			IVwCacheDa cda = (IVwCacheDa)m_caches.DataAccess;
 			if (CurrentAnalysisTree.Analysis == null)
 			{
@@ -1189,7 +1187,7 @@ namespace SIL.FieldWorks.IText
 			m_caches.Map(hvoSbWord, CurrentAnalysisTree.Wordform.Hvo); // Review: any reason to map these?
 			ISilDataAccess sdaMain = m_caches.MainCache.MainCacheAccessor;
 			CopyStringsToSecondary(InterlinLineChoices.kflidWord, sdaMain, CurrentAnalysisTree.Wordform.Hvo,
-				WfiWordformTags.kflidForm, cda, hvoSbWord, ktagSbWordForm, tsf);
+				WfiWordformTags.kflidForm, cda, hvoSbWord, ktagSbWordForm);
 			CaseFunctions cf = VernCaseFuncs(RawWordform);
 			m_case = cf.StringCase(RawWordform.Text);
 			// empty it in case we're redoing after choose from combo.
@@ -1219,7 +1217,7 @@ namespace SIL.FieldWorks.IText
 							// Enhance: may NOT want to do this, when we get the baseline consistently
 							// keeping original case.
 							CopyStringsToSecondary(InterlinLineChoices.kflidWord, sdaMain, CurrentAnalysisTree.Wordform.Hvo,
-								WfiWordformTags.kflidForm, cda, hvoSbWord, ktagSbWordForm, tsf);
+								WfiWordformTags.kflidForm, cda, hvoSbWord, ktagSbWordForm);
 						}
 					}
 					// Hide the analysis combo if there's no default analysis (which means there are
@@ -1246,7 +1244,7 @@ namespace SIL.FieldWorks.IText
 			// Set every alternative of the word gloss, whether or not we have one...this
 			// ensures clearing it out if we once had something but do no longer.
 			CopyStringsToSecondary(InterlinLineChoices.kflidWordGloss, sdaMain, m_hvoWordGloss,
-				WfiGlossTags.kflidForm, cda, hvoSbWord, ktagSbWordGloss, tsf);
+				WfiGlossTags.kflidForm, cda, hvoSbWord, ktagSbWordGloss);
 			cda.CacheIntProp(hvoSbWord, ktagSbWordGlossGuess, fGuessing);
 			cda.CacheObjProp(hvoSbWord, ktagSbWordPos, 0); // default.
 			if (analysis != null) // Might still be, if no default is available.
@@ -1255,7 +1253,7 @@ namespace SIL.FieldWorks.IText
 				if (category != null)
 				{
 					int hvoWordPos = CreateSecondaryAndCopyStrings(InterlinLineChoices.kflidWordPos, category.Hvo,
-																   CmPossibilityTags.kflidAbbreviation, hvoSbWord, sdaMain, cda, tsf);
+																   CmPossibilityTags.kflidAbbreviation, hvoSbWord, sdaMain, cda);
 					cda.CacheObjProp(hvoSbWord, ktagSbWordPos, hvoWordPos);
 					cda.CacheIntProp(hvoWordPos, ktagSbNamedObjGuess, fGuessing);
 				}
@@ -1284,7 +1282,7 @@ namespace SIL.FieldWorks.IText
 							hvoMorphForm = m_caches.DataAccess.MakeNewObject(kclsidSbNamedObj, mb.Hvo,
 																			 ktagSbMorphForm, -2); // -2 for atomic
 							CopyStringsToSecondary(InterlinLineChoices.kflidMorphemes, sdaMain, mb.Hvo,
-												   WfiMorphBundleTags.kflidForm, cda, hvoMorphForm, ktagSbNamedObjName, tsf);
+												   WfiMorphBundleTags.kflidForm, cda, hvoMorphForm, ktagSbNamedObjName);
 							// We will slightly adjust the form we display in the default vernacular WS.
 							InterlinLineSpec specMorphemes = m_choices.GetPrimarySpec(InterlinLineChoices.kflidMorphemes);
 							int wsForm;
@@ -1315,14 +1313,14 @@ namespace SIL.FieldWorks.IText
 									bldrError.AppendLine(e.Message);
 								}
 							}
-							tssForm = TsStringUtils.MakeTss(realForm, RawWordformWs);
+							tssForm = TsStringUtils.MakeString(realForm, RawWordformWs);
 							cda.CacheStringAlt(hvoMorphForm, ktagSbNamedObjName, wsVern, tssForm);
 						}
 						else
 						{
 							// Create the secondary object corresponding to the MoForm in the usual way from the form object.
 							hvoMorphForm = CreateSecondaryAndCopyStrings(InterlinLineChoices.kflidMorphemes, mf.Hvo,
-																		 MoFormTags.kflidForm, hvoSbWord, sdaMain, cda, tsf);
+																		 MoFormTags.kflidForm, hvoSbWord, sdaMain, cda);
 							// Store the prefix and postfix markers from the MoMorphType object.
 							int hvoMorphType = sdaMain.get_ObjectProp(mf.Hvo,
 																	  MoFormTags.kflidMorphType);
@@ -1336,10 +1334,10 @@ namespace SIL.FieldWorks.IText
 						}
 						if (!String.IsNullOrEmpty(sPrefix))
 							cda.CacheStringProp(hvoMbSec, ktagSbMorphPrefix,
-												tsf.MakeString(sPrefix, wsVern));
+												TsStringUtils.MakeString(sPrefix, wsVern));
 						if (!String.IsNullOrEmpty(sPostfix))
 							cda.CacheStringProp(hvoMbSec, ktagSbMorphPostfix,
-												tsf.MakeString(sPostfix, wsVern));
+												TsStringUtils.MakeString(sPostfix, wsVern));
 
 						// Link the SbMorph to its form object, noting if it is a guess.
 						cda.CacheObjProp(hvoMbSec, ktagSbMorphForm, hvoMorphForm);
@@ -1370,7 +1368,7 @@ namespace SIL.FieldWorks.IText
 							{
 								// add normal LexGloss without variant info
 								hvoLexSenseSec = CreateSecondaryAndCopyStrings(InterlinLineChoices.kflidLexGloss, senseReal.Hvo,
-											 LexSenseTags.kflidGloss, hvoSbWord, sdaMain, cda, tsf);
+											 LexSenseTags.kflidGloss, hvoSbWord, sdaMain, cda);
 							}
 							cda.CacheObjProp(hvoMbSec, ktagSbMorphGloss, hvoLexSenseSec);
 							cda.CacheIntProp(hvoLexSenseSec, ktagSbNamedObjGuess, fGuessing);
@@ -1414,13 +1412,13 @@ namespace SIL.FieldWorks.IText
 							// that can own MoForms. We don't actually create the LexEntry, to
 							// improve performance. All the relevant data should already have
 							// been loaded while creating the main interlinear view.
-							LoadSecDataForEntry(entryReal, senseReal, hvoSbWord, cda, wsVern, hvoMbSec, fGuessing, sdaMain, tsf);
+							LoadSecDataForEntry(entryReal, senseReal, hvoSbWord, cda, wsVern, hvoMbSec, fGuessing, sdaMain);
 						}
 					}
 					if (bldrError.Length > 0)
 					{
 						var msg = bldrError.ToString().Trim();
-						var wnd = (FindForm() ?? Mediator.PropertyTable.GetValue("window")) as IWin32Window;
+						var wnd = FindForm() ?? m_propertyTable.GetValue<IWin32Window>("window");
 						MessageBox.Show(wnd, msg, ITextStrings.ksWarning, MessageBoxButtons.OK, MessageBoxIcon.Warning);
 					}
 				}
@@ -1439,7 +1437,7 @@ namespace SIL.FieldWorks.IText
 					if (fAdjustCase && CaseStatus == StringCaseStatus.title &&
 						tssForm != null && tssForm.Length > 0)
 					{
-						tssForm = TsStringUtils.MakeTss(cf.ToLower(tssForm.Text), this.RawWordformWs);
+						tssForm = TsStringUtils.MakeString(cf.ToLower(tssForm.Text), this.RawWordformWs);
 						m_tssWordform = tssForm; // need this to be set in case hvoWordformRef set to zero.
 						// If we adjust the case of the form, we must adjust the hvo as well,
 						// or any analyses created will go to the wrong WfiWordform.
@@ -1469,7 +1467,7 @@ namespace SIL.FieldWorks.IText
 			return humanCount + machineCount > 1;
 		}
 
-		private static bool IsAnalysisHumanApproved(FdoCache cache, IWfiAnalysis analysis)
+		private static bool IsAnalysisHumanApproved(LcmCache cache, IWfiAnalysis analysis)
 		{
 			if (analysis == null)
 				return false; // non-existent analysis can't be approved.
@@ -1489,18 +1487,18 @@ namespace SIL.FieldWorks.IText
 		}
 
 		private int CreateSecondaryAndCopyStrings(int flidChoices, int hvoMain, int flidMain, int hvoSbWord,
-			ISilDataAccess sdaMain, IVwCacheDa cda, ITsStrFactory tsf)
+			ISilDataAccess sdaMain, IVwCacheDa cda)
 		{
 			int hvoSec = m_caches.FindOrCreateSec(hvoMain,
 				kclsidSbNamedObj, hvoSbWord, ktagSbWordDummy);
-			CopyStringsToSecondary(flidChoices, sdaMain, hvoMain, flidMain, cda, hvoSec, ktagSbNamedObjName, tsf);
+			CopyStringsToSecondary(flidChoices, sdaMain, hvoMain, flidMain, cda, hvoSec, ktagSbNamedObjName);
 			return hvoSec;
 		}
 
 		private int CreateSecondaryAndCopyStrings(int flidChoices, int hvoMain, int flidMain)
 		{
 			return CreateSecondaryAndCopyStrings(flidChoices, hvoMain, flidMain, kSbWord,
-				m_caches.MainCache.MainCacheAccessor, m_caches.DataAccess as IVwCacheDa, null);
+				m_caches.MainCache.MainCacheAccessor, m_caches.DataAccess as IVwCacheDa);
 		}
 
 		/// <summary>
@@ -1540,7 +1538,7 @@ namespace SIL.FieldWorks.IText
 		}
 
 		private void CopyStringsToSecondary(IList<int> writingSystems, ISilDataAccess sdaMain, int hvoMain,
-			int flidMain, IVwCacheDa cda, int hvoSec, int flidSec, ITsStrFactory tsf)
+			int flidMain, IVwCacheDa cda, int hvoSec, int flidSec)
 		{
 			CheckDisposed();
 			foreach (int ws in writingSystems)
@@ -1572,7 +1570,7 @@ namespace SIL.FieldWorks.IText
 
 				if (hvoMain == 0)
 				{
-					tss = MakeTss("", wsActual, tsf);
+					tss = TsStringUtils.EmptyString(wsActual);
 				}
 				else
 				{
@@ -1589,10 +1587,10 @@ namespace SIL.FieldWorks.IText
 		/// cache.
 		/// </summary>
 		internal void CopyStringsToSecondary(int flidChoices, ISilDataAccess sdaMain, int hvoMain,
-			int flidMain, IVwCacheDa cda, int hvoSec, int flidSec, ITsStrFactory tsf)
+			int flidMain, IVwCacheDa cda, int hvoSec, int flidSec)
 		{
 			var writingSystems = m_caches.MainCache.ServiceLocator.WritingSystems.AllWritingSystems.Select(ws => ws.Handle).ToList();
-			CopyStringsToSecondary(writingSystems, sdaMain, hvoMain, flidMain, cda, hvoSec, flidSec, tsf);
+			CopyStringsToSecondary(writingSystems, sdaMain, hvoMain, flidMain, cda, hvoSec, flidSec);
 		}
 
 		private static void CacheStringAltForAllCurrentWs(IEnumerable<int> currentWsList, IVwCacheDa cda, int hvoSec, int flidSec,
@@ -1605,7 +1603,7 @@ namespace SIL.FieldWorks.IText
 					if (hvoMain != 0)
 						tssMain = sdaMain.get_MultiStringAlt(hvoMain, flidMain, ws1);
 					else
-						tssMain = TsStringUtils.MakeTss("", ws1);
+						tssMain = TsStringUtils.MakeString("", ws1);
 					return tssMain;
 				});
 		}
@@ -1619,7 +1617,7 @@ namespace SIL.FieldWorks.IText
 				if (createStringAlt != null)
 					tssMain = createStringAlt(ws1);
 				if (tssMain == null)
-					tssMain = TsStringUtils.MakeTss("", ws1);
+					tssMain = TsStringUtils.MakeString("", ws1);
 				cda.CacheStringAlt(hvoSec, flidSec, ws1, tssMain);
 			}
 		}
@@ -1743,7 +1741,7 @@ namespace SIL.FieldWorks.IText
 		}
 
 		private void LoadSecDataForEntry(ILexEntry entryReal, ILexSense senseReal, int hvoSbWord, IVwCacheDa cda, int wsVern,
-			int hvoMbSec, int fGuessing, ISilDataAccess sdaMain, ITsStrFactory tsf)
+			int hvoMbSec, int fGuessing, ISilDataAccess sdaMain)
 		{
 			int hvoEntry = m_caches.FindOrCreateSec(entryReal.Hvo, kclsidSbNamedObj,
 				hvoSbWord, ktagSbWordDummy);
@@ -1752,7 +1750,7 @@ namespace SIL.FieldWorks.IText
 			int hvoEntryToDisplay = entryReal.Hvo;
 			if (senseReal != null)
 			{
-				if ((entryReal as ILexEntry).IsVariantOfSenseOrOwnerEntry(senseReal, out ler))
+				if (entryReal.IsVariantOfSenseOrOwnerEntry(senseReal, out ler))
 					hvoEntryToDisplay = senseReal.EntryID;
 			}
 
@@ -1767,10 +1765,10 @@ namespace SIL.FieldWorks.IText
 				int hvoLf = sdaMain.get_ObjectProp(hvoEntryToDisplay, LexEntryTags.kflidLexemeForm);
 				if (hvoLf != 0)
 					CopyStringsToSecondary(writingSystems, sdaMain, hvoLf,
-						MoFormTags.kflidForm, cda, hvoEntry, ktagSbNamedObjName, tsf);
+						MoFormTags.kflidForm, cda, hvoEntry, ktagSbNamedObjName);
 				else
 					CopyStringsToSecondary(writingSystems, sdaMain, hvoEntryToDisplay,
-						LexEntryTags.kflidCitationForm, cda, hvoEntry, ktagSbNamedObjName, tsf);
+						LexEntryTags.kflidCitationForm, cda, hvoEntry, ktagSbNamedObjName);
 			}
 		}
 
@@ -1833,29 +1831,9 @@ namespace SIL.FieldWorks.IText
 		}
 
 		/// <summary>
-		/// Make a string in the specified ws, using the provided TSF if possible,
-		/// if passed null, make one.
-		/// </summary>
-		/// <param name="text"></param>
-		/// <param name="ws"></param>
-		/// <param name="tsf"></param>
-		/// <returns></returns>
-		private ITsString MakeTss(string text, int ws, ITsStrFactory tsf)
-		{
-			ITsStrFactory tsfT = tsf;
-			if (tsfT == null)
-				tsfT = TsStrFactoryClass.Create();
-			return tsfT.MakeString(text, ws);
-		}
-
-		/// <summary>
 		/// Make and install the selection indicated by the array of objects on the first (and only root),
 		/// an IP at the start of the property.
 		/// </summary>
-		/// <param name="rgvsli"></param>
-		/// <param name="tag"></param>
-		/// <param name="ws"></param>
-		/// <param name="cpropPrevious"></param>
 		/// <returns>true, if selection was successful.</returns>
 		private bool MoveSelection(SelLevInfo[] rgvsli, int tag, int cpropPrevious)
 		{
@@ -1929,7 +1907,7 @@ namespace SIL.FieldWorks.IText
 					try
 					{
 						m_caches.DataAccess.SetMultiStringAlt(hvoSbForm, ktagSbNamedObjName, ws,
-							defFormReal.Form.get_String(ws));
+							WritingSystemServices.GetMagicStringAlt(Cache, ws, defFormReal.Hvo, MoFormTags.kflidForm));
 					}
 					catch (Exception e)
 					{
@@ -2123,7 +2101,7 @@ namespace SIL.FieldWorks.IText
 		/// If this is being called to establish a default monomorphemic guess, skip over
 		/// any bound root or bound stem entries that hvoEntry may be a variant of.
 		/// </summary>
-		public ILexEntryRef GetVariantRef(FdoCache cache, int hvoEntry, bool fMonoMorphemic)
+		public ILexEntryRef GetVariantRef(LcmCache cache, int hvoEntry, bool fMonoMorphemic)
 		{
 			ISilDataAccess sda = cache.MainCacheAccessor;
 			int cRef = sda.get_VecSize(hvoEntry, LexEntryTags.kflidEntryRefs);
@@ -2175,7 +2153,7 @@ namespace SIL.FieldWorks.IText
 		/// root or a bound stem.  We don't want to use those as guesses for monomorphemic
 		/// words.  See LT-10323.
 		/// </summary>
-		private static bool IsEntryBound(FdoCache cache, int hvoComponent, int clid)
+		private static bool IsEntryBound(LcmCache cache, int hvoComponent, int clid)
 		{
 			int hvoTargetEntry;
 			if (clid == LexSenseTags.kClassId)
@@ -2263,7 +2241,7 @@ namespace SIL.FieldWorks.IText
 		private void ShowComboForSelection(IVwSelection vwselNew, bool fMouseDown)
 		{
 			// It's a good idea to get this first...it's possible for MakeCombo to leave the selection invalid.
-			SIL.Utils.Rect loc;
+			Rect loc;
 			vwselNew.GetParaLocation(out loc);
 			if (!fMouseDown)
 			{
@@ -2271,7 +2249,7 @@ namespace SIL.FieldWorks.IText
 				// If we've moved to somewhere outside any paragraph get rid of the combos.
 				// But, allow somewhere close, since otherwise it's almost impossible to get
 				// a combo on an empty string.
-				SIL.Utils.Rect locExpanded = loc;
+				Rect locExpanded = loc;
 				locExpanded.right += 50;
 				locExpanded.left -= 5;
 				locExpanded.top -= 2;
@@ -2307,7 +2285,7 @@ namespace SIL.FieldWorks.IText
 			DisposeComboHandler();
 			if (!m_fInMouseDrag)
 			{
-				m_ComboHandler = InterlinComboHandler.MakeCombo(m_mediator.HelpTopicProvider,
+				m_ComboHandler = InterlinComboHandler.MakeCombo(m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"),
 					vwselNew, this, fMouseDown);
 			}
 			else
@@ -2390,7 +2368,7 @@ namespace SIL.FieldWorks.IText
 			IVwSelection selArrow;
 			int dxPixelIncrement = 3;
 			uint iconParagraphWidth = 10;
-			SIL.Utils.Rect rect;
+			Rect rect;
 			selOrig.GetParaLocation(out rect);
 			if (m_vc.RightToLeft)
 			{
@@ -2439,7 +2417,7 @@ namespace SIL.FieldWorks.IText
 			if (dxPixelIncrement == 0)
 				throw new ArgumentException(String.Format("dxPixelIncrement({0}) must be nonzero", dxPixelIncrement));
 
-			SIL.Utils.Rect rect;
+			Rect rect;
 			selOrig.GetParaLocation(out rect);
 			int y = rect.top + (rect.bottom - rect.top) / 2;
 			Point pt = new Point((int)xMin, y);
@@ -2502,7 +2480,7 @@ namespace SIL.FieldWorks.IText
 			Debug.Assert(tsi.IsPicture);
 			IVwSelection selStartOfText = null;
 			int dxPixelIncrement = 1;
-			SIL.Utils.Rect rect;
+			Rect rect;
 			selOrig.GetParaLocation(out rect);
 			int widthIconPara = (rect.right - rect.left);
 			int xMaxCountOfPixels = (widthIconPara) * 2;
@@ -2901,6 +2879,8 @@ namespace SIL.FieldWorks.IText
 		{
 			Debug.Assert(Mediator != null);
 			CmObjectUi rightClickUiObj = CmObjectUi.MakeUi(Cache, hvoReal);
+			rightClickUiObj.Mediator = Mediator;
+			rightClickUiObj.PropTable = m_propertyTable;
 			if (rightClickUiObj != null)
 			{
 				rightClickUiObj.AdditionalColleague = additionalTarget;
@@ -2908,7 +2888,7 @@ namespace SIL.FieldWorks.IText
 				try
 				{
 					//Debug.WriteLine("hvoReal=" + hvoReal.ToString() + " " + ui.Object.ShortName + "  " + ui.Object.ToString());
-					return rightClickUiObj.HandleRightClick(Mediator, this, true, CmObjectUi.MarkCtrlClickItem);
+					return rightClickUiObj.HandleRightClick(Mediator, m_propertyTable, this, true, CmObjectUi.MarkCtrlClickItem);
 				}
 				finally
 				{
@@ -2934,7 +2914,7 @@ namespace SIL.FieldWorks.IText
 		{
 			if (m_ComboHandler != null)
 			{
-				(m_ComboHandler as IDisposable).Dispose();
+				m_ComboHandler.Dispose();
 				m_ComboHandler = null;
 			}
 		}
@@ -3782,12 +3762,10 @@ namespace SIL.FieldWorks.IText
 		{
 			CheckDisposed();
 
-			ITsStrFactory tsf = TsStrFactoryClass.Create();
-			IVwCacheDa cda = m_caches.DataAccess as IVwCacheDa;
+			var cda = (IVwCacheDa) m_caches.DataAccess;
 			foreach (int wsId in m_choices.WritingSystemsForFlid(InterlinLineChoices.kflidWordGloss, true))
 			{
-				ITsString tss;
-				tss = tsf.MakeString("", wsId);
+				ITsString tss = TsStringUtils.EmptyString(wsId);
 				cda.CacheStringAlt(kSbWord, ktagSbWordGloss, wsId, tss);
 			}
 		}
@@ -3799,7 +3777,7 @@ namespace SIL.FieldWorks.IText
 		/// <returns></returns>
 		public bool ShouldSave(bool fSaveGuess)
 		{
-			return m_caches.DataAccess.IsDirty() || fSaveGuess && this.UsingGuess;
+			return m_caches.DataAccess.IsDirty() || fSaveGuess && UsingGuess;
 		}
 
 		/// <summary>
@@ -3840,7 +3818,7 @@ namespace SIL.FieldWorks.IText
 			if (m_hvoWordGloss != 0)
 				existingGloss = m_caches.MainCache.ServiceLocator.GetInstance<IWfiGlossRepository>().GetObject(m_hvoWordGloss);
 			return new GetRealAnalysisMethod(
-				m_mediator != null ? m_mediator.HelpTopicProvider : null, this, m_caches,
+				m_propertyTable != null ? m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider") : null, this, m_caches,
 				kSbWord, CurrentAnalysisTree, GetWfiAnalysisOfAnalysis(), existingGloss,
 				m_choices, m_tssWordform, fWantOnlyWfiAnalysis);
 		}
@@ -3869,8 +3847,7 @@ namespace SIL.FieldWorks.IText
 			if (m_caches.MainCache == null || DesignMode)
 				return;
 
-			m_rootb = VwRootBoxClass.Create();
-			m_rootb.SetSite(this);
+			base.MakeRoot();
 
 			m_vc = new SandboxVc(m_caches, m_choices, IconsForAnalysisChoices, this);
 			m_vc.ShowMorphBundles = m_fShowMorphBundles;
@@ -3883,7 +3860,6 @@ namespace SIL.FieldWorks.IText
 			m_rootb.SetRootObject(kSbWord, m_vc, SandboxVc.kfragBundle, m_stylesheet);
 
 			m_dxdLayoutWidth = kForceLayout; // Don't try to draw until we get OnSize and do layout.
-			base.MakeRoot();
 			// For some reason, we don't always initialize our control size to be the same as our rootbox.
 			this.Margin = new Padding(3, 0, 3, 1);
 			SyncControlSizeToRootBoxSize();
@@ -4155,8 +4131,6 @@ namespace SIL.FieldWorks.IText
 		/// but select the indicated item.
 		/// </summary>
 		/// <param name="e"></param>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "tree is a reference")]
 		protected override void OnKeyPress(KeyPressEventArgs e)
 		{
 			if (!PassKeysToKeyboardHandler)
@@ -4357,8 +4331,6 @@ namespace SIL.FieldWorks.IText
 			return tagRightClickTextProp;
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="CmObjectUi.HandleCtrlClick disposes itself when its done")]
 		protected override void OnMouseUp(MouseEventArgs e)
 		{
 			base.OnMouseUp(e);
@@ -4372,7 +4344,9 @@ namespace SIL.FieldWorks.IText
 				if (hvoTarget == 0)
 					return; // LT-13878: User may have 'Ctrl+Click'ed on an arrow or off in space somewhere
 				CmObjectUi targetUiObj = CmObjectUi.MakeUi(Cache, hvoTarget);
-				targetUiObj.HandleCtrlClick(Mediator, this);
+				targetUiObj.Mediator = Mediator;
+				targetUiObj.PropTable = m_propertyTable;
+				targetUiObj.HandleCtrlClick(this);
 			}
 		}
 
@@ -4381,8 +4355,8 @@ namespace SIL.FieldWorks.IText
 			if (!m_fHandlingRightClickMenu)
 				return false;
 			XCore.Command cmd = (XCore.Command)commandObject;
-			string tool = SIL.Utils.XmlUtils.GetManditoryAttributeValue(cmd.Parameters[0], "tool");
-			string className = SIL.Utils.XmlUtils.GetManditoryAttributeValue(cmd.Parameters[0], "className");
+			string tool = SIL.Utils.XmlUtils.GetMandatoryAttributeValue(cmd.Parameters[0], "tool");
+			string className = SIL.Utils.XmlUtils.GetMandatoryAttributeValue(cmd.Parameters[0], "className");
 
 			// The menu item CmdPOSJumpToDefault is used in the Sandbox for jumping to morpheme POS,
 			// and we don't want it to show up if we don't have a morpheme. But, although we don't
@@ -4453,6 +4427,8 @@ namespace SIL.FieldWorks.IText
 					// This method should do likewise...
 					using (CmObjectUi ui = CmObjectUi.MakeUi(m_caches.MainCache, hvoMsa))
 					{
+						ui.Mediator = Mediator;
+						ui.PropTable = m_propertyTable;
 						Guid guid = ui.GuidForJumping(null);
 						if (guid == Guid.Empty)
 							return 0;
@@ -4511,8 +4487,6 @@ namespace SIL.FieldWorks.IText
 			return m_caches.RealHvo(hvoTarget);
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "container is a reference")]
 		private FocusBoxController Controller
 		{
 			get
@@ -4528,13 +4502,11 @@ namespace SIL.FieldWorks.IText
 			}
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "cache is a reference")]
 		public virtual bool OnJumpToTool(object commandObject)
 		{
 			XCore.Command cmd = (XCore.Command)commandObject;
-			string tool = SIL.Utils.XmlUtils.GetManditoryAttributeValue(cmd.Parameters[0], "tool");
-			string className = SIL.Utils.XmlUtils.GetManditoryAttributeValue(cmd.Parameters[0], "className");
+			string tool = SIL.Utils.XmlUtils.GetMandatoryAttributeValue(cmd.Parameters[0], "tool");
+			string className = SIL.Utils.XmlUtils.GetMandatoryAttributeValue(cmd.Parameters[0], "className");
 			string concordOn = SIL.Utils.XmlUtils.GetOptionalAttributeValue(cmd.Parameters[0], "concordOn", "");
 
 			if (CurrentAnalysisTree.Analysis != null)
@@ -4550,7 +4522,7 @@ namespace SIL.FieldWorks.IText
 				int hvo = GetHvoForJumpToToolClass(className);
 				if (hvo != 0)
 				{
-					FdoCache cache = m_caches.MainCache;
+					LcmCache cache = m_caches.MainCache;
 					ICmObject co = cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvo);
 					var fwLink = new FwLinkArgs(tool, co.Guid);
 					List<Property> additionalProps = fwLink.PropertyTableEntries;

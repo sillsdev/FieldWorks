@@ -11,11 +11,11 @@
 using System;
 using System.Windows.Forms;
 using NUnit.Framework;
-using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FDO.FDOTests;
+using SIL.LCModel.Core.Cellar;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -30,7 +30,6 @@ namespace SIL.FieldWorks.XWorks
 		protected ICmPossibilityFactory m_possFact;
 		protected ICmPossibilityList m_testList;
 		protected DeleteListHelper m_helper;
-		protected ITsStrFactory m_tsFact;
 		protected int m_userWs;
 
 		#endregion
@@ -42,7 +41,6 @@ namespace SIL.FieldWorks.XWorks
 			var servLoc = Cache.ServiceLocator;
 			m_listRepo = servLoc.GetInstance<ICmPossibilityListRepository>();
 			m_possFact = servLoc.GetInstance<ICmPossibilityFactory>();
-			m_tsFact = Cache.TsStrFactory;
 			m_userWs = Cache.DefaultUserWs;
 
 			CreateCustomList();
@@ -53,15 +51,15 @@ namespace SIL.FieldWorks.XWorks
 		{
 			const string name = "Test Custom List";
 			const string description = "Test Custom list description";
-			var listName = m_tsFact.MakeString(name, m_userWs);
-			var listDesc = m_tsFact.MakeString(description, m_userWs);
+			ITsString listName = TsStringUtils.MakeString(name, m_userWs);
+			ITsString listDesc = TsStringUtils.MakeString(description, m_userWs);
 			m_testList = Cache.ServiceLocator.GetInstance<ICmPossibilityListFactory>().CreateUnowned(
 				listName.Text, m_userWs);
 			m_testList.Name.set_String(m_userWs, listName);
 			m_testList.Description.set_String(m_userWs, listDesc);
 
 			// Set various properties of CmPossibilityList
-			m_testList.DisplayOption = (int)SIL.FieldWorks.FDO.PossNameType.kpntNameAndAbbrev;
+			m_testList.DisplayOption = (int) PossNameType.kpntNameAndAbbrev;
 			m_testList.PreventDuplicates = true;
 			m_testList.IsSorted = true;
 			m_testList.WsSelector = WritingSystemServices.kwsAnals;
@@ -73,7 +71,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var item = Cache.ServiceLocator.GetInstance<ICmCustomItemFactory>().Create();
 			owningList.PossibilitiesOS.Add(item);
-			item.Name.set_String(m_userWs, m_tsFact.MakeString(itemName, m_userWs));
+			item.Name.set_String(m_userWs, TsStringUtils.MakeString(itemName, m_userWs));
 			return item;
 		}
 	}
@@ -241,7 +239,7 @@ namespace SIL.FieldWorks.XWorks
 			const string newPossName = "Test Possibility";
 			var clists = m_listRepo.Count;
 			var newPoss = m_possFact.Create(Guid.NewGuid(), m_testList);
-			newPoss.Name.set_String(m_userWs, m_tsFact.MakeString(newPossName, m_userWs));
+			newPoss.Name.set_String(m_userWs, TsStringUtils.MakeString(newPossName, m_userWs));
 			m_helper.ExpectedTestResponse = DialogResult.No;
 
 			// Create a reference to the possibility
@@ -270,7 +268,7 @@ namespace SIL.FieldWorks.XWorks
 			const string newPossName = "Test Possibility";
 			var clists = m_listRepo.Count;
 			var newPoss = m_possFact.Create(Guid.NewGuid(), m_testList);
-			newPoss.Name.set_String(m_userWs, m_tsFact.MakeString(newPossName, m_userWs));
+			newPoss.Name.set_String(m_userWs, TsStringUtils.MakeString(newPossName, m_userWs));
 			m_helper.ExpectedTestResponse = DialogResult.Yes;
 
 			// Create a reference to the possibility
@@ -300,7 +298,7 @@ namespace SIL.FieldWorks.XWorks
 			var clists = m_listRepo.Count;
 			var cfields = Cache.MetaDataCacheAccessor.FieldCount;
 			var newPoss = m_possFact.Create(Guid.NewGuid(), m_testList);
-			newPoss.Name.set_String(m_userWs, m_tsFact.MakeString(newPossName, m_userWs));
+			newPoss.Name.set_String(m_userWs, TsStringUtils.MakeString(newPossName, m_userWs));
 			m_helper.ExpectedTestResponse = DialogResult.Yes;
 
 			// Create a custom field in LexEntry
@@ -422,7 +420,7 @@ namespace SIL.FieldWorks.XWorks
 			var clists = m_listRepo.Count;
 			var cfields = Cache.MetaDataCacheAccessor.FieldCount;
 			var newPoss = m_possFact.Create(Guid.NewGuid(), m_testList);
-			newPoss.Name.set_String(m_userWs, m_tsFact.MakeString(newPossName, m_userWs));
+			newPoss.Name.set_String(m_userWs, TsStringUtils.MakeString(newPossName, m_userWs));
 			m_helper.ExpectedTestResponse = DialogResult.No;
 
 			// Create a custom field in LexEntry
@@ -461,11 +459,11 @@ namespace SIL.FieldWorks.XWorks
 			const string newPossName = "Test Possibility";
 			var clists = m_listRepo.Count;
 			var newPoss1 = m_possFact.Create(Guid.NewGuid(), m_testList);
-			newPoss1.Name.set_String(m_userWs, m_tsFact.MakeString(newPossName + "1", m_userWs));
+			newPoss1.Name.set_String(m_userWs, TsStringUtils.MakeString(newPossName + "1", m_userWs));
 			var newPoss2 = m_possFact.Create(Guid.NewGuid(), m_testList);
-			newPoss2.Name.set_String(m_userWs, m_tsFact.MakeString(newPossName + "2", m_userWs));
+			newPoss2.Name.set_String(m_userWs, TsStringUtils.MakeString(newPossName + "2", m_userWs));
 			var newPoss3 = m_possFact.Create(Guid.NewGuid(), m_testList);
-			newPoss3.Name.set_String(m_userWs, m_tsFact.MakeString(newPossName + "3", m_userWs));
+			newPoss3.Name.set_String(m_userWs, TsStringUtils.MakeString(newPossName + "3", m_userWs));
 			m_helper.ExpectedTestResponse = DialogResult.Yes;
 
 			// Create references to the possibilities
@@ -488,7 +486,7 @@ namespace SIL.FieldWorks.XWorks
 	{
 		internal string PossNameInDlg { get; set; }
 
-		public DeleteListHelper(FdoCache cache) : base(cache)
+		public DeleteListHelper(LcmCache cache) : base(cache)
 		{
 			PossNameInDlg = "";
 		}

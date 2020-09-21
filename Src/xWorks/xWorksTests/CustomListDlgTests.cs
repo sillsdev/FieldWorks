@@ -7,17 +7,15 @@
 //
 // <remarks>
 // </remarks>
-
-using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using NUnit.Framework;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FDO.FDOTests;
-using SIL.CoreImpl;
+using SIL.FieldWorks.Common.ViewsInterfaces;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel.Core.KernelInterfaces;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -34,15 +32,9 @@ namespace SIL.FieldWorks.XWorks
 
 		void SetUserWs(string wsStr)
 		{
-			var wsMgr = Cache.ServiceLocator.GetInstance<IWritingSystemManager>();
-			IWritingSystem userWs;
-			if (!wsMgr.TryGetOrSet(wsStr, out userWs))
-			{
-				var wsFact = Cache.WritingSystemFactory;
-				wsFact.get_Engine(wsStr); // this installs it if it wasn't found.
-				if (!wsMgr.TryGetOrSet(wsStr, out userWs))
-					Assert.Fail("Totally Unknown Writing System: " + wsStr);
-			}
+			WritingSystemManager wsMgr = Cache.ServiceLocator.WritingSystemManager;
+			CoreWritingSystemDefinition userWs;
+			wsMgr.GetOrSet(wsStr, out userWs);
 			wsMgr.UserWritingSystem = userWs;
 		}
 
@@ -64,7 +56,7 @@ namespace SIL.FieldWorks.XWorks
 				Assert.True(wsFr > 0, "Test failed because French ws is not installed.");
 				dlg.InitializeMultiString();
 				// setup up multistring controls
-				var nameTss = Cache.TsStrFactory.MakeString("Gens", wsFr);
+				var nameTss = TsStringUtils.MakeString("Gens", wsFr);
 
 				// SUT (actually tests both Set and Get)
 				dlg.SetListNameForWs(nameTss, wsFr);
@@ -91,8 +83,8 @@ namespace SIL.FieldWorks.XWorks
 				Assert.True(wsSp > 0, "Test failed because Spanish ws is not installed.");
 				dlg.InitializeMultiString();
 				// setup up multistring controls
-				var nameTssFr = Cache.TsStrFactory.MakeString("Une description en français!", wsFr);
-				var nameTssSp = Cache.TsStrFactory.MakeString("Un descripción en español?", wsSp);
+				var nameTssFr = TsStringUtils.MakeString("Une description en français!", wsFr);
+				var nameTssSp = TsStringUtils.MakeString("Un descripción en español?", wsSp);
 
 				// SUT (actually tests both Set and Get)
 				dlg.SetDescriptionForWs(nameTssFr, wsFr);
@@ -122,7 +114,7 @@ namespace SIL.FieldWorks.XWorks
 				Assert.True(wsFr > 0, "Test failed because French ws is not installed.");
 				dlg.InitializeMultiString();
 				// setup up multistring controls
-				var nameTss = Cache.TsStrFactory.MakeString("Gens-test", wsFr);
+				var nameTss = TsStringUtils.MakeString("Gens-test", wsFr);
 				var newList = Cache.ServiceLocator.GetInstance<ICmPossibilityListFactory>().CreateUnowned(
 					"testPeople", Cache.DefaultUserWs);
 				newList.Name.set_String(wsFr, nameTss);
@@ -153,7 +145,7 @@ namespace SIL.FieldWorks.XWorks
 				Assert.True(wsFr > 0, "Test failed because French ws is not installed.");
 				dlg.InitializeMultiString();
 				// setup up multistring controls
-				var nameTss = Cache.TsStrFactory.MakeString("Gens-test", wsFr);
+				var nameTss = TsStringUtils.MakeString("Gens-test", wsFr);
 				// set dialog list name French alternative to "Gens-test", but don't create a list
 				// with that name.
 				dlg.SetListNameForWs(nameTss, wsFr);
@@ -191,7 +183,7 @@ namespace SIL.FieldWorks.XWorks
 		public void SetDialogTitle_Configure()
 		{
 			// Configure subclass of CustomListDlg
-			using (var dlg = new ConfigureListDlg(null, Cache.LangProject.LocationsOA))
+			using (var dlg = new ConfigureListDlg(null, null, Cache.LangProject.LocationsOA))
 			{
 				// Dialog Title should default to "Configure List"
 				Assert.AreEqual("Configure List", dlg.Text,
@@ -207,7 +199,7 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void GetCheckBoxes_defaults()
 		{
-			using (var dlg = new AddListDlg(null))
+			using (var dlg = new AddListDlg(null, null))
 			{
 				// SUT; Get default checkbox values
 				var hier = dlg.SupportsHierarchy;
@@ -229,7 +221,7 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void SetCheckBoxesToOtherValues()
 		{
-			using (var dlg = new ConfigureListDlg(null, Cache.LangProject.LocationsOA))
+			using (var dlg = new ConfigureListDlg(null, null, Cache.LangProject.LocationsOA))
 			{
 				// SUT; Set non-default checkbox values
 				dlg.SupportsHierarchy = true;
@@ -252,7 +244,7 @@ namespace SIL.FieldWorks.XWorks
 		public void GetDefaultWsComboEntries()
 		{
 			// SUT
-			using (var dlg = new AddListDlg(null))
+			using (var dlg = new AddListDlg(null, null))
 			{
 				// Verify
 				Assert.AreEqual(WritingSystemServices.kwsAnals, dlg.SelectedWs,
@@ -269,7 +261,7 @@ namespace SIL.FieldWorks.XWorks
 		public void SetWsComboSelectedItem()
 		{
 			// SUT
-			using (var dlg = new ConfigureListDlg(null, Cache.LangProject.LocationsOA))
+			using (var dlg = new ConfigureListDlg(null, null, Cache.LangProject.LocationsOA))
 			{
 				dlg.SelectedWs = WritingSystemServices.kwsVerns;
 
@@ -376,18 +368,19 @@ namespace SIL.FieldWorks.XWorks
 	/// </summary>
 	public class TestCustomListDlg : CustomListDlg
 	{
-		public TestCustomListDlg() : base(null)
+		public TestCustomListDlg()
+			: base(null, null)
 		{
 		}
 
 		#region Protected methods made Internal
 
-		internal List<IWritingSystem> GetUiWssAndInstall(IEnumerable<string> uiLanguages)
+		internal List<CoreWritingSystemDefinition> GetUiWssAndInstall(IEnumerable<string> uiLanguages)
 		{
 			return GetUiWritingSystemAndEnglish();
 		}
 
-		internal void SetTestCache(FdoCache cache)
+		internal void SetTestCache(LcmCache cache)
 		{
 			Cache = cache;
 		}

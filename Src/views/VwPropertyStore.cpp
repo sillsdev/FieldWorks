@@ -76,7 +76,7 @@ void VwPropertyStore::CommonInit()
 	m_chrp.dympHeight = knDefaultFontSize;
 	m_chrp.m_unt = kuntNone;
 	m_chrp.m_clrUnder = (unsigned long) kclrTransparent; // cheat: means same as foreground
-#if WIN32
+#if defined(WIN32) || defined(WIN64)
 	m_chrp.clrFore = m_clrBorderColor = ::GetSysColor(COLOR_WINDOWTEXT);
 #else //WIN32
 	// set to default black RGB color
@@ -167,7 +167,7 @@ VwPropertyStore::~VwPropertyStore()
 		ithmipkzvps.GetValue()->DisconnectParent();
 	}
 
-#if !WIN32
+#if !defined(_WIN32) && !defined(_M_X64)
 	// work around TeDllTests hang on exit
 	if (m_qwsf)
 		m_qwsf.Detach();
@@ -307,7 +307,7 @@ int VwPropertyStore::AdjustedLineHeight(VwPropertyStore * pzvpsLeaf, int * pdymp
 	qzvpsWithWsAndFont->m_chrp.ws = pzvpsLeaf->m_chrp.ws;
 	qzvpsWithWsAndFont->Lock();
 
-#if WIN32
+#if defined(WIN32) || defined(WIN64)
 	// We want to make some measurements on the font. They don't have to be super precise,
 	// so we'll just use a current screen DC.
 	HDC hdc = AfGdi::GetDC(NULL);
@@ -476,7 +476,7 @@ void VwPropertyStore::InitChrp()
 		}
 		// If we get here we have either a valid, installed font name, or a
 		// standard magic name. In either case, just use it.
-		int cchCopy = pch - pchStartName;
+		int cchCopy = (int)(pch - pchStartName);
 		if (cchCopy > 31)
 			cchCopy = 31;
 		wcsncpy_s(m_chrp.szFaceName, 32, pchStartName, cchCopy);
@@ -534,14 +534,14 @@ void VwPropertyStore::InitChrp()
 			// First, we observe that some fonts don't return a physical font having the requested logical size, so
 			// we calculate a factor that takes this into account.
 			// Second, we use a universal fudge factor that makes everything right...
-#if WIN32
+#if defined(WIN32) || defined(WIN64)
 			HDC hdc = AfGdi::GetDC(NULL);
 			int dpiY = ::GetDeviceCaps(hdc, LOGPIXELSY);
 #else
 			int dpiY = GetDpiY(NULL);
 #endif
 			double requestedToReceivedRatio = m_pzvpsParent->m_chrp.dympHeight * kdzmpInch / (dpiY * 1000.0 * (dympDescent + dympEmHeight));
-#if WIN32
+#if defined(WIN32) || defined(WIN64)
 			AfGdi::ReleaseDC(NULL, hdc);
 #endif
 			double fudgeFactor = 1.125;
@@ -2154,7 +2154,7 @@ void VwPropertyStore::ApplyTtp(ITsTextProps * pttp)
 	// unnecessary. But it seemed safer to leave it in, in case there is some reason for the
 	// change that I haven't realized.)
 	CheckHr(hr = pttp->GetIntPropValues(ktptLineHeight, &xpv, &nVal));
-	if (hr == S_OK)
+	if (hr == S_OK && xpv != -1)
 		CheckHr(put_IntProperty(ktptLineHeight, xpv, nVal));
 
 	if (fDoTableRowStuff)
@@ -2294,7 +2294,7 @@ int VwPropertyStore::MarginTrailing(CellSides grfcs)
 	Right now the only error we're checking for is the renderer being not properly set-up
 	(eg, if there were errors loading a Graphite font).
 ----------------------------------------------------------------------------------------------*/
-HRESULT VwPropertyStore::DrawingErrors(IVwGraphics* pvg)
+HRESULT VwPropertyStore::DrawingErrors(IRenderEngineFactory * pref, IVwGraphics* pvg)
 {
 	HRESULT hr;
 
@@ -2305,8 +2305,9 @@ HRESULT VwPropertyStore::DrawingErrors(IVwGraphics* pvg)
 		CheckHr(m_qwsf->get_EngineOrNull(m_chrp.ws, &qws));
 		if (qws)
 		{
+			CheckHr(pvg->SetupGraphics(&m_chrp));
 			IRenderEnginePtr qreneng;
-			CheckHr(m_qwsf->get_RendererFromChrp(pvg, &m_chrp, &qreneng));
+			CheckHr(pref->get_Renderer(qws, pvg, &qreneng));
 			if (qreneng)
 			{
 				ComBool fValid;
@@ -2319,7 +2320,7 @@ HRESULT VwPropertyStore::DrawingErrors(IVwGraphics* pvg)
 
 	if (m_qzvpsReset)
 	{
-		IgnoreHr(hr = m_qzvpsReset->DrawingErrors(pvg));
+		IgnoreHr(hr = m_qzvpsReset->DrawingErrors(pref, pvg));
 		if (FAILED(hr))
 			return hr;
 	}
@@ -2329,7 +2330,7 @@ HRESULT VwPropertyStore::DrawingErrors(IVwGraphics* pvg)
 	for (ithmvprzvps = m_hmttpzvps.Begin(); ithmvprzvps != m_hmttpzvps.End(); ++ithmvprzvps)
 	{
 		VwPropertyStore * pzvps = ithmvprzvps.GetValue();
-		IgnoreHr(hr = pzvps->DrawingErrors(pvg));
+		IgnoreHr(hr = pzvps->DrawingErrors(pref, pvg));
 		if (FAILED(hr))
 			// Found an error.
 			return hr;
@@ -2340,7 +2341,7 @@ HRESULT VwPropertyStore::DrawingErrors(IVwGraphics* pvg)
 	for (ithmipkzvps = m_hmipkzvps.Begin(); ithmipkzvps != m_hmipkzvps.End(); ++ithmipkzvps)
 	{
 		VwPropertyStore * pzvps = ithmipkzvps.GetValue();
-		IgnoreHr(hr = pzvps->DrawingErrors(pvg));
+		IgnoreHr(hr = pzvps->DrawingErrors(pref, pvg));
 		if (FAILED(hr))
 			// Found an error.
 			return hr;
@@ -2350,7 +2351,7 @@ HRESULT VwPropertyStore::DrawingErrors(IVwGraphics* pvg)
 	for (int ispr = 0; ispr < m_vstrprrec.Size(); ++ispr)
 	{
 		VwPropertyStore * pzvps = m_vstrprrec[ispr].m_pzvps;
-		IgnoreHr(hr = pzvps->DrawingErrors(pvg));
+		IgnoreHr(hr = pzvps->DrawingErrors(pref, pvg));
 		if (FAILED(hr))
 			// Found an error.
 			return hr;

@@ -1,5 +1,5 @@
 /*--------------------------------------------------------------------*//*:Ignore this sentence.
-Copyright (c) 1999-2015 SIL International
+Copyright (c) 1999-2019 SIL International
 This software is licensed under the LGPL, version 2.1 or later
 (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -29,7 +29,7 @@ DEFINE_THIS_FILE
 #undef Tracing_KeybdSelection
 //#define Tracing_KeybdSelection
 
-#ifndef WIN32
+#if !defined(_WIN32) && !defined(_M_X64)
 const CLSID CLSID_ViewInputManager = {0x830BAF1F, 0x6F84, 0x46EF, {0xB6, 0x3E, 0x3C, 0x1B, 0xFD, 0xF9, 0xE8, 0x3E}};
 #endif
 
@@ -72,7 +72,7 @@ void VwRootBox::Init()
 	m_ptDpiSrc.y = 96;
 
 #ifdef ENABLE_TSF
-#ifdef WIN32
+#if defined(WIN32) || defined(WIN64)
 	VwTextStorePtr qtxs;
 	qtxs.Attach(NewObj VwTextStore(this));
 	CheckHr(qtxs->QueryInterface(IID_IViewInputMgr, (void**)&m_qvim));
@@ -527,122 +527,59 @@ STDMETHODIMP VwRootBox::get_DataAccess(ISilDataAccess ** ppsda)
 	END_COM_METHOD(g_fact, IID_IVwRootBox);
 }
 
-//:>********************************************************************************************
-//:>	Serialization
-//:>********************************************************************************************
-
 /*----------------------------------------------------------------------------------------------
-	Write the contents of the box to a stream; read it back and reconstruct the boxes. Links to
-	the underlying objects are not recorded.
+	Gets the render engine factory.
 ----------------------------------------------------------------------------------------------*/
-STDMETHODIMP VwRootBox::Serialize(IStream * pstrm)
+STDMETHODIMP VwRootBox::get_RenderEngineFactory(IRenderEngineFactory ** ppref)
 {
 	BEGIN_COM_METHOD;
-	ChkComArgPtr(pstrm);
-	Assert(false);
-	ThrowInternalError(E_NOTIMPL);
-	END_COM_METHOD(g_fact, IID_IVwRootBox);
-}
+	ChkComOutPtr(ppref);
 
-/*----------------------------------------------------------------------------------------------
-	Restore the state of a newly created box from info saved by Serialize().
-----------------------------------------------------------------------------------------------*/
-STDMETHODIMP VwRootBox::Deserialize(IStream * pstrm)
-{
-	BEGIN_COM_METHOD;
-	ChkComArgPtr(pstrm);
-	Assert(false);
-	ThrowInternalError(E_NOTIMPL);
-	END_COM_METHOD(g_fact, IID_IVwRootBox);
-}
-
-
-/*----------------------------------------------------------------------------------------------
-	Write the contents of this root box to the stream in WorldPad XML format.
-
-	@param pstrm Pointer to an IStream object for output.
-----------------------------------------------------------------------------------------------*/
-STDMETHODIMP VwRootBox::WriteWpx(IStream * pstrm)
-{
-	BEGIN_COM_METHOD;
-	ChkComArgPtr(pstrm);
-
-	// Sorry, this will expand everything.  There's no getting around it!
-	VwGroupBox * pgbox = dynamic_cast<VwGroupBox *>(FirstRealBox());
-	Assert(pgbox);
-	VwBox * pbox;
-	for (pbox = pgbox->FirstRealBox(); pbox; pbox = pbox->NextRealBox())
-		WriteWpxBoxes(pstrm, pbox);
+	*ppref = m_qref;
+	AddRefObj(*ppref);
 
 	END_COM_METHOD(g_fact, IID_IVwRootBox);
 }
 
 /*----------------------------------------------------------------------------------------------
-	Write the contents of a box owned by a VwGroupBox to the stream in WorldPad XML format.
-
-	@param pstrm Pointer to an IStream object for output.
-	@param pbox Pointer to an inner box owned by a pile box.
+	Sets the render engine factory.
 ----------------------------------------------------------------------------------------------*/
-void VwRootBox::WriteWpxBoxes(IStream * pstrm, VwBox * pbox)
+STDMETHODIMP VwRootBox::putref_RenderEngineFactory(IRenderEngineFactory * pref)
 {
-	AssertPtr(pstrm);
-	AssertPtr(pbox);
+	BEGIN_COM_METHOD;
+	ChkComArgPtr(pref);
 
-	if (pbox->IsParagraphBox())
-	{
-		// This is the only kind of box we currently know how to write out in WorldPad XML
-		// format.
-		VwParagraphBox * pvpbox = dynamic_cast<VwParagraphBox *>(pbox);
-		AssertPtr(pvpbox);
-		pvpbox->WriteWpxText(pstrm);
-		return;
-	}
-	// If this is a group box, recurse!
-	VwGroupBox * pgbox = dynamic_cast<VwGroupBox *>(pbox);
-	if (pgbox)
-	{
-		// Sorry, this will expand everything.  There's no getting around it!
-		for (pbox = pgbox->FirstRealBox(); pbox; pbox = pbox->NextRealBox())
-			WriteWpxBoxes(pstrm, pbox);
-		return;
-	}
-#if 99-99
-	FormatToStream(pstrm, "  <StTxtPara>%n");
-	FormatToStream(pstrm, "    <StyleRules1002>%n");
-	FormatToStream(pstrm, "      <Prop namedStyle=\"Normal\"/>%n");
-	FormatToStream(pstrm, "    </StyleRules1002>%n");
-	FormatToStream(pstrm, "    <Contents1003>%n");
-	FormatToStream(pstrm, "      <Str><Run ws=\"ENG\" ows=\"0\" bold=\"on\" italic=\"on\"/>");
-	FormatToStream(pstrm, "DEBUG: This box ");
-	FormatToStream(pstrm, "<Run ws=\"ENG\" ows=\"0\"/>(%08x)", pbox);
-	FormatToStream(pstrm, "<Run ws=\"ENG\" ows=\"0\" bold=\"on\" italic=\"on\"/>");
-	FormatToStream(pstrm, " is ");
-	if (pbox->IsLazyBox())
-	{
-		FormatToStream(pstrm, "Lazy!!");
-	}
-	else if (pbox->IsStringBox())
-	{
-		FormatToStream(pstrm, "a StringBox.");
-	}
-	else if (pbox->IsBoxFromTsString())
-	{
-		FormatToStream(pstrm, "from a TsString.");
-	}
-	else if (pbox->IsInnerPileBox())
-	{
-		FormatToStream(pstrm, "an InnerPileBox.");
-	}
-	else
-	{
-		FormatToStream(pstrm, "an unknown type??");
-	}
-	FormatToStream(pstrm, "</Str>%n");
-	FormatToStream(pstrm, "    </Contents1003>%n");
-	FormatToStream(pstrm, "  </StTxtPara>%n");
-#endif
+	m_qref = pref;
+
+	END_COM_METHOD(g_fact, IID_IVwRootBox);
 }
 
+/*----------------------------------------------------------------------------------------------
+	Gets the string factory.
+----------------------------------------------------------------------------------------------*/
+STDMETHODIMP VwRootBox::get_TsStrFactory(ITsStrFactory ** pptsf)
+{
+	BEGIN_COM_METHOD;
+	ChkComOutPtr(pptsf);
+
+	*pptsf = m_qtsf;
+	AddRefObj(*pptsf);
+
+	END_COM_METHOD(g_fact, IID_IVwRootBox);
+}
+
+/*----------------------------------------------------------------------------------------------
+	Sets the string factory.
+----------------------------------------------------------------------------------------------*/
+STDMETHODIMP VwRootBox::putref_TsStrFactory(ITsStrFactory * ptsf)
+{
+	BEGIN_COM_METHOD;
+	ChkComArgPtr(ptsf);
+
+	m_qtsf = ptsf;
+
+	END_COM_METHOD(g_fact, IID_IVwRootBox);
+}
 
 //:>********************************************************************************************
 //:>	Selections
@@ -1379,7 +1316,7 @@ STDMETHODIMP VwRootBox::DeleteRangeIfComplex(IVwGraphics *pvg, ComBool * pfWasCo
 		int cactionsBefore;
 		CheckHr(qah->get_UndoableActionCount(&cactionsBefore));
 		int dummy = -1;
-#if WIN32
+#if defined(WIN32) || defined(WIN64)
 		m_qvwsel->OnTyping(pvg, L"\x7F", 1, kfssNone, &dummy);
 #else
 		static OleStringLiteral str(L"\x7F");
@@ -1427,7 +1364,7 @@ STDMETHODIMP VwRootBox::OnSysChar(int chw)
 // Return true if the registry setting for suppressing clumping is true.
 bool RegistrySuppressClumping()
 {
-#ifdef WIN32
+#if defined(WIN32) || defined(WIN64)
 	RegKey hkey;
 	if(::RegOpenKeyEx(HKEY_CURRENT_USER, L"Software\\SIL\\FieldWorks", 0, KEY_READ, &hkey) != ERROR_SUCCESS)
 		return false;
@@ -1439,9 +1376,10 @@ bool RegistrySuppressClumping()
 		return false;
 	return wcscmp(L"True", rgch) == 0 || wcscmp(L"true", rgch) == 0 || wcscmp(L"TRUE", rgch) == 0;
 #else
-	// TODO-Linux
-	// TODO Review do we need a unix equivialent.
-	return false;
+	char * arrowByCharacter = getenv("FW_ARROWBYCHARACTER");
+	if (arrowByCharacter == NULL)
+		return false;
+	return strcasecmp(arrowByCharacter, "true") == 0;
 #endif
 }
 
@@ -2713,7 +2651,7 @@ STDMETHODIMP VwRootBox::DrawingErrors(IVwGraphics * pvg)
 
 	HRESULT hr;
 
-	IgnoreHr(hr = Style()->DrawingErrors(pvg));
+	IgnoreHr(hr = Style()->DrawingErrors(m_qref, pvg));
 	if (FAILED(hr))
 		return hr;
 
@@ -2932,7 +2870,6 @@ STDMETHODIMP VwRootBox::Layout(IVwGraphics * pvg, int dxAvailWidth)
 	m_ptDpiSrc.x = dpiX;
 	m_ptDpiSrc.y = dpiY;
 
-	//AssertNotifiersValid(); // This is a error checking function related to TE-2962
 	if (!m_fConstructed)
 		Construct(pvg, dxAvailWidth);
 	VwDivBox::DoLayout(pvg, dxAvailWidth, -1, true);
@@ -3024,7 +2961,7 @@ void VwRootBox::ProcessHeaderSpecials(ITsString * ptss, ITsString ** pptssRet, i
 		do
 		{
 			fMatch = false; // reset each iteration. We only repeat if it is true.
-#ifndef WIN32
+#if !defined(_WIN32) && !defined(_M_X64)
 			static OleStringLiteral page(L"&[page]");
 			const OLECHAR * pchSpecial = u_strstr(pchString, page);
 #else
@@ -3046,7 +2983,7 @@ void VwRootBox::ProcessHeaderSpecials(ITsString * ptss, ITsString ** pptssRet, i
 				{
 					fMatch = true;
 					// ENHANCE (Mac portability): get the date string some portable way...
-#if WIN32
+#if defined(WIN32) || defined(WIN64)
 					TCHAR buf2[200];
 					SYSTEMTIME stim;
 					::GetSystemTime(&stim);
@@ -3074,7 +3011,7 @@ void VwRootBox::ProcessHeaderSpecials(ITsString * ptss, ITsString ** pptssRet, i
 					{
 						fMatch = true;
 						// ENHANCE (Mac portability): get the time string some portable way...
-#if WIN32
+#if defined(WIN32) || defined(WIN64)
 						TCHAR buf2[200];
 						SYSTEMTIME stim;
 						::GetLocalTime(&stim);
@@ -3112,8 +3049,8 @@ void VwRootBox::ProcessHeaderSpecials(ITsString * ptss, ITsString ** pptssRet, i
 				int cchBuf = u_strlen(buf);
 				ITsTextPropsPtr qttp;
 				TsRunInfo tri;
-				int ichSpecial = pchSpecial - pchString;
-				CheckHr(qtss->FetchRunInfoAt(pchSpecial - pchString, &tri, &qttp));
+				int ichSpecial = (int)(pchSpecial - pchString);
+				CheckHr(qtss->FetchRunInfoAt((int)(pchSpecial - pchString), &tri, &qttp));
 				CheckHr(qtsb->ReplaceRgch(ichSpecial, ichSpecial + cchSpecial, buf, cchBuf, qttp));
 				qtss->UnlockText(pchString);
 				pchString = NULL;
@@ -3343,7 +3280,7 @@ STDMETHODIMP VwRootBox::InitializePrinting(IVwPrintContext * pvpc)
 		stu.Format(L"No room to print: left = %d, right = %d, top = %d, bottom = %d "
 			L"width = %d", vpi.m_rcDoc.left, vpi.m_rcDoc.right, vpi.m_rcDoc.top,
 			vpi.m_rcDoc.bottom, dxsAvailWidth);
-#if WIN32
+#if defined(WIN32) || defined(WIN64)
 		::MessageBox(NULL, stu.Chars(), L"Initializing Printing", MB_OK);
 #else
 		// TODO-Linux: I don't think this is even used on Linux.
@@ -3428,7 +3365,7 @@ void VwRootBox::CreatePrintInfo(IVwPrintContext * pvpc, VwPrintInfo & vpi)
 	vpi.m_rcPage.right = right;
 	vpi.m_rcPage.top = top;
 	vpi.m_rcPage.bottom = bottom;
-#if !WIN32
+#if !defined(_WIN32) && !defined(_M_X64)
 	qvg->put_XUnitsPerInch(72);
 	qvg->put_YUnitsPerInch(72);
 #endif
@@ -3617,6 +3554,7 @@ STDMETHODIMP VwRootBox::Close()
 		m_qsda.Clear();
 	}
 	m_qsync.Clear();
+	m_qref.Clear();
 
 #ifdef ENABLE_TSF
 	// m_qvim gets created in the c'tor, so one could think of destroying it in the
@@ -4779,7 +4717,7 @@ void VwRootBox::Unlock()
 		InvalidateRect(&invalid);
 }
 
-#ifdef WIN32 // In Linux we use a managed implementation
+#if defined(WIN32) || defined(WIN64) // In Linux we use a managed implementation
 //:>********************************************************************************************
 //:>	VwDrawRootBuffered
 //:>********************************************************************************************
@@ -4984,7 +4922,7 @@ STDMETHODIMP VwDrawRootBuffered::DrawTheRoot(IVwRootBox * prootb, HDC hdc, RECT 
 	if (m_hdcMem)
 	{
 		HBITMAP hbmp = (HBITMAP)::GetCurrentObject(m_hdcMem, OBJ_BITMAP);
-		BOOL fSuccess = AfGdi::DeleteObjectBitmap(hbmp);
+		fSuccess = AfGdi::DeleteObjectBitmap(hbmp);
 		Assert(fSuccess);
 		fSuccess = AfGdi::DeleteDC(m_hdcMem);
 		Assert(fSuccess);
@@ -5098,7 +5036,7 @@ STDMETHODIMP VwDrawRootBuffered:: DrawTheRootRotated(IVwRootBox * prootb, HDC hd
 	if (m_hdcMem)
 	{
 		HBITMAP hbmp = (HBITMAP)::GetCurrentObject(m_hdcMem, OBJ_BITMAP);
-		BOOL fSuccess = AfGdi::DeleteObjectBitmap(hbmp);
+		fSuccess = AfGdi::DeleteObjectBitmap(hbmp);
 		Assert(fSuccess);
 		fSuccess = AfGdi::DeleteDC(m_hdcMem);
 		Assert(fSuccess);
@@ -5262,7 +5200,7 @@ STDMETHODIMP VwRootBox::QueryService(REFGUID guidService, REFIID riid, void ** p
 {
 	BEGIN_COM_METHOD;
 	ChkComOutPtr(ppv);
-#if WIN32 // IAccessible not implemented
+#if defined(WIN32) || defined(WIN64) // IAccessible not implemented
 	if (riid == IID_IAccessible)
 	{
 		IDispatchPtr qacc;

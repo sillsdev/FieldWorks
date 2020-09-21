@@ -9,13 +9,13 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using NUnit.Framework;
-using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.LCModel.Core.Cellar;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.FDOTests;
-using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.Utils;
+using SIL.LCModel;
+using SIL.LCModel.Infrastructure;
+using SIL.LCModel.Utils;
 // ReSharper disable InconsistentNaming
 
 namespace SIL.FieldWorks.XWorks
@@ -128,7 +128,6 @@ namespace SIL.FieldWorks.XWorks
 			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
 			{
 				var styleFactory = Cache.ServiceLocator.GetInstance<IStStyleFactory>();
-
 				styleFactory.Create(Cache.LangProject.StylesOC, "Dictionary-Headword",
 					ContextValues.InternalConfigureView, StructureValues.Undefined, FunctionValues.Line, true, 2, true);
 				var testStyle = styleFactory.Create(Cache.LangProject.StylesOC, "TestStyle", ContextValues.InternalConfigureView, StructureValues.Undefined,
@@ -136,20 +135,30 @@ namespace SIL.FieldWorks.XWorks
 				testStyle.Usage.set_String(Cache.DefaultAnalWs, "Test Style");
 				var normalStyle = styleFactory.Create(Cache.LangProject.StylesOC, "Normal", ContextValues.InternalConfigureView, StructureValues.Undefined,
 					FunctionValues.Line, false, 2, true);
-				var propsBldr = TsPropsBldrClass.Create();
+				var propsBldr = TsStringUtils.MakePropsBldr();
 				propsBldr.SetIntPropValues((int)FwTextPropType.ktptBackColor, (int)FwTextPropVar.ktpvDefault, 0x2BACCA); // arbitrary color to create para element
 				normalStyle.Rules = propsBldr.GetTextProps();
+				var senseStyle = styleFactory.Create(Cache.LangProject.StylesOC, "Dictionary-Sense",
+					ContextValues.InternalConfigureView, StructureValues.Undefined, FunctionValues.Line, false, 2, true);
+				propsBldr.SetIntPropValues((int)FwTextPropType.ktptBackColor, (int)FwTextPropVar.ktpvDefault, 0x2BACCA); // arbitrary color to create para element
+				propsBldr.SetIntPropValues((int)FwTextPropType.ktptForeColor, (int)FwTextPropVar.ktpvDefault, NamedRedBGR);
+				propsBldr.SetStrPropValue((int)FwTextPropType.ktptFontFamily, "Arial");
+				propsBldr.SetIntPropValues((int)FwTextPropType.ktptFontSize,
+					(int)FwTextPropVar.ktpvMilliPoint, 23000);
+				propsBldr.SetStrPropValue((int)FwTextPropType.ktptBulNumFontInfo, "");
+				senseStyle.Rules = propsBldr.GetTextProps();
+				senseStyle.BasedOnRA = normalStyle;
 				var styleWithNamedColors = styleFactory.Create(Cache.LangProject.StylesOC, "Nominal", ContextValues.InternalConfigureView, StructureValues.Undefined,
 					FunctionValues.Line, false, 2, false);
 				styleWithNamedColors.BasedOnRA = normalStyle;
-				propsBldr = TsPropsBldrClass.Create();
+				propsBldr = TsStringUtils.MakePropsBldr();
 				propsBldr.SetIntPropValues((int)FwTextPropType.ktptBackColor, (int)FwTextPropVar.ktpvDefault, NamedRedBGR);
 				propsBldr.SetIntPropValues((int)FwTextPropType.ktptForeColor, (int)FwTextPropVar.ktpvDefault, NamedRedBGR);
 				styleWithNamedColors.Rules = propsBldr.GetTextProps();
 				var styleWithCustomColors = styleFactory.Create(Cache.LangProject.StylesOC, "Abnormal", ContextValues.InternalConfigureView, StructureValues.Undefined,
 					FunctionValues.Line, false, 2, false);
 				styleWithCustomColors.BasedOnRA = normalStyle;
-				propsBldr = TsPropsBldrClass.Create();
+				propsBldr = TsStringUtils.MakePropsBldr();
 				propsBldr.SetIntPropValues((int)FwTextPropType.ktptBackColor, (int)FwTextPropVar.ktpvDefault, CustomRedBGR);
 				propsBldr.SetIntPropValues((int)FwTextPropType.ktptForeColor, (int)FwTextPropVar.ktpvDefault, CustomRedBGR);
 				styleWithCustomColors.Rules = propsBldr.GetTextProps();
@@ -319,7 +328,7 @@ namespace SIL.FieldWorks.XWorks
 			Assert.AreEqual(5, Cache.LangProject.StylesOC.Count, "Setup problem. Should not have changed number of styles from just preparing to import.");
 			// SUT
 			_controller.DoImport();
-			Assert.AreEqual(8, Cache.LangProject.StylesOC.Count, "This unit test starts with 5 styles. 3 are 'unsupported' and kept. 2 are removed. We import 5 styles: 3 are completely new; 2 are replacements for the 2 that were removed. Resulting in 8 styles after import.");
+			Assert.AreEqual(9, Cache.LangProject.StylesOC.Count, "This unit test starts with 6 styles. 3 are 'unsupported' and kept. 3 are removed. We import 6 styles: 3 are completely new; 3 are replacements for the 3 that were removed. Resulting in 9 styles after import.");
 			var importedTestStyle = Cache.LangProject.StylesOC.FirstOrDefault(style => style.Name == "TestStyle");
 			Assert.NotNull(importedTestStyle, "test style was not imported.");
 			var importedParaStyle = Cache.LangProject.StylesOC.FirstOrDefault(style => style.Name == "Nominal");
@@ -672,7 +681,29 @@ namespace SIL.FieldWorks.XWorks
 		private void VerifyCustomFieldAbsent(string customFieldLabel, int classWithCustomField)
 		{
 			var mdc = Cache.MetaDataCacheAccessor as IFwMetaDataCacheManaged;
-			Assert.Throws<FDOInvalidFieldException>(() => mdc.GetFieldId2(classWithCustomField, customFieldLabel, false));
+			Assert.Throws<LcmInvalidFieldException>(() => mdc.GetFieldId2(classWithCustomField, customFieldLabel, false));
+		}
+
+		/// <summary>
+		/// LT-18246:Number and Bullet style information lost on export/import of "Configure Dictionary"
+		/// </summary>
+		[Test]
+		public void DoImport_CustomBulletInfoIsImported()
+		{
+			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
+			{
+				// Set up state of flex before the import happens.
+				var styleFactory = Cache.ServiceLocator.GetInstance<IStStyleFactory>();
+				styleFactory.Create(Cache.LangProject.StylesOC, "Dictionary-Sense", ContextValues.InternalConfigureView, StructureValues.Body, FunctionValues.Line, false, 2, true);
+			});
+			Assert.AreEqual(1, Cache.LangProject.StylesOC.Count, "Setup problem. Unexpected number of styles before doing any import activity.");
+			_controller.PrepareImport(_zipFile);
+			Assert.AreEqual(1, Cache.LangProject.StylesOC.Count, "Setup problem. Should not have changed number of styles from just preparing to import.");
+			// SUT
+			_controller.DoImport();
+			Assert.AreEqual(6, Cache.LangProject.StylesOC.Count, "Resulting styles count should be 6 after import.");
+			var importedSenseStyle = Cache.LangProject.StylesOC.FirstOrDefault(style => style.Name == "Dictionary-Sense");
+			Assert.NotNull(importedSenseStyle, "Dictionary-Sense style was not imported.");
 		}
 	}
 }

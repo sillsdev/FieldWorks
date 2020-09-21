@@ -1,10 +1,6 @@
-// Copyright (c) 2007-2016 SIL International
+// Copyright (c) 2007-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: LexOptionsDlg.cs
-// Responsibility: Steve McConnel
-// Last reviewed:
 //
 // <remarks>
 // This implements the "Tools/Options" command dialog for Language Explorer.
@@ -13,28 +9,26 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Windows.Forms;
 using System.IO;
 using System.Xml;
-using SIL.CoreImpl;
-using SIL.CoreImpl.Properties;
+using SIL.LCModel.Core.WritingSystems;
 using SIL.FieldWorks.Common.Framework;
-using SIL.Utils;
-using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.LCModel.Utils;
+using SIL.LCModel;
+using SIL.PlatformUtilities;
+using SIL.Utils;
 using XCore;
-#if !__MonoCS__
-using NetSparkle;
-#endif
 
 namespace SIL.FieldWorks.LexText.Controls
 {
 	public partial class LexOptionsDlg : Form, IFwExtension
 	{
-		private Mediator m_mediator = null;
-		private FdoCache m_cache = null;
+		private Mediator m_mediator;
+		private XCore.PropertyTable m_propertyTable;
+		private LcmCache m_cache = null;
 		private string m_sUserWs = null;
 		private string m_sNewUserWs = null;
 		private bool m_pluginsUpdated = false;
@@ -63,15 +57,14 @@ namespace SIL.FieldWorks.LexText.Controls
 		{
 			base.OnLoad(e);
 			m_autoOpenCheckBox.Checked = AutoOpenLastProject;
-			m_okToPingCheckBox.Checked = Settings.Default.Reporting.OkToPingBasicUsageData;
+			var appSettings = m_propertyTable.GetValue<FwApplicationSettingsBase>("AppSettings");
+			m_okToPingCheckBox.Checked = appSettings.Reporting.OkToPingBasicUsageData;
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		private void m_btnOK_Click(object sender, EventArgs e)
 		{
-			Settings.Default.Reporting.OkToPingBasicUsageData = m_okToPingCheckBox.Checked;
-			Settings.Default.Save();
+			var appSettings = m_propertyTable.GetValue<FwApplicationSettingsBase>("AppSettings");
+			appSettings.Reporting.OkToPingBasicUsageData = m_okToPingCheckBox.Checked;
 			m_sNewUserWs = m_userInterfaceChooser.NewUserWs;
 			if (m_sUserWs != m_sNewUserWs)
 			{
@@ -80,20 +73,22 @@ namespace SIL.FieldWorks.LexText.Controls
 				{
 					FormLanguageSwitchSingleton.Instance.ChangeCurrentThreadUICulture(ci);
 					FormLanguageSwitchSingleton.Instance.ChangeLanguage(this);
-#if __MonoCS__
-					// Mono leaves the wait cursor on, unlike .Net itself.
-					Cursor.Current = Cursors.Default;
-#endif
+
+					if (Platform.IsMono)
+					{
+						// Mono leaves the wait cursor on, unlike .Net itself.
+						Cursor.Current = Cursors.Default;
+					}
 				}
 				// This needs to be consistent with Common/FieldWorks/FieldWorks.SetUICulture().
 				FwRegistryHelper.FieldWorksRegistryKey.SetValue(FwRegistryHelper.UserLocaleValueName, m_sNewUserWs);
 				//The writing system the user selects for the user interface may not be loaded yet into the project
 				//database. Therefore we need to check this first and if it is not we need to load it.
-				IWritingSystem ws;
+				CoreWritingSystemDefinition ws;
 				m_cache.ServiceLocator.WritingSystemManager.GetOrSet(m_sNewUserWs, out ws);
 				m_cache.ServiceLocator.WritingSystemManager.UserWritingSystem = ws;
 				// Reload the mediator's string table with the appropriate language data.
-				m_mediator.StringTbl.Reload(m_sNewUserWs);
+				StringTable.Table.Reload(m_sNewUserWs);
 			}
 
 			// Handle installing/uninstalling plugins.
@@ -178,8 +173,8 @@ namespace SIL.FieldWorks.LexText.Controls
 					// Leave any dlls in place since they may be shared, or in use for the moment.
 				}
 			}
-			CoreImpl.Properties.Settings.Default.UpdateGlobalWSStore = !updateGlobalWS.Checked;
-			CoreImpl.Properties.Settings.Default.Save();
+			appSettings.UpdateGlobalWSStore = !updateGlobalWS.Checked;
+			appSettings.Save();
 			AutoOpenLastProject = m_autoOpenCheckBox.Checked;
 			DialogResult = DialogResult.OK;
 		}
@@ -190,12 +185,12 @@ namespace SIL.FieldWorks.LexText.Controls
 			// open that project automatically instead of displaying the usual Welcome dialog.
 			get
 			{
-				var app = m_mediator.PropertyTable.GetValue("App") as FwApp;
+				var app = m_propertyTable.GetValue<FwApp>("App");
 				return app.RegistrySettings.AutoOpenLastEditedProject;
 			}
 			set
 			{
-				var app = m_mediator.PropertyTable.GetValue("App") as FwApp;
+				var app = m_propertyTable.GetValue<FwApp>("App");
 				if (app != null)
 					app.RegistrySettings.AutoOpenLastEditedProject = value;
 			}
@@ -214,15 +209,16 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		#region IFwExtension Members
 
-		void IFwExtension.Init(FdoCache cache, Mediator mediator)
+		void IFwExtension.Init(LcmCache cache, Mediator mediator, PropertyTable propertyTable)
 		{
-			updateGlobalWS.Checked = !CoreImpl.Properties.Settings.Default.UpdateGlobalWSStore;
 			m_mediator = mediator;
+			m_propertyTable = propertyTable;
 			m_cache = cache;
-			m_helpTopicProvider = mediator.HelpTopicProvider;
+			m_helpTopicProvider = m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider");
 			m_sUserWs = m_cache.ServiceLocator.WritingSystemManager.UserWritingSystem.Id;
 			m_sNewUserWs = m_sUserWs;
-			m_userInterfaceChooser.SuppressKeyTermLocalizationLangs = true;
+			var appSettings = m_propertyTable.GetValue<FwApplicationSettingsBase>("AppSettings");
+			updateGlobalWS.Checked = !appSettings.UpdateGlobalWSStore;
 			m_userInterfaceChooser.Init(m_sUserWs);
 
 			// Populate Plugins tab page list.
@@ -238,7 +234,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				Debug.WriteLine(dir);
 				// Currently not offering Concorder plugin in FW7, therefore, we
 				// can remove the feature until we need to implement. (FWNX-755)
-				if(MiscUtils.IsUnix && dir == Path.Combine(basePluginPath, "Concorder"))
+				if (Platform.IsUnix && dir == Path.Combine(basePluginPath, "Concorder"))
 					continue;
 				string managerPath = Path.Combine(dir, "ExtensionManager.xml");
 				if (File.Exists(managerPath))

@@ -1,4 +1,8 @@
-﻿using System.Reflection;
+﻿// Copyright (c) 2012-2015 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
+
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
@@ -10,7 +14,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("SIL International")]
 [assembly: AssemblyProduct("NUnitReport")]
-[assembly: AssemblyCopyright("Copyright © 2012-2013 SIL International")]
+[assembly: AssemblyCopyright("Copyright © 2012-$YEAR SIL International")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

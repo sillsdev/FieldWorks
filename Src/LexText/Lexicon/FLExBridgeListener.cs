@@ -1,10 +1,9 @@
-﻿// Copyright (c) 2015 SIL International
+﻿// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -12,36 +11,34 @@ using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using System.Xml;
 using System.Xml.Linq;
-using Palaso.IO;
-using Palaso.Lift;
-using Palaso.Lift.Migration;
-using Palaso.Lift.Parsing;
+using SIL.Lift;
+using SIL.Lift.Migration;
+using SIL.Lift.Parsing;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.LCModel.DomainServices;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.FieldWorks.FDO.Infrastructure.Impl;
+using SIL.LCModel;
+using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.LexText.Controls;
 using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.XWorks.LexText;
-using SIL.Utils;
+using SIL.IO;
+using SIL.LCModel.Utils;
 using XCore;
 
 namespace SIL.FieldWorks.XWorks.LexEd
 {
 	[MediatorDispose]
-	[SuppressMessage("Gendarme.Rules.Correctness", "DisposableFieldsShouldBeDisposedRule",
-		Justification="_mediator is a reference")]
-	sealed class FLExBridgeListener : IxCoreColleague, IFWDisposable
+	sealed class FLExBridgeListener : IxCoreColleague, IDisposable
 	{
 		private Mediator _mediator;
+		private PropertyTable _propertyTable;
 		private Form _parentForm;
 		private string _liftPathname;
 		private IProgress _progressDlg;
-		private FdoCache Cache { get; set; }
+		private LcmCache Cache { get; set; }
 
 		/// <summary>
 		/// On static initialization the OldLiftBridgeProjects is populated from the mapping file if it is present.
@@ -50,8 +47,6 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		/// </summary>
 		private static readonly List<string> OldLiftBridgeProjects;
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		static FLExBridgeListener()
 		{
 			OldLiftBridgeProjects = new List<string>();
@@ -80,15 +75,16 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			return new IxCoreColleague[] { this };
 		}
 
-		public void Init(Mediator mediator, XmlNode configurationParameters)
+		public void Init(Mediator mediator, PropertyTable propertyTable, XmlNode configurationParameters)
 		{
 			CheckDisposed();
 
 			_mediator = mediator;
-			Cache = (FdoCache)_mediator.PropertyTable.GetValue("cache");
-			_mediator.PropertyTable.SetProperty("FLExBridgeListener", this);
-			_mediator.PropertyTable.SetPropertyPersistence("FLExBridgeListener", false);
-			_parentForm = (Form)_mediator.PropertyTable.GetValue("window");
+			_propertyTable = propertyTable;
+			Cache = _propertyTable.GetValue<LcmCache>("cache");
+			_propertyTable.SetProperty("FLExBridgeListener", this, true);
+			_propertyTable.SetPropertyPersistence("FLExBridgeListener", false);
+			_parentForm = _propertyTable.GetValue<Form>("window");
 			mediator.AddColleague(this);
 		}
 
@@ -117,18 +113,18 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		public bool OnDisplayFLExLiftBridge(object parameters, ref UIItemDisplayProperties display)
 		{
 			CheckForFlexBridgeInstalledAndSetMenuItemProperties(display);
-			var bridgeLastUsed = _mediator.PropertyTable.GetStringProperty(
+			var bridgeLastUsed = _propertyTable.GetStringProperty(
 				"LastBridgeUsed", "NoBridgeUsedYet", PropertyTable.SettingsGroup.LocalSettings);
 			if (bridgeLastUsed == "FLExBridge")
 			{
 				// If Fix it app does not exist, then disable main FLEx S/R, since FB needs to call it, after a merge.
 				// If !IsConfiguredForSR (failed the first time), disable the button and hotkey
-				display.Enabled = display.Enabled && FLExBridgeHelper.FixItAppExists && IsConfiguredForSR(Cache.ProjectId.ProjectFolder);
+				display.Enabled = display.Enabled && FLExBridgeHelper.FixItAppExists && FLExBridgeHelper.DoesProjectHaveFlexRepo(Cache.ProjectId);
 			}
 			else if (bridgeLastUsed == "LiftBridge")
 			{
 				// If !IsConfiguredForLiftSR (failed first time), disable the button and hotkey
-				display.Enabled = display.Enabled && IsConfiguredForLiftSR(Cache.ProjectId.ProjectFolder);
+				display.Enabled = display.Enabled && FLExBridgeHelper.DoesProjectHaveLiftRepo(Cache.ProjectId);
 			}
 			else // there was no LastBridgeUsed (this is the first time), disable the button and hotkey
 			{
@@ -165,7 +161,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 		private void RunFLExLiftBridge(object commandObject)
 		{
-			var bridgeLastUsed = _mediator.PropertyTable.GetStringProperty("LastBridgeUsed", "FLExBridge", PropertyTable.SettingsGroup.LocalSettings);
+			var bridgeLastUsed = _propertyTable.GetStringProperty("LastBridgeUsed", "FLExBridge", PropertyTable.SettingsGroup.LocalSettings);
 			if (bridgeLastUsed == "FLExBridge")
 				OnFLExBridge(commandObject);
 
@@ -192,14 +188,14 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		public bool OnObtainAnyFlexBridgeProject(object commandObject)
 		{
 			ObtainedProjectType obtainedProjectType;
-			var newprojectPathname = ObtainProjectMethod.ObtainProjectFromAnySource(_parentForm, _mediator.HelpTopicProvider,
+			var newprojectPathname = ObtainProjectMethod.ObtainProjectFromAnySource(_parentForm, _propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"),
 				out obtainedProjectType);
 			if (string.IsNullOrEmpty(newprojectPathname))
 				return true; // We dealt with it.
-			_mediator.PropertyTable.SetProperty("LastBridgeUsed", obtainedProjectType == ObtainedProjectType.Lift ? "LiftBridge" : "FLExBridge",
-				PropertyTable.SettingsGroup.LocalSettings);
+			_propertyTable.SetProperty("LastBridgeUsed", obtainedProjectType == ObtainedProjectType.Lift ? "LiftBridge" : "FLExBridge",
+				PropertyTable.SettingsGroup.LocalSettings, true);
 
-			FieldWorks.OpenNewProject(new ProjectId(FDOBackendProviderType.kXML, newprojectPathname, null), FwUtils.ksFlexAppName);
+			FieldWorks.OpenNewProject(new ProjectId(newprojectPathname));
 
 			return true;
 		}
@@ -224,6 +220,9 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			return true; // We dealt with it.
 		}
 
+		// For send/receive involving LIFT projects, use the lift version "0.13_ldml3" so the version 3 ldml files will exist on a different chorus branch
+		private const string ldml3LiftVersion = "0.13_ldml3";
+
 		/// <summary>
 		/// Handles the "Get and _Merge Lexicon with this Project" menu item.
 		/// </summary>
@@ -231,14 +230,14 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		{
 			if (Directory.Exists(GetLiftRepositoryFolderFromFwProjectFolder(Cache.ProjectId.ProjectFolder)))
 			{
-				MessageBox.Show(((FwApp)_mediator.PropertyTable.GetValue("App")).ActiveMainWindow, LexEdStrings.kProjectAlreadyHasLiftRepo, LexEdStrings.kCannotDoGetAndMergeAgain, MessageBoxButtons.OK);
+				MessageBox.Show(_propertyTable.GetValue<FwApp>("App").ActiveMainWindow, LexEdStrings.kProjectAlreadyHasLiftRepo, LexEdStrings.kCannotDoGetAndMergeAgain, MessageBoxButtons.OK);
 				return true;
 			}
 
 			StopParser();
 			bool dummy;
 			var success = FLExBridgeHelper.LaunchFieldworksBridge(Cache.ProjectId.ProjectFolder, null, FLExBridgeHelper.ObtainLift, null,
-				FDOBackendProvider.ModelVersion, "0.13", null,
+				LcmCache.ModelVersion, ldml3LiftVersion, null,
 				null, out dummy, out _liftPathname);
 
 			if (!success || string.IsNullOrEmpty(_liftPathname))
@@ -248,7 +247,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			}
 			 // Do merciful import.
 			ImportLiftCommon(FlexLiftMerger.MergeStyle.MsKeepBoth);
-			_mediator.PropertyTable.SetProperty("LastBridgeUsed", "LiftBridge", PropertyTable.SettingsGroup.LocalSettings);
+			_propertyTable.SetProperty("LastBridgeUsed", "LiftBridge", PropertyTable.SettingsGroup.LocalSettings, true);
 			_mediator.BroadcastMessage("MasterRefresh", null);
 
 			return true;
@@ -271,14 +270,9 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				return true; // Flex Bridge isn't installed, so the rest doesn't matter.
 
 			// If Fix it app does not exist, then disable main FLEx S/R, since FB needs to call it, after a merge.
-			display.Enabled = IsConfiguredForSR(Cache.ProjectId.ProjectFolder) && FLExBridgeHelper.FixItAppExists;
+			display.Enabled = FLExBridgeHelper.DoesProjectHaveFlexRepo(Cache.ProjectId) && FLExBridgeHelper.FixItAppExists;
 
 			return true; // We dealt with it.
-		}
-
-		private static bool IsConfiguredForSR(string projectFolder)
-		{
-			return Directory.Exists(Path.Combine(projectFolder, ".hg"));
 		}
 
 		/// <summary>
@@ -286,22 +280,22 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		/// </summary>
 		/// <param name="commandObject">Includes the XML command element of the OnFLExBridge message</param>
 		/// <returns>true if the message was handled, false if there was an error or the call was deemed inappropriate.</returns>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "newAppWindow is a reference")]
 		public bool OnFLExBridge(object commandObject)
 		{
+			//Make sure any last changes are saved. (Process focus lost for controls)
+			Application.DoEvents();
 			if (!LinkedFilesLocationIsDefault())
 			{
-				using (var dlg = new FwCoreDlgs.WarningNotUsingDefaultLinkedFilesLocation(_mediator.HelpTopicProvider))
+				using (var dlg = new FwCoreDlgs.WarningNotUsingDefaultLinkedFilesLocation(_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider")))
 				{
 					var result = dlg.ShowDialog();
 					if (result == DialogResult.Yes)
 					{
-						var app = (LexTextApp)_mediator.PropertyTable.GetValue("App");
+						var app = _propertyTable.GetValue<LexTextApp>("App");
 						var sLinkedFilesRootDir = app.Cache.LangProject.LinkedFilesRootDir;
 						NonUndoableUnitOfWorkHelper.Do(app.Cache.ActionHandlerAccessor, () =>
 						{
-							app.Cache.LangProject.LinkedFilesRootDir = FdoFileHelper.GetDefaultLinkedFilesDir(
+							app.Cache.LangProject.LinkedFilesRootDir = LcmFileHelper.GetDefaultLinkedFilesDir(
 								app.Cache.ProjectId.ProjectFolder);
 						});
 						app.UpdateExternalLinks(sLinkedFilesRootDir);
@@ -322,28 +316,18 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			}
 			StopParser();
 			SaveAllDataToDisk();
-			_mediator.PropertyTable.SetProperty("LastBridgeUsed", "FLExBridge", PropertyTable.SettingsGroup.LocalSettings);
-			if (IsDb4oProject)
-			{
-				var dlg = new Db4oSendReceiveDialog();
-				if (dlg.ShowDialog() == DialogResult.Abort)
-				{
-					// User clicked on link
-					_mediator.SendMessage("FileProjectSharingLocation", null);
-				}
-				return true;
-			}
+			_propertyTable.SetProperty("LastBridgeUsed", "FLExBridge", PropertyTable.SettingsGroup.LocalSettings, true);
 
 			string url;
 			var projectFolder = Cache.ProjectId.ProjectFolder;
 			var savedState = PrepareToDetectMainConflicts(projectFolder);
 			string dummy;
-			var fullProjectFileName = Path.Combine(projectFolder, Cache.ProjectId.Name + FdoFileHelper.ksFwDataXmlFileExtension);
+			var fullProjectFileName = Path.Combine(projectFolder, Cache.ProjectId.Name + LcmFileHelper.ksFwDataXmlFileExtension);
 			bool dataChanged;
 			using (CopyDictionaryConfigFileToTemp(projectFolder))
 			{
 				var success = FLExBridgeHelper.LaunchFieldworksBridge(fullProjectFileName, SendReceiveUser, FLExBridgeHelper.SendReceive,
-					null, FDOBackendProvider.ModelVersion, "0.13",
+					null, LcmCache.ModelVersion, "0.13",
 					Cache.LangProject.DefaultVernacularWritingSystem.Id, null,
 					out dataChanged, out dummy);
 				if (!success)
@@ -356,7 +340,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			if (dataChanged)
 			{
 				bool conflictOccurred = DetectMainConflicts(projectFolder, savedState);
-				var app = (LexTextApp)_mediator.PropertyTable.GetValue("App");
+				var app = _propertyTable.GetValue<LexTextApp>("App");
 				var newAppWindow = RefreshCacheWindowAndAll(app, fullProjectFileName);
 				if (conflictOccurred)
 				{
@@ -374,7 +358,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 		private bool LinkedFilesLocationIsDefault()
 		{
-			var defaultLinkedFilesFolder = FdoFileHelper.GetDefaultLinkedFilesDir(Cache.ServiceLocator.DataSetup.ProjectId.ProjectFolder);
+			var defaultLinkedFilesFolder = LcmFileHelper.GetDefaultLinkedFilesDir(Cache.ServiceLocator.DataSetup.ProjectId.ProjectFolder);
 			return defaultLinkedFilesFolder.Equals(Cache.LanguageProject.LinkedFilesRootDir);
 		}
 
@@ -422,18 +406,9 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			if (!display.Enabled)
 				return true; // Flex Bridge isn't installed, so the rest doesn't matter.
 
-			display.Enabled = !OldLiftBridgeProjects.Contains(Cache.LangProject.Guid.ToString()) &&
-									!IsConfiguredForLiftSR(Cache.ProjectId.ProjectFolder);
+			display.Enabled = !OldLiftBridgeProjects.Contains(Cache.LangProject.Guid.ToString())
+				&& !FLExBridgeHelper.DoesProjectHaveLiftRepo(Cache.ProjectId);
 			return true; // We dealt with it.
-		}
-
-		private static bool IsConfiguredForLiftSR(string folder)
-		{
-			var otherRepoPath = Path.Combine(folder, FdoFileHelper.OtherRepositories);
-			if (!Directory.Exists(otherRepoPath))
-				return false;
-			var liftFolder = Directory.EnumerateDirectories(otherRepoPath, "*_LIFT").FirstOrDefault();
-			return !String.IsNullOrEmpty(liftFolder) && IsConfiguredForSR(liftFolder);
 		}
 
 		/// <summary>
@@ -445,7 +420,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			if (!display.Enabled)
 				return true; // Flex Bridge isn't installed, so the rest doesn't matter.
 
-			display.Enabled = !IsConfiguredForSR(Cache.ProjectId.ProjectFolder);
+			display.Enabled = !FLExBridgeHelper.DoesProjectHaveFlexRepo(Cache.ProjectId);
 			return true; // We dealt with it.
 		}
 
@@ -469,7 +444,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			if (!display.Enabled)
 				return true; // Flex Bridge isn't installed, so the rest doesn't matter.
 
-				display.Enabled = OldLiftBridgeProjects.Contains(Cache.LangProject.Guid.ToString()) || IsConfiguredForLiftSR(Cache.ProjectId.ProjectFolder);
+				display.Enabled = OldLiftBridgeProjects.Contains(Cache.LangProject.Guid.ToString()) || FLExBridgeHelper.DoesProjectHaveLiftRepo(Cache.ProjectId);
 			return true; // We dealt with it.
 		}
 
@@ -478,12 +453,10 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		/// </summary>
 		/// <param name="argument">Includes the XML command element of the OnLiftBridge message</param>
 		/// <returns>true if the message was handled, false if there was an error or the call was deemed inappropriate, or somebody should also try to handle the message.</returns>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "newAppWindow is a reference")]
 		public bool OnLiftBridge(object argument)
 		{
 			SaveAllDataToDisk();
-			_mediator.PropertyTable.SetProperty("LastBridgeUsed", "LiftBridge", PropertyTable.SettingsGroup.LocalSettings);
+			_propertyTable.SetProperty("LastBridgeUsed", "LiftBridge", PropertyTable.SettingsGroup.LocalSettings, true);
 
 			// Step 0. Try to move an extant lift repo from old location to new.
 			if (!MoveOldLiftRepoIfNeeded())
@@ -517,7 +490,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			if (dataChanged)
 			{
 				bool conflictOccurred = DetectLiftConflicts(liftFolder, savedState);
-				var app = (LexTextApp)_mediator.PropertyTable.GetValue("App");
+				var app = _propertyTable.GetValue<LexTextApp>("App");
 				var newAppWindow = RefreshCacheWindowAndAll(app, fullProjectFileName);
 				if (conflictOccurred)
 				{
@@ -544,17 +517,14 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 		private string GetFullProjectFileName()
 		{
-			var currentExtension = IsDb4oProject
-				? FdoFileHelper.ksFwDataDb4oFileExtension
-				: FdoFileHelper.ksFwDataXmlFileExtension;
-			return Path.Combine(Cache.ProjectId.ProjectFolder, Cache.ProjectId.Name + currentExtension);
+			return Path.Combine(Cache.ProjectId.ProjectFolder, Cache.ProjectId.Name + LcmFileHelper.ksFwDataXmlFileExtension);
 		}
 
 		private void SaveAllDataToDisk()
 		{
 			//Give all forms the opportunity to save any uncommitted data
 			//(important for analysis sandboxes)
-			var activeForm = _mediator.PropertyTable.GetValue("window") as Form;
+			var activeForm = _propertyTable.GetValue<Form>("window");
 			if (activeForm != null)
 			{
 				activeForm.ValidateChildren(ValidationConstraints.Enabled);
@@ -598,7 +568,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				GetFullProjectFileName(),
 				SendReceiveUser,
 				FLExBridgeHelper.CheckForUpdates,
-				null, FDOBackendProvider.ModelVersion, "0.13", null, null,
+				null, LcmCache.ModelVersion, "0.13", null, null,
 				out dummy1, out dummy2);
 
 			return true;
@@ -631,7 +601,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				GetFullProjectFileName(),
 				SendReceiveUser,
 				FLExBridgeHelper.AboutFLExBridge,
-				null, FDOBackendProvider.ModelVersion, "0.13", null, null,
+				null, LcmCache.ModelVersion, "0.13", null, null,
 				out dummy1, out dummy2);
 
 			return true;
@@ -666,25 +636,13 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		/// <remarks>If you change the name of this method, you need to check for calls to SendMessage("ViewMessages").</remarks>
 		public bool OnViewMessages(object commandObject)
 		{
-			if (IsDb4oProject)
-			{
-				using (var dlg = new Db4oSendReceiveDialog())
-				{
-					if (dlg.ShowDialog() == DialogResult.Abort)
-					{
-						// User clicked on link
-						_mediator.SendMessage("FileProjectSharingLocation", null);
-					}
-					return true;
-				}
-			}
 			bool dummy1;
 			string dummy2;
 			FLExBridgeHelper.FLExJumpUrlChanged += JumpToFlexObject;
-			var success = FLExBridgeHelper.LaunchFieldworksBridge(Path.Combine(Cache.ProjectId.ProjectFolder, Cache.ProjectId.Name + FdoFileHelper.ksFwDataXmlFileExtension),
+			var success = FLExBridgeHelper.LaunchFieldworksBridge(Path.Combine(Cache.ProjectId.ProjectFolder, Cache.ProjectId.Name + LcmFileHelper.ksFwDataXmlFileExtension),
 								   SendReceiveUser,
 								   FLExBridgeHelper.ConflictViewer,
-								   null, FDOBackendProvider.ModelVersion, "0.13", null, BroadcastMasterRefresh,
+								   null, LcmCache.ModelVersion, "0.13", null, BroadcastMasterRefresh,
 								   out dummy1, out dummy2);
 			if (!success)
 			{
@@ -729,7 +687,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				GetFullProjectFileName(),
 				SendReceiveUser,
 				FLExBridgeHelper.LiftConflictViewer,
-				null, FDOBackendProvider.ModelVersion, "0.13", null, BroadcastMasterRefresh,
+				null, LcmCache.ModelVersion, ldml3LiftVersion, null, BroadcastMasterRefresh,
 				out dummy1, out dummy2);
 			if (!success)
 			{
@@ -827,7 +785,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				GetFullProjectFileName(),
 				SendReceiveUser,
 				FLExBridgeHelper.MoveLift,
-				Cache.LanguageProject.Guid.ToString().ToLowerInvariant(), FDOBackendProvider.ModelVersion, "0.13", null, null,
+				Cache.LanguageProject.Guid.ToString().ToLowerInvariant(), LcmCache.ModelVersion, ldml3LiftVersion, null, null,
 				out dummyDataChanged, out _liftPathname); // _liftPathname will be null, if no repo was moved.
 			if (!success)
 			{
@@ -940,7 +898,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				fullProjectFileName,
 				SendReceiveUser,
 				FLExBridgeHelper.SendReceiveLift, // May create a new lift repo in the process of doing the S/R. Or, it may just use the extant lift repo.
-				null, FDOBackendProvider.ModelVersion, "0.13", Cache.LangProject.DefaultVernacularWritingSystem.Id, null,
+				null, LcmCache.ModelVersion, ldml3LiftVersion, Cache.LangProject.DefaultVernacularWritingSystem.Id, null,
 				out dataChanged, out dummy);
 			if (!success)
 			{
@@ -963,7 +921,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 		internal static string GetLiftRepositoryFolderFromFwProjectFolder(string projectFolder)
 		{
-			var otherDir = Path.Combine(projectFolder, FdoFileHelper.OtherRepositories);
+			var otherDir = Path.Combine(projectFolder, LcmFileHelper.OtherRepositories);
 			if (Directory.Exists(otherDir))
 			{
 				var extantOtherFolders = Directory.GetDirectories(otherDir);
@@ -973,7 +931,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			}
 
 			var flexProjName = Path.GetFileName(projectFolder);
-			return Path.Combine(projectFolder, FdoFileHelper.OtherRepositories, flexProjName + '_' + FLExBridgeHelper.LIFT);
+			return Path.Combine(projectFolder, LcmFileHelper.OtherRepositories, flexProjName + '_' + FLExBridgeHelper.LIFT);
 		}
 
 		void OnDumperSetProgressMessage(object sender, ProgressMessageArgs e)
@@ -1027,7 +985,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		/// <param name="liftPath"></param>
 		/// <param name="parentForm"></param>
 		/// <returns></returns>
-		public static bool ImportObtainedLexicon(FdoCache cache, string liftPath, Form parentForm)
+		public static bool ImportObtainedLexicon(LcmCache cache, string liftPath, Form parentForm)
 		{
 			using (var importer = new FLExBridgeListener())
 			{
@@ -1152,9 +1110,9 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				var fMigrationNeeded = Migrator.IsMigrationNeeded(liftPathname);
 				if (fMigrationNeeded)
 				{
-					var sOldVersion = Palaso.Lift.Validation.Validator.GetLiftVersion(liftPathname);
+					var sOldVersion = Lift.Validation.Validator.GetLiftVersion(liftPathname);
 					progressDialog.Message = String.Format(ResourceHelper.GetResourceString("kstidLiftVersionMigration"),
-						sOldVersion, Palaso.Lift.Validation.Validator.LiftVersion);
+						sOldVersion, Lift.Validation.Validator.LiftVersion);
 					sFilename = Migrator.MigrateToLatestVersion(liftPathname);
 				}
 				else
@@ -1177,7 +1135,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 					// Try to move the migrated file to the temp directory, even if a copy of it
 					// already exists there.
 					var sTempMigrated = Path.Combine(Path.GetTempPath(),
-													 Path.ChangeExtension(Path.GetFileName(sFilename), "." + Palaso.Lift.Validation.Validator.LiftVersion + ".lift"));
+													 Path.ChangeExtension(Path.GetFileName(sFilename), "." + Lift.Validation.Validator.LiftVersion + ".lift"));
 					if (File.Exists(sTempMigrated))
 						File.Delete(sTempMigrated);
 					File.Move(sFilename, sTempMigrated);
@@ -1383,7 +1341,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			// Have FLEx Bridge do its 'undo'
 			// flexbridge -p <project folder name> #-u username -v undo_export_lift)
 			FLExBridgeHelper.LaunchFieldworksBridge(Cache.ProjectId.ProjectFolder, SendReceiveUser,
-				FLExBridgeHelper.UndoExportLift, null, FDOBackendProvider.ModelVersion, "0.13", null, null,
+				FLExBridgeHelper.UndoExportLift, null, LcmCache.ModelVersion, ldml3LiftVersion, null, null,
 				out dataChanged, out dummy);
 		}
 
@@ -1406,7 +1364,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		/// When 'true', then skip any Flex notes, and only consider the Lift notes.
 		/// </param>
 		/// <returns>'true' if there are any Chorus Notes files at the given level. Otherwise, it returns 'false'.</returns>
-		private static bool NotesFileIsPresent(FdoCache cache, bool checkForLiftNotes)
+		private static bool NotesFileIsPresent(LcmCache cache, bool checkForLiftNotes)
 		{
 			// Default to look for notes in the main FW repo.
 			var folderToSearchIn = cache.ProjectId.ProjectFolder;
@@ -1451,14 +1409,14 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		}
 
 		// currently duplicated in MorphologyListener, to avoid an assembly dependency.
-		private static bool IsVernacularSpellingEnabled(Mediator mediator)
+		private static bool IsVernacularSpellingEnabled(PropertyTable propertyTable)
 		{
-			return mediator.PropertyTable.GetBoolProperty("UseVernSpellingDictionary", true);
+			return propertyTable.GetBoolProperty("UseVernSpellingDictionary", true);
 		}
 
 		private static bool CheckForExistingFileName(string projectFolder, string revisedFileName)
 		{
-			if (File.Exists(Path.Combine(projectFolder, revisedFileName + FdoFileHelper.ksFwDataXmlFileExtension)))
+			if (File.Exists(Path.Combine(projectFolder, revisedFileName + LcmFileHelper.ksFwDataXmlFileExtension)))
 			{
 				MessageBox.Show(
 					LexEdStrings.ksExistingProjectName, LexEdStrings.ksWarning, MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -1472,25 +1430,18 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			return Path.Combine(Directory.GetParent(oldProjectFolder).FullName, revisedProjName);
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "FwApp is a reference I guess")]
 		private static FwXWindow RefreshCacheWindowAndAll(LexTextApp app, string fullProjectFileName)
 		{
 			var manager = app.FwManager;
 			var appArgs = new FwAppArgs(fullProjectFileName);
 			var newAppWindow =
 				(FwXWindow)manager.ReopenProject(manager.Cache.ProjectId.Name, appArgs).ActiveMainWindow;
-			if (IsVernacularSpellingEnabled(newAppWindow.Mediator))
+			if (IsVernacularSpellingEnabled(newAppWindow.PropTable))
 				WfiWordformServices.ConformSpellingDictToWordforms(newAppWindow.Cache);
 			//clear out any sort cache files (or whatever else might mess us up) and then refresh
 			newAppWindow.ClearInvalidatedStoredData();
 			newAppWindow.RefreshDisplay();
 			return newAppWindow;
-		}
-
-		private bool IsDb4oProject
-		{
-			get { return Cache.ProjectId.Type == FDOBackendProviderType.kDb4oClientServer; }
 		}
 
 		private static bool DetectLiftConflicts(string path, Dictionary<string, long> savedState)
@@ -1511,7 +1462,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			foreach (var file in Directory.GetFiles(path, "*.ChorusNotes", SearchOption.AllDirectories))
 			{
 				// TODO: Test to see if one conflict tool can do both FLEx and LIFT conflicts.
-				if (file.Contains(FdoFileHelper.OtherRepositories))
+				if (file.Contains(LcmFileHelper.OtherRepositories))
 					continue; // Skip them, since they are part of some other repository.
 
 				long oldLength;
@@ -1533,7 +1484,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			var result = new Dictionary<string, long>();
 			foreach (var file in Directory.GetFiles(projectFolder, "*.ChorusNotes", SearchOption.AllDirectories))
 			{
-				if (file.Contains(FdoFileHelper.OtherRepositories))
+				if (file.Contains(LcmFileHelper.OtherRepositories))
 					continue; // Skip them, since they are part of some other repository.
 
 				result[file] = new FileInfo(file).Length;
@@ -1571,7 +1522,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 		private bool ShowMessageBeforeFirstSendReceive_IsUserReady()
 		{
-			using (var FirstTimeDlg = new FLExBridgeFirstSendReceiveInstructionsDlg(_mediator.HelpTopicProvider))
+			using (var FirstTimeDlg = new FLExBridgeFirstSendReceiveInstructionsDlg(_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider")))
 			{
 				return DialogResult.OK == FirstTimeDlg.ShowDialog();
 			}
@@ -1623,9 +1574,6 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 			IsDisposed = true;
 		}
-		#endregion
-
-		#region Implementation of IFWDisposable
 
 		/// <summary>
 		/// This method throws an ObjectDisposedException if IsDisposed returns
@@ -1646,10 +1594,5 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		public bool IsDisposed { get; set; }
 
 		#endregion
-
-		private static void logger(string guid, string date, string description)
-		{
-			Console.WriteLine("Error reported, but not dealt with {0} {1} {2}", guid, date, description);
-		}
 	}
 }

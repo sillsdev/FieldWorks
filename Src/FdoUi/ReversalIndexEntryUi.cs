@@ -6,7 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using SIL.FieldWorks.LexText.Controls;
 using XCore;
 
@@ -50,12 +50,12 @@ namespace SIL.FieldWorks.FdoUi
 		/// Fetches the GUID value of the given property, having checked it is a valid object.
 		/// If it is not a valid object, the property is removed.
 		/// </summary>
-		/// <param name="mediator"></param>
+		/// <param name="propertyTable"></param>
 		/// <param name="key">Property name</param>
 		/// <returns>The ReversalIndexGuid, or empty GUID if there is a problem</returns>
-		public static Guid GetObjectGuidIfValid(Mediator mediator, string key)
+		public static Guid GetObjectGuidIfValid(PropertyTable propertyTable, string key)
 		{
-			var sGuid = mediator.PropertyTable.GetStringProperty(key, "");
+			var sGuid = propertyTable.GetStringProperty(key, "");
 			if (string.IsNullOrEmpty(sGuid))
 				return Guid.Empty;
 
@@ -69,10 +69,10 @@ namespace SIL.FieldWorks.FdoUi
 				return Guid.Empty;
 			}
 
-			var cache = (FdoCache)mediator.PropertyTable.GetValue("cache");
+			var cache = propertyTable.GetValue<LcmCache>("cache");
 			if (!cache.ServiceLocator.ObjectRepository.IsValidObjectId(guid))
 			{
-				mediator.PropertyTable.RemoveProperty(key);
+				propertyTable.RemoveProperty(key);
 				return Guid.Empty;
 			}
 			return guid;

@@ -903,7 +903,7 @@
           <editable value="false"/>
         </properties>
         <seq field="Senses" layout="empty" sep=", " frag="true"><!-- flag not to split into multiple items when sorted on -->
-          <seq field="ReversalEntries" layout="empty" sep=", " frag="true">
+          <seq field="ReferringReversalIndexEntries" layout="empty" sep=", " frag="true">
 		    <string field="ReversalForm" ws="$ws=best analorvern"/>
 		  </seq>
         </seq>

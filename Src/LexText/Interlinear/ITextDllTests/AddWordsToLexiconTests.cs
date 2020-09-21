@@ -1,18 +1,19 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FDO.FDOTests;
 using NUnit.Framework;
-using Rhino.Mocks;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.Utils;
-using SIL.CoreImpl;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.FieldWorks.Common.FwUtils;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Infrastructure;
+using SIL.ObjectModel;
+using XCore;
 
 namespace SIL.FieldWorks.IText
 {
@@ -22,8 +23,10 @@ namespace SIL.FieldWorks.IText
 	[TestFixture]
 	public class AddWordsToLexiconTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
 	{
-		private FDO.IText m_text1;
+		private LCModel.IText m_text1;
 		private SandboxForTests m_sandbox;
+		private Mediator m_mediator;
+		private PropertyTable m_propertyTable;
 
 		/// <summary>
 		///
@@ -49,7 +52,7 @@ namespace SIL.FieldWorks.IText
 			m_text1.ContentsOA = stText1;
 			var para1 = stText1.AddNewTextPara(null);
 			(m_text1.ContentsOA[0]).Contents =
-				TsStringUtils.MakeTss("xxxa xxxb xxxc xxxd xxxe, xxxa xxxb.", Cache.DefaultVernWs);
+				TsStringUtils.MakeString("xxxa xxxb xxxc xxxd xxxe, xxxa xxxb.", Cache.DefaultVernWs);
 			InterlinMaster.LoadParagraphAnnotationsAndGenerateEntryGuessesIfNeeded(stText1, false);
 
 			// setup language project parts of speech
@@ -72,7 +75,20 @@ namespace SIL.FieldWorks.IText
 		{
 			// Dispose managed resources here.
 			if (m_sandbox != null)
+			{
 				m_sandbox.Dispose();
+				m_sandbox = null;
+			}
+			if (m_mediator != null)
+			{
+				m_mediator.Dispose();
+				m_mediator = null;
+			}
+			if (m_propertyTable != null)
+			{
+				m_propertyTable.Dispose();
+				m_propertyTable = null;
+			}
 			base.TestTearDown();
 		}
 
@@ -85,7 +101,9 @@ namespace SIL.FieldWorks.IText
 																				 Cache.DefaultAnalWs,
 																				 InterlinLineChoices.InterlinMode.
 																					 GlossAddWordsToLexicon);
-			m_sandbox = new SandboxForTests(Cache, lineChoices);
+			m_mediator = new Mediator();
+			m_propertyTable = new PropertyTable(m_mediator);
+			m_sandbox = new SandboxForTests(Cache, m_mediator, m_propertyTable, lineChoices);
 		}
 
 
@@ -93,8 +111,8 @@ namespace SIL.FieldWorks.IText
 		{
 			private InterlinDocForAnalysis m_mockInterlinDoc;
 
-			internal SandboxForTests(FdoCache cache, InterlinLineChoices lineChoices)
-				: base(cache, null, null, lineChoices)
+			internal SandboxForTests(LcmCache cache, Mediator mediator, PropertyTable propertyTable, InterlinLineChoices lineChoices)
+				: base(cache, mediator, propertyTable, null, lineChoices)
 			{
 			}
 
@@ -142,7 +160,7 @@ namespace SIL.FieldWorks.IText
 
 			internal ITsString SetTssInSandbox(int flid, int ws, string str)
 			{
-				ITsString tss = TsStringUtils.MakeTss(str, ws);
+				ITsString tss = TsStringUtils.MakeString(str, ws);
 				switch (flid)
 				{
 					default:
@@ -244,7 +262,7 @@ namespace SIL.FieldWorks.IText
 						break;
 				}
 				return InterlinComboHandler.MakeCombo(
-					m_mediator != null ? m_mediator.HelpTopicProvider : null, tagIcon,
+					m_propertyTable != null ? m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider") : null, tagIcon,
 					this, morphIndex) as InterlinComboHandler;
 			}
 
@@ -299,7 +317,7 @@ namespace SIL.FieldWorks.IText
 			}
 		}
 
-		internal static AnalysisOccurrence GetNewAnalysisOccurence(FDO.IText text, int iPara, int iSeg, int iSegForm)
+		internal static AnalysisOccurrence GetNewAnalysisOccurence(LCModel.IText text, int iPara, int iSeg, int iSegForm)
 		{
 			IStTxtPara para = text.ContentsOA.ParagraphsOS[iPara] as IStTxtPara;
 			var seg = para.SegmentsOS[iSeg];
@@ -309,7 +327,7 @@ namespace SIL.FieldWorks.IText
 		/// <summary>
 		/// keeps track of how many UndoTasks we create during a test.
 		/// </summary>
-		internal class UndoableUOWHelperForTests : FwDisposableBase
+		internal class UndoableUOWHelperForTests : DisposableBase
 		{
 			private IActionHandler m_actionHandler;
 			private Queue<UOW> m_taskQueue = new Queue<UOW>();
@@ -373,6 +391,12 @@ namespace SIL.FieldWorks.IText
 			{
 				UndoAll();
 			}
+
+			protected override void Dispose(bool disposing)
+			{
+				Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + " ******");
+				base.Dispose(disposing);
+			}
 		}
 
 		/// <summary>
@@ -388,7 +412,7 @@ namespace SIL.FieldWorks.IText
 			m_sandbox.SwitchWord(cba0_0);
 
 			// verify that the word gloss is empty
-			ITsString tssEmpty = TsStringUtils.MakeTss("", Cache.DefaultAnalWs);
+			ITsString tssEmpty = TsStringUtils.MakeString("", Cache.DefaultAnalWs);
 			ITsString tssWordGloss = m_sandbox.GetTssInSandbox(InterlinLineChoices.kflidWordGloss,
 															   Cache.DefaultAnalWs);
 			CompareTss(tssEmpty, tssWordGloss);
@@ -507,9 +531,9 @@ namespace SIL.FieldWorks.IText
 			var cba0_0 = GetNewAnalysisOccurence(m_text1, 0, 0, 0);
 			m_sandbox.SwitchWord(cba0_0);
 			string formLexEntry = "xxxab";
-			ITsString tssLexEntryForm = TsStringUtils.MakeTss(formLexEntry, Cache.DefaultVernWs);
+			ITsString tssLexEntryForm = TsStringUtils.MakeString(formLexEntry, Cache.DefaultVernWs);
 			string formAllomorph = "xxxa";
-			ITsString tssAllomorphForm = TsStringUtils.MakeTss(formAllomorph, Cache.DefaultVernWs);
+			ITsString tssAllomorphForm = TsStringUtils.MakeString(formAllomorph, Cache.DefaultVernWs);
 
 			// first create an entry with a matching allomorph that doesn't match 'verb' POS we will be selecting in the sandbox
 			ILexEntry lexEntry_NounPos;
@@ -606,7 +630,7 @@ namespace SIL.FieldWorks.IText
 		}
 
 		/// <summary/>
-		internal static void SetupLexEntryAndSense(string formLexEntry, string senseGloss, FdoCache cache, SandboxForTests testSandBox, out ILexEntry lexEntry, out ILexSense lexSense)
+		internal static void SetupLexEntryAndSense(string formLexEntry, string senseGloss, LcmCache cache, SandboxForTests testSandBox, out ILexEntry lexEntry, out ILexSense lexSense)
 		{
 			SetupLexEntryAndSense(formLexEntry, senseGloss, "adjunct", cache, testSandBox, out lexEntry, out lexSense);
 		}
@@ -618,16 +642,16 @@ namespace SIL.FieldWorks.IText
 		}
 
 		/// <summary/>
-		internal static void SetupLexEntryAndSense(string formLexEntry, string senseGloss, string partOfSpeech, FdoCache cache,
+		internal static void SetupLexEntryAndSense(string formLexEntry, string senseGloss, string partOfSpeech, LcmCache cache,
 			SandboxForTests testSandBox, out ILexEntry lexEntry, out ILexSense lexSense)
 		{
-			ITsString tssLexEntryForm = TsStringUtils.MakeTss(formLexEntry, cache.DefaultVernWs);
+			ITsString tssLexEntryForm = TsStringUtils.MakeString(formLexEntry, cache.DefaultVernWs);
 			// create a sense with a matching gloss
 			var entryComponents = MorphServices.BuildEntryComponents(cache, tssLexEntryForm);
 			int hvoSenseMsaPos = testSandBox.GetComboItemHvo(InterlinLineChoices.kflidWordPos, 0, partOfSpeech);
 			if (hvoSenseMsaPos != 0)
 				entryComponents.MSA.MainPOS = cache.ServiceLocator.GetInstance<IPartOfSpeechRepository>().GetObject(hvoSenseMsaPos);
-			entryComponents.GlossAlternatives.Add(TsStringUtils.MakeTss(senseGloss, cache.DefaultAnalWs));
+			entryComponents.GlossAlternatives.Add(TsStringUtils.MakeString(senseGloss, cache.DefaultAnalWs));
 			ILexEntry newEntry = cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create(entryComponents);
 			lexEntry = newEntry;
 			lexSense = newEntry.SensesOS[0];

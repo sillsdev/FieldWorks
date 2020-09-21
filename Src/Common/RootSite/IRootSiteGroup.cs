@@ -13,7 +13,7 @@ using System;
 using System.Collections.Generic;
 using System.Xml;
 
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using XCore;
 
 namespace SIL.FieldWorks.Common.RootSites

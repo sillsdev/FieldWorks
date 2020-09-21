@@ -1,44 +1,42 @@
-// Copyright (c) 2009-2013 SIL International
+// Copyright (c) 2009-2016 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: LexImportWizard.cs
-// Responsibility: FLEx Team
 
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.IO;
 using System.Reflection;
 using System.Windows.Forms;
 using Microsoft.Win32;
 using Sfm2Xml;
-
-using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;	// FW WS stuff
 using SIL.FieldWorks.Common.Controls;
-using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.Common.Controls.FileDialog;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.Widgets;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
 using SIL.FieldWorks.FwCoreDlgs.BackupRestore;
 using SIL.FieldWorks.Resources;
-using SIL.Utils;
-using SIL.Utils.FileDialog;
-using XCore;
 using SilEncConverters40;
+using SIL.LCModel.Core.Cellar;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.FieldWorks.Common.FwUtils;
+using SIL.LCModel.Utils;
+using SIL.PlatformUtilities;
+using XCore;
 
 namespace SIL.FieldWorks.LexText.Controls
 {
 	public class LexImportWizard : WizardDialog, IFwExtension
 	{
 		private bool m_FeasabilityReportGenerated = false;	// has to run before import
-		private FdoCache m_cache = null;
-		private Mediator m_mediator = null;
+		private LcmCache m_cache;
+		private Mediator m_mediator;
+		private PropertyTable m_propertyTable;
 		private IApp m_app;
 		private IVwStylesheet m_stylesheet;
 		private bool m_formHasLoaded = false;	// so we don't process text changed msgs
@@ -173,7 +171,7 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		#region Constructor and init routines
 		/// <summary>
-		/// Create the Wizard and require an FdoCache object.
+		/// Create the Wizard and require an LcmCache object.
 		/// </summary>
 		/// <param name="cache"></param>
 		public LexImportWizard()
@@ -217,17 +215,19 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// </summary>
 		/// <param name="cache"></param>
 		/// <param name="mediator"></param>
-		void IFwExtension.Init(FdoCache cache, XCore.Mediator mediator)
+		/// <param name="propertyTable"></param>
+		void IFwExtension.Init(LcmCache cache, XCore.Mediator mediator, XCore.PropertyTable propertyTable)
 		{
 			CheckDisposed();
 
 			m_wizard = this;
 			m_cache = cache;
 			m_mediator = mediator;
-			if (mediator != null)
+			m_propertyTable = propertyTable;
+			if (propertyTable != null)
 			{
-				m_app = (IApp) mediator.PropertyTable.GetValue("App");
-				m_stylesheet = FontHeightAdjuster.StyleSheetFromMediator(mediator);
+				m_app = propertyTable.GetValue<IApp>("App");
+				m_stylesheet = FontHeightAdjuster.StyleSheetFromPropertyTable(propertyTable);
 			}
 			m_dirtyInputFile = true;
 			m_dirtyMapFile = true;
@@ -342,8 +342,8 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		// added so it could invoke the Styles dialog
 		// so many dlgs are passing a cache and mediator - seems to be crying
-		//   out for a beter solution.
-		public XCore.Mediator Mediator
+		//   out for a better solution.
+		public Mediator Mediator
 		{
 			get
 			{
@@ -354,6 +354,11 @@ namespace SIL.FieldWorks.LexText.Controls
 
 				return m_mediator;
 			}
+		}
+
+		public XCore.PropertyTable PropTable
+		{
+			get { return m_propertyTable; }
 		}
 
 		private void LexImportWizard_Load(object sender, System.EventArgs e)
@@ -884,7 +889,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			// get list of current Language descriptor values
 			Hashtable langDescs = GetUILanguages();
 
-			using (var dlg = new LexImportWizardLanguage(m_cache, langDescs, m_mediator.HelpTopicProvider, m_app, m_stylesheet))
+			using (var dlg = new LexImportWizardLanguage(m_cache, langDescs, m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), m_app))
 			{
 			if (dlg.ShowDialog(this) == DialogResult.OK)
 			{
@@ -929,7 +934,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			}
 
 			using (var dlg = new LexImportWizardLanguage(m_cache, langDescs,
-					m_mediator.HelpTopicProvider, m_app, m_stylesheet))
+					m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), m_app))
 			{
 			dlg.LangToModify(desc, name, map);
 			if (dlg.ShowDialog(this) == DialogResult.OK)
@@ -987,7 +992,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		private string ConvertNameFromIdtoFW(string wsId)
 		{
 			//getting name for a writing system given the identifier.
-			IWritingSystem ws;
+			CoreWritingSystemDefinition ws;
 
 			if (m_cache.ServiceLocator.WritingSystemManager.TryGet(wsId, out ws))
 				return ws.DisplayLabel;
@@ -1159,7 +1164,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			contentMapping = listViewContentMapping.Items[selIndex].Tag as MarkerPresenter.ContentMapping;
 			using (LexImportWizardMarker dlg = new LexImportWizardMarker(m_LexFields))
 			{
-			dlg.Init(contentMapping, langDescs, m_cache, m_mediator.HelpTopicProvider, m_app, m_stylesheet);
+				dlg.Init(contentMapping, langDescs, m_cache, m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), m_app);
 			DialogResult dr = dlg.ShowDialog(this);
 
 			// Custom fields have to be handled independantly of the dialogresult being ok sense they
@@ -1747,10 +1752,10 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		internal class FlexConverter : Sfm2Xml.Converter
 		{
-			private FdoCache m_cache;
+			private LcmCache m_cache;
 			private int m_wsEn;
 
-			public FlexConverter(FdoCache cache)
+			public FlexConverter(LcmCache cache)
 				: base()
 			{
 				m_cache = cache;
@@ -1926,7 +1931,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			}
 
 			if(helpTopic != null)
-				ShowHelp.ShowHelpTopic(m_mediator.HelpTopicProvider, helpTopic);
+				ShowHelp.ShowHelpTopic(m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), helpTopic);
 		}
 
 		protected override void OnFinishButton()
@@ -2009,8 +2014,6 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// retrieve the last import file that was imported via the wizard from the registry.
 		/// </summary>
 		/// <returns></returns>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "key is a reference")]
 		private bool GetLastImportFile(out string fileName)
 		{
 			fileName = string.Empty;
@@ -3113,6 +3116,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			this.Controls.Add(this.btnQuickFinish);
 			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Sizable;
 			this.Name = "LexImportWizard";
+			this.ShowIcon = false;
 			this.ShowInTaskbar = false;
 			this.StepNames = new string[] {
 				resources.GetString("$this.StepNames"),
@@ -3356,8 +3360,6 @@ namespace SIL.FieldWorks.LexText.Controls
 			return true;
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		private int ProcessErrorLogErrors(System.Xml.XmlDocument xmlMap, ref string sHtml)
 		{
 			int errorCount = 0;
@@ -3454,8 +3456,6 @@ namespace SIL.FieldWorks.LexText.Controls
 			return errorCount;
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		private int ProcessErrorLogWarnings(System.Xml.XmlDocument xmlMap, ref string sHtml)
 		{
 			int warningCount = 0;
@@ -3499,8 +3499,6 @@ namespace SIL.FieldWorks.LexText.Controls
 			return warningCount;
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		private void ProcessErrorLogCautions(System.Xml.XmlDocument xmlMap, ref string sHtmlOUT)
 		{
 			string fileName = m_processedInputFile;
@@ -3630,8 +3628,6 @@ namespace SIL.FieldWorks.LexText.Controls
 			sHtmlOUT += sHtml.ToString();
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		private void ProcessErrorLogSfmInfo(System.Xml.XmlDocument xmlMap, ref string sHtml)
 		{
 			System.Xml.XmlNode infoNode =
@@ -3703,18 +3699,18 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		#endregion
 
-		private void listViewMappingLanguages_DoubleClick(object sender, System.EventArgs e)
+		private void listViewMappingLanguages_DoubleClick(object sender, EventArgs e)
 		{
 			btnModifyMappingLanguage.PerformClick();	// same as pressing the modify button
 		}
 
-		private void btnBackup_Click(object sender, System.EventArgs e)
+		private void btnBackup_Click(object sender, EventArgs e)
 		{
-			using (var dlg = new BackupProjectDlg(m_cache, FwUtils.ksFlexAbbrev, m_mediator.HelpTopicProvider))
+			using (var dlg = new BackupProjectDlg(m_cache, m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider")))
 			dlg.ShowDialog(this);
 		}
 
-		private void listViewContentMapping_DoubleClick(object sender, System.EventArgs e)
+		private void listViewContentMapping_DoubleClick(object sender, EventArgs e)
 		{
 			btnModifyContentMapping.PerformClick();
 		}
@@ -3727,12 +3723,12 @@ namespace SIL.FieldWorks.LexText.Controls
 				lblFinishWOImport.Visible = false;
 		}
 
-		private void m_DisplayImportReport_KeyDown(object sender, System.Windows.Forms.KeyEventArgs e)
+		private void m_DisplayImportReport_KeyDown(object sender, KeyEventArgs e)
 		{
 			ShowFinishLabel();
 		}
 
-		private void m_DisplayImportReport_KeyUp(object sender, System.Windows.Forms.KeyEventArgs e)
+		private void m_DisplayImportReport_KeyUp(object sender, KeyEventArgs e)
 		{
 			ShowFinishLabel();
 		}
@@ -3826,7 +3822,10 @@ namespace SIL.FieldWorks.LexText.Controls
 			// I don't fully understand why, but it seems the base class does some
 			// critical repositioning of buttons. See LT-4675.
 			OnResize(e);
-#if __MonoCS__
+
+			if (!Platform.IsMono)
+				return;
+
 			// This button moving logic works on mono.  At this point, the sizes of the
 			// list views have settled down.  See FWNX-847.
 			int minY = listViewMappingLanguages.Bottom + 7;
@@ -3847,24 +3846,25 @@ namespace SIL.FieldWorks.LexText.Controls
 				MoveButton(btnModifyCharMapping, btnAddCharMapping, minY);
 				MoveButton(btnDeleteCharMapping, btnModifyCharMapping, minY);
 			}
-#endif
 		}
 
-#if __MonoCS__
-		void MoveButton(Button btn, Button btnLeft, int y)
+		private void MoveButton(Button btn, Button btnLeft, int y)
 		{
+			Debug.Assert(Platform.IsMono, "only needed on Linux");
 			if (btnLeft == null)
 				btn.Location = new Point(btn.Left, y);
 			else
 				btn.Location = new Point(btnLeft.Right + 7, y);
 		}
-#endif
 
-// This moving button logic has issues on mono. (and on Windows, if truth be told!)
-#if !__MonoCS__
+		// This moving button logic has issues on mono. (and on Windows, if truth be told!)
 		protected override void OnSizeChanged(EventArgs e)
 		{
 			base.OnSizeChanged(e);
+
+			if (Platform.IsMono)
+				return;
+
 			/// The following code is added to handle the adjustment that the framework
 			/// makes 'at some point' in the start up process of this dialog to handle
 			/// cases where the dpi is > 96.
@@ -3933,6 +3933,7 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		private void MoveButton(ButtonBase btn, int dw, int dh)
 		{
+			Debug.Assert(!Platform.IsMono, "only needed on Windows");
 			Point oldPoint = btn.Location;
 			oldPoint.X += dw;
 			oldPoint.Y += dh;
@@ -3941,12 +3942,12 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		private void MoveButton2(ButtonBase btn, int dw, int YCoord)
 		{
+			Debug.Assert(!Platform.IsMono, "only needed on Windows");
 			Point oldPoint = btn.Location;
 			oldPoint.X += dw;
 			oldPoint.Y = YCoord;
 			btn.Location = oldPoint;
 		}
-#endif
 
 		private void btnSaveMapFile_Click(object sender, System.EventArgs e)
 		{
@@ -3998,9 +3999,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				// LT-10904 added checkbox
 				listViewContentMapping.Height =
 					tabSteps.Bottom - btnModifyContentMapping.Height - m_chkCreateMissingLinks.Height - listViewContentMapping.Top - 20;
-				var nudge = 0;
-				if (MiscUtils.IsUnix)
-					nudge = 25;
+				var nudge = Platform.IsUnix ? 25 : 0;
 				// LT-17974 Adjust layout on Linux/Mono so checkbox and modify button are not overlapping.
 				listViewContentMapping.Height -= nudge;
 
@@ -4108,7 +4107,7 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		private void btnAddCharMapping_Click(object sender, System.EventArgs e)
 		{
-			using (var dlg = new LexImportWizardCharMarkerDlg(m_mediator.HelpTopicProvider, m_app, m_stylesheet))
+			using (var dlg = new LexImportWizardCharMarkerDlg(m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), m_app, m_stylesheet))
 			{
 			dlg.Init(null, GetUILanguages(), m_cache);
 			dlg.SetExistingBeginMarkers(ExtractExistingBeginMarkers(false));
@@ -4134,7 +4133,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			int selIndex = selIndexes[0];	// only support 1
 			Sfm2Xml.ClsInFieldMarker selectedIFM;
 			selectedIFM = listViewCharMappings.Items[selIndex].Tag as Sfm2Xml.ClsInFieldMarker;
-			using (var dlg = new LexImportWizardCharMarkerDlg(m_mediator.HelpTopicProvider, m_app, m_stylesheet))
+			using (var dlg = new LexImportWizardCharMarkerDlg(m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), m_app, m_stylesheet))
 			{
 				dlg.Init(selectedIFM, GetUILanguages(), m_cache);
 				dlg.SetExistingBeginMarkers(ExtractExistingBeginMarkers(true));
@@ -4220,38 +4219,57 @@ namespace SIL.FieldWorks.LexText.Controls
 			m_mediator = pi.GetValue(wndActive, null) as Mediator;
 			if (m_mediator != null)
 			{
-				m_app = (IApp) m_mediator.PropertyTable.GetValue("App");
-				m_stylesheet = FontHeightAdjuster.StyleSheetFromMediator(m_mediator);
+				m_app = m_propertyTable.GetValue<IApp>("App");
+				m_stylesheet = FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable);
 			}
 		}
 
-		private Sfm2Xml.LexImportCustomField FieldDescriptionToLexImportField(FieldDescription fd)
+		private LexImportCustomField FieldDescriptionToLexImportField(FieldDescription fd)
 		{
 			string sig = "";
-			if (fd.Type == CellarPropertyType.MultiUnicode)
+			switch (fd.Type)
+			{
+				case CellarPropertyType.MultiUnicode:
 				sig = "MultiUnicode";
-			else if (fd.Type == CellarPropertyType.String)
+					break;
+				case CellarPropertyType.String:
 				sig = "string";
-			else if (fd.Type == CellarPropertyType.OwningAtomic && fd.DstCls == StTextTags.kClassId)
+					break;
+				case CellarPropertyType.OwningAtomic:
+					if (fd.DstCls == StTextTags.kClassId)
+					{
 				sig = "text";
-			else if (fd.Type == CellarPropertyType.ReferenceAtomic && fd.ListRootId != Guid.Empty)
+					}
+					break;
+				case CellarPropertyType.ReferenceAtomic:
+					if (fd.ListRootId != Guid.Empty)
+					{
 				sig = "ListRef";
-			else if (fd.Type == CellarPropertyType.ReferenceCollection && fd.ListRootId != Guid.Empty)
+					}
+					break;
+				case CellarPropertyType.ReferenceCollection:
+					if (fd.ListRootId != Guid.Empty)
+					{
 				sig = "ListMultiRef";
+					}
+					break;
 			// JohnT: added  GenDate and Numeric and Integer to prevent the crash in LT-11188.
 			// Not sure these string values are actually used for anything; if they are, it might be a problem,
 			// because I haven't been able to track down how or where they are used.
-			else if (fd.Type == CellarPropertyType.GenDate)
+				case CellarPropertyType.GenDate:
 				sig = "Date";
-			else if (fd.Type == CellarPropertyType.Integer)
+					break;
+				case CellarPropertyType.Integer:
 				sig = "Integer";
-			else if (fd.Type == CellarPropertyType.Numeric)
+					break;
+				case CellarPropertyType.Numeric:
 				sig = "Number";
-			else
-			{
+					break;
+				default:
 				throw new Exception("Error converting custom field to LexImportField - unexpected signature");
 			}
-			Sfm2Xml.LexImportCustomField lif = new Sfm2Xml.LexImportCustomField(
+
+			LexImportCustomField lif = new LexImportCustomField(
 				fd.Class,
 				"NOT SURE YET _ Set In The Calling method???",
 				//fd.CustomId,
@@ -4272,57 +4290,6 @@ namespace SIL.FieldWorks.LexText.Controls
 				lif.IsAbbrField = true;
 			////lif.CustomFieldID = fd.CustomId;	// save the guid for this field
 			return lif;
-		}
-
-/*		private Sfm2Xml.LexImportField FieldDescriptionToLexImportField(FieldDescription fd)
-		{
-			string sig = "";
-			if (fd.Type == 16 || fd.Type == 20)
-				sig = "MultiUnicode";
-			else if (fd.Type == 13 || fd.Type == 17)
-				sig = "String";
-			else
-			{
-				throw new Exception("Error converting custom field to LexImportField - unexpected signature");
-			}
-
-			Sfm2Xml.LexImportField lif = new Sfm2Xml.LexImportField(
-				fd.Name,
-				fd.Userlabel,
-				fd.Name,
-				sig,
-				false,
-				(sig=="MultiUnicode")?true:false,
-				false,
-				"MDFVALUE");
-
-			return lif;
-		}
-*/
-		private void GetCustomFields(FdoCache cache)
-		{
-			// m_CustomFields
-			// FieldDescription.ClearDataAbout(m_cache);
-			foreach (FieldDescription fd in FieldDescription.FieldDescriptors(cache))
-			{
-				if (fd.IsCustomField && fd.Class > 4999 && fd.Class < 6000)
-				{
-					// As per LT-7462, limit displayed fields to ones with classes
-					// from module 5 (5000-5999) - GordonM
-
-					//m_CustomFields.AddField(fd.Class.ToString(), "Entry",
-					//    new Sfm2Xml.LexImportField(
-					// m_customFields.Add(new FDWrapper(fd, true));
-					int asdf = 88;
-					asdf++;
-					m_CustomFields.AddField("className", "partOf", FieldDescriptionToLexImportField(fd));
-					// <Class name="Entry" partOf="records">
-					// <Class name="Sense" partOf="Entry Subentry">
-					// <Class name="Subentry" partOf="Entry">
-					// <Class name="Variant" partOf="Entry Subentry Sense">
-
-				}
-			}
 		}
 	}
 }

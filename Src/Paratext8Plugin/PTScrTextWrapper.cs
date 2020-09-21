@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using Paratext.Data;
 using Paratext.Data.ProjectSettingsAccess;
 using SIL.FieldWorks.Common.ScriptureUtils;
@@ -174,7 +175,24 @@ namespace Paratext8Plugin
 			private TranslationInformation ptObject;
 
 			public string BaseProjectName { get { return ptObject.BaseProjectName; } }
-			public ProjectType Type { get { return (ProjectType)Enum.Parse(typeof(ProjectType), ptObject.Type.ToString()); } }
+
+			public ProjectType Type
+			{
+				get
+				{
+					try
+					{
+						return (ProjectType) Enum.Parse(typeof(ProjectType),
+							ptObject.Type.ToString());
+					}
+					catch (ArgumentException)
+					{
+						// The enum type is unknown - Assert for developers, and ignore.
+						Debug.Fail($"Unknown Enum value {ptObject.Type.ToString()}");
+						return ProjectType.Unknown;
+					}
+				}
+			}
 			public PT8TranslationInfoWrapper(TranslationInformation translationInfo)
 			{
 				ptObject = translationInfo;

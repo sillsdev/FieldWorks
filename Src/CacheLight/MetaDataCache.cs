@@ -1,21 +1,18 @@
-// Copyright (c) 2006-2013 SIL International
+// Copyright (c) 2006-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: MetaDataCache.cs
-// Responsibility: Randy Regnier
 
 using System;
 using System.Collections.Specialized; // Needed for StringCollection.
 using System.Collections.Generic; // Needed for Dictionary.
-using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices; // needed for Marshal
 using System.Xml;
-using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.Utils;
+using SIL.LCModel.Utils;
 using System.Text;
 using System.IO;
+using SIL.LCModel.Core.Cellar;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.Utils;
 
 namespace SIL.FieldWorks.CacheLight
 {
@@ -143,8 +140,6 @@ namespace SIL.FieldWorks.CacheLight
 		/// See Ling.cm or xmi2cellar3.xml for supported XML data formats.
 		/// Note: This may also be used to load persisted custom fields.
 		/// </remarks>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		public void InitXml(string pathname, bool clearPrevCache)
 		{
 			if (pathname == null)
@@ -180,7 +175,7 @@ namespace SIL.FieldWorks.CacheLight
 					clid = XmlUtils.GetMandatoryIntegerAttributeValue(newClassNode, "num");
 					if (clid > 0) // Basic initialization has already happened for the base class.
 					{
-						var newClassName = XmlUtils.GetManditoryAttributeValue(newClassNode, "id");
+						var newClassName = XmlUtils.GetMandatoryAttributeValue(newClassNode, "id");
 						// Check to see if the class already exists.
 						if (m_nameToClid.ContainsKey(newClassName))
 							throw new ArgumentException("Duplicate Cellar Class named; " + newClassName);
@@ -200,9 +195,9 @@ namespace SIL.FieldWorks.CacheLight
 						flid = flidBase + XmlUtils.GetMandatoryIntegerAttributeValue(fieldNode, "num");
 						mfr = new MetaFieldRec
 						{
-							m_fieldName = XmlUtils.GetManditoryAttributeValue(fieldNode, "id"),
+							m_fieldName = XmlUtils.GetMandatoryAttributeValue(fieldNode, "id"),
 							m_ownClsid = clid,
-							m_sig = XmlUtils.GetManditoryAttributeValue(fieldNode, "sig")
+							m_sig = XmlUtils.GetMandatoryAttributeValue(fieldNode, "sig")
 						};
 
 						if (m_nameToClid.ContainsKey(mfr.m_sig))
@@ -265,7 +260,7 @@ namespace SIL.FieldWorks.CacheLight
 								mfr.m_sig = null;
 								break;
 							case "owning":
-								switch (XmlUtils.GetManditoryAttributeValue(fieldNode, "card"))
+								switch (XmlUtils.GetMandatoryAttributeValue(fieldNode, "card"))
 								{
 									case "atomic":
 										mfr.m_fieldType = CellarPropertyType.OwningAtomic;
@@ -279,7 +274,7 @@ namespace SIL.FieldWorks.CacheLight
 								}
 								break;
 							case "rel":
-								switch (XmlUtils.GetManditoryAttributeValue(fieldNode, "card"))
+								switch (XmlUtils.GetMandatoryAttributeValue(fieldNode, "card"))
 								{
 									case "atomic":
 										mfr.m_fieldType = CellarPropertyType.ReferenceAtomic;
@@ -349,7 +344,7 @@ namespace SIL.FieldWorks.CacheLight
 				XmlNode baseClassNode = doc.DocumentElement.SelectSingleNode("class[@num='0']");
 				// Add CmObject properties.
 				string baseClassName = (baseClassNode == null) ? "BaseClass" :
-					XmlUtils.GetManditoryAttributeValue(baseClassNode, "id");
+					XmlUtils.GetMandatoryAttributeValue(baseClassNode, "id");
 				mcr = new MetaClassRec(baseClassName, true, baseClassName);
 				flid = (int)CmObjectFields.kflidCmObject_Guid;
 				mfr = new MetaFieldRec

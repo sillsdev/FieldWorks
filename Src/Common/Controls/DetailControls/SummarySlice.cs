@@ -1,4 +1,4 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -6,15 +6,16 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
-using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using System.Windows.Forms.VisualStyles;
-
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.LCModel.Core.Text;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.Controls;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel;
+using SIL.LCModel.Infrastructure;
 using SIL.Utils;
 using XCore;
 
@@ -52,18 +53,17 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			{
 				// Instead of the parameter being a layout name, it is literal text which will be
 				// the whole contents of the slice, with standard properties.
-				string text = XmlUtils.GetManditoryAttributeValue(m_callerNode, "label");
-				if (m_stringTable != null)
-					text = m_stringTable.LocalizeAttributeValue(text);
+				string text = XmlUtils.GetMandatoryAttributeValue(m_callerNode, "label");
+				text = StringTable.Table.LocalizeAttributeValue(text);
 				m_view = new LiteralLabelView(text, this);
 			}
 			else
 			{
 				m_layout = XmlUtils.GetOptionalAttributeValue(m_callerNode, "param")
-					?? XmlUtils.GetManditoryAttributeValue(m_configurationNode, "layout");
+					?? XmlUtils.GetMandatoryAttributeValue(m_configurationNode, "layout");
 				m_collapsedLayout = XmlUtils.GetOptionalAttributeValue(m_callerNode, "collapsedLayout")
 					?? XmlUtils.GetOptionalAttributeValue(m_configurationNode, "collapsedLayout");
-				m_view = new SummaryXmlView(m_obj.Hvo, m_layout, m_stringTable, this);
+				m_view = new SummaryXmlView(m_obj.Hvo, m_layout, this);
 				m_view.Mediator = Mediator;
 			}
 
@@ -294,7 +294,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			CheckDisposed();
 
 			var command = (Command)commandObject;
-			string className = XmlUtils.GetManditoryAttributeValue(command.Parameters[0], "className");
+			string className = XmlUtils.GetMandatoryAttributeValue(command.Parameters[0], "className");
 			bool fIsValid = false;
 			if (className == "RnGenericRec")
 			{
@@ -344,7 +344,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			CheckDisposed();
 
 			var command = (Command)commandObject;
-			string className = XmlUtils.GetManditoryAttributeValue(command.Parameters[0], "className");
+			string className = XmlUtils.GetMandatoryAttributeValue(command.Parameters[0], "className");
 			bool fIsValid = false;
 			if (className == "RnGenericRec")
 			{
@@ -398,7 +398,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			CheckDisposed();
 
 			var command = (Command)commandObject;
-			string className = XmlUtils.GetManditoryAttributeValue(command.Parameters[0], "className");
+			string className = XmlUtils.GetMandatoryAttributeValue(command.Parameters[0], "className");
 			bool fIsValid = false;
 			if (className == "RnGenericRec")
 			{
@@ -460,7 +460,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			CheckDisposed();
 
 			var command = (Command)commandObject;
-			string className = XmlUtils.GetManditoryAttributeValue(command.Parameters[0], "className");
+			string className = XmlUtils.GetMandatoryAttributeValue(command.Parameters[0], "className");
 			bool fIsValid = false;
 			if (className == "RnGenericRec")
 			{
@@ -537,6 +537,12 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			SetStyle(ControlStyles.AllPaintingInWmPaint, true);
 			SetStyle(ControlStyles.UserPaint, true);
 			BackColor = SystemColors.Window;
+		}
+
+		protected override void Dispose(bool disposing)
+		{
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + " ******");
+			base.Dispose(disposing);
 		}
 
 		protected override Size DefaultSize
@@ -718,21 +724,18 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		public override void MakeRoot()
 		{
 			CheckDisposed();
-			base.MakeRoot();
 
-			if (m_fdoCache == null || DesignMode)
+			if (m_cache == null || DesignMode)
 				return;
 
-			IVwRootBox rootb = VwRootBoxClass.Create();
-			rootb.SetSite(this);
+			base.MakeRoot();
 
-			m_vc = new LiteralLabelVc(m_text, m_fdoCache.WritingSystemFactory.UserWs);
+			m_vc = new LiteralLabelVc(m_text, m_cache.WritingSystemFactory.UserWs);
 
-			rootb.DataAccess = m_fdoCache.DomainDataByFlid;
+			m_rootb.DataAccess = m_cache.DomainDataByFlid;
 
 			// Since the VC just displays a literal, both the root HVO and the root frag are arbitrary.
-			rootb.SetRootObject(1, m_vc, 2, StyleSheet);
-			m_rootb = rootb;
+			m_rootb.SetRootObject(1, m_vc, 2, StyleSheet);
 			// pathologically (mainly during Refresh, it seems) the slice width may get set before
 			// the root box is created, and no further size adjustment may take place, in which case,
 			// when we have made the root, we need to adjust the width it occupies in the parent slice.
@@ -796,7 +799,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 	{
 		SummarySlice m_slice;
 
-		public SummaryXmlView(int hvo, string label, StringTable stringTbl, SummarySlice slice) : base( hvo, label, stringTbl, false)
+		public SummaryXmlView(int hvo, string label, SummarySlice slice) : base( hvo, label, false)
 		{
 			m_slice = slice;
 		}

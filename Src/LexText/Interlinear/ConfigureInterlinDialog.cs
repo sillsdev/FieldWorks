@@ -1,4 +1,4 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -9,22 +9,19 @@ using System.ComponentModel;
 using System.Windows.Forms;
 
 using SIL.FieldWorks.Common.Controls; // for XmlViews stuff, especially borrowed form ColumnConfigureDialog
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.Utils;
 using System.Diagnostics;
-using SIL.CoreImpl;
-using XCore;
-using System.Diagnostics.CodeAnalysis;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.WritingSystems;
 
 namespace SIL.FieldWorks.IText
 {
 	/// <summary>
 	/// Summary description for ConfigureInterlinDialog.
 	/// </summary>
-	public class ConfigureInterlinDialog : Form, IFWDisposable
+	public class ConfigureInterlinDialog : Form
 	{
 		private Label label1;
 		private Label label2;
@@ -50,14 +47,14 @@ namespace SIL.FieldWorks.IText
 		private IContainer components;
 
 		bool m_fUpdatingWsCombo = false; // true during UpdateWsCombo
-		private FdoCache m_cache;
+		private LcmCache m_cache;
 		private IHelpTopicProvider m_helpTopicProvider;
 		private ImageList imageList1;
 
 		InterlinLineChoices m_choices;
 
 
-		public ConfigureInterlinDialog(FdoCache cache, IHelpTopicProvider helpTopicProvider,
+		public ConfigureInterlinDialog(LcmCache cache, IHelpTopicProvider helpTopicProvider,
 			InterlinLineChoices choices)
 		{
 			//
@@ -322,18 +319,21 @@ namespace SIL.FieldWorks.IText
 				// the actual analysis ws name.
 				foreach (WsComboItem item in WsComboItems(ls.ComboContent))
 				{
-					if (getWsFromId(item.Id) == ls.WritingSystem)
+					var ws = ls.IsMagicWritingSystem ? m_cache.LangProject.DefaultWsForMagicWs(ls.WritingSystem) : ls.WritingSystem;
+					if (getWsFromId(item.Id) == ws)
 					{
 						wsName = item.ToString();
 						break;
+					}
+					else
+					{
+						Debug.WriteLine(item.Id);
 					}
 				}
 				// Last ditch effort
 				if (wsName == "")
 				{
-					ILgWritingSystemFactory wsf = m_cache.LanguageWritingSystemFactoryAccessor;
-					int wsui = m_cache.DefaultUserWs;
-					IWritingSystem wsObj = m_cache.ServiceLocator.WritingSystemManager.Get(ls.WritingSystem);
+					CoreWritingSystemDefinition wsObj = m_cache.ServiceLocator.WritingSystemManager.Get(ls.WritingSystem);
 					if (wsObj != null)
 						wsName = wsObj.DisplayLabel;
 				}
@@ -376,7 +376,7 @@ namespace SIL.FieldWorks.IText
 		/// <param name="cache"></param>
 		/// <param name="owner"></param>
 		/// <returns></returns>
-		internal static ComboBox.ObjectCollection WsComboItemsInternal(FdoCache cache, ComboBox owner,
+		internal static ComboBox.ObjectCollection WsComboItemsInternal(LcmCache cache, ComboBox owner,
 			Dictionary<ColumnConfigureDialog.WsComboContent, ComboBox.ObjectCollection> cachedBoxes,
 			ColumnConfigureDialog.WsComboContent comboContent)
 		{
@@ -634,8 +634,6 @@ namespace SIL.FieldWorks.IText
 			e.DrawText();
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "We return the Brush")]
 		private Brush GetBrush(InterlinLineSpec spec, bool selected)
 		{
 			Brush textBrush = SystemBrushes.ControlText;
@@ -650,8 +648,6 @@ namespace SIL.FieldWorks.IText
 			return textBrush;
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "backBrush is a reference")]
 		private void DrawItem(System.Windows.Forms.DrawListViewItemEventArgs e, InterlinLineSpec spec)
 		{
 			Brush backBrush = SystemBrushes.ControlLightLight;

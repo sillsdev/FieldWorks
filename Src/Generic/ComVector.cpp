@@ -304,7 +304,7 @@ void BaseOfComVector::_InsertMultiple(IUnknown ** pe, int ceIns, IUnknown * punk
 	int ceNew = m_ce + ceIns;
 	if (ceNew > m_ceAlloc)
 	{
-		int ie = pe - m_peFirst;
+		int ie = (int)(pe - m_peFirst);
 		EnsureSpace(ceIns);
 		pe = m_peFirst + ie;
 	}
@@ -327,7 +327,7 @@ void BaseOfComVector::_Erase(IUnknown ** peMin, IUnknown ** peLim)
 {
 	_DestroyRange(peMin, peLim);
 	memmove(peMin, peLim, ((m_peFirst + m_ce) - peLim) * isizeof(IUnknown *));
-	m_ce -= peLim - peMin;
+	m_ce -= (int)(peLim - peMin);
 	AssertObj(this);
 }
 //:End Ignore

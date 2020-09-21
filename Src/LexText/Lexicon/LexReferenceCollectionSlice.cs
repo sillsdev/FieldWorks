@@ -3,12 +3,10 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Diagnostics;
-
-using SIL.Utils;
 using SIL.FieldWorks.Common.Framework.DetailControls;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using XCore;
-using System.Diagnostics.CodeAnalysis;
+using SIL.Utils;
 
 namespace SIL.FieldWorks.XWorks.LexEd
 {
@@ -19,8 +17,6 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		/// <summary>
 		/// Initializes a new instance of the <see cref="LexReferenceCollectionSlice"/> class.
 		/// </summary>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "LexReferenceCollectionLauncher gets added to panel's Controls collection and disposed there")]
 		public LexReferenceCollectionSlice()
 			: base(new LexReferenceCollectionLauncher())
 		{

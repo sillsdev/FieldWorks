@@ -2,7 +2,7 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using SIL.Utils;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls
@@ -12,7 +12,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 	/// </summary>
 	public class GenDateSlice : FieldSlice
 	{
-		public GenDateSlice(FdoCache cache, ICmObject obj, int flid)
+		public GenDateSlice(LcmCache cache, ICmObject obj, int flid)
 			: base(new GenDateLauncher(), cache, obj, flid)
 		{
 		}
@@ -21,17 +21,9 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		{
 			base.FinishInit();
 			// have chooser title use the same text as the label
-			if (Mediator != null && Mediator.HasStringTable)
-				m_fieldName = XmlUtils.GetLocalizedAttributeValue(Mediator.StringTbl,
-					m_configurationNode, "label", m_fieldName);
-			else if (StringTbl != null)
-				m_fieldName = XmlUtils.GetLocalizedAttributeValue(StringTbl,
-					m_configurationNode, "label", m_fieldName);
-			else
-				m_fieldName = XmlUtils.GetOptionalAttributeValue(
-					m_configurationNode, "label", m_fieldName);
+			m_fieldName = XmlUtils.GetLocalizedAttributeValue(m_configurationNode, "label", m_fieldName);
 
-			((GenDateLauncher)Control).Initialize(m_cache, m_obj, m_flid, m_fieldName, m_persistenceProvider, Mediator,
+			((GenDateLauncher)Control).Initialize(m_cache, m_obj, m_flid, m_fieldName, m_persistenceProvider, Mediator, m_propertyTable,
 				"", "analysis");
 		}
 

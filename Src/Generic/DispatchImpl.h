@@ -1,6 +1,6 @@
-#if WIN32
+#if defined(_WIN32) || defined(_M_X64)
+#include <cguid.h>
 // TODO-Linux: Implement later
-
 class SilComTypeInfoHolder : public ModuleEntry
 {
 // Should be 'protected' but can cause compiler to generate fat code.
@@ -82,11 +82,11 @@ public:
 		{
 			for (int i=0; i<(int)cNames; i++)
 			{
-				int n = wcslen(rgszNames[i]);
+				size_t n = wcslen(rgszNames[i]);
 				int j;
 				for (j = m_nCount-1; j >= 0; j--)
 				{
-					if ((n == m_pMap[j].nLen) &&
+					if ((n == (size_t)m_pMap[j].nLen) &&
 						(memcmp(m_pMap[j].bstr, rgszNames[i], m_pMap[j].nLen * sizeof(OLECHAR)) == 0))
 					{
 						rgdispid[i] = m_pMap[j].id;
@@ -234,7 +234,7 @@ SilDispatchImpl<T, piid, plibid, wMajor, wMinor, tihclass>::_tihclass
 SilDispatchImpl<T, piid, plibid, wMajor, wMinor, tihclass>::_tih(
 piid, plibid, wMajor, wMinor);
 #else
-#if WIN32
+#if defined(_WIN32) || defined(_M_X64)
 // REVIEW  We used to have wMajor and wMinor for the last two parameters, but VS .NET 2003 grumbled
 // that wMajor/wMinor were undeclared identifiers.
 #define IMPLEMENT_SIL_DISPATCH(T, piid, plibid) \

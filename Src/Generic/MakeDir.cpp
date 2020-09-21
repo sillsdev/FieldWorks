@@ -28,7 +28,7 @@ DEFINE_THIS_FILE
 ----------------------------------------------------------------------------------------------*/
 bool MakeDir(const achar * pszPath)
 {
-#if WIN32
+#if defined(_WIN32) || defined(_M_X64)
 	StrAppBufPath strbp(pszPath);
 
 	// Look for last backslash:
@@ -56,7 +56,7 @@ bool MakeDir(const achar * pszPath)
 	}
 	// If this next call fails, it may only be because the path already exists, so we will check
 	// our overall success afterwards:
-#if WIN32
+#if defined(_WIN32) || defined(_M_X64)
 	_tmkdir(strbp.Chars());
 	DWORD nFlags = GetFileAttributes(strbp.Chars());
 	if (nFlags == INVALID_FILE_ATTRIBUTES || !(nFlags & FILE_ATTRIBUTE_DIRECTORY))

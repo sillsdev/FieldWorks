@@ -1,18 +1,17 @@
-﻿// Copyright (c) 2015 SIL International
+// Copyright (c) 2015 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using SIL.FieldWorks.Common.Controls;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Application;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel;
+using SIL.LCModel.Application;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.Filters;
 using SIL.FieldWorks.XWorks;
+using XCore;
 
 namespace SIL.FieldWorks.IText
 {
@@ -122,9 +121,14 @@ namespace SIL.FieldWorks.IText
 
 			if (((IActionHandlerExtensions)Cache.ActionHandlerAccessor).CanStartUow)
 				ParseAndUpdate(); // do it now
-			else // do it as soon as possible. (we might be processing PropChanged.)
+			else if (Cache.ActionHandlerAccessor.IsUndoOrRedoInProgress)
 			{
-				// REVIEW (FWR-1906): Do we need to do this reload only the first time, or also (as here) when the prop change is from undo or redo?
+				// we're doing an undo or redo action; because of the code below, the UnitOfWork
+				// already knows we need to reload the list after we get done with PropChanged.
+				// But for the same reasons as in the original action, we aren't ready to do it now.
+				return true;
+			} else // do it as soon as possible. (We might be processing PropChanged)
+			{
 				// Enhance JohnT: is there some way we can be sure only one of these tasks gets added?
 				((IActionHandlerExtensions)Cache.ActionHandlerAccessor).DoAtEndOfPropChangedAlways(RecordList_PropChangedCompleted);
 				return true;
@@ -157,7 +161,7 @@ namespace SIL.FieldWorks.IText
 			var texts = vernacularTexts.Concat(scriptureTexts).Where(x => x != null).ToList();
 			int count = (from text in texts from para in text.ParagraphsOS select para).Count();
 			int done = 0;
-			using (var progress = FwXWindow.CreateSimpleProgressState(m_mediator))
+			using (var progress = FwXWindow.CreateSimpleProgressState(m_propertyTable))
 			{
 				progress.SetMilestone(ITextStrings.ksParsing);
 				foreach (var text in texts)
@@ -191,9 +195,24 @@ namespace SIL.FieldWorks.IText
 			return true; // if by any chance this is used without a conc decorator, assume all Scripture is interesting.
 		}
 
+		// This is invoked when there have been significant changes but we can't reload immediately
+		// because we need to finish handling PropChanged first. We want to really reload the list,
+		// not just record that it might be a nice idea sometime.
+		// Enhance: previously we were calling ReloadList. That could leave the list in an invalid
+		// state and the UI displaying deleted objects and lead to crashes (LT-18976), since
+		// there was no guarantee of ever doing a real reload. (For example, closing the change
+		// spelling dialog forces a real reload by calling MasterRefresh; but undoing that change
+		// ended up doing no reload at all, even though this method was called.)
+		// However, it's possible that using ForceReloadList here
+		// will cause more reloads than are needed, slowing things down. If so, one thing to
+		// investigate would be making sure that a request to call this is only added once per UnitOfWork.
+		// (See the one use of this function.)
+		// It's also possible that the MasterRefresh on closing the change spelling dialog
+		// can be removed now we're doing a real reload here.
+		// I'm not risking either of those changes at a time when we're trying to stabilize for release.
 		void RecordList_PropChangedCompleted()
 		{
-			ReloadList();
+			ForceReloadList();
 		}
 	}
 }

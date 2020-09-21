@@ -5,7 +5,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Paratext.LexicalContracts;
 
@@ -63,8 +62,6 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 			return ((IEnumerable<Lexeme>)m_lexemes).GetEnumerator();
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "Don't need to dispose an IEnumerator.")]
 		IEnumerator IEnumerable.GetEnumerator()
 		{
 			return GetEnumerator();

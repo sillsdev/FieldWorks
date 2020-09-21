@@ -1,47 +1,39 @@
-// Copyright (c) 2003-2013 SIL International
+// Copyright (c) 2003-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: BasicEntryInfoDlg.cs
-// Responsibility: Randy Regnier
-// Last reviewed:
-//
-// <remarks>
-// Implementation of:
-//		InsertEntryDlg - Dialog for adding basic information of new entries.
-// </remarks>
 
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using System.Xml;
 using Microsoft.Win32;
 using SIL.Collections;
-using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.WritingSystems;
 using SIL.FieldWorks.Common.Controls;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.Common.RootSites;
+using SIL.FieldWorks.Common.Widgets;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.LexText.Controls.MGA;
 using SIL.FieldWorks.Resources;
-using SIL.Utils;
+using SIL.PlatformUtilities;
+using SIL.Windows.Forms;
 using XCore;
-using SIL.FieldWorks.Common.Widgets;
-using SIL.FieldWorks.Common.FwUtils;
-using SIL.CoreImpl;
 
 namespace SIL.FieldWorks.LexText.Controls
 {
 	/// <summary>
 	/// Summary description for InsertEntryDlg.
 	/// </summary>
-	public class InsertEntryDlg : Form, IFWDisposable
+	public class InsertEntryDlg : Form
 	{
 		public enum MorphTypeFilterType
 		{
@@ -52,8 +44,9 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		#region Data members
 
-		private FdoCache m_cache;
+		private LcmCache m_cache;
 		private Mediator m_mediator;
+		private XCore.PropertyTable m_propertyTable;
 		private ILexEntry m_entry;
 		private IMoMorphType m_morphType;
 		private ILexEntryType m_complexType;
@@ -137,8 +130,6 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// Registry key for settings for this Dialog.
 		/// </summary>
 		/// -----------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "We're returning an object")]
 		public RegistryKey SettingsKey
 		{
 			get
@@ -332,7 +323,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				{
 					int wsGloss = TsStringUtils.GetWsAtOffset(value, 0);
 					bool fAnal = false;
-					foreach (IWritingSystem ws in m_cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems)
+					foreach (CoreWritingSystemDefinition ws in m_cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems)
 					{
 						if (ws.Handle == wsGloss)
 						{
@@ -384,12 +375,13 @@ namespace SIL.FieldWorks.LexText.Controls
 			{
 				Debug.Assert(value != null);
 				m_mediator = value;
-				if (m_mediator.HelpTopicProvider != null)
+				var helpTopicProvider = m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider");
+				if (helpTopicProvider != null)
 				{
-					m_helpProvider.HelpNamespace = m_mediator.HelpTopicProvider.HelpFile;
-					m_helpProvider.SetHelpKeyword(this, m_mediator.HelpTopicProvider.GetHelpString(s_helpTopic));
+					m_helpProvider.HelpNamespace = helpTopicProvider.HelpFile;
+					m_helpProvider.SetHelpKeyword(this, helpTopicProvider.GetHelpString(s_helpTopic));
 				}
-				m_btnHelp.Enabled = (m_mediator.HelpTopicProvider != null);
+				m_btnHelp.Enabled = (helpTopicProvider != null);
 			}
 		}
 
@@ -452,7 +444,7 @@ namespace SIL.FieldWorks.LexText.Controls
 					var width = (int)regKey.GetValue("InsertWidth", Width);
 					var height = (int)regKey.GetValue("InsertHeight", Height);
 					var rect = new Rectangle(x, y, width, height);
-					ScreenUtils.EnsureVisibleRect(ref rect);
+					ScreenHelper.EnsureVisibleRect(ref rect);
 					DesktopBounds = rect;
 					StartPosition = FormStartPosition.Manual;
 				}
@@ -499,11 +491,13 @@ namespace SIL.FieldWorks.LexText.Controls
 			base.OnLoad(e);
 			if (Size != size)
 				Size = size;
-#if __MonoCS__
-			// Mono doesn't seem to fire the Activated event, so call the method here.
-			// This fixes FWNX-783, setting the focus in the gloss textbox.
-			SetInitialFocus();
-#endif
+
+			if (Platform.IsMono)
+			{
+				// Mono doesn't seem to fire the Activated event, so call the method here.
+				// This fixes FWNX-783, setting the focus in the gloss textbox.
+				SetInitialFocus();
+			}
 		}
 
 		bool m_fInitialized;
@@ -544,22 +538,22 @@ namespace SIL.FieldWorks.LexText.Controls
 			SetInitialFocus();
 		}
 
-#if __MonoCS__
-		/// <summary>
-		/// </summary>
+		/// <summary/>
 		protected override void WndProc(ref Message m)
 		{
-			// FWNX-520: fix some focus issues.
-			// By the time this message is processed, the popup form (PopupTree) may need to be the
-			// active window, so ignore WM_ACTIVATE.
-			if (m.Msg == 0x6 /*WM_ACTIVATE*/ && System.Windows.Forms.Form.ActiveForm == this)
+			if (Platform.IsMono)
 			{
-				return;
+				// FWNX-520: fix some focus issues.
+				// By the time this message is processed, the popup form (PopupTree) may need to be the
+				// active window, so ignore WM_ACTIVATE.
+				if (m.Msg == 0x6 /*WM_ACTIVATE*/ && System.Windows.Forms.Form.ActiveForm == this)
+				{
+					return;
+				}
 			}
 
 			base.WndProc(ref m);
 		}
-#endif
 
 		/// <summary>
 		/// Initialize the dialog.
@@ -567,24 +561,22 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <param name="cache">The FDO cache to use.</param>
 		/// <param name="morphType">The morpheme type</param>
 		/// <remarks>All other variations of SetDlgInfo should eventually call this one.</remarks>
-		protected void SetDlgInfo(FdoCache cache, IMoMorphType morphType)
+		protected void SetDlgInfo(LcmCache cache, IMoMorphType morphType)
 		{
 			SetDlgInfo(cache, morphType, 0, MorphTypeFilterType.Any);
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "searchEngine is disposed by the mediator.")]
-		protected void SetDlgInfo(FdoCache cache, IMoMorphType morphType, int wsVern, MorphTypeFilterType filter)
+		protected void SetDlgInfo(LcmCache cache, IMoMorphType morphType, int wsVern, MorphTypeFilterType filter)
 		{
 			try
 			{
-				IVwStylesheet stylesheet = FontHeightAdjuster.StyleSheetFromMediator(m_mediator);
-				var xnWindow = (XmlNode) m_mediator.PropertyTable.GetValue("WindowConfiguration");
+				IVwStylesheet stylesheet = FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable);
+				var xnWindow = m_propertyTable.GetValue<XmlNode>("WindowConfiguration");
 				XmlNode configNode = xnWindow.SelectSingleNode("controls/parameters/guicontrol[@id=\"matchingEntries\"]/parameters");
 
-				SearchEngine searchEngine = SearchEngine.Get(m_mediator, "InsertEntrySearchEngine", () => new InsertEntrySearchEngine(cache));
+				SearchEngine searchEngine = SearchEngine.Get(m_mediator, m_propertyTable, "InsertEntrySearchEngine", () => new InsertEntrySearchEngine(cache));
 
-				m_matchingObjectsBrowser.Initialize(cache, stylesheet, m_mediator, configNode,
+				m_matchingObjectsBrowser.Initialize(cache, stylesheet, m_mediator, m_propertyTable, configNode,
 					searchEngine);
 
 				m_cache = cache;
@@ -601,8 +593,8 @@ namespace SIL.FieldWorks.LexText.Controls
 
 				// Set writing system factory and code for the two edit boxes.
 				IWritingSystemContainer wsContainer = cache.ServiceLocator.WritingSystems;
-				IWritingSystem defAnalWs = wsContainer.DefaultAnalysisWritingSystem;
-				IWritingSystem defVernWs = wsContainer.DefaultVernacularWritingSystem;
+				CoreWritingSystemDefinition defAnalWs = wsContainer.DefaultAnalysisWritingSystem;
+				CoreWritingSystemDefinition defVernWs = wsContainer.DefaultVernacularWritingSystem;
 				m_tbLexicalForm.WritingSystemFactory = cache.WritingSystemFactory;
 				m_tbGloss.WritingSystemFactory = cache.WritingSystemFactory;
 
@@ -612,12 +604,11 @@ namespace SIL.FieldWorks.LexText.Controls
 				if (wsVern <= 0)
 					wsVern = defVernWs.Handle;
 				// initialize to empty TsStrings
-				ITsStrFactory tsf = cache.TsStrFactory;
 				//we need to use the wsVern so that tbLexicalForm is sized correctly for the font size.
 				//In Interlinear text the baseline can be in any of the vernacular writing systems, not just
 				//the defaultVernacularWritingSystem.
-				ITsString tssForm = tsf.MakeString("", wsVern);
-				ITsString tssGloss = tsf.MakeString("", defAnalWs.Handle);
+				ITsString tssForm = TsStringUtils.EmptyString(wsVern);
+				ITsString tssGloss = TsStringUtils.EmptyString(defAnalWs.Handle);
 
 				using (m_updateTextMonitor.Enter())
 				{
@@ -658,7 +649,7 @@ namespace SIL.FieldWorks.LexText.Controls
 					AdjustTextBoxAndDialogHeight(m_tbGloss);
 				}
 
-				m_msaGroupBox.Initialize(cache, m_mediator, m_lnkAssistant, this);
+				m_msaGroupBox.Initialize(cache, m_mediator, m_propertyTable, m_lnkAssistant, this);
 				// See if we need to adjust the height of the MSA group box.
 				int oldHeight = m_msaGroupBox.Height;
 				int newHeight = Math.Max(m_msaGroupBox.PreferredHeight, oldHeight);
@@ -787,10 +778,12 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <param name="cache">The FDO cache to use.</param>
 		/// <param name="tssForm">The initial form to use.</param>
 		/// <param name="mediator">The XCore.Mediator to use.</param>
-		public void SetDlgInfo(FdoCache cache, ITsString tssForm, Mediator mediator)
+		/// <param name="propertyTable"></param>
+		public void SetDlgInfo(LcmCache cache, ITsString tssForm, Mediator mediator, XCore.PropertyTable propertyTable)
 		{
 			CheckDisposed();
 
+			m_propertyTable = propertyTable; // Must do be fore setting the Mediator prop.
 			Mediator = mediator;
 			var morphComponents = MorphServices.BuildMorphComponents(cache, tssForm, MoMorphTypeTags.kguidMorphStem);
 			var morphType = morphComponents.MorphType;
@@ -803,14 +796,14 @@ namespace SIL.FieldWorks.LexText.Controls
 			{
 				TssForm = tssForm;
 
-				TssGloss = TsStringUtils.MakeTss("", wsContainer.DefaultAnalysisWritingSystem.Handle);
+				TssGloss = TsStringUtils.MakeString("", wsContainer.DefaultAnalysisWritingSystem.Handle);
 				// The lexical form is already set, so shift focus to the gloss when
 				// the form is activated.
 				m_fLexicalFormInitialFocus = false;
 			}
 			else
 			{
-				TssForm = TsStringUtils.MakeTss("", wsContainer.DefaultVernacularWritingSystem.Handle);
+				TssForm = TsStringUtils.MakeString("", wsContainer.DefaultVernacularWritingSystem.Handle);
 				TssGloss = tssForm;
 				// The gloss is already set, so shift the focus to the lexical form
 				// when the form is activated.
@@ -826,12 +819,14 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// </summary>
 		/// <param name="cache">The FDO cache to use.</param>
 		/// <param name="mediator">The XCore.Mediator to use.</param>
+		/// <param name="propertyTable"></param>
 		/// <param name="persistProvider">The persistence provider to use.</param>
-		public void SetDlgInfo(FdoCache cache, Mediator mediator, IPersistenceProvider persistProvider)
+		public void SetDlgInfo(LcmCache cache, Mediator mediator, XCore.PropertyTable propertyTable, IPersistenceProvider persistProvider)
 		{
 			CheckDisposed();
 
 			Debug.Assert(persistProvider != null);
+			m_propertyTable = propertyTable;
 			Mediator = mediator;
 
 			SetDlgInfo(cache);
@@ -845,12 +840,14 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <param name="msaType">The type of msa</param>
 		/// <param name="slot">The default slot of the inflectional affix msa to</param>
 		/// <param name="mediator">The mediator.</param>
+		/// <param name="propertyTable"></param>
 		/// <param name="filter">The filter.</param>
-		public void SetDlgInfo(FdoCache cache, IMoMorphType morphType,
-			MsaType msaType, IMoInflAffixSlot slot, Mediator mediator, MorphTypeFilterType filter)
+		public void SetDlgInfo(LcmCache cache, IMoMorphType morphType,
+			MsaType msaType, IMoInflAffixSlot slot, Mediator mediator, XCore.PropertyTable propertyTable, MorphTypeFilterType filter)
 		{
 			CheckDisposed();
 
+			m_propertyTable = propertyTable;
 			Mediator = mediator;
 
 			SetDlgInfo(cache, morphType, 0, filter);
@@ -872,7 +869,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// Initialize an InsertEntryDlg from something like an "Insert Major Entry menu".
 		/// </summary>
 		/// <param name="cache">The FDO cache to use.</param>
-		protected void SetDlgInfo(FdoCache cache)
+		protected void SetDlgInfo(LcmCache cache)
 		{
 			SetDlgInfo(cache, cache.ServiceLocator.GetInstance<IMoMorphTypeRepository>().GetObject(MoMorphTypeTags.kguidMorphStem));
 		}
@@ -929,8 +926,7 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		private string GetTitle()
 		{
-			return m_mediator == null ? LexText.Controls.LexTextControls.ksNewEntry
-				: m_mediator.StringTbl.GetStringWithXPath("CreateEntry", "/group[@id=\"DialogTitles\"]/");
+			return StringTable.Table.GetStringWithXPath("CreateEntry", "/group[@id=\"DialogTitles\"]/");
 		}
 
 		protected virtual void UpdateMatches()
@@ -942,7 +938,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			ITsString tssForm = TssForm;
 			int vernWs = TsStringUtils.GetWsAtOffset(tssForm, 0);
 			string form = MorphServices.EnsureNoMarkers(tssForm.Text, m_cache);
-			tssForm = m_cache.TsStrFactory.MakeString(form, vernWs);
+			tssForm = TsStringUtils.MakeString(form, vernWs);
 
 			ITsString tssGloss = SelectedOrBestGlossTss;
 
@@ -1016,9 +1012,10 @@ namespace SIL.FieldWorks.LexText.Controls
 			CheckDisposed();
 
 			s_helpTopic = helpTopic;
-			if (m_mediator.HelpTopicProvider != null)
+			var helpTopicProvider = m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider");
+			if (helpTopicProvider != null)
 			{
-				m_helpProvider.SetHelpKeyword(this, m_mediator.HelpTopicProvider.GetHelpString(s_helpTopic));
+				m_helpProvider.SetHelpKeyword(this, helpTopicProvider.GetHelpString(s_helpTopic));
 				m_btnHelp.Enabled = true;
 			}
 		}
@@ -1030,8 +1027,6 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// Required method for Designer support - do not modify
 		/// the contents of this method with the code editor.
 		/// </summary>
-		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
-			Justification = "TODO-Linux: LinkLabel.TabStop is missing from Mono")]
 		private void InitializeComponent()
 		{
 			this.components = new System.ComponentModel.Container();
@@ -1180,7 +1175,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			// m_msaGroupBox
 			//
 			resources.ApplyResources(this.m_msaGroupBox, "m_msaGroupBox");
-			this.m_msaGroupBox.MSAType = SIL.FieldWorks.FDO.MsaType.kNotSet;
+			this.m_msaGroupBox.MSAType = MsaType.kNotSet;
 			this.m_msaGroupBox.Name = "m_msaGroupBox";
 			this.m_msaGroupBox.Slot = null;
 			//
@@ -1439,7 +1434,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			entryComponents.MorphType = m_morphType;
 			CollectValuesFromMultiStringControl(msLexicalForm, entryComponents.LexemeFormAlternatives, BestTssForm);
 			CollectValuesFromMultiStringControl(msGloss, entryComponents.GlossAlternatives,
-				TsStringUtils.MakeTss(Gloss, m_cache.DefaultAnalWs));
+				TsStringUtils.MakeString(Gloss, m_cache.DefaultAnalWs));
 			entryComponents.MSA = m_msaGroupBox.SandboxMSA;
 			if (m_MGAGlossListBoxItems != null)
 			{
@@ -1452,7 +1447,6 @@ namespace SIL.FieldWorks.LexText.Controls
 		private void CollectValuesFromMultiStringControl(LabeledMultiStringControl lmsControl,
 			IList<ITsString> alternativesCollector, ITsString defaultIfNoMultiString)
 		{
-			var bldr = m_cache.TsStrFactory;
 			if (lmsControl == null)
 			{
 				alternativesCollector.Add(defaultIfNoMultiString);
@@ -1467,7 +1461,7 @@ namespace SIL.FieldWorks.LexText.Controls
 					if (tss != null && tss.Text != null)
 					{
 						// In the case of copied text, sometimes the string had the wrong ws attached to it. (LT-11950)
-						alternativesCollector.Add(bldr.MakeString(tss.Text, ws));
+						alternativesCollector.Add(TsStringUtils.MakeString(tss.Text, ws));
 					}
 				}
 			}
@@ -1693,8 +1687,6 @@ namespace SIL.FieldWorks.LexText.Controls
 			UpdateMatches();
 		}
 
-		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
-			Justification = "TODO-Linux: LinkLabel.TabStop is missing from Mono")]
 		private void CheckIfGoto()
 		{
 			bool fEnable = m_matchingObjectsBrowser.SelectedObject != null;
@@ -1715,7 +1707,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				// Get a wait cursor by setting the LinkLabel to use a wait cursor. See FWNX-700.
 				// Need to use a wait cursor while creating dialog, but not when showing it.
 				using (new WaitCursor(m_lnkAssistant))
-					dlg = new MGAHtmlHelpDialog(m_cache, m_mediator, m_tbLexicalForm.Text);
+					dlg = new MGAHtmlHelpDialog(m_cache, m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), m_tbLexicalForm.Text);
 
 				using (dlg)
 				{
@@ -1736,7 +1728,7 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		private void btnHelp_Click(object sender, EventArgs e)
 		{
-			ShowHelp.ShowHelpTopic(m_mediator.HelpTopicProvider, "FLExHelpFile", s_helpTopic);
+			ShowHelp.ShowHelpTopic(m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), "FLExHelpFile", s_helpTopic);
 		}
 
 		#endregion Event Handlers

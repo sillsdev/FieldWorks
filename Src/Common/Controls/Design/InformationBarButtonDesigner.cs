@@ -1,4 +1,4 @@
-// Copyright (c) 2002-2013 SIL International
+// Copyright (c) 2002-2016 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 //
@@ -8,7 +8,6 @@
 //
 // --------------------------------------------------------------------------------------------
 
-using System;
 using System.Collections;
 using System.ComponentModel;
 using System.Windows.Forms.Design;
@@ -22,13 +21,6 @@ namespace SIL.FieldWorks.Common.Controls.Design
 	public class InformationBarButtonDesigner : ControlDesigner
 	{
 		/// <summary>
-		/// Initializes a new instance of the InformationBarButtonDesigner class.
-		/// </summary>
-		public InformationBarButtonDesigner()
-		{
-		}
-
-		/// <summary>
 		/// Adjusts the set of properties the component exposes through a TypeDescriptor.
 		/// </summary>
 		/// <param name="properties">An IDictionary containing the properties for the class of
@@ -37,9 +29,16 @@ namespace SIL.FieldWorks.Common.Controls.Design
 		{
 			base.PreFilterProperties(properties);
 
-			PropertyDescriptor property = (PropertyDescriptor)properties["Size"];
+			var property = (PropertyDescriptor)properties["Size"];
 			properties["Size"] = TypeDescriptor.CreateProperty(property.ComponentType,
 				property, BrowsableAttribute.No, DesignerSerializationVisibilityAttribute.Hidden);
+		}
+
+		/// <summary/>
+		protected override void Dispose(bool disposing)
+		{
+			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + ". ******");
+			base.Dispose(disposing);
 		}
 	}
 }

@@ -25,7 +25,7 @@ namespace SIL.FieldWorks.PaObjects
 		/// ------------------------------------------------------------------------------------
 		public bool ShouldWait(string name, string server)
 		{
-			var matchStatus = FieldWorks.GetProjectMatchStatus(new ProjectId(name, server));
+			var matchStatus = FieldWorks.GetProjectMatchStatus(new ProjectId(name));
 			return (matchStatus == ProjectMatch.DontKnowYet ||
 				matchStatus == ProjectMatch.WaitingForUserOrOtherFw ||
 				matchStatus == ProjectMatch.SingleProcessMode);
@@ -34,7 +34,7 @@ namespace SIL.FieldWorks.PaObjects
 		/// ------------------------------------------------------------------------------------
 		public bool IsMyProject(string name, string server)
 		{
-			var matchStatus = FieldWorks.GetProjectMatchStatus(new ProjectId(name, server));
+			var matchStatus = FieldWorks.GetProjectMatchStatus(new ProjectId(name));
 			return (matchStatus == ProjectMatch.ItsMyProject);
 		}
 

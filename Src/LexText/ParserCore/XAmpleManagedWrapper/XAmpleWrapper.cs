@@ -9,6 +9,7 @@ namespace XAmpleManagedWrapper
 	public class XAmpleWrapper : IXAmpleWrapper, IDisposable
 	{
 		protected XAmpleDLLWrapper m_xample;
+		private static object m_lockObject = new object();
 
 		#region Disposable stuff
 		#if DEBUG
@@ -56,7 +57,10 @@ namespace XAmpleManagedWrapper
 
 		public string ParseWord (string wordform)
 		{
-			return m_xample.ParseString (wordform);
+			lock (m_lockObject)
+			{
+				return m_xample.ParseString(wordform);
+			}
 		}
 
 
@@ -68,7 +72,10 @@ namespace XAmpleManagedWrapper
 
 		public void LoadFiles (string fixedFilesDir, string dynamicFilesDir, string databaseName)
 		{
-			m_xample.LoadFiles (fixedFilesDir, dynamicFilesDir, databaseName);
+			lock (m_lockObject)
+			{
+				m_xample.LoadFiles(fixedFilesDir, dynamicFilesDir, databaseName);
+			}
 		}
 
 

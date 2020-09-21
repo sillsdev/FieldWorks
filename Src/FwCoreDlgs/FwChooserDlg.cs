@@ -1,23 +1,16 @@
-// Copyright (c) 2006-2013 SIL International
+// Copyright (c) 2006-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: FwChooserDlg.cs
-// Responsibility: TE Team
 
 using System;
 using Microsoft.Win32;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using SIL.FieldWorks.Common.Controls;
-using SIL.Utils;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Resources;
-using SIL.FieldWorks.Common.COMInterfaces;
-using XCore;
 
 namespace SIL.FieldWorks.FwCoreDlgs
 {
@@ -26,13 +19,13 @@ namespace SIL.FieldWorks.FwCoreDlgs
 	/// Summary description for FwChooserDlg.
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
-	public class FwChooserDlg : Form, IFWDisposable, ISettings, ICmPossibilitySupplier
+	public class FwChooserDlg : Form, ISettings, ICmPossibilitySupplier
 	{
 		#region Data members
 		/// <summary>The possibility list used to populate the tree</summary>
 		protected ICmPossibilityList m_list;
 		/// <summary></summary>
-		protected FdoCache m_cache;
+		protected LcmCache m_cache;
 		/// <summary></summary>
 		protected IProjectSpecificSettingsKeyProvider m_projSettingsKey;
 
@@ -271,7 +264,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// this list get deleted and the new ones added.</param>
 		/// <returns>True if the sequence was changed, false otherwise</returns>
 		/// ------------------------------------------------------------------------------------
-		public bool GetPossibilities(IFdoReferenceSequence<ICmPossibility> listToUpdate)
+		public bool GetPossibilities(ILcmReferenceSequence<ICmPossibility> listToUpdate)
 		{
 			CheckDisposed();
 
@@ -346,8 +339,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// Get the registry key for this dialog.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "We're returning an object")]
 		public virtual RegistryKey SettingsKey
 		{
 			get

@@ -1,12 +1,11 @@
 ﻿using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Xml;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.TestUtilities;
 using XCore;
-using Palaso.TestUtilities;
 
 
 namespace XMLViewsTests
@@ -30,7 +29,6 @@ namespace XMLViewsTests
 			m_inventory.Merger = new LayoutMerger();
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule", Justification = "MSDN says XmlNodeList is not disposable even though Gendarme claims it is.")]
 		[Test]
 		public void TestMergeCustomCopy()
 		{

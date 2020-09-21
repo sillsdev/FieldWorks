@@ -1,21 +1,17 @@
-﻿// Copyright (c) 2015 SIL International
+﻿// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Xml.Linq;
 using System.Xml.XPath;
 using NUnit.Framework;
-using SIL.CoreImpl;
-using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.LexText.Controls;
-using SIL.FieldWorks.Test.TestUtils;
 using Sfm2Xml;
+using SIL.LCModel.Core.WritingSystems;
 
 namespace LexTextControlsTests
 {
@@ -23,14 +19,8 @@ namespace LexTextControlsTests
 	/// These are largely adapted from the tests in SIL.FieldWorks.IText.InterlinSfmImportTests
 	/// </summary>
 	[TestFixture]
-	public class WordsSfmImportTests : BaseTest
+	public class WordsSfmImportTests
 	{
-		[SuppressMessage("Gendarme.Rules.Portability", "NewLineLiteralRule",
-			Justification="New lines in input strings are different depending on platform")]
-		public WordsSfmImportTests()
-		{
-		}
-
 		/// <summary>
 		/// This tests out most aspects of the conversion.
 		/// </summary>
@@ -171,10 +161,10 @@ namespace LexTextControlsTests
 		/// NOTE: Copied from SIL.FieldWorks.IText.InterlinSfmImportTests
 		/// </summary>
 		/// <returns></returns>
-		private PalasoWritingSystemManager GetWsf()
+		private WritingSystemManager GetWsf()
 		{
-			var wsf = new PalasoWritingSystemManager();
-			IWritingSystem wsObj;
+			var wsf = new WritingSystemManager();
+			CoreWritingSystemDefinition wsObj;
 			wsf.GetOrSet("qaa-x-kal", out wsObj);
 			EnsureQuoteAndHyphenWordForming(wsObj);
 			return wsf;
@@ -183,27 +173,23 @@ namespace LexTextControlsTests
 		/// <summary>
 		/// NOTE: Copied from SIL.FieldWorks.IText.InterlinSfmImportTests
 		/// </summary>
-		/// <param name="wsObj"></param>
-		private void EnsureQuoteAndHyphenWordForming(IWritingSystem wsObj)
+		private void EnsureQuoteAndHyphenWordForming(CoreWritingSystemDefinition wsObj)
 		{
-			var validChars = ValidCharacters.Load(wsObj.ValidChars,
-				wsObj.DisplayLabel, null, null, FwDirectoryFinder.LegacyWordformingCharOverridesFile);
+			ValidCharacters validChars = ValidCharacters.Load(wsObj);
 			var fChangedSomething = false;
 			if (!validChars.IsWordForming('-'))
 			{
-				validChars.AddCharacter("-");
-				validChars.MoveBetweenWordFormingAndOther(new List<string>(new[] { "-" }), true);
+				validChars.AddCharacter("-", ValidCharacterType.WordForming);
 				fChangedSomething = true;
 			}
 			if (!validChars.IsWordForming('\''))
 			{
-				validChars.AddCharacter("'");
-				validChars.MoveBetweenWordFormingAndOther(new List<string>(new[] { "'" }), true);
+				validChars.AddCharacter("'", ValidCharacterType.WordForming);
 				fChangedSomething = true;
 			}
 			if (!fChangedSomething)
 				return;
-			wsObj.ValidChars = validChars.XmlString;
+			validChars.SaveTo(wsObj);
 		}
 
 		/// <summary>

@@ -1,18 +1,21 @@
 # Generated or Downloaded (as part of the build process)
 GeneratedAssemblyInfo.cs
 Collection.cpp
+.vs/
 Build/FieldWorks.targets
 Build/GlobalInclude.properties
+Build/LibraryDevelopment.properties
 Build/NuGet.exe
+Build/nunit.framework.dll
+Build/nunit.framework.xml
 Build/packages.config
-Src/Common/COMInterfaces/FwKernel.cs
-Src/Common/COMInterfaces/Views.cs
-Src/Common/CoreImpl/CellarPropertyType.cs
+Build/*.dll
+Build/*.pdb
+BuildDir/
+Src/Common/ViewsInterfaces/Views.cs
 DistFiles/Data/
-DistFiles/Icu40/data/
-DistFiles/Icu40/icudt40l/
-DistFiles/Icu50/
 DistFiles/Languages/
+DistFiles/Installers/
 DistFiles/Helps/
 DistFiles/Language Explorer/Movies/
 DistFiles/ReleaseData/
@@ -21,15 +24,20 @@ Downloads/
 Installer/
 Localizations/
 packages/
+PatchableInstaller/
 Bin/_setLatestBuildConfig.bat
 Bin/_setroot.bat
 Lib/debug/DebugProcs.lib
 Lib/debug/Generic.lib
 Lib/debug/unit++.lib
+Lib/debug/unit++.pdb
 Lib/release/DebugProcs.lib
 Lib/release/Generic.lib
 Lib/release/unit++.lib
 DistFiles/Parts/Generated.fwlayout
+Lib/src/Ethnologue/GeneratedEthnologue.cs
+Src/FwParatextLexiconPlugin/GeneratedParatextLexiconPluginRegistryHelper.cs
+Src/Common/FwUtils/GeneratedFwUtils.cs
 Src/CommonAssemblyInfo.cs
 Src/LangInst/InstallLanguageTests/timing.txt
 
@@ -54,8 +62,10 @@ _user.mak.lnx
 *.vshost.exe*
 *.sdf
 *.opensdf
+*.orig
 .project
-app.config
+*.VC.db
+*.VC.opendb
 
 .dotest/
 .depend
@@ -80,14 +90,13 @@ Output_i686/
 Output_x86_64/
 Lib/src/unit++/autom4te.cache/
 Lib/src/unit++/configure
-Lib/src/unit++/VS/Debug/
-Lib/src/unit++/VS/Release/
+Lib/src/unit++/VS/*/
 Lib/src/Enchant/fieldworks-enchant-1.6.1/
-Src/DbAccessFirebird/Test/temp.awk
-Src/DbAccessFirebird/testDbAccess
 Src/Kernel/libFwKernel
 Src/views/libViews
 Src/views/libVwGraphics
+Src/views/Test/x64/
+Src/views/x64
 Bin/src/CodeGen/CodeGen
 debian/
 DistFiles/FwResources.dll
@@ -95,21 +104,14 @@ DistFiles/TeResources.dll
 DistFiles/Parts/GeneratedLayouts.xml
 DistFiles/Parts/GeneratedParts.xml
 DistFiles/Projects/
-Src/FDO/Infrastructure/Impl/Generated*.cs
-Src/FDO/Generated*.cs
-Src/FDO/DomainImpl/FDOGenerated.cs
-Src/FDO/DomainImpl/Generated*.cs
-Src/FDO/IOC/Generated*.cs
-DistFiles/Db4objects.Db4o.dll
-DistFiles/FirebirdSql.Data.FirebirdClient.dll
-DistFiles/Editorial\ Checks/
+DistFiles/Editorial\ Checks/ScrChecks.dll*
+DistFiles/Editorial\ Checks/ScrChecks.pdb
 DistFiles/Language\ Explorer/Configuration/Available\ Plugins/
+DistFiles/Language\ Explorer/Configuration/strings-*.xml
 Src/AppCore/libAppCore
 Src/DebugProcs/libDebugProcs
 Src/Generic/libGeneric
 Src/Language/libLanguage
-Lib/src/HermitCrab.NET/HermitCrabExe/bin
-Lib/src/HermitCrab.NET/HermitCrab/bin
 xulrunner/*
 
 DistFiles/ReleaseData/
@@ -124,11 +126,21 @@ DistFiles/ReleaseData/
 
 Lib/debug/graphite2.lib
 Lib/release/graphite2.lib
+Lib/linux/libfieldworks-fdo.pc
 Lib/linux/Debug/libgraphite2.a
 Lib/linux/Release/libgraphite2.a
 
 Lib/icu*.lib
-DistFiles/Icu*.zip
+DistFiles/Icu*/data
 DistFiles/Icu*/icudt*l
 DistFiles/Icu*/*.*
+Bin/NUnit/
 .idea/
+DistFiles/Styles.dtd
+DistFiles/Templates/GOLDEtic.xml
+DistFiles/Templates/NewLangProj.fwdata
+DistFiles/Templates/POS.xml
+DistFiles/Templates/SemDom.xml
+
+Src/Kernel/FwKernelTlb.idl
+Src/Kernel/*.idh

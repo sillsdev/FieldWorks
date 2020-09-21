@@ -1,14 +1,12 @@
-//#define TESTMS
+// Copyright (c) 2003-2017 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;
-using System.Reflection;
-
-using SIL.Utils;
+using SIL.FieldWorks.Common.FwUtils;
 
 namespace XCore
 {
@@ -44,9 +42,7 @@ namespace XCore
 	///	OnPaint yourself, just don't make the changes to OnPaint. In some cases, we've observed
 	///	infinite loops from calling Invalidate and aborting OnPaint. This has not been fully tested.
 	/// </summary>
-	[SuppressMessage("Gendarme.Rules.Correctness", "DisposableFieldsShouldBeDisposedRule",
-		Justification = "variable is a reference; it is owned by parent")]
-	public sealed class MessageSequencer : IFWDisposable
+	public sealed class MessageSequencer : IDisposable
 	{
 #if TESTMS
 		private int m_obj;
@@ -76,7 +72,7 @@ namespace XCore
 		}
 
 		// Set uses a Dictionary for fast lookup.
-		static Set<int> msgs;
+		static HashSet<int> msgs;
 
 		/// <summary>Create the Set just once</summary>
 		private static void CreateSet()
@@ -85,7 +81,7 @@ namespace XCore
 			{
 				if (msgs != null)
 					return;
-				msgs = new Set<int>(s_seqMessages);
+				msgs = new HashSet<int>(s_seqMessages);
 			}
 		}
 

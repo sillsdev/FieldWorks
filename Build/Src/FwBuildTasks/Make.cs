@@ -1,3 +1,7 @@
+// Copyright (c) 2015 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
+
 using System;
 using System.IO;
 using System.Text;
@@ -29,6 +33,11 @@ namespace FwBuildTasks
 		/// </summary>
 		[Required]
 		public string BuildRoot { get; set; }
+
+		/// <summary>
+		/// The build architecture (x86 or x64)
+		/// </summary>
+		public string BuildArch { get; set; }
 
 		/// <summary>
 		/// Gets or sets the target inside the Makefile.
@@ -83,6 +92,7 @@ namespace FwBuildTasks
 		private void CheckToolPath()
 		{
 			string path = Environment.GetEnvironmentVariable("PATH");
+			string vcInstallDir = Environment.GetEnvironmentVariable("VCINSTALLDIR");
 			//Console.WriteLine("DEBUG Make Task: PATH='{0}'", path);
 			string makePath = ToolPath == null ? String.Empty : ToolPath.Trim();
 			if (!String.IsNullOrEmpty(makePath) && File.Exists(Path.Combine(makePath, ToolName)))
@@ -105,8 +115,8 @@ namespace FwBuildTasks
 					return;
 				}
 			}
-			// Blind guess since we can't figure it out.
-			ToolPath = "C:\\Program Files\\Microsoft Visual Studio 10.0\\VC\\bin";
+			// Fall Back to the install directory
+			ToolPath = Path.Combine(vcInstallDir, "bin");
 		}
 
 		protected override string GenerateFullPathToTool()
@@ -123,6 +133,7 @@ namespace FwBuildTasks
 				bldr.AppendSwitchIfNotNull("BUILD_CONFIG=", Configuration);
 				bldr.AppendSwitchIfNotNull("BUILD_TYPE=", BuildType);
 				bldr.AppendSwitchIfNotNull("BUILD_ROOT=", BuildRoot);
+				bldr.AppendSwitchIfNotNull("BUILD_ARCH=", BuildArch);
 				bldr.AppendSwitchIfNotNull("-C", Path.GetDirectoryName(Makefile));
 				if (String.IsNullOrEmpty(Target))
 					bldr.AppendSwitch("all");
@@ -135,6 +146,7 @@ namespace FwBuildTasks
 				bldr.AppendSwitchIfNotNull("BUILD_CONFIG=", Configuration);
 				bldr.AppendSwitchIfNotNull("BUILD_TYPE=", BuildType);
 				bldr.AppendSwitchIfNotNull("BUILD_ROOT=", BuildRoot);
+				bldr.AppendSwitchIfNotNull("BUILD_ARCH=", BuildArch);
 				bldr.AppendSwitchIfNotNull("/f ", Makefile);
 				if (!String.IsNullOrEmpty(Target))
 					bldr.AppendSwitch(Target);

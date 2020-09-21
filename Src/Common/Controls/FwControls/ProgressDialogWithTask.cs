@@ -1,20 +1,16 @@
-// Copyright (c) 2007-2013 SIL International
+// Copyright (c) 2007-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: ProgressDialogWithTask.cs
-// Responsibility: TE Team
 
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.Utils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Application.ApplicationServices;
+using SIL.LCModel.Utils;
+using SIL.LCModel;
+using SIL.LCModel.Application.ApplicationServices;
 using System.IO;
 
 namespace SIL.FieldWorks.Common.Controls
@@ -25,7 +21,7 @@ namespace SIL.FieldWorks.Common.Controls
 	/// in the background.
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
-	public class ProgressDialogWithTask : IThreadedProgress, IFWDisposable
+	public class ProgressDialogWithTask : IThreadedProgress, IDisposable
 	{
 		/// <summary>
 		/// Occurs when [canceling].
@@ -90,8 +86,6 @@ namespace SIL.FieldWorks.Common.Controls
 			m_worker.RunWorkerCompleted += m_worker_RunWorkerCompleted;
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="m_worker gets disposed in Dispose()")]
 		private void InitOnOwnerThread()
 		{
 			if (m_synchronizeInvoke != null && m_synchronizeInvoke.InvokeRequired)
@@ -692,7 +686,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="cache"> </param>
 		/// <param name="ws"></param>
 		/// <param name="parentWindow"> </param>
-		public static void ImportTranslatedListsForWs(Form parentWindow, FdoCache cache, string ws)
+		public static void ImportTranslatedListsForWs(Form parentWindow, LcmCache cache, string ws)
 		{
 			string path = XmlTranslatedLists.TranslatedListsPathForWs(ws, FwDirectoryFinder.TemplateDirectory);
 			if (!File.Exists(path))
@@ -710,7 +704,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <summary>
 		/// Method with required signature for ProgressDialogWithTask.RunTask, to invoke XmlTranslatedLists.ImportTranslatedListsForWs.
 		/// Should only be called by the other overload of ImportTranslatedListsForWs.
-		/// args must be a writing system identifier string and an FdoCache.
+		/// args must be a writing system identifier string and an LcmCache.
 		/// </summary>
 		/// <param name="dlg"></param>
 		/// <param name="args"></param>
@@ -718,7 +712,7 @@ namespace SIL.FieldWorks.Common.Controls
 		private static object ImportTranslatedListsForWs(IThreadedProgress dlg, object[] args)
 		{
 			var ws = (string)args[0];
-			var cache = (FdoCache) args[1];
+			var cache = (LcmCache) args[1];
 			XmlTranslatedLists.ImportTranslatedListsForWs(ws, cache, FwDirectoryFinder.TemplateDirectory, dlg);
 			return null;
 		}
@@ -787,8 +781,6 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "owner is a reference")]
 		private void m_progressDialog_FormClosing(object sender, FormClosingEventArgs e)
 		{
 			if (m_worker.IsBusy)

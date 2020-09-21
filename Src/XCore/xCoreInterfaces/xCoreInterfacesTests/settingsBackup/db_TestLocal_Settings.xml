@@ -54,4 +54,10 @@
 		<doPersist>true</doPersist>
 		<doDispose>false</doDispose>
 	</Property>
+    <Property>
+      <name>db$Testlocal$InitialArea</name>
+      <value xsi:type="xsd:string">grammar</value>
+      <doPersist>true</doPersist>
+      <doDispose>false</doDispose>
+    </Property>
 </ArrayOfProperty>

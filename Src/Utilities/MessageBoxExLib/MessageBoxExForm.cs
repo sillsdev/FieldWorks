@@ -2,11 +2,11 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
-using SIL.Utils;
+using SIL.FieldWorks.Common.FwUtils;
+using SIL.PlatformUtilities;
 
 namespace Utils.MessageBoxExLib
 {
@@ -14,7 +14,7 @@ namespace Utils.MessageBoxExLib
 	/// An advanced MessageBox that supports customizations like Font, Icon,
 	/// Buttons and Saved Responses
 	/// </summary>
-	internal class MessageBoxExForm : Form, IFWDisposable
+	internal class MessageBoxExForm : Form
 	{
 		#region Constants
 		private const int LEFT_PADDING = 12;
@@ -706,8 +706,6 @@ namespace Utils.MessageBoxExLib
 		/// <summary>
 		/// Layout all the controls
 		/// </summary>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="buttonCtrl is added to _buttonControlsTable and disposed in Dispose()")]
 		private void LayoutControls()
 		{
 			panelIcon.Location = new Point(LEFT_PADDING, TOP_PADDING);
@@ -945,17 +943,18 @@ namespace Utils.MessageBoxExLib
 			}
 		}
 
-#if !__MonoCS__
-		[DllImport("user32.dll", CharSet=CharSet.Auto)]
-		private static extern bool MessageBeep(uint type);
-#else
+		[DllImport("user32.dll", CharSet=CharSet.Auto, EntryPoint = "MessageBeep")]
+		private static extern bool MessageBeepWindows(uint type);
+
 		private static bool MessageBeep(uint type)
 		{
+			if (Platform.IsWindows)
+				return MessageBeepWindows(type);
+
 			Console.WriteLine("Warning using unimplemented method MessageBeep");
 			// TODO-Linux: make a beep somehow using managed code
 			return true;
 		}
-#endif
 		#endregion
 
 		private void MessageBoxExForm_MouseMove(object sender, System.Windows.Forms.MouseEventArgs e)

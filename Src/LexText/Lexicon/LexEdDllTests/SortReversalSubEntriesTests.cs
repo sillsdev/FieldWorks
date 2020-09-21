@@ -2,13 +2,9 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using NUnit.Framework;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.FDOTests;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel;
 using SIL.FieldWorks.XWorks.LexEd;
 
 namespace LexEdDllTests
@@ -54,7 +50,7 @@ namespace LexEdDllTests
 			IReversalIndex revIndex = m_revIndexRepo.FindOrCreateIndexForWs(wsObj.Handle);
 			//Add an entry to the Reveral index
 			revIndex.EntriesOC.Add(revIndexEntry);
-			revIndexEntry.ReversalForm.set_String(wsObj.Handle, Cache.TsStrFactory.MakeString(riForm, wsObj.Handle));
+			revIndexEntry.ReversalForm.set_String(wsObj.Handle, TsStringUtils.MakeString(riForm, wsObj.Handle));
 			return revIndexEntry;
 		}
 
@@ -63,7 +59,7 @@ namespace LexEdDllTests
 			var wsObj = Cache.LanguageProject.DefaultAnalysisWritingSystem;
 			var revIndexEntry = m_revIndexEntryFactory.Create();
 			indexEntry.SubentriesOS.Add(revIndexEntry);
-			revIndexEntry.ReversalForm.set_String(wsObj.Handle, Cache.TsStrFactory.MakeString(subEntryForm, wsObj.Handle));
+			revIndexEntry.ReversalForm.set_String(wsObj.Handle, TsStringUtils.MakeString(subEntryForm, wsObj.Handle));
 			return revIndexEntry;
 		}
 	}

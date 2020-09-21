@@ -8,7 +8,6 @@
 //
 // <remarks>
 // </remarks>
-
 using System;
 using System.Diagnostics;
 using System.Drawing;
@@ -16,13 +15,15 @@ using System.Drawing.Printing;
 using System.Linq;
 using System.Windows.Forms;
 using System.Xml;
-
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.FDO;
-using SIL.Utils;
-using SIL.FieldWorks.FDO.Application;
+using SIL.LCModel;
+using SIL.LCModel.Utils;
+using SIL.LCModel.Application;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.Utils;
+using XCore;
 
 namespace SIL.FieldWorks.Common.Controls
 {
@@ -130,8 +131,6 @@ namespace SIL.FieldWorks.Common.Controls
 		protected XmlVc m_xmlVc;
 		/// <summary></summary>
 		protected IFwMetaDataCache m_mdc;
-		/// <summary></summary>
-		protected StringTable m_stringTable;
 		bool m_fShowFailingItems; // display items that fail the condition specified in the view.
 		private IApp m_app;
 
@@ -191,7 +190,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// Initializes a new instance of the <see cref="XmlSeqView"/> class.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public XmlSeqView(FdoCache cache, int hvoRoot, int flid, XmlNode xnSpec, ISilDataAccessManaged sda, IApp app, ICmPossibility publication)
+		public XmlSeqView(LcmCache cache, int hvoRoot, int flid, XmlNode xnSpec, ISilDataAccessManaged sda, IApp app, ICmPossibility publication)
 			: base(null)
 		{
 			m_app = app;
@@ -256,7 +255,6 @@ namespace SIL.FieldWorks.Common.Controls
 			{
 			}
 			m_xmlVc = null;
-			m_stringTable = null;
 			m_mdc = null;
 			m_sXmlSpec = null;
 			m_docSpec = null;
@@ -311,41 +309,37 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			CheckDisposed();
 
-			base.MakeRoot();
-
-			if (m_fdoCache == null || DesignMode)
+			if (m_cache == null || DesignMode)
 				return;
 
-			IVwRootBox rootb = VwRootBoxClass.Create();
-			rootb.SetSite(this);
+			base.MakeRoot();
 
 			bool fEditable = XmlUtils.GetOptionalBooleanAttributeValue(m_xnSpec, "editable", true);
-			string toolName = m_mediator.PropertyTable.GetStringProperty("currentContentControl", null);
-			m_fShowFailingItems = m_mediator.PropertyTable.GetBoolProperty("ShowFailingItems-" + toolName, false);
-			//m_xmlVc = new XmlVc(m_xnSpec, StringTbl); // possibly reinstate for old approach?
+			string toolName = m_propertyTable.GetStringProperty("currentContentControl", null);
+			m_fShowFailingItems = m_propertyTable.GetBoolProperty("ShowFailingItems-" + toolName, false);
+			//m_xmlVc = new XmlVc(m_xnSpec, Table); // possibly reinstate for old approach?
 			// Note: we want to keep this logic similar to RecordDocView.GetLayoutName(), except that here
 			// we do NOT want to use the layoutSuffix, though it may be specified so that it can be
 			// used when the configure dialog handles a shared view.
 			string sLayout = null;
 			string sProp = XmlUtils.GetOptionalAttributeValue(m_xnSpec, "layoutProperty", null);
 			if (!String.IsNullOrEmpty(sProp))
-				sLayout = m_mediator.PropertyTable.GetStringProperty(sProp, null);
+				sLayout = m_propertyTable.GetStringProperty(sProp, null);
 			if (String.IsNullOrEmpty(sLayout))
-				sLayout = XmlUtils.GetManditoryAttributeValue(m_xnSpec, "layout");
+				sLayout = XmlUtils.GetMandatoryAttributeValue(m_xnSpec, "layout");
 			ISilDataAccess sda = GetSda();
-			m_xmlVc = new XmlVc(StringTbl, sLayout, fEditable, this, m_app,
+			m_xmlVc = new XmlVc(sLayout, fEditable, this, m_app,
 				m_fShowFailingItems ? null : ItemDisplayCondition, sda) {IdentifySource = true};
 			ReadOnlyView = !fEditable;
 			if (!fEditable)
-				rootb.MaxParasToScan = 0;
-			m_xmlVc.Cache = m_fdoCache;
+				m_rootb.MaxParasToScan = 0;
+			m_xmlVc.Cache = m_cache;
 			m_xmlVc.MainSeqFlid = m_mainFlid;
 
-			rootb.DataAccess = sda;
+			m_rootb.DataAccess = sda;
 			m_xmlVc.DataAccess = sda;
 
-			rootb.SetRootObject(m_hvoRoot, m_xmlVc, RootFrag, m_styleSheet);
-			m_rootb = rootb;
+			m_rootb.SetRootObject(m_hvoRoot, m_xmlVc, RootFrag, m_styleSheet);
 		}
 
 		private ISilDataAccess GetSda()
@@ -384,10 +378,10 @@ namespace SIL.FieldWorks.Common.Controls
 			CheckDisposed();
 
 			base.OnPropertyChanged(name);
-			string toolName = m_mediator.PropertyTable.GetStringProperty("currentContentControl", null);
+			string toolName = m_propertyTable.GetStringProperty("currentContentControl", null);
 			if(name == "ShowFailingItems-" + toolName)
 			{
-				bool fShowFailingItems = m_mediator.PropertyTable.GetBoolProperty(name, false);
+				bool fShowFailingItems = m_propertyTable.GetBoolProperty(name, false);
 				if (fShowFailingItems != m_fShowFailingItems)
 				{
 					m_fShowFailingItems = fShowFailingItems;
@@ -452,25 +446,6 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 		}
 		#endregion
-
-		/// <summary>
-		/// a look up table for getting the correct version of strings that the user will see.
-		/// </summary>
-		public StringTable StringTbl
-		{
-			get
-			{
-				CheckDisposed();
-
-				return m_stringTable;
-			}
-			set
-			{
-				CheckDisposed();
-
-				m_stringTable = value;
-			}
-		}
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -586,8 +561,8 @@ namespace SIL.FieldWorks.Common.Controls
 
 	class XmlSeqSelectionRestorer: SelectionRestorer
 	{
-		private FdoCache Cache { get; set; }
-		public XmlSeqSelectionRestorer(SimpleRootSite rootSite, FdoCache cache) : base(rootSite)
+		private LcmCache Cache { get; set; }
+		public XmlSeqSelectionRestorer(SimpleRootSite rootSite, LcmCache cache) : base(rootSite)
 		{
 			Cache = cache;
 		}
@@ -602,6 +577,7 @@ namespace SIL.FieldWorks.Common.Controls
 		protected override void Dispose(bool fDisposing)
 		{
 			Debug.WriteLineIf(!fDisposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
+			base.Dispose(fDisposing);
 			if (!fDisposing || IsDisposed || m_savedSelection == null || m_rootSite.RootBox.Height <= 0)
 				return;
 

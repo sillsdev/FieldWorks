@@ -1,41 +1,38 @@
-﻿// Copyright (c) 2015 SIL International
+// Copyright (c) 2015 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
-using SIL.CoreImpl;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Application;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.LCModel;
+using SIL.LCModel.Application;
+using SIL.LCModel.DomainServices;
 using SIL.Collections;
+using SIL.LCModel.Core.WritingSystems;
 using SIL.Machine.Annotations;
 using SIL.Machine.FeatureModel;
 using SIL.Machine.Matching;
 
 namespace SIL.FieldWorks.IText
 {
-	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
-		Justification="m_cache is a reference")]
 	public class ComplexConcPatternModel
 	{
 		private readonly ComplexConcPatternNode m_root;
 		private readonly ComplexConcPatternSda m_sda;
 		private readonly SpanFactory<ShapeNode> m_spanFactory;
 		private Matcher<ComplexConcParagraphData, ShapeNode> m_matcher;
-		private readonly FdoCache m_cache;
+		private readonly LcmCache m_cache;
 		private FeatureSystem m_featSys;
 
-		public ComplexConcPatternModel(FdoCache cache)
+		public ComplexConcPatternModel(LcmCache cache)
 			: this(cache, new ComplexConcGroupNode())
 		{
 		}
 
-		public ComplexConcPatternModel(FdoCache cache, ComplexConcPatternNode root)
+		public ComplexConcPatternModel(LcmCache cache, ComplexConcPatternNode root)
 		{
 			m_cache = cache;
 			m_root = root;
@@ -58,6 +55,8 @@ namespace SIL.FieldWorks.IText
 			get { return m_root.IsLeaf || (m_root.Children.Count == 1 && m_root.Children[0] is ComplexConcWordBdryNode); }
 		}
 
+		public bool CouldNotParseAllParagraphs { get; private set; }
+
 		public ComplexConcPatternNode GetNode(int hvo)
 		{
 			return m_sda.Nodes[hvo];
@@ -77,13 +76,13 @@ namespace SIL.FieldWorks.IText
 						new FeatureSymbol("segBdry", "Segment"),
 						new FeatureSymbol("wordBdry", "Word"))
 				};
-			foreach (IWritingSystem ws in m_cache.ServiceLocator.WritingSystems.CurrentVernacularWritingSystems)
+			foreach (CoreWritingSystemDefinition ws in m_cache.ServiceLocator.WritingSystems.CurrentVernacularWritingSystems)
 			{
 				m_featSys.Add(new StringFeature(string.Format("entry-{0}", ws.Handle)) {Description = string.Format("Entry-{0}", ws.Abbreviation)});
 				m_featSys.Add(new StringFeature(string.Format("form-{0}", ws.Handle)) {Description = string.Format("Form-{0}", ws.Abbreviation)});
 			}
 
-			foreach (IWritingSystem ws in m_cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems)
+			foreach (CoreWritingSystemDefinition ws in m_cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems)
 				m_featSys.Add(new StringFeature(string.Format("gloss-{0}", ws.Handle)) {Description = string.Format("Gloss-{0}", ws.Abbreviation)});
 
 			m_featSys.Add(new SymbolicFeature("cat", m_cache.ServiceLocator.GetInstance<IPartOfSpeechRepository>().AllInstances()
@@ -126,57 +125,74 @@ namespace SIL.FieldWorks.IText
 
 		public IEnumerable<IParaFragment> Search(IStText text)
 		{
+			CouldNotParseAllParagraphs = false;
 			if (IsPatternEmpty)
 				return Enumerable.Empty<IParaFragment>();
 
 			var matches = new List<IParaFragment>();
 			foreach (IStTxtPara para in text.ParagraphsOS.OfType<IStTxtPara>())
 			{
-				IParaFragment lastFragment = null;
-				var data = new ComplexConcParagraphData(m_spanFactory, m_featSys, para);
-				Match<ComplexConcParagraphData, ShapeNode> match = m_matcher.Match(data);
-				while (match.Success)
+				try
 				{
-					if (match.Span.Start == match.Span.End
-						&& ((FeatureSymbol) match.Span.Start.Annotation.FeatureStruct.GetValue<SymbolicFeatureValue>("type")).ID == "bdry")
+					IParaFragment lastFragment = null;
+					var data = new ComplexConcParagraphData(m_spanFactory, m_featSys, para);
+					Match<ComplexConcParagraphData, ShapeNode> match = m_matcher.Match(data);
+					while (match.Success)
 					{
-						match = match.NextMatch();
-						continue;
-					}
+						if (match.Span.Start == match.Span.End
+							&& ((FeatureSymbol)match.Span.Start.Annotation.FeatureStruct
+								.GetValue<SymbolicFeatureValue>("type")).ID == "bdry")
+						{
+							match = match.NextMatch();
+							continue;
+						}
 
-					ShapeNode startNode = match.Span.Start;
-					if (((FeatureSymbol) startNode.Annotation.FeatureStruct.GetValue<SymbolicFeatureValue>("type")).ID == "bdry")
-						startNode = startNode.Next;
+						ShapeNode startNode = match.Span.Start;
+						if (((FeatureSymbol)startNode.Annotation.FeatureStruct
+							.GetValue<SymbolicFeatureValue>("type")).ID == "bdry")
+							startNode = startNode.Next;
 
-					Annotation<ShapeNode> startAnn = startNode.Annotation;
-					if (((FeatureSymbol) startAnn.FeatureStruct.GetValue<SymbolicFeatureValue>("type")).ID == "morph")
-						startAnn = startAnn.Parent;
+						Annotation<ShapeNode> startAnn = startNode.Annotation;
+						if (((FeatureSymbol)startAnn.FeatureStruct.GetValue<SymbolicFeatureValue>(
+							"type")).ID == "morph")
+							startAnn = startAnn.Parent;
 
-					var startAnalysis = (Tuple<IAnalysis, int, int>) startAnn.Data;
+						var startAnalysis = (Tuple<IAnalysis, int, int>)startAnn.Data;
 
-					ShapeNode endNode = match.Span.End;
-					if (((FeatureSymbol) endNode.Annotation.FeatureStruct.GetValue<SymbolicFeatureValue>("type")).ID == "bdry")
-						endNode = endNode.Prev;
+						ShapeNode endNode = match.Span.End;
+						if (((FeatureSymbol)endNode.Annotation.FeatureStruct
+							.GetValue<SymbolicFeatureValue>("type")).ID == "bdry")
+							endNode = endNode.Prev;
 
-					Annotation<ShapeNode> endAnn = endNode.Annotation;
-					if (((FeatureSymbol) endAnn.FeatureStruct.GetValue<SymbolicFeatureValue>("type")).ID == "morph")
-						endAnn = endAnn.Parent;
+						Annotation<ShapeNode> endAnn = endNode.Annotation;
+						if (((FeatureSymbol)endAnn.FeatureStruct.GetValue<SymbolicFeatureValue>(
+							"type")).ID == "morph")
+							endAnn = endAnn.Parent;
 
-					Debug.Assert(startNode.CompareTo(endNode) <= 0);
+						Debug.Assert(startNode.CompareTo(endNode) <= 0);
 
-					var endAnalysis = (Tuple<IAnalysis, int, int>) endAnn.Data;
+						var endAnalysis = (Tuple<IAnalysis, int, int>)endAnn.Data;
 
-					if (lastFragment != null && lastFragment.GetMyBeginOffsetInPara() == startAnalysis.Item2 && lastFragment.GetMyEndOffsetInPara() == endAnalysis.Item3)
-					{
+						if (lastFragment != null &&
+							lastFragment.GetMyBeginOffsetInPara() == startAnalysis.Item2 &&
+							lastFragment.GetMyEndOffsetInPara() == endAnalysis.Item3)
+						{
+							match = GetNextMatch(match);
+							continue;
+						}
+
+						ISegment seg =
+							para.SegmentsOS.Last(s => s.BeginOffset <= startAnalysis.Item2);
+						lastFragment = new ParaFragment(seg, startAnalysis.Item2,
+							endAnalysis.Item3, startAnalysis.Item1);
+						matches.Add(lastFragment);
+
 						match = GetNextMatch(match);
-						continue;
 					}
-
-					ISegment seg = para.SegmentsOS.Last(s => s.BeginOffset <= startAnalysis.Item2);
-					lastFragment = new ParaFragment(seg, startAnalysis.Item2, endAnalysis.Item3, startAnalysis.Item1);
-					matches.Add(lastFragment);
-
-					match = GetNextMatch(match);
+				}
+				catch (InvalidOperationException)
+				{
+					CouldNotParseAllParagraphs = true;
 				}
 			}
 

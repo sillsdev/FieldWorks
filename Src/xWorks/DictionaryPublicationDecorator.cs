@@ -5,16 +5,16 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.LCModel.Core.Cellar;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.FdoUi;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Application;
-using SIL.FieldWorks.FDO.DomainImpl;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel;
+using SIL.LCModel.Application;
+using SIL.LCModel.DomainImpl;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Infrastructure;
 using XCore;
 
 namespace SIL.FieldWorks.XWorks
@@ -27,15 +27,13 @@ namespace SIL.FieldWorks.XWorks
 	/// modified answers. It implements IVwPropChanged and clears its cache when relevant properties change,
 	/// though currently we do not try to generate automatic propchanges on additional affected properties.
 	/// </summary>
-	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
-		Justification="Cache is a reference")]
 	public class DictionaryPublicationDecorator : DomainDataByFlidDecoratorBase
 	{
 		// a set of HVOs of entries, senses, and examples that should not be displayed in the publication.
 		readonly HashSet<int> m_excludedItems = new HashSet<int>();
 		readonly HashSet<int> m_excludeAsMainEntry = new HashSet<int>();
 
-		private FdoCache Cache { get; set; }
+		private LcmCache Cache { get; set; }
 
 		private int m_LexDbEntriesFlid; // similar to m_mainFlid in the XmlVc it decorates
 
@@ -69,7 +67,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// Make one. By default we filter to the main dictionary.
 		/// </summary>
-		public DictionaryPublicationDecorator(FdoCache cache, ISilDataAccessManaged domainDataByFlid, int mainFlid)
+		public DictionaryPublicationDecorator(LcmCache cache, ISilDataAccessManaged domainDataByFlid, int mainFlid)
 			: this(cache, domainDataByFlid, mainFlid, cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS[0])
 		{}
 
@@ -77,7 +75,7 @@ namespace SIL.FieldWorks.XWorks
 		/// Create one. The SDA passed MAY be the DomainDataByFlid of the cache, but it is usually another
 		/// decorator.
 		/// </summary>
-		public DictionaryPublicationDecorator(FdoCache cache, ISilDataAccessManaged domainDataByFlid, int mainFlid, ICmPossibility publication)
+		public DictionaryPublicationDecorator(LcmCache cache, ISilDataAccessManaged domainDataByFlid, int mainFlid, ICmPossibility publication)
 			: base(domainDataByFlid)
 		{
 			Cache = cache;
@@ -237,7 +235,7 @@ namespace SIL.FieldWorks.XWorks
 
 		private ITsString GetSenseNumberTss(ILexSense sense)
 		{
-			return Cache.TsStrFactory.MakeString(GetSenseNumber(sense),
+			return TsStringUtils.MakeString(GetSenseNumber(sense),
 				Cache.DefaultUserWs);
 		}
 
@@ -306,7 +304,7 @@ namespace SIL.FieldWorks.XWorks
 			int hn;
 			if (!m_homographNumbers.TryGetValue(entry.Hvo, out hn))
 				hn = entry.HomographNumber; // unknown entry, use its own HN instead of our override
-			ITsIncStrBldr tisb = TsIncStrBldrClass.Create();
+			ITsIncStrBldr tisb = TsStringUtils.MakeIncStrBldr();
 			tisb.AppendTsString(StringServices.HeadWordForWsAndHn(entry, wsVern, hn, "", hv));
 			var hc = sense.Services.GetInstance<HomographConfiguration>();
 			if (hc.ShowSenseNumber(hv) && HasMoreThanOneSense(entry))
@@ -420,11 +418,11 @@ namespace SIL.FieldWorks.XWorks
 		internal ICmPossibility Publication { get; set; }
 
 		/// <summary>Returns HVO's of the entries to publish. If there are none, returns an empty array.</summary>
-		public int[] GetEntriesToPublish(Mediator mediator, int virtualFlid, string dictionaryType = null)
+		public int[] GetEntriesToPublish(PropertyTable propertyTable, int virtualFlid, string dictionaryType = null)
 		{
 			if (dictionaryType == null)
 			{
-				dictionaryType = DictionaryConfigurationListener.GetDictionaryConfigurationBaseType(mediator);
+				dictionaryType = DictionaryConfigurationListener.GetDictionaryConfigurationBaseType(propertyTable);
 			}
 			// LT-16426: Listener here needs to return a non-localized version or all non-English dictionaries will be empty!
 			switch (dictionaryType)
@@ -433,7 +431,7 @@ namespace SIL.FieldWorks.XWorks
 					return VecProp(Cache.LangProject.LexDbOA.Hvo, virtualFlid);
 				case "Reversal Index":
 				{
-					var reversalIndexGuid = ReversalIndexEntryUi.GetObjectGuidIfValid(mediator, "ReversalIndexGuid");
+					var reversalIndexGuid = ReversalIndexEntryUi.GetObjectGuidIfValid(propertyTable, "ReversalIndexGuid");
 					if (reversalIndexGuid != Guid.Empty)
 					{
 						var currentReversalIndex = Cache.ServiceLocator.GetObject(reversalIndexGuid) as IReversalIndex;
@@ -495,7 +493,9 @@ namespace SIL.FieldWorks.XWorks
 
 		private bool IsMainReversalEntry(int hvo)
 		{
-			var entry = Cache.ServiceLocator.GetObject(hvo) as IReversalIndexEntry;
+			IReversalIndexEntry entry = null;
+			if (Cache.ServiceLocator.IsValidObjectId(hvo))
+				entry = Cache.ServiceLocator.GetObject(hvo) as IReversalIndexEntry;
 			return entry != null && entry.Owner is IReversalIndex; // Subentries are owned by other Entries
 		}
 
@@ -507,9 +507,9 @@ namespace SIL.FieldWorks.XWorks
 		private bool IsPublishableReversalEntry(IReversalIndexEntry revEntry)
 		{
 			// We should still display reversal entries that have no senses
-			if (!revEntry.ReferringSenses.Any())
+			if (!revEntry.SensesRS.Any())
 				return true;
-			foreach (var sense in revEntry.ReferringSenses)
+			foreach (var sense in revEntry.SensesRS)
 			{
 				if (!m_excludedItems.Contains(sense.Hvo))
 					return true;	// At least one sense in one entry allows publication.

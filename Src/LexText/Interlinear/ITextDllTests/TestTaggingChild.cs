@@ -1,13 +1,12 @@
-﻿// Copyright (c) 2015 SIL International
+﻿// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Collections.Generic;
 using System.Windows.Forms;
 
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.Utils;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
 
 namespace SIL.FieldWorks.IText
 {
@@ -16,7 +15,7 @@ namespace SIL.FieldWorks.IText
 	/// </summary>
 	class TestTaggingChild: InterlinTaggingChild
 	{
-		public TestTaggingChild(FdoCache cache)
+		public TestTaggingChild(LcmCache cache)
 		{
 			Cache = cache;
 			m_tagFact = cache.ServiceLocator.GetInstance<ITextTagFactory>();
@@ -45,7 +44,7 @@ namespace SIL.FieldWorks.IText
 			return MakeTextTagInstance(tagPoss);
 		}
 
-		internal void CallDeleteTextTags(Set<ITextTag> tagsToDelete)
+		internal void CallDeleteTextTags(ISet<ITextTag> tagsToDelete)
 		{
 			DeleteTextTags(tagsToDelete);
 		}

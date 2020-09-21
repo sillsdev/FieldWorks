@@ -1,23 +1,17 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using System.Collections;
-using System.ComponentModel;
 using System.Drawing;
-using System.Data;
 using System.Windows.Forms;
-using System.Diagnostics;
-
-using SIL.Utils;
 
 namespace SIL.FieldWorks.Common.Controls
 {
 	/// <summary>
 	/// WSChooser is only a mockup at this point!!!!!!!!!!!
 	/// </summary>
-	public class WSChooser : UserControl, IFWDisposable
+	public class WSChooser : UserControl
 	{
 		private System.Windows.Forms.Button button1;
 		private System.Windows.Forms.ContextMenu WritingSystems;

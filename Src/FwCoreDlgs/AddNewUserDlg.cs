@@ -1,25 +1,11 @@
-// Copyright (c) 2004-2013 SIL International
+// Copyright (c) 2004-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: AddNewUserDlg.cs
-// Responsibility: TE Team
-//
-// <remarks>
-// </remarks>
 
 using System;
-using System.Drawing;
-using System.Collections;
-using System.ComponentModel;
 using System.Windows.Forms;
-using System.Diagnostics;
-
 using SIL.FieldWorks.Common.Drawing;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.Utils;
 using SIL.FieldWorks.Common.FwUtils;
-using XCore;
 
 namespace SIL.FieldWorks.FwCoreDlgs
 {
@@ -28,7 +14,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 	/// Add New User Dialog is used by User Properties dialog when the Add button is clicked.
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
-	public class AddNewUserDlg : Form, IFWDisposable
+	public class AddNewUserDlg : Form
 	{
 		#region Member variables
 

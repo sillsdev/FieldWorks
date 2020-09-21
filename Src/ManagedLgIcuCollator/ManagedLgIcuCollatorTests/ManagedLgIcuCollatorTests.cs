@@ -4,7 +4,7 @@
 
 using NUnit.Framework;
 using System;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 
 namespace SIL.FieldWorks.Language
 {
@@ -116,17 +116,17 @@ namespace SIL.FieldWorks.Language
 
 				object obj1 = icuCollator.get_SortKeyVariant("action", options);
 
-				Assert.IsTrue((obj1 as byte[])[0] == 44);
-				Assert.IsTrue((obj1 as byte[])[1] == 48);
-				Assert.IsTrue((obj1 as byte[])[2] == 82);
-				Assert.IsTrue((obj1 as byte[])[3] == 60);
-				Assert.IsTrue((obj1 as byte[])[4] == 72);
-				Assert.IsTrue((obj1 as byte[])[5] == 70);
-				Assert.IsTrue((obj1 as byte[])[6] == 1);
-				Assert.IsTrue((obj1 as byte[])[7] == 10);
-				Assert.IsTrue((obj1 as byte[])[8] == 1);
-				Assert.IsTrue((obj1 as byte[])[9] == 10);
-				Assert.IsTrue((obj1 as byte[])[10] == 0);
+				Assert.That((obj1 as byte[])[0], Is.EqualTo(41));
+				Assert.That((obj1 as byte[])[1], Is.EqualTo(45));
+				Assert.That((obj1 as byte[])[2], Is.EqualTo(79));
+				Assert.That((obj1 as byte[])[3], Is.EqualTo(57));
+				Assert.That((obj1 as byte[])[4], Is.EqualTo(69));
+				Assert.That((obj1 as byte[])[5], Is.EqualTo(67));
+				Assert.That((obj1 as byte[])[6], Is.EqualTo(1));
+				Assert.That((obj1 as byte[])[7], Is.EqualTo(10));
+				Assert.That((obj1 as byte[])[8], Is.EqualTo(1));
+				Assert.That((obj1 as byte[])[9], Is.EqualTo(10));
+				Assert.That((obj1 as byte[])[10], Is.EqualTo(0));
 			}
 		}
 

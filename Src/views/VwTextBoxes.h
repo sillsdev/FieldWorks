@@ -17,7 +17,7 @@ Description:
 
 #include "OleStringLiteral.h"
 
-#ifndef WIN32
+#if !defined(_WIN32) && !defined(_M_X64)
 // TODO Review - Assuming the MSVC++ compiler adds a forward declare ref when "friend class ParaBuilder;" is used. Gcc doesn't do this.
 class ParaBuilder;
 #endif
@@ -41,6 +41,7 @@ protected:
 	VwStringBox()
 		:VwLeafBox()
 	{
+		m_ichMin = 0;
 #ifdef _DEBUG
 		// acts as a flag for validity of the box.
 		rgchDebugStr[0] = 0xffff;
@@ -429,7 +430,6 @@ public:
 	virtual void Search(VwPattern * ppat, IVwSearchKiller * pxserkl = NULL);
 	void MakeSourceNfd();
 
-	void WriteWpxText(IStream * pstrm);
 	virtual OLECHAR * Name()
 	{
 		static OleStringLiteral name(L"Paragraph");
@@ -547,6 +547,13 @@ protected:
 		int * pxd, Rect rcSrc, Rect rcDst, IVwGraphics * pvg);
 	bool NoSignificantSizeChange(int dysHeight, int dxsWidth);
 
+	// qsort function for sorting an array of pointers to integers by the magnitude of the
+	// integers pointed to.
+	static int compareIntPtrs(const void * ppv1, const void * ppv2)
+	{
+		return **((int **)ppv1) - **((int **)ppv2);
+	}
+
 public:
 	int ComputeOuterWidth();
 protected:
@@ -595,6 +602,8 @@ public:
 	VwConcParaBox(VwPropertyStore * pzvps, VwSourceType vst = kvstConc)
 		: VwParagraphBox(pzvps, vst)
 	{
+		m_ichLimItem = m_ichLimItem = 0;
+		m_dmpAlign = 0;
 	}
 	void Init(int ichMinItem, int ichLimItem, int dmpAlign, VwConcParaOpts cpo);
 	virtual void DoPartialLayout(IVwGraphics * pvg, VwBox * pboxStart, int cLinesToSave,

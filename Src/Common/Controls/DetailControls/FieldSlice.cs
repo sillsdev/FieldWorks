@@ -12,7 +12,7 @@
 using System.Windows.Forms;
 using System.Diagnostics;
 
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using SIL.Utils;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls
@@ -58,7 +58,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// <param name="cache">The cache.</param>
 		/// <param name="obj">CmObject that is being displayed.</param>
 		/// <param name="flid">The field identifier for the attribute we are displaying.</param>
-		protected FieldSlice(Control control, FdoCache cache, ICmObject obj, int flid)
+		protected FieldSlice(Control control, LcmCache cache, ICmObject obj, int flid)
 			: base(control)
 		{
 			Debug.Assert(cache != null);
@@ -114,7 +114,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			Debug.Assert(m_configurationNode != null);
 
 			string className = m_cache.DomainDataByFlid.MetaDataCache.GetClassName(m_obj.ClassID);
-			m_fieldName = XmlUtils.GetManditoryAttributeValue(m_configurationNode, "field");
+			m_fieldName = XmlUtils.GetMandatoryAttributeValue(m_configurationNode, "field");
 			m_flid = AutoDataTreeMenuHandler.ContextMenuHelper.GetFlid(m_cache.DomainDataByFlid.MetaDataCache,
 				className, m_fieldName);
 		}

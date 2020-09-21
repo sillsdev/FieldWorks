@@ -1,4 +1,4 @@
-﻿namespace FDOBrowser
+﻿namespace LCMBrowser
 {
 	partial class ClassPropertySelector
 	{

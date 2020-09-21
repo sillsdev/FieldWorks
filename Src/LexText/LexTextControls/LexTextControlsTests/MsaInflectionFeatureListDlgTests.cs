@@ -1,25 +1,14 @@
-// Copyright (c) 2003-2013 SIL International
+// Copyright (c) 2003-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: MsaInflectionFeatureListDlgTests.cs
-// Responsibility:
 
-using System;
 using System.Windows.Forms;
-using System.Diagnostics;
 using System.IO;
 using System.Xml;
-using System.Xml.Xsl;
-
 using NUnit.Framework;
 
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainImpl;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FDO.FDOTests;
-using XCore;
-using System.Diagnostics.CodeAnalysis;
+using SIL.LCModel;
+using SIL.FieldWorks.Common.FwUtils;
 
 namespace SIL.FieldWorks.LexText.Controls
 {
@@ -40,14 +29,12 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		private ILangProject CreateFeatureSystem(out IFsFeatStruc featStruct)
 		{
-			featStruct = null;
 			ILangProject lp = Cache.LanguageProject;
 
 			// Set up the xml fs description
 			XmlDocument doc = new XmlDocument();
-			string sFileDir = Path.Combine(SIL.FieldWorks.Common.FwUtils.FwDirectoryFinder.SourceDirectory,
-				Path.Combine(@"FDO", Path.Combine(@"FDOTests", @"TestData")));
-			string sFile = Path.Combine(sFileDir, "FeatureSystem2.xml");
+			string sFile = Path.Combine(FwDirectoryFinder.SourceDirectory, "LexText", "LexTextControls", "LexTextControlsTests",
+				"FeatureSystem2.xml");
 
 			doc.Load(sFile);
 			XmlNode itemNeut = doc.SelectSingleNode("//item[@id='vNeut']");
@@ -96,20 +83,16 @@ namespace SIL.FieldWorks.LexText.Controls
 		}
 
 		[Test]
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "tv is a reference")]
 		public void PopulateTreeFromFeatureSystem()
 		{
 			// Set up sample data
 			IFsFeatStruc featStruct;
 			ILangProject lp = CreateFeatureSystem(out featStruct);
 
-
+			string dir = Path.Combine(FwDirectoryFinder.SourceDirectory, "LexText", "LexTextControls", "LexTextControlsTests");
 			// Set up the xml fs description
 			XmlDocument doc = new XmlDocument();
-			string sFileDir = Path.Combine(SIL.FieldWorks.Common.FwUtils.FwDirectoryFinder.SourceDirectory,
-										   Path.Combine(@"FDO", Path.Combine(@"FDOTests", @"TestData")));
-			string sFile = Path.Combine(sFileDir, "FeatureSystem2.xml");
+			string sFile = Path.Combine(dir, "FeatureSystem2.xml");
 			doc.Load(sFile);
 			XmlNode itemNeut = doc.SelectSingleNode("//item[@id='vNeut']");
 			// Add some complex features
@@ -122,7 +105,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			XmlNode item1st = doc.SelectSingleNode("//item[@id='v1']");
 			msfs.AddFeatureFromXml(item1st);
 			// now get a simple, top-level closed feature
-			sFile = Path.Combine(sFileDir, "FeatureSystem3.xml");
+			sFile = Path.Combine(dir, "FeatureSystem3.xml");
 			doc.Load(sFile);
 			XmlNode itemImpfv = doc.SelectSingleNode("//item[@id='vImpfv']");
 			msfs.AddFeatureFromXml(itemImpfv);
@@ -134,7 +117,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				ILexEntryInflType cobj =
 					Cache.ServiceLocator.GetInstance<ILexEntryInflTypeFactory>().Create();
 				lp.LexDbOA.VariantEntryTypesOA.PossibilitiesOS.Add(cobj);
-				dlg.SetDlgInfo(Cache, (Mediator)null, cobj, 0);
+				dlg.SetDlgInfo(Cache, null, null, cobj, 0);
 
 				// load some feature system values into treeview
 				FeatureStructureTreeView tv = dlg.TreeView;
@@ -147,7 +130,7 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		private void TestFeatureStructureContent(IFsFeatStruc featStruct)
 		{
-			IFdoOwningCollection<IFsFeatureSpecification> specCol = featStruct.FeatureSpecsOC;
+			ILcmOwningCollection<IFsFeatureSpecification> specCol = featStruct.FeatureSpecsOC;
 			Assert.AreEqual(1, specCol.Count, "Count of top level feature specs");
 			foreach (IFsFeatureSpecification spec in specCol)
 			{
@@ -155,7 +138,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				Assert.IsNotNull(complex, "complex feature value is null and should not be");
 				Assert.AreEqual("subject agreement", complex.FeatureRA.Name.AnalysisDefaultWritingSystem.Text, "Expected complex feature name");
 				IFsFeatStruc fsNested = complex.ValueOA as IFsFeatStruc;
-				IFdoOwningCollection<IFsFeatureSpecification> fsNestedCol = fsNested.FeatureSpecsOC;
+				ILcmOwningCollection<IFsFeatureSpecification> fsNestedCol = fsNested.FeatureSpecsOC;
 				Assert.AreEqual(2, fsNestedCol.Count, "Nested fs has one feature");
 				foreach (IFsFeatureSpecification specNested in fsNestedCol)
 				{
@@ -180,7 +163,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			{
 				foreach (IFsFeatureSpecification spec in featStruct.FeatureSpecsOC)
 					featStruct.FeatureSpecsOC.Remove(spec);
-				dlg.SetDlgInfo(Cache, null, featStruct, MoStemMsaTags.kflidMsFeatures);
+				dlg.SetDlgInfo(Cache, null, null, featStruct, MoStemMsaTags.kflidMsFeatures);
 				dlg.UpdateFeatureStructure(tv.Nodes);
 			}
 		}

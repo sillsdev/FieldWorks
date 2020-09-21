@@ -1,23 +1,16 @@
 // Copyright (c) 2003-2013 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: FxApp.cs
-// Responsibility:
-// --------------------------------------------------------------------------------------------
-using System.Diagnostics.CodeAnalysis;
+
 using System.Windows.Forms;
 using System.Diagnostics;
 using Microsoft.Win32;
 using System.Collections.Generic;
 using System.IO;
-
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using SIL.FieldWorks.Common.Framework;
-using SIL.Utils;
+using SIL.LCModel.Utils;
 using SIL.FieldWorks.Common.FwUtils;
-using SILUBS.SharedScrUtils;
-using XCore;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -83,7 +76,7 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		public void OnMasterRefresh(object sender)
 		{
-			// TODO: This is no longer called by the Mediator, since this class
+			// TODO: This is no longer called by the PropertyTable, since this class
 			// is no longer an xcore colleague. But, it can't be removed either,
 			// since it is used by another method on this clsss. :-(
 			CheckDisposed();
@@ -152,6 +145,11 @@ namespace SIL.FieldWorks.XWorks
 				return "";
 			}
 		}
+
+		/// <summary>
+		/// Gets the classname used for setting the WM_CLASS on Linux
+		/// </summary>
+		public abstract string WindowClassName { get; }
 
 		#endregion // Properties
 
@@ -228,8 +226,6 @@ namespace SIL.FieldWorks.XWorks
 		/// The RegistryKey for this application.
 		/// </summary>
 		///***********************************************************************************
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "We're returning an object")]
 		public override RegistryKey SettingsKey
 		{
 			get
@@ -285,7 +281,7 @@ namespace SIL.FieldWorks.XWorks
 			// We pass a copy of the link information because it doesn't get used until after the following line
 			// removes the information we need.
 			FwXWindow result = new FwXWindow(this, wndCopyFrom, iconStream, configFile,
-				m_appArgs.HasLinkInformation ? m_appArgs.CopyLinkArgs() : null, false);
+				m_appArgs.HasLinkInformation ? m_appArgs.CopyLinkArgs() : null);
 			m_appArgs.ClearLinkInformation(); // Make sure the next window that is opened doesn't default to the same place
 			return result;
 		}
@@ -335,22 +331,5 @@ namespace SIL.FieldWorks.XWorks
 			get { return "FLEXUsage@sil.org"; }
 		}
 		#endregion
-
-		#region Other methods
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Use this for slow operations that should happen during the splash screen instead of
-		/// during app construction
-		/// </summary>
-		/// <param name="progressDlg">The progress dialog to use.</param>
-		/// ------------------------------------------------------------------------------------
-		public override void DoApplicationInitialization(IProgress progressDlg)
-		{
-			base.DoApplicationInitialization(progressDlg);
-			if (FwUtils.IsOkToDisplayScriptureIfPresent)
-				ScrReference.InitializeVersification(FwDirectoryFinder.TeFolder, false);
-		}
-		#endregion // Other methods
 	}
 }

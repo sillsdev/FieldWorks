@@ -169,13 +169,6 @@
   <data name="ksRedoEditingParserParameters" xml:space="preserve">
     <value>Redo Editing Parser Parameters</value>
   </data>
-  <data name="ksOtherClientIsParsing" xml:space="preserve">
-    <value>Parsing all words may only be done on one client at a time, and another client is currently doing this.</value>
-  </data>
-  <data name="ksParsingElsewhere" xml:space="preserve">
-    <value>Parsing Elsewhere</value>
-    <comment>Caption that goes with ksOtherClientIsParsing</comment>
-  </data>
   <data name="ksRedoClearParserAnalyses" xml:space="preserve">
     <value>Redo Clear Selected Word Parser Analyses</value>
   </data>

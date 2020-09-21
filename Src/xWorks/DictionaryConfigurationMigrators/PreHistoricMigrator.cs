@@ -8,14 +8,15 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Xml;
-using SIL.CoreImpl;
+using SIL.LCModel.Core.Cellar;
+using SIL.LCModel.Core.Text;
 using SIL.FieldWorks.Common.Controls;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Widgets;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Infrastructure;
 using SIL.Utils;
 using XCore;
 using DCM = SIL.FieldWorks.XWorks.DictionaryConfigurationMigrator;
@@ -31,6 +32,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 	/// </summary>
 	public class PreHistoricMigrator : IDictionaryConfigurationMigrator, ILayoutConverter
 	{
+		private PropertyTable m_propertyTable;
 		private Mediator m_mediator;
 		private Inventory m_layoutInventory;
 		private Inventory m_partInventory;
@@ -53,14 +55,18 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 		/// </summary>
 		internal string m_configDirSuffixBeingMigrated;
 
-		public PreHistoricMigrator() : this(null, null) { }
+		/// <summary>
+		/// The mediator is needed to retrieve information about the prehistoric configurations
+		/// </summary>
+		public PreHistoricMigrator(Mediator mediator) : this(null, mediator, null) {}
 
 		/// <summary>
 		/// Constructor for tests
 		/// </summary>
-		internal PreHistoricMigrator(FdoCache cache, Mediator mediator)
+		internal PreHistoricMigrator(LcmCache cache, Mediator mediator, PropertyTable propertyTable)
 		{
 			Cache = cache;
+			m_propertyTable = propertyTable;
 			m_mediator = mediator;
 		}
 
@@ -73,11 +79,11 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 		/// </summary>
 		private const string AlphaConfigFolder = "AlphaConfigs";
 
-		public void MigrateIfNeeded(SimpleLogger logger, Mediator mediator, string appVersion)
+		public void MigrateIfNeeded(SimpleLogger logger, PropertyTable propertyTable, string appVersion)
 		{
 			m_logger = logger;
-			m_mediator = mediator;
-			Cache = (FdoCache)mediator.PropertyTable.GetValue("cache");
+			m_propertyTable = propertyTable;
+			Cache = propertyTable.GetValue<LcmCache>("cache");
 			LayoutLevels = new LayoutLevels();
 			m_layoutInventory = Inventory.GetInventory("layouts", Cache.ProjectId.Name);
 			m_partInventory = Inventory.GetInventory("parts", Cache.ProjectId.Name);
@@ -86,7 +92,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			{
 				m_logger.WriteLine(string.Format("{0}: Old configurations were found in need of migration. - {1}",
 					appVersion, DateTime.Now.ToString("yyyy MMM d h:mm:ss")));
-				var projectPath = FdoFileHelper.GetConfigSettingsDir(Cache.ProjectId.ProjectFolder);
+				var projectPath = LcmFileHelper.GetConfigSettingsDir(Cache.ProjectId.ProjectFolder);
 
 				m_logger.WriteLine("Migrating dictionary configurations");
 				m_configDirSuffixBeingMigrated = DictionaryConfigurationListener.DictionaryConfigurationDirectoryName;
@@ -137,7 +143,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 		internal bool ConfigsNeedMigratingFromPre83()
 		{
 			// If the project already has up-to-date configurations then we don't need to migrate
-			var configSettingsDir = FdoFileHelper.GetConfigSettingsDir(Cache.ProjectId.ProjectFolder);
+			var configSettingsDir = LcmFileHelper.GetConfigSettingsDir(Cache.ProjectId.ProjectFolder);
 			var newDictionaryConfigLoc = Path.Combine(configSettingsDir, DCL.DictionaryConfigurationDirectoryName);
 			if (DCM.ConfigFilesInDir(newDictionaryConfigLoc).Any())
 			{
@@ -160,8 +166,8 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			//<configure class="LexEntry" label="Main Entry" layout="publishStemEntry" />
 			//<configure class="LexEntry" label="Minor Entry" layout="publishStemMinorEntry" hideConfig="true" />
 			//</layoutType>
-			var label = XmlUtils.GetManditoryAttributeValue(layoutNode, "label");
-			var layout = XmlUtils.GetManditoryAttributeValue(layoutNode, "layout");
+			var label = XmlUtils.GetMandatoryAttributeValue(layoutNode, "label");
+			var layout = XmlUtils.GetMandatoryAttributeValue(layoutNode, "layout");
 			m_logger.WriteLine(string.Format("Migrating old fwlayout and parts config: '{0}' - {1}.", label, layout));
 			m_logger.IncreaseIndent();
 			var configNodeList = oldNodes.Select(ConvertLayoutTreeNodeToConfigNode).ToList();
@@ -184,7 +190,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 				return;
 			DictionaryConfigurationModel alpha83DefaultModel;
 			const string extension = DictionaryConfigurationModel.FileExtension;
-			var projectPath = Path.Combine(FdoFileHelper.GetConfigSettingsDir(Cache.ProjectId.ProjectFolder), m_configDirSuffixBeingMigrated);
+			var projectPath = Path.Combine(LcmFileHelper.GetConfigSettingsDir(Cache.ProjectId.ProjectFolder), m_configDirSuffixBeingMigrated);
 			var alphaConfigsPath = Path.Combine(FwDirectoryFinder.FlexFolder, AlphaConfigFolder);
 
 			var newDictionaryConfigLoc = Path.Combine(FwDirectoryFinder.DefaultConfigurations, DCL.DictionaryConfigurationDirectoryName);
@@ -246,7 +252,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 							var languageCode = customSuffixIndex > 0
 								? layout.Substring(languageSuffixIndex, customSuffixIndex - languageSuffixIndex)
 								: layout.Substring(languageSuffixIndex);
-							reversalIndex = Cache.ServiceLocator.WritingSystemManager.Get(languageCode).DisplayLabel;
+							reversalIndex = Cache.ServiceLocator.WritingSystemManager.Get(languageCode).Id;
 						}
 						else
 						{
@@ -929,7 +935,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 
 		private string GenerateNumberStyleFromLayoutTreeNode(XmlDocConfigureDlg.LayoutTreeNode node)
 		{
-			var styleSheet = FontHeightAdjuster.StyleSheetFromMediator(m_mediator);
+			var styleSheet = FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable);
 			const string senseNumberStyleBase = "Dictionary-SenseNumber";
 			var senseNumberStyleName = senseNumberStyleBase;
 			var matchedOrCreated = false;
@@ -944,7 +950,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 					senseNumberStyle.Type = StyleType.kstCharacter;
 					senseNumberStyle.UserLevel = 1;
 					senseNumberStyle.IsBuiltIn = false;
-					var propsBldr = TsPropsBldrClass.Create();
+					var propsBldr = TsStringUtils.MakePropsBldr();
 					propsBldr.SetStrPropValue((int)FwTextPropType.ktptFontFamily, node.NumFont);
 					if (!string.IsNullOrEmpty(node.NumStyle))
 					{
@@ -1024,13 +1030,13 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 
 		private void MigratePublicationLayoutSelection(string oldLayout, string newPath)
 		{
-			if (oldLayout.Equals(m_mediator.PropertyTable.GetStringProperty("DictionaryPublicationLayout", string.Empty)))
+			if (oldLayout.Equals(m_propertyTable.GetStringProperty("DictionaryPublicationLayout", string.Empty)))
 			{
-				m_mediator.PropertyTable.SetProperty("DictionaryPublicationLayout", newPath);
+				m_propertyTable.SetProperty("DictionaryPublicationLayout", newPath, true);
 			}
-			else if (oldLayout.Equals(m_mediator.PropertyTable.GetStringProperty("ReversalIndexPublicationLayout", string.Empty)))
+			else if (oldLayout.Equals(m_propertyTable.GetStringProperty("ReversalIndexPublicationLayout", string.Empty)))
 			{
-				m_mediator.PropertyTable.SetProperty("ReversalIndexPublicationLayout", newPath);
+				m_propertyTable.SetProperty("ReversalIndexPublicationLayout", newPath, true);
 			}
 		}
 
@@ -1040,7 +1046,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			return m_layoutInventory.GetLayoutTypes();
 		}
 
-		public FdoCache Cache { get; private set; }
+		public LcmCache Cache { get; private set; }
 		public StringTable StringTable { get { return null; } } // used solely for l10n of nodes, which is a hindrance to migration.
 		public LayoutLevels LayoutLevels { get; private set; }
 

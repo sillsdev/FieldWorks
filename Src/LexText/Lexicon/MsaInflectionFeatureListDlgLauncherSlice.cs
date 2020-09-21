@@ -4,12 +4,11 @@
 
 using System;
 using System.Xml;
-
-using SIL.Utils;
 using SIL.FieldWorks.Common.Framework.DetailControls;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel;
+using SIL.LCModel.Infrastructure;
+using SIL.Utils;
 
 namespace SIL.FieldWorks.XWorks.LexEd
 {
@@ -91,12 +90,13 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				m_flid = FsFeatStrucTags.kflidFeatureSpecs;
 			}
 
-			ctrl.Initialize((FdoCache)Mediator.PropertyTable.GetValue("cache"),
+			ctrl.Initialize(m_propertyTable.GetValue<LcmCache>("cache"),
 				m_fs,
 				m_flid,
 				"Name",
 				ContainingDataTree.PersistenceProvder,
 				Mediator,
+				m_propertyTable,
 				"Name",
 				XmlUtils.GetOptionalAttributeValue(m_configurationNode, "ws", "analysis")); // TODO: Get better default 'best ws'.
 		}
@@ -105,7 +105,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		{
 			if (m_obj != null)
 			{
-				NonUndoableUnitOfWorkHelper.Do(m_cache.ServiceLocator.GetInstance<IActionHandler>(), () =>
+				NonUndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(m_cache.ServiceLocator.GetInstance<IActionHandler>(), () =>
 				{
 					switch (m_obj.ClassID)
 					{
@@ -230,12 +230,13 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				m_flid = FsFeatStrucTags.kflidFeatureSpecs;
 			}
 
-			ctrl.Initialize((FdoCache)Mediator.PropertyTable.GetValue("cache"),
+			ctrl.Initialize(m_propertyTable.GetValue<LcmCache>("cache"),
 				m_fs,
 				m_flid,
 				"Name",
 				ContainingDataTree.PersistenceProvder,
 				Mediator,
+				m_propertyTable,
 				"Name",
 				XmlUtils.GetOptionalAttributeValue(m_configurationNode, "ws", "analysis")); // TODO: Get better default 'best ws'.
 		}

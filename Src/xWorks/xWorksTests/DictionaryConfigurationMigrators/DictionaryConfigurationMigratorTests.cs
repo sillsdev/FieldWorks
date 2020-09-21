@@ -1,19 +1,17 @@
-﻿// Copyright (c) 2014-2016 SIL International
+﻿// Copyright (c) 2014-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Collections.Generic;
 using System.IO;
 using NUnit.Framework;
-using Palaso.IO;
+using SIL.IO;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.FDOTests;
-using SIL.Utils;
+using SIL.LCModel;
+using SIL.LCModel.Utils;
 using XCore;
-// ReSharper disable InconsistentNaming
 
 namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 {
@@ -23,6 +21,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 		private string m_configFilePath;
 		private MockFwXWindow m_window;
 		private Mediator m_mediator;
+		private PropertyTable m_propertyTable;
 
 		[TestFixtureSetUp]
 		public override void FixtureSetup()
@@ -34,6 +33,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			m_configFilePath = Path.Combine(FwDirectoryFinder.CodeDirectory, m_application.DefaultConfigurationPathname);
 			m_window = new MockFwXWindow(m_application, m_configFilePath);
 			m_window.Init(Cache); // initializes Mediator values
+			m_propertyTable = m_window.PropTable;
 			m_mediator = m_window.Mediator;
 			m_mediator.AddColleague(new StubContentControlProvider());
 			m_window.LoadUI(m_configFilePath); // actually loads UI here; needed for non-null stylesheet
@@ -43,7 +43,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 		[TestFixtureTearDown]
 		public override void FixtureTeardown()
 		{
-			DirectoryUtilities.DeleteDirectoryRobust(Cache.ProjectId.Path);
+			RobustIO.DeleteDirectoryAndContents(Cache.ProjectId.Path);
 			base.FixtureTeardown();
 			m_application.Dispose();
 			m_window.Dispose();
@@ -54,7 +54,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 		[Test]
 		public void MigrateOldConfigurationsIfNeeded_BringsPreHistoricFileToCurrentVersion()
 		{
-			var configSettingsDir = FdoFileHelper.GetConfigSettingsDir(Path.GetDirectoryName(Cache.ProjectId.Path));
+			var configSettingsDir = LcmFileHelper.GetConfigSettingsDir(Path.GetDirectoryName(Cache.ProjectId.Path));
 			var newConfigFilePath = Path.Combine(configSettingsDir, DictionaryConfigurationListener.DictionaryConfigurationDirectoryName,
 				"Lexeme" + DictionaryConfigurationModel.FileExtension);
 			Assert.False(File.Exists(newConfigFilePath), "should not yet be migrated");
@@ -62,11 +62,11 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			File.WriteAllLines(Path.Combine(configSettingsDir, "Test.fwlayout"), new[]{
 				@"<layoutType label='Lexeme-based (complex forms as main entries)' layout='publishStem'><configure class='LexEntry' label='Main Entry' layout='publishStemEntry' />",
 				@"<configure class='LexEntry' label='Minor Entry' layout='publishStemMinorEntry' hideConfig='true' /></layoutType>'"});
-			var migrator = new DictionaryConfigurationMigrator(m_mediator);
+			var migrator = new DictionaryConfigurationMigrator(m_propertyTable, m_mediator);
 			migrator.MigrateOldConfigurationsIfNeeded(); // SUT
 			var updatedConfigModel = new DictionaryConfigurationModel(newConfigFilePath, Cache);
 			Assert.AreEqual(DictionaryConfigurationMigrator.VersionCurrent, updatedConfigModel.Version);
-			DirectoryUtilities.DeleteDirectoryRobust(configSettingsDir);
+			RobustIO.DeleteDirectoryAndContents(configSettingsDir);
 		}
 
 		[Test]
@@ -75,10 +75,10 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			// Localize a Part's label to German (sufficient to cause a mismatched nodes crash if one config's labels are localized)
 			var localizedPartLabels = new Dictionary<string, string>();
 			localizedPartLabels["Main Entry"] = "Haupteintrag";
-			var pathsToL10nStrings = (Dictionary<string, Dictionary<string, string>>)ReflectionHelper.GetField(m_mediator.StringTbl, "m_pathsToStrings");
-			pathsToL10nStrings["group[@id = 'LocalizedAttributes']/"] = localizedPartLabels;
+			var pathsToL10NStrings = (Dictionary<string, Dictionary<string, string>>)ReflectionHelper.GetField(StringTable.Table, "m_pathsToStrings");
+			pathsToL10NStrings["group[@id = 'LocalizedAttributes']/"] = localizedPartLabels;
 
-			var configSettingsDir = FdoFileHelper.GetConfigSettingsDir(Path.GetDirectoryName(Cache.ProjectId.Path));
+			var configSettingsDir = LcmFileHelper.GetConfigSettingsDir(Path.GetDirectoryName(Cache.ProjectId.Path));
 			var newConfigFilePath = Path.Combine(configSettingsDir, DictionaryConfigurationListener.DictionaryConfigurationDirectoryName,
 				"Lexeme" + DictionaryConfigurationModel.FileExtension);
 			Assert.False(File.Exists(newConfigFilePath), "should not yet be migrated");
@@ -86,18 +86,18 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			File.WriteAllLines(Path.Combine(configSettingsDir, "Test.fwlayout"), new[]{
 				@"<layoutType label='Lexeme-based (complex forms as main entries)' layout='publishStem'><configure class='LexEntry' label='Main Entry' layout='publishStemEntry' />",
 				@"<configure class='LexEntry' label='Minor Entry' layout='publishStemMinorEntry' hideConfig='true' /></layoutType>'"});
-			var migrator = new DictionaryConfigurationMigrator(m_mediator);
+			var migrator = new DictionaryConfigurationMigrator(m_propertyTable, m_mediator);
 			Assert.DoesNotThrow(() => migrator.MigrateOldConfigurationsIfNeeded(), "ArgumentException indicates localized labels."); // SUT
 			var updatedConfigModel = new DictionaryConfigurationModel(newConfigFilePath, Cache);
 			Assert.AreEqual(2, updatedConfigModel.Parts.Count, "Should have 2 top-level nodes");
 			Assert.AreEqual("Main Entry", updatedConfigModel.Parts[0].Label);
-			DirectoryUtilities.DeleteDirectoryRobust(configSettingsDir);
+			RobustIO.DeleteDirectoryAndContents(configSettingsDir);
 		}
 
 		[Test]
 		public void MigrateOldConfigurationsIfNeeded_PreservesOrderOfBibliographies()
 		{
-			var configSettingsDir = FdoFileHelper.GetConfigSettingsDir(Path.GetDirectoryName(Cache.ProjectId.Path));
+			var configSettingsDir = LcmFileHelper.GetConfigSettingsDir(Path.GetDirectoryName(Cache.ProjectId.Path));
 			var newConfigFilePath = Path.Combine(configSettingsDir, DictionaryConfigurationListener.ReversalIndexConfigurationDirectoryName,
 				"AllReversalIndexes" + DictionaryConfigurationModel.FileExtension);
 			Assert.False(File.Exists(newConfigFilePath), "should not yet be migrated");
@@ -105,7 +105,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			File.WriteAllLines(Path.Combine(configSettingsDir, "Test.fwlayout"), new[]{
 				@"<layoutType label='All Reversal Indexes' layout='publishReversal'>",
 				@"<configure class='ReversalIndexEntry' label='Reversal Entry' layout='publishReversalEntry' /></layoutType>'"});
-			var migrator = new DictionaryConfigurationMigrator(m_mediator);
+			var migrator = new DictionaryConfigurationMigrator(m_propertyTable, m_mediator);
 			migrator.MigrateOldConfigurationsIfNeeded(); // SUT
 			var updatedConfigModel = new DictionaryConfigurationModel(newConfigFilePath, Cache);
 			var refdSenseChildren = updatedConfigModel.Parts[0].Children.Find(n => n.Label == "Referenced Senses").Children;
@@ -123,7 +123,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 				++bibCount;
 			}
 			Assert.AreEqual(2, bibCount, "Should be exactly two Bibliography nodes (sense and entry)");
-			DirectoryUtilities.DeleteDirectoryRobust(configSettingsDir);
+			RobustIO.DeleteDirectoryAndContents(configSettingsDir);
 		}
 
 		[Test]

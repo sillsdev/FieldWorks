@@ -9,12 +9,8 @@
 // </remarks>
 
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
+using SIL.FieldWorks.Common.FwUtils;
 
 namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 {
@@ -25,7 +21,7 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 	/// ----------------------------------------------------------------------------------------
 	public partial class ImportDateFormatDlg : Form
 	{
-		private XCore.IHelpTopicProvider m_helpTopicProvider;
+		private IHelpTopicProvider m_helpTopicProvider;
 		bool m_fGenDate;
 		// This example DateTime value must match that found in DateFieldOptions.cs!
 		DateTime m_dtExample = new DateTime(1999, 3, 29, 15, 30, 45);
@@ -40,7 +36,7 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 			InitializeComponent();
 		}
 
-		public void Initialize(string sFormat, XCore.IHelpTopicProvider helpTopicProvider, bool fGenDate)
+		public void Initialize(string sFormat, IHelpTopicProvider helpTopicProvider, bool fGenDate)
 		{
 			m_tbFormat.Text = sFormat;
 			m_helpTopicProvider = helpTopicProvider;

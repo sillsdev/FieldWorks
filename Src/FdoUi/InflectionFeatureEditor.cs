@@ -1,23 +1,22 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
-using System.Diagnostics;
 using System.Xml;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.LCModel;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.Common.Controls;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.LCModel.DomainServices;
 using SIL.FieldWorks.LexText.Controls;
-using SIL.Utils;
 using XCore;
-using SIL.CoreImpl;
 using System.Linq;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.Utils;
 
 namespace SIL.FieldWorks.FdoUi
 {
@@ -31,11 +30,11 @@ namespace SIL.FieldWorks.FdoUi
 	/// sort of makes sense to put it here as a class that is quite specific to a particular
 	/// part of the model.
 	/// </summary>
-	public class InflectionFeatureEditor : IBulkEditSpecControl, IFWDisposable
+	public class InflectionFeatureEditor : IBulkEditSpecControl, IDisposable
 	{
 		Mediator m_mediator;
 		TreeCombo m_tree;
-		FdoCache m_cache;
+		LcmCache m_cache;
 		protected XMLViewsDataCache m_sda;
 		InflectionFeaturePopupTreeManager m_InflectionFeatureTreeManager;
 		int m_selectedHvo = 0;
@@ -187,9 +186,14 @@ namespace SIL.FieldWorks.FdoUi
 		}
 
 		/// <summary>
+		/// Get/Set the property table'
+		/// </summary>
+		public PropertyTable PropTable { get; set; }
+
+		/// <summary>
 		/// Get or set the cache. Must be set before the tree values need to load.
 		/// </summary>
-		public FdoCache Cache
+		public LcmCache Cache
 		{
 			get
 			{
@@ -236,8 +240,8 @@ namespace SIL.FieldWorks.FdoUi
 			if (m_InflectionFeatureTreeManager == null)
 			{
 				m_InflectionFeatureTreeManager = new InflectionFeaturePopupTreeManager(m_tree,
-																					   m_cache, false, m_mediator,
-																					   (Form)m_mediator.PropertyTable.GetValue("window"),
+																					   m_cache, false, m_mediator, PropTable,
+																					   PropTable.GetValue<Form>("window"),
 																					   m_displayWs);
 				m_InflectionFeatureTreeManager.AfterSelect += new TreeViewEventHandler(m_pOSPopupTreeManager_AfterSelect);
 			}
@@ -316,9 +320,9 @@ namespace SIL.FieldWorks.FdoUi
 
 			var pos = GetPOS();
 			// Make a Set of eligible parts of speech to use in filtering.
-			Set<int> possiblePOS = GetPossiblePartsOfSpeech();
+			HashSet<int> possiblePOS = GetPossiblePartsOfSpeech();
 			// Make a Dictionary from HVO of entry to list of modified senses.
-			var sensesByEntry = new Dictionary<int, Set<ILexSense>>();
+			var sensesByEntry = new Dictionary<int, HashSet<ILexSense>>();
 			int i = 0;
 			// Report progress 50 times or every 100 items, whichever is more (but no more than once per item!)
 			int interval = Math.Min(100, Math.Max(itemsToChange.Count() / 50, 1));
@@ -336,7 +340,7 @@ namespace SIL.FieldWorks.FdoUi
 				var msa = ls.MorphoSyntaxAnalysisRA;
 				int hvoEntry = ls.EntryID;
 				if (!sensesByEntry.ContainsKey(hvoEntry))
-					sensesByEntry[hvoEntry] = new Set<ILexSense>();
+					sensesByEntry[hvoEntry] = new HashSet<ILexSense>();
 				sensesByEntry[hvoEntry].Add(ls);
 			}
 			//REVIEW: Should these really be the same Undo/Redo strings as for InflectionClassEditor.cs?
@@ -371,8 +375,8 @@ namespace SIL.FieldWorks.FdoUi
 				{
 					// See if we can reuse an existing MoStemMsa by changing it.
 					// This is possible if it is used only by senses in the list, or not used at all.
-					var otherSenses = new Set<ILexSense>();
-					var senses = new Set<ILexSense>(entry.AllSenses.ToArray());
+					var otherSenses = new HashSet<ILexSense>();
+					var senses = new HashSet<ILexSense>(entry.AllSenses.ToArray());
 					if (senses.Count != sensesToChange.Count)
 					{
 						foreach (var ls in senses)
@@ -470,7 +474,7 @@ namespace SIL.FieldWorks.FdoUi
 		/// <param name="sda"></param>
 		/// <param name="hvoPos"></param>
 		/// <param name="possiblePOS"></param>
-		void AddChildPos(ISilDataAccess sda, int hvoPos, Set<int> possiblePOS)
+		void AddChildPos(ISilDataAccess sda, int hvoPos, HashSet<int> possiblePOS)
 		{
 			possiblePOS.Add(hvoPos);
 			int chvo = sda.get_VecSize(hvoPos, CmPossibilityTags.kflidSubPossibilities);
@@ -491,9 +495,9 @@ namespace SIL.FieldWorks.FdoUi
 		{
 			CheckDisposed();
 
-			ITsString tss = TsStringUtils.MakeTss(m_selectedLabel, m_cache.DefaultAnalWs);
+			ITsString tss = TsStringUtils.MakeString(m_selectedLabel, m_cache.DefaultAnalWs);
 			// Build a Set of parts of speech that can take this class.
-			Set<int> possiblePOS = GetPossiblePartsOfSpeech();
+			HashSet<int> possiblePOS = GetPossiblePartsOfSpeech();
 			int i = 0;
 			// Report progress 50 times or every 100 items, whichever is more (but no more than once per item!)
 			int interval = Math.Min(100, Math.Max(itemsToChange.Count() / 50, 1));
@@ -530,7 +534,7 @@ namespace SIL.FieldWorks.FdoUi
 			}
 		}
 
-		private bool IsItemEligible(ISilDataAccess sda, int hvo, Set<int> possiblePOS)
+		private bool IsItemEligible(ISilDataAccess sda, int hvo, HashSet<int> possiblePOS)
 		{
 			bool fEnable = false;
 			int hvoMsa = sda.get_ObjectProp(hvo, LexSenseTags.kflidMorphoSyntaxAnalysis);
@@ -564,10 +568,10 @@ namespace SIL.FieldWorks.FdoUi
 			return null;
 		}
 
-		private Set<int> GetPossiblePartsOfSpeech()
+		private HashSet<int> GetPossiblePartsOfSpeech()
 		{
 			ISilDataAccess sda = m_cache.DomainDataByFlid;
-			Set<int> possiblePOS = new Set<int>();
+			var possiblePOS = new HashSet<int>();
 			if (m_selectedHvo != 0)
 			{
 				var obj = m_cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(m_selectedHvo).Owner;

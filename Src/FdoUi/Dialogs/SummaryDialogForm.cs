@@ -1,25 +1,18 @@
-// Copyright (c) 2005-2013 SIL International
+// Copyright (c) 2005-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: SummaryDialogForm.cs
-// Responsibility:
-// Last reviewed:
-//
-// <remarks>
-// </remarks>
 
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Windows.Forms;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.Controls;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Application;
-using SIL.Utils;
+using SIL.LCModel;
+using SIL.LCModel.Application;
 using XCore;
 
 namespace SIL.FieldWorks.FdoUi.Dialogs
@@ -41,15 +34,16 @@ namespace SIL.FieldWorks.FdoUi.Dialogs
 	/// should pop up to find a different entry to display with a new SummaryDialogForm.
 	/// </remarks>
 	/// ----------------------------------------------------------------------------------------
-	internal class SummaryDialogForm : Form, IFWDisposable
+	internal class SummaryDialogForm : Form
 	{
 		#region Member variables
 		private List<int> m_rghvo;
 		private int m_hvoSelected;		// object selected in the view.
 		private ITsString m_tssWf;
 		private XmlView m_xv;
-		private FdoCache m_cache;
+		private LcmCache m_cache;
 		private XCore.Mediator m_mediator;
+		private PropertyTable m_propertyTable;
 		private IHelpTopicProvider m_helpProvider;
 		private string m_helpFileKey;
 //		private IVwStylesheet m_vss;
@@ -87,6 +81,7 @@ namespace SIL.FieldWorks.FdoUi.Dialogs
 			m_rghvo.Add(leui.Object.Hvo);
 			m_cache = leui.Object.Cache;
 			m_mediator = leui.Mediator;
+			m_propertyTable = leui.PropTable;
 			Initialize(tssForm, helpProvider, helpFileKey, styleSheet);
 		}
 
@@ -103,7 +98,7 @@ namespace SIL.FieldWorks.FdoUi.Dialogs
 		/// <param name="mediator">The mediator.</param>
 		/// ------------------------------------------------------------------------------------
 		internal SummaryDialogForm(List<int> rghvo, ITsString tssForm, IHelpTopicProvider helpProvider,
-			string helpFileKey, IVwStylesheet styleSheet, FdoCache cache, Mediator mediator)
+			string helpFileKey, IVwStylesheet styleSheet, LcmCache cache, Mediator mediator, PropertyTable propertyTable)
 		{
 			InitializeComponent();
 			AccessibleName = GetType().Name;
@@ -112,6 +107,7 @@ namespace SIL.FieldWorks.FdoUi.Dialogs
 			m_rghvo = rghvo;
 			m_cache = cache;
 			m_mediator = mediator;
+			m_propertyTable = propertyTable;
 			Initialize(tssForm, helpProvider, helpFileKey, styleSheet);
 		}
 
@@ -270,7 +266,7 @@ namespace SIL.FieldWorks.FdoUi.Dialogs
 		/// <param name="styleSheet"></param>
 		/// <returns></returns>
 		/// ------------------------------------------------------------------------------------
-		private XmlView CreateSummaryView(List<int> rghvoEntries, FdoCache cache, IVwStylesheet styleSheet)
+		private XmlView CreateSummaryView(List<int> rghvoEntries, LcmCache cache, IVwStylesheet styleSheet)
 		{
 			// Make a decorator to publish the list of entries as a fake property of the LexDb.
 			int kflidEntriesFound = 8999950; // some arbitrary number not conflicting with real flids.
@@ -282,7 +278,7 @@ namespace SIL.FieldWorks.FdoUi.Dialogs
 			sda.SetOwningPropInfo(LexDbTags.kflidClass, "LexDb", "EntriesFound");
 
 			// Make an XmlView which displays that object using the specified layout.
-			XmlView xv = new XmlView(hvoRoot, "publishFound", null, false, sda);
+			XmlView xv = new XmlView(hvoRoot, "publishFound", false, sda);
 			xv.Cache = cache;
 			xv.Mediator = m_mediator;
 			xv.StyleSheet = styleSheet;
@@ -449,10 +445,9 @@ namespace SIL.FieldWorks.FdoUi.Dialogs
 			if (hvo == 0)
 				return;
 			ICmObject cmo = m_cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvo);
-			FwAppArgs link = new FwAppArgs(FwUtils.ksFlexAppName, m_cache.ProjectId.Handle,
-				m_cache.ProjectId.ServerName, "lexiconEdit", cmo.Guid);
+			FwAppArgs link = new FwAppArgs(m_cache.ProjectId.Handle, "lexiconEdit", cmo.Guid);
 			Debug.Assert(m_mediator != null, "The program must pass in a mediator to follow a link in the same application!");
-			IApp app = (IApp)m_mediator.PropertyTable.GetValue("App");
+			IApp app = m_propertyTable.GetValue<IApp>("App");
 			app.HandleOutgoingLink(link);
 		}
 

@@ -4,13 +4,11 @@
 //
 // File: EntryDlgListener.cs
 // Responsibility: Randy Regnier
-
 using System;
 using System.Diagnostics;
 using System.Windows.Forms;
-using System.Xml;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel;
+using SIL.LCModel.Infrastructure;
 using XCore;
 using SIL.Utils;
 
@@ -52,16 +50,16 @@ namespace SIL.FieldWorks.LexText.Controls
 
 			Debug.Assert(argument != null && argument is XCore.Command);
 			string className = XmlUtils.GetOptionalAttributeValue(
-				(argument as XCore.Command).Parameters[0],
+				(argument as Command).Parameters[0],
 				"className");
 			if (className == null || className != "LexEntry")
 				return false;
 
 			using (InsertEntryDlg dlg = new InsertEntryDlg())
 			{
-				FdoCache cache = (FdoCache)m_mediator.PropertyTable.GetValue("cache");
+				LcmCache cache = m_propertyTable.GetValue<LcmCache>("cache");
 				Debug.Assert(cache != null);
-				dlg.SetDlgInfo(cache, m_mediator, m_persistProvider);
+				dlg.SetDlgInfo(cache, m_mediator, m_propertyTable, m_persistProvider);
 				if (dlg.ShowDialog(Form.ActiveForm) == DialogResult.OK)
 				{
 					ILexEntry entry;
@@ -113,11 +111,11 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		private bool RunMergeEntryDialog(object argument, bool fLoseNoTextData)
 		{
-			ICmObject obj = m_mediator.PropertyTable.GetValue("ActiveClerkSelectedObject") as ICmObject;
+			ICmObject obj = m_propertyTable.GetValue<ICmObject>("ActiveClerkSelectedObject");
 			Debug.Assert(obj != null);
 			if (obj == null)
 				return false;		// should never happen, but nothing we can do if it does!
-			FdoCache cache = (FdoCache)m_mediator.PropertyTable.GetValue("cache");
+			LcmCache cache = m_propertyTable.GetValue<LcmCache>("cache");
 			Debug.Assert(cache != null);
 			Debug.Assert(cache == obj.Cache);
 			ILexEntry currentEntry = obj as ILexEntry;
@@ -132,7 +130,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			using (MergeEntryDlg dlg = new MergeEntryDlg())
 			{
 				Debug.Assert(argument != null && argument is Command);
-				dlg.SetDlgInfo(cache, m_mediator, currentEntry);
+				dlg.SetDlgInfo(cache, m_mediator, m_propertyTable, currentEntry);
 				if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
 				{
 					var survivor = dlg.SelectedObject as ILexEntry;
@@ -173,11 +171,11 @@ namespace SIL.FieldWorks.LexText.Controls
 		{
 			get
 			{
-				string areaChoice = m_mediator.PropertyTable.GetStringProperty("areaChoice", null);
+				string areaChoice = m_propertyTable.GetStringProperty("areaChoice", null);
 				if (areaChoice == null) return false; // happens at start up
 				if ("lexicon" == areaChoice)
 				{
-					string tool = m_mediator.PropertyTable.GetStringProperty("currentContentControl", null);
+					string tool = m_propertyTable.GetStringProperty("currentContentControl", null);
 					if (tool == "lexiconEdit") return true;
 					return false;
 				}
@@ -222,9 +220,9 @@ namespace SIL.FieldWorks.LexText.Controls
 
 			using (var dlg = new EntryGoDlg())
 			{
-				var cache = (FdoCache)m_mediator.PropertyTable.GetValue("cache");
+				var cache = m_propertyTable.GetValue<LcmCache>("cache");
 				Debug.Assert(cache != null);
-				dlg.SetDlgInfo(cache, null, m_mediator);
+				dlg.SetDlgInfo(cache, null, m_mediator, m_propertyTable);
 				dlg.SetHelpTopic("khtpFindLexicalEntry");
 				if (dlg.ShowDialog() == DialogResult.OK)
 					m_mediator.BroadcastMessageUntilHandled("JumpToRecord", dlg.SelectedObject.Hvo);
@@ -248,17 +246,15 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// the problem on how to control we are CommandSet are handled by listeners are
 		/// visible. It is difficult because some commands, like this one, may be appropriate
 		/// from more than 1 area.</remarks>
-		/// <param name="commandObject"></param>
-		/// <param name="display"></param>
 		/// <returns></returns>
 		protected  bool InFriendlyArea
 		{
 			get
 			{
-				if (m_mediator.PropertyTable.GetStringProperty("ToolForAreaNamed_lexicon", null) == "reversalEditComplete")
+				if (m_propertyTable.GetStringProperty("ToolForAreaNamed_lexicon", null) == "reversalEditComplete")
 					return false;
 
-				string areaChoice = m_mediator.PropertyTable.GetStringProperty("areaChoice",
+				string areaChoice = m_propertyTable.GetStringProperty("areaChoice",
 					null);
 				string[] areas = new string[]{"lexicon"};
 				foreach(string area in areas)
@@ -268,7 +264,7 @@ namespace SIL.FieldWorks.LexText.Controls
 						// We want to show goto dialog for dictionary views, but not lists, etc.
 						// that may be in the Lexicon area.
 						// Note, getting a clerk directly here causes a dependency loop in compilation.
-						var obj = (ICmObject)m_mediator.PropertyTable.GetValue("ActiveClerkOwningObject");
+						var obj = m_propertyTable.GetValue<ICmObject>("ActiveClerkOwningObject");
 						return (obj != null) && (obj.ClassID == LexDbTags.kClassId);
 					}
 				}
@@ -277,16 +273,5 @@ namespace SIL.FieldWorks.LexText.Controls
 		}
 
 		#endregion XCORE Message Handlers
-
-		/// <summary>
-		/// Initialize the IxCoreColleague object.
-		/// </summary>
-		public override void Init(Mediator mediator, XmlNode configurationParameters)
-		{
-			CheckDisposed();
-
-			base.Init(mediator, configurationParameters);
-			//FdoCache cache = (FdoCache)m_mediator.PropertyTable.GetValue("cache");
-		}
 	}
 }

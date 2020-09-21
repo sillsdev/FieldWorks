@@ -8,12 +8,13 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using NUnit.Framework;
-using SIL.CoreImpl;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.WritingSystems;
 using SIL.FieldWorks.Common.Controls;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.Utils;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Utils;
 using XCore;
 
 namespace SIL.FieldWorks.XWorks
@@ -36,7 +37,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// Creates a DictionaryConfigurationModel with one Main and one of each neeeded Minor Entry nodes, all with enabled HeadWord children
 		/// </summary>
-		internal static DictionaryConfigurationModel CreateInterestingConfigurationModel(FdoCache cache, Mediator mediator = null,
+		internal static DictionaryConfigurationModel CreateInterestingConfigurationModel(LcmCache cache, PropertyTable propertyTable = null,
 			DictionaryConfigurationModel.ConfigType configType = DictionaryConfigurationModel.ConfigType.Root)
 		{
 			var mainHeadwordNode = new ConfigurableDictionaryNode
@@ -76,7 +77,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				AllPublications = true,
 				Parts = new List<ConfigurableDictionaryNode> { mainEntryNode, minorEntryNode, minorSecondNode },
-				FilePath = mediator == null ? null : Path.Combine(DictionaryConfigurationListener.GetProjectConfigurationDirectory(mediator),
+				FilePath = propertyTable == null ? null : Path.Combine(DictionaryConfigurationListener.GetProjectConfigurationDirectory(propertyTable),
 																	"filename" + DictionaryConfigurationModel.FileExtension),
 				IsRootBased = configType == DictionaryConfigurationModel.ConfigType.Root
 			};
@@ -117,19 +118,19 @@ namespace SIL.FieldWorks.XWorks
 		/// <param name="headword">Optional: defaults to 'Citation'</param>
 		/// <param name="gloss">Optional: defaults to 'gloss'</param>
 		/// <returns></returns>
-		internal static ILexEntry CreateInterestingLexEntry(FdoCache cache, string headword = "Citation", string gloss = "gloss")
+		internal static ILexEntry CreateInterestingLexEntry(LcmCache cache, string headword = "Citation", string gloss = "gloss", string definition = null)
 		{
 			var entryFactory = cache.ServiceLocator.GetInstance<ILexEntryFactory>();
 			var entry = entryFactory.Create();
 			var wsEn = EnsureWritingSystemSetup(cache, "en", false);
 			var wsFr = EnsureWritingSystemSetup(cache, "fr", true);
-			AddHeadwordToEntry(entry, headword, wsFr, cache);
-			entry.Comment.set_String(wsEn, cache.TsStrFactory.MakeString("Comment", wsEn));
-			AddSenseToEntry(entry, gloss, wsEn, cache);
+			AddHeadwordToEntry(entry, headword, wsFr);
+			entry.Comment.set_String(wsEn, TsStringUtils.MakeString("Comment", wsEn));
+			AddSenseToEntry(entry, gloss, wsEn, cache, definition);
 			return entry;
 		}
 
-		private static int EnsureWritingSystemSetup(FdoCache cache, string wsStr, bool isVernacular)
+		private static int EnsureWritingSystemSetup(LcmCache cache, string wsStr, bool isVernacular)
 		{
 			var wsFact = cache.WritingSystemFactory;
 			var result = wsFact.GetWsFromStr(wsStr);
@@ -137,11 +138,11 @@ namespace SIL.FieldWorks.XWorks
 			{
 				if (isVernacular)
 				{
-					cache.LangProject.AddToCurrentVernacularWritingSystems(cache.WritingSystemFactory.get_Engine(wsStr) as IWritingSystem);
+					cache.LangProject.AddToCurrentVernacularWritingSystems(cache.WritingSystemFactory.get_Engine(wsStr) as CoreWritingSystemDefinition);
 				}
 				else
 				{
-					cache.LangProject.AddToCurrentAnalysisWritingSystems(cache.WritingSystemFactory.get_Engine(wsStr) as IWritingSystem);
+					cache.LangProject.AddToCurrentAnalysisWritingSystems(cache.WritingSystemFactory.get_Engine(wsStr) as CoreWritingSystemDefinition);
 				}
 			}
 			return wsFact.GetWsFromStr(wsStr);
@@ -154,7 +155,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <param name="headword">Optional: defaults to 'Citation'</param>
 		/// <param name="gloss">Optional: defaults to 'gloss'</param>
 		/// <returns></returns>
-		internal static ILexEntry CreateInterestingSuffix(FdoCache cache, string headword = "ba", string gloss = "gloss")
+		internal static ILexEntry CreateInterestingSuffix(LcmCache cache, string headword = "ba", string gloss = "gloss")
 		{
 			var entry = CreateInterestingLexEntry(cache, headword, gloss);
 			var wsEn = cache.WritingSystemFactory.GetWsFromStr("en");
@@ -176,9 +177,23 @@ namespace SIL.FieldWorks.XWorks
 				SetGuidOn(item, tempGuid);
 			}
 
+			~TempGuidOn()
+			{
+				Dispose(false);
+			}
+
 			public void Dispose()
 			{
-				SetGuidOn(Item, m_OriginalGuid);
+				Dispose(true);
+				GC.SuppressFinalize(this);
+			}
+
+			private void Dispose(bool disposing)
+			{
+				System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + " ******");
+
+				if (disposing)
+					SetGuidOn(Item, m_OriginalGuid);
 			}
 
 			private static void SetGuidOn(ICmObject item, Guid newGuid)
@@ -192,7 +207,7 @@ namespace SIL.FieldWorks.XWorks
 		/// Use reflection to set the guid on a variant form. May not work for all kinds of tests or appropriately be editing the database.
 		/// Because changing the Guid causes teardown problem, it must be reset prior to teardown (hence the Disposable <returns/>)
 		/// </summary>
-		internal static TempGuidOn<ILexEntryRef> CreateVariantForm(FdoCache cache, IVariantComponentLexeme main, ILexEntry variantForm, Guid guid,
+		internal static TempGuidOn<ILexEntryRef> CreateVariantForm(LcmCache cache, IVariantComponentLexeme main, ILexEntry variantForm, Guid guid,
 			string type = TestVariantName)
 		{
 			return new TempGuidOn<ILexEntryRef>(CreateVariantForm(cache, main, variantForm, type), guid);
@@ -201,7 +216,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// 'internal static' so Reversal tests can use it
 		/// </summary>
-		internal static ILexEntryRef CreateVariantForm(FdoCache cache, IVariantComponentLexeme main, ILexEntry variantForm, string type = TestVariantName)
+		internal static ILexEntryRef CreateVariantForm(LcmCache cache, IVariantComponentLexeme main, ILexEntry variantForm, string type = TestVariantName)
 		{
 			var owningList = cache.LangProject.LexDbOA.VariantEntryTypesOA;
 			Assert.IsNotNull(owningList, "No VariantEntryTypes property on Lexicon object.");
@@ -223,25 +238,25 @@ namespace SIL.FieldWorks.XWorks
 		/// Use reflection to set the guid on a complex form. May not work for all kinds of tests or appropriately be editing the database.
 		/// Because changing the Guid causes teardown problem, it must be reset prior to teardown (hence the Disposable <returns/>)
 		/// </summary>
-		internal static TempGuidOn<ILexEntryRef> CreateComplexForm(FdoCache cache, IVariantComponentLexeme main, ILexEntry complexForm, Guid guid,
+		internal static TempGuidOn<ILexEntryRef> CreateComplexForm(LcmCache cache, IVariantComponentLexeme main, ILexEntry complexForm, Guid guid,
 			bool subentry)
 		{
 			return new TempGuidOn<ILexEntryRef>(CreateComplexForm(cache, main, complexForm, subentry), guid);
 		}
 
-		internal static ILexEntryRef CreateComplexForm(FdoCache cache, ICmObject main, ILexEntry complexForm, bool subentry, byte complexFormTypeIndex = 1)
+		internal static ILexEntryRef CreateComplexForm(LcmCache cache, ICmObject main, ILexEntry complexForm, bool subentry, byte complexFormTypeIndex = 1)
 		{
 			return CreateComplexForm(cache, main, complexForm, subentry,
 				(ILexEntryType)cache.LangProject.LexDbOA.ComplexEntryTypesOA.PossibilitiesOS[complexFormTypeIndex]);
 		}
 
-		private static ILexEntryRef CreateComplexForm(FdoCache cache, ICmObject main, ILexEntry complexForm, bool subentry, Guid typeGuid)
+		private static ILexEntryRef CreateComplexForm(LcmCache cache, ICmObject main, ILexEntry complexForm, bool subentry, Guid typeGuid)
 		{
 			return CreateComplexForm(cache, main, complexForm, subentry,
 				(ILexEntryType)cache.LangProject.LexDbOA.ComplexEntryTypesOA.PossibilitiesOS.First(x => x.Guid == typeGuid));
 		}
 
-		private static ILexEntryRef CreateComplexForm(FdoCache cache, ICmObject main, ILexEntry complexForm, bool subentry, ILexEntryType complexEntryType)
+		private static ILexEntryRef CreateComplexForm(LcmCache cache, ICmObject main, ILexEntry complexForm, bool subentry, ILexEntryType complexEntryType)
 		{
 			var complexEntryRef = cache.ServiceLocator.GetInstance<ILexEntryRefFactory>().Create();
 			complexForm.EntryRefsOS.Add(complexEntryRef);
@@ -326,27 +341,34 @@ namespace SIL.FieldWorks.XWorks
 			return DictionaryConfigurationImportController.AddPublicationType(name, Cache);
 		}
 
-		private static void AddHeadwordToEntry(ILexEntry entry, string headword, int wsId, FdoCache cache)
+		private static void AddHeadwordToEntry(ILexEntry entry, string headword, int wsId)
 		{
 			// The headword field is special: it uses Citation if available, or LexemeForm if Citation isn't filled in
-			entry.CitationForm.set_String(wsId, cache.TsStrFactory.MakeString(headword, wsId));
+			entry.CitationForm.set_String(wsId, TsStringUtils.MakeString(headword, wsId));
 		}
 
-		private static ILexPronunciation AddPronunciationToEntry(ILexEntry entry, string content, int wsId, FdoCache cache)
+		private static ILexPronunciation AddPronunciationToEntry(ILexEntry entry, string content, int wsId, LcmCache cache)
 		{
 			var pronunciation = cache.ServiceLocator.GetInstance<ILexPronunciationFactory>().Create();
 			entry.PronunciationsOS.Add(pronunciation);
-			pronunciation.Form.set_String(wsId, cache.TsStrFactory.MakeString(content, wsId));
+			pronunciation.Form.set_String(wsId, TsStringUtils.MakeString(content, wsId));
 			return pronunciation;
 		}
 
-		private static void AddSenseToEntry(ILexEntry entry, string gloss, int wsId, FdoCache cache)
+		private static void AddSenseToEntry(ILexEntry entry, string gloss, int wsId, LcmCache cache, string definition = null)
 		{
 			var senseFactory = cache.ServiceLocator.GetInstance<ILexSenseFactory>();
 			var sense = senseFactory.Create();
 			entry.SensesOS.Add(sense);
 			if (!string.IsNullOrEmpty(gloss))
-				sense.Gloss.set_String(wsId, cache.TsStrFactory.MakeString(gloss, wsId));
+			{
+				sense.Gloss.set_String(wsId, TsStringUtils.MakeString(gloss, wsId));
+			}
+
+			if (!string.IsNullOrEmpty(definition))
+			{
+				sense.Definition.set_String(wsId, TsStringUtils.MakeString(definition, wsId));
+			}
 		}
 
 		private void AddSenseAndTwoSubsensesToEntry(ICmObject entryOrSense, string gloss)
@@ -358,18 +380,18 @@ namespace SIL.FieldWorks.XWorks
 				entry.SensesOS.Add(sense);
 			else
 				((ILexSense)entryOrSense).SensesOS.Add(sense);
-			sense.Gloss.set_String(m_wsEn, Cache.TsStrFactory.MakeString(gloss, m_wsEn));
+			sense.Gloss.set_String(m_wsEn, TsStringUtils.MakeString(gloss, m_wsEn));
 			var subSensesOne = senseFactory.Create();
 			sense.SensesOS.Add(subSensesOne);
-			subSensesOne.Gloss.set_String(m_wsEn, Cache.TsStrFactory.MakeString(gloss + "2.1", m_wsEn));
+			subSensesOne.Gloss.set_String(m_wsEn, TsStringUtils.MakeString(gloss + "2.1", m_wsEn));
 			var subSensesTwo = senseFactory.Create();
 			sense.SensesOS.Add(subSensesTwo);
-			subSensesTwo.Gloss.set_String(m_wsEn, Cache.TsStrFactory.MakeString(gloss + "2.2", m_wsEn));
+			subSensesTwo.Gloss.set_String(m_wsEn, TsStringUtils.MakeString(gloss + "2.2", m_wsEn));
 		}
 
 		private void AddSingleSubSenseToSense(string gloss, ILexSense sense)
 		{
-			sense.Gloss.set_String(m_wsEn, Cache.TsStrFactory.MakeString(gloss, m_wsEn));
+			sense.Gloss.set_String(m_wsEn, TsStringUtils.MakeString(gloss, m_wsEn));
 			AddSubSenseToSense(gloss + "1.1", sense);
 		}
 
@@ -377,19 +399,19 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var subSensesOne = sense.Cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create();
 			sense.SensesOS.Add(subSensesOne);
-			subSensesOne.Gloss.set_String(m_wsEn, Cache.TsStrFactory.MakeString(gloss, m_wsEn));
+			subSensesOne.Gloss.set_String(m_wsEn, TsStringUtils.MakeString(gloss, m_wsEn));
 		}
 
 		private ILexExampleSentence AddExampleToSense(ILexSense sense, string content, string translation = null)
 		{
 			var exampleFact = Cache.ServiceLocator.GetInstance<ILexExampleSentenceFactory>();
 			var example = exampleFact.Create(new Guid(), sense);
-			example.Example.set_String(m_wsFr, Cache.TsStrFactory.MakeString(content, m_wsFr));
+			example.Example.set_String(m_wsFr, TsStringUtils.MakeString(content, m_wsFr));
 			if (translation != null)
 			{
 				var type = Cache.ServiceLocator.GetInstance<ICmPossibilityRepository>().GetObject(CmPossibilityTags.kguidTranFreeTranslation);
 				var cmTranslation = Cache.ServiceLocator.GetInstance<ICmTranslationFactory>().Create(example, type);
-				cmTranslation.Translation.set_String(m_wsEn, Cache.TsStrFactory.MakeString(translation, m_wsEn));
+				cmTranslation.Translation.set_String(m_wsEn, TsStringUtils.MakeString(translation, m_wsEn));
 				example.TranslationsOC.Add(cmTranslation);
 			}
 			return example;
@@ -400,19 +422,19 @@ namespace SIL.FieldWorks.XWorks
 			var morphFact = Cache.ServiceLocator.GetInstance<IMoStemAllomorphFactory>();
 			var morph = morphFact.Create();
 			entry.AlternateFormsOS.Add(morph);
-			morph.Form.set_String(m_wsFr, Cache.TsStrFactory.MakeString("Allomorph", m_wsFr));
+			morph.Form.set_String(m_wsFr, TsStringUtils.MakeString("Allomorph", m_wsFr));
 
 			// add environment to the allomorph
 			const int stringRepresentationFlid = 5097008;
 			var env = Cache.ServiceLocator.GetInstance<IPhEnvironmentFactory>().Create();
 			Cache.LangProject.PhonologicalDataOA.EnvironmentsOS.Add(env);
 			morph.PhoneEnvRC.Add(env);
-			Cache.MainCacheAccessor.SetString(env.Hvo, stringRepresentationFlid, Cache.TsStrFactory.MakeString("phoneyEnv", m_wsEn));
+			Cache.MainCacheAccessor.SetString(env.Hvo, stringRepresentationFlid, TsStringUtils.MakeString("phoneyEnv", m_wsEn));
 
 			return morph;
 		}
 
-		private static IStText CreateMultiParaText(string content, FdoCache cache)
+		private static IStText CreateMultiParaText(string content, LcmCache cache)
 		{
 			var text = cache.ServiceLocator.GetInstance<ITextFactory>().Create();
 			//cache.LangProject.
@@ -428,21 +450,21 @@ namespace SIL.FieldWorks.XWorks
 			return text.ContentsOA;
 		}
 
-		private static ITsString MakeVernTss(string content, FdoCache cache)
+		private static ITsString MakeVernTss(string content, LcmCache cache)
 		{
-			return cache.TsStrFactory.MakeString(content, cache.DefaultVernWs);
+			return TsStringUtils.MakeString(content, cache.DefaultVernWs);
 		}
 
 		private ITsString MakeMulitlingualTss(IEnumerable<string> content)
 		{
 			// automatically alternates runs between 'en' and 'fr'
-			var tsFact = Cache.TsStrFactory;
+			var tsFact = TsStringUtils.TsStrFactory;
 			var lastWs = m_wsFr;
 			var builder = tsFact.GetIncBldr();
 			foreach (var runContent in content)
 			{
 				lastWs = lastWs == m_wsEn ? m_wsFr : m_wsEn; // switch ws for each run
-				builder.AppendTsString(tsFact.MakeString(runContent, lastWs));
+				builder.AppendTsString(TsStringUtils.MakeString(runContent, lastWs));
 			}
 			return builder.GetString();
 		}
@@ -451,7 +473,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			EnsureHebrewExists();
 			// automatically alternates runs between 'en' and 'he' (Hebrew)
-			var tsFact = Cache.TsStrFactory;
+			var tsFact = TsStringUtils.TsStrFactory;
 			var lastWs = m_wsEn;
 			var builder = tsFact.GetIncBldr();
 			foreach (var runContent in content)
@@ -467,7 +489,7 @@ namespace SIL.FieldWorks.XWorks
 			if (m_wsHe > 0)
 				return;
 			var wsManager = Cache.ServiceLocator.WritingSystemManager;
-			IWritingSystem hebrew;
+			CoreWritingSystemDefinition hebrew;
 			wsManager.GetOrSet("he", out hebrew);
 			hebrew.RightToLeftScript = true;
 			m_wsHe = hebrew.Handle;
@@ -539,7 +561,7 @@ namespace SIL.FieldWorks.XWorks
 			return GetFullyEnabledListOptions(Cache, listName);
 		}
 
-		public static DictionaryNodeOptions GetFullyEnabledListOptions(FdoCache cache, DictionaryNodeListOptions.ListIds listName)
+		public static DictionaryNodeOptions GetFullyEnabledListOptions(LcmCache cache, DictionaryNodeListOptions.ListIds listName)
 		{
 			List<DictionaryNodeListOptions.DictionaryNodeOption> dnoList;
 			var useParaOptions = false;
@@ -648,7 +670,7 @@ namespace SIL.FieldWorks.XWorks
 
 	internal class TestPictureClass
 	{
-		public IFdoList<ICmPicture> Pictures { get; set; }
+		public ILcmList<ICmPicture> Pictures { get; set; }
 	}
 	#endregion
 }

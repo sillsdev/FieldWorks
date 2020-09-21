@@ -10,9 +10,8 @@ using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using NUnit.Framework;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.Utils;
-using System.Collections;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 
 namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 {
@@ -571,9 +570,6 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 				return;
 
 			base.MakeRoot();
-
-			m_rootb = VwRootBoxClass.Create();
-			m_rootb.SetSite(this);
 
 			// Set up a new view constructor.
 			m_basicViewVc = new SimpleViewVc(DisplayType, flid);

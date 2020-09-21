@@ -1,37 +1,24 @@
-﻿// Copyright (c) 2015 SIL International
+﻿// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Xml.Linq;
 using System.Xml.XPath;
-using ECInterfaces;
 using NUnit.Framework;
-using SIL.FieldWorks.Common.FwUtils;
 using Sfm2Xml;
-using SIL.CoreImpl;
-using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.LexText.Controls;
-using SIL.FieldWorks.Test.TestUtils;
 using SilEncConverters40;
+using SIL.LCModel.Core.WritingSystems;
 
 namespace SIL.FieldWorks.IText
 {
 	[TestFixture]
-	public class InterlinSfmImportTests : BaseTest
+	public class InterlinSfmImportTests
 	{
-		[SuppressMessage("Gendarme.Rules.Portability", "NewLineLiteralRule",
-			Justification="New lines in input strings are different depending on platform")]
-		public InterlinSfmImportTests()
-		{
-		}
-
 		private string input1 =
 			@"\_sh v3.0  943  S Texts
 \id Abu
@@ -354,10 +341,10 @@ namespace SIL.FieldWorks.IText
 			Assert.That(output[1], Is.EqualTo("unterminated"));
 		}
 
-		private PalasoWritingSystemManager GetWsf()
+		private WritingSystemManager GetWsf()
 		{
-			var wsf = new PalasoWritingSystemManager();
-			IWritingSystem wsObj;
+			var wsf = new WritingSystemManager();
+			CoreWritingSystemDefinition wsObj;
 			wsf.GetOrSet("qaa-x-kal", out wsObj);
 			EnsureQuoteAndHyphenWordForming(wsObj);
 			return wsf;
@@ -378,26 +365,23 @@ namespace SIL.FieldWorks.IText
 			return mappings;
 		}
 
-		private void EnsureQuoteAndHyphenWordForming(IWritingSystem wsObj)
+		private void EnsureQuoteAndHyphenWordForming(CoreWritingSystemDefinition wsObj)
 		{
-			var validChars = ValidCharacters.Load(wsObj.ValidChars,
-				wsObj.DisplayLabel, null, null, FwDirectoryFinder.LegacyWordformingCharOverridesFile);
+			ValidCharacters validChars = ValidCharacters.Load(wsObj);
 			var fChangedSomething = false;
 			if (!validChars.IsWordForming('-'))
 			{
-				validChars.AddCharacter("-");
-				validChars.MoveBetweenWordFormingAndOther(new List<string>(new[] { "-" }), true);
+				validChars.AddCharacter("-", ValidCharacterType.WordForming);
 				fChangedSomething = true;
 			}
 			if (!validChars.IsWordForming('\''))
 			{
-				validChars.AddCharacter("'");
-				validChars.MoveBetweenWordFormingAndOther(new List<string>(new[] { "'" }), true);
+				validChars.AddCharacter("'", ValidCharacterType.WordForming);
 				fChangedSomething = true;
 			}
 			if (!fChangedSomething)
 				return;
-			wsObj.ValidChars = validChars.XmlString;
+			validChars.SaveTo(wsObj);
 		}
 
 		private void VerifyText(XElement phrase, string[] items, HashSet<string> punctItems, string lang)

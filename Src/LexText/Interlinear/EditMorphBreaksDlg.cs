@@ -1,4 +1,4 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -6,13 +6,10 @@ using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Windows.Forms;
-
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.Utils;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FwCoreDlgs;
-using XCore;
 
 namespace SIL.FieldWorks.IText
 {
@@ -22,7 +19,7 @@ namespace SIL.FieldWorks.IText
 	/// bigger edit box, and it displays some helpful (?) information to assist in marking the
 	/// morpheme types.
 	/// </summary>
-	public class EditMorphBreaksDlg : Form, IFWDisposable
+	public class EditMorphBreaksDlg : Form
 	{
 		private Button m_btnOk;
 		private Button m_btnCancel;
@@ -89,7 +86,7 @@ namespace SIL.FieldWorks.IText
 		/// This sets the original wordform and morph-broken word into the dialog.
 		/// </summary>
 		public void Initialize(ITsString tssWord, string sMorphs, ILgWritingSystemFactory wsf,
-			FdoCache cache, StringTable stringTable, IVwStylesheet stylesheet)
+			LcmCache cache, IVwStylesheet stylesheet)
 		{
 			CheckDisposed();
 
@@ -122,10 +119,10 @@ namespace SIL.FieldWorks.IText
 			morphTypeRepo.GetMajorMorphTypes(out mmtStem, out mmtPrefix, out mmtSuffix, out mmtInfix,
 				out mmtBoundStem, out mmtProclitic, out mmtEnclitic, out mmtSimulfix, out mmtSuprafix);
 			// Format the labels according to the MoMorphType Prefix/Postfix values.
-			string sExample1 = stringTable.GetString("EditMorphBreaks-Example1", "DialogStrings");
-			string sExample2 = stringTable.GetString("EditMorphBreaks-Example2", "DialogStrings");
-			string sStemExample = stringTable.GetString("EditMorphBreaks-stemExample", "DialogStrings");
-			string sAffixExample = stringTable.GetString("EditMorphBreaks-affixExample", "DialogStrings");
+			string sExample1 = StringTable.Table.GetString("EditMorphBreaks-Example1", "DialogStrings");
+			string sExample2 = StringTable.Table.GetString("EditMorphBreaks-Example2", "DialogStrings");
+			string sStemExample = StringTable.Table.GetString("EditMorphBreaks-stemExample", "DialogStrings");
+			string sAffixExample = StringTable.Table.GetString("EditMorphBreaks-affixExample", "DialogStrings");
 			m_lblHelp2Example1.Text = String.Format(sExample1, mmtStem.Prefix ?? "", mmtStem.Postfix ?? "");
 			m_lblHelp2Example2.Text = String.Format(sExample2, mmtSuffix.Prefix ?? "", mmtSuffix.Postfix ?? "");
 			m_lblBreakStemExample.Text = String.Format(sStemExample, mmtStem.Prefix ?? "", mmtStem.Postfix ?? "");
@@ -152,7 +149,7 @@ namespace SIL.FieldWorks.IText
 				mmtSuprafix.Prefix == null ? "" : " " + mmtSuprafix.Prefix,
 				mmtSuprafix.Postfix == null ? "" : mmtSuprafix.Postfix + " ");
 
-			m_morphBreakContextMenu = new MorphBreakHelperMenu(m_txtMorphs, m_helpTopicProvider, cache, stringTable);
+			m_morphBreakContextMenu = new MorphBreakHelperMenu(m_txtMorphs, m_helpTopicProvider, cache);
 			m_txtMorphs.AdjustForStyleSheet(this, null, stylesheet);
 			m_morphBreakHelper.Height = m_txtMorphs.Height;
 		}

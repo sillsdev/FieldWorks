@@ -1,9 +1,6 @@
-// Copyright (c) 2002-2013 SIL International
+// Copyright (c) 2002-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: ParserConnection.cs
-// Responsibility: John Hatton
 
 using System;
 using System.Collections.Generic;
@@ -11,16 +8,17 @@ using System.IO;
 using System.Threading;
 using System.Xml.Linq;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using SIL.FieldWorks.WordWorks.Parser;
-using SIL.Utils;
+using SIL.ObjectModel;
+using XCore;
 
 namespace SIL.FieldWorks.LexText.Controls
 {
 	/// <summary>
 	/// Handles acquiring a parser and safely subscribing to and receiving events from it.
 	/// </summary>
-	public sealed class ParserConnection : FwDisposableBase, IAsyncResult
+	public sealed class ParserConnection : DisposableBase, IAsyncResult
 	{
 		private readonly ParserScheduler m_scheduler;
 
@@ -35,7 +33,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// Initializes a new instance of the <see cref="ParserConnection"/> class.
 		/// This will attempt to connect to an existing parser or start a new one if necessary.
 		/// </summary>
-		public ParserConnection(FdoCache cache, IdleQueue idleQueue)
+		public ParserConnection(LcmCache cache, IdleQueue idleQueue)
 		{
 			m_activity = "";
 			m_scheduler = new ParserScheduler(cache, idleQueue, Path.Combine(FwDirectoryFinder.CodeDirectory, FwDirectoryFinder.ksFlexFolderName));

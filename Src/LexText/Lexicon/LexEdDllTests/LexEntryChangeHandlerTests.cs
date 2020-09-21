@@ -5,8 +5,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.FDOTests;
+using SIL.LCModel;
 using SIL.FieldWorks.XWorks.LexEd;
 
 namespace LexEdDllTests

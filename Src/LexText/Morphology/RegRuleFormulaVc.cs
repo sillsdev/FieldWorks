@@ -1,8 +1,10 @@
 using System;
 using System.Drawing;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.FDO;
-using SIL.Utils;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
+using SIL.LCModel;
+using SIL.LCModel.Utils;
 using XCore;
 
 namespace SIL.FieldWorks.XWorks.MorphologyEditor
@@ -21,17 +23,17 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 
 		private IPhSegRuleRHS m_rhs;
 
-		public RegRuleFormulaVc(FdoCache cache, Mediator mediator)
-			: base(cache, mediator)
+		public RegRuleFormulaVc(LcmCache cache, PropertyTable propertyTable)
+			: base(cache, propertyTable)
 		{
-			ITsPropsBldr tpb = TsPropsBldrClass.Create();
+			ITsPropsBldr tpb = TsStringUtils.MakePropsBldr();
 			tpb.SetIntPropValues((int)FwTextPropType.ktptBorderBottom, (int)FwTextPropVar.ktpvMilliPoint, 1000);
 			tpb.SetIntPropValues((int)FwTextPropType.ktptBorderColor, (int)FwTextPropVar.ktpvDefault,
 				(int)ColorUtil.ConvertColorToBGR(Color.Gray));
 			tpb.SetIntPropValues((int)FwTextPropType.ktptAlign, (int)FwTextPropVar.ktpvEnum, (int)FwTextAlign.ktalCenter);
 			m_ctxtProps = tpb.GetTextProps();
 
-			tpb = TsPropsBldrClass.Create();
+			tpb = TsStringUtils.MakePropsBldr();
 			tpb.SetIntPropValues((int)FwTextPropType.ktptFontSize, (int)FwTextPropVar.ktpvMilliPoint, 20000);
 			tpb.SetIntPropValues((int)FwTextPropType.ktptForeColor, (int)FwTextPropVar.ktpvDefault,
 				(int)ColorUtil.ConvertColorToBGR(Color.Gray));
@@ -42,11 +44,10 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			tpb.SetIntPropValues((int)FwTextPropType.ktptEditable, (int)FwTextPropVar.ktpvEnum, (int)TptEditable.ktptNotEditable);
 			m_charProps = tpb.GetTextProps();
 
-			ITsStrFactory tsf = m_cache.TsStrFactory;
 			int userWs = m_cache.DefaultUserWs;
-			m_arrow = tsf.MakeString("\u2192", userWs);
-			m_slash = tsf.MakeString("/", userWs);
-			m_underscore = tsf.MakeString("__", userWs);
+			m_arrow = TsStringUtils.MakeString("\u2192", userWs);
+			m_slash = TsStringUtils.MakeString("/", userWs);
+			m_underscore = TsStringUtils.MakeString("__", userWs);
 		}
 
 		protected override int GetMaxNumLines()

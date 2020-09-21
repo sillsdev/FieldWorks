@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015 SIL International
+﻿// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -6,11 +6,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
-using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.Utils;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel;
+using SIL.LCModel.Infrastructure;
+using SIL.ObjectModel;
+using SIL.LCModel.Utils;
 using XCore;
 
 namespace SIL.FieldWorks.Common.Controls
@@ -38,25 +39,25 @@ namespace SIL.FieldWorks.Common.Controls
 	/// <summary>
 	/// An abstract class for performing indexing and searching asynchronously.
 	/// </summary>
-	public abstract class SearchEngine : FwDisposableBase, IVwNotifyChange
+	public abstract class SearchEngine : DisposableBase, IVwNotifyChange
 	{
 		/// <summary>
 		/// Gets the search engine.
 		/// </summary>
-		public static SearchEngine Get(Mediator mediator, string propName, Func<SearchEngine> searchEngineFactory)
+		public static SearchEngine Get(Mediator mediator, PropertyTable propertyTable, string propName, Func<SearchEngine> searchEngineFactory)
 		{
-			var searchEngine = (SearchEngine) mediator.PropertyTable.GetValue(propName);
+			var searchEngine = propertyTable.GetValue<SearchEngine>(propName);
 			if (searchEngine == null)
 			{
 				searchEngine = searchEngineFactory();
-				mediator.PropertyTable.SetProperty(propName, searchEngine);
-				mediator.PropertyTable.SetPropertyDispose(propName, true);
-				mediator.PropertyTable.SetPropertyPersistence(propName, false);
+				propertyTable.SetProperty(propName, searchEngine, true);
+				propertyTable.SetPropertyDispose(propName, true);
+				propertyTable.SetPropertyPersistence(propName, false);
 			}
 			return searchEngine;
 		}
 
-		private readonly FdoCache m_cache;
+		private readonly LcmCache m_cache;
 		private readonly StringSearcher<int> m_searcher;
 
 		private IList<ICmObject> m_searchableObjs;
@@ -73,7 +74,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <summary>
 		/// Initializes a new instance of the <see cref="SearchEngine"/> class.
 		/// </summary>
-		protected SearchEngine(FdoCache cache, SearchType type)
+		protected SearchEngine(LcmCache cache, SearchType type)
 		{
 			m_cache = cache;
 			m_searcher = new StringSearcher<int>(type, m_cache.ServiceLocator.WritingSystemManager);
@@ -121,7 +122,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <summary>
 		/// Gets the cache.
 		/// </summary>
-		protected FdoCache Cache
+		protected LcmCache Cache
 		{
 			get { return m_cache; }
 		}

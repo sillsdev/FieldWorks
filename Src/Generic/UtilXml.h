@@ -36,7 +36,7 @@ bool FromSurrogate(wchar chIn1, wchar pchIn2, uint* pch32Out);
 // Convert any XML character entities in the string to the corresponding single characters.
 bool DecodeCharacterEntities(StrUni & stu);
 
-// Returns false if ch is the second (low) of a surrogate pair.
+// Returns true if ch is the second (low) of a surrogate pair.
 inline bool IsLowSurrogate(wchar ch)
 {
 	return (ch >= 0xDC00 && ch <= 0xDFFF);

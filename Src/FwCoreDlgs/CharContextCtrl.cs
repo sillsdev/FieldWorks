@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2017 SIL International
+// Copyright (c) 2015-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -8,18 +8,21 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Windows.Forms;
-using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
+using Icu;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.FieldWorks.Common.Controls.FileDialog;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.ScriptureUtils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.LCModel;
+using SIL.LCModel.Utils;
 using SIL.FieldWorks.Resources;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Core.Text;
 using SIL.Utils;
-using SIL.Utils.FileDialog;
-using SILUBS.SharedScrUtils;
+using SIL.Windows.Forms;
 
 namespace SIL.FieldWorks.FwCoreDlgs
 {
@@ -57,28 +60,21 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// list of context information.</summary>
 		public event GetContextInfoHandler GetContextInfo;
 
-		/// <summary>list validator used to remove bogus items from the list of
-		/// TextTokenSubstrings returned from the check
-		/// </summary>
-		public delegate void ValidateList(List<TextTokenSubstring> list);
-
 		private string[] m_fileData;
 		private DataGridView m_tokenGrid;
 		private string m_scrChecksDllFile;
 		private List<ContextInfo> m_currContextInfoList;
 		private Dictionary<string, List<ContextInfo>> m_contextInfoLists;
-		private FdoCache m_cache;
+		private LcmCache m_cache;
 		private IWritingSystemContainer m_wsContainer;
-		private ILgCharacterPropertyEngine m_charPropEng;
 		private IApp m_app;
-		private IWritingSystem m_ws;
+		private CoreWritingSystemDefinition m_ws;
 		private int m_gridRowHeight;
 		private CheckType m_checkToRun;
 		private string m_sListName;
 		private readonly string m_sInitialScanMsgLabel;
 		private Dictionary<string, string> m_chkParams = new Dictionary<string, string>();
 		private string m_currContextItem;
-		private ValidateList m_listValidator;
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -100,23 +96,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Gets the character property engine to use for this control.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		private ILgCharacterPropertyEngine CharPropEngine
-		{
-			get
-			{
-				if (m_wsContainer.DefaultVernacularWritingSystem != null)
-					return m_wsContainer.DefaultVernacularWritingSystem.CharPropEngine;
-				if (m_charPropEng == null)
-					m_charPropEng = LgIcuCharPropEngineClass.Create();
-				return m_charPropEng;
-			}
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
 		/// Initializes this CharContextCtrl
 		/// </summary>
 		/// <param name="cache">The cache.</param>
@@ -126,8 +105,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <param name="contextFont">The context font.</param>
 		/// <param name="tokenGrid">The token grid.</param>
 		/// ------------------------------------------------------------------------------------
-		public void Initialize(FdoCache cache, IWritingSystemContainer wsContainer,
-			IWritingSystem ws, IApp app, Font contextFont, DataGridView tokenGrid)
+		public void Initialize(LcmCache cache, IWritingSystemContainer wsContainer,
+			CoreWritingSystemDefinition ws, IApp app, Font contextFont, DataGridView tokenGrid)
 		{
 			m_cache = cache;
 			m_wsContainer = wsContainer;
@@ -136,23 +115,14 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			ContextFont = contextFont;
 			TokenGrid = tokenGrid;
 
-			if (FwUtils.IsOkToDisplayScriptureIfPresent)
+			var isOkToDisplayScripture = m_cache != null && m_cache.ServiceLocator.GetInstance<IScrBookRepository>().AllInstances().Any();
+			if (isOkToDisplayScripture)
+			{
 				m_scrChecksDllFile = FwDirectoryFinder.BasicEditorialChecksDll;
+			}
 
 			if (m_ws != null)
 			{
-				bool modifyingVernWs = (m_wsContainer.DefaultVernacularWritingSystem != null &&
-					m_ws.Id == m_wsContainer.DefaultVernacularWritingSystem.Id);
-
-				// If TE isn't installed, we can't support creating an inventory
-				// based on Scripture data. Likewise if we don't yet have any books (which also guards
-				// against showing the option in the SE edition, unless it has been paired with Paratext).
-				cmnuScanScripture.Visible = (FwUtils.IsOkToDisplayScriptureIfPresent &&
-					File.Exists(m_scrChecksDllFile) &&
-					m_cache != null && m_cache.LanguageProject.TranslatedScriptureOA != null
-					&& m_cache.LanguageProject.TranslatedScriptureOA.ScriptureBooksOS.Count > 0
-					&& modifyingVernWs);
-
 				if (m_ws.RightToLeftScript)
 				{
 					// Set the order of the columns for right-to-left text.
@@ -270,17 +240,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Sets the list validator used to remove bogus items from the list of
-		/// TextTokenSubstrings returned from the check.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public ValidateList ListValidator
-		{
-			set { m_listValidator = value; }
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
 		///
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
@@ -314,10 +273,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			get
 			{
-				// Get the writing system and valid characters list
-				if (m_wsContainer.DefaultVernacularWritingSystem == null)
-					return null;
-				return ValidCharacters.Load(m_wsContainer.DefaultVernacularWritingSystem, LoadException, FwDirectoryFinder.LegacyWordformingCharOverridesFile);
+				var wsToLoad = m_wsContainer == null ? m_ws : m_wsContainer.DefaultVernacularWritingSystem;
+				return ValidCharacters.Load(wsToLoad);
 			}
 		}
 
@@ -328,7 +285,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// ------------------------------------------------------------------------------------
 		private CharacterCategorizer CharacterCategorizer
 		{
-			get { return new FwCharacterCategorizer(ValidCharacters, CharPropEngine); }
+			get { return new FwCharacterCategorizer(ValidCharacters); }
 		}
 		#endregion
 
@@ -377,18 +334,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		#endregion
 
 		#region Event handlers and helper methods
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Reports a load exception in the scrDataSource.
-		/// </summary>
-		/// <param name="e">The exception.</param>
-		/// ------------------------------------------------------------------------------------
-		void LoadException(ArgumentException e)
-		{
-			ErrorReporter.ReportException(e, m_app.SettingsKey,
-				m_app.SupportEmailAddress, ParentForm, false);
-		}
-
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Adjust the width of the columns so they just fit inside the client area of the grid.
@@ -561,12 +506,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		///
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		private void cmnuScanScripture_Click(object sender, EventArgs e)
-		{
-			// Scan the current scripture project.
-			GetTokensSubStrings(null);
-		}
-
 		private void cmnuScanFile_Click(object sender, EventArgs e)
 		{
 			// Let the user specify a Paratext or Toolbox language file to scan.
@@ -602,8 +541,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 			using (new WaitCursor(this))
 			{
-				List<TextTokenSubstring> tokens = (string.IsNullOrEmpty(fileName) ?
-					ReadTEScripture() : ReadFile(fileName));
+				List<TextTokenSubstring> tokens = ReadFile(fileName);
 
 				if (tokens == null || tokens.Count == 0)
 				{
@@ -620,76 +558,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					TextTokenSubStringsLoaded(tokens);
 				}
 			}
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Reads the current TE scripture project.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		private List<TextTokenSubstring> ReadTEScripture()
-		{
-			var scrDataSource = new ScrChecksDataSource(m_cache, ResourceHelper.GetResourceString("kstidPunctCheckWhitespaceChar"),
-				FwDirectoryFinder.LegacyWordformingCharOverridesFile, FwDirectoryFinder.TeStylesPath);
-
-			scrDataSource.LoadException += scrDataSource_LoadException;
-
-			IScrCheckInventory scrCharInventoryBldr = CreateScrCharInventoryBldr(FwDirectoryFinder.BasicEditorialChecksDll,
-				scrDataSource, m_checkToRun == CheckType.Punctuation ?
-				"SILUBS.ScriptureChecks.PunctuationCheck" : "SILUBS.ScriptureChecks.CharactersCheck");
-
-			var tokens = new List<ITextToken>();
-			var scr = m_cache.LangProject.TranslatedScriptureOA;
-			if (scr == null || scr.ScriptureBooksOS.Count == 0)
-				return null;
-
-			foreach (var book in scr.ScriptureBooksOS)
-			{
-				if (scrDataSource.GetText(book.CanonicalNum, 0))
-					tokens.AddRange(scrDataSource.TextTokens());
-			}
-
-			foreach (KeyValuePair<string, string> kvp in m_chkParams)
-				scrDataSource.SetParameterValue(kvp.Key, kvp.Value);
-
-			scrDataSource.SetParameterValue("PreferredLocale", string.Empty);
-
-			return tokens.Count == 0 ? null : GetTokenSubstrings(scrCharInventoryBldr, tokens);
-		}
-
-		private static IScrCheckInventory CreateScrCharInventoryBldr(string checksDll, IChecksDataSource scrDataSource, string checkType)
-		{
-			var scrCharInventoryBldr = (IScrCheckInventory)ReflectionHelper.CreateObject(checksDll,
-				checkType, new object[] { scrDataSource });
-			return scrCharInventoryBldr;
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Reports a load exception in the scrDataSource.
-		/// </summary>
-		/// <param name="e">The exception.</param>
-		/// ------------------------------------------------------------------------------------
-		void scrDataSource_LoadException(ArgumentException e)
-		{
-			ErrorReporter.ReportException(e, m_app.SettingsKey, m_app.SupportEmailAddress,
-				ParentForm, false);
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Gets the token substrings.
-		/// </summary>
-		/// <param name="inventory">The inventory used to parse the tokens.</param>
-		/// <param name="tokens">The tokens (runs of text).</param>
-		/// ------------------------------------------------------------------------------------
-		private List<TextTokenSubstring> GetTokenSubstrings(IScrCheckInventory inventory,
-			List<ITextToken> tokens)
-		{
-			List<TextTokenSubstring> list = inventory.GetReferences(tokens, string.Empty);
-			if (m_listValidator != null)
-				m_listValidator(list);
-			return list;
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -737,17 +605,20 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			// The following list of control characters should never appear in plain Unicode
 			// data.
-			char[] controlChars = new char[] {
+			char[] controlChars =
+			{
 				'\x01', '\x02', '\x03', '\x04', '\x05', '\x06', '\x07', '\x08', '\x0E', '\x0F',
 				'\x10', '\x11', '\x12', '\x13', '\x14', '\x15', '\x16', '\x17', '\x18', '\x19',
-				'\x1A', '\x1B', '\x7F' };
+				'\x1A', '\x1B', '\x7F'
+			};
 			for (int i = 0; i < m_fileData.Length; i++)
 			{
 				if (m_fileData[i].Length > 0)
 				{
 					if (m_fileData[i].IndexOfAny(controlChars) >= 0)
 						throw new Exception(FWCoreDlgsErrors.ksInvalidControlCharacterFound);
-					m_fileData[i] = CharPropEngine.NormalizeD(m_fileData[i]);
+					m_fileData[i] = CustomIcu.GetIcuNormalizer(FwNormalizationMode.knmNFD)
+						.Normalize(m_fileData[i]);
 				}
 			}
 		}
@@ -944,6 +815,13 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		public ContextGrid()
 		{
 			DoubleBuffered = true;
+		}
+
+		/// <summary/>
+		protected override void Dispose(bool disposing)
+		{
+			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + " ******");
+			base.Dispose(disposing);
 		}
 	}
 

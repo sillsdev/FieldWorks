@@ -1,19 +1,14 @@
-// Copyright (c) 2003-2013 SIL International
+// Copyright (c) 2003-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: ImageContent.cs
-// Responsibility:
-// Last reviewed:
-//
-// <remarks>
-// </remarks>
 
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 using System.Windows.Forms;
 using System.Xml;
+using SIL.LCModel.Utils;
 using SIL.Utils;
 
 namespace XCore
@@ -27,8 +22,8 @@ namespace XCore
 	/// </remarks>
 	public class ImageContent : XCoreUserControl, IxCoreContentControl
 	{
-		private System.Windows.Forms.PictureBox pictureBox1;
-		private System.Windows.Forms.Label imagePath;
+		private PictureBox pictureBox1;
+		private Label imagePath;
 		/// <summary>
 		/// Required designer variable.
 		/// </summary>
@@ -43,24 +38,25 @@ namespace XCore
 		{
 			// This call is required by the Windows.Forms Form Designer.
 			InitializeComponent();
-			base.AccNameDefault = "ImageContent";	// default accessibility name
+			AccNameDefault = "ImageContent";	// default accessibility name
 		}
 
 		//IxCoreColleague
-		public void Init(Mediator mediator,  XmlNode configurationParameters)
+		public void Init(Mediator mediator, PropertyTable propertyTable, XmlNode configurationParameters)
 		{
 			CheckDisposed();
 
-			base.m_configurationParameters = configurationParameters;	// save for acc info
-			string path = XmlUtils.GetManditoryAttributeValue(configurationParameters, "imagePath");
+			m_configurationParameters = configurationParameters;	// save for acc info
+			string path = XmlUtils.GetMandatoryAttributeValue(configurationParameters, "imagePath");
 			 path = mediator.GetRealPath(path);
-			if(System.IO.File.Exists(path))
-				this.pictureBox1.Image  = Image.FromFile(FileUtils.ActualFilePath(path));
+			if (File.Exists(path))
+			{
+				pictureBox1.Image  = Image.FromFile(FileUtils.ActualFilePath(path));
+			}
 			else
 			{
 				imagePath.Text=path;
-			}//throw new ConfigurationException("Could not find this file", configurationParameters);
-
+			}
 		}
 
 		//IxCoreColleague

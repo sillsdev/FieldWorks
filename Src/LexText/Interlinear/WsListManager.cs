@@ -1,18 +1,17 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Diagnostics;
 using System.Linq;
-using System.Windows.Forms;
-using SIL.CoreImpl;
-using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.FDO;
-using SIL.Utils;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.LCModel;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using System.Collections.Generic;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.DomainServices;
 
 namespace SIL.FieldWorks.IText
 {
@@ -23,7 +22,7 @@ namespace SIL.FieldWorks.IText
 	/// used by MultiStringSlice, and probably by other classes that are nothing to do with
 	/// IText. I'm thinking it might belong in the same DLL as LangProject.
 	/// </summary>
-	public class WsListManager : IFWDisposable
+	public class WsListManager : IDisposable
 	{
 		ILangProject m_lp;
 		ITsString m_tssColon;
@@ -41,10 +40,10 @@ namespace SIL.FieldWorks.IText
 		}
 
 		/// <summary>
-		/// Create one starting from an FdoCache.
+		/// Create one starting from an LcmCache.
 		/// </summary>
 		/// <param name="cache"></param>
-		public WsListManager(FdoCache cache): this(cache.LangProject)
+		public WsListManager(LcmCache cache): this(cache.LangProject)
 		{
 		}
 
@@ -179,9 +178,9 @@ namespace SIL.FieldWorks.IText
 		/// Return an array of writing systems given an array of their HVOs.
 		/// </summary>
 		/// <returns></returns>
-		private IWritingSystem[] WssFromHvos(int[] hvos)
+		private CoreWritingSystemDefinition[] WssFromHvos(int[] hvos)
 		{
-			var lgWss = new List<IWritingSystem>();
+			var lgWss = new List<CoreWritingSystemDefinition>();
 			foreach (int ws in hvos)
 				lgWss.Add(m_lp.Services.WritingSystemManager.Get(ws));
 			return lgWss.ToArray();
@@ -223,13 +222,11 @@ namespace SIL.FieldWorks.IText
 				if (m_labels == null || ! equalArrays(m_labelBasis, AnalysisWsIds))
 				{
 					ITsTextProps ttp = LanguageCodeStyle;
-					ILgWritingSystem[] wssAnalysis = AnalysisWss;
-					List<ITsString> labels = new List<ITsString>();
-					ITsStrFactory tsf = TsStrFactoryClass.Create();
-					foreach (IWritingSystem ws in AnalysisWss)
+					var labels = new List<ITsString>();
+					foreach (CoreWritingSystemDefinition ws in AnalysisWss.Cast<CoreWritingSystemDefinition>())
 					{
 						string sAbbr = ws.Abbreviation;
-						labels.Add(tsf.MakeStringWithPropsRgch(sAbbr, sAbbr.Length, ttp));
+						labels.Add(TsStringUtils.MakeString(sAbbr, ttp));
 					}
 					m_labels = labels.ToArray();
 					m_labelBasis = AnalysisWsIds;
@@ -238,10 +235,10 @@ namespace SIL.FieldWorks.IText
 			}
 		}
 
-		public static ITsString WsLabel(FdoCache cache, int ws)
+		public static ITsString WsLabel(LcmCache cache, int ws)
 		{
-			IWritingSystem wsObj = cache.ServiceLocator.WritingSystemManager.Get(ws);
-			ITsString abbr = TsStringUtils.MakeTss(wsObj.Abbreviation, cache.DefaultUserWs, "Language Code");
+			CoreWritingSystemDefinition wsObj = cache.ServiceLocator.WritingSystemManager.Get(ws);
+			ITsString abbr = TsStringUtils.MakeString(wsObj.Abbreviation, cache.DefaultUserWs, "Language Code");
 			ITsStrBldr tsb = abbr.GetBldr();
 			tsb.SetProperties(0, tsb.Length, LanguageCodeTextProps(cache.DefaultUserWs));
 			return tsb.GetString();
@@ -259,8 +256,7 @@ namespace SIL.FieldWorks.IText
 
 			if (m_tssColon == null)
 			{
-				ITsStrFactory tsf = TsStrFactoryClass.Create();
-				m_tssColon = tsf.MakeString(": ", m_lp.Cache.DefaultUserWs);
+				m_tssColon = TsStringUtils.MakeString(": ", m_lp.Cache.DefaultUserWs);
 			}
 			if (m_ttpLabelStyle == null)
 			{
@@ -290,7 +286,7 @@ namespace SIL.FieldWorks.IText
 		/// </summary>
 		public static ITsTextProps LanguageCodeTextProps(int wsUser)
 		{
-			ITsPropsBldr tpb = TsPropsBldrClass.Create();
+			ITsPropsBldr tpb = TsStringUtils.MakePropsBldr();
 			tpb.SetIntPropValues((int)FwTextPropType.ktptWs, (int)FwTextPropVar.ktpvDefault,
 				wsUser);
 			tpb.SetIntPropValues((int)FwTextPropType.ktptForeColor, (int)FwTextPropVar.ktpvDefault,

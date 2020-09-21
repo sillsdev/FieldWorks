@@ -24,6 +24,7 @@ DeclareLibrary(Views, 1.0, "Views 1.0 Type Library",
 	// for definition of ITsString.
 	importlib("FwKernelTlb.tlb");	// Includes DbAccess, DbServices, and Language as well.
 
+	#include "Render.idh"
 	#include "Views.idh"
 
 };

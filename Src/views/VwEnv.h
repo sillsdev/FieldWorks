@@ -147,9 +147,8 @@ public:
 	void GetRegenerateInfo(VwBox ** ppbox, NotifierVec & vpanoteIncomplete, bool fForErrorRecovery = false);
 	void SetParentOfTopNotifiers(VwNotifier * pnote);
 
-	static void IntToTsString(int nVal, ITsStrFactory ** pptsf, ISilDataAccess * psda, ITsString ** pptss);
-	static void GetStringFactory(ITsStrFactory ** pptsf);
-	static void TimeToTsString(int64 nTime, DWORD flags, ISilDataAccess * psda, ITsString ** pptss);
+	static void IntToTsString(int nVal, ITsStrFactory * ptsf, ISilDataAccess * psda, ITsString ** pptss);
+	static void TimeToTsString(int64 nTime, DWORD flags, ITsStrFactory * ptsf, ISilDataAccess * psda, ITsString ** pptss);
 	void AddObjVecItemRange(int tag, IVwViewConstructor * pvvc, int frag,
 		int ihvoMin, int ihvoLim);
 

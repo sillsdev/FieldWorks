@@ -1,27 +1,25 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.Runtime.Serialization;
 using System.Windows.Forms;
 using System.Xml;
 
-using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel.Core.Cellar;
+using SIL.LCModel;
+using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.Resources;
-using SIL.Utils;
-using System.Diagnostics.CodeAnalysis;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.PlatformUtilities;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls
 {
 	/// <summary></summary>
-	public class SliceTreeNode : UserControl, IFWDisposable
+	public class SliceTreeNode : UserControl
 	{
 		#region constants
 		// Constants used in drawing tree diagram.
@@ -53,8 +51,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		private System.ComponentModel.Container components = null;
 
 		/// <summary></summary>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "parent is a reference")]
 		public Slice Slice
 		{
 			get
@@ -155,7 +151,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			if (drgevent.Effect == DragDropEffects.None)
 				return;
 			// Todo JohnT: verify that m_slice is the last slice in the representation of flid.
-			FdoCache cache = Slice.ContainingDataTree.Cache;
+			LcmCache cache = Slice.ContainingDataTree.Cache;
 			UndoableUnitOfWorkHelper.Do("Undo Move Item", "Redo Move Item",
 				cache.ActionHandlerAccessor, () =>
 				{
@@ -225,13 +221,11 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// <summary>
 		/// Return whether it is OK to move the objects indicated by odi to the specified destination.
 		/// </summary>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "cache is a reference")]
 		public bool OkToMove(int hvoDstOwner, int flidDst, int ihvoDstStart, ObjectDragInfo odi)
 		{
 			CheckDisposed();
 
-			FDO.FdoCache cache = Slice.ContainingDataTree.Cache;
+			LcmCache cache = Slice.ContainingDataTree.Cache;
 			ICmObjectRepository repo = cache.ServiceLocator.GetInstance<ICmObjectRepository>();
 			if (flidDst == odi.FlidSrc)
 			{
@@ -585,22 +579,20 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			Debug.WriteLine("TreeNode key down");
 		}
 
-		#if __MonoCS__
 		/// <summary>
 		/// Activate menu only if Alt key is being pressed.  See FWNX-1353.
 		/// </summary>
 		/// <remarks>TODO: Getting here without the Alt key may be considered a Mono bug.</remarks>
 		protected override bool ProcessDialogChar(char charCode)
 		{
-			if (Control.ModifierKeys == Keys.Alt)
+			if (!Platform.IsMono || ModifierKeys == Keys.Alt)
 				return base.ProcessDialogChar(charCode);
 			return false;
 		}
-		#endif
 	}
 
 	/// <summary></summary>
-	[Serializable()]
+	[Serializable]
 	public class ObjectDragInfo : ISerializable
 	{
 		int m_hvoSrcOwner;

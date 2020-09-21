@@ -8,8 +8,8 @@
 // ---------------------------------------------------------------------------------------------
 using System.Collections.Generic;
 using NUnit.Framework;
-using SILUBS.SharedScrUtils;
-using SIL.Utils;
+using SIL.FieldWorks.Common.FwUtils;
+using SIL.LCModel.Utils;
 
 namespace SILUBS.ScriptureChecks
 {

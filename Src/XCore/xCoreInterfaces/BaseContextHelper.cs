@@ -1,19 +1,15 @@
-// Copyright (c) 2003-2013 SIL International
+// Copyright (c) 2003-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// Authorship History: John Hatton
-// Last reviewed:
 
 using System;
-using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Collections.Generic;
 using System.IO;
 using System.Xml;
-using SIL.Utils;
+using SIL.LCModel.Utils;
 using System.Windows.Forms;
-
+using SIL.FieldWorks.Common.FwUtils;
+using SIL.Utils;
 
 namespace XCore
 {
@@ -36,10 +32,9 @@ namespace XCore
 	/// adapts DotNetBar to provide context help
 	/// /summary>
 	[XCore.MediatorDispose]
-	[SuppressMessage("Gendarme.Rules.Correctness", "DisposableFieldsShouldBeDisposedRule",
-		Justification = "variable is a reference; it is owned by parent")]
-	public abstract class BaseContextHelper : IContextHelper, IxCoreColleague, IFWDisposable
+	public abstract class BaseContextHelper : IContextHelper, IxCoreColleague, IDisposable
 	{
+		protected PropertyTable m_propertyTable;
 		protected Mediator m_mediator;
 		protected XmlDocument m_document;
 		protected Dictionary<string, XmlNode> m_helpIdToElt = new Dictionary<string, XmlNode>();
@@ -137,8 +132,8 @@ namespace XCore
 				if (m_mediator != null)
 				{
 					m_mediator.RemoveColleague(this);
-					m_mediator.PropertyTable.SetProperty("ContextHelper", null, false);
-					m_mediator.PropertyTable.SetPropertyPersistence("ContextHelper",false);
+					m_propertyTable.SetProperty("ContextHelper", null, false);
+					m_propertyTable.SetPropertyPersistence("ContextHelper", false);
 				}
 				if (m_helpIdToElt != null)
 					m_helpIdToElt.Clear();
@@ -168,27 +163,28 @@ namespace XCore
 
 		#region IxCoreColleague
 		/// <summary/>
-		public void Init(Mediator mediator, XmlNode configurationParameters)
+		public void Init(Mediator mediator, PropertyTable propertyTable, XmlNode configurationParameters)
 		{
 			CheckDisposed();
 			m_mediator = mediator;
+			m_propertyTable = propertyTable;
 			mediator.AddColleague(this);
-			mediator.PropertyTable.SetProperty("ContextHelper", this,false);
-			mediator.PropertyTable.SetPropertyPersistence("ContextHelper",false);
+			m_propertyTable.SetProperty("ContextHelper", this, false);
+			m_propertyTable.SetPropertyPersistence("ContextHelper", false);
 
-			ParentControl = (Control)m_mediator.PropertyTable.GetValue("window");
+			ParentControl = m_propertyTable.GetValue<Control>("window");
 			m_document= new XmlDocument();
 
 			//we use the  directory of the file which held are parameters as the starting point
 			//of the path we were given.
-			string path = XmlUtils.GetManditoryAttributeValue(configurationParameters,
+			string path = XmlUtils.GetMandatoryAttributeValue(configurationParameters,
 				"contextHelpPath");
 			var configParamatersBasePath = FileUtils.StripFilePrefix(configurationParameters.BaseURI);
 			path = Path.Combine(Path.GetDirectoryName(configParamatersBasePath), path);
 			m_document.Load(path);
 			//m_items = m_document.SelectNodes("strings/item");
 
-			ShowAlways = m_mediator.PropertyTable.GetBoolProperty("ShowBalloonHelp", true);
+			ShowAlways = m_propertyTable.GetBoolProperty("ShowBalloonHelp", true);
 		}
 
 		public	IxCoreColleague[] GetMessageTargets()
@@ -213,7 +209,7 @@ namespace XCore
 		{
 			CheckDisposed();
 			string caption = "";
-			string text = m_mediator.StringTbl.LocalizeContextHelpString(id);
+			string text = StringTable.Table.LocalizeContextHelpString(id);
 			if (String.IsNullOrEmpty(text))
 				GetHelpText(id, ref caption, out  text);
 			return text;
@@ -228,7 +224,7 @@ namespace XCore
 			XmlNode match = null;
 			if (!m_helpIdToElt.ContainsKey(id))
 			{
-				// Not in Dictioanry, so try and get a new one, or null.
+				// Not in Dictionary, so try and get a new one, or null.
 				match = m_document.SelectSingleNode(String.Format("strings/item[@id='{0}']", id));
 				m_helpIdToElt[id] = match; // even if null!
 			}
@@ -237,16 +233,16 @@ namespace XCore
 			if (match != null)
 			{
 				text = match.InnerText;
-				text = m_mediator.StringTbl.LocalizeLiteralValue(text);
+				text = StringTable.Table.LocalizeLiteralValue(text);
 				if (String.IsNullOrEmpty(caption))
 				{
 					caption = XmlUtils.GetOptionalAttributeValue(match, "caption", "");
-					caption = m_mediator.StringTbl.LocalizeAttributeValue(caption);
+					caption = StringTable.Table.LocalizeAttributeValue(caption);
 				}
 				else
 				{
 					string sCaptionFormat = XmlUtils.GetOptionalAttributeValue(match, "captionformat");
-					sCaptionFormat = m_mediator.StringTbl.LocalizeAttributeValue(sCaptionFormat);
+					sCaptionFormat = StringTable.Table.LocalizeAttributeValue(sCaptionFormat);
 					if (!String.IsNullOrEmpty(sCaptionFormat) && sCaptionFormat.IndexOf("{0}") >= 0)
 						caption = String.Format(sCaptionFormat, caption);
 				}
@@ -364,7 +360,7 @@ namespace XCore
 			switch(name)
 			{
 				case "ShowBalloonHelp":
-					ShowAlways=m_mediator.PropertyTable.GetBoolProperty(name, true);
+					ShowAlways = m_propertyTable.GetBoolProperty(name, true);
 					break;
 				default:
 					break;

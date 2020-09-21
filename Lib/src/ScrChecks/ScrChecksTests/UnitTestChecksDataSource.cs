@@ -8,7 +8,7 @@ using System.Text;
 using System.Diagnostics;
 using System.Globalization;
 using System.Text.RegularExpressions;
-using SILUBS.SharedScrUtils;
+using SIL.FieldWorks.Common.FwUtils;
 
 namespace SILUBS.ScriptureChecks
 {

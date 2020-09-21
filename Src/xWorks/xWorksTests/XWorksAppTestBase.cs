@@ -1,23 +1,20 @@
 // Copyright (c) 2003-2015 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-
 using System;
 using System.Windows.Forms;
 using System.Collections.Generic;
 using System.IO;
 using System.Xml;
 using System.Linq;
-
 using NUnit.Framework;
-
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.Framework;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.Utils;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Utils;
 using XCore;
-using SIL.FieldWorks.FDO.FDOTests;
 using SIL.FieldWorks.Common.FwUtils;
 
 namespace SIL.FieldWorks.XWorks
@@ -45,7 +42,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 		}
 
-		public void Init(FdoCache cache)
+		public void Init(LcmCache cache)
 		{
 			InitMediatorValues(cache);
 		}
@@ -60,28 +57,28 @@ namespace SIL.FieldWorks.XWorks
 			m_windowConfigurationNode = configuration.SelectSingleNode("window");
 			ReplaceControlAssemblies();
 
-			PropertyTable.SetProperty("WindowConfiguration", m_windowConfigurationNode);
-			PropertyTable.SetPropertyPersistence("WindowConfiguration", false);
+			PropTable.SetProperty("WindowConfiguration", m_windowConfigurationNode, true);
+			PropTable.SetPropertyPersistence("WindowConfiguration", false);
 
 			LoadDefaultProperties(m_windowConfigurationNode.SelectSingleNode("defaultProperties"));
 
-			m_mediator.PropertyTable.SetProperty("window", this);
-			m_mediator.PropertyTable.SetPropertyPersistence("window", false);
+			PropTable.SetProperty("window", this, true);
+			PropTable.SetPropertyPersistence("window", false);
 
 			CommandSet commandset = new CommandSet(m_mediator);
 			commandset.Init(m_windowConfigurationNode);
 			m_mediator.Initialize(commandset);
 
-			LoadStringTableIfPresent(configurationPath);
+			var st = StringTable.Table; // Force loading it.
 
 			RestoreWindowSettings(false);
 			m_mediator.AddColleague(this);
 
-			m_menusChoiceGroupCollection = new ChoiceGroupCollection(m_mediator, null, m_windowConfigurationNode);
-			m_sidebarChoiceGroupCollection = new ChoiceGroupCollection(m_mediator, null, m_windowConfigurationNode);
-			m_toolbarsChoiceGroupCollection = new ChoiceGroupCollection(m_mediator, null, m_windowConfigurationNode);
+			m_menusChoiceGroupCollection = new ChoiceGroupCollection(m_mediator, m_propertyTable, null, m_windowConfigurationNode);
+			m_sidebarChoiceGroupCollection = new ChoiceGroupCollection(m_mediator, m_propertyTable, null, m_windowConfigurationNode);
+			m_toolbarsChoiceGroupCollection = new ChoiceGroupCollection(m_mediator, m_propertyTable, null, m_windowConfigurationNode);
 
-			var handle = this.Handle; // create's a window handle for this form to allow processing broadcasted items.
+			var handle = Handle; // create's a window handle for this form to allow processing broadcasted items.
 		}
 
 		protected override void XWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
@@ -89,7 +86,7 @@ namespace SIL.FieldWorks.XWorks
 			if (!m_mediator.IsDisposed)
 			{
 				m_mediator.ProcessMessages = false;
-				m_mediator.PropertyTable.SetProperty("windowState", WindowState, false);
+				PropTable.SetProperty("windowState", WindowState, false);
 			}
 		}
 
@@ -115,10 +112,10 @@ namespace SIL.FieldWorks.XWorks
 		public XmlNode ActivateTool(string toolName)
 		{
 			XmlNode configurationNode = GetToolNode(toolName);
-			m_mediator.PropertyTable.SetProperty("currentContentControlParameters", configurationNode.SelectSingleNode("control"));
-			m_mediator.PropertyTable.SetPropertyPersistence("currentContentControlParameters", false);
-			m_mediator.PropertyTable.SetProperty("currentContentControl", toolName);
-			m_mediator.PropertyTable.SetPropertyPersistence("currentContentControl", false);
+			PropTable.SetProperty("currentContentControlParameters", configurationNode.SelectSingleNode("control"), true);
+			PropTable.SetPropertyPersistence("currentContentControlParameters", false);
+			PropTable.SetProperty("currentContentControl", toolName, true);
+			PropTable.SetPropertyPersistence("currentContentControl", false);
 			ProcessPendingItems();
 			return configurationNode;
 		}
@@ -177,7 +174,7 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		public RecordClerk ActiveClerk
 		{
-			get { return m_mediator.PropertyTable.GetValue("ActiveClerk") as RecordClerk; }
+			get { return PropTable.GetValue<RecordClerk>("ActiveClerk"); }
 		}
 
 		/// <summary>
@@ -186,9 +183,9 @@ namespace SIL.FieldWorks.XWorks
 		/// <param name="idCommand"></param>
 		public void InvokeCommand(string idCommand)
 		{
-			XCore.Command cmd = m_mediator.CommandSet[idCommand] as XCore.Command;
+			var cmd = m_mediator.CommandSet[idCommand] as Command;
 			cmd.InvokeCommand();
-			this.ProcessPendingItems();
+			ProcessPendingItems();
 		}
 
 		/// <summary>
@@ -230,7 +227,7 @@ namespace SIL.FieldWorks.XWorks
 		/// Gets the cache.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public FdoCache Cache { get; set; }
+		public LcmCache Cache { get; set; }
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -358,7 +355,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		///
 		/// </summary>
-		public void FileProjectSharingLocation(FwApp fwApp, Form dialogOwner)
+		public void FileProjectLocation(FwApp fwApp, Form dialogOwner)
 		{
 			throw new NotImplementedException();
 		}
@@ -498,6 +495,12 @@ namespace SIL.FieldWorks.XWorks
 				return FwSubKey.LexText;
 			}
 		}
+
+		public override string WindowClassName
+		{
+			// doesn't really matter what we return when running tests
+			get { return "fieldworks-tests"; }
+		}
 	}
 
 	[TestFixture]
@@ -507,7 +510,6 @@ namespace SIL.FieldWorks.XWorks
 		protected FwXApp m_application;
 		protected string m_configFilePath;
 
-		private ITsStrFactory m_tssFact;
 		private ICmPossibilityFactory m_possFact;
 		private ICmPossibilityRepository m_possRepo;
 		private IPartOfSpeechFactory m_posFact;
@@ -536,9 +538,10 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[TestFixtureSetUp]
-		public void FixtureInit()
+		public virtual void FixtureInit()
 		{
 			FwRegistrySettings.Init();
+			SetupEverythingButBase();
 			Init(); // subclass version must create and set m_application
 
 			m_configFilePath = Path.Combine(FwDirectoryFinder.CodeDirectory, m_application.DefaultConfigurationPathname);
@@ -560,7 +563,6 @@ namespace SIL.FieldWorks.XWorks
 		{
 			Assert.True(Cache != null, "No cache yet!?");
 			var servLoc = Cache.ServiceLocator;
-			m_tssFact = Cache.TsStrFactory;
 			m_possFact = servLoc.GetInstance<ICmPossibilityFactory>();
 			m_possRepo = servLoc.GetInstance<ICmPossibilityRepository>();
 			m_posFact = servLoc.GetInstance<IPartOfSpeechFactory>();
@@ -584,6 +586,7 @@ namespace SIL.FieldWorks.XWorks
 			m_application.Dispose();
 			if (m_window != null)
 			{
+				m_window.Close();
 				m_window.Dispose(); // also disposes mediator
 				m_window = null;
 			}
@@ -632,14 +635,6 @@ namespace SIL.FieldWorks.XWorks
 			GetCommand(commandName).InvokeCommand();
 			//let the screen redraw
 			Application.DoEvents();
-		}
-
-		protected PropertyTable Properties
-		{
-			get
-			{
-				return m_window == null ? null : m_window.Mediator.PropertyTable;
-			}
 		}
 
 		protected void SetTool(string toolValueName)
@@ -777,8 +772,8 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var msa = new SandboxGenericMSA { MainPOS = categoryPoss };
 			var comp = new LexEntryComponents { MorphType = morphTypePoss, MSA = msa };
-			comp.GlossAlternatives.Add(m_tssFact.MakeString(gloss, Cache.DefaultAnalWs));
-			comp.LexemeFormAlternatives.Add(m_tssFact.MakeString(lexForm, Cache.DefaultVernWs));
+			comp.GlossAlternatives.Add(TsStringUtils.MakeString(gloss, Cache.DefaultAnalWs));
+			comp.LexemeFormAlternatives.Add(TsStringUtils.MakeString(lexForm, Cache.DefaultVernWs));
 			var entry = m_entryFact.Create(comp);
 			addList.Add(entry);
 			return entry;
@@ -791,8 +786,8 @@ namespace SIL.FieldWorks.XWorks
 			Assert.IsNotNull(varType, "Need a variant entry type!");
 			var msa = new SandboxGenericMSA { MainPOS = categoryPoss };
 			var comp = new LexEntryComponents { MorphType = morphTypePoss, MSA = msa };
-			comp.GlossAlternatives.Add(m_tssFact.MakeString(gloss, Cache.DefaultAnalWs));
-			comp.LexemeFormAlternatives.Add(m_tssFact.MakeString(lexForm, Cache.DefaultVernWs));
+			comp.GlossAlternatives.Add(TsStringUtils.MakeString(gloss, Cache.DefaultAnalWs));
+			comp.LexemeFormAlternatives.Add(TsStringUtils.MakeString(lexForm, Cache.DefaultVernWs));
 			var entry = m_entryFact.Create(comp);
 			var ler = entry.MakeVariantOf(origLe, varType);
 			addList.Add(entry);

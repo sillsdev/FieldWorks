@@ -9,10 +9,10 @@ using System.Drawing;
 using System.Windows.Forms;
 using Gecko;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using SIL.FieldWorks.XWorks.DictionaryDetailsView;
-using SIL.Utils;
-using XCore;
+using SIL.Windows.Forms;
+using PropertyTable = XCore.PropertyTable;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -25,7 +25,7 @@ namespace SIL.FieldWorks.XWorks
 		public event EventHandler ManageConfigurations;
 
 		public event SwitchConfigurationEvent SwitchConfiguration;
-		Mediator m_mediator;
+		PropertyTable m_propertyTable;
 
 		private string m_helpTopic;
 		private readonly HelpProvider m_helpProvider;
@@ -36,9 +36,9 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		public event EventHandler SaveModel;
 
-		public DictionaryConfigurationDlg(Mediator mediator)
+		public DictionaryConfigurationDlg(PropertyTable propertyTable)
 		{
-			m_mediator = mediator;
+			m_propertyTable = propertyTable;
 			InitializeComponent();
 
 			m_preview.Dock = DockStyle.Fill;
@@ -48,21 +48,21 @@ namespace SIL.FieldWorks.XWorks
 			treeDetail_Button_Split.IsSplitterFixed = true;
 			this.MinimumSize = new Size(m_grpConfigurationManagement.Width + 3, manageConfigs_treeDetailButton_split.Height);
 
-			m_helpTopicProvider = mediator.HelpTopicProvider;
+			m_helpTopicProvider = propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider");
 			m_helpProvider = new HelpProvider { HelpNamespace = m_helpTopicProvider.HelpFile };
 			m_helpProvider.SetHelpKeyword(this, m_helpTopicProvider.GetHelpString(HelpTopic));
 			m_helpProvider.SetHelpNavigator(this, HelpNavigator.Topic);
 			m_helpProvider.SetShowHelp(this, true);
 
 			// Restore the location and size from last time we called this dialog.
-			if (m_mediator != null && m_mediator.PropertyTable != null)
+			if (m_propertyTable != null)
 			{
-				object locWnd = m_mediator.PropertyTable.GetValue("DictionaryConfigurationDlg_Location");
-				object szWnd = m_mediator.PropertyTable.GetValue("DictionaryConfigurationDlg_Size");
+				object locWnd = m_propertyTable.GetValue<object>("DictionaryConfigurationDlg_Location");
+				object szWnd = m_propertyTable.GetValue<object>("DictionaryConfigurationDlg_Size");
 				if (locWnd != null && szWnd != null)
 				{
 					Rectangle rect = new Rectangle((Point)locWnd, (Size)szWnd);
-					ScreenUtils.EnsureVisibleRect(ref rect);
+					ScreenHelper.EnsureVisibleRect(ref rect);
 					DesktopBounds = rect;
 					StartPosition = FormStartPosition.Manual;
 				}
@@ -171,8 +171,7 @@ namespace SIL.FieldWorks.XWorks
 		private List<GeckoElement> _highlightedElements;
 		private const string HighlightStyle = "background-color:Yellow ";	// LightYellow isn't really bold enough marking to my eyes for this feature.
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule", Justification = "element does NOT need to be disposed locally!")]
-		public void HighlightContent(ConfigurableDictionaryNode configNode, FdoCache cache)
+		public void HighlightContent(ConfigurableDictionaryNode configNode, LcmCache cache)
 		{
 			if (m_preview.IsDisposed)
 				return;
@@ -204,9 +203,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "body is a reference")]
-		private static List<GeckoElement> FindConfiguredItem(ConfigurableDictionaryNode selectedConfigNode, GeckoWebBrowser browser, FdoCache cache)
+		private static List<GeckoElement> FindConfiguredItem(ConfigurableDictionaryNode selectedConfigNode, GeckoWebBrowser browser, LcmCache cache)
 		{
 			var elements = new List<GeckoElement>();
 			var body = browser.Document.Body;
@@ -245,7 +242,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		private static IEnumerable<GeckoElement> FindMatchingSpans(ConfigurableDictionaryNode selectedNode, GeckoElement parent,
-			ConfigurableDictionaryNode topLevelNode, FdoCache cache)
+			ConfigurableDictionaryNode topLevelNode, LcmCache cache)
 		{
 			var elements = new List<GeckoElement>();
 			var desiredClass = CssGenerator.GetClassAttributeForConfig(selectedNode);
@@ -283,7 +280,7 @@ namespace SIL.FieldWorks.XWorks
 
 		private void helpButton_Click(object sender, EventArgs e)
 		{
-			ShowHelp.ShowHelpTopic(m_mediator.HelpTopicProvider, m_helpTopic);
+			ShowHelp.ShowHelpTopic(m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), m_helpTopic);
 		}
 
 		private void OnConfigurationChanged(object sender, EventArgs e)
@@ -300,12 +297,12 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		protected override void OnClosing(CancelEventArgs e)
 		{
-			if (m_mediator != null)
+			if (m_propertyTable != null)
 			{
-				m_mediator.PropertyTable.SetProperty("DictionaryConfigurationDlg_Location", Location, false);
-				m_mediator.PropertyTable.SetPropertyPersistence("DictionaryConfigurationDlg_Location", true);
-				m_mediator.PropertyTable.SetProperty("DictionaryConfigurationDlg_Size", Size, false);
-				m_mediator.PropertyTable.SetPropertyPersistence("DictionaryConfigurationDlg_Size", true);
+				m_propertyTable.SetProperty("DictionaryConfigurationDlg_Location", Location, false);
+				m_propertyTable.SetPropertyPersistence("DictionaryConfigurationDlg_Location", true);
+				m_propertyTable.SetProperty("DictionaryConfigurationDlg_Size", Size, false);
+				m_propertyTable.SetPropertyPersistence("DictionaryConfigurationDlg_Size", true);
 			}
 			base.OnClosing(e);
 		}

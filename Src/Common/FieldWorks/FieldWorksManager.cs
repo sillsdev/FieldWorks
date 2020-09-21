@@ -4,15 +4,14 @@
 //
 // File: FieldWorksManager.cs
 // Responsibility: FW Team
-
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using System.Windows.Forms;
-using SIL.Utils;
+using SIL.LCModel.Utils;
 
 namespace SIL.FieldWorks
 {
@@ -30,7 +29,7 @@ namespace SIL.FieldWorks
 		/// Gets the cache.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public FdoCache Cache
+		public LcmCache Cache
 		{
 			get { return FieldWorks.Cache; }
 		}
@@ -110,7 +109,7 @@ namespace SIL.FieldWorks
 		public void CreateNewProject(FwApp app, Form dialogOwner)
 		{
 			ProjectId newProject = FieldWorks.CreateNewProject(dialogOwner, app, app);
-			if (newProject != null && !FieldWorks.OpenNewProject(newProject, app.ApplicationName))
+			if (newProject != null && !FieldWorks.OpenNewProject(newProject))
 			{
 				Debug.Fail("Failed to open the new project");
 			}
@@ -175,9 +174,9 @@ namespace SIL.FieldWorks
 		/// <param name="fwApp">The FieldWorks application.</param>
 		/// <param name="dialogOwner">The dialog owner.</param>
 		/// ------------------------------------------------------------------------------------
-		public void FileProjectSharingLocation(FwApp fwApp, Form dialogOwner)
+		public void FileProjectLocation(FwApp fwApp, Form dialogOwner)
 		{
-			FieldWorks.FileProjectSharingLocation(dialogOwner, fwApp);
+			FieldWorks.FileProjectLocation(dialogOwner, fwApp);
 		}
 		/// ------------------------------------------------------------------------------------
 		/// <summary>

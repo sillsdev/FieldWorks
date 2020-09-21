@@ -7,7 +7,7 @@ using System.Linq;
 using System.Collections.Generic;
 using System.Xml.Serialization;
 using SIL.PaToFdoInterfaces;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 
 namespace SIL.FieldWorks.PaObjects
 {

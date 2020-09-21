@@ -1,20 +1,19 @@
 // Copyright (c) 2014 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-
 using System;
 using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
-
-using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Widgets;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel;
+using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.FwCoreDlgs;
-using SIL.Utils;
+using SIL.LCModel.Utils;
 using XCore;
-using SIL.CoreImpl;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel.Core.KernelInterfaces;
 
 namespace SIL.FieldWorks.LexText.Controls
 {
@@ -61,11 +60,12 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// </summary>
 		/// <param name="cache">The cache.</param>
 		/// <param name="mediator">The mediator.</param>
+		/// <param name="propertyTable"></param>
 		/// <param name="tssVariantLexemeForm">The variant lexeme form.</param>
-		public void SetDlgInfo(FdoCache cache, Mediator mediator, ITsString tssVariantLexemeForm)
+		public void SetDlgInfo(LcmCache cache, Mediator mediator, XCore.PropertyTable propertyTable, ITsString tssVariantLexemeForm)
 		{
 			m_tssVariantLexemeForm = tssVariantLexemeForm;
-			base.SetDlgInfo(cache, mediator, null);
+			base.SetDlgInfo(cache, mediator, propertyTable, null);
 		}
 
 
@@ -76,8 +76,9 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// </summary>
 		/// <param name="cache"></param>
 		/// <param name="mediator"></param>
+		/// <param name="propertyTable"></param>
 		/// <param name="componentLexeme">the entry we wish to find or create a variant for.</param>
-		protected void SetDlgInfoForComponentLexeme(FdoCache cache, Mediator mediator, IVariantComponentLexeme componentLexeme)
+		protected void SetDlgInfoForComponentLexeme(LcmCache cache, Mediator mediator, XCore.PropertyTable propertyTable, IVariantComponentLexeme componentLexeme)
 		{
 			m_fBackRefToVariant = true;
 			ILexEntry startingEntry;
@@ -89,7 +90,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			{
 				startingEntry = componentLexeme.Owner as ILexEntry;
 			}
-			SetDlgInfo(cache, mediator, startingEntry);
+			SetDlgInfo(cache, mediator, propertyTable, startingEntry);
 			// we are looking for an existing variant form
 			// so hide the Entry/Sense radio group box.
 			grplbl.Visible = false;
@@ -108,11 +109,11 @@ namespace SIL.FieldWorks.LexText.Controls
 		}
 
 
-		protected override void SetDlgInfo(FdoCache cache, WindowParams wp, Mediator mediator, int ws)
+		protected override void SetDlgInfo(LcmCache cache, WindowParams wp, Mediator mediator, XCore.PropertyTable propertyTable, int ws)
 		{
-			WritingSystemAndStylesheetHelper.SetupWritingSystemAndStylesheetInfo(tcVariantTypes,
-				cache, mediator, cache.DefaultUserWs);
-			base.SetDlgInfo(cache, wp, mediator, ws);
+			WritingSystemAndStylesheetHelper.SetupWritingSystemAndStylesheetInfo(propertyTable, tcVariantTypes,
+				cache, cache.DefaultUserWs);
+			base.SetDlgInfo(cache, wp, mediator, propertyTable, ws);
 			// load the variant type possibilities.
 			LoadVariantTypes();
 		}
@@ -142,7 +143,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			if (m_tcManager == null)
 			{
 				m_tcManager = new PossibilityListPopupTreeManager(tcVariantTypes, m_cache,
-					m_mediator, m_cache.LangProject.LexDbOA.VariantEntryTypesOA, m_cache.DefaultUserWs,
+					m_mediator, m_propertyTable, m_cache.LangProject.LexDbOA.VariantEntryTypesOA, m_cache.DefaultUserWs,
 					false, this);
 			}
 			m_tcManager.LoadPopupTree(hvoTarget);
@@ -246,7 +247,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			}
 			catch (ArgumentException)
 			{
-				MessageBoxes.ReportLexEntryCircularReference((ILexEntry)componentLexeme, variant, false);
+				MessageBoxes.ReportLexEntryCircularReference(componentLexeme, variant, false);
 			}
 		}
 
@@ -404,9 +405,9 @@ namespace SIL.FieldWorks.LexText.Controls
 			string trimmed = m_tbForm.Text.Trim();
 			if (trimmed.Length > 0 && m_cbWritingSystems.SelectedItem != null)
 			{
-				var ws = (IWritingSystem) m_cbWritingSystems.SelectedItem;
+				var ws = (CoreWritingSystemDefinition) m_cbWritingSystems.SelectedItem;
 				if (m_cache.ServiceLocator.WritingSystems.CurrentVernacularWritingSystems.Contains(ws))
-					tssNewVariantLexemeForm = TsStringUtils.MakeTss(trimmed, ws.Handle);
+					tssNewVariantLexemeForm = TsStringUtils.MakeString(trimmed, ws.Handle);
 			}
 			return tssNewVariantLexemeForm;
 		}
@@ -507,10 +508,11 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// </summary>
 		/// <param name="cache"></param>
 		/// <param name="mediator"></param>
+		/// <param name="propertyTable"></param>
 		/// <param name="componentLexeme">the entry we wish to find or create a variant for.</param>
-		public void SetDlgInfo(FdoCache cache, Mediator mediator, IVariantComponentLexeme componentLexeme)
+		public void SetDlgInfo(LcmCache cache, Mediator mediator, XCore.PropertyTable propertyTable, IVariantComponentLexeme componentLexeme)
 		{
-			SetDlgInfoForComponentLexeme(cache, mediator, componentLexeme);
+			SetDlgInfoForComponentLexeme(cache, mediator, propertyTable, componentLexeme);
 		}
 	}
 }

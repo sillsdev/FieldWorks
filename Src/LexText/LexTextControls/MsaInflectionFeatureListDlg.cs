@@ -1,17 +1,20 @@
+// Copyright (c) 2017 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
+
 // This really needs to be refactored with MasterCategoryListDlg.cs
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
+using System.Linq;
 using System.Text;
 using System.Windows.Forms;
-using System.Linq;
-using SIL.CoreImpl;
-using SIL.FieldWorks.FDO;
-using SIL.Utils;
+using SIL.LCModel.Core.Cellar;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Infrastructure;
+using SIL.Windows.Forms;
 using XCore;
 
 namespace SIL.FieldWorks.LexText.Controls
@@ -19,10 +22,11 @@ namespace SIL.FieldWorks.LexText.Controls
 	/// <summary>
 	/// Summary description for MsaInflectionFeatureListDlg.
 	/// </summary>
-	public class MsaInflectionFeatureListDlg : Form, IFWDisposable
+	public class MsaInflectionFeatureListDlg : Form
 	{
 		private Mediator m_mediator;
-		protected FdoCache m_cache;
+		private XCore.PropertyTable m_propertyTable;
+		protected LcmCache m_cache;
 		// The dialog can be initialized with an existing feature structure,
 		// or just with an owning object and flid in which to create one.
 		private IFsFeatStruc m_fs;
@@ -123,13 +127,15 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// </summary>
 		/// <param name="cache"></param>
 		/// <param name="mediator"></param>
+		/// <param name="propertyTable"></param>
 		/// <param name="fs"></param>
 		/// <param name="owningFlid"></param>
-		public void SetDlgInfo(FdoCache cache, Mediator mediator, IFsFeatStruc fs, int owningFlid)
+		public void SetDlgInfo(LcmCache cache, Mediator mediator, XCore.PropertyTable propertyTable, IFsFeatStruc fs, int owningFlid)
 		{
 			CheckDisposed();
 
 			m_fs = fs;
+			m_propertyTable = propertyTable;
 			Mediator = mediator;
 			m_cache = cache;
 			m_owningFlid = owningFlid;
@@ -142,20 +148,23 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// </summary>
 		/// <param name="cache"></param>
 		/// <param name="mediator"></param>
+		/// <param name="propertyTable"></param>
 		/// <param name="cobj"></param>
 		/// <param name="owningFlid"></param>
-		public void SetDlgInfo(FdoCache cache, Mediator mediator, ICmObject cobj, int owningFlid)
+		public void SetDlgInfo(LcmCache cache, Mediator mediator, XCore.PropertyTable propertyTable, ICmObject cobj, int owningFlid)
 		{
 			CheckDisposed();
 
 			m_fs = null;
 			m_owningFlid = owningFlid;
 			m_hvoOwner = cobj.Hvo;
+			m_propertyTable = propertyTable;
 			Mediator = mediator;
 			m_cache = cache;
 			LoadInflFeats(cobj, owningFlid);
 			EnableLink();
 		}
+
 		/// <summary>
 		/// Init the dialog with a POS.
 		/// If a new feature structure is created, it will currently be in the ReferenceForms of the POS.
@@ -164,10 +173,11 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// </summary>
 		/// <param name="cache"></param>
 		/// <param name="mediator"></param>
+		/// <param name="propertyTable"></param>
 		/// <param name="pos"></param>
-		public void SetDlgInfo(FdoCache cache, Mediator mediator, IPartOfSpeech pos)
+		public void SetDlgInfo(LcmCache cache, Mediator mediator, XCore.PropertyTable propertyTable, IPartOfSpeech pos)
 		{
-			SetDlgInfo(cache, mediator, pos, PartOfSpeechTags.kflidReferenceForms);
+			SetDlgInfo(cache, mediator, propertyTable, pos, PartOfSpeechTags.kflidReferenceForms);
 		}
 
 		protected virtual void EnableLink()
@@ -175,8 +185,6 @@ namespace SIL.FieldWorks.LexText.Controls
 			linkLabel1.Enabled = m_highestPOS != null;
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="helpProvider gets disposed in Dispose()")]
 		private Mediator Mediator
 		{
 			set
@@ -186,19 +194,21 @@ namespace SIL.FieldWorks.LexText.Controls
 				{
 					// Reset window location.
 					// Get location to the stored values, if any.
-					object locWnd = m_mediator.PropertyTable.GetValue("msaInflFeatListDlgLocation");
-					object szWnd = m_mediator.PropertyTable.GetValue("msaInflFeatListDlgSize");
-					if (locWnd != null && szWnd != null)
+					if (m_propertyTable.PropertyExists("msaInflFeatListDlgLocation")
+						&& m_propertyTable.PropertyExists("msaInflFeatListDlgSize"))
 					{
-						var rect = new Rectangle((Point) locWnd, (Size) szWnd);
-						ScreenUtils.EnsureVisibleRect(ref rect);
+						var locWnd = m_propertyTable.GetValue<Point>("msaInflFeatListDlgLocation");
+						var szWnd = m_propertyTable.GetValue<Size>("msaInflFeatListDlgSize");
+						var rect = new Rectangle(locWnd, szWnd);
+						ScreenHelper.EnsureVisibleRect(ref rect);
 						DesktopBounds = rect;
 						StartPosition = FormStartPosition.Manual;
 					}
-					if (m_mediator.HelpTopicProvider != null) // Will be null when running tests
+					var helpTopicProvider = m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider");
+					if (helpTopicProvider != null) // Will be null when running tests
 					{
-						helpProvider = new HelpProvider { HelpNamespace = m_mediator.HelpTopicProvider.HelpFile };
-						helpProvider.SetHelpKeyword(this, m_mediator.HelpTopicProvider.GetHelpString(m_helpTopic));
+						helpProvider = new HelpProvider { HelpNamespace = helpTopicProvider.HelpFile };
+						helpProvider.SetHelpKeyword(this, helpTopicProvider.GetHelpString(m_helpTopic));
 						helpProvider.SetHelpNavigator(this, HelpNavigator.Topic);
 					}
 				}
@@ -438,8 +448,6 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// Required method for Designer support - do not modify
 		/// the contents of this method with the code editor.
 		/// </summary>
-		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
-			Justification = "TODO-Linux: LinkLabel.TabStop is missing from Mono")]
 		private void InitializeComponent()
 		{
 			this.components = new System.ComponentModel.Container();
@@ -620,10 +628,10 @@ namespace SIL.FieldWorks.LexText.Controls
 						});
 			}
 
-			if (m_mediator != null)
+			if (m_propertyTable != null)
 			{
-				m_mediator.PropertyTable.SetProperty("msaInflFeatListDlgLocation", Location);
-				m_mediator.PropertyTable.SetProperty("msaInflFeatListDlgSize", Size);
+				m_propertyTable.SetProperty("msaInflFeatListDlgLocation", Location, true);
+				m_propertyTable.SetProperty("msaInflFeatListDlgSize", Size, true);
 			}
 		}
 
@@ -734,7 +742,7 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		private void m_bnHelp_Click(object sender, EventArgs e)
 		{
-			ShowHelp.ShowHelpTopic(m_mediator.HelpTopicProvider, m_helpTopic);
+			ShowHelp.ShowHelpTopic(m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), m_helpTopic);
 		}
 	}
 	public class FeatureSystemInflectionFeatureListDlg : MsaInflectionFeatureListDlg

@@ -6,8 +6,8 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
-using Palaso.UI.WindowsForms.HtmlBrowser;
 using SIL.FieldWorks.XWorks.DictionaryDetailsView;
+using SIL.Windows.Forms.HtmlBrowser;
 using XCore;
 
 namespace SIL.FieldWorks.XWorks
@@ -52,7 +52,7 @@ namespace SIL.FieldWorks.XWorks
 			this.treeDetail_Button_Split = new System.Windows.Forms.SplitContainer();
 			this.tree_Detail_Split = new System.Windows.Forms.SplitContainer();
 			this.previewDetailSplit = new System.Windows.Forms.SplitContainer();
-			this.m_preview = new Palaso.UI.WindowsForms.HtmlBrowser.XWebBrowser();
+			this.m_preview = new SIL.Windows.Forms.HtmlBrowser.XWebBrowser();
 			this.buttonLayoutPanel = new System.Windows.Forms.FlowLayoutPanel();
 			this.helpButton = new System.Windows.Forms.Button();
 			this.applyButton = new System.Windows.Forms.Button();

@@ -5,7 +5,7 @@
 using System.Diagnostics;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.Framework.DetailControls;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 
 namespace SIL.FieldWorks.XWorks.MorphologyEditor
 {
@@ -68,7 +68,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		public override void FinishInit()
 		{
 			CheckDisposed();
-			var ctrl = new AnalysisInterlinearRs(m_cache, (IWfiAnalysis)Object, ConfigurationNode, StringTbl)
+			var ctrl = new AnalysisInterlinearRs(m_cache, (IWfiAnalysis)Object, ConfigurationNode)
 					{
 						Mediator = Mediator
 					};

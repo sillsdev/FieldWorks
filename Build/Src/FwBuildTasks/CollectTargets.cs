@@ -1,21 +1,30 @@
-﻿using System;
+// Copyright (c) 2012-2018 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
+
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Xml;
 using System.Xml.Linq;
+using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
 
 namespace FwBuildTasks
 {
 	public class GenerateFwTargets : Task
 	{
+		[Required]
+		public string ToolsVersion { get; set; }
+
 		public override bool Execute()
 		{
 			try
 			{
-				var gen = new CollectTargets(Log);
+				var gen = new CollectTargets(Log, ToolsVersion);
 				gen.Generate();
 				return true;
 			}
@@ -32,23 +41,25 @@ namespace FwBuildTasks
 	/// </summary>
 	public class CollectTargets
 	{
-		public class StopTaskException: Exception
+		public class StopTaskException : Exception
 		{
 			public StopTaskException(Exception innerException) : base(null, innerException)
 			{
 			}
 		}
 
-		private string m_fwroot;
-		private Dictionary<string, string> m_mapProjFile = new Dictionary<string, string>();
-		private Dictionary<string, List<string>> m_mapProjDepends = new Dictionary<string, List<string>>();
-		private TaskLoggingHelper Log { get; set; }
+		private readonly string m_fwroot;
+		private readonly Dictionary<string, string> m_mapProjFile = new Dictionary<string, string>();
+		private readonly Dictionary<string, List<string>> m_mapProjDepends = new Dictionary<string, List<string>>();
+		private TaskLoggingHelper Log { get; }
 		private XmlDocument m_csprojFile;
 		private XmlNamespaceManager m_namespaceMgr;
 		private Dictionary<string, int> m_timeoutMap;
+		private string ToolsVersion { get; set; }
 
-		public CollectTargets(TaskLoggingHelper log)
+		public CollectTargets(TaskLoggingHelper log, string toolsVersion)
 		{
+			ToolsVersion = toolsVersion;
 			Log = log;
 			// Get the parent directory of the running program.  We assume that
 			// this is the root of the FieldWorks repository tree.
@@ -74,18 +85,10 @@ namespace FwBuildTasks
 			var infoSrc = new DirectoryInfo(Path.Combine(m_fwroot, "Src"));
 			CollectInfo(infoSrc);
 			// These projects from Lib had nant targets.  They really should be under Src.
-			var infoSilUtil = new DirectoryInfo(Path.Combine(m_fwroot, "Lib/src/SilUtils"));
-			CollectInfo(infoSilUtil);
 			var infoEth = new DirectoryInfo(Path.Combine(m_fwroot, "Lib/src/Ethnologue"));
 			CollectInfo(infoEth);
-			var infoScr = new DirectoryInfo(Path.Combine(m_fwroot, "Lib/src/SharedScrControls"));
-			CollectInfo(infoScr);
-			var infoScr2 = new DirectoryInfo(Path.Combine(m_fwroot, "Lib/src/SharedScrUtils"));
+			var infoScr2 = new DirectoryInfo(Path.Combine(m_fwroot, "Lib/src/ScrChecks"));
 			CollectInfo(infoScr2);
-			var infoScr3 = new DirectoryInfo(Path.Combine(m_fwroot, "Lib/src/ScrChecks"));
-			CollectInfo(infoScr3);
-			var infoPhr = new DirectoryInfo(Path.Combine(m_fwroot, "Lib/src/PhraseTranslationHelper"));
-			CollectInfo(infoPhr);
 			var infoObj = new DirectoryInfo(Path.Combine(m_fwroot, "Lib/src/ObjectBrowser"));
 			CollectInfo(infoObj);
 			WriteTargetFiles();
@@ -113,15 +116,12 @@ namespace FwBuildTasks
 		private void ProcessCsProjFile(string filename)
 		{
 			if (filename.Contains("Src/LexText/Extensions/") || filename.Contains("Src\\LexText\\Extensions\\"))
-				return;		// Skip the extensions -- they're either obsolete or nonstandard.
+				return; // Skip the extensions -- they're either obsolete or nonstandard.
 			var project = Path.GetFileNameWithoutExtension(filename);
-			if (project == "ICSharpCode.SharpZLib")
-				return;
-			if (project == "VwGraphicsReplayer" ||
-				project == "SilSidePaneTestApp" ||
+			if (project == "ICSharpCode.SharpZLib" ||
+				project == "VwGraphicsReplayer" ||
 				project == "SfmStats" ||
-				project == "ConvertSFM" ||
-				project == "Paratext8Plugin") // Paratext8Plugin is a .net 4.6.1 project and needs special attention in the release/8.3 branch
+				project == "ConvertSFM")
 			{
 				return; // Skip these apps - they are are sample or support apps
 			}
@@ -165,7 +165,7 @@ namespace FwBuildTasks
 							// here: we use the same .csproj file on both Windows and Linux
 							// and so it contains backslashes in the name which is a valid
 							// character on Linux.
-							var i0 = projectName.LastIndexOfAny(new[] { '\\', '/' });
+							var i0 = projectName.LastIndexOfAny(new[] {'\\', '/'});
 							if (i0 >= 0)
 								projectName = projectName.Substring(i0 + 1);
 							projectName = projectName.Replace(".csproj", "");
@@ -188,10 +188,20 @@ namespace FwBuildTasks
 
 		private void LoadProjectFile(string projectFile)
 		{
-			m_csprojFile = new XmlDocument();
-			m_csprojFile.Load(projectFile);
-			m_namespaceMgr = new XmlNamespaceManager(m_csprojFile.NameTable);
-			m_namespaceMgr.AddNamespace("c", "http://schemas.microsoft.com/developer/msbuild/2003");
+			try
+			{
+				m_csprojFile = new XmlDocument();
+				m_csprojFile.Load(projectFile);
+				m_namespaceMgr = new XmlNamespaceManager(m_csprojFile.NameTable);
+				m_namespaceMgr.AddNamespace("c", "http://schemas.microsoft.com/developer/msbuild/2003");
+			}
+			catch (XmlException e)
+			{
+				Log.LogError("GenerateFwTargets", null, null,
+					projectFile, 0, 0, 0, 0, "Error reading project references. Invalid XML file?");
+
+				throw new StopTaskException(e);
+			}
 		}
 
 		/// <summary>
@@ -232,240 +242,232 @@ namespace FwBuildTasks
 			projectSubDir = projectSubDir.Replace("\\", "/");
 			if (projectSubDir.StartsWith("/Src/"))
 				projectSubDir = projectSubDir.Substring(5);
-			else
-				if (projectSubDir.StartsWith("/Lib/src/"))
-					projectSubDir = projectSubDir.Substring(9);
-				else
-					if (projectSubDir.StartsWith("/"))
-						projectSubDir = projectSubDir.Substring(1);
+			else if (projectSubDir.StartsWith("/Lib/src/"))
+				projectSubDir = projectSubDir.Substring(9);
+			else if (projectSubDir.StartsWith("/"))
+				projectSubDir = projectSubDir.Substring(1);
 			if (Path.DirectorySeparatorChar != '/')
 				projectSubDir = projectSubDir.Replace('/', Path.DirectorySeparatorChar);
 			return projectSubDir;
 		}
+
+		private static bool IsMono
+		{
+			get
+			{
+				return Type.GetType("Mono.Runtime") != null;
+			}
+		}
+
+		[DllImport("__Internal", EntryPoint = "mono_get_runtime_build_info")]
+		private static extern string GetMonoVersion();
+
+		/// <summary>
+		/// Gets the version of the currently running Mono (e.g.
+		/// "5.0.1.1 (2017-02/5077205 Thu May 25 09:16:53 UTC 2017)"), or the empty string
+		/// on Windows.
+		/// </summary>
+		private static string MonoVersion => IsMono ? GetMonoVersion() : string.Empty;
 
 		/// <summary>
 		/// Used the collected information to write the needed target files.
 		/// </summary>
 		private void WriteTargetFiles()
 		{
-			// Write all the C# targets and their dependencies.
-
-			using (var writer = new StreamWriter(Path.Combine(m_fwroot, "Build/FieldWorks.targets")))
+			var targetsFile = Path.Combine(m_fwroot, "Build/FieldWorks.targets");
+			try
 			{
-				writer.WriteLine("<?xml version=\"1.0\" encoding=\"utf-8\"?>");
-				writer.WriteLine("<!-- This file is automatically generated by the Setup target.  DO NOT EDIT! -->");
-				writer.WriteLine("<!-- Unfortunately, the new one is generated after the old one has been read. -->");
-				writer.WriteLine("<!-- 'msbuild /t:refreshTargets' generates this file and does nothing else. -->");
-				writer.WriteLine("<Project xmlns=\"http://schemas.microsoft.com/developer/msbuild/2003\" ToolsVersion=\"4.0\">");
-				writer.WriteLine();
-				foreach (var project in m_mapProjFile.Keys)
+				// Write all the C# targets and their dependencies.
+				using (var writer = new StreamWriter(targetsFile))
 				{
-					LoadProjectFile(m_mapProjFile[project]);
-
-					var isTestProject = project.EndsWith("Tests") ||
-						project == "TestManager" ||
-						project == "ProjectUnpacker";
-
-					// <Choose> to define DefineConstants
-					writer.WriteLine("\t<Choose>");
-					var otherwiseBldr = new StringBuilder();
-					var otherwiseAdded = false;
-					var configs = new Dictionary<string, string>();
-					foreach (XmlNode node in ConfigNodes)
-					{
-						var condition = node.Attributes["Condition"].InnerText;
-						var tmp = condition.Substring(condition.IndexOf("==") + 2).Trim().Trim('\'');
-						var configuration = tmp.Substring(0, tmp.IndexOf("|"));
-
-						// Add configuration only once even if same configuration is contained
-						// for multiple platforms, e.g. for AnyCpu and x64.
-						if (configs.ContainsKey(configuration))
-						{
-							if (configs[configuration] !=
-								node.SelectSingleNode("c:DefineConstants", m_namespaceMgr).InnerText.Replace(";", " "))
-							{
-								Log.LogError("Configuration {0} for project {1} is defined several times " +
-											"but contains differing values for DefineConstants.", configuration, project);
-							}
-							continue;
-						}
-						configs.Add(configuration, node.SelectSingleNode("c:DefineConstants", m_namespaceMgr).InnerText.Replace(";", " "));
-
-						writer.WriteLine("\t\t<When Condition=\" '$(config-capital)' == '{0}' \">", configuration);
-						writer.WriteLine("\t\t\t<PropertyGroup>");
-						writer.WriteLine("\t\t\t\t<{0}Defines>{1} CODE_ANALYSIS</{0}Defines>",
-							project, configs[configuration]);
-						writer.WriteLine("\t\t\t</PropertyGroup>");
-						writer.WriteLine("\t\t</When>");
-						if (condition.Contains("Debug") && !otherwiseAdded)
-						{
-							otherwiseBldr.AppendLine("\t\t<Otherwise>");
-							otherwiseBldr.AppendLine("\t\t\t<PropertyGroup>");
-							otherwiseBldr.AppendLine(
-								string.Format("\t\t\t\t<{0}Defines>{1} CODE_ANALYSIS</{0}Defines>",
-									project,
-									node.SelectSingleNode("c:DefineConstants", m_namespaceMgr).InnerText.Replace(";", " ")));
-							otherwiseBldr.AppendLine("\t\t\t</PropertyGroup>");
-							otherwiseBldr.AppendLine("\t\t</Otherwise>");
-							otherwiseAdded = true;
-						}
-					}
-					writer.Write(otherwiseBldr.ToString());
-					writer.WriteLine("\t</Choose>");
+					writer.WriteLine("<?xml version=\"1.0\" encoding=\"utf-8\"?>");
+					writer.WriteLine("<!-- This file is automatically generated by the Setup target.  DO NOT EDIT! -->");
+					writer.WriteLine("<!-- Unfortunately, the new one is generated after the old one has been read. -->");
+					writer.WriteLine("<!-- 'msbuild /t:refreshTargets' generates this file and does nothing else. -->");
+					var toolsVersion = !IsMono || int.Parse(MonoVersion.Substring(0, 1)) >= 5 ? "15.0" : "14.0";
+					writer.WriteLine("<Project xmlns=\"http://schemas.microsoft.com/developer/msbuild/2003\" ToolsVersion=\"{0}\">", toolsVersion);
 					writer.WriteLine();
-
-					writer.Write("\t<Target Name=\"{0}\"", project);
-					var bldr = new StringBuilder();
-					bldr.Append("Initialize");	// ensure the output directories and version files exist.
-					switch (project)
+					foreach (var project in m_mapProjFile.Keys)
 					{
-						case "COMInterfaces":
-							bldr.Append(";mktlbs");
-							break;
-						case "xWorks":
-							// xWorks now references FlexUIAdapter.dll.
-							// But, we don't discover that dependency, because for some bizarre
-							// historical reason, the project that builds FlexUIAdapter.dll is called XCoreAdapterSilSidePane.
-							bldr.Append(";XCoreAdapterSilSidePane");
-							break;
-						case "TeImportExportTests":
-						case "FwCoreDlgsTests":
-							// The TeImportExportTests and FwCoreDlgsTests require that the ScrChecks.dll is in DistFiles/Editorial Checks.
+						LoadProjectFile(m_mapProjFile[project]);
+
+						var isTestProject = project.EndsWith("Tests") || project == "TestManager" || project == "ProjectUnpacker";
+
+						// <Choose> to define DefineConstants
+						writer.WriteLine("\t<Choose>");
+						var otherwiseBldr = new StringBuilder();
+						var otherwiseAdded = false;
+						var configs = new Dictionary<string, string>();
+						foreach (XmlNode node in ConfigNodes)
+						{
+							var condition = node.Attributes["Condition"].InnerText;
+							var tmp = condition.Substring(condition.IndexOf("==") + 2).Trim().Trim('\'');
+							var configuration = tmp.Substring(0, tmp.IndexOf("|"));
+
+							// Add configuration only once even if same configuration is contained
+							// for multiple platforms, e.g. for AnyCpu and x64.
+							if (configs.ContainsKey(configuration))
+							{
+								if (configs[configuration] != node.SelectSingleNode("c:DefineConstants", m_namespaceMgr).InnerText.Replace(";", " "))
+								{
+									Log.LogError("Configuration {0} for project {1} is defined several times " +
+										"but contains differing values for DefineConstants.", configuration, project);
+								}
+								continue;
+							}
+							configs.Add(configuration, node.SelectSingleNode("c:DefineConstants", m_namespaceMgr).InnerText.Replace(";", " "));
+
+							writer.WriteLine("\t\t<When Condition=\" '$(config-capital)' == '{0}' \">", configuration);
+							writer.WriteLine("\t\t\t<PropertyGroup>");
+							writer.WriteLine("\t\t\t\t<{0}Defines>{1} CODE_ANALYSIS</{0}Defines>",
+								project, configs[configuration]);
+							writer.WriteLine("\t\t\t</PropertyGroup>");
+							writer.WriteLine("\t\t</When>");
+							if (condition.Contains("Debug") && !otherwiseAdded)
+							{
+								otherwiseBldr.AppendLine("\t\t<Otherwise>");
+								otherwiseBldr.AppendLine("\t\t\t<PropertyGroup>");
+								otherwiseBldr.AppendLine(string.Format("\t\t\t\t<{0}Defines>{1} CODE_ANALYSIS</{0}Defines>", project,
+									node.SelectSingleNode("c:DefineConstants", m_namespaceMgr).InnerText.Replace(";", " ")));
+								otherwiseBldr.AppendLine("\t\t\t</PropertyGroup>");
+								otherwiseBldr.AppendLine("\t\t</Otherwise>");
+								otherwiseAdded = true;
+							}
+						}
+						writer.Write(otherwiseBldr.ToString());
+						writer.WriteLine("\t</Choose>");
+						writer.WriteLine();
+
+						writer.Write("\t<Target Name=\"{0}\"", project);
+						var bldr = new StringBuilder();
+						bldr.Append("Initialize"); // ensure the output directories and version files exist.
+						if (project == "ParatextImportTests" || project == "FwCoreDlgsTests")
+						{
+							// The ParatextImportTests and FwCoreDlgsTests require that the ScrChecks.dll be in DistFiles/Editorial Checks.
 							// We don't discover that dependency because it's not a reference (LT-13777).
 							bldr.Append(";ScrChecks");
-							break;
-						default:
-							break;
-					}
-					var dependencies = m_mapProjDepends[project];
-					dependencies.Sort();
-					foreach (var dep in dependencies)
-					{
-						if (m_mapProjFile.ContainsKey(dep))
-							bldr.AppendFormat(";{0}", dep);
-					}
-					writer.Write(" DependsOnTargets=\"{0}\"", bldr.ToString());
+						}
+						var dependencies = m_mapProjDepends[project];
+						dependencies.Sort();
+						foreach (var dep in dependencies)
+						{
+							if (m_mapProjFile.ContainsKey(dep))
+								bldr.AppendFormat(";{0}", dep);
+						}
+						writer.Write($" DependsOnTargets=\"{bldr}\"");
 
-					if (project == "MigrateSqlDbs")
-					{
-						writer.Write(" Condition=\"'$(OS)'=='Windows_NT'\"");
-					}
-					if (project.StartsWith("LinuxSmoke") ||
-						project.StartsWith("ManagedVwWindow"))
-					{
-						writer.Write(" Condition=\"'$(OS)'=='Unix'\"");
-					}
-					writer.WriteLine(">");
+						if (project == "MigrateSqlDbs")
+						{
+							writer.Write(" Condition=\"'$(OS)'=='Windows_NT'\"");
+						}
+						if (project.StartsWith("ManagedVwWindow"))
+						{
+							writer.Write(" Condition=\"'$(OS)'=='Unix'\"");
+						}
+						writer.WriteLine(">");
 
-					// <MsBuild> task
-					writer.WriteLine("\t\t<MSBuild Projects=\"{0}\"", m_mapProjFile[project].Replace(m_fwroot, "$(fwrt)"));
-					writer.WriteLine("\t\t\tTargets=\"$(msbuild-target)\"");
-					writer.WriteLine("\t\t\tProperties=\"$(msbuild-props);IntermediateOutputPath=$(dir-fwobj){0}{1}{0};DefineConstants=$({2}Defines);$(warningsAsErrors);WarningLevel=4\"",
-						Path.DirectorySeparatorChar, GetProjectSubDir(project), project);
-					writer.WriteLine("\t\t\tToolsVersion=\"4.0\"/>");
+						// <MsBuild> task
+						writer.WriteLine($"\t\t<MSBuild Projects=\"{m_mapProjFile[project].Replace(m_fwroot, "$(fwrt)")}\"");
+						writer.WriteLine("\t\t\tTargets=\"$(msbuild-target)\"");
+						writer.WriteLine("\t\t\tProperties=\"$(msbuild-props);IntermediateOutputPath=$(dir-fwobj){0}{1}{0};DefineConstants=$({2}Defines);$(warningsAsErrors);WarningLevel=4;LcmArtifactsDir=$(LcmArtifactsDir)\"/>",
+							Path.DirectorySeparatorChar, GetProjectSubDir(project), project);
+						// <Clouseau> verification task
+						writer.WriteLine($"\t\t<Clouseau Condition=\"'$(Configuration)' == 'Debug'\" AssemblyPathname=\"$(dir-outputBase)/{AssemblyName}\"/>");
 
-					// <Gendarme> verification task
-					writer.WriteLine("\t\t<Gendarme ConfigurationFile=\"$(fwrt)/Build/Gendarme.MsBuild/fw-gendarme-rules.xml\"");
-					writer.WriteLine("\t\t\tRuleSet=\"$({1})\" Assembly=\"$(dir-outputBase)/{0}\"",
-						AssemblyName, isTestProject ? "verifyset-test" : "verifyset");
-					writer.WriteLine("\t\t\tLogType=\"Html\" LogFile=\"$(dir-outputBase){0}{1}-gendarme.html\"", Path.DirectorySeparatorChar, project);
-					writer.WriteLine("\t\t\tIgnoreFile=\"{0}/gendarme-{1}.ignore\"",
-						Path.GetDirectoryName(m_mapProjFile[project].Replace(m_fwroot, "$(fwrt)")),
-						project);
-					writer.WriteLine("\t\t\tAutoUpdateIgnores=\"$(autoUpdateIgnores)\" VerifyFail=\"$(verifyFail)\"");
-					writer.WriteLine("\t\t\tCondition=\"'$(config-capital)'=='Debug'\" />");
-
-					if (isTestProject)
-					{
-						// <NUnit> task
-						writer.WriteLine("\t\t<Message Text=\"Running unit tests for {0}\" />", project);
-						writer.WriteLine("\t\t<NUnit Condition=\"'$(action)'=='test'\"");
-						writer.WriteLine("\t\t\tAssemblies=\"$(dir-outputBase)/{0}.dll\"", project);
-						writer.WriteLine("\t\t\tToolPath=\"$(fwrt)/Bin/NUnit/bin\"");
-						writer.WriteLine("\t\t\tWorkingDirectory=\"$(dir-outputBase)\"");
-						writer.WriteLine("\t\t\tOutputXmlFile=\"$(dir-outputBase)/{0}.dll-nunit-output.xml\"", project);
-						writer.WriteLine("\t\t\tForce32Bit=\"$(useNUnit-x86)\"");
-						writer.WriteLine("\t\t\tExcludeCategory=\"$(excludedCategories)\"");
-						// Don't continue on error. NUnit returns 0 even if there are failed tests.
-						// A non-zero return code means a configuration error or that NUnit crashed
-						// - we shouldn't ignore those.
-						//writer.WriteLine("\t\t\tContinueOnError=\"true\"");
-						writer.WriteLine("\t\t\tFudgeFactor=\"$(timeoutFudgeFactor)\"");
-						writer.WriteLine("\t\t\tTimeout=\"{0}\">", TimeoutForProject(project));
-						writer.WriteLine("\t\t\t<Output TaskParameter=\"FailedSuites\" ItemName=\"FailedSuites\"/>");
-						writer.WriteLine("\t\t</NUnit>");
-						writer.WriteLine("\t\t<Message Text=\"Finished building {0}.\" Condition=\"'$(action)'!='test'\"/>", project);
-						writer.WriteLine("\t\t<Message Text=\"Finished building {0} and running tests.\" Condition=\"'$(action)'=='test'\"/>", project);
-						// Generate dotCover task
-						GenerateDotCoverTask(writer, new [] {project}, string.Format("{0}.coverage.xml", project));
+						if (isTestProject)
+						{
+							// <NUnit> task
+							writer.WriteLine($"\t\t<Message Text=\"Running unit tests for {project}\" />");
+							writer.WriteLine("\t\t<NUnit Condition=\"'$(action)'=='test'\"");
+							writer.WriteLine($"\t\t\tAssemblies=\"$(dir-outputBase)/{project}.dll\"");
+							writer.WriteLine("\t\t\tToolPath=\"$(fwrt)/Bin/NUnit/bin\"");
+							writer.WriteLine("\t\t\tWorkingDirectory=\"$(dir-outputBase)\"");
+							writer.WriteLine($"\t\t\tOutputXmlFile=\"$(dir-outputBase)/{project}.dll-nunit-output.xml\"");
+							writer.WriteLine("\t\t\tForce32Bit=\"$(useNUnit-x86)\"");
+							writer.WriteLine("\t\t\tExcludeCategory=\"$(excludedCategories)\"");
+							// Don't continue on error. NUnit returns 0 even if there are failed tests.
+							// A non-zero return code means a configuration error or that NUnit crashed
+							// - we shouldn't ignore those.
+							//writer.WriteLine("\t\t\tContinueOnError=\"true\"");
+							writer.WriteLine("\t\t\tFudgeFactor=\"$(timeoutFudgeFactor)\"");
+							writer.WriteLine($"\t\t\tTimeout=\"{TimeoutForProject(project)}\">");
+							writer.WriteLine("\t\t\t<Output TaskParameter=\"FailedSuites\" ItemName=\"FailedSuites\"/>");
+							writer.WriteLine("\t\t</NUnit>");
+							writer.WriteLine($"\t\t<Message Text=\"Finished building {project}.\" Condition=\"'$(action)'!='test'\"/>");
+							writer.WriteLine($"\t\t<Message Text=\"Finished building {project} and running tests.\" Condition=\"'$(action)'=='test'\"/>");
+							// Generate dotCover task
+							GenerateDotCoverTask(writer, new[] {project}, $"{project}.coverage.xml");
+						}
+						else
+						{
+							writer.WriteLine($"\t\t<Message Text=\"Finished building {project}.\"/>");
+						}
+						writer.WriteLine("\t</Target>");
+						writer.WriteLine();
 					}
-					else
+					writer.Write("\t<Target Name=\"allCsharp\" DependsOnTargets=\"");
+					bool first = true;
+					foreach (var project in m_mapProjFile.Keys)
 					{
-						writer.WriteLine("\t\t<Message Text=\"Finished building {0}.\"/>", project);
+						// These projects are experimental.
+						// These projects weren't built by nant normally.
+						if (project == "FxtExe")
+						{
+							continue;
+						}
+						if (first)
+							writer.Write(project);
+						else
+							writer.Write(";{0}", project);
+						first = false;
 					}
-					writer.WriteLine("\t</Target>");
+					writer.WriteLine("\"/>");
 					writer.WriteLine();
-				}
-				writer.Write("\t<Target Name=\"allCsharp\" DependsOnTargets=\"");
-				bool first = true;
-				foreach (var project in m_mapProjFile.Keys)
-				{
-					if (project.StartsWith("SharpViews") ||		// These projects are experimental.
-						project == "FxtExe" ||					// These projects weren't built by nant normally.
-						project.StartsWith("LinuxSmokeTest"))
+					writer.Write("\t<Target Name=\"allCsharpNoTests\" DependsOnTargets=\"");
+					first = true;
+					foreach (var project in m_mapProjFile.Keys)
 					{
-						continue;
+						// These projects are experimental.
+						// These projects weren't built by nant normally.
+						if (project == "FxtExe" ||
+							project.EndsWith("Tests") || // These are tests.
+							project == "ProjectUnpacker") // This is only used in tests.
+						{
+							continue;
+						}
+						if (first)
+							writer.Write(project);
+						else
+							writer.Write(";{0}", project);
+						first = false;
 					}
-					if (first)
-						writer.Write(project);
-					else
-						writer.Write(";{0}", project);
-					first = false;
-				}
-				writer.WriteLine("\"/>");
-				writer.WriteLine();
-				writer.Write("\t<Target Name=\"allCsharpNoTests\" DependsOnTargets=\"");
-				first = true;
-				foreach (var project in m_mapProjFile.Keys)
-				{
-					if (project.StartsWith("SharpViews") ||		// These projects are experimental.
-						project == "FxtExe" ||					// These projects weren't built by nant normally.
-						project == "FixFwData" ||
-						project.StartsWith("LinuxSmokeTest") ||
-						project.EndsWith("Tests") ||			// These are tests.
-						project == "TestUtils" ||				// This is a test.
-						project == "TestManager" ||				// This is a test.
-						project == "ProjectUnpacker")			// This is only used in tests.
-					{
-						continue;
-					}
-					if (first)
-						writer.Write(project);
-					else
-						writer.Write(";{0}", project);
-					first = false;
-				}
-				writer.WriteLine("\"/>");
+					writer.WriteLine("\"/>");
 
-				ProcessDependencyGraph(writer);
-
-				writer.WriteLine("</Project>");
-				writer.Flush();
-				writer.Close();
+					writer.WriteLine("</Project>");
+					writer.Flush();
+					writer.Close();
+				}
+				Console.WriteLine("Created {0}", targetsFile);
 			}
-			Console.WriteLine("Created {0}", Path.Combine(m_fwroot, "Build/FieldWorks.targets"));
+			catch (Exception e)
+			{
+				var badFile = targetsFile + ".bad";
+				File.Move(targetsFile, badFile);
+				Console.WriteLine("Failed to Create FieldWorks.targets bad result stored in {0}", badFile);
+				throw new StopTaskException(e);
+			}
 		}
 
 		private static void GenerateDotCoverTask(StreamWriter writer, IEnumerable<string> projects, string outputXml)
 		{
-			string assemblyList = projects.Aggregate("", (current, proj) => current + string.Format("$(dir-outputBase)/{0}.dll;", proj));
-			writer.WriteLine("\t\t<Message Text=\"Running coverage analysis for {0}\" Condition=\"'$(action)'=='cover'\"/>", string.Join(", ", projects));
+			string assemblyList = projects.Aggregate("", (current, proj) => current + $"$(dir-outputBase)/{proj}.dll;");
+			writer.WriteLine($"\t\t<Message Text=\"Running coverage analysis for {string.Join(", ", projects)}\" Condition=\"'$(action)'=='cover'\"/>");
 			writer.WriteLine("\t\t<GenerateTestCoverageReport Condition=\"'$(action)'=='cover'\"");
-			writer.WriteLine("\t\t\tAssemblies=\"" + assemblyList + "\"");
+			writer.WriteLine($"\t\t\tAssemblies=\"{assemblyList}\"");
 			writer.WriteLine("\t\t\tNUnitConsoleExe=\"$(fwrt)/Bin/NUnit/bin/nunit-console-x86.exe\"");
 			writer.WriteLine("\t\t\tDotCoverExe=\"$(DOTCOVER_HOME)/dotcover.exe\"");
 			writer.WriteLine("\t\t\tWorkingDirectory=\"$(dir-outputBase)\"");
-			writer.WriteLine("\t\t\tOutputXmlFile=\"$(dir-outputBase)/{0}\"/>", outputXml);
+			writer.WriteLine($"\t\t\tOutputXmlFile=\"$(dir-outputBase)/{outputXml}\"/>");
 		}
 
 		/// <summary>
@@ -477,161 +479,22 @@ namespace FwBuildTasks
 		/// </remarks>
 		int TimeoutForProject(string project)
 		{
-			if(m_timeoutMap == null)
+			if (m_timeoutMap == null)
 			{
 				var timeoutDocument = XDocument.Load(Path.Combine(m_fwroot, "Build", "TestTimeoutValues.xml"));
 				m_timeoutMap = new Dictionary<string, int>();
 				var testTimeoutValuesElement = timeoutDocument.Root;
 				m_timeoutMap["default"] = int.Parse(testTimeoutValuesElement.Attribute("defaultTimeLimit").Value);
-				foreach(var timeoutElement in timeoutDocument.Root.Descendants("TimeoutGroup"))
+				foreach (var timeoutElement in timeoutDocument.Root.Descendants("TimeoutGroup"))
 				{
 					var timeout = int.Parse(timeoutElement.Attribute("timeLimit").Value);
-					foreach(var projectElement in timeoutElement.Descendants("Project"))
+					foreach (var projectElement in timeoutElement.Descendants("Project"))
 					{
 						m_timeoutMap[projectElement.Attribute("name").Value] = timeout;
 					}
 				}
 			}
 			return (m_timeoutMap.ContainsKey(project) ? m_timeoutMap[project] : m_timeoutMap["default"])*1000;
-		}
-
-		void ProcessDependencyGraph(StreamWriter writer)
-		{
-#if false
-			// The parallelized building isn't much faster, and tests don't all work right.
-			// ----------------------------------------------------------------------------
-			// Filter dependencies for those that are actually built.
-			// Also collect all projects that don't depend on any other built projects.
-			Dictionary<string, List<string>> mapProjInternalDepends = new Dictionary<string, List<string>>();
-			List<HashSet<string>> groupDependencies = new List<HashSet<string>>();
-			groupDependencies.Add(new HashSet<string>());
-			int cProjects = 0;
-			foreach (var project in m_mapProjFile.Keys)
-			{
-				if (project.StartsWith("SharpViews") ||		// These projects are experimental.
-					project == "FxtExe" ||					// These projects weren't built by nant normally.
-					project == "FixFwData" ||
-					project.StartsWith("LinuxSmokeTest"))
-				{
-					continue;
-				}
-				var dependencies = new List<string>();
-				foreach (var dep in m_mapProjDepends[project])
-				{
-					if (m_mapProjFile.ContainsKey(dep))
-						dependencies.Add(dep);
-				}
-				if (project == "xWorksTests" && !dependencies.Contains("XCoreAdapterSilSidePane"))
-					dependencies.Add("XCoreAdapterSilSidePane");
-				if (dependencies.Count == 0)
-					groupDependencies[0].Add(project);
-				dependencies.Sort();
-				mapProjInternalDepends.Add(project, dependencies);
-				++cProjects;
-			}
-			if (groupDependencies[0].Count == 0)
-				return;
-			int num = 1;
-			HashSet<string> total = new HashSet<string>(groupDependencies[0]);
-			// Work through all the dependencies, collecting sets of projects that can be
-			// built in parallel.
-			while (total.Count < cProjects)
-			{
-				groupDependencies.Add(new HashSet<string>());
-				foreach (var project in mapProjInternalDepends.Keys)
-				{
-					bool fAlready = false;
-					for (int i = 0; i < groupDependencies.Count - 1; ++i)
-					{
-						if (groupDependencies[i].Contains(project))
-						{
-							fAlready = true;
-							break;
-						}
-					}
-					if (fAlready)
-						continue;
-					var dependencies = mapProjInternalDepends[project];
-					if (total.IsSupersetOf(dependencies))
-						groupDependencies[num].Add(project);
-				}
-				if (groupDependencies[num].Count == 0)
-					break;
-				foreach (var x in groupDependencies[num])
-					total.Add(x);
-				++num;
-			}
-			writer.WriteLine("<!--");
-			writer.WriteLine("\tUsing this parallelization gains only 15% for building FieldWorks,");
-			writer.WriteLine("\tand possibly nothing for running tests. (Although trials have shown");
-			writer.WriteLine("\t1600+ new test failures when trying this parallelized setup!)");
-			writer.WriteLine();
-			for (int i = 0; i < groupDependencies.Count; ++i)
-			{
-				var targName = string.Format("cs{0:d03}", i+1);
-				writer.Write("\t<Target Name=\"{0}\"", targName);
-				var depends = String.Format("cs{0:d03}", i);
-				if (i == 0)
-					depends = "Initialize";
-				if (groupDependencies[i].Contains("COMInterfaces"))
-					depends = "mktlbs;" + depends;
-				writer.WriteLine(" DependsOnTargets=\"{0}\">", depends);
-				bool fIncludesTests = false;
-				int count = 0;
-				writer.Write("\t\t<MSBuild Projects=\"");
-				foreach (var targ in groupDependencies[i])
-				{
-					if (count > 0)
-						writer.Write(";");
-					writer.Write(m_mapProjFile[targ].Replace(m_fwroot, "$(fwrt)"));
-					++count;
-					if (targ.EndsWith("Tests") ||
-						targ == "TestManager" ||
-						targ == "ProjectUnpacker")
-					{
-						fIncludesTests = true;
-					}
-				}
-				writer.WriteLine("\"");
-				writer.WriteLine("\t\t         Targets=\"$(msbuild-target)\"");
-				writer.WriteLine("\t\t         Properties=\"$(msbuild-props)\"");
-				writer.WriteLine("\t\t         BuildInParallel=\"true\"");
-				writer.WriteLine("\t\t         ToolsVersion=\"4.0\"/>");
-				if (fIncludesTests)
-				{
-					writer.WriteLine("\t\t<NUnit Condition=\"'$(action)'=='test'\"");
-					writer.Write("\t\t       Assemblies=\"");
-					count = 0;
-					int timeout = 0;
-					foreach (var targ in groupDependencies[i])
-					{
-						if (targ.EndsWith("Tests") ||
-							targ == "TestManager" ||
-							targ == "ProjectUnpacker")
-						{
-							if (count > 0)
-								writer.Write(";");
-							writer.Write("$(dir-outputBase)/{0}.dll", targ);
-							++count;
-							timeout += TimeoutForProject(targ);
-						}
-					}
-					writer.WriteLine("\"");
-					writer.WriteLine("\t\t       ToolPath=\"$(fwrt)/Bin/NUnit/bin\"");
-					writer.WriteLine("\t\t       WorkingDirectory=\"$(dir-outputBase)\"");
-					writer.WriteLine("\t\t       OutputXmlFile=\"$(dir-outputBase)/cs{0:d03}.dll-nunit-output.xml\"", i+1);
-					writer.WriteLine("\t\t       Force32Bit=\"$(useNUnit-x86)\"");
-					writer.WriteLine("\t\t       ExcludeCategory=\"$(excludedCategories)\"");
-					writer.WriteLine("\t\t       Timeout=\"{0}\"", timeout);
-					writer.WriteLine("\t\t       ContinueOnError=\"true\" />");
-				}
-				writer.WriteLine("\t</Target>");
-				writer.WriteLine();
-			}
-			writer.WriteLine("\t<Target Name=\"csAll\" DependsOnTargets=\"cs{0:d03}\"/>", groupDependencies.Count);
-			writer.WriteLine("-->");
-			writer.WriteLine();
-#endif
 		}
 	}
 }

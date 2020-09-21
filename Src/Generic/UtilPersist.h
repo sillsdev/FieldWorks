@@ -182,7 +182,7 @@ template<typename XChar>
 	void WriteString(IStream * pstrm, StrBase<XChar> & stb);
 
 
-#if WIN32
+#if defined(_WIN32) || defined(_M_X64)
 /*----------------------------------------------------------------------------------------------
 	Resolve psz into a full path name.
 ----------------------------------------------------------------------------------------------*/
@@ -208,7 +208,7 @@ void FillBytes(IStream * pstrmDst, byte b, int cb);
 ----------------------------------------------------------------------------------------------*/
 inline void WriteLineEnd(IStream * pstrm)
 {
-#ifdef WIN32
+#if defined(_WIN32) || defined(_M_X64)
 	// for MS-DOS and MS Windows, line end = carriage return, linefeed
 	WriteBuf(pstrm, "\r\n", 2);
 #else

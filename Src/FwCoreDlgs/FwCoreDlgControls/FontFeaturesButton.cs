@@ -1,14 +1,16 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using System.Drawing;
-using System.Windows.Forms;
 using System.Diagnostics;
-
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.Utils;
+using System.Drawing;
+using System.Linq;
+using System.Windows.Forms;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.Common.ViewsInterfaces;
+using SIL.LCModel.Utils;
 
 namespace SIL.FieldWorks.FwCoreDlgControls
 {
@@ -17,7 +19,7 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 	/// Font Features button
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
-	public class FontFeaturesButton : Button, IFWDisposable
+	public class FontFeaturesButton : Button
 	{
 		#region Member variables and constants
 		/// <summary></summary>
@@ -576,9 +578,20 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 					continue;
 				if (stFeatures.Length != 0)
 					stFeatures = stFeatures + ",";
-				stFeatures = stFeatures + ids[ifeat] + "=" + values[ifeat];
+				stFeatures = stFeatures + ConvertFontFeatureIdToCode(ids[ifeat]) + "=" + values[ifeat];
 			}
 			return stFeatures;
+		}
+
+		static private string ConvertFontFeatureIdToCode(int fontFeatureId)
+		{
+			byte[] bytes = BitConverter.GetBytes(fontFeatureId);
+			string result = String.Empty;
+			foreach (int value in bytes.Reverse())
+			{
+				result += Convert.ToChar(value);
+			}
+			return result;
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -603,6 +616,13 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 				base(label, ffbtn.ItemClickHandler)
 			{
 				m_featureIndex = featureIndex;
+			}
+
+			/// <summary/>
+			protected override void Dispose(bool disposing)
+			{
+				System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + ". ******");
+				base.Dispose(disposing);
 			}
 
 			/// --------------------------------------------------------------------------------
@@ -635,6 +655,7 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 				m_featureEngine.GetFeatureIDs(cfid, idsM, out cfid);
 				m_ids = MarshalEx.NativeToArray<int>(idsM, cfid);
 			}
+			m_fontFeatures = GraphiteFontFeatures.ConvertFontFeatureCodesToIds(m_fontFeatures);
 			m_values = ParseFeatureString(m_ids, m_fontFeatures);
 			Debug.Assert(m_ids.Length == m_values.Length);
 

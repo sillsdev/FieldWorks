@@ -6,7 +6,7 @@ using System;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using Palaso.Linq;
+using SIL.Linq;
 using SIL.FieldWorks.Common.FwUtils;
 using XCore;
 

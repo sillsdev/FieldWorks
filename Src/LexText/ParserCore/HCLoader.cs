@@ -1,21 +1,19 @@
-﻿// Copyright (c) 2015 SIL International
+﻿// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Xml;
 using System.Xml.Linq;
 using SIL.Collections;
-using SIL.CoreImpl;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FDO.Validation;
+using SIL.LCModel.Core.Phonology;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel;
 using SIL.HermitCrab;
 using SIL.HermitCrab.MorphologicalRules;
 using SIL.HermitCrab.PhonologicalRules;
@@ -25,11 +23,9 @@ using SIL.Machine.Matching;
 
 namespace SIL.FieldWorks.WordWorks.Parser
 {
-	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
-		Justification="m_cache and m_loadErrorsWriter are references")]
 	public class HCLoader
 	{
-		public static Language Load(SpanFactory<ShapeNode> spanFactory, FdoCache cache, IHCLoadErrorLogger logger)
+		public static Language Load(SpanFactory<ShapeNode> spanFactory, LcmCache cache, IHCLoadErrorLogger logger)
 		{
 			var loader = new HCLoader(spanFactory, cache, logger);
 			loader.LoadLanguage();
@@ -43,7 +39,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		};
 
 		private readonly SpanFactory<ShapeNode> m_spanFactory;
-		private readonly FdoCache m_cache;
+		private readonly LcmCache m_cache;
 		private readonly Dictionary<IMoForm, List<Allomorph>> m_allomorphs;
 		private readonly Dictionary<IMoMorphSynAnalysis, List<Morpheme>> m_morphemes;
 		private readonly Dictionary<IMoStemName, StemName> m_stemNames;
@@ -70,7 +66,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		private CharacterDefinition m_null;
 		private CharacterDefinition m_morphBdry;
 
-		private HCLoader(SpanFactory<ShapeNode> spanFactory, FdoCache cache, IHCLoadErrorLogger logger)
+		private HCLoader(SpanFactory<ShapeNode> spanFactory, LcmCache cache, IHCLoadErrorLogger logger)
 		{
 			m_spanFactory = spanFactory;
 			m_cache = cache;
@@ -2337,8 +2333,8 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			if (m_acceptUnspecifiedGraphemes)
 			{
 				// load valid characters from the default vernacular writing system into symbol table
-				IWritingSystem ws = m_cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
-				ValidCharacters validChars = ValidCharacters.Load(ws, null, null);
+				var ws = m_cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
+				var validChars = ValidCharacters.Load(ws);
 				foreach (string wordFormingChar in validChars.WordFormingCharacters)
 				{
 					if (!m_table.Contains(wordFormingChar))

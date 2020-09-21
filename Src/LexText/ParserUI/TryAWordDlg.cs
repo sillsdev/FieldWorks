@@ -1,10 +1,6 @@
-// Copyright (c) 2003-2013 SIL International
+// Copyright (c) 2003-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: TryAWordDlg.cs
-// Responsibility: Andy Black
-// Last reviewed:
 //
 // <remarks>
 // Implementation of:
@@ -14,7 +10,6 @@
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -22,11 +17,10 @@ using System.Windows.Forms;
 using System.Xml.Linq;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.Widgets;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.WordWorks.Parser;
-using SIL.Utils;
+using SIL.LCModel;
 using XCore;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.Utils;
 
 namespace SIL.FieldWorks.LexText.Controls
 {
@@ -34,18 +28,13 @@ namespace SIL.FieldWorks.LexText.Controls
 	/// <summary>
 	/// Summary description for TryAWordDlg.
 	/// </summary>
-	public class TryAWordDlg : Form, IFWDisposable, IxWindow
+	public class TryAWordDlg : Form, IMediatorProvider, IPropertyTableProvider
 	{
 		private const string PersistProviderID = "TryAWord";
 		private const string HelpTopicID = "khtpTryAWord";
 
 		#region Data members
-
-		/// <summary>
-		/// xCore Mediator.
-		/// </summary>
-		private Mediator m_mediator;
-		private FdoCache m_cache;
+		private LcmCache m_cache;
 		private ParserListener m_parserListener;
 		private PersistenceProvider m_persistProvider;
 		private readonly HelpProvider m_helpProvider;
@@ -95,13 +84,12 @@ namespace SIL.FieldWorks.LexText.Controls
 			m_helpProvider = new HelpProvider();
 		}
 
-		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
-			Justification = "Code in question is only compiled on Windows")]
-		public void SetDlgInfo(Mediator mediator, IWfiWordform wordform, ParserListener parserListener)
+		public void SetDlgInfo(Mediator mediator, PropertyTable propertyTable, IWfiWordform wordform, ParserListener parserListener)
 		{
-			m_mediator = mediator;
-			m_persistProvider = new PersistenceProvider(PersistProviderID, m_mediator.PropertyTable);
-			m_cache = (FdoCache) m_mediator.PropertyTable.GetValue("cache");
+			Mediator = mediator;
+			PropTable = propertyTable;
+			m_persistProvider = new PersistenceProvider(Mediator, propertyTable, PersistProviderID);
+			m_cache = PropTable.GetValue<LcmCache>("cache");
 			m_parserListener = parserListener;
 
 			Text = m_cache.ProjectId.UiName + " - " + Text;
@@ -115,13 +103,14 @@ namespace SIL.FieldWorks.LexText.Controls
 			else
 				SetWordToUse(wordform.Form.VernacularDefaultWritingSystem.Text);
 
-			m_webPageInteractor = new WebPageInteractor(m_htmlControl, m_mediator, m_wordformTextBox);
+			m_webPageInteractor = new WebPageInteractor(m_htmlControl, Mediator, m_cache, m_wordformTextBox);
 
 			// No such thing as FwApp.App now: if(FwApp.App != null) // Could be null during testing
-			if (m_mediator.HelpTopicProvider != null) // trying this
+			var helpTopicProvider = PropTable.GetValue<IHelpTopicProvider>("HelpTopicProvider");
+			if (helpTopicProvider != null) // trying this
 			{
-				m_helpProvider.HelpNamespace = m_mediator.HelpTopicProvider.HelpFile;
-				m_helpProvider.SetHelpKeyword(this, m_mediator.HelpTopicProvider.GetHelpString(HelpTopicID));
+				m_helpProvider.HelpNamespace = helpTopicProvider.HelpFile;
+				m_helpProvider.SetHelpKeyword(this, helpTopicProvider.GetHelpString(HelpTopicID));
 				m_helpProvider.SetHelpNavigator(this, HelpNavigator.Topic);
 			}
 
@@ -136,11 +125,9 @@ namespace SIL.FieldWorks.LexText.Controls
 			}
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="TryAWordRootSite gets added to control collection and disposed there")]
 		private void SetRootSite()
 		{
-			m_rootsite = new TryAWordRootSite(m_cache, m_mediator) { Dock = DockStyle.Top };
+			m_rootsite = new TryAWordRootSite(m_cache, Mediator, PropTable) { Dock = DockStyle.Top };
 			m_sandboxPanel.Controls.Add(m_rootsite);
 			m_rootsite.SizeChanged += m_rootsite_SizeChanged;
 			if (m_sandboxPanel.Height != m_rootsite.Height)
@@ -155,11 +142,9 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		private string GetString(string id)
 		{
-			return m_mediator.StringTbl.GetString(id, "Linguistics/Morphology/TryAWord");
+			return StringTable.Table.GetString(id, "Linguistics/Morphology/TryAWord");
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="HtmlControl gets added to control collection and disposed there")]
 		private void InitHtmlControl()
 		{
 			m_htmlControl = new HtmlControl
@@ -183,12 +168,12 @@ namespace SIL.FieldWorks.LexText.Controls
 			m_wordformTextBox.WritingSystemFactory = m_cache.LanguageWritingSystemFactoryAccessor;
 			m_wordformTextBox.WritingSystemCode = m_cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Handle;
 			m_wordformTextBox.Text = "";
-			m_wordformTextBox.AdjustForStyleSheet(this, m_wordPanel, m_mediator);
+			m_wordformTextBox.AdjustForStyleSheet(this, m_wordPanel, PropTable);
 		}
 
 		private void GetLastWordUsed()
 		{
-			var word = m_mediator.PropertyTable.GetValue("TryAWordDlg-lastWordToTry") as string;
+			var word = PropTable.GetValue<string>("TryAWordDlg-lastWordToTry");
 			if (word != null)
 				SetWordToUse(word.Trim());
 		}
@@ -379,11 +364,14 @@ namespace SIL.FieldWorks.LexText.Controls
 		{
 			base.OnClosed(ea);
 			// remember last word used, if possible
-			m_mediator.PropertyTable.SetProperty("TryAWordDlg-lastWordToTry", m_wordformTextBox.Text.Trim(), false, PropertyTable.SettingsGroup.LocalSettings);
-			m_mediator.PropertyTable.SetPropertyPersistence("TryAWordDlg-lastWordToTry", true, PropertyTable.SettingsGroup.LocalSettings);
+			PropTable.SetProperty("TryAWordDlg-lastWordToTry", m_wordformTextBox.Text.Trim(), PropertyTable.SettingsGroup.LocalSettings, false);
+			PropTable.SetPropertyPersistence("TryAWordDlg-lastWordToTry", true, PropertyTable.SettingsGroup.LocalSettings);
 			m_persistProvider.PersistWindowSettings(PersistProviderID, this);
 			if (m_parserListener.Connection != null)
+			{
 				m_parserListener.Connection.TryAWordDialogIsRunning = false;
+				m_parserListener.DisconnectFromParser();
+			}
 		}
 
 		private void m_wordformTextBox_TextChanged(object sender, EventArgs e)
@@ -453,18 +441,18 @@ namespace SIL.FieldWorks.LexText.Controls
 				switch (m_cache.LanguageProject.MorphologicalDataOA.ActiveParser)
 				{
 					case "XAmple":
-						trace = new XAmpleTrace(m_mediator);
-						m_webPageInteractor.WordGrammarDebugger = new XAmpleWordGrammarDebugger(m_mediator, result);
+						trace = new XAmpleTrace();
+						m_webPageInteractor.WordGrammarDebugger = new XAmpleWordGrammarDebugger(PropTable, result);
 						break;
 					case "HC":
-						trace = new HCTrace(m_mediator);
+						trace = new HCTrace();
 						m_webPageInteractor.WordGrammarDebugger = null;
 						break;
 				}
 
 				Debug.Assert(trace != null);
 
-				sOutput = trace.CreateResultPage(result, DoTrace);
+				sOutput = trace.CreateResultPage(PropTable, result, DoTrace);
 			}
 			var uri = new Uri(sOutput);
 			m_htmlControl.URL = uri.AbsoluteUri;
@@ -538,7 +526,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				m_parserListener.DisconnectFromParser();
 				m_statusLabel.Text = ParserStoppedMessage();
 				m_tryItButton.Enabled = true;
-				var app = (IApp) m_mediator.PropertyTable.GetValue("App");
+					var app = PropTable.GetValue<IApp>("App");
 				ErrorReporter.ReportException(ex, app.SettingsKey, app.SupportEmailAddress, this, false);
 				return;
 			}
@@ -593,7 +581,7 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		private void m_buttonHelp_Click(object sender, EventArgs e)
 		{
-			ShowHelp.ShowHelpTopic(m_mediator.HelpTopicProvider, HelpTopicID);
+			ShowHelp.ShowHelpTopic(PropTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), HelpTopicID);
 		}
 
 		private void m_closeButton_Click(object sender, EventArgs e)
@@ -652,32 +640,16 @@ namespace SIL.FieldWorks.LexText.Controls
 		}
 
 
-		#region IxWindow Members
+		#region IMediatorProvider Members
 
-		public Mediator Mediator
-		{
-			get { return m_mediator; }
-		}
+		public Mediator Mediator { get; private set; }
 
-		public void SuspendWindowSizePersistence()
-		{
-			throw new NotImplementedException();
-		}
+		#endregion
 
-		public void ResumeWindowSizePersistence()
-		{
-			throw new NotImplementedException();
-		}
 
-		public void ResumeIdleProcessing()
-		{
-			throw new NotImplementedException();
-		}
+		#region IPropertyTableProvider Members
 
-		public void SuspendIdleProcessing()
-		{
-			throw new NotImplementedException();
-		}
+		public PropertyTable PropTable { get; private set; }
 
 		#endregion
 	}

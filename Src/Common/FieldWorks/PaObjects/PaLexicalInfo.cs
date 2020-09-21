@@ -1,44 +1,24 @@
-// Copyright (c) 2009-2013 SIL International
+// Copyright (c) 2009-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: PaLexicalInfo.cs
-// Responsibility: D. Olson
-//
-// <remarks>
-// </remarks>
 
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Threading;
 using System.Windows.Forms;
 using SIL.PaToFdoInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FwCoreDlgs;
-using SIL.Utils;
-using SIL.FieldWorks.FDO.DomainServices;
 
 namespace SIL.FieldWorks.PaObjects
 {
-	/// ----------------------------------------------------------------------------------------
+	/// ReSharper disable once InheritdocConsiderUsage -- cannot inheritdoc from multiple bases.
 	public class PaLexicalInfo : IPaLexicalInfo, IDisposable
 	{
 		private List<PaWritingSystem> m_writingSystems;
 		private List<PaLexEntry> m_lexEntries;
-
-		#region constructors
-		/// <summary>
-		/// Contstructor is required to initialize ClientServerServices
-		/// </summary>
-		public PaLexicalInfo()
-		{
-			// need to call this iniitialization routine to allow the ChooseLangProjectDialog can be used
-			ClientServerServices.SetCurrentToDb4OBackend(null, FwDirectoryFinder.FdoDirectories);
-		}
-		#endregion
 
 		#region Disposable stuff
 		#if DEBUG
@@ -87,15 +67,15 @@ namespace SIL.FieldWorks.PaObjects
 		public bool ShowOpenProject(Form owner, ref Rectangle dialogBounds,
 			ref int dialogSplitterPos, out string name, out string server)
 		{
-			Common.COMInterfaces.Icu.InitIcuDataDir();
-			RegistryHelper.ProductName = "FieldWorks"; // inorder to find correct Registry keys
+			FwRegistryHelper.Initialize();
+			FwUtils.InitializeIcu();
 
 			using (var dlg = new ChooseLangProjectDialog(dialogBounds, dialogSplitterPos))
 			{
 				if (dlg.ShowDialog(owner) == DialogResult.OK)
 				{
 					name = dlg.Project;
-					server = dlg.Server;
+					server = null;
 					dialogBounds = dlg.Bounds;
 					dialogSplitterPos = dlg.SplitterPosition;
 					return true;
@@ -142,8 +122,6 @@ namespace SIL.FieldWorks.PaObjects
 		/// </returns>
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
-			Justification="See TODO-Linux comment")]
 		private bool InternalInitialize(string name, string server, bool loadOnlyWs,
 			int timeToWaitForProcessStart, int timeToWaitForLoadingData)
 		{
@@ -170,8 +148,7 @@ namespace SIL.FieldWorks.PaObjects
 					if (!newProcessStarted)
 					{
 						newProcessStarted = true;
-						newFwInstance = FieldWorks.OpenProjectWithNewProcess(null, name, server,
-							FwUtils.ksFlexAbbrev, "-" + FwAppArgs.kNoUserInterface);
+						newFwInstance = FieldWorks.OpenProjectWithNewProcess(name, "-" + FwAppArgs.kNoUserInterface);
 
 						// TODO-Linux: WaitForInputIdle isn't fully implemented on Linux.
 						if (!newFwInstance.WaitForInputIdle(timeToWaitForProcessStart))

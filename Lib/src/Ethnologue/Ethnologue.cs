@@ -1,19 +1,10 @@
-﻿// ---------------------------------------------------------------------------------------------
-// Copyright (c) 2009-2015 SIL International
+﻿// Copyright (c) 2009-2015 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: Ethnologue.cs
-// Responsibility:
-//
-// <remarks>
-// </remarks>
-// ---------------------------------------------------------------------------------------------
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
-using System.Globalization;
 using System.IO;
 using System.Text;
 using Microsoft.Win32;
@@ -26,7 +17,7 @@ namespace SIL.Ethnologue
 	/// read the raw data directly from tab delimited files, and store it in
 	/// memory.
 	/// </summary>
-	public class Ethnologue
+	public partial class Ethnologue
 	{
 		/// <summary>
 		/// This table defines the possible language status values, which are
@@ -881,7 +872,7 @@ namespace SIL.Ethnologue
 			// Note. We don't want to use CreateSubKey here because it will fail on
 			// non-administrator logins. The user doesn't need to modify this setting.
 			// Trying to use DirectoryFinder for this causes circular dependencies.
-			using (var regKey = key.OpenSubKey(@"Software\SIL\FieldWorks\8"))
+			using (var regKey = key.OpenSubKey(RegistryPathWithVersion))
 			{
 				return (regKey == null) ? null : regKey.GetValue("RootCodeDir") as string;
 			}

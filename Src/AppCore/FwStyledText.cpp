@@ -117,28 +117,25 @@ static void CopyOneWsFontInfo(const OLECHAR * & pchSrc, OLECHAR * & pchDst)
 {
 	// Copy ws info and length of font family name and font family name itself
 	// and # int props and int props themselves.
+	// See logic at SkipStrProposAndGetIntPropCount below
 	int cchFF = *(pchSrc + 2); // Follows ws.
-	int cpropInt = SignedInt(pchSrc[3 + cchFF]); // Follows ws, cchFF and ff itself.
-	int cchStrProps = 0;
+	int ich = 3 + cchFF;
+	int cpropInt = SignedInt(pchSrc[ich]); // Follows ws, cchFF and ff itself.
 	if (cpropInt < 0)
 	{
 		// Additional string properties.
-		int cpropStr = cpropInt * -1;
-		cchStrProps = 1; // counter
-		// Point at the data right after the ws (2), char count for FF, FF itself, and
-		// the cprop that turned out to be a cpropStr.
-		OLECHAR * pchTmp = const_cast<OLECHAR *>(pchSrc) + 3 + cchFF + 1;
+		int cpropStr = (-cpropInt);
+		ich++;
 		for (int iprop = 0; iprop < cpropStr; iprop++)
 		{
-			int cch = *pchTmp;
-			cchStrProps += 1 + cch;
-			pchTmp += 1 + cch;
+			int cch = pchSrc[ich + 1];
+			ich += 2 + cch;
 		}
 		// The character following the extra strings is the real integer property count.
-		cpropInt = *pchTmp;
+		cpropInt = pchSrc[ich];
 	}
-	// First 4 = 2 (ws) + 1 (cchFF) + 1 (cprop).
-	int cchCopy = 4 + cchFF + cchStrProps + (cpropInt * 4);
+	// ich is the index of the integer property count.
+	int cchCopy = ich + 1 + (cpropInt * 4);
 	MoveItems(pchSrc, pchDst, cchCopy);
 	pchSrc += cchCopy;
 	pchDst += cchCopy;
@@ -680,7 +677,7 @@ void FwStyledText::ComputeWsStyleInheritance(BSTR bstrBase, BSTR bstrOver,
 			*pcpropCombined = cpropCombined;
 		}
 	}
-	sbstrComp.Assign(rgch, pch - rgch);
+	sbstrComp.Assign(rgch, (int)(pch - rgch));
 }
 
 
@@ -774,7 +771,7 @@ void FwStyledText::ZapWsStyle(StrUni & stuWsStyle, int tpt, int nVar, int nVal)
 		// Font family.
 		const OLECHAR * pchFF = pchOld + 1;
 		pchOld = pchFF + *pchOld;
-		StrUni stuFF(pchFF, pchOld - pchFF);
+		StrUni stuFF(pchFF, (int)(pchOld - pchFF));
 		if (pchOld >= pchLimOld)
 			ThrowHr(WarnHr(E_FAIL));
 		if (tpt == ktptFontFamily)
@@ -870,7 +867,7 @@ void FwStyledText::ZapWsStyle(StrUni & stuWsStyle, int tpt, int nVar, int nVal)
 		*pchCpropNew = (OLECHAR)cpropNew;
 	}
 	// DON'T count on null termination! May have 0's in it.
-	StrUni stuNew(rgchNew, pchNew - rgchNew);
+	StrUni stuNew(rgchNew, (int)(pchNew - rgchNew));
 	stuWsStyle = stuNew;
 }
 
@@ -930,7 +927,7 @@ void FwStyledText::DecodeFontPropsString(BSTR bstr, bool fExplicit,
 		if (pch >= pchLim)
 			ThrowHr(WarnHr(E_FAIL));
 		StrUni stuMarkup;
-		stuMarkup.Assign(pchFF, pch - pchFF);
+		stuMarkup.Assign(pchFF, (int)(pch - pchFF));
 		esi.m_stuFontFamily.Assign(FontStringMarkupToUi(false, stuMarkup));
 		ConvertDefaultFontInput(esi.m_stuFontFamily);
 		if (pch > pchFF)
@@ -1178,7 +1175,7 @@ StrUni FwStyledText::EncodeFontPropsString(Vector<WsStyleInfo> & vesi, bool fFor
 		}
 		*pchCount = (OLECHAR) cprop;
 	}
-	StrUni stuRet(rgch, pch - rgch); // DON'T count on null termination! May have 0's in it.
+	StrUni stuRet(rgch, (int)(pch - rgch)); // DON'T count on null termination! May have 0's in it.
 	return stuRet;
 }
 

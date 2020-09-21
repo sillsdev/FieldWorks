@@ -6,28 +6,27 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using System.Xml;
-
-using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.Controls;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.Widgets;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.LexText.Controls;
-using SIL.Utils;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using SIL.FieldWorks.Filters;
 using SIL.FieldWorks.FwCoreDlgs;
 using SIL.FieldWorks.XWorks;
+using SIL.LCModel.Core.Cellar;
 using XCore;
-
 
 namespace SIL.FieldWorks.IText
 {
@@ -52,20 +51,20 @@ namespace SIL.FieldWorks.IText
 
 		#region IxCoreColleague Members
 
-		public override void Init(Mediator mediator, XmlNode configurationParameters)
+		public override void Init(Mediator mediator, PropertyTable propertyTable, XmlNode configurationParameters)
 		{
 			CheckDisposed();
-			base.Init(mediator, configurationParameters);
+			base.Init(mediator, propertyTable, configurationParameters);
 
 			m_tbSearchText.WritingSystemFactory = m_cache.LanguageWritingSystemFactoryAccessor;
-			m_tbSearchText.AdjustForStyleSheet(FontHeightAdjuster.StyleSheetFromMediator(mediator));
+			m_tbSearchText.AdjustForStyleSheet(FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable));
 			m_tbSearchText.Text = String.Empty;
 			m_tbSearchText.TextChanged += m_tbSearchText_TextChanged;
 			m_tbSearchText.KeyDown += m_tbSearchText_KeyDown;
 			FillLineComboList();
 
 			m_fwtbItem.WritingSystemFactory = m_cache.LanguageWritingSystemFactoryAccessor;
-			m_fwtbItem.StyleSheet = FontHeightAdjuster.StyleSheetFromMediator(m_mediator);
+			m_fwtbItem.StyleSheet = FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable);
 			m_fwtbItem.WritingSystemCode = m_cache.DefaultVernWs;
 			m_fwtbItem.Text = String.Empty;
 			m_fwtbItem.Visible = false; // Needed to prevent LT-12162 unneeded text box.
@@ -121,6 +120,7 @@ namespace SIL.FieldWorks.IText
 			}
 			m_clerk = null;
 			m_mediator = null;
+			m_propertyTable = null;
 			m_pOSPopupTreeManager = null;
 			base.Dispose(disposing);
 		}
@@ -128,7 +128,7 @@ namespace SIL.FieldWorks.IText
 
 		private void LoadSettings()
 		{
-			string sLine = m_mediator.PropertyTable.GetStringProperty("ConcordanceLine", "kBaseline",
+			string sLine = m_propertyTable.GetStringProperty("ConcordanceLine", "kBaseline",
 						 PropertyTable.SettingsGroup.LocalSettings);
 			ConcordanceLines line;
 			try
@@ -141,7 +141,7 @@ namespace SIL.FieldWorks.IText
 			}
 			SetConcordanceLine(line);
 
-			string sWs = m_mediator.PropertyTable.GetStringProperty("ConcordanceWs", null,
+			string sWs = m_propertyTable.GetStringProperty("ConcordanceWs", null,
 				PropertyTable.SettingsGroup.LocalSettings);
 			int ws = 0;
 			if (sWs != null)
@@ -153,27 +153,27 @@ namespace SIL.FieldWorks.IText
 			ws = CurrentSelectedWs();
 			m_tbSearchText.WritingSystemCode = ws;
 
-			string sText = m_mediator.PropertyTable.GetStringProperty("ConcordanceText", null,
+			string sText = m_propertyTable.GetStringProperty("ConcordanceText", null,
 				PropertyTable.SettingsGroup.LocalSettings);
 			if (sText != null)
 				m_tbSearchText.Text = sText;
 
-			bool fMatchCase = m_mediator.PropertyTable.GetBoolProperty("ConcordanceMatchCase",
+			bool fMatchCase = m_propertyTable.GetBoolProperty("ConcordanceMatchCase",
 				m_chkMatchCase.Checked, PropertyTable.SettingsGroup.LocalSettings);
 			m_chkMatchCase.Checked = fMatchCase;
 
-			bool fMatchDiacritics = m_mediator.PropertyTable.GetBoolProperty("ConcordanceMatchDiacritics",
+			bool fMatchDiacritics = m_propertyTable.GetBoolProperty("ConcordanceMatchDiacritics",
 				m_chkMatchDiacritics.Checked, PropertyTable.SettingsGroup.LocalSettings);
 			m_chkMatchDiacritics.Checked = fMatchDiacritics;
 
-			string sConcordanceOption = m_mediator.PropertyTable.GetStringProperty("ConcordanceOption",
+			string sConcordanceOption = m_propertyTable.GetStringProperty("ConcordanceOption",
 				null, PropertyTable.SettingsGroup.LocalSettings);
 			SetConcordanceOption(sConcordanceOption);
 		}
 
 		private int CurrentSelectedWs()
 		{
-			var ws = m_cbWritingSystem.SelectedItem as IWritingSystem;
+			var ws = m_cbWritingSystem.SelectedItem as CoreWritingSystemDefinition;
 			// Could have nothing selected.  See LT-8041.
 			if (ws == null)
 				return m_cache.DefaultVernWs;
@@ -288,37 +288,37 @@ namespace SIL.FieldWorks.IText
 		private void SaveSettings()
 		{
 			// Save our settings for later.
-			m_mediator.PropertyTable.SetProperty("ConcordanceLine",
-				((ConcordLine) m_cbLine.SelectedItem).Line.ToString(), false,
-				PropertyTable.SettingsGroup.LocalSettings);
-			m_mediator.PropertyTable.SetPropertyPersistence("ConcordanceLine", true,
-				PropertyTable.SettingsGroup.LocalSettings);
-
-			m_mediator.PropertyTable.SetProperty("ConcordanceWs",
-				((IWritingSystem) m_cbWritingSystem.SelectedItem).Id, false,
-				PropertyTable.SettingsGroup.LocalSettings);
-			m_mediator.PropertyTable.SetPropertyPersistence("ConcordanceWs", true,
+			m_propertyTable.SetProperty("ConcordanceLine",
+				((ConcordLine) m_cbLine.SelectedItem).Line.ToString(),
+				PropertyTable.SettingsGroup.LocalSettings, false);
+			m_propertyTable.SetPropertyPersistence("ConcordanceLine", true,
 				PropertyTable.SettingsGroup.LocalSettings);
 
-			m_mediator.PropertyTable.SetProperty("ConcordanceText",
-				m_tbSearchText.Text.Trim(), false, PropertyTable.SettingsGroup.LocalSettings);
-			m_mediator.PropertyTable.SetPropertyPersistence("ConcordanceText", true,
+			m_propertyTable.SetProperty("ConcordanceWs",
+				((CoreWritingSystemDefinition) m_cbWritingSystem.SelectedItem).Id,
+				PropertyTable.SettingsGroup.LocalSettings, false);
+			m_propertyTable.SetPropertyPersistence("ConcordanceWs", true,
 				PropertyTable.SettingsGroup.LocalSettings);
 
-			m_mediator.PropertyTable.SetProperty("ConcordanceMatchCase",
-				m_chkMatchCase.Checked, false, PropertyTable.SettingsGroup.LocalSettings);
-			m_mediator.PropertyTable.SetPropertyPersistence("ConcordanceMatchCase", true,
+			m_propertyTable.SetProperty("ConcordanceText",
+				m_tbSearchText.Text.Trim(), PropertyTable.SettingsGroup.LocalSettings, false);
+			m_propertyTable.SetPropertyPersistence("ConcordanceText", true,
 				PropertyTable.SettingsGroup.LocalSettings);
 
-			m_mediator.PropertyTable.SetProperty("ConcordanceMatchDiacritics",
-				m_chkMatchDiacritics.Checked, false, PropertyTable.SettingsGroup.LocalSettings);
-			m_mediator.PropertyTable.SetPropertyPersistence("ConcordanceMatchDiacritics", true,
+			m_propertyTable.SetProperty("ConcordanceMatchCase",
+				m_chkMatchCase.Checked, PropertyTable.SettingsGroup.LocalSettings, false);
+			m_propertyTable.SetPropertyPersistence("ConcordanceMatchCase", true,
+				PropertyTable.SettingsGroup.LocalSettings);
+
+			m_propertyTable.SetProperty("ConcordanceMatchDiacritics",
+				m_chkMatchDiacritics.Checked, PropertyTable.SettingsGroup.LocalSettings, false);
+			m_propertyTable.SetPropertyPersistence("ConcordanceMatchDiacritics", true,
 				PropertyTable.SettingsGroup.LocalSettings);
 
 			string sConcordanceOption = GetConcordanceOption();
-			m_mediator.PropertyTable.SetProperty("ConcordanceOption",
-				sConcordanceOption, false, PropertyTable.SettingsGroup.LocalSettings);
-			m_mediator.PropertyTable.SetPropertyPersistence("ConcordanceOption", true,
+			m_propertyTable.SetProperty("ConcordanceOption",
+				sConcordanceOption, PropertyTable.SettingsGroup.LocalSettings, false);
+			m_propertyTable.SetPropertyPersistence("ConcordanceOption", true,
 				PropertyTable.SettingsGroup.LocalSettings);
 		}
 
@@ -341,7 +341,8 @@ namespace SIL.FieldWorks.IText
 			kNote,
 			kGramCategory,
 			kWordCategory,
-			kTags
+			kTags,
+			kCustom
 		};
 
 		/// <summary>
@@ -352,8 +353,8 @@ namespace SIL.FieldWorks.IText
 			/// <summary>
 			/// Constructor.
 			/// </summary>
-			public POSComboController(TreeCombo treeCombo, FdoCache cache, ICmPossibilityList list, int ws, bool useAbbr, Mediator mediator, Form parent) :
-				base(treeCombo, cache, list, ws, useAbbr, mediator, parent)
+			public POSComboController(TreeCombo treeCombo, LcmCache cache, ICmPossibilityList list, int ws, bool useAbbr, Mediator mediator, PropertyTable propertyTable, Form parent) :
+				base(treeCombo, cache, list, ws, useAbbr, mediator, propertyTable, parent)
 			{
 				Sorted = true;
 			}
@@ -388,12 +389,14 @@ namespace SIL.FieldWorks.IText
 			private string m_name;
 			private int m_wsMagic;
 			ConcordanceLines m_line;
+			private int m_flidIfCustom; // only for custom fields!
 
-			internal ConcordLine(string name, int wsMagic, ConcordanceLines line)
+			internal ConcordLine(string name, int wsMagic, ConcordanceLines line, int flidIfCustom = 0)
 			{
 				m_name = name;
 				m_wsMagic = wsMagic;
 				m_line = line;
+				m_flidIfCustom = flidIfCustom;
 			}
 
 			internal string Name
@@ -410,6 +413,9 @@ namespace SIL.FieldWorks.IText
 			{
 				get { return m_line; }
 			}
+
+			/// <remarks>Only for custom fields!</remarks>
+			internal int FlidIfCustom => m_flidIfCustom;
 
 			public override string ToString()
 			{
@@ -517,8 +523,6 @@ namespace SIL.FieldWorks.IText
 		/// This method will fill in the DropDownList which replaces the Textbox for searching on certain lines
 		/// </summary>
 		/// <param name="line"></param>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="m_pOSPopupTreeManager gets disposed in Dispose()")]
 		private void FillSearchComboList(ConcordanceLines line)
 		{
 			if(m_pOSPopupTreeManager != null)
@@ -532,7 +536,8 @@ namespace SIL.FieldWorks.IText
 											m_cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle,
 											false,
 											m_mediator,
-											(Form)m_mediator.PropertyTable.GetValue("window")) {Sorted = false};
+											m_propertyTable,
+											m_propertyTable.GetValue<Form>("window")) { Sorted = false };
 					break;
 				default: //Lex. Gram. Info and Word Cat. both work the same, and are handled here in the default option
 					m_pOSPopupTreeManager = new POSComboController(m_cbSearchText,
@@ -541,7 +546,8 @@ namespace SIL.FieldWorks.IText
 											m_cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle,
 											false,
 											m_mediator,
-											(Form)m_mediator.PropertyTable.GetValue("window"));
+											m_propertyTable,
+											m_propertyTable.GetValue<Form>("window"));
 					break;
 			}
 			m_pOSPopupTreeManager.AfterSelect += POSAfterSelect;
@@ -556,15 +562,14 @@ namespace SIL.FieldWorks.IText
 
 		private void m_cbWritingSystem_SelectedIndexChanged(object sender, EventArgs e)
 		{
-			var ws = m_cbWritingSystem.SelectedItem as IWritingSystem;
+			var ws = m_cbWritingSystem.SelectedItem as CoreWritingSystemDefinition;
 			if (ws == null)
 			{
 				Debug.Assert(m_cbWritingSystem.SelectedIndex == -1);
 				return;
 			}
 			m_tbSearchText.WritingSystemCode = ws.Handle;
-			ITsStrFactory tsf = TsStrFactoryClass.Create();
-			m_tbSearchText.Tss = tsf.MakeString(m_tbSearchText.Text.Trim(), ws.Handle);
+			m_tbSearchText.Tss = TsStringUtils.MakeString(m_tbSearchText.Text.Trim(), ws.Handle);
 		}
 
 		private void m_rbtnUseRegExp_CheckedChanged(object sender, EventArgs e)
@@ -614,9 +619,9 @@ namespace SIL.FieldWorks.IText
 					MessageBox.Show(ITextStrings.ksMatchStringTooLong, ITextStrings.ksWarning);
 					m_tbSearchText.Text = sMatch;
 				}
-				int ws = ((IWritingSystem) m_cbWritingSystem.SelectedItem).Handle;
+				int ws = ((CoreWritingSystemDefinition) m_cbWritingSystem.SelectedItem).Handle;
 
-				ConcordLine conc = (ConcordLine)m_cbLine.SelectedItem;
+				var conc = (ConcordLine) m_cbLine.SelectedItem;
 				switch (conc.Line)
 				{
 					case ConcordanceLines.kBaseline:
@@ -654,6 +659,9 @@ namespace SIL.FieldWorks.IText
 						break;
 					case ConcordanceLines.kTags:
 						occurrences = UpdateConcordanceForTag(ws);
+						break;
+					case ConcordanceLines.kCustom:
+						occurrences = UpdateConcordanceForCustomField(conc.FlidIfCustom, ws);
 						break;
 					default:
 						occurrences = new List<IParaFragment>();
@@ -851,7 +859,7 @@ namespace SIL.FieldWorks.IText
 				if (tss == null)
 				{
 					ws = m_cache.DefaultVernWs;
-					tss = m_cache.TsStrFactory.MakeString("", ws);
+					tss = TsStringUtils.EmptyString(ws);
 				}
 				SetDefaultVisibilityOfItems(true, String.Empty);
 				m_fObjectConcorded = false;
@@ -914,7 +922,15 @@ namespace SIL.FieldWorks.IText
 			m_cbLine.Items.Add(new ConcordLine(ITextStrings.ksTagging,
 				WritingSystemServices.kwsAnals,
 				ConcordanceLines.kTags));
-
+			var classId = m_cache.MetaDataCacheAccessor.GetClassId("Segment");
+			var mdc = (IFwMetaDataCacheManaged)m_cache.MetaDataCacheAccessor;
+			foreach (int flid in mdc.GetFields(classId, false, (int)CellarPropertyTypeFilter.All))
+			{
+				if (!mdc.IsCustom(flid))
+					continue;
+				m_cbLine.Items.Add(new ConcordLine(mdc.GetFieldName(flid), mdc.GetFieldWs(flid),
+					ConcordanceLines.kCustom, flid));
+			}
 
 			m_cbLine.SelectedIndex = 0;
 		}
@@ -943,18 +959,28 @@ namespace SIL.FieldWorks.IText
 			switch (wsMagic)
 			{
 				case WritingSystemServices.kwsVerns:
-					foreach (IWritingSystem ws in m_cache.ServiceLocator.WritingSystems.CurrentVernacularWritingSystems)
+					foreach (CoreWritingSystemDefinition ws in m_cache.ServiceLocator.WritingSystems.CurrentVernacularWritingSystems)
 						m_cbWritingSystem.Items.Add(ws);
 					wsSet = m_cache.DefaultVernWs;
 					break;
 				case WritingSystemServices.kwsAnals:
-					foreach (IWritingSystem ws in m_cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems)
+					foreach (CoreWritingSystemDefinition ws in m_cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems)
 						m_cbWritingSystem.Items.Add(ws);
 					wsSet = m_cache.DefaultAnalWs;
 					break;
+				case WritingSystemServices.kwsAnal:
+					m_cbWritingSystem.Items.Add(m_cache.ServiceLocator.WritingSystems
+						.DefaultAnalysisWritingSystem);
+					wsSet = m_cache.DefaultAnalWs;
+					break;
+				case WritingSystemServices.kwsVern:
+					m_cbWritingSystem.Items.Add(m_cache.ServiceLocator.WritingSystems
+						.DefaultVernacularWritingSystem);
+					wsSet = m_cache.DefaultVernWs;
+					break;
 			}
 			//Keep the users current selection if they have switched to a similar field (vernacular or analysis)
-			if(current != null && m_cbWritingSystem.Items.Contains(current))
+			if (current != null && m_cbWritingSystem.Items.Contains(current))
 				m_cbWritingSystem.SelectedItem = current;
 			else //otherwise set it to the default for the correct language type
 				SetWritingSystem(wsSet);
@@ -965,7 +991,7 @@ namespace SIL.FieldWorks.IText
 			int idx = -1;
 			for (int i = 0; i < m_cbWritingSystem.Items.Count; ++i)
 			{
-				if (((IWritingSystem) m_cbWritingSystem.Items[i]).Handle == ws)
+				if (((CoreWritingSystemDefinition) m_cbWritingSystem.Items[i]).Handle == ws)
 				{
 					idx = i;
 					break;
@@ -973,7 +999,7 @@ namespace SIL.FieldWorks.IText
 			}
 			if (idx == -1)
 			{
-				foreach (IWritingSystem wsObj in m_cache.ServiceLocator.WritingSystems.AllWritingSystems)
+				foreach (CoreWritingSystemDefinition wsObj in m_cache.ServiceLocator.WritingSystems.AllWritingSystems)
 				{
 					if (wsObj.Handle == ws)
 					{
@@ -1027,6 +1053,56 @@ namespace SIL.FieldWorks.IText
 					}
 				}
 			}
+			return occurrences;
+		}
+
+		private List<IParaFragment> UpdateConcordanceForCustomField(int flid, int ws)
+		{
+			SimpleStringMatcher matcher = GetMatcher(ws) as SimpleStringMatcher;
+			ISilDataAccess sda = m_cache.MainCacheAccessor;
+			var paragraphsToSearch = ParagraphsToSearch;
+
+			return GetOccurrencesInCustomField(flid, paragraphsToSearch, sda, matcher);
+		}
+
+		// internal (and static) for unit testing.
+		internal static List<IParaFragment> GetOccurrencesInCustomField(int flid, HashSet<IStTxtPara> paragraphsToSearch,
+			ISilDataAccess sda, SimpleStringMatcher matcher)
+		{
+			var occurrences = new List<IParaFragment>();
+			if (!matcher.IsValid())
+				return occurrences;
+
+			int cPara = 0;
+			foreach (var para in paragraphsToSearch)
+			{
+				++cPara;
+				foreach (var segment in para.SegmentsOS)
+				{
+					var content = sda.get_StringProp(segment.Hvo, flid);
+					// Find occurrences of the string in this field.
+					if (matcher.Matches(content))
+					{
+						// Since we don't have any way yet to show individual matches,
+						// just make one occurrence if we got any match on this paragraph.
+						List<MatchRangePair> results = matcher.GetAllResults();
+						if (results.Count > 0)
+						{
+							occurrences.Add(new ParaFragment(segment, 0, content.Length, null));
+							if (occurrences.Count >= MaxConcordanceMatches())
+							{
+								MessageBox.Show(String.Format(
+										ITextStrings.ksShowingOnlyTheFirstXXXMatches,
+										occurrences.Count, cPara, paragraphsToSearch.Count),
+									ITextStrings.ksNotice,
+									MessageBoxButtons.OK, MessageBoxIcon.Information);
+								return occurrences;
+							}
+						}
+					}
+				}
+			}
+
 			return occurrences;
 		}
 
@@ -1266,7 +1342,7 @@ namespace SIL.FieldWorks.IText
 				// every nondiacritic character in the string.
 				for (int ich = sb.Length - 1; ich > 0; --ich)
 				{
-					if (Icu.IsDiacritic(sb[ich]))
+					if (Icu.Character.IsDiacritic(sb[ich]))
 						sb[ich] = '%';
 					else
 						sb.Insert(ich, '%');
@@ -1553,7 +1629,7 @@ namespace SIL.FieldWorks.IText
 		private bool InitializeConcordanceSearch(ICmObject cmo, ITsString tssObj)
 		{
 			string sType = cmo.GetType().Name;
-			string sTag = m_mediator.StringTbl.GetString(sType, "ClassNames");
+			string sTag = StringTable.Table.GetString(sType, "ClassNames");
 			SetDefaultVisibilityOfItems(false, sTag);
 			m_fObjectConcorded = true;
 			m_hvoMatch = cmo.Hvo;
@@ -1601,10 +1677,10 @@ namespace SIL.FieldWorks.IText
 		{
 			CheckDisposed();
 			// Check if we're the right tool, and that we have a valid object id.
-			string toolName = m_mediator.PropertyTable.GetStringProperty("currentContentControl", null);
-			string areaName = m_mediator.PropertyTable.GetStringProperty("areaChoice", null);
-			string concordOn = m_mediator.PropertyTable.GetStringProperty("ConcordOn", null);
-			m_mediator.PropertyTable.RemoveProperty("ConcordOn");
+			string toolName = m_propertyTable.GetStringProperty("currentContentControl", null);
+			string areaName = m_propertyTable.GetStringProperty("areaChoice", null);
+			string concordOn = m_propertyTable.GetStringProperty("ConcordOn", null);
+			m_propertyTable.RemoveProperty("ConcordOn");
 			Debug.Assert(!String.IsNullOrEmpty(toolName) && !String.IsNullOrEmpty(areaName));
 			if (areaName != "textsWords" || toolName != "concordance")
 				return false;
@@ -1718,9 +1794,9 @@ namespace SIL.FieldWorks.IText
 	{
 		internal ConcordanceControlBase OwningControl { get; set; }
 
-		public override void Init(FdoCache cache, Mediator mediator, XmlNode recordListNode)
+		public override void Init(LcmCache cache, Mediator mediator, PropertyTable propertyTable, XmlNode recordListNode)
 		{
-			base.Init(cache, mediator, recordListNode);
+			base.Init(cache, mediator, propertyTable, recordListNode);
 			m_owningObject = cache.LangProject;
 		}
 

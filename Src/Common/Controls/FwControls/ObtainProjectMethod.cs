@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -9,13 +9,12 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using System.Xml;
-using SIL.CoreImpl;
+using SIL.LCModel.Core.WritingSystems;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FDO.Infrastructure.Impl;
-using SIL.Utils;
-using XCore;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Utils;
+using SIL.Reporting;
 
 namespace SIL.FieldWorks.Common.Controls
 {
@@ -34,8 +33,9 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			bool dummy;
 			string fwdataFileFullPathname;
+			var liftVersion = "0.13_ldml3";
 			var success = FLExBridgeHelper.LaunchFieldworksBridge(FwDirectoryFinder.ProjectsDirectory, null, FLExBridgeHelper.Obtain, null,
-				FDOBackendProvider.ModelVersion, "0.13", null, null, out dummy, out fwdataFileFullPathname);
+				LcmCache.ModelVersion, liftVersion, null, null, out dummy, out fwdataFileFullPathname);
 			if (!success)
 			{
 				ReportDuplicateBridge();
@@ -55,6 +55,8 @@ namespace SIL.FieldWorks.Common.Controls
 				obtainedProjectType = ObtainedProjectType.Lift;
 			}
 
+			UsageReporter.SendEvent("OpenProject", "SendReceive", string.Format("Create from {0} repo", obtainedProjectType.ToString()),
+				string.Format("vers: {0}, {1}", LcmCache.ModelVersion, liftVersion), 0);
 			EnsureLinkedFoldersExist(fwdataFileFullPathname);
 
 			return fwdataFileFullPathname;
@@ -90,14 +92,15 @@ namespace SIL.FieldWorks.Common.Controls
 		private static string CreateProjectFromLift(Form parent, IHelpTopicProvider helpTopicProvider, string liftPath)
 		{
 			string projectPath;
-			FdoCache cache;
+			LcmCache cache;
 
-			var anthroListFile = CallPickAnthroList(helpTopicProvider);
+			// Default to the enhanced OCM file list
+			var anthroListFile = Path.Combine(FwDirectoryFinder.TemplateDirectory, FwDirectoryFinder.ksOCMFrameFilename);
 
 			using (var progressDlg = new ProgressDialogWithTask(parent))
 			{
 				progressDlg.Title = FwControls.ksCreatingLiftProject;
-				var cacheReceiver = new FdoCache[1]; // a clumsy way of handling an out parameter, consistent with RunTask
+				var cacheReceiver = new LcmCache[1]; // a clumsy way of handling an out parameter, consistent with RunTask
 				projectPath = (string)progressDlg.RunTask(true, CreateProjectTask,
 					new object[] { liftPath, parent, anthroListFile, cacheReceiver });
 				cache = cacheReceiver[0];
@@ -113,25 +116,11 @@ namespace SIL.FieldWorks.Common.Controls
 
 		#region Reflective Methods And Supporting Constants
 
-		internal const string PickAnthroDll = @"FwCoreDlgs.dll";
-		internal const string PickAnthroClass = @"SIL.FieldWorks.FwCoreDlgs.FwCheckAnthroListDlg";
-		internal const string PickAnthroMethod = @"PickAnthroList";
-
-		internal static string CallPickAnthroList(IHelpTopicProvider helpTopicProvider)
-		{
-			// this is a horrible way to invoke this, but the current project organization does not allow us to reference
-			// the FwCoreDlgs project, nor is there any straightforward way to move the code we need into some project we can
-			// reference, or any obviously suitable project to move it to without creating other References loops.
-			// nasty reflection calls seems less technical debt than creating an otherwise unnecessary project.
-			return (string)ReflectionHelper.CallStaticMethod(PickAnthroDll, PickAnthroClass,
-				PickAnthroMethod, null, helpTopicProvider);
-		}
-
 		internal const string ImportLexiconDll = @"LexEdDll.dll";
 		internal const string ImportLexiconClass = @"SIL.FieldWorks.XWorks.LexEd.FLExBridgeListener";
 		internal const string ImportLexiconMethod = @"ImportObtainedLexicon";
 
-		internal static void CallImportObtainedLexicon(FdoCache cache, string liftPath, Form parent)
+		internal static void CallImportObtainedLexicon(LcmCache cache, string liftPath, Form parent)
 		{
 			// this is a horrible way to invoke this, but the current project organization does not allow us to reference
 			// the LexEdDll project, nor is there any straightforward way to move the code we need into some project we can
@@ -157,30 +146,32 @@ namespace SIL.FieldWorks.Common.Controls
 			var liftPathname = (string) parameters[0];
 			var synchronizeInvoke = (ISynchronizeInvoke) parameters[1];
 			var anthroFile = (string) parameters[2];
-			var cacheReceiver = (FdoCache[]) parameters[3];
+			var cacheReceiver = (LcmCache[]) parameters[3];
 
-			IWritingSystem wsVern, wsAnalysis;
+			CoreWritingSystemDefinition wsVern, wsAnalysis;
 			RetrieveDefaultWritingSystemsFromLift(liftPathname, out wsVern, out wsAnalysis);
 
-			string projectPath = FdoCache.CreateNewLangProj(progress,
+			string projectPath = LcmCache.CreateNewLangProj(progress,
 				Directory.GetParent(Path.GetDirectoryName(liftPathname)).Parent.Name, // Get the new Flex project name from the Lift pathname.
-				FwDirectoryFinder.FdoDirectories, synchronizeInvoke, wsAnalysis, wsVern, null, null, null, anthroFile);
+				FwDirectoryFinder.LcmDirectories, synchronizeInvoke, wsAnalysis, wsVern, null, null, null, anthroFile);
 
 			// This is a temporary cache, just to do the import, and AFAIK we have no access to the current
 			// user WS. So create it as "English". Put it in the array to return to the caller.
-			cacheReceiver[0] = FdoCache.CreateCacheFromLocalProjectFile(projectPath, "en", new SilentFdoUI(synchronizeInvoke), FwDirectoryFinder.FdoDirectories, new FdoSettings(), progress);
+			cacheReceiver[0] = LcmCache.CreateCacheFromLocalProjectFile(projectPath, "en", new SilentLcmUI(synchronizeInvoke),
+				FwDirectoryFinder.LcmDirectories, new LcmSettings(), progress);
 			return projectPath;
 		}
 
-		private static void RetrieveDefaultWritingSystemsFromLift(string liftPath, out IWritingSystem wsVern,
-			out IWritingSystem wsAnalysis)
+		private static void RetrieveDefaultWritingSystemsFromLift(string liftPath, out CoreWritingSystemDefinition wsVern,
+			out CoreWritingSystemDefinition wsAnalysis)
 		{
+			PerformLdmlMigrationInClonedLiftRepo(liftPath);
 			using (var liftReader = new StreamReader(liftPath, Encoding.UTF8))
 			{
 				string vernWsId, analysisWsId;
 				using (var reader = XmlReader.Create(liftReader))
 					RetrieveDefaultWritingSystemIdsFromLift(reader, out vernWsId, out analysisWsId);
-				var wsManager = new PalasoWritingSystemManager(new GlobalFileWritingSystemStore());
+				var wsManager = new WritingSystemManager(SingletonsContainer.Get<CoreGlobalWritingSystemRepository>());
 				wsManager.GetOrSet(vernWsId, out wsVern);
 				wsManager.GetOrSet(analysisWsId, out wsAnalysis);
 			}
@@ -242,6 +233,16 @@ namespace SIL.FieldWorks.Common.Controls
 				vernWs = "fr"; // Arbitrary default (consistent with default creation of new project) if we don't find an entry
 			if (string.IsNullOrWhiteSpace(analysisWs))
 				analysisWs = "en"; // Arbitrary default if we don't find a sense
+		}
+
+		/// <summary>
+		/// Migrate LDML files to the latest version directly in the cloned lift repository
+		/// </summary>
+		private static void PerformLdmlMigrationInClonedLiftRepo(string liftPath)
+		{
+			string ldmlFolder = Path.Combine(Path.GetDirectoryName(liftPath), "WritingSystems");
+			var ldmlMigrator = new WritingSystems.Migration.LdmlInFolderWritingSystemRepositoryMigrator(ldmlFolder, null);
+			ldmlMigrator.Migrate();
 		}
 
 		/// <summary>

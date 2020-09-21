@@ -4,8 +4,9 @@
 
 using System.Collections.Generic;
 using System.Windows.Forms;
+using SIL.LCModel.Core.Text;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using SIL.FieldWorks.Common.Widgets;
 using XCore;
 
@@ -23,8 +24,8 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-		public InflectionFeaturePopupTreeManager(TreeCombo treeCombo, FdoCache cache,  bool useAbbr, Mediator mediator, Form parent, int wsDisplay)
-			: base(treeCombo, cache, mediator, cache.LanguageProject.PartsOfSpeechOA, wsDisplay, useAbbr, parent)
+		public InflectionFeaturePopupTreeManager(TreeCombo treeCombo, LcmCache cache, bool useAbbr, Mediator mediator, XCore.PropertyTable propertyTable, Form parent, int wsDisplay)
+			: base(treeCombo, cache, mediator, propertyTable, cache.LanguageProject.PartsOfSpeechOA, wsDisplay, useAbbr, parent)
 		{
 		}
 
@@ -59,7 +60,7 @@ namespace SIL.FieldWorks.LexText.Controls
 						match = node;
 				}
 				item.Nodes.Add(new HvoTreeNode(
-					Cache.TsStrFactory.MakeString(LexTextControls.ksChooseInflFeats, Cache.WritingSystemFactory.UserWs),
+					TsStringUtils.MakeString(LexTextControls.ksChooseInflFeats, Cache.WritingSystemFactory.UserWs),
 					kMore));
 			}
 			return match;
@@ -86,7 +87,7 @@ namespace SIL.FieldWorks.LexText.Controls
 						HvoTreeNode parentNode = selectedNode.Parent as HvoTreeNode;
 						int hvoPos = parentNode.Hvo;
 						var pos = Cache.ServiceLocator.GetInstance<IPartOfSpeechRepository>().GetObject(hvoPos);
-						dlg.SetDlgInfo(Cache, m_mediator, pos);
+						dlg.SetDlgInfo(Cache, m_mediator, m_propertyTable, pos);
 						switch (dlg.ShowDialog(ParentForm))
 						{
 							case DialogResult.OK:

@@ -1,13 +1,6 @@
-// Copyright (c) 2006-2013 SIL International
+// Copyright (c) 2006-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: CollectorEnv.cs
-// Responsibility:
-// Last reviewed:
-//
-// <remarks>
-// </remarks>
 
 using System;
 using System.Collections.Generic;
@@ -17,14 +10,13 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
-using System.Xml;
 using System.Xml.Xsl;
-using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.FDO.Application;
-using SIL.Utils;
-using SIL.FieldWorks.FDO;
-using SIL.Utils.ComTypes;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
+using SIL.LCModel.Application;
+using SIL.LCModel.Utils;
+using SIL.LCModel;
 
 namespace SIL.FieldWorks.Common.RootSites
 {
@@ -1853,7 +1845,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			/// <summary/>
 			private void Dispose(bool fDisposing)
 			{
-				System.Diagnostics.Debug.WriteLineIf(!fDisposing, "****** Missing Dispose() call for " + GetType().ToString() + " *******");
+				Debug.WriteLineIf(!fDisposing, "****** Missing Dispose() call for " + GetType() + " *******");
 				if (fDisposing && !IsDisposed)
 				{
 					// dispose managed and unmanaged objects
@@ -2753,7 +2745,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			m_fNonEmpty = true;
 		}
 
-		private readonly Set<int> m_notedStringPropertyDependencies = new Set<int>();
+		private readonly HashSet<int> m_notedStringPropertyDependencies = new HashSet<int>();
 		/// <summary>
 		///
 		/// </summary>
@@ -2900,7 +2892,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		public TsStringCollectorEnv(IVwEnv baseEnv, ISilDataAccess sda, int hvoRoot):
 			base(baseEnv, sda, hvoRoot)
 		{
-			m_builder = TsIncStrBldrClass.Create();
+			m_builder = TsStringUtils.MakeIncStrBldr();
 			// In case we add some raw strings, typically numbers, satisfy the constraints of string
 			// builders by giving it SOME writing system.
 			m_builder.SetIntPropValues((int)FwTextPropType.ktptWs, (int)FwTextPropVar.ktpvDefault,

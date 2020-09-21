@@ -3,9 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
@@ -13,10 +11,10 @@ using NUnit.Framework;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Widgets;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.LCModel.DomainServices;
 using SIL.FieldWorks.FwCoreDlgControls;
 using SIL.FieldWorks.XWorks.DictionaryDetailsView;
-using SIL.Utils;
+using SIL.LCModel.Utils;
 using XCore;
 // ReSharper disable InconsistentNaming
 
@@ -25,9 +23,10 @@ namespace SIL.FieldWorks.XWorks
 	[TestFixture]
 	public class DictionaryDetailsControllerTests : XWorksAppTestBase, IDisposable
 	{
+		private PropertyTable m_propertyTable;
 		private Mediator m_mediator;
-		private FwStyleSheet m_styleSheet;
-		private DictionaryDetailsController m_staticDDController; // for testing methods that would be static if not for m_mediator
+		private LcmStyleSheet m_styleSheet;
+		private DictionaryDetailsController m_staticDDController; // for testing methods that would be static if not for m_propertyTable
 
 		#region IDisposable and Gendarme requirements
 		~DictionaryDetailsControllerTests()
@@ -44,16 +43,19 @@ namespace SIL.FieldWorks.XWorks
 			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			if (disposing && !IsDisposed)
 			{
-				if (m_mediator != null && !m_mediator.IsDisposed)
+				if(m_mediator != null && !m_mediator.IsDisposed)
+				{
 					m_mediator.RemoveColleague(m_window);
+					m_mediator.Dispose();
+				}
 
 				if (m_window != null && !m_window.IsDisposed)
 					m_window.Dispose();
 				m_window = null;
 
-				if (m_mediator != null && !m_mediator.IsDisposed)
-					m_mediator.Dispose();
-				m_mediator = null;
+				if (m_propertyTable != null && !m_propertyTable.IsDisposed)
+					m_propertyTable.Dispose();
+				m_propertyTable = null;
 
 				if (m_staticDDController != null && m_staticDDController.View != null && !m_staticDDController.View.IsDisposed)
 					m_staticDDController.View.Dispose();
@@ -80,17 +82,15 @@ namespace SIL.FieldWorks.XWorks
 			m_configFilePath = Path.Combine(FwDirectoryFinder.CodeDirectory, m_application.DefaultConfigurationPathname);
 			m_window = new MockFwXWindow(m_application, m_configFilePath);
 			((MockFwXWindow)m_window).Init(Cache); // initializes Mediator values
-			m_mediator = m_window.Mediator;
+			m_propertyTable = m_window.PropTable;
 			m_window.LoadUI(m_configFilePath); // actually loads UI here; needed for non-null stylesheet
 
-			m_styleSheet = FontHeightAdjuster.StyleSheetFromMediator(m_mediator);
+			m_styleSheet = FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable);
 			GenerateStyles();
 
-			m_staticDDController = new DictionaryDetailsController(new TestDictionaryDetailsView(), m_mediator);
+			m_staticDDController = new DictionaryDetailsController(new TestDictionaryDetailsView(), m_propertyTable);
 			m_staticDDController.LoadNode(null, new ConfigurableDictionaryNode());
 		}
-		[SuppressMessage("Gendarme.Rules.Correctness", "DisposableFieldsShouldBeDisposedRule",
-   Justification = "member is disposed through the property")]
 		internal class TestDictionaryDetailsView : IDictionaryDetailsView
 		{
 			private List<StyleComboItem> m_styles;
@@ -115,8 +115,9 @@ namespace SIL.FieldWorks.XWorks
 				get { return m_optionsView; }
 				set
 				{
-					if (m_optionsView != null)
-						m_optionsView.Dispose();
+					if (IsDisposed)
+						throw new ObjectDisposedException($"{GetType()} in use after being disposed");
+					m_optionsView?.Dispose();
 					m_optionsView = value;
 				}
 			}
@@ -224,7 +225,6 @@ namespace SIL.FieldWorks.XWorks
 			return ((TestDictionaryDetailsView)view).OptionsView as IDictionaryGroupingOptionsView;
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule", Justification = "ListOptionsView is disposed by its parent")]
 		private static IList<ListViewItem> GetListViewItems(IDictionaryDetailsView view)
 		{
 			return ((TestDictionaryDetailsView)view).GetListViewItems();
@@ -262,7 +262,7 @@ namespace SIL.FieldWorks.XWorks
 				DictionaryNodeOptions =
 					new DictionaryNodeListAndParaOptions { DisplayEachInAParagraph = true }
 			};
-			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), m_mediator);
+			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), m_propertyTable);
 			controller.LoadNode(null, testNode);
 			using (var view = controller.View)
 			{
@@ -279,7 +279,7 @@ namespace SIL.FieldWorks.XWorks
 				DictionaryNodeOptions =
 					new DictionaryNodeListAndParaOptions { DisplayEachInAParagraph = false }
 			};
-			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), m_mediator);
+			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), m_propertyTable);
 			controller.LoadNode(null, testNode);
 			using (var view = controller.View)
 			{
@@ -291,14 +291,13 @@ namespace SIL.FieldWorks.XWorks
 
 		#region Note tests
 		[Test]
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule", Justification = "optionsView is a reference only")]
 		public void NoteLoadsParagraphStylesWhenShowInParaSet()
 		{
 			var wsOptions = new DictionaryNodeWritingSystemAndParaOptions();
 			{
 				wsOptions.DisplayEachInAParagraph = true;
 			};
-			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), m_mediator);
+			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), m_propertyTable);
 			controller.LoadNode(null, new ConfigurableDictionaryNode { DictionaryNodeOptions = wsOptions });
 			using (var view = controller.View)
 			{
@@ -325,7 +324,7 @@ namespace SIL.FieldWorks.XWorks
 				DictionaryNodeOptions =
 					new DictionaryNodeSenseOptions { DisplayEachSenseInAParagraph = true }
 			};
-			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), m_mediator);
+			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), m_propertyTable);
 			controller.LoadNode(null, testNode);
 			using (var view = controller.View)
 			{
@@ -342,7 +341,7 @@ namespace SIL.FieldWorks.XWorks
 				DictionaryNodeOptions =
 					new DictionaryNodeSenseOptions { DisplayEachSenseInAParagraph = false }
 			};
-			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), m_mediator);
+			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), m_propertyTable);
 			controller.LoadNode(null, testNode);
 			using (var view = controller.View)
 			{
@@ -354,7 +353,7 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void NonSenseLoadsCharacterStyles()
 		{
-			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), m_mediator);
+			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), m_propertyTable);
 			using(var view = controller.View)
 			{
 				controller.LoadNode(null, new ConfigurableDictionaryNode {Parent = new ConfigurableDictionaryNode()});
@@ -375,7 +374,7 @@ namespace SIL.FieldWorks.XWorks
 					Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>()
 				}
 			};
-			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), m_mediator);
+			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), m_propertyTable);
 			node.StyleType = ConfigurableDictionaryNode.StyleTypes.Character;
 			controller.LoadNode(null, node);
 			AssertShowingCharacterStyles(controller.View);
@@ -420,7 +419,7 @@ namespace SIL.FieldWorks.XWorks
 					DisplayEachInAParagraph = true
 				}
 			};
-			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), m_mediator);
+			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), m_propertyTable);
 			// SUT
 			controller.LoadNode(null, node);
 			AssertShowingParagraphStyles(controller.View);
@@ -448,7 +447,7 @@ namespace SIL.FieldWorks.XWorks
 					WsType = DictionaryNodeWritingSystemOptions.WritingSystemType.Analysis
 				}
 			};
-			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), m_mediator);
+			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), m_propertyTable);
 			Assert.DoesNotThrow(() =>
 			{
 				// SUT
@@ -458,7 +457,6 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule", Justification = "ListOptionsView is disposed by its parent")]
 		public void ShowGrammaticalInfo_LinksToSense()
 		{
 			var parentSenseOptions = new DictionaryNodeSenseOptions { ShowSharedGrammarInfoFirst = true };
@@ -474,7 +472,7 @@ namespace SIL.FieldWorks.XWorks
 			};
 			parentSenseNode.Children = new List<ConfigurableDictionaryNode> { childGramarNode };
 
-			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), m_mediator);
+			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), m_propertyTable);
 			controller.LoadNode(null, childGramarNode);
 			using(var view = controller.View)
 			{
@@ -501,7 +499,7 @@ namespace SIL.FieldWorks.XWorks
 			parentComplexFormsNode.Children = new List<ConfigurableDictionaryNode> { childGramarNode };
 
 			// SUT is LoadNode.  `using ... .View` to ensure disposal
-			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), m_mediator);
+			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), m_propertyTable);
 			Assert.DoesNotThrow(() => { using(controller.View) { controller.LoadNode(null, childGramarNode); } });
 		}
 		#endregion Sense tests
@@ -555,24 +553,22 @@ namespace SIL.FieldWorks.XWorks
 				ListId = DictionaryNodeListOptions.ListIds.Variant
 			};
 			var node = new ConfigurableDictionaryNode { DictionaryNodeOptions = listOptions };
-			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), m_mediator);
-			// SUT
-			controller.LoadNode(null, node);
+			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), m_propertyTable);
 			using (var view = controller.View)
 			{
+				// SUT
+				controller.LoadNode(null, node);
 				var listViewItems = GetListViewItems(view);
 
 				Assert.AreEqual(XmlViewsUtils.GetGuidForUnspecifiedVariantType().ToString(), listViewItems[0].Tag,
 					"The saved selection should be first");
 				Assert.AreEqual(listViewItems.Count, listViewItems.Count(item => item.Checked), "All items should be checked");
-			}
-			Assert.AreEqual(1, listOptions.Options.Count, "Loading the node should not affect the original list");
+				Assert.AreEqual(1, listOptions.Options.Count, "Loading the node should not affect the original list");
 
-			listOptions.Options[0].IsEnabled = false;
-			controller.LoadNode(null, node); // SUT
-			using (var view = controller.View)
-			{
-				var listViewItems = GetListViewItems(view);
+				listOptions.Options[0].IsEnabled = false;
+				// SUT
+				controller.LoadNode(null, node);
+				listViewItems = GetListViewItems(view);
 
 				Assert.AreEqual(XmlViewsUtils.GetGuidForUnspecifiedVariantType().ToString(), listViewItems[0].Tag,
 					"The saved item should be first");
@@ -588,7 +584,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				DictionaryNodeOptions = new DictionaryNodeSenseOptions { DisplayEachSenseInAParagraph = true }
 			};
-			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), m_mediator);
+			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), m_propertyTable);
 			controller.LoadNode(null, testNode);
 			Assert.False(controller.View.SurroundingCharsVisible, "Context should start hidden");
 			testNode = new ConfigurableDictionaryNode
@@ -609,7 +605,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				DictionaryNodeOptions = new DictionaryNodeSenseOptions { DisplayEachSenseInAParagraph = false }
 			};
-			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), m_mediator);
+			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), m_propertyTable);
 			controller.LoadNode(null, testNode);
 			Assert.True(controller.View.SurroundingCharsVisible, "Context should start visible");
 			testNode = new ConfigurableDictionaryNode
@@ -631,7 +627,7 @@ namespace SIL.FieldWorks.XWorks
 				ListId = DictionaryNodeListOptions.ListIds.Variant
 			};
 			var node = new ConfigurableDictionaryNode { DictionaryNodeOptions = listOptions };
-			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), m_mediator);
+			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), m_propertyTable);
 			controller.LoadNode(null, node);
 			Assert.NotNull(((TestDictionaryDetailsView)controller.View).OptionsView, "Test setup failed, OptionsView shoud not be null");
 			var optionlessNode = new ConfigurableDictionaryNode();
@@ -673,7 +669,7 @@ namespace SIL.FieldWorks.XWorks
 
 		private void VerifyCannotUncheckOnlyCheckedItemInList(DictionaryNodeOptions options)
 		{
-			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), m_mediator);
+			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), m_propertyTable);
 			controller.LoadNode(null, new ConfigurableDictionaryNode { DictionaryNodeOptions = options });
 			using (var view = controller.View)
 			{
@@ -710,7 +706,7 @@ namespace SIL.FieldWorks.XWorks
 
 		private void VerifyCannotMoveTopItemUp(DictionaryNodeOptions options)
 		{
-			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), m_mediator);
+			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), m_propertyTable);
 			controller.LoadNode(null, new ConfigurableDictionaryNode { DictionaryNodeOptions = options });
 			using (var view = controller.View)
 			{
@@ -748,7 +744,7 @@ namespace SIL.FieldWorks.XWorks
 
 		private void VerifyCannotMoveBottomItemDown(DictionaryNodeOptions options)
 		{
-			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), m_mediator);
+			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), m_propertyTable);
 			controller.LoadNode(null, new ConfigurableDictionaryNode { DictionaryNodeOptions = options });
 			using (var view = controller.View)
 			{
@@ -779,7 +775,7 @@ namespace SIL.FieldWorks.XWorks
 				Options = ListOfEnabledDNOsFromStrings(new List<string> { "en", "fr" }),
 				WsType = DictionaryNodeWritingSystemOptions.WritingSystemType.Both
 			};
-			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), m_mediator);
+			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), m_propertyTable);
 			controller.LoadNode(null, new ConfigurableDictionaryNode { DictionaryNodeOptions = wsOptions });
 			using (var view = controller.View)
 			{
@@ -805,7 +801,6 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule", Justification = "optionsView is disposed by its parent")]
 		public void LoadWsOptions_DisplayCheckboxEnable()
 		{
 			var wsOptions = new DictionaryNodeWritingSystemOptions
@@ -814,7 +809,7 @@ namespace SIL.FieldWorks.XWorks
 				WsType = DictionaryNodeWritingSystemOptions.WritingSystemType.Both,
 				DisplayWritingSystemAbbreviations = true
 			};
-			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), m_mediator);
+			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), m_propertyTable);
 			controller.LoadNode(null, new ConfigurableDictionaryNode { DictionaryNodeOptions = wsOptions });
 			using (var view = controller.View)
 			{
@@ -839,7 +834,6 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule", Justification = "optionsView is disposed by its parent")]
 		public void LoadSenseOptions_ChecksRightBoxes()
 		{
 			var subSenseConfig = new ConfigurableDictionaryNode
@@ -877,7 +871,7 @@ namespace SIL.FieldWorks.XWorks
 			};
 			CssGeneratorTests.PopulateFieldsForTesting(entryConfig);
 
-			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), m_mediator);
+			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), m_propertyTable);
 			controller.LoadNode(null, senseConfig);
 			using (var view = controller.View)
 			{
@@ -890,32 +884,11 @@ namespace SIL.FieldWorks.XWorks
 				Assert.AreEqual("%d", optionsView.NumberingStyle, "proper numbering style loads for Sense");
 				Assert.IsTrue(optionsView.NumberSingleSense, "checkbox set properly for numbering even single Sense");
 				Assert.IsTrue(optionsView.ShowGrammarFirst, "checkbox set properly for show common gram info first for Senses");
-				// controls are private, so work around that limitation.
-				var realView = optionsView as SenseOptionsView;
-				Assert.IsNotNull(realView);
-				var controlsChecked = 0;
-				foreach (Control control in realView.Controls)
-				{
-					if (control is GroupBox && control.Name == "groupBoxSenseNumber")
-					{
-						Assert.AreEqual("Sense Number Configuration", control.Text, "groupBoxSenseNumber has incorrect Text for Sense");
-						++controlsChecked;
-					}
-					else if (control is CheckBox && control.Name == "checkBoxSenseInPara")
-					{
-						Assert.IsTrue(control.Enabled && control.Visible, "checkBoxSenseInPara should be enabled and visible for Sense");
-						++controlsChecked;
-					}
-					else if (control is CheckBox && control.Name == "checkBoxFirstSenseInline")
-					{
-						Assert.IsTrue(control.Enabled && control.Visible, "checkBoxFirstSenseInline should be enabled and visible for Sense");
-						++controlsChecked;
-					}
-				}
-				Assert.AreEqual(3, controlsChecked, "Matched incorrect number of controls for Sense");
+				// controls are not part of IDictionarySenseOptionsView, so work around that limitation.
+				ValidateSenseControls(optionsView, false);
 			}
 
-			var controller2 = new DictionaryDetailsController(new TestDictionaryDetailsView(), m_mediator);
+			var controller2 = new DictionaryDetailsController(new TestDictionaryDetailsView(), m_propertyTable);
 			controller2.LoadNode(null, subSenseConfig);
 			using (var view = controller2.View)
 			{
@@ -927,34 +900,60 @@ namespace SIL.FieldWorks.XWorks
 				Assert.AreEqual("%A", optionsView.NumberingStyle, "proper numbering style loads for Subsense");
 				Assert.IsTrue(optionsView.NumberSingleSense, "checkbox set properly for numbering even single Subsense");
 				Assert.IsTrue(optionsView.ShowGrammarFirst, "checkbox set properly for hide common gram info for Subsenses");
-				// controls are private, so work around that limitation.
-				var realView = optionsView as SenseOptionsView;
-				Assert.IsNotNull(realView);
-				var controlsChecked = 0;
-				foreach (Control control in realView.Controls)
-				{
-					if (control is GroupBox && control.Name == "groupBoxSenseNumber")
-					{
-						Assert.AreEqual(xWorksStrings.ksSubsenseNumberConfig, control.Text, "groupBoxSenseNumber has incorrect Text for Subsense");
-						++controlsChecked;
-					}
-					else if (control is CheckBox && control.Name == "checkBoxSenseInPara")
-					{
-						Assert.IsTrue(control.Enabled && control.Visible, "checkBoxSenseInPara should be enabled and visible for Subsense");
-						++controlsChecked;
-					}
-					else if (control is CheckBox && control.Name == "checkBoxFirstSenseInline")
-					{
-						Assert.IsFalse(control.Enabled || control.Visible, "checkBoxFirstSenseInline should be disabled and invisible when no paras");
-						++controlsChecked;
-					}
-				}
-				Assert.AreEqual(3, controlsChecked, "Matched incorrect number of controls for Subsense");
+				// controls are not part of IDictionarySenseOptionsView, so work around that limitation.
+				ValidateSenseControls(optionsView, true);
 			}
 		}
 
+		// REVIEW (Hasso) 2017.04: This is not the best way to test that the controller properly updates the GUI, since it also asserts GUI structure.
+		// REVIEW (cont): A better way would be to use a view interface with a test implementation. If you break this test, please fix it *properly*
+		// REVIEW (apology): we're too close to a release to be bothered with such a refactor.
+		private static void ValidateSenseControls(object iView, bool isSubsense)
+		{
+			var label = isSubsense ? "Subsense" : "sense";
+			Assert.AreEqual(typeof(SenseOptionsView), iView.GetType());
+			var view = (Control)iView;
+			var controlsChecked = 0;
+			foreach (Control control in view.Controls)
+			{
+				if (control is GroupBox && control.Name == "groupBoxSenseNumber")
+				{
+					Assert.AreEqual(isSubsense ? xWorksStrings.ksSubsenseNumberConfig : "Sense Number Configuration",
+						control.Text, "groupBoxSenseNumber has incorrect Text");
+					++controlsChecked;
+				}
+				else if (control is FlowLayoutPanel && control.Name == "senseStructureVerticalFlow")
+				{
+					var innerControls = 0;
+					foreach (Control innerControl in control.Controls)
+					{
+						if (innerControl is CheckBox && innerControl.Name == "checkBoxShowGrammarFirst")
+						{
+							Assert.IsTrue(innerControl.Enabled && innerControl.Visible, "checkBoxShowGrammarFirst should be enabled and visible for {0}", label);
+							++innerControls;
+						}
+						else if (innerControl is CheckBox && innerControl.Name == "checkBoxSenseInPara")
+						{
+							Assert.IsTrue(innerControl.Enabled && innerControl.Visible, "checkBoxSenseInPara should be enabled and visible for {0}", label);
+							++innerControls;
+						}
+						else if (innerControl is CheckBox && innerControl.Name == "checkBoxFirstSenseInline")
+						{
+							if (isSubsense)
+								Assert.IsFalse(innerControl.Enabled || innerControl.Visible, "checkBoxFirstSenseInline should be disabled and invisible when no paras");
+							else
+								Assert.IsTrue(innerControl.Enabled && innerControl.Visible, "checkBoxFirstSenseInline should be enabled and visible when paras");
+							++innerControls;
+						}
+					}
+					Assert.AreEqual(3, innerControls, "Matched incorrect number of controls within senseStructureVerticalFlow for {0}", label);
+					++controlsChecked;
+				}
+			}
+			Assert.AreEqual(2, controlsChecked, "Matched incorrect number of controls for {0}", label);
+		}
+
 		[Test]
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule", Justification = "optionsView is disposed by its parent")]
 		public void LoadSenseOptions_NumberingStyleList()
 		{
 			var subSubSenseConfig = new ConfigurableDictionaryNode
@@ -1006,7 +1005,7 @@ namespace SIL.FieldWorks.XWorks
 			};
 			CssGeneratorTests.PopulateFieldsForTesting(entryConfig);
 
-			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), m_mediator);
+			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), m_propertyTable);
 			using (var view = controller.View)
 			{
 				controller.LoadNode(null, senseConfig);
@@ -1051,7 +1050,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var wsOptions = (DictionaryNodeWritingSystemOptions)ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new[] { "vernacular" },
 				DictionaryNodeWritingSystemOptions.WritingSystemType.Vernacular);
-			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), m_mediator);
+			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), m_propertyTable);
 			controller.LoadNode(null, new ConfigurableDictionaryNode { DictionaryNodeOptions = wsOptions });
 			using (var view = controller.View)
 			{
@@ -1083,7 +1082,7 @@ namespace SIL.FieldWorks.XWorks
 				Options = ListOfEnabledDNOsFromStrings(new List<string> { "en" }),
 				WsType = DictionaryNodeWritingSystemOptions.WritingSystemType.Both
 			};
-			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), m_mediator);
+			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), m_propertyTable);
 			controller.LoadNode(null, new ConfigurableDictionaryNode { DictionaryNodeOptions = wsOptions });
 			using (var view = controller.View)
 			{
@@ -1116,7 +1115,7 @@ namespace SIL.FieldWorks.XWorks
 				Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>(),
 				WsType = DictionaryNodeWritingSystemOptions.WritingSystemType.Both
 			};
-			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), m_mediator);
+			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), m_propertyTable);
 			controller.LoadNode(null, new ConfigurableDictionaryNode { DictionaryNodeOptions = wsOptions });
 			using (var view = controller.View)
 			{
@@ -1148,7 +1147,7 @@ namespace SIL.FieldWorks.XWorks
 				Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>(),
 				WsType = DictionaryNodeWritingSystemOptions.WritingSystemType.Both
 			};
-			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), m_mediator);
+			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), m_propertyTable);
 			controller.LoadNode(null, new ConfigurableDictionaryNode { DictionaryNodeOptions = wsOptions });
 			using (var view = controller.View)
 			{
@@ -1208,7 +1207,7 @@ namespace SIL.FieldWorks.XWorks
 
 			using (var view = new TestDictionaryDetailsView())
 			{
-				var controller = new DictionaryDetailsController(view, m_mediator);
+				var controller = new DictionaryDetailsController(view, m_propertyTable);
 				// SUT (actually, ensures that messages will show after the user selects a different Config in the ConfigDlg)
 				controller.LoadNode(new DictionaryConfigurationModel(), mainEntry);
 				Assert.IsNullOrEmpty(view.GetTooltipFromOverPanel(), "Unshared nodes require no explanation");
@@ -1241,8 +1240,6 @@ namespace SIL.FieldWorks.XWorks
 		#region GroupingNode tests
 
 		[Test]
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "optionsView is disposed by its parent")]
 		public void LoadGroupingOptions_SetsAllInfo()
 		{
 			var groupConfig = new ConfigurableDictionaryNode
@@ -1261,7 +1258,7 @@ namespace SIL.FieldWorks.XWorks
 			};
 			CssGeneratorTests.PopulateFieldsForTesting(entryConfig);
 
-			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), m_mediator);
+			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), m_propertyTable);
 			controller.LoadNode(null, groupConfig);
 			using (var view = controller.View)
 			{

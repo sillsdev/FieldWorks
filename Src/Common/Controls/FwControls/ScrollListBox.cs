@@ -1,19 +1,12 @@
-// Copyright (c) 2003-2013 SIL International
+// Copyright (c) 2003-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: ScrollListBox.cs
-// Responsibility: TE Team
-//
-// <remarks>
-// </remarks>
 
 using System;
 using System.ComponentModel;
-using System.Drawing;
 using System.Windows.Forms;
-
-using SIL.Utils;
+using SIL.FieldWorks.Common.FwUtils;
+using SIL.LCModel.Utils;
 
 namespace SIL.FieldWorks.Common.Controls
 {
@@ -22,7 +15,7 @@ namespace SIL.FieldWorks.Common.Controls
 	/// Listbox that provides access to scroll messages
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
-	public class ScrollListBox : ListBox, IFWDisposable
+	public class ScrollListBox : ListBox
 	{
 		private bool m_fHandleScrolling = true;
 
@@ -99,7 +92,7 @@ namespace SIL.FieldWorks.Common.Controls
 			else if (m.Msg == (int)Win32.WinMsgs.WM_MOUSEMOVE)
 			{
 				OnMouseMove(new MouseEventArgs(
-					MiscUtils.TranslateMouseButtons((Win32.MouseButtons)m.WParam.ToInt32()), 0,
+					SIL.FieldWorks.Common.FwUtils.FwUtils.TranslateMouseButtons((Win32.MouseButtons)m.WParam.ToInt32()), 0,
 					MiscUtils.LoWord(m.LParam), MiscUtils.HiWord(m.LParam), 0));
 				m.Result = IntPtr.Zero;
 				return;

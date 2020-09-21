@@ -1,24 +1,25 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2020 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
-using System.Xml;
+using System.IO;
 using System.Windows.Forms;
+using System.Xml;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.IText;
 using SIL.FieldWorks.Resources;
 using SIL.Utils;
-using System.Diagnostics;
-using System.IO;
-using SIL.Utils.ComTypes;
 
 namespace SIL.FieldWorks.Discourse
 {
@@ -355,8 +356,7 @@ namespace SIL.FieldWorks.Discourse
 		{
 			CheckDisposed();
 
-			m_rootb = VwRootBoxClass.Create();
-			m_rootb.SetSite(this);
+			base.MakeRoot();
 
 			m_vc = new ConstChartVc(this);
 			m_vc.LineChoices = m_lineChoices;
@@ -366,8 +366,6 @@ namespace SIL.FieldWorks.Discourse
 
 			m_rootb.DataAccess = Cache.MainCacheAccessor;
 			m_rootb.SetRootObject(m_hvoChart, m_vc, ConstChartVc.kfragChart, this.StyleSheet);
-
-			base.MakeRoot();
 			//m_rootb.Activate(VwSelectionState.vssOutOfFocus); // Makes selection visible even before ever got focus.
 		}
 
@@ -468,7 +466,7 @@ namespace SIL.FieldWorks.Discourse
 						NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
 							{
 								cell.Row.Notes =
-									Cache.TsStrFactory.EmptyString(Cache.DefaultAnalWs);
+									TsStringUtils.EmptyString(Cache.DefaultAnalWs);
 							});
 					}
 				}
@@ -560,7 +558,7 @@ namespace SIL.FieldWorks.Discourse
 			//
 			// ConstChartBody
 			//
-			this.AccessibleName = "MainChartBody";
+			this.AccessibleName = "Chart Body";
 			this.Name = "ConstChartBody";
 			this.ResumeLayout(false);
 
@@ -587,7 +585,6 @@ namespace SIL.FieldWorks.Discourse
 		Dictionary<string, ITsTextProps> m_formatProps;
 		Dictionary<string, string> m_brackets;
 		readonly ITsString m_tssSpace;
-		private readonly ITsStrFactory m_tssFact;
 		private readonly IConstChartRowRepository m_rowRepo;
 		private readonly IConstChartWordGroupRepository m_wordGrpRepo;
 		private readonly IConstituentChartCellPartRepository m_partRepo;
@@ -601,14 +598,13 @@ namespace SIL.FieldWorks.Discourse
 		{
 			m_chart = chart;
 			m_cache = m_chart.Cache;
-			m_tssFact = m_cache.TsStrFactory;
-			m_tssSpace = m_tssFact.MakeString(" ", m_cache.DefaultAnalWs);
+			m_tssSpace = TsStringUtils.MakeString(" ", m_cache.DefaultAnalWs);
 			m_rowRepo = m_cache.ServiceLocator.GetInstance<IConstChartRowRepository>();
 			m_wordGrpRepo = m_cache.ServiceLocator.GetInstance<IConstChartWordGroupRepository>();
 			m_partRepo = m_cache.ServiceLocator.GetInstance<IConstituentChartCellPartRepository>();
-			m_sMovedTextBefore = m_tssFact.MakeString(DiscourseStrings.ksMovedTextBefore,
+			m_sMovedTextBefore = TsStringUtils.MakeString(DiscourseStrings.ksMovedTextBefore,
 													m_cache.DefaultUserWs);
-			m_sMovedTextAfter = m_tssFact.MakeString(DiscourseStrings.ksMovedTextAfter,
+			m_sMovedTextAfter = TsStringUtils.MakeString(DiscourseStrings.ksMovedTextAfter,
 													m_cache.DefaultUserWs);
 			LoadFormatProps();
 		}
@@ -631,7 +627,7 @@ namespace SIL.FieldWorks.Discourse
 			{
 				if (item is XmlComment)
 					continue;
-				ITsPropsBldr bldr = TsPropsBldrClass.Create();
+				ITsPropsBldr bldr = TsStringUtils.MakePropsBldr();
 				var color = XmlUtils.GetOptionalAttributeValue(item, "color", null);
 				if (color != null)
 					bldr.SetIntPropValues((int)FwTextPropType.ktptForeColor, (int)FwTextPropVar.ktpvDefault,
@@ -959,7 +955,6 @@ namespace SIL.FieldWorks.Discourse
 
 		private void PrintIndividualColumnHeaders(int hvo, IVwEnv vwenv)
 		{
-			var tssFact = m_cache.TsStrFactory;
 			var analWs = m_cache.DefaultAnalWs;
 			var oldEnv = vwenv;
 
@@ -968,7 +963,7 @@ namespace SIL.FieldWorks.Discourse
 			(vwenv as ChartRowEnvDecorator).IsRtL = m_chart.IsRightToLeft;
 			MakeCellsMethod.OpenRowNumberCell(vwenv); // blank cell under header for row numbers
 			vwenv.CloseTableCell();
-			PrintTemplateColumnHeaders(vwenv, tssFact, analWs);
+			PrintTemplateColumnHeaders(vwenv, analWs);
 			MakeCellsMethod.OpenStandardCell(vwenv, 1, false); // blank cell below Notes header
 			vwenv.CloseTableCell();
 			(vwenv as ChartRowEnvDecorator).FlushDecorator(); // if RTL, put out headers reversed
@@ -977,18 +972,18 @@ namespace SIL.FieldWorks.Discourse
 			vwenv.CloseTable();
 		}
 
-		private void PrintTemplateColumnHeaders(IVwEnv vwenv, ITsStrFactory tssFact, int analWs)
+		private void PrintTemplateColumnHeaders(IVwEnv vwenv, int analWs)
 		{
 			for (var icol = 0; icol < m_chart.AllColumns.Length; icol++)
 			{
-				PrintOneTemplateHeader(vwenv, tssFact, analWs, icol);
+				PrintOneTemplateHeader(vwenv, analWs, icol);
 			}
 		}
 
-		private void PrintOneTemplateHeader(IVwEnv vwenv, ITsStrFactory tssFact, int analWs, int icol)
+		private void PrintOneTemplateHeader(IVwEnv vwenv, int analWs, int icol)
 		{
 			MakeCellsMethod.OpenStandardCell(vwenv, 1, m_chart.Logic.GroupEndIndices.Contains(icol));
-			vwenv.AddString(tssFact.MakeString(m_chart.Logic.GetColumnLabel(icol), analWs));
+			vwenv.AddString(TsStringUtils.MakeString(m_chart.Logic.GetColumnLabel(icol), analWs));
 			vwenv.CloseTableCell();
 		}
 
@@ -1011,14 +1006,14 @@ namespace SIL.FieldWorks.Discourse
 		private void PrintNotesCellHeader(IVwEnv vwenv, int analWs)
 		{
 			MakeCellsMethod.OpenStandardCell(vwenv, 1, false);
-			vwenv.AddString(m_tssFact.MakeString(DiscourseStrings.ksNotesColumnHeader, analWs));
+			vwenv.AddString(TsStringUtils.MakeString(DiscourseStrings.ksNotesColumnHeader, analWs));
 			vwenv.CloseTableCell();
 		}
 
 		private void PrintRowNumCellHeader(IVwEnv vwenv, int analWs)
 		{
 			MakeCellsMethod.OpenRowNumberCell(vwenv); // header for row numbers
-			vwenv.AddString(m_tssFact.MakeString("#", analWs));
+			vwenv.AddString(TsStringUtils.MakeString("#", analWs));
 			vwenv.CloseTableCell();
 		}
 
@@ -1187,7 +1182,7 @@ namespace SIL.FieldWorks.Discourse
 					vwenv.AddObj(hvoFirst, this, kfragComment);
 					if (chvo == 1)
 						break;
-					var shyphen = m_cache.TsStrFactory.MakeString("-", m_cache.DefaultAnalWs);
+					var shyphen = TsStringUtils.MakeString("-", m_cache.DefaultAnalWs);
 					vwenv.AddString(shyphen);
 					var hvoLast = sda.get_VecItem(hvo, kflidDepClauses, chvo - 1);
 					vwenv.AddObj(hvoLast, this, kfragComment);
@@ -1269,7 +1264,7 @@ namespace SIL.FieldWorks.Discourse
 		}
 
 
-		protected override void GetSegmentLevelTags(FdoCache cache)
+		protected override void GetSegmentLevelTags(LcmCache cache)
 		{
 			// do nothing (we don't need tags above bundle level).
 		}
@@ -1300,7 +1295,7 @@ namespace SIL.FieldWorks.Discourse
 				if (m_fIsAnalysisWsGraphiteEnabled)
 					index = 1;
 			}
-			var sbracket = m_cache.TsStrFactory.MakeString(
+			var sbracket = TsStringUtils.MakeString(
 				String.Format(sFormat, bracket.Substring(index, 1)), m_cache.DefaultAnalWs);
 			vwenv.AddString(sbracket);
 		}
@@ -1331,7 +1326,7 @@ namespace SIL.FieldWorks.Discourse
 				if (m_fIsAnalysisWsGraphiteEnabled)
 					index = 0;
 			}
-			var sbracket = m_cache.TsStrFactory.MakeString(
+			var sbracket = TsStringUtils.MakeString(
 				String.Format(sFormat, bracket.Substring(index, 1)), m_cache.DefaultAnalWs);
 			vwenv.AddString(sbracket);
 		}
@@ -1345,7 +1340,7 @@ namespace SIL.FieldWorks.Discourse
 		private readonly ChartRowEnvDecorator m_vwenv;
 		private readonly int m_hvoRow; // Hvo of the IConstChartRow representing a row in the chart.
 		private readonly IConstChartRow m_row;
-		private readonly FdoCache m_cache;
+		private readonly LcmCache m_cache;
 		private readonly ConstChartVc m_this; // original 'this' object of the refactored method.
 		private readonly ConstChartBody m_chart;
 		private int[] m_cellparts;
@@ -1393,7 +1388,7 @@ namespace SIL.FieldWorks.Discourse
 		/// <param name="cache"></param>
 		/// <param name="vwenv"></param>
 		/// <param name="hvo"></param>
-		public MakeCellsMethod(ConstChartVc baseObj, FdoCache cache, IVwEnv vwenv, int hvo)
+		public MakeCellsMethod(ConstChartVc baseObj, LcmCache cache, IVwEnv vwenv, int hvo)
 		{
 			m_this = baseObj;
 			m_cache = cache;
@@ -1402,7 +1397,6 @@ namespace SIL.FieldWorks.Discourse
 
 			// Decorator makes sure that things get put out in the right order if chart is RtL
 			m_chart = baseObj.m_chart;
-			//var sPopFormatting = m_cache.TsStrFactory.MakeString(Convert.ToString(m_chart.PDF), m_cache.DefaultAnalWs);
 			m_vwenv = new ChartRowEnvDecorator(vwenv);
 
 			m_hvoRow = hvo;
@@ -1411,7 +1405,7 @@ namespace SIL.FieldWorks.Discourse
 
 		private void SetupMissingMarker()
 		{
-			m_missMkr = m_cache.TsStrFactory.MakeString(DiscourseStrings.ksMissingMarker, m_cache.DefaultAnalWs);
+			m_missMkr = TsStringUtils.MakeString(DiscourseStrings.ksMissingMarker, m_cache.DefaultAnalWs);
 		}
 
 		/// <summary>

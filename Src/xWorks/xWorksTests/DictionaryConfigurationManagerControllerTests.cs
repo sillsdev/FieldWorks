@@ -11,15 +11,16 @@ using System.Text;
 using System.Windows.Forms;
 using Ionic.Zip;
 using NUnit.Framework;
-using Palaso.TestUtilities;
-using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.LCModel.Core.Cellar;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.FDOTests;
-using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.Utils;
-using FileUtils = SIL.Utils.FileUtils;
+using SIL.LCModel;
+using SIL.LCModel.Infrastructure;
+using SIL.TestUtilities;
+using SIL.LCModel.Utils;
+using XCore;
+using FileUtils = SIL.LCModel.Utils.FileUtils;
 // ReSharper disable InconsistentNaming
 
 namespace SIL.FieldWorks.XWorks
@@ -52,7 +53,7 @@ namespace SIL.FieldWorks.XWorks
 				var styleFactory = Cache.ServiceLocator.GetInstance<IStStyleFactory>();
 				_characterTestStyle = styleFactory.Create(Cache.LangProject.StylesOC, "TestStyle", ContextValues.InternalConfigureView, StructureValues.Body, FunctionValues.Line, true, 2, false);
 				_characterTestStyle.Usage.set_String(Cache.DefaultAnalWs, "Test Style");
-				var propsBldr = TsPropsBldrClass.Create();
+				var propsBldr = TsStringUtils.MakePropsBldr();
 				propsBldr.SetIntPropValues((int)FwTextPropType.ktptForeColor, (int)FwTextPropVar.ktpvDefault,
 					(int)ColorUtil.ConvertColorToBGR(Color.Red));
 				propsBldr.SetIntPropValues((int)FwTextPropType.ktptUnderline, (int)FwTextPropVar.ktpvDefault,
@@ -111,8 +112,7 @@ namespace SIL.FieldWorks.XWorks
 				"publicationA",
 				"publicationB"
 			};
-
-			_controller = new DictionaryConfigurationManagerController(Cache, _configurations, publications, _projectConfigPath, _defaultConfigPath);
+			_controller = new DictionaryConfigurationManagerController(Cache, null, _configurations, publications, _projectConfigPath, _defaultConfigPath);
 		}
 
 		[TearDown]
@@ -438,13 +438,13 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var defaultReversalPath = Path.Combine(FwDirectoryFinder.DefaultConfigurations, "ReversalIndex");
 			// construct a controller to work in the default reversal directory
-			_controller = new DictionaryConfigurationManagerController(Cache, _configurations, new List<string>(), _projectConfigPath, defaultReversalPath);
+			_controller = new DictionaryConfigurationManagerController(Cache, null, _configurations, new List<string>(), _projectConfigPath, defaultReversalPath);
 			var allRevFileName = DictionaryConfigurationModel.AllReversalIndexesFilenameBase + DictionaryConfigurationModel.FileExtension;
 			var shippedRootDefaultConfigurationPath = Path.Combine(defaultReversalPath, allRevFileName);
 			FileUtils.WriteStringtoFile(shippedRootDefaultConfigurationPath, "bogus data that is unread, the file is read from the real defaults", Encoding.UTF8);
 
 			var configurationToDelete = _configurations[0];
-			configurationToDelete.FilePath = Path.Combine("whateverdir", "English" + DictionaryConfigurationModel.FileExtension);
+			configurationToDelete.FilePath = Path.Combine("whateverdir", "en" + DictionaryConfigurationModel.FileExtension);
 			configurationToDelete.Label = "English";
 			configurationToDelete.WritingSystem = "en";
 
@@ -458,6 +458,7 @@ namespace SIL.FieldWorks.XWorks
 
 			Assert.That(FileUtils.FileExists(pathToConfiguration), "The English reversal file should have been reset to defaults, not deleted.");
 			Assert.That(configurationToDelete.Label, Is.EqualTo("English"), "The label should still be English after a reset.");
+			Assert.That(configurationToDelete.WritingSystem, Is.EqualTo("en"), "The writingsystem should still be en after a reset.");
 			Assert.That(configurationToDelete.IsReversal, Is.True, "The reset configuration files should still be a reversal file.");
 			Assert.Contains(configurationToDelete, _configurations, "The configuration should still be present in the list after being reset.");
 			Assert.That(_controller.IsDirty, "Resetting is a change that is saved later; should be dirty");
@@ -534,7 +535,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				Label = "English",
 				WritingSystem = "en",
-				FilePath = Path.Combine("whateverdir", "English" + DictionaryConfigurationModel.FileExtension)
+				FilePath = Path.Combine("whateverdir", "en" + DictionaryConfigurationModel.FileExtension)
 			};
 
 			// SUT
@@ -550,7 +551,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				Label = "Manglish",
 				WritingSystem = "en",
-				FilePath = Path.Combine("whateverdir", "English" + DictionaryConfigurationModel.FileExtension)
+				FilePath = Path.Combine("whateverdir", "en" + DictionaryConfigurationModel.FileExtension)
 			};
 
 			// SUT
@@ -582,7 +583,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				Label = "German (Algeria)",
 				WritingSystem = "de-DZ",
-				FilePath = Path.Combine("whateverdir", "German (Algeria)" + DictionaryConfigurationModel.FileExtension)
+				FilePath = Path.Combine("whateverdir", "de-DZ" + DictionaryConfigurationModel.FileExtension)
 			};
 
 			// SUT

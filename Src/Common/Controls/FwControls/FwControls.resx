@@ -126,20 +126,20 @@
   <data name="kstidWizStepLabel" xml:space="preserve">
     <value>Step {0} of {1}</value>
   </data>
-  <assembly alias="System.Drawing" name="System.Drawing, Version=1.0.3300.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="CheckBox" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
-		iVBORw0KGgoAAAANSUhEUgAAABAAAAARCAYAAADUryzEAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
-		YQUAAAAgY0hSTQAAeiYAAICEAAD6AAAAgOgAAHUwAADqYAAAOpgAABdwnLpRPAAAADBJREFUOE9jYBhM
-		4D/QMaRiFPeTqhmkHtOA/0QAJJeOGjAaiNgTEonJmbpJeWAyNgA0jZp0Ee9guAAAAABJRU5ErkJggg==
+        iVBORw0KGgoAAAANSUhEUgAAABAAAAARCAYAAADUryzEAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6
+        JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAAMklEQVQ4T2MYVOA/GRgFYFNACKMAsCAx
+        AKYWpAkZjBowagAIIEsQi1EANgWE8IADBgYANI2adEjqiHIAAAAASUVORK5CYII=
 </value>
   </data>
   <data name="CheckBoxCheck" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
-		iVBORw0KGgoAAAANSUhEUgAAABAAAAARCAYAAADUryzEAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
-		YQUAAAAgY0hSTQAAeiYAAICEAAD6AAAAgOgAAHUwAADqYAAAOpgAABdwnLpRPAAAAGJJREFUOE9jYBhM
-		4D/QMaRiFPeTqhmkHtOA/0QAJJeSZgBIIwiQZQBME1EGwGyC+QY5cIk2AItz4aFD0AvYohM5bAkagOZM
-		jHghygCYIdhilWgDcCUJvAaQmJypm5QHJmMDAGISW7Nk0F5GAAAAAElFTkSuQmCC
+        iVBORw0KGgoAAAANSUhEUgAAABAAAAARCAYAAADUryzEAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6
+        JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAAaUlEQVQ4T82M0QqAMAwD+/8/rZ0YuWzT
+        Dl/0ILA218Wv2F7EmAlVjGO5gtx2RMoP1MvNGI8fsNc7Y5hA1LE/YwwC35ob2BmXpDdDsDdM1MydQGcM
+        cj8LuRnj9qBHbjsiLFZjzIQqnxOxA2ISW7MPZ2v2AAAAAElFTkSuQmCC
 </value>
   </data>
   <data name="kstidLangNoneAbove" xml:space="preserve">
@@ -153,36 +153,6 @@
   </data>
   <data name="kstidWizTabPage" xml:space="preserve">
     <value>Pg. {0}</value>
-  </data>
-  <data name="kstidStep1" xml:space="preserve">
-    <value>Step 1</value>
-  </data>
-  <data name="kstidStep2" xml:space="preserve">
-    <value>Step 2</value>
-  </data>
-  <data name="kstidStep3" xml:space="preserve">
-    <value>Step 3</value>
-  </data>
-  <data name="kstidBibleNode" xml:space="preserve">
-    <value>Bible</value>
-    <comment>text for Entire Bible node in Scripture tree controls (see Save Version and Book Filter dialog boxes in TE and Choose Texts dialog box in FLEx)</comment>
-  </data>
-  <data name="kstidNtNode" xml:space="preserve">
-    <value>New Testament</value>
-    <comment>text for NT node in Scripture tree controls (see Save Version and Book Filter dialog boxes in TE and Choose Texts dialog box in FLEx)</comment>
-  </data>
-  <data name="kstidOtNode" xml:space="preserve">
-    <value>Old Testament</value>
-    <comment>text for OT node in Scripture tree controls (see Save Version and Book Filter dialog boxes in TE and Choose Texts dialog box in FLEx)</comment>
-  </data>
-  <data name="kOkbtnEmptySelection" xml:space="preserve">
-    <value>OK will create an empty text</value>
-  </data>
-  <data name="kOkbtnGenreSelection" xml:space="preserve">
-    <value>OK will create an empty text assigned to these genres</value>
-  </data>
-  <data name="kOkbtnNoTextSelection" xml:space="preserve">
-    <value>No texts are selected</value>
   </data>
   <data name="kBridgeAlreadyRunning" xml:space="preserve">
     <value>There is already a copy of FLExBridge running.

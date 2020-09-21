@@ -32,9 +32,13 @@ Last reviewed:
 // a long is 64bit long, so we can't use ULONG in COM interfaces and needs to be replaced with
 // the 32bit equivalent. However, on Windows ULONG is a typedef and used in external header
 // files, so we can't simply replace ULONG with UINT32. Instead we use the following defines:
-#ifdef WIN32
+#if defined(_M_IX86) || defined(_M_X64)
 #define UCOMINT32	ULONG
 #define COMINT32	LONG
+//#elif defined(_M_X64)
+//#define UCOMINT32	ULONGLONG
+//#define COMINT32	LONGLONG
+
 #else
 #define UCOMINT32	UINT32
 #define COMINT32	INT32
@@ -81,7 +85,7 @@ Last reviewed:
 /***********************************************************************************************
 	Windows / Framework headers.
 ***********************************************************************************************/
-#if WIN32
+#if defined(_WIN32) || defined(_M_X64)
 
 #define STRICT 1
 #ifdef USING_MFC
@@ -98,8 +102,10 @@ Last reviewed:
 #include <ole2.h>
 
 #else // !WIN32
-
+#pragma warning(push)
+#pragma warning(disable: 4458) // declaration of 'type' hides class member
 #include "IcuCommon.h" // Enables general access to ICU (International Components for Unicode).
+#pragma warning(pop)
 #include <Hacks.h>
 #include <COM.h>
 #include <COMInterfaces.h>
@@ -117,34 +123,34 @@ Last reviewed:
 /***********************************************************************************************
 	Standard Headers.
 ***********************************************************************************************/
-#ifdef WIN32
+#if defined(_WIN32) || defined(_M_X64)
 #include <malloc.h>
 #endif // WIN32
 #include <stdio.h>
 #include <stdarg.h>
-#ifdef WIN32
+#if defined(_WIN32) || defined(_M_X64)
 #include <sys\timeb.h>
 #endif // WIN32
 #include <time.h>
 #include <math.h>
 #include <limits.h>
-#ifdef WIN32
+#if defined(_WIN32) || defined(_M_X64)
 #include <tchar.h>
 #endif // WIN32
 
-#ifdef WIN32
+#if defined(_WIN32) || defined(_M_X64)
 #include <crtdbg.h>
 #endif // WIN32
 
 #include <exception>
 #include <new>
-#if !WIN32
+#if !defined(_WIN32) && !defined(_M_X64)
 #include <string>
 #include <cstdlib>
 #endif // !WIN32
 
 // These are needed for the Task Scheduler section of FwExplorer.
-#ifdef WIN32
+#if defined(_WIN32) || defined(_M_X64)
 #include <initguid.h>
 #pragma warning(push)
 #pragma warning(disable: 4268) // 'const' static/global data initialized with compiler generated
@@ -157,7 +163,7 @@ Last reviewed:
 #include <Usp10.h> // For Uniscribe (currently only in Language DLL).
 
 #pragma warning(push)
-#pragma warning(disable: 4127)
+#pragma warning(disable: 4127 4458)
 #include "IcuCommon.h" // Enables general access to ICU (International Components for Unicode).
 #pragma warning(pop)
 
@@ -165,16 +171,19 @@ Last reviewed:
 
 // Used for stack dumping and the like.
 
-#ifdef WIN32
+#if defined(_WIN32) || defined(_M_X64)
 // imagehlp.h must be compiled with packing to eight-byte-boundaries,
 // but does nothing to enforce that.
 #pragma pack( push, before_imagehlp, 8 )
+#pragma warning(push)
+#pragma warning(disable: 4091) // 'typedef' ignored when no variable is declared
 #include <imagehlp.h>
 #include <Tlhelp32.h>
+#pragma warning(pop)
 #pragma pack( pop, before_imagehlp )
 #endif // WIN32
 
-#ifdef WIN32
+#if defined(_WIN32) || defined(_M_X64)
 // Get the MS Text Services Framework interfaces.
 #include <Msctf.h>
 // This allows us to implement IAccessible (currently only in Views DLL).
@@ -219,7 +228,7 @@ Last reviewed:
 /***********************************************************************************************
 	Simple types.
 ***********************************************************************************************/
-#if WIN32
+#if defined(_WIN32) || defined(_M_X64)
 typedef wchar_t  wchar;	// UTF-16
 typedef int     wwchar;	// UTF-32
 #else //WIN32
@@ -253,14 +262,14 @@ typedef const achar * Pcsz;
 	that overloads the & operator.
 *************************************************************************************/
 #undef offsetof
-#define offsetof(cls,fld) ((int)&((cls *)0)->fld)
+#define offsetof(cls,fld) ((size_t)&((cls *)0)->fld)
 
-#define addrsafe_offsetof(cls,fld) reinterpret_cast<int>(AddrOf(((cls *)0)->fld))
+#define addrsafe_offsetof(cls,fld) reinterpret_cast<size_t>(AddrOf(((cls *)0)->fld))
 
 template<typename T> inline T * AddrOf(T & x)
 {
 	T * pt;
-#ifdef _MSC_VER
+#if defined(_WIN32) && !defined(_M_X64)
 	__asm
 	{
 		mov eax,x
@@ -275,8 +284,12 @@ template<typename T> inline T * AddrOf(T & x)
 
 // This is to make a signed isizeof operator, otherwise we get tons of warnings about
 // signed / unsigned mismatches.
+#if !defined(_WIN32) && !defined(_M_X64)
+#define SSIZE_T ssize_t
+#endif // !SSIZE_T
+
 #ifndef isizeof
-	#define isizeof(T) ((int)sizeof(T))
+	#define isizeof(T) ((SSIZE_T)sizeof(T))
 #endif
 
 #define SizeOfArray(rgt) (isizeof(rgt) / isizeof(rgt[0]))
@@ -290,7 +303,7 @@ inline bool ValidPsz(const wchar *pszw)
 	// Note: IsBadStringPtrW is not implemented on Win9x without the Microsoft Layer for
 	// Unicode, but this is only used in Asserts, so it will not affect the end user, and
 	// after Version 1 we will not be supporting Win98 anyway.
-#if WIN32
+#if defined(_WIN32) || defined(_M_X64)
 	return pszw != NULL && !::IsBadStringPtrW(pszw, 0x10000000);
 #else
 	return pszw != NULL && !::IsBadReadPtr(pszw, 1);
@@ -299,14 +312,14 @@ inline bool ValidPsz(const wchar *pszw)
 
 inline bool ValidPsz(const schar *pszs)
 {
-#if WIN32
+#if defined(_WIN32) || defined(_M_X64)
 	return pszs != NULL && !::IsBadStringPtrA(pszs, 0x10000000);
 #else
 	return pszs != NULL && !::IsBadReadPtr(pszs, 1);
 #endif
 }
 
-#if !WIN32
+#if !defined(_WIN32) && !defined(_M_X64)
 inline bool ValidPsz(const wchar_t *pszs)
 {
 	return pszs != NULL && !::IsBadReadPtr(pszs, 1);
@@ -401,14 +414,14 @@ template<typename T> inline T * GetPtr(void *pv, int ib)
 #include "FileStrm.h"
 #include "ResourceStrm.h"
 #include "StringStrm.h"
-#ifdef WIN32
+#if defined(_WIN32) || defined(_M_X64)
 #include "DataStream.h"
 #endif // WIN32
 #include "DataReader.h"
 #include "DataWriter.h"
 #include "TextProps.h"
 #include "DispatchImpl.h"
-#ifdef WIN32
+#if defined(_WIN32) || defined(_M_X64)
 #include "UtilFile.h"
 #include <process.h>
 #endif

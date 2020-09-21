@@ -6,19 +6,41 @@
 
 # Possible values for RUNMODE:
 # - INSTALLED: when running an installed package
-# - PACKAGE: while building the package
+# - PACKAGING: while building the package
+
+# Unset things from incoming environment to avoid unexpected behaviour, such
+# as when FW is run from PT. Restore path to something basic, along with the
+# dotnet tools path, if present.
+unset LD_LIBRARY_PATH \
+  LD_PRELOAD \
+  PATH \
+  MONO_ENABLE_SHM \
+  MONO_IOMAP \
+  MONO_WINFORMS_XIM_STYLE \
+  MOZ_ASSUME_USER_NS \
+  MOZ_LIBDIR TEXINPUTS \
+  USE_GTK_DIALOGS \
+  WINFORMS_FONT_OVERRIDE_EXPLICITLY_SET \
+  WINFORMS_STYLE_TITLEBAR_COLOR_1 \
+  WINFORMS_STYLE_TITLEBAR_COLOR_2 \
+  WINFORMS_STYLE_TITLEBAR_VERTICAL_GRADIENT
+export PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin"
+DOTNET_TOOLS_PATHER="/etc/profile.d/dotnet-cli-tools-bin-path.sh"
+if [ -f "${DOTNET_TOOLS_PATHER}" ]; then
+  . "${DOTNET_TOOLS_PATHER}"
+fi
 
 BASE=$(pwd)
 COM=$(dirname "${BASE}")/libcom/COM
 ARCH=$(uname -m)
 [ -z "$BUILD" ] && BUILD=Debug
-[ -z "$MONO_PREFIX" ] && MONO_PREFIX=/opt/mono-sil
-[ -z "$MONO_SILPKGDIR" ] && MONO_SILPKGDIR=/opt/mono-sil
+[ -z "$MONO_PREFIX" ] && MONO_PREFIX=/opt/mono5-sil
+[ -z "$MONO_SILPKGDIR" ] && MONO_SILPKGDIR=/opt/mono5-sil
 
 # Dependency locations
 # search for xulrunner and geckofx, select the best, and add its location to LD_LIBRARY_PATH
 . ./environ-xulrunner
-GDK_SHARP=/usr/lib/cli/gdk-sharp-2.0/
+[ -d /usr/lib/cli/gdk-sharp-2.0 ] && GDK_SHARP=/usr/lib/cli/gdk-sharp-2.0/
 ENC_CONVERTERS=/usr/lib/fieldworks
 
 MONO_RUNTIME=v4.0.30319
@@ -29,11 +51,11 @@ MONO_ENV_OPTIONS="-O=-gshared"
 if [ "$RUNMODE" != "INSTALLED" ]
 then
 	PATH="${BASE}/Output_${ARCH}/${BUILD}:\
-${BASE}/Lib/src/icu/install${ARCH}/bin:${BASE}/Lib/src/icu/source/bin:\
+/usr/lib/fieldworks/icu-bin:\
 ${COM}/build${ARCH}/bin:\
 ${PATH}"
 	LD_LIBRARY_PATH="${BASE}/Output_${ARCH}/${BUILD}:\
-${BASE}/Lib/src/icu/install${ARCH}/lib:\
+/usr/lib/fieldworks/lib:\
 ${COM}/build${ARCH}/lib:\
 ${LD_LIBRARY_PATH}"
 fi
@@ -43,10 +65,10 @@ fi
 # Add packaged mono items to paths
 PATH="${MONO_SILPKGDIR}/bin:${PATH}"
 LD_LIBRARY_PATH="${MONO_SILPKGDIR}/lib:${ENC_CONVERTERS}:${LD_LIBRARY_PATH}"
-PKG_CONFIG_PATH="${MONO_SILPKGDIR}/lib/pkgconfig:${PKG_CONFIG_PATH}"
+PKG_CONFIG_PATH="${MONO_SILPKGDIR}/lib/pkgconfig:/usr/lib/fieldworks/lib/pkgconfig:${PKG_CONFIG_PATH}"
 MONO_GAC_PREFIX="${MONO_SILPKGDIR}:${ENC_CONVERTERS}:/usr:${MONO_PREFIX}"
 
-if [ "$RUNMODE" != "PACKAGE" ]
+if [ "$RUNMODE" != "PACKAGING" ]
 then
 	# Make locally-built software (eg mono) visible
 	PATH="${MONO_PREFIX}/bin:${PATH}"
@@ -63,8 +85,9 @@ then
 	FW_ROOTCODE="${BASE}/../../share/fieldworks"
 	ICU_DATA="${HOME}/.config/fieldworks/Icu54"
 	PATH="${BASE}/icu-bin:${PATH}"
-	LD_LIBRARY_PATH="${BASE}:${LD_LIBRARY_PATH}"
+	LD_LIBRARY_PATH="${BASE}:${BASE}/lib:${LD_LIBRARY_PATH}"
 	MONO_REGISTRY_PATH="${HOME}/.config/fieldworks/registry"
+	MONO_HELP_VIEWER=${BASE}/launch-xchm
 else
 	COMPONENTS_MAP_PATH="${BASE}/Output_${ARCH}/${BUILD}"
 	FW_ROOT="${BASE}/DistFiles"
@@ -72,12 +95,14 @@ else
 	FW_ROOTCODE="${BASE}/DistFiles"
 	ICU_DATA="${BASE}/DistFiles/Icu54"
 	MONO_REGISTRY_PATH="${BASE}/Output_${ARCH}/registry"
+	MONO_HELP_VIEWER=${BASE}/Lib/linux/launch-xchm
 fi
 
-if [ "$RUNMODE" != "PACKAGE" -a "$RUNMODE" != "INSTALLED" ]
+if [ "$RUNMODE" != "PACKAGING" -a "$RUNMODE" != "INSTALLED" ]
 then
 	FW_CommonAppData=${BASE}/Output_${ARCH}/VarLibFieldworks
 	[ ! -d $FW_CommonAppData ] && mkdir -p $FW_CommonAppData
+	[ -d /var/lib/fieldworks/registry ] && cp -r /var/lib/fieldworks/registry $FW_CommonAppData
 	MONO_PATH="${BASE}/DistFiles:${BASE}/Output_${ARCH}/${BUILD}"
 fi
 
@@ -102,6 +127,7 @@ export \
 	FW_ROOT FW_ROOTCODE FW_ROOTDATA \
 	ICU_DATA \
 	FLEXBRIDGEDIR \
+	MONO_HELP_VIEWER \
 	MONO_PATH MONO_REGISTRY_PATH \
 	MONO_PREFIX MONO_GAC_PREFIX \
 	MONO_RUNTIME MONO_DEBUG MONO_ENV_OPTIONS \

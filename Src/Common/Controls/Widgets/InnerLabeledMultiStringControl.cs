@@ -5,25 +5,26 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Windows.Forms;		// controls and etc...
-using SIL.CoreImpl;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.LCModel.DomainServices;
 
 namespace SIL.FieldWorks.Common.Widgets
 {
 	internal class InnerLabeledMultiStringControl : SimpleRootSite
 	{
 		LabeledMultiStringVc m_vc;
-		FdoCache m_realCache; // real one we get writing system info from
+		LcmCache m_realCache; // real one we get writing system info from
 		ISilDataAccess m_sda; // one actually used in the view.
-		List<IWritingSystem> m_rgws;
+		List<CoreWritingSystemDefinition> m_rgws;
 
 		internal const int khvoRoot = -3045; // arbitrary but recognizeable numbers for debugging.
 		internal const int kflid = 4554;
 
-		public InnerLabeledMultiStringControl(FdoCache cache, int wsMagic)
+		public InnerLabeledMultiStringControl(LcmCache cache, int wsMagic)
 		{
 			m_realCache = cache;
 			m_sda = new TextBoxDataAccess { WritingSystemFactory = cache.WritingSystemFactory };
@@ -33,7 +34,7 @@ namespace SIL.FieldWorks.Common.Widgets
 			IsTextBox = true;	// range selection not shown when not in focus
 		}
 
-		public InnerLabeledMultiStringControl(FdoCache cache, List<IWritingSystem> wsList)
+		public InnerLabeledMultiStringControl(LcmCache cache, List<CoreWritingSystemDefinition> wsList)
 		{
 			// Ctor for use with a non-standard list of wss (like available UI languages)
 			m_realCache = cache;
@@ -94,7 +95,7 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// <summary>
 		/// Get the number of writing systems being displayed.
 		/// </summary>
-		public List<IWritingSystem> WritingSystems
+		public List<CoreWritingSystemDefinition> WritingSystems
 		{
 			get
 			{
@@ -111,21 +112,21 @@ namespace SIL.FieldWorks.Common.Widgets
 			if (DesignMode)
 				return;
 
-			m_rootb = VwRootBoxClass.Create();
-			m_rootb.SetSite(this);
+			// The simple root site won't lay out properly until this is done.
+			// It needs to be done before base.MakeRoot or it won't lay out at all ever!
+			WritingSystemFactory = m_realCache.WritingSystemFactory;
+
+			base.MakeRoot();
+
 			m_rootb.DataAccess = m_sda;
 
 			int wsUser = m_realCache.ServiceLocator.WritingSystemManager.UserWs;
 			int wsEn = m_realCache.ServiceLocator.WritingSystemManager.GetWsFromStr("en");
-			m_vc = new LabeledMultiStringVc(kflid, WritingSystems, wsUser, true, wsEn, m_realCache.TsStrFactory);
+			m_vc = new LabeledMultiStringVc(kflid, WritingSystems, wsUser, true, wsEn);
 
 			// arg3 is a meaningless initial fragment, since this VC only displays one thing.
 			m_rootb.SetRootObject(khvoRoot, m_vc, 1, m_styleSheet);
 			m_dxdLayoutWidth = kForceLayout; // Don't try to draw until we get OnSize and do layout.
-			// The simple root site won't lay out properly until this is done.
-			// It needs to be done before base.MakeRoot or it won't lay out at all ever!
-			WritingSystemFactory = m_realCache.WritingSystemFactory;
-			base.MakeRoot();
 		}
 
 		/// <summary>

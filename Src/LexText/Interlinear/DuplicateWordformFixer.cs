@@ -3,18 +3,15 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.FdoUi;
 using SIL.FieldWorks.FwCoreDlgs;
 
 namespace SIL.FieldWorks.IText
 {
-	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
-		Justification="The creator/owner of this class is responsible to dispose the passed in dialog")]
 	public class DuplicateWordformFixer : IUtility
 	{
 		public string Label
@@ -60,7 +57,7 @@ namespace SIL.FieldWorks.IText
 		public void Process()
 		{
 			Debug.Assert(m_dlg != null);
-			var cache = (FdoCache)m_dlg.Mediator.PropertyTable.GetValue("cache");
+			var cache = m_dlg.PropTable.GetValue<LcmCache>("cache");
 			string failures = null;
 			UndoableUnitOfWorkHelper.Do(ITextStrings.ksUndoMergeWordforms, ITextStrings.ksRedoMergeWordforms, cache.ActionHandlerAccessor,
 				() => failures = WfiWordformServices.FixDuplicates(cache, new ProgressBarWrapper(m_dlg.ProgressBar)));

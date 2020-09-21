@@ -1,19 +1,18 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
 using System.Xml;
-using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.Utils;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Infrastructure;
 
 namespace SIL.FieldWorks.IText
 {
@@ -24,7 +23,7 @@ namespace SIL.FieldWorks.IText
 	public class InterlinearExporter : CollectorEnv
 	{
 		protected XmlWriter m_writer;
-		protected FdoCache m_cache;
+		protected LcmCache m_cache;
 		bool m_fItemIsOpen = false; // true while doing some <item> element (causes various things to output data)
 		bool m_fDoingHeadword = false; // true while displaying a headword (causes some special behaviors)
 		bool m_fDoingHomographNumber = false; // true after note dependency on homograph number, to end of headword.
@@ -32,6 +31,7 @@ namespace SIL.FieldWorks.IText
 		bool m_fAwaitingHeadwordForm = false; // true after start of headword until we get a string alt.
 		bool m_fDoingMorphType = false; // true during display of MorphType of MoForm.
 		bool m_fDoingInterlinName = false; // true during MSA
+		bool m_fDoingGlossPrepend = false; // true after special AddProp
 		bool m_fDoingGlossAppend = false; // true after special AddProp
 		string m_sPendingPrefix; // got a prefix, need the ws from the form itself before we write it.
 		string m_sFreeAnnotationType;
@@ -43,15 +43,15 @@ namespace SIL.FieldWorks.IText
 		int m_flidStTextTitle;
 		int m_flidStTextSource;
 		InterlinVc m_vc = null;
-		Set<int> m_usedWritingSystems = new Set<int>();
+		private readonly HashSet<int> m_usedWritingSystems = new HashSet<int>();
 		/// <summary>saves the morphtype so that glosses can be marked as pro/enclitics.  See LT-8288.</summary>
 		Guid m_guidMorphType = Guid.Empty;
 		IMoMorphType m_mmtEnclitic;
 		IMoMorphType m_mmtProclitic;
-		protected IWritingSystemManager m_wsManager;
+		protected WritingSystemManager m_wsManager;
 		protected ICmObjectRepository m_repoObj;
 
-		public static InterlinearExporter Create(string mode, FdoCache cache, XmlWriter writer, ICmObject objRoot,
+		public static InterlinearExporter Create(string mode, LcmCache cache, XmlWriter writer, ICmObject objRoot,
 			InterlinLineChoices lineChoices, InterlinVc vc)
 		{
 			if (mode != null && mode.ToLowerInvariant() == "elan")
@@ -64,7 +64,7 @@ namespace SIL.FieldWorks.IText
 			}
 		}
 
-		protected InterlinearExporter(FdoCache cache, XmlWriter writer, ICmObject objRoot,
+		protected InterlinearExporter(LcmCache cache, XmlWriter writer, ICmObject objRoot,
 			InterlinLineChoices lineChoices, InterlinVc vc)
 			: base(null, cache.MainCacheAccessor, objRoot.Hvo)
 		{
@@ -121,6 +121,11 @@ namespace SIL.FieldWorks.IText
 			{
 				// <item type="punct">
 				WriteItem(tag, "punct", 0);
+			}
+			else if (((IFwMetaDataCacheManaged)m_cache.MetaDataCacheAccessor).IsCustom(tag))
+			{
+				// custom fields are not multi-strings, so pass 0 for the ws
+				WriteItem(tag, m_cache.MetaDataCacheAccessor.GetFieldName(tag), 0);
 			}
 		}
 
@@ -200,8 +205,7 @@ namespace SIL.FieldWorks.IText
 			}
 			else
 			{
-				Debug.WriteLine(
-					String.Format("Export.AddStringAltMember(hvo={0}, tag={1}, ws={2})", m_hvoCurr, tag, ws));
+				Debug.WriteLine("Export.AddStringAltMember(hvo={0}, tag={1}, ws={2})", m_hvoCurr, tag, ws);
 			}
 		}
 
@@ -384,22 +388,31 @@ namespace SIL.FieldWorks.IText
 
 		public override void AddProp(int tag, IVwViewConstructor vc, int frag)
 		{
+			if (tag == InterlinVc.ktagGlossPrepend)
+			{
+				m_fDoingGlossPrepend = true;
+			}
 			if (tag == InterlinVc.ktagGlossAppend)
 			{
 				m_fDoingGlossAppend = true;
 			}
 			base.AddProp(tag, vc, frag);
+			if (tag == InterlinVc.ktagGlossPrepend)
+			{
+				m_fDoingGlossPrepend = false;
+			}
 			if (tag == InterlinVc.ktagGlossAppend)
 			{
 				m_fDoingGlossAppend = false;
 			}
-
 		}
 
 		public override void AddTsString(ITsString tss)
 		{
 			if (m_fDoingGlossAppend)
 				WriteItem("glsAppend", tss);
+			else if (m_fDoingGlossPrepend)
+				WriteItem("glsPrepend", tss);
 			base.AddTsString(tss);
 		}
 
@@ -606,7 +619,7 @@ namespace SIL.FieldWorks.IText
 						// information we may encounter in the word bundles.
 						string icuCode = m_cache.LanguageWritingSystemFactoryAccessor.GetStrFromWs(wsActual);
 						m_writer.WriteAttributeString("lang", icuCode);
-						IWritingSystem ws = m_wsManager.Get(wsActual);
+						CoreWritingSystemDefinition ws = m_wsManager.Get(wsActual);
 						string fontName = ws.DefaultFontName;
 						m_writer.WriteAttributeString("font", fontName);
 						if (m_cache.ServiceLocator.WritingSystems.VernacularWritingSystems.Contains(ws))
@@ -617,9 +630,9 @@ namespace SIL.FieldWorks.IText
 					}
 					m_writer.WriteEndElement();	// languages
 					//Media files section
-					if (text != null && text is FDO.IText && ((FDO.IText)text).MediaFilesOA != null)
+					if (text != null && text is LCModel.IText && ((LCModel.IText)text).MediaFilesOA != null)
 					{
-						FDO.IText theText = (FDO.IText) text;
+						LCModel.IText theText = (LCModel.IText) text;
 						m_writer.WriteStartElement("media-files");
 						m_writer.WriteAttributeString("offset-type", theText.MediaFilesOA.OffsetType);
 						foreach (var mediaFile in theText.MediaFilesOA.MediaURIsOC)
@@ -748,7 +761,7 @@ namespace SIL.FieldWorks.IText
 		{
 			if (txt == null)
 				return;
-			var text = txt.Owner as FDO.IText;
+			var text = txt.Owner as LCModel.IText;
 			if (text != null)
 			{
 				foreach (var writingSystemId in text.Name.AvailableWritingSystemIds)
@@ -785,7 +798,7 @@ namespace SIL.FieldWorks.IText
 	public class InterlinearExporterForElan : InterlinearExporter
 	{
 		private const int kDocVersion = 2;
-		protected internal InterlinearExporterForElan(FdoCache cache, XmlWriter writer, ICmObject objRoot,
+		protected internal InterlinearExporterForElan(LcmCache cache, XmlWriter writer, ICmObject objRoot,
 			InterlinLineChoices lineChoices, InterlinVc vc)
 			: base(cache, writer, objRoot, lineChoices, vc)
 		{

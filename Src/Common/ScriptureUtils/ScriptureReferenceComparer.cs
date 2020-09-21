@@ -11,7 +11,7 @@
 using System;
 using System.Collections;
 using System.Diagnostics;
-using SILUBS.SharedScrUtils;
+using SIL.LCModel.Core.Scripture;
 
 namespace SIL.FieldWorks.Common.ScriptureUtils
 {

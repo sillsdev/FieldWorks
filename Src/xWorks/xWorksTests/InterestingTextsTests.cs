@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015 SIL International
+﻿// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -6,10 +6,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
-using SILUBS.SharedScrUtils;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Core.Scripture;
 using XCore;
 
 namespace SIL.FieldWorks.XWorks
@@ -18,23 +18,28 @@ namespace SIL.FieldWorks.XWorks
 	/// Tests the InterestingTextsList class.
 	/// </summary>
 	[TestFixture]
-	public class InterestingTextsTests: Test.TestUtils.BaseTest
+	public class InterestingTextsTests
 	{
 		MockStTextRepository m_mockStTextRepo;
-		PropertyTable m_propertyTable;
+		private Mediator m_mediator;
+		private PropertyTable m_propertyTable;
 
 		[SetUp]
 		public void Initialize()
 		{
 			m_mockStTextRepo = new MockStTextRepository();
-			m_propertyTable = new PropertyTable(null);
+			m_mediator = new Mediator();
+			m_propertyTable = new PropertyTable(m_mediator);
 			m_sections.Clear();
 		}
 
 		[TearDown]
 		public void TearDown()
 		{
+			m_mediator.Dispose();
+			m_mediator = null;
 			m_propertyTable.Dispose();
+			m_propertyTable = null;
 		}
 
 		/// <summary>
@@ -44,11 +49,11 @@ namespace SIL.FieldWorks.XWorks
 		public void GetCoreTexts()
 		{
 			MockTextRepository mockTextRep = MakeMockTextRepoWithTwoMockTexts();
-			var testObj = new InterestingTextList(m_propertyTable, mockTextRep, m_mockStTextRepo);
+			var testObj = new InterestingTextList(m_mediator, m_propertyTable, mockTextRep, m_mockStTextRepo);
 			VerifyList(CurrentTexts(mockTextRep),
 				testObj.InterestingTexts, "texts from initial list of two");
 			// Make sure it works if there are none.
-			Assert.AreEqual(0, new InterestingTextList(m_propertyTable, new MockTextRepository(), m_mockStTextRepo).InterestingTexts.Count());
+			Assert.AreEqual(0, new InterestingTextList(m_mediator, m_propertyTable, new MockTextRepository(), m_mockStTextRepo).InterestingTexts.Count());
 			Assert.IsTrue(testObj.IsInterestingText(mockTextRep.m_texts[0].ContentsOA));
 			Assert.IsFalse(testObj.IsInterestingText(new MockStText()));
 		}
@@ -57,7 +62,7 @@ namespace SIL.FieldWorks.XWorks
 		public void AddAndRemoveCoreTexts()
 		{
 			MockTextRepository mockTextRep = MakeMockTextRepoWithTwoMockTexts();
-			var testObj = new InterestingTextList(m_propertyTable, mockTextRep, m_mockStTextRepo);
+			var testObj = new InterestingTextList(m_mediator, m_propertyTable, mockTextRep, m_mockStTextRepo);
 			Assert.AreEqual(0, testObj.ScriptureTexts.Count());
 			testObj.InterestingTextsChanged += TextsChangedHandler;
 			MockText newText = AddMockText(mockTextRep, testObj);
@@ -77,7 +82,7 @@ namespace SIL.FieldWorks.XWorks
 		public void ReplaceCoreText()
 		{
 			MockTextRepository mockTextRepo = MakeMockTextRepoWithTwoMockTexts();
-			var testObj = new InterestingTextList(m_propertyTable, mockTextRepo, m_mockStTextRepo);
+			var testObj = new InterestingTextList(m_mediator, m_propertyTable, mockTextRepo, m_mockStTextRepo);
 			var firstStText = testObj.InterestingTexts.First();
 			MockText firstText = firstStText.Owner as MockText;
 			var replacement = new MockStText();
@@ -166,8 +171,8 @@ namespace SIL.FieldWorks.XWorks
 			MockTextRepository mockTextRep = MakeMockTextRepoWithTwoMockTexts();
 			MakeMockScriptureSection();
 			m_propertyTable.SetProperty(InterestingTextList.PersistPropertyName, InterestingTextList.MakeIdList(
-				new ICmObject[] {m_sections[0].ContentOA, m_sections[0].HeadingOA}));
-			var testObj = new InterestingTextList(m_propertyTable, mockTextRep, m_mockStTextRepo, fIncludeScripture);
+				new ICmObject[] { m_sections[0].ContentOA, m_sections[0].HeadingOA }), true);
+			var testObj = new InterestingTextList(m_mediator, m_propertyTable, mockTextRep, m_mockStTextRepo, fIncludeScripture);
 			testObj.InterestingTextsChanged += TextsChangedHandler;
 			expectedScripture = new List<IStText>();
 			expectedScripture.Add(m_sections[0].ContentOA);
@@ -190,8 +195,8 @@ namespace SIL.FieldWorks.XWorks
 			MockTextRepository mockTextRep = MakeMockTextRepoWithTwoMockTexts();
 			MakeMockScriptureSection();
 			m_propertyTable.SetProperty(InterestingTextList.PersistPropertyName, InterestingTextList.MakeIdList(
-				new ICmObject[] { m_sections[0].ContentOA, m_sections[0].HeadingOA }) + "," + Convert.ToBase64String(Guid.NewGuid().ToByteArray()) + ",$%^#@+");
-			var testObj = new InterestingTextList(m_propertyTable, mockTextRep, m_mockStTextRepo, true);
+				new ICmObject[] { m_sections[0].ContentOA, m_sections[0].HeadingOA }) + "," + Convert.ToBase64String(Guid.NewGuid().ToByteArray()) + ",$%^#@+", true);
+			var testObj = new InterestingTextList(m_mediator, m_propertyTable, mockTextRep, m_mockStTextRepo, true);
 			testObj.InterestingTextsChanged += TextsChangedHandler;
 			var expectedScripture = new List<IStText>();
 			expectedScripture.Add(m_sections[0].ContentOA);
@@ -372,7 +377,7 @@ namespace SIL.FieldWorks.XWorks
 			throw new NotImplementedException();
 		}
 
-		public IFdoServiceLocator Services
+		public ILcmServiceLocator Services
 		{
 			get { throw new NotImplementedException(); }
 		}
@@ -440,7 +445,7 @@ namespace SIL.FieldWorks.XWorks
 
 		public bool IsValidObject { get; set; }
 
-		public FdoCache Cache
+		public LcmCache Cache
 		{
 			get { throw new NotImplementedException(); }
 		}
@@ -900,7 +905,7 @@ namespace SIL.FieldWorks.XWorks
 					((MockCmObject)m_contents).Owner = this;
 			}
 		}
-		public IFdoReferenceCollection<ICmPossibility> GenresRC
+		public ILcmReferenceCollection<ICmPossibility> GenresRC
 		{
 			get { throw new NotImplementedException(); }
 		}
@@ -939,12 +944,12 @@ namespace SIL.FieldWorks.XWorks
 			get { throw new NotImplementedException(); }
 		}
 
-		public IFdoOwningCollection<IPublication> PublicationsOC
+		public ILcmOwningCollection<IPublication> PublicationsOC
 		{
 			get { throw new NotImplementedException(); }
 		}
 
-		public IFdoOwningCollection<IPubHFSet> HeaderFooterSetsOC
+		public ILcmOwningCollection<IPubHFSet> HeaderFooterSetsOC
 		{
 			get { throw new NotImplementedException(); }
 		}
@@ -961,7 +966,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 		}
 
-		public IFdoOwningSequence<IStPara> ParagraphsOS
+		public ILcmOwningSequence<IStPara> ParagraphsOS
 		{
 			get { throw new NotImplementedException(); }
 		}
@@ -972,7 +977,7 @@ namespace SIL.FieldWorks.XWorks
 			set { throw new NotImplementedException(); }
 		}
 
-		public IFdoOwningCollection<ITextTag> TagsOC
+		public ILcmOwningCollection<ITextTag> TagsOC
 		{
 			get { throw new NotImplementedException(); }
 		}
@@ -1083,7 +1088,7 @@ namespace SIL.FieldWorks.XWorks
 			set { throw new NotImplementedException(); }
 		}
 
-		public IFdoOwningSequence<IScrBook> BooksOS
+		public ILcmOwningSequence<IScrBook> BooksOS
 		{
 			get { throw new NotImplementedException(); }
 		}

@@ -1,22 +1,24 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using System.Xml;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.LCModel.Core.Text;
 using SIL.FieldWorks.Common.Controls;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Application;
+using SIL.FieldWorks.Common.Widgets;
+using SIL.LCModel;
+using SIL.LCModel.Application;
 using SIL.FieldWorks.LexText.Controls;
-using SIL.Utils;
+using SIL.LCModel.Utils;
+using SIL.Windows.Forms;
 using XCore;
 
 namespace SIL.FieldWorks.FdoUi.Dialogs
@@ -24,15 +26,15 @@ namespace SIL.FieldWorks.FdoUi.Dialogs
 	/// <summary>
 	/// Summary description for MergeObjectDlg.
 	/// </summary>
-	public class MergeObjectDlg : Form, IFWDisposable
+	public class MergeObjectDlg : Form
 	{
 		private SIL.FieldWorks.Common.Widgets.FwTextBox m_fwTextBoxBottomMsg;
-		private FdoCache m_cache;
+		private LcmCache m_cache;
 		private IHelpTopicProvider m_helpTopicProvider;
 		private DummyCmObject m_mainObj = null;
 		private DummyCmObject m_obj;
-		private ITsStrFactory m_tsf;
 		private Mediator m_mediator;
+		private XCore.PropertyTable m_propertyTable;
 
 		private System.Windows.Forms.Label label2;
 		private System.Windows.Forms.PictureBox pictureBox1;
@@ -60,8 +62,6 @@ namespace SIL.FieldWorks.FdoUi.Dialogs
 			}
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "infoIcon is a reference")]
 		private MergeObjectDlg()
 		{
 			//
@@ -89,8 +89,14 @@ namespace SIL.FieldWorks.FdoUi.Dialogs
 		/// Set up the dlg in preparation to showing it.
 		/// </summary>
 		/// <param name="cache">FDO cache.</param>
+		/// <param name="propertyTable"></param>
 		/// <param name="wp">Strings used for various items in this dialog.</param>
-		public void SetDlgInfo(FdoCache cache, Mediator mediator, WindowParams wp, DummyCmObject mainObj, List<DummyCmObject> mergeCandidates,
+		/// <param name="mediator"></param>
+		/// <param name="mainObj"></param>
+		/// <param name="mergeCandidates"></param>
+		/// <param name="guiControl"></param>
+		/// <param name="helpTopic"></param>
+		public void SetDlgInfo(LcmCache cache, Mediator mediator, XCore.PropertyTable propertyTable, WindowParams wp, DummyCmObject mainObj, List<DummyCmObject> mergeCandidates,
 			string guiControl, string helpTopic)
 		{
 			CheckDisposed();
@@ -98,9 +104,9 @@ namespace SIL.FieldWorks.FdoUi.Dialogs
 			Debug.Assert(cache != null);
 
 			m_mediator = mediator;
+			m_propertyTable = propertyTable;
 			m_cache = cache;
 			m_mainObj = mainObj;
-			m_tsf = cache.TsStrFactory;
 
 			m_fwTextBoxBottomMsg.WritingSystemFactory = m_cache.WritingSystemFactory;
 			m_fwTextBoxBottomMsg.WritingSystemCode = m_cache.WritingSystemFactory.UserWs;
@@ -126,7 +132,7 @@ namespace SIL.FieldWorks.FdoUi.Dialogs
 		private void MoveWindowToPreviousPosition()
 		{
 			// Get location to the stored values, if any.
-			object locWnd = m_mediator.PropertyTable.GetValue("mergeDlgLocation");
+			object locWnd = m_propertyTable.GetValue<object>("mergeDlgLocation");
 			// JohnT: this dialog can't be resized. So it doesn't make sense to
 			// remember a size. If we do, we need to override OnLoad (as in SimpleListChooser)
 			// to prevent the dialog growing every time at 120 dpi. But such an override
@@ -134,10 +140,10 @@ namespace SIL.FieldWorks.FdoUi.Dialogs
 			// It's better just to use the default size until it's resizeable for some reason.
 			//m_mediator.PropertyTable.GetValue("msaCreatorDlgSize");
 			object szWnd = Size;
-			if (locWnd != null && szWnd != null)
+			if (locWnd != null)
 			{
 				Rectangle rect = new Rectangle((Point)locWnd, (Size)szWnd);
-				ScreenUtils.EnsureVisibleRect(ref rect);
+				ScreenHelper.EnsureVisibleRect(ref rect);
 				DesktopBounds = rect;
 				StartPosition = FormStartPosition.Manual;
 			}
@@ -145,7 +151,7 @@ namespace SIL.FieldWorks.FdoUi.Dialogs
 
 		private void InitBrowseView(string guiControl, List<DummyCmObject> mergeCandidates)
 		{
-			XmlNode configurationParameters = (XmlNode)m_mediator.PropertyTable.GetValue("WindowConfiguration");
+			XmlNode configurationParameters = m_propertyTable.GetValue<XmlNode>("WindowConfiguration");
 			XmlNode toolNode = configurationParameters.SelectSingleNode("controls/parameters/guicontrol[@id='" + guiControl + "']/parameters");
 
 			const int kfakeFlid = 8999958;
@@ -157,8 +163,8 @@ namespace SIL.FieldWorks.FdoUi.Dialogs
 			sda.SetOwningPropInfo(WfiWordformTags.kClassId, "LangProject", "Options");
 			sda.SetOwningPropValue(hvos);
 
-			m_bvMergeOptions = new BrowseViewer(toolNode, m_cache.LangProject.Hvo, ObjectListPublisher.OwningFlid, m_cache, m_mediator, null, sda);
-			m_bvMergeOptions.StyleSheet = Common.Widgets.FontHeightAdjuster.StyleSheetFromMediator(m_mediator);
+			m_bvMergeOptions = new BrowseViewer(toolNode, m_cache.LangProject.Hvo, ObjectListPublisher.OwningFlid, m_cache, m_mediator, m_propertyTable, null, sda);
+			m_bvMergeOptions.StyleSheet = FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable);
 			m_bvMergeOptions.SelectedIndexChanged += m_bvMergeOptions_SelectedIndexChanged;
 			m_bvMergeOptions.Dock = DockStyle.Fill;
 			m_bvPanel.Controls.Add(m_bvMergeOptions);
@@ -180,7 +186,7 @@ namespace SIL.FieldWorks.FdoUi.Dialogs
 		/// </summary>
 		protected override void Dispose( bool disposing )
 		{
-			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			// Must not be run more than once.
 			if (IsDisposed)
 				return;
@@ -195,7 +201,6 @@ namespace SIL.FieldWorks.FdoUi.Dialogs
 			m_cache = null;
 			m_fwTextBoxBottomMsg = null;
 			m_mediator = null;
-			m_tsf = null;
 
 			base.Dispose( disposing );
 		}
@@ -205,18 +210,17 @@ namespace SIL.FieldWorks.FdoUi.Dialogs
 		private void SetBottomMessage()
 		{
 			int userWs = m_cache.ServiceLocator.WritingSystemManager.UserWs;
-			int vernWs = m_cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Handle;
 			string sBase;
 			if (m_obj != null && m_obj.Hvo > 0)
 				sBase = FdoUiStrings.ksMergeXIntoY;
 			else
 				sBase = FdoUiStrings.ksMergeXIntoSelection;
-			ITsStrBldr tsb = TsStrBldrClass.Create();
-			tsb.ReplaceTsString(0, tsb.Length, m_tsf.MakeString(sBase, userWs));
+			ITsStrBldr tsb = TsStringUtils.MakeStrBldr();
+			tsb.ReplaceTsString(0, tsb.Length, TsStringUtils.MakeString(sBase, userWs));
 			// Replace every "{0}" with the headword we'll be merging, and make it bold.
-			ITsString tssFrom = m_tsf.MakeString(m_mainObj.ToString(), m_mainObj.WS);
+			ITsString tssFrom = TsStringUtils.MakeString(m_mainObj.ToString(), m_mainObj.WS);
 			string sTmp = tsb.Text;
-			int ich = sTmp.IndexOf("{0}");
+			int ich = sTmp.IndexOf("{0}", StringComparison.Ordinal);
 			int cch = tssFrom.Length;
 			while (ich >= 0 && cch > 0)
 			{
@@ -226,14 +230,14 @@ namespace SIL.FieldWorks.FdoUi.Dialogs
 					(int)FwTextPropVar.ktpvEnum,
 					(int)FwTextToggleVal.kttvForceOn);
 				sTmp = tsb.Text;
-				ich = sTmp.IndexOf("{0}");	// in case localization needs more than one.
+				ich = sTmp.IndexOf("{0}", StringComparison.Ordinal);	// in case localization needs more than one.
 			}
 			int cLines = 1;
 			if (m_obj != null && m_obj.Hvo > 0)
 			{
 				// Replace every "{1}" with the headword we'll be merging into.
-				ITsString tssTo = m_tsf.MakeString(m_obj.ToString(), m_obj.WS);
-				ich = sTmp.IndexOf("{1}");
+				ITsString tssTo = TsStringUtils.MakeString(m_obj.ToString(), m_obj.WS);
+				ich = sTmp.IndexOf("{1}", StringComparison.Ordinal);
 				cch = tssTo.Length;
 				while (ich >= 0 && cch > 0)
 				{
@@ -243,27 +247,27 @@ namespace SIL.FieldWorks.FdoUi.Dialogs
 						(int)FwTextPropVar.ktpvEnum,
 						(int)FwTextToggleVal.kttvForceOn);
 					sTmp = tsb.Text;
-					ich = sTmp.IndexOf("{1}");
+					ich = sTmp.IndexOf("{1}", StringComparison.Ordinal);
 				}
 				// Replace every "{2}" with a newline character.
-				ich = sTmp.IndexOf("{2}");
+				ich = sTmp.IndexOf("{2}", StringComparison.Ordinal);
 				while (ich >= 0)
 				{
-					tsb.ReplaceTsString(ich, ich + 3, m_tsf.MakeString(StringUtils.kChHardLB.ToString(), userWs));
+					tsb.ReplaceTsString(ich, ich + 3, TsStringUtils.MakeString(StringUtils.kChHardLB.ToString(), userWs));
 					sTmp = tsb.Text;
-					ich = sTmp.IndexOf("{2}");
+					ich = sTmp.IndexOf("{2}", StringComparison.Ordinal);
 					++cLines;
 				}
 			}
 			else
 			{
 				// Replace every "{1}" with a newline character.
-				ich = sTmp.IndexOf("{1}");
+				ich = sTmp.IndexOf("{1}", StringComparison.Ordinal);
 				while (ich >= 0)
 				{
-					tsb.ReplaceTsString(ich, ich + 3, m_tsf.MakeString(StringUtils.kChHardLB.ToString(), userWs));
+					tsb.ReplaceTsString(ich, ich + 3, TsStringUtils.MakeString(StringUtils.kChHardLB.ToString(), userWs));
 					sTmp = tsb.Text;
-					ich = sTmp.IndexOf("{1}");
+					ich = sTmp.IndexOf("{1}", StringComparison.Ordinal);
 					++cLines;
 				}
 			}
@@ -279,7 +283,7 @@ namespace SIL.FieldWorks.FdoUi.Dialogs
 			{
 				int delta = newHeight - oldHeight;
 				Size = MinimumSize;
-				SIL.FieldWorks.Common.Widgets.FontHeightAdjuster.GrowDialogAndAdjustControls(this, delta, m_fwTextBoxBottomMsg);
+				FontHeightAdjuster.GrowDialogAndAdjustControls(this, delta, m_fwTextBoxBottomMsg);
 				m_fwTextBoxBottomMsg.Height = newHeight;
 			}
 		}
@@ -382,7 +386,7 @@ namespace SIL.FieldWorks.FdoUi.Dialogs
 		}
 		#endregion
 
-		private void m_bvMergeOptions_SelectedIndexChanged(object sender, System.EventArgs e)
+		private void m_bvMergeOptions_SelectedIndexChanged(object sender, EventArgs e)
 		{
 			SetSelectedObject();
 		}
@@ -395,16 +399,16 @@ namespace SIL.FieldWorks.FdoUi.Dialogs
 			btnOK.Enabled = true;
 		}
 
-		private void MergeObjectDlg_Closed(object sender, System.EventArgs e)
+		private void MergeObjectDlg_Closed(object sender, EventArgs e)
 		{
-			if (m_mediator != null)
+			if (m_propertyTable != null)
 			{
-				m_mediator.PropertyTable.SetProperty("mergeDlgLocation", Location);
-				m_mediator.PropertyTable.SetProperty("mergeDlgSize", Size);
+				m_propertyTable.SetProperty("mergeDlgLocation", Location, true);
+				m_propertyTable.SetProperty("mergeDlgSize", Size, true);
 			}
 		}
 
-		private void buttonHelp_Click(object sender, System.EventArgs e)
+		private void buttonHelp_Click(object sender, EventArgs e)
 		{
 			ShowHelp.ShowHelpTopic(m_helpTopicProvider, m_helpTopic);
 		}

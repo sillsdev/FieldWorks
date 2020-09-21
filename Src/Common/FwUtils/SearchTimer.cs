@@ -4,7 +4,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;
 
 namespace SIL.FieldWorks.Common.FwUtils
@@ -14,8 +13,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 	/// of user input and then doing some search function after either a pause or a
 	/// change in the text box.
 	/// </summary>
-	[SuppressMessage("Gendarme.Rules.Correctness", "DisposableFieldsShouldBeDisposedRule",
-		Justification="m_owningControl is a reference.")]
 	public class SearchTimer: IDisposable
 	{
 		private readonly Timer m_timer;

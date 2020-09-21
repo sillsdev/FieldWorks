@@ -1,18 +1,18 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Windows.Forms;
 using System.Drawing;
-using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.LCModel;
+using SIL.FieldWorks.Common.ViewsInterfaces;
+using SIL.LCModel.DomainServices;
 using SIL.FieldWorks.FdoUi;
-using SIL.Utils;
+using SIL.LCModel.Utils;
 using SIL.FieldWorks.Common.Widgets;
-using SIL.CoreImpl;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.KernelInterfaces;
 
 
 namespace SIL.FieldWorks.IText
@@ -21,12 +21,12 @@ namespace SIL.FieldWorks.IText
 	/// This class handles the functions of the combo box that is used to choose a
 	/// different existing analysis.
 	/// </summary>
-	internal class ChooseAnalysisHandler : IComboHandler, IFWDisposable
+	internal class ChooseAnalysisHandler : IComboHandler, IDisposable
 	{
 		int m_hvoAnalysis; // The current 'analysis', may be wordform, analysis, gloss.
 		int m_hvoSrc; // the object (CmAnnotation? or SbWordform) we're analyzing.
 		bool m_fInitializing = false; // true to suppress AnalysisChosen while setting up combo.
-		FdoCache m_cache;
+		LcmCache m_cache;
 		IComboList m_combo;
 		SandboxBase m_owner;
 		const string ksMissingString = "---";
@@ -110,7 +110,7 @@ namespace SIL.FieldWorks.IText
 		/// <param name="hvoSrc"></param>
 		/// <param name="?"></param>
 		/// <param name="comboList"></param>
-		public ChooseAnalysisHandler(FdoCache cache, int hvoSrc, int hvoAnalysis, IComboList comboList)
+		public ChooseAnalysisHandler(LcmCache cache, int hvoSrc, int hvoAnalysis, IComboList comboList)
 		{
 			m_combo = comboList;
 			m_cache = cache;
@@ -261,7 +261,7 @@ namespace SIL.FieldWorks.IText
 		void AddSeparatorLine()
 		{
 			//review
-			ITsStrBldr builder = TsStrBldrClass.Create();
+			ITsStrBldr builder = TsStringUtils.MakeStrBldr();
 			builder.Replace(0,0,"-------", null);
 			builder.SetIntPropValues(0, builder.Length, (int)FwTextPropType.ktptWs,
 				(int)FwTextPropVar.ktpvDefault, m_cache.DefaultUserWs);
@@ -319,8 +319,8 @@ namespace SIL.FieldWorks.IText
 
 		protected ITsString MakeSimpleString(String str)
 		{
-			ITsStrBldr builder = TsStrBldrClass.Create();
-			ITsPropsBldr bldr = TsPropsBldrClass.Create();
+			ITsStrBldr builder = TsStringUtils.MakeStrBldr();
+			ITsPropsBldr bldr = TsStringUtils.MakePropsBldr();
 			bldr.SetIntPropValues((int)FwTextPropType.ktptWs,
 				(int)FwTextPropVar.ktpvDefault, m_cache.DefaultUserWs);
 			bldr.SetIntPropValues((int)FwTextPropType.ktptFontSize,
@@ -332,9 +332,9 @@ namespace SIL.FieldWorks.IText
 
 		// Generate a suitable string representation of a WfiGloss.
 		// Todo: finish implementing (add the gloss!)
-		static internal ITsString MakeGlossStringRep(IWfiGloss wg, FdoCache fdoCache, bool fUseStyleSheet)
+		static internal ITsString MakeGlossStringRep(IWfiGloss wg, LcmCache fdoCache, bool fUseStyleSheet)
 		{
-			ITsStrBldr tsb = TsStrBldrClass.Create();
+			ITsStrBldr tsb = TsStringUtils.MakeStrBldr();
 			var wa = wg.Owner as IWfiAnalysis;
 
 			var category = wa.CategoryRA;
@@ -360,18 +360,18 @@ namespace SIL.FieldWorks.IText
 		}
 
 		// Make a string representing a WfiAnalysis, suitable for use in a combo box item.
-		static internal ITsString MakeAnalysisStringRep(IWfiAnalysis wa, FdoCache fdoCache, bool fUseStyleSheet, int wsVern)
+		static internal ITsString MakeAnalysisStringRep(IWfiAnalysis wa, LcmCache fdoCache, bool fUseStyleSheet, int wsVern)
 		{
 			//			ITsTextProps boldItalicAnalysis = BoldItalicAnalysis(fdoCache);
 			//			ITsTextProps italicAnalysis = ItalicAnalysis(fdoCache, Sandbox.SandboxVc.krgbRed);
 			ITsTextProps posTextProperties = PartOfSpeechTextProperties(fdoCache, true, fUseStyleSheet);
 			ITsTextProps formTextProperties = FormTextProperties(fdoCache, fUseStyleSheet, wsVern);
 			ITsTextProps glossTextProperties = GlossTextProperties(fdoCache, true, fUseStyleSheet);
-			ITsStrBldr tsb = TsStrBldrClass.Create();
+			ITsStrBldr tsb = TsStringUtils.MakeStrBldr();
 			ISilDataAccess sda = fdoCache.MainCacheAccessor;
 			int cmorph = wa.MorphBundlesOS.Count;
 			if (cmorph == 0)
-				return TsStringUtils.MakeTss(ITextStrings.ksNoMorphemes, fdoCache.DefaultUserWs);
+				return TsStringUtils.MakeString(ITextStrings.ksNoMorphemes, fdoCache.DefaultUserWs);
 			bool fRtl = fdoCache.ServiceLocator.WritingSystemManager.Get(wsVern).RightToLeftScript;
 			int start = 0;
 			int lim = cmorph;
@@ -452,10 +452,10 @@ namespace SIL.FieldWorks.IText
 		/// </summary>
 		/// <param name="fdoCache"></param>
 		/// <returns></returns>
-		public static ITsTextProps FormTextProperties(FdoCache fdoCache, bool fUseStyleSheet, int wsVern)
+		public static ITsTextProps FormTextProperties(LcmCache fdoCache, bool fUseStyleSheet, int wsVern)
 		{
 			int color =(int) CmObjectUi.RGB(Color.DarkBlue);
-			ITsPropsBldr bldr = TsPropsBldrClass.Create();
+			ITsPropsBldr bldr = TsStringUtils.MakePropsBldr();
 			if (!fUseStyleSheet)
 			{
 				bldr.SetIntPropValues((int)FwTextPropType.ktptFontSize ,
@@ -474,10 +474,10 @@ namespace SIL.FieldWorks.IText
 			return bldr.GetTextProps();
 		}
 
-		public static ITsTextProps GlossTextProperties(FdoCache fdoCache, bool inAnalysisLine, bool fUseStyleSheet)
+		public static ITsTextProps GlossTextProperties(LcmCache fdoCache, bool inAnalysisLine, bool fUseStyleSheet)
 		{
 			int color =(int) CmObjectUi.RGB(Color.DarkRed);
-			ITsPropsBldr bldr = TsPropsBldrClass.Create();
+			ITsPropsBldr bldr = TsStringUtils.MakePropsBldr();
 			if (!fUseStyleSheet)
 			{
 				bldr.SetIntPropValues((int)FwTextPropType.ktptFontSize ,
@@ -503,10 +503,10 @@ namespace SIL.FieldWorks.IText
 		/// </summary>
 		/// <param name="fdoCache"></param>
 		/// <returns></returns>
-		public static ITsTextProps PartOfSpeechTextProperties(FdoCache fdoCache, bool inAnalysisLine, bool fUseStyleSheet)
+		public static ITsTextProps PartOfSpeechTextProperties(LcmCache fdoCache, bool inAnalysisLine, bool fUseStyleSheet)
 		{
 			int color =(int) CmObjectUi.RGB(Color.Green);
-			ITsPropsBldr bldr = TsPropsBldrClass.Create();
+			ITsPropsBldr bldr = TsStringUtils.MakePropsBldr();
 			if (!fUseStyleSheet)
 			{
 				bldr.SetIntPropValues((int)FwTextPropType.ktptFontSize ,
@@ -553,7 +553,7 @@ namespace SIL.FieldWorks.IText
 		/// Display the combo box at the specified location, or the list box pulled down from the specified location.
 		/// </summary>
 		/// <param name="loc"></param>
-		public void Activate(SIL.Utils.Rect loc)
+		public void Activate(Rect loc)
 		{
 			CheckDisposed();
 

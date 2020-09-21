@@ -1,4 +1,8 @@
-﻿using System;
+// Copyright (c) 2018 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
+
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
@@ -49,7 +53,7 @@ namespace FwBuildTasks
 		public override bool Execute()
 		{
 			Dictionary<string, string> substitutions;
-			if (!ParseSymbolFile(Symbols, Log, out substitutions))
+			if (!BuildUtils.ParseSymbolFile(Symbols, Log, out substitutions))
 				return false;
 
 			string template = Template;
@@ -70,8 +74,18 @@ namespace FwBuildTasks
 				fileContents = regex.Replace(fileContents, string.Format("{0:dd}", DateTime.Now));
 
 				regex = new Regex("\\$NUMBEROFDAYS");
-				fileContents = regex.Replace(fileContents,
-					Convert.ToInt32(Math.Truncate(DateTime.Now.ToOADate())).ToString());
+				var numberOfDays = Convert.ToInt32(Math.Truncate(DateTime.Now.ToOADate())).ToString();
+				fileContents = regex.Replace(fileContents, numberOfDays);
+
+				// Jenkins builds should set the BUILD_NUMBER in the environment
+				var buildNumber = Environment.GetEnvironmentVariable("BUILD_NUMBER");
+				if (string.IsNullOrEmpty(buildNumber))
+				{
+					// fall back to number of days if no BUILD_NUMBER is in the environment
+					buildNumber = numberOfDays;
+				}
+				regex = new Regex("\\$BUILDNUMBER");
+				fileContents = regex.Replace(fileContents, buildNumber);
 
 				regex = new Regex("\\$GENERATEDFILECOMMENT");
 				if (regex.IsMatch(fileContents))
@@ -131,37 +145,6 @@ namespace FwBuildTasks
 				Log.LogMessage(MessageImportance.High, "Generating {0} from {1} threw an exception {2}", Output,
 						template, e.Message);
 				return false;
-			}
-			return true;
-		}
-
-		/// <returns>true if substitutions were successfully parsed from the symbol file</returns>
-		public static bool ParseSymbolFile(string symbolFile, TaskLoggingHelper log, out Dictionary<string, string> substitutions)
-		{
-			substitutions = new Dictionary<string, string>();
-			if (string.IsNullOrEmpty(symbolFile))
-				return true;
-			if (!File.Exists(symbolFile))
-			{
-				log.LogMessage(MessageImportance.High, "Symbol file " + symbolFile + " not found");
-				return false;
-			}
-			var reader = new StreamReader(symbolFile);
-			var lineNumber = 0;
-			while (!reader.EndOfStream)
-			{
-				var line = reader.ReadLine();
-				lineNumber++;
-				// Ignore empty lines, comments, or if we somehow get a null at the end.
-				if (string.IsNullOrWhiteSpace(line) || line.StartsWith("//"))
-					continue;
-				var items = line.Split('=');
-				if (items.Length != 2 || items[0].Trim().Length == 0)
-				{
-					log.LogMessage(MessageImportance.High, "Invalid symbol file: '{0}' line {1} should be Name=Value", symbolFile, lineNumber);
-					return false;
-				}
-				substitutions[items[0].Trim()] = items[1].Trim();
 			}
 			return true;
 		}

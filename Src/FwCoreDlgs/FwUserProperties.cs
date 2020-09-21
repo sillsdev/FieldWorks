@@ -1,25 +1,16 @@
-// Copyright (c) 2002-2013 SIL International
+// Copyright (c) 2002-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: FwUserProperties.cs
-// Responsibility: TE Team
-//
-// <remarks>
-// Heavily modified (January-July 2004) by Sarah Doorenbos (sarahdoorenbos@yahoo.com)
-// </remarks>
 
 using System;
 using System.Diagnostics;
 using System.Reflection;
 using System.Resources;
 using System.Windows.Forms;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using SIL.FieldWorks.Common.Drawing;
-using SIL.Utils;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
-using XCore;
 
 namespace SIL.FieldWorks.FwCoreDlgs
 {
@@ -33,7 +24,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 	/// If needed, they can be found in the source tree...go for the version before my checkin on Nov 5 2010.
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
-	public class FwUserProperties : Form, IFWDisposable
+	public class FwUserProperties : Form
 	{
 		#region FwUserProperties Data Members
 		#region Designer Variables
@@ -102,7 +93,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		protected const int kDataAccessTab = 2;
 
 		/// <summary></summary>
-		protected FdoCache m_Cache;
+		protected LcmCache m_Cache;
 		private bool m_cacheMadeLocally = false;
 		private Feature[] m_Features;
 		private int m_userLevel;
@@ -143,12 +134,12 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Creates and initializes a new instance of the FwUserProperties class. Accepts an
-		/// FdoCache that encapsulates a DB connection.
+		/// LcmCache that encapsulates a DB connection.
 		/// </summary>
 		/// <param name="cache">Accessor for data cache and DB connection</param>
 		/// <param name="features">A list of application features available to the user</param>
 		/// ------------------------------------------------------------------------------------
-		public FwUserProperties(FdoCache cache, Feature[] features): this()
+		public FwUserProperties(LcmCache cache, Feature[] features): this()
 		{
 			if (cache == null)
 				throw new Exception("Null Cache passed toFwUserProperties");
@@ -716,7 +707,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 			//Temporary:
 			clbFeatures.Items.AddRange(m_Features);
-			//SIL.FieldWorks.TE.GetAppFeatures();
 		}
 
 		private void CreateNewAccounts()

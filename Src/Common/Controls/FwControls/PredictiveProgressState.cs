@@ -1,10 +1,6 @@
-// Copyright (c) 2005-2013 SIL International
+// Copyright (c) 2005-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: PredictiveProgressState.cs
-// Responsibility:
-// Last reviewed:
 //
 // <remarks>
 //	This code started from http://www.codeproject.com/csharp/PrettyGoodSplashScreen.asp.
@@ -26,8 +22,7 @@
 using System;
 using System.Collections.Generic;
 using Microsoft.Win32;
-using System.Diagnostics;
-using SIL.Utils;
+using SIL.LCModel.Utils;
 
 namespace SIL.FieldWorks.Common.Controls
 {

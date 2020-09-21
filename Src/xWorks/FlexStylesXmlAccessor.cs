@@ -1,20 +1,22 @@
-// Copyright (c) 2014-2015 SIL International
+// Copyright (c) 2014-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Drawing;
 using System.Linq;
 using System.Xml;
 using System.Xml.Schema;
 using System.Xml.Serialization;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel;
 using SIL.FieldWorks.Common.Framework;
-using SIL.Utils;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Utils;
 using SIL.FieldWorks.FwCoreDlgControls;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.LCModel.DomainServices;
 
 namespace SIL.FieldWorks.XWorks.LexText
 {
@@ -32,6 +34,14 @@ namespace SIL.FieldWorks.XWorks.LexText
 		private FlexStylesXmlAccessor() {}
 
 		private string m_sourceDocumentPath;
+		private static readonly Dictionary<string, string> BulletPropertyMap = new Dictionary<string, string>
+		{
+			{"numberscheme", "bulNumScheme"},
+			{"startat", "bulNumStartAt"},
+			{"textafter", "bulNumTxtAft"},
+			{"textbefore", "bulNumTxtBef"},
+			{"bulletcustom", "bulCusTxt"}
+		};
 
 		/// <summary/>
 		public FlexStylesXmlAccessor(ILexDb lexicon, bool loadDocument = false, string sourceDocument = null)
@@ -55,7 +65,7 @@ namespace SIL.FieldWorks.XWorks.LexText
 		/// -------------------------------------------------------------------------------------
 		protected override string ResourceFilePathFromFwInstall
 		{
-			get { return @"/Language Explorer/" + ResourceFileName; }
+			get { return Path.DirectorySeparatorChar + @"Language Explorer" + Path.DirectorySeparatorChar + ResourceFileName; }
 		}
 
 		/// -------------------------------------------------------------------------------------
@@ -74,7 +84,7 @@ namespace SIL.FieldWorks.XWorks.LexText
 		/// Gets the resource list in which the CmResources are owned.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		protected override IFdoOwningCollection<ICmResource> ResourceList
+		protected override ILcmOwningCollection<ICmResource> ResourceList
 		{
 			get { return m_lexicon.ResourcesOC; }
 		}
@@ -84,17 +94,17 @@ namespace SIL.FieldWorks.XWorks.LexText
 		/// Required implementation of abstract method gives style collection.
 		/// </summary>
 		/// -------------------------------------------------------------------------------------
-		protected override IFdoOwningCollection<IStStyle> StyleCollection
+		protected override ILcmOwningCollection<IStStyle> StyleCollection
 		{
 			get { return m_cache.LangProject.StylesOC; }
 		}
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Gets the FdoCache
+		/// Gets the LcmCache
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		protected override FdoCache Cache
+		protected override LcmCache Cache
 		{
 			get { return m_lexicon.Cache; }
 		}
@@ -145,7 +155,13 @@ namespace SIL.FieldWorks.XWorks.LexText
 		{
 			if (context != ContextValues.InternalConfigureView &&
 				context != ContextValues.Internal &&
-				context != ContextValues.General)
+				context != ContextValues.General &&
+				context != ContextValues.Book &&
+				context != ContextValues.Text &&
+				context != ContextValues.PsuedoStyle &&
+				context != ContextValues.InternalMappable &&
+				context != ContextValues.Note &&
+				context != ContextValues.Title)
 				ReportInvalidInstallation(String.Format(
 					"Style {0} is illegally defined with context '{1}' in {2}.",
 					styleName, context, ResourceFileName));
@@ -294,7 +310,7 @@ namespace SIL.FieldWorks.XWorks.LexText
 				if (wsOverrideProps.Any())
 				{
 					writer.WriteStartElement("override");
-					writer.WriteAttributeString("wsId", writingSystem.RFC5646);
+					writer.WriteAttributeString("wsId", writingSystem.LanguageTag);
 					foreach (var prop in wsOverrideProps)
 					{
 						writer.WriteAttributeString(prop.Item1, prop.Item2);
@@ -311,6 +327,31 @@ namespace SIL.FieldWorks.XWorks.LexText
 				{
 					writer.WriteAttributeString(prop.Item1, prop.Item2);
 				}
+
+				//Bullet/Number FontInfo
+				try
+				{
+					IEnumerable<Tuple<string, string>> bulNumParaProperty = CollectBulletProps(style.BulletInfo);
+					foreach (var prop in bulNumParaProperty)
+					{
+						string propName = prop.Item1;
+						if (BulletPropertyMap.ContainsKey(propName.ToLower()))
+							propName = BulletPropertyMap[propName.ToLower()];
+						writer.WriteAttributeString(propName, prop.Item2);
+					}
+					// Generate the font info (the font element is required by the DTD even if it has no attributes)
+					writer.WriteStartElement("BulNumFontInfo");
+					IEnumerable<Tuple<string, string>> bulletFontInfoProperties = CollectFontProps(style.BulletInfo.FontInfo);
+					if (bulletFontInfoProperties.Any())
+					{
+						foreach (var prop in bulletFontInfoProperties)
+						{
+							writer.WriteAttributeString(prop.Item1, prop.Item2);
+						}
+					}
+					writer.WriteEndElement(); // bullet
+				}
+				catch{}
 				writer.WriteEndElement(); // paragraph
 			}
 		}
@@ -334,6 +375,7 @@ namespace SIL.FieldWorks.XWorks.LexText
 			{
 				fontProperties.Add(new Tuple<string, string>("italic", styleRules.Italic.Value.ToString().ToLowerInvariant()));
 			}
+			GetColorValueAttribute("backcolor", styleRules.BackColor, fontProperties);
 			GetColorValueAttribute("color", styleRules.FontColor, fontProperties);
 			GetColorValueAttribute("underlineColor", styleRules.UnderlineColor, fontProperties);
 			if (styleRules.Underline.ValueIsSet)
@@ -447,6 +489,66 @@ namespace SIL.FieldWorks.XWorks.LexText
 		}
 
 		/// <summary>
+		/// Collects the bullet info for the style in tuples of attribute name, attribute value
+		/// </summary>
+		private IEnumerable<Tuple<string, string>> CollectBulletProps(BulletInfo styleRules)
+		{
+			var bulletProperties = new List<Tuple<string, string>>();
+			if (styleRules.m_numberScheme.ToString().Length > 0)
+			{
+				string bulletNumberScheme;
+				switch (styleRules.m_numberScheme)
+				{
+					case VwBulNum.kvbnNone:
+						bulletNumberScheme = "None";
+						break;
+					case VwBulNum.kvbnArabic:
+						bulletNumberScheme = "Arabic";
+						break;
+					case VwBulNum.kvbnRomanUpper:
+						bulletNumberScheme = "RomanUpper";
+						break;
+					case VwBulNum.kvbnRomanLower:
+						bulletNumberScheme = "RomanLower";
+						break;
+					case VwBulNum.kvbnLetterUpper:
+						bulletNumberScheme = "LetterUpper";
+						break;
+					case VwBulNum.kvbnLetterLower:
+						bulletNumberScheme = "LetterLower";
+						break;
+					case VwBulNum.kvbnArabic01:
+						bulletNumberScheme = "Arabic01";
+						break;
+					case VwBulNum.kvbnBullet:
+						bulletNumberScheme = "Custom";
+						break;
+					default:
+						bulletNumberScheme = styleRules.m_numberScheme.ToString();
+						break;
+				}
+				bulletProperties.Add(new Tuple<string, string>("numberScheme", bulletNumberScheme));
+			}
+			if (!string.IsNullOrEmpty(styleRules.m_bulletCustom))
+			{
+				bulletProperties.Add(new Tuple<string, string>("bulletCustom", styleRules.m_bulletCustom.ToLowerInvariant()));
+			}
+			if (styleRules.m_start.ToString().Length > 0)
+			{
+				bulletProperties.Add(new Tuple<string, string>("startAt", styleRules.m_start.ToString().ToLowerInvariant()));
+			}
+			if (!string.IsNullOrEmpty(styleRules.m_textBefore))
+			{
+				bulletProperties.Add(new Tuple<string, string>("textBefore", styleRules.m_textBefore.ToLowerInvariant()));
+			}
+			if (!string.IsNullOrEmpty(styleRules.m_textAfter))
+			{
+				bulletProperties.Add(new Tuple<string, string>("textAfter", styleRules.m_textAfter.ToLowerInvariant()));
+			}
+			return bulletProperties;
+		}
+
+		/// <summary>
 		/// Takes the property identifier integer and the attribute name that we want to use in the xml and generates a tuple
 		/// with the attribute name and value if this property is set in the style rules. This method assumes the property is
 		/// for a size value stored in millipoints.
@@ -492,7 +594,7 @@ namespace SIL.FieldWorks.XWorks.LexText
 			if (hasColor != -1)
 			{
 				var color = Color.FromArgb((int)ColorUtil.ConvertRGBtoBGR((uint)colorValueBGR)); // convert BGR to RGB
-				GetColorValueFromSystemColor(attributeName, resultsList, color);
+				GetColorValueFromSystemColor(attributeName, color, resultsList);
 			}
 		}
 
@@ -501,15 +603,17 @@ namespace SIL.FieldWorks.XWorks.LexText
 			if (fontColor.ValueIsSet)
 			{
 				var color = fontColor.Value;
-				GetColorValueFromSystemColor(attributeName, resultsList, color);
+				GetColorValueFromSystemColor(attributeName, color, resultsList);
 			}
 		}
 
 		/// <summary>
 		/// Takes a system color and writes out a string if it is a known color, or an RGB value that the import code can read
 		/// </summary>
-		private static void GetColorValueFromSystemColor(string attributeName, List<Tuple<string, string>> resultsList, Color color)
+		private static void GetColorValueFromSystemColor(string attributeName, Color color, List<Tuple<string, string>> resultsList)
 		{
+			if (color.IsEmpty)
+				return;
 			var colorString = color.IsKnownColor
 				? color.Name.ToLowerInvariant()
 				: string.Format("({0},{1},{2})", color.R, color.G, color.B);

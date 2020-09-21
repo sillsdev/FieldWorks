@@ -1,24 +1,18 @@
-// Copyright (c) 2010-2013 SIL International
+// Copyright (c) 2010-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: FwUpdateReportDlg.cs
-// Responsibility: TE Team
 
 using System;
-using System.IO;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Printing;
+using System.IO;
 using System.Text;
 using System.Windows.Forms;
-
+using SIL.FieldWorks.Common.Controls.FileDialog;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Resources;
-using SIL.Utils;
-using SIL.Utils.FileDialog;
-using XCore;
-using System.Diagnostics.CodeAnalysis;
+using SIL.LCModel.Utils;
 
 namespace SIL.FieldWorks.FwCoreDlgs
 {
@@ -30,7 +24,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 	/// <remarks>This is intended to be an abstract base class, but making it abstract messes up
 	/// the Designer in the derived classes. You should override HelpTopicKey</remarks>
 	/// ----------------------------------------------------------------------------------------
-	public partial class FwUpdateReportDlg : Form, IFWDisposable
+	public partial class FwUpdateReportDlg : Form
 	{
 		#region Private members
 		private Font m_SansSerifFont;
@@ -117,7 +111,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		}
 		#endregion
 
-		#region IFwDisposable implementation
+		#region IDisposable implementation
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Check to see if the object has been disposed.
@@ -282,8 +276,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// Handle BeginPrint event.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "FontFamily.Families contains references")]
 		private void printDocument_BeginPrint(object sender, PrintEventArgs e)
 		{
 			if (m_SansSerifFont == null)

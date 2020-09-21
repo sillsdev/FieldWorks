@@ -11,7 +11,6 @@
 // which the program has been (at least partially) localized.  Each language name is given in
 // its own language and script.
 // </remarks>
-
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -19,10 +18,10 @@ using System.Linq;
 using System.Windows.Forms;
 using System.Diagnostics;
 using System.Globalization;
-
 using System.IO;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.Common.FwUtils;
+using Icu;
+using SIL.LCModel.Core.Text;
+using SIL.PlatformUtilities;
 
 namespace SIL.FieldWorks.Common.Widgets
 {
@@ -44,14 +43,15 @@ namespace SIL.FieldWorks.Common.Widgets
 		public UserInterfaceChooser()
 		{
 			InitializeComponent();
-#if __MonoCS__
-			// On Windows, finding fonts for strings appears to work fine.  On Linux, fonts
-			// are found based purely on the current locale setting.  So displaying Chinese
-			// text when the locale is set to Hindi just doesn't work.  Thus, to get our
-			// fancy display of language choices to work on Linux, we have to draw the list
-			// ourselves.  (See FWNX-1069.)
-			this.DrawMode = DrawMode.OwnerDrawVariable;
-#endif
+			if (Platform.IsMono)
+			{
+				// On Windows, finding fonts for strings appears to work fine.  On Linux, fonts
+				// are found based purely on the current locale setting.  So displaying Chinese
+				// text when the locale is set to Hindi just doesn't work.  Thus, to get our
+				// fancy display of language choices to work on Linux, we have to draw the list
+				// ourselves.  (See FWNX-1069.)
+				this.DrawMode = DrawMode.OwnerDrawVariable;
+			}
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -79,17 +79,6 @@ namespace SIL.FieldWorks.Common.Widgets
 			get { return (m_sNewUserWs == "en-US" ? "en" : m_sNewUserWs); }
 		}
 
-		/// <summary>
-		/// Set true in FLEx, where the UI languages combo should not show extra languages
-		/// just because TE has localizations of the Key Terms list in those languages.
-		/// This is a bit of a kludge. Ideally we would make TE behave more like FLEx, where
-		/// list localizations are a function of analysis language rather than UI language,
-		/// and hence available localizations of them do not need to affect the UI language
-		/// choices. The negative definition makes TE's choice the default and avoids
-		/// having to change TE code.
-		/// </summary>
-		public bool SuppressKeyTermLocalizationLangs { get; set; }
-
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Populate the User Interface Languages combobox with the available languages.
@@ -101,9 +90,6 @@ namespace SIL.FieldWorks.Common.Widgets
 
 			// First, find those languages having satellite resource DLLs.
 			AddAvailableLangsFromSatelliteDlls();
-
-			if(!SuppressKeyTermLocalizationLangs)
-				AddAvailableLangsFromKeyTermsLocalizations();
 
 			// If no English locale was added, then add generic English. Otherwise,
 			// if another, non US version of English, was added (e.g. en_GB), then add
@@ -169,20 +155,6 @@ namespace SIL.FieldWorks.Common.Widgets
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Adds the available languages from localizations of the biblical terms file.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		private void AddAvailableLangsFromKeyTermsLocalizations()
-		{
-			foreach (string file in FwDirectoryFinder.KeyTermsLocalizationFiles)
-			{
-				if (!String.IsNullOrEmpty(file))
-					AddLanguage(FwDirectoryFinder.GetLocaleFromKeyTermsLocFile(file));
-			}
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
 		/// Adds the language.
 		/// </summary>
 		/// <param name="sLocale">The locale.</param>
@@ -239,15 +211,17 @@ namespace SIL.FieldWorks.Common.Widgets
 			m_sNewUserWs = ldi.Locale;
 		}
 
-#if __MonoCS__
-		// See the comment above about FWNX-1069.
-
 		/// <summary>
 		/// Handles the measure item event.
 		/// </summary>
 		protected override void OnMeasureItem(MeasureItemEventArgs e)
 		{
 			base.OnMeasureItem(e);
+
+			if (!Platform.IsMono)
+				return;
+
+			// See the comment above about FWNX-1069.
 			var lang = ((LanguageDisplayItem)Items[e.Index]).Locale;
 			using (Font font = GetFontForLanguage(lang))
 			{
@@ -308,12 +282,10 @@ namespace SIL.FieldWorks.Common.Widgets
 		{
 			// For some reason, Mono requires both FwUtils in the next line.
 			string fontName = FwUtils.FwUtils.GetFontNameForLanguage(lang);
-			if (String.IsNullOrEmpty(fontName))
+			if (string.IsNullOrEmpty(fontName))
 				return new Font(FontFamily.GenericSansSerif, 8.25F);
-			else
-				return new Font(fontName, 8.25F);
+			return new Font(fontName, 8.25F);
 		}
-#endif
 
 		#region LanguageDisplayItem class
 		/// ------------------------------------------------------------------------------------
@@ -355,8 +327,7 @@ namespace SIL.FieldWorks.Common.Widgets
 				}
 				catch
 				{
-					Icu.UErrorCode uerr;
-					Icu.GetDisplayName(sLocale, sLocale, out sName, out uerr);
+					sName = new Locale(sLocale).GetDisplayName(sLocale);
 				}
 				return sName;
 			}

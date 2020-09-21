@@ -4,11 +4,10 @@
 
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;
-using SIL.FieldWorks.Common.FwUtils;
 using System.Linq;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.LexText.Controls;
 using XCore;
@@ -20,20 +19,18 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 	/// </summary>
 	public class PhonologicalFeaturePopupTreeManager : PopupTreeManager
 	{
-		private const int kEmpty = 0;
-		private const int kLine = -1;
 		/// <summary>
 		/// Used to indicate that a feature needs to be removed from the list of feature/value pairs in a phoneme
 		/// </summary>
 		public const int kRemoveThisFeature = -2;
 		private const int kChoosePhonologicaFeatures = -3;
 		private List<ICmBaseAnnotation> m_annotations = new List<ICmBaseAnnotation>();
-		private IFsClosedFeature m_closedFeature;
+		private readonly IFsClosedFeature m_closedFeature;
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-		public PhonologicalFeaturePopupTreeManager(TreeCombo treeCombo, FdoCache cache,  bool useAbbr, Mediator mediator, Form parent, int wsDisplay, IFsClosedFeature closedFeature)
-			: base(treeCombo, cache, mediator, cache.LanguageProject.PartsOfSpeechOA, wsDisplay, useAbbr, parent)
+		public PhonologicalFeaturePopupTreeManager(TreeCombo treeCombo, LcmCache cache, bool useAbbr, Mediator mediator, PropertyTable propertyTable, Form parent, int wsDisplay, IFsClosedFeature closedFeature)
+			: base(treeCombo, cache, mediator, propertyTable, cache.LanguageProject.PartsOfSpeechOA, wsDisplay, useAbbr, parent)
 		{
 			m_closedFeature = closedFeature;
 		}
@@ -100,19 +97,12 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			}
 
 			popupTree.Nodes.Add(new HvoTreeNode(
-					Cache.TsStrFactory.MakeString(LexTextControls.ksRemoveThisFeature, Cache.WritingSystemFactory.UserWs),
+					TsStringUtils.MakeString(LexTextControls.ksRemoveThisFeature, Cache.WritingSystemFactory.UserWs),
 					kRemoveThisFeature));
-			/* Trying this now without using the phonological feature chooser; if users ask for it, will reconsider.
-			 * popupTree.Nodes.Add(new HvoTreeNode(
-					Cache.TsStrFactory.MakeString(LexTextControls.ksChoosePhonFeats, Cache.WritingSystemFactory.UserWs),
-					kChoosePhonologicaFeatures));*/
 
 			return match;
-
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="pt is a reference")]
 		protected override void m_treeCombo_AfterSelect(object sender, TreeViewEventArgs e)
 		{
 			HvoTreeNode selectedNode = e.Node as HvoTreeNode;
@@ -135,7 +125,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 					{
 						Cache.DomainDataByFlid.BeginUndoTask(LexTextControls.ksUndoInsertPhonologicalFeature, LexTextControls.ksRedoInsertPhonologicalFeature);
 						var fs = CreateEmptyFeatureStructureInAnnotation(null);
-						dlg.SetDlgInfo(Cache, m_mediator, fs);
+						dlg.SetDlgInfo(Cache, m_mediator, m_propertyTable, fs);
 						dlg.ShowIgnoreInsteadOfDontCare = true;
 						dlg.SetHelpTopic("khtptoolBulkEditPhonemesChooserDlg");
 
@@ -172,8 +162,6 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 						}
 						Cache.DomainDataByFlid.EndUndoTask();
 					}
-					break;
-				default:
 					break;
 			}
 			// FWR-3432 - If we get here and we still haven't got a valid Hvo, don't continue

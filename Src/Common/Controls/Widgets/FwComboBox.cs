@@ -1,19 +1,21 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.ComponentModel;
-using System.Drawing;
-using System.Windows.Forms;
-using System.Runtime.InteropServices;
-using System.Windows.Forms.VisualStyles;
-
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.Resources;
 using System.Diagnostics;
-using SIL.Utils; // for Win32 message defns.
-using System.Diagnostics.CodeAnalysis;
+using System.Drawing;
+using System.Runtime.InteropServices;
+using System.Windows.Forms;
+using System.Windows.Forms.VisualStyles;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
+using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.Resources;
+using SIL.LCModel.Utils;
+using SIL.PlatformUtilities;
+using XCore;
 
 namespace SIL.FieldWorks.Common.Widgets
 {
@@ -105,7 +107,7 @@ namespace SIL.FieldWorks.Common.Widgets
 	/// ComboBox. Classes that extend this class provide an implementation of the drop down
 	/// box.
 	/// </summary>
-	public abstract class FwComboBoxBase : UserControl, IFWDisposable, IVwNotifyChange, IWritingSystemAndStylesheet
+	public abstract class FwComboBoxBase : UserControl, IVwNotifyChange, IWritingSystemAndStylesheet
 	{
 		#region Events
 		/// <summary>
@@ -460,10 +462,8 @@ namespace SIL.FieldWorks.Common.Widgets
 			{
 				CheckDisposed();
 				m_useVisualStyleBackColor = value;
-#if !__MonoCS__
-				if (value)
+				if (!Platform.IsMono && value)
 					m_comboTextBox.BackColor = Color.Transparent;
-#endif
 			}
 		}
 
@@ -949,12 +949,12 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// </summary>
 		/// <param name="parent"></param>
 		/// <param name="grower"></param>
-		/// <param name="mediator"></param>
-		public void AdjustForStyleSheet(Form parent, Control grower, XCore.Mediator mediator)
+		/// <param name="propertyTable"></param>
+		public void AdjustForStyleSheet(Form parent, Control grower, PropertyTable propertyTable)
 		{
 			CheckDisposed();
 
-			AdjustForStyleSheet(parent, grower, FontHeightAdjuster.StyleSheetFromMediator(mediator));
+			AdjustForStyleSheet(parent, grower, FontHeightAdjuster.StyleSheetFromPropertyTable(propertyTable));
 		}
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -1040,8 +1040,6 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// <summary>
 		/// Shows the drop down box.
 		/// </summary>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "parent is a reference")]
 		protected void ShowDropDownBox()
 		{
 			CheckDisposed();
@@ -1072,23 +1070,27 @@ namespace SIL.FieldWorks.Common.Widgets
 
 			if (sz != m_dropDownBox.Form.Size)
 				m_dropDownBox.Form.Size = sz;
-#if __MonoCS__	// FWNX-748: ensure a launching form that is not m_dropDownBox itself.
-			// In Mono, Form.ActiveForm occasionally returns m_dropDownBox at this point.  So we
-			// try another approach to finding the launching form for displaying m_dropDownBox.
-			// Note that the launching form never changes, so it needs to be set only once.
-			if (m_dropDownBox.LaunchingForm == null)
+			if (Platform.IsMono)
 			{
-				Control parent = this;
-				Form launcher = parent as Form;
-				while (parent != null && launcher == null)
+				// FWNX-748: ensure a launching form that is not m_dropDownBox itself.
+				// In Mono, Form.ActiveForm occasionally returns m_dropDownBox at this point.  So we
+				// try another approach to finding the launching form for displaying m_dropDownBox.
+				// Note that the launching form never changes, so it needs to be set only once.
+				if (m_dropDownBox.LaunchingForm == null)
 				{
-					parent = parent.Parent;
-					launcher = parent as Form;
+					Control parent = this;
+					Form launcher = parent as Form;
+					while (parent != null && launcher == null)
+					{
+						parent = parent.Parent;
+						launcher = parent as Form;
+					}
+
+					if (launcher != null)
+						m_dropDownBox.LaunchingForm = launcher;
 				}
-				if (launcher != null)
-					m_dropDownBox.LaunchingForm = launcher;
 			}
-#endif
+
 			m_dropDownBox.Launch(Parent.RectangleToScreen(Bounds), workingArea);
 
 			// for some reason, sometimes the size of the form changes after it has become visible, so
@@ -1338,11 +1340,7 @@ namespace SIL.FieldWorks.Common.Widgets
 					ListBox.SameItemSelected -= m_listBox_SameItemSelected;
 				}
 			}
-			if (m_tssPrevious != null)
-			{
-				Marshal.ReleaseComObject(m_tssPrevious);
-				m_tssPrevious = null;
-			}
+			m_tssPrevious = null;
 
 			base.Dispose(disposing);
 		}
@@ -2021,8 +2019,6 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// <summary>
 		/// Make one.
 		/// </summary>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "m_previousForm is a reference")]
 		public ComboListBox()
 		{
 			m_activateOnShow = true;
@@ -2119,11 +2115,14 @@ namespace SIL.FieldWorks.Common.Widgets
 			CheckDisposed();
 
 			m_previousForm = Form.ActiveForm;
-#if __MonoCS__	// FWNX-908: Crash closing combobox.
-			// Somehow on Mono, Form.ActiveForm can sometimes return m_listForm at this point.
-			if (m_previousForm == null || m_previousForm == m_listForm)
-				m_previousForm = LaunchingForm;
-#endif
+			if (Platform.IsMono)
+			{
+				// FWNX-908: Crash closing combobox.
+				// Somehow on Mono, Form.ActiveForm can sometimes return m_listForm at this point.
+				if (m_previousForm == null || m_previousForm == m_listForm)
+					m_previousForm = LaunchingForm;
+			}
+
 			m_listForm.ShowInTaskbar = false; // this is mainly to prevent it showing in the task bar.
 			//Figure where to put it. First try right below the main combo box.
 			// Pathologically the list box may be bigger than the available height. If so shrink it.
@@ -2195,14 +2194,15 @@ namespace SIL.FieldWorks.Common.Widgets
 
 		private static void ShowInactiveTopmost(Form owner, Form frm)
 		{
-#if __MonoCS__
-			// TODO:  Implement something comparable on Linux/Mono if possible.
-#else
+			if (Platform.IsMono)
+			{
+				// TODO:  Implement something comparable on Linux/Mono if possible.
+				return;
+			}
 			if (owner != null)
 				SetWindowLong(frm.Handle, GWL_HWNDPARENT, owner.Handle.ToInt32());
 			ShowWindow(frm.Handle, SW_SHOWNOACTIVATE);
 			SetWindowPos(frm.Handle.ToInt32(), HWND_TOPMOST, frm.Left, frm.Top, frm.Width, frm.Height, SWP_NOACTIVATE);
-#endif
 		}
 
 		/// <summary>
@@ -2211,22 +2211,25 @@ namespace SIL.FieldWorks.Common.Widgets
 		public void HideForm()
 		{
 			CheckDisposed();
-
-			// The order of the following two lines is very important!  On some
-			// machines the LT-2962 issue will show itself if this is changed.
-			// The summary statement is that making the form not visible causes
-			// the system to activate another application, and with out telling
-			// it before hand what to activate it would get confused and cycle
-			// through the applications that were currently running.  By
-			// activating the main form first and then hiding the little form
-			// the bug is not seen (and maybe not present...
-			// but that's much like the forest and a falling tree debate.)
-			//
-			// ** Dont change the order of the following two lines **
-			if (m_previousForm != null) // Somehow may not be, if no form is active when launched!
-				m_previousForm.Activate();
+			// There have been several historical bugs about Flex losing focus or failing to activate
+			// the right windows when dismissing combo boxes. LT-2962, LT-19219 and probably others.
+			// It seems that setting TopMost to false on the listForm before activating the previous form
+			// is the current right answer. But previous right answers were broken by updates to Windows.
+			var listTopMostValue = false;
 			if (m_listForm != null)
+			{
+				listTopMostValue = m_listForm.TopMost;
+				m_listForm.TopMost = false;
+			}
+
+			m_previousForm?.Activate();
+
+			if (m_listForm != null)
+			{
 				m_listForm.Visible = false;
+				// set the TopMost back after hiding just in case we re-show the combobox
+				m_listForm.TopMost = listTopMostValue;
+			}
 			// reset HighlightedItem to current selected.
 			HighlightedIndex = SelectedIndex;
 			if (m_comboMessageFilter != null)
@@ -2334,7 +2337,13 @@ namespace SIL.FieldWorks.Common.Widgets
 
 		private void m_ListForm_Deactivate(object sender, EventArgs e)
 		{
-			HideForm();
+			// If this event is processed after we have already hidden the form it does bad things to the
+			// focus when we try to show a dialog from a combo box item.
+			// So we only call HideForm if the ComboBox is visible.
+			if (Visible)
+			{
+				HideForm();
+			}
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -2364,7 +2373,7 @@ namespace SIL.FieldWorks.Common.Widgets
 	/// ------------------------------------------------------------------------------------
 	/// <summary>Message filter for detecting events that may hide the compbo </summary>
 	/// ------------------------------------------------------------------------------------
-	internal class FwComboMessageFilter : IMessageFilter, IFWDisposable
+	internal class FwComboMessageFilter : IMessageFilter, IDisposable
 	{
 		private ComboListBox m_comboListbox;
 		private bool m_fGotMouseDown; // true after a mouse down occurs anywhere at all.
@@ -2659,18 +2668,15 @@ namespace SIL.FieldWorks.Common.Widgets
 			m_comboBox = comboBox;
 			// Allows it to be big unless client shrinks it.
 			Font = new Font(Font.Name, (float)100.0);
-#if !__MonoCS__
-			if (Application.RenderWithVisualStyles)
+			if (!Platform.IsMono && Application.RenderWithVisualStyles)
 			{
 				DoubleBuffered = true;
 				BackColor = Color.Transparent;
+				return;
 			}
-			else
-#endif
-			{
-				// And, if not changed, it's background color is white.
-				BackColor = SystemColors.Window;
-			}
+
+			// And, if not changed, it's background color is white.
+			BackColor = SystemColors.Window;
 		}
 
 		/// <summary>
@@ -2814,6 +2820,13 @@ namespace SIL.FieldWorks.Common.Widgets
 				Image = ResourceHelper.ComboMenuArrowIcon; // no text, just the image
 				BackColor = SystemColors.Control;
 			}
+		}
+
+		/// <summary/>
+		protected override void Dispose(bool disposing)
+		{
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + ". ******");
+			base.Dispose(disposing);
 		}
 
 		/// <summary>

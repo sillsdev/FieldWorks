@@ -3,24 +3,24 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.IO;
 using System.Text;
 using System.Windows.Forms;
-using System.IO;
 
-using SIL.FieldWorks.LexText.Controls;
-using SIL.FieldWorks.FDO;
-using XCore;
 using SIL.FieldWorks.Common.Controls;
-using SIL.Utils;
-using SIL.Utils.FileDialog;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.LCModel;
+using SIL.FieldWorks.LexText.Controls;
 using SIL.FieldWorks.Resources;
+using SIL.LCModel.Utils;
+using XCore;
+using SIL.FieldWorks.Common.Controls.FileDialog;
 
 namespace SIL.FieldWorks.IText
 {
 	public partial class InterlinearImportDlg : Form, IFwExtension
 	{
-		private FdoCache m_cache;
+		private LcmCache m_cache;
 		private Mediator m_mediator;
 
 		private readonly StringBuilder m_messages = new StringBuilder();
@@ -116,12 +116,14 @@ namespace SIL.FieldWorks.IText
 
 		#region IFwExtension Members
 
-		public void Init(FdoCache cache, Mediator mediator)
+		public void Init(LcmCache cache, Mediator mediator, PropertyTable propertyTable)
 		{
 			m_cache = cache;
 			m_mediator = mediator;
 			if (m_mediator != null)
-				m_helpTopicProvider = m_mediator.HelpTopicProvider;
+			{
+				m_helpTopicProvider = propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider");
+			}
 		}
 
 		#endregion

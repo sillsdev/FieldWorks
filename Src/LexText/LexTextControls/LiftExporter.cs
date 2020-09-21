@@ -8,23 +8,24 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Xml;
-using Palaso.WritingSystems;
-using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO.Application;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.Utils;
+using SIL.LCModel;
+using SIL.LCModel.Application;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Infrastructure;
+using SIL.LCModel.Utils;
 using System.Text;
-using SIL.FieldWorks.FDO.Application.ApplicationServices;
+using SIL.LCModel.Application.ApplicationServices;
 using System.Windows.Forms;
+using SIL.LCModel.Core.Cellar;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.FieldWorks.Common.FwUtils;
+using SIL.Utils;
 
 namespace SIL.FieldWorks.LexText.Controls
 {
@@ -33,8 +34,6 @@ namespace SIL.FieldWorks.LexText.Controls
 	/// Export the lexicon as a LIFT file.
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
-	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
-		Justification="m_cache is a reference")]
 	public class LiftExporter
 	{
 		/// <summary></summary>
@@ -51,9 +50,9 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// </summary>
 		public event EventHandler<ProgressMessageArgs> SetProgressMessage;
 
-		private readonly FdoCache m_cache;
+		private readonly LcmCache m_cache;
 		private readonly IFwMetaDataCacheManaged m_mdc;
-		private readonly IWritingSystemManager m_wsManager;
+		private readonly WritingSystemManager m_wsManager;
 		private readonly int m_wsEn;
 		private readonly int m_wsBestAnalVern;
 		private readonly int m_wsBestVernAnal;
@@ -65,7 +64,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		private readonly ICmPossibilityListRepository m_repoCmPossibilityLists;
 		private readonly ISilDataAccessManaged m_sda;
 
-		public LiftExporter(FdoCache cache)
+		public LiftExporter(LcmCache cache)
 		{
 			m_cache = cache;
 			m_mdc = cache.MetaDataCacheAccessor as IFwMetaDataCacheManaged;
@@ -205,7 +204,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			if (!Directory.Exists(sDirectory))
 				Directory.CreateDirectory(sDirectory);
 
-			var wss = new HashSet<IWritingSystem>(m_cache.ServiceLocator.WritingSystems.AllWritingSystems);
+			var wss = new HashSet<CoreWritingSystemDefinition>(m_cache.ServiceLocator.WritingSystems.AllWritingSystems);
 			wss.UnionWith(from index in m_cache.ServiceLocator.GetInstance<IReversalIndexRepository>().AllInstances()
 						  where !String.IsNullOrEmpty(index.WritingSystem)
 						  select m_cache.ServiceLocator.WritingSystemManager.Get(index.WritingSystem));
@@ -314,10 +313,10 @@ namespace SIL.FieldWorks.LexText.Controls
 									var internalPath = tssString.Text;
 									// usually this will be unchanged, but it is pathologically possible that the file name conflicts.
 									var exportedForm = ExportFile(internalPath,
-										Path.Combine(FdoFileHelper.GetMediaDir(m_cache.LangProject.LinkedFilesRootDir), internalPath),
+										Path.Combine(LcmFileHelper.GetMediaDir(m_cache.LangProject.LinkedFilesRootDir), internalPath),
 										"audio");
 									if (internalPath != exportedForm)
-										tssString = m_cache.TsStrFactory.MakeString(exportedForm, ws);
+										tssString = TsStringUtils.MakeString(exportedForm, ws);
 								}
 								WriteFormElement(w, ws, tssString);
 							}
@@ -456,7 +455,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			w.WriteLine(str);
 		}
 
-		public static String GetPossibilityBestAlternative(int possibilityHvo, FdoCache cache)
+		public static String GetPossibilityBestAlternative(int possibilityHvo, LcmCache cache)
 		{
 			ITsMultiString tsm =
 				cache.DomainDataByFlid.get_MultiStringProp(possibilityHvo, CmPossibilityTags.kflidName);
@@ -541,7 +540,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				return;
 			w.Write("<media href=\"");
 			ExportFile(w, file.MediaFileRA.InternalPath, file.MediaFileRA.AbsoluteInternalPath, "audio",
-				FdoFileHelper.ksMediaDir);
+				LcmFileHelper.ksMediaDir);
 			//if (file.MediaFileRA != null)
 			//    w.Write(XmlUtils.MakeSafeXmlAttribute(Path.GetFileName(file.MediaFileRA.InternalPath)));
 			w.WriteLine("\">");
@@ -612,7 +611,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		{
 			if (string.IsNullOrEmpty(inputString))
 				return inputString;
-			var normalizedString = Icu.Normalize(inputString, Icu.UNormalizationMode.UNORM_NFC);
+			var normalizedString = CustomIcu.GetIcuNormalizer(FwNormalizationMode.knmNFC).Normalize(inputString);
 			return XmlUtils.MakeSafeXml(normalizedString);
 		}
 
@@ -620,7 +619,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		{
 			if (string.IsNullOrEmpty(inputString))
 				return inputString;
-			var normalizedString = Icu.Normalize(inputString, Icu.UNormalizationMode.UNORM_NFC);
+			var normalizedString = CustomIcu.GetIcuNormalizer(FwNormalizationMode.knmNFC).Normalize(inputString);
 			return XmlUtils.MakeSafeXmlAttribute(normalizedString);
 		}
 
@@ -806,7 +805,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				WriteTrait(w, RangeNames.sDbDialectLabelsOA, dialect.Name, m_wsBestVernAnal);
 			foreach (var dom in sense.DomainTypesRC)
 				WriteTrait(w, RangeNames.sDbDomainTypesOA, dom.Name, m_wsBestAnalVern);
-			foreach (var reversal in sense.ReversalEntriesRC)
+			foreach (var reversal in sense.ReferringReversalIndexEntries)
 				WriteReversal(w, reversal);
 			if (sense.SenseTypeRA != null)
 				WriteTrait(w, RangeNames.sDbSenseTypesOA, sense.SenseTypeRA.Name, m_wsBestAnalVern);
@@ -834,7 +833,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			if (picture.PictureFileRA != null)
 			{
 				ExportFile(w, picture.PictureFileRA.InternalPath, picture.PictureFileRA.AbsoluteInternalPath,
-					"pictures", FdoFileHelper.ksPicturesDir);
+					"pictures", LcmFileHelper.ksPicturesDir);
 			}
 			w.WriteLine("\">");
 			WriteAllForms(w, "label", null, "form", picture.Caption);
@@ -883,7 +882,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				return m_filesCreated[actualPath].Item2; //return the file we wrote last time we saw this path
 			}
 			// We are going to export the text of this to XML as NFC, so we want to write the file using a matching NFC name.
-			var safeWritePath = Icu.Normalize(writePath, Icu.UNormalizationMode.UNORM_NFC);
+			var safeWritePath = CustomIcu.GetIcuNormalizer(FwNormalizationMode.knmNFC).Normalize(writePath);
 			// Use as source any similar file that exists.
 			var safeSourcePath = FileUtils.ActualFilePath(actualPath);
 			if (ExportPicturesAndMedia && !String.IsNullOrEmpty(FolderPath) && FileUtils.FileExists(safeSourcePath))
@@ -1377,7 +1376,7 @@ namespace SIL.FieldWorks.LexText.Controls
 					var internalPath = sForm;
 					// usually this will be unchanged, but it is pathologically possible that the file name conflicts.
 					sForm = ExportFile(internalPath,
-						Path.Combine(FdoFileHelper.GetMediaDir(m_cache.LangProject.LinkedFilesRootDir), internalPath),
+						Path.Combine(LcmFileHelper.GetMediaDir(m_cache.LangProject.LinkedFilesRootDir), internalPath),
 						"audio");
 				}
 				w.WriteLine("<{0} lang=\"{1}\"><text>{2}</text></{0}>", elementName,
@@ -1428,7 +1427,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				var internalPath = alt.Form.get_String(ws).Text;
 				// usually this will be unchanged, but it is pathologically possible that the file name conflicts.
 				var writePath = ExportFile(internalPath,
-					Path.Combine(FdoFileHelper.GetMediaDir(m_cache.LangProject.LinkedFilesRootDir), internalPath),
+					Path.Combine(LcmFileHelper.GetMediaDir(m_cache.LangProject.LinkedFilesRootDir), internalPath),
 					"audio");
 				return writePath;
 			}
@@ -1495,7 +1494,7 @@ namespace SIL.FieldWorks.LexText.Controls
 					var internalPath = tssVal.Text == null ? "" : tssVal.Text;
 					// usually this will be unchanged, but it is pathologically possible that the file name conflicts.
 					var writePath = ExportFile(internalPath,
-						Path.Combine(FdoFileHelper.GetMediaDir(m_cache.LangProject.LinkedFilesRootDir), internalPath),
+						Path.Combine(LcmFileHelper.GetMediaDir(m_cache.LangProject.LinkedFilesRootDir), internalPath),
 						"audio");
 					return XmlUtils.MakeSafeXml(writePath);
 				}
@@ -1566,7 +1565,7 @@ namespace SIL.FieldWorks.LexText.Controls
 					var absPath = destination;
 					if (!Path.IsPathRooted(destination))
 						absPath = Path.Combine(m_cache.LangProject.LinkedFilesRootDir, destination);
-					var writePath = ExportFile(destination, absPath, "others", FdoFileHelper.ksOtherLinkedFilesDir);
+					var writePath = ExportFile(destination, absPath, "others", LcmFileHelper.ksOtherLinkedFilesDir);
 					// We force the file to be in the "others" directory, but in this case we include "others" in the URL,
 					// so it will actually work as a URL relative to the LIFT file.
 					bldr.AppendFormat(" href=\"file://others/{0}\"", XmlUtils.MakeSafeXmlAttribute(writePath.Replace('\\', '/')));
@@ -1581,8 +1580,8 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		private bool IsVoiceWritingSystem(int wsString)
 		{
-			var wsEngine = m_wsManager.get_EngineOrNull(wsString);
-			return wsEngine is WritingSystemDefinition && ((WritingSystemDefinition)wsEngine).IsVoice;
+			var wsEngine = (CoreWritingSystemDefinition) m_wsManager.get_EngineOrNull(wsString);
+			return wsEngine.IsVoice;
 		}
 
 		private void WriteTrait(TextWriter w, string sName, IMultiAccessorBase multi, int wsWant)
@@ -1685,6 +1684,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			WriteAffixSlotRanges(w);
 			WriteInflectionClassRanges(w);
 			WriteStemNameRanges(w);
+			WritePublicationsRange(w);
 			WriteAnyOtherRangesReferencedByFields(w);
 			w.WriteLine("</lift-ranges>");
 			w.Flush();
@@ -2294,6 +2294,12 @@ namespace SIL.FieldWorks.LexText.Controls
 			}
 		}
 
+		private void WritePublicationsRange(TextWriter w)
+		{
+			WritePossibilityListAsRange(w, "Publications", m_cache.LangProject.LexDbOA.PublicationTypesOA,
+				m_cache.LangProject.LexDbOA.PublicationTypesOA.Guid.ToString());
+		}
+
 		/// <summary>
 		/// Find all the lists referenced by custom fields and all the custom possibility lists
 		/// </summary>
@@ -2763,6 +2769,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				case "etymology":
 				case "note-type":
 				case "paradigm":
+				case "Publications":
 					return false;
 				default:
 					if (range.EndsWith("-slot") || range.EndsWith("-Slots") ||

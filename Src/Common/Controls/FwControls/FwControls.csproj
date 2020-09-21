@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="15.0">
   <PropertyGroup>
     <ProjectType>Local</ProjectType>
     <ProductVersion>9.0.30729</ProductVersion>
@@ -17,13 +17,7 @@
     <OutputType>Library</OutputType>
     <RootNamespace>SIL.FieldWorks.Common.Controls</RootNamespace>
     <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
-    <FileUpgradeFlags>
-    </FileUpgradeFlags>
-    <UpgradeBackupLocation>
-    </UpgradeBackupLocation>
     <OldToolsVersion>3.5</OldToolsVersion>
-    <SccAuxPath>
-    </SccAuxPath>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -39,8 +33,10 @@
     <IsWebBootstrapper>false</IsWebBootstrapper>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <TargetFrameworkProfile />
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <OutputPath>..\..\..\..\Output\Debug\</OutputPath>
     <BaseAddress>285212672</BaseAddress>
     <ConfigurationOverrideFile>
@@ -58,9 +54,10 @@
     <DebugType>full</DebugType>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
-    <PlatformTarget>x86</PlatformTarget>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
     <OutputPath>..\..\..\..\Output\Release\</OutputPath>
     <BaseAddress>285212672</BaseAddress>
     <ConfigurationOverrideFile>
@@ -78,32 +75,83 @@
     <DebugType>full</DebugType>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
-    <PlatformTarget>x86</PlatformTarget>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x64' ">
+    <OutputPath>..\..\..\..\Output\Debug\</OutputPath>
+    <BaseAddress>285212672</BaseAddress>
+    <ConfigurationOverrideFile>
+    </ConfigurationOverrideFile>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DocumentationFile>..\..\..\..\Output\Debug\FwControls.xml</DocumentationFile>
+    <DebugSymbols>true</DebugSymbols>
+    <FileAlignment>4096</FileAlignment>
+    <NoWarn>168,169,219,414,649,1635,1702,1701</NoWarn>
+    <Optimize>false</Optimize>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <RemoveIntegerChecks>false</RemoveIntegerChecks>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <WarningLevel>4</WarningLevel>
+    <DebugType>full</DebugType>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x64' ">
+    <OutputPath>..\..\..\..\Output\Release\</OutputPath>
+    <BaseAddress>285212672</BaseAddress>
+    <ConfigurationOverrideFile>
+    </ConfigurationOverrideFile>
+    <DefineConstants>TRACE</DefineConstants>
+    <DocumentationFile>
+    </DocumentationFile>
+    <DebugSymbols>true</DebugSymbols>
+    <FileAlignment>4096</FileAlignment>
+    <NoWarn>168,169,219,414,649,1635,1702,1701</NoWarn>
+    <Optimize>true</Optimize>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <RemoveIntegerChecks>false</RemoveIntegerChecks>
+    <WarningLevel>4</WarningLevel>
+    <DebugType>full</DebugType>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Accessibility">
       <Name>Accessibility</Name>
     </Reference>
-    <Reference Include="COMInterfaces">
-      <Name>COMInterfaces</Name>
-      <HintPath>..\..\..\..\Output\Debug\COMInterfaces.dll</HintPath>
-    </Reference>
-    <Reference Include="Controls.Design">
-      <Name>Controls.Design</Name>
-      <HintPath>..\..\..\..\Output\Debug\Controls.Design.dll</HintPath>
-    </Reference>
-    <Reference Include="FDO, Version=7.0.1.26814, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="RootSite, Version=9.0.0.20498, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Output\Debug\RootSite.dll</HintPath>
     </Reference>
-    <Reference Include="FwUtils, Version=8.0.9.31046, Culture=neutral, processorArchitecture=x86">
+    <Reference Include="SIL.Core.Desktop, Version=6.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Output\Debug\SIL.Core.Desktop.dll</HintPath>
+    </Reference>
+    <Reference Include="SIL.Windows.Forms.WritingSystems, Version=6.0.0.0, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Output\Debug\SIL.Windows.Forms.WritingSystems.dll</HintPath>
+    </Reference>
+    <Reference Include="ViewsInterfaces">
+      <Name>ViewsInterfaces</Name>
+      <HintPath>..\..\..\..\Output\Debug\ViewsInterfaces.dll</HintPath>
+    </Reference>
+    <Reference Include="SIL.LCModel">
+      <HintPath>..\..\..\..\Output\Debug\SIL.LCModel.dll</HintPath>
+    </Reference>
+    <Reference Include="FwUtils">
       <HintPath>..\..\..\..\Output\Debug\FwUtils.dll</HintPath>
     </Reference>
-    <Reference Include="ManagedLgIcuCollator, Version=0.0.0.0, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="ManagedLgIcuCollator">
       <HintPath>..\..\..\..\Output\Debug\ManagedLgIcuCollator.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL" />
+    <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\DistFiles/Microsoft.Practices.ServiceLocation.dll</HintPath>
+    </Reference>
     <Reference Include="ParatextShared, Version=7.5.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Output\Debug\ParatextShared.dll</HintPath>
@@ -112,54 +160,53 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Output\Debug\ScriptureUtils.dll</HintPath>
     </Reference>
-    <Reference Include="System">
-      <Name>System</Name>
+    <Reference Include="SIL.Core, Version=2.6.0.0, Culture=neutral, PublicKeyToken=cab3c8c5232dfcf2, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Output\Debug\SIL.Core.dll</HintPath>
     </Reference>
-    <Reference Include="System.Data">
-      <Name>System.Data</Name>
+    <Reference Include="SIL.WritingSystems, Version=2.6.0.0, Culture=neutral, PublicKeyToken=cab3c8c5232dfcf2, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Output\Debug\SIL.WritingSystems.dll</HintPath>
     </Reference>
-    <Reference Include="System.Drawing">
-      <Name>System.Drawing</Name>
-    </Reference>
-    <Reference Include="System.Windows.Forms">
-      <Name>System.Windows.Forms</Name>
-    </Reference>
-    <Reference Include="System.Xml">
-      <Name>System.XML</Name>
-    </Reference>
-    <Reference Include="BasicUtils">
-      <HintPath>..\..\..\..\Output\Debug\BasicUtils.dll</HintPath>
-    </Reference>
-    <Reference Include="CoreImpl">
-      <HintPath>..\..\..\..\Output\Debug\CoreImpl.dll</HintPath>
-    </Reference>
-    <Reference Include="Ethnologue">
-      <HintPath>..\..\..\..\Output\Debug\Ethnologue.dll</HintPath>
+    <Reference Include="System" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+    <Reference Include="SIL.LCModel.Core">
+      <HintPath>..\..\..\..\Output\Debug\SIL.LCModel.Core.dll</HintPath>
     </Reference>
     <Reference Include="FwResources">
       <HintPath>..\..\..\..\Output\Debug\FwResources.dll</HintPath>
     </Reference>
-    <Reference Include="SilUtils">
-      <HintPath>..\..\..\..\Output\Debug\SilUtils.dll</HintPath>
+    <Reference Include="SIL.LCModel.Utils">
+      <HintPath>..\..\..\..\Output\Debug\SIL.LCModel.Utils.dll</HintPath>
     </Reference>
-    <Reference Include="Palaso">
-      <HintPath>..\..\..\..\Downloads\Palaso.dll</HintPath>
+    <Reference Include="xCore">
+      <HintPath>..\..\..\..\Output\Debug\xCore.dll</HintPath>
     </Reference>
-    <Reference Include="ScrUtilsInterfaces">
-      <HintPath>..\..\..\..\Output\Debug\ScrUtilsInterfaces.dll</HintPath>
+    <Reference Include="xCoreInterfaces">
+      <HintPath>..\..\..\..\Output\Debug\xCoreInterfaces.dll</HintPath>
     </Reference>
-    <Reference Include="SharedScrUtils">
-      <HintPath>..\..\..\..\Output\Debug\SharedScrUtils.dll</HintPath>
+    <Reference
+      Include="gtk-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" >
+      <HintPath>..\..\..\..\Lib\gtk-sharp.dll</HintPath>
+      <Private>False</Private>
     </Reference>
-    <Reference Include="xCore, Version=7.2.0.17521, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="glib-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" >
+      <HintPath>..\..\..\..\Lib\glib-sharp.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="atk-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" >
+      <HintPath>..\..\..\..\Lib\atk-sharp.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="SIL.Windows.Forms">
+      <HintPath>..\..\..\..\Output\Debug\SIL.Windows.Forms.dll</HintPath>
+    </Reference>
+    <Reference Include="icu.net">
       <SpecificVersion>False</SpecificVersion>
-    </Reference>
-    <Reference Include="xCoreInterfaces, Version=7.2.0.40833, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-    </Reference>
-    <Reference Include="XMLUtils">
-      <Name>XMLUtils</Name>
-      <HintPath>..\..\..\..\Output\Debug\XMLUtils.dll</HintPath>
+      <HintPath>..\..\..\Output\Debug\icu.net.dll</HintPath>
+      <Private>True</Private>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -208,20 +255,8 @@
     <Compile Include="ExplorerBarItem.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="FilterAllTextsDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="FilterTextsDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="IFilterTextsDialog.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="IInheritableFwControl.cs" />
     <Compile Include="ObtainProjectMethod.cs" />
-    <Compile Include="TextsTriStateTreeView.cs">
-      <SubType>Component</SubType>
-    </Compile>
     <Compile Include="FwBasicGrid.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -255,9 +290,6 @@
     <Compile Include="FwDrawing.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="FwListView.cs">
-      <SubType>Component</SubType>
-    </Compile>
     <Compile Include="FwPanel.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -288,9 +320,6 @@
     </Compile>
     <Compile Include="InformationBarButtonCollection.cs">
       <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="LanguageSetup.cs">
-      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="LineControl.cs">
       <SubType>UserControl</SubType>
@@ -345,17 +374,12 @@
     <Compile Include="StatusBarTextBox.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="ProgressDialogWithTask.cs">
-      <SubType>Form</SubType>
-    </Compile>
+    <Compile Include="ProgressDialogWithTask.cs" />
     <Compile Include="TriStateTreeView.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="WizardDialog.cs">
       <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="WizardStepPanel.cs">
-      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="WSChooser.cs">
       <SubType>UserControl</SubType>
@@ -382,16 +406,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="DockExtender\Floaty.resx">
       <DependentUpon>Floaty.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="FilterAllTextsDialog.resx">
-      <DependentUpon>FilterAllTextsDialog.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="FilterTextsDialog.resx">
-      <DependentUpon>FilterTextsDialog.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="TextsTriStateTreeView.resx">
-      <DependentUpon>TextsTriStateTreeView.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="FwButton.resx">
@@ -423,10 +437,6 @@
       <SubType>Designer</SubType>
       <DependentUpon>FwHelpButton.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="FwListView.resx">
-      <DependentUpon>FwListView.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
     <EmbeddedResource Include="FwPopup.resx">
       <DependentUpon>FwPopup.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -437,10 +447,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="InformationBarButton.resx">
       <DependentUpon>InformationBarButton.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="LanguageSetup.resx">
-      <DependentUpon>LanguageSetup.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="LineControl.resx">
@@ -491,10 +497,6 @@
       <DependentUpon>WizardDialog.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="WizardStepPanel.resx">
-      <DependentUpon>WizardStepPanel.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
     <EmbeddedResource Include="WSChooser.resx">
       <DependentUpon>WSChooser.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -506,24 +508,33 @@
     <Content Include="resources\GreyChecked.bmp" />
     <None Include="resources\MissingGlyph.png" />
     <Content Include="resources\Unchecked.bmp" />
-    <None Include="gendarme-FwControls.ignore" />
-  </ItemGroup>
-  <ItemGroup>
-    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
-      <Visible>False</Visible>
-      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
-      <Install>false</Install>
-    </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
-      <Visible>False</Visible>
-      <ProductName>.NET Framework 3.5 SP1</ProductName>
-      <Install>true</Install>
-    </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
-      <Visible>False</Visible>
-      <ProductName>Windows Installer 3.1</ProductName>
-      <Install>true</Install>
-    </BootstrapperPackage>
+    <Compile Include="FileDialog\FileDialogAdapter.cs" />
+    <Compile Include="FileDialog\FileDialogStrings.Designer.cs">
+      <DependentUpon>FileDialogStrings.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="FileDialog\FolderBrowserDialogAdapter.cs" />
+    <Compile Include="FileDialog\Manager.cs" />
+    <Compile Include="FileDialog\OpenFileDialogAdapter.cs" />
+    <Compile Include="FileDialog\SaveFileDialogAdapter.cs" />
+    <None Include="FileDialog\readme.txt" />
+    <Compile Include="FileDialog\Interfaces\IFileDialog.cs" />
+    <Compile Include="FileDialog\Interfaces\IFolderBrowserDialog.cs" />
+    <Compile Include="FileDialog\Interfaces\IOpenFileDialog.cs" />
+    <Compile Include="FileDialog\Interfaces\ISaveFileDialog.cs" />
+    <Compile Include="FileDialog\Linux\FileDialogLinux.cs" />
+    <Compile Include="FileDialog\Linux\FolderBrowserDialogLinux.cs" />
+    <Compile Include="FileDialog\Linux\OpenFileDialogLinux.cs" />
+    <Compile Include="FileDialog\Linux\SaveFileDialogLinux.cs" />
+    <Compile Include="FileDialog\Windows\FileDialogWindows.cs" />
+    <Compile Include="FileDialog\Windows\FolderBrowserDialogWindows.cs" />
+    <Compile Include="FileDialog\Windows\OpenFileDialogWindows.cs" />
+    <Compile Include="FileDialog\Windows\SaveFileDialogWindows.cs" />
+    <EmbeddedResource Include="FileDialog\FileDialogStrings.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>FileDialogStrings.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

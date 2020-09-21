@@ -5,10 +5,11 @@
 using System;
 using System.Linq;
 using System.Xml;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.FDO;
-using SIL.Utils;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.LCModel;
+using SIL.LCModel.Utils;
+using XCore;
 
 namespace SIL.FieldWorks.XWorks.MorphologyEditor
 {
@@ -46,13 +47,13 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			}
 		}
 
-		public override void Initialize(FdoCache cache, ICmObject obj, int flid, string fieldName, IPersistenceProvider persistProvider,
-			XCore.Mediator mediator, string displayNameProperty, string displayWs)
+		public override void Initialize(LcmCache cache, ICmObject obj, int flid, string fieldName, IPersistenceProvider persistProvider,
+			Mediator mediator, PropertyTable propertyTable, string displayNameProperty, string displayWs)
 		{
 			CheckDisposed();
-			base.Initialize(cache, obj, flid, fieldName, persistProvider, mediator, displayNameProperty, displayWs);
+			base.Initialize(cache, obj, flid, fieldName, persistProvider, mediator, propertyTable, displayNameProperty, displayWs);
 
-			m_view.Init(mediator, obj.Hvo, this, new MetaRuleFormulaVc(cache, mediator), MetaRuleFormulaVc.kfragRule, cache.MainCacheAccessor);
+			m_view.Init(mediator, propertyTable, obj.Hvo, this, new MetaRuleFormulaVc(cache, propertyTable), MetaRuleFormulaVc.kfragRule, cache.MainCacheAccessor);
 
 			m_insertionControl.AddOption(new InsertOption(RuleInsertType.Phoneme), DisplayOption);
 			m_insertionControl.AddOption(new InsertOption(RuleInsertType.NaturalClass), DisplayOption);

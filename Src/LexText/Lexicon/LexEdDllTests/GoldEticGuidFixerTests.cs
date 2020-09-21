@@ -1,31 +1,30 @@
-﻿// Copyright (c) 2014 SIL International
+﻿// Copyright (c) 2014-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Collections.Generic;
 using System.IO;
 using NUnit.Framework;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Application.ApplicationServices;
-using SIL.FieldWorks.FDO.FDOTests;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel;
+using SIL.LCModel.Application.ApplicationServices;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.Test.TestUtils;
 using SIL.FieldWorks.XWorks.LexEd;
 
 namespace LexEdDllTests
 {
-	class GoldEticGuidFixerTests : BaseTest
+	class GoldEticGuidFixerTests
 	{
-		protected FdoCache Cache { get; set; }
+		protected LcmCache Cache { get; set; }
 
 		[SetUp]
 		public void TestSetup()
 		{
-			Cache = FdoCache.CreateCacheWithNewBlankLangProj(new TestProjectId(FDOBackendProviderType.kMemoryOnly, null),
-																			 "en", "fr", "en", new DummyFdoUI(), FwDirectoryFinder.FdoDirectories, new FdoSettings());
+			Cache = LcmCache.CreateCacheWithNewBlankLangProj(new TestProjectId(BackendProviderType.kMemoryOnly, null),
+				"en", "fr", "en", new DummyLcmUI(), FwDirectoryFinder.LcmDirectories, new LcmSettings());
 			var loader = new XmlList();
 			loader.ImportList(Cache.LangProject, "PartsOfSpeech", Path.Combine(FwDirectoryFinder.TemplateDirectory, "POS.xml"),
-									new DummyProgressDlg());
+				new DummyProgressDlg());
 			// This allows tests to do any kind of data changes without worrying about starting a UOW.
 			Cache.ActionHandlerAccessor.BeginUndoTask("Undo doing stuff", "Redo doing stuff");
 		}
@@ -118,7 +117,7 @@ namespace LexEdDllTests
 			var myNewPos = Cache.ServiceLocator.GetInstance<IPartOfSpeechFactory>().Create();
 			var wsEn = Cache.WritingSystemFactory.GetWsFromStr("en");
 			posList.PossibilitiesOS.Add(myNewPos);
-			myNewPos.Name.set_String(wsEn, Cache.TsStrFactory.MakeString("Mine", wsEn));
+			myNewPos.Name.set_String(wsEn, TsStringUtils.MakeString("Mine", wsEn));
 			var myNewPosGuid = myNewPos.Guid;
 			// SUT
 			Assert.That(GoldEticGuidFixer.ReplacePOSGuidsWithGoldEticGuids(Cache), Is.False);

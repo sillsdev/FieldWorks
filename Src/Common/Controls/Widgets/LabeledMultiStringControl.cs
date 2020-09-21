@@ -1,4 +1,4 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -9,29 +9,30 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;		// controls and etc...
 using System.Windows.Forms.VisualStyles;
-using SIL.CoreImpl;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.Utils;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 
 namespace SIL.FieldWorks.Common.Widgets
 {
 	/// <summary>
 	/// LabeledMultiStringControl (used in InsertEntryDlg)
-	/// has an FdoCache, but it is used only to figure out the writing systems to use; the control
+	/// has an LcmCache, but it is used only to figure out the writing systems to use; the control
 	/// works with a dummy cache, object, and flid, and the resulting text must be read back.
 	/// </summary>
-	public class LabeledMultiStringControl : UserControl, IVwNotifyChange, IFWDisposable
+	public class LabeledMultiStringControl : UserControl, IVwNotifyChange
 	{
 		InnerLabeledMultiStringControl m_innerControl;
-		bool m_isHot = false;
+		bool m_isHot;
 		bool m_hasBorder;
 		Padding m_textPadding;
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="LabeledMultiStringControl"/> class.
 		/// </summary>
-		public LabeledMultiStringControl(FdoCache cache, int wsMagic, IVwStylesheet vss)
+		public LabeledMultiStringControl(LcmCache cache, int wsMagic, IVwStylesheet vss)
 		{
 			m_innerControl = new InnerLabeledMultiStringControl(cache, wsMagic);
 			InternalInit(cache, vss);
@@ -42,17 +43,17 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// For use with a non-standard list of wss (like available UI languages).
 		/// (See CustomListDlg)
 		/// </summary>
-		/// <param name="cache">The FdoCache.</param>
+		/// <param name="cache">The LcmCache.</param>
 		/// <param name="wsList">The non-standard list of IWritingSystems.</param>
 		/// <param name="vss">The stylesheet.</param>
-		public LabeledMultiStringControl(FdoCache cache, List<IWritingSystem> wsList, IVwStylesheet vss)
+		public LabeledMultiStringControl(LcmCache cache, List<CoreWritingSystemDefinition> wsList, IVwStylesheet vss)
 		{
 
 			m_innerControl = new InnerLabeledMultiStringControl(cache, wsList);
 			InternalInit(cache, vss);
 		}
 
-		private void InternalInit(FdoCache cache, IVwStylesheet vss)
+		private void InternalInit(LcmCache cache, IVwStylesheet vss)
 		{
 			if (Application.RenderWithVisualStyles)
 				DoubleBuffered = true;
@@ -388,8 +389,7 @@ namespace SIL.FieldWorks.Common.Widgets
 		{
 			CheckDisposed();
 
-			ITsStrFactory tsf = TsStrFactoryClass.Create();
-			SetValue(ws, tsf.MakeString(txt, ws));
+			SetValue(ws, TsStringUtils.MakeString(txt, ws));
 		}
 
 		/// <summary>

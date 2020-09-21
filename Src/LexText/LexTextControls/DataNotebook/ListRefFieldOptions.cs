@@ -12,10 +12,12 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Windows.Forms;
-using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.LCModel.Core.Cellar;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 
 namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 {
@@ -26,8 +28,8 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 	/// ----------------------------------------------------------------------------------------
 	public partial class ListRefFieldOptions : UserControl
 	{
-		FdoCache m_cache;
-		XCore.IHelpTopicProvider m_helpTopicProvider;
+		LcmCache m_cache;
+		IHelpTopicProvider m_helpTopicProvider;
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="ListRefFieldOptions"/> class.
@@ -112,12 +114,12 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 		}
 
 
-		internal void Initialize(FdoCache cache, XCore.IHelpTopicProvider helpTopicProvider, IApp app, IVwStylesheet stylesheet,
-			NotebookImportWiz.RnSfMarker rsfm, CellarPropertyType cpt)
+		internal void Initialize(LcmCache cache, IHelpTopicProvider helpTopicProvider, IApp app, NotebookImportWiz.RnSfMarker rsfm,
+			CellarPropertyType cpt)
 		{
 			m_cache = cache;
 			m_helpTopicProvider = helpTopicProvider;
-			m_btnAddWritingSystem.Initialize(m_cache, helpTopicProvider, app, stylesheet);
+			m_btnAddWritingSystem.Initialize(m_cache, helpTopicProvider, app);
 			NotebookImportWiz.InitializeWritingSystemCombo(rsfm.m_tlo.m_wsId, cache,
 				m_cbWritingSystem);
 
@@ -262,7 +264,7 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 		{
 			get
 			{
-				var ws = m_cbWritingSystem.SelectedItem as IWritingSystem;
+				var ws = m_cbWritingSystem.SelectedItem as CoreWritingSystemDefinition;
 				if (ws == null)
 					return null;
 				else
@@ -272,7 +274,7 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 
 		private void m_btnAddWritingSystem_WritingSystemAdded(object sender, EventArgs e)
 		{
-			IWritingSystem ws = m_btnAddWritingSystem.NewWritingSystem;
+			CoreWritingSystemDefinition ws = m_btnAddWritingSystem.NewWritingSystem;
 			if (ws != null)
 				NotebookImportWiz.InitializeWritingSystemCombo(ws.Id, m_cache,
 					m_cbWritingSystem);

@@ -1,24 +1,16 @@
-// Copyright (c) 2003-2013 SIL International
+// Copyright (c) 2003-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: ImageHolder.cs
-// Responsibility:
-// Last reviewed:
-//
-// <remarks>
-// </remarks>
 
 using System;
 using System.Windows.Forms;
-using SIL.Utils;
 
 namespace XCore
 {
 	/// <summary>
 	/// Summary description for ImageHolder.
 	/// </summary>
-	public class IconHolder : UserControl, IFWDisposable
+	public class IconHolder : UserControl
 	{
 		public System.Windows.Forms.ImageList largeImages;
 		private System.ComponentModel.IContainer components;

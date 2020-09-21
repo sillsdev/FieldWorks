@@ -1,8 +1,6 @@
-// Copyright (c) 2010-2013 SIL International
+// Copyright (c) 2010-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// Original author: MarkS 2010-06-29 TestColumnConfigureDialog.cs
 
 using System.Collections.Generic;
 using System.Linq;
@@ -10,36 +8,39 @@ using System.Xml;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.FDOTests;
-using SIL.FieldWorks.Test.TestUtils;
-using SIL.Utils;
+using SIL.LCModel;
 using XCore;
 
 namespace XMLViewsTests
 {
 	/// <summary></summary>
 	[TestFixture]
-	public class TestColumnConfigureDialog : BaseTest
+	public class TestColumnConfigureDialog
 	{
 		private Mediator m_mediator;
-		private FdoCache m_cache;
+		private PropertyTable m_propertyTable;
+		private LcmCache m_cache;
 
 		[SetUp]
 		public void SetUp()
 		{
 			m_mediator = new Mediator();
-			m_mediator.StringTbl = new StringTable("../../DistFiles/Language Explorer/Configuration");
-			m_cache = FdoCache.CreateCacheWithNewBlankLangProj(
-				new TestProjectId(FDOBackendProviderType.kMemoryOnly, null), "en", "en", "en", new DummyFdoUI(), FwDirectoryFinder.FdoDirectories, new FdoSettings());
-			m_mediator.PropertyTable.SetProperty("cache", m_cache);
+			m_propertyTable = new PropertyTable(m_mediator);
+			var st = StringTable.Table; // Make sure it is loaded.
+			m_cache = LcmCache.CreateCacheWithNewBlankLangProj(
+				new TestProjectId(BackendProviderType.kMemoryOnly, null), "en", "en", "en", new DummyLcmUI(), FwDirectoryFinder.LcmDirectories, new LcmSettings());
+			m_propertyTable.SetProperty("cache", m_cache, true);
 		}
 
 		[TearDown]
 		public void TearDown()
 		{
+			m_propertyTable.Dispose();
+			m_propertyTable = null;
 			m_mediator.Dispose();
+			m_mediator = null;
 			m_cache.Dispose();
+			m_cache = null;
 		}
 
 		#region AfterMovingItemArrowsAreNotImproperlyDisabled
@@ -113,8 +114,7 @@ namespace XMLViewsTests
 			possibleColumns_document.LoadXml(possibleColumnsData);
 			List<XmlNode> possibleColumns = possibleColumns_document.FirstChild.ChildNodes.Cast<XmlNode>().ToList();
 
-			ColumnConfigureDialog window = new ColumnConfigureDialog(possibleColumns, currentColumns, m_mediator,
-				m_mediator.StringTbl);
+			ColumnConfigureDialog window = new ColumnConfigureDialog(possibleColumns, currentColumns, m_propertyTable);
 			window.FinishInitialization();
 
 			return window;

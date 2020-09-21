@@ -4,13 +4,12 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.Utils;
-using SILUBS.SharedScrUtils;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Core.Scripture;
+using SIL.Reporting;
 
 namespace SIL.FieldWorks.Common.ScriptureUtils
 {
@@ -409,24 +408,30 @@ namespace SIL.FieldWorks.Common.ScriptureUtils
 				RefreshProjects();
 				if (!m_IsParatextInitialized)
 				{
-					importSettings.ParatextScrProj = null;
-					importSettings.ParatextBTProj = null;
-					importSettings.ParatextNotesProj = null;
+					ClearImportSettings(importSettings);
 					return;
 				}
 
-				if (!LoadProjectMappings(importSettings.ParatextScrProj, importSettings.GetMappingListForDomain(ImportDomain.Main), ImportDomain.Main))
+				var mainMappings = importSettings.GetMappingListForDomain(ImportDomain.Main);
+				var backTransMappings = importSettings.GetMappingListForDomain(ImportDomain.BackTrans);
+				var notesMappings = importSettings.GetMappingListForDomain(ImportDomain.Annotations);
+
+				if (mainMappings == null || backTransMappings == null || notesMappings == null)
+				{
+					ClearImportSettings(importSettings);
+					return;
+				}
+
+				if (!LoadProjectMappings(importSettings.ParatextScrProj, mainMappings, ImportDomain.Main))
 					importSettings.ParatextScrProj = null;
 
-				if (!LoadProjectMappings(importSettings.ParatextBTProj, importSettings.GetMappingListForDomain(ImportDomain.BackTrans), ImportDomain.BackTrans))
+				if (!LoadProjectMappings(importSettings.ParatextBTProj, backTransMappings, ImportDomain.BackTrans))
 					importSettings.ParatextBTProj = null;
 
-				if (!LoadProjectMappings(importSettings.ParatextNotesProj, importSettings.GetMappingListForDomain(ImportDomain.Annotations), ImportDomain.Annotations))
+				if (!LoadProjectMappings(importSettings.ParatextNotesProj, notesMappings, ImportDomain.Annotations))
 					importSettings.ParatextNotesProj = null;
 			}
 
-			[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-				Justification = "See REVIEW comment")]
 			private bool LoadProjectMappings(string project, ScrMappingList mappingList, ImportDomain domain)
 			{
 				// If the new project ID is null, then do not load mappings.
@@ -490,6 +495,16 @@ namespace SIL.FieldWorks.Common.ScriptureUtils
 					return false;
 				}
 				return true;
+			}
+
+			/// <summary>
+			/// Removes the project info from the given importSettings
+			/// </summary>
+			private static void ClearImportSettings(IScrImportSet importSettings)
+			{
+				importSettings.ParatextScrProj = null;
+				importSettings.ParatextBTProj = null;
+				importSettings.ParatextNotesProj = null;
 			}
 		}
 		#endregion
@@ -676,7 +691,23 @@ namespace SIL.FieldWorks.Common.ScriptureUtils
 		/// <summary/>
 		StudyBible,
 		/// <summary/>
-		GlobalConsultantNotes
+		GlobalConsultantNotes,
+		/// <summary/>
+		Auxiliary,
+		/// <summary/>
+		AuxiliaryResource,
+		/// <summary/>
+		MarbleResource,
+		/// <summary/>
+		TransliterationWithEncoder,
+		/// <summary/>
+		ConsultantNotes,
+		/// <summary/>
+		GlobalAnthropologyNotes,
+		/// <summary/>
+		StudyBibleAdditions,
+		/// <summary/>
+		Unknown
 	}
 
 	/// <summary/>

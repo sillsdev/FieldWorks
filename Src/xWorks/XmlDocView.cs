@@ -1,29 +1,29 @@
 // Copyright (c) 2003-2013 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using System.Xml;
-using SIL.FieldWorks.FDO.Application;
+using SIL.LCModel.Application;
 using SIL.FieldWorks.FwCoreDlgs;
 using XCore;
-using SIL.Utils;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.Widgets;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.LCModel.DomainServices;
 using SIL.FieldWorks.Common.FwUtils;
 using System.Drawing.Printing;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.FieldWorks.FwCoreDlgControls;
+using SIL.Utils;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -93,8 +93,7 @@ namespace SIL.FieldWorks.XWorks
 		private IEnumerable<Tuple<string, string>> GatherBuiltInAndUserLayouts()
 		{
 			var layoutList = new List<Tuple<string, string>>();
-			var configNode = m_mediator.PropertyTable.GetValue("currentContentControlParameters", null);
-			layoutList.AddRange(GetBuiltInLayouts((XmlNode)configNode));
+			layoutList.AddRange(GetBuiltInLayouts(m_propertyTable.GetValue<XmlNode>("currentContentControlParameters", null)));
 			var builtInLayoutList = new List<string>();
 			builtInLayoutList.AddRange(from layout in layoutList select layout.Item2);
 			var userLayouts = m_mainView.Vc.LayoutCache.LayoutInventory.GetLayoutTypes();
@@ -102,8 +101,6 @@ namespace SIL.FieldWorks.XWorks
 			return layoutList;
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		private static IEnumerable<Tuple<string, string>> GetBuiltInLayouts(XmlNode configNode)
 		{
 			var configLayouts = XmlUtils.FindNode(configNode, "configureLayouts");
@@ -209,7 +206,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				// We don't want to use GetSelectedPublication here because it supplies a default,
 				// and we want to treat that case specially.
-				var pubName = m_mediator.PropertyTable.GetStringProperty("SelectedPublication", null);
+				var pubName = m_propertyTable.GetStringProperty("SelectedPublication", null);
 				if (pubName == null)
 				{
 					if (Cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS.Count > 0)
@@ -236,12 +233,7 @@ namespace SIL.FieldWorks.XWorks
 
 		private string GetSelectedConfigView()
 		{
-			string sLayoutType = null;
-			if (m_mediator != null && m_mediator.PropertyTable != null)
-			{
-				sLayoutType = m_mediator.PropertyTable.GetStringProperty("DictionaryPublicationLayout",
-					String.Empty);
-			}
+			string sLayoutType = m_propertyTable.GetStringProperty("DictionaryPublicationLayout", String.Empty);
 			if (String.IsNullOrEmpty(sLayoutType))
 				sLayoutType = "publishStem";
 			return sLayoutType;
@@ -250,7 +242,7 @@ namespace SIL.FieldWorks.XWorks
 		private string GetSelectedPublication()
 		{
 			// Sometimes we just want the string value which might be '$$all_entries$$'
-			return m_mediator.PropertyTable.GetStringProperty("SelectedPublication",
+			return m_propertyTable.GetStringProperty("SelectedPublication",
 				xWorksStrings.AllEntriesPublication);
 		}
 
@@ -345,7 +337,7 @@ namespace SIL.FieldWorks.XWorks
 				{
 					Debug.Fail(@"Unexpected <> value in title string: " + match.Groups[0].Value);
 					// This might be useful one day?
-					replacement = m_mediator.PropertyTable.GetStringProperty(match.Groups[0].Value, null);
+					replacement = m_propertyTable.GetStringProperty(match.Groups[0].Value, null);
 				}
 				if (replacement != null)
 					titleStr = propertyFinder.Replace(titleStr, replacement);
@@ -482,8 +474,7 @@ namespace SIL.FieldWorks.XWorks
 			string backColorName = XmlUtils.GetOptionalAttributeValue(m_configurationParameters,
 				"backColor", "Window");
 			BackColor = Color.FromName(backColorName);
-			m_configObjectName = XmlUtils.GetLocalizedAttributeValue(m_mediator.StringTbl,
-				m_configurationParameters, "configureObjectName", null);
+			m_configObjectName = XmlUtils.GetLocalizedAttributeValue(m_configurationParameters, "configureObjectName", null);
 		}
 
 		public virtual bool OnRecordNavigation(object argument)
@@ -496,8 +487,8 @@ namespace SIL.FieldWorks.XWorks
 
 			// persist Clerk's CurrentIndex in a db specific way
 			string propName = Clerk.PersistedIndexProperty;
-			m_mediator.PropertyTable.SetProperty(propName, Clerk.CurrentIndex, PropertyTable.SettingsGroup.LocalSettings);
-			m_mediator.PropertyTable.SetPropertyPersistence(propName, true, PropertyTable.SettingsGroup.LocalSettings);
+			m_propertyTable.SetProperty(propName, Clerk.CurrentIndex, PropertyTable.SettingsGroup.LocalSettings, true);
+			m_propertyTable.SetPropertyPersistence(propName, true, PropertyTable.SettingsGroup.LocalSettings);
 
 			Clerk.SuppressSaveOnChangeRecord = (argument as RecordNavigationInfo).SuppressSaveOnChangeRecord;
 			using (WaitCursor wc = new WaitCursor(this))
@@ -518,8 +509,6 @@ namespace SIL.FieldWorks.XWorks
 			return true;	//we handled this.
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="ToolStripMenuItem gets added to m_contextMenu.Items; ContextMenuStrip is disposed in DisposeContextMenu()")]
 		protected override void OnMouseClick(MouseEventArgs e)
 		{
 			if ((ModifierKeys & Keys.Control) == Keys.Control)
@@ -557,7 +546,7 @@ namespace SIL.FieldWorks.XWorks
 				else
 					label = string.Format(xWorksStrings.ksConfigureIn, nodePath.Split(':')[3], m_configObjectName);
 				var m_contextMenu = new ContextMenuStrip();
-				var item = new ToolStripMenuItem(label);
+				var item = new DisposableToolStripMenuItem(label);
 				m_contextMenu.Items.Add(item);
 				item.Click += RunConfigureDialogAt;
 				item.Tag = nodePath;
@@ -676,7 +665,7 @@ namespace SIL.FieldWorks.XWorks
 		/// Return an item of the specified class that is indicated by a click at the specified position,
 		/// but only if it is part of a different object also of that class.
 		/// </summary>
-		internal static ICmObject SubitemClicked(Point where, int clsid, SimpleRootSite view, FdoCache cache, ISortItemProvider sortItemProvider,
+		internal static ICmObject SubitemClicked(Point where, int clsid, SimpleRootSite view, LcmCache cache, ISortItemProvider sortItemProvider,
 			IPreferedTargetAdjuster adjuster)
 		{
 			var sel = view.GetSelectionAtPoint(where, false);
@@ -804,8 +793,7 @@ namespace SIL.FieldWorks.XWorks
 			m_currentObject = clerk.CurrentObject;
 			m_currentIndex = currentIndex;
 			//add our current state to the history system
-			string toolName = m_mediator.PropertyTable.GetStringProperty(
-				"currentContentControl", "");
+			string toolName = m_propertyTable.GetStringProperty("currentContentControl", "");
 			Guid guid = Guid.Empty;
 			if (clerk.CurrentObject != null)
 				guid = clerk.CurrentObject.Guid;
@@ -813,14 +801,6 @@ namespace SIL.FieldWorks.XWorks
 
 			SelectAndScrollToCurrentRecord();
 			base.ShowRecord();
-		}
-
-		private enum ExclusionReasonCode
-		{
-			NotExcluded,
-			NotInPublication,
-			ExcludedHeadword,
-			ExcludedMinorEntry
 		}
 
 		/// <summary>
@@ -837,11 +817,11 @@ namespace SIL.FieldWorks.XWorks
 		public bool OnCheckJump(object argument)
 		{
 			var hvoTarget = (int)argument;
-			var currControl = m_mediator.PropertyTable.GetStringProperty("currentContentControl", "");
+			var currControl = m_propertyTable.GetStringProperty("currentContentControl", "");
 			// Currently this (LT-11447) only applies to Dictionary view
 			if (hvoTarget > 0 && currControl == ksLexDictionary)
 			{
-				ExclusionReasonCode xrc;
+				DictionaryConfigurationController.ExclusionReasonCode xrc;
 				// Make sure we explain to the user in case hvoTarget is not visible due to
 				// the current Publication layout or Configuration view.
 				if (!IsObjectVisible(hvoTarget, out xrc))
@@ -853,9 +833,7 @@ namespace SIL.FieldWorks.XWorks
 			return true;
 		}
 
-		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
-			Justification="See TODO-Linux comment")]
-		private void GiveSimpleWarning(ExclusionReasonCode xrc)
+		private void GiveSimpleWarning(DictionaryConfigurationController.ExclusionReasonCode xrc)
 		{
 			// Tell the user why we aren't jumping to his record
 			var msg = xWorksStrings.ksSelectedEntryNotInDict;
@@ -864,17 +842,17 @@ namespace SIL.FieldWorks.XWorks
 			string shlpTopic;
 			switch (xrc)
 			{
-				case ExclusionReasonCode.NotInPublication:
+				case DictionaryConfigurationController.ExclusionReasonCode.NotInPublication:
 					caption = xWorksStrings.ksEntryNotPublished;
 					reason = xWorksStrings.ksEntryNotPublishedReason;
 					shlpTopic = "User_Interface/Menus/Edit/Find_a_lexical_entry.htm";		//khtpEntryNotPublished
 					break;
-				case ExclusionReasonCode.ExcludedHeadword:
+				case DictionaryConfigurationController.ExclusionReasonCode.ExcludedHeadword:
 					caption = xWorksStrings.ksMainNotShown;
 					reason = xWorksStrings.ksMainNotShownReason;
 					shlpTopic = "khtpMainEntryNotShown";
 					break;
-				case ExclusionReasonCode.ExcludedMinorEntry:
+				case DictionaryConfigurationController.ExclusionReasonCode.ExcludedMinorEntry:
 					caption = xWorksStrings.ksMinorNotShown;
 					reason = xWorksStrings.ksMinorNotShownReason;
 					shlpTopic = "khtpMinorEntryNotShown";
@@ -886,13 +864,13 @@ namespace SIL.FieldWorks.XWorks
 			// TODO-Linux: Help is not implemented on Mono
 			MessageBox.Show(FindForm(), msg, caption, MessageBoxButtons.OK,
 							MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1, 0,
-							m_mediator.HelpTopicProvider.HelpFile,
+							m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider").HelpFile,
 							HelpNavigator.Topic, shlpTopic);
 		}
 
-		private bool IsObjectVisible(int hvoTarget, out ExclusionReasonCode xrc)
+		private bool IsObjectVisible(int hvoTarget, out DictionaryConfigurationController.ExclusionReasonCode xrc)
 		{
-			xrc = ExclusionReasonCode.NotExcluded;
+			xrc = DictionaryConfigurationController.ExclusionReasonCode.NotExcluded;
 			var objRepo = Cache.ServiceLocator.GetInstance<ICmObjectRepository>();
 			Debug.Assert(objRepo.IsValidObjectId(hvoTarget), "Invalid hvoTarget!");
 			if (!objRepo.IsValidObjectId(hvoTarget))
@@ -909,13 +887,13 @@ namespace SIL.FieldWorks.XWorks
 				var currentPubPoss = Publication;
 				if (!entry.PublishIn.Contains(currentPubPoss))
 				{
-					xrc = ExclusionReasonCode.NotInPublication;
+					xrc = DictionaryConfigurationController.ExclusionReasonCode.NotInPublication;
 					return false;
 				}
 				// Second deal with whether the entry shouldn't be shown as a headword
 				if (!entry.ShowMainEntryIn.Contains(currentPubPoss))
 				{
-					xrc = ExclusionReasonCode.ExcludedHeadword;
+					xrc = DictionaryConfigurationController.ExclusionReasonCode.ExcludedHeadword;
 					return false;
 				}
 			}
@@ -923,7 +901,7 @@ namespace SIL.FieldWorks.XWorks
 			// commented out until conditions are clarified (LT-11447)
 			if (entry.EntryRefsOS.Count > 0 && !entry.PublishAsMinorEntry && IsRootBasedView)
 			{
-				xrc = ExclusionReasonCode.ExcludedMinorEntry;
+				xrc = DictionaryConfigurationController.ExclusionReasonCode.ExcludedMinorEntry;
 				return false;
 			}
 			// If we get here, we should be able to display it.
@@ -1081,7 +1059,7 @@ namespace SIL.FieldWorks.XWorks
 				if (!clerk.SetCurrentFromRelatedClerk())
 				{
 					// retrieve persisted clerk index and set it.
-					int idx = m_mediator.PropertyTable.GetIntProperty(clerk.PersistedIndexProperty, -1,
+					int idx = m_propertyTable.GetIntProperty(clerk.PersistedIndexProperty, -1,
 						PropertyTable.SettingsGroup.LocalSettings);
 					if (idx >= 0 && !clerk.HasEmptyList)
 					{
@@ -1103,10 +1081,10 @@ namespace SIL.FieldWorks.XWorks
 				// Create the main view
 
 				// Review JohnT: should it be m_configurationParameters or .FirstChild?
-				IApp app = (IApp)m_mediator.PropertyTable.GetValue("App");
+				IApp app = m_propertyTable.GetValue<IApp>("App");
 				m_mainView = new XmlSeqView(Cache, m_hvoOwner, m_fakeFlid, m_configurationParameters, Clerk.VirtualListPublisher, app,
 					Publication);
-				m_mainView.Init(m_mediator, m_configurationParameters); // Required call to xCore.Colleague.
+				m_mainView.Init(m_mediator, m_propertyTable, m_configurationParameters); // Required call to xCore.Colleague.
 				m_mainView.Dock = DockStyle.Fill;
 				m_mainView.Cache = Cache;
 				m_mainView.SelectionChangedEvent +=
@@ -1148,16 +1126,16 @@ namespace SIL.FieldWorks.XWorks
 
 		protected override void SetupStylesheet()
 		{
-			FwStyleSheet ss = StyleSheet;
+			LcmStyleSheet ss = StyleSheet;
 			if (ss != null)
 				m_mainView.StyleSheet = ss;
 		}
 
-		private FwStyleSheet StyleSheet
+		private LcmStyleSheet StyleSheet
 		{
 			get
 			{
-				return FontHeightAdjuster.StyleSheetFromMediator(m_mediator);
+				return FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable);
 			}
 		}
 
@@ -1226,11 +1204,11 @@ namespace SIL.FieldWorks.XWorks
 			using(var dlg = new XmlDocConfigureDlg())
 			{
 				dlg.SetConfigDlgInfo(m_configurationParameters, Cache, StyleSheet,
-					FindForm() as IMainWindowDelegateCallbacks, m_mediator, sProp);
+					FindForm() as IMainWindowDelegateCallbacks, m_mediator, m_propertyTable, sProp);
 				dlg.SetActiveNode(nodePath);
 				if(dlg.ShowDialog(this) == DialogResult.OK)
 				{
-					string sNewLayout = m_mediator.PropertyTable.GetStringProperty(sProp, null);
+					string sNewLayout = m_propertyTable.GetStringProperty(sProp, null);
 					m_mainView.ResetTables(sNewLayout);
 					SelectAndScrollToCurrentRecord();
 				}
@@ -1247,19 +1225,21 @@ namespace SIL.FieldWorks.XWorks
 		/// to drive home the point that the subclass must set m_fullyInitialized
 		/// to true when it is fully initialized.</remarks>
 		/// <param name="mediator"></param>
+		/// <param name="propertyTable"></param>
 		/// <param name="configurationParameters"></param>
-		protected void InitBase(Mediator mediator, XmlNode configurationParameters)
+		protected void InitBase(Mediator mediator, PropertyTable propertyTable, XmlNode configurationParameters)
 		{
 			Debug.Assert(m_fullyInitialized == false, "No way we are fully initialized yet!");
 
 			m_mediator = mediator;
+			m_propertyTable = propertyTable;
 			base.m_configurationParameters = configurationParameters;
 
 			ReadParameters();
 
 			m_mediator.AddColleague(this);
 
-			m_mediator.PropertyTable.SetProperty("ShowRecordList", false);
+			m_propertyTable.SetProperty("ShowRecordList", false, true);
 
 			SetupDataContext();
 			ShowRecord();
@@ -1278,11 +1258,11 @@ namespace SIL.FieldWorks.XWorks
 
 		#region IxCoreColleague implementation
 
-		public override void Init(Mediator mediator, XmlNode configurationParameters)
+		public override void Init(Mediator mediator, PropertyTable propertyTable, XmlNode configurationParameters)
 		{
 			CheckDisposed();
 
-			InitBase(mediator, configurationParameters);
+			InitBase(mediator, propertyTable, configurationParameters);
 		}
 
 		/// <summary>
@@ -1343,7 +1323,7 @@ namespace SIL.FieldWorks.XWorks
 
 			display.Enabled = false;
 			// Don't claim to have handled it if the clerk is holding reversal entries.
-			return !(Clerk.Id == "reversalEntries");
+			return Clerk.Id != "AllReversalEntries";
 		}
 
 		/// <summary>
@@ -1390,7 +1370,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			CheckDisposed();
 
-			if (Clerk.Id == "reversalEntries")
+			if (Clerk.Id == "AllReversalEntries")
 			{
 				return false; // Let the clerk do it.
 			}

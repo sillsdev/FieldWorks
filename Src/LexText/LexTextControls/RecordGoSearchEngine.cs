@@ -5,10 +5,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.LCModel.Core.Text;
 using SIL.FieldWorks.Common.Controls;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel;
 
 namespace SIL.FieldWorks.LexText.Controls
 {
@@ -17,7 +17,7 @@ namespace SIL.FieldWorks.LexText.Controls
 	/// </summary>
 	internal class RecordGoSearchEngine : SearchEngine
 	{
-		public RecordGoSearchEngine(FdoCache cache)
+		public RecordGoSearchEngine(LcmCache cache)
 			: base(cache, SearchType.FullText)
 		{
 		}

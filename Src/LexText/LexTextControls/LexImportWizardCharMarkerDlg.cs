@@ -1,4 +1,4 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2016-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -6,21 +6,19 @@ using System;
 using System.Drawing;
 using System.Collections;
 using System.Windows.Forms;
-using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.FieldWorks.Common.RootSites;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
 using SIL.FieldWorks.FwCoreDlgs;
-using SIL.Utils;
-using XCore;	// for FwApp
 
 namespace SIL.FieldWorks.LexText.Controls
 {
 	/// <summary>
 	/// Summary description for LexImportWizardCharMarkerDlg.
 	/// </summary>
-	public class LexImportWizardCharMarkerDlg : Form, IFWDisposable
+	public class LexImportWizardCharMarkerDlg : Form
 	{
 		private Label lblBeginMarker;
 		private Label lblEndMarker;
@@ -44,7 +42,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		private Hashtable m_uiLangs;
 		private Button btnOK;
 		private Button btnCancel;
-		private FdoCache m_cache;
+		private LcmCache m_cache;
 		private IHelpTopicProvider m_helpTopicProvider;
 		private IApp m_app;
 		private IVwStylesheet m_stylesheet;
@@ -134,7 +132,7 @@ namespace SIL.FieldWorks.LexText.Controls
 //			m_existingElementNames = names;
 		}
 
-		public void Init(Sfm2Xml.ClsInFieldMarker ifm, Hashtable uiLangsHT, FdoCache cache)
+		public void Init(Sfm2Xml.ClsInFieldMarker ifm, Hashtable uiLangsHT, LcmCache cache)
 		{
 			CheckDisposed();
 
@@ -512,7 +510,7 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		private void btnAdd_Click(object sender, EventArgs e)
 		{
-			using (var dlg = new LexImportWizardLanguage(m_cache, m_uiLangs, m_helpTopicProvider, m_app, m_stylesheet))
+			using (var dlg = new LexImportWizardLanguage(m_cache, m_uiLangs, m_helpTopicProvider, m_app))
 			{
 				if (dlg.ShowDialog(this) == DialogResult.OK)
 				{
@@ -537,19 +535,21 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		private void btnStyles_Click(object sender, EventArgs e)
 		{
-			Mediator med = null;
+			XCore.PropertyTable propertyTable = null;
 			LexImportWizard wiz = LexImportWizard.Wizard();
 			if (wiz != null)
-				med = wiz.Mediator;
-			if (med == null)
+			{
+				propertyTable = wiz.PropTable;
+			}
+			if (propertyTable == null)
 			{
 				// See LT-9100 and LT-9266.  Apparently this condition can happen.
 				MessageBox.Show(LexTextControls.ksCannotSoTryAgain, LexTextControls.ksInternalProblem,
 					MessageBoxButtons.OK, MessageBoxIcon.Information);
 				return;
 			}
-			FwStylesDlg.RunStylesDialogForCombo(cbStyle, InitializeStylesComboBox, "", m_stylesheet as FwStyleSheet,
-				0, 0, m_cache, this, ((IApp)med.PropertyTable.GetValue("App")), m_helpTopicProvider, null);
+			FwStylesDlg.RunStylesDialogForCombo(cbStyle, InitializeStylesComboBox, "", m_stylesheet as LcmStyleSheet,
+				0, 0, m_cache, this, propertyTable.GetValue<IApp>("App"), m_helpTopicProvider, null);
 		}
 
 		//private void tbElementName_TextChanged(object sender, EventArgs e)

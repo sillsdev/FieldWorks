@@ -1,24 +1,23 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;
 using System.Xml;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.LCModel;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.Common.Controls;
-using SIL.FieldWorks.FDO.Application;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.LCModel.Application;
+using SIL.LCModel.DomainServices;
 using SIL.FieldWorks.XWorks.MorphologyEditor;
-using SIL.Utils;
 using XCore;
-using SIL.CoreImpl;
 using System.Linq;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.Utils;
 
 namespace SIL.FieldWorks.FdoUi
 {
@@ -31,13 +30,11 @@ namespace SIL.FieldWorks.FdoUi
 	/// sort of makes sense to put it here as a class that is quite specific to a particular
 	/// part of the model.
 	/// </summary>
-	[SuppressMessage("Gendarme.Rules.Correctness", "DisposableFieldsShouldBeDisposedRule",
-		Justification="m_cache and m_mediator are references")]
-	public class PhonologicalFeatureEditor : IBulkEditSpecControl, IFWDisposable
+	public class PhonologicalFeatureEditor : IBulkEditSpecControl, IDisposable
 	{
 		private Mediator m_mediator;
 		private TreeCombo m_tree;
-		private FdoCache m_cache;
+		private LcmCache m_cache;
 		protected XMLViewsDataCache m_sda;
 		private PhonologicalFeaturePopupTreeManager m_PhonologicalFeatureTreeManager;
 		private int m_selectedHvo = 0;
@@ -202,9 +199,14 @@ namespace SIL.FieldWorks.FdoUi
 		}
 
 		/// <summary>
+		/// Get/Set the property table'
+		/// </summary>
+		public PropertyTable PropTable { get; set; }
+
+		/// <summary>
 		/// Get or set the cache. Must be set before the tree values need to load.
 		/// </summary>
-		public FdoCache Cache
+		public LcmCache Cache
 		{
 			get
 			{
@@ -269,17 +271,15 @@ namespace SIL.FieldWorks.FdoUi
 				}
 
 				m_PhonologicalFeatureTreeManager = new PhonologicalFeaturePopupTreeManager(m_tree,
-																						   m_cache, false, m_mediator,
-																						   (Form)
-																						   m_mediator.PropertyTable.GetValue(
-																							"window"),
+																						   m_cache, false, m_mediator, PropTable,
+																						   PropTable.GetValue<Form>("window"),
 																						   m_displayWs, m_closedFeature);
 				m_PhonologicalFeatureTreeManager.AfterSelect += new TreeViewEventHandler(m_PhonFeaturePopupTreeManager_AfterSelect);
 			}
 			m_PhonologicalFeatureTreeManager.LoadPopupTree(0);
 		}
 
-		private void m_PhonFeaturePopupTreeManager_AfterSelect(object sender, System.Windows.Forms.TreeViewEventArgs e)
+		private void m_PhonFeaturePopupTreeManager_AfterSelect(object sender, TreeViewEventArgs e)
 		{
 			// Arrange to turn all relevant items blue.
 			// Remember which item was selected so we can later 'doit'.
@@ -484,7 +484,7 @@ namespace SIL.FieldWorks.FdoUi
 			{
 				labelToShow = " "; // it is the remove option so we just show nothing after the arrow
 			}
-			ITsString tss = TsStringUtils.MakeTss(labelToShow, m_cache.DefaultAnalWs);
+			ITsString tss = TsStringUtils.MakeString(labelToShow, m_cache.DefaultAnalWs);
 			int i = 0;
 			// Report progress 50 times or every 100 items, whichever is more (but no more than once per item!)
 			int interval = Math.Min(100, Math.Max(itemsToChange.Count()/50, 1));
@@ -665,10 +665,11 @@ namespace SIL.FieldWorks.FdoUi
 		/// <param name="spec">The parameters element of the BV, containing the
 		/// 'columns' elements that specify the BE bar (among other things).</param>
 		/// <param name="mediator">The mediator.</param>
+		/// <param name="propertyTable"></param>
 		/// <param name="cache">The cache.</param>
 		/// ------------------------------------------------------------------------------------
-		public BulkEditBarPhonologicalFeatures(BrowseViewer bv, XmlNode spec, Mediator mediator, FdoCache cache) :
-			base(bv, spec, mediator, cache)
+		public BulkEditBarPhonologicalFeatures(BrowseViewer bv, XmlNode spec, Mediator mediator, PropertyTable propertyTable, LcmCache cache) :
+			base(bv, spec, mediator, propertyTable, cache)
 		{
 			m_operationsTabControl.Controls.Remove(BulkCopyTab);
 			m_operationsTabControl.Controls.Remove(ClickCopyTab);
@@ -793,22 +794,23 @@ namespace SIL.FieldWorks.FdoUi
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		public BrowseViewerPhonologicalFeatures(XmlNode nodeSpec, int hvoRoot, int fakeFlid,
-			FdoCache cache, Mediator mediator, ISortItemProvider sortItemProvider, ISilDataAccessManaged sda)
-			: base(nodeSpec, hvoRoot, fakeFlid, cache, mediator, sortItemProvider, sda)
+			LcmCache cache, Mediator mediator, PropertyTable propertyTable, ISortItemProvider sortItemProvider, ISilDataAccessManaged sda)
+			: base(nodeSpec, hvoRoot, fakeFlid, cache, mediator, propertyTable, sortItemProvider, sda)
 		{ }
 
 
-		/// <summary>
+		///  <summary>
 		///
-		/// </summary>
-		/// <param name="bv"></param>
-		/// <param name="spec"></param>
-		/// <param name="mediator"></param>
+		///  </summary>
+		///  <param name="bv"></param>
+		///  <param name="spec"></param>
+		///  <param name="mediator"></param>
+		/// <param name="propertyTable"></param>
 		/// <param name="cache"></param>
-		/// <returns></returns>
-		protected override BulkEditBar CreateBulkEditBar(BrowseViewer bv, XmlNode spec, Mediator mediator, FdoCache cache)
+		///  <returns></returns>
+		protected override BulkEditBar CreateBulkEditBar(BrowseViewer bv, XmlNode spec, Mediator mediator, PropertyTable propertyTable, LcmCache cache)
 		{
-			return new BulkEditBarPhonologicalFeatures(bv, spec, mediator, cache);
+			return new BulkEditBarPhonologicalFeatures(bv, spec, mediator, propertyTable, cache);
 		}
 
 	}

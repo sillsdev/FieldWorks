@@ -9,9 +9,10 @@ using System.Linq;
 using System.Windows.Forms;
 using System.Xml;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel;
+using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.FwCoreDlgs;
+using XCore;
 
 namespace SIL.FieldWorks.XWorks.LexEd
 {
@@ -44,7 +45,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 		public void Process()
 		{
-			var cache = (FdoCache)Dialog.Mediator.PropertyTable.GetValue("cache");
+			var cache = Dialog.PropTable.GetValue<LcmCache>("cache");
 			NonUndoableUnitOfWorkHelper.DoSomehow(cache.ActionHandlerAccessor, () =>
 			{
 				var fixedGuids = ReplacePOSGuidsWithGoldEticGuids(cache);
@@ -55,7 +56,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			});
 		}
 
-		internal static bool ReplacePOSGuidsWithGoldEticGuids(FdoCache cache)
+		internal static bool ReplacePOSGuidsWithGoldEticGuids(LcmCache cache)
 		{
 			var goldDocument = new XmlDocument();
 			goldDocument.Load(Path.Combine(FwDirectoryFinder.TemplateDirectory, "GOLDEtic.xml"));
@@ -73,7 +74,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			return true;
 		}
 
-		private static void ReplacePosItemWithCloneWithNewGuid(FdoCache cache, KeyValuePair<IPartOfSpeech, string> badItem)
+		private static void ReplacePosItemWithCloneWithNewGuid(LcmCache cache, KeyValuePair<IPartOfSpeech, string> badItem)
 		{
 			IPartOfSpeech replacementPos;
 			var badPartOfSpeech = badItem.Key;

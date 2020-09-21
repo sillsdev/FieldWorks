@@ -1,26 +1,10 @@
-// Copyright (c) 2005-2013 SIL International
+// Copyright (c) 2005-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: MasterDlgListener.cs
-// Responsibility: Andy Black
-// Last reviewed:
-//
-// <remarks>
-// </remarks>
 
 using System;
-using System.Diagnostics;
 using System.Xml;
-using System.Windows.Forms;
-using System.Collections;
-
 using XCore;
-using SIL.Utils;
-using SIL.FieldWorks.FDO;
-using System.IO;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.LexText.Controls;
 
 namespace SIL.FieldWorks.XWorks.MorphologyEditor
 {
@@ -28,7 +12,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 	/// Listener class for adding POSes via Insert menu.
 	/// </summary>
 	[XCore.MediatorDispose]
-	public class MasterDlgListener : IxCoreColleague, IFWDisposable
+	public class MasterDlgListener : IxCoreColleague, IDisposable
 	{
 		#region Data members
 
@@ -36,6 +20,10 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		/// xCore Mediator.
 		/// </summary>
 		protected Mediator m_mediator;
+		/// <summary>
+		///
+		/// </summary>
+		protected PropertyTable m_propertyTable;
 		/// <summary>
 		/// Optional configuration parameters.
 		/// </summary>
@@ -167,11 +155,12 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		/// <summary>
 		/// Initialize the IxCoreColleague object.
 		/// </summary>
-		public void Init(Mediator mediator, XmlNode configurationParameters)
+		public void Init(Mediator mediator, PropertyTable propertyTable, XmlNode configurationParameters)
 		{
 			CheckDisposed();
 
 			m_mediator = mediator;
+			m_propertyTable = propertyTable;
 			mediator.AddColleague(this);
 			m_configurationParameters = configurationParameters;
 			//m_persistProvider = new XCore.PersistenceProvider(PersistentLabel, m_mediator.PropertyTable);

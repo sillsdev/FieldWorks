@@ -231,7 +231,7 @@
 		<part ref="ReverseNameAllA"/>
 		<part ref="ReverseAbbrAllA"/>
 		<part ref="DescriptionAllA"/>
-		<part ref="GlossPrependAllA" visibility="ifdata"/>
+		<part ref="GlossPrependAllA"/>
 		<part ref="GlossAppendAllA"/>
 		<part ref="InflFeats"/>
 		<part ref="Slots"/>

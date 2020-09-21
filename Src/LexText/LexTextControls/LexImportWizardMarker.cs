@@ -1,4 +1,4 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -6,7 +6,6 @@ using System;
 using System.Collections;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
@@ -14,20 +13,20 @@ using System.Xml;
 using System.Xml.Xsl;
 using Gecko;
 using Sfm2Xml;
+using SIL.LCModel.Core.Text;
 using SIL.FieldWorks.Common.Controls;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.Utils;
+using SIL.LCModel;
+using SIL.LCModel.Infrastructure;
 using XCore;
 using TreeView = System.Windows.Forms.TreeView;
 
 namespace SIL.FieldWorks.LexText.Controls
 {
 	/// <summary></summary>
-	public class LexImportWizardMarker : Form, IFWDisposable
+	public class LexImportWizardMarker : Form
 	{
 		private Label lblMarker;
 		private Label m_lblMarker;
@@ -56,10 +55,9 @@ namespace SIL.FieldWorks.LexText.Controls
 		private FwOverrideComboBox cbFunction;
 		private Label lblFunction;
 		private CheckBox chkbxAutoField;
-		private FdoCache m_cache;
+		private LcmCache m_cache;
 		private IHelpTopicProvider m_helpTopicProvider;
 		private IApp m_app;
-		private IVwStylesheet m_stylesheet;
 		private string m_refFuncString;
 		private string m_refFuncStringOrig;
 		private Button buttonHelp;	// initial value
@@ -86,8 +84,8 @@ namespace SIL.FieldWorks.LexText.Controls
 			blbLangDesc.Enabled = cbLangDesc.Enabled = btnAddLangDesc.Enabled = enable;
 		}
 
-		public void Init(MarkerPresenter.ContentMapping currentMarker, Hashtable uiLangsHT, FdoCache cache,
-			IHelpTopicProvider helpTopicProvider, IApp app, IVwStylesheet stylesheet)
+		public void Init(MarkerPresenter.ContentMapping currentMarker, Hashtable uiLangsHT, LcmCache cache,
+			IHelpTopicProvider helpTopicProvider, IApp app)
 		{
 			CheckDisposed();
 
@@ -95,7 +93,6 @@ namespace SIL.FieldWorks.LexText.Controls
 			m_cache = cache;
 			m_helpTopicProvider = helpTopicProvider;
 			m_app = app;
-			m_stylesheet = stylesheet;
 			helpProvider.HelpNamespace = helpTopicProvider.HelpFile;
 			helpProvider.SetHelpKeyword(this, helpTopicProvider.GetHelpString(s_helpTopic));
 			helpProvider.SetHelpNavigator(this, HelpNavigator.Topic);
@@ -454,8 +451,6 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// Required method for Designer support - do not modify
 		/// the contents of this method with the code editor.
 		/// </summary>
-		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
-			Justification = "Code in question is only compiled on Windows")]
 		private void InitializeComponent()
 		{
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(LexImportWizardMarker));
@@ -711,7 +706,7 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		private void btnAddLangDesc_Click(object sender, EventArgs e)
 		{
-			using (var dlg = new LexImportWizardLanguage(m_cache, m_uiLangs, m_helpTopicProvider, m_app, m_stylesheet))
+			using (var dlg = new LexImportWizardLanguage(m_cache, m_uiLangs, m_helpTopicProvider, m_app))
 			{
 			if (dlg.ShowDialog(this) == DialogResult.OK)
 			{
@@ -1135,7 +1130,7 @@ namespace SIL.FieldWorks.LexText.Controls
 					{
 						var entryTypefactory = m_cache.ServiceLocator.GetInstance<ILexEntryTypeFactory>();
 						ICmPossibility newType;
-						IFdoOwningSequence<ICmPossibility> owningSeq;
+						ILcmOwningSequence<ICmPossibility> owningSeq;
 						string description;
 						switch (field.ID)
 						{
@@ -1160,10 +1155,9 @@ namespace SIL.FieldWorks.LexText.Controls
 						NonUndoableUnitOfWorkHelper.Do(m_cache.ActionHandlerAccessor, () =>
 							{
 								owningSeq.Add(newType);
-								var strFact = m_cache.TsStrFactory;
 								var userWs = m_cache.WritingSystemFactory.UserWs;
-								newType.Name.set_String(userWs, strFact.MakeString(funcText, userWs));
-								newType.Description.set_String(userWs, strFact.MakeString(description, userWs));
+								newType.Name.set_String(userWs, TsStringUtils.MakeString(funcText, userWs));
+								newType.Description.set_String(userWs, TsStringUtils.MakeString(description, userWs));
 							});
 					}
 				}

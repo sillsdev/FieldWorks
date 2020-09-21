@@ -7,10 +7,11 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using NUnit.Framework;
-using Palaso.IO;
-using SIL.CoreImpl;
-using SIL.FieldWorks.FDO.FDOTests;
-using SIL.Utils;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.FieldWorks.Common.FwUtils;
+using SIL.LCModel.DomainServices;
+using SIL.IO;
+using SIL.LCModel;
 
 // ReSharper disable InconsistentNaming
 
@@ -227,7 +228,9 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 		[Test]
 		public void MigrateFrom83Alpha_MissingReversalWsFilledIn()
 		{
-			Cache.LangProject.AddToCurrentAnalysisWritingSystems((IWritingSystem)Cache.WritingSystemFactory.get_Engine("ta-fonipa"));
+			CoreWritingSystemDefinition testWs;
+			WritingSystemServices.FindOrCreateWritingSystem(Cache, null, "ta-fonipa", false, false, out testWs);
+			Cache.LangProject.AddToCurrentAnalysisWritingSystems(testWs);
 			var configModelEn = new DictionaryConfigurationModel
 			{
 				Version = 2,

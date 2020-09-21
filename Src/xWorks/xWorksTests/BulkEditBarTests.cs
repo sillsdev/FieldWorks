@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2013 SIL International
+// Copyright (c) 2003-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -10,18 +10,16 @@ using System.Linq;
 using System.Windows.Forms;
 using System.Xml;
 using NUnit.Framework;
-using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.LCModel.Core.Text;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Widgets;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Application;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel;
+using SIL.LCModel.Application;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.Filters;
-using SIL.Utils;
 using XCore;
-using System.Diagnostics.CodeAnalysis;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -33,6 +31,7 @@ namespace SIL.FieldWorks.XWorks
 		/// m_window is needed for processing xcore messages when simulating user events.
 		/// </summary>
 		private Mediator m_mediator;
+		protected PropertyTable m_propertyTable;
 		protected BulkEditBarForTests m_bulkEditBar;
 		protected BrowseViewerForTests m_bv;
 		protected ObservableCollection<ICmObject> m_createdObjectList;
@@ -85,7 +84,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			UndoAllActions();
 			// delete property table settings.
-			Properties.RemoveLocalAndGlobalSettings();
+			m_propertyTable.RemoveLocalAndGlobalSettings();
 
 			if (m_mediator != null)
 				m_mediator.RemoveColleague(m_window);
@@ -110,9 +109,10 @@ namespace SIL.FieldWorks.XWorks
 			m_window = new MockFwXWindow(m_application, m_configFilePath); // (MockFwXApp)
 			((MockFwXWindow)m_window).Init(Cache); // initializes Mediator values
 			m_mediator = m_window.Mediator;
+			m_propertyTable = m_window.PropTable;
 			((MockFwXWindow)m_window).ClearReplacements();
 			// delete property table settings.
-			Properties.RemoveLocalAndGlobalSettings();
+			m_propertyTable.RemoveLocalAndGlobalSettings();
 			ProcessPendingItems();
 			ControlAssemblyReplacements();
 			m_window.LoadUI(m_configFilePath); // actually loads UI here.
@@ -220,11 +220,10 @@ namespace SIL.FieldWorks.XWorks
 			/// </summary>
 			readonly MockFwXWindow m_wnd;
 
-			internal BulkEditBarForTests(BrowseViewer bv, XmlNode spec, Mediator mediator, FdoCache cache)
-				: base(bv, spec, mediator, cache)
+			internal BulkEditBarForTests(BrowseViewer bv, XmlNode spec, Mediator mediator, PropertyTable propertyTable, LcmCache cache)
+				: base(bv, spec, mediator, propertyTable, cache)
 			{
-				Form mainWindow = (Form)mediator.PropertyTable.GetValue("window") as Form;
-				m_wnd = mainWindow as MockFwXWindow;
+				m_wnd = propertyTable.GetValue<MockFwXWindow>("window");
 			}
 
 			internal void SwitchTab(string tabName)
@@ -268,8 +267,6 @@ namespace SIL.FieldWorks.XWorks
 				return items;
 			}
 
-			[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-				Justification = "matches is a reference")]
 			internal Control GetTabControlChild(string controlName)
 			{
 				Control[] matches = m_operationsTabControl.SelectedTab.Controls.Find(controlName, true);
@@ -334,32 +331,32 @@ namespace SIL.FieldWorks.XWorks
 		{
 			MockFwXWindow m_wnd = null;
 
-			internal BrowseViewerForTests(XmlNode nodeSpec, int hvoRoot, int fakeFlid, FdoCache cache,
-				Mediator mediator, ISortItemProvider sortItemProvider, ISilDataAccessManaged sdaRecordList)
-				: base(nodeSpec, hvoRoot, fakeFlid, cache, mediator, sortItemProvider, sdaRecordList)
+			internal BrowseViewerForTests(XmlNode nodeSpec, int hvoRoot, int fakeFlid, LcmCache cache,
+				Mediator mediator, PropertyTable propertyTable, ISortItemProvider sortItemProvider, ISilDataAccessManaged sdaRecordList)
+				: base(nodeSpec, hvoRoot, fakeFlid, cache, mediator, propertyTable, sortItemProvider, sdaRecordList)
 			{
-				var mainWindow = (Form)mediator.PropertyTable.GetValue("window");
-				m_wnd = mainWindow as MockFwXWindow;
+				m_wnd = m_propertyTable.GetValue<MockFwXWindow>("window");
 				m_xbv.MakeRoot(); // needed to process OnRecordNavigation
 			}
 
-			/// <summary>
+			///  <summary>
 			///
-			/// </summary>
-			/// <param name="bv"></param>
-			/// <param name="spec"></param>
-			/// <param name="mediator"></param>
+			///  </summary>
+			///  <param name="bv"></param>
+			///  <param name="spec"></param>
+			///  <param name="mediator"></param>
+			/// <param name="propertyTable"></param>
 			/// <param name="cache"></param>
-			/// <returns></returns>
-			protected override BulkEditBar CreateBulkEditBar(BrowseViewer bv, XmlNode spec, Mediator mediator, FdoCache cache)
+			///  <returns></returns>
+			protected override BulkEditBar CreateBulkEditBar(BrowseViewer bv, XmlNode spec, Mediator mediator, PropertyTable propertyTable, LcmCache cache)
 			{
-				return new BulkEditBarForTests(bv, spec, mediator, cache);
+				return new BulkEditBarForTests(bv, spec, mediator, propertyTable, cache);
 			}
 
 			private AnywhereMatcher CreateAnywhereMatcher(string pattern, int ws)
 			{
 				IVwPattern ivwpattern = VwPatternClass.Create();
-				ivwpattern.Pattern = TsStringUtils.MakeTss(pattern, ws);
+				ivwpattern.Pattern = TsStringUtils.MakeString(pattern, ws);
 				ivwpattern.MatchCase = true;
 				ivwpattern.MatchDiacritics = true;
 
@@ -404,8 +401,6 @@ namespace SIL.FieldWorks.XWorks
 				return fsiTarget;
 			}
 
-			[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-				Justification = "FiltersortItem[] is a reference")]
 			private FilterSortItem FindColumnInfo(string columnName)
 			{
 				FilterSortItem fsiTarget = null;
@@ -437,7 +432,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				// get column matching the given layoutName
 				List<XmlNode> possibleColumns = m_xbv.Vc.ComputePossibleColumns();
-				XmlNode colSpec = XmlViewsUtils.FindNodeWithAttrVal(possibleColumns, "layout", layoutName, null);
+				XmlNode colSpec = XmlViewsUtils.FindNodeWithAttrVal(possibleColumns, "layout", layoutName);
 				if (this.IsColumnHidden(colSpec))
 				{
 					this.AppendColumn(colSpec);
@@ -482,11 +477,13 @@ namespace SIL.FieldWorks.XWorks
 		protected class RecordBrowseViewForTests : RecordBrowseView
 		{
 			protected override BrowseViewer CreateBrowseViewer(XmlNode nodeSpec, int hvoRoot, int fakeFlid,
-				FdoCache cache, Mediator mediator, ISortItemProvider sortItemProvider, ISilDataAccessManaged sda)
+				LcmCache cache, Mediator mediator, PropertyTable propertyTable, ISortItemProvider sortItemProvider, ISilDataAccessManaged sda)
 			{
-				var app = (MockFwXApp)mediator.PropertyTable.GetValue("App");
-				mediator.FeedbackInfoProvider = app;
-				return new BrowseViewerForTests(nodeSpec, hvoRoot, fakeFlid, cache, mediator,
+				var app = propertyTable.GetValue<MockFwXApp>("App");
+				propertyTable.SetProperty("FeedbackInfoProvider", app, true);
+				propertyTable.SetPropertyPersistence("FeedbackInfoProvider", false);
+				return new BrowseViewerForTests(nodeSpec, hvoRoot, fakeFlid, cache,
+					mediator, propertyTable,
 					sortItemProvider, sda);
 			}
 
@@ -763,7 +760,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		private Dictionary<string, ICmSemanticDomain> AddSemanticDomains(FdoCache cache)
+		private Dictionary<string, ICmSemanticDomain> AddSemanticDomains(LcmCache cache)
 		{
 			var semDomFact = cache.ServiceLocator.GetInstance<ICmSemanticDomainFactory>();
 			var semDomList = cache.LangProject.SemanticDomainListOA;
@@ -1500,8 +1497,6 @@ namespace SIL.FieldWorks.XWorks
 		/// queries the lexical database to find an entry with multiple descendents
 		/// </summary>
 		/// <returns></returns>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "clerk is a reference")]
 		private ILexEntry CreateZZZparentEntryWithMultipleSensesAndPronunciation_AndUpdateList()
 		{
 			ILexPronunciation dummy;
@@ -1521,7 +1516,7 @@ namespace SIL.FieldWorks.XWorks
 				int clsidForm = 0;
 				parentEntry = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create(
 					MorphServices.FindMorphType(Cache, ref formLexEntry, out clsidForm),
-					TsStringUtils.MakeTss(formLexEntry, Cache.DefaultVernWs), "ZZZparentEntry.sense1", null);
+					TsStringUtils.MakeString(formLexEntry, Cache.DefaultVernWs), "ZZZparentEntry.sense1", null);
 				var parentEntrySense1 = parentEntry.SensesOS[0];
 				var parentEntrySense2 = Cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create(
 					parentEntry, null, "ZZZparentEntry.sense2");
@@ -1605,7 +1600,7 @@ namespace SIL.FieldWorks.XWorks
 			/// <summary/>
 			protected virtual void Dispose(bool fDisposing)
 			{
-				System.Diagnostics.Debug.WriteLineIf(!fDisposing, "****** Missing Dispose() call for " + GetType().ToString() + " *******");
+				System.Diagnostics.Debug.WriteLineIf(!fDisposing, "****** Missing Dispose() call for " + GetType() + " *******");
 				if (fDisposing && !IsDisposed)
 				{
 					// dispose managed and unmanaged objects
@@ -1773,11 +1768,10 @@ namespace SIL.FieldWorks.XWorks
 			using (FilterBehavior.Create(this))
 				m_bulkEditBar.SetTargetField("Glosses");
 
-			var allSensesForEntry = new Set<int>(
-				FdoVectorUtils.ConvertCmObjectsToHvos(entryWithMultipleDescendents.AllSenses));
-			var checkedItems = new Set<int>(m_bv.CheckedItems);
+			var allSensesForEntry = new HashSet<int>(entryWithMultipleDescendents.AllSenses.Select(s => s.Hvo));
+			var checkedItems = new HashSet<int>(m_bv.CheckedItems);
 			Assert.AreEqual(allSensesForEntry.Count, checkedItems.Count, "Checked items mismatched.");
-			Assert.IsTrue(checkedItems.Equals(allSensesForEntry), "Checked items mismatched.");
+			Assert.IsTrue(checkedItems.SetEquals(allSensesForEntry), "Checked items mismatched.");
 		}
 
 		[Test]
@@ -1797,11 +1791,10 @@ namespace SIL.FieldWorks.XWorks
 			using (FilterBehavior.Create(this))
 				m_bulkEditBar.SetTargetField("Glosses");
 
-			var allSensesForEntry = new Set<int>(FdoVectorUtils.ConvertCmObjectsToHvos(
-				entryWithMultipleDescendents.AllSenses));
-			var uncheckedItems = new Set<int>(m_bv.UncheckedItems());
+			var allSensesForEntry = new HashSet<int>(entryWithMultipleDescendents.AllSenses.Select(s => s.Hvo));
+			var uncheckedItems = new HashSet<int>(m_bv.UncheckedItems());
 			Assert.AreEqual(allSensesForEntry.Count, uncheckedItems.Count, "Unchecked items mismatched.");
-			Assert.IsTrue(uncheckedItems.Equals(allSensesForEntry), "Unchecked items mismatched.");
+			Assert.IsTrue(uncheckedItems.SetEquals(allSensesForEntry), "Unchecked items mismatched.");
 		}
 
 		/// <summary>
@@ -1830,11 +1823,11 @@ namespace SIL.FieldWorks.XWorks
 			using (FilterBehavior.Create(this))
 				m_bulkEditBar.SetTargetField("Lexeme Form");
 
-			var selectedEntries = new Set<int>(new int[] { entryWithMultipleDescendents.Hvo });
-			selectedEntries.AddRange(FdoVectorUtils.ConvertCmObjectsToHvos(entriesWithoutSenses));
-			var checkedItems = new Set<int>(m_bv.CheckedItems);
+			var selectedEntries = new HashSet<int> {entryWithMultipleDescendents.Hvo};
+			selectedEntries.UnionWith(entriesWithoutSenses.Select(e => e.Hvo));
+			var checkedItems = new HashSet<int>(m_bv.CheckedItems);
 			Assert.AreEqual(selectedEntries.Count, checkedItems.Count, "Checked items mismatched.");
-			Assert.IsTrue(checkedItems.Equals(selectedEntries), "Checked items mismatched.");
+			Assert.IsTrue(checkedItems.SetEquals(selectedEntries), "Checked items mismatched.");
 		}
 
 		/// <summary>
@@ -1852,16 +1845,16 @@ namespace SIL.FieldWorks.XWorks
 			var clerk = (m_bv.Parent as RecordBrowseViewForTests).Clerk;
 
 			// unselect all the senses belonging to this entry
-			m_bv.UncheckItems(FdoVectorUtils.ConvertCmObjectsToHvos<ILexSense>(entryWithMultipleDescendents.AllSenses));
+			m_bv.UncheckItems(entryWithMultipleDescendents.AllSenses.Select(s => s.Hvo));
 
 			// switch to the parent list
 			using (FilterBehavior.Create(this))
 				m_bulkEditBar.SetTargetField("Lexeme Form");
 
-			var unselectedEntries = new Set<int>(new int[] { entryWithMultipleDescendents.Hvo });
-			var uncheckedItems = new Set<int>(m_bv.UncheckedItems());
+			var unselectedEntries = new HashSet<int> {entryWithMultipleDescendents.Hvo};
+			var uncheckedItems = new HashSet<int>(m_bv.UncheckedItems());
 			Assert.AreEqual(unselectedEntries.Count, uncheckedItems.Count, "Unchecked items mismatched.");
-			Assert.IsTrue(uncheckedItems.Equals(unselectedEntries), "Unchecked items mismatched.");
+			Assert.IsTrue(uncheckedItems.SetEquals(unselectedEntries), "Unchecked items mismatched.");
 		}
 
 		/// <summary>
@@ -1892,9 +1885,9 @@ namespace SIL.FieldWorks.XWorks
 			using (FilterBehavior.Create(this))
 				m_bulkEditBar.SetTargetField("Glosses");
 			// validate that only the siblings are selected.
-			var hvoSenseSiblings = new Set<int>(FdoVectorUtils.ConvertCmObjectsToHvos(parentEntry.AllSenses));
+			var hvoSenseSiblings = new HashSet<int>(parentEntry.AllSenses.Select(s => s.Hvo));
 			Assert.AreEqual(hvoSenseSiblings.Count, m_bv.CheckedItems.Count);
-			Assert.IsTrue(hvoSenseSiblings.Equals(new Set<int>(m_bv.CheckedItems)));
+			Assert.IsTrue(hvoSenseSiblings.SetEquals(new HashSet<int>(m_bv.CheckedItems)));
 		}
 
 		[Test]
@@ -1918,10 +1911,10 @@ namespace SIL.FieldWorks.XWorks
 			using (FilterBehavior.Create(this))
 				m_bulkEditBar.SetTargetField("Glosses");
 			// validate that only the siblings are unselected.
-			var hvoSenseSiblings = new Set<int>(FdoVectorUtils.ConvertCmObjectsToHvos<ILexSense>(parentEntry.AllSenses));
-			var uncheckedItems = new Set<int>(m_bv.UncheckedItems());
+			var hvoSenseSiblings = new HashSet<int>(parentEntry.AllSenses.Select(s => s.Hvo));
+			var uncheckedItems = new HashSet<int>(m_bv.UncheckedItems());
 			Assert.AreEqual(hvoSenseSiblings.Count, uncheckedItems.Count);
-			Assert.IsTrue(hvoSenseSiblings.Equals(uncheckedItems));
+			Assert.IsTrue(hvoSenseSiblings.SetEquals(uncheckedItems));
 		}
 
 		/// <summary>
@@ -1947,9 +1940,8 @@ namespace SIL.FieldWorks.XWorks
 			using (FilterBehavior.Create(this))
 				m_bulkEditBar.SetTargetField("Allomorphs");
 			// validate that everything (except variant allomorph?) is still not selected.
-			var checkedItems = new Set<int>(m_bv.CheckedItems);
-			var selectedEntries = new Set<int>();
-			selectedEntries.AddRange(FdoVectorUtils.ConvertCmObjectsToHvos(entriesWithoutSenses));
+			var checkedItems = new HashSet<int>(m_bv.CheckedItems);
+			var selectedEntries = new HashSet<int>(entriesWithoutSenses.Select(e => e.Hvo));
 			Assert.AreEqual(selectedEntries.Count, checkedItems.Count);
 		}
 
@@ -1983,16 +1975,16 @@ namespace SIL.FieldWorks.XWorks
 			// go through each of the translation items, and find the LexEntry owner.
 			var translationsToEntries = GetParentOfClassMap(uncheckedTranslationItems,
 				LexEntryTags.kClassId);
-			var expectedUnselectedEntries = new Set<int>(translationsToEntries.Values);
+			var expectedUnselectedEntries = new HashSet<int>(translationsToEntries.Values);
 
 			// Now switch to Entries and expect the new parent items to be selected.
 			using (FilterBehavior.Create(this))
 				m_bulkEditBar.SetTargetField("Lexeme Form");
 
-			var entriesSelected = new Set<int>(m_bv.CheckedItems);
-			var entriesUnselected = new Set<int>(m_bv.UncheckedItems());
+			var entriesSelected = new HashSet<int>(m_bv.CheckedItems);
+			var entriesUnselected = new HashSet<int>(m_bv.UncheckedItems());
 			Assert.AreEqual(expectedUnselectedEntries.Count, entriesUnselected.Count, "Unselected items mismatched.");
-			Assert.IsTrue(expectedUnselectedEntries.Equals(entriesUnselected), "Unselected items mismatched.");
+			Assert.IsTrue(expectedUnselectedEntries.SetEquals(entriesUnselected), "Unselected items mismatched.");
 			Assert.Greater(entriesSelected.Count, 0);
 		}
 

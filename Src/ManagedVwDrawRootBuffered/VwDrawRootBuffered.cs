@@ -4,11 +4,9 @@
 
 using System;
 using System.Drawing;
-using System.Drawing.Drawing2D;
 using System.Runtime.InteropServices;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.Utils;
-using System.Diagnostics.CodeAnalysis;
+using SIL.FieldWorks.Common.ViewsInterfaces;
+using SIL.LCModel.Core.Text;
 
 namespace SIL.FieldWorks.Views
 {
@@ -86,8 +84,6 @@ namespace SIL.FieldWorks.Views
 		/// <summary>
 		/// See C++ documentation
 		/// </summary>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "memoryBuffer.Graphics returns a reference")]
 		public void DrawTheRoot(IVwRootBox prootb, IntPtr hdc, Rect rcpDraw, uint bkclr,
 			bool fDrawSel, IVwRootSite pvrs)
 		{
@@ -187,8 +183,6 @@ namespace SIL.FieldWorks.Views
 		/// <summary>
 		/// See C++ documentation
 		/// </summary>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "memoryBuffer.Graphics returns a reference")]
 		public void DrawTheRootAt(IVwRootBox prootb, IntPtr hdc, Rect rcpDraw, uint bkclr,
 			bool fDrawSel, IVwGraphics pvg, Rect rcSrc, Rect rcDst, int ysTop, int dysHeight)
 		{
@@ -228,8 +222,6 @@ namespace SIL.FieldWorks.Views
 		/// the memory buffer to the screen.
 		/// See C++ documentation for more info.
 		/// </summary>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "memoryBuffer.Graphics returns a reference")]
 		public void DrawTheRootRotated(IVwRootBox rootb, IntPtr hdc, Rect rcpDraw, uint bkclr,
 			bool fDrawSel, IVwRootSite vrs, int nHow)
 		{

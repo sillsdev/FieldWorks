@@ -1,19 +1,18 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Text;
 using NUnit.Framework;
-using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FDO.FDOTests;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Infrastructure;
 
 namespace SIL.FieldWorks.IText
 {
@@ -23,8 +22,6 @@ namespace SIL.FieldWorks.IText
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
 	[TestFixture]
-	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
-		Justification="Unit test - m_stream gets disposed in TestTearDown()")]
 	public class ImportInterlinearAnalysesTests : MemoryOnlyBackendProviderReallyRestoredForEachTestTestBase
 	{
 		private MemoryStream m_Stream;
@@ -64,7 +61,7 @@ namespace SIL.FieldWorks.IText
 				"</words></phrase></phrases></paragraph></paragraphs></interlinear-text></document>";
 
 			var li = new BIRDFormatImportTests.LLIMergeExtension(Cache, null, null);
-			FDO.IText importedText = null;
+			LCModel.IText importedText = null;
 			var options = CreateImportInterlinearOptions(xml);
 			li.ImportInterlinear(options, ref importedText);
 			using (var firstEntry = Cache.LanguageProject.Texts.GetEnumerator())
@@ -128,7 +125,7 @@ namespace SIL.FieldWorks.IText
 				"</words></phrase></phrases></paragraph></paragraphs></interlinear-text></document>";
 
 			var li = new BIRDFormatImportTests.LLIMergeExtension(Cache, null, null);
-			FDO.IText importedText = null;
+			LCModel.IText importedText = null;
 			var options = CreateImportInterlinearOptions(xml);
 			li.ImportInterlinear(options, ref importedText);
 			using (var firstEntry = Cache.LanguageProject.Texts.GetEnumerator())
@@ -177,7 +174,7 @@ namespace SIL.FieldWorks.IText
 				"</words></phrase></phrases></paragraph></paragraphs></interlinear-text></document>";
 
 			var li = new BIRDFormatImportTests.LLIMergeExtension(Cache, null, null);
-			FDO.IText importedText = null;
+			LCModel.IText importedText = null;
 			var options = CreateImportInterlinearOptions(xml);
 			li.ImportInterlinear(options, ref importedText);
 			using (var firstEntry = Cache.LanguageProject.Texts.GetEnumerator())
@@ -221,7 +218,7 @@ namespace SIL.FieldWorks.IText
 				"</words></phrase></phrases></paragraph></paragraphs></interlinear-text></document>";
 
 			var li = new BIRDFormatImportTests.LLIMergeExtension(Cache, null, null);
-			FDO.IText importedText = null;
+			LCModel.IText importedText = null;
 			var options = CreateImportInterlinearOptions(xml);
 			li.ImportInterlinear(options, ref importedText);
 			using (var firstEntry = Cache.LanguageProject.Texts.GetEnumerator())
@@ -250,31 +247,32 @@ namespace SIL.FieldWorks.IText
 			var sl = Cache.ServiceLocator;
 			var wsf = Cache.WritingSystemFactory;
 
-			FDO.IText text;
-
+			LCModel.IText text;
+			IStTxtPara para = null;
 			IWfiWordform word = null;
 			ITsString paraContents = null;
+			Guid segGuid = new Guid();
 			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
 			{
 				text = sl.GetInstance<ITextFactory>().Create(Cache, new Guid("AAAAAAAA-AAAA-AAAA-AAAA-AAAAAAAAAAAA"));
 				//Cache.LangProject.TextsOC.Add(text);
 				var sttext = sl.GetInstance<IStTextFactory>().Create();
 				text.ContentsOA = sttext;
-				IStTxtPara para = sl.GetInstance<IStTxtParaFactory>().Create();
+				para = sl.GetInstance<IStTxtParaFactory>().Create();
 				sttext.ParagraphsOS.Add(para);
-				para.Contents = Cache.TsStrFactory.MakeString("supercalifragilisticexpialidocious", wsf.get_Engine("en").Handle);
-				paraContents = para.Contents;
+				paraContents = TsStringUtils.MakeString("supercalifragilisticexpialidocious", wsf.get_Engine("en").Handle);
 				ISegment segment = sl.GetInstance<ISegmentFactory>().Create();
 				para.SegmentsOS.Add(segment);
-				ITsString wform = TsStringUtils.MakeTss("supercalifragilisticexpialidocious",
+				ITsString wform = TsStringUtils.MakeString("supercalifragilisticexpialidocious",
 					wsf.get_Engine("en").Handle);
+				segGuid = segment.Guid;
 				word = sl.GetInstance<IWfiWordformFactory>().Create(wform);
 				segment.AnalysesRS.Add(word);
 			});
 
 			// import an analysis with word gloss
-			const string xml = "<document><interlinear-text guid='AAAAAAAA-AAAA-AAAA-AAAA-AAAAAAAAAAAA'>" +
-				"<paragraphs><paragraph><phrases><phrase><words>" +
+			string xml = "<document><interlinear-text guid='AAAAAAAA-AAAA-AAAA-AAAA-AAAAAAAAAAAA'>" +
+				"<paragraphs><paragraph><phrases><phrase guid='" + segGuid + "'><words>" +
 					"<word>" +
 						"<item type='txt' lang='en'>supercalifragilisticexpialidocious</item>" +
 						"<item type='gls' lang='pt'>absurdo</item>" +
@@ -283,7 +281,7 @@ namespace SIL.FieldWorks.IText
 
 			var li = new BIRDFormatImportTests.LLIMergeExtension(Cache, null, null);
 			var options = CreateImportInterlinearOptions(xml);
-			FDO.IText importedText = null;
+			LCModel.IText importedText = null;
 			li.ImportInterlinear(options, ref importedText);
 			using (var firstEntry = Cache.LanguageProject.Texts.GetEnumerator())
 			{
@@ -302,14 +300,11 @@ namespace SIL.FieldWorks.IText
 				var importedGloss = at.Gloss;
 				Assert.That(importedGloss.Form.get_String(wsf.get_Engine("pt").Handle).Text, Is.EqualTo("absurdo"));
 
-				/* NOTE: currently paragraphs are getting recreated, so we can't depend upon that ownership tree persisting after the import
-				 *
-				Assert.That(importedPara.Guid, Is.SameAs(para.Guid));
-				var at = new AnalysisTree(para.Analyses.First());
+				Assert.That(importedPara.Guid.Equals(para.Guid));
+				at = new AnalysisTree(para.Analyses.First());
 				Assert.IsNotNull(at.Gloss, "IAnalysis should be WfiGloss");
 				var gloss = at.Gloss;
 				Assert.That(gloss.Form.get_String(wsf.get_Engine("pt").Handle).Text, Is.EqualTo("absurdo"));
-				 */
 
 				// make sure nothing has changed:
 				Assert.That(Cache.LanguageProject.Texts.Count, Is.EqualTo(1));
@@ -333,31 +328,32 @@ namespace SIL.FieldWorks.IText
 			var sl = Cache.ServiceLocator;
 			var wsf = Cache.WritingSystemFactory;
 
-			FDO.IText text;
-
+			LCModel.IText text;
+			IStTxtPara para = null;
 			IWfiWordform word = null;
 			ITsString paraContents = null;
+			Guid segGuid = new Guid();
 			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
 			{
 				text = sl.GetInstance<ITextFactory>().Create(Cache, new Guid("AAAAAAAA-AAAA-AAAA-AAAA-AAAAAAAAAAAA"));
 				//Cache.LangProject.TextsOC.Add(text);
 				var sttext = sl.GetInstance<IStTextFactory>().Create();
 				text.ContentsOA = sttext;
-				IStTxtPara para = sl.GetInstance<IStTxtParaFactory>().Create();
+				para = sl.GetInstance<IStTxtParaFactory>().Create();
 				sttext.ParagraphsOS.Add(para);
-				para.Contents = Cache.TsStrFactory.MakeString("supercalifragilisticexpialidocious", wsf.get_Engine("en").Handle);
-				paraContents = para.Contents;
+				paraContents = TsStringUtils.MakeString("supercalifragilisticexpialidocious", wsf.get_Engine("en").Handle);
 				ISegment segment = sl.GetInstance<ISegmentFactory>().Create();
 				para.SegmentsOS.Add(segment);
-				ITsString wform = TsStringUtils.MakeTss("supercalifragilisticexpialidocious",
+				ITsString wform = TsStringUtils.MakeString("supercalifragilisticexpialidocious",
 					wsf.get_Engine("en").Handle);
+				segGuid = segment.Guid;
 				word = sl.GetInstance<IWfiWordformFactory>().Create(wform);
 				segment.AnalysesRS.Add(word);
 			});
 
 			// import an analysis with word gloss
 			string xml = "<document><interlinear-text guid='AAAAAAAA-AAAA-AAAA-AAAA-AAAAAAAAAAAA'>" +
-				"<paragraphs><paragraph><phrases><phrase><words>" +
+				"<paragraphs><paragraph><phrases><phrase guid='" + segGuid + "'><words>" +
 					"<word guid='" + word.Guid + "'>" +
 						"<item type='txt' lang='en'>supercalifragilisticexpialidocious</item>" +
 						"<item type='gls' lang='pt'>absurdo</item>" +
@@ -366,7 +362,7 @@ namespace SIL.FieldWorks.IText
 
 			var li = new BIRDFormatImportTests.LLIMergeExtension(Cache, null, null);
 			var options = CreateImportInterlinearOptions(xml);
-			FDO.IText importedText = null;
+			LCModel.IText importedText = null;
 			li.ImportInterlinear(options, ref importedText);
 			using (var firstEntry = Cache.LanguageProject.Texts.GetEnumerator())
 			{
@@ -386,14 +382,11 @@ namespace SIL.FieldWorks.IText
 				var importedGloss = at.Gloss;
 				Assert.That(importedGloss.Form.get_String(wsf.get_Engine("pt").Handle).Text, Is.EqualTo("absurdo"));
 
-				/* NOTE: currently paragraphs are getting recreated, so we can't depend upon that ownership tree persisting after the import
-				 *
-				Assert.That(importedPara.Guid, Is.SameAs(para.Guid));
-				var at = new AnalysisTree(para.Analyses.First());
+				Assert.That(importedPara.Guid.Equals(para.Guid));
+				at = new AnalysisTree(para.Analyses.First());
 				Assert.IsNotNull(at.Gloss, "IAnalysis should be WfiGloss");
 				var gloss = at.Gloss;
 				Assert.That(gloss.Form.get_String(wsf.get_Engine("pt").Handle).Text, Is.EqualTo("absurdo"));
-				 */
 
 				// make sure nothing has changed:
 				Assert.That(Cache.LanguageProject.Texts.Count, Is.EqualTo(1));
@@ -417,7 +410,7 @@ namespace SIL.FieldWorks.IText
 			var sl = Cache.ServiceLocator;
 			var wsf = Cache.WritingSystemFactory;
 
-			FDO.IText text;
+			LCModel.IText text;
 
 			IWfiWordform word = null;
 			ITsString paraContents = null;
@@ -430,11 +423,11 @@ namespace SIL.FieldWorks.IText
 				text.ContentsOA = sttext;
 				IStTxtPara para = sl.GetInstance<IStTxtParaFactory>().Create();
 				sttext.ParagraphsOS.Add(para);
-				para.Contents = Cache.TsStrFactory.MakeString("supercalifragilisticexpialidocious", wsf.get_Engine("en").Handle);
+				para.Contents = TsStringUtils.MakeString("supercalifragilisticexpialidocious", wsf.get_Engine("en").Handle);
 				paraContents = para.Contents;
 				ISegment segment = sl.GetInstance<ISegmentFactory>().Create();
 				para.SegmentsOS.Add(segment);
-				ITsString wform = TsStringUtils.MakeTss("supercalifragilisticexpialidocious",
+				ITsString wform = TsStringUtils.MakeString("supercalifragilisticexpialidocious",
 					wsf.get_Engine("en").Handle);
 				segGuid = segment.Guid;
 				word = sl.GetInstance<IWfiWordformFactory>().Create(wform);
@@ -454,7 +447,7 @@ namespace SIL.FieldWorks.IText
 
 			var li = new BIRDFormatImportTests.LLIMergeExtension(Cache, null, null);
 			var options = CreateImportInterlinearOptions(xml);
-			FDO.IText importedText = null;
+			LCModel.IText importedText = null;
 			li.ImportInterlinear(options, ref importedText);
 			using (var firstEntry = Cache.LanguageProject.Texts.GetEnumerator())
 			{
@@ -496,7 +489,7 @@ namespace SIL.FieldWorks.IText
 			var sl = Cache.ServiceLocator;
 			var wsf = Cache.WritingSystemFactory;
 
-			FDO.IText text;
+			LCModel.IText text;
 
 			IWfiWordform word = null;
 			ITsString paraContents = null;
@@ -509,11 +502,10 @@ namespace SIL.FieldWorks.IText
 				text.ContentsOA = sttext;
 				IStTxtPara para = sl.GetInstance<IStTxtParaFactory>().Create();
 				sttext.ParagraphsOS.Add(para);
-				para.Contents = Cache.TsStrFactory.MakeString("supercalifragilisticexpialidocious", wsf.get_Engine("en").Handle);
-				paraContents = para.Contents;
+				paraContents = TsStringUtils.MakeString("supercalifragilisticexpialidocious", wsf.get_Engine("en").Handle);
 				ISegment segment = sl.GetInstance<ISegmentFactory>().Create();
 				para.SegmentsOS.Add(segment);
-				ITsString wform = TsStringUtils.MakeTss("supercalifragilisticexpialidocious",
+				ITsString wform = TsStringUtils.MakeString("supercalifragilisticexpialidocious",
 					wsf.get_Engine("en").Handle);
 				segGuid = segment.Guid;
 				word = sl.GetInstance<IWfiWordformFactory>().Create(wform);
@@ -533,7 +525,7 @@ namespace SIL.FieldWorks.IText
 
 			var li = new BIRDFormatImportTests.LLIMergeExtension(Cache, null, null);
 			var options = CreateImportInterlinearOptions(xml);
-			FDO.IText importedText = null;
+			LCModel.IText importedText = null;
 			li.ImportInterlinear(options, ref importedText);
 			using (var firstEntry = Cache.LanguageProject.Texts.GetEnumerator())
 			{
@@ -576,7 +568,7 @@ namespace SIL.FieldWorks.IText
 			var sl = Cache.ServiceLocator;
 			var wsf = Cache.WritingSystemFactory;
 
-			FDO.IText text;
+			LCModel.IText text;
 
 			IWfiWordform word = null;
 			ITsString paraContents = null;
@@ -589,11 +581,10 @@ namespace SIL.FieldWorks.IText
 				text.ContentsOA = sttext;
 				IStTxtPara para = sl.GetInstance<IStTxtParaFactory>().Create();
 				sttext.ParagraphsOS.Add(para);
-				para.Contents = Cache.TsStrFactory.MakeString("supercalifragilisticexpialidocious", wsf.get_Engine("en").Handle);
-				paraContents = para.Contents;
+				paraContents = TsStringUtils.MakeString("supercalifragilisticexpialidocious", wsf.get_Engine("en").Handle);
 				ISegment segment = sl.GetInstance<ISegmentFactory>().Create();
 				para.SegmentsOS.Add(segment);
-				ITsString wform = TsStringUtils.MakeTss("supercalifragilisticexpialidocious",
+				ITsString wform = TsStringUtils.MakeString("supercalifragilisticexpialidocious",
 					wsf.get_Engine("en").Handle);
 				segGuid = segment.Guid;
 				word = sl.GetInstance<IWfiWordformFactory>().Create(wform);
@@ -613,7 +604,7 @@ namespace SIL.FieldWorks.IText
 
 			var li = new BIRDFormatImportTests.LLIMergeExtension(Cache, null, null);
 			var options = CreateImportInterlinearOptions(xml);
-			FDO.IText importedText = null;
+			LCModel.IText importedText = null;
 			li.ImportInterlinear(options, ref importedText);
 			using (var firstEntry = Cache.LanguageProject.Texts.GetEnumerator())
 			{
@@ -670,7 +661,7 @@ namespace SIL.FieldWorks.IText
 
 			var li = new BIRDFormatImportTests.LLIMergeExtension(Cache, null, null);
 			var options = CreateImportInterlinearOptions(xml);
-			FDO.IText importedText = null;
+			LCModel.IText importedText = null;
 			li.ImportInterlinear(options, ref importedText);
 			var stText = importedText.ContentsOA;
 			var para = (IStTxtPara)stText.ParagraphsOS[0];
@@ -697,11 +688,11 @@ namespace SIL.FieldWorks.IText
 			{
 				var wf = Cache.ServiceLocator.GetInstance<IWfiWordformFactory>().Create();
 				int wsEn = Cache.WritingSystemFactory.GetWsFromStr("en");
-				wf.Form.set_String(wsEn, Cache.TsStrFactory.MakeString("this is a phrase", wsEn));
+				wf.Form.set_String(wsEn, TsStringUtils.MakeString("this is a phrase", wsEn));
 			});
 			var li = new BIRDFormatImportTests.LLIMergeExtension(Cache, null, null);
 			var options = CreateImportInterlinearOptions(xml);
-			FDO.IText importedText = null;
+			LCModel.IText importedText = null;
 			li.ImportInterlinear(options, ref importedText);
 			var stText = importedText.ContentsOA;
 			var para = (IStTxtPara)stText.ParagraphsOS[0];
@@ -722,7 +713,7 @@ namespace SIL.FieldWorks.IText
 
 			var li = new BIRDFormatImportTests.LLIMergeExtension(Cache, null, null);
 			var options = CreateImportInterlinearOptions(xml);
-			FDO.IText importedText = null;
+			LCModel.IText importedText = null;
 			li.ImportInterlinear(options, ref importedText);
 			var stText = importedText.ContentsOA;
 			var para = (IStTxtPara)stText.ParagraphsOS[0];
@@ -760,7 +751,7 @@ namespace SIL.FieldWorks.IText
 		public void WordsFragDoc_OneWordAndOneGloss()
 		{
 			var wsEn = Cache.WritingSystemFactory.GetWsFromStr("en");
-			IWritingSystem wsKal;
+			CoreWritingSystemDefinition wsKal;
 			Cache.ServiceLocator.WritingSystemManager.GetOrSet("qaa-x-kal", out wsKal);
 
 			const string xml =
@@ -792,7 +783,7 @@ namespace SIL.FieldWorks.IText
 		public void WordsFragDoc_OneWordAndOneGloss_AvoidDuplication()
 		{
 			var wsEn = Cache.WritingSystemFactory.GetWsFromStr("en");
-			IWritingSystem wsKal;
+			CoreWritingSystemDefinition wsKal;
 			Cache.ServiceLocator.WritingSystemManager.GetOrSet("qaa-x-kal", out wsKal);
 
 			const string xml =
@@ -831,7 +822,7 @@ namespace SIL.FieldWorks.IText
 		public void WordsFragDoc_OneWordAndMultiGloss()
 		{
 			var wsEn = Cache.WritingSystemFactory.GetWsFromStr("en");
-			IWritingSystem wsKal;
+			CoreWritingSystemDefinition wsKal;
 			Cache.ServiceLocator.WritingSystemManager.GetOrSet("qaa-x-kal", out wsKal);
 
 			const string xml =
@@ -866,7 +857,7 @@ namespace SIL.FieldWorks.IText
 		public void WordsFragDoc_OneWordAndMultiGloss_AvoidDuplication()
 		{
 			var wsEn = Cache.WritingSystemFactory.GetWsFromStr("en");
-			IWritingSystem wsKal;
+			CoreWritingSystemDefinition wsKal;
 			Cache.ServiceLocator.WritingSystemManager.GetOrSet("qaa-x-kal", out wsKal);
 
 			const string xml =
@@ -907,7 +898,7 @@ namespace SIL.FieldWorks.IText
 		public void WordsFragDoc_OneWordPhraseAndOneGloss()
 		{
 			var wsEn = Cache.WritingSystemFactory.GetWsFromStr("en");
-			IWritingSystem wsKal;
+			CoreWritingSystemDefinition wsKal;
 			Cache.ServiceLocator.WritingSystemManager.GetOrSet("qaa-x-kal", out wsKal);
 
 			const string xml =
@@ -939,7 +930,7 @@ namespace SIL.FieldWorks.IText
 		public void WordsFragDoc_OneWordPhraseAndOneGloss_AvoidDuplicates()
 		{
 			var wsEn = Cache.WritingSystemFactory.GetWsFromStr("en");
-			IWritingSystem wsKal;
+			CoreWritingSystemDefinition wsKal;
 			Cache.ServiceLocator.WritingSystemManager.GetOrSet("qaa-x-kal", out wsKal);
 
 			const string xml =

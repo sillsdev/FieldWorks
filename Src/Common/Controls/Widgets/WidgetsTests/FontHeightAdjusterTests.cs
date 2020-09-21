@@ -1,4 +1,4 @@
-// Copyright (c) 2004-2016 SIL International
+// Copyright (c) 2004-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -6,10 +6,11 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using NUnit.Framework;
-using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.Test.TestUtils;
-using SIL.Utils;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.FieldWorks.Common.FwUtils;
+using SIL.LCModel.Utils;
 
 namespace SIL.FieldWorks.Common.Widgets
 {
@@ -20,12 +21,12 @@ namespace SIL.FieldWorks.Common.Widgets
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
 	[TestFixture]
-	public class FontHeightAdjusterTests: BaseTest
+	public class FontHeightAdjusterTests
 	{
 
 		#region Data Members
 		TestFwStylesheet m_stylesheet;
-		IWritingSystemManager m_wsManager;
+		WritingSystemManager m_wsManager;
 		int m_hvoGermanWs;
 		int m_hvoEnglishWs;
 		#endregion
@@ -35,20 +36,19 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// Set up some dummy styles for testing purposes
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public override void FixtureSetup()
+		[TestFixtureSetUp]
+		public void FixtureSetup()
 		{
-			base.FixtureSetup();
-
 			m_stylesheet = new TestFwStylesheet();
-			m_wsManager = new PalasoWritingSystemManager();
+			m_wsManager = new WritingSystemManager();
 
 			// English
-			IWritingSystem enWs;
+			CoreWritingSystemDefinition enWs;
 			m_wsManager.GetOrSet("en", out enWs);
 			m_hvoEnglishWs = enWs.Handle;
 			Assert.IsTrue(m_hvoEnglishWs > 0, "Should have gotten an hvo for the English WS");
 			// German
-			IWritingSystem deWs;
+			CoreWritingSystemDefinition deWs;
 			m_wsManager.GetOrSet("de", out deWs);
 			m_hvoGermanWs = deWs.Handle;
 			Assert.IsTrue(m_hvoGermanWs > 0, "Should have gotten an hvo for the German WS");
@@ -56,7 +56,7 @@ namespace SIL.FieldWorks.Common.Widgets
 
 			// Create a couple of styles
 			int hvoStyle = m_stylesheet.MakeNewStyle();
-			ITsPropsBldr propsBldr = TsPropsBldrClass.Create();
+			ITsPropsBldr propsBldr = TsStringUtils.MakePropsBldr();
 			propsBldr.SetStrPropValue((int)FwTextStringProp.kstpFontFamily, "Arial");
 			m_stylesheet.PutStyle("StyleA", "bla", hvoStyle, 0, hvoStyle, 1, false, false,
 				propsBldr.GetTextProps());
@@ -143,9 +143,9 @@ namespace SIL.FieldWorks.Common.Widgets
 		[Test]
 		public void TestGetAdjustedTsString()
 		{
-			ITsStrBldr strBldr = TsStrBldrClass.Create();
-			ITsStrBldr strBldrExpected = TsStrBldrClass.Create();
-			ITsPropsBldr propsBldr = TsPropsBldrClass.Create();
+			ITsStrBldr strBldr = TsStringUtils.MakeStrBldr();
+			ITsStrBldr strBldrExpected = TsStringUtils.MakeStrBldr();
+			ITsPropsBldr propsBldr = TsStringUtils.MakePropsBldr();
 
 			propsBldr.SetStrPropValue((int)FwTextPropType.ktptNamedStyle, "StyleA");
 			propsBldr.SetIntPropValues((int)FwTextPropType.ktptWs, 0, m_hvoGermanWs);

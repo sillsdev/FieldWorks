@@ -41,14 +41,18 @@ namespace TestViews
 #define BREVE L"\x02D8" // compatibility decomposition to 0020 0306
 #define a_WITH_DIAERESIS L"\x00E4" // decomposes to 0061 0308.
 #define a_WITH_DIAERESIS_AND_MACRON L"\x01DF"
-#ifdef WIN32
+#if defined(WIN32) || defined(_M_X64)
 #define MUSICAL_SYMBOL_MINIMA L"\xD834\xDDBB" // 1D1BB decomposes to 1D1B9 1D165
 #define MUSICAL_SYMBOL_SEMIBREVIS_WHITE L"\xD834\xDDB9" // 1D1B9
 #define MUSICAL_SYMBOL_COMBINING_STEM L"\xD834\xDD65" // 1D165
+#define EXAMPLE_SURROGATE_PAIR L"\xD835\xDD14"
+#define SURROGATE_PAIR_DIACRITIC L"\xD804\xDF3C"
 #else
 #define MUSICAL_SYMBOL_MINIMA L"\x1D1BB" // 1D1BB decomposes to 1D1B9 1D165
 #define MUSICAL_SYMBOL_SEMIBREVIS_WHITE L"\x1D1B9" // 1D1B9
 #define MUSICAL_SYMBOL_COMBINING_STEM L"\x1D165" // 1D165
+#define EXAMPLE_SURROGATE_PAIR L"\x1D514"
+#define SURROGATE_PAIR_DIACRITIC L"\x1133C"
 #endif
 
 	class DummySimpleParaVc : public DummyBaseVc
@@ -285,12 +289,12 @@ namespace TestViews
 			// Insert a footnote ORC into the string.
 			StrUni stuData;
 			OLECHAR * prgchData;
-			GUID uidSimulatedFootnote;
-			CheckHr(CoCreateGuid(&uidSimulatedFootnote));
+			GUID uidFootnote;
+			CheckHr(CoCreateGuid(&uidFootnote));
 			// Make large enough for a guid plus the type character at the start.
 			stuData.SetSize(isizeof(GUID) / isizeof(OLECHAR) + 1, &prgchData);
 			*prgchData = kodtOwnNameGuidHot;
-			memmove(prgchData + 1, &uidSimulatedFootnote, isizeof(uidSimulatedFootnote));
+			memmove(prgchData + 1, &uidFootnote, isizeof(uidFootnote));
 			CheckHr(qtpbTextPropsBuilder->SetStrPropValue(ktptObjData, stuData.Bstr()));
 			CheckHr(qtpbTextPropsBuilder->GetTextProps(&qttp));
 			OLECHAR chObj = kchObject;
@@ -343,12 +347,12 @@ namespace TestViews
 			// Insert a footnote ORC into the string.
 			StrUni stuData;
 			OLECHAR * prgchData;
-			GUID uidSimulatedFootnote;
-			CheckHr(CoCreateGuid(&uidSimulatedFootnote));
+			GUID uidFootnote;
+			CheckHr(CoCreateGuid(&uidFootnote));
 			// Make large enough for a guid plus the type character at the start.
 			stuData.SetSize(isizeof(GUID) / isizeof(OLECHAR) + 1, &prgchData);
 			*prgchData = kodtOwnNameGuidHot;
-			memmove(prgchData + 1, &uidSimulatedFootnote, isizeof(uidSimulatedFootnote));
+			memmove(prgchData + 1, &uidFootnote, isizeof(uidFootnote));
 			CheckHr(qtpbTextPropsBuilder->SetStrPropValue(ktptObjData, stuData.Bstr()));
 			CheckHr(qtpbTextPropsBuilder->GetTextProps(&qttp));
 			OLECHAR chObj = kchObject;
@@ -399,12 +403,12 @@ namespace TestViews
 			// Insert a footnote ORC into the string.
 			StrUni stuData;
 			OLECHAR * prgchData;
-			GUID uidSimulatedFootnote;
-			CheckHr(CoCreateGuid(&uidSimulatedFootnote));
+			GUID uidFootnote;
+			CheckHr(CoCreateGuid(&uidFootnote));
 			// Make large enough for a guid plus the type character at the start.
 			stuData.SetSize(isizeof(GUID) / isizeof(OLECHAR) + 1, &prgchData);
 			*prgchData = kodtOwnNameGuidHot;
-			memmove(prgchData + 1, &uidSimulatedFootnote, isizeof(uidSimulatedFootnote));
+			memmove(prgchData + 1, &uidFootnote, isizeof(uidFootnote));
 			CheckHr(qtpbTextPropsBuilder->SetStrPropValue(ktptObjData, stuData.Bstr()));
 			CheckHr(qtpbTextPropsBuilder->GetTextProps(&qttp));
 			OLECHAR chObj = kchObject;
@@ -481,12 +485,12 @@ namespace TestViews
 			// Insert a footnote ORC into the string.
 			StrUni stuData;
 			OLECHAR * prgchData;
-			GUID uidSimulatedFootnote;
-			CheckHr(CoCreateGuid(&uidSimulatedFootnote));
+			GUID uidFootnote;
+			CheckHr(CoCreateGuid(&uidFootnote));
 			// Make large enough for a guid plus the type character at the start.
 			stuData.SetSize(isizeof(GUID) / isizeof(OLECHAR) + 1, &prgchData);
 			*prgchData = kodtOwnNameGuidHot;
-			memmove(prgchData + 1, &uidSimulatedFootnote, isizeof(uidSimulatedFootnote));
+			memmove(prgchData + 1, &uidFootnote, isizeof(uidFootnote));
 			CheckHr(qtpbTextPropsBuilder->SetStrPropValue(ktptObjData, stuData.Bstr()));
 			CheckHr(qtpbTextPropsBuilder->GetTextProps(&qttp));
 			OLECHAR chObj = kchObject;
@@ -1342,15 +1346,19 @@ namespace TestViews
 		{
 			m_qpat->put_UseRegularExpressions(false); // in case another test failed
 			unitpp::assert_true("English writing system exists", m_qwsEng.Ptr());
+			ITsStrFactoryPtr qtsf;
+			qtsf.CreateInstance(CLSID_TsStrFactory);
 			IVwCacheDaPtr qcda;
 			qcda.CreateInstance(CLSID_VwCacheDa);
+			qcda->putref_TsStrFactory(qtsf);
 			ISilDataAccessPtr qsda;
 			qcda->QueryInterface(IID_ISilDataAccess, (void **)&qsda);
 
 			qsda->putref_WritingSystemFactory(g_qwsf);
 
-			ITsStrFactoryPtr qtsf;
-			qtsf.CreateInstance(CLSID_TsStrFactory);
+			IRenderEngineFactoryPtr qref;
+			qref.Attach(NewObj MockRenderEngineFactory);
+
 			ITsStringPtr qtss;
 			// Now make two strings, the contents of paragraphs 1 and 2.
 			StrUni stuPara1(L"abc" A_WITH_DIAERESIS COMBINING_DOT_BELOW L"abcA" COMBINING_DOT_BELOW
@@ -1363,8 +1371,8 @@ namespace TestViews
 
 			// Now make them the paragraphs of an StText.
 			HVO rghvo[2] = {khvoOrigPara1, khvoOrigPara2};
-			HVO hvoRoot = 101;
-			qcda->CacheVecProp(hvoRoot, kflidStText_Paragraphs, rghvo, 2);
+			HVO hvoRootBox = 101;
+			qcda->CacheVecProp(hvoRootBox, kflidStText_Paragraphs, rghvo, 2);
 
 			// Now make the root box and view constructor and Graphics object.
 			IVwRootBoxPtr qrootb;
@@ -1381,7 +1389,9 @@ namespace TestViews
 				IVwViewConstructorPtr qvc;
 				qvc.Attach(NewObj DummySimpleParaVc());
 				qrootb->putref_DataAccess(qsda);
-				qrootb->SetRootObject(hvoRoot, qvc, kfragStText, NULL);
+				qrootb->putref_RenderEngineFactory(qref);
+				qrootb->putref_TsStrFactory(qtsf);
+				qrootb->SetRootObject(hvoRootBox, qvc, kfragStText, NULL);
 				DummyRootSitePtr qdrs;
 				qdrs.Attach(NewObj DummyRootSite());
 				Rect rcSrc(0, 0, 96, 96);

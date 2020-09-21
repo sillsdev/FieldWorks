@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -166,6 +166,9 @@
     <value>You do not have permission to change the setting "{0}". Administrator privileges are required to make changes affecting all users of this computer.</value>
     <comment>Error message when writing a registry setting for "local machine" fails.</comment>
   </data>
+  <data name="ksCorruptSettingsFileCaption" xml:space="preserve">
+    <value>Corrupt Settings File Detected</value>
+  </data>
   <data name="kstIdCantDoDictExists" xml:space="preserve">
     <value>FieldWorks has unexpectedly timed out trying to determine whether the spelling dictionary {0} exists. FieldWorks will assume there is no such dictionary, which may affect spell-checking. If you think this dictionary should exist, we recommend restarting your computer. If you see this message regularly, please report it as a bug.</value>
   </data>
@@ -176,9 +179,34 @@
     <value> The writing system {0} specifies an invalid spelling dictionary ({1}). Valid spelling dictionary IDs must only contain ASCII alphanumeric characters or underline. Spell checking will not work for this writing system until you correct this in the Writing System Properties dialog.</value>
     <comment>Error message. {0} might be a code like "fr" and {1} a bad ID, typically a short string like "frn[".</comment>
   </data>
+  <data name="ksDeleteAndReportCorruptSettingsFile" xml:space="preserve">
+    <value>FieldWorks has detected one or more corrupted settings files. These files will be safely deleted. If you have been using different keyboards to input text, these may be reset to default values. Please restore them yourself.</value>
+    <comment>Let users know that local user settings need to be manually restored</comment>
+  </data>
   <data name="ksPtCommunicationProblem" xml:space="preserve">
     <value>The project you are opening will not communicate with Paratext
 because a project with the same name is already open.
 If you want to use Paratext with this project, make a change in this project (so that it will start first), close both projects, then restart FLEx.</value>
+  </data>
+  <data name="kstidAppVersionFmt" xml:space="preserve">
+    <value>Version: {0}  {1}  {2}</value>
+    <comment>Displays in the Help/About box and the splash screen</comment>
+  </data>
+  <data name="kstidLicense" xml:space="preserve">
+    <value>This software is licensed under the LGPL, version 2.1 or later</value>
+    <comment>Displays in the Help/About box and the splash screen</comment>
+  </data>
+  <data name="kstidLicenseURL" xml:space="preserve">
+    <value>(http://www.gnu.org/licenses/lgpl-2.1.html)</value>
+    <comment>Displays in the Help/About box</comment>
+  </data>
+  <data name="kstidMajorVersionFmt" xml:space="preserve">
+    <value>Version: {0}</value>
+    <comment>Displays in the Help/About box and the splash screen</comment>
+  </data>
+  <data name="ConvertBytesToMp3_BadWavFile" xml:space="preserve">
+    <value>Error converting wav file to mp3 {0}{1}{2}</value>
+    <comment>When uploading to webonary if there is an unsupported wav file this message will be shown.
+      {0} is the target filename, {1} is a newline character, and {2} is an error message about how the file is bad</comment>
   </data>
 </root>

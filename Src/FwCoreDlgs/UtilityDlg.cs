@@ -1,17 +1,17 @@
-// Copyright (c) 2014 SIL International
+// Copyright (c) 2014-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using System.Diagnostics.CodeAnalysis;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Xml;
 using System.Diagnostics;
 using System.IO;
-
-using SIL.Utils;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.PlatformUtilities;
+using SIL.Utils;
 using XCore;
 
 namespace SIL.FieldWorks.FwCoreDlgs
@@ -21,9 +21,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 	/// These utilities must implement the IUtility class and can set several labels in the dialog to explain the conditions where they
 	/// are needed and their behavior.
 	/// </summary>
-	public class UtilityDlg : Form, IFWDisposable
+	public class UtilityDlg : Form
 	{
 		private Mediator m_mediator;
+		private PropertyTable m_propertyTable;
 		private string m_whenDescription;
 		private string m_whatDescription;
 		private string m_redoDescription;
@@ -82,6 +83,18 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			{
 				CheckDisposed();
 				return m_mediator;
+			}
+		}
+
+		/// <summary>
+		/// Get the property table.
+		/// </summary>
+		public PropertyTable PropTable
+		{
+			get
+			{
+				CheckDisposed();
+				return m_propertyTable;
 			}
 		}
 
@@ -183,10 +196,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// Setup the dlg with needed information.
 		/// </summary>
 		/// <param name="mediator"></param>
+		/// <param name="propertyTable"></param>
 		/// <param name="configurationParameters"></param>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
-		public void SetDlgInfo(Mediator mediator, XmlNode configurationParameters)
+		public void SetDlgInfo(Mediator mediator, PropertyTable propertyTable, XmlNode configurationParameters)
 		{
 			CheckDisposed();
 
@@ -194,11 +206,11 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			Debug.Assert(configurationParameters != null);
 
 			m_mediator = mediator;
+			m_propertyTable = propertyTable;
 			// <parameters title="FieldWorks Project Utilities" filename="Language Explorer\Configuration\UtilityCatalogInclude.xml"/>
-			this.Text = XmlUtils.GetLocalizedAttributeValue(mediator.StringTbl, configurationParameters,
-				"title", "FieldWorks Project Utilities");
+			this.Text = XmlUtils.GetLocalizedAttributeValue(configurationParameters, "title", "FieldWorks Project Utilities");
 			string utilsPathname = Path.Combine(FwDirectoryFinder.CodeDirectory,
-			XmlUtils.GetManditoryAttributeValue(configurationParameters, "filename"));
+			XmlUtils.GetMandatoryAttributeValue(configurationParameters, "filename"));
 			// Get the folder path:
 			string utilsFolderName = Path.GetDirectoryName(utilsPathname);
 			// Get the file name:
@@ -329,16 +341,18 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private void m_clbUtilities_SelectedIndexChanged(object sender, System.EventArgs e)
 		{
 			var currentFont = m_rtbDescription.SelectionFont;
-#if __MonoCS__
-			// Creating the bold equivalent of the current font doesn't seem to work in Mono,
-			// as we crash shortly due to failures in GDIPlus.GdipMeasureString() using that
-			// font.
-			var boldFont = currentFont;
-#else
-			var boldFontStyle = FontStyle.Bold;
-			using (var boldFont = new Font(currentFont.FontFamily, currentFont.Size, boldFontStyle))
-#endif
+
+			Font boldFont = null;
+			try
 			{
+				var boldFontStyle = FontStyle.Bold;
+				// Creating the bold equivalent of the current font doesn't seem to work in Mono,
+				// as we crash shortly due to failures in GDIPlus.GdipMeasureString() using that
+				// font.
+				boldFont = Platform.IsMono
+					? currentFont
+					: new Font(currentFont.FontFamily, currentFont.Size, boldFontStyle);
+
 				m_whatDescription = m_whenDescription = m_redoDescription = null;
 				((IUtility)m_clbUtilities.SelectedItem).OnSelection();
 				m_rtbDescription.Clear();
@@ -373,14 +387,21 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					m_rtbDescription.AppendText(FwCoreDlgs.ksQuestions);
 				else
 					m_rtbDescription.AppendText(m_redoDescription);
-#if __MonoCS__
-				// If we don't have a selection explicitly set, we will crash deep in the Mono
-				// code (RichTextBox.cs:618, property SelectionFont:get) shortly.
-				m_rtbDescription.Focus();
-				m_rtbDescription.SelectionStart = 0;
-				m_rtbDescription.SelectionLength = 0;
-				m_clbUtilities.Focus();
-#endif
+
+				if (Platform.IsMono)
+				{
+					// If we don't have a selection explicitly set, we will crash deep in the Mono
+					// code (RichTextBox.cs:618, property SelectionFont:get) shortly.
+					m_rtbDescription.Focus();
+					m_rtbDescription.SelectionStart = 0;
+					m_rtbDescription.SelectionLength = 0;
+					m_clbUtilities.Focus();
+				}
+			}
+			finally
+			{
+				if (!Platform.IsMono && boldFont != null)
+					boldFont.Dispose();
 			}
 		}
 
@@ -392,7 +413,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				//m_lSteps.Text = String.Empty;
 				//int totalSteps = m_clbUtilities.CheckedItems.Count;
 				//int currentStep = 0;
-				Set<IUtility> checkedItems = new Set<IUtility>();
+				var checkedItems = new HashSet<IUtility>();
 				foreach (IUtility util in m_clbUtilities.CheckedItems)
 				{
 					//m_lSteps.SuspendLayout();

@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015 SIL International
+﻿// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -7,21 +7,22 @@ using System.Collections.Generic;
 using System.Windows.Forms;
 using System.Xml;
 using SIL.FieldWorks.Common.Controls;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Application;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.FieldWorks.Common.FwUtils;
+using SIL.LCModel;
+using SIL.LCModel.Application;
+using SIL.LCModel.DomainServices;
 using SIL.FieldWorks.XWorks;
 using SIL.Utils;
 using XCore;
 
 namespace SIL.FieldWorks.IText
 {
-	public class ConcordanceControlBase : UserControl, IxCoreContentControl, IFWDisposable
+	public class ConcordanceControlBase : UserControl, IxCoreContentControl
 	{
 		protected Mediator m_mediator;
+		protected PropertyTable m_propertyTable;
 		protected XmlNode m_configurationParameters;
-		protected FdoCache m_cache;
+		protected LcmCache m_cache;
 		protected OccurrencesOfSelectedUnit m_clerk;
 		protected IHelpTopicProvider m_helpTopicProvider;
 
@@ -42,15 +43,16 @@ namespace SIL.FieldWorks.IText
 			return ContainsFocus ? this : null;
 		}
 
-		public virtual void Init(Mediator mediator, XmlNode configurationParameters)
+		public virtual void Init(Mediator mediator, PropertyTable propertyTable, XmlNode configurationParameters)
 		{
 			CheckDisposed();
 			m_mediator = mediator;
-			m_helpTopicProvider = m_mediator.HelpTopicProvider;
+			m_propertyTable = propertyTable;
+			m_helpTopicProvider = m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider");
 			m_configurationParameters = configurationParameters;
-			m_cache = (FdoCache)mediator.PropertyTable.GetValue("cache");
+			m_cache = m_propertyTable.GetValue<LcmCache>("cache");
 			string name = RecordClerk.GetCorrespondingPropertyName(XmlUtils.GetAttributeValue(configurationParameters, "clerk"));
-			m_clerk = (OccurrencesOfSelectedUnit) m_mediator.PropertyTable.GetValue(name) ?? (OccurrencesOfSelectedUnit) RecordClerkFactory.CreateClerk(m_mediator, m_configurationParameters, true);
+			m_clerk = m_propertyTable.GetValue<OccurrencesOfSelectedUnit>(name) ?? (OccurrencesOfSelectedUnit)RecordClerkFactory.CreateClerk(m_mediator, m_propertyTable, m_configurationParameters, true);
 			m_clerk.ConcordanceControl = this;
 		}
 
@@ -97,6 +99,12 @@ namespace SIL.FieldWorks.IText
 		{
 			if (IsDisposed)
 				throw new ObjectDisposedException(String.Format("'{0}' in use after being disposed.", GetType().Name));
+		}
+
+		protected override void Dispose(bool disposing)
+		{
+			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + " ******");
+			base.Dispose(disposing);
 		}
 
 		// True after the first time we do it.

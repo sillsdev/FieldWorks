@@ -1,25 +1,24 @@
-// Copyright (c) 2007-2013 SIL International
+// Copyright (c) 2007-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: FwTextBox.cs
-// Responsibility:
-//
 
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
-using System.Drawing;
 using System.Diagnostics;
+using System.Drawing;
 using System.Windows.Forms;
 using System.Windows.Forms.VisualStyles;
-using System.Collections.Generic;
-
-using SIL.FieldWorks.FDO.Application;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.LCModel.Core.Cellar;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.Utils;
-using SIL.CoreImpl;
+using SIL.LCModel.Application;
+using SIL.LCModel.DomainServices;
+using SIL.Reporting;
+using SIL.LCModel.Utils;
+using XCore;
 
 namespace SIL.FieldWorks.Common.Widgets
 {
@@ -43,7 +42,7 @@ namespace SIL.FieldWorks.Common.Widgets
 	///	to do this even if you are not using TsString data.
 	/// </summary>
 	/// -----------------------------------------------------------------------------------------
-	public class FwTextBox : UserControl, IFWDisposable, IVwNotifyChange, ISupportInitialize
+	public class FwTextBox : UserControl, IVwNotifyChange, ISupportInitialize
 	{
 		#region Data Members
 
@@ -608,12 +607,12 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// </summary>
 		/// <param name="parent"></param>
 		/// <param name="grower"></param>
-		/// <param name="mediator"></param>
-		public void AdjustForStyleSheet(Form parent, Control grower, XCore.Mediator mediator)
+		/// <param name="propertyTable"></param>
+		public void AdjustForStyleSheet(Form parent, Control grower, PropertyTable propertyTable)
 		{
 			CheckDisposed();
 
-			AdjustForStyleSheet(parent, grower, FontHeightAdjuster.StyleSheetFromMediator(mediator));
+			AdjustForStyleSheet(parent, grower, FontHeightAdjuster.StyleSheetFromPropertyTable(propertyTable));
 		}
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -1451,8 +1450,7 @@ namespace SIL.FieldWorks.Common.Widgets
 			ITsString tss;
 			if (!m_strings.TryGetValue(key, out tss))
 			{
-				ITsStrFactory tsf = TsStrFactoryClass.Create();
-				tss = tsf.MakeString("", ws == 0 ? m_wsf.UserWs : ws);
+				tss = TsStringUtils.EmptyString(ws == 0 ? m_wsf.UserWs : ws);
 				m_strings[key] = tss;
 			}
 			return tss;
@@ -1662,7 +1660,7 @@ namespace SIL.FieldWorks.Common.Widgets
 		const int khvoRoot = 7003; // likewise.
 		internal const string LineBreak = "\u2028";
 
-		// Neither of these caches are used by FdoCache.
+		// Neither of these caches are used by LcmCache.
 		// They are only used here.
 		internal ISilDataAccess m_DataAccess; // Another interface on m_CacheDa.
 		TextBoxVc m_vc;
@@ -1702,11 +1700,11 @@ namespace SIL.FieldWorks.Common.Widgets
 			if(LicenseManager.UsageMode != LicenseUsageMode.Designtime)
 			{
 				m_vc = new TextBoxVc(this);
+				// So many things blow up so badly if we don't have one of these that I finally decided to just
+				// make one, even though it won't always, perhaps not often, be the one we want.
+				CreateTempWritingSystemFactory();
+				m_DataAccess.WritingSystemFactory = WritingSystemFactory;
 			}
-			// So many things blow up so badly if we don't have one of these that I finally decided to just
-			// make one, even though it won't always, perhaps not often, be the one we want.
-			CreateTempWritingSystemFactory();
-			m_DataAccess.WritingSystemFactory = WritingSystemFactory;
 			IsTextBox = true;	// range selection not shown when not in focus
 		}
 
@@ -1816,9 +1814,9 @@ namespace SIL.FieldWorks.Common.Widgets
 		{
 			if (m_fUsingTempWsFactory)
 			{
+				SingletonsContainer.Get<RenderEngineFactory>().ClearRenderEngines(m_wsf);
 				var disposable = m_wsf as IDisposable;
-				if (disposable != null)
-					disposable.Dispose();
+				disposable?.Dispose();
 				m_wsf = null;
 				m_fUsingTempWsFactory = false;
 			}
@@ -1925,7 +1923,7 @@ namespace SIL.FieldWorks.Common.Widgets
 				// If the contents is currently empty, make sure inital typing will occur in this WS.
 				// (Unless it is zero, which is not a valid WS...hope it gets changed again if so.)
 				if (Tss.Length == 0 && value != 0)
-					Tss = TsStringUtils.MakeTss("", value);
+					Tss = TsStringUtils.MakeString("", value);
 			}
 		}
 
@@ -2036,7 +2034,7 @@ namespace SIL.FieldWorks.Common.Widgets
 			if (tss == null || tss.Length == 0)
 				return tss;
 
-			ITsIncStrBldr tisb = TsIncStrBldrClass.Create();
+			ITsIncStrBldr tisb = TsStringUtils.MakeIncStrBldr();
 			List<ITsString> lines = TsStringUtils.Split(tss, new[] { oldSubStr }, StringSplitOptions.None);
 			for (int i = 0; i < lines.Count; i++)
 			{
@@ -2118,7 +2116,7 @@ namespace SIL.FieldWorks.Common.Widgets
 			set
 			{
 				CheckDisposed();
-				Tss = TsStringUtils.MakeTss(value, WritingSystemCode);
+				Tss = TsStringUtils.MakeString(value, WritingSystemCode);
 			}
 		}
 
@@ -2255,7 +2253,7 @@ namespace SIL.FieldWorks.Common.Widgets
 			set
 			{
 				CheckDisposed();
-				SelectedTss = TsStringUtils.MakeTss(value, WritingSystemCode);
+				SelectedTss = TsStringUtils.MakeString(value, WritingSystemCode);
 			}
 		}
 
@@ -2328,12 +2326,12 @@ namespace SIL.FieldWorks.Common.Widgets
 
 			if (InDesigner)
 				return;
-			m_rootb = VwRootBoxClass.Create();
-			m_rootb.SetSite(this);
+
+			base.MakeRoot();
+
 			m_rootb.DataAccess = m_DataAccess;
 			m_rootb.SetRootObject(khvoRoot, m_vc, kfragRoot, StyleSheet);
 			m_dxdLayoutWidth = kForceLayout; // Don't try to draw until we get OnSize and do layout.
-			base.MakeRoot();
 			m_DataAccess.AddNotification(this);
 			//Text = "This is a view"; // Todo: remove after preliminary testing.
 			//m_rootb.MakeSimpleSel(true, true, true, true);
@@ -2650,10 +2648,13 @@ namespace SIL.FieldWorks.Common.Widgets
 				try
 				{
 					IVwCacheDa cda = VwCacheDaClass.Create();
+					cda.TsStrFactory = TsStringUtils.TsStrFactory;
 					ISilDataAccess sda = (ISilDataAccess) cda;
 					sda.WritingSystemFactory = WritingSystemFactory;
 					sda.SetString(khvoRoot, ktagText, FontHeightAdjuster.GetUnadjustedTsString(Tss));
 					IVwRootBox rootb = VwRootBoxClass.Create();
+					rootb.RenderEngineFactory = SingletonsContainer.Get<RenderEngineFactory>();
+					rootb.TsStrFactory = TsStringUtils.TsStrFactory;
 					rootb.SetSite(this);
 					rootb.DataAccess = sda;
 					rootb.SetRootObject(khvoRoot, m_vc, kfragRoot, StyleSheet);
@@ -2700,14 +2701,17 @@ namespace SIL.FieldWorks.Common.Widgets
 				{
 					m_vc.SaveSize = true;
 					IVwCacheDa cda = VwCacheDaClass.Create();
+					cda.TsStrFactory = TsStringUtils.TsStrFactory;
 					ISilDataAccess sda = (ISilDataAccess)cda;
 					sda.WritingSystemFactory = WritingSystemFactory;
 					sda.SetString(khvoRoot, ktagText, FontHeightAdjuster.GetUnadjustedTsString(Tss));
 					IVwRootBox rootb = VwRootBoxClass.Create();
+					rootb.RenderEngineFactory = SingletonsContainer.Get<RenderEngineFactory>();
+					rootb.TsStrFactory = TsStringUtils.TsStrFactory;
 					rootb.SetSite(this);
 					rootb.DataAccess = sda;
 					rootb.SetRootObject(khvoRoot, m_vc, kfragRoot, StyleSheet);
-					int dx = 0;
+					int dx;
 					using (new HoldGraphics(this))
 					{
 						rootb.Layout(m_graphicsManager.VwGraphics, GetAvailWidth(rootb));
@@ -2745,7 +2749,7 @@ namespace SIL.FieldWorks.Common.Widgets
 			get
 			{
 				CheckDisposed();
-				return m_fAdjustStringHeight && WritingSystemFactory != null && !AutoScroll;
+				return LicenseManager.UsageMode != LicenseUsageMode.Designtime && m_fAdjustStringHeight && WritingSystemFactory != null && !AutoScroll;
 			}
 		}
 

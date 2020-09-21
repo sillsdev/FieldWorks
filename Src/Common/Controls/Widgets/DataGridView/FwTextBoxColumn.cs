@@ -14,12 +14,11 @@ using System.Diagnostics;
 using System.Windows.Forms;
 using System.Drawing;
 using System.ComponentModel;
-
-using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
-using System.Diagnostics.CodeAnalysis;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Core.KernelInterfaces;
 
 namespace SIL.FieldWorks.Common.Widgets
 {
@@ -31,7 +30,7 @@ namespace SIL.FieldWorks.Common.Widgets
 	public class FwTextBoxColumn : DataGridViewColumn
 	{
 		/// <summary></summary>
-		protected FdoCache m_cache;
+		protected LcmCache m_cache;
 		/// <summary></summary>
 		protected FwTextBoxControl m_textBoxControl;
 		/// <summary></summary>
@@ -39,7 +38,7 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// <summary></summary>
 		protected Dictionary<string, Font> m_fontCache = new Dictionary<string,Font>();
 		/// <summary></summary>
-		private FwStyleSheet m_styleSheet;
+		private LcmStyleSheet m_styleSheet;
 		private bool m_DisposeCellTemplate;
 
 		private float m_szOfFontAt100Pcnt = 10f;
@@ -63,9 +62,7 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// </summary>
 		/// <param name="cache">The cache.</param>
 		/// ------------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "FwTextBoxCell gets disposed in Dispose()")]
-		public FwTextBoxColumn(FdoCache cache) : base(new FwTextBoxCell())
+		public FwTextBoxColumn(LcmCache cache) : base(new FwTextBoxCell())
 		{
 			m_DisposeCellTemplate = true;
 			m_cache = cache;
@@ -76,7 +73,7 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// Initializes a new instance of the <see cref="FwTextBoxColumn"/> class.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public FwTextBoxColumn(FdoCache cache, bool rowsAreMultiLing) : this(cache)
+		public FwTextBoxColumn(LcmCache cache, bool rowsAreMultiLing) : this(cache)
 		{
 			m_rowsAreMultiLing = rowsAreMultiLing;
 		}
@@ -89,12 +86,11 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// set to <c>false</c> if called by GC. If this parameter is <c>false</c> we shouldn't
 		/// access any managed objects since these might already have been destroyed.</param>
 		/// ------------------------------------------------------------------------------------
+		//[SuppressMessage("Clouseau", "MissingDisposeCall", Justification = "Debug.WriteLineIf statement disabled because of a bug in .NET DataGridView:"
+		//	+ "DataGridView.AddRange() creates a temporary clone that it doesn't dispose, so we will always get this warning message and we can't do anything about it.")]
 		protected override void Dispose(bool disposing)
 		{
-			// Debug.WriteLineIf statement disabled because of a bug in .NET DataGridView:
-			// DataGridView.AddRange() creates a temporary clone that it doesn't dispose, so we
-			// will always get this warning message and we can't do anything about it.
-			// Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** (but this might not be your fault)");
 			if (disposing)
 			{
 				if (m_textBoxControl != null)
@@ -135,9 +131,9 @@ namespace SIL.FieldWorks.Common.Widgets
 			{
 				if (m_cache != null)
 				{
-					IWritingSystem ws = GetWritingSystem(e.RowIndex1);
+					CoreWritingSystemDefinition ws = GetWritingSystem(e.RowIndex1);
 					Debug.Assert(ws == GetWritingSystem(e.RowIndex2));
-					e.SortResult = ws.Collator.Compare(((ITsString)e.CellValue1).Text, ((ITsString)e.CellValue2).Text);
+					e.SortResult = ws.DefaultCollation.Collator.Compare(((ITsString)e.CellValue1).Text, ((ITsString)e.CellValue2).Text);
 					e.Handled = true;
 					return;
 				}
@@ -159,7 +155,7 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// <param name="rowIndex">Index of the row.</param>
 		/// <returns>The writing system</returns>
 		/// ------------------------------------------------------------------------------------
-		private IWritingSystem GetWritingSystem(int rowIndex)
+		private CoreWritingSystemDefinition GetWritingSystem(int rowIndex)
 		{
 			int ws = (m_rowsAreMultiLing ? GetWritingSystemHandle(rowIndex) : m_ws);
 			return m_cache.ServiceLocator.WritingSystemManager.Get(ws);
@@ -173,7 +169,7 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// ------------------------------------------------------------------------------------
 		[Browsable(false)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-		public FdoCache Cache
+		public LcmCache Cache
 		{
 			get { return m_cache; }
 			set
@@ -215,7 +211,7 @@ namespace SIL.FieldWorks.Common.Widgets
 			get { return m_styleSheet; }
 			set
 			{
-				m_styleSheet = value as FwStyleSheet;
+				m_styleSheet = value as LcmStyleSheet;
 				if (m_textBoxControl != null)
 					m_textBoxControl.StyleSheet = m_styleSheet;
 			}
@@ -367,10 +363,10 @@ namespace SIL.FieldWorks.Common.Widgets
 			string faceName;
 			if (m_styleSheet != null)
 			{
-				// When there is a stylesheet, use it to get the font face name for the style
-				// name specified in the text props. If there is no style name in the text props,
-				// GetFaceNameFromStyle() should return the font face for the normal style.
-				faceName = m_styleSheet.GetFaceNameFromStyle(styleName, ws, m_cache);
+				using (var font = FontHeightAdjuster.GetFontForStyle(styleName, m_styleSheet, ws, m_cache.WritingSystemFactory))
+				{
+					faceName = font == null ? null : font.Name;
+				}
 			}
 			else
 			{
@@ -535,13 +531,12 @@ namespace SIL.FieldWorks.Common.Widgets
 			int ws = GetWritingSystemHandle(rowIndex);
 			if (ws <= 0)
 			{
-				ITsIncStrBldr strBldr = TsIncStrBldrClass.Create();
+				ITsIncStrBldr strBldr = TsStringUtils.MakeIncStrBldr();
 				strBldr.Append(string.Empty);
 				return strBldr.GetString();
 			}
 
-			ITsStrFactory tsf = TsStrFactoryClass.Create();
-			return tsf.MakeString(string.Empty, ws);
+			return TsStringUtils.EmptyString(ws);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -568,8 +563,6 @@ namespace SIL.FieldWorks.Common.Widgets
 		///
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "fnt and family are references")]
 		public void SetZoomFactor(float factor)
 		{
 			if (DefaultCellStyle != null)

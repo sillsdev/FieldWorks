@@ -2,10 +2,12 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using SIL.CoreImpl;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.LCModel.Core.Cellar;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel;
+using SIL.FieldWorks.Common.ViewsInterfaces;
+using SIL.LCModel.DomainServices;
 
 namespace SIL.FieldWorks.IText
 {
@@ -24,7 +26,7 @@ namespace SIL.FieldWorks.IText
 		/// </summary>
 		protected override void MakeVc()
 		{
-			m_vc = new InterlinPrintVc(m_fdoCache);
+			m_vc = new InterlinPrintVc(m_cache);
 		}
 
 		/// <summary>
@@ -46,7 +48,7 @@ namespace SIL.FieldWorks.IText
 		internal int vtagStTextTitle = 0;
 		internal int vtagStTextSource = 0;
 
-		public InterlinPrintVc(FdoCache cache) : base(cache)
+		public InterlinPrintVc(LcmCache cache) : base(cache)
 		{
 
 		}
@@ -57,7 +59,7 @@ namespace SIL.FieldWorks.IText
 			return 0;
 		}
 
-		protected override void GetSegmentLevelTags(FdoCache cache)
+		protected override void GetSegmentLevelTags(LcmCache cache)
 		{
 			// for PrintView
 			vtagStTextTitle = cache.MetaDataCacheAccessor.GetFieldId("StText", "Title", false);
@@ -67,7 +69,6 @@ namespace SIL.FieldWorks.IText
 
 		public override void Display(IVwEnv vwenv, int hvo, int frag)
 		{
-			ITsStrFactory tsf = null;
 			switch (frag)
 			{
 				case kfragStText: // The whole text, root object for the InterlinDocChild.
@@ -112,8 +113,7 @@ namespace SIL.FieldWorks.IText
 					else
 					{
 						// just add a blank title.
-						tsf = TsStrFactoryClass.Create();
-						ITsString blankTitle = tsf.MakeString("", m_wsAnalysis);
+						ITsString blankTitle = TsStringUtils.EmptyString(m_wsAnalysis);
 						vwenv.AddString(blankTitle);
 					}
 					vwenv.CloseParagraph();
@@ -131,8 +131,7 @@ namespace SIL.FieldWorks.IText
 					else
 					{
 						// just add a blank source.
-						tsf = TsStrFactoryClass.Create();
-						ITsString tssBlank = tsf.MakeString("", m_wsAnalysis);
+						ITsString tssBlank = TsStringUtils.EmptyString(m_wsAnalysis);
 						vwenv.AddString(tssBlank);
 					}
 					vwenv.set_IntProperty((int)FwTextPropType.ktptMarginBottom,

@@ -322,7 +322,7 @@ public:
 	// Initializes the text props for the root property store.
 	void InitRootTextProps(IVwViewConstructor * pvc);
 
-	HRESULT DrawingErrors(IVwGraphics * pvg);
+	HRESULT DrawingErrors(IRenderEngineFactory * pref, IVwGraphics * pvg);
 
 	int DefaultWritingSystem()
 	{

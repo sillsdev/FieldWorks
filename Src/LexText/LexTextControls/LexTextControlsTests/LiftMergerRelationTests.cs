@@ -6,8 +6,9 @@ using System;
 using System.IO;
 using System.Linq;
 using NUnit.Framework;
-using SIL.CoreImpl;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel;
 using SIL.FieldWorks.LexText.Controls;
 
 namespace LexTextControlsTests
@@ -1284,8 +1285,8 @@ namespace LexTextControlsTests
 			Cache.LangProject.AnalysisWss = "en fr";
 			Cache.LangProject.CurAnalysisWss = "en";
 			Cache.LangProject.VernWss = "sen arb";
-			Cache.LangProject.AddToCurrentVernacularWritingSystems(Cache.WritingSystemFactory.get_Engine("sen") as IWritingSystem);
-			Cache.LangProject.AddToCurrentVernacularWritingSystems(Cache.WritingSystemFactory.get_Engine("arb") as IWritingSystem);
+			Cache.LangProject.AddToCurrentVernacularWritingSystems(Cache.WritingSystemFactory.get_Engine("sen") as CoreWritingSystemDefinition);
+			Cache.LangProject.AddToCurrentVernacularWritingSystems(Cache.WritingSystemFactory.get_Engine("arb") as CoreWritingSystemDefinition);
 			Cache.LangProject.CurVernWss = "sen";
 
 			CreateNeededStyles();
@@ -1756,8 +1757,8 @@ namespace LexTextControlsTests
 			var refTypeRepo = Cache.ServiceLocator.GetInstance<ILexRefTypeRepository>();
 			var refTypeFactory = Cache.ServiceLocator.GetInstance<ILexRefTypeFactory>();
 			var testType = refTypeFactory.Create(new Guid("b7862f14-ea5e-11de-8d47-0013722f8dec"), null);
-			testType.Name.set_String(wsEn, Cache.TsStrFactory.MakeString("Test" + normalizedOmega, wsEn));
-			testType.Abbreviation.set_String(wsEn, Cache.TsStrFactory.MakeString("test", wsEn));
+			testType.Name.set_String(wsEn, TsStringUtils.MakeString("Test" + normalizedOmega, wsEn));
+			testType.Abbreviation.set_String(wsEn, TsStringUtils.MakeString("test", wsEn));
 			Cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.Add(testType);
 			var refTypeCountBeforeImport = Cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.Count;
 			var liftFile = CreateInputFile(liftWithSenseUsingNonAsciiRelation);

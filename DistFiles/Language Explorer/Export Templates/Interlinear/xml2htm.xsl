@@ -216,6 +216,8 @@
   <!-- suppress homograph numbers and variant types, so they don't occupy an extra line-->
   <xsl:template match="morph/item[@type='hn']">
   </xsl:template>
+  <xsl:template match="morph/item[@type='glsPrepend']">
+  </xsl:template>
   <xsl:template match="morph/item[@type='variantTypes']">
   </xsl:template>
   <xsl:template match="morph/item[@type='glsAppend']">
@@ -226,6 +228,9 @@
   <!-- This mode occurs within the 'cf' item to display the homograph number from the following item.-->
   <xsl:template match="morph/item[@type='hn']" mode="hn">
 	<xsl:apply-templates/>
+  </xsl:template>
+  <xsl:template match="morph/item[@type='glsPrepend']" mode="glsPrepend">
+	<span class="itx_VariantTypes"><xsl:apply-templates/></span>
   </xsl:template>
   <xsl:template match="morph/item[@type='variantTypes']" mode="variantTypes">
 	<span class="itx_VariantTypes"><xsl:apply-templates/></span>
@@ -267,6 +272,10 @@
 			<xsl:text>_</xsl:text>
 			<xsl:value-of select="@type"/>
 		</xsl:attribute>
+		<xsl:variable name="glsPrepend" select="preceding-sibling::item[1][@type='glsPrepend']"/>
+		<xsl:if test="$glsPrepend">
+		  <xsl:apply-templates select="$glsPrepend" mode="glsPrepend"/>
+		</xsl:if>
 		<xsl:apply-templates/>
 		<xsl:variable name="glsAppend" select="following-sibling::item[1][@type='glsAppend']"/>
 		<xsl:if test="$glsAppend">

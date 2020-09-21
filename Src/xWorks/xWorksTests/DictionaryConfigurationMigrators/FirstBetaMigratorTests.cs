@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2016-2017 SIL International
+// Copyright (c) 2016-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -6,14 +6,13 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using NUnit.Framework;
-using Palaso.IO;
-using Palaso.TestUtilities;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.FDOTests;
-using SIL.Utils;
+using SIL.LCModel;
+using SIL.IO;
+using SIL.TestUtilities;
+using DCM = SIL.FieldWorks.XWorks.DictionaryConfigurationMigrator;
 using XCore;
 
 // ReSharper disable InconsistentNaming
@@ -33,6 +32,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 		private string m_configFilePath;
 		private MockFwXWindow m_window;
 		private Mediator m_mediator;
+		private PropertyTable m_propertyTable;
 
 		[TestFixtureSetUp]
 		public override void FixtureSetup()
@@ -48,12 +48,13 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			m_mediator.AddColleague(new StubContentControlProvider());
 			m_window.LoadUI(m_configFilePath); // actually loads UI here; needed for non-null stylesheet
 			LayoutCache.InitializePartInventories(Cache.ProjectId.Name, m_application, Cache.ProjectId.Path);
+			m_propertyTable = m_window.PropTable;
 		}
 
 		[TestFixtureTearDown]
 		public override void FixtureTeardown()
 		{
-			DirectoryUtilities.DeleteDirectoryRobust(Cache.ProjectId.Path);
+			RobustIO.DeleteDirectoryAndContents(Cache.ProjectId.Path);
 			base.FixtureTeardown();
 			m_application.Dispose();
 			m_window.Dispose();
@@ -92,7 +93,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 		{
 			using (var tempFolder = TemporaryFolder.TrackExisting(Path.GetDirectoryName(Cache.ProjectId.Path)))
 			{
-				var configLocations = FdoFileHelper.GetConfigSettingsDir(tempFolder.Path);
+				var configLocations = LcmFileHelper.GetConfigSettingsDir(tempFolder.Path);
 				configLocations = Path.Combine(configLocations, "Dictionary");
 				Directory.CreateDirectory(configLocations);
 				const string content =
@@ -103,8 +104,43 @@ name='Stem-based (complex forms as main entries)' version='8' lastModified='2016
 				var actualFilePath = Path.Combine(configLocations, "Stem" + DictionaryConfigurationModel.FileExtension);
 				var convertedFilePath = Path.Combine(configLocations, "Lexeme" + DictionaryConfigurationModel.FileExtension);
 				File.WriteAllText(actualFilePath, content);
-				m_migrator.MigrateIfNeeded(m_logger, m_mediator, "Test App Version"); // SUT
+				m_migrator.MigrateIfNeeded(m_logger, m_propertyTable, "Test App Version"); // SUT
 				Assert.IsTrue(File.Exists(convertedFilePath));
+			}
+		}
+
+		[Test]
+		public void MigrateFrom83Alpha_CopiesReversalConfigsCorrectly()
+		{
+			using (var tempFolder = TemporaryFolder.TrackExisting(Path.GetDirectoryName(Cache.ProjectId.Path)))
+			{
+				var configLocations = LcmFileHelper.GetConfigSettingsDir(tempFolder.Path);
+				configLocations = Path.Combine(configLocations, "ReversalIndex");
+				Directory.CreateDirectory(configLocations);
+				const string content1 =
+					@"<DictionaryConfiguration xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xmlns:xsd='http://www.w3.org/2001/XMLSchema'
+name='French Reversal Index' writingSystem='fr' version='21' lastModified='2020-03-11' allPublications='true' isRootBased='false'>
+  <ConfigurationItem name='Reversal Entry' isEnabled='true' style='Reversal-Normal' styleType='paragraph' field='ReversalIndexEntry' cssClassNameOverride='reversalindexentry'/>
+</DictionaryConfiguration>";
+				var filePath1 = Path.Combine(configLocations, "fr" + DictionaryConfigurationModel.FileExtension);
+				File.WriteAllText(filePath1, content1);
+				const string content2 =
+					@"<DictionaryConfiguration xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xmlns:xsd='http://www.w3.org/2001/XMLSchema'
+name='French Reversal Index 2' writingSystem='fr' version='21' lastModified='2020-03-11' allPublications='true' isRootBased='false'>
+  <ConfigurationItem name='Reversal Entry' isEnabled='true' style='Reversal-Normal' styleType='paragraph' field='ReversalIndexEntry' cssClassNameOverride='reversalindexentry'/>
+</DictionaryConfiguration>";
+				var filePath2 = Path.Combine(configLocations, "fr2" + DictionaryConfigurationModel.FileExtension);
+				File.WriteAllText(filePath2, content2);
+				const string content3 =
+					@"<DictionaryConfiguration xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xmlns:xsd='http://www.w3.org/2001/XMLSchema'
+name='French Reversal Index 3' writingSystem='fr' version='21' lastModified='2020-03-11' allPublications='true' isRootBased='false'>
+  <ConfigurationItem name='Reversal Entry' isEnabled='true' style='Reversal-Normal' styleType='paragraph' field='ReversalIndexEntry' cssClassNameOverride='reversalindexentry'/>
+</DictionaryConfiguration>";
+				var filePath3 = Path.Combine(configLocations, "fr3" + DictionaryConfigurationModel.FileExtension);
+				File.WriteAllText(filePath3, content3);
+				m_migrator.MigrateIfNeeded(m_logger, m_propertyTable, "Test App Version"); // SUT
+				var todoList = DCM.GetConfigsNeedingMigration(Cache, DCM.VersionCurrent);
+				Assert.IsTrue(todoList.Count == 0, "Should have already migrated everything");
 			}
 		}
 
@@ -1065,6 +1101,44 @@ name='Stem-based (complex forms as main entries)' version='8' lastModified='2016
 			Assert.IsNull(etymologyNode.DictionaryNodeOptions, "Improper options added to etymology sequence node.");
 		}
 
+		[Test]
+		public void MigrateFrom83AlphaToBeta10_UpdatesReversalReferringsenses()
+		{
+			var refdSensesNode = new ConfigurableDictionaryNode
+			{
+				Label = "Referenced Senses",
+				FieldDescription = "ReferringSenses"
+			};
+			var allReversalSubentries = new ConfigurableDictionaryNode
+			{
+				Label = "Reversal Entry",
+				FieldDescription = "SubentriesOS",
+				Children = new List<ConfigurableDictionaryNode> { refdSensesNode }
+			};
+			var referencedSensesNode = new ConfigurableDictionaryNode
+			{
+				Label = "Referenced Senses",
+				FieldDescription = "ReferringSenses"
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				Label = "Reversal Entry",
+				FieldDescription = "ReversalIndexEntry",
+				Children = new List<ConfigurableDictionaryNode> { referencedSensesNode, allReversalSubentries }
+			};
+			var alphaModel = new DictionaryConfigurationModel
+			{
+				Version = FirstAlphaMigrator.VersionAlpha3,
+				WritingSystem = "en",
+				FilePath = string.Empty,
+				Parts = new List<ConfigurableDictionaryNode> { mainEntryNode }
+			};
+			var betaModel = m_migrator.LoadBetaDefaultForAlphaConfig(alphaModel);
+			m_migrator.MigrateFrom83Alpha(m_logger, alphaModel, betaModel);
+			Assert.AreEqual("SensesRS", referencedSensesNode.FieldDescription, "Should have changed 'ReferringSenses' field for reversal to 'SensesRS'");
+			Assert.AreEqual("SensesRS", refdSensesNode.FieldDescription, "Should have changed 'ReferringSenses' field for reversal to 'SensesRS'");
+		}
+
 		/// <summary>Referenced Complex Forms that are siblings of Subentries should become Other Referenced Complex Forms</summary>
 		[Test]
 		public void MigrateFrom83Alpha_SelectsProperReferencedComplexForms()
@@ -1111,6 +1185,69 @@ name='Stem-based (complex forms as main entries)' version='8' lastModified='2016
 			Assert.AreEqual(1, minorEntryChildren.Count, "no children should have been added or deleted");
 			Assert.AreEqual(ReferencedComplexForms, minorEntryChildren[0].FieldDescription, "should not have changed");
 			Assert.AreEqual("Referenced Complex Forms", minorEntryChildren[0].Label, "should not have changed");
+		}
+
+		[Test]
+		public void MigrateFrom83Alpha_SelectsDialectLabels()
+		{
+			var nameNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "Name"
+			};
+
+			var abbreviationNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "Abbreviation"
+			};
+
+			var dialectLabelsNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "DialectLabelsRS",
+				Label = "Dialect Labels",
+				IsEnabled = false,
+				Children = new List<ConfigurableDictionaryNode> { abbreviationNode, nameNode }
+			};
+
+			var targetsNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "ConfigTargets",
+				Children = new List<ConfigurableDictionaryNode> { dialectLabelsNode }
+			};
+			var crossReferencesNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "MinimalLexReferences",
+				Children = new List<ConfigurableDictionaryNode> { targetsNode }
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexEntry",
+				Children = new List<ConfigurableDictionaryNode> { crossReferencesNode }
+			};
+
+			var userModel = new DictionaryConfigurationModel
+			{
+				Version = DictionaryConfigurationMigrator.VersionCurrent,
+				Parts = new List<ConfigurableDictionaryNode>
+				{
+					new ConfigurableDictionaryNode
+					{
+						Label = "Main Entry", FieldDescription = LexEntry,
+						Children = new List<ConfigurableDictionaryNode> { mainEntryNode }
+					}
+				}
+			};
+			var betaModel = new DictionaryConfigurationModel
+			{
+				Parts = new List<ConfigurableDictionaryNode>
+				{
+					new ConfigurableDictionaryNode { Label = "Main Entry", FieldDescription = LexEntry }
+				}
+			};
+			m_migrator.MigrateFrom83Alpha(m_logger, userModel, betaModel); // SUT
+			var dialectLabels = userModel.Parts[0].Children[0].Children[0].Children[0].Children[0];
+			Assert.AreEqual("Dialect Labels", dialectLabels.Label, "should have Dialect Labels");
+			Assert.IsFalse(dialectLabels.IsEnabled, "dialectLabels should be false");
+			Assert.AreEqual(2, dialectLabels.Children.Count, "two children should have been created");
 		}
 
 		/// <summary>Apart from Category Info, all children of Gram. Info under (Other) Referenced Complex Forms should be removed</summary>
@@ -1192,6 +1329,47 @@ name='Stem-based (complex forms as main entries)' version='8' lastModified='2016
 			m_migrator.MigrateFrom83Alpha(m_logger, alphaModel, betaModel); // SUT
 			Assert.AreNotEqual("MLHeadWord", betaModel.SharedItems[0].Children[2].Children[0].SubField);
 			Assert.Null(betaModel.SharedItems[0].Children[2].Children[0].SubField);
+		}
+
+		[Test]
+		public void MigrateFrom83AlphaToBeta10_ConfigReferencedEntriesUseAsPrimary()
+		{
+			var primaryEntries = new ConfigurableDictionaryNode
+			{
+				Label = "Primary Entry(s)",
+				FieldDescription = "PrimarySensesOrEntries",
+				CSSClassNameOverride = "primarylexemes"
+			};
+			var referencedEntryNode = new ConfigurableDictionaryNode
+			{
+				Label = "Primary Entry References",
+				FieldDescription = "EntryRefsWithThisMainSense",
+				Children = new List<ConfigurableDictionaryNode> { primaryEntries }
+			};
+			var referencedSenses = new ConfigurableDictionaryNode
+			{
+				Label = "Referenced Senses",
+				FieldDescription = "SensesRS",
+				Children = new List<ConfigurableDictionaryNode> { referencedEntryNode }
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				Label = "Reversal Entry",
+				FieldDescription = "ReversalIndexEntry",
+				Children = new List<ConfigurableDictionaryNode> {referencedSenses}
+			};
+			var alphaModel = new DictionaryConfigurationModel
+			{
+				Version = 20,
+				WritingSystem = "en",
+				FilePath = string.Empty,
+				Parts = new List<ConfigurableDictionaryNode> { mainEntryNode }
+			};
+			var betaModel = m_migrator.LoadBetaDefaultForAlphaConfig(alphaModel);
+			m_migrator.MigrateFrom83Alpha(m_logger, alphaModel, betaModel);
+			Assert.AreEqual("MainEntryRefs", referencedEntryNode.FieldDescription, "Should have updated the field from 'EntryRefsWithThisMainSense' to 'MainEntryRefs'");
+			Assert.AreEqual("ConfigReferencedEntries", primaryEntries.FieldDescription, "Should have updated the field from 'PrimarySensesOrEntries' to 'ConfigReferencedEntries'");
+			Assert.AreEqual("referencedentries", primaryEntries.CSSClassNameOverride, "Should have changed the CSSClassNameOverride from 'primarylexemes' to 'referencedentries'");
 		}
 
 		[Test]

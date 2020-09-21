@@ -1,16 +1,15 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Diagnostics;
-using System.Drawing;
 using System.Windows.Forms;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Widgets;
-using SIL.FieldWorks.FDO;
-using SIL.Utils;
+using SIL.LCModel;
 using XCore;
 
 namespace SIL.FieldWorks.FdoUi.Dialogs
@@ -18,7 +17,7 @@ namespace SIL.FieldWorks.FdoUi.Dialogs
 	/// <summary>
 	/// This dialog window allows for a user to confirm deleting an object, or cancel the deletion.
 	/// </summary>
-	public class ConfirmDeleteObjectDlg : Form, IFWDisposable
+	public class ConfirmDeleteObjectDlg : Form
 	{
 		private Label label1;
 		private Label label2;
@@ -27,7 +26,7 @@ namespace SIL.FieldWorks.FdoUi.Dialogs
 		private Button m_cancelButton;
 		private readonly FwTextBox m_descriptionBox3;
 		private readonly FwTextBox m_descriptionBox4;
-		protected FdoCache m_cache;
+		protected LcmCache m_cache;
 		private Panel panel1;
 		private Panel panel2;
 		private Button buttonHelp;
@@ -130,27 +129,32 @@ namespace SIL.FieldWorks.FdoUi.Dialogs
 			base.Dispose( disposing );
 		}
 
-		public void SetDlgInfo(CmObjectUi obj, FdoCache cache, Mediator mediator)
+		public void SetDlgInfo(CmObjectUi obj, LcmCache cache, Mediator mediator, PropertyTable propertyTable)
 		{
 			CheckDisposed();
 
 			Debug.Assert(obj != null);
 			Debug.Assert(obj.Object != null);
 
-			SetDlgInfo(obj, cache, mediator, cache.TsStrFactory.MakeString(" ", cache.DefaultUserWs));
+			SetDlgInfo(obj, cache, mediator, propertyTable, TsStringUtils.MakeString(" ", cache.DefaultUserWs));
 		}
 
 
-		public void SetDlgInfo(CmObjectUi obj, FdoCache cache, Mediator mediator, ITsString tssNote)
+		public void SetDlgInfo(CmObjectUi obj, LcmCache cache, Mediator mediator, PropertyTable propertyTable, ITsString tssNote)
 		{
 
 			CheckDisposed();
 
 			if (obj.Mediator == null)
+			{
 				obj.Mediator = mediator;
-			StringTable strings = mediator.StringTbl;
+			}
+			if (obj.PropTable == null)
+			{
+				obj.PropTable = propertyTable;
+			}
 			m_cache = cache;
-			IVwStylesheet stylesheet = FontHeightAdjuster.StyleSheetFromMediator(mediator);
+			IVwStylesheet stylesheet = FontHeightAdjuster.StyleSheetFromPropertyTable(propertyTable);
 
 			Debug.Assert(obj != null);
 			Debug.Assert(obj.Object != null);
@@ -168,10 +172,10 @@ namespace SIL.FieldWorks.FdoUi.Dialogs
 			{
 				buttonHelp.Visible = true;
 				buttonHelp.Enabled = true;
-				this.helpProvider = new HelpProvider();
-				this.helpProvider.HelpNamespace = m_helpTopicProvider.HelpFile;
-				this.helpProvider.SetHelpKeyword(this, m_helpTopicProvider.GetHelpString(s_helpTopic));
-				this.helpProvider.SetHelpNavigator(this, HelpNavigator.Topic);
+				helpProvider = new HelpProvider();
+				helpProvider.HelpNamespace = m_helpTopicProvider.HelpFile;
+				helpProvider.SetHelpKeyword(this, m_helpTopicProvider.GetHelpString(s_helpTopic));
+				helpProvider.SetHelpNavigator(this, HelpNavigator.Topic);
 			}
 			else
 			{
@@ -185,7 +189,7 @@ namespace SIL.FieldWorks.FdoUi.Dialogs
 			m_descriptionBox3.WritingSystemFactory = m_cache.WritingSystemFactory;
 			m_descriptionBox3.WritingSystemCode = defUserWs;
 			m_descriptionBox3.StyleSheet = stylesheet;
-			ITsIncStrBldr tisb3 = TsIncStrBldrClass.Create();
+			ITsIncStrBldr tisb3 = TsStringUtils.MakeIncStrBldr();
 			tisb3.AppendTsString(obj.Object.DeletionTextTSS);
 			m_descriptionBox3.Tss = tisb3.GetString();
 			// Adjust the dialog size if needed to display the message (FWNX-857).
@@ -195,7 +199,7 @@ namespace SIL.FieldWorks.FdoUi.Dialogs
 			m_descriptionBox4.WritingSystemFactory = m_cache.WritingSystemFactory;
 			m_descriptionBox4.WritingSystemCode = defUserWs;
 			m_descriptionBox4.StyleSheet = stylesheet;
-			ITsIncStrBldr tisb4 = TsIncStrBldrClass.Create();
+			ITsIncStrBldr tisb4 = TsStringUtils.MakeIncStrBldr();
 			tisb4.AppendTsString(tssNote); //this is the default for m_descriptionBox4
 			m_descriptionBox4.Tss = tisb4.GetString();
 			GrowTextBox(panel2, m_descriptionBox4);

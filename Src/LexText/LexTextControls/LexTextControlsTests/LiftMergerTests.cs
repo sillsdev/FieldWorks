@@ -7,29 +7,30 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using System.Xml;
-using NUnit.Framework;
-using Palaso.Lift.Parsing;
-using Palaso.TestUtilities;
-using Palaso.WritingSystems;
-using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO.Application;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.FieldWorks.LexText.Controls;
-using System.IO;
-using SIL.FieldWorks.FDO.FDOTests;
-using Palaso.Lift.Migration;
-using SIL.Utils;
 using System.Xml.Linq;
 using System.Xml.XPath;
+using NUnit.Framework;
+using SIL.LCModel.Core.Cellar;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.FieldWorks.Common.FwUtils;
+using SIL.LCModel;
+using SIL.LCModel.Application;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Infrastructure;
+using SIL.FieldWorks.LexText.Controls;
+using SIL.Lift.Migration;
+using SIL.Lift.Parsing;
+using SIL.TestUtilities;
+using SIL.LCModel.Utils;
+using SIL.Utils;
+using SIL.WritingSystems;
 
 namespace LexTextControlsTests
 {
@@ -58,29 +59,27 @@ namespace LexTextControlsTests
 			Cache.LangProject.LexDbOA.ReferencesOA =
 				Cache.ServiceLocator.GetInstance<ICmPossibilityListFactory>().
 					Create();
-			var mockProjectName = "xxyyzProjectFolderForLIFTImport";
+			const string mockProjectName = "xxyyzProjectFolderForLIFTImport";
 			MockProjectFolder = Path.Combine(Path.GetTempPath(), mockProjectName);
-			var mockProjectPath = Path.Combine(MockProjectFolder, mockProjectName + ".fwdata");
-			MockLinkedFilesFolder = Path.Combine(MockProjectFolder, FdoFileHelper.ksLinkedFilesDir);
+			MockLinkedFilesFolder = Path.Combine(MockProjectFolder, LcmFileHelper.ksLinkedFilesDir);
 			if (Directory.Exists(MockLinkedFilesFolder))
 				Directory.Delete(MockLinkedFilesFolder, true);
 			Directory.CreateDirectory(MockLinkedFilesFolder);
 			Cache.LangProject.LinkedFilesRootDir = MockLinkedFilesFolder;
 
-			var writingSystemManager = Cache.ServiceLocator.WritingSystemManager;
-			var languageSubtag =
-				Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.LanguageSubtag;
+			WritingSystemManager writingSystemManager = Cache.ServiceLocator.WritingSystemManager;
+			LanguageSubtag languageSubtag =
+				Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Language;
 			//var voiceTag = RFC5646Tag.RFC5646TagForVoiceWritingSystem(languageSubtag.Name, "");
-			var audioWs = writingSystemManager.Create(languageSubtag,
-				LangTagUtils.GetScriptSubtag("Zxxx"), null, LangTagUtils.GetVariantSubtag("audio"));
-			IWritingSystem existingAudioWs;
-			if (writingSystemManager.TryGet(audioWs.Id, out existingAudioWs))
+			CoreWritingSystemDefinition audioWs = writingSystemManager.Create(languageSubtag, WellKnownSubtags.AudioScript, null, new VariantSubtag[] {WellKnownSubtags.AudioPrivateUse});
+			CoreWritingSystemDefinition existingAudioWs;
+			if (writingSystemManager.TryGet(audioWs.LanguageTag, out existingAudioWs))
 			{
 				m_audioWsCode = existingAudioWs.Handle;
 			}
 			else
 			{
-				((WritingSystemDefinition) audioWs).IsVoice = true;
+				audioWs.IsVoice = true;
 				// should already be so? Make sure.
 				writingSystemManager.Set(audioWs); // gives it a handle
 				m_audioWsCode = audioWs.Handle;
@@ -177,7 +176,7 @@ namespace LexTextControlsTests
 			return path;
 		}
 
-		static private readonly string[] s_LiftData1 = new[]
+		static private readonly string[] s_LiftData1 =
 		{
 			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
 			"<lift producer=\"SIL.FLEx 7.0.1.40602\" version=\"0.13\">",
@@ -343,18 +342,18 @@ namespace LexTextControlsTests
 			}
 
 			Assert.That(sense0.PicturesOS.Count, Is.EqualTo(2));
-			Assert.That(sense0.PicturesOS[0].PictureFileRA.InternalPath, Is.EqualTo(Path.Combine(FdoFileHelper.ksPicturesDir, "Desert.jpg")));
-			Assert.That(sense0.PicturesOS[1].PictureFileRA.InternalPath, Is.EqualTo(Path.Combine(FdoFileHelper.ksPicturesDir, myPicRelativePath)));
-			VerifyLinkedFileExists(FdoFileHelper.ksPicturesDir, "Desert.jpg");
-			VerifyLinkedFileExists(FdoFileHelper.ksPicturesDir, myPicRelativePath);
+			Assert.That(sense0.PicturesOS[0].PictureFileRA.InternalPath, Is.EqualTo(Path.Combine(LcmFileHelper.ksPicturesDir, "Desert.jpg")));
+			Assert.That(sense0.PicturesOS[1].PictureFileRA.InternalPath, Is.EqualTo(Path.Combine(LcmFileHelper.ksPicturesDir, myPicRelativePath)));
+			VerifyLinkedFileExists(LcmFileHelper.ksPicturesDir, "Desert.jpg");
+			VerifyLinkedFileExists(LcmFileHelper.ksPicturesDir, myPicRelativePath);
 
 			Assert.That(entry.PronunciationsOS.Count, Is.EqualTo(1));
 			Assert.That(entry.PronunciationsOS[0].MediaFilesOS[0].MediaFileRA.InternalPath,
-				Is.EqualTo(Path.Combine(FdoFileHelper.ksMediaDir, "Sleep Away.mp3")));
-			VerifyLinkedFileExists(FdoFileHelper.ksMediaDir, "Sleep Away.mp3");
-			VerifyLinkedFileExists(FdoFileHelper.ksMediaDir, "hombre634407358826681759.wav");
-			VerifyLinkedFileExists(FdoFileHelper.ksMediaDir, "male adult634407358826681760.wav");
-			VerifyLinkedFileExists(FdoFileHelper.ksOtherLinkedFilesDir, "SomeFile.txt");
+				Is.EqualTo(Path.Combine(LcmFileHelper.ksMediaDir, "Sleep Away.mp3")));
+			VerifyLinkedFileExists(LcmFileHelper.ksMediaDir, "Sleep Away.mp3");
+			VerifyLinkedFileExists(LcmFileHelper.ksMediaDir, "hombre634407358826681759.wav");
+			VerifyLinkedFileExists(LcmFileHelper.ksMediaDir, "male adult634407358826681760.wav");
+			VerifyLinkedFileExists(LcmFileHelper.ksOtherLinkedFilesDir, "SomeFile.txt");
 
 			Assert.IsTrue(repoEntry.TryGetObject(new Guid("766aaee2-34b6-4e28-a883-5c2186125a2f"), out entry));
 			Assert.AreEqual(1, entry.SensesOS.Count);
@@ -1038,8 +1037,6 @@ namespace LexTextControlsTests
 		/// </summary>
 		///--------------------------------------------------------------------------------------
 		[Test]
-		[SuppressMessage("Gendarme.Rules.Portability", "NewLineLiteralRule",
-			Justification="Unit test - we're testing with different combinations of newline chars")]
 		public void TestLiftImport4()
 		{
 			// Setup
@@ -2107,7 +2104,7 @@ namespace LexTextControlsTests
 			Assert.AreEqual(1, repoSense.Count);
 			ILexSense sense;
 			Assert.IsTrue(repoSense.TryGetObject(new Guid("b4de1476-b432-46b6-97e3-c993ff0a2ff9"), out sense));
-			Assert.That(sense.ReversalEntriesRC.Count, Is.EqualTo(0), "Empty reversal should not have been imported.");
+			Assert.That(sense.ReferringReversalIndexEntries.Count, Is.EqualTo(0), "Empty reversal should not have been imported.");
 			Assert.That(Cache.ServiceLocator.GetInstance<IReversalIndexEntryRepository>().Count, Is.EqualTo(0));
 		}
 
@@ -2156,7 +2153,7 @@ namespace LexTextControlsTests
 			Assert.AreEqual(1, repoSense.Count);
 			ILexSense sense;
 			Assert.IsTrue(repoSense.TryGetObject(new Guid("b4de1476-b432-46b6-97e3-c993ff0a2ff9"), out sense));
-			Assert.That(sense.ReversalEntriesRC.Count, Is.EqualTo(1), "Empty reversal should not have been imported but non empty should.");
+			Assert.That(sense.ReferringReversalIndexEntries.Count, Is.EqualTo(1), "Empty reversal should not have been imported but non empty should.");
 		}
 
 		/// <summary>
@@ -2176,7 +2173,7 @@ namespace LexTextControlsTests
 			entry.LexemeFormOA = Cache.ServiceLocator.GetInstance<IMoStemAllomorphFactory>().Create();
 			entry.LexemeFormOA.Form.set_String(Cache.DefaultVernWs, "some entry");
 			entry.SensesOS.Add(sense);
-			sense.Gloss.set_String(english, Cache.TsStrFactory.MakeString("blank", english));
+			sense.Gloss.set_String(english, TsStringUtils.MakeString("blank", english));
 			var entryCreationMs = entry.DateCreated.Millisecond;
 			var entryModifiedMs = entry.DateModified.Millisecond;
 			var basicLiftEntry = new[]
@@ -2414,7 +2411,7 @@ namespace LexTextControlsTests
 			VerifyCustomField(entry, customData, m_customFieldEntryIds["CustomFld CustomList2"]);
 		}
 
-		public static String GetPossibilityBestAlternative(int possibilityHvo, FdoCache cache)
+		public static String GetPossibilityBestAlternative(int possibilityHvo, LcmCache cache)
 		{
 			ITsMultiString tsm =
 				cache.DomainDataByFlid.get_MultiStringProp(possibilityHvo, CmPossibilityTags.kflidName);
@@ -2690,7 +2687,7 @@ namespace LexTextControlsTests
 			Assert.AreEqual(3, text.ParagraphsOS.Count, "The first Long Text field should have three paragraphs.");
 
 			Assert.IsNull(text.ParagraphsOS[0].StyleName);
-			ITsIncStrBldr tisb = TsIncStrBldrClass.Create();
+			ITsIncStrBldr tisb = TsStringUtils.MakeIncStrBldr();
 			var wsEn = Cache.WritingSystemFactory.GetWsFromStr("en");
 			tisb.SetIntPropValues((int)FwTextPropType.ktptWs, 0, wsEn);
 			tisb.Append("This test paragraph does not have a style explicitly assigned.");
@@ -2833,7 +2830,7 @@ namespace LexTextControlsTests
 			Assert.IsNotNull(para);
 			Assert.AreEqual("Numbered List", para.StyleName);
 			var wsEn = Cache.WritingSystemFactory.GetWsFromStr("en");
-			var tss = Cache.TsStrFactory.MakeString("This is the fourth paragraph.", wsEn);
+			var tss = TsStringUtils.MakeString("This is the fourth paragraph.", wsEn);
 			Assert.AreEqual(tss.Text, para.Contents.Text);
 			Assert.IsTrue(tss.Equals(para.Contents), "The fourth paragraph contents should not have changed.");
 		}
@@ -2939,7 +2936,7 @@ namespace LexTextControlsTests
 			Assert.AreEqual(cpara, text.ParagraphsOS.Count,
 				String.Format("The first Long Text field should have {0} paragraphs.", cpara));
 			Assert.AreEqual("Bulleted List", text.ParagraphsOS[0].StyleName);
-			ITsIncStrBldr tisb = TsIncStrBldrClass.Create();
+			ITsIncStrBldr tisb = TsStringUtils.MakeIncStrBldr();
 			var wsEn = Cache.WritingSystemFactory.GetWsFromStr("en");
 			tisb.SetIntPropValues((int)FwTextPropType.ktptWs, 0, wsEn);
 			tisb.Append("This is a test of sorts.  This field can contain ");
@@ -3010,19 +3007,19 @@ namespace LexTextControlsTests
 			var para1 = Cache.ServiceLocator.GetInstance<IStTxtParaFactory>().Create();
 			text.ParagraphsOS.Add(para1);
 			para1.StyleName = "Numbered List";
-			para1.Contents = Cache.TsStrFactory.MakeString("This is the first paragraph.", Cache.DefaultAnalWs);
+			para1.Contents = TsStringUtils.MakeString("This is the first paragraph.", Cache.DefaultAnalWs);
 			var para2 = Cache.ServiceLocator.GetInstance<IStTxtParaFactory>().Create();
 			text.ParagraphsOS.Add(para2);
 			para2.StyleName = "Numbered List";
-			para2.Contents = Cache.TsStrFactory.MakeString("This is the second paragraph.", Cache.DefaultAnalWs);
+			para2.Contents = TsStringUtils.MakeString("This is the second paragraph.", Cache.DefaultAnalWs);
 			var para3 = Cache.ServiceLocator.GetInstance<IStTxtParaFactory>().Create();
 			text.ParagraphsOS.Add(para3);
 			para3.StyleName = "Numbered List";
-			para3.Contents = Cache.TsStrFactory.MakeString("This is the third paragraph.", Cache.DefaultAnalWs);
+			para3.Contents = TsStringUtils.MakeString("This is the third paragraph.", Cache.DefaultAnalWs);
 			var para4 = Cache.ServiceLocator.GetInstance<IStTxtParaFactory>().Create();
 			text.ParagraphsOS.Add(para4);
 			para4.StyleName = "Numbered List";
-			para4.Contents = Cache.TsStrFactory.MakeString("This is the fourth paragraph.", Cache.DefaultAnalWs);
+			para4.Contents = TsStringUtils.MakeString("This is the fourth paragraph.", Cache.DefaultAnalWs);
 
 			return flidCustom;
 		}
@@ -3034,24 +3031,23 @@ namespace LexTextControlsTests
 		/// </summary>
 		///--------------------------------------------------------------------------------------
 		[Test]
-		public void TestLDMLMigration()
+		public void TestLdmlMigration()
 		{
-			var projectFolder = Path.GetTempPath();
-			var testLiftDataSource = Path.Combine(FwDirectoryFinder.SourceDirectory,
+			string testLiftDataSource = Path.Combine(FwDirectoryFinder.SourceDirectory,
 												  "LexText/LexTextControls/LexTextControlsTests/LDML-11723");
-			var testLiftDataPath = Path.Combine(FwDirectoryFinder.SourceDirectory,
+			string testLiftDataPath = Path.Combine(FwDirectoryFinder.SourceDirectory,
 												"LexText/LexTextControls/LexTextControlsTests/LDML-11723-test");
 
-			var sLiftDataFile = Path.Combine(testLiftDataPath, "LDML-11723.lift");
-			var sLiftRangesFile = Path.Combine(testLiftDataPath, "LDML-11723.lift-ranges");
-			var sWSfilesPath = Path.Combine(testLiftDataPath, "WritingSystems");
-			var enLdml = Path.Combine(sWSfilesPath, "en.ldml");
-			var sehLdml = Path.Combine(sWSfilesPath, "seh.ldml");
-			var esLdml = Path.Combine(sWSfilesPath, "es.ldml");
-			var xkalLdml = Path.Combine(sWSfilesPath, "x-kal.ldml");
-			var qaaxkalLdml = Path.Combine(sWSfilesPath, "qaa-x-kal.ldml");
-			var qaaIPAxkalLdml = Path.Combine(sWSfilesPath, "qaa-fonipa-x-kal.ldml");
-			var qaaPhonemicxkalLdml = Path.Combine(sWSfilesPath, "qaa-fonipa-x-kal-emic.ldml");
+			string sLiftDataFile = Path.Combine(testLiftDataPath, "LDML-11723.lift");
+			string sLiftRangesFile = Path.Combine(testLiftDataPath, "LDML-11723.lift-ranges");
+			string sWSfilesPath = Path.Combine(testLiftDataPath, "WritingSystems");
+			string enLdml = Path.Combine(sWSfilesPath, "en.ldml");
+			string sehLdml = Path.Combine(sWSfilesPath, "seh.ldml");
+			string esLdml = Path.Combine(sWSfilesPath, "es.ldml");
+			string xkalLdml = Path.Combine(sWSfilesPath, "x-kal.ldml");
+			string qaaXkalLdml = Path.Combine(sWSfilesPath, "qaa-x-kal.ldml");
+			string qaaIpaXkalLdml = Path.Combine(sWSfilesPath, "qaa-fonipa-x-kal.ldml");
+			string qaaPhonemicxkalLdml = Path.Combine(sWSfilesPath, "qaa-fonipa-x-kal-emic.ldml");
 
 			LdmlFileBackup.CopyDirectory(testLiftDataSource, testLiftDataPath);
 
@@ -3063,11 +3059,10 @@ namespace LexTextControlsTests
 			File.SetAttributes(sehLdml, FileAttributes.Normal);
 			File.SetAttributes(esLdml, FileAttributes.Normal);
 			File.SetAttributes(xkalLdml, FileAttributes.Normal);
-			File.SetAttributes(qaaIPAxkalLdml, FileAttributes.Normal);
+			File.SetAttributes(qaaIpaXkalLdml, FileAttributes.Normal);
 			File.SetAttributes(qaaPhonemicxkalLdml, FileAttributes.Normal);
 
 			var flexImporter = new FlexLiftMerger(Cache, FlexLiftMerger.MergeStyle.MsKeepBoth, true);
-			var parser = new LiftParser<LiftObject, CmLiftEntry, CmLiftSense, CmLiftExample>(flexImporter);
 
 			//Mirgrate the LDML files and lang names
 			flexImporter.LdmlFilesMigration(testLiftDataPath, sLiftDataFile, sLiftRangesFile);
@@ -3085,17 +3080,17 @@ namespace LexTextControlsTests
 			// Verify that es.ldml is unchanged.
 			Assert.That(File.Exists(esLdml));
 			// Verify that qaa-fonipa-x-kal.ldml is unchanged.
-			Assert.That(File.Exists(qaaIPAxkalLdml));
+			Assert.That(File.Exists(qaaIpaXkalLdml));
 			// Verify that qaa-fonipa-x-kal-emic.ldml is unchanged.
 			Assert.That(File.Exists(qaaPhonemicxkalLdml));
 
 			// Verify that x-kal.ldml no longer exists
 			Assert.That(!File.Exists(xkalLdml));
 			// Verify that x-kal.ldml is renamed to qaa-x-kal and content changed
-			Assert.That(File.Exists(qaaxkalLdml));
+			Assert.That(File.Exists(qaaXkalLdml));
 
 			//Verify qaa-x-kal.ldml file has correct changes in it.
-			VerifyKalabaLdmlFile(qaaxkalLdml);
+			VerifyKalabaLdmlFile(qaaXkalLdml);
 
 			//Verify LDML 11723.lift file has correct changes in it.
 			VerifyLiftDataFile(sLiftDataFile);
@@ -3871,9 +3866,9 @@ namespace LexTextControlsTests
 			var wsEn = Cache.WritingSystemFactory.GetWsFromStr("en");
 			var statusList = Cache.ServiceLocator.GetInstance<ICmPossibilityListFactory>().CreateUnowned("status", wsEn);
 			var confirmed = Cache.ServiceLocator.GetInstance<ICmPossibilityFactory>().Create(new Guid("bd80cd3e-ea5e-11de-9871-0013722f8dec"), statusList);
-			confirmed.Name.set_String(wsEn, Cache.TsStrFactory.MakeString("Confirmed", wsEn));
+			confirmed.Name.set_String(wsEn, TsStringUtils.MakeString("Confirmed", wsEn));
 			var pending = Cache.ServiceLocator.GetInstance<ICmPossibilityFactory>().Create(new Guid("bd964254-ea5e-11de-8cdf-0013722f8dec"), statusList);
-			pending.Name.set_String(wsEn, Cache.TsStrFactory.MakeString("Pending", wsEn));
+			pending.Name.set_String(wsEn, TsStringUtils.MakeString("Pending", wsEn));
 			var entryNew = new FieldDescription(Cache)
 			{
 				Type = CellarPropertyType.ReferenceAtomic,
@@ -3949,7 +3944,7 @@ namespace LexTextControlsTests
 			var lexPronunciation = Cache.ServiceLocator.GetInstance<ILexPronunciationFactory>().Create();
 			entry.PronunciationsOS.Add(lexPronunciation);
 			if (ws > 0)
-				lexPronunciation.Form.set_String(ws, Cache.TsStrFactory.MakeString(pronunciation, ws));
+				lexPronunciation.Form.set_String(ws, TsStringUtils.MakeString(pronunciation, ws));
 		}
 
 		[Test]
@@ -4073,10 +4068,10 @@ namespace LexTextControlsTests
 			Assert.That(Cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS, Has.Count.EqualTo(1), "Should start out with just the one LRT");
 			var en = Cache.WritingSystemFactory.GetWsFromStr("en");
 			var de = Cache.WritingSystemFactory.GetWsFromStr("de");
-			lrt.Name.AnalysisDefaultWritingSystem = TsStringUtils.MakeTss("Antonym", en);
-			lrt.Description.AnalysisDefaultWritingSystem = TsStringUtils.MakeTss("Opposite", en);
-			lrt.Description.set_String(de, TsStringUtils.MakeTss("OppositeG", de));
-			lrt.Abbreviation.set_String(de, TsStringUtils.MakeTss("AntG", de));
+			lrt.Name.AnalysisDefaultWritingSystem = TsStringUtils.MakeString("Antonym", en);
+			lrt.Description.AnalysisDefaultWritingSystem = TsStringUtils.MakeString("Opposite", en);
+			lrt.Description.set_String(de, TsStringUtils.MakeString("OppositeG", de));
+			lrt.Abbreviation.set_String(de, TsStringUtils.MakeString("AntG", de));
 
 			//Create the LIFT data file
 			var sOrigFile = CreateInputFile(_minimalLiftData);

@@ -3,16 +3,15 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Xml;
 using Gecko;
-using Palaso.UI.WindowsForms.HtmlBrowser;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
+using SIL.LCModel.Core.KernelInterfaces;
 using XCore;
 using SIL.Utils;
+using SIL.Windows.Forms.HtmlBrowser;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -25,11 +24,11 @@ namespace SIL.FieldWorks.XWorks
 		private XWebBrowser m_mainView;
 		internal string m_configObjectName;
 
-		public override void Init(Mediator mediator, XmlNode configurationParameters)
+		public override void Init(Mediator mediator, PropertyTable propertyTable, XmlNode configurationParameters)
 		{
 			CheckDisposed();
 
-			InitBase(mediator, configurationParameters);
+			InitBase(mediator, propertyTable, configurationParameters);
 			m_mainView = new XWebBrowser(XWebBrowser.BrowserType.GeckoFx);
 			m_mainView.Dock = DockStyle.Fill;
 			m_mainView.Location = new Point(0, 0);
@@ -58,7 +57,6 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// Handle a mouse click in the web browser displaying the xhtml.
 		/// </summary>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule", Justification = "element does NOT need to be disposed locally!")]
 		private void OnDomClick(object sender, DomMouseEventArgs e)
 		{
 			XhtmlDocView.CloseContextMenuIfOpen();
@@ -70,11 +68,11 @@ namespace SIL.FieldWorks.XWorks
 				return;
 			if (e.Button == GeckoMouseButton.Left)
 			{
-				XhtmlDocView.HandleDomLeftClick(Clerk, e, element);
+				XhtmlDocView.HandleDomLeftClick(Clerk, m_propertyTable,e, element);
 			}
 			else if (e.Button == GeckoMouseButton.Right)
 			{
-				XhtmlDocView.HandleDomRightClick(browser, e, element, m_mediator);
+				XhtmlDocView.HandleDomRightClick(browser, e, element, m_propertyTable, m_mediator);
 			}
 		}
 
@@ -109,7 +107,7 @@ namespace SIL.FieldWorks.XWorks
 			m_mainView.DocumentCompleted += EnableRecordDocView;
 			if (cmo != null && cmo.Hvo > 0)
 			{
-				var configurationFile = DictionaryConfigurationListener.GetCurrentConfiguration(m_mediator);
+				var configurationFile = DictionaryConfigurationListener.GetCurrentConfiguration(m_propertyTable);
 				if (String.IsNullOrEmpty(configurationFile))
 				{
 					m_mainView.DocumentText = String.Format("<html><body><p>{0}</p></body></html>",
@@ -117,7 +115,7 @@ namespace SIL.FieldWorks.XWorks
 					return;
 				}
 				var configuration = new DictionaryConfigurationModel(configurationFile, Cache);
-				var xhtmlPath = ConfiguredXHTMLGenerator.SavePreviewHtmlWithStyles(new [] { cmo.Hvo }, null, configuration, m_mediator);
+				var xhtmlPath = ConfiguredXHTMLGenerator.SavePreviewHtmlWithStyles(new [] { cmo.Hvo }, null, configuration, m_propertyTable);
 				m_mainView.Url = new Uri(xhtmlPath);
 				m_mainView.Refresh(WebBrowserRefreshOption.Completely);
 			}
@@ -156,7 +154,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			if (IsDisposed)
 				return true; // no longer necessary to refresh the view
-			var ui = Cache.ServiceLocator.GetInstance<IFdoUI>();
+			var ui = Cache.ServiceLocator.GetInstance<ILcmUI>();
 			if (ui != null && DateTime.Now - ui.LastActivityTime < TimeSpan.FromMilliseconds(400))
 				return false; // Don't interrupt a user who is busy typing. Wait for a pause to refresh the view.
 			ShowRecord();

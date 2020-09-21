@@ -329,12 +329,12 @@ namespace TestViews
 			// Insert a footnote ORC into the string.
 			StrUni stuData;
 			OLECHAR * prgchData;
-			GUID uidSimulatedFootnote;
-			hr = CoCreateGuid(&uidSimulatedFootnote);
+			GUID uidFootnote;
+			hr = CoCreateGuid(&uidFootnote);
 			// Make large enough for a guid plus the type character at the start.
 			stuData.SetSize(isizeof(GUID) / isizeof(OLECHAR) + 1, &prgchData);
 			*prgchData = kodtOwnNameGuidHot;
-			memmove(prgchData + 1, &uidSimulatedFootnote, isizeof(uidSimulatedFootnote));
+			memmove(prgchData + 1, &uidFootnote, isizeof(uidFootnote));
 			hr = qtpbTextPropsBuilder->SetStrPropValue(ktptObjData, stuData.Bstr());
 			hr = qtpbTextPropsBuilder->GetTextProps(&qttp);
 			OLECHAR chObj = kchObject;
@@ -415,12 +415,12 @@ namespace TestViews
 			// Insert a footnote ORC into the string.
 			StrUni stuData;
 			OLECHAR * prgchData;
-			GUID uidSimulatedFootnote;
-			hr = CoCreateGuid(&uidSimulatedFootnote);
+			GUID uidFootnote;
+			hr = CoCreateGuid(&uidFootnote);
 			// Make large enough for a guid plus the type character at the start.
 			stuData.SetSize(isizeof(GUID) / isizeof(OLECHAR) + 1, &prgchData);
 			*prgchData = kodtOwnNameGuidHot;
-			memmove(prgchData + 1, &uidSimulatedFootnote, isizeof(uidSimulatedFootnote));
+			memmove(prgchData + 1, &uidFootnote, isizeof(uidFootnote));
 			hr = qtpbTextPropsBuilder->SetStrPropValue(ktptObjData, stuData.Bstr());
 			hr = qtpbTextPropsBuilder->GetTextProps(&qttp);
 			OLECHAR chObj = kchObject;
@@ -467,12 +467,12 @@ namespace TestViews
 			// Insert a footnote ORC into the string.
 			StrUni stuData;
 			OLECHAR * prgchData;
-			GUID uidSimulatedFootnote;
-			hr = CoCreateGuid(&uidSimulatedFootnote);
+			GUID uidFootnote;
+			hr = CoCreateGuid(&uidFootnote);
 			// Make large enough for a guid plus the type character at the start.
 			stuData.SetSize(isizeof(GUID) / isizeof(OLECHAR) + 1, &prgchData);
 			*prgchData = kodtOwnNameGuidHot;
-			memmove(prgchData + 1, &uidSimulatedFootnote, isizeof(uidSimulatedFootnote));
+			memmove(prgchData + 1, &uidFootnote, isizeof(uidFootnote));
 			hr = qtpbTextPropsBuilder->SetStrPropValue(ktptObjData, stuData.Bstr());
 			hr = qtpbTextPropsBuilder->GetTextProps(&qttp);
 			OLECHAR chObj = kchObject;

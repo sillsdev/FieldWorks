@@ -3,8 +3,8 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using NUnit.Framework;
-using SILUBS.SharedScrUtils;
-using SIL.Utils;
+using SIL.FieldWorks.Common.FwUtils;
+using SIL.LCModel.Utils;
 
 namespace SILUBS.ScriptureChecks
 {

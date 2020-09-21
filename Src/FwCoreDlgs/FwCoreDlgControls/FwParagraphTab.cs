@@ -1,27 +1,15 @@
-// Copyright (c) 2006-2013 SIL International
+// Copyright (c) 2006-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: FwParagraphTab.cs
-// Responsibility: TE Team
-//
-// <remarks>
-// </remarks>
 
 using System;
 using System.Diagnostics;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Drawing;
-using System.Data;
-using System.Text;
 using System.Windows.Forms;
-
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.Utils;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.LCModel.DomainServices;
+using SIL.PlatformUtilities;
 
 namespace SIL.FieldWorks.FwCoreDlgControls
 {
@@ -30,7 +18,7 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 	///
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
-	public partial class FwParagraphTab : UserControl, IFWDisposable, IStylesTab
+	public partial class FwParagraphTab : UserControl, IStylesTab
 	{
 		#region Member Data
 		/// <summary>
@@ -227,12 +215,15 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 		public void UpdateForStyle(StyleInfo styleInfo)
 		{
 			CheckDisposed();
-#if __MonoCS__
-			// On Mono, the sequence of events when changing styles can cause this to be
-			// called even when switching to a character style.  See FWNX-870.
-			if (!styleInfo.IsParagraphStyle)
-				return;
-#endif
+
+			if (Platform.IsMono)
+			{
+				// On Mono, the sequence of events when changing styles can cause this to be
+				// called even when switching to a character style.  See FWNX-870.
+				if (!styleInfo.IsParagraphStyle)
+					return;
+			}
+
 			// Don't allow controls to undo their inherited state while filling in
 			m_dontUpdateInheritance = true;
 			m_currentStyleInfo = styleInfo;

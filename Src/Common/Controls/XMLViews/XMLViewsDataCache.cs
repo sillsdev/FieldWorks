@@ -5,14 +5,14 @@
 using System;
 using System.Collections.Generic;
 using System.Xml;
-using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Application;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel.Core.Cellar;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Application;
+using SIL.LCModel.Infrastructure;
 using SIL.Utils;
-using HvoFlidKey = SIL.FieldWorks.FDO.Application.HvoFlidKey;
-using HvoFlidWSKey = SIL.FieldWorks.FDO.Application.HvoFlidWSKey;
+using HvoFlidKey = SIL.LCModel.Application.HvoFlidKey;
+using HvoFlidWSKey = SIL.LCModel.Application.HvoFlidWSKey;
 
 namespace SIL.FieldWorks.Common.Controls
 {
@@ -256,8 +256,7 @@ namespace SIL.FieldWorks.Common.Controls
 				return result;
 			if (tag == m_tagReversalEntriesBulkText && result1 != null)
 				return result1;
-			ITsStrFactory tsf = TsStrFactoryClass.Create();
-			return tsf.MakeString("", ws);
+			return TsStringUtils.EmptyString(ws);
 		}
 
 		/// <summary>
@@ -307,17 +306,15 @@ namespace SIL.FieldWorks.Common.Controls
 				}
 				if (tss == null)
 				{
-					foreach (var x in m_mlStringCache.Keys)
+					foreach (HvoFlidWSKey x in m_mlStringCache.Keys)
 					{
-						ITsStrFactory tsf = TsStrFactoryClass.Create();
-						return tsf.EmptyString(x.Ws);
+						return TsStringUtils.EmptyString(x.Ws);
 					}
 				}
 				if (tss != null)
 				{
-					ITsStrFactory tsf = TsStrFactoryClass.Create();
 					var ws = TsStringUtils.GetWsOfRun(tss, 0);
-					return tsf.EmptyString(ws);
+					return TsStringUtils.EmptyString(ws);
 				}
 				// Enhance JohnT: might be desirable to return empty string rather than crashing,
 				// but as things stand, we don't know what would be a sensible WS.
@@ -356,7 +353,7 @@ namespace SIL.FieldWorks.Common.Controls
 
 	}
 
-	class XmlViewsMdc : FdoMetaDataCacheDecoratorBase
+	class XmlViewsMdc : LcmMetaDataCacheDecoratorBase
 	{
 		public XmlViewsMdc(IFwMetaDataCacheManaged metaDataCache) : base(metaDataCache)
 		{

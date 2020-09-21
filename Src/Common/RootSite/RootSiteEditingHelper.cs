@@ -4,24 +4,24 @@
 //
 // File: RootSiteEditingHelper.cs
 // Responsibility:
-
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.LCModel.Core.SpellChecking;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.UIAdapters;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Application;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel;
+using SIL.LCModel.Application;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.Resources;
-using SIL.Utils;
+using SIL.LCModel.Utils;
 
 namespace SIL.FieldWorks.Common.RootSites
 {
@@ -53,7 +53,7 @@ namespace SIL.FieldWorks.Common.RootSites
 
 		#region Member variables
 		/// <summary>The FDO cache</summary>
-		protected FdoCache m_cache;
+		protected LcmCache m_cache;
 		private SpellCheckStatus m_spellCheckStatus = SpellCheckStatus.Disabled;
 		private SpellCheckHelper m_spellCheckHelper = null;
 		private int m_undoCountBeforeMerge;
@@ -71,7 +71,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <param name="cache">The FDO Cache</param>
 		/// <param name="callbacks">implementation of <see cref="IEditingCallbacks"/></param>
 		/// ------------------------------------------------------------------------------------
-		public RootSiteEditingHelper(FdoCache cache, IEditingCallbacks callbacks)
+		public RootSiteEditingHelper(LcmCache cache, IEditingCallbacks callbacks)
 			: base(callbacks)
 		{
 			Cache = cache;
@@ -84,7 +84,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// of creating the editing helper.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public FdoCache Cache
+		public LcmCache Cache
 		{
 			get { return m_cache; }
 			internal set
@@ -200,8 +200,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// Make spell checking menu options using the DotNetBar adapter.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="we store a reference to AddToDictMenuItem for later use. REVIEW: we never dispose it.")]
 		private List<string> MakeSpellCheckMenuOptions(Point mousePos, RootSite rootsite,
 			ITMAdapter tmAdapter, string menuName, string addToDictMenuName,
 			string changeMultipleMenuName, string insertBeforeMenuName)
@@ -393,7 +391,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <param name="cache">FDO cache representing the DB connection to use</param>
 		/// <param name="guid">The guid of the object in the DB</param>
 		/// ------------------------------------------------------------------------------------
-		public string TextRepOfObj(FdoCache cache, Guid guid)
+		public string TextRepOfObj(LcmCache cache, Guid guid)
 		{
 			CheckDisposed();
 			ICmObject obj;
@@ -417,7 +415,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <param name="kodt">The object data type to use for embedding the new object
 		/// </param>
 		/// ------------------------------------------------------------------------------------
-		public virtual Guid MakeObjFromText(FdoCache cache, string sTextRep,
+		public virtual Guid MakeObjFromText(LcmCache cache, string sTextRep,
 			IVwSelection selDst, out int kodt)
 		{
 			CheckDisposed();
@@ -1096,7 +1094,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <param name="clip">The URL.</param>
 		/// <param name="stylesheet">The stylesheet.</param>
 		/// ------------------------------------------------------------------------------------
-		public void ConvertSelToLink(string clip, FwStyleSheet stylesheet)
+		public void ConvertSelToLink(string clip, LcmStyleSheet stylesheet)
 		{
 			CheckDisposed();
 			var hyperlinkStyle = stylesheet.FindStyle(StyleServices.Hyperlink);
@@ -1135,8 +1133,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			}
 			if (!sel.IsRange)
 			{
-				ITsStrFactory tsf = TsStrFactoryClass.Create();
-				tssLink = tsf.MakeString(clip, sda.WritingSystemFactory.UserWs);
+				tssLink = TsStringUtils.MakeString(clip, sda.WritingSystemFactory.UserWs);
 				tsb = tssLink.GetBldr();
 			}
 
@@ -1144,8 +1141,7 @@ namespace SIL.FieldWorks.Common.RootSites
 				RootSiteStrings.ksUndoInsertLink, RootSiteStrings.ksRedoInsertLink))
 			{
 				if (m_cache != null && m_cache.ProjectId != null)
-					clip = FwLinkArgs.FixSilfwUrlForCurrentProject(clip, m_cache.ProjectId.Name,
-						m_cache.ProjectId.ServerName);
+					clip = FwLinkArgs.FixSilfwUrlForCurrentProject(clip, m_cache.ProjectId.Name);
 				var filename = StringServices.MarkTextInBldrAsHyperlink(tsb, 0, tsb.Length, clip, hyperlinkStyle, m_cache.LanguageProject.LinkedFilesRootDir);
 				if (FileUtils.IsFilePathValid(filename))
 				{
@@ -1212,7 +1208,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <param name="stylesheet">The stylesheet.</param>
 		/// <returns></returns>
 		/// ------------------------------------------------------------------------------------
-		public bool PasteUrl(FwStyleSheet stylesheet)
+		public bool PasteUrl(LcmStyleSheet stylesheet)
 		{
 			CheckDisposed();
 			if (!CanPasteUrl())

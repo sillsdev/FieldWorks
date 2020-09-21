@@ -1,18 +1,11 @@
-// Copyright (c) 2003-2013 SIL International
+// Copyright (c) 2003-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: M3ParserModelRetriever.cs
-// Responsibility: John Hatton
-//
-// <remarks>
-//	this is  a MethodObject (see "Refactoring", Fowler).
-// </remarks>
 
 using System;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.FDO;
-using SIL.Utils;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel;
+using SIL.ObjectModel;
 
 namespace SIL.FieldWorks.WordWorks.Parser
 {
@@ -20,9 +13,9 @@ namespace SIL.FieldWorks.WordWorks.Parser
 	/// Summary description for M3ParserModelRetriever.
 	/// </summary>
 	/// <remarks>Is public for testing purposes</remarks>
-	public class ParserModelChangeListener : FwDisposableBase, IVwNotifyChange
+	public class ParserModelChangeListener : DisposableBase, IVwNotifyChange
 	{
-		private readonly FdoCache m_cache;
+		private readonly LcmCache m_cache;
 		private readonly object m_syncRoot = new object();
 		private bool m_changed;
 
@@ -31,7 +24,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		/// Initializes a new instance of the <see cref="ParserModelChangeListener"/> class.
 		/// </summary>
 		/// -----------------------------------------------------------------------------------
-		public ParserModelChangeListener(FdoCache cache)
+		public ParserModelChangeListener(LcmCache cache)
 		{
 			if (cache == null) throw new ArgumentNullException("cache");
 

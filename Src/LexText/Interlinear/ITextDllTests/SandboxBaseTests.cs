@@ -1,17 +1,19 @@
-﻿// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using NUnit.Framework;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FDO.FDOTests;
-using System.Diagnostics.CodeAnalysis;
-using SIL.Utils;
+using SIL.FieldWorks.Common.ViewsInterfaces;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.ObjectModel;
+using XCore;
 
 namespace SIL.FieldWorks.IText
 {
@@ -21,6 +23,46 @@ namespace SIL.FieldWorks.IText
 	[TestFixture]
 	public class SandboxBaseTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
 	{
+		private Mediator m_mediator;
+		private PropertyTable m_propertyTable;
+
+		#region Overrides of MemoryOnlyBackendProviderRestoredForEachTestTestBase
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Override to start an undoable UOW.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		public override void TestSetup()
+		{
+			base.TestSetup();
+
+			m_mediator = new Mediator();
+			m_propertyTable = new PropertyTable(m_mediator);
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Override to end the undoable UOW, Undo everything, and 'commit',
+		/// which will essentially clear out the Redo stack.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		public override void TestTearDown()
+		{
+			if (m_mediator != null)
+			{
+				m_mediator.Dispose();
+				m_mediator = null;
+			}
+			if (m_propertyTable != null)
+			{
+				m_propertyTable.Dispose();
+				m_propertyTable = null;
+			}
+			base.TestTearDown();
+		}
+
+		#endregion
 		/// <summary>
 		/// Test the indicated method.
 		/// </summary>
@@ -111,6 +153,7 @@ namespace SIL.FieldWorks.IText
 			var wa = Cache.ServiceLocator.GetInstance<IWfiAnalysisFactory>().Create();
 			wf.AnalysesOC.Add(wa);
 			var sda = VwCacheDaClass.Create();
+			sda.TsStrFactory = TsStringUtils.TsStrFactory;
 			var wsIds = new List<int>();
 			wsIds.Add(Cache.DefaultAnalWs);
 			int hvoAbc = 123456;
@@ -156,10 +199,10 @@ namespace SIL.FieldWorks.IText
 			wgAbc3.Form.AnalysisDefaultWritingSystem = MakeAnalysisString("abc");
 			var wsSpn = Cache.WritingSystemFactory.get_Engine("es").Handle;
 			var wsFrn = Cache.WritingSystemFactory.get_Engine("fr").Handle;
-			wgAbc3.Form.set_String(wsSpn, Cache.TsStrFactory.MakeString("abcS", wsSpn));
-			wgAbc3.Form.set_String(wsFrn, Cache.TsStrFactory.MakeString("abcF", wsFrn));
+			wgAbc3.Form.set_String(wsSpn, TsStringUtils.MakeString("abcS", wsSpn));
+			wgAbc3.Form.set_String(wsFrn, TsStringUtils.MakeString("abcF", wsFrn));
 			wsIds.Add(wsSpn);
-			sda.CacheStringAlt(hvoAbc, SandboxBase.ktagSbWordGloss, wsSpn, Cache.TsStrFactory.MakeString("abcS", wsSpn));
+			sda.CacheStringAlt(hvoAbc, SandboxBase.ktagSbWordGloss, wsSpn, TsStringUtils.MakeString("abcS", wsSpn));
 			Assert.That(SandboxBase.GetRealAnalysisMethod.GetBestGloss(wa, wsIds, sda, hvoAbc), Is.EqualTo(wgAbc3));
 
 			// Of two partial matches, prefer the one where other alternatives are empty.
@@ -168,9 +211,9 @@ namespace SIL.FieldWorks.IText
 			var wgAbc2 = Cache.ServiceLocator.GetInstance<IWfiGlossFactory>().Create();
 			wa.MeaningsOC.Add(wgAbc2);
 			wgAbc2.Form.AnalysisDefaultWritingSystem = MakeAnalysisString("abc");
-			wgAbc2.Form.set_String(wsSpn, Cache.TsStrFactory.MakeString("abcS", wsSpn));
+			wgAbc2.Form.set_String(wsSpn, TsStringUtils.MakeString("abcS", wsSpn));
 			wsIds.Add(wsFrn);
-			sda.CacheStringAlt(hvoAbc, SandboxBase.ktagSbWordGloss, wsFrn, Cache.TsStrFactory.MakeString("abcOther", wsFrn));
+			sda.CacheStringAlt(hvoAbc, SandboxBase.ktagSbWordGloss, wsFrn, TsStringUtils.MakeString("abcOther", wsFrn));
 			Assert.That(SandboxBase.GetRealAnalysisMethod.GetBestGloss(wa, wsIds, sda, hvoAbc), Is.EqualTo(wgAbc2));
 
 			// Of two perfect matches, we prefer the one that has no other information.
@@ -178,7 +221,7 @@ namespace SIL.FieldWorks.IText
 			Assert.That(SandboxBase.GetRealAnalysisMethod.GetBestGloss(wa, wsIds, sda, hvoAbc), Is.EqualTo(wgAbc2));
 
 			// We will not return one where the WfiGloss has a relevant non-empty alternative, even if the corresponding target is empty.
-			sda.CacheStringAlt(hvoAbc, SandboxBase.ktagSbWordGloss, wsSpn, Cache.TsStrFactory.MakeString("", wsSpn));
+			sda.CacheStringAlt(hvoAbc, SandboxBase.ktagSbWordGloss, wsSpn, TsStringUtils.MakeString("", wsSpn));
 			wa.MeaningsOC.Remove(wgAbc);
 			Assert.That(SandboxBase.GetRealAnalysisMethod.GetBestGloss(wa, wsIds, sda, hvoAbc), Is.Null);
 		}
@@ -335,8 +378,6 @@ namespace SIL.FieldWorks.IText
 		}
 
 		[Test]
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "handlerList is a reference")]
 		public void LexEntriesComboHandler_ItemsInComboForInflVariant()
 		{
 			using (var sandbox = SetupSandbox(() =>
@@ -659,7 +700,7 @@ namespace SIL.FieldWorks.IText
 			// Make a sandbox and sut
 			InterlinLineChoices lineChoices = InterlinLineChoices.DefaultChoices(Cache.LangProject,
 				Cache.DefaultVernWs, Cache.DefaultAnalWs, InterlinLineChoices.InterlinMode.Analyze);
-			using(var sandbox = new SandboxBase(Cache, null, null, lineChoices, wa.Hvo))
+			using(var sandbox = new SandboxBase(Cache, null, m_propertyTable, null, lineChoices, wa.Hvo))
 			{
 				var mockList = new MockComboHandler();
 				sandbox.m_ComboHandler = mockList;
@@ -700,9 +741,7 @@ namespace SIL.FieldWorks.IText
 			return SandboxBase.InterlinComboHandler.MakeCombo(null, tagIcon, sandbox, morphIndex) as SandboxBase.InterlinComboHandler;
 		}
 
-		[SuppressMessage("Gendarme.Rules.Design", "UseCorrectDisposeSignaturesRule",
-			Justification = "Nothing to dispose here, just needed to avoid a crash on TearDown.")]
-		public class MockComboHandler : IComboHandler, IDisposable
+		public class MockComboHandler : DisposableBase, IComboHandler
 		{
 			public void SetupCombo() { }
 
@@ -717,7 +756,12 @@ namespace SIL.FieldWorks.IText
 
 			public int SelectedMorphHvo { get; private set; }
 			public void HandleSelectIfActive() { }
-			public void Dispose() { }
+
+			protected override void Dispose(bool disposing)
+			{
+				Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + " ******");
+				base.Dispose(disposing);
+			}
 		}
 
 		/// <summary>
@@ -732,7 +776,7 @@ namespace SIL.FieldWorks.IText
 		{
 			var occurrence = createDataForSandbox();
 			var lineChoices = InterlinLineChoices.DefaultChoices(Cache.LangProject, Cache.DefaultVernWs, Cache.DefaultAnalWs);
-			var sandbox = new SandboxBase(Cache, null, null, lineChoices, occurrence.Analysis.Hvo);
+			var sandbox = new SandboxBase(Cache, m_mediator, m_propertyTable, null, lineChoices, occurrence.Analysis.Hvo);
 			sandbox.MakeRoot();
 			return sandbox;
 		}
@@ -786,7 +830,7 @@ namespace SIL.FieldWorks.IText
 			return new AnalysisOccurrence(seg, 0);
 		}
 
-		private FDO.IText MakeText(string contents)
+		private LCModel.IText MakeText(string contents)
 		{
 			var text = Cache.ServiceLocator.GetInstance<ITextFactory>().Create();
 			//Cache.LangProject.TextsOC.Add(text);
@@ -794,7 +838,7 @@ namespace SIL.FieldWorks.IText
 			text.ContentsOA = stText;
 			var para = Cache.ServiceLocator.GetInstance<IStTxtParaFactory>().Create();
 			stText.ParagraphsOS.Add(para);
-			para.Contents = Cache.TsStrFactory.MakeString(contents, Cache.DefaultVernWs);
+			para.Contents = TsStringUtils.MakeString(contents, Cache.DefaultVernWs);
 			var seg = Cache.ServiceLocator.GetInstance<ISegmentFactory>().Create();
 			para.SegmentsOS.Add(seg);
 			return text;
@@ -802,11 +846,11 @@ namespace SIL.FieldWorks.IText
 
 		private ITsString MakeVernString(string content)
 		{
-			return Cache.TsStrFactory.MakeString(content, Cache.DefaultVernWs);
+			return TsStringUtils.MakeString(content, Cache.DefaultVernWs);
 		}
 		private ITsString MakeAnalysisString(string content)
 		{
-			return Cache.TsStrFactory.MakeString(content, Cache.DefaultAnalWs);
+			return TsStringUtils.MakeString(content, Cache.DefaultAnalWs);
 		}
 
 		private IWfiWordform MakeWordform(string form)

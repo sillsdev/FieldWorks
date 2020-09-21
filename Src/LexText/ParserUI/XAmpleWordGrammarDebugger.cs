@@ -5,7 +5,6 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -13,13 +12,11 @@ using System.Xml;
 using System.Xml.Linq;
 using System.Xml.XPath;
 using System.Xml.Xsl;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using XCore;
 
 namespace SIL.FieldWorks.LexText.Controls
 {
-	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
-		Justification="m_cache and m_mediator are references")]
 	public class XAmpleWordGrammarDebugger
 	{
 		private static ParserTraceUITransform s_pageTransform;
@@ -42,17 +39,16 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// the latest word grammar debugging step xml document
 		/// </summary>
 		private XDocument m_wordGrammarDebuggerXml;
-
+		private PropertyTable m_propertyTable;
 		private readonly XslCompiledTransform m_intermediateTransform;
-		private readonly Mediator m_mediator;
-		private readonly FdoCache m_cache;
+		private readonly LcmCache m_cache;
 		private readonly XDocument m_parseResult;
 
-		public XAmpleWordGrammarDebugger(Mediator mediator, XDocument parseResult)
+		public XAmpleWordGrammarDebugger(PropertyTable propertyTable, XDocument parseResult)
 		{
-			m_mediator = mediator;
+			m_propertyTable = propertyTable;
 			m_parseResult = parseResult;
-			m_cache = (FdoCache) m_mediator.PropertyTable.GetValue("cache");
+			m_cache = m_propertyTable.GetValue<LcmCache>("cache");
 			m_xmlHtmlStack = new Stack<Tuple<XDocument, string>>();
 			m_intermediateTransform = new XslCompiledTransform();
 			m_intermediateTransform.Load(Path.Combine(Path.GetTempPath(), m_cache.ProjectId.Name + "XAmpleWordGrammarDebugger.xsl"), new XsltSettings(true, false), new XmlUrlResolver());
@@ -141,7 +137,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				m_intermediateTransform.Transform(xmlDoc.CreateNavigator(), writer);
 			m_wordGrammarDebuggerXml = output;
 			// format the result
-			return PageTransform.Transform(m_mediator, output, "WordGrammarDebugger" + m_xmlHtmlStack.Count);
+			return PageTransform.Transform(m_propertyTable, output, "WordGrammarDebugger" + m_xmlHtmlStack.Count);
 		}
 
 		private void WriteMorphNodes(XmlWriter writer, string nodeId)

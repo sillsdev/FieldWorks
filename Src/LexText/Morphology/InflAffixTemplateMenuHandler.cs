@@ -1,26 +1,17 @@
-// Copyright (c) 2003-2013 SIL International
+// Copyright (c) 2003-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: InflAffixTemplateMenuHandler.cs
-// Responsibility: Andy Black
-// Last reviewed:
-//
-// <remarks>
-// </remarks>
 
 using System;
 using System.Xml;
 using System.Windows.Forms;
 using System.Drawing;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
-
+using SIL.LCModel.Core.KernelInterfaces;
 using XCore;
-using SIL.Utils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.LCModel;
 using SIL.FieldWorks.Common.Widgets;
+using SIL.Utils;
 
 namespace SIL.FieldWorks.XWorks.MorphologyEditor
 {
@@ -29,21 +20,23 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 	/// When the user (or test code) issues commands, this class also invokes the corresponding methods on the
 	/// Inflectional Affix Template control.
 	/// </summary>
-	public class InflAffixTemplateMenuHandler : IxCoreColleague, IFWDisposable
+	public class InflAffixTemplateMenuHandler : IxCoreColleague, IDisposable
 	{
 		/// <summary>
 		/// Inflectiona Affix Template Control.
 		/// </summary>
-		protected InflAffixTemplateControl m_inflAffixTemplateCtrl=null;
+		protected InflAffixTemplateControl m_inflAffixTemplateCtrl;
 
 		/// <summary>
 		/// Mediator that passes off messages.
 		/// </summary>
-		protected XCore.Mediator m_mediator = null;
+		protected Mediator m_mediator;
+
+		protected PropertyTable m_propertyTable;
 
 		// These variables are used for the popup menus.
-		private ComboListBox m_clb = null;
-		private bool m_fConstructingMenu = false;
+		private ComboListBox m_clb;
+		private bool m_fConstructingMenu;
 		private System.Collections.Generic.List<FwMenuItem> m_rgfmi;
 
 		#region IDisposable & Co. implementation
@@ -168,21 +161,8 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			}
 			if (h == null)			//no class specified, so just returned a generic InflAffixTemplateControl
 				h = new InflAffixTemplateMenuHandler();
-			h.InflAffixTemplate = (InflAffixTemplateControl) inflAffixTemplateCtrl;
+			h.InflAffixTemplate = inflAffixTemplateCtrl;
 			return h;
-		}
-
-		/// <summary>
-		/// a look up table for getting the correct version of strings that the user will see.
-		/// </summary>
-		public StringTable StringTbl
-		{
-			get
-			{
-				CheckDisposed();
-
-				return m_mediator.StringTbl;
-			}
 		}
 
 		public InflAffixTemplateControl InflAffixTemplate
@@ -201,11 +181,12 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 
 		#region IxCoreColleague implementation
 
-		public void Init(Mediator mediator, XmlNode configurationParameters)
+		public void Init(Mediator mediator, PropertyTable propertyTable, XmlNode configurationParameters)
 		{
 			CheckDisposed();
 
 			m_mediator = mediator;
+			m_propertyTable = propertyTable;
 		}
 
 		/// <summary>
@@ -219,9 +200,9 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			CheckDisposed();
 
 			if (m_inflAffixTemplateCtrl != null)
-				return new IxCoreColleague[]{(IxCoreColleague)m_inflAffixTemplateCtrl, this};
-			else
-				return new IxCoreColleague[]{this};
+				return new[]{(IxCoreColleague)m_inflAffixTemplateCtrl, this};
+
+			return new IxCoreColleague[]{this};
 		}
 
 		/// <summary>
@@ -267,7 +248,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			return true;//we handled this, no need to ask anyone else.
 		}
 
-		protected FdoCache Cache
+		protected LcmCache Cache
 		{
 			get
 			{
@@ -315,7 +296,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 				// Since we may initialize with TsStrings, need to set WSF.
 				m_clb.WritingSystemFactory = Cache.LanguageWritingSystemFactoryAccessor;
 				m_clb.DropDownStyle = ComboBoxStyle.DropDownList; // Prevents direct editing.
-				m_clb.StyleSheet = SIL.FieldWorks.Common.Widgets.FontHeightAdjuster.StyleSheetFromMediator(m_mediator);
+				m_clb.StyleSheet = FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable);
 			}
 			m_clb.Items.Clear();
 			for (int i = 0; i < m_rgfmi.Count; ++i)
@@ -367,8 +348,6 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			}
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-				Justification="Dispose not used elsewhere for creating XCore.Command objects")]
 		internal virtual void HandleFwMenuSelection(object sender, EventArgs ea)
 		{
 			CheckDisposed();
@@ -379,7 +358,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			FwMenuItem fmi = FindEnabledItem(iSel);
 			if (fmi == null)
 				return;
-			var command = new XCore.Command(m_mediator, fmi.ConfigurationNode);
+			var command = new Command(m_mediator, fmi.ConfigurationNode);
 			m_mediator.SendMessage(fmi.Message, command);
 		}
 
@@ -409,7 +388,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		private System.Collections.Generic.List<FwMenuItem> BuildMenu(string menuId)
 		{
 			System.Collections.Generic.List<FwMenuItem> rgfmi = new System.Collections.Generic.List<FwMenuItem>();
-			XmlNode xnWindow = (XmlNode)m_mediator.PropertyTable.GetValue("WindowConfiguration");
+			XmlNode xnWindow = m_propertyTable.GetValue<XmlNode>("WindowConfiguration");
 			Debug.Assert(xnWindow != null);
 			XmlNode xnMenu = xnWindow.SelectSingleNode("contextMenus/menu[@id=\"" + menuId + "\"]");
 			Debug.Assert(xnMenu != null && xnMenu.ChildNodes != null && xnMenu.ChildNodes.Count > 0);

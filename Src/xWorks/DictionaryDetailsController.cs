@@ -4,19 +4,18 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.Controls;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.Widgets;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainImpl;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.LCModel;
+using SIL.LCModel.DomainImpl;
+using SIL.LCModel.DomainServices;
 using SIL.FieldWorks.FwCoreDlgControls;
 using SIL.FieldWorks.FwCoreDlgs;
-using SIL.FieldWorks.LexText.Controls;
 using SIL.FieldWorks.XWorks.DictionaryDetailsView;
 using SIL.FieldWorks.XWorks.LexText;
 using XCore;
@@ -30,9 +29,9 @@ namespace SIL.FieldWorks.XWorks
 	/// </summary>
 	public class DictionaryDetailsController
 	{
-		private readonly Mediator m_mediator;
-		private readonly FdoCache m_cache;
-		private readonly FwStyleSheet m_styleSheet;
+		private readonly PropertyTable m_propertyTable;
+		private readonly LcmCache m_cache;
+		private readonly LcmStyleSheet m_styleSheet;
 
 		private List<StyleComboItem> m_charStyles;
 		private List<StyleComboItem> m_paraStyles;
@@ -58,12 +57,12 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>Fired whenever the selected node is changed, so that the node tree can be refreshed</summary>
 		public event EventHandler SelectedNodeChanged;
 
-		public DictionaryDetailsController(IDictionaryDetailsView view, Mediator mediator)
+		public DictionaryDetailsController(IDictionaryDetailsView view, PropertyTable propertyTable)
 		{
 			// one-time setup
-			m_mediator = mediator;
-			m_cache = (FdoCache)mediator.PropertyTable.GetValue("cache");
-			m_styleSheet = FontHeightAdjuster.StyleSheetFromMediator(mediator);
+			m_propertyTable = propertyTable;
+			m_cache = propertyTable.GetValue<LcmCache>("cache");
+			m_styleSheet = FontHeightAdjuster.StyleSheetFromPropertyTable(propertyTable);
 			LoadStylesLists();
 			View = view;
 		}
@@ -72,7 +71,6 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// (Re)initializes the controller and view to configure the given node
 		/// </summary>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule", Justification = "View is disposed by its parent")]
 		public void LoadNode(DictionaryConfigurationModel model, ConfigurableDictionaryNode node)
 		{
 			m_configModel = model;
@@ -261,7 +259,6 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>Initialize options for DictionaryNodeWritingSystemOptions</summary>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule", Justification = "wsOptionsView is disposed by its parent")]
 		private UserControl LoadWsOptions(DictionaryNodeWritingSystemOptions wsOptions)
 		{
 			var wsOptionsView = new ListOptionsView
@@ -360,7 +357,6 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>Initialize options for DictionaryNodeSenseOptions</summary>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule", Justification = "senseOptionsView is disposed by its parent")]
 		private UserControl LoadSenseOptions(DictionaryNodeSenseOptions senseOptions, bool isSubsense, bool isSubSubsense)
 		{
 			// initialize SenseOptionsView
@@ -429,7 +425,6 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>Initialize options for DictionaryNodeListOptions other than WritingSystem options</summary>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule", Justification = "listOptionsView is disposed by its parent")]
 		private UserControl LoadListOptions(DictionaryNodeListOptions listOptions)
 		{
 			var listOptionsView = new ListOptionsView();
@@ -580,7 +575,6 @@ namespace SIL.FieldWorks.XWorks
 			return styleName;
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule", Justification = "optionsView is disposed by its parent")]
 		private UserControl LoadGrammaticalInfoOptions()
 		{
 			var optionsView = new ListOptionsView
@@ -848,8 +842,8 @@ namespace SIL.FieldWorks.XWorks
 				var controller = new HeadwordNumbersController(dlg, m_configModel, m_cache);
 				// ReSharper disable once AccessToDisposedClosure - can only be used before the dialog is disposed
 				dlg.RunStylesDialog += (sender, e) => HandleStylesBtn((ComboBox) sender, ((ComboBox)sender).Text);
-				dlg.SetupDialog(m_mediator.HelpTopicProvider);
-				dlg.SetStyleSheet = FontHeightAdjuster.StyleSheetFromMediator(m_mediator);
+				dlg.SetupDialog(m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"));
+				dlg.SetStyleSheet = FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable);
 				//dlg.StartPosition = FormStartPosition.CenterScreen;
 				if (dlg.ShowDialog(View.TopLevelControl) != DialogResult.OK)
 					return;
@@ -865,8 +859,8 @@ namespace SIL.FieldWorks.XWorks
 		{
 			// If the combo is not enabled, don't allow the Styles dialog to change it (pass null instead). FixStyles will ensure a refresh.
 			FwStylesDlg.RunStylesDialogForCombo(combo.Enabled ? combo : null, FixStyles(combo.Enabled),
-				defaultStyle, m_styleSheet, 0, 0, m_cache, View.TopLevelControl, (IApp)m_mediator.PropertyTable.GetValue("App"),
-				m_mediator.HelpTopicProvider, new FlexStylesXmlAccessor(m_cache.LanguageProject.LexDbOA).SetPropsToFactorySettings);
+				defaultStyle, m_styleSheet, 0, 0, m_cache, View.TopLevelControl, m_propertyTable.GetValue<IApp>("App"),
+				m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), new FlexStylesXmlAccessor(m_cache.LanguageProject.LexDbOA).SetPropsToFactorySettings);
 		}
 
 		private void BeforeTextChanged()

@@ -1,10 +1,11 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using SIL.FieldWorks.FDO;
-using SIL.Utils;
-using SIL.FieldWorks.Common.COMInterfaces;
+using System.Collections.Generic;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.RootSites;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls
@@ -355,23 +356,20 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			public override void MakeRoot()
 			{
 				CheckDisposed();
-				base.MakeRoot();
 
-				if (m_fdoCache == null || DesignMode)
+				if (m_cache == null || DesignMode)
 					return;
 
-				IVwRootBox rootb = VwRootBoxClass.Create();
-				rootb.SetSite(this);
+				base.MakeRoot();
 
-				rootb.DataAccess = m_fdoCache.DomainDataByFlid;
+				m_rootb.DataAccess = m_cache.DomainDataByFlid;
 
 				m_cvc = new ConcVc(m_cp, m_gni, m_index);
 
 				// The root object is the one, if any, that the policy gives us for this slice.
 				// If it doesn't give us one the vc will obtain a key string from the policy
 				// directly. The frag argument is arbitrary.
-				rootb.SetRootObject(m_cp.Item(m_index), m_cvc, 1, m_styleSheet);
-				m_rootb = rootb;
+				m_rootb.SetRootObject(m_cp.Item(m_index), m_cvc, 1, m_styleSheet);
 			}
 		}
 
@@ -414,7 +412,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 		#endregion
 
-		public TwoLevelConc(FdoCache cache, IConcPolicy cp, IGetNodeInfo gni)
+		public TwoLevelConc(LcmCache cache, IConcPolicy cp, IGetNodeInfo gni)
 		{
 			m_cp = cp;
 			m_gni = gni;
@@ -438,8 +436,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			CheckDisposed();
 
 			ViewSlice vs = new ViewSlice(new ConcView(m_cp, m_gni, i));
-			Set<Slice> newKids = new Set<Slice>(1);
-			newKids.Add(vs);
+			var newKids = new HashSet<Slice> {vs};
 			InsertSliceRange(i, newKids);
 			return vs;
 		}

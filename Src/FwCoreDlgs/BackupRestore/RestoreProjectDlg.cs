@@ -4,18 +4,16 @@
 //
 // File: RestoreProjectDlg.cs
 // Responsibility: TE Team
-
 using System;
 using System.IO;
 using System.Linq;
-using System.Media;
 using System.Windows.Forms;
+using SIL.FieldWorks.Common.Controls.FileDialog;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO.DomainServices.BackupRestore;
+using SIL.LCModel.DomainServices.BackupRestore;
 using SIL.FieldWorks.Resources;
-using SIL.Utils;
-using SIL.Utils.FileDialog;
-using XCore;
+using SIL.Reporting;
+using SIL.LCModel.Utils;
 
 namespace SIL.FieldWorks.FwCoreDlgs.BackupRestore
 {
@@ -31,16 +29,13 @@ namespace SIL.FieldWorks.FwCoreDlgs.BackupRestore
 		/// </summary>
 		/// <param name="parentWindow">The parent window to use when reporting an error (can be
 		/// null).</param>
-		/// <param name="caption">Used in title bar of message box when reporting an error
-		/// (typically the name of the application).
-		/// </param>
 		/// <param name="zipFilename">The backup zip filename.</param>
 		/// <param name="action">The action to perform.</param>
 		/// <returns>
 		/// 	<c>true</c> if successful (no exception caught); <c>false</c> otherwise
 		/// </returns>
 		/// ------------------------------------------------------------------------------------
-		public static bool HandleRestoreFileErrors(IWin32Window parentWindow, string caption, string zipFilename, Action action)
+		public static bool HandleRestoreFileErrors(IWin32Window parentWindow, string zipFilename, Action action)
 		{
 			try
 			{
@@ -52,7 +47,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.BackupRestore
 					error is UnauthorizedAccessException)
 				{
 					Logger.WriteError(error);
-					MessageBoxUtils.Show(parentWindow, error.Message, caption, MessageBoxButtons.OK, MessageBoxIcon.Information);
+					MessageBoxUtils.Show(parentWindow, error.Message, "FLEx", MessageBoxButtons.OK, MessageBoxIcon.Information);
 					return false;
 				}
 				throw;
@@ -61,7 +56,6 @@ namespace SIL.FieldWorks.FwCoreDlgs.BackupRestore
 		}
 
 		#region Data members
-		private readonly string m_appName;
 		private readonly IHelpTopicProvider m_helpTopicProvider;
 		private readonly RestoreProjectPresenter m_presenter;
 		private readonly RestoreProjectSettings m_settings;
@@ -88,11 +82,10 @@ namespace SIL.FieldWorks.FwCoreDlgs.BackupRestore
 		/// </summary>
 		/// <param name="backupFileSettings">Specific backup file settings to use (dialog
 		/// controls to select a backup file will be disabled)</param>
-		/// <param name="appName">Name of the application (for showing in message box captions).</param>
 		/// <param name="helpTopicProvider">The help topic provider.</param>
 		/// ------------------------------------------------------------------------------------
-		public RestoreProjectDlg(BackupFileSettings backupFileSettings, string appName,
-			IHelpTopicProvider helpTopicProvider) : this(appName, helpTopicProvider)
+		public RestoreProjectDlg(BackupFileSettings backupFileSettings,
+			IHelpTopicProvider helpTopicProvider) : this(helpTopicProvider)
 		{
 			m_lblBackupZipFile.Text = backupFileSettings.File;
 			m_presenter = new RestoreProjectPresenter(this);
@@ -107,11 +100,10 @@ namespace SIL.FieldWorks.FwCoreDlgs.BackupRestore
 		/// Initializes a new instance of the <see cref="RestoreProjectDlg"/> class.
 		/// </summary>
 		/// <param name="defaultProjectName">Default project to show existing backups for.</param>
-		/// <param name="appName">Name of the application (for showing in message box captions).</param>
 		/// <param name="helpTopicProvider">The help topic provider.</param>
 		/// ------------------------------------------------------------------------------------
-		public RestoreProjectDlg(string defaultProjectName, string appName,
-			IHelpTopicProvider helpTopicProvider) : this(appName, helpTopicProvider)
+		public RestoreProjectDlg(string defaultProjectName,
+			IHelpTopicProvider helpTopicProvider) : this(helpTopicProvider)
 		{
 			m_presenter = new RestoreProjectPresenter(this, defaultProjectName);
 			m_rdoDefaultFolder_CheckedChanged(null, null);
@@ -122,12 +114,10 @@ namespace SIL.FieldWorks.FwCoreDlgs.BackupRestore
 		/// <summary>
 		/// Initializes a new instance of the <see cref="RestoreProjectDlg"/> class.
 		/// </summary>
-		/// <param name="appName">Name of the application (for showing in message box captions).</param>
 		/// <param name="helpTopicProvider">The help topic provider.</param>
 		/// ------------------------------------------------------------------------------------
-		private RestoreProjectDlg(string appName, IHelpTopicProvider helpTopicProvider) : this()
+		private RestoreProjectDlg(IHelpTopicProvider helpTopicProvider) : this()
 		{
-			m_appName = appName;
 			m_helpTopicProvider = helpTopicProvider;
 			m_lblOtherBackupIncludes.Text = String.Empty;
 			m_lblDefaultBackupIncludes.Text = String.Empty;
@@ -323,7 +313,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.BackupRestore
 				return;
 			}
 
-			if (HandleRestoreFileErrors(this, m_appName, BackupZipFile,
+			if (HandleRestoreFileErrors(this, BackupZipFile,
 				() => BackupFileSettings = new BackupFileSettings(BackupZipFile, true)))
 			{
 				SetOriginalNameFromSettings();
@@ -422,7 +412,6 @@ namespace SIL.FieldWorks.FwCoreDlgs.BackupRestore
 					{
 						m_txtOtherProjectName.Select();
 						m_txtOtherProjectName.SelectAll();
-						return;
 					}
 				}
 			}
@@ -565,39 +554,33 @@ namespace SIL.FieldWorks.FwCoreDlgs.BackupRestore
 
 		/// <summary>
 		/// Routine to eliminate illegal characters from being entered as part of a Project filename.
+		/// Note that we allow backups with existing illegal (Unicode) characters to be restored under the same name (or [name]-01).
+		/// TODO (Hasso) 2019.05: prevent pasting illegal characters (Ctrl-V and right-click)--must use TextChanged or similar (LT-19712)
 		/// </summary>
 		/// <param name="sender">The source of the event.</param>
 		/// <param name="e">The <see cref="T:System.Windows.Forms.KeyPressEventArgs"/> instance
 		/// containing the event data.</param>
 		private void m_txtOtherProjectName_KeyPress(object sender, KeyPressEventArgs e)
 		{
-			var key = e.KeyChar;
-			if (e.KeyChar == (int)Keys.Back)
-				return;
-
-			if (IsIllegalInFilename(key))
+			switch ((int)e.KeyChar)
 			{
-				IssueBeep();
-				e.Handled = true; // This will cause the character to NOT be entered.
-				return;
+				case (int)Keys.Back: // Backspace
+				case 26: // Ctrl-Z (undo)
+				case 25: // Ctrl-Y (redo)
+				case 24: // Ctrl-X (cut)
+				case 22: // Ctrl-V (paste)
+				case 3: // Ctrl-C (copy)
+				case 1: // Ctrl-A (select all)
+					return;
 			}
-			e.Handled = false; // Gets processed normally elsewhere
-			return;
-		}
 
-		private bool IsIllegalInFilename(char keyPressed)
-		{
-			return m_invalidCharArray.Any(ch => keyPressed == ch);
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Issues a warning beep when the user performs an illegal operation.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		protected virtual void IssueBeep()
-		{
-			MiscUtils.ErrorBeep();
+			string errorMessage;
+			string character = e.KeyChar.ToString();
+			if (!FwNewLangProjectModel.CheckForSafeProjectName(ref character, out errorMessage))
+			{
+				MessageBox.Show(errorMessage, FwCoreDlgs.FwProjProperties_PickDifferentProjName, MessageBoxButtons.OK, MessageBoxIcon.Error);
+				e.Handled = true; // This will cause the character NOT to be entered.
+			}
 		}
 
 		#endregion

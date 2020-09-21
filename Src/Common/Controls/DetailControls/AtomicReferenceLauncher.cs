@@ -8,13 +8,14 @@
 using System;
 using System.Collections.Generic;
 
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel;
+using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.Common.Framework.DetailControls.Resources;
-using SIL.Utils;
 using SIL.FieldWorks.Common.Controls;
 using XCore;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.PlatformUtilities;
+using SIL.Utils;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls
 {
@@ -35,11 +36,14 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		{
 			// This call is required by the Windows Form Designer.
 			InitializeComponent();
-#if __MonoCS__ // FWNX-266
-			// Ensure parent get created before m_atomicRefView otherwise
-			// m_atomicRefView Handle can be in an invalid state (in mono).
-			CreateHandle();
-#endif
+
+			if (Platform.IsMono)
+			{
+				// FWNX-266
+				// Ensure parent get created before m_atomicRefView otherwise
+				// m_atomicRefView Handle can be in an invalid state (in mono).
+				CreateHandle();
+			}
 		}
 
 		/// <summary>
@@ -60,12 +64,12 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			base.Dispose(disposing);
 		}
 
-		public override void Initialize(FdoCache cache, ICmObject obj, int flid,
-			string fieldName, IPersistenceProvider persistProvider, Mediator mediator, string displayNameProperty, string displayWs)
+		public override void Initialize(LcmCache cache, ICmObject obj, int flid,
+			string fieldName, IPersistenceProvider persistProvider, Mediator mediator, PropertyTable propertyTable, string displayNameProperty, string displayWs)
 		{
 			CheckDisposed();
 
-			base.Initialize(cache, obj, flid, fieldName, persistProvider, mediator, displayNameProperty, displayWs);
+			base.Initialize(cache, obj, flid, fieldName, persistProvider, mediator, propertyTable, displayNameProperty, displayWs);
 			m_atomicRefView.Initialize(obj, flid, fieldName, cache, displayNameProperty, mediator, displayWs);
 		}
 		#endregion // Construction, Initialization, and Disposition
@@ -83,7 +87,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 					nullLabel = null;
 			}
 			var c = new SimpleListChooser(m_cache, m_persistProvider,
-				m_mediator.HelpTopicProvider, labels, Target,
+				m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), labels, Target,
 				m_fieldName, nullLabel, m_atomicRefView.StyleSheet);
 			return c;
 		}

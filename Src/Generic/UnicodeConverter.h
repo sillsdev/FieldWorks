@@ -35,7 +35,7 @@ public:
 	static int Convert(const char* source, int sourceLen, UChar* target, int targetLen);
 	static int Convert(const UChar* source, int sourceLen, char* target, int targetLen);
 
-#if !WIN32 // SIZEOF_WCHAR_T != 2
+#if !defined(_WIN32) && !defined(_M_X64) // SIZEOF_WCHAR_T != 2
 //	The following two methods use overloading to perform conversion from UTF-16
 //	to UTF-32 and from UTF-32 to UTF-16.
 	static int Convert(const UChar* source, int sourceLen, wchar_t* target, int targetLen);

@@ -1,27 +1,18 @@
-// Copyright (c) 2007-2013 SIL International
+// Copyright (c) 2007-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: FwMultilingualPropView.cs
-// Responsibility: TE Team
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
-using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
-using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel;
 using SIL.FieldWorks.Resources;
-using SIL.Utils;
 
 namespace SIL.FieldWorks.Common.Widgets
 {
@@ -52,7 +43,7 @@ namespace SIL.FieldWorks.Common.Widgets
 		List<int> WritingSystemsToDisplay { get; }
 
 		/// <summary> </summary>
-		IWritingSystemManager WritingSystemManager { get; }
+		WritingSystemManager WritingSystemManager { get; }
 
 		/// <summary></summary>
 		ITsString GetMultiStringAlt(int tag, int ws);
@@ -63,7 +54,7 @@ namespace SIL.FieldWorks.Common.Widgets
 		void AddColumn(string name, int widthPct);
 
 		/// <summary> </summary>
-		FdoCache Cache { get; set; }
+		LcmCache Cache { get; set; }
 
 		/// <summary> </summary>
 		int RootObject { get; set; }
@@ -82,7 +73,7 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// <summary>a list of writing systems for which to display information</summary>
 		private List<int> m_writingSystemsToDisplay = new List<int>();
 		/// <summary>database cache</summary>
-		private FdoCache m_cache;
+		private LcmCache m_cache;
 		/// <summary></summary>
 		private IVwStylesheet m_stylesheet;
 		#endregion
@@ -98,7 +89,7 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// ------------------------------------------------------------------------------------
 		[BrowsableAttribute(false)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-		public FdoCache Cache {
+		public LcmCache Cache {
 			get { return m_cache; }
 			set { m_cache = value; }
 		}
@@ -187,7 +178,7 @@ namespace SIL.FieldWorks.Common.Widgets
 				throw new InvalidOperationException("At least one writing system must be added to the WritingSystemsToDisplay property before showing the FwMultilingualPropView named " + Grid.Name);
 		}
 
-		public IWritingSystemManager WritingSystemManager {
+		public WritingSystemManager WritingSystemManager {
 			get { return m_cache.ServiceLocator.WritingSystemManager; }
 		}
 
@@ -227,7 +218,7 @@ namespace SIL.FieldWorks.Common.Widgets
 	/// in multiple writing systems.
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
-	public class FwMultilingualPropView : DataGridView, IFWDisposable
+	public class FwMultilingualPropView : DataGridView
 	{
 		#region Struct ColumnInfo
 		/// ------------------------------------------------------------------------------------
@@ -301,7 +292,7 @@ namespace SIL.FieldWorks.Common.Widgets
 		}
 		#endregion
 
-		#region IFWDisposable implementation
+		#region IDisposable implementation
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Check to see if the object has been disposed.
@@ -365,7 +356,7 @@ namespace SIL.FieldWorks.Common.Widgets
 		}
 
 		/// <summary> </summary>
-		public FdoCache Cache {
+		public LcmCache Cache {
 			get { return PropertyDataSource.Cache; }
 			set {PropertyDataSource.Cache = value; }
 		}
@@ -413,8 +404,6 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// <param name="e">The <see cref="T:System.EventArgs"/> instance containing the event
 		/// data.</param>
 		/// ------------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="Added to Rows collection and disposed in DataGridView.Dispose()")]
 		protected override void OnVisibleChanged(EventArgs e)
 		{
 			base.OnVisibleChanged(e);

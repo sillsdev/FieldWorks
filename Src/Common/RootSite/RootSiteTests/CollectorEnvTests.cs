@@ -1,16 +1,13 @@
-// Copyright (c) 2006-2013 SIL International
+// Copyright (c) 2006-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: CollectorEnvTests.cs
-// Responsibility: TE Team
 
 using System;
 using NUnit.Framework;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.FDOTests;
-using SIL.FieldWorks.Test.TestUtils;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
+using SIL.LCModel;
 
 namespace SIL.FieldWorks.Common.RootSites
 {
@@ -54,7 +51,7 @@ namespace SIL.FieldWorks.Common.RootSites
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
 	[TestFixture]
-	public class CollectorEnvTests : ScrInMemoryFdoTestBase
+	public class CollectorEnvTests : ScrInMemoryLcmTestBase
 	{
 		#region Dummy View Constructor
 		///  ----------------------------------------------------------------------------------------
@@ -84,7 +81,7 @@ namespace SIL.FieldWorks.Common.RootSites
 						break;
 					case 2: // An StText; display the paragraphs.
 						vwenv.GetOuterObject(vwenv.EmbeddingLevel - 1, out hvoOuter, out tag, out ihvo);
-						tss = TsStringHelper.MakeTSS(
+						tss = TsStringUtils.MakeString(
 							"Hvo = " + hvoOuter + "; Tag = " + tag + "; Ihvo = " + ihvo,
 							frWs);
 						vwenv.AddString(tss);
@@ -92,7 +89,7 @@ namespace SIL.FieldWorks.Common.RootSites
 						break;
 					case 3: // StTxtPara, display details of our outer object
 						vwenv.GetOuterObject(vwenv.EmbeddingLevel - 1, out hvoOuter, out tag, out ihvo);
-						tss = TsStringHelper.MakeTSS(
+						tss = TsStringUtils.MakeString(
 							"Hvo = " + hvoOuter + "; Tag = " + tag + "; Ihvo = " + ihvo,
 							frWs);
 						vwenv.AddString(tss);

@@ -1,6 +1,36 @@
+# Copyright (c) 2018-2020 SIL International
+# This software is licensed under the LGPL, version 2.1 or later
+# (http://www.gnu.org/licenses/lgpl-2.1.html)
+
 root = true
 
-[*.{cs,cpp,h}]
+# Defaults
+[*]
+indent_style = tab
+indent_size = tab
+tab_width = 4
+charset = utf-8
+trim_trailing_whitespace = true
+insert_final_newline = false
+max_line_length = 98
+
+[*.cs]
+indent_style = tab
+tab_width = 4
+
+# Settings Visual Studio uses for generated files
+[*.{csproj,resx,settings,vcxproj*,vdproj,xml,json}]
+indent_style = space
+indent_size = 2
+
+# Generated file
+[*.sln]
+end_of_line = crlf
+
+[*.{cpp,h}]
 indent_style = tab
 indent_size = 4
-trim_trailing_whitespace = true
+
+[*.proj]
+indent_style = space
+indent_size = 2

@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
 using Paratext.Data;
+using PtxUtils;
 using SIL.FieldWorks.Common.ScriptureUtils;
 using SIL.Scripture;
 // ReSharper disable InconsistentNaming
@@ -26,6 +27,7 @@ namespace Paratext8Plugin
 		public IEnumerable<string> ScrTextNames { get { return ScrTextCollection.ScrTexts(IncludeProjects.AllAccessible).Select(scrText => scrText.Name.ToLowerInvariant()); } }
 		public void Initialize()
 		{
+			Alert.Implementation = new ParatextAlert();
 			ParatextData.Initialize();
 		}
 

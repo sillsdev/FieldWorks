@@ -5,7 +5,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using SIL.Utils;
+using SIL.LCModel.Utils;
 
 namespace SIL.FieldWorks.Common.FXT
 {

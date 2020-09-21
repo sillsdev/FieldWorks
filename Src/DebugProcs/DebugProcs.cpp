@@ -9,7 +9,7 @@ Last reviewed:
 
 	Code for debug utilities.
 -------------------------------------------------------------------------------*//*:End Ignore*/
-#if WIN32
+#if defined(WIN32) || defined(WIN64)
 #define WINDOWS_LEAN_AND_MEAN
 #include "Windows.h"
 #else
@@ -21,7 +21,7 @@ Last reviewed:
 #endif
 #include <stdio.h>
 #include <assert.h>
-#if WIN32
+#if defined(WIN32) || defined(WIN64)
 #include <CrtDbg.h>
 #else
 const int _CRT_ASSERT = 2;
@@ -64,7 +64,7 @@ void __cdecl SilAssert (
 void WINAPI DefWarnProc(const char * pszExp, const char * pszFile, int nLine, HMODULE hmod)
 {
 	char sz[256];
-#if WIN32
+#if defined(WIN32) || defined(WIN64)
 	char szModule[MAX_PATH];
 	GetModuleFileName(hmod, szModule, isizeof(szModule));
 	char * pszDll = strrchr(szModule, '\\');
@@ -232,7 +232,7 @@ extern "C" __declspec(dllexport) _DBG_REPORT_HOOK APIENTRY DbgSetReportHook(_DBG
 	return oldHook;
 }
 
-#if WIN32
+#if defined(WIN32) || defined(WIN64)
 /*----------------------------------------------------------------------------------------------
 	Handler that intercepts debug output. If a ReportHook is set it sends the output to that,
 	otherwise it outputs it with OutputDebugString and printf.
@@ -263,7 +263,7 @@ int __cdecl ReportHandler(int nReportType, char* szMsg, int* pRet)
 ----------------------------------------------------------------------------------------------*/
 extern "C" __declspec(dllexport) int APIENTRY DebugProcsInit(void)
 {
-#if WIN32
+#if defined(WIN32) || defined(WIN64)
 	int nRet = _CrtSetReportHook2(_CRT_RPTHOOK_INSTALL, ReportHandler);
 	return nRet;
 #else
@@ -276,7 +276,7 @@ extern "C" __declspec(dllexport) int APIENTRY DebugProcsInit(void)
 ----------------------------------------------------------------------------------------------*/
 extern "C" __declspec(dllexport) int APIENTRY DebugProcsExit(void)
 {
-#if WIN32
+#if defined(WIN32) || defined(WIN64)
 	int nRet = _CrtSetReportHook2(_CRT_RPTHOOK_REMOVE, ReportHandler);
 	return nRet;
 #else
@@ -290,7 +290,7 @@ extern "C" __declspec(dllexport) int APIENTRY DebugProcsExit(void)
 ----------------------------------------------------------------------------------------------*/
 bool GetShowAssertMessageBox()
 {
-#if WIN32
+#if defined(WIN32) || defined(WIN64)
 	HKEY hk;
 	if (::RegOpenKeyEx(HKEY_LOCAL_MACHINE, "Software\\SIL\\FieldWorks", 0,
 			KEY_QUERY_VALUE, &hk) == ERROR_SUCCESS)
@@ -319,7 +319,7 @@ bool GetShowAssertMessageBox()
 		strcasecmp(pEnvVar, "0") != 0 &&
 		strcasecmp(pEnvVar, "false") != 0 &&
 		strcasecmp(pEnvVar, "no") != 0;
-#if WIN32
+#if defined(WIN32) || defined(WIN64)
 #pragma warning(pop)
 #endif // WIN32
 }
@@ -445,7 +445,7 @@ void __cdecl SilAssert (
 	strcpy_s( assertbuf, ASSERTBUFSZ, BOXINTRO );
 	strcat_s( assertbuf, ASSERTBUFSZ, dblnewline );
 
-#if WIN32
+#if defined(WIN32) || defined(WIN64)
 	// TODO-Linux: Find filename of managed executable
 	/*
 		* Line 2: program line
@@ -461,7 +461,7 @@ void __cdecl SilAssert (
 	/* sizeof(PROGINTRO) includes the NULL terminator */
 	if ( sizeof(PROGINTRO) + strlen(progname) + NEWLINESZ > MAXLINELEN )
 	{
-		int cch = (sizeof(PROGINTRO) + strlen(progname) + NEWLINESZ) - MAXLINELEN;
+		size_t cch = (sizeof(PROGINTRO) + strlen(progname) + NEWLINESZ) - MAXLINELEN;
 		pch += cch;
 		strncpy_s( pch, sizeof(progname) - cch, dotdotdot, DOTDOTDOTSZ );
 	}
@@ -608,7 +608,7 @@ void __cdecl SilAssert (
 		/* Retry: call the debugger */
 		if (nCode == IDRETRY)
 		{
-#if WIN32
+#if defined(WIN32) || defined(WIN64)
 			_DbgBreak();
 #else
 			raise(SIGTRAP);

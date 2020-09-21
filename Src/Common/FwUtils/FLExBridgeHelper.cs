@@ -5,15 +5,15 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.ServiceModel;
 using System.Threading;
-using SIL.Utils;
-
+using SIL.LCModel;
+using SIL.LCModel.Utils;
 using IPCFramework;
+using SIL.PlatformUtilities;
 
 namespace SIL.FieldWorks.Common.FwUtils
 {
@@ -125,7 +125,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 
 		/// <summary>
 		/// constant for locating the nested lift repository (within the "OtherRepositories" path of a project).
-		/// See also SIL.FieldWorks.FDO.FdoFileHelper.OtherRepositories
+		/// See also SIL.FieldWorks.FDO.LcmFileHelper.OtherRepositories
 		/// </summary>
 		public const string LIFT = @"LIFT";
 
@@ -167,8 +167,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <param name="changesReceived">true if S/R made changes to the project.</param>
 		/// <param name="projectName">Name of the project to be opened after launch returns.</param>
 		/// <returns>true if successful, false otherwise</returns>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="ServiceHost gets disposed in KillTheHost()")]
 		public static bool LaunchFieldworksBridge(string projectFolder, string userName, string command, string projectGuid,
 			int fwmodelVersionNumber, string liftModelVersionNumber, string writingSystemId, Action onNonBlockerCommandComplete,
 			out bool changesReceived, out string projectName)
@@ -212,11 +210,10 @@ namespace SIL.FieldWorks.Common.FwUtils
 			// current culture may have country etc info after a hyphen. FlexBridge just needs the main language ID.
 			// It probably can't ever be null or empty, but let's be as robust as possible.
 			var locale = Thread.CurrentThread.CurrentUICulture.Name;
-#if __MonoCS__
+
 			// Mono doesn't have a plain "zh" locale.  It needs the country code for Chinese.  See FWNX-1255.
-			if (locale != "zh-CN")
-#endif
-			locale = string.IsNullOrWhiteSpace(locale) ? "en" : locale.Split('-')[0];
+			if (!Platform.IsMono || locale != "zh-CN")
+				locale = string.IsNullOrWhiteSpace(locale) ? "en" : locale.Split('-')[0];
 			AddArg(ref args, "-locale", locale);
 
 			if (_noBlockerHostAndCallback != null)
@@ -312,8 +309,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 
 		static IIPCClient _client;
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="REVIEW: It is unclear if disposing the ChannelFactory affects channelClient.")]
 		private static void BeginEmergencyExitChute(string pipeID)
 		{
 			try
@@ -378,18 +373,39 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <returns><c>true</c> if is flex bridge installed; otherwise, <c>false</c>.</returns>
 		public static bool IsFlexBridgeInstalled()
 		{
-			var fullName = FLExBridgeHelper.FullFieldWorksBridgePath();
+			string fullName = FullFieldWorksBridgePath();
 			return FileUtils.FileExists(fullName); // Flex Bridge exe has to exist
 		}
 
 		/// <summary>
 		/// Answer whether the project appears to have a FLEx repo. This is currently determined by its having a .hg folder.
 		/// </summary>
-		/// <param name="projectFolderPath">Path to the project folder</param>
 		/// <returns></returns>
-		public static bool DoesProjectHaveFlexRepo(string projectFolderPath)
+		public static bool DoesProjectHaveFlexRepo(IProjectIdentifier projectId)
 		{
-			return Directory.Exists(Path.Combine(projectFolderPath, ".hg"));
+			// useful to return false on null for some unit tests
+			return projectId != null && IsMercurialRepo(projectId.ProjectFolder);
+		}
+
+		/// <summary>
+		/// Answer whether the project appears to have a LIFT repo.
+		/// </summary>
+		/// <returns></returns>
+		public static bool DoesProjectHaveLiftRepo(IProjectIdentifier projectId)
+		{
+			// useful to return false on null for some unit tests
+			if (projectId == null)
+				return false;
+			string otherRepoPath = Path.Combine(projectId.ProjectFolder, LcmFileHelper.OtherRepositories);
+			if (!Directory.Exists(otherRepoPath))
+				return false;
+			string liftFolder = Directory.EnumerateDirectories(otherRepoPath, "*_LIFT").FirstOrDefault();
+			return !String.IsNullOrEmpty(liftFolder) && IsMercurialRepo(liftFolder);
+		}
+
+		private static bool IsMercurialRepo(string path)
+		{
+			return Directory.Exists(Path.Combine(path, ".hg"));
 		}
 
 		/// <summary>

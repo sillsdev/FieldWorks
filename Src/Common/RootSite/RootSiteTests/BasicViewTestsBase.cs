@@ -1,21 +1,12 @@
-// Copyright (c) 2003-2013 SIL International
+// Copyright (c) 2003-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: BasicViewTestsBase.cs
-// Responsibility: TE Team
-// Last reviewed:
-//
-// <remarks>
-// </remarks>
-// --------------------------------------------------------------------------------------------
+
 using System.Diagnostics;
 using NUnit.Framework;
-using SIL.CoreImpl;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.FDOTests;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.Resources;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
+using SIL.PlatformUtilities;
 
 namespace SIL.FieldWorks.Common.RootSites
 {
@@ -24,7 +15,7 @@ namespace SIL.FieldWorks.Common.RootSites
 	/// Base class for tests that use <see cref="DummyBasicView"/>
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
-	public class BasicViewTestsBase : ScrInMemoryFdoTestBase
+	public class BasicViewTestsBase : ScrInMemoryLcmTestBase
 	{
 		/// <summary>The draft form</summary>
 		protected DummyBasicView m_basicView;
@@ -56,8 +47,8 @@ namespace SIL.FieldWorks.Common.RootSites
 		{
 			base.TestSetup();
 
-			var styleSheet = new FwStyleSheet();
-			styleSheet.Init(Cache, m_scr.Hvo, ScriptureTags.kflidStyles);
+			var styleSheet = new LcmStyleSheet();
+			styleSheet.Init(Cache, Cache.LangProject.Hvo, LangProjectTags.kflidStyles);
 
 			Debug.Assert(m_basicView == null, "m_basicView is not null.");
 			//if (m_basicView != null)
@@ -95,12 +86,9 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// ------------------------------------------------------------------------------------
 		protected virtual void ShowForm(DummyBasicViewVc.DisplayType display)
 		{
-#if !__MonoCS__
-			int height = 307 - 25;
-#else
 			// TODO-Linux: This value works better, given mono differences. Possibly look into this further.
-			int height = 300;
-#endif
+			int height = Platform.IsMono ? 300 : 307 - 25;
+
 			ShowForm(display, height);
 		}
 

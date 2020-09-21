@@ -3,10 +3,9 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.FdoUi;
 using SIL.FieldWorks.FwCoreDlgs;
 
@@ -17,8 +16,6 @@ namespace SIL.FieldWorks.IText
 	/// An entry in UtilityCatalogInclude (in DistFiles/Language Explorer/Configuration) causes an instance to
 	/// be created by reflection when the dialog is initialized.
 	/// </summary>
-	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
-		Justification = "The creator/owner of this class is responsible to dispose the passed in dialog")]
 	public class DuplicateAnalysisFixer : IUtility
 	{
 		public string Label
@@ -64,7 +61,7 @@ namespace SIL.FieldWorks.IText
 		public void Process()
 		{
 			Debug.Assert(m_dlg != null);
-			var cache = (FdoCache) m_dlg.Mediator.PropertyTable.GetValue("cache");
+			var cache = m_dlg.PropTable.GetValue<LcmCache>("cache");
 			UndoableUnitOfWorkHelper.Do(ITextStrings.ksUndoMergeAnalyses, ITextStrings.ksRedoMergeAnalyses,
 				cache.ActionHandlerAccessor,
 				() => WfiWordformServices.MergeDuplicateAnalyses(cache, new ProgressBarWrapper(m_dlg.ProgressBar)));

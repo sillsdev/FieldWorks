@@ -1,30 +1,16 @@
-// Copyright (c) 2003-2013 SIL International
+// Copyright (c) 2003-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: LexEntryImages.cs
-// Responsibility:
-// Last reviewed:
-//
-// <remarks>
-// </remarks>
 
 using System;
-using System.Collections;
-using System.ComponentModel;
-using System.Drawing;
-using System.Data;
 using System.Windows.Forms;
-using System.Diagnostics;
-
-using SIL.Utils;
 
 namespace SIL.FieldWorks.XWorks.LexEd
 {
 	/// <summary>
 	/// Summary description for LexEntryImages.
 	/// </summary>
-	public class LexEntryImages : UserControl, IFWDisposable
+	public class LexEntryImages : UserControl
 	{
 		public System.Windows.Forms.ImageList buttonImages;
 		private System.ComponentModel.IContainer components;

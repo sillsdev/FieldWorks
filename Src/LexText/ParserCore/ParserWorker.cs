@@ -1,9 +1,6 @@
-// Copyright (c) 2003-2014 SIL International
+// Copyright (c) 2003-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: ParserWorker.cs
-// Responsibility:
 //
 // <remarks>
 //  The name here, "worker" would lead one to think that this is the
@@ -29,19 +26,21 @@ no exception: Create an infl affix slot with no affixes in it and then use this 
 */
 
 using System;
-using SIL.Utils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel;
+using SIL.LCModel.Infrastructure;
+using SIL.ObjectModel;
+using XCore;
 
 namespace SIL.FieldWorks.WordWorks.Parser
 {
 	/// <summary>
 	/// Summary description for ParserWorker.
 	/// </summary>
-	public class ParserWorker : FwDisposableBase
+	public class ParserWorker : DisposableBase
 	{
-		private readonly FdoCache m_cache;
+		private readonly LcmCache m_cache;
 		private readonly Action<TaskReport> m_taskUpdateHandler;
 		private readonly ParseFiler m_parseFiler;
 		private int m_numberOfWordForms;
@@ -52,7 +51,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		/// Initializes a new instance of the <see cref="ParserWorker"/> class.
 		/// </summary>
 		/// -----------------------------------------------------------------------------------
-		public ParserWorker(FdoCache cache, Action<TaskReport> taskUpdateHandler, IdleQueue idleQueue, string dataDir)
+		public ParserWorker(LcmCache cache, Action<TaskReport> taskUpdateHandler, IdleQueue idleQueue, string dataDir)
 		{
 			m_cache = cache;
 			m_taskUpdateHandler = taskUpdateHandler;
@@ -109,7 +108,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			CheckNeedsUpdate();
 			using (var task = new TaskReport(string.Format(ParserCoreStrings.ksTraceWordformX, sForm), m_taskUpdateHandler))
 			{
-				string normForm = Icu.Normalize(sForm, Icu.UNormalizationMode.UNORM_NFD);
+				string normForm = CustomIcu.GetIcuNormalizer(FwNormalizationMode.knmNFD).Normalize(sForm);
 				task.Details = fDoTrace ? m_parser.TraceWordXml(normForm, sSelectTraceMorphs) : m_parser.ParseWordXml(normForm);
 			}
 		}
@@ -135,7 +134,9 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				return false;
 
 			CheckNeedsUpdate();
-			ParseResult result = m_parser.ParseWord(Icu.Normalize(form.Text.Replace(' ', '.'), Icu.UNormalizationMode.UNORM_NFD));
+			ParseResult result = m_parser.ParseWord(
+				CustomIcu.GetIcuNormalizer(FwNormalizationMode.knmNFD)
+				.Normalize(form.Text.Replace(' ', '.')));
 			if (wordformHash == result.GetHashCode())
 				return false;
 

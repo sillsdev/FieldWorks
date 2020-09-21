@@ -4,7 +4,7 @@
 
 using System;
 using System.Collections.Generic;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.LCModel.Core.KernelInterfaces;
 
 namespace SIL.FieldWorks.Discourse
 {
@@ -47,8 +47,20 @@ namespace SIL.FieldWorks.Discourse
 
 		public void Dispose()
 		{
-			m_sda.RemoveNotification(this);
+			Dispose(true);
 			GC.SuppressFinalize(this);
+		}
+
+		~NotifyChangeSpy()
+		{
+			Dispose(false);
+		}
+
+		private void Dispose(bool disposing)
+		{
+			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + " ******");
+			if (disposing)
+				m_sda.RemoveNotification(this);
 		}
 		#endregion
 

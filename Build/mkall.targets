@@ -1,16 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
-
-	<UsingTask TaskName="Unitpp" AssemblyFile="FwBuildTasks.dll"/>
-	<UsingTask TaskName="RegisterForTests" AssemblyFile="FwBuildTasks.dll"/>
-	<UsingTask TaskName="DownloadFile" AssemblyFile="FwBuildTasks.dll"/>
-	<UsingTask TaskName="Unzip" AssemblyFile="FwBuildTasks.dll"/>
-	<UsingTask TaskName="Zip" AssemblyFile="FwBuildTasks.dll"/>
-	<UsingTask TaskName="ForceDelete" AssemblyFile="FwBuildTasks.dll"/>
-	<UsingTask TaskName="GenerateTestCoverageReport" AssemblyFile="FwBuildTasks.dll"/>
-
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="15.0">
 	<!-- Make all of FieldWorks. -->
-	<Target Name="mkall" DependsOnTargets="CopyDlls;initLinux;initWindows;LinuxRegistry;allCpp;allCsharp;ensureTLBsUpToDate;Paratext8Plugin">
+	<Target Name="mkall" DependsOnTargets="initLinux;initWindows;LinuxRegistry;allCpp;allCsharp;ensureTLBsUpToDate">
 		<Message Text="Finished mkall Target."/>
 		<CreateItem Condition="'$(action)'=='test'" Include="$(dir-outputBase)/*-nunit-output.xml">
 			<Output TaskParameter="Include" ItemName="NUnitReportFiles"/>
@@ -18,7 +9,7 @@
 		<GenerateNUnitReports Condition="'$(action)'=='test'" ReportFiles="@(NUnitReportFiles)"/>
 	</Target>
 
-	<Target Name="allCpp" DependsOnTargets="DebugProcs;GenericLib;testGenericLib;FwKernel;testFwKernel;Views;testViews">
+	<Target Name="allCpp" DependsOnTargets="DebugProcs;GenericLib;testGenericLib;FwKernel;Views;testViews">
 		<CreateItem Include="$(dir-outputBase)/*.compmap">
 			<Output TaskParameter="Include" ItemName="CompMapFiles"/>
 		</CreateItem>
@@ -37,8 +28,8 @@
 	<Target Name="regFreeCpp" DependsOnTargets="FwKernel;Views"
 		AfterTargets="FwKernel;Views" Condition="'$(OS)'=='Windows_NT'">
 		<RegFree Executable="$(dir-outputBase)/FwKernel.dll" Output="$(dir-outputBase)/FieldWorks.Tests.manifest"
-			Dlls="$(dir-outputBase)/FwKernel.dll;$(dir-outputBase)/Views.dll"
-			Fragments="@(Fragments)"/>
+			Dlls="$(dir-outputBase)\FwKernel.dll;$(dir-outputBase)\Views.dll"
+			Fragments="@(Fragments)" Platform="$(Platform)" MSBuildArchitecture="$(Platform)"/>
 	</Target>
 
 	<Target Name="DebugProcs" DependsOnTargets="initLinux;initWindows">
@@ -46,6 +37,7 @@
 				Makefile="$(fwrt)\Src\DebugProcs\DebugProcs.mak"
 				Configuration="$(config-capital)"
 				BuildRoot="$(fwrt)"
+				BuildArch="'$(Platform)'"
 				WorkingDirectory="$(fwrt)\Src\DebugProcs"/>
 		<Make Condition="'$(OS)'=='Unix'" ToolPath="/usr/bin"
 				Makefile="$(fwrt)/Src/DebugProcs/Makefile"
@@ -60,6 +52,7 @@
 				Makefile="$(fwrt)\Src\Generic\GenericLib.mak"
 				Configuration="$(config-capital)"
 				BuildRoot="$(fwrt)"
+				BuildArch="'$(Platform)'"
 				WorkingDirectory="$(fwrt)\Src\Generic"/>
 		<Make Condition="'$(OS)'=='Unix'" ToolPath="/usr/bin"
 				Makefile="$(fwrt)/Src/Generic/Makefile"
@@ -74,6 +67,7 @@
 				Makefile="$(fwrt)\Src\Generic\Test\testGenericLib.mak"
 				Configuration="$(config-capital)"
 				BuildRoot="$(fwrt)"
+				BuildArch="'$(Platform)'"
 				WorkingDirectory="$(fwrt)\Bin"/>
 		<Make Condition="'$(OS)'=='Unix'" ToolPath="/usr/bin"
 				Makefile="$(fwrt)/Src/Generic/Test/Makefile"
@@ -82,8 +76,8 @@
 				WorkingDirectory="$(fwrt)/Src/Generic/Test" ContinueOnError="true"/>
 		<RegFree Executable="$(dir-outputBase)\testGenericLib.exe"
 				DependentAssemblies="$(dir-outputBase)\FwKernel.X.manifest;$(dir-outputBase)\Views.X.manifest"
-				Condition="'$(OS)'=='Windows_NT'"/>
-		<Exec Command="mt.exe -outputresource:$(dir-outputBase)\testGenericLib.exe -manifest $(dir-outputBase)\testGenericLib.exe.manifest"
+				Condition="'$(OS)'=='Windows_NT'" Platform="$(Platform)" MSBuildArchitecture="$(Platform)"/>
+		<Exec Command="set PATH=$(PATH) mt.exe -outputresource:$(dir-outputBase)\testGenericLib.exe -manifest $(dir-outputBase)\testGenericLib.exe.manifest"
 				Condition="'$(OS)'=='Windows_NT'"/>
 		<Unitpp Condition="'$(action)'=='test'"
 				FixturePath="$(dir-outputBase)/testGenericLib"
@@ -95,50 +89,21 @@
 		<Message Text="Finished building testGenericLib and running tests." Condition="'$(action)'=='test'"/>
 	</Target>
 
-	<Target Name="FwKernel" DependsOnTargets="GenericLib;GenerateCellarConstants;AppCore;createCompMaps">
+	<Target Name="FwKernel" DependsOnTargets="GenericLib;GenerateCellarConstants;AppCore;createCompMaps;CopyDlls">
 		<Message Text="FwKernel make-target='$(make-target)'"/>
 		<Make Condition="'$(OS)'=='Windows_NT'"
 			Makefile="$(fwrt)\Src\Kernel\FwKernel.mak"
 			Configuration="$(config-capital)"
 			BuildRoot="$(fwrt)"
+			BuildArch="'$(Platform)'"
 			WorkingDirectory="$(fwrt)\Src\Kernel"/>
 		<Make Condition="'$(OS)'=='Unix'" ToolPath="/usr/bin"
 			Makefile="$(fwrt)/Src/Kernel/Makefile"
 			Configuration="$(config-capital)" Target="$(make-target)"
 			BuildRoot="$(fwrt)"
 			WorkingDirectory="$(fwrt)/Src/Kernel"/>
-		<RegFree Executable="$(dir-outputBase)\FwKernel.dll" Output="$(dir-outputBase)\FwKernel.X.manifest" Condition="'$(OS)'=='Windows_NT'" />
+		<RegFree Executable="$(dir-outputBase)\FwKernel.dll" Output="$(dir-outputBase)\FwKernel.X.manifest" Condition="'$(OS)'=='Windows_NT'" Platform="$(Platform)"  MSBuildArchitecture="$(Platform)"/>
 		<Message Text="Finished building FwKernel."/>
-	</Target>
-
-	<Target Name="testFwKernel" DependsOnTargets="GenericLib;FwKernel;Views;ManagedLgIcuCollator">
-		<Make Condition="'$(OS)'=='Windows_NT'"
-				Makefile="$(fwrt)\Src\Kernel\Test\testFwKernel.mak"
-				Configuration="$(config-capital)"
-				BuildRoot="$(fwrt)"
-				WorkingDirectory="$(fwrt)\Bin"/>
-		<Make Condition="'$(OS)'=='Unix'" ToolPath="/usr/bin"
-				Makefile="$(fwrt)/Src/Kernel/Test/Makefile"
-				Configuration="$(config-capital)" Target="$(make-target)"
-				BuildRoot="$(fwrt)"
-				WorkingDirectory="$(fwrt)/Src/Kernel/Test" ContinueOnError="true"/>
-		<RegFree Executable="$(dir-outputBase)\testFwKernel.exe"
-				DependentAssemblies="$(dir-outputBase)\FwKernel.X.manifest;$(dir-outputBase)\Views.X.manifest"
-				Condition="'$(OS)'=='Windows_NT'"/>
-		<Exec Command="mt.exe -outputresource:$(dir-outputBase)\testFwKernel.exe -manifest $(dir-outputBase)\testFwKernel.exe.manifest"
-				Condition="'$(OS)'=='Windows_NT'"/>
-		<CreateItem Include="$(dir-outputBase)/*.compmap">
-			<Output TaskParameter="Include" ItemName="KernelCompMapFiles"/>
-		</CreateItem>
-		<CatenateFiles SourceFiles="@(KernelCompMapFiles)" TargetFile="$(dir-outputBase)/components.map" Condition="'$(OS)'=='Unix'"/>
-		<Unitpp Condition="'$(action)'=='test'"
-				FixturePath="$(dir-outputBase)/testFwKernel"
-				FudgeFactor="$(timeoutFudgeFactor)"
-				Timeout="75000">
-			<Output TaskParameter="FailedSuites" ItemName="FailedSuites"/>
-		</Unitpp>
-		<Message Text="Finished building testFwKernel." Condition="'$(action)'!='test'"/>
-		<Message Text="Finished building testFwKernel and running tests." Condition="'$(action)'=='test'"/>
 	</Target>
 
 	<Target Name="AppCore" DependsOnTargets="DebugProcs;GenericLib">
@@ -156,13 +121,14 @@
 			Makefile="$(fwrt)\Src\views\Views.mak"
 			Configuration="$(config-capital)"
 			BuildRoot="$(fwrt)"
+			BuildArch="'$(Platform)'"
 			WorkingDirectory="$(fwrt)\Src\views"/>
 		<Make Condition="'$(OS)'=='Unix'" ToolPath="/usr/bin"
 			Makefile="$(fwrt)/Src/views/Makefile"
 			Configuration="$(config-capital)" Target="$(make-target)"
 			BuildRoot="$(fwrt)"
 			WorkingDirectory="$(fwrt)/Src/views"/>
-		<RegFree Executable="$(dir-outputBase)\Views.dll" Output="$(dir-outputBase)\Views.X.manifest" Condition="'$(OS)'=='Windows_NT'" />
+		<RegFree Executable="$(dir-outputBase)\Views.dll" Output="$(dir-outputBase)\Views.X.manifest" Condition="'$(OS)'=='Windows_NT'" Platform="$(Platform)" MSBuildArchitecture="$(Platform)"/>
 		<Message Text="Finished building Views."/>
 	</Target>
 
@@ -171,6 +137,7 @@
 				Makefile="$(fwrt)\Src\views\Test\testViews.mak"
 				Configuration="$(config-capital)"
 				BuildRoot="$(fwrt)"
+				BuildArch="'$(Platform)'"
 				WorkingDirectory="$(fwrt)\Bin"/>
 		<Make Condition="'$(OS)'=='Unix'" ToolPath="/usr/bin"
 				Makefile="$(fwrt)/Src/views/Test/Makefile"
@@ -179,7 +146,7 @@
 				WorkingDirectory="$(fwrt)/Src/views/Test" ContinueOnError="true"/>
 		<RegFree Executable="$(dir-outputBase)\testViews.exe"
 				DependentAssemblies="$(dir-outputBase)\FwKernel.X.manifest;$(dir-outputBase)\Views.X.manifest"
-				Condition="'$(OS)'=='Windows_NT'"/>
+				Condition="'$(OS)'=='Windows_NT'" Platform="$(Platform)" MSBuildArchitecture="$(Platform)"/>
 		<Exec Command="mt.exe -outputresource:$(dir-outputBase)\testViews.exe -manifest $(dir-outputBase)\testViews.exe.manifest"
 				Condition="'$(OS)'=='Windows_NT'"/>
 		<CreateItem Include="$(dir-outputBase)/*.compmap">
@@ -189,56 +156,30 @@
 		<Unitpp Condition="'$(action)'=='test'"
 				FixturePath="$(dir-outputBase)/testViews"
 				FudgeFactor="$(timeoutFudgeFactor)"
-				Timeout="75000">
+				Timeout="250000">
 			<Output TaskParameter="FailedSuites" ItemName="FailedSuites"/>
 		</Unitpp>
 		<Message Text="Finished building testViews." Condition="'$(action)'!='test'"/>
 		<Message Text="Finished building testViews and running tests." Condition="'$(action)'=='test'"/>
 	</Target>
 
+	<UsingTask TaskName="LcmGenerate" AssemblyFile="$(LcmArtifactsDir)/SIL.LCModel.Build.Tasks.dll"/>
+
 	<ItemGroup>
-		<CellarConstantsInputs Include="$(fwrt)/Src/FDO/MasterFieldWorksModel.xml"/>
-		<CellarConstantsInputs Include="$(fwrt)/Src/FDO/FDOGenerate/CellarConstants.vm.h"/>
+		<CellarConstantsInputs Include="$(LcmArtifactsDir)/MasterLCModel.xml"/>
+		<CellarConstantsInputs Include="$(fwrt)/Src/Kernel/CellarConstants.vm.h"/>
 		<CellarConstantsOutputs Include="$(fwrt)/Output/Common/CellarConstants.h"/>
 	</ItemGroup>
 
-	<Target Name="GenerateCellarConstants" DependsOnTargets="CopyCellarBaseConstants"
+	<Target Name="GenerateCellarConstants" DependsOnTargets="CopyCellarBaseConstants;CopyDlls"
 			Inputs="@(CellarConstantsInputs)" Outputs="@(CellarConstantsOutputs)">
 		<MakeDir Directories="$(dir-fwoutputCommon)" Condition="'$(action)'!='clean'"/>
-		<FdoGenerate XmlFile="$(fwrt)/Src/FDO/MasterFieldWorksModel.xml"
+		<LcmGenerate XmlFile="$(LcmArtifactsDir)/MasterLCModel.xml"
 					 OutputDir="$(dir-fwoutputCommon)"
 					 OutputFile="CellarConstants.h"
-					 TemplateFile="$(fwrt)/Src/FDO/FDOGenerate/CellarConstants.vm.h"
-					 WorkingDirectory="$(fwrt)/Src/FDO"
+					 TemplateFile="$(fwrt)/Src/Kernel/CellarConstants.vm.h"
+					 WorkingDirectory="$(LcmArtifactsDir)/"
 					 Condition="'$(action)'!='clean'"/>
-	</Target>
-
-	<Choose>
-		<When Condition=" '$(config-capital)' == 'Debug' ">
-			<PropertyGroup>
-				<Paratext8PluginDefines>DEBUG TRACE CODE_ANALYSIS</Paratext8PluginDefines>
-			</PropertyGroup>
-		</When>
-		<When Condition=" '$(config-capital)' == 'Release' ">
-			<PropertyGroup>
-				<Paratext8PluginDefines>TRACE CODE_ANALYSIS</Paratext8PluginDefines>
-			</PropertyGroup>
-		</When>
-		<Otherwise>
-			<PropertyGroup>
-				<Paratext8PluginDefines>DEBUG TRACE CODE_ANALYSIS</Paratext8PluginDefines>
-			</PropertyGroup>
-		</Otherwise>
-	</Choose>
-
-	<Target Name="Paratext8Plugin" DependsOnTargets="Initialize;ScriptureUtils">
-		<MSBuild Projects="$(fwrt)\Src\Paratext8Plugin\Paratext8Plugin.csproj"
-			Targets="$(msbuild-target)"
-			Properties="$(msbuild-props);IntermediateOutputPath=$(dir-fwobj)\Paratext8Plugin\;DefineConstants=$(Paratext8PluginDefines);$(warningsAsErrors);WarningLevel=4"
-			ToolsVersion="4.0" Condition="'$(OS)'!='Unix'"/>
-		<!-- Paratext8Plugin must be built against a newer version of Mono that FLEx 8 does not support. -->
-		<Message Text="Finished building Paratext8Plugin." Condition="'$(OS)'!='Unix'"/>
-		<Message Text="Skipped building Paratext8Plugin." Condition="'$(OS)'=='Unix'"/>
 	</Target>
 
 	<Target Name="CopyCellarBaseConstants" Inputs="$(fwrt)/Src/Kernel/CellarBaseConstants.h" Outputs="$(fwrt)/Output/Common/CellarBaseConstants.h">
@@ -265,6 +206,7 @@
 				Configuration="$(config-capital)"
 				Target="dirs $(dir-fwoutputCommon)\FwKernelTlb.tlb"
 				BuildRoot="$(fwrt)"
+				BuildArch="'$(PLATFORM)'"
 				WorkingDirectory="$(fwrt)"/>
 		<Make Condition="'$(OS)'=='Windows_NT'"
 				Makefile="$(fwrt)\Src\views\Views.mak"
@@ -278,238 +220,301 @@
 		<SetEnvVar Variable="ANAL_TYPE" Value="$(Original-ANAL_TYPE)" />
 	</Target>
 
-	<Target Name="remakefw-internal" DependsOnTargets="CleanAll;Initialize;setRegistryValues;ensureTLBsUpToDate;CopyDlls;IcuData;mkall"/>
+	<Target Name="remakefw-internal" DependsOnTargets="CleanAll;Initialize;CopyDlls;setRegistryValues;ensureTLBsUpToDate;GeneratePartsAndLayoutFiles;mkall"/>
 
 	<Target Name="remakefw" DependsOnTargets="remakefw-internal">
+		<!-- If tests were run on a developer machine, fail to alert the developer of any failures -->
 		<Error Condition="'@(FailedSuites)'!=''" Text="The following projects had failing tests: @(FailedSuites)" />
 	</Target>
 
 	<Target Name="remakefw-jenkins" DependsOnTargets="remakefw-internal">
-		<!-- Jenkins looks at the test output files to see if tests failed, so we don't have to
-			fail on failed tests -->
+		<!-- Jenkins looks at the test output files to see if tests failed, so we don't have to fail on failed tests -->
 		<Warning Condition="'@(FailedSuites)'!=''" Text="The following projects had failing tests: @(FailedSuites)" />
 	</Target>
 
 	<ItemGroup>
+		<!-- Don't delete FieldWorks.targets - that has to be done separately, otherwise we
+		delete the file we just create previously when we run remakefw -->
+		<!--<GeneratedFiles Include="$(fwrt)/Build/FieldWorks.targets"/>-->
+		<GeneratedFiles Include="$(fwrt)/Build/packages.config"/>
 		<GeneratedFiles Include="$(fwrt)/Src/**/Collection.cpp"/>
 		<GeneratedFiles Include="$(fwrt)/Src/**/asserts.log"/>
-		<GeneratedFiles Include="$(fwrt)/Src/Common/COMInterfaces/FwKernel.cs"/>
-		<GeneratedFiles Include="$(fwrt)/Src/Common/COMInterfaces/Views.cs"/>
-		<GeneratedFiles Include="$(fwrt)/Src/FDO/DomainImpl/GeneratedFactoryImplementations.cs"/>
-		<GeneratedFiles Include="$(fwrt)/Src/FDO/DomainImpl/FDOGenerated.cs"/>
+		<GeneratedFiles Include="$(fwrt)/Src/Common/ViewsInterfaces/Views.cs"/>
+		<GeneratedFiles Include="$(fwrt)/Lib/debug/unit++.lib"/>
+		<GeneratedFiles Include="$(fwrt)/Lib/release/unit++.lib"/>
+		<GeneratedFiles Include="$(fwrt)/DistFiles/Parts/GeneratedParts.xml"/>
+		<GeneratedFiles Include="$(fwrt)/DistFiles/Parts/Generated.fwlayout"/>
 	</ItemGroup>
+
+	<Target Name="CleanDownloads">
+		<ForceDelete Files="$(DownloadsDir)" />
+	</Target>
+
+	<Target Name="Clean" DependsOnTargets="CleanAll">
+		<ForceDelete Files="$(fwrt)/Build/FieldWorks.targets"/>
+	</Target>
 
 	<Target Name="CleanAll" DependsOnTargets="cleanWindows;cleanLinux">
 		<!-- remove the Obj and Output directories -->
-		<ForceDelete Files="$(dir-fwobj);$(dir-fwoutput)"/>
-		<ForceDelete Files="$(fwrt)/Output" Condition="'$(OS)'=='Unix'"/>
+		<ForceDelete Files="$(dir-fwobj);$(dir-fwoutput)" />
+		<ForceDelete Files="$(fwrt)/Output" Condition="'$(OS)'=='Unix'" />
 		<!-- remove other directories and files created during the build process -->
-		<ForceDelete Files="@(IcuDataFiles)"/>
-		<ForceDelete Files="$(fwrt)/Bin/FieldWorks.targets"/>
-		<ForceDelete Files="@(GeneratedFiles)"/>
-		<ForceDelete Files="$(fwrt)/DistFiles/Icu$(IcuVersion).zip"/>
-
-		<Message Text="Finished deleting the output directories!"/>
+		<ForceDelete Files="@(GeneratedFiles)" />
+		<!-- remove LCM files -->
+		<ItemGroup>
+			<LcmFilesToDelete Include="$(fwrt)/Src/Kernel/*.idh" />
+			<LcmFilesToDelete Include="$(fwrt)/Src/Kernel/FwKernelTlb.idl" />
+			<LcmFilesToDelete Include="$(fwrt)/DistFiles/Styles.dtd" />
+			<LcmFilesToDelete Include="$(fwrt)/DistFiles/Templates/GOLDEtic.xml" />
+			<LcmFilesToDelete Include="$(fwrt)/DistFiles/Templates/NewLangProj.fwdata" />
+			<LcmFilesToDelete Include="$(fwrt)/DistFiles/Templates/POS.xml" />
+			<LcmFilesToDelete Include="$(fwrt)/DistFiles/Templates/SemDom.xml" />
+			<LcmFilesToDelete Include="$(dir-fwoutputCommon)/FwKernelTlb.json" />
+		</ItemGroup>
+		<ForceDelete Files="@(LcmFilesToDelete)" />
+		<ForceDelete Files="$(fwrt)/DistFiles/Icu$(IcuVersion)" />
+		<SetEnvVar Variable="LD_PRELOAD" Value="" Condition="'$(OS)'=='Unix'"/>
+		<Message Text="Finished deleting the output directories!" />
 	</Target>
 
 	<PropertyGroup>
-		<!-- ChorusWin32v25nostrongCont is the chorus-2.5 branch build of Chorus for Windows development. Update when appropriate. -->
-		<ChorusDownloadUrl Condition="'$(OS)'=='Windows_NT'">http://build.palaso.org/guestAuth/repository/download/ChorusWin32v25nostrongCont/fw-8.3.9.tcbuildtag</ChorusDownloadUrl>
-		<!-- ChorusPrecise64v25Cont is the chorus-2.5 branch build of Chorus for Linux development. Update when appropriate. -->
-		<ChorusDownloadUrl Condition="'$(OS)'=='Unix'">http://build.palaso.org/guestAuth/repository/download/ChorusPrecise64v25Cont/fw-8.3.9.tcbuildtag</ChorusDownloadUrl>
-		<!-- PalasoWin32v26nostrongCont is the libpalaso-2.6 branch build of Palaso for Windows development. Update when appropriate. -->
-		<PalasoDownloadUrl Condition="'$(OS)'=='Windows_NT'">http://build.palaso.org/guestAuth/repository/download/PalasoWin32v26nostrongCont/fw-8.3.5.tcbuildtag</PalasoDownloadUrl>
-		<!-- PalasoPrecise64v26Cont is the libpalaso-2.6 branch build of Palaso for Linux development. Update when appropriate. -->
-		<PalasoDownloadUrl Condition="'$(OS)'=='Unix'">http://build.palaso.org/guestAuth/repository/download/PalasoPrecise64v26Cont/fw-8.3.5.tcbuildtag</PalasoDownloadUrl>
-		<!--Todo: use PalasoDownloadUrl, when it refers to somewhere that has the IPCFramework.-->
+		<MasterVersionInfo>$(fwrt)/Src/MasterVersionInfo.txt</MasterVersionInfo>
+		<TeamCityUrl>https://build.palaso.org/</TeamCityUrl>
+
+		<!-- Chorus_Win32masterContinuous is the master branch build of Chorus for Windows development. Update when appropriate. -->
+		<ChorusBuildType Condition="'$(OS)'=='Windows_NT'">Chorus_Win32masterContinuous</ChorusBuildType>
+		<!-- Chorus_Linux64masterContinuous is the master branch build of Chorus for Linux development. Update when appropriate. -->
+		<ChorusBuildType Condition="'$(OS)'=='Unix'">Chorus_Linux64masterContinuous</ChorusBuildType>
+		<ChorusBuildTag>fw-9.0.11.tcbuildtag</ChorusBuildTag>
+		<!-- Libpalaso_PalasoWinmasterContinuous is the master branch build of Palaso for Windows development. Update when appropriate. -->
+		<PalasoBuildType Condition="'$(OS)'=='Windows_NT' AND '$(arch)'!='x64'">Libpalaso_PalasoWin32masterContinuous</PalasoBuildType>
+		<PalasoBuildType Condition="'$(OS)'=='Windows_NT' AND '$(arch)'=='x64'">Libpalaso_PalasoWinmasterContinuous</PalasoBuildType>
+		<!-- bt322 is the master branch build of Palaso for Linux development. Update when appropriate. -->
+		<PalasoBuildType Condition="'$(OS)'=='Unix'">Libpalaso_PalasoLinux64masterContinuous</PalasoBuildType>
+		<PalasoBuildTag>fw-9.0.11.tcbuildtag</PalasoBuildTag>
+		<!--Todo: use PalasoBuildType, when it refers to somewhere that has the IPCFramework.-->
 		<!-- bt278 is the develop branch build of IPCFramework for Windows development. Update when appropriate. -->
-		<IPCFrameworkDownloadUrl Condition="'$(OS)'=='Windows_NT'">http://build.palaso.org/guestAuth/repository/download/bt278/fw-8.2.tcbuildtag</IPCFrameworkDownloadUrl>
+		<IPCFrameworkBuildType Condition="'$(OS)'=='Windows_NT'">bt278</IPCFrameworkBuildType>
 		<!-- bt279 is the develop branch build of IPCFramework for Linux development. Update when appropriate. -->
-		<IPCFrameworkDownloadUrl Condition="'$(OS)'=='Unix'">http://build.palaso.org/guestAuth/repository/download/bt279/fw-8.2.tcbuildtag</IPCFrameworkDownloadUrl>
+		<IPCFrameworkBuildType Condition="'$(OS)'=='Unix'">bt279</IPCFrameworkBuildType>
 		<!-- bt393 is the master branch build of ExCss for Windows development. Update when appropriate. -->
-		<ExCssDownloadUrl Condition="'$(OS)'=='Windows_NT'">http://build.palaso.org/guestAuth/repository/download/bt393/fw-8.3.0~alpha3.tcbuildtag</ExCssDownloadUrl>
+		<ExCssBuildType Condition="'$(OS)'=='Windows_NT'">bt393</ExCssBuildType>
+		<ExCss Condition="'$(OS)'=='Windows_NT'">ExCss</ExCss>
 		<!-- bt395 is the master branch build of ExCss for Linux development. Update when appropriate. -->
-		<ExCssDownloadUrl Condition="'$(OS)'=='Unix'">http://build.palaso.org/guestAuth/repository/download/bt395/fw-8.3.0~alpha3.tcbuildtag</ExCssDownloadUrl>
-		<DownloadsSilOrgDownloadUrl>http://downloads.sil.org/BuildDlls/FW8.1/</DownloadsSilOrgDownloadUrl>
-		<HermitCrabDownloadUrl>http://build.palaso.org/guestAuth/repository/download/bt410/fw-8.3.tcbuildtag</HermitCrabDownloadUrl>
-		<Icu4cDownloadUrl Condition="'$(OS)'=='Windows_NT'">http://build.palaso.org/guestAuth/repository/download/Libraries_Icu4cWin32FieldWorksContinuous/fw-8.2.tcbuildtag</Icu4cDownloadUrl>
-		<SILScriptureDownloadUrl Condition="'$(OS)'=='Unix'">http://build.palaso.org/guestAuth/repository/download/Libpalaso_PalasoLinux64masterContinuous/fw-8.3.9.tcbuildtag</SILScriptureDownloadUrl>
-		<SILScriptureDownloadUrl Condition="'$(OS)'=='Windows_NT'">http://build.palaso.org/guestAuth/repository/download/Libpalaso_PalasoWin32masterContinuous/fw-8.3.9.tcbuildtag</SILScriptureDownloadUrl>
+		<ExCssBuildType Condition="'$(OS)'=='Unix'">bt395</ExCssBuildType>
+		<ExCss Condition="'$(OS)'=='Unix'">ExCSS</ExCss>
+		<Icu4cBuildType32>Libraries_Icu4cWin32FieldWorksContinuous</Icu4cBuildType32>
+		<Icu4cBuildType64>Libraries_Icu4cWin64FieldWorksContinuous</Icu4cBuildType64>
+		<HermitCrabBuildType>bt410</HermitCrabBuildType>
+		<HermitCrabBuildTag>fw-9.0.11.tcbuildtag</HermitCrabBuildTag>
+		<DownloadsSilOrgDownloadUrl>http://downloads.sil.org/BuildDlls/FW8.1</DownloadsSilOrgDownloadUrl>
+		<DownloadsSilOrgOSDownloadUrl Condition="'$(OS)'=='Windows_NT'">$(DownloadsSilOrgDownloadUrl)/Windows</DownloadsSilOrgOSDownloadUrl>
+		<DownloadsSilOrgOSDownloadUrl Condition="'$(OS)'=='Unix'">$(DownloadsSilOrgDownloadUrl)/Linux</DownloadsSilOrgOSDownloadUrl>
+		<NUnitDownloadUrl>https://github.com/nunit/nunitv2/releases/download/2.6.4/NUnit-2.6.4.zip</NUnitDownloadUrl>
+		<LcmBuildType Condition="'$(OS)'=='Windows_NT' AND '$(arch)'!='x64'">Liblcm_LiblcmWin32masterContinuous</LcmBuildType>
+		<LcmBuildType Condition="'$(OS)'=='Windows_NT' AND '$(arch)'=='x64'">Liblcm_LiblcmWin64masterContinuous</LcmBuildType>
+		<LcmBuildType Condition="'$(OS)'=='Unix'">Liblcm_LiblcmLinux64masterContinuous</LcmBuildType>
+		<LcmBuildTag>fw-9.0.11.tcbuildtag</LcmBuildTag>
 		<!-- Windows/.Net and Linux/Mono use different extensions for debug information files. -->
 		<DebugInfo Condition="'$(OS)'=='Unix'">dll.mdb</DebugInfo>
 		<DebugInfo Condition="'$(OS)'=='Windows_NT'">pdb</DebugInfo>
+		<DownloadsDir>$(fwrt)/Downloads</DownloadsDir>
 	</PropertyGroup>
 
-	<Target Name="downloadDlls" DependsOnTargets="RestoreNuGetPackages">
-		<MakeDir Directories="$(fwrt)/Downloads"/>
-		<Message Text="Downloading artifacts from Palaso libpalaso-2.6 branch build."/>
-		<DownloadFile Address="$(PalasoDownloadUrl)/Palaso.dll" LocalFilename="$(fwrt)/Downloads/Palaso.dll"/>
-		<DownloadFile Address="$(PalasoDownloadUrl)/Palaso.dll.config" LocalFilename="$(fwrt)/Downloads/Palaso.dll.config" Condition="'$(OS)'=='Unix'"/>
-		<DownloadFile Address="$(PalasoDownloadUrl)/Palaso.$(DebugInfo)" LocalFilename="$(fwrt)/Downloads/Palaso.$(DebugInfo)"/>
-		<DownloadFile Address="$(PalasoDownloadUrl)/Palaso.Lift.dll" LocalFilename="$(fwrt)/Downloads/Palaso.Lift.dll"/>
-		<DownloadFile Address="$(PalasoDownloadUrl)/Palaso.Lift.$(DebugInfo)" LocalFilename="$(fwrt)/Downloads/Palaso.Lift.$(DebugInfo)"/>
-		<DownloadFile Address="$(PalasoDownloadUrl)/Palaso.Media.dll" LocalFilename="$(fwrt)/Downloads/Palaso.Media.dll"/>
-		<DownloadFile Address="$(PalasoDownloadUrl)/Palaso.Media.dll.config" LocalFilename="$(fwrt)/Downloads/Palaso.Media.dll.config" Condition="'$(OS)'=='Unix'"/>
-		<DownloadFile Address="$(PalasoDownloadUrl)/Palaso.Media.$(DebugInfo)" LocalFilename="$(fwrt)/Downloads/Palaso.Media.$(DebugInfo)"/>
-		<DownloadFile Address="$(PalasoDownloadUrl)/Palaso.TestUtilities.dll" LocalFilename="$(fwrt)/Downloads/Palaso.TestUtilities.dll"/>
-		<DownloadFile Address="$(PalasoDownloadUrl)/Palaso.TestUtilities.$(DebugInfo)" LocalFilename="$(fwrt)/Downloads/Palaso.TestUtilities.$(DebugInfo)"/>
-		<DownloadFile Address="$(PalasoDownloadUrl)/PalasoUIWindowsForms.dll" LocalFilename="$(fwrt)/Downloads/PalasoUIWindowsForms.dll"/>
-		<DownloadFile Address="$(PalasoDownloadUrl)/PalasoUIWindowsForms.dll.config" LocalFilename="$(fwrt)/Downloads/PalasoUIWindowsForms.dll.config" Condition="'$(OS)'=='Unix'"/>
-		<DownloadFile Address="$(PalasoDownloadUrl)/PalasoUIWindowsForms.$(DebugInfo)" LocalFilename="$(fwrt)/Downloads/PalasoUIWindowsForms.$(DebugInfo)"/>
-		<DownloadFile Address="$(PalasoDownloadUrl)/PalasoUIWindowsForms.GeckoBrowserAdapter.dll" LocalFilename="$(fwrt)/Downloads/PalasoUIWindowsForms.GeckoBrowserAdapter.dll"/>
-		<DownloadFile Address="$(PalasoDownloadUrl)/PalasoUIWindowsForms.GeckoBrowserAdapter.$(DebugInfo)" LocalFilename="$(fwrt)/Downloads/PalasoUIWindowsForms.GeckoBrowserAdapter.$(DebugInfo)"/>
-		<DownloadFile Address="$(PalasoDownloadUrl)/SIL.Archiving.dll" LocalFilename="$(fwrt)/Downloads/SIL.Archiving.dll"/>
-		<DownloadFile Address="$(PalasoDownloadUrl)/SIL.Archiving.dll.config" LocalFilename="$(fwrt)/Downloads/SIL.Archiving.dll.config" Condition="'$(OS)'=='Unix'"/>
-		<DownloadFile Address="$(PalasoDownloadUrl)/SIL.Archiving.$(DebugInfo)" LocalFilename="$(fwrt)/Downloads/SIL.Archiving.$(DebugInfo)"/>
-		<DownloadFile Address="$(PalasoDownloadUrl)/Ionic.Zip.dll" LocalFilename="$(fwrt)/Downloads/Ionic.Zip.dll"/>
-		<DownloadFile Address="$(PalasoDownloadUrl)/Keyman7Interop.dll" LocalFilename="$(fwrt)/Downloads/Keyman7Interop.dll" Condition="'$(OS)'=='Windows_NT'"/>
-		<DownloadFile Address="$(PalasoDownloadUrl)/KeymanLink.dll" LocalFilename="$(fwrt)/Downloads/KeymanLink.dll" Condition="'$(OS)'=='Windows_NT'"/>
-		<Message Text="Downloading pinned artifacts for L10NSharp, Enchant.Net, ibusdotnet, and NDesk.DBus."/>
-		<DownloadFile Address="$(PalasoDownloadUrl)/L10NSharp.dll" LocalFilename="$(fwrt)/Downloads/L10NSharp.dll"/>
-		<DownloadFile Address="$(PalasoDownloadUrl)/Enchant.Net.dll" LocalFilename="$(fwrt)/Downloads/Enchant.Net.dll"/>
-		<DownloadFile Address="$(PalasoDownloadUrl)/Enchant.Net.dll.config" LocalFilename="$(fwrt)/Downloads/Enchant.Net.dll.config" Condition="'$(OS)'=='Unix'"/>
-		<DownloadFile Address="$(PalasoDownloadUrl)/ibusdotnet.dll" LocalFilename="$(fwrt)/Downloads/ibusdotnet.dll"
-					  Condition="'$(OS)'=='Unix'"/>
-		<DownloadFile Address="$(PalasoDownloadUrl)/NDesk.DBus.dll" LocalFilename="$(fwrt)/Downloads/NDesk.DBus.dll"
-					  Condition="'$(OS)'=='Unix'"/>
-		<DownloadFile Address="$(PalasoDownloadUrl)/NDesk.DBus.dll.config" LocalFilename="$(fwrt)/Downloads/NDesk.DBus.dll.config"
-					  Condition="'$(OS)'=='Unix'"/>
-		<DownloadFile Address="$(PalasoDownloadUrl)/taglib-sharp.dll" LocalFilename="$(fwrt)/Downloads/taglib-sharp.dll"/>
-		<DownloadFile Address="$(PalasoDownloadUrl)/irrKlang.NET4.dll" LocalFilename="$(fwrt)/Downloads/irrKlang.NET4.dll"/>
-		<DownloadFile Address="$(PalasoDownloadUrl)/icu.net.dll" LocalFilename="$(fwrt)/Downloads/icu.net.dll"/>
+	<ItemGroup>
+		<PalasoFiles Include="SIL.Core.dll"/>
+		<PalasoFiles Include="SIL.Core.pdb"/>
+		<PalasoFiles Include="SIL.Core.Desktop.dll"/>
+		<PalasoFiles Include="SIL.Core.Desktop.pdb"/>
+		<PalasoFiles Include="SIL.Lift.dll"/>
+		<PalasoFiles Include="SIL.Lift.pdb"/>
+		<PalasoFiles Include="SIL.Media.dll"/>
+		<PalasoFiles Include="SIL.Media.dll.config" Condition="'$(OS)'=='Unix'"/>
+		<PalasoFiles Include="SIL.Media.pdb"/>
+		<PalasoFiles Include="SIL.Windows.Forms.dll"/>
+		<PalasoFiles Include="SIL.Windows.Forms.pdb"/>
+		<PalasoFiles Include="SIL.Windows.Forms.GeckoBrowserAdapter.dll"/>
+		<PalasoFiles Include="SIL.Windows.Forms.GeckoBrowserAdapter.pdb"/>
+		<PalasoFiles Include="SIL.Archiving.dll"/>
+		<PalasoFiles Include="SIL.Archiving.dll.config" Condition="'$(OS)'=='Unix'"/>
+		<PalasoFiles Include="SIL.Archiving.pdb"/>
+		<PalasoFiles Include="Keyman10Interop.dll" Condition="'$(OS)'=='Windows_NT'"/>
+		<PalasoFiles Include="Keyman7Interop.dll" Condition="'$(OS)'=='Windows_NT'"/>
+		<PalasoFiles Include="KeymanLink.dll" Condition="'$(OS)'=='Windows_NT'"/>
+		<PalasoFiles Include="SIL.WritingSystems.dll"/>
+		<PalasoFiles Include="SIL.WritingSystems.pdb"/>
+		<PalasoFiles Include="SIL.WritingSystems.Tests.dll"/>
+		<PalasoFiles Include="SIL.WritingSystems.Tests.pdb"/>
+		<PalasoFiles Include="SIL.Windows.Forms.WritingSystems.dll"/>
+		<PalasoFiles Include="SIL.Windows.Forms.WritingSystems.pdb"/>
+		<PalasoFiles Include="SIL.Windows.Forms.Keyboarding.dll"/>
+		<PalasoFiles Include="SIL.Windows.Forms.Keyboarding.dll.config" Condition="'$(OS)'=='Unix'"/>
+		<PalasoFiles Include="SIL.Windows.Forms.Keyboarding.pdb"/>
+		<PalasoFiles Include="SIL.Lexicon.dll"/>
+		<PalasoFiles Include="SIL.Lexicon.pdb"/>
+		<PalasoFiles Include="SIL.Scripture.dll"/>
+		<PalasoFiles Include="SIL.Scripture.pdb"/>
+		<PalasoFiles Include="SIL.TestUtilities.dll"/>
+		<PalasoFiles Include="L10NSharp.dll"/>
+		<PalasoFiles Include="Commons.Xml.Relaxng.dll"/>
+		<PalasoFiles Include="irrKlang.NET4.dll" Condition="'$(OS)'=='Windows_NT'"/>
+		<PalasoFiles Include="Enchant.Net.dll"/>
+		<PalasoFiles Include="Enchant.Net.dll.config" Condition="'$(OS)'=='Unix'"/>
+		<PalasoFiles Include="NDesk.DBus.dll"/>
+		<PalasoFiles Include="NDesk.DBus.dll.config"/>
+		<PalasoFiles Include="taglib-sharp.dll"/>
+		<PalasoFiles Include="Spart.dll"/>
 
-		<Message Text="Downloading artifacts from Chorus chorus-2.5 branch build."/>
-		<DownloadFile Address="$(ChorusDownloadUrl)/Autofac.dll" LocalFilename="$(fwrt)/Downloads/Autofac.dll"/>
-		<DownloadFile Address="$(ChorusDownloadUrl)/Chorus.exe" LocalFilename="$(fwrt)/Downloads/Chorus.exe"/>
-		<DownloadFile Address="$(ChorusDownloadUrl)/ChorusHub.exe" LocalFilename="$(fwrt)/Downloads/ChorusHub.exe" Condition="'$(OS)'=='Unix'"/>
-		<DownloadFile Address="$(ChorusDownloadUrl)/LibChorus.dll" LocalFilename="$(fwrt)/Downloads/LibChorus.dll"/>
-		<DownloadFile Address="$(ChorusDownloadUrl)/Vulcan.Uczniowie.HelpProvider.dll" LocalFilename="$(fwrt)/Downloads/Vulcan.Uczniowie.HelpProvider.dll"/>
+		<ChorusFiles Include="Autofac.dll"/>
+		<ChorusFiles Include="Chorus.exe"/>
+		<ChorusFiles Include="ChorusHub.exe" Condition="'$(OS)'=='Unix'"/>
+		<ChorusFiles Include="LibChorus.dll"/>
+		<ChorusFiles Include="Vulcan.Uczniowie.HelpProvider.dll"/>
 
-		<Message Text="Downloading pinned artifacts for IPCFramework."/>
-		<DownloadFile Address="$(IPCFrameworkDownloadUrl)/IPCFramework.dll" LocalFilename="$(fwrt)/Downloads/IPCFramework.dll"/>
+		<IcuFiles Include="gennorm2.exe"/>
+		<IcuFiles Include="icudt$(IcuVersion).dll"/>
+		<IcuFiles Include="icuin$(IcuVersion).dll"/>
+		<IcuFiles Include="icutu$(IcuVersion).dll"/>
+		<IcuFiles Include="icuuc$(IcuVersion).dll"/>
+		<IcuFiles Include="icudt.lib"/>
+		<IcuFiles Include="icuin.lib"/>
+		<IcuFiles Include="icuuc.lib"/>
 
-		<Message Text="Downloading artifacts for ExCss."/>
-		<DownloadFile Address="$(ExCssDownloadUrl)/ExCSS.dll" LocalFilename="$(fwrt)/Downloads/ExCSS.dll" Condition="'$(OS)'=='Unix'"/>
-		<DownloadFile Address="$(ExCssDownloadUrl)/ExCss.dll" LocalFilename="$(fwrt)/Downloads/ExCSS.dll" Condition="'$(OS)'=='Windows_NT'"/>
-		<DownloadFile Address="$(ExCssDownloadUrl)/ExCSS.dll.mdb" LocalFilename="$(fwrt)/Downloads/ExCSS.dll.mdb" Condition="'$(OS)'=='Unix'"/>
-		<DownloadFile Address="$(ExCssDownloadUrl)/ExCss.pdb" LocalFilename="$(fwrt)/Downloads/ExCss.pdb" Condition="'$(OS)'=='Windows_NT'"/>
+		<LcmOutputBaseFiles Include="ICSharpCode.SharpZipLib.dll" />
+		<LcmOutputBaseFiles Include="Hunspellx86.dll" Condition="'$(OS)'=='Windows_NT' AND '$(Platform)'!='x64'"/>
+		<LcmOutputBaseFiles Include="Hunspellx64.dll" Condition="'$(OS)'=='Windows_NT' AND '$(Platform)'=='x64'"/>
+		<LcmOutputBaseFiles Include="NHunspell.dll" Condition="'$(OS)'=='Windows_NT'" />
+		<LcmOutputBaseFiles Include="Microsoft.Practices.ServiceLocation.dll" />
+		<LcmOutputBaseFiles Include="protobuf-net.dll" />
+		<LcmOutputBaseFiles Include="StructureMap.dll" />
+		<LcmOutputBaseFiles Include="Tools.dll" />
+		<LcmOutputBaseFiles Include="SIL.LCModel.FixData.dll" />
+		<LcmOutputBaseFiles Include="SIL.LCModel.FixData.pdb" />
+		<LcmOutputBaseFiles Include="SIL.LCModel.Utils.dll" />
+		<LcmOutputBaseFiles Include="SIL.LCModel.Utils.pdb" />
+		<LcmOutputBaseFiles Include="SIL.LCModel.Utils.Tests.dll" />
+		<LcmOutputBaseFiles Include="SIL.LCModel.Utils.Tests.dll.config" />
+		<LcmOutputBaseFiles Include="SIL.LCModel.Utils.Tests.pdb" />
+		<LcmOutputBaseFiles Include="SIL.LCModel.Core.dll" />
+		<LcmOutputBaseFiles Include="SIL.LCModel.Core.dll.config"/>
+		<LcmOutputBaseFiles Include="SIL.LCModel.Core.pdb" />
+		<LcmOutputBaseFiles Include="SIL.LCModel.Core.Tests.dll" />
+		<LcmOutputBaseFiles Include="SIL.LCModel.Core.Tests.dll.config" />
+		<LcmOutputBaseFiles Include="SIL.LCModel.Core.Tests.pdb" />
+		<LcmOutputBaseFiles Include="SIL.LCModel.Build.Tasks.dll" />
+		<LcmOutputBaseFiles Include="SIL.LCModel.Build.Tasks.pdb" />
+		<LcmOutputBaseFiles Include="SIL.LCModel.dll" />
+		<LcmOutputBaseFiles Include="SIL.LCModel.pdb" />
+		<LcmOutputBaseFiles Include="SIL.LCModel.Tests.dll" />
+		<LcmOutputBaseFiles Include="SIL.LCModel.Tests.dll.config" />
+		<LcmOutputBaseFiles Include="SIL.LCModel.Tests.pdb" />
+
+		<LcmOutputCommonFiles Include="KernelInterfaces/FwKernelTlb.json" />
+
+		<LcmFwKernelFiles Include="KernelInterfaces/common.idh" />
+		<LcmFwKernelFiles Include="KernelInterfaces/FwKernel.idh" />
+		<LcmFwKernelFiles Include="KernelInterfaces/Language.idh" />
+		<LcmFwKernelFiles Include="KernelInterfaces/TextServ.idh" />
+		<LcmFwKernelFiles Include="KernelInterfaces/FwKernelTlb.idl" />
+
+		<LcmDistFiles Include="Styles.dtd" />
+
+		<!-- GOLDEtic.xml is copied so that developers can use grammatical categories without building localizations.
+			Building localizations will overwrite this file with the latest translations. -->
+		<LcmTemplatesFiles Include="Templates/GOLDEtic.xml" />
+		<LcmTemplatesFiles Include="Templates/NewLangProj.fwdata" />
+		<LcmTemplatesFiles Include="Templates/POS.xml" />
+		<LcmTemplatesFiles Include="Templates/SemDom.xml" />
+
+		<LcmIcuDataFiles Include="IcuData/data/nfc.txt" />
+		<LcmIcuDataFiles Include="IcuData/data/nfcHebrew.txt" />
+		<LcmIcuDataFiles Include="IcuData/data/nfcOverrides.txt" />
+		<LcmIcuDataFiles Include="IcuData/data/nfkc.txt" />
+		<LcmIcuDataFiles Include="IcuData/data/nfkcOverrides.txt" />
+		<LcmIcuDataFiles Include="IcuData/data/UnicodeDataOverrides.txt" />
+
+		<LcmIcuNrmFiles Include="IcuData/icudt$(IcuVersion)l/nfc_fw.nrm" />
+		<LcmIcuNrmFiles Include="IcuData/icudt$(IcuVersion)l/nfkc_fw.nrm" />
+	</ItemGroup>
+
+	<Target Name="downloadDlls" DependsOnTargets="RestoreNuGetPackages" Condition="'$(disableDownloads)'!='true'">
+		<MakeDir Directories="$(DownloadsDir)"/>
+		<MakeDir Directories="$(DownloadsDir)/lib"/>
+		<MakeDir Directories="$(DownloadsDir)/lib/x64"/>
+		<MakeDir Directories="$(DownloadsDir)/lib/x86"/>
+		<Message Text="NOT" Condition="'$(UseLocalLibraries)'=='Y'"/>
+		<Message Text="Downloading artifacts for Palaso, including  L10NSharp, Enchant.Net, ibusdotnet, NDesk.DBus, Spart, and Newtonsoft.Json."/>
+		<DownloadFilesFromTeamCity Address="$(TeamCityUrl)" BuildType="$(PalasoBuildType)" VersionInfo="$(MasterVersionInfo)"
+			Artifacts="@(PalasoFiles)" DownloadsDir="$(DownloadsDir)" Tag="$(PalasoBuildTag)" Condition="'$(UseLocalLibraries)'!='Y'"/>
+
+		<Message Text="Downloading artifacts for Chorus."/>
+		<DownloadFilesFromTeamCity Address="$(TeamCityUrl)" BuildType="$(ChorusBuildType)" VersionInfo="$(MasterVersionInfo)"
+			Artifacts="@(ChorusFiles)" DownloadsDir="$(DownloadsDir)" Tag="$(ChorusBuildTag)" Condition="'$(UseLocalLibraries)'!='Y'"/>
+
+		<Message Text="nor" Condition="'$(UseLocalLibraries)'=='Y'"/>
+		<Message Text="Downloading artifacts for LCM." />
+		<DownloadFilesFromTeamCity Address="$(TeamCityUrl)" BuildType="$(LcmBuildType)" VersionInfo="$(MasterVersionInfo)" Artifacts="LCM.zip" DownloadsDir="$(DownloadsDir)" Condition="'$(UseLocalLibraries)'!='Y'" Tag="$(LcmBuildTag)"/>
+		<Message Text="(the above artifacts will be copied from $(PalasoArtifactsDir), $(ChorusArtifactsDir), and $(LcmArtifactsDir), respectively, as  specified in LibraryDevelopment.targets)" Condition="'$(UseLocalLibraries)'=='Y'"/>
+
+		<Message Text="Downloading an artifact for IPCFramework."/>
+		<DownloadFilesFromTeamCity Address="$(TeamCityUrl)" BuildType="$(IPCFrameworkBuildType)" VersionInfo="$(MasterVersionInfo)" Artifacts="IPCFramework.dll" DownloadsDir="$(DownloadsDir)"/>
+
+		<!-- Due to platform-specific casing, ExCSS or ExCss is included in a variable -->
+		<Message Text="Downloading artifacts for $(ExCss)."/>
+		<DownloadFilesFromTeamCity Address="$(TeamCityUrl)" BuildType="$(ExCssBuildType)" VersionInfo="$(MasterVersionInfo)" Artifacts="$(ExCss).dll;$(ExCss).$(DebugInfo)" DownloadsDir="$(DownloadsDir)"/>
+
+		<Message Text="Downloading artifacts for icu4c." Condition="'$(OS)'=='Windows_NT'"/>
+		<DownloadFilesFromTeamCity Address="$(TeamCityUrl)" BuildType="$(Icu4cBuildType32)" VersionInfo="$(MasterVersionInfo)" Artifacts="@(IcuFiles)" DownloadsDir="$(DownloadsDir)/lib/x86" Condition="'$(OS)'=='Windows_NT'"/>
+		<DownloadFilesFromTeamCity Address="$(TeamCityUrl)" BuildType="$(Icu4cBuildType64)" VersionInfo="$(MasterVersionInfo)" Artifacts="@(IcuFiles)" DownloadsDir="$(DownloadsDir)/lib/x64" Condition="'$(OS)'=='Windows_NT' AND '$(arch)'=='x64'"/>
+
+		<Message Text="Downloading artifacts for HermitCrab." />
+		<DownloadFilesFromTeamCity Address="$(TeamCityUrl)" BuildType="$(HermitCrabBuildType)" Tag="$(HermitCrabBuildTag)" VersionInfo="$(MasterVersionInfo)" Artifacts="QuickGraph.dll;SIL.Machine.dll;SIL.Collections.dll;SIL.HermitCrab.dll" DownloadsDir="$(DownloadsDir)"/>
 
 		<Message Text="Downloading Paratext DLLs." />
-		<DownloadFile Address="$(DownloadsSilOrgDownloadUrl)Paratext.LexicalContracts.dll" LocalFilename="$(fwrt)/Downloads/Paratext.LexicalContracts.dll"/>
-		<!-- Windows downloads -->
-		<DownloadFile Address="$(DownloadsSilOrgDownloadUrl)Windows/FormattedEditor.dll" LocalFilename="$(fwrt)/Downloads/FormattedEditor.dll" Condition="'$(OS)'=='Windows_NT'"/>
-		<DownloadFile Address="$(DownloadsSilOrgDownloadUrl)Windows/HelpSystem.dll" LocalFilename="$(fwrt)/Downloads/HelpSystem.dll" Condition="'$(OS)'=='Windows_NT'"/>
-		<DownloadFile Address="$(DownloadsSilOrgDownloadUrl)Windows/HtmlEditor.dll" LocalFilename="$(fwrt)/Downloads/HtmlEditor.dll" Condition="'$(OS)'=='Windows_NT'"/>
-		<DownloadFile Address="$(DownloadsSilOrgDownloadUrl)Windows/NetLoc.dll" LocalFilename="$(fwrt)/Downloads/NetLoc.dll" Condition="'$(OS)'=='Windows_NT'"/>
-		<DownloadFile Address="$(DownloadsSilOrgDownloadUrl)Windows/ParatextShared.dll" LocalFilename="$(fwrt)/Downloads/ParatextShared.dll" Condition="'$(OS)'=='Windows_NT'"/>
-		<DownloadFile Address="$(DownloadsSilOrgDownloadUrl)Windows/Utilities.dll" LocalFilename="$(fwrt)/Downloads/Utilities.dll" Condition="'$(OS)'=='Windows_NT'"/>
-		<!-- Linux downloads -->
-		<DownloadFile Address="$(DownloadsSilOrgDownloadUrl)Linux/FormattedEditor.dll" LocalFilename="$(fwrt)/Downloads/FormattedEditor.dll" Condition="'$(OS)'=='Unix'"/>
-		<DownloadFile Address="$(DownloadsSilOrgDownloadUrl)Linux/HelpSystem.dll" LocalFilename="$(fwrt)/Downloads/HelpSystem.dll" Condition="'$(OS)'=='Unix'"/>
-		<DownloadFile Address="$(DownloadsSilOrgDownloadUrl)Linux/HtmlEditor.dll" LocalFilename="$(fwrt)/Downloads/HtmlEditor.dll" Condition="'$(OS)'=='Unix'"/>
-		<DownloadFile Address="$(DownloadsSilOrgDownloadUrl)Linux/NetLoc.dll" LocalFilename="$(fwrt)/Downloads/NetLoc.dll" Condition="'$(OS)'=='Unix'"/>
-		<DownloadFile Address="$(DownloadsSilOrgDownloadUrl)Linux/ParatextShared.dll" LocalFilename="$(fwrt)/Downloads/ParatextShared.dll" Condition="'$(OS)'=='Unix'"/>
-		<DownloadFile Address="$(DownloadsSilOrgDownloadUrl)Linux/Utilities.dll" LocalFilename="$(fwrt)/Downloads/Utilities.dll" Condition="'$(OS)'=='Unix'"/>
+		<DownloadFile Address="$(DownloadsSilOrgDownloadUrl)/Paratext.LexicalContracts.dll" DownloadsDir="$(DownloadsDir)"/>
+		<DownloadFile Address="$(DownloadsSilOrgOSDownloadUrl)/FormattedEditor.dll" DownloadsDir="$(DownloadsDir)"/>
+		<DownloadFile Address="$(DownloadsSilOrgOSDownloadUrl)/HelpSystem.dll" DownloadsDir="$(DownloadsDir)"/>
+		<DownloadFile Address="$(DownloadsSilOrgOSDownloadUrl)/HtmlEditor.dll" DownloadsDir="$(DownloadsDir)"/>
+		<DownloadFile Address="$(DownloadsSilOrgOSDownloadUrl)/NetLoc.dll" DownloadsDir="$(DownloadsDir)"/>
+		<DownloadFile Address="$(DownloadsSilOrgOSDownloadUrl)/ParatextShared.dll" DownloadsDir="$(DownloadsDir)"/>
+		<DownloadFile Address="$(DownloadsSilOrgOSDownloadUrl)/Utilities.dll" DownloadsDir="$(DownloadsDir)"/>
 
-		<Message Text="Downloading pinned artifacts for HermitCrab." />
-		<DownloadFile Address="$(HermitCrabDownloadUrl)/QuickGraph.dll" LocalFilename="$(fwrt)/Downloads/QuickGraph.dll"/>
-		<DownloadFile Address="$(HermitCrabDownloadUrl)/SIL.Machine.dll" LocalFilename="$(fwrt)/Downloads/SIL.Machine.dll"/>
-		<DownloadFile Address="$(HermitCrabDownloadUrl)/SIL.Collections.dll" LocalFilename="$(fwrt)/Downloads/SIL.Collections.dll"/>
-		<DownloadFile Address="$(HermitCrabDownloadUrl)/SIL.HermitCrab.dll" LocalFilename="$(fwrt)/Downloads/SIL.HermitCrab.dll"/>
-
-		<Message Text="Downloading pinned artifacts for icu4c." Condition="'$(OS)'=='Windows_NT'"/>
-		<DownloadFile Address="$(Icu4cDownloadUrl)/gennorm2.exe" LocalFilename="$(fwrt)/Downloads/gennorm2.exe" Condition="'$(OS)'=='Windows_NT'"/>
-		<DownloadFile Address="$(Icu4cDownloadUrl)/icudt$(IcuVersion).dll" LocalFilename="$(fwrt)/Downloads/icudt$(IcuVersion).dll" Condition="'$(OS)'=='Windows_NT'"/>
-		<DownloadFile Address="$(Icu4cDownloadUrl)/icuin$(IcuVersion).dll" LocalFilename="$(fwrt)/Downloads/icuin$(IcuVersion).dll" Condition="'$(OS)'=='Windows_NT'"/>
-		<DownloadFile Address="$(Icu4cDownloadUrl)/icutu$(IcuVersion).dll" LocalFilename="$(fwrt)/Downloads/icutu$(IcuVersion).dll" Condition="'$(OS)'=='Windows_NT'"/>
-		<DownloadFile Address="$(Icu4cDownloadUrl)/icuuc$(IcuVersion).dll" LocalFilename="$(fwrt)/Downloads/icuuc$(IcuVersion).dll" Condition="'$(OS)'=='Windows_NT'"/>
-		<DownloadFile Address="$(Icu4cDownloadUrl)/icudt.lib" LocalFilename="$(fwrt)/Downloads/icudt.lib" Condition="'$(OS)'=='Windows_NT'"/>
-		<DownloadFile Address="$(Icu4cDownloadUrl)/icuin.lib" LocalFilename="$(fwrt)/Downloads/icuin.lib" Condition="'$(OS)'=='Windows_NT'"/>
-		<DownloadFile Address="$(Icu4cDownloadUrl)/icuuc.lib" LocalFilename="$(fwrt)/Downloads/icuuc.lib" Condition="'$(OS)'=='Windows_NT'"/>
-
-
-		<Message Text="Downloading pinned artifacts from Palaso for Paratext 8 support" />
-		<DownloadFile Address="$(SILScriptureDownloadUrl)/Newtonsoft.Json.dll" LocalFilename="$(fwrt)/Downloads/Newtonsoft.Json.dll"/>
-		<DownloadFile Address="$(SILScriptureDownloadUrl)/SIL.Core.dll" LocalFilename="$(fwrt)/Downloads/SIL.Core.dll"/>
-		<DownloadFile Address="$(SILScriptureDownloadUrl)/SIL.Scripture.dll" LocalFilename="$(fwrt)/Downloads/SIL.Scripture.dll"/>
-		<DownloadFile Address="$(SILScriptureDownloadUrl)/SIL.WritingSystems.dll" LocalFilename="$(fwrt)/Downloads/SIL.WritingSystems.dll"/>
+		<Message Text="Downloading NUnit." />
+		<!-- Use wget to download nunit since mono 4.6 has TLS trouble. mono 5 is fine. -->
+		<Exec Command="wget '$(NUnitDownloadUrl)' -O '$(DownloadsDir)/NUnit-2.6.4.zip'" Condition="'$(OS)'!='Windows_NT'"/>
+		<DownloadFile Address="$(NUnitDownloadUrl)" DownloadsDir="$(DownloadsDir)"/>
 	</Target>
+
+	<!-- Setup source variables (to enable local development in libpalaso, chorus, and liblcm) -->
+	<PropertyGroup>
+		<PalasoArtifactsDir Condition="'$(PalasoArtifactsDir)'==''">$(DownloadsDir)</PalasoArtifactsDir>
+		<ChorusArtifactsDir Condition="'$(ChorusArtifactsDir)'==''">$(DownloadsDir)</ChorusArtifactsDir>
+		<LcmArtifactsDir Condition="'$(LcmArtifactsDir)'==''">$(DownloadsDir)/LCM</LcmArtifactsDir>
+	</PropertyGroup>
 
 	<!-- item group for downloads, to allow easy copying -->
 	<!-- wildcards don't work unless the files have already been downloaded once -->
 	<ItemGroup>
-		<DownloadedFiles Include="$(fwrt)/Downloads/Autofac.dll"/>
-		<DownloadedFiles Include="$(fwrt)/Downloads/Chorus.exe"/>
-		<DownloadedFiles Include="$(fwrt)/Downloads/ChorusHub.exe" Condition="'$(OS)'=='Unix'"/>
-		<DownloadedFiles Include="$(fwrt)/Downloads/LibChorus.dll"/>
-		<DownloadedFiles Include="$(fwrt)/Downloads/Vulcan.Uczniowie.HelpProvider.dll"/>
 		<!-- we need to explicitly specify the important files, otherwise they'll be ignored
 		if they don't exist by the time this ItemGroup is read -->
-		<DownloadedFiles Include="$(fwrt)/Downloads/Palaso.dll"/>
-		<DownloadedFiles Include="$(fwrt)/Downloads/Palaso.dll.config" Condition="'$(OS)'=='Unix'"/>
-		<DownloadedFiles Include="$(fwrt)/Downloads/Palaso.dll.mdb" Condition="'$(OS)'=='Unix'"/>
-		<DownloadedFiles Include="$(fwrt)/Downloads/Palaso.pdb" Condition="'$(OS)'=='Windows_NT'"/>
-		<DownloadedFiles Include="$(fwrt)/Downloads/Palaso.Lift.dll"/>
-		<DownloadedFiles Include="$(fwrt)/Downloads/Palaso.Lift.dll.mdb" Condition="'$(OS)'=='Unix'"/>
-		<DownloadedFiles Include="$(fwrt)/Downloads/Palaso.Lift.pdb" Condition="'$(OS)'=='Windows_NT'"/>
-		<DownloadedFiles Include="$(fwrt)/Downloads/Palaso.Media.dll"/>
-		<DownloadedFiles Include="$(fwrt)/Downloads/Palaso.Media.dll.config" Condition="'$(OS)'=='Unix'"/>
-		<DownloadedFiles Include="$(fwrt)/Downloads/Palaso.Media.dll.mdb" Condition="'$(OS)'=='Unix'"/>
-		<DownloadedFiles Include="$(fwrt)/Downloads/Palaso.Media.pdb" Condition="'$(OS)'=='Windows_NT'"/>
-		<DownloadedFiles Include="$(fwrt)/Downloads/Palaso.TestUtilities.dll"/>
-		<DownloadedFiles Include="$(fwrt)/Downloads/Palaso.TestUtilities.dll.mdb" Condition="'$(OS)'=='Unix'"/>
-		<DownloadedFiles Include="$(fwrt)/Downloads/Palaso.TestUtilities.pdb" Condition="'$(OS)'=='Windows_NT'"/>
-		<DownloadedFiles Include="$(fwrt)/Downloads/PalasoUIWindowsForms.dll"/>
-		<DownloadedFiles Include="$(fwrt)/Downloads/PalasoUIWindowsForms.dll.config" Condition="'$(OS)'=='Unix'"/>
-		<DownloadedFiles Include="$(fwrt)/Downloads/PalasoUIWindowsForms.dll.mdb" Condition="'$(OS)'=='Unix'"/>
-		<DownloadedFiles Include="$(fwrt)/Downloads/PalasoUIWindowsForms.pdb" Condition="'$(OS)'=='Windows_NT'"/>
-		<DownloadedFiles Include="$(fwrt)/Downloads/PalasoUIWindowsForms.GeckoBrowserAdapter.dll"/>
-		<DownloadedFiles Include="$(fwrt)/Downloads/PalasoUIWindowsForms.GeckoBrowserAdapter.dll.mdb" Condition="'$(OS)'=='Unix'"/>
-		<DownloadedFiles Include="$(fwrt)/Downloads/PalasoUIWindowsForms.GeckoBrowserAdapter.pdb" Condition="'$(OS)'=='Windows_NT'"/>
-		<DownloadedFiles Include="$(fwrt)/Downloads/SIL.Archiving.dll"/>
-		<DownloadedFiles Include="$(fwrt)/Downloads/SIL.Archiving.dll.config" Condition="'$(OS)'=='Unix'"/>
-		<DownloadedFiles Include="$(fwrt)/Downloads/SIL.Archiving.$(DebugInfo)"/>
-		<!-- newer SIL (Palaso) libraries needed for Paratext 8 support -->
-		<DownloadedFiles Include="$(fwrt)/Downloads/Newtonsoft.Json.dll"/>
-		<DownloadedFiles Include="$(fwrt)/Downloads/SIL.Core.dll"/>
-		<DownloadedFiles Include="$(fwrt)/Downloads/SIL.WritingSystems.dll"/>
-		<DownloadedFiles Include="$(fwrt)/Downloads/icu.net.dll"/>
-		<DownloadedFiles Include="$(fwrt)/Downloads/Keyman7Interop.dll" Condition="'$(OS)'=='Windows_NT'"/>
-		<DownloadedFiles Include="$(fwrt)/Downloads/KeymanLink.dll" Condition="'$(OS)'=='Windows_NT'"/>
-		<DownloadedFiles Include="$(fwrt)/Downloads/L10NSharp.dll"/>
-		<DownloadedFiles Include="$(fwrt)/Downloads/Enchant.Net.dll"/>
-		<DownloadedFiles Include="$(fwrt)/Downloads/Enchant.Net.dll.config" Condition="'$(OS)'=='Unix'"/>
-		<DownloadedFiles Include="$(fwrt)/Downloads/IPCFramework.dll"/>
-		<DownloadedFiles Include="$(fwrt)/Downloads/ExCss.dll" Condition="'$(OS)'=='Windows_NT'"/>
-		<DownloadedFiles Include="$(fwrt)/Downloads/ExCss.pdb" Condition="'$(OS)'=='Windows_NT'"/>
-		<!-- xBuild and MsBuild generate different case artifacts's off the same solution file. (sigh) -->
-		<DownloadedFiles Include="$(fwrt)/Downloads/ExCSS.dll" Condition="'$(OS)'=='Unix'"/>
-		<DownloadedFiles Include="$(fwrt)/Downloads/ExCSS.dll.mdb" Condition="'$(OS)'=='Unix'"/>
-		<DownloadedFiles Include="$(fwrt)/Downloads/ibusdotnet.dll" Condition="'$(OS)'=='Unix'"/>
-		<DownloadedFiles Include="$(fwrt)/Downloads/NDesk.DBus.dll" Condition="'$(OS)'=='Unix'"/>
-		<DownloadedFiles Include="$(fwrt)/Downloads/NDesk.DBus.dll.config" Condition="'$(OS)'=='Unix'"/>
-		<DownloadedFiles Include="$(fwrt)/Downloads/Ionic.Zip.dll"/>
-		<DownloadedFiles Include="$(fwrt)/Downloads/taglib-sharp.dll"/>
-		<DownloadedFiles Include="$(fwrt)/Downloads/irrKlang.NET4.dll"/>
-		<DownloadedFiles Include="$(fwrt)/Downloads/FormattedEditor.dll"/>
-		<DownloadedFiles Include="$(fwrt)/Downloads/HelpSystem.dll"/>
-		<DownloadedFiles Include="$(fwrt)/Downloads/HtmlEditor.dll"/>
-		<DownloadedFiles Include="$(fwrt)/Downloads/NetLoc.dll"/>
-		<DownloadedFiles Include="$(fwrt)/Downloads/Paratext.LexicalContracts.dll"/>
-		<DownloadedFiles Include="$(fwrt)/Downloads/ParatextShared.dll"/>
-		<DownloadedFiles Include="$(fwrt)/Downloads/Utilities.dll"/>
-		<DownloadedFiles Include="$(fwrt)/Downloads/QuickGraph.dll"/>
-		<DownloadedFiles Include="$(fwrt)/Downloads/SIL.Machine.dll"/>
-		<DownloadedFiles Include="$(fwrt)/Downloads/SIL.Collections.dll"/>
-		<DownloadedFiles Include="$(fwrt)/Downloads/SIL.HermitCrab.dll"/>
-		<DownloadedFiles Include="$(fwrt)/Downloads/gennorm2.exe" Condition="'$(OS)'=='Windows_NT'"/>
-		<DownloadedFiles Include="$(fwrt)/Downloads/icudt$(IcuVersion).dll" Condition="'$(OS)'=='Windows_NT'"/>
-		<DownloadedFiles Include="$(fwrt)/Downloads/icuin$(IcuVersion).dll" Condition="'$(OS)'=='Windows_NT'"/>
-		<DownloadedFiles Include="$(fwrt)/Downloads/icutu$(IcuVersion).dll" Condition="'$(OS)'=='Windows_NT'"/>
-		<DownloadedFiles Include="$(fwrt)/Downloads/icuuc$(IcuVersion).dll" Condition="'$(OS)'=='Windows_NT'"/>
+		<DownloadedFiles Include="$(DownloadsDir)/IPCFramework.dll"/>
+		<!-- xBuild and MsBuild generate different case artifacts off the same solution file. (sigh) -->
+		<DownloadedFiles Include="$(DownloadsDir)/$(ExCss).dll"/>
+		<DownloadedFiles Include="$(DownloadsDir)/$(ExCss).$(DebugInfo)"/>
+		<DownloadedFiles Include="$(DownloadsDir)/FormattedEditor.dll"/>
+		<DownloadedFiles Include="$(DownloadsDir)/HelpSystem.dll"/>
+		<DownloadedFiles Include="$(DownloadsDir)/HtmlEditor.dll"/>
+		<DownloadedFiles Include="$(DownloadsDir)/NetLoc.dll"/>
+		<DownloadedFiles Include="$(DownloadsDir)/Paratext.LexicalContracts.dll"/>
+		<DownloadedFiles Include="$(DownloadsDir)/ParatextShared.dll"/>
+		<DownloadedFiles Include="$(DownloadsDir)/Utilities.dll"/>
+		<DownloadedFiles Include="$(DownloadsDir)/QuickGraph.dll"/>
+		<DownloadedFiles Include="$(DownloadsDir)/SIL.Machine.dll"/>
+		<DownloadedFiles Include="$(DownloadsDir)/SIL.Collections.dll"/>
+		<DownloadedFiles Include="$(DownloadsDir)/SIL.HermitCrab.dll"/>
 	</ItemGroup>
 
-	<Target Name="CopyDlls" DependsOnTargets="downloadDlls">
+	<Target Name="CopyDlls" DependsOnTargets="downloadDlls;copyLibL10ns">
 		<!-- .Net assemblies -->
 		<Copy SourceFiles="$(fwrt)/DistFiles/LinqBridge.dll" DestinationFolder="$(dir-outputBase)"
 				SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true"/>
@@ -523,57 +528,101 @@
 		<Copy SourceFiles="$(fwrt)/DistFiles/libxample64.so" DestinationFolder="$(dir-outputBase)"
 				SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'$(OS)'=='Unix'"/>
 		<!-- Windows dynamically loaded libraries -->
-		<Copy SourceFiles="$(fwrt)/DistFiles/xample.dll" DestinationFolder="$(dir-outputBase)"
-				SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'$(OS)'=='Windows_NT'"/>
-		<Copy SourceFiles="$(fwrt)/DistFiles/Commons.Xml.Relaxng.dll" DestinationFolder="$(dir-outputBase)"
-				SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'$(OS)'=='Windows_NT'"/>
+		<Copy SourceFiles="$(fwrt)/DistFiles/xample32.dll" DestinationFiles="$(dir-outputBase)/xample.dll"
+				SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'$(OS)'=='Windows_NT'  AND '$(arch)'!='x64'"/>
+		<Copy SourceFiles="$(fwrt)/DistFiles/xample64.dll" DestinationFiles="$(dir-outputBase)/xample.dll"
+				SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'$(OS)'=='Windows_NT' AND '$(arch)'=='x64'"/>
 		<!-- ICU libs -->
-		<Copy SourceFiles="$(fwrt)/Downloads/icudt.lib" DestinationFolder="$(fwrt)/Lib"
+		<Copy SourceFiles="$(DownloadsDir)/lib/$(arch)/icudt.lib" DestinationFolder="$(fwrt)/Lib"
 				SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'$(OS)'=='Windows_NT'"/>
-		<Copy SourceFiles="$(fwrt)/Downloads/icuin.lib" DestinationFolder="$(fwrt)/Lib"
+		<Copy SourceFiles="$(DownloadsDir)/lib/$(arch)/icuin.lib" DestinationFolder="$(fwrt)/Lib"
 				SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'$(OS)'=='Windows_NT'"/>
-		<Copy SourceFiles="$(fwrt)/Downloads/icuuc.lib" DestinationFolder="$(fwrt)/Lib"
+		<Copy SourceFiles="$(DownloadsDir)/lib/$(arch)/icuuc.lib" DestinationFolder="$(fwrt)/Lib"
 				SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'$(OS)'=='Windows_NT'"/>
-		<!-- Hunspell dlls -->
-		<Copy SourceFiles="$(fwrt)/DistFiles/Windows/libhunspell.dll" DestinationFolder="$(dir-outputBase)"
-				SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'$(OS)'=='Windows_NT'"/>
+		<!-- Copy ICU dll's and exe's to lib/x64 and lib/x86. The ICU .lib files don't need included. -->
+		<ItemGroup>
+			<IcuFileSet32 Include="$(DownloadsDir)/lib/x86/icu*.dll" />
+			<IcuFileSet32 Include="$(DownloadsDir)/lib/x86/gennorm2.exe" />
+		</ItemGroup>
+		<ItemGroup>
+			<IcuFileSet64 Include="$(DownloadsDir)/lib/x64/icu*.dll" />
+			<IcuFileSet64 Include="$(DownloadsDir)/lib/x64/gennorm2.exe" />
+		</ItemGroup>
+		<!-- Include 32-bit ICU, even if arch is x64, so we can provide 32-bit ICU for 32-bit Paratext to use when the tools interact. -->
+		<Copy SourceFiles="@(IcuFileSet32)" DestinationFolder="$(dir-outputBase)/lib/x86" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'$(OS)'=='Windows_NT'" />
+		<Copy SourceFiles="@(IcuFileSet64)" DestinationFolder="$(dir-outputBase)/lib/x64" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'$(OS)'=='Windows_NT' AND '$(arch)'=='x64'" />
+
+		<!-- NUnit dlls -->
+		<Unzip ZipFilename="$(DownloadsDir)/NUnit-2.6.4.zip" ToDir="$(DownloadsDir)/" />
+		<CreateItem Include="$(DownloadsDir)/NUnit-2.6.4/**/*">
+			<Output TaskParameter="Include" ItemName="NUnitFiles"/>
+		</CreateItem>
+		<Copy SourceFiles="@(NUnitFiles)" DestinationFolder="$(fwrt)/Bin/NUnit/%(RecursiveDir)"
+				SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true"/>
+		<ForceDelete Files="$(DownloadsDir)/NUnit-2.6.4/" />
+
+		<!-- LCM dlls -->
+		<ForceDelete Files="$(DownloadsDir)/LCM/" />
+		<Unzip ZipFilename="$(DownloadsDir)/LCM.zip" ToDir="$(DownloadsDir)/LCM/" Condition="'$(UseLocalLibraries)'!='Y'"/>
+		<Copy SourceFiles="@(LcmOutputBaseFiles -> '$(LcmArtifactsDir)/%(Identity)')" DestinationFolder="$(dir-outputBase)" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />
+		<Copy SourceFiles="@(LcmOutputCommonFiles -> '$(LcmArtifactsDir)/%(Identity)')" DestinationFolder="$(dir-fwoutputCommon)" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />
+		<Copy SourceFiles="@(LcmFwKernelFiles -> '$(LcmArtifactsDir)/%(Identity)')" DestinationFolder="$(fwrt)/Src/Kernel" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />
+		<Copy SourceFiles="@(LcmDistFiles -> '$(LcmArtifactsDir)/%(Identity)')" DestinationFolder="$(fwrt)/DistFiles" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />
+		<Copy SourceFiles="@(LcmTemplatesFiles -> '$(LcmArtifactsDir)/%(Identity)')" DestinationFolder="$(fwrt)/DistFiles/Templates" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />
+		<Copy SourceFiles="@(LcmIcuDataFiles -> '$(LcmArtifactsDir)/%(Identity)')" DestinationFolder="$(fwrt)/DistFiles/Icu$(IcuVersion)/data" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />
+		<Copy SourceFiles="@(LcmIcuNrmFiles -> '$(LcmArtifactsDir)/%(Identity)')" DestinationFolder="$(fwrt)/DistFiles/Icu$(IcuVersion)/icudt$(IcuVersion)l" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />
+
 		<!-- Copy the downloaded artifacts -->
+		<Copy SourceFiles="@(PalasoFiles -> '$(PalasoArtifactsDir)/%(Identity)')" DestinationFolder="$(dir-outputBase)" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />
+		<Copy SourceFiles="@(ChorusFiles -> '$(ChorusArtifactsDir)/%(Identity)')" DestinationFolder="$(dir-outputBase)" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />
 		<Copy SourceFiles="@(DownloadedFiles)" DestinationFolder="$(dir-outputBase)"
 			SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true"/>
+
+		<!-- Encoding Converters Files -->
+		<Copy SourceFiles="@(ECWindowsFiles -> '$(fwrt)/packages/Encoding-Converters-Core.$(ECNugetVersion)/lib/net40/$(ECArch)/%(Identity)')"
+			DestinationFolder="$(dir-outputBase)" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'$(OS)'=='Windows_NT'"/>
+		<Copy SourceFiles="@(ECPlugins -> '$(fwrt)/packages/Encoding-Converters-Core.$(ECNugetVersion)/Plugins/%(Identity)')"
+			DestinationFolder="$(dir-outputBase)/EC/Plugins" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'$(OS)'=='Windows_NT'"/>
+
 		<!-- NuGet packages. Property- and ItemGroups are inside the target so $(arch) and *'s are read properly -->
 		<PropertyGroup>
+			<!-- Yes, the Windows version is missing the the OS and the 32-bit architecture. This package must be updated in encoding-converters-core also -->
+			<GeckoDir Condition="'$(OS)'=='Windows_NT' AND '$(arch)'!='x64'">$(fwrt)/packages/Geckofx45.45.0.33</GeckoDir>
+			<GeckoDir Condition="'$(OS)'=='Windows_NT' AND '$(arch)'=='x64'">$(fwrt)/packages/Geckofx45.64.45.0.33</GeckoDir>
 			<Architecture Condition="'$(arch)'=='x86_64'">64</Architecture>
 			<Architecture Condition="'$(arch)'!='x86_64'">32</Architecture>
-			<GeckoDir Condition="'$(OS)'=='Windows_NT'">$(fwrt)/packages/Geckofx45.45.0.20</GeckoDir>
 			<GeckoDir Condition="'$(OS)'!='Windows_NT'">$(fwrt)/packages/Geckofx45.$(Architecture).Linux.45.0.36</GeckoDir>
 		</PropertyGroup>
 		<ItemGroup>
-			<NuGottenFiles Include="$(GeckoDir)/lib/net40/Geckofx-Core.dll"/>
-			<NuGottenFiles Include="$(GeckoDir)/lib/net40/Geckofx-Core.pdb" Condition="'$(OS)'=='Windows_NT'"/>
-			<NuGottenFiles Include="$(GeckoDir)/lib/net40/Geckofx-Core.dll.mdb" Condition="'$(OS)'!='Windows_NT'"/>
-			<NuGottenFiles Include="$(GeckoDir)/lib/net40/Geckofx-Winforms.dll"/>
-			<NuGottenFiles Include="$(GeckoDir)/lib/net40/Geckofx-Winforms.pdb" Condition="'$(OS)'=='Windows_NT'"/>
-			<NuGottenFiles Include="$(GeckoDir)/lib/net40/Geckofx-Winforms.dll.mdb" Condition="'$(OS)'!='Windows_NT'"/>
+			<!-- The geckofx .dll files are actually pulled from the encoding converters package -->
+			<NuGottenFiles Include="$(GeckoDir)/lib/net45/*.*" Exclude="Geckofx-Core.dll;Geckofx-Winforms.dll" Condition="'$(OS)'=='Windows_NT'"/>
+			<NuGottenFiles Include="$(GeckoDir)/lib/net40/*.*" Condition="'$(OS)'!='Windows_NT'"/>
 			<NuGottenFiles Include="$(GeckoDir)/build/Geckofx-Core.dll.config" Condition="'$(OS)'!='Windows_NT'"/>
 			<NuGottenFiles Include="$(GeckoDir)/content/**/*.*"/>
-			<NuGottenFiles Include="$(fwrt)/packages/DotNetZip.1.10.1/lib/net20/*.*"/>
-			<NuGottenFiles Include="$(fwrt)/packages/protobuf-net.2.0.0.668/lib/net40/protobuf-net.dll" />
+			<NuGottenFiles Include="$(fwrt)/packages/DotNetZip.1.13.3/lib/net40/*.*"/>
+			<NuGottenFiles Include="$(fwrt)/packages/NAudio.1.10.0/lib/net35/NAudio.dll"/>
+			<NuGottenFiles Include="$(fwrt)/packages/NAudio.Lame.1.1.5/lib/netstandard2.0/NAudio.Lame.dll"/>
+			<NuGottenFiles Condition="'$(OS)'=='Windows_NT' AND '$(arch)'!='x64'" Include="$(fwrt)/packages/NAudio.Lame.1.1.5/build/libmp3lame.32.dll"/>
+			<NuGottenFiles Condition="'$(OS)'=='Windows_NT' AND '$(arch)'=='x64'" Include="$(fwrt)/packages/NAudio.Lame.1.1.5/build/libmp3lame.64.dll"/>
+			<NuGottenFiles Include="$(fwrt)/packages/Newtonsoft.Json.12.0.3/lib/net45/Newtonsoft.Json.dll"/>
+			<NuGottenFiles Include="$(fwrt)/packages/Microsoft.Extensions.DependencyModel.2.0.4/lib/net451/Microsoft.Extensions.DependencyModel.dll"/>
+			<NuGottenFiles Include="$(fwrt)/packages/icu.net.2.5.4/lib/net451/icu.net.dll"/>
+			<NuGottenFiles Include="$(fwrt)/packages/System.ValueTuple.4.5.0/lib/net461/System.ValueTuple.dll"/>
+			<NuGottenFiles Include="$(fwrt)/packages\ParatextData.9.0.3\lib\net461\Paratext.LexicalContracts.dll" />
+			<NuGottenFiles Include="$(fwrt)/packages\ParatextData.9.0.3\lib\net461\ParatextData.dll"/>
+			<NuGottenFiles Include="$(fwrt)/packages\ParatextData.9.0.3\lib\net461\PtxUtils.dll"/>
 		</ItemGroup>
 		<Copy SourceFiles="@(NuGottenFiles)" DestinationFolder="$(dir-outputBase)/%(RecursiveDir)"
 			SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true"/>
+		<!-- Copy the libpalso dlls that ParatextData depends on -->
+		<ItemGroup>
+			<ParatextDeps Include="$(fwrt)/packages/SIL.Lib.6.0.11/lib/net46/SIL.*" />
+		</ItemGroup>
+		<Copy SourceFiles="@(ParatextDeps)" DestinationFolder="$(dir-outputBase)/lib/ParatextDeps"
+			SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true"/>
 	</Target>
 
-	<Target Name="setRegistryValues" DependsOnTargets="initLinux;initWindows;setKeysInHKLM;setKeysInHKCU"/>
-
-	<!-- This target only has an effect on Windows machines, and should be removed once encoding converters are updated to look in HKCU by default -->
-	<Target Name="setKeysInHKLM" Condition="'$(UserIsAdmin)'=='True'">
-		<WriteRegistry Hive="LocalMachine"
-						 Key="SOFTWARE\SIL\SilEncConverters40\RootDir"
-						 Value="$(fwrt)\DistFiles\Windows\EC Common"/>
-		<WriteRegistry Hive="LocalMachine"
-						 Key="SOFTWARE\SIL\SilEncConverters40\DeveloperPluginDir"
-						 Value="$(fwrt)\DistFiles\Windows\EC\EC\Plugins"/>
-	</Target>
+	<Target Name="setRegistryValues" DependsOnTargets="initLinux;initWindows;setKeysInHKCU"/>
 
 	<Target Name="setKeysInHKCU" Condition="'$(packaging)' != 'yes'">
 		<Message Text="Setting registry values for $(fwrt)."/>
@@ -591,11 +640,11 @@
 			Value="$(dir-icuData)"/>
 		<WriteRegistry Hive="CurrentUser"
 			Key="$(BUILDAGENT_HKCU)SOFTWARE\SIL\SilEncConverters40\RootDir"
-			Value="$(fwrt)\DistFiles\Windows\EC Common"
+			Value="$(dir-outputBase)"
 			Condition="'$(OS)'=='Windows_NT'"/>
 		<WriteRegistry Hive="CurrentUser"
 			Key="$(BUILDAGENT_HKCU)SOFTWARE\SIL\SilEncConverters40\DeveloperPluginDir"
-			Value="$(fwrt)\DistFiles\Windows\EC\EC\Plugins"
+			Value="$(dir-outputBase)\EC\Plugins"
 			Condition="'$(OS)'=='Windows_NT'"/>
 		<WriteRegistry Hive="CurrentUser"
 			Key="$(BUILDAGENT_HKCU)SOFTWARE\SIL\SilEncConverters40\RootDir"
@@ -610,37 +659,5 @@
 		<WriteRegistry Hive="CurrentUser"
 			Key="$(BUILDAGENT_HKCU)SOFTWARE\SIL\EncodingConverterRepository\Registry"
 			Value="$(fwrt)/DistFiles/SIL/Repository/mappingRegistry.xml"/>
-	</Target>
-
-	<Target Name="allTe" DependsOnTargets="BasicUtils,ZipUtils,Design,FwControls,ScriptureUtils,TeExe,ScrChecks,SharedScrUtils,FwRemoteDatabaseConnectorService"/>
-
-	<ItemGroup>
-		<IcuDataSources Include="$(fwrt)/DistFiles/Icu$(IcuVersion)/data/*.*" />
-	</ItemGroup>
-	<ItemGroup>
-		<IcuDataZipFiles Include="$(fwrt)/DistFiles/Icu$(IcuVersion)/UnicodeDataOverrides.txt" />
-		<IcuDataZipFiles Include="$(fwrt)/DistFiles/Icu$(IcuVersion)/icudt$(IcuVersion)l/nfc_fw.nrm" />
-		<IcuDataZipFiles Include="$(fwrt)/DistFiles/Icu$(IcuVersion)/icudt$(IcuVersion)l/nfkc_fw.nrm" />
-	</ItemGroup>
-	<Target Name="GenerateIcuData" Inputs="@(IcuDataSources)" Outputs="$(fwrt)/DistFiles/Icu$(IcuVersion).zip" DependsOnTargets="CopyDlls">
-		<Copy SourceFiles="$(fwrt)/DistFiles/Icu$(IcuVersion)/data/UnicodeDataOverrides.txt" DestinationFolder="$(fwrt)/DistFiles/Icu$(IcuVersion)"
-				SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true"/>
-		<MakeDir Directories="$(fwrt)/DistFiles/Icu$(IcuVersion)/icudt$(IcuVersion)l" />
-		<PropertyGroup>
-			<gennorm2 Condition="'$(OS)'=='Windows_NT'">$(dir-outputBase)\gennorm2.exe</gennorm2>
-			<gennorm2 Condition="'$(OS)'=='Unix'">$(fwrt)/Lib/src/icu/install$(arch)/sbin/gennorm2</gennorm2>
-		</PropertyGroup>
-		<Exec Command='"$(gennorm2)" -o "$(fwrt)/DistFiles/Icu$(IcuVersion)/icudt$(IcuVersion)l/nfc_fw.nrm" "$(fwrt)/DistFiles/Icu$(IcuVersion)/data/nfc.txt" "$(fwrt)/DistFiles/Icu$(IcuVersion)/data/nfcHebrew.txt" "$(fwrt)/DistFiles/Icu$(IcuVersion)/data/nfcOverrides.txt"' />
-		<Exec Command='"$(gennorm2)" -o "$(fwrt)/DistFiles/Icu$(IcuVersion)/icudt$(IcuVersion)l/nfkc_fw.nrm" "$(fwrt)/DistFiles/Icu$(IcuVersion)/data/nfc.txt" "$(fwrt)/DistFiles/Icu$(IcuVersion)/data/nfcHebrew.txt" "$(fwrt)/DistFiles/Icu$(IcuVersion)/data/nfkc.txt" "$(fwrt)/DistFiles/Icu$(IcuVersion)/data/nfcOverrides.txt" "$(fwrt)/DistFiles/Icu$(IcuVersion)/data/nfkcOverrides.txt"' />
-		<Zip Source="@(IcuDataZipFiles)" WorkingDirectory="$(fwrt)/DistFiles" Destination="$(fwrt)/DistFiles/Icu$(IcuVersion).zip" />
-	</Target>
-
-	<ItemGroup>
-		<IcuDataFiles Include="$(fwrt)/DistFiles/Icu$(IcuVersion)/*.*"/>
-		<IcuDataFiles Include="$(fwrt)/DistFiles/Icu$(IcuVersion)/icudt$(IcuVersion)l/*.*"/>
-	</ItemGroup>
-	<Target Name="IcuData" DependsOnTargets="GenerateIcuData">
-		<Delete Files="$(IcuDataFiles)" TreatErrorsAsWarnings="true"/>
-		<Unzip ZipFilename="$(fwrt)/DistFiles/Icu$(IcuVersion).zip" ToDir="$(fwrt)/DistFiles"/>
 	</Target>
 </Project>

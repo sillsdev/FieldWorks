@@ -1,18 +1,12 @@
-// Copyright (c) 2010-2013 SIL International
+// Copyright (c) 2010-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: LogFile.cs
-// Responsibility: mcconnel
-//
-// <remarks>
-// </remarks>
 
 using System;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using Microsoft.Win32;
-using SIL.Utils;
+using SIL.LCModel.Utils;
+using SIL.PlatformUtilities;
 
 namespace SIL.FieldWorks.UnicodeCharEditor
 {
@@ -50,8 +44,6 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 		///<summary>
 		///</summary>
 		///<param name="line"></param>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="GetLogFile() returns a reference to a singleton")]
 		public static void AddVerboseLine(string line)
 		{
 			if (GetLogFile().VerboseLogging)
@@ -61,8 +53,6 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 		///<summary>
 		///</summary>
 		///<returns></returns>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="GetLogFile() returns a reference to a singleton")]
 		public static bool IsLogging()
 		{
 			return GetLogFile().Logging;
@@ -154,15 +144,16 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 
 			public void AddLineX(string line, bool echoToStdError)
 			{
-				var dateStamp = String.Format("[{0}] ", DateTime.Now);
+				var dateStamp = string.Format("[{0}] ", DateTime.Now);
 
 				//			// always log to the debug output window
 				//			System.Diagnostics.Debug.Write(dateStamp, "Log");
-#if !__MonoCS__
-				// TODO-Linux: this breaks unit test: InstallLanguageTests.IcuTests.TestInstallLanguage_argumentParser
-				// since System.Diagnostics.Debug goes to StdOut on Linux.
-				System.Diagnostics.Debug.WriteLine(line);
-#endif
+				if (Platform.IsWindows)
+				{
+					// TODO-Linux: this breaks unit test: InstallLanguageTests.IcuTests.TestInstallLanguage_argumentParser
+					// since System.Diagnostics.Debug goes to StdOut on Linux.
+					System.Diagnostics.Debug.WriteLine(line);
+				}
 
 				if (!Logging)
 					return;
@@ -204,7 +195,7 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 			/// <summary/>
 			private void Dispose(bool fDisposing)
 			{
-				System.Diagnostics.Debug.WriteLineIf(!fDisposing, "****** Missing Dispose() call for " + GetType().ToString() + " *******");
+				System.Diagnostics.Debug.WriteLineIf(!fDisposing, "****** Missing Dispose() call for " + GetType() + " *******");
 				if (fDisposing)
 				{
 					// dispose managed and unmanaged objects

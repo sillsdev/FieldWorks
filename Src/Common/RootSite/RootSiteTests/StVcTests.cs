@@ -1,9 +1,6 @@
-// Copyright (c) 2003-2013 SIL International
+// Copyright (c) 2003-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: StVcTests.cs
-// Responsibility: Eberhard Beilharz
 
 using System;
 using System.Diagnostics;
@@ -12,15 +9,14 @@ using System.Windows.Forms;
 
 using NUnit.Framework;
 
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.Resources;
-using SIL.FieldWorks.Test.TestUtils;
-using SIL.FieldWorks.FDO.FDOTests;
-using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.CoreImpl;
-using SIL.Utils;
+using SIL.LCModel;
+using SIL.FieldWorks.Common.ViewsInterfaces;
+using SIL.LCModel.Infrastructure;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Utils;
 
 namespace SIL.FieldWorks.Common.RootSites
 {
@@ -28,7 +24,7 @@ namespace SIL.FieldWorks.Common.RootSites
 	/// Summary description for StVcTests.
 	/// </summary>
 	[TestFixture]
-	public class StVcTests : ScrInMemoryFdoTestBase
+	public class StVcTests : ScrInMemoryLcmTestBase
 	{
 		#region Dummy Footnote view
 		#region Footnote fragments
@@ -37,7 +33,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// Possible footnote fragments
 		/// </summary>
 		///  ----------------------------------------------------------------------------------------
-		private enum FootnoteFrags: int
+		private enum FootnoteFrags
 		{
 			/// <summary>Scripture</summary>
 			kfrScripture = 100, // debug is easier if different range from tags
@@ -65,7 +61,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			/// Initializes a new instance of the FootnoteVc class
 			/// </summary>
 			/// ------------------------------------------------------------------------------------
-			public DummyFootnoteVc(FdoCache cache) : base(cache.WritingSystemFactory.UserWs)
+			public DummyFootnoteVc(LcmCache cache) : base(cache.WritingSystemFactory.UserWs)
 			{
 				m_stvc = new StVc(cache.WritingSystemFactory.UserWs);
 				m_stvc.Cache = cache;
@@ -147,7 +143,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			/// </summary>
 			/// <param name="cache"></param>
 			/// --------------------------------------------------------------------------------
-			public DummyFootnoteView(FdoCache cache) : base(cache)
+			public DummyFootnoteView(LcmCache cache) : base(cache)
 			{
 			}
 
@@ -158,7 +154,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			/// <param name="cache"></param>
 			/// <param name="displayTranslation">true if translation should be displayed</param>
 			/// --------------------------------------------------------------------------------
-			public DummyFootnoteView(FdoCache cache, bool displayTranslation) : base(cache)
+			public DummyFootnoteView(LcmCache cache, bool displayTranslation) : base(cache)
 			{
 				m_displayTranslation = displayTranslation;
 			}
@@ -185,16 +181,13 @@ namespace SIL.FieldWorks.Common.RootSites
 			{
 				CheckDisposed();
 
-				if (m_fdoCache == null || DesignMode)
+				if (m_cache == null || DesignMode)
 					return;
 
 				base.MakeRoot();
 
-				m_rootb = VwRootBoxClass.Create();
-				m_rootb.SetSite(this);
-
 				// Set up a new view constructor.
-				m_footnoteVc = new DummyFootnoteVc(m_fdoCache);
+				m_footnoteVc = new DummyFootnoteVc(m_cache);
 				m_footnoteVc.DisplayTranslation = m_displayTranslation;
 
 				m_rootb.DataAccess = Cache.DomainDataByFlid;
@@ -228,7 +221,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			base.FixtureSetup();
 
 			// Set a vern ws.
-			IWritingSystem french;
+			CoreWritingSystemDefinition french;
 			Cache.ServiceLocator.WritingSystemManager.GetOrSet("fr", out french);
 
 			NonUndoableUnitOfWorkHelper.Do(m_actionHandler, () =>
@@ -256,16 +249,15 @@ namespace SIL.FieldWorks.Common.RootSites
 		{
 			IScrFootnote footnote = Cache.ServiceLocator.GetInstance<IScrFootnoteFactory>().Create();
 			m_scr.ScriptureBooksOS[0].FootnotesOS.Add(footnote);
-			footnote.FootnoteMarker = Cache.TsStrFactory.MakeString("a", Cache.WritingSystemFactory.GetWsFromStr("en"));
+			footnote.FootnoteMarker = TsStringUtils.MakeString("a", Cache.WritingSystemFactory.GetWsFromStr("en"));
 
 			// Add the guid property so we can get it out as a string.
-			ITsPropsBldr propsBldr = TsPropsBldrClass.Create();
-			byte[] objData = TsStringUtils.GetObjData(footnote.Guid, 1);
+			ITsPropsBldr propsBldr = TsStringUtils.MakePropsBldr();
+			byte[] objData = TsStringUtils.GetObjData(footnote.Guid, FwObjDataTypes.kodtPictEvenHot);
 			propsBldr.SetStrPropValueRgch(1, objData, objData.Length);
 
 			// Get the guid property as a string.
-			string sObjData;
-			propsBldr.GetStrPropValue(1, out sObjData);
+			string sObjData = propsBldr.GetStrPropValue(1);
 
 			StVc vc = new StVc(Cache.WritingSystemFactory.UserWs) { Cache = Cache };
 			ITsString footnoteMarker = vc.GetStrForGuid(sObjData.Substring(1));
@@ -296,10 +288,10 @@ namespace SIL.FieldWorks.Common.RootSites
 		{
 			IScrBook book = m_scr.ScriptureBooksOS[0];
 			IScrFootnote footnote = AddFootnote(book, (IStTxtPara)book.TitleOA.ParagraphsOS[0], 0, "This is a footnote");
-			footnote.FootnoteMarker = Cache.TsStrFactory.MakeString("a", Cache.WritingSystemFactory.GetWsFromStr("en"));
+			footnote.FootnoteMarker = TsStringUtils.MakeString("a", Cache.WritingSystemFactory.GetWsFromStr("en"));
 			// Prepare the test by creating a footnote view
-			FwStyleSheet styleSheet = new FwStyleSheet();
-			styleSheet.Init(Cache, m_scr.Hvo, ScriptureTags.kflidStyles);
+			LcmStyleSheet styleSheet = new LcmStyleSheet();
+			styleSheet.Init(Cache, Cache.LangProject.Hvo, LangProjectTags.kflidStyles);
 
 			using (DummyFootnoteView footnoteView = new DummyFootnoteView(Cache))
 			{
@@ -360,10 +352,10 @@ namespace SIL.FieldWorks.Common.RootSites
 			// add a translation to the footnote
 			ICmTranslation translation = para.GetOrCreateBT();
 			int analWs = Cache.DefaultAnalWs;
-			translation.Translation.set_String(analWs, TsStringHelper.MakeTSS("abcde", analWs));
+			translation.Translation.set_String(analWs, TsStringUtils.MakeString("abcde", analWs));
 
-			FwStyleSheet styleSheet = new FwStyleSheet();
-			styleSheet.Init(Cache, m_scr.Hvo, ScriptureTags.kflidStyles);
+			LcmStyleSheet styleSheet = new LcmStyleSheet();
+			styleSheet.Init(Cache, Cache.LangProject.Hvo, LangProjectTags.kflidStyles);
 
 			// Prepare the test by creating a footnote view
 			using (DummyFootnoteView footnoteView = new DummyFootnoteView(Cache, true))
@@ -399,8 +391,8 @@ namespace SIL.FieldWorks.Common.RootSites
 		public void ReadOnlySpaceAfterFootnoteMarker()
 		{
 			// Prepare the test by creating a footnote view
-			FwStyleSheet styleSheet = new FwStyleSheet();
-			styleSheet.Init(Cache, m_scr.Hvo, ScriptureTags.kflidStyles);
+			LcmStyleSheet styleSheet = new LcmStyleSheet();
+			styleSheet.Init(Cache, Cache.LangProject.Hvo, LangProjectTags.kflidStyles);
 
 			using (Form form = new Form())
 			using (DummyFootnoteView footnoteView = new DummyFootnoteView(Cache))

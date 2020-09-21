@@ -213,7 +213,7 @@ int HashChars::operator () (const char * pszKey)
 {
 	if (NULL == pszKey)
 		return 0;
-	int cb = strlen(pszKey);
+	int cb = (int)(strlen(pszKey));
 	if (0 == cb)
 		return 0;
 	int nHash = 0;

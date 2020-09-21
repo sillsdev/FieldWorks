@@ -155,4 +155,7 @@ If you will only look at selections and settings, click OK.
 
 If you need to make changes, tell the other users to close this project before you continue, or click Cancel.</value>
   </data>
+  <data name="CustomNumberingSystem" xml:space="preserve">
+    <value>[Custom numbering system]</value>
+  </data>
 </root>

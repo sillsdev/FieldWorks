@@ -6,7 +6,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.Controls;
-using SIL.Utils;
+using SIL.LCModel.Utils;
 
 namespace SIL.FieldWorks.FwCoreDlgControls
 {

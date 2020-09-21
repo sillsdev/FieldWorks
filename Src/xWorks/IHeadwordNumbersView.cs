@@ -4,8 +4,8 @@
 
 using System;
 using System.Collections.Generic;
-using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel.Core.KernelInterfaces;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -24,7 +24,7 @@ namespace SIL.FieldWorks.XWorks
 		bool OkButtonEnabled { get; set; }
 		string Description { get; set; }
 		string HomographWritingSystem { get; set; }
-		IEnumerable<IWritingSystem> AvailableWritingSystems { set; }
+		IEnumerable<CoreWritingSystemDefinition> AvailableWritingSystems { set; }
 		IEnumerable<string> CustomDigits { get; set; }
 		void SetWsFactoryForCustomDigits(ILgWritingSystemFactory factory);
 	}

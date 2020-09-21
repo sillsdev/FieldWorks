@@ -1,9 +1,6 @@
-// Copyright (c) 2003-2013 SIL International
+// Copyright (c) 2003-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: XDumper.cs
-// Responsibility:
 
 using System;
 using System.IO;
@@ -12,17 +9,21 @@ using System.Diagnostics;
 using System.Reflection;
 using System.Collections;
 using System.Collections.Generic;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.FDO.Application;
-using SIL.FieldWorks.FDO.Application.ApplicationServices;
-using SIL.Utils;
+using SIL.LCModel;
+using SIL.LCModel.Application;
+using SIL.LCModel.Application.ApplicationServices;
+using SIL.LCModel.Utils;
 using System.Text;
-using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.CoreImpl;
+using SIL.LCModel.Infrastructure;
+using SIL.LCModel.DomainServices;
 using System.Linq;
+using Icu.Normalization;
+using SIL.LCModel.Core.Cellar;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.Utils;
 
 namespace SIL.FieldWorks.Common.FXT
 {
@@ -51,7 +52,7 @@ namespace SIL.FieldWorks.Common.FXT
 		public event EventHandler<ProgressMessageArgs> SetProgressMessage;
 
 		private XmlDocument m_fxtDocument;
-		protected FdoCache m_cache;
+		protected LcmCache m_cache;
 		private IFwMetaDataCacheManaged m_mdc;
 		protected string m_format; //"xml", "sf"
 		protected XmlNode m_templateRootNode;
@@ -60,11 +61,11 @@ namespace SIL.FieldWorks.Common.FXT
 		protected IFilterStrategy[] m_filters;
 		protected bool m_cancelNow = false;
 		protected Dictionary<string, XmlNode> m_classNameToclassNode = new Dictionary<string, XmlNode>(100);
-		protected Icu.UNormalizationMode m_eIcuNormalizationMode = Icu.UNormalizationMode.UNORM_NFD;
+		protected Normalizer2 m_normalizer;
 		private WritingSystemAttrStyles m_writingSystemAttrStyle = WritingSystemAttrStyles.FieldWorks;
 		private StringFormatOutputStyle m_eStringFormatOutput = StringFormatOutputStyle.None;
 		private readonly ICmObjectRepository m_cmObjectRepository;
-		private readonly IWritingSystemManager m_wsManager;
+		private readonly WritingSystemManager m_wsManager;
 		private readonly IWritingSystemContainer m_wsContainer;
 		/// <summary>
 		/// Store the pathname of the output file, if there is one.
@@ -148,7 +149,7 @@ namespace SIL.FieldWorks.Common.FXT
 		/// Initializes a new instance of the <see cref="XDumper"/> class.
 		/// </summary>
 		/// -----------------------------------------------------------------------------------
-		public XDumper(FdoCache cache)
+		public XDumper(LcmCache cache): this()
 		{
 			m_cache = cache;
 			m_mdc = m_cache.ServiceLocator.GetInstance<IFwMetaDataCacheManaged>();
@@ -159,7 +160,7 @@ namespace SIL.FieldWorks.Common.FXT
 
 		public XDumper()
 		{
-
+			m_normalizer = CustomIcu.GetIcuNormalizer(FwNormalizationMode.knmNFD);
 		}
 		/// <summary>
 		///
@@ -318,9 +319,9 @@ namespace SIL.FieldWorks.Common.FXT
 			m_templateRootNode = node;
 			string sIcuNormalizationMode = XmlUtils.GetOptionalAttributeValue(m_templateRootNode, "normalization", "NFC");
 			if (sIcuNormalizationMode == "NFD")
-				m_eIcuNormalizationMode = Icu.UNormalizationMode.UNORM_NFD;
+				m_normalizer = CustomIcu.GetIcuNormalizer(FwNormalizationMode.knmNFD);
 			else
-				m_eIcuNormalizationMode = Icu.UNormalizationMode.UNORM_NFC;
+				m_normalizer = CustomIcu.GetIcuNormalizer(FwNormalizationMode.knmNFC);
 			string style = XmlUtils.GetOptionalAttributeValue(m_templateRootNode, "writingSystemAttributeStyle", WritingSystemAttrStyles.FieldWorks.ToString());
 			m_writingSystemAttrStyle = (WritingSystemAttrStyles) System.Enum.Parse(typeof(WritingSystemAttrStyles), style);
 			string sFormatOutput = XmlUtils.GetOptionalAttributeValue(m_templateRootNode, "stringFormatOutputStyle", StringFormatOutputStyle.None.ToString());
@@ -484,7 +485,7 @@ namespace SIL.FieldWorks.Common.FXT
 		protected void CollectCallElementAttributes(List<string> rgsAttrs,
 			ICmObject currentObject, XmlNode node)
 		{
-			string name = XmlUtils.GetManditoryAttributeValue(node, "name").Trim();
+			string name = XmlUtils.GetMandatoryAttributeValue(node, "name").Trim();
 			XmlNode classNode = GetClassTemplateNode(name);
 			if (classNode == null)
 				return;//	throw new RuntimeConfigurationException("Did not find a <class> element matching the root object type of "+className+".");
@@ -500,7 +501,7 @@ namespace SIL.FieldWorks.Common.FXT
 		/// <param name="node"></param>
 		protected void DoCallElement(TextWriter contentsStream, ICmObject currentObject, XmlNode node)
 		{
-			string name = XmlUtils.GetManditoryAttributeValue(node, "name").Trim();
+			string name = XmlUtils.GetMandatoryAttributeValue(node, "name").Trim();
 			XmlNode classNode = GetClassTemplateNode(name);
 			if ( classNode ==null)
 				return;//	throw new RuntimeConfigurationException("Did not find a <class> element matching the root object type of "+className+".");
@@ -842,7 +843,7 @@ namespace SIL.FieldWorks.Common.FXT
 		/// <summary>
 		/// Get the SFM tag extension for the given writing system.
 		/// </summary>
-		private string LabelString(IWritingSystem ws)
+		private string LabelString(CoreWritingSystemDefinition ws)
 		{
 			string str = ws.Abbreviation;
 			if (!string.IsNullOrEmpty(str))
@@ -889,7 +890,7 @@ namespace SIL.FieldWorks.Common.FXT
 
 		protected void DoCustomElements(TextWriter contentsStream, ICmObject currentObject, XmlNode node)
 		{
-			string sClass = XmlUtils.GetManditoryAttributeValue(node, "class");
+			string sClass = XmlUtils.GetMandatoryAttributeValue(node, "class");
 			string sType = XmlUtils.GetOptionalAttributeValue(node, "fieldType", "");
 			int[] flids;
 			if (!m_customFlids.TryGetValue(sClass + sType, out flids))
@@ -1066,8 +1067,8 @@ namespace SIL.FieldWorks.Common.FXT
 		protected void DoMultilingualStringElement(TextWriter contentsStream,
 			ICmObject currentObject, XmlNode node, string flags)
 		{
-			string name = XmlUtils.GetManditoryAttributeValue(node, "name");
-			string propertyName = XmlUtils.GetManditoryAttributeValue(node, "simpleProperty");
+			string name = XmlUtils.GetMandatoryAttributeValue(node, "name");
+			string propertyName = XmlUtils.GetMandatoryAttributeValue(node, "simpleProperty");
 			string methodName = XmlUtils.GetOptionalAttributeValue(node, "method");
 			string writingSystems = XmlUtils.GetOptionalAttributeValue(node, "ws", "all");
 			object propertyObject = GetProperty(currentObject, propertyName);
@@ -1091,7 +1092,7 @@ namespace SIL.FieldWorks.Common.FXT
 			{
 				possibleWss = GetWssWithData(propertyObject as IMultiStringAccessor);
 			}
-			foreach (IWritingSystem ws in GetDesiredWritingSystemsList(writingSystems, possibleWss))
+			foreach (CoreWritingSystemDefinition ws in GetDesiredWritingSystemsList(writingSystems, possibleWss))
 			{
 				bool fHasData = false;
 				if (methodName != null)
@@ -1150,7 +1151,7 @@ namespace SIL.FieldWorks.Common.FXT
 			if (propertyObject is IMultiStringAccessor)
 				possibleWss = GetWssWithData(propertyObject as IMultiStringAccessor);
 
-			foreach (var ws in GetDesiredWritingSystemsList(writingSystems, possibleWss))
+			foreach (CoreWritingSystemDefinition ws in GetDesiredWritingSystemsList(writingSystems, possibleWss))
 			{
 				if (possibleWss != null && !possibleWss.Contains(ws.Handle))
 					continue;
@@ -1160,13 +1161,13 @@ namespace SIL.FieldWorks.Common.FXT
 			return false;
 		}
 
-		private IEnumerable<IWritingSystem> GetDesiredWritingSystemsList(string writingSystemsDescriptor, HashSet<int> possibleWss)
+		private IEnumerable<CoreWritingSystemDefinition> GetDesiredWritingSystemsList(string writingSystemsDescriptor, HashSet<int> possibleWss)
 		{
-			var wsList = new List<IWritingSystem>();
+			var wsList = new List<CoreWritingSystemDefinition>();
 
 			if (writingSystemsDescriptor == "all" || writingSystemsDescriptor == "all analysis")
 			{
-				foreach (IWritingSystem ws in m_wsContainer.CurrentAnalysisWritingSystems)
+				foreach (CoreWritingSystemDefinition ws in m_wsContainer.CurrentAnalysisWritingSystems)
 				{
 					if (possibleWss == null || possibleWss.Contains(ws.Handle))
 					{
@@ -1177,7 +1178,7 @@ namespace SIL.FieldWorks.Common.FXT
 			}
 			if (writingSystemsDescriptor == "all" || writingSystemsDescriptor == "all vernacular")
 			{
-				foreach (var ws in m_wsContainer.CurrentVernacularWritingSystems)
+				foreach (CoreWritingSystemDefinition ws in m_wsContainer.CurrentVernacularWritingSystems)
 				{
 					if (possibleWss == null || possibleWss.Contains(ws.Handle))
 					{
@@ -1188,7 +1189,7 @@ namespace SIL.FieldWorks.Common.FXT
 			}
 			if (writingSystemsDescriptor == "every")
 			{
-				foreach (IWritingSystem ws in m_wsContainer.AllWritingSystems)
+				foreach (CoreWritingSystemDefinition ws in m_wsContainer.AllWritingSystems)
 				{
 					if (possibleWss == null || possibleWss.Contains(ws.Handle))
 					{
@@ -1206,14 +1207,14 @@ namespace SIL.FieldWorks.Common.FXT
 		protected void doCustomMultilingualStringElementSFM(TextWriter contentsStream,
 			ICmObject currentObject, XmlNode node, string flags)
 		{
-			string name = XmlUtils.GetManditoryAttributeValue(node, "name");
+			string name = XmlUtils.GetMandatoryAttributeValue(node, "name");
 			int flid = GetCustomFlid(node, currentObject.ClassID);
 
 			string writingSystems = XmlUtils.GetOptionalAttributeValue(node, "ws", "all");
 			var alreadyOutput = new HashSet<int>();
 			if (writingSystems == "all" || writingSystems == "all analysis")
 			{
-				foreach (IWritingSystem ws in m_wsContainer.CurrentAnalysisWritingSystems)
+				foreach (CoreWritingSystemDefinition ws in m_wsContainer.CurrentAnalysisWritingSystems)
 				{
 					writeCustomStringAlternativeToSFM(currentObject, flid, ws, name, contentsStream);
 					alreadyOutput.Add(ws.Handle);
@@ -1238,7 +1239,7 @@ namespace SIL.FieldWorks.Common.FXT
 		/// <param name="ws"></param>
 		/// <param name="name"></param>
 		/// <param name="contentsStream"></param>
-		protected void writeCustomStringAlternativeToSFM(ICmObject currentObject, int flid, IWritingSystem ws,
+		protected void writeCustomStringAlternativeToSFM(ICmObject currentObject, int flid, CoreWritingSystemDefinition ws,
 			string name, TextWriter contentsStream)
 		{
 			if (m_mapFlids.ContainsKey(flid))
@@ -1262,7 +1263,7 @@ namespace SIL.FieldWorks.Common.FXT
 		protected void DoCustomStringElement(TextWriter contentsStream, ICmObject currentObject,
 			XmlNode node, string flags)
 		{
-			string name = XmlUtils.GetManditoryAttributeValue(node, "name");
+			string name = XmlUtils.GetMandatoryAttributeValue(node, "name");
 			int flid = GetCustomFlid(node, currentObject.ClassID);
 
 			string s = null;
@@ -1307,7 +1308,7 @@ namespace SIL.FieldWorks.Common.FXT
 			return flid;
 		}
 
-		private bool TryWriteStringAlternative(object orange, IWritingSystem ws, string name,
+		private bool TryWriteStringAlternative(object orange, CoreWritingSystemDefinition ws, string name,
 			string internalElementName, TextWriter contentsStream, bool fLeadingNewline)
 		{
 			ITsString tss = null;
@@ -1331,7 +1332,7 @@ namespace SIL.FieldWorks.Common.FXT
 			}
 		}
 
-		private void WriteString(string s, string name, IWritingSystem ws, string internalElementName,
+		private void WriteString(string s, string name, CoreWritingSystemDefinition ws, string internalElementName,
 			TextWriter contentsStream)
 		{
 			if (m_format == "xml")
@@ -1345,11 +1346,11 @@ namespace SIL.FieldWorks.Common.FXT
 //			WriteString(s, name, ws, null, contentsStream);
 //		}
 
-		private void WriteStringSFM(string s, string name, IWritingSystem ws, TextWriter contentsStream)
+		private void WriteStringSFM(string s, string name, CoreWritingSystemDefinition ws, TextWriter contentsStream)
 		{
 			if (s != null && s.Trim().Length > 0)
 			{
-				s = Icu.Normalize(s, m_eIcuNormalizationMode);
+				s = m_normalizer.Normalize(s);
 				string elname = name;
 				if (ws != null)
 				{
@@ -1368,7 +1369,7 @@ namespace SIL.FieldWorks.Common.FXT
 //			WriteStringXml(s, name, ws, null, contentsStream);
 //        }
 
-		private void WriteStringXml(string s, string name, IWritingSystem ws,
+		private void WriteStringXml(string s, string name, CoreWritingSystemDefinition ws,
 			string internalElementName, TextWriter contentsStream)
 		{
 			if (s == null || s.Trim().Length == 0)
@@ -1376,14 +1377,14 @@ namespace SIL.FieldWorks.Common.FXT
 
 			using (var writer = XmlWriter.Create(contentsStream, new XmlWriterSettings { OmitXmlDeclaration = true, ConformanceLevel = ConformanceLevel.Fragment }))
 			{
-				s = Icu.Normalize(s, m_eIcuNormalizationMode);
+				s = m_normalizer.Normalize(s);
 				WriteStringStartElements(writer, name, ws, internalElementName);
 				writer.WriteString(s);
 				WriteStringEndElements(writer, internalElementName);
 			}
 		}
 
-		private void WriteTsStringXml(ITsString tss, string name, IWritingSystem ws,
+		private void WriteTsStringXml(ITsString tss, string name, CoreWritingSystemDefinition ws,
 			string internalElementName, TextWriter contentsStream)
 		{
 			if (tss == null || tss.Length == 0)
@@ -1405,7 +1406,7 @@ namespace SIL.FieldWorks.Common.FXT
 		}
 
 		private void WriteStringStartElements(XmlWriter writer, string name,
-			IWritingSystem ws, string internalElementName)
+			CoreWritingSystemDefinition ws, string internalElementName)
 		{
 			writer.WriteStartElement(name);
 			if (ws != null)
@@ -1437,8 +1438,8 @@ namespace SIL.FieldWorks.Common.FXT
 		protected void DoNumberElement(TextWriter contentsStream, ICmObject currentObject,
 			XmlNode node)
 		{
-			string name = XmlUtils.GetManditoryAttributeValue(node, "name");
-			string propertyName = XmlUtils.GetManditoryAttributeValue(node, "simpleProperty");
+			string name = XmlUtils.GetMandatoryAttributeValue(node, "name");
+			string propertyName = XmlUtils.GetMandatoryAttributeValue(node, "simpleProperty");
 			object val = GetProperty(currentObject, propertyName);
 			Debug.Assert(val is int);
 			int nVal = (int)val;
@@ -1482,8 +1483,8 @@ namespace SIL.FieldWorks.Common.FXT
 		protected void DoBooleanElement(TextWriter contentsStream, ICmObject currentObject,
 			XmlNode node)
 		{
-			string name = XmlUtils.GetManditoryAttributeValue(node, "name");
-			string propertyName = XmlUtils.GetManditoryAttributeValue(node, "simpleProperty");
+			string name = XmlUtils.GetMandatoryAttributeValue(node, "name");
+			string propertyName = XmlUtils.GetMandatoryAttributeValue(node, "simpleProperty");
 			object val = GetProperty(currentObject, propertyName);
 			Debug.Assert(val is bool);
 			bool fVal = (bool)val;
@@ -1515,7 +1516,7 @@ namespace SIL.FieldWorks.Common.FXT
 		protected void DoStringElement(TextWriter contentsStream, ICmObject currentObject,
 			XmlNode node)
 		{
-			string name = XmlUtils.GetManditoryAttributeValue(node, "name");
+			string name = XmlUtils.GetMandatoryAttributeValue(node, "name");
 			string sVal = null;
 			ITsString tssVal = null;
 			if (m_eStringFormatOutput == StringFormatOutputStyle.None)
@@ -1546,7 +1547,7 @@ namespace SIL.FieldWorks.Common.FXT
 						wsFake = m_wsContainer.DefaultAnalysisWritingSystem.Handle;
 					if (m_writingSystemAttrStyle == WritingSystemAttrStyles.LIFT && name == "form")
 					{
-						IWritingSystem ws = m_wsManager.Get(wsFake);
+						CoreWritingSystemDefinition ws = m_wsManager.Get(wsFake);
 						writer.WriteAttributeString("lang", ws.Id); // keep LIFT happy with bogus ws.
 					}
 					if (!String.IsNullOrEmpty(sInternalName))
@@ -1555,12 +1556,12 @@ namespace SIL.FieldWorks.Common.FXT
 					string after = XmlUtils.GetOptionalAttributeValue(node, "after");
 					if (!String.IsNullOrEmpty(before))
 					{
-						before = Icu.Normalize(before, m_eIcuNormalizationMode);
+						before = m_normalizer.Normalize(before);
 						writer.WriteString(before);
 					}
 					if (sVal != null)
 					{
-						sVal = Icu.Normalize(sVal, m_eIcuNormalizationMode);
+						sVal = m_normalizer.Normalize(sVal);
 						writer.WriteString(sVal);
 					}
 					else if (tssVal != null)
@@ -1577,7 +1578,7 @@ namespace SIL.FieldWorks.Common.FXT
 					}
 					if (!String.IsNullOrEmpty(after))
 					{
-						after = Icu.Normalize(after, m_eIcuNormalizationMode);
+						after = m_normalizer.Normalize(after);
 						writer.WriteString(after);
 					}
 					if (!String.IsNullOrEmpty(sInternalName))
@@ -1640,7 +1641,7 @@ namespace SIL.FieldWorks.Common.FXT
 				if (sbComment.Length > 0)
 					writer.WriteComment(sbComment.ToString());
 				string sRun = tssVal.get_RunText(irun);
-				writer.WriteString(Icu.Normalize(sRun, m_eIcuNormalizationMode));
+				writer.WriteString(m_normalizer.Normalize(sRun));
 				writer.WriteEndElement();
 			}
 		}
@@ -1699,7 +1700,7 @@ namespace SIL.FieldWorks.Common.FXT
 						nProp = ttp.GetIntProp(iprop, out tpt, out nVar);
 						if (tpt == (int)FwTextPropType.ktptWs && nProp != wsString)
 						{
-							IWritingSystem ws = m_wsManager.Get(nProp);
+							CoreWritingSystemDefinition ws = m_wsManager.Get(nProp);
 							writer.WriteAttributeString("lang", ws.Id);
 						}
 					}
@@ -1714,7 +1715,7 @@ namespace SIL.FieldWorks.Common.FXT
 					}
 				}
 				string sRun = tssVal.get_RunText(irun);
-				writer.WriteString(Icu.Normalize(sRun, m_eIcuNormalizationMode));
+				writer.WriteString(m_normalizer.Normalize(sRun));
 				if (fSpan)
 					writer.WriteEndElement();
 			}
@@ -1735,7 +1736,7 @@ namespace SIL.FieldWorks.Common.FXT
 			XmlNode node, string flags)
 		{
 			string hideFlag = XmlUtils.GetOptionalAttributeValue(node, "hideFlag");
-			string name = XmlUtils.GetManditoryAttributeValue(node, "name");
+			string name = XmlUtils.GetMandatoryAttributeValue(node, "name");
 			// If no hideflag was specified, or it was specified but is not in the list of flags
 			// we were called with
 			if (flags == null || hideFlag == null || flags.IndexOf(hideFlag) < 0)
@@ -1844,7 +1845,7 @@ namespace SIL.FieldWorks.Common.FXT
 		protected void DoRefAtomicElement(TextWriter contentsStream, ICmObject currentObject,
 			XmlNode node, string flags)
 		{
-			string property = XmlUtils.GetManditoryAttributeValue(node, "simpleProperty");
+			string property = XmlUtils.GetMandatoryAttributeValue(node, "simpleProperty");
 			//fix up the property name (should be fooOA.Hvo or fooRA.Hvo)
 			if (property != "Owner" && property.LastIndexOf(".Hvo") < 0)
 				property = String.Format("{0}.Hvo", property);
@@ -1858,7 +1859,7 @@ namespace SIL.FieldWorks.Common.FXT
 			Type t = obj.GetType();
 			if (t.FullName == "System.String")
 			{
-				string name = XmlUtils.GetManditoryAttributeValue(node, "name");
+				string name = XmlUtils.GetMandatoryAttributeValue(node, "name");
 				if (m_format == "xml")
 				{
 					contentsStream.Write("<{0} dst=\"{1}\"/>", name, obj);
@@ -1869,8 +1870,7 @@ namespace SIL.FieldWorks.Common.FXT
 					// Try ShortName.  (See LT-
 					int hvo = Int32.Parse(obj.ToString());
 					var cmo = m_cmObjectRepository.GetObject(hvo);
-					string s = Icu.Normalize(cmo.ShortName, m_eIcuNormalizationMode);
-					//string s = Icu.Normalize(obj.ToString(), m_eIcuNormalizationMode);
+					string s = m_normalizer.Normalize(cmo.ShortName);
 					contentsStream.WriteLine("{2}\\{0} {1}", name, s, Environment.NewLine);
 				}
 			}
@@ -1915,7 +1915,7 @@ namespace SIL.FieldWorks.Common.FXT
 		protected void DoAttributeIndirectElement(List<string> rgsAttrs, ICmObject currentObject, XmlNode node)
 		{
 
-			string targetProperty = XmlUtils.GetManditoryAttributeValue(node, "target");
+			string targetProperty = XmlUtils.GetMandatoryAttributeValue(node, "target");
 			var target = GetProperty(currentObject, targetProperty) as ICmObject;
 			if (target != null)
 			{
@@ -1948,7 +1948,7 @@ namespace SIL.FieldWorks.Common.FXT
 		protected void DoAttributeElement(List<string> rgsAttrs, ICmObject currentObject, XmlNode node)
 		{
 			Debug.Assert(m_format == "xml");
-			string propertyName = XmlUtils.GetManditoryAttributeValue(node, "simpleProperty");
+			string propertyName = XmlUtils.GetMandatoryAttributeValue(node, "simpleProperty");
 			string attrName = XmlUtils.GetOptionalAttributeValue(node, "name");
 			bool fOptional = XmlUtils.GetOptionalBooleanAttributeValue(node, "optional", false);
 			string x = null;
@@ -1981,7 +1981,7 @@ namespace SIL.FieldWorks.Common.FXT
 				x = x + sAfter;
 			if (fOptional && String.IsNullOrEmpty(x))
 				return;
-			x = Icu.Normalize(x, m_eIcuNormalizationMode);
+			x = m_normalizer.Normalize(x);
 			x = XmlUtils.MakeSafeXmlAttribute(x);
 			rgsAttrs.Add(String.Format(" {0}=\"{1}\"", attrName.Trim(), x));
 		}
@@ -2056,17 +2056,17 @@ namespace SIL.FieldWorks.Common.FXT
 				bool fIsXml = XmlUtils.GetOptionalBooleanAttributeValue(node, "isXml", false);
 				if (before != null)
 				{
-					before = Icu.Normalize(before, m_eIcuNormalizationMode);
+					before = m_normalizer.Normalize(before);
 					writer.WriteString(before);
 				}
-				x = Icu.Normalize(x, m_eIcuNormalizationMode);
+				x = m_normalizer.Normalize(x);
 				if (fIsXml)
 					writer.WriteRaw(x);
 				else
 					writer.WriteString(x);
 				if (after != null)
 				{
-					after = Icu.Normalize(after, m_eIcuNormalizationMode);
+					after = m_normalizer.Normalize(after);
 					writer.WriteString(after);
 				}
 			}
@@ -2074,7 +2074,7 @@ namespace SIL.FieldWorks.Common.FXT
 
 		protected string GetSimplePropertyString(XmlNode node, ICmObject currentObject)
 		{
-			string propertyName = XmlUtils.GetManditoryAttributeValue(node,"simpleProperty");
+			string propertyName = XmlUtils.GetMandatoryAttributeValue(node,"simpleProperty");
 			string x;
 			if (PropertyIsVirtual(currentObject, propertyName))
 			{
@@ -2089,7 +2089,7 @@ namespace SIL.FieldWorks.Common.FXT
 
 		private ITsString GetSimplePropertyTsString(XmlNode node, ICmObject currentObject)
 		{
-			string propertyName = XmlUtils.GetManditoryAttributeValue(node, "simpleProperty");
+			string propertyName = XmlUtils.GetMandatoryAttributeValue(node, "simpleProperty");
 			ITsString x;
 			if (PropertyIsVirtual(currentObject, propertyName))
 			{
@@ -2172,7 +2172,7 @@ namespace SIL.FieldWorks.Common.FXT
 			{
 				// we want the real xml deal for things like MoMorphData:ParserParameters
 				// outputStream.Write(MakeXmlSafe(x));
-				x = Icu.Normalize(x, m_eIcuNormalizationMode);
+				x = m_normalizer.Normalize(x);
 				outputStream.Write(x);
 			}
 		}
@@ -2187,9 +2187,9 @@ namespace SIL.FieldWorks.Common.FXT
 		{
 			Debug.Assert(m_format == "xml");
 
-			string attrName = XmlUtils.GetManditoryAttributeValue(node, "name");
-			string format = XmlUtils.GetManditoryAttributeValue(node, "format");
-			string propertyName = XmlUtils.GetManditoryAttributeValue(node, "property");
+			string attrName = XmlUtils.GetMandatoryAttributeValue(node, "name");
+			string format = XmlUtils.GetMandatoryAttributeValue(node, "format");
+			string propertyName = XmlUtils.GetMandatoryAttributeValue(node, "property");
 			DateTime t = (DateTime)GetProperty(currentObject, propertyName);
 			rgsAttrs.Add(String.Format(" {0}=\"{1}\"", attrName.Trim(), t.ToString(format)));
 		}
@@ -2197,32 +2197,19 @@ namespace SIL.FieldWorks.Common.FXT
 		protected int[] LoadVirtualField(ICmObject currentObject, string field)
 		{
 			object obj = GetProperty(currentObject, field);
-			if (obj is int[])
-			{
-				return obj as int[];
-			}
-			else if (obj is System.Collections.ArrayList)
-			{
-				throw new InvalidOperationException("No array lists are to be used. in fact, as of this writing, FDO uses none at all.");
-			}
-			else if (obj is List<int>)
-			{
-				return (obj as List<int>).ToArray();
-			}
-			else if (obj is Set<int>)
-			{
-				return (obj as Set<int>).ToArray();
-			}
-			else if (obj is int)
+
+			var enumerable = obj as IEnumerable<int>;
+			if (enumerable != null)
+				return enumerable.ToArray();
+
+			if (obj is int)
 			{
 				int[] hvos = new int[1];
-				hvos[0] = (int)obj;
+				hvos[0] = (int) obj;
 				return hvos;
 			}
-			else
-			{
-				return new int[0];
-			}
+
+			return new int[0];
 		}
 
 		/// <summary>
@@ -2241,7 +2228,7 @@ namespace SIL.FieldWorks.Common.FXT
 			string label = XmlUtils.GetOptionalAttributeValue(node, "itemLabel");
 			if (label == null)
 				label = "subobject";
-			string field = XmlUtils.GetManditoryAttributeValue(node, "field");
+			string field = XmlUtils.GetMandatoryAttributeValue(node, "field");
 			string sVirtual = XmlUtils.GetOptionalAttributeValue(node, "virtual");
 			bool fVirtual = false;
 			if (sVirtual != null)
@@ -2295,14 +2282,14 @@ namespace SIL.FieldWorks.Common.FXT
 					object obj = GetProperty(co, property);
 					if (obj == null)
 						continue;
-					string s = Icu.Normalize(obj.ToString(), m_eIcuNormalizationMode);
+					string s = m_normalizer.Normalize(obj.ToString());
 					string separator = "";
 					if (wsProp != null)
 					{
 						obj = GetProperty(co, wsProp);
 						if (obj != null)
 						{
-							IWritingSystem ws = obj as IWritingSystem ?? m_wsManager.Get((string)obj);
+							CoreWritingSystemDefinition ws = obj as CoreWritingSystemDefinition ?? m_wsManager.Get((string) obj);
 							if (ws != null)
 								labelWs = LabelString(ws);
 						}
@@ -2333,7 +2320,7 @@ namespace SIL.FieldWorks.Common.FXT
 			string label = XmlUtils.GetOptionalAttributeValue(node, "itemLabel");
 			if (label == null)
 				label ="object";
-			string field = XmlUtils.GetManditoryAttributeValue(node, "field");
+			string field = XmlUtils.GetMandatoryAttributeValue(node, "field");
 			bool fXmlVirtual = XmlUtils.GetOptionalBooleanAttributeValue(node, "virtual", false);
 			bool fWriteAsRelation = XmlUtils.GetOptionalBooleanAttributeValue(node, "writeAsRelation", false);
 			//Debug.WriteLine ("<refVector field ="+field+">");
@@ -2486,13 +2473,13 @@ namespace SIL.FieldWorks.Common.FXT
 			object obj = GetProperty(co, property);
 			if (obj == null)
 				return false;
-			sData = Icu.Normalize(obj.ToString(), m_eIcuNormalizationMode);
+			sData = m_normalizer.Normalize(obj.ToString());
 			if (!string.IsNullOrEmpty(wsProp))
 			{
 				obj = GetProperty(co, wsProp);
 				if (obj != null)
 				{
-					var ws = obj as IWritingSystem ?? m_wsManager.Get((int)obj);
+					var ws = obj as CoreWritingSystemDefinition ?? m_wsManager.Get((int) obj);
 					if (ws != null)
 						labelWs = LabelString(ws);
 				}
@@ -2646,7 +2633,7 @@ namespace SIL.FieldWorks.Common.FXT
 		protected void DoObjectVectorElement(TextWriter contentsStream, ICmObject currentObject,
 			XmlNode node)
 		{
-			string property = XmlUtils.GetManditoryAttributeValue(node, "objProperty");
+			string property = XmlUtils.GetMandatoryAttributeValue(node, "objProperty");
 			string virtClass = XmlUtils.GetOptionalAttributeValue(node, "virtualclass");
 			int count = XmlUtils.GetOptionalIntegerValue(node, "count", -1);
 			string sField = XmlUtils.GetOptionalAttributeValue(node, "field");
@@ -2814,7 +2801,7 @@ namespace SIL.FieldWorks.Common.FXT
 		protected void DoObjectAtomicElement (TextWriter contentsStream, ICmObject currentObject, XmlNode node)
 		{
 			//string mode = XmlUtils.GetOptionalAttributeValue(node, "mode");
-			string property =XmlUtils.GetManditoryAttributeValue(node, "objProperty");
+			string property =XmlUtils.GetMandatoryAttributeValue(node, "objProperty");
 			string sClassTag = XmlUtils.GetOptionalAttributeValue(node, "classtag");
 			//Debug.WriteLine ("<objAtomic property ="+property+">");
 			currentObject = GetObjectFromProperty(currentObject, property);
@@ -2827,7 +2814,7 @@ namespace SIL.FieldWorks.Common.FXT
 
 		protected void DoGroupElement (TextWriter contentsStream, ICmObject currentObject, XmlNode node)
 		{
-			string property =XmlUtils.GetManditoryAttributeValue(node, "objProperty");
+			string property =XmlUtils.GetMandatoryAttributeValue(node, "objProperty");
 			//Debug.WriteLine ("<group "+" "+property+">");
 			var ownedObject = GetObjectFromProperty(currentObject, property);
 
@@ -2948,14 +2935,14 @@ namespace SIL.FieldWorks.Common.FXT
 				case "#comment":
 					break;
 				case "#text":
-					s = Icu.Normalize(node.InnerText, m_eIcuNormalizationMode);
+					s = m_normalizer.Normalize(node.InnerText);
 					contentsStream.Write(s);
 					break;
 				case "comment":
 					DoCommentOutput(contentsStream, node);
 					break;
 				case "text":
-					s = Icu.Normalize(node.InnerText, m_eIcuNormalizationMode);
+					s = m_normalizer.Normalize(node.InnerText);
 					contentsStream.Write(s);
 					break;
 				case "template":
@@ -3005,7 +2992,7 @@ namespace SIL.FieldWorks.Common.FXT
 		/// <returns></returns>
 		protected int GetSingleWritingSystemDescriptor(XmlNode node)
 		{
-			string wsSpec = XmlUtils.GetManditoryAttributeValue(node, "ws");
+			string wsSpec = XmlUtils.GetMandatoryAttributeValue(node, "ws");
 			switch (wsSpec)
 			{
 				case "vernacular":
@@ -3191,7 +3178,7 @@ namespace SIL.FieldWorks.Common.FXT
 				Dictionary<string, string> dict = (Dictionary<string, string>)propertyObject;
 				string value;
 
-				IWritingSystem ws = FindWritingSystem(alternative);
+				CoreWritingSystemDefinition ws = FindWritingSystem(alternative);
 				if (dict.TryGetValue(ws.Abbreviation, out value))
 				{
 					return value;
@@ -3234,9 +3221,9 @@ namespace SIL.FieldWorks.Common.FXT
 			{
 				return propertyObject.ToString();
 			}
-			else if (propertyObject is IWritingSystem)
+			else if (propertyObject is CoreWritingSystemDefinition)
 			{
-				return (propertyObject as IWritingSystem).Id;
+				return ((CoreWritingSystemDefinition) propertyObject).Id;
 			}
 			throw new ConfigurationException ("Sorry, XDumper can not yet handle attributes of this class: '"+type.ToString()+"'.");
 		}
@@ -3286,7 +3273,7 @@ namespace SIL.FieldWorks.Common.FXT
 				return GetTsStringOfProperty(propertyObject, -1);
 		}
 
-		protected IWritingSystem FindWritingSystem(int handle)
+		protected CoreWritingSystemDefinition FindWritingSystem(int handle)
 		{
 			return m_wsManager.Get(handle);
 		}

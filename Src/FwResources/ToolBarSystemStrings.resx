@@ -177,15 +177,6 @@
 	<data name="kstidInvalidNameMessage">
 		<value>Toolbar name cannot be empty.</value>
 	</data>
-	<data name="kstidSysMnuMinimize">
-		<value>Minimize</value>
-	</data>
-	<data name="kstidSysMnuRestore">
-		<value>Restore</value>
-	</data>
-	<data name="kstidSysMnuClose">
-		<value>Close</value>
-	</data>
 	<data name="kstidSysMnuRestore">
 		<value>Restore</value>
 	</data>

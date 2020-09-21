@@ -1,4 +1,4 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -7,12 +7,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
 using System.Diagnostics;
-using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.Utils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
-using XCore;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
 
 namespace SIL.FieldWorks.Discourse
 {
@@ -25,7 +22,7 @@ namespace SIL.FieldWorks.Discourse
 		private AdvancedMTDialogLogic m_AMTDLogic;
 		private HelpProvider helpProvider;
 
-		internal AdvancedMTDialog(FdoCache cache, bool fPrepose, CChartSentenceElements ccSentElem, IHelpTopicProvider helpTopicProvidor)
+		internal AdvancedMTDialog(LcmCache cache, bool fPrepose, CChartSentenceElements ccSentElem, IHelpTopicProvider helpTopicProvidor)
 		{
 			InitializeComponent();
 
@@ -184,11 +181,11 @@ namespace SIL.FieldWorks.Discourse
 	{
 		private readonly CChartSentenceElements m_ccSentElem;
 		private readonly DialogInterlinRibbon m_ribbon;
-		private readonly FdoCache m_cache;
+		private readonly LcmCache m_cache;
 		private readonly bool m_fPrepose;
 		private IConstChartWordGroup m_wordGroup;
 
-		public AdvancedMTDialogLogic(FdoCache cache, bool fPrepose, CChartSentenceElements ccSentElem)
+		public AdvancedMTDialogLogic(LcmCache cache, bool fPrepose, CChartSentenceElements ccSentElem)
 		{
 			m_cache = cache;
 			m_fPrepose = fPrepose;
@@ -239,7 +236,7 @@ namespace SIL.FieldWorks.Discourse
 		/// <summary>
 		/// Gets the FDO cache.
 		/// </summary>
-		public FdoCache Cache
+		public LcmCache Cache
 		{
 			get { return m_cache; }
 		}
@@ -377,11 +374,10 @@ namespace SIL.FieldWorks.Discourse
 		/// </summary>
 		internal void SetAffectedWordGroups(AnalysisOccurrence[] selectedWords)
 		{
-			var selWords = new Set<AnalysisOccurrence>();
-			selWords.AddRange(selectedWords);
+			var selWords = new HashSet<AnalysisOccurrence>(selectedWords);
 			var affectedWordGrps = (from wordGroup in SentElem.AffectedWordGroups
 									let wordGrpPoints = wordGroup.GetOccurrences()
-									where selWords.Intersection(wordGrpPoints).Count > 0
+									where selWords.Intersect(wordGrpPoints).Any()
 									select wordGroup).ToList();
 			SentElem.AffectedWordGroups = affectedWordGrps;
 		}

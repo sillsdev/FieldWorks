@@ -4,8 +4,10 @@
 
 using System;
 using System.Windows.Forms;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.LexText.Controls;
 using SIL.Utils;
+using XCore;
 
 namespace SIL.FieldWorks.XWorks.MorphologyEditor
 {
@@ -44,8 +46,8 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			var cmd = (XCore.Command) args;
 			if (cmd.Parameters.Count > 0)
 			{
-				string minStr = XmlUtils.GetManditoryAttributeValue(cmd.Parameters[0], "min");
-				string maxStr = XmlUtils.GetManditoryAttributeValue(cmd.Parameters[0], "max");
+				string minStr = XmlUtils.GetMandatoryAttributeValue(cmd.Parameters[0], "min");
+				string maxStr = XmlUtils.GetMandatoryAttributeValue(cmd.Parameters[0], "max");
 				int min = Int32.Parse(minStr);
 				int max = Int32.Parse(maxStr);
 				RegRuleFormulaControl.SetContextOccurrence(min, max);
@@ -54,16 +56,16 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			{
 				int min, max;
 				RegRuleFormulaControl.GetContextOccurrence(out min, out max);
-				using (var dlg = new OccurrenceDlg(m_mediator.HelpTopicProvider, min, max, false))
+				using (var dlg = new OccurrenceDlg(m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), min, max, false))
 				{
-					if (dlg.ShowDialog((XCore.XWindow)Mediator.PropertyTable.GetValue("window")) == DialogResult.OK)
+					if (dlg.ShowDialog(m_propertyTable.GetValue<XWindow>("window")) == DialogResult.OK)
 						RegRuleFormulaControl.SetContextOccurrence(dlg.Minimum, dlg.Maximum);
 				}
 			}
 			return true;
 		}
 
-		public bool OnDisplayContextSetVariables(object commandObject, ref XCore.UIItemDisplayProperties display)
+		public bool OnDisplayContextSetVariables(object commandObject, ref UIItemDisplayProperties display)
 		{
 			CheckDisposed();
 			bool enable = RuleFormulaControl.IsFeatsNCContextCurrent;

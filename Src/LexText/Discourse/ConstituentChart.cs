@@ -1,26 +1,23 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
-using System.Diagnostics;
-using SIL.CoreImpl;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FDO.Infrastructure;
-using XCore;
-
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.Common.COMInterfaces;
 using System.Xml;
-using SIL.Utils;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.FieldWorks.Common.FwUtils;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.IText;
-using System.Diagnostics.CodeAnalysis;
+using SIL.Utils;
+using XCore;
 
 namespace SIL.FieldWorks.Discourse
 {
@@ -66,22 +63,22 @@ namespace SIL.FieldWorks.Discourse
 		// controls the popup help items for the Constituent Chart Form
 		private InterAreaBookmark m_bookmark;
 		// To keep track of where we are in the text between panes (and areas)
-		internal FdoCache m_cache;
-		private IFdoServiceLocator m_serviceLocator;
+		internal LcmCache m_cache;
+		private ILcmServiceLocator m_serviceLocator;
 		private XmlNode m_configurationParameters;
 		#endregion
 
 		/// <summary>
 		/// Make one. Usually called by reflection.
 		/// </summary>
-		public ConstituentChart(FdoCache cache) : this(cache, new ConstituentChartLogic(cache))
+		public ConstituentChart(LcmCache cache) : this(cache, new ConstituentChartLogic(cache))
 		{
 		}
 
 		/// <summary>
 		/// Make one. This variant is used in testing (to plug in a known logic class).
 		/// </summary>
-		internal ConstituentChart(FdoCache cache, ConstituentChartLogic logic)
+		internal ConstituentChart(LcmCache cache, ConstituentChartLogic logic)
 		{
 			m_cache = cache;
 			m_serviceLocator = m_cache.ServiceLocator;
@@ -99,8 +96,6 @@ namespace SIL.FieldWorks.Discourse
 			Controls.AddRange(new Control[] { m_topStuff, m_bottomStuff });
 
 			Dock = DockStyle.Fill;
-
-			AccessibleNameCreator.AddNames(this);
 
 			ResumeLayout();
 		}
@@ -151,7 +146,7 @@ namespace SIL.FieldWorks.Discourse
 			m_bottomStuff.ResumeLayout();
 		}
 
-		FdoCache IInterlinearTabControl.Cache
+		LcmCache IInterlinearTabControl.Cache
 		{
 			get { return m_cache; }
 			set { m_cache = value; }
@@ -265,8 +260,6 @@ namespace SIL.FieldWorks.Discourse
 		// padding (pixels) to autoresize column width to prevent wrapping
 		private const int kColPadding = 4;
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "changingColHdr is a reference")]
 		internal void m_headerMainCols_ColumnAutoResize(int icolChanged)
 		{
 			var maxWidth = MaxUseableWidth();
@@ -511,8 +504,6 @@ namespace SIL.FieldWorks.Discourse
 			ComputeButtonWidths();
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "c and c2 are references")]
 		private void ComputeButtonWidths()
 		{
 			//GetColumnWidths();
@@ -674,7 +665,7 @@ namespace SIL.FieldWorks.Discourse
 			{
 				// Reset bookmark to prevent LT-12666
 				if (m_bookmark != null && m_mediator != null)
-					m_bookmark.Reset(m_chart.BasedOnRA.IndexInOwner, m_mediator);
+					m_bookmark.Reset(m_chart.BasedOnRA.IndexInOwner);
 				return;
 			}
 			// no rows in chart; no selection necessary
@@ -788,7 +779,7 @@ namespace SIL.FieldWorks.Discourse
 			bool fExactMatch;
 			var occurrenceToMark = SegmentServices.FindNearestAnalysis(GetTextParagraphByIndex(iPara),
 				offset, offset, out fExactMatch);
-			m_bookmark.Save(occurrenceToMark, false, m_bookmark.TextIndex, m_mediator); // bookmark this location, but don't persist.
+			m_bookmark.Save(occurrenceToMark, false, m_bookmark.TextIndex); // bookmark this location, but don't persist.
 		}
 
 		private IStTxtPara GetTextParagraphByIndex(int iPara)
@@ -900,7 +891,7 @@ namespace SIL.FieldWorks.Discourse
 
 		bool HasPersistantColWidths
 		{
-			get { return m_mediator.PropertyTable.GetStringProperty(ColWidthId(), null) != null; }
+			get { return m_propertyTable.GetStringProperty(ColWidthId(), null) != null; }
 		}
 
 		/// <summary>
@@ -911,7 +902,7 @@ namespace SIL.FieldWorks.Discourse
 		{
 			if (m_mediator == null)
 				return false;
-			string savedCols = m_mediator.PropertyTable.GetStringProperty(ColWidthId(), null);
+			string savedCols = m_propertyTable.GetStringProperty(ColWidthId(), null);
 			if (savedCols == null)
 				return false;
 			XmlDocument doc = new XmlDocument();
@@ -956,7 +947,8 @@ namespace SIL.FieldWorks.Discourse
 				colList.Append("<col width=\"" + val + "\"/>");
 			}
 			colList.Append("</root>");
-			m_mediator.PropertyTable.SetProperty(ColWidthId(), colList.ToString());
+			var cwId = ColWidthId();
+			m_propertyTable.SetProperty(cwId, colList.ToString(), true);
 		}
 
 		private string ColWidthId()
@@ -991,7 +983,7 @@ namespace SIL.FieldWorks.Discourse
 			{
 				Debug.Assert(m_bookmark != null, "Hit null bookmark. Why?");
 				if (m_bookmark != null)
-					m_bookmark.Reset(m_bookmark.TextIndex, m_mediator);
+					m_bookmark.Reset(m_bookmark.TextIndex);
 				// Resetting of highlight is done in the array setter now.
 				PrepareForChOrphInsert(iPara, offset);
 				// scroll to ChOrph, highlight cell possibilities, set bookmark etc.
@@ -1128,7 +1120,7 @@ namespace SIL.FieldWorks.Discourse
 			// guards against LT-8309, though I could not reproduce all cases.
 			if (m_chart == null || m_body == null || m_logic == null)
 				return false;
-			using (var dlg = new DiscourseExportDialog(m_mediator, this.m_chart.Hvo, m_body.Vc, m_logic.WsLineNumber))
+			using (var dlg = new DiscourseExportDialog(m_mediator, m_propertyTable, m_chart.Hvo, m_body.Vc, m_logic.WsLineNumber))
 			{
 				dlg.ShowDialog(this);
 			}
@@ -1153,16 +1145,18 @@ namespace SIL.FieldWorks.Discourse
 		/// Basic initialization.
 		/// </summary>
 		/// <param name="mediator"></param>
+		/// <param name="propertyTable"></param>
 		/// <param name="configurationParameters"></param>
-		public void Init(Mediator mediator, System.Xml.XmlNode configurationParameters)
+		public void Init(Mediator mediator, PropertyTable propertyTable, XmlNode configurationParameters)
 		{
 			m_mediator = mediator;
-			if (m_mediator != null)
-				m_logic.Init(m_mediator.HelpTopicProvider);
+			m_propertyTable = propertyTable;
+			if (m_propertyTable != null)
+				m_logic.Init(m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"));
 
 			m_configurationParameters = configurationParameters;
 			InterlinLineChoices lineChoices = GetLineChoices();
-			m_body.Init(mediator, m_configurationParameters);
+			m_body.Init(mediator, propertyTable, m_configurationParameters);
 			m_body.LineChoices = lineChoices;
 			m_ribbon.LineChoices = lineChoices;
 		}
@@ -1211,17 +1205,20 @@ namespace SIL.FieldWorks.Discourse
 		}
 
 		private Mediator m_mediator;
+		private PropertyTable m_propertyTable;
 
 		private InterlinLineChoices GetLineChoices()
 		{
 			var result = new InterlinLineChoices(m_cache.LangProject, m_cache.DefaultVernWs, m_cache.DefaultAnalWs);
 			string persist = null;
-			if (m_mediator != null)
-				persist = m_mediator.PropertyTable.GetStringProperty(ConfigPropName, null, PropertyTable.SettingsGroup.LocalSettings);
+			if (m_propertyTable != null)
+			{
+				persist = m_propertyTable.GetStringProperty(ConfigPropName, null, PropertyTable.SettingsGroup.LocalSettings);
+			}
 			InterlinLineChoices lineChoices = null;
 			if (persist != null)
 			{
-				lineChoices = InterlinLineChoices.Restore(persist, m_cache.ServiceLocator.GetInstance<ILgWritingSystemFactory>(), m_cache.LangProject, m_cache.DefaultVernWs, m_cache.DefaultAnalWs);
+				lineChoices = InterlinLineChoices.Restore(persist, m_cache.ServiceLocator.GetInstance<ILgWritingSystemFactory>(), m_cache.LangProject, m_cache.DefaultVernWs, m_cache.DefaultAnalWs, InterlinLineChoices.InterlinMode.Analyze, m_propertyTable, ConfigPropName);
 			}
 			GetLineChoice(result, lineChoices, InterlinLineChoices.kflidWord);
 			GetLineChoice(result, lineChoices, InterlinLineChoices.kflidWordGloss);
@@ -1259,7 +1256,7 @@ namespace SIL.FieldWorks.Discourse
 	/// It's main function is to handle double-clicks on column boundaries so the chart (which is neither
 	/// a ListView nor a BrowseViewer) can resize its columns.
 	/// </summary>
-	public class ChartHeaderView : ListView, IFWDisposable
+	public class ChartHeaderView : ListView
 	{
 		private ConstituentChart m_chart;
 

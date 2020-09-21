@@ -1,18 +1,17 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using System.Windows.Forms;
 using System.Xml;
-using System.Linq;
-
-using SIL.FieldWorks.Common.Framework.DetailControls.Resources;
 using SIL.FieldWorks.Common.Controls;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.FieldWorks.Common.Framework.DetailControls.Resources;
+using SIL.FieldWorks.Common.FwUtils;
+using SIL.LCModel;
+using SIL.LCModel.Infrastructure;
 using SIL.Utils;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls
@@ -43,21 +42,17 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// <returns>The SimpleListChooser.</returns>
 		protected new MorphTypeChooser GetChooser(IEnumerable<ObjectLabel> labels)
 		{
-			string sShowAllTypes = m_mediator.StringTbl.GetStringWithXPath("ChangeLexemeMorphTypeShowAllTypes", m_ksPath);
+			string sShowAllTypes = StringTable.Table.GetStringWithXPath("ChangeLexemeMorphTypeShowAllTypes", m_ksPath);
 			var x = new MorphTypeChooser(m_persistProvider, labels, m_fieldName, m_obj, m_displayNameProperty,
-				m_flid, sShowAllTypes, m_mediator.HelpTopicProvider);
+				m_flid, sShowAllTypes, m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"));
 			x.Cache = m_cache;
-			x.NullLabel.DisplayName  = XmlUtils.GetOptionalAttributeValue(m_configurationNode, "nullLabel", "<EMPTY>");
+			x.NullLabel.DisplayName  = XmlUtils.GetOptionalAttributeValue(m_configurationNode, "nullLabel", DetailControlsStrings.ksEMPTY);
 			return x;
 		}
 
 		/// <summary>
 		/// Override method to handle launching of a chooser for selecting lexical entries.
 		/// </summary>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="FindForm() returns a reference")]
-		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
-			Justification="See TODO-Linux comment")]
 		protected override void HandleChooser()
 		{
 			string displayWs = "analysis vernacular";
@@ -80,9 +75,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 			using (MorphTypeChooser chooser = GetChooser(labels))
 			{
-				bool fMadeMorphTypeChange = false;
-				var entry = (ILexEntry) m_obj.Owner;
-				chooser.InitializeExtras(m_configurationNode, Mediator);
+				chooser.InitializeExtras(m_configurationNode, Mediator, m_propertyTable);
 				chooser.SetObjectAndFlid(m_obj.Hvo, m_flid);
 				chooser.SetHelpTopic(Slice.GetChooserHelpTopicID());
 
@@ -97,81 +90,102 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				if (chooser.ShowDialog() == DialogResult.OK)
 				{
 					var selected = (IMoMorphType) chooser.ChosenOne.Object;
-					var original = Target as IMoMorphType;
-					string sUndo = m_mediator.StringTbl.GetStringWithXPath("ChangeLexemeMorphTypeUndo", m_ksPath);
-					string sRedo = m_mediator.StringTbl.GetStringWithXPath("ChangeLexemeMorphTypeRedo", m_ksPath);
-
-					bool fRemoveComponents = false;
-					if (selected.Guid == MoMorphTypeTags.kguidMorphRoot
-						|| selected.Guid == MoMorphTypeTags.kguidMorphBoundRoot)
-					{
-						// changing to root...not allowed to have complex forms.
-						foreach (ILexEntryRef ler in entry.EntryRefsOS)
-						{
-							if (ler.RefType == LexEntryRefTags.krtComplexForm)
-							{
-								fRemoveComponents = true;
-								// If there are no components we will delete without asking...but must then check for more
-								// complex forms that DO have components.
-								if (ler.ComponentLexemesRS.Count > 0)
-								{
-									// TODO-Linux: Help is not implemented in Mono
-									if (MessageBox.Show(FindForm(), DetailControlsStrings.ksRootNoComponentsMessage,
-										DetailControlsStrings.ksRootNoComponentsCaption, MessageBoxButtons.YesNo,
-										MessageBoxIcon.Question, MessageBoxDefaultButton.Button1, 0, m_mediator.HelpTopicProvider.HelpFile,
-										HelpNavigator.Topic, "/Using_Tools/Lexicon_tools/Lexicon_Edit/change_the_morph_type.htm") != DialogResult.Yes)
-									{
-										return;
-									}
-									break;
-								}
-							}
-						}
-					}
-
-					UndoableUnitOfWorkHelper.Do(sUndo, sRedo, entry, () =>
-					{
-						if (fRemoveComponents)
-						{
-							foreach (var ler in entry.EntryRefsOS.Where(entryRef => entryRef.RefType == LexEntryRefTags.krtComplexForm))
-								entry.EntryRefsOS.Remove(ler);
-						}
-
-						if (IsStemType(original) || m_obj is IMoStemAllomorph)
-						{
-							if (IsStemType(selected))
-							{
-								Target = selected;
-							}
-							else
-							{
-								//have to switch from stem to affix
-								fMadeMorphTypeChange = ChangeStemToAffix(entry, selected);
-							}
-						}
-						else
-						{
-							// original is affix variety
-							if (IsStemType(selected))
-							{
-								//have to switch from affix to stem
-								fMadeMorphTypeChange = ChangeAffixToStem(entry, selected);
-							}
-							else
-							{
-								Target = selected;
-							}
-						}
-						if (selected.Guid == MoMorphTypeTags.kguidMorphPhrase)
-						{
-							ILexEntryRef ler = m_cache.ServiceLocator.GetInstance<ILexEntryRefFactory>().Create();
-							entry.EntryRefsOS.Add(ler);
-							ler.RefType = LexEntryRefTags.krtComplexForm;
-							ler.HideMinorEntry = 1;
-						}
-					});
+					MakeMorphTypeChange(selected);
 				}
 			}
+		}
+
+		private void MakeMorphTypeChange(IMoMorphType selected)
+		{
+			var entry = (ILexEntry)m_obj.Owner;
+			var original = Target as IMoMorphType;
+			var sUndo = StringTable.Table.GetStringWithXPath("ChangeLexemeMorphTypeUndo", m_ksPath);
+			var sRedo = StringTable.Table.GetStringWithXPath("ChangeLexemeMorphTypeRedo", m_ksPath);
+
+			var fRemoveComponents = false;
+			if (selected.Guid == MoMorphTypeTags.kguidMorphRoot
+				|| selected.Guid == MoMorphTypeTags.kguidMorphBoundRoot)
+			{
+				// changing to root...not allowed to have complex forms.
+				foreach (ILexEntryRef ler in entry.EntryRefsOS)
+				{
+					if (ler.RefType == LexEntryRefTags.krtComplexForm)
+					{
+						fRemoveComponents = true;
+						// If there are no components we will delete without asking...but must then check for more
+						// complex forms that DO have components.
+						if (ler.ComponentLexemesRS.Count > 0)
+						{
+							// TODO-Linux: Help is not implemented in Mono
+							if (MessageBox.Show(FindForm(), DetailControlsStrings.ksRootNoComponentsMessage,
+									DetailControlsStrings.ksRootNoComponentsCaption, MessageBoxButtons.YesNo,
+									MessageBoxIcon.Question, MessageBoxDefaultButton.Button1, 0,
+									m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider").HelpFile,
+									HelpNavigator.Topic,
+									"/Using_Tools/Lexicon_tools/Lexicon_Edit/change_the_morph_type.htm") != DialogResult.Yes)
+							{
+								return;
+							}
+
+							break;
+						}
+					}
+				}
+			}
+
+			UndoableUnitOfWorkHelper.Do(sUndo, sRedo, entry, () =>
+			{
+				if (fRemoveComponents)
+				{
+					foreach (var ler in entry.EntryRefsOS.Where(entryRef =>
+						entryRef.RefType == LexEntryRefTags.krtComplexForm))
+						entry.EntryRefsOS.Remove(ler);
+				}
+
+				if (IsStemType(original) || m_obj is IMoStemAllomorph)
+				{
+					if (IsStemType(selected))
+					{
+						Target = selected;
+					}
+					else
+					{
+						//have to switch from stem to affix
+						ChangeStemToAffix(entry, selected);
+					}
+				}
+				else
+				{
+					// original is affix variety
+					if (IsStemType(selected))
+					{
+						//have to switch from affix to stem
+						ChangeAffixToStem(entry, selected);
+					}
+					else
+					{
+						Target = selected;
+					}
+				}
+
+				if (selected.Guid == MoMorphTypeTags.kguidMorphPhrase)
+				{
+					ILexEntryRef ler = m_cache.ServiceLocator.GetInstance<ILexEntryRefFactory>().Create();
+					entry.EntryRefsOS.Add(ler);
+					ler.RefType = LexEntryRefTags.krtComplexForm;
+					ler.HideMinorEntry = 1;
+				}
+			});
+		}
+
+		protected override void UpdateAutoComplete()
+		{
+			// Do nothing here.
+		}
+
+		protected override void HandlePossibilitySelected(object sender, EventArgs e)
+		{
+			MakeMorphTypeChange((IMoMorphType)AutoCompleteSelectedPossibility);
 		}
 
 		protected override bool AllowEmptyItem
@@ -201,7 +215,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			}
 			if (CheckForAffixDataLoss(affix, rgmsaOld))
 				return false;
-			FdoCache cache = m_cache;
+			LcmCache cache = m_cache;
 			var stem = m_cache.ServiceLocator.GetInstance<IMoStemAllomorphFactory>().Create();
 			SwapValues(entry, affix, stem, type, rgmsaOld);	// may cause slice/button to be disposed...
 			return true;
@@ -274,26 +288,26 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			{
 				string sMsg;
 				if (fLoseInflCls && fLoseInfixLoc && fLoseGramInfo)
-					sMsg = m_mediator.StringTbl.GetStringWithXPath("ChangeMorphTypeLoseInflClsInfixLocGramInfo", m_ksPath);
+					sMsg = StringTable.Table.GetStringWithXPath("ChangeMorphTypeLoseInflClsInfixLocGramInfo", m_ksPath);
 				else if (fLoseRule && fLoseInflCls && fLoseGramInfo)
-					sMsg = m_mediator.StringTbl.GetStringWithXPath("ChangeMorphTypeLoseRuleInflClsGramInfo", m_ksPath);
+					sMsg = StringTable.Table.GetStringWithXPath("ChangeMorphTypeLoseRuleInflClsGramInfo", m_ksPath);
 				else if (fLoseInflCls && fLoseInfixLoc)
-					sMsg = m_mediator.StringTbl.GetStringWithXPath("ChangeMorphTypeLoseInflClsInfixLoc", m_ksPath);
+					sMsg = StringTable.Table.GetStringWithXPath("ChangeMorphTypeLoseInflClsInfixLoc", m_ksPath);
 				else if (fLoseInflCls && fLoseGramInfo)
-					sMsg = m_mediator.StringTbl.GetStringWithXPath("ChangeMorphTypeLoseInflClsGramInfo", m_ksPath);
+					sMsg = StringTable.Table.GetStringWithXPath("ChangeMorphTypeLoseInflClsGramInfo", m_ksPath);
 				else if (fLoseInfixLoc && fLoseGramInfo)
-					sMsg = m_mediator.StringTbl.GetStringWithXPath("ChangeMorphTypeLoseInfixLocGramInfo", m_ksPath);
+					sMsg = StringTable.Table.GetStringWithXPath("ChangeMorphTypeLoseInfixLocGramInfo", m_ksPath);
 				else if (fLoseRule && fLoseInflCls)
-					sMsg = m_mediator.StringTbl.GetStringWithXPath("ChangeMorphTypeLoseRuleInflCls", m_ksPath);
+					sMsg = StringTable.Table.GetStringWithXPath("ChangeMorphTypeLoseRuleInflCls", m_ksPath);
 				else if (fLoseRule)
-					sMsg = m_mediator.StringTbl.GetStringWithXPath("ChangeMorphTypeLoseRule", m_ksPath);
+					sMsg = StringTable.Table.GetStringWithXPath("ChangeMorphTypeLoseRule", m_ksPath);
 				else if (fLoseInflCls)
-					sMsg = m_mediator.StringTbl.GetStringWithXPath("ChangeMorphTypeLoseInflCls", m_ksPath);
+					sMsg = StringTable.Table.GetStringWithXPath("ChangeMorphTypeLoseInflCls", m_ksPath);
 				else if (fLoseInfixLoc)
-					sMsg = m_mediator.StringTbl.GetStringWithXPath("ChangeMorphTypeLoseInfixLoc", m_ksPath);
+					sMsg = StringTable.Table.GetStringWithXPath("ChangeMorphTypeLoseInfixLoc", m_ksPath);
 				else
-					sMsg = m_mediator.StringTbl.GetStringWithXPath("ChangeMorphTypeLoseGramInfo", m_ksPath);
-				string sCaption = m_mediator.StringTbl.GetStringWithXPath("ChangeLexemeMorphTypeCaption", m_ksPath);
+					sMsg = StringTable.Table.GetStringWithXPath("ChangeMorphTypeLoseGramInfo", m_ksPath);
+				string sCaption = StringTable.Table.GetStringWithXPath("ChangeLexemeMorphTypeCaption", m_ksPath);
 				DialogResult result = MessageBox.Show(sMsg, sCaption,
 					MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
 				if (result == DialogResult.No)
@@ -320,7 +334,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			}
 			if (CheckForStemDataLoss(stem, rgmsaOld))
 				return false;
-			FdoCache cache = m_cache;
+			LcmCache cache = m_cache;
 			var affix = m_cache.ServiceLocator.GetInstance<IMoAffixAllomorphFactory>().Create();
 			SwapValues(entry, stem, affix, type, rgmsaOld);
 			return true;
@@ -348,12 +362,12 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			{
 				string sMsg;
 				if (fLoseStemName && fLoseGramInfo)
-					sMsg = m_mediator.StringTbl.GetStringWithXPath("ChangeMorphTypeLoseStemNameGramInfo", m_ksPath);
+					sMsg = StringTable.Table.GetStringWithXPath("ChangeMorphTypeLoseStemNameGramInfo", m_ksPath);
 				else if (fLoseStemName)
-					sMsg = m_mediator.StringTbl.GetStringWithXPath("ChangeMorphTypeLoseStemName", m_ksPath);
+					sMsg = StringTable.Table.GetStringWithXPath("ChangeMorphTypeLoseStemName", m_ksPath);
 				else
-					sMsg = m_mediator.StringTbl.GetStringWithXPath("ChangeMorphTypeLoseGramInfo", m_ksPath);
-				string sCaption = m_mediator.StringTbl.GetStringWithXPath("ChangeLexemeMorphTypeCaption", m_ksPath);
+					sMsg = StringTable.Table.GetStringWithXPath("ChangeMorphTypeLoseGramInfo", m_ksPath);
+				string sCaption = StringTable.Table.GetStringWithXPath("ChangeLexemeMorphTypeCaption", m_ksPath);
 				DialogResult result = MessageBox.Show(sMsg, sCaption,
 					MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
 				if (result == DialogResult.No)
@@ -364,8 +378,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			return false;
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "dtree is a reference")]
 		private void SwapValues(ILexEntry entry, IMoForm origForm, IMoForm newForm, IMoMorphType type,
 			List<IMoMorphSynAnalysis> rgmsaOld)
 		{

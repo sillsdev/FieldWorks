@@ -2,6 +2,7 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System;
 using System.Windows.Forms;
 
 namespace SIL.FieldWorks.XWorks
@@ -22,6 +23,9 @@ namespace SIL.FieldWorks.XWorks
 			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			if (disposing && (components != null))
 			{
+				foreach(IDisposable menuItem in m_CtrlRightClickMenu.Items)
+					menuItem.Dispose();
+				m_CtrlRightClickMenu.Dispose();
 				components.Dispose();
 			}
 			for (int i = m_CtrlRightClickMenu.Items.Count - 1; i >= 0; i--)

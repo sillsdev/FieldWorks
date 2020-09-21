@@ -179,15 +179,6 @@ protected:
 
 	// Other protected methods
 	void Compile();
-	//--void Convert(SmartBstr & sbstr);
-	int FindCorrespondingIndex(OLECHAR * pchOrig, int cch, OLECHAR *pchBuf1,
-		OLECHAR * pchBuf2, ILgCharacterPropertyEngine * pcpe, int cchBuf);
-	int FixIndex(OLECHAR * pchOrig, int cch, int cchConv, int ich, OLECHAR *pchBuf1,
-		OLECHAR * pchBuf2, ILgCharacterPropertyEngine * pcpe, int cchBuf);
-	bool FigureIndexesAndCheckWs(IVwTextSource * pts, int ichMinSearch, int ichLimSearch,
-		OLECHAR * pchBuf, int cchBuf, OLECHAR * pchBuf2, int cchBuf2,
-		ILgCharacterPropertyEngine * pcpe, int cchMax, int cchConv,
-		OLECHAR ** ppchMatch, int & ichMinMatch, int & ichLimMatch);
 	void CleanupRegexPattern();
 };
 
@@ -225,7 +216,7 @@ public:
 	}
 
 	// IVwPattern methods
-	STDMETHOD(put_Window)(int hwnd);
+	STDMETHOD(put_Window)(DWORD * hwnd);
 	STDMETHOD(FlushMessages)();
 	STDMETHOD(get_AbortRequest)(ComBool * pfAbort);
 	STDMETHOD(put_AbortRequest)(ComBool fAbort);

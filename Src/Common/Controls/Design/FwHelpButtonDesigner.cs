@@ -1,10 +1,8 @@
-// Copyright (c) 2002-2013 SIL International
+// Copyright (c) 2002-2016 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System;
 using System.Collections;
-using System.ComponentModel;
 using System.Windows.Forms.Design;
 
 namespace SIL.FieldWorks.Common.Controls.Design
@@ -26,7 +24,14 @@ namespace SIL.FieldWorks.Common.Controls.Design
 		public override void InitializeNewComponent(IDictionary defaultValues)
 		{
 			base.InitializeNewComponent(defaultValues);
-			base.Control.Text = "&Help";
+			Control.Text = "&Help";
+		}
+
+		/// <summary/>
+		protected override void Dispose(bool disposing)
+		{
+			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + ". ******");
+			base.Dispose(disposing);
 		}
 	}
 }

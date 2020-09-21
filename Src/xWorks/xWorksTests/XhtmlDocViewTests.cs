@@ -1,17 +1,17 @@
-﻿// Copyright (c) 2014 SIL International
+// Copyright (c) 2014-2020 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Xml;
 using NUnit.Framework;
-using Palaso.IO;
+using SIL.LCModel.Core.Text;
+using SIL.IO;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel;
+using SIL.LCModel.Infrastructure;
 using XCore;
 
 namespace SIL.FieldWorks.XWorks
@@ -19,12 +19,13 @@ namespace SIL.FieldWorks.XWorks
 	[TestFixture]
 	class XhtmlDocViewTests : XWorksAppTestBase, IDisposable
 	{
+		private PropertyTable m_propertyTable;
 		private Mediator m_mediator;
 		[TestFixtureSetUp]
-		public new void FixtureSetup()
+		public override void FixtureInit()
 		{
 			// Init() is called from XWorksAppTestBase's TestFixtureSetup, so we won't call it here.
-
+			base.FixtureInit();
 			var testProjPath = Path.Combine(Path.GetTempPath(), "XhtmlDocViewtestProj");
 			if(Directory.Exists(testProjPath))
 				Directory.Delete(testProjPath, true);
@@ -44,7 +45,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				var testPubItem = Cache.ServiceLocator.GetInstance<ICmPossibilityFactory>().Create();
 				int enId = Cache.WritingSystemFactory.GetWsFromStr("en");
-				var testPubName = Cache.TsStrFactory.MakeString("TestPub", enId);
+				var testPubName = TsStringUtils.MakeString("TestPub", enId);
 				Cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS.Add(testPubItem);
 				testPubItem.Name.set_String(enId, testPubName);
 				var allPubsConfig = ConfigurationTemplateWithAllPublications;
@@ -54,6 +55,7 @@ namespace SIL.FieldWorks.XWorks
 				{
 					docView.SetConfigObjectName("Dictionary");
 					docView.SetMediator(m_mediator);
+					docView.SetPropertyTable(m_propertyTable);
 					File.WriteAllText(tempConfigFile.Path, allPubsConfig);
 					List<string> pubsInConfig;
 					List<string> pubsNotInConfig;
@@ -74,11 +76,11 @@ namespace SIL.FieldWorks.XWorks
 			{
 				var testPubItem = Cache.ServiceLocator.GetInstance<ICmPossibilityFactory>().Create();
 				int enId = Cache.WritingSystemFactory.GetWsFromStr("en");
-				var testPubName = Cache.TsStrFactory.MakeString("TestPub", enId);
+				var testPubName = TsStringUtils.MakeString("TestPub", enId);
 				Cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS.Add(testPubItem);
 				testPubItem.Name.set_String(enId, testPubName);
 				var notTestPubItem = Cache.ServiceLocator.GetInstance<ICmPossibilityFactory>().Create();
-				var notTestPubName = Cache.TsStrFactory.MakeString("NotTestPub", enId);
+				var notTestPubName = TsStringUtils.MakeString("NotTestPub", enId);
 				Cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS.Add(notTestPubItem);
 				notTestPubItem.Name.set_String(enId, notTestPubName);
 				var configWithoutTestPub = ConfigurationTemplate.Replace("</Publications>", "<Publication>NotTestPub</Publication></Publications>");
@@ -88,6 +90,7 @@ namespace SIL.FieldWorks.XWorks
 				{
 					docView.SetConfigObjectName("Dictionary");
 					docView.SetMediator(m_mediator);
+					docView.SetPropertyTable(m_propertyTable);
 					File.WriteAllText(tempConfigFile.Path, configWithoutTestPub);
 					List<string> pubsInConfig;
 					List<string> pubsNotInConfig;
@@ -108,7 +111,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				var testPubItem = Cache.ServiceLocator.GetInstance<ICmPossibilityFactory>().Create();
 				int enId = Cache.WritingSystemFactory.GetWsFromStr("en");
-				var testPubName = Cache.TsStrFactory.MakeString("TestPub", enId);
+				var testPubName = TsStringUtils.MakeString("TestPub", enId);
 				Cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS.Add(testPubItem);
 				testPubItem.Name.set_String(enId, testPubName);
 				var configWithTestPub = ConfigurationTemplate.Replace("</Publications>", "<Publication>TestPub</Publication></Publications>");
@@ -118,6 +121,7 @@ namespace SIL.FieldWorks.XWorks
 				{
 					docView.SetConfigObjectName("Dictionary");
 					docView.SetMediator(m_mediator);
+					docView.SetPropertyTable(m_propertyTable);
 					File.WriteAllText(tempConfigFile.Path, configWithTestPub);
 					List<string> inConfig;
 					List<string> outConfig;
@@ -143,6 +147,7 @@ namespace SIL.FieldWorks.XWorks
 				{
 					docView.SetConfigObjectName("Dictionary");
 					docView.SetMediator(m_mediator);
+					docView.SetPropertyTable(m_propertyTable);
 					File.WriteAllText(tempConfigFile.Path, allPubsConfig);
 					IDictionary<string, string> configsWithPub;
 					IDictionary<string, string> configsWithoutPub;
@@ -164,7 +169,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				var testPubItem = Cache.ServiceLocator.GetInstance<ICmPossibilityFactory>().Create();
 				int enId = Cache.WritingSystemFactory.GetWsFromStr("en");
-				var testPubName = Cache.TsStrFactory.MakeString("TestPub", enId);
+				var testPubName = TsStringUtils.MakeString("TestPub", enId);
 				Cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS.Add(testPubItem);
 				testPubItem.Name.set_String(enId, testPubName);
 				using(var docView = new TestXhtmlDocView())
@@ -173,6 +178,7 @@ namespace SIL.FieldWorks.XWorks
 				{
 					docView.SetConfigObjectName("Dictionary");
 					docView.SetMediator(m_mediator);
+					docView.SetPropertyTable(m_propertyTable);
 					File.WriteAllText(tempConfigFile.Path, ConfigurationTemplate);
 					IDictionary<string, string> configsWithPub;
 					IDictionary<string, string> configsWithoutPub;
@@ -194,11 +200,11 @@ namespace SIL.FieldWorks.XWorks
 			{
 				var testPubItem = Cache.ServiceLocator.GetInstance<ICmPossibilityFactory>().Create();
 				int enId = Cache.WritingSystemFactory.GetWsFromStr("en");
-				var testPubName = Cache.TsStrFactory.MakeString("TestPub", enId);
+				var testPubName = TsStringUtils.MakeString("TestPub", enId);
 				Cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS.Add(testPubItem);
 				testPubItem.Name.set_String(enId, testPubName);
 				var notTestPubItem = Cache.ServiceLocator.GetInstance<ICmPossibilityFactory>().Create();
-				var notTestPubName = Cache.TsStrFactory.MakeString("NotTestPub", enId);
+				var notTestPubName = TsStringUtils.MakeString("NotTestPub", enId);
 				Cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS.Add(notTestPubItem);
 				notTestPubItem.Name.set_String(enId, notTestPubName);
 				var configWithoutTestPub = ConfigurationTemplate.Replace("</Publications>", "<Publication>NotTestPub</Publication></Publications>");
@@ -208,6 +214,7 @@ namespace SIL.FieldWorks.XWorks
 				{
 					docView.SetConfigObjectName("Dictionary");
 					docView.SetMediator(m_mediator);
+					docView.SetPropertyTable(m_propertyTable);
 					File.WriteAllText(tempConfigFile.Path, configWithoutTestPub);
 					IDictionary<string, string> configsWithPub;
 					IDictionary<string, string> configsWithoutPub;
@@ -229,7 +236,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				var testPubItem = Cache.ServiceLocator.GetInstance<ICmPossibilityFactory>().Create();
 				int enId = Cache.WritingSystemFactory.GetWsFromStr("en");
-				var testPubName = Cache.TsStrFactory.MakeString("TestPub", enId);
+				var testPubName = TsStringUtils.MakeString("TestPub", enId);
 				Cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS.Add(testPubItem);
 				testPubItem.Name.set_String(enId, testPubName);
 				var configWithTestPub = ConfigurationTemplate.Replace("</Publications>", "<Publication>TestPub</Publication></Publications>");
@@ -239,6 +246,7 @@ namespace SIL.FieldWorks.XWorks
 				{
 					docView.SetConfigObjectName("Dictionary");
 					docView.SetMediator(m_mediator);
+					docView.SetPropertyTable(m_propertyTable);
 					File.WriteAllText(tempConfigFile.Path, configWithTestPub);
 					IDictionary<string, string> configsWithPub;
 					IDictionary<string, string> configsWithoutPub;
@@ -260,7 +268,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				var testPubItem = Cache.ServiceLocator.GetInstance<ICmPossibilityFactory>().Create();
 				int enId = Cache.WritingSystemFactory.GetWsFromStr("en");
-				var testPubName = Cache.TsStrFactory.MakeString("TestPub", enId);
+				var testPubName = TsStringUtils.MakeString("TestPub", enId);
 				Cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS.Add(testPubItem);
 				testPubItem.Name.set_String(enId, testPubName);
 				// Change the project path to temp for this test
@@ -275,8 +283,9 @@ namespace SIL.FieldWorks.XWorks
 					{
 						docView.SetConfigObjectName("Dictionary");
 						docView.SetMediator(m_mediator);
-						m_mediator.PropertyTable.SetProperty("currentContentControl", "lexiconDictionary", false);
-						m_mediator.PropertyTable.SetProperty("DictionaryPublicationLayout", tempConfigFile.Path);
+						docView.SetPropertyTable(m_propertyTable);
+						m_propertyTable.SetProperty("currentContentControl", "lexiconDictionary", false);
+						m_propertyTable.SetProperty("DictionaryPublicationLayout", tempConfigFile.Path, true);
 						File.WriteAllText(tempConfigFile.Path, configWithTestPub);
 						// SUT
 						Assert.That(docView.GetValidConfigurationForPublication("TestPub"), Is.StringContaining(tempConfigFile.Path));
@@ -292,7 +301,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				var testPubItem = Cache.ServiceLocator.GetInstance<ICmPossibilityFactory>().Create();
 				int enId = Cache.WritingSystemFactory.GetWsFromStr("en");
-				var testPubName = Cache.TsStrFactory.MakeString("TestPub", enId);
+				var testPubName = TsStringUtils.MakeString("TestPub", enId);
 				Cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS.Add(testPubItem);
 				testPubItem.Name.set_String(enId, testPubName);
 
@@ -305,9 +314,10 @@ namespace SIL.FieldWorks.XWorks
 				{
 					docView.SetConfigObjectName("Dictionary");
 					docView.SetMediator(m_mediator);
-					m_mediator.PropertyTable.SetProperty("DictionaryPublicationLayout", tempConfigFile.Path);
+					docView.SetPropertyTable(m_propertyTable);
+					m_propertyTable.SetProperty("DictionaryPublicationLayout", tempConfigFile.Path, true);
 					// DictionaryConfigurationListener.GetCurrentConfiguration() needs to know the currentContentControl.
-					m_mediator.PropertyTable.SetProperty("currentContentControl", "lexiconDictionary");
+					m_propertyTable.SetProperty("currentContentControl", "lexiconDictionary", true);
 					File.WriteAllText(tempConfigFile.Path, configWithTestPub);
 					// SUT
 					Assert.That(docView.GetValidConfigurationForPublication(xWorksStrings.AllEntriesPublication),
@@ -323,7 +333,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				var testPubItem = Cache.ServiceLocator.GetInstance<ICmPossibilityFactory>().Create();
 				int enId = Cache.WritingSystemFactory.GetWsFromStr("en");
-				var testPubName = Cache.TsStrFactory.MakeString("NotTheTestPub", enId);
+				var testPubName = TsStringUtils.MakeString("NotTheTestPub", enId);
 				Cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS.Add(testPubItem);
 				testPubItem.Name.set_String(enId, testPubName);
 				var configSansTestPub = ConfigurationTemplate.Replace("</Publications>",
@@ -333,7 +343,8 @@ namespace SIL.FieldWorks.XWorks
 				{
 					docView.SetConfigObjectName("Dictionary");
 					docView.SetMediator(m_mediator);
-					var projConfigs = Path.Combine(FdoFileHelper.GetConfigSettingsDir(Cache.ProjectId.ProjectFolder),
+					docView.SetPropertyTable(m_propertyTable);
+					var projConfigs = Path.Combine(LcmFileHelper.GetConfigSettingsDir(Cache.ProjectId.ProjectFolder),
 															 "Dictionary");
 					Directory.CreateDirectory(projConfigs);
 					// override every shipped config with a config that does not have the TestPub publication
@@ -375,18 +386,18 @@ namespace SIL.FieldWorks.XWorks
 			{
 				var testPubItem = Cache.ServiceLocator.GetInstance<ICmPossibilityFactory>().Create();
 				int enId = Cache.WritingSystemFactory.GetWsFromStr("en");
-				var testPubName = Cache.TsStrFactory.MakeString("TestPub", enId);
+				var testPubName = TsStringUtils.MakeString("TestPub", enId);
 				Cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS.Add(testPubItem);
 				testPubItem.Name.set_String(enId, testPubName);
 				var notTestPubItem = Cache.ServiceLocator.GetInstance<ICmPossibilityFactory>().Create();
-				var notTestPubName = Cache.TsStrFactory.MakeString("NotTestPub", enId);
+				var notTestPubName = TsStringUtils.MakeString("NotTestPub", enId);
 				Cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS.Add(notTestPubItem);
 				notTestPubItem.Name.set_String(enId, notTestPubName);
 				var nonMatchingConfig = ConfigurationTemplate.Replace("</Publications>", "<Publication>NotTestPub</Publication></Publications>");
 				//Change the name for the matching config so that our two user configs don't conflict with each other
 				var matchingConfig = ConfigurationTemplate.Replace("</Publications>",
 																					"<Publication>TestPub</Publication></Publications>").Replace("AConfigPub", "AAConfigPub");
-				var dictionaryConfigPath = Path.Combine(FdoFileHelper.GetConfigSettingsDir(Cache.ProjectId.ProjectFolder), "Dictionary");
+				var dictionaryConfigPath = Path.Combine(LcmFileHelper.GetConfigSettingsDir(Cache.ProjectId.ProjectFolder), "Dictionary");
 				using(var docView = new TestXhtmlDocView())
 				using(var nonMatchedConfigFile = TempFile.WithFilename(Path.Combine(dictionaryConfigPath,
 																								  "NoMatch"+DictionaryConfigurationModel.FileExtension)))
@@ -396,9 +407,10 @@ namespace SIL.FieldWorks.XWorks
 					File.WriteAllText(nonMatchedConfigFile.Path, nonMatchingConfig);
 					File.WriteAllText(matchedConfigFile.Path, matchingConfig);
 					docView.SetConfigObjectName("Dictionary");
-					m_mediator.PropertyTable.SetProperty("currentContentControl", "lexiconDictionary", false);
-					m_mediator.PropertyTable.SetProperty("DictionaryPublicationLayout", nonMatchedConfigFile.Path);
+					m_propertyTable.SetProperty("currentContentControl", "lexiconDictionary", false);
+					m_propertyTable.SetProperty("DictionaryPublicationLayout", nonMatchedConfigFile.Path, true);
 					docView.SetMediator(m_mediator);
+					docView.SetPropertyTable(m_propertyTable);
 					// SUT
 					var validConfig = docView.GetValidConfigurationForPublication("TestPub");
 					Assert.That(validConfig, Is.Not.StringContaining(nonMatchedConfigFile.Path));
@@ -418,6 +430,11 @@ namespace SIL.FieldWorks.XWorks
 			{
 				m_mediator = mediator;
 			}
+
+			public void SetPropertyTable(PropertyTable propertyTable)
+			{
+				m_propertyTable = propertyTable;
+			}
 		}
 
 		protected override void Init()
@@ -426,7 +443,7 @@ namespace SIL.FieldWorks.XWorks
 			m_configFilePath = Path.Combine(FwDirectoryFinder.CodeDirectory, m_application.DefaultConfigurationPathname);
 			m_window = new MockFwXWindow(m_application, m_configFilePath);
 			((MockFwXWindow)m_window).Init(Cache); // initializes Mediator values
-			m_mediator = m_window.Mediator;
+			m_propertyTable = m_window.PropTable;
 		}
 
 		#region IDisposable Section (aka keep Gendarme happy)
@@ -443,7 +460,8 @@ namespace SIL.FieldWorks.XWorks
 		protected virtual void Dispose(bool disposing)
 		{
 			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
-
+			if(m_propertyTable != null)
+				m_propertyTable.Dispose();
 			if (m_window != null)
 				m_window.Dispose();
 

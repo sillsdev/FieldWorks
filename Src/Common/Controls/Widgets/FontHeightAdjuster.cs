@@ -9,15 +9,18 @@
 // </remarks>
 
 using System;
-using SIL.FieldWorks.Common.COMInterfaces;
+using System.Diagnostics;
+using System.Drawing;
+using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
-using System.Reflection;
-using SIL.FieldWorks.FDO;
-using System.Drawing;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.Utils;
-using System.Diagnostics;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
+using SIL.Reporting;
+using XCore;
 
 namespace SIL.FieldWorks.Common.Widgets
 {
@@ -26,7 +29,7 @@ namespace SIL.FieldWorks.Common.Widgets
 	/// Summary description for FontHeightAdjuster.
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
-	public class FontHeightAdjuster
+	public static class FontHeightAdjuster
 	{
 		/// -------------------------------------------------------------------------------------
 		/// <summary>
@@ -166,7 +169,7 @@ namespace SIL.FieldWorks.Common.Widgets
 			vwps.Stylesheet = styleSheet;
 			vwps.WritingSystemFactory = writingSystemFactory;
 
-			ITsPropsBldr ttpBldr = TsPropsBldrClass.Create();
+			ITsPropsBldr ttpBldr = TsStringUtils.MakePropsBldr();
 			ttpBldr.SetStrPropValue((int)FwTextPropType.ktptNamedStyle, styleName);
 			ttpBldr.SetIntPropValues((int)FwTextPropType.ktptWs, 0, hvoWs);
 			ITsTextProps ttp = ttpBldr.GetTextProps();
@@ -231,14 +234,13 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// displayed in the default Normal style of the stylesheet obtained from the mediator.
 		/// </summary>
 		/// <param name="hvoWs">The hvo of the writing system.</param>
-		/// <param name="mediator">The mediator.</param>
 		/// <param name="wsf">The writing system factory.</param>
+		/// <param name="propertyTable"></param>
 		/// <returns></returns>
 		/// ------------------------------------------------------------------------------------
-		static public Font GetFontForNormalStyle(int hvoWs, XCore.Mediator mediator,
-			ILgWritingSystemFactory wsf)
+		public static Font GetFontForNormalStyle(int hvoWs, ILgWritingSystemFactory wsf, PropertyTable propertyTable)
 		{
-			return GetFontForNormalStyle(hvoWs, StyleSheetFromMediator(mediator), wsf);
+			return GetFontForNormalStyle(hvoWs, StyleSheetFromPropertyTable(propertyTable), wsf);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -252,8 +254,8 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// <param name="cache">The cache from which the writing system factory is obtained.
 		/// </param>
 		/// ------------------------------------------------------------------------------------
-		static public Font GetFontForNormalStyle(int hvoWs,
-			IVwStylesheet styleSheet, FdoCache cache)
+		public static Font GetFontForNormalStyle(int hvoWs,
+			IVwStylesheet styleSheet, LcmCache cache)
 		{
 			return GetFontForNormalStyle(hvoWs, styleSheet,
 				cache.WritingSystemFactory);
@@ -270,7 +272,7 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// <param name="wsf"></param>
 		/// <returns></returns>
 		/// ------------------------------------------------------------------------------------
-		static public Font GetFontForNormalStyle(int hvoWs, IVwStylesheet styleSheet,
+		public static Font GetFontForNormalStyle(int hvoWs, IVwStylesheet styleSheet,
 			ILgWritingSystemFactory wsf)
 		{
 			ITsTextProps ttpNormal = styleSheet.NormalFontStyle;
@@ -283,31 +285,27 @@ namespace SIL.FieldWorks.Common.Widgets
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Determine a stylesheet from a mediator. Currently this is done by looking for the main window
+		/// Determine a stylesheet from a PropertyTable. Currently this is done by looking for the main window
 		/// and seeing whether it has a StyleSheet property that returns one. (We use reflection
 		/// because the relevant classes are in DLLs we can't reference.)
 		/// </summary>
-		/// <param name="mediator"></param>
 		/// <returns></returns>
 		/// ------------------------------------------------------------------------------------
-		static public FwStyleSheet StyleSheetFromMediator(XCore.Mediator mediator)
+		public static LcmStyleSheet StyleSheetFromPropertyTable(IPropertyRetriever propertyTable)
 		{
-			if (mediator == null || mediator.PropertyTable == null)
-				return null;
-			Form mainWindow = (Form)mediator.PropertyTable.GetValue("window");
+			Form mainWindow = propertyTable.GetValue<Form>("window");
 			PropertyInfo pi = null;
 			if (mainWindow != null)
 			{
-				string areaChoice = mediator.PropertyTable.GetStringProperty("areaChoice", null);
+				string areaChoice = propertyTable.GetStringProperty("areaChoice", null);
 				if (areaChoice != null && areaChoice.ToLowerInvariant() == "notebook")
 					pi = mainWindow.GetType().GetProperty("AnthroStyleSheet");
 				if (pi == null)
 					pi = mainWindow.GetType().GetProperty("StyleSheet");
 			}
 			if (pi != null)
-				return pi.GetValue(mainWindow, null) as FwStyleSheet;
-			else
-				return mediator.PropertyTable.GetValue("FwStyleSheet") as FwStyleSheet;
+				return pi.GetValue(mainWindow, null) as LcmStyleSheet;
+			return propertyTable.GetValue<LcmStyleSheet>("LcmStyleSheet");
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -319,7 +317,7 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// <param name="delta"></param>
 		/// <param name="grower"></param>
 		/// ------------------------------------------------------------------------------------
-		static public void GrowDialogAndAdjustControls(Control parent, int delta, Control grower)
+		public static void GrowDialogAndAdjustControls(Control parent, int delta, Control grower)
 		{
 			if (delta == 0)
 				return;

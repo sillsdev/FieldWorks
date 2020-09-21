@@ -61,7 +61,7 @@ protected:
 
 	void Seek(int ib)
 	{
-		if (SetFilePointer(m_hfile, ib, NULL, FILE_BEGIN) == 0xFFFFFFFF)
+		if (SetFilePointer(m_hfile, ib, NULL, FILE_BEGIN) == SIZE_MAX)
 			ThrowHr(WarnHr(STG_E_SEEKERROR));
 	}
 };

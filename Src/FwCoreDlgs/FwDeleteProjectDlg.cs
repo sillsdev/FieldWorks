@@ -1,23 +1,15 @@
-// Copyright (c) 2004-2013 SIL International
+// Copyright (c) 2004-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: FwDeleteProjectDlg.cs
-// Responsibility: FW Team
 
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
-using System.Data.SqlClient;
-
-using SIL.Utils;
 using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.Common.FwUtils;
-using XCore;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using System.IO;
-using System.Diagnostics;
 
 namespace SIL.FieldWorks.FwCoreDlgs
 {
@@ -27,7 +19,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 	/// Summary description for FwDeleteProjectDlg.
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
-	public class FwDeleteProjectDlg : Form, IFWDisposable
+	public class FwDeleteProjectDlg : Form
 	{
 		private ListBox m_lstProjects;
 		private ListBox m_lstProjectsInUse;
@@ -293,25 +285,22 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					}
 					else
 					{
-						string path = Path.Combine(folder, info.DatabaseName + FdoFileHelper.ksFwDataXmlFileExtension);
+						string path = Path.Combine(folder, info.DatabaseName + LcmFileHelper.ksFwDataXmlFileExtension);
 						if (File.Exists(path))
 							File.Delete(path);
-						path = Path.ChangeExtension(path, FdoFileHelper.ksFwDataDb4oFileExtension);
+						path = Path.ChangeExtension(path, LcmFileHelper.ksFwDataFallbackFileExtension);
 						if (File.Exists(path))
 							File.Delete(path);
-						path = Path.ChangeExtension(path, FdoFileHelper.ksFwDataFallbackFileExtension);
-						if (File.Exists(path))
-							File.Delete(path);
-						path = Path.Combine(folder, FdoFileHelper.ksWritingSystemsDir);
+						path = Path.Combine(folder, LcmFileHelper.ksWritingSystemsDir);
 						if (Directory.Exists(path))
 							Directory.Delete(path, true);
-						path = Path.Combine(folder, FdoFileHelper.ksBackupSettingsDir);
+						path = Path.Combine(folder, LcmFileHelper.ksBackupSettingsDir);
 						if (Directory.Exists(path))
 							Directory.Delete(path, true);
-						path = Path.Combine(folder, FdoFileHelper.ksConfigurationSettingsDir);
+						path = Path.Combine(folder, LcmFileHelper.ksConfigurationSettingsDir);
 						if (Directory.Exists(path))
 							Directory.Delete(path, true);
-						path = Path.Combine(folder, FdoFileHelper.ksSortSequenceTempDir);
+						path = Path.Combine(folder, LcmFileHelper.ksSortSequenceTempDir);
 						if (Directory.Exists(path))
 							Directory.Delete(path, true);
 						string[] folders = Directory.GetDirectories(folder);
@@ -339,10 +328,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			foreach (string dir in folders)
 			{
 				string name = Path.GetFileName(dir);
-				if (name == FdoFileHelper.ksWritingSystemsDir ||
-					name == FdoFileHelper.ksBackupSettingsDir ||
-					name == FdoFileHelper.ksConfigurationSettingsDir ||
-					name == FdoFileHelper.ksSortSequenceTempDir)
+				if (name == LcmFileHelper.ksWritingSystemsDir ||
+					name == LcmFileHelper.ksBackupSettingsDir ||
+					name == LcmFileHelper.ksConfigurationSettingsDir ||
+					name == LcmFileHelper.ksSortSequenceTempDir)
 				{
 					continue;
 				}
@@ -355,9 +344,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			foreach (string filepath in files)
 			{
 				string file = Path.GetFileName(filepath);
-				if (file != info.DatabaseName + FdoFileHelper.ksFwDataXmlFileExtension &&
-					file != info.DatabaseName + FdoFileHelper.ksFwDataDb4oFileExtension &&
-					file != info.DatabaseName + FdoFileHelper.ksFwDataFallbackFileExtension)
+				if (file != info.DatabaseName + LcmFileHelper.ksFwDataXmlFileExtension &&
+					file != info.DatabaseName + LcmFileHelper.ksFwDataFallbackFileExtension)
 				{
 					return true;
 				}

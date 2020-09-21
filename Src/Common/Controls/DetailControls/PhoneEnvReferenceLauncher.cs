@@ -12,15 +12,16 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Windows.Forms;
 using System.Linq;
+using System.Windows.Forms;
 
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Application;
-using SIL.FieldWorks.Common.Framework.DetailControls.Resources;
 using SIL.FieldWorks.Common.Controls;
-using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.Utils;
+using SIL.FieldWorks.Common.Framework.DetailControls.Resources;
+using SIL.FieldWorks.Common.FwUtils;
+using SIL.LCModel;
+using SIL.LCModel.Application;
+using SIL.LCModel.Infrastructure;
+using SIL.LCModel.Utils;
 using XCore;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls
@@ -69,14 +70,14 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			base.Dispose( disposing );
 		}
 
-		public override void Initialize(FdoCache cache, ICmObject obj, int flid,
-			string fieldName, IPersistenceProvider persistProvider, Mediator mediator, string displayNameProperty, string displayWs)
+		public override void Initialize(LcmCache cache, ICmObject obj, int flid,
+			string fieldName, IPersistenceProvider persistProvider, Mediator mediator, PropertyTable propertyTable, string displayNameProperty, string displayWs)
 		{
 			CheckDisposed();
 
 			Debug.Assert(obj is IMoAffixAllomorph || obj is IMoStemAllomorph);
 
-			base.Initialize(cache, obj, flid, fieldName, persistProvider, mediator, displayNameProperty, displayWs);
+			base.Initialize(cache, obj, flid, fieldName, persistProvider, mediator, propertyTable, displayNameProperty, displayWs);
 			m_phoneEnvRefView.Initialize((IMoForm)obj, flid, cache);
 		}
 
@@ -105,7 +106,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				m_fieldName,
 				m_cache,
 				contents,
-				m_mediator.HelpTopicProvider);
+				m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"));
 		}
 
 		/// ------------------------------------------------------------------------------------

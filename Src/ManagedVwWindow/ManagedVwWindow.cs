@@ -4,8 +4,7 @@
 
 using System;
 using System.Windows.Forms;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.Utils;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using System.Runtime.InteropServices;
 
 namespace SIL.FieldWorks.Views

@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2014-2016 SIL International
+﻿// Copyright (c) 2014-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -6,7 +6,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Serialization;
-using SIL.Utils;
+using SIL.FieldWorks.Common.FwUtils;
+using System.Text.RegularExpressions;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -379,12 +380,22 @@ namespace SIL.FieldWorks.XWorks
 
 			// Provide a suffix to distinguish among similar dictionary items.
 			int suffix = 1;
+			string labelSuffix = string.IsNullOrEmpty(duplicate.LabelSuffix) ? "" : duplicate.LabelSuffix;
+			var copy = Regex.Match(labelSuffix, @"\d+$");
+			if (copy.Success)
+			{
+				suffix = Convert.ToInt32(copy.Value);
+				labelSuffix = labelSuffix.Remove(labelSuffix.LastIndexOf(copy.Value));
+			}
+			duplicate.LabelSuffix = string.Concat(labelSuffix, suffix);
+
 			// Check that no siblings have a matching suffix, and that no children of grouping siblings have a matching suffix
-			while (duplicate.NodeWithSameDisplayLabelExists(suffix.ToString(), siblings))
+			while (duplicate.NodeWithSameDisplayLabelExists(duplicate.LabelSuffix, siblings))
 			{
 				suffix++;
+				duplicate.LabelSuffix = string.Concat(labelSuffix, suffix);
 			}
-			duplicate.LabelSuffix = suffix.ToString();
+			//duplicate.LabelSuffix += suffix;
 
 			var locationOfThisNode = siblings.IndexOf(this);
 			siblings.Insert(locationOfThisNode + 1, duplicate);

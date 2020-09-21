@@ -1,28 +1,23 @@
-// Copyright (c) 2005-2013 SIL International
+// Copyright (c) 2005-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: MorphologyListener.cs
-// Responsibility: Randy Regnier
-// Last reviewed:
-//
-// <remarks>
-// </remarks>
 
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;
 using System.Xml;
-using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.LCModel.Core.SpellChecking;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.Framework;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.FdoUi;
 using SIL.FieldWorks.IText;
 using SIL.Utils;
@@ -36,7 +31,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 	/// to tools in the Words area.
 	/// </summary>
 	[XCore.MediatorDispose]
-	public class MorphologyListener : IxCoreColleague, IVwNotifyChange, IFWDisposable
+	public class MorphologyListener : IxCoreColleague, IVwNotifyChange, IDisposable
 	{
 		#region Data members
 
@@ -44,29 +39,10 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		/// Mediator that passes off messages.
 		/// </summary>
 		private XCore.Mediator m_mediator;
-		private XmlNode m_configurationParameters;
+		private PropertyTable m_propertyTable;
 		private IWfiWordformRepository m_wordformRepos;
-		private FdoCache m_cache;
 
 		#endregion Data members
-
-		#region Properties
-
-		private IWfiWordform Wordform
-		{
-			get
-			{
-				IWfiWordform wf = null;
-				string clerkId = XmlUtils.GetManditoryAttributeValue(m_configurationParameters, "clerk");
-				string propertyName = RecordClerk.GetCorrespondingPropertyName(clerkId);
-				RecordClerk clerk = (RecordClerk)m_mediator.PropertyTable.GetValue(propertyName);
-				if (clerk != null)
-					wf = clerk.CurrentObject as IWfiWordform;
-				return wf;
-			}
-		}
-
-		#endregion Properties
 
 		#region IDisposable & Co. implementation
 		// Region last reviewed: never
@@ -125,8 +101,8 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 				string text = wf.Form.VernacularDefaultWritingSystem.Text;
 				if (!string.IsNullOrEmpty(text))
 				{
-					SpellingHelper.SetSpellingStatus(text, m_cache.DefaultVernWs,
-													m_cache.LanguageWritingSystemFactoryAccessor,
+					SpellingHelper.SetSpellingStatus(text, Cache.DefaultVernWs,
+													Cache.LanguageWritingSystemFactoryAccessor,
 													wf.SpellingStatus == (int)SpellingStatusStates.correct);
 				}
 
@@ -181,13 +157,13 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 				// Dispose managed resources here.
 				if (m_mediator != null)
 					m_mediator.RemoveColleague(this);
-				if (m_cache != null && !m_cache.IsDisposed && m_cache.DomainDataByFlid != null)
-					m_cache.DomainDataByFlid.RemoveNotification(this);
+				if (Cache != null && !Cache.IsDisposed && Cache.DomainDataByFlid != null)
+					Cache.DomainDataByFlid.RemoveNotification(this);
 			}
 
 			// Dispose unmanaged resources here, whether disposing is true or false.
 			m_mediator = null;
-			m_configurationParameters = null;
+			m_propertyTable = null;
 
 			m_isDisposed = true;
 		}
@@ -196,16 +172,16 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 
 		#region IxCoreColleague implementation
 
-		public virtual void Init(Mediator mediator, XmlNode configurationParameters)
+		public virtual void Init(Mediator mediator, PropertyTable propertyTable, XmlNode configurationParameters)
 		{
 			CheckDisposed();
 
 			m_mediator = mediator;
-			m_configurationParameters = configurationParameters;
+			m_propertyTable = propertyTable;
 			m_mediator.AddColleague(this);
-			m_cache = (FdoCache)m_mediator.PropertyTable.GetValue("cache");
-			m_wordformRepos = m_cache.ServiceLocator.GetInstance<IWfiWordformRepository>();
-			m_cache.DomainDataByFlid.AddNotification(this);
+			Cache = m_propertyTable.GetValue<LcmCache>("cache");
+			m_wordformRepos = Cache.ServiceLocator.GetInstance<IWfiWordformRepository>();
+			Cache.DomainDataByFlid.AddNotification(this);
 			if (IsVernacularSpellingEnabled())
 				OnEnableVernacularSpelling();
 		}
@@ -286,8 +262,8 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 				OnEnableVernacularSpelling();
 			else
 				WfiWordformServices.DisableVernacularSpellingDictionary(Cache);
-			m_mediator.PropertyTable.SetProperty("UseVernSpellingDictionary", checking);
-			m_mediator.PropertyTable.SetPropertyPersistence("UseVernSpellingDictionary", true);
+			m_propertyTable.SetProperty("UseVernSpellingDictionary", checking, true);
+			m_propertyTable.SetPropertyPersistence("UseVernSpellingDictionary", true);
 			RestartSpellChecking();
 			return true;
 		}
@@ -295,12 +271,12 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		// currently duplicated in FLExBridgeListener, to avoid an assembly dependency.
 		private bool IsVernacularSpellingEnabled()
 		{
-			return m_mediator.PropertyTable.GetBoolProperty("UseVernSpellingDictionary", true);
+			return m_propertyTable.GetBoolProperty("UseVernSpellingDictionary", true);
 		}
 
 		private void RestartSpellChecking()
 		{
-			IApp app = (IApp)m_mediator.PropertyTable.GetValue("App");
+			IApp app = m_propertyTable.GetValue<IApp>("App");
 			if (app != null)
 			{
 				app.RestartSpellChecking();
@@ -317,17 +293,13 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		{
 			CheckDisposed();
 
-			FdoCache cache = (FdoCache)m_mediator.PropertyTable.GetValue("cache");
-			if (cache == null)
+			if (Cache == null)
 				return false; // impossible?
-			WfiWordformServices.ConformSpellingDictToWordforms(cache);
+			WfiWordformServices.ConformSpellingDictToWordforms(Cache);
 			return true; // handled
 		}
 
-		private FdoCache Cache
-		{
-			get { return (FdoCache)m_mediator.PropertyTable.GetValue("cache"); }
-		}
+		private LcmCache Cache { get; set; }
 
 		/// <summary>
 		/// Enable vernacular spelling.
@@ -337,11 +309,11 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			// Enable all vernacular spelling dictionaries by changing those that are set to <None>
 			// to point to the appropriate Locale ID. Do this BEFORE updating the spelling dictionaries,
 			// otherwise, the update won't see that there is any dictionary set to update.
-			var cache = Cache;
-			foreach (IWritingSystem wsObj in cache.ServiceLocator.WritingSystems.CurrentVernacularWritingSystems)
+			LcmCache cache = Cache;
+			foreach (CoreWritingSystemDefinition wsObj in cache.ServiceLocator.WritingSystems.CurrentVernacularWritingSystems)
 			{
 				// This allows it to try to find a dictionary, but doesn't force one to exist.
-				if (wsObj.SpellCheckingId == null || wsObj.SpellCheckingId == "<None>") // LT-13556 new langs were null here
+				if (string.IsNullOrEmpty(wsObj.SpellCheckingId) || wsObj.SpellCheckingId == "<None>") // LT-13556 new langs were null here
 					wsObj.SpellCheckingId = wsObj.Id.Replace('-', '_');
 			}
 			// This forces the default vernacular WS spelling dictionary to exist, and updates
@@ -356,7 +328,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 
 			if (InFriendlyArea && m_mediator != null)
 			{
-				var clrk = m_mediator.PropertyTable.GetValue("ActiveClerk") as RecordClerk;
+				var clrk = m_propertyTable.GetValue<RecordClerk>("ActiveClerk");
 				if (clrk != null && !clrk.IsDisposed && clrk.Id == "concordanceWords")
 				{
 					display.Visible = true;
@@ -377,9 +349,9 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		/// If successful return its guid, otherwise, return Guid.Empty.
 		/// </summary>
 		/// <returns></returns>
-		internal static Guid ActiveWordform(FdoCache cache, Mediator mediator)
+		internal static Guid ActiveWordform(LcmCache cache, PropertyTable propertyTable)
 		{
-			IApp app = mediator.PropertyTable.GetValue("App") as IApp;
+			IApp app = propertyTable.GetValue<IApp>("App");
 			if (app == null)
 				return Guid.Empty;
 			IFwMainWnd window = app.ActiveMainWindow as IFwMainWnd;
@@ -424,8 +396,8 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			// Without checking both the SpellingStatus and (virtual) FullConcordanceCount
 			// fields for the ActiveWordform() result, it's too likely that the user
 			// will get a puzzling "Target not found" message popping up.  See LT-8717.
-			FwLinkArgs link = new FwAppArgs(FwUtils.ksFlexAppName, Cache.ProjectId.Handle,
-				Cache.ProjectId.ServerName, "toolBulkEditWordforms", Guid.Empty);
+			FwLinkArgs link = new FwAppArgs(Cache.ProjectId.Handle,
+				"toolBulkEditWordforms", Guid.Empty);
 			List<Property> additionalProps = link.PropertyTableEntries;
 			additionalProps.Add(new Property("SuspendLoadListUntilOnChangeFilter", link.ToolName));
 			additionalProps.Add(new Property("LinkSetupInfo", "TeReviewUndecidedSpelling"));
@@ -442,8 +414,8 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 
 		public bool OnViewIncorrectWords(object argument)
 		{
-			FwLinkArgs link = new FwAppArgs(FwUtils.ksFlexAppName, Cache.ProjectId.Handle,
-				Cache.ProjectId.ServerName, "Analyses", ActiveWordform(Cache, m_mediator));
+			FwLinkArgs link = new FwAppArgs(Cache.ProjectId.Handle,
+				"Analyses", ActiveWordform(Cache, m_propertyTable));
 			List<Property> additionalProps = link.PropertyTableEntries;
 			additionalProps.Add(new Property("SuspendLoadListUntilOnChangeFilter", link.ToolName));
 			additionalProps.Add(new Property("LinkSetupInfo", "TeCorrectSpelling"));
@@ -462,8 +434,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 
 			using (var dlg = new WordformGoDlg())
 			{
-				var cache = (FdoCache) m_mediator.PropertyTable.GetValue("cache");
-				dlg.SetDlgInfo(cache, null, m_mediator);
+				dlg.SetDlgInfo(Cache, null, m_mediator, m_propertyTable);
 				if (dlg.ShowDialog() == DialogResult.OK)
 					m_mediator.BroadcastMessageUntilHandled("JumpToRecord", dlg.SelectedObject.Hvo);
 			}
@@ -482,7 +453,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		{
 			get
 			{
-				return (m_mediator.PropertyTable.GetStringProperty("areaChoice", null) == "textsWords");
+				return (m_propertyTable.GetStringProperty("areaChoice", null) == "textsWords");
 			}
 		}
 
@@ -499,7 +470,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			var command = (Command)commandObject;
 			if (command.TargetId != Guid.Empty)
 			{
-				var tool = XmlUtils.GetManditoryAttributeValue(command.Parameters[0], "tool");
+				var tool = XmlUtils.GetMandatoryAttributeValue(command.Parameters[0], "tool");
 				m_mediator.PostMessage("FollowLink", new FwLinkArgs(tool, command.TargetId));
 				command.TargetId = Guid.Empty;	// clear the target for future use.
 				return true;
@@ -528,7 +499,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			get
 			{
 				if (m_mainWindowNode == null)
-					m_mainWindowNode = (XmlNode)m_mediator.PropertyTable.GetValue("WindowConfiguration");
+					m_mainWindowNode = m_propertyTable.GetValue<XmlNode>("WindowConfiguration");
 				return m_mainWindowNode;
 			}
 		}
@@ -537,8 +508,6 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		/// Returns the object of the current slice, or (if no slice is marked current)
 		/// the object of the first slice, or (if there are no slices, or no data entry form) null.
 		/// </summary>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="FieldAt() returns a reference")]
 		private ICmObject CurrentSliceObject
 		{
 			get
@@ -612,7 +581,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		{
 			get
 			{
-				return (m_mediator.PropertyTable.GetStringProperty("areaChoice", null) == "textsWords");
+				return (m_propertyTable.GetStringProperty("areaChoice", null) == "textsWords");
 			}
 		}
 
@@ -664,7 +633,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		{
 			using (IFwGuiControl ctrl = new ConcordanceDlg())
 			{
-				ctrl.Init(m_mediator, MainWindowNode, concordOnObject);
+				ctrl.Init(m_mediator, m_propertyTable, MainWindowNode, concordOnObject);
 				ctrl.Launch();
 			}
 		}
@@ -753,12 +722,11 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		/// <returns></returns>
 		public virtual bool OnDisplayJumpToTool(object commandObject, ref UIItemDisplayProperties display)
 		{
-			var cache = (FdoCache)m_mediator.PropertyTable.GetValue("cache");
 			var cmd = (Command)commandObject;
-			var className = XmlUtils.GetManditoryAttributeValue(cmd.Parameters[0], "className");
+			var className = XmlUtils.GetMandatoryAttributeValue(cmd.Parameters[0], "className");
 			var specifiedClsid = 0;
-			if ((cache.MetaDataCacheAccessor as IFwMetaDataCacheManaged).ClassExists(className))
-				specifiedClsid = cache.MetaDataCacheAccessor.GetClassId(className);
+			if ((Cache.MetaDataCacheAccessor as IFwMetaDataCacheManaged).ClassExists(className))
+				specifiedClsid = Cache.MetaDataCacheAccessor.GetClassId(className);
 			var anal = Analysis;
 			if (anal != null)
 			{
@@ -788,9 +756,8 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		/// <returns></returns>
 		public virtual bool OnJumpToTool(object commandObject)
 		{
-			var cache = (FdoCache)m_mediator.PropertyTable.GetValue("cache");
 			var cmd = (Command)commandObject;
-			var className = XmlUtils.GetManditoryAttributeValue(cmd.Parameters[0], "className");
+			var className = XmlUtils.GetMandatoryAttributeValue(cmd.Parameters[0], "className");
 			var guid = Guid.Empty;
 			switch (className)
 			{
@@ -809,7 +776,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			}
 			if (guid != Guid.Empty)
 			{
-				var tool = XmlUtils.GetManditoryAttributeValue(cmd.Parameters[0], "tool");
+				var tool = XmlUtils.GetMandatoryAttributeValue(cmd.Parameters[0], "tool");
 				m_mediator.PostMessage("FollowLink", new FwLinkArgs(tool, guid));
 				return true;
 			}
@@ -1016,7 +983,6 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			if (InFriendlyArea && m_mediator != null && m_dataEntryForm.Root != null)
 			{
 #pragma warning disable 0219
-				FdoCache cache = (FdoCache)m_mediator.PropertyTable.GetValue("cache");
 				display.Visible = true;
 				display.Enabled = Wordform != null;
 #pragma warning restore 0219
@@ -1036,7 +1002,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		public bool OnAddApprovedAnalysis(object argument)
 		{
 			var mainWnd = (FwXWindow)m_dataEntryForm.FindForm();
-			using (EditMorphBreaksDlg dlg = new EditMorphBreaksDlg(mainWnd.Mediator.HelpTopicProvider))
+			using (EditMorphBreaksDlg dlg = new EditMorphBreaksDlg(m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider")))
 			{
 				IWfiWordform wf = Wordform;
 				if (wf == null)
@@ -1045,7 +1011,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 				string morphs = tssWord.Text;
 				var cache = Cache;
 				dlg.Initialize(tssWord, morphs, cache.MainCacheAccessor.WritingSystemFactory,
-					cache, m_dataEntryForm.Mediator.StringTbl, m_dataEntryForm.StyleSheet);
+					cache, m_dataEntryForm.StyleSheet);
 				// Making the form active fixes problems like LT-2619.
 				// I'm (RandyR) not sure what adverse impact might show up by doing this.
 				mainWnd.Activate();
@@ -1085,13 +1051,13 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 								Wordform.AnalysesOC.Add(newAnalysis);
 								newAnalysis.ApprovalStatusIcon = 1; // Make it human approved.
 								int vernWS = TsStringUtils.GetWsAtOffset(tssWord, 0);
-								foreach (string morph in fullForm.Split(Unicode.SpaceChars))
+								foreach (string morph in fullForm.Split(Common.FwUtils.Unicode.SpaceChars))
 								{
-									if (morph != null && morph.Length != 0)
+									if (!string.IsNullOrEmpty(morph))
 									{
 										IWfiMorphBundle mb = cache.ServiceLocator.GetInstance<IWfiMorphBundleFactory>().Create();
 										newAnalysis.MorphBundlesOS.Add(mb);
-										mb.Form.set_String(vernWS, Cache.TsStrFactory.MakeString(morph, vernWS));
+										mb.Form.set_String(vernWS, TsStringUtils.MakeString(morph, vernWS));
 									}
 								}
 							});

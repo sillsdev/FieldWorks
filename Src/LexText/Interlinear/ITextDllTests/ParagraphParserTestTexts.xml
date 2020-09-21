@@ -4,7 +4,7 @@
 <Texts6001>
 	<Text id="">
 		<Name5>
-			<AUni ws="xkal">Test Text1 for ParagraphParser</AUni>
+			<AUni ws="qaa-x-kal">Test Text1 for ParagraphParser</AUni>
 		</Name5>
 		<Description5>
 			<AStr ws="en">
@@ -14,12 +14,7 @@
 		<Contents5054>
 			<StText>
 				<Paragraphs14>
-					<!--Paragraph 1 - empty.-->
-					<StTxtPara id="">
-						<Segments16>
-						</Segments16>
-					</StTxtPara>
-					<!--Paragraph 2 - simple segments -->
+					<!--Paragraph 1 - simple segments -->
 					<!--xxxpus xxxyalola xxxnihimbilira. xxxnihimbilira xxxpus xxxyalola. xxxhesyla xxxnihimbilira.-->
 					<StTxtPara id="">
 						<Segments16>
@@ -103,7 +98,12 @@
 							</CmBaseAnnotation>
 						</Segments16>
 					</StTxtPara>
-					<!-- Paragraph 3 - complex punctuation -->
+		  <!--Paragraph 2 - empty.-->
+		  <StTxtPara id="">
+			<Segments16>
+			</Segments16>
+		  </StTxtPara>
+		  <!-- Paragraph 3 - complex punctuation -->
 					<!--xxxnihimbiligu  xxxyaloni, xxxkasani & xxxnihimbilibi... "xxxnihimbilira (xxxpus) xxxkasani."! ! ! xxxpus-->
 					<StTxtPara id="">
 						<Segments16>
@@ -149,7 +149,7 @@
 										<AnnotationType34>
 											<Link ws="en" name="Punctuation In Context" guid="cfecb1fe-037a-452d-a35b-59e06d15f4df" />
 										</AnnotationType34>
-										<StringValue37 extraTrailingWhitespace="0">...</StringValue37>
+										<StringValue37 extraTrailingWhitespace="1">...</StringValue37>
 									</CmBaseAnnotation>
 									<CmBaseAnnotation id="">
 										<AnnotationType34>
@@ -201,7 +201,7 @@
 										<AnnotationType34>
 											<Link ws="en" name="Punctuation In Context" guid="cfecb1fe-037a-452d-a35b-59e06d15f4df" />
 										</AnnotationType34>
-										<StringValue37>!</StringValue37>
+										<StringValue37 extraTrailingWhitespace="1">!</StringValue37>
 									</CmBaseAnnotation>
 									<CmBaseAnnotation id="">
 										<AnnotationType34>
@@ -251,31 +251,25 @@
 										<AnnotationType34>
 											<Link ws="en" name="Wordform In Context" guid="eb92e50f-ba96-4d1d-b632-057b5c274132" />
 										</AnnotationType34>
-										<StringValue37>xxxkasani</StringValue37>
-									</CmBaseAnnotation>
-									<CmBaseAnnotation id="">
-										<AnnotationType34>
-											<Link ws="en" name="Punctuation In Context" guid="cfecb1fe-037a-452d-a35b-59e06d15f4df" />
-										</AnnotationType34>
-										<StringValue37 extraTrailingWhitespace="0">1</StringValue37>
+										<StringValue37>xxxkasani1xxxpus</StringValue37>
 									</CmBaseAnnotation>
 									<CmBaseAnnotation id="">
 										<AnnotationType34>
 											<Link ws="en" name="Wordform In Context" guid="eb92e50f-ba96-4d1d-b632-057b5c274132" />
 										</AnnotationType34>
-										<StringValue37>xxxpus</StringValue37>
+										<StringValue37>xxxnihimbilibi</StringValue37>
 									</CmBaseAnnotation>
-									<CmBaseAnnotation id="">
+									<CmBaseAnnotation id=""> <!-- Numbers are now word forming [LT-10756] -->
 										<AnnotationType34>
 											<Link ws="en" name="Wordform In Context" guid="eb92e50f-ba96-4d1d-b632-057b5c274132" />
 										</AnnotationType34>
-										<StringValue37 extraTrailingWhitespace="1">xxxnihimbilibi</StringValue37>
+										<StringValue37>123</StringValue37>
 									</CmBaseAnnotation>
 									<CmBaseAnnotation id="">
 										<AnnotationType34>
 											<Link ws="en" name="Punctuation In Context" guid="cfecb1fe-037a-452d-a35b-59e06d15f4df" />
 										</AnnotationType34>
-										<StringValue37 extraTrailingWhitespace="1">123.</StringValue37>
+										<StringValue37 extraTrailingWhitespace="1">.</StringValue37>
 									</CmBaseAnnotation>
 								</SegmentForms37>
 							</CmBaseAnnotation>
@@ -417,13 +411,13 @@
 										<AnnotationType34>
 											<Link ws="en" name="Wordform In Context" guid="eb92e50f-ba96-4d1d-b632-057b5c274132" />
 										</AnnotationType34>
-										<StringValue37>xxxpus</StringValue37>
+					<StringValue37 extraTrailingWhitespace="1">xxxpus</StringValue37>
 									</CmBaseAnnotation>
 									<CmBaseAnnotation id="">
 										<AnnotationType34>
-											<Link ws="en" name="Wordform In Context" guid="eb92e50f-ba96-4d1d-b632-057b5c274132" />
-										</AnnotationType34>
-										<StringValue37 ws="es">xxes</StringValue37>
+					  <Link ws="en" name="Punctuation In Context" guid="cfecb1fe-037a-452d-a35b-59e06d15f4df" />
+					</AnnotationType34>
+										<StringValue37 extraTrailingWhitespace="1" ws="es">xxes</StringValue37>
 									</CmBaseAnnotation>
 									<CmBaseAnnotation id="">
 										<AnnotationType34>
@@ -443,15 +437,15 @@
 								<SegmentForms37>
 									<CmBaseAnnotation id="">
 										<AnnotationType34>
-											<Link ws="en" name="Wordform In Context" guid="eb92e50f-ba96-4d1d-b632-057b5c274132" />
-										</AnnotationType34>
-										<StringValue37 ws="fr">xxfr</StringValue37>
+					  <Link ws="en" name="Punctuation In Context" guid="cfecb1fe-037a-452d-a35b-59e06d15f4df" />
+					</AnnotationType34>
+										<StringValue37 extraTrailingWhitespace="1" ws="fr">xxfr</StringValue37>
 									</CmBaseAnnotation>
 									<CmBaseAnnotation id="">
 										<AnnotationType34>
-											<Link ws="en" name="Wordform In Context" guid="eb92e50f-ba96-4d1d-b632-057b5c274132" />
-										</AnnotationType34>
-										<StringValue37 ws="en">xxen</StringValue37>
+					  <Link ws="en" name="Punctuation In Context" guid="cfecb1fe-037a-452d-a35b-59e06d15f4df" />
+					</AnnotationType34>
+										<StringValue37 extraTrailingWhitespace="1" ws="en">xxen</StringValue37>
 									</CmBaseAnnotation>
 									<CmBaseAnnotation id="">
 										<AnnotationType34>
@@ -463,13 +457,13 @@
 										<AnnotationType34>
 											<Link ws="en" name="Wordform In Context" guid="eb92e50f-ba96-4d1d-b632-057b5c274132" />
 										</AnnotationType34>
-										<StringValue37>xxxpus</StringValue37>
+										<StringValue37 extraTrailingWhitespace="1">xxxpus</StringValue37>
 									</CmBaseAnnotation>
 									<CmBaseAnnotation id="">
 										<AnnotationType34>
-											<Link ws="en" name="Wordform In Context" guid="eb92e50f-ba96-4d1d-b632-057b5c274132" />
-										</AnnotationType34>
-										<StringValue37 ws="de">xxde</StringValue37>
+					  <Link ws="en" name="Punctuation In Context" guid="cfecb1fe-037a-452d-a35b-59e06d15f4df" />
+					</AnnotationType34>
+										<StringValue37 extraTrailingWhitespace="0" ws="de">xxde</StringValue37>
 									</CmBaseAnnotation>
 									<CmBaseAnnotation id="">
 										<AnnotationType34>
@@ -483,26 +477,26 @@
 								<SegmentForms37>
 									<CmBaseAnnotation id="">
 										<AnnotationType34>
-											<Link ws="en" name="Wordform In Context" guid="eb92e50f-ba96-4d1d-b632-057b5c274132" />
-										</AnnotationType34>
-										<StringValue37 ws="de">xxkal</StringValue37>
+					  <Link ws="en" name="Punctuation In Context" guid="cfecb1fe-037a-452d-a35b-59e06d15f4df" />
+					</AnnotationType34>
+										<StringValue37 extraTrailingWhitespace="1" ws="de">xxkal</StringValue37>
+									</CmBaseAnnotation>
+									<CmBaseAnnotation id="">
+										<AnnotationType34>
+					  <Link ws="en" name="Wordform In Context" guid="eb92e50f-ba96-4d1d-b632-057b5c274132" />
+					</AnnotationType34>
+										<StringValue37 ws="qaa-x-kal">xxkal</StringValue37>
 									</CmBaseAnnotation>
 									<CmBaseAnnotation id="">
 										<AnnotationType34>
 											<Link ws="en" name="Wordform In Context" guid="eb92e50f-ba96-4d1d-b632-057b5c274132" />
 										</AnnotationType34>
-										<StringValue37 ws="xkal">xxkal</StringValue37>
+					<StringValue37 extraTrailingWhitespace="1" >xxxxhesyla</StringValue37>
 									</CmBaseAnnotation>
 									<CmBaseAnnotation id="">
 										<AnnotationType34>
-											<Link ws="en" name="Wordform In Context" guid="eb92e50f-ba96-4d1d-b632-057b5c274132" />
-										</AnnotationType34>
-										<StringValue37>xxxxhesyla</StringValue37>
-									</CmBaseAnnotation>
-									<CmBaseAnnotation id="">
-										<AnnotationType34>
-											<Link ws="en" name="Wordform In Context" guid="eb92e50f-ba96-4d1d-b632-057b5c274132" />
-										</AnnotationType34>
+					  <Link ws="en" name="Punctuation In Context" guid="cfecb1fe-037a-452d-a35b-59e06d15f4df" />
+					</AnnotationType34>
 										<StringValue37 ws="de">xxxxhesyla</StringValue37>
 									</CmBaseAnnotation>
 									<CmBaseAnnotation id="">

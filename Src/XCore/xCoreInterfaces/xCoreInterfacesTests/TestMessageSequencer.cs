@@ -1,4 +1,4 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -7,8 +7,7 @@ using System.Collections;
 using System.Windows.Forms;
 using System.Xml;
 using NUnit.Framework;
-using SIL.FieldWorks.Test.TestUtils;
-using SIL.Utils;
+using SIL.FieldWorks.Common.FwUtils;
 
 namespace XCore
 {
@@ -16,7 +15,7 @@ namespace XCore
 	/// TestMessageSequencer.
 	/// </summary>
 	[TestFixture]
-	public class TestMessageSequencer: BaseTest
+	public class TestMessageSequencer
 	{
 		private class DummyForm : Form
 		{
@@ -30,7 +29,15 @@ namespace XCore
 				Visible = false;
 				CreateHandle();
 			}
+
+			/// <summary/>
+			protected override void Dispose(bool disposing)
+			{
+				System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + ". ****** ");
+				base.Dispose(disposing);
+			}
 		}
+
 		/// <summary>
 		/// Test non-reentrant operation
 		/// </summary>
@@ -227,7 +234,8 @@ namespace XCore
 		}
 	}
 
-	public class TestMessagePriority : BaseTest
+	[TestFixture]
+	public class TestMessagePriority
 	{
 		/// <summary>
 		/// Checks to make sure the priority of colleagues is being handled properly in the mediator.
@@ -487,9 +495,9 @@ namespace XCore
 	{
 		#region Implementation of IxCoreColleague
 
-		public void Init(Mediator mediator, XmlNode configurationParameters)
+		public void Init(Mediator mediator, PropertyTable propertyTable, XmlNode configurationParameters)
 		{
-			throw new NotImplementedException();
+			throw new NotSupportedException();
 		}
 
 		/// <summary>

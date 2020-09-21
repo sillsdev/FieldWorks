@@ -1,10 +1,10 @@
-﻿// Copyright (c) 2014-2017 SIL International
+// Copyright (c) 2014-2020 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -13,14 +13,16 @@ using System.Xml;
 using System.Xml.Linq;
 using Gecko;
 using Gecko.DOM;
-using Palaso.UI.WindowsForms.HtmlBrowser;
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Widgets;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
+using SIL.FieldWorks.FwCoreDlgControls;
 using SIL.FieldWorks.FwCoreDlgs;
+using SIL.LCModel.Utils;
 using SIL.Utils;
+using SIL.Windows.Forms.HtmlBrowser;
 using XCore;
 
 namespace SIL.FieldWorks.XWorks
@@ -35,10 +37,12 @@ namespace SIL.FieldWorks.XWorks
 		private string m_selectedObjectID = string.Empty;
 		internal string m_configObjectName;
 		internal const string CurrentSelectedEntryClass = "currentSelectedEntry";
+		private string m_currentConfigView; // used when this is a Dictionary view to store which view is active.
 
-		public override void Init(Mediator mediator, XmlNode configurationParameters)
+		public override void Init(Mediator mediator, PropertyTable propertyTable, XmlNode configurationParameters)
 		{
 			m_mediator = mediator;
+			m_propertyTable = propertyTable;
 			m_configurationParameters = configurationParameters;
 			m_mainView = new XWebBrowser(XWebBrowser.BrowserType.GeckoFx);
 			m_mainView.Dock = DockStyle.Fill;
@@ -117,7 +121,7 @@ namespace SIL.FieldWorks.XWorks
 						if (currentPage.PreviousSibling != null)
 						{
 							var itemIndex = int.Parse(((GeckoHtmlElement)currentPage.PreviousSibling).Attributes["endIndex"].NodeValue);
-							Clerk.JumpToRecord(PublicationDecorator.GetEntriesToPublish(m_mediator, Clerk.VirtualFlid)[itemIndex]);
+							Clerk.JumpToRecord(PublicationDecorator.GetEntriesToPublish(m_propertyTable, Clerk.VirtualFlid)[itemIndex]);
 						}
 					}
 					break;
@@ -130,7 +134,7 @@ namespace SIL.FieldWorks.XWorks
 						if (currentPage.NextSibling != null)
 						{
 							var itemIndex = int.Parse(((GeckoHtmlElement)currentPage.NextSibling).Attributes["startIndex"].NodeValue);
-							Clerk.JumpToRecord(PublicationDecorator.GetEntriesToPublish(m_mediator, Clerk.VirtualFlid)[itemIndex]);
+							Clerk.JumpToRecord(PublicationDecorator.GetEntriesToPublish(m_propertyTable, Clerk.VirtualFlid)[itemIndex]);
 						}
 					}
 					break;
@@ -140,10 +144,119 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
+
+
+		/// <summary>
+		/// Used to verify current content control so that Find Lexical Entry behaves differently
+		/// in Dictionary View.
+		/// </summary>
+		private const string ksLexDictionary = "lexiconDictionary";
+
+		/// <summary>
+		/// Check to see if the user needs to be alerted that JumpToRecord is not possible.
+		/// </summary>
+		/// <param name="argument">the hvo of the record</param>
+		/// <returns></returns>
+		public bool OnJumpToRecord(object argument)
+		{
+			var hvoTarget = (int)argument;
+			var currControl = m_propertyTable.GetStringProperty("currentContentControl", "");
+			if (hvoTarget > 0 && currControl == ksLexDictionary)
+			{
+				DictionaryConfigurationController.ExclusionReasonCode xrc;
+				// Make sure we explain to the user in case hvoTarget is not visible due to
+				// the current Publication layout or Configuration view.
+				if (!IsObjectVisible(hvoTarget, out xrc))
+				{
+					// Tell the user why we aren't jumping to his record
+					GiveSimpleWarning(xrc);
+				}
+			}
+			return false;
+		}
+
+		private void GiveSimpleWarning(DictionaryConfigurationController.ExclusionReasonCode xrc)
+		{
+			// Tell the user why we aren't jumping to his record
+			var msg = xWorksStrings.ksSelectedEntryNotInDict;
+			string caption;
+			string reason;
+			string shlpTopic;
+			switch (xrc)
+			{
+				case DictionaryConfigurationController.ExclusionReasonCode.NotInPublication:
+					caption = xWorksStrings.ksEntryNotPublished;
+					reason = xWorksStrings.ksEntryNotPublishedReason;
+					shlpTopic = "User_Interface/Menus/Edit/Find_a_lexical_entry.htm";		//khtpEntryNotPublished
+					break;
+				case DictionaryConfigurationController.ExclusionReasonCode.ExcludedHeadword:
+					caption = xWorksStrings.ksMainNotShown;
+					reason = xWorksStrings.ksMainNotShownReason;
+					shlpTopic = "khtpMainEntryNotShown";
+					break;
+				case DictionaryConfigurationController.ExclusionReasonCode.ExcludedMinorEntry:
+					caption = xWorksStrings.ksMinorNotShown;
+					reason = xWorksStrings.ksMinorNotShownReason;
+					shlpTopic = "khtpMinorEntryNotShown";
+					break;
+				default:
+					throw new ArgumentException("Unknown ExclusionReasonCode");
+			}
+			msg = String.Format(msg, reason);
+			// TODO-Linux: Help is not implemented on Mono
+			MessageBox.Show(FindForm(), msg, caption, MessageBoxButtons.OK,
+							MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1, 0,
+							m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider").HelpFile,
+							HelpNavigator.Topic, shlpTopic);
+		}
+
+		private bool IsObjectVisible(int hvoTarget, out DictionaryConfigurationController.ExclusionReasonCode xrc)
+		{
+			xrc = DictionaryConfigurationController.ExclusionReasonCode.NotExcluded;
+			var objRepo = Cache.ServiceLocator.GetInstance<ICmObjectRepository>();
+			Debug.Assert(objRepo.IsValidObjectId(hvoTarget), "Invalid hvoTarget!");
+			if (!objRepo.IsValidObjectId(hvoTarget))
+				throw new ArgumentException("Unknown object.");
+			var entry = objRepo.GetObject(hvoTarget) as ILexEntry;
+			Debug.Assert(entry != null, "HvoTarget is not a LexEntry!");
+			if (entry == null)
+				throw new ArgumentException("Target is not a LexEntry.");
+
+			// Now we have our LexEntry
+			// First deal with whether the active Publication excludes it.
+			var m_currentPublication = m_propertyTable.GetValue<string>("SelectedPublication", null);
+			var publications = Cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS.Select(p => p).Where(p => p.NameHierarchyString == m_currentPublication.ToString()).FirstOrDefault();
+			//if the publications is null in case of Dictionary view selected as $$All Entries$$.
+			if (publications != null && publications.NameHierarchyString != xWorksStrings.AllEntriesPublication)
+			{
+				var currentPubPoss = publications;
+				if (!entry.PublishIn.Contains(currentPubPoss))
+				{
+					xrc = DictionaryConfigurationController.ExclusionReasonCode.NotInPublication;
+					return false;
+				}
+				// Second deal with whether the entry shouldn't be shown as a headword
+				if (!entry.ShowMainEntryIn.Contains(currentPubPoss))
+				{
+					xrc = DictionaryConfigurationController.ExclusionReasonCode.ExcludedHeadword;
+					return false;
+				}
+			}
+			// Third deal with whether the entry shouldn't be shown as a minor entry.
+			// commented out until conditions are clarified (LT-11447)
+			var configuration = new DictionaryConfigurationModel(GetCurrentConfiguration(false), Cache);
+			if (entry.EntryRefsOS.Count > 0 && !entry.PublishAsMinorEntry && configuration.IsRootBased)
+			{
+				xrc = DictionaryConfigurationController.ExclusionReasonCode.ExcludedMinorEntry;
+				return false;
+			}
+			// If we get here, we should be able to display it.
+			return true;
+		}
+
 		/// <summary>
 		/// Handle a mouse click in the web browser displaying the xhtml.
 		/// </summary>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule", Justification = "element does NOT need to be disposed locally!")]
 		private void OnDomClick(object sender, DomMouseEventArgs e)
 		{
 			CloseContextMenuIfOpen();
@@ -160,11 +273,11 @@ namespace SIL.FieldWorks.XWorks
 					return;
 				}
 				// Handle button clicks or select the entry represented by the current element.
-				HandleDomLeftClick(Clerk, e, element);
+				HandleDomLeftClick(Clerk, m_propertyTable, e, element);
 			}
 			else if (e.Button == GeckoMouseButton.Right)
 			{
-				HandleDomRightClick(browser, e, element, m_mediator);
+				HandleDomRightClick(browser, e, element, m_propertyTable, m_mediator);
 			}
 		}
 
@@ -187,25 +300,37 @@ namespace SIL.FieldWorks.XWorks
 		/// Handle the user left clicking on the document view by jumping to an entry, playing a media element, or adjusting the view
 		/// </summary>
 		/// <remarks>internal so that it can be re-used by the XhtmlRecordDocView</remarks>
-		internal static void HandleDomLeftClick(RecordClerk clerk, DomMouseEventArgs e, GeckoElement element)
+		internal static void HandleDomLeftClick(RecordClerk clerk, PropertyTable propertyTable, DomMouseEventArgs e, GeckoElement element)
 		{
-			GeckoElement dummy;
-			var topLevelGuid = GetHrefFromGeckoDomElement(element);
-			if (topLevelGuid == Guid.Empty)
-				GetClassListFromGeckoElement(element, out topLevelGuid, out dummy);
-			if (topLevelGuid != Guid.Empty)
+			// the destination is either the target of a link to another entry
+			// or the entry being clicked (when the user clicks anywhere in an entry that is not currently selected)
+			var destinationGuid = GetGuidFromEntryLink(element);
+			if (destinationGuid == Guid.Empty)
+				GetClassListFromGeckoElement(element, out destinationGuid, out _);
+
+			// If we don't have a destination GUID, the user may have clicked a video player. We can't handle that,
+			// and if we say we did, we will prevent the user from operating the video controls.
+			if (destinationGuid == Guid.Empty)
+				return;
+
+			var currentObj = clerk.CurrentObject;
+			if (currentObj != null && currentObj.Guid == destinationGuid)
 			{
-				var currentObj = clerk.CurrentObject;
-				if (currentObj != null && currentObj.Guid == topLevelGuid)
+				// don't need to jump: we're already here. If this is an Anchor element, it's probably a link to a video;
+				// return without setting e.Handled = true; Gecko will open the link
+				if (element is GeckoAnchorElement)
+					return;
+			}
+			else
+			{
+				var cache = propertyTable.GetValue<LcmCache>("cache");
+				if (cache.ServiceLocator.GetInstance<ICmObjectRepository>().TryGetObject(destinationGuid, out var obj))
 				{
-					// don't need to jump, we're already here...
-					// unless this is a video link
-					if (element is GeckoAnchorElement)
-						return; // don't handle the click; gecko will jump to the link
-				}
-				else
-				{
-					clerk.JumpToRecord(topLevelGuid);
+					// Jump only if we need to; unnecessary refreshes prevent audio from playing when the user clicks an audio link (LT-19967)
+					if (clerk.JumpToTargetWillChangeIndex(obj.Hvo))
+						clerk.OnJumpToRecord(obj.Hvo);
+					else if (element is GeckoAnchorElement)
+						return;
 				}
 			}
 			e.Handled = true;
@@ -214,9 +339,9 @@ namespace SIL.FieldWorks.XWorks
 		private void AddMoreEntriesToPage(bool goingUp, GeckoWebBrowser browser)
 		{
 			var browserElement = browser.Document.Body;
-			var entriesToPublish = PublicationDecorator.GetEntriesToPublish(m_mediator, Clerk.VirtualFlid);
+			var entriesToPublish = PublicationDecorator.GetEntriesToPublish(m_propertyTable, Clerk.VirtualFlid);
 			// Right-to-Left for the overall layout is determined by Dictionary-Normal
-			var dictionaryNormalStyle = new ExportStyleInfo(FontHeightAdjuster.StyleSheetFromMediator(m_mediator).Styles["Dictionary-Normal"]);
+			var dictionaryNormalStyle = new ExportStyleInfo(FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable).Styles["Dictionary-Normal"]);
 			var isNormalRightToLeft = dictionaryNormalStyle.DirectionIsRightToLeft == TriStateBool.triTrue; // default is LTR
 			// Get the current page
 			if (goingUp)
@@ -233,7 +358,7 @@ namespace SIL.FieldWorks.XWorks
 					return;
 				var oldCurPageRange = new Tuple<int, int>(int.Parse(currentPageButton.Attributes["startIndex"].NodeValue), int.Parse(currentPageButton.Attributes["endIndex"].NodeValue));
 				var oldAdjPageRange = new Tuple<int, int>(int.Parse(adjacentPageButton.Attributes["startIndex"].NodeValue), int.Parse(adjacentPageButton.Attributes["endIndex"].NodeValue));
-				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, false, false, "", isNormalRightToLeft);
+				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, new ReadOnlyPropertyTable(m_propertyTable), false, false, "", isNormalRightToLeft);
 				var entries = ConfiguredXHTMLGenerator.GenerateNextFewEntries(PublicationDecorator, entriesToPublish, GetCurrentConfiguration(false), settings, oldCurPageRange,
 					oldAdjPageRange, ConfiguredXHTMLGenerator.EntriesToAddCount, out newCurPageRange, out newAdjPageRange);
 				// Load entries above the first entry
@@ -266,7 +391,7 @@ namespace SIL.FieldWorks.XWorks
 					return;
 				var currentPageRange = new Tuple<int, int>(int.Parse(currentPageButton.Attributes["startIndex"].NodeValue), int.Parse(currentPageButton.Attributes["endIndex"].NodeValue));
 				var adjacentPageRange = new Tuple<int, int>(int.Parse(adjPage.Attributes["startIndex"].NodeValue), int.Parse(adjPage.Attributes["endIndex"].NodeValue));
-				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, false, false, "", isNormalRightToLeft);
+				var settings = new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, new ReadOnlyPropertyTable(m_propertyTable), false, false, "", isNormalRightToLeft);
 				var entries = ConfiguredXHTMLGenerator.GenerateNextFewEntries(PublicationDecorator, entriesToPublish, GetCurrentConfiguration(false), settings, currentPageRange,
 					adjacentPageRange, ConfiguredXHTMLGenerator.EntriesToAddCount, out newCurrentPageRange, out newAdjPageRange);
 				// Load entries above the lower navigation buttons
@@ -314,13 +439,13 @@ namespace SIL.FieldWorks.XWorks
 		private static GeckoHtmlElement GetBottomCurrentPageButton(GeckoElement pageButtonElement)
 		{
 			// from the parent node select the second instance of the current page (the one with the id)
-			return (GeckoHtmlElement)pageButtonElement.OwnerDocument.Body.SelectFirst("(//*[@class='pagebutton' and @id])[2]");
+			return (GeckoHtmlElement)pageButtonElement?.OwnerDocument?.Body?.SelectFirst("(//*[@class='pagebutton' and @id])[2]");
 		}
 
 		private static GeckoHtmlElement GetTopCurrentPageButton(GeckoElement element)
 		{
 			// The page with the id is the current page, select the first one on the page
-			return (GeckoHtmlElement)element.OwnerDocument.Body.SelectFirst("//*[@class='pagebutton' and @id]");
+			return (GeckoHtmlElement)element?.OwnerDocument?.Body?.SelectFirst("//*[@class='pagebutton' and @id]");
 		}
 
 		private static bool HandleClickOnPageButton(RecordClerk clerk, GeckoElement element)
@@ -343,26 +468,24 @@ namespace SIL.FieldWorks.XWorks
 		/// <remarks>
 		/// This is static so that the method can be shared with XhtmlRecordDocView.
 		/// </remarks>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "ToolStripMenuItems get added to m_contextMenu.Items; ContextMenuStrip is disposed in DisposeContextMenu()")]
-		internal static void HandleDomRightClick(GeckoWebBrowser browser, DomMouseEventArgs e, GeckoElement element, Mediator mediator)
+		internal static void HandleDomRightClick(GeckoWebBrowser browser, DomMouseEventArgs e, GeckoElement element, PropertyTable propertyTable, Mediator mediator)
 		{
 			Guid topLevelGuid;
 			GeckoElement entryElement;
 			var classList = GetClassListFromGeckoElement(element, out topLevelGuid, out entryElement);
-			var localizedName = DictionaryConfigurationListener.GetDictionaryConfigurationType(mediator);
+			var localizedName = DictionaryConfigurationListener.GetDictionaryConfigurationType(propertyTable);
 			var label = string.Format(xWorksStrings.ksConfigure, localizedName);
 			s_contextMenu = new ContextMenuStrip();
-			var item = new ToolStripMenuItem(label);
+			var item = new DisposableToolStripMenuItem(label);
 			s_contextMenu.Items.Add(item);
 			item.Click += RunConfigureDialogAt;
-			item.Tag = new object[] { mediator, classList, topLevelGuid };
+			item.Tag = new object[] { propertyTable, mediator, classList, topLevelGuid };
 			if (e.CtrlKey) // show hidden menu item for tech support
 			{
-				item = new ToolStripMenuItem(xWorksStrings.ksInspect);
+				item = new DisposableToolStripMenuItem(xWorksStrings.ksInspect);
 				s_contextMenu.Items.Add(item);
 				item.Click += RunDiagnosticsDialogAt;
-				item.Tag = new object[] { mediator, entryElement, topLevelGuid };
+				item.Tag = new object[] { propertyTable, entryElement, topLevelGuid };
 			}
 			s_contextMenu.Show(browser, new Point(e.ClientX, e.ClientY));
 			s_contextMenu.Closed += m_contextMenu_Closed;
@@ -373,8 +496,6 @@ namespace SIL.FieldWorks.XWorks
 		/// Returns the class hierarchy for a GeckoElement
 		/// </summary>
 		/// <remarks>LT-17213 Internal for use in DictionaryConfigurationDlg</remarks>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "elem does NOT need to be disposed locally!")]
 		internal static List<string> GetClassListFromGeckoElement(GeckoElement element, out Guid topLevelGuid, out GeckoElement entryElement)
 		{
 			topLevelGuid = Guid.Empty;
@@ -399,9 +520,23 @@ namespace SIL.FieldWorks.XWorks
 			return classList;
 		}
 
-		internal static Guid GetHrefFromGeckoDomElement(GeckoElement element)
+		/// <summary>
+		/// Gets the GUID from a Gecko DOM Element that represents a link to an entry (or sense?).
+		/// If the passed element is not a link, or if it a link to play a file, Guid.Empty is returned.
+		/// </summary>
+		/// <exception cref="FormatException">
+		/// If the href happens to start with a GUID but have extra text at the end (this should happen only for audio writing systems,
+		/// but we shouldn't be returning links for those. And throwing doesn't affect whether audio is played, anyway.
+		/// </exception>
+		/// <remarks>
+		/// <see cref="ConfiguredXHTMLGenerator"/> generates subentry headwords in Audio Writing Systems
+		/// as media links, *not* links to that entry (as other WS's are)
+		/// </remarks>
+		private static Guid GetGuidFromEntryLink(GeckoElement element)
 		{
-			if (!element.HasAttribute("href"))
+			// A link to somewhere must have an 'href' and must not have an 'onclick' attribute. If I recall correctly, we have to put an 'href' on
+			// media links to get the hotlink hand to appear, but we don't want them to actually go anywhere, as this prevents playing the media.
+			if (!element.HasAttribute("href") || element.HasAttribute("onclick"))
 				return Guid.Empty;
 
 			var hrefVal = element.GetAttribute("href");
@@ -452,24 +587,25 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var item = (ToolStripMenuItem)sender;
 			var tagObjects = (object[])item.Tag;
-			var mediator = (Mediator)tagObjects[0];
-			var classList = (List<string>)tagObjects[1];
-			var guid = (Guid)tagObjects[2];
+			var propertyTable = tagObjects[0] as PropertyTable;
+			var mediator = tagObjects[1] as Mediator;
+			var classList = tagObjects[2] as List<string>;
+			var guid = (Guid)tagObjects[3];
 			bool refreshNeeded;
-			using (var dlg = new DictionaryConfigurationDlg(mediator))
+			using (var dlg = new DictionaryConfigurationDlg(propertyTable))
 			{
-				var cache = mediator.PropertyTable.GetValue("cache") as FdoCache;
-				var clerk = mediator.PropertyTable.GetValue("ActiveClerk", null) as RecordClerk;
+				var cache = propertyTable.GetValue<LcmCache>("cache");
+				var clerk = propertyTable.GetValue<RecordClerk>("ActiveClerk", null);
 				ICmObject current = null;
 				if (guid != Guid.Empty && cache != null && cache.ServiceLocator.ObjectRepository.IsValidObjectId(guid))
 					current = cache.ServiceLocator.GetObject(guid);
 				else if (clerk != null)
 					current = clerk.CurrentObject;
-				var controller = new DictionaryConfigurationController(dlg, mediator, current);
+				var controller = new DictionaryConfigurationController(dlg, propertyTable, mediator, current);
 				controller.SetStartingNode(classList);
-				dlg.Text = String.Format(xWorksStrings.ConfigureTitle, DictionaryConfigurationListener.GetDictionaryConfigurationType(mediator));
-				dlg.HelpTopic = DictionaryConfigurationListener.GetConfigDialogHelpTopic(mediator);
-				dlg.ShowDialog(mediator.PropertyTable.GetValue("window") as IWin32Window);
+				dlg.Text = String.Format(xWorksStrings.ConfigureTitle, DictionaryConfigurationListener.GetDictionaryConfigurationType(propertyTable));
+				dlg.HelpTopic = DictionaryConfigurationListener.GetConfigDialogHelpTopic(propertyTable);
+				dlg.ShowDialog(propertyTable.GetValue<IWin32Window>("window"));
 				refreshNeeded = controller.MasterRefreshRequired;
 			}
 			if (refreshNeeded)
@@ -480,12 +616,12 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var item = (ToolStripMenuItem)sender;
 			var tagObjects = (object[])item.Tag;
-			var mediator = (Mediator)tagObjects[0];
+			var propTable = (PropertyTable)tagObjects[0];
 			var element = (GeckoElement)tagObjects[1];
 			var guid = (Guid)tagObjects[2];
 			using (var dlg = new XmlDiagnosticsDlg(element, guid))
 			{
-				dlg.ShowDialog(mediator.PropertyTable.GetValue("window") as IWin32Window);
+				dlg.ShowDialog(propTable.GetValue<IWin32Window>("window"));
 			}
 		}
 
@@ -510,7 +646,8 @@ namespace SIL.FieldWorks.XWorks
 			// In some cases (e.g where a user reset their local settings) the stored configuration may no longer
 			// exist on disk.
 			var validConfiguration = SetCurrentDictionaryPublicationLayout();
-			UpdateContent(PublicationDecorator, validConfiguration);
+			if (string.IsNullOrEmpty(m_propertyTable.GetStringProperty("SuspendLoadingRecordUntilOnJumpToRecord", null)))
+				UpdateContent(PublicationDecorator, validConfiguration);
 		}
 
 		private string SetCurrentDictionaryPublicationLayout()
@@ -647,7 +784,7 @@ namespace SIL.FieldWorks.XWorks
 			var coreCommand = commandObject as Command;
 			if(coreCommand != null)
 			{
-				var tool = XmlUtils.GetManditoryAttributeValue(coreCommand.Parameters[0], "tool");
+				var tool = XmlUtils.GetMandatoryAttributeValue(coreCommand.Parameters[0], "tool");
 				if(tool != "publicationsEdit")
 					return false;
 
@@ -662,7 +799,7 @@ namespace SIL.FieldWorks.XWorks
 		/// All publications which the given configuration apply to will be placed in the inConfig collection.
 		/// All publications which the configuration does not apply to will be placed in the notInConfig collection.
 		/// </summary>
-		internal void SplitPublicationsByConfiguration(IFdoOwningSequence<ICmPossibility> publications,
+		internal void SplitPublicationsByConfiguration(ILcmOwningSequence<ICmPossibility> publications,
 																	  string configurationPath,
 																	  out List<string> inConfig,
 																	  out List<string> notInConfig)
@@ -757,12 +894,12 @@ namespace SIL.FieldWorks.XWorks
 				case "ReversalIndexPublicationLayout":
 					var currentConfig = GetCurrentConfiguration(false);
 					if (name == "ReversalIndexPublicationLayout")
-						DictionaryConfigurationUtils.SetReversalIndexGuidBasedOnReversalIndexConfiguration(m_mediator, Cache);
+						DictionaryConfigurationUtils.SetReversalIndexGuidBasedOnReversalIndexConfiguration(m_propertyTable, Cache);
 					var currentPublication = GetCurrentPublication();
 					var validPublication = GetValidPublicationForConfiguration(currentConfig) ?? xWorksStrings.AllEntriesPublication;
 					if (validPublication != currentPublication)
 					{
-						m_mediator.PropertyTable.SetProperty("SelectedPublication", validPublication, false);
+						m_propertyTable.SetProperty("SelectedPublication", validPublication, false);
 					}
 					UpdateContent(PublicationDecorator, currentConfig);
 					break;
@@ -785,7 +922,7 @@ namespace SIL.FieldWorks.XWorks
 		private void LoadPageIfNecessary(GeckoWebBrowser browser)
 		{
 			var currentObjectHvo = Clerk.CurrentObjectHvo;
-			var currentObjectIndex = Array.IndexOf(PublicationDecorator.GetEntriesToPublish(m_mediator, Clerk.VirtualFlid), currentObjectHvo);
+			var currentObjectIndex = Array.IndexOf(PublicationDecorator.GetEntriesToPublish(m_propertyTable, Clerk.VirtualFlid), currentObjectHvo);
 			if (currentObjectIndex < 0 || browser == null || browser.Document == null) // If the current item is not to be displayed (invalid, not in this publication) just quit
 				return;
 			var currentPage = GetTopCurrentPageButton(browser.Document.Body);
@@ -801,7 +938,6 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// Remove the style from the previously selected entry.
 		/// </summary>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule", Justification = "GeckoHtmlElement does NOT need to be disposed locally!")]
 		private void RemoveStyleFromPreviousSelectedEntryOnView(GeckoWebBrowser browser)
 		{
 			if (string.IsNullOrEmpty(m_selectedObjectID))
@@ -818,7 +954,6 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// Set the style attribute on the current entry to color the background.
 		/// </summary>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule", Justification = "GeckoHtmlElement does NOT need to be disposed locally!")]
 		private void SetActiveSelectedEntryOnView(GeckoWebBrowser browser)
 		{
 			if (Clerk.CurrentObject == null)
@@ -826,8 +961,6 @@ namespace SIL.FieldWorks.XWorks
 
 			if (Clerk.Id == "AllReversalEntries")
 			{
-				var currentConfig = m_mediator.PropertyTable.GetStringProperty("ReversalIndexPublicationLayout", string.Empty);
-				var configuration = new DictionaryConfigurationModel(currentConfig, Cache);
 				var reversalentry = Clerk.CurrentObject as IReversalIndexEntry;
 				if (reversalentry == null)
 					return;
@@ -835,11 +968,13 @@ namespace SIL.FieldWorks.XWorks
 				if (writingSystem == null)
 					return;
 				var currReversalWs = writingSystem.Id;
-				if(configuration.WritingSystem != currReversalWs)
+				var currentConfig = m_propertyTable.GetStringProperty("ReversalIndexPublicationLayout", string.Empty);
+				var configuration = File.Exists(currentConfig) ? new DictionaryConfigurationModel(currentConfig, Cache) : null;
+				if (configuration == null || configuration.WritingSystem != currReversalWs)
 				{
-					var newConfig = Path.Combine(DictionaryConfigurationListener.GetProjectConfigurationDirectory(m_mediator),
-						writingSystem.DisplayLabel + DictionaryConfigurationModel.FileExtension);
-					m_mediator.PropertyTable.SetProperty("ReversalIndexPublicationLayout", newConfig, true);
+					var newConfig = Path.Combine(DictionaryConfigurationListener.GetProjectConfigurationDirectory(m_propertyTable),
+						writingSystem.Id + DictionaryConfigurationModel.FileExtension);
+					m_propertyTable.SetProperty("ReversalIndexPublicationLayout", File.Exists(newConfig) ? newConfig : null, true);
 				}
 			}
 			var currentObjectGuid = Clerk.CurrentObject.Guid.ToString();
@@ -905,7 +1040,7 @@ namespace SIL.FieldWorks.XWorks
 			var validPublication = GetValidPublicationForConfiguration(currentConfig) ?? xWorksStrings.AllEntriesPublication;
 			if (currentPublication != xWorksStrings.AllEntriesPublication && currentPublication != validPublication)
 			{
-				m_mediator.PropertyTable.SetProperty("SelectedPublication", validPublication, true);
+				m_propertyTable.SetProperty("SelectedPublication", validPublication, true);
 			}
 			UpdateContent(PublicationDecorator, currentConfig);
 		}
@@ -945,7 +1080,7 @@ namespace SIL.FieldWorks.XWorks
 
 		public bool OnShowAllEntries(object args)
 		{
-			m_mediator.PropertyTable.SetProperty("SelectedPublication", xWorksStrings.AllEntriesPublication);
+			m_propertyTable.SetProperty("SelectedPublication", xWorksStrings.AllEntriesPublication, true);
 			return true;
 		}
 
@@ -994,7 +1129,7 @@ namespace SIL.FieldWorks.XWorks
 				progress.Message = xWorksStrings.ksObtainingEntriesToDisplay;
 			var configuration = new DictionaryConfigurationModel(configurationFile, Cache);
 			publicationDecorator.Refresh();
-			var entriesToPublish = publicationDecorator.GetEntriesToPublish(m_mediator, Clerk.VirtualFlid);
+			var entriesToPublish = publicationDecorator.GetEntriesToPublish(m_propertyTable, Clerk.VirtualFlid);
 			var start = DateTime.Now;
 			if (progress != null)
 			{
@@ -1003,7 +1138,7 @@ namespace SIL.FieldWorks.XWorks
 				progress.Maximum = entryCount + 1 + entryCount / 100;
 				progress.Position++;
 			}
-			var xhtmlPath = ConfiguredXHTMLGenerator.SavePreviewHtmlWithStyles(entriesToPublish, publicationDecorator, configuration, m_mediator, progress);
+			var xhtmlPath = ConfiguredXHTMLGenerator.SavePreviewHtmlWithStyles(entriesToPublish, publicationDecorator, configuration, m_propertyTable, progress);
 			var end = DateTime.Now;
 			System.Diagnostics.Debug.WriteLine(string.Format("saving xhtml/css took {0}", end - start));
 			return xhtmlPath;
@@ -1023,18 +1158,18 @@ namespace SIL.FieldWorks.XWorks
 		private string GetCurrentPublication()
 		{
 			// Returns the current publication and use '$$all_entries$$' if none has yet been set
-			return m_mediator.PropertyTable.GetStringProperty("SelectedPublication",
-																			  xWorksStrings.AllEntriesPublication);
+			return m_propertyTable.GetStringProperty("SelectedPublication",
+			 xWorksStrings.AllEntriesPublication);
 		}
 
 		private string GetCurrentConfiguration(bool fUpdate)
 		{
-			return DictionaryConfigurationListener.GetCurrentConfiguration(m_mediator, fUpdate);
+			return DictionaryConfigurationListener.GetCurrentConfiguration(m_propertyTable, fUpdate);
 		}
 
 		private void SetCurrentConfiguration(string currentConfig, bool fUpdate)
 		{
-			DictionaryConfigurationListener.SetCurrentConfiguration(m_mediator, currentConfig, fUpdate);
+			DictionaryConfigurationListener.SetCurrentConfiguration(m_propertyTable, currentConfig, fUpdate);
 		}
 
 		public DictionaryPublicationDecorator PublicationDecorator
@@ -1084,7 +1219,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 			// Limit length of View title to remaining available width
 			curViewName = TrimToMaxPixelWidth(Math.Max(2, maxViewWidth), curViewName);
-			var isReversalIndex = DictionaryConfigurationListener.GetDictionaryConfigurationType(m_mediator) == xWorksStrings.ReversalIndex;
+			var isReversalIndex = DictionaryConfigurationListener.GetDictionaryConfigurationType(m_propertyTable) == xWorksStrings.ReversalIndex;
 			if (!isReversalIndex)
 				ResetSpacer(maxViewWidth, curViewName);
 			else
@@ -1112,7 +1247,7 @@ namespace SIL.FieldWorks.XWorks
 			if (pubNameTitlePiece == xWorksStrings.AllEntriesPublication)
 				pubNameTitlePiece = xWorksStrings.ksAllEntries;
 			titleStr = pubNameTitlePiece + " " + titleStr;
-			var isReversalIndex = DictionaryConfigurationListener.GetDictionaryConfigurationType(m_mediator) == xWorksStrings.ReversalIndex;
+			var isReversalIndex = DictionaryConfigurationListener.GetDictionaryConfigurationType(m_propertyTable) == xWorksStrings.ReversalIndex;
 			if (isReversalIndex)
 			{
 				var maxViewWidth = Width / 2 - kSpaceForMenuButton;

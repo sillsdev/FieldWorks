@@ -1,843 +1,654 @@
 <?xml version="1.0" encoding="utf-8"?>
 <root>
-  <!--
-	Microsoft ResX Schema
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
 
-	Version 2.0
-
-	The primary goals of this format is to allow a simple XML format
-	that is mostly human readable. The generation and parsing of the
-	various data types are done through the TypeConverter classes
-	associated with the data types.
-
-	Example:
-
-	... ado.net/XML headers & schema ...
-	<resheader name="resmimetype">text/microsoft-resx</resheader>
-	<resheader name="version">2.0</resheader>
-	<resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
-	<resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
-	<data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
-	<data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
-	<data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
-		<value>[base64 mime encoded serialized .NET Framework object]</value>
-	</data>
-	<data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
-		<value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
-		<comment>This is a comment</comment>
-	</data>
-
-	There are any number of "resheader" rows that contain simple
-	name/value pairs.
-
-	Each data row contains a name, and value. The row also contains a
-	type or mimetype. Type corresponds to a .NET class that support
-	text/value conversion through the TypeConverter architecture.
-	Classes that don't support this are serialized and stored with the
-	mimetype set.
-
-	The mimetype is used for serialized objects, and tells the
-	ResXResourceReader how to depersist the object. This is currently not
-	extensible. For a given mimetype the value must be set accordingly:
-
-	Note - application/x-microsoft.net.object.binary.base64 is the format
-	that the ResXResourceWriter will generate, however the reader can
-	read any of the formats listed below.
-
-	mimetype: application/x-microsoft.net.object.binary.base64
-	value   : The object must be serialized with
-			: System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
-			: and then encoded with base64 encoding.
-
-	mimetype: application/x-microsoft.net.object.soap.base64
-	value   : The object must be serialized with
-			: System.Runtime.Serialization.Formatters.Soap.SoapFormatter
-			: and then encoded with base64 encoding.
-
-	mimetype: application/x-microsoft.net.object.bytearray.base64
-	value   : The object must be serialized into a byte array
-			: using a System.ComponentModel.TypeConverter
-			: and then encoded with base64 encoding.
-	-->
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
   <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
-	<xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
-	<xsd:element name="root" msdata:IsDataSet="true">
-	  <xsd:complexType>
-		<xsd:choice maxOccurs="unbounded">
-		  <xsd:element name="metadata">
-			<xsd:complexType>
-			  <xsd:sequence>
-				<xsd:element name="value" type="xsd:string" minOccurs="0" />
-			  </xsd:sequence>
-			  <xsd:attribute name="name" use="required" type="xsd:string" />
-			  <xsd:attribute name="type" type="xsd:string" />
-			  <xsd:attribute name="mimetype" type="xsd:string" />
-			  <xsd:attribute ref="xml:space" />
-			</xsd:complexType>
-		  </xsd:element>
-		  <xsd:element name="assembly">
-			<xsd:complexType>
-			  <xsd:attribute name="alias" type="xsd:string" />
-			  <xsd:attribute name="name" type="xsd:string" />
-			</xsd:complexType>
-		  </xsd:element>
-		  <xsd:element name="data">
-			<xsd:complexType>
-			  <xsd:sequence>
-				<xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
-				<xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
-			  </xsd:sequence>
-			  <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
-			  <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
-			  <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
-			  <xsd:attribute ref="xml:space" />
-			</xsd:complexType>
-		  </xsd:element>
-		  <xsd:element name="resheader">
-			<xsd:complexType>
-			  <xsd:sequence>
-				<xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
-			  </xsd:sequence>
-			  <xsd:attribute name="name" type="xsd:string" use="required" />
-			</xsd:complexType>
-		  </xsd:element>
-		</xsd:choice>
-	  </xsd:complexType>
-	</xsd:element>
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
   </xsd:schema>
   <resheader name="resmimetype">
-	<value>text/microsoft-resx</value>
+    <value>text/microsoft-resx</value>
   </resheader>
   <resheader name="version">
-	<value>2.0</value>
+    <value>2.0</value>
   </resheader>
   <resheader name="reader">
-	<value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <resheader name="writer">
-	<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="m_hostsTreeView.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
-	<value>Fill</value>
-  </data>
-  <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
-  <data name="m_hostsTreeView.Location" type="System.Drawing.Point, System.Drawing">
-	<value>0, 16</value>
-  </data>
-  <data name="m_hostsTreeView.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-	<value>0, 0, 0, 0</value>
-  </data>
-  <data name="m_hostsTreeView.Size" type="System.Drawing.Size, System.Drawing">
-	<value>232, 153</value>
+  <data name="m_lstLanguageProjects.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
   </data>
   <assembly alias="mscorlib" name="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="m_hostsTreeView.TabIndex" type="System.Int32, mscorlib">
-	<value>1</value>
-  </data>
-  <data name="&gt;&gt;m_hostsTreeView.Name" xml:space="preserve">
-	<value>m_hostsTreeView</value>
-  </data>
-  <data name="&gt;&gt;m_hostsTreeView.Type" xml:space="preserve">
-	<value>System.Windows.Forms.TreeView, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;m_hostsTreeView.Parent" xml:space="preserve">
-	<value>m_tblLayoutLocations</value>
-  </data>
-  <data name="&gt;&gt;m_hostsTreeView.ZOrder" xml:space="preserve">
-	<value>4</value>
-  </data>
-  <data name="m_lstLanguageProjects.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
-	<value>Fill</value>
-  </data>
   <data name="m_lstLanguageProjects.Enabled" type="System.Boolean, mscorlib">
-	<value>False</value>
+    <value>False</value>
   </data>
   <data name="m_lstLanguageProjects.HorizontalScrollbar" type="System.Boolean, mscorlib">
-	<value>True</value>
+    <value>True</value>
   </data>
   <data name="m_lstLanguageProjects.IntegralHeight" type="System.Boolean, mscorlib">
-	<value>False</value>
+    <value>False</value>
   </data>
+  <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="m_lstLanguageProjects.Location" type="System.Drawing.Point, System.Drawing">
-	<value>0, 16</value>
+    <value>0, 16</value>
   </data>
   <data name="m_lstLanguageProjects.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-	<value>0, 0, 1, 0</value>
+    <value>0, 0, 1, 0</value>
   </data>
   <data name="m_lstLanguageProjects.Size" type="System.Drawing.Size, System.Drawing">
-	<value>259, 224</value>
+    <value>497, 224</value>
   </data>
   <data name="m_lstLanguageProjects.TabIndex" type="System.Int32, mscorlib">
-	<value>3</value>
+    <value>3</value>
   </data>
   <data name="&gt;&gt;m_lstLanguageProjects.Name" xml:space="preserve">
-	<value>m_lstLanguageProjects</value>
+    <value>m_lstLanguageProjects</value>
   </data>
   <data name="&gt;&gt;m_lstLanguageProjects.Type" xml:space="preserve">
-	<value>System.Windows.Forms.ListBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Windows.Forms.ListBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;m_lstLanguageProjects.Parent" xml:space="preserve">
-	<value>m_tblLayoutProjects</value>
+    <value>m_tblLayoutProjects</value>
   </data>
   <data name="&gt;&gt;m_lstLanguageProjects.ZOrder" xml:space="preserve">
-	<value>1</value>
+    <value>1</value>
   </data>
   <data name="m_btnCancel.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
-	<value>Bottom, Right</value>
+    <value>Bottom, Right</value>
   </data>
   <data name="m_btnCancel.AutoSizeMode" type="System.Windows.Forms.AutoSizeMode, System.Windows.Forms">
-	<value>GrowAndShrink</value>
+    <value>GrowAndShrink</value>
   </data>
   <data name="m_btnCancel.Location" type="System.Drawing.Point, System.Drawing">
-	<value>328, 250</value>
+    <value>328, 250</value>
   </data>
   <data name="m_btnCancel.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-	<value>8, 5, 0, 0</value>
+    <value>8, 5, 0, 0</value>
+  </data>
+  <data name="m_btnCancel.MinimumSize" type="System.Drawing.Size, System.Drawing">
+    <value>75, 26</value>
   </data>
   <data name="m_btnCancel.Size" type="System.Drawing.Size, System.Drawing">
-	<value>75, 26</value>
+    <value>75, 26</value>
   </data>
   <data name="m_btnCancel.TabIndex" type="System.Int32, mscorlib">
-	<value>8</value>
+    <value>8</value>
   </data>
   <data name="m_btnCancel.Text" xml:space="preserve">
-	<value>Cancel</value>
+    <value>Cancel</value>
   </data>
   <data name="&gt;&gt;m_btnCancel.Name" xml:space="preserve">
-	<value>m_btnCancel</value>
+    <value>m_btnCancel</value>
   </data>
   <data name="&gt;&gt;m_btnCancel.Type" xml:space="preserve">
-	<value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;m_btnCancel.Parent" xml:space="preserve">
-	<value>m_tblLayoutOuter</value>
+    <value>m_tblLayoutOuter</value>
   </data>
   <data name="&gt;&gt;m_btnCancel.ZOrder" xml:space="preserve">
-	<value>3</value>
+    <value>3</value>
   </data>
   <data name="m_btnOk.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
-	<value>Bottom, Right</value>
+    <value>Bottom, Right</value>
   </data>
   <data name="m_btnOk.AutoSizeMode" type="System.Windows.Forms.AutoSizeMode, System.Windows.Forms">
-	<value>GrowAndShrink</value>
+    <value>GrowAndShrink</value>
   </data>
   <data name="m_btnOk.Enabled" type="System.Boolean, mscorlib">
-	<value>False</value>
+    <value>False</value>
   </data>
   <data name="m_btnOk.Location" type="System.Drawing.Point, System.Drawing">
-	<value>245, 250</value>
+    <value>245, 250</value>
   </data>
   <data name="m_btnOk.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-	<value>8, 5, 0, 0</value>
+    <value>8, 5, 0, 0</value>
+  </data>
+  <data name="m_btnOk.MinimumSize" type="System.Drawing.Size, System.Drawing">
+    <value>75, 26</value>
   </data>
   <data name="m_btnOk.Size" type="System.Drawing.Size, System.Drawing">
-	<value>75, 26</value>
+    <value>75, 26</value>
   </data>
   <data name="m_btnOk.TabIndex" type="System.Int32, mscorlib">
-	<value>7</value>
+    <value>7</value>
   </data>
   <data name="m_btnOk.Text" xml:space="preserve">
-	<value>Open</value>
+    <value>Open</value>
   </data>
   <data name="&gt;&gt;m_btnOk.Name" xml:space="preserve">
-	<value>m_btnOk</value>
+    <value>m_btnOk</value>
   </data>
   <data name="&gt;&gt;m_btnOk.Type" xml:space="preserve">
-	<value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;m_btnOk.Parent" xml:space="preserve">
-	<value>m_tblLayoutOuter</value>
+    <value>m_tblLayoutOuter</value>
   </data>
   <data name="&gt;&gt;m_btnOk.ZOrder" xml:space="preserve">
-	<value>1</value>
-  </data>
-  <data name="m_lblLookIn.AutoSize" type="System.Boolean, mscorlib">
-	<value>True</value>
-  </data>
-  <data name="m_lblLookIn.Location" type="System.Drawing.Point, System.Drawing">
-	<value>3, 0</value>
-  </data>
-  <data name="m_lblLookIn.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-	<value>3, 0, 3, 3</value>
-  </data>
-  <data name="m_lblLookIn.Size" type="System.Drawing.Size, System.Drawing">
-	<value>45, 13</value>
-  </data>
-  <data name="m_lblLookIn.TabIndex" type="System.Int32, mscorlib">
-	<value>0</value>
-  </data>
-  <data name="m_lblLookIn.Text" xml:space="preserve">
-	<value>&amp;Look in:</value>
-  </data>
-  <data name="&gt;&gt;m_lblLookIn.Name" xml:space="preserve">
-	<value>m_lblLookIn</value>
-  </data>
-  <data name="&gt;&gt;m_lblLookIn.Type" xml:space="preserve">
-	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;m_lblLookIn.Parent" xml:space="preserve">
-	<value>m_tblLayoutLocations</value>
-  </data>
-  <data name="&gt;&gt;m_lblLookIn.ZOrder" xml:space="preserve">
-	<value>0</value>
+    <value>1</value>
   </data>
   <data name="m_lblChoosePrj.AutoSize" type="System.Boolean, mscorlib">
-	<value>True</value>
+    <value>True</value>
   </data>
   <data name="m_lblChoosePrj.Location" type="System.Drawing.Point, System.Drawing">
-	<value>3, 0</value>
+    <value>3, 0</value>
   </data>
   <data name="m_lblChoosePrj.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-	<value>3, 0, 0, 3</value>
+    <value>3, 0, 0, 3</value>
   </data>
   <data name="m_lblChoosePrj.Size" type="System.Drawing.Size, System.Drawing">
-	<value>90, 13</value>
+    <value>90, 13</value>
   </data>
   <data name="m_lblChoosePrj.TabIndex" type="System.Int32, mscorlib">
-	<value>2</value>
+    <value>2</value>
   </data>
   <data name="m_lblChoosePrj.Text" xml:space="preserve">
-	<value>&amp;Choose a project:</value>
+    <value>&amp;Choose a project:</value>
   </data>
   <data name="&gt;&gt;m_lblChoosePrj.Name" xml:space="preserve">
-	<value>m_lblChoosePrj</value>
+    <value>m_lblChoosePrj</value>
   </data>
   <data name="&gt;&gt;m_lblChoosePrj.Type" xml:space="preserve">
-	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;m_lblChoosePrj.Parent" xml:space="preserve">
-	<value>m_tblLayoutProjects</value>
+    <value>m_tblLayoutProjects</value>
   </data>
   <data name="&gt;&gt;m_lblChoosePrj.ZOrder" xml:space="preserve">
-	<value>0</value>
-  </data>
-  <data name="m_txtAddHost.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
-	<value>Fill</value>
-  </data>
-  <data name="m_txtAddHost.Location" type="System.Drawing.Point, System.Drawing">
-	<value>0, 190</value>
-  </data>
-  <data name="m_txtAddHost.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-	<value>0, 0, 0, 0</value>
-  </data>
-  <data name="m_txtAddHost.Size" type="System.Drawing.Size, System.Drawing">
-	<value>232, 20</value>
-  </data>
-  <data name="m_txtAddHost.TabIndex" type="System.Int32, mscorlib">
-	<value>5</value>
-  </data>
-  <data name="&gt;&gt;m_txtAddHost.Name" xml:space="preserve">
-	<value>m_txtAddHost</value>
-  </data>
-  <data name="&gt;&gt;m_txtAddHost.Type" xml:space="preserve">
-	<value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;m_txtAddHost.Parent" xml:space="preserve">
-	<value>m_tblLayoutLocations</value>
-  </data>
-  <data name="&gt;&gt;m_txtAddHost.ZOrder" xml:space="preserve">
-	<value>3</value>
-  </data>
-  <data name="m_btnAddHost.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
-	<value>Bottom, Right</value>
-  </data>
-  <data name="m_btnAddHost.AutoSize" type="System.Boolean, mscorlib">
-	<value>True</value>
-  </data>
-  <data name="m_btnAddHost.Enabled" type="System.Boolean, mscorlib">
-	<value>False</value>
-  </data>
-  <data name="m_btnAddHost.Location" type="System.Drawing.Point, System.Drawing">
-	<value>157, 214</value>
-  </data>
-  <data name="m_btnAddHost.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-	<value>0, 4, 0, 0</value>
-  </data>
-  <data name="m_btnAddHost.Size" type="System.Drawing.Size, System.Drawing">
-	<value>75, 26</value>
-  </data>
-  <data name="m_btnAddHost.TabIndex" type="System.Int32, mscorlib">
-	<value>6</value>
-  </data>
-  <data name="m_btnAddHost.Text" xml:space="preserve">
-	<value>&amp;Add</value>
-  </data>
-  <data name="&gt;&gt;m_btnAddHost.Name" xml:space="preserve">
-	<value>m_btnAddHost</value>
-  </data>
-  <data name="&gt;&gt;m_btnAddHost.Type" xml:space="preserve">
-	<value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;m_btnAddHost.Parent" xml:space="preserve">
-	<value>m_tblLayoutLocations</value>
-  </data>
-  <data name="&gt;&gt;m_btnAddHost.ZOrder" xml:space="preserve">
-	<value>1</value>
+    <value>0</value>
   </data>
   <data name="m_btnHelp.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
-	<value>Bottom, Right</value>
+    <value>Bottom, Right</value>
   </data>
   <data name="m_btnHelp.AutoSizeMode" type="System.Windows.Forms.AutoSizeMode, System.Windows.Forms">
-	<value>GrowAndShrink</value>
+    <value>GrowAndShrink</value>
   </data>
   <data name="m_btnHelp.Location" type="System.Drawing.Point, System.Drawing">
-	<value>423, 250</value>
+    <value>423, 250</value>
   </data>
   <data name="m_btnHelp.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-	<value>8, 5, 0, 0</value>
+    <value>8, 5, 0, 0</value>
+  </data>
+  <data name="m_btnHelp.MinimumSize" type="System.Drawing.Size, System.Drawing">
+    <value>75, 26</value>
   </data>
   <data name="m_btnHelp.Size" type="System.Drawing.Size, System.Drawing">
-	<value>75, 26</value>
+    <value>75, 26</value>
   </data>
   <data name="m_btnHelp.TabIndex" type="System.Int32, mscorlib">
-	<value>9</value>
+    <value>9</value>
   </data>
   <data name="m_btnHelp.Text" xml:space="preserve">
-	<value>Help</value>
+    <value>Help</value>
   </data>
   <data name="&gt;&gt;m_btnHelp.Name" xml:space="preserve">
-	<value>m_btnHelp</value>
+    <value>m_btnHelp</value>
   </data>
   <data name="&gt;&gt;m_btnHelp.Type" xml:space="preserve">
-	<value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;m_btnHelp.Parent" xml:space="preserve">
-	<value>m_tblLayoutOuter</value>
+    <value>m_tblLayoutOuter</value>
   </data>
   <data name="&gt;&gt;m_btnHelp.ZOrder" xml:space="preserve">
-	<value>2</value>
-  </data>
-  <data name="m_lblAddNetworkComp.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
-	<value>Bottom, Left</value>
-  </data>
-  <data name="m_lblAddNetworkComp.AutoSize" type="System.Boolean, mscorlib">
-	<value>True</value>
-  </data>
-  <data name="m_lblAddNetworkComp.Location" type="System.Drawing.Point, System.Drawing">
-	<value>3, 174</value>
-  </data>
-  <data name="m_lblAddNetworkComp.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-	<value>3, 5, 3, 3</value>
-  </data>
-  <data name="m_lblAddNetworkComp.Size" type="System.Drawing.Size, System.Drawing">
-	<value>129, 13</value>
-  </data>
-  <data name="m_lblAddNetworkComp.TabIndex" type="System.Int32, mscorlib">
-	<value>4</value>
-  </data>
-  <data name="m_lblAddNetworkComp.Text" xml:space="preserve">
-	<value>Add &amp;networked computer:</value>
-  </data>
-  <data name="&gt;&gt;m_lblAddNetworkComp.Name" xml:space="preserve">
-	<value>m_lblAddNetworkComp</value>
-  </data>
-  <data name="&gt;&gt;m_lblAddNetworkComp.Type" xml:space="preserve">
-	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;m_lblAddNetworkComp.Parent" xml:space="preserve">
-	<value>m_tblLayoutLocations</value>
-  </data>
-  <data name="&gt;&gt;m_lblAddNetworkComp.ZOrder" xml:space="preserve">
-	<value>2</value>
+    <value>2</value>
   </data>
   <data name="m_linkOpenFwDataProject.AutoSize" type="System.Boolean, mscorlib">
-	<value>True</value>
+    <value>True</value>
   </data>
   <data name="m_linkOpenFwDataProject.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
-	<value>Left</value>
+    <value>Left</value>
   </data>
   <data name="m_linkOpenFwDataProject.ImageAlign" type="System.Drawing.ContentAlignment, System.Drawing">
-	<value>MiddleLeft</value>
+    <value>MiddleLeft</value>
   </data>
   <data name="m_linkOpenFwDataProject.Location" type="System.Drawing.Point, System.Drawing">
-	<value>3, 25</value>
+    <value>3, 25</value>
   </data>
   <data name="m_linkOpenFwDataProject.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-	<value>3, 0, 0, 0</value>
+    <value>3, 0, 0, 0</value>
   </data>
   <data name="m_linkOpenFwDataProject.Size" type="System.Drawing.Size, System.Drawing">
-	<value>158, 25</value>
+    <value>158, 25</value>
   </data>
   <data name="m_linkOpenFwDataProject.TabIndex" type="System.Int32, mscorlib">
-	<value>7</value>
+    <value>7</value>
   </data>
   <data name="m_linkOpenFwDataProject.Text" xml:space="preserve">
-	<value>Open project in another location</value>
+    <value>Open project in another location</value>
   </data>
   <data name="m_linkOpenFwDataProject.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
-	<value>MiddleLeft</value>
+    <value>MiddleLeft</value>
   </data>
   <data name="&gt;&gt;m_linkOpenFwDataProject.Name" xml:space="preserve">
-	<value>m_linkOpenFwDataProject</value>
+    <value>m_linkOpenFwDataProject</value>
   </data>
   <data name="&gt;&gt;m_linkOpenFwDataProject.Type" xml:space="preserve">
-	<value>System.Windows.Forms.LinkLabel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Windows.Forms.LinkLabel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;m_linkOpenFwDataProject.Parent" xml:space="preserve">
-	<value>OpenProjectLinksLayoutPanel</value>
+    <value>OpenProjectLinksLayoutPanel</value>
   </data>
   <data name="&gt;&gt;m_linkOpenFwDataProject.ZOrder" xml:space="preserve">
-	<value>0</value>
+    <value>0</value>
   </data>
   <data name="m_linkOpenBridgeProject.AutoSize" type="System.Boolean, mscorlib">
-	<value>True</value>
+    <value>True</value>
   </data>
   <data name="m_linkOpenBridgeProject.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
-	<value>Left</value>
+    <value>Left</value>
   </data>
   <data name="m_linkOpenBridgeProject.ImageAlign" type="System.Drawing.ContentAlignment, System.Drawing">
-	<value>MiddleLeft</value>
+    <value>MiddleLeft</value>
   </data>
   <data name="m_linkOpenBridgeProject.Location" type="System.Drawing.Point, System.Drawing">
-	<value>3, 0</value>
+    <value>3, 0</value>
   </data>
   <data name="m_linkOpenBridgeProject.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-	<value>3, 0, 0, 0</value>
+    <value>3, 0, 0, 0</value>
   </data>
   <data name="m_linkOpenBridgeProject.Size" type="System.Drawing.Size, System.Drawing">
-	<value>163, 25</value>
+    <value>140, 25</value>
   </data>
   <data name="m_linkOpenBridgeProject.TabIndex" type="System.Int32, mscorlib">
-	<value>7</value>
+    <value>7</value>
   </data>
   <data name="m_linkOpenBridgeProject.Text" xml:space="preserve">
-	<value>Get project from a colleague</value>
+    <value>Get project from a colleague</value>
   </data>
   <data name="m_linkOpenBridgeProject.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
-	<value>MiddleLeft</value>
+    <value>MiddleLeft</value>
   </data>
   <data name="&gt;&gt;m_linkOpenBridgeProject.Name" xml:space="preserve">
-	<value>m_linkOpenBridgeProject</value>
+    <value>m_linkOpenBridgeProject</value>
   </data>
   <data name="&gt;&gt;m_linkOpenBridgeProject.Type" xml:space="preserve">
-	<value>System.Windows.Forms.LinkLabel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Windows.Forms.LinkLabel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;m_linkOpenBridgeProject.Parent" xml:space="preserve">
-	<value>OpenProjectLinksLayoutPanel</value>
+    <value>OpenProjectLinksLayoutPanel</value>
   </data>
   <data name="&gt;&gt;m_linkOpenBridgeProject.ZOrder" xml:space="preserve">
-	<value>1</value>
+    <value>1</value>
   </data>
   <data name="m_tblLayoutOuter.ColumnCount" type="System.Int32, mscorlib">
-	<value>5</value>
-  </data>
-  <data name="&gt;&gt;OpenBridgeProjectContainer.Name" xml:space="preserve">
-	<value>OpenBridgeProjectContainer</value>
-  </data>
-  <data name="&gt;&gt;OpenBridgeProjectContainer.Type" xml:space="preserve">
-	<value>System.Windows.Forms.SplitContainer, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;OpenBridgeProjectContainer.Parent" xml:space="preserve">
-	<value>m_tblLayoutOuter</value>
-  </data>
-  <data name="&gt;&gt;OpenBridgeProjectContainer.ZOrder" xml:space="preserve">
-	<value>4</value>
-  </data>
-  <data name="m_tblLayoutOuter.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
-	<value>Fill</value>
-  </data>
-  <data name="m_tblLayoutOuter.Location" type="System.Drawing.Point, System.Drawing">
-	<value>10, 10</value>
-  </data>
-  <data name="m_tblLayoutOuter.RowCount" type="System.Int32, mscorlib">
-	<value>2</value>
-  </data>
-  <data name="m_tblLayoutOuter.Size" type="System.Drawing.Size, System.Drawing">
-	<value>498, 296</value>
-  </data>
-  <data name="m_tblLayoutOuter.TabIndex" type="System.Int32, mscorlib">
-	<value>11</value>
-  </data>
-  <data name="&gt;&gt;m_tblLayoutOuter.Name" xml:space="preserve">
-	<value>m_tblLayoutOuter</value>
-  </data>
-  <data name="&gt;&gt;m_tblLayoutOuter.Type" xml:space="preserve">
-	<value>System.Windows.Forms.TableLayoutPanel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;m_tblLayoutOuter.Parent" xml:space="preserve">
-	<value>$this</value>
-  </data>
-  <data name="&gt;&gt;m_tblLayoutOuter.ZOrder" xml:space="preserve">
-	<value>0</value>
-  </data>
-  <data name="m_tblLayoutOuter.LayoutSettings" type="System.Windows.Forms.TableLayoutSettings, System.Windows.Forms">
-	<value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="m_splitContainer" Row="0" RowSpan="1" Column="0" ColumnSpan="5" /&gt;&lt;Control Name="m_btnOk" Row="1" RowSpan="1" Column="2" ColumnSpan="1" /&gt;&lt;Control Name="m_btnHelp" Row="1" RowSpan="1" Column="4" ColumnSpan="1" /&gt;&lt;Control Name="m_btnCancel" Row="1" RowSpan="1" Column="3" ColumnSpan="1" /&gt;&lt;Control Name="OpenBridgeProjectContainer" Row="1" RowSpan="2" Column="0" ColumnSpan="2" /&gt;&lt;/Controls&gt;&lt;Columns Styles="Percent,100,AutoSize,0,AutoSize,0,AutoSize,0,Absolute,95,Absolute,20" /&gt;&lt;Rows Styles="Percent,100,AutoSize,0,Absolute,20" /&gt;&lt;/TableLayoutSettings&gt;</value>
-  </data>
-  <data name="m_splitContainer.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
-	<value>Fill</value>
-  </data>
-  <data name="m_splitContainer.Location" type="System.Drawing.Point, System.Drawing">
-	<value>0, 0</value>
-  </data>
-  <data name="m_splitContainer.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-	<value>0, 0, 0, 0</value>
-  </data>
-  <data name="m_tblLayoutLocations.ColumnCount" type="System.Int32, mscorlib">
-	<value>1</value>
-  </data>
-  <data name="m_tblLayoutLocations.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
-	<value>Fill</value>
-  </data>
-  <data name="m_tblLayoutLocations.Location" type="System.Drawing.Point, System.Drawing">
-	<value>0, 0</value>
-  </data>
-  <data name="m_tblLayoutLocations.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-	<value>0, 0, 0, 0</value>
-  </data>
-  <data name="m_tblLayoutLocations.RowCount" type="System.Int32, mscorlib">
-	<value>5</value>
-  </data>
-  <data name="m_tblLayoutLocations.Size" type="System.Drawing.Size, System.Drawing">
-	<value>232, 240</value>
-  </data>
-  <data name="m_tblLayoutLocations.TabIndex" type="System.Int32, mscorlib">
-	<value>0</value>
-  </data>
-  <data name="&gt;&gt;m_tblLayoutLocations.Name" xml:space="preserve">
-	<value>m_tblLayoutLocations</value>
-  </data>
-  <data name="&gt;&gt;m_tblLayoutLocations.Type" xml:space="preserve">
-	<value>System.Windows.Forms.TableLayoutPanel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;m_tblLayoutLocations.Parent" xml:space="preserve">
-	<value>m_splitContainer.Panel1</value>
-  </data>
-  <data name="&gt;&gt;m_tblLayoutLocations.ZOrder" xml:space="preserve">
-	<value>0</value>
-  </data>
-  <data name="m_tblLayoutLocations.LayoutSettings" type="System.Windows.Forms.TableLayoutSettings, System.Windows.Forms">
-	<value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="m_lblLookIn" Row="0" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="m_btnAddHost" Row="4" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="m_lblAddNetworkComp" Row="2" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="m_txtAddHost" Row="3" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="m_hostsTreeView" Row="1" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;/Controls&gt;&lt;Columns Styles="Percent,100" /&gt;&lt;Rows Styles="AutoSize,0,Percent,100,AutoSize,0,AutoSize,0,AutoSize,0" /&gt;&lt;/TableLayoutSettings&gt;</value>
-  </data>
-  <data name="&gt;&gt;m_splitContainer.Panel1.Name" xml:space="preserve">
-	<value>m_splitContainer.Panel1</value>
-  </data>
-  <data name="&gt;&gt;m_splitContainer.Panel1.Type" xml:space="preserve">
-	<value>System.Windows.Forms.SplitterPanel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;m_splitContainer.Panel1.Parent" xml:space="preserve">
-	<value>m_splitContainer</value>
-  </data>
-  <data name="&gt;&gt;m_splitContainer.Panel1.ZOrder" xml:space="preserve">
-	<value>0</value>
-  </data>
-  <data name="m_tblLayoutProjects.ColumnCount" type="System.Int32, mscorlib">
-	<value>1</value>
-  </data>
-  <data name="m_tblLayoutProjects.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
-	<value>Fill</value>
-  </data>
-  <data name="m_tblLayoutProjects.Location" type="System.Drawing.Point, System.Drawing">
-	<value>0, 0</value>
-  </data>
-  <data name="m_tblLayoutProjects.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-	<value>0, 0, 0, 0</value>
-  </data>
-  <data name="m_tblLayoutProjects.RowCount" type="System.Int32, mscorlib">
-	<value>2</value>
-  </data>
-  <data name="m_tblLayoutProjects.Size" type="System.Drawing.Size, System.Drawing">
-	<value>260, 240</value>
-  </data>
-  <data name="m_tblLayoutProjects.TabIndex" type="System.Int32, mscorlib">
-	<value>0</value>
-  </data>
-  <data name="&gt;&gt;m_tblLayoutProjects.Name" xml:space="preserve">
-	<value>m_tblLayoutProjects</value>
-  </data>
-  <data name="&gt;&gt;m_tblLayoutProjects.Type" xml:space="preserve">
-	<value>System.Windows.Forms.TableLayoutPanel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;m_tblLayoutProjects.Parent" xml:space="preserve">
-	<value>m_splitContainer.Panel2</value>
-  </data>
-  <data name="&gt;&gt;m_tblLayoutProjects.ZOrder" xml:space="preserve">
-	<value>0</value>
-  </data>
-  <data name="m_tblLayoutProjects.LayoutSettings" type="System.Windows.Forms.TableLayoutSettings, System.Windows.Forms">
-	<value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="m_lblChoosePrj" Row="0" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="m_lstLanguageProjects" Row="1" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;/Controls&gt;&lt;Columns Styles="AutoSize,0" /&gt;&lt;Rows Styles="AutoSize,0,Percent,100" /&gt;&lt;/TableLayoutSettings&gt;</value>
-  </data>
-  <data name="&gt;&gt;m_splitContainer.Panel2.Name" xml:space="preserve">
-	<value>m_splitContainer.Panel2</value>
-  </data>
-  <data name="&gt;&gt;m_splitContainer.Panel2.Type" xml:space="preserve">
-	<value>System.Windows.Forms.SplitterPanel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;m_splitContainer.Panel2.Parent" xml:space="preserve">
-	<value>m_splitContainer</value>
-  </data>
-  <data name="&gt;&gt;m_splitContainer.Panel2.ZOrder" xml:space="preserve">
-	<value>1</value>
-  </data>
-  <data name="m_splitContainer.Size" type="System.Drawing.Size, System.Drawing">
-	<value>498, 240</value>
-  </data>
-  <data name="m_splitContainer.SplitterDistance" type="System.Int32, mscorlib">
-	<value>232</value>
-  </data>
-  <data name="m_splitContainer.SplitterWidth" type="System.Int32, mscorlib">
-	<value>6</value>
-  </data>
-  <data name="m_splitContainer.TabIndex" type="System.Int32, mscorlib">
-	<value>10</value>
-  </data>
-  <data name="&gt;&gt;m_splitContainer.Name" xml:space="preserve">
-	<value>m_splitContainer</value>
-  </data>
-  <data name="&gt;&gt;m_splitContainer.Type" xml:space="preserve">
-	<value>System.Windows.Forms.SplitContainer, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;m_splitContainer.Parent" xml:space="preserve">
-	<value>m_tblLayoutOuter</value>
-  </data>
-  <data name="&gt;&gt;m_splitContainer.ZOrder" xml:space="preserve">
-	<value>0</value>
+    <value>5</value>
   </data>
   <data name="OpenBridgeProjectContainer.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
-	<value>Fill</value>
+    <value>Fill</value>
   </data>
   <data name="OpenBridgeProjectContainer.IsSplitterFixed" type="System.Boolean, mscorlib">
-	<value>True</value>
+    <value>True</value>
   </data>
   <data name="OpenBridgeProjectContainer.Location" type="System.Drawing.Point, System.Drawing">
-	<value>3, 243</value>
+    <value>3, 243</value>
   </data>
   <data name="pictureBox1.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
-	<value>Fill</value>
+    <value>Fill</value>
   </data>
   <data name="pictureBox1.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
-	<value>NoControl</value>
+    <value>NoControl</value>
   </data>
   <data name="pictureBox1.Location" type="System.Drawing.Point, System.Drawing">
-	<value>0, 0</value>
+    <value>0, 0</value>
   </data>
   <data name="pictureBox1.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-	<value>0, 0, 0, 0</value>
+    <value>0, 0, 0, 0</value>
   </data>
   <data name="pictureBox1.Size" type="System.Drawing.Size, System.Drawing">
-	<value>36, 50</value>
+    <value>36, 50</value>
   </data>
   <data name="pictureBox1.TabIndex" type="System.Int32, mscorlib">
-	<value>12</value>
+    <value>12</value>
   </data>
   <data name="&gt;&gt;pictureBox1.Name" xml:space="preserve">
-	<value>pictureBox1</value>
+    <value>pictureBox1</value>
   </data>
   <data name="&gt;&gt;pictureBox1.Type" xml:space="preserve">
-	<value>System.Windows.Forms.PictureBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Windows.Forms.PictureBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;pictureBox1.Parent" xml:space="preserve">
-	<value>OpenBridgeProjectContainer.Panel1</value>
+    <value>OpenBridgeProjectContainer.Panel1</value>
   </data>
   <data name="&gt;&gt;pictureBox1.ZOrder" xml:space="preserve">
-	<value>0</value>
+    <value>0</value>
   </data>
   <data name="&gt;&gt;OpenBridgeProjectContainer.Panel1.Name" xml:space="preserve">
-	<value>OpenBridgeProjectContainer.Panel1</value>
+    <value>OpenBridgeProjectContainer.Panel1</value>
   </data>
   <data name="&gt;&gt;OpenBridgeProjectContainer.Panel1.Type" xml:space="preserve">
-	<value>System.Windows.Forms.SplitterPanel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Windows.Forms.SplitterPanel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;OpenBridgeProjectContainer.Panel1.Parent" xml:space="preserve">
-	<value>OpenBridgeProjectContainer</value>
+    <value>OpenBridgeProjectContainer</value>
   </data>
   <data name="&gt;&gt;OpenBridgeProjectContainer.Panel1.ZOrder" xml:space="preserve">
-	<value>0</value>
+    <value>0</value>
   </data>
   <data name="OpenBridgeProjectContainer.Panel1MinSize" type="System.Int32, mscorlib">
-	<value>36</value>
+    <value>36</value>
   </data>
   <data name="OpenProjectLinksLayoutPanel.ColumnCount" type="System.Int32, mscorlib">
-	<value>1</value>
+    <value>1</value>
   </data>
   <data name="OpenProjectLinksLayoutPanel.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
-	<value>Fill</value>
+    <value>Fill</value>
   </data>
   <data name="OpenProjectLinksLayoutPanel.Location" type="System.Drawing.Point, System.Drawing">
-	<value>0, 0</value>
+    <value>0, 0</value>
   </data>
   <data name="OpenProjectLinksLayoutPanel.RowCount" type="System.Int32, mscorlib">
-	<value>2</value>
+    <value>2</value>
   </data>
   <data name="OpenProjectLinksLayoutPanel.Size" type="System.Drawing.Size, System.Drawing">
-	<value>191, 50</value>
+    <value>191, 50</value>
   </data>
   <data name="OpenProjectLinksLayoutPanel.TabIndex" type="System.Int32, mscorlib">
-	<value>0</value>
+    <value>0</value>
   </data>
   <data name="&gt;&gt;OpenProjectLinksLayoutPanel.Name" xml:space="preserve">
-	<value>OpenProjectLinksLayoutPanel</value>
+    <value>OpenProjectLinksLayoutPanel</value>
   </data>
   <data name="&gt;&gt;OpenProjectLinksLayoutPanel.Type" xml:space="preserve">
-	<value>System.Windows.Forms.TableLayoutPanel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Windows.Forms.TableLayoutPanel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;OpenProjectLinksLayoutPanel.Parent" xml:space="preserve">
-	<value>OpenBridgeProjectContainer.Panel2</value>
+    <value>OpenBridgeProjectContainer.Panel2</value>
   </data>
   <data name="&gt;&gt;OpenProjectLinksLayoutPanel.ZOrder" xml:space="preserve">
-	<value>0</value>
+    <value>0</value>
   </data>
   <data name="OpenProjectLinksLayoutPanel.LayoutSettings" type="System.Windows.Forms.TableLayoutSettings, System.Windows.Forms">
-	<value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="m_linkOpenFwDataProject" Row="1" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="m_linkOpenBridgeProject" Row="0" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;/Controls&gt;&lt;Columns Styles="Percent,50" /&gt;&lt;Rows Styles="Percent,50,Percent,50" /&gt;&lt;/TableLayoutSettings&gt;</value>
+    <value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="m_linkOpenFwDataProject" Row="1" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="m_linkOpenBridgeProject" Row="0" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;/Controls&gt;&lt;Columns Styles="Percent,50" /&gt;&lt;Rows Styles="Percent,50,Percent,50" /&gt;&lt;/TableLayoutSettings&gt;</value>
   </data>
   <data name="&gt;&gt;OpenBridgeProjectContainer.Panel2.Name" xml:space="preserve">
-	<value>OpenBridgeProjectContainer.Panel2</value>
+    <value>OpenBridgeProjectContainer.Panel2</value>
   </data>
   <data name="&gt;&gt;OpenBridgeProjectContainer.Panel2.Type" xml:space="preserve">
-	<value>System.Windows.Forms.SplitterPanel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Windows.Forms.SplitterPanel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;OpenBridgeProjectContainer.Panel2.Parent" xml:space="preserve">
-	<value>OpenBridgeProjectContainer</value>
+    <value>OpenBridgeProjectContainer</value>
   </data>
   <data name="&gt;&gt;OpenBridgeProjectContainer.Panel2.ZOrder" xml:space="preserve">
-	<value>1</value>
+    <value>1</value>
   </data>
   <data name="OpenBridgeProjectContainer.Size" type="System.Drawing.Size, System.Drawing">
-	<value>231, 50</value>
+    <value>231, 50</value>
   </data>
   <data name="OpenBridgeProjectContainer.SplitterDistance" type="System.Int32, mscorlib">
-	<value>36</value>
+    <value>36</value>
   </data>
   <data name="OpenBridgeProjectContainer.TabIndex" type="System.Int32, mscorlib">
-	<value>11</value>
+    <value>11</value>
   </data>
   <data name="&gt;&gt;OpenBridgeProjectContainer.Name" xml:space="preserve">
-	<value>OpenBridgeProjectContainer</value>
+    <value>OpenBridgeProjectContainer</value>
   </data>
   <data name="&gt;&gt;OpenBridgeProjectContainer.Type" xml:space="preserve">
-	<value>System.Windows.Forms.SplitContainer, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Windows.Forms.SplitContainer, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;OpenBridgeProjectContainer.Parent" xml:space="preserve">
-	<value>m_tblLayoutOuter</value>
+    <value>m_tblLayoutOuter</value>
   </data>
   <data name="&gt;&gt;OpenBridgeProjectContainer.ZOrder" xml:space="preserve">
-	<value>4</value>
+    <value>4</value>
+  </data>
+  <data name="m_tblLayoutOuter.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="m_tblLayoutOuter.Location" type="System.Drawing.Point, System.Drawing">
+    <value>10, 10</value>
+  </data>
+  <data name="m_tblLayoutOuter.RowCount" type="System.Int32, mscorlib">
+    <value>2</value>
+  </data>
+  <data name="m_tblLayoutOuter.Size" type="System.Drawing.Size, System.Drawing">
+    <value>498, 296</value>
+  </data>
+  <data name="m_tblLayoutOuter.TabIndex" type="System.Int32, mscorlib">
+    <value>11</value>
+  </data>
+  <data name="&gt;&gt;m_tblLayoutOuter.Name" xml:space="preserve">
+    <value>m_tblLayoutOuter</value>
+  </data>
+  <data name="&gt;&gt;m_tblLayoutOuter.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TableLayoutPanel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_tblLayoutOuter.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;m_tblLayoutOuter.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="m_tblLayoutOuter.LayoutSettings" type="System.Windows.Forms.TableLayoutSettings, System.Windows.Forms">
+    <value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="m_splitContainer" Row="0" RowSpan="1" Column="0" ColumnSpan="5" /&gt;&lt;Control Name="m_btnOk" Row="1" RowSpan="1" Column="2" ColumnSpan="1" /&gt;&lt;Control Name="m_btnHelp" Row="1" RowSpan="1" Column="4" ColumnSpan="1" /&gt;&lt;Control Name="m_btnCancel" Row="1" RowSpan="1" Column="3" ColumnSpan="1" /&gt;&lt;Control Name="OpenBridgeProjectContainer" Row="1" RowSpan="2" Column="0" ColumnSpan="2" /&gt;&lt;/Controls&gt;&lt;Columns Styles="Percent,100,AutoSize,0,AutoSize,0,AutoSize,0,Absolute,95,Absolute,20" /&gt;&lt;Rows Styles="Percent,100,AutoSize,0,Absolute,20" /&gt;&lt;/TableLayoutSettings&gt;</value>
+  </data>
+  <data name="m_splitContainer.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="m_splitContainer.Location" type="System.Drawing.Point, System.Drawing">
+    <value>0, 0</value>
+  </data>
+  <data name="m_splitContainer.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>0, 0, 0, 0</value>
+  </data>
+  <data name="&gt;&gt;m_splitContainer.Panel1.Name" xml:space="preserve">
+    <value>m_splitContainer.Panel1</value>
+  </data>
+  <data name="&gt;&gt;m_splitContainer.Panel1.Type" xml:space="preserve">
+    <value>System.Windows.Forms.SplitterPanel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_splitContainer.Panel1.Parent" xml:space="preserve">
+    <value>m_splitContainer</value>
+  </data>
+  <data name="&gt;&gt;m_splitContainer.Panel1.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="m_splitContainer.Panel1MinSize" type="System.Int32, mscorlib">
+    <value>0</value>
+  </data>
+  <data name="m_tblLayoutProjects.ColumnCount" type="System.Int32, mscorlib">
+    <value>1</value>
+  </data>
+  <data name="m_tblLayoutProjects.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="m_tblLayoutProjects.Location" type="System.Drawing.Point, System.Drawing">
+    <value>0, 0</value>
+  </data>
+  <data name="m_tblLayoutProjects.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>0, 0, 0, 0</value>
+  </data>
+  <data name="m_tblLayoutProjects.RowCount" type="System.Int32, mscorlib">
+    <value>2</value>
+  </data>
+  <data name="m_tblLayoutProjects.Size" type="System.Drawing.Size, System.Drawing">
+    <value>498, 240</value>
+  </data>
+  <data name="m_tblLayoutProjects.TabIndex" type="System.Int32, mscorlib">
+    <value>0</value>
+  </data>
+  <data name="&gt;&gt;m_tblLayoutProjects.Name" xml:space="preserve">
+    <value>m_tblLayoutProjects</value>
+  </data>
+  <data name="&gt;&gt;m_tblLayoutProjects.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TableLayoutPanel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_tblLayoutProjects.Parent" xml:space="preserve">
+    <value>m_splitContainer.Panel2</value>
+  </data>
+  <data name="&gt;&gt;m_tblLayoutProjects.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="m_tblLayoutProjects.LayoutSettings" type="System.Windows.Forms.TableLayoutSettings, System.Windows.Forms">
+    <value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="m_lblChoosePrj" Row="0" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="m_lstLanguageProjects" Row="1" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;/Controls&gt;&lt;Columns Styles="AutoSize,0" /&gt;&lt;Rows Styles="AutoSize,0,Percent,100" /&gt;&lt;/TableLayoutSettings&gt;</value>
+  </data>
+  <data name="&gt;&gt;m_splitContainer.Panel2.Name" xml:space="preserve">
+    <value>m_splitContainer.Panel2</value>
+  </data>
+  <data name="&gt;&gt;m_splitContainer.Panel2.Type" xml:space="preserve">
+    <value>System.Windows.Forms.SplitterPanel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_splitContainer.Panel2.Parent" xml:space="preserve">
+    <value>m_splitContainer</value>
+  </data>
+  <data name="&gt;&gt;m_splitContainer.Panel2.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="m_splitContainer.Size" type="System.Drawing.Size, System.Drawing">
+    <value>498, 240</value>
+  </data>
+  <data name="m_splitContainer.SplitterDistance" type="System.Int32, mscorlib">
+    <value>0</value>
+  </data>
+  <data name="m_splitContainer.SplitterWidth" type="System.Int32, mscorlib">
+    <value>1</value>
+  </data>
+  <data name="m_splitContainer.TabIndex" type="System.Int32, mscorlib">
+    <value>10</value>
+  </data>
+  <data name="&gt;&gt;m_splitContainer.Name" xml:space="preserve">
+    <value>m_splitContainer</value>
+  </data>
+  <data name="&gt;&gt;m_splitContainer.Type" xml:space="preserve">
+    <value>System.Windows.Forms.SplitContainer, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_splitContainer.Parent" xml:space="preserve">
+    <value>m_tblLayoutOuter</value>
+  </data>
+  <data name="&gt;&gt;m_splitContainer.ZOrder" xml:space="preserve">
+    <value>0</value>
   </data>
   <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-	<value>True</value>
+    <value>True</value>
   </metadata>
   <data name="$this.AutoScaleDimensions" type="System.Drawing.SizeF, System.Drawing">
-	<value>6, 13</value>
+    <value>6, 13</value>
   </data>
   <data name="$this.ClientSize" type="System.Drawing.Size, System.Drawing">
-	<value>518, 316</value>
+    <value>518, 316</value>
   </data>
   <data name="$this.MinimumSize" type="System.Drawing.Size, System.Drawing">
-	<value>534, 354</value>
+    <value>534, 354</value>
   </data>
   <data name="$this.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
-	<value>10, 10, 10, 10</value>
+    <value>10, 10, 10, 10</value>
   </data>
   <data name="$this.StartPosition" type="System.Windows.Forms.FormStartPosition, System.Windows.Forms">
-	<value>CenterParent</value>
+    <value>CenterParent</value>
   </data>
   <data name="$this.Text" xml:space="preserve">
-	<value>Open Project</value>
+    <value>Open Project</value>
   </data>
   <data name="&gt;&gt;$this.Name" xml:space="preserve">
-	<value>ChooseLangProjectDialog</value>
+    <value>ChooseLangProjectDialog</value>
   </data>
   <data name="&gt;&gt;$this.Type" xml:space="preserve">
-	<value>System.Windows.Forms.Form, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Windows.Forms.Form, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
 </root>

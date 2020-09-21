@@ -1,32 +1,25 @@
-﻿// Copyright (c) 2015 SIL International
+﻿// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Windows.Forms;
-using Paratext;
-using SIL.CoreImpl;
-using SIL.FieldWorks.Common.Controls;
-using SIL.FieldWorks.Common.Framework;
+using SIL.LCModel.Core.Text;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.Common.ScriptureUtils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.XWorks;
-using SIL.Utils;
-using SILUBS.SharedScrUtils;
 using XCore;
 
 namespace SIL.FieldWorks.IText
 {
-	public class InterlinearTextsRecordClerk : RecordClerk, IBookImporter
+	public class InterlinearTextsRecordClerk : RecordClerk
 	{
-		private FwStyleSheet m_stylesheet;
+		private LcmStyleSheet m_stylesheet;
 
 		// The following is used in the process of selecting the ws for a new text.  See LT-6692.
 		private int m_wsPrevText;
@@ -76,7 +69,7 @@ namespace SIL.FieldWorks.IText
 		{
 			if (CurrentObject is IWfiWordform)
 				return true;
-			return CurrentObject.Owner is FDO.IText;
+			return CurrentObject.Owner is LCModel.IText;
 		}
 
 		public override void ReloadIfNeeded()
@@ -149,8 +142,6 @@ namespace SIL.FieldWorks.IText
 			}
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "Gendarme is just too dumb to understand the try...finally pattern to ensure disposal of dlg")]
 		protected internal bool OnAddTexts(object args)
 		{
 			CheckDisposed();
@@ -158,23 +149,13 @@ namespace SIL.FieldWorks.IText
 			var interestingTextsList = GetInterestingTextList();
 			var interestingTexts = interestingTextsList.InterestingTexts.ToArray();
 
-			IFilterTextsDialog<IStText> dlg = null;
-			try
+			using (var dlg = new FilterTextsDialog(m_propertyTable.GetValue<IApp>("App"), Cache, interestingTexts, m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider")))
 			{
-				if (FwUtils.IsOkToDisplayScriptureIfPresent)
-					dlg = new FilterTextsDialogTE(Cache, interestingTexts, m_mediator.HelpTopicProvider, this);
-				else
-					dlg = new FilterTextsDialog(Cache, interestingTexts, m_mediator.HelpTopicProvider);
-				if (dlg.ShowDialog(((IApp)m_mediator.PropertyTable.GetValue("App")).ActiveMainWindow) == DialogResult.OK)
+				if (dlg.ShowDialog(m_propertyTable.GetValue<Form>("window")) == DialogResult.OK)
 				{
 					interestingTextsList.SetInterestingTexts(dlg.GetListOfIncludedTexts());
 					UpdateFilterStatusBarPanel();
 				}
-			}
-			finally
-			{
-				if (dlg != null)
-					((IDisposable)dlg).Dispose();
 			}
 
 			return true;
@@ -182,7 +163,7 @@ namespace SIL.FieldWorks.IText
 
 		private InterestingTextList GetInterestingTextList()
 		{
-			return InterestingTextsDecorator.GetInterestingTextList(m_mediator, Cache.ServiceLocator);
+			return InterestingTextsDecorator.GetInterestingTextList(m_mediator, m_propertyTable, Cache.ServiceLocator);
 		}
 
 		/// <summary>
@@ -201,7 +182,7 @@ namespace SIL.FieldWorks.IText
 				return true; // or should we just say, we don't know? But this command definitely should only be possible when this IS active.
 			}
 
-			RecordClerk clrk = m_mediator.PropertyTable.GetValue("ActiveClerk") as RecordClerk;
+			RecordClerk clrk = m_propertyTable.GetValue<RecordClerk>("ActiveClerk");
 			if (clrk != null && clrk.Id == "interlinearTexts")
 			{
 				display.Enabled = true;
@@ -262,15 +243,15 @@ namespace SIL.FieldWorks.IText
 			// Check to if a genre was assigned to this text
 			// (when selected from the text list: ie a genre w/o a text was sellected)
 			string property = GetCorrespondingPropertyName("DelayedGenreAssignment");
-			var genreList = m_mediator.PropertyTable.GetValue(property, null) as List<TreeNode>;
-			var ownerText = newText.Owner as FDO.IText;
+			var genreList = m_propertyTable.GetValue<List<TreeNode>>(property, null);
+			var ownerText = newText.Owner as LCModel.IText;
 			if (genreList != null && genreList.Count > 0 && ownerText != null)
 			{
 				foreach (var node in genreList)
 				{
 					ownerText.GenresRC.Add((ICmPossibility)node.Tag);
 				}
-				m_mediator.PropertyTable.RemoveProperty(property);
+				m_propertyTable.RemoveProperty(property);
 			}
 
 			if (CurrentObject == null || CurrentObject.Hvo == 0)
@@ -288,14 +269,14 @@ namespace SIL.FieldWorks.IText
 
 		internal abstract class CreateAndInsertStText : RecordList.ICreateAndInsert<IStText>
 		{
-			internal CreateAndInsertStText(FdoCache cache, InterlinearTextsRecordClerk clerk)
+			internal CreateAndInsertStText(LcmCache cache, InterlinearTextsRecordClerk clerk)
 			{
 				Cache = cache;
 				Clerk = clerk;
 			}
 
 			protected InterlinearTextsRecordClerk Clerk;
-			protected FdoCache Cache;
+			protected LcmCache Cache;
 			protected IStText NewStText;
 
 			#region ICreateAndInsert<IStText> Members
@@ -314,6 +295,10 @@ namespace SIL.FieldWorks.IText
 				newText.ContentsOA = NewStText;
 				Clerk.CreateFirstParagraph(NewStText, wsText);
 				InterlinMaster.LoadParagraphAnnotationsAndGenerateEntryGuessesIfNeeded(NewStText, false);
+				if (Cache.LangProject.DiscourseDataOA == null)
+					Cache.LangProject.DiscourseDataOA = Cache.ServiceLocator.GetInstance<IDsDiscourseDataFactory>().Create();
+				Cache.ServiceLocator.GetInstance<IDsConstChartFactory>().Create(Cache.LangProject.DiscourseDataOA, newText.ContentsOA,
+					Cache.LangProject.GetDefaultChartTemplate());
 			}
 
 			#endregion
@@ -321,7 +306,7 @@ namespace SIL.FieldWorks.IText
 
 		internal class UndoableCreateAndInsertStText : CreateAndInsertStText
 		{
-			internal UndoableCreateAndInsertStText(FdoCache cache, Command command, InterlinearTextsRecordClerk clerk)
+			internal UndoableCreateAndInsertStText(LcmCache cache, Command command, InterlinearTextsRecordClerk clerk)
 				: base(cache, clerk)
 			{
 				CommandArgs = command;
@@ -341,7 +326,7 @@ namespace SIL.FieldWorks.IText
 
 		internal class NonUndoableCreateAndInsertStText : CreateAndInsertStText
 		{
-			internal NonUndoableCreateAndInsertStText(FdoCache cache, InterlinearTextsRecordClerk clerk)
+			internal NonUndoableCreateAndInsertStText(LcmCache cache, InterlinearTextsRecordClerk clerk)
 				: base(cache, clerk)
 			{
 			}
@@ -364,7 +349,7 @@ namespace SIL.FieldWorks.IText
 		internal void CreateFirstParagraph(IStText stText, int wsText)
 		{
 			var txtPara = stText.AddNewTextPara(null);
-			txtPara.Contents = TsStringUtils.MakeTss(string.Empty, wsText);
+			txtPara.Contents = TsStringUtils.MakeString(string.Empty, wsText);
 		}
 
 		private int GetWsForNewText()
@@ -380,7 +365,7 @@ namespace SIL.FieldWorks.IText
 				{
 					using (var dlg = new ChooseTextWritingSystemDlg())
 					{
-						dlg.Initialize(Cache, m_mediator.HelpTopicProvider, wsText);
+						dlg.Initialize(Cache, m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), wsText);
 						dlg.ShowDialog(Form.ActiveForm);
 						wsText = dlg.TextWs;
 					}
@@ -393,107 +378,5 @@ namespace SIL.FieldWorks.IText
 			}
 			return wsText;
 		}
-
-		/// <summary>
-		/// This class creates text, it must delete it here when UNDO is commanded
-		/// so it can update InterestingTexts.
-		/// </summary>
-/*		public override void PropChanged(int hvo, int tag, int ivMin, int cvIns, int cvDel)
-		{
-			if (cvDel != 1)
-				return;
-			SaveOnChangeRecord();
-			SuppressSaveOnChangeRecord = true;
-			try
-			{
-				m_list.DeleteCurrentObject();
-			}
-			finally
-			{
-				SuppressSaveOnChangeRecord = false;
-			}
-			GetInterestingTextList().UpdateInterestingTexts();
-		} */
-
-		#region IBookImporter Members
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Imports the specified book.
-		/// </summary>
-		/// <param name="bookNum">The canonical book number.</param>
-		/// <param name="owningForm">Form that can be used as the owner of progress dialogs and
-		/// message boxes.</param>
-		/// <param name="importBt">True to import only the back translation, false to import
-		/// only the main translation</param>
-		/// <returns>
-		/// The ScrBook created to hold the imported data
-		/// </returns>
-		/// ------------------------------------------------------------------------------------
-		public IScrBook Import(int bookNum, Form owningForm, bool importBt)
-		{
-			IScripture scr = Cache.LangProject.TranslatedScriptureOA;
-			bool haveSomethingToImport = NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
-				{
-					IScrImportSet importSettings = scr.FindOrCreateDefaultImportSettings(TypeOfImport.Paratext6);
-					importSettings.StyleSheet = ScriptureStylesheet;
-					IScrText paratextProj = ParatextHelper.GetAssociatedProject(Cache.ProjectId);
-					importSettings.ParatextScrProj = paratextProj.Name;
-					importSettings.StartRef = new BCVRef(bookNum, 0, 0);
-					int chapter = paratextProj.Versification.LastChapter(bookNum);
-					importSettings.EndRef = new BCVRef(bookNum, chapter, paratextProj.Versification.LastVerse(bookNum, chapter));
-					if (!importBt)
-					{
-						importSettings.ImportTranslation = true;
-						importSettings.ImportBackTranslation = false;
-					}
-					else
-					{
-						List<IScrText> btProjects = ParatextHelper.GetBtsForProject(paratextProj).ToList();
-						if (btProjects.Count > 0 && (string.IsNullOrEmpty(importSettings.ParatextBTProj) ||
-													 !btProjects.Any(st => st.Name == importSettings.ParatextBTProj)))
-						{
-							importSettings.ParatextBTProj = btProjects[0].Name;
-						}
-						if (string.IsNullOrEmpty(importSettings.ParatextBTProj))
-							return false;
-						importSettings.ImportTranslation = false;
-						importSettings.ImportBackTranslation = true;
-					}
-					ParatextHelper.LoadProjectMappings(importSettings);
-					ScrMappingList importMap = importSettings.GetMappingListForDomain(ImportDomain.Main);
-					ImportMappingInfo figureInfo = importMap[@"\fig"];
-					if (figureInfo != null)
-						figureInfo.IsExcluded = true;
-					importSettings.SaveSettings();
-					return true;
-				});
-
-			if (haveSomethingToImport && ReflectionHelper.GetBoolResult(ReflectionHelper.GetType("TeImportExport.dll",
-				"SIL.FieldWorks.TE.TeImportManager"), "ImportParatext", owningForm, ScriptureStylesheet,
-				(FwApp)m_mediator.PropertyTable.GetValue("App")))
-			{
-				return scr.FindBook(bookNum);
-			}
-			return null;
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Gets the Scripture stylesheet.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		private FwStyleSheet ScriptureStylesheet
-		{
-			get
-			{
-				if (m_stylesheet == null)
-				{
-					m_stylesheet = new FwStyleSheet();
-					m_stylesheet.Init(Cache, Cache.LangProject.TranslatedScriptureOA.Hvo, ScriptureTags.kflidStyles);
-				}
-				return m_stylesheet;
-			}
-		}
-		#endregion
 	}
 }

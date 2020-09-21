@@ -19,7 +19,7 @@ namespace SIL.FieldWorks.IText {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class ITextStrings {
@@ -61,6 +61,24 @@ namespace SIL.FieldWorks.IText {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Not all paragraphs in {0} could be parsed.
+        /// </summary>
+        internal static string ComplexConcControl_NotAllParasParsed {
+            get {
+                return ResourceManager.GetString("ComplexConcControl_NotAllParasParsed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Results may be incomplete..
+        /// </summary>
+        internal static string ComplexConcControl_ResultsMayBeIncomplete {
+            get {
+                return ResourceManager.GetString("ComplexConcControl_ResultsMayBeIncomplete", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to For the category: .
         /// </summary>
         internal static string ConcordanceSearchCatLabel {
@@ -93,6 +111,33 @@ namespace SIL.FieldWorks.IText {
         internal static string DeletedObjectDetected {
             get {
                 return ResourceManager.GetString("DeletedObjectDetected", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to OK will create an empty text.
+        /// </summary>
+        internal static string kOkbtnEmptySelection {
+            get {
+                return ResourceManager.GetString("kOkbtnEmptySelection", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to OK will create an empty text assigned to these genres.
+        /// </summary>
+        internal static string kOkbtnGenreSelection {
+            get {
+                return ResourceManager.GetString("kOkbtnGenreSelection", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No texts are selected.
+        /// </summary>
+        internal static string kOkbtnNoTextSelection {
+            get {
+                return ResourceManager.GetString("kOkbtnNoTextSelection", resourceCulture);
             }
         }
         
@@ -228,6 +273,15 @@ namespace SIL.FieldWorks.IText {
         internal static string ksBstAn {
             get {
                 return ResourceManager.GetString("ksBstAn", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to bst. vn.
+        /// </summary>
+        internal static string ksBstVn {
+            get {
+                return ResourceManager.GetString("ksBstVn", resourceCulture);
             }
         }
         
@@ -1951,6 +2005,33 @@ namespace SIL.FieldWorks.IText {
         internal static string ksTexts {
             get {
                 return ResourceManager.GetString("ksTexts", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Bible.
+        /// </summary>
+        internal static string kstidBibleNode {
+            get {
+                return ResourceManager.GetString("kstidBibleNode", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to New Testament.
+        /// </summary>
+        internal static string kstidNtNode {
+            get {
+                return ResourceManager.GetString("kstidNtNode", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Old Testament.
+        /// </summary>
+        internal static string kstidOtNode {
+            get {
+                return ResourceManager.GetString("kstidOtNode", resourceCulture);
             }
         }
         

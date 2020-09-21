@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -6,21 +6,19 @@ using System;
 using System.IO;
 using System.Reflection;
 using Microsoft.Win32;
-using SIL.CoreImpl;
-using SIL.FieldWorks.FDO;
-using SIL.Utils;
+using SIL.LCModel;
+using SIL.LCModel.Utils;
 
 namespace SIL.FieldWorks.ParatextLexiconPlugin
 {
 	internal static class ParatextLexiconPluginDirectoryFinder
 	{
-		private static readonly IFdoDirectories s_fdoDirs = new ParatextLexiconPluginFdoDirectories();
-
 		private const string ProjectsDir = "ProjectsDir";
 		private const string RootDataDir = "RootDataDir";
 		private const string RootCodeDir = "RootCodeDir";
 		private const string Projects = "Projects";
 		private const string Templates = "Templates";
+		private const string SilDir = "SIL";
 		private const string FieldWorksDir = "FieldWorks";
 
 		public static string ProjectsDirectory
@@ -38,19 +36,16 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 			get { return Path.Combine(CodeDirectory, Templates); }
 		}
 
-		public static IFdoDirectories FdoDirectories
-		{
-			get { return s_fdoDirs; }
-		}
+		public static ILcmDirectories LcmDirectories { get; } = new ParatextLexiconPluginLcmDirectories();
 
 		public static string DataDirectory
 		{
-			get { return GetDirectory(RootDataDir, DirectoryFinder.CommonAppDataFolder(FieldWorksDir)); }
+			get { return GetDirectory(RootDataDir, Path.Combine(LcmFileHelper.CommonApplicationData, SilDir, FieldWorksDir)); }
 		}
 
 		public static string DataDirectoryLocalMachine
 		{
-			get { return GetDirectoryLocalMachine(RootDataDir, DirectoryFinder.CommonAppDataFolder(FieldWorksDir)); }
+			get { return GetDirectoryLocalMachine(RootDataDir, Path.Combine(LcmFileHelper.CommonApplicationData, SilDir, FieldWorksDir)); }
 		}
 
 		public static string CodeDirectory
@@ -68,7 +63,7 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 			using (RegistryKey machineKey = ParatextLexiconPluginRegistryHelper.FieldWorksRegistryKeyLocalMachine)
 			{
 				var registryKey = userKey;
-				if (userKey == null || userKey.GetValue(registryValue) == null)
+				if (userKey?.GetValue(registryValue) == null)
 				{
 					registryKey = machineKey;
 				}
@@ -79,7 +74,7 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 
 		private static string GetDirectory(RegistryKey registryKey, string registryValue, string defaultDir)
 		{
-			string rootDir = (registryKey == null) ? null : registryKey.GetValue(registryValue, null) as string;
+			string rootDir = registryKey?.GetValue(registryValue, null) as string;
 
 			if (string.IsNullOrEmpty(rootDir) && !string.IsNullOrEmpty(defaultDir))
 				rootDir = defaultDir;
@@ -102,19 +97,14 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 			}
 		}
 
-		private class ParatextLexiconPluginFdoDirectories : IFdoDirectories
+		private class ParatextLexiconPluginLcmDirectories : ILcmDirectories
 		{
-			string IFdoDirectories.ProjectsDirectory
+			string ILcmDirectories.ProjectsDirectory
 			{
 				get { return ProjectsDirectory; }
 			}
 
-			string IFdoDirectories.DefaultProjectsDirectory
-			{
-				get { return ProjectsDirectoryLocalMachine; }
-			}
-
-			string IFdoDirectories.TemplateDirectory
+			string ILcmDirectories.TemplateDirectory
 			{
 				get { return TemplateDirectory; }
 			}

@@ -4,16 +4,15 @@
 
 using System;
 using System.Collections.Generic;
-using NUnit.Framework;
-using System.Windows.Forms;
 using System.Drawing;
-
-using SIL.FieldWorks.FDO;
+using System.Windows.Forms;
+using NUnit.Framework;
+using SIL.FieldWorks.Common.FwUtils.Attributes;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.Utils;
-using SIL.Utils.Attributes;
-using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.FieldWorks.Common.ViewsInterfaces;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Infrastructure;
 
 namespace SIL.FieldWorks.Discourse
 {
@@ -21,7 +20,7 @@ namespace SIL.FieldWorks.Discourse
 	/// Tests for the Constituent chart.
 	/// </summary>
 	[TestFixture]
-	[InitializeRealKeyboardController(InitDummyAfterTests = true)]
+	[InitializeRealKeyboardController]
 	public class InterlinRibbonTests : InMemoryDiscourseTestBase
 	{
 		private TestInterlinRibbon m_ribbon;
@@ -164,7 +163,7 @@ namespace SIL.FieldWorks.Discourse
 	/// </summary>
 	internal class TestInterlinRibbon : InterlinRibbon
 	{
-		public TestInterlinRibbon(FdoCache cache, int hvoStText)
+		public TestInterlinRibbon(LcmCache cache, int hvoStText)
 			: base(cache, hvoStText)
 		{
 		}

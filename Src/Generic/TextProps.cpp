@@ -88,13 +88,13 @@ bool TextProps::FGetTextPropValue(int scp, const byte * prgb, int cb,
 	if (pnVal1)
 	{
 		*pnVal1 = 0;
-		CopyBytes(prgb + ib, pnVal1, Min(cbData, isizeof(int)));
+		CopyBytes(prgb + ib, pnVal1, Min(cbData, (int)isizeof(int)));
 	}
 	if (pnVal2)
 	{
 		*pnVal2 = 0;
-		if (cbData > isizeof(int))
-			CopyBytes(prgb + ib + isizeof(int), pnVal2, cbData - isizeof(int));
+		if (cbData > (int)isizeof(int))
+			CopyBytes(prgb + ib + isizeof(int), pnVal2, cbData - (int)isizeof(int));
 	}
 
 	return true;

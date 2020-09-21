@@ -10,7 +10,6 @@
 // label, centering the checkbox in the header instead.  It also treated clicking anywhere in
 // the header as clicking in the checkbox.
 // </remarks>
-
 using System;
 using System.Diagnostics;
 using System.Drawing;

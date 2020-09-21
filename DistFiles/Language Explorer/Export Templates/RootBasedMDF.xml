@@ -97,7 +97,7 @@ Export using the Multi-Dictionary Formatter root-based standard. This includes s
 		<objAtomic objProperty="MorphoSyntaxAnalysisRA"/>
 		<multilingualStringElement name="g" simpleProperty="Gloss"/>
 		<multilingualStringElement name="d" simpleProperty="Definition"/>
-		<refVector field="ReversalEntries" itemLabel="re" itemProperty="LongName" itemWsProp="WritingSystem"/>
+		<refVector field="ReferringReversalIndexEntries" itemLabel="re" itemProperty="LongName" itemWsProp="WritingSystem"/>
 		<objVector objProperty="ExamplesOS"/>
 		<objVector objProperty="LexSenseReferences"/><!-- virtual property -->
 		<multilingualStringElement name="np" simpleProperty="PhonologyNote"/>

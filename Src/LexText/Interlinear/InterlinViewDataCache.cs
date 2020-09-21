@@ -9,13 +9,10 @@
 // </remarks>
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Text;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Application;
-using SIL.FieldWorks.FDO.DomainServices;
-using HvoFlidKey=SIL.FieldWorks.FDO.HvoFlidKey;
+using SIL.LCModel;
+using SIL.LCModel.Application;
+using HvoFlidKey=SIL.LCModel.HvoFlidKey;
 
 namespace SIL.FieldWorks.IText
 {
@@ -32,7 +29,7 @@ namespace SIL.FieldWorks.IText
 		private readonly IDictionary<HvoFlidKey, int> m_guessCache = new Dictionary<HvoFlidKey, int>();
 		private readonly IDictionary<HvoFlidKey, int> m_humanApproved = new Dictionary<HvoFlidKey, int>();
 
-		public InterlinViewDataCache(FdoCache cache) : base(cache.DomainDataByFlid as ISilDataAccessManaged)
+		public InterlinViewDataCache(LcmCache cache) : base(cache.DomainDataByFlid as ISilDataAccessManaged)
 		{
 		}
 

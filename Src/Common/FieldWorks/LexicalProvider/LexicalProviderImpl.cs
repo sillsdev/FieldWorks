@@ -11,17 +11,17 @@
 // ---------------------------------------------------------------------------------------------
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.ServiceModel;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.CoreImpl;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.FieldWorks.FdoUi;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.Utils;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Infrastructure;
+using SIL.FieldWorks.FdoUi;
+using SIL.Reporting;
+using SIL.LCModel.Utils;
 using XCore;
 
 namespace SIL.FieldWorks.LexicalProvider
@@ -34,12 +34,10 @@ namespace SIL.FieldWorks.LexicalProvider
 	[ServiceBehavior(IncludeExceptionDetailInFaults = true,
 		InstanceContextMode = InstanceContextMode.Single,
 		MaxItemsInObjectGraph = 2147483647)]
-	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
-		Justification="m_cache is a reference")]
 	public sealed class LexicalProviderImpl : ILexicalProvider
 	{
 		private const string kAnalysisPrefix = "Analysis:";
-		private readonly FdoCache m_cache;
+		private readonly LcmCache m_cache;
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -47,7 +45,7 @@ namespace SIL.FieldWorks.LexicalProvider
 		/// specified cache.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public LexicalProviderImpl(FdoCache cache)
+		public LexicalProviderImpl(LcmCache cache)
 		{
 			m_cache = cache;
 		}
@@ -71,14 +69,20 @@ namespace SIL.FieldWorks.LexicalProvider
 			// WCF server to not be OneWay. (Otherwise, time-out exceptions occur.)
 			FieldWorks.ThreadHelper.InvokeAsync(() =>
 			{
-				ITsString tss = TsStringUtils.MakeTss(entry, FieldWorks.Cache.DefaultVernWs);
-				Mediator mediator = new Mediator();
-				mediator.HelpTopicProvider = FieldWorks.GetHelpTopicProvider(FwUtils.ksFlexAbbrev);
-				mediator.FeedbackInfoProvider = FieldWorks.GetOrCreateFlexApp();
-				mediator.PropertyTable.SetProperty("App", FieldWorks.GetOrCreateFlexApp());
+				ITsString tss = TsStringUtils.MakeString(entry, FieldWorks.Cache.DefaultVernWs);
+				using (Mediator mediator = new Mediator())
+				using (PropertyTable propertyTable = new PropertyTable(mediator))
+				{
+					propertyTable.SetProperty("HelpTopicProvider", FieldWorks.GetHelpTopicProvider(), true);
+					propertyTable.SetPropertyPersistence("HelpTopicProvider", false);
+					var flexApp = FieldWorks.GetOrCreateFlexApp();
+					propertyTable.SetProperty("FeedbackInfoProvider", flexApp, true);
+					propertyTable.SetPropertyPersistence("FeedbackInfoProvider", false);
+					propertyTable.SetProperty("App", flexApp, true);
 
-				LexEntryUi.DisplayEntry(FieldWorks.Cache, mediator, mediator.HelpTopicProvider,
+					LexEntryUi.DisplayEntry(FieldWorks.Cache, mediator, propertyTable, propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"),
 					"UserHelpFile", tss, null);
+				}
 			});
 		}
 
@@ -101,14 +105,20 @@ namespace SIL.FieldWorks.LexicalProvider
 			// WCF server to not be OneWay. (Otherwise, time-out exceptions occur.)
 			FieldWorks.ThreadHelper.InvokeAsync(() =>
 			{
-				ITsString tss = TsStringUtils.MakeTss(entry, FieldWorks.Cache.DefaultVernWs);
-				Mediator mediator = new Mediator();
-				mediator.HelpTopicProvider = FieldWorks.GetHelpTopicProvider(FwUtils.ksFlexAbbrev);
-				mediator.FeedbackInfoProvider = FieldWorks.GetOrCreateFlexApp();
-				mediator.PropertyTable.SetProperty("App", FieldWorks.GetOrCreateFlexApp());
+				ITsString tss = TsStringUtils.MakeString(entry, FieldWorks.Cache.DefaultVernWs);
+				using (Mediator mediator = new Mediator())
+				using (PropertyTable propertyTable = new PropertyTable(mediator))
+				{
+					propertyTable.SetProperty("HelpTopicProvider", FieldWorks.GetHelpTopicProvider(), true);
+					propertyTable.SetPropertyPersistence("HelpTopicProvider", false);
+					var flexApp = FieldWorks.GetOrCreateFlexApp();
+					propertyTable.SetProperty("FeedbackInfoProvider", flexApp, true);
+					propertyTable.SetPropertyPersistence("FeedbackInfoProvider", false);
+					propertyTable.SetProperty("App", flexApp, true);
 
-				LexEntryUi.DisplayRelatedEntries(FieldWorks.Cache, mediator, mediator.HelpTopicProvider,
+					LexEntryUi.DisplayRelatedEntries(FieldWorks.Cache, mediator, propertyTable, propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"),
 					"UserHelpFile", tss);
+				}
 			});
 		}
 
@@ -174,7 +184,7 @@ namespace SIL.FieldWorks.LexicalProvider
 					switch(lexeme.Type)
 					{
 						case LexemeType.Word:
-							ITsString tss = TsStringUtils.MakeTss(lexeme.LexicalForm, m_cache.DefaultVernWs);
+							ITsString tss = TsStringUtils.MakeString(lexeme.LexicalForm, m_cache.DefaultVernWs);
 							m_cache.ServiceLocator.GetInstance<IWfiWordformFactory>().Create(tss);
 							break;
 						default:
@@ -183,7 +193,7 @@ namespace SIL.FieldWorks.LexicalProvider
 							msa.MsaType = (lexeme.Type == LexemeType.Stem) ? MsaType.kStem : MsaType.kUnclassified;
 
 							IMoMorphType morphType = GetMorphTypeForLexemeType(lexeme.Type);
-							ITsString tssForm = TsStringUtils.MakeTss(sForm, m_cache.DefaultVernWs);
+							ITsString tssForm = TsStringUtils.MakeString(sForm, m_cache.DefaultVernWs);
 							m_cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create(morphType, tssForm, (ITsString) null, msa);
 							break;
 						}
@@ -271,7 +281,7 @@ namespace SIL.FieldWorks.LexicalProvider
 							dbAnalysis.MeaningsOC.Add(dbGloss);
 						}
 						dbGlosses = dbGloss.Form;
-						dbAnalysis.ApprovalStatusIcon = 1; // Assume the analysis from the external application is user approved
+						dbAnalysis.ApprovalStatusIcon = (int)Opinions.approves; // Assume the analysis from the external application is user approved
 					}
 					else
 					{
@@ -282,7 +292,7 @@ namespace SIL.FieldWorks.LexicalProvider
 
 					// Add the new gloss to the list of glosses for the sense
 					ILgWritingSystem writingSystem = m_cache.WritingSystemFactory.get_Engine(language);
-					dbGlosses.set_String(writingSystem.Handle, TsStringUtils.MakeTss(text, writingSystem.Handle));
+					dbGlosses.set_String(writingSystem.Handle, TsStringUtils.MakeString(text, writingSystem.Handle));
 
 					return new LexGloss(language, text);
 				});
@@ -401,7 +411,7 @@ namespace SIL.FieldWorks.LexicalProvider
 		{
 			IWfiWordform wf;
 			m_cache.ServiceLocator.GetInstance<IWfiWordformRepository>().TryGetObject(
-				TsStringUtils.MakeTss(lexicalForm, m_cache.DefaultVernWs), true, out wf);
+				TsStringUtils.MakeString(lexicalForm, m_cache.DefaultVernWs), true, out wf);
 			return wf;
 		}
 

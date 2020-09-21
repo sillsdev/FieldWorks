@@ -6,12 +6,12 @@
 // Responsibility: FW Team
 
 using System;
-using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
-using SIL.Utils;
-using SIL.Utils.ComTypes;
+using SIL.FieldWorks.Common.ViewsInterfaces;
+using SIL.FieldWorks.Common.FwUtils;
+using SIL.LCModel.Utils;
 
 namespace SIL.FieldWorks.Common.RootSites
 {
@@ -48,10 +48,6 @@ namespace SIL.FieldWorks.Common.RootSites
 			}
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="image gets disposed in finally block")]
-		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
-			Justification="See TODO-Linux comment")]
 		private IPicture LoadPicture()
 		{
 			IPicture picture;

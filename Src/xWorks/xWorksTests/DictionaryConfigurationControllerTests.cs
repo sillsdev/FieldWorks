@@ -8,17 +8,18 @@ using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using NUnit.Framework;
-using SIL.CoreImpl;
+using SIL.LCModel.Core.Cellar;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.WritingSystems;
 using SIL.FieldWorks.Common.Controls;
-using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Framework;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Widgets;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FDO.FDOTests;
-using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.Utils;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Infrastructure;
+using SIL.LCModel.Utils;
 using XCore;
 
 // ReSharper disable InconsistentNaming
@@ -35,7 +36,7 @@ namespace SIL.FieldWorks.XWorks
 		private DictionaryConfigurationModel m_model;
 		private FwXApp m_application;
 		private FwXWindow m_window;
-		private Mediator m_mediator;
+		private PropertyTable m_propertyTable;
 
 		[SetUp]
 		public void Setup()
@@ -53,10 +54,10 @@ namespace SIL.FieldWorks.XWorks
 			var configFilePath = Path.Combine(FwDirectoryFinder.CodeDirectory, m_application.DefaultConfigurationPathname);
 			m_window = new MockFwXWindow(m_application, configFilePath);
 			((MockFwXWindow)m_window).Init(Cache); // initializes Mediator values
-			m_mediator = m_window.Mediator;
+			m_propertyTable = m_window.PropTable;
 			m_window.LoadUI(configFilePath); // actually loads UI here; needed for non-null stylesheet
 			// Add styles to the stylesheet to prevent intermittent unit test failures setting the selected index in the Styles Combobox
-			var styles = FontHeightAdjuster.StyleSheetFromMediator(m_mediator).Styles;
+			var styles = FontHeightAdjuster.StyleSheetFromPropertyTable(m_window.PropTable).Styles;
 			styles.Add(new BaseStyleInfo { Name = "Dictionary-Normal", IsParagraphStyle = true });
 			styles.Add(new BaseStyleInfo { Name = "Dictionary-Headword", IsParagraphStyle = false });
 			styles.Add(new BaseStyleInfo { Name = "Bulleted List", IsParagraphStyle = true });
@@ -74,7 +75,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				m_window.Dispose(); // also disposes m_mediator
 				m_window = null;
-				m_mediator = null;
+				m_propertyTable = null;
 			}
 			FwRegistrySettings.Release();
 			base.FixtureTeardown();
@@ -726,12 +727,12 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void GetProjectConfigLocationForPath_AlreadyProjectLocNoChange()
 		{
-			using (var mockMediator = new MockMediator(Cache))
+			using (var mockWindow = new MockWindowSetup(Cache))
 			{
 				var projectPath = string.Concat(Path.Combine(Path.Combine(
-					FdoFileHelper.GetConfigSettingsDir(Cache.ProjectId.ProjectFolder), "Test"), "test"), DictionaryConfigurationModel.FileExtension);
+					LcmFileHelper.GetConfigSettingsDir(Cache.ProjectId.ProjectFolder), "Test"), "test"), DictionaryConfigurationModel.FileExtension);
 				//SUT
-				var controller = new DictionaryConfigurationController { _mediator = mockMediator.Mediator };
+				var controller = new DictionaryConfigurationController { _propertyTable = mockWindow.PropertyTable };
 				var result = controller.GetProjectConfigLocationForPath(projectPath);
 				Assert.AreEqual(result, projectPath);
 			}
@@ -742,13 +743,13 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var defaultPath = string.Concat(Path.Combine(Path.Combine(
 				FwDirectoryFinder.DefaultConfigurations, "Test"), "test"), DictionaryConfigurationModel.FileExtension);
-			using (var mockMediator = new MockMediator(Cache))
+			using(var mockWindow = new MockWindowSetup(Cache))
 			{
 				//SUT
-				var controller = new DictionaryConfigurationController { _mediator = mockMediator.Mediator };
-				Assert.IsFalse(defaultPath.StartsWith(FdoFileHelper.GetConfigSettingsDir(Cache.ProjectId.ProjectFolder)));
+				var controller = new DictionaryConfigurationController { _propertyTable = mockWindow.PropertyTable };
+				Assert.IsFalse(defaultPath.StartsWith(LcmFileHelper.GetConfigSettingsDir(Cache.ProjectId.ProjectFolder)));
 				var result = controller.GetProjectConfigLocationForPath(defaultPath);
-				Assert.IsTrue(result.StartsWith(FdoFileHelper.GetConfigSettingsDir(Cache.ProjectId.ProjectFolder)));
+				Assert.IsTrue(result.StartsWith(LcmFileHelper.GetConfigSettingsDir(Cache.ProjectId.ProjectFolder)));
 				Assert.IsTrue(result.EndsWith(string.Concat(Path.Combine("Test", "test"), DictionaryConfigurationModel.FileExtension)));
 			}
 		}
@@ -882,14 +883,15 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		private sealed class MockMediator : IDisposable
+		private sealed class MockWindowSetup : IDisposable
 		{
 			private readonly MockFwXApp application;
 			private readonly MockFwXWindow window;
 
 			public Mediator Mediator { get; private set; }
+			public PropertyTable PropertyTable { get; set; }
 
-			public MockMediator(FdoCache cache)
+			public MockWindowSetup(LcmCache cache)
 			{
 				var manager = new MockFwManager { Cache = cache };
 				FwRegistrySettings.Init(); // Sets up fake static registry values for the MockFwXApp to use
@@ -897,13 +899,31 @@ namespace SIL.FieldWorks.XWorks
 				window = new MockFwXWindow(application, Path.GetTempFileName());
 				window.Init(cache); // initializes Mediator values
 				Mediator = window.Mediator;
+				PropertyTable = new PropertyTable(Mediator);
+				PropertyTable.SetProperty("cache", cache, false);
 			}
 
 			public void Dispose()
 			{
-				application.Dispose();
-				window.Dispose();
-				Mediator.Dispose();
+				Dispose(true);
+				GC.SuppressFinalize(this);
+			}
+
+			private void Dispose(bool disposing)
+			{
+				System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + " ******");
+				if(disposing)
+				{
+					application.Dispose();
+					window.Dispose();
+					PropertyTable.Dispose();
+					Mediator.Dispose();
+				}
+			}
+
+			~MockWindowSetup()
+			{
+				Dispose(false);
 			}
 		}
 
@@ -1009,7 +1029,7 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void UpdateWsOptions_OrderAndCheckMaintained()
 		{
-			IWritingSystem wsEs;
+			CoreWritingSystemDefinition wsEs;
 			Cache.ServiceLocator.WritingSystemManager.GetOrSet("es", out wsEs);
 			Cache.ServiceLocator.WritingSystems.AddToCurrentVernacularWritingSystems(wsEs);
 			var model = new DictionaryConfigurationModel();
@@ -1406,12 +1426,12 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void SaveModelHandler_SavesUpdatedFilePath() // LT-15898
 		{
-			using (var mediator = new MockMediator(Cache))
+			using (var mockWindow = new MockWindowSetup(Cache))
 			{
-				FileUtils.EnsureDirectoryExists(DictionaryConfigurationListener.GetProjectConfigurationDirectory(mediator.Mediator, "Dictionary"));
+				FileUtils.EnsureDirectoryExists(DictionaryConfigurationListener.GetProjectConfigurationDirectory(mockWindow.PropertyTable, "Dictionary"));
 				var controller = new DictionaryConfigurationController
 				{
-					_mediator = mediator.Mediator,
+					_propertyTable = mockWindow.PropertyTable,
 					_model = new DictionaryConfigurationModel
 					{
 						FilePath = Path.Combine(DictionaryConfigurationListener.GetDefaultConfigurationDirectory("Dictionary"), "SomeConfigurationFileName")
@@ -1421,8 +1441,8 @@ namespace SIL.FieldWorks.XWorks
 
 				// SUT
 				controller.SaveModel();
-				var savedPath = mediator.Mediator.PropertyTable.GetStringProperty("DictionaryPublicationLayout", null);
-				var projectConfigsPath = FdoFileHelper.GetConfigSettingsDir(Cache.ProjectId.ProjectFolder);
+				var savedPath = mockWindow.PropertyTable.GetStringProperty("DictionaryPublicationLayout", null);
+				var projectConfigsPath = LcmFileHelper.GetConfigSettingsDir(Cache.ProjectId.ProjectFolder);
 				Assert.AreEqual(controller._model.FilePath, savedPath, "Should have saved the path to the selected Configuration Model");
 				StringAssert.StartsWith(projectConfigsPath, savedPath, "Path should be in the project's folder");
 				StringAssert.EndsWith("SomeConfigurationFileName", savedPath, "Incorrect configuration saved");
@@ -1439,7 +1459,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var entryWithHeadword = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create();
 			var wsFr = Cache.WritingSystemFactory.GetWsFromStr("fr");
-			entryWithHeadword.CitationForm.set_String(wsFr, Cache.TsStrFactory.MakeString("Headword", wsFr));
+			entryWithHeadword.CitationForm.set_String(wsFr, TsStringUtils.MakeString("Headword", wsFr));
 			return entryWithHeadword;
 		}
 
@@ -1459,7 +1479,7 @@ namespace SIL.FieldWorks.XWorks
 			public void Redraw()
 			{ }
 
-			public void HighlightContent(ConfigurableDictionaryNode configNode, FdoCache cache)
+			public void HighlightContent(ConfigurableDictionaryNode configNode, LcmCache cache)
 			{ }
 
 			public void SetChoices(IEnumerable<DictionaryConfigurationModel> choices)
@@ -1481,9 +1501,24 @@ namespace SIL.FieldWorks.XWorks
 
 			public void Dispose()
 			{
+				Dispose(true);
+				GC.SuppressFinalize(this);
+			}
+
+			private void Dispose(bool disposing)
+			{
+				System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + " ******");
+				if (disposing)
+				{
 					if (DetailsView != null && !DetailsView.IsDisposed)
 						DetailsView.Dispose();
 					m_treeControl.Dispose();
+				}
+			}
+
+			~TestConfigurableDictionaryView()
+			{
+				Dispose(false);
 			}
 
 			public void Close() { }
@@ -1555,17 +1590,17 @@ namespace SIL.FieldWorks.XWorks
 			riRepo.FindOrCreateIndexForWs(aWs);
 		}
 
-		private void CreateALexEntry(FdoCache cache)
+		private void CreateALexEntry(LcmCache cache)
 		{
 			var factory = cache.ServiceLocator.GetInstance<ILexEntryFactory>();
 			var entry = factory.Create();
 			var wsEn = cache.WritingSystemFactory.GetWsFromStr("en");
 			var wsFr = cache.WritingSystemFactory.GetWsFromStr("fr");
-			entry.CitationForm.set_String(wsFr, cache.TsStrFactory.MakeString("mot", wsFr));
+			entry.CitationForm.set_String(wsFr, TsStringUtils.MakeString("mot", wsFr));
 			var senseFactory = cache.ServiceLocator.GetInstance<ILexSenseFactory>();
 			var sense = senseFactory.Create();
 			entry.SensesOS.Add(sense);
-			sense.Gloss.set_String(wsEn, cache.TsStrFactory.MakeString("word", wsEn));
+			sense.Gloss.set_String(wsEn, TsStringUtils.MakeString("word", wsEn));
 		}
 
 		[Test]
@@ -1579,10 +1614,10 @@ namespace SIL.FieldWorks.XWorks
 			{
 				var entryWithHeadword = CreateLexEntryWithHeadword();
 
-				m_mediator.PropertyTable.SetProperty("currentContentControl", "lexiconDictionary");
+				m_propertyTable.SetProperty("currentContentControl", "lexiconDictionary", false);
 				Cache.ProjectId.Path = Path.Combine(FwDirectoryFinder.SourceDirectory, "xWorks/xWorksTests/TestData/");
 
-				var dcc = new DictionaryConfigurationController(testView, m_mediator, entryWithHeadword);
+				var dcc = new DictionaryConfigurationController(testView, m_propertyTable, null, entryWithHeadword);
 				//SUT
 				dcc.View.TreeControl.Tree.TopNode.Checked = false;
 				((TestConfigurableDictionaryView)dcc.View).DoSaveModel();
@@ -1602,10 +1637,10 @@ namespace SIL.FieldWorks.XWorks
 			{
 				var entryWithHeadword = CreateLexEntryWithHeadword();
 
-				m_mediator.PropertyTable.SetProperty("currentContentControl", "lexiconDictionary");
+				m_propertyTable.SetProperty("currentContentControl", "lexiconDictionary", false);
 				Cache.ProjectId.Path = Path.Combine(FwDirectoryFinder.SourceDirectory, "xWorks/xWorksTests/TestData/");
 
-				var dcc = new DictionaryConfigurationController(testView, m_mediator, entryWithHeadword);
+				var dcc = new DictionaryConfigurationController(testView, m_propertyTable, null, entryWithHeadword);
 				//SUT
 				dcc.View.TreeControl.Tree.TopNode.Checked = false;
 				Assert.IsFalse(dcc.MasterRefreshRequired, "Should not have saved changes--user did not click OK or Apply");
@@ -1624,10 +1659,10 @@ namespace SIL.FieldWorks.XWorks
 			{
 				var entryWithHeadword = CreateLexEntryWithHeadword();
 
-				m_mediator.PropertyTable.SetProperty("currentContentControl", "lexiconDictionary");
+				m_propertyTable.SetProperty("currentContentControl", "lexiconDictionary", false);
 				Cache.ProjectId.Path = Path.Combine(FwDirectoryFinder.SourceDirectory, "xWorks/xWorksTests/TestData/");
 
-				var dcc = new DictionaryConfigurationController(testView, m_mediator, entryWithHeadword);
+				var dcc = new DictionaryConfigurationController(testView, m_propertyTable, null, entryWithHeadword);
 				//SUT
 				((TestConfigurableDictionaryView)dcc.View).DoSaveModel();
 				Assert.IsFalse(dcc.MasterRefreshRequired, "Should not have saved changes--none to save");
@@ -1990,13 +2025,159 @@ namespace SIL.FieldWorks.XWorks
 			{
 				DictionaryConfigurationController.MergeTypesIntoDictionaryModel(model, Cache);
 				var opts1 = ((DictionaryNodeListOptions)lexicalRelationNode.DictionaryNodeOptions).Options;
-				Assert.AreEqual(1, opts1.Count, "Properly merged reference types to options list in lexical relation node");
-				Assert.AreEqual(newType.Guid.ToString(), opts1[0].Id, "New type appears in the list in lexical relation node");
+				Assert.AreEqual(1, opts1.Count, "Improper number of reference types on lexical relation node");
+				Assert.AreEqual(newType.Guid.ToString(), opts1[0].Id, "New type should appear in the list in lexical relation node");
 			}
 			finally
 			{
 				// Don't mess up other unit tests with an extra reference type.
 				RemoveNewReferenceType(newType);
+			}
+		}
+
+		[Test]
+		public void CheckAsymmetricReferenceType()
+		{
+			var lexicalRelationNode = new ConfigurableDictionaryNode
+			{
+				Label = "Lexical Relations",
+				FieldDescription = "LexSenseReferences",
+				IsEnabled = true,
+				DictionaryNodeOptions = new DictionaryNodeListOptions
+				{
+					ListId = DictionaryNodeListOptions.ListIds.Sense,
+					Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
+					{
+						new DictionaryNodeListOptions.DictionaryNodeOption { Id="0b5b04c8-3900-4537-9eec-1346d10507d7", IsEnabled = true },
+						new DictionaryNodeListOptions.DictionaryNodeOption { Id="1ac9f08e-ed72-4775-a18e-3b1330da8618", IsEnabled = true },
+						new DictionaryNodeListOptions.DictionaryNodeOption { Id="854fc2a8-c0e0-4b72-8611-314a21467fe4", IsEnabled = true }
+					},
+				},
+			};
+			var senseNode = new ConfigurableDictionaryNode
+			{
+				Label = "Senses",
+				FieldDescription = "SensesOS",
+				IsEnabled = true,
+				DictionaryNodeOptions = new DictionaryNodeSenseOptions
+				{
+					DisplayEachSenseInAParagraph = true,
+					NumberingStyle = "%d",
+					NumberEvenASingleSense = false,
+					ShowSharedGrammarInfoFirst = true
+				},
+				Children = new List<ConfigurableDictionaryNode> { lexicalRelationNode }
+			};
+			var entryNode = new ConfigurableDictionaryNode
+			{
+				Label = "Main Entry",
+				FieldDescription = "LexEntry",
+				IsEnabled = true,
+				Style = "Dictionary-Normal",
+				Children = new List<ConfigurableDictionaryNode> { senseNode }
+			};
+			var model = new DictionaryConfigurationModel
+			{
+				FilePath = "/no/such/file",
+				Version = 0,
+				Label = "Root",
+				Parts = new List<ConfigurableDictionaryNode> { entryNode },
+			};
+			var senseTreeType = MakeRefType("Part", null, (int)LexRefTypeTags.MappingTypes.kmtSenseTree);
+			var senseUnidirectionalType = MakeRefType("Part", null, (int)LexRefTypeTags.MappingTypes.kmtSenseUnidirectional);
+			var entryUnidirectionalType = MakeRefType("Part", null, (int)LexRefTypeTags.MappingTypes.kmtEntryUnidirectional);
+			var senseAsymmetricPairType = MakeRefType("Part", null, (int)LexRefTypeTags.MappingTypes.kmtSenseAsymmetricPair);
+			var entryAsymmetricPairType = MakeRefType("Part", null, (int)LexRefTypeTags.MappingTypes.kmtEntryAsymmetricPair);
+			var entryOrSenseAsymmetricPairType = MakeRefType("Part", null, (int)LexRefTypeTags.MappingTypes.kmtEntryOrSenseAsymmetricPair);
+			var entryOrSenseTreeType = MakeRefType("Part", null, (int)LexRefTypeTags.MappingTypes.kmtEntryOrSenseTree);
+			var entryOrSenseUnidirectionalType = MakeRefType("Part", null, (int)LexRefTypeTags.MappingTypes.kmtEntryOrSenseUnidirectional);
+			var entryTreeType = MakeRefType("Part", null, (int)LexRefTypeTags.MappingTypes.kmtEntryTree);
+			// SUT
+			try
+			{
+				DictionaryConfigurationController.MergeTypesIntoDictionaryModel(model, Cache);
+				var opts1 = ((DictionaryNodeListOptions)lexicalRelationNode.DictionaryNodeOptions).Options;
+				Assert.AreEqual(18, opts1.Count, "The new tree reftype should have added 2 options, the rest should have been removed.");
+				Assert.AreEqual(senseTreeType.Guid.ToString() + ":f", opts1[0].Id, "The sense tree type should have added the first option with :f appended to the guid.");
+				Assert.AreEqual(senseTreeType.Guid.ToString() + ":r", opts1[1].Id, "The sense tree type should have added the second option with :r appended to the guid.");
+				Assert.AreEqual(senseUnidirectionalType.Guid.ToString() + ":f", opts1[2].Id, "The sense unidirectional type should have added the first option with :f appended to the guid.");
+				Assert.AreEqual(senseUnidirectionalType.Guid.ToString() + ":r", opts1[3].Id, "The sense unidirectional type should have added the second option with :r appended to the guid.");
+				Assert.AreEqual(entryUnidirectionalType.Guid.ToString() + ":f", opts1[4].Id, "The entry unidirectional type should have added the first option with :f appended to the guid.");
+				Assert.AreEqual(entryUnidirectionalType.Guid.ToString() + ":r", opts1[5].Id, "The entry unidirectional type should have added the second option with :r appended to the guid.");
+				Assert.AreEqual(senseAsymmetricPairType.Guid.ToString() + ":f", opts1[6].Id, "The sense asymmetric pair type should have added the first option with :f appended to the guid.");
+				Assert.AreEqual(senseAsymmetricPairType.Guid.ToString() + ":r", opts1[7].Id, "The sense asymmetric pair type should have added the second option with :r appended to the guid.");
+				Assert.AreEqual(entryAsymmetricPairType.Guid.ToString() + ":f", opts1[8].Id, "The entry asymmetric pair type should have added the first option with :f appended to the guid.");
+				Assert.AreEqual(entryAsymmetricPairType.Guid.ToString() + ":r", opts1[9].Id, "The entry asymmetric pair type should have added the second option with :r appended to the guid.");
+				Assert.AreEqual(entryOrSenseAsymmetricPairType.Guid.ToString() + ":f", opts1[10].Id, "The entry or sense asymmetric pair type should have added the first option with :f appended to the guid.");
+				Assert.AreEqual(entryOrSenseAsymmetricPairType.Guid.ToString() + ":r", opts1[11].Id, "The entry or sense asymmetric pair type should have added the second option with :r appended to the guid.");
+				Assert.AreEqual(entryOrSenseTreeType.Guid.ToString() + ":f", opts1[12].Id, "The entry or sense tree type should have added the first option with :f appended to the guid.");
+				Assert.AreEqual(entryOrSenseTreeType.Guid.ToString() + ":r", opts1[13].Id, "The entry or sense tree type should have added the second option with :r appended to the guid.");
+				Assert.AreEqual(entryOrSenseUnidirectionalType.Guid.ToString() + ":f", opts1[14].Id, "The entry or sense unidirectional type should have added the first option with :f appended to the guid.");
+				Assert.AreEqual(entryOrSenseUnidirectionalType.Guid.ToString() + ":r", opts1[15].Id, "The entry or sense unidirectional type should have added the second option with :r appended to the guid.");
+				Assert.AreEqual(entryTreeType.Guid.ToString() + ":f", opts1[16].Id, "The entry tree type should have added the first option with :f appended to the guid.");
+				Assert.AreEqual(entryTreeType.Guid.ToString() + ":r", opts1[17].Id, "The entry tree type should have added the second option with :r appended to the guid.");
+			}
+			finally
+			{
+				// Don't mess up other unit tests with an extra reference type.
+				RemoveNewReferenceType(senseTreeType);
+				RemoveNewReferenceType(senseUnidirectionalType);
+				RemoveNewReferenceType(entryUnidirectionalType);
+				RemoveNewReferenceType(senseAsymmetricPairType);
+				RemoveNewReferenceType(entryAsymmetricPairType);
+				RemoveNewReferenceType(entryOrSenseAsymmetricPairType);
+				RemoveNewReferenceType(entryOrSenseTreeType);
+				RemoveNewReferenceType(entryOrSenseUnidirectionalType);
+				RemoveNewReferenceType(entryTreeType);
+			}
+		}
+
+		[Test]
+		public void CheckCrossReferenceType()
+		{
+			var crossReferencesNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "MinimalLexReferences",
+				DictionaryNodeOptions = new DictionaryNodeListOptions
+				{
+					ListId = DictionaryNodeListOptions.ListIds.Entry,
+					Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
+					{
+						new DictionaryNodeListOptions.DictionaryNodeOption { Id="0b5b04c8-3900-4537-9eec-1346d10507d7", IsEnabled = true },
+						new DictionaryNodeListOptions.DictionaryNodeOption { Id="1ac9f08e-ed72-4775-a18e-3b1330da8618", IsEnabled = true },
+						new DictionaryNodeListOptions.DictionaryNodeOption { Id="854fc2a8-c0e0-4b72-8611-314a21467fe4", IsEnabled = true }
+					}
+				}
+			};
+			var entryNode = new ConfigurableDictionaryNode
+			{
+				Label = "Main Entry",
+				FieldDescription = "LexEntry",
+				IsEnabled = true,
+				Style = "Dictionary-Normal",
+				Children = new List<ConfigurableDictionaryNode> { crossReferencesNode }
+			};
+			var model = new DictionaryConfigurationModel
+			{
+				FilePath = "/no/such/file",
+				Version = 0,
+				Label = "Root",
+				Parts = new List<ConfigurableDictionaryNode> { entryNode },
+			};
+			var entryAsymmetricPairType = MakeRefType("Compare", null, (int)LexRefTypeTags.MappingTypes.kmtEntryUnidirectional);
+			// SUT
+			try
+			{
+				DictionaryConfigurationController.MergeTypesIntoDictionaryModel(model, Cache);
+				var opts1 = ((DictionaryNodeListOptions)crossReferencesNode.DictionaryNodeOptions).Options;
+				Assert.AreEqual(2, opts1.Count, "The new tree reftype should have added 2 options.");
+				Assert.AreEqual(entryAsymmetricPairType.Guid.ToString() + ":f", opts1[0].Id, "The entry asymmetric pair type should have added the first option with :f appended to the guid.");
+				Assert.AreEqual(entryAsymmetricPairType.Guid.ToString() + ":r", opts1[1].Id, "The entry asymmetric pair type should have added the second option with :r appended to the guid.");
+			}
+			finally
+			{
+				// Don't mess up other unit tests with an extra reference type.
+				RemoveNewReferenceType(entryAsymmetricPairType);
 			}
 		}
 
@@ -2225,7 +2406,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 		private ITsString AnalysisTss(string form)
 		{
-			return Cache.TsStrFactory.MakeString(form, Cache.DefaultAnalWs);
+			return TsStringUtils.MakeString(form, Cache.DefaultAnalWs);
 		}
 		private void RemoveNewVariantType(ILexEntryType newType)
 		{

@@ -3,14 +3,14 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using System.Xml;
 using System.Linq;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.FieldWorks.Common.COMInterfaces;
+using System.Xml;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.RootSites;
+using SIL.LCModel;
+using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.LexText.Controls;
-using SIL.Utils;
+using SIL.LCModel.Utils;
 using XCore;
 
 namespace SIL.FieldWorks.XWorks.MorphologyEditor
@@ -62,14 +62,14 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			}
 		}
 
-		public override void Initialize(FdoCache cache, ICmObject obj, int flid, string fieldName, IPersistenceProvider persistProvider,
-			Mediator mediator, string displayNameProperty, string displayWs)
+		public override void Initialize(LcmCache cache, ICmObject obj, int flid, string fieldName, IPersistenceProvider persistProvider,
+			Mediator mediator, PropertyTable propertyTable, string displayNameProperty, string displayWs)
 		{
 			CheckDisposed();
 
-			base.Initialize(cache, obj, flid, fieldName, persistProvider, mediator, displayNameProperty, displayWs);
+			base.Initialize(cache, obj, flid, fieldName, persistProvider, mediator, propertyTable, displayNameProperty, displayWs);
 
-			m_view.Init(mediator, obj.Hvo, this, new RegRuleFormulaVc(cache, mediator), RegRuleFormulaVc.kfragRHS, cache.MainCacheAccessor);
+			m_view.Init(mediator, propertyTable, obj.Hvo, this, new RegRuleFormulaVc(cache, propertyTable), RegRuleFormulaVc.kfragRHS, cache.MainCacheAccessor);
 
 			m_insertionControl.AddOption(new InsertOption(RuleInsertType.Phoneme), DisplayOption);
 			m_insertionControl.AddOption(new InsertOption(RuleInsertType.NaturalClass), DisplayOption);
@@ -691,7 +691,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		protected override void SetupPhonologicalFeatureChoooserDlg(PhonologicalFeatureChooserDlg featChooser)
 		{
 			featChooser.ShowFeatureConstraintValues = true;
-			featChooser.SetDlgInfo(m_cache, m_mediator, Rhs.OwningRule);
+			featChooser.SetDlgInfo(m_cache, m_mediator, m_propertyTable, Rhs.OwningRule);
 		}
 
 		/// <summary>

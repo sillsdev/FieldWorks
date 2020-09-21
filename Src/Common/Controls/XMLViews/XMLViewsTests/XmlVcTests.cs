@@ -5,20 +5,19 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Text;
 using NUnit.Framework;
-using SIL.CoreImpl;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.WritingSystems;
 using SIL.FieldWorks.CacheLight;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.Controls;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Application;
-using SIL.FieldWorks.FDO.FDOTests;
-using SIL.Utils;
-using SIL.Utils.ComTypes;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel;
+using SIL.LCModel.Application;
+using SIL.LCModel.Utils;
 using XCore;
 
 namespace XMLViewsTests
@@ -27,13 +26,11 @@ namespace XMLViewsTests
 	/// Test (some aspects of) XmlVc
 	/// </summary>
 	[TestFixture]
-	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
-		Justification="Unit test - m_sda gets disposed in FixtureTeardown()")]
 	public class XmlVcTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
 	{
 		private RealDataCache m_sda;
 		/// <summary>Writing System Manager (reset for each test)</summary>
-		protected IWritingSystemManager m_wsManager;
+		protected WritingSystemManager m_wsManager;
 
 		private int m_hvoLexDb; // root
 		private int m_hvoKick; // one entry.
@@ -47,8 +44,6 @@ namespace XMLViewsTests
 
 		internal const int kclsidLexDb = 1; // consistent with TextCacheModel.xml in resource file
 		internal const int kclsidEntry = 7; // consistent with TextCacheModel.xml in resource file
-
-		private ITsStrFactory m_tsf;
 
 		private LayoutCache m_layouts;
 
@@ -71,7 +66,7 @@ namespace XMLViewsTests
 			//m_cache.TextParagraphsFlid = kflidTextParas;
 
 			Debug.Assert(m_wsManager == null);
-			m_wsManager = Cache.ServiceLocator.GetInstance<IWritingSystemManager>();
+			m_wsManager = Cache.ServiceLocator.WritingSystemManager;
 			m_sda.WritingSystemFactory = m_wsManager;
 
 			m_wsAnal = Cache.DefaultAnalWs;
@@ -85,8 +80,6 @@ namespace XMLViewsTests
 			//m_wsManager.UserWs = m_wsEng;
 			//m_wsUser = m_wsManager.UserWs;
 
-			m_tsf = TsStrFactoryClass.Create();
-
 			m_hvoLexDb = m_sda.MakeNewObject(kclsidLexDb, 0, -1, -1);
 
 			kflidLexDb_Entries = m_sda.MetaDataCache.GetFieldId("LexDb", "Entries", false);
@@ -94,8 +87,8 @@ namespace XMLViewsTests
 			kflidEntry_Summary = m_sda.MetaDataCache.GetFieldId("Entry", "Summary", false);
 
 			m_hvoKick = m_sda.MakeNewObject(kclsidEntry, m_hvoLexDb, kflidLexDb_Entries, 0);
-			m_sda.SetMultiStringAlt(m_hvoKick, kflidEntry_Form, m_wsVern, m_tsf.MakeString("kick", m_wsVern));
-			m_sda.SetString(m_hvoKick, kflidEntry_Summary, m_tsf.MakeString("strike with foot", m_wsAnal));
+			m_sda.SetMultiStringAlt(m_hvoKick, kflidEntry_Form, m_wsVern, TsStringUtils.MakeString("kick", m_wsVern));
+			m_sda.SetString(m_hvoKick, kflidEntry_Summary, TsStringUtils.MakeString("strike with foot", m_wsAnal));
 
 			var keyAttrs = new Dictionary<string, string[]>();
 			keyAttrs["layout"] = new[] { "class", "type", "name", "choiceGuid" };
@@ -152,9 +145,9 @@ namespace XMLViewsTests
 		[Test]
 		public void StringPropIsMarked()
 		{
-			using (var view = new XmlView(m_hvoLexDb, "root", null, true, m_sda))
+			using (var view = new XmlView(m_hvoLexDb, "root", true, m_sda))
 			{
-				var vc = new XmlVc(null, "root", true, view, null, m_sda);
+				var vc = new XmlVc("root", true, view, null, m_sda);
 				vc.IdentifySource = true;
 				vc.SetCache(Cache);
 				vc.m_layouts = m_layouts;
@@ -223,7 +216,7 @@ namespace XMLViewsTests
 			var sense = Cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create();
 			entry.SensesOS.Add(sense);
 			var sda = new MockDecorator(Cache);
-			var vc = new XmlVc(null, "root", true, null, null, sda);
+			var vc = new XmlVc("root", true, null, null, sda);
 			vc.SetCache(Cache);
 			var sut = new XmlVcDisplayVec(vc, new MockEnv(), entry.Hvo, LexEntryTags.kflidSenses, 1);
 
@@ -234,12 +227,10 @@ namespace XMLViewsTests
 		}
 	}
 
-	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
-		Justification = "Cache is a reference and will be disposed in parent class")]
 	class MockDecorator : DomainDataByFlidDecoratorBase
 	{
-		private FdoCache m_cache;
-		public MockDecorator(FdoCache cache) : base(cache.DomainDataByFlid as ISilDataAccessManaged)
+		private LcmCache m_cache;
+		public MockDecorator(LcmCache cache) : base(cache.DomainDataByFlid as ISilDataAccessManaged)
 		{
 			m_cache = cache;
 		}
@@ -249,7 +240,7 @@ namespace XMLViewsTests
 		public override ITsString get_StringProp(int hvo, int tag)
 		{
 			Tag = tag;
-			return m_cache.TsStrFactory.MakeString("77", m_cache.DefaultUserWs);
+			return TsStringUtils.MakeString("77", m_cache.DefaultUserWs);
 		}
 	}
 

@@ -6,8 +6,6 @@
 // Responsibility: TE Team
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace SIL.FieldWorks.Common.FwUtils
 {

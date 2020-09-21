@@ -1022,6 +1022,8 @@ namespace TestViews
 
 				VwRootBoxPtr qrootbSync = dynamic_cast<VwRootBox *>(qrootbSyncT.Ptr());
 				qrootbSync->putref_DataAccess(m_qsda);
+				qrootbSync->putref_RenderEngineFactory(m_qref);
+				qrootbSync->putref_TsStrFactory(m_qtsf);
 				qrootbSync->SetRootObject(khvoBook, m_qvc, kfragBook, NULL);
 
 				// It needs its own dummy root site, otherwise, coordinate adjustments happen twice in the site.
@@ -1364,11 +1366,14 @@ namespace TestViews
 		virtual void Setup()
 		{
 			CreateTestWritingSystemFactory();
+			m_qtsf.CreateInstance(CLSID_TsStrFactory);
 			m_qcda.CreateInstance(CLSID_VwCacheDa);
+			m_qcda->putref_TsStrFactory(m_qtsf);
 			m_qcda->QueryInterface(IID_ISilDataAccess, (void **)&m_qsda);
 			m_qsda->putref_WritingSystemFactory(g_qwsf);
 
-			m_qtsf.CreateInstance(CLSID_TsStrFactory);
+			m_qref.Attach(NewObj MockRenderEngineFactory);
+
 			IVwRootBoxPtr qrootb;
 			// When we create the root box with CreateInstance, it is created by the actual
 			// views DLL. This results in a heap validation failure: some memory allocated
@@ -1387,6 +1392,8 @@ namespace TestViews
 			m_hdc = GetTestDC();
 			m_qvg32->Initialize(m_hdc);
 			m_qrootb->putref_DataAccess(m_qsda);
+			m_qrootb->putref_RenderEngineFactory(m_qref);
+			m_qrootb->putref_TsStrFactory(m_qtsf);
 			m_qdrs.Attach(NewObj DummyRootSite());
 			m_rcSrc = Rect(0, 0, 96, 96);
 			m_qdrs->SetRects(m_rcSrc, m_rcSrc);
@@ -1415,6 +1422,7 @@ namespace TestViews
 				m_qrootb.Clear();
 			}
 			m_qtsf.Clear();
+			m_qref.Clear();
 			m_qsda.Clear();
 			m_qcda.Clear();
 			m_qvc.Clear();
@@ -1424,6 +1432,7 @@ namespace TestViews
 
 		IVwCacheDaPtr m_qcda;
 		ISilDataAccessPtr m_qsda;
+		IRenderEngineFactoryPtr m_qref;
 		ITsStrFactoryPtr m_qtsf;
 		VwRootBoxPtr m_qrootb;
 		IVwGraphicsWin32Ptr m_qvg32;

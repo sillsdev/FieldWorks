@@ -6,11 +6,10 @@ using System;
 using System.Windows.Forms;
 using System.Diagnostics;
 
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using SIL.FieldWorks.Common.Framework.DetailControls;
 using SIL.FieldWorks.LexText.Controls;
 using SIL.Utils;
-using System.Diagnostics.CodeAnalysis;
 
 namespace SIL.FieldWorks.XWorks.LexEd
 {
@@ -106,8 +105,6 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		/// </summary>
 		/// <remarks>internal and virtual to support testing...otherwise would be private</remarks>
 		/// <returns></returns>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "parent is a reference")]
 		internal virtual ICmObject GetChildObject()
 		{
 			LexReferenceTreeRootSlice owningSlice = null;
@@ -157,7 +154,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				var wp = new WindowParams { m_title = String.Format(LexEdStrings.ksReplaceXEntry), m_btnText = LexEdStrings.ks_Replace };
 				//This method is only called when we are Replacing the
 				//tree root of a Whole/Part lexical relation
-				dlg.SetDlgInfo(m_cache, wp, m_mediator);
+				dlg.SetDlgInfo(m_cache, wp, m_mediator, m_propertyTable);
 				dlg.SetHelpTopic("khtpChooseLexicalRelationAdd");
 				if (dlg.ShowDialog(FindForm()) == DialogResult.OK)
 				{

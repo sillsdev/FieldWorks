@@ -1,16 +1,16 @@
-// Copyright (c) 2007-2013 SIL International
+// Copyright (c) 2007-2016 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: FwTextBoxCell.cs
-// Responsibility: TE Team
 
 using System;
 using System.ComponentModel;
-using System.Drawing;
+using System.Diagnostics;
 using System.Windows.Forms;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.LCModel.Core.KernelInterfaces;
+using System.Drawing;
 using System.Diagnostics.CodeAnalysis;
+using SIL.FieldWorks.Common.ViewsInterfaces;
+using SIL.PlatformUtilities;
 
 namespace SIL.FieldWorks.Common.Widgets
 {
@@ -21,13 +21,11 @@ namespace SIL.FieldWorks.Common.Widgets
 	/// ----------------------------------------------------------------------------------------
 	public class FwTextBoxCell : DataGridViewTextBoxCell
 	{
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Initializes a new instance of the <see cref="T:FwTextBoxCell"/> class.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public FwTextBoxCell() : base()
+		/// <summary/>
+		protected override void Dispose(bool disposing)
 		{
+			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + ". ******");
+			base.Dispose(disposing);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -49,11 +47,14 @@ namespace SIL.FieldWorks.Common.Widgets
 		public override void InitializeEditingControl(int rowIndex, object initialFormattedValue,
 			DataGridViewCellStyle dataGridViewCellStyle)
 		{
-#if !__MonoCS__
-			// FWNX-472 on mono calling base.InitalizeEditingControl reverts DataGridView.EditingControl
-			// to a DataGridViewTextBoxEditingControl.
-			base.InitializeEditingControl(rowIndex, initialFormattedValue, dataGridViewCellStyle);
-#endif
+			if (!Platform.IsMono)
+			{
+				// FWNX-472 on mono calling base.InitalizeEditingControl reverts DataGridView.EditingControl
+				// to a DataGridViewTextBoxEditingControl.
+				base.InitializeEditingControl(rowIndex, initialFormattedValue,
+					dataGridViewCellStyle);
+			}
+
 			FwTextBoxControl ctrl = DataGridView.EditingControl as FwTextBoxControl;
 			InitializeTextBoxControl(ctrl, rowIndex);
 		}
@@ -189,7 +190,6 @@ namespace SIL.FieldWorks.Common.Widgets
 				rowIndex, ref cellStyle, valueTypeConverter, formattedValueTypeConverter, context);
 		}
 
-#if __MonoCS__
 		/// <summary>
 		/// Paint this DataGridView cell.  Overridden to allow RightToLeft display if needed.
 		/// </summary>
@@ -198,6 +198,13 @@ namespace SIL.FieldWorks.Common.Widgets
 			string errorText, DataGridViewCellStyle cellStyle,
 			DataGridViewAdvancedBorderStyle advancedBorderStyle, DataGridViewPaintParts paintParts)
 		{
+			if (!Platform.IsMono)
+			{
+				base.Paint(graphics, clipBounds, cellBounds, rowIndex, cellState, val,
+					formattedValue, errorText, cellStyle, advancedBorderStyle, paintParts);
+				return;
+			}
+
 			FwTextBoxColumn col = OwningColumn as FwTextBoxColumn;
 			if (formattedValue == null || col == null)
 			{
@@ -225,9 +232,11 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// <summary>
 		/// Draw the text using the FieldWorks IVwGraphicsWin32 interface.
 		/// </summary>
+		/// <remarks>Only used with Mono</remarks>
 		private void DrawFwText(Graphics graphics, Rectangle cellBounds,
 			string text, DataGridViewCellStyle cellStyle, FwTextBoxColumn col)
 		{
+			Debug.Assert(Platform.IsMono, "This method is only needed on Mono");
 			if (String.IsNullOrEmpty(text))
 				return;
 			IntPtr hdc = graphics.GetHdc();
@@ -255,9 +264,11 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// <summary>
 		/// Get the starting location for drawing the text.
 		/// </summary>
+		/// <remarks>Only used with Mono</remarks>
 		private void GetLocationForText(Rectangle cellBounds, bool fRightToLeft,
 			IVwGraphicsWin32 vg, string text, out int x, out int y)
 		{
+			Debug.Assert(Platform.IsMono, "This method is only needed on Mono");
 			var contentBounds = cellBounds;
 			contentBounds.Height -= 2;
 			contentBounds.Width -= 2;
@@ -282,10 +293,10 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// <summary>
 		/// Derive the LgCharRenderProps from the DataGridViewCellStyle and FwTextBoxColumn.
 		/// </summary>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "font is a reference")]
+		/// <remarks>Only used with Mono</remarks>
 		private LgCharRenderProps GetRenderProps(DataGridViewCellStyle cellStyle, FwTextBoxColumn col)
 		{
+			Debug.Assert(Platform.IsMono, "This method is only needed on Mono");
 			var renderProps = new LgCharRenderProps();
 			renderProps.szFaceName = new ushort[32];	// arrays should be created in constructor, but struct doesn't have one.
 			renderProps.szFontVar = new ushort[64];
@@ -311,6 +322,5 @@ namespace SIL.FieldWorks.Common.Widgets
 			renderProps.ttvItalic = 0;
 			return renderProps;
 		}
-#endif
 	}
 }

@@ -1,26 +1,12 @@
-// Copyright (c) 2002-2013 SIL International
+// Copyright (c) 2002-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: FwColorCombo.cs
-// Responsibility: DavidO
-// Last reviewed:
-//
-// Implementation of FwColorCombo
-//
-// --------------------------------------------------------------------------------------------
 
 using System;
 using System.Windows.Forms.VisualStyles;
-using System.Collections;
-using System.ComponentModel;
 using System.Drawing;
-using System.Data;
 using System.Windows.Forms;
 using System.Diagnostics;
-
-using SIL.FieldWorks.Common.Drawing;
-using SIL.Utils;
 
 namespace SIL.FieldWorks.Common.Controls
 {
@@ -29,7 +15,7 @@ namespace SIL.FieldWorks.Common.Controls
 	/// Summary description for FwColorCombo.
 	/// </summary>
 	/// ------------------------------------------------------------------------------------
-	public class FwColorCombo : UserControl, IFWDisposable, IInheritableFwControl
+	public class FwColorCombo : UserControl, IInheritableFwControl
 	{
 		/// <summary>This event occurs when the color has been picked</summary>
 		public event EventHandler ColorPicked;

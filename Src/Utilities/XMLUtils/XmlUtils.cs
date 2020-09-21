@@ -1,20 +1,14 @@
-// Copyright (c) 2003-2013 SIL International
+// Copyright (c) 2003-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: XmlUtils.cs
-// Responsibility: Andy Black
-// Last reviewed:
 //
 // <remarks>
 // This makes available some utilities for handling XML Nodes
 // </remarks>
-// --------------------------------------------------------------------------------------------
 
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Reflection;
 using System.Text;
@@ -22,13 +16,15 @@ using System.Xml;
 using System.Globalization;
 using System.Xml.Serialization;
 using System.Xml.Xsl;
+using SIL.FieldWorks.Common.FwUtils;
+using SIL.LCModel.Utils;
 
 namespace SIL.Utils
 {
 	/// <summary>
 	/// Summary description for XmlUtils.
 	/// </summary>
-	public class XmlUtils
+	public static class XmlUtils
 	{
 		/// <summary>
 		/// Returns true if value of attrName is 'true' or 'yes' (case ignored)
@@ -59,7 +55,7 @@ namespace SIL.Utils
 		/// <returns>The value, or 0 if attr is missing.</returns>
 		public static int GetMandatoryIntegerAttributeValue(XmlNode node, string attrName)
 		{
-			return Int32.Parse(GetManditoryAttributeValue(node, attrName), CultureInfo.InvariantCulture);
+			return Int32.Parse(GetMandatoryAttributeValue(node, attrName), CultureInfo.InvariantCulture);
 		}
 
 		/// <summary>
@@ -85,7 +81,7 @@ namespace SIL.Utils
 		/// <returns></returns>
 		public static int[] GetMandatoryIntegerListAttributeValue(XmlNode node, string attrName)
 		{
-			string input = GetManditoryAttributeValue(node, attrName);
+			string input = GetMandatoryAttributeValue(node, attrName);
 			string[] vals = input.Split(',');
 			var result = new int[vals.Length];
 			for (int i = 0; i < vals.Length; i++)
@@ -101,7 +97,7 @@ namespace SIL.Utils
 		/// <returns></returns>
 		public static uint[] GetMandatoryUIntegerListAttributeValue(XmlNode node, string attrName)
 		{
-			string input = GetManditoryAttributeValue(node, attrName);
+			string input = GetMandatoryAttributeValue(node, attrName);
 			string[] vals = input.Split(',');
 			var result = new uint[vals.Length];
 			for (int i = 0; i < vals.Length; i++)
@@ -243,6 +239,20 @@ namespace SIL.Utils
 		}
 
 		/// <summary>
+		/// Get an optional attribute value from an XmlNode, and look up its localized value in the
+		/// standard StringTable.
+		/// </summary>
+		/// <param name="node"></param>
+		/// <param name="attrName"></param>
+		/// <param name="defaultString"></param>
+		/// <returns></returns>
+		public static string GetLocalizedAttributeValue(XmlNode node,
+			string attrName, string defaultString)
+		{
+			return GetLocalizedAttributeValue(StringTable.Table, node, attrName, defaultString);
+		}
+
+		/// <summary>
 		/// Return the node that has the desired 'name', either the input node or a decendent.
 		/// </summary>
 		/// <param name="node">The XmlNode to look in.</param>
@@ -272,7 +282,7 @@ namespace SIL.Utils
 		/// <exception cref="ApplicationException">
 		/// Thrown when the value is not found in the node.
 		/// </exception>
-		public static string GetManditoryAttributeValue(XmlNode node, string attrName)
+		public static string GetMandatoryAttributeValue(XmlNode node, string attrName)
 		{
 			string retval = GetOptionalAttributeValue(node, attrName, null);
 			if (retval == null)
@@ -465,8 +475,6 @@ namespace SIL.Utils
 		/// Steve says one place we do need to make encoded XML is in the content of Residue fields.</remarks>
 		/// <param name="sInput"></param>
 		/// <returns></returns>
-		[SuppressMessage("Gendarme.Rules.Portability", "NewLineLiteralRule",
-			Justification="Replacing new line characters")]
 		public static string ConvertMultiparagraphToSafeXml(string sInput)
 		{
 			string sOutput = sInput;
@@ -511,87 +519,6 @@ namespace SIL.Utils
 			return sOutput;
 		}
 
-		/// <summary>
-		/// Convert an encoded attribute string into plain text.
-		/// </summary>
-		/// <param name="sInput"></param>
-		/// <returns></returns>
-		public static string DecodeXmlAttribute(string sInput)
-		{
-			string sOutput = sInput;
-			if (!String.IsNullOrEmpty(sOutput) && sOutput.Contains("&"))
-			{
-				sOutput = sOutput.Replace("&gt;", ">");
-				sOutput = sOutput.Replace("&lt;", "<");
-				sOutput = sOutput.Replace("&apos;", "'");
-				sOutput = sOutput.Replace("&quot;", "\"");
-				sOutput = sOutput.Replace("&amp;", "&");
-			}
-			for (int idx = sOutput.IndexOf("&#"); idx >= 0; idx = sOutput.IndexOf("&#"))
-			{
-				int idxEnd = sOutput.IndexOf(';', idx);
-				if (idxEnd < 0)
-					break;
-				string sOrig = sOutput.Substring(idx, (idxEnd - idx) + 1);
-				string sNum = sOutput.Substring(idx + 2, idxEnd - (idx + 2));
-				string sReplace = null;
-				int chNum = 0;
-				if (sNum[0] == 'x' || sNum[0] == 'X')
-				{
-					if (Int32.TryParse(sNum.Substring(1), NumberStyles.HexNumber, NumberFormatInfo.InvariantInfo, out chNum))
-						sReplace = Char.ConvertFromUtf32(chNum);
-				}
-				else
-				{
-					if (Int32.TryParse(sNum, out chNum))
-						sReplace = Char.ConvertFromUtf32(chNum);
-				}
-				if (sReplace == null)
-					sReplace = sNum;
-				sOutput = sOutput.Replace(sOrig, sReplace);
-			}
-			return sOutput;
-		}
-
-		/// <summary>
-		/// build an xpath to the given node in its document.
-		/// </summary>
-		/// <param name="node"></param>
-		/// <returns></returns>
-		public static string GetXPathInDocument(XmlNode node)
-		{
-			if (node == null || node.NodeType != XmlNodeType.Element)
-				return "";
-			//XmlNode parent = node.ParentNode;
-			// start with the name of the node, and tentatively guess it to be the root element.
-			string xpath = String.Format("/{0}", node.LocalName);
-			// append the index of the node amongst any preceding siblings.
-			int index = GetIndexAmongSiblings(node);
-			if (index != -1)
-			{
-				index = index + 1; // add one for an xpath index.
-				xpath += String.Format("[{0}]", index);
-			}
-			return String.Concat(GetXPathInDocument(node.ParentNode), xpath);
-		}
-
-		/// <summary>
-		///
-		/// </summary>
-		/// <param name="node"></param>
-		/// <returns>Zero-based Index of Node in ParentNode.ChildNodes. -1, if node has no parent.</returns>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
-		public static int GetIndexAmongSiblings(XmlNode node)
-		{
-			XmlNode parent = node.ParentNode;
-			if (parent != null)
-			{
-				return node.SelectNodes("./preceding-sibling::" + node.LocalName).Count;
-			}
-			return -1;
-		}
-
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Find the index of the node in nodes that 'matches' the target node.
@@ -611,26 +538,6 @@ namespace SIL.Utils
 				index++;
 			}
 			return -1;
-		}
-
-		/// <summary>
-		/// return the deep clone of the given node, in a clone of its document context.
-		/// </summary>
-		/// <param name="node"></param>
-		/// <returns></returns>
-		public static XmlNode CloneNodeWithDocument(XmlNode node)
-		{
-			if (node == null)
-				return null;
-			// get the xpath of the node in its document
-			if (node.NodeType != XmlNodeType.Document)
-			{
-				string xpath = GetXPathInDocument(node);
-				XmlNode clonedOwner = node.OwnerDocument.CloneNode(true);
-				return clonedOwner.SelectSingleNode(xpath);
-			}
-
-			return node.CloneNode(true);
 		}
 
 		#region Serialize/Deserialize
@@ -665,8 +572,6 @@ namespace SIL.Utils
 		/// <param name="xml"></param>
 		/// <param name="targetType"></param>
 		/// <returns>null if we didn't deserialize the object</returns>
-		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
-			Justification="See TODO-Linux comment")]
 		static public object DeserializeXmlString(string xml, Type targetType)
 		{
 			// TODO-Linux: System.Boolean System.Type::op_{Ine,E}quality(System.Type,System.Type)
@@ -727,8 +632,6 @@ namespace SIL.Utils
 		/// </summary>
 		/// <param name="methodName"></param>
 		/// <returns></returns>
-		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
-			Justification="See TODO-Linux comment")]
 		public static MethodInfo GetStaticMethod(string sAssemblyName, string sClassName,
 			string sMethodName, string sContext, out Type typeFound)
 		{
@@ -776,7 +679,8 @@ namespace SIL.Utils
 			}
 			return mi;
 		}
-		static protected string MakeGetStaticMethodErrorMessage(string sMainMsg, string sContext)
+
+		private static string MakeGetStaticMethodErrorMessage(string sMainMsg, string sContext)
 		{
 			string sResult = "GetStaticMethod() could not find the " + sMainMsg +
 				" while processing " + sContext;
@@ -814,25 +718,27 @@ namespace SIL.Utils
 		public static XslCompiledTransform CreateTransform(string xslName, string assemblyName)
 		{
 			var transform = new XslCompiledTransform();
-#if !__MonoCS__
-			// Assumes the XSL has been precompiled.  xslName is the name of the precompiled class
-			Type type = Type.GetType(xslName + "," + assemblyName);
-			Debug.Assert(type != null);
-			transform.Load(type);
-#else
-			string libPath = Path.GetDirectoryName(FileUtils.StripFilePrefix(Assembly.GetExecutingAssembly().CodeBase));
-			Assembly transformAssembly = Assembly.LoadFrom(Path.Combine(libPath, assemblyName + ".dll"));
-			using (Stream stream = transformAssembly.GetManifestResourceStream(xslName + ".xsl"))
+			if (MiscUtils.IsDotNet)
 			{
-				Debug.Assert(stream != null);
-				using (XmlReader reader = XmlReader.Create(stream))
-					transform.Load(reader, new XsltSettings(true, false), new XmlResourceResolver(transformAssembly));
+				// Assumes the XSL has been precompiled.  xslName is the name of the precompiled class
+				Type type = Type.GetType(xslName + "," + assemblyName);
+				Debug.Assert(type != null);
+				transform.Load(type);
 			}
-#endif
+			else
+			{
+				string libPath = Path.GetDirectoryName(FileUtils.StripFilePrefix(Assembly.GetExecutingAssembly().CodeBase));
+				Assembly transformAssembly = Assembly.LoadFrom(Path.Combine(libPath, assemblyName + ".dll"));
+				using (Stream stream = transformAssembly.GetManifestResourceStream(xslName + ".xsl"))
+				{
+					Debug.Assert(stream != null);
+					using (XmlReader reader = XmlReader.Create(stream))
+						transform.Load(reader, new XsltSettings(true, false), new XmlResourceResolver(transformAssembly));
+				}
+			}
 			return transform;
 		}
 
-#if __MonoCS__
 		private class XmlResourceResolver : XmlUrlResolver
 		{
 			private readonly Assembly m_assembly;
@@ -849,8 +755,6 @@ namespace SIL.Utils
 				return base.ResolveUri(baseUri, relativeUri);
 			}
 
-			[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-				Justification = "Method returns a reference")]
 			public override object GetEntity(Uri absoluteUri, string role, Type ofObjectToReturn)
 			{
 				switch (absoluteUri.Scheme)
@@ -865,7 +769,6 @@ namespace SIL.Utils
 				}
 			}
 		}
-#endif
 	}
 
 	/// <summary>

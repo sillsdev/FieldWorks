@@ -2,8 +2,8 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using SIL.FieldWorks.FwCoreDlgControls;
 using System.Windows.Forms;
-using System.Diagnostics.CodeAnalysis;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -100,8 +100,6 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		public bool HighlightEnabled { set { highlight.Enabled = value; } }
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "ToolStripMenuItems disposed in Dispose method")]
 		public DictionaryConfigurationTreeControl()
 		{
 			InitializeComponent();
@@ -153,12 +151,12 @@ namespace SIL.FieldWorks.XWorks
 			// Create the ContextMenuStrip.
 			m_CtrlRightClickMenu = new ContextMenuStrip();
 			// Create the checkall and uncheckall items
-			var checkAllItem = new ToolStripMenuItem
+			var checkAllItem = new DisposableToolStripMenuItem
 			{
 				Text = xWorksStrings.ConfigurationTreeControl_SelectAllChildren,
 				DisplayStyle = ToolStripItemDisplayStyle.Text
 			};
-			var uncheckAllItem = new ToolStripMenuItem
+			var uncheckAllItem = new DisposableToolStripMenuItem
 			{
 				Text = xWorksStrings.ConfigurationTreeControl_ClearAllChildren,
 				DisplayStyle = ToolStripItemDisplayStyle.Text

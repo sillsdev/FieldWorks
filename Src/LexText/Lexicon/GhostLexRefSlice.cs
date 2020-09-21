@@ -1,19 +1,18 @@
 ﻿// Copyright (c) 2014 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-
 using System;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Windows.Forms;
 using System.Xml;
 using SIL.FieldWorks.Common.Framework.DetailControls;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel;
+using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.FwCoreDlgs;
 using SIL.FieldWorks.LexText.Controls;
+using SIL.PlatformUtilities;
 using SIL.Utils;
 
 namespace SIL.FieldWorks.XWorks.LexEd
@@ -43,7 +42,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			// It doesn't need most of the usual info, but the Mediator is important if the user
 			// asks to Create a new lex entry from inside the first dialog (LT-9679).
 			// We'd pass 0 and null for flid and fieldname, but there are Asserts to prevent this.
-			(Control as ButtonLauncher).Initialize(m_cache, m_obj, 1, "nonsence", null, Mediator, null, null);
+			(Control as ButtonLauncher).Initialize(m_cache, m_obj, 1, "nonsence", null, Mediator, m_propertyTable, null, null);
 			base.Install(parent);
 		}
 	}
@@ -58,15 +57,13 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			BackColor = System.Drawing.SystemColors.Window;
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="FindForm() returns a reference")]
 		protected override void HandleChooser()
 		{
 			Debug.Assert(m_obj.ClassID == LexEntryTags.kClassId);
 			using (LinkEntryOrSenseDlg dlg = new LinkEntryOrSenseDlg())
 			{
 				ILexEntry le = m_obj as ILexEntry;
-				dlg.SetDlgInfo(m_obj.Cache, m_mediator, le);
+				dlg.SetDlgInfo(m_obj.Cache, m_mediator, m_propertyTable, le);
 				String str = ShowHelp.RemoveSpaces(this.Slice.Label);
 				dlg.SetHelpTopic("khtpChooseLexicalEntryOrSense-" + str);
 				if (dlg.ShowDialog(FindForm()) == DialogResult.OK)
@@ -141,21 +138,19 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			}
 			catch (ArgumentException)
 			{
-				MessageBoxes.ReportLexEntryCircularReference((ILexEntry)m_obj, newObj, true);
+				MessageBoxes.ReportLexEntryCircularReference(m_obj, newObj, true);
 			}
 		}
 
-#if __MonoCS__
 		/// <summary>
 		/// Activate menu only if Alt key is being pressed.  See FWNX-1353.
 		/// </summary>
 		/// <remarks>TODO: Getting here without the Alt key may be considered a Mono bug.</remarks>
 		protected override bool ProcessDialogChar(char charCode)
 		{
-			if (Control.ModifierKeys == Keys.Alt)
+			if (!Platform.IsMono || Control.ModifierKeys == Keys.Alt)
 				return base.ProcessDialogChar(charCode);
 			return false;
 		}
-#endif
 	}
 }

@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -136,6 +136,10 @@
   <data name="ksBstAn" xml:space="preserve">
     <value>bst. an</value>
     <comment>short for Best Analysis (writing system)</comment>
+  </data>
+  <data name="ksBstVn" xml:space="preserve">
+    <value>bst. vn</value>
+    <comment>short for Best Vernacular (writing system)</comment>
   </data>
   <data name="ksCannotHideField" xml:space="preserve">
     <value>Cannot hide field</value>
@@ -950,5 +954,30 @@ Click "Cancel" to abort this import.</value>
   </data>
   <data name="ksImportLangMissingTextStartsWith" xml:space="preserve">
     <value>The first words of this text are: </value>
+  </data>
+  <data name="kOkbtnEmptySelection" xml:space="preserve">
+    <value>OK will create an empty text</value>
+  </data>
+  <data name="kOkbtnGenreSelection" xml:space="preserve">
+    <value>OK will create an empty text assigned to these genres</value>
+  </data>
+  <data name="kOkbtnNoTextSelection" xml:space="preserve">
+    <value>No texts are selected</value>
+  </data>
+  <data name="kstidBibleNode" xml:space="preserve">
+    <value>Bible</value>
+    <comment>text for Entire Bible node in Scripture tree controls</comment>
+  </data>
+  <data name="kstidNtNode" xml:space="preserve">
+    <value>New Testament</value>
+    <comment>text for NT node in Scripture tree controls</comment>
+  </data>
+  <data name="kstidOtNode" xml:space="preserve">
+    <value>Old Testament</value>
+    <comment>text for OT node in Scripture tree controls</comment>
+  </data>
+  <data name="ComplexConcControl_NotAllParasParsed" xml:space="preserve">
+    <value>Not all paragraphs in {0} could be parsed</value>
+    <comment>Warning message in Complex Concordance tool when not all paragraphs in a text could be parsed</comment>
   </data>
 </root>

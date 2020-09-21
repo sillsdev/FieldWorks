@@ -2,14 +2,11 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Xml;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.FDO;
+using SIL.FieldWorks.Common.ViewsInterfaces;
+using SIL.LCModel;
 using SIL.Utils;
+using XCore;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -24,11 +21,11 @@ namespace SIL.FieldWorks.XWorks
 	public class SubitemRecordClerk : RecordClerk
 	{
 		internal int SubitemFlid { get; private set; }
-		public override void Init(XCore.Mediator mediator, System.Xml.XmlNode viewConfiguration)
+		public override void Init(XCore.Mediator mediator, PropertyTable propertyTable, XmlNode viewConfiguration)
 		{
-			base.Init(mediator, viewConfiguration);
+			base.Init(mediator, propertyTable, viewConfiguration);
 			XmlNode clerkConfiguration = ToolConfiguration.GetClerkNodeFromToolParamsNode(viewConfiguration);
-			var subitemNames = XmlUtils.GetManditoryAttributeValue(clerkConfiguration, "field").Split('.');
+			var subitemNames = XmlUtils.GetMandatoryAttributeValue(clerkConfiguration, "field").Split('.');
 			SubitemFlid = Cache.MetaDataCacheAccessor.GetFieldId(subitemNames[0].Trim(), subitemNames[1].Trim(), true);
 		}
 
@@ -41,7 +38,7 @@ namespace SIL.FieldWorks.XWorks
 			Subitem = subitem;
 		}
 
-		internal override void ViewChangedSelectedRecord(SIL.FieldWorks.Common.FwUtils.FwObjectSelectionEventArgs e, SIL.FieldWorks.Common.COMInterfaces.IVwSelection sel)
+		internal override void ViewChangedSelectedRecord(SIL.FieldWorks.Common.FwUtils.FwObjectSelectionEventArgs e, SIL.FieldWorks.Common.ViewsInterfaces.IVwSelection sel)
 		{
 			base.ViewChangedSelectedRecord(e, sel);
 			UsedToSyncRelatedClerk = false;

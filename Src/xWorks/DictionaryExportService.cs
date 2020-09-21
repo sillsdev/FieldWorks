@@ -4,34 +4,35 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Xml;
-using SIL.FieldWorks.FDO;
-using SIL.Utils;
+using SIL.LCModel;
+using SIL.LCModel.Utils;
 using XCore;
 
 namespace SIL.FieldWorks.XWorks
 {
 	public class DictionaryExportService
 	{
+		private readonly PropertyTable m_propertyTable;
 		private readonly Mediator m_mediator;
-		private readonly FdoCache m_cache;
+		private readonly LcmCache m_cache;
 
 		private const string DictionaryType = "Dictionary";
 		private const string ReversalType = "Reversal Index";
 
-		public DictionaryExportService(Mediator mediator)
+		public DictionaryExportService(PropertyTable propertyTable, Mediator mediator)
 		{
+			m_propertyTable = propertyTable;
 			m_mediator = mediator;
-			m_cache = (FdoCache)m_mediator.PropertyTable.GetValue("cache");
+			m_cache = propertyTable.GetValue<LcmCache>("cache");
 		}
 
 		public int CountDictionaryEntries(DictionaryConfigurationModel config)
 		{
 			int[] entries;
-			using(ClerkActivator.ActivateClerkMatchingExportType(DictionaryType, m_mediator))
-				ConfiguredXHTMLGenerator.GetPublicationDecoratorAndEntries(m_mediator, out entries, DictionaryType);
+			using(ClerkActivator.ActivateClerkMatchingExportType(DictionaryType, m_propertyTable, m_mediator))
+				ConfiguredXHTMLGenerator.GetPublicationDecoratorAndEntries(m_propertyTable, out entries, DictionaryType);
 			return entries.Count(e => IsGenerated(m_cache, config, e));
 		}
 
@@ -39,7 +40,7 @@ namespace SIL.FieldWorks.XWorks
 		/// Determines how many times the entry with the given HVO is generated for the given config (usually 0 or 1,
 		/// but can be more if the entry matches more than one Minor Entry node)
 		/// </summary>
-		internal static bool IsGenerated(FdoCache cache, DictionaryConfigurationModel config, int hvo)
+		internal static bool IsGenerated(LcmCache cache, DictionaryConfigurationModel config, int hvo)
 		{
 			var entry = (ILexEntry)cache.ServiceLocator.GetObject(hvo);
 			if (ConfiguredXHTMLGenerator.IsMainEntry(entry, config))
@@ -53,7 +54,7 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		public SortedDictionary<string,int> GetCountsOfReversalIndexes(IEnumerable<string> selectedReversalIndexes)
 		{
-			using (ClerkActivator.ActivateClerkMatchingExportType(ReversalType, m_mediator))
+			using (ClerkActivator.ActivateClerkMatchingExportType(ReversalType, m_propertyTable, m_mediator))
 			{
 				var relevantReversalIndexesAndTheirCounts = m_cache.ServiceLocator.GetInstance<IReversalIndexRepository>().AllInstances()
 					.Select(repo => m_cache.ServiceLocator.GetObject(repo.Guid) as IReversalIndex)
@@ -67,17 +68,17 @@ namespace SIL.FieldWorks.XWorks
 		internal int CountReversalIndexEntries(IReversalIndex ri)
 		{
 			int[] entries;
-			using (ReversalIndexActivator.ActivateReversalIndex(ri.Guid, m_mediator))
-				ConfiguredXHTMLGenerator.GetPublicationDecoratorAndEntries(m_mediator, out entries, ReversalType);
+			using (ReversalIndexActivator.ActivateReversalIndex(ri.Guid, m_propertyTable))
+				ConfiguredXHTMLGenerator.GetPublicationDecoratorAndEntries(m_propertyTable, out entries, ReversalType);
 			return entries.Length;
 		}
 
 		public void ExportDictionaryContent(string xhtmlPath, DictionaryConfigurationModel configuration = null, IThreadedProgress progress = null)
 		{
-			using (ClerkActivator.ActivateClerkMatchingExportType(DictionaryType, m_mediator))
+			using (ClerkActivator.ActivateClerkMatchingExportType(DictionaryType, m_propertyTable, m_mediator))
 			{
 				configuration = configuration ?? new DictionaryConfigurationModel(
-					DictionaryConfigurationListener.GetCurrentConfiguration(m_mediator, "Dictionary"), m_cache);
+					DictionaryConfigurationListener.GetCurrentConfiguration(m_propertyTable, "Dictionary"), m_cache);
 				ExportConfiguredXhtml(xhtmlPath, configuration, DictionaryType, progress);
 			}
 		}
@@ -85,11 +86,11 @@ namespace SIL.FieldWorks.XWorks
 		public void ExportReversalContent(string xhtmlPath, string reversalWs = null, DictionaryConfigurationModel configuration = null,
 			IThreadedProgress progress = null)
 		{
-			using (ClerkActivator.ActivateClerkMatchingExportType(ReversalType, m_mediator))
-			using (ReversalIndexActivator.ActivateReversalIndex(reversalWs, m_mediator, m_cache))
+			using (ClerkActivator.ActivateClerkMatchingExportType(ReversalType, m_propertyTable, m_mediator))
+			using (ReversalIndexActivator.ActivateReversalIndex(reversalWs, m_propertyTable, m_cache))
 			{
 				configuration = configuration ?? new DictionaryConfigurationModel(
-					DictionaryConfigurationListener.GetCurrentConfiguration(m_mediator, "ReversalIndex"), m_cache);
+					DictionaryConfigurationListener.GetCurrentConfiguration(m_propertyTable, "ReversalIndex"), m_cache);
 				ExportConfiguredXhtml(xhtmlPath, configuration, ReversalType, progress);
 			}
 		}
@@ -97,14 +98,12 @@ namespace SIL.FieldWorks.XWorks
 		private void ExportConfiguredXhtml(string xhtmlPath, DictionaryConfigurationModel configuration, string exportType, IThreadedProgress progress)
 		{
 			int[] entriesToSave;
-			var publicationDecorator = ConfiguredXHTMLGenerator.GetPublicationDecoratorAndEntries(m_mediator, out entriesToSave, exportType);
+			var publicationDecorator = ConfiguredXHTMLGenerator.GetPublicationDecoratorAndEntries(m_propertyTable, out entriesToSave, exportType);
 			if (progress != null)
 				progress.Maximum = entriesToSave.Length;
-			ConfiguredXHTMLGenerator.SavePublishedHtmlWithStyles(entriesToSave, publicationDecorator, int.MaxValue, configuration, m_mediator, xhtmlPath, progress);
+			ConfiguredXHTMLGenerator.SavePublishedHtmlWithStyles(entriesToSave, publicationDecorator, int.MaxValue, configuration, m_propertyTable, xhtmlPath, progress);
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "DisposableFieldsShouldBeDisposedRule",
-			Justification = "m_currentClerk is a reference that had *better not* be disposed when ClerkActivator is disposed")]
 		private sealed class ClerkActivator : IDisposable
 		{
 			private static RecordClerk s_dictionaryClerk;
@@ -117,13 +116,25 @@ namespace SIL.FieldWorks.XWorks
 				m_currentClerk = currentClerk;
 			}
 
+			#region disposal
 			public void Dispose()
 			{
-				if (m_currentClerk != null && !m_currentClerk.IsDisposed)
-				{
-					m_currentClerk.ActivateUI(true);
-				}
+				Dispose(true);
+				GC.SuppressFinalize(this);
 			}
+
+			private void Dispose(bool disposing)
+			{
+				System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + " ******");
+				if (disposing && m_currentClerk != null && !m_currentClerk.IsDisposed)
+					m_currentClerk.ActivateUI(true);
+			}
+
+			~ClerkActivator()
+			{
+				Dispose(false);
+			}
+			#endregion disposal
 
 			private static void CacheClerk(string clerkType, RecordClerk clerk)
 			{
@@ -138,9 +149,7 @@ namespace SIL.FieldWorks.XWorks
 				}
 			}
 
-			[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-				Justification = "tempClerk must be active when this function returns")]
-			public static ClerkActivator ActivateClerkMatchingExportType(string exportType, Mediator mediator)
+			public static ClerkActivator ActivateClerkMatchingExportType(string exportType, PropertyTable  propertyTable, Mediator mediator)
 			{
 				var isDictionary = exportType == DictionaryType;
 				const string area = "lexicon";
@@ -149,16 +158,16 @@ namespace SIL.FieldWorks.XWorks
 				var parameter = new Tuple<string, string, XmlNode[]>(area, tool, collector);
 				mediator.SendMessage("GetContentControlParameters", parameter);
 				var parameters = collector[0].SelectSingleNode(".//parameters[@clerk]");
-				var currentClerk = mediator.PropertyTable.GetValue("ActiveClerk", null) as RecordClerk;
+				var currentClerk = propertyTable.GetValue<RecordClerk>("ActiveClerk", null);
 				if (DoesClerkMatchParams(currentClerk, parameters))
 					return null; // No need to juggle clerks if the one we want is already active
 
 				var tempClerk = isDictionary ? s_dictionaryClerk : s_reversalIndexClerk;
 				if (tempClerk == null || tempClerk.IsDisposed)
 				{
-					tempClerk = RecordClerk.FindClerk(mediator, isDictionary ? "entries" : "AllReversalEntries");
+					tempClerk = RecordClerk.FindClerk(propertyTable, isDictionary ? "entries" : "AllReversalEntries");
 					if (tempClerk == null || tempClerk.IsDisposed)
-						tempClerk = RecordClerkFactory.CreateClerk(mediator, parameters, true);
+						tempClerk = RecordClerkFactory.CreateClerk(mediator, propertyTable, parameters, true);
 					CacheClerk(exportType, tempClerk);
 				}
 				tempClerk.ActivateUI(true, false);
@@ -177,84 +186,109 @@ namespace SIL.FieldWorks.XWorks
 				return id == clerk.Id;
 			}
 		}
-
-		[SuppressMessage("Gendarme.Rules.Correctness", "DisposableFieldsShouldBeDisposedRule", Justification = "m_mediator and m_clerk are references")]
 		private sealed class ReversalIndexActivator : IDisposable
 		{
 			private readonly string m_sCurrentRevIdxGuid;
-			private readonly Mediator m_mediator;
+			private readonly PropertyTable m_propertyTable;
 			private readonly RecordClerk m_clerk;
 
-			private ReversalIndexActivator(string currentRevIdxGuid, Mediator mediator, RecordClerk clerk)
+			private ReversalIndexActivator(string currentRevIdxGuid, PropertyTable propertyTable, RecordClerk clerk)
 			{
 				m_sCurrentRevIdxGuid = currentRevIdxGuid;
-				m_mediator = mediator;
+				m_propertyTable = propertyTable;
 				m_clerk = clerk;
 			}
 
+			#region disposal
 			public void Dispose()
 			{
-				string dummy;
-				ActivateReversalIndexIfNeeded(m_sCurrentRevIdxGuid, m_mediator, m_clerk, out dummy);
+				Dispose(true);
+				GC.SuppressFinalize(this);
 			}
 
-			public static ReversalIndexActivator ActivateReversalIndex(string reversalWs, Mediator mediator, FdoCache cache)
+			private void Dispose(bool disposing)
+			{
+				System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + " ******");
+				string dummy;
+				if(disposing)
+					ActivateReversalIndexIfNeeded(m_sCurrentRevIdxGuid, m_propertyTable, m_clerk, out dummy);
+			}
+
+			~ReversalIndexActivator()
+			{
+				Dispose(false);
+			}
+			#endregion disposal
+
+			public static ReversalIndexActivator ActivateReversalIndex(string reversalWs, PropertyTable propertyTable, LcmCache cache)
 			{
 				if (reversalWs == null)
 					return null;
 				var reversalGuid = cache.ServiceLocator.GetInstance<IReversalIndexRepository>().AllInstances()
 					.First(revIdx => revIdx.WritingSystem == reversalWs).Guid;
-				return ActivateReversalIndex(reversalGuid, mediator);
+				return ActivateReversalIndex(reversalGuid, propertyTable);
 			}
 
-			public static ReversalIndexActivator ActivateReversalIndex(Guid reversalGuid, Mediator mediator)
+			public static ReversalIndexActivator ActivateReversalIndex(Guid reversalGuid, PropertyTable propertyTable)
 			{
-				var clerk = mediator.PropertyTable.GetValue("ActiveClerk", null) as RecordClerk;
+				var clerk = propertyTable.GetValue<RecordClerk>("ActiveClerk", null);
 				string originalReversalIndexGuid;
-				return ActivateReversalIndexIfNeeded(reversalGuid.ToString(), mediator, clerk, out originalReversalIndexGuid)
-					? new ReversalIndexActivator(originalReversalIndexGuid, mediator, clerk)
+				return ActivateReversalIndexIfNeeded(reversalGuid.ToString(), propertyTable, clerk, out originalReversalIndexGuid)
+					? new ReversalIndexActivator(originalReversalIndexGuid, propertyTable, clerk)
 					: null;
 			}
 
 			/// <returns>true iff activation was needed (the requested Reversal Index was not already active)</returns>
-			private static bool ActivateReversalIndexIfNeeded(string newReversalGuid, Mediator mediator, RecordClerk clerk, out string oldReversalGuid)
+			private static bool ActivateReversalIndexIfNeeded(string newReversalGuid, PropertyTable propertyTable, RecordClerk clerk, out string oldReversalGuid)
 			{
-				oldReversalGuid = mediator.PropertyTable.GetStringProperty("ReversalIndexGuid", null);
+				oldReversalGuid = propertyTable.GetStringProperty("ReversalIndexGuid", null);
 				if (newReversalGuid == null || newReversalGuid == oldReversalGuid)
 					return false;
 				// Set the reversal index guid property so that the right guid is found down in DictionaryPublicationDecorater.GetEntriesToPublish,
 				// and manually call OnPropertyChanged to cause LexEdDll ReversalClerk.ChangeOwningObject(guid) to be called. This causes the
 				// right reversal content to be exported, fixing LT-17011.
-				mediator.PropertyTable.SetProperty("ReversalIndexGuid", newReversalGuid);
+				propertyTable.SetProperty("ReversalIndexGuid", newReversalGuid, true);
 				if (clerk != null)
 					clerk.OnPropertyChanged("ReversalIndexGuid");
 				return true;
 			}
 		}
-
-		[SuppressMessage("Gendarme.Rules.Correctness", "DisposableFieldsShouldBeDisposedRule", Justification = "m_mediator is a reference")]
 		internal sealed class PublicationActivator : IDisposable
 		{
 			private readonly string m_currentPublication;
-			private readonly Mediator m_mediator;
+			private readonly PropertyTable m_propertyTable;
 
-			public PublicationActivator(Mediator mediator)
+			public PublicationActivator(PropertyTable propertyTable)
 			{
-				m_currentPublication = mediator.PropertyTable.GetStringProperty("SelectedPublication", null);
-				m_mediator = mediator;
+				m_currentPublication = propertyTable.GetStringProperty("SelectedPublication", null);
+				m_propertyTable = propertyTable;
 			}
 
+			#region disposal
 			public void Dispose()
 			{
-				if (!string.IsNullOrEmpty(m_currentPublication))
-					m_mediator.PropertyTable.SetProperty("SelectedPublication", m_currentPublication, false);
+				Dispose(true);
+				GC.SuppressFinalize(this);
 			}
+
+			private void Dispose(bool disposing)
+			{
+				System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + " ******");
+				if (disposing && !string.IsNullOrEmpty(m_currentPublication))
+					m_propertyTable.SetProperty("SelectedPublication", m_currentPublication, false);
+			}
+
+			~PublicationActivator()
+			{
+				Dispose(false);
+			}
+			#endregion disposal
 
 			public void ActivatePublication(string publication)
 			{
 				// Don't publish the property change: doing so may refresh the Dictionary (or Reversal) preview in the main window;
 				// we want to activate the Publication for export purposes only.
-				m_mediator.PropertyTable.SetProperty("SelectedPublication", publication, false);
+				m_propertyTable.SetProperty("SelectedPublication", publication, false);
 			}
 		}
 	}

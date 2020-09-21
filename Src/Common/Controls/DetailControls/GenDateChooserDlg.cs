@@ -1,25 +1,20 @@
-﻿// Copyright (c) 2015 SIL International
+﻿// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Windows.Forms;
-using SIL.CoreImpl;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel.Core.Cellar;
 using SIL.FieldWorks.Common.Framework.DetailControls.Resources;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.Utils;
-using XCore;
+using SIL.PlatformUtilities;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls
 {
 	/// <summary>
 	/// A chooser dialog for generic dates.
 	/// </summary>
-	public class GenDateChooserDlg : Form, IFWDisposable
+	public class GenDateChooserDlg : Form
 	{
 		private const int PRECISION_NO_DATE = 4;
 		private const int MONTH_UNKNOWN = 12;
@@ -58,18 +53,19 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		{
 			InitializeComponent();
 
-#if __MonoCS__
-			// FWNX-817:
-			// center calendar on Form. This is necessary because it has a different size
-			// on Linux
-			m_calendar.Left = (ClientRectangle.Width - m_calendar.Width) / 2;
-			// make the empty calender box the same size as calendar
-			var oriEmptyCalendarSize = m_emptyCalendar.Size;
-			m_emptyCalendar.Size = m_calendar.Size;
-			m_emptyCalendar.Location = m_calendar.Location;
-			// resize "No Calendar Available" label.
-			label1.Size = m_emptyCalendar.Size - (oriEmptyCalendarSize - label1.Size);
-#endif
+			if (Platform.IsMono)
+			{
+				// FWNX-817:
+				// center calendar on Form. This is necessary because it has a different size
+				// on Linux
+				m_calendar.Left = (ClientRectangle.Width - m_calendar.Width) / 2;
+				// make the empty calender box the same size as calendar
+				var oriEmptyCalendarSize = m_emptyCalendar.Size;
+				m_emptyCalendar.Size = m_calendar.Size;
+				m_emptyCalendar.Location = m_calendar.Location;
+				// resize "No Calendar Available" label.
+				label1.Size = m_emptyCalendar.Size - (oriEmptyCalendarSize - label1.Size);
+			}
 		}
 
 		/// ------------------------------------------------------------------------------------

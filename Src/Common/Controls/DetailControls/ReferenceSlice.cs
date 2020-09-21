@@ -13,8 +13,8 @@ using System.Windows.Forms;
 using System.Xml;
 
 using SIL.FieldWorks.Common.RootSites;
+using SIL.LCModel;
 using SIL.Utils;
-using SIL.FieldWorks.FDO;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls
 {
@@ -40,7 +40,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// <param name="cache">The cache.</param>
 		/// <param name="obj">The obj.</param>
 		/// <param name="flid">The flid.</param>
-		protected ReferenceSlice(Control control, FdoCache cache, ICmObject obj, int flid)
+		protected ReferenceSlice(Control control, LcmCache cache, ICmObject obj, int flid)
 			: base(control, cache, obj, flid)
 		{
 		}
@@ -52,15 +52,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			if (m_fieldName != null)
 			{
 				// have chooser title use the same text as the label
-				if (Mediator != null && Mediator.HasStringTable)
-					m_fieldName = XmlUtils.GetLocalizedAttributeValue(Mediator.StringTbl,
-																	  m_configurationNode, "label", m_fieldName);
-				else if (StringTbl != null)
-					m_fieldName = XmlUtils.GetLocalizedAttributeValue(StringTbl,
-																	  m_configurationNode, "label", m_fieldName);
-				else
-					m_fieldName = XmlUtils.GetOptionalAttributeValue(
-						m_configurationNode, "label", m_fieldName);
+				m_fieldName = XmlUtils.GetLocalizedAttributeValue(m_configurationNode, "label", m_fieldName);
 			}
 		}
 

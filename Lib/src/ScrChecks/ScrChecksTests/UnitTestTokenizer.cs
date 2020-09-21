@@ -2,11 +2,10 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Diagnostics;
-using SILUBS.SharedScrUtils;
+using SIL.FieldWorks.Common.FwUtils;
+using SIL.LCModel.Core.Scripture;
 
 namespace SILUBS.ScriptureChecks
 {
@@ -237,7 +236,6 @@ namespace SILUBS.ScriptureChecks
 				if (tok.IsParagraphStart)
 					inPublishable = tok.IsPublishable ||
 						tok.IsChapter;
-				// sadly \c does not have publishable property set in usfm.sty
 
 				if (inPublishable)
 					tokens.Add(tok);

@@ -7,7 +7,7 @@ using System.Linq;
 using System.Collections.Generic;
 using System.Xml.Serialization;
 using SIL.PaToFdoInterfaces;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 
 namespace SIL.FieldWorks.PaObjects
 {
@@ -36,7 +36,7 @@ namespace SIL.FieldWorks.PaObjects
 			xRestrictions = PaMultiString.Create(lxSense.Restrictions, svcloc);
 			xSemanticsNote = PaMultiString.Create(lxSense.SemanticsNote, svcloc);
 			xSociolinguisticsNote = PaMultiString.Create(lxSense.SocioLinguisticsNote, svcloc);
-			xReversalEntries = lxSense.ReversalEntriesRC.Select(x => PaMultiString.Create(x.ReversalForm, svcloc)).ToList();
+			xReversalEntries = lxSense.ReferringReversalIndexEntries.Select(x => PaMultiString.Create(x.ReversalForm, svcloc)).ToList();
 			xGuid = lxSense.Guid;
 
 			ImportResidue = lxSense.ImportResidue.Text;

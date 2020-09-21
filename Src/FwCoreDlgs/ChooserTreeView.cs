@@ -4,12 +4,10 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Windows.Forms;
-using SIL.FieldWorks.FDO;
-using SIL.Utils;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.CoreImpl;
+using SIL.LCModel;
+using SIL.LCModel.Utils;
+using SIL.LCModel.Core.Text;
 
 namespace SIL.FieldWorks.Common.Controls
 {
@@ -210,9 +208,9 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			if (m_lblSelectedCategories != null)
 			{
-				m_lblSelectedCategories.Text = (SelectedItems.Count == 0 ?
+				m_lblSelectedCategories.Text = SelectedItems.Count == 0 ?
 					FwCoreDlgs.Properties.Resources.kstidNoPossibilitySelectedText :
-					SelectedItems.ToString(", "));
+					string.Join(", ", SelectedItems);
 			}
 		}
 

@@ -1,27 +1,21 @@
-// Copyright (c) 2010-2013 SIL International
+// Copyright (c) 2010-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: AnthroFieldMappingDlg.cs
-// Responsibility: mcconnel
-//
-// <remarks>
-// </remarks>
 
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
+using System.Reflection;
 using System.Windows.Forms;
-using SIL.CoreImpl;
+using SIL.LCModel.Core.Cellar;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel;
+using SIL.LCModel.Infrastructure;
 using SIL.Utils;
 using XCore;
-using System.Reflection;
-using System.Diagnostics.CodeAnalysis;
 
 namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 {
@@ -30,7 +24,7 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 	/// ----------------------------------------------------------------------------------------
 	public partial class AnthroFieldMappingDlg : Form
 	{
-		FdoCache m_cache;
+		LcmCache m_cache;
 		private IHelpTopicProvider m_helpTopicProvider;
 		private IApp m_app;
 		IFwMetaDataCacheManaged m_mdc;
@@ -43,6 +37,7 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 		LinkFieldOptions m_linkOpt;
 		DiscardOptions m_discardOpt;
 		Mediator m_mediator;
+		PropertyTable m_propertyTable;
 		Dictionary<int, string> m_mapFlidName;
 
 		Point m_locSubCtrl = new Point(2, 20);
@@ -110,10 +105,10 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 			//m_sOptionsGroupFmt = m_groupOptions.Text;
 		}
 
-		public void Initialize(FdoCache cache, IHelpTopicProvider helpTopicProvider, IApp app,
+		public void Initialize(LcmCache cache, IHelpTopicProvider helpTopicProvider, IApp app,
 			NotebookImportWiz.RnSfMarker rsf, Sfm2Xml.SfmFile sfmFile,
 			Dictionary<int, string> mapFlidName, IVwStylesheet stylesheet,
-			Mediator mediator)
+			Mediator mediator, PropertyTable propertyTable)
 		{
 			m_cache = cache;
 			m_helpTopicProvider = helpTopicProvider;
@@ -123,6 +118,7 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 			m_stylesheet = stylesheet;
 			m_mdc = cache.ServiceLocator.GetInstance<IFwMetaDataCacheManaged>();
 			m_mediator = mediator;
+			m_propertyTable = propertyTable;
 			m_mapFlidName = mapFlidName;
 
 			FillInFieldList();
@@ -147,7 +143,7 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 		{
 			m_groupContents.Text = String.Format(m_sContentsGroupFmt, rsf.m_sMkr);
 			m_lvContents.Items.Clear();
-			Set<string> setContents = new Set<string>();
+			var setContents = new HashSet<string>();
 			foreach (Sfm2Xml.SfmField field in m_sfmFile.Lines)
 			{
 				if (field.Marker == rsf.m_sMkr)
@@ -202,7 +198,7 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 								m_groupOptions.Text = LexTextControls.ksListRefImportOptions;
 								m_groupOptions.Controls.Add(m_listOpt);
 								m_listOpt.Location = m_locSubCtrl;
-								m_listOpt.Initialize(m_cache, m_helpTopicProvider, m_app, m_stylesheet, m_rsfm, cpt);
+								m_listOpt.Initialize(m_cache, m_helpTopicProvider, m_app, m_rsfm, cpt);
 								break;
 							}
 							throw new ArgumentException(LexTextControls.ksInvalidField);
@@ -225,7 +221,7 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 							m_groupOptions.Text = LexTextControls.ksListRefImportOptions;
 							m_groupOptions.Controls.Add(m_listOpt);
 							m_listOpt.Location = m_locSubCtrl;
-							m_listOpt.Initialize(m_cache, m_helpTopicProvider, m_app, m_stylesheet, m_rsfm, cpt);
+							m_listOpt.Initialize(m_cache, m_helpTopicProvider, m_app, m_rsfm, cpt);
 							break;
 						case RnGenericRecTags.kClassId:
 							throw new NotImplementedException(LexTextControls.ksUnimplementedField);
@@ -238,13 +234,13 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 					m_groupOptions.Text = LexTextControls.ksMultiStringImportOptions;
 					m_groupOptions.Controls.Add(m_stringOpt);
 					m_stringOpt.Location = m_locSubCtrl;
-					m_stringOpt.Initialize(m_cache, m_helpTopicProvider, m_app, m_stylesheet, m_rsfm);
+					m_stringOpt.Initialize(m_cache, m_helpTopicProvider, m_app, m_rsfm);
 					break;
 				case CellarPropertyType.String:
 					m_groupOptions.Text = LexTextControls.ksStringImportOptions;
 					m_groupOptions.Controls.Add(m_stringOpt);
 					m_stringOpt.Location = m_locSubCtrl;
-					m_stringOpt.Initialize(m_cache, m_helpTopicProvider, m_app, m_stylesheet, m_rsfm);
+					m_stringOpt.Initialize(m_cache, m_helpTopicProvider, m_app, m_rsfm);
 					break;
 				case CellarPropertyType.GenDate:
 					m_groupOptions.Text = LexTextControls.ksGenDateImportOptions;
@@ -293,8 +289,9 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 				"AnthroFieldMappingDlg.m_btnAddCustom_Click()", out typeFound);
 			if (mi != null)
 			{
-				var parameters = new object[1];
+				var parameters = new object[2];
 				parameters[0] = m_mediator;
+				parameters[1] = m_propertyTable;
 				mi.Invoke(typeFound,
 					System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.Public |
 					System.Reflection.BindingFlags.NonPublic, null, parameters, null);
@@ -324,8 +321,6 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 			}
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "ctrl is a reference")]
 		private void m_btnOK_Click(object sender, EventArgs e)
 		{
 			DestinationField dest =  m_cbDestination.SelectedItem as DestinationField;

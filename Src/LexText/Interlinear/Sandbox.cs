@@ -3,10 +3,11 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Linq;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using XCore;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.LCModel.DomainServices;
 
 namespace SIL.FieldWorks.IText
 {
@@ -39,12 +40,15 @@ namespace SIL.FieldWorks.IText
 		/// Create a new one.
 		/// </summary>
 		/// <param name="cache"></param>
+		/// <param name="propertyTable"></param>
 		/// <param name="ss"></param>
 		/// <param name="choices"></param>
 		/// <param name="mediator"></param>
-		public Sandbox(FdoCache cache, Mediator mediator, IVwStylesheet ss,
+		/// <param name="selected"></param>
+		/// <param name="focusBox"></param>
+		public Sandbox(LcmCache cache, Mediator mediator, PropertyTable propertyTable, IVwStylesheet ss,
 			InterlinLineChoices choices, AnalysisOccurrence selected, FocusBoxController focusBox)
-			: this(cache, mediator, ss, choices)
+			: this(cache, mediator, propertyTable, ss, choices)
 		{
 			FocusBox = focusBox;
 			m_interlinDoc = focusBox.InterlinDoc;
@@ -53,15 +57,16 @@ namespace SIL.FieldWorks.IText
 			LoadForWordBundleAnalysis(m_occurrenceSelected.Analysis.Hvo);
 		}
 
-		/// <summary>
+		///  <summary>
 		///
-		/// </summary>
-		/// <param name="cache"></param>
-		/// <param name="mediator"></param>
+		///  </summary>
+		///  <param name="cache"></param>
+		///  <param name="mediator"></param>
+		/// <param name="propertyTable"></param>
 		/// <param name="ss"></param>
-		/// <param name="choices"></param>
-		public Sandbox(FdoCache cache, Mediator mediator, IVwStylesheet ss, InterlinLineChoices choices)
-			: base(cache, mediator, ss, choices)
+		///  <param name="choices"></param>
+		public Sandbox(LcmCache cache, Mediator mediator, PropertyTable propertyTable, IVwStylesheet ss, InterlinLineChoices choices)
+			: base(cache, mediator, propertyTable, ss, choices)
 		{
 		}
 

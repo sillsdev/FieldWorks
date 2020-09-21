@@ -5,12 +5,16 @@
 using System.IO;
 using System.Linq;
 using NUnit.Framework;
+using SIL.LCModel.Core.Text;
 using SIL.FieldWorks.Common.Controls;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Application;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel;
+using SIL.LCModel.Application;
+using SIL.LCModel.Infrastructure;
+using SIL.LCModel.Utils;
+using XCore;
+
 // ReSharper disable InconsistentNaming
 
 namespace SIL.FieldWorks.XWorks
@@ -74,7 +78,7 @@ namespace SIL.FieldWorks.XWorks
 		private ILexEntry m_sky;
 
 		private ILexExampleSentence m_goodHot;
-		private ILexExampleSentence m_badHot;
+		private ILexExampleSentence m_badHot; // REVIEW (Hasso) 2018.02: many of these are unused. Can they be removed?
 
 		private ILexEntryRef m_hotWaterComponents;
 		private ILexEntryRef m_blueSkyComponents;
@@ -106,9 +110,11 @@ namespace SIL.FieldWorks.XWorks
 
 		private IReversalIndex m_revIndex;
 
-		const int kmainFlid = 89999956;
+		private const int kmainFlid = 89999956;
 
 		private int m_flidReferringSenses;
+
+		private PropertyTable PropertyTable => m_window.PropTable;
 
 		protected override void Init()
 		{
@@ -251,23 +257,23 @@ namespace SIL.FieldWorks.XWorks
 			index.EntriesOC.Add(indexEntry);
 			var wsEn = Cache.ServiceLocator.WritingSystemManager.Get("en").Handle;
 			indexEntry.ReversalForm.set_String(wsEn, "Reversal Form");
-			m_nolanryan.AllSenses[0].ReversalEntriesRC.Add(indexEntry);
+			indexEntry.SensesRS.Add(m_nolanryan.AllSenses[0]);
 			var indexEntry2 = m_revIndexEntryFactory.Create();
 			index.EntriesOC.Add(indexEntry2);
 			indexEntry2.ReversalForm.set_String(wsEn, "Reversal 2 Form");
-			m_water.AllSenses[0].ReversalEntriesRC.Add(indexEntry2);
+			indexEntry2.SensesRS.Add(m_water.AllSenses[0]);
 			var entry2SubentryA = m_revIndexEntryFactory.Create();
 			indexEntry2.SubentriesOS.Add(entry2SubentryA);
 			entry2SubentryA.ReversalForm.set_String(wsEn, "Reversal 2a Form");
-			m_water2.AllSenses[0].ReversalEntriesRC.Add(entry2SubentryA);
+			entry2SubentryA.SensesRS.Add(m_water2.AllSenses[0]);
 			var entry2SubentryB = m_revIndexEntryFactory.Create();
 			indexEntry2.SubentriesOS.Add(entry2SubentryB);
 			entry2SubentryB.ReversalForm.set_String(wsEn, "Reversal 2b Form");
-			m_hotWater.AllSenses[0].ReversalEntriesRC.Add(entry2SubentryB);
+			entry2SubentryB.SensesRS.Add(m_hotWater.AllSenses[0]);
 			var subsubentry = m_revIndexEntryFactory.Create();
 			entry2SubentryB.SubentriesOS.Add(subsubentry);
 			subsubentry.ReversalForm.set_String(wsEn, "Reversal 2b || !2b Form");
-			m_waterH2O.ReversalEntriesRC.Add(subsubentry);
+			subsubentry.SensesRS.Add(m_waterH2O);
 			var senseLessIndexEntry = m_revIndexEntryFactory.Create();
 			index.EntriesOC.Add(senseLessIndexEntry);
 			senseLessIndexEntry.ReversalForm.set_String(wsEn, "Reversal Form NoSense");
@@ -291,9 +297,9 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void GetEntriesToPublish_WorksWithFrenchUI()
 		{
-			Mediator.PropertyTable.SetProperty("currentContentControl", "lexiconEdit");
+			PropertyTable.SetProperty("currentContentControl", "lexiconEdit", true);
 
-			var englishEntries = m_decorator.GetEntriesToPublish(Mediator, ObjectListPublisher.OwningFlid);
+			var englishEntries = m_decorator.GetEntriesToPublish(PropertyTable, ObjectListPublisher.OwningFlid);
 			Assert.That(englishEntries.Length, Is.GreaterThan(0));
 
 			// Set UI Language to French
@@ -301,7 +307,7 @@ namespace SIL.FieldWorks.XWorks
 			wsm.UserWritingSystem = wsm.Get("fr");
 
 			// SUT
-			var frenchEntries = m_decorator.GetEntriesToPublish(Mediator, ObjectListPublisher.OwningFlid);
+			var frenchEntries = m_decorator.GetEntriesToPublish(PropertyTable, ObjectListPublisher.OwningFlid);
 			Assert.That(englishEntries.Length, Is.EqualTo(frenchEntries.Length));
 		}
 
@@ -309,12 +315,12 @@ namespace SIL.FieldWorks.XWorks
 		public void GetSortedAndFilteredReversalEntries_ExcludesSubentriesAndUnpublishable()
 		{
 			// This test relies on the objects set up during the test FixtureSetup
-			Mediator.PropertyTable.SetProperty("currentContentControl", "reversalToolEditComplete");
-			Mediator.PropertyTable.SetProperty("ReversalIndexGuid", m_revIndex.Guid.ToString());
+			PropertyTable.SetProperty("currentContentControl", "reversalToolEditComplete", true);
+			PropertyTable.SetProperty("ReversalIndexGuid", m_revIndex.Guid.ToString(), true);
 
 			Assert.AreEqual(6, m_revDecorator.VecProp(m_revIndex.Hvo, ObjectListPublisher.OwningFlid).Length,
 				"there should be 6 Reversal Entries and Sub[sub]entries");
-			var entries = m_revDecorator.GetEntriesToPublish(Mediator, ObjectListPublisher.OwningFlid, "Reversal Index");
+			var entries = m_revDecorator.GetEntriesToPublish(PropertyTable, ObjectListPublisher.OwningFlid, "Reversal Index");
 			// "Reversal Form" is linked to m_nolanryan which is excluded from publication
 			Assert.AreEqual(2, entries.Length, "there should be only 2 main Reversal Entry that can be published");
 			var entry = Cache.ServiceLocator.GetObject(entries[0]) as IReversalIndexEntry;
@@ -324,7 +330,7 @@ namespace SIL.FieldWorks.XWorks
 			// "Reversal 2a Form" is linked to m_water2 which is excluded from publication
 			var vec = m_revDecorator.VecProp(entry.Hvo, ReversalIndexEntryTags.kflidSubentries);
 			Assert.AreEqual(1, vec.Length, "Only one of the subentries is publishable");
-			var subentry = Cache.ServiceLocator.GetObject(vec[0]) as IReversalIndexEntry;
+			var subentry = (IReversalIndexEntry)Cache.ServiceLocator.GetObject(vec[0]);
 			Assert.AreEqual("Reversal 2b Form", subentry.ShortName, "'Reversal 2b Form' is the only publishable subentry of 'Reversal 2 Form'");
 			Assert.IsTrue(m_revDecorator.IsExcludedObject(entry.SubentriesOS[0]), "First subentry ('Reversal 2a Form') should be excluded");
 			Assert.IsFalse(m_revDecorator.IsExcludedObject(entry.SubentriesOS[1]), "Second subentry ('Reversal 2b Form') should not be excluded')");
@@ -334,19 +340,19 @@ namespace SIL.FieldWorks.XWorks
 		public void GetSortedAndFilteredReversalEntries_IncludesSenselessReversalEntries()
 		{
 			// This test relies on the objects set up during the test FixtureSetup
-			Mediator.PropertyTable.SetProperty("currentContentControl", "reversalToolEditComplete");
-			Mediator.PropertyTable.SetProperty("ReversalIndexGuid", m_revIndex.Guid.ToString());
+			PropertyTable.SetProperty("currentContentControl", "reversalToolEditComplete", false);
+			PropertyTable.SetProperty("ReversalIndexGuid", m_revIndex.Guid.ToString(), false);
 
 			Assert.AreEqual(6, m_revDecorator.VecProp(m_revIndex.Hvo, ObjectListPublisher.OwningFlid).Length,
 				"there should be 6 Reversal Entries and Sub[sub]entries");
-			var entries = m_revDecorator.GetEntriesToPublish(Mediator, ObjectListPublisher.OwningFlid, "Reversal Index");
+			var entries = m_revDecorator.GetEntriesToPublish(PropertyTable, ObjectListPublisher.OwningFlid, "Reversal Index");
 			// "Reversal Form" is linked to m_nolanryan which is excluded from publication
 			Assert.AreEqual(2, entries.Length, "there should be only 2 main Reversal Entry that can be published");
-			var entry = Cache.ServiceLocator.GetObject(entries[1]) as IReversalIndexEntry;
-			Assert.IsNotNull(entry, "the single reversal entry really is a reversal entry");
-			Assert.IsFalse(entry.ReferringSenses.Any(), "Test setup is broken, this entry should have no senses");
+			var revEntry = Cache.ServiceLocator.GetObject(entries[1]) as IReversalIndexEntry;
+			Assert.IsNotNull(revEntry, "the single reversal entry really is a reversal entry");
+			Assert.IsFalse(revEntry.SensesRS.Any(), "Test setup is broken, this entry should have no senses");
 			// SUT
-			Assert.IsFalse(m_revDecorator.IsExcludedObject(entry), "A reversal index entry with no senses should not be excluded");
+			Assert.IsFalse(m_revDecorator.IsExcludedObject(revEntry), "A reversal index entry with no senses should not be excluded");
 		}
 
 		/// <summary>
@@ -713,7 +719,7 @@ namespace SIL.FieldWorks.XWorks
 
 		private ITsString VernacularTss(string form)
 		{
-			return Cache.TsStrFactory.MakeString(form, Cache.DefaultVernWs);
+			return TsStringUtils.MakeString(form, Cache.DefaultVernWs);
 		}
 
 		private ILexEntry MakeEntry()
@@ -750,7 +756,7 @@ namespace SIL.FieldWorks.XWorks
 
 		private ITsString AnalysisTss(string form)
 		{
-			return Cache.TsStrFactory.MakeString(form, Cache.DefaultAnalWs);
+			return TsStringUtils.MakeString(form, Cache.DefaultAnalWs);
 		}
 
 		private ILexSense MakeSense(ILexSense owningSense, string gloss)

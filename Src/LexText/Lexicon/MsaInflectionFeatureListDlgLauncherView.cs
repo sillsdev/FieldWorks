@@ -9,8 +9,8 @@ using System.Drawing;
 using System.Windows.Forms;
 using System.Diagnostics;
 
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.FDO;
+using SIL.FieldWorks.Common.ViewsInterfaces;
+using SIL.LCModel;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FdoUi;
 using XCore;
@@ -30,12 +30,12 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			InitializeComponent();
 		}
 
-		public void Init(Mediator mediator, IFsFeatStruc fs)
+		public void Init(LcmCache cache, IFsFeatStruc fs)
 		{
 			CheckDisposed();
 
 			m_fs = fs;
-			m_fdoCache = (FdoCache)mediator.PropertyTable.GetValue("cache");
+			m_cache = cache;
 
 			if (m_rootb == null)
 			{
@@ -76,15 +76,13 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		{
 			CheckDisposed();
 
-			base.MakeRoot();
-
-			if (m_fdoCache == null || DesignMode)
+			if (m_cache == null || DesignMode)
 				return;
 
-			m_rootb = VwRootBoxClass.Create();
-			m_rootb.SetSite(this);
-			m_rootb.DataAccess = m_fdoCache.DomainDataByFlid;
-			m_vc = new CmObjectUi.CmAnalObjectVc(m_fdoCache);
+			base.MakeRoot();
+
+			m_rootb.DataAccess = m_cache.DomainDataByFlid;
+			m_vc = new CmObjectUi.CmAnalObjectVc(m_cache);
 
 			if (m_fs != null)
 			{

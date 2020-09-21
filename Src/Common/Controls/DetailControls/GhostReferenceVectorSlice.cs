@@ -2,18 +2,15 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 using System.Xml;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Framework.DetailControls.Resources;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.FieldWorks.Common.FwUtils;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Infrastructure;
 using SIL.Utils;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls
@@ -25,7 +22,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 	/// </summary>
 	public class GhostReferenceVectorSlice : FieldSlice
 	{
-		public GhostReferenceVectorSlice(FdoCache cache, ICmObject obj, XmlNode configNode)
+		public GhostReferenceVectorSlice(LcmCache cache, ICmObject obj, XmlNode configNode)
 			: base(new GhostReferenceVectorLauncher(), cache, obj, GetFieldId(cache, configNode))
 		{
 		}
@@ -34,17 +31,17 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		{
 		}
 
-		private static int GetFieldId(FdoCache cache, XmlNode configurationParameters)
+		private static int GetFieldId(LcmCache cache, XmlNode configurationParameters)
 		{
-			return cache.MetaDataCacheAccessor.GetFieldId(XmlUtils.GetManditoryAttributeValue(configurationParameters, "ghostClass"),
-				XmlUtils.GetManditoryAttributeValue(configurationParameters, "ghostField"), true);
+			return cache.MetaDataCacheAccessor.GetFieldId(XmlUtils.GetMandatoryAttributeValue(configurationParameters, "ghostClass"),
+				XmlUtils.GetMandatoryAttributeValue(configurationParameters, "ghostField"), true);
 		}
 
 		public override void FinishInit()
 		{
 			base.FinishInit();
 
-			((GhostReferenceVectorLauncher)Control).Initialize(m_cache, m_obj, m_flid, m_fieldName, m_persistenceProvider, m_mediator, DisplayNameProperty, BestWsName);
+			((GhostReferenceVectorLauncher)Control).Initialize(m_cache, m_obj, m_flid, m_fieldName, m_persistenceProvider, m_mediator, m_propertyTable, DisplayNameProperty, BestWsName);
 		}
 
 		// Copied from ReferenceVectorSlice for initializing GhostReferenceVectorLauncher...may not be used.
@@ -85,14 +82,12 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		}
 		// We want to emulate what ReferenceLauncher does, but without the object being created
 		// until the user clicks OK in the simple list chooser.
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="FindForm() returns a reference")]
 		protected override void HandleChooser()
 		{
 			// YAGNI: may eventually need to make configurable how it comes up with the list of candidates.
 			// Currently this is used only for properties of a ghost notebook record.
 			var candidateList = (ICmPossibilityList) ReferenceTargetServices.RnGenericRecReferenceTargetOwner(m_cache, m_flid);
-			var candidates = candidateList == null ? null : candidateList.PossibilitiesOS.Cast<ICmObject>();
+			var candidates = candidateList == null ? null : candidateList.PossibilitiesOS;
 			// YAGNI: see ReferenceLauncher implementation of this method for a possible approach to
 			// making the choice of writing system configurable.
 			var labels = ObjectLabel.CreateObjectLabels(m_cache, candidates,
@@ -102,7 +97,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				m_fieldName,
 				m_cache,
 				new ICmObject[0],
-				m_mediator.HelpTopicProvider);
+				m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"));
 			chooser.SetHelpTopic(Slice.GetChooserHelpTopicID());
 
 			chooser.SetObjectAndFlid(0, m_flid);
@@ -122,7 +117,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				//    if (referenceTargetOwner != null)
 				//        chooser.TextParamHvo = referenceTargetOwner.Hvo;
 				//    chooser.SetHelpTopic(Slice.GetChooserHelpTopicID());
-				chooser.InitializeExtras(Slice.ConfigurationNode, Mediator);
+				chooser.InitializeExtras(Slice.ConfigurationNode, Mediator, m_propertyTable);
 			}
 			var res = chooser.ShowDialog(FindForm());
 			if (DialogResult.Cancel == res)

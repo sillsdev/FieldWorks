@@ -1,3 +1,5 @@
+using XCore;
+
 namespace SIL.FieldWorks.XWorks.LexEd
 {
 	partial class FindExampleSentenceDlg
@@ -24,12 +26,13 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 				if (m_clerk != null && m_mediator != null)
 				{
-					m_mediator.PropertyTable.RemoveProperty("RecordClerk-" + m_clerk.Id);
+					m_propertyTable.RemoveProperty("RecordClerk-" + m_clerk.Id);
 					m_clerk.Dispose();
 				}
 			}
 			m_cache = null;
 			m_mediator = null;
+			m_propertyTable = null;
 			m_configurationNode = null;
 			m_les = null;
 			m_owningSense = null;

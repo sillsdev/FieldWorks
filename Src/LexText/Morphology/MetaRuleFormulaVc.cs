@@ -1,8 +1,11 @@
 using System;
 using System.Drawing;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.FDO;
-using SIL.Utils;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
+using SIL.LCModel;
+using SIL.LCModel.Utils;
+using XCore;
 
 namespace SIL.FieldWorks.XWorks.MorphologyEditor
 {
@@ -28,16 +31,16 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 
 		private IPhMetathesisRule m_rule;
 
-		public MetaRuleFormulaVc(FdoCache cache, XCore.Mediator mediator)
-			: base(cache, mediator)
+		public MetaRuleFormulaVc(LcmCache cache, PropertyTable propertyTable)
+			: base(cache, propertyTable)
 		{
-			ITsPropsBldr tpb = TsPropsBldrClass.Create();
+			ITsPropsBldr tpb = TsStringUtils.MakePropsBldr();
 			tpb.SetIntPropValues((int)FwTextPropType.ktptBorderColor, (int)FwTextPropVar.ktpvDefault,
 				(int)ColorUtil.ConvertColorToBGR(Color.Gray));
 			tpb.SetIntPropValues((int)FwTextPropType.ktptAlign, (int)FwTextPropVar.ktpvEnum, (int)FwTextAlign.ktalCenter);
 			m_inputCtxtProps = tpb.GetTextProps();
 
-			tpb = TsPropsBldrClass.Create();
+			tpb = TsStringUtils.MakePropsBldr();
 			tpb.SetIntPropValues((int)FwTextPropType.ktptBorderColor, (int)FwTextPropVar.ktpvDefault,
 				(int)ColorUtil.ConvertColorToBGR(Color.Gray));
 			tpb.SetIntPropValues((int)FwTextPropType.ktptAlign, (int)FwTextPropVar.ktpvEnum, (int)FwTextAlign.ktalCenter);
@@ -46,7 +49,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 				(int)ColorUtil.ConvertColorToBGR(Color.Gray));
 			m_resultCtxtProps = tpb.GetTextProps();
 
-			tpb = TsPropsBldrClass.Create();
+			tpb = TsStringUtils.MakePropsBldr();
 			tpb.SetStrPropValue((int)FwTextPropType.ktptFontFamily, MiscUtils.StandardSansSerif);
 			tpb.SetIntPropValues((int)FwTextPropType.ktptFontSize, (int)FwTextPropVar.ktpvMilliPoint, 10000);
 			tpb.SetIntPropValues((int)FwTextPropType.ktptBorderColor, (int)FwTextPropVar.ktpvDefault,
@@ -57,7 +60,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			tpb.SetIntPropValues((int)FwTextPropType.ktptEditable, (int)FwTextPropVar.ktpvEnum, (int)TptEditable.ktptNotEditable);
 			m_colHeaderProps = tpb.GetTextProps();
 
-			tpb = TsPropsBldrClass.Create();
+			tpb = TsStringUtils.MakePropsBldr();
 			tpb.SetStrPropValue((int)FwTextPropType.ktptFontFamily, MiscUtils.StandardSansSerif);
 			tpb.SetIntPropValues((int)FwTextPropType.ktptFontSize, (int)FwTextPropVar.ktpvMilliPoint, 10000);
 			tpb.SetIntPropValues((int)FwTextPropType.ktptForeColor, (int)FwTextPropVar.ktpvDefault,
@@ -66,13 +69,12 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			tpb.SetIntPropValues((int)FwTextPropType.ktptEditable, (int)FwTextPropVar.ktpvEnum, (int)TptEditable.ktptNotEditable);
 			m_rowHeaderProps = tpb.GetTextProps();
 
-			var tsf = m_cache.TsStrFactory;
 			var userWs = m_cache.DefaultUserWs;
-			m_inputStr = tsf.MakeString(MEStrings.ksMetaRuleInput, userWs);
-			m_resultStr = tsf.MakeString(MEStrings.ksMetaRuleResult, userWs);
-			m_leftEnvStr = tsf.MakeString(MEStrings.ksMetaRuleLeftEnv, userWs);
-			m_rightEnvStr = tsf.MakeString(MEStrings.ksMetaRuleRightEnv, userWs);
-			m_switchStr = tsf.MakeString(MEStrings.ksMetaRuleSwitch, userWs);
+			m_inputStr = TsStringUtils.MakeString(MEStrings.ksMetaRuleInput, userWs);
+			m_resultStr = TsStringUtils.MakeString(MEStrings.ksMetaRuleResult, userWs);
+			m_leftEnvStr = TsStringUtils.MakeString(MEStrings.ksMetaRuleLeftEnv, userWs);
+			m_rightEnvStr = TsStringUtils.MakeString(MEStrings.ksMetaRuleRightEnv, userWs);
+			m_switchStr = TsStringUtils.MakeString(MEStrings.ksMetaRuleSwitch, userWs);
 		}
 
 		protected override int GetMaxNumLines()

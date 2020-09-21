@@ -1,17 +1,15 @@
-﻿// Copyright (c) 2014-2016 SIL International
+// Copyright (c) 2014-2016 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using SIL.CoreImpl;
-using SIL.FieldWorks.FDO;
+using SIL.FieldWorks.Common.FwUtils;
+using SIL.LCModel;
 using SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators;
-using SIL.Utils;
 using XCore;
 
 namespace SIL.FieldWorks.XWorks
@@ -19,11 +17,9 @@ namespace SIL.FieldWorks.XWorks
 	/// <summary>
 	/// This class is used to migrate dictionary configurations from the old layout and parts to the new <code>DictionaryConfigurationModel</code> xml.
 	/// </summary>
-	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
-		Justification="Cache is a reference")]
 	public class DictionaryConfigurationMigrator
 	{
-		public const int VersionCurrent = 19;
+		public const int VersionCurrent = 22;
 		internal const string NodePathSeparator = " > ";
 		public const string RootFileName = "Root";
 		public const string HybridFileName = "Hybrid";
@@ -32,17 +28,20 @@ namespace SIL.FieldWorks.XWorks
 
 		private readonly Inventory m_layoutInventory;
 		private readonly Inventory m_partInventory;
-		private readonly Mediator m_mediator;
+		private Mediator m_mediator;
+		private readonly PropertyTable m_propertyTable;
 		private SimpleLogger m_logger;
 
 		private readonly IEnumerable<IDictionaryConfigurationMigrator> m_migrators;
 
-		public DictionaryConfigurationMigrator(Mediator mediator)
+
+		public DictionaryConfigurationMigrator(PropertyTable propertyTable, Mediator mediator)
 		{
+			m_propertyTable = propertyTable;
 			m_mediator = mediator;
 			m_migrators = new List<IDictionaryConfigurationMigrator>
 			{
-				new PreHistoricMigrator(),
+				new PreHistoricMigrator(m_mediator),
 				new FirstAlphaMigrator(),
 				new FirstBetaMigrator()
 			};
@@ -61,15 +60,15 @@ namespace SIL.FieldWorks.XWorks
 					// Further migration changes (especially Label changes) may need changes in multiple migrators:
 					foreach (var migrator in m_migrators)
 					{
-						migrator.MigrateIfNeeded(m_logger, m_mediator, versionProvider.ApplicationVersion);
+						migrator.MigrateIfNeeded(m_logger, m_propertyTable, versionProvider.ApplicationVersion);
 					}
-					CreateProjectCustomCssIfNeeded(m_mediator);
+					CreateProjectCustomCssIfNeeded(m_propertyTable);
 				}
 				finally
 				{
 					if (m_logger.HasContent)
 					{
-						var configurationDir = DictionaryConfigurationListener.GetProjectConfigurationDirectory(m_mediator,
+					var configurationDir = DictionaryConfigurationListener.GetProjectConfigurationDirectory(m_propertyTable,
 							DictionaryConfigurationListener.DictionaryConfigurationDirectoryName);
 						Directory.CreateDirectory(configurationDir);
 						File.AppendAllText(Path.Combine(configurationDir, "ConfigMigrationLog.txt"), m_logger.Content);
@@ -80,12 +79,12 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>Create custom CSS file in the project's folder</summary>
-		private static void CreateProjectCustomCssIfNeeded(Mediator mediator)
+		private static void CreateProjectCustomCssIfNeeded(PropertyTable propertyTable)
 		{
 			var innerDirectories = new [] { "Dictionary", "ReversalIndex" };
 			foreach (var innerDir in innerDirectories)
 			{
-				var configDir = DictionaryConfigurationListener.GetProjectConfigurationDirectory(mediator, innerDir);
+				var configDir = DictionaryConfigurationListener.GetProjectConfigurationDirectory(propertyTable, innerDir);
 				Directory.CreateDirectory(configDir);
 				var customCssPath = Path.Combine(configDir, string.Format("Project{0}Overrides.css", innerDir == "ReversalIndex" ? "Reversal" : innerDir));
 				if (!File.Exists(customCssPath))
@@ -112,7 +111,7 @@ namespace SIL.FieldWorks.XWorks
 			return Directory.Exists(dir) ? Directory.EnumerateFiles(dir, "*" + DictionaryConfigurationModel.FileExtension) : new string[0];
 		}
 
-		internal static void SetWritingSystemForReversalModel(DictionaryConfigurationModel convertedModel, FdoCache cache)
+		internal static void SetWritingSystemForReversalModel(DictionaryConfigurationModel convertedModel, LcmCache cache)
 		{
 			if (!convertedModel.IsReversal || !string.IsNullOrEmpty(convertedModel.WritingSystem)) // don't change existing WS's
 				return;
@@ -144,9 +143,9 @@ namespace SIL.FieldWorks.XWorks
 			set { m_logger = value; }
 		}
 
-		internal static List<DictionaryConfigurationModel> GetConfigsNeedingMigration(FdoCache cache, int targetVersion)
+		internal static List<DictionaryConfigurationModel> GetConfigsNeedingMigration(LcmCache cache, int targetVersion)
 		{
-			var configSettingsDir = FdoFileHelper.GetConfigSettingsDir(cache.ProjectId.ProjectFolder);
+			var configSettingsDir = LcmFileHelper.GetConfigSettingsDir(cache.ProjectId.ProjectFolder);
 			var dictionaryConfigLoc = Path.Combine(configSettingsDir, DictionaryConfigurationListener.DictionaryConfigurationDirectoryName);
 			var reversalIndexConfigLoc = Path.Combine(configSettingsDir, DictionaryConfigurationListener.ReversalIndexConfigurationDirectoryName);
 			var projectConfigPaths = new List<string>(ConfigFilesInDir(dictionaryConfigLoc));
@@ -169,7 +168,7 @@ namespace SIL.FieldWorks.XWorks
 		/// This method will copy configuration node values from newDefaultModelPath over the matching nodes in oldDefaultModelPath.
 		/// </summary>
 		/// <remarks>Intended to be used only on defaults, not on data with user changes.</remarks>
-		internal static DictionaryConfigurationModel LoadConfigWithCurrentDefaults(string oldDefaultModelPath, FdoCache cache, string newDefaultPath)
+		internal static DictionaryConfigurationModel LoadConfigWithCurrentDefaults(string oldDefaultModelPath, LcmCache cache, string newDefaultPath)
 		{
 			var oldDefaultConfigs = new DictionaryConfigurationModel(oldDefaultModelPath, cache);
 			var newDefaultConfigs = new DictionaryConfigurationModel(newDefaultPath, cache);

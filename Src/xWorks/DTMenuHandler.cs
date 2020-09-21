@@ -8,31 +8,31 @@
 //
 // <remarks>
 // </remarks>
-
 using System;
-using System.Diagnostics;
-using System.Linq;
-using System.Xml;
 using System.Collections.Generic;
-using System.Windows.Forms;
+using System.Diagnostics;
 using System.Drawing;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.FieldWorks.FdoUi;
+using System.IO;
+using System.Linq;
+using System.Windows.Forms;
+using System.Xml;
+using SIL.LCModel.Core.Cellar;
+using SIL.FieldWorks.Common.Controls.FileDialog;
 using SIL.FieldWorks.Common.Framework.DetailControls;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
+using SIL.FieldWorks.Common.Widgets;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Infrastructure;
+using SIL.FieldWorks.FdoUi;
 using SIL.FieldWorks.FwCoreDlgs;
 using SIL.FieldWorks.Resources;
-using SIL.CoreImpl;
+using SIL.Reporting;
 using SIL.Utils;
-using SIL.Utils.FileDialog;
 using XCore;
-using SIL.FieldWorks.Common.Widgets;
-using System.Diagnostics.CodeAnalysis;
-using System.IO;
+using ConfigurationException = SIL.Utils.ConfigurationException;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -56,6 +56,10 @@ namespace SIL.FieldWorks.XWorks
 		/// Mediator that passes off messages.
 		/// </summary>
 		protected XCore.Mediator m_mediator;
+		/// <summary>
+		///
+		/// </summary>
+		protected PropertyTable m_propertyTable;
 
 		/// <summary>
 		/// COnfiguration information.
@@ -86,18 +90,6 @@ namespace SIL.FieldWorks.XWorks
 			return h;
 		}
 
-
-		/// <summary>
-		/// a look up table for getting the correct version of strings that the user will see.
-		/// </summary>
-		public StringTable StringTbl
-		{
-			get
-			{
-				return m_mediator.StringTbl;
-			}
-		}
-
 		public DataTree DtTree
 		{
 			set
@@ -112,9 +104,10 @@ namespace SIL.FieldWorks.XWorks
 
 		#region IxCoreColleague implementation
 
-		public void Init(Mediator mediator, XmlNode configurationParameters)
+		public void Init(Mediator mediator, PropertyTable propertyTable, XmlNode configurationParameters)
 		{
 			m_mediator = mediator;
+			m_propertyTable = propertyTable;
 			m_configuration = configurationParameters;
 		}
 
@@ -124,8 +117,6 @@ namespace SIL.FieldWorks.XWorks
 		/// 2) be potential recipients of a broadcast
 		/// </summary>
 		/// <returns></returns>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "slice is a reference")]
 		public IxCoreColleague[] GetMessageTargets()
 		{
 			//if the slice implements IxCoreColleague, than it is one of our sub colleagues
@@ -164,13 +155,13 @@ namespace SIL.FieldWorks.XWorks
 				return false; // should not happen, but play safe
 			var obj = m_dataEntryForm.CurrentSlice.Object;
 			int chvo = obj.Cache.DomainDataByFlid.get_VecSize(obj.Hvo, flid);
-			IApp app = (IApp)m_mediator.PropertyTable.GetValue("App");
+			IApp app = m_propertyTable.GetValue<IApp>("App");
 			using (PicturePropertiesDialog dlg = new PicturePropertiesDialog(obj.Cache, null,
-				m_mediator.HelpTopicProvider, app, true))
+				m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), app, true))
 			{
 				if (dlg.Initialize())
 				{
-					var stylesheet = FontHeightAdjuster.StyleSheetFromMediator(m_mediator);
+					var stylesheet = FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable);
 					dlg.UseMultiStringCaption(obj.Cache, WritingSystemServices.kwsVernAnals, stylesheet);
 					if (dlg.ShowDialog() == DialogResult.OK)
 					{
@@ -188,8 +179,6 @@ namespace SIL.FieldWorks.XWorks
 			return true;
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "current is a reference")]
 		private bool CanInsertPictureOrMediaFile(object cmd, out int flid)
 		{
 			Command command = (Command) cmd;
@@ -279,14 +268,14 @@ namespace SIL.FieldWorks.XWorks
 			using (var dlg = new OpenFileDialogAdapter())
 			{
 				string defaultDirectory = Cache.LangProject.LinkedFilesRootDir;
-				dlg.InitialDirectory = m_mediator != null ? m_mediator.PropertyTable.GetStringProperty("InsertMediaFile-LastDirectory", defaultDirectory)
+				dlg.InitialDirectory = m_mediator != null ? m_propertyTable.GetStringProperty("InsertMediaFile-LastDirectory", defaultDirectory)
 					: defaultDirectory;
 				dlg.Filter = filter;
 				dlg.FilterIndex = 1;
-				if (m_mediator != null && m_mediator.HasStringTable)
-					dlg.Title = m_mediator.StringTbl.GetString(keyCaption);
 				if (string.IsNullOrEmpty(dlg.Title) || dlg.Title == "*" + keyCaption + "*")
+				{
 					dlg.Title = defaultCaption;
+				}
 				dlg.RestoreDirectory = true;
 				dlg.CheckFileExists = true;
 				dlg.CheckPathExists = true;
@@ -299,12 +288,12 @@ namespace SIL.FieldWorks.XWorks
 					if (dialogResult == DialogResult.OK)
 					{
 						string[] fileNames = MoveOrCopyFilesController.MoveCopyOrLeaveMediaFiles(dlg.FileNames,
-							Cache.LangProject.LinkedFilesRootDir, m_mediator.HelpTopicProvider, Cache.ProjectId.IsLocal);
-						string sFolderName = null;
-						if (m_mediator != null && m_mediator.HasStringTable)
-							sFolderName = m_mediator.StringTbl.GetString("kstidMediaFolder");
+							Cache.LangProject.LinkedFilesRootDir, m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"));
+						string sFolderName = StringTable.Table.GetString("kstidMediaFolder");
 						if (string.IsNullOrEmpty(sFolderName) || sFolderName == "*kstidMediaFolder*")
+						{
 							sFolderName = CmFolderTags.LocalMedia;
+						}
 						if (!obj.IsValidObject)
 							return true; // Probably some other client deleted it while we were choosing the file.
 
@@ -328,8 +317,7 @@ namespace SIL.FieldWorks.XWorks
 							if (fileName != null)
 							{
 								string directory = Path.GetDirectoryName(fileName);
-								m_mediator.PropertyTable.SetProperty("InsertMediaFile-LastDirectory", directory);
-								m_mediator.PropertyTable.SetPropertyPersistence("InsertMediaFile-LastDirectory", false);
+								m_propertyTable.SetProperty("InsertMediaFile-LastDirectory", directory, false);
 							}
 						}
 					}
@@ -351,44 +339,12 @@ namespace SIL.FieldWorks.XWorks
 			return OnDisplayInsertPicture(commandObject, ref display);
 		}
 
-		public bool OnDeleteMediaFile(object cmd)
-		{
-			var obj = m_dataEntryForm.CurrentSlice.Object;
-			var media = obj as ICmMedia;
-			if (media != null)
-			{
-				UndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(
-					xWorksStrings.ksUndoDeleteMediaLink,
-					xWorksStrings.ksRedoDeleteMediaLink,
-					Cache.ActionHandlerAccessor,
-					() =>
-					{
-						CmObjectUi.ConsiderDeletingRelatedFile(media.MediaFileRA, m_mediator);
-						Cache.DomainDataByFlid.DeleteObj(media.Hvo);
-					});
-			}
-			return true;
-		}
-
-		/// <summary>
-		/// Check whether or not to display the "Delete This Media Link" command.
-		/// </summary>
-		/// <param name="commandObject"></param>
-		/// <param name="display"></param>
-		/// <returns></returns>
-		public virtual bool OnDisplayDeleteMediaFile(object commandObject,
-			ref UIItemDisplayProperties display)
-		{
-			display.Enabled = true;
-			return true;
-		}
-
 		public bool OnDataTreeHelp(object cmd)
 		{
 			string helpTopicID = null;
 			if (m_dataEntryForm.CurrentSlice != null)
 				helpTopicID = m_dataEntryForm.CurrentSlice.GetSliceHelpTopicID();
-			ShowHelp.ShowHelpTopic(m_mediator.HelpTopicProvider, helpTopicID);
+			ShowHelp.ShowHelpTopic(m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), helpTopicID);
 
 			return true;
 		}
@@ -399,7 +355,7 @@ namespace SIL.FieldWorks.XWorks
 			string helpTopicID = null;
 			if (m_dataEntryForm.CurrentSlice != null)
 				helpTopicID = m_dataEntryForm.CurrentSlice.GetSliceHelpTopicID();
-			display.Visible = display.Enabled = (m_mediator.HelpTopicProvider.GetHelpString(helpTopicID) != null);
+			display.Visible = display.Enabled = (m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider").GetHelpString(helpTopicID) != null);
 
 			return true;
 		}
@@ -647,7 +603,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <param name="parentObj">The object where the item would be inserted, if possible.</param>
 		/// <param name="index">index (0-based) where it will be inserted. -1 if atomic or returns false</param>
 		/// <returns>true if we can insert into the given object</returns>
-		protected bool CanInsertFieldIntoObj(FdoCache fdoCache, string fieldName, ICmObject parentObj, out int index)
+		protected bool CanInsertFieldIntoObj(LcmCache fdoCache, string fieldName, ICmObject parentObj, out int index)
 		{
 			index = -1; // atomic or not possible
 			if (fdoCache == null || parentObj == null || (!parentObj.IsValidObject) || String.IsNullOrEmpty(fieldName))
@@ -764,8 +720,6 @@ namespace SIL.FieldWorks.XWorks
 			return true;	//we handled this.
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "current is a reference")]
 		protected virtual bool DeleteObject(Command command)
 		{
 			Slice current = m_dataEntryForm.CurrentSlice;
@@ -781,8 +735,6 @@ namespace SIL.FieldWorks.XWorks
 		/// <param name="commandObject"></param>
 		/// <param name="display"></param>
 		/// <returns></returns>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "current is a reference")]
 		public virtual bool OnDisplayDataTreeDelete(object commandObject,
 			ref UIItemDisplayProperties display)
 		{
@@ -801,18 +753,20 @@ namespace SIL.FieldWorks.XWorks
 			//			if(current.GetObjectHvoForMenusToOperateOn() == m_dataEntryForm.Root.Hvo && !current.WrapsAtomic)
 			//			{
 			//				display.Enabled = false;
-			//				display.Text += StringTbl.GetString("(Programming error: would delete this record.)");
+			//				display.Text += Table.GetString("(Programming error: would delete this record.)");
 			//			}
 			//			else
 			if(!display.Enabled)
-				display.Text += StringTbl.GetString("(cannot delete this)");
+				display.Text += StringTable.Table.GetString("(cannot delete this)");
 
 			if (display.Text.Contains("{0}"))
 			{
 				// Insert the class name of the thing we will delete
 				var obj = current.GetObjectForMenusToOperateOn();
 				if (obj != null)
-					display.Text = string.Format(display.Text, m_mediator.StringTbl.GetString(obj.ClassName, "ClassNames"));
+				{
+					display.Text = string.Format(display.Text, StringTable.Table.GetString(obj.ClassName, "ClassNames"));
+			}
 			}
 
 			return true;//we handled this, no need to ask anyone else.
@@ -823,8 +777,6 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		/// <param name="cmd"></param>
 		/// <returns></returns>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "current is a reference")]
 		public virtual bool OnDataTreeDeleteReference(object cmd)
 		{
 			Command command = (Command)cmd;
@@ -841,8 +793,6 @@ namespace SIL.FieldWorks.XWorks
 		/// <param name="commandObject"></param>
 		/// <param name="display"></param>
 		/// <returns></returns>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "current is a reference")]
 		public virtual bool OnDisplayDataTreeDeleteReference(object commandObject,
 			ref UIItemDisplayProperties display)
 		{
@@ -856,12 +806,10 @@ namespace SIL.FieldWorks.XWorks
 			Command command = (Command)commandObject;
 			display.Enabled = current != null && current.CanDeleteReferenceNow(command);
 			if (!display.Enabled)
-				display.Text += StringTbl.GetString("(cannot delete this)");
+				display.Text += StringTable.Table.GetString("(cannot delete this)");
 			return true;//we handled this, no need to ask anyone else.
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "current is a reference")]
 		public bool OnDataTreeMerge(object cmd)
 		{
 			Slice current = m_dataEntryForm.CurrentSlice;
@@ -877,20 +825,16 @@ namespace SIL.FieldWorks.XWorks
 		/// <param name="commandObject"></param>
 		/// <param name="display"></param>
 		/// <returns></returns>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "current is a reference")]
 		public virtual bool OnDisplayDataTreeMerge(object commandObject, ref UIItemDisplayProperties display)
 		{
 			Slice current = m_dataEntryForm.CurrentSlice;
 			display.Enabled = current != null && current.GetCanMergeNow();
 			if(!display.Enabled)
-				display.Text += StringTbl.GetString("(cannot merge this)");
+				display.Text += StringTable.Table.GetString("(cannot merge this)");
 
 			return true;//we handled this, no need to ask anyone else.
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "current is a reference")]
 		public bool OnDataTreeSplit(object cmd)
 		{
 			Slice current = m_dataEntryForm.CurrentSlice;
@@ -906,8 +850,6 @@ namespace SIL.FieldWorks.XWorks
 		/// <param name="commandObject"></param>
 		/// <param name="display"></param>
 		/// <returns></returns>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "current is a reference")]
 		public virtual bool OnDisplayDataTreeSplit(object commandObject,
 			ref UIItemDisplayProperties display)
 		{
@@ -922,8 +864,6 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		/// <param name="cmd"></param>
 		/// <returns></returns>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "current is a reference")]
 		public bool OnDataTreeEdit(object cmd)
 		{
 			Slice current = m_dataEntryForm.CurrentSlice;
@@ -940,8 +880,6 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		/// <param name="cmd"></param>
 		/// <returns></returns>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "current is a reference")]
 		public bool OnDataTreeAddReference(object cmd)
 		{
 			Slice current = m_dataEntryForm.CurrentSlice;
@@ -957,8 +895,6 @@ namespace SIL.FieldWorks.XWorks
 		/// <param name="commandObject"></param>
 		/// <param name="display"></param>
 		/// <returns></returns>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "current is a reference")]
 		public virtual bool OnDisplayDataTreeEdit(object commandObject, ref UIItemDisplayProperties display)
 		{
 			Slice current = m_dataEntryForm.CurrentSlice;
@@ -979,6 +915,7 @@ namespace SIL.FieldWorks.XWorks
 			using (CmObjectUi fdoUi = CmObjectUi.MakeUi(m_dataEntryForm.CurrentSlice.Object))
 			{
 				fdoUi.Mediator = m_mediator;
+				fdoUi.PropTable = m_propertyTable;
 				fdoUi.LaunchGuiControl(command);
 			}
 			return true;
@@ -989,8 +926,6 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		/// <param name="cmd"></param>
 		/// <returns>true to indicate the message was handled</returns>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "slice and parent are references")]
 		public bool OnMoveUpObjectInSequence(object cmd)
 		{
 			Slice slice = m_dataEntryForm.CurrentSlice;
@@ -1025,8 +960,6 @@ namespace SIL.FieldWorks.XWorks
 		/// <param name="commandObject"></param>
 		/// <param name="display"></param>
 		/// <returns></returns>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "slice and cache are references")]
 		public virtual bool OnDisplayMoveUpObjectInSequence(object commandObject,
 			ref UIItemDisplayProperties display)
 		{
@@ -1080,8 +1013,6 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		/// <param name="cmd"></param>
 		/// <returns>true to indicate the message was handled</returns>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "slice and parent are references")]
 		public virtual bool OnMoveDownObjectInSequence(object cmd)
 		{
 			Slice slice = m_dataEntryForm.CurrentSlice;
@@ -1120,8 +1051,6 @@ namespace SIL.FieldWorks.XWorks
 		/// <param name="commandObject"></param>
 		/// <param name="display"></param>
 		/// <returns></returns>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "slice and cache are references")]
 		public virtual bool OnDisplayMoveDownObjectInSequence(object commandObject,
 			ref UIItemDisplayProperties display)
 		{
@@ -1133,7 +1062,7 @@ namespace SIL.FieldWorks.XWorks
 				display.Visible = false;
 				return true;
 			}
-			FdoCache cache = m_dataEntryForm.Cache;
+			LcmCache cache = m_dataEntryForm.Cache;
 			IFwMetaDataCache mdc = cache.DomainDataByFlid.MetaDataCache;
 			// FWR-2742 Handle a slice Object (like LexEntry) being unowned (and OwningFlid = 0)
 			var type = CellarPropertyType.ReferenceAtomic;
@@ -1223,11 +1152,11 @@ namespace SIL.FieldWorks.XWorks
 			if (Cache == null || m_dataEntryForm == null || m_dataEntryForm.Root == null)
 				return false;
 			Command command = (Command)commandObject;
-			string className = XmlUtils.GetManditoryAttributeValue(command.Parameters[0], "className");
+			string className = XmlUtils.GetMandatoryAttributeValue(command.Parameters[0], "className");
 			if (className != m_dataEntryForm.Root.ClassName)
 				return false;
 			string restrictToTool = XmlUtils.GetOptionalAttributeValue(command.Parameters[0], "restrictToTool");
-			if (restrictToTool != null && restrictToTool != m_mediator.PropertyTable.GetStringProperty("currentContentControl", String.Empty))
+			if (restrictToTool != null && restrictToTool != m_propertyTable.GetStringProperty("currentContentControl", String.Empty))
 				return false;
 			return m_dataEntryForm.Root is ILexEntry;
 		}
@@ -1235,11 +1164,11 @@ namespace SIL.FieldWorks.XWorks
 		private bool AddNewLexEntryRef(object argument, int flidTypes)
 		{
 			Command command = (Command)argument;
-			string className = XmlUtils.GetManditoryAttributeValue(command.Parameters[0], "className");
+			string className = XmlUtils.GetMandatoryAttributeValue(command.Parameters[0], "className");
 			if (className != m_dataEntryForm.Root.ClassName)
 				return false;
 			string restrictToTool = XmlUtils.GetOptionalAttributeValue(command.Parameters[0], "restrictToTool");
-			if (restrictToTool != null && restrictToTool != m_mediator.PropertyTable.GetStringProperty("currentContentControl", String.Empty))
+			if (restrictToTool != null && restrictToTool != m_propertyTable.GetStringProperty("currentContentControl", String.Empty))
 				return false;
 
 			var ent = m_dataEntryForm.Root as ILexEntry;
@@ -1279,8 +1208,6 @@ namespace SIL.FieldWorks.XWorks
 			return false;
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "current is a reference")]
 		public bool OnDisplayAddComponentToPrimary(object commandObject, ref UIItemDisplayProperties display)
 		{
 			Slice current = m_dataEntryForm.CurrentSlice;
@@ -1289,11 +1216,11 @@ namespace SIL.FieldWorks.XWorks
 			bool fEnable = false;
 			bool fChecked = false;
 			Command command = (Command)commandObject;
-			string className = XmlUtils.GetManditoryAttributeValue(command.Parameters[0], "className");
+			string className = XmlUtils.GetMandatoryAttributeValue(command.Parameters[0], "className");
 			if (className == current.Object.ClassName)
 			{
 				string tool = XmlUtils.GetOptionalAttributeValue(command.Parameters[0], "tool");
-				if (tool == null || tool == m_mediator.PropertyTable.GetStringProperty("currentContentControl", String.Empty))
+				if (tool == null || tool == m_propertyTable.GetStringProperty("currentContentControl", String.Empty))
 				{
 					int hvo = GetSelectedComponentHvo();
 					var ler = current.Object as ILexEntryRef;
@@ -1314,8 +1241,6 @@ namespace SIL.FieldWorks.XWorks
 			return true;
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "current is a reference")]
 		public bool OnAddComponentToPrimary(object argument)
 		{
 			Slice current = m_dataEntryForm.CurrentSlice;
@@ -1371,8 +1296,6 @@ namespace SIL.FieldWorks.XWorks
 		/// <param name="commandObject">The command to build the popup menu.</param>
 		/// <param name="display">The display properties for this slice.</param>
 		/// <returns>true if the VisibleComplexFormEntries part should be put on the popup menu.</returns>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "complexFormsSlice is a reference")]
 		public bool OnDisplayVisibleComplexForm(object commandObject, ref UIItemDisplayProperties display)
 		{
 			display.Visible = display.Enabled = false; // item shows on some wrong slice menus if not false
@@ -1383,7 +1306,7 @@ namespace SIL.FieldWorks.XWorks
 			bool fChecked = false;
 			// Is this the right slice to handle this command?
 			var command = (Command)commandObject;
-			string className = XmlUtils.GetManditoryAttributeValue(command.Parameters[0], "className");
+			string className = XmlUtils.GetMandatoryAttributeValue(command.Parameters[0], "className");
 			if (("LexEntry" != complexFormsSlice.Object.ClassName &&
 				 "LexSense" != complexFormsSlice.Object.ClassName ) || className != "LexEntryOrLexSense")
 				return false; // not the right message target
@@ -1405,8 +1328,6 @@ namespace SIL.FieldWorks.XWorks
 			return true;
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "current is a reference")]
 		public bool OnVisibleComplexForm(object argument)
 		{
 			Slice current = m_dataEntryForm.CurrentSlice;
@@ -1490,8 +1411,6 @@ namespace SIL.FieldWorks.XWorks
 		/// Gets a selected component's HVO; a component of a complex form.
 		/// </summary>
 		/// <returns>The HVO of the selected component or 0 if there is none.</returns>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "current is a reference")]
 		private int GetSelectedComponentHvo()
 		{
 			Slice current = m_dataEntryForm.CurrentSlice;
@@ -1523,7 +1442,7 @@ namespace SIL.FieldWorks.XWorks
 			return 0; // no selection found
 		}
 
-		protected FdoCache Cache
+		protected LcmCache Cache
 		{
 			get
 			{
@@ -1536,8 +1455,6 @@ namespace SIL.FieldWorks.XWorks
 		/// Invoked by a DataTree (which is in turn invoked by the slice)
 		/// when the context menu for a slice is needed.
 		/// </summary>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "slice is a reference")]
 		public ContextMenu ShowSliceContextMenu(object sender, SliceMenuRequestArgs e)
 		{
 			Slice slice = e.Slice;
@@ -1581,10 +1498,10 @@ namespace SIL.FieldWorks.XWorks
 			string menuId = null;
 			if (caller != null)
 				menuId = ShowContextMenu2Id(caller, fHotLinkOnly);
-			if (menuId == null || menuId.Length == 0)
+			if (string.IsNullOrEmpty(menuId))
 				menuId = ShowContextMenu2Id(configuration, fHotLinkOnly);
 
-			XWindow window = (XWindow)m_mediator.PropertyTable.GetValue("window");
+			XWindow window = m_propertyTable.GetValue<XWindow>("window");
 
 			//an empty menu attribute means no menu
 			if (menuId != null && menuId.Length== 0)

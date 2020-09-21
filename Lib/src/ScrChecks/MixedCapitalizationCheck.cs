@@ -4,8 +4,7 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
-using SILUBS.SharedScrUtils;
+using SIL.FieldWorks.Common.FwUtils;
 
 namespace SILUBS.ScriptureChecks
 {

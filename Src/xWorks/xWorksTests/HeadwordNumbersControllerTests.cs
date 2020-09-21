@@ -4,12 +4,11 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using NUnit.Framework;
-using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.FDO.DomainImpl;
-using SIL.FieldWorks.FDO.FDOTests;
+using SIL.LCModel;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.DomainImpl;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -263,8 +262,10 @@ namespace SIL.FieldWorks.XWorks
 			public string Description { get; set; }
 			public string HomographWritingSystem { get; set; }
 
+#pragma warning disable 67 // For completeness of the interface, not actually used in the tests
 			public event EventHandler RunStylesDialog = delegate(object sender, EventArgs args) {  };
-			public IEnumerable<IWritingSystem> AvailableWritingSystems { private get; set; }
+#pragma warning restore 67
+			public IEnumerable<CoreWritingSystemDefinition> AvailableWritingSystems { private get; set; }
 			public IEnumerable<string> CustomDigits { get; set; }
 			public event EventHandler CustomDigitsChanged;
 			public bool OkButtonEnabled { get; set; }

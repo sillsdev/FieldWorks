@@ -17,10 +17,9 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
-
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.Utils;
-using SIL.Utils.ComTypes;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
+using SIL.LCModel.Utils;
 using XCore;
 
 namespace SIL.FieldWorks.Common.RootSites

@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="15.0">
   <PropertyGroup>
     <ProjectType>Local</ProjectType>
     <ProductVersion>9.0.21022</ProductVersion>
@@ -21,16 +21,8 @@
     <OutputType>Library</OutputType>
     <RootNamespace>SIL.FieldWorks.FwCoreDlgs</RootNamespace>
     <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
-    <StartupObject>
-    </StartupObject>
-    <FileUpgradeFlags>
-    </FileUpgradeFlags>
-    <UpgradeBackupLocation>
-    </UpgradeBackupLocation>
-    <SccAuxPath>
-    </SccAuxPath>
     <OldToolsVersion>3.5</OldToolsVersion>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -48,7 +40,7 @@
     <BootstrapperEnabled>true</BootstrapperEnabled>
     <TargetFrameworkProfile />
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <OutputPath>..\..\Output\Debug\</OutputPath>
     <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
     <BaseAddress>285212672</BaseAddress>
@@ -69,9 +61,9 @@
     <DebugType>full</DebugType>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
-    <PlatformTarget>x86</PlatformTarget>
+    <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
     <OutputPath>..\..\Output\Release\</OutputPath>
     <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
     <BaseAddress>285212672</BaseAddress>
@@ -93,25 +85,81 @@
     <DebugType>full</DebugType>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
-    <PlatformTarget>x86</PlatformTarget>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x64' ">
+    <OutputPath>..\..\Output\Debug\</OutputPath>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <BaseAddress>285212672</BaseAddress>
+    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+    <ConfigurationOverrideFile>
+    </ConfigurationOverrideFile>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DocumentationFile>..\..\Output\Debug\FwCoreDlgs.xml</DocumentationFile>
+    <DebugSymbols>true</DebugSymbols>
+    <FileAlignment>4096</FileAlignment>
+    <NoStdLib>false</NoStdLib>
+    <NoWarn>168,169,219,414,649,1635,1702,1701</NoWarn>
+    <Optimize>false</Optimize>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <RemoveIntegerChecks>false</RemoveIntegerChecks>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <WarningLevel>4</WarningLevel>
+    <DebugType>full</DebugType>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x64' ">
+    <OutputPath>..\..\Output\Release\</OutputPath>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <BaseAddress>285212672</BaseAddress>
+    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+    <ConfigurationOverrideFile>
+    </ConfigurationOverrideFile>
+    <DefineConstants>TRACE</DefineConstants>
+    <DocumentationFile>
+    </DocumentationFile>
+    <DebugSymbols>true</DebugSymbols>
+    <FileAlignment>4096</FileAlignment>
+    <NoStdLib>false</NoStdLib>
+    <NoWarn>168,169,219,414,649,1635,1702,1701</NoWarn>
+    <Optimize>true</Optimize>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <RemoveIntegerChecks>false</RemoveIntegerChecks>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <WarningLevel>4</WarningLevel>
+    <DebugType>full</DebugType>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="BasicUtils, Version=4.1.1.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="SIL.Core.Desktop, Version=4.1.0.0, Culture=neutral, PublicKeyToken=cab3c8c5232dfcf2, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Debug\BasicUtils.dll</HintPath>
+      <HintPath>..\..\Output\Debug\SIL.Core.Desktop.dll</HintPath>
     </Reference>
-    <Reference Include="COMInterfaces">
-      <Name>COMInterfaces</Name>
+    <Reference Include="SIL.Windows.Forms.Keyboarding, Version=6.0.0.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Debug\COMInterfaces.dll</HintPath>
+      <HintPath>..\..\Output\Debug\SIL.Windows.Forms.Keyboarding.dll</HintPath>
     </Reference>
-    <Reference Include="Controls.Design, Version=4.1.0.9, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="SIL.Windows.Forms.WritingSystems, Version=6.0.0.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Debug\Controls.Design.dll</HintPath>
+      <HintPath>..\..\Output\Debug\SIL.Windows.Forms.WritingSystems.dll</HintPath>
     </Reference>
-    <Reference Include="CoreImpl, Version=6.1.0.17531, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="System.Data" />
+    <Reference Include="System.ValueTuple, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51">
+      <SpecificVersion>True</SpecificVersion>
+      <HintPath>..\..\packages\System.ValueTuple.4.5.0\lib\net461\System.ValueTuple.dll</HintPath>
+    </Reference>
+    <Reference Include="ViewsInterfaces">
+      <Name>ViewsInterfaces</Name>
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Debug\CoreImpl.dll</HintPath>
+      <HintPath>..\..\Output\Debug\ViewsInterfaces.dll</HintPath>
+    </Reference>
+    <Reference Include="SIL.LCModel.Core, Version=9.0.0.0, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Output\Debug\SIL.LCModel.Core.dll</HintPath>
     </Reference>
     <Reference Include="ECInterfaces, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485, processorArchitecture=x86" Condition="'$(OS)'!='Unix'">
       <SpecificVersion>False</SpecificVersion>
@@ -121,14 +169,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>/usr/lib/fieldworks/ECInterfaces.dll</HintPath>
     </Reference>
-    <Reference Include="Ethnologue, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="SIL.LCModel">
+      <Name>SIL.LCModel</Name>
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Debug\Ethnologue.dll</HintPath>
-    </Reference>
-    <Reference Include="FDO">
-      <Name>FDO</Name>
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Debug\FDO.dll</HintPath>
+      <HintPath>..\..\Output\Debug\SIL.LCModel.dll</HintPath>
     </Reference>
     <Reference Include="Filters">
       <Name>Filters</Name>
@@ -155,20 +199,14 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\FwUtils.dll</HintPath>
     </Reference>
-    <Reference Include="ICSharpCode.SharpZipLib, Version=0.85.5.452, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="icu.net">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Lib\debug\ICSharpCode.SharpZipLib.dll</HintPath>
+      <HintPath>..\..\Output\Debug\icu.net.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\DistFiles\Microsoft.Practices.ServiceLocation.dll</HintPath>
-    </Reference>
-    <Reference Include="Palaso, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Downloads\Palaso.dll</HintPath>
-    </Reference>
-    <Reference Include="PalasoUIWindowsForms, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
     </Reference>
     <Reference Include="Reporting, Version=1.0.2327.30181, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -183,9 +221,17 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\ScriptureUtils.dll</HintPath>
     </Reference>
-    <Reference Include="SharedScrUtils, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="SIL.Core, Version=2.6.0.0, Culture=neutral, PublicKeyToken=cab3c8c5232dfcf2, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Debug\SharedScrUtils.dll</HintPath>
+      <HintPath>..\..\Output\Debug\SIL.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="SIL.Lexicon, Version=3.0.0.0, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Output\Debug\SIL.Lexicon.dll</HintPath>
+    </Reference>
+    <Reference Include="SIL.WritingSystems, Version=2.6.0.0, Culture=neutral, PublicKeyToken=cab3c8c5232dfcf2, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Output\Debug\SIL.WritingSystems.dll</HintPath>
     </Reference>
     <Reference Include="SilEncConverters40, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485, processorArchitecture=x86" Condition="'$(OS)'!='Unix'">
       <SpecificVersion>False</SpecificVersion>
@@ -195,32 +241,20 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>/usr/lib/fieldworks/SilEncConverters40.dll</HintPath>
     </Reference>
-    <Reference Include="SilUtils, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="SIL.LCModel.Utils, Version=9.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Debug\SilUtils.dll</HintPath>
+      <HintPath>..\..\Output\Debug\SIL.LCModel.Utils.dll</HintPath>
     </Reference>
     <Reference Include="SimpleRootSite">
       <Name>SimpleRootSite</Name>
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\SimpleRootSite.dll</HintPath>
     </Reference>
-    <Reference Include="System">
-      <Name>System</Name>
-    </Reference>
+    <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Data">
-      <Name>System.Data</Name>
-    </Reference>
-    <Reference Include="System.Drawing">
-      <Name>System.Drawing</Name>
-    </Reference>
-    <Reference Include="System.Web" />
-    <Reference Include="System.Windows.Forms">
-      <Name>System.Windows.Forms</Name>
-    </Reference>
-    <Reference Include="System.Xml">
-      <Name>System.XML</Name>
-    </Reference>
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
     <Reference Include="Widgets">
       <Name>Widgets</Name>
       <SpecificVersion>False</SpecificVersion>
@@ -236,7 +270,12 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\XMLUtils.dll</HintPath>
     </Reference>
-    <Reference Include="Mono.Posix" Condition="'$(OS)'=='Unix'" />
+    <Reference Include="Mono.Posix">
+      <HintPath>..\..\packages\Mono.Posix-4.5.4.5.0\lib\net45\Mono.Posix.dll</HintPath>
+    </Reference>
+    <Reference Include="SIL.Windows.Forms">
+      <HintPath>..\..\Output\Debug\SIL.Windows.Forms.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\CommonAssemblyInfo.cs">
@@ -258,8 +297,21 @@
     <Compile Include="AddNewUserDlg.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="AddNewVernLangWarningDlg.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="AddNewVernLangWarningDlg.Designer.cs">
+      <DependentUpon>AddNewVernLangWarningDlg.cs</DependentUpon>
+    </Compile>
     <Compile Include="AdvancedEncProps.cs">
       <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="AdvancedScriptRegionVariantModel.cs" />
+    <Compile Include="AdvancedScriptRegionVariantView.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="AdvancedScriptRegionVariantView.Designer.cs">
+      <DependentUpon>AdvancedScriptRegionVariantView.cs</DependentUpon>
     </Compile>
     <Compile Include="ArchiveWithRamp.cs">
       <SubType>Form</SubType>
@@ -316,7 +368,6 @@
     <Compile Include="ChooserTreeView.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="ClientServerServicesHelper.cs" />
     <Compile Include="CnvtrPropertiesCtrl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -332,11 +383,35 @@
     <Compile Include="DeleteWritingSystemWarningDialog.Designer.cs">
       <DependentUpon>DeleteWritingSystemWarningDialog.cs</DependentUpon>
     </Compile>
-    <Compile Include="FwCheckAnthroListDlg.cs">
-      <SubType>Form</SubType>
+    <Compile Include="FwCharacterCategorizer.cs" />
+    <Compile Include="FwChooseAnthroListCtrl.cs">
+      <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="FwCheckAnthroListDlg.Designer.cs">
-      <DependentUpon>FwCheckAnthroListDlg.cs</DependentUpon>
+    <Compile Include="FwChooseAnthroListCtrl.Designer.cs">
+      <DependentUpon>FwChooseAnthroListCtrl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FwChooseAnthroListModel.cs" />
+    <Compile Include="FwNewLangProject.Designer.cs">
+      <DependentUpon>FwNewLangProject.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FwNewLangProjectModel.cs" />
+    <Compile Include="FwNewLangProjMoreWsControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="FwNewLangProjMoreWsControl.Designer.cs">
+      <DependentUpon>FwNewLangProjMoreWsControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FwNewLangProjWritingSystemsControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="FwNewLangProjWritingSystemsControl.Designer.cs">
+      <DependentUpon>FwNewLangProjWritingSystemsControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FwNewProjectProjectNameControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="FwNewProjectProjectNameControl.Designer.cs">
+      <DependentUpon>FwNewProjectProjectNameControl.cs</DependentUpon>
     </Compile>
     <Compile Include="FwStylesModifiedDlg.cs">
       <SubType>Form</SubType>
@@ -350,6 +425,13 @@
     <Compile Include="FwUpdateReportDlg.Designer.cs">
       <DependentUpon>FwUpdateReportDlg.cs</DependentUpon>
     </Compile>
+    <Compile Include="FwWritingSystemSetupDlg.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FwWritingSystemSetupDlg.Designer.cs">
+      <DependentUpon>FwWritingSystemSetupDlg.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FwWritingSystemSetupModel.cs" />
     <Compile Include="MergeWritingSystemDlg.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -367,17 +449,11 @@
     <Compile Include="MoveOrCopyFilesDlg.Designer.cs">
       <DependentUpon>MoveOrCopyFilesDlg.cs</DependentUpon>
     </Compile>
-    <Compile Include="ProjectLocationSharingDlg.cs">
+    <Compile Include="ProjectLocationDlg.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="ProjectLocationSharingDlg.Designer.cs">
-      <DependentUpon>ProjectLocationSharingDlg.cs</DependentUpon>
-    </Compile>
-    <Compile Include="PunctuationDlg.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="PunctuationDlg.Designer.cs">
-      <DependentUpon>PunctuationDlg.cs</DependentUpon>
+    <Compile Include="ProjectLocationDlg.Designer.cs">
+      <DependentUpon>ProjectLocationDlg.cs</DependentUpon>
     </Compile>
     <Compile Include="FwApplyStyleDlg.cs">
       <SubType>Form</SubType>
@@ -385,13 +461,10 @@
     <Compile Include="FwApplyStyleDlg.Designer.cs">
       <DependentUpon>FwApplyStyleDlg.cs</DependentUpon>
     </Compile>
-    <Compile Include="DuplicateProjectFoundDlg.cs">
-      <SubType>Form</SubType>
-    </Compile>
     <Compile Include="ErrorMessage.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="FindReplaceCollectorEnv.cs" />
+    <Compile Include="FindCollectorEnv.cs" />
     <Compile Include="FwChooserDlg.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -443,9 +516,6 @@
     <Compile Include="IUtility.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="LanguageSelectionDlg.cs">
-      <SubType>Form</SubType>
-    </Compile>
     <Compile Include="MorphBreakHelperMenu.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -484,8 +554,11 @@
     <Compile Include="WarningNotUsingDefaultLinkedFilesLocation.Designer.cs">
       <DependentUpon>WarningNotUsingDefaultLinkedFilesLocation.cs</DependentUpon>
     </Compile>
-    <Compile Include="WritingSystemPropertiesDialog.cs">
-      <SubType>Form</SubType>
+    <Compile Include="WizardStep.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="WizardStep.Designer.cs">
+      <DependentUpon>WizardStep.cs</DependentUpon>
     </Compile>
     <EmbeddedResource Include="AddCnvtrDlg.resx">
       <DependentUpon>AddCnvtrDlg.cs</DependentUpon>
@@ -505,9 +578,15 @@
       <DependentUpon>AddNewUserDlg.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="AddNewVernLangWarningDlg.resx">
+      <DependentUpon>AddNewVernLangWarningDlg.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="AdvancedEncProps.resx">
       <DependentUpon>AdvancedEncProps.cs</DependentUpon>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="AdvancedScriptRegionVariantView.resx">
+      <DependentUpon>AdvancedScriptRegionVariantView.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ArchiveWithRamp.resx">
       <DependentUpon>ArchiveWithRamp.cs</DependentUpon>
@@ -545,8 +624,17 @@
     <EmbeddedResource Include="DeleteWritingSystemWarningDialog.resx">
       <DependentUpon>DeleteWritingSystemWarningDialog.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="FwCheckAnthroListDlg.resx">
-      <DependentUpon>FwCheckAnthroListDlg.cs</DependentUpon>
+    <EmbeddedResource Include="FwChooseAnthroListCtrl.resx">
+      <DependentUpon>FwChooseAnthroListCtrl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FwNewLangProjMoreWsControl.resx">
+      <DependentUpon>FwNewLangProjMoreWsControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FwNewLangProjWritingSystemsControl.resx">
+      <DependentUpon>FwNewLangProjWritingSystemsControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FwNewProjectProjectNameControl.resx">
+      <DependentUpon>FwNewProjectProjectNameControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="FwStylesModifiedDlg.resx">
       <DependentUpon>FwStylesModifiedDlg.cs</DependentUpon>
@@ -567,19 +655,11 @@
       <SubType>Designer</SubType>
       <DependentUpon>MoveOrCopyFilesDlg.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="ProjectLocationSharingDlg.resx">
-      <DependentUpon>ProjectLocationSharingDlg.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="PunctuationDlg.resx">
-      <DependentUpon>PunctuationDlg.cs</DependentUpon>
-      <SubType>Designer</SubType>
+    <EmbeddedResource Include="ProjectLocationDlg.resx">
+      <DependentUpon>ProjectLocationDlg.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="FwApplyStyleDlg.resx">
       <DependentUpon>FwApplyStyleDlg.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="DuplicateProjectFoundDlg.resx">
-      <DependentUpon>DuplicateProjectFoundDlg.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="FwChooserDlg.resx">
@@ -628,10 +708,6 @@
       <DependentUpon>FwUserProperties.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="LanguageSelectionDlg.resx">
-      <DependentUpon>LanguageSelectionDlg.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
     <EmbeddedResource Include="PicturePropertiesDialog.resx">
       <DependentUpon>PicturePropertiesDialog.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -661,16 +737,18 @@
     <EmbeddedResource Include="WarningNotUsingDefaultLinkedFilesLocation.resx">
       <DependentUpon>WarningNotUsingDefaultLinkedFilesLocation.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="WritingSystemPropertiesDialog.resx">
-      <DependentUpon>WritingSystemPropertiesDialog.cs</DependentUpon>
+    <EmbeddedResource Include="FwWritingSystemSetupDlg.resx">
+      <DependentUpon>FwWritingSystemSetupDlg.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <Compile Include="AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
+    <EmbeddedResource Include="WizardStep.resx">
+      <DependentUpon>WizardStep.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <None Include="gendarme-FwCoreDlgs.ignore" />
     <None Include="Resources\FwCopyRight.png" />
   </ItemGroup>
   <ItemGroup>
@@ -686,6 +764,9 @@
     <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Resources\WizardConnectToStep.png" />
+    <Content Include="Resources\WizardStepComplete.png" />
+    <None Include="Resources\WizardNotComplete.png" />
     <None Include="Resources\Bullet.png" />
     <None Include="Resources\wait22trans.gif" />
     <Content Include="Resources\Warning.png" />

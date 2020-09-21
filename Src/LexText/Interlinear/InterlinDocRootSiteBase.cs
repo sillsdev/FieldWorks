@@ -1,23 +1,23 @@
-﻿// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
-using System.Windows.Forms;
-using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.Common.Controls;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.Utils;
-using XCore;
 using System.Linq;
+using System.Windows.Forms;
+using SIL.FieldWorks.Common.ViewsInterfaces;
+using SIL.FieldWorks.Common.Controls;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.Common.RootSites;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Infrastructure;
+using SIL.FieldWorks.FwCoreDlgControls;
+using XCore;
 
 namespace SIL.FieldWorks.IText
 {
@@ -63,18 +63,15 @@ namespace SIL.FieldWorks.IText
 
 		public override void MakeRoot()
 		{
-			if (m_fdoCache == null || DesignMode)
+			if (m_cache == null || DesignMode)
 				return;
 
-			MakeRootInternal();
-
 			base.MakeRoot();
+			MakeRootInternal();
 		}
 
 		protected virtual void MakeRootInternal()
 		{
-			m_rootb = VwRootBoxClass.Create();
-			m_rootb.SetSite(this);
 			// Setting this result too low can result in moving a cursor from an editable field
 			// to a non-editable field (e.g. with Control-Right and Control-Left cursor
 			// commands).  Normally we could set this to only a few (e.g. 4). but in
@@ -87,16 +84,16 @@ namespace SIL.FieldWorks.IText
 			EnsureVc();
 
 			// We want to get notified when anything changes.
-			m_sda = m_fdoCache.MainCacheAccessor;
+			m_sda = m_cache.MainCacheAccessor;
 			m_sda.AddNotification(this);
 
-			m_vc.ShowMorphBundles = m_mediator.PropertyTable.GetBoolProperty("ShowMorphBundles", true);
+			m_vc.ShowMorphBundles = m_propertyTable.GetBoolProperty("ShowMorphBundles", true);
 			m_vc.LineChoices = LineChoices;
 			m_vc.ShowDefaultSense = true;
 
-			m_rootb.DataAccess = m_fdoCache.MainCacheAccessor;
+			m_rootb.DataAccess = m_cache.MainCacheAccessor;
 			m_rootb.SetRootObject(m_hvoRoot, m_vc, InterlinVc.kfragStText, m_styleSheet);
-			m_objRepo = m_fdoCache.ServiceLocator.GetInstance<ICmObjectRepository>();
+			m_objRepo = m_cache.ServiceLocator.GetInstance<ICmObjectRepository>();
 		}
 
 		public bool OnDisplayExportInterlinear(object commandObject, ref UIItemDisplayProperties display)
@@ -109,7 +106,6 @@ namespace SIL.FieldWorks.IText
 			return true;
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule", Justification = "parent is a reference")]
 		public bool OnExportInterlinear(object argument)
 		{
 			// If the currently selected text is from Scripture, then we need to give the dialog
@@ -118,10 +114,8 @@ namespace SIL.FieldWorks.IText
 			while (parent != null && !(parent is InterlinMaster))
 				parent = parent.Parent;
 			var master = parent as InterlinMaster;
-			IBookImporter bookImporter = null;
 			if (master != null)
 			{
-				bookImporter = master.Clerk as IBookImporter;
 				var clerk = master.Clerk as InterlinearTextsRecordClerk;
 				if (clerk != null)
 				{
@@ -130,7 +124,7 @@ namespace SIL.FieldWorks.IText
 			}
 			bool fFocusBox = TryHideFocusBoxAndUninstall();
 			ICmObject objRoot = m_objRepo.GetObject(m_hvoRoot);
-			using (var dlg = new InterlinearExportDialog(m_mediator, objRoot, m_vc, bookImporter))
+			using (var dlg = new InterlinearExportDialog(m_mediator, m_propertyTable, objRoot, m_vc))
 			{
 				dlg.ShowDialog(this);
 			}
@@ -497,8 +491,6 @@ namespace SIL.FieldWorks.IText
 			}
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "ToolStripSeparator gets added to the menu and disposed there")]
 		private ContextMenuStrip MakeContextMenu(int ilineChoice)
 		{
 			var menu = new ContextMenuStrip();
@@ -553,8 +545,6 @@ namespace SIL.FieldWorks.IText
 			return menu;
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="ToolStripMenuItem added to menu.Items collection and disposed there")]
 		private void AddHideLineMenuItem(ContextMenuStrip menu,
 			InterlinLineChoices curLineChoices, int ilineChoice)
 		{
@@ -574,8 +564,6 @@ namespace SIL.FieldWorks.IText
 			return result;
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="menuItem added to addSubMenu.DropDownItems collection and disposed there")]
 		private void AddAdditionalWsMenuItem(ToolStripMenuItem addSubMenu,
 			InterlinLineChoices curLineChoices, int ilineChoice)
 		{
@@ -622,7 +610,7 @@ namespace SIL.FieldWorks.IText
 			if (spec.WritingSystem == WritingSystemServices.kwsFirstAnal)
 				return Cache.LangProject.DefaultAnalysisWritingSystem.Handle;
 			if (spec.WritingSystem == WritingSystemServices.kwsVernInParagraph)
-				return Cache.LangProject.DefaultVernacularWritingSystem.Handle;
+				return Cache.LangProject.DefaultVernacularWritingSystem.Handle; // REVIEW (Hasso) 2018.01: this is frequently the case, but not always
 			int ws = -50;
 			try
 			{
@@ -635,8 +623,6 @@ namespace SIL.FieldWorks.IText
 			return ws;
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="ToolStripMenuItem gets added to menu.Items collection and disposed there")]
 		private void AddMoveUpMenuItem(ContextMenuStrip menu, int ilineChoice)
 		{
 			var moveUpItem = new ToolStripMenuItem(ITextStrings.ksMoveUp) { Tag = ilineChoice };
@@ -644,8 +630,6 @@ namespace SIL.FieldWorks.IText
 			menu.Items.Add(moveUpItem);
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="ToolStripMenuItem gets added to menu.Items collection and disposed there")]
 		private void AddMoveDownMenuItem(ContextMenuStrip menu, int ilineChoice)
 		{
 			var moveDownItem = new ToolStripMenuItem(ITextStrings.ksMoveDown) { Tag = ilineChoice };
@@ -653,8 +637,6 @@ namespace SIL.FieldWorks.IText
 			menu.Items.Add(moveDownItem);
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="AddLineMenuItem gets added to addLineSubMenu.DropDownItems collection and disposed there")]
 		private void AddNewLineMenuItem(ToolStripMenuItem addLineSubMenu, InterlinLineChoices curLineChoices)
 		{
 			// Add menu options to add lines of flids that are in default list, but don't currently appear.
@@ -736,7 +718,7 @@ namespace SIL.FieldWorks.IText
 
 			var flid = menuItem.Flid;
 			var newLineChoices = m_vc.LineChoices.Clone() as InterlinLineChoices;
-			if (newLineChoices != null)
+			if (newLineChoices != null && ((IFwMetaDataCacheManaged)m_cache.MetaDataCacheAccessor).FieldExists(flid))
 			{
 				newLineChoices.Add(flid);
 				UpdateForNewLineChoices(newLineChoices);
@@ -782,7 +764,7 @@ namespace SIL.FieldWorks.IText
 			{
 				if (ForEditing)
 				{
-					lineChoices = EditableInterlinLineChoices.DefaultChoices(m_fdoCache.LangProject,
+					lineChoices = EditableInterlinLineChoices.DefaultChoices(m_cache.LangProject,
 						WritingSystemServices.kwsVernInParagraph, WritingSystemServices.kwsAnal);
 					lineChoices.Mode = mode;
 					if (mode == InterlinLineChoices.InterlinMode.Gloss ||
@@ -793,7 +775,7 @@ namespace SIL.FieldWorks.IText
 				}
 				else
 				{
-					lineChoices = InterlinLineChoices.DefaultChoices(m_fdoCache.LangProject,
+					lineChoices = InterlinLineChoices.DefaultChoices(m_cache.LangProject,
 						WritingSystemServices.kwsVernInParagraph, WritingSystemServices.kwsAnal, mode);
 				}
 			}
@@ -819,11 +801,11 @@ namespace SIL.FieldWorks.IText
 		internal bool TryRestoreLineChoices(out InterlinLineChoices lineChoices)
 		{
 			lineChoices = null;
-			var persist = m_mediator.PropertyTable.GetStringProperty(ConfigPropName, null, PropertyTable.SettingsGroup.LocalSettings);
+			var persist = m_propertyTable.GetStringProperty(ConfigPropName, null, PropertyTable.SettingsGroup.LocalSettings);
 			if (persist != null)
 			{
-				lineChoices = InterlinLineChoices.Restore(persist, m_fdoCache.LanguageWritingSystemFactoryAccessor,
-					m_fdoCache.LangProject, WritingSystemServices.kwsVernInParagraph, m_fdoCache.DefaultAnalWs);
+				lineChoices = InterlinLineChoices.Restore(persist, m_cache.LanguageWritingSystemFactoryAccessor,
+					m_cache.LangProject, WritingSystemServices.kwsVernInParagraph, m_cache.DefaultAnalWs, InterlinLineChoices.InterlinMode.Analyze, m_propertyTable, ConfigPropName);
 			}
 			return persist != null && lineChoices != null;
 		}
@@ -834,7 +816,7 @@ namespace SIL.FieldWorks.IText
 		/// <param name="argument"></param>
 		public bool OnConfigureInterlinear(object argument)
 		{
-			using (var dlg = new ConfigureInterlinDialog(m_fdoCache, m_mediator.HelpTopicProvider,
+			using (var dlg = new ConfigureInterlinDialog(m_cache, m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"),
 				m_vc.LineChoices.Clone() as InterlinLineChoices))
 			{
 				if (dlg.ShowDialog(this) == DialogResult.OK)
@@ -861,9 +843,10 @@ namespace SIL.FieldWorks.IText
 
 		internal void PersistAndDisplayChangedLineChoices()
 		{
-			m_mediator.PropertyTable.SetProperty(ConfigPropName,
-				m_vc.LineChoices.Persist(m_fdoCache.LanguageWritingSystemFactoryAccessor),
-				PropertyTable.SettingsGroup.LocalSettings);
+			m_propertyTable.SetProperty(ConfigPropName,
+				m_vc.LineChoices.Persist(m_cache.LanguageWritingSystemFactoryAccessor),
+				PropertyTable.SettingsGroup.LocalSettings,
+				true);
 			UpdateDisplayForNewLineChoices();
 		}
 
@@ -928,8 +911,6 @@ namespace SIL.FieldWorks.IText
 			m_rootb.PropChanged(occurrence.Segment.Hvo, SegmentTags.kflidAnalyses, occurrence.Index, 1, 1);
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "parentControl is a reference")]
 		internal InterlinMaster GetMaster()
 		{
 			for (Control parentControl = Parent; parentControl != null; parentControl = parentControl.Parent)
@@ -1016,7 +997,7 @@ namespace SIL.FieldWorks.IText
 			switch (tag)
 			{
 				case WfiAnalysisTags.kflidEvaluations:
-					IWfiAnalysis analysis = m_fdoCache.ServiceLocator.GetInstance<IWfiAnalysisRepository>().GetObject(hvo);
+					IWfiAnalysis analysis = m_cache.ServiceLocator.GetInstance<IWfiAnalysisRepository>().GetObject(hvo);
 					if (analysis.HasWordform && RootStText.UniqueWordforms().Contains(analysis.Wordform))
 					{
 						m_wordformsToUpdate.Add(analysis.Wordform);
@@ -1024,7 +1005,7 @@ namespace SIL.FieldWorks.IText
 					}
 					break;
 				case WfiWordformTags.kflidAnalyses:
-					IWfiWordform wordform = m_fdoCache.ServiceLocator.GetInstance<IWfiWordformRepository>().GetObject(hvo);
+					IWfiWordform wordform = m_cache.ServiceLocator.GetInstance<IWfiWordformRepository>().GetObject(hvo);
 					if (RootStText.UniqueWordforms().Contains(wordform))
 					{
 						m_wordformsToUpdate.Add(wordform);
@@ -1144,6 +1125,12 @@ namespace SIL.FieldWorks.IText
 			m_ws = ws;
 		}
 
+		protected override void Dispose(bool disposing)
+		{
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + " ******");
+			base.Dispose(disposing);
+		}
+
 		public int Flid
 		{
 			get { return m_flid; }
@@ -1175,6 +1162,12 @@ namespace SIL.FieldWorks.IText
 			m_flid = flid;
 		}
 
+		protected override void Dispose(bool disposing)
+		{
+			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + " ******");
+			base.Dispose(disposing);
+		}
+
 		public int Flid
 		{
 			get { return m_flid; }
@@ -1203,7 +1196,7 @@ namespace SIL.FieldWorks.IText
 	/// </summary>
 	public interface IInterlinearTabControl : IChangeRootObject
 	{
-		FdoCache Cache { get; set; }
+		LcmCache Cache { get; set; }
 	}
 
 	public interface IStyleSheet

@@ -8,11 +8,13 @@ using System.Linq;
 using System.Windows.Forms;
 using Aga.Controls.Tree;
 using Aga.Controls.Tree.NodeControls;
-using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Widgets;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using XCore;
 
 namespace SIL.FieldWorks.IText
@@ -50,8 +52,7 @@ namespace SIL.FieldWorks.IText
 
 		private System.ComponentModel.IContainer components;
 
-		private FdoCache m_cache;
-		private Mediator m_mediator;
+		private LcmCache m_cache;
 		private IHelpTopicProvider m_helpTopicProvider;
 		private ComplexConcMorphNode m_node;
 		private PossibilityComboController m_catPopupTreeManager;
@@ -63,30 +64,29 @@ namespace SIL.FieldWorks.IText
 			AccessibleName = GetType().Name;
 		}
 
-		public void SetDlgInfo(FdoCache cache, Mediator mediator, ComplexConcMorphNode node)
+		public void SetDlgInfo(LcmCache cache, Mediator mediator, PropertyTable propertyTable, ComplexConcMorphNode node)
 		{
 			m_cache = cache;
-			m_mediator = mediator;
 			m_node = node;
 
 			m_formTextBox.WritingSystemFactory = m_cache.LanguageWritingSystemFactoryAccessor;
-			m_formTextBox.AdjustForStyleSheet(FontHeightAdjuster.StyleSheetFromMediator(mediator));
+			m_formTextBox.AdjustForStyleSheet(FontHeightAdjuster.StyleSheetFromPropertyTable(propertyTable));
 
 			m_glossTextBox.WritingSystemFactory = m_cache.LanguageWritingSystemFactoryAccessor;
-			m_glossTextBox.AdjustForStyleSheet(FontHeightAdjuster.StyleSheetFromMediator(mediator));
+			m_glossTextBox.AdjustForStyleSheet(FontHeightAdjuster.StyleSheetFromPropertyTable(propertyTable));
 
 			m_entryTextBox.WritingSystemFactory = m_cache.LanguageWritingSystemFactoryAccessor;
-			m_entryTextBox.AdjustForStyleSheet(FontHeightAdjuster.StyleSheetFromMediator(mediator));
+			m_entryTextBox.AdjustForStyleSheet(FontHeightAdjuster.StyleSheetFromPropertyTable(propertyTable));
 
 			m_categoryComboBox.WritingSystemFactory = m_cache.LanguageWritingSystemFactoryAccessor;
 
-			foreach (IWritingSystem ws in m_cache.ServiceLocator.WritingSystems.CurrentVernacularWritingSystems)
+			foreach (CoreWritingSystemDefinition ws in m_cache.ServiceLocator.WritingSystems.CurrentVernacularWritingSystems)
 			{
 				m_formWsComboBox.Items.Add(ws);
 				m_entryWsComboBox.Items.Add(ws);
 			}
 
-			foreach (IWritingSystem ws in m_cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems)
+			foreach (CoreWritingSystemDefinition ws in m_cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems)
 				m_glossWsComboBox.Items.Add(ws);
 
 			m_inflModel = new InflFeatureTreeModel(m_cache.LangProject.MsFeatureSystemOA, m_node.InflFeatures, m_imageList.Images[0], m_imageList.Images[1]);
@@ -102,8 +102,9 @@ namespace SIL.FieldWorks.IText
 									m_cache.LanguageProject.PartsOfSpeechOA,
 									m_cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle,
 									false,
-									m_mediator,
-									(Form) m_mediator.PropertyTable.GetValue("window"));
+									mediator,
+									propertyTable,
+									propertyTable.GetValue<Form>("window"));
 
 			if (m_node.Category != null)
 			{
@@ -115,7 +116,7 @@ namespace SIL.FieldWorks.IText
 				m_catPopupTreeManager.LoadPopupTree(0);
 			}
 
-			m_helpTopicProvider = m_mediator.HelpTopicProvider;
+			m_helpTopicProvider = propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider");
 
 			m_helpProvider.HelpNamespace = m_helpTopicProvider.HelpFile;
 			m_helpProvider.SetHelpKeyword(this, m_helpTopicProvider.GetHelpString(s_helpTopic));
@@ -187,15 +188,14 @@ namespace SIL.FieldWorks.IText
 
 		private void UpdateTextBoxWs(ComboBox wsComboBox, FwTextBox textBox)
 		{
-			var ws = wsComboBox.SelectedItem as IWritingSystem;
+			var ws = wsComboBox.SelectedItem as CoreWritingSystemDefinition;
 			if (ws == null)
 			{
 				Debug.Assert(wsComboBox.SelectedIndex == -1);
 				return;
 			}
 			textBox.WritingSystemCode = ws.Handle;
-			ITsStrFactory tsf = TsStrFactoryClass.Create();
-			textBox.Tss = tsf.MakeString(textBox.Text.Trim(), ws.Handle);
+			textBox.Tss = TsStringUtils.MakeString(textBox.Text.Trim(), ws.Handle);
 		}
 
 		private void m_valueComboBox_CreatingEditor(object sender, EditEventArgs e)

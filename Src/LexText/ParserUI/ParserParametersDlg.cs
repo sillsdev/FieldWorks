@@ -1,10 +1,6 @@
-// Copyright (c) 2003-2013 SIL International
+// Copyright (c) 2003-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: ParserParametersDlg.cs
-// Responsibility: Andy Black
-// Last reviewed:
 //
 // <remarks>
 // Implementation of:
@@ -14,22 +10,19 @@
 
 using System;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Windows.Forms;
 using System.Xml;
 using System.Data;
 using System.Xml.Linq;
-using SIL.Utils;
 using SIL.FieldWorks.Common.FwUtils;
-using XCore;
 
 namespace SIL.FieldWorks.LexText.Controls
 {
 	/// <summary>
 	/// Summary description for ParserParametersDlg.
 	/// </summary>
-	public class ParserParametersDlg : Form, IFWDisposable
+	public class ParserParametersDlg : Form
 	{
 		private const string HelpTopic = "khtpParserParamters";
 
@@ -281,8 +274,6 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <summary>
 		/// Set up the dlg in preparation to showing it.
 		/// </summary>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="m_dsParserParameters gets disposed in Dispose()")]
 		public void SetDlgInfo(string title, string parserParameters)
 		{
 			CheckDisposed();
@@ -344,8 +335,6 @@ namespace SIL.FieldWorks.LexText.Controls
 			return new DataView(table) { AllowNew = false };
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "DataColumns get added to collection and disposed there")]
 		private DataTable CreateXAmpleDataTable()
 		{
 			var tblXAmple = new DataTable(XAmple);
@@ -359,8 +348,6 @@ namespace SIL.FieldWorks.LexText.Controls
 			return tblXAmple;
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "DataColumns get added to collection and disposed there")]
 		private DataTable CreateHCDataTable()
 		{
 			var tblHC = new DataTable(HC);

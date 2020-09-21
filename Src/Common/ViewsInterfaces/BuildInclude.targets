@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="14.0">
+	<UsingTask TaskName="IdlImp" AssemblyFile="$(LcmArtifactsDir)/SIL.LCModel.Build.Tasks.dll"/>
+
+	<ItemGroup>
+		<UsingNamespaces Include="SIL.LCModel.Core.KernelInterfaces" />
+		<UsingNamespaces Include="SIL.LCModel.Utils" />
+	</ItemGroup>
+	<ItemGroup>
+		<ViewsSources Include="$(OutDir)/../Common/ViewsTlb.idl"/>
+	</ItemGroup>
+	<ItemGroup>
+		<ViewsIdhFiles Include="../../views/Render.idh"/>
+		<ViewsIdhFiles Include="../../views/Views.idh"/>
+		<ViewsIdhFiles Include="../../CommonCOMDlgs/CmnFwDlgs.idh"/>
+	</ItemGroup>
+	<ItemGroup>
+		<ViewsRefs Include="$(OutDir)/../Common/FwKernelTlb.json" />
+	</ItemGroup>
+	<ItemGroup>
+		<ViewsInputs Include="@(ViewsIdhFiles)" />
+		<ViewsInputs Include="@(ViewsSources)" />
+	</ItemGroup>
+	<Target Name="ViewsCs" Inputs="@(ViewsInputs)" Outputs="Views.cs">
+		<IdlImp Output="Views.cs"
+				Namespace="SIL.FieldWorks.Common.ViewsInterfaces"
+				Sources="@(ViewsSources)"
+				UsingNamespaces="@(UsingNamespaces)"
+				IdhFiles="@(ViewsIdhFiles)"
+				ReferenceFiles="@(ViewsRefs)">
+		</IdlImp>
+	</Target>
+
+	<Target Name="AfterClean">
+		<Delete Files="@(OutputFiles)" ContinueOnError="true"/>
+		<Delete Files="Views.cs;$(OutDir)/../Common/ViewsTlb.iip;$(OutDir)/../Common/ViewsTlb.json" ContinueOnError="true"/>
+	</Target>
+	<Target Name="BeforeBuild" DependsOnTargets="ViewsCs">
+	</Target>
+	<Target Name="AfterBuild">
+	</Target>
+</Project>

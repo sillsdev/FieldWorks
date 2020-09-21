@@ -7,14 +7,17 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
 
-using SIL.FieldWorks.Common.Widgets;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Infrastructure;
-using XCore;
+using SIL.FieldWorks.Common.ViewsInterfaces;
+using SIL.FieldWorks.Common.Widgets;
+using SIL.LCModel;
+using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.FdoUi;
 using SIL.FieldWorks.LexText.Controls;
+using XCore;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls
 {
@@ -103,7 +106,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			if (ichLim > ichMin)
 			{
 				LexEntryUi.DisplayOrCreateEntry(m_cache, hvo, tag, ws, ichMin, ichLim, this,
-					m_mediator, m_mediator.HelpTopicProvider, "UserHelpFile");
+					m_mediator, m_propertyTable, m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), "UserHelpFile");
 				return true;
 			}
 			return false;
@@ -188,7 +191,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				ITsString tssForm = tsb.GetString();
 				using (var dlg = new InsertEntryDlg())
 				{
-					dlg.SetDlgInfo(m_cache, tssForm, m_mediator);
+					dlg.SetDlgInfo(m_cache, tssForm, m_mediator, m_propertyTable);
 					if (dlg.ShowDialog(this) == DialogResult.OK)
 					{
 						// is there anything special we want to do?
@@ -213,8 +216,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 					var sda = m_cache.DomainDataByFlid;
 					textHvo = sda.MakeNewObject(StTextTags.kClassId, m_obj.Hvo, m_flid, -2);
 					var hvoStTxtPara = sda.MakeNewObject(StTxtParaTags.kClassId, textHvo, StTextTags.kflidParagraphs, 0);
-					var tsf = m_cache.TsStrFactory;
-					sda.SetString(hvoStTxtPara, StTxtParaTags.kflidContents, tsf.EmptyString(m_ws == 0 ? m_cache.DefaultAnalWs : m_ws));
+					sda.SetString(hvoStTxtPara, StTxtParaTags.kflidContents, TsStringUtils.EmptyString(m_ws == 0 ? m_cache.DefaultAnalWs : m_ws));
 				});
 				view.StText = m_cache.ServiceLocator.GetInstance<IStTextRepository>().GetObject(textHvo);
 			}
@@ -273,10 +275,10 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		{
 			CheckDisposed();
 			Mediator = mediator;
-			Cache = (FdoCache)mediator.PropertyTable.GetValue("cache");
-			StyleSheet = FontHeightAdjuster.StyleSheetFromMediator(m_mediator);
+			Cache = m_propertyTable.GetValue<LcmCache>("cache");
+			StyleSheet = FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable);
 			m_text = text;
-			m_vc = new StVc("Normal", ws) {Cache = m_fdoCache, Editable = true};
+			m_vc = new StVc("Normal", ws) {Cache = m_cache, Editable = true};
 			DoSpellCheck = true;
 			if (m_rootb == null)
 			{
@@ -334,14 +336,13 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		public override void MakeRoot()
 		{
 			CheckDisposed();
-			base.MakeRoot();
 
-			if (m_fdoCache == null || DesignMode)
+			if (m_cache == null || DesignMode)
 				return;
 
-			m_rootb = VwRootBoxClass.Create();
-			m_rootb.SetSite(this);
-			m_rootb.DataAccess = m_fdoCache.DomainDataByFlid;
+			base.MakeRoot();
+
+			m_rootb.DataAccess = m_cache.DomainDataByFlid;
 			if (m_text != null)
 				m_rootb.SetRootObject(m_text.Hvo, m_vc, (int)StTextFrags.kfrText, m_styleSheet);
 

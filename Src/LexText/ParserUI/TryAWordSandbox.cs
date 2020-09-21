@@ -2,9 +2,10 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel;
+using SIL.FieldWorks.Common.ViewsInterfaces;
+using SIL.LCModel.DomainServices;
 using SIL.FieldWorks.IText;
 using XCore;
 
@@ -25,13 +26,14 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// Create a new one.
 		/// </summary>
 		/// <param name="cache"></param>
+		/// <param name="propertyTable"></param>
 		/// <param name="ss"></param>
 		/// <param name="choices"></param>
 		/// <param name="analysis"></param>
 		/// <param name="mediator"></param>
-		public TryAWordSandbox(FdoCache cache, Mediator mediator, IVwStylesheet ss, InterlinLineChoices choices,
+		public TryAWordSandbox(LcmCache cache, Mediator mediator, PropertyTable propertyTable, IVwStylesheet ss, InterlinLineChoices choices,
 			IAnalysis analysis)
-			: base(cache, mediator, ss, choices)
+			: base(cache, mediator, propertyTable, ss, choices)
 		{
 			SizeToContent = true;
 			LoadForWordBundleAnalysis(analysis.Hvo);

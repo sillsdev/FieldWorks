@@ -1,13 +1,6 @@
-// Copyright (c) 2003-2013 SIL International
+// Copyright (c) 2003-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: RecordEditView.cs
-// Responsibility:
-// Last reviewed:
-//
-// <remarks>
-// </remarks>
 
 using System;
 using System.ComponentModel;
@@ -15,17 +8,16 @@ using System.Diagnostics;
 using System.Drawing.Printing;
 using System.Windows.Forms;
 using System.Xml;
-
-using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Framework.DetailControls;
-using SIL.FieldWorks.FDO;
-using SIL.Utils;
+using SIL.LCModel;
 using XCore;
 using System.Collections.Generic;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
-using System.Diagnostics.CodeAnalysis;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.PlatformUtilities;
+using SIL.Utils;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -79,8 +71,6 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// Initializes a new instance of the <see cref="RecordEditView"/> class.
 		/// </summary>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "DataTree gets disposed in Dispose()")]
 		public RecordEditView()
 			: this(new DataTree())
 		{
@@ -103,18 +93,19 @@ namespace SIL.FieldWorks.XWorks
 		/// Initialize this as an IxCoreColleague
 		/// </summary>
 		/// <param name="mediator"></param>
+		/// <param name="propertyTable"></param>
 		/// <param name="configurationParameters"></param>
 		/// ------------------------------------------------------------------------------------
-		public override void Init(Mediator mediator, XmlNode configurationParameters)
+		public override void Init(Mediator mediator, PropertyTable propertyTable, XmlNode configurationParameters)
 		{
 			CheckDisposed();
 
-			InitBase(mediator, configurationParameters);
+			InitBase(mediator, propertyTable, configurationParameters);
 
 			m_showDescendantInRoot = XmlUtils.GetOptionalBooleanAttributeValue(configurationParameters, "showDescendantInRoot", false);
 
 			// retrieve persisted clerk index and set it.
-			int idx = m_mediator.PropertyTable.GetIntProperty(Clerk.PersistedIndexProperty, -1, PropertyTable.SettingsGroup.LocalSettings);
+			int idx = m_propertyTable.GetIntProperty(Clerk.PersistedIndexProperty, -1, PropertyTable.SettingsGroup.LocalSettings);
 			int lim = Clerk.ListSize;
 			if (idx >= 0 && idx < lim)
 			{
@@ -131,7 +122,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 
 			// If possible make it use the style sheet appropriate for its main window.
-			m_dataEntryForm.StyleSheet = FontHeightAdjuster.StyleSheetFromMediator(m_mediator);
+			m_dataEntryForm.StyleSheet = FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable);
 			m_fullyInitialized = true;
 		}
 
@@ -182,9 +173,9 @@ namespace SIL.FieldWorks.XWorks
 
 			// persist Clerk's CurrentIndex in a db specific way
 			string propName = Clerk.PersistedIndexProperty;
-			m_mediator.PropertyTable.SetProperty(propName, Clerk.CurrentIndex, PropertyTable.SettingsGroup.LocalSettings);
-			m_mediator.PropertyTable.SetPropertyPersistence(propName, true, PropertyTable.SettingsGroup.LocalSettings);
-			var window = (XWindow)m_mediator.PropertyTable.GetValue("window");
+			m_propertyTable.SetProperty(propName, Clerk.CurrentIndex, PropertyTable.SettingsGroup.LocalSettings, true);
+			m_propertyTable.SetPropertyPersistence(propName, true, PropertyTable.SettingsGroup.LocalSettings);
+			var window = m_propertyTable.GetValue<XWindow>("window");
 
 			try
 			{
@@ -275,10 +266,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			if (!rni.SkipShowRecord)
 			{
-				if (m_mediator.PropertyTable.GetBoolProperty("DoingAutomatedTest", false))
-					ShowRecordOnIdle(rni.SuppressSaveOnChangeRecord);
-				else
-					m_mediator.IdleQueue.Add(IdleQueuePriority.High, ShowRecordOnIdle, rni);
+				m_mediator.IdleQueue.Add(IdleQueuePriority.High, ShowRecordOnIdle, rni);
 			}
 		}
 
@@ -332,12 +320,9 @@ namespace SIL.FieldWorks.XWorks
 			}
 			catch (Exception error)
 			{
-				if (m_mediator.PropertyTable.GetBoolProperty("DoingAutomatedTest", false))
-					throw;
-
 				//don't really need to make the program stop just because we could not show this record.
-				IApp app = (IApp)m_mediator.PropertyTable.GetValue("App");
-				ErrorReporter.ReportException(error, app.SettingsKey, m_mediator.FeedbackInfoProvider.SupportEmailAddress,
+				IApp app = m_propertyTable.GetValue<IApp>("App");
+				ErrorReporter.ReportException(error, app.SettingsKey, m_propertyTable.GetValue<IFeedbackInfoProvider>("FeedbackInfoProvider").SupportEmailAddress,
 					null, false);
 			}
 			int msEnd = Environment.TickCount;
@@ -380,7 +365,7 @@ namespace SIL.FieldWorks.XWorks
 				Cache.DomainDataByFlid.AddNotification(this);
 			string titleId = XmlUtils.GetAttributeValue(m_configurationParameters, "altTitleId");
 			if (titleId != null)
-				m_titleStr = StringTbl.GetString(titleId, "AlternativeTitles");
+				m_titleStr = StringTable.Table.GetString(titleId, "AlternativeTitles");
 			m_printLayout = XmlUtils.GetAttributeValue(m_configurationParameters, "printLayout");
 		}
 
@@ -400,23 +385,22 @@ namespace SIL.FieldWorks.XWorks
 			else
 				persistContext=m_vectorName+".DataTree";
 
-			m_dataEntryForm.PersistenceProvder = new PersistenceProvider(persistContext, m_mediator.PropertyTable);
+			m_dataEntryForm.PersistenceProvder = new PersistenceProvider(m_mediator, m_propertyTable, persistContext);
 
 			Clerk.UpdateRecordTreeBarIfNeeded();
 			SetupSliceFilter();
 			m_dataEntryForm.Dock = DockStyle.Fill;
-			m_dataEntryForm.StringTbl = StringTbl;
-			m_dataEntryForm.SmallImages =(ImageCollection) m_mediator.PropertyTable.GetValue("smallImages");
+			m_dataEntryForm.SmallImages = m_propertyTable.GetValue<ImageCollection>("smallImages");
 			string sDatabase = Cache.ProjectId.Name;
 			m_dataEntryForm.Initialize(Cache, true, Inventory.GetInventory("layouts", sDatabase),
 				Inventory.GetInventory("parts", sDatabase));
-			m_dataEntryForm.Init(m_mediator, m_configurationParameters);
+			m_dataEntryForm.Init(m_mediator, m_propertyTable, m_configurationParameters);
 			if (m_dataEntryForm.AccessibilityObject != null)
 				m_dataEntryForm.AccessibilityObject.Name = "RecordEditView.DataTree";
 			//set up the context menu, overriding the automatic menu creator/handler
 
 			m_menuHandler = DTMenuHandler.Create(m_dataEntryForm, m_configurationParameters);
-			m_menuHandler.Init(m_mediator, m_configurationParameters);
+			m_menuHandler.Init(m_mediator, m_propertyTable, m_configurationParameters);
 
 //			m_dataEntryForm.SetContextMenuHandler(new SliceMenuRequestHandler((m_menuHandler.GetSliceContextMenu));
 			m_dataEntryForm.SetContextMenuHandler(m_menuHandler.ShowSliceContextMenu);
@@ -444,10 +428,12 @@ namespace SIL.FieldWorks.XWorks
 				string filterPath = XmlUtils.GetOptionalAttributeValue(m_configurationParameters, "filterPath");
 				if (filterPath!= null)
 				{
-#if __MonoCS__
-					// TODO-Linux: fix the data
-					filterPath = filterPath.Replace(@"\", "/");
-#endif
+					if (!Platform.IsWindows)
+					{
+						// TODO-Linux: fix the data
+						filterPath = filterPath.Replace(@"\", "/");
+					}
+
 					var document = new XmlDocument();
 					document.Load(FwDirectoryFinder.GetCodeFile(filterPath));
 					m_dataEntryForm.SliceFilter = new SliceFilter(document);
@@ -556,7 +542,6 @@ namespace SIL.FieldWorks.XWorks
 			this.m_dataEntryForm.Size = new System.Drawing.Size(752, 150);
 			this.m_dataEntryForm.SliceFilter = null;
 			this.m_dataEntryForm.SmallImages = null;
-			this.m_dataEntryForm.StringTbl = null;
 			this.m_dataEntryForm.StyleSheet = null;
 			this.m_dataEntryForm.TabIndex = 3;
 			//
@@ -597,7 +582,7 @@ namespace SIL.FieldWorks.XWorks
 				return false;
 			// Don't bother; this edit view does not specify a print layout, or there's nothing to print.
 
-			var area = m_mediator.PropertyTable.GetStringProperty("areaChoice", null);
+			var area = m_propertyTable.GetStringProperty("areaChoice", null);
 			string toolId;
 			switch (area)
 			{
@@ -673,7 +658,7 @@ namespace SIL.FieldWorks.XWorks
 				return null;
 			}
 			// TODO: Not right yet!
-			docView.Init(m_mediator, parentConfigNode.SelectSingleNode("parameters"));
+			docView.Init(m_mediator, m_propertyTable, parentConfigNode.SelectSingleNode("parameters"));
 			return docView;
 		}
 

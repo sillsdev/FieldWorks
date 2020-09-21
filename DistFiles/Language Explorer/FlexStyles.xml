@@ -6,7 +6,7 @@
 	*********************************************************************************************
 -->
 <Styles date="2017-02-28" DTDver="1610190E-D7A3-42D7-8B48-C0C49320435F" label="Flex Dictionary">
-	<markup version="64eb89f8-aa7a-4408-8187-fcd451b16f32">
+	<markup version="e5238df8-6fcb-4350-9c85-db9c9726381b">
 		<!--
 		The 'Normal' entry is here mainly as a placeholder, so the DTD will allow things to be based on it.
 		Logically Normal should probably be internal, but it's 'general' in existing projects, and the
@@ -236,6 +236,98 @@
 			<help category="Flex_Dictionary_Styles"/>
 			<font />
 		</tag>
+		<!-- These appear to be the most relevant styles copied from TeStyles.xml and more may still be required. -->
+		<tag id="Book_ID" guid="5CE84D6F-4E4C-45F8-8E77-555471F3EFBE" userlevel="0" context="book" type="paragraph">
+			<sfm>\id</sfm>
+			<font/>
+			<paragraph basedOn="Normal" next="Book_ID"/>
+		</tag>
+		<tag id="Paragraph" guid="679AB46A-8A27-4449-91B1-EDAD14669B01" userlevel="0" structure="body" use="proseSentenceInitial" context="text" type="paragraph">
+			<sfm>\p</sfm>
+			<usage wsId="en">Paragraph identifies a paragraph of prose.</usage>
+			<help category="Paragraph_Elements"/>
+			<font/>
+			<paragraph basedOn="Normal" next="Paragraph" firstLine="12 pt"/>
+		</tag>
+		<tag id="Chapter_Number" guid="DBF212FE-A9EF-4CC8-A41F-7CAD28A99BD3" userlevel="0" structure="body" use="chapter" context="text" type="character">
+			<sfm>\c</sfm>
+			<usage wsId="en">Chapter Number identifies the start of a chapter.</usage>
+			<help category="Chapters_and_Verses"/>
+			<font dropCap="2 lines" spellcheck="false"/>
+		</tag>
+		<tag id="Verse_Number" guid="674F0BDD-4240-49D7-9288-A6DCC130FF08" userlevel="0" structure="body" use="verse" context="text" type="character">
+			<sfm>\v</sfm>
+			<usage wsId="en">Verse Number identifies the start of a verse.</usage>
+			<help category="Chapters_and_Verses"/>
+			<font superscript="true" spellcheck="false"/>
+		</tag>
+		<tag id="Note_General_Paragraph" guid="507CB768-7F8A-471E-8776-8FAF196F27A6" userlevel="1" context="note" type="paragraph" use="prose">
+			<sfm>\f</sfm>
+			<usage wsId="en">Note General Paragraph identifies a note.</usage>
+			<help category="Notes_and_Cross-References"/>
+			<font size="8 pt"/>
+			<paragraph basedOn="Paragraph" next="Note_General_Paragraph" lineSpacing="10 pt" lineSpacingType="atleast"/>
+		</tag>
+		<tag id="DefaultFootnoteCharacters" guid="29E239EE-95F3-4C1E-97D7-E2A6794CD174" userlevel="0" context="psuedoStyle" type="character" use="prose">
+			<sfm paraStyleContext="Note_General_Paragraph">\ft</sfm>
+			<sfm paraStyleContext="Note_Cross-Reference_Paragraph">\xt</sfm>
+			<font/>
+		</tag>
+		<tag id="Note_Target_Reference" guid="4E5BF21D-F892-4382-A7A2-4BB9C5DA8FCF" userlevel="1" context="internalMappable" use="footnote" type="character">
+			<sfm paraStyleContext="Note_General_Paragraph">\fr</sfm>
+			<sfm paraStyleContext="Note_Cross-Reference_Paragraph">\xo</sfm>
+			<usage wsId="en">Note Target Reference identifies the verse (or range of verses) that is referenced in a note.</usage>
+			<help category="Notes_and_Cross-References"/>
+			<font bold="true"/>
+		</tag>
+		<tag id="Alternate_Reading" guid="6FBC04A2-3664-4106-ABF3-DFE699B97BE5" userlevel="2" context="note" type="character">
+			<sfm paraStyleContext="Note_General_Paragraph">\fq</sfm>
+			<sfm paraStyleContext="Note_Cross-Reference_Paragraph">\xq</sfm>
+			<usage wsId="en">Alternate Reading identifies an alternate translation for a passage in a note.</usage>
+			<help category="Notes_and_Cross-References"/>
+			<font bold="true"/>
+		</tag>
+		<tag id="Note_Marker" guid="B169287B-53F7-4FAA-A2C3-E382F72B845A" userlevel="1" context="internal" type="character">
+			<sfm>\fm</sfm>
+			<usage wsId="en">Note Marker identifies the location of a note (for example, a footnote).</usage>
+			<help category="Notes_and_Cross-References"/>
+			<font bold="true" superscript="true" spellcheck="false"/>
+		</tag>
+		<tag id="Chapter_Head" guid="BC5CAA5E-6324-4935-8573-8378FC6CF6C9" userlevel="0" structure="heading" context="text" type="paragraph" use="title">
+			<sfm>\cl</sfm>
+			<usage wsId="en">Chapter Head identifies a heading that contains the chapter number and the word for Chapter or Psalm.</usage>
+			<help category="Chapters_and_Verses"/>
+			<font italic="false"/>
+			<paragraph basedOn="Section_Head" next="Paragraph" alignment="center"/>
+		</tag>
+		<tag id="Section_Head" guid="A5A1A249-B888-434D-A839-A2421EC50DBF" userlevel="0" structure="heading" context="text" type="paragraph">
+			<sfm>\s</sfm>
+			<usage wsId="en">Section Head identifies the start of a normal section.</usage>
+			<help category="Titles_Headings_and_Labels"/>
+			<font bold="true" size="9 pt"/>
+			<paragraph basedOn="Normal" next="Paragraph" alignment="center" spaceBefore="8 pt" spaceAfter="4 pt"
+					   keepWithNext="true" keepTogether="true"/>
+		</tag>
+		<tag id="Title_Main" guid="7473C95B-26ED-4FDA-8F31-C8AA0C25F2AA" userlevel="0" context="title" type="paragraph">
+			<sfm>\mt</sfm>
+			<usage wsId="en">Title Main identifies the main title of a book.</usage>
+			<help category="Titles_Headings_and_Labels"/>
+			<font bold="true" italic="false" size="20 pt"/>
+			<paragraph basedOn="Section_Head" next="Title_Main" alignment="center" spaceBefore="36 pt" spaceAfter="12 pt" lineSpacing="24 pt" lineSpacingType="exact"/>
+		</tag>
+		<tag id="Title_Secondary" guid="6FAB1EB3-500C-4B76-BE30-A27B0B12883A" userlevel="3" context="title" type="character">
+			<sfm>\mt2</sfm>
+			<usage wsId="en">Title Secondary identifies a part of the title that is of second-level importance.</usage>
+			<help category="Titles_Headings_and_Labels"/>
+			<font size="14 pt"/>
+		</tag>
+		<tag id="Parallel_Passage_Reference" guid="B93DE5B9-556C-4651-8B9D-D3369FB8EBC8" userlevel="1" structure="heading" context="text" type="paragraph">
+			<sfm>\r</sfm>
+			<usage wsId="en">Parallel Passage Reference identifies canonical (book-chapter-verse) references to parallel passages.</usage>
+			<help category="Titles_Headings_and_Labels"/>
+			<font bold="false" italic="true"/>
+			<paragraph basedOn="Section_Head" next="Paragraph" spaceBefore="-4 pt" spaceAfter="4 pt"/>
+		</tag>
 	</markup>
 	<replacements>
 		<change old="External_Link" new="Hyperlink"/>
@@ -244,8 +336,164 @@
 	</replacements>
 	<!-- this element is not currently used in Flex, but ImportMappingSets is not allowed to be empty, so has a dummy-->
 	<ImportMappingSets>
-		<ImportMapping name="Flex Default">
-			<mapping id="dummyXXYYZZNo" type="excluded" />
+		<ImportMapping name="TE Default">
+			<mapping id="_DateStampHasFourDigitYear" type="excluded" />
+			<mapping id="_sh" type="excluded" />
+			<mapping id="vref" type="excluded" />
+			<mapping id="add" type="style" styleName="Supplied" />
+			<mapping id="b" type="style" styleName="Stanza_Break" />
+			<mapping id="bk" type="style" styleName="Book_Title_In_Text" />
+			<mapping id="c" type="style" styleName="Chapter_Number" />
+			<mapping id="ca" type="style" styleName="Chapter_Number_Alternate" />
+			<mapping id="cap" type="property" propertyName="FigureCaption" />
+			<mapping id="cat" type="property" propertyName="FigureFilename" />
+			<mapping id="cl" type="property" propertyName="ChapterLabel" />
+			<mapping id="cls" type="style" styleName="Closing" />
+			<mapping id="cs" type="style" styleName="Section_Head" />
+			<mapping id="d" type="style" styleName="Hebrew_Title" />
+			<mapping id="di" type="style" styleName="Hebrew_Title" />
+			<mapping id="div" type="style" styleName="Section_Head_Major" />
+			<mapping id="dvrf" type="style" styleName="Canonical_Reference" />
+			<mapping id="e" type="excluded" />
+			<mapping id="em" type="style" styleName="Emphasis" />
+			<mapping id="f" type="style" styleName="Note_General_Paragraph" />
+			<mapping id="fig" type="property" propertyName="Figure" />
+			<mapping id="figcap" type="property" propertyName="FigureCaption" />
+			<mapping id="figcat" type="property" propertyName="FigureFilename" />
+			<mapping id="figcopy" type="property" propertyName="FigureCopyright" />
+			<mapping id="figdesc" type="property" propertyName="FigureDescription" />
+			<mapping id="figlaypos" type="property" propertyName="FigureLayoutPosition" />
+			<mapping id="figrefrng" type="property" propertyName="FigureRefRange" />
+			<mapping id="figscale" type="property" propertyName="FigureScale" />
+			<mapping id="fk" type="style" styleName="Referenced_Text" />
+			<mapping id="fq" type="style" styleName="Alternate_Reading" />
+			<mapping id="fqa" type="style" styleName="Alternate_Reading" />
+			<mapping id="fr" type="style" styleName="Note_Target_Reference"/>
+			<mapping id="ft" type="property" propertyName="DefaultFootnoteCharacters" />
+			<mapping id="fv" type="style" styleName="Verse_Number_In_Note" />
+			<mapping id="gmb" type="property" propertyName="FigureFilename" /> <!--From Indonesia branch standard-->
+			<mapping id="gmbj" type="property" propertyName="FigureCaption" /> <!--From Indonesia branch standard-->
+			<mapping id="h" type="property" propertyName="TitleShort" />
+			<mapping id="hr" type="style" styleName="Variant_Section_Tail" />
+			<mapping id="ib" type="style" styleName="Stanza_Break" />
+			<mapping id="id" type="style" styleName="Book_ID" />
+			<mapping id="ide" type="excluded" />
+			<mapping id="ie" type="excluded" />
+			<mapping id="iex" type="style" styleName="Intro_Paragraph" />
+			<mapping id="imi" type="style" styleName="Intro_Citation_Paragraph" />
+			<mapping id="imq" type="style" styleName="Intro_Citation_Paragraph" />
+			<mapping id="imt" type="style" styleName="Title_Main" />
+			<mapping id="imt1" type="style" styleName="Title_Main" />
+			<mapping id="imt2" type="style" styleName="Title_Secondary" />
+			<mapping id="imt3" type="style" styleName="Title_Tertiary" />
+			<mapping id="imte" type="style" styleName="Intro_Section_Head" />
+			<mapping id="io" type="style" styleName="Intro_List_Item1" />
+			<mapping id="io1" type="style" styleName="Intro_List_Item1" />
+			<mapping id="io2" type="style" styleName="Intro_List_Item2" />
+			<mapping id="io3" type="style" styleName="Intro_List_Item3" />
+			<mapping id="ior" type="style" styleName="Canonical_Reference" />
+			<mapping id="iot" type="style" styleName="Intro_Section_Head" />
+			<mapping id="ip" type="style" styleName="Intro_Paragraph" />
+			<mapping id="ipi" type="style" styleName="Intro_Paragraph" />
+			<mapping id="ipq" type="style" styleName="Intro_Citation_Line1" />
+			<mapping id="ipq1" type="style" styleName="Intro_Citation_Line1" />
+			<mapping id="ipq2" type="style" styleName="Intro_Citation_Line2" />
+			<mapping id="ipr" type="style" styleName="Intro_Cross-Reference" />
+			<mapping id="iq" type="style" styleName="Intro_Citation_Line1" />
+			<mapping id="iq1" type="style" styleName="Intro_Citation_Line1" />
+			<mapping id="iq2" type="style" styleName="Intro_Citation_Line2" />
+			<mapping id="is" type="style" styleName="Intro_Section_Head" />
+			<mapping id="is1" type="style" styleName="Intro_Section_Head" />
+			<mapping id="k" type="style" styleName="Key_Word" />
+			<mapping id="li" type="style" styleName="List_Item1" />
+			<mapping id="li1" type="style" styleName="List_Item1" />
+			<mapping id="li2" type="style" styleName="List_Item2" />
+			<mapping id="li3" type="style" styleName="List_Item3" />
+			<mapping id="lit" type="style" styleName="Congregational_Response" />
+			<mapping id="m" type="style" styleName="Paragraph_Continuation" />
+			<mapping id="mi" type="style" styleName="Embedded_Text_Paragraph_Continuation" />
+			<mapping id="mr" type="style" styleName="Section_Range_Paragraph" />
+			<mapping id="ms" type="style" styleName="Section_Head_Major" />
+			<mapping id="ms1" type="style" styleName="Section_Head_Major" />
+			<mapping id="mt" type="style" styleName="Title_Main" />
+			<mapping id="mt1" type="style" styleName="Title_Main" />
+			<mapping id="mt2" type="style" styleName="Title_Secondary" />
+			<mapping id="mt3" type="style" styleName="Title_Tertiary" />
+			<mapping id="mte" type="style" styleName="Section_Head" />
+			<mapping id="nb" type="property" propertyName="DefaultParagraphCharacters" />
+			<mapping id="nc" type="style" styleName="Variant_Section_Head" />
+			<mapping id="nd" type="style" styleName="Name_Of_God" />
+			<mapping id="no" type="property" propertyName="DefaultParagraphCharacters" />
+			<mapping id="ord" type="style" styleName="Ordinal_Number_Ending" />
+			<mapping id="p" type="style" styleName="Paragraph" />
+			<mapping id="pc" type="style" styleName="Inscription_Paragraph" />
+			<mapping id="ph" type="style" styleName="List_Item1" />
+			<mapping id="ph1" type="style" styleName="List_Item1" />
+			<mapping id="ph2" type="style" styleName="List_Item2" />
+			<mapping id="ph3" type="style" styleName="List_Item3" />
+			<mapping id="pi" type="style" styleName="Embedded_Text_Paragraph" />
+			<mapping id="pi1" type="style" styleName="List_Item1_Additional" />
+			<mapping id="pi2" type="style" styleName="List_Item2_Additional" />
+			<mapping id="pm" type="style" styleName="Embedded_Text_Paragraph" />
+			<mapping id="pmc" type="style" styleName="Embedded_Text_Closing" />
+			<mapping id="pmo" type="style" styleName="Embedded_Text_Opening" />
+			<mapping id="pmr" type="style" styleName="Embedded_Text_Refrain" />
+			<mapping id="pr" type="style" styleName="Cross-Reference" />
+			<mapping id="q" type="style" styleName="Line1" />
+			<mapping id="q1" type="style" styleName="Line1" />
+			<mapping id="q2" type="style" styleName="Line2" />
+			<mapping id="q3" type="style" styleName="Line3" />
+			<mapping id="qa" type="style" styleName="Section_Head_Series" />
+			<mapping id="qc" type="style" styleName="Doxology" />
+			<mapping id="qm" type="style" styleName="Embedded_Text_Line1" />
+			<mapping id="qm1" type="style" styleName="Embedded_Text_Line1" />
+			<mapping id="qm2" type="style" styleName="Embedded_Text_Line2" />
+			<mapping id="qm3" type="style" styleName="Embedded_Text_Line3" />
+			<mapping id="qr" type="style" styleName="Refrain" />
+			<mapping id="qs" type="style" styleName="Interlude" />
+			<mapping id="qt" type="style" styleName="Quoted_Text" />
+			<mapping id="r" type="style" styleName="Parallel_Passage_Reference" />
+			<mapping id="rcrd" type="excluded" />
+			<mapping id="rem" type="style" styleName="Remark" />
+			<mapping id="rr" type="style" styleName="Cross-Reference" />
+			<mapping id="s" type="style" styleName="Section_Head" />
+			<mapping id="s1" type="style" styleName="Section_Head" />
+			<mapping id="s2" type="style" styleName="Section_Head_Minor" />
+			<mapping id="sc" type="style" styleName="Inscription" />
+			<mapping id="sig" type="style" styleName="Hand" />
+			<mapping id="sk" type="style" styleName="Speech_Speaker" />
+			<mapping id="sp" type="style" styleName="Speech_Speaker" />
+			<mapping id="st" type="style" styleName="Title_Secondary" />
+			<mapping id="tc1" type="style" styleName="Table_Cell" />
+			<mapping id="tc2" type="style" styleName="Table_Cell" />
+			<mapping id="tc3" type="style" styleName="Table_Cell" />
+			<mapping id="tc4" type="style" styleName="Table_Cell" />
+			<mapping id="tcr1" type="style" styleName="Table_Cell_Last" />
+			<mapping id="tcr2" type="style" styleName="Table_Cell_Last" />
+			<mapping id="tcr3" type="style" styleName="Table_Cell_Last" />
+			<mapping id="tcr4" type="style" styleName="Table_Cell_Last" />
+			<mapping id="th1" type="style" styleName="Table_Cell_Head" />
+			<mapping id="th2" type="style" styleName="Table_Cell_Head" />
+			<mapping id="th3" type="style" styleName="Table_Cell_Head" />
+			<mapping id="th4" type="style" styleName="Table_Cell_Head" />
+			<mapping id="thr1" type="style" styleName="Table_Cell_Head_Last" />
+			<mapping id="thr2" type="style" styleName="Table_Cell_Head_Last" />
+			<mapping id="thr3" type="style" styleName="Table_Cell_Head_Last" />
+			<mapping id="thr4" type="style" styleName="Table_Cell_Head_Last" />
+			<mapping id="tir" type="style" styleName="Canonical_Reference" />
+			<mapping id="tl" type="style" styleName="Foreign" />
+			<mapping id="tr" type="style" styleName="Table_Row" />
+			<mapping id="v" type="style" styleName="Verse_Number" />
+			<mapping id="V" type="style" styleName="Verse_Number_In_Note" />
+			<mapping id="va" type="style" styleName="Verse_Number_Alternate" />
+			<mapping id="vt" type="property" propertyName="DefaultParagraphCharacters" />
+			<mapping id="w" type="style" styleName="See_In_Glossary" />
+			<mapping id="wj" type="style" styleName="Words_Of_Christ" />
+			<mapping id="x" type="style" styleName="Note_Cross-Reference_Paragraph" />
+			<mapping id="xk" type="style" styleName="Referenced_Text" />
+			<mapping id="xo" type="style" styleName="Note_Target_Reference"/>
+			<mapping id="xq" type="style" styleName="Alternate_Reading" />
+			<mapping id="xt" type="property" propertyName="DefaultFootnoteCharacters" />
 		</ImportMapping>
 	</ImportMappingSets>
 </Styles>

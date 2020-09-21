@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015 SIL International
+// Copyright (c) 2015 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -8,12 +8,13 @@ using System.Drawing;
 using System.Windows.Forms;
 using System.Xml;
 using System.Linq;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.LexText.Controls;
 using SIL.FieldWorks.XWorks;
 using SIL.Utils;
@@ -91,21 +92,21 @@ namespace SIL.FieldWorks.IText
 			}
 		}
 
-		public override void Init(Mediator mediator, XmlNode configurationParameters)
+		public override void Init(Mediator mediator, PropertyTable propertyTable, XmlNode configurationParameters)
 		{
 			CheckDisposed();
-			base.Init(mediator, configurationParameters);
+			base.Init(mediator, propertyTable, configurationParameters);
 
-			ComplexConcGroupNode pattern = (ComplexConcGroupNode) m_mediator.PropertyTable.GetValue("ComplexConcPattern");
+			var pattern = m_propertyTable.GetValue<ComplexConcGroupNode>("ComplexConcPattern");
 			if (pattern == null)
 			{
 				pattern = new ComplexConcGroupNode();
-				m_mediator.PropertyTable.SetProperty("ComplexConcPattern", pattern);
-				m_mediator.PropertyTable.SetPropertyPersistence("ComplexConcPattern", false);
+				m_propertyTable.SetProperty("ComplexConcPattern", pattern, true);
+				m_propertyTable.SetPropertyPersistence("ComplexConcPattern", false);
 			}
 			m_patternModel = new ComplexConcPatternModel(m_cache, pattern);
 
-			m_view.Init(mediator, m_patternModel.Root.Hvo, this, new ComplexConcPatternVc(m_cache, mediator), ComplexConcPatternVc.kfragPattern,
+			m_view.Init(mediator, m_propertyTable, m_patternModel.Root.Hvo, this, new ComplexConcPatternVc(m_cache, propertyTable), ComplexConcPatternVc.kfragPattern,
 				m_patternModel.DataAccess);
 
 			m_view.SelectionChanged += SelectionChanged;
@@ -235,7 +236,16 @@ namespace SIL.FieldWorks.IText
 
 				ParseUnparsedParagraphs();
 				foreach (IStText text in ConcDecorator.InterestingTexts)
+				{
 					matches.AddRange(m_patternModel.Search(text));
+					if (m_patternModel.CouldNotParseAllParagraphs)
+					{
+						MessageBox.Show(string.Format(ITextStrings.ComplexConcControl_NotAllParasParsed, text.ChooserNameTS.Text),
+							ITextStrings.ComplexConcControl_ResultsMayBeIncomplete, MessageBoxButtons.OK,
+							MessageBoxIcon.Warning);
+					}
+				}
+
 			}
 
 			return matches;
@@ -460,7 +470,7 @@ namespace SIL.FieldWorks.IText
 			if (nodes.Count > 0)
 			{
 				// we only bother to display the context menu if an item is selected
-				XWindow window = (XWindow) m_mediator.PropertyTable.GetValue("window");
+				var window = m_propertyTable.GetValue<XWindow>("window");
 
 				window.ShowContextMenu("mnuComplexConcordance",
 					new Point(Cursor.Position.X, Cursor.Position.Y),
@@ -491,8 +501,8 @@ namespace SIL.FieldWorks.IText
 					using (ComplexConcMorphDlg dlg = new ComplexConcMorphDlg())
 					{
 						ComplexConcMorphNode morphNode = new ComplexConcMorphNode();
-						dlg.SetDlgInfo(m_cache, m_mediator, morphNode);
-						if (dlg.ShowDialog((XWindow) m_mediator.PropertyTable.GetValue("window")) == DialogResult.OK)
+						dlg.SetDlgInfo(m_cache, m_mediator, m_propertyTable, morphNode);
+						if (dlg.ShowDialog(m_propertyTable.GetValue<XWindow>("window")) == DialogResult.OK)
 							node = morphNode;
 					}
 					break;
@@ -501,8 +511,8 @@ namespace SIL.FieldWorks.IText
 					using (ComplexConcWordDlg dlg = new ComplexConcWordDlg())
 					{
 						ComplexConcWordNode wordNode = new ComplexConcWordNode();
-						dlg.SetDlgInfo(m_cache, m_mediator, wordNode);
-						if (dlg.ShowDialog((XWindow) m_mediator.PropertyTable.GetValue("window")) == DialogResult.OK)
+						dlg.SetDlgInfo(m_cache, m_mediator, m_propertyTable, wordNode);
+						if (dlg.ShowDialog(m_propertyTable.GetValue<XWindow>("window")) == DialogResult.OK)
 							node = wordNode;
 					}
 					break;
@@ -511,8 +521,8 @@ namespace SIL.FieldWorks.IText
 					using (ComplexConcTagDlg dlg = new ComplexConcTagDlg())
 					{
 						ComplexConcTagNode tagNode = new ComplexConcTagNode();
-						dlg.SetDlgInfo(m_cache, m_mediator, tagNode);
-						if (dlg.ShowDialog((XWindow) m_mediator.PropertyTable.GetValue("window")) == DialogResult.OK)
+						dlg.SetDlgInfo(m_cache, m_mediator, m_propertyTable, tagNode);
+						if (dlg.ShowDialog(m_propertyTable.GetValue<XWindow>("window")) == DialogResult.OK)
 							node = tagNode;
 					}
 					break;
@@ -620,8 +630,8 @@ namespace SIL.FieldWorks.IText
 			var cmd = (Command) args;
 			if (cmd.Parameters.Count > 0)
 			{
-				string minStr = XmlUtils.GetManditoryAttributeValue(cmd.Parameters[0], "min");
-				string maxStr = XmlUtils.GetManditoryAttributeValue(cmd.Parameters[0], "max");
+				string minStr = XmlUtils.GetMandatoryAttributeValue(cmd.Parameters[0], "min");
+				string maxStr = XmlUtils.GetMandatoryAttributeValue(cmd.Parameters[0], "max");
 				min = Int32.Parse(minStr);
 				max = Int32.Parse(maxStr);
 			}
@@ -640,10 +650,10 @@ namespace SIL.FieldWorks.IText
 					max = nodes[0].Maximum;
 					paren = !nodes[0].IsLeaf;
 				}
-				using (OccurrenceDlg dlg = new OccurrenceDlg(m_mediator.HelpTopicProvider, min, max, paren))
+				using (var dlg = new OccurrenceDlg(m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), min, max, paren))
 				{
 					dlg.SetHelpTopic("khtpCtxtOccurComplexConcordance");
-					if (dlg.ShowDialog((XWindow) m_mediator.PropertyTable.GetValue("window")) == DialogResult.OK)
+					if (dlg.ShowDialog(m_propertyTable.GetValue<XWindow>("window")) == DialogResult.OK)
 					{
 						min = dlg.Minimum;
 						max = dlg.Maximum;
@@ -693,12 +703,13 @@ namespace SIL.FieldWorks.IText
 			ComplexConcPatternNode[] nodes = CurrentNodes;
 
 			ComplexConcWordNode wordNode = nodes[0] as ComplexConcWordNode;
+			var xwindow = m_propertyTable.GetValue<XWindow>("window");
 			if (wordNode != null)
 			{
 				using (ComplexConcWordDlg dlg = new ComplexConcWordDlg())
 				{
-					dlg.SetDlgInfo(m_cache, m_mediator, wordNode);
-					if (dlg.ShowDialog((XWindow) m_mediator.PropertyTable.GetValue("window")) == DialogResult.Cancel)
+					dlg.SetDlgInfo(m_cache, m_mediator, m_propertyTable, wordNode);
+					if (dlg.ShowDialog(xwindow) == DialogResult.Cancel)
 						return true;
 				}
 			}
@@ -709,8 +720,8 @@ namespace SIL.FieldWorks.IText
 				{
 					using (ComplexConcMorphDlg dlg = new ComplexConcMorphDlg())
 					{
-						dlg.SetDlgInfo(m_cache, m_mediator, morphNode);
-						if (dlg.ShowDialog((XWindow) m_mediator.PropertyTable.GetValue("window")) == DialogResult.Cancel)
+						dlg.SetDlgInfo(m_cache, m_mediator, m_propertyTable, morphNode);
+						if (dlg.ShowDialog(xwindow) == DialogResult.Cancel)
 							return true;
 					}
 				}
@@ -721,8 +732,8 @@ namespace SIL.FieldWorks.IText
 					{
 						using (ComplexConcTagDlg dlg = new ComplexConcTagDlg())
 						{
-							dlg.SetDlgInfo(m_cache, m_mediator, tagNode);
-							if (dlg.ShowDialog((XWindow) m_mediator.PropertyTable.GetValue("window")) == DialogResult.Cancel)
+							dlg.SetDlgInfo(m_cache, m_mediator, m_propertyTable, tagNode);
+							if (dlg.ShowDialog(xwindow) == DialogResult.Cancel)
 								return true;
 						}
 					}

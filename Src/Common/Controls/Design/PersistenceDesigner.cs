@@ -16,7 +16,6 @@ using System;
 using System.Windows.Forms;
 using System.ComponentModel;
 using System.ComponentModel.Design;
-using System.ComponentModel.Design.Serialization;
 using System.Reflection;
 
 namespace SIL.FieldWorks.Common.Controls.Design
@@ -37,8 +36,8 @@ namespace SIL.FieldWorks.Common.Controls.Design
 		{
 			base.Initialize(c);
 
-			IDesignerHost host = (IDesignerHost)GetService(typeof(IDesignerHost));
-			Control control = host.RootComponent as Control;
+			var host = (IDesignerHost)GetService(typeof(IDesignerHost));
+			var control = host?.RootComponent as Control;
 
 			if (control == null)
 				return;
@@ -52,6 +51,13 @@ namespace SIL.FieldWorks.Common.Controls.Design
 				BindingFlags.DeclaredOnly | BindingFlags.Public |
 				BindingFlags.SetProperty | BindingFlags.Instance, null, c, new object[] { control });
 
+		}
+
+		/// <summary/>
+		protected override void Dispose(bool disposing)
+		{
+			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + ". ******");
+			base.Dispose(disposing);
 		}
 	}
 }

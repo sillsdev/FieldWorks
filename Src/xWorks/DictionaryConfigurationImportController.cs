@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2017 SIL International
+// Copyright (c) 2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -11,18 +11,17 @@ using System.Windows.Forms;
 using System.Xml.Linq;
 using System.Xml.XPath;
 using Ionic.Zip;
-using Palaso.Lift.Migration;
-using Palaso.Lift.Parsing;
-using Palaso.Linq;
-using Palaso.Reporting;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.Controls.FileDialog;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel;
+using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.LexText.Controls;
 using SIL.FieldWorks.XWorks.LexText;
-using SIL.Utils;
-using SIL.Utils.FileDialog;
+using SIL.Lift.Migration;
+using SIL.Lift.Parsing;
+using SIL.Linq;
+using SIL.Reporting;
+using SIL.LCModel.Utils;
 using File = System.IO.File;
 
 
@@ -33,7 +32,7 @@ namespace SIL.FieldWorks.XWorks
 	/// </summary>
 	public class DictionaryConfigurationImportController
 	{
-		private FdoCache _cache;
+		private LcmCache _cache;
 		private string _projectConfigDir;
 		/// <summary>
 		/// Registered configurations that we know about.
@@ -96,10 +95,13 @@ namespace SIL.FieldWorks.XWorks
 		/// The following style names are known to have unsupported features. We will avoid wiping out default styles of these types when
 		/// importing a view.
 		/// </summary>
-		public static readonly Set<string> UnsupportedStyles = new Set<string> { "Bulleted List", "Numbered List", "Homograph-Number" };
+		public static readonly HashSet<string> UnsupportedStyles = new HashSet<string>
+		{
+			"Bulleted List", "Numbered List", "Homograph-Number"
+		};
 
 		/// <summary/>
-		public DictionaryConfigurationImportController(FdoCache cache, string projectConfigDir,
+		public DictionaryConfigurationImportController(LcmCache cache, string projectConfigDir,
 			List<DictionaryConfigurationModel> configurations)
 		{
 			_cache = cache;
@@ -180,21 +182,20 @@ namespace SIL.FieldWorks.XWorks
 
 		private void ImportStyles(string importStylesLocation)
 		{
+			var stylesToRemove = _cache.LangProject.StylesOC.Where(style => !UnsupportedStyles.Contains(style.Name));
+
+			// For LT-18267, record basedon and next properties of styles not
+			// being exported, so they can be reconnected to the imported
+			// styles of the same name.
+			var preimportStyleLinks = _cache.LangProject.StylesOC.Where(style => UnsupportedStyles.Contains(style.Name)).ToDictionary(
+				style => style.Name,
+				style => new
+				{
+					BasedOn = style.BasedOnRA == null ? null : style.BasedOnRA.Name,
+					Next = style.NextRA == null ? null : style.NextRA.Name
+				});
 			NonUndoableUnitOfWorkHelper.DoSomehow(_cache.ActionHandlerAccessor, () =>
 			{
-				var stylesToRemove = _cache.LangProject.StylesOC.Where(style => !UnsupportedStyles.Contains(style.Name));
-
-				// For LT-18267, record basedon and next properties of styles not
-				// being exported, so they can be reconnected to the imported
-				// styles of the same name.
-				var preimportStyleLinks = _cache.LangProject.StylesOC.Where(style => UnsupportedStyles.Contains(style.Name)).ToDictionary(
-					style => style.Name,
-					style => new
-					{
-						BasedOn = style.BasedOnRA == null ? null : style.BasedOnRA.Name,
-						Next = style.NextRA == null ? null : style.NextRA.Name
-					});
-
 				// Before importing styles, remove all the current styles, except
 				// for styles that we don't support and so we don't expect will
 				// be imported.
@@ -202,8 +203,14 @@ namespace SIL.FieldWorks.XWorks
 				{
 					_cache.LangProject.StylesOC.Remove(style);
 				}
-
-				// Import styles
+			});
+			// Be sure that the Remove action is committed and saved to disk before we re-import styles with the same guid.
+			// If we don't then the changes won't be noticed as the Styles will be marked as transient and won't be saved.
+			_cache.ActionHandlerAccessor.Commit();
+			// Import styles
+			NonUndoableUnitOfWorkHelper.DoSomehow(_cache.ActionHandlerAccessor, () =>
+			{
+				// ReSharper disable once UnusedVariable -- The FlexStylesXmlAccessor constructor does the work of importing.
 				var stylesAccessor = new FlexStylesXmlAccessor(_cache.LangProject.LexDbOA, true, importStylesLocation);
 
 				var postimportStylesToReconnect = _cache.LangProject.StylesOC.Where(style => UnsupportedStyles.Contains(style.Name));
@@ -229,7 +236,7 @@ namespace SIL.FieldWorks.XWorks
 				var fMigrationNeeded = Migrator.IsMigrationNeeded(liftPathname);
 				if (fMigrationNeeded)
 				{
-					var sOldVersion = Palaso.Lift.Validation.Validator.GetLiftVersion(liftPathname);
+					var sOldVersion = Lift.Validation.Validator.GetLiftVersion(liftPathname);
 					sFilename = Migrator.MigrateToLatestVersion(liftPathname);
 				}
 				else
@@ -252,7 +259,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// Add publication type if it's not in the project's list of publications.
 		/// </summary>
-		private static void AddPublicationTypeIfNotPresent(string name, FdoCache cache)
+		private static void AddPublicationTypeIfNotPresent(string name, LcmCache cache)
 		{
 			if (cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS
 				.Select(pub => pub.Name.get_String(cache.DefaultAnalWs).Text).Contains(name))
@@ -260,7 +267,7 @@ namespace SIL.FieldWorks.XWorks
 			AddPublicationType(name, cache);
 		}
 
-		public static ICmPossibility AddPublicationType(string name, FdoCache cache)
+		public static ICmPossibility AddPublicationType(string name, LcmCache cache)
 		{
 			Debug.Assert(cache.LangProject.LexDbOA.PublicationTypesOA != null);
 

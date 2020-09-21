@@ -1,36 +1,27 @@
-// Copyright (c) 2005-2013 SIL International
+// Copyright (c) 2005-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: XmlBrowseViewBaseVc.cs
-// Responsibility: Randy Regnier
-// Last reviewed:
-//
-// <remarks>
-// </remarks>
 
 using System;
-using System.Diagnostics.CodeAnalysis;
 using System.Text.RegularExpressions;
 using System.Xml;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Diagnostics;
 using System.Windows.Forms;
-using System.Runtime.InteropServices;
 using System.Reflection; // for check-box icons.
-using Palaso.WritingSystems;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.Utils;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.Filters;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Resources; // for check-box icons.
 using SIL.FieldWorks.Common.RootSites;
-using SIL.CoreImpl;
-using SIL.Utils.ComTypes;
+using SIL.LCModel.Core.Cellar;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.Utils;
 using XCore;
 
 namespace SIL.FieldWorks.Common.Controls
@@ -119,7 +110,7 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			get
 			{
-				string Id1 = m_xbv.Mediator.PropertyTable.GetStringProperty("currentContentControl", "");
+				string Id1 = m_xbv.m_bv.PropTable.GetStringProperty("currentContentControl", "");
 				string Id2 = m_xbv.GetCorrespondingPropertyName("ColumnList");
 				return String.Format("{0}_{1}", Id1, Id2);
 			}
@@ -160,7 +151,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <summary>
 		/// This contructor is used by SortMethodFinder to make a braindead VC.
 		/// </summary>
-		public XmlBrowseViewBaseVc() : base(null) // We don't have a string table.
+		public XmlBrowseViewBaseVc() : base() // We don't have a string table.
 		{
 			m_fakeFlid = 0;
 		}
@@ -168,14 +159,10 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <summary>
 		/// This contructor is used by SortMethodFinder to make a partly braindead VC.
 		/// </summary>
-		public XmlBrowseViewBaseVc(XmlBrowseViewBase xbv, StringTable table)
-			: base(table)
+		public XmlBrowseViewBaseVc(XmlBrowseViewBase xbv)
 		{
-
-			Debug.Assert(xbv.Mediator.FeedbackInfoProvider != null, "No FeedbackInfoProvider");
-
-			MApp = xbv.Mediator.FeedbackInfoProvider as IApp;
-			XmlBrowseViewBaseVcInit(xbv.Cache, xbv.DataAccess, table);
+			MApp = xbv.m_bv.PropTable.GetValue<IApp>("FeedbackInfoProvider");
+			XmlBrowseViewBaseVcInit(xbv.Cache, xbv.DataAccess);
 
 		}
 
@@ -184,18 +171,18 @@ namespace SIL.FieldWorks.Common.Controls
 		/// It will fail if asked to interpret decorator properties, since it doesn't have the decorator SDA.
 		/// Avoid using this constructor if possible.
 		/// </summary>
-		public XmlBrowseViewBaseVc(FdoCache cache, StringTable table)
-			: base(table)
+		public XmlBrowseViewBaseVc(LcmCache cache)
+			: base()
 		{
-			XmlBrowseViewBaseVcInit(cache, null, table);
+			XmlBrowseViewBaseVcInit(cache, null);
 		}
 		/// <summary>
 		/// This contructor is used by FilterBar and LayoutCache to make a partly braindead VC.
 		/// </summary>
-		public XmlBrowseViewBaseVc(FdoCache cache, ISilDataAccess sda, StringTable table)
-			: base(table)
+		public XmlBrowseViewBaseVc(LcmCache cache, ISilDataAccess sda)
+			: base()
 		{
-			XmlBrowseViewBaseVcInit(cache, sda, table);
+			XmlBrowseViewBaseVcInit(cache, sda);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -204,16 +191,12 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		/// <param name="xnSpec">The xn spec.</param>
 		/// <param name="fakeFlid">The fake flid.</param>
-		/// <param name="stringTable">The string table.</param>
 		/// <param name="xbv">The XBV.</param>
 		/// ------------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
-		public XmlBrowseViewBaseVc(XmlNode xnSpec, int fakeFlid, StringTable stringTable, XmlBrowseViewBase xbv)
-			: this(xbv, stringTable)
+		public XmlBrowseViewBaseVc(XmlNode xnSpec, int fakeFlid, XmlBrowseViewBase xbv)
+			: this(xbv)
 		{
 			Debug.Assert(xnSpec != null);
-			Debug.Assert(stringTable != null);
 			Debug.Assert(xbv != null);
 			DataAccess = xbv.SpecialCache;
 
@@ -221,14 +204,14 @@ namespace SIL.FieldWorks.Common.Controls
 			m_xnSpec = xnSpec;
 
 			// This column list is saved in BrowseViewer.UpdateColumnList
-			string savedCols = m_xbv.Mediator.PropertyTable.GetStringProperty(ColListId, null, XCore.PropertyTable.SettingsGroup.LocalSettings);
+			string savedCols = m_xbv.m_bv.PropTable.GetStringProperty(ColListId, null, XCore.PropertyTable.SettingsGroup.LocalSettings);
 			SortItemProvider = xbv.SortItemProvider;
 			ComputePossibleColumns();
 			XmlDocument doc = null;
 			string target = null;
-			if (savedCols != null && savedCols != "")
+			if (!string.IsNullOrEmpty(savedCols))
 			{
-				doc = GetSavedColumns(savedCols, m_xbv.Mediator, ColListId);
+				doc = GetSavedColumns(savedCols, m_xbv.Mediator, m_xbv.m_bv.PropTable, ColListId);
 			}
 			if (doc == null) // nothing saved, or saved info won't parse
 			{
@@ -251,7 +234,7 @@ namespace SIL.FieldWorks.Common.Controls
 			SetupSelectColumn();
 		}
 
-		internal static XmlDocument GetSavedColumns(string savedCols, Mediator mediator, string colListId)
+		internal static XmlDocument GetSavedColumns(string savedCols, Mediator mediator, PropertyTable propertyTable, string colListId)
 		{
 			XmlDocument doc;
 			string target;
@@ -304,7 +287,7 @@ namespace SIL.FieldWorks.Common.Controls
 						case 17:
 							savedCols = FixVersion18Columns(savedCols);
 							savedCols = savedCols.Replace("root version=\"17\"", "root version=\"18\"");
-							mediator.PropertyTable.SetProperty(colListId, savedCols);
+							propertyTable.SetProperty(colListId, savedCols, true);
 							doc.LoadXml(savedCols);
 							break;
 						default:
@@ -316,7 +299,7 @@ namespace SIL.FieldWorks.Common.Controls
 							doc = null;
 							// Forget the old settings, so we don't keep complaining every time the program runs.
 							// There doesn't seem to be any way to remove the property altogether, so at least, make it empty.
-							mediator.PropertyTable.SetProperty(colListId, "", XCore.PropertyTable.SettingsGroup.LocalSettings);
+							propertyTable.SetProperty(colListId, "", PropertyTable.SettingsGroup.LocalSettings, true);
 							break;
 					}
 				}
@@ -494,7 +477,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <summary>
 		/// This contructor is used by SortMethodFinder to make a braindead VC.
 		/// </summary>
-		private void XmlBrowseViewBaseVcInit(FdoCache cache, ISilDataAccess sda, StringTable table)
+		private void XmlBrowseViewBaseVcInit(LcmCache cache, ISilDataAccess sda)
 		{
 			Debug.Assert(cache != null);
 
@@ -578,7 +561,7 @@ namespace SIL.FieldWorks.Common.Controls
 					else
 					{
 						// we still need to know what listItemsClass to expect this list to be based on.
-						string listItemsClass = XmlUtils.GetManditoryAttributeValue(m_xnSpec, "listItemsClass");
+						string listItemsClass = XmlUtils.GetMandatoryAttributeValue(m_xnSpec, "listItemsClass");
 						m_listItemsClass = m_cache.MetaDataCacheAccessor.GetClassId(listItemsClass);
 
 					}
@@ -625,7 +608,6 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <returns>true if this node refers to a nonexistent custom field</returns>
 		private bool CheckForBadCustomField(List<XmlNode> possibleColumns, XmlNode node)
 		{
-			StringTable stringTbl = this.StringTbl;
 			// see if this node is based on a layout. If so, get its part
 			PropWs propWs;
 			XmlNode columnForCustomField = null;
@@ -639,7 +621,7 @@ namespace SIL.FieldWorks.Common.Controls
 					{
 						if ((m_mdc as IFwMetaDataCacheManaged).FieldExists(className, fieldName, false))
 						{
-							ColumnConfigureDialog.GenerateColumnLabel(node, m_cache, stringTbl);
+							ColumnConfigureDialog.GenerateColumnLabel(node, m_cache);
 							return false;
 						}
 					}
@@ -648,7 +630,7 @@ namespace SIL.FieldWorks.Common.Controls
 				else if (propWs != null)
 				{
 					XmlUtils.AppendAttribute(node, "originalLabel", GetNewLabelFromMatchingCustomField(possibleColumns, propWs.flid));
-					ColumnConfigureDialog.GenerateColumnLabel(node, m_cache, stringTbl);
+					ColumnConfigureDialog.GenerateColumnLabel(node, m_cache);
 				}
 				else
 				{
@@ -663,18 +645,17 @@ namespace SIL.FieldWorks.Common.Controls
 
 		private string GetNewLabelFromMatchingCustomField(List<XmlNode> possibleColumns, int flid)
 		{
-			StringTable tbl = this.StringTbl;
 			foreach (XmlNode possibleColumn in possibleColumns)
 			{
 				// Desired node may be a child of a child...  (See LT-6447.)
 				PropWs propWs;
-				XmlNode columnForCustomField = null;
-				if (this.TryColumnForCustomField(possibleColumn, this.ListItemsClass, out columnForCustomField, out propWs))
+				XmlNode columnForCustomField;
+				if (TryColumnForCustomField(possibleColumn, ListItemsClass, out columnForCustomField, out propWs))
 				{
 					// the flid of the updated custom field node matches the given flid of the old node.
 					if (propWs != null && propWs.flid == flid)
 					{
-						string label = XmlUtils.GetLocalizedAttributeValue(tbl, possibleColumn,
+						string label = XmlUtils.GetLocalizedAttributeValue(possibleColumn,
 								"label", null);
 						return label;
 					}
@@ -1038,12 +1019,11 @@ namespace SIL.FieldWorks.Common.Controls
 			m_wsBest = GetBestWsForNode(node, hvo);
 			if (m_wsBest != 0)
 			{
-				var ws = m_cache.ServiceLocator.WritingSystemManager.Get(m_wsBest);
+				CoreWritingSystemDefinition ws = m_cache.ServiceLocator.WritingSystemManager.Get(m_wsBest);
 				if (ws != null)
 				{
 					fRightToLeft = ws.RightToLeftScript;
-					var wsDef = ws as WritingSystemDefinition;
-					fVoice = wsDef == null ? false : wsDef.IsVoice;
+					fVoice = ws.IsVoice;
 				}
 			}
 			bool fSortedFromEnd = m_xbv.ColumnSortedFromEnd(icol - cAdjCol);
@@ -1456,7 +1436,7 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			if (ws != 0)
 			{
-				IWritingSystem wsObj = m_cache.ServiceLocator.WritingSystemManager.Get(ws);
+				CoreWritingSystemDefinition wsObj = m_cache.ServiceLocator.WritingSystemManager.Get(ws);
 				return wsObj.RightToLeftScript;
 			}
 			return false;
@@ -1579,12 +1559,9 @@ namespace SIL.FieldWorks.Common.Controls
 			var bestWsHandle = GetBestWsForNode(node, hvo);
 			if (bestWsHandle != 0)
 			{
-				var ws = m_cache.ServiceLocator.WritingSystemManager.Get(bestWsHandle);
+				CoreWritingSystemDefinition ws = m_cache.ServiceLocator.WritingSystemManager.Get(bestWsHandle);
 				if (ws != null)
-				{
-					var wsDef = ws as WritingSystemDefinition;
-					fVoice = wsDef == null ? false : wsDef.IsVoice;
-				}
+					fVoice = ws.IsVoice;
 			}
 			return fVoice;
 		}
@@ -1625,6 +1602,16 @@ namespace SIL.FieldWorks.Common.Controls
 		/// ------------------------------------------------------------------------------------
 		public override void Display(IVwEnv vwenv, int hvo, int frag)
 		{
+			// LT-19688: Some operations fail to cause the browse view's record list to refresh (e.g. bulk delete all lexical entries).
+			//           In these cases, `hvo` will be positive and invalid
+			// LT-20254: Complex Concordance results are displayed using "invalid" negative hvo's.
+			// 10 years of errors prove we can't get this right. Let's stop crashing but still encourage developers to fix it.
+			if (m_cache == null || (hvo > 0 && !m_cache.ServiceLocator.IsValidObjectId(hvo)))
+			{
+				Debug.Assert(m_cache != null && m_cache.ServiceLocator.IsValidObjectId(hvo),
+					"Trying to display a row for an invalid object. Some recent operation failed to cause this browse view's record list to refresh");
+				return;
+			}
 			switch (frag)
 			{
 				case kfragRoot:
@@ -1774,9 +1761,9 @@ namespace SIL.FieldWorks.Common.Controls
 		public class ItemsCollectorEnv : CollectorEnv
 		{
 #pragma warning disable 414
-			FdoCache m_cache;
+			LcmCache m_cache;
 #pragma warning restore 414
-			Set<int> m_hvosInCell = new Set<int>();
+			private readonly HashSet<int> m_hvosInCell = new HashSet<int>();
 
 			/// <summary>
 			///
@@ -1784,7 +1771,7 @@ namespace SIL.FieldWorks.Common.Controls
 			/// <param name="env"></param>
 			/// <param name="cache"></param>
 			/// <param name="hvoRoot"></param>
-			public ItemsCollectorEnv(IVwEnv env, FdoCache cache, int hvoRoot)
+			public ItemsCollectorEnv(IVwEnv env, LcmCache cache, int hvoRoot)
 				: base(env, cache.MainCacheAccessor, hvoRoot)
 			{
 				m_cache = cache;
@@ -1797,7 +1784,7 @@ namespace SIL.FieldWorks.Common.Controls
 			/// <param name="cache"></param>
 			/// <param name="sda">Data access object, decorator, to use for this ItemsCollectorEnv</param>
 			/// <param name="hvoRoot"></param>
-			public ItemsCollectorEnv(IVwEnv env, FdoCache cache, ISilDataAccess sda, int hvoRoot)
+			public ItemsCollectorEnv(IVwEnv env, LcmCache cache, ISilDataAccess sda, int hvoRoot)
 				: base(env, sda, hvoRoot)
 			{
 				m_cache = cache;
@@ -1806,7 +1793,7 @@ namespace SIL.FieldWorks.Common.Controls
 			/// <summary>
 			/// Return the list of hvos used to build the display in DisplayCell.
 			/// </summary>
-			public Set<int> HvosCollectedInCell
+			public ISet<int> HvosCollectedInCell
 			{
 				get
 				{

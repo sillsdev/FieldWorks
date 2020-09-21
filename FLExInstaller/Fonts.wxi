@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Include xmlns="http://schemas.microsoft.com/wix/2006/wi" xmlns:util="http://schemas.microsoft.com/wix/UtilExtension">
+	<Property Id="ANDIKAINSTALLED">
+		<RegistrySearch Id="AndikaInstalled" Root="HKLM" Key="SOFTWARE\Microsoft\Windows NT\CurrentVersion\Fonts"
+						Name="Andika (TrueType)" Type="raw"/>
+	</Property>
+	<Property Id="ANDIKABOLDINSTALLED">
+		<RegistrySearch Id="AndikaBoldInstalled" Root="HKLM" Key="SOFTWARE\Microsoft\Windows NT\CurrentVersion\Fonts"
+						Name="Andika Bold (TrueType)" Type="raw"/>
+	</Property>
+	<Property Id="ANDIKAITALICINSTALLED">
+		<RegistrySearch Id="AndikaItalicInstalled" Root="HKLM" Key="SOFTWARE\Microsoft\Windows NT\CurrentVersion\Fonts"
+						Name="Andika Italic (TrueType)" Type="raw"/>
+	</Property>
+	<Property Id="ANDIKABOLDITALICINSTALLED">
+		<RegistrySearch Id="AndikaBoldItalicInstalled" Root="HKLM" Key="SOFTWARE\Microsoft\Windows NT\CurrentVersion\Fonts"
+						Name="Andika Bold Italic (TrueType)" Type="raw"/>
+	</Property>
+
+	<Property Id="CHARISINSTALLED">
+		<RegistrySearch Id="CharisInstalled" Root="HKLM" Key="SOFTWARE\Microsoft\Windows NT\CurrentVersion\Fonts"
+						Name="Charis SIL (TrueType)" Type="raw"/>
+	</Property>
+	<Property Id="CHARISBOLDINSTALLED">
+		<RegistrySearch Id="CharisBoldInstalled" Root="HKLM" Key="SOFTWARE\Microsoft\Windows NT\CurrentVersion\Fonts"
+						Name="Charis SIL Bold (TrueType)" Type="raw"/>
+	</Property>
+	<Property Id="CHARISITALICINSTALLED">
+		<RegistrySearch Id="CharisItalicInstalled" Root="HKLM" Key="SOFTWARE\Microsoft\Windows NT\CurrentVersion\Fonts"
+						Name="Charis SIL Italic (TrueType)" Type="raw"/>
+	</Property>
+	<Property Id="CHARISBOLDITALICINSTALLED">
+		<RegistrySearch Id="CharisBoldItalicInstalled" Root="HKLM" Key="SOFTWARE\Microsoft\Windows NT\CurrentVersion\Fonts"
+						Name="Charis SIL Bold Italic (TrueType)" Type="raw"/>
+	</Property>
+
+	<Property Id="DOULOSINSTALLED">
+		<RegistrySearch Id="DoulosInstalled" Root="HKLM" Key="SOFTWARE\Microsoft\Windows NT\CurrentVersion\Fonts"
+						Name="Doulos SIL (TrueType)" Type="raw"/>
+	</Property>
+	<Property Id="DOULOSBOLDINSTALLED">
+		<RegistrySearch Id="DoulosBoldInstalled" Root="HKLM" Key="SOFTWARE\Microsoft\Windows NT\CurrentVersion\Fonts"
+						Name="Doulos SIL Bold (TrueType)" Type="raw"/>
+	</Property>
+	<Property Id="DOULOSITALICINSTALLED">
+		<RegistrySearch Id="DoulosItalicInstalled" Root="HKLM" Key="SOFTWARE\Microsoft\Windows NT\CurrentVersion\Fonts"
+						Name="Doulos SIL Italic (TrueType)" Type="raw"/>
+	</Property>
+	<Property Id="DOULOSBOLDITALICINSTALLED">
+		<RegistrySearch Id="DoulosBoldItalicInstalled" Root="HKLM" Key="SOFTWARE\Microsoft\Windows NT\CurrentVersion\Fonts"
+						Name="Doulos SIL Bold Italic (TrueType)" Type="raw"/>
+	</Property>
+
+	<Property Id="GENTIUMPLUSINSTALLED">
+		<RegistrySearch Id="GentiumPlusInstalled" Root="HKLM" Key="SOFTWARE\Microsoft\Windows NT\CurrentVersion\Fonts"
+						Name="Gentium Plus (TrueType)" Type="raw"/>
+	</Property>
+	<Property Id="GENTIUMPLUSBOLDINSTALLED">
+		<RegistrySearch Id="GentiumPlusBoldInstalled" Root="HKLM" Key="SOFTWARE\Microsoft\Windows NT\CurrentVersion\Fonts"
+						Name="Gentium Plus Bold (TrueType)" Type="raw"/>
+	</Property>
+	<Property Id="GENTIUMPLUSITALICINSTALLED">
+		<RegistrySearch Id="GentiumPlusItalicInstalled" Root="HKLM" Key="SOFTWARE\Microsoft\Windows NT\CurrentVersion\Fonts"
+						Name="Gentium Plus Italic (TrueType)" Type="raw"/>
+	</Property>
+	<Property Id="GENTIUMPLUSBOLDITALICINSTALLED">
+		<RegistrySearch Id="GentiumPlusBoldItalicInstalled" Root="HKLM" Key="SOFTWARE\Microsoft\Windows NT\CurrentVersion\Fonts"
+						Name="Gentium Plus Bold Italic (TrueType)" Type="raw"/>
+	</Property>
+
+	<Property Id="QUIVIRAINSTALLED">
+		<RegistrySearch Id="QuiviraInstalled" Root="HKLM" Key="SOFTWARE\Microsoft\Windows NT\CurrentVersion\Fonts"
+						Name="Quivira (TrueType)" Type="raw"/>
+	</Property>
+
+	<?ifdef MASTERBUILDDIR?>
+	<WixVariable Id="FONTDIR" Value="$(var.MASTERBUILDDIR)_Font"/>
+	<?else?>
+	<WixVariable Id="FONTDIR" Value="$(var.UPDATEBUILDDIR)_Font"/>
+	<?endif?>
+
+	<DirectoryRef Id="FontsFolder">
+		<!-- LT-19288, LT-19306: Don't change installed fonts.
+			Registry checks prevent installing over existing versions (newer or older). Empty GUID's prevent uninstalling or repairing. -->
+		<Component Id="AndikaFont" Guid="">
+			<Condition>NOT (ANDIKAINSTALLED or ANDIKABOLDINSTALLED or ANDIKAITALICINSTALLED or ANDIKABOLDITALICINSTALLED)</Condition>
+			<File Id="Andika" TrueType="yes" Source="!(wix.FONTDIR)\Andika-R.ttf"/>
+		</Component>
+		<Component Id="CharisFont" Guid="">
+			<Condition>NOT (CHARISINSTALLED or CHARISBOLDINSTALLED or CHARISITALICINSTALLED or CHARISBOLDITALICINSTALLED)</Condition>
+			<File Id="CharisBold" TrueType="yes" Source="!(wix.FONTDIR)\CharisSIL-B.ttf"/>
+			<File Id="CharisBoldItalic" TrueType="yes" Source="!(wix.FONTDIR)\CharisSIL-BI.ttf"/>
+			<File Id="CharisItalic" TrueType="yes" Source="!(wix.FONTDIR)\CharisSIL-I.ttf"/>
+			<File Id="Charis" TrueType="yes" Source="!(wix.FONTDIR)\CharisSIL-R.ttf"/>
+		</Component>
+		<Component Id="DoulosFont" Guid="">
+			<Condition>NOT (DOULOSINSTALLED or DOULOSBOLDINSTALLED or DOULOSITALICINSTALLED or DOULOSBOLDITALICINSTALLED)</Condition>
+			<File Id="Doulos" TrueType="yes" Source="!(wix.FONTDIR)\DoulosSIL-R.ttf"/>
+		</Component>
+		<Component Id="GentiumPlusFont" Guid="">
+			<Condition>NOT (GENTIUMPLUSINSTALLED or GENTIUMPLUSBOLDINSTALLED or GENTIUMPLUSITALICINSTALLED or GENTIUMPLUSBOLDITALICINSTALLED)</Condition>
+			<File Id="GentiumPlusItalic" TrueType="yes" Source="!(wix.FONTDIR)\GentiumPlus-I.ttf"/>
+			<File Id="GentiumPlus" TrueType="yes" Source="!(wix.FONTDIR)\GentiumPlus-R.ttf"/>
+		</Component>
+		<Component Id="QuiviraFont" Guid="">
+			<Condition>NOT QUIVIRAINSTALLED</Condition>
+			<File Id="Quivira" TrueType="yes" Source="!(wix.FONTDIR)\Quivira.otf"/>
+		</Component>
+	</DirectoryRef>
+	<ComponentGroup Id="Fonts">
+		<ComponentRef Id="AndikaFont"/>
+		<ComponentRef Id="CharisFont"/>
+		<ComponentRef Id="DoulosFont"/>
+		<ComponentRef Id="GentiumPlusFont"/>
+		<ComponentRef Id="QuiviraFont"/>
+	</ComponentGroup>
+</Include>

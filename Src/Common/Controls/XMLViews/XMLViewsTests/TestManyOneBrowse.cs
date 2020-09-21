@@ -1,20 +1,21 @@
-// Copyright (c) 2010-2013 SIL International
+// Copyright (c) 2010-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-using System;
+
 using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Xml;
 
 using NUnit.Framework;
 
-using SIL.CoreImpl;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.WritingSystems;
 using SIL.FieldWorks.CacheLight;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.Controls;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Filters;
 using SIL.Utils;
@@ -28,9 +29,7 @@ namespace XMLViewsTests
 	/// to the root object of each row.
 	/// </summary>
 	[TestFixture]
-	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
-		Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
-	public class TestManyOneBrowse : SIL.FieldWorks.Test.TestUtils.BaseTest
+	public class TestManyOneBrowse
 	{
 		private IFwMetaDataCache m_mdc;
 		private ISilDataAccess m_sda;
@@ -38,7 +37,7 @@ namespace XMLViewsTests
 		private Inventory m_layoutInventory;
 		private Inventory m_partInventory;
 		private LayoutCache m_layouts;
-		private IWritingSystemManager m_wsManager;
+		private WritingSystemManager m_wsManager;
 		private IVwCacheDa m_cda;
 
 		/// <summary>
@@ -77,8 +76,9 @@ namespace XMLViewsTests
 			// - MoStemMsa (2, 11)
 			// - MoDerivationalMsa (10)
 			m_cda = VwCacheDaClass.Create();
-			m_sda = m_cda as ISilDataAccess;
-			m_wsManager = new PalasoWritingSystemManager();
+			m_cda.TsStrFactory = TsStringUtils.TsStrFactory;
+			m_sda = (ISilDataAccess) m_cda;
+			m_wsManager = new WritingSystemManager();
 			m_sda.WritingSystemFactory = m_wsManager;
 			var parser = new SimpleDataParser(m_mdc, m_cda);
 

@@ -1,18 +1,12 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System;
-using System.Collections;
-using System.ComponentModel;
-using System.Drawing;
-using System.Data;
-using System.Windows.Forms;
-
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.LCModel;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.Framework.DetailControls;
 using System.Collections.Generic;
+using SIL.LCModel.Core.KernelInterfaces;
 
 namespace SIL.FieldWorks.XWorks.LexEd
 {
@@ -29,7 +23,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 		protected override VectorReferenceVc CreateVectorReferenceVc()
 		{
-			return new LexReferenceTreeBranchesVc(m_fdoCache, m_rootFlid, m_displayNameProperty, m_displayWs);
+			return new LexReferenceTreeBranchesVc(m_cache, m_rootFlid, m_displayNameProperty, m_displayWs);
 		}
 
 		protected override void Delete()
@@ -42,7 +36,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 #if WANTPORTMULTI
 			for (int i = 0; i < hvos.Length; ++i)
 			{
-				ICmObject cmo = ICmObject.CreateFromDBObject(m_fdoCache, hvos[i]);
+				ICmObject cmo = ICmObject.CreateFromDBObject(m_cache, hvos[i]);
 				(cmo as ICmObject).UpdateTimestampForVirtualChange();
 			}
 #endif
@@ -88,7 +82,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		/// <summary>
 		/// Constructor for the Vector Reference View Constructor Class.
 		/// </summary>
-		public LexReferenceTreeBranchesVc(FdoCache cache, int flid, string displayNameProperty, string displayWs)
+		public LexReferenceTreeBranchesVc(LcmCache cache, int flid, string displayNameProperty, string displayWs)
 			: base (cache, flid, displayNameProperty, displayWs)
 		{
 		}

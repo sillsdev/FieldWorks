@@ -2,16 +2,14 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System.Diagnostics.CodeAnalysis;
 using System.Xml;
-
-using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.FDO;
-using XCore;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.LexText.Controls;
 using SIL.FieldWorks.Common.Controls;
+using SIL.LCModel.Core.KernelInterfaces;
 
 namespace SIL.FieldWorks.XWorks.MorphologyEditor
 {
@@ -39,7 +37,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		/// </summary>
 		protected override void LoadWritingSystemCombo()
 		{
-			foreach (IWritingSystem ws in m_cache.ServiceLocator.WritingSystems.CurrentVernacularWritingSystems)
+			foreach (CoreWritingSystemDefinition ws in m_cache.ServiceLocator.WritingSystems.CurrentVernacularWritingSystems)
 				m_cbWritingSystems.Items.Add(ws);
 		}
 
@@ -47,23 +45,21 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 
 		#region Other methods
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "searchEngine is disposed by the mediator.")]
-		protected override void InitializeMatchingObjects(FdoCache cache, Mediator mediator)
+		protected override void InitializeMatchingObjects(LcmCache cache)
 		{
-			var xnWindow = (XmlNode) m_mediator.PropertyTable.GetValue("WindowConfiguration");
+			var xnWindow = m_propertyTable.GetValue<XmlNode>("WindowConfiguration");
 			var configNode = xnWindow.SelectSingleNode("controls/parameters/guicontrol[@id=\"WordformsBrowseView\"]/parameters");
 
-			SearchEngine searchEngine = SearchEngine.Get(mediator, "WordformGoSearchEngine", () => new WordformGoSearchEngine(cache));
+			SearchEngine searchEngine = SearchEngine.Get(m_mediator, m_propertyTable, "WordformGoSearchEngine", () => new WordformGoSearchEngine(cache));
 
-			m_matchingObjectsBrowser.Initialize(cache, FontHeightAdjuster.StyleSheetFromMediator(mediator), mediator, configNode,
+			m_matchingObjectsBrowser.Initialize(cache, FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable), m_mediator, m_propertyTable, configNode,
 				searchEngine);
 
 			// start building index
-			var wsObj = (IWritingSystem) m_cbWritingSystems.SelectedItem;
+			var wsObj = (CoreWritingSystemDefinition) m_cbWritingSystems.SelectedItem;
 			if (wsObj != null)
 			{
-				ITsString tssForm = m_tsf.MakeString(string.Empty, wsObj.Handle);
+				ITsString tssForm = TsStringUtils.EmptyString(wsObj.Handle);
 				var field = new SearchField(WfiWordformTags.kflidForm, tssForm);
 				m_matchingObjectsBrowser.SearchAsync(new[] { field });
 			}
@@ -75,7 +71,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		/// <param name="searchKey"></param>
 		protected override void ResetMatches(string searchKey)
 		{
-			var wsObj = (IWritingSystem) m_cbWritingSystems.SelectedItem;
+			var wsObj = (CoreWritingSystemDefinition) m_cbWritingSystems.SelectedItem;
 			int wsSelHvo = wsObj != null ? wsObj.Handle : 0;
 
 			string form;
@@ -99,7 +95,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			m_oldSearchKey = searchKey;
 			m_oldSearchWs = wsSelHvo;
 
-			ITsString tssForm = m_tsf.MakeString(form ?? string.Empty, vernWs);
+			ITsString tssForm = TsStringUtils.MakeString(form ?? string.Empty, vernWs);
 			var field = new SearchField(WfiWordformTags.kflidForm, tssForm);
 			m_matchingObjectsBrowser.SearchAsync(new[] { field });
 		}

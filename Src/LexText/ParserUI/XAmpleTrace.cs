@@ -13,7 +13,6 @@
 //		XAmpleTrace - Deal with results of an XAmple trace
 // </remarks>
 
-using System.Diagnostics.CodeAnalysis;
 using System.Xml.Linq;
 using XCore;
 
@@ -22,8 +21,6 @@ namespace SIL.FieldWorks.LexText.Controls
 	/// <summary>
 	/// Summary description for XAmpleTrace.
 	/// </summary>
-	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
-		Justification="m_mediator is a reference")]
 	public class XAmpleTrace : IParserTrace
 	{
 		private static ParserTraceUITransform s_traceTransform;
@@ -48,24 +45,14 @@ namespace SIL.FieldWorks.LexText.Controls
 			}
 		}
 
-		private readonly Mediator m_mediator;
-
-		/// <summary>
-		/// The real deal
-		/// </summary>
-		/// <param name="mediator"></param>
-		public XAmpleTrace(Mediator mediator)
-		{
-			m_mediator = mediator;
-		}
-
 		/// <summary>
 		/// Create an HTML page of the results
 		/// </summary>
+		/// <param name="propertyTable"></param>
 		/// <param name="result">XML string of the XAmple trace output</param>
 		/// <param name="isTrace"></param>
 		/// <returns>URL of the resulting HTML page</returns>
-		public string CreateResultPage(XDocument result, bool isTrace)
+		public string CreateResultPage(PropertyTable propertyTable, XDocument result, bool isTrace)
 		{
 			ParserTraceUITransform transform;
 			string baseName;
@@ -79,7 +66,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				transform = ParseTransform;
 				baseName = "XAmpleParse";
 			}
-			return transform.Transform(m_mediator, result, baseName);
+			return transform.Transform(propertyTable, result, baseName);
 		}
 	}
 }

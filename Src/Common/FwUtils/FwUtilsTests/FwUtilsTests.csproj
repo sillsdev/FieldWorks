@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="15.0">
   <PropertyGroup>
     <ProjectType>Local</ProjectType>
     <ProductVersion>9.0.30729</ProductVersion>
@@ -14,6 +14,7 @@
     <AssemblyName>FwUtilsTests</AssemblyName>
     <AssemblyOriginatorKeyFile>
     </AssemblyOriginatorKeyFile>
+    <AppConfig>..\..\..\AppForTests.config</AppConfig>
     <DefaultClientScript>JScript</DefaultClientScript>
     <DefaultHTMLPageLayout>Grid</DefaultHTMLPageLayout>
     <DefaultTargetSchema>IE50</DefaultTargetSchema>
@@ -28,7 +29,7 @@
     <UpgradeBackupLocation>
     </UpgradeBackupLocation>
     <OldToolsVersion>3.5</OldToolsVersion>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -45,8 +46,10 @@
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
     <TargetFrameworkProfile />
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <OutputPath>..\..\..\..\Output\Debug\</OutputPath>
     <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
     <BaseAddress>285212672</BaseAddress>
@@ -66,10 +69,10 @@
     <WarningLevel>4</WarningLevel>
     <DebugType>full</DebugType>
     <ErrorReport>prompt</ErrorReport>
-    <PlatformTarget>x86</PlatformTarget>
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
     <OutputPath>..\..\..\..\Output\Release\</OutputPath>
     <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
     <BaseAddress>285212672</BaseAddress>
@@ -91,83 +94,162 @@
     <DebugType>full</DebugType>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
-    <PlatformTarget>x86</PlatformTarget>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x64' ">
+    <OutputPath>..\..\..\..\Output\Debug\</OutputPath>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <BaseAddress>285212672</BaseAddress>
+    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+    <ConfigurationOverrideFile>
+    </ConfigurationOverrideFile>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DocumentationFile>..\..\..\..\Output\Debug\FwUtilsTests.xml</DocumentationFile>
+    <DebugSymbols>true</DebugSymbols>
+    <FileAlignment>4096</FileAlignment>
+    <NoStdLib>false</NoStdLib>
+    <NoWarn>168,169,219,414,649,1635,1702,1701</NoWarn>
+    <Optimize>false</Optimize>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <RemoveIntegerChecks>false</RemoveIntegerChecks>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <WarningLevel>4</WarningLevel>
+    <DebugType>full</DebugType>
+    <ErrorReport>prompt</ErrorReport>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x64' ">
+    <OutputPath>..\..\..\..\Output\Release\</OutputPath>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <BaseAddress>285212672</BaseAddress>
+    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+    <ConfigurationOverrideFile>
+    </ConfigurationOverrideFile>
+    <DefineConstants>TRACE</DefineConstants>
+    <DocumentationFile>
+    </DocumentationFile>
+    <DebugSymbols>true</DebugSymbols>
+    <FileAlignment>4096</FileAlignment>
+    <NoStdLib>false</NoStdLib>
+    <NoWarn>168,169,219,414,649,1635,1702,1701</NoWarn>
+    <Optimize>true</Optimize>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <RemoveIntegerChecks>false</RemoveIntegerChecks>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <WarningLevel>4</WarningLevel>
+    <DebugType>full</DebugType>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="BasicUtils, Version=4.1.1.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="SIL.Core.Desktop, Version=4.1.0.0, Culture=neutral, PublicKeyToken=cab3c8c5232dfcf2, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Output\Debug\BasicUtils.dll</HintPath>
+      <HintPath>..\..\..\..\Output\Debug\SIL.Core.Desktop.dll</HintPath>
     </Reference>
-    <Reference Include="BasicUtilsTests, Version=0.0.0.0, Culture=neutral, processorArchitecture=x86">
+    <Reference Include="SIL.LCModel.Core.Tests, Version=9.0.0.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Output\Debug\BasicUtilsTests.dll</HintPath>
+      <HintPath>..\..\..\..\Output\Debug\SIL.LCModel.Core.Tests.dll</HintPath>
     </Reference>
-    <Reference Include="COMInterfaces">
-      <Name>COMInterfaces</Name>
-      <HintPath>..\..\..\..\Output\Debug\COMInterfaces.dll</HintPath>
-    </Reference>
-    <Reference Include="COMInterfacesTests, Version=0.0.0.0, Culture=neutral, processorArchitecture=x86">
+    <Reference Include="SIL.TestUtilities, Version=3.1.0.0, Culture=neutral, PublicKeyToken=cab3c8c5232dfcf2, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Output\Debug\COMInterfacesTests.dll</HintPath>
+      <HintPath>..\..\..\..\Output\Debug\SIL.TestUtilities.dll</HintPath>
     </Reference>
-    <Reference Include="CoreImpl, Version=6.1.0.26994, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="SIL.LCModel.Utils.Tests, Version=9.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Output\Debug\CoreImpl.dll</HintPath>
+      <HintPath>..\..\..\..\Output\Debug\SIL.LCModel.Utils.Tests.dll</HintPath>
     </Reference>
-    <Reference Include="FDO, Version=8.0.6.20651, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Output\Debug\FDO.dll</HintPath>
-    </Reference>
-    <Reference Include="FwUtils, Version=1.2.0.9, Culture=neutral">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Output\Debug\FwUtils.dll</HintPath>
-    </Reference>
-    <Reference Include="NMock, Version=1.0.3450.24681, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Bin\nmock\NMock.dll</HintPath>
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="ViewsInterfaces">
+      <Name>ViewsInterfaces</Name>
+      <HintPath>..\..\..\..\Output\Debug\ViewsInterfaces.dll</HintPath>
     </Reference>
     <Reference Include="nunit.framework">
       <Name>nunit.framework</Name>
       <HintPath>..\..\..\..\packages\NUnit.2.6.4\lib\nunit.framework.dll</HintPath>
     </Reference>
-    <Reference Include="SilUtils, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Output\Debug\SilUtils.dll</HintPath>
-    </Reference>
     <Reference Include="System">
       <Name>System</Name>
     </Reference>
     <Reference Include="System.Core" />
-    <Reference Include="System.Xml" />
-    <Reference Include="TestUtils, Version=6.1.1.28258, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Output\Debug\TestUtils.dll</HintPath>
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="SIL.Windows.Forms.Keyboarding">
+      <HintPath>..\..\..\..\Output\Debug\SIL.Windows.Forms.Keyboarding.dll</HintPath>
     </Reference>
-    <Reference Include="xCoreInterfaces, Version=6.1.1.14994, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Output\Debug\xCoreInterfaces.dll</HintPath>
+    <Reference Include="SIL.LCModel.Core">
+      <HintPath>..\..\..\..\Output\Debug\SIL.LCModel.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="FwUtils">
+      <HintPath>..\..\..\..\Output\Debug\FwUtils.dll</HintPath>
+    </Reference>
+    <Reference Include="SIL.LCModel.Utils">
+      <HintPath>..\..\..\..\Output\Debug\SIL.LCModel.Utils.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="SIL.Core">
+      <HintPath>..\..\..\..\Output\Debug\SIL.Core.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AlphaOutlineTests.cs" />
+    <Compile Include="Attributes\CreateComObjectsFromManifestAttribute.cs" />
+    <Compile Include="Attributes\HandleApplicationThreadExceptionAttribute.cs" />
+    <Compile Include="Attributes\RedirectHKCU.cs" />
+    <Compile Include="Attributes\RequiresSTAOnWindowsAttribute.cs" />
+    <Compile Include="Attributes\SuppressErrorBeepsAttribute.cs" />
+    <Compile Include="CharEnumeratorForByteArrayTests.cs" />
+    <Compile Include="DebugProcsTests.cs" />
+    <Compile Include="FwApplicationSettingsTests.cs" />
+    <Compile Include="InterfacesTests.cs" />
+    <Compile Include="DisposableObjectsSetTests.cs" />
+    <Compile Include="IVwCacheDaTests.cs" />
     <Compile Include="LayoutKeyUtilsTests.cs" />
-    <Compile Include="UpgradeUserSettingsTests.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="SimpleLoggerTests.cs" />
+    <Compile Include="StringTableTests.cs" />
+    <Compile Include="TempSFFileMaker.cs" />
+    <Compile Include="TempSFFileMakerTests.cs" />
+    <Compile Include="TestBaseForTestsThatCreateTempFilesBasedOnResources.cs" />
+    <Compile Include="TestFwApplicationSettings.cs" />
+    <Compile Include="TestFwStylesheet.cs" />
+    <Compile Include="TestFwStylesheetTests.cs" />
+    <Compile Include="WavConverterTests.cs" />
+    <Compile Include="XmlHelper.cs" />
     <None Include="App.config" />
+    <Compile Include="FwDirectoryFinderTests.cs" />
+    <Compile Include="DummyFwRegistryHelper.cs" />
+    <Compile Include="FwLinkArgsTests.cs" />
+    <Compile Include="FwRegistryHelperTests.cs" />
+    <Compile Include="MatchedPairsTests.cs" />
+    <Compile Include="MeasurementUtilsTest.cs" />
+    <Compile Include="ParagraphCorrelationTests.cs" />
+    <Compile Include="QuotationMarksTests.cs" />
+    <Compile Include="ClipboardStub.cs" />
+    <Compile Include="ImagePictureTest.cs" />
+    <Compile Include="MessageBoxStub.cs" />
+    <Compile Include="Attributes\InitializeNoOpKeyboardControllerAttribute.cs" />
+    <Compile Include="Attributes\InitializeRealKeyboardControllerAttribute.cs" />
+    <Compile Include="Attributes\SetMessageBoxAdapterAttribute.cs" />
+    <Compile Include="DummyKeyboardAdaptor.cs" />
+    <Compile Include="Attributes\InitializeFwRegistryHelperAttribute.cs" />
     <Compile Include="..\..\..\AssemblyInfoForTests.cs">
       <Link>AssemblyInfoForTests.cs</Link>
     </Compile>
-    <Compile Include="CaseFunctionsTest.cs" />
-    <Compile Include="FwDirectoryFinderTests.cs" />
-    <Compile Include="DummyCharPropEngine.cs" />
-    <Compile Include="DummyFwRegistryHelper.cs" />
-    <Compile Include="DummyICU.cs" />
-    <Compile Include="ExemplarCharactersHelperTests.cs" />
-    <Compile Include="FwLinkArgsTests.cs" />
-    <Compile Include="FwRegistryHelperTests.cs" />
-    <Compile Include="IcuWrapperTest.cs" />
-    <Compile Include="MeasurementUtilsTest.cs" />
-    <Compile Include="MoreStringUtilsTests.cs" />
-    <Compile Include="ParagraphCorrelationTests.cs" />
-    <Compile Include="ShowHelpTests.cs" />
+    <Compile Include="ManagedPictureFactoryTests.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="food\fruit\citrus\strings-en.xml" />
+    <EmbeddedResource Include="food\fruit\strings-en.xml" />
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">

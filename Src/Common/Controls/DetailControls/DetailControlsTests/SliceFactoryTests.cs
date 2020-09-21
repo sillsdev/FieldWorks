@@ -4,22 +4,19 @@
 //
 // Original author: MarkS 2016-07-27 SliceFactoryTests.cs
 
-using System.Collections;
-using System.Windows.Forms;
 using System.Xml;
 using NUnit.Framework;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.FDOTests;
-using SIL.Utils;
-using XCore;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.FDO.Application;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel;
+using SIL.FieldWorks.Common.ViewsInterfaces;
+using SIL.LCModel.Application;
+using SIL.LCModel.Infrastructure;
 using System;
-using Palaso.TestUtilities;
-using SIL.CoreImpl;
+using SIL.TestUtilities;
 using System.Collections.Generic;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.LCModel.Core.Cellar;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.DomainServices;
 using SIL.FieldWorks.XWorks;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls
@@ -44,7 +41,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 			CreateTestData();
 			ICmPossibility cmPossibility = CreateCustomItemAddToList(m_testList, "itemname");
-			IFdoServiceLocator fdoServiceLocator = new FdoServiceLocatorStub(cmPossibility);
+			ILcmServiceLocator fdoServiceLocator = new FdoServiceLocatorStub(cmPossibility);
 
 			// SUT
 			SliceFactory.SetConfigurationDisplayPropertyIfNeeded(configurationNode, cmObject, cmObjectCustomFieldFlid, mainCacheAccessor, fdoServiceLocator, metadataCache);
@@ -52,7 +49,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			AssertThatXmlIn.String(configurationNode.OuterXml).HasSpecifiedNumberOfMatchesForXpath("/slice/deParams[@displayProperty]", 1);
 		}
 
-		class FdoServiceLocatorStub : IFdoServiceLocator
+		class FdoServiceLocatorStub : ILcmServiceLocator
 		{
 			ICmPossibility m_returnObject;
 			public FdoServiceLocatorStub(ICmPossibility returnObject)
@@ -69,13 +66,12 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			public bool IsValidObjectId(int hvo) {throw new NotImplementedException();}
 			public ICmObject GetObject(Guid guid) {throw new NotImplementedException();}
 			public ICmObject GetObject(ICmObjectId id) {throw new NotImplementedException();}
-			public IWritingSystemManager WritingSystemManager { get{throw new NotImplementedException();} }
+			public WritingSystemManager WritingSystemManager { get { throw new NotImplementedException(); } }
 			public IWritingSystemContainer WritingSystems { get{throw new NotImplementedException();} }
 			public ICmObjectRepository ObjectRepository { get{throw new NotImplementedException();} }
 			public ICmObjectIdFactory ObjectIdFactory { get{throw new NotImplementedException();} }
 			public IFwMetaDataCacheManaged MetaDataCache  { get{throw new NotImplementedException();} }
 			public ILgWritingSystemFactory WritingSystemFactory { get{throw new NotImplementedException();} }
-			public ILgCharacterPropertyEngine UnicodeCharProps { get{throw new NotImplementedException();} }
 			public IEnumerable<object> GetAllInstances(Type serviceType)
 			{throw new NotImplementedException();}
 			public IEnumerable<TService> GetAllInstances<TService>()
@@ -106,7 +102,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 		}
 
-		class FwMetaDataCacheStub : FdoMetaDataCacheDecoratorBase
+		class FwMetaDataCacheStub : LcmMetaDataCacheDecoratorBase
 		{
 			public FwMetaDataCacheStub(IFwMetaDataCacheManaged metaDataCache) : base(metaDataCache)
 			{
@@ -173,7 +169,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				throw new NotImplementedException();
 			}
 
-			public IFdoServiceLocator Services
+			public ILcmServiceLocator Services
 			{
 				get { throw new NotImplementedException(); }
 			}
@@ -240,7 +236,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 			public bool IsValidObject { get; set; }
 
-			public FdoCache Cache
+			public LcmCache Cache
 			{
 				get { throw new NotImplementedException(); }
 			}

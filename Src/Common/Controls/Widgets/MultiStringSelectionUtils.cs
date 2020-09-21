@@ -2,28 +2,13 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System;
-using System.ComponentModel;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
-using System.Drawing;
-using System.IO;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;		// controls and etc...
-using System.Windows.Forms.VisualStyles;
-using System.Xml;
-using Palaso.Media;
-using Palaso.WritingSystems;
-using SIL.CoreImpl;
-using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.Utils;
-using System.Text;
 
 namespace SIL.FieldWorks.Common.Widgets
 {
@@ -35,7 +20,7 @@ namespace SIL.FieldWorks.Common.Widgets
 	/// </summary>
 	internal static class MultiStringSelectionUtils
 	{
-		internal static IVwSelection GetSelAtStartOfWs(IVwRootBox rootBox, int flid, int wsIndex, IWritingSystem ws)
+		internal static IVwSelection GetSelAtStartOfWs(IVwRootBox rootBox, int flid, int wsIndex, CoreWritingSystemDefinition ws)
 		{
 			try
 			{
@@ -47,7 +32,7 @@ namespace SIL.FieldWorks.Common.Widgets
 			}
 		}
 
-		internal static int GetCurrentSelectionIndex(SelectionHelper curSel, List<IWritingSystem> writingSystems)
+		internal static int GetCurrentSelectionIndex(SelectionHelper curSel, List<CoreWritingSystemDefinition> writingSystems)
 		{
 			var ws = curSel.SelProps.GetWs();
 			int index = -1;
@@ -62,7 +47,7 @@ namespace SIL.FieldWorks.Common.Widgets
 			return index;
 		}
 
-		internal static void HandleUpDownArrows(KeyEventArgs e, IVwRootBox rootBox, SelectionHelper curSel, List<IWritingSystem> wsList, int flid)
+		internal static void HandleUpDownArrows(KeyEventArgs e, IVwRootBox rootBox, SelectionHelper curSel, List<CoreWritingSystemDefinition> wsList, int flid)
 		{
 			if (curSel == null || !curSel.IsValid) // LT-13805: sometimes selection was null
 				return;

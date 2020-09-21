@@ -1,17 +1,13 @@
-// Copyright (c) 2003-2013 SIL International
+// Copyright (c) 2003-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: StringTableTests.cs
-// Authorship History: John Hatton
-// --------------------------------------------------------------------------------------------
-using System.Diagnostics.CodeAnalysis;
+
 using NUnit.Framework;
 using System.Xml;
 using System.Collections.Generic;
-using SIL.Utils;
 using System.Diagnostics;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.Utils;
 
 namespace XCore
 {
@@ -19,7 +15,7 @@ namespace XCore
 	/// Summary description for IncludeXmlTests.
 	/// </summary>
 	[TestFixture]
-	public class IncludeXmlTests : TestBaseForTestsThatCreateTempFilesBasedOnResources
+	public class IncludeXmlTests
 	{
 		protected XmlIncluder m_includer;
 
@@ -29,10 +25,10 @@ namespace XCore
 			SimpleResolver resolver = new SimpleResolver();
 
 			string source = FwDirectoryFinder.SourceDirectory;
-			string path = System.IO.Path.Combine(source, @"Utilities/XMLUtils/XMLUtilsTests");
+			string path = System.IO.Path.Combine(source, "XCore", "xCoreTests");
 			if (!System.IO.Directory.Exists(path))
 			{
-				Debug.Fail(path + " not found.  Have the XmlUtilsTests been moved?");
+				Debug.Fail(path + " not found.");
 			}
 
 			resolver.BaseDirectory = path;
@@ -40,8 +36,6 @@ namespace XCore
 		}
 
 		[Test]
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		public void ReplaceNode()
 		{
 			XmlDocument doc =  new XmlDocument();
@@ -54,8 +48,6 @@ namespace XCore
 		}
 
 		[Test]
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		public void ProcessDomExplicit()
 		{
 			XmlDocument doc =  new XmlDocument();
@@ -70,8 +62,6 @@ namespace XCore
 		/// This document contains nodes to do the inclusion.
 		/// </summary>
 		[Test]
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		public void ExplicitThisDocInclusionBase()
 		{
 			XmlDocument doc = new XmlDocument();
@@ -87,8 +77,6 @@ namespace XCore
 		/// This document contains nodes to do the inclusion.
 		/// </summary>
 		[Test]
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		public void TwoLevelThisDocInclusion()
 		{
 			XmlDocument doc = new XmlDocument();
@@ -104,8 +92,6 @@ namespace XCore
 		/// override
 		/// </summary>
 		[Test]
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		public void InclusionOverrides()
 		{
 			XmlDocument doc = new XmlDocument();
@@ -146,8 +132,6 @@ namespace XCore
 		}
 
 		[Test]
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		public void TwoLevelInclusion()
 		{
 			XmlDocument doc =  new XmlDocument();
@@ -161,8 +145,6 @@ namespace XCore
 		}
 
 		[Test]
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		public void ThreeLevelInclusionWithRelativeDirectory()
 		{
 			XmlDocument doc =  new XmlDocument();

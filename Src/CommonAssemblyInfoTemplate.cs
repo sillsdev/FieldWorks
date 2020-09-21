@@ -1,4 +1,4 @@
-﻿/*----------------------------------------------------------------------------------------------
+/*----------------------------------------------------------------------------------------------
 Copyright (c) 2002-2013 SIL International
 This software is licensed under the LGPL, version 2.1 or later
 (http://www.gnu.org/licenses/lgpl-2.1.html)
@@ -25,9 +25,9 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
-// Format: Version.Milestone.Year.MMDDL
-[assembly: AssemblyFileVersion("$!{FWMAJOR:0}.$!{FWMINOR:0}.$!{FWREVISION:0}.$NUMBEROFDAYS")]
-// Format: FwMajorVersion.FwMinorVersion
-[assembly: AssemblyInformationalVersionAttribute("$!{FWMAJOR:0}.$!{FWMINOR:0} $!FWBETAVERSION")]
-// Format: Version.Milestone.0.Level
+// Format: Major.Minor.Revision.BuildNumber
+[assembly: AssemblyFileVersion("$!{FWMAJOR:0}.$!{FWMINOR:0}.$!{FWREVISION:0}.$BUILDNUMBER")]
+// Format: FwMajorVersion.FwMinorVersion Day Alpha/Beta/RC
+[assembly: AssemblyInformationalVersion("$!{FWMAJOR:0}.$!{FWMINOR:0}.$!{FWREVISION:0}.$!{BUILDNUMBER:0} $NUMBEROFDAYS $!FWBETAVERSION")]
+// Format: Major.Minor.Revision.BuildNumber?
 [assembly: AssemblyVersion("$!{FWMAJOR:0}.$!{FWMINOR:0}.$!{FWREVISION:0}.*")]

@@ -15,7 +15,7 @@ using System.IO;
 
 using NUnit.Framework;
 
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 
 namespace SIL.FieldWorks.Common.FXT
 {

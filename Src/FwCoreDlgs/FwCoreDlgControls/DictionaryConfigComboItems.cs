@@ -3,7 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.LCModel.DomainServices;
 
 //------------------------------------------------------------------------------
 // REVIEW (Hasso) 2014.03: FwCoreDlgControls might not be the best project for these Model classes (xWorks would be better),

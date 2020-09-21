@@ -1,9 +1,6 @@
-// Copyright (c) 2006-2013 SIL International
+// Copyright (c) 2006-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: FwFontTab.cs
-// Responsibility: TE Team
 
 using System;
 using System.Diagnostics;
@@ -12,12 +9,11 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 
-using SIL.CoreImpl;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel;
 using SIL.FieldWorks.Common.Controls;
-using SIL.Utils;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.DomainServices;
 using SIL.FieldWorks.Resources;
 
 namespace SIL.FieldWorks.FwCoreDlgControls
@@ -27,7 +23,7 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 	///
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
-	public partial class FwFontTab : UserControl, IFWDisposable, IStylesTab
+	public partial class FwFontTab : UserControl, IStylesTab
 	{
 		#region Data Members
 		/// <summary>
@@ -238,7 +234,7 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 		/// Fills the font info controls
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public void FillFontInfo(FdoCache cache)
+		public void FillFontInfo(LcmCache cache)
 		{
 			CheckDisposed();
 
@@ -248,7 +244,7 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 			item.SubItems.Add(string.Empty);
 			m_lstWritingSystems.Items.Add(item);
 
-			foreach (IWritingSystem ws in cache.ServiceLocator.WritingSystems.AllWritingSystems)
+			foreach (CoreWritingSystemDefinition ws in cache.ServiceLocator.WritingSystems.AllWritingSystems)
 			{
 				item = new ListViewItem(ws.DisplayLabel);
 				item.Tag = ws.Handle;
@@ -300,7 +296,7 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 			// only include the magic font names, not the real ones.
 			FillFontNames(ws > -1);
 
-			m_FontAttributes.ShowingInheritedProperties = ShowingInheritedProperties;
+			m_FontAttributes.ShowingInheritedProperties = true; // Always allow re-setting to unspecified for font attributes
 
 			// Initialize controls based on whether or not this style inherits from another style.
 			InitControlBehavior(ShowingInheritedProperties);
@@ -406,6 +402,15 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 		}
 		#endregion
 
+		internal ComboBox FontNamesComboBox
+		{
+			get
+			{
+				CheckDisposed();
+				return m_cboFontNames;
+			}
+		}
+
 		#region private methods
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -415,7 +420,7 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 		/// magic font names and real font names; otherwise only the magic font names will be in
 		/// the list.</param>
 		/// ------------------------------------------------------------------------------------
-		private void FillFontNames(bool fIncludeRealFontNames)
+		internal void FillFontNames(bool fIncludeRealFontNames)
 		{
 			if (m_fFontListIncludesRealNames == fIncludeRealFontNames &&
 				m_cboFontNames.Items.Count > 0)

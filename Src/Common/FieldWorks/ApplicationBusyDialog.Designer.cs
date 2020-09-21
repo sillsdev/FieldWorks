@@ -1,4 +1,4 @@
-// Copyright (c) 2010-2013 SIL International
+// Copyright (c) 2010-2020 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 //
@@ -51,7 +51,7 @@ namespace SIL.FieldWorks
 			this.m_btnCancel.Name = "m_btnCancel";
 			this.m_btnCancel.Size = new System.Drawing.Size(75, 23);
 			this.m_btnCancel.TabIndex = 0;
-			this.m_btnCancel.Text = "Cancel";
+			this.m_btnCancel.Text = SIL.FieldWorks.Properties.Resources.ksCancelButton;
 			this.m_btnCancel.UseVisualStyleBackColor = true;
 			this.m_btnCancel.Click += new System.EventHandler(this.m_btnCancel_Click);
 			//

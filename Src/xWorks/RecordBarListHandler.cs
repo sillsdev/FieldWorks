@@ -3,20 +3,16 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using XCore;
 using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Windows.Forms;
-using System.Xml;
-
-using SIL.FieldWorks.Filters;
-using SIL.FieldWorks.FDO;
-using SIL.Utils;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.LCModel.Core.Text;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.CoreImpl;
 using SIL.FieldWorks.Common.RootSites;
+using SIL.LCModel;
+using SIL.FieldWorks.Filters;
+using SIL.Utils;
+using XCore;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -69,7 +65,7 @@ namespace SIL.FieldWorks.XWorks
 				return;
 			}
 
-			XWindow window = (XWindow)m_mediator.PropertyTable.GetValue("window");
+			XWindow window = m_propertyTable.GetValue<XWindow>("window");
 			window.TreeBarControl.IsFlatList = true;
 			using (new WaitCursor(window))
 			{
@@ -85,9 +81,9 @@ namespace SIL.FieldWorks.XWorks
 				}
 				catch(Exception error)
 				{
-					IApp app = (IApp)m_mediator.PropertyTable.GetValue("App");
+					IApp app = m_propertyTable.GetValue<IApp>("App");
 					ErrorReporter.ReportException(error, app.SettingsKey,
-						m_mediator.FeedbackInfoProvider.SupportEmailAddress, null, false);
+						m_propertyTable.GetValue<IFeedbackInfoProvider>("FeedbackInfoProvider").SupportEmailAddress, null, false);
 				}
 
 
@@ -136,10 +132,9 @@ namespace SIL.FieldWorks.XWorks
 		{
 			get
 			{
-				XWindow window = (XWindow)m_mediator.PropertyTable.GetValue("window");
+				XWindow window = m_propertyTable.GetValue<XWindow>("window");
 				if (window != null)
 					return (ListView)window.ListStyleRecordList;
-				else
 					return null;
 			}
 		}

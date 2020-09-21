@@ -1,44 +1,59 @@
 echo off
 
+echo.
+echo.
+echo NOTE: If you are building from a clean repository, you will need to answer a few questions after restoring NuGet packages before the build can continue.
+echo.
+echo.
+
 REM cause Environment variable changes to be lost after this process dies:
 if not "%OS%"=="" setlocal
 
 REM Add Bin and DistFiles to the PATH:
 pushd %~dp0
 cd ..
-set PATH=%cd%\DistFiles;%cd%\Bin;%PATH%
+set PATH=%cd%\DistFiles;%cd%\Bin;%WIX%\bin;%PATH%
 popd
 
-Set RegQry=HKLM\Hardware\Description\System\CentralProcessor\0
-
-REG.exe Query %RegQry% > checkOS.txt
-
-Find /i "x86" < CheckOS.txt > StringCheck.txt
-
-If %ERRORLEVEL% == 0 (
-	set KEY_NAME=HKLM\SOFTWARE\Microsoft\VisualStudio\12.0
-) ELSE (
-	set KEY_NAME=HKLM\SOFTWARE\Wow6432Node\Microsoft\VisualStudio\12.0
+for /f "usebackq tokens=1* delims=: " %%i in (`vswhere -version "[15.0,15.999)" -requires Microsoft.Component.MSBuild`) do (
+  if /i "%%i"=="installationPath" set InstallDir=%%j
+  if /i "%%i"=="catalog_productLineVersion" set VSVersion=%%j
 )
-set KEY_NAME=%KEY_NAME%\Setup\VS
 
-del CheckOS.txt
-del StringCheck.txt
+if "%arch%" == "" set arch=x86
+call "%InstallDir%\VC\Auxiliary\Build\vcvarsall.bat" %arch% 8.1
 
-set VALUE_NAME=ProductDir
 
-REM Check for presence of key first.
-reg query %KEY_NAME% /v %VALUE_NAME% 2>nul || (echo Build requires VisualStudio 2013! & exit /b 1)
+if "%arch%" == "x86" IF "%VSVersion%" GEQ "2019" (set MsBuild="%InstallDir%\MSBuild\Current\Bin\msbuild.exe") else (set MsBuild="%InstallDir%\MSBuild\15.0\Bin\msbuild.exe")
+if "%arch%" == "x64" if "%VSVersion%" GEQ "2019" (set MsBuild="%InstallDir%\MSBuild\Current\Bin\amd64\msbuild.exe") else (set MsBuild="%InstallDir%\MSBuild\15.0\Bin\amd64\msbuild.exe")
 
-REM query the value. pipe it through findstr in order to find the matching line that has the value. only grab token 3 and the remainder of the line. %%b is what we are interested in here.
-set INSTALL_DIR=
-for /f "tokens=2,*" %%a in ('reg query %KEY_NAME% /v %VALUE_NAME% ^| findstr %VALUE_NAME%') do (
-	set PRODUCT_DIR=%%b
-)
-call "%PRODUCT_DIR%\VC\vcvarsall.bat"
+set KEY_NAME="HKLM\SOFTWARE\WOW6432Node\Microsoft\Microsoft SDKs\Windows\v10.0"
+set VALUE_NAME=InstallationFolder
+
+REG QUERY %KEY_NAME% /S /v %VALUE_NAME%
+FOR /F "tokens=2* delims= " %%1 IN (
+  'REG QUERY %KEY_NAME% /v %VALUE_NAME%') DO SET pInstallDir=%%2
+SET PATH=%PATH%;%pInstallDir%bin\%arch%;
+
+set VALUE_NAME=ProductVersion
+REG QUERY %KEY_NAME% /S /v %VALUE_NAME%
+FOR /F "tokens=2* delims= " %%1 IN (
+  'REG QUERY %KEY_NAME% /v %VALUE_NAME%') DO SET Win10SdkUcrtPath=%pInstallDir%Include\%%2.0\ucrt
 
 REM allow typelib registration in redirected registry key even with limited permissions
 set OAPERUSERTLIBREG=1
 
-msbuild /t:refreshTargets
-msbuild %*
+echo "Feedback" %MsBuild%
+REM Run the next target only if the previous target succeeded
+(
+	%MsBuild% /t:RestoreNuGetPackages
+) && (
+	%MsBuild% /t:CheckDevelopmentPropertiesFile
+) && (
+	%MsBuild% /t:refreshTargets
+) && (
+	%MsBuild% %*
+)
+FOR /F "tokens=*" %%g IN ('date /t') do (SET DATE=%%g)
+FOR /F "tokens=*" %%g IN ('time /t') do (SET TIME=%%g)
+echo Build completed at %TIME% on %DATE%

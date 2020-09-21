@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <template format="htm" type="configured" datatype="ExportedDictionary" xslt="Configured.xsl;ConfiguredIndex.xsl;IndexCards.xslt">
-	<FxtDocumentDescription dataLabel="Configured Dictionary" formatLabel="Index Cards HTML" defaultExtension="htm" filter="htm files (*.htm)|*.htm;*.html|All files (*.*)|*.*">
+	<FxtDocumentDescription dataLabel="Configured Dictionary" formatLabel="Index cards (HTML)" defaultExtension="htm" filter="htm files (*.htm)|*.htm;*.html|All files (*.*)|*.*">
 This export option is not yet ready to release.
 Please mailto: FLEx_DevTeam@sil.org
 

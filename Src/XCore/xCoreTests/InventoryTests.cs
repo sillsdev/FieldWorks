@@ -1,20 +1,13 @@
-// Copyright (c) 2003-2013 SIL International
+// Copyright (c) 2003-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: InventoryTests.cs
-// Responsibility: John Thomson
-// Last reviewed:
-//
-// <remarks>
-// </remarks>
-// --------------------------------------------------------------------------------------------
+
 using System.IO;
 using System.Xml;
 using System.Collections.Generic;
 using NUnit.Framework;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.Utils;
-using System.Resources;
 
 namespace XCore
 {
@@ -42,14 +35,6 @@ namespace XCore
 
 			m_inventory = new Inventory(new string[] {testPathBase, testPathLater},
 				"*Layouts.xml", "/layoutInventory/*", keyAttrs, "InventoryTests", "projectPath");
-		}
-
-		protected override ResourceManager ResourceMgr
-		{
-			get
-			{
-				return Properties.Resources.ResourceManager;
-			}
 		}
 
 		XmlNode CheckNode(string name, string[] keyvals, string target)
@@ -244,6 +229,19 @@ namespace XCore
 			XmlNode repeat = m_inventory.GetUnified(baseNode, alteration);
 			Assert.AreSame(unified, repeat); // ensure not generating repeatedly.
 		}
+
+		[Test]
+		public void GetUnified_SkipsShouldNotMerge()
+		{
+			XmlNode baseNode = m_inventory.GetElement("layout",
+				new string[] { "MoAffixProcess", "detail", null, "TestGetUnify3" }); // TestGetUnify3 data has shouldNotMerge="true" on its child.
+			XmlNode alteration = m_inventory.GetElement("layout",
+				new string[] { "MoAffixProcess", "detail", null, "TestGetUnify4" });
+			XmlNode unified = m_inventory.GetUnified(baseNode, alteration);
+			Assert.AreEqual(1, unified.ChildNodes.Count);
+			XmlNode repeat = m_inventory.GetUnified(baseNode, alteration);
+			Assert.AreSame(unified, repeat); // ensure not generating repeatedly.
+		}
 	}
 
 	[TestFixture]
@@ -260,14 +258,6 @@ namespace XCore
 			string folder = CreateTempTestFiles(typeof(Properties.Resources), "CreateOverrideTestData");
 			doc.Load(Path.Combine(folder, "CreateOverrideTestData.xml"));
 			root = doc.DocumentElement;
-		}
-
-		protected override ResourceManager ResourceMgr
-		{
-			get
-			{
-				return Properties.Resources.ResourceManager;
-			}
 		}
 
 		[Test]

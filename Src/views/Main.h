@@ -1,5 +1,5 @@
 /*--------------------------------------------------------------------*//*:Ignore this sentence.
-Copyright (c) 1999-2013 SIL International
+Copyright (c) 1999-2019 SIL International
 This software is licensed under the LGPL, version 2.1 or later
 (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -18,7 +18,7 @@ Description:
 
 #define NO_EXCEPTIONS 1
 #include "common.h"
-#if WIN32
+#if defined(WIN32) || defined(WIN64)
 #include <shlobj.h> // for one call to SHGetSpecialFolderPath
 #endif
 
@@ -39,7 +39,7 @@ If you want to show colored boxes around the boxes uncomment the following defin
 #define kchwHardLineBreak (wchar)0x2028
 
 #include "VwResources.h"
-#if WIN32
+#if defined(WIN32) || defined(WIN64)
 #include "..\..\..\Src\AppCore\Res\AfAppRes.h"
 #else
 #include <Res/AfAppRes.h> // from AppCore
@@ -73,7 +73,7 @@ class VwTextSelection;
 class VwTableRowBox;
 class VwTableCellBox;
 class SilDataAccess;
-#if WIN32
+#if defined(WIN32) || defined(WIN64)
 class VwAccessRoot;
 #endif
 class VwSynchronizer;
@@ -92,9 +92,10 @@ DEFINE_COM_PTR(VwSynchronizer); // deals with circularity of root box and synch.
 //:>**********************************************************************************
 //:>	Interfaces.
 //:>**********************************************************************************
-#include "FwKernelTlb.h"
-
+#include <FwKernelTlb.h>
 #include "ViewsTlb.h"
+#include "LgUnicodeCollater.h"
+#include "ActionHandler.h"
 
 //:>**********************************************************************************
 //:>	Types and constants used in View subsystem
@@ -155,7 +156,7 @@ typedef ComMultiMap<HVO, VwAbstractNotifier> ObjNoteMap; // Hungarian mmhvoqnote
 // for interfacing with Graphite:
 namespace gr {
 typedef unsigned char utf8;
-#ifdef WIN32
+#if defined(WIN32) || defined(WIN64)
 typedef wchar_t utf16;
 #else
 typedef wchar utf16;
@@ -165,7 +166,19 @@ typedef unsigned long int utf32;
 class GrEngine;
 } // gr
 
-// obsolete #include "ActualTextProperties.h"
+#include "LgLineBreaker.h"
+class UniscribeEngine;
+DEFINE_COM_PTR(UniscribeEngine);
+class GraphiteEngine;
+DEFINE_COM_PTR(GraphiteEngine);
+#if !defined(_WIN32) && !defined(_M_X64)
+#include "UniscribeLinux.h"
+#endif
+#include "UniscribeSegment.h"
+#include "UniscribeEngine.h"
+#include "GraphiteSegment.h"
+#include "GraphiteEngine.h"
+
 #include "ViewsGlobals.h"
 #include "VwBaseDataAccess.h"
 #include "VwBaseVirtualHandler.h"
@@ -184,20 +197,14 @@ class GrEngine;
 #include "VwTableBox.h"
 #include "VwLazyBox.h"
 #include "StringToNumHelpers.h"
-#if WIN32
+#if defined(WIN32) || defined(WIN64)
 #include "AfDef.h"
 #include "AfColorTable.h"
 #include "AfGfx.h"
 #include "VwPattern.h"
-#include "WriteXml.h"
-#include "FwStyledText.h"
 #include "VwAccessRoot.h"
 #include "VwSynchronizer.h"
 #include "VwTextStore.h"
-#else
-#include "StringToNumHelpers.h"
-#include "WriteXml.h"
-#include "FwStyledText.h"
 #endif
 #include "AfColorTable.h"
 #include "VwPattern.h"
@@ -205,8 +212,26 @@ class GrEngine;
 #include "VwLayoutStream.h"
 #include "VwUndo.h"
 #include "VwInvertedViews.h"
-#if !WIN32
+#if !defined(_WIN32) && !defined(_M_X64)
 #include "DisplayCapsInfo.h"
 #endif
+#include "TsString.h"
+#include "TsTextProps.h"
+#include "TsStrFactory.h"
+#include "TsPropsFactory.h"
+#include "TextServ.h"
+#include "StringToNumHelpers.h"
+#include "FwStyledText.h"
+#if defined(WIN32) || defined(WIN64)
+// for parsing XML files; in this DLL, we want the parser to work with wide characters,
+// since we always parse BSTRs.
+#define XML_UNICODE_WCHAR_T
+#else
+// XML_UNICODE_WCHAR_T causes XML_Char to be wchar_t
+#ifdef XML_UNICODE
+#error "Don't define XML_UNICODE as this causes XML_CHAR to be UTF-16 which expat on Linux can't handle"
+#endif
+#endif
+#include "../Cellar/FwXml.h"
 
 #endif //!VIEWS_H

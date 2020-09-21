@@ -1,14 +1,12 @@
-﻿// Copyright (c) 2015 SIL International
+﻿// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections.Generic;
-using System.Text;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.Utils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Application;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Application;
+using SIL.LCModel.Utils;
 
 namespace SIL.FieldWorks.Common.Controls
 {
@@ -23,7 +21,7 @@ namespace SIL.FieldWorks.Common.Controls
 		private int m_mainFlid;
 		private int m_hvoRoot;
 		private Dictionary<int, ITestItem> m_filterFlids = new Dictionary<int, ITestItem>();
-		Set<int> m_validHvos = new Set<int>();
+		private readonly HashSet<int> m_validHvos;
 
 		/// <summary>
 		/// Make one that wraps the specified cache and passes items in the specified property of the specified root object.
@@ -37,7 +35,7 @@ namespace SIL.FieldWorks.Common.Controls
 			using (ArrayPtr arrayPtr = MarshalEx.ArrayToNative<int>(chvoReal))
 			{
 				BaseSda.VecProp(m_hvoRoot, m_mainFlid, chvoReal, out chvoReal, arrayPtr);
-				m_validHvos = new Set<int>(MarshalEx.NativeToArray<int>(arrayPtr, chvoReal));
+				m_validHvos = new HashSet<int>(MarshalEx.NativeToArray<int>(arrayPtr, chvoReal));
 			}
 		}
 
@@ -152,7 +150,7 @@ namespace SIL.FieldWorks.Common.Controls
 	/// </summary>
 	interface ITestItem
 	{
-		bool Test(int hvo, ISilDataAccess sda, Set<int> validHvos);
+		bool Test(int hvo, ISilDataAccess sda, ISet<int> validHvos);
 	}
 
 	/// <summary>
@@ -166,7 +164,7 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			m_flid = flid;
 		}
-		public bool Test(int hvo, ISilDataAccess sda, Set<int> validHvos)
+		public bool Test(int hvo, ISilDataAccess sda, ISet<int> validHvos)
 		{
 			return validHvos.Contains(sda.get_ObjectProp(hvo, m_flid));
 		}

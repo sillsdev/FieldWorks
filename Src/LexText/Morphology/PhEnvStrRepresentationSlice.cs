@@ -1,20 +1,19 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;
-
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.LCModel.Core.Phonology;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.Framework.DetailControls;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.Utils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Validation;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
 using XCore;
-using SIL.FieldWorks.FDO.DomainServices;
 
 namespace SIL.FieldWorks.XWorks.MorphologyEditor
 {
@@ -37,11 +36,10 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		/// <param name="flid"></param>
 		/// <param name="node"></param>
 		/// <param name="obj"></param>
-		/// <param name="stringTbl"></param>
 		/// <param name="persistenceProvider"></param>
 		/// <param name="ws"></param>
-		public PhEnvStrRepresentationSlice(FdoCache cache, string editor, int flid,
-			System.Xml.XmlNode node, ICmObject obj, StringTable stringTbl,
+		public PhEnvStrRepresentationSlice(LcmCache cache, string editor, int flid,
+			System.Xml.XmlNode node, ICmObject obj,
 			IPersistenceProvider persistenceProvider, int ws)
 			: base(new StringRepSliceView(obj.Hvo), obj, StringRepSliceVc.Flid)
 		{
@@ -61,7 +59,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			CheckDisposed();
 
 			StringRepSliceView ctrl = Control as StringRepSliceView; //new StringRepSliceView(m_hvoContext);
-			ctrl.Cache = (FdoCache)Mediator.PropertyTable.GetValue("cache");
+			ctrl.Cache = m_propertyTable.GetValue<LcmCache>("cache");
 			ctrl.ResetValidator();
 
 			if (ctrl.RootBox == null)
@@ -172,7 +170,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			StringRepSliceView view = Control as StringRepSliceView;
 			m_cache.DomainDataByFlid.BeginUndoTask(MEStrings.ksInsertNaturalClass, MEStrings.ksInsertNaturalClass);
 			bool fOk = SimpleListChooser.ChooseNaturalClass(view.RootBox, m_cache,
-				m_persistenceProvider, Mediator);
+				m_persistenceProvider, Mediator, m_propertyTable);
 			m_cache.DomainDataByFlid.EndUndoTask();
 			return fOk;
 		}
@@ -252,8 +250,8 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 				CheckDisposed();
 
 				m_validator = new PhonEnvRecognizer(
-					m_fdoCache.LangProject.PhonologicalDataOA.AllPhonemes().ToArray(),
-					m_fdoCache.LangProject.PhonologicalDataOA.AllNaturalClassAbbrs().ToArray());
+					m_cache.LangProject.PhonologicalDataOA.AllPhonemes().ToArray(),
+					m_cache.LangProject.PhonologicalDataOA.AllNaturalClassAbbrs().ToArray());
 			}
 
 			/// <summary>
@@ -303,8 +301,6 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 
 			#endregion INotifyControlInCurrentSlice implementation
 
-			[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-				Justification="FindForm() returns a reference")]
 			private void DoValidation(bool refresh)
 			{
 				Form frm = FindForm();
@@ -346,19 +342,17 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			{
 				CheckDisposed();
 
-				base.MakeRoot();
-
-				if (m_fdoCache == null || DesignMode)
+				if (m_cache == null || DesignMode)
 					return;
 
 				// A crude way of making sure the property we want is loaded into the cache.
-				m_env = m_fdoCache.ServiceLocator.GetInstance<IPhEnvironmentRepository>().GetObject(m_hvoObj);
+				m_env = m_cache.ServiceLocator.GetInstance<IPhEnvironmentRepository>().GetObject(m_hvoObj);
 				m_vc = new StringRepSliceVc();
-				// Review JohnT: why doesn't the base class do this??
-				m_rootb = VwRootBoxClass.Create();
-				m_rootb.SetSite(this);
+
+				base.MakeRoot();
+
 				// And maybe this too, at least by default?
-				m_rootb.DataAccess = m_fdoCache.MainCacheAccessor;
+				m_rootb.DataAccess = m_cache.MainCacheAccessor;
 
 				// arg3 is a meaningless initial fragment, since this VC only displays one thing.
 				// arg4 could be used to supply a stylesheet.
@@ -471,7 +465,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 					return false;
 				// We need a CmObjectUi in order to call HandleRightClick().
 				using (SIL.FieldWorks.FdoUi.CmObjectUi ui = new SIL.FieldWorks.FdoUi.CmObjectUi(m_env))
-					return ui.HandleRightClick(Mediator, this, true, "mnuEnvChoices");
+					return ui.HandleRightClick(Mediator, m_propertyTable, this, true, "mnuEnvChoices");
 			}
 			#endregion
 		}

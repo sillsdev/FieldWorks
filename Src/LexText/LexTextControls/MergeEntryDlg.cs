@@ -2,20 +2,21 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Diagnostics;
 using System.Linq;
 using System.Windows.Forms;
 using System.Xml;
-using SIL.CoreImpl;
-using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Widgets;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.Utils;
+using SIL.LCModel;
+using SIL.LCModel.Utils;
 using XCore;
-using System.Diagnostics.CodeAnalysis;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.FieldWorks.Common.Controls;
+using SIL.LCModel.Core.KernelInterfaces;
 
 namespace SIL.FieldWorks.LexText.Controls
 {
@@ -50,8 +51,6 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		#region	Construction and Destruction
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "infoIcon is a reference")]
 		public MergeEntryDlg()
 		{
 			// This call is required by the Windows Form Designer.
@@ -84,15 +83,16 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// </summary>
 		/// <param name="cache">FDO cache.</param>
 		/// <param name="mediator">Mediator used to restore saved siz and location info.</param>
+		/// <param name="propertyTable"></param>
 		/// <param name="startingEntry">Entry that cannot be used as a match in this dlg.</param>
-		public void SetDlgInfo(FdoCache cache, Mediator mediator, ILexEntry startingEntry)
+		public void SetDlgInfo(LcmCache cache, Mediator mediator, PropertyTable propertyTable, ILexEntry startingEntry)
 		{
 			CheckDisposed();
 
 			Debug.Assert(startingEntry != null);
 			m_startingEntry = startingEntry;
 
-			SetDlgInfo(cache, null, mediator);
+			SetDlgInfo(cache, null, mediator, propertyTable);
 
 			// Relocate remaining three buttons.
 			Point pt = m_btnHelp.Location;
@@ -131,12 +131,12 @@ namespace SIL.FieldWorks.LexText.Controls
 				sBase = LexTextControls.ksEntryXMergedIntoY;
 			else
 				sBase = LexTextControls.ksEntryXMergedIntoSel;
-			ITsStrBldr tsb = TsStrBldrClass.Create();
-			tsb.ReplaceTsString(0, tsb.Length, m_tsf.MakeString(sBase, userWs));
+			ITsStrBldr tsb = TsStringUtils.MakeStrBldr();
+			tsb.ReplaceTsString(0, tsb.Length, TsStringUtils.MakeString(sBase, userWs));
 			// Replace every "{0}" with the headword we'll be merging, and make it bold.
 			ITsString tssFrom = m_startingEntry.HeadWord;
 			string sTmp = tsb.Text;
-			int ich = sTmp.IndexOf("{0}");
+			int ich = sTmp.IndexOf("{0}", StringComparison.Ordinal);
 			int cch = tssFrom.Length;
 			while (ich >= 0 && cch > 0)
 			{
@@ -146,13 +146,13 @@ namespace SIL.FieldWorks.LexText.Controls
 					(int)FwTextPropVar.ktpvEnum,
 					(int)FwTextToggleVal.kttvForceOn);
 				sTmp = tsb.Text;
-				ich = sTmp.IndexOf("{0}");	// in case localization needs more than one.
+				ich = sTmp.IndexOf("{0}", StringComparison.Ordinal);	// in case localization needs more than one.
 			}
 			if (m_selObject != null)
 			{
 				// Replace every "{1}" with the headword we'll be merging into.
 				ITsString tssTo = ((ILexEntry)m_selObject).HeadWord;
-				ich = sTmp.IndexOf("{1}");
+				ich = sTmp.IndexOf("{1}", StringComparison.Ordinal);
 				cch = tssTo.Length;
 				while (ich >= 0 && cch > 0)
 				{
@@ -162,44 +162,44 @@ namespace SIL.FieldWorks.LexText.Controls
 						(int)FwTextPropVar.ktpvEnum,
 						(int)FwTextToggleVal.kttvForceOn);
 					sTmp = tsb.Text;
-					ich = sTmp.IndexOf("{0}");
+					ich = sTmp.IndexOf("{0}", StringComparison.Ordinal);
 				}
 				// Replace every "{2}" with a newline character.
-				ich = sTmp.IndexOf("{2}");
+				ich = sTmp.IndexOf("{2}", StringComparison.Ordinal);
 				while (ich >= 0)
 				{
-					tsb.ReplaceTsString(ich, ich + 3, m_tsf.MakeString(StringUtils.kChHardLB.ToString(), userWs));
+					tsb.ReplaceTsString(ich, ich + 3, TsStringUtils.MakeString(StringUtils.kChHardLB.ToString(), userWs));
 					sTmp = tsb.Text;
-					ich = sTmp.IndexOf("{2}");
+					ich = sTmp.IndexOf("{2}", StringComparison.Ordinal);
 				}
 			}
 			else
 			{
 				// Replace every "{1}" with a newline character.
-				ich = sTmp.IndexOf("{1}");
+				ich = sTmp.IndexOf("{1}", StringComparison.Ordinal);
 				while (ich >= 0)
 				{
-					tsb.ReplaceTsString(ich, ich + 3, m_tsf.MakeString(StringUtils.kChHardLB.ToString(), userWs));
+					tsb.ReplaceTsString(ich, ich + 3, TsStringUtils.MakeString(StringUtils.kChHardLB.ToString(), userWs));
 					sTmp = tsb.Text;
-					ich = sTmp.IndexOf("{1}");
+					ich = sTmp.IndexOf("{1}", StringComparison.Ordinal);
 				}
 			}
 			m_fwTextBoxBottomMsg.Tss = tsb.GetString();
 		}
 
-		protected override void  InitializeMatchingObjects(FdoCache cache, Mediator mediator)
+		protected override void InitializeMatchingObjects(LcmCache cache)
 		{
-			var xnWindow = (XmlNode)m_mediator.PropertyTable.GetValue("WindowConfiguration");
+			var xnWindow = m_propertyTable.GetValue<XmlNode>("WindowConfiguration");
 			XmlNode configNode = xnWindow.SelectSingleNode("controls/parameters/guicontrol[@id=\"matchingEntries\"]/parameters");
 
-			var searchEngine = (MergeEntrySearchEngine)SearchEngine.Get(mediator, "MergeEntrySearchEngine", () => new MergeEntrySearchEngine(cache));
+			var searchEngine = (MergeEntrySearchEngine)SearchEngine.Get(m_mediator, m_propertyTable, "MergeEntrySearchEngine", () => new MergeEntrySearchEngine(cache));
 			searchEngine.CurrentEntryHvo = m_startingEntry.Hvo;
 
-			m_matchingObjectsBrowser.Initialize(cache, FontHeightAdjuster.StyleSheetFromMediator(mediator), mediator, configNode,
+			m_matchingObjectsBrowser.Initialize(cache, FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable), m_mediator, m_propertyTable, configNode,
 				searchEngine);
 
 			// start building index
-			var selectedWs = (IWritingSystem)m_cbWritingSystems.SelectedItem;
+			var selectedWs = (CoreWritingSystemDefinition) m_cbWritingSystems.SelectedItem;
 			if(selectedWs != null)
 				m_matchingObjectsBrowser.SearchAsync(GetFields(string.Empty, selectedWs.Handle));
 		}
@@ -211,7 +211,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		{
 			public int CurrentEntryHvo { private get; set; }
 
-			public MergeEntrySearchEngine(FdoCache cache) : base(cache)
+			public MergeEntrySearchEngine(LcmCache cache) : base(cache)
 			{
 			}
 

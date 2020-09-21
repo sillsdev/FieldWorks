@@ -1,4 +1,4 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -9,12 +9,13 @@ using System.Drawing;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.LCModel.Core.Text;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.Controls;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using SIL.FieldWorks.Resources;
-using SIL.Utils;
 using XCore;
 
 namespace SIL.FieldWorks.FdoUi.Dialogs
@@ -22,7 +23,7 @@ namespace SIL.FieldWorks.FdoUi.Dialogs
 	/// <summary>
 	/// Summary description for RelatedWords.
 	/// </summary>
-	public class RelatedWords : Form, IFWDisposable
+	public class RelatedWords : Form
 	{
 		private Button m_btnInsert;
 		private Button m_btnClose;
@@ -34,7 +35,7 @@ namespace SIL.FieldWorks.FdoUi.Dialogs
 		private System.ComponentModel.Container components = null;
 
 		RelatedWordsView m_view;
-		FdoCache m_cache;
+		LcmCache m_cache;
 		IVwSelection m_sel;
 		IVwStylesheet m_styleSheet;
 		int m_hvoEntry;
@@ -66,7 +67,7 @@ namespace SIL.FieldWorks.FdoUi.Dialogs
 		/// <param name="cdaTemp"></param>
 		/// <param name="owner"></param>
 		/// <returns></returns>
-		static internal bool LoadDomainAndRelationInfo(FdoCache cache, int hvoEntry, out int[] domainsOut,
+		static internal bool LoadDomainAndRelationInfo(LcmCache cache, int hvoEntry, out int[] domainsOut,
 			out int[] lexrelsOut, out IVwCacheDa cdaTemp, IWin32Window owner)
 		{
 			bool fHaveSemDomains = LoadDomainInfo(cache, hvoEntry, out domainsOut, out cdaTemp);
@@ -97,7 +98,7 @@ namespace SIL.FieldWorks.FdoUi.Dialogs
 		/// <param name="hvoSemanticDomainsOut">A list of int IDs of the semantic domains of the lexical entry</param>
 		/// <param name="cdaTemp"></param>
 		/// <returns></returns>
-		static private bool LoadDomainInfo(FdoCache cache, int hvoEntry, out int[] hvoSemanticDomainsOut, out IVwCacheDa cdaTemp)
+		static private bool LoadDomainInfo(LcmCache cache, int hvoEntry, out int[] hvoSemanticDomainsOut, out IVwCacheDa cdaTemp)
 		{
 			// REVIEW (SteveMiller): The LINQ below runs slow the first time its run. We should try to
 			// optimize it if possible.
@@ -115,6 +116,7 @@ namespace SIL.FieldWorks.FdoUi.Dialogs
 				select sd.Hvo).ToArray();
 
 			cdaTemp = VwCacheDaClass.Create();
+			cdaTemp.TsStrFactory = TsStringUtils.TsStrFactory;
 			foreach (var sd in domains)
 			{
 				cdaTemp.CacheStringProp(sd.Hvo, RelatedWordsVc.ktagName,
@@ -139,7 +141,7 @@ namespace SIL.FieldWorks.FdoUi.Dialogs
 		/// <param name="cdaTemp"></param>
 		/// <returns>false if the entry has no associated lexical relations, or none of them are linked to any other entries.</returns>
 		//
-		static private bool LoadLexicalRelationInfo(FdoCache cache, int hvoEntry, out int[] relsOut, IVwCacheDa cdaTemp)
+		static private bool LoadLexicalRelationInfo(LcmCache cache, int hvoEntry, out int[] relsOut, IVwCacheDa cdaTemp)
 		{
 			var relatedObjectIds = new List<int>();
 			var entryRepository = cache.ServiceLocator.GetInstance<ILexEntryRepository>();
@@ -188,9 +190,9 @@ namespace SIL.FieldWorks.FdoUi.Dialogs
 		/// <param name="cache"></param>
 		/// <returns></returns>
 		/// ------------------------------------------------------------------------------------
-		public static XmlView MakeSummaryView(int hvoEntry, FdoCache cache, IVwStylesheet styleSheet, Mediator mediator)
+		public static XmlView MakeSummaryView(int hvoEntry, LcmCache cache, IVwStylesheet styleSheet, Mediator mediator)
 		{
-			XmlView xv = new XmlView(hvoEntry, "publishStem", null, false);
+			XmlView xv = new XmlView(hvoEntry, "publishStem", false);
 			xv.Cache = cache;
 			xv.StyleSheet = styleSheet;
 			xv.Mediator = mediator;
@@ -198,7 +200,7 @@ namespace SIL.FieldWorks.FdoUi.Dialogs
 		}
 
 
-		public RelatedWords(FdoCache cache, IVwSelection sel, int hvoEntry, int[] domains, int[] lexrels,
+		public RelatedWords(LcmCache cache, IVwSelection sel, int hvoEntry, int[] domains, int[] lexrels,
 			IVwCacheDa cdaTemp, IVwStylesheet styleSheet, Mediator mediator, bool hideInsertButton)
 		{
 			m_cache = cache;
@@ -552,7 +554,7 @@ namespace SIL.FieldWorks.FdoUi.Dialogs
 	{
 		int m_hvoRoot;
 		ISilDataAccess m_sda;
-		FdoCache m_cache;
+		LcmCache m_cache;
 		int m_wsUser;
 		RelatedWordsVc m_vc;
 		bool m_fInSelChange = false;
@@ -560,7 +562,7 @@ namespace SIL.FieldWorks.FdoUi.Dialogs
 
 		public event EventHandler SelChanged;
 
-		public RelatedWordsView(FdoCache cache, int hvoRoot, ITsString headword, ISilDataAccess sda, int wsUser)
+		public RelatedWordsView(LcmCache cache, int hvoRoot, ITsString headword, ISilDataAccess sda, int wsUser)
 		{
 			m_cache = cache;
 			m_hvoRoot = hvoRoot;
@@ -622,14 +624,10 @@ namespace SIL.FieldWorks.FdoUi.Dialogs
 
 			base.MakeRoot();
 
-			IVwRootBox rootb = VwRootBoxClass.Create();
-			rootb.SetSite(this);
-
 			m_vc = new RelatedWordsVc(m_wsUser, m_headword);
 
-			rootb.DataAccess = m_sda;
+			m_rootb.DataAccess = m_sda;
 
-			m_rootb = rootb;
 			m_rootb.SetRootObject(m_hvoRoot, m_vc, RelatedWordsVc.kfragRoot, m_styleSheet);
 			m_fRootboxMade = true;
 		}
@@ -747,11 +745,10 @@ namespace SIL.FieldWorks.FdoUi.Dialogs
 		public RelatedWordsVc(int wsUser, ITsString headword)
 		{
 			m_wsDefault = wsUser;
-			ITsStrFactory tsf = TsStrFactoryClass.Create();
-			m_tssColon = tsf.MakeString(": ", wsUser);
-			m_tssComma = tsf.MakeString(", ", wsUser);
-			m_tssSdRelation = tsf.MakeString(FdoUiStrings.ksWordsRelatedBySemanticDomain, wsUser);
-			m_tssLexRelation = tsf.MakeString(FdoUiStrings.ksLexicallyRelatedWords, wsUser);
+			m_tssColon = TsStringUtils.MakeString(": ", wsUser);
+			m_tssComma = TsStringUtils.MakeString(", ", wsUser);
+			m_tssSdRelation = TsStringUtils.MakeString(FdoUiStrings.ksWordsRelatedBySemanticDomain, wsUser);
+			m_tssLexRelation = TsStringUtils.MakeString(FdoUiStrings.ksLexicallyRelatedWords, wsUser);
 
 			var semanticDomainStrBuilder = m_tssSdRelation.GetBldr();
 			var index = semanticDomainStrBuilder.Text.IndexOf("{0}");

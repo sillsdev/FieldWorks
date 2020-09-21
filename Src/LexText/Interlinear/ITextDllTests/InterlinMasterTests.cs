@@ -5,11 +5,11 @@
 using System;
 using System.IO;
 using NUnit.Framework;
-using SIL.CoreImpl;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.WritingSystems;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.FDOTests;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel;
+using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.XWorks;
 using XCore;
 
@@ -18,13 +18,14 @@ namespace SIL.FieldWorks.IText
 	[TestFixture]
 	public class InterlinMasterTests : MemoryOnlyBackendProviderTestBase, IDisposable
 	{
-		private IWritingSystem m_wsDefaultVern, m_wsOtherVern, m_wsEn;
+		private CoreWritingSystemDefinition m_wsDefaultVern, m_wsOtherVern, m_wsEn;
 		private IStText m_sttNoExplicitWs, m_sttEmptyButWithWs;
 		private IStText m_stText;
 
 		private FwXApp m_application;
 		private FwXWindow m_window;
 		private Mediator m_mediator;
+		private PropertyTable m_propertyTable;
 
 		#region disposal
 		protected virtual void Dispose(bool disposing)
@@ -32,12 +33,14 @@ namespace SIL.FieldWorks.IText
 			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			if (disposing)
 			{
-				if (m_application != null)
-					m_application.Dispose();
-				if (m_window != null)
-					m_window.Dispose();
-				if (m_mediator != null)
-					m_mediator.Dispose();
+				m_application?.Dispose();
+				m_application = null;
+				m_window?.Dispose();
+				m_window = null;
+				m_mediator?.Dispose();
+				m_mediator = null;
+				m_propertyTable?.Dispose();
+				m_propertyTable = null;
 			}
 		}
 
@@ -49,6 +52,12 @@ namespace SIL.FieldWorks.IText
 		public void Dispose()
 		{
 			Dispose(true);
+			// This object will be cleaned up by the Dispose method.
+			// Therefore, you should call GC.SupressFinalize to
+			// take this object off the finalization queue
+			// and prevent finalization code for this object
+			// from executing a second time.
+			GC.SuppressFinalize(this);
 		}
 		#endregion disposal
 
@@ -67,6 +76,7 @@ namespace SIL.FieldWorks.IText
 			m_window = new MockFwXWindow(m_application, configFilePath);
 			((MockFwXWindow)m_window).Init(Cache); // initializes Mediator values
 			m_mediator = m_window.Mediator;
+			m_propertyTable = m_window.PropTable;
 
 			// set up default vernacular ws.
 			m_wsDefaultVern = Cache.ServiceLocator.WritingSystemManager.Get("fr");
@@ -87,13 +97,13 @@ namespace SIL.FieldWorks.IText
 			m_sttEmptyButWithWs = Cache.ServiceLocator.GetInstance<IStTextFactory>().Create();
 			Cache.ServiceLocator.GetInstance<ITextFactory>().Create().ContentsOA = m_sttEmptyButWithWs;
 			m_sttEmptyButWithWs.AddNewTextPara(null);
-			((IStTxtPara)m_sttEmptyButWithWs.ParagraphsOS[0]).Contents = TsStringUtils.MakeTss(string.Empty, m_wsOtherVern.Handle);
+			((IStTxtPara)m_sttEmptyButWithWs.ParagraphsOS[0]).Contents = TsStringUtils.MakeString(string.Empty, m_wsOtherVern.Handle);
 		}
 
 		[Test]
 		public void ShowRoot_ReplacesGlobalDefaultWsWithDefaultVernInEmptyText()
 		{
-			using(var interlinMaster = new TestInterlinMaster(m_mediator, m_sttNoExplicitWs))
+			using(var interlinMaster = new TestInterlinMaster(m_mediator, m_propertyTable, m_sttNoExplicitWs))
 			{
 				interlinMaster.TestShowRecord(); // SUT
 			}
@@ -104,7 +114,7 @@ namespace SIL.FieldWorks.IText
 		[Test]
 		public void ShowRoot_MaintainsSelectedWsInEmptyText()
 		{
-			using(var interlinMaster = new TestInterlinMaster(m_mediator, m_sttEmptyButWithWs))
+			using (var interlinMaster = new TestInterlinMaster(m_mediator, m_propertyTable, m_sttEmptyButWithWs))
 			{
 				interlinMaster.TestShowRecord(); // SUT
 			}
@@ -115,9 +125,10 @@ namespace SIL.FieldWorks.IText
 		#region Test Classes
 		private class TestInterlinMaster : InterlinMaster
 		{
-			public TestInterlinMaster(Mediator mediator, IStText stText)
+			public TestInterlinMaster(Mediator mediator, PropertyTable propertyTable, IStText stText)
 			{
 				m_mediator = mediator;
+				m_propertyTable = propertyTable;
 				if(ExistingClerk != null)
 				{
 					System.Diagnostics.Debug.WriteLine("****** Disposing a {0} whose current StText's WS is {1}; replacing with {2}. ******",
@@ -126,7 +137,7 @@ namespace SIL.FieldWorks.IText
 						Cache.ServiceLocator.WritingSystemManager.Get(stText.MainWritingSystem).Id);
 					ExistingClerk.Dispose();
 				}
-				Clerk = new TestClerk(mediator, stText);
+				Clerk = new TestClerk(mediator, propertyTable, stText);
 			}
 
 			protected internal override IStText RootStText
@@ -144,9 +155,10 @@ namespace SIL.FieldWorks.IText
 		{
 			internal readonly IStText m_stText;
 
-			public TestClerk(Mediator mediator, IStText stText)
+			public TestClerk(Mediator mediator, PropertyTable propertyTable, IStText stText)
 			{
 				m_mediator = mediator;
+				m_propertyTable = propertyTable;
 				m_stText = stText;
 			}
 

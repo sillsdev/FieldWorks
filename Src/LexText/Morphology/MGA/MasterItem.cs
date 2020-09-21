@@ -4,13 +4,11 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 using System.Xml;
+using SIL.LCModel;
 using SIL.Utils;
-using SIL.FieldWorks.FDO;
 
 namespace SIL.FieldWorks.LexText.Controls.MGA
 {
@@ -33,8 +31,6 @@ namespace SIL.FieldWorks.LexText.Controls.MGA
 			m_citations = new List<MasterItemCitation>();
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		public MasterItem(XmlNode node, GlossListTreeView.ImageKind kind, string sTerm)
 		{
 			m_node = node;
@@ -44,17 +40,17 @@ namespace SIL.FieldWorks.LexText.Controls.MGA
 			m_citations = new List<MasterItemCitation>();
 
 			XmlNode nd = node.SelectSingleNode("abbrev");
-			m_abbrevWs = XmlUtils.GetManditoryAttributeValue(nd, "ws");
+			m_abbrevWs = XmlUtils.GetMandatoryAttributeValue(nd, "ws");
 			m_abbrev = nd.InnerText;
 
 			nd = node.SelectSingleNode("term");
-			m_termWs = XmlUtils.GetManditoryAttributeValue(nd, "ws");
+			m_termWs = XmlUtils.GetMandatoryAttributeValue(nd, "ws");
 			m_term = nd.InnerText;
 
 			nd = node.SelectSingleNode("def");
 			if (nd != null)
 			{
-				m_defWs = XmlUtils.GetManditoryAttributeValue(nd, "ws");
+				m_defWs = XmlUtils.GetMandatoryAttributeValue(nd, "ws");
 				m_def = nd.InnerText;
 			}
 
@@ -71,7 +67,7 @@ namespace SIL.FieldWorks.LexText.Controls.MGA
 		/// figure out if the feature represented by the node is already in the database
 		/// </summary>
 		/// <param name="cache">database cache</param>
-		public virtual void DetermineInDatabase(FdoCache cache)
+		public virtual void DetermineInDatabase(LcmCache cache)
 		{
 		}
 		public virtual bool KindCanBeInDatabase()
@@ -84,7 +80,7 @@ namespace SIL.FieldWorks.LexText.Controls.MGA
 				m_eKind == GlossListTreeView.ImageKind.complex);
 		}
 
-		public virtual void AddToDatabase(FdoCache cache)
+		public virtual void AddToDatabase(LcmCache cache)
 		{
 		}
 

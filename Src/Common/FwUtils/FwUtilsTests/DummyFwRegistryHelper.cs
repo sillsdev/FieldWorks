@@ -1,11 +1,10 @@
-// Copyright (c) 2015-2017 SIL International
+// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using System.Collections.Generic;
 using Microsoft.Win32;
-using SIL.Utils;
+using NUnit.Framework;
 
 namespace SIL.FieldWorks.Common.FwUtils
 {
@@ -15,91 +14,78 @@ namespace SIL.FieldWorks.Common.FwUtils
 	/// </summary>
 	public class DummyFwRegistryHelper : IFwRegistryHelper
 	{
-		private Dictionary<string, RegistryKey> FakeKeyMap = new Dictionary<string, RegistryKey>();
+		internal const string FlexKeyName = "Language Explorer";
+		internal const string DirName = "TestDir";
+		internal const string DirNameValue = @"Z:\somedirectory\subdir\subdir\DontUseThis";
+		internal const string Crashes = "NumberOfHorrendousCrashes";
+		internal const string ValueName3 = "FlexTestValue1";
+		internal const int Value3 = 20;
+		internal const string ValueName4 = "FlexTestValue2";
+		internal const string Value4 = "somestring";
+		internal const string ExtraValue = "NotSetInSharedSetupMethod";
+		internal const string Launches = "launches";
+		internal const string UserWs = "UserWs";
+		internal const string UserWsValue = "pt";
+		internal const string ProjectShared = "ProjectShared";
 
 		#region IFwRegistryHelper implementation
 
-		/// <summary/>
+		/// <inheritdoc/>
 		public bool Paratext7Installed()
 		{
-			throw new NotImplementedException();
+			throw new NotSupportedException();
 		}
 
-		/// <summary>
-		///
-		/// </summary>
-		public RegistryKey FieldWorksRegistryKeyLocalMachine
-		{
-			get { return GetTestKey("FieldWorksRegistryKLM"); }
-		}
+		/// <inheritdoc/>
+		public RegistryKey FieldWorksRegistryKeyLocalMachine => GetTestKey("FieldWorksRegistryKLM");
 
-		/// <summary></summary>
-		public RegistryKey LocalMachineHive
-		{
-			get { return GetTestKey("HKLM"); }
-		}
+		/// <inheritdoc/>
+		public RegistryKey LocalMachineHive => GetTestKey("HKLM");
 
-		/// <summary>
-		///
-		/// </summary>
+		/// <summary/>
 		private RegistryKey GetTestKey(string keyName)
 		{
 			return Registry.CurrentUser.CreateSubKey(@"Software\SIL\FieldWorks\UnitTests\HelperFW\" + keyName);
 		}
 
-		/// <summary>
-		///
-		/// </summary>
+		/// <remarks>not supported</remarks>
 		public RegistryKey FieldWorksBridgeRegistryKeyLocalMachine
 		{
 			get
 			{
-				throw new NotImplementedException();
+				throw new NotSupportedException();
 			}
 		}
 
-		/// <summary>
-		///
-		/// </summary>
+		/// <remarks>not supported</remarks>
 		public RegistryKey FieldWorksRegistryKeyLocalMachineForWriting
 		{
 			get
 			{
-				throw new NotImplementedException();
+				throw new NotSupportedException();
 			}
 		}
 
-		/// <summary>
-		///
-		/// </summary>
-		public RegistryKey FieldWorksRegistryKey
-		{
-			get
-			{
-				return Registry.CurrentUser.CreateSubKey(@"Software\SIL\FieldWorks\UnitTests\DirectoryFinderTests");
-			}
-		}
+		/// <inheritdoc/>
+		public RegistryKey FieldWorksRegistryKey => FieldWorksVersionlessRegistryKey.CreateSubKey(FwRegistryHelper.FieldWorksRegistryKeyName);
+
+		/// <inheritdoc/>
+		public RegistryKey FieldWorksVersionlessRegistryKey => Registry.CurrentUser.CreateSubKey(@"Software\SIL\FieldWorks\UnitTests");
+
+		/// <inheritdoc/>
+		public RegistryKey FieldWorksVersionlessOld32BitRegistryKey => FieldWorksVersionlessRegistryKey.OpenSubKey("WOW6432Node");
 
 		/// <summary>
-		///
+		/// For testing the upgrade of user registry keys from under WOW6432Node
 		/// </summary>
-		public RegistryKey FieldWorksVersionlessRegistryKey
-		{
-			get
-			{
-				return Registry.CurrentUser.CreateSubKey(
-					@"Software\SIL\FieldWorks\UnitTests");
-			}
-		}
+		public RegistryKey FieldWorksVersionlessOld32BitRegistryKeyForWriting => FieldWorksVersionlessRegistryKey.CreateSubKey("WOW6432Node");
 
-		/// <summary>
-		///
-		/// </summary>
+		/// <remarks>not supported</remarks>
 		public string UserLocaleValueName
 		{
 			get
 			{
-				throw new NotImplementedException();
+				throw new NotSupportedException();
 			}
 		}
 		#endregion
@@ -109,37 +95,59 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// </summary>
 		public RegistryKey SetupVersion7Settings()
 		{
-			var version7Key = FieldWorksVersionlessRegistryKey.CreateSubKey(
-				FwRegistryHelper.OldFieldWorksRegistryKeyNameVersion7);
-			// add some test keys and values here
-			const string flexKeyName = "LanguageExplorer";
-			const string teKeyName = "TE";
-			const string dirName = "TestDir";
-			const string crashes = "NumberOfHorrendousCrashes";
-			const string valueName3 = "FlexTestValue1";
-			const string valueName4 = "FlexTestValue2";
-			const string launches = "launches";
-			const string userWs = "UserWs";
-			var flexKey = version7Key.CreateSubKey(flexKeyName);
-			var teKey = version7Key.CreateSubKey(teKeyName);
-			version7Key.SetValue(dirName, "Z:\\somedirectory\\subdir\\subdir\\DontUseThis");
-			version7Key.SetValue(crashes, 200);
-			version7Key.SetValue(userWs, "pt");
-			flexKey.SetValue(valueName3, 20);
-			flexKey.SetValue(valueName4, "somestring");
-			flexKey.SetValue(launches, 44);
-			teKey.SetValue(crashes, 10);
-			teKey.SetValue(dirName, "Z:\\somedirectory");
+			var version7Key = CreateSettingsSubKeyForVersion(FwRegistryHelper.OldFieldWorksRegistryKeyNameVersion7);
+
+			SetBasicKeysAndValues(version7Key);
+
 			return version7Key;
+		}
+
+		/// <summary>
+		/// For testing the upgrade of user registry keys from FW7 to FW8
+		/// </summary>
+		public RegistryKey CreateSettingsSubKeyForVersion(string versionKey)
+		{
+			return FieldWorksVersionlessRegistryKey.CreateSubKey(versionKey);
+		}
+
+		/// <summary>
+		/// For testing the upgrade of user registry keys from under WOW6432Node
+		/// </summary>
+		public RegistryKey CreateSettingsSubKeyForOld32BitVersion(string versionKey)
+		{
+			return FieldWorksVersionlessOld32BitRegistryKeyForWriting.CreateSubKey(versionKey);
+		}
+
+		private static void SetBasicKeysAndValues(RegistryKey versionKey)
+		{
+			// add some test keys and values here
+
+			versionKey.SetValue(DirName, DirNameValue);
+			versionKey.SetValue(UserWs, UserWsValue);
+
+			using (var flexKey = versionKey.CreateSubKey(FlexKeyName))
+			{
+				Assert.That(flexKey != null, $"{nameof(flexKey)} should not be null");
+				flexKey.SetValue(Crashes, 5);
+				flexKey.SetValue(ValueName3, Value3);
+				flexKey.SetValue(ValueName4, Value4);
+				flexKey.SetValue(Launches, 44);
+			}
+			using (var teKey = versionKey.CreateSubKey(FwRegistryHelper.TranslationEditor))
+			{
+				Assert.That(teKey != null, $"{nameof(teKey)} should not be null");
+				teKey.SetValue(Crashes, 10);
+				teKey.SetValue(DirName, @"Z:\somedirectory");
+			}
 		}
 
 		/// <summary>
 		/// For testing key migration on upgrade.
 		/// </summary>
-		public RegistryKey SetupVersion7ProjectSharedSetting()
+		public RegistryKey SetupVersion7ProjectSharedSettingInHKLM()
 		{
 			var hklmFw7 = SetupVersion7ProjectSharedSettingLocation();
-			hklmFw7.SetValue("ProjectShared", "True");
+			hklmFw7.SetValue(ProjectShared, "True");
 			return hklmFw7;
 		}
 
@@ -148,40 +156,70 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// </summary>
 		public RegistryKey SetupVersion7ProjectSharedSettingLocation()
 		{
-			return LocalMachineHive.CreateSubKey(@"SOFTWARE\SIL\FieldWorks\7.0");
+			return LocalMachineHive.CreateSubKey(@"SOFTWARE\SIL\FieldWorks\" + FwRegistryHelper.OldFieldWorksRegistryKeyNameVersion7);
 		}
 
 		/// <summary>
 		/// For testing upgrade of user settings where some version 8 keys already exist.
 		/// </summary>
-		/// <returns></returns>
 		public RegistryKey SetupVersion8Settings()
 		{
-			var version8Key = FieldWorksVersionlessRegistryKey.CreateSubKey(FwRegistryHelper.FieldWorksRegistryKeyName);
-			const string userWs = "UserWs";
-			version8Key.SetValue(userWs, "fr");
+			var version8Key = CreateSettingsSubKeyForVersion(FwRegistryHelper.OldFieldWorksRegistryKeyNameVersion8);
+
+			SetBasicKeysAndValues(version8Key);
+
+			version8Key.SetValue(UserWs, "fr");
 
 			return version8Key;
 		}
 
 		/// <summary>
-		/// Removes all SubTrees from registry, for test SetUp or Teardown
+		/// For testing upgrade of user settings where version 8 keys exist in the 32-bit space.
 		/// </summary>
-		public void DeleteAllSubTreesIfPresent()
+		public RegistryKey SetupVersion8Old32BitSettings()
 		{
-			DeleteRegistrySubkeyTreeIfPresent(FwRegistryHelper.FieldWorksVersionlessRegistryKey,
-				FwRegistryHelper.OldFieldWorksRegistryKeyNameVersion7);
-			DeleteRegistrySubkeyTreeIfPresent(FwRegistryHelper.FieldWorksVersionlessRegistryKey,
-				FwRegistryHelper.FieldWorksRegistryKeyName);
-			DeleteRegistrySubkeyTreeIfPresent(FwRegistryHelper.FieldWorksVersionlessRegistryKey, "DirectoryFinderTests");
-			DeleteRegistrySubkeyTreeIfPresent(FwRegistryHelper.FieldWorksVersionlessRegistryKey, "HelperFW");
+			var version8Key = CreateSettingsSubKeyForOld32BitVersion(FwRegistryHelper.OldFieldWorksRegistryKeyNameVersion8);
+
+			version8Key.SetValue(ExtraValue, "From32Bit8");
+
+			return version8Key;
 		}
 
-		private void DeleteRegistrySubkeyTreeIfPresent(RegistryKey key, string subKeyName)
+		/// <summary>
+		/// For testing upgrade of user settings where version 9 keys already exist in the 32-bit space.
+		/// </summary>
+		public RegistryKey SetupVersion9Old32BitSettings()
 		{
-			if(RegistryHelper.KeyExists(key, subKeyName))
+			var version9Key = CreateSettingsSubKeyForOld32BitVersion(FwRegistryHelper.FieldWorksRegistryKeyName);
+
+			SetBasicKeysAndValues(version9Key);
+
+			return version9Key;
+		}
+
+		/// <summary>
+		/// For testing upgrade of user settings where some version 9 keys already exist.
+		/// </summary>
+		public RegistryKey SetupVersion9Settings()
+		{
+			Assert.AreEqual("9", FwRegistryHelper.FieldWorksRegistryKeyName,
+				$"Please update the migration code and tests to handle migration to version {FwRegistryHelper.FieldWorksRegistryKey}");
+			var version9Key = CreateSettingsSubKeyForVersion(FwRegistryHelper.FieldWorksRegistryKeyName);
+
+			version9Key.SetValue(UserWs, "sp");
+
+			return version9Key;
+		}
+
+		/// <summary>
+		/// Removes the "Software\SIL\FieldWorks\UnitTests" key and everything in it.
+		/// </summary>
+		internal void RemoveTestRegistryEntries()
+		{
+			using (var fwKey = Registry.CurrentUser.CreateSubKey(@"Software\SIL\FieldWorks"))
 			{
-				key.DeleteSubKeyTree(subKeyName);
+				Assert.That(fwKey != null, $"{nameof(fwKey)} had better not be null");
+				fwKey.DeleteSubKeyTree("UnitTests", false);
 			}
 		}
 	}

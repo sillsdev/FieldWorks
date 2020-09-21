@@ -1,4 +1,4 @@
-// Copyright (c) 2010-2015 SIL International
+// Copyright (c) 2010-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -6,16 +6,16 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
-using System.Linq;
 using System.Windows.Forms;		// controls and etc...
 using System.Xml;
-using Palaso.WritingSystems;
-using SIL.CoreImpl;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.LCModel.Core.Cellar;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.Utils;
+using SIL.LCModel.DomainServices;
 
 namespace SIL.FieldWorks.Common.Widgets
 {
@@ -34,9 +34,9 @@ namespace SIL.FieldWorks.Common.Widgets
 		// by m_wsMagic. Currently the only example is that on a pronunciation field, vernacular as well as
 		// the default pronunciation WSS might be relevant.
 		int m_wsOptional;
-		List<IWritingSystem> m_rgws;
-		List<IWritingSystem> m_rgwsToDisplay;
-		LabeledMultiStringVc m_vc = null;
+		List<CoreWritingSystemDefinition> m_rgws;
+		List<CoreWritingSystemDefinition> m_rgwsToDisplay;
+		LabeledMultiStringVc m_vc;
 		private string m_textStyle;
 		/// <summary>
 		/// We may need to set up other controls than what this class itself knows about.
@@ -54,7 +54,7 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// <summary>
 		/// Return the relevant writing systems.
 		/// </summary>
-		internal List<IWritingSystem> WritingSystems
+		internal List<CoreWritingSystemDefinition> WritingSystems
 		{
 			get { return m_rgws; }
 		}
@@ -71,6 +71,13 @@ namespace SIL.FieldWorks.Common.Widgets
 		internal int HvoObj
 		{
 			get { return m_hvoObj; }
+		}
+		/// <summary>
+		/// Returns true if a refresh is pending. For testing.
+		/// </summary>
+		internal bool RefreshPending
+		{
+			get { return m_fRefreshPending; }
 		}
 
 		/// <summary>
@@ -127,11 +134,19 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// <summary>
 		/// Return the sound control rectangle.
 		/// </summary>
-		internal void GetSoundControlRectangle(IVwSelection sel, out Rectangle selRect)
+		internal bool GetSoundControlRectangle(IVwSelection sel, out Rectangle selRect)
 		{
+			// Trying to get the Rectangle for the sound control can cause a crash (LT-18994) if a refresh is pending
+			// to reconstruct the RootBox. Just return false for now and try again when the refresh is successful.
+			if (m_fRefreshPending)
+			{
+				selRect = new Rectangle(); // Just a dummy
+				return false;
+			}
 			bool fEndBeforeAnchor;
 			using (new HoldGraphics(this))
 				SelectionRectangle(sel, out selRect, out fEndBeforeAnchor);
+			return true;
 		}
 
 		/// <summary>
@@ -190,6 +205,16 @@ namespace SIL.FieldWorks.Common.Widgets
 			return base.RefreshDisplay();
 		}
 
+		/// <summary>
+		/// Use the refresh pending flag to determine if the display must be refreshed. The flag is set when
+		/// this control failed a previous RefreshDisplay which can happen when this control is reused.
+		/// </summary>
+		internal void RefreshDisplayIfPending()
+		{
+			if (m_fRefreshPending)
+				RefreshDisplay();
+		}
+
 		private void ConstructReuseCore(int hvo, int flid, int wsMagic, int wsOptional, bool forceIncludeEnglish, bool editable, bool spellCheck)
 		{
 			m_hvoObj = hvo;
@@ -219,7 +244,7 @@ namespace SIL.FieldWorks.Common.Widgets
 		{
 			try
 			{
-				m_fdoCache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(m_hvoObj); // Throws an exception, if not valid.
+				m_cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(m_hvoObj); // Throws an exception, if not valid.
 				base.OnKeyPress(e);
 			}
 			catch
@@ -375,22 +400,20 @@ namespace SIL.FieldWorks.Common.Widgets
 			CheckDisposed();
 
 			m_rootb = null;
-			base.MakeRoot();
 
-			if (m_fdoCache == null || DesignMode)
+			if (m_cache == null || DesignMode)
 				return;
 
 			m_rgws = WritingSystemOptions;
 
-			int wsUser = m_fdoCache.WritingSystemFactory.UserWs;
-			m_vc = new InnerLabeledMultiStringViewVc(m_flid, m_rgws, wsUser, m_editable, m_fdoCache.TsStrFactory, this);
+			int wsUser = m_cache.WritingSystemFactory.UserWs;
+			m_vc = new InnerLabeledMultiStringViewVc(m_flid, m_rgws, wsUser, m_editable, this);
 
-			// Review JohnT: why doesn't the base class do this??
-			m_rootb = VwRootBoxClass.Create();
-			m_rootb.SetSite(this);
+			base.MakeRoot();
 
+			Debug.Assert(m_rootb != null);
 			// And maybe this too, at least by default?
-			m_rootb.DataAccess = m_fdoCache.DomainDataByFlid;
+			m_rootb.DataAccess = m_cache.DomainDataByFlid;
 
 			// arg3 is a meaningless initial fragment, since this VC only displays one thing.
 			// arg4 could be used to supply a stylesheet.
@@ -404,7 +427,7 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// This is the list of writing systems that can be enabled for this control. It should be either the Vernacular list
 		/// or Analysis list shown in the WritingSystemPropertiesDialog which are checked and unchecked.
 		/// </summary>
-		public List<IWritingSystem> WritingSystemOptions
+		public List<CoreWritingSystemDefinition> WritingSystemOptions
 		{
 			get
 			{
@@ -418,14 +441,14 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// </summary>
 		/// <param name="fIncludeUncheckedActiveWss">if false, include only current wss,
 		/// if true, includes unchecked active wss.</param>
-		public List<IWritingSystem> GetWritingSystemOptions(bool fIncludeUncheckedActiveWss)
+		public List<CoreWritingSystemDefinition> GetWritingSystemOptions(bool fIncludeUncheckedActiveWss)
 		{
-			var result = WritingSystemServices.GetWritingSystemList(m_fdoCache, m_wsMagic, m_hvoObj,
+			var result = WritingSystemServices.GetWritingSystemList(m_cache, m_wsMagic, m_hvoObj,
 				m_forceIncludeEnglish, fIncludeUncheckedActiveWss);
 			if (fIncludeUncheckedActiveWss && m_wsOptional != 0)
 			{
-				result = new List<IWritingSystem>(result); // just in case caller does not want it modified
-				var additionalWss = WritingSystemServices.GetWritingSystemList(m_fdoCache, m_wsOptional, m_hvoObj,
+				result = new List<CoreWritingSystemDefinition>(result); // just in case caller does not want it modified
+				var additionalWss = WritingSystemServices.GetWritingSystemList(m_cache, m_wsOptional, m_hvoObj,
 					m_forceIncludeEnglish, fIncludeUncheckedActiveWss);
 				foreach (var ws in additionalWss)
 					if (!result.Contains(ws))
@@ -439,7 +462,7 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// are the writing systems the user has checked in the WritingSystemPropertiesDialog.
 		/// if null, we'll display every writing system option.
 		/// </summary>
-		public List<IWritingSystem> WritingSystemsToDisplay
+		public List<CoreWritingSystemDefinition> WritingSystemsToDisplay
 		{
 			get { return m_rgwsToDisplay; }
 			set
@@ -504,18 +527,17 @@ namespace SIL.FieldWorks.Common.Widgets
 	internal class LabeledMultiStringVc: FwBaseVc
 	{
 		internal int m_flid;
-		internal List<IWritingSystem> m_rgws; // writing systems to display
+		internal List<CoreWritingSystemDefinition> m_rgws; // writing systems to display
 		ITsTextProps m_ttpLabel; // Props to use for ws name labels
 		bool m_editable = true;
 		int m_wsEn;
 		internal int m_mDxmpLabelWidth;
 
-		public LabeledMultiStringVc(int flid, List<IWritingSystem> rgws, int wsUser, bool editable, int wsEn, ITsStrFactory tsf)
+		public LabeledMultiStringVc(int flid, List<CoreWritingSystemDefinition> rgws, int wsUser, bool editable, int wsEn)
 		{
 			Reuse(flid, rgws, editable);
 			m_ttpLabel = WritingSystemServices.AbbreviationTextProperties;
 			m_wsEn = wsEn == 0 ? wsUser : wsEn;
-			m_tsf = tsf;
 			// Here's the C++ code which does the same thing using styles.
 			//				StrUni stuLangCodeStyle(L"Language Code");
 			//				ITsPropsFactoryPtr qtpf;
@@ -549,7 +571,7 @@ namespace SIL.FieldWorks.Common.Widgets
 			}
 		}
 
-		public void Reuse(int flid, List<IWritingSystem> rgws, bool editable)
+		public void Reuse(int flid, List<CoreWritingSystemDefinition> rgws, bool editable)
 		{
 			m_flid = flid;
 			m_rgws = rgws;
@@ -564,7 +586,7 @@ namespace SIL.FieldWorks.Common.Widgets
 			if (string.IsNullOrEmpty(result))
 				result = "??";
 
-			return m_tsf.MakeString(result, m_wsEn);
+			return TsStringUtils.MakeString(result, m_wsEn);
 		}
 
 		public override void Display(IVwEnv vwenv, int hvo, int frag)
@@ -617,7 +639,7 @@ namespace SIL.FieldWorks.Common.Widgets
 			vwenv.MakeColumns(1, vlColMain);
 
 			vwenv.OpenTableBody();
-			var visibleWss = new Set<ILgWritingSystem>();
+			var visibleWss = new HashSet<ILgWritingSystem>();
 			// if we passed in a view and have WritingSystemsToDisplay
 			// then we'll load that list in order to filter our larger m_rgws list.
 			AddViewWritingSystems(visibleWss);
@@ -652,7 +674,7 @@ namespace SIL.FieldWorks.Common.Widgets
 				}
 				vwenv.set_IntProperty((int)FwTextPropType.ktptPadTop, (int)FwTextPropVar.ktpvMilliPoint, 2000);
 				vwenv.OpenTableCell(1,1);
-				var wsdef = m_rgws[i] as WritingSystemDefinition;
+				CoreWritingSystemDefinition wsdef = m_rgws[i];
 				if (wsdef != null && wsdef.IsVoice)
 				{
 					// We embed it in a conc paragraph to ensure it never takes more than a line.
@@ -689,7 +711,7 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// <summary>
 		/// Subclass with LabeledMultiStringView tests for empty alternatives and returns true to skip them.
 		/// </summary>
-		internal virtual bool SkipEmptyWritingSystem(Set<ILgWritingSystem> visibleWss, int i, int hvo)
+		internal virtual bool SkipEmptyWritingSystem(ISet<ILgWritingSystem> visibleWss, int i, int hvo)
 		{
 			return false;
 		}
@@ -697,7 +719,7 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// <summary>
 		/// Subclass with LabelledMultiStringView gets extra WSS to display from it.
 		/// </summary>
-		internal virtual void AddViewWritingSystems(Set<ILgWritingSystem> visibleWss)
+		internal virtual void AddViewWritingSystems(ISet<ILgWritingSystem> visibleWss)
 		{
 		}
 
@@ -717,9 +739,9 @@ namespace SIL.FieldWorks.Common.Widgets
 	{
 		private InnerLabeledMultiStringView m_view;
 
-		public InnerLabeledMultiStringViewVc(int flid, List<IWritingSystem> rgws, int wsUser, bool editable,
-			ITsStrFactory tsf, InnerLabeledMultiStringView view)
-			: base(flid, rgws, wsUser, editable, view.WritingSystemFactory.GetWsFromStr("en"), tsf)
+		public InnerLabeledMultiStringViewVc(int flid, List<CoreWritingSystemDefinition> rgws, int wsUser, bool editable,
+			InnerLabeledMultiStringView view)
+			: base(flid, rgws, wsUser, editable, view.WritingSystemFactory.GetWsFromStr("en"))
 		{
 			m_view = view;
 			Debug.Assert(m_view != null);
@@ -731,13 +753,13 @@ namespace SIL.FieldWorks.Common.Widgets
 			m_view.TriggerDisplay(vwenv);
 		}
 
-		internal override void AddViewWritingSystems(Set<ILgWritingSystem> visibleWss)
+		internal override void AddViewWritingSystems(ISet<ILgWritingSystem> visibleWss)
 		{
 			if (m_view.WritingSystemsToDisplay != null)
-				visibleWss.AddRange(m_view.WritingSystemsToDisplay);
+				visibleWss.UnionWith(m_view.WritingSystemsToDisplay);
 		}
 
-		internal override bool SkipEmptyWritingSystem(Set<ILgWritingSystem> visibleWss, int i, int hvo)
+		internal override bool SkipEmptyWritingSystem(ISet<ILgWritingSystem> visibleWss, int i, int hvo)
 		{
 			// if we have defined writing systems to display, we want to
 			// show those, plus other options that have data.

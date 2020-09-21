@@ -51,7 +51,7 @@ VwBox::VwBox(VwPropertyStore * pzvps)
 VwBox::~VwBox()
 {
 	// Inform any IAccessible implementations that they may no longer point at this box.
-#if WIN32
+#if defined(WIN32) || defined(WIN64)
 	VwAccessRoot::BoxDeleted(this);
 #endif
 	VwRootBox * prootb = this->Root();
@@ -2890,25 +2890,11 @@ void VwPileBox::DrawForeground(IVwGraphics * pvg, Rect rcSrc, Rect rcDst, int ys
 		// it's visible bottom (the bottom of the drop cap) may be below the bottom of the page/clip
 		// rectangle, but we still want to draw the following paragraph, which overlaps the bottom
 		// of the drop cap.
-// TODO-Linux: This breaks backtranslation-draftview -
-// Remove when we no longer use RomRender (this isn't neccessary the problem, but it could be)
-#if WIN32
 		if (rcSrc.MapYTo(pbox->Bottom(), rcDst) > bottom ||
 			pbox->Bottom() >= ysTopOfPage + dysPageHeight)
 		{
 			return;
 		}
-#else
-		if (/*rcSrc.MapYTo(pbox->Bottom(), rcDst) > bottom  ||*/ //pbox->Bottom() > bottom ||
-			pbox->Bottom() >= ysTopOfPage + dysPageHeight)
-		{
-			return;
-		}
-
-#endif
-
-
-
 	}
 }
 
@@ -3204,7 +3190,7 @@ void VwSeparatorBox::DrawForeground(IVwGraphics * pvg, Rect rcSrc, Rect rcDst)
 	int inset = (right - left) / 3;
 	left += inset;
 	right -= inset;
-#if WIN32
+#if defined(WIN32) || defined(WIN64)
 	CheckHr(pvg->put_BackColor(::GetSysColor(COLOR_3DFACE)));
 #else //WIN32
 	// TODO-Linux: implement better.
@@ -3276,7 +3262,7 @@ void VwBarBox::DrawForeground(IVwGraphics * pvg, Rect rcSrc, Rect rcDst)
 
 VwPictureBox::~VwPictureBox()
 {
-#if !WIN32
+#if !defined(_WIN32) && !defined(_M_X64)
 	// On Linux we use a managed IPicture implementation that also implements IDisposable,
 	// so we should call Dispose()
 	if (m_qpic)

@@ -1,4 +1,4 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -7,17 +7,17 @@ using System.Linq;
 using System.Windows.Forms;
 using System.Collections.Generic;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.LCModel;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.Common.Controls;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.LexText.Controls;
 using XCore;
 using SIL.FieldWorks.Filters;
-using SIL.Utils;
 using System.Xml;
-using SIL.CoreImpl;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.Utils;
 
 namespace SIL.FieldWorks.FdoUi
 {
@@ -31,13 +31,13 @@ namespace SIL.FieldWorks.FdoUi
 	/// sort of makes sense to put it here as a class that is quite specific to a particular
 	/// part of the model.
 	/// </summary>
-	public abstract class BulkPosEditorBase : IBulkEditSpecControl, IFWDisposable, ITextChangedNotification
+	public abstract class BulkPosEditorBase : IBulkEditSpecControl, IDisposable, ITextChangedNotification
 	{
 		#region Data members & event declarations
 
 		protected Mediator m_mediator;
 		protected TreeCombo m_tree;
-		protected FdoCache m_cache;
+		protected LcmCache m_cache;
 		protected XMLViewsDataCache m_sda;
 		protected POSPopupTreeManager m_pOSPopupTreeManager;
 		protected int m_selectedHvo = 0;
@@ -62,8 +62,6 @@ namespace SIL.FieldWorks.FdoUi
 		/// Inform the editor that the text of the tree changed (without changing the selected index...
 		/// that needs to be updated).
 		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
 		public void ControlTextChanged()
 		{
 			if (m_pOSPopupTreeManager == null)
@@ -217,9 +215,14 @@ namespace SIL.FieldWorks.FdoUi
 		}
 
 		/// <summary>
+		/// Get/Set the property table'
+		/// </summary>
+		public PropertyTable PropTable { get; set; }
+
+		/// <summary>
 		/// Get or set the cache. Must be set before the tree values need to load.
 		/// </summary>
-		public FdoCache Cache
+		public LcmCache Cache
 		{
 			get
 			{
@@ -285,7 +288,8 @@ namespace SIL.FieldWorks.FdoUi
 					m_cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle,
 					false,
 					m_mediator,
-					(Form)m_mediator.PropertyTable.GetValue("window"));
+					PropTable,
+					PropTable.GetValue<Form>("window"));
 				m_pOSPopupTreeManager.AfterSelect += m_pOSPopupTreeManager_AfterSelect;
 			}
 			m_pOSPopupTreeManager.LoadPopupTree(0);
@@ -342,7 +346,7 @@ namespace SIL.FieldWorks.FdoUi
 		{
 			CheckDisposed();
 
-			ITsString tss = TsStringUtils.MakeTss(m_selectedLabel, m_cache.DefaultAnalWs);
+			ITsString tss = TsStringUtils.MakeString(m_selectedLabel, m_cache.DefaultAnalWs);
 			int i = 0;
 			// Report progress 50 times or every 100 items, whichever is more (but no more than once per item!)
 			int interval = Math.Min(100, Math.Max(itemsToChange.Count() / 50, 1));
@@ -635,7 +639,7 @@ namespace SIL.FieldWorks.FdoUi
 		/// Default constructor for persistence.
 		/// </summary>
 		public PosFilter() { }
-		public PosFilter(FdoCache cache, ListMatchOptions mode, int[] targets, XmlNode colSpec)
+		public PosFilter(LcmCache cache, ListMatchOptions mode, int[] targets, XmlNode colSpec)
 			: base(cache, mode, targets, colSpec)
 		{
 		}
@@ -658,7 +662,7 @@ namespace SIL.FieldWorks.FdoUi
 		/// <summary>
 		/// Return the HVO of the list from which choices can be made.
 		/// </summary>
-		static public int List(FdoCache cache)
+		static public int List(LcmCache cache)
 		{
 			return cache.LanguageProject.PartsOfSpeechOA.Hvo;
 		}
@@ -681,7 +685,7 @@ namespace SIL.FieldWorks.FdoUi
 		/// Default constructor for persistence.
 		/// </summary>
 		public EntryPosFilter() { }
-		public EntryPosFilter(FdoCache cache, ListMatchOptions mode, int[] targets)
+		public EntryPosFilter(LcmCache cache, ListMatchOptions mode, int[] targets)
 			: base(cache, mode, targets)
 		{
 		}
@@ -779,7 +783,7 @@ namespace SIL.FieldWorks.FdoUi
 		/// <summary>
 		/// Return the HVO of the list from which choices can be made.
 		/// </summary>
-		static public int List(FdoCache cache)
+		static public int List(LcmCache cache)
 		{
 			return cache.LanguageProject.PartsOfSpeechOA.Hvo;
 		}

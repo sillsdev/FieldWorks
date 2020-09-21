@@ -8,20 +8,16 @@
 //
 // <remarks>
 // </remarks>
-
 using System;
-using System.Collections;
-using System.ComponentModel;
-using System.Data;
 using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Xml;
 using System.Collections.Generic;
-
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.Utils;
+using XCore;
 
 namespace SIL.FieldWorks.Common.Controls
 {
@@ -111,8 +107,6 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <summary></summary>
 		protected IFwMetaDataCache m_mdc;
 		/// <summary></summary>
-		protected StringTable m_stringTable;
-		/// <summary></summary>
 		protected bool m_fEditable = true;
 		bool m_fInChangeSelectedObjects = false;
 		private ISilDataAccess m_sda;
@@ -157,11 +151,9 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		/// <param name="hvo">Root object to display</param>
 		/// <param name="layoutName">Name of standard layout of that object to use to display it</param>
-		/// <param name="stringTable">Optional string table for translating literals</param>
 		/// <param name="fEditable">True to enable editing at top level.</param>
-		public XmlView (int hvo, string layoutName, StringTable stringTable, bool fEditable)
+		public XmlView (int hvo, string layoutName, bool fEditable)
 		{
-			StringTbl = stringTable;
 			m_layoutName = layoutName;
 			m_hvoRoot = hvo;
 			m_fEditable = fEditable;
@@ -172,11 +164,10 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		/// <param name="hvo">Root object to display</param>
 		/// <param name="layoutName">Name of standard layout of that object to use to display it</param>
-		/// <param name="stringTable">Optional string table for translating literals</param>
 		/// <param name="fEditable">True to enable editing at top level.</param>
 		/// <param name="sda">typically a decorator; you can omit this to take the default one from the Cache.</param>
-		public XmlView(int hvo, string layoutName, StringTable stringTable, bool fEditable, ISilDataAccess sda)
-			: this(hvo, layoutName, stringTable, fEditable)
+		public XmlView(int hvo, string layoutName, bool fEditable, ISilDataAccess sda)
+			: this(hvo, layoutName, fEditable)
 		{
 			m_sda = sda;
 		}
@@ -186,19 +177,6 @@ namespace SIL.FieldWorks.Common.Controls
 			m_hvoRoot = hvoRoot;
 			Debug.Assert(xnSpec != null, "Creating an XMLView with null spec");
 			m_xnSpec = xnSpec;
-		}
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Initializes a new instance of the <see cref="T:XmlView"/> class.
-		/// </summary>
-		/// <param name="hvoRoot">The hvo root.</param>
-		/// <param name="xnSpec">The xn spec.</param>
-		/// <param name="stringTable">The string table.</param>
-		/// ------------------------------------------------------------------------------------
-		public XmlView(int hvoRoot, XmlNode xnSpec, StringTable stringTable)
-		{
-			StringTbl = stringTable;
-			InitXmlViewRootSpec(hvoRoot, xnSpec);
 		}
 
 		/// <summary>
@@ -264,7 +242,6 @@ namespace SIL.FieldWorks.Common.Controls
 			m_layoutName = null;
 			m_xnSpec = null;
 			m_mdc = null;
-			m_stringTable = null;
 		}
 
 		/// <summary>
@@ -300,29 +277,26 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			CheckDisposed();
 
-			base.MakeRoot();
-
-			if (m_fdoCache == null || DesignMode)
+			if (m_cache == null || DesignMode)
 				return;
 
-			IVwRootBox rootb = VwRootBoxClass.Create();
-			rootb.SetSite(this);
+			base.MakeRoot();
 
 			if (m_sda == null)
-				m_sda = m_fdoCache.DomainDataByFlid;
+				m_sda = m_cache.DomainDataByFlid;
 
 			Debug.Assert(m_layoutName != null, "No layout name.");
-			IApp app = null;
-			if (m_mediator != null && m_mediator.PropertyTable != null)
-				app = m_mediator.PropertyTable.GetValue("App") as IApp;
-			m_xmlVc = new XmlVc(StringTbl, m_layoutName, m_fEditable, this, app, m_sda);
-			m_xmlVc.Cache = m_fdoCache;
-			m_xmlVc.DataAccess = m_sda; // let it use the decorator if any.
+			IApp app = m_propertyTable == null ? null : m_propertyTable.GetValue<IApp>("App");
+			m_xmlVc = new XmlVc(m_layoutName, m_fEditable, this, app, m_sda)
+			{
+				Cache = m_cache,
+				DataAccess = m_sda
+			};
+			// let it use the decorator if any.
 
-			rootb.DataAccess = m_sda;
+			m_rootb.DataAccess = m_sda;
 			//if (this.EditingHelper != null)
 			//    this.EditingHelper.Editable = m_fEditable;
-			m_rootb = rootb;
 			RootObjectHvo = m_hvoRoot;
 		}
 
@@ -338,25 +312,6 @@ namespace SIL.FieldWorks.Common.Controls
 				m_hvoRoot = value;
 				int frag = 1; // magic number ALWAYS used for root fragment in this type of view.
 				m_rootb.SetRootObject(m_hvoRoot, m_xmlVc, frag, m_styleSheet);
-			}
-		}
-
-		/// <summary>
-		/// a look up table for getting the correct version of strings that the user will see.
-		/// </summary>
-		public StringTable StringTbl
-		{
-			get
-			{
-				CheckDisposed();
-
-				return m_stringTable;
-			}
-			set
-			{
-				CheckDisposed();
-
-				m_stringTable = value;
 			}
 		}
 

@@ -1,7 +1,0 @@
-# Gendarme filter file to suppress reporting of defects
-
-#-----------------------------------------------------------------------------------------------
-R: Gendarme.Rules.Design.TypesWithDisposableFieldsShouldBeDisposableRule
-
-# reference only
-T: SIL.PublishingSolution.FlexDePlugin

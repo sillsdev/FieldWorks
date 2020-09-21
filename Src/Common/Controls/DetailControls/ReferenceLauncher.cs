@@ -1,29 +1,17 @@
-// Copyright (c) 2003-2013 SIL International
+// Copyright (c) 2003-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: ReferenceLauncher.cs
-// Responsibility: RandyR
-// Last reviewed:
-//
-// <remarks>
-// </remarks>
 
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
-using System.Drawing;
-using System.Linq;
 using System.Windows.Forms;
 using System.Xml;
-using SIL.CoreImpl;
+using SIL.LCModel.Core.Cellar;
 using SIL.FieldWorks.Common.Controls;
-using SIL.FieldWorks.FDO;
+using SIL.FieldWorks.Common.FwUtils;
+using SIL.LCModel;
 using SIL.Utils;
-using XCore;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls
 {
@@ -46,7 +34,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			get
 			{
 				CheckDisposed();
-				return ((CellarPropertyType)m_cache.DomainDataByFlid.MetaDataCache.GetFieldType((int)m_flid) == CellarPropertyType.ReferenceSequence);
+				return ((CellarPropertyType)m_cache.DomainDataByFlid.MetaDataCache.GetFieldType(m_flid) == CellarPropertyType.ReferenceSequence);
 			}
 		}
 
@@ -117,8 +105,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// <remarks>
 		/// Subclasses should override this method, if the SimpleListChooser is not suitable.
 		/// </remarks>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="FindForm() returns a reference")]
 		protected override void HandleChooser()
 		{
 			string displayWs = "analysis vernacular";
@@ -178,7 +164,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 					if (referenceTargetOwner != null)
 						chooser.TextParamHvo = referenceTargetOwner.Hvo;
 					chooser.SetHelpTopic(Slice.GetChooserHelpTopicID());
-					chooser.InitializeExtras(m_configurationNode, Mediator);
+					chooser.InitializeExtras(m_configurationNode, Mediator, m_propertyTable);
 				}
 
 				var res = chooser.ShowDialog(MainControl.FindForm());
@@ -211,7 +197,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		protected virtual SimpleListChooser GetChooser(IEnumerable<ObjectLabel> labels)
 		{
 			SimpleListChooser x = new SimpleListChooser(m_persistProvider, labels,
-				m_fieldName, m_mediator.HelpTopicProvider);
+				m_fieldName, m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"));
 			x.NullLabel.DisplayName  = XmlUtils.GetOptionalAttributeValue(m_configurationNode, "nullLabel", "<EMPTY>");
 			return x;
 		}

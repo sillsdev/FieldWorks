@@ -1,28 +1,27 @@
-﻿// Copyright (c) 2015 SIL International
+﻿// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using System.Xml.Serialization;
 using Sfm2Xml;
-using SIL.CoreImpl;
+using SIL.LCModel.Core.WritingSystems;
 using SIL.FieldWorks.Common.Controls;
+using SIL.FieldWorks.Common.Controls.FileDialog;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel;
+using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.LexText.Controls;
 using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.XWorks;
-using SIL.Utils;
-using SIL.Utils.FileDialog;
+using SIL.LCModel.Utils;
 using XCore;
 
 namespace SIL.FieldWorks.IText
@@ -30,8 +29,9 @@ namespace SIL.FieldWorks.IText
 	public partial class InterlinearSfmImportWizard : WizardDialog, IFwExtension
 	{
 //		private const string kSfmImportSettingsRegistryKeyName = "SFM import settings";
-		protected FdoCache m_cache;
+		protected LcmCache m_cache;
 		private Mediator m_mediator;
+		private PropertyTable m_propertyTable;
 		private IHelpTopicProvider m_helpTopicProvider;
 		private List<InterlinearMapping> m_mappings = new List<InterlinearMapping>();
 		// Maps from writing system name to most recently selected encoding converter for that WS.
@@ -54,16 +54,15 @@ namespace SIL.FieldWorks.IText
 			Text = String.Format(Text, ITextStrings.ksInterlinearTexts);
 		}
 
-		public void Init(FdoCache cache, Mediator mediator)
+		public void Init(LcmCache cache, Mediator mediator, PropertyTable propertyTable)
 		{
 			m_cache = cache;
 			m_mediator = mediator;
-			if (m_mediator != null)
-				m_helpTopicProvider = m_mediator.HelpTopicProvider;
-			//var settingsPath = FwRegistryHelper.FieldWorksRegistryKey.GetValue(kSfmImportSettingsRegistryKeyName) as string;
-			//if (string.IsNullOrEmpty(settingsPath) || !File.Exists(settingsPath))
-			//    settingsPath = GetDefaultInputSettingsPath();
-			//m_loadSettingsFileBox.Text = settingsPath;
+			m_propertyTable = propertyTable;
+			if (m_propertyTable != null)
+			{
+				m_helpTopicProvider = m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider");
+			}
 			SetDialogTitle();
 		}
 
@@ -373,8 +372,8 @@ namespace SIL.FieldWorks.IText
 			}
 			else if(CurrentStepNumber == 1)
 			{
-				ICollection<IWritingSystem> currentVernacWSs = m_cache.LanguageProject.VernacularWritingSystems;
-				ICollection<IWritingSystem> currentAnalysWSs = m_cache.LanguageProject.AnalysisWritingSystems;
+				ICollection<CoreWritingSystemDefinition> currentVernacWSs = m_cache.LanguageProject.VernacularWritingSystems;
+				ICollection<CoreWritingSystemDefinition> currentAnalysWSs = m_cache.LanguageProject.AnalysisWritingSystems;
 				var vernToAdd = new ArrayList();
 				var analysToAdd = new ArrayList();
 				int textCount = CalculateTextCount(m_mappings, followedBy);
@@ -383,7 +382,7 @@ namespace SIL.FieldWorks.IText
 					if (mapping.Destination == InterlinDestination.Ignored)
 						continue; // may well have no WS, in any case, we don't care whether it's in our list.
 					bool creationCancelled = false;
-					var ws = (IWritingSystem)m_cache.WritingSystemFactory.get_Engine(mapping.WritingSystem);
+					var ws = (CoreWritingSystemDefinition) m_cache.WritingSystemFactory.get_Engine(mapping.WritingSystem);
 					if (mapping.Destination == InterlinDestination.Baseline || mapping.Destination == InterlinDestination.Wordform)
 					{
 						if(!currentVernacWSs.Contains(ws) && !vernToAdd.Contains(ws))
@@ -423,11 +422,11 @@ namespace SIL.FieldWorks.IText
 				NonUndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(m_cache.ActionHandlerAccessor,
 					() => //Add all the collected new languages into the project in their proper section.
 					{
-						foreach (IWritingSystem analysLang in analysToAdd)
+						foreach (CoreWritingSystemDefinition analysLang in analysToAdd)
 						{
 							m_cache.LanguageProject.AddToCurrentAnalysisWritingSystems(analysLang);
 						}
-						foreach (IWritingSystem vernLang in vernToAdd)
+						foreach (CoreWritingSystemDefinition vernLang in vernToAdd)
 						{
 							m_cache.LanguageProject.AddToCurrentVernacularWritingSystems(vernLang);
 						}
@@ -472,7 +471,7 @@ namespace SIL.FieldWorks.IText
 		private int CalculateTextCount(List<InterlinearMapping> mMappings, Dictionary<string, Dictionary<string, int>> dictionary)
 		{
 			int count = 0;
-			Set<string> headers = new Set<string>();
+			var headers = new HashSet<string>();
 			foreach (InterlinearMapping interlinearMapping in mMappings)
 			{
 				if(interlinearMapping.Destination == InterlinDestination.Id ||
@@ -558,8 +557,6 @@ namespace SIL.FieldWorks.IText
 			}
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="RecordClerk.FindClerk() returns a reference")]
 		protected override void OnFinishButton()
 		{
 			base.OnFinishButton();
@@ -593,12 +590,12 @@ namespace SIL.FieldWorks.IText
 			if (m_firstNewText != null)
 			{
 				// try to select it.
-				var clerk = RecordClerk.FindClerk(m_mediator, "interlinearTexts");
+				var clerk = RecordClerk.FindClerk(m_propertyTable, "interlinearTexts");
 				if (clerk != null)
 					clerk.JumpToRecord(m_firstNewText.ContentsOA.Hvo);
 			}
 		}
-		FDO.IText m_firstNewText;
+		LCModel.IText m_firstNewText;
 		private List<InterlinearMapping> m_oldMappings;
 
 		/// <summary>
@@ -615,7 +612,7 @@ namespace SIL.FieldWorks.IText
 					continue; // report?
 				var input = new ByteReader(path);
 				var converterStage1 = GetSfmConverter();
-				var stage1 = converterStage1.Convert(input, m_mappings, m_cache.WritingSystemFactory);
+				var stage1 = converterStage1.Convert(input, m_mappings, m_cache.ServiceLocator.WritingSystemManager);
 				// Skip actual import if SHIFT was held down.
 				if (secretShiftText.Visible == true)
 					continue;
@@ -748,7 +745,7 @@ namespace SIL.FieldWorks.IText
 				var index = m_mappingsList.SelectedIndices[0];
 				var mapping = m_mappings[index];
 				var destinationsFilter = GetDestinationsFilter();
-				dlg.SetupDlg(m_helpTopicProvider, (IApp)m_mediator.PropertyTable.GetValue("App"), m_cache,
+				dlg.SetupDlg(m_helpTopicProvider, m_propertyTable.GetValue<IApp>("App"), m_cache,
 					mapping, destinationsFilter);
 				dlg.ShowDialog(this);
 				var item = m_mappingsList.Items[index];
@@ -785,7 +782,7 @@ namespace SIL.FieldWorks.IText
 
 		private void m_btnHelp_Click(object sender, EventArgs e)
 		{
-			ShowHelp.ShowHelpTopic(m_mediator.HelpTopicProvider, m_helpTopicID);
+			ShowHelp.ShowHelpTopic(m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), m_helpTopicID);
 		}
 
 		private void m_browseSaveSettingsFileButon_Click(object sender, EventArgs e)

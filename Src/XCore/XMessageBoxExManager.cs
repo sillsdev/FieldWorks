@@ -1,24 +1,22 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Windows.Forms;
 using System.Xml.Serialization;
-using SIL.CoreImpl;
-using System.IO;
-using SIL.Utils;
+using SIL.FieldWorks.Common.FwUtils;
 using Utils.MessageBoxExLib;
-using System.Diagnostics.CodeAnalysis;
 
 namespace XCore
 {
 	/// <summary>
 	/// a subclass of the (open-source) message box manager which interfaces it to XCore
 	/// </summary>
-	public class XMessageBoxExManager : IFWDisposable
+	public class XMessageBoxExManager : IDisposable
 	{
 		protected static Dictionary<string, XMessageBoxExManager> s_singletonMessageBoxExManager =
 			new Dictionary<string, XMessageBoxExManager>();
@@ -28,8 +26,6 @@ namespace XCore
 		/// this can be called repeatedly, but only one will be made.
 		/// </summary>
 		/// <returns></returns>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "XMessageBoxExManager is a (per-app) singleton")]
 		public static XMessageBoxExManager CreateXMessageBoxExManager(string appName)
 		{
 			if (!s_singletonMessageBoxExManager.ContainsKey(appName))
@@ -327,7 +323,7 @@ namespace XCore
 
 		private string SettingsPath()
 		{
-			string path = DirectoryFinder.UserAppDataFolder(m_appName);
+			string path = FwDirectoryFinder.UserAppDataFolder(m_appName);
 			Directory.CreateDirectory(path);
 			path = Path.Combine(path, "DialogResponses.xml");
 			return path;

@@ -8,12 +8,14 @@ using System.IO;
 using System.Reflection;
 using System.Text;
 using System.Xml;
-using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.LCModel.Core.Cellar;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Application;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.LCModel;
+using SIL.LCModel.Application;
+using SIL.LCModel.DomainServices;
 using SIL.FieldWorks.Filters;
 using SIL.Utils;
 
@@ -24,20 +26,19 @@ namespace SIL.FieldWorks.Common.Controls
 	/// on looking up a layout for a particular HVO.
 	/// </summary>
 	public class LayoutFinder : IStringFinder, IPersistAsXml,
-		IStoresFdoCache, IStoresDataAccess, IAcceptsStringTable
+		IStoresLcmCache, IStoresDataAccess
 	{
 		#region Data members
 		internal ISilDataAccess m_sda;
 		internal string m_layoutName;
 		internal IFwMetaDataCache m_mdc;
-		internal FdoCache m_cache;
+		internal LcmCache m_cache;
 		internal LayoutCache m_layouts;
 		internal XmlNode m_colSpec;
 		/// <summary/>
 		protected XmlBrowseViewBaseVc m_vc;
 		/// <summary/>
 		protected bool m_fDisposeVc;
-		private StringTable m_stringTbl;
 		private IApp m_app;
 		#endregion
 
@@ -48,15 +49,13 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="cache">The cache.</param>
 		/// <param name="layoutName">Name of the layout.</param>
 		/// <param name="colSpec">The col spec.</param>
-		/// <param name="stringTbl">The string TBL.</param>
 		/// <param name="app">The application.</param>
 		/// ------------------------------------------------------------------------------------
-		public LayoutFinder(FdoCache cache, string layoutName, XmlNode colSpec,
-			StringTable stringTbl, IApp app): this()
+		public LayoutFinder(LcmCache cache, string layoutName, XmlNode colSpec,
+			IApp app): this()
 		{
 			m_layoutName = layoutName;
 			m_colSpec = colSpec;
-			m_stringTbl = stringTbl;
 			m_app = app;
 			Cache = cache;
 		}
@@ -72,13 +71,13 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <summary>
 		/// Make a finder appropriate to the given column specification
 		/// </summary>
-		/// <param name="cache">FdoCache</param>
+		/// <param name="cache">LcmCache</param>
 		/// <param name="colSpec">column specification</param>
 		/// <param name="vc">The vc.</param>
 		/// <param name="app">The application.</param>
 		/// <returns>finder for colSpec</returns>
 		/// ------------------------------------------------------------------------------------
-		static public IStringFinder CreateFinder(FdoCache cache, XmlNode colSpec,
+		static public IStringFinder CreateFinder(LcmCache cache, XmlNode colSpec,
 			XmlBrowseViewBaseVc vc, IApp app)
 		{
 			string layoutName = XmlUtils.GetOptionalAttributeValue(colSpec, "layout");
@@ -103,7 +102,7 @@ namespace SIL.FieldWorks.Common.Controls
 						// no special action needed here for sorting dates or date that shows as 'yes" or "no";
 						// Using a SortCollectorEnv triggers special
 						// action in case "datetime"/"gendate" of XmlVc.ProcessFrag().
-						result = new LayoutFinder(cache, layoutName, colSpec, vc.StringTbl, app);
+						result = new LayoutFinder(cache, layoutName, colSpec, app);
 						break;
 					default:
 						throw new ConfigurationException("unexpected sort type: " + sortType, colSpec);
@@ -111,7 +110,7 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 			else
 			{
-				result = new LayoutFinder(cache, layoutName, colSpec, vc.StringTbl, app);
+				result = new LayoutFinder(cache, layoutName, colSpec, app);
 			}
 			result.Vc = vc;
 			return result;
@@ -138,8 +137,6 @@ namespace SIL.FieldWorks.Common.Controls
 			set
 			{
 				m_vc = value;
-				if (m_vc != null && m_stringTbl == null)
-					m_stringTbl = m_vc.StringTbl;
 				m_sda = m_vc.DataAccess;
 				m_mdc = m_sda.MetaDataCache;
 			}
@@ -270,7 +267,7 @@ namespace SIL.FieldWorks.Common.Controls
 			// every time the tool is changed
 			if (m_vc == null)
 			{
-				m_vc = new XmlBrowseViewBaseVc(m_cache, m_stringTbl);
+				m_vc = new XmlBrowseViewBaseVc(m_cache);
 				m_vc.SuppressPictures = true; // we won't dispose of it, so it mustn't make pictures (which we don't need)
 				m_vc.DataAccess = m_sda;
 			}
@@ -280,8 +277,6 @@ namespace SIL.FieldWorks.Common.Controls
 					m_vc.Cache = m_cache;
 				if (m_vc.Cache == null)
 					throw new ApplicationException("There's no way the browse VC (m_vc) can get a string in its current state.");
-				if (m_vc.StringTbl == null)
-					m_vc.StringTbl = m_stringTbl;
 			}
 			m_vc.DisplayCell(item, m_colSpec, hvo, collector);
 			return collector.Result;
@@ -313,7 +308,7 @@ namespace SIL.FieldWorks.Common.Controls
 
 		private string[] StringsFor(int hvo, XmlNode layout, int wsForce)
 		{
-			return XmlViewsUtils.StringsFor(m_cache, m_cache.DomainDataByFlid, layout, hvo, m_layouts, null, m_stringTbl, wsForce);
+			return XmlViewsUtils.StringsFor(m_cache, m_cache.DomainDataByFlid, layout, hvo, m_layouts, null, wsForce);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -363,8 +358,8 @@ namespace SIL.FieldWorks.Common.Controls
 			// lose the sort arrow when switching between tools sharing common columns (LT-2858).
 			// For now, just assume that columns with the same label will display the same value.
 			// If this proves too loose for a particular column, try implementing a sortmethod instead.
-			string colSpecLabel = XmlUtils.GetManditoryAttributeValue(m_colSpec, "label");
-			string otherLfLabel = XmlUtils.GetManditoryAttributeValue(otherLf.m_colSpec, "label");
+			string colSpecLabel = XmlUtils.GetMandatoryAttributeValue(m_colSpec, "label");
+			string otherLfLabel = XmlUtils.GetMandatoryAttributeValue(otherLf.m_colSpec, "label");
 			string colSpecLabel2 = XmlUtils.GetOptionalAttributeValue(m_colSpec, "headerlabel");
 			string otherLfLabel2 = XmlUtils.GetOptionalAttributeValue(otherLf.m_colSpec, "headerlabel");
 			return (colSpecLabel == otherLfLabel ||
@@ -428,18 +423,18 @@ namespace SIL.FieldWorks.Common.Controls
 		/// ------------------------------------------------------------------------------------
 		public virtual void InitXml(XmlNode node)
 		{
-			m_layoutName = XmlUtils.GetManditoryAttributeValue(node, "layout");
+			m_layoutName = XmlUtils.GetMandatoryAttributeValue(node, "layout");
 			m_colSpec = node.SelectSingleNode("column");
 		}
 
 		#endregion
 
-		#region IStoresFdoCache Members
+		#region IStoresLcmCache Members
 
 		/// <summary>
 		/// This is used to set the cache when one is recreated from XML.
 		/// </summary>
-		public FdoCache Cache
+		public LcmCache Cache
 		{
 			set
 			{
@@ -459,21 +454,6 @@ namespace SIL.FieldWorks.Common.Controls
 					m_vc.Cache = value;
 			}
 		}
-		#endregion
-
-		#region IAcceptsStringTable Members
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Sets the string table.
-		/// </summary>
-		/// <value>The string table.</value>
-		/// ------------------------------------------------------------------------------------
-		public StringTable StringTable
-		{
-			set { m_stringTbl = value; }
-		}
-
 		#endregion
 	}
 
@@ -500,9 +480,9 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="colSpec">The col spec.</param>
 		/// <param name="app">The application</param>
 		/// ------------------------------------------------------------------------------------
-		public SortMethodFinder(FdoCache cache, string methodName, string layoutName,
+		public SortMethodFinder(LcmCache cache, string methodName, string layoutName,
 			XmlNode colSpec, IApp app)
-			: base(cache, layoutName, colSpec, null, app)
+			: base(cache, layoutName, colSpec, app)
 		{
 			SortMethod = methodName;
 			WritingSystemName = StringServices.GetWsSpecWithoutPrefix(colSpec);
@@ -655,7 +635,7 @@ namespace SIL.FieldWorks.Common.Controls
 		private int GetFlid(XmlNode frag, int hvo)
 		{
 			string stClassName = XmlUtils.GetOptionalAttributeValue(frag, "class");
-			string stFieldName = XmlUtils.GetManditoryAttributeValue(frag, "field");
+			string stFieldName = XmlUtils.GetMandatoryAttributeValue(frag, "field");
 			if (string.IsNullOrEmpty(stClassName))
 			{
 				int classId = m_sda.get_IntProp(hvo,
@@ -794,7 +774,7 @@ namespace SIL.FieldWorks.Common.Controls
 		public override void InitXml(XmlNode node)
 		{
 			base.InitXml(node);
-			SortMethod = XmlUtils.GetManditoryAttributeValue(node, "sortmethod");
+			SortMethod = XmlUtils.GetMandatoryAttributeValue(node, "sortmethod");
 			WritingSystemName = XmlUtils.GetOptionalAttributeValue(node, "ws", null);
 			// Enhance JohnT: if we start using string tables for browse views,
 			// we will need a better way to provide one to the Vc we make here.
@@ -821,8 +801,8 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="colSpec">The col spec.</param>
 		/// <param name="app">The application</param>
 		/// ------------------------------------------------------------------------------------
-		public IntCompareFinder(FdoCache cache, string layoutName, XmlNode colSpec, IApp app)
-			: base(cache, layoutName, colSpec, null, app)
+		public IntCompareFinder(LcmCache cache, string layoutName, XmlNode colSpec, IApp app)
+			: base(cache, layoutName, colSpec, app)
 		{
 		}
 

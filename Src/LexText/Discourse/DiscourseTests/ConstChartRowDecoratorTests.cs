@@ -12,9 +12,10 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using NUnit.Framework;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.Utils;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
+using SIL.LCModel;
 
 namespace SIL.FieldWorks.Discourse
 {
@@ -33,7 +34,6 @@ namespace SIL.FieldWorks.Discourse
 		[SetUp]
 		public void CreateTestDecorator()
 		{
-			//var sPopFormatting = Cache.TsStrFactory.MakeString(Convert.ToString(m_PDF), Cache.DefaultAnalWs);
 			m_spy = new VwEnvSpy();
 		}
 
@@ -70,7 +70,7 @@ namespace SIL.FieldWorks.Discourse
 		public void Test_FiveCallsLeftToRight()
 		{
 			// Setup
-			var tsStr = Cache.TsStrFactory.MakeString("random", Cache.DefaultAnalWs);
+			var tsStr = TsStringUtils.MakeString("random", Cache.DefaultAnalWs);
 			m_spy.IsRtL = false;
 			m_spy.OpenTableCell(1, 1);
 			m_spy.OpenParagraph();
@@ -96,7 +96,7 @@ namespace SIL.FieldWorks.Discourse
 		public void Test_OpenCellAddString()
 		{
 			// Setup
-			var tsStr = Cache.TsStrFactory.MakeString("random", Cache.DefaultAnalWs);
+			var tsStr = TsStringUtils.MakeString("random", Cache.DefaultAnalWs);
 			m_spy.IsRtL = true;
 			m_spy.OpenTableCell(1, 1);
 			m_spy.OpenParagraph();

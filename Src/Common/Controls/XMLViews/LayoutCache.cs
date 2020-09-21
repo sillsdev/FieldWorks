@@ -1,22 +1,22 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Xml;
 using System.Diagnostics;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.Utils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Infrastructure;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
 using SIL.FieldWorks.Filters;
 using XCore;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
+using SIL.ObjectModel;
+using SIL.Utils;
 
 namespace SIL.FieldWorks.Common.Controls
 {
@@ -281,9 +281,9 @@ namespace SIL.FieldWorks.Common.Controls
 	/// <summary>
 	/// Helper for handling switching between related (ListItemClass) lists.
 	/// </summary>
-	public class PartOwnershipTree : FwDisposableBase
+	public class PartOwnershipTree : DisposableBase
 	{
-		FdoCache m_cache = null;
+		LcmCache m_cache = null;
 		XmlNode m_classOwnershipTree = null;
 		XmlNode m_parentToChildrenSpecs = null;
 
@@ -294,7 +294,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="sortItemProvider"></param>
 		/// <param name="fReturnFirstDecendentOnly"></param>
 		/// <returns></returns>
-		static public PartOwnershipTree Create(FdoCache cache, IMultiListSortItemProvider sortItemProvider, bool fReturnFirstDecendentOnly)
+		static public PartOwnershipTree Create(LcmCache cache, IMultiListSortItemProvider sortItemProvider, bool fReturnFirstDecendentOnly)
 		{
 			return new PartOwnershipTree(cache, sortItemProvider, fReturnFirstDecendentOnly);
 		}
@@ -305,9 +305,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="cache"></param>
 		/// <param name="sortItemProvider"></param>
 		/// <param name="fReturnFirstDecendentOnly"></param>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
-		private PartOwnershipTree(FdoCache cache, IMultiListSortItemProvider sortItemProvider, bool fReturnFirstDecendentOnly)
+		private PartOwnershipTree(LcmCache cache, IMultiListSortItemProvider sortItemProvider, bool fReturnFirstDecendentOnly)
 		{
 			XmlNode partOwnershipTreeSpec = sortItemProvider.PartOwnershipTreeSpec;
 			m_cache = cache;
@@ -331,12 +329,12 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 		}
 
-		private FdoCache Cache
+		private LcmCache Cache
 		{
 			get { return m_cache; }
 		}
 
-		#region FwDisposableBase overrides
+		#region DisposableBase overrides
 		/// <summary>
 		///
 		/// </summary>
@@ -346,7 +344,7 @@ namespace SIL.FieldWorks.Common.Controls
 			m_classOwnershipTree = null;
 			m_parentToChildrenSpecs = null;
 		}
-		#endregion FwDisposableBase overrides
+		#endregion DisposableBase overrides
 
 
 		/// <summary>
@@ -359,7 +357,7 @@ namespace SIL.FieldWorks.Common.Controls
 			string flidName;
 			string targetClassName = m_cache.DomainDataByFlid.MetaDataCache.GetClassName(targetClsId);
 			XmlNode classNode = m_classOwnershipTree.SelectSingleNode(".//" + targetClassName);
-			flidName = XmlUtils.GetManditoryAttributeValue(classNode, "sourceField");
+			flidName = XmlUtils.GetMandatoryAttributeValue(classNode, "sourceField");
 			if (targetFieldId != 0)
 			{
 				var altSourceField = XmlUtils.GetOptionalAttributeValue(classNode, "altSourceField");
@@ -392,10 +390,10 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="flidForCurrentList"></param>
 		/// <param name="commonAncestors"></param>
 		/// <returns></returns>
-		public Set<int> FindCorrespondingItemsInCurrentList(int flidForItemsBeforeListChange, Set<int> itemsBeforeListChange, int flidForCurrentList, out Set<int> commonAncestors)
+		public ISet<int> FindCorrespondingItemsInCurrentList(int flidForItemsBeforeListChange, ISet<int> itemsBeforeListChange, int flidForCurrentList, out ISet<int> commonAncestors)
 		{
-			Set<int> relatives = new Set<int>();
-			commonAncestors = new Set<int>();
+			var relatives = new HashSet<int>();
+			commonAncestors = new HashSet<int>();
 			int newListItemsClass = GhostParentHelper.GetBulkEditDestinationClass(Cache, flidForCurrentList);
 			int prevListItemsClass = GhostParentHelper.GetBulkEditDestinationClass(Cache, flidForItemsBeforeListChange);
 			RelationshipOfRelatives relationshipOfTarget = FindTreeRelationship(prevListItemsClass, newListItemsClass);
@@ -468,10 +466,10 @@ namespace SIL.FieldWorks.Common.Controls
 							if (!commonAncestors.Contains(hvoCommonAncestor))
 							{
 								GhostParentHelper gph = GetGhostParentHelper(flidForCurrentList);
-								Set<int> descendents = GetDescendents(hvoCommonAncestor, flidForCurrentList);
+								ISet<int> descendents = GetDescendents(hvoCommonAncestor, flidForCurrentList);
 								if (descendents.Count > 0)
 								{
-									relatives.AddRange(descendents);
+									relatives.UnionWith(descendents);
 								}
 								else if (gph != null && gph.IsGhostOwnerClass(hvoCommonAncestor))
 								{
@@ -491,16 +489,16 @@ namespace SIL.FieldWorks.Common.Controls
 			return GhostParentHelper.CreateIfPossible(Cache.ServiceLocator, flidToTry);
 		}
 
-		private Set<int> GetDescendents(int hvoCommonAncestor, int relativesFlid)
+		private ISet<int> GetDescendents(int hvoCommonAncestor, int relativesFlid)
 		{
 			string listPropertyName = Cache.MetaDataCacheAccessor.GetFieldName(relativesFlid);
 			string parentObjName = Cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvoCommonAncestor).ClassName;
 			string xpathToPart = "./part[@id='" + parentObjName + "-Jt-" + listPropertyName + "']";
 			XmlNode pathSpec = m_parentToChildrenSpecs.SelectSingleNode(xpathToPart);
 			Debug.Assert(pathSpec != null,
-				String.Format("You are experiencing a rare and difficult-to-reproduce error (LT- 11443 and linked issues). If you can add any information to the issue or fix it please do. If JohnT is available please call him over. Expected to find part ({0}) in ParentClassPathsToChildren", xpathToPart));
+				string.Format("You are experiencing a rare and difficult-to-reproduce error (LT- 11443 and linked issues). If you can add any information to the issue or fix it please do. If JohnT is available please call him over. Expected to find part ({0}) in ParentClassPathsToChildren", xpathToPart));
 			if (pathSpec == null)
-				return new Set<int>(); // This just means we don't find a related object. Better than crashing, but not what we intend.
+				return new HashSet<int>(); // This just means we don't find a related object. Better than crashing, but not what we intend.
 			// get the part spec that gives us the path from obsolete current (parent) list item object
 			// to the new one.
 			var vc = new XmlBrowseViewBaseVc(m_cache, null);
@@ -511,7 +509,7 @@ namespace SIL.FieldWorks.Common.Controls
 			{
 				return collector.HvosCollectedInCell;
 			}
-			return new Set<int>();
+			return new HashSet<int>();
 		}
 
 		private RelationshipOfRelatives FindTreeRelationship(int prevListItemsClass, int newListItemsClass)

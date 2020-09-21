@@ -1,4 +1,4 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -8,8 +8,8 @@ using System.Drawing;
 using System.Windows.Forms;
 using System.Xml;
 using System.Reflection;
-
-using SIL.Utils; // For IFWDisposable
+using SIL.PlatformUtilities;
+using SIL.Utils;
 
 namespace XCore
 {
@@ -29,7 +29,7 @@ namespace XCore
 	/// Most of the mehtods in these interfaces wil be pass-thourh methods to m_mainControl,
 	/// but we will try to get some use out of them, as well.
 	/// </remarks>
-	public partial class PaneBarContainer : BasicPaneBarContainer, IxCoreContentControl, IFWDisposable, IPostLayoutInit
+	public partial class PaneBarContainer : BasicPaneBarContainer, IxCoreContentControl, IPostLayoutInit
 	{
 		#region Data Members
 
@@ -48,13 +48,16 @@ namespace XCore
 			InitializeComponent();
 		}
 
-#if __MonoCS__ // FWNX-425
+		// FWNX-425
 		/// <summary> make Width always match parent Width </summary>
 		protected override void OnLayout(LayoutEventArgs levent)
 		{
-			if (Parent != null && Width != Parent.Width)
+			if (Platform.IsMono)
 			{
-				Width = Parent.Width;
+				if (Parent != null && Width != Parent.Width)
+				{
+					Width = Parent.Width;
+				}
 			}
 
 			base.OnLayout (levent);
@@ -63,14 +66,16 @@ namespace XCore
 		/// <summary> make Width always match parent Width </summary>
 		protected override void OnSizeChanged(EventArgs e)
 		{
-			if (Parent != null && Width != Parent.Width)
+			if (Platform.IsMono)
 			{
-				Width = Parent.Width;
+				if (Parent != null && Width != Parent.Width)
+				{
+					Width = Parent.Width;
+				}
 			}
 
 			base.OnSizeChanged (e);
 		}
-#endif
 
 		#endregion Construction
 
@@ -104,7 +109,7 @@ namespace XCore
 
 		#endregion Properties
 
-		#region IFWDisposable implementation, in part
+		#region Disposable implementation, in part
 
 		/// <summary>
 		/// Check to see if the object has been disposed.
@@ -117,17 +122,18 @@ namespace XCore
 				throw new ObjectDisposedException(String.Format("'{0}' in use after being disposed.", GetType().Name));
 		}
 
-		#endregion IFWDisposable implementation, in part
+		#endregion Disposable implementation, in part
 
 		#region IxCoreColleague implementation
 		/// <summary></summary>
-		public void Init(Mediator mediator, XmlNode configurationParameters)
+		public void Init(Mediator mediator, PropertyTable propertyTable, XmlNode configurationParameters)
 		{
 			CheckDisposed();
 
 			SuspendLayout();
 
 			m_mediator = mediator;
+			m_propertyTable = propertyTable;
 			m_configurationParameters = configurationParameters;
 
 			// Make the IPaneBar.
@@ -136,8 +142,8 @@ namespace XCore
 			string groupId = XmlUtils.GetOptionalAttributeValue(m_configurationParameters, "PaneBarGroupId", null);
 			if (groupId != null)
 			{
-				XWindow window = (XWindow)m_mediator.PropertyTable.GetValue("window");
-				ImageCollection small = (ImageCollection)m_mediator.PropertyTable.GetValue("smallImages");
+				XWindow window = m_propertyTable.GetValue<XWindow>("window");
+				ImageCollection small = m_propertyTable.GetValue<ImageCollection>("smallImages");
 				paneBar.Init(small, (IUIMenuAdapter)window.MenuAdapter, m_mediator);
 			}
 			ReloadPaneBar(paneBar);
@@ -167,16 +173,18 @@ namespace XCore
 				mp.DefaultPrintPaneId = DefaultPrintPaneId;
 				mp.ParentSizeHint = ParentSizeHint;
 			}*/
-			(mainControl as IxCoreColleague).Init(m_mediator, mainControlNode.SelectSingleNode("parameters"));
-#if __MonoCS__
-			// At least one IPaneBarUser main control disposes of its MainPaneBar.  This can
-			// cause the program to hang later on.  See FWNX-1036 for details.
-			if ((m_paneBar as Control).IsDisposed)
+			(mainControl as IxCoreColleague).Init(m_mediator, m_propertyTable, mainControlNode.SelectSingleNode("parameters"));
+			if (Platform.IsMono)
 			{
-				Controls.Remove(m_paneBar as Control);
-				m_paneBar = null;
+				// At least one IPaneBarUser main control disposes of its MainPaneBar.  This can
+				// cause the program to hang later on.  See FWNX-1036 for details.
+				if ((m_paneBar as Control).IsDisposed)
+				{
+					Controls.Remove(m_paneBar as Control);
+					m_paneBar = null;
+				}
 			}
-#endif
+
 			Controls.Add(mainControl);
 			if (mainControl is MultiPane)
 			{
@@ -205,7 +213,7 @@ namespace XCore
 			string groupId = XmlUtils.GetOptionalAttributeValue(m_configurationParameters, "PaneBarGroupId", null);
 			if (groupId != null)
 			{
-				XWindow window = (XWindow)m_mediator.PropertyTable.GetValue("window");
+				XWindow window = m_propertyTable.GetValue<XWindow>("window");
 				ChoiceGroup group = window.GetChoiceGroupForMenu(groupId);
 				group.PopulateNow();
 				paneBar.AddGroup(group);
@@ -304,6 +312,7 @@ namespace XCore
 		#region Data Members
 
 		protected Mediator m_mediator;
+		protected PropertyTable m_propertyTable;
 		protected IPaneBar m_paneBar;
 
 		#endregion Data Members
@@ -312,10 +321,19 @@ namespace XCore
 		/// Init for basic panebar.
 		/// </summary>
 		/// <param name="mediator"></param>
+		/// <param name="propertyTable"></param>
 		/// <param name="mainControl"></param>
-		public void Init(Mediator mediator, Control mainControl)
+		public void Init(Mediator mediator, PropertyTable propertyTable, Control mainControl)
 		{
-			m_mediator = mediator;
+			if (m_mediator != null && m_mediator != mediator)
+				throw new ArgumentException("Mis-matched mediators being set for this object.");
+			if (m_propertyTable != null && m_propertyTable != propertyTable)
+				throw new ArgumentException("Mis-matched property tables being set for this object.");
+
+			if (m_mediator == null)
+				m_mediator = mediator;
+			if (m_propertyTable == null)
+				m_propertyTable = propertyTable;
 			m_paneBar = CreatePaneBar();
 			Controls.Add(m_paneBar as Control);
 
@@ -326,7 +344,7 @@ namespace XCore
 
 		protected IPaneBar CreatePaneBar()
 		{
-			string preferredLibrary = (string)m_mediator.PropertyTable.GetValue("PreferredUILibrary", "xCoreOpenSourceAdapter.dll");
+			string preferredLibrary = m_propertyTable.GetValue("PreferredUILibrary", "xCoreOpenSourceAdapter.dll");
 			Assembly adaptorAssembly = AdapterAssemblyFactory.GetAdapterAssembly(preferredLibrary);
 			IPaneBar paneBar = adaptorAssembly.CreateInstance("XCore.PaneBar") as IPaneBar;
 			Control pb = paneBar as Control;
@@ -339,6 +357,12 @@ namespace XCore
 		public IPaneBar PaneBar
 		{
 			get { return m_paneBar; }
+		}
+
+		protected override void Dispose(bool disposing)
+		{
+			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ******");
+			base.Dispose(disposing);
 		}
 	}
 }

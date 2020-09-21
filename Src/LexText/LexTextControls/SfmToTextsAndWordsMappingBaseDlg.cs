@@ -7,14 +7,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Resources;
 using System.Windows.Forms;
-using SIL.CoreImpl;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using SIL.FieldWorks.FwCoreDlgs;
 using SIL.FieldWorks.LexText.Controls.DataNotebook;
 using SilEncConverters40;
-using XCore;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.FieldWorks.Common.FwUtils;
 
 namespace SIL.FieldWorks.LexText.Controls
 {
@@ -22,7 +21,7 @@ namespace SIL.FieldWorks.LexText.Controls
 	{
 		protected string m_helpTopicID;
 
-		private FdoCache m_cache;
+		private LcmCache m_cache;
 		private string m_orginalLabel;
 		private readonly string m_blankEC = Sfm2Xml.STATICS.AlreadyInUnicode;
 		private Sfm2FlexTextMappingBase m_mapping; // the object we are editing.
@@ -39,12 +38,12 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		void SfmInterlinearMappingDlg_WritingSystemAdded(object sender, EventArgs e)
 		{
-			IWritingSystem ws = ((AddWritingSystemButton)m_addWritingSystemButton).NewWritingSystem;
+			CoreWritingSystemDefinition ws = ((AddWritingSystemButton)m_addWritingSystemButton).NewWritingSystem;
 			if (ws != null)
 				NotebookImportWiz.InitializeWritingSystemCombo(ws.Id, m_cache, m_writingSystemCombo);
 		}
 
-		public void SetupDlg(IHelpTopicProvider helpTopicProvider, IApp app, FdoCache cache,  Sfm2FlexTextMappingBase mappingToModify, IEnumerable<InterlinDestination> destinationsToDisplay)
+		public void SetupDlg(IHelpTopicProvider helpTopicProvider, IApp app, LcmCache cache,  Sfm2FlexTextMappingBase mappingToModify, IEnumerable<InterlinDestination> destinationsToDisplay)
 		{
 			m_helpTopicProvider = helpTopicProvider;
 			m_app = app;
@@ -66,7 +65,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			m_addWritingSystemButton.TabIndex = tabIndex;
 			m_addWritingSystemButton.Text = text;
 			var addWritingSystemButton = ((AddWritingSystemButton)m_addWritingSystemButton);
-			addWritingSystemButton.Initialize(m_cache, helpTopicProvider, app, null, cache.ServiceLocator.WritingSystems.AllWritingSystems);
+			addWritingSystemButton.Initialize(m_cache, helpTopicProvider, app, cache.ServiceLocator.WritingSystems.AllWritingSystems);
 			addWritingSystemButton.WritingSystemAdded += SfmInterlinearMappingDlg_WritingSystemAdded;
 			m_destinationsListBox.SelectedIndexChanged += new EventHandler(m_destinationsListBox_SelectedIndexChanged);
 			LoadConverters(mappingToModify.Converter);
@@ -102,8 +101,8 @@ namespace SIL.FieldWorks.LexText.Controls
 		protected string GetOldWs()
 		{
 			var oldWs = m_mapping.WritingSystem;
-			if (m_writingSystemCombo.SelectedItem is IWritingSystem)
-				oldWs = ((IWritingSystem)m_writingSystemCombo.SelectedItem).Id;
+			if (m_writingSystemCombo.SelectedItem is CoreWritingSystemDefinition)
+				oldWs = ((CoreWritingSystemDefinition) m_writingSystemCombo.SelectedItem).Id;
 			return oldWs;
 		}
 
@@ -212,7 +211,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		private void m_okButton_Click(object sender, EventArgs e)
 		{
 			var dest = ((DestinationItem) m_destinationsListBox.SelectedItem).Dest;
-			m_mapping.WritingSystem = dest == InterlinDestination.Ignored ? null : ((IWritingSystem)m_writingSystemCombo.SelectedItem).Id;
+			m_mapping.WritingSystem = dest == InterlinDestination.Ignored ? null : ((CoreWritingSystemDefinition) m_writingSystemCombo.SelectedItem).Id;
 			m_mapping.Converter = m_converterCombo.SelectedIndex <= 0 ? "" : m_converterCombo.Text;
 			m_mapping.Destination = dest;
 		}

@@ -3,17 +3,18 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using System.Windows.Forms;
 using System.Drawing;
+using System.Windows.Forms;
+using SIL.FieldWorks.Common.Framework.DetailControls.Resources;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.Widgets;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.Utils;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.FwCoreDlgs;
-using SIL.FieldWorks.Common.Framework.DetailControls.Resources;
-using SIL.FieldWorks.FDO.DomainServices;
-using System.Diagnostics.CodeAnalysis;
+using SIL.LCModel.Utils;
+using SIL.Utils;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls
 {
@@ -32,8 +33,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		///
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "Panel gets added to the Controls collection and disposed there")]
 		public PictureSlice(ICmPicture picture)
 		{
 			m_picBox = new PictureBox();
@@ -123,8 +122,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 		#endregion IDisposable override
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "image is a reference")]
 		protected override void OnSizeChanged(EventArgs e)
 		{
 			// Skip handling this, if the DataTree hasn't
@@ -169,12 +166,12 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		{
 			CheckDisposed();
 			var pic = (ICmPicture)Object;
-			var app = (IApp)m_mediator.PropertyTable.GetValue("App");
-			using (var dlg = new PicturePropertiesDialog(m_cache, pic, m_mediator.HelpTopicProvider, app, true))
+			var app = m_propertyTable.GetValue<IApp>("App");
+			using (var dlg = new PicturePropertiesDialog(m_cache, pic, m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), app, true))
 			{
 				if (dlg.Initialize())
 				{
-					var stylesheet = FontHeightAdjuster.StyleSheetFromMediator(m_mediator);
+					var stylesheet = FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable);
 					dlg.UseMultiStringCaption(m_cache, WritingSystemServices.kwsVernAnals, stylesheet);
 					dlg.SetMultilingualCaptionValues(pic.Caption);
 					if (dlg.ShowDialog() == DialogResult.OK)

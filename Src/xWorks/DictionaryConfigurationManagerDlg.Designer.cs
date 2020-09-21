@@ -74,7 +74,6 @@
 			// buttonTableLayoutPanel
 			// 
 			resources.ApplyResources(this.buttonTableLayoutPanel, "buttonTableLayoutPanel");
-			this.mainTableLayoutPanel.SetColumnSpan(this.buttonTableLayoutPanel, 4);
 			this.buttonTableLayoutPanel.Controls.Add(this.helpButton, 2, 0);
 			this.buttonTableLayoutPanel.Controls.Add(this.closeButton, 1, 0);
 			this.buttonTableLayoutPanel.Name = "buttonTableLayoutPanel";

@@ -1,18 +1,16 @@
-// Copyright (c) 2012-2013 SIL International
+// Copyright (c) 2012-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// Original author: MarkS 2012-11-05 XmlBrowseViewBaseTests.cs
 
 using System;
-using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Windows.Forms;
 using NUnit.Framework;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.Controls;
-using SIL.FieldWorks.FDO.FDOTests;
-using SIL.Utils;
+using SIL.LCModel;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Utils;
 
 namespace XMLViewsTests
 {
@@ -72,8 +70,6 @@ namespace XMLViewsTests
 		}
 
 		/// <summary/>
-		[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
-			Justification="m_xmlBrowseViewBase is a reference")]
 		public class FakeRootBox : IVwRootBox
 		{
 			/// <summary/>
@@ -108,6 +104,18 @@ namespace XMLViewsTests
 
 			/// <summary/>
 			public ISilDataAccess DataAccess
+			{
+				get;
+				set;
+			}
+
+			public IRenderEngineFactory RenderEngineFactory
+			{
+				get;
+				set;
+			}
+
+			public ITsStrFactory TsStrFactory
 			{
 				get;
 				set;
@@ -498,10 +506,6 @@ namespace XMLViewsTests
 
 	/// <summary/>
 	[TestFixture]
-	[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-		Justification="FakeBrowseViewer gets disposed in TearDown method")]
-	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
-		Justification="m_view is a reference; object gets disposed as part of FakeBrowseViewer's control collection")]
 	public class XmlBrowseViewBaseTests : MemoryOnlyBackendProviderTestBase
 	{
 		private FakeXmlBrowseViewBase m_view;

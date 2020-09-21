@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2014-2017 SIL International
+// Copyright (c) 2014-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -9,16 +9,18 @@ using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using System.Xml.Serialization;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FdoUi.Dialogs;
-using SIL.Utils;
-using Palaso.Linq;
-using SIL.CoreImpl;
-using XCore;
 using Ionic.Zip;
+using SIL.LCModel;
+using SIL.FieldWorks.FdoUi.Dialogs;
+using SIL.LCModel.Utils;
+using SIL.Linq;
+using SIL.WritingSystems;
+using XCore;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.FieldWorks.Common.Controls.FileDialog;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.LexText.Controls;
 using SIL.FieldWorks.XWorks.LexText;
-using SIL.Utils.FileDialog;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -30,8 +32,9 @@ namespace SIL.FieldWorks.XWorks
 	{
 		private readonly DictionaryConfigurationManagerDlg _view;
 
+		private readonly PropertyTable _propertyTable;
 		private readonly Mediator _mediator;
-		private readonly FdoCache _cache;
+		private readonly LcmCache _cache;
 
 		internal readonly string _projectConfigDir;
 		private readonly string _defaultConfigDir;
@@ -109,22 +112,23 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// For unit tests.
 		/// </summary>
-		internal DictionaryConfigurationManagerController(FdoCache cache,
+		internal DictionaryConfigurationManagerController(LcmCache cache, Mediator mediator,
 			List<DictionaryConfigurationModel> configurations, List<string> publications, string projectConfigDir, string defaultConfigDir)
 		{
 			_cache = cache;
+			_mediator = mediator;
 			_configurations = configurations;
 			_publications = publications;
 			_projectConfigDir = projectConfigDir;
 			_defaultConfigDir = defaultConfigDir;
 		}
 
-		public DictionaryConfigurationManagerController(DictionaryConfigurationManagerDlg view, Mediator mediator,
+		public DictionaryConfigurationManagerController(DictionaryConfigurationManagerDlg view, PropertyTable propertyTable, Mediator mediator,
 			List<DictionaryConfigurationModel> configurations, List<string> publications, string projectConfigDir, string defaultConfigDir, DictionaryConfigurationModel currentConfig) :
-			this((FdoCache)mediator.PropertyTable.GetValue("cache"), configurations, publications, projectConfigDir, defaultConfigDir)
+			this(propertyTable.GetValue<LcmCache>("cache"), mediator, configurations, publications, projectConfigDir, defaultConfigDir)
 		{
 			_view = view;
-			_mediator = mediator;
+			_propertyTable = propertyTable;
 			_initialConfig = currentConfig;
 
 			// Add special publication selection for All Publications.
@@ -471,10 +475,10 @@ namespace SIL.FieldWorks.XWorks
 			if (configurationToDelete == null)
 				return;
 
-			using (var dlg = new ConfirmDeleteObjectDlg(_mediator.HelpTopicProvider))
+			using (var dlg = new ConfirmDeleteObjectDlg(_propertyTable.GetValue<FwXApp>("App")))
 			{
 				dlg.WindowTitle = xWorksStrings.Confirm + " " + xWorksStrings.Delete;
-				var kindOfConfiguration = DictionaryConfigurationListener.GetDictionaryConfigurationType(_mediator);
+				var kindOfConfiguration = DictionaryConfigurationListener.GetDictionaryConfigurationType(_propertyTable);
 				dlg.TopBodyText = String.Format("{0} {1}: {2}", kindOfConfiguration, xWorksStrings.View, configurationToDelete.Label);
 
 				if (IsConfigurationACustomizedOriginal(configurationToDelete))
@@ -530,7 +534,7 @@ namespace SIL.FieldWorks.XWorks
 
 			var disallowedCharacters = MiscUtils.GetInvalidProjectNameChars(MiscUtils.FilenameFilterStrength.kFilterBackup) + " $%";
 			string outputPath;
-			using (var saveDialog = new SaveFileDialogAdapter())
+			using (var saveDialog = new DialogAdapters.SaveFileDialogAdapter())
 			{
 				saveDialog.Title = xWorksStrings.kstidChooseExportFile;
 				saveDialog.FileName = StringUtils.FilterForFileName(SelectedConfiguration + "_FLEx-Dictionary-Configuration_" + DateTime.Now.ToString("yyyy-MM-dd"), disallowedCharacters);
@@ -554,7 +558,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// Create a zip file containing a dictionary configuration for the user to share, into destinationZipPath. LT-17397.
 		/// </summary>
-		internal static void ExportConfiguration(DictionaryConfigurationModel configurationToExport, string destinationZipPath, FdoCache cache)
+		internal static void ExportConfiguration(DictionaryConfigurationModel configurationToExport, string destinationZipPath, LcmCache cache)
 		{
 			if (configurationToExport == null)
 				throw new ArgumentNullException("configurationToExport");
@@ -578,7 +582,7 @@ namespace SIL.FieldWorks.XWorks
 		/// Prepare custom fields to be included in dictionary configuration export. LT-17397.
 		/// Returns paths to files to be included in a zipped export.
 		/// </summary>
-		internal static IEnumerable<string> PrepareCustomFieldsExport(FdoCache cache)
+		internal static IEnumerable<string> PrepareCustomFieldsExport(LcmCache cache)
 		{
 			var exporter = new LiftExporter(cache);
 			var liftFile = Path.Combine(Path.GetTempPath(), "DictExportCustomLift", "CustomFields.lift");
@@ -601,7 +605,7 @@ namespace SIL.FieldWorks.XWorks
 		/// Prepare stylesheet to be included in dictionary configuration export. LT-17397.
 		/// Returns paths to files to be included in a zipped export.
 		/// </summary>
-		internal static string PrepareStylesheetExport(FdoCache cache)
+		internal static string PrepareStylesheetExport(LcmCache cache)
 		{
 			var projectStyles = new FlexStylesXmlAccessor(cache.LangProject.LexDbOA, true);
 			var serializer = new XmlSerializer(typeof(FlexStylesXmlAccessor));
@@ -628,7 +632,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 
 			var importController = new DictionaryConfigurationImportController(_cache, _projectConfigDir, _configurations);
-			using (var importDialog = new DictionaryConfigurationImportDlg(_mediator.HelpTopicProvider) { HelpTopic = _view.HelpTopic })
+			using (var importDialog = new DictionaryConfigurationImportDlg(_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider")) { HelpTopic = _view.HelpTopic })
 			{
 				importController.DisplayView(importDialog);
 			}
@@ -651,7 +655,7 @@ namespace SIL.FieldWorks.XWorks
 			return IsConfigurationACustomizedOriginal(configuration, _defaultConfigDir, _cache);
 		}
 
-		public static bool IsConfigurationACustomizedOriginal(DictionaryConfigurationModel config, string defaultConfigDir, FdoCache cache)
+		public static bool IsConfigurationACustomizedOriginal(DictionaryConfigurationModel config, string defaultConfigDir, LcmCache cache)
 		{
 			return IsConfigurationACustomizedShippedDefault(config, defaultConfigDir) || IsConfigurationAnOriginalReversal(config, cache);
 		}
@@ -674,17 +678,16 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// Whether a configuration represents a Reversal.
 		/// </summary>
-		public static bool IsConfigurationAnOriginalReversal(DictionaryConfigurationModel configuration, FdoCache cache)
+		public static bool IsConfigurationAnOriginalReversal(DictionaryConfigurationModel configuration, LcmCache cache)
 		{
 			if (configuration.FilePath == null)
 				return false;
-
 			// No configuration.WritingSystem means it is not a reversal, or that it is the AllReversalIndexes which doesn't act any different from a default config
-			if (!String.IsNullOrWhiteSpace(configuration.WritingSystem))
+			if (!string.IsNullOrWhiteSpace(configuration.WritingSystem) && IetfLanguageTag.IsValid(configuration.WritingSystem))
 			{
-				var writingSystem = (IWritingSystem)cache.WritingSystemFactory.get_Engine(configuration.WritingSystem);
-				// The reversals start out with the filename matching the ws DisplayLabel, copies will have a different file name
-				return writingSystem.DisplayLabel == Path.GetFileNameWithoutExtension(configuration.FilePath);
+				var writingSystem = (CoreWritingSystemDefinition)cache.WritingSystemFactory.get_Engine(configuration.WritingSystem);
+				// The reversals start out with the filename matching the ws Id, copies will have a different file name
+				return writingSystem.Id == Path.GetFileNameWithoutExtension(configuration.FilePath);
 			}
 			return false;
 		}

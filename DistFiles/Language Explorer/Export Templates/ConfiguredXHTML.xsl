@@ -394,7 +394,7 @@ display/printout!
 	  </xsl:when>
 	  <xsl:otherwise>
 		<xsl:for-each select="MoForm/MoForm_Form">
-		  <xsl:call-template name="ProcessMultiString"></xsl:call-template>
+		  <xsl:call-template name="ProcessAnyString"></xsl:call-template>
 		</xsl:for-each>
 	  </xsl:otherwise>
 	</xsl:choose>
@@ -462,7 +462,7 @@ display/printout!
 	  </xsl:when>
 
 	  <xsl:otherwise>
-		<xsl:call-template name="ProcessMultiString"></xsl:call-template>
+		<xsl:call-template name="ProcessAnyString"></xsl:call-template>
 	  </xsl:otherwise>
 	</xsl:choose>
   </xsl:template>
@@ -506,63 +506,63 @@ display/printout!
 
 
   <xsl:template match="LexEtymology_Form">
-	<xsl:call-template name="ProcessMultiString"></xsl:call-template>
+	<xsl:call-template name="ProcessAnyString"></xsl:call-template>
   </xsl:template>
 
   <xsl:template match="LexEtymology_Comment">
-	<xsl:call-template name="ProcessMultiString"></xsl:call-template>
+	<xsl:call-template name="ProcessAnyString"></xsl:call-template>
   </xsl:template>
 
   <xsl:template match="LexEtymology_Gloss">
-	<xsl:call-template name="ProcessMultiString"></xsl:call-template>
+	<xsl:call-template name="ProcessAnyString"></xsl:call-template>
   </xsl:template>
 
   <xsl:template match="MoStemMsaLink_MLPartOfSpeech">
-	<xsl:call-template name="ProcessMultiString"></xsl:call-template>
+	<xsl:call-template name="ProcessAnyString"></xsl:call-template>
   </xsl:template>
 
   <xsl:template match="LexEtymology_Source">
-	<xsl:call-template name="ProcessMultiUnicode"></xsl:call-template>
+	<xsl:call-template name="ProcessAnyString"></xsl:call-template>
   </xsl:template>
 
   <xsl:template match="MoMorphType_Prefix|MoMorphType_Postfix">
-	<xsl:call-template name="ProcessMultiUnicode"></xsl:call-template>
+	<xsl:call-template name="ProcessAnyString"></xsl:call-template>
   </xsl:template>
 
   <xsl:template match="MoForm_Form">
-	<xsl:call-template name="ProcessMultiString"></xsl:call-template>
+	<xsl:call-template name="ProcessAnyString"></xsl:call-template>
   </xsl:template>
 
 
   <!-- convert <LexEntryRef_Summary>  -->
 
   <xsl:template match="LexEntryRef_Summary">
-	<xsl:call-template name="ProcessMultiString"></xsl:call-template>
+	<xsl:call-template name="ProcessAnyString"></xsl:call-template>
   </xsl:template>
 
 
   <!-- convert <LexPronunciation_Form>  -->
 
   <xsl:template match="LexPronunciation_Form">
-	<xsl:call-template name="ProcessMultiString"></xsl:call-template>
+	<xsl:call-template name="ProcessAnyString"></xsl:call-template>
   </xsl:template>
 
 
   <!-- convert <LexPronunciation_CVPattern>  -->
 
   <xsl:template match="LexPronunciation_CVPattern">
-	<xsl:call-template name="ProcessString"></xsl:call-template>
+	<xsl:call-template name="ProcessAnyString"></xsl:call-template>
   </xsl:template>
 
 
   <!-- convert <LexPronunciation_Tone>  -->
 
   <xsl:template match="LexPronunciation_Tone">
-	<xsl:call-template name="ProcessString"></xsl:call-template>
+	<xsl:call-template name="ProcessAnyString"></xsl:call-template>
   </xsl:template>
 
   <xsl:template match="PhEnvironment_StringRepresentation">
-	<xsl:call-template name="ProcessString"/>
+	<xsl:call-template name="ProcessAnyString"/>
   </xsl:template>
 
   <xsl:template match="MoStemAllomorph">
@@ -679,43 +679,41 @@ display/printout!
 	</xsl:choose>
   </xsl:template>
 
-
-
   <xsl:template match="CmPossibility_Abbreviation|CmPossibility_Name">
-	<xsl:call-template name="ProcessMultiString"></xsl:call-template>
+	<xsl:call-template name="ProcessAnyString"></xsl:call-template>
   </xsl:template>
   <xsl:template match="LexEntryType_ReverseAbbr|LexEntryType_ReverseName">
-	<xsl:call-template name="ProcessMultiString"></xsl:call-template>
+	<xsl:call-template name="ProcessAnyString"></xsl:call-template>
   </xsl:template>
   <xsl:template match="LexRefType_ReverseAbbreviation|LexRefType_ReverseName">
-	<xsl:call-template name="ProcessMultiString"></xsl:call-template>
+	<xsl:call-template name="ProcessAnyString"></xsl:call-template>
   </xsl:template>
 
   <!-- convert <LexEntry_Comment>  -->
 
   <xsl:template match="LexEntry_Comment">
-	<xsl:call-template name="ProcessMultiString"></xsl:call-template>
+	<xsl:call-template name="ProcessAnyString"></xsl:call-template>
   </xsl:template>
 
 
   <!-- convert <LexEntry_Bibliography>  -->
 
   <xsl:template match="LexEntry_Bibliography">
-	<xsl:call-template name="ProcessMultiString"></xsl:call-template>
+	<xsl:call-template name="ProcessAnyString"></xsl:call-template>
   </xsl:template>
 
 
   <!-- convert <LexEntry_LiteralMeaning>  -->
 
   <xsl:template match="LexEntry_LiteralMeaning">
-	<xsl:call-template name="ProcessMultiString"></xsl:call-template>
+	<xsl:call-template name="ProcessAnyString"></xsl:call-template>
   </xsl:template>
 
 
   <!-- convert <LexEntry_DateCreated> and <LexEntry_DateModified> -->
 
   <xsl:template match="LexEntry_DateCreated|LexEntry_DateModified">
-	<xsl:call-template name="ProcessString"></xsl:call-template>
+	<xsl:call-template name="ProcessAnyString"></xsl:call-template>
   </xsl:template>
 
 
@@ -772,56 +770,56 @@ display/printout!
 	<!-- convert <MoMorphSynAnalysisLink_MLPartOfSpeech> to <span class="grammatical-info_lg"> -->
 
   <xsl:template match="MoMorphSynAnalysisLink_MLPartOfSpeech|MoStemMsa_MLPartOfSpeech">
-	<xsl:call-template name="ProcessMultiString"></xsl:call-template>
+	<xsl:call-template name="ProcessAnyString"></xsl:call-template>
   </xsl:template>
 
 
   <xsl:template match="MoInflAffixSlot_Name">
-	<xsl:call-template name="ProcessMultiString"></xsl:call-template>
+	<xsl:call-template name="ProcessAnyString"></xsl:call-template>
   </xsl:template>
 
 
   <!-- convert <MoMorphSynAnalysisLink_FeaturesTSS> to list of <span class="grammatical-info-feature"> -->
 
   <xsl:template match="MoMorphSynAnalysisLink_FeaturesTSS">
-	<xsl:call-template name="ProcessString"></xsl:call-template>
+	<xsl:call-template name="ProcessAnyString"></xsl:call-template>
   </xsl:template>
 
 
   <!-- convert <MoMorphSynAnalysisLink_ExceptionFeaturesTSS> to list of <span class="grammatical-info-exceptfeature"> -->
 
   <xsl:template match="MoMorphSynAnalysisLink_ExceptionFeaturesTSS">
-	<xsl:call-template name="ProcessString"></xsl:call-template>
+	<xsl:call-template name="ProcessAnyString"></xsl:call-template>
   </xsl:template>
 
 
   <!-- convert <MoMorphSynAnalysisLink_MLInflectionClass> to <span class="grammatical-info_lg"> -->
 
   <xsl:template match="MoMorphSynAnalysisLink_MLInflectionClass">
-	<xsl:call-template name="ProcessMultiString"></xsl:call-template>
+	<xsl:call-template name="ProcessAnyString"></xsl:call-template>
   </xsl:template>
 
 
   <!-- convert <LexSense_Source> -->
 
   <xsl:template match="LexSense_Source">
-	<xsl:call-template name="ProcessString"></xsl:call-template>
+	<xsl:call-template name="ProcessAnyString"></xsl:call-template>
   </xsl:template>
 
 
   <!-- convert <LexSense_Gloss> or <LexSense_Definition> to <span class="definition_lg"> -->
 
   <xsl:template match="LexSense_Gloss|LexSense_Definition">
-	<xsl:call-template name="ProcessMultiString"></xsl:call-template>
+	<xsl:call-template name="ProcessAnyString"></xsl:call-template>
   </xsl:template>
 
 
   <xsl:template match="LexExampleSentence_Example">
-	<xsl:call-template name="ProcessMultiString"></xsl:call-template>
+	<xsl:call-template name="ProcessAnyString"></xsl:call-template>
   </xsl:template>
 
   <xsl:template match="CmTranslation_Translation">
-	<xsl:call-template name="ProcessMultiString"></xsl:call-template>
+	<xsl:call-template name="ProcessAnyString"></xsl:call-template>
   </xsl:template>
 
 
@@ -840,77 +838,77 @@ display/printout!
   <!-- convert <LexEntry_SummaryDefinition> -->
 
   <xsl:template match="LexEntry_SummaryDefinition">
-	<xsl:call-template name="ProcessMultiString"></xsl:call-template>
+	<xsl:call-template name="ProcessAnyString"></xsl:call-template>
   </xsl:template>
 
 
   <!-- convert <LexSense_SocioLinguisticsNote> -->
 
   <xsl:template match="LexSense_SocioLinguisticsNote">
-	<xsl:call-template name="ProcessMultiString"></xsl:call-template>
+	<xsl:call-template name="ProcessAnyString"></xsl:call-template>
   </xsl:template>
 
 
   <!-- convert <LexSense_GeneralNote> -->
 
   <xsl:template match="LexSense_GeneralNote">
-	<xsl:call-template name="ProcessMultiString"></xsl:call-template>
+	<xsl:call-template name="ProcessAnyString"></xsl:call-template>
   </xsl:template>
 
 
   <!-- convert <LexSense_Restrictions> -->
 
   <xsl:template match="LexSense_Restrictions">
-	<xsl:call-template name="ProcessMultiString"></xsl:call-template>
+	<xsl:call-template name="ProcessAnyString"></xsl:call-template>
   </xsl:template>
 
 
   <!-- convert <LexSense_PhonologyNote> -->
 
   <xsl:template match="LexSense_PhonologyNote">
-	<xsl:call-template name="ProcessMultiString"></xsl:call-template>
+	<xsl:call-template name="ProcessAnyString"></xsl:call-template>
   </xsl:template>
 
 
   <!-- convert <LexSense_SemanticsNote> -->
 
   <xsl:template match="LexSense_SemanticsNote">
-	<xsl:call-template name="ProcessMultiString"></xsl:call-template>
+	<xsl:call-template name="ProcessAnyString"></xsl:call-template>
   </xsl:template>
 
 
   <!-- convert <LexSense_AnthroNote> -->
 
   <xsl:template match="LexSense_AnthroNote">
-	<xsl:call-template name="ProcessMultiString"></xsl:call-template>
+	<xsl:call-template name="ProcessAnyString"></xsl:call-template>
   </xsl:template>
 
 
   <!-- convert <LexSense_Bibliography> -->
 
   <xsl:template match="LexSense_Bibliography">
-	<xsl:call-template name="ProcessMultiString"></xsl:call-template>
+	<xsl:call-template name="ProcessAnyString"></xsl:call-template>
   </xsl:template>
 
 
   <!-- convert <LexSense_DiscourseNote> -->
 
   <xsl:template match="LexSense_DiscourseNote">
-	<xsl:call-template name="ProcessMultiString"></xsl:call-template>
+	<xsl:call-template name="ProcessAnyString"></xsl:call-template>
   </xsl:template>
 
 
   <!-- convert <LexSense_ScientificName> -->
 
   <xsl:template match="LexSense_ScientificName">
-	<xsl:call-template name="ProcessString"></xsl:call-template>
+	<xsl:call-template name="ProcessAnyString"></xsl:call-template>
   </xsl:template>
 
 
   <!-- convert <LexSense_EncyclopedicInfo> -->
 
   <xsl:template match="LexSense_EncyclopedicInfo">
-	<xsl:call-template name="ProcessMultiString"></xsl:call-template>
+	<xsl:call-template name="ProcessAnyString"></xsl:call-template>
   </xsl:template>
 
 
@@ -959,7 +957,7 @@ display/printout!
 
   <xsl:template match="CmPictureLink_SenseNumberTSS">
 	<xsl:if test="count(ancestor::LexEntry_Hvo/Paragraph/span/LexEntry_Senses//LexSense)>1">
-	  <xsl:call-template name="ProcessString"></xsl:call-template>
+	  <xsl:call-template name="ProcessAnyString"></xsl:call-template>
 	</xsl:if>
   </xsl:template>
 
@@ -967,7 +965,7 @@ display/printout!
   <!-- convert <CmPicture_Caption> -->
 
   <xsl:template match="CmPicture_Caption">
-	<xsl:call-template name="ProcessMultiString"></xsl:call-template>
+	<xsl:call-template name="ProcessAnyString"></xsl:call-template>
   </xsl:template>
 
 
@@ -1002,7 +1000,7 @@ display/printout!
 		<xsl:if test="../preceding-sibling::LiteralString">
 		  <xsl:value-of select="../preceding-sibling::LiteralString/Str/Run"/>
 		</xsl:if>
-		<xsl:call-template name="ProcessMultiString"></xsl:call-template>
+		<xsl:call-template name="ProcessAnyString"></xsl:call-template>
 	  </xsl:for-each>
 	</xsl:if>
   </xsl:template>
@@ -1126,6 +1124,24 @@ display/printout!
   <!-- * NAMED TEMPLATES * -->
   <!-- ******************* -->
 
+  <!-- Process any string reliably that has Str or AStr or AUni elements. This -->
+  <!-- should keep our .xsl templates from breaking with model changes -->
+  <!-- having to do with underlying strings. -->
+
+  <xsl:template name="ProcessAnyString">
+	<xsl:choose>
+		<xsl:when test="Str/Run">
+			<xsl:call-template name="ProcessString"></xsl:call-template>
+		</xsl:when>
+		<xsl:when test="AStr/Run">
+			<xsl:call-template name="ProcessMultiString"></xsl:call-template>
+		</xsl:when>
+		<xsl:when test="AUni">
+			<xsl:call-template name="ProcessMultiUnicode"></xsl:call-template>
+		</xsl:when>
+	</xsl:choose>
+  </xsl:template>
+
   <!-- process content that consists of one or more <AStr> elements -->
   <!-- TODO: handle styles as well as writing systems in the individual runs? -->
 
@@ -1150,7 +1166,6 @@ display/printout!
 	  </xsl:for-each>
 	</xsl:for-each>
   </xsl:template>
-
 
   <!-- process the <Run> elements inside an <AStr> element -->
 
@@ -1210,7 +1225,7 @@ display/printout!
 	<div>
 		<xsl:if test="Paragraph/@style"><xsl:attribute name="class"><xsl:value-of select="translate(Paragraph/@style,' ','_')"/></xsl:attribute></xsl:if>
 		<xsl:for-each select="Paragraph/StTxtPara_Contents">
-		  <xsl:call-template name="ProcessString"/>
+		  <xsl:call-template name="ProcessAnyString"/>
 		</xsl:for-each>
 	</div>
   </xsl:template>

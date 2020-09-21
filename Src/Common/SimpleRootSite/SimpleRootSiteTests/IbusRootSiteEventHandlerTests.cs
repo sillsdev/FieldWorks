@@ -1,22 +1,22 @@
-// Copyright (c) 2013 SIL International
+// Copyright (c) 2013-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-#if __MonoCS__
+
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;
 using IBusDotNet;
 using NUnit.Framework;
 using Rhino.Mocks;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
+using SIL.Keyboarding;
+using SIL.Windows.Forms.Keyboarding;
+using SIL.Windows.Forms.Keyboarding.Linux;
+using SIL.LCModel.Utils;
 using X11.XKlavier;
-using Palaso.UI.WindowsForms.Keyboarding;
-using Palaso.UI.WindowsForms.Keyboarding.InternalInterfaces;
-using Palaso.UI.WindowsForms.Keyboarding.Linux;
-using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.Test.TestUtils;
-using SIL.Utils.Attributes;
 
 namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 {
@@ -26,11 +26,8 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
 	[TestFixture]
-	[InitializeRealKeyboardController(InitDummyAfterTests = true)]
 	[Platform(Include = "Linux", Reason="IbusRootSiteEventHandlerTests is Linux only")]
-	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
-		Justification="Unit test. Variable disposed in Teardown method")]
-	public class IbusRootSiteEventHandlerTests: BaseTest
+	public class IbusRootSiteEventHandlerTests
 	{
 		// some lparam values representing keypress that we use for testing.
 		private static readonly Dictionary<char, int> lparams = new Dictionary<char, int>();
@@ -76,12 +73,15 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 		{
 			m_dummySimpleRootSite = new DummySimpleRootSite();
 			Assert.NotNull(m_dummySimpleRootSite.RootBox);
+			Keyboard.Controller = new DefaultKeyboardController();
 		}
 
 		[TearDown]
 		public void TestTearDown()
 		{
-			KeyboardController.Unregister(m_dummySimpleRootSite);
+			KeyboardController.UnregisterControl(m_dummySimpleRootSite);
+			KeyboardController.Shutdown();
+			Keyboard.Controller = new DefaultKeyboardController();
 
 			if (m_dummyIBusCommunicator != null)
 				m_dummyIBusCommunicator.Dispose();
@@ -99,8 +99,8 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			var ibusKeyboardRetrievingAdaptor = new IbusKeyboardRetrievingAdaptorDouble(ibusCommunicator);
 			var xklEngineMock = MockRepository.GenerateStub<IXklEngine>();
 			var xkbKeyboardRetrievingAdaptor = new XkbKeyboardRetrievingAdaptorDouble(xklEngineMock);
-			KeyboardController.Manager.SetKeyboardRetrievers(new IKeyboardRetrievingAdaptor[] { xkbKeyboardRetrievingAdaptor, ibusKeyboardRetrievingAdaptor});
-			KeyboardController.Register(m_dummySimpleRootSite, new IbusRootSiteEventHandler(m_dummySimpleRootSite));
+			KeyboardController.Initialize(xkbKeyboardRetrievingAdaptor, ibusKeyboardRetrievingAdaptor);
+			KeyboardController.RegisterControl(m_dummySimpleRootSite, new IbusRootSiteEventHandler(m_dummySimpleRootSite));
 		}
 
 		/// <summary>Simulate multiple keypresses.</summary>
@@ -184,8 +184,6 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 
 		/// <summary></summary>
 		[Test]
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="Dummy IBusCommunicator is disposed in TestTearDown()")]
 		public void KillFocus_ShowingPreedit_PreeditIsNotCommitedAndSelectionIsInsertionPoint()
 		{
 			ChooseSimulatedKeyboard(new CommitBeforeUpdateIbusCommunicator());
@@ -206,8 +204,6 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 
 		/// <summary></summary>
 		[Test]
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="Dummy IBusCommunicator is disposed in TestTearDown()")]
 		public void Focus_Unfocused_KeypressAcceptedAsNormal()
 		{
 			ChooseSimulatedKeyboard(new CommitBeforeUpdateIbusCommunicator());
@@ -236,8 +232,6 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 		[Test]
 		[TestCase(1, 2, TestName="ReplaceForwardSelectedChar_Replaced")]
 		[TestCase(2, 1, TestName="ReplaceBackwardSelectedChar_Replaced")]
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="Dummy IBusCommunicator is disposed in TestTearDown()")]
 		public void CorrectPlacementOfTypedChars(int anchor, int end)
 		{
 			// Setup
@@ -266,8 +260,6 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 
 		/// <summary>Test case for FWNX-1305</summary>
 		[Test]
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-		Justification="Dummy IBusCommunicator is disposed in TestTearDown()")]
 		public void HandleNullActionHandler()
 		{
 			// Setup
@@ -310,8 +302,6 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 		[TestCase("dd",  3, 2, "ABddC","dd", 5, 4, TestName="TwoKeysEnd_BackwardSelection_PreeditPlacedBefore")]
 		[TestCase("dd ", 2, 3, "ABD",    "", 3, 3, TestName="Commit_ForwardSelection_IPAfter")]
 		[TestCase("dd ", 3, 2, "ABD",    "", 3, 3, TestName="Commit_BackwardSelection_IPAfter")]
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="Dummy IBusCommunicator is disposed in TestTearDown()")]
 		public void CorrectPlacementOfPreedit(string input, int anchor, int end, string expectedText,
 			string expectedPreedit, int expectedAnchor, int expectedEnd)
 		{
@@ -462,19 +452,19 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 		{
 		}
 
-		public void Location(IVwGraphics _vg, Utils.Rect rcSrc, Utils.Rect rcDst,
-			out Utils.Rect _rdPrimary, out Utils.Rect _rdSecondary, out bool _fSplit,
+		public void Location(IVwGraphics _vg, Rect rcSrc, Rect rcDst,
+			out Rect _rdPrimary, out Rect _rdSecondary, out bool _fSplit,
 			out bool _fEndBeforeAnchor)
 		{
-			_rdPrimary = default(Utils.Rect);
-			_rdSecondary = default(Utils.Rect);
+			_rdPrimary = default(Rect);
+			_rdSecondary = default(Rect);
 			_fSplit = false;
 			_fEndBeforeAnchor = false;
 		}
 
-		public void GetParaLocation(out Utils.Rect _rdLoc)
+		public void GetParaLocation(out Rect _rdLoc)
 		{
-			_rdLoc = default(Utils.Rect);
+			_rdLoc = default(Rect);
 		}
 
 		public void ReplaceWithTsString(ITsString _tss)
@@ -495,7 +485,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 
 		public void GetSelectionString(out ITsString _ptss, string bstrSep)
 		{
-			_ptss = TsStringHelper.MakeTSS(SelectionText,
+			_ptss = TsStringUtils.MakeString(SelectionText,
 				m_rootBox.m_dummySimpleRootSite.WritingSystemFactory.UserWs);
 		}
 
@@ -770,12 +760,6 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 		public int UndoableSequenceCount { get { return 0; } }
 
 		public int RedoableSequenceCount  { get { return 0; } }
-
-		public IUndoGrouper UndoGrouper
-		{
-			get { return null;}
-			set {}
-		}
 
 		public bool IsUndoOrRedoInProgress { get { return false; } }
 
@@ -1143,8 +1127,6 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 		#endregion
 	}
 
-	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
-		Justification="reference only")]
 	public class DummyRootBox : IVwRootBox
 	{
 		internal ISilDataAccess m_dummyDataAccess = new DummyDataAccess();
@@ -1251,7 +1233,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			throw new NotImplementedException();
 		}
 
-		public IVwSelection MakeSelAt(int xd, int yd, Utils.Rect rcSrc, Utils.Rect rcDst, bool fInstall)
+		public IVwSelection MakeSelAt(int xd, int yd, Rect rcSrc, Rect rcDst, bool fInstall)
 		{
 			throw new NotImplementedException();
 		}
@@ -1262,18 +1244,18 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			throw new NotImplementedException();
 		}
 
-		public bool get_IsClickInText(int xd, int yd, Utils.Rect rcSrc, Utils.Rect rcDst)
+		public bool get_IsClickInText(int xd, int yd, Rect rcSrc, Rect rcDst)
 		{
 			throw new NotImplementedException();
 		}
 
-		public bool get_IsClickInObject(int xd, int yd, Utils.Rect rcSrc, Utils.Rect rcDst, out int _odt)
+		public bool get_IsClickInObject(int xd, int yd, Rect rcSrc, Rect rcDst, out int _odt)
 		{
 			throw new NotImplementedException();
 		}
 
-		public bool get_IsClickInOverlayTag(int xd, int yd, Utils.Rect rcSrc1, Utils.Rect rcDst1,
-			out int _iGuid, out string _bstrGuids, out Utils.Rect _rcTag, out Utils.Rect _rcAllTags,
+		public bool get_IsClickInOverlayTag(int xd, int yd, Rect rcSrc1, Rect rcDst1,
+			out int _iGuid, out string _bstrGuids, out Rect _rcTag, out Rect _rcAllTags,
 			out bool _fOpeningTag)
 		{
 			throw new NotImplementedException();
@@ -1296,7 +1278,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			}
 
 			var ws = m_dummySimpleRootSite.WritingSystemFactory.UserWs;
-			m_dummySelection.ReplaceWithTsString(TsStringHelper.MakeTSS(input, ws));
+			m_dummySelection.ReplaceWithTsString(TsStringUtils.MakeString(input, ws));
 		}
 
 		public void DeleteRangeIfComplex(IVwGraphics _vg, out bool _fWasComplex)
@@ -1324,27 +1306,27 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			throw new NotImplementedException();
 		}
 
-		public void MouseDown(int xd, int yd, Utils.Rect rcSrc, Utils.Rect rcDst)
+		public void MouseDown(int xd, int yd, Rect rcSrc, Rect rcDst)
 		{
 			throw new NotImplementedException();
 		}
 
-		public void MouseDblClk(int xd, int yd, Utils.Rect rcSrc, Utils.Rect rcDst)
+		public void MouseDblClk(int xd, int yd, Rect rcSrc, Rect rcDst)
 		{
 			throw new NotImplementedException();
 		}
 
-		public void MouseMoveDrag(int xd, int yd, Utils.Rect rcSrc, Utils.Rect rcDst)
+		public void MouseMoveDrag(int xd, int yd, Rect rcSrc, Rect rcDst)
 		{
 			throw new NotImplementedException();
 		}
 
-		public void MouseDownExtended(int xd, int yd, Utils.Rect rcSrc, Utils.Rect rcDst)
+		public void MouseDownExtended(int xd, int yd, Rect rcSrc, Rect rcDst)
 		{
 			throw new NotImplementedException();
 		}
 
-		public void MouseUp(int xd, int yd, Utils.Rect rcSrc, Utils.Rect rcDst)
+		public void MouseUp(int xd, int yd, Rect rcSrc, Rect rcDst)
 		{
 			throw new NotImplementedException();
 		}
@@ -1354,12 +1336,12 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			throw new NotImplementedException();
 		}
 
-		public VwPrepDrawResult PrepareToDraw(IVwGraphics _vg, Utils.Rect rcSrc, Utils.Rect rcDst)
+		public VwPrepDrawResult PrepareToDraw(IVwGraphics _vg, Rect rcSrc, Rect rcDst)
 		{
 			throw new NotImplementedException();
 		}
 
-		public void DrawRoot(IVwGraphics _vg, Utils.Rect rcSrc, Utils.Rect rcDst, bool fDrawSel)
+		public void DrawRoot(IVwGraphics _vg, Rect rcSrc, Rect rcDst, bool fDrawSel)
 		{
 			throw new NotImplementedException();
 		}
@@ -1424,7 +1406,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			throw new NotImplementedException();
 		}
 
-		public void DrawRoot2(IVwGraphics _vg, Utils.Rect rcSrc, Utils.Rect rcDst, bool fDrawSel,
+		public void DrawRoot2(IVwGraphics _vg, Rect rcSrc, Rect rcDst, bool fDrawSel,
 			int ysTop, int dysHeight)
 		{
 			throw new NotImplementedException();
@@ -1460,6 +1442,10 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 				throw new NotImplementedException();
 			}
 		}
+
+		public IRenderEngineFactory RenderEngineFactory { get; set; }
+
+		public ITsStrFactory TsStrFactory { get; set; }
 
 		public IVwOverlay Overlay
 		{
@@ -1569,7 +1555,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 		public DummySimpleRootSite()
 		{
 			m_rootb = new DummyRootBox(this);
-			WritingSystemFactory = new PalasoWritingSystemManager();
+			WritingSystemFactory = new WritingSystemManager();
 		}
 
 		protected override void Dispose(bool disposing)
@@ -1611,6 +1597,11 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 		public event Action<int, int> DeleteSurroundingText;
 		public event Action<int, int, int> KeyEvent;
 #pragma warning restore 67
+
+		~CommitBeforeUpdateIbusCommunicator()
+		{
+			Dispose(false);
+		}
 
 		public bool IsDisposed { get; private set; }
 
@@ -1674,6 +1665,13 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 
 		public void Dispose()
 		{
+			Dispose(true);
+			GC.SuppressFinalize(this);
+		}
+
+		private void Dispose(bool fDisposing)
+		{
+			System.Diagnostics.Debug.WriteLineIf(!fDisposing, "****** Missing Dispose() call for " + GetType() + " *******");
 			IsDisposed = true;
 		}
 
@@ -1896,6 +1894,11 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 		public event Action<int, int, int> KeyEvent;
 #pragma warning restore 67
 
+		~CommitOnlyIbusCommunicator()
+		{
+			Dispose(false);
+		}
+
 		public bool IsDisposed { get; private set; }
 
 		public IBusConnection Connection
@@ -1947,6 +1950,13 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 
 		public void Dispose()
 		{
+			Dispose(true);
+			GC.SuppressFinalize(this);
+		}
+
+		private void Dispose(bool fDisposing)
+		{
+			System.Diagnostics.Debug.WriteLineIf(!fDisposing, "****** Missing Dispose() call for " + GetType() + " *******");
 			IsDisposed = true;
 		}
 
@@ -1977,6 +1987,11 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 		public event Action HidePreeditText;
 		public event Action<int, int, int> KeyEvent;
 #pragma warning restore 67
+
+		~KeyboardThatSendsDeletesAsCommitsDummyIBusCommunicator()
+		{
+			Dispose(false);
+		}
 
 		public bool IsDisposed { get; private set; }
 
@@ -2044,6 +2059,13 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 
 		public void Dispose()
 		{
+			Dispose(true);
+			GC.SuppressFinalize(this);
+		}
+
+		private void Dispose(bool fDisposing)
+		{
+			System.Diagnostics.Debug.WriteLineIf(!fDisposing, "****** Missing Dispose() call for " + GetType() + " *******");
 			IsDisposed = true;
 		}
 
@@ -2073,6 +2095,11 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 		public event Action<int, int> DeleteSurroundingText;
 		public event Action HidePreeditText;
 #pragma warning restore 67
+
+		~KeyboardThatSendsBackspacesAsForwardKeyEvents()
+		{
+			Dispose(false);
+		}
 
 		public event Action<int, int, int> KeyEvent;
 
@@ -2143,6 +2170,13 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 
 		public void Dispose()
 		{
+			Dispose(true);
+			GC.SuppressFinalize(this);
+		}
+
+		private void Dispose(bool fDisposing)
+		{
+			System.Diagnostics.Debug.WriteLineIf(!fDisposing, "****** Missing Dispose() call for " + GetType() + " *******");
 			IsDisposed = true;
 		}
 
@@ -2159,4 +2193,3 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 
 	#endregion
 }
-#endif

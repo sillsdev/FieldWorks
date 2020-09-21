@@ -3,6 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Xml.Linq;
+using XCore;
 
 namespace SIL.FieldWorks.LexText.Controls
 {
@@ -14,9 +15,10 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <summary>
 		/// Create an HTML page of the results
 		/// </summary>
+		/// <param name="propertyTable"></param>
 		/// <param name="result">XML of the parse trace output</param>
 		/// <param name="isTrace"></param>
 		/// <returns>URL of the resulting HTML page</returns>
-		string CreateResultPage(XDocument result, bool isTrace);
+		string CreateResultPage(PropertyTable propertyTable, XDocument result, bool isTrace);
 	}
 }

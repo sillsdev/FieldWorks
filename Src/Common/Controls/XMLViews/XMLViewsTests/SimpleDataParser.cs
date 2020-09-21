@@ -4,11 +4,12 @@
 
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Xml;
-using SIL.CoreImpl;
+using SIL.LCModel.Core.Cellar;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.Utils;
-using SIL.FieldWorks.Common.COMInterfaces;
 
 namespace XMLViewsTests
 {
@@ -18,17 +19,16 @@ namespace XMLViewsTests
 	/// </summary>
 	public class SimpleDataParser
 	{
-		IFwMetaDataCache m_mdc;
-		IVwCacheDa m_cda;
-		ISilDataAccess m_sda;
-		ILgWritingSystemFactory m_wsf;
-		ITsStrFactory m_tsf = TsStrFactoryClass.Create();
+		private readonly IFwMetaDataCache m_mdc;
+		private readonly IVwCacheDa m_cda;
+		private readonly ISilDataAccess m_sda;
+		private readonly ILgWritingSystemFactory m_wsf;
 
 		public SimpleDataParser(IFwMetaDataCache mdc, IVwCacheDa cda)
 		{
 			m_mdc = mdc;
 			m_cda = cda;
-			m_sda = cda as ISilDataAccess;
+			m_sda = (ISilDataAccess) cda;
 			m_wsf = m_sda.WritingSystemFactory;
 		}
 
@@ -101,7 +101,7 @@ namespace XMLViewsTests
 
 		int GetProp(int hvo, XmlNode elt)
 		{
-			string propName = XmlUtils.GetManditoryAttributeValue(elt, "prop");
+			string propName = XmlUtils.GetMandatoryAttributeValue(elt, "prop");
 			int clsid = m_sda.get_IntProp(hvo, (int)CmObjectFields.kflidCmObject_Class);
 			return (int)m_mdc.GetFieldId2(clsid, propName, true);
 		}
@@ -156,13 +156,13 @@ namespace XMLViewsTests
 
 		ITsString MakeString(int ws, XmlNode elt)
 		{
-			string val = XmlUtils.GetManditoryAttributeValue(elt, "val");
-			return m_tsf.MakeString(val, ws);
+			string val = XmlUtils.GetMandatoryAttributeValue(elt, "val");
+			return TsStringUtils.MakeString(val, ws);
 		}
 
 		int GetWritingSystem(XmlNode elt)
 		{
-			string wsId = XmlUtils.GetManditoryAttributeValue(elt, "ws");
+			string wsId = XmlUtils.GetMandatoryAttributeValue(elt, "ws");
 			int ws = m_wsf.get_Engine(wsId).Handle;
 			if (ws == 0)
 				throw new Exception("writing system " + wsId + " not recognized");

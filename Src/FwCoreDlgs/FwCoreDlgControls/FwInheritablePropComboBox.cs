@@ -5,18 +5,11 @@
 // File: FwInheritablePropComboBox.cs
 // Responsibility: TE Team
 
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Text;
 using System.Windows.Forms;
 using System.Drawing;
 using System.Diagnostics;
-
-using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.Controls;
-using SIL.Utils;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.LCModel.DomainServices;
 
 namespace SIL.FieldWorks.FwCoreDlgControls
 {

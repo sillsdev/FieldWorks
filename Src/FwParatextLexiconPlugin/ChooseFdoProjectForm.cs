@@ -7,12 +7,11 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Net.Sockets;
-using System.Runtime.Remoting;
 using System.Windows.Forms;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FDO.DomainServices.BackupRestore;
+using SIL.FieldWorks.Common.FwUtils;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.DomainServices.BackupRestore;
 
 namespace SIL.FieldWorks.ParatextLexiconPlugin
 {
@@ -21,8 +20,8 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 		private LanguageProjectInfo m_selectedItem;
 		private string m_restoreFileFullPath;
 		private RestoreProjectSettings m_restoreSettings;
-		private readonly ParatextLexiconPluginFdoUI m_ui;
-		private readonly KeyedCollection<string, FdoCache> m_fdoCacheCache;
+		private readonly ParatextLexiconPluginLcmUI m_ui;
+		private readonly KeyedCollection<string, LcmCache> m_cacheCache;
 
 		public string SelectedProject
 		{
@@ -41,7 +40,7 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 			else
 			{
 				m_selectedItem = (LanguageProjectInfo) listBox.SelectedItem;
-				if (!m_fdoCacheCache.Contains(m_selectedItem.ToString()) && ProjectLockingService.IsProjectLocked(m_selectedItem.FullName))
+				if (!m_cacheCache.Contains(m_selectedItem.ToString()) && ProjectLockingService.IsProjectLocked(m_selectedItem.FullName))
 				{
 					MessageBox.Show(this, Strings.ksProjectOpen, Strings.ksErrorCaption, MessageBoxButtons.OK, MessageBoxIcon.Error);
 					return;
@@ -117,13 +116,13 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 		}
 		#endregion
 
-		public ChooseFdoProjectForm(ParatextLexiconPluginFdoUI ui, KeyedCollection<string, FdoCache> fdoCacheCache)
+		public ChooseFdoProjectForm(ParatextLexiconPluginLcmUI ui, KeyedCollection<string, LcmCache> fdoCacheCache)
 		{
 			// This call is required by the Windows Form Designer.
 			InitializeComponent();
 			m_ui = ui;
-			m_fdoCacheCache = fdoCacheCache;
-			PopulateLanguageProjectsList(Dns.GetHostName(), true);
+			m_cacheCache = fdoCacheCache;
+			PopulateLanguageProjectsList(Dns.GetHostName());
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -131,50 +130,21 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 		/// Queries a given host for avaiable Projects on a separate thread
 		/// </summary>
 		/// <param name="host">The host.</param>
-		/// <param name="showLocalProjects">true if we want to show local fwdata projects</param>
 		/// ------------------------------------------------------------------------------------
-		private void PopulateLanguageProjectsList(string host, bool showLocalProjects)
+		private void PopulateLanguageProjectsList(string host)
 		{
-			// Need to end the previous project finder if the user clicks another host while
-			// searching the current host.
-			ClientServerServices.Current.ForceEndFindProjects();
-
 			btnOk.Enabled = false;
 			listBox.Items.Clear();
 			listBox.Enabled = true;
 
-			ClientServerServices.Current.BeginFindProjects(host, AddProject,
-				HandleProjectFindingExceptions, showLocalProjects);
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Handles any exceptions thrown in the thread that looks for projects.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		private void HandleProjectFindingExceptions(Exception e)
-		{
-			if (InvokeRequired)
+			// Load projects.
+			foreach (var projectPathname in Directory.GetDirectories(ParatextLexiconPluginDirectoryFinder.ProjectsDirectory))
 			{
-				Invoke((Action<Exception>)HandleProjectFindingExceptions, e);
-				return;
-			}
-
-			if (e is SocketException || e is RemotingException)
-			{
-				MessageBox.Show(
-					ActiveForm,
-					Strings.ksCouldNotConnectText,
-					Strings.ksWarningCaption,
-					MessageBoxButtons.OK, MessageBoxIcon.Warning);
-			}
-			else if (e is DirectoryNotFoundException)
-			{
-				// this indicates that the project directory does not exist, just ignore
-			}
-			else
-			{
-				throw e;
+				var projectDirName = new DirectoryInfo(projectPathname).Name;
+				var dataPathname = Path.Combine(projectPathname, projectDirName + LcmFileHelper.ksFwDataXmlFileExtension);
+				if (!File.Exists(dataPathname))
+					continue;
+				AddProject(dataPathname);
 			}
 		}
 
@@ -303,6 +273,5 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 			}
 		}
 		#endregion
-
 	}
 }

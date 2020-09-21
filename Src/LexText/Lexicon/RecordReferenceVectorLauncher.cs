@@ -2,15 +2,11 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System;
-using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;
 using System.Linq;
-using System.Xml;
 using SIL.FieldWorks.Common.Framework.DetailControls;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using SIL.FieldWorks.LexText.Controls;
-using SIL.Utils;
 
 namespace SIL.FieldWorks.XWorks.LexEd
 {
@@ -19,14 +15,12 @@ namespace SIL.FieldWorks.XWorks.LexEd
 	/// </summary>
 	public class RecordReferenceVectorLauncher : VectorReferenceLauncher
 	{
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="FindForm() returns a reference")]
 		protected override void HandleChooser()
 		{
 			using (var dlg = new RecordGoDlg())
 			{
 				var wp = new WindowParams { m_title = LexEdStrings.ksIdentifyRecord, m_btnText = LexEdStrings.ks_Add };
-				dlg.SetDlgInfo(m_cache, wp, m_mediator);
+				dlg.SetDlgInfo(m_cache, wp, m_mediator, m_propertyTable);
 				dlg.SetHelpTopic(Slice.GetChooserHelpTopicID());
 				if (dlg.ShowDialog(FindForm()) == DialogResult.OK)
 					AddItem(dlg.SelectedObject);

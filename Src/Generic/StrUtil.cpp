@@ -11,7 +11,7 @@ Last reviewed: 27Sep99
 ----------------------------------------------------------------------------------------------*/
 
 #include "common.h"
-#if WIN32
+#if defined(_WIN32) || defined(_M_X64)
 #include <shlobj.h>
 #endif
 
@@ -28,7 +28,7 @@ namespace StrUtil
 	// even though u_setDataDirectory() may have already been called.
 	static bool s_fSilIcuInitCalled = false;
 
-#if WIN32
+#if defined(_WIN32) || defined(_M_X64)
 bool GetIcuDir(HKEY hkRoot, char* dir, DWORD size)
 {
 	bool fRes = false;
@@ -37,8 +37,8 @@ bool GetIcuDir(HKEY hkRoot, char* dir, DWORD size)
 	if (lRet == ERROR_SUCCESS)
 	{
 		DWORD dwType;
-		long lRet = ::RegQueryValueExA(hk, "Icu" ICU_VERSION "DataDir", NULL, &dwType, (BYTE*) dir, &size);
-		if (lRet == ERROR_SUCCESS && dwType == REG_SZ)
+		long lQueryRetVal = ::RegQueryValueExA(hk, "Icu" ICU_VERSION "DataDir", NULL, &dwType, (BYTE*) dir, &size);
+		if (lQueryRetVal == ERROR_SUCCESS && dwType == REG_SZ)
 			fRes = true;
 		::RegCloseKey(hk);
 	}
@@ -54,7 +54,7 @@ void InitIcuDataDir()
 {
 	const char * pszDir = u_getDataDirectory();
 	char rgchDataDirectory[MAX_PATH];
-#if WIN32
+#if defined(_WIN32) || defined(_M_X64)
 	if (!pszDir || !*pszDir)
 	{
 		// The ICU Data Directory is not yet set.  Get the root directory from the registry
@@ -79,7 +79,7 @@ void InitIcuDataDir()
 		}
 
 		// Remove any trailing \ from the registry value.
-		int cch = strlen(rgchDataDirectory);
+		int cch = (int)strlen(rgchDataDirectory);
 		if (rgchDataDirectory[cch - 1] == '\\')
 			rgchDataDirectory[cch - 1] = 0;
 		u_setDataDirectory(rgchDataDirectory);
@@ -106,7 +106,7 @@ void InitIcuDataDir()
 
 	if (status != U_ZERO_ERROR)
 	{
-#if WIN32
+#if defined(_WIN32) || defined(_M_X64)
 		ThrowInternalError(E_UNEXPECTED, "Error Initalizing Icu. Check HKLM\\Software\\SIL\\Icu50DataDir is set in the registry.");
 #else
 		ThrowInternalError(E_UNEXPECTED, "Error Initalizing Icu. Check ICU_DATA is set.");
@@ -116,7 +116,7 @@ void InitIcuDataDir()
 	pszDir = u_getDataDirectory();
 	if (!pszDir || !*pszDir)
 	{
-#if WIN32
+#if defined(_WIN32) || defined(_M_X64)
 		ThrowInternalError(E_UNEXPECTED, "Error No Icu Data Directory. Check HKLM\\Software\\SIL\\Icu50DataDir is set in the registry.");
 #else
 		ThrowInternalError(E_UNEXPECTED, "Error No Icu Data Directory. Check ICU_DATA is set.");
@@ -228,36 +228,36 @@ const wchar * SkipLeadingWhiteSpace(const wchar * psz)
 		length of trimmed string.
 	}
 ----------------------------------------------------------------------------------------------*/
-unsigned LengthLessTrailingWhiteSpace(const char * psz)
+unsigned int LengthLessTrailingWhiteSpace(const char * psz)
 {
 	const char * pszLim = psz + strlen(psz);
 	while (pszLim > psz && isascii(pszLim[-1]) && isspace(pszLim[-1]))
 		pszLim--;
 
-	return pszLim - psz;
+	return (unsigned int)(pszLim - psz);
 }
 
-unsigned LengthLessTrailingWhiteSpace(const wchar * psz)
+unsigned int LengthLessTrailingWhiteSpace(const wchar * psz)
 {
 	UnicodeString us(psz);
-	int ich;
+	unsigned int count;
 	bool fSurr;
-	for (ich=us.length(); ich > 0; --ich)
+	for (count=us.length(); count > 0; --count)
 	{
 		fSurr = false;
-		UChar32 ch = us.charAt(ich-1);
+		UChar32 ch = us.charAt(count-1);
 		if (U16_IS_SURROGATE(ch))
 		{
 			fSurr = true;
-			if (ich > 1)
-				ch = us.char32At(ich-2);
+			if (count > 1)
+				ch = us.char32At(count-2);
 		}
 		if (! u_isUWhiteSpace(ch))
 			break;
 		if (fSurr)
-			--ich;
+			--count;
 	}
-	return ich;
+	return count;
 }
 
 };

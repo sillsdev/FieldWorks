@@ -5,13 +5,10 @@
 // File: WelcomeToFieldWorksDlg.cs
 // Responsibility: naylor
 
-using System.Diagnostics.CodeAnalysis;
-using System.Drawing;
-using SIL.Utils;
 using System.ComponentModel;
 using System.Windows.Forms;
-using Palaso.UI.WindowsForms.Widgets;
-using XCore;
+using SIL.FieldWorks.Common.FwUtils;
+using SIL.Windows.Forms.Widgets;
 
 namespace SIL.FieldWorks
 {
@@ -47,8 +44,6 @@ namespace SIL.FieldWorks
 		/// Required method for Designer support - do not modify
 		/// the contents of this method with the code editor.
 		/// </summary>
-		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
-			Justification = "TODO-Linux: LinkLabel.TabStop is missing from Mono")]
 		private void InitializeComponent()
 		{
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(WelcomeToFieldWorksDlg));
@@ -68,7 +63,7 @@ namespace SIL.FieldWorks
 			this.helpButton = new System.Windows.Forms.Button();
 			this.closeButton = new System.Windows.Forms.Button();
 			this.mainVerticalLayout = new System.Windows.Forms.FlowLayoutPanel();
-			this.m_lblProjectLoadError = new Palaso.UI.WindowsForms.Widgets.BetterLabel();
+			this.m_lblProjectLoadError = new SIL.Windows.Forms.Widgets.BetterLabel();
 			this.topPanel.SuspendLayout();
 			this.reportingInfoLayout.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.infoIcon)).BeginInit();

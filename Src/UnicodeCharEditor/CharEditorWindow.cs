@@ -1,12 +1,6 @@
-// Copyright (c) 2010-2013 SIL International
+// Copyright (c) 2010-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: CharEditorWindow.cs
-// Responsibility: mcconnel
-//
-// <remarks>
-// </remarks>
 
 using System;
 using System.Collections;
@@ -19,11 +13,9 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
 using System.Xml.Linq;
-using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.LCModel.Core.Text;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.Utils;
-using XCore;
 
 namespace SIL.FieldWorks.UnicodeCharEditor
 {
@@ -130,7 +122,7 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 
 		private void ReadDataFromUnicodeFiles()
 		{
-			var icuDir = Icu.DefaultDirectory;
+			var icuDir = CustomIcu.DefaultDataDirectory;
 			if (string.IsNullOrEmpty(icuDir))
 				throw new Exception("An error occurred: ICU directory not found. Registry value for ICU not set?");
 			var unicodeDataFilename = Path.Combine(icuDir, "UnicodeDataOverrides.txt");
@@ -400,7 +392,7 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 		{
 			get
 			{
-				var icuDir = Icu.DefaultDirectory;
+				var icuDir = CustomIcu.DefaultDataDirectory;
 				if (string.IsNullOrEmpty(icuDir))
 					throw new Exception("An error occurred: ICU directory not found. Registry value for ICU not set?");
 				// Must handle registry setting with or without final \  LT-11766.

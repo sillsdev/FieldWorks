@@ -8,7 +8,6 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 using NUnit.Framework;
-using System.Diagnostics.CodeAnalysis;
 
 namespace SIL.SilSidePane
 {
@@ -163,8 +162,6 @@ namespace SIL.SilSidePane
 
 		#region ContainingControl
 		[Test]
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "containingControl is a reference")]
 		public void ContainingControlTest()
 		{
 			Control containingControl = _sidePane.ContainingControl;

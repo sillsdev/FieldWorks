@@ -1,23 +1,18 @@
-// Copyright (c) 2003-2013 SIL International
+// Copyright (c) 2003-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: ChooserCommand.cs
-// Responsibility: Andy Black
-// Last reviewed:
-//
-// <remarks>
-// </remarks>
 
 using System;
 using System.Windows.Forms;
 using System.Linq;
+using SIL.LCModel.Core.Text;
 using SIL.FieldWorks.Common.Framework.DetailControls.Resources;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.LexText.Controls;
 using SIL.FieldWorks.Common.Controls;
+using SIL.FieldWorks.Common.FwUtils;
 using XCore;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls
@@ -32,9 +27,9 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		protected bool m_fPrefix;
 		protected IMoInflAffixSlot m_slot;
 
-		public MakeInflAffixEntryChooserCommand(FdoCache cache, bool fCloseBeforeExecuting,
-			string sLabel, bool fPrefix, IMoInflAffixSlot slot, Mediator mediator)
-			: base(cache, fCloseBeforeExecuting, sLabel, mediator)
+		public MakeInflAffixEntryChooserCommand(LcmCache cache, bool fCloseBeforeExecuting,
+			string sLabel, bool fPrefix, IMoInflAffixSlot slot, Mediator mediator, PropertyTable propertyTable)
+			: base(cache, fCloseBeforeExecuting, sLabel, mediator, propertyTable)
 		{
 			m_fPrefix = fPrefix;
 			m_slot = slot;
@@ -49,7 +44,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			using (InsertEntryDlg dlg = new InsertEntryDlg())
 			{
 				var morphType = GetMorphType();
-				dlg.SetDlgInfo(m_cache, morphType, MsaType.kInfl, m_slot, m_mediator,
+				dlg.SetDlgInfo(m_cache, morphType, MsaType.kInfl, m_slot, m_mediator, m_propertyTable,
 					m_fPrefix ? InsertEntryDlg.MorphTypeFilterType.Prefix : InsertEntryDlg.MorphTypeFilterType.Suffix);
 				dlg.DisableAffixTypeMainPosAndSlot();
 				if (dlg.ShowDialog() == DialogResult.OK)
@@ -112,8 +107,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		protected int m_posHvo;
 		protected bool m_fOptional;
 
-		public MakeInflAffixSlotChooserCommand(FdoCache cache, bool fCloseBeforeExecuting, string sLabel, int posHvo, bool fOptional, XCore.Mediator mediator)
-			: base(cache, fCloseBeforeExecuting, sLabel, mediator)
+		public MakeInflAffixSlotChooserCommand(LcmCache cache, bool fCloseBeforeExecuting, string sLabel, int posHvo, bool fOptional, Mediator mediator, PropertyTable propertyTable)
+			: base(cache, fCloseBeforeExecuting, sLabel, mediator, propertyTable)
 		{
 			m_posHvo = posHvo;
 			m_fOptional = fOptional;
@@ -130,10 +125,9 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				() =>
 					{
 						pos.AffixSlotsOC.Add(slot);
-						string sNewSlotName = m_mediator.StringTbl.GetString("NewSlotName",
-							"Linguistics/Morphology/TemplateTable");
+						string sNewSlotName = StringTable.Table.GetString("NewSlotName", "Linguistics/Morphology/TemplateTable");
 						int defAnalWs = m_cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle;
-						slot.Name.set_String(defAnalWs, m_cache.TsStrFactory.MakeString(sNewSlotName, defAnalWs));
+						slot.Name.set_String(defAnalWs, TsStringUtils.MakeString(sNewSlotName, defAnalWs));
 						slot.Optional = m_fOptional;
 					});
 			// Enhance JohnT: usually the newly created slot will also get inserted into a template.

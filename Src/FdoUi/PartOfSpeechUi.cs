@@ -2,13 +2,9 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System;
 using System.Diagnostics;
 using System.Windows.Forms;
-
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.Common.Widgets;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.LCModel;
 using XCore;
 using SIL.FieldWorks.LexText.Controls;
 
@@ -36,21 +32,22 @@ namespace SIL.FieldWorks.FdoUi
 		/// Handle the context menu for inserting a POS.
 		/// </summary>
 		/// <param name="mediator"></param>
+		/// <param name="propertyTable"></param>
 		/// <param name="classId"></param>
 		/// <param name="hvoOwner"></param>
 		/// <param name="flid"></param>
 		/// <param name="insertionPosition"></param>
 		/// <returns></returns>
-		public new static PartOfSpeechUi CreateNewUiObject(Mediator mediator, int classId, int hvoOwner, int flid, int insertionPosition)
+		public new static PartOfSpeechUi CreateNewUiObject(Mediator mediator, PropertyTable propertyTable, int classId, int hvoOwner, int flid, int insertionPosition)
 		{
 			PartOfSpeechUi posUi = null;
 			using (MasterCategoryListDlg dlg = new MasterCategoryListDlg())
 			{
-				FdoCache cache = (FdoCache)mediator.PropertyTable.GetValue("cache");
+				LcmCache cache = propertyTable.GetValue<LcmCache>("cache");
 				Debug.Assert(cache != null);
 				var newOwner = cache.ServiceLocator.GetInstance<IPartOfSpeechRepository>().GetObject(hvoOwner);
-				dlg.SetDlginfo(newOwner.OwningList, mediator, true, newOwner);
-				switch (dlg.ShowDialog((Form)mediator.PropertyTable.GetValue("window")))
+				dlg.SetDlginfo(newOwner.OwningList, mediator, propertyTable, true, newOwner);
+				switch (dlg.ShowDialog(propertyTable.GetValue<Form>("window")))
 				{
 					case DialogResult.OK: // Fall through.
 					case DialogResult.Yes:
@@ -68,13 +65,13 @@ namespace SIL.FieldWorks.FdoUi
 		/// <param name="commandObject"></param>
 		/// <param name="display"></param>
 		/// <returns></returns>
-		public override bool OnDisplayJumpToTool(object commandObject, ref XCore.UIItemDisplayProperties display)
+		public override bool OnDisplayJumpToTool(object commandObject, ref UIItemDisplayProperties display)
 		{
 			CheckDisposed();
 
-			XCore.Command command = (XCore.Command)commandObject;
-			string tool = SIL.Utils.XmlUtils.GetManditoryAttributeValue(command.Parameters[0], "tool");
-			string toolChoice = m_mediator.PropertyTable.GetStringProperty("currentContentControl", null);
+			Command command = (Command)commandObject;
+			string tool = Utils.XmlUtils.GetMandatoryAttributeValue(command.Parameters[0], "tool");
+			string toolChoice = PropTable.GetStringProperty("currentContentControl", null);
 
 			if (tool == "posEdit" && toolChoice == "reversalToolReversalIndexPOS")
 			{

@@ -16,7 +16,7 @@ DEFINE_THIS_FILE
 /*:End Ignore*/
 #include <vector>
 
-#if !WIN32
+#if !defined(_WIN32) && !defined(_M_X64)
 #include "StringTable.h"
 #endif
 
@@ -74,7 +74,7 @@ protected:
 
 	// The other character type.
 	typedef typename CharDefns<XChar>::OtherChar1 YChar;
-#ifndef WIN32
+#if !defined(WIN32) && !defined(_M_X64)
 	typedef typename CharDefns<XChar>::OtherChar2 ZChar;
 #endif
 
@@ -170,7 +170,7 @@ protected:
 		Assert(m_rgch <= m_pchOut && m_pchOut <= m_pchOutLim);
 		if (m_rgch < m_pchOut)
 		{
-			(*m_pfnWrite)(m_pvParam, m_rgch, m_pchOut - m_rgch);
+			(*m_pfnWrite)(m_pvParam, m_rgch, (int)(m_pchOut - m_rgch));
 			m_pchOut = m_rgch;
 		}
 	}
@@ -207,7 +207,7 @@ protected:
 	{
 		for (;;)
 		{
-			int cchT = m_pchOutLim - m_pchOut;
+			int cchT = (int)(m_pchOutLim - m_pchOut);
 			if (cchT >= cch)
 			{
 				FillChars(m_pchOut, ch, cch);
@@ -251,7 +251,7 @@ protected:
 			*pchT++ = g_rgchDigits[pguid->Data4[iv] & 0x0F];
 		}
 		Assert(pchT == prgchTerm + 36);
-		cch = pchT - prgchTerm;
+		cch = (int)(pchT - prgchTerm);
 	}
 	void GuidToString(uint* puT, XChar* prgchTerm, int & cch)
 	{
@@ -274,7 +274,7 @@ protected:
 		*pchT++ = g_rgchDigits[(uT >>  0) & 0x1F];
 		*pchT++ = g_rgchDigits[(uT >>  5) & 0x1F];
 		Assert(pchT == prgchTerm + 26);
-		cch = pchT - prgchTerm;
+		cch = (int)(pchT - prgchTerm);
 	}
 	void TimeToString(SilTime* pstim, bool fUTC, XChar* prgchTerm, int lenTerm, int & cch)
 	{
@@ -811,7 +811,7 @@ template<typename XChar, typename Pfn>
 }
 
 
-#ifdef WIN32
+#if defined(_WIN32) || defined(_M_X64)
 /*----------------------------------------------------------------------------------------------
 	Helper function for FormatDate() to format day of month
 ----------------------------------------------------------------------------------------------*/
@@ -888,7 +888,7 @@ template<typename XChar, typename Pfn>
 	void TextFormatter<XChar, Pfn>::FormatDate(
 		XChar rgchTerm[], int & Xcch, int nGenDate, bool fLongDate)
 {
-#if WIN32
+#if defined(_WIN32) || defined(_M_X64)
 	wchar rgchTemp[80] = L""; // do everything with wide chars
 #else
 	char rgchTemp[80] = ""; // do everything with 8-bit chars
@@ -913,7 +913,7 @@ template<typename XChar, typename Pfn>
 		nYear = 1;
 
 	// Select date format
-#if WIN32
+#if defined(_WIN32) || defined(_M_X64)
 	StrUniBuf stubFmt;
 #else
 	StrAnsiBuf stabFmt;
@@ -922,7 +922,7 @@ template<typename XChar, typename Pfn>
 	int cchFmt;
 	if (nDay == 0 && nMonth == 0)
 	{
-#if WIN32
+#if defined(_WIN32) || defined(_M_X64)
 		stubFmt.Assign(L"yyyy");
 #else
 		stabFmt.Assign("%Y");
@@ -930,7 +930,7 @@ template<typename XChar, typename Pfn>
 	}
 	else if (nDay == 0)
 	{
-#if WIN32
+#if defined(_WIN32) || defined(_M_X64)
 		cchFmt = ::GetLocaleInfo(LOCALE_USER_DEFAULT, LOCALE_SYEARMONTH, rgchFmt, 80);
 		stubFmt.Assign(rgchFmt);
 		if (!stubFmt.Length())
@@ -941,8 +941,7 @@ template<typename XChar, typename Pfn>
 	}
 	else if (fLongDate)
 	{
-#if WIN32
-		achar rgchFmt[81];
+#if defined(_WIN32) || defined(_M_X64)
 		cchFmt = ::GetLocaleInfo(LOCALE_USER_DEFAULT, LOCALE_SLONGDATE, rgchFmt, 80);
 		stubFmt.Assign(rgchFmt);
 #else
@@ -951,8 +950,7 @@ template<typename XChar, typename Pfn>
 	}
 	else
 	{
-#if WIN32
-		achar rgchFmt[81];
+#if defined(_WIN32) || defined(_M_X64)
 		cchFmt = ::GetLocaleInfo(LOCALE_USER_DEFAULT, LOCALE_SSHORTDATE, rgchFmt, 80);
 		stubFmt.Assign(rgchFmt);
 #else
@@ -966,9 +964,9 @@ template<typename XChar, typename Pfn>
 		LoadDateQualifiers();
 		Assert(g_fDoneDateQual);
 
-#if WIN32
+#if defined(_WIN32) || defined(_M_X64)
 		wcscpy_s(rgchTemp + cch, SizeOfArray(rgchTemp) - cch, g_rgchwDatePrec[nPrec]);
-		cch += wcslen(g_rgchwDatePrec[nPrec]);
+		cch += (int)(wcslen(g_rgchwDatePrec[nPrec]));
 		wcscpy_s(rgchTemp + cch, SizeOfArray(rgchTemp) - cch, L" ");
 #else
 		StrAnsiBuf datePrec(g_rgchwDatePrec[nPrec]);
@@ -982,7 +980,7 @@ template<typename XChar, typename Pfn>
 	if (nGenDate > 0 && nDay == 0 && (nMonth == 0 || nYear < 1900))
 	{
 
-#if WIN32
+#if defined(_WIN32) || defined(_M_X64)
 		wcscpy_s(rgchTemp + cch, SizeOfArray(rgchTemp) - cch, L"AD ");
 #else
 		strcpy(rgchTemp + cch, "AD ");
@@ -993,13 +991,13 @@ template<typename XChar, typename Pfn>
 	// TODO SteveMc: this may not work for some non-English languages
 	bool fDiscard = false; // Used to omit day of week and punctuation
 
-#if WIN32
+#if defined(_WIN32) || defined(_M_X64)
 	// Format date proper
 	for (int i = 0; i < stubFmt.Length(); )
 	{
-		int n;
+		int ndx;
 		wchar ch = stubFmt.GetAt(i);
-		for (n = 1; n < 4 && i + n < stubFmt.Length() && stubFmt.GetAt(i + n) == ch; ++n)
+		for (ndx = 1; ndx < 4 && i + ndx < stubFmt.Length() && stubFmt.GetAt(i + ndx) == ch; ++ndx)
 		{			// count run of same char
 		}
 		switch (ch)
@@ -1008,20 +1006,20 @@ template<typename XChar, typename Pfn>
 			fDiscard = false;
 			if (nDay != 0)
 			{
-				if (n >= 3 && (nGenDate < 0 || nYear < 1900 || nMonth <= 0))
+				if (ndx >= 3 && (nGenDate < 0 || nYear < 1900 || nMonth <= 0))
 					fDiscard = true; // don't show day of week and punctuation after it
 				else
-					cch += FormatDateDay(n, rgchTemp + cch, SizeOfArray(rgchTemp) - cch, nYear, nMonth, nDay);
+					cch += FormatDateDay(ndx, rgchTemp + cch, SizeOfArray(rgchTemp) - cch, nYear, nMonth, nDay);
 			}
 			break;
 		case 'M': // month
 			fDiscard = false;
 			if (nMonth != 0)
-				cch += FormatDateMonth(n, rgchTemp + cch, SizeOfArray(rgchTemp) - cch, nMonth);
+				cch += FormatDateMonth(ndx, rgchTemp + cch, SizeOfArray(rgchTemp) - cch, nMonth);
 			break;
 		case 'y': // year
 			fDiscard = false;
-			cch += FormatDateYear(n, rgchTemp + cch, SizeOfArray(rgchTemp) - cch, nYear);
+			cch += FormatDateYear(ndx, rgchTemp + cch, SizeOfArray(rgchTemp) - cch, nYear);
 			break;
 		case 'g': // period/era
 			fDiscard = false;
@@ -1035,12 +1033,12 @@ template<typename XChar, typename Pfn>
 		default: // just copy anything else
 			if (!fDiscard)
 			{
-				for (int j = 0; j < n; j++)
+				for (int j = 0; j < ndx; j++)
 					rgchTemp[cch++] = stubFmt.GetAt(i+j);
 			}
 			break;
 		}
-		i += n;
+		i += ndx;
 	}
 #else
 	if(fLongDate)
@@ -1067,7 +1065,7 @@ template<typename XChar, typename Pfn>
 
 	if (nGenDate < 0)
 	{
-#if WIN32
+#if defined(_WIN32) || defined(_M_X64)
 		wcscpy_s(rgchTemp+cch, SizeOfArray(rgchTemp) - cch, L" BC");
 #else
 		strcpy(rgchTemp+cch, " BC");
@@ -1115,7 +1113,7 @@ template<typename XChar, typename Pfn>
 
 		case 'n':
 			// Write a line termination appropriate for the OS.
-#ifdef WIN32
+#if defined(_WIN32) || defined(_M_X64)
 			rgchTerm[0] = 0x0D; // CR.
 			rgchTerm[1] = 0x0A; // LF.
 			WriteChars(rgchTerm, 2); // Write CRLF to m_pchOut; increase m_pchOut by 2.
@@ -1365,7 +1363,7 @@ template<typename XChar>
 	AssertPtr(pstrm);
 	AssertPsz(pszFmt);
 
-#ifndef WIN32
+#if !defined(WIN32) && !defined(_M_X64)
 	va_list argList;
 	va_start(argList, pszFmt);
 	FormatText(FormatCallbackStream<XChar>, pstrm,
@@ -1390,7 +1388,7 @@ template<typename XChar>
 	AssertPtr(pstrm);
 	AssertArray(prgchFmt, cchFmt);
 
-#ifndef WIN32
+#if !defined(WIN32) && !defined(_M_X64)
 	va_list argList;
 	va_start(argList, cchFmt);
 	FormatText(FormatCallbackStream<XChar>, pstrm,
@@ -1641,7 +1639,7 @@ template<typename XChar>
 	AssertArrayN(prgchIns, cchIns);
 
 	int cchCur = m_pbuf->Cch();
-	Assert((uint)ichMin <= (uint)ichLim && (uint)ichLim <= (uint)cchCur);
+	Assert(ichMin <= ichLim && ichLim <= cchCur);
 
 	if (!cchIns)
 	{
@@ -1791,7 +1789,7 @@ template<typename XChar>
 	AssertObj(this);
 }
 
-#ifndef WIN32
+#if !defined(WIN32) && !defined(_M_X64)
 /*----------------------------------------------------------------------------------------------
 	Replace the range [ichMin, ichLim) with the given characters of the third type. Use the given
 	codepage to convert between Unicode and 8-bit data.
@@ -1954,7 +1952,7 @@ template<typename XChar>
 	AssertObj(this);
 }
 
-#ifndef WIN32
+#if !defined(WIN32) && !defined(_M_X64)
 /*----------------------------------------------------------------------------------------------
 	Replace the buffer for this StrBase<> with a new string constructed by formatting the
 	string template (prgchFmt, cchFmt). See FormatText.
@@ -2044,7 +2042,7 @@ template<typename XChar>
 	AssertObj(this);
 }
 
-#ifndef WIN32
+#if !defined(WIN32) && !defined(_M_X64)
 /*----------------------------------------------------------------------------------------------
 	Append, to the buffer of this StrBase<>, a new string constructed by formatting the
 	string template (prgchFmt, cchFmt). See FormatText.
@@ -2102,7 +2100,7 @@ template<typename XChar>
 	Return an actual character pointer of a description of the current properties.
 	This is meant for use in the debugger, to be displayed in the Output window.
 ----------------------------------------------------------------------------------------------*/
-#if WIN32
+#if defined(_WIN32) || defined(_M_X64)
 #ifdef DEBUG
 // bammel: Can't get the following to work, it gives unresolved external during link:
 //template<typename XChar>
@@ -2261,7 +2259,7 @@ template<typename XChar, int kcchMax>
 	return !m_fOverflow;
 }
 
-#ifndef WIN32
+#if !defined(WIN32) && !defined(_M_X64)
 /*----------------------------------------------------------------------------------------------
 	Assign the characters from the given string (prgch, cch) of the third character type to be
 	the value of this StrBaseBuf<>. If there is an overflow, copy the characters that fit and
@@ -2412,7 +2410,7 @@ template<typename XChar, int kcchMax>
 	return !m_fOverflow;
 }
 
-#ifndef WIN32
+#if !defined(WIN32) && !defined(_M_X64)
 /*----------------------------------------------------------------------------------------------
 	Append a copy of the characters from the given string (prgch, cch) of the third character
 	type to the value of this StrBaseBuf<>. If there is an overflow, copy the characters that
@@ -2694,7 +2692,7 @@ template<typename XChar, int kcchMax>
 	}
 ----------------------------------------------------------------------------------------------*/
 template<typename XChar, int kcchMax>
-#ifdef WIN32
+#if defined(_WIN32) || defined(_M_X64)
 	bool StrBaseBuf<XChar, kcchMax>::FormatCore(const YChar * prgchFmt, int cchFmt,
 		va_list vaArgList)
 #else
@@ -2768,7 +2766,7 @@ template<typename XChar, int kcchMax>
 	}
 ----------------------------------------------------------------------------------------------*/
 template<typename XChar, int kcchMax>
-#ifdef WIN32
+#if defined(_WIN32) || defined(_M_X64)
 	bool StrBaseBuf<XChar, kcchMax>::FormatAppendCore(const YChar * prgchFmt, int cchFmt,
 		va_list vaArgList)
 #else // ZChar is gcc wide/utf32. YChar is utf16.
@@ -3479,7 +3477,7 @@ void GetResourceString(const wchar ** pprgch, int * pcch, int stid)
 {
 	AssertPtr(pprgch);
 	AssertPtr(pcch);
-#if WIN32
+#if defined(_WIN32) || defined(_M_X64)
 	HRSRC hrsrc;
 	HGLOBAL hgl;
 	HINSTANCE hinst;
@@ -4187,7 +4185,7 @@ static void SkipWhitespace (pcwchar pwdate)
 ----------------------------------------------------------------------------------------------*/
 static int MatchLeadingChars (pwchar pwarg, pcwchar pwval, int minmatch, bool casesensitive)
 {
-	int nval = wcslen (pwval);
+	int nval = (int)wcslen(pwval);
 	bool eq;
 	for (int i=0; i<nval; i++)
 	{
@@ -4344,7 +4342,7 @@ template<typename XChar>
 	*pgdat = nBC * (sti.year * 100000L + sti.ymon * 1000L + sti.mday * 10 + nPrec);
 
 	if (pcchRead)
-		*pcchRead = pwdate - pwdate0;
+		*pcchRead = (int)(pwdate - pwdate0);
 	return *pwdate == 0;
 }
 
@@ -4396,7 +4394,7 @@ static int ParseFmtQuotedText (const wchar *pszFmt, pcwchar& pszDate)
 	}
 
 	pszFmt++; // skip trailing quote
-	return pszFmt - pszFmt0; // return number of characters parsed
+	return (int)(pszFmt - pszFmt0); // return number of characters parsed
 }
 
 /*----------------------------------------------------------------------------------------------
@@ -4476,7 +4474,7 @@ static int ParseFormattedDate(const wchar * pszFmt, const wchar * pszDateString,
 			case 2:
 				fDayPresent = true;
 				psti->mday = (unsigned short)wcstoul(pszDate, &pszNewDate, 10);
-				cchUsed = pszNewDate - pszDate;
+				cchUsed = (int)(pszNewDate - pszDate);
 				if (cchUsed < 1 || psti->mday > 31)
 					return 0;
 				pszDate = pszNewDate;
@@ -4510,7 +4508,7 @@ static int ParseFormattedDate(const wchar * pszFmt, const wchar * pszDateString,
 			case 1:
 			case 2:
 				psti->ymon = (unsigned short)wcstoul(pszDate, &pszNewDate, 10);
-				cchUsed = pszNewDate - pszDate;
+				cchUsed = (int)(pszNewDate - pszDate);
 				if (cchUsed < 1 || cchUsed > 2)
 					return 0;
 				pszDate = pszNewDate;
@@ -4544,7 +4542,7 @@ static int ParseFormattedDate(const wchar * pszFmt, const wchar * pszDateString,
 			{
 			case 1:
 				psti->year = (unsigned short)(2000 + wcstoul(pszDate, &pszNewDate, 10));
-				cchUsed = pszNewDate - pszDate;
+				cchUsed = (int)(pszNewDate - pszDate);
 				if (cchUsed != 1)
 				{
 					return 0;
@@ -4561,7 +4559,7 @@ static int ParseFormattedDate(const wchar * pszFmt, const wchar * pszDateString,
 				break;
 			case 2:
 				psti->year = (unsigned short)(2000 + wcstoul(pszDate, &pszNewDate, 10));
-				cchUsed = pszNewDate - pszDate;
+				cchUsed = (int)(pszNewDate - pszDate);
 				if (cchUsed == 0 || cchUsed > 2)
 				{
 					return 0;
@@ -4578,7 +4576,7 @@ static int ParseFormattedDate(const wchar * pszFmt, const wchar * pszDateString,
 				break;
 			case 4:
 				psti->year = (unsigned short)wcstoul(pszDate, &pszNewDate, 10);
-				cchUsed = pszNewDate - pszDate;
+				cchUsed = (int)(pszNewDate - pszDate);
 				if (cchUsed == 0)
 					return 0;
 				pszDate = pszNewDate;
@@ -4625,7 +4623,7 @@ static int ParseFormattedDate(const wchar * pszFmt, const wchar * pszDateString,
 
 	bool fOk = ValidateDate(fYearPresent ? psti->year : 2000, fMonthPresent ? psti->ymon : 1,
 		fDayPresent ? psti->mday : 1);
-	return fOk ? pszDate - pszDateString : 0;
+	return fOk ? (int)(pszDate - pszDateString) : 0;
 }
 
 /*----------------------------------------------------------------------------------------------
@@ -4901,7 +4899,7 @@ static int ParseTimeStringTry(const wchar * pszFmt, const wchar * pszTime, SilTi
 		{
 		case 'h': // 12-hour format
 			psti->hour = (int)wcstoul(pszTime, &pszNewTime, 10);
-			cchUsed = pszNewTime - pszTime;
+			cchUsed = (int)(pszNewTime - pszTime);
 			if (psti->hour == 12)
 				psti->hour = 0;
 			if (cchUsed < 1 || psti->hour > 11)
@@ -4911,21 +4909,21 @@ static int ParseTimeStringTry(const wchar * pszFmt, const wchar * pszTime, SilTi
 		case 'H': // 24-hour format
 			f24hour = true;
 			psti->hour = (int)wcstoul(pszTime, &pszNewTime, 10);
-			cchUsed = pszNewTime - pszTime;
+			cchUsed = (int)(pszNewTime - pszTime);
 			if (cchUsed < 1 || psti->hour > 23)
 				return 0;
 			pszTime = pszNewTime;
 			break;
 		case 'm': // minutes
 			psti->min = (int)wcstoul(pszTime, &pszNewTime, 10);
-			cchUsed = pszNewTime - pszTime;
+			cchUsed = (int)(pszNewTime - pszTime);
 			if (cchUsed < 1 || psti->min > 59)
 				return 0;
 			pszTime = pszNewTime;
 			break;
 		case 's': // seconds
 			psti->sec = (int)wcstoul(pszTime, &pszNewTime, 10);
-			cchUsed = pszNewTime - pszTime;
+			cchUsed = (int)(pszNewTime - pszTime);
 			if (cchUsed < 1 || psti->sec > 59)
 				return 0;
 			pszTime = pszNewTime;
@@ -4933,7 +4931,7 @@ static int ParseTimeStringTry(const wchar * pszFmt, const wchar * pszTime, SilTi
 			{	// milliseconds expected after decimal separator
 				pszTime += g_rgstuSDecimal.Length();
 				psti->msec = (int)wcstoul(pszTime, &pszNewTime, 10);
-				cchUsed = pszNewTime - pszTime;
+				cchUsed = (int)(pszNewTime - pszTime);
 				if (cchUsed == 1)
 					psti->msec *= 100;
 				else if (cchUsed == 2)
@@ -4973,7 +4971,7 @@ static int ParseTimeStringTry(const wchar * pszFmt, const wchar * pszTime, SilTi
 	}
 	if (fPM && !f24hour)
 		psti->hour += 12;
-	return pszTime - pszTimeBeg;
+	return (int)(pszTime - pszTimeBeg);
 }
 
 /*----------------------------------------------------------------------------------------------
@@ -5448,5 +5446,42 @@ void StrUtil::FixForSqlQuotedString(StrUni & stu)
 	{
 		stu.Replace(ich + 1, ich + 1, "'", 1);
 		ich = stu.FindCh('\'', ich + 2);
+	}
+}
+
+bool StrUtil::IsSeparator(int ch)
+{
+	int cc = u_charType(ch);
+	return cc >= U_SPACE_SEPARATOR && cc <= U_PARAGRAPH_SEPARATOR;
+}
+
+bool StrUtil::IsNumber(int ch)
+{
+	int cc = u_charType(ch);
+	return cc >= U_DECIMAL_DIGIT_NUMBER && cc <= U_OTHER_NUMBER;
+}
+
+bool StrUtil::IsMark(int ch)
+{
+	int cc = u_charType(ch);
+	return cc >= U_NON_SPACING_MARK && cc <= U_COMBINING_SPACING_MARK;
+}
+
+bool StrUtil::IsWordForming(int ch)
+{
+	int cc = u_charType(ch);
+	switch (cc)
+	{
+		case U_UPPERCASE_LETTER:
+		case U_LOWERCASE_LETTER:
+		case U_TITLECASE_LETTER:
+		case U_MODIFIER_LETTER:
+		case U_OTHER_LETTER:
+		case U_NON_SPACING_MARK:
+		case U_COMBINING_SPACING_MARK:
+		case U_MODIFIER_SYMBOL:
+			return true;
+		default:
+			return false;
 	}
 }

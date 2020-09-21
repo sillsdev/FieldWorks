@@ -14,6 +14,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
+using SIL.PlatformUtilities;
 
 namespace SIL.FieldWorks.Common.Widgets
 {
@@ -385,10 +386,9 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// ------------------------------------------------------------------------------------
 		private void OnOwnerLayoutCompleted(object sender, EventArgs e)
 		{
-#if __MonoCS__
-			if (Owner == null)
+
+			if (Platform.IsMono && Owner == null)
 				return;
-#endif
 
 			if (Dock == DockStyle.Fill)
 			{

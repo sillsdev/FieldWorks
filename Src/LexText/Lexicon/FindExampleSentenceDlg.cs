@@ -1,4 +1,4 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -7,23 +7,24 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
 using System.Xml;
-
+using SIL.LCModel.Core.Text;
 using SIL.FieldWorks.Common.Controls;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.FdoUi;
-using SIL.Utils;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using XCore;
 using SIL.FieldWorks.Common.Widgets;
+using SIL.Utils;
 
 namespace SIL.FieldWorks.XWorks.LexEd
 {
 	public partial class FindExampleSentenceDlg : Form, IFwGuiControl
 	{
-		FdoCache m_cache;
+		LcmCache m_cache;
 		Mediator m_mediator;
+		private PropertyTable m_propertyTable;
 		XmlNode m_configurationNode;
 		ILexExampleSentence m_les;
 		ILexSense m_owningSense;
@@ -37,19 +38,15 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			InitializeComponent();
 		}
 
-		#region IFWDisposable Members
-
 		public void CheckDisposed()
 		{
 			if (IsDisposed)
 				throw new ObjectDisposedException(String.Format("'{0}' in use after being disposed.", GetType().Name));
 		}
 
-		#endregion
-
 		#region IFwGuiControl Members
 
-		public void Init(Mediator mediator, XmlNode configurationNode, ICmObject sourceObject)
+		public void Init(Mediator mediator, PropertyTable propertyTable, XmlNode configurationNode, ICmObject sourceObject)
 		{
 			CheckDisposed();
 
@@ -82,14 +79,16 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			}
 
 			m_mediator = mediator;
+			m_propertyTable = propertyTable;
 			m_configurationNode = configurationNode;
 
 			helpProvider.SetHelpNavigator(this, HelpNavigator.Topic);
 			helpProvider.SetShowHelp(this, true);
-			if (m_mediator.HelpTopicProvider != null)
+			var helpToicProvider = m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider");
+			if (helpToicProvider != null)
 			{
-				helpProvider.HelpNamespace = m_mediator.HelpTopicProvider.HelpFile;
-				helpProvider.SetHelpKeyword(this, m_mediator.HelpTopicProvider.GetHelpString(m_helpTopic));
+				helpProvider.HelpNamespace = helpToicProvider.HelpFile;
+				helpProvider.SetHelpKeyword(this, helpToicProvider.GetHelpString(m_helpTopic));
 				btnHelp.Enabled = true;
 			}
 
@@ -99,7 +98,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		public void Launch()
 		{
 			CheckDisposed();
-			ShowDialog((Form)m_mediator.PropertyTable.GetValue("window"));
+			ShowDialog(m_propertyTable.GetValue<Form>("window"));
 		}
 
 		#endregion
@@ -118,12 +117,12 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			// Load the controls.
 
 			// 1. Initialize the preview pane (lower pane)
-			m_previewPane = new XmlView(0, "publicationNew", null, false);
+			m_previewPane = new XmlView(0, "publicationNew", false);
 			m_previewPane.Cache = m_cache;
-			m_previewPane.StyleSheet = FontHeightAdjuster.StyleSheetFromMediator(m_mediator);
+			m_previewPane.StyleSheet = FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable);
 
 			BasicPaneBarContainer pbc = new BasicPaneBarContainer();
-			pbc.Init(m_mediator, m_previewPane);
+			pbc.Init(m_mediator, m_propertyTable, m_previewPane);
 			pbc.Dock = DockStyle.Fill;
 			pbc.PaneBar.Text = LexEdStrings.ksFindExampleSentenceDlgPreviewPaneTitle;
 			panel2.Controls.Add(pbc);
@@ -134,15 +133,15 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			XmlNode xnBrowseViewControlParameters = this.BrowseViewControlParameters;
 
 			// First create our Clerk, since we can't set it's OwningObject via the configuration/mediator/PropertyTable info.
-			m_clerk = RecordClerkFactory.CreateClerk(m_mediator, xnBrowseViewControlParameters, true);
+			m_clerk = RecordClerkFactory.CreateClerk(m_mediator, m_propertyTable, xnBrowseViewControlParameters, true);
 			m_clerk.OwningObject = m_owningSense;
 
 			m_rbv = DynamicLoader.CreateObject(xnBrowseViewControlParameters.ParentNode.SelectSingleNode("dynamicloaderinfo")) as ConcOccurrenceBrowseView;
-			m_rbv.Init(m_mediator, xnBrowseViewControlParameters, m_previewPane, m_clerk.VirtualListPublisher);
-			m_rbv.CheckBoxChanged += new CheckBoxChangedEventHandler(m_rbv_CheckBoxChanged);
+			m_rbv.Init(m_mediator, m_propertyTable, xnBrowseViewControlParameters, m_previewPane, m_clerk.VirtualListPublisher);
+			m_rbv.CheckBoxChanged += m_rbv_CheckBoxChanged;
 			// add it to our controls.
 			BasicPaneBarContainer pbc1 = new BasicPaneBarContainer();
-			pbc1.Init(m_mediator, m_rbv);
+			pbc1.Init(m_mediator, m_propertyTable, m_rbv);
 			pbc1.BorderStyle = BorderStyle.FixedSingle;
 			pbc1.Dock = DockStyle.Fill;
 			pbc1.PaneBar.Text = LexEdStrings.ksFindExampleSentenceDlgBrowseViewPaneTitle;
@@ -254,7 +253,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 		private void btnHelp_Click(object sender, EventArgs e)
 		{
-			ShowHelp.ShowHelpTopic(m_mediator.HelpTopicProvider, m_helpTopic);
+			ShowHelp.ShowHelpTopic(m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), m_helpTopic);
 		}
 	}
 
@@ -264,11 +263,11 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		XmlView m_previewPane;
 		private ISilDataAccess m_decoratedSda; // typically a ConcSda, understands the segment property of the fake HVO.
 
-		internal void Init(Mediator mediator, XmlNode xnBrowseViewControlParameters, XmlView pubView, ISilDataAccess sda)
+		internal void Init(Mediator mediator, PropertyTable propertyTable, XmlNode xnBrowseViewControlParameters, XmlView pubView, ISilDataAccess sda)
 		{
 			m_previewPane = pubView;
 			m_decoratedSda = sda;
-			base.Init(mediator, xnBrowseViewControlParameters);
+			base.Init(mediator, propertyTable, xnBrowseViewControlParameters);
 		}
 
 		public override void OnSelectionChanged(object sender, FwObjectSelectionEventArgs e)

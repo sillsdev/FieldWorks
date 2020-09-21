@@ -6,14 +6,15 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
-using SIL.FieldWorks.FDO;
-using SIL.Utils;
-using XCore;
+using SIL.FieldWorks.Common.FwUtils;
+using SIL.LCModel;
+using SIL.Reporting;
+using SIL.LCModel.Utils;
 
 namespace SIL.FieldWorks.FwCoreDlgs
 {
 	/// <summary>Used to move or copy media files when they are linked to a FieldWorks project</summary>
-	public class MoveOrCopyFilesController
+	public static class MoveOrCopyFilesController
 	{
 		#region Static methods
 		/// <summary>
@@ -22,16 +23,15 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// </summary>
 		/// <param name="files">The fully-specified path names of the files.</param>
 		/// <param name="sRootDirLinkedFiles">The fully-specified path name of the LinkedFiles root directory.</param>
-		/// <param name="isLocal">True if running on the local server: allows file not to be moved or copied</param>
 		/// <param name="helpTopicProvider">The help topic provider.</param>
 		/// <returns>The fully specified path names of the files to use, which might be the same as the given path or it could be
 		/// in its new location under the LinkedFiles folder if the user elected to move or copy it.</returns>
-		public static string[] MoveCopyOrLeaveMediaFiles(string[] files, string sRootDirLinkedFiles, IHelpTopicProvider helpTopicProvider, bool isLocal)
+		public static string[] MoveCopyOrLeaveMediaFiles(string[] files, string sRootDirLinkedFiles, IHelpTopicProvider helpTopicProvider)
 		{
 			return MoveCopyOrLeaveFiles(files,
-				Path.Combine(sRootDirLinkedFiles, FdoFileHelper.ksMediaDir),
+				Path.Combine(sRootDirLinkedFiles, LcmFileHelper.ksMediaDir),
 				sRootDirLinkedFiles,
-				helpTopicProvider, isLocal);
+				helpTopicProvider);
 		}
 
 		/// <summary>
@@ -41,20 +41,19 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <param name="sFile">The fully-specified path name of the file.</param>
 		/// <param name="sRootDirLinkedFiles">The fully-specified path name of the LinkedFiles root directory.</param>
 		/// <param name="helpTopicProvider">The help topic provider.</param>
-		/// <param name="isLocal">True if running on the local server: allows file not to be moved or copied</param>
 		/// <returns>The fully specified path name of the file to use, which might be the same as the given path or it could be
 		/// in its new location under the LinkedFiles folder if the user elected to move or copy it.</returns>
 		public static string MoveCopyOrLeaveExternalFile(string sFile, string sRootDirLinkedFiles,
-			IHelpTopicProvider helpTopicProvider, bool isLocal)
+			IHelpTopicProvider helpTopicProvider)
 		{
 			return MoveCopyOrLeaveFiles(new[] {sFile},
-				Path.Combine(sRootDirLinkedFiles, FdoFileHelper.ksOtherLinkedFilesDir),
+				Path.Combine(sRootDirLinkedFiles, LcmFileHelper.ksOtherLinkedFilesDir),
 				sRootDirLinkedFiles,
-				helpTopicProvider, isLocal).FirstOrDefault();
+				helpTopicProvider).FirstOrDefault();
 		}
 
 		private static string[] MoveCopyOrLeaveFiles(string[] files, string subFolder, string sRootDirExternalLinks,
-			IHelpTopicProvider helpTopicProvider, bool isLocal)
+			IHelpTopicProvider helpTopicProvider)
 		{
 			try
 			{
@@ -74,7 +73,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 			using (var dlg = new MoveOrCopyFilesDlg())
 			{
-				dlg.Initialize2(subFolder, helpTopicProvider, isLocal);
+				dlg.Initialize2(subFolder, helpTopicProvider);
 				if (dlg.ShowDialog() == DialogResult.OK)
 				{
 					FileLocationChoice choice = dlg.Choice;

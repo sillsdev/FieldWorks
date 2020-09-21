@@ -534,7 +534,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			return rval;
 		}
 
-		public MarkerPresenter(/*FdoCache cache, */ string rootDir, Hashtable uiLangInfo, string topAnalysisWS,
+		public MarkerPresenter(/*LcmCache cache, */ string rootDir, Hashtable uiLangInfo, string topAnalysisWS,
 			string mapfile, string datafile, string fwFile, int numColumns)
 		{
 			m_rootDir = rootDir;
@@ -579,7 +579,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		}
 
 #if false
-		public MarkerPresenter(FdoCache cache, string mapfile, string datafile, string fwFile, int numColumns)
+		public MarkerPresenter(LcmCache cache, string mapfile, string datafile, string fwFile, int numColumns)
 		{
 			m_cache = cache;
 			m_mapFile = mapfile;

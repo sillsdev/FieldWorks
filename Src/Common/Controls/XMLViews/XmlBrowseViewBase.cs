@@ -1,13 +1,6 @@
-// Copyright (c) 2005-2013 SIL International
+// Copyright (c) 2005-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: XmlBrowseViewBase.cs
-// Responsibility: Randy Regnier
-// Last reviewed:
-//
-// <remarks>
-// </remarks>
 
 using System;
 using System.Drawing;
@@ -16,13 +9,13 @@ using System.Xml;
 using System.Diagnostics;
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.FDO.Application;
-using SIL.Utils;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel.Application;
+using SIL.FieldWorks.Common.ViewsInterfaces;
+using SIL.LCModel;
 using XCore;
 using SIL.FieldWorks.Common.FwUtils;
-using System.Diagnostics.CodeAnalysis;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.Utils;
 
 namespace SIL.FieldWorks.Common.Controls
 {
@@ -73,8 +66,6 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <summary></summary>
 		protected int m_hvoOldSel = 0;
 		/// <summary></summary>
-		protected StringTable m_stringTable;
-		/// <summary></summary>
 		protected bool m_wantScrollIntoView = true;
 		/// <summary></summary>
 		protected string m_id;
@@ -98,23 +89,6 @@ namespace SIL.FieldWorks.Common.Controls
 		#endregion Data members
 
 		#region Properties
-
-		/// <summary>
-		/// a look up table for getting the correct version of strings that the user will see.
-		/// </summary>
-		public StringTable StringTbl
-		{
-			get
-			{
-				CheckDisposed();
-				return m_stringTable;
-			}
-			set
-			{
-				CheckDisposed();
-				m_stringTable = value;
-			}
-		}
 
 		class LineCollector : StringCollectorEnv
 		{
@@ -1022,7 +996,7 @@ namespace SIL.FieldWorks.Common.Controls
 					{
 						// Deleting everything in one view doesn't seem to fix the RecordList in
 						// related views.  See LT-9711.
-						IRecordListUpdater x = Mediator.PropertyTable.GetValue("ActiveClerk") as IRecordListUpdater;
+						IRecordListUpdater x = m_propertyTable.GetValue<IRecordListUpdater>("ActiveClerk");
 						if (x != null)
 						{
 							using (new WaitCursor(this))
@@ -1088,7 +1062,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="bv">The bv. Also used to set SortItemProvider</param>
 		/// ------------------------------------------------------------------------------------
 		public virtual void Init(XmlNode nodeSpec, int hvoRoot, int fakeFlid,
-			FdoCache cache, Mediator mediator, BrowseViewer bv)
+			LcmCache cache, Mediator mediator, BrowseViewer bv)
 		{
 			CheckDisposed();
 
@@ -1100,9 +1074,8 @@ namespace SIL.FieldWorks.Common.Controls
 			if (m_nodeSpec == null)
 				m_nodeSpec = nodeSpec;
 			m_bv = bv;
-			StringTbl = mediator.StringTbl;
 			m_mediator = mediator;
-			m_fdoCache = cache;
+			m_cache = cache;
 			m_sda = m_bv.SpecialCache;
 			// This is usually done in MakeRoot, but we need it to exist right from the start
 			// because right after we make this window we use info from the VC to help make
@@ -1179,7 +1152,6 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 			m_xbvvc = null;
 			m_nodeSpec = null;
-			m_stringTable = null;
 			m_bv = null;
 		}
 
@@ -1196,12 +1168,10 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <returns></returns>
 		internal string[] GetStringList(XmlNode spec)
 		{
-			if (StringTbl == null)
-				return null;
 			XmlNode stringList = XmlUtils.GetFirstNonCommentChild(spec);
 			if (stringList == null || stringList.Name != "stringList")
 				return null;
-			return StringTbl.GetStringsFromStringListNode(stringList);
+			return StringTable.Table.GetStringsFromStringListNode(stringList);
 		}
 
 		/// <summary>
@@ -1822,25 +1792,30 @@ namespace SIL.FieldWorks.Common.Controls
 			if (!fInstalledNewSelection)
 			{
 				// Try something else.
-				vwselNew = m_rootb.MakeTextSelInObj(0,
-					1, rgvsli, 0, null,	//1, rgvsli,
-					true, // fInitial
-					false, // fEdit
-					false, // fRange
-					false, // fWholeObj
-					true); // fInstall
-				fInstalledNewSelection = true;
-				if (vwselNew == null)
+				try
 				{
-					// not much we can do to handle errors, but don't let the program die just
+					vwselNew = m_rootb.MakeTextSelInObj(0,
+						1, rgvsli, 0, null,
+						fInitial: true,
+						fEdit: false,
+						fRange: false,
+						fWholeObj: false,
+						fInstall: true);
+					if (vwselNew != null)
+						fInstalledNewSelection = true;
+				}
+				catch
+				{
+					// Not much we can do to handle errors, but don't let the program die just
 					// because the display hasn't yet been laid out, so selections can't fully be
 					// created and displayed.
-					fInstalledNewSelection = false;
-					Debug.WriteLine("XmlBrowseViewBase::SetDefaultInsertionPointInRow: Caught exception while trying to scroll a non-editable object into view.");
+					// Or (LT-20118) the display is laid out, but the previously-selected item has been deleted.
 				}
 			}
 			if (vwselNew != null && fInstalledNewSelection)
 				MakeSelectionVisible(vwselNew, true, true, true);
+			else
+				Debug.WriteLine("XmlBrowseViewBase::SetDefaultInsertionPointInRow: Caught exception while trying to scroll a non-editable object into view.");
 			return fInstalledNewSelection;
 		}
 
@@ -1869,8 +1844,6 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		/// <param name="e"></param>
 		/// <returns></returns>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "scrollBar is a reference")]
 		private bool DoMouseWheelVScroll(MouseEventArgs e)
 		{
 			if (m_bv == null)
@@ -1923,15 +1896,15 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			CheckDisposed();
 
-			if (m_fdoCache == null || DesignMode)
+			if (m_cache == null || DesignMode)
 				return;
 
-			m_rootb = VwRootBoxClass.Create();
-			m_rootb.SetSite(this);
+			base.MakeRoot();
+
 			// Only change it if it is null or different.
 			// Otherwise, it does an uneeded disposal/creation of the layout cache.
-			if (m_xbvvc.Cache == null || m_xbvvc.Cache != m_fdoCache)
-				m_xbvvc.Cache = m_fdoCache;
+			if (m_xbvvc.Cache == null || m_xbvvc.Cache != m_cache)
+				m_xbvvc.Cache = m_cache;
 			SetSelectedRowHighlighting();
 			this.ReadOnlyView = this.ReadOnlySelect;
 
@@ -1941,7 +1914,6 @@ namespace SIL.FieldWorks.Common.Controls
 			m_rootb.DataAccess = m_sda;
 
 			RootObjectHvo = m_hvoRoot;
-			base.MakeRoot();
 			m_bv.SpecialCache.AddNotification(this);
 			m_dxdLayoutWidth = kForceLayout; // Don't try to draw until we get OnSize and do layout.
 			// Filter bar uses info from our VC and can't fininish init until we make it.
@@ -2040,21 +2012,18 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			CheckDisposed();
 
-			object tool = m_mediator.PropertyTable.GetValue("currentContentControlObject", null);
-			if (tool != null && tool is MultiPane)
+			var tool = m_propertyTable.GetValue<MultiPane>("currentContentControlObject", null);
+			if (tool != null)
 			{
 				// We want to print only if this tool is selected for printing, or if nothing has been selected.
 				// or if no default has been specified.
-				if ((tool as MultiPane).PrintPane == m_id ||
-					(tool as MultiPane).PrintPane == "")
+				if ((tool).PrintPane == m_id ||
+					(tool).PrintPane == "")
 				{
 					return base.OnPrint(args);
 				}
-				else
-				{
-					// allow the specified default RootSite to Print.
-					return false;
-				}
+				// allow the specified default RootSite to Print.
+				return false;
 			}
 			else
 			{
@@ -2119,15 +2088,16 @@ namespace SIL.FieldWorks.Common.Controls
 		/// Allows xCore-specific initialization. We don't need any.
 		/// </summary>
 		/// <param name="mediator"></param>
+		/// <param name="propertyTable"></param>
 		/// <param name="configurationParameters"></param>
-		public override void Init(XCore.Mediator mediator, System.Xml.XmlNode configurationParameters)
+		public override void Init(Mediator mediator, PropertyTable propertyTable, XmlNode configurationParameters)
 		{
 			CheckDisposed();
 
 			// Do this early...we need the ID to restore the columns when the VC is created.
 			m_id = XmlUtils.GetOptionalAttributeValue(configurationParameters, "id", "NeedsId");
 
-			base.Init(mediator, configurationParameters);
+			base.Init(mediator, propertyTable, configurationParameters);
 			// The call to the superclass method ignores "configurationParameters",
 			// so set it here if it hasn't already been done.
 			if (m_nodeSpec == null)

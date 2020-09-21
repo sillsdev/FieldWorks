@@ -4,7 +4,7 @@
 
 using System.IO;
 using NUnit.Framework;
-using Palaso.TestUtilities;
+using SIL.TestUtilities;
 using Sfm2Xml;
 
 namespace Sfm2XmlTests

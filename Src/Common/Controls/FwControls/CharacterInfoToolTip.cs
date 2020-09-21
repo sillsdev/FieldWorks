@@ -3,16 +3,12 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Drawing;
 using System.Windows.Forms;
-using System.Media;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.Utils;
+using SIL.LCModel.Utils;
 using System.Drawing.Drawing2D;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.CoreImpl;
+using SIL.LCModel.Core.Text;
 
 namespace SIL.FieldWorks.Common.Controls
 {
@@ -147,7 +143,7 @@ namespace SIL.FieldWorks.Common.Controls
 
 			if (m_ctrl == null)
 			{
-				MiscUtils.ErrorBeep();
+				FwUtils.FwUtils.ErrorBeep();
 				return;
 			}
 
@@ -194,7 +190,7 @@ namespace SIL.FieldWorks.Common.Controls
 			if (UnicodeValueTextConstructed != null)
 				UnicodeValueTextConstructed(this, m_ctrl, ref m_text);
 
-			string name = Icu.GetPrettyICUCharName(chr);
+			string name = Icu.Character.GetPrettyICUCharName(chr);
 
 			// Get the name of the character if its length is 1.
 			if (!string.IsNullOrEmpty(name))

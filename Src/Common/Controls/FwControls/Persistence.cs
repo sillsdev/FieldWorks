@@ -1,31 +1,18 @@
-// Copyright (c) 2002-2013 SIL International
+// Copyright (c) 2002-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: Persistence.cs
-// Responsibility: RonM
-// Last reviewed:
-//
-// <remarks>
-// Implementation of Persistence
-// </remarks>
-//
 
 using System;
+using System.ComponentModel;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.IO;
-using System.Runtime.Serialization;
-using System.Runtime.Serialization.Formatters;
+using System.Reflection;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Windows.Forms;
-using System.Reflection;
-using System.ComponentModel;
 using Microsoft.Win32;
-
-using SIL.Utils;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.Windows.Forms;
 
 namespace SIL.FieldWorks.Common.Controls
 {
@@ -91,7 +78,7 @@ namespace SIL.FieldWorks.Common.Controls
 	/// ----------------------------------------------------------------------------------------
 	[ToolboxBitmap(typeof(Persistence), "resources.Persistence.bmp")]
 	[Designer("SIL.FieldWorks.Common.Controls.Design.PersistenceDesigner")]
-	public class Persistence : Component, ISupportInitialize, IFWDisposable
+	public class Persistence : Component, ISupportInitialize
 	{
 		#region Variables and declarations
 		/// <summary></summary>
@@ -193,7 +180,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// ------------------------------------------------------------------------------------
 		protected override void Dispose(bool disposing)
 		{
-			//Debug.WriteLineIf(!disposing, "****************** " + GetType().Name + " 'disposing' is false. ******************");
+			Debug.WriteLineIf(!disposing, "****************** Missing Dispose() call for " + GetType() + " ******************");
 			// Must not be run more than once.
 			if (m_isDisposed)
 				return;
@@ -226,8 +213,6 @@ namespace SIL.FieldWorks.Common.Controls
 		/// Normally this is the key provided by our parent form.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "key is a reference")]
 		[Browsable(false)]
 		public RegistryKey SettingsKey
 		{
@@ -428,8 +413,6 @@ namespace SIL.FieldWorks.Common.Controls
 		///		Save window position if the Window State is "Normal".
 		/// </summary>
 		///***********************************************************************************
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="FindForm() returns a reference")]
 		private void OnMoveResize(object sender, System.EventArgs e)
 		{
 			// Save position
@@ -485,27 +468,27 @@ namespace SIL.FieldWorks.Common.Controls
 			int iHeight = (int)key.GetValue(Parent.GetType().Name + "Height", (Parent is Form ?
 				((Form)Parent).DesktopBounds.Height : Parent.Height));
 
-			Rectangle rect = new Rectangle(iLeft, iTop, iWidth, iHeight);
+			var rect = new Rectangle(iLeft, iTop, iWidth, iHeight);
 
-			if (Parent is Form)
+			var parentForm = Parent as Form;
+			if (parentForm != null)
 			{
-				Form parent = Parent as Form;
-				ScreenUtils.EnsureVisibleRect(ref rect);
-				if (rect != parent.DesktopBounds)
+				ScreenHelper.EnsureVisibleRect(ref rect);
+				if (rect != parentForm.DesktopBounds)
 				{
 					// this means we loaded values from the registry - or the form is to big
-					parent.StartPosition = FormStartPosition.Manual;
+					parentForm.StartPosition = FormStartPosition.Manual;
 				}
-				parent.DesktopLocation = new Point(rect.X, rect.Y);
+				parentForm.DesktopLocation = new Point(rect.X, rect.Y);
 
 				// we can't set the width and height on the form yet - if we do it won't
 				// resize our child controls
 				m_normalLeft = rect.X;
 				m_normalTop = rect.Y;
-				parent.Width = m_normalWidth = rect.Width;
-				parent.Height = m_normalHeight = rect.Height;
-				parent.WindowState = (FormWindowState)SettingsKey.GetValue(
-					parent.GetType().Name + sWindowState, parent.WindowState);
+				parentForm.Width = m_normalWidth = rect.Width;
+				parentForm.Height = m_normalHeight = rect.Height;
+				parentForm.WindowState = (FormWindowState)SettingsKey.GetValue(
+					parentForm.GetType().Name + sWindowState, parentForm.WindowState);
 			}
 			else
 			{
@@ -558,8 +541,6 @@ namespace SIL.FieldWorks.Common.Controls
 		///
 		/// <param name='key'>The Registry Key.</param>
 		///***********************************************************************************
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="FindForm() returns a reference")]
 		public void SaveWindowState(RegistryKey key)
 		{
 			CheckDisposed();

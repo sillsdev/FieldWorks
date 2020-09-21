@@ -1,20 +1,18 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using System.Windows.Forms;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Windows.Forms;
 using System.Xml;
-
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Infrastructure;
-using XCore;
 using SIL.FieldWorks.Common.Controls;
-using SIL.Utils;
 using SIL.FieldWorks.Common.Framework.DetailControls;
-using System.Diagnostics.CodeAnalysis;
+using SIL.FieldWorks.Common.FwUtils;
+using SIL.LCModel;
+using SIL.LCModel.Infrastructure;
+using XCore;
 
 namespace SIL.FieldWorks.XWorks.LexEd
 {
@@ -48,8 +46,6 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		/// <param name="commandObject"></param>
 		/// <param name="display"></param>
 		/// <returns></returns>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "slice is a reference")]
 		public virtual bool OnDisplayMoveReversalPOS(object commandObject,
 			ref UIItemDisplayProperties display)
 		{
@@ -64,13 +60,13 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				display.Visible = InFriendlyArea;
 			}
 			if(!display.Enabled)
-				display.Text += StringTbl.GetString("(cannot move this)");
+				display.Text += StringTable.Table.GetString("(cannot move this)");
 			return true; //we've handled this
 		}
 
 		public bool OnMoveReversalPOS(object cmd)
 		{
-			FdoCache cache = Cache;
+			LcmCache cache = Cache;
 			var labels = new List<ObjectLabel>();
 			foreach (IPartOfSpeech pos in MergeOrMoveCandidates)
 			{
@@ -79,7 +75,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 					labels.Add(ObjectLabel.CreateObjectLabelOnly(cache, pos, "ShortNameTSS", "best analysis"));
 				}
 			}
-			using (SimpleListChooser dlg = new SimpleListChooser(cache, null, m_mediator.HelpTopicProvider, labels, null,
+			using (SimpleListChooser dlg = new SimpleListChooser(cache, null, m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), labels, null,
 				LexEdStrings.ksCategoryToMoveTo, null))
 			{
 				dlg.SetHelpTopic("khtpChoose-CategoryToMoveTo");
@@ -129,8 +125,6 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		/// <param name="commandObject"></param>
 		/// <param name="display"></param>
 		/// <returns></returns>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "slice is a reference")]
 		public virtual bool OnDisplayMergeReversalPOS(object commandObject,
 			ref UIItemDisplayProperties display)
 		{
@@ -145,17 +139,17 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				display.Visible = InFriendlyArea;
 			}
 			if(!display.Enabled)
-				display.Text += StringTbl.GetString("(cannot merge this)");
+				display.Text += StringTable.Table.GetString("(cannot merge this)");
 			return true; //we've handled this
 		}
 
 		public bool OnMergeReversalPOS(object cmd)
 		{
-			FdoCache cache = Cache;
+			LcmCache cache = Cache;
 			var labels = new List<ObjectLabel>();
 			foreach (IPartOfSpeech pos in MergeOrMoveCandidates)
 				labels.Add(ObjectLabel.CreateObjectLabelOnly(cache, pos, "ShortNameTSS", "best analysis"));
-			using (SimpleListChooser dlg = new SimpleListChooser(cache, null, m_mediator.HelpTopicProvider, labels, null,
+			using (SimpleListChooser dlg = new SimpleListChooser(cache, null, m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), labels, null,
 				LexEdStrings.ksCategoryToMergeInto, null))
 			{
 				dlg.SetHelpTopic("khtpMergeCategories");
@@ -182,8 +176,6 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		/// <param name="commandObject"></param>
 		/// <param name="display"></param>
 		/// <returns></returns>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "slice is a reference")]
 		public virtual bool OnDisplayPromoteReversalSubPOS(object commandObject,
 			ref UIItemDisplayProperties display)
 		{
@@ -196,15 +188,13 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			return true; //we've handled this
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "slice and cache are references")]
 		public bool OnPromoteReversalSubPOS(object cmd)
 		{
 			Slice slice = m_dataEntryForm.CurrentSlice;
 			Debug.Assert(slice != null, "No slice was current");
 			if (slice != null)
 			{
-				FdoCache cache = m_dataEntryForm.Cache;
+				LcmCache cache = m_dataEntryForm.Cache;
 				var sliceObj = slice.Object as ICmPossibility;
 				var newOwner = sliceObj.Owner.Owner;
 				switch (newOwner.ClassID)
@@ -240,7 +230,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			}
 		}
 
-		private Set<ICmPossibility> MergeOrMoveCandidates
+		private ISet<ICmPossibility> MergeOrMoveCandidates
 		{
 			get
 			{
@@ -271,8 +261,8 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		{
 			get
 			{
-				return (m_mediator.PropertyTable.GetStringProperty("areaChoice", null) == "lists"
-					&& m_mediator.PropertyTable.GetStringProperty("ToolForAreaNamed_lists", null) == "reversalToolReversalIndexPOS");
+				return (m_propertyTable.GetStringProperty("areaChoice", null) == "lists"
+					&& m_propertyTable.GetStringProperty("ToolForAreaNamed_lists", null) == "reversalToolReversalIndexPOS");
 			}
 		}
 	}
@@ -284,14 +274,14 @@ namespace SIL.FieldWorks.XWorks.LexEd
 	{
 
 
-		public override void Init(FdoCache cache, Mediator mediator, XmlNode recordListNode)
+		public override void Init(LcmCache cache, Mediator mediator, PropertyTable propertyTable, XmlNode recordListNode)
 		{
 			CheckDisposed();
 
 			// <recordList owner="IReversalIndex" property="AllEntries" assemblyPath="RBRExtensions.dll" class="RBRExtensions.AllReversalEntriesRecordList"/>
-			BaseInit(cache, mediator, recordListNode);
+			BaseInit(cache, mediator, propertyTable, recordListNode);
 			m_flid = CmPossibilityListTags.kflidPossibilities;
-			Guid riGuid = AllReversalEntriesRecordList.GetReversalIndexGuid(mediator);
+			Guid riGuid = AllReversalEntriesRecordList.GetReversalIndexGuid(mediator, propertyTable);
 			if (riGuid != Guid.Empty)
 			{
 				IReversalIndex ri = cache.ServiceLocator.GetObject(riGuid) as IReversalIndex;

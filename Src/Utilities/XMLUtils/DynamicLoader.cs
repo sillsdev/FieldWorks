@@ -3,14 +3,13 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Reflection;
 using System.Text;
 using System.Xml;
+using SIL.LCModel.Utils;
 
 namespace SIL.Utils
 {
@@ -47,10 +46,10 @@ namespace SIL.Utils
 			XmlNode configuration = parentConfigNode.SelectSingleNode("dynamicloaderinfo");
 			if (configuration == null)
 				return null;
-			string assemblyPath = XmlUtils.GetManditoryAttributeValue(configuration, "assemblyPath");
+			string assemblyPath = XmlUtils.GetMandatoryAttributeValue(configuration, "assemblyPath");
 			if (assemblyPath == "null")
 				return null;
-			string className = XmlUtils.GetManditoryAttributeValue(configuration, "class");
+			string className = XmlUtils.GetMandatoryAttributeValue(configuration, "class");
 			Assembly assembly;
 			GetAssembly(assemblyPath, out assembly);
 			return assembly.GetType(className.Trim());
@@ -73,8 +72,6 @@ namespace SIL.Utils
 			return CreateObject(configuration, CreateArgs(configuration));
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		private static object[] CreateArgs(XmlNode configuration)
 		{
 			List<object> argList = new List<object>();
@@ -87,8 +84,8 @@ namespace SIL.Utils
 					Dictionary<string, string> argDict = new Dictionary<string, string>();
 					foreach (XmlNode argNode in argNodes)
 					{
-						string argName = XmlUtils.GetManditoryAttributeValue(argNode, "name");
-						string argVal = XmlUtils.GetManditoryAttributeValue(argNode, "value");
+						string argName = XmlUtils.GetMandatoryAttributeValue(argNode, "name");
+						string argVal = XmlUtils.GetMandatoryAttributeValue(argNode, "value");
 						argDict.Add(argName, argVal);
 					}
 					string argValue;
@@ -114,12 +111,12 @@ namespace SIL.Utils
 		/// <returns></returns>
 		static public Object CreateObject(XmlNode configuration, params object[] args)
 		{
-			string  assemblyPath = XmlUtils.GetManditoryAttributeValue(configuration, "assemblyPath");
+			string  assemblyPath = XmlUtils.GetMandatoryAttributeValue(configuration, "assemblyPath");
 			// JohnT: see AddAssemblyPathInfo. We use this when the object we're trying to persist
 			// as a child of another object is null.
 			if (assemblyPath == "null")
 				return null;
-			string className = XmlUtils.GetManditoryAttributeValue(configuration, "class");
+			string className = XmlUtils.GetMandatoryAttributeValue(configuration, "class");
 			return CreateObject(assemblyPath, className, args);
 		}
 		/// <summary>

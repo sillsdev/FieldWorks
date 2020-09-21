@@ -117,22 +117,580 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="editDomainsLinkPanel.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Bottom, Left, Right</value>
+  </data>
+  <assembly alias="mscorlib" name="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="editDomainsLinkPanel.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="editDomainsLinkPic.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>None</value>
+  </data>
+  <data name="editDomainsLinkPic.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <data name="editDomainsLinkPic.Location" type="System.Drawing.Point, System.Drawing">
+    <value>8, 3</value>
+  </data>
+  <data name="editDomainsLinkPic.Size" type="System.Drawing.Size, System.Drawing">
+    <value>16, 16</value>
+  </data>
+  <data name="editDomainsLinkPic.TabIndex" type="System.Int32, mscorlib">
+    <value>5</value>
+  </data>
+  <data name="&gt;&gt;editDomainsLinkPic.Name" xml:space="preserve">
+    <value>editDomainsLinkPic</value>
+  </data>
+  <data name="&gt;&gt;editDomainsLinkPic.Type" xml:space="preserve">
+    <value>System.Windows.Forms.PictureBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;editDomainsLinkPic.Parent" xml:space="preserve">
+    <value>editDomainsLinkPanel</value>
+  </data>
+  <data name="&gt;&gt;editDomainsLinkPic.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="editDomainslinklabel.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>None</value>
+  </data>
+  <data name="editDomainslinklabel.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="editDomainslinklabel.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="editDomainslinklabel.Location" type="System.Drawing.Point, System.Drawing">
+    <value>30, 4</value>
+  </data>
+  <data name="editDomainslinklabel.Size" type="System.Drawing.Size, System.Drawing">
+    <value>116, 13</value>
+  </data>
+  <data name="editDomainslinklabel.TabIndex" type="System.Int32, mscorlib">
+    <value>4</value>
+  </data>
+  <data name="editDomainslinklabel.Text" xml:space="preserve">
+    <value>Edit Semantic Domains</value>
+  </data>
+  <data name="editDomainslinklabel.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+    <value>MiddleLeft</value>
+  </data>
+  <data name="&gt;&gt;editDomainslinklabel.Name" xml:space="preserve">
+    <value>editDomainslinklabel</value>
+  </data>
+  <data name="&gt;&gt;editDomainslinklabel.Type" xml:space="preserve">
+    <value>System.Windows.Forms.LinkLabel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;editDomainslinklabel.Parent" xml:space="preserve">
+    <value>editDomainsLinkPanel</value>
+  </data>
+  <data name="&gt;&gt;editDomainslinklabel.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="editDomainsLinkPanel.Location" type="System.Drawing.Point, System.Drawing">
+    <value>8, 367</value>
+  </data>
+  <data name="editDomainsLinkPanel.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>5, 0, 0, 0</value>
+  </data>
+  <data name="editDomainsLinkPanel.Size" type="System.Drawing.Size, System.Drawing">
+    <value>305, 40</value>
+  </data>
+  <data name="editDomainsLinkPanel.TabIndex" type="System.Int32, mscorlib">
+    <value>5</value>
+  </data>
+  <data name="&gt;&gt;editDomainsLinkPanel.Name" xml:space="preserve">
+    <value>editDomainsLinkPanel</value>
+  </data>
+  <data name="&gt;&gt;editDomainsLinkPanel.Type" xml:space="preserve">
+    <value>System.Windows.Forms.FlowLayoutPanel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;editDomainsLinkPanel.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;editDomainsLinkPanel.ZOrder" xml:space="preserve">
+    <value>5</value>
+  </data>
+  <data name="domainTree.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Top, Bottom, Left, Right</value>
+  </data>
+  <data name="domainTree.Location" type="System.Drawing.Point, System.Drawing">
+    <value>0, 0</value>
+  </data>
+  <data name="domainTree.Size" type="System.Drawing.Size, System.Drawing">
+    <value>304, 148</value>
+  </data>
+  <data name="domainTree.TabIndex" type="System.Int32, mscorlib">
+    <value>6</value>
+  </data>
+  <data name="&gt;&gt;domainTree.Name" xml:space="preserve">
+    <value>domainTree</value>
+  </data>
+  <data name="&gt;&gt;domainTree.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TreeView, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;domainTree.Parent" xml:space="preserve">
+    <value>splitContainer1.Panel1</value>
+  </data>
+  <data name="&gt;&gt;domainTree.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="searchTextBox.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Top, Left, Right</value>
+  </data>
+  <data name="searchTextBox.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Microsoft Sans Serif, 100pt</value>
+  </data>
+  <data name="searchTextBox.Location" type="System.Drawing.Point, System.Drawing">
+    <value>0, 1</value>
+  </data>
+  <data name="searchTextBox.Size" type="System.Drawing.Size, System.Drawing">
+    <value>278, 24</value>
+  </data>
+  <data name="searchTextBox.TabIndex" type="System.Int32, mscorlib">
+    <value>7</value>
+  </data>
+  <data name="&gt;&gt;searchTextBox.Name" xml:space="preserve">
+    <value>searchTextBox</value>
+  </data>
+  <data name="&gt;&gt;searchTextBox.Type" xml:space="preserve">
+    <value>SIL.FieldWorks.Common.Widgets.FwTextBox, Widgets, Version=9.0.8.18794, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;searchTextBox.Parent" xml:space="preserve">
+    <value>panel1</value>
+  </data>
+  <data name="&gt;&gt;searchTextBox.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="domainList.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Top, Bottom, Left, Right</value>
+  </data>
+  <data name="columnHeader1.Width" type="System.Int32, mscorlib">
+    <value>305</value>
+  </data>
+  <data name="domainList.LabelWrap" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
+  <data name="domainList.Location" type="System.Drawing.Point, System.Drawing">
+    <value>0, 0</value>
+  </data>
+  <data name="domainList.Size" type="System.Drawing.Size, System.Drawing">
+    <value>304, 148</value>
+  </data>
+  <data name="domainList.TabIndex" type="System.Int32, mscorlib">
+    <value>8</value>
+  </data>
+  <data name="domainList.Visible" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
+  <data name="&gt;&gt;domainList.Name" xml:space="preserve">
+    <value>domainList</value>
+  </data>
+  <data name="&gt;&gt;domainList.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ListView, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;domainList.Parent" xml:space="preserve">
+    <value>splitContainer1.Panel1</value>
+  </data>
+  <data name="&gt;&gt;domainList.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="displayUsagePanel.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Bottom, Left, Right</value>
+  </data>
+  <data name="displayUsageCheckBox.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="displayUsageCheckBox.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="displayUsageCheckBox.Location" type="System.Drawing.Point, System.Drawing">
+    <value>8, 3</value>
+  </data>
+  <data name="displayUsageCheckBox.Size" type="System.Drawing.Size, System.Drawing">
+    <value>126, 17</value>
+  </data>
+  <data name="displayUsageCheckBox.TabIndex" type="System.Int32, mscorlib">
+    <value>0</value>
+  </data>
+  <data name="displayUsageCheckBox.Text" xml:space="preserve">
+    <value>Display usage figures</value>
+  </data>
+  <data name="&gt;&gt;displayUsageCheckBox.Name" xml:space="preserve">
+    <value>displayUsageCheckBox</value>
+  </data>
+  <data name="&gt;&gt;displayUsageCheckBox.Type" xml:space="preserve">
+    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;displayUsageCheckBox.Parent" xml:space="preserve">
+    <value>displayUsagePanel</value>
+  </data>
+  <data name="&gt;&gt;displayUsageCheckBox.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="displayUsagePanel.Location" type="System.Drawing.Point, System.Drawing">
+    <value>8, 338</value>
+  </data>
+  <data name="displayUsagePanel.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>5, 0, 0, 0</value>
+  </data>
+  <data name="displayUsagePanel.Size" type="System.Drawing.Size, System.Drawing">
+    <value>305, 23</value>
+  </data>
+  <data name="displayUsagePanel.TabIndex" type="System.Int32, mscorlib">
+    <value>6</value>
+  </data>
+  <data name="&gt;&gt;displayUsagePanel.Name" xml:space="preserve">
+    <value>displayUsagePanel</value>
+  </data>
+  <data name="&gt;&gt;displayUsagePanel.Type" xml:space="preserve">
+    <value>System.Windows.Forms.FlowLayoutPanel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;displayUsagePanel.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;displayUsagePanel.ZOrder" xml:space="preserve">
+    <value>4</value>
+  </data>
+  <data name="buttonPanel.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Bottom, Left, Right</value>
+  </data>
+  <data name="buttonHelp.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>None</value>
+  </data>
+  <data name="buttonHelp.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="buttonHelp.Location" type="System.Drawing.Point, System.Drawing">
+    <value>227, 5</value>
+  </data>
+  <data name="buttonHelp.Size" type="System.Drawing.Size, System.Drawing">
+    <value>75, 23</value>
+  </data>
+  <data name="buttonHelp.TabIndex" type="System.Int32, mscorlib">
+    <value>9</value>
+  </data>
+  <data name="buttonHelp.Text" xml:space="preserve">
+    <value>Help</value>
+  </data>
+  <data name="&gt;&gt;buttonHelp.Name" xml:space="preserve">
+    <value>buttonHelp</value>
+  </data>
+  <data name="&gt;&gt;buttonHelp.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;buttonHelp.Parent" xml:space="preserve">
+    <value>buttonPanel</value>
+  </data>
+  <data name="&gt;&gt;buttonHelp.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="btnCancel.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>None</value>
+  </data>
+  <data name="btnCancel.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="btnCancel.Location" type="System.Drawing.Point, System.Drawing">
+    <value>146, 5</value>
+  </data>
+  <data name="btnCancel.Size" type="System.Drawing.Size, System.Drawing">
+    <value>75, 23</value>
+  </data>
+  <data name="btnCancel.TabIndex" type="System.Int32, mscorlib">
+    <value>2</value>
+  </data>
+  <data name="btnCancel.Text" xml:space="preserve">
+    <value>&amp;Cancel</value>
+  </data>
+  <data name="&gt;&gt;btnCancel.Name" xml:space="preserve">
+    <value>btnCancel</value>
+  </data>
+  <data name="&gt;&gt;btnCancel.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;btnCancel.Parent" xml:space="preserve">
+    <value>buttonPanel</value>
+  </data>
+  <data name="&gt;&gt;btnCancel.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="btnOK.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>None</value>
+  </data>
+  <data name="btnOK.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="btnOK.Location" type="System.Drawing.Point, System.Drawing">
+    <value>65, 5</value>
+  </data>
+  <data name="btnOK.Size" type="System.Drawing.Size, System.Drawing">
+    <value>75, 23</value>
+  </data>
+  <data name="btnOK.TabIndex" type="System.Int32, mscorlib">
+    <value>1</value>
+  </data>
+  <data name="btnOK.Text" xml:space="preserve">
+    <value>&amp;OK</value>
+  </data>
+  <data name="&gt;&gt;btnOK.Name" xml:space="preserve">
+    <value>btnOK</value>
+  </data>
+  <data name="&gt;&gt;btnOK.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;btnOK.Parent" xml:space="preserve">
+    <value>buttonPanel</value>
+  </data>
+  <data name="&gt;&gt;btnOK.ZOrder" xml:space="preserve">
+    <value>2</value>
+  </data>
+  <data name="buttonPanel.FlowDirection" type="System.Windows.Forms.FlowDirection, System.Windows.Forms">
+    <value>RightToLeft</value>
+  </data>
+  <data name="buttonPanel.Location" type="System.Drawing.Point, System.Drawing">
+    <value>8, 400</value>
+  </data>
+  <data name="buttonPanel.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>0, 2, 0, 0</value>
+  </data>
+  <data name="buttonPanel.Size" type="System.Drawing.Size, System.Drawing">
+    <value>305, 34</value>
+  </data>
+  <data name="buttonPanel.TabIndex" type="System.Int32, mscorlib">
+    <value>7</value>
+  </data>
+  <data name="&gt;&gt;buttonPanel.Name" xml:space="preserve">
+    <value>buttonPanel</value>
+  </data>
+  <data name="&gt;&gt;buttonPanel.Type" xml:space="preserve">
+    <value>System.Windows.Forms.FlowLayoutPanel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;buttonPanel.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;buttonPanel.ZOrder" xml:space="preserve">
+    <value>3</value>
+  </data>
+  <data name="selectedDomainsList.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Top, Bottom, Left, Right</value>
+  </data>
+  <data name="columnHeader2.Width" type="System.Int32, mscorlib">
+    <value>305</value>
+  </data>
+  <data name="selectedDomainsList.LabelWrap" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
+  <data name="selectedDomainsList.Location" type="System.Drawing.Point, System.Drawing">
+    <value>0, 0</value>
+  </data>
+  <data name="selectedDomainsList.Size" type="System.Drawing.Size, System.Drawing">
+    <value>304, 146</value>
+  </data>
+  <data name="selectedDomainsList.TabIndex" type="System.Int32, mscorlib">
+    <value>9</value>
+  </data>
+  <data name="&gt;&gt;selectedDomainsList.Name" xml:space="preserve">
+    <value>selectedDomainsList</value>
+  </data>
+  <data name="&gt;&gt;selectedDomainsList.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ListView, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;selectedDomainsList.Parent" xml:space="preserve">
+    <value>splitContainer1.Panel2</value>
+  </data>
+  <data name="&gt;&gt;selectedDomainsList.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="button1.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Bottom, Right</value>
+  </data>
+  <data name="button1.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
+        YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAADISURBVDhP1ZIxDoMwFENzJ+7UO2Vj6EGYupC5h2Bp2ZA6
+        /Nru/xIpKEVql1qyQhL7BUHSnqwUs3yqfLtezLfbspJNftxfNsDoAhDWPbYvnqKgARBFmXOCu/ab6HWN
+        JwWEJZ/LnUaPb2UZAQEw5lSPYcw9vpUAcRKL4QrQNQD6gKuwCm+A1odclkUnVOU1AM/MeHxf+hMBUdmN
+        tcN3YZomy/gjBaUw13z7sxgehkGlglvZ9+fvAfM8/xMA19HGcVSRJoTy7V8qpSdd5HsHxgdTmwAAAABJ
+        RU5ErkJggg==
+</value>
+  </data>
+  <data name="button1.ImageAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+    <value>MiddleLeft</value>
+  </data>
+  <data name="button1.Location" type="System.Drawing.Point, System.Drawing">
+    <value>214, 340</value>
+  </data>
+  <data name="button1.Size" type="System.Drawing.Size, System.Drawing">
+    <value>100, 23</value>
+  </data>
+  <data name="button1.TabIndex" type="System.Int32, mscorlib">
+    <value>10</value>
+  </data>
+  <data name="button1.Text" xml:space="preserve">
+    <value>Suggest</value>
+  </data>
+  <data name="&gt;&gt;button1.Name" xml:space="preserve">
+    <value>button1</value>
+  </data>
+  <data name="&gt;&gt;button1.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;button1.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;button1.ZOrder" xml:space="preserve">
+    <value>2</value>
+  </data>
+  <data name="panel1.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Top, Left, Right</value>
+  </data>
   <data name="btnCancelSearch.BackgroundImage" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAABGdBTUEAAK/INwWK6QAAAAlwSFlzAAAO
-        wQAADsEBuJFr7QAAABl0RVh0U29mdHdhcmUAQWRvYmUgSW1hZ2VSZWFkeXHJZTwAAABAdEVYdENvcHly
+        xAAADsQBlSsOGwAAABl0RVh0U29mdHdhcmUAQWRvYmUgSW1hZ2VSZWFkeXHJZTwAAABAdEVYdENvcHly
         aWdodABDb3B5cmlnaHQgqSAyMDA1IGFuZCBmb2xsb3dpbmcgeWVhcnMgRGV2Q29tcG9uZW50cyBMTEMy
-        IOTwAAACLUlEQVRYR+2VXU+SYRjH/QKd9x067MQ+QlttrXXW1ttymNnU5svYarQ80BoFaS90UJkscCWt
-        YctmsLCXoaKBimECQjYlMPQRNRBWv27GopwmDXzmyfPf7j0H93b9f9f/unY/ZeywynbYn/8CkJYy6O74
-        qWly0agZ4eIlF7V1/UhSqmT+ggBSIoNGG8D9OY0/DmNRcEfgpTfFyTOv8XhiJUEUBDheH+SJO8PMEkRX
-        YV6cmDiRZTCMgKraIR9AeDbNVWOc9iH4OA+BBQhJEFyET9+g2wcV2iCeUXFZpLZMwOH6TrNllc4xePdF
-        xC/SnhIQE8J8cBae+6HVnkLfPl6kPVsvoWM4xWVLEqMAsIdhaA68otkPYg/ezOQAWuxr6G9OyAMgLf+k
-        6e4K15xi6YI5U6foPJuGLQQmLxzWhPCMi5kUqX+OILmSYGrUxaGqQQwDP7jvgRcB6JvOwVjE/NW9aY6o
-        xEUJ2hRgLuijU7WXB+qjGE1v2V/ppd68Rst7uD4g5i6+amuKA5WTZN+IUrQBIDLtw1xbTth4ELvFTFdb
-        Kw8NbXT0JLlwO0GVdpEGXYwOi3gUtkHrALLmXXXlxPsrWHBWE7XV4H10iuG+p9tgtXmJPMBXYf74fM5c
-        cp1lUr+HV6d38UzXIJt5tnAewHrlxAZzq8zm6wB6b53Ld24TnffckLfz37H+GUHIR3fjPkzHdmO/1yxr
-        7H8XL/gzkptEAVASUBJQElASUBJQEvgFd8uLfMW2VTkAAAAASUVORK5CYII=
-    </value>
+        IOTwAAACLUlEQVRYR+2UbUuTURyH+wK97zv0sjf2EYKCiN4FPZHMzFDDBwbFIl9osdrSHtaLyhxtUi5i
+        RoZtpD0wddqmzmZuc8vQtdn0dmqbG3V11m4WYk2cDonuCw433Od/+F3n/A9nB9vMvyEgLaTR3fZRWe+k
+        TjPEhYtOqqp7kaSkXFE46wpI8TQarR/XpxS+GIxEwBWGF54kJ06/wu2OypWFsa7AsZoAj11pphYgsgyz
+        YkTFCC+CYQhUFT1yZWHkFQhNp7hijNEyAB9mwT8HQQkC8/DxK3R4oVQbwD0sJgskr0CP8xsNlmXaRuDt
+        Z3H84rQnhMSYCO+fhmc+aLIn0beMyis2Tn6BwSSXLAmMQsAegoEZ8IjNvhf34PVUVqDRvoL+xpi8YuPk
+        FZAWf1B/Z4mrDnHpAtlQh9h55jRsQTB54JAmiHtU9KRA/iqQWIozMezkYHk/hr7v3HPDcz90T2ZlLKL/
+        6q4Uh1ViYhP8UWAm4KVNtYf76iMYTW/YV+ahxrxC4zu41if6Lr5qa5L9ZeO/3ojNsEYgPOnFXFVCyHgA
+        u8VMe3MTDwzNtHYmOH8rTrl2nlpdlFaLeBS2gFUCmfD26hJivaXMOSqI2CrxPDzJYPcTuWLryQl8EeGP
+        zmXDJecZxvW7eXlqJ091tXJFccgJWC8fXxNuLXJ4hpxA182zuXCbCO+8XvzwDL9bEPTSUbcX09Fd2O82
+        yH+Lz6pLuB0oAoqAIqAIKAKKwP8uAD8Bd8uLfLP11+oAAAAASUVORK5CYII=
+</value>
+  </data>
+  <data name="btnCancelSearch.Location" type="System.Drawing.Point, System.Drawing">
+    <value>278, 1</value>
+  </data>
+  <data name="btnCancelSearch.Size" type="System.Drawing.Size, System.Drawing">
+    <value>75, 23</value>
+  </data>
+  <data name="btnCancelSearch.TabIndex" type="System.Int32, mscorlib">
+    <value>11</value>
+  </data>
+  <data name="&gt;&gt;btnCancelSearch.Name" xml:space="preserve">
+    <value>btnCancelSearch</value>
+  </data>
+  <data name="&gt;&gt;btnCancelSearch.Type" xml:space="preserve">
+    <value>SIL.FieldWorks.Common.Framework.DetailControls.FwCancelSearchButton, DetailControls, Version=9.0.8.24798, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;btnCancelSearch.Parent" xml:space="preserve">
+    <value>panel1</value>
+  </data>
+  <data name="&gt;&gt;btnCancelSearch.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="panel1.Location" type="System.Drawing.Point, System.Drawing">
+    <value>8, 4</value>
+  </data>
+  <data name="panel1.Size" type="System.Drawing.Size, System.Drawing">
+    <value>305, 26</value>
+  </data>
+  <data name="panel1.TabIndex" type="System.Int32, mscorlib">
+    <value>12</value>
+  </data>
+  <data name="&gt;&gt;panel1.Name" xml:space="preserve">
+    <value>panel1</value>
+  </data>
+  <data name="&gt;&gt;panel1.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Panel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;panel1.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;panel1.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="splitContainer1.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Top, Bottom, Left, Right</value>
+  </data>
+  <data name="splitContainer1.Location" type="System.Drawing.Point, System.Drawing">
+    <value>8, 34</value>
+  </data>
+  <data name="splitContainer1.Orientation" type="System.Windows.Forms.Orientation, System.Windows.Forms">
+    <value>Horizontal</value>
+  </data>
+  <data name="&gt;&gt;splitContainer1.Panel1.Name" xml:space="preserve">
+    <value>splitContainer1.Panel1</value>
+  </data>
+  <data name="&gt;&gt;splitContainer1.Panel1.Type" xml:space="preserve">
+    <value>System.Windows.Forms.SplitterPanel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;splitContainer1.Panel1.Parent" xml:space="preserve">
+    <value>splitContainer1</value>
+  </data>
+  <data name="&gt;&gt;splitContainer1.Panel1.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="&gt;&gt;splitContainer1.Panel2.Name" xml:space="preserve">
+    <value>splitContainer1.Panel2</value>
+  </data>
+  <data name="&gt;&gt;splitContainer1.Panel2.Type" xml:space="preserve">
+    <value>System.Windows.Forms.SplitterPanel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;splitContainer1.Panel2.Parent" xml:space="preserve">
+    <value>splitContainer1</value>
+  </data>
+  <data name="&gt;&gt;splitContainer1.Panel2.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="splitContainer1.Size" type="System.Drawing.Size, System.Drawing">
+    <value>307, 298</value>
+  </data>
+  <data name="splitContainer1.SplitterDistance" type="System.Int32, mscorlib">
+    <value>148</value>
+  </data>
+  <data name="splitContainer1.TabIndex" type="System.Int32, mscorlib">
+    <value>13</value>
+  </data>
+  <data name="&gt;&gt;splitContainer1.Name" xml:space="preserve">
+    <value>splitContainer1</value>
+  </data>
+  <data name="&gt;&gt;splitContainer1.Type" xml:space="preserve">
+    <value>System.Windows.Forms.SplitContainer, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;splitContainer1.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;splitContainer1.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
+  <data name="$this.AutoScaleDimensions" type="System.Drawing.SizeF, System.Drawing">
+    <value>6, 13</value>
+  </data>
+  <data name="$this.ClientSize" type="System.Drawing.Size, System.Drawing">
+    <value>322, 445</value>
+  </data>
+  <data name="$this.MinimumSize" type="System.Drawing.Size, System.Drawing">
+    <value>338, 483</value>
+  </data>
+  <data name="$this.Text" xml:space="preserve">
+    <value>Choose Semantic Domains</value>
+  </data>
+  <data name="&gt;&gt;columnHeader1.Name" xml:space="preserve">
+    <value>columnHeader1</value>
+  </data>
+  <data name="&gt;&gt;columnHeader1.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ColumnHeader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;columnHeader2.Name" xml:space="preserve">
+    <value>columnHeader2</value>
+  </data>
+  <data name="&gt;&gt;columnHeader2.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ColumnHeader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;$this.Name" xml:space="preserve">
+    <value>SemanticDomainsChooser</value>
+  </data>
+  <data name="&gt;&gt;$this.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Form, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
 </root>

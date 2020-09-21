@@ -696,7 +696,7 @@
     <value>&amp;Create...</value>
   </data>
   <data name="ks_WritingSystem_" xml:space="preserve">
-    <value>&amp;Writing System:</value>
+    <value>Writing System:</value>
   </data>
   <data name="ksLexicalEntries" xml:space="preserve">
     <value>Lexical Entries</value>

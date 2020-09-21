@@ -2,17 +2,13 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System;
-using System.Collections;
-using System.ComponentModel;
-using System.Drawing;
-using System.Windows.Forms;
 using System.Diagnostics;
+using System.Windows.Forms;
 
-using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.Framework.DetailControls;
+using SIL.FieldWorks.Common.FwUtils;
+using SIL.LCModel;
 using SIL.FieldWorks.LexText.Controls;
-using SIL.Utils;
 
 namespace SIL.FieldWorks.XWorks.MorphologyEditor
 {
@@ -69,7 +65,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 					dlg = new LinkMSADlg();
 				}
 				Debug.Assert(dlg != null);
-				dlg.SetDlgInfo(m_cache, null, m_mediator);
+				dlg.SetDlgInfo(m_cache, null, m_mediator, m_propertyTable);
 				if (dlg.ShowDialog(frm) == DialogResult.OK)
 					AddItem(dlg.SelectedObject);
 			}

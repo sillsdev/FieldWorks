@@ -8,13 +8,13 @@
 //
 // <remarks>
 // </remarks>
-
 using System;
 using System.Diagnostics;
-
-using SIL.FieldWorks.FDO;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.FieldWorks.Common.FwUtils;
+using SIL.LCModel;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.Utils;
 using XCore;
 
@@ -27,7 +27,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 	{
 		private int m_dxLastWidth; // width last time OnSizeChanged was called.
 
-		public PhoneEnvReferenceSlice(FdoCache cache, ICmObject obj, int flid)
+		public PhoneEnvReferenceSlice(LcmCache cache, ICmObject obj, int flid)
 			: base(new PhoneEnvReferenceLauncher(), cache, obj, flid)
 		{
 			Debug.Assert(obj is IMoAffixAllomorph || obj is IMoStemAllomorph);
@@ -108,7 +108,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			base.FinishInit();
 
 			var rl = (PhoneEnvReferenceLauncher)Control;
-			rl.Initialize(m_cache, m_obj, m_flid, m_fieldName, m_persistenceProvider, Mediator, null, null);
+			rl.Initialize(m_cache, m_obj, m_flid, m_fieldName, m_persistenceProvider, Mediator, m_propertyTable, null, null);
 			rl.ConfigurationNode = ConfigurationNode;
 			rl.ViewSizeChanged += OnViewSizeChanged;
 			var view = (PhoneEnvReferenceView)rl.MainControl;
@@ -146,16 +146,13 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		public override void RegisterWithContextHelper()
 		{
 			CheckDisposed();
-			Mediator mediator = this.Mediator;
-			StringTable tbl = null;
-			if (mediator.HasStringTable)
-				tbl = mediator.StringTbl;
-			string caption = XmlUtils.GetLocalizedAttributeValue(tbl, ConfigurationNode, "label", "");
+
+			string caption = XmlUtils.GetLocalizedAttributeValue(ConfigurationNode, "label", "");
 
 			PhoneEnvReferenceLauncher launcher = (PhoneEnvReferenceLauncher)this.Control;
-			mediator.SendMessage("RegisterHelpTargetWithId",
+			Mediator.SendMessage("RegisterHelpTargetWithId",
 				new object[]{launcher.Controls[1], caption, HelpId}, false);
-			mediator.SendMessage("RegisterHelpTargetWithId",
+			Mediator.SendMessage("RegisterHelpTargetWithId",
 				new object[]{launcher.Controls[0], caption, HelpId, "Button"}, false);
 		}
 
@@ -317,7 +314,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			PhoneEnvReferenceLauncher rl = (PhoneEnvReferenceLauncher)this.Control;
 			PhoneEnvReferenceView view = (PhoneEnvReferenceView)rl.MainControl;
 			return SimpleListChooser.ChooseNaturalClass(view.RootBox, m_cache,
-				m_persistenceProvider, Mediator);
+				m_persistenceProvider, Mediator, m_propertyTable);
 		}
 
 		/// <summary>

@@ -1,24 +1,11 @@
-// Copyright (c) 2002-2013 SIL International
+// Copyright (c) 2002-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: DummyPersistedFormWinDef.cs
-// Responsibility: TomB
-// Last reviewed:
-//
-// <remarks>
-// </remarks>
 
 using System;
-using System.Drawing;
-using System.Collections;
-using System.ComponentModel;
-using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;
 using Microsoft.Win32;
-
-using SIL.FieldWorks.Common.Controls;
-using SIL.Utils;
+using SIL.LCModel.Utils;
 
 namespace SIL.FieldWorks.Common.Controls
 {
@@ -27,7 +14,7 @@ namespace SIL.FieldWorks.Common.Controls
 	/// Summary description for DummyPersistedFormWinDef.
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
-	public class DummyPersistedFormWinDef : Form, IFWDisposable, ISettings
+	public class DummyPersistedFormWinDef : Form, ISettings
 	{
 		private SIL.FieldWorks.Common.Controls.Persistence m_persistence;
 		private System.ComponentModel.IContainer components;
@@ -155,8 +142,6 @@ namespace SIL.FieldWorks.Common.Controls
 		/// Gets the settings key.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "We're returning an object")]
 		public RegistryKey SettingsKey
 		{
 			get

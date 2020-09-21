@@ -1,13 +1,6 @@
-// Copyright (c) 2003-2013 SIL International
+// Copyright (c) 2003-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: MGA.cs
-// Responsibility: Andy Black
-// Last reviewed:
-//
-// <remarks>
-// </remarks>
 
 using System;
 using System.Drawing;
@@ -16,10 +9,8 @@ using System.Windows.Forms;
 using System.IO;
 using System.Text;
 using System.Xml;
-
-using SIL.FieldWorks.FDO;
-using XCore;
-using SIL.Utils;
+using SIL.LCModel;
+using SIL.LCModel.Utils;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Controls;
 
@@ -28,13 +19,12 @@ namespace  SIL.FieldWorks.LexText.Controls.MGA
 	/// <summary>
 	/// Base class for MGAHtmlHelpDialog. Can be used standalone to show dialog without html help.
 	/// </summary>
-	public class MGADialog : Form, IFWDisposable
+	public class MGADialog : Form
 	{
 		#region Member variables
 		private int m_panelBottomHeight = 0;
-		private readonly FdoCache m_cache;
+		private readonly LcmCache m_cache;
 		private readonly IHelpTopicProvider m_helpTopicProvider;
-		private readonly Mediator m_mediator;
 		private Button buttonInsert;
 		private Button buttonRemove;
 		private Button buttonAcceptGloss;
@@ -99,14 +89,13 @@ namespace  SIL.FieldWorks.LexText.Controls.MGA
 		/// Initializes a new instance of the <see cref="MGADialog"/> class.
 		/// </summary>
 		/// <param name="cache">The cache.</param>
-		/// <param name="mediator">The mediator.</param>
+		/// <param name="helpTopicProvider"></param>
 		/// <param name="sMorphemeForm">The s morpheme form.</param>
 		/// ------------------------------------------------------------------------------------
-		public MGADialog(FdoCache cache, Mediator mediator, string sMorphemeForm)
+		public MGADialog(LcmCache cache, IHelpTopicProvider helpTopicProvider, string sMorphemeForm)
 		{
-			m_mediator = mediator;
 			m_cache = cache;
-			m_helpTopicProvider = m_mediator.HelpTopicProvider;
+			m_helpTopicProvider = helpTopicProvider;
 			InitForm();
 			labelAllomorph.Text = sMorphemeForm;
 
@@ -249,8 +238,30 @@ namespace  SIL.FieldWorks.LexText.Controls.MGA
 		public void OnInsertButtonClick(object obj, EventArgs ea)
 		{
 			CheckDisposed();
+			ProcessAnySelectedNodes(treeViewGlossListItem.Nodes);
+		}
 
-			MasterInflectionFeature mif = (MasterInflectionFeature)treeViewGlossListItem.SelectedNode.Tag;
+		private void ProcessAnySelectedNodes(TreeNodeCollection nodes)
+		{
+			foreach (TreeNode node in nodes)
+			{
+				if (node.Nodes.Count > 0)
+				{
+					ProcessAnySelectedNodes(node.Nodes);
+				}
+				else
+				{
+					if (node.Checked)
+					{
+						InsertSelectedItem(node);
+					}
+				}
+			}
+		}
+
+		private void InsertSelectedItem(TreeNode selectedNode)
+		{
+			MasterInflectionFeature mif = (MasterInflectionFeature)selectedNode.Tag;
 			if (mif == null)
 				return; // just to be safe
 			GlossListBoxItem glbiNew = new GlossListBoxItem(m_cache, mif.Node,
@@ -260,9 +271,9 @@ namespace  SIL.FieldWorks.LexText.Controls.MGA
 			if (glossListBoxGloss.NewItemConflictsWithExtantItem(glbiNew, out glbiConflict))
 			{
 				const string ksPath = "/group[@id='Linguistics']/group[@id='Morphology']/group[@id='MGA']/";
-				string sMsg1 = m_mediator.StringTbl.GetStringWithXPath("ItemConflictDlgMessage", ksPath);
-				string sMsg = String.Format(sMsg1, glbiConflict.ToString());
-				string sCaption = m_mediator.StringTbl.GetStringWithXPath("ItemConflictDlgCaption", ksPath);
+				string sMsg1 = StringTable.Table.GetStringWithXPath("ItemConflictDlgMessage", ksPath);
+				string sMsg = String.Format(sMsg1, glbiConflict);
+				string sCaption = StringTable.Table.GetStringWithXPath("ItemConflictDlgCaption", ksPath);
 				MessageBox.Show(sMsg, sCaption, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
 				return;
 			}
@@ -273,6 +284,7 @@ namespace  SIL.FieldWorks.LexText.Controls.MGA
 			EnableMoveUpDownButtons();
 			ShowGloss();
 		}
+
 		void OnModifyButtonClick(object obj, EventArgs ea)
 		{
 			MessageBox.Show(MGAStrings.ksNoModifyButtonYet);

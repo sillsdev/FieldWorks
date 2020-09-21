@@ -1,19 +1,17 @@
-﻿// Copyright (c) 2015 SIL International
+// Copyright (c) 2015 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Reflection;
 using Microsoft.Win32;
-using SIL.Utils;
+using SIL.LCModel.Utils;
 
 namespace SIL.FieldWorks.ParatextLexiconPlugin
 {
-	internal class ParatextLexiconPluginRegistryHelper
+	internal partial class ParatextLexiconPluginRegistryHelper
 	{
-		private const string FdoVersion = "8";
 
 		static ParatextLexiconPluginRegistryHelper()
 		{
@@ -40,6 +38,9 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 			}
 		}
 
+		/// <summary>
+		/// Is Fieldworks installed, based on querying the registry.
+		/// </summary>
 		public static bool IsFieldWorksInstalled
 		{
 			get
@@ -51,18 +52,14 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 			}
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "Disposed in caller.")]
 		public static RegistryKey FieldWorksRegistryKey
 		{
-			get { return RegistryHelper.SettingsKey(FdoVersion); }
+			get { return RegistryHelper.SettingsKey(FWMajorVersion) ?? RegistryHelper.SettingsKeyOld32Bit(FWMajorVersion); }
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "Disposed in caller.")]
 		public static RegistryKey FieldWorksRegistryKeyLocalMachine
 		{
-			get { return RegistryHelper.SettingsKeyLocalMachine(FdoVersion); }
+			get { return RegistryHelper.SettingsKeyLocalMachine(FWMajorVersion) ?? RegistryHelper.SettingsKeyLocalMachineOld32Bit(FWMajorVersion); }
 		}
 	}
 }

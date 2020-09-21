@@ -4,14 +4,16 @@
 
 using System;
 using System.Windows.Forms;
-using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.LCModel.Core.Cellar;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
 using SIL.FieldWorks.Common.FwUtils;
 using XCore;
-using SIL.FieldWorks.FDO.Infrastructure;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls
 {
@@ -132,7 +134,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			/// <param name="flid"></param>
 			/// <param name="cache"></param>
 			/// <param name="mediator"></param>
-			public StringSliceVc(int flid, FdoCache cache, Mediator mediator)
+			public StringSliceVc(int flid, LcmCache cache, Mediator mediator)
 			{
 				m_flid = flid;
 // ReSharper disable DoNotCallOverridableMethodsInConstructor
@@ -144,7 +146,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 					m_wsEn = cache.DefaultUserWs;
 			}
 
-			public StringSliceVc(int flid, int ws, FdoCache cache, Mediator mediator)
+			public StringSliceVc(int flid, int ws, LcmCache cache, Mediator mediator)
 				:this(flid, cache, mediator)
 			{
 				m_wsDefault = ws;
@@ -266,12 +268,12 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			{
 				m_wsLabel = ws;
 				var sWs = m_cache.WritingSystemFactory.GetStrFromWs(ws);
-				IWritingSystem wsys;
+				CoreWritingSystemDefinition wsys;
 				WritingSystemServices.FindOrCreateWritingSystem(m_cache, FwDirectoryFinder.TemplateDirectory, sWs, false, false, out wsys);
 				var result = wsys.Abbreviation;
 				if (string.IsNullOrEmpty(result))
 					result = "??";
-				ITsStrBldr tsb = TsStrBldrClass.Create();
+				ITsStrBldr tsb = TsStringUtils.MakeStrBldr();
 				tsb.Replace(0, 0, result, WritingSystemServices.AbbreviationTextProperties);
 				tsb.SetIntPropValues(0, tsb.Length, (int)FwTextPropType.ktptWs, 0, m_wsEn);
 				return tsb.GetString();
@@ -283,7 +285,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			{
 				if (m_cache == null)
 					return;
-				IWritingSystem wsObj = m_cache.ServiceLocator.WritingSystemManager.Get(ws);
+				CoreWritingSystemDefinition wsObj = m_cache.ServiceLocator.WritingSystemManager.Get(ws);
 				if (wsObj != null && wsObj.RightToLeftScript)
 				{
 					vwenv.set_IntProperty((int)FwTextPropType.ktptRightToLeft,
@@ -352,7 +354,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			{
 				m_wsDefault = -1;
 			}
-			public UnicodeStringSliceVc(int flid, int ws, FdoCache fdoCache)
+			public UnicodeStringSliceVc(int flid, int ws, LcmCache fdoCache)
 			{
 				m_flid = flid;
 				if (ws == -1)
@@ -542,38 +544,35 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			public override void MakeRoot()
 			{
 				CheckDisposed();
-				base.MakeRoot();
 
-				if (m_fdoCache == null || DesignMode)
+				if (m_cache == null || DesignMode)
 					return;
 
 				// A crude way of making sure the property we want is loaded into the cache.
-				m_obj = m_fdoCache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(m_hvoObj);
+				m_obj = m_cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(m_hvoObj);
 
-				CellarPropertyType type = (CellarPropertyType)m_fdoCache.DomainDataByFlid.MetaDataCache.GetFieldType(m_flid);
+				CellarPropertyType type = (CellarPropertyType)m_cache.DomainDataByFlid.MetaDataCache.GetFieldType(m_flid);
 				if (type == CellarPropertyType.Unicode)
 				{
-					m_vc = new UnicodeStringSliceVc(m_flid, m_ws, m_fdoCache);
+					m_vc = new UnicodeStringSliceVc(m_flid, m_ws, m_cache);
 				}
 				else if (type == CellarPropertyType.String)
 				{
 					// Even if we were given a writing system, we must not use it if not a multistring,
 					// otherwise the VC crashes when it tries to read the property as multilingual.
-					m_vc = new StringSliceVc(m_flid, m_fdoCache, m_mediator);
+					m_vc = new StringSliceVc(m_flid, m_cache, m_mediator);
 					(m_vc as StringSliceVc).ShowWsLabel = m_fShowWsLabel;
 				}
 				else
 				{
-					m_vc = new StringSliceVc(m_flid, m_ws, m_fdoCache, m_mediator);
+					m_vc = new StringSliceVc(m_flid, m_ws, m_cache, m_mediator);
 					(m_vc as StringSliceVc).ShowWsLabel = m_fShowWsLabel;
 				}
 
-				// Review JohnT: why doesn't the base class do this??
-				m_rootb = VwRootBoxClass.Create();
-				m_rootb.SetSite(this);
+				base.MakeRoot();
 
 				// And maybe this too, at least by default?
-				m_rootb.DataAccess = m_fdoCache.DomainDataByFlid;
+				m_rootb.DataAccess = m_cache.DomainDataByFlid;
 
 				// arg3 is a meaningless initial fragment, since this VC only displays one thing.
 				// arg4 could be used to supply a stylesheet.

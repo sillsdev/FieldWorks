@@ -3,14 +3,15 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Collections.Generic;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel;
+using SIL.LCModel.Infrastructure;
 
 namespace LexEdDllTests
 {
 	internal static class TestUtils
 	{
-		internal static void AddComplexFormComponents(FdoCache cache, ILexEntry entry, List<ICmObject> list, List<ILexEntryType> types = null)
+		internal static void AddComplexFormComponents(LcmCache cache, ILexEntry entry, List<ICmObject> list, List<ILexEntryType> types = null)
 		{
 			UndoableUnitOfWorkHelper.Do("undo", "redo", cache.ActionHandlerAccessor, () =>
 			{
@@ -34,7 +35,7 @@ namespace LexEdDllTests
 			});
 		}
 
-		internal static ILexEntry MakeEntry(FdoCache cache, string lf, string gloss)
+		internal static ILexEntry MakeEntry(LcmCache cache, string lf, string gloss)
 		{
 			ILexEntry entry = null;
 			UndoableUnitOfWorkHelper.Do("undo", "redo", cache.ActionHandlerAccessor, () =>
@@ -43,10 +44,10 @@ namespace LexEdDllTests
 				var form = cache.ServiceLocator.GetInstance<IMoStemAllomorphFactory>().Create();
 				entry.LexemeFormOA = form;
 				form.Form.VernacularDefaultWritingSystem =
-					cache.TsStrFactory.MakeString(lf, cache.DefaultVernWs);
+					TsStringUtils.MakeString(lf, cache.DefaultVernWs);
 				var sense = cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create();
 				entry.SensesOS.Add(sense);
-				sense.Gloss.AnalysisDefaultWritingSystem = cache.TsStrFactory.MakeString(gloss, cache.DefaultAnalWs);
+				sense.Gloss.AnalysisDefaultWritingSystem = TsStringUtils.MakeString(gloss, cache.DefaultAnalWs);
 			});
 			return entry;
 		}

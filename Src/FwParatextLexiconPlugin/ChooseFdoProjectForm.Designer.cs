@@ -1,3 +1,7 @@
+// Copyright (c) 2015 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
+
 namespace SIL.FieldWorks.ParatextLexiconPlugin
 {
 	partial class ChooseFdoProjectForm : System.Windows.Forms.Form
@@ -7,6 +11,7 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 		[System.Diagnostics.DebuggerNonUserCode()]
 		protected override void Dispose(bool disposing)
 		{
+			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + ". ******");
 			if (disposing && components != null) {
 				components.Dispose();
 			}

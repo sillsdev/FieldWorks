@@ -10,10 +10,10 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.Utils;
+using SIL.FieldWorks.Common.ViewsInterfaces;
+using SIL.LCModel.Utils;
 using System.Runtime.InteropServices;
-using System.Diagnostics.CodeAnalysis;
+using SIL.LCModel.Core.KernelInterfaces;
 
 namespace SIL.FieldWorks.Common.RootSites
 {
@@ -290,14 +290,11 @@ namespace SIL.FieldWorks.Common.RootSites
 
 			if (vwSel == null || !vwSel.IsValid)
 			{
-				if (rootSite == null || rootSite.RootBox == null)
-					return null;
-				vwSel = rootSite.RootBox.Selection;
+				vwSel = rootSite?.RootBox?.Selection;
 				if (vwSel == null || !vwSel.IsValid)
 					return null;
 			}
 
-			Debug.Assert(vwSel.IsValid);
 			SelectionHelper helper = new SelectionHelper(vwSel, rootSite);
 
 			if (!helper.GetSelEndInfo(false))
@@ -320,13 +317,15 @@ namespace SIL.FieldWorks.Common.RootSites
 		{
 			int i = fEnd ? 1 : 0;
 			int cvsli = m_vwSel.CLevels(fEnd) - 1;
-			//Review TE Team (JT-JH): We changed this from if (cvsli <= 0). We're guessing there just isn't any 0 cases in TE?
 			if (cvsli < 0)
+			{
 				cvsli = 0;
-				//return false;
+			}
 
 			if (m_selInfo[i] == null)
+			{
 				m_selInfo[i] = new SelInfo();
+			}
 
 			using (ArrayPtr prgvsli = MarshalEx.ArrayToNative<SelLevInfo>(cvsli))
 			{
@@ -337,7 +336,9 @@ namespace SIL.FieldWorks.Common.RootSites
 			}
 
 			if (fEnd)
+			{
 				m_fEndSet = true;
+			}
 			return true;
 		}
 		#endregion
@@ -541,8 +542,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <param name="cttp">Returned count of TsTxtProps (this is basically just the number
 		/// of runs in the selection)</param>
 		/// ------------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "ArrayPtr.Null is a reference")]
 		public static void GetSelectionProps(IVwSelection vwSel, out ITsTextProps[] vttp,
 			out IVwPropertyStore[] vvps, out int cttp)
 		{

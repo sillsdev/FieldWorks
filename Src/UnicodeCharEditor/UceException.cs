@@ -1,11 +1,11 @@
-// Copyright (c) 2017 SIL International
+// Copyright (c) 2017-2018 SIL International
 // This software is licensed under the MIT License (http://opensource.org/licenses/MIT)
 using System;
 using System.Text;
 
 namespace SIL.FieldWorks.UnicodeCharEditor
 {
-	/// <summary/>
+	/// <inheritdoc />
 	public abstract class UceException: Exception
 	{
 		/// <summary/>
@@ -13,18 +13,14 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 		/// <summary/>
 		protected readonly string m_msg;
 
-		///<summary>
-		/// Constructor with a message.
-		///</summary>
+		/// <inheritdoc />
 		protected UceException(ErrorCodes errorCode, string msg)
 		{
 			m_errorCode = errorCode;
 			m_msg = msg;
 		}
 
-		/// <summary>
-		/// Gets a message that describes the current exception.
-		/// </summary>
+		/// <inheritdoc />
 		public override string Message
 		{
 			get

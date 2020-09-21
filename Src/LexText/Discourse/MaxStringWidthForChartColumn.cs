@@ -9,8 +9,8 @@
 // </remarks>
 
 using System;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.Common.COMInterfaces;
 
 namespace SIL.FieldWorks.Discourse
 {

@@ -4,17 +4,10 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.IO;
 using System.Linq;
-using System.Text;
-using System.Windows.Forms;
-using System.Xml;
-using Sfm2Xml;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.LCModel.Core.Text;
 using SIL.FieldWorks.LexText.Controls;
-using SIL.FieldWorks.FDO.DomainServices;
-using SilEncConverters40;
+using SIL.LCModel.DomainServices;
 
 namespace SIL.FieldWorks.IText
 {
@@ -25,8 +18,6 @@ namespace SIL.FieldWorks.IText
 	/// from a single stream as a dictionary from text name to a stream from which the FlexText for a text
 	/// of that name can be read.
 	/// </summary>
-	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
-		Justification="m_writer gets disposed in Convert method")]
 	internal class Sfm2FlexText : Sfm2FlexTextBase<InterlinearMapping>
 	{
 		// true when we have already added a "words" element to the current "phrase". Meaningless if there is not a phrase open at all.
@@ -119,9 +110,9 @@ namespace SIL.FieldWorks.IText
 			m_textHasContent = true;
 			var text = GetString(data, mapping).Trim();
 
-			var ws = m_wsf.get_Engine(mapping.WritingSystem).Handle; // don't use GetWsFromStr, fails if not a known WS
-			var tss = m_tsf.MakeString(text, ws);
-			var wordmaker = new WordMaker(tss, m_wsf);
+			var ws = m_wsManager.get_Engine(mapping.WritingSystem).Handle; // don't use GetWsFromStr, fails if not a known WS
+			var tss = TsStringUtils.MakeString(text, ws);
+			var wordmaker = new WordMaker(tss, m_wsManager);
 			int ichLast = 0;
 			int ichMin, ichLim;
 			while (true)

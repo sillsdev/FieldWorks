@@ -1,18 +1,12 @@
-// Copyright (c) 2004-2013 SIL International
+// Copyright (c) 2004-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: ParserAnalysisRemover.cs
-// Responsibility: Randy Regnier
-// Last reviewed:
-//
-// <remarks>
-// </remarks>
-// --------------------------------------------------------------------------------------------
+
 using System.Diagnostics;
 using System.Linq;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.FieldWorks.Common.FwUtils;
+using SIL.LCModel;
+using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.FwCoreDlgs;
 
 namespace SIL.FieldWorks.XWorks.MorphologyEditor
@@ -49,7 +43,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			get
 			{
 				Debug.Assert(m_dlg != null);
-				return m_dlg.Mediator.StringTbl.GetStringWithXPath("Label", kPath);
+				return StringTable.Table.GetStringWithXPath("Label", kPath);
 			}
 		}
 
@@ -86,9 +80,9 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		public void OnSelection()
 		{
 			Debug.Assert(m_dlg != null);
-			m_dlg.WhenDescription = m_dlg.Mediator.StringTbl.GetStringWithXPath("WhenDescription", kPath);
-			m_dlg.WhatDescription = m_dlg.Mediator.StringTbl.GetStringWithXPath("WhatDescription", kPath);
-			m_dlg.RedoDescription = m_dlg.Mediator.StringTbl.GetStringWithXPath("RedoDescription", kPath);
+			m_dlg.WhenDescription = StringTable.Table.GetStringWithXPath("WhenDescription", kPath);
+			m_dlg.WhatDescription = StringTable.Table.GetStringWithXPath("WhatDescription", kPath);
+			m_dlg.RedoDescription = StringTable.Table.GetStringWithXPath("RedoDescription", kPath);
 		}
 
 		/// <summary>
@@ -97,7 +91,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		public void Process()
 		{
 			Debug.Assert(m_dlg != null);
-			var cache = (FdoCache) m_dlg.Mediator.PropertyTable.GetValue("cache");
+			var cache = m_dlg.PropTable.GetValue<LcmCache>("cache");
 			IWfiAnalysis[] analyses = cache.ServiceLocator.GetInstance<IWfiAnalysisRepository>().AllInstances().ToArray();
 			if (analyses.Length == 0)
 				return;

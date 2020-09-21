@@ -3,10 +3,9 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Xml.Linq;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using SIL.HermitCrab;
 using SIL.HermitCrab.MorphologicalRules;
 using SIL.HermitCrab.PhonologicalRules;
@@ -14,13 +13,11 @@ using SIL.Machine.FeatureModel;
 
 namespace SIL.FieldWorks.WordWorks.Parser
 {
-	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
-		Justification = "m_cache is a reference and disposed in the parent class")]
 	internal class FwXmlTraceManager : ITraceManager
 	{
-		private readonly FdoCache m_cache;
+		private readonly LcmCache m_cache;
 
-		public FwXmlTraceManager(FdoCache fdoCache)
+		public FwXmlTraceManager(LcmCache fdoCache)
 		{
 			m_cache = fdoCache;
 		}

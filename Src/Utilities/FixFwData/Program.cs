@@ -7,19 +7,15 @@
 
 using System;
 using System.ComponentModel;
-using System.Diagnostics.CodeAnalysis;
-using System.Windows.Forms;
-using Palaso.Reporting;
 using SIL.FieldWorks.FixData;
-using Palaso.UI.WindowsForms.HotSpot;
-using SIL.Utils;
+using SIL.Reporting;
+using SIL.LCModel.Utils;
+using SIL.Windows.Forms.HotSpot;
 
 namespace FixFwData
 {
 	class Program
 	{
-		[SuppressMessage("Gendarme.Rules.Portability", "ExitCodeIsLimitedOnUnixRule",
-			Justification = "Appears to be a bug in Gendarme...not recognizing that 0 and 1 are in correct range (0..255)")]
 		private static int Main(string[] args)
 		{
 			SetUpErrorHandling();
@@ -97,7 +93,7 @@ namespace FixFwData
 				get { return false; }
 				set { }
 			}
-			#region Gendarme required cruft
+			#region Clouseau required cruft
 #if DEBUG
 			/// <summary/>
 			~NullProgress()

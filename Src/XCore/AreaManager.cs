@@ -1,10 +1,6 @@
-// Copyright (c) 2003-2013 SIL International
+// Copyright (c) 2003-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: AreaManager.cs
-// Responsibility:
-// Last retooled:
 //
 // <remarks>
 // This is a "Listener" which watches the 'areaChoice' property.
@@ -20,13 +16,8 @@
 //		</listeners>
 //	</code>
 // </example>
-
-
 using System;
-using System.Diagnostics;
 using System.Xml;
-
-using SIL.Utils;
 
 namespace XCore
 {
@@ -38,8 +29,8 @@ namespace XCore
 	/// Having this listener saves a lot of worry about resetting stuff on the dlg between openings,
 	/// as the dlg gets created from scratch for each call.
 	/// </summary>
-	[XCore.MediatorDispose]
-	public abstract class DlgListenerBase : IxCoreColleague, IFWDisposable
+	[MediatorDispose]
+	public abstract class DlgListenerBase : IxCoreColleague, IDisposable
 	{
 		#region Data members
 
@@ -47,6 +38,10 @@ namespace XCore
 		/// xCore Mediator.
 		/// </summary>
 		protected Mediator m_mediator;
+		/// <summary>
+		/// The PropertyTable
+		/// </summary>
+		protected PropertyTable m_propertyTable;
 		/// <summary>
 		/// Optional configuration parameters.
 		/// </summary>
@@ -182,14 +177,15 @@ namespace XCore
 		/// <summary>
 		/// Initialize the IxCoreColleague object.
 		/// </summary>
-		public virtual void Init(Mediator mediator, XmlNode configurationParameters)
+		public virtual void Init(Mediator mediator, PropertyTable propertyTable, XmlNode configurationParameters)
 		{
 			CheckDisposed();
 
 			m_mediator = mediator;
+			m_propertyTable = propertyTable;
 			mediator.AddColleague(this);
 			m_configurationParameters = configurationParameters;
-			m_persistProvider = new XCore.PersistenceProvider(PersistentLabel, m_mediator.PropertyTable);
+			m_persistProvider = new PersistenceProvider(m_mediator, m_propertyTable, PersistentLabel);
 		}
 
 		/// <summary>

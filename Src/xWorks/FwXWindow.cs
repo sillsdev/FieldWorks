@@ -1,47 +1,41 @@
-// Copyright (c) 2003-2013 SIL International
+// Copyright (c) 2003-2019 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: FwXWindow.cs
-// Responsibility: FLEx Team
 
 using System;
-using System.Linq;
-using System.Windows.Forms;
-using System.Diagnostics;
-using Microsoft.Win32;
-using System.IO;
-using System.Drawing;
-using System.Reflection;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Drawing;
+using System.IO;
+using System.Linq;
+using System.Reflection;
 using System.Text;
-using L10NSharp;
-using SIL.CoreImpl;
-using SIL.FieldWorks.Common.UIAdapters;
-using SIL.FieldWorks.Common.Widgets;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.Common.Framework;
-using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.FDO.Application;
-using SIL.FieldWorks.XWorks.Archiving;
-using SIL.Utils;
-using SIL.Utils.FileDialog;
+using System.Windows.Forms;
+using Microsoft.Win32;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.Controls;
-using SIL.FieldWorks.FwCoreDlgs;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.FwCoreDlgControls;
-using XCore;
-using SIL.FieldWorks.Resources;
-using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.FieldWorks.Common.Controls.FileDialog;
+using SIL.FieldWorks.Common.Framework;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
-using Logger = SIL.Utils.Logger;
-using System.Diagnostics.CodeAnalysis;
-
-
-#if !__MonoCS__
-using NetSparkle;
-#endif
+using SIL.FieldWorks.Common.RootSites;
+using SIL.FieldWorks.Common.UIAdapters;
+using SIL.LCModel;
+using SIL.LCModel.Application;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Infrastructure;
+using SIL.FieldWorks.FwCoreDlgControls;
+using StyleInfo = SIL.FieldWorks.FwCoreDlgControls.StyleInfo;
+using SIL.FieldWorks.FwCoreDlgs;
+using SIL.FieldWorks.Resources;
+using SIL.FieldWorks.XWorks.Archiving;
+using SIL.IO;
+using SIL.PlatformUtilities;
+using SIL.Reporting;
+using SIL.LCModel.Utils;
+using SIL.Utils;
+using XCore;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -60,7 +54,7 @@ namespace SIL.FieldWorks.XWorks
 		/// Flag indicating whether or not this instance of MainWnd is a copy of
 		/// another Wnd (i.e. created by choosing the "Window/New Window" menu).
 		/// </summary>
-		protected bool m_fWindowIsCopy = false;
+		protected bool m_fWindowIsCopy;
 
 		/// <summary>
 		/// Configuration file pathname.
@@ -84,12 +78,10 @@ namespace SIL.FieldWorks.XWorks
 
 		static bool m_fInUndoRedo; // true while executing an Undo/Redo command.
 
-		private static LocalizationManager s_localizationMgr;
-
 		/// <summary>
 		/// The stylesheet used for all views in this window.
 		/// </summary>
-		protected FwStyleSheet m_StyleSheet;
+		protected LcmStyleSheet m_StyleSheet;
 
 		protected FwApp m_app; // protected so the test mock can get to it.
 		#endregion
@@ -100,8 +92,6 @@ namespace SIL.FieldWorks.XWorks
 		/// chance to reload stuff (calling the old OnRefresh methods), then give
 		/// windows a chance to redisplay themselves.
 		/// </summary>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "activeCache is a reference")]
 		public virtual void OnMasterRefresh(object sender)
 		{
 			CheckDisposed();
@@ -110,7 +100,7 @@ namespace SIL.FieldWorks.XWorks
 			// what the string and List variables below attempt to handle.  See LT-6444.
 			FwXWindow activeWnd = ActiveForm as FwXWindow;
 
-			FdoCache activeCache = null;
+			LcmCache activeCache = null;
 			if (activeWnd != null)
 				activeCache = activeWnd.Cache;
 
@@ -216,7 +206,7 @@ namespace SIL.FieldWorks.XWorks
 						if (rootb != null)
 						{
 							IVwStylesheet vss = rootb.Stylesheet;
-							FwStyleSheet fss = vss as FwStyleSheet;
+							LcmStyleSheet fss = vss as LcmStyleSheet;
 							if (fss != null)
 							{
 								int hvo = fss.RootObjectHvo;
@@ -308,19 +298,17 @@ namespace SIL.FieldWorks.XWorks
 		private void BasicInit(FwApp app)
 		{
 			m_delegate = new MainWindowDelegate(this);
-			m_delegate.App = app;
-			m_mediator.HelpTopicProvider = app;
-			m_mediator.FeedbackInfoProvider = app;
-			m_mediator.PropertyTable.SetProperty("App", app);
-			m_mediator.PropertyTable.SetPropertyPersistence("App", false);
-
-			string path = null;
 			if (app != null) // if configFile in FwXApp == null
 			{
-				path = FdoFileHelper.GetConfigSettingsDir(app.Cache.ProjectId.ProjectFolder);
-				Directory.CreateDirectory(path);
+			m_delegate.App = app;
+
+				m_propertyTable.SetProperty("HelpTopicProvider", app, true);
+				m_propertyTable.SetPropertyPersistence("HelpTopicProvider", false);
+				m_propertyTable.SetProperty("FeedbackInfoProvider", app, true);
+				m_propertyTable.SetPropertyPersistence("FeedbackInfoProvider", false);
+				m_propertyTable.SetProperty("App", app, true);
+				m_propertyTable.SetPropertyPersistence("App", false);
 			}
-			m_mediator.PropertyTable.UserSettingDirectory = path;
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -348,13 +336,9 @@ namespace SIL.FieldWorks.XWorks
 		/// <param name="iconStream">The icon stream.</param>
 		/// <param name="configFile">The config file.</param>
 		/// <param name="startupLink">The link to follow once the window is initialized.</param>
-		/// <param name="inAutomatedTest">if set to <c>true</c>, (well behaved) code will avoid
-		/// bringing up dialogs that we cannot respond to (like confirmation and error dialogs)
-		/// and it should cause the system to avoid saving the settings to a file (or at least
-		/// saving them in some special way so as not to mess up the user.)</param>
 		/// ------------------------------------------------------------------------------------
 		public FwXWindow(FwApp app, Form wndCopyFrom, Stream iconStream,
-			string configFile, FwLinkArgs startupLink, bool inAutomatedTest)
+			string configFile, FwLinkArgs startupLink)
 		{
 			BasicInit(app);
 			m_startupLink = startupLink;
@@ -364,16 +348,11 @@ namespace SIL.FieldWorks.XWorks
 			m_configFile = configFile;
 
 			Init(iconStream, wndCopyFrom, app.Cache);
-			if(inAutomatedTest)
-			{
-				Mediator.PropertyTable.SetProperty("DoingAutomatedTest", true);
-				Mediator.PropertyTable.SetPropertyPersistence("DoingAutomatedTest", false);
-			}
 
 			// The order of the next two lines has been changed because the loading of the UI
 			// properly depends on m_viewHelper being initialized.  Why this was not so with DNB
 			// I do not know.
-			// Here is the orginal order (along with a comment between them that seemed to imply this
+			// Here is the original order (along with a comment between them that seemed to imply this
 			// new order could be a problem, but no obvious ones have appeared in my testing.
 
 		   /*
@@ -385,7 +364,7 @@ namespace SIL.FieldWorks.XWorks
 			m_viewHelper = new ActiveViewHelper(this);
 			LoadUI(configFile);
 
-			m_viewHelper.ActiveViewChanged += new EventHandler<EventArgs>(ActiveViewChanged);
+			m_viewHelper.ActiveViewChanged += ActiveViewChanged;
 		}
 
 		/// <summary>
@@ -402,8 +381,8 @@ namespace SIL.FieldWorks.XWorks
 		protected override void RestoreProperties()
 		{
 			base.RestoreProperties();
-			m_mediator.PropertyTable.RestoreFromFile(m_mediator.PropertyTable.LocalSettingsId);
-			GlobalSettingServices.RestoreSettings(Cache.ServiceLocator, m_mediator.PropertyTable);
+			m_propertyTable.RestoreFromFile(m_propertyTable.LocalSettingsId);
+			GlobalSettingServices.RestoreSettings(Cache.ServiceLocator, m_propertyTable);
 		}
 
 		/// <summary>
@@ -412,8 +391,8 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		protected override void DiscardProperties()
 		{
-			var tempDirectory = Path.Combine(Cache.ProjectId.ProjectFolder, FdoFileHelper.ksSortSequenceTempDir);
-			Palaso.IO.DirectoryUtilities.DeleteDirectoryRobust(tempDirectory);
+			var tempDirectory = Path.Combine(Cache.ProjectId.ProjectFolder, LcmFileHelper.ksSortSequenceTempDir);
+			RobustIO.DeleteDirectoryAndContents(tempDirectory);
 		}
 
 		public void ClearInvalidatedStoredData()
@@ -468,7 +447,7 @@ namespace SIL.FieldWorks.XWorks
 				}
 			}
 
-			// NOTE: base.Dispose() may need the FdoCache which RemoveWindow() wants to delete.
+			// NOTE: base.Dispose() may need the LcmCache which RemoveWindow() wants to delete.
 			base.Dispose(disposing);
 
 			m_viewHelper = null;
@@ -478,6 +457,12 @@ namespace SIL.FieldWorks.XWorks
 		protected override void OnHandleCreated(EventArgs e)
 		{
 			base.OnHandleCreated(e);
+
+			// Set WM_CLASS on Linux (LT-19085)
+			var xapp = m_app as FwXApp;
+			if (Platform.IsLinux && xapp != null)
+				SIL.Windows.Forms.Miscellaneous.X11.SetWmClass(xapp.WindowClassName, Handle);
+
 			Logger.WriteEvent(WindowHandleInfo("Created new window"));
 		}
 
@@ -527,7 +512,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <param name="wndCopyFrom"></param>
 		/// <param name="cache"></param>
 		/// ------------------------------------------------------------------------------------
-		private void Init(Stream iconStream, Form wndCopyFrom, FdoCache cache)
+		private void Init(Stream iconStream, Form wndCopyFrom, LcmCache cache)
 		{
 			m_fWindowIsCopy = (wndCopyFrom != null);
 			InitMediatorValues(cache);
@@ -536,13 +521,16 @@ namespace SIL.FieldWorks.XWorks
 				Icon = new System.Drawing.Icon(iconStream);
 		}
 
-		protected void InitMediatorValues(FdoCache cache)
+		protected void InitMediatorValues(LcmCache cache)
 		{
-			Mediator.PropertyTable.LocalSettingsId = "local";
-			Mediator.PropertyTable.SetProperty("cache", cache);
-			Mediator.PropertyTable.SetPropertyPersistence("cache", false);
-			Mediator.PropertyTable.SetProperty("DocumentName", GetProjectName(cache));
-			Mediator.PropertyTable.SetPropertyPersistence("DocumentName", false);
+			m_propertyTable.LocalSettingsId = "local";
+			m_propertyTable.SetProperty("cache", cache, true);
+			m_propertyTable.SetPropertyPersistence("cache", false);
+			m_propertyTable.SetProperty("DocumentName", GetProjectName(cache), true);
+			m_propertyTable.SetPropertyPersistence("DocumentName", false);
+			var path = LcmFileHelper.GetConfigSettingsDir(cache.ProjectId.ProjectFolder);
+			Directory.CreateDirectory(path);
+			m_propertyTable.UserSettingDirectory = path;
 			Mediator.PathVariables["{DISTFILES}"] = FwDirectoryFinder.CodeDirectory;
 		}
 
@@ -551,7 +539,7 @@ namespace SIL.FieldWorks.XWorks
 		/// Gets the string that will go in the caption of the main window.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public string GetMainWindowCaption(FdoCache cache)
+		public string GetMainWindowCaption(LcmCache cache)
 		{
 			string sCaption = m_delegate.GetMainWindowCaption(cache);
 			return sCaption ?? Text;
@@ -565,7 +553,7 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		/// <param name="cache">The FDO cache</param>
 		/// ------------------------------------------------------------------------------------
-		public string GetProjectName(FdoCache cache)
+		public string GetProjectName(LcmCache cache)
 		{
 			return m_delegate.GetProjectName(cache);
 		}
@@ -573,34 +561,27 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// factory method for getting a progress state which is already hooked up to the correct progress panel
 		/// </summary>
+		/// <param name="propertyTable"></param>
 		/// <param name="taskLabel"></param>
 		/// <returns></returns>
-		public static ProgressState CreatePredictiveProgressState(Mediator mediator, string taskLabel)
+		public static ProgressState CreatePredictiveProgressState(PropertyTable propertyTable, string taskLabel)
 		{
-			if (mediator == null || mediator.PropertyTable == null)
-				return new NullProgressState();//not ready to be doing progress bars
-
-
-			StatusBarProgressPanel panel = mediator.PropertyTable.GetValue("ProgressBar") as StatusBarProgressPanel;
+			StatusBarProgressPanel panel = propertyTable.GetValue<StatusBarProgressPanel>("ProgressBar");
 			if (panel == null)
 				return new NullProgressState();//not ready to be doing progress bars
 
-			IApp app = (IApp)mediator.PropertyTable.GetValue("App");
+			IApp app = propertyTable.GetValue<IApp>("App");
 			PredictiveProgressState s = new PredictiveProgressState(panel, app.SettingsKey, taskLabel);
 			return s;
 		}
 		/// <summary>
 		/// factory method for getting a progress state which is already hooked up to the correct progress panel
 		/// </summary>
-		/// <param name="taskLabel"></param>
+		/// <param name="propertyTable"></param>
 		/// <returns></returns>
-		public static ProgressState CreateMilestoneProgressState(Mediator mediator)
+		public static ProgressState CreateMilestoneProgressState(PropertyTable propertyTable)
 		{
-			if (mediator == null || mediator.PropertyTable == null)
-				return new NullProgressState();//not ready to be doing progress bars
-
-
-			StatusBarProgressPanel panel = mediator.PropertyTable.GetValue("ProgressBar") as StatusBarProgressPanel;
+			StatusBarProgressPanel panel = propertyTable.GetValue<StatusBarProgressPanel>("ProgressBar");
 			if (panel == null)
 				return new NullProgressState();//not ready to be doing progress bars
 
@@ -609,15 +590,11 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// factory method for getting a simple progress state which is already hooked up to the correct progress panel
 		/// </summary>
-		/// <param name="taskLabel"></param>
+		/// <param name="propertyTable"></param>
 		/// <returns></returns>
-		public static ProgressState CreateSimpleProgressState(Mediator mediator)
+		public static ProgressState CreateSimpleProgressState(PropertyTable propertyTable)
 		{
-			if (mediator == null || mediator.PropertyTable == null)
-				return new NullProgressState();//not ready to be doing progress bars
-
-
-			StatusBarProgressPanel panel = mediator.PropertyTable.GetValue("ProgressBar") as StatusBarProgressPanel;
+			StatusBarProgressPanel panel = propertyTable.GetValue<StatusBarProgressPanel>("ProgressBar");
 			if (panel == null)
 				return new NullProgressState();//not ready to be doing progress bars
 
@@ -739,7 +716,7 @@ namespace SIL.FieldWorks.XWorks
 			if (string.IsNullOrEmpty(pathname))
 				return false;
 			pathname = MoveOrCopyFilesController.MoveCopyOrLeaveExternalFile(pathname,
-				Cache.LangProject.LinkedFilesRootDir, m_mediator.HelpTopicProvider,  Cache.ProjectId.IsLocal);
+				Cache.LangProject.LinkedFilesRootDir, m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"));
 			if (String.IsNullOrEmpty(pathname))
 				return false;
 			// JohnT: don't use m_StyleSheet, no guarantee it has been created (see LT-7034)
@@ -758,7 +735,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			CheckDisposed();
 
-			bool fAllow = Mediator.PropertyTable.GetBoolProperty("AllowInsertLinkToFile", true);
+			bool fAllow = m_propertyTable.GetBoolProperty("AllowInsertLinkToFile", true);
 
 			if (fAllow)
 			{
@@ -886,7 +863,7 @@ namespace SIL.FieldWorks.XWorks
 
 			using (UtilityDlg dlg = new UtilityDlg(m_app))
 			{
-				dlg.SetDlgInfo(m_mediator, (command as XCore.Command).Parameters[0]);
+				dlg.SetDlgInfo(m_mediator, m_propertyTable, ((Command)command).Parameters[0]);
 				dlg.ShowDialog(this);
 			}
 
@@ -931,7 +908,7 @@ namespace SIL.FieldWorks.XWorks
 			// If we can find the CharMap program, then enable the menu command
 			string sysStr = Environment.GetFolderPath(Environment.SpecialFolder.System);
 			string charmapPath = sysStr + "\\charmap.exe";
-			display.Enabled = System.IO.File.Exists(charmapPath);
+			display.Enabled = File.Exists(charmapPath);
 			return true;
 		}
 
@@ -986,18 +963,8 @@ namespace SIL.FieldWorks.XWorks
 		/// ------------------------------------------------------------------------------------
 		protected bool OnStartLogging(object args)
 		{
-			// For now, it attaches itself to various things through events, and runs until
-			// the program exits.
-			using (ScriptMaker sm = new ScriptMaker(ActiveForm))
-			{
-				LinkListener ll = (LinkListener)m_mediator.PropertyTable.GetValue("LinkListener",
-					null);
-				if (ll == null)
 					return true;
-				sm.GoTo(ll.CurrentContext.ToString());
-				return true;
 			}
-		}
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -1048,12 +1015,12 @@ namespace SIL.FieldWorks.XWorks
 			//there appears to be a problem with the DotNetBar balloon help which causes
 			//it to crash when the user hovers over something that should have a balloon but that window
 			//is behind a modeless dialog.
-			var balloonActive=m_mediator.PropertyTable.GetBoolProperty("ShowBalloonHelp", false);
-			m_mediator.PropertyTable.SetProperty("ShowBalloonHelp", false);
+			var balloonActive = m_propertyTable.GetBoolProperty("ShowBalloonHelp", false);
+			m_propertyTable.SetProperty("ShowBalloonHelp", false, true);
 
 			m_delegate.FileOpen(this);
 
-			m_mediator.PropertyTable.SetProperty("ShowBalloonHelp", balloonActive);
+			m_propertyTable.SetProperty("ShowBalloonHelp", balloonActive, true);
 
 			return true;
 		}
@@ -1081,25 +1048,6 @@ namespace SIL.FieldWorks.XWorks
 		protected bool OnHelpReportProblem(object args)
 		{
 			ErrorReporter.ReportProblem(FwRegistryHelper.FieldWorksRegistryKey, m_app.SupportEmailAddress, this);
-			return true;
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Check if any updates to FW are available
-		/// </summary>
-		/// <param name="args"></param>
-		/// <returns></returns>
-		/// ------------------------------------------------------------------------------------
-		protected bool OnHelpCheckForUpdates(object args)
-		{
-#if !__MonoCS__
-			var sparkle = SingletonsContainer.Item("Sparkle") as Sparkle;
-			if (sparkle == null)
-				MessageBox.Show("Updates do not work unless FieldWorks was installed via the installer.");
-			else
-				sparkle.CheckForUpdatesAtUserRequest();
-#endif
 			return true;
 		}
 
@@ -1149,7 +1097,7 @@ namespace SIL.FieldWorks.XWorks
 				return true;
 
 			ReapRamp ramp = new ReapRamp();
-			return ramp.ArchiveNow(this, MainMenuStrip.Font, Icon, filesToArchive, m_mediator, m_app, Cache);
+			return ramp.ArchiveNow(this, MainMenuStrip.Font, Icon, filesToArchive, m_propertyTable, m_app, Cache);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1195,7 +1143,10 @@ namespace SIL.FieldWorks.XWorks
 		/// ------------------------------------------------------------------------------------
 		public bool OnDisplayUploadToWebonary(object command, ref UIItemDisplayProperties display)
 		{
-			display.Enabled = true;
+			// Some areas have different RecordClerks which can crash when used with the
+			// the upload to webonary controller, so enable only in lexicon area for now
+			var areaChoice = m_propertyTable.GetStringProperty("areaChoice", null);
+			display.Enabled = areaChoice == "lexicon";
 			return true;
 		}
 
@@ -1209,39 +1160,38 @@ namespace SIL.FieldWorks.XWorks
 		public bool OnUploadToWebonary(object command)
 		{
 			CheckDisposed();
-			ShowUploadToWebonaryDialog(m_mediator);
+			ShowUploadToWebonaryDialog(m_mediator, PropTable);
 			return true;
 		}
 
-		internal static void ShowUploadToWebonaryDialog(Mediator mediator)
+		internal static void ShowUploadToWebonaryDialog(Mediator mediator, PropertyTable propertyTable)
 		{
-			var cache = (FdoCache)mediator.PropertyTable.GetValue("cache");
+			var cache = propertyTable.GetValue<LcmCache>("cache");
 
 			var publications = cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS.Select(p => p.Name.BestAnalysisAlternative.Text).ToList();
 
-			var projectConfigDir = DictionaryConfigurationListener.GetProjectConfigurationDirectory(mediator, DictionaryConfigurationListener.DictionaryConfigurationDirectoryName);
+			var projectConfigDir = DictionaryConfigurationListener.GetProjectConfigurationDirectory(propertyTable, DictionaryConfigurationListener.DictionaryConfigurationDirectoryName);
 			var defaultConfigDir = DictionaryConfigurationListener.GetDefaultConfigurationDirectory(DictionaryConfigurationListener.DictionaryConfigurationDirectoryName);
 			var configurations = DictionaryConfigurationController.GetDictionaryConfigurationLabels(cache, defaultConfigDir, projectConfigDir);
 			// Now collect all the reversal configurations into the reversals variable
-			projectConfigDir = DictionaryConfigurationListener.GetProjectConfigurationDirectory(mediator, DictionaryConfigurationListener.ReversalIndexConfigurationDirectoryName);
+			projectConfigDir = DictionaryConfigurationListener.GetProjectConfigurationDirectory(propertyTable, DictionaryConfigurationListener.ReversalIndexConfigurationDirectoryName);
 			defaultConfigDir = DictionaryConfigurationListener.GetDefaultConfigurationDirectory(DictionaryConfigurationListener.ReversalIndexConfigurationDirectoryName);
 			var reversals = DictionaryConfigurationController.GetDictionaryConfigurationLabels(cache, defaultConfigDir, projectConfigDir);
 
 			// show dialog
-			var model = new UploadToWebonaryModel(mediator)
+			var model = new UploadToWebonaryModel(propertyTable)
 			{
 				Reversals = reversals,
 				Configurations = configurations,
 				Publications = publications
 			};
-			using (var controller = new UploadToWebonaryController(cache, mediator))
-			using (var dialog = new UploadToWebonaryDlg(controller, model, mediator))
+			using (var controller = new UploadToWebonaryController(cache, propertyTable, mediator))
+			using (var dialog = new UploadToWebonaryDlg(controller, model, propertyTable))
 			{
 				dialog.ShowDialog();
 				mediator.SendMessage("Refresh", null);
 			}
 		}
-
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -1251,7 +1201,7 @@ namespace SIL.FieldWorks.XWorks
 		/// ------------------------------------------------------------------------------------
 		protected bool OnFileProjectProperties(object command)
 		{
-			LaunchProjPropertiesDlg(false);
+			LaunchProjPropertiesDlg();
 			return true;
 		}
 
@@ -1275,22 +1225,18 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		/// <param name="startOnWSPage">if set to <c>true</c> [start on WS page].</param>
 		/// ------------------------------------------------------------------------------------
-		private void LaunchProjPropertiesDlg(bool startOnWSPage)
+		private void LaunchProjPropertiesDlg()
 		{
-			if (!ClientServerServicesHelper.WarnOnOpeningSingleUserDialog(Cache))
-				return;
 			if (!SharedBackendServicesHelper.WarnOnOpeningSingleUserDialog(Cache))
 				return;
 
-			FdoCache cache = Cache;
+			LcmCache cache = Cache;
 			bool fDbRenamed = false;
 			string sProject = cache.ProjectId.Name;
 			string sLinkedFilesRootDir = cache.LangProject.LinkedFilesRootDir;
-			using (var dlg = new FwProjPropertiesDlg(cache, m_app, m_app, FontHeightAdjuster.StyleSheetFromMediator(Mediator)))
+			using (var dlg = new FwProjPropertiesDlg(cache, m_app, m_app))
 			{
-				dlg.ProjectPropertiesChanged += OnProjectPropertiesChanged;
-				if (startOnWSPage)
-					dlg.StartWithWSPage();
+				dlg.ProjectPropertiesChanged += OnWritingSystemListChanged;
 				if (dlg.ShowDialog(this) != DialogResult.Abort)
 				{
 					fDbRenamed = dlg.ProjectNameChanged();
@@ -1307,8 +1253,8 @@ namespace SIL.FieldWorks.XWorks
 					// destroyed and recreated.
 					if (!fDbRenamed && !fFilesMoved)
 					{
-						Mediator.PropertyTable.SetProperty("DocumentName", cache.ProjectId.UiName);
-						Mediator.PropertyTable.SetPropertyPersistence("DocumentName", false);
+						m_propertyTable.SetProperty("DocumentName", cache.ProjectId.UiName, true);
+						m_propertyTable.SetPropertyPersistence("DocumentName", false);
 					}
 				}
 			}
@@ -1316,43 +1262,51 @@ namespace SIL.FieldWorks.XWorks
 				m_app.FwManager.RenameProject(sProject, m_app);
 		}
 
-		private void OnProjectPropertiesChanged(object sender, EventArgs eventArgs)
+		private void OnWritingSystemListChanged(object sender, EventArgs eventArgs)
 		{
-			// this event is fired before the Project Properties dialog is closed, so that we have a chance
+			// this event is fired before the WritingSystemProperties dialog is closed, so that we have a chance
 			// to refresh everything before Paint events start getting fired, which can cause problems if
 			// any writing systems are removed that a rootsite is currently displaying
-			var dlg = (FwProjPropertiesDlg) sender;
-			if (dlg.WritingSystemsChanged())
+			if (m_app is FwXApp)
 			{
-				if (m_app is FwXApp)
-					((FwXApp)m_app).OnMasterRefresh(null);
+				((FwXApp)m_app).OnMasterRefresh(null);
+			}
 
-				ReversalIndexServices.CreateOrRemoveReversalIndexConfigurationFiles(m_app.Cache.ServiceLocator.WritingSystemManager,
-					m_app.Cache, FwDirectoryFinder.DefaultConfigurations, FwDirectoryFinder.ProjectsDirectory, dlg.OriginalProjectName);
-				var selectedWsObj = dlg.AnalysisWsList.SelectedItem as IWritingSystem;
-				SetReversalIndexGuid(selectedWsObj);
+			ReversalIndexServices.CreateOrRemoveReversalIndexConfigurationFiles(m_app.Cache.ServiceLocator.WritingSystemManager,
+				m_app.Cache, FwDirectoryFinder.DefaultConfigurations, FwDirectoryFinder.ProjectsDirectory, m_app.Cache.ProjectId.Name);
+		}
+
+		/// <summary>
+		/// Performs a refresh. Intended for use with an event handler in the <code>FwWritingSystemSetupModel</code>.
+		/// </summary>
+		private void OnWritingSystemUpdated(object param, EventArgs args)
+		{
+			if (m_app is FwXApp)
+			{
+				((FwXApp)m_app).OnMasterRefresh(null);
 			}
 		}
+
 
 		/// <summary>
 		/// Method which set the index to the WS property
 		/// </summary>
 		/// <param name="selectedWsObj">selected writing system</param>
-		private void SetReversalIndexGuid(IWritingSystem selectedWsObj)
+		private void SetReversalIndexGuid(CoreWritingSystemDefinition selectedWsObj)
 		{
 			if (selectedWsObj != null)
 			{
 				if (selectedWsObj.DisplayLabel.ToLower().IndexOf("audio", StringComparison.Ordinal) == -1)
 				{
 					var revGuid = ReversalIndexServices.GetOrCreateWsGuid(selectedWsObj, Cache);
-					m_mediator.PropertyTable.SetProperty("ReversalIndexGuid", revGuid.ToString());
+					m_propertyTable.SetProperty("ReversalIndexGuid", revGuid.ToString(), true);
 				}
 				else
 				{
-					m_mediator.PropertyTable.SetProperty("ReversalIndexGuid", Guid.Empty.ToString());
+					m_propertyTable.SetProperty("ReversalIndexGuid", Guid.Empty.ToString(), true);
 				}
 			}
-			m_mediator.PropertyTable.SetPropertyPersistence("ReversalIndexGuid", true);
+			m_propertyTable.SetPropertyPersistence("ReversalIndexGuid", true);
 		}
 
 		/// <summary>
@@ -1375,29 +1329,37 @@ namespace SIL.FieldWorks.XWorks
 			return oldName;
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Display the project properties dialog, but starting with the WS page.
+		/// Show the writing systems properties dialog with the Vernacular list.
 		/// </summary>
-		/// <param name="arg"></param>
 		/// ------------------------------------------------------------------------------------
-		public bool OnWritingSystemProperties(object arg)
+		public bool OnVernWritingSystemProperties(object arg)
 		{
-			CheckDisposed();
-
-			LaunchProjPropertiesDlg(true);
+			ShowWsPropsDialog(FwWritingSystemSetupModel.ListType.Vernacular);
 			return true;
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// This is very similar to OnUpdateEditCut, but for xCore applications.
+		/// Show the writing systems properties dialog with the Analysis list.
 		/// </summary>
-		/// <param name="commandObject"></param>
-		/// <param name="display"></param>
-		/// <returns>true to indicate handled.</returns>
-		/// ------------------------------------------------------------------------------------
-		public virtual bool OnDisplayWritingSystemProperties(object commandObject,
+		public bool OnAnalyWritingSystemProperties(object arg)
+		{
+			ShowWsPropsDialog(FwWritingSystemSetupModel.ListType.Analysis);
+			return true;
+		}
+
+		/// <summary/>
+		public bool OnDisplayVernWritingSystemProperties(object commandObject,
+			ref UIItemDisplayProperties display)
+		{
+			CheckDisposed();
+
+			display.Enabled = true;
+			return true;
+		}
+
+		/// <summary/>
+		public bool OnDisplayAnalyWritingSystemProperties(object commandObject,
 			ref UIItemDisplayProperties display)
 		{
 			CheckDisposed();
@@ -1424,10 +1386,9 @@ namespace SIL.FieldWorks.XWorks
 		/// Handle the File/Restore menu command
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		protected bool OnFileProjectSharingLocation(object arg)
+		protected bool OnFileProjectLocation(object arg)
 		{
-			if (m_app.Cache.ProjectId.IsLocal)
-				m_app.FwManager.FileProjectSharingLocation(m_app, this);
+			m_app.FwManager.FileProjectLocation(m_app, this);
 			return true;
 		}
 
@@ -1436,9 +1397,9 @@ namespace SIL.FieldWorks.XWorks
 		/// Updates the enabled state of the File Project Sharing Location menu item
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		protected bool OnDisplayFileProjectSharingLocation(object commandObject, ref UIItemDisplayProperties display)
+		protected bool OnDisplayFileProjectLocation(object commandObject, ref UIItemDisplayProperties display)
 		{
-			display.Enabled = m_app.Cache.ProjectId.IsLocal && FwRegistryHelper.FieldWorksRegistryKeyLocalMachine.CanWriteKey();
+			display.Enabled = FwRegistryHelper.FieldWorksRegistryKeyLocalMachine.CanWriteKey();
 			return true;
 		}
 
@@ -1520,14 +1481,28 @@ namespace SIL.FieldWorks.XWorks
 			return false;
 		}
 
+		private void ShowWsPropsDialog(FwWritingSystemSetupModel.ListType type)
+		{
+			CheckDisposed();
+
+			var model = new FwWritingSystemSetupModel(Cache.LangProject, type, Cache.ServiceLocator.WritingSystemManager, Cache);
+			model.WritingSystemListUpdated += OnWritingSystemListChanged;
+			model.WritingSystemUpdated += OnWritingSystemUpdated;
+			var view = new FwWritingSystemSetupDlg(model, m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), m_app);
+			view.ShowDialog(this);
+		}
+
 		private Control GetFocusControl()
 		{
 			Control focusControl = null;
-			object control = m_mediator.PropertyTable.GetValue("FirstControlToHandleMessages");
-			if (control != null)
-				focusControl = control as Control;
+			if (m_propertyTable.PropertyExists("FirstControlToHandleMessages"))
+			{
+				focusControl = m_propertyTable.GetValue<Control>("FirstControlToHandleMessages");
+			}
 			if (focusControl == null || focusControl.IsDisposed)
-				focusControl = XWindow.FocusedControl();
+			{
+				focusControl = FocusedControl();
+			}
 			return focusControl;
 		}
 
@@ -1692,7 +1667,7 @@ namespace SIL.FieldWorks.XWorks
 		public bool RefreshDisplay()
 		{
 			Cache.ServiceLocator.GetInstance<IUndoStackManager>().Refresh();
-			var cacheCollector = new HashSet<IRefreshCache>();
+			var cacheCollector = new HashSet<DomainDataByFlidDecoratorBase>();
 			var clerkCollector = new HashSet<RecordClerk>();
 			CollectCachesToRefresh(this, cacheCollector, clerkCollector);
 			foreach (var cache in cacheCollector)
@@ -1704,11 +1679,8 @@ namespace SIL.FieldWorks.XWorks
 				// In many cases ReconstructViews, which calls RefreshViews, will also try to Refresh the same caches.
 				// Not only is this a waste, but it may wipe out data that ReloadIfNeeded has carefully re-created.
 				// So suspend refresh for the caches we have already refreshed.
-				foreach (var cache in cacheCollector)
-				{
-					if (cache is ISuspendRefresh)
-						((ISuspendRefresh)cache).SuspendRefresh();
-				}
+				foreach (DomainDataByFlidDecoratorBase cache in cacheCollector)
+					cache.SuspendRefresh();
 				// Don't be lured into simplifying this to ReconstructViews(this). That has the loop,
 				// but also calls this method again, making a stack overflow.
 				foreach (Control c in Controls)
@@ -1716,11 +1688,8 @@ namespace SIL.FieldWorks.XWorks
 			}
 			finally
 			{
-				foreach (var cache in cacheCollector)
-				{
-					if (cache is ISuspendRefresh)
-						((ISuspendRefresh)cache).ResumeRefresh();
-				}
+				foreach (DomainDataByFlidDecoratorBase cache in cacheCollector)
+					cache.ResumeRefresh();
 			}
 			return true;
 		}
@@ -1730,24 +1699,29 @@ namespace SIL.FieldWorks.XWorks
 		/// We currently handle controls that are rootsites, and check their own SDAs as well
 		/// as any base SDAs that those SDAs wrap.
 		/// </summary>
-		private void CollectCachesToRefresh(Control c, HashSet<IRefreshCache> cacheCollector, HashSet<RecordClerk> clerkCollector)
+		private void CollectCachesToRefresh(Control c, HashSet<DomainDataByFlidDecoratorBase> cacheCollector,
+			HashSet<RecordClerk> clerkCollector)
 		{
 			var rootSite = c as IVwRootSite;
-			if (rootSite != null && rootSite.RootBox != null)
+			if (rootSite?.RootBox != null)
 			{
-				var sda = rootSite.RootBox.DataAccess;
+				ISilDataAccess sda = rootSite.RootBox.DataAccess;
 				while (sda != null)
 				{
-					if (sda is IRefreshCache)
-						cacheCollector.Add((IRefreshCache)sda);
-					if (sda is DomainDataByFlidDecoratorBase)
-						sda = ((DomainDataByFlidDecoratorBase)sda).BaseSda;
+					var cache = sda as DomainDataByFlidDecoratorBase;
+					if (cache != null)
+					{
+						cacheCollector.Add(cache);
+						sda = cache.BaseSda;
+					}
 					else
+					{
 						break;
+					}
 				}
 			}
 			var clerkView = c as XWorksViewBase;
-			if (clerkView != null && clerkView.ExistingClerk != null)
+			if (clerkView?.ExistingClerk != null)
 				clerkCollector.Add(clerkView.ExistingClerk);
 
 			foreach (Control child in c.Controls)
@@ -1811,7 +1785,7 @@ namespace SIL.FieldWorks.XWorks
 			bool canRedo = (ah.RedoableSequenceCount > 0);
 			display.Enabled = canRedo;
 			string sRedo = canRedo ? ah.GetRedoText() : xWorksStrings.Redo;
-			display.Text = (sRedo == null || sRedo == "") ? xWorksStrings.Redo : sRedo;
+			display.Text = string.IsNullOrEmpty(sRedo) ? xWorksStrings.Redo : sRedo;
 			return true;
 		}
 
@@ -1999,7 +1973,7 @@ namespace SIL.FieldWorks.XWorks
 				dlg.AllowCancel = true;
 				dlg.Maximum = 200;
 				dlg.Message = filename;
-				dlg.RunTask(true, FdoCache.ImportTranslatedLists, filename, Cache);
+				dlg.RunTask(true, LcmCache.ImportTranslatedLists, filename, Cache);
 			}
 		}
 
@@ -2042,11 +2016,11 @@ namespace SIL.FieldWorks.XWorks
 
 		public override void SaveSettings()
 		{
-			GlobalSettingServices.SaveSettings(Cache.ServiceLocator, m_mediator.PropertyTable);
+			GlobalSettingServices.SaveSettings(Cache.ServiceLocator, m_propertyTable);
 			// first save global settings, ignoring database specific ones.
-			m_mediator.PropertyTable.SaveGlobalSettings();
+			m_propertyTable.SaveGlobalSettings();
 			// now save database specific settings.
-			m_mediator.PropertyTable.SaveLocalSettings();
+			m_propertyTable.SaveLocalSettings();
 		}
 
 		/// <summary>Keyman select language message</summary>
@@ -2164,13 +2138,13 @@ namespace SIL.FieldWorks.XWorks
 		/// Gets or sets the data objects cache.
 		/// </summary>
 		/// -----------------------------------------------------------------------------------
-		public FdoCache Cache
+		public LcmCache Cache
 		{
 			get
 			{
 				CheckDisposed();
 
-				return (FdoCache)m_mediator.PropertyTable.GetValue("cache", null);
+				return m_propertyTable.GetValue<LcmCache>("cache", null);
 			}
 		}
 
@@ -2213,12 +2187,9 @@ namespace SIL.FieldWorks.XWorks
 			{
 				CheckDisposed();
 
-				object loc = m_mediator.PropertyTable.GetValue("windowLocation");
-				Debug.Assert(loc != null);
-
-				object size = m_mediator.PropertyTable.GetValue("windowSize", /*hack*/new Size(400,400));
-				Debug.Assert(size != null);
-				return new Rectangle((Point)loc, (Size)size);
+				var loc = m_propertyTable.GetValue<Point>("windowLocation");
+				var size = m_propertyTable.GetValue("windowSize", /*hack*/new Size(400, 400));
+				return new Rectangle(loc, size);
 			}
 		}
 
@@ -2271,7 +2242,7 @@ namespace SIL.FieldWorks.XWorks
 
 			/* Bad things happen, when this is done and the parser is running.
 			 * TODO: Figure out how they can co-exist.
-			if (Mediator.PropertyTable.GetBoolProperty("SyncOnIdle", false) && FwApp.App != null
+			if (PropertyTable.PropertyTable.GetBoolProperty("SyncOnIdle", false) && FwApp.App != null
 				&& FwApp.App.SyncGuid != Guid.Empty)
 			{
 				FwApp.App.SyncFromDb();
@@ -2309,10 +2280,10 @@ namespace SIL.FieldWorks.XWorks
 		/// ------------------------------------------------------------------------------------
 		private void ResyncRootboxStyles()
 		{
-			FwStyleSheet fssPrev = null;	// this is used to minimize reloads via Init().
+			LcmStyleSheet fssPrev = null;	// this is used to minimize reloads via Init().
 			foreach (IVwRootBox rootb in FindAllRootBoxes(this))
 			{
-				FwStyleSheet fss = rootb.Stylesheet as FwStyleSheet;
+				LcmStyleSheet fss = rootb.Stylesheet as LcmStyleSheet;
 				if (fss != null && fss.Cache != null)
 				{
 					Debug.Assert(fss.Cache == Cache);
@@ -2369,7 +2340,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			CheckDisposed();
 
-			return Mediator.PropertyTable.GetValue(name, null) as IRecordListUpdater;
+			return m_propertyTable.GetValue<IRecordListUpdater>(name, null);
 		}
 		#endregion // IRecordListOwner implementation
 
@@ -2453,14 +2424,14 @@ namespace SIL.FieldWorks.XWorks
 		/// Gets the stylesheet being used by the active view, if possible, otherwise,
 		/// the window's own stylesheet.
 		/// </summary>
-		public FwStyleSheet ActiveStyleSheet
+		public LcmStyleSheet ActiveStyleSheet
 		{
 			get
 			{
 				var view = ActiveView as SimpleRootSite;
-				if (view == null || (view.StyleSheet as FwStyleSheet) == null)
+				if (view == null || (view.StyleSheet as LcmStyleSheet) == null)
 					return StyleSheet;
-				return (FwStyleSheet)view.StyleSheet;
+				return (LcmStyleSheet)view.StyleSheet;
 			}
 		}
 
@@ -2470,13 +2441,13 @@ namespace SIL.FieldWorks.XWorks
 		/// LexDb stylesheet. (not yet implemented)
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public virtual FwStyleSheet StyleSheet
+		public virtual LcmStyleSheet StyleSheet
 		{
 			get
 			{
 				CheckDisposed();
 
-				FdoCache cache = Cache;
+				LcmCache cache = Cache;
 				if (m_StyleSheet == null && cache != null)
 					ResyncStylesheet();
 				return m_StyleSheet;
@@ -2496,7 +2467,7 @@ namespace SIL.FieldWorks.XWorks
 		private void ResyncStylesheet()
 		{
 			if (m_StyleSheet == null)
-				m_StyleSheet = new FwStyleSheet();
+				m_StyleSheet = new LcmStyleSheet();
 			m_StyleSheet.Init(Cache, Cache.LanguageProject.Hvo, LangProjectTags.kflidStyles);
 			if (m_rebarAdapter is IUIAdapterForceRegenerate)
 				((IUIAdapterForceRegenerate)m_rebarAdapter).ForceFullRegenerate();
@@ -2546,21 +2517,12 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
-		/// Mediator message handling Priority.
+		/// PropertyTable message handling Priority.
 		/// To fix LT-13375, this needs to have a slightly higher priority than normal.
 		/// </summary>
 		public override int Priority
 		{
 			get { return ((int)ColleaguePriority.Medium) - 1; }
 		}
-	}
-
-	/// <summary>
-	/// This interface marks a cache that can do something meaningful in the way of Refresh
-	/// (that is, it doesn't just contain raw data).
-	/// </summary>
-	internal interface IRefreshCache : IRefreshable
-	{
-		new void Refresh();
 	}
 }

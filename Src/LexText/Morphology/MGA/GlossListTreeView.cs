@@ -1,34 +1,24 @@
-// Copyright (c) 2003-2013 SIL International
+// Copyright (c) 2003-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: GLossListTreeView.cs
-// Responsibility: Andy Black
-// Last reviewed:
-//
-// <remarks>
-// </remarks>
 
 using System;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Text;
 using System.Xml;
 using System.Windows.Forms;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Core.Text;
 using SIL.Utils;
-using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.CoreImpl;
 
 namespace SIL.FieldWorks.LexText.Controls.MGA
 {
 	/// <summary>
 	/// Summary description for GlossListTreeView.
 	/// </summary>
-	public class GlossListTreeView : TreeView, IFWDisposable
+	public class GlossListTreeView : TreeView
 	{
 		public enum ImageKind
 		{
@@ -51,7 +41,7 @@ namespace SIL.FieldWorks.LexText.Controls.MGA
 		protected string m_sTermNodeXPath = "term[@ws='en']";
 		protected string m_sAbbrevNodeXPath = "abbrev[@ws='en']";
 		protected TreeNode m_lastSelectedTreeNode = null;
-		protected FdoCache m_cache;
+		protected LcmCache m_cache;
 
 		/// <summary>
 		/// Check to see if the object has been disposed.
@@ -101,7 +91,7 @@ namespace SIL.FieldWorks.LexText.Controls.MGA
 		/// <summary>
 		/// Sets FDO cache
 		/// </summary>
-		public FdoCache Cache
+		public LcmCache Cache
 		{
 			set { m_cache = value;}
 		}
@@ -252,8 +242,6 @@ namespace SIL.FieldWorks.LexText.Controls.MGA
 			m_sAbbrevNodeXPath = "abbrev[@ws='" + m_sWritingSystemAbbrev + "']";
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		private void PopulateTreeView(XmlDocument dom, XmlNode treeTop)
 		{
 			XmlNodeList nodes = dom.SelectNodes(m_sTopOfList + "/item");
@@ -270,8 +258,6 @@ namespace SIL.FieldWorks.LexText.Controls.MGA
 
 		#endregion
 		#region private methods
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="Added to ImageList and disposed there.")]
 		private void CommonInit()
 		{
 			AfterCollapse += new TreeViewEventHandler(OnAfterCollapse);
@@ -327,23 +313,8 @@ namespace SIL.FieldWorks.LexText.Controls.MGA
 		{
 			return (tn.Nodes.Count == 0);
 		}
-		void UndoLastSelectedNode()
-		{
-			if (m_lastSelectedTreeNode != null)
-			{
-				if (IsTerminalNode(m_lastSelectedTreeNode))
-				{
-					m_lastSelectedTreeNode.Checked = false;
-					if (m_fTerminalsUseCheckBoxes)
-						m_lastSelectedTreeNode.ImageIndex = m_lastSelectedTreeNode.SelectedImageIndex = (int)ImageKind.checkBox;
-					else
-						m_lastSelectedTreeNode.ImageIndex = m_lastSelectedTreeNode.SelectedImageIndex = (int)ImageKind.radio;
-				}
-			}
-		}
 		protected virtual void HandleCheckBoxNodes(TreeView tv, TreeNode tn)
 		{
-			UndoLastSelectedNode();
 			if (m_fTerminalsUseCheckBoxes)
 			{
 				if (IsTerminalNode(tn))
@@ -430,8 +401,6 @@ namespace SIL.FieldWorks.LexText.Controls.MGA
 				tn.ImageIndex = tn.SelectedImageIndex = (int)ImageKind.openFolder;
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		private void AddNode(XmlNode currentNode, TreeNode parentNode, XmlDocument dom)
 		{
 			string sStatus = XmlUtils.GetAttributeValue(currentNode, "status");
@@ -485,8 +454,6 @@ namespace SIL.FieldWorks.LexText.Controls.MGA
 			return newNode;
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		private void FleshOutProxy(XmlNode currentNode, XmlDocument dom)
 		{
 			string sTarget = XmlUtils.GetAttributeValue(currentNode, "target");

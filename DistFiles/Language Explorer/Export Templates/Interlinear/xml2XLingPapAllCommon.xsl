@@ -3,7 +3,7 @@
 	<!-- This stylesheet contains the common components for XLingPaper output  -->
 
 	<xsl:key name="ItemsLang" match="//item" use="@lang"/>
-
+	<xsl:variable name="sThisTextId" select="substring-before(/document/interlinear-text/@guid,'-')"/>
 	<xsl:template match="interlinear-text">
 		<xsl:variable name="sScriptureType">
 			<xsl:variable name="sTitle" select="item[@type='title']"/>
@@ -238,6 +238,10 @@
 						<!--<xsl:if test="@vernacular='true'">
 							<xsl:attribute name="name">vernacular</xsl:attribute>
 						</xsl:if>-->
+					</language>
+				</xsl:if>
+				<xsl:if test="key('ItemsLang',$sLangId)[parent::word and @type='punct']">
+					<language font-family="{$sFont}" id="{$sLangId}-baseline">
 					</language>
 				</xsl:if>
 				<xsl:if test="key('ItemsLang',$sLangId)[parent::word and @type='pos']">

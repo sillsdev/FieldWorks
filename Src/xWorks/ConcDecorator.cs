@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015 SIL International
+﻿// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -7,13 +7,14 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Xml;
-using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.LCModel.Core.Cellar;
+using SIL.LCModel.Core.Text;
 using SIL.FieldWorks.Common.Controls;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Application;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel;
+using SIL.LCModel.Application;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Infrastructure;
 using XCore;
 
 namespace SIL.FieldWorks.XWorks
@@ -30,14 +31,14 @@ namespace SIL.FieldWorks.XWorks
 	/// keyword), the object (typically StTxtPara) and segment they belong to, and several other derived properties which can
 	/// be displayed in optional columns of the concordance views.
 	/// </summary>
-	public class ConcDecorator : DomainDataByFlidDecoratorBase, IAnalysisOccurrenceFromHvo, ISetMediator, IRefreshCache
+	public class ConcDecorator : DomainDataByFlidDecoratorBase, IAnalysisOccurrenceFromHvo, ISetMediator
 	{
 		/// <summary>
 		/// Maps from wf hvo to array of dummy HVOs generated to represent occurrences.
 		/// </summary>
 		private Dictionary<int, int[]> m_values = new Dictionary<int, int[]>();
 		Dictionary<int, IParaFragment> m_occurrences = new Dictionary<int, IParaFragment>();
-		private IFdoServiceLocator m_services;
+		private ILcmServiceLocator m_services;
 		// This variable supports kflidConcOccurrences, the root list for the Concordance view (as opposed to the various word list views).
 		// The value is determined by the concordance control and inserted into this class.
 		private int[] m_concValues = new int[0];
@@ -46,7 +47,7 @@ namespace SIL.FieldWorks.XWorks
 		private bool m_fRefreshSuspended;
 
 		public ConcDecorator(ISilDataAccessManaged domainDataByFlid, XmlNode configurationNode,
-			IFdoServiceLocator services)
+			ILcmServiceLocator services)
 			: base(domainDataByFlid)
 		{
 			m_services = services;
@@ -436,7 +437,7 @@ namespace SIL.FieldWorks.XWorks
 
 		ITsString EmptyUserString()
 		{
-			return TsStrFactoryClass.Create().MakeString("", BaseSda.WritingSystemFactory.UserWs);
+			return TsStringUtils.EmptyString(BaseSda.WritingSystemFactory.UserWs);
 		}
 		public override ITsString get_StringProp(int hvo, int tag)
 		{
@@ -457,21 +458,21 @@ namespace SIL.FieldWorks.XWorks
 						var text = GetStText(hvo);
 						if (text != null)
 							return text.Title.get_String(ws);
-						return TsStrFactoryClass.Create().MakeString("", ws);
+						return TsStringUtils.EmptyString(ws);
 					}
 				case kflidTextSource:
 					{
 						var text = GetStText(hvo);
 						if (text != null)
 							return text.Source.get_String(ws);
-						return TsStrFactoryClass.Create().MakeString("", ws);
+						return TsStringUtils.EmptyString(ws);
 					}
 				case kflidTextComment:
 					{
 						var text = GetStText(hvo);
 						if (text != null)
 							return text.Comment.get_String(ws);
-						return TsStrFactoryClass.Create().MakeString("", ws);
+						return TsStringUtils.EmptyString(ws);
 					}
 			}
 			return base.get_MultiStringAlt(hvo, tag, ws);
@@ -531,10 +532,13 @@ namespace SIL.FieldWorks.XWorks
 
 		public Mediator Mediator { get; private set; }
 
-		public void SetMediator(Mediator mediator)
+		public PropertyTable PropTable { get; private set; }
+
+		public void SetMediator(Mediator mediator, PropertyTable propertyTable)
 		{
 			Mediator = mediator;
-			m_interestingTexts = InterestingTextsDecorator.GetInterestingTextList(mediator, m_services);
+			PropTable = propertyTable;
+			m_interestingTexts = InterestingTextsDecorator.GetInterestingTextList(mediator, PropTable, m_services);
 			m_interestingTexts.InterestingTextsChanged += m_interestingTexts_InterestingTextsChanged;
 		}
 
@@ -575,7 +579,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 	}
 
-	public class ConcMdc : FdoMetaDataCacheDecoratorBase
+	public class ConcMdc : LcmMetaDataCacheDecoratorBase
 	{
 		public ConcMdc(IFwMetaDataCacheManaged metaDataCache)
 			: base(metaDataCache)

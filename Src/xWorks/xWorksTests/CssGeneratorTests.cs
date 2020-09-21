@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2014-2016 SIL International
+// Copyright (c) 2014-2016 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -13,16 +13,16 @@ using System.Text.RegularExpressions;
 using System.Xml;
 using ExCSS;
 using NUnit.Framework;
-using Palaso.TestUtilities;
-using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.LCModel.Core.Cellar;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.TestUtilities;
 using SIL.FieldWorks.Common.Framework;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Widgets;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FDO.FDOTests;
-using SIL.Utils;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
 using XCore;
 
 // ReSharper disable InconsistentNaming - Justification: Underscores are standard for test names but nowhere else in our code
@@ -30,8 +30,8 @@ namespace SIL.FieldWorks.XWorks
 {
 	public class CssGeneratorTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
 	{
-		private Mediator m_mediator;
-		private FwStyleSheet m_styleSheet;
+		private ReadOnlyPropertyTable m_propertyTable;
+		private LcmStyleSheet m_styleSheet;
 		private MockFwXApp m_application;
 		private string m_configFilePath;
 		private MockFwXWindow m_window;
@@ -63,25 +63,25 @@ namespace SIL.FieldWorks.XWorks
 			m_configFilePath = Path.Combine(FwDirectoryFinder.CodeDirectory, m_application.DefaultConfigurationPathname);
 			m_window = new MockFwXWindow(m_application, m_configFilePath);
 			m_window.Init(Cache); // initializes Mediator values
-			m_mediator = m_window.Mediator;
+			m_propertyTable = new ReadOnlyPropertyTable(m_window.PropTable);
 			m_window.LoadUI(m_configFilePath); // actually loads UI here; needed for non-null stylesheet
 
-			m_styleSheet = FontHeightAdjuster.StyleSheetFromMediator(m_mediator);
-			m_owningTable = new StyleInfoTable("AbbySomebody", (IWritingSystemManager)Cache.WritingSystemFactory);
+			m_styleSheet = FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable);
+			m_owningTable = new StyleInfoTable("AbbySomebody", Cache.ServiceLocator.WritingSystemManager);
 		}
 
 		[TestFixtureTearDown]
 		protected void TearDown()
 		{
 			m_application.Dispose();
-			m_mediator.Dispose();
+			m_window.PropTable.Dispose();
 			FwRegistrySettings.Release();
 		}
 
 		[SetUp]
 		public void ResetAssemblyFile()
 		{
-			ConfiguredXHTMLGenerator.AssemblyFile = "FDO";
+			ConfiguredXHTMLGenerator.AssemblyFile = "SIL.LCModel";
 			if (!m_styleSheet.Styles.Contains("FooStyle"))
 			{
 				GenerateStyle("FooStyle");
@@ -90,13 +90,13 @@ namespace SIL.FieldWorks.XWorks
 
 		private ConfiguredXHTMLGenerator.GeneratorSettings DefaultSettings
 		{
-			get { return new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_mediator, false, false, null); }
+			get { return new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null); }
 		}
 
 		[Test]
 		public void GenerateCssForConfiguration_NullModelThrowsNullArgument()
 		{
-			Assert.Throws(typeof(ArgumentNullException), () => CssGenerator.GenerateCssFromConfiguration(null, m_mediator));
+			Assert.Throws(typeof(ArgumentNullException), () => CssGenerator.GenerateCssFromConfiguration(null, m_propertyTable));
 		}
 
 		[Test]
@@ -105,10 +105,10 @@ namespace SIL.FieldWorks.XWorks
 			var letHeadStyle = GenerateParagraphStyle(CssGenerator.LetterHeadingStyleName);
 			letHeadStyle.SetExplicitParaIntProp((int)FwTextPropType.ktptAlign, (int)FwTextPropVar.ktpvEnum,
 				(int)FwTextAlign.ktalCenter);
-			var mediatorStyles = FontHeightAdjuster.StyleSheetFromMediator(m_mediator);
+			var mediatorStyles = FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable);
 			var styleSheet = new StyleSheet();
 			//SUT
-			CssGenerator.GenerateLetterHeaderCss(m_mediator, mediatorStyles, styleSheet);
+			CssGenerator.GenerateLetterHeaderCss(m_propertyTable, mediatorStyles, styleSheet);
 			// verify that the css result contains boilerplate rules and the text-align center expected from the letHeadStyle test style
 			Assert.IsTrue(Regex.Match(styleSheet.ToString(), @"\.letHead\s*{\s*-moz-column-count:1;\s*-webkit-column-count:1;\s*column-count:1;\s*clear:both;\s*width:100%;.*text-align:center").Success,
 							  "GenerateLetterHeaderCss did not generate the expected css rules");
@@ -134,7 +134,7 @@ namespace SIL.FieldWorks.XWorks
 			PopulateFieldsForTesting(model);
 
 			//SUT
-			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
+			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
 			// verify that the css result contains a line similar to: .lexentry {clear:both;white-space:pre;}
 			Assert.IsTrue(Regex.Match(cssResult, @"\.lexentry\s*{\s*clear:both;\s*white-space:pre-wrap;").Success,
 							  "Css for root node(lexentry) did not generate 'clear' and 'white-space' rules match");
@@ -170,7 +170,7 @@ namespace SIL.FieldWorks.XWorks
 			PopulateFieldsForTesting(model);
 
 			//SUT
-			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
+			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
 			// verify that the css result contains a line similar to: .sharedsubentries .sharedsubentry .headword span{
 			Assert.IsTrue(Regex.Match(cssResult, @"\.sharedsubentries\s*\.sharedsubentry>\s*\.mainheadword>\s*span\s*{.*").Success,
 				"Css for child node(headword) did not generate a match{0}{1}", Environment.NewLine, cssResult);
@@ -184,7 +184,7 @@ namespace SIL.FieldWorks.XWorks
 
 			var model = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { mainEntryNode } };
 			//SUT
-			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
+			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
 			// verify that the css result contains a line similar to a { text-decoration:inherit; color:inherit; }
 			Assert.IsTrue(Regex.Match(cssResult, @"\s*a\s*{[^}]*text-decoration:inherit;").Success, "Links should inherit underlines and similar.");
 			Assert.IsTrue(Regex.Match(cssResult, @"\s*a\s*{[^}]*color:inherit;").Success, "Links should inherit color.");
@@ -198,7 +198,7 @@ namespace SIL.FieldWorks.XWorks
 
 			var model = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { mainEntryNode } };
 			//SUT
-			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
+			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
 			Assert.That(Regex.Match(cssResult, @"\*\[dir='ltr'\], \*\[dir='rtl'\]\s*{[^}]*unicode-bidi:\s*-moz-isolate;").Success, "Missing -moz-isolate rule");
 			Assert.That(Regex.Match(cssResult, @"\*\[dir='ltr'\], \*\[dir='rtl'\]\s*{[^}]*unicode-bidi:\s*-ms-isolate;").Success, "Missing -ms-isolate rule");
 			Assert.That(Regex.Match(cssResult, @"\*\[dir='ltr'\], \*\[dir='rtl'\]\s*{[^}]*unicode-bidi:\s*isolate;").Success, "Missing isolate rule");
@@ -224,7 +224,7 @@ namespace SIL.FieldWorks.XWorks
 			PopulateFieldsForTesting(mainEntryNode);
 			var model = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { mainEntryNode } };
 			//SUT
-			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
+			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
 			// Check result for before and after rules equivalent to .headword span:first-child{content:'Z';} and .headword span:last-child{content:'A'}
 			Assert.IsTrue(Regex.Match(cssResult, @"\.mainheadword>\s*span\s*:\s*first-child:before\s*{\s*content\s*:\s*'Z';\s*}").Success,
 							  "css before rule with Z content not found on headword");
@@ -253,7 +253,7 @@ namespace SIL.FieldWorks.XWorks
 			PopulateFieldsForTesting(mainEntryNode);
 			var model = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { mainEntryNode } };
 			//SUT
-			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
+			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
 			// Check result for before, between and after rules
 			Assert.IsTrue(Regex.Match(cssResult, @"\.mainheadword>\s*span\s*:\s*first-child:before\s*{\s*content\s*:\s*'\\\s*'beforeText\\'\s*';\s*}").Success,
 							  "css before rule with 'beforeText' content not found on headword");
@@ -291,7 +291,7 @@ namespace SIL.FieldWorks.XWorks
 			PopulateFieldsForTesting(mainEntryNode);
 			var model = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { mainEntryNode } };
 			//SUT
-			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
+			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
 			// Check the result for before and after rules for the group
 			Assert.IsTrue(Regex.Match(cssResult, @"\.grouping_hwg\s*:before\s*{\s*content\s*:\s*'{';\s*}").Success,
 							  "css before rule for the grouping node was not generated");
@@ -328,7 +328,7 @@ namespace SIL.FieldWorks.XWorks
 			PopulateFieldsForTesting(mainEntryNode);
 			var model = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { mainEntryNode } };
 			//SUT
-			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
+			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
 			// Check the result for before and after rules for the group
 			Assert.IsTrue(Regex.Match(cssResult, @"\.grouping_hwg\s*{\s*display\s*:\s*block;\s*}").Success,
 							  "paragraph selection did not result in block display for css");
@@ -355,7 +355,7 @@ namespace SIL.FieldWorks.XWorks
 			PopulateFieldsForTesting(mainEntryNode);
 			var model = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { mainEntryNode } };
 			//SUT
-			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
+			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
 			// Check result for between rule equivalent to lexentry> .mainheadword> span.writingsystemprefix + span:not(:last-child):after{content:' ';}
 			Assert.IsTrue(Regex.Match(cssResult, @".*\.lexentry\s*>\s*\.mainheadword>\s*span\.writingsystemprefix\s*\~\s*span\.writingsystemprefix:before{.*content:' ';.*}", RegexOptions.Singleline).Success,
 							  "Between selector not generated.");
@@ -386,7 +386,7 @@ namespace SIL.FieldWorks.XWorks
 			PopulateFieldsForTesting(mainEntryNode);
 			var model = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { mainEntryNode } };
 			//SUT
-			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
+			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
 			// Check result for before and after rules equivalent to .subentries .subentry .headword span:first-child{content:'Z';} and .headword span:last-child{content:'A'}
 			Assert.IsTrue(Regex.Match(cssResult, @"\.subentries\s*\.subentry>\s*\.headword>\s*span\s*:\s*first-child:before\s*{\s*content\s*:\s*'Z';\s*}").Success,
 							  "css before rule with Z content not found on headword");
@@ -416,7 +416,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				var model = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { mainEntryNode } };
 				//SUT
-				var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
+				var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
 				// Check result for before and after rules equivalent to .headword span:first-child{content:'Z';font-size:10pt;color:#00F;}
 				// and .headword span:last-child{content:'A';font-size:10pt;color:#00F;}
 				Assert.IsTrue(Regex.Match(cssResult,
@@ -449,7 +449,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				var model = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { mainEntryNode } };
 				//SUT
-				var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
+				var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
 				Assert.That(cssResult, Contains.Substring(".lexentry> .senses:after"));
 				Assert.That(cssResult, Is.Not.StringContaining(".lexentry> .senses .sense:after"));
 				Assert.That(cssResult, Is.Not.StringContaining(".lexentry> .senses .sense:last-child:after"));
@@ -491,7 +491,7 @@ namespace SIL.FieldWorks.XWorks
 			PopulateFieldsForTesting(mainEntryNode);
 			var model = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { mainEntryNode } };
 			//SUT
-			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
+			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
 			Assert.IsTrue(Regex.Match(cssResult, @".lexentry> .senses .sense> .definitionorgloss> span:first-child:before{.*content:'<';.*}",
 				RegexOptions.Singleline).Success, "Before not generated.");
 			Assert.IsTrue(Regex.Match(cssResult, @".lexentry> .senses .sense> .definitionorgloss> span\+span\[lang\|=\'en\']:before{.*content:',';.*}",
@@ -505,7 +505,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			GenerateStyle("Dictionary-Vernacular");
 			//SUT
-			var styleDeclaration = CssGenerator.GenerateCssStyleFromFwStyleSheet("Dictionary-Vernacular", CssGenerator.DefaultStyle, m_mediator);
+			var styleDeclaration = CssGenerator.GenerateCssStyleFromLcmStyleSheet("Dictionary-Vernacular", CssGenerator.DefaultStyle, m_propertyTable);
 			VerifyFontInfoInCss(FontColor, FontBGColor, FontName, FontBold, FontItalic, FontSize, styleDeclaration.ToString());
 		}
 
@@ -514,7 +514,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			GenerateParagraphStyle("Dictionary-Paragraph");
 			//SUT
-			var styleDeclaration = CssGenerator.GenerateCssStyleFromFwStyleSheet("Dictionary-Paragraph", CssGenerator.DefaultStyle, m_mediator);
+			var styleDeclaration = CssGenerator.GenerateCssStyleFromLcmStyleSheet("Dictionary-Paragraph", CssGenerator.DefaultStyle, m_propertyTable);
 			//border leading omitted from paragraph style definition which should result in 0pt left width
 			VerifyParagraphBorderInCss(BorderColor, 0, BorderTrailing, BorderBottom, BorderTop, styleDeclaration.ToString());
 		}
@@ -567,7 +567,7 @@ namespace SIL.FieldWorks.XWorks
 			PopulateFieldsForTesting(mainEntryNode);
 			var model = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { mainEntryNode } };
 			//SUT
-			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
+			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
 			Assert.IsTrue(Regex.Match(cssResult, @".lexentry> .senses .sense>.*.anthronote{.*font-size:12pt;.*color:#F00;.*content:'\\25A0';.*}",
 				RegexOptions.Singleline).Success, "AnthoNote content not generated.");
 			Assert.IsTrue(Regex.Match(cssResult, @".lexentry> .senses .sense>.*.anthronote>.*span.writingsystemprefix.~.span.writingsystemprefix:before",
@@ -606,7 +606,7 @@ namespace SIL.FieldWorks.XWorks
 			var model = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { entry } };
 			PopulateFieldsForTesting(model);
 			// SUT
-			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
+			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
 			const string regExPected = @".lexentry>\s.senses\s>\s.sensecontent:before.*{.*content:'@';.*font-size:14pt;.*color:Green;.*}";
 			Assert.IsTrue(Regex.Match(cssResult, regExPected, RegexOptions.Singleline).Success, "Custom bullet content not generated.");
 		}
@@ -616,7 +616,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			GenerateParagraphStyle("Dictionary-Paragraph-Padding");
 			//SUT
-			var styleDeclaration = CssGenerator.GenerateCssStyleFromFwStyleSheet("Dictionary-Paragraph-Padding", CssGenerator.DefaultStyle, null, m_mediator);
+			var styleDeclaration = CssGenerator.GenerateCssStyleFromLcmStyleSheet("Dictionary-Paragraph-Padding", CssGenerator.DefaultStyle, null, m_propertyTable);
 			// Indent values are converted into pt values on export
 			Assert.That(styleDeclaration.ToString(), Contains.Substring("margin-left:" + LeadingIndent / 1000 + "pt"));
 			Assert.That(styleDeclaration.ToString(), Contains.Substring("padding-right:" + TrailingIndent / 1000 + "pt"));
@@ -648,7 +648,7 @@ namespace SIL.FieldWorks.XWorks
 			};
 			PopulateFieldsForTesting(entry);
 			//SUT
-			var styleDeclaration = CssGenerator.GenerateCssStyleFromFwStyleSheet("ParagraphMarginAbsoluteParentOverrideChild", CssGenerator.DefaultStyle, senses, m_mediator);
+			var styleDeclaration = CssGenerator.GenerateCssStyleFromLcmStyleSheet("ParagraphMarginAbsoluteParentOverrideChild", CssGenerator.DefaultStyle, senses, m_propertyTable);
 			// Indent values are converted into pt values on export
 			// LeadingIndent is the value generated for the parent (24).
 			// In order for the child to have a correct indent (15) it must overcome the larger indent of the parent by a negative amount
@@ -680,7 +680,7 @@ namespace SIL.FieldWorks.XWorks
 			};
 			PopulateFieldsForTesting(entry);
 			//SUT
-			var styleDeclaration = CssGenerator.GenerateCssStyleFromFwStyleSheet("ParagraphMarginAbsoluteParentOverrideChild", CssGenerator.DefaultStyle, senses, m_mediator);
+			var styleDeclaration = CssGenerator.GenerateCssStyleFromLcmStyleSheet("ParagraphMarginAbsoluteParentOverrideChild", CssGenerator.DefaultStyle, senses, m_propertyTable);
 			// Indent values are converted into pt values on export
 			Assert.That(styleDeclaration.ToString(), Contains.Substring("margin-left:" + 0 + "pt"));
 			Assert.That(styleDeclaration.ToString(), Contains.Substring("padding-right:" + TrailingIndent / 1000 + "pt"));
@@ -723,11 +723,11 @@ namespace SIL.FieldWorks.XWorks
 			PopulateFieldsForTesting(entry);
 			// In order to generate the correct indentation at each level we should see 5pt margin for each style
 			//SUT
-			var gpDeclaration = CssGenerator.GenerateCssStyleFromFwStyleSheet(grandParentStyle.Name, CssGenerator.DefaultStyle, entry, m_mediator);
+			var gpDeclaration = CssGenerator.GenerateCssStyleFromLcmStyleSheet(grandParentStyle.Name, CssGenerator.DefaultStyle, entry, m_propertyTable);
 			Assert.That(gpDeclaration.ToString(), Contains.Substring("margin-left:5pt"), "Grandparent margin incorrectly generated");
-			var parentDeclaration = CssGenerator.GenerateCssStyleFromFwStyleSheet(parentStyle.Name, CssGenerator.DefaultStyle, senses, m_mediator);
+			var parentDeclaration = CssGenerator.GenerateCssStyleFromLcmStyleSheet(parentStyle.Name, CssGenerator.DefaultStyle, senses, m_propertyTable);
 			Assert.That(parentDeclaration.ToString(), Contains.Substring("margin-left:7pt"), "Parent margin incorrectly generated");
-			var childDeclaration = CssGenerator.GenerateCssStyleFromFwStyleSheet(childStyle.Name, CssGenerator.DefaultStyle, subSenses, m_mediator);
+			var childDeclaration = CssGenerator.GenerateCssStyleFromLcmStyleSheet(childStyle.Name, CssGenerator.DefaultStyle, subSenses, m_propertyTable);
 			Assert.That(childDeclaration.ToString(), Contains.Substring("margin-left:8pt"), "Child margin incorrectly generated");
 		}
 
@@ -738,7 +738,7 @@ namespace SIL.FieldWorks.XWorks
 			var testStyle = GenerateParagraphStyle("Dictionary-Paragraph-Padding-Hanging");
 			testStyle.SetExplicitParaIntProp((int)FwTextPropType.ktptFirstIndent, 0, hangingIndent);
 			//SUT
-			var styleDeclaration = CssGenerator.GenerateCssStyleFromFwStyleSheet("Dictionary-Paragraph-Padding-Hanging", CssGenerator.DefaultStyle, m_mediator);
+			var styleDeclaration = CssGenerator.GenerateCssStyleFromLcmStyleSheet("Dictionary-Paragraph-Padding-Hanging", CssGenerator.DefaultStyle, m_propertyTable);
 			// Indent values are converted into pt values on export
 			Assert.That(styleDeclaration.ToString(), Contains.Substring("margin-left:" + (LeadingIndent - hangingIndent) / 1000 + "pt"));
 			Assert.That(styleDeclaration.ToString(), Contains.Substring("text-indent:" + hangingIndent / 1000 + "pt"));
@@ -771,8 +771,8 @@ namespace SIL.FieldWorks.XWorks
 			parentStyle.SetExplicitParaIntProp((int)FwTextPropType.ktptFirstIndent, 0, parentHangingIndent);
 			childStyle.SetExplicitParaIntProp((int)FwTextPropType.ktptFirstIndent, 0, childHangingIndent);
 			//SUT
-			var parentDeclaration = CssGenerator.GenerateCssStyleFromFwStyleSheet(parentStyle.Name, CssGenerator.DefaultStyle, entry, m_mediator);
-			var childDeclaration = CssGenerator.GenerateCssStyleFromFwStyleSheet(childStyleName, CssGenerator.DefaultStyle, senses, m_mediator);
+			var parentDeclaration = CssGenerator.GenerateCssStyleFromLcmStyleSheet(parentStyle.Name, CssGenerator.DefaultStyle, entry, m_propertyTable);
+			var childDeclaration = CssGenerator.GenerateCssStyleFromLcmStyleSheet(childStyleName, CssGenerator.DefaultStyle, senses, m_propertyTable);
 			// Indent values are converted into pt values on export
 			Assert.That(parentDeclaration.ToString(), Contains.Substring("margin-left:" + (LeadingIndent - parentHangingIndent) / 1000 + "pt"));
 			Assert.That(parentDeclaration.ToString(), Contains.Substring("text-indent:" + parentHangingIndent / 1000 + "pt"));
@@ -822,7 +822,7 @@ namespace SIL.FieldWorks.XWorks
 			childStyle.SetExplicitParaIntProp((int)FwTextPropType.ktptFirstIndent, 0, childHangingIndent);
 			grandChildStyle.SetExplicitParaIntProp((int)FwTextPropType.ktptFirstIndent, 0, grandChildHangingIndent);
 
-			var grandChildDeclaration = CssGenerator.GenerateCssStyleFromFwStyleSheet(grandChildStyleName, CssGenerator.DefaultStyle, examples, m_mediator, true);
+			var grandChildDeclaration = CssGenerator.GenerateCssStyleFromLcmStyleSheet(grandChildStyleName, CssGenerator.DefaultStyle, examples, m_propertyTable, true);
 
 			Assert.AreEqual(2, grandChildDeclaration.Count);
 			// Indent values are converted into pt values on export
@@ -835,6 +835,70 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(firstSenseChildCss, Contains.Substring("text-indent:" + grandChildHangingIndent / 1000 + "pt"));
 			Assert.That(allOtherSenseChildrenCss, Contains.Substring("margin-left:" + otherSenseIndent / 1000 + "pt"));
 			Assert.That(allOtherSenseChildrenCss, Contains.Substring("text-indent:" + grandChildHangingIndent / 1000 + "pt"));
+		}
+
+		[Test]
+		public void GenerateCssForStyleName_Parallel_Passage_ReferenceRulesGenerated()
+		{
+			var grandChildStyleName = "Dictionary-Parallel-Passage-Reference-GrandBaby";
+			var childStyleName = "Dictionary-Parallel-Passage-Reference-Child";
+			var parentStyle = GenerateParagraphStyle("Dictionary-Parallel-Passage-Reference-Parent");
+			var childStyle = GenerateParagraphStyle(childStyleName);
+			var grandChildStyle = GenerateParagraphStyle(grandChildStyleName);
+			var SubSubSenseOptions = new DictionaryNodeSenseOptions { NumberingStyle = "%A", ParentSenseNumberingStyle = "%.", NumberEvenASingleSense = true };
+			var subSenseOptions = new DictionaryNodeSenseOptions { NumberingStyle = "%a", ParentSenseNumberingStyle = "%." };
+			var senseOptions = new DictionaryNodeSenseOptions { NumberingStyle = "%d" };
+			var exampleChild = new ConfigurableDictionaryNode { FieldDescription = "Example" };
+			var examples = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "ExamplesOS",
+				DictionaryNodeOptions = new DictionaryNodeListAndParaOptions { DisplayEachInAParagraph = true },
+				Style = grandChildStyleName,
+				Children = new List<ConfigurableDictionaryNode> { exampleChild }
+			};
+			var gloss = new ConfigurableDictionaryNode { FieldDescription = "Gloss" };
+			var subSubsenses = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "SensesOS",
+				CSSClassNameOverride = "senses",
+				Label = "SubSubsenses",
+				DictionaryNodeOptions = SubSubSenseOptions,
+				Children = new List<ConfigurableDictionaryNode> { gloss },
+				Style = grandChildStyleName,
+			};
+			var subSense = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "SensesOS",
+				CSSClassNameOverride = "senses",
+				Label = "Subsenses",
+				DictionaryNodeOptions = subSenseOptions,
+				Children = new List<ConfigurableDictionaryNode> { gloss, subSubsenses },
+				Style = childStyle.Name
+			};
+			var senses = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "SensesOS",
+				CSSClassNameOverride = "Senses",
+				DictionaryNodeOptions = senseOptions,
+				Children = new List<ConfigurableDictionaryNode> { gloss, subSense },
+				Style = parentStyle.Name,
+			};
+			var entry = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexEntry",
+				Children = new List<ConfigurableDictionaryNode> { senses }
+			};
+			PopulateFieldsForTesting(entry);
+			parentStyle.SetExplicitParaIntProp((int)FwTextPropType.ktptKeepWithNext, 0, 1);
+			childStyle.SetExplicitParaIntProp((int)FwTextPropType.ktptKeepTogether, 0, 1);
+			grandChildStyle.SetExplicitParaIntProp((int)FwTextPropType.ktptKeepWithNext, 0, 1);
+
+			var grandChildDeclaration = CssGenerator.GenerateCssStyleFromLcmStyleSheet(grandChildStyleName, CssGenerator.DefaultStyle, examples, m_propertyTable, true);
+			Assert.That(grandChildDeclaration[0].ToString(), Contains.Substring("page-break-inside:initial"));
+			var childDeclaration = CssGenerator.GenerateCssStyleFromLcmStyleSheet(childStyleName, CssGenerator.DefaultStyle, examples, m_propertyTable, true);
+			Assert.That(childDeclaration[0].ToString(), Contains.Substring("page-break-inside:avoid"));
+			var parentDeclaration = CssGenerator.GenerateCssStyleFromLcmStyleSheet(parentStyle.Name, CssGenerator.DefaultStyle, examples, m_propertyTable, true);
+			Assert.That(parentDeclaration[0].ToString(), Contains.Substring("page-break-inside:initial"));
 		}
 
 		[Test]
@@ -866,7 +930,7 @@ namespace SIL.FieldWorks.XWorks
 			};
 			PopulateFieldsForTesting(entry);
 			//SUT
-			var childDeclaration = CssGenerator.GenerateCssStyleFromFwStyleSheet(childStyle.Name, CssGenerator.DefaultStyle, headword, m_mediator);
+			var childDeclaration = CssGenerator.GenerateCssStyleFromLcmStyleSheet(childStyle.Name, CssGenerator.DefaultStyle, headword, m_propertyTable);
 			Assert.That(childDeclaration.ToString(), Is.Not.StringContaining("margin-left"));
 		}
 
@@ -877,7 +941,7 @@ namespace SIL.FieldWorks.XWorks
 			var testStyle = GenerateEmptyParagraphStyle("Dictionary-Paragraph-Hanging-No-Padding");
 			testStyle.SetExplicitParaIntProp((int)FwTextPropType.ktptFirstIndent, 0, hangingIndent);
 			//SUT
-			var styleDeclaration = CssGenerator.GenerateCssStyleFromFwStyleSheet("Dictionary-Paragraph-Hanging-No-Padding", CssGenerator.DefaultStyle, m_mediator);
+			var styleDeclaration = CssGenerator.GenerateCssStyleFromLcmStyleSheet("Dictionary-Paragraph-Hanging-No-Padding", CssGenerator.DefaultStyle, m_propertyTable);
 			// Indent values are converted into pt values on export
 			Assert.That(styleDeclaration.ToString(), Contains.Substring("margin-left:" + -hangingIndent / 1000 + "pt"));
 			Assert.That(styleDeclaration.ToString(), Contains.Substring("text-indent:" + hangingIndent / 1000 + "pt"));
@@ -888,7 +952,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			GenerateParagraphStyle("Dictionary-Paragraph-Justify");
 			//SUT
-			var styleDeclaration = CssGenerator.GenerateCssStyleFromFwStyleSheet("Dictionary-Paragraph-Justify", CssGenerator.DefaultStyle, m_mediator);
+			var styleDeclaration = CssGenerator.GenerateCssStyleFromLcmStyleSheet("Dictionary-Paragraph-Justify", CssGenerator.DefaultStyle, m_propertyTable);
 			Assert.That(styleDeclaration.ToString(), Contains.Substring("align:" + ParagraphAlignment.AsCssString()));
 		}
 
@@ -897,7 +961,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			GenerateParagraphStyle("Dictionary-Paragraph-RelativeLine");
 			//SUT
-			var styleDeclaration = CssGenerator.GenerateCssStyleFromFwStyleSheet("Dictionary-Paragraph-RelativeLine", CssGenerator.DefaultStyle, m_mediator);
+			var styleDeclaration = CssGenerator.GenerateCssStyleFromLcmStyleSheet("Dictionary-Paragraph-RelativeLine", CssGenerator.DefaultStyle, m_propertyTable);
 			Assert.That(styleDeclaration.ToString(), Contains.Substring("line-height:" + CssDoubleSpace + ";"));
 		}
 
@@ -907,7 +971,7 @@ namespace SIL.FieldWorks.XWorks
 			var style = GenerateParagraphStyle("Dictionary-Paragraph-Absolute");
 			style.SetExplicitParaIntProp((int)FwTextPropType.ktptLineHeight, (int)FwTextPropVar.ktpvMilliPoint, 9 * 1000);
 			//SUT
-			var styleDeclaration = CssGenerator.GenerateCssStyleFromFwStyleSheet("Dictionary-Paragraph-Absolute", CssGenerator.DefaultStyle, m_mediator);
+			var styleDeclaration = CssGenerator.GenerateCssStyleFromLcmStyleSheet("Dictionary-Paragraph-Absolute", CssGenerator.DefaultStyle, m_propertyTable);
 			Assert.That(styleDeclaration.ToString(), Contains.Substring("line-height:9pt;"));
 		}
 
@@ -918,7 +982,7 @@ namespace SIL.FieldWorks.XWorks
 			var style = GenerateParagraphStyle("Dictionary-Paragraph-LineSpacingExactly");
 			style.SetExplicitParaIntProp((int)FwTextPropType.ktptLineHeight, (int)FwTextPropVar.ktpvMilliPoint, exactly);
 			//SUT
-			var styleDeclaration = CssGenerator.GenerateCssStyleFromFwStyleSheet("Dictionary-Paragraph-LineSpacingExactly", CssGenerator.DefaultStyle, m_mediator);
+			var styleDeclaration = CssGenerator.GenerateCssStyleFromLcmStyleSheet("Dictionary-Paragraph-LineSpacingExactly", CssGenerator.DefaultStyle, m_propertyTable);
 			Assert.That(styleDeclaration.ToString(), Contains.Substring("line-height:12pt;"));
 		}
 
@@ -929,7 +993,7 @@ namespace SIL.FieldWorks.XWorks
 			var style = GenerateParagraphStyle("Dictionary-Paragraph-LineSpacingAtleast");
 			style.SetExplicitParaIntProp((int)FwTextPropType.ktptLineHeight, (int)FwTextPropVar.ktpvMilliPoint, atleast);
 			//SUT
-			var styleDeclaration = CssGenerator.GenerateCssStyleFromFwStyleSheet("Dictionary-Paragraph-LineSpacingAtleast", CssGenerator.DefaultStyle, m_mediator);
+			var styleDeclaration = CssGenerator.GenerateCssStyleFromLcmStyleSheet("Dictionary-Paragraph-LineSpacingAtleast", CssGenerator.DefaultStyle, m_propertyTable);
 			Assert.That(styleDeclaration.ToString(), Contains.Substring("flex-line-height:12pt;"));
 		}
 
@@ -950,7 +1014,7 @@ namespace SIL.FieldWorks.XWorks
 			var model = new DictionaryConfigurationModel();
 			model.Parts = new List<ConfigurableDictionaryNode> { headwordNode };
 			//SUT
-			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
+			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
 			VerifyFontInfoInCss(FontColor, FontBGColor, FontName, true, true, FontSize, cssResult);
 		}
 
@@ -975,7 +1039,7 @@ namespace SIL.FieldWorks.XWorks
 			var model = new DictionaryConfigurationModel();
 			model.Parts = new List<ConfigurableDictionaryNode> { headwordNode };
 			//SUT
-			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
+			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
 			//make sure that fontinfo with the french overrides is present
 			VerifyFontInfoInCss(FontColor, FontBGColor, "french", true, false, FontSize, cssResult);
 			//make sure that the default options are also present
@@ -1000,7 +1064,7 @@ namespace SIL.FieldWorks.XWorks
 			var model = new DictionaryConfigurationModel();
 			model.Parts = new List<ConfigurableDictionaryNode> { minorEntryNode };
 			//SUT
-			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
+			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
 			Assert.That(cssResult, Contains.Substring(".minor"));
 			VerifyFontInfoInCss(FontColor, FontBGColor, FontName, true, true, FontSize, cssResult);
 			//border leading omitted from paragraph style definition which should result in 0pt left width
@@ -1015,7 +1079,7 @@ namespace SIL.FieldWorks.XWorks
 			string defaultRoot =
 				Path.Combine(Path.Combine(FwDirectoryFinder.DefaultConfigurations, "Dictionary"), "Root" + DictionaryConfigurationModel.FileExtension);
 			var model = new DictionaryConfigurationModel(defaultRoot, Cache);
-			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
+			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
 			var parser = new Parser();
 			var styleSheet = parser.Parse(cssResult);
 			Debug.WriteLine(cssResult);
@@ -1030,7 +1094,7 @@ namespace SIL.FieldWorks.XWorks
 			childStyle.SetBasedOnStyle(parentStyle);
 			childStyle.SetExplicitParaIntProp((int)FwTextPropType.ktptBorderColor, 0, (int)ColorUtil.ConvertColorToBGR(Color.HotPink));
 			//SUT - Generate using default font info
-			var cssResult = CssGenerator.GenerateCssStyleFromFwStyleSheet("Child", CssGenerator.DefaultStyle, m_mediator);
+			var cssResult = CssGenerator.GenerateCssStyleFromLcmStyleSheet("Child", CssGenerator.DefaultStyle, m_propertyTable);
 			// The css should have the overridden border color, but report all other values as the parent style
 			//border leading omitted from paragraph style definition which should result in 0pt left width
 			VerifyParagraphBorderInCss(Color.HotPink, 0, BorderTrailing, BorderBottom, BorderTop, cssResult.ToString());
@@ -1040,7 +1104,7 @@ namespace SIL.FieldWorks.XWorks
 		public void GenerateCssForStyleName_CharStyleUnsetValuesAreNotExported()
 		{
 			GenerateEmptyStyle("EmptyChar");
-			var cssResult = CssGenerator.GenerateCssStyleFromFwStyleSheet("EmptyChar", CssGenerator.DefaultStyle, m_mediator);
+			var cssResult = CssGenerator.GenerateCssStyleFromLcmStyleSheet("EmptyChar", CssGenerator.DefaultStyle, m_propertyTable);
 			Assert.AreEqual(cssResult.ToString().Trim(), String.Empty);
 		}
 
@@ -1063,7 +1127,7 @@ namespace SIL.FieldWorks.XWorks
 					Parts = new List<ConfigurableDictionaryNode> { testNode }
 				};
 			//SUT
-			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
+			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
 			//Verify that vernacular was converted into french to match the vernholder node
 			Assert.That(cssResult, Contains.Substring(".vernholder> span[lang|=\"fr\"]"));
 		}
@@ -1087,7 +1151,7 @@ namespace SIL.FieldWorks.XWorks
 				Parts = new List<ConfigurableDictionaryNode> { testNode }
 			};
 			//SUT
-			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
+			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
 			//Verify that analysis was converted into english to match the analyholder node
 			Assert.That(cssResult, Contains.Substring(".analyholder> span[lang|=\"en\"]"));
 		}
@@ -1121,9 +1185,9 @@ namespace SIL.FieldWorks.XWorks
 			var factory = Cache.ServiceLocator.GetInstance<ILexEntryFactory>();
 			var entry = factory.Create();
 			var wsFr = Cache.WritingSystemFactory.GetWsFromStr("fr");
-			entry.CitationForm.set_String(wsFr, Cache.TsStrFactory.MakeString("homme", wsFr));
+			entry.CitationForm.set_String(wsFr, TsStringUtils.MakeString("homme", wsFr));
 			//SUT
-			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
+			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
 			Assert.That(cssResult, Is.Not.StringContaining(".lexentry"));
 			Assert.That(cssResult, Contains.Substring(".bolo"));
 
@@ -1167,9 +1231,9 @@ namespace SIL.FieldWorks.XWorks
 			var factory = Cache.ServiceLocator.GetInstance<ILexEntryFactory>();
 			var entry = factory.Create();
 			var wsFr = Cache.WritingSystemFactory.GetWsFromStr("fr");
-			entry.CitationForm.set_String(wsFr, Cache.TsStrFactory.MakeString("HeadWordTest", wsFr));
+			entry.CitationForm.set_String(wsFr, TsStringUtils.MakeString("HeadWordTest", wsFr));
 			//SUT
-			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
+			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
 			Assert.That(cssResult, Is.Not.StringContaining(".headword"));
 			Assert.That(cssResult, Contains.Substring(".tailwind"));
 
@@ -1209,9 +1273,9 @@ namespace SIL.FieldWorks.XWorks
 			var sense = Cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create();
 			entry.SensesOS.Add(sense);
 			var wsEn = Cache.WritingSystemFactory.GetWsFromStr("en");
-			sense.Gloss.set_String(wsEn, Cache.TsStrFactory.MakeString("gloss", wsEn));
+			sense.Gloss.set_String(wsEn, TsStringUtils.MakeString("gloss", wsEn));
 			//SUT
-			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
+			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
 			Assert.That(cssResult, Contains.Substring(".lexentry> .senses .sense> .gloss"));
 
 			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entry, testEntryNode, null, DefaultSettings);
@@ -1239,7 +1303,7 @@ namespace SIL.FieldWorks.XWorks
 			var model = new DictionaryConfigurationModel();
 			model.Parts = new List<ConfigurableDictionaryNode> { headwordNode };
 			//SUT
-			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
+			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
 			//make sure that fontinfo with the subscript overrides made it into css
 			VerifyExtraFontInfoInCss(0, FwSuperscriptVal.kssvSub, FwUnderlineType.kuntNone, Color.Black, cssResult);
 			Assert.IsTrue(Regex.Match(cssResult, @".*\.sil*\.fieldworks.xworks.testrootclass>\s*span\[lang|='fr']\{.*position\:relative\*top\:-0.2em.*", RegexOptions.Singleline).Success,
@@ -1266,7 +1330,7 @@ namespace SIL.FieldWorks.XWorks
 			var model = new DictionaryConfigurationModel();
 			model.Parts = new List<ConfigurableDictionaryNode> { headwordNode };
 			//SUT
-			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
+			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
 			//make sure that fontinfo with the superscript overrides made it into css
 			VerifyExtraFontInfoInCss(0, FwSuperscriptVal.kssvSuper, FwUnderlineType.kuntNone, Color.Black, cssResult);
 			Assert.IsTrue(Regex.Match(cssResult, @".*\.sil*\.fieldworks.xworks.testrootclass>\s*span\[lang|='fr']\{.*position\:relative\*top\:\0.2em.*", RegexOptions.Singleline).Success,
@@ -1294,7 +1358,7 @@ namespace SIL.FieldWorks.XWorks
 			var model = new DictionaryConfigurationModel();
 			model.Parts = new List<ConfigurableDictionaryNode> { headwordNode };
 			//SUT
-			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
+			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
 			//make sure that fontinfo with the underline overrides made it into css
 			VerifyExtraFontInfoInCss(0, FwSuperscriptVal.kssvOff, FwUnderlineType.kuntSingle, Color.HotPink, cssResult);
 		}
@@ -1320,7 +1384,7 @@ namespace SIL.FieldWorks.XWorks
 			var model = new DictionaryConfigurationModel();
 			model.Parts = new List<ConfigurableDictionaryNode> { headwordNode };
 			//SUT
-			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
+			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
 			//make sure that fontinfo with the underline overrides made it into css
 			VerifyExtraFontInfoInCss(0, FwSuperscriptVal.kssvOff, FwUnderlineType.kuntDouble, Color.Khaki, cssResult);
 		}
@@ -1346,7 +1410,7 @@ namespace SIL.FieldWorks.XWorks
 			var model = new DictionaryConfigurationModel();
 			model.Parts = new List<ConfigurableDictionaryNode> { headwordNode };
 			//SUT
-			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
+			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
 			//make sure that fontinfo with the underline overrides made it into css
 			VerifyExtraFontInfoInCss(0, FwSuperscriptVal.kssvOff, FwUnderlineType.kuntDashed, Color.Black, cssResult);
 		}
@@ -1372,7 +1436,7 @@ namespace SIL.FieldWorks.XWorks
 			var model = new DictionaryConfigurationModel();
 			model.Parts = new List<ConfigurableDictionaryNode> { headwordNode };
 			//SUT
-			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
+			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
 			//make sure that fontinfo with the underline overrides made it into css
 			VerifyExtraFontInfoInCss(0, FwSuperscriptVal.kssvOff, FwUnderlineType.kuntStrikethrough, Color.Black, cssResult);
 		}
@@ -1398,7 +1462,7 @@ namespace SIL.FieldWorks.XWorks
 			var model = new DictionaryConfigurationModel();
 			model.Parts = new List<ConfigurableDictionaryNode> { headwordNode };
 			//SUT
-			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
+			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
 			//make sure that fontinfo with the underline overrides made it into css
 			VerifyExtraFontInfoInCss(0, FwSuperscriptVal.kssvOff, FwUnderlineType.kuntDotted, Color.Black, cssResult);
 		}
@@ -1422,7 +1486,7 @@ namespace SIL.FieldWorks.XWorks
 
 			var model = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { headwordNode } };
 			//SUT
-			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
+			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
 			//make sure that fontinfo with the superscript overrides made it into css
 			VerifyExtraFontInfoInCss(0, FwSuperscriptVal.kssvOff, FwUnderlineType.kuntNone, Color.Black, cssResult);
 		}
@@ -1466,7 +1530,7 @@ namespace SIL.FieldWorks.XWorks
 			var model = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { entry } };
 			PopulateFieldsForTesting(entry);
 			//SUT
-			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
+			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
 			Assert.That(cssResult, Contains.Substring(".lexentry> .senses .sense> .morphosyntaxanalysisra> .mlpartofspeech"));
 			Assert.That(cssResult, Contains.Substring(".lexentry> .senses .sense> .morphosyntaxanalysisra> .mlinflectionclass"));
 			Assert.That(cssResult, Contains.Substring(".lexentry> .senses .sense> .morphosyntaxanalysisra> .slots .slot> .name"));
@@ -1499,7 +1563,7 @@ namespace SIL.FieldWorks.XWorks
 			var model = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { entry } };
 			PopulateFieldsForTesting(entry);
 			//SUT
-			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
+			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
 			Assert.That(cssResult, Contains.Substring(".lexentry> .variantformentrybackrefs .variantformentrybackref> .pronunciations .pronunciation> .form"));
 		}
 
@@ -1532,7 +1596,7 @@ namespace SIL.FieldWorks.XWorks
 			var model = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { entry } };
 			PopulateFieldsForTesting(entry);
 			//SUT
-			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
+			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
 			Assert.That(cssResult, Contains.Substring(".lexentry> .subentries .subentry> .complexformtypes .complexformtype> .reverseabbr> span"));
 		}
 
@@ -1571,7 +1635,7 @@ namespace SIL.FieldWorks.XWorks
 			var model = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { entry } };
 			PopulateFieldsForTesting(entry);
 			//SUT
-			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
+			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
 			VerifyRegex(cssResult, @".lexentry> .visiblecomplexformbackrefs> .complexformtypes .complexformtype> .name:before{\s*content:'<';\s*}",
 				"Before not generated:");
 			VerifyRegex(cssResult, @".lexentry> .visiblecomplexformbackrefs> .complexformtypes .complexformtype> .name> .nam\+ .nam:before{\s*content:',';\s*}",
@@ -1618,7 +1682,7 @@ namespace SIL.FieldWorks.XWorks
 			var model = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { entry } };
 			PopulateFieldsForTesting(entry);
 			//SUT
-			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
+			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
 			VerifyRegex(cssResult, @".lexentry> .visiblecomplexformbackrefs .visiblecomplexformbackref> .complexformtypes .complexformtype> .name:before{\s*content:'<';\s*}",
 				"Before not generated:");
 			VerifyRegex(cssResult, @".lexentry> .visiblecomplexformbackrefs .visiblecomplexformbackref> .complexformtypes .complexformtype> .name> .nam\+ .nam:before{\s*content:',';\s*}",
@@ -1665,7 +1729,7 @@ namespace SIL.FieldWorks.XWorks
 			var model = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { entry } };
 			PopulateFieldsForTesting(entry);
 			//SUT
-			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
+			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
 			Assert.IsTrue(Regex.Match(cssResult, @".lexentry> .variantformentrybackrefs:before{.*content:'\[';.*}",
 				RegexOptions.Singleline).Success, "Before not generated for Variant Entry.");
 			Assert.IsTrue(Regex.Match(cssResult, @".lexentry> .variantformentrybackrefs> .variantformentrybackref\+ .variantformentrybackref:before{.*content:'\; ';.*}",
@@ -1723,7 +1787,7 @@ namespace SIL.FieldWorks.XWorks
 			var model = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { entry } };
 			PopulateFieldsForTesting(entry);
 			//SUT
-			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
+			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
 			VerifyRegex(cssResult, @".lexentry> .variantformentrybackrefs_inflectional-variants:before{.*content:'\[';.*}",
 				"Before not generated for Variant Entry.");
 			VerifyRegex(cssResult, @".lexentry> .variantformentrybackrefs_inflectional-variants> .variantformentrybackref_inflectional-variants\+ .variantformentrybackref_inflectional-variants:before{.*content:'\; ';.*}",
@@ -1773,7 +1837,7 @@ namespace SIL.FieldWorks.XWorks
 			model.Parts = new List<ConfigurableDictionaryNode> { entry };
 			PopulateFieldsForTesting(entry);
 			//SUT
-			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
+			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
 			Assert.That(cssResult, Contains.Substring(".lexentry> .senses .sense> .otherreferencedcomplexforms .otherreferencedcomplexform> .headword"));
 		}
 
@@ -1804,7 +1868,7 @@ namespace SIL.FieldWorks.XWorks
 			model.Parts = new List<ConfigurableDictionaryNode> { entry };
 			PopulateFieldsForTesting(entry);
 			//SUT
-			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
+			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
 			Assert.That(cssResult, Contains.Substring(".lexentry> .complexforms .complexform> .headword"));
 			Assert.IsTrue(Regex.Match(cssResult, @"\.lexentry>\s*\.complexforms\s*\.complexform{.*display\s*:\s*block;.*}", RegexOptions.Singleline).Success);
 		}
@@ -1835,7 +1899,7 @@ namespace SIL.FieldWorks.XWorks
 			model.Parts = new List<ConfigurableDictionaryNode> { entry };
 			PopulateFieldsForTesting(entry);
 			//SUT
-			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
+			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
 			Assert.That(cssResult, Contains.Substring(".lexentry> .senses .sense> .subentries .subentry> .headword"));
 		}
 
@@ -1871,7 +1935,7 @@ namespace SIL.FieldWorks.XWorks
 			model.Parts = new List<ConfigurableDictionaryNode> { entry };
 			PopulateFieldsForTesting(entry);
 			//SUT
-			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
+			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
 			Assert.That(cssResult, Contains.Substring(".lexentry> .senses > .sensecontent > .sense> .gloss"));
 			Assert.That(cssResult, Contains.Substring(".lexentry> .senses > .sensecontent > .sense> .morphosyntaxanalysisra"));
 			Assert.IsTrue(Regex.Match(cssResult,
@@ -1912,7 +1976,7 @@ namespace SIL.FieldWorks.XWorks
 			model.Parts = new List<ConfigurableDictionaryNode> { entry };
 			PopulateFieldsForTesting(entry);
 			//SUT
-			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
+			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
 			Assert.IsTrue(Regex.Match(cssResult,
 				@"\.entry>\s*\.senses>\s*span.sensecontent\+\s*span\:before\{\s*content\:\'\*\'\;",
 				RegexOptions.Singleline).Success, "Between Material for Senses not placed correctly");
@@ -1921,7 +1985,7 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void GenerateCssForConfiguration_WritingSystemAudioWorks()
 		{
-			IWritingSystem wsEnAudio;
+			CoreWritingSystemDefinition wsEnAudio;
 			Cache.ServiceLocator.WritingSystemManager.GetOrSet("en-Zxxx-x-audio", out wsEnAudio);
 			Cache.ServiceLocator.WritingSystems.AddToCurrentVernacularWritingSystems(wsEnAudio);
 			var headwordNode = new ConfigurableDictionaryNode
@@ -1940,7 +2004,7 @@ namespace SIL.FieldWorks.XWorks
 			model.Parts = new List<ConfigurableDictionaryNode> { entry };
 			PopulateFieldsForTesting(entry);
 			// SUT
-			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
+			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
 			Assert.That(cssResult, Contains.Substring(".lexentry> .lexemeformoa> span[lang|=\"en-Zxxx-x-audio\"]{"));
 			Assert.IsTrue(Regex.Match(cssResult, @"a.en-Zxxx-x-audio{.*text-decoration:none;.*}", RegexOptions.Singleline).Success,
 							  "Audio not generated.");
@@ -1967,7 +2031,7 @@ namespace SIL.FieldWorks.XWorks
 			var model = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { entry } };
 			PopulateFieldsForTesting(model);
 			//SUT
-			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
+			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
 			Assert.That(cssResult, Contains.Substring(".lexentry> .senses > .sensecontent > .sense> .gloss"));
 			Assert.IsTrue(Regex.Match(cssResult, @"\.lexentry>\s*\.senses\s*>\s*\.sensecontent(\s*\+\s*\.sensecontent)?\s*{.*display\s*:\s*block;.*}", RegexOptions.Singleline).Success);
 			Assert.False(Regex.Match(cssResult, @"{\s*}").Success); // make sure we filter out empty rules
@@ -2000,7 +2064,7 @@ namespace SIL.FieldWorks.XWorks
 			model.Parts = new List<ConfigurableDictionaryNode> { entry };
 			PopulateFieldsForTesting(entry);
 			//SUT
-			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
+			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
 			Assert.IsTrue(Regex.Match(cssResult, @"\.lexentry>\s*\.senses\s*>\s*\.sensecontent\s*>\s*\.sense>\s*\.examples\s*\.example\s*{.*display\s*:\s*block;.*}", RegexOptions.Singleline).Success);
 		}
 
@@ -2031,7 +2095,7 @@ namespace SIL.FieldWorks.XWorks
 			model.Parts = new List<ConfigurableDictionaryNode> { entry };
 			PopulateFieldsForTesting(entry);
 			//SUT
-			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
+			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
 			Assert.IsFalse(Regex.Match(cssResult, @"\.lexentry>\s*\.senses\s*\.sense>\s*\.examples\s*\.example\s*{.*display\s*:\s*block;.*}", RegexOptions.Singleline).Success);
 		}
 
@@ -2057,7 +2121,7 @@ namespace SIL.FieldWorks.XWorks
 			var model = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { entry } };
 			PopulateFieldsForTesting(model);
 			//SUT
-			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
+			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
 			Assert.That(cssResult, Contains.Substring(".lexentry> .senses > .sensecontent > .sense> .gloss"));
 			Assert.IsTrue(Regex.Match(cssResult, @"\.lexentry>\s*\.senses\s*>\s*\.sensecontent\s*\+\s*\.sensecontent\s*{.*display\s*:\s*block;.*}", RegexOptions.Singleline).Success);
 			Assert.IsTrue(Regex.Match(cssResult, @"\.lexentry>\s*\.senses\s*>\s*\.sensecontent\s*>\s*\.sense\s*{.*font-style\s*:\s*italic;.*}", RegexOptions.Singleline).Success);
@@ -2085,7 +2149,7 @@ namespace SIL.FieldWorks.XWorks
 			var model = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { entry } };
 			PopulateFieldsForTesting(model);
 			//SUT
-			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
+			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
 			Assert.That(cssResult, Contains.Substring(".lexentry> .senses > .sensecontent > .sense> .gloss"));
 			Assert.IsTrue(Regex.Match(cssResult, @"\.lexentry>\s*\.senses\s*>\s*\.sensecontent\s*{.*display\s*:\s*block;.*}", RegexOptions.Singleline).Success);
 			Assert.IsTrue(Regex.Match(cssResult, @"\.lexentry>\s*\.senses\s*>\s*\.sensecontent\s*>\s*\.sense\s*{.*font-style\s*:\s*italic;.*}", RegexOptions.Singleline).Success);
@@ -2111,10 +2175,34 @@ namespace SIL.FieldWorks.XWorks
 			var model = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { entry } };
 			PopulateFieldsForTesting(entry);
 			// SUT
-			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
+			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
 			Assert.IsTrue(Regex.Match(cssResult, @".*\.lexentry>\s*\.senses\s*>\s*\.sensecontent\s*\.sensenumber", RegexOptions.Singleline).Success,
 							  "sense number style selector was not generated.");
 			VerifyFontInfoInCss(FontColor, FontBGColor, FontName, FontBold, FontItalic, FontSize, cssResult);
+		}
+
+		[Test]
+		public void GenerateCssForConfiguration_CharStyleFontFeaturesWorks()
+		{
+			ConfiguredXHTMLGenerator.AssemblyFile = "xWorksTests";
+			var style = GenerateStyle("underline");
+			var fontInfo = new FontInfo { m_features = { ExplicitValue = "smcps=1,Eng=2" } };
+			style.SetWsStyle(fontInfo, Cache.DefaultVernWs);
+			var headwordNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "SIL.FieldWorks.XWorks.TestRootClass",
+				Label = "Headword",
+				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new[] { "fr" }),
+				Style = "underline",
+				IsEnabled = true
+			};
+
+			var model = new DictionaryConfigurationModel();
+			model.Parts = new List<ConfigurableDictionaryNode> { headwordNode };
+			//SUT
+			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
+			//make sure that fontinfo with the underline overrides made it into css
+			VerifyFontInfoInCss(FontColor, FontBGColor, FontName, FontBold, FontItalic, FontSize, cssResult, "\"smcps\" 1,\"Eng\" 2");
 		}
 
 		[Test]
@@ -2124,8 +2212,8 @@ namespace SIL.FieldWorks.XWorks
 			var gloss = new ConfigurableDictionaryNode { FieldDescription = "Gloss", Style = "FooStyle" };
 			var senses = new ConfigurableDictionaryNode
 			{
-				FieldDescription = "ReferringSenses",
-				CSSClassNameOverride = "ReferringSenses",
+				FieldDescription = "SensesRS",
+				CSSClassNameOverride = "refdsenses",
 				DictionaryNodeOptions = new DictionaryNodeSenseOptions
 				{
 					DisplayEachSenseInAParagraph = true, NumberStyle = "Dictionary-RevSenseNum"
@@ -2141,9 +2229,9 @@ namespace SIL.FieldWorks.XWorks
 			var model = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { entry } };
 			PopulateFieldsForTesting(entry);
 			// SUT
-			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
-			Assert.That(cssResult, Contains.Substring(".reversalindexentry> .referringsenses > .sensecontent > .referringsense> .gloss"));
-			Assert.IsTrue(Regex.Match(cssResult, @"\.reversalindexentry>\s*\.referringsenses\s*>\s*\.sensecontent\s*\.sensenumber\s*{.*font-style\s*:\s*italic;.*}", RegexOptions.Singleline).Success);
+			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
+			Assert.That(cssResult, Contains.Substring(".reversalindexentry> .refdsenses > .sensecontent > .refdsense> .gloss"));
+			Assert.IsTrue(Regex.Match(cssResult, @"\.reversalindexentry>\s*\.refdsenses\s*>\s*\.sensecontent\s*\.sensenumber\s*{.*font-style\s*:\s*italic;.*}", RegexOptions.Singleline).Success);
 			Assert.False(Regex.Match(cssResult, @"{\s*}").Success); // make sure we filter out empty rules
 		}
 
@@ -2166,7 +2254,7 @@ namespace SIL.FieldWorks.XWorks
 			model.Parts = new List<ConfigurableDictionaryNode> { entry };
 			PopulateFieldsForTesting(entry);
 			// SUT
-			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
+			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
 			Assert.IsTrue(Regex.Match(cssResult, @".*\.lexentry>\s*\.senses\s*>\s*\.sensecontent\s*\.sensenumber:before{.*content:'\['.*}", RegexOptions.Singleline).Success,
 							  "Before content not applied to the sense number selector.");
 			Assert.IsTrue(Regex.Match(cssResult, @".*\.lexentry>\s*\.senses\s*>\s*\.sensecontent\s*\.sensenumber:after{.*content:'\]'.*}", RegexOptions.Singleline).Success,
@@ -2206,7 +2294,7 @@ namespace SIL.FieldWorks.XWorks
 			};
 			var senses = new ConfigurableDictionaryNode
 			{
-				FieldDescription = "ReferringSenses",
+				FieldDescription = "SensesRS",
 				Children = new List<ConfigurableDictionaryNode> { primaryentry }
 			};
 			var entry = new ConfigurableDictionaryNode
@@ -2217,8 +2305,8 @@ namespace SIL.FieldWorks.XWorks
 			var model = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { entry } };
 			PopulateFieldsForTesting(entry);
 			// SUT
-			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
-			const string thisMainSense = @"\.reversalindexentry>\s*\.referringsenses\s*\.referringsense>\s*\.entryrefswiththismainsense";
+			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
+			const string thisMainSense = @"\.reversalindexentry>\s*\.sensesrs\s*\.sensesr>\s*\.entryrefswiththismainsense";
 			VerifyRegex(cssResult, thisMainSense + @">\s*\.entrytypes:before{\s*content:'b4';\s*}"); // TODO? (Hasso) 2016.10: put on .types .type first-child
 			VerifyRegex(cssResult, thisMainSense + @">\s*\.entryrefswiththismainsens\s*\+\s*.entrytypes:before{\s*content:'twixt';\s*}",
 				"Until everything else is restructured under the yet-to-be-added Targets node, Factoring Type.Between goes between typed factions");
@@ -2249,7 +2337,7 @@ namespace SIL.FieldWorks.XWorks
 			model.Parts = new List<ConfigurableDictionaryNode> { entry };
 			PopulateFieldsForTesting(entry);
 			// SUT
-			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
+			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
 			VerifyRegex(cssResult, @".*\.lexentry>\s*\.senses>\s*\.sense\s*\+\s*\.sense:before{.*content:','.*}", "Between selector not generated.");
 		}
 
@@ -2272,7 +2360,7 @@ namespace SIL.FieldWorks.XWorks
 			model.Parts = new List<ConfigurableDictionaryNode> { entry };
 			PopulateFieldsForTesting(entry);
 			// SUT
-			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
+			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
 			Assert.IsTrue(Regex.Match(cssResult, @".*\.lexentry>\s*\.lexemeform>\s*span\.writingsystemprefix\s*\~\s*span\.writingsystemprefix:before{.*content:','.*}", RegexOptions.Singleline).Success,
 							  "Between span selector not generated.");
 		}
@@ -2305,7 +2393,7 @@ namespace SIL.FieldWorks.XWorks
 			model.Parts = new List<ConfigurableDictionaryNode> { entry };
 			PopulateFieldsForTesting(entry);
 			// SUT
-			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
+			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
 			Assert.IsTrue(Regex.Match(cssResult, @".*\.lexentry>\s*\.lexemeform>\s*span\+span\[lang\|=\'fr\'\]:before{.*content:','.*}", RegexOptions.Singleline).Success,
 							  "Between Multi-WritingSystem without Abbr selector not generated.");
 		}
@@ -2345,7 +2433,7 @@ namespace SIL.FieldWorks.XWorks
 			model.Parts = new List<ConfigurableDictionaryNode> { entry };
 			PopulateFieldsForTesting(entry);
 			// SUT
-			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
+			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
 			Assert.IsTrue(Regex.Match(cssResult, @".*\.lexentry>\s*\.lexemeform>\s*span\.writingsystemprefix\s*\~\s*span\.writingsystemprefix:before\s*{.*content:','.*}", RegexOptions.Singleline).Success,
 							  "Between Multi-WritingSystem with Abbr selector not generated for LexemeForm.");
 			Assert.IsTrue(Regex.Match(cssResult, @".*\.lexentry>\s*\.headword>\s*span\.writingsystemprefix\s*\~\s*span\.writingsystemprefix:before\s*{.*content:','.*}", RegexOptions.Singleline).Success,
@@ -2392,7 +2480,7 @@ namespace SIL.FieldWorks.XWorks
 			PopulateFieldsForTesting(entry);
 			wsOpts.Options[1].IsEnabled = false; // uncheck French ws
 			// SUT
-			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
+			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
 			Assert.IsFalse(Regex.Match(cssResult, @".*\.lexentry>\s*\.lexemeform>\s*span\.writingsystemprefix\s*\+\s*span:not\(:last-child\):after\s*{.*content:','.*}", RegexOptions.Singleline).Success,
 							  "Between Multi-WritingSystem selector should not be generated for LexemeForm (only 1 ws checked).");
 			Assert.IsFalse(Regex.Match(cssResult, @".*\.lexentry>\s*\.headword>\s*span\.writingsystemprefix\s*\+\s*span:not\(:last-child\):after\s*{.*content:','.*}", RegexOptions.Singleline).Success,
@@ -2423,7 +2511,7 @@ namespace SIL.FieldWorks.XWorks
 				model.Parts = new List<ConfigurableDictionaryNode> { entry };
 				PopulateFieldsForTesting(entry);
 				// SUT
-				var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
+				var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
 				VerifyRegex(cssResult, @".*\.lexentry>\s*\.senses>\s*\.sense\s*\+\s*\.sense:before{.*content:',';.*font-size:10pt;.*color:#00F.*}",
 					"Between selector with format not generated.");
 			}
@@ -2548,7 +2636,7 @@ namespace SIL.FieldWorks.XWorks
 				};
 
 			// SUT
-			var cssWithPictureRules = CssGenerator.GenerateCssFromConfiguration(config, m_mediator);
+			var cssWithPictureRules = CssGenerator.GenerateCssFromConfiguration(config, m_propertyTable);
 			Assert.IsTrue(Regex.Match(cssWithPictureRules, @".*\.entry.*picture.*{.*float:right.*}", RegexOptions.Singleline).Success,
 							  "picture not floated right");
 			Assert.IsTrue(Regex.Match(cssWithPictureRules, @".*\.entry.*picture.*img.*{.*max-width:1in;.*}", RegexOptions.Singleline).Success,
@@ -2611,7 +2699,7 @@ namespace SIL.FieldWorks.XWorks
 			};
 
 			// SUT
-			var cssResult = CssGenerator.GenerateCssFromConfiguration(config, m_mediator);
+			var cssResult = CssGenerator.GenerateCssFromConfiguration(config, m_propertyTable);
 
 			var senseNumberBefore = @".entry> .pictures .picture> .captionContent .sensenumbertss:before\{\s*content:'\[';";
 			Assert.IsTrue(Regex.Match(cssResult, senseNumberBefore, RegexOptions.Singleline).Success, "expected Sense Number before rule is generated");
@@ -2669,7 +2757,7 @@ namespace SIL.FieldWorks.XWorks
 			};
 
 			// SUT
-			var cssResult = CssGenerator.GenerateCssFromConfiguration(config, m_mediator);
+			var cssResult = CssGenerator.GenerateCssFromConfiguration(config, m_propertyTable);
 
 			var pictureBefore = @".entry> .pictures> div:first-child:before\{\s*content:'\[';";
 			Assert.IsTrue(Regex.Match(cssResult, pictureBefore, RegexOptions.Singleline).Success, "expected Picture before rule is generated");
@@ -2727,7 +2815,7 @@ namespace SIL.FieldWorks.XWorks
 				};
 
 			// SUT
-			var cssWithPictureRules = CssGenerator.GenerateCssFromConfiguration(config, m_mediator);
+			var cssWithPictureRules = CssGenerator.GenerateCssFromConfiguration(config, m_propertyTable);
 
 			Assert.IsTrue(Regex.Match(cssWithPictureRules, @".*\.entry.*pictures.*picture> .captionContent .caption", RegexOptions.Singleline).Success,
 				"css for image did not contain expected rule");
@@ -2766,9 +2854,9 @@ namespace SIL.FieldWorks.XWorks
 			var sense = Cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create();
 			entry.SensesOS.Add(sense);
 			var wsEn = Cache.WritingSystemFactory.GetWsFromStr("en");
-			sense.Gloss.set_String(wsEn, Cache.TsStrFactory.MakeString("gloss", wsEn));
+			sense.Gloss.set_String(wsEn, TsStringUtils.MakeString("gloss", wsEn));
 			//SUT
-			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
+			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
 			Assert.That(Regex.Replace(cssResult, @"\t|\n|\r", ""), Contains.Substring(".lexentry> .senses .sense> .gloss> span.writingsystemprefix" +
 				"{font-family:\'foofoo\',serif;font-size:10pt;font-weight:bold;font-style:italic;color:#00F;"));
 			Assert.That(Regex.Replace(cssResult, @"\t|\n|\r", ""), Contains.Substring(".lexentry> .senses .sense> .gloss> span.writingsystemprefix:after{content:' ';}"));
@@ -2813,7 +2901,7 @@ namespace SIL.FieldWorks.XWorks
 			const string englishStyle = "span[lang|=\"en\"]{font-family:'english',serif;color:#F00;}";
 			const string frenchStyle = "span[lang|=\"fr\"]{font-family:'french',serif;color:#008000;}";
 			//SUT
-			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
+			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
 			Assert.That(Regex.Replace(cssResult, @"\t|\n|\r", ""), Contains.Substring(defaultStyle + englishStyle + frenchStyle));
 		}
 
@@ -2862,7 +2950,7 @@ namespace SIL.FieldWorks.XWorks
 			const string definitionSelector = ".lexentry> .senses .sense> .definition";
 			const string englishSpecificStyle = " span[lang|=\"en\"]{color:#FF0;}";
 			//SUT
-			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
+			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
 			Assert.That(Regex.Replace(cssResult, @"\t|\n|\r", ""), Contains.Substring(englishGeneralStyle));
 			Assert.That(Regex.Replace(cssResult, @"\t|\n|\r", ""), Contains.Substring(definitionSelector + englishSpecificStyle));
 		}
@@ -2886,7 +2974,7 @@ namespace SIL.FieldWorks.XWorks
 			};
 			PopulateFieldsForTesting(testEntryNode);
 			//SUT
-			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
+			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
 			Assert.IsTrue(Regex.Match(cssResult, @"div.entry{\s*margin-left:24pt;\s*padding-right:48pt;\s*}", RegexOptions.Singleline).Success,
 							  "Generate Dictionary-Normal Paragraph Style not generated.");
 		}
@@ -2934,7 +3022,7 @@ namespace SIL.FieldWorks.XWorks
 			};
 			model.Parts.ForEach(PopulateFieldsForTesting);
 			//SUT
-			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
+			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
 			Assert.IsTrue(Regex.Match(cssResult, @"div.minorentry{\s*margin-left:24pt;\s*padding-right:48pt;\s*}", RegexOptions.Singleline).Success,
 							  "Dictionary-Minor Paragraph Style not generated.");
 			Assert.IsTrue(Regex.Match(cssResult, @"div.specialminorentry{\s*padding-right:32pt;\s*}", RegexOptions.Singleline).Success,
@@ -2972,7 +3060,7 @@ namespace SIL.FieldWorks.XWorks
 			SetStyleFontColor(secStyle, Color.Green); // set Dictionary-Secondary to Green
 
 			//SUT
-			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
+			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
 			StringAssert.DoesNotContain("color:#00F;", cssResult, "Dictionary-Minor Paragraph Style should not be generated.");
 			// The problem we are testing for occurred in the section of CssGenerator labeled:
 			// "Then generate the rules for all the writing system overrides"
@@ -3005,8 +3093,8 @@ namespace SIL.FieldWorks.XWorks
 			var model = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { entry } };
 			PopulateFieldsForTesting(model);
 			// SUT
-			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
-			const string regExPected = @".lexentry>\s.senses\s>\s.sensecontent:before.*{.*content:'\\25A0';.*font-size:14pt;.*color:Green;.*}";
+			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
+			const string regExPected = @".lexentry>\s.senses\s>\s.sensecontent:before.*{.*content:'\\25A0';.*font-size:14pt;.*color:Green;.*font-family:Arial;.*font-weight:bold;.*font-style:italic;.*background-color:Brown;.*}";
 			Assert.IsTrue(Regex.Match(cssResult, regExPected, RegexOptions.Singleline).Success, "Bulleted style not generated.");
 		}
 
@@ -3035,8 +3123,8 @@ namespace SIL.FieldWorks.XWorks
 			var model = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { entry } };
 			PopulateFieldsForTesting(model);
 			// SUT
-			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
-			const string regExPected = @".lexentry>\s.senses\s>\s.sensecontent\s.\s.sensecontent:not\(:first-child\):before.*{.*content:'\\25A0';.*font-size:14pt;.*color:Green;.*}";
+			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
+			const string regExPected = @".lexentry>\s.senses\s>\s.sensecontent\s.\s.sensecontent:not\(:first-child\):before.*{.*content:'\\25A0';.*font-size:14pt;.*color:Green;.*font-family:Arial;.*font-weight:bold;.*font-style:italic;.*background-color:Brown;.*}";
 			Assert.IsTrue(Regex.Match(cssResult, regExPected, RegexOptions.Singleline).Success, "Bulleted style not generated.");
 		}
 
@@ -3064,7 +3152,7 @@ namespace SIL.FieldWorks.XWorks
 			var model = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { entry } };
 			PopulateFieldsForTesting(model);
 			// SUT
-			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
+			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
 			const string regexExpected = @".lexentry>\s.senses{.*counter-reset:\ssensesos;.*}.*.lexentry>\s.senses\s>\s.sensecontent:before{.*counter-increment:\ssensesos;.*content:\scounter.sensesos,\sdecimal.\s'\s';.*font-size:14pt;.*color:Green;.*}";
 			Assert.IsTrue(Regex.Match(cssResult, regexExpected, RegexOptions.Singleline).Success, "Numbering style not generated for Senses.");
 		}
@@ -3094,7 +3182,7 @@ namespace SIL.FieldWorks.XWorks
 			var model = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { entryConfig } };
 			PopulateFieldsForTesting(entryConfig);
 			// SUT
-			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
+			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
 			const string regexExpected = @".lexentry>\s.subentries{.*counter-reset:[\s]subentries;.*}.*.lexentry>\s.subentries\s.subentry:before{.*counter-increment:[\s]subentries;.*content:\scounter.subentries,\supper-roman.\s'\s';.*font-size:14pt;.*color:Green;.*}";
 			Assert.IsTrue(Regex.Match(cssResult, regexExpected, RegexOptions.Singleline).Success,
 				"Numbering style not generated for Subentry.");
@@ -3134,7 +3222,7 @@ namespace SIL.FieldWorks.XWorks
 			var model = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { entry } };
 			PopulateFieldsForTesting(entry);
 			//SUT
-			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
+			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
 			const string regexExpected = @".lexentry>\s.senses\s>\s.sensecontent\s>\s.sense>\s.examplesos{.*counter-reset:[\s]examplesos;.*}.*.lexentry>\s.senses\s>\s.sensecontent\s>\s.sense>\s.examplesos\s.exampleso:before{.*counter-increment:[\s]examplesos;.*content:[\s]counter.examplesos,[\s]upper-alpha.\s'\s';.*font-size:14pt;.*color:Green;.*}";
 			Assert.IsTrue(Regex.Match(cssResult, regexExpected, RegexOptions.Singleline).Success, "Numbering style not generated for Examples.");
 		}
@@ -3153,7 +3241,7 @@ namespace SIL.FieldWorks.XWorks
 			var model = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { entry } };
 			PopulateFieldsForTesting(model);
 			// SUT
-			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
+			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
 			Assert.That(cssResult, Contains.Substring("direction:rtl"));
 			const string regExPectedForPadding = @".lexentry.*{.*text-align:justify;.*border-color:#F00;.*border-left-width:0pt;.*border-right-width:5pt;.*border-top-width:20pt;.*border-bottom-width:10pt;.*margin-right:24pt;.*line-height:2;.*padding-bottom:30pt;.*padding-top:15pt;.*padding-left:48pt;.*}";
 			Assert.IsTrue(Regex.Match(cssResult, regExPectedForPadding, RegexOptions.Singleline).Success, "Margin Right and/or Padding Left not generated.");
@@ -3172,7 +3260,7 @@ namespace SIL.FieldWorks.XWorks
 			var model = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { entry } };
 			PopulateFieldsForTesting(model);
 			// SUT
-			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
+			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
 			Assert.That(cssResult, !Contains.Substring("direction"));
 		}
 
@@ -3196,7 +3284,7 @@ namespace SIL.FieldWorks.XWorks
 			var model = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { entry } };
 			PopulateFieldsForTesting(entry);
 			// SUT
-			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
+			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
 			const string regExpected = @".lexentry>\s.senses\s>\s.sensecontent";
 			Assert.IsTrue(Regex.Match(cssResult, regExpected, RegexOptions.Singleline).Success, "Sense List style should generate a match.");
 			const string regExNotExpected = regExpected + @"(\s\+\s.sensecontent)?:not\(:first-child\):before";
@@ -3239,8 +3327,8 @@ namespace SIL.FieldWorks.XWorks
 			var model = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { entry } };
 			PopulateFieldsForTesting(entry);
 			// SUT
-			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
-			const string regExPected = @".lexentry>\s.senses\s*>\s*.sensecontent\s*>\s*.sense>\s.senses\s>\s.sensecontent:before.*{.*content:'\\25A0';.*font-size:14pt;.*color:Green;.*}";
+			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
+			const string regExPected = @".lexentry>\s.senses\s*>\s*.sensecontent\s*>\s*.sense>\s.senses\s>\s.sensecontent:before.*{.*content:'\\25A0';.*font-size:14pt;.*color:Green;.*font-family:Arial;.*font-weight:bold;.*font-style:italic;.*background-color:Brown;.*}";
 			Assert.IsTrue(Regex.Match(cssResult, regExPected, RegexOptions.Singleline).Success, "Bulleted style for SubSenses not generated.");
 		}
 
@@ -3268,7 +3356,7 @@ namespace SIL.FieldWorks.XWorks
 			var model = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { entryConfig } };
 			PopulateFieldsForTesting(entryConfig);
 			// SUT
-			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
+			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
 			var regexExpected1 = @"\.lexentry>\s\.subentries\s\.subentry{[^}]*\sfont-size:12pt;[^}]*\scolor:#F00;[^}]*\sdisplay:block;[^}]*}";
 			Assert.IsTrue(Regex.Match(cssResult, regexExpected1, RegexOptions.Singleline).Success,
 				"expected subentry rule not generated");
@@ -3325,7 +3413,7 @@ namespace SIL.FieldWorks.XWorks
 			using (new CustomFieldForTest(Cache, "Costume", Cache.MetaDataCacheAccessor.GetClassId("LexEntry"), 0, CellarPropertyType.Nil, Guid.Empty))
 			{
 				// SUT
-				var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
+				var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
 				const string regexExpected1 = @"\.lexentry>\s.mlrs\s\.mlr>\s\.configtargets\s\.configtarget>\s\.costume{[^}]*}";
 				Assert.IsTrue(Regex.Match(cssResult, regexExpected1, RegexOptions.Singleline).Success, "expected costume rule not generated");
 			}
@@ -3351,7 +3439,7 @@ namespace SIL.FieldWorks.XWorks
 			using (new CustomFieldForTest(Cache, "Costume", Cache.MetaDataCacheAccessor.GetClassId("LexEntry"), 0, CellarPropertyType.Nil, Guid.Empty))
 			{
 				// SUT
-				var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
+				var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
 				const string regexExpected1 = @"\.lexentry>\s.cf12costume{[^}]*}";
 				Assert.IsTrue(Regex.Match(cssResult, regexExpected1, RegexOptions.Singleline).Success, "Class name started with number");
 			}
@@ -3389,7 +3477,7 @@ namespace SIL.FieldWorks.XWorks
 				CellarPropertyType.ReferenceCollection, Guid.Empty))
 			{
 				// SUT
-				var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
+				var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
 				const string regexExpected1 = @"\.lexentry>\s\.custom-location \.custom-locatio{[^}]*}";
 				Assert.IsTrue(Regex.Match(cssResult, regexExpected1, RegexOptions.Singleline).Success,
 					"expected custom-location rule not generated");
@@ -3421,7 +3509,7 @@ namespace SIL.FieldWorks.XWorks
 			var model = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { entryConfig } };
 			PopulateFieldsForTesting(model);
 			// SUT
-			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
+			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
 			var regexExpected1 = @"\.lexentry>\s\.note_test-one{[^}]*}";
 			Assert.IsTrue(Regex.Match(cssResult, regexExpected1, RegexOptions.Singleline).Success,
 				"expected duplicated config node rename rule not generated");
@@ -3446,7 +3534,7 @@ namespace SIL.FieldWorks.XWorks
 			var model = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { entryConfig } };
 			PopulateFieldsForTesting(model);
 			// SUT
-			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
+			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
 			var regexExpected1 = @"\.lexentry>\s\.note_-test{[^}]*}";
 			Assert.IsTrue(Regex.Match(cssResult, regexExpected1, RegexOptions.Singleline).Success,
 				"expected duplicated config node rename rule not generated");
@@ -3471,7 +3559,7 @@ namespace SIL.FieldWorks.XWorks
 			var model = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { entryConfig } };
 			PopulateFieldsForTesting(model);
 			// SUT
-			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
+			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
 			var regexExpected1 = @"\.lexentry>\s\.note_-test-{[^}]*}";
 			Assert.IsTrue(Regex.Match(cssResult, regexExpected1, RegexOptions.Singleline).Success,
 				"expected duplicated config node rename rule not generated");
@@ -3517,7 +3605,7 @@ namespace SIL.FieldWorks.XWorks
 			var model = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { entryConfig } };
 			PopulateFieldsForTesting(entryConfig);
 			// SUT
-			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
+			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
 
 			//Following Testcase removed(no longer needed) as a fix for LT-17238 ("Between" contents should not come between spans that are all in a single string with embedded WSs)
 			//var regexItem1 = @".entry> .pronunciations .pronunciation> .form> span\+ span:before\{\s*content:' ';\s*\}";
@@ -3568,9 +3656,9 @@ namespace SIL.FieldWorks.XWorks
 			PopulateFieldsForTesting(entryConfig);
 			var model = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { entryConfig } };
 			//SUT
-			var cssPara = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
+			var cssPara = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
 			((DictionaryNodeSenseOptions)sensesConfig.DictionaryNodeOptions).DisplayEachSenseInAParagraph = false;
-			var cssInline = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
+			var cssInline = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
 
 			const string regexBefore = @"^\.lexentry> \.senses:before\{";
 			const string regexAfter = @"^\.lexentry> \.senses:after\{";
@@ -3610,7 +3698,7 @@ namespace SIL.FieldWorks.XWorks
 			var model = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { mainEntryNode } };
 			PopulateFieldsForTesting(model);
 			var vernWs = Cache.ServiceLocator.WritingSystemManager.Get(Cache.DefaultVernWs);
-			Assert.AreEqual("fr", vernWs.RFC5646); // just verifying
+			Assert.AreEqual("fr", vernWs.LanguageTag); // just verifying
 			// Set Dictionary-Sense to default to Green
 			var greenFontInfo = new FontInfo {m_fontColor = {ExplicitValue = Color.Green}};
 			var newteststyle = GenerateStyleFromFontInfo(Cache, "Dictionary-Sense", greenFontInfo);
@@ -3620,7 +3708,7 @@ namespace SIL.FieldWorks.XWorks
 			SafelyAddStyleToSheetAndTable(newteststyle.Name, newteststyle);
 
 			//SUT
-			var result = CssGenerator.GenerateCssFromConfiguration(model, m_mediator);
+			var result = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
 			// default (analysis ws) rule
 			const string regexPrimary = @"^\.lexentry> \.extendednotecontents\{\s*color:#008000;";
 			// specific (embedded vernacular ws) rule affecting any span inside .extendednotecontents (at any level)
@@ -3632,6 +3720,7 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void GenerateCssForConfiguration_ContentNormalizedComposed()
 		{
+			var icuNormalizer = CustomIcu.GetIcuNormalizer(FwNormalizationMode.knmNFD);
 			var model = new DictionaryConfigurationModel
 			{
 				Parts = new List<ConfigurableDictionaryNode>
@@ -3639,24 +3728,24 @@ namespace SIL.FieldWorks.XWorks
 					new ConfigurableDictionaryNode
 					{
 						FieldDescription = "LexEntry",
-						CSSClassNameOverride = Icu.Normalize("자ㄱㄴ시", Icu.UNormalizationMode.UNORM_NFD),
+						CSSClassNameOverride = icuNormalizer.Normalize("자ㄱㄴ시"),
 						Children = new List<ConfigurableDictionaryNode>
 						{
 							new ConfigurableDictionaryNode
 							{
 								FieldDescription = "MLHeadWord",
-								Before = Icu.Normalize("garçon", Icu.UNormalizationMode.UNORM_NFD),
-								Between = Icu.Normalize("자ㄱㄴ시", Icu.UNormalizationMode.UNORM_NFD),
-								After = Icu.Normalize("Brötchen", Icu.UNormalizationMode.UNORM_NFD)
+								Before = icuNormalizer.Normalize("garçon"),
+								Between = icuNormalizer.Normalize("자ㄱㄴ시"),
+								After = icuNormalizer.Normalize("Brötchen")
 							}
 						}
 					}
 				}
 			};
 			PopulateFieldsForTesting(model);
-			var result = CssGenerator.GenerateCssFromConfiguration(model, m_mediator); // SUT
+			var result = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable); // SUT
 			Assert.IsNotNullOrEmpty(result);
-			Assert.That(Cache.TsStrFactory.MakeString(result, 1).get_IsNormalizedForm(FwNormalizationMode.knmNFC));
+			Assert.That(TsStringUtils.MakeString(result, 1).get_IsNormalizedForm(FwNormalizationMode.knmNFC));
 		}
 
 		#region Test Helper Methods
@@ -3734,7 +3823,7 @@ namespace SIL.FieldWorks.XWorks
 			return style;
 		}
 
-		private static TestStyle GenerateStyleFromFontInfo(FdoCache cache, string name, FontInfo fontInfo, bool isParagraphStyle = false)
+		private static TestStyle GenerateStyleFromFontInfo(LcmCache cache, string name, FontInfo fontInfo, bool isParagraphStyle = false)
 		{
 			return new TestStyle(fontInfo, cache) { Name = name, IsParagraphStyle = isParagraphStyle };
 		}
@@ -3754,6 +3843,11 @@ namespace SIL.FieldWorks.XWorks
 			var fontInfo = new FontInfo();
 			fontInfo.m_fontColor.ExplicitValue = Color.Green;
 			fontInfo.m_fontSize.ExplicitValue = 14000;
+			fontInfo.m_fontName.ExplicitValue = "Arial";
+			fontInfo.m_bold.ExplicitValue = true;
+			fontInfo.m_italic.ExplicitValue = true;
+			fontInfo.m_underline.ExplicitValue = FwUnderlineType.kuntNone;
+			fontInfo.m_backColor.ExplicitValue = Color.Blue;
 			var bulletinfo = new BulletInfo
 			{
 				m_numberScheme = (VwBulNum)105,
@@ -3765,6 +3859,11 @@ namespace SIL.FieldWorks.XWorks
 			var fontInfo1 = new FontInfo();
 			fontInfo1.m_fontColor.ExplicitValue = Color.Red;
 			fontInfo1.m_fontSize.ExplicitValue = 12000;
+			fontInfo1.m_fontName.ExplicitValue = "Arial";
+			fontInfo1.m_bold.ExplicitValue = false;
+			fontInfo1.m_italic.ExplicitValue = false;
+			fontInfo1.m_underline.ExplicitValue = FwUnderlineType.kuntNone;
+			fontInfo.m_backColor.ExplicitValue = Color.Brown;
 			style.SetDefaultFontInfo(fontInfo1);
 
 			SafelyAddStyleToSheetAndTable(name, style);
@@ -3775,6 +3874,11 @@ namespace SIL.FieldWorks.XWorks
 			var fontInfo = new FontInfo();
 			fontInfo.m_fontColor.ExplicitValue = Color.Green;
 			fontInfo.m_fontSize.ExplicitValue = 14000;
+			fontInfo.m_fontName.ExplicitValue = "Arial";
+			fontInfo.m_bold.ExplicitValue = true;
+			fontInfo.m_italic.ExplicitValue = true;
+			fontInfo.m_underline.ExplicitValue = FwUnderlineType.kuntNone;
+			fontInfo.m_backColor.ExplicitValue = Color.Blue;
 			var bulletinfo = new BulletInfo
 			{
 				m_numberScheme = (VwBulNum)100,
@@ -3787,6 +3891,11 @@ namespace SIL.FieldWorks.XWorks
 			var fontInfo1 = new FontInfo();
 			fontInfo1.m_fontColor.ExplicitValue = Color.Red;
 			fontInfo1.m_fontSize.ExplicitValue = 12000;
+			fontInfo1.m_fontName.ExplicitValue = "Arial";
+			fontInfo1.m_bold.ExplicitValue = false;
+			fontInfo1.m_italic.ExplicitValue = false;
+			fontInfo1.m_underline.ExplicitValue = FwUnderlineType.kuntNone;
+			fontInfo.m_backColor.ExplicitValue = Color.Brown;
 			style.SetDefaultFontInfo(fontInfo1);
 
 			SafelyAddStyleToSheetAndTable(name, style);
@@ -3797,6 +3906,11 @@ namespace SIL.FieldWorks.XWorks
 			var fontInfo = new FontInfo();
 			fontInfo.m_fontColor.ExplicitValue = Color.Green;
 			fontInfo.m_fontSize.ExplicitValue = 14000;
+			fontInfo.m_fontName.ExplicitValue = "Arial";
+			fontInfo.m_bold.ExplicitValue = true;
+			fontInfo.m_italic.ExplicitValue = true;
+			fontInfo.m_underline.ExplicitValue = FwUnderlineType.kuntNone;
+			fontInfo.m_backColor.ExplicitValue = Color.Blue;
 			var bulletinfo = new BulletInfo
 			{
 				m_numberScheme = schemeType,
@@ -3808,6 +3922,11 @@ namespace SIL.FieldWorks.XWorks
 			var fontInfo1 = new FontInfo();
 			fontInfo1.m_fontColor.ExplicitValue = Color.Red;
 			fontInfo1.m_fontSize.ExplicitValue = 12000;
+			fontInfo1.m_fontName.ExplicitValue = "Arial";
+			fontInfo1.m_bold.ExplicitValue = false;
+			fontInfo1.m_italic.ExplicitValue = false;
+			fontInfo1.m_underline.ExplicitValue = FwUnderlineType.kuntNone;
+			fontInfo.m_backColor.ExplicitValue = Color.Brown;
 			style.SetDefaultFontInfo(fontInfo1);
 
 			SafelyAddStyleToSheetAndTable(name, style);
@@ -3908,12 +4027,27 @@ namespace SIL.FieldWorks.XWorks
 				m_tests.SafelyAddStyleToSheetAndTable(m_name, style);
 			}
 
-			/// <summary>Replace the populated style with an empty one</summary>
-			public void Dispose()
+			~TempContextStyle()
 			{
+				Dispose(false);
+			}
+
+			private void Dispose(bool disposing)
+			{
+				Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + " ******");
+
+				if (!disposing)
+					return;
 				var fontInfo = new FontInfo();
 				var style = new TestStyle(fontInfo, m_tests.Cache) { Name = m_name, IsParagraphStyle = false };
 				m_tests.SafelyAddStyleToSheetAndTable(m_name, style);
+			}
+
+			/// <summary>Replace the populated style with an empty one</summary>
+			public void Dispose()
+			{
+				Dispose(true);
+				GC.SuppressFinalize(this);
 			}
 		}
 
@@ -3922,7 +4056,7 @@ namespace SIL.FieldWorks.XWorks
 			style.SetDefaultFontInfo(new FontInfo() { m_fontColor = { ExplicitValue = color } });
 		}
 
-		private static void VerifyFontInfoInCss(Color color, Color bgcolor, string fontName, bool bold, bool italic, int size, string css)
+		private static void VerifyFontInfoInCss(Color color, Color bgcolor, string fontName, bool bold, bool italic, int size, string css, string fontFeatures = null)
 		{
 			Assert.That(css, Contains.Substring("color:" + HtmlColor.FromRgb(color.R, color.G, color.B)), "font color missing");
 			Assert.That(css, Contains.Substring("background-color:" + HtmlColor.FromRgb(bgcolor.R, bgcolor.G, bgcolor.B)), "background-color missing");
@@ -3931,6 +4065,10 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(css, Contains.Substring("font-style:" + (italic ? "italic" : "normal") + ";"), "font italic missing");
 			// Font sizes are stored as millipoint integers in the styles by FLEx and turned into pt values on export
 			Assert.That(css, Contains.Substring("font-size:" + (float)size / 1000 + "pt;"), "font size missing");
+			if (fontFeatures != null)
+			{
+				Assert.That(css, Contains.Substring("font-feature-settings:" + fontFeatures));
+			}
 		}
 
 		private static void VerifyExtraFontInfoInCss(int offset, FwSuperscriptVal superscript,
@@ -4030,9 +4168,7 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(css, Contains.Substring("border-right-width:" + trailing / 1000 + "pt"));
 		}
 
-		// ReSharper disable UnusedParameter.Local -- these parameters are very important.
 		private static void VerifyRegex(string input, string pattern, string message = null, RegexOptions options = RegexOptions.Singleline)
-		// ReSharper restore UnusedParameter.Local
 		{
 			Assert.IsTrue(Regex.Match(input, pattern, options).Success,
 				string.Format("{3}Expected{0}{1}{0}but got{0}{2}", Environment.NewLine, pattern, input,
@@ -4045,13 +4181,13 @@ namespace SIL.FieldWorks.XWorks
 
 	internal class TestStyle : BaseStyleInfo
 	{
-		public TestStyle(FontInfo defaultFontInfo, FdoCache cache)
+		public TestStyle(FontInfo defaultFontInfo, LcmCache cache)
 			: base(cache)
 		{
 			m_defaultFontInfo = defaultFontInfo;
 		}
 
-		public TestStyle(InheritableStyleProp<BulletInfo> defaultBulletFontInfo, FdoCache cache)
+		public TestStyle(InheritableStyleProp<BulletInfo> defaultBulletFontInfo, LcmCache cache)
 			: base(cache)
 		{
 			m_bulletInfo = defaultBulletFontInfo;

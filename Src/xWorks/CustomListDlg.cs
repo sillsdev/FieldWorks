@@ -1,27 +1,21 @@
-// Copyright (c) 2010-2013 SIL International
+// Copyright (c) 2010-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: CustomListDlg.cs
-// Responsibility: GordonM
-//
-// <remarks>
-// </remarks>
 
 using System;
 using System.Diagnostics;
 using System.Linq;
 using System.Windows.Forms;
-using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Widgets;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.Utils;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Infrastructure;
 using XCore;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using System.Collections.Generic;
-using SIL.CoreImpl;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel.Core.KernelInterfaces;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -30,29 +24,31 @@ namespace SIL.FieldWorks.XWorks
 	/// Dialog for adding TopicListEditor-like custom lists to a Fieldworks project.
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
-	public partial class CustomListDlg : Form, IFWDisposable
+	public partial class CustomListDlg : Form
 	{
 		protected string s_helpTopic = "khtpCustomLists";
 		private HelpProvider m_helpProvider;
 		protected readonly Mediator m_mediator;
-		private FdoCache m_cache;
+		protected readonly PropertyTable m_propertyTable;
+		private LcmCache m_cache;
 		protected bool m_finSetup;
 		protected LabeledMultiStringControl m_lmscListName;
 		protected LabeledMultiStringControl m_lmscDescription;
 		private IVwStylesheet m_stylesheet;
-		protected List<IWritingSystem> m_uiWss;
+		protected List<CoreWritingSystemDefinition> m_uiWss;
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Initializes a new instance of the <see cref="T:CustomListDlg"/> class.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public CustomListDlg(Mediator mediator)
+		public CustomListDlg(Mediator mediator, PropertyTable propertyTable)
 		{
 			m_finSetup = true;
 			InitializeComponent();
 			StartPosition = FormStartPosition.CenterParent;
 			m_mediator = mediator;
+			m_propertyTable = propertyTable;
 			m_btnOK.Enabled = false;
 
 			InitializeWSCombo();
@@ -61,9 +57,9 @@ namespace SIL.FieldWorks.XWorks
 
 		private void CustomListDlg_Load(object sender, EventArgs e)
 		{
-			if (m_mediator != null && m_mediator.HelpTopicProvider != null)
+			if (m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider") != null)
 				InitializeHelpProvider();
-			m_stylesheet = FontHeightAdjuster.StyleSheetFromMediator(m_mediator);
+			m_stylesheet = FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable);
 			InitializeMultiStringControls();
 			InitializeDialogFields();
 			m_finSetup = false;
@@ -113,18 +109,18 @@ namespace SIL.FieldWorks.XWorks
 		/// also gets the English Writing System.
 		/// </summary>
 		/// <returns></returns>
-		protected List<IWritingSystem> GetUiWritingSystemAndEnglish()
+		protected List<CoreWritingSystemDefinition> GetUiWritingSystemAndEnglish()
 		{
 			// Protected for testing
 			Debug.Assert(Cache != null, "Can't install languages without a cache!");
 			var wsMgr = Cache.ServiceLocator.WritingSystemManager;
 			var userWs = wsMgr.UserWritingSystem;
-			var result = new List<IWritingSystem> {userWs};
-			if (userWs.LanguageSubtag.Code == "en")
+			var result = new List<CoreWritingSystemDefinition> {userWs};
+			if (userWs.Language.Code == "en")
 				return result;
 
 			// If English is not the DefaultUserWs, add it to the list.
-			IWritingSystem engWs;
+			CoreWritingSystemDefinition engWs;
 			if (wsMgr.TryGet("en", out engWs))
 				result.Add(engWs);
 			return result;
@@ -244,8 +240,11 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		private void InitializeHelpProvider()
 		{
-			m_helpProvider = new HelpProvider { HelpNamespace = m_mediator.HelpTopicProvider.HelpFile };
-			m_helpProvider.SetHelpKeyword(this, m_mediator.HelpTopicProvider.GetHelpString(s_helpTopic));
+			m_helpProvider = new HelpProvider
+			{
+				HelpNamespace = m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider").HelpFile
+			};
+			m_helpProvider.SetHelpKeyword(this, m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider").GetHelpString(s_helpTopic));
 			m_helpProvider.SetHelpNavigator(this, HelpNavigator.Topic);
 			m_helpProvider.SetShowHelp(this, true);
 		}
@@ -278,7 +277,7 @@ namespace SIL.FieldWorks.XWorks
 				for (var i = 0; i < cws; i++)
 				{
 					var curWs = m_lmscListName.Ws(i);
-					var emptyStr = Cache.TsStrFactory.EmptyString(curWs).Text;
+					var emptyStr = TsStringUtils.EmptyString(curWs).Text;
 					var lmscName = m_lmscListName.Value(curWs).Text;
 					if (repo.AllInstances().Where(
 						list => list.Name.get_String(curWs).Text != emptyStr
@@ -321,14 +320,14 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// FDO cache. Use setter ONLY in tests
 		/// </summary>
-		protected FdoCache Cache
+		protected LcmCache Cache
 		{
 			get
 			{
 				if (m_mediator == null && m_cache == null)
 					return null;
 				if (m_cache == null)
-					m_cache = (FdoCache) m_mediator.PropertyTable.GetValue("cache");
+					m_cache = m_propertyTable.GetValue<LcmCache>("cache");
 				return m_cache;
 			}
 			set
@@ -341,10 +340,10 @@ namespace SIL.FieldWorks.XWorks
 		{
 			if (m_mediator == null)
 				return;
-			ShowHelp.ShowHelpTopic(m_mediator.HelpTopicProvider, s_helpTopic);
+			ShowHelp.ShowHelpTopic(m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), s_helpTopic);
 		}
 
-		#region Implementation of IFWDisposable
+		#region Implementation of IDisposable
 
 		/// <summary>
 		/// This method throws an ObjectDisposedException if IsDisposed returns true.
@@ -542,8 +541,8 @@ namespace SIL.FieldWorks.XWorks
 		/// Initializes a new instance of the <see cref="T:AddListDlg"/> class.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public AddListDlg(Mediator mediator) :
-			base(mediator)
+		public AddListDlg(Mediator mediator, PropertyTable propertyTable) :
+			base(mediator, propertyTable)
 		{
 			s_helpTopic = "khtpNewCustomList";
 		}
@@ -651,8 +650,8 @@ namespace SIL.FieldWorks.XWorks
 		/// Initializes a new instance of the <see cref="T:ConfigureListDlg"/> class.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public ConfigureListDlg(Mediator mediator, ICmPossibilityList possList) :
-			base(mediator)
+		public ConfigureListDlg(Mediator mediator, PropertyTable propertyTable, ICmPossibilityList possList) :
+			base(mediator, propertyTable)
 		{
 			m_curList = possList;
 			m_fchangesMade = false;
@@ -806,7 +805,7 @@ namespace SIL.FieldWorks.XWorks
 				for (var i = 0; i < cws; i++)
 				{
 					var curWs = m_lmscListName.Ws(i);
-					var emptyStr = Cache.TsStrFactory.EmptyString(curWs).Text;
+					var emptyStr = TsStringUtils.EmptyString(curWs).Text;
 					var lmscName = m_lmscListName.Value(curWs).Text;
 					if (repo.AllInstances().Where(
 						list => list != m_curList
@@ -836,9 +835,6 @@ namespace SIL.FieldWorks.XWorks
 			for (var i = 0; i < cws; i++)
 			{
 				var curWs = msControl.Ws(i);
-				//if (oldStrings.get_String(curWs).Text != Cache.TsStrFactory.EmptyString(curWs).Text
-				//    && oldStrings.get_String(curWs).Text != msControl.Value(curWs).Text)
-				//    return true;
 				if (oldStrings.get_String(curWs).Text != msControl.Value(curWs).Text)
 					return true;
 			}

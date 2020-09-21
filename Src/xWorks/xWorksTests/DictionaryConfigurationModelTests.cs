@@ -4,20 +4,19 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Xml;
 using System.Xml.Linq;
 using System.Xml.Schema;
 using NUnit.Framework;
-using Palaso.IO;
-using Palaso.TestUtilities;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.LCModel.Core.Text;
+using SIL.IO;
+using SIL.TestUtilities;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.FDOTests;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel;
+using SIL.LCModel.Infrastructure;
 
 // ReSharper disable InconsistentNaming
 
@@ -301,7 +300,7 @@ namespace SIL.FieldWorks.XWorks
 						Cache.ServiceLocator.GetInstance<ICmPossibilityListFactory>().Create();
 				result = Cache.ServiceLocator.GetInstance<ICmPossibilityFactory>().Create();
 				Cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS.Add(result);
-				result.Name.AnalysisDefaultWritingSystem = Cache.TsStrFactory.MakeString(publicationName,
+				result.Name.AnalysisDefaultWritingSystem = TsStringUtils.MakeString(publicationName,
 					Cache.DefaultAnalWs);
 			});
 			return result;
@@ -940,8 +939,6 @@ namespace SIL.FieldWorks.XWorks
 			StringAssert.Contains(Environment.NewLine, File.ReadAllText(modelFile), "Configuration XML should not all be on one line");
 		}
 
-		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
-							  Justification = "Certain types can't be validated. e.g. xs:byte, otherwise implemented enough for us")]
 		private static void ValidateAgainstSchema(string xmlFile)
 		{
 			var schemaLocation = Path.Combine(Path.Combine(FwDirectoryFinder.FlexFolder, "Configuration"), "DictionaryConfiguration.xsd");

@@ -1,13 +1,6 @@
-// Copyright (c) 2003-2013 SIL International
+// Copyright (c) 2003-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: HtmlViewer2.cs
-// Responsibility:
-// Last reviewed:
-//
-// <remarks>
-// </remarks>
 
 using System;
 using System.Collections.Generic;
@@ -17,6 +10,7 @@ using System.IO;
 using System.Reflection;
 using System.Windows.Forms;
 using System.Xml;
+using SIL.LCModel.Utils;
 using SIL.Utils;
 
 namespace XCore
@@ -40,6 +34,10 @@ namespace XCore
 		/// Mediator that passes off messages.
 		/// </summary>
 		protected Mediator m_mediator;
+		/// <summary>
+		/// Property table that stores all manner of objects.
+		/// </summary>
+		protected PropertyTable m_propertyTable;
 		/// <summary>
 		/// Required designer variable.
 		/// </summary>
@@ -99,15 +97,17 @@ namespace XCore
 		/// Initialize.
 		/// </summary>
 		/// <param name="mediator"></param>
+		/// <param name="propertyTable"></param>
 		/// <param name="configurationParameters"></param>
-		public virtual void Init(Mediator mediator, XmlNode configurationParameters)
+		public virtual void Init(Mediator mediator, PropertyTable propertyTable, XmlNode configurationParameters)
 		{
 			CheckDisposed();
 
 			m_mediator = mediator;
+			m_propertyTable = propertyTable;
 			m_configurationParameters = configurationParameters;
 			mediator.AddColleague(this);
-			string urlAttr = XmlUtils.GetManditoryAttributeValue(m_configurationParameters, "URL");
+			string urlAttr = XmlUtils.GetMandatoryAttributeValue(m_configurationParameters, "URL");
 			var uri = new Uri(GetInstallSubDirectory(urlAttr));
 			m_htmlControl.URL = uri.AbsoluteUri;
 

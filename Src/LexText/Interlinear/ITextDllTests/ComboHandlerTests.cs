@@ -4,10 +4,10 @@
 
 using NUnit.Framework;
 using Rhino.Mocks;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.Widgets;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.FDOTests;
+using SIL.LCModel;
+using XCore;
 
 namespace SIL.FieldWorks.IText
 {
@@ -17,6 +17,47 @@ namespace SIL.FieldWorks.IText
 	[TestFixture]
 	public class ComboHandlerTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
 	{
+		private Mediator m_mediator;
+		private PropertyTable m_propertyTable;
+
+		#region Overrides of MemoryOnlyBackendProviderRestoredForEachTestTestBase
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Override to start an undoable UOW.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		public override void TestSetup()
+		{
+			base.TestSetup();
+
+			m_mediator = new Mediator();
+			m_propertyTable = new PropertyTable(m_mediator);
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Override to end the undoable UOW, Undo everything, and 'commit',
+		/// which will essentially clear out the Redo stack.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		public override void TestTearDown()
+		{
+			if (m_mediator != null)
+			{
+				m_mediator.Dispose();
+				m_mediator = null;
+			}
+			if (m_propertyTable != null)
+			{
+				m_propertyTable.Dispose();
+				m_propertyTable = null;
+			}
+			base.TestTearDown();
+		}
+
+		#endregion
+
 		/// <summary>
 		/// Test the case where an analysis is created from a sense with no MSA, hence the bundle has no MSA,
 		/// then the user selects that same sense; this method should return true so we will set the MSA of
@@ -51,7 +92,7 @@ namespace SIL.FieldWorks.IText
 				Cache.DefaultVernWs, Cache.DefaultAnalWs, InterlinLineChoices.InterlinMode.Analyze);
 			using (var sut = new SandboxBase.IhMissingEntry(null))
 			{
-				using (var sandbox = new SandboxBase(Cache, null, null, lineChoices, wa.Hvo))
+				using (var sandbox = new SandboxBase(Cache, m_mediator, m_propertyTable, null, lineChoices, wa.Hvo))
 				{
 					sut.SetSandboxForTesting(sandbox);
 					var mockList = MockRepository.GenerateMock<IComboList>();
@@ -66,7 +107,7 @@ namespace SIL.FieldWorks.IText
 				entry.MorphoSyntaxAnalysesOC.Add(msa);
 				sense.MorphoSyntaxAnalysisRA = msa;
 				mb.MsaRA = msa;
-				using (var sandbox = new SandboxBase(Cache, null, null, lineChoices, wa.Hvo))
+				using (var sandbox = new SandboxBase(Cache, m_mediator, m_propertyTable, null, lineChoices, wa.Hvo))
 				{
 					sut.SetSandboxForTesting(sandbox);
 					Assert.That(sut.NeedSelectSame(), Is.False);

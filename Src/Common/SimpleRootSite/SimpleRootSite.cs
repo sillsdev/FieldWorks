@@ -1,162 +1,34 @@
-// Copyright (c) 2004-2013 SIL International
+// Copyright (c) 2004-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: SimpleRootSite.cs
-// Responsibility: FW Team
 
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Drawing.Printing;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
+using System.Xml;
 using Accessibility;
-using Palaso.UI.WindowsForms.Keyboarding.Interfaces;
-using Palaso.WritingSystems;
-using Palaso.UI.WindowsForms.Keyboarding;
-using Palaso.UI.WindowsForms.Keyboarding.Types;
-using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.Utils;
-#if !__MonoCS__
-using System.Windows.Automation.Provider;
-#endif
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
+using SIL.FieldWorks.Common.FwUtils;
+using SIL.LCModel.Application;
+using SIL.Keyboarding;
+using SIL.LCModel.Utils;
+using SIL.PlatformUtilities;
+using SIL.Windows.Forms.Keyboarding;
+using Win32 = SIL.FieldWorks.Common.FwUtils.Win32;
+using SIL.Windows.Forms.Keyboarding.Windows;
 using XCore;
 
 namespace SIL.FieldWorks.Common.RootSites
 {
-	#region SuspendDrawing class
-	/// ------------------------------------------------------------------------------------
-	/// <summary>
-	/// Suspends drawing the parent object
-	/// </summary>
-	/// <example>
-	/// REQUIRED usage:
-	/// using(new SuspendDrawing(Handle)) // this sends the WM_SETREDRAW message to the window
-	/// {
-	///		doStuff();
-	/// } // this resumes drawing the parent object
-	/// </example>
-	/// ------------------------------------------------------------------------------------
-	public class SuspendDrawing : IFWDisposable
-	{
-		private IRootSite m_Parent;
-
-		/// --------------------------------------------------------------------------------
-		/// <summary>
-		/// Suspend drawing of the parent.
-		/// </summary>
-		/// <param name="parent">Containing rootsite</param>
-		/// --------------------------------------------------------------------------------
-		public SuspendDrawing(IRootSite parent)
-		{
-			m_Parent = parent;
-			m_Parent.AllowPainting = false;
-		}
-
-		#region IDisposable & Co. implementation
-		// Region last reviewed: never
-
-		/// <summary>
-		/// True, if the object has been disposed.
-		/// </summary>
-		private bool m_isDisposed = false;
-
-		/// <summary>
-		/// See if the object has been disposed.
-		/// </summary>
-		public bool IsDisposed
-		{
-			get { return m_isDisposed; }
-		}
-
-		/// <summary>
-		/// Finalizer, in case client doesn't dispose it.
-		/// Force Dispose(false) if not already called (i.e. m_isDisposed is true)
-		/// </summary>
-		/// <remarks>
-		/// In case some clients forget to dispose it directly.
-		/// </remarks>
-		~SuspendDrawing()
-		{
-			Dispose(false);
-			// The base class finalizer is called automatically.
-		}
-
-		/// <summary>
-		///
-		/// </summary>
-		/// <remarks>Must not be virtual.</remarks>
-		public void Dispose()
-		{
-			Dispose(true);
-			// This object will be cleaned up by the Dispose method.
-			// Therefore, you should call GC.SupressFinalize to
-			// take this object off the finalization queue
-			// and prevent finalization code for this object
-			// from executing a second time.
-			GC.SuppressFinalize(this);
-		}
-
-		/// <summary>
-		/// Executes in two distinct scenarios.
-		///
-		/// 1. If disposing is true, the method has been called directly
-		/// or indirectly by a user's code via the Dispose method.
-		/// Both managed and unmanaged resources can be disposed.
-		///
-		/// 2. If disposing is false, the method has been called by the
-		/// runtime from inside the finalizer and you should not reference (access)
-		/// other managed objects, as they already have been garbage collected.
-		/// Only unmanaged resources can be disposed.
-		/// </summary>
-		/// <param name="disposing"></param>
-		/// <remarks>
-		/// If any exceptions are thrown, that is fine.
-		/// If the method is being done in a finalizer, it will be ignored.
-		/// If it is thrown by client code calling Dispose,
-		/// it needs to be handled by fixing the bug.
-		///
-		/// If subclasses override this method, they should call the base implementation.
-		/// </remarks>
-		protected virtual void Dispose(bool disposing)
-		{
-			Debug.WriteLineIf(!disposing, "****************** Missing Dispose() call for " + GetType().Name + "******************");
-			// Must not be run more than once.
-			if (m_isDisposed)
-				return;
-
-			if (disposing)
-			{
-				// Dispose managed resources here.
-				if (m_Parent != null)
-					m_Parent.AllowPainting = true;
-			}
-
-			// Dispose unmanaged resources here, whether disposing is true or false.
-			m_Parent = null;
-
-			m_isDisposed = true;
-		}
-
-		/// <summary>
-		/// Throw if the IsDisposed property is true
-		/// </summary>
-		public void CheckDisposed()
-		{
-			if (IsDisposed)
-				throw new ObjectDisposedException("SuspendDrawing", "This object is being used after it has been disposed: this is an Error.");
-		}
-
-		#endregion IDisposable & Co. implementation
-	}
-	#endregion
-
 	#region SimpleRootSite class
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>
@@ -164,7 +36,7 @@ namespace SIL.FieldWorks.Common.RootSites
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
 	public class SimpleRootSite : UserControl, IVwRootSite, IRootSite, IxCoreColleague,
-		IEditingCallbacks, IReceiveSequentialMessages, IMessageFilter, IFWDisposable
+		IEditingCallbacks, IReceiveSequentialMessages, IMessageFilter
 	{
 		#region Events
 		/// <summary>
@@ -202,7 +74,7 @@ namespace SIL.FieldWorks.Common.RootSites
 				if (Parent.IsDisposed || Parent.m_rootb == null || DataUpdateMonitor.IsUpdateInProgress())
 					return;
 
-				var manager = Parent.WritingSystemFactory as PalasoWritingSystemManager;
+				var manager = Parent.WritingSystemFactory as WritingSystemManager;
 				if (manager == null)
 					return;
 
@@ -210,9 +82,7 @@ namespace SIL.FieldWorks.Common.RootSites
 				// needs to handle it.
 				// SMc: furthermore, this is not really focused until OnGotFocus() has run.
 				// Responding before that causes a nasty bug in language/keyboard selection.
-				var wsRepo = manager.LocalWritingSystemStore;
-
-				if (!Parent.Focused || g_focusRootSite.Target != Parent || wsRepo == null)
+				if (!Parent.Focused || g_focusRootSite.Target != Parent)
 					return;
 
 				// If possible, adjust the language of the selection to be one that matches
@@ -220,15 +90,15 @@ namespace SIL.FieldWorks.Common.RootSites
 
 				var vwsel = Parent.m_rootb.Selection; // may be null
 				int wsSel = SelectionHelper.GetFirstWsOfSelection(vwsel); // may be zero
-				IWritingSystemDefinition wsSelDefn = null;
+				CoreWritingSystemDefinition wsSelDefn = null;
 				if (wsSel != 0)
-					wsSelDefn = manager.Get(wsSel) as IWritingSystemDefinition;
+					wsSelDefn = manager.Get(wsSel);
 
-				var wsNewDefn = wsRepo.GetWsForInputMethod(newKeyboard, wsSelDefn, Parent.PlausibleWritingSystems);
+				CoreWritingSystemDefinition wsNewDefn = GetWSForInputMethod(newKeyboard, wsSelDefn, Parent.PlausibleWritingSystems);
 				if (wsNewDefn == null || wsNewDefn.Equals(wsSelDefn))
 					return;
 
-				Parent.HandleKeyboardChange(vwsel, ((PalasoWritingSystem)wsNewDefn).Handle);
+				Parent.HandleKeyboardChange(vwsel, wsNewDefn.Handle);
 
 				// The following line is needed to get Chinese IMEs to fully initialize.
 				// This causes Text Services to set its focus, which is the crucial bit
@@ -287,13 +157,11 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// </summary>
 		protected bool SuppressPrintHandling { get; set; }
 
-#if __MonoCS__
 		/// <summary>
 		/// This allows storing of the AutoScrollPosition when AllowPainting == false
 		/// as on Mono Setting AutoScrollPosition causes a redraw even when AllowPainting == false
 		/// </summary>
 		private Point? cachedAutoScrollPosition = null;
-#endif
 
 		/// <summary>Used to draw the rootbox</summary>
 		private IVwDrawRootBuffered m_vdrb;
@@ -342,7 +210,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <summary>
 		/// A writing system factory used to interpret data in the view. Subclasses of
 		/// SimpleRootSite should set this before doing much with the root site. The RootSite
-		/// subclass can obtain one automatically from its FdoCache.
+		/// subclass can obtain one automatically from its LcmCache.
 		/// </summary>
 		protected ILgWritingSystemFactory m_wsf;
 
@@ -381,6 +249,10 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// but saved and made accessible for clients.
 		/// </summary>
 		protected Mediator m_mediator;
+		/// <summary>
+		/// The proerty Table provided by XCoreColleague.Init.
+		/// </summary>
+		protected PropertyTable m_propertyTable;
 		/// <summary>
 		/// Supports the LayoutSizeChanged event by maintaining a list of who wants it.
 		/// </summary>
@@ -457,11 +329,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		#endregion
 
 		#region Constructor, Dispose, Designer generated code
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		///
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
+		/// <inheritdoc />
 		public SimpleRootSite()
 		{
 			// This call is required by the Windows.Forms Form Designer.
@@ -474,10 +342,6 @@ namespace SIL.FieldWorks.Common.RootSites
 			m_messageSequencer = new MessageSequencer(this);
 			m_graphicsManager = CreateGraphicsManager();
 			m_orientationManager = CreateOrientationManager();
-#if !__MonoCS__
-			if (UIAutomationServerProviderFactory == null)
-				UIAutomationServerProviderFactory = () => new SimpleRootSiteDataProvider(this);
-#endif
 			if(LicenseManager.UsageMode != LicenseUsageMode.Designtime)
 				SubscribeToRootSiteEventHandlerEvents();
 		}
@@ -499,12 +363,24 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// </summary>
 		private void SubscribeToRootSiteEventHandlerEvents()
 		{
-#if __MonoCS__
-			m_rootSiteEventHandler = new IbusRootSiteEventHandler(this);
-#else
-			m_rootSiteEventHandler = new WindowsLanguageProfileSink(this);
-#endif
-			KeyboardController.Register(this, m_rootSiteEventHandler);
+			if (!KeyboardController.IsInitialized || m_rootSiteEventHandler != null)
+				return;
+
+			if (Platform.IsWindows)
+				m_rootSiteEventHandler = new WindowsLanguageProfileSink(this);
+			else
+				m_rootSiteEventHandler = new IbusRootSiteEventHandler(this);
+
+			KeyboardController.RegisterControl(this, m_rootSiteEventHandler);
+		}
+
+		private void UnsubscribeFromRootSiteEventHandlerEvents()
+		{
+			if (!KeyboardController.IsInitialized || m_rootSiteEventHandler == null)
+				return;
+
+			KeyboardController.UnregisterControl(this);
+			m_rootSiteEventHandler = null;
 		}
 
 		/// <summary>
@@ -529,7 +405,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// -----------------------------------------------------------------------------------
 		protected override void Dispose(bool disposing)
 		{
-			Debug.WriteLineIf(!disposing, "****************** Missing Dispose() call for " + GetType().Name + "******************");
+			Debug.WriteLineIf(!disposing, "****************** Missing Dispose() call for " + GetType().Name + " ******************");
 			// Must not be run more than once.
 			if (IsDisposed)
 				return;
@@ -553,6 +429,8 @@ namespace SIL.FieldWorks.Common.RootSites
 
 			if (disposing)
 			{
+				UnsubscribeFromRootSiteEventHandlerEvents();
+
 				if (m_rootb != null)
 					CloseRootBox();
 
@@ -582,9 +460,6 @@ namespace SIL.FieldWorks.Common.RootSites
 				}
 				if (components != null)
 					components.Dispose();
-				#if __MonoCS__
-				KeyboardController.Unregister(this);
-				#endif
 			}
 
 			if (m_vdrb != null && Marshal.IsComObject(m_vdrb))
@@ -744,10 +619,10 @@ namespace SIL.FieldWorks.Common.RootSites
 		}
 
 		/// <summary>
-		/// Retrieve the mediator, typically obtained from xCoreColleague.Init, though somtimes
+		/// Retrieve the mediator, typically obtained from xCoreColleague.Init, though sometimes
 		/// it may be set directly.
 		/// </summary>
-		public XCore.Mediator Mediator
+		public Mediator Mediator
 		{
 			get
 			{
@@ -760,6 +635,15 @@ namespace SIL.FieldWorks.Common.RootSites
 				m_mediator = value;
 			}
 		}
+
+		/// <summary>
+		/// Get the PropertyTable.
+		/// </summary>
+		internal PropertyTable PropTable
+		{
+			get { return m_propertyTable; }
+		}
+
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// The paragraph style name for the current selection.
@@ -961,9 +845,15 @@ namespace SIL.FieldWorks.Common.RootSites
 			{
 				CheckDisposed();
 
+				// check if this property will actually change
+				if (EditingHelper.Editable == !value)
+					return;
+
 				// If this is read-only, it should not try to handle keyboard input in general.
 				if (EditingHelper.Editable && value)
-					KeyboardController.Unregister(this);
+				{
+					UnsubscribeFromRootSiteEventHandlerEvents();
+				}
 				else if (!EditingHelper.Editable && !value)
 				{
 					SubscribeToRootSiteEventHandlerEvents();
@@ -1646,14 +1536,16 @@ namespace SIL.FieldWorks.Common.RootSites
 					newPos.X = 0;
 					newPos.Y = 0;
 				}
-#if !__MonoCS__
-				AutoScrollPosition = newPos;
-#else
-				if (AllowPainting == true) // FWNX-235
-					AutoScrollPosition = newPos;
+
+				if (Platform.IsMono)
+				{
+					if (AllowPainting == true) // FWNX-235
+						AutoScrollPosition = newPos;
+					else
+						cachedAutoScrollPosition = newPos;
+				}
 				else
-					cachedAutoScrollPosition = newPos;
-#endif
+					AutoScrollPosition = newPos;
 			}
 		}
 
@@ -1673,36 +1565,39 @@ namespace SIL.FieldWorks.Common.RootSites
 			set
 			{
 				CheckDisposed();
-#if !__MonoCS__
-				AutoScrollMinSize = value;
-#else
-				// TODO-Linux
-				// Due to difference in mono scrolling bar behaviour
-				// possibly partly due to bug https://bugzilla.novell.com/show_bug.cgi?id=500796
-				// although there are probably other problems.
-				// possibly causes other unit test issues
-				// Don't adjust this unless it's needed.  See FWNX-561.
-				AutoScrollMinSize = value - new Size(VScroll ? SystemInformation.VerticalScrollBarWidth : 0,
-					HScroll ? SystemInformation.HorizontalScrollBarHeight : 0);
-#endif
 
-#if !__MonoCS__
-				// Following line is necessary so that the DisplayRectangle gets updated.
-				// This calls PerformLayout().
-				AdjustFormScrollbars(HScroll || VScroll);
-#else
-				try
+				if (Platform.IsMono)
 				{
+					// TODO-Linux
+					// Due to difference in mono scrolling bar behaviour
+					// possibly partly due to bug https://bugzilla.novell.com/show_bug.cgi?id=500796
+					// although there are probably other problems.
+					// possibly causes other unit test issues
+					// Don't adjust this unless it's needed.  See FWNX-561.
+					AutoScrollMinSize = value - new Size(
+						VScroll ? SystemInformation.VerticalScrollBarWidth : 0,
+						HScroll ? SystemInformation.HorizontalScrollBarHeight : 0);
+
+					try
+					{
+						AdjustFormScrollbars(HScroll || VScroll);
+					}
+					catch(System.ArgumentOutOfRangeException )
+					{
+						// TODO-Linux: Investigate real cause of this.
+						// I think it caused by mono setting ScrollPosition to 0 when Scrollbar isn't visible
+						// it should possibly set it to Minimum value instead.
+						// Currently occurs when dropping down scrollbars in Flex.
+					}
+				}
+				else
+				{
+					AutoScrollMinSize = value;
+
+					// Following line is necessary so that the DisplayRectangle gets updated.
+					// This calls PerformLayout().
 					AdjustFormScrollbars(HScroll || VScroll);
 				}
-				catch(System.ArgumentOutOfRangeException )
-				{
-					// TODO-Linux: Invesigate real cause of this.
-					// I think it caused by mono setting ScrollPosition to 0 when Scrollbar isn't visible
-					// it should possibly set it to Minimun value instead.
-					// Currently occurs when dropping down scrollbars in Flex.
-				}
-#endif
 			}
 		}
 
@@ -1835,7 +1730,7 @@ namespace SIL.FieldWorks.Common.RootSites
 
 						int dyRange = m_rootb.Height;
 						Rectangle r = AdjustedClientRectangle;
-						SIL.Utils.Rect clipRect = new SIL.Utils.Rect(r.Left, r.Top, r.Right, r.Bottom);
+						Rect clipRect = new Rect(r.Left, r.Top, r.Right, r.Bottom);
 
 						if (m_graphicsManager.VwGraphics is IVwGraphicsWin32)
 							((IVwGraphicsWin32)m_graphicsManager.VwGraphics).SetClipRect(ref clipRect);
@@ -1986,11 +1881,11 @@ namespace SIL.FieldWorks.Common.RootSites
 		public virtual bool RefreshDisplay()
 		{
 			CheckDisposed();
-			if (m_rootb == null || m_rootb.Site == null)
+			if (m_rootb?.Site == null)
 				return false;
 
-			if (m_rootb.DataAccess is IRefreshable)
-				((IRefreshable)m_rootb.DataAccess).Refresh();
+			var decorator = m_rootb.DataAccess as DomainDataByFlidDecoratorBase;
+			decorator?.Refresh();
 
 			// If we aren't visible or don't belong to a form, then set a flag to do a refresh
 			// the next time we go visible.
@@ -2012,8 +1907,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			}
 			finally
 			{
-				if (restorer != null)
-					restorer.Dispose();
+				restorer?.Dispose();
 			}
 			//Enhance: If all refreshable descendants are handled this should return true
 			return false;
@@ -2088,30 +1982,34 @@ namespace SIL.FieldWorks.Common.RootSites
 
 					if (m_nAllowPaint == 0 && Visible && IsHandleCreated)
 					{
-#if !__MonoCS__
-						Utils.Win32.SendMessage(Handle, (int)Utils.Win32.WinMsgs.WM_SETREDRAW, 1, 0);
-						Update();
-						Invalidate();
-#else
-						this.ResumeLayout();
-						Update();
-						Invalidate();
+						if (Platform.IsMono)
+						{
+							this.ResumeLayout();
+							Update();
+							Invalidate();
 
-						// FWNX-235
-						if (cachedAutoScrollPosition != null)
-							AutoScrollPosition = (Point)cachedAutoScrollPosition;
-						cachedAutoScrollPosition = null;
-#endif
+							// FWNX-235
+							if (cachedAutoScrollPosition != null)
+								AutoScrollPosition = (Point)cachedAutoScrollPosition;
+							cachedAutoScrollPosition = null;
+						}
+						else
+						{
+							Win32.SendMessage(Handle, (int)Win32.WinMsgs.WM_SETREDRAW, 1, 0);
+							Update();
+							Invalidate();
+						}
 					}
 				}
 				else
 				{   // prevent painting
 					if (m_nAllowPaint == 0 && Visible && IsHandleCreated)
-#if !__MonoCS__
-						Utils.Win32.SendMessage(Handle, (int)Utils.Win32.WinMsgs.WM_SETREDRAW, 0, 0);
-#else
-						this.SuspendLayout();
-#endif
+					{
+						if (Platform.IsMono)
+							this.SuspendLayout();
+						else
+							Win32.SendMessage(Handle, (int)Win32.WinMsgs.WM_SETREDRAW, 0, 0);
+					}
 
 					m_nAllowPaint++;
 				}
@@ -2120,18 +2018,21 @@ namespace SIL.FieldWorks.Common.RootSites
 		#endregion
 
 		#region Implementation of IxCoreColleague
+
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Allows xCore-specific initialization. We don't need any.
 		/// </summary>
 		/// <param name="mediator">The mediator</param>
+		/// <param name="propertyTable"></param>
 		/// <param name="configurationParameters">Not used</param>
 		/// ------------------------------------------------------------------------------------
-		public virtual void Init(XCore.Mediator mediator, System.Xml.XmlNode configurationParameters)
+		public virtual void Init(Mediator mediator, PropertyTable propertyTable, XmlNode configurationParameters)
 		{
 			CheckDisposed();
 			// Save the mediator in case a client or subclass wants it.
 			m_mediator = mediator;
+			m_propertyTable = propertyTable;
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -2141,10 +2042,10 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// </summary>
 		/// <returns></returns>
 		/// ------------------------------------------------------------------------------------
-		public virtual XCore.IxCoreColleague[] GetMessageTargets()
+		public virtual IxCoreColleague[] GetMessageTargets()
 		{
 			CheckDisposed();
-			return new XCore.IxCoreColleague[] { this };
+			return new IxCoreColleague[] { this };
 		}
 
 		/// <summary>
@@ -2355,8 +2256,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// Note: this does not implement the lower level IPrintRootSite.Print(pd).
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="FindForm() returns a reference")]
 		public virtual void Print(PrintDocument pd)
 		{
 			CheckDisposed();
@@ -3170,9 +3069,9 @@ namespace SIL.FieldWorks.Common.RootSites
 		{
 			get
 			{
-#if __MonoCS__
-				return null; // TODO-Linux IOleServiceProvider not listed in QueryInterface issue.
-#else
+				if (Platform.IsMono)
+					return null; // TODO-Linux IOleServiceProvider not listed in QueryInterface issue.
+
 				CheckDisposed();
 				Guid guid = Marshal.GenerateGuidForType(typeof(IOleServiceProvider));
 				if (m_rootb == null)
@@ -3194,7 +3093,6 @@ namespace SIL.FieldWorks.Common.RootSites
 					sp.QueryService(ref guidAcc, ref guidAcc, out obj);
 				}
 				return obj;
-#endif
 			}
 		}
 
@@ -3394,18 +3292,21 @@ namespace SIL.FieldWorks.Common.RootSites
 				// we must not.
 				// (Note: setting a WS by setting the Keyman keyboard is still not working, because
 				// it seems .NET applications don't get the notification from Keyman.)
-#if !__MonoCS__
-				IntPtr hwndOld = m.WParam;
-				int procIdOld, procIdThis;
-				Utils.Win32.GetWindowThreadProcessId(hwndOld, out procIdOld);
-				Utils.Win32.GetWindowThreadProcessId(Handle, out procIdThis);
-				if (procIdOld == procIdThis && m_rootb != null && EditingHelper != null)
-					EditingHelper.SetKeyboardForSelection(m_rootb.Selection);
-#else
-				// REVIEW: do we have to compare the process the old and new window belongs to?
-				if (m_rootb != null && EditingHelper != null)
-					EditingHelper.SetKeyboardForSelection(m_rootb.Selection);
-#endif
+				if (Platform.IsMono)
+				{
+					// REVIEW: do we have to compare the process the old and new window belongs to?
+					if (m_rootb != null && EditingHelper != null)
+						EditingHelper.SetKeyboardForSelection(m_rootb.Selection);
+				}
+				else
+				{
+					IntPtr hwndOld = m.WParam;
+					int procIdOld, procIdThis;
+					Win32.GetWindowThreadProcessId(hwndOld, out procIdOld);
+					Win32.GetWindowThreadProcessId(Handle, out procIdThis);
+					if (procIdOld == procIdThis && m_rootb != null && EditingHelper != null)
+						EditingHelper.SetKeyboardForSelection(m_rootb.Selection);
+				}
 
 				// Start the blinking cursor timer here and stop it in the OnKillFocus handler later.
 				if (m_Timer != null)
@@ -3800,22 +3701,23 @@ namespace SIL.FieldWorks.Common.RootSites
 				}
 			}
 
-#if !__MonoCS__
-			base.OnLayout(levent);
-#else
-			// TODO-Linux: Create simple test case for this and fix mono bug
-			try
+			if (Platform.IsMono)
 			{
+				// TODO-Linux: Create simple test case for this and fix mono bug
+				try
+				{
+					base.OnLayout(levent);
+				}
+				catch(System.ArgumentOutOfRangeException)
+				{
+					// TODO-Linux: Investigate real cause of this.
+					// I think it caused by mono setting ScrollPosition to 0 when Scrollbar isn't visible
+					// it should possibly set it to Minimum value instead.
+					// Currently occurs when dropping down scrollbars in Flex.
+				}
+			}
+			else
 				base.OnLayout(levent);
-			}
-			catch(System.ArgumentOutOfRangeException)
-			{
-				// TODO-Linux: Invesigate real cause of this.
-				// I think it caused by mono setting ScrollPosition to 0 when Scrollbar isn't visible
-				// it should possibly set it to Minimun value instread.
-				// Currently occurs when dropping down scrollbars in Flex.
-			}
-#endif
 		}
 
 		/// <summary>
@@ -4419,21 +4321,23 @@ namespace SIL.FieldWorks.Common.RootSites
 					}
 				}
 			}
-#if !__MonoCS__
-			base.OnSizeChanged(e);
-#else
-			try
+
+			if (Platform.IsMono)
 			{
+				try
+				{
+					base.OnSizeChanged(e);
+				}
+				catch (System.ArgumentOutOfRangeException)
+				{
+					// TODO-Linux: Investigate real cause of this.
+					// I think it caused by mono setting ScrollPosition to 0 when Scrollbar isn't visible
+					// it should possibly set it to Minimum value instead.
+					// Currently occurs when dropping down scrollbars in Flex.
+				}
+			}
+			else
 				base.OnSizeChanged(e);
-			}
-			catch(System.ArgumentOutOfRangeException)
-			{
-				// TODO-Linux: Invesigate real cause of this.
-				// I think it caused by mono setting ScrollPosition to 0 when Scrollbar isn't visible
-				// it should possibly set it to Minimun value instread.
-				// Currently occurs when dropping down scrollbars in Flex.
-			}
-#endif
 
 			// Sometimes (e.g., I tried this in InterlinDocChild), we destroy the root box when
 			// the pane is collapsed below a workable size.
@@ -4489,7 +4393,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Set/Get the writing system factory used by this root site. The main RootSite
-		/// subclass obtains this from the FdoCache if it has not been set.
+		/// subclass obtains this from the LcmCache if it has not been set.
 		/// </summary>
 		/// -----------------------------------------------------------------------------------
 		public virtual ILgWritingSystemFactory WritingSystemFactory
@@ -4623,20 +4527,26 @@ namespace SIL.FieldWorks.Common.RootSites
 						//Debug.WriteLine("Drawing " + this.Handle + " " + e.ClipRectangle + " " + this.RectangleToScreen(e.ClipRectangle));
 						//Debug.WriteLine("  Offset is " + this.ScrollPosition);
 
-#if __MonoCS__ // TODO-Linux: FWNX-449: cairo 1.10.0 has a maximun size limitation of 32767.
+						if (Platform.IsMono)
+						{
+							// TODO-Linux: FWNX-449: cairo 1.10.0 has a maximum size limitation of 32767.
 
-						// The following code is a work around for a cairo limitation.
-						// when the ClipRectangle Height exceeded 32767
-						// (cairo is only use with mono)
-						// This has the added benefit of increasing the scrolling speed in TE.
+							// The following code is a work around for a cairo limitation.
+							// when the ClipRectangle Height exceeded 32767
+							// (cairo is only use with mono)
+							// This has the added benefit of increasing the scrolling speed in TE.
 
-						m_orientationManager.DrawTheRoot(m_vdrb, m_rootb, hdc, ClientRectangle,
-							rgbBackColor, true,
-							Rectangle.Intersect(e.ClipRectangle, ClientRectangle));
-#else
-						m_orientationManager.DrawTheRoot(m_vdrb, m_rootb, hdc, ClientRectangle,
-							rgbBackColor, true, e.ClipRectangle);
-#endif
+							m_orientationManager.DrawTheRoot(m_vdrb, m_rootb, hdc,
+								ClientRectangle,
+								rgbBackColor, true,
+								Rectangle.Intersect(e.ClipRectangle, ClientRectangle));
+						}
+						else
+						{
+							m_orientationManager.DrawTheRoot(m_vdrb, m_rootb, hdc,
+								ClientRectangle,
+								rgbBackColor, true, e.ClipRectangle);
+						}
 					}
 				}
 				catch
@@ -4663,9 +4573,9 @@ namespace SIL.FieldWorks.Common.RootSites
 			}
 			else
 			{
-				e.Graphics.FillRectangle(SystemBrushes.Window, this.ClientRectangle);
-				e.Graphics.DrawString("Empty " + this.GetType().ToString(),
-					SystemInformation.MenuFont, SystemBrushes.WindowText, this.ClientRectangle);
+				e.Graphics.FillRectangle(SystemBrushes.Window, ClientRectangle);
+				e.Graphics.DrawString("Empty " + GetType(),
+					SystemInformation.MenuFont, SystemBrushes.WindowText, ClientRectangle);
 			}
 		}
 
@@ -4674,8 +4584,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// Set focus to our window
 		/// </summary>
 		/// -----------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="FindForm() returns a reference")]
 		private void SwitchFocusHere()
 		{
 			if (FindForm() == Form.ActiveForm)
@@ -4697,11 +4605,16 @@ namespace SIL.FieldWorks.Common.RootSites
 
 			SetAccessibleName(Name);
 
-#if !__MonoCS__
-			m_vdrb = VwDrawRootBufferedClass.Create();
-#else
-			m_vdrb = new SIL.FieldWorks.Views.VwDrawRootBuffered(); // Managed object on Linux
-#endif
+			// Managed object on Linux
+			m_vdrb = Platform.IsMono
+				? new SIL.FieldWorks.Views.VwDrawRootBuffered()
+				: (IVwDrawRootBuffered)VwDrawRootBufferedClass.Create();
+
+			m_rootb = VwRootBoxClass.Create();
+			m_rootb.RenderEngineFactory = SingletonsContainer.Get<RenderEngineFactory>();
+			m_rootb.TsStrFactory = TsStringUtils.TsStrFactory;
+			m_rootb.SetSite(this);
+
 			m_fRootboxMade = true;
 		}
 
@@ -4799,10 +4712,11 @@ namespace SIL.FieldWorks.Common.RootSites
 				catch
 				{
 					// This was causing unhandled exceptions from the MakeSelection call in the C++ code
-#if __MonoCS__
-					// So exception isn't silently hidden (FWNX-343)
-					Debug.Assert(MiscUtils.RunningTests, "m_rootb.MouseDown threw exception.");
-#endif
+					if (Platform.IsMono)
+					{
+						// So exception isn't silently hidden (FWNX-343)
+						Debug.Assert(MiscUtils.RunningTests, "m_rootb.MouseDown threw exception.");
+					}
 				}
 
 				EditingHelper.HandleMouseDown();
@@ -4946,18 +4860,17 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <summary>
 		/// Writing systems the user might reasonably choose. Overridden in RootSite to limit it to the ones active in this project.
 		/// </summary>
-		protected virtual IWritingSystemDefinition[] PlausibleWritingSystems
+		protected virtual CoreWritingSystemDefinition[] PlausibleWritingSystems
 		{
 			get
 			{
-				var manager = (WritingSystemFactory as PalasoWritingSystemManager);
+				var manager = (WritingSystemManager) WritingSystemFactory;
 				if (manager == null)
-					return new IWritingSystemDefinition[0];
-				return manager.LocalWritingSystemStore.AllWritingSystems.ToArray();
+					return new CoreWritingSystemDefinition[0];
+				return manager.WritingSystemStore.AllWritingSystems.ToArray();
 			}
 		}
 
-		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// When the user has selected a keyboard from the system tray, adjust the language of
 		/// the selection to something that matches, if possible.
@@ -5769,8 +5682,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <param name="pvo">Overlay</param>
 		/// <param name="itag">Index of tag</param>
 		/// -----------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="FindForm() returns a reference")]
 		public void ModifyOverlay(bool fApplyTag, IVwOverlay pvo, int itag)
 		{
 			CheckDisposed();
@@ -6103,6 +6014,39 @@ namespace SIL.FieldWorks.Common.RootSites
 
 			return rcDst.Top + (y - rcSrc.Top) * dyd / dys;
 		}
+
+		/// <summary>
+		/// Get the writing system that is most probably intended by the user, when the input
+		/// method changes to the specified <paramref name="inputMethod"/>, given the indicated
+		/// candidates, and that <paramref name="wsCurrent"/> is the preferred result if it is
+		/// a possible WS for the specified input method. wsCurrent is also returned if none
+		/// of the <paramref name="candidates"/> is found to match the specified inputs.
+		/// </summary>
+		/// <param name="inputMethod">The input method or keyboard</param>
+		/// <param name="wsCurrent">The writing system that is currently active in the form.
+		/// This serves as a default that will be returned if no writing system can be
+		/// determined from the first argument. It may be null. Also, if there is more than
+		/// one equally promising match in candidates, and wsCurrent is one of them, it will
+		/// be preferred. This ensures that we don't change WS on the user unless the keyboard
+		/// they have selected definitely indicates a different WS.</param>
+		/// <param name="candidates">The writing systems that should be considered as possible
+		/// return values.</param>
+		/// <returns>The best writing system for <paramref name="inputMethod"/>.</returns>
+		/// <remarks>This method replaces IWritingSystemRepository.GetWsForInputLanguage and
+		/// should preferably be used.</remarks>
+		internal static CoreWritingSystemDefinition GetWSForInputMethod(IKeyboardDefinition inputMethod,
+			CoreWritingSystemDefinition wsCurrent, CoreWritingSystemDefinition[] candidates)
+		{
+			if (inputMethod == null)
+				throw new ArgumentNullException("inputMethod");
+
+			// See if the default is suitable.
+			if (wsCurrent != null && inputMethod.Equals(wsCurrent.LocalKeyboard))
+				return wsCurrent;
+
+			return candidates.FirstOrDefault(ws => inputMethod.Equals(ws.LocalKeyboard)) ?? wsCurrent;
+		}
+
 		#endregion
 
 		#region implementation of IReceiveSequentialMessages
@@ -6147,9 +6091,10 @@ namespace SIL.FieldWorks.Common.RootSites
 			CheckDisposed();
 			switch (msg.Msg)
 			{
-#if !__MonoCS__ // Disable use of UIAutomationProvider.dll on Linux
 				case 61: // WM_GETOBJECT
+					if (!Platform.IsMono)
 					{
+						// Disable use of UIAutomationProvider.dll on Linux
 						// FWR-2874, FWR-3045: This code was commented out to prevent a crash
 						// that can happen when using the Windows 7 On-Screen Keyboard.
 						//if (msg.LParam.ToInt32() == AutomationInteropProvider.RootObjectId)
@@ -6174,9 +6119,10 @@ namespace SIL.FieldWorks.Common.RootSites
 							Guid guidAcc = Marshal.GenerateGuidForType(typeof(IAccessible));
 							msg.Result = LresultFromObject(ref guidAcc, msg.WParam, obj);
 						}
+
 						return;
 					}
-#endif
+					break;
 				case 0x286:	// WM_IME_CHAR
 					{
 						// We must handle this directly so that duplicate WM_CHAR messages don't get
@@ -6185,41 +6131,30 @@ namespace SIL.FieldWorks.Common.RootSites
 						OnKeyPress(new KeyPressEventArgs((char)msg.WParam));
 						return;
 					}
-				case (int)Utils.Win32.WinMsgs.WM_SETFOCUS:
+				case (int)Win32.WinMsgs.WM_SETFOCUS:
 					OnSetFocus(msg);
-#if __MonoCS__
-					// In Linux+Mono, if you .Focus() a SimpleRootSite, checking .Focused reports false unless
-					// we comment out this case for intercepting WM_SETFOCUS, or call base.WndProc() to
-					// presumably let Mono handle WM_SETFOCUS as well by successfully setting focus on the
-					// base Control.
-					// Affects six unit tests in FwCoreDlgsTests FwFindReplaceDlgTests: eg ApplyStyle_ToEmptyTextBox.
-					//
-					// Intercepting WM_SETFOCUS in Windows relates to focus switching with respect to Keyman.
 
-					base.WndProc(ref msg);
-#endif // __MonoCS__
+					if (Platform.IsMono)
+					{
+						// In Linux+Mono, if you .Focus() a SimpleRootSite, checking .Focused reports false unless
+						// we comment out this case for intercepting WM_SETFOCUS, or call base.WndProc() to
+						// presumably let Mono handle WM_SETFOCUS as well by successfully setting focus on the
+						// base Control.
+						// Affects six unit tests in FwCoreDlgsTests FwFindReplaceDlgTests: eg ApplyStyle_ToEmptyTextBox.
+						//
+						// Intercepting WM_SETFOCUS in Windows relates to focus switching with respect to Keyman.
+
+						base.WndProc(ref msg);
+					}
 					return;
-				case (int)Utils.Win32.WinMsgs.WM_KILLFOCUS:
+				case (int)Win32.WinMsgs.WM_KILLFOCUS:
 					base.WndProc(ref msg);
 					OnKillFocus(Control.FromHandle(msg.WParam),
-						MiscUtils.IsChildWindowOfForm(ParentForm, msg.WParam));
+						SIL.FieldWorks.Common.FwUtils.FwUtils.IsChildWindowOfForm(ParentForm, msg.WParam));
 					return;
 			}
 			base.WndProc(ref msg);
 		}
-
-#if !__MonoCS__
-		#region UIAutomationServerProvider
-
-		/// <summary>
-		/// Gets or sets the factory for our UI automation server provider.
-		/// </summary>
-		/// <value>The UI automation server provider factory.</value>
-		protected Func<IRawElementProviderFragmentRoot> UIAutomationServerProviderFactory
-		{ get; set; }
-
-		#endregion
-#endif
 
 		/// <summary>
 		/// Required by interface, but not used, because we don't user the MessageSequencer
@@ -6235,9 +6170,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		#endregion
 
 		#region Sequential message processing enforcement
-
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "parent is a reference")]
 		private XCore.IxWindow ContainingXWindow()
 		{
 			for (Control parent = this.Parent; parent != null; parent = parent.Parent)
@@ -6300,17 +6232,17 @@ namespace SIL.FieldWorks.Common.RootSites
 
 			switch (m.Msg)
 			{
-				case (int)Utils.Win32.WinMsgs.WM_KEYUP:
-				case (int)Utils.Win32.WinMsgs.WM_LBUTTONUP:
-				case (int)Utils.Win32.WinMsgs.WM_KEYDOWN:
+				case (int)Win32.WinMsgs.WM_KEYUP:
+				case (int)Win32.WinMsgs.WM_LBUTTONUP:
+				case (int)Win32.WinMsgs.WM_KEYDOWN:
 					// If user-initiated messages come (or our spurious one, which we check
 					// for below), remove this filter.
 					Application.RemoveMessageFilter(this);
 					m_messageFilterInstalled = false;
 
 					// Now check for the spurious CTRL-UP message
-					if (m.Msg == (int)Utils.Win32.WinMsgs.WM_KEYUP &&
-						m.WParam.ToInt32() == (int)Utils.Win32.VirtualKeycodes.VK_CONTROL)
+					if (m.Msg == (int)Win32.WinMsgs.WM_KEYUP &&
+						m.WParam.ToInt32() == (int)Win32.VirtualKeycodes.VK_CONTROL)
 					{
 						return true; // discard this message
 					}
@@ -6320,6 +6252,133 @@ namespace SIL.FieldWorks.Common.RootSites
 		}
 		#endregion
 
+	}
+	#endregion
+
+	#region SuspendDrawing class
+	/// ------------------------------------------------------------------------------------
+	/// <summary>
+	/// Suspends drawing the parent object
+	/// </summary>
+	/// <example>
+	/// REQUIRED usage:
+	/// using(new SuspendDrawing(Handle)) // this sends the WM_SETREDRAW message to the window
+	/// {
+	///		doStuff();
+	/// } // this resumes drawing the parent object
+	/// </example>
+	/// ------------------------------------------------------------------------------------
+	public class SuspendDrawing : IDisposable
+	{
+		private IRootSite m_parent;
+
+		/// --------------------------------------------------------------------------------
+		/// <summary>
+		/// Suspend drawing of the parent.
+		/// </summary>
+		/// <param name="parent">Containing rootsite</param>
+		/// --------------------------------------------------------------------------------
+		public SuspendDrawing(IRootSite parent)
+		{
+			m_parent = parent;
+			m_parent.AllowPainting = false;
+		}
+
+		#region IDisposable & Co. implementation
+		// Region last reviewed: never
+
+		/// <summary>
+		/// True, if the object has been disposed.
+		/// </summary>
+		private bool m_isDisposed;
+
+		/// <summary>
+		/// See if the object has been disposed.
+		/// </summary>
+		public bool IsDisposed
+		{
+			get { return m_isDisposed; }
+		}
+
+		/// <summary>
+		/// Finalizer, in case client doesn't dispose it.
+		/// Force Dispose(false) if not already called (i.e. m_isDisposed is true)
+		/// </summary>
+		/// <remarks>
+		/// In case some clients forget to dispose it directly.
+		/// </remarks>
+		~SuspendDrawing()
+		{
+			Dispose(false);
+			// The base class finalizer is called automatically.
+		}
+
+		/// <summary>
+		///
+		/// </summary>
+		/// <remarks>Must not be virtual.</remarks>
+		public void Dispose()
+		{
+			Dispose(true);
+			// This object will be cleaned up by the Dispose method.
+			// Therefore, you should call GC.SupressFinalize to
+			// take this object off the finalization queue
+			// and prevent finalization code for this object
+			// from executing a second time.
+			GC.SuppressFinalize(this);
+		}
+
+		/// <summary>
+		/// Executes in two distinct scenarios.
+		///
+		/// 1. If disposing is true, the method has been called directly
+		/// or indirectly by a user's code via the Dispose method.
+		/// Both managed and unmanaged resources can be disposed.
+		///
+		/// 2. If disposing is false, the method has been called by the
+		/// runtime from inside the finalizer and you should not reference (access)
+		/// other managed objects, as they already have been garbage collected.
+		/// Only unmanaged resources can be disposed.
+		/// </summary>
+		/// <param name="disposing"></param>
+		/// <remarks>
+		/// If any exceptions are thrown, that is fine.
+		/// If the method is being done in a finalizer, it will be ignored.
+		/// If it is thrown by client code calling Dispose,
+		/// it needs to be handled by fixing the bug.
+		///
+		/// If subclasses override this method, they should call the base implementation.
+		/// </remarks>
+		protected virtual void Dispose(bool disposing)
+		{
+			Debug.WriteLineIf(!disposing, "****************** Missing Dispose() call for " + GetType().Name + " ******************");
+			// Must not be run more than once.
+			if (m_isDisposed)
+				return;
+
+			if (disposing)
+			{
+				// Dispose managed resources here.
+				if (m_parent != null)
+					m_parent.AllowPainting = true;
+			}
+
+			// Dispose unmanaged resources here, whether disposing is true or false.
+			m_parent = null;
+
+			m_isDisposed = true;
+		}
+
+		/// <summary>
+		/// Throw if the IsDisposed property is true
+		/// </summary>
+		public void CheckDisposed()
+		{
+			if (IsDisposed)
+				throw new ObjectDisposedException("SuspendDrawing", "This object is being used after it has been disposed: this is an Error.");
+		}
+
+		#endregion IDisposable & Co. implementation
 	}
 	#endregion
 }

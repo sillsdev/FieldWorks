@@ -5,11 +5,11 @@
 using System;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using SIL.FieldWorks.Common.Framework.DetailControls;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.FdoUi;
-using SIL.FieldWorks.Common.Framework;
+using SIL.LCModel.Utils;
+using XCore;
 
 namespace SIL.FieldWorks.XWorks.MorphologyEditor
 {
@@ -70,7 +70,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			RuleFormulaControl.InsertionControl.Show();
 			Height = DesiredHeight(RuleFormulaControl.RootSite);
 			// FWNX-753 called attention to misbehavior around here.
-			if (SIL.Utils.MiscUtils.IsMono &&
+			if (MiscUtils.IsMono &&
 				RuleFormulaControl.Height != Height &&
 				RuleFormulaControl.Height == oldHeight)
 			{
@@ -133,14 +133,14 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			CheckDisposed();
 			base.Install(parent);
 
-			RuleFormulaControl.Initialize((FdoCache)Mediator.PropertyTable.GetValue("cache"), Object, -1, MEStrings.ksRuleEnvChooserName,
-				ContainingDataTree.PersistenceProvder, Mediator, null, null);
+			RuleFormulaControl.Initialize(m_propertyTable.GetValue<LcmCache>("cache"), Object, -1, MEStrings.ksRuleEnvChooserName,
+				ContainingDataTree.PersistenceProvder, Mediator, m_propertyTable, null, null);
 
 			RuleFormulaControl.InsertionControl.Hide();
-			RuleFormulaControl.InsertionControl.SizeChanged += new EventHandler(InsertionControl_SizeChanged);
+			RuleFormulaControl.InsertionControl.SizeChanged += InsertionControl_SizeChanged;
 		}
 
-		public bool OnDisplayContextSetFeatures(object commandObject, ref XCore.UIItemDisplayProperties display)
+		public bool OnDisplayContextSetFeatures(object commandObject, ref UIItemDisplayProperties display)
 		{
 			CheckDisposed();
 			bool enable = RuleFormulaControl.IsFeatsNCContextCurrent;
@@ -156,7 +156,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			return true;
 		}
 
-		public bool OnDisplayContextJumpToNaturalClass(object commandObject, ref XCore.UIItemDisplayProperties display)
+		public bool OnDisplayContextJumpToNaturalClass(object commandObject, ref UIItemDisplayProperties display)
 		{
 			CheckDisposed();
 			bool enable = RuleFormulaControl.IsNCContextCurrent;

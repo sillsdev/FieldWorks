@@ -6,11 +6,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FDO.FDOTests;
-using FS = System.Collections.Generic.Dictionary<SIL.FieldWorks.FDO.IFsFeatDefn, object>;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
+using FS = System.Collections.Generic.Dictionary<SIL.LCModel.IFsFeatDefn, object>;
 
 namespace SIL.FieldWorks.IText
 {
@@ -20,7 +20,7 @@ namespace SIL.FieldWorks.IText
 		private IPartOfSpeech m_noun;
 		private IPartOfSpeech m_verb;
 		private IPartOfSpeech m_adj;
-		private FDO.IText m_text;
+		private LCModel.IText m_text;
 		private ICmPossibility m_np;
 		private readonly IEqualityComparer<IParaFragment> m_fragmentComparer = new ParaFragmentEqualityComparer();
 		private IFsFeatStrucType m_inflType;
@@ -136,7 +136,7 @@ namespace SIL.FieldWorks.IText
 			return Cache.LanguageProject.MsFeatureSystemOA.FeaturesOC.OfType<IFsClosedFeature>().SelectMany(f => f.ValuesOC).First(sym => sym.Abbreviation.AnalysisDefaultWritingSystem.Text == id);
 		}
 
-		private ITextTag MakeTag(FDO.IText text, ICmPossibility tag, ISegment beginSeg, int begin, ISegment endSeg, int end)
+		private ITextTag MakeTag(LCModel.IText text, ICmPossibility tag, ISegment beginSeg, int begin, ISegment endSeg, int end)
 		{
 			ITextTag ttag = Cache.ServiceLocator.GetInstance<ITextTagFactory>().Create();
 			text.ContentsOA.TagsOC.Add(ttag);
@@ -148,14 +148,14 @@ namespace SIL.FieldWorks.IText
 			return ttag;
 		}
 
-		private FDO.IText MakeText(string contents)
+		private LCModel.IText MakeText(string contents)
 		{
 			var text = Cache.ServiceLocator.GetInstance<ITextFactory>().Create();
 			var stText = Cache.ServiceLocator.GetInstance<IStTextFactory>().Create();
 			text.ContentsOA = stText;
 			var para = Cache.ServiceLocator.GetInstance<IStTxtParaFactory>().Create();
 			stText.ParagraphsOS.Add(para);
-			para.Contents = Cache.TsStrFactory.MakeString(contents, Cache.DefaultVernWs);
+			para.Contents = TsStringUtils.MakeString(contents, Cache.DefaultVernWs);
 
 			using (var pp = new ParagraphParser(Cache))
 			{
@@ -267,11 +267,11 @@ namespace SIL.FieldWorks.IText
 
 		private ITsString MakeVernString(string content)
 		{
-			return Cache.TsStrFactory.MakeString(content, Cache.DefaultVernWs);
+			return TsStringUtils.MakeString(content, Cache.DefaultVernWs);
 		}
 		private ITsString MakeAnalysisString(string content)
 		{
-			return Cache.TsStrFactory.MakeString(content, Cache.DefaultAnalWs);
+			return TsStringUtils.MakeString(content, Cache.DefaultAnalWs);
 		}
 
 		[Test]

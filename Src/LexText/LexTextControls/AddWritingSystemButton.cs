@@ -1,29 +1,21 @@
-// Copyright (c) 2010-2013 SIL International
+// Copyright (c) 2010-2020 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: AddWritingSystemButton.cs
-// Responsibility: mcconnel
-//
-// <remarks>
-// </remarks>
 
 using System;
-using System.ComponentModel;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 
-using SIL.CoreImpl;
+using SIL.LCModel.Core.WritingSystems;
 using SIL.FieldWorks.Common.Controls;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel;
+using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.FwCoreDlgs;
-using SIL.Utils;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.FDO;
-using XCore;
 
 namespace SIL.FieldWorks.LexText.Controls
 {
@@ -32,15 +24,14 @@ namespace SIL.FieldWorks.LexText.Controls
 	///
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
-	public partial class AddWritingSystemButton : Button, IFWDisposable
+	public partial class AddWritingSystemButton : Button
 	{
-		FdoCache m_cache;
+		LcmCache m_cache;
 		private HashSet<string> m_existingWsIds;
 		public event EventHandler WritingSystemAdded;
-		IWritingSystem m_wsNew;
+		private CoreWritingSystemDefinition m_wsNew;
 		private IHelpTopicProvider m_helpTopicProvider;
 		private IApp m_app;
-		private IVwStylesheet m_stylesheet;
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -63,7 +54,6 @@ namespace SIL.FieldWorks.LexText.Controls
 			InitializeComponent();
 		}
 
-		#region IFWDisposable Members
 		/// <summary>
 		/// Check to see if the object has been disposed.
 		/// All public Properties and Methods should call this
@@ -74,7 +64,6 @@ namespace SIL.FieldWorks.LexText.Controls
 			if (IsDisposed)
 				throw new ObjectDisposedException(String.Format("'{0}' in use after being disposed.", GetType().Name));
 		}
-		#endregion
 
 		/// <summary>
 		/// Initialize for adding new writing systems during import.
@@ -82,25 +71,23 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <param name="cache">primary FDO data cache</param>
 		/// <param name="helpTopicProvider">The help topic provider.</param>
 		/// <param name="app">The app.</param>
-		/// <param name="stylesheet">The stylesheet.</param>
 		/// <param name="wss">The writing systems already displayed.</param>
-		public void Initialize(FdoCache cache, IHelpTopicProvider helpTopicProvider, IApp app,
-			 IVwStylesheet stylesheet, IEnumerable<IWritingSystem> wss)
+		public void Initialize(LcmCache cache, IHelpTopicProvider helpTopicProvider, IApp app,
+			 IEnumerable<CoreWritingSystemDefinition> wss)
 		{
 			CheckDisposed();
 			m_cache = cache;
 			m_helpTopicProvider = helpTopicProvider;
 			m_app = app;
 			m_existingWsIds = new HashSet<string>(wss.Select(ws => ws.Id).ToList());
-			m_stylesheet = stylesheet;
 		}
 
 		/// <summary>
 		/// Initialize for adding new writing systems.
 		/// </summary>
-		internal void Initialize(FdoCache cache, IHelpTopicProvider helpTopicProvider, IApp app, IVwStylesheet stylesheet)
+		internal void Initialize(LcmCache cache, IHelpTopicProvider helpTopicProvider, IApp app)
 		{
-			Initialize(cache, helpTopicProvider, m_app, stylesheet, cache.ServiceLocator.WritingSystems.AllWritingSystems);
+			Initialize(cache, helpTopicProvider, m_app, cache.ServiceLocator.WritingSystems.AllWritingSystems);
 		}
 
 		protected override void OnPaint(PaintEventArgs e)
@@ -130,12 +117,12 @@ namespace SIL.FieldWorks.LexText.Controls
 			var mnuAddWs = components.ContextMenu("mnuAddWs");
 
 				// look like the "Add" button on the WS properties dlg
-				List<IWritingSystem> xmlWs = GetOtherWritingSystems();
+				List<CoreWritingSystemDefinition> xmlWs = GetOtherWritingSystems();
 				var xmlWsV = new MenuItem[xmlWs.Count + 2]; // one for Vernacular
 				var xmlWsA = new MenuItem[xmlWs.Count + 2]; // one for Analysis
 				for (int i = 0; i < xmlWs.Count; i++)
 				{
-					IWritingSystem ws = xmlWs[i];
+					CoreWritingSystemDefinition ws = xmlWs[i];
 					xmlWsV[i] = new MenuItem(ws.DisplayLabel, mnuAddWS_Vern);
 					xmlWsA[i] = new MenuItem(ws.DisplayLabel, mnuAddWS_Anal);
 					xmlWsV[i].Tag = ws;
@@ -153,9 +140,9 @@ namespace SIL.FieldWorks.LexText.Controls
 				mnuAddWs.Show(this, new Point(0, Height));
 			}
 
-		private List<IWritingSystem> GetOtherWritingSystems()
+		private List<CoreWritingSystemDefinition> GetOtherWritingSystems()
 		{
-			return m_cache.ServiceLocator.WritingSystemManager.GlobalWritingSystems.
+			return m_cache.ServiceLocator.WritingSystemManager.OtherWritingSystems.
 				Where(ws => !m_existingWsIds.Contains(ws.Id)).OrderBy(ws => ws.DisplayLabel).ToList();
 		}
 
@@ -171,21 +158,20 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		private void CommonAddWS(bool isAnalysis, MenuItem selectedMI)
 		{
-			IWritingSystem ws = null;
+			CoreWritingSystemDefinition ws = null;
 
 			if (selectedMI.Text == LexTextControls.ks_DefineNew_)
 			{
-				IEnumerable<IWritingSystem> newWritingSystems;
-				if (WritingSystemPropertiesDialog.ShowNewDialog(FindForm(), m_cache, m_cache.ServiceLocator.WritingSystemManager,
-					m_cache.ServiceLocator.WritingSystems, m_helpTopicProvider, m_app, m_stylesheet, true, null,
-					out newWritingSystems))
+				if (FwWritingSystemSetupDlg.ShowNewDialog(FindForm(), m_cache, m_helpTopicProvider, m_app,
+					isAnalysis ? FwWritingSystemSetupModel.ListType.Analysis : FwWritingSystemSetupModel.ListType.Vernacular,
+					out var newWritingSystems))
 				{
-					ws = newWritingSystems.First();
+					ws = newWritingSystems.FirstOrDefault();
 				}
 			}
 			else
 			{
-				ws = selectedMI.Tag as IWritingSystem;
+				ws = selectedMI.Tag as CoreWritingSystemDefinition;
 			}
 
 			if (ws != null)
@@ -220,7 +206,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <summary>
 		/// Get the new writing system added by clicking this button and following the popup menus.
 		/// </summary>
-		public IWritingSystem NewWritingSystem
+		public CoreWritingSystemDefinition NewWritingSystem
 		{
 			get
 			{

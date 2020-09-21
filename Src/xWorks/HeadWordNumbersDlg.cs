@@ -7,14 +7,14 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows.Forms;
-using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.Widgets;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainImpl;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.LCModel;
+using SIL.LCModel.DomainImpl;
+using SIL.LCModel.DomainServices;
 using XCore;
 
 namespace SIL.FieldWorks.XWorks
@@ -202,7 +202,7 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		private void UpdateWritingSystemCodeInDigits()
 		{
-			var wsHandle = ((IWritingSystem)m_writingSystemCombo.SelectedItem).Handle;
+			var wsHandle = ((CoreWritingSystemDefinition)m_writingSystemCombo.SelectedItem).Handle;
 			foreach (var digit in _digitBoxes)
 			{
 				digit.WritingSystemCode = wsHandle;
@@ -213,7 +213,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		public IEnumerable<IWritingSystem> AvailableWritingSystems
+		public IEnumerable<CoreWritingSystemDefinition> AvailableWritingSystems
 		{
 			set
 			{
@@ -260,7 +260,7 @@ namespace SIL.FieldWorks.XWorks
 
 		public bool OkButtonEnabled { get { return m_btnOk.Enabled; } set { m_btnOk.Enabled = value; } }
 
-		public FwStyleSheet SetStyleSheet
+		public LcmStyleSheet SetStyleSheet
 		{
 			set
 			{

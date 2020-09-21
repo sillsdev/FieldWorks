@@ -1,4 +1,4 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -8,12 +8,12 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Windows.Forms;
 using System.Xml;
-
-using SIL.CoreImpl;
+using SIL.LCModel.Core.WritingSystems;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
 using SIL.Utils;
+using SIL.WritingSystems;
 using XCore;
 
 namespace SIL.FieldWorks.Common.Controls
@@ -21,7 +21,7 @@ namespace SIL.FieldWorks.Common.Controls
 	/// <summary>
 	/// Summary description for ColumnConfigureDialg.
 	/// </summary>
-	public class ColumnConfigureDialog : Form, IFWDisposable
+	public class ColumnConfigureDialog : Form
 	{
 		private const string s_helpTopic = "khtpConfigureColumns";
 		private Label label1;
@@ -41,8 +41,7 @@ namespace SIL.FieldWorks.Common.Controls
 
 		List<XmlNode> m_possibleColumns;
 		List<XmlNode> m_currentColumns;
-		readonly FdoCache m_cache;
-		StringTable m_stringTbl;
+		readonly LcmCache m_cache;
 		private readonly IHelpTopicProvider m_helpTopicProvider;
 
 		bool m_fUpdatingWsCombo = false; // true during UpdateWsCombo
@@ -100,22 +99,19 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		/// <param name="possibleColumns">The possible columns.</param>
 		/// <param name="currentColumns">The current columns.</param>
-		/// <param name="mediator">The mediator.</param>
-		/// <param name="stringTbl">The string TBL.</param>
+		/// <param name="propertyTable"></param>
 		/// ------------------------------------------------------------------------------------
-		public ColumnConfigureDialog(List<XmlNode> possibleColumns, List<XmlNode> currentColumns,
-			Mediator mediator, StringTable stringTbl)
+		public ColumnConfigureDialog(List<XmlNode> possibleColumns, List<XmlNode> currentColumns, PropertyTable propertyTable)
 		{
 			m_possibleColumns = possibleColumns;
 			m_currentColumns = currentColumns;
-			m_cache = (FdoCache)mediator.PropertyTable.GetValue("cache");
-			m_stringTbl = stringTbl;
+			m_cache = propertyTable.GetValue<LcmCache>("cache");
 			//
 			// Required for Windows Form Designer support
 			//
 			InitializeComponent();
 
-			m_helpTopicProvider = mediator.HelpTopicProvider;
+			m_helpTopicProvider = propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider");
 			if (m_helpTopicProvider != null)
 			{
 				helpProvider.HelpNamespace = m_helpTopicProvider.HelpFile;
@@ -258,12 +254,12 @@ namespace SIL.FieldWorks.Common.Controls
 			wsCombo.Items.Clear();
 			using (var ie = m_cache.LanguageProject.LexDbOA.ReversalIndexesOC.GetEnumerator())
 			{
-				var rgWs = new IWritingSystem[m_cache.LanguageProject.LexDbOA.ReversalIndexesOC.Count];
+				var rgWs = new CoreWritingSystemDefinition[m_cache.LanguageProject.LexDbOA.ReversalIndexesOC.Count];
 				for (int i = 0; i < rgWs.Length; ++i)
 				{
 					if (!ie.MoveNext())
 						throw new Exception("The IEnumerator failed to move to an existing Reversal Index???");
-					var ri = (IReversalIndex)ie.Current;
+					IReversalIndex ri = ie.Current;
 					rgWs[i] = m_cache.ServiceLocator.WritingSystemManager.Get(ri.WritingSystem);
 				}
 				bool fSort = wsCombo.Sorted;
@@ -298,11 +294,11 @@ namespace SIL.FieldWorks.Common.Controls
 
 			wsCombo.Items.Clear();
 			var ri = m_cache.ServiceLocator.GetInstance<IReversalIndexRepository>().GetObject(m_hvoRootObj);
-			LanguageSubtag sLang = m_cache.ServiceLocator.WritingSystemManager.Get(ri.WritingSystem).LanguageSubtag;
+			LanguageSubtag sLang = m_cache.ServiceLocator.WritingSystemManager.Get(ri.WritingSystem).Language;
 			bool fSort = wsCombo.Sorted;
-			foreach (IWritingSystem ws in WritingSystemServices.GetReversalIndexWritingSystems(m_cache, ri.Hvo, false))
+			foreach (CoreWritingSystemDefinition ws in WritingSystemServices.GetReversalIndexWritingSystems(m_cache, ri.Hvo, false))
 			{
-				if (ws.LanguageSubtag == sLang)
+				if (ws.Language == sLang)
 				{
 					wsCombo.Items.Add(new WsComboItem(ws.DisplayLabel, ws.Id));
 				}
@@ -321,7 +317,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <summary>
 		/// Initialize the combo box for the standard set of writing systems.
 		/// </summary>
-		public static void AddWritingSystemsToCombo(FdoCache cache,
+		public static void AddWritingSystemsToCombo(LcmCache cache,
 			ComboBox.ObjectCollection items, WsComboContent contentToAdd)
 		{
 			AddWritingSystemsToCombo(cache, items, contentToAdd, false, false);
@@ -330,7 +326,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <summary>
 		/// Initialize the combo box for the standard set of writing systems.
 		/// </summary>
-		public static void AddWritingSystemsToCombo(FdoCache cache,
+		public static void AddWritingSystemsToCombo(LcmCache cache,
 			ComboBox.ObjectCollection items, WsComboContent contentToAdd, bool skipDefaults)
 		{
 			AddWritingSystemsToCombo(cache, items, contentToAdd, skipDefaults, false);
@@ -349,7 +345,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// adds all reasonable single generic items not already included by skipDefaults.
 		/// Ignored if skipDefaults is true.</param>
 		/// <remarks>This is static because ConfigureInterlinDialog uses it</remarks>
-		public static void AddWritingSystemsToCombo(FdoCache cache,
+		public static void AddWritingSystemsToCombo(LcmCache cache,
 			ComboBox.ObjectCollection items, WsComboContent contentToAdd, bool skipDefaults,
 			bool allowMultiple)
 		{
@@ -540,9 +536,9 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="items">The items.</param>
 		/// <param name="wss">The ws array.</param>
 		/// ------------------------------------------------------------------------------------
-		public static void AddWritingSystemsToCombo(FdoCache cache, ComboBox.ObjectCollection items, IEnumerable<IWritingSystem> wss)
+		public static void AddWritingSystemsToCombo(LcmCache cache, ComboBox.ObjectCollection items, IEnumerable<CoreWritingSystemDefinition> wss)
 		{
-			foreach(IWritingSystem ws in wss)
+			foreach (CoreWritingSystemDefinition ws in wss)
 				items.Add(new WsComboItem(ws.DisplayLabel, ws.Id));
 		}
 
@@ -569,9 +565,9 @@ namespace SIL.FieldWorks.Common.Controls
 		ListViewItem MakeCurrentItem(XmlNode node)
 		{
 			var cols = new string[2];
-			var label = XmlUtils.GetLocalizedAttributeValue(m_stringTbl, node, "label", null);
+			var label = XmlUtils.GetLocalizedAttributeValue(node, "label", null);
 			if (label == null)
-				label = XmlUtils.GetManditoryAttributeValue(node, "label");
+				label = XmlUtils.GetMandatoryAttributeValue(node, "label");
 			cols[0] = label;
 			var wsParam = XmlViewsUtils.FindWsParam(node);
 			var dispCategory = TranslateWsParamToLocalizedDisplayCategory(wsParam);
@@ -584,7 +580,7 @@ namespace SIL.FieldWorks.Common.Controls
 			if (string.IsNullOrEmpty(dispCategory) && !string.IsNullOrEmpty(wsParam))
 			{
 				// Display the language name, not its ICU locale.
-				IWritingSystem ws;
+				CoreWritingSystemDefinition ws;
 				if (m_cache.ServiceLocator.WritingSystemManager.TryGet(wsParam, out ws))
 					cols[1] = ws.DisplayLabel;
 				else
@@ -747,7 +743,7 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 			if (ri != null)
 			{
-				IWritingSystem ws = m_cache.ServiceLocator.WritingSystemManager.Get(ri.WritingSystem);
+				CoreWritingSystemDefinition ws = m_cache.ServiceLocator.WritingSystemManager.Get(ri.WritingSystem);
 				return ws.DisplayLabel;
 			}
 			return null;
@@ -770,7 +766,7 @@ namespace SIL.FieldWorks.Common.Controls
 
 		void InitCurrentList()
 		{
-			IComparer<XmlNode> columnSorter = new ColumnSorter(m_stringTbl);
+			IComparer<XmlNode> columnSorter = new ColumnSorter();
 			int firstIndex = 0;
 			int count = m_possibleColumns.Count;
 			if (m_possibleColumns.Count > 0 && m_possibleColumns[0].ParentNode != null)
@@ -1120,13 +1116,13 @@ namespace SIL.FieldWorks.Common.Controls
 
 		private string GetColumnLabel(int columnIndex)
 		{
-			string label = XmlUtils.GetLocalizedAttributeValue(m_stringTbl, CurrentSpecs[columnIndex],
+			string label = XmlUtils.GetLocalizedAttributeValue(CurrentSpecs[columnIndex],
 															   "originalLabel", null);
 			if (label == null)
-				label = XmlUtils.GetLocalizedAttributeValue(m_stringTbl, CurrentSpecs[columnIndex],
+				label = XmlUtils.GetLocalizedAttributeValue(CurrentSpecs[columnIndex],
 															"label", null);
 			if (label == null)
-				label = XmlUtils.GetManditoryAttributeValue(CurrentSpecs[columnIndex], "label");
+				label = XmlUtils.GetMandatoryAttributeValue(CurrentSpecs[columnIndex], "label");
 			return label;
 		}
 
@@ -1359,7 +1355,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="wsForOptions"></param>
 		/// <param name="defaultMagicName"></param>
 		/// <returns></returns>
-		public static WsComboContent ChooseComboContent(FdoCache cache, int wsForOptions, string defaultMagicName)
+		public static WsComboContent ChooseComboContent(LcmCache cache, int wsForOptions, string defaultMagicName)
 		{
 			string magicName = "";
 			if (wsForOptions < 0)
@@ -1440,10 +1436,10 @@ namespace SIL.FieldWorks.Common.Controls
 					XmlUtils.AppendAttribute(replacement, "originalWs", currentList.Items[index].SubItems[1].Text);
 			}
 
-			GenerateColumnLabel(replacement, m_cache, m_stringTbl);
+			GenerateColumnLabel(replacement, m_cache);
 
 			XmlAttribute xa = replacement.Attributes["label"];
-			xa.Value = XmlUtils.GetManditoryAttributeValue(replacement, "label");
+			xa.Value = XmlUtils.GetMandatoryAttributeValue(replacement, "label");
 			var listItem = MakeCurrentItem(replacement);
 			if (listItem == null) // The user deleted this ws and there was already one with the default ws.
 			{
@@ -1466,10 +1462,9 @@ namespace SIL.FieldWorks.Common.Controls
 		/// column already.
 		/// </summary>
 		/// <param name="colSpec">The XML node of the column specification</param>
-		/// <param name="cache">The FdoCache</param>
-		/// <param name="stringTbl">The string TBL.</param>
+		/// <param name="cache">The LcmCache</param>
 		/// ------------------------------------------------------------------------------------
-		static public void GenerateColumnLabel(XmlNode colSpec, FdoCache cache, StringTable stringTbl)
+		static public void GenerateColumnLabel(XmlNode colSpec, LcmCache cache)
 		{
 			string newWs = XmlViewsUtils.FindWsParam(colSpec);
 			string originalWs = XmlUtils.GetOptionalAttributeValue(colSpec, "originalWs");
@@ -1482,13 +1477,13 @@ namespace SIL.FieldWorks.Common.Controls
 				// generate a label if it is changed again: we know both the original label
 				// (to possibly append an abbreviation to) and the original writing system (so
 				// we know whether to mark it at all).
-				originalLabel = XmlUtils.GetManditoryAttributeValue(colSpec, "label");
+				originalLabel = XmlUtils.GetMandatoryAttributeValue(colSpec, "label");
 				XmlUtils.AppendAttribute(colSpec, "originalLabel", originalLabel);
 			}
 
 			string label = originalLabel;
-			if (!String.IsNullOrEmpty(label) && stringTbl != null)
-				label = stringTbl.LocalizeAttributeValue(label);
+			if (!String.IsNullOrEmpty(label))
+				label = StringTable.Table.LocalizeAttributeValue(label);
 
 			// Note that there's no reason to try and make a new label if originalWs isn't defined.  If this is the
 			// case, then it means that the ws was never changed, so we don't need to put the new ws in the label
@@ -1507,7 +1502,7 @@ namespace SIL.FieldWorks.Common.Controls
 				{
 					// Try to use the abbreviation of the language name, not its ICU locale
 					// name.
-					IWritingSystem ws;
+					CoreWritingSystemDefinition ws;
 					if (cache.ServiceLocator.WritingSystemManager.TryGet(newWs, out ws))
 						extra = ws.Abbreviation;
 					if (string.IsNullOrEmpty(extra))
@@ -1528,23 +1523,16 @@ namespace SIL.FieldWorks.Common.Controls
 		// Class to sort the columns before they are displayed
 		private class ColumnSorter : IComparer<XmlNode>
 		{
-			private StringTable m_stringTable;
-
-			internal ColumnSorter(StringTable tbl)
-			{
-				m_stringTable = tbl;
-			}
-
 			#region IComparer<T> Members
 
 			public int Compare(XmlNode x, XmlNode y)
 			{
-				string xVal = XmlUtils.GetLocalizedAttributeValue(m_stringTable, (XmlNode)x, "label", null);
+				string xVal = XmlUtils.GetLocalizedAttributeValue(x, "label", null);
 				if (xVal == null)
-					xVal = XmlUtils.GetManditoryAttributeValue((XmlNode)x, "label");
-				string yVal = XmlUtils.GetLocalizedAttributeValue(m_stringTable, (XmlNode)y, "label", null);
+					xVal = XmlUtils.GetMandatoryAttributeValue(x, "label");
+				string yVal = XmlUtils.GetLocalizedAttributeValue(y, "label", null);
 				if (yVal == null)
-					yVal = XmlUtils.GetManditoryAttributeValue((XmlNode)y, "label");
+					yVal = XmlUtils.GetMandatoryAttributeValue((XmlNode)y, "label");
 				return xVal.CompareTo(yVal);
 			}
 
@@ -1570,7 +1558,7 @@ namespace SIL.FieldWorks.Common.Controls
 
 		public override string ToString()
 		{
-			return XmlUtils.GetManditoryAttributeValue(m_item, "label");
+			return XmlUtils.GetMandatoryAttributeValue(m_item, "label");
 		}
 
 	}

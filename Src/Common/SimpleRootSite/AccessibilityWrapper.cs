@@ -2,19 +2,15 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Windows.Forms;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 
 namespace SIL.FieldWorks.Common.RootSites
 {
 	/// <summary>
 	/// This class implements the DotNet Acessibility interface by wrapping the COM IAccessible interface
 	/// implemented by the root box.
-	/// It is uncomfortably similar to COMInterfaces.AccessibleObjectFromIAccessible, but was developed
+	/// It is uncomfortably similar to ViewsInterfaces.AccessibleObjectFromIAccessible, but was developed
 	/// independently since we (JohnT and Dan) didn't find AccessibleObjectFromIAccessible until later.
 	/// The most important difference is that this version stores the root site as well as its
 	/// AccessibleRootObject. This handles the problem that DotNet apparently only asks any one object
@@ -188,8 +184,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <summary>
 		/// One of many methods that delegate to the IAccessible, with a suitable default if it is null.
 		/// </summary>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "m_rootSite.Parent returns a reference")]
 		public override AccessibleObject Parent
 		{
 			get

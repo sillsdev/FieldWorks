@@ -1,33 +1,29 @@
-// Copyright (c) 2003-2013 SIL International
+// Copyright (c) 2003-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: PhoneEnvReferenceView.cs
-// Responsibility: Randy Regnier
-// Last reviewed:
-//
-// <remarks>
-// </remarks>
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using System.Diagnostics;
 using System.Xml;
-using SIL.CoreImpl;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel.Core.Cellar;
+using SIL.LCModel.Core.Phonology;
+using SIL.LCModel.Core.Text;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.Framework.DetailControls.Resources;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FDO.Validation;
+using SIL.LCModel;
+using SIL.LCModel.Application;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.FdoUi;
-using SIL.Utils;
+using SIL.LCModel.Utils;
 using XCore;
-using SIL.FieldWorks.FDO.Application;
-using SIL.FieldWorks.FDO.Infrastructure;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls
 {
@@ -57,13 +53,12 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		public const int kFragEnvironmentObj = 5;
 
 		// A cache used to interact with the Views code,
-		// but which is not the one in the FdoCache.
+		// but which is not the one in the LcmCache.
 		private PhoneEnvReferenceSda m_sda;
 		private PhoneEnvReferenceVc m_PhoneEnvReferenceVc;
 		private IMoForm m_rootObj;
 		private int m_rootFlid;
 		private int m_hvoOldSelection = 0;
-		private ITsStrFactory m_tsf;
 		private int m_wsVern;
 		private PhonEnvRecognizer m_validator;
 		private Dictionary<int, IPhEnvironment> m_realEnvs = new Dictionary<int, IPhEnvironment>();
@@ -73,7 +68,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// <summary>
 		/// This allows the view to communicate size changes to the embedding slice.
 		/// </summary>
-		public event SIL.Utils.FwViewSizeChangedEventHandler ViewSizeChanged;
+		public event FwViewSizeChangedEventHandler ViewSizeChanged;
 		private int m_heightView = 0;
 
 		#endregion // Constants and data members
@@ -82,7 +77,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 		private ITsString DummyString
 		{
-			get { return m_tsf.MakeString("", m_wsVern); }
+			get { return TsStringUtils.EmptyString(m_wsVern); }
 		}
 
 		#endregion Properties
@@ -95,16 +90,15 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			InitializeComponent();
 		}
 
-		public void Initialize(IMoForm rootObj, int rootFlid, FdoCache cache)
+		public void Initialize(IMoForm rootObj, int rootFlid, LcmCache cache)
 		{
 			CheckDisposed();
 
 			Debug.Assert(rootObj is IMoAffixAllomorph || rootObj is IMoStemAllomorph);
-			Debug.Assert(cache != null && m_fdoCache == null);
+			Debug.Assert(cache != null && m_cache == null);
 			Cache = cache;
-			m_tsf = cache.TsStrFactory;
 			ResetValidator();
-			m_wsVern = m_fdoCache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Handle;
+			m_wsVern = m_cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Handle;
 			m_rootObj = rootObj;
 			m_rootFlid = rootFlid;
 			if (m_rootb == null)
@@ -137,7 +131,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				m_realEnvs = null;
 			}
 			m_rootObj = null;
-			m_tsf = null;
 			m_sda = null;
 			m_PhoneEnvReferenceVc = null;
 		}
@@ -164,7 +157,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		{
 			foreach (int realHvoEnv in realEnvHvos)
 			{
-				var env = m_fdoCache.ServiceLocator.GetInstance<IPhEnvironmentRepository>().GetObject(realHvoEnv);
+				var env = m_cache.ServiceLocator.GetInstance<IPhEnvironmentRepository>().GetObject(realHvoEnv);
 				AppendPhoneEnv(m_id, env.StringRepresentation);
 				m_realEnvs[m_id] = env; // NB: m_id gets changed each pass through the loop.
 				ValidateStringRep(m_id++);
@@ -174,7 +167,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// <summary>
 		/// Add new item to the collection (added in the chooser).
 		/// </summary>
-		/// <param name="realHvo">ID of the envirnoment from the chooser.</param>
 		public void AddNewItem(IPhEnvironment env)
 		{
 			CheckDisposed();
@@ -188,7 +180,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// <summary>
 		/// Remove an item from the collection (deleted in the chooser).
 		/// </summary>
-		/// <param name="realHvo">ID of the environment from the chooser.</param>
 		public void RemoveItem(IPhEnvironment env)
 		{
 			CheckDisposed();
@@ -250,19 +241,18 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		public override void MakeRoot()
 		{
 			CheckDisposed();
-			base.MakeRoot();
 
-			if (m_fdoCache == null || DesignMode)
+			if (m_cache == null || DesignMode)
 				return;
 
-			m_PhoneEnvReferenceVc = new PhoneEnvReferenceVc(m_fdoCache);
-			m_sda = new PhoneEnvReferenceSda(m_fdoCache.DomainDataByFlid as ISilDataAccessManaged);
+			m_PhoneEnvReferenceVc = new PhoneEnvReferenceVc(m_cache);
+			m_sda = new PhoneEnvReferenceSda(m_cache.DomainDataByFlid as ISilDataAccessManaged);
 
 			// Populate m_vwCache with data.
 			ResynchListToDatabase();
 
-			m_rootb = VwRootBoxClass.Create();
-			m_rootb.SetSite(this);
+			base.MakeRoot();
+
 			m_rootb.DataAccess = m_sda;
 			m_rootb.SetRootObject(m_rootObj.Hvo, m_PhoneEnvReferenceVc, kFragEnvironments,
 				null);
@@ -282,9 +272,9 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			m_rootObj = form;
 		}
 
-		internal void SetCache(FdoCache cache)
+		internal void SetCache(LcmCache cache)
 		{
-			m_fdoCache = cache;
+			m_cache = cache;
 		}
 
 		#region UndoRedo
@@ -361,8 +351,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		{
 			CheckDisposed();
 			m_validator = new PhonEnvRecognizer(
-				m_fdoCache.LangProject.PhonologicalDataOA.AllPhonemes().ToArray(),
-				m_fdoCache.LangProject.PhonologicalDataOA.AllNaturalClassAbbrs().ToArray());
+				m_cache.LangProject.PhonologicalDataOA.AllPhonemes().ToArray(),
+				m_cache.LangProject.PhonologicalDataOA.AllNaturalClassAbbrs().ToArray());
 		}
 
 		/// <summary>
@@ -513,9 +503,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 		private void ValidateStringRep(int hvoDummyObj)
 		{
-			ITsString tss = m_sda.get_StringProp(hvoDummyObj, kEnvStringRep);
-			if (tss == null)
-				tss = m_fdoCache.TsStrFactory.MakeString(String.Empty, m_fdoCache.DefaultAnalWs);
+			ITsString tss = m_sda.get_StringProp(hvoDummyObj, kEnvStringRep) ?? TsStringUtils.EmptyString(m_cache.DefaultAnalWs);
 			ITsStrBldr bldr = tss.GetBldr();
 			if (m_validator.Recognize(tss.Text))
 				ClearSquigglyLine(hvoDummyObj, ref tss, ref bldr);
@@ -560,9 +548,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// because the validator doesn't tell us where the problem ends.
 		/// Since it didn't tell us, we don't try to guess.
 		/// </remarks>
-		/// <param name="hvo"></param>
-		/// <param name="validatorMessage"></param>
-		/// <param name="bldr"></param>
 		private void MakeSquigglyLine(int hvo, string validatorMessage, ref ITsString tss,
 			ref ITsStrBldr bldr)
 		{
@@ -634,7 +619,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// found.
 		/// </returns>
 		private static IPhEnvironment GetEnvironmentFromHvo(
-			IFdoOwningSequence<IPhEnvironment> environmentsHaystack,
+			ILcmOwningSequence<IPhEnvironment> environmentsHaystack,
 			int hvoPattern)
 		{
 			return environmentsHaystack.FirstOrDefault(env =>
@@ -649,8 +634,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		{
 			ITsString environmentTssRep = m_sda.get_StringProp(
 				localDummyHvoOfAnEnvironmentInEntry, kEnvStringRep);
-			return environmentTssRep ?? m_fdoCache.TsStrFactory.MakeString(
-				String.Empty, m_fdoCache.DefaultAnalWs);
+			return environmentTssRep ?? TsStringUtils.EmptyString(m_cache.DefaultAnalWs);
 		}
 
 		/// <summary>
@@ -675,7 +659,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			// in the slice and then Undoing or Redoing a previous command DOES save the changes in the slice; I think OnLeave() must
 			// be called somewhere in the process of invoking Undo before it is too late. This is not ideal behavior, but it
 			// beats crashing.
-			if (m_fdoCache.ActionHandlerAccessor.IsUndoOrRedoInProgress)
+			if (m_cache.ActionHandlerAccessor.IsUndoOrRedoInProgress)
 				return;
 			Form frm = FindForm();
 			WaitCursor wc = null;
@@ -687,7 +671,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				// We're saving any changes to the real cache, so can no longer Undo/Redo local edits.
 				CommitLocalEdits();
 				// [NB: m_silCache is the same cache as m_vwCache, but is is a different cache than
-				// m_fdoCache.  m_fdoCache has access to the database, and updates it, but
+				// m_cache.  m_cache has access to the database, and updates it, but
 				// m_silCache does not.]
 				if (DesignMode || m_rootb == null
 					// It may not be valid by now, since it may have been deleted.
@@ -699,12 +683,12 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				}
 				string fieldname =
 					(m_rootFlid == MoAffixAllomorphTags.kflidPhoneEnv) ? "PhoneEnv" : "Position";
-				m_fdoCache.DomainDataByFlid.BeginUndoTask(
+				m_cache.DomainDataByFlid.BeginUndoTask(
 					String.Format(DetailControlsStrings.ksUndoSet, fieldname),
 					String.Format(DetailControlsStrings.ksRedoSet, fieldname));
-				IPhEnvironmentFactory environmentFactory = m_fdoCache.ServiceLocator.GetInstance<IPhEnvironmentFactory>();
-				IFdoOwningSequence<IPhEnvironment> allAvailablePhoneEnvironmentsInProject =
-					m_fdoCache.LanguageProject.PhonologicalDataOA.EnvironmentsOS;
+				IPhEnvironmentFactory environmentFactory = m_cache.ServiceLocator.GetInstance<IPhEnvironmentFactory>();
+				ILcmOwningSequence<IPhEnvironment> allAvailablePhoneEnvironmentsInProject =
+					m_cache.LanguageProject.PhonologicalDataOA.EnvironmentsOS;
 
 				var envsBeingRequestedForThisEntry = EnvsBeingRequestedForThisEntry();
 
@@ -727,15 +711,15 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				}
 
 				var countOfExistingEnvironmentsInDatabaseForEntry =
-					m_fdoCache.DomainDataByFlid.get_VecSize(m_rootObj.Hvo, m_rootFlid);
+					m_cache.DomainDataByFlid.get_VecSize(m_rootObj.Hvo, m_rootFlid);
 				// Contains environments already in entry or recently selected in
 				// dialog, but not ones just typed
 				int[] existingListOfEnvironmentHvosInDatabaseForEntry;
-				int chvoMax = m_fdoCache.DomainDataByFlid.get_VecSize(
+				int chvoMax = m_cache.DomainDataByFlid.get_VecSize(
 					m_rootObj.Hvo, m_rootFlid);
 				using (ArrayPtr arrayPtr = MarshalEx.ArrayToNative<int>(chvoMax))
 				{
-					m_fdoCache.DomainDataByFlid.VecProp(m_rootObj.Hvo, m_rootFlid, chvoMax, out chvoMax, arrayPtr);
+					m_cache.DomainDataByFlid.VecProp(m_rootObj.Hvo, m_rootFlid, chvoMax, out chvoMax, arrayPtr);
 					existingListOfEnvironmentHvosInDatabaseForEntry = MarshalEx.NativeToArray<int>(arrayPtr, chvoMax);
 				}
 
@@ -782,12 +766,12 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 					!equalArrays(existingListOfEnvironmentHvosInDatabaseForEntry,
 						newListOfEnvironmentHvosForEntry.ToArray()))
 				{
-					m_fdoCache.DomainDataByFlid.Replace(m_rootObj.Hvo, m_rootFlid, 0,
+					m_cache.DomainDataByFlid.Replace(m_rootObj.Hvo, m_rootFlid, 0,
 						countOfExistingEnvironmentsInDatabaseForEntry,
 						newListOfEnvironmentHvosForEntry.ToArray(),
 						newListOfEnvironmentHvosForEntry.Count());
 				}
-				m_fdoCache.DomainDataByFlid.EndUndoTask();
+				m_cache.DomainDataByFlid.EndUndoTask();
 			}
 			finally
 			{
@@ -860,7 +844,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// items with the same string representation. (eg FWNX-822)
 		/// </summary>
 		private static IPhEnvironment FindPhoneEnv(
-			IFdoOwningSequence<IPhEnvironment> allProjectEnvs,
+			ILcmOwningSequence<IPhEnvironment> allProjectEnvs,
 			string environmentPattern, int[] alreadyUsedHvos,
 			int[] preferredHvos)
 		{
@@ -1131,14 +1115,14 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				// addition to all the Insert X" items.
 				int hvo = m_realEnvs[hvoDummy].Hvo;
 				using (ReferenceCollectionUi ui = new ReferenceCollectionUi(Cache, m_rootObj, m_rootFlid, hvo))
-					return ui.HandleRightClick(Mediator, this, true);
+					return ui.HandleRightClick(Mediator, m_propertyTable, this, true);
 			}
 			else
 			{
 				// We need a CmObjectUi in order to call HandleRightClick().  This won't
 				// display the "Show in Environments list" item in the popup menu.
 				using (CmObjectUi ui = new CmObjectUi(m_rootObj))
-					return ui.HandleRightClick(Mediator, this, true, "mnuEnvReferenceChoices");
+					return ui.HandleRightClick(Mediator, m_propertyTable, this, true, "mnuEnvReferenceChoices");
 			}
 		}
 		#endregion
@@ -1150,7 +1134,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// </summary>
 		public class PhoneEnvReferenceVc : FwBaseVc
 		{
-			public PhoneEnvReferenceVc(FdoCache cache)
+			public PhoneEnvReferenceVc(LcmCache cache)
 			{
 				Debug.Assert(cache != null);
 			}
@@ -1384,7 +1368,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		#endregion // PhoneEnvReferenceSda class
 
 		#region PhoneEnvReferenceMdc class
-		class PhoneEnvReferenceMdc : FdoMetaDataCacheDecoratorBase
+		class PhoneEnvReferenceMdc : LcmMetaDataCacheDecoratorBase
 		{
 			public PhoneEnvReferenceMdc(IFwMetaDataCacheManaged mdc)
 				: base(mdc)

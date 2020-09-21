@@ -1,21 +1,18 @@
-// Copyright (c) 2003-2013 SIL International
+// Copyright (c) 2003-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: Mediator.cs
-// Authorship History: John Hatton
 
 using System;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using System.Threading;
 using System.Text;
 using System.Windows.Forms;
-
-using SIL.Utils;
+using SIL.FieldWorks.Common.FwUtils;
+using SIL.Reporting;
 
 namespace XCore
 {
@@ -99,9 +96,7 @@ namespace XCore
 	}
 
 	/// <summary></summary>
-	[SuppressMessage("Gendarme.Rules.Design", "UseCorrectDisposeSignaturesRule",
-		Justification = "We derive from Component and therefore can't modify the signature of Dispose(bool)")]
-	public sealed class Mediator : Component, IFWDisposable
+	public sealed class Mediator : Component
 	{
 		#region PendingMessageItem
 
@@ -143,8 +138,6 @@ namespace XCore
 				m_justCheckingForReceivers = justCheckingForReceivers;
 			}
 
-			[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
-				Justification="See TODO-Linux comment")]
 			public override bool Equals(object obj)
 			{
 				if (obj == null)
@@ -200,7 +193,7 @@ namespace XCore
 
 		#region Data members
 		// testing to have list of IxCoreColleagues that are disposed now
-		private Set<string> m_disposedColleagues = new Set<string>();
+		private HashSet<string> m_disposedColleagues = new HashSet<string>();
 		public void AddDisposedColleague(string hashKey)
 		{
 			CheckDisposed();
@@ -213,7 +206,6 @@ namespace XCore
 		public bool IsDisposedColleague(string hashKey) { return m_disposedColleagues.Contains(hashKey); }
 		//private void ClearDisposedColleagues() { m_disposedColleagues.Clear(); }
 		private bool m_processMessages = true;
-		private PropertyTable m_propertyTable;
 		private CommandSet m_commandSet;
 //		private bool m_allowCommandsToExecute;
 		private SortedDictionary<Tuple<int, IxCoreColleague>, bool> m_colleagues = new SortedDictionary<Tuple<int, IxCoreColleague>, bool>(new TupleComparer());
@@ -244,9 +236,9 @@ namespace XCore
 
 
 		/// <summary>keeps a list of classes (colleagues) and the methods that it doesn't contain</summary>
-		private Dictionary<string, Set<string>> m_MethodsNOTonColleagues;	// key=colleague.ToString(), value=Set of methods of methods
+		private Dictionary<string, HashSet<string>> m_MethodsNOTonColleagues;	// key=colleague.ToString(), value=Set of methods of methods
 		/// <summary>Set of method names that are implemented by any colleague</summary>
-		private Set<string> m_MethodsOnAnyColleague;
+		private HashSet<string> m_MethodsOnAnyColleague;
 
 		private readonly IdleQueue m_idleQueue = new IdleQueue();
 		#endregion
@@ -259,8 +251,7 @@ namespace XCore
 		/// -----------------------------------------------------------------------------------
 		public Mediator()
 		{
-			m_propertyTable = new PropertyTable(this);
-			m_MethodsOnAnyColleague = new Set<string>();
+			m_MethodsOnAnyColleague = new HashSet<string>();
 //			m_allowCommandsToExecute = false;
 
 			// NOTE: to set the trace level, create a config file like the following and set
@@ -374,7 +365,7 @@ namespace XCore
 		/// </remarks>
 		protected override void Dispose(bool disposing)
 		{
-			Debug.WriteLineIf(!disposing, "****************** " + GetType().Name + " 'disposing' is false. ******************");
+			Debug.WriteLineIf(!disposing, "****************** Missing Dispose() call for " + GetType() + " ******************");
 			// Can be called more than once, but not run more than once.
 			if (m_isDisposed)
 				return;
@@ -386,7 +377,7 @@ namespace XCore
 				// Use a copy of the m_colleagues Set,
 				// since the Dispose methods on the colleague should remove itself from m_colleagues,
 				// which will cause an exception to be throw (list changed while spinning through it.
-				Set<IxCoreColleague> copyOfColleagues = new Set<IxCoreColleague>();
+				var copyOfColleagues = new HashSet<IxCoreColleague>();
 				foreach (var key in m_colleagues.Keys)
 				{
 					copyOfColleagues.Add(key.Item2);
@@ -399,16 +390,13 @@ namespace XCore
 						// Is the class marked with [XCore.MediatorDispose],
 						// or is it in the temporary colleague holder?
 						object[] attrs = icc.GetType().GetCustomAttributes(typeof(MediatorDisposeAttribute), true);
-						if ((attrs != null && attrs.Length > 0)
-							|| m_temporaryColleague == icc)
+						if ((attrs.Length > 0) || m_temporaryColleague == icc)
 						{
 							(icc as IDisposable).Dispose();
 						}
 					}
 				}
 				copyOfColleagues.Clear();
-				if (m_propertyTable != null)
-					m_propertyTable.Dispose();
 				if (m_commandSet != null)
 					m_commandSet.Dispose();
 				if (m_pathVariables != null)
@@ -432,7 +420,6 @@ namespace XCore
 			m_jobs = null;
 			m_disposedColleagues = null;
 			m_temporaryColleague = null;
-			m_propertyTable = null;
 			m_commandSet = null;
 			m_colleagues = null;
 			m_pathVariables = null;
@@ -447,6 +434,34 @@ namespace XCore
 			m_isDisposed = true;
 
 			base.Dispose(disposing);
+		}
+
+		/// <summary>
+		/// In app shutdown, we need to dispose of colleagues that are disposable before the call to Dispose.
+		/// The reason is that when the main window (XWindow) is shuttinng down, it first calls Dispose
+		/// on PropertyTable, and then on Mediator. BUT, the Mediator then wants to dispose colleagues,
+		/// which in turn may want to remove themselves from the PropertyTable, which throws, since it
+		/// has already been disposed.
+		/// </summary>
+		public void PreDisposeColleagues()
+		{
+			// Use a copy ("ToList" call) to avoid collection changed exception.
+			foreach (var disposedKey in m_colleagues.Keys.Where(key => key.Item2 is IDisposable).ToList())
+			{
+				((IDisposable)disposedKey.Item2).Dispose();
+				if (m_colleagues.ContainsKey(disposedKey))
+				{
+					// If it didn't have the good manners to remove itself,
+					// do it here.
+					m_colleagues.Remove(disposedKey);
+				}
+			}
+			if (!(m_temporaryColleague is IDisposable))
+			{
+				return;
+			}
+			((IDisposable)m_temporaryColleague).Dispose();
+			m_temporaryColleague = null;
 		}
 
 		#endregion IDisposable & Co. implementation
@@ -537,13 +552,11 @@ namespace XCore
 		}
 
 		// flag set if we are going to have a specific m_mainWindowHandler but don't yet.
-		bool m_specificToOneMainWindow = false;
+		private bool m_specificToOneMainWindow;
 		private bool m_safeToBroadcast = true;
 		private IntPtr m_mainWndPtr = IntPtr.Zero;
 
 		/// <summary>This posts a WM_BROADCAST... msg to the main app window</summary>
-		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
-			Justification = "Add TODO-Linux comment")]
 		private void AddWindowMessage()
 		{
 			if (!ProcessMessages)
@@ -566,7 +579,7 @@ namespace XCore
 					mainWndPtr = process.MainWindowHandle;
 			}
 			if (mainWndPtr != IntPtr.Zero)
-				Win32.PostMessage(mainWndPtr, Mediator.WM_BROADCAST_ITEM_INQUEUE, 0, 0);
+				Win32.PostMessage(mainWndPtr, WM_BROADCAST_ITEM_INQUEUE, (IntPtr)0, (IntPtr)0);
 		}
 
 		/// <summary>Add an item to the queue and let the app know an item is present to be processed.</summary>
@@ -1267,6 +1280,7 @@ namespace XCore
 			}
 
 			IxCoreColleague[] targets = colleague.GetMessageTargets();
+			targets = targets.Where(x => x != null).OrderBy(y => y.Priority).ToArray();
 			// Try following the 'Code Performance' guidelines which says that
 			// .."foreach introduces both managed heap and virtual function overhead..
 			// This can be a significant factor in performance-sensitive regions of your application."
@@ -1523,109 +1537,6 @@ namespace XCore
 			{
 				CheckDisposed();
 				return m_commandSet;
-			}
-		}
-
-		public PropertyTable PropertyTable
-		{
-			get
-			{
-				CheckDisposed();
-				return m_propertyTable;
-			}
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Gets the help topic provider from the mediator's properties.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public IHelpTopicProvider HelpTopicProvider
-		{
-			get
-			{
-				CheckDisposed();
-				return (IHelpTopicProvider)PropertyTable.GetValue("HelpTopicProvider");
-			}
-			set
-			{
-				CheckDisposed();
-				PropertyTable.SetProperty("HelpTopicProvider", value);
-				PropertyTable.SetPropertyPersistence("HelpTopicProvider", false);
-			}
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Gets the feedback information provider from the mediator's properties.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public IFeedbackInfoProvider FeedbackInfoProvider
-		{
-			get
-			{
-				CheckDisposed();
-				return (IFeedbackInfoProvider)PropertyTable.GetValue("FeedbackInfoProvider");
-			}
-			set
-			{
-				CheckDisposed();
-				PropertyTable.SetProperty("FeedbackInfoProvider", value);
-				PropertyTable.SetPropertyPersistence("FeedbackInfoProvider", false);
-			}
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// a look up table for getting the correct version of strings that the user will see.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public StringTable StringTbl
-		{
-			get
-			{
-				CheckDisposed();
-				object table = PropertyTable.GetValue("stringTable");
-				if (table == null)
-					throw new ConfigurationException("Could not get the StringTable. Make sure there is at least an 'strings-en.xml' in the configuration directory.");
-				return (StringTable)table;
-			}
-			set
-			{
-				PropertyTable.SetProperty("stringTable", value);
-				PropertyTable.SetPropertyPersistence("stringTable", false);
-			}
-		}
-
-		/// <summary>
-		/// This property can be used to see if the String Table has been set
-		/// without triggering an exception.
-		/// </summary>
-		public bool IsStringTableSet
-		{
-			get
-			{
-				try
-				{
-					var table = this.StringTbl;
-					return true;
-				}
-				catch (ConfigurationException)
-				{
-					return false;
-				}
-			}
-		}
-
-		/// <summary>
-		/// Check whether we have a string table stored and available for use.
-		/// </summary>
-		public bool HasStringTable
-		{
-			get
-			{
-				object table = PropertyTable.GetValue("stringTable");
-				return table != null;
 			}
 		}
 

@@ -44,6 +44,13 @@ namespace SIL.FieldWorks.Common.Controls
 			m_rcText = ClientRectangle;
 		}
 
+		/// <summary/>
+		protected override void Dispose(bool disposing)
+		{
+			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + ". ******");
+			base.Dispose(disposing);
+		}
+
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Make sure the text in the header label acts like a normal label in that it

@@ -4,9 +4,8 @@
 
 using System;
 using System.Diagnostics;
-
 using SIL.FieldWorks.Common.Widgets;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using XCore;
 
 namespace SIL.FieldWorks.LexText.Controls
@@ -110,15 +109,16 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// </summary>
 		/// <param name="cache">FDO cache.</param>
 		/// <param name="mediator">Mediator used to restore saved siz and location info.</param>
+		/// <param name="propertyTable"></param>
 		/// <param name="startingEntry">Entry that cannot be used as a match in this dlg.</param>
-		public void SetDlgInfo(FdoCache cache, Mediator mediator, ILexEntry startingEntry)
+		public void SetDlgInfo(LcmCache cache, Mediator mediator, XCore.PropertyTable propertyTable, ILexEntry startingEntry)
 		{
 			CheckDisposed();
 
 			Debug.Assert(startingEntry != null);
 			m_startingEntry = startingEntry;
 
-			SetDlgInfo(cache, null, mediator);
+			SetDlgInfo(cache, null, mediator, propertyTable);
 		}
 
 		/// <summary>
@@ -127,11 +127,12 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <param name="cache"></param>
 		/// <param name="wp"></param>
 		/// <param name="mediator"></param>
-		public override void SetDlgInfo(FdoCache cache, WindowParams wp, Mediator mediator)
+		/// <param name="propertyTable"></param>
+		public override void SetDlgInfo(LcmCache cache, WindowParams wp, Mediator mediator, XCore.PropertyTable propertyTable)
 		{
 			CheckDisposed();
 
-			base.SetDlgInfo(cache, wp, mediator);
+			base.SetDlgInfo(cache, wp, mediator, propertyTable);
 			// This is needed to make the replacement MatchingEntriesBrowser visible:
 			Controls.SetChildIndex(m_matchingObjectsBrowser, 0);
 
@@ -140,7 +141,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			// For a resizeable dialog, we don't want AdjustForStylesheet to really change its size,
 			// because then it ends up growing every time it launches!
 			int oldHeight = Height;
-			m_fwcbAllomorphs.AdjustForStyleSheet(this, grplbl, mediator);
+			m_fwcbAllomorphs.AdjustForStyleSheet(this, grplbl, propertyTable);
 			Height = oldHeight;
 		}
 
@@ -176,7 +177,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			// For a resizeable dialog, we don't want AdjustForStylesheet to really change its size,
 			// because then it ends up growing every time it launches!
 			int oldHeight = Height;
-			m_fwcbAllomorphs.AdjustForStyleSheet(this, grplbl, m_mediator);
+			m_fwcbAllomorphs.AdjustForStyleSheet(this, grplbl, m_propertyTable);
 			Height = oldHeight;
 		}
 

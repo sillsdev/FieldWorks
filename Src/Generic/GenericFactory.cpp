@@ -15,7 +15,7 @@ Description:
 
 #include "BinTree_i.cpp"
 
-#if !WIN32
+#if !defined(_WIN32) && !defined(_M_X64)
 #include <iostream>
 #include "COMLibrary.h"
 #endif
@@ -273,7 +273,7 @@ void GenericFactory::UnregisterFactoryNode(GenericFactory * pfact)
 	UnregisterFactoryNode(pfact->m_rgpobj[1]);
 }
 
-#ifdef WIN32
+#if defined(_WIN32) || defined(_M_X64)
 /*----------------------------------------------------------------------------------------------
 	Returns the registry key used for registering classes. This is normally HKEY_CLASSES_ROOT,
 	unless we register on a per user basis in which case it is
@@ -335,7 +335,7 @@ HKEY GenericFactory::GetClassesRoot(RegKey& hkCuClassesRoot)
 ----------------------------------------------------------------------------------------------*/
 void GenericFactory::Register()
 {
-#if WIN32
+#if defined(_WIN32) || defined(_M_X64)
 
 	// Register server info
 	DWORD dwT;
@@ -424,7 +424,7 @@ void GenericFactory::Register()
 	// Review JohnT: is there any other strategy that might be more reliable?
 	// Do e.g. Korean Windows also use .EXE?
 
-	int cchPath = _tcslen(pszPath);
+	int cchPath = (int)_tcslen(pszPath);
 	if (cchPath < 4)
 		ThrowHr(WarnHr(E_FAIL)); // neither exe nor dll!
 
@@ -498,14 +498,14 @@ void GenericFactory::Register()
 ----------------------------------------------------------------------------------------------*/
 void GenericFactory::Unregister()
 {
-#if WIN32
+#if defined(_WIN32) || defined(_M_X64)
 
 	RegKey hkMyOldProgId;
 	RegKey hkClsid;
 
 	// Find the clsid that was originally stored in ProgID.
 	achar szClsid[100] = {0};
-	DWORD cchClsid = sizeof(szClsid);
+	size_t cchClsid = sizeof(szClsid);
 	StrAppBuf strbProgId = m_pszProgId;
 	strbProgId += _T("\\CLSID");
 	RegKey hkCuClassesRoot;
@@ -515,7 +515,7 @@ void GenericFactory::Unregister()
 		&hkMyOldProgId);
 	if (ERROR_SUCCESS == lnRes)
 	{
-		RegQueryValueEx(hkMyOldProgId, NULL, NULL, NULL, (BYTE *)szClsid, &cchClsid);
+		RegQueryValueEx(hkMyOldProgId, NULL, NULL, NULL, (BYTE *)szClsid, (LPDWORD)cchClsid);
 	}
 	else if (ERROR_FILE_NOT_FOUND != lnRes)
 		ThrowHr(WarnHr(E_FAIL));

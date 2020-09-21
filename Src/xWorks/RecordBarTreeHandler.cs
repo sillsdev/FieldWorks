@@ -1,16 +1,11 @@
-// Copyright (c) 2003-2015 SIL International
+// Copyright (c) 2003-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: TreeBarHandler.cs
-// Authorship History: John Hatton
-// Last reviewed:
 //
 // <remarks>
 //	This class is responsible for populating the XCore tree bar with the records
 //	that are given to it by the RecordClerk.
 // </remarks>
-
 
 using System;
 using SIL.FieldWorks.FdoUi;
@@ -20,14 +15,14 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Xml;
-
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Filters;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Infrastructure;
+using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.FwCoreDlgControls;
 using SIL.Utils;
-using SIL.CoreImpl;
-using SIL.FieldWorks.FDO.Infrastructure;
-using System.Diagnostics.CodeAnalysis;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -35,10 +30,11 @@ namespace SIL.FieldWorks.XWorks
 	/// <summary>
 	/// Responsible for populating the XCore tree bar with the records.
 	/// </summary>
-	public abstract class RecordBarHandler : IFWDisposable
+	public abstract class RecordBarHandler : IDisposable
 	{
 		protected Mediator m_mediator;
-		protected FdoCache m_cache; // initialized with mediator.
+		protected PropertyTable m_propertyTable;
+		protected LcmCache m_cache; // initialized with mediator.
 		protected bool m_expand;
 		protected bool m_hierarchical;
 		protected bool m_includeAbbr;
@@ -47,7 +43,7 @@ namespace SIL.FieldWorks.XWorks
 		// This gets set when we skipped populating the tree bar because it wasn't visible.
 		protected bool m_fOutOfDate = false;
 
-		static public RecordBarHandler Create(Mediator mediator, XmlNode toolConfiguration)
+		static public RecordBarHandler Create(Mediator mediator, PropertyTable propertyTable, XmlNode toolConfiguration)
 		{
 			RecordBarHandler handler;
 			XmlNode node = toolConfiguration.SelectSingleNode("treeBarHandler");
@@ -55,7 +51,7 @@ namespace SIL.FieldWorks.XWorks
 				handler = new RecordBarListHandler();
 			else
 				handler = (TreeBarHandler)DynamicLoader.CreateObject(node);
-			handler.Init(mediator, node);
+			handler.Init(mediator, propertyTable, node);
 			return handler;
 		}
 
@@ -156,12 +152,13 @@ namespace SIL.FieldWorks.XWorks
 
 		#endregion IDisposable & Co. implementation
 
-		internal virtual void  Init(Mediator mediator, XmlNode node)
+		internal virtual void Init(Mediator mediator, PropertyTable propertyTable, XmlNode node)
 		{
 			CheckDisposed();
 
 			m_mediator = mediator;
-			m_cache = (FdoCache)m_mediator.PropertyTable.GetValue("cache");
+			m_propertyTable = propertyTable;
+			m_cache = m_propertyTable.GetValue<LcmCache>("cache");
 
 			if (node != null)
 			{
@@ -190,7 +187,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			get
 			{
-				return m_mediator.PropertyTable.GetBoolProperty("ShowRecordList", false);
+				return m_propertyTable.GetBoolProperty("ShowRecordList", false);
 			}
 		}
 
@@ -229,7 +226,7 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		protected virtual void UpdateHeaderVisibility()
 		{
-			var window = (XWindow)m_mediator.PropertyTable.GetValue("window");
+			var window = m_propertyTable.GetValue<XWindow>("window");
 			if (window == null || window.IsDisposed)
 				return;
 
@@ -267,8 +264,6 @@ namespace SIL.FieldWorks.XWorks
 			return possibility.OwningFlid != CmPossibilityTags.kflidSubPossibilities;
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "ToolStripMenuItems get added to the menu and disposed there")]
 		protected override ContextMenuStrip CreateTreebarContextMenuStrip()
 		{
 			ContextMenuStrip menu = base.CreateTreebarContextMenuStrip();
@@ -276,8 +271,8 @@ namespace SIL.FieldWorks.XWorks
 				&& !(RecordList.OwningObject as ICmPossibilityList).IsSorted)
 			{
 				// Move up and move down items make sense
-				menu.Items.Add(new ToolStripMenuItem(xWorksStrings.MoveUp));
-				menu.Items.Add(new ToolStripMenuItem(xWorksStrings.MoveDown));
+				menu.Items.Add(new DisposableToolStripMenuItem(xWorksStrings.MoveUp));
+				menu.Items.Add(new DisposableToolStripMenuItem(xWorksStrings.MoveDown));
 			}
 			return menu;
 		}
@@ -353,9 +348,9 @@ namespace SIL.FieldWorks.XWorks
 		{
 		}
 
-		internal override void Init(Mediator mediator, XmlNode node)
+		internal override void Init(Mediator mediator, PropertyTable propertyTable, XmlNode node)
 		{
-			base.Init(mediator, node);
+			base.Init(mediator, propertyTable, node);
 			m_objRepo = m_cache.ServiceLocator.GetInstance<ICmObjectRepository>();
 			m_possRepo = m_cache.ServiceLocator.GetInstance<ICmPossibilityRepository>();
 		}
@@ -487,12 +482,12 @@ namespace SIL.FieldWorks.XWorks
 
 			m_list = list;
 
-			var window = (XWindow)m_mediator.PropertyTable.GetValue("window");
+			var window = m_propertyTable.GetValue<XWindow>("window");
 			using (new WaitCursor(window))
 			{
 				window.TreeBarControl.IsFlatList = false;
 				var tree = (TreeView)window.TreeStyleRecordList;
-				var expandedItems = new Set<int>();
+				var expandedItems = new HashSet<int>();
 				if (m_tree != null && !m_expand)
 					GetExpandedItems(m_tree.Nodes, expandedItems);
 				m_tree = tree;
@@ -541,8 +536,6 @@ namespace SIL.FieldWorks.XWorks
 				// an internal node.  (See LT-4508.)
 				UpdateSelection(list.CurrentObject);
 				tree.EndUpdate();
-
-				EnsureSelectedNodeVisible(tree);
 			}
 		}
 
@@ -551,7 +544,7 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		/// <param name="treeNodeCollection"></param>
 		/// <param name="expandedItems"></param>
-		private void GetExpandedItems(TreeNodeCollection treeNodeCollection, Set<int> expandedItems)
+		private void GetExpandedItems(TreeNodeCollection treeNodeCollection, HashSet<int> expandedItems)
 		{
 			foreach (TreeNode node in treeNodeCollection)
 			{
@@ -570,7 +563,7 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		/// <param name="treeNodeCollection"></param>
 		/// <param name="expandedItems"></param>
-		private void ExpandItems(TreeNodeCollection treeNodeCollection, Set<int> expandedItems)
+		private void ExpandItems(TreeNodeCollection treeNodeCollection, HashSet<int> expandedItems)
 		{
 			foreach (TreeNode node in treeNodeCollection)
 			{
@@ -584,7 +577,7 @@ namespace SIL.FieldWorks.XWorks
 
 		protected virtual ContextMenuStrip CreateTreebarContextMenuStrip()
 		{
-			var promoteMenuItem = new ToolStripMenuItem(xWorksStrings.Promote);
+			var promoteMenuItem = new DisposableToolStripMenuItem(xWorksStrings.Promote);
 			var contStrip = new ContextMenuStrip();
 			contStrip.Items.Add(promoteMenuItem);
 			return contStrip;
@@ -735,7 +728,7 @@ namespace SIL.FieldWorks.XWorks
 			var hvoMove = (int)sourceItem.Tag;
 			var hvoDest = 0;
 			int flidDest;
-			var cache = (FdoCache)m_mediator.PropertyTable.GetValue("cache");
+			var cache = m_propertyTable.GetValue<LcmCache>("cache");
 			var move = cache.ServiceLocator.GetObject(hvoMove);
 			var moveLabel = sourceItem.Text;
 			TreeNodeCollection newSiblings;
@@ -782,7 +775,7 @@ namespace SIL.FieldWorks.XWorks
 					cache.ActionHandlerAccessor, () =>
 						cache.DomainDataByFlid.MoveOwnSeq(hvoOldOwner, flidSrc, srcIndex, srcIndex,
 														 hvoDest, flidDest, ihvoDest));
-				// Note: use MoveOwningSequence off FdoCache,
+				// Note: use MoveOwningSequence off LcmCache,
 				// so we get propchanges that can be picked up by SyncWatcher (CLE-76)
 				// (Hopefully the propchanges won't cause too much intermediant flicker,
 				// before ListUpdateHelper calls ReloadList())
@@ -805,7 +798,6 @@ namespace SIL.FieldWorks.XWorks
 		/// <returns>true if a problem was reported and the move should be cancelled.</returns>
 		private bool CheckAndReportForbiddenMove(int hvoMove, int hvoDest)
 		{
-			var cache = (FdoCache) m_mediator.PropertyTable.GetValue("cache");
 			var movingPossItem = m_possRepo.GetObject(hvoMove);
 			if (movingPossItem != null)
 			{
@@ -1073,7 +1065,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			CheckDisposed();
 
-			var window = (XWindow)m_mediator.PropertyTable.GetValue("window");
+			var window = m_propertyTable.GetValue<XWindow>("window");
 			var tree = (TreeView)window.TreeStyleRecordList;
 			if (currentObject == null)
 			{

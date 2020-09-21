@@ -11,13 +11,16 @@
 // </remarks>
 
 using System;
-using System.Drawing;
 using System.Diagnostics;
+using System.Drawing;
 using System.Xml;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.Utils;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.LCModel;
+using SIL.LCModel.Utils;
 using XCore;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls
@@ -73,7 +76,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			m_displayNameProperty = null;
 		}
 
-		public void Initialize(ICmObject rootObj, int rootFlid, string rootFieldName, FdoCache cache, string displayNameProperty,
+		public void Initialize(ICmObject rootObj, int rootFlid, string rootFieldName, LcmCache cache, string displayNameProperty,
 			Mediator mediator, string displayWs)
 		{
 			CheckDisposed();
@@ -156,25 +159,23 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			CheckDisposed();
 			base.MakeRoot();
 
-			if (m_fdoCache == null || DesignMode)
+			if (m_cache == null || DesignMode)
 				return;
 
 			SetReferenceVc();
-			m_rootb = VwRootBoxClass.Create();
-			m_rootb.SetSite(this);
 			m_rootb.DataAccess = GetDataAccess();
 			SetRootBoxObj();
 		}
 
 		protected virtual ISilDataAccess GetDataAccess()
 		{
-			return m_fdoCache.DomainDataByFlid;
+			return m_cache.DomainDataByFlid;
 		}
 
 		public virtual void SetReferenceVc()
 		{
 			CheckDisposed();
-			m_atomicReferenceVc = new AtomicReferenceVc(m_fdoCache, m_rootFlid, m_displayNameProperty);
+			m_atomicReferenceVc = new AtomicReferenceVc(m_cache, m_rootFlid, m_displayNameProperty);
 		}
 
 		#endregion // RootSite required methods
@@ -295,7 +296,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		protected string m_displayNameProperty;
 		private string m_textStyle;
 
-		public AtomicReferenceVc(FdoCache cache, int flid, string displayNameProperty)
+		public AtomicReferenceVc(LcmCache cache, int flid, string displayNameProperty)
 		{
 			Debug.Assert(cache != null);
 			Cache = cache;
@@ -340,14 +341,13 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 						(int)FwTextPropVar.ktpvDefault,
 						(int)TptEditable.ktptNotEditable);
 					ITsString tss;
-					ITsStrFactory tsf = m_cache.TsStrFactory;
 					Debug.Assert(hvo != 0);
 					// Use reflection to get a prebuilt name if we can.  Otherwise
 					// settle for piecing together a string.
 					Debug.Assert(m_cache != null);
 					var obj = m_cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvo);
 					Debug.Assert(obj != null);
-					System.Type type = obj.GetType();
+					Type type = obj.GetType();
 					System.Reflection.PropertyInfo pi = type.GetProperty("TsName",
 						System.Reflection.BindingFlags.Instance |
 						System.Reflection.BindingFlags.Public |
@@ -373,7 +373,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 							object info = pi.GetValue(obj, null);
 							// handle the object type
 							if (info is String)
-								tss = tsf.MakeString((string)info, ws);
+								tss = TsStringUtils.MakeString((string) info, ws);
 							else if (info is IMultiUnicode)
 							{
 								var accessor = info as IMultiUnicode;
@@ -391,7 +391,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 							tss = obj.ShortNameTSS; // prefer this, which is hopefully smart about wss.
 							if (tss == null || tss.Length == 0)
 							{
-								tss = tsf.MakeString(obj.ShortName, ws);
+								tss = TsStringUtils.MakeString(obj.ShortName, ws);
 							}
 						}
 					}

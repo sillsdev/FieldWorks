@@ -10,13 +10,11 @@ using System.Diagnostics;
 using System.Collections.Generic;
 using System.Text;
 using System.Drawing;
-using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.Resources;
-using SIL.Utils;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
 
 namespace SIL.FieldWorks.FwCoreDlgControls
 {
@@ -68,7 +66,7 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 		/// <param name="cache">FDO cache</param>
 		/// ------------------------------------------------------------------------------------
 		public StyleInfo(string name, StyleInfo basedOnStyle, StyleType styleType,
-			FdoCache cache) : base(cache)
+			LcmCache cache) : base(cache)
 		{
 			Name = name;
 			m_styleType = styleType;
@@ -604,7 +602,7 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 
 			m_style = style;
 			style.Name = m_name;
-			style.Usage.UserDefaultWritingSystem = Cache.TsStrFactory.MakeString(
+			style.Usage.UserDefaultWritingSystem = TsStringUtils.MakeString(
 				m_usage,
 				Cache.ServiceLocator.WritingSystemManager.UserWs);
 			style.Type = m_styleType;
@@ -642,7 +640,7 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 			style.UserLevel = m_userLevel;
 
 			// Build the text props
-			ITsPropsBldr styleProps = TsPropsBldrClass.Create();
+			ITsPropsBldr styleProps = TsStringUtils.MakePropsBldr();
 
 			if (m_defaultFontInfo.m_fontName.IsExplicit)
 			{

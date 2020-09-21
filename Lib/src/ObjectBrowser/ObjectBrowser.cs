@@ -1,4 +1,4 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -11,11 +11,7 @@ using System.ComponentModel;
 
 namespace SIL.ObjectBrowser
 {
-	/// ----------------------------------------------------------------------------------------
-	/// <summary>
-	/// FDOBrowserForm Class
-	/// </summary>
-	/// ----------------------------------------------------------------------------------------
+	/// <summary/>
 	public partial class ObjectBrowser : Form
 	{
 		#region Data members
@@ -48,11 +44,8 @@ namespace SIL.ObjectBrowser
 		#endregion Data members
 
 		#region Construction
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Constructor.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
+
+		/// <summary/>
 		public ObjectBrowser()
 		{
 			InitializeComponent();

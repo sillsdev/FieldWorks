@@ -102,7 +102,7 @@ display/printout!
   <!-- convert <RnGenericRec_Title> and other string valued elements -->
 
   <xsl:template match="RnGenericRec_Title|StTxtPara_Contents">
-	<xsl:call-template name="ProcessString"></xsl:call-template>
+	<xsl:call-template name="ProcessAnyString"></xsl:call-template>
   </xsl:template>
 
 
@@ -164,16 +164,16 @@ display/printout!
 
 
   <xsl:template match="CmPossibility_Abbreviation|CmPossibility_Name">
-	<xsl:call-template name="ProcessMultiString"></xsl:call-template>
+	<xsl:call-template name="ProcessAnyString"></xsl:call-template>
   </xsl:template>
 
   <!-- convert <RnGenericRec_DateCreated> and <RnGenericRec_DateModified> -->
 
   <xsl:template match="RnGenericRec_DateCreated|RnGenericRec_DateModified">
-	<xsl:call-template name="ProcessString"></xsl:call-template>
+	<xsl:call-template name="ProcessAnyString"></xsl:call-template>
   </xsl:template>
   <xsl:template match="RnGenericRec_DateOfEvent">
-	<xsl:call-template name="ProcessString"></xsl:call-template>
+	<xsl:call-template name="ProcessAnyString"></xsl:call-template>
   </xsl:template>
 
 
@@ -250,6 +250,24 @@ display/printout!
   <!-- ******************* -->
   <!-- * NAMED TEMPLATES * -->
   <!-- ******************* -->
+
+  <!-- Process any string reliably that has Str or AStr or AUni elements. This -->
+  <!-- should keep our .xsl templates from breaking with model changes -->
+  <!-- having to do with underlying strings. -->
+
+  <xsl:template name="ProcessAnyString">
+	<xsl:choose>
+		<xsl:when test="Str/Run">
+			<xsl:call-template name="ProcessString"></xsl:call-template>
+		</xsl:when>
+		<xsl:when test="AStr/Run">
+			<xsl:call-template name="ProcessMultiString"></xsl:call-template>
+		</xsl:when>
+		<xsl:when test="AUni">
+			<xsl:call-template name="ProcessMultiUnicode"></xsl:call-template>
+		</xsl:when>
+	</xsl:choose>
+  </xsl:template>
 
   <!-- process content that consists of one or more <AStr> elements -->
 

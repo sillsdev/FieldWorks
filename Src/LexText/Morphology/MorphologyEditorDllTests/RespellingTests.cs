@@ -12,15 +12,14 @@ using System.Reflection;
 
 using NUnit.Framework;
 using Rhino.Mocks;
-using SIL.CoreImpl;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.FDO.Application;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FDO.FDOTests;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel;
+using SIL.LCModel.Application;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.Common.Controls;
-using SIL.Utils;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Utils;
 using XCore;
 
 namespace SIL.FieldWorks.XWorks.MorphologyEditor
@@ -29,6 +28,8 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 	public class RespellingTests : MemoryOnlyBackendProviderTestBase
 	{
 		private const int kObjectListFlid = 89999956;
+		private Mediator m_mediator;
+		private PropertyTable m_propertyTable;
 
 		public override void FixtureSetup()
 		{
@@ -39,18 +40,47 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			});
 		}
 
+		#region Overrides of FdoTestBase
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Done before each test.
+		/// Overriders should call base method.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		public override void TestSetup()
+		{
+			base.TestSetup();
+			m_mediator = new Mediator();
+			m_propertyTable = new PropertyTable(m_mediator);
+		}
+
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Done after each test.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public override void  TestTearDown()
+		public override void TestTearDown()
 		{
 			while (m_actionHandler.CanUndo())
 				Assert.AreEqual(UndoResult.kuresSuccess, m_actionHandler.Undo());
 			Assert.AreEqual(0, m_actionHandler.UndoableSequenceCount);
+
+			if (m_mediator != null)
+			{
+				m_mediator.Dispose();
+				m_mediator = null;
+			}
+			if (m_propertyTable != null)
+			{
+				m_propertyTable.Dispose();
+				m_propertyTable = null;
+			}
+
 			base.TestTearDown();
 		}
+
+		#endregion
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -328,8 +358,8 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 				{
 					IScrBook book = Cache.ServiceLocator.GetInstance<IScrBookFactory>().Create(1, out stText);
 					paraT = Cache.ServiceLocator.GetInstance<IScrTxtParaFactory>().CreateWithStyle(stText, "Monkey");
-					paraT.Contents = TsStringUtils.MakeTss(sParaText, Cache.DefaultVernWs);
-					object owner = ReflectionHelper.CreateObject("FDO.dll", "SIL.FieldWorks.FDO.Infrastructure.Impl.CmObjectId", BindingFlags.NonPublic,
+					paraT.Contents = TsStringUtils.MakeString(sParaText, Cache.DefaultVernWs);
+					object owner = ReflectionHelper.CreateObject("SIL.LCModel.dll", "SIL.LCModel.Infrastructure.Impl.CmObjectId", BindingFlags.NonPublic,
 						new object[] { book.Guid });
 					ReflectionHelper.SetField(stText, "m_owner", owner);
 				}
@@ -341,17 +371,17 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 					text.ContentsOA = stText;
 					paraT = Cache.ServiceLocator.GetInstance<IStTxtParaFactory>().Create();
 					stText.ParagraphsOS.Add(paraT);
-					paraT.Contents = TsStringUtils.MakeTss(sParaText, Cache.DefaultVernWs);
+					paraT.Contents = TsStringUtils.MakeString(sParaText, Cache.DefaultVernWs);
 				}
 				foreach (ISegment seg in paraT.SegmentsOS)
 				{
-					FdoTestHelper.CreateAnalyses(seg, paraT.Contents, seg.BeginOffset, seg.EndOffset, fCreateGlosses);
+					LcmTestHelper.CreateAnalyses(seg, paraT.Contents, seg.BeginOffset, seg.EndOffset, fCreateGlosses);
 					paraFrags.AddRange(GetParaFragmentsInSegmentForWord(seg, sWordToReplace));
 				}
 			});
 
 			var rsda = new RespellingSda((ISilDataAccessManaged)Cache.MainCacheAccessor, null, Cache.ServiceLocator);
-			InterestingTextList dummyTextList = MockRepository.GenerateStub<InterestingTextList>(null, Cache.ServiceLocator.GetInstance<ITextRepository>(),
+			InterestingTextList dummyTextList = MockRepository.GenerateStub<InterestingTextList>(m_mediator, m_propertyTable, Cache.ServiceLocator.GetInstance<ITextRepository>(),
 			Cache.ServiceLocator.GetInstance<IStTextRepository>());
 			if (clidPara == ScrTxtParaTags.kClassId)
 				dummyTextList.Stub(tl => tl.InterestingTexts).Return(new IStText[0]);
@@ -410,8 +440,8 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 				{
 					IScrBook book = Cache.ServiceLocator.GetInstance<IScrBookFactory>().Create(1, out stText);
 					paraT = Cache.ServiceLocator.GetInstance<IScrTxtParaFactory>().CreateWithStyle(stText, "Monkey");
-					paraT.Contents = TsStringUtils.MakeTss(sParaText, Cache.DefaultVernWs);
-					object owner = ReflectionHelper.CreateObject("FDO.dll", "SIL.FieldWorks.FDO.Infrastructure.Impl.CmObjectId", BindingFlags.NonPublic,
+					paraT.Contents = TsStringUtils.MakeString(sParaText, Cache.DefaultVernWs);
+					object owner = ReflectionHelper.CreateObject("SIL.LCModel.dll", "SIL.LCModel.Infrastructure.Impl.CmObjectId", BindingFlags.NonPublic,
 						new object[] { book.Guid });
 					ReflectionHelper.SetField(stText, "m_owner", owner);
 				}
@@ -423,11 +453,11 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 					text.ContentsOA = stText;
 					paraT = Cache.ServiceLocator.GetInstance<IStTxtParaFactory>().Create();
 					stText.ParagraphsOS.Add(paraT);
-					paraT.Contents = TsStringUtils.MakeTss(sParaText, Cache.DefaultVernWs);
+					paraT.Contents = TsStringUtils.MakeString(sParaText, Cache.DefaultVernWs);
 				}
 				foreach (ISegment seg in paraT.SegmentsOS)
 				{
-					FdoTestHelper.CreateAnalyses(seg, paraT.Contents, seg.BeginOffset, seg.EndOffset, true);
+					LcmTestHelper.CreateAnalyses(seg, paraT.Contents, seg.BeginOffset, seg.EndOffset, true);
 					var thisSegParaFrags = GetParaFragmentsInSegmentForWord(seg, sWordToReplace);
 					SetMultimorphemicAnalyses(thisSegParaFrags, morphsToCreate);
 					paraFrags.AddRange(thisSegParaFrags);
@@ -435,7 +465,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			});
 
 			var rsda = new RespellingSda((ISilDataAccessManaged)Cache.MainCacheAccessor, null, Cache.ServiceLocator);
-			InterestingTextList dummyTextList = MockRepository.GenerateStub<InterestingTextList>(null, Cache.ServiceLocator.GetInstance<ITextRepository>(),
+			InterestingTextList dummyTextList = MockRepository.GenerateStub<InterestingTextList>(m_mediator, m_propertyTable, Cache.ServiceLocator.GetInstance<ITextRepository>(),
 			Cache.ServiceLocator.GetInstance<IStTextRepository>());
 			if (clidPara == ScrTxtParaTags.kClassId)
 				dummyTextList.Stub(tl => tl.InterestingTexts).Return(new IStText[0]);
@@ -464,7 +494,6 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		private void SetMultimorphemicAnalyses(IEnumerable<IParaFragment> thisSegParaFrags, string[] morphsToCreate)
 		{
 			var morphFact = Cache.ServiceLocator.GetInstance<IWfiMorphBundleFactory>();
-			var tssFact = Cache.TsStrFactory;
 			// IWfiWordform, IWfiAnalysis, and IWfiGloss objects will have already been created.
 			// Still need to add WfiMorphBundles as per morphsToCreate.
 			foreach (IWfiWordform wordform in thisSegParaFrags.Select(x => x.Analysis))
@@ -476,7 +505,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 				{
 					var bundle = morphFact.Create();
 					analysis.MorphBundlesOS.Add(bundle);
-					bundle.Form.VernacularDefaultWritingSystem = tssFact.MakeString(morpheme, Cache.DefaultVernWs);
+					bundle.Form.VernacularDefaultWritingSystem = TsStringUtils.MakeString(morpheme, Cache.DefaultVernWs);
 				}
 			}
 		}
@@ -816,11 +845,11 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			action.AddOccurrence(m_para2Occurrences[2]);
 			action.DoIt();
 			VerifyDoneStateApplyTwo();
-			Assert.IsTrue(m_fdoCache.CanUndo, "undo should be possible after respelling");
+			Assert.IsTrue(m_cache.CanUndo, "undo should be possible after respelling");
 			UndoResult ures;
-			m_fdoCache.Undo(out ures);
+			m_cache.Undo(out ures);
 			VerifyStartingState();
-			m_fdoCache.Redo(out ures);
+			m_cache.Redo(out ures);
 			VerifyDoneStateApplyTwo();
 		}
 
@@ -898,8 +927,8 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 
 		private void VerifyTwfic(int cba, int begin, int end, string message)
 		{
-			Assert.AreEqual(begin, m_fdoCache.GetIntProperty(cba, kflidBeginOffset), message + " beginOffset");
-			Assert.AreEqual(end, m_fdoCache.GetIntProperty(cba, kflidEndOffset), message + " endOffset");
+			Assert.AreEqual(begin, m_cache.GetIntProperty(cba, kflidBeginOffset), message + " beginOffset");
+			Assert.AreEqual(end, m_cache.GetIntProperty(cba, kflidEndOffset), message + " endOffset");
 		}
 
 		/// <summary>
@@ -920,11 +949,11 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			action.CopyAnalyses = true;
 			action.DoIt();
 			VerifyDoneStateApplyTwoAndCopyAnalyses();
-			Assert.IsTrue(m_fdoCache.CanUndo, "undo should be possible after respelling");
+			Assert.IsTrue(m_cache.CanUndo, "undo should be possible after respelling");
 			UndoResult ures;
-			m_fdoCache.Undo(out ures);
+			m_cache.Undo(out ures);
 			VerifyStartingState();
-			m_fdoCache.Redo(out ures);
+			m_cache.Redo(out ures);
 			VerifyDoneStateApplyTwoAndCopyAnalyses();
 		}
 
@@ -995,7 +1024,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			m_wgChopper = new WfiGloss();
 			m_wfaAxe.MeaningsOC.Add(m_wgChopper);
 			m_wgChopper.Form.AnalysisDefaultWritingSystem = "chopper";
-			m_wfaAxe.SetAgentOpinion(m_fdoCache.LangProject.DefaultUserAgent, Opinions.approves);
+			m_wfaAxe.SetAgentOpinion(m_cache.LangProject.DefaultUserAgent, Opinions.approves);
 
 			ILexEntry entryCut = LexEntry.CreateEntry(Cache,
 					MoMorphType.FindMorphType(Cache, new MoMorphTypeCollection(Cache), ref formLexEntry, out clsidForm), tssLexEntryForm,
@@ -1009,7 +1038,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			m_wgCut = new WfiGloss();
 			m_wfaCut.MeaningsOC.Add(m_wgCut);
 			m_wgCut.Form.AnalysisDefaultWritingSystem = "cut";
-			m_wfaCut.SetAgentOpinion(m_fdoCache.LangProject.DefaultUserAgent, Opinions.approves);
+			m_wfaCut.SetAgentOpinion(m_cache.LangProject.DefaultUserAgent, Opinions.approves);
 
 			m_cAnalyses += 2;
 		}
@@ -1040,7 +1069,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			WfiGloss gloss = new WfiGloss();
 			result.MeaningsOC.Add(gloss);
 			gloss.Form.AnalysisDefaultWritingSystem = gloss1 + "." + gloss2;
-			result.SetAgentOpinion(m_fdoCache.LangProject.DefaultUserAgent, Opinions.approves);
+			result.SetAgentOpinion(m_cache.LangProject.DefaultUserAgent, Opinions.approves);
 
 			m_cAnalyses++;
 
@@ -1082,11 +1111,11 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			action.PreserveCase = true;
 			action.DoIt();
 			VerifyDoneStateApplyAllAndUpdateLexicon();
-			Assert.IsTrue(m_fdoCache.CanUndo, "undo should be possible after respelling");
+			Assert.IsTrue(m_cache.CanUndo, "undo should be possible after respelling");
 			UndoResult ures;
-			m_fdoCache.Undo(out ures);
+			m_cache.Undo(out ures);
 			VerifyStartingState();
-			m_fdoCache.Redo(out ures);
+			m_cache.Redo(out ures);
 			VerifyDoneStateApplyAllAndUpdateLexicon();
 		}
 
@@ -1146,11 +1175,11 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			action.KeepAnalyses = true;
 			action.DoIt();
 			VerifyDoneStateApplyAllAndKeepAnalyses();
-			Assert.IsTrue(m_fdoCache.CanUndo, "undo should be possible after respelling");
+			Assert.IsTrue(m_cache.CanUndo, "undo should be possible after respelling");
 			UndoResult ures;
-			m_fdoCache.Undo(out ures);
+			m_cache.Undo(out ures);
 			VerifyStartingState();
-			m_fdoCache.Redo(out ures);
+			m_cache.Redo(out ures);
 			VerifyDoneStateApplyAllAndKeepAnalyses();
 		}
 

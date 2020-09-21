@@ -10,8 +10,8 @@ using System.Net;
 using System.Xml;
 using System.Xml.Serialization;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainImpl;
+using SIL.LCModel;
+using SIL.LCModel.DomainImpl;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -169,7 +169,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// Loads the model. If Cache is not null, also connects parents and references, and updates lists from the rest of the FieldWorks model.
 		/// </summary>
-		public void Load(FdoCache cache)
+		public void Load(LcmCache cache)
 		{
 			var serializer = new XmlSerializer(typeof(DictionaryConfigurationModel));
 			using (var reader = XmlReader.Create(FilePath))
@@ -190,7 +190,15 @@ namespace SIL.FieldWorks.XWorks
 			// Update FDO's homograph configuration from the loaded dictionary configuration homograph settings
 			if (HomographConfiguration != null)
 			{
-				HomographConfiguration.ExportToHomographConfiguration(cache.ServiceLocator.GetInstance<HomographConfiguration>());
+				var wsTtype = DictionaryNodeWritingSystemOptions.WritingSystemType.Both;
+				var availableWSs = DictionaryConfigurationController.GetCurrentWritingSystems(wsTtype, cache);
+				if (availableWSs.Any(x => x.Id == HomographConfiguration.HomographWritingSystem))
+					HomographConfiguration.ExportToHomographConfiguration(cache.ServiceLocator.GetInstance<HomographConfiguration>());
+				else
+				{
+					HomographConfiguration.HomographWritingSystem = string.Empty;
+					HomographConfiguration.CustomHomographNumbers = string.Empty;
+				}
 			}
 			// Handle any changes to the custom field definitions.  (See https://jira.sil.org/browse/LT-16430.)
 			// The "Merge" method handles both additions and deletions.
@@ -233,7 +241,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>Loads a DictionaryConfigurationModel from the given path</summary>
-		public DictionaryConfigurationModel(string path, FdoCache cache)
+		public DictionaryConfigurationModel(string path, LcmCache cache)
 		{
 			FilePath = path;
 			Load(cache);

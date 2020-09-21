@@ -1,19 +1,17 @@
-// Copyright (c) 2013 SIL International
+// Copyright (c) 2013-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-#if __MonoCS__
 using System;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using IBusDotNet;
-using Palaso.UI.WindowsForms.Extensions;
-using Palaso.UI.WindowsForms.Keyboarding.Interfaces;
-using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.LCModel.Core.Text;
+using SIL.FieldWorks.Common.ViewsInterfaces;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.RootSites.Properties;
-using SIL.Utils;
+using SIL.LCModel.Utils;
+using SIL.Windows.Forms.Keyboarding.Linux;
 
 namespace SIL.FieldWorks.Common.RootSites
 {
@@ -21,9 +19,7 @@ namespace SIL.FieldWorks.Common.RootSites
 	/// <summary>
 	/// Views code specific handler of IBus events
 	/// </summary>
-	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
-		Justification="AssociatedSimpleRootSite is a reference")]
-	public class IbusRootSiteEventHandler: IIbusEventHandler
+	public class IbusRootSiteEventHandler : IIbusEventHandler
 	{
 		/// <summary>
 		/// Initializes a new instance of the
@@ -39,9 +35,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		private class SelectionWrapper
 		{
 			private readonly ITsTextProps[] m_TextProps;
-
-			[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-				Justification = "SimpleRootSite.EditingHelper is a reference")]
 			public SelectionWrapper(SimpleRootSite rootSite)
 			{
 				SelectionHelper = new SelectionHelper(rootSite.EditingHelper.CurrentSelection);
@@ -196,10 +189,10 @@ namespace SIL.FieldWorks.Common.RootSites
 		{
 			// handle the unlikely event of no selection props.
 			if (selectionProps == null || selectionProps.Length == 0)
-				return TsStringUtils.MakeTss(text, AssociatedSimpleRootSite.WritingSystemFactory.UserWs);
+				return TsStringUtils.MakeString(text, AssociatedSimpleRootSite.WritingSystemFactory.UserWs);
 
 			var textProps = selectionProps[0];
-			var propsBuilder = TsPropsBldrClass.Create();
+			var propsBuilder = TsStringUtils.MakePropsBldr();
 			var colorGray = (int)ColorUtil.ConvertColorToBGR(Color.Gray);
 			for (int i = 0; i < textProps.IntPropCount; i++)
 			{
@@ -229,13 +222,9 @@ namespace SIL.FieldWorks.Common.RootSites
 					(int)FwTextPropVar.ktpvDefault, colorGray);
 			}
 
-			var tssFactory = TsStrFactoryClass.Create();
-			return tssFactory.MakeStringWithPropsRgch(text, text.Length,
-				propsBuilder.GetTextProps()).get_NormalizedForm(FwNormalizationMode.knmNFD);
+			return TsStringUtils.MakeString(text, propsBuilder.GetTextProps())
+				.get_NormalizedForm(FwNormalizationMode.knmNFD);
 		}
-
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "AssociatedSimpleRootSite.EditingHelper returns a reference")]
 		private SelectionHelper SetupForTypingEventHandler(bool checkIfFocused,
 			bool rollBackPreviousTask)
 		{
@@ -415,7 +404,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		{
 			if (AssociatedSimpleRootSite.InvokeRequired)
 			{
-				AssociatedSimpleRootSite.BeginInvoke(() => OnCommitText(ibusText));
+				AssociatedSimpleRootSite.InvokeAsync(() => OnCommitText(ibusText));
 				return;
 			}
 
@@ -430,13 +419,11 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <param name="cursorPos">0-based position where the cursor should be put after
 		/// updating the composition (pre-edit window). This position is relative to the
 		/// composition/preedit text.</param>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "SimpleRootSite.EditingHelper is a reference")]
 		public void OnUpdatePreeditText(object obj, int cursorPos)
 		{
 			if (AssociatedSimpleRootSite.InvokeRequired)
 			{
-				AssociatedSimpleRootSite.BeginInvoke(() => OnUpdatePreeditText(obj, cursorPos));
+				AssociatedSimpleRootSite.InvokeAsync(() => OnUpdatePreeditText(obj, cursorPos));
 				return;
 			}
 
@@ -540,7 +527,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		{
 			if (AssociatedSimpleRootSite.InvokeRequired)
 			{
-				AssociatedSimpleRootSite.BeginInvoke(() => OnDeleteSurroundingText(offset, nChars));
+				AssociatedSimpleRootSite.InvokeAsync(() => OnDeleteSurroundingText(offset, nChars));
 				return;
 			}
 
@@ -593,7 +580,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		{
 			if (AssociatedSimpleRootSite.InvokeRequired)
 			{
-				AssociatedSimpleRootSite.BeginInvoke(OnHidePreeditText);
+				AssociatedSimpleRootSite.InvokeAsync(OnHidePreeditText);
 				return;
 			}
 
@@ -618,7 +605,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		{
 			if (AssociatedSimpleRootSite.InvokeRequired)
 			{
-				AssociatedSimpleRootSite.BeginInvoke(() => OnIbusKeyPress(keySym, scanCode, index));
+				AssociatedSimpleRootSite.InvokeAsync(() => OnIbusKeyPress(keySym, scanCode, index));
 				return;
 			}
 			if (!AssociatedSimpleRootSite.Focused || AssociatedSimpleRootSite.ReadOnlyView)
@@ -635,8 +622,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// IBus will use this information when it opens a pop-up window to present a list of
 		/// composition choices.
 		/// </summary>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "SimpleRootSite.EditingHelper is a reference")]
 		public Rectangle SelectionLocationAndHeight
 		{
 			get
@@ -666,4 +651,3 @@ namespace SIL.FieldWorks.Common.RootSites
 		#endregion
 	}
 }
-#endif

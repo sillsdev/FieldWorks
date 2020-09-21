@@ -1397,7 +1397,7 @@ FieldWorks ReadMe for help in this area.</value>
     <comment>Dialog text to keep or change homograph numbering ws when default vernacular ws is changed</comment>
   </data>
   <data name="kstidChangeHomographNumberWsTitle" xml:space="preserve">
-    <value>Change Vernacular Writing System</value>
+    <value>Default Vernacular Writing System Has Changed</value>
     <comment>Dialog title for keeping or changing homograph numbering ws when default vernacular ws is changed</comment>
   </data>
   <data name="kstidAddingFwProject" xml:space="preserve">
@@ -1416,5 +1416,9 @@ FieldWorks ReadMe for help in this area.</value>
   </data>
   <data name="kstidDataMigrationProhibitedText" xml:space="preserve">
     <value>This project cannot be migrated to a newer version. Please shut down all other applications that are currently using this project and try opening the project again.</value>
+  </data>
+  <data name="kstidMissingDefaultCollation" xml:space="preserve">
+    <value>The writing systems {0} are missing the default collation. The standard icu collation will be used.</value>
+    <comment>{0} is a list of one or more writing systems</comment>
   </data>
 </root>

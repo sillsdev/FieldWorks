@@ -10,10 +10,9 @@
 
 using System;
 using System.Windows.Forms;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel;
+using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.LexText.Controls.MGA;
-using System.Diagnostics.CodeAnalysis;
 
 namespace SIL.FieldWorks.LexText.Controls
 {
@@ -25,8 +24,6 @@ namespace SIL.FieldWorks.LexText.Controls
 		public MasterPhonologicalFeatureListDlg()
 		{
 		}
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "PhonologicalFeaturesTreeView gets disposed in base class")]
 		public MasterPhonologicalFeatureListDlg(string className) : base(className, new PhonologicalFeaturesTreeView())
 		{
 		}

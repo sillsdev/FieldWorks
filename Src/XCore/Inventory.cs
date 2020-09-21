@@ -1,15 +1,8 @@
-// Copyright (c) 2003-2013 SIL International
+// Copyright (c) 2003-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: Inventory.cs
-// Last reviewed:
-//
-// <remarks>
-// </remarks>
 
 using System;
-using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Text;
 using System.Xml;
@@ -17,9 +10,10 @@ using System.Diagnostics;
 using System.IO;
 using System.Collections.Generic;
 using System.Linq;
-using SIL.FieldWorks.FDO;
-using SIL.Utils;
+using SIL.LCModel;
+using SIL.LCModel.Utils;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.Utils;
 
 namespace XCore
 {
@@ -91,7 +85,7 @@ namespace XCore
 		/// <summary>
 		/// Set of template paths.
 		/// </summary>
-		protected Set<string> m_inventoryPaths;
+		protected HashSet<string> m_inventoryPaths;
 		// The pattern used to find files to load into the inventory in a directory.
 		// PersistOverrideElement assumes that it can strip off one character to get a useful
 		// suffix for a file name (e.g., '*.fwlayout' is a typical pattern).
@@ -204,7 +198,7 @@ namespace XCore
 		public Inventory(string filePattern, string xpath,
 			Dictionary<string, string[]> keyAttrs, string appName, String projectPath)
 		{
-			m_inventoryPaths = new Set<string>();
+			m_inventoryPaths = new HashSet<string>();
 			m_filePattern = filePattern;
 			m_keyAttrs = keyAttrs;
 			m_xpathElementsWanted = xpath;
@@ -301,8 +295,6 @@ namespace XCore
 		///   corresponding layoutType node with a layout name that ends with "#Foo".
 		/// </summary>
 		/// <param name="element"></param>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		public void PersistOverrideElement(XmlNode element)
 		{
 			string[] keyAttrs = m_keyAttrs[element.Name];
@@ -330,7 +322,7 @@ namespace XCore
 				{
 					foreach (var node in nodes.OfType<XmlNode>())
 					{
-						var layoutNode = XmlUtils.GetManditoryAttributeValue(node, "layout");
+						var layoutNode = XmlUtils.GetMandatoryAttributeValue(node, "layout");
 						if (layoutNode.EndsWith(tag))
 						{
 							layoutType = node;
@@ -339,14 +331,14 @@ namespace XCore
 					}
 					if (layoutType != null)
 					{
-						var label = XmlUtils.GetManditoryAttributeValue(layoutType, "label");
+						var label = XmlUtils.GetMandatoryAttributeValue(layoutType, "label");
 						var className = XmlUtils.GetOptionalAttributeValue(layoutType.FirstChild, "class");
 						name = String.Format("{0}_{1}", label, className);
 					}
 				}
 			}
 			if (String.IsNullOrEmpty(name))
-				name = XmlUtils.GetManditoryAttributeValue(element, keyAttrs[0]);
+				name = XmlUtils.GetMandatoryAttributeValue(element, keyAttrs[0]);
 			string sDatabase = String.IsNullOrEmpty(m_sDatabase) ? "default$$" : "";
 			string fileName = sDatabase + name + m_filePattern.Substring(1); // strip off leading *
 			string path = Path.Combine(UserOverrideConfigurationSettingsPath, fileName);
@@ -398,7 +390,7 @@ namespace XCore
 					// Remove any matching layoutType
 					if (layoutType != null)
 					{
-						var layout = XmlUtils.GetManditoryAttributeValue(layoutType, "layout");
+						var layout = XmlUtils.GetMandatoryAttributeValue(layoutType, "layout");
 						foreach (XmlNode child in parent.ChildNodes)
 						{
 							if (child.Name != layoutType.Name)
@@ -450,21 +442,19 @@ namespace XCore
 		/// <summary>
 		/// Add (or replace) the given layout type in the inventory.
 		/// </summary>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		public void AddLayoutTypeToInventory(XmlNode layoutType)
 		{
 			Debug.Assert(m_mainDoc != null);
 			XmlNode root = m_mainDoc["Main"];
 			Debug.Assert(root != null);
 
-			var layoutName = XmlUtils.GetManditoryAttributeValue(layoutType, "layout");
+			var layoutName = XmlUtils.GetMandatoryAttributeValue(layoutType, "layout");
 			var nodes = root.SelectNodes("layoutType");
 			if (nodes != null)
 			{
 				foreach (var xn in nodes.OfType<XmlNode>())
 				{
-					var layoutOld = XmlUtils.GetManditoryAttributeValue(xn, "layout");
+					var layoutOld = XmlUtils.GetMandatoryAttributeValue(xn, "layout");
 					if (layoutOld == layoutName)
 					{
 						root.ReplaceChild(m_mainDoc.ImportNode(layoutType, true), xn);
@@ -478,8 +468,6 @@ namespace XCore
 		/// <summary>
 		/// Return the list of layout types that the inventory knows about.
 		/// </summary>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		public List<XmlNode> GetLayoutTypes()
 		{
 			Debug.Assert(m_mainDoc != null);
@@ -514,7 +502,7 @@ namespace XCore
 
 		private string UserOverrideConfigurationSettingsPath
 		{
-			get { return FdoFileHelper.GetConfigSettingsDir(m_projectPath); }
+			get { return LcmFileHelper.GetConfigSettingsDir(m_projectPath); }
 		}
 
 		/// <summary>
@@ -634,7 +622,7 @@ namespace XCore
 		/// <returns></returns>
 		private XmlNode ApplyAlteration(string elementName, string[] attrvals, XmlNode alteration)
 		{
-			string baseName = XmlUtils.GetManditoryAttributeValue(alteration, "base");
+			string baseName = XmlUtils.GetMandatoryAttributeValue(alteration, "base");
 			string[] baseKey = (string[])attrvals.Clone();
 			int cKeys = baseKey.Length;
 			baseKey[cKeys - 1] = baseName;
@@ -689,13 +677,11 @@ namespace XCore
 			return unified;
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "ChildNodes returns a reference")]
 		private void UnifyChildren(XmlNode alteration, XmlNode baseNode, XmlNode unified)
 		{
 			bool reorder = XmlUtils.GetOptionalBooleanAttributeValue(alteration, "reorder", false);
 			XmlNodeList orderBy;
-			Set<XmlNode> remainingOthers;
+			HashSet<XmlNode> remainingOthers;
 			XmlNodeList others;
 			if (reorder)
 			{
@@ -707,7 +693,7 @@ namespace XCore
 				orderBy = baseNode.ChildNodes;
 				others = alteration.ChildNodes;
 			}
-			remainingOthers = new Set<XmlNode>(others.Count);
+			remainingOthers = new HashSet<XmlNode>();
 			foreach(XmlNode node in others)
 				remainingOthers.Add(node);
 			foreach(XmlNode item in orderBy)
@@ -740,10 +726,7 @@ namespace XCore
 		/// If there is a node in remainingOthers which 'matches' item (in name and
 		/// specified keys), remove and return it; otherwise return null.
 		/// </summary>
-		/// <param name="remainingOthers"></param>
-		/// <param name="item"></param>
-		/// <returns></returns>
-		XmlNode MatchAndRemove(Set<XmlNode> remainingOthers, XmlNode target)
+		XmlNode MatchAndRemove(HashSet<XmlNode> remainingOthers, XmlNode target)
 		{
 			string elementName = target.Name;
 			string[] keyAttrs = null;
@@ -936,7 +919,7 @@ namespace XCore
 			if (alteration == null)
 				return null;
 			string[] keyBase = (string[])attrvals.Clone();
-			keyBase[keyBase.Length - 1] = XmlUtils.GetManditoryAttributeValue(alteration, "base");
+			keyBase[keyBase.Length - 1] = XmlUtils.GetMandatoryAttributeValue(alteration, "base");
 			// if the alteration is an override (key = id), the base node is saved in m_baseDoc,
 			// otherwise it is just in the normal main document.
 			string[] keyAttrs = m_keyAttrs[elementName];
@@ -1003,8 +986,6 @@ namespace XCore
 		/// </summary>
 		/// <param name="inventoryFilePath"></param>
 		/// <param name="newData"></param>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		protected void RefreshOneInventoryFile(string inventoryFilePath, List<XmlNode> newData)
 		{
 			XmlDocument xdoc = new XmlDocument();
@@ -1076,8 +1057,6 @@ namespace XCore
 		/// <remarks>
 		/// tests over in XMLVIews need access to this method.
 		/// </remarks>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		public void AddElementsFromFiles(IEnumerable<string> filePaths, int version, bool loadUserOverRides)
 		{
 			Debug.Assert(filePaths != null);
@@ -1102,8 +1081,6 @@ namespace XCore
 		/// <summary>
 		/// Collect all of the elements up from a string input (used in testing).
 		/// </summary>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		protected void AddElementsFromString(string input, int version)
 		{
 			Debug.Assert(m_mainDoc != null);
@@ -1282,7 +1259,7 @@ namespace XCore
 		private void NoteIfNodeWsTagged(XmlNode node)
 		{
 			if (node.Name == "layout" &&
-				XmlUtils.GetManditoryAttributeValue(node, "type") == "jtview" &&
+				XmlUtils.GetMandatoryAttributeValue(node, "type") == "jtview" &&
 				XmlUtils.GetOptionalBooleanAttributeValue(node, "tagForWs", false))
 			{
 				m_wsTaggedNodes.Add(node);
@@ -1302,10 +1279,10 @@ namespace XCore
 
 			foreach (XmlNode xn in m_wsTaggedNodes)
 			{
-				string sName = XmlUtils.GetManditoryAttributeValue(xn, "name");
+				string sName = XmlUtils.GetMandatoryAttributeValue(xn, "name");
 				string sWsName = String.Format("{0}-{1}", sName, sWsTag);
-				string sClass = XmlUtils.GetManditoryAttributeValue(xn, "class");
-				string sType = XmlUtils.GetManditoryAttributeValue(xn, "type");
+				string sClass = XmlUtils.GetMandatoryAttributeValue(xn, "class");
+				string sType = XmlUtils.GetMandatoryAttributeValue(xn, "type");
 				Debug.Assert(xn.Name == "layout" && sType == "jtview" &&
 					XmlUtils.GetOptionalBooleanAttributeValue(xn, "tagForWs", false));
 				XmlNode layout = GetElement("layout", new[] { sClass, sType, sWsName, null });
@@ -1319,7 +1296,7 @@ namespace XCore
 						continue;
 					if (xnChild.Name == "sublayout")
 					{
-						string sSubName = XmlUtils.GetManditoryAttributeValue(xnChild, "name");
+						string sSubName = XmlUtils.GetMandatoryAttributeValue(xnChild, "name");
 						xnChild.Attributes["name"].Value = String.Format("{0}-{1}", sSubName, sWsTag);
 					}
 					else if (xnChild.Name == "part")
@@ -1348,7 +1325,7 @@ namespace XCore
 			string baseName = XmlUtils.GetOptionalAttributeValue(node, "base");
 			if (baseName != null)
 			{
-				string id = XmlUtils.GetManditoryAttributeValue(node, keyAttrs[keyAttrs.Length - 1]);
+				string id = XmlUtils.GetMandatoryAttributeValue(node, keyAttrs[keyAttrs.Length - 1]);
 				if (id == baseName)
 				{
 					// it is an override.
@@ -1511,6 +1488,8 @@ namespace XCore
 		/// <returns></returns>
 		public XmlNode GetUnified(XmlNode main, XmlNode alteration)
 		{
+			if (main.SelectNodes("part[@ref='AsLexemeForm' and @shouldNotMerge='true']").Count > 0)
+				return main;
 			XmlNode result;
 			var key = new Tuple<XmlNode, XmlNode>(main, alteration);
 			if (!m_unifiedNodes.TryGetValue(key, out result))
@@ -1580,20 +1559,17 @@ namespace XCore
 			public override string ToString()
 			{
 				var bldr = new StringBuilder();
-				if (!String.IsNullOrEmpty(m_elementName))
+				if (!string.IsNullOrEmpty(m_elementName))
 					bldr.AppendFormat("{0}: ", m_elementName);
 				if (m_attrvals != null)
-					bldr.Append(m_attrvals.ToString("-"));
-				if (bldr.Length > 0)
-					return bldr.ToString();
-
-				return base.ToString();
+					bldr.Append(string.Join("-", m_attrvals));
+				return bldr.Length > 0 ? bldr.ToString() : base.ToString();
 			}
 		}
 
-		public Set<string> ExistingDuplicateKeys()
+		public ISet<string> ExistingDuplicateKeys()
 		{
-			var set = new Set<string>();
+			var set = new HashSet<string>();
 			foreach (var dupKey in
 				from key in m_getElementTable.Keys select key.ElementName into elemName
 				let idx = elemName.IndexOf('%') where idx >= 0

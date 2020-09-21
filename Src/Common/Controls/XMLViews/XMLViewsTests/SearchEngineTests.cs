@@ -5,13 +5,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
-using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.LCModel.Core.Text;
 using SIL.FieldWorks.Common.Controls;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainImpl;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FDO.FDOTests;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel;
+using SIL.LCModel.DomainImpl;
+using SIL.LCModel.DomainServices;
 
 namespace XMLViewsTests
 {
@@ -25,22 +24,22 @@ namespace XMLViewsTests
 			{
 				var entryFactory = Cache.ServiceLocator.GetInstance<ILexEntryFactory>();
 				IMoMorphType stem = Cache.ServiceLocator.GetInstance<IMoMorphTypeRepository>().GetObject(MoMorphTypeTags.kguidMorphStem);
-				ILexEntry form1 = entryFactory.Create(stem, Cache.TsStrFactory.MakeString("form1", Cache.DefaultVernWs), "gloss1", new SandboxGenericMSA());
-				ILexEntry form2 = entryFactory.Create(stem, Cache.TsStrFactory.MakeString("form2", Cache.DefaultVernWs), "gloss2", new SandboxGenericMSA());
-				ILexEntry form3 = entryFactory.Create(stem, Cache.TsStrFactory.MakeString("form3", Cache.DefaultVernWs), "gloss3", new SandboxGenericMSA());
+				ILexEntry form1 = entryFactory.Create(stem, TsStringUtils.MakeString("form1", Cache.DefaultVernWs), "gloss1", new SandboxGenericMSA());
+				ILexEntry form2 = entryFactory.Create(stem, TsStringUtils.MakeString("form2", Cache.DefaultVernWs), "gloss2", new SandboxGenericMSA());
+				ILexEntry form3 = entryFactory.Create(stem, TsStringUtils.MakeString("form3", Cache.DefaultVernWs), "gloss3", new SandboxGenericMSA());
 
 				m_actionHandler.EndUndoTask();
 
-				Assert.That(searchEngine.Search(new[] { new SearchField(LexEntryTags.kflidLexemeForm, Cache.TsStrFactory.MakeString("fo", Cache.DefaultVernWs)) }),
+				Assert.That(searchEngine.Search(new[] { new SearchField(LexEntryTags.kflidLexemeForm, TsStringUtils.MakeString("fo", Cache.DefaultVernWs)) }),
 					Is.EquivalentTo(new[] {form1.Hvo, form2.Hvo, form3.Hvo}));
 
-				Assert.That(searchEngine.Search(new[] { new SearchField(LexEntryTags.kflidLexemeForm, Cache.TsStrFactory.MakeString("form1", Cache.DefaultVernWs)) }),
+				Assert.That(searchEngine.Search(new[] { new SearchField(LexEntryTags.kflidLexemeForm, TsStringUtils.MakeString("form1", Cache.DefaultVernWs)) }),
 					Is.EquivalentTo(new[] { form1.Hvo }));
 
-				Assert.That(searchEngine.Search(new[] { new SearchField(LexEntryTags.kflidLexemeForm, Cache.TsStrFactory.MakeString("form4", Cache.DefaultVernWs)) }),
+				Assert.That(searchEngine.Search(new[] { new SearchField(LexEntryTags.kflidLexemeForm, TsStringUtils.MakeString("form4", Cache.DefaultVernWs)) }),
 					Is.Empty);
 
-				Assert.That(searchEngine.Search(new[] { new SearchField(LexSenseTags.kflidGloss, Cache.TsStrFactory.MakeString("gl", Cache.DefaultAnalWs)) }),
+				Assert.That(searchEngine.Search(new[] { new SearchField(LexSenseTags.kflidGloss, TsStringUtils.MakeString("gl", Cache.DefaultAnalWs)) }),
 					Is.EquivalentTo(new[] { form1.Hvo, form2.Hvo, form3.Hvo }));
 			}
 		}
@@ -52,19 +51,19 @@ namespace XMLViewsTests
 			{
 				var entryFactory = Cache.ServiceLocator.GetInstance<ILexEntryFactory>();
 				IMoMorphType stem = Cache.ServiceLocator.GetInstance<IMoMorphTypeRepository>().GetObject(MoMorphTypeTags.kguidMorphStem);
-				ILexEntry form1 = entryFactory.Create(stem, Cache.TsStrFactory.MakeString("form1", Cache.DefaultVernWs), "gloss1", new SandboxGenericMSA());
-				ILexEntry form2 = entryFactory.Create(stem, Cache.TsStrFactory.MakeString("form2", Cache.DefaultVernWs), "gloss2", new SandboxGenericMSA());
-				ILexEntry form3 = entryFactory.Create(stem, Cache.TsStrFactory.MakeString("form3", Cache.DefaultVernWs), "gloss3", new SandboxGenericMSA());
+				ILexEntry form1 = entryFactory.Create(stem, TsStringUtils.MakeString("form1", Cache.DefaultVernWs), "gloss1", new SandboxGenericMSA());
+				ILexEntry form2 = entryFactory.Create(stem, TsStringUtils.MakeString("form2", Cache.DefaultVernWs), "gloss2", new SandboxGenericMSA());
+				ILexEntry form3 = entryFactory.Create(stem, TsStringUtils.MakeString("form3", Cache.DefaultVernWs), "gloss3", new SandboxGenericMSA());
 
 				m_actionHandler.EndUndoTask();
 				searchEngine.FilterThisHvo = form1.Hvo;
-				Assert.That(searchEngine.Search(new[] { new SearchField(LexEntryTags.kflidLexemeForm, Cache.TsStrFactory.MakeString("fo", Cache.DefaultVernWs)) }),
+				Assert.That(searchEngine.Search(new[] { new SearchField(LexEntryTags.kflidLexemeForm, TsStringUtils.MakeString("fo", Cache.DefaultVernWs)) }),
 					Is.EquivalentTo(new[] { form2.Hvo, form3.Hvo }), "form1 entry not filtered out");
 
-				Assert.That(searchEngine.Search(new[] { new SearchField(LexEntryTags.kflidLexemeForm, Cache.TsStrFactory.MakeString("form1", Cache.DefaultVernWs)) }),
+				Assert.That(searchEngine.Search(new[] { new SearchField(LexEntryTags.kflidLexemeForm, TsStringUtils.MakeString("form1", Cache.DefaultVernWs)) }),
 					Is.Empty, "form1 entry not filtered out");
 
-				Assert.That(searchEngine.Search(new[] { new SearchField(LexSenseTags.kflidGloss, Cache.TsStrFactory.MakeString("gl", Cache.DefaultAnalWs)) }),
+				Assert.That(searchEngine.Search(new[] { new SearchField(LexSenseTags.kflidGloss, TsStringUtils.MakeString("gl", Cache.DefaultAnalWs)) }),
 					Is.EquivalentTo(new[] { form2.Hvo, form3.Hvo }), "form1 entry not filtered out");
 			}
 		}
@@ -76,33 +75,33 @@ namespace XMLViewsTests
 			{
 				var entryFactory = Cache.ServiceLocator.GetInstance<ILexEntryFactory>();
 				IMoMorphType stem = Cache.ServiceLocator.GetInstance<IMoMorphTypeRepository>().GetObject(MoMorphTypeTags.kguidMorphStem);
-				ILexEntry form1 = entryFactory.Create(stem, Cache.TsStrFactory.MakeString("form1", Cache.DefaultVernWs), "gloss1", new SandboxGenericMSA());
-				ILexEntry form2 = entryFactory.Create(stem, Cache.TsStrFactory.MakeString("form2", Cache.DefaultVernWs), "gloss2", new SandboxGenericMSA());
-				ILexEntry form3 = entryFactory.Create(stem, Cache.TsStrFactory.MakeString("form3", Cache.DefaultVernWs), "gloss3", new SandboxGenericMSA());
+				ILexEntry form1 = entryFactory.Create(stem, TsStringUtils.MakeString("form1", Cache.DefaultVernWs), "gloss1", new SandboxGenericMSA());
+				ILexEntry form2 = entryFactory.Create(stem, TsStringUtils.MakeString("form2", Cache.DefaultVernWs), "gloss2", new SandboxGenericMSA());
+				ILexEntry form3 = entryFactory.Create(stem, TsStringUtils.MakeString("form3", Cache.DefaultVernWs), "gloss3", new SandboxGenericMSA());
 
 				m_actionHandler.EndUndoTask();
 
-				Assert.That(searchEngine.Search(new[] { new SearchField(LexEntryTags.kflidLexemeForm, Cache.TsStrFactory.MakeString("fo", Cache.DefaultVernWs)) }),
+				Assert.That(searchEngine.Search(new[] { new SearchField(LexEntryTags.kflidLexemeForm, TsStringUtils.MakeString("fo", Cache.DefaultVernWs)) }),
 					Is.EquivalentTo(new[] { form1.Hvo, form2.Hvo, form3.Hvo }));
-				Assert.That(searchEngine.Search(new[] { new SearchField(LexSenseTags.kflidGloss, Cache.TsStrFactory.MakeString("gl", Cache.DefaultAnalWs)) }),
+				Assert.That(searchEngine.Search(new[] { new SearchField(LexSenseTags.kflidGloss, TsStringUtils.MakeString("gl", Cache.DefaultAnalWs)) }),
 					Is.EquivalentTo(new[] { form1.Hvo, form2.Hvo, form3.Hvo }));
 
 				m_actionHandler.BeginUndoTask("Undo doing stuff", "Redo doing stuff");
-				ILexEntry form4 = entryFactory.Create(stem, Cache.TsStrFactory.MakeString("form4", Cache.DefaultVernWs), "gloss4", new SandboxGenericMSA());
+				ILexEntry form4 = entryFactory.Create(stem, TsStringUtils.MakeString("form4", Cache.DefaultVernWs), "gloss4", new SandboxGenericMSA());
 				m_actionHandler.EndUndoTask();
 
-				Assert.That(searchEngine.Search(new[] { new SearchField(LexEntryTags.kflidLexemeForm, Cache.TsStrFactory.MakeString("fo", Cache.DefaultVernWs)) }),
+				Assert.That(searchEngine.Search(new[] { new SearchField(LexEntryTags.kflidLexemeForm, TsStringUtils.MakeString("fo", Cache.DefaultVernWs)) }),
 					Is.EquivalentTo(new[] { form1.Hvo, form2.Hvo, form3.Hvo, form4.Hvo }));
-				Assert.That(searchEngine.Search(new[] { new SearchField(LexSenseTags.kflidGloss, Cache.TsStrFactory.MakeString("gl", Cache.DefaultAnalWs)) }),
+				Assert.That(searchEngine.Search(new[] { new SearchField(LexSenseTags.kflidGloss, TsStringUtils.MakeString("gl", Cache.DefaultAnalWs)) }),
 					Is.EquivalentTo(new[] { form1.Hvo, form2.Hvo, form3.Hvo, form4.Hvo }));
 
 				m_actionHandler.BeginUndoTask("Undo doing stuff", "Redo doing stuff");
 				form1.Delete();
 				m_actionHandler.EndUndoTask();
 
-				Assert.That(searchEngine.Search(new[] { new SearchField(LexEntryTags.kflidLexemeForm, Cache.TsStrFactory.MakeString("fo", Cache.DefaultVernWs)) }),
+				Assert.That(searchEngine.Search(new[] { new SearchField(LexEntryTags.kflidLexemeForm, TsStringUtils.MakeString("fo", Cache.DefaultVernWs)) }),
 					Is.EquivalentTo(new[] { form2.Hvo, form3.Hvo, form4.Hvo }));
-				Assert.That(searchEngine.Search(new[] { new SearchField(LexSenseTags.kflidGloss, Cache.TsStrFactory.MakeString("gl", Cache.DefaultAnalWs)) }),
+				Assert.That(searchEngine.Search(new[] { new SearchField(LexSenseTags.kflidGloss, TsStringUtils.MakeString("gl", Cache.DefaultAnalWs)) }),
 					Is.EquivalentTo(new[] { form2.Hvo, form3.Hvo, form4.Hvo }));
 
 				m_actionHandler.BeginUndoTask("Undo doing stuff", "Redo doing stuff");
@@ -110,16 +109,16 @@ namespace XMLViewsTests
 				form2.SensesOS[0].Gloss.SetAnalysisDefaultWritingSystem("other");
 				m_actionHandler.EndUndoTask();
 
-				Assert.That(searchEngine.Search(new[] { new SearchField(LexEntryTags.kflidLexemeForm, Cache.TsStrFactory.MakeString("fo", Cache.DefaultVernWs)) }),
+				Assert.That(searchEngine.Search(new[] { new SearchField(LexEntryTags.kflidLexemeForm, TsStringUtils.MakeString("fo", Cache.DefaultVernWs)) }),
 					Is.EquivalentTo(new[] { form3.Hvo, form4.Hvo }));
-				Assert.That(searchEngine.Search(new[] { new SearchField(LexSenseTags.kflidGloss, Cache.TsStrFactory.MakeString("gl", Cache.DefaultAnalWs)) }),
+				Assert.That(searchEngine.Search(new[] { new SearchField(LexSenseTags.kflidGloss, TsStringUtils.MakeString("gl", Cache.DefaultAnalWs)) }),
 					Is.EquivalentTo(new[] { form3.Hvo, form4.Hvo }));
 			}
 		}
 
 		private class LexEntrySearchEngine : SearchEngine
 		{
-			public LexEntrySearchEngine(FdoCache cache)
+			public LexEntrySearchEngine(LcmCache cache)
 				: base(cache, SearchType.Prefix)
 			{
 			}

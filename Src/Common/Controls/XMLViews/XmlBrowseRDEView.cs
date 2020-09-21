@@ -1,4 +1,4 @@
-// Copyright (c) 2005-2015 SIL International
+// Copyright (c) 2005-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -6,18 +6,20 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Xml;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.FDO.Application;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel.Application;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Infrastructure;
+using SIL.LCModel.Utils;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.Utils;
-using SIL.FieldWorks.Common.COMInterfaces;
 using XCore;
 
 namespace SIL.FieldWorks.Common.Controls
@@ -91,7 +93,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="bv">The bv.</param>
 		/// ------------------------------------------------------------------------------------
 		public override void Init(XmlNode nodeSpec, int hvoRoot, int fakeFlid,
-			FdoCache cache, Mediator mediator, BrowseViewer bv)
+			LcmCache cache, Mediator mediator, BrowseViewer bv)
 		{
 			CheckDisposed();
 
@@ -118,7 +120,7 @@ namespace SIL.FieldWorks.Common.Controls
 
 				if (m_xbvvc == null)
 				{
-					m_xbvvc = new XmlRDEBrowseViewVc(m_nodeSpec, m_fakeFlid, m_stringTable, this);
+					m_xbvvc = new XmlRDEBrowseViewVc(m_nodeSpec, m_fakeFlid, this);
 				}
 				return base.Vc;
 			}
@@ -324,7 +326,7 @@ namespace SIL.FieldWorks.Common.Controls
 				// based upon either LexemeForm.Form or LexSense.Definition. We could probably
 				// do this as part of the solution to handling duplicate columns in LT-3763.
 				XmlNode column = columns[i - 1];
-				string columnLabel = XmlUtils.GetManditoryAttributeValue(column, "label");
+				string columnLabel = XmlUtils.GetMandatoryAttributeValue(column, "label");
 				string[] columnLabelComponents = columnLabel.Split(new char[] { ' ', ':' });
 				// get column label without writing system or extraneous information.
 				string columnBasicLabel = LocalizeIfPossible(columnLabelComponents[0]);
@@ -351,8 +353,8 @@ namespace SIL.FieldWorks.Common.Controls
 			for (int i = 1; i <= columns.Count; ++i)
 			{
 				int kflid = XMLViewsDataCache.ktagEditColumnBase + i;
-				int wsCol = WritingSystemServices.GetWritingSystem(m_fdoCache, columns[i - 1], null,
-					m_fdoCache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle).Handle;
+				int wsCol = WritingSystemServices.GetWritingSystem(m_cache, columns[i - 1], null,
+					m_cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle).Handle;
 				// Get the string for each column.
 				rgtss[i - 1] = sda.get_MultiStringAlt(XmlRDEBrowseViewVc.khvoNewItem,
 					kflid, wsCol);
@@ -373,9 +375,9 @@ namespace SIL.FieldWorks.Common.Controls
 			for (int i = 1; i <= columns.Count; ++i)
 			{
 				int kflid = XMLViewsDataCache.ktagEditColumnBase + i;
-				int wsCol = WritingSystemServices.GetWritingSystem(m_fdoCache, columns[i - 1], null,
-					m_fdoCache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle).Handle;
-				sda.SetMultiStringAlt(XmlRDEBrowseViewVc.khvoNewItem, kflid, wsCol, Cache.TsStrFactory.MakeString("", wsCol));
+				int wsCol = WritingSystemServices.GetWritingSystem(m_cache, columns[i - 1], null,
+					m_cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle).Handle;
+				sda.SetMultiStringAlt(XmlRDEBrowseViewVc.khvoNewItem, kflid, wsCol, TsStringUtils.EmptyString(wsCol));
 			}
 			// Set the selection to the first column.
 			SetSelectionToFirstColumnInNewRow();
@@ -384,10 +386,7 @@ namespace SIL.FieldWorks.Common.Controls
 
 		private string LocalizeIfPossible(string sValue)
 		{
-			if (m_stringTable == null)
-				return sValue;
-			else
-				return m_stringTable.LocalizeAttributeValue(sValue);
+			return StringTable.Table.LocalizeAttributeValue(sValue);
 		}
 
 		/// <summary>
@@ -597,8 +596,8 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			List<XmlNode> columns = m_xbvvc.ColumnSpecs;
 			int flidNew = XMLViewsDataCache.ktagEditColumnBase + 1;
-			int wsNew = WritingSystemServices.GetWritingSystem(m_fdoCache, columns[0], null,
-				m_fdoCache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle).Handle;
+			int wsNew = WritingSystemServices.GetWritingSystem(m_cache, columns[0], null,
+				m_cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle).Handle;
 			try
 			{
 				SelLevInfo[] rgvsli = new SelLevInfo[1];
@@ -789,11 +788,10 @@ namespace SIL.FieldWorks.Common.Controls
 			Type factoryType = ReflectionHelper.GetType(RDEVc.EditRowAssembly, factoryClassName);
 			object factory = Cache.ServiceLocator.GetService(factoryType);
 			System.Reflection.MethodInfo mi = factoryType.GetMethod(RDEVc.EditRowSaveMethod);
-			object[] parameters = new object[4];
-			parameters[0] = (object)m_hvoRoot;
-			parameters[1] = (object)columns;
-			parameters[2] = (object)rgtss;
-			parameters[3] = (m_mediator != null && m_mediator.HasStringTable) ? (object)m_mediator.StringTbl : null;
+			object[] parameters = new object[3];
+			parameters[0] = m_hvoRoot;
+			parameters[1] = columns;
+			parameters[2] = rgtss;
 			int newObjHvo = (int)mi.Invoke(factory, parameters);
 			return newObjHvo;
 		}
@@ -827,7 +825,7 @@ namespace SIL.FieldWorks.Common.Controls
 				{
 					RDEVc.EditableObjectsRemoveInvalidObjects();
 
-					Set<int> idsClone = RDEVc.EditableObjectsClone();
+					ISet<int> idsClone = RDEVc.EditableObjectsClone();
 					fInDoMerges = true;
 					Type targetType = ReflectionHelper.GetType(RDEVc.EditRowAssembly, RDEVc.EditRowClass);
 					System.Reflection.MethodInfo mi = targetType.GetMethod(RDEVc.EditRowMergeMethod);
@@ -897,8 +895,6 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="rcSrcRoot"></param>
 		/// <param name="rcDstRoot"></param>
 		/// <returns></returns>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="Context menu - can't dispose right away")]
 		protected override bool OnRightMouseUp(Point pt, Rectangle rcSrcRoot, Rectangle rcDstRoot)
 		{
 			var sel = MakeSelectionAt(new MouseEventArgs(MouseButtons.Right, 1, pt.X, pt.Y, 0));
@@ -973,7 +969,7 @@ namespace SIL.FieldWorks.Common.Controls
 		//			base.OnGotFocus(e);
 		////-			if (m_hmark == 0)
 		////-			{
-		////-				IActionHandler ah = m_fdoCache.ActionHandlerAccessor;
+		////-				IActionHandler ah = m_cache.ActionHandlerAccessor;
 		////-				if (ah != null)
 		////-					m_hmark = ah.Mark();
 		////-			}
@@ -983,7 +979,7 @@ namespace SIL.FieldWorks.Common.Controls
 		//		protected override void OnLostFocus(EventArgs e)
 		//		{
 		//			this.DoMerges();
-		////-			IActionHandler ah = m_fdoCache.ActionHandlerAccessor;
+		////-			IActionHandler ah = m_cache.ActionHandlerAccessor;
 		////-			if (ah != null && m_hmark != 0)
 		////-			{
 		////-				if (ah.get_TasksSinceMark(true))
@@ -1145,13 +1141,13 @@ namespace SIL.FieldWorks.Common.Controls
 				// Therefore the last thing in rgvsli is always the information identifying the sense we
 				// want to process.
 				int hvoSense = tsi.ContainingObject(cvsli - 1);
-				int hvoEntry = m_fdoCache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvoSense).Owner.Hvo;
+				int hvoEntry = m_cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvoSense).Owner.Hvo;
 #endif
 				// If this was an editable object, it no longer is, because it's about to no longer exist.
 				RDEVc.EditableObjectsRemove(hvoSense);
 
-				var le = m_fdoCache.ServiceLocator.GetInstance<ILexEntryRepository>().GetObject(hvoEntry);
-				var ls = m_fdoCache.ServiceLocator.GetInstance<ILexSenseRepository>().GetObject(hvoSense);
+				var le = m_cache.ServiceLocator.GetInstance<ILexEntryRepository>().GetObject(hvoEntry);
+				var ls = m_cache.ServiceLocator.GetInstance<ILexSenseRepository>().GetObject(hvoSense);
 				string sUndo = XMLViewsStrings.ksUndoDeleteRecord;
 				string sRedo = XMLViewsStrings.ksRedoDeleteRecord;
 				UndoableUnitOfWorkHelper.Do(sUndo, sRedo, Cache.ActionHandlerAccessor, () =>

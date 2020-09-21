@@ -11,22 +11,28 @@ TLB_SRC        = $(OUTPUT)/Common
 
 # -I$(AFCORE_SRC)
 
-PACKAGES = gdk-2.0 gtkmm-2.4 cairomm-1.0 pangomm-1.4 freetype2 uuid
+PACKAGES = glib-2.0 gtk+-2.0 glibmm-2.4 gdk-2.0 gtkmm-2.4 cairomm-1.0 pangomm-1.4 freetype2 uuid
 
-DEFINES  = -DGR_FW -DVIEWSDLL -DSUPPRESS_FW_EXCEPTION_HANDLING -DWIN32_KEY_VALUES=1
+DEFINES  = -DGR_FW -DVIEWSDLL -DSUPPRESS_FW_EXCEPTION_HANDLING -DWIN32_KEY_VALUES=1 -DGRAPHITE2_STATIC
 
 ifeq ($(BUILD_CONFIG),Debug)
 	DEBUG_LIBS = $(OUT_DIR)/libDebugProcs.a
 	DEFINES  := $(DEFINES) -D_DEBUG -DDEBUG
+	DEBUG_INCLUDES = -I$(DEBUGPROCS_SRC)
 	OPTIMIZATIONS = -O0
 else
 	OPTIMIZATIONS = -O0
 endif
 
+GR2_INC = $(BUILD_ROOT)/Lib/src/graphite2/include
+
+INCLUDES := $(DEBUG_INCLUDES)
+
 INCLUDES := \
-	$(shell icu-config --detect-prefix --cppflags) \
+	$(shell icu-config --cppflags) \
 	-I. -Ilib \
 	-I$(GENERIC_SRC) -I$(APPCORE_SRC) -I$(DEBUGPROCS_SRC) \
+	-I$(GR2_INC) \
 	-I$(COMMONDLGS_SRC) \
 	-I$(TLB_SRC) -I$(INCLUDE) \
 	-I$(WIN32MORE_INC) \
@@ -41,12 +47,12 @@ LDLIBS := \
 	-L$(COM_LIB) -lcom \
 	-L$(WIN32BASE_LIB) -lWin32Base \
 	$(shell pkg-config --libs $(PACKAGES)) \
-	$(shell icu-config --detect-prefix --ldflags) \
-	-ldl \
+	$(shell icu-config --ldflags) \
+	-lpthread -ldl \
 
 
 CPPFLAGS = $(DEFINES) $(INCLUDES) -MMD
-CXXFLAGS = -g $(OPTIMIZATIONS) -fPIC -fvisibility=hidden -Werror -Waddress -Warray-bounds -Wmissing-field-initializers -Wclobbered -Wreturn-type -fstack-protector-all -Wshadow -rdynamic -std=c++11
+CXXFLAGS = -g $(OPTIMIZATIONS) -fPIC -fvisibility=hidden -Werror -Wno-error=deprecated-declarations -Waddress -Warray-bounds -Wmissing-field-initializers -Wclobbered -Wreturn-type -fstack-protector-all -Wshadow -rdynamic -std=c++11
 
 ARFLAGS  = -crs
 
@@ -61,6 +67,7 @@ LINK_LIBS := \
 	$(COM_OUT_DIR)/libViewsTlb.a \
 	$(OUT_DIR)/libGeneric.a \
 	$(OUT_DIR)/libAppCore.a \
+	$(BUILD_ROOT)/Lib/linux/$(BUILD_CONFIG)/libgraphite2.a \
 	$(DEBUG_LIBS) \
 
 # === Object Lists ===
@@ -84,6 +91,7 @@ OBJS = \
 	$(INT_DIR)/VwTextBoxes.o \
 	$(INT_DIR)/VwTxtSrc.o \
 	$(INT_DIR)/VwInvertedViews.o \
+	$(INT_DIR)/lib/ActionHandler.o \
 	$(INT_DIR)/lib/VwBaseDataAccess.o \
 	$(INT_DIR)/lib/VwBaseVirtualHandler.o \
 	$(INT_DIR)/lib/VwCacheDa.o \
@@ -91,6 +99,19 @@ OBJS = \
 	$(INT_DIR)/lib/VwGraphicsCairo.o \
 	$(INT_DIR)/lib/VwUndo.o \
 	$(INT_DIR)/lib/DisplayCapsInfo.o \
+	$(INT_DIR)/lib/UniscribeLinux.o \
+	$(INT_DIR)/lib/UniscribeSegment.o \
+	$(INT_DIR)/lib/UniscribeEngine.o \
+	$(INT_DIR)/lib/GraphiteSegment.o \
+	$(INT_DIR)/lib/GraphiteEngine.o \
+	$(INT_DIR)/lib/LgLineBreaker.o \
+	$(INT_DIR)/lib/LgUnicodeCollater.o \
+	$(INT_DIR)/lib/TsString.o \
+	$(INT_DIR)/lib/TsTextProps.o \
+	$(INT_DIR)/lib/TsStrFactory.o \
+	$(INT_DIR)/lib/TsPropsFactory.o \
+	$(INT_DIR)/lib/TextServ.o \
+	$(INT_DIR)/lib/DebugReport.o \
 
 VWG_OBJS = \
 	$(INT_DIR)/lib/VwGraphicsCairo.o \
@@ -99,6 +120,7 @@ VWG_OBJS = \
 
 OBJS_OTHER = \
 	$(INT_DIR)/ModuleEntry.o \
+	$(INT_DIR)/TextProps1.o \
 
 # === Targets ===
 
@@ -111,7 +133,7 @@ else
 	$(LINK.cc) -shared -o $@ $^ $(LDLIBS)
 endif
 	# TODO: this is a hack. Remove after implementing FWNX-823.
-	-cd $(OUT_DIR) && ln -s $(@F) oleaut32.dll
+	-cd $(OUT_DIR) && ln -sf $(@F) oleaut32.dll
 
 $(OUT_DIR)/libVwGraphics.so: $(VWG_OBJS) $(OBJS_OTHER) $(LINK_LIBS)
 	$(LINK.cc) -shared -o $@ $^ $(LDLIBS)
@@ -137,13 +159,12 @@ ComponentsMap: $(OUT_DIR)/libViews.so $(OUT_DIR)/libVwGraphics.so
 $(OBJS): $(PCHNAME)
 
 $(INT_DIR)/%.o: $(GENERIC_SRC)/%.cpp
-	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $(INCLUDES) $(TARGET_ARCH) \
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $(TARGET_ARCH) \
 	  -c $< -o $@ -MMD -MF $(@:%.o=%.d)
 
 $(OUT_DIR)/libAppCore.a:
 	@$(MAKE) -C $(APPCORE_SRC)/ -q all || \
 	 $(MAKE) -C $(APPCORE_SRC)/
-
 
 $(OUT_DIR)/libGeneric.a:
 	@$(MAKE) -C $(GENERIC_SRC)/ -q all || \

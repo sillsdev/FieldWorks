@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2014-2016 SIL International
+// Copyright (c) 2014-2020 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -10,8 +10,9 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.Utils;
-using XCore;
+using SIL.LCModel.Utils;
+using SIL.Windows.Forms;
+using PropertyTable = XCore.PropertyTable;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -28,7 +29,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// Needed to get the HelpTopicProvider and to save project specific settings
 		/// </summary>
-		protected Mediator Mediator { get; set; }
+		protected PropertyTable PropertyTable { get; set; }
 
 		public UploadToWebonaryDlg()
 		{
@@ -36,7 +37,7 @@ namespace SIL.FieldWorks.XWorks
 			LoadFromModel();
 		}
 
-		public UploadToWebonaryDlg(UploadToWebonaryController controller, UploadToWebonaryModel model, Mediator mediator)
+		public UploadToWebonaryDlg(UploadToWebonaryController controller, UploadToWebonaryModel model, PropertyTable propertyTable)
 		{
 			InitializeComponent();
 
@@ -44,11 +45,10 @@ namespace SIL.FieldWorks.XWorks
 				MinimumSize = new Size(MinimumSize.Width, MinimumSize.Height + m_additionalMinimumHeightForMono);
 
 			m_controller = controller;
-			Mediator = mediator;
 			Model = model;
 			LoadFromModel();
 
-			m_helpTopicProvider = mediator.HelpTopicProvider;
+			m_helpTopicProvider = propertyTable.GetValue<FwXApp>("App");
 
 			// When a link is clicked, open a web page to the URL.
 			explanationLabel.LinkClicked += (sender, args) =>
@@ -58,14 +58,14 @@ namespace SIL.FieldWorks.XWorks
 			};
 
 			// Restore the location and size from last time we called this dialog.
-			if (Mediator != null && Mediator.PropertyTable != null)
+			if (PropertyTable != null)
 			{
-				object locWnd = Mediator.PropertyTable.GetValue("UploadToWebonaryDlg_Location");
-				object szWnd = Mediator.PropertyTable.GetValue("UploadToWebonaryDlg_Size");
+				object locWnd = PropertyTable.GetValue<object>("UploadToWebonaryDlg_Location");
+				object szWnd = PropertyTable.GetValue<object>("UploadToWebonaryDlg_Size");
 				if (locWnd != null && szWnd != null)
 				{
 					Rectangle rect = new Rectangle((Point) locWnd, (Size) szWnd);
-					ScreenUtils.EnsureVisibleRect(ref rect);
+					ScreenHelper.EnsureVisibleRect(ref rect);
 					DesktopBounds = rect;
 					StartPosition = FormStartPosition.Manual;
 				}
@@ -74,7 +74,7 @@ namespace SIL.FieldWorks.XWorks
 			// Start with output log area not shown by default
 			// When a user clicks Publish, it is revealed. This is done within the context of having a resizable table of controls, and having
 			// the output log area be the vertically growing control when a user increases the height of the dialog
-			this.Shown += (sender, args) => { this.Height = this.Height - outputLogTextbox.Height; };
+			this.Shown += (sender, args) => { ValidateSortingOnAlphaHeaders(); this.Height = this.Height - outputLogTextbox.Height;};
 
 			// Handle localizable explanation area with link.
 			var explanationText = xWorksStrings.toApplyForWebonaryAccountExplanation;
@@ -89,6 +89,11 @@ namespace SIL.FieldWorks.XWorks
 				explanationTextLinkLength = 0;
 			}
 			explanationLabel.LinkArea = new LinkArea(explanationTextLinkStart, explanationTextLinkLength);
+		}
+
+		private void siteNameBox_TextChanged(object sender, EventArgs e)
+		{
+			webonarySiteURLLabel.Text = string.Format(xWorksStrings.WebonarySiteURLFormat, webonarySiteNameTextbox.Text);
 		}
 
 		private void UpdateEntriesToBePublishedLabel()
@@ -120,6 +125,15 @@ namespace SIL.FieldWorks.XWorks
 			}
 
 			howManyPubsAlertLabel.Text = string.Format(xWorksStrings.PublicationEntriesLabel, countOfDictionaryEntries, middle);
+		}
+
+		public void ValidateSortingOnAlphaHeaders()
+		{
+			if (!m_controller.IsSortingOnAlphaHeaders())
+			{
+				MessageBox.Show(xWorksStrings.msgCantCalculateLetterHeadings,
+					xWorksStrings.CantCalculateLetterHeadings, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+			}
 		}
 
 		private void PopulatePublicationsList()
@@ -169,7 +183,8 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var selectedReversals = GetSelectedReversals();
 			var availableReversals = Model.Reversals.Where(prop => prop.Value.Publications.Contains(publication)
-				&& prop.Value.Label != DictionaryConfigurationModel.AllReversalIndexes).Select(prop => prop.Value.Label).ToList();
+				&& prop.Value.Label != DictionaryConfigurationModel.AllReversalIndexes
+			  && !string.IsNullOrEmpty(prop.Value.WritingSystem)).Select(prop => prop.Value.Label).ToList();
 			reversalsCheckedListBox.Items.Clear();
 			foreach (var reversal in availableReversals)
 				reversalsCheckedListBox.Items.Add(reversal);
@@ -191,7 +206,7 @@ namespace SIL.FieldWorks.XWorks
 				}
 				webonaryUsernameTextbox.Text = Model.UserName;
 				webonarySiteNameTextbox.Text = Model.SiteName;
-				if (!String.IsNullOrEmpty(Model.SelectedPublication))
+				if (!String.IsNullOrEmpty(Model.SelectedPublication) && publicationBox.Items.Contains(Model.SelectedPublication))
 				{
 					publicationBox.SelectedItem = Model.SelectedPublication;
 				}
@@ -327,12 +342,12 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		protected override void OnClosing(CancelEventArgs e)
 		{
-			if (Mediator != null)
+			if (PropertyTable != null)
 			{
-				Mediator.PropertyTable.SetProperty("UploadToWebonaryDlg_Location", Location, false);
-				Mediator.PropertyTable.SetPropertyPersistence("UploadToWebonaryDlg_Location", true);
-				Mediator.PropertyTable.SetProperty("UploadToWebonaryDlg_Size", Size, false);
-				Mediator.PropertyTable.SetPropertyPersistence("UploadToWebonaryDlg_Size", true);
+				PropertyTable.SetProperty("UploadToWebonaryDlg_Location", Location, false);
+				PropertyTable.SetPropertyPersistence("UploadToWebonaryDlg_Location", true);
+				PropertyTable.SetProperty("UploadToWebonaryDlg_Size", Size, false);
+				PropertyTable.SetPropertyPersistence("UploadToWebonaryDlg_Size", true);
 			}
 			base.OnClosing(e);
 		}

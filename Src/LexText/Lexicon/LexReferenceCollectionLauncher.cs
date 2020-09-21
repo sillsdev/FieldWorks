@@ -6,7 +6,7 @@ using System;
 using System.Windows.Forms;
 using System.Diagnostics;
 
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using SIL.FieldWorks.LexText.Controls;
 using SIL.FieldWorks.Common.Framework.DetailControls;
 
@@ -67,7 +67,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				}
 				Debug.Assert(dlg != null);
 				var wp = new WindowParams { m_title = sTitle, m_btnText = LexEdStrings.ks_Add };
-				dlg.SetDlgInfo(m_cache, wp, m_mediator);
+				dlg.SetDlgInfo(m_cache, wp, m_mediator, m_propertyTable);
 				dlg.SetHelpTopic("khtpChooseLexicalRelationAdd");
 				if (dlg.ShowDialog(FindForm()) == DialogResult.OK && dlg.SelectedObject != null)
 				{

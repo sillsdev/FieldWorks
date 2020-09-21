@@ -7,25 +7,24 @@ using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
 
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.LCModel;
 using System.Xml;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.DomainServices;
 using SIL.Utils;
-using SIL.FieldWorks.FDO.DomainServices;
 
 namespace SIL.FieldWorks.Discourse
 {
 	public class DiscourseTestHelper
 	{
 		internal Dictionary<IStTxtPara, AnalysisOccurrence[]> m_allOccurrences;
-		internal FDO.IText m_text;
+		internal LCModel.IText m_text;
 		internal IStText m_stText;
 		private IStTxtPara m_firstPara;
 
 		#region Factories/Repositories
 
-		private ITsStrFactory m_tsf;
-		private readonly IFdoServiceLocator m_servLoc;
+		private readonly ILcmServiceLocator m_servLoc;
 		private readonly IWfiAnalysisFactory m_wAnalysisFact;
 		private readonly IWfiGlossFactory m_wGlossFact;
 		private readonly IConstChartRowFactory m_rowFact;
@@ -38,20 +37,19 @@ namespace SIL.FieldWorks.Discourse
 
 		#endregion
 
-		private FdoCache m_cache;
+		private LcmCache m_cache;
 		private TestCCLogic m_logic;
 		private ICmPossibility m_template;
 		List<ICmPossibility> m_allColumns;
 		private IDsConstChart m_chart;
 
-		public DiscourseTestHelper(FdoCache cache)
+		public DiscourseTestHelper(LcmCache cache)
 		{
 			m_cache = cache;
 
 			#region Load Factories and Repositories
 
 			m_servLoc = m_cache.ServiceLocator;
-			m_tsf = cache.TsStrFactory;
 			m_wAnalysisFact = m_servLoc.GetInstance<IWfiAnalysisFactory>();
 			m_wGlossFact = m_servLoc.GetInstance<IWfiGlossFactory>();
 			m_rowFact = m_servLoc.GetInstance<IConstChartRowFactory>();
@@ -72,7 +70,7 @@ namespace SIL.FieldWorks.Discourse
 
 		}
 
-		internal FdoCache Cache
+		internal LcmCache Cache
 		{
 			get { return m_cache; }
 		}
@@ -104,7 +102,7 @@ namespace SIL.FieldWorks.Discourse
 		{
 			var para0 = m_servLoc.GetInstance<IStTxtParaFactory>().Create();
 			m_stText.ParagraphsOS.Add(para0);
-			var tsstring = m_tsf.MakeString(content, Cache.DefaultVernWs);
+			var tsstring = TsStringUtils.MakeString(content, Cache.DefaultVernWs);
 			para0.Contents = tsstring;
 			ParseTestParagraphWithSpecificContent(para0);
 			return para0;
@@ -146,7 +144,7 @@ namespace SIL.FieldWorks.Discourse
 			testText.ParagraphsOS.Add(para0);
 			var cPara = testText.ParagraphsOS.Count;
 			var paraNum = cPara == 1 ? "one" : cPara.ToString();
-			var tsstring = m_tsf.MakeString("this is paragraph " + paraNum + ". It is for our constituent chart database tests.",
+			var tsstring = TsStringUtils.MakeString("this is paragraph " + paraNum + ". It is for our constituent chart database tests.",
 				Cache.DefaultVernWs);
 			para0.Contents = tsstring;
 			ParseTestParagraph(para0);
@@ -247,7 +245,7 @@ namespace SIL.FieldWorks.Discourse
 					var wordform = xform.Wordform;
 					var analysis = m_wAnalysisFact.Create(wordform, m_wGlossFact);
 					ich++; // past space or dot
-					var tssString = m_tsf.MakeString(word + "Gloss"+ ich, wsGloss);
+					var tssString = TsStringUtils.MakeString(word + "Gloss"+ ich, wsGloss);
 					var gloss = analysis.MeaningsOC.FirstOrDefault();
 					gloss.Form.set_String(wsGloss, tssString);
 					seg.AnalysesRS[i] = gloss;
@@ -336,12 +334,12 @@ namespace SIL.FieldWorks.Discourse
 
 		private void InitItem(XmlNode item, ICmPossibility poss)
 		{
-			poss.Name.AnalysisDefaultWritingSystem = m_tsf.MakeString(
-				XmlUtils.GetManditoryAttributeValue(item, "name"), Cache.DefaultAnalWs);
+			poss.Name.AnalysisDefaultWritingSystem = TsStringUtils.MakeString(
+				XmlUtils.GetMandatoryAttributeValue(item, "name"), Cache.DefaultAnalWs);
 			string abbr = XmlUtils.GetOptionalAttributeValue(item, "abbr");
 			if (String.IsNullOrEmpty(abbr))
 				abbr = poss.Name.AnalysisDefaultWritingSystem.Text;
-			poss.Abbreviation.AnalysisDefaultWritingSystem = m_tsf.MakeString(abbr, Cache.DefaultAnalWs);
+			poss.Abbreviation.AnalysisDefaultWritingSystem = TsStringUtils.MakeString(abbr, Cache.DefaultAnalWs);
 			foreach (XmlNode subItem in item.ChildNodes)
 			{
 				var poss2 = m_servLoc.GetInstance<ICmPossibilityFactory>().Create();
@@ -410,7 +408,7 @@ namespace SIL.FieldWorks.Discourse
 		/// <returns></returns>
 		internal IConstChartRow MakeRow(IDsConstChart chart, string lineNo)
 		{
-			var label = m_tsf.MakeString(lineNo, Logic.WsLineNumber);
+			var label = TsStringUtils.MakeString(lineNo, Logic.WsLineNumber);
 			return m_rowFact.Create(chart, chart.RowsOS.Count, label);
 		}
 
@@ -770,7 +768,7 @@ namespace SIL.FieldWorks.Discourse
 		/// <param name="msg"></param>
 		internal void VerifyRowNumber(string label, IConstChartRow row, string msg)
 		{
-			var expected = Cache.TsStrFactory.MakeString(label, Logic.WsLineNumber).Text;
+			var expected = TsStringUtils.MakeString(label, Logic.WsLineNumber).Text;
 			var actual = row.Label.Text;
 			Assert.AreEqual(expected, actual, msg);
 		}

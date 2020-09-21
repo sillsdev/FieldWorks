@@ -4,13 +4,12 @@
 
 using System;
 using System.ComponentModel;
-using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Runtime.InteropServices;
-using System.Security.Permissions;
 using System.Text;
 using System.Windows.Forms;
 using System.Windows.Forms.VisualStyles;
+using SIL.PlatformUtilities;
 
 namespace SIL.FieldWorks.Common.Widgets
 {
@@ -150,8 +149,6 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// <value></value>
 		/// <returns>true if right-to-left mirror placement is turned on; false for standard child control placement. The default is false.
 		/// </returns>
-		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
-			Justification="RightToLeftLayout is not supported in Mono, but we don't allow RTL here.")]
 		public override bool RightToLeftLayout
 		{
 			get { return base.RightToLeftLayout; }
@@ -509,37 +506,42 @@ namespace SIL.FieldWorks.Common.Widgets
 
 	static class NativeMethods
 	{
-#if __MonoCS__
 		public static IntPtr SendMessage(IntPtr hWnd, uint Msg, IntPtr wParam, IntPtr lParam)
 		{
+			if (Platform.IsWindows)
+				return SendMessageWindows(hWnd, Msg, wParam, lParam);
+
 			Console.WriteLine("Warning: using unimplemented method NativeMethods.SendMessage");
 			return IntPtr.Zero;
 		}
 
 		public static bool DeleteObject(IntPtr hObject)
 		{
+			if (Platform.IsWindows)
+				return DeleteObjectWindows(hObject);
+
 			Console.WriteLine("Warning: using unimplemented method NativeMethods.DeleteObject");
 			return true;
 		}
 
-
 		public static uint RealGetWindowClass(IntPtr hWnd, StringBuilder ClassName, uint ClassNameMax)
 		{
+			if (Platform.IsWindows)
+				return RealGetWindowClassWindows(hWnd, ClassName, ClassNameMax);
+
 			Console.WriteLine("Warning: using unimplemented method NativeMethods.RealGetWindowClass");
 			return 0;
 		}
 
-#else
 		[DllImport("user32.dll", EntryPoint = "SendMessageW", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.StdCall)]
-		public static extern IntPtr SendMessage(IntPtr hWnd, uint Msg, IntPtr wParam, IntPtr lParam);
+		private static extern IntPtr SendMessageWindows(IntPtr hWnd, uint Msg, IntPtr wParam, IntPtr lParam);
 
 		[DllImport("gdi32.dll", EntryPoint = "DeleteObject", CallingConvention = CallingConvention.StdCall)]
 		[return: MarshalAs(UnmanagedType.Bool)]
-		public static extern bool DeleteObject(IntPtr hObject);
+		private static extern bool DeleteObjectWindows(IntPtr hObject);
 
 		[DllImport("user32.dll", EntryPoint = "RealGetWindowClassW", CallingConvention = CallingConvention.StdCall, CharSet = CharSet.Unicode)]
-		public static extern uint RealGetWindowClass(IntPtr hWnd, StringBuilder ClassName, uint ClassNameMax);
-#endif
+		private static extern uint RealGetWindowClassWindows(IntPtr hWnd, StringBuilder ClassName, uint ClassNameMax);
 
 		#region API Structures
 		[StructLayout(LayoutKind.Sequential)]

@@ -2,8 +2,6 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System.Diagnostics.CodeAnalysis;
-
 namespace SIL.ObjectBrowser
 {
 	partial class InspectorWnd
@@ -20,8 +18,6 @@ namespace SIL.ObjectBrowser
 		/// the contents of this method with the code editor.
 		/// </summary>
 		// TODO-Linux: VirtualMode is not supported on Mono
-		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
-			Justification="See TODO-Linux comment")]
 		private void InitializeComponent()
 		{
 			this.gridInspector = new InspectorGrid();

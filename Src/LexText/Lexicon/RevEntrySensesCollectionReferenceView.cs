@@ -1,29 +1,14 @@
-// Copyright (c) 2003-2013 SIL International
+// Copyright (c) 2003-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: RevEntrySensesCollectionReferenceView.cs
-// Responsibility: Randyr Regnier
-// Last reviewed:
-//
 
-using System;
-using System.Collections;
-using System.ComponentModel;
-using System.Drawing;
-using System.Windows.Forms;
-using System.Diagnostics;
-using System.Xml;
-
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.FDO.Validation;
-using SIL.Utils;
 using SIL.FieldWorks.Common.Framework.DetailControls;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
+using SIL.LCModel;
+using SIL.LCModel.Infrastructure;
 
-namespace SIL.FieldWorks.Common.Controls
+namespace SIL.FieldWorks.XWorks.LexEd
 {
 	/// <summary>
 	/// Main class for displaying the VectorReferenceSlice.
@@ -130,14 +115,14 @@ namespace SIL.FieldWorks.Common.Controls
 			if (m_selectedSenseHvo == 0)
 				return;		// must be selecting multiple objects!  (See LT-5724.)
 			int h1 = m_rootb.Height;
-			ILexSense sense = (ILexSense)m_fdoCache.ServiceLocator.GetObject(m_selectedSenseHvo);
-			IFdoReferenceCollection<IReversalIndexEntry> col = sense.ReversalEntriesRC;
+			ILexSense sense = (ILexSense)m_cache.ServiceLocator.GetObject(m_selectedSenseHvo);
+			var col = sense.ReferringReversalIndexEntries;
 			using (UndoableUnitOfWorkHelper helper = new UndoableUnitOfWorkHelper(
-				m_fdoCache.ActionHandlerAccessor,
+				m_cache.ActionHandlerAccessor,
 				SIL.FieldWorks.XWorks.LexEd.LexEdStrings.ksUndoDeleteRevFromSense,
 				SIL.FieldWorks.XWorks.LexEd.LexEdStrings.ksRedoDeleteRevFromSense))
 			{
-				sense.ReversalEntriesRC.Remove(m_rootObj as IReversalIndexEntry);
+				((IReversalIndexEntry)m_rootObj).SensesRS.Remove(sense);
 				helper.RollBack = false;
 			}
 			CheckViewSizeChanged(h1, m_rootb.Height);

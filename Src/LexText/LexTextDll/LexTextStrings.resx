@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -189,7 +189,7 @@ If you click No, you will see various options for starting work in Language Expl
     <value>Transduce Citation Forms</value>
   </data>
   <data name="ksUsedForSemanticBasedEntry" xml:space="preserve">
-    <value>This tool is designed for a typist to use during a semantically-based word-collection workshop.  For information on this method, see http://www.rapidwords.net and http://www.sil.org/computing/ddp/.</value>
+    <value>This tool is designed for a typist to use during a semantically-based word-collection workshop.  For information on this method, see http://www.rapidwords.net</value>
   </data>
   <data name="ksWhenToTransduceCitForms" xml:space="preserve">
     <value>This can be used to convert Citation Forms into another writing system.</value>
@@ -217,8 +217,8 @@ Would you like to do this now?</value>
     <value>Characters within words</value>
     <comment>Caption for message box.</comment>
   </data>
-  <data name="ksErrorCannotLaunchMovies" xml:space="preserve">
-    <value>An error occurred trying to launch the movies. You could try to launch them yourself. They are located in this folder: {0}</value>
+  <data name="ksErrorCannotOpenMovies" xml:space="preserve">
+    <value>An error occurred trying to open the movies at the following URL. Try again with your web browser. {0}</value>
   </data>
   <data name="kstidSupportEmail" xml:space="preserve">
     <value>FlexErrors@sil.org</value>
@@ -242,5 +242,13 @@ Would you like to do this now?</value>
   </data>
   <data name="ksExistingProjectName" xml:space="preserve">
     <value>That project already exists. You'll need to choose a different name in Project Properties.</value>
+  </data>
+  <data name="LexTextApp_RestartToChangeUI_Content" xml:space="preserve">
+    <value>Restart FieldWorks to complete the User Interface language change.</value>
+    <comment>Message box contents when a user changes the User Interface language in Tools-&gt;Settings</comment>
+  </data>
+  <data name="LexTextApp_RestartToChangeUI_Title" xml:space="preserve">
+    <value>User Interface Language Changed</value>
+    <comment>Message box title when the User Interface is changed in Tools-&gt;Options</comment>
   </data>
 </root>

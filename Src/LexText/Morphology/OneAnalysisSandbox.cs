@@ -3,9 +3,11 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Diagnostics;
-using SIL.CoreImpl;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.FieldWorks.Common.FwUtils;
+using SIL.LCModel;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using XCore;
 using SIL.FieldWorks.IText;
 
@@ -26,11 +28,12 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		/// </summary>
 		/// <param name="cache">The cache.</param>
 		/// <param name="mediator">The mediator.</param>
+		/// <param name="propertyTable"></param>
 		/// <param name="ss">The stylesheet.</param>
 		/// <param name="choices">The choices.</param>
 		/// <param name="hvoAnalysis">The hvo analysis.</param>
-		public OneAnalysisSandbox(FdoCache cache, Mediator mediator, IVwStylesheet ss, InterlinLineChoices choices, int hvoAnalysis)
-			: base(cache, mediator, ss, choices, hvoAnalysis)
+		public OneAnalysisSandbox(LcmCache cache, Mediator mediator, PropertyTable propertyTable, IVwStylesheet ss, InterlinLineChoices choices, int hvoAnalysis)
+			: base(cache, mediator, propertyTable, ss, choices, hvoAnalysis)
 		{
 			SizeToContent = true;
 			InitializeComponent();
@@ -125,7 +128,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 							{
 								// Change to 'unknown'. Will no longer be able to use the morph property to get
 								// at the actual form, so reinstate it in the bundle.
-								foreach (IWritingSystem ws in mb.Cache.ServiceLocator.WritingSystems.VernacularWritingSystems)
+								foreach (CoreWritingSystemDefinition ws in mb.Cache.ServiceLocator.WritingSystems.VernacularWritingSystems)
 									mb.Form.set_String(ws.Handle, mb.Cache.MainCacheAccessor.get_MultiStringAlt(oldHvo, MoFormTags.kflidForm, ws.Handle));
 								mb.MorphRA = null; // See LT-13878 for 'unrelated' crash reported by Santhosh
 							}

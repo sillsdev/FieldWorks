@@ -1,0 +1,31 @@
+#!/bin/bash
+
+# Repack an assembly.
+# Created 2018-08-13
+#
+# Usage: ./ilrepack-assemblies /path/to/PrimaryAssembly.dll [/path/to/OtherAssemblies.dll ...]
+#
+# Original PrimaryAssembly.dll is left as PrimaryAssembly.dll~.
+#
+# Environment variables:
+#   ILREPACK - path to ILRepack.exe to use.
+
+set -e -o pipefail -u
+
+PRIMARY_ASSEMBLY="$1"
+ILREPACK="${ILREPACK-"$(dirname "$0")/../packages/ILRepack.2.0.15/tools/ILRepack.exe"}"
+TMP_ASSEMBLY=$(mktemp -d)/"$(basename "$PRIMARY_ASSEMBLY")"
+# Set ASSEMBLIES to the remaining arguments.
+shift
+ASSEMBLIES="${@}"
+
+LIBSARGS=/lib:"$(dirname "$PRIMARY_ASSEMBLY")"
+mono "$ILREPACK" /out:"$TMP_ASSEMBLY" "$LIBSARGS" "$PRIMARY_ASSEMBLY" $ASSEMBLIES
+mv "$PRIMARY_ASSEMBLY" "$PRIMARY_ASSEMBLY~"
+mv "$TMP_ASSEMBLY" "$PRIMARY_ASSEMBLY"
+
+for assembly in $ASSEMBLIES; do
+  if [[ -f $assembly.config ]]; then
+	echo >&2 "ilrepack-assemblies($$): WARNING: Not including settings from $assembly.config for $PRIMARY_ASSEMBLY."
+  fi
+done

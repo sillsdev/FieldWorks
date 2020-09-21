@@ -13,9 +13,9 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
-using SIL.FieldWorks.Common.Controls;
 using Microsoft.Win32;
-using SIL.Utils;
+using SIL.FieldWorks.Common.Controls;
+using SIL.FieldWorks.Common.FwUtils;
 
 namespace ControlExtenders
 {
@@ -76,7 +76,7 @@ namespace ControlExtenders
 		private RegistryKey m_settingsKey = null;
 		#endregion private members
 
-		#region initialization
+		#region initialization y disposal
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// constructor
@@ -110,6 +110,12 @@ namespace ControlExtenders
 			this.ResumeLayout(false);
 		}
 
+		/// <summary/>
+		protected override void Dispose(bool disposing)
+		{
+			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + ". ******");
+			base.Dispose(disposing);
+		}
 		#endregion initialization
 
 		#region properties
@@ -1084,7 +1090,7 @@ namespace ControlExtenders
 				key.SetValue(ModifiedRegValue("UndockedBounds"), DesktopBounds);
 			else
 			{
-				Rectangle rc = MiscUtils.GetRcFromString(bounds);
+				Rectangle rc = FwUtils.GetRcFromString(bounds);
 				if (rc != Rectangle.Empty)
 					DesktopBounds = rc;
 			}

@@ -7,11 +7,11 @@ using System.Text;
 using System.Xml.Linq;
 using System.Xml.XPath;
 using System.Xml.Xsl;
-using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Widgets;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using SIL.Utils;
 using XCore;
 
@@ -26,15 +26,15 @@ namespace SIL.FieldWorks.LexText.Controls
 			m_transform = XmlUtils.CreateTransform(xslName, "PresentationTransforms");
 		}
 
-		public string Transform(Mediator mediator, XDocument doc, string baseName)
+		public string Transform(PropertyTable propertyTable, XDocument doc, string baseName)
 		{
-			return Transform(mediator, doc, baseName, new XsltArgumentList());
+			return Transform(propertyTable, doc, baseName, new XsltArgumentList());
 		}
 
-		public string Transform(Mediator mediator, XDocument doc, string baseName, XsltArgumentList args)
+		public string Transform(PropertyTable propertyTable, XDocument doc, string baseName, XsltArgumentList args)
 		{
-			var cache = (FdoCache) mediator.PropertyTable.GetValue("cache");
-			SetWritingSystemBasedArguments(cache, mediator, args);
+			var cache = propertyTable.GetValue<LcmCache>("cache");
+			SetWritingSystemBasedArguments(cache, propertyTable, args);
 			args.AddParam("prmIconPath", "", IconPath);
 			string filePath = Path.Combine(Path.GetTempPath(), cache.ProjectId.Name + baseName + ".htm");
 			using (var writer = new StreamWriter(filePath))
@@ -42,19 +42,19 @@ namespace SIL.FieldWorks.LexText.Controls
 			return filePath;
 		}
 
-		private void SetWritingSystemBasedArguments(FdoCache cache, Mediator mediator, XsltArgumentList argumentList)
+		private void SetWritingSystemBasedArguments(LcmCache cache, PropertyTable propertyTable, XsltArgumentList argumentList)
 		{
 			ILgWritingSystemFactory wsf = cache.WritingSystemFactory;
 			IWritingSystemContainer wsContainer = cache.ServiceLocator.WritingSystems;
-			IWritingSystem defAnalWs = wsContainer.DefaultAnalysisWritingSystem;
-			using (var myFont = FontHeightAdjuster.GetFontForNormalStyle(defAnalWs.Handle, mediator, wsf))
+			CoreWritingSystemDefinition defAnalWs = wsContainer.DefaultAnalysisWritingSystem;
+			using (var myFont = FontHeightAdjuster.GetFontForNormalStyle(defAnalWs.Handle, wsf, propertyTable))
 			{
 				argumentList.AddParam("prmAnalysisFont", "", myFont.FontFamily.Name);
 				argumentList.AddParam("prmAnalysisFontSize", "", myFont.Size + "pt");
 			}
 
-			IWritingSystem defVernWs = wsContainer.DefaultVernacularWritingSystem;
-			using (var myFont = FontHeightAdjuster.GetFontForNormalStyle(defVernWs.Handle, mediator, wsf))
+			CoreWritingSystemDefinition defVernWs = wsContainer.DefaultVernacularWritingSystem;
+			using (var myFont = FontHeightAdjuster.GetFontForNormalStyle(defVernWs.Handle, wsf, propertyTable))
 			{
 				argumentList.AddParam("prmVernacularFont", "", myFont.FontFamily.Name);
 				argumentList.AddParam("prmVernacularFontSize", "", myFont.Size + "pt");

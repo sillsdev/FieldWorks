@@ -1,23 +1,19 @@
-// Copyright (c) 2007-2013 SIL International
+// Copyright (c) 2007-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: FwApplyStyleDlg.cs
-// Responsibility: TE Team
 
 using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
-using SIL.CoreImpl;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.Utils;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.FwCoreDlgControls;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.FDO.DomainServices;
-using XCore;
+using SIL.LCModel.DomainServices;
+using StyleInfo = SIL.FieldWorks.FwCoreDlgControls.StyleInfo;
 
 namespace SIL.FieldWorks.FwCoreDlgs
 {
@@ -26,12 +22,12 @@ namespace SIL.FieldWorks.FwCoreDlgs
 	/// The new Styles Dialog
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
-	public partial class FwApplyStyleDlg : Form, IFWDisposable
+	public partial class FwApplyStyleDlg : Form
 	{
 		#region Data Members
 		private StyleListBoxHelper m_styleListHelper;
 		private StyleInfoTable m_styleTable;
-		private FwStyleSheet m_styleSheet;
+		private LcmStyleSheet m_styleSheet;
 		private string m_paraStyleName;
 		private string m_charStyleName;
 
@@ -61,7 +57,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <param name="app">The application.</param>
 		/// <param name="helpTopicProvider">The help topic provider.</param>
 		/// ------------------------------------------------------------------------------------
-		public FwApplyStyleDlg(IVwRootSite rootSite, FdoCache cache, int hvoStylesOwner,
+		public FwApplyStyleDlg(IVwRootSite rootSite, LcmCache cache, int hvoStylesOwner,
 			int stylesTag, string normalStyleName, int customUserLevel, string paraStyleName,
 			string charStyleName, int hvoRootObject, IApp app,
 			IHelpTopicProvider helpTopicProvider)
@@ -82,7 +78,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			// Load the style information
 			m_styleTable = new StyleInfoTable(normalStyleName,
 				cache.ServiceLocator.WritingSystemManager);
-			m_styleSheet = new FwStyleSheet();
+			m_styleSheet = new LcmStyleSheet();
 			m_styleSheet.Init(cache, hvoStylesOwner, stylesTag);
 			m_styleListHelper = new StyleListBoxHelper(m_lstStyles);
 			m_styleListHelper.ShowInternalStyles = false;

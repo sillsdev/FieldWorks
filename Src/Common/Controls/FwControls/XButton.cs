@@ -1,14 +1,13 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Windows.Forms.VisualStyles;
-using SIL.Utils;
+using SIL.PlatformUtilities;
+using SIL.Windows.Forms;
 
 namespace SIL.FieldWorks.Common.Controls
 {
@@ -17,7 +16,7 @@ namespace SIL.FieldWorks.Common.Controls
 	///
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
-	public class XButton : Label, IFWDisposable
+	public class XButton : Label
 	{
 		private bool m_drawLeftArrowButton = false;
 		private bool m_drawRightArrowButton = false;
@@ -41,14 +40,11 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			AutoSize = false;
 			BackColor = SystemColors.Control;
-#if __MonoCS__
 			// Linux doesn't have the Marlett font -- do we need to pick a special one to get
 			// Unicode dingbats?  (In practice, the only use of XButton in FieldWorks is in the
 			// color picker, and it never uses a path that tries to draw the dingbats.)
-			Font = new Font("OpenSymbol", 9, GraphicsUnit.Point);
-#else
-			Font = new Font("Marlett", 9, GraphicsUnit.Point);
-#endif
+			var fontName = Platform.IsWindows ? "Marlett" : "OpenSymbol";
+			Font = new Font(fontName, 9, GraphicsUnit.Point);
 			Size = new Size(16, 16);
 		}
 
@@ -61,6 +57,13 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			if (IsDisposed)
 				throw new ObjectDisposedException(String.Format("'{0}' in use after being disposed.", GetType().Name));
+		}
+
+		/// <summary/>
+		protected override void Dispose(bool disposing)
+		{
+			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + ". ******");
+			base.Dispose(disposing);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -365,13 +368,10 @@ namespace SIL.FieldWorks.Common.Controls
 			Color clr = (m_state == PaintState.Normal ? SystemColors.ControlDarkDark :
 				SystemColors.ControlText);
 
-#if __MonoCS__
 			// Linux doesn't have the Marlett font, so use a standard Unicode dingbat here.
-			TextRenderer.DrawText(e.Graphics, "\u2573", Font, rc, clr, m_txtFmtflags);
-#else
-			// The 'r' in the Marlett font is the close button symbol 'X'
-			TextRenderer.DrawText(e.Graphics, "r", Font, rc, clr, m_txtFmtflags);
-#endif
+			var glyph = Platform.IsWindows ? "r" : "\u2573";
+			TextRenderer.DrawText(e.Graphics, glyph, Font, rc, clr, m_txtFmtflags);
+
 			// Draw the border around the button.
 			rc.Width--;
 			rc.Height--;
@@ -422,13 +422,12 @@ namespace SIL.FieldWorks.Common.Controls
 			ControlPaint.DrawButton(e.Graphics, rc,
 				(m_state == PaintState.HotDown ? ButtonState.Pushed : ButtonState.Normal));
 
-#if __MonoCS__
-			// Linux doesn't have the Marlett font, so use standard Unicode dingbats here.
-			string arrowGlyph = (m_drawLeftArrowButton ? "\u25C4" : "\u25BA");
-#else
-			// In the Marlett font, '3' is the left arrow and '4' is the right.
-			string arrowGlyph = (m_drawLeftArrowButton ? "3" : "4");
-#endif
+			var arrowGlyph = Platform.IsWindows
+				// In the Marlett font, '3' is the left arrow and '4' is the right.
+				? (m_drawLeftArrowButton ? "3" : "4")
+				// Linux doesn't have the Marlett font, so use standard Unicode dingbats here.
+				: (m_drawLeftArrowButton ? "\u25C4" : "\u25BA");
+
 			Color clr = (Enabled ? SystemColors.ControlText : SystemColors.GrayText);
 			TextRenderer.DrawText(e.Graphics, arrowGlyph, Font, rc,	clr, m_txtFmtflags);
 		}

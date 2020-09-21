@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Include>
+	<!-- Set the projects dir to what the user had chosen before.
+		(WiX Note: later registry searches replace results of earlier searches, so the current version's directory is preferred over the previous version's.)
+		Look for FieldWorks\8 in the 32-bit registry space since FieldWorks 8 was only 32-bit. -->
+	<Property Id="REGDATAFOLDER">
+		<RegistrySearch Id="LegacyDataFolder" Root="HKLM" Key="SOFTWARE\SIL\FieldWorks\8" Name="[DATAFOLDERREGSZNAME]" Type="directory" Win64="no"/>
+		<RegistrySearch Id="RegistryDataFolder" Root="HKLM" Key="SOFTWARE\[REGISTRYKEY]" Name="[DATAFOLDERREGSZNAME]" Type="directory"/>
+	</Property>
+	<Property Id="REGISTRYKEY" Value="SIL\$(var.SafeApplicationName)\$(var.MajorVersion)"/>
+	<Property Id="APPFOLDERREGSZNAME" Value="RootCodeDir"/>
+	<Property Id="DATAFOLDERREGSZNAME" Value="ProjectsDir"/>
+	<SetProperty Id="OVRAPPFOLDER" Value="[$(var.PFDir)]\SIL\$(var.SafeApplicationName) $(var.MajorVersion)\" Before="AppSearch"/>
+	<SetProperty Id="OVRHARVESTDATAFOLDER" Value="[CommonAppDataFolder]SIL" Before="AppSearch"/>
+	<SetProperty Id="OVRDATAFOLDER" Value="[CommonAppDataFolder]SIL\FieldWorks\Projects" Before="AppSearch"/>
+</Include>

@@ -3,12 +3,10 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using System.Runtime.InteropServices;
-using SIL.FieldWorks.Common.RootSites;
 
 namespace SIL.FieldWorks.IText
 {
-	partial class SandboxBase : RootSite
+	partial class SandboxBase
 	{
 		/// <summary>
 		/// Required designer variable.
@@ -22,13 +20,18 @@ namespace SIL.FieldWorks.IText
 		/// -----------------------------------------------------------------------------------
 		protected override void Dispose(bool disposing)
 		{
+			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ******");
+
 			// Must not be run more than once.
 			if (IsDisposed)
 				return;
 
-			if (disposing && m_mediator != null && m_mediator.PropertyTable != null)
+			if (disposing)
 			{
-				m_mediator.PropertyTable.SetProperty("FirstControlToHandleMessages", null);
+				if (m_propertyTable != null)
+				{
+					m_propertyTable.SetProperty("FirstControlToHandleMessages", null, true);
+				}
 			}
 
 			base.Dispose(disposing);
@@ -58,6 +61,7 @@ namespace SIL.FieldWorks.IText
 
 			m_editMonitor = null;
 			m_vc = null;
+			m_propertyTable = null;
 			if (m_rawWordform != null)
 			{
 				m_rawWordform = null;

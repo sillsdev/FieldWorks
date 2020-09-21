@@ -55,7 +55,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 				if (directoryInfo.Name.Substring(0, 1) == ".")
 					continue;
 
-				if(directoryInfo.Name == dirFilter)
+				if (directoryInfo.Name == dirFilter)
 					continue;
 
 				string dstFullName = Path.Combine(dst, directoryInfo.Name);

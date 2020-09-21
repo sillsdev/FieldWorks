@@ -3,44 +3,46 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Windows.Forms;
-using SIL.Utils;
+using SIL.Windows.Forms;
 
 namespace XCore
 {
 	/// <summary>
 	///  A PersistenceProvider which uses the XCore PropertyTable
 	/// </summary>
-	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
-		Justification = "variable is a reference; it is owned by parent")]
 	public class PersistenceProvider : IPersistenceProvider
 	{
 		protected string m_contextString;
+		protected Mediator m_mediator;
 		protected PropertyTable m_propertyTable;
 
 		/// <summary>
 		/// create a PersistenceProvider which uses the XCore PropertyTable.
 		/// </summary>
+		/// <param name="mediator"></param>
+		/// <param name="propertyTable"></param>
 		/// <param name="context">used to provide persistence and access to settings
 		/// limited to a particular context. For example, if they control is used in
 		/// three different places, we don't necessarily want to control to use the
 		/// same settings each time. So each case would need its own context string.</param>
-		/// <param name="propertyTable"></param>
-		public PersistenceProvider(string context, PropertyTable propertyTable)
+		public PersistenceProvider(Mediator mediator, PropertyTable propertyTable, string context)
 		{
 			m_contextString= context;
+			m_mediator = mediator;
 			m_propertyTable = propertyTable;
 		}
+
 		/// <summary>
 		/// create a PersistenceProvider which uses the XCore PropertyTable.
 		/// </summary>
+		/// <param name="mediator"></param>
 		/// <param name="propertyTable"></param>
-		public PersistenceProvider(PropertyTable propertyTable)
+		public PersistenceProvider(Mediator mediator, PropertyTable propertyTable)
+			: this(mediator, propertyTable, "Default")
+
 		{
-			m_contextString= "Default";
-			m_propertyTable = propertyTable;
 		}
 
 		public void RestoreWindowSettings(string id,Form form)
@@ -72,7 +74,7 @@ namespace XCore
 			// since the last time he ran the program.  (See LT-1078.)
 			Rectangle rcNewWnd = form.DesktopBounds;
 //			Rectangle rcScrn = System.Windows.Forms.Screen.FromRectangle(rcNewWnd).WorkingArea;
-			ScreenUtils.EnsureVisibleRect(ref rcNewWnd);
+			ScreenHelper.EnsureVisibleRect(ref rcNewWnd);
 			form.DesktopBounds = rcNewWnd;
 		}
 
@@ -83,12 +85,13 @@ namespace XCore
 
 		protected object Get(string id,string label)
 		{
-			return m_propertyTable.GetValue(GetPrefix(id)+"-"+label);
+			return m_propertyTable.GetValue<object>(GetPrefix(id) + "-" + label);
 		}
 
 		protected void Set(string id,string label, object value)
 		{
-			m_propertyTable.SetProperty(GetPrefix(id)+"-"+label, value);
+			var propertyName = GetPrefix(id) + "-" + label;
+			m_propertyTable.SetProperty(propertyName, value, true);
 		}
 
 		public void PersistWindowSettings(string id,Form form)
@@ -105,9 +108,9 @@ namespace XCore
 				Set(id, "windowLocation", form.Location);
 		}
 
-		public Object GetInfoObject(string id, Object defaultValue)
+		public object GetInfoObject(string id, object defaultValue)
 		{
-			return m_propertyTable.GetValue(GetPrefix(id), defaultValue);
+			return m_propertyTable.GetValue<object>(GetPrefix(id), defaultValue);
 		}
 		public void SetInfoObject(string id, Object info)
 		{

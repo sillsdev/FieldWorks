@@ -5,8 +5,7 @@
 // File: VwSelectionArgs.cs
 
 using System;
-using SIL.FieldWorks.Common.COMInterfaces;
-using System.Diagnostics;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 
 namespace SIL.FieldWorks.Common.RootSites
 {

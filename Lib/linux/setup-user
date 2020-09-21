@@ -19,6 +19,23 @@ FW_SHARE=$prefix/share/fieldworks
 WRITEKEY="${FW_LIB}/WriteKey.exe"
 READKEY="${FW_LIB}/ReadKey.exe"
 
+WriteKey()
+{
+	mono "${WRITEKEY}" "$@"
+}
+
+
+ReadKey()
+{
+	# MONO_DEBUG seems to trigger warnings being printed to stdout for
+	# bad values in MONO_PATH. While correcting the occasional bad value
+	# that creeps into MONO_PATH is good, just unsetting MONO_DEBUG here
+	# will prevent surprise registry corruption when migrating registry
+	# keys from old to new FW versions. This is LT-18815.
+	(unset MONO_DEBUG
+	mono "${READKEY}" "$@")
+}
+
 # For example: CopyRegistryKey LM "Software/SIL/FieldWorks/7.0" "ProjectsDir" LM "Software/SIL/FieldWorks/8" "ProjectsDir"
 CopyRegistryKey()
 {
@@ -30,16 +47,15 @@ CopyRegistryKey()
 	DESTINATION_LOCATION="$5"
 	DESTINATION_KEY="$6"
 
-	mono "${WRITEKEY}" "$DESTINATION_ROOT" "$DESTINATION_LOCATION" "$DESTINATION_KEY" \
-		$(mono "${READKEY}" "$SOURCE_ROOT" "$SOURCE_LOCATION" "$SOURCE_KEY")
+	WriteKey "$DESTINATION_ROOT" "$DESTINATION_LOCATION" "$DESTINATION_KEY" \
+		"$(ReadKey "$SOURCE_ROOT" "$SOURCE_LOCATION" "$SOURCE_KEY")"
 }
 
 (
 	if [ ! -d "${FW_CONFIG}/Icu54/" ]; then
 		echo "# Copying ICU data"
-		mkdir -p "${FW_CONFIG}/Icu54/"
-		cp -a "${FW_SHARE}/Icu54/icudt54l" "${FW_CONFIG}/Icu54/"
-		cp -a "${FW_SHARE}/Icu54/data" "${FW_CONFIG}/Icu54/"
+		mkdir -p "${FW_CONFIG}"
+		cp -a "${FW_SHARE}/Icu54" "${FW_CONFIG}/"
 	fi
 
 	if [ ! -d "${FW_CONFIG}/SIL/" ]; then
@@ -53,14 +69,6 @@ CopyRegistryKey()
 		mkdir -p "${FW_DATA}/Projects/"
 	fi
 
-	# if we haven't setup running the remote access daemon yet, set it up and start it.
-	if [ ! -f "${XDG_CONFIG_HOME}/autostart/ShareFwProjects.desktop" ]; then
-		echo "# Starting remote access"
-		mkdir -p "${XDG_CONFIG_HOME}/autostart"
-		cp -a "${FW_SHARE}/ShareFwProjects.desktop" "${XDG_CONFIG_HOME}/autostart"
-		${FW_LIB}/ShareFwProjects
-	fi
-
 	mkdir -p "${FW_CONFIG}/SIL/Repository"
 	mkdir -p "${FW_CONFIG}/MoveRepositoryTo"
 
@@ -68,46 +76,69 @@ CopyRegistryKey()
 
 	cd "$FW_LIB"; RUNMODE="INSTALLED" . environ; cd "$OLDPWD"
 
-	# If there aren't registry keys yet, set some defaults
-	if [ ! -d "${FW_CONFIG}/registry/LocalMachine/software/sil/fieldworks" ]; then
-		echo "# Setting configuration"
+	# Are there FW 9 registry settings?
+	if ReadKey LM "Software/SIL/FieldWorks/9" "ProjectsDir" 2>/dev/null; then
+		# All done!
+		:
+	else
+		# Are there FW 8 registry settings?
+		if ReadKey LM "Software/SIL/FieldWorks/8" "ProjectsDir" 2>/dev/null; then
+			# Migrate them to FW 9.
 
-		# REVIEW these were taken from nant setup registry may not be correct for an install.
-		if [ ! -d "${FW_CONFIG}/registry/LocalMachine/software/sil/encodingconverterrepository" ]; then
-			mono "${WRITEKEY}" LM "Software/SIL/EncodingConverterRepository" "Registry" "${FW_CONFIG}/SIL/Repository/mappingRegistry.xml"
-			mono "${WRITEKEY}" LM "Software/SIL/EncodingConverterRepository" "MoveRepositoryTo" "${FW_CONFIG}/MoveRepositoryTo"
+			echo "# Migrating from FW 8 registry settings."
+
+			# Write any default settings for keys that are new in version 9.
+			# None.
+
+			# Migrate any settings from version 8 to version 9.
+			CopyRegistryKey LM "Software/SIL/FieldWorks/8" "RootDataDir" LM "Software/SIL/FieldWorks/9" "RootDataDir"
+			CopyRegistryKey LM "Software/SIL/FieldWorks/8" "RootCodeDir" LM "Software/SIL/FieldWorks/9" "RootCodeDir"
+			CopyRegistryKey LM "Software/SIL/FieldWorks/8" "ProjectsDir" LM "Software/SIL/FieldWorks/9" "ProjectsDir"
+		else
+			# Are there FW 7 registry settings?
+			if ReadKey LM "Software/SIL/FieldWorks/7.0" "ProjectsDir" 2>/dev/null; then
+				# Migrate them to FW 9.
+
+				echo "# Migrating from FW 7 registry settings."
+
+				# Write any default settings for keys that are new in version 8 or 9.
+				# None.
+
+				# Migrate any settings from version 7 to version 9.
+				CopyRegistryKey LM "Software/SIL/FieldWorks/7.0" "RootDataDir" LM "Software/SIL/FieldWorks/9" "RootDataDir"
+				CopyRegistryKey LM "Software/SIL/FieldWorks/7.0" "RootCodeDir" LM "Software/SIL/FieldWorks/9" "RootCodeDir"
+				CopyRegistryKey LM "Software/SIL/FieldWorks/7.0" "ProjectsDir" LM "Software/SIL/FieldWorks/9" "ProjectsDir"
+			else
+				# Create FW 9 registry settings for an empty registry.
+				echo "# Creating FW 9 registry settings."
+
+				# REVIEW these were taken from nant setup registry may not be correct for an install.
+				if [ ! -d "${FW_CONFIG}/registry/LocalMachine/software/sil/encodingconverterrepository" ]; then
+					WriteKey LM "Software/SIL/EncodingConverterRepository" "Registry" "${FW_CONFIG}/SIL/Repository/mappingRegistry.xml"
+					WriteKey LM "Software/SIL/EncodingConverterRepository" "MoveRepositoryTo" "${FW_CONFIG}/MoveRepositoryTo"
+				fi
+				WriteKey LM "Software/Microsoft/.NETFramework/AssemblyFolders" "Primary Interop Assemblies" "$FW_LIB"
+				WriteKey LM "Software/SIL" "InitIcu" "1"
+				WriteKey LM "Software/SIL/FieldWorks" "InstallLanguageUseLog" "False"
+
+				WriteKey LM "Software/SIL/FieldWorks/9" "RootDataDir" "${FW_CONFIG}/"
+				WriteKey LM "Software/SIL/FieldWorks/9" "RootCodeDir" "${FW_SHARE}"
+				WriteKey LM "Software/SIL/FieldWorks/9" "ProjectsDir" "${FW_DATA}/Projects"
+			fi
 		fi
-		mono "${WRITEKEY}" LM "Software/Microsoft/.NETFramework/AssemblyFolders" "Primary Interop Assemblies" "$FW_LIB"
-		mono "${WRITEKEY}" LM "Software/SIL" "InitIcu" "1"
-		mono "${WRITEKEY}" LM "Software/SIL/FieldWorks" "InstallLanguageUseLog" "False"
-
-		mono "${WRITEKEY}" LM "Software/SIL/FieldWorks/8" "RootDataDir" "${FW_CONFIG}/"
-		mono "${WRITEKEY}" LM "Software/SIL/FieldWorks/8" "RootCodeDir" "${FW_SHARE}"
-		mono "${WRITEKEY}" LM "Software/SIL/FieldWorks/8" "ProjectsDir" "${FW_DATA}/Projects"
-	fi
-
-	# If there aren't version 8 registry keys yet, migrate them from the version 7 registry keys.
-	if ! mono "${READKEY}" LM "Software/SIL/FieldWorks/8" "ProjectsDir" ; then
-		# Write any default settings for keys that are new in version 8.
-		# None.
-
-		# Migrate any settings from version 7 to version 8.
-		CopyRegistryKey LM "Software/SIL/FieldWorks/7.0" "RootDataDir" LM "Software/SIL/FieldWorks/8" "RootDataDir"
-		CopyRegistryKey LM "Software/SIL/FieldWorks/7.0" "RootCodeDir" LM "Software/SIL/FieldWorks/8" "RootCodeDir"
-		CopyRegistryKey LM "Software/SIL/FieldWorks/7.0" "ProjectsDir" LM "Software/SIL/FieldWorks/8" "ProjectsDir"
 	fi
 
 	# Set values unconditionally, to take care of upgrades
 	# TODO: implement a WriteKey option to only set and not overwrite values. See comments in FWNX-1065.
 	# TODO: implement batch load/dump in WriteKey similar to dconf
 
-	echo "# Updating configuration"
+	echo "# Writing required registry settings."
 
-	mono "${WRITEKEY}" LM "Software/SIL" "Icu54DataDir" "${FW_CONFIG}/Icu54"
-	mono "${WRITEKEY}" LM "Software/SIL" "Icu54Dir" "${FW_CONFIG}/Icu54"
+	WriteKey LM "Software/SIL" "Icu54DataDir" "${FW_CONFIG}/Icu54"
+	WriteKey LM "Software/SIL" "Icu54Dir" "${FW_CONFIG}/Icu54"
 
-	mono "${WRITEKEY}" LM "Software/SIL/SilEncConverters40" "PluginDir" "${FW_LIB}/EC/Plugins"
-	mono "${WRITEKEY}" LM "Software/SIL/SilEncConverters40" "RootDir" "${FW_LIB}"
+	WriteKey LM "Software/SIL/SilEncConverters40" "PluginDir" "${FW_LIB}/EC/Plugins"
+	WriteKey LM "Software/SIL/SilEncConverters40" "RootDir" "${FW_LIB}"
 
 ) | zenity --progress \
 	--title="User specific setup" \

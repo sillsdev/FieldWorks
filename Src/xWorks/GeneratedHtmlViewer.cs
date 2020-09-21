@@ -1,38 +1,30 @@
-// Copyright (c) 2003-2013 SIL International
+// Copyright (c) 2003-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: GeneratedHtmlViewer.cs
-// Responsibility: AndyBlack
-// Last reviewed:
-//
-// <remarks>
-// </remarks>
 
 using System;
-using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
-using System.Drawing;
 using System.Collections.Generic;
-using System.Linq;
-using System.Xml;
-using System.Windows.Forms;
-using System.Reflection;
+using System.Diagnostics;
+using System.Drawing;
 using System.IO;
+using System.Linq;
+using System.Reflection;
 using System.Resources;
 using System.Text;
+using System.Windows.Forms;
+using System.Xml;
 using System.Xml.Xsl;
 using Microsoft.Win32;
-using SIL.FieldWorks.FDO.DomainServices;
-using XCore;
-using SIL.FieldWorks.FDO;
-using SIL.Utils;
-using SIL.Utils.FileDialog;
 using SIL.FieldWorks.Common.Controls;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.Common.Widgets;
-using SIL.FieldWorks.Resources;
+using SIL.FieldWorks.Common.Controls.FileDialog;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.Common.Widgets;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
+using SIL.FieldWorks.Resources;
+using SIL.Utils;
+using XCore;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -47,7 +39,7 @@ namespace SIL.FieldWorks.XWorks
 	/// <remarks>
 	/// IxCoreColleague is included in the IxCoreContentControl definition.
 	/// </remarks>
-	public class GeneratedHtmlViewer : UserControl, IxCoreContentControl, IFWDisposable
+	public class GeneratedHtmlViewer : UserControl, IxCoreContentControl
 	{
 		#region Data Members
 		/// <summary>
@@ -58,6 +50,10 @@ namespace SIL.FieldWorks.XWorks
 		/// Mediator that passes off messages.
 		/// </summary>
 		protected Mediator m_mediator;
+		/// <summary>
+		///
+		/// </summary>
+		protected PropertyTable m_propertyTable;
 
 		protected string m_outputDirectory;
 
@@ -172,8 +168,6 @@ namespace SIL.FieldWorks.XWorks
 			get { return Path.Combine(UtilityHtmlPath, "InitialDocument.htm"); }
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "We're returning an object")]
 		private RegistryKey RegistryKey
 		{
 			get
@@ -191,11 +185,11 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// FDO cache.
 		/// </summary>
-		protected FdoCache Cache
+		protected LcmCache Cache
 		{
 			get
 			{
-				return (FdoCache)m_mediator.PropertyTable.GetValue("cache");
+				return m_propertyTable.GetValue<LcmCache>("cache");
 			}
 		}
 
@@ -224,10 +218,10 @@ namespace SIL.FieldWorks.XWorks
 
 		private void ReadParameters()
 		{
-			m_sRegKeyName = XmlUtils.GetManditoryAttributeValue(m_configurationParameters, "regKeyName");
-			m_sProgressDialogTitle = XmlUtils.GetManditoryAttributeValue(m_configurationParameters, "dialogTitle");
-			m_sFileNameKey = XmlUtils.GetManditoryAttributeValue(m_configurationParameters, "fileNameKey");
-			m_sStringsPath = XmlUtils.GetManditoryAttributeValue(m_configurationParameters, "stringsPath");
+			m_sRegKeyName = XmlUtils.GetMandatoryAttributeValue(m_configurationParameters, "regKeyName");
+			m_sProgressDialogTitle = XmlUtils.GetMandatoryAttributeValue(m_configurationParameters, "dialogTitle");
+			m_sFileNameKey = XmlUtils.GetMandatoryAttributeValue(m_configurationParameters, "fileNameKey");
+			m_sStringsPath = XmlUtils.GetMandatoryAttributeValue(m_configurationParameters, "stringsPath");
 
 			foreach (XmlNode rNode in m_configurationParameters.ChildNodes)
 			{
@@ -512,7 +506,7 @@ namespace SIL.FieldWorks.XWorks
 		private void InitSaveAsWebpageDialog(ISaveFileDialog dlg)
 		{
 			dlg.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Personal);
-			dlg.FileName =  m_mediator.StringTbl.GetString(m_sFileNameKey, m_sStringsPath);
+			dlg.FileName = StringTable.Table.GetString(m_sFileNameKey, m_sStringsPath);
 			dlg.AddExtension = true;
 			dlg.Filter = ResourceHelper.FileFilter(FileFilterType.HTM);
 			dlg.Title = m_sSaveAsWebpageDialogTitle;
@@ -558,7 +552,7 @@ namespace SIL.FieldWorks.XWorks
 				ShowGeneratingPage();
 				PerformRetrieval(out sFxtOutputPath, dlg);
 				PerformTransformations(sFxtOutputPath, dlg);
-				UpdateProgress(m_mediator.StringTbl.GetString("Complete", "DocumentGeneration"), dlg);//m_stringResMan.GetString("stidCompleted"), dlg);
+				UpdateProgress(StringTable.Table.GetString("Complete", "DocumentGeneration"), dlg);
 				dlg.Close();
 			}
 		}
@@ -612,10 +606,10 @@ namespace SIL.FieldWorks.XWorks
 
 		private string ApplyTransform(string inputFile, XmlNode node, ProgressDialogWorkingOn dlg)
 		{
-			string progressPrompt = XmlUtils.GetManditoryAttributeValue(node, "progressPrompt");
+			string progressPrompt = XmlUtils.GetMandatoryAttributeValue(node, "progressPrompt");
 			UpdateProgress(progressPrompt, dlg);
-			string stylesheetName = XmlUtils.GetManditoryAttributeValue(node, "stylesheetName");
-			string stylesheetAssembly = XmlUtils.GetManditoryAttributeValue(node, "stylesheetAssembly");
+			string stylesheetName = XmlUtils.GetMandatoryAttributeValue(node, "stylesheetName");
+			string stylesheetAssembly = XmlUtils.GetMandatoryAttributeValue(node, "stylesheetAssembly");
 			string outputFile = Path.Combine(m_outputDirectory, Cache.ProjectId.Name + stylesheetName + "Result." + GetExtensionFromNode(node));
 
 			XsltArgumentList argumentList = CreateParameterList(node);
@@ -670,7 +664,7 @@ namespace SIL.FieldWorks.XWorks
 		private string GetNormalStyleFontSize(int ws)
 		{
 			ILgWritingSystemFactory wsf = Cache.WritingSystemFactory;
-			using (Font myFont = FontHeightAdjuster.GetFontForNormalStyle(ws, m_mediator, wsf))
+			using (Font myFont = FontHeightAdjuster.GetFontForNormalStyle(ws, wsf, m_propertyTable))
 				return myFont.Size + "pt";
 		}
 
@@ -699,8 +693,8 @@ namespace SIL.FieldWorks.XWorks
 			{
 				if (rParamNode.Name == "param")
 				{
-					string name = XmlUtils.GetManditoryAttributeValue(rParamNode, "name");
-					string value = XmlUtils.GetManditoryAttributeValue(rParamNode, "value");
+					string name = XmlUtils.GetMandatoryAttributeValue(rParamNode, "name");
+					string value = XmlUtils.GetMandatoryAttributeValue(rParamNode, "value");
 					if (value == "TransformDirectory")
 					{
 						value = TransformPath.Replace("\\", "/");
@@ -718,7 +712,7 @@ namespace SIL.FieldWorks.XWorks
 
 		private static string GetExtensionFromNode(XmlNode node)
 		{
-			return XmlUtils.GetManditoryAttributeValue(node, "ext");
+			return XmlUtils.GetMandatoryAttributeValue(node, "ext");
 		}
 
 		private static void UpdateProgress(string sMessage, ProgressDialogWorkingOn dlg)
@@ -735,21 +729,23 @@ namespace SIL.FieldWorks.XWorks
 		/// Initialize.
 		/// </summary>
 		/// <param name="mediator"></param>
+		/// <param name="propertyTable"></param>
 		/// <param name="configurationParameters"></param>
-		public void Init(Mediator mediator, XmlNode configurationParameters)
+		public void Init(Mediator mediator, PropertyTable propertyTable, XmlNode configurationParameters)
 		{
 			CheckDisposed();
 
 			m_mediator = mediator;
-			m_previousShowTreeBarValue = m_mediator.PropertyTable.GetBoolProperty("ShowRecordList", true);
+			m_propertyTable = propertyTable;
+			m_previousShowTreeBarValue = m_propertyTable.GetBoolProperty("ShowRecordList", true);
 
-			m_mediator.PropertyTable.SetProperty("ShowRecordList", false);
+			m_propertyTable.SetProperty("ShowRecordList", false, true);
 
 			m_configurationParameters = configurationParameters;
 			mediator.AddColleague(this);
 
-			m_mediator.PropertyTable.SetProperty("StatusPanelRecordNumber", "");
-			m_mediator.PropertyTable.SetPropertyPersistence("StatusPanelRecordNumber", false);
+			m_propertyTable.SetProperty("StatusPanelRecordNumber", "", true);
+			m_propertyTable.SetPropertyPersistence("StatusPanelRecordNumber", false);
 
 #if notnow
 			m_htmlControl.Browser.DocumentCompleted += new WebBrowserDocumentCompletedEventHandler(Browser_DocumentCompleted);
@@ -764,8 +760,7 @@ namespace SIL.FieldWorks.XWorks
 			ShowSketch();
 
 			//add our current state to the history system
-			string toolName = m_mediator.PropertyTable.GetStringProperty("currentContentControl","");
-			FdoCache cache = Cache;
+			string toolName = m_propertyTable.GetStringProperty("currentContentControl", "");
 			m_mediator.SendMessage("AddContextToHistory", new FwLinkArgs(toolName, Guid.Empty), false);
 		}
 #if notnow
@@ -778,9 +773,9 @@ namespace SIL.FieldWorks.XWorks
 		private void SetStrings()
 		{
 			const string ksPath = "Linguistics/Morphology/MorphSketch";
-			m_sSaveAsWebpageDialogTitle = m_mediator.StringTbl.GetString("SaveAsWebpageDialogTitle", ksPath);
-			toolTip1.SetToolTip(m_BackBtn, m_mediator.StringTbl.GetString("BackButtonToolTip", ksPath));
-			toolTip1.SetToolTip(m_ForwardBtn, m_mediator.StringTbl.GetString("ForwardButtonToolTip", ksPath));
+			m_sSaveAsWebpageDialogTitle = StringTable.Table.GetString("SaveAsWebpageDialogTitle", ksPath);
+			toolTip1.SetToolTip(m_BackBtn, StringTable.Table.GetString("BackButtonToolTip", ksPath));
+			toolTip1.SetToolTip(m_ForwardBtn, StringTable.Table.GetString("ForwardButtonToolTip", ksPath));
 		}
 
 		private void SetAlsoSaveInfo()
@@ -841,7 +836,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			CheckDisposed();
 
-			m_mediator.PropertyTable.SetProperty("ShowRecordList", m_previousShowTreeBarValue);
+			m_propertyTable.SetProperty("ShowRecordList", m_previousShowTreeBarValue, true);
 			return true;
 		}
 
@@ -1007,7 +1002,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			CheckDisposed();
 
-				using (var dlg = new ExportDialog(m_mediator))
+				using (var dlg = new ExportDialog(m_mediator, m_propertyTable))
 				{
 					dlg.ShowDialog();
 				}

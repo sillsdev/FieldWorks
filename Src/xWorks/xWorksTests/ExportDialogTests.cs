@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2010-2016 SIL International
+﻿// Copyright (c) 2010-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -6,13 +6,10 @@ using System;
 using System.IO;
 using System.Text;
 using NUnit.Framework;
-
-using SIL.FieldWorks.Test.TestUtils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.FDOTests;
-using SIL.FieldWorks.FDO.Application.ApplicationServices;
+using SIL.LCModel;
+using SIL.LCModel.Application.ApplicationServices;
 using System.Collections.Generic;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.Common.FwUtils;
 // ReSharper disable InconsistentNaming
 
@@ -24,7 +21,7 @@ namespace SIL.FieldWorks.XWorks
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
 	[TestFixture]
-	public class ExportDialogTests : BaseTest
+	public class ExportDialogTests
 	{
 		#region SemanticDomainXml
 		/// <summary>
@@ -456,7 +453,7 @@ namespace SIL.FieldWorks.XWorks
 			"</LangProject>" + Environment.NewLine;
 		#endregion SemanticDomainXml
 
-		private FdoCache m_cache;
+		private LcmCache m_cache;
 
 		#region Setup and Helper Methods
 
@@ -466,8 +463,9 @@ namespace SIL.FieldWorks.XWorks
 		[SetUp]
 		public void CreateMockCache()
 		{
-			m_cache = FdoCache.CreateCacheWithNewBlankLangProj(
-				new TestProjectId(FDOBackendProviderType.kMemoryOnly, null), "en", "fr", "en", new DummyFdoUI(), FwDirectoryFinder.FdoDirectories, new FdoSettings());
+			m_cache = LcmCache.CreateCacheWithNewBlankLangProj(
+				new TestProjectId(BackendProviderType.kMemoryOnly, null), "en", "fr", "en", new DummyLcmUI(),
+				FwDirectoryFinder.LcmDirectories, new LcmSettings());
 			var xl = new XmlList();
 			using (var reader = new StringReader(s_ksSemanticDomainsXml))
 				xl.ImportList(m_cache.LangProject, "SemanticDomainList", reader, null);
@@ -732,7 +730,7 @@ namespace SIL.FieldWorks.XWorks
 					Assert.AreEqual("</Abbreviation>", r.ReadLine());
 					Assert.AreEqual("<Description>", r.ReadLine());
 					Assert.AreEqual("<AStr ws=\"en\">", r.ReadLine());
-					Assert.AreEqual("<Run ws=\"en\">Use this domain for words related to the moon. In your culture people may believe things about the moon. For instance in European culture people used to believe that the moon caused people to become crazy. So in English we have words like &quot;moon-struck&quot; and &quot;lunatic.&quot; You should include such words in this domain.</Run>", r.ReadLine());
+					Assert.AreEqual("<Run ws=\"en\">Use this domain for words related to the moon. In your culture people may believe things about the moon. For instance in European culture people used to believe that the moon caused people to become crazy. So in English we have words like \"moon-struck\" and \"lunatic.\" You should include such words in this domain.</Run>", r.ReadLine());
 					Assert.AreEqual("</AStr>", r.ReadLine());
 					Assert.AreEqual("<AStr ws=\"fr\">", r.ReadLine());
 					Assert.AreEqual("<Run ws=\"fr\"></Run>", r.ReadLine());

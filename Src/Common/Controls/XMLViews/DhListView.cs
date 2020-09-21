@@ -1,4 +1,4 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -7,10 +7,9 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
-
-using SIL.Utils;
 using System.Linq;
 using System.Runtime.InteropServices;
+using SIL.PlatformUtilities;
 
 namespace SIL.FieldWorks.Common.Controls
 {
@@ -19,7 +18,7 @@ namespace SIL.FieldWorks.Common.Controls
 	/// when resizing the columns.
 	/// This class holds the headers that show above columns of data that BrowseViewer knows about.
 	/// </summary>
-	public class DhListView : ListView, IFWDisposable
+	public class DhListView : ListView
 	{
 		private BrowseViewer m_bv;
 		private ImageList m_imgList;
@@ -28,20 +27,18 @@ namespace SIL.FieldWorks.Common.Controls
 		bool m_suppressColumnWidthChanges;
 		private ToolTip m_tooltip;
 
-#if __MonoCS__	// FWNX-224
-			// on Mono, when a right click is pressed, this class emits a RightClick event
-			// followed by a generic click event.
-			// This flag allows use to generate a LeftClick event if we previously didn't
-			// receive a RightClick.
-			private bool m_fIgnoreNextClick = false;
-#endif
+		// FWNX-224
+		// on Mono, when a right click is pressed, this class emits a RightClick event
+		// followed by a generic click event.
+		// This flag allows use to generate a LeftClick event if we previously didn't
+		// receive a RightClick.
+		private bool m_fIgnoreNextClick = false;
 
 		/// <summary></summary>
 		public event ColumnRightClickEventHandler ColumnRightClick;
-#if __MonoCS__	// FWNX-224
+		// FWNX-224
 		/// <summary>event for 'left click'</summary>
 		public event ColumnClickEventHandler ColumnLeftClick;
-#endif
 
 		/// <summary></summary>
 		public event ColumnDragDropReorderedHandler ColumnDragDropReordered;
@@ -62,16 +59,19 @@ namespace SIL.FieldWorks.Common.Controls
 
 		int kHalfArrowSize = 6;
 
-#if __MonoCS__ // FWNX-646: missing column headings
+		// FWNX-646: missing column headings
 		/// <summary/>
 		protected override void OnParentVisibleChanged(EventArgs e)
 		{
-			// Force a call to internal mono method LayoutDetails().
-			BeginUpdate();
-			EndUpdate();
+			if (Platform.IsMono)
+			{
+				// Force a call to internal mono method LayoutDetails().
+				BeginUpdate();
+				EndUpdate();
+			}
+
 			base.OnParentVisibleChanged(e);
 		}
-#endif
 
 		/// <summary>
 		/// Create one and set the browse view it belongs to.
@@ -93,9 +93,12 @@ namespace SIL.FieldWorks.Common.Controls
 			m_imgList.Images.Add(GetArrowBitmap(ArrowType.Descending, ArrowSize.Small));		// Add descending arrow
 
 			ColumnWidthChanged += ListView_ColumnWidthChanged;
-#if __MonoCS__ // FWNX-224
-			ColumnClick += HandleColumnClick;
-#endif
+			if (Platform.IsMono)
+			{
+				// FWNX-224
+				ColumnClick += HandleColumnClick;
+			}
+
 			ColumnWidthChanging += ListView_ColumnWidthChanging;
 			ColumnReordered += HandleColumnReordered;
 		}
@@ -285,7 +288,7 @@ namespace SIL.FieldWorks.Common.Controls
 		#endregion
 
 
-#if __MonoCS__ // FWNX-224
+		// FWNX-224
 		internal void HandleColumnClick (object sender, ColumnClickEventArgs e)
 		{
 			if (m_fIgnoreNextClick)
@@ -297,7 +300,6 @@ namespace SIL.FieldWorks.Common.Controls
 			if (ColumnLeftClick != null && m_fIgnoreNextClick == false)
 				ColumnLeftClick(this, e);
 		}
-#endif
 
 		/// <summary>
 		/// Check to see if the object has been disposed.
@@ -585,10 +587,12 @@ namespace SIL.FieldWorks.Common.Controls
 		/// ------------------------------------------------------------------------------------
 		protected void OnColumnRightClick(int iItem, Point ptLoc)
 		{
-#if __MonoCS__ // FWNX-224
-			// set flag so next ColumnClick event doesn't generate a left click
-			m_fIgnoreNextClick = true;
-#endif
+			if (Platform.IsMono)
+			{
+				// FWNX-224
+				// set flag so next ColumnClick event doesn't generate a left click
+				m_fIgnoreNextClick = true;
+			}
 
 			if (ColumnRightClick != null)
 				ColumnRightClick(this, new ColumnRightClickEventArgs(iItem, ptLoc));

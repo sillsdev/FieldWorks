@@ -1,10 +1,6 @@
-// Copyright (c) 2003-2013 SIL International
+// Copyright (c) 2003-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: XUpdater.cs
-// Responsibility:
-// Last reviewed:
 //
 // <remarks>
 // This updates a given FXT result file.
@@ -14,16 +10,16 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Xml;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Application;
+using SIL.LCModel;
+using SIL.LCModel.Application;
+using SIL.LCModel.Utils;
+using SIL.LCModel.Core.Cellar;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.Utils;
-using SIL.CoreImpl;
 
 namespace SIL.FieldWorks.Common.FXT
 {
@@ -37,7 +33,7 @@ namespace SIL.FieldWorks.Common.FXT
 		private const string ksSimpleProperty = "simpleProperty";
 		IFwMetaDataCache m_mdc;
 
-		public XUpdater(FdoCache cache, string sFxtPath)
+		public XUpdater(LcmCache cache, string sFxtPath)
 		{
 			m_cache = cache;
 			FxtDocument = new XmlDocument();
@@ -606,8 +602,6 @@ namespace SIL.FieldWorks.Common.FXT
 			}
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		private void HandleOwningVectorDeletions(XmlDocument fxtResult, XmlNode resultNode, List<int> hvosResult, List<int> hvosDatabase, int flid)
 		{
 			// if the item is no longer in the database, need to remove it from the fxt result
@@ -675,8 +669,6 @@ namespace SIL.FieldWorks.Common.FXT
 			}
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		private void HandleDaughterDeletions(XmlNode resultNode, XmlDocument fxtResult, List<int[]> listOfFlids)
 		{
 			if (listOfFlids.Count == 0 || resultNode.ChildNodes.Count == 0)
@@ -772,8 +764,6 @@ namespace SIL.FieldWorks.Common.FXT
 			return false;
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		private void HandleReferenceVectorDeletions(XmlDocument fxtResult, XmlNode resultNode, List<int> hvosResult, List<int> hvosDatabase)
 		{
 			// if the item is no longer in the database, need to remove it from the fxt result
@@ -793,8 +783,6 @@ namespace SIL.FieldWorks.Common.FXT
 			}
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		private List<int> GetHvosInFxtResult(XmlNode resultNode, string sFxtItemLabel, XmlNode fxtNode)
 		{
 			XmlNodeList resultNodes;
@@ -951,8 +939,6 @@ namespace SIL.FieldWorks.Common.FXT
 		/// <param name="searchPropsFound">The search props found.</param>
 		/// <param name="sAttrValueFound">The search attribute value found.</param>
 		/// <returns></returns>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		private XmlNode GetFxtFieldNode(string sClassName, List<FXTElementSearchProperties> searchProps, out string sResultOwningElementName,
 			out FXTElementSearchProperties searchPropsFound, out string sAttrValueFound)
 		{

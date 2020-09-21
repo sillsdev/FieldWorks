@@ -1,24 +1,14 @@
-// Copyright (c) 2003-2013 SIL International
+// Copyright (c) 2003-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: RootsiteBasicViewTestsBase.cs
-// Responsibility: TE Team
-// Last reviewed:
-//
-// <remarks>
-// </remarks>
 
 using System;
 using System.Diagnostics;
 using NUnit.Framework;
-using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.FDOTests;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.FieldWorks.Resources;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Infrastructure;
 
 namespace SIL.FieldWorks.Common.RootSites
 {
@@ -221,7 +211,7 @@ namespace SIL.FieldWorks.Common.RootSites
 	/// Base class for tests that use <see cref="DummyBasicView"/>
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
-	public class RootsiteDummyViewTestsBase : ScrInMemoryFdoTestBase
+	public class RootsiteDummyViewTestsBase : ScrInMemoryLcmTestBase
 	{
 		/// <summary>The draft form</summary>
 		protected DummyBasicView m_basicView;
@@ -251,10 +241,10 @@ namespace SIL.FieldWorks.Common.RootSites
 		{
 			base.TestSetup();
 
-			var styleSheet = new FwStyleSheet();
+			var styleSheet = new LcmStyleSheet();
 
-			styleSheet.Init(Cache, m_scr.Hvo,
-				ScriptureTags.kflidStyles);
+			styleSheet.Init(Cache, Cache.LangProject.Hvo,
+				LangProjectTags.kflidStyles);
 
 			Debug.Assert(m_basicView == null, "m_basicView is not null.");
 

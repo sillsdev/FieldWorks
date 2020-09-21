@@ -1,3 +1,7 @@
+// Copyright (c) 2015 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
+
 namespace SIL.FieldWorks.FwCoreDlgs
 {
 	partial class MoveOrCopyFilesDlg
@@ -96,6 +100,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			//
 			resources.ApplyResources(this, "$this");
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+			this.ControlBox = false;
 			this.Controls.Add(this.m_msgNewDir);
 			this.Controls.Add(this.m_btnHelp);
 			this.Controls.Add(this.m_msgOldDir);

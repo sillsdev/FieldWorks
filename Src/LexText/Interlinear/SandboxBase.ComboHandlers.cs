@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -6,25 +6,24 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Linq;
-using System.Text;
 using System.Windows.Forms;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO.Application;
-using SIL.Utils;
 using SIL.FieldWorks.Common.Widgets;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel;
+using SIL.LCModel.Application;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.FdoUi;
 using SIL.FieldWorks.LexText.Controls;
-using Color=System.Drawing.Color;
-using SIL.CoreImpl;
+using SIL.ObjectModel;
 using XCore;
-using SIL.FieldWorks.XWorks;
+using Color=System.Drawing.Color;
 
 namespace SIL.FieldWorks.IText
 {
@@ -33,7 +32,7 @@ namespace SIL.FieldWorks.IText
 	/// An interface common to classes that 'handle' combo boxes that appear when something in
 	/// IText is clicked.
 	/// </summary>
-	internal interface IComboHandler
+	internal interface IComboHandler : IDisposable
 	{
 		/// <summary>
 		/// Initialize the combo contents.
@@ -54,7 +53,7 @@ namespace SIL.FieldWorks.IText
 		/// If it is a ComboListBox pop it up at the relevant place for the indicated location.
 		/// </summary>
 		/// <param name="loc"></param>
-		void Activate(SIL.Utils.Rect loc);
+		void Activate(Rect loc);
 
 		/// <summary>
 		/// This one is a bit awkward in this interface, but it simplifies things. It's OK to
@@ -78,7 +77,7 @@ namespace SIL.FieldWorks.IText
 		/// handles the events.  For most of the primary events, the default here is to do
 		/// nothing.
 		/// </summary>
-		public class InterlinComboHandler : FwDisposableBase, IComboHandler
+		public class InterlinComboHandler : DisposableBase, IComboHandler
 		{
 			// Main array of information retrieved from sel that made combo.
 			protected SelLevInfo[] m_rgvsli;
@@ -134,7 +133,7 @@ namespace SIL.FieldWorks.IText
 				m_hvoMorph = m_sandbox.Caches.DataAccess.get_VecItem(kSbWord, ktagSbWordMorphs, imorph);
 			}
 
-			#region FwDisposableBase for IDisposable
+			#region DisposableBase for IDisposable
 
 			protected override void DisposeManagedResources()
 			{
@@ -163,7 +162,13 @@ namespace SIL.FieldWorks.IText
 				m_comboList = null;
 			}
 
-			#endregion FwDisposableBase for IDisposable
+			protected override void Dispose(bool disposing)
+			{
+				Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + " ******");
+				base.Dispose(disposing);
+			}
+
+			#endregion DisposableBase for IDisposable
 
 			/// <summary>
 			/// encapsulates the common behavior of items in an InterlinComboHandler combo list.
@@ -231,7 +236,7 @@ namespace SIL.FieldWorks.IText
 			protected static ITsTextProps HighlightProperty(System.Drawing.Color highlightColor)
 			{
 				int color = (int)CmObjectUi.RGB(highlightColor);
-				ITsPropsBldr bldr = TsPropsBldrClass.Create();
+				ITsPropsBldr bldr = TsStringUtils.MakePropsBldr();
 				bldr.SetIntPropValues((int)FwTextPropType.ktptForeColor,
 					(int)FwTextPropVar.ktpvDefault, color);
 				return bldr.GetTextProps();
@@ -438,7 +443,7 @@ namespace SIL.FieldWorks.IText
 			// If the control is a combo make it visible at the indicated location.
 			// If it is a ComboListBox pop it up at the relevant place for the indicated
 			// location.
-			public virtual void Activate(SIL.Utils.Rect loc)
+			public virtual void Activate(Rect loc)
 			{
 				CheckDisposed();
 
@@ -781,8 +786,7 @@ namespace SIL.FieldWorks.IText
 			{
 				CheckDisposed();
 
-				return TsStrFactoryClass.Create().
-					MakeString(str, m_caches.MainCache.DefaultAnalWs);
+				return TsStringUtils.MakeString(str, m_caches.MainCache.DefaultAnalWs);
 			}
 			/// <summary>
 			/// Synchronize the word gloss and POS with the morpheme gloss and MSA info, to the extent possible.
@@ -954,7 +958,7 @@ namespace SIL.FieldWorks.IText
 						// Todo: figure implementation
 						//					int ihvoTwfic = m_rgvsli[m_iRoot].ihvo;
 						//					int [] itemsToInsert = new int[0];
-						//					m_fdoCache.ReplaceReferenceProperty(m_hvoSbWord,
+						//					m_cache.ReplaceReferenceProperty(m_hvoSbWord,
 						//						StTxtParaTags.kflidAnalyzedTextObjects,
 						//						ihvoTwfic, ihvoTwfic + 1, ref itemsToInsert);
 						// Enhance JohnT: consider removing the WfiWordform, if there are no
@@ -974,10 +978,8 @@ namespace SIL.FieldWorks.IText
 				{
 					return true;
 				}
-				ITsString tssWord = TsStrFactoryClass.Create().MakeString(newval,
-					m_sandbox.RawWordformWs);
 				// Todo JohnT: clean out old analysis, come up with new defaults.
-				//SetAnalysisTo(DbOps.FindOrCreateWordform(m_fdoCache, tssWord));
+				//SetAnalysisTo(DbOps.FindOrCreateWordform(m_cache, tssWord));
 				// Enhance JohnT: consider removing the old WfiWordform, if there are no
 				// analyses and no other references.
 				return true;
@@ -1010,7 +1012,7 @@ namespace SIL.FieldWorks.IText
 				base.SetupCombo();
 				// Any time we pop this up, the text in the box is the text form of the current
 				// analysis, as a starting point.
-				ITsStrBldr builder = TsStrBldrClass.Create();
+				ITsStrBldr builder = TsStringUtils.MakeStrBldr();
 				int cmorphs = MorphCount;
 				Debug.Assert(cmorphs != 0); // we're supposed to be building on one of them!
 
@@ -1034,8 +1036,7 @@ namespace SIL.FieldWorks.IText
 					ComboList.Text = currentBreakdown;
 					// The above and every other distinct morpheme breakdown from owned
 					// WfiAnalyses are possible choices.
-					ITsString tssText = TsStrFactoryClass.Create().
-						MakeString(currentBreakdown, m_wsVern);
+					ITsString tssText = TsStringUtils.MakeString(currentBreakdown, m_wsVern);
 					ComboList.Items.Add(tssText);
 				}
 				else
@@ -1097,7 +1098,7 @@ namespace SIL.FieldWorks.IText
 			void AddOtherCase(string other)
 			{
 				// 0 is a reserved value for other case wordform
-				AddIfNotPresent(TsStringUtils.MakeTss(other, m_sandbox.RawWordformWs), null);
+				AddIfNotPresent(TsStringUtils.MakeString(other, m_sandbox.RawWordformWs), null);
 			}
 
 			/// <summary>
@@ -1108,9 +1109,8 @@ namespace SIL.FieldWorks.IText
 			{
 				if (wordform == null)
 					return; // no real wordform, can't have analyses.
-				ITsStrBldr builder = TsStrBldrClass.Create();
-				ITsString space = TsStrFactoryClass.Create().
-					MakeString(fBaseWordIsPhrase ? "  " : " ", m_wsVern);
+				ITsStrBldr builder = TsStringUtils.MakeStrBldr();
+				ITsString space = TsStringUtils.MakeString(fBaseWordIsPhrase ? "  " : " ", m_wsVern);
 				foreach (IWfiAnalysis wa in wordform.AnalysesOC)
 				{
 					Opinions o = wa.GetAgentOpinion(
@@ -1309,12 +1309,13 @@ namespace SIL.FieldWorks.IText
 			internal string EditMorphBreaks()
 			{
 				string sMorphs = null;
-				using (var dlg = new EditMorphBreaksDlg(((IxWindow)m_sandbox.FindForm()).Mediator.HelpTopicProvider))
+				var propTable = ((IPropertyTableProvider) m_sandbox.FindForm()).PropTable;
+				using (var dlg = new EditMorphBreaksDlg(propTable.GetValue<IHelpTopicProvider>("HelpTopicProvider")))
 				{
 					ITsString tssWord = m_sandbox.SbWordForm(m_sandbox.RawWordformWs);
 					sMorphs = m_sandbox.SandboxEditMonitor.BuildCurrentMorphsString();
 					dlg.Initialize(tssWord, sMorphs, m_caches.MainCache.MainCacheAccessor.WritingSystemFactory,
-						m_caches.MainCache, m_sandbox.Mediator.StringTbl, m_sandbox.StyleSheet);
+						m_caches.MainCache, m_sandbox.StyleSheet);
 					Form mainWnd = m_sandbox.FindForm();
 					// Making the form active fixes problems like LT-2619.
 					// I'm (RandyR) not sure what adverse impact might show up by doing this.
@@ -1450,7 +1451,7 @@ namespace SIL.FieldWorks.IText
 				/// </summary>
 				/// <param name="cache"></param>
 				/// <returns></returns>
-				public ILexEntry GetPrimaryOrOwningEntry(FdoCache cache)
+				public ILexEntry GetPrimaryOrOwningEntry(LcmCache cache)
 				{
 					var repository = cache.ServiceLocator.GetInstance<ICmObjectRepository>();
 					ILexEntry morphEntryReal = null;
@@ -1814,7 +1815,7 @@ namespace SIL.FieldWorks.IText
 			}
 
 			private void AddMorphItemToList(IMoForm mf, ILexEntryRef ler, ITsString tssSense, ILexSense sense,
-											IWritingSystem wsAnalysis, ITsString tssName, int hvoLexEntry)
+											CoreWritingSystemDefinition wsAnalysis, ITsString tssName, int hvoLexEntry)
 			{
 				MorphItem mi;
 				if (tssSense.Length == 0)
@@ -1934,7 +1935,7 @@ namespace SIL.FieldWorks.IText
 			private void AddMorphItemsToComboList()
 			{
 				var coRepository = m_caches.MainCache.ServiceLocator.GetInstance<ICmObjectRepository>();
-				ITsIncStrBldr tisb = TsIncStrBldrClass.Create();
+				ITsIncStrBldr tisb = TsStringUtils.MakeIncStrBldr();
 				MorphItem miPrev = new MorphItem();
 				m_morphItems.Sort();
 				foreach (MorphItem mi in m_morphItems)
@@ -1955,7 +1956,7 @@ namespace SIL.FieldWorks.IText
 							m_wsAnal);
 						tisb.Append("  ");
 
-						ITsString tssSense = TsStringUtils.MakeTss(mi.m_nameSense,
+						ITsString tssSense = TsStringUtils.MakeString(mi.m_nameSense,
 							m_caches.MainCache.DefaultAnalWs);
 
 						tisb.AppendTsString(tssSense);
@@ -2040,7 +2041,7 @@ namespace SIL.FieldWorks.IText
 
 			private void AddUnknownLexEntryToComboList()
 			{
-				ITsIncStrBldr tisb = TsIncStrBldrClass.Create();
+				ITsIncStrBldr tisb = TsStringUtils.MakeIncStrBldr();
 				tisb.Clear();
 				tisb.SetIntPropValues(
 					(int)FwTextPropType.ktptSuperscript,
@@ -2054,7 +2055,7 @@ namespace SIL.FieldWorks.IText
 
 			private void AddItemToComboList(string itemName, EventHandler onSelect, ITsTextProps itemProperties, bool enableItem)
 			{
-				ITsStrBldr tsb = TsStrBldrClass.Create();
+				ITsStrBldr tsb = TsStringUtils.MakeStrBldr();
 				tsb.Replace(tsb.Length, tsb.Length, itemName, itemProperties);
 				tsb.SetIntPropValues(0, tsb.Length, (int)FwTextPropType.ktptWs, 0, m_wsUser);
 				ComboList.Items.Add(new InterlinComboHandlerActionComboItem(
@@ -2167,7 +2168,7 @@ namespace SIL.FieldWorks.IText
 				le = null;
 				allomorph = null;
 				sense = null;
-				FdoCache cache = m_caches.MainCache;
+				LcmCache cache = m_caches.MainCache;
 				int hvoMorph = m_caches.DataAccess.get_ObjectProp(m_hvoMorph, ktagSbMorphForm);
 				ITsString tssForm = m_caches.DataAccess.get_MultiStringAlt(hvoMorph,
 																		   ktagSbNamedObjName, m_sandbox.RawWordformWs);
@@ -2190,7 +2191,7 @@ namespace SIL.FieldWorks.IText
 				{
 					using (InsertEntryDlg dlg = InsertEntryNow.CreateInsertEntryDlg(fCreateNow))
 					{
-						dlg.SetDlgInfo(cache, m_sandbox.GetFullMorphForm(m_hvoMorph), m_sandbox.Mediator);
+						dlg.SetDlgInfo(cache, m_sandbox.GetFullMorphForm(m_hvoMorph), m_sandbox.Mediator, m_sandbox.m_propertyTable);
 						dlg.TssGloss = entryComponents.GlossAlternatives.FirstOrDefault();
 						foreach (ITsString tss in entryComponents.GlossAlternatives.Skip(1))
 							dlg.SetInitialGloss(TsStringUtils.GetWsAtOffset(tss, 0), tss);
@@ -2338,8 +2339,8 @@ namespace SIL.FieldWorks.IText
 
 				using (AddAllomorphDlg dlg = new AddAllomorphDlg())
 				{
-					FdoCache cache = m_caches.MainCache;
-					dlg.SetDlgInfo(cache, null, m_sandbox.Mediator, tssForm, morphType.Hvo);
+					LcmCache cache = m_caches.MainCache;
+					dlg.SetDlgInfo(cache, null, m_sandbox.Mediator, m_sandbox.m_propertyTable, tssForm, morphType.Hvo);
 					Form mainWnd = m_sandbox.FindForm();
 					// Making the form active fixes LT-2619.
 					// I'm (RandyR) not sure what adverse impact might show up by doing this.
@@ -2365,8 +2366,7 @@ namespace SIL.FieldWorks.IText
 								entryForm = tssHeadword.Text;
 							if (entryForm == null || entryForm == "")
 								entryForm = ITextStrings.ksNoForm;
-							string sNoMorphType = m_sandbox.Mediator.StringTbl.GetString(
-								"NoMorphType", "DialogStrings");
+							string sNoMorphType = StringTable.Table.GetString("NoMorphType", "DialogStrings");
 							string sTypeLe;
 							if (mmtLe != null)
 								sTypeLe = mmtLe.Name.BestAnalysisAlternative.Text;
@@ -2538,7 +2538,7 @@ namespace SIL.FieldWorks.IText
 				// which causes bad problems.
 				using (AddNewSenseDlg dlg = new AddNewSenseDlg(m_helpTopicProvider))
 				{
-					dlg.SetDlgInfo(tssForm, le, m_sandbox.Mediator);
+					dlg.SetDlgInfo(tssForm, le, m_sandbox.Mediator, m_sandbox.m_propertyTable);
 					Form mainWnd = m_sandbox.FindForm();
 					// Making the form active fixes problems like LT-2619.
 					// I'm (RandyR) not sure what adverse impact might show up by doing this.
@@ -2789,13 +2789,13 @@ namespace SIL.FieldWorks.IText
 						if (morphReal != null && morphReal.IsValidObject)
 						{
 							variantEntry = morphReal.Owner as ILexEntry;
-							dlg.SetDlgInfo(m_sandbox.Cache, m_sandbox.Mediator, variantEntry);
+							dlg.SetDlgInfo(m_sandbox.Cache, m_sandbox.Mediator, m_sandbox.m_propertyTable, variantEntry);
 						}
 						else
 						{
 							// since we didn't start with an entry,
 							// set up the dialog using the form of the variant
-							dlg.SetDlgInfo(m_sandbox.Cache, m_sandbox.Mediator, tssForm);
+							dlg.SetDlgInfo(m_sandbox.Cache, m_sandbox.Mediator, m_sandbox.m_propertyTable, tssForm);
 						}
 						dlg.SetHelpTopic("khtpAddVariantFromInterlinear");
 						Form mainWnd = m_sandbox.FindForm();
@@ -2839,7 +2839,7 @@ namespace SIL.FieldWorks.IText
 
 			/// <summary>
 			/// Update the sandbox cache to reflect a choice of the real MoForm and the
-			/// entry indicated by the FdoCache hvos passed.
+			/// entry indicated by the LcmCache hvos passed.
 			/// </summary>
 			internal void UpdateMorphEntry(IMoForm moFormReal, ILexEntry entryReal, ILexSense senseReal,
 				ILexEntryInflType inflType = null)
@@ -2871,9 +2871,9 @@ namespace SIL.FieldWorks.IText
 				// Make and install a secondary object to correspond to the real LexEntry.
 				// (The zero says we are not guessing any more, since the user selected this entry.)
 
-				m_sandbox.LoadSecDataForEntry(morphEntry, senseReal != null ? senseReal : realDefaultSense,
+				m_sandbox.LoadSecDataForEntry(morphEntry, senseReal ?? realDefaultSense,
 					m_hvoSbWord, m_caches.DataAccess as IVwCacheDa,
-					m_wsVern, m_hvoMorph, 0, m_caches.MainCache.MainCacheAccessor, null);
+					m_wsVern, m_hvoMorph, 0, m_caches.MainCache.MainCacheAccessor);
 				m_caches.DataAccess.PropChanged(m_rootb,
 					(int)PropChangeType.kpctNotifyAll, m_hvoMorph, ktagSbMorphEntry, 0,
 					1, WasReal());
@@ -2908,8 +2908,6 @@ namespace SIL.FieldWorks.IText
 			}
 		}
 
-		[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
-			Justification="m_sandbox is a reference")]
 		class UpdateMorphEntryAction: UndoActionBase
 		{
 			private SandboxBase m_sandbox;
@@ -3042,7 +3040,7 @@ namespace SIL.FieldWorks.IText
 					ISilDataAccess sda = m_caches.DataAccess;
 					foreach (int wsId in m_sandbox.m_choices.WritingSystemsForFlid(InterlinLineChoices.kflidWordGloss))
 					{
-						ITsString tssGloss = TsStringUtils.MakeTss("", wsId);
+						ITsString tssGloss = TsStringUtils.MakeString("", wsId);
 						sda.SetMultiStringAlt(m_hvoSbWord, ktagSbWordGloss, wsId, tssGloss);
 						sda.PropChanged(null, (int)PropChangeType.kpctNotifyAll, m_hvoSbWord, ktagSbWordGloss,
 							wsId, 0, 0);
@@ -3102,14 +3100,13 @@ namespace SIL.FieldWorks.IText
 				if (item == null)
 					return;
 				m_sandbox.WordGlossHvo = item.Hvo;
-				ITsStrFactory tsf = TsStrFactoryClass.Create();
 				foreach (int ws in m_sandbox.m_choices.WritingSystemsForFlid(InterlinLineChoices.kflidWordGloss))
 				{
 					ITsString tss;
 					if (item.Hvo == 0)
 					{
 						// Make an empty string in the specified ws.
-						tss = tsf.MakeString("", ws);
+						tss = TsStringUtils.EmptyString(ws);
 					}
 					else
 					{
@@ -3143,7 +3140,7 @@ namespace SIL.FieldWorks.IText
 
 				base.SetupCombo();
 				int hvoEmptyGloss = 0;
-				ITsStrBldr tsb = TsStrBldrClass.Create();
+				ITsStrBldr tsb = TsStringUtils.MakeStrBldr();
 
 				ComboList.WritingSystemFactory =
 					m_caches.MainCache.LanguageWritingSystemFactoryAccessor;
@@ -3173,7 +3170,7 @@ namespace SIL.FieldWorks.IText
 					//}
 				}
 				ComboList.Items.Add(new HvoTssComboItem(hvoEmptyGloss,
-					TsStringUtils.MakeTss(ITextStrings.ksNewWordGloss2, m_caches.MainCache.DefaultUserWs)));
+					TsStringUtils.MakeString(ITextStrings.ksNewWordGloss2, m_caches.MainCache.DefaultUserWs)));
 				// Set combo selection to current selection.
 				ComboList.SelectedIndex = this.IndexOfCurrentItem;
 
@@ -3215,7 +3212,7 @@ namespace SIL.FieldWorks.IText
 					if (glossCount == 0 && wsids.Count > 0)
 					{
 						hvoEmptyGloss = gloss.Hvo;
-						ITsPropsBldr tpbUserWs = TsPropsBldrClass.Create();
+						ITsPropsBldr tpbUserWs = TsStringUtils.MakePropsBldr();
 						tpbUserWs.SetIntPropValues((int)FwTextPropType.ktptWs, 0, m_wsUser);
 						tsb.Replace(tsb.Length, tsb.Length, ITextStrings.ksEmpty, tpbUserWs.GetTextProps());
 					}
@@ -3327,7 +3324,7 @@ namespace SIL.FieldWorks.IText
 				m_tree.Load += new EventHandler(m_tree_Load);
 				// Handle AfterSelect events through POSPopupTreeManager in m_tree_Load().
 			}
-			public override void Activate(SIL.Utils.Rect loc)
+			public override void Activate(Rect loc)
 			{
 				CheckDisposed();
 
@@ -3401,14 +3398,12 @@ namespace SIL.FieldWorks.IText
 			}
 
 			// We can't add the items until the form loads, or we get a spurious horizontal scroll bar.
-			[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-				Justification = "cache is a reference")]
 			private void m_tree_Load(object sender, EventArgs e)
 			{
 				if (m_pOSPopupTreeManager == null)
 				{
-					FdoCache cache = m_caches.MainCache;
-					m_pOSPopupTreeManager = new POSPopupTreeManager(m_tree, cache, cache.LangProject.PartsOfSpeechOA, cache.DefaultAnalWs, false, m_sandbox.Mediator, m_sandbox.FindForm());
+					LcmCache cache = m_caches.MainCache;
+					m_pOSPopupTreeManager = new POSPopupTreeManager(m_tree, cache, cache.LangProject.PartsOfSpeechOA, cache.DefaultAnalWs, false, m_sandbox.Mediator, m_sandbox.m_propertyTable, m_sandbox.FindForm());
 					m_pOSPopupTreeManager.AfterSelect += new TreeViewEventHandler(m_pOSPopupTreeManager_AfterSelect);
 				}
 				m_pOSPopupTreeManager.LoadPopupTree(m_caches.RealHvo(m_caches.DataAccess.get_ObjectProp(m_hvoSbWord, ktagSbWordPos)));

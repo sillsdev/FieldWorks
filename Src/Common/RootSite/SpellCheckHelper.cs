@@ -8,17 +8,15 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 
-using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
-using SIL.Utils;
+using SIL.LCModel.Core.SpellChecking;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
+using SIL.LCModel;
 
 namespace SIL.FieldWorks.Common.RootSites
 {
@@ -30,14 +28,14 @@ namespace SIL.FieldWorks.Common.RootSites
 	public class SpellCheckHelper
 	{
 		/// <summary>The Cache</summary>
-		protected FdoCache m_cache;
+		protected LcmCache m_cache;
 
 		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/// -----------------------------------------------------------------------------------
-		public SpellCheckHelper(FdoCache cache)
+		public SpellCheckHelper(LcmCache cache)
 		{
 			m_cache = cache;
 		}
@@ -145,7 +143,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			if (nonSpellingError)
 				itemAdd.Enabled = false;
 			menu.Items.Insert(iMenuItem++, itemAdd);
-			itemAdd.Image = SIL.FieldWorks.Resources.ResourceHelper.SpellingIcon;
+			itemAdd.Image = Resources.ResourceHelper.SpellingIcon;
 			itemAdd.Click += spellingMenuItemClick;
 			return iMenuItem;
 		}
@@ -187,8 +185,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// SpellCorrectMenuItems returned, but some clients use it in creating other menu options.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="we store a reference to SpellCorrectMenuItem for later use. REVIEW: we never dispose it.")]
 		public ICollection<SpellCorrectMenuItem> GetSuggestions(Point mousePos,
 			SimpleRootSite rootsite, out int hvoObj, out int tag, out int wsAlt, out int wsText,
 			out string word, out ISpellEngine dict, out bool nonSpellingError)
@@ -226,8 +222,8 @@ namespace SIL.FieldWorks.Common.RootSites
 			ILgWritingSystemFactory wsf = rootsite.RootBox.DataAccess.WritingSystemFactory;
 
 			// May need to enlarge the word beyond what GrowToWord does, if there is adjacent wordforming material.
-			int ichMinAdjust = AdjustWordBoundary(wsf, tss, ichMin, -1, 0) + 1; // further expanded start of word.
-			int ichLimAdjust = AdjustWordBoundary(wsf, tss, ichLim - 1, 1, tss.Length); // further expanded lim of word.
+			int ichMinAdjust = AdjustWordBoundary(wsf, tss, false, ichMin, 0) + 1; // further expanded start of word.
+			int ichLimAdjust = AdjustWordBoundary(wsf, tss, true, ichLim - 1, tss.Length); // further expanded lim of word.
 			// From the ends we can strip stuff with different spell-checking properties.
 			IVwStylesheet styles = rootsite.RootBox.Stylesheet;
 			int spellProps = SpellCheckProps(tss, ichMin, styles);
@@ -237,8 +233,6 @@ namespace SIL.FieldWorks.Common.RootSites
 				ichLimAdjust--;
 			ichMin = ichMinAdjust;
 			ichLim = ichLimAdjust;
-
-			ITsStrFactory tsf = TsStrFactoryClass.Create();
 
 			// Now we have the specific range we will check. Get the actual string.
 			ITsStrBldr bldr = tss.GetBldr();
@@ -274,7 +268,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			ICollection<string> suggestions = dict.Suggest(word);
 			foreach (string suggest in suggestions)
 			{
-				ITsString replacement = tsf.MakeStringRgch(suggest, suggest.Length, wsText);
+				ITsString replacement = TsStringUtils.MakeString(suggest, wsText);
 				if (keepOrcs != null)
 				{
 					ITsStrBldr bldrRep = keepOrcs.GetBldr();
@@ -290,22 +284,21 @@ namespace SIL.FieldWorks.Common.RootSites
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Given a start character position that is within a word, and an delta that is +/- 1,
+		/// Given a start character position that is within a word, and a direction
 		/// return the index of the first non-wordforming (and non-number) character in that direction,
 		/// or -1 if the start of the string is reached, or string.Length if the end is reached.
 		/// For our purposes here, ORC (0xfffc) is considered word-forming.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		private int AdjustWordBoundary(ILgWritingSystemFactory wsf, ITsString tss, int ichStart,
-			int delta, int lim)
+		private int AdjustWordBoundary(ILgWritingSystemFactory wsf, ITsString tss, bool forward,
+			int ichStart, int lim)
 		{
-			string text = tss.Text;
 			int ich;
-			for (ich = ichStart + delta; !BeyondLim(ich, delta, lim); ich += delta)
+			for (ich = NextCharIndex(tss, forward, ichStart); !BeyondLim(forward, ich, lim); ich = NextCharIndex(tss, forward, ich))
 			{
-				ILgCharacterPropertyEngine cpe = TsStringUtils.GetCharPropEngineAtOffset(tss, wsf, ich);
-				char ch = text[ich];
-				if (!cpe.get_IsWordForming(ch) && !cpe.get_IsNumber(ch) && ch != 0xfffc)
+				int ch = tss.CharAt(ich);
+				ILgWritingSystem ws = wsf.get_EngineOrNull(tss.get_WritingSystemAt(ich));
+				if (!ws.get_IsWordForming(ch) && !Icu.Character.IsNumeric(ch) && ch != 0xfffc)
 					break;
 			}
 			return ich;
@@ -316,9 +309,14 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// Determins whether ich has passed the limit
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		private bool BeyondLim(int ich, int delta, int lim)
+		private static bool BeyondLim(bool forward, int ich, int lim)
 		{
-			return (delta < 0) ? (ich < lim) : (ich >= lim);
+			return forward ? ich >= lim : ich < lim;
+		}
+
+		private static int NextCharIndex(ITsString tss, bool forward, int ich)
+		{
+			return forward ? tss.NextCharIndex(ich) : tss.PrevCharIndex(ich);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -371,8 +369,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// tssWord to something that does not contain them, and retain the orcs to append to any substitutions (returned in tssKeepOrcs).
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="we store a reference to SpellCorrectMenuItem for later use. REVIEW: we never dispose it.")]
 		private IList<SpellCorrectMenuItem> MakeEmbeddedNscSuggestion(ref ITsString tssWord, IVwStylesheet styles, IVwRootBox rootb,
 			int hvoObj, int tag, int wsAlt, int ichMin, int ichLim, out ITsString tssKeepOrcs)
 		{
@@ -412,7 +408,7 @@ namespace SIL.FieldWorks.Common.RootSites
 						if (bldrWord == null)
 						{
 							bldrWord = tssWord.GetBldr();
-							bldrKeepOrcs = TsStrBldrClass.Create();
+							bldrKeepOrcs = TsStringUtils.MakeStrBldr();
 						}
 						bldrWord.Replace(ich - bldrWordOffset, ich - bldrWordOffset + 1, "", null);
 						bldrKeepOrcs.Replace(bldrKeepOrcs.Length, bldrKeepOrcs.Length, "\xfffc", ttp);
@@ -459,8 +455,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// writing systems
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="we store a reference to SpellCorrectMenuItem for later use. REVIEW: we never dispose it.")]
 		private ICollection<SpellCorrectMenuItem> MakeWssSuggestions(ITsString tssWord,
 			List<int> wss, IVwRootBox rootb, int hvoObj, int tag, int wsAlt,
 			int ichMin, int ichLim)
@@ -503,147 +497,18 @@ namespace SIL.FieldWorks.Common.RootSites
 		}
 	}
 
-	// A helper class for MakeSpellCheckColleague. See comments there.
-	///// <summary>
-	///// A temporary colleague that contains enough information to correct a spelling error
-	///// in a particular string.
-	///// </summary>
-	//internal class SpellCorrectColleague : IxCoreColleague
-	//{
-	//    IVwRootBox m_rootb;
-	//    ICollection<string> m_suggestions;
-	//    int m_hvoObj;
-	//    int m_tag;
-	//    int m_wsAlt;
-	//    int m_wsText;
-	//    int m_ichMin;
-	//    int m_ichLim;
-	//    string m_word; // supposedly incorrect word.
-	//    Dictionary m_dict;
-	//    EditingHelper m_helper;
-
-	//    public SpellCorrectColleague(IVwRootBox rootb, ICollection<string> suggestions,
-	//        int hvoObj, int tag, int wsAlt, int wsText, int ichMin, int ichLim, string word, Dictionary dict, EditingHelper helper)
-	//    {
-	//        m_rootb = rootb;
-	//        m_suggestions = suggestions;
-	//        m_hvoObj = hvoObj;
-	//        m_tag = tag;
-	//        m_wsAlt = wsAlt;
-	//        m_wsText = wsText;
-	//        m_ichMin = ichMin;
-	//        m_ichLim = ichLim;
-	//        m_word = word;
-	//        m_dict = dict;
-	//        m_helper = helper;
-	//    }
-
-	//    #region methods called by reflection (mediator.Broadcast)
-
-	//    public bool OnDisplayPossibleCorrections(string wsList, UIListDisplayProperties display)
-	//    {
-	//        XCore.List items = display.List;
-	//        XmlDocument doc = new XmlDocument();
-
-	//        foreach (string suggestion in m_suggestions)
-	//        {
-	//            XmlNode paramNode = doc.CreateElement("param");
-	//            XmlAttribute att = doc.CreateAttribute("correction");
-	//            att.Value = suggestion;
-	//            paramNode.Attributes.Append(att);
-	//            items.Add(suggestion, suggestion, null, paramNode);
-	//        }
-	//        if (m_suggestions.Count == 0)
-	//        {
-	//            XmlNode paramNode = doc.CreateElement("param"); // dummy
-	//            items.Add(SimpleRootSiteStrings.ksNoSuggestions, SimpleRootSiteStrings.ksNoSuggestions, null, paramNode);
-	//        }
-	//        return true;
-	//    }
-
-	//    /// <summary>
-	//    /// We want to display the Correct Spelling item (and submenu) if we this colleague
-	//    /// exists at all.
-	//    /// </summary>
-	//    /// <param name="arg"></param>
-	//    /// <param name="display"></param>
-	//    /// <returns></returns>
-	//    public bool OnDisplayCorrectSpelling(object arg, UIItemDisplayProperties display)
-	//    {
-	//        display.Visible = true;
-	//        display.Enabled = true;
-	//        return true;
-	//    }
-
-	//    /// <summary>
-	//    /// Mediator-called method to do spelling correction.
-	//    /// </summary>
-	//    /// <param name="arg"></param>
-	//    /// <returns></returns>
-	//    public bool OnCorrectSpelling(object arg)
-	//    {
-	//        XmlNode paramNode = arg as XmlNode;
-	//        if (paramNode.Attributes["correction"] == null)
-	//            return true; // "No suggestions" item.
-	//        string correction = paramNode.Attributes["correction"].Value;
-	//        m_rootb.DataAccess.BeginUndoTask(SimpleRootSiteStrings.ksUndoCorrectSpelling, SimpleRootSiteStrings.ksRedoSpellingChange);
-	//        ITsStrBldr bldr = m_rootb.DataAccess.get_MultiStringAlt(m_hvoObj, m_tag, m_wsAlt).GetBldr();
-	//        bldr.Replace(m_ichMin, m_ichLim, correction, null);
-	//        m_rootb.DataAccess.SetMultiStringAlt(m_hvoObj, m_tag, m_wsAlt, bldr.GetString());
-	//        m_rootb.DataAccess.PropChanged(null, (int)PropChangeType.kpctNotifyAll, m_hvoObj, m_tag, m_wsAlt, 1, 1);
-	//        m_rootb.DataAccess.EndUndoTask();
-	//        return true;
-	//    }
-
-	//    /// <summary>
-	//    /// Mediator-called method to add 'incorrect' word to dictionary.
-	//    /// </summary>
-	//    /// <param name="arg"></param>
-	//    /// <returns></returns>
-	//    public bool OnAddToSpellDict(object arg)
-	//    {
-	//        m_helper.AddToSpellDict(m_dict, m_word, m_wsText);
-	//        m_rootb.DataAccess.PropChanged(null, (int)PropChangeType.kpctNotifyAll, m_hvoObj, m_tag, m_wsAlt, 1, 1);
-	//        return true;
-	//    }
-	//    #endregion methods called by reflection (mediator.Broadcast)
-
-	//    #region IxCoreColleague Members
-
-	//    /// <summary>
-	//    /// No addtional ones, but include yourself.
-	//    /// </summary>
-	//    /// <returns></returns>
-	//    public IxCoreColleague[] GetMessageTargets()
-	//    {
-	//        return new IxCoreColleague[] { this };
-	//    }
-
-	//    /// <summary>
-	//    /// Required interface method, but nothing to do.
-	//    /// </summary>
-	//    /// <param name="mediator"></param>
-	//    /// <param name="configurationParameters"></param>
-	//    public void Init(Mediator mediator, System.Xml.XmlNode configurationParameters)
-	//    {
-
-	//    }
-
-	//    #endregion
-	//}
-
 	/// <summary>
 	/// Menu item subclass containing the information needed to correct a spelling error.
 	/// </summary>
 	public class SpellCorrectMenuItem : ToolStripMenuItem
 	{
-		IVwRootBox m_rootb;
-		int m_hvoObj;
-		int m_tag;
-		int m_wsAlt; // 0 if not multilingual--not yet implemented.
-		int m_ichMin; // where to make the change.
-		int m_ichLim; // end of string to replace
-		ITsString m_tssReplacement;
+		private readonly IVwRootBox m_rootb;
+		private readonly int m_hvoObj;
+		private readonly int m_tag;
+		private readonly int m_wsAlt; // 0 if not multilingual--not yet implemented.
+		private readonly int m_ichMin; // where to make the change.
+		private readonly int m_ichLim; // end of string to replace
+		private readonly ITsString m_tssReplacement;
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -660,6 +525,13 @@ namespace SIL.FieldWorks.Common.RootSites
 			m_ichMin = ichMin;
 			m_ichLim = ichLim;
 			m_tssReplacement = tss;
+		}
+
+		/// <summary/>
+		protected override void Dispose(bool disposing)
+		{
+			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + ". ******");
+			base.Dispose(disposing);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -700,7 +572,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		private readonly int m_tag;
 		private readonly int m_wsAlt; // 0 if not multilingual--not yet implemented.
 		private readonly int m_wsText; // ws of actual word
-		private readonly FdoCache m_cache;
+		private readonly LcmCache m_cache;
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -708,7 +580,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		internal AddToDictMenuItem(ISpellEngine dict, string word, IVwRootBox rootb,
-			int hvoObj, int tag, int wsAlt, int wsText, string text, FdoCache cache)
+			int hvoObj, int tag, int wsAlt, int wsText, string text, LcmCache cache)
 			: base(text)
 		{
 			m_rootb = rootb;
@@ -719,6 +591,13 @@ namespace SIL.FieldWorks.Common.RootSites
 			m_wsAlt = wsAlt;
 			m_wsText = wsText;
 			m_cache = cache;
+		}
+
+		/// <summary/>
+		protected override void Dispose(bool disposing)
+		{
+			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + ". ******");
+			base.Dispose(disposing);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -784,7 +663,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			{
 				// Create it. (Caller has already started the UOW.)
 				wf = servLoc.GetInstance<IWfiWordformFactory>().Create(
-								m_cache.TsStrFactory.MakeString(word, ws));
+								TsStringUtils.MakeString(word, ws));
 			}
 			wf.SpellingStatus = (int)SpellingStatusStates.correct;
 		}
@@ -803,6 +682,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		private readonly int m_tag;
 		private readonly int m_wsAlt;
 		private readonly IVwRootBox m_rootb;
+		private readonly ISilDataAccess m_dataAccess;
 
 		public UndoAddToSpellDictAction(int wsText, string word, IVwRootBox rootb,
 			int hvoObj, int tag, int wsAlt)
@@ -813,6 +693,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			m_tag = tag;
 			m_wsAlt = wsAlt;
 			m_rootb = rootb;
+			m_dataAccess = rootb?.DataAccess;
 		}
 
 		#region IUndoAction Members
@@ -828,14 +709,19 @@ namespace SIL.FieldWorks.Common.RootSites
 
 		public bool IsRedoable
 		{
-			get { return true; }
+			get { return m_dataAccess != null; }
 		}
 
 		public bool Redo()
 		{
-			SpellingHelper.SetSpellingStatus(m_word, m_wsText, m_rootb.DataAccess.WritingSystemFactory, true);
-			m_rootb.PropChanged(m_hvoObj, m_tag, m_wsAlt, 1, 1);
-			return true;
+			if (m_rootb != null && m_dataAccess != null)
+			{
+				SpellingHelper.SetSpellingStatus(m_word, m_wsText, m_dataAccess.WritingSystemFactory, true);
+				m_rootb.PropChanged(m_hvoObj, m_tag, m_wsAlt, 1, 1);
+				return true;
+			}
+
+			return false;
 		}
 
 		public bool SuppressNotification
@@ -845,9 +731,14 @@ namespace SIL.FieldWorks.Common.RootSites
 
 		public bool Undo()
 		{
-			SpellingHelper.SetSpellingStatus(m_word, m_wsText, m_rootb.DataAccess.WritingSystemFactory, false);
-			m_rootb.PropChanged(m_hvoObj, m_tag, m_wsAlt, 1, 1);
-			return true;
+			if (m_rootb != null && m_dataAccess != null)
+			{
+				SpellingHelper.SetSpellingStatus(m_word, m_wsText, m_dataAccess.WritingSystemFactory, false);
+				m_rootb.PropChanged(m_hvoObj, m_tag, m_wsAlt, 1, 1);
+				return true;
+			}
+
+			return false;
 		}
 
 		#endregion

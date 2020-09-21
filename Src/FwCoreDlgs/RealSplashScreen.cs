@@ -1,9 +1,6 @@
-// Copyright (c) 2002-2013 SIL International
+// Copyright (c) 2002-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: FwSplashScreen.cs
-// Responsibility: TE Team
 
 using System;
 using System.ComponentModel;
@@ -11,10 +8,11 @@ using System.Diagnostics;
 using System.Reflection;
 using System.Threading;
 using System.Windows.Forms;
-using SIL.CoreImpl;
-using SIL.FieldWorks.Common.FwUtils;
-using SIL.Utils;
 using SIL.FieldWorks.Common.Controls;
+using SIL.FieldWorks.Common.FwUtils;
+using SIL.LCModel.Utils;
+using SIL.PlatformUtilities;
+using SIL.Windows.Forms;
 
 namespace SIL.FieldWorks.FwCoreDlgs
 {
@@ -24,7 +22,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 	/// and runs in a separate thread.
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
-	internal class RealSplashScreen : Form, IProgress, IFWDisposable
+	internal class RealSplashScreen : Form, IProgress
 	{
 		#region Events
 		event CancelEventHandler IProgress.Canceling
@@ -105,12 +103,13 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			if (IsDisposed)
 				throw new ObjectDisposedException(String.Format("'{0}' in use after being disposed.", GetType().Name));
 
-#if __MonoCS__
-			// Note: mono can only create a winform on the main thread.
-			// So this ensures the progress bar gets painted when modified.
-			if (IsHandleCreated)
-				Application.DoEvents();
-#endif
+			if (Platform.IsMono)
+			{
+				// Note: mono can only create a winform on the main thread.
+				// So this ensures the progress bar gets painted when modified.
+				if (IsHandleCreated)
+					Application.DoEvents();
+			}
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -368,8 +367,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// ------------------------------------------------------------------------------------
 		private void SetPosition(object obj, System.EventArgs e)
 		{
-			Left = (ScreenUtils.PrimaryScreen.WorkingArea.Width - Width) / 2;
-			Top = (ScreenUtils.PrimaryScreen.WorkingArea.Height - Height) / 2;
+			Left = (ScreenHelper.PrimaryScreen.WorkingArea.Width - Width) / 2;
+			Top = (ScreenHelper.PrimaryScreen.WorkingArea.Height - Height) / 2;
 		}
 		#endregion
 
@@ -395,9 +394,12 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				try
 				{
 
-#if DEBUG && !__MonoCS__
-					Thread.CurrentThread.Name = "UpdateOpacityCallback";
+					if (!Platform.IsMono)
+					{
+#if DEBUG
+						Thread.CurrentThread.Name = "UpdateOpacityCallback";
 #endif
+					}
 
 					if (m_timer == null)
 						return;
@@ -407,14 +409,16 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					// debugging while starting up, but it might happen at other times too
 					// - so just be safe.
 					if (!IsDisposed && IsHandleCreated)
-#if !__MonoCS__
-						this.Invoke(new UpdateOpacityDelegate(UpdateOpacity));
-#else // Windows have to be on the main thread on mono.
 					{
-						UpdateOpacity();
-						Application.DoEvents(); // force a paint
+						if (Platform.IsMono)
+						{
+							// Windows have to be on the main thread on mono.
+							UpdateOpacity();
+							Application.DoEvents(); // force a paint
+						}
+						else
+							Invoke(new UpdateOpacityDelegate(UpdateOpacity));
 					}
-#endif
 				}
 				catch (Exception e)
 				{
@@ -428,22 +432,16 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		///
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		private void UpdateOpacity()
 		{
 			try
 			{
 				double currentOpacity = Opacity;
 				if (currentOpacity < 1.0)
-#if !__MonoCS__
-					Opacity = currentOpacity + 0.05;
-#else
-					Opacity = currentOpacity + 0.025; // looks nicer on mono/linux
-#endif
+				{
+					// 0.025 looks nicer on mono/linux
+					Opacity = currentOpacity + (Platform.IsMono ? 0.025 : 0.05);
+				}
 				else if (m_timer != null)
 				{
 					m_timer.Dispose();

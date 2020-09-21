@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015 SIL International
+// Copyright (c) 2015 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -7,13 +7,11 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Linq;
-
-using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using SIL.FieldWorks.FwCoreDlgs.BackupRestore;
-using XCore;
-using System.Diagnostics.CodeAnalysis;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.Windows.Forms.WritingSystems;
 
 namespace SIL.FieldWorks.FwCoreDlgs
 {
@@ -24,8 +22,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 	{
 		private const string HelpTopic = "khtpProjPropsMergeWS";
 
-		private readonly IWritingSystem m_ws;
-		private FdoCache m_cache;
+		private readonly string m_wsToMerge;
+		private LcmCache m_cache;
 		private readonly IHelpTopicProvider m_helpTopicProvider;
 
 		private Label m_wsLabel;
@@ -38,17 +36,17 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private Label m_mergeLabel;
 		private Button m_backupButton;
 		private HelpProvider m_helpProvider;
+		private LcmCache cache;
+		private WritingSystemSetupModel currentWsSetupModel;
+		private IEnumerable<CoreWritingSystemDefinition> enumerable;
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MergeWritingSystemDlg"/> class.
 		/// </summary>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "infoIcon is a reference")]
-		public MergeWritingSystemDlg(FdoCache cache, IWritingSystem ws, IEnumerable<IWritingSystem> wss, IHelpTopicProvider helpTopicProvider)
+		public MergeWritingSystemDlg(LcmCache cache, string wsToMerge, IEnumerable<WSListItemModel> wss, IHelpTopicProvider helpTopicProvider)
 		{
 			m_cache = cache;
-			m_ws = ws;
-
+			m_wsToMerge = wsToMerge;
 			//
 			// Required for Windows Form Designer support
 			//
@@ -58,8 +56,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_infoPictureBox.Image = infoIcon.ToBitmap();
 			m_infoPictureBox.Size = infoIcon.Size;
 
-			foreach (IWritingSystem curWs in wss.Except(new[] { ws }))
-				m_wsListBox.Items.Add(curWs);
+			foreach (var ws in wss)
+			{
+				m_wsListBox.Items.Add(ws);
+			}
 			m_wsListBox.SelectedIndex = 0;
 
 			m_helpTopicProvider = helpTopicProvider;
@@ -73,15 +73,22 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			}
 		}
 
+		/// <summary/>
+		protected override void Dispose(bool disposing)
+		{
+			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + " ******");
+			base.Dispose(disposing);
+		}
+
 		/// <summary>
 		/// Gets the selected writing system.
 		/// </summary>
 		/// <value>The selected writing system.</value>
-		public IWritingSystem SelectedWritingSystem
+		public CoreWritingSystemDefinition SelectedWritingSystem
 		{
 			get
 			{
-				return (IWritingSystem) m_wsListBox.SelectedItem;
+				return ((WSListItemModel) m_wsListBox.SelectedItem).WorkingWs;
 			}
 		}
 
@@ -188,12 +195,12 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 		private void m_wsListBox_SelectedIndexChanged(object sender, EventArgs e)
 		{
-			m_mergeLabel.Text = string.Format(FwCoreDlgs.kstidMergeWritingSystems, m_ws, SelectedWritingSystem);
+			m_mergeLabel.Text = string.Format(FwCoreDlgs.kstidMergeWritingSystems, m_wsToMerge, SelectedWritingSystem);
 		}
 
 		private void m_backupButton_Click(object sender, EventArgs e)
 		{
-			using (var dlg = new BackupProjectDlg(m_cache, FwUtils.ksFlexAbbrev, m_helpTopicProvider))
+			using (var dlg = new BackupProjectDlg(m_cache, m_helpTopicProvider))
 				dlg.ShowDialog(this);
 
 		}

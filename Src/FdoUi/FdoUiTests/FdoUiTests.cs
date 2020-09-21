@@ -6,14 +6,50 @@
 // Responsibility: TE Team
 // ---------------------------------------------------------------------------------------------
 
-using System;
 using NUnit.Framework;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FDO.FDOTests;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
 
 namespace SIL.FieldWorks.FdoUi
 {
+	/// <summary>
+	/// Dummy class used from testing CmObjectUi
+	/// </summary>
+	public class DummyCmObjectUi : CmObjectUi
+	{
+
+		/// <summary>
+		///
+		/// </summary>
+		public DummyCmObjectUi(ICmObject obj) : base(obj)
+		{
+		}
+
+		/// <summary>
+		/// Dummy method to create a DummyCmObjectUi object
+		/// </summary>
+		public static DummyCmObjectUi MakeDummyUi(ICmObject obj)
+		{
+			var objectUi = new DummyCmObjectUi(obj);
+			objectUi.m_hvo = obj.Hvo;
+			return objectUi;
+		}
+
+		/// <summary>
+		/// Ignores the related clean up for testing purposes
+		/// </summary>
+		protected override void DoRelatedCleanupForDeleteObject()
+		{
+			// skip this method in CmObjectUi class because it invokes message boxes
+		}
+
+		internal void SimulateReallyDeleteUnderlyingObject()
+		{
+			ReallyDeleteUnderlyingObject();
+		}
+	}
+
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>
 	///
@@ -31,7 +67,7 @@ namespace SIL.FieldWorks.FdoUi
 		public void FindEntryForWordform_EmptyString()
 		{
 			using (var lexEntryUi = LexEntryUi.FindEntryForWordform(Cache,
-				Cache.TsStrFactory.MakeString(string.Empty, Cache.DefaultVernWs)))
+				TsStringUtils.EmptyString(Cache.DefaultVernWs)))
 			{
 				Assert.IsNull(lexEntryUi);
 			}
@@ -65,29 +101,44 @@ namespace SIL.FieldWorks.FdoUi
 			// SUT
 			// First make sure it works with the same case
 			using (var lexEntryUi = LexEntryUi.FindEntryForWordform(Cache,
-				Cache.TsStrFactory.MakeString("Uppercaseword", Cache.DefaultVernWs)))
+				TsStringUtils.MakeString("Uppercaseword", Cache.DefaultVernWs)))
 			{
 				Assert.IsNotNull(lexEntryUi);
 				Assert.AreEqual(entry1.Hvo, lexEntryUi.Object.Hvo, "Found wrong object");
 			}
 			using (var lexEntryUi = LexEntryUi.FindEntryForWordform(Cache,
-				Cache.TsStrFactory.MakeString("lowercaseword", Cache.DefaultVernWs)))
+				TsStringUtils.MakeString("lowercaseword", Cache.DefaultVernWs)))
 			{
 				Assert.IsNotNull(lexEntryUi);
 				Assert.AreEqual(entry2.Hvo, lexEntryUi.Object.Hvo, "Found wrong object");
 			}
 			// Now make sure it works with the wrong case
 			using (var lexEntryUi = LexEntryUi.FindEntryForWordform(Cache,
-				Cache.TsStrFactory.MakeString("uppercaseword", Cache.DefaultVernWs)))
+				TsStringUtils.MakeString("uppercaseword", Cache.DefaultVernWs)))
 			{
 				Assert.IsNotNull(lexEntryUi);
 				Assert.AreEqual(entry1.Hvo, lexEntryUi.Object.Hvo, "Found wrong object");
 			}
 			using (var lexEntryUi = LexEntryUi.FindEntryForWordform(Cache,
-				Cache.TsStrFactory.MakeString("LowerCASEword", Cache.DefaultVernWs)))
+				TsStringUtils.MakeString("LowerCASEword", Cache.DefaultVernWs)))
 			{
 				Assert.IsNotNull(lexEntryUi);
 				Assert.AreEqual(entry2.Hvo, lexEntryUi.Object.Hvo, "Found wrong object");
+			}
+		}
+
+		/// <summary>
+		/// Tests that the DeleteUnderlyingObjectMethod actually deletes the object, regardless of what happens in related clean up
+		/// </summary>
+		[Test]
+		public void DeleteCmPictureObject_RelatedCleanUpDoesNotNegateDeletion()
+		{
+			var obj = Cache.ServiceLocator.GetInstance<ICmPictureFactory>().Create();
+			using (DummyCmObjectUi objectUi = DummyCmObjectUi.MakeDummyUi(obj))
+			{
+				Assert.IsTrue(obj.IsValidObject);
+				objectUi.SimulateReallyDeleteUnderlyingObject(); // Call ReallyDeleteUnderlyingObject() in CmObjectUi
+				Assert.IsFalse(obj.IsValidObject);
 			}
 		}
 	}

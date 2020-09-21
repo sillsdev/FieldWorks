@@ -1,31 +1,32 @@
-// Copyright (c) 2003-2013 SIL International
+// Copyright (c) 2003-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: XmlVc.cs
-// Responsibility: WordWorks
 
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
+using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Xml;
-using System.Globalization;
-using SIL.CoreImpl;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.Common.COMInterfaces;
+using Icu.Collation;
+using SIL.LCModel.Core.Cellar;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.FDO.Application;
-using SIL.FieldWorks.FDO.Application.ApplicationServices;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.Utils;
+using SIL.LCModel;
+using SIL.LCModel.Application;
+using SIL.LCModel.Application.ApplicationServices;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.Resources;
-using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.Utils.ComTypes;
+using SIL.ObjectModel;
+using SIL.LCModel.Utils;
+using SIL.Utils;
 
 namespace SIL.FieldWorks.Common.Controls
 {
@@ -98,13 +99,11 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <summary></summary>
 		protected int m_mainFlid; // Main flid used in XmlSeqView.
 		/// <summary></summary>
-		protected StringTable m_stringTable;
-		/// <summary></summary>
 		protected string m_rootLayoutName; // name of part to use for root.
 		// Current writing system id being used in multilingual fragment.
 		// Some methods that refer to this variable are static, so it must be static also.
 		/// <summary></summary>
-		static protected IWritingSystem s_qwsCurrent = null;
+		static protected CoreWritingSystemDefinition s_qwsCurrent = null;
 		/// <summary></summary>
 		static protected int s_cwsMulti = 0;	// count of current ws alternatives.
 		/// <summary></summary>
@@ -184,16 +183,15 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <summary>
 		/// Initializes a new instance of the <see cref="XmlVc"/> class.
 		/// </summary>
-		/// <param name="stringTable">The string table.</param>
 		/// <param name="rootLayoutName">Name of the root layout.</param>
 		/// <param name="fEditable">if set to <c>true</c> [f editable].</param>
 		/// <param name="rootSite">The root site.</param>
 		/// <param name="app">The application.</param>
 		/// <param name="sda">Data access (possibly a decorator for the rootSite's cache's one)</param>
 		/// ------------------------------------------------------------------------------------
-		public XmlVc(StringTable stringTable, string rootLayoutName, bool fEditable,
+		public XmlVc(string rootLayoutName, bool fEditable,
 			SimpleRootSite rootSite, IApp app, ISilDataAccess sda)
-			: this(stringTable, rootLayoutName, fEditable, rootSite, app, null, sda)
+			: this(rootLayoutName, fEditable, rootSite, app, null, sda)
 		{
 		}
 
@@ -202,7 +200,6 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <summary>
 		/// Initializes a new instance of the <see cref="XmlVc"/> class.
 		/// </summary>
-		/// <param name="stringTable">The string table.</param>
 		/// <param name="rootLayoutName">Name of the root layout.</param>
 		/// <param name="fEditable">if set to <c>true</c> [f editable].</param>
 		/// <param name="rootSite">The root site.</param>
@@ -210,8 +207,8 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="condition">The condition.</param>
 		/// <param name="sda">Data access (possibly a decorator for the rootSite's cache's one)</param>
 		/// ------------------------------------------------------------------------------------
-		public XmlVc(StringTable stringTable, string rootLayoutName, bool fEditable,
-			SimpleRootSite rootSite, IApp app, XmlNode condition, ISilDataAccess sda) : this(stringTable)
+		public XmlVc(string rootLayoutName, bool fEditable,
+			SimpleRootSite rootSite, IApp app, XmlNode condition, ISilDataAccess sda) : this()
 		{
 			m_rootLayoutName = rootLayoutName;
 			m_fEditable = fEditable;
@@ -226,12 +223,9 @@ namespace SIL.FieldWorks.Common.Controls
 		/// top-level layout name, such as browse view.
 		/// Initializes a new instance of the <see cref="XmlVc"/> class.
 		/// </summary>
-		/// <param name="stringTable">The string table.</param>
 		/// ------------------------------------------------------------------------------------
-		public XmlVc(StringTable stringTable)
+		public XmlVc()
 		{
-			StringTbl = stringTable;
-
 			m_unspecComplexFormType = XmlViewsUtils.GetGuidForUnspecifiedComplexFormType();
 			m_unspecVariantType = XmlViewsUtils.GetGuidForUnspecifiedVariantType();
 		}
@@ -370,7 +364,7 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 		}
 
-		Set<int> m_lastLoadRecent = new Set<int>();
+		HashSet<int> m_lastLoadRecent = new HashSet<int>();
 
 
 		/// ------------------------------------------------------------------------------------
@@ -857,7 +851,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <returns></returns>
 		private int GetIntFromNamedProp(string attrName, XmlNode frag, int hvo)
 		{
-			string propName = XmlUtils.GetManditoryAttributeValue(frag, attrName);
+			string propName = XmlUtils.GetMandatoryAttributeValue(frag, attrName);
 			var parts = propName.Split('.');
 			int flid;
 			if (parts.Length == 2)
@@ -909,7 +903,7 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 		}
 
-		internal static void DisplayWsLabel(IWritingSystem qws, IVwEnv vwenv, FdoCache cache)
+		internal static void DisplayWsLabel(CoreWritingSystemDefinition qws, IVwEnv vwenv, LcmCache cache)
 		{
 			if (qws == null)
 				return;
@@ -919,8 +913,7 @@ namespace SIL.FieldWorks.Common.Controls
 				sLabel = qws.Id;
 			if (sLabel == null)
 				sLabel = XMLViewsStrings.ksUNK;
-			ITsStrFactory tsf = cache.TsStrFactory;
-			ITsIncStrBldr tisb = tsf.GetIncBldr();
+			ITsIncStrBldr tisb = TsStringUtils.MakeIncStrBldr();
 			tisb.SetIntPropValues((int)FwTextPropType.ktptWs,
 				0, cache.ServiceLocator.WritingSystemManager.UserWs);
 			tisb.SetIntPropValues((int)FwTextPropType.ktptEditable,
@@ -932,16 +925,15 @@ namespace SIL.FieldWorks.Common.Controls
 			vwenv.AddString(tisb.GetString());
 		}
 
-		internal static void DisplayMultiSep(XmlNode frag, IVwEnv vwenv, FdoCache cache)
+		internal static void DisplayMultiSep(XmlNode frag, IVwEnv vwenv, LcmCache cache)
 		{
 			string sWs = XmlUtils.GetOptionalAttributeValue(frag, "ws");
 			if (sWs != null && sWs == "current")
 			{
 				if (!s_fMultiFirst && s_sMultiSep != null && s_sMultiSep != "")
 				{
-					ITsStrFactory tsf = cache.TsStrFactory;
 					int wsUi = cache.WritingSystemFactory.UserWs;
-					ITsString tss = tsf.MakeString(s_sMultiSep, wsUi);
+					ITsString tss = TsStringUtils.MakeString(s_sMultiSep, wsUi);
 					vwenv.AddString(tss);
 				}
 				else
@@ -1086,7 +1078,7 @@ namespace SIL.FieldWorks.Common.Controls
 			ITsString tssSep = null;
 			if (sep != null)
 			{
-				tssSep = m_cache.TsStrFactory.MakeString(sep,
+				tssSep = TsStringUtils.MakeString(sep,
 					m_cache.ServiceLocator.WritingSystemManager.UserWs);
 			}
 			bool fLabel = XmlUtils.GetOptionalBooleanAttributeValue(caller, "showLabels", false); // true to 'separate' using multistring labels.
@@ -1117,7 +1109,7 @@ namespace SIL.FieldWorks.Common.Controls
 					(vwenv as ConfiguredExport).BeginMultilingualAlternative(ws);
 				if (fLabel)
 				{
-					IWritingSystem wsObj = m_cache.ServiceLocator.WritingSystemManager.Get(ws);
+					CoreWritingSystemDefinition wsObj = m_cache.ServiceLocator.WritingSystemManager.Get(ws);
 					DisplayWsLabel(wsObj, vwenv, m_cache);
 				}
 				if (fCurrentHvo)
@@ -1359,7 +1351,7 @@ namespace SIL.FieldWorks.Common.Controls
 					case "table":
 						{
 							ProcessProperties(frag, vwenv);
-							IWritingSystem ws = Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
+							CoreWritingSystemDefinition ws = Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
 							if (ws.RightToLeftScript)
 								vwenv.set_IntProperty((int)FwTextPropType.ktptRightToLeft, (int)FwTextPropVar.ktpvEnum, -1);
 							// defaults for table settings.
@@ -1471,12 +1463,12 @@ namespace SIL.FieldWorks.Common.Controls
 							break;
 						}
 					case "objectOfRowUsingViewConstructor": // display the current object using an external VC.
-						//notice this assumes that it wants a FdoCache as an argument
+						//notice this assumes that it wants a LcmCache as an argument
 						IVwViewConstructor vc =
 							(IVwViewConstructor)SIL.Utils.DynamicLoader.CreateObject(frag,
 							new Object[] { m_cache });
 						int selectorId =
-							Convert.ToInt32(XmlUtils.GetManditoryAttributeValue(frag, "selector"));
+							Convert.ToInt32(XmlUtils.GetMandatoryAttributeValue(frag, "selector"));
 						// Note this is AddObj, not AddObjProp, and it explicitly adds the current object using the new vc and fragId
 						vwenv.AddObj(hvo, vc, selectorId);
 						break;
@@ -1558,7 +1550,7 @@ namespace SIL.FieldWorks.Common.Controls
 								XmlNode dtNode = XmlViewsUtils.CopyWithParamDefaults(frag);
 								string format;
 								if (vwenv is SortCollectorEnv)
-									format = System.Globalization.DateTimeFormatInfo.InvariantInfo.SortableDateTimePattern;
+									format = DateTimeFormatInfo.InvariantInfo.SortableDateTimePattern;
 								else
 									format = XmlUtils.GetOptionalAttributeValue(dtNode, "format");
 								string formattedDateTime;
@@ -1566,30 +1558,28 @@ namespace SIL.FieldWorks.Common.Controls
 								{
 									if (format != null)
 									{
-										formattedDateTime = dt.ToString(format, System.Globalization.DateTimeFormatInfo.CurrentInfo);
+										formattedDateTime = dt.ToString(format, DateTimeFormatInfo.CurrentInfo);
 									}
 									else
 									{
 										// "G" format takes user's system ShortDate format appended by system LongTime format.
-										formattedDateTime = dt.ToString("G", System.Globalization.DateTimeFormatInfo.CurrentInfo);
+										formattedDateTime = dt.ToString("G", DateTimeFormatInfo.CurrentInfo);
 									}
 								}
 								catch (FormatException e)
 								{
 									string errorMsg = "Invalid datetime format attribute (" + format + ") in " + e.Source;
-									formattedDateTime = errorMsg;
-									throw new SIL.Utils.ConfigurationException(errorMsg, frag, e);
+									throw new ConfigurationException(errorMsg, frag, e);
 								}
-								ITsStrFactory tsf = m_cache.TsStrFactory;
 								int systemWs = m_cache.ServiceLocator.WritingSystemManager.UserWs;
-								ITsString tss = tsf.MakeString(formattedDateTime, systemWs);
+								ITsString tss = TsStringUtils.MakeString(formattedDateTime, systemWs);
 								if (vwenv is ConfiguredExport)
 									vwenv.AddTimeProp(flid, 0);
 								AddStringThatCounts(vwenv, tss, caller);
 							}
 							else
 							{
-								string stFieldName = XmlUtils.GetManditoryAttributeValue(frag, "field");
+								string stFieldName = XmlUtils.GetMandatoryAttributeValue(frag, "field");
 								throw new Exception("Bad field type (" + stFieldName + " for hvo " + hvo + " found for " +
 									frag.Name + "  property " + flid + " in " + frag.OuterXml);
 							}
@@ -1604,7 +1594,7 @@ namespace SIL.FieldWorks.Common.Controls
 								return; // something badly wrong.
 							//temp
 							int min = Int32.Parse(XmlUtils.GetOptionalAttributeValue(frag, "min", "0"));
-							int max = Int32.Parse(XmlUtils.GetManditoryAttributeValue(frag, "max"));
+							int max = Int32.Parse(XmlUtils.GetMandatoryAttributeValue(frag, "max"));
 							// Get an ID that simply identifies the pictureValues child. This is used in DisplayPicture.
 							int fragId = GetId(frag.SelectSingleNode("picturevalues"), m_idToDisplayCommand, m_displayCommandToId);
 							vwenv.AddIntPropPic(flid, this, fragId, min, max);
@@ -1620,19 +1610,16 @@ namespace SIL.FieldWorks.Common.Controls
 						{
 							// Default to UI writing system.
 							string literal = frag.InnerText;
-							if (m_stringTable != null)
-							{
-								string sTranslate = XmlUtils.GetOptionalAttributeValue(frag, "translate", "");
-								if (sTranslate.Trim().ToLower() != "do not translate")
-									literal = m_stringTable.LocalizeLiteralValue(literal);
-							}
+							string sTranslate = XmlUtils.GetOptionalAttributeValue(frag, "translate", "");
+							if (sTranslate.Trim().ToLower() != "do not translate")
+								literal = StringTable.Table.LocalizeLiteralValue(literal);
 							string sWs = XmlUtils.GetOptionalAttributeValue(frag, "ws");
 							int ws;
 							if (sWs != null)
 								ws = m_cache.WritingSystemFactory.GetWsFromStr(sWs);
 							else
 								ws = m_cache.WritingSystemFactory.UserWs;
-							vwenv.AddString(m_cache.TsStrFactory.MakeString(literal, ws));
+							vwenv.AddString(TsStringUtils.MakeString(literal, ws));
 							break;
 						}
 					case "if":
@@ -1677,9 +1664,7 @@ namespace SIL.FieldWorks.Common.Controls
 							string[] labels;
 							if (!m_StringsFromListNode.TryGetValue(frag, out labels))
 							{
-								if (StringTbl == null)
-									throw new Exception("The stringList fragment requires a StringTable to be defined by the program");
-								labels = StringTbl.GetStringsFromStringListNode(frag);
+								labels = StringTable.Table.GetStringsFromStringListNode(frag);
 								m_StringsFromListNode[frag] = labels;
 							}
 							int flid = GetFlid(frag, hvo);
@@ -1688,7 +1673,7 @@ namespace SIL.FieldWorks.Common.Controls
 								(value < labels.Length))
 							{
 								int wsUi = m_cache.WritingSystemFactory.UserWs;
-								ITsString tss = m_cache.TsStrFactory.MakeString(labels[value], wsUi);
+								ITsString tss = TsStringUtils.MakeString(labels[value], wsUi);
 								vwenv.AddString(tss);
 								NoteDependency(vwenv, hvo, flid);
 							}
@@ -2092,7 +2077,7 @@ namespace SIL.FieldWorks.Common.Controls
 										// If ws is 'configure' then we must have a caller to inherit the configured value from.
 										if (sWs == "configure")
 										{
-											sWs = XmlUtils.GetManditoryAttributeValue(caller, "ws");
+											sWs = XmlUtils.GetMandatoryAttributeValue(caller, "ws");
 										}
 										wsid = m_cache.WritingSystemFactory.GetWsFromStr(sWs);
 									}
@@ -2341,7 +2326,7 @@ namespace SIL.FieldWorks.Common.Controls
 		}
 
 		/// <summary>
-		/// This combines some of the logic of GetFlid(hvo, frag) and FdoCache.GetFlid(hvo, class, field).
+		/// This combines some of the logic of GetFlid(hvo, frag) and LcmCache.GetFlid(hvo, class, field).
 		/// Where possible it determines a flid that should be preloaded, adds it to info, and
 		/// returns it.
 		/// </summary>
@@ -2431,7 +2416,7 @@ namespace SIL.FieldWorks.Common.Controls
 		// Process a 'part ref' node (frag) for the specified object an env.
 		internal void ProcessPartRef(XmlNode frag, int hvo, IVwEnv vwenv)
 		{
-			string layoutName = XmlUtils.GetManditoryAttributeValue(frag, "ref");
+			string layoutName = XmlUtils.GetMandatoryAttributeValue(frag, "ref");
 			XmlNode node;
 			if (layoutName == "$child")
 			{
@@ -2649,7 +2634,7 @@ namespace SIL.FieldWorks.Common.Controls
 					var sVisibility = XmlUtils.GetOptionalAttributeValue(gramInfoPartRef, "visibility", "always");
 					if (sVisibility == "never")
 						return true; // user has configured gram info first, but turned off gram info.
-					string morphLayoutName = XmlUtils.GetManditoryAttributeValue(gramInfoPartRef, "ref");
+					string morphLayoutName = XmlUtils.GetMandatoryAttributeValue(gramInfoPartRef, "ref");
 					var part = GetNodeForPart(firstChildHvo, morphLayoutName, false);
 					if (part == null)
 						throw new ArgumentException("Attempt to display gram info of first child, but part for " + morphLayoutName +
@@ -2741,7 +2726,7 @@ namespace SIL.FieldWorks.Common.Controls
 			string visibility = XmlUtils.GetOptionalAttributeValue(frag, "visibility", "always");
 			if (visibility == "never")
 				return;
-			string layoutName = XmlUtils.GetManditoryAttributeValue(frag, "ref");
+			string layoutName = XmlUtils.GetMandatoryAttributeValue(frag, "ref");
 			XmlNode node;
 			if (layoutName == "$child")
 			{
@@ -2765,7 +2750,7 @@ namespace SIL.FieldWorks.Common.Controls
 			bool fShowAsParagraphs = XmlUtils.GetOptionalBooleanAttributeValue(frag, "showasindentedpara", false);
 			if (fShowAsParagraphs)
 				return;
-			string item = XmlUtils.GetLocalizedAttributeValue(m_stringTable, frag, attrName, null);
+			string item = XmlUtils.GetLocalizedAttributeValue(frag, attrName, null);
 			if (String.IsNullOrEmpty(item))
 			{
 				if (DelayedNumberExists)
@@ -2773,7 +2758,7 @@ namespace SIL.FieldWorks.Common.Controls
 				else
 					return;
 			}
-			var tss = m_cache.TsStrFactory.MakeString(item,
+			var tss = TsStringUtils.MakeString(item,
 				m_cache.ServiceLocator.WritingSystemManager.UserWs);
 			var tssNumber = GetDelayedNumber(frag, vwenv is TestCollectorEnv);
 			var sStyle = XmlUtils.GetAttributeValue(frag, attrName + "Style");
@@ -2869,8 +2854,8 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 			Debug.Assert(layout.Name == "layout");
 			var label = XmlUtils.GetOptionalAttributeValue(partRef, "label", partRefId);
-			return XmlUtils.GetManditoryAttributeValue(layout, "class") + ":" +
-				XmlUtils.GetManditoryAttributeValue(layout, "name") + ":" + partRefId + ":" + label;
+			return XmlUtils.GetMandatoryAttributeValue(layout, "class") + ":" +
+				XmlUtils.GetMandatoryAttributeValue(layout, "name") + ":" + partRefId + ":" + label;
 		}
 
 
@@ -2898,7 +2883,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		internal void AddMarkedString(IVwEnv vwenv, XmlNode whereFrom, string input, int ws)
 		{
-			var bldr = TsIncStrBldrClass.Create();
+			var bldr = TsStringUtils.MakeIncStrBldr();
 			bldr.SetIntPropValues((int)FwTextPropType.ktptWs, (int)FwTextPropVar.ktpvDefault, ws);
 			if (IdentifySource)
 				bldr.SetStrPropValue((int)FwTextPropType.ktptBulNumTxtBef, NodeIdentifier(whereFrom));
@@ -3034,7 +3019,7 @@ namespace SIL.FieldWorks.Common.Controls
 				{
 					// If we have filtering set to show only certain types of minor entries,
 					// apply the filter before we try adding the object to the view.  (LT-10953)
-					var validTypes = new Set<Guid>();
+					var validTypes = new HashSet<Guid>();
 					var entryType = XmlUtils.GetOptionalAttributeValue(caller, "entrytype");
 					Debug.Assert(entryType == "minor");
 					var rgsGuidsPlus = guidsFilter.Split(',');
@@ -3216,7 +3201,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="sda">The sda.</param>
 		/// <param name="caller">The caller.</param>
 		/// <returns></returns>
-		public static bool ConditionPasses(XmlNode frag, int hvo, FdoCache cache, ISilDataAccess sda, XmlNode caller)
+		public static bool ConditionPasses(XmlNode frag, int hvo, LcmCache cache, ISilDataAccess sda, XmlNode caller)
 		{
 			return ConditionPasses(null, frag, hvo, cache, sda, caller);
 		}
@@ -3229,7 +3214,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="cache">The cache.</param>
 		/// <param name="sda">The sda.</param>
 		/// <returns></returns>
-		public static bool ConditionPasses(XmlNode frag, int hvo, FdoCache cache, ISilDataAccess sda)
+		public static bool ConditionPasses(XmlNode frag, int hvo, LcmCache cache, ISilDataAccess sda)
 		{
 			return ConditionPasses(null, frag, hvo, cache, sda, null);
 		}
@@ -3241,7 +3226,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="hvo">The hvo.</param>
 		/// <param name="cache">The cache.</param>
 		/// <returns></returns>
-		public static bool ConditionPasses(XmlNode frag, int hvo, FdoCache cache)
+		public static bool ConditionPasses(XmlNode frag, int hvo, LcmCache cache)
 		{
 			return ConditionPasses(null, frag, hvo, cache, cache.DomainDataByFlid, null);
 		}
@@ -3293,7 +3278,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="sda">The sda.</param>
 		/// <param name="caller">the 'part ref' node that invoked the current part. May be null if XML does not use it.</param>
 		/// <returns></returns>
-		public static bool ConditionPasses(IVwEnv vwenv, XmlNode frag, int hvo, FdoCache cache, ISilDataAccess sda, XmlNode caller)
+		public static bool ConditionPasses(IVwEnv vwenv, XmlNode frag, int hvo, LcmCache cache, ISilDataAccess sda, XmlNode caller)
 		{
 			GetActualTarget(frag, ref hvo, sda);	// modify the hvo if needed
 
@@ -3316,7 +3301,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="frag"></param>
 		/// <param name="cache"></param>
 		/// <returns></returns>
-		private static bool BidiConditionPasses(XmlNode frag, FdoCache cache)
+		private static bool BidiConditionPasses(XmlNode frag, LcmCache cache)
 		{
 			string sBidi = XmlUtils.GetOptionalAttributeValue(frag, "bidi");
 			if (sBidi != null)
@@ -3342,7 +3327,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="sda">The sda.</param>
 		/// <param name="caller">The caller.</param>
 		/// <returns></returns>
-		static private bool ValueEqualityConditionsPass(IVwEnv vwenv, XmlNode frag, int hvo, FdoCache cache,
+		static private bool ValueEqualityConditionsPass(IVwEnv vwenv, XmlNode frag, int hvo, LcmCache cache,
 			ISilDataAccess sda, XmlNode caller)
 		{
 			if (!StringEqualsConditionPasses(vwenv, frag, hvo, sda))
@@ -3503,7 +3488,7 @@ namespace SIL.FieldWorks.Common.Controls
 			int flidVal = 0;
 			if (Int32.TryParse(sFlid, out flidVal))
 			{
-				string fieldName = XmlUtils.GetManditoryAttributeValue(frag, "field");
+				string fieldName = XmlUtils.GetMandatoryAttributeValue(frag, "field");
 				int flid = GetFlid(frag, hvo, sda);
 				return flid == flidVal;
 			}
@@ -3625,7 +3610,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="caller">The caller.</param>
 		/// <returns></returns>
 		static private bool StringAltEqualsConditionPasses(IVwEnv vwenv, XmlNode frag, int hvo,
-			FdoCache cache, ISilDataAccess sda, XmlNode caller)
+			LcmCache cache, ISilDataAccess sda, XmlNode caller)
 		{
 			string stringAltValue = XmlUtils.GetOptionalAttributeValue(frag, "stringaltequals");
 			if (stringAltValue != null)
@@ -3654,7 +3639,7 @@ namespace SIL.FieldWorks.Common.Controls
 					// If ws is 'configure' then we must have a caller to inherit the configured value from.
 					if (wsId == "configure")
 					{
-						wsId = XmlUtils.GetManditoryAttributeValue(caller, "ws");
+						wsId = XmlUtils.GetMandatoryAttributeValue(caller, "ws");
 					}
 					foreach (int ws in WritingSystemServices.GetAllWritingSystems(cache, wsId, null, hvo, flid))
 					{
@@ -3669,8 +3654,7 @@ namespace SIL.FieldWorks.Common.Controls
 
 		static void NoteStringValDependency(IVwEnv vwenv, int hvo, int flid, int ws, string val)
 		{
-			ITsStrFactory tsf = TsStrFactoryClass.Create();
-			vwenv.NoteStringValDependency(hvo, flid, ws, tsf.MakeString(val, ws));
+			vwenv.NoteStringValDependency(hvo, flid, ws, TsStringUtils.MakeString(val, ws));
 		}
 
 		/// <summary>
@@ -3693,11 +3677,10 @@ namespace SIL.FieldWorks.Common.Controls
 					ITsString tsString = sda.get_StringProp(hvo, flid);
 					int var;
 					int realWs = tsString.get_Properties(0).GetIntPropValues((int) FwTextPropType.ktptWs, out var);
-					ITsStrFactory tsf = TsStrFactoryClass.Create();
 					// Third argument must be 0 to indicate a non-multistring.
 					// Fourth argument is the TsString version of the string we are testing against.
 					// The display will update for a change in whether it is true that sda.get_StringProp(hvo, flid) is equal to arg4
-					vwenv.NoteStringValDependency(hvo, flid, 0, tsf.MakeString(stringValue, realWs));
+					vwenv.NoteStringValDependency(hvo, flid, 0, TsStringUtils.MakeString(stringValue, realWs));
 					value = tsString.Text;
 				} // otherwise we don't have an object, and will treat the current value as null.
 				if (value == null && stringValue == "")
@@ -3954,7 +3937,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		/// <value>The cache.</value>
 		/// ------------------------------------------------------------------------------------
-		public override FdoCache Cache
+		public override LcmCache Cache
 		{
 			set
 			{
@@ -3973,7 +3956,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// Test-only way to set cache without setting SDA and layouts.
 		/// Test code should set them some other way!
 		/// </summary>
-		internal void SetCache(FdoCache cache)
+		internal void SetCache(LcmCache cache)
 		{
 			base.Cache = cache;
 		}
@@ -3989,22 +3972,6 @@ namespace SIL.FieldWorks.Common.Controls
 			{
 				m_sda = value;
 				m_mdc = value.MetaDataCache;
-			}
-		}
-
-		/// <summary>
-		/// a look up table for getting the correct version of strings that the user will see.
-		/// </summary>
-		public StringTable StringTbl
-		{
-			get
-			{
-				return m_stringTable;
-			}
-			set
-			{
-				m_stringTable = value;
-				m_StringsFromListNode.Clear();
 			}
 		}
 
@@ -4470,8 +4437,6 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="vwenv">The vwenv.</param>
 		/// <param name="hvo">The hvo.</param>
 		/// ------------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		public virtual void ProcessColumnSpecs(XmlNode frag, IVwEnv vwenv, int hvo)
 		{
 			XmlNode columnsElement = frag["columns"];
@@ -5733,12 +5698,12 @@ namespace SIL.FieldWorks.Common.Controls
 	/// <summary>
 	/// Compares CmObjects using their SortKey property.
 	/// </summary>
-	class CmObjectComparer : FwDisposableBase, IComparer<int>
+	class CmObjectComparer : DisposableBase, IComparer<int>
 	{
-		private IntPtr m_col = IntPtr.Zero;
-		private readonly FdoCache m_cache;
+		private Collator m_col;
+		private readonly LcmCache m_cache;
 
-		public CmObjectComparer(FdoCache cache)
+		public CmObjectComparer(LcmCache cache)
 		{
 			m_cache = cache;
 		}
@@ -5759,17 +5724,17 @@ namespace SIL.FieldWorks.Common.Controls
 			if (string.IsNullOrEmpty(ykeyStr))
 				return 1;
 
-			if (m_col == IntPtr.Zero)
+			if (m_col == null)
 			{
 				string ws = xobj.SortKeyWs;
 				if (string.IsNullOrEmpty(ws))
 					ws = yobj.SortKeyWs;
-				string icuLocale = Icu.GetName(ws);
-				m_col = Icu.OpenCollator(icuLocale);
+				string icuLocale = new Icu.Locale(ws).Name;
+				m_col = Collator.Create(icuLocale);
 			}
 
-			byte[] xkey = Icu.GetSortKey(m_col, xkeyStr);
-			byte[] ykey = Icu.GetSortKey(m_col, ykeyStr);
+			byte[] xkey = m_col.GetSortKey(xkeyStr).KeyData;
+			byte[] ykey = m_col.GetSortKey(ykeyStr).KeyData;
 			// Simulate strcmp on the two NUL-terminated byte strings.
 			// This avoids marshalling back and forth.
 			// JohnT: but apparently the strings are not null-terminated if the input was empty.
@@ -5801,10 +5766,10 @@ namespace SIL.FieldWorks.Common.Controls
 
 		protected override void DisposeUnmanagedResources()
 		{
-			if (m_col != IntPtr.Zero)
+			if (m_col != null)
 			{
-				Icu.CloseCollator(m_col);
-				m_col = IntPtr.Zero;
+				m_col.Dispose();
+				m_col = null;
 			}
 		}
 	}

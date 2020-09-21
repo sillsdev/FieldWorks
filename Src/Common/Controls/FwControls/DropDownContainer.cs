@@ -15,7 +15,7 @@ using System.Collections;
 using System.ComponentModel;
 using System.Windows.Forms;
 
-using SIL.Utils;
+using SIL.LCModel.Utils;
 
 namespace SIL.FieldWorks.Common.Controls
 {

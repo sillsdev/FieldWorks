@@ -8,11 +8,11 @@
 
 using System;
 using NUnit.Framework;
-using SIL.FieldWorks.FDO.FDOTests;
-using SIL.Utils;
-using SILUBS.SharedScrUtils;
+using SIL.LCModel.Utils;
 using System.Collections.Generic;
-using SIL.FieldWorks.FDO.DomainServices;
+using System.Text;
+using SIL.FieldWorks.Common.FwUtils;
+using SIL.LCModel;
 
 namespace SIL.FieldWorks.FwCoreDlgs
 {
@@ -129,16 +129,48 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 				// First string is the normalized order that ICU produces.
 				// Second string is the normalized order that .Net produces.
-				ReflectionHelper.SetField(ctrl, "m_fileData", new[] { "\u05E9\u05c1\u05b4\u0596",
-				"\u05E9\u05b4\u05c1\u0596" });
+				var icuStyleNormalizationOrder = "\u05E9\u05c1\u05b4\u0596";
+				var dotnetStyleNormalizationOrder = "\u05E9\u05b4\u05c1\u0596";
+				ReflectionHelper.SetField(ctrl, "m_fileData",
+					new[] { icuStyleNormalizationOrder, dotnetStyleNormalizationOrder });
 
+				// SUT
 				ReflectionHelper.CallMethod(ctrl, "NormalizeFileData");
 
+				// Verify
 				var results = (string[])ReflectionHelper.GetField(ctrl, "m_fileData");
-				Assert.AreEqual(2, results.Length);
-				Assert.AreEqual("\u05E9\u05c1\u05b4\u0596", results[0], "Expect ICU-style normalization");
-				Assert.AreEqual("\u05E9\u05c1\u05b4\u0596", results[1], "Expect ICU-style normalization");
+				Assert.That(results.Length, Is.EqualTo(2));
+				Assert.That(results[0], Is.EqualTo(icuStyleNormalizationOrder),
+					GetMessage("Expect ICU-style normalization (from ICU order)",
+						icuStyleNormalizationOrder,
+						results[0]));
+				Assert.That(results[1], Is.EqualTo(icuStyleNormalizationOrder),
+					GetMessage("Expect ICU-style normalization (from .NET order)",
+						icuStyleNormalizationOrder,
+						results[1]));
 			}
+		}
+
+		private string GetMessage(string message, string expected, string actual)
+		{
+			var bldr = new StringBuilder(message);
+			bldr.AppendLine();
+			bldr.AppendFormat("  Expected: \"{0}\"", GetStringAsUnicodeCodepoints(expected));
+			bldr.AppendLine();
+			bldr.AppendFormat("  Actual:   \"{0}\"", GetStringAsUnicodeCodepoints(actual));
+			bldr.AppendLine();
+			return bldr.ToString();
+		}
+
+		private string GetStringAsUnicodeCodepoints(string s)
+		{
+			var bldr = new StringBuilder();
+			foreach (var c in s.ToCharArray())
+			{
+				bldr.AppendFormat("\\u{0:x4}", Convert.ToInt32(c));
+			}
+
+			return bldr.ToString();
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -156,95 +188,16 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				ctrl.Initialize(Cache, Cache.ServiceLocator.WritingSystems,
 					null, null, null, null);
 
-				// First string is the normalized order that ICU produces.
-				// Second string is the normalized order that .Net produces.
 				ReflectionHelper.SetField(ctrl, "m_fileData", new[] { "\u2074" });
 
+				// SUT
 				ReflectionHelper.CallMethod(ctrl, "NormalizeFileData");
 
+				// Verify
 				var results = (string[])ReflectionHelper.GetField(ctrl, "m_fileData");
-				Assert.AreEqual(1, results.Length);
-				Assert.AreEqual("\u2074", results[0], "Expect ICU-style normalization");
+				Assert.That(results.Length, Is.EqualTo(1));
+				Assert.That(results[0], Is.EqualTo("\u2074"), "Expect ICU-style normalization");
 			}
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Tests the GetTokenSubstrings method when no validator is supplied.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		[Test]
-		public void GetTokenSubstrings_NoValidator()
-		{
-			using (var ctrl = new CharContextCtrl())
-			{
-				ctrl.Initialize(Cache, Cache.ServiceLocator.WritingSystems,
-					null, null, null, null);
-
-				var tokens = new List<ITextToken>();
-				ITextToken token = new ScrCheckingToken();
-				ReflectionHelper.SetField(token, "m_sText", "Mom. Dad!");
-				tokens.Add(token);
-				var inventory = new DummyScrInventory
-													{
-														m_references = new List<TextTokenSubstring>
-															{ new TextTokenSubstring(token, 3, 2) }
-													};
-				var validatedList = (List<TextTokenSubstring>)ReflectionHelper.GetResult(ctrl, "GetTokenSubstrings",
-					inventory, tokens);
-				Assert.AreEqual(1, validatedList.Count);
-				Assert.AreEqual(". ", validatedList[0].Text);
-			}
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Tests the GetTokenSubstrings method when a validator is supplied which removes
-		/// the first and last substring.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		[Test]
-		public void GetTokenSubstrings_ValidatorThatRemovesSomeResults()
-		{
-			using (var ctrl = new CharContextCtrl())
-			{
-				ctrl.Initialize(Cache, Cache.ServiceLocator.WritingSystems,
-					null, null, null, null);
-				ctrl.ListValidator = RemoveFirstAndLastSubString;
-
-				var tokens = new List<ITextToken>();
-				ITextToken token = new ScrCheckingToken();
-				ReflectionHelper.SetField(token, "m_sText", "Mom. Dad! Brother(Sister)");
-				tokens.Add(token);
-				var inventory = new DummyScrInventory
-									{
-										m_references = new List<TextTokenSubstring>
-														{
-															new TextTokenSubstring(token, 3, 2),
-															new TextTokenSubstring(token, 8, 2),
-															new TextTokenSubstring(token, 17, 1),
-															new TextTokenSubstring(token, 24, 1)
-														}
-									};
-				var validatedList =
-					(List<TextTokenSubstring>)ReflectionHelper.GetResult(ctrl, "GetTokenSubstrings",
-					inventory, tokens);
-				Assert.AreEqual(2, validatedList.Count);
-				Assert.AreEqual("! ", validatedList[0].Text);
-				Assert.AreEqual("(", validatedList[1].Text);
-			}
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Removes the first and last sub string.
-		/// </summary>
-		/// <param name="list">The list.</param>
-		/// ------------------------------------------------------------------------------------
-		private static void RemoveFirstAndLastSubString(List<TextTokenSubstring> list)
-		{
-			list.RemoveAt(0);
-			list.RemoveAt(list.Count - 1);
 		}
 	}
 	#endregion

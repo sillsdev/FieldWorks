@@ -1,28 +1,25 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Diagnostics.CodeAnalysis;
-using System.Windows.Forms;
-using System.IO;
 using System.Diagnostics;
-
-using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.Common.Widgets;
-using SIL.Utils;
-using SIL.Utils.FileDialog;
+using System.IO;
+using System.Windows.Forms;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.WritingSystems;
 using SIL.FieldWorks.Common.Controls;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.LexText.Controls;
-using XCore;
-using SIL.FieldWorks.Resources;
-using SIL.CoreImpl;
+using SIL.FieldWorks.Common.Controls.FileDialog;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
+using SIL.LCModel;
+using SIL.FieldWorks.LexText.Controls;
+using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.XWorks;
-using SilEncConverters40;
+using SIL.LCModel.Utils;
+using XCore;
 
 namespace SIL.FieldWorks.IText
 {
@@ -57,7 +54,7 @@ namespace SIL.FieldWorks.IText
 	/// <summary>
 	/// Summary description for IFwImportDialog.
 	/// </summary>
-	public class LinguaLinksImportDlg : Form, IFWDisposable, IFwExtension
+	public class LinguaLinksImportDlg : Form, IFwExtension
 	{
 		public const int kLlName = 0;
 		public const int kFwName = 1;
@@ -70,7 +67,7 @@ namespace SIL.FieldWorks.IText
 		/// </summary>
 		private System.ComponentModel.Container components = null;
 
-		protected FdoCache m_cache;
+		protected LcmCache m_cache;
 		private System.Windows.Forms.LinkLabel linkLabel2;
 		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.TextBox m_LinguaLinksXmlFileName;
@@ -84,6 +81,7 @@ namespace SIL.FieldWorks.IText
 		private System.Windows.Forms.Button btnModifyMapping;
 		private System.Windows.Forms.Button btnImport;
 		protected Mediator m_mediator;
+		protected PropertyTable m_propertyTable;
 		private System.Windows.Forms.Button btn_Cancel;
 		private string m_sTempDir;
 		private string m_sRootDir;
@@ -185,12 +183,14 @@ namespace SIL.FieldWorks.IText
 		/// </summary>
 		/// <param name="cache"></param>
 		/// <param name="mediator"></param>
-		public void Init(FdoCache cache, XCore.Mediator mediator)
+		/// <param name="propertyTable"></param>
+		public void Init(LcmCache cache, XCore.Mediator mediator, PropertyTable propertyTable)
 		{
 			CheckDisposed();
 
 			m_cache = cache;
 			m_mediator = mediator;
+			m_propertyTable = propertyTable;
 			m_sRootDir = FwDirectoryFinder.CodeDirectory;
 			if (!m_sRootDir.EndsWith("\\"))
 				m_sRootDir += "\\";
@@ -201,11 +201,12 @@ namespace SIL.FieldWorks.IText
 				Directory.CreateDirectory(m_sTempDir);
 			m_sLastXmlFileName = "";
 
-			if(m_mediator.HelpTopicProvider != null) // FwApp.App could be null during tests
+			var helpTopicProvider = m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider");
+			if (helpTopicProvider != null) // FwApp.App could be null during tests
 			{
 				helpProvider = new HelpProvider();
-				helpProvider.HelpNamespace = m_mediator.HelpTopicProvider.HelpFile;
-				helpProvider.SetHelpKeyword(this, m_mediator.HelpTopicProvider.GetHelpString(s_helpTopic));
+				helpProvider.HelpNamespace = helpTopicProvider.HelpFile;
+				helpProvider.SetHelpKeyword(this, helpTopicProvider.GetHelpString(s_helpTopic));
 				helpProvider.SetHelpNavigator(this, HelpNavigator.Topic);
 			}
 		}
@@ -244,8 +245,6 @@ namespace SIL.FieldWorks.IText
 		/// Required method for Designer support - do not modify
 		/// the contents of this method with the code editor.
 		/// </summary>
-		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
-			Justification = "TODO-Linux: LinkLabel.TabStop is missing from Mono")]
 		private void InitializeComponent()
 		{
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(LinguaLinksImportDlg));
@@ -552,7 +551,7 @@ namespace SIL.FieldWorks.IText
 
 		private void linkLabel2_LinkClicked(object sender, System.Windows.Forms.LinkLabelLinkClickedEventArgs e)
 		{
-			ShowHelp.ShowHelpTopic(m_mediator.HelpTopicProvider, "khtpLinguaLinksImportLink");
+			ShowHelp.ShowHelpTopic(m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), "khtpLinguaLinksImportLink");
 		}
 
 		private string BaseName(string fullName)
@@ -634,7 +633,7 @@ namespace SIL.FieldWorks.IText
 						var wsInfo = new Dictionary<string, WsInfo>();
 
 						//getting name for a writing system given the ICU code.
-						foreach (IWritingSystem ws in m_cache.ServiceLocator.WritingSystemManager.LocalWritingSystems)
+						foreach (CoreWritingSystemDefinition ws in m_cache.ServiceLocator.WritingSystemManager.WritingSystems)
 						{
 							var wsi = new WsInfo(ws.DisplayLabel, ws.Id, string.IsNullOrEmpty(ws.LegacyMapping) ? "Windows1252<>Unicode" : ws.LegacyMapping);
 							wsInfo.Add(wsi.KEY, wsi);
@@ -857,9 +856,9 @@ namespace SIL.FieldWorks.IText
 			int selIndex = selIndexes[0];
 			// only support 1
 			lvItem = listViewMapping.Items[selIndex];
-			IApp app = (IApp)m_mediator.PropertyTable.GetValue("App");
+			IApp app = m_propertyTable.GetValue<IApp>("App");
 			using (LexImportWizardLanguage dlg = new LexImportWizardLanguage(m_cache,
-					m_mediator.HelpTopicProvider, app, FontHeightAdjuster.StyleSheetFromMediator(m_mediator)))
+				m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), app))
 			{
 				llName = lvItem.Text;
 				fwName = lvItem.SubItems[1].Text;
@@ -934,7 +933,7 @@ namespace SIL.FieldWorks.IText
 					Debug.Assert(m_nextInput == m_LinguaLinksXmlFileName.Text);
 					// Ensure the idle time processing for change record doesn't cause problems
 					// because the import creates a record to change to.  See FWR-3700.
-					var clerk = m_mediator.PropertyTable.GetValue("ActiveClerk") as RecordClerk;
+					var clerk = m_propertyTable.GetValue<RecordClerk>("ActiveClerk");
 					var fSuppressedSave = false;
 					try
 					{
@@ -1008,19 +1007,19 @@ namespace SIL.FieldWorks.IText
 				MessageBox.Show(this, message, caption, MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
 		}
 
-		private void LinguaLinksImportDlg_KeyDown(object sender, System.Windows.Forms.KeyEventArgs e)
+		private void LinguaLinksImportDlg_KeyDown(object sender, KeyEventArgs e)
 		{
 			ShowFinishLabel();
 		}
 
-		private void LinguaLinksImportDlg_KeyUp(object sender, System.Windows.Forms.KeyEventArgs e)
+		private void LinguaLinksImportDlg_KeyUp(object sender, KeyEventArgs e)
 		{
 			ShowFinishLabel();
 		}
 
-		private void m_btnHelp_Click(object sender, System.EventArgs e)
+		private void m_btnHelp_Click(object sender, EventArgs e)
 		{
-			ShowHelp.ShowHelpTopic(m_mediator.HelpTopicProvider, s_helpTopic);
+			ShowHelp.ShowHelpTopic(m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), s_helpTopic);
 		}
 	}
 }

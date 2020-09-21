@@ -1,4 +1,4 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -6,22 +6,21 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Windows.Forms;
-
-using SIL.FieldWorks.Common.COMInterfaces;
+using Icu;
+using SIL.LCModel.Core.Text;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Resources;
-using SIL.Utils;
+using SIL.LCModel.Utils;
 
 namespace SIL.FieldWorks.FwCoreDlgControls
 {
 		/// <summary>
 	/// Summary description for LocaleMenuButton.
 	/// </summary>
-	public class LocaleMenuButton : Button, IFWDisposable
+	public class LocaleMenuButton : Button
 	{
 		private System.ComponentModel.Container components;
 
@@ -101,33 +100,35 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 			{
 				CheckDisposed();
 
-				// This gets called during initialization with null. If we get
-				// an Enumerator, it locks root.res. For some reason the
-				// destructor for the enumerator doesn't get called for a long
-				// time.
+				// This gets called during initialization with null.
 				if (value == null)
 					return; // Probably initialization.
-				ILgIcuLocaleEnumerator locEnum = LgIcuLocaleEnumeratorClass.Create();
 
-				try
+				string displayName;
+				if (TryGetDisplayName(value, out displayName))
 				{
-					int cloc = locEnum.Count;
-					for (int iloc = 0; iloc < cloc; iloc++)
-					{
-						if (locEnum.get_Name(iloc) == value)
-						{
-							Text = locEnum.get_DisplayName(iloc, m_displayLocaleId);
-							m_selectedLocale = value;
-							return;
-						}
-					}
+					Text = displayName;
+					m_selectedLocale = value;
+				}
+				else
+				{
 					// Client should make sure it is a valid id. Failing this, make a warning.
 					Text = FwCoreDlgControls.kstidError;
 				}
-				finally
-				{
-					Marshal.ReleaseComObject(locEnum);
-				}
+			}
+		}
+
+		private bool TryGetDisplayName(string locale, out string displayName)
+		{
+			try
+			{
+				displayName = new Locale().GetDisplayName(locale);
+				return true;
+			}
+			catch
+			{
+				displayName = string.Empty;
+				return false;
 			}
 		}
 
@@ -138,56 +139,19 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 		/// <returns></returns>
 		public bool IsCustomLocale(string localeId)
 		{
-			ILgIcuResourceBundle rbroot = LgIcuResourceBundleClass.Create();
-			try
+			using (var rbroot = new ResourceBundle(null, "en"))
+			using (var rbCustom = rbroot["Custom"])
+			using (var rbCustomLocales = rbCustom["LocalesAdded"])
 			{
-#if !__MonoCS__
-				rbroot.Init(null, "en");
-#else
-	// TODO-Linux: fix Mono bug
-				rbroot.Init("", "en");
-#endif
-				ILgIcuResourceBundle rbCustom = rbroot.get_GetSubsection("Custom");
-				if (rbCustom != null)
-				{
-					ILgIcuResourceBundle rbCustomLocales = rbCustom.get_GetSubsection("LocalesAdded");
-					Marshal.ReleaseComObject(rbCustom);
-					if (rbCustomLocales == null)
-						return false; // Should never be.
-					while (rbCustomLocales.HasNext)
-					{
-						ILgIcuResourceBundle rbItem = rbCustomLocales.Next;
-						if (rbItem.String == localeId)
-						{
-							Marshal.ReleaseComObject(rbItem);
-							Marshal.ReleaseComObject(rbCustomLocales);
-							return true;
-						}
-						Marshal.ReleaseComObject(rbItem);
-					}
-					Marshal.ReleaseComObject(rbCustomLocales);
-				}
-				// Now, compare the locale againt all known locales -- it may not exist at all yet!
-				// If not, it is considered custom.
-				ILgIcuLocaleEnumerator locEnum = LgIcuLocaleEnumeratorClass.Create();
+				if (rbCustomLocales.GetStringContents().Contains(localeId))
+					return true;
+			}
 
-				int cloc = locEnum.Count;
-				for (int iloc = 0; iloc < cloc; iloc++)
-				{
-					if (localeId == locEnum.get_Name(iloc))
-					{
-						Marshal.ReleaseComObject(locEnum);
-						return false;
-					}
-				}
-				//Didn't find in either list...custom.
-				Marshal.ReleaseComObject(locEnum);
-				return true;
-			}
-			finally
-			{
-				Marshal.ReleaseComObject(rbroot);
-			}
+			// Next, check if ICU knows about this locale. If ICU doesn't know about it, it is considered custom.
+			string displayNameIgnored;
+			if (TryGetDisplayName(localeId, out displayNameIgnored))
+				return false;
+			return true;
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -254,6 +218,31 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 				LocaleSelected(this, ea);
 		}
 
+		/// <summary>
+		/// Get a dictionary, keyed by language ID, with values being a list of locale IDs and names.
+		/// This allows "en-GB" and "en-US" to be grouped together under "English" in a menu, for example.
+		/// </summary>
+		/// <param name="displayLocale">Locale ID in which to display the locale names (e.g., if this is "fr", then the "en" locale will have the display name "anglais").</param>
+		/// <returns>A dictionary whose keys are language IDs (2- or 3-letter ISO codes) and whose values are a list of the IcuIdAndName objects that GetLocaleIdsAndNames returns.</returns>
+		private static IDictionary<string, IList<IcuIdAndName>> GetLocalesByLanguage(
+			string displayLocale = null)
+		{
+			var result = new Dictionary<string, IList<IcuIdAndName>>();
+			foreach (var locale in Locale.AvailableLocales)
+			{
+				var name = locale.GetDisplayName(displayLocale);
+				IList<IcuIdAndName> entries;
+				if (!result.TryGetValue(locale.Language, out entries))
+				{
+					entries = new List<IcuIdAndName>();
+					result[locale.Language] = entries;
+				}
+				entries.Add(new IcuIdAndName(locale.Id, name));
+			}
+			return result;
+		}
+
+
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Raises the click event.
@@ -262,7 +251,6 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 		/// ------------------------------------------------------------------------------------
 		protected override void OnClick(EventArgs e)
 		{
-			ILgIcuLocaleEnumerator locEnum = LgIcuLocaleEnumeratorClass.Create();
 			var menu = components.ContextMenuStrip("contextMenu");
 
 			// Create the various collections we use in the process of assembling
@@ -271,21 +259,12 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 			m_mainItems = new List<LocaleMenuItemData>();
 			m_itemData = new Dictionary<ToolStripMenuItem, LocaleMenuItemData>();
 
-			int cloc = locEnum.Count;
-			for(int iloc = 0; iloc < cloc; iloc++)
+			var localeDataByLanguage = GetLocalesByLanguage(m_displayLocaleId);
+			foreach (var localeData in localeDataByLanguage)
 			{
-				string langid = locEnum.get_Language(iloc);
-				string localeid = locEnum.get_Name(iloc);
-				string displayName = locEnum.get_DisplayName(iloc, m_displayLocaleId);
-				List<LocaleMenuItemData> mainItems;
-				if (!m_locales.TryGetValue(langid, out mainItems))
-				{
-					mainItems = new List<LocaleMenuItemData>();
-					m_locales[langid] = mainItems;
-				}
-				// Todo: second arg should be display name.
-				var data = new LocaleMenuItemData(localeid, displayName);
-				mainItems.Add(data);
+				string langid = localeData.Key;
+				var items = localeData.Value;
+				m_locales[langid] = items.Select(idAndName => new LocaleMenuItemData(idAndName.Id, idAndName.Name)).ToList();
 			}
 
 			// Generate the secondary items. For each key in m_locales,
@@ -365,7 +344,6 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 			else
 				menu.Show(this, new Point(0, Height));
 
-			Marshal.ReleaseComObject(locEnum);
 			base.OnClick(e); // Review JohnT: is this useful or harmful or neither? MS recommends it.
 		}
 
@@ -446,8 +424,6 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 			contextMenu.Show(control, position);
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="overflow gets added to ToolStripItemCollection and disposed there")]
 		private static void CalculateOverflow(ContextMenuStrip contextMenu,
 			ToolStripItemCollection items, int maxHeight)
 		{

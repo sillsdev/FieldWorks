@@ -1,16 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="15.0">
   <PropertyGroup>
     <ProjectType>Local</ProjectType>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{86B57733-A74B-43F1-863F-31A39E60F120}</ProjectGuid>
-    <SccProjectName>
-    </SccProjectName>
-    <SccLocalPath>
-    </SccLocalPath>
-    <SccProvider>
-    </SccProvider>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ApplicationIcon>
@@ -33,7 +27,7 @@
     </FileUpgradeFlags>
     <UpgradeBackupLocation>
     </UpgradeBackupLocation>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <SccAuxPath>
     </SccAuxPath>
     <OldToolsVersion>3.5</OldToolsVersion>
@@ -54,7 +48,7 @@
     <BootstrapperEnabled>true</BootstrapperEnabled>
     <TargetFrameworkProfile />
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <OutputPath>..\..\Output\Debug\</OutputPath>
     <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
     <BaseAddress>285212672</BaseAddress>
@@ -76,9 +70,9 @@
     <DebugType>full</DebugType>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
-    <PlatformTarget>x86</PlatformTarget>
+    <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
     <OutputPath>..\..\Output\Release\</OutputPath>
     <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
     <BaseAddress>285212672</BaseAddress>
@@ -100,26 +94,85 @@
     <DebugType>full</DebugType>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
-    <PlatformTarget>x86</PlatformTarget>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x64' ">
+    <OutputPath>..\..\Output\Debug\</OutputPath>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <BaseAddress>285212672</BaseAddress>
+    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+    <ConfigurationOverrideFile>
+    </ConfigurationOverrideFile>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DocumentationFile>
+    </DocumentationFile>
+    <DebugSymbols>true</DebugSymbols>
+    <FileAlignment>4096</FileAlignment>
+    <NoStdLib>false</NoStdLib>
+    <NoWarn>168,169,219,414,649,1635,1702,1701</NoWarn>
+    <Optimize>false</Optimize>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <RemoveIntegerChecks>false</RemoveIntegerChecks>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <WarningLevel>4</WarningLevel>
+    <DebugType>full</DebugType>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x64' ">
+    <OutputPath>..\..\Output\Release\</OutputPath>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <BaseAddress>285212672</BaseAddress>
+    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+    <ConfigurationOverrideFile>
+    </ConfigurationOverrideFile>
+    <DefineConstants>TRACE</DefineConstants>
+    <DocumentationFile>
+    </DocumentationFile>
+    <DebugSymbols>true</DebugSymbols>
+    <FileAlignment>4096</FileAlignment>
+    <NoStdLib>false</NoStdLib>
+    <NoWarn>168,169,219,414,649,1635,1702,1701</NoWarn>
+    <Optimize>true</Optimize>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <RemoveIntegerChecks>false</RemoveIntegerChecks>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <WarningLevel>4</WarningLevel>
+    <DebugType>full</DebugType>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Accessibility">
       <Name>Accessibility</Name>
     </Reference>
-    <Reference Include="COMInterfaces, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\..\Output\Debug\COMInterfaces.dll</HintPath>
+    <Reference Include="DotNetZip">
+      <HintPath>..\..\packages\DotNetZip.1.11.0\lib\net20\DotNetZip.dll</HintPath>
+    </Reference>
+    <Reference Include="NAudio, Version=1.10.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\NAudio.1.10.0\lib\net35\NAudio.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="SIL.Core.Desktop, Version=4.1.0.0, Culture=neutral, PublicKeyToken=cab3c8c5232dfcf2, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Output\Debug\SIL.Core.Desktop.dll</HintPath>
+    </Reference>
+    <Reference Include="ViewsInterfaces, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\..\Output\Debug\ViewsInterfaces.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
     </Reference>
     <Reference Include="DetailControls, Version=6.1.1.30508, Culture=neutral, PublicKeyToken=null">
       <HintPath>..\..\Output\Debug\DetailControls.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
     </Reference>
-    <Reference Include="ExCss, Version=2.0.2.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="ExCSS, Version=2.0.2.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Downloads\ExCSS.dll</HintPath>
+      <HintPath>..\..\Output\Debug\ExCSS.dll</HintPath>
     </Reference>
-    <Reference Include="FDO, Version=6.1.1.30361, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\..\Output\Debug\FDO.dll</HintPath>
+    <Reference Include="SIL.LCModel, Version=9.0.0.0, Culture=neutral, processorArchitecture=x86">
+      <HintPath>..\..\Output\Debug\SIL.LCModel.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
     </Reference>
     <Reference Include="FdoUi, Version=6.1.1.19955, Culture=neutral, processorArchitecture=MSIL">
@@ -160,9 +213,6 @@
     <Reference Include="Geckofx-Winforms">
       <HintPath>..\..\Output\Debug\Geckofx-Winforms.dll</HintPath>
     </Reference>
-    <Reference Include="DotNetZip">
-      <HintPath>..\..\Output\Debug\DotNetZip.dll</HintPath>
-    </Reference>
     <Reference Include="L10NSharp, Version=1.1.4981.28556, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\L10NSharp.dll</HintPath>
@@ -170,29 +220,9 @@
     <Reference Include="LexTextControls, Version=7.1.0.28634, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
     </Reference>
-    <Reference Include="MessageBoxExLib, Version=8.0.8.15166, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Debug\MessageBoxExLib.dll</HintPath>
-    </Reference>
     <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\DistFiles\Microsoft.Practices.ServiceLocation.dll</HintPath>
-    </Reference>
-    <Reference Include="NetSparkle.Net40, Version=1.0.22.0, Culture=neutral, processorArchitecture=x86" Condition="'$(OS)'!='Unix'">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\DistFiles\NetSparkle.Net40.dll</HintPath>
-    </Reference>
-    <Reference Include="Palaso, Version=2.5.174.0, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Downloads\Palaso.dll</HintPath>
-    </Reference>
-    <Reference Include="Palaso.Lift, Version=1.9.16.1, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Downloads\Palaso.Lift.dll</HintPath>
-    </Reference>
-    <Reference Include="PalasoUIWindowsForms, Version=2.4.24.0, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Downloads\PalasoUIWindowsForms.dll</HintPath>
     </Reference>
     <Reference Include="Reporting, Version=1.0.3685.30341, Culture=neutral, PublicKeyToken=null">
       <HintPath>..\..\Output\Debug\Reporting.dll</HintPath>
@@ -203,7 +233,23 @@
       <SpecificVersion>False</SpecificVersion>
     </Reference>
     <Reference Include="SIL.Archiving">
-      <HintPath>..\..\Downloads\SIL.Archiving.dll</HintPath>
+      <HintPath>..\..\Output\Debug\SIL.Archiving.dll</HintPath>
+    </Reference>
+    <Reference Include="SIL.Core, Version=2.6.0.0, Culture=neutral, PublicKeyToken=cab3c8c5232dfcf2, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Output\Debug\SIL.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="SIL.Lift, Version=3.0.0.0, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Output\Debug\SIL.Lift.dll</HintPath>
+    </Reference>
+    <Reference Include="SIL.Windows.Forms, Version=2.6.0.0, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Output\Debug\SIL.Windows.Forms.dll</HintPath>
+    </Reference>
+    <Reference Include="SIL.WritingSystems, Version=2.6.0.0, Culture=neutral, PublicKeyToken=cab3c8c5232dfcf2, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Output\Debug\SIL.WritingSystems.dll</HintPath>
     </Reference>
     <Reference Include="SimpleRootSite, Version=6.1.1.30383, Culture=neutral, PublicKeyToken=null">
       <HintPath>..\..\Output\Debug\SimpleRootSite.dll</HintPath>
@@ -211,7 +257,6 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Security" />
     <Reference Include="System.Windows.Forms" />
@@ -225,13 +270,14 @@
       <HintPath>..\..\Output\Debug\xCore.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
     </Reference>
-    <Reference Include="BasicUtils, Version=6.1.1.29480, Culture=neutral, PublicKeyToken=null">
+    <Reference Include="SIL.LCModel.Core, Version=9.0.0.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Debug\BasicUtils.dll</HintPath>
+      <HintPath>..\..\Output\Debug\SIL.LCModel.Core.dll</HintPath>
     </Reference>
-    <Reference Include="CoreImpl, Version=6.1.1.30291, Culture=neutral, PublicKeyToken=null">
+    <Reference Include="icu.net">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Debug\CoreImpl.dll</HintPath>
+      <HintPath>..\..\Output\Debug\icu.net.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Widgets, Version=6.1.1.30419, Culture=neutral, PublicKeyToken=null">
       <SpecificVersion>False</SpecificVersion>
@@ -245,13 +291,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\FwCoreDlgControls.dll</HintPath>
     </Reference>
-    <Reference Include="SharedScrUtils, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="SIL.LCModel.Utils, Version=9.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Debug\SharedScrUtils.dll</HintPath>
-    </Reference>
-    <Reference Include="SilUtils, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Debug\SilUtils.dll</HintPath>
+      <HintPath>..\..\Output\Debug\SIL.LCModel.Utils.dll</HintPath>
     </Reference>
     <Reference Include="xCoreInterfaces, Version=6.1.1.20913, Culture=neutral, PublicKeyToken=null">
       <HintPath>..\..\Output\Debug\xCoreInterfaces.dll</HintPath>
@@ -264,6 +306,9 @@
     <Reference Include="XMLViews, Version=1.0.3685.30465, Culture=neutral, PublicKeyToken=null">
       <HintPath>..\..\Output\Debug\XMLViews.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
+    </Reference>
+    <Reference Include="DialogAdapters">
+      <HintPath>..\..\packages\DialogAdapters.0.1.0.32308\lib\net45\DialogAdapters.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -362,6 +407,8 @@
     <Compile Include="IDictionaryConfigurationView.cs" />
     <Compile Include="DictionaryNodeOptions.cs" />
     <Compile Include="GlobalSettingServices.cs" />
+    <Compile Include="ReversalIndexServices.cs" />
+    <Compile Include="SilErrorReportingAdapter.cs" />
     <Compile Include="IDictionaryDetailsView.cs" />
     <Compile Include="IDictionarySenseOptionsView.cs" />
     <Compile Include="IDictionaryGroupingOptionsView.cs" />
@@ -375,7 +422,6 @@
     </Compile>
     <Compile Include="IWebonaryClient.cs" />
     <Compile Include="LegacyConfigurationUtils.cs" />
-    <Compile Include="PalasoErrorReportingAdapter.cs" />
     <Compile Include="ConcDecorator.cs" />
     <Compile Include="CustomListDlg.cs">
       <SubType>Form</SubType>
@@ -685,8 +731,4 @@
   <PropertyGroup>
     <DistFiles>../../DistFiles</DistFiles>
   </PropertyGroup>
-  <ItemGroup>
-    <None Include="gendarme-xWorks.ignore" />
-  </ItemGroup>
-  <ItemGroup />
 </Project>

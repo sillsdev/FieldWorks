@@ -54,7 +54,7 @@ namespace TestGenericLib
 		// object
 		void testProgrammingErrorInCalledMethod()
 		{
-#ifdef WIN32
+#if defined(WIN32) || defined(_M_X64)
 			HRESULT hr = ComMethod(E_UNEXPECTED);
 			unitpp::assert_eq("Got wrong return value for E_UNEXPECTED", E_UNEXPECTED, hr);
 
@@ -75,7 +75,7 @@ namespace TestGenericLib
 		// info object
 		void testProgrammingErrorInSubMethod()
 		{
-#ifdef WIN32
+#if defined(WIN32) || defined(_M_X64)
 			HRESULT hr = OuterComMethod(E_INVALIDARG);
 			unitpp::assert_eq("Got wrong return value for E_INVALIDARG", E_INVALIDARG, hr);
 
@@ -96,7 +96,7 @@ namespace TestGenericLib
 		// object
 		void testOtherErrorInCalledMethod()
 		{
-#ifdef WIN32
+#if defined(WIN32) || defined(_M_X64)
 			HRESULT hr = ComMethod(E_FAIL);
 			unitpp::assert_eq("Got wrong return value for E_FAIL", E_FAIL, hr);
 
@@ -117,7 +117,7 @@ namespace TestGenericLib
 		// info object
 		void testOtherErrorInSubMethod()
 		{
-#ifdef WIN32
+#if defined(WIN32) || defined(_M_X64)
 			HRESULT hr = OuterComMethod(E_ABORT);
 			unitpp::assert_eq("Got wrong return value for E_ABORT", E_ABORT, hr);
 
@@ -138,7 +138,7 @@ namespace TestGenericLib
 		// instead
 		void testCheckHr()
 		{
-#ifdef WIN32
+#if defined(WIN32) || defined(_M_X64)
 			try
 			{
 				CheckHr(ComMethod(E_ACCESSDENIED));

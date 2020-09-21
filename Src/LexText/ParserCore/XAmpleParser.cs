@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015 SIL International
+﻿// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -11,27 +11,27 @@ using System.Linq;
 using System.Text;
 using System.Xml;
 using System.Xml.Linq;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.Utils;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Infrastructure;
+using SIL.ObjectModel;
 using XAmpleManagedWrapper;
 
 namespace SIL.FieldWorks.WordWorks.Parser
 {
-	public class XAmpleParser : FwDisposableBase, IParser
+	public class XAmpleParser : DisposableBase, IParser
 	{
 		private static readonly char[] Digits = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' };
 
 		private XAmpleWrapper m_xample;
 		private readonly string m_dataDir;
-		private readonly FdoCache m_cache;
+		private readonly LcmCache m_cache;
 		private ParserModelChangeListener m_changeListener;
 		private readonly M3ToXAmpleTransformer m_transformer;
 		private readonly string m_database;
 		private bool m_forceUpdate;
 
-		public XAmpleParser(FdoCache cache, string dataDir)
+		public XAmpleParser(LcmCache cache, string dataDir)
 		{
 			m_cache = cache;
 			m_xample = new XAmpleWrapper();
@@ -98,7 +98,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				m_transformer.MakeAmpleFiles(model);
 
 				int maxAnalCount = 20;
-				XElement maxAnalCountElem = model.Elements("M3Dump").Elements("ParserParameters").Elements("XAmple").Elements("MaxAnalysesToReturn").FirstOrDefault();
+				XElement maxAnalCountElem = model.Elements("M3Dump").Elements("ParserParameters").Elements("ParserParameters").Elements("XAmple").Elements("MaxAnalysesToReturn").FirstOrDefault();
 				if (maxAnalCountElem != null)
 				{
 					maxAnalCount = (int) maxAnalCountElem;
@@ -179,7 +179,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			return result;
 		}
 
-		private static bool TryCreateParseMorph(FdoCache cache, XElement morphElem, out ParseMorph morph)
+		private static bool TryCreateParseMorph(LcmCache cache, XElement morphElem, out ParseMorph morph)
 		{
 			XElement formElement = morphElem.Element("MoForm");
 			Debug.Assert(formElement != null);

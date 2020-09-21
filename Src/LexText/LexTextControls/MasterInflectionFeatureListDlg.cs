@@ -10,12 +10,12 @@
 
 using System;
 using System.Windows.Forms;
-using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel;
+using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.LexText.Controls.MGA;
-using System.Diagnostics.CodeAnalysis;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel.Core.KernelInterfaces;
 
 namespace SIL.FieldWorks.LexText.Controls
 {
@@ -29,8 +29,6 @@ namespace SIL.FieldWorks.LexText.Controls
 		{
 		}
 
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "GlossListTreeView gets disposed in base class")]
 		public MasterInflectionFeatureListDlg(string className) : base(className, new GlossListTreeView())
 		{
 		}
@@ -73,9 +71,9 @@ namespace SIL.FieldWorks.LexText.Controls
 					type = m_cache.ServiceLocator.GetInstance<IFsFeatStrucTypeFactory>().Create();
 					m_cache.LanguageProject.MsFeatureSystemOA.TypesOC.Add(type);
 					type.CatalogSourceId = "Infl";
-					foreach (IWritingSystem ws in m_cache.ServiceLocator.WritingSystems.AnalysisWritingSystems)
+					foreach (CoreWritingSystemDefinition ws in m_cache.ServiceLocator.WritingSystems.AnalysisWritingSystems)
 					{
-						var tss = m_cache.TsStrFactory.MakeString("Infl", ws.Handle);
+						var tss = TsStringUtils.MakeString("Infl", ws.Handle);
 						type.Abbreviation.set_String(ws.Handle, tss);
 						type.Name.set_String(ws.Handle, tss);
 					}

@@ -5,8 +5,7 @@
 using System;
 using System.Collections;
 using System.Xml;
-
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using SIL.Utils;
 using XCore;
 
@@ -19,7 +18,7 @@ namespace SIL.FieldWorks.Filters
 	{
 		//protected IWfiWordSet m_wordSet;
 		//protected FdoReferenceCollection m_cases;
-		//protected FdoCache m_cache;
+		//protected LcmCache m_cache;
 		/// <summary></summary>
 		protected int[] m_hvos;
 
@@ -49,7 +48,7 @@ namespace SIL.FieldWorks.Filters
 		/// the ids are valid.
 		/// </summary>
 		/// <param name="cache"></param>
-		internal void ReloadWordSet(FdoCache cache)
+		internal void ReloadWordSet(LcmCache cache)
 		{
 			int hvo = Int32.Parse(m_id);
 			IWfiWordSet wordSet = cache.ServiceLocator.GetObject(hvo) as IWfiWordSet;
@@ -85,7 +84,7 @@ namespace SIL.FieldWorks.Filters
 		public override void InitXml(XmlNode node)
 		{
 			base.InitXml (node);
-			m_id = XmlUtils.GetManditoryAttributeValue(node, "id");
+			m_id = XmlUtils.GetMandatoryAttributeValue(node, "id");
 			m_hvos = XmlUtils.GetMandatoryIntegerListAttributeValue(node, "wordlist");
 		}
 
@@ -105,7 +104,7 @@ namespace SIL.FieldWorks.Filters
 		///// </summary>
 		///// <param name="cache"></param>
 		///// <param name="configuration"></param>
-//		public override void Init(FdoCache cache,XmlNode filterNode)
+//		public override void Init(LcmCache cache,XmlNode filterNode)
 //		{
 ////			m_cache = cache;
 ////			int hvo = m_cache.LangProject.MorphologicalDataOA.TestSetsOC.HvoArray[0];
@@ -160,7 +159,7 @@ namespace SIL.FieldWorks.Filters
 	public  class WfiRecordFilterListProvider : RecordFilterListProvider
 	{
 		/// <summary></summary>
-		protected FdoCache m_cache;
+		protected LcmCache m_cache;
 		// Collection of WordSetFilter objects.
 		/// <summary></summary>
 		protected ArrayList m_filters;
@@ -180,13 +179,14 @@ namespace SIL.FieldWorks.Filters
 		/// Initialize the filter list. this is called because we are an IxCoreColleague
 		/// </summary>
 		/// <param name="mediator">The mediator.</param>
+		/// <param name="propertyTable"></param>
 		/// <param name="configuration">The configuration.</param>
 		/// ------------------------------------------------------------------------------------
-		public override void Init(Mediator mediator, XmlNode configuration)
+		public override void Init(Mediator mediator, PropertyTable propertyTable, XmlNode configuration)
 		{
-			base.Init(mediator, configuration);
+			base.Init(mediator, propertyTable, configuration);
 			m_mediator.AddColleague(this);
-			m_cache = (FdoCache)mediator.PropertyTable.GetValue("cache");
+			m_cache = m_propertyTable.GetValue<LcmCache>("cache");
 			ReLoad();
 		}
 

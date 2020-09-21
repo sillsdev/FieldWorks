@@ -1,30 +1,21 @@
-// Copyright (c) 2004-2013 SIL International
+// Copyright (c) 2004-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: ErrorReport.cs
-// Responsibility:
-//
-// <remarks>
-// </remarks>
-// ---------------------------------------------------------------------------------------------
 
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using System.Windows.Forms;
 using System.Drawing;  // GDI+ stuff
-using System.Drawing.Imaging;  // ImageFormat
-
 using Microsoft.Win32;
-using Palaso.Email;
-using SIL.Utils;
+using SIL.Email;
+using SIL.FieldWorks.Common.FwUtils;
+using SIL.LCModel.Utils;
+using SIL.PlatformUtilities;
+using SIL.Reporting;
+
 
 namespace SIL.Utils
 {
@@ -33,7 +24,7 @@ namespace SIL.Utils
 	/// Summary description for ErrorReporter.
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
-	public class ErrorReporter : Form, IFWDisposable
+	public class ErrorReporter : Form
 	{
 		#region Member variables
 
@@ -72,7 +63,7 @@ namespace SIL.Utils
 		/// ------------------------------------------------------------------------------------
 		protected ErrorReporter(bool isLethal, string emailAddress, bool fReportDuplicateGuidsASAP = false, string errorText = "")
 		{
-			Palaso.Reporting.ErrorReport.AddStandardProperties();
+			Reporting.ErrorReport.AddStandardProperties();
 			m_isLethal = isLethal;
 			m_emailAddress = emailAddress;
 			AccessibleName = GetType().Name;
@@ -138,10 +129,6 @@ namespace SIL.Utils
 		/// Required method for Designer support - do not modify
 		/// the contents of this method with the code editor.
 		/// </summary>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="Variables added to Controls collection and disposed there")]
-		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
-			Justification = "TODO-Linux: LinkLabel.TabStop is missing from Mono")]
 		private void InitializeComponent()
 		{
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ErrorReporter));
@@ -362,8 +349,6 @@ namespace SIL.Utils
 		/// Invoked by a menu command, allows the user to report a problem that didn't crash the program,
 		/// complete with all the context information we attach to crashes (except a stack dump).
 		/// </summary>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="ErrorReporter dialog gets disposed in ModelessClosed method")]
 		public static void ReportProblem(RegistryKey applicationKey, string emailAddress, Form parent)
 		{
 			ErrorReporter e = new ErrorReporter(false, emailAddress);
@@ -380,8 +365,6 @@ namespace SIL.Utils
 		/// <summary>
 		/// This is called when FLEx discovers duplicate GUIDs in the fwdata file.
 		/// </summary>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "ErrorReporter dialog gets disposed in ModelessClosed method")]
 		public static void ReportDuplicateGuids(RegistryKey applicationKey, string emailAddress, Form parent, string errorText)
 		{
 			ErrorReporter e = new ErrorReporter(false, emailAddress, true, errorText);
@@ -394,8 +377,6 @@ namespace SIL.Utils
 		/// Invoked by a menu command, allows the user to make a suggestion,
 		/// complete with all the context information we attach to crashes (except a stack dump).
 		/// </summary>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="ErrorReporter dialog gets disposed in ModelessClosed method")]
 		public static void MakeSuggestion(RegistryKey applicationKey, string emailAddress, Form parent)
 		{
 			ErrorReporter e = new ErrorReporter(false, emailAddress);
@@ -405,19 +386,6 @@ namespace SIL.Utils
 			e.Closed += ModelessClosed;
 		}
 
-		#endregion
-
-		#region Properties
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		///make this false during automated testing
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public static bool OkToInteractWithUser
-		{
-			set {s_isOkToInteractWithUser = value;}
-			get {return s_isOkToInteractWithUser;}
-		}
 		#endregion
 
 		#region Methods
@@ -444,7 +412,7 @@ namespace SIL.Utils
 		/// ------------------------------------------------------------------------------------
 		public static void AddProperty(string label, string contents)
 		{
-			Palaso.Reporting.ErrorReport.AddProperty(label, contents);
+			Reporting.ErrorReport.AddProperty(label, contents);
 		}
 
 		private string m_viewDetailsOriginalText;
@@ -567,13 +535,13 @@ namespace SIL.Utils
 			Exception innerMostException = null;
 			if (error != null)
 			{
-				detailsText.AppendLine(ExceptionHelper.GetHiearchicalExceptionInfo(error, out innerMostException));
+				detailsText.AppendLine(ExceptionHelper.GetHiearchicalExceptionInfo(error, ref innerMostException));
 
 				// if the exception had inner exceptions, show the inner-most exception first, since
 				// that is usually the one we want the developer to read.
 				if (innerMostException != null)
 				{
-					StringBuilder innerException = new StringBuilder();
+					var innerException = new StringBuilder();
 					innerException.AppendLine("Inner most exception:");
 					innerException.AppendLine(ExceptionHelper.GetExceptionText(innerMostException));
 					innerException.AppendLine();
@@ -583,8 +551,8 @@ namespace SIL.Utils
 			}
 
 			detailsText.AppendLine("Additional information about the computer and project:");
-			foreach (string label in Palaso.Reporting.ErrorReport.Properties.Keys)
-				detailsText.AppendLine(label + ": " + Palaso.Reporting.ErrorReport.Properties[label]);
+			foreach (string label in Reporting.ErrorReport.Properties.Keys)
+				detailsText.AppendLine(label + ": " + Reporting.ErrorReport.Properties[label]);
 
 			if (innerMostException != null)
 				error = innerMostException;
@@ -631,7 +599,7 @@ namespace SIL.Utils
 
 			int count = (int)applicationKey.GetValue(sPropName, 0) + 1;
 			applicationKey.SetValue(sPropName, count);
-			Palaso.Reporting.ErrorReport.AddProperty(sPropName, count.ToString());
+			Reporting.ErrorReport.AddProperty(sPropName, count.ToString());
 		}
 
 		private static void UpdateAppRuntime(RegistryKey applicationKey)
@@ -653,12 +621,12 @@ namespace SIL.Utils
 				applicationKey.SetValue("TotalAppRuntime", csec);
 			}
 			int cmin = csec / 60;
-			Palaso.Reporting.ErrorReport.AddProperty("TotalRuntime",
+			Reporting.ErrorReport.AddProperty("TotalRuntime",
 				String.Format("{0}:{1:d2}:{2:d2}", cmin / 60, cmin % 60, csec % 60));
 			if (secBeforeCrash > 0)
 			{
 				int minBeforeCrash = secBeforeCrash / 60;
-				Palaso.Reporting.ErrorReport.AddProperty("RuntimeBeforeCrash",
+				Reporting.ErrorReport.AddProperty("RuntimeBeforeCrash",
 					String.Format("{0}:{1:d2}:{2:d2}", minBeforeCrash / 60, minBeforeCrash % 60, secBeforeCrash % 60));
 			}
 		}
@@ -728,20 +696,21 @@ namespace SIL.Utils
 				// called from the Finalizer thread
 				if (Thread.CurrentThread.GetApartmentState() == ApartmentState.STA)
 				{
-#if __MonoCS__
-					// Workaround for Xamarin bug #4959. I had a mono fix for that bug
-					// but that doesn't work with FW - I couldn't figure out why not.
-					// This is a dirty hack but at least works :-)
-					var clipboardAtom = gdk_atom_intern("CLIPBOARD", true);
-					var clipboard = gtk_clipboard_get(clipboardAtom);
-					if (clipboard != IntPtr.Zero)
+					if (Platform.IsMono)
 					{
-						gtk_clipboard_set_text(clipboard, body, -1);
-						gtk_clipboard_store(clipboard);
+						// Workaround for Xamarin bug #4959. I had a mono fix for that bug
+						// but that doesn't work with FW - I couldn't figure out why not.
+						// This is a dirty hack but at least works :-)
+						var clipboardAtom = gdk_atom_intern("CLIPBOARD", true);
+						var clipboard = gtk_clipboard_get(clipboardAtom);
+						if (clipboard != IntPtr.Zero)
+						{
+							gtk_clipboard_set_text(clipboard, body, -1);
+							gtk_clipboard_store(clipboard);
+						}
 					}
-#else
-					ClipboardUtils.SetDataObject(body, true);
-#endif
+					else
+						ClipboardUtils.SetDataObject(body, true);
 				}
 				else
 					Logger.WriteEvent(body);
@@ -759,21 +728,19 @@ namespace SIL.Utils
 			Application.Exit();
 		}
 
-#if __MonoCS__
 		// Workaround for Xamarin bug #4959
 
 		[DllImport("libgdk-x11-2.0")]
-		internal extern static IntPtr gdk_atom_intern(string atomName, bool onlyIfExists);
+		internal static extern IntPtr gdk_atom_intern(string atomName, bool onlyIfExists);
 
 		[DllImport("libgtk-x11-2.0")]
-		internal extern static IntPtr gtk_clipboard_get(IntPtr atom);
+		internal static extern IntPtr gtk_clipboard_get(IntPtr atom);
 
 		[DllImport("libgtk-x11-2.0")]
-		internal extern static void gtk_clipboard_store(IntPtr clipboard);
+		internal static extern void gtk_clipboard_store(IntPtr clipboard);
 
 		[DllImport("libgtk-x11-2.0")]
-		internal extern static void gtk_clipboard_set_text(IntPtr clipboard, [MarshalAs(UnmanagedType.LPStr)] string text, int len);
-#endif
+		internal static extern void gtk_clipboard_set_text(IntPtr clipboard, [MarshalAs(UnmanagedType.LPStr)] string text, int len);
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -799,8 +766,6 @@ namespace SIL.Utils
 		/// </summary>
 		/// <param name="e"></param>
 		/// ------------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "e.Graphics returns a reference")]
 		protected override void OnPaint(PaintEventArgs e)
 		{
 			if (m_showChips)

@@ -17,4 +17,5 @@ import "FwKernelPs.idl";	// includes Language
 
 #define NO_COCLASSES
 
+#include "Render.idh"
 #include "Views.idh"

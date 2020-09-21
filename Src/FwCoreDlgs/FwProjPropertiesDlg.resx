@@ -135,7 +135,7 @@
   </data>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="m_btnHelp.Location" type="System.Drawing.Point, System.Drawing">
-    <value>296, 392</value>
+    <value>296, 418</value>
   </data>
   <assembly alias="mscorlib" name="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="m_btnHelp.ShowHelp" type="System.Boolean, mscorlib">
@@ -175,7 +175,7 @@
     <value>NoControl</value>
   </data>
   <data name="m_btnCancel.Location" type="System.Drawing.Point, System.Drawing">
-    <value>216, 392</value>
+    <value>216, 418</value>
   </data>
   <data name="m_btnCancel.ShowHelp" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -247,7 +247,7 @@
     <value>lineControl3</value>
   </data>
   <data name="&gt;&gt;lineControl3.Type" xml:space="preserve">
-    <value>SIL.FieldWorks.Common.Controls.LineControl, FwControls, Version=8.0.1.16774, Culture=neutral, PublicKeyToken=null</value>
+    <value>SIL.FieldWorks.Common.Controls.LineControl, FwControls, Version=9.0.6.35194, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;lineControl3.Parent" xml:space="preserve">
     <value>m_tpGeneral</value>
@@ -259,7 +259,7 @@
     <value>lineControl2</value>
   </data>
   <data name="&gt;&gt;lineControl2.Type" xml:space="preserve">
-    <value>SIL.FieldWorks.Common.Controls.LineControl, FwControls, Version=8.0.1.16774, Culture=neutral, PublicKeyToken=null</value>
+    <value>SIL.FieldWorks.Common.Controls.LineControl, FwControls, Version=9.0.6.35194, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;lineControl2.Parent" xml:space="preserve">
     <value>m_tpGeneral</value>
@@ -271,7 +271,7 @@
     <value>lineControl1</value>
   </data>
   <data name="&gt;&gt;lineControl1.Type" xml:space="preserve">
-    <value>SIL.FieldWorks.Common.Controls.LineControl, FwControls, Version=8.0.1.16774, Culture=neutral, PublicKeyToken=null</value>
+    <value>SIL.FieldWorks.Common.Controls.LineControl, FwControls, Version=9.0.6.35194, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;lineControl1.Parent" xml:space="preserve">
     <value>m_tpGeneral</value>
@@ -418,7 +418,7 @@
     <value>False</value>
   </data>
   <data name="m_tpGeneral.Size" type="System.Drawing.Size, System.Drawing">
-    <value>360, 350</value>
+    <value>360, 378</value>
   </data>
   <data name="m_tpGeneral.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
@@ -437,6 +437,9 @@
   </data>
   <data name="&gt;&gt;m_tpGeneral.ZOrder" xml:space="preserve">
     <value>0</value>
+  </data>
+  <data name="m_tbLocation.AccessibleDescription" xml:space="preserve">
+    <value />
   </data>
   <data name="m_tbLocation.AccessibleName" xml:space="preserve">
     <value>m_tbLocation</value>
@@ -490,7 +493,7 @@
     <value>lineControl3</value>
   </data>
   <data name="&gt;&gt;lineControl3.Type" xml:space="preserve">
-    <value>SIL.FieldWorks.Common.Controls.LineControl, FwControls, Version=8.0.1.16774, Culture=neutral, PublicKeyToken=null</value>
+    <value>SIL.FieldWorks.Common.Controls.LineControl, FwControls, Version=9.0.6.35194, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;lineControl3.Parent" xml:space="preserve">
     <value>m_tpGeneral</value>
@@ -520,7 +523,7 @@
     <value>lineControl2</value>
   </data>
   <data name="&gt;&gt;lineControl2.Type" xml:space="preserve">
-    <value>SIL.FieldWorks.Common.Controls.LineControl, FwControls, Version=8.0.1.16774, Culture=neutral, PublicKeyToken=null</value>
+    <value>SIL.FieldWorks.Common.Controls.LineControl, FwControls, Version=9.0.6.35194, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;lineControl2.Parent" xml:space="preserve">
     <value>m_tpGeneral</value>
@@ -547,7 +550,7 @@
     <value>lineControl1</value>
   </data>
   <data name="&gt;&gt;lineControl1.Type" xml:space="preserve">
-    <value>SIL.FieldWorks.Common.Controls.LineControl, FwControls, Version=8.0.1.16774, Culture=neutral, PublicKeyToken=null</value>
+    <value>SIL.FieldWorks.Common.Controls.LineControl, FwControls, Version=9.0.6.35194, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;lineControl1.Parent" xml:space="preserve">
     <value>m_tpGeneral</value>
@@ -560,12 +563,12 @@
   </metadata>
   <data name="m_picLangProgFileBox.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
-        iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
-        YQUAAAAgY0hSTQAAeiYAAICEAAD6AAAAgOgAAHUwAADqYAAAOpgAABdwnLpRPAAAAOFJREFUWEftl1EO
-        hCAMRDmaR+NovRm7A+mG1aGJpq0/xDQxGp3XoRQorbx7vSzfygYwHSgwKDBQfUsACIvUkNCklgDR4kgM
-        GhQgQ3wJkCVOATLFLwCRlb5K7K8GsrOnDuBhrb6hQmw6UwcA4DX39V+3hoAB4BkmrIh0uOOQVr4xQKW/
-        W33n4sAMMECGSwqVDgBBjVQHZuHzfegQPC1K1yK0+gSE2Hs3AO0PrFta09YC0B7wWw01g4w+MIunA5zF
-        KYBnO54bERO/ADyteOu7efvFTiB9Txi9HFtHn30u2A5sBz7TNi6KFdHSiQAAAABJRU5ErkJggg==
+        iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6
+        JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAA4ElEQVRYR8WOARaDMAhDPZpH82jczBmw
+        a1aL23y0LC+UUubPsieL2hxRmyNqc0TtVccPZZiVUXGfwoLINsRfA4yGl1NZFWuaAS+98ip6HrzclZkB
+        L7N3AFxGuoV3A/SWIvxXgG2LdQExuNgN0C4+dVgAzLApInpfV9mXw/Yu+ub9D2doADttzrOpAdhTA9x5
+        aICnDguAmfcR2HsPC1Dm2Gnt7cN3ATAD9+cAT+wFYLiytUwK0MIhKxQg0hygB4esnEsjjG97cMjKuTTK
+        FXcVtTmiNkfU5ojaHFGbI2oztC8v0zYuis7NOFIAAAAASUVORK5CYII=
 </value>
   </data>
   <data name="m_picLangProgFileBox.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
@@ -952,6 +955,18 @@
   <metadata name="label6.GenerateMember" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>False</value>
   </metadata>
+  <data name="&gt;&gt;m_addWSsToSldrCheckBox.Name" xml:space="preserve">
+    <value>m_addWSsToSldrCheckBox</value>
+  </data>
+  <data name="&gt;&gt;m_addWSsToSldrCheckBox.Type" xml:space="preserve">
+    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_addWSsToSldrCheckBox.Parent" xml:space="preserve">
+    <value>m_tpWritingSystems</value>
+  </data>
+  <data name="&gt;&gt;m_addWSsToSldrCheckBox.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
   <data name="&gt;&gt;m_btnAnalMoveUp.Name" xml:space="preserve">
     <value>m_btnAnalMoveUp</value>
   </data>
@@ -962,7 +977,7 @@
     <value>m_tpWritingSystems</value>
   </data>
   <data name="&gt;&gt;m_btnAnalMoveUp.ZOrder" xml:space="preserve">
-    <value>0</value>
+    <value>1</value>
   </data>
   <data name="&gt;&gt;m_btnAnalMoveDown.Name" xml:space="preserve">
     <value>m_btnAnalMoveDown</value>
@@ -974,7 +989,7 @@
     <value>m_tpWritingSystems</value>
   </data>
   <data name="&gt;&gt;m_btnAnalMoveDown.ZOrder" xml:space="preserve">
-    <value>1</value>
+    <value>2</value>
   </data>
   <data name="&gt;&gt;m_btnDelAnalWs.Name" xml:space="preserve">
     <value>m_btnDelAnalWs</value>
@@ -986,7 +1001,7 @@
     <value>m_tpWritingSystems</value>
   </data>
   <data name="&gt;&gt;m_btnDelAnalWs.ZOrder" xml:space="preserve">
-    <value>2</value>
+    <value>3</value>
   </data>
   <data name="&gt;&gt;m_btnModifyAnalWs.Name" xml:space="preserve">
     <value>m_btnModifyAnalWs</value>
@@ -998,7 +1013,7 @@
     <value>m_tpWritingSystems</value>
   </data>
   <data name="&gt;&gt;m_btnModifyAnalWs.ZOrder" xml:space="preserve">
-    <value>3</value>
+    <value>4</value>
   </data>
   <data name="&gt;&gt;m_btnAddAnalWs.Name" xml:space="preserve">
     <value>m_btnAddAnalWs</value>
@@ -1010,7 +1025,7 @@
     <value>m_tpWritingSystems</value>
   </data>
   <data name="&gt;&gt;m_btnAddAnalWs.ZOrder" xml:space="preserve">
-    <value>4</value>
+    <value>5</value>
   </data>
   <data name="&gt;&gt;m_btnVernMoveUp.Name" xml:space="preserve">
     <value>m_btnVernMoveUp</value>
@@ -1022,7 +1037,7 @@
     <value>m_tpWritingSystems</value>
   </data>
   <data name="&gt;&gt;m_btnVernMoveUp.ZOrder" xml:space="preserve">
-    <value>5</value>
+    <value>6</value>
   </data>
   <data name="&gt;&gt;m_btnVernMoveDown.Name" xml:space="preserve">
     <value>m_btnVernMoveDown</value>
@@ -1034,7 +1049,7 @@
     <value>m_tpWritingSystems</value>
   </data>
   <data name="&gt;&gt;m_btnVernMoveDown.ZOrder" xml:space="preserve">
-    <value>6</value>
+    <value>7</value>
   </data>
   <data name="&gt;&gt;m_btnDelVernWs.Name" xml:space="preserve">
     <value>m_btnDelVernWs</value>
@@ -1046,7 +1061,7 @@
     <value>m_tpWritingSystems</value>
   </data>
   <data name="&gt;&gt;m_btnDelVernWs.ZOrder" xml:space="preserve">
-    <value>7</value>
+    <value>8</value>
   </data>
   <data name="&gt;&gt;m_btnModifyVernWs.Name" xml:space="preserve">
     <value>m_btnModifyVernWs</value>
@@ -1058,7 +1073,7 @@
     <value>m_tpWritingSystems</value>
   </data>
   <data name="&gt;&gt;m_btnModifyVernWs.ZOrder" xml:space="preserve">
-    <value>8</value>
+    <value>9</value>
   </data>
   <data name="&gt;&gt;m_btnAddVernWs.Name" xml:space="preserve">
     <value>m_btnAddVernWs</value>
@@ -1070,7 +1085,7 @@
     <value>m_tpWritingSystems</value>
   </data>
   <data name="&gt;&gt;m_btnAddVernWs.ZOrder" xml:space="preserve">
-    <value>9</value>
+    <value>10</value>
   </data>
   <data name="&gt;&gt;m_lstAnalWs.Name" xml:space="preserve">
     <value>m_lstAnalWs</value>
@@ -1082,7 +1097,7 @@
     <value>m_tpWritingSystems</value>
   </data>
   <data name="&gt;&gt;m_lstAnalWs.ZOrder" xml:space="preserve">
-    <value>10</value>
+    <value>11</value>
   </data>
   <data name="&gt;&gt;m_lstVernWs.Name" xml:space="preserve">
     <value>m_lstVernWs</value>
@@ -1094,7 +1109,7 @@
     <value>m_tpWritingSystems</value>
   </data>
   <data name="&gt;&gt;m_lstVernWs.ZOrder" xml:space="preserve">
-    <value>11</value>
+    <value>12</value>
   </data>
   <data name="&gt;&gt;label9.Name" xml:space="preserve">
     <value>label9</value>
@@ -1106,7 +1121,7 @@
     <value>m_tpWritingSystems</value>
   </data>
   <data name="&gt;&gt;label9.ZOrder" xml:space="preserve">
-    <value>12</value>
+    <value>13</value>
   </data>
   <data name="&gt;&gt;label8.Name" xml:space="preserve">
     <value>label8</value>
@@ -1118,7 +1133,7 @@
     <value>m_tpWritingSystems</value>
   </data>
   <data name="&gt;&gt;label8.ZOrder" xml:space="preserve">
-    <value>13</value>
+    <value>14</value>
   </data>
   <data name="&gt;&gt;label6.Name" xml:space="preserve">
     <value>label6</value>
@@ -1130,7 +1145,7 @@
     <value>m_tpWritingSystems</value>
   </data>
   <data name="&gt;&gt;label6.ZOrder" xml:space="preserve">
-    <value>14</value>
+    <value>15</value>
   </data>
   <data name="m_tpWritingSystems.Location" type="System.Drawing.Point, System.Drawing">
     <value>4, 22</value>
@@ -1139,7 +1154,7 @@
     <value>False</value>
   </data>
   <data name="m_tpWritingSystems.Size" type="System.Drawing.Size, System.Drawing">
-    <value>360, 350</value>
+    <value>360, 378</value>
   </data>
   <data name="m_tpWritingSystems.TabIndex" type="System.Int32, mscorlib">
     <value>1</value>
@@ -1158,6 +1173,36 @@
   </data>
   <data name="&gt;&gt;m_tpWritingSystems.ZOrder" xml:space="preserve">
     <value>1</value>
+  </data>
+  <data name="m_addWSsToSldrCheckBox.CheckAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+    <value>TopLeft</value>
+  </data>
+  <data name="m_addWSsToSldrCheckBox.Location" type="System.Drawing.Point, System.Drawing">
+    <value>16, 340</value>
+  </data>
+  <data name="m_addWSsToSldrCheckBox.Size" type="System.Drawing.Size, System.Drawing">
+    <value>328, 33</value>
+  </data>
+  <data name="m_addWSsToSldrCheckBox.TabIndex" type="System.Int32, mscorlib">
+    <value>15</value>
+  </data>
+  <data name="m_addWSsToSldrCheckBox.Text" xml:space="preserve">
+    <value>Allow writing system information to be added to the SIL Locale Data Repository</value>
+  </data>
+  <data name="m_addWSsToSldrCheckBox.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+    <value>TopLeft</value>
+  </data>
+  <data name="&gt;&gt;m_addWSsToSldrCheckBox.Name" xml:space="preserve">
+    <value>m_addWSsToSldrCheckBox</value>
+  </data>
+  <data name="&gt;&gt;m_addWSsToSldrCheckBox.Type" xml:space="preserve">
+    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_addWSsToSldrCheckBox.Parent" xml:space="preserve">
+    <value>m_tpWritingSystems</value>
+  </data>
+  <data name="&gt;&gt;m_addWSsToSldrCheckBox.ZOrder" xml:space="preserve">
+    <value>0</value>
   </data>
   <data name="m_btnAnalMoveUp.Enabled" type="System.Boolean, mscorlib">
     <value>False</value>
@@ -1190,7 +1235,7 @@
     <value>m_tpWritingSystems</value>
   </data>
   <data name="&gt;&gt;m_btnAnalMoveUp.ZOrder" xml:space="preserve">
-    <value>0</value>
+    <value>1</value>
   </data>
   <data name="m_btnAnalMoveDown.Enabled" type="System.Boolean, mscorlib">
     <value>False</value>
@@ -1223,7 +1268,7 @@
     <value>m_tpWritingSystems</value>
   </data>
   <data name="&gt;&gt;m_btnAnalMoveDown.ZOrder" xml:space="preserve">
-    <value>1</value>
+    <value>2</value>
   </data>
   <data name="m_btnDelAnalWs.HelpString" xml:space="preserve">
     <value>Removes the selected analysis writing system from the project, but not from FieldWorks. Some text may become hidden. Use the Add button to return the writing system to the project.</value>
@@ -1259,7 +1304,7 @@
     <value>m_tpWritingSystems</value>
   </data>
   <data name="&gt;&gt;m_btnDelAnalWs.ZOrder" xml:space="preserve">
-    <value>2</value>
+    <value>3</value>
   </data>
   <data name="m_btnModifyAnalWs.HelpString" xml:space="preserve">
     <value>Opens a dialog so you can modify the features of the selected writing system.</value>
@@ -1295,17 +1340,16 @@
     <value>m_tpWritingSystems</value>
   </data>
   <data name="&gt;&gt;m_btnModifyAnalWs.ZOrder" xml:space="preserve">
-    <value>3</value>
+    <value>4</value>
   </data>
   <data name="m_btnAddAnalWs.HelpString" xml:space="preserve">
     <value>Opens a menu so you can add a analysis writing system to this project.  You may select an existing writing system or define a new one.</value>
   </data>
   <data name="m_btnAddAnalWs.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
-        iVBORw0KGgoAAAANSUhEUgAAAAsAAAAHCAYAAADebrddAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
-        YQUAAAAgY0hSTQAAeiYAAICEAAD6AAAAgOgAAHUwAADqYAAAOpgAABdwnLpRPAAAADVJREFUKFNj+M9A
-        PIQrZWAAMnFgmHEo5mJTjGwvhiOQNaA7EKuLQRqw+YQE7wG9RHxY/GcAAJYYiXc60TkqAAAAAElFTkSu
-        QmCC
+        iVBORw0KGgoAAAANSUhEUgAAAAsAAAAHCAYAAADebrddAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6
+        JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAANElEQVQoU2P4TwJEMEBMHBiuBsYAc9AU
+        gTCKPDIHBHEpBEEkJgJiUwiCSEzCEIlJCP5nAACWGIl3zGbZcQAAAABJRU5ErkJggg==
 </value>
   </data>
   <data name="m_btnAddAnalWs.ImageAlign" type="System.Drawing.ContentAlignment, System.Drawing">
@@ -1342,7 +1386,7 @@
     <value>m_tpWritingSystems</value>
   </data>
   <data name="&gt;&gt;m_btnAddAnalWs.ZOrder" xml:space="preserve">
-    <value>4</value>
+    <value>5</value>
   </data>
   <data name="m_btnVernMoveUp.Enabled" type="System.Boolean, mscorlib">
     <value>False</value>
@@ -1375,10 +1419,13 @@
     <value>m_tpWritingSystems</value>
   </data>
   <data name="&gt;&gt;m_btnVernMoveUp.ZOrder" xml:space="preserve">
-    <value>5</value>
+    <value>6</value>
   </data>
   <data name="m_btnVernMoveDown.Enabled" type="System.Boolean, mscorlib">
     <value>False</value>
+  </data>
+  <data name="m_btnVernMoveDown.HelpKeyword" xml:space="preserve">
+    <value />
   </data>
   <data name="m_btnVernMoveDown.HelpString" xml:space="preserve">
     <value>Moves the selected vernacular writing system down one position in the list.</value>
@@ -1408,7 +1455,7 @@
     <value>m_tpWritingSystems</value>
   </data>
   <data name="&gt;&gt;m_btnVernMoveDown.ZOrder" xml:space="preserve">
-    <value>6</value>
+    <value>7</value>
   </data>
   <data name="m_btnDelVernWs.HelpString" xml:space="preserve">
     <value>Removes the selected vernacular writing system from the project, but not from FieldWorks. Some text may become hidden. Use the Add button to return the writing system to the project.</value>
@@ -1444,7 +1491,7 @@
     <value>m_tpWritingSystems</value>
   </data>
   <data name="&gt;&gt;m_btnDelVernWs.ZOrder" xml:space="preserve">
-    <value>7</value>
+    <value>8</value>
   </data>
   <data name="m_btnModifyVernWs.HelpString" xml:space="preserve">
     <value>Opens a dialog so you can modify the features of the selected writing system.</value>
@@ -1480,17 +1527,16 @@
     <value>m_tpWritingSystems</value>
   </data>
   <data name="&gt;&gt;m_btnModifyVernWs.ZOrder" xml:space="preserve">
-    <value>8</value>
+    <value>9</value>
   </data>
   <data name="m_btnAddVernWs.HelpString" xml:space="preserve">
     <value>Opens a menu so you can add a vernacular writing system to this project.  You may select an existing writing system or define a new one.</value>
   </data>
   <data name="m_btnAddVernWs.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
-        iVBORw0KGgoAAAANSUhEUgAAAAsAAAAHCAYAAADebrddAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
-        YQUAAAAgY0hSTQAAeiYAAICEAAD6AAAAgOgAAHUwAADqYAAAOpgAABdwnLpRPAAAADVJREFUKFNj+M9A
-        PIQrZWAAMnFgmHEo5mJTjGwvhiOQNaA7EKuLQRqw+YQE7wG9RHxY/GcAAJYYiXc60TkqAAAAAElFTkSu
-        QmCC
+        iVBORw0KGgoAAAANSUhEUgAAAAsAAAAHCAYAAADebrddAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6
+        JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAANElEQVQoU2P4TwJEMEBMHBiuBsYAc9AU
+        gTCKPDIHBHEpBEEkJgJiUwiCSEzCEIlJCP5nAACWGIl3zGbZcQAAAABJRU5ErkJggg==
 </value>
   </data>
   <data name="m_btnAddVernWs.ImageAlign" type="System.Drawing.ContentAlignment, System.Drawing">
@@ -1527,7 +1573,7 @@
     <value>m_tpWritingSystems</value>
   </data>
   <data name="&gt;&gt;m_btnAddVernWs.ZOrder" xml:space="preserve">
-    <value>9</value>
+    <value>10</value>
   </data>
   <data name="m_lstAnalWs.HelpString" xml:space="preserve">
     <value>Displays available analysis writing systems in this project.  Selected check boxes indicate those that appear in single-line text fields and their vertical order.</value>
@@ -1554,7 +1600,7 @@
     <value>m_tpWritingSystems</value>
   </data>
   <data name="&gt;&gt;m_lstAnalWs.ZOrder" xml:space="preserve">
-    <value>10</value>
+    <value>11</value>
   </data>
   <data name="m_lstVernWs.HelpString" xml:space="preserve">
     <value>Displays available vernacular writing systems in this project.  Selected check boxes indicate those that appear in single-line text fields and their vertical order.</value>
@@ -1581,7 +1627,7 @@
     <value>m_tpWritingSystems</value>
   </data>
   <data name="&gt;&gt;m_lstVernWs.ZOrder" xml:space="preserve">
-    <value>11</value>
+    <value>12</value>
   </data>
   <metadata name="label9.GenerateMember" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>False</value>
@@ -1617,7 +1663,7 @@
     <value>m_tpWritingSystems</value>
   </data>
   <data name="&gt;&gt;label9.ZOrder" xml:space="preserve">
-    <value>12</value>
+    <value>13</value>
   </data>
   <metadata name="label8.GenerateMember" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>False</value>
@@ -1653,7 +1699,7 @@
     <value>m_tpWritingSystems</value>
   </data>
   <data name="&gt;&gt;label8.ZOrder" xml:space="preserve">
-    <value>13</value>
+    <value>14</value>
   </data>
   <metadata name="label6.GenerateMember" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>False</value>
@@ -1686,11 +1732,134 @@
     <value>m_tpWritingSystems</value>
   </data>
   <data name="&gt;&gt;label6.ZOrder" xml:space="preserve">
-    <value>14</value>
+    <value>15</value>
   </data>
   <metadata name="m_tpExternalLinks.GenerateMember" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>False</value>
   </metadata>
+  <metadata name="label13.GenerateMember" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>False</value>
+  </metadata>
+  <metadata name="label12.GenerateMember" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>False</value>
+  </metadata>
+  <metadata name="label11.GenerateMember" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>False</value>
+  </metadata>
+  <metadata name="label10.GenerateMember" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>False</value>
+  </metadata>
+  <data name="&gt;&gt;linkLbl_useDefaultFolder.Name" xml:space="preserve">
+    <value>linkLbl_useDefaultFolder</value>
+  </data>
+  <data name="&gt;&gt;linkLbl_useDefaultFolder.Type" xml:space="preserve">
+    <value>System.Windows.Forms.LinkLabel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;linkLbl_useDefaultFolder.Parent" xml:space="preserve">
+    <value>m_tpExternalLinks</value>
+  </data>
+  <data name="&gt;&gt;linkLbl_useDefaultFolder.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="&gt;&gt;label13.Name" xml:space="preserve">
+    <value>label13</value>
+  </data>
+  <data name="&gt;&gt;label13.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;label13.Parent" xml:space="preserve">
+    <value>m_tpExternalLinks</value>
+  </data>
+  <data name="&gt;&gt;label13.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="&gt;&gt;btnLinkedFilesBrowse.Name" xml:space="preserve">
+    <value>btnLinkedFilesBrowse</value>
+  </data>
+  <data name="&gt;&gt;btnLinkedFilesBrowse.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;btnLinkedFilesBrowse.Parent" xml:space="preserve">
+    <value>m_tpExternalLinks</value>
+  </data>
+  <data name="&gt;&gt;btnLinkedFilesBrowse.ZOrder" xml:space="preserve">
+    <value>2</value>
+  </data>
+  <data name="&gt;&gt;txtExtLnkEdit.Name" xml:space="preserve">
+    <value>txtExtLnkEdit</value>
+  </data>
+  <data name="&gt;&gt;txtExtLnkEdit.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;txtExtLnkEdit.Parent" xml:space="preserve">
+    <value>m_tpExternalLinks</value>
+  </data>
+  <data name="&gt;&gt;txtExtLnkEdit.ZOrder" xml:space="preserve">
+    <value>3</value>
+  </data>
+  <data name="&gt;&gt;label12.Name" xml:space="preserve">
+    <value>label12</value>
+  </data>
+  <data name="&gt;&gt;label12.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;label12.Parent" xml:space="preserve">
+    <value>m_tpExternalLinks</value>
+  </data>
+  <data name="&gt;&gt;label12.ZOrder" xml:space="preserve">
+    <value>4</value>
+  </data>
+  <data name="&gt;&gt;label11.Name" xml:space="preserve">
+    <value>label11</value>
+  </data>
+  <data name="&gt;&gt;label11.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;label11.Parent" xml:space="preserve">
+    <value>m_tpExternalLinks</value>
+  </data>
+  <data name="&gt;&gt;label11.ZOrder" xml:space="preserve">
+    <value>5</value>
+  </data>
+  <data name="&gt;&gt;label10.Name" xml:space="preserve">
+    <value>label10</value>
+  </data>
+  <data name="&gt;&gt;label10.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;label10.Parent" xml:space="preserve">
+    <value>m_tpExternalLinks</value>
+  </data>
+  <data name="&gt;&gt;label10.ZOrder" xml:space="preserve">
+    <value>6</value>
+  </data>
+  <data name="m_tpExternalLinks.Location" type="System.Drawing.Point, System.Drawing">
+    <value>4, 22</value>
+  </data>
+  <data name="m_tpExternalLinks.ShowHelp" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
+  <data name="m_tpExternalLinks.Size" type="System.Drawing.Size, System.Drawing">
+    <value>360, 378</value>
+  </data>
+  <data name="m_tpExternalLinks.TabIndex" type="System.Int32, mscorlib">
+    <value>2</value>
+  </data>
+  <data name="m_tpExternalLinks.Text" xml:space="preserve">
+    <value>Linked Files</value>
+  </data>
+  <data name="&gt;&gt;m_tpExternalLinks.Name" xml:space="preserve">
+    <value>m_tpExternalLinks</value>
+  </data>
+  <data name="&gt;&gt;m_tpExternalLinks.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TabPage, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_tpExternalLinks.Parent" xml:space="preserve">
+    <value>m_tabControl</value>
+  </data>
+  <data name="&gt;&gt;m_tpExternalLinks.ZOrder" xml:space="preserve">
+    <value>2</value>
+  </data>
   <data name="linkLbl_useDefaultFolder.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
@@ -1913,33 +2082,6 @@
   <data name="&gt;&gt;label10.ZOrder" xml:space="preserve">
     <value>6</value>
   </data>
-  <data name="m_tpExternalLinks.Location" type="System.Drawing.Point, System.Drawing">
-    <value>4, 22</value>
-  </data>
-  <data name="m_tpExternalLinks.ShowHelp" type="System.Boolean, mscorlib">
-    <value>False</value>
-  </data>
-  <data name="m_tpExternalLinks.Size" type="System.Drawing.Size, System.Drawing">
-    <value>360, 350</value>
-  </data>
-  <data name="m_tpExternalLinks.TabIndex" type="System.Int32, mscorlib">
-    <value>2</value>
-  </data>
-  <data name="m_tpExternalLinks.Text" xml:space="preserve">
-    <value>Linked Files</value>
-  </data>
-  <data name="&gt;&gt;m_tpExternalLinks.Name" xml:space="preserve">
-    <value>m_tpExternalLinks</value>
-  </data>
-  <data name="&gt;&gt;m_tpExternalLinks.Type" xml:space="preserve">
-    <value>System.Windows.Forms.TabPage, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;m_tpExternalLinks.Parent" xml:space="preserve">
-    <value>m_tabControl</value>
-  </data>
-  <data name="&gt;&gt;m_tpExternalLinks.ZOrder" xml:space="preserve">
-    <value>2</value>
-  </data>
   <data name="m_btnOK.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Bottom, Right</value>
   </data>
@@ -1950,7 +2092,7 @@
     <value>NoControl</value>
   </data>
   <data name="m_btnOK.Location" type="System.Drawing.Point, System.Drawing">
-    <value>136, 392</value>
+    <value>136, 418</value>
   </data>
   <data name="m_btnOK.ShowHelp" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -1976,6 +2118,66 @@
   <data name="&gt;&gt;m_btnOK.ZOrder" xml:space="preserve">
     <value>5</value>
   </data>
+  <data name="m_enableProjectSharingCheckBox.CheckAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+    <value>TopLeft</value>
+  </data>
+  <data name="m_enableProjectSharingCheckBox.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="m_enableProjectSharingCheckBox.Location" type="System.Drawing.Point, System.Drawing">
+    <value>13, 25</value>
+  </data>
+  <data name="m_enableProjectSharingCheckBox.ShowHelp" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="m_enableProjectSharingCheckBox.Size" type="System.Drawing.Size, System.Drawing">
+    <value>328, 33</value>
+  </data>
+  <data name="m_enableProjectSharingCheckBox.TabIndex" type="System.Int32, mscorlib">
+    <value>16</value>
+  </data>
+  <data name="m_enableProjectSharingCheckBox.Text" xml:space="preserve">
+    <value>Share project contents with programs on this computer</value>
+  </data>
+  <data name="m_enableProjectSharingCheckBox.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+    <value>TopLeft</value>
+  </data>
+  <data name="&gt;&gt;m_enableProjectSharingCheckBox.Name" xml:space="preserve">
+    <value>m_enableProjectSharingCheckBox</value>
+  </data>
+  <data name="&gt;&gt;m_enableProjectSharingCheckBox.Type" xml:space="preserve">
+    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_enableProjectSharingCheckBox.Parent" xml:space="preserve">
+    <value>m_tpSharing</value>
+  </data>
+  <data name="&gt;&gt;m_enableProjectSharingCheckBox.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="m_tpSharing.Location" type="System.Drawing.Point, System.Drawing">
+    <value>4, 22</value>
+  </data>
+  <data name="m_tpSharing.Size" type="System.Drawing.Size, System.Drawing">
+    <value>360, 378</value>
+  </data>
+  <data name="m_tpSharing.TabIndex" type="System.Int32, mscorlib">
+    <value>3</value>
+  </data>
+  <data name="m_tpSharing.Text" xml:space="preserve">
+    <value>Sharing</value>
+  </data>
+  <data name="&gt;&gt;m_tpSharing.Name" xml:space="preserve">
+    <value>m_tpSharing</value>
+  </data>
+  <data name="&gt;&gt;m_tpSharing.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TabPage, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_tpSharing.Parent" xml:space="preserve">
+    <value>m_tabControl</value>
+  </data>
+  <data name="&gt;&gt;m_tpSharing.ZOrder" xml:space="preserve">
+    <value>3</value>
+  </data>
   <data name="m_tabControl.ItemSize" type="System.Drawing.Size, System.Drawing">
     <value>49, 18</value>
   </data>
@@ -1986,7 +2188,7 @@
     <value>False</value>
   </data>
   <data name="m_tabControl.Size" type="System.Drawing.Size, System.Drawing">
-    <value>368, 376</value>
+    <value>368, 404</value>
   </data>
   <data name="m_tabControl.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
@@ -2060,6 +2262,30 @@
   <data name="m_deleteMenuItem.Text" xml:space="preserve">
     <value>Delete</value>
   </data>
+  <data name="button1.Location" type="System.Drawing.Point, System.Drawing">
+    <value>12, 418</value>
+  </data>
+  <data name="button1.Size" type="System.Drawing.Size, System.Drawing">
+    <value>75, 23</value>
+  </data>
+  <data name="button1.TabIndex" type="System.Int32, mscorlib">
+    <value>4</value>
+  </data>
+  <data name="button1.Text" xml:space="preserve">
+    <value>TestVern</value>
+  </data>
+  <data name="&gt;&gt;button1.Name" xml:space="preserve">
+    <value>button1</value>
+  </data>
+  <data name="&gt;&gt;button1.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;button1.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;button1.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
   <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>
   </metadata>
@@ -2067,7 +2293,10 @@
     <value>6, 13</value>
   </data>
   <data name="$this.ClientSize" type="System.Drawing.Size, System.Drawing">
-    <value>384, 424</value>
+    <value>384, 450</value>
+  </data>
+  <data name="$this.HelpString" xml:space="preserve">
+    <value />
   </data>
   <data name="$this.ShowHelp" type="System.Boolean, mscorlib">
     <value>False</value>

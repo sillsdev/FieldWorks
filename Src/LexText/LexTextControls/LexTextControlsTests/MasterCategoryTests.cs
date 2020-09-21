@@ -1,17 +1,13 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Xml;
 using NUnit.Framework;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.FDOTests;
+using SIL.LCModel;
 using SIL.FieldWorks.LexText.Controls;
-using SIL.Utils;
 
 namespace LexTextControlsTests
 {
@@ -59,17 +55,17 @@ namespace LexTextControlsTests
 			doc.LoadXml(input);
 			var rootItem = doc.DocumentElement.ChildNodes[1];
 
-			var mc = MasterCategoryListDlg.MasterCategory.Create(new Set<IPartOfSpeech>(), rootItem, Cache);
+			var mc = MasterCategoryListDlg.MasterCategory.Create(new HashSet<IPartOfSpeech>(), rootItem, Cache);
 			mc.AddToDatabase(Cache, posList, null, null);
 			var adposition = CheckPos("ae115ea8-2cd7-4501-8ae7-dc638e4f17c5", posList);
 
 			var childItem = rootItem.ChildNodes[3];
-			var mcChild = MasterCategoryListDlg.MasterCategory.Create(new Set<IPartOfSpeech> { adposition }, childItem, Cache);
+			var mcChild = MasterCategoryListDlg.MasterCategory.Create(new HashSet<IPartOfSpeech> {adposition}, childItem, Cache);
 			mcChild.AddToDatabase(Cache, posList, null, adposition);
 			var postPosition = CheckPos("18f1b2b8-0ce3-4889-90e9-003fed6a969f", adposition);
 
 			var grandChildItem = childItem.ChildNodes[3];
-			var mcGrandChild = MasterCategoryListDlg.MasterCategory.Create(new Set<IPartOfSpeech> { adposition, postPosition }, grandChildItem, Cache);
+			var mcGrandChild = MasterCategoryListDlg.MasterCategory.Create(new HashSet<IPartOfSpeech> {adposition, postPosition}, grandChildItem, Cache);
 			mcGrandChild.AddToDatabase(Cache, posList, mcChild, null);
 			CheckPos("82B1250A-E64F-4AD8-8B8C-5ABBC732087A", postPosition);
 		}
@@ -110,14 +106,14 @@ namespace LexTextControlsTests
 			var doc = new XmlDocument();
 			doc.LoadXml(input);
 			var rootItem = doc.DocumentElement.ChildNodes[1];
-			var mc = MasterCategoryListDlg.MasterCategory.Create(new Set<IPartOfSpeech>(), rootItem, Cache);
+			var mc = MasterCategoryListDlg.MasterCategory.Create(new HashSet<IPartOfSpeech>(), rootItem, Cache);
 			m_actionHandler.EndUndoTask();
 			Assert.That(posList, Is.Not.Null, "Test requires default init of cache to create POS list");
 			mc.AddToDatabase(Cache, posList, null, null);
 
 			var childItem = rootItem.ChildNodes[3];
 			var firstPos = (IPartOfSpeech) posList.PossibilitiesOS[0];
-			var mcChild = MasterCategoryListDlg.MasterCategory.Create(new Set<IPartOfSpeech> { firstPos }, childItem, Cache);
+			var mcChild = MasterCategoryListDlg.MasterCategory.Create(new HashSet<IPartOfSpeech> { firstPos }, childItem, Cache);
 			mcChild.AddToDatabase(Cache, posList, null, firstPos);
 
 			Assert.That(firstPos.Guid, Is.Not.Null, "Item in the category should not be null Guid");

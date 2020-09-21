@@ -1,26 +1,26 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Diagnostics;
 using System.Drawing;
-using System.Linq;
 using System.Windows.Forms;
 using System.Xml;
-
-using SIL.CoreImpl;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.FDO.Application;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.FieldWorks.Common.Widgets;
+using SIL.LCModel;
+using SIL.LCModel.Application;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.FdoUi;
-using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.XWorks;
 using XCore;
-using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.FieldWorks.Common.Widgets;
 
 namespace SIL.FieldWorks.IText
 {
@@ -40,9 +40,6 @@ namespace SIL.FieldWorks.IText
 		/// this is the clerk, if any, that determines the text for our control.
 		/// </summary>
 		RecordClerk m_clerk;
-
-		private IVwStylesheet m_flexStylesheet;
-		private IVwStylesheet m_teStylesheet;
 
 		public RawTextPane() : base(null)
 		{
@@ -105,7 +102,6 @@ namespace SIL.FieldWorks.IText
 
 			if (hvo != m_hvoRoot || m_vc == null)
 			{
-				SetStyleSheet(hvo);
 				m_hvoRoot = hvo;
 				SetupVc();
 				ChangeOrMakeRoot(m_hvoRoot, m_vc, (int)StTextFrags.kfrText, m_styleSheet);
@@ -133,35 +129,6 @@ namespace SIL.FieldWorks.IText
 		public override bool CanApplyStyle
 		{
 			get { return base.CanApplyStyle && !ScriptureServices.ScriptureIsResponsibleFor(m_rootObj); }
-		}
-
-
-		private void SetStyleSheet(int hvo)
-		{
-			var text = hvo == 0 ? null : (IStText)Cache.ServiceLocator.GetObject(hvo);
-
-			IVwStylesheet wantedStylesheet = m_styleSheet;
-			if (text != null && ScriptureServices.ScriptureIsResponsibleFor(text))
-			{
-				// Use the Scripture stylesheet
-				if (m_teStylesheet == null)
-				{
-					m_flexStylesheet = m_styleSheet; // remember the default.
-					var stylesheet = new FwStyleSheet();
-					stylesheet.Init(Cache, Cache.LangProject.TranslatedScriptureOA.Hvo, ScriptureTags.kflidStyles);
-					m_teStylesheet = stylesheet;
-				}
-				wantedStylesheet = m_teStylesheet;
-			}
-			else if (m_flexStylesheet != null)
-			{
-				wantedStylesheet = m_flexStylesheet;
-			}
-			if (wantedStylesheet != m_styleSheet)
-			{
-				m_styleSheet = wantedStylesheet;
-				// Todo: set up the comobo; set the main window one.
-			}
 		}
 
 		#endregion
@@ -238,7 +205,7 @@ namespace SIL.FieldWorks.IText
 			{
 				UndoableUnitOfWorkHelper.Do(ITextStrings.ksUndoInsertInvisibleSpace, ITextStrings.ksRedoInsertInvisibleSpace,
 					Cache.ActionHandlerAccessor,
-					() => sel.ReplaceWithTsString(Cache.TsStrFactory.MakeString(AnalysisOccurrence.KstrZws, ws)));
+					() => sel.ReplaceWithTsString(TsStringUtils.MakeString(AnalysisOccurrence.KstrZws, ws)));
 			}
 			helper.SetIch(SelectionHelper.SelLimitType.Anchor, ich + 1);
 			helper.SetIch(SelectionHelper.SelLimitType.End, ich + 1);
@@ -345,7 +312,7 @@ namespace SIL.FieldWorks.IText
 								if (tag != StTxtParaTags.kflidContents)
 									return;
 
-								var para = m_fdoCache.ServiceLocator.GetInstance<IStTxtParaRepository>().GetObject(hvo);
+								var para = m_cache.ServiceLocator.GetInstance<IStTxtParaRepository>().GetObject(hvo);
 								// force this paragraph to recognize it might need reparsing.
 								SetParaToReparse(para);
 							}
@@ -387,24 +354,28 @@ namespace SIL.FieldWorks.IText
 
 		private void TurnOnShowInvisibleSpaces()
 		{
-			if(m_mediator != null)
-				m_mediator.PropertyTable.SetProperty("ShowInvisibleSpaces", true);
+			if (m_propertyTable != null)
+			{
+				m_propertyTable.SetProperty("ShowInvisibleSpaces", true, true);
+			}
 		}
 
 		private void TurnOffClickInvisibleSpace()
 		{
-			if (m_mediator != null)
-				m_mediator.PropertyTable.SetProperty("ClickInvisibleSpace", false);
+			if (m_propertyTable != null)
+			{
+				m_propertyTable.SetProperty("ClickInvisibleSpace", false, true);
+			}
 		}
 
 		private bool ShowInvisibleSpaces
 		{
-			get { return m_mediator != null && m_mediator.PropertyTable.GetBoolProperty("ShowInvisibleSpaces", false); }
+			get { return m_propertyTable.GetBoolProperty("ShowInvisibleSpaces", false); }
 		}
 
 		private bool ClickInvisibleSpace
 		{
-			get { return m_mediator != null && m_mediator.PropertyTable.GetBoolProperty("ClickInvisibleSpace", false); }
+			get { return m_propertyTable.GetBoolProperty("ClickInvisibleSpace", false); }
 		}
 
 		#region Overrides of RootSite
@@ -417,23 +388,20 @@ namespace SIL.FieldWorks.IText
 		{
 			CheckDisposed();
 
-			if (m_fdoCache == null || DesignMode || m_hvoRoot == 0)
+			if (m_cache == null || DesignMode || m_hvoRoot == 0)
 				return;
 
-			m_rootb = VwRootBoxClass.Create();
-			m_rootb.SetSite(this);
+			base.MakeRoot();
 
 			int wsFirstPara = GetWsOfFirstWordOfFirstTextPara();
-			m_vc = new RawTextVc(m_rootb, m_fdoCache, wsFirstPara);
+			m_vc = new RawTextVc(m_rootb, m_cache, wsFirstPara);
 			SetupVc();
 
-			m_showSpaceDa = new ShowSpaceDecorator((ISilDataAccessManaged)m_fdoCache.MainCacheAccessor);
+			m_showSpaceDa = new ShowSpaceDecorator((ISilDataAccessManaged)m_cache.MainCacheAccessor);
 			m_showSpaceDa.ShowSpaces = ShowInvisibleSpaces;
 			m_rootb.DataAccess = m_showSpaceDa;
 
 			m_rootb.SetRootObject(m_hvoRoot, m_vc, (int)StTextFrags.kfrText, m_styleSheet);
-
-			base.MakeRoot();
 		}
 
 		/// <summary>
@@ -489,8 +457,8 @@ namespace SIL.FieldWorks.IText
 			IWfiWordform wordform;
 			if (!GetSelectedWordform(vwselNew, out wordform))
 				wordform = null;
-			m_mediator.PropertyTable.SetProperty("TextSelectedWord", wordform);
-			m_mediator.PropertyTable.SetPropertyPersistence("TextSelectedWord", false);
+			m_propertyTable.SetProperty("TextSelectedWord", wordform, true);
+			m_propertyTable.SetPropertyPersistence("TextSelectedWord", false);
 
 			SelectionHelper helper = SelectionHelper.Create(vwselNew, this);
 			if (helper != null && helper.GetTextPropId(SelectionHelper.SelLimitType.Anchor) == RawTextVc.kTagUserPrompt)
@@ -502,13 +470,13 @@ namespace SIL.FieldWorks.IText
 
 		protected override void OnLayout(LayoutEventArgs levent)
 		{
-			if (Parent == null)
+			if (Parent == null && string.IsNullOrEmpty(levent.AffectedProperty))
 				return; // width is meaningless, no point in doing extra work
 			// In a tab page this panel occupies the whole thing, so layout is wasted until
 			// our size is adjusted to match.
 			if (Parent is TabPage && (Parent.Width - Parent.Padding.Horizontal) != this.Width)
 				return;
-			base.OnLayout (levent);
+			base.OnLayout(levent);
 		}
 
 
@@ -596,6 +564,7 @@ namespace SIL.FieldWorks.IText
 				{
 					ui = CmObjectUi.MakeUi(Cache, wordform.Hvo);
 					ui.Mediator = m_mediator;
+					ui.PropTable = m_propertyTable;
 					tempColleague = new TemporaryColleagueParameter(m_mediator, ui, false);
 				}
 				mainWind.ShowContextMenu("mnuIText-RawText", new Point(Cursor.Position.X, Cursor.Position.Y),
@@ -614,10 +583,7 @@ namespace SIL.FieldWorks.IText
 		{
 			get
 			{
-				if (m_mediator != null)
-					return m_mediator.PropertyTable.GetValue("ActiveClerk") as RecordClerk;
-				else
-					return null;
+				return m_propertyTable.GetValue<RecordClerk>("ActiveClerk");
 			}
 		}
 
@@ -720,8 +686,8 @@ namespace SIL.FieldWorks.IText
 			int ichMin, ichLim, hvo, tag, ws;
 			if (GetSelectedWordPos(m_rootb.Selection, out hvo, out tag, out ws, out ichMin, out ichLim))
 			{
-				LexEntryUi.DisplayOrCreateEntry(m_fdoCache, hvo, tag, ws, ichMin, ichLim, this,
-					m_mediator, m_mediator.HelpTopicProvider, "UserHelpFile");
+				LexEntryUi.DisplayOrCreateEntry(m_cache, hvo, tag, ws, ichMin, ichLim, this,
+					m_mediator, m_propertyTable, m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), "UserHelpFile");
 			}
 			return true;
 		}
@@ -777,7 +743,7 @@ namespace SIL.FieldWorks.IText
 			if (tag != StTxtParaTags.kflidContents)
 				return false;
 
-			var para = m_fdoCache.ServiceLocator.GetInstance<IStTxtParaRepository>().GetObject(hvo);
+			var para = m_cache.ServiceLocator.GetInstance<IStTxtParaRepository>().GetObject(hvo);
 			if (!para.ParseIsCurrent)
 			{
 				ReparseParaInUowIfNeeded(para);
@@ -877,7 +843,7 @@ namespace SIL.FieldWorks.IText
 				Swap(ref ichMin, ref ichLim);
 				Swap(ref hvoStart, ref hvoEnd);
 			}
-			WordBreakGuesser guesser = new WordBreakGuesser(m_fdoCache, hvoStart);
+			WordBreakGuesser guesser = new WordBreakGuesser(m_cache, hvoStart);
 			if (hvoStart == hvoEnd)
 			{
 				if (ichMin == ichLim)
@@ -891,7 +857,7 @@ namespace SIL.FieldWorks.IText
 			{
 				guesser.Guess(ichMin, -1, hvoStart);
 				bool fProcessing = false;
-				ISilDataAccess sda = m_fdoCache.MainCacheAccessor;
+				ISilDataAccess sda = m_cache.MainCacheAccessor;
 				int hvoStText = m_hvoRoot;
 				int cpara = sda.get_VecSize(hvoStText, StTextTags.kflidParagraphs);
 				for (int i = 0; i < cpara; i++)
@@ -915,15 +881,16 @@ namespace SIL.FieldWorks.IText
 		/// Save the configuration parameters in case we want to use them locally.
 		/// </summary>
 		/// <param name="mediator"></param>
+		/// <param name="propertyTable"></param>
 		/// <param name="configurationParameters"></param>
-		public override void Init(Mediator mediator, System.Xml.XmlNode configurationParameters)
+		public override void Init(Mediator mediator, PropertyTable propertyTable, XmlNode configurationParameters)
 		{
 			CheckDisposed();
 
-			base.Init (mediator, configurationParameters);
+			base.Init (mediator, propertyTable, configurationParameters);
 			m_configurationParameters = configurationParameters;
-			m_clerk = ToolConfiguration.FindClerk(m_mediator, m_configurationParameters);
-			m_styleSheet = FontHeightAdjuster.StyleSheetFromMediator(m_mediator);
+			m_clerk = ToolConfiguration.FindClerk(m_propertyTable, m_configurationParameters);
+			m_styleSheet = FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable);
 		}
 	}
 
@@ -934,7 +901,7 @@ namespace SIL.FieldWorks.IText
 
 		IVwRootBox m_rootb;
 
-		public RawTextVc(IVwRootBox rootb, FdoCache cache, int wsFirstPara) : base("Normal", wsFirstPara)
+		public RawTextVc(IVwRootBox rootb, LcmCache cache, int wsFirstPara) : base("Normal", wsFirstPara)
 		{
 			m_rootb = rootb;
 			Cache = cache;
@@ -948,7 +915,7 @@ namespace SIL.FieldWorks.IText
 		internal void SetupVernWsForText(int wsVern)
 		{
 			m_wsDefault = wsVern;
-			IWritingSystem defWs = Cache.ServiceLocator.WritingSystemManager.Get(wsVern);
+			CoreWritingSystemDefinition defWs = Cache.ServiceLocator.WritingSystemManager.Get(wsVern);
 			RightToLeft = defWs.RightToLeftScript;
 		}
 
@@ -1071,18 +1038,18 @@ namespace SIL.FieldWorks.IText
 		{
 			string userPrompt = ITextStrings.ksEnterOrPasteHere;
 
-			ITsPropsBldr ttpBldr = TsPropsBldrClass.Create();
+			ITsPropsBldr ttpBldr = TsStringUtils.MakePropsBldr();
 			ttpBldr.SetIntPropValues((int)FwTextPropType.ktptBackColor,
 				(int)FwTextPropVar.ktpvDefault, Color.LightGray.ToArgb());
 			ttpBldr.SetIntPropValues((int)FwTextPropType.ktptWs,
 				(int)FwTextPropVar.ktpvDefault, Cache.DefaultUserWs);
-			ITsStrBldr bldr = TsStrBldrClass.Create();
+			ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
 			bldr.Replace(0, 0, userPrompt, ttpBldr.GetTextProps());
 			// Begin the prompt with a zero-width space in the vernacular writing system (with
 			// no funny colors).  This ensures anything the user types (or pastes from a non-FW
 			// clipboard) is put in that WS.
 			// 200B == zero-width space.
-			ITsPropsBldr ttpBldr2 = TsPropsBldrClass.Create();
+			ITsPropsBldr ttpBldr2 = TsStringUtils.MakePropsBldr();
 			ttpBldr2.SetIntPropValues((int)FwTextPropType.ktptWs,
 				(int)FwTextPropVar.ktpvDefault, Cache.DefaultVernWs);
 			bldr.Replace(0, 0, "\u200B", ttpBldr2.GetTextProps());
@@ -1093,7 +1060,7 @@ namespace SIL.FieldWorks.IText
 		{
 			get
 			{
-				ITsPropsBldr bldr = TsPropsBldrClass.Create();
+				ITsPropsBldr bldr = TsStringUtils.MakePropsBldr();
 				bldr.SetStrPropValue((int)FwTextPropType.ktptNamedStyle, "Dictionary-Pictures");
 				bldr.SetIntPropValues((int)FwTextPropType.ktptEditable,
 					(int)FwTextPropVar.ktpvEnum,

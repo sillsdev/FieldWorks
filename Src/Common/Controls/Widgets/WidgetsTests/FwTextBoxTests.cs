@@ -1,16 +1,12 @@
-﻿// Copyright (c) 2015 SIL International
+﻿// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using System.Collections.Generic;
-using System.Text;
-
 using NUnit.Framework;
-
-using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.Test.TestUtils;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.FieldWorks.Common.FwUtils;
 
 namespace SIL.FieldWorks.Common.Widgets
 {
@@ -20,21 +16,21 @@ namespace SIL.FieldWorks.Common.Widgets
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
 	[TestFixture]
-	class FwTextBoxTests : BaseTest
+	class FwTextBoxTests
 	{
 		#region Data Members
 		TestFwStylesheet m_stylesheet;
-		IWritingSystemManager m_wsManager;
+		WritingSystemManager m_wsManager;
 		int m_hvoEnglishWs;
 		#endregion
 
-		public override void FixtureSetup()
+		[TestFixtureSetUp]
+		public void FixtureSetup()
 		{
-			base.FixtureSetup();
-			m_wsManager = new PalasoWritingSystemManager();
+			m_wsManager = new WritingSystemManager();
 
 			// setup English ws.
-			IWritingSystem enWs;
+			CoreWritingSystemDefinition enWs;
 			m_wsManager.GetOrSet("en", out enWs);
 			m_hvoEnglishWs = enWs.Handle;
 		}
@@ -56,18 +52,18 @@ namespace SIL.FieldWorks.Common.Widgets
 				textBox.Visible = true;
 				textBox.WordWrap = false;
 
-				textBox.Tss = TsStringHelper.MakeTSS("Test", m_hvoEnglishWs);
+				textBox.Tss = TsStringUtils.MakeString("Test", m_hvoEnglishWs);
 				Assert.LessOrEqual(textBox.PreferredHeight, textBox.Height, "The simple string should fit within the default height.");
 				Assert.LessOrEqual(textBox.PreferredWidth, textBox.Width, "The simple string should fit within the default width.");
 
-				textBox.Tss = TsStringHelper.MakeTSS("This is a very long string that should be larger than the default box size in some way or other.", m_hvoEnglishWs);
+				textBox.Tss = TsStringUtils.MakeString("This is a very long string that should be larger than the default box size in some way or other.", m_hvoEnglishWs);
 				Console.WriteLine("PreferredHeight 2 = {0}", textBox.PreferredHeight);
 				Console.WriteLine("PreferredWidth 2 = {0}", textBox.PreferredWidth);
 				Assert.LessOrEqual(textBox.PreferredHeight, textBox.Height, "The longer string should still fit within the default height (for no wordwrapping).");
 				Assert.Greater(textBox.PreferredWidth, textBox.Width, "The longer string should not fit within the default width (for no wordwrapping)");
 
 				textBox.WordWrap = true;
-				textBox.Tss = TsStringHelper.MakeTSS("This is a very long string that should be even larger than the default box size in some way or other.", m_hvoEnglishWs);
+				textBox.Tss = TsStringUtils.MakeString("This is a very long string that should be even larger than the default box size in some way or other.", m_hvoEnglishWs);
 				Console.WriteLine("PreferredHeight 3 = {0}", textBox.PreferredHeight);
 				Console.WriteLine("PreferredWidth 3 = {0}", textBox.PreferredWidth);
 				Assert.Greater(textBox.PreferredHeight, textBox.Height, "The longest string should not fit within the default height (for wordwrapping).");

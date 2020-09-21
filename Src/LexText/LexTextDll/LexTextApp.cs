@@ -1,9 +1,6 @@
-// Copyright (c) 2003-2013 SIL International
+// Copyright (c) 2003-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: LexTextApp.cs
-// Responsibility: RandyR
 
 using System;
 using System.Collections.Generic;
@@ -11,21 +8,21 @@ using System.IO;
 using System.Windows.Forms;
 using System.Diagnostics;
 using System.ComponentModel;
-using SIL.CoreImpl;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Framework;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainImpl;
-using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.Utils;
+using SIL.LCModel;
+using SIL.LCModel.DomainImpl;
+using SIL.LCModel.Infrastructure;
+using SIL.LCModel.Utils;
 using XCore;
 using SIL.FieldWorks.IText;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.LexText.Controls;
 using SIL.FieldWorks.LexText.Controls.DataNotebook;
-using System.Diagnostics.CodeAnalysis;
+using SIL.LCModel.Core.Scripture;
+using SIL.LCModel.DomainServices;
+using SIL.Utils;
 
 namespace SIL.FieldWorks.XWorks.LexText
 {
@@ -224,6 +221,11 @@ namespace SIL.FieldWorks.XWorks.LexText
 			}
 		}
 
+		public override string WindowClassName
+		{
+			get { return "fieldworks-flex"; }
+		}
+
 		private static bool m_fResourceFailed = false;
 
 		/// -----------------------------------------------------------------------------------
@@ -297,10 +299,10 @@ namespace SIL.FieldWorks.XWorks.LexText
 		public bool OnSFMImport(object parameters)
 		{
 			Form formActive = ActiveForm;
-			FwXWindow wndActive = formActive as FwXWindow;
+			FwXWindow wndActive = (FwXWindow)formActive;
 			using (var importWizard = new LexImportWizard())
 			{
-				((IFwExtension)importWizard).Init(Cache, wndActive.Mediator);
+				((IFwExtension)importWizard).Init(Cache, wndActive.Mediator, wndActive.PropTable);
 				importWizard.ShowDialog(formActive);
 			}
 			return true;
@@ -309,8 +311,6 @@ namespace SIL.FieldWorks.XWorks.LexText
 		/// <summary>
 		/// Display the import commands only while in the appropriate area.
 		/// </summary>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "mediator is a reference")]
 		public bool OnDisplayLaunchConnectedDialog(object parameters, ref UIItemDisplayProperties display)
 		{
 			display.Enabled = false;
@@ -325,7 +325,7 @@ namespace SIL.FieldWorks.XWorks.LexText
 			Mediator mediator = wndActive.Mediator;
 			if (mediator == null)
 				return true;
-			string area = (string)mediator.PropertyTable.GetValue("areaChoice");
+			string area = wndActive.PropTable.GetValue<string>("areaChoice");
 			bool fEnabled = true;
 			switch (command.Id)
 			{
@@ -341,15 +341,8 @@ namespace SIL.FieldWorks.XWorks.LexText
 				case "CmdImportInterlinearSfm":
 				case "CmdImportWordsAndGlossesSfm":
 				case "CmdImportInterlinearData":
-					if (mediator.PropertyTable.GetStringProperty("currentContentControl", null) == "concordance" || mediator.PropertyTable.GetStringProperty("currentContentControl", null) == "concordance")
-
-					{
-						fEnabled = false;
-					}
-					else
-					{
-						fEnabled = area == "textsWords";
-					}
+					// LT-11998: importing texts in the Concordance tool can crash
+					fEnabled = area == "textsWords" && wndActive.PropTable.GetStringProperty("currentContentControl", null) != "concordance";
 					break;
 				case "CmdImportSFMNotebook":
 					fEnabled = area == "notebook";
@@ -379,6 +372,21 @@ namespace SIL.FieldWorks.XWorks.LexText
 
 			FwXWindow wndActive = formActive as FwXWindow;
 			IFwExtension dlg = null;
+			if (((classInfo as System.Xml.XmlElement)?.Attributes["class"]?.Value ?? "").Contains(
+				"LinguaLinks"))
+			{
+				// Message is deliberately not localized. We expect this to affect maybe one person every couple of years based on recent
+				// occurrences. Doubt it's worth translating.
+				// The reason for the disabling is that model changes require significant changes to the Import code,
+				// and we don't think it's worth the effort. What few LinguaLinks projects still require import can be handled
+				// by installing a version 7 FieldWorks, importing, and then migrating.
+				// (For example, the currently generated stage 5 XML assumes Senses still reference ReveralEntries, rather than the
+				// current opposite link; and there were problems importing texts even in FLEx 8 (LT-2084)).
+				MessageBox.Show(
+					@"Fieldworks no longer supports import of LinguaLinks data. For any remaining projects that need this, our support staff can help convert your data. Please send a message to flex_errors@sil.org",
+					"Sorry", MessageBoxButtons.OK, MessageBoxIcon.Information);
+				return true;
+			}
 			try
 			{
 				try
@@ -393,15 +401,20 @@ namespace SIL.FieldWorks.XWorks.LexText
 						throw new ApplicationException(message, error);
 				}
 				var oldWsUser = Cache.WritingSystemFactory.UserWs;
-				dlg.Init(Cache, wndActive.Mediator);
+				dlg.Init(Cache, wndActive.Mediator, wndActive.PropTable);
 				DialogResult dr = ((Form) dlg).ShowDialog(ActiveForm);
 				if (dr == DialogResult.OK)
 				{
 					if (dlg is LexOptionsDlg)
 					{
 						LexOptionsDlg loDlg = dlg as LexOptionsDlg;
-						if ((oldWsUser != Cache.WritingSystemFactory.UserWs) || loDlg.PluginsUpdated)
-							ReplaceMainWindow(wndActive);
+						if (oldWsUser != Cache.WritingSystemFactory.UserWs ||
+							loDlg.PluginsUpdated)
+						{
+							wndActive.SaveSettings();
+							MessageBoxUtils.Show(wndActive, LexTextStrings.LexTextApp_RestartToChangeUI_Content,
+								LexTextStrings.LexTextApp_RestartToChangeUI_Title, MessageBoxButtons.OK);
+						}
 					}
 					else if (dlg is LinguaLinksImportDlg || dlg is InterlinearImportDlg ||
 							 dlg is LexImportWizard || dlg is NotebookImportWiz || dlg is LiftImportDlg)
@@ -524,7 +537,7 @@ namespace SIL.FieldWorks.XWorks.LexText
 		public bool OnRefresh(object sender)
 		{
 			CheckDisposed();
-			Set<string> setDatabases = new Set<string>();
+			var setDatabases = new HashSet<string>();
 			foreach (FwXWindow wnd in m_rgMainWindows)
 			{
 				string sDatabase = wnd.Cache.ProjectId.Name;
@@ -625,7 +638,7 @@ namespace SIL.FieldWorks.XWorks.LexText
 			CheckDisposed();
 
 			XCore.Command command = (XCore.Command)commandObject;
-			string fileName = SIL.Utils.XmlUtils.GetManditoryAttributeValue(command.Parameters[0], "file");
+			string fileName = SIL.Utils.XmlUtils.GetMandatoryAttributeValue(command.Parameters[0], "file");
 			fileName = fileName.Replace('\\', Path.DirectorySeparatorChar);
 			string path = String.Format(FwDirectoryFinder.CodeDirectory +
 				"{0}Helps{0}Language Explorer{0}Training{0}" + fileName, Path.DirectorySeparatorChar);
@@ -648,7 +661,7 @@ namespace SIL.FieldWorks.XWorks.LexText
 			CheckDisposed();
 
 			XCore.Command command = (XCore.Command)commandObject;
-			string fileName = SIL.Utils.XmlUtils.GetManditoryAttributeValue(command.Parameters[0], "file");
+			string fileName = SIL.Utils.XmlUtils.GetMandatoryAttributeValue(command.Parameters[0], "file");
 			fileName = fileName.Replace('\\', Path.DirectorySeparatorChar);
 			string path = String.Format(FwDirectoryFinder.CodeDirectory +
 				"{0}Helps{0}Language Explorer{0}Training{0}" + fileName, Path.DirectorySeparatorChar);
@@ -670,7 +683,7 @@ namespace SIL.FieldWorks.XWorks.LexText
 			CheckDisposed();
 
 			XCore.Command command = (XCore.Command)commandObject;
-			string fileName = SIL.Utils.XmlUtils.GetManditoryAttributeValue(command.Parameters[0], "file");
+			string fileName = SIL.Utils.XmlUtils.GetMandatoryAttributeValue(command.Parameters[0], "file");
 			fileName = fileName.Replace('\\', Path.DirectorySeparatorChar);
 			string path = String.Format(FwDirectoryFinder.CodeDirectory + "{0}Helps{0}" + fileName,
 				Path.DirectorySeparatorChar);
@@ -686,50 +699,11 @@ namespace SIL.FieldWorks.XWorks.LexText
 		{
 			CheckDisposed();
 
-			try
-			{
-				string pathMovies = String.Format(FwDirectoryFinder.CodeDirectory +
-					"{0}Language Explorer{0}Movies{0}Demo Movies.html",
-					Path.DirectorySeparatorChar);
+			const string moviesUrl = "https://software.sil.org/fieldworks/download/demo-movies/index-of-demo-movies/";
 
-				OpenDocument<Win32Exception>(pathMovies, (win32err) => {
-					if (win32err.NativeErrorCode == 1155)
-					{
-						// The user has the movie files, but does not have a file association for .html files.
-						// Try to launch Internet Explorer directly:
-						using (Process.Start("IExplore.exe", pathMovies))
-						{
-						}
-					}
-					else
-					{
-						// User probably does not have movies. Try to launch the "no movies" web page:
-						string pathNoMovies = String.Format(FwDirectoryFinder.CodeDirectory +
-							"{0}Language Explorer{0}Movies{0}notfound.html",
-							Path.DirectorySeparatorChar);
+			OpenDocument(moviesUrl, e =>
+				MessageBox.Show(null, string.Format(LexTextStrings.ksErrorCannotOpenMovies, moviesUrl), LexTextStrings.ksError));
 
-						OpenDocument<Win32Exception>(pathNoMovies, (win32err2) => {
-							if (win32err2.NativeErrorCode == 1155)
-							{
-								// The user does not have a file association for .html files.
-								// Try to launch Internet Explorer directly:
-								using (Process.Start("IExplore.exe", pathNoMovies))
-								{
-								}
-							}
-							else
-								throw win32err2;
-						});
-						}
-				});
-					}
-			catch (Exception)
-			{
-				// Some other unforeseen error:
-				MessageBox.Show(null, String.Format(LexTextStrings.ksErrorCannotLaunchMovies,
-					String.Format(FwDirectoryFinder.CodeDirectory + "{0}Language Explorer{0}Movies",
-					Path.DirectorySeparatorChar)), LexTextStrings.ksError);
-			}
 			return true;
 		}
 
@@ -806,15 +780,12 @@ namespace SIL.FieldWorks.XWorks.LexText
 		public override bool InitCacheForApp(IThreadedProgress progressDlg)
 		{
 			Cache.ServiceLocator.DataSetup.LoadDomainAsync(BackendBulkLoadDomain.All);
-			AddDefaultWordformingOverridesIfNeeded();
 
 			// The try-catch block is modeled after that used by TeScrInitializer.Initialize(),
 			// as the suggestion for fixing LT-8797.
 			try
 			{
-				// Make sure this DB uses the current stylesheet version.
-				if (Cache.ProjectId.IsLocal && Cache.NumberOfRemoteClients == 0)
-					FlexStylesXmlAccessor.EnsureCurrentStylesheet(Cache.LangProject, progressDlg);
+				SafelyEnsureStyleSheetPostTERemoval(progressDlg);
 			}
 			catch (WorkerThreadException e)
 			{
@@ -826,35 +797,14 @@ namespace SIL.FieldWorks.XWorks.LexText
 			return true;
 		}
 
-		/// <summary>
-		/// Adds the default word-forming character overrides to the list of valid
-		/// characters for each vernacular writing system that is using the old
-		/// valid characters representation.
-		/// </summary>
-		private void AddDefaultWordformingOverridesIfNeeded()
+		private void SafelyEnsureStyleSheetPostTERemoval(IThreadedProgress progressDlg)
 		{
-			foreach (IWritingSystem wsObj in Cache.ServiceLocator.WritingSystems.VernacularWritingSystems)
-			{
-				string validCharsSrc = wsObj.ValidChars;
-				if (!ValidCharacters.IsNewValidCharsString(validCharsSrc))
-				{
-					ValidCharacters valChars = ValidCharacters.Load(wsObj, LoadException, FwDirectoryFinder.LegacyWordformingCharOverridesFile);
-					valChars.AddDefaultWordformingCharOverrides();
-					wsObj.ValidChars = valChars.XmlString;
-				}
-			}
-			Cache.ServiceLocator.WritingSystemManager.Save();
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Reports a ValidCharacters load exception.
-		/// </summary>
-		/// <param name="e">The exception.</param>
-		/// ------------------------------------------------------------------------------------
-		void LoadException(ArgumentException e)
-		{
-			ErrorReporter.ReportException(e, SettingsKey, SupportEmailAddress);
+			// Ensure that we have up-to-date versification information so that projects with old TE styles
+			// will be able to migrate them from the Scripture area to the LanguageProject model
+			ScrReference.InitializeVersification(FwDirectoryFinder.EditorialChecksDirectory, false);
+			// Make sure this DB uses the current stylesheet version
+			// Suppress adjusting scripture sections since isn't safe to do so at this point
+			SectionAdjustmentSuppressionHelper.Do(() => FlexStylesXmlAccessor.EnsureCurrentStylesheet(Cache.LangProject, progressDlg));
 		}
 
 		/// <summary>
@@ -880,9 +830,10 @@ namespace SIL.FieldWorks.XWorks.LexText
 		/// Initialization. Never called because we don't use the xWindow class.
 		/// </summary>
 		/// <param name="mediator">Message mediator</param>
+		/// <param name="propertyTable"></param>
 		/// <param name="configurationParameters">Not used</param>
 		/// ------------------------------------------------------------------------------------
-		public void Init(Mediator mediator, System.Xml.XmlNode configurationParameters)
+		public void Init(Mediator mediator, PropertyTable propertyTable, System.Xml.XmlNode configurationParameters)
 		{
 			CheckDisposed();
 		}

@@ -1,26 +1,18 @@
-// Copyright (c) 2003-2013 SIL International
+// Copyright (c) 2003-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: SimpleListChooser.cs
-// Responsibility:
-// Last reviewed:
-//
-// <remarks>
-// </remarks>
 
 using System;
+using System.Collections.Generic;
 using System.Windows.Forms;
 using System.Xml;
-using System.Collections.Generic;
-
-using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Framework.DetailControls.Resources;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.FieldWorks.Common.FwUtils;
+using SIL.LCModel;
 using SIL.Utils;
-using SIL.FieldWorks.FDO;
 using XCore;
-// for FwLink (in FdoUiLowLevel assembly)
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls
 {
@@ -52,7 +44,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// <param name="fieldName">the user-readable name of the field that is being edited</param>
 		/// <param name="nullLabel">The null label.</param>
 		/// ------------------------------------------------------------------------------------
-		public SimpleListChooser(FdoCache cache, IPersistenceProvider persistProvider,
+		public SimpleListChooser(LcmCache cache, IPersistenceProvider persistProvider,
 			IHelpTopicProvider helpTopicProvider, IEnumerable<ObjectLabel> labels,
 			ICmObject currentObj, string fieldName, string nullLabel)
 			: base(cache, helpTopicProvider, persistProvider, labels, currentObj, fieldName, nullLabel)
@@ -73,7 +65,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// <param name="nullLabel">The null label.</param>
 		/// <param name="stylesheet">The stylesheet.</param>
 		/// ------------------------------------------------------------------------------------
-		public SimpleListChooser(FdoCache cache, IPersistenceProvider persistProvider,
+		public SimpleListChooser(LcmCache cache, IPersistenceProvider persistProvider,
 			IHelpTopicProvider helpTopicProvider, IEnumerable<ObjectLabel> labels,
 			ICmObject currentObj, string fieldName, string nullLabel, IVwStylesheet stylesheet)
 			: base(cache, helpTopicProvider, persistProvider, labels, currentObj, fieldName, nullLabel, stylesheet)
@@ -91,7 +83,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// <param name="currentObj">use null if emtpy.</param>
 		/// <param name="fieldName">the user-readable name of the field that is being edited</param>
 		/// ------------------------------------------------------------------------------------
-		public SimpleListChooser(FdoCache cache, IPersistenceProvider persistProvider,
+		public SimpleListChooser(LcmCache cache, IPersistenceProvider persistProvider,
 			IHelpTopicProvider helpTopicProvider, IEnumerable<ObjectLabel> labels,
 			ICmObject currentObj, string fieldName)
 			: base(cache, helpTopicProvider, persistProvider, labels, currentObj, fieldName)
@@ -143,7 +135,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// <param name="helpTopicProvider">The help topic provider.</param>
 		/// ------------------------------------------------------------------------------------
 		public SimpleListChooser(IPersistenceProvider persistProvider,
-			IEnumerable<ObjectLabel> labels, string fieldName, FdoCache cache,
+			IEnumerable<ObjectLabel> labels, string fieldName, LcmCache cache,
 			IEnumerable<ICmObject> chosenObjs, IHelpTopicProvider helpTopicProvider)
 			: base(persistProvider, labels, fieldName, cache, chosenObjs, helpTopicProvider)
 		{
@@ -170,12 +162,12 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 						sLabel = String.Format(sLabel, sTopPOS);
 						bool fOptional = XmlUtils.GetOptionalBooleanAttributeValue(node, "optional",
 							false);
-						string sTitle = m_mediator.StringTbl.GetString(
+						string sTitle = StringTable.Table.GetString(
 							fOptional ? "OptionalSlot" : "ObligatorySlot",
 							"Linguistics/Morphology/TemplateTable");
 						AddLink(sLabel, LinkType.kSimpleLink,
 							new MakeInflAffixSlotChooserCommand(m_cache, true, sTitle, hvoPos,
-							fOptional, m_mediator));
+							fOptional, m_mediator, m_propertyTable));
 					}
 					break;
 				default:

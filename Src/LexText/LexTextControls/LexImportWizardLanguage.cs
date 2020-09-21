@@ -1,4 +1,4 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2020 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -8,16 +8,13 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows.Forms;
 
-using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using SIL.FieldWorks.FwCoreDlgs;
-using SilEncConverters40;	// for the encoding converters
-using SIL.Utils;
-using SIL.FieldWorks.Common.FwUtils;
+using SilEncConverters40;
+// for the encoding converters
 using SIL.FieldWorks.Common.Controls;
-using XCore;
+using SIL.FieldWorks.Common.FwUtils;
 
 
 namespace SIL.FieldWorks.LexText.Controls
@@ -25,7 +22,7 @@ namespace SIL.FieldWorks.LexText.Controls
 	/// <summary>
 	/// Summary description for LexImportWizardLanguage.
 	/// </summary>
-	public class LexImportWizardLanguage : Form, IFWDisposable
+	public class LexImportWizardLanguage : Form
 	{
 		private Label lblComment;
 		private Label lblLangDesc;
@@ -40,10 +37,9 @@ namespace SIL.FieldWorks.LexText.Controls
 		private GroupBox groupBox1;
 		private IContainer components;
 
-		private FdoCache m_cache;
+		private LcmCache m_cache;
 		private IHelpTopicProvider m_helpTopicProvider;
 		private IApp m_app;
-		private IVwStylesheet m_stylesheet;
 		// class to contain 'ws' information to be put in combo boxes
 		class WsInfo
 		{
@@ -89,6 +85,8 @@ namespace SIL.FieldWorks.LexText.Controls
 			}
 		}
 
+
+		// REVIEW (Hasso) this is kept updated, but its contents are never read.
 		private readonly Dictionary<string, WsInfo> m_wsInfo;	// hash of wsInfo
 		private string m_blankEC = Sfm2Xml.STATICS.AlreadyInUnicode;
 //		private WsInfo m_wsiDefault;
@@ -134,13 +132,12 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <param name="helpTopicProvider">The help topic provider.</param>
 		/// <param name="app">The app.</param>
 		/// ------------------------------------------------------------------------------------
-		public LexImportWizardLanguage(FdoCache cache, Hashtable existingLangDesc,
-			IHelpTopicProvider helpTopicProvider, IApp app, IVwStylesheet stylesheet) : this()
+		public LexImportWizardLanguage(LcmCache cache, Hashtable existingLangDesc,
+			IHelpTopicProvider helpTopicProvider, IApp app) : this()
 		{
 			m_existingLangDescriptors = existingLangDesc; //
 			m_cache = cache;
 			m_app = app;
-			m_stylesheet = stylesheet;
 			m_LinguaLinksImport = false; // (Bev) this is an SFM import
 			setupHelp(helpTopicProvider);
 		}
@@ -153,8 +150,8 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <param name="helpTopicProvider">The help topic provider.</param>
 		/// <param name="app">The app.</param>
 		/// ------------------------------------------------------------------------------------
-		public LexImportWizardLanguage(FdoCache cache, IHelpTopicProvider helpTopicProvider,
-			IApp app, IVwStylesheet stylesheet) : this(cache, new Hashtable(), helpTopicProvider, app, stylesheet)
+		public LexImportWizardLanguage(LcmCache cache, IHelpTopicProvider helpTopicProvider,
+			IApp app) : this(cache, new Hashtable(), helpTopicProvider, app)
 		{
 			m_LinguaLinksImport = true;
 			tbLangDesc.ReadOnly = true; // don't let them change the language name
@@ -388,17 +385,8 @@ namespace SIL.FieldWorks.LexText.Controls
 			tbLangDesc.Text = m_LangDesc;
 
 			// initialize the 'ws' combo box and the AddWs button with the data from the DB
-			foreach (IWritingSystem ws in m_cache.ServiceLocator.WritingSystemManager.LocalWritingSystems)
-			{
-				var wsi = new WsInfo(ws.DisplayLabel, ws.Id, ws.LegacyMapping);
-				m_wsInfo.Add(wsi.KEY, wsi);
-				cbWS.Items.Add(wsi);
-			}
-
-			cbWS.Sorted = false;
-			var wsiIgnore = new WsInfo();
-			cbWS.Items.Add(wsiIgnore);
-			btnAddWS.Initialize(m_cache, m_helpTopicProvider, m_app, m_stylesheet, m_cache.ServiceLocator.WritingSystemManager.LocalWritingSystems);
+			ReloadWsCombo();
+			btnAddWS.Initialize(m_cache, m_helpTopicProvider, m_app, m_cache.ServiceLocator.WritingSystemManager.WritingSystems);
 
 			// select the proper index if there is a valid writing system
 			int index = 0;
@@ -420,6 +408,23 @@ namespace SIL.FieldWorks.LexText.Controls
 					index = 0;
 			}
 			cbEC.SelectedIndex = index;
+		}
+
+		private void ReloadWsCombo()
+		{
+			m_wsInfo.Clear();
+			cbWS.ClearItems();
+			cbWS.Sorted = true;
+			foreach (var ws in m_cache.ServiceLocator.WritingSystemManager.WritingSystems)
+			{
+				var wsi = new WsInfo(ws.DisplayLabel, ws.Id, ws.LegacyMapping);
+				m_wsInfo.Add(wsi.KEY, wsi);
+				cbWS.Items.Add(wsi);
+			}
+
+			cbWS.Sorted = false;
+			// Add the special "ignore" WsInfo
+			cbWS.Items.Add(new WsInfo());
 		}
 
 		/// <summary>
@@ -447,23 +452,17 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		private void btnAddWS_WritingSystemAdded(object sender, EventArgs e)
 		{
-			IWritingSystem ws = btnAddWS.NewWritingSystem;
+			var ws = btnAddWS.NewWritingSystem;
 			if (ws != null)
 			{
-				string mapName = ws.LegacyMapping;
-				var wsi = new WsInfo(ws.DisplayLabel, ws.Id, mapName);
-				m_wsInfo.Add(wsi.KEY, wsi);
+				ReloadWsCombo();
 
-				// now select it for the ws combo box
-				int index = cbWS.Items.Add(wsi);
-				cbWS.SelectedIndex = index;
+				var mapName = ws.LegacyMapping;
+				// select the new ws in the combo
+				cbWS.SelectedIndex = cbWS.FindStringExact(new WsInfo(ws.DisplayLabel, ws.Id, mapName).ToString());
 
 				// now if there's an encoding converter for the ws, select it
-				if (String.IsNullOrEmpty(mapName))
-					index = cbEC.FindStringExact(m_blankEC);
-				else
-					index = cbEC.Items.Add(mapName);
-				cbEC.SelectedIndex = index;
+				cbEC.SelectedIndex = string.IsNullOrEmpty(mapName) ? cbEC.FindStringExact(m_blankEC) : cbEC.Items.Add(mapName);
 			}
 		}
 

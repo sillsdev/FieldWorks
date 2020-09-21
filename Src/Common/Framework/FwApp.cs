@@ -1,33 +1,30 @@
-// Copyright (c) 2002-2013 SIL International
+// Copyright (c) 2002-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: FwApp.cs
-// Responsibility: TE Team
 
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.IO;
+using System.Security;
 using System.Threading;
 using System.Windows.Forms;
-using System.Security;
 using Microsoft.Win32;
-
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.Controls;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.Utils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.FwCoreDlgs;
 using SIL.FieldWorks.Resources;
-using SIL.CoreImpl;
+using SIL.Reporting;
+using SIL.LCModel.Utils;
+using SIL.Windows.Forms;
 using XCore;
 
 namespace SIL.FieldWorks.Common.Framework
@@ -80,10 +77,10 @@ namespace SIL.FieldWorks.Common.Framework
 	/// </summary>
 	/// <remarks>Hungarian: rch</remarks>
 	/// ----------------------------------------------------------------------------------------
-	public interface IRecordChangeHandler : IFWDisposable
+	public interface IRecordChangeHandler : IDisposable
 	{
 		/// <summary>Initialize the object with the record and the list to which it belongs.</summary>
-		void Setup(object record, IRecordListUpdater rlu, FdoCache cache);
+		void Setup(object record, IRecordListUpdater rlu, LcmCache cache);
 		/// <summary>Fix the record for any changes, possibly refreshing the list to which it belongs.</summary>
 		void Fixup(bool fRefreshList);
 
@@ -144,7 +141,7 @@ namespace SIL.FieldWorks.Common.Framework
 	/// Base application for .net FieldWorks apps (i.e., replacement for AfApp)
 	/// </remarks>
 	/// ---------------------------------------------------------------------------------------
-	public abstract class FwApp : IApp, ISettings, IFWDisposable, IHelpTopicProvider,
+	public abstract class FwApp : IApp, ISettings, IDisposable, IHelpTopicProvider,
 		IMessageFilter, IFeedbackInfoProvider, IProjectSpecificSettingsKeyProvider
 	{
 		#region SuppressedCacheInfo class
@@ -357,9 +354,6 @@ namespace SIL.FieldWorks.Common.Framework
 			fwMainWindow.Show(); // Show method loads persisted settings for window & controls
 			fwMainWindow.Activate(); // This makes main window come to front after splash screen closes
 
-			if (fwMainWindow is FwMainWnd)
-				((FwMainWnd)fwMainWindow).HandleActivation();
-
 			// adjust position if this is an additional window
 			if (wndCopyFrom != null)
 			{
@@ -374,7 +368,7 @@ namespace SIL.FieldWorks.Common.Framework
 				// since the last time he ran the program.  (See LT-1083.)
 				Rectangle rcNewWnd = fwMainWindow.DesktopBounds;
 				//				Rectangle rcScrn = Screen.FromRectangle(rcNewWnd).WorkingArea;
-				ScreenUtils.EnsureVisibleRect(ref rcNewWnd);
+				ScreenHelper.EnsureVisibleRect(ref rcNewWnd);
 				fwMainWindow.DesktopBounds = rcNewWnd;
 				fwMainWindow.StartPosition = FormStartPosition.Manual;
 			}
@@ -428,7 +422,7 @@ namespace SIL.FieldWorks.Common.Framework
 			// on the screen its mostly on. Note: this will only be necessary when the window
 			// being copied from is partly off the screen in a single monitor system or
 			// spanning multiple monitors in a multiple monitor system.
-			ScreenUtils.EnsureVisibleRect(ref rcNewWnd);
+			ScreenHelper.EnsureVisibleRect(ref rcNewWnd);
 
 			// Set the properties of the new window
 			wndNew.DesktopBounds = rcNewWnd;
@@ -650,13 +644,6 @@ namespace SIL.FieldWorks.Common.Framework
 		/// ------------------------------------------------------------------------------------
 		protected virtual void OnClosingWindow(object sender, CancelEventArgs e)
 		{
-			if (sender is FwMainWnd)
-			{
-				FwMainWnd wnd = (FwMainWnd)sender;
-				Logger.WriteEvent(string.Format("Exiting {0} for {1}", wnd.Name,
-					wnd.Cache.ProjectId.Name));
-			}
-
 			if (sender is IFwMainWnd)
 			{
 				if (FindReplaceDialog != null)
@@ -754,8 +741,6 @@ namespace SIL.FieldWorks.Common.Framework
 		/// Gets the project specific settings key.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "We're returning an object")]
 		public RegistryKey ProjectSpecificSettingsKey
 		{
 			get
@@ -840,7 +825,7 @@ namespace SIL.FieldWorks.Common.Framework
 		{
 			get
 			{
-				return ClientServerServices.Current.Local.IdForLocalProject("Sena 3");
+				return Path.Combine(FwDirectoryFinder.ProjectsDirectory, "Sena 3", "Sena 3" + LcmFileHelper.ksFwDataXmlFileExtension);
 			}
 		}
 
@@ -871,7 +856,7 @@ namespace SIL.FieldWorks.Common.Framework
 		/// Gets the cache.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public FdoCache Cache
+		public LcmCache Cache
 		{
 			get { return (m_fwManager != null) ? m_fwManager.Cache : null; }
 		}
@@ -1184,7 +1169,7 @@ namespace SIL.FieldWorks.Common.Framework
 			// Get the screen in which to cascade.
 			Screen scrn = Screen.FromControl(wndCurr);
 
-			Rectangle rcScrnAdjusted = ScreenUtils.AdjustedWorkingArea(scrn);
+			Rectangle rcScrnAdjusted = ScreenHelper.AdjustedWorkingArea(scrn);
 			Rectangle rcUpperLeft = rcScrnAdjusted;
 			rcUpperLeft.Width = CascadeSize(rcUpperLeft.Width, wndCurr.MinimumSize.Width);
 			rcUpperLeft.Height = CascadeSize(rcUpperLeft.Height, wndCurr.MinimumSize.Height);
@@ -1356,8 +1341,8 @@ namespace SIL.FieldWorks.Common.Framework
 			// does not include the task bar. However, we cannot set a widnow's X or Y
 			// coordinate to the working area's X or Y. If the window is to be located
 			// in the upper left corner next to the task bar, X and Y must be 0.
-			rcDesired.X -= ScreenUtils.TaskbarWidth;
-			rcDesired.Y -= ScreenUtils.TaskbarHeight;
+			rcDesired.X -= ScreenHelper.TaskbarWidth;
+			rcDesired.Y -= ScreenHelper.TaskbarHeight;
 
 			// Move the active window to its proper place and size.
 			wndCurr.DesktopBounds = rcDesired;
@@ -1464,42 +1449,6 @@ namespace SIL.FieldWorks.Common.Framework
 				return true;
 			}
 			return false;
-		}
-		#endregion
-
-		#region Painting suppression methods
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Suppresses painting in every view and every main window.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public void SuppressPaint()
-		{
-			foreach (IFwMainWnd wnd in m_rgMainWindows)
-			{
-				if (wnd is FwMainWnd)
-				{
-					foreach (IRootSite site in ((FwMainWnd)wnd).ActiveViewHelper.Views)
-						site.AllowPainting = false;
-				}
-			}
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Resumes painting in every view and every main window.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public void ResumePaint()
-		{
-			foreach (IFwMainWnd wnd in m_rgMainWindows)
-			{
-				if (wnd is FwMainWnd)
-				{
-					foreach (IRootSite site in ((FwMainWnd)wnd).ActiveViewHelper.Views)
-						site.AllowPainting = true;
-				}
-			}
 		}
 		#endregion
 

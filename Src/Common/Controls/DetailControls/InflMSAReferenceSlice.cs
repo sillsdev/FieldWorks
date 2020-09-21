@@ -12,7 +12,7 @@
 using System.Diagnostics;
 using System.Linq;
 
-using SIL.FieldWorks.FDO;
+using SIL.LCModel;
 using SIL.FieldWorks.Common.FwUtils;
 
 
@@ -30,7 +30,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// <param name="cache">The cache.</param>
 		/// <param name="obj">The obj.</param>
 		/// <param name="flid">The flid.</param>
-		public InflMSAReferenceSlice(FdoCache cache, ICmObject obj, int flid)
+		public InflMSAReferenceSlice(LcmCache cache, ICmObject obj, int flid)
 			: base(cache, obj, flid)
 		{
 		}
