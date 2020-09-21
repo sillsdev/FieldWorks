@@ -652,8 +652,9 @@ namespace SIL.FieldWorks.IText
 						m_tagSel,
 						0, // no previous occurrence
 						m_ichSelOutput, m_ichSelOutput, m_wsVern,
-						false, // needs to be false here to associate with trailing character
-						// esp. for when the cursor is at the beginning of the morpheme (LT-7773)
+						m_ichSelOutput > 0, // if the IP is at the beginning of the
+						// morpheme we want fAssocPrev to be false (LT-7773), but otherwise want
+						// it to be true (LT-19236)
 						-1, // end not in different object
 						propsBuilder.GetTextProps(),
 						true); // install it.
