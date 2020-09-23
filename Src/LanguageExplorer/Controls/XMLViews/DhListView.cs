@@ -130,7 +130,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// This is used to keep track of the positions of columns after they have been dragged and dropped.
 		/// ColumnsDisplayOrder[i] is the index of the position where the column at
-		/// position i in the orginal Columns collection is actually displayed.
+		/// position i in the original Columns collection is actually displayed.
 		/// </summary>
 		private List<int> OrderForColumnsDisplay
 		{

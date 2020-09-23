@@ -57,7 +57,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			//
 			// InterlinDocRootSiteBase
 			//
-			this.AccessibleName = "InterlinDocRootSiteBase";
+			this.AccessibleName = "Interlinear Document RootSite";
 			this.Name = "InterlinDocRootSiteBase";
 			this.ResumeLayout(false);
 		}

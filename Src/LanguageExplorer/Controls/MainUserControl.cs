@@ -36,6 +36,10 @@ namespace LanguageExplorer.Controls
 			return new FwAccessibleObject(this);
 		}
 
+#if HASSOTODO
+		// REVIEW (Hasso) 2020.05: What is the purpose of this? These names are neither accessible nor localizable.
+		// There is a lot of work yet to do to make our software accessible to screen readers.
+#endif
 		/// <summary>
 		/// Set/Set the default accessible name.
 		/// </summary>

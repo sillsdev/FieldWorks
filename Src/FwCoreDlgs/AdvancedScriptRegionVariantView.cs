@@ -23,11 +23,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			InitializeComponent();
 		}
 
-		#region ISelectableIdentifierOptions impl
+		#region ISelectableIdentifierOptions implementation
 		/// <summary/>
 		public void Selected()
 		{
-			UpdateDisplayFromModel(null, null);
 		}
 
 		/// <summary/>
@@ -40,15 +39,12 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			RemoveAllEventHandlers();
 		}
-		#endregion
-
-		private static void UpdateDisplayFromModel(object o, EventArgs eventArgs)
-		{
-		}
+		#endregion ISelectableIdentifierOptions implementation
 
 		private void RemoveAllEventHandlers()
 		{
 			// disconnect all change event handlers
+			_abbreviation.TextChanged -= _abbreviationTextBox_TextChanged;
 			_scriptChooser.SelectedIndexChanged -= _scriptChooser_SelectedIndexChanged;
 			_regionChooser.SelectedIndexChanged -= _regionChooser_SelectedIndexChanged;
 			_standardVariantCombo.SelectedIndexChanged -= _standardVariantCombo_SelectedIndexChanged;
@@ -63,6 +59,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private void AddAllEventHandlers()
 		{
 			// Reconnect all change event handlers
+			_abbreviation.TextChanged += _abbreviationTextBox_TextChanged;
 			_scriptChooser.SelectedIndexChanged += _scriptChooser_SelectedIndexChanged;
 			_regionChooser.SelectedIndexChanged += _regionChooser_SelectedIndexChanged;
 			_standardVariantCombo.SelectedIndexChanged += _standardVariantCombo_SelectedIndexChanged;
@@ -104,7 +101,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			var scripts = _model.GetScripts().ToArray();
 			foreach (var scriptChoice in scripts)
 			{
-				_scriptChooser.Items.Add(new ScriptChoiceView(scriptChoice.Label, scriptChoice));
+				_scriptChooser.Items.Add(new ScriptChoiceView(scriptChoice));
 			}
 			if (_model.Script != null)
 			{
@@ -115,7 +112,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			var modelRegions = _model.GetRegions().ToArray();
 			foreach (var regionChoice in modelRegions)
 			{
-				_regionChooser.Items.Add(new RegionChoiceView(regionChoice.Label, regionChoice));
+				_regionChooser.Items.Add(new RegionChoiceView(regionChoice));
 			}
 			if (_model.Region != null)
 			{
@@ -139,40 +136,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			AddAllEventHandlers();
 		}
 
-		private sealed class ScriptChoiceView : Tuple<string, ScriptListItem>
+		private void _abbreviationTextBox_TextChanged(object sender, EventArgs e)
 		{
-			internal ScriptChoiceView(string label, ScriptListItem scriptChoice) : base(label, scriptChoice)
-			{
-			}
-
-			public override string ToString()
-			{
-				return Item1;
-			}
-		}
-
-		private sealed class RegionChoiceView : Tuple<string, RegionListItem>
-		{
-			internal RegionChoiceView(string label, RegionListItem regionListItem) : base(label, regionListItem)
-			{
-			}
-
-			public override string ToString()
-			{
-				return Item1;
-			}
-		}
-
-		private sealed class VariantChoiceView : Tuple<string, VariantListItem>
-		{
-			internal VariantChoiceView(VariantListItem variant): base(variant.Name, variant)
-			{
-			}
-
-			public override string ToString()
-			{
-				return Item1;
-			}
+			_model.Abbreviation = _abbreviation.Text;
+			BindToModel(_model);
 		}
 
 		private void _variantsTextBox_TextChanged(object sender, EventArgs e)
@@ -264,6 +231,42 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			else if (_ietftagTextBox.Text.Length > 0)
 			{
 				_ietftagTextBox.BackColor = Color.Red;
+			}
+		}
+
+		private sealed class ScriptChoiceView : Tuple<string, ScriptListItem>
+		{
+			internal ScriptChoiceView(ScriptListItem scriptChoice) : base(scriptChoice.Label, scriptChoice)
+			{
+			}
+
+			public override string ToString()
+			{
+				return Item1;
+			}
+		}
+
+		private sealed class RegionChoiceView : Tuple<string, RegionListItem>
+		{
+			internal RegionChoiceView(RegionListItem regionListItem) : base(regionListItem.Label, regionListItem)
+			{
+			}
+
+			public override string ToString()
+			{
+				return Item1;
+			}
+		}
+
+		private sealed class VariantChoiceView : Tuple<string, VariantListItem>
+		{
+			internal VariantChoiceView(VariantListItem variant) : base(variant.Name, variant)
+			{
+			}
+
+			public override string ToString()
+			{
+				return Item1;
 			}
 		}
 	}

@@ -10,8 +10,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 {
 	partial class AdvancedScriptRegionVariantView
 	{
-
-
 		private void InitializeComponent()
 		{
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(AdvancedScriptRegionVariantView));
@@ -26,8 +24,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			this._standardVariantCombo = new System.Windows.Forms.ComboBox();
 			this._abbreviation = new System.Windows.Forms.TextBox();
 			this._specialTypeComboBox = new System.Windows.Forms.ComboBox();
-			this.betterLabel5 = new SIL.Windows.Forms.Widgets.BetterLabel();
-			this.betterLabel4 = new SIL.Windows.Forms.Widgets.BetterLabel();
+			this._specialLabel = new SIL.Windows.Forms.Widgets.BetterLabel();
+			this._abbrLabel = new SIL.Windows.Forms.Widgets.BetterLabel();
 			this._scriptLabel = new SIL.Windows.Forms.Widgets.BetterLabel();
 			this._regionLabel = new SIL.Windows.Forms.Widgets.BetterLabel();
 			this._standardVariantLabel = new SIL.Windows.Forms.Widgets.BetterLabel();
@@ -111,25 +109,25 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			resources.ApplyResources(this._specialTypeComboBox, "_specialTypeComboBox");
 			this._specialTypeComboBox.Name = "_specialTypeComboBox";
 			// 
-			// betterLabel5
+			// _specialLabel
 			// 
-			resources.ApplyResources(this.betterLabel5, "betterLabel5");
-			this.betterLabel5.BorderStyle = System.Windows.Forms.BorderStyle.None;
-			this.betterLabel5.ForeColor = System.Drawing.SystemColors.ControlText;
-			this.betterLabel5.IsTextSelectable = false;
-			this.betterLabel5.Name = "betterLabel5";
-			this.betterLabel5.ReadOnly = true;
-			this.betterLabel5.TabStop = false;
+			resources.ApplyResources(this._specialLabel, "_specialLabel");
+			this._specialLabel.BorderStyle = System.Windows.Forms.BorderStyle.None;
+			this._specialLabel.ForeColor = System.Drawing.SystemColors.ControlText;
+			this._specialLabel.IsTextSelectable = false;
+			this._specialLabel.Name = "_specialLabel";
+			this._specialLabel.ReadOnly = true;
+			this._specialLabel.TabStop = false;
 			// 
-			// betterLabel4
+			// _abbrLabel
 			// 
-			resources.ApplyResources(this.betterLabel4, "betterLabel4");
-			this.betterLabel4.BorderStyle = System.Windows.Forms.BorderStyle.None;
-			this.betterLabel4.ForeColor = System.Drawing.SystemColors.ControlText;
-			this.betterLabel4.IsTextSelectable = false;
-			this.betterLabel4.Name = "betterLabel4";
-			this.betterLabel4.ReadOnly = true;
-			this.betterLabel4.TabStop = false;
+			resources.ApplyResources(this._abbrLabel, "_abbrLabel");
+			this._abbrLabel.BorderStyle = System.Windows.Forms.BorderStyle.None;
+			this._abbrLabel.ForeColor = System.Drawing.SystemColors.ControlText;
+			this._abbrLabel.IsTextSelectable = false;
+			this._abbrLabel.Name = "_abbrLabel";
+			this._abbrLabel.ReadOnly = true;
+			this._abbrLabel.TabStop = false;
 			// 
 			// _scriptLabel
 			// 
@@ -256,8 +254,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			this.Controls.Add(this.tableLayoutPanel1);
 			this.Controls.Add(this._abbreviation);
 			this.Controls.Add(this._specialTypeComboBox);
-			this.Controls.Add(this.betterLabel5);
-			this.Controls.Add(this.betterLabel4);
+			this.Controls.Add(this._specialLabel);
+			this.Controls.Add(this._abbrLabel);
 			resources.ApplyResources(this, "$this");
 			this.Name = "AdvancedScriptRegionVariantView";
 			this.tableLayoutPanel1.ResumeLayout(false);
@@ -283,8 +281,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private ComboBox _standardVariantCombo;
 		private TextBox _abbreviation;
 		private ComboBox _specialTypeComboBox;
-		private BetterLabel betterLabel5;
-		private BetterLabel betterLabel4;
+		private BetterLabel _specialLabel;
+		private BetterLabel _abbrLabel;
 		private BetterLabel _scriptLabel;
 		private BetterLabel _regionLabel;
 		private BetterLabel _standardVariantLabel;

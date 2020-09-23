@@ -871,6 +871,13 @@ STDMETHODIMP VwGraphics::GetFontData(int nTableId, int * pcbTableSz, BYTE * prgb
 		*pcbTableSz = 0;
 		return S_FALSE;
 	}
+
+	// NOTE: In LT-20221 we saw that corrupt FontData was occasionally being returned from this method.
+	// We were unable to determine how the font data was corrupted.
+	// The issue occurred predictably on windows 10, but was not reproducible in windows 8.
+	// This suggests the problem could be in Microsoft code.
+	// ENHANCE: Find a way to test for bad font data and raise an error from this method
+
 	*pcbTableSz = cbTableSz;
 
 	END_COM_METHOD(g_fact, IID_IVwGraphics);

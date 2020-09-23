@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
+using System.Linq;
 using System.Windows.Forms;
 using System.Xml;
 using SIL.LCModel;
@@ -62,12 +63,17 @@ namespace LanguageExplorer.Controls
 			mc.m_term = NameFixer(sContent);
 			mc.m_defWs = GetBestWritingSystemForNamedNode(node, "def", sDefaultWS, cache, out sContent);
 			mc.m_def = sContent;
+			// ReSharper disable once PossibleNullReferenceException
 			foreach (XmlNode citNode in node.SelectNodes("citation"))
 			{
 				mc.m_citations.Add(new MasterCategoryCitation(XmlUtils.GetMandatoryAttributeValue(citNode, "ws"), citNode.InnerText));
 			}
 			return mc;
 		}
+
+		/// <summary>
+		/// TODO: unit test, resolve LT-19115
+		/// </summary>
 		private static string GetBestWritingSystemForNamedNode(XmlNode node, string sNodeName, string sDefaultWS, LcmCache cache, out string sNodeContent)
 		{
 			string sWS;
@@ -103,48 +109,82 @@ namespace LanguageExplorer.Controls
 
 		public void AddToDatabase(LcmCache cache, ICmPossibilityList posList, MasterCategory parent, IPartOfSpeech subItemOwner)
 		{
-			if (POS != null)
+			// It's already in the database, so nothing more can be done.
+			if (InDatabase)
 			{
-				return; // It's already in the database, so nothing more can be done.
+				return;
 			}
-			UndoableUnitOfWorkHelper.Do(LanguageExplorerControls.ksUndoCreateCategory, LanguageExplorerControls.ksRedoCreateCategory, cache.ServiceLocator.GetInstance<IActionHandler>(), () =>
+			UndoableUnitOfWorkHelper.Do(LanguageExplorerControls.ksUndoCreateCategory, LanguageExplorerControls.ksRedoCreateCategory,
+				cache.ServiceLocator.GetInstance<IActionHandler>(), () =>
+				{
+					DeterminePOSLocationInfo(cache, subItemOwner, parent, posList, out _, out _);
+					Debug.Assert(POS != null);
+					if (m_node == null)
+					{
+						// should not happen, but just in case... we still get something useful
+						var wsf = cache.WritingSystemFactory;
+						var termWs = wsf.GetWsFromStr(m_termWs);
+						var abbrevWs = wsf.GetWsFromStr(m_abbrevWs);
+						var defWs = wsf.GetWsFromStr(m_defWs);
+						POS.Name.set_String(termWs, TsStringUtils.MakeString(m_term, termWs));
+						POS.Abbreviation.set_String(abbrevWs, TsStringUtils.MakeString(m_abbrev, abbrevWs));
+						POS.Description.set_String(defWs, TsStringUtils.MakeString(m_def, defWs));
+					}
+					else
+					{
+						UpdatePOSStrings(cache, m_node, POS);
+					}
+					POS.CatalogSourceId = m_id;
+				});
+		}
+		/// <summary>
+		/// Updates the text of the projects grammatical categories with text from provided goldEticDoc
+		/// </summary>
+		internal static void UpdatePOSStrings(LcmCache cache, XmlDocument goldEticDoc)
+		{
+			var posDict = cache.LangProject.PartsOfSpeechOA.ReallyReallyAllPossibilities
+				.Cast<IPartOfSpeech>().ToDictionary(pos => pos.CatalogSourceId);
+			var posNodes = goldEticDoc.DocumentElement?.SelectNodes("/eticPOSList/item");
+			Debug.Assert(posNodes != null);
+			UowHelpers.UndoExtension(LanguageExplorerControls.ImportTranslateGrammaticalCategories, cache.ServiceLocator.GetInstance<IActionHandler>(), () =>
 			{
-				DeterminePOSLocationInfo(cache, subItemOwner, parent, posList, out _, out _);
-				var wsf = cache.WritingSystemFactory;
-				Debug.Assert(POS != null);
-				var termWs = wsf.GetWsFromStr(m_termWs);
-				var abbrevWs = wsf.GetWsFromStr(m_abbrevWs);
-				var defWs = wsf.GetWsFromStr(m_defWs);
-				if (m_node == null)
-				{
-					// should not happen, but just in case... we still get something useful
-					POS.Name.set_String(termWs, TsStringUtils.MakeString(m_term, termWs));
-					POS.Abbreviation.set_String(abbrevWs, TsStringUtils.MakeString(m_abbrev, abbrevWs));
-					POS.Description.set_String(defWs, TsStringUtils.MakeString(m_def, defWs));
-				}
-				else
-				{
-					SetContentFromNode(cache, "abbrev", false, POS.Abbreviation);
-					SetContentFromNode(cache, "term", true, POS.Name);
-					SetContentFromNode(cache, "def", false, POS.Description);
-				}
-				POS.CatalogSourceId = m_id;
+				UpdatePOSStrings(cache, goldEticDoc.DocumentElement, posDict);
 			});
 		}
 
-		private void SetContentFromNode(LcmCache cache, string sNodeName, bool fFixName, ITsMultiString item)
+		private static void UpdatePOSStrings(LcmCache cache, XmlElement goldEticElt, Dictionary<string, IPartOfSpeech> posDict)
+		{
+			foreach (XmlElement posElt in goldEticElt.GetElementsByTagName("item"))
+			{
+				if (posDict.TryGetValue(XmlUtils.GetMandatoryAttributeValue(posElt, "id"), out var pos))
+				{
+					UpdatePOSStrings(cache, posElt, pos);
+					UpdatePOSStrings(cache, posElt, posDict);
+				}
+			}
+		}
+
+		/// <summary>
+		/// Updates the text of the POS from the XmlNode. Must be called inside a UOW.
+		/// </summary>
+		internal static void UpdatePOSStrings(LcmCache cache, XmlNode posNode, IPartOfSpeech pos)
+		{
+			SetContentFromNode(cache, posNode, "abbrev", false, pos.Abbreviation);
+			SetContentFromNode(cache, posNode, "term", true, pos.Name);
+			SetContentFromNode(cache, posNode, "def", false, pos.Description);
+		}
+
+		private static void SetContentFromNode(LcmCache cache, XmlNode posNode, string sNodeName, bool fFixName, ITsMultiString item)
 		{
 			var wsf = cache.WritingSystemFactory;
 			int iWS;
 			var fContentFound = false; // be pessimistic
-			foreach (var ws in cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems)
+			foreach (var ws in cache.ServiceLocator.WritingSystems.AnalysisWritingSystems)
 			{
 				var sWS = ws.Id;
-				var nd = m_node.SelectSingleNode(sNodeName + "[@ws='" + sWS + "']");
+				var nd = posNode.SelectSingleNode(sNodeName + "[@ws='" + sWS + "']");
 				if (nd == null || nd.InnerText.Length == 0)
-				{
 					continue;
-				}
 				fContentFound = true;
 				var sNodeContent = fFixName ? NameFixer(nd.InnerText) : nd.InnerText;
 				iWS = wsf.GetWsFromStr(sWS);
@@ -157,9 +197,10 @@ namespace LanguageExplorer.Controls
 			}
 		}
 
-		private void DeterminePOSLocationInfo(LcmCache cache, IPartOfSpeech subItemOwner, MasterCategory parent, ICmPossibilityList posList, out int newOwningFlid, out int insertLocation)
+		private void DeterminePOSLocationInfo(LcmCache cache, IPartOfSpeech subItemOwner,
+			MasterCategory parent, ICmPossibilityList posList,
+			out int newOwningFlid, out int insertLocation)
 		{
-			int newOwner;
 			// The XML node is from a file shipped with FieldWorks. It is quite likely multiple users
 			// of a project could independently add the same items, so we create them with fixed guids
 			// so merge will recognize them as the same objects.
@@ -186,7 +227,7 @@ namespace LanguageExplorer.Controls
 			{
 				newOwningFlid = CmPossibilityListTags.kflidPossibilities;
 				insertLocation = posList.PossibilitiesOS.Count;
-				POS = posFactory.Create(guid, posList); // automatically adds to parent.
+				POS = posFactory.Create(guid,posList); // automatically adds to parent.
 			}
 		}
 

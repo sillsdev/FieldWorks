@@ -6,6 +6,9 @@ using System.Diagnostics;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 {
+#if HASSOTODO
+	// TODO: 2020.05: make localizable
+#endif
 	partial class WordsSfmImportWizard
 	{
 		/// <summary>

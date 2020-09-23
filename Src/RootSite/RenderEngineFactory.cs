@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Utils;
@@ -19,14 +20,12 @@ namespace SIL.FieldWorks.Common.RootSites
 	/// </summary>
 	internal sealed class RenderEngineFactory : DisposableBase, IRenderEngineFactory
 	{
-		private readonly Dictionary<ILgWritingSystem, Dictionary<Tuple<string, bool, bool>, GraphiteEngine>> m_graphiteEngines;
-		private readonly Dictionary<ILgWritingSystemFactory, IRenderEngine> m_nonGraphiteEngines;
+		private readonly Dictionary<ILgWritingSystem, Dictionary<Tuple<string, bool, bool>, Tuple<bool, IRenderEngine>>> _fontEngines;
 
 		/// <summary />
 		public RenderEngineFactory()
 		{
-			m_graphiteEngines = new Dictionary<ILgWritingSystem, Dictionary<Tuple<string, bool, bool>, GraphiteEngine>>();
-			m_nonGraphiteEngines = new Dictionary<ILgWritingSystemFactory, IRenderEngine>();
+			_fontEngines = new Dictionary<ILgWritingSystem, Dictionary<Tuple<string, bool, bool>, Tuple<bool, IRenderEngine>>>();
 		}
 
 		/// <summary>
@@ -45,56 +44,68 @@ namespace SIL.FieldWorks.Common.RootSites
 				MarshalEx.StringToUShort(fontName, chrp.szFaceName);
 				vg.SetupGraphics(ref chrp);
 			}
-
-			if (ws.IsGraphiteEnabled)
+			if (!_fontEngines.TryGetValue(ws, out var wsFontEngines))
 			{
-				if (!m_graphiteEngines.TryGetValue(ws, out var wsGraphiteEngines))
-				{
-					wsGraphiteEngines = new Dictionary<Tuple<string, bool, bool>, GraphiteEngine>();
-					m_graphiteEngines[ws] = wsGraphiteEngines;
-				}
-				var key = Tuple.Create(fontName, chrp.ttvBold == (int)FwTextToggleVal.kttvForceOn, chrp.ttvItalic == (int)FwTextToggleVal.kttvForceOn);
-				if (!wsGraphiteEngines.TryGetValue(key, out var graphiteEngine))
-				{
-					graphiteEngine = GraphiteEngineClass.Create();
-					var fontFeatures = fontName == ws.DefaultFontName ? ws.DefaultFontFeatures : null;
-					graphiteEngine.InitRenderer(vg, fontFeatures);
-					// check if the font is a valid Graphite font
-					if (graphiteEngine.FontIsValid)
-					{
-						graphiteEngine.RenderEngineFactory = this;
-						graphiteEngine.WritingSystemFactory = ws.WritingSystemFactory;
-						wsGraphiteEngines[key] = graphiteEngine;
-					}
-					else
-					{
-						Marshal.ReleaseComObject(graphiteEngine);
-						graphiteEngine = null;
-					}
-				}
-				if (graphiteEngine != null)
-				{
-					return graphiteEngine;
-				}
+				wsFontEngines = new Dictionary<Tuple<string, bool, bool>, Tuple<bool, IRenderEngine>>();
+				_fontEngines[ws] = wsFontEngines;
+			}
+			var key = Tuple.Create(fontName, chrp.ttvBold == (int)FwTextToggleVal.kttvForceOn, chrp.ttvItalic == (int)FwTextToggleVal.kttvForceOn);
+			if (!wsFontEngines.TryGetValue(key, out var fontEngine))
+			{
+				// We don't have a font engine stored for this combination of font face with bold and italic
+				// so we will create the engine for it here
+				wsFontEngines[key] = GetRenderingEngine(fontName, vg, ws);
+			}
+			else if (fontEngine.Item1 == ws.IsGraphiteEnabled)
+			{
+				// We did have a font engine for this key and IsGraphiteEnabled hasn't changed so use it.
+				return fontEngine.Item2;
 			}
 			else
 			{
-				if (m_graphiteEngines.TryGetValue(ws, out var wsGraphiteEngines))
-				{
-					ReleaseRenderEngines(wsGraphiteEngines.Values);
-					m_graphiteEngines.Remove(ws);
-				}
+				// We had a font engine for this key, but IsGraphiteEnabled has changed in the ws.
+				// Destroy all the engines associated with this ws and create one for this key.
+				ReleaseRenderEngines(wsFontEngines.Values);
+				wsFontEngines.Clear();
+				var renderingEngine = GetRenderingEngine(fontName, vg, ws);
+				wsFontEngines[key] = renderingEngine;
 			}
-			if (!m_nonGraphiteEngines.TryGetValue(ws.WritingSystemFactory, out var nonGraphiteEngine))
-			{
-				nonGraphiteEngine = UniscribeEngineClass.Create();
-				nonGraphiteEngine.InitRenderer(vg, null);
-				nonGraphiteEngine.RenderEngineFactory = this;
-				nonGraphiteEngine.WritingSystemFactory = ws.WritingSystemFactory;
-				m_nonGraphiteEngines[ws.WritingSystemFactory] = nonGraphiteEngine;
-			}
+			return wsFontEngines[key].Item2;
+		}
 
-			return nonGraphiteEngine;
+		private Tuple<bool, IRenderEngine> GetRenderingEngine(string fontName, IVwGraphics vg, ILgWritingSystem ws)
+		{
+			// NB: Even if the ws claims graphite is enabled, this might not be a graphite font
+			if (ws.IsGraphiteEnabled)
+			{
+				var graphiteEngine = GraphiteEngineClass.Create();
+				string fontFeatures = null;
+				if (fontName == ws.DefaultFontName)
+				{
+					fontFeatures = GraphiteFontFeatures.ConvertFontFeatureCodesToIds(ws.DefaultFontFeatures);
+				}
+				graphiteEngine.InitRenderer(vg, fontFeatures);
+				// check if the font is a valid Graphite font
+				if (graphiteEngine.FontIsValid)
+				{
+					graphiteEngine.RenderEngineFactory = this;
+					graphiteEngine.WritingSystemFactory = ws.WritingSystemFactory;
+					return new Tuple<bool, IRenderEngine>(ws.IsGraphiteEnabled, graphiteEngine);
+				}
+				// It wasn't really a graphite font - release the graphite one and create a Uniscribe below
+				Marshal.ReleaseComObject(graphiteEngine);
+			}
+			return new Tuple<bool, IRenderEngine>(ws.IsGraphiteEnabled, GetUniscribeEngine(vg, ws));
+		}
+
+		private IRenderEngine GetUniscribeEngine(IVwGraphics vg, ILgWritingSystem ws)
+		{
+			IRenderEngine uniscribeEngine = UniscribeEngineClass.Create();
+			uniscribeEngine.InitRenderer(vg, null);
+			uniscribeEngine.RenderEngineFactory = this;
+			uniscribeEngine.WritingSystemFactory = ws.WritingSystemFactory;
+
+			return uniscribeEngine;
 		}
 
 		/// <summary>
@@ -102,14 +113,11 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// </summary>
 		public void ClearRenderEngines()
 		{
-			foreach (var wsGraphiteEngines in m_graphiteEngines.Values)
+			foreach (var wsGraphiteEngines in _fontEngines.Values)
 			{
 				ReleaseRenderEngines(wsGraphiteEngines.Values);
 			}
-			m_graphiteEngines.Clear();
-
-			ReleaseRenderEngines(m_nonGraphiteEngines.Values);
-			m_nonGraphiteEngines.Clear();
+			_fontEngines.Clear();
 		}
 
 		/// <summary>
@@ -117,23 +125,19 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// </summary>
 		public void ClearRenderEngines(ILgWritingSystemFactory wsf)
 		{
-			foreach (var kvp in m_graphiteEngines.Where(kvp => kvp.Key.WritingSystemFactory == wsf).ToArray())
+			foreach (var kvp in _fontEngines
+				.Where(kvp => kvp.Key.WritingSystemFactory == wsf).ToArray())
 			{
 				ReleaseRenderEngines(kvp.Value.Values);
-				m_graphiteEngines.Remove(kvp.Key);
-			}
-			if (m_nonGraphiteEngines.TryGetValue(wsf, out var nonGraphiteRenderEngine))
-			{
-				Marshal.ReleaseComObject(nonGraphiteRenderEngine);
-				m_nonGraphiteEngines.Remove(wsf);
+				_fontEngines.Remove(kvp.Key);
 			}
 		}
 
-		private void ReleaseRenderEngines(IEnumerable<IRenderEngine> renderEngines)
+		private void ReleaseRenderEngines(IEnumerable<Tuple<bool, IRenderEngine>> renderEngines)
 		{
 			foreach (var renderEngine in renderEngines)
 			{
-				Marshal.ReleaseComObject(renderEngine);
+				Marshal.ReleaseComObject(renderEngine.Item2);
 			}
 		}
 

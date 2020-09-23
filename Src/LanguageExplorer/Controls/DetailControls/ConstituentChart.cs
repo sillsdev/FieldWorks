@@ -87,6 +87,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			m_serviceLocator = Cache.ServiceLocator;
 			m_logic = logic;
 			ForEditing = true;
+			AccessibleName = "Constituent Chart";
 			Name = "ConstituentChart";
 			Vc = new InterlinVc(Cache);
 		}

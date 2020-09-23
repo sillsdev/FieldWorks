@@ -461,7 +461,6 @@
     <None Include="Controls\XMLViews\Resources\Layouts.xml" />
     <None Include="Controls\XMLViews\Resources\Parts.xml" />
     <None Include="Controls\XMLViews\Resources\TextCacheModel_LanguageExplorer.xml" />
-    <None Include="DictionaryConfiguration\TestData\AudioFiles\abu2.wav" />
     <None Include="Areas\TextsAndWords\Interlinear\ExportTestFiles\Phase1-KalabaTest.xml" />
     <None Include="Areas\TextsAndWords\Interlinear\ExportTestFiles\Phase1-KalabaTestPunctuation.xml" />
     <None Include="Areas\TextsAndWords\Interlinear\ExportTestFiles\Phase1-KalabaTestPunctuationWordAlignedXLingPap.xml" />

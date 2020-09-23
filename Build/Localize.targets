@@ -1,18 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="15.0">
 
+	<UsingTask TaskName="GoldEticToXliff" AssemblyFile="FwBuildTasks.dll"/>
 	<UsingTask TaskName="ListsToXliff" AssemblyFile="FwBuildTasks.dll"/>
 	<UsingTask TaskName="LocalizeFieldWorks" AssemblyFile="FwBuildTasks.dll"/>
 	<UsingTask TaskName="NormalizeLocales" AssemblyFile="FwBuildTasks.dll"/>
 	<UsingTask TaskName="PoToXml" AssemblyFile="FwBuildTasks.dll"/>
+	<UsingTask TaskName="XliffToGoldEtic" AssemblyFile="FwBuildTasks.dll"/>
 	<UsingTask TaskName="XliffToLists" AssemblyFile="FwBuildTasks.dll"/>
 	<UsingTask TaskName="XmlToPo" AssemblyFile="FwBuildTasks.dll"/>
 	<UsingTask TaskName="Zip" AssemblyFile="FwBuildTasks.dll"/>
 
 	<!-- Localize strings-en.xml, lists, and all resx files -->
 	<Target Name="localize" DependsOnTargets="localize-source;localize-binaries"/>
-	<Target Name="localize-source" DependsOnTargets="Initialize;downloadTranslatedFiles;copyLibL10ns;zipLocalizedLists;processLanguages-source"/>
-	<Target Name="localize-binaries" DependsOnTargets="Initialize;processLanguages-binaries"/>
+	<Target Name="localize-source" DependsOnTargets="Initialize;downloadTranslatedFiles;copyLibL10ns;combineGOLDEtic;zipLocalizedLists;processLanguages-source" Condition="'$(DisableLocalization)'!='true'"/>
+	<Target Name="localize-binaries" DependsOnTargets="Initialize;processLanguages-binaries" Condition="'$(DisableLocalization)'!='true'"/>
 
 	<PropertyGroup>
 		<SldrUrl>https://ldml.api.sil.org/</SldrUrl>
@@ -20,6 +22,7 @@
 		<L10nsDirectory>$(L10nsBaseDir)/l10ns</L10nsDirectory>
 		<LibL10nsDirectory>$(fwrt)/DistFiles/CommonLocalizations</LibL10nsDirectory>
 		<ListsDirectory>$(L10nsBaseDir)/lists</ListsDirectory>
+		<GoldEticDir>$(ListsDirectory)/GramCats</GoldEticDir>
 		<MessagesPot>$(L10nsBaseDir)/messages.pot</MessagesPot>
 		<LcmRootDir>$(LcmLocalArtifactsDir)/../..</LcmRootDir>
 		<LcmSrcDir>$(LcmRootDir)/src</LcmSrcDir>
@@ -39,6 +42,7 @@
 			<OldXliffs Include="$(ListsDirectory)/*.xlf"/>
 		</ItemGroup>
 		<ForceDelete Files="@(OldXliffs)"/>
+		<GoldEticToXliff SourceXml="$(LcmSrcDir)/SIL.LCModel/Templates/GOLDEtic.xml" XliffOutputDir="$(ListsDirectory)"/>
 		<ListsToXliff SourceXml="$(ListsDirectory)/LocalizableLists.xml" XliffOutputDir="$(ListsDirectory)"/>
 		<ForceDelete Files="$(MessagesPot)"/>
 		<XmlToPo FwRoot="$(fwrt)" Output="$(MessagesPot)"/>
@@ -105,6 +109,16 @@
 			<TranslatedResxFiles Include="$(LocaleDir)/Localizations/LCM/**/*.resx"/>
 		</ItemGroup>
 		<Move SourceFiles="@(TranslatedResxFiles)" DestinationFolder="$(LocaleDir)/src/%(RecursiveDir)" />
+	</Target>
+
+	<Target Name="combineGOLDEtic">
+		<PropertyGroup>
+			<OutputXml>$(fwrt)/DistFiles/Templates/GOLDEtic.xml</OutputXml>
+		</PropertyGroup>
+		<ItemGroup>
+			<GEXliffFiles Include="$(L10nsDirectory)/*/Lists/GOLDEtic/GOLDEtic.*.xlf"/>
+		</ItemGroup>
+		<XliffToGoldEtic XliffSourceFiles="@(GEXliffFiles)" OutputXml="$(OutputXml)"/>
 	</Target>
 
 	<Target Name="updateOneTemplateLdmlFile">

@@ -1,11 +1,9 @@
-// Copyright (c) 2012-2019 SIL International
+// Copyright (c) 2012-2020 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Diagnostics;
 using System.Windows.Forms;
-using SIL.FieldWorks.FwCoreDlgs.Controls;
-using SIL.FieldWorks.Resources;
 
 namespace LanguageExplorer.Controls.DetailControls
 {
@@ -56,8 +54,8 @@ namespace LanguageExplorer.Controls.DetailControls
 			this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
 			this.button1 = new System.Windows.Forms.Button();
 			this.panel1 = new System.Windows.Forms.Panel();
-			this.splitContainer1 = new System.Windows.Forms.SplitContainer();
 			this.btnCancelSearch = new LanguageExplorer.Controls.DetailControls.FwCancelSearchButton();
+			this.splitContainer1 = new System.Windows.Forms.SplitContainer();
 			this.editDomainsLinkPanel.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.editDomainsLinkPic)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.searchTextBox)).BeginInit();
@@ -72,227 +70,151 @@ namespace LanguageExplorer.Controls.DetailControls
 			// 
 			// editDomainsLinkPanel
 			// 
-			this.editDomainsLinkPanel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-			this.editDomainsLinkPanel.AutoSize = true;
+			resources.ApplyResources(this.editDomainsLinkPanel, "editDomainsLinkPanel");
 			this.editDomainsLinkPanel.Controls.Add(this.editDomainsLinkPic);
 			this.editDomainsLinkPanel.Controls.Add(this.editDomainslinklabel);
-			this.editDomainsLinkPanel.Location = new System.Drawing.Point(8, 367);
 			this.editDomainsLinkPanel.Name = "editDomainsLinkPanel";
-			this.editDomainsLinkPanel.Padding = new System.Windows.Forms.Padding(5, 0, 0, 0);
-			this.editDomainsLinkPanel.Size = new System.Drawing.Size(305, 40);
-			this.editDomainsLinkPanel.TabIndex = 5;
 			// 
 			// editDomainsLinkPic
 			// 
-			this.editDomainsLinkPic.Anchor = System.Windows.Forms.AnchorStyles.None;
+			resources.ApplyResources(this.editDomainsLinkPic, "editDomainsLinkPic");
 			this.editDomainsLinkPic.BackColor = System.Drawing.SystemColors.Control;
-			this.editDomainsLinkPic.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-			this.editDomainsLinkPic.Location = new System.Drawing.Point(8, 3);
 			this.editDomainsLinkPic.Name = "editDomainsLinkPic";
-			this.editDomainsLinkPic.Size = new System.Drawing.Size(16, 16);
-			this.editDomainsLinkPic.TabIndex = 5;
 			this.editDomainsLinkPic.TabStop = false;
 			// 
 			// editDomainslinklabel
 			// 
-			this.editDomainslinklabel.Anchor = System.Windows.Forms.AnchorStyles.None;
-			this.editDomainslinklabel.AutoSize = true;
-			this.editDomainslinklabel.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-			this.editDomainslinklabel.Location = new System.Drawing.Point(30, 4);
+			resources.ApplyResources(this.editDomainslinklabel, "editDomainslinklabel");
 			this.editDomainslinklabel.Name = "editDomainslinklabel";
-			this.editDomainslinklabel.Size = new System.Drawing.Size(116, 13);
-			this.editDomainslinklabel.TabIndex = 4;
 			this.editDomainslinklabel.TabStop = true;
-			this.editDomainslinklabel.Text = "Edit Semantic Domains";
-			this.editDomainslinklabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			this.editDomainslinklabel.VisitedLinkColor = System.Drawing.Color.Blue;
 			this.editDomainslinklabel.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.OnEditDomainsLinkClicked);
 			// 
 			// domainTree
 			// 
-			this.domainTree.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+			resources.ApplyResources(this.domainTree, "domainTree");
 			this.domainTree.CheckBoxes = true;
-			this.domainTree.Location = new System.Drawing.Point(0, 0);
 			this.domainTree.Name = "domainTree";
-			this.domainTree.Size = new System.Drawing.Size(304, 148);
-			this.domainTree.TabIndex = 6;
 			this.domainTree.AfterCheck += new System.Windows.Forms.TreeViewEventHandler(this.OnDomainTreeCheck);
 			// 
 			// searchTextBox
 			// 
 			this.searchTextBox.AcceptsReturn = false;
 			this.searchTextBox.AdjustStringHeight = true;
-			this.searchTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+			resources.ApplyResources(this.searchTextBox, "searchTextBox");
 			this.searchTextBox.BackColor = System.Drawing.SystemColors.Window;
 			this.searchTextBox.controlID = null;
-			this.searchTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 100F);
 			this.searchTextBox.HasBorder = false;
-			this.searchTextBox.Location = new System.Drawing.Point(0, 1);
 			this.searchTextBox.Name = "searchTextBox";
-			this.searchTextBox.Size = new System.Drawing.Size(278, 24);
 			this.searchTextBox.SuppressEnter = true;
-			this.searchTextBox.TabIndex = 7;
 			this.searchTextBox.WordWrap = false;
 			// 
 			// domainList
 			// 
-			this.domainList.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+			resources.ApplyResources(this.domainList, "domainList");
 			this.domainList.AutoArrange = false;
 			this.domainList.CheckBoxes = true;
 			this.domainList.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeader1});
 			this.domainList.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.None;
-			this.domainList.LabelWrap = false;
-			this.domainList.Location = new System.Drawing.Point(0, 0);
+			this.domainList.HideSelection = false;
 			this.domainList.MultiSelect = false;
 			this.domainList.Name = "domainList";
 			this.domainList.ShowGroups = false;
-			this.domainList.Size = new System.Drawing.Size(304, 148);
-			this.domainList.TabIndex = 8;
 			this.domainList.UseCompatibleStateImageBehavior = false;
 			this.domainList.View = System.Windows.Forms.View.Details;
-			this.domainList.Visible = false;
 			this.domainList.ItemChecked += new System.Windows.Forms.ItemCheckedEventHandler(this.OnDomainListChecked);
 			// 
 			// columnHeader1
 			// 
-			this.columnHeader1.Width = 305;
+			resources.ApplyResources(this.columnHeader1, "columnHeader1");
 			// 
 			// displayUsagePanel
 			// 
-			this.displayUsagePanel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+			resources.ApplyResources(this.displayUsagePanel, "displayUsagePanel");
 			this.displayUsagePanel.Controls.Add(this.displayUsageCheckBox);
-			this.displayUsagePanel.Location = new System.Drawing.Point(8, 338);
 			this.displayUsagePanel.Name = "displayUsagePanel";
-			this.displayUsagePanel.Padding = new System.Windows.Forms.Padding(5, 0, 0, 0);
-			this.displayUsagePanel.Size = new System.Drawing.Size(305, 23);
-			this.displayUsagePanel.TabIndex = 6;
 			// 
 			// displayUsageCheckBox
 			// 
-			this.displayUsageCheckBox.AutoSize = true;
-			this.displayUsageCheckBox.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-			this.displayUsageCheckBox.Location = new System.Drawing.Point(8, 3);
+			resources.ApplyResources(this.displayUsageCheckBox, "displayUsageCheckBox");
 			this.displayUsageCheckBox.Name = "displayUsageCheckBox";
-			this.displayUsageCheckBox.Size = new System.Drawing.Size(126, 17);
-			this.displayUsageCheckBox.TabIndex = 0;
-			this.displayUsageCheckBox.Text = "Display usage figures";
 			this.displayUsageCheckBox.UseVisualStyleBackColor = true;
 			this.displayUsageCheckBox.CheckedChanged += new System.EventHandler(this.OnDisplayUsageCheckedChanged);
 			// 
 			// buttonPanel
 			// 
-			this.buttonPanel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+			resources.ApplyResources(this.buttonPanel, "buttonPanel");
 			this.buttonPanel.Controls.Add(this.buttonHelp);
 			this.buttonPanel.Controls.Add(this.btnCancel);
 			this.buttonPanel.Controls.Add(this.btnOK);
-			this.buttonPanel.FlowDirection = System.Windows.Forms.FlowDirection.RightToLeft;
-			this.buttonPanel.Location = new System.Drawing.Point(8, 400);
 			this.buttonPanel.Name = "buttonPanel";
-			this.buttonPanel.Padding = new System.Windows.Forms.Padding(0, 2, 0, 0);
-			this.buttonPanel.Size = new System.Drawing.Size(305, 34);
-			this.buttonPanel.TabIndex = 7;
 			// 
 			// buttonHelp
 			// 
-			this.buttonHelp.Anchor = System.Windows.Forms.AnchorStyles.None;
-			this.buttonHelp.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-			this.buttonHelp.Location = new System.Drawing.Point(227, 5);
+			resources.ApplyResources(this.buttonHelp, "buttonHelp");
 			this.buttonHelp.Name = "buttonHelp";
-			this.buttonHelp.Size = new System.Drawing.Size(75, 23);
-			this.buttonHelp.TabIndex = 9;
-			this.buttonHelp.Text = "Help";
 			this.buttonHelp.Click += new System.EventHandler(this.buttonHelp_Click);
 			// 
 			// btnCancel
 			// 
-			this.btnCancel.Anchor = System.Windows.Forms.AnchorStyles.None;
+			resources.ApplyResources(this.btnCancel, "btnCancel");
 			this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-			this.btnCancel.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-			this.btnCancel.Location = new System.Drawing.Point(146, 5);
 			this.btnCancel.Name = "btnCancel";
-			this.btnCancel.Size = new System.Drawing.Size(75, 23);
-			this.btnCancel.TabIndex = 2;
-			this.btnCancel.Text = "&Cancel";
 			// 
 			// btnOK
 			// 
-			this.btnOK.Anchor = System.Windows.Forms.AnchorStyles.None;
+			resources.ApplyResources(this.btnOK, "btnOK");
 			this.btnOK.DialogResult = System.Windows.Forms.DialogResult.OK;
-			this.btnOK.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-			this.btnOK.Location = new System.Drawing.Point(65, 5);
 			this.btnOK.Name = "btnOK";
-			this.btnOK.Size = new System.Drawing.Size(75, 23);
-			this.btnOK.TabIndex = 1;
-			this.btnOK.Text = "&OK";
 			this.btnOK.Click += new System.EventHandler(this.OnOk);
 			// 
 			// selectedDomainsList
 			// 
-			this.selectedDomainsList.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+			resources.ApplyResources(this.selectedDomainsList, "selectedDomainsList");
 			this.selectedDomainsList.AutoArrange = false;
 			this.selectedDomainsList.CheckBoxes = true;
 			this.selectedDomainsList.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeader2});
 			this.selectedDomainsList.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.None;
-			this.selectedDomainsList.LabelWrap = false;
-			this.selectedDomainsList.Location = new System.Drawing.Point(0, 0);
+			this.selectedDomainsList.HideSelection = false;
 			this.selectedDomainsList.MultiSelect = false;
 			this.selectedDomainsList.Name = "selectedDomainsList";
 			this.selectedDomainsList.ShowGroups = false;
-			this.selectedDomainsList.Size = new System.Drawing.Size(304, 146);
-			this.selectedDomainsList.TabIndex = 9;
 			this.selectedDomainsList.UseCompatibleStateImageBehavior = false;
 			this.selectedDomainsList.View = System.Windows.Forms.View.Details;
 			this.selectedDomainsList.ItemChecked += new System.Windows.Forms.ItemCheckedEventHandler(this.OnSelectedDomainItemChecked);
 			// 
 			// columnHeader2
 			// 
-			this.columnHeader2.Width = 305;
+			resources.ApplyResources(this.columnHeader2, "columnHeader2");
 			// 
 			// button1
 			// 
-			this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.button1.Image = ResourceHelper.SuggestLightbulb;
-			this.button1.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.button1.Location = new System.Drawing.Point(214, 340);
+			resources.ApplyResources(this.button1, "button1");
 			this.button1.Name = "button1";
-			this.button1.Size = new System.Drawing.Size(100, 23);
-			this.button1.TabIndex = 10;
-			this.button1.Text = "Suggest";
 			this.button1.UseVisualStyleBackColor = true;
 			this.button1.Click += new System.EventHandler(this.OnSuggestClicked);
 			// 
 			// panel1
 			// 
-			this.panel1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+			resources.ApplyResources(this.panel1, "panel1");
 			this.panel1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
 			this.panel1.Controls.Add(this.searchTextBox);
 			this.panel1.Controls.Add(this.btnCancelSearch);
-			this.panel1.Location = new System.Drawing.Point(8, 4);
 			this.panel1.Name = "panel1";
-			this.panel1.Size = new System.Drawing.Size(305, 26);
-			this.panel1.TabIndex = 12;
+			// 
+			// btnCancelSearch
+			// 
+			resources.ApplyResources(this.btnCancelSearch, "btnCancelSearch");
+			this.btnCancelSearch.Name = "btnCancelSearch";
+			this.btnCancelSearch.SearchIsActive = false;
+			this.btnCancelSearch.Click += new System.EventHandler(this.btnCancelSearch_Click);
 			// 
 			// splitContainer1
 			// 
-			this.splitContainer1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-			this.splitContainer1.Location = new System.Drawing.Point(8, 34);
+			resources.ApplyResources(this.splitContainer1, "splitContainer1");
 			this.splitContainer1.Name = "splitContainer1";
-			this.splitContainer1.Orientation = System.Windows.Forms.Orientation.Horizontal;
 			// 
 			// splitContainer1.Panel1
 			// 
@@ -302,27 +224,13 @@ namespace LanguageExplorer.Controls.DetailControls
 			// splitContainer1.Panel2
 			// 
 			this.splitContainer1.Panel2.Controls.Add(this.selectedDomainsList);
-			this.splitContainer1.Size = new System.Drawing.Size(307, 298);
-			this.splitContainer1.SplitterDistance = 148;
-			this.splitContainer1.TabIndex = 13;
-			// 
-			// btnCancelSearch
-			// 
-			this.btnCancelSearch.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("btnCancelSearch.BackgroundImage")));
-			this.btnCancelSearch.Location = new System.Drawing.Point(278, 1);
-			this.btnCancelSearch.Name = "btnCancelSearch";
-			this.btnCancelSearch.SearchIsActive = false;
-			this.btnCancelSearch.Size = new System.Drawing.Size(75, 23);
-			this.btnCancelSearch.TabIndex = 11;
-			this.btnCancelSearch.Click += new System.EventHandler(this.btnCancelSearch_Click);
 			// 
 			// SemanticDomainsChooser
 			// 
 			this.AcceptButton = this.btnOK;
-			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+			resources.ApplyResources(this, "$this");
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.CancelButton = this.btnCancel;
-			this.ClientSize = new System.Drawing.Size(322, 445);
 			this.Controls.Add(this.splitContainer1);
 			this.Controls.Add(this.panel1);
 			this.Controls.Add(this.button1);
@@ -331,10 +239,8 @@ namespace LanguageExplorer.Controls.DetailControls
 			this.Controls.Add(this.editDomainsLinkPanel);
 			this.MaximizeBox = false;
 			this.MinimizeBox = false;
-			this.MinimumSize = new System.Drawing.Size(338, 483);
 			this.Name = "SemanticDomainsChooser";
 			this.ShowIcon = false;
-			this.Text = "Choose Semantic Domains";
 			this.editDomainsLinkPanel.ResumeLayout(false);
 			this.editDomainsLinkPanel.PerformLayout();
 			((System.ComponentModel.ISupportInitialize)(this.editDomainsLinkPic)).EndInit();
@@ -358,7 +264,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		protected System.Windows.Forms.PictureBox editDomainsLinkPic;
 		protected System.Windows.Forms.LinkLabel editDomainslinklabel;
 		private System.Windows.Forms.TreeView domainTree;
-		private FwTextBox searchTextBox;
+		private SIL.FieldWorks.FwCoreDlgs.Controls.FwTextBox searchTextBox;
 		private System.Windows.Forms.ListView domainList;
 		protected System.Windows.Forms.FlowLayoutPanel displayUsagePanel;
 		private System.Windows.Forms.CheckBox displayUsageCheckBox;

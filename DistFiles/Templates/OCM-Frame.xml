@@ -16,7 +16,7 @@
 </Abbreviation>
 <Description>
 <AStr ws="en">
-<Run ws="en">This list contains both Framework for Research and Methodology in Ethnography (FRAME) and the Outline of Cultural Materials (OCM) as well as some expanded lower-level categories.</Run>
+<Run ws="en">This list contains both Framework for Research and Methodology in Ethnography (FRAME) and the Outline of Cultural Materials (OCM) as well as some expanded lower-level categories. Descriptions of these categories can be found at https://hraf.yale.edu/resources/reference/outline-of-cultural-materials/.</Run>
 </AStr>
 </Description>
 <Possibilities>
@@ -142,6 +142,11 @@
 <Abbreviation>
 <AUni ws="en">110</AUni>
 </Abbreviation>
+<Description>
+<AStr ws="en">
+<Run ws="en">Human Relations Area Files (HRAF) are sources of information about the people in an area. Descriptions of Anthropology Categories can be found at https://hraf.yale.edu/resources/reference/outline-of-cultural-materials/.</Run>
+</AStr>
+</Description>
 <SubPossibilities>
 <CmAnthroItem guid="18BAC3D4-EFA2-4804-AF01-DE5953AF92D8">
 <BackColor><Integer val="12632256"/></BackColor>
@@ -4862,6 +4867,11 @@
 <Abbreviation>
 <AUni ws="en">5331x</AUni>
 </Abbreviation>
+<Description>
+<AStr ws="en">
+<Run ws="en">A text (such as a story or scripture) set to music.</Run>
+</AStr>
+</Description>
 </CmAnthroItem>
 </SubPossibilities>
 </CmAnthroItem>
@@ -6161,6 +6171,11 @@
 <Abbreviation>
 <AUni ws="en">604</AUni>
 </Abbreviation>
+<Description>
+<AStr ws="en">
+<Run ws="en">Aunts, uncles, nephews, and nieces</Run>
+</AStr>
+</Description>
 </CmAnthroItem>
 <CmAnthroItem guid="D2C0BCC4-A55E-4579-833D-CC42FCE461B7">
 <BackColor><Integer val="65280"/></BackColor>

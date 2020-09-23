@@ -14,6 +14,24 @@ namespace LanguageExplorer.Controls.DetailControls
 	{
 		private PossibilityAutoComplete m_autoComplete;
 
+		private PossibilityAutoComplete AutoComplete
+		{
+			get => m_autoComplete;
+			set
+			{
+				if (m_autoComplete != null)
+				{
+					m_autoComplete.PossibilitySelected -= HandlePossibilitySelected;
+					m_autoComplete.Dispose();
+				}
+				m_autoComplete = value;
+				if (m_autoComplete != null)
+				{
+					m_autoComplete.PossibilitySelected += HandlePossibilitySelected;
+				}
+			}
+		}
+
 		#region Construction, Initialization, and Disposal
 
 		/// <summary>
@@ -30,8 +48,7 @@ namespace LanguageExplorer.Controls.DetailControls
 
 			if (disposing)
 			{
-				m_autoComplete.PossibilitySelected -= HandlePossibilitySelected;
-				m_autoComplete.Dispose();
+				AutoComplete = null; // The Property will automatically unwire event handlers and dispose itself
 				m_cache.DomainDataByFlid.RemoveNotification(this);
 			}
 
@@ -41,8 +58,8 @@ namespace LanguageExplorer.Controls.DetailControls
 		public override void Initialize(LcmCache cache, ICmObject obj, int flid, string fieldName, IPersistenceProvider persistProvider, string displayNameProperty, string displayWs)
 		{
 			base.Initialize(cache, obj, flid, fieldName, persistProvider, displayNameProperty, displayWs);
-			m_autoComplete = new PossibilityAutoComplete(cache, PropertyTable, (ICmPossibilityList) obj.ReferenceTargetOwner(flid), m_vectorRefView, displayNameProperty, displayWs);
-			m_autoComplete.PossibilitySelected += HandlePossibilitySelected;
+			AutoComplete = new PossibilityAutoComplete(cache, PropertyTable, (ICmPossibilityList) obj.ReferenceTargetOwner(flid),
+				m_vectorRefView, displayNameProperty, displayWs);
 			m_vectorRefView.RootBox.DataAccess.AddNotification(this);
 		}
 
@@ -58,7 +75,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			base.OnLeave(e);
 			if (m_vectorRefView?.RootBox != null)
 			{
-				var possibilities = m_autoComplete.Possibilities.ToArray();
+				var possibilities = AutoComplete.Possibilities.ToArray();
 				if (possibilities.Length == 1)
 				{
 					var selected = m_vectorRefView.SelectedObject;
@@ -79,7 +96,7 @@ namespace LanguageExplorer.Controls.DetailControls
 					UpdateDisplayFromDatabase();
 				}
 			}
-			m_autoComplete.Hide();
+			AutoComplete.Hide();
 		}
 
 		#endregion // Overrides
@@ -93,13 +110,13 @@ namespace LanguageExplorer.Controls.DetailControls
 		{
 			if (tag == PossibilityVectorReferenceView.kflidFake)
 			{
-				m_autoComplete.Update(m_vectorRefView.RootBox.DataAccess.get_StringProp(hvo, tag));
+				AutoComplete.Update(m_vectorRefView.RootBox.DataAccess.get_StringProp(hvo, tag));
 			}
 		}
 
 		private void HandlePossibilitySelected(object sender, EventArgs e)
 		{
-			var poss = m_autoComplete.SelectedPossibility;
+			var poss = AutoComplete.SelectedPossibility;
 			var curObj = m_vectorRefView.SelectedObject;
 			if (curObj == null)
 			{

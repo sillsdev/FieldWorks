@@ -44,6 +44,7 @@ Src/FwParatextLexiconPlugin/GeneratedParatextLexiconPluginRegistryHelper.cs
 Src/FwUtils/GeneratedFwUtils.cs
 Src/CommonAssemblyInfo.cs
 Src/LangInst/InstallLanguageTests/timing.txt
+Src/LanguageExplorerTests/DictionaryConfiguration/ConfigurationSettings/Dictionary/Preview.css
 UpgradeLog*.htm
 
 # other files

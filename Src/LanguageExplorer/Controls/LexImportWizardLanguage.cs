@@ -33,6 +33,9 @@ namespace LanguageExplorer.Controls
 		private LcmCache m_cache;
 		private IHelpTopicProvider m_helpTopicProvider;
 		private IApp m_app;
+#if HASSOTODO
+		// REVIEW: This is kept updated, but its contents are never read.
+#endif
 		private readonly Dictionary<string, WsInfo> m_wsInfo;   // hash of wsInfo
 		private string m_blankEC = SfmToXml.SfmToXmlServices.AlreadyInUnicode;
 		private string m_LangDesc;
@@ -281,15 +284,7 @@ namespace LanguageExplorer.Controls
 			}
 			tbLangDesc.Text = m_LangDesc;
 			// initialize the 'ws' combo box and the AddWs button with the data from the DB
-			foreach (var ws in m_cache.ServiceLocator.WritingSystemManager.WritingSystems)
-			{
-				var wsi = new WsInfo(ws.DisplayLabel, ws.Id, ws.LegacyMapping);
-				m_wsInfo.Add(wsi.Key, wsi);
-				cbWS.Items.Add(wsi);
-			}
-			cbWS.Sorted = false;
-			var wsiIgnore = new WsInfo();
-			cbWS.Items.Add(wsiIgnore);
+			ReloadWsCombo();
 			btnAddWS.Initialize(m_cache, m_helpTopicProvider, m_app, m_cache.ServiceLocator.WritingSystemManager.WritingSystems);
 			// select the proper index if there is a valid writing system
 			var index = 0;
@@ -313,6 +308,22 @@ namespace LanguageExplorer.Controls
 				}
 			}
 			cbEC.SelectedIndex = index;
+		}
+
+		private void ReloadWsCombo()
+		{
+			m_wsInfo.Clear();
+			cbWS.ClearItems();
+			cbWS.Sorted = true;
+			foreach (var ws in m_cache.ServiceLocator.WritingSystemManager.WritingSystems)
+			{
+				var wsi = new WsInfo(ws.DisplayLabel, ws.Id, ws.LegacyMapping);
+				m_wsInfo.Add(wsi.Key, wsi);
+				cbWS.Items.Add(wsi);
+			}
+			cbWS.Sorted = false;
+			// Add the special "ignore" WsInfo
+			cbWS.Items.Add(new WsInfo());
 		}
 
 		/// <summary>
@@ -344,17 +355,12 @@ namespace LanguageExplorer.Controls
 			var ws = btnAddWS.NewWritingSystem;
 			if (ws != null)
 			{
+				ReloadWsCombo();
 				var mapName = ws.LegacyMapping;
-				var wsi = new WsInfo(ws.DisplayLabel, ws.Id, mapName);
-				m_wsInfo.Add(wsi.Key, wsi);
-
-				// now select it for the ws combo box
-				var index = cbWS.Items.Add(wsi);
-				cbWS.SelectedIndex = index;
-
+				// select the new ws in the combo
+				cbWS.SelectedIndex = cbWS.FindStringExact(new WsInfo(ws.DisplayLabel, ws.Id, mapName).ToString());
 				// now if there's an encoding converter for the ws, select it
-				index = string.IsNullOrEmpty(mapName) ? cbEC.FindStringExact(m_blankEC) : cbEC.Items.Add(mapName);
-				cbEC.SelectedIndex = index;
+				cbEC.SelectedIndex = string.IsNullOrEmpty(mapName) ? cbEC.FindStringExact(m_blankEC) : cbEC.Items.Add(mapName);
 			}
 		}
 
@@ -442,7 +448,7 @@ namespace LanguageExplorer.Controls
 				Name = LanguageExplorerControls.ksIgnore;
 			}
 
-			public WsInfo(string name, string id, string map)
+			internal WsInfo(string name, string id, string map)
 			{
 				Name = name;
 				Id = id;
@@ -451,11 +457,11 @@ namespace LanguageExplorer.Controls
 
 			private string Name { get; }
 
-			public string Id { get; }
+			internal string Id { get; }
 
-			public string Key => Id;
+			internal string Key => Id;
 
-			public string Map { get; }
+			internal string Map { get; }
 
 			public override string ToString()
 			{

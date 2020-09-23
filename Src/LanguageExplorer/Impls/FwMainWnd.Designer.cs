@@ -318,6 +318,7 @@ namespace LanguageExplorer.Impls
 			this.toolStripFormat = new System.Windows.Forms.ToolStrip();
 			this.Toolbar_WritingSystemList = new System.Windows.Forms.ToolStripComboBox();
 			this.Toolbar_CombinedStylesList = new System.Windows.Forms.ToolStripComboBox();
+			this.CmdImportTranslatedGramCats = new System.Windows.Forms.ToolStripMenuItem();
 			this._menuStrip.SuspendLayout();
 			this.toolStripStandard.SuspendLayout();
 			this.toolStripContainer.ContentPanel.SuspendLayout();
@@ -516,7 +517,8 @@ namespace LanguageExplorer.Impls
             this.CmdImportWordsAndGlossesSfm,
             this.CmdImportInterlinearData,
             this.CmdImportSFMNotebook,
-            this.CmdImportTranslatedLists});
+            this.CmdImportTranslatedLists,
+            this.CmdImportTranslatedGramCats});
 			this.ImportMenu.Name = "ImportMenu";
 			this.ImportMenu.Size = new System.Drawing.Size(211, 22);
 			this.ImportMenu.Text = "&Import";
@@ -2210,8 +2212,8 @@ namespace LanguageExplorer.Impls
 			// 
 			this.CmdHelpDemoMovies.Name = "CmdHelpDemoMovies";
 			this.CmdHelpDemoMovies.Size = new System.Drawing.Size(217, 22);
-			this.CmdHelpDemoMovies.Text = "&Demo Movies...";
-			this.CmdHelpDemoMovies.ToolTipText = "Run the Demo Movies.";
+			this.CmdHelpDemoMovies.Text = "&Demo Movies (Online)...";
+			this.CmdHelpDemoMovies.ToolTipText = "Open the Demo Movies online.";
 			// 
 			// HelpMenu_ResourcesMenu
 			// 
@@ -2994,6 +2996,12 @@ namespace LanguageExplorer.Impls
 			this.Toolbar_CombinedStylesList.Size = new System.Drawing.Size(121, 25);
 			this.Toolbar_CombinedStylesList.ToolTipText = "Styles";
 			// 
+			// CmdImportTranslatedGramCats
+			// 
+			this.CmdImportTranslatedGramCats.Name = "CmdImportTranslatedGramCats";
+			this.CmdImportTranslatedGramCats.Size = new System.Drawing.Size(295, 22);
+			this.CmdImportTranslatedGramCats.Text = "Translated &Grammatical Category Content";
+			// 
 			// FwMainWnd
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -3329,5 +3337,6 @@ namespace LanguageExplorer.Impls
 		private ToolStripButton Toolbar_CmdInsertAllomorphACP;
 		private ToolStripButton Toolbar_CmdInsertACPGroup;
 		private ToolStripButton Toolbar_CmdChooseTexts;
+		private ToolStripMenuItem CmdImportTranslatedGramCats;
 	}
 }

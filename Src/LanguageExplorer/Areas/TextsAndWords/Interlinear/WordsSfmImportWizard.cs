@@ -9,6 +9,9 @@ using SIL.LCModel.Utils;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
 {
+#if HASSOTODO
+	// TODO: 2020.05: make localizable
+#endif
 	public partial class WordsSfmImportWizard : InterlinearSfmImportWizard
 	{
 		public WordsSfmImportWizard()

@@ -61,6 +61,15 @@ namespace SIL.FieldWorks.Common.FwUtils {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Error converting wav file to mp3 {0}{1}{2}.
+        /// </summary>
+        public static string ConvertBytesToMp3_BadWavFile {
+            get {
+                return ResourceManager.GetString("ConvertBytesToMp3_BadWavFile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The help file could not be located..
         /// </summary>
         public static string ksCannotFindHelp {

@@ -103,6 +103,23 @@ namespace LanguageExplorerTests.Filters
 		}
 
 		[Test]
+		public void SortDoesNotThrowWhenIcuRulesAreInvalid()
+		{
+			var enWs = Cache.DefaultAnalWs;
+			var matchString = TsStringUtils.MakeString("buburuq", enWs);
+
+			var mvpWs = (CoreWritingSystemDefinition)Cache.WritingSystemFactory.get_EngineOrNull(enWs);
+			mvpWs.DefaultCollation = new IcuRulesCollationDefinition("standard") { IcuRules = "a < b" };
+
+			var sorter = new GenRecordSorter(new StringFinderCompare(new OwnMlPropFinder(Cache.DomainDataByFlid, _citationFlid, enWs), new WritingSystemComparer(mvpWs)));
+
+			var resultsSorter = new FindResultSorter(matchString, sorter);
+			var records = CreateRecords(new[] { "Ramban", "buburuq" });
+			Assert.DoesNotThrow(() => resultsSorter.Sort(records));
+			VerifySortOrder(new[] { "buburuq", "Ramban" }, records);
+		}
+
+		[Test]
 		public void FullMatchIsFollowedByStartsWithAlphabeticalAfter()
 		{
 			var enWs = Cache.DefaultAnalWs;

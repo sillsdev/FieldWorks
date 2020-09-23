@@ -2195,6 +2195,31 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		}
 
 		[Test]
+		public void GenerateCssForConfiguration_CharStyleFontFeaturesWorks()
+		{
+			ConfiguredLcmGenerator.AssemblyFile = TestUtilities.LanguageExplorerTests;
+			var style = GenerateStyle("underline");
+			var fontInfo = new FontInfo { m_features = { ExplicitValue = "smcps=1,Eng=2" } };
+			style.SetWsStyle(fontInfo, Cache.DefaultVernWs);
+			var headwordNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = TestUtilities.LanguageExplorerTests_DictionaryConfiguration_TestRootClass,
+				Label = "Headword",
+				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new[] { "fr" }),
+				Style = "underline",
+				IsEnabled = true
+			};
+			var model = new DictionaryConfigurationModel
+			{
+				Parts = new List<ConfigurableDictionaryNode> { headwordNode }
+			};
+			//SUT
+			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, _readOnlyPropertyTable);
+			//make sure that fontinfo with the underline overrides made it into css
+			VerifyFontInfoInCss(FontColor, FontBGColor, FontName, FontBold, FontItalic, FontSize, cssResult, "\"smcps\" 1,\"Eng\" 2");
+		}
+
+		[Test]
 		public void GenerateCssForConfiguration_ReversalSenseNumberWorks()
 		{
 			GenerateStyle("Dictionary-RevSenseNum");
@@ -4049,7 +4074,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			style.SetDefaultFontInfo(new FontInfo() { m_fontColor = { ExplicitValue = color } });
 		}
 
-		private static void VerifyFontInfoInCss(Color color, Color bgcolor, string fontName, bool bold, bool italic, int size, string css)
+		private static void VerifyFontInfoInCss(Color color, Color bgcolor, string fontName, bool bold, bool italic, int size, string css, string fontFeatures = null)
 		{
 			Assert.That(css, Contains.Substring("color:" + HtmlColor.FromRgb(color.R, color.G, color.B)), "font color missing");
 			Assert.That(css, Contains.Substring("background-color:" + HtmlColor.FromRgb(bgcolor.R, bgcolor.G, bgcolor.B)), "background-color missing");
@@ -4058,6 +4083,10 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			Assert.That(css, Contains.Substring("font-style:" + (italic ? "italic" : "normal") + ";"), "font italic missing");
 			// Font sizes are stored as millipoint integers in the styles by FLEx and turned into pt values on export
 			Assert.That(css, Contains.Substring("font-size:" + (float)size / 1000 + "pt;"), "font size missing");
+			if (fontFeatures != null)
+			{
+				Assert.That(css, Contains.Substring("font-feature-settings:" + fontFeatures));
+			}
 		}
 
 		private static void VerifyExtraFontInfoInCss(int offset, FwSuperscriptVal superscript,

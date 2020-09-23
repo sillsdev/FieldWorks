@@ -6280,7 +6280,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 				// create a temp directory and copy a .wav file into it
 				var destination = Path.Combine(expectedMediaFolderPath, "AudioVisual");
 				Directory.CreateDirectory(destination);
-				var path = Path.Combine(DictionaryConfigurationServices.TestDataPath, "AudioFiles", "abu2.wav");
+				var path = Path.Combine(TestSetupServices.AudioFilesPath, "abu2.wav");
 				File.Copy(path, Path.Combine(destination, Path.GetFileName(path)), true);
 
 				//SUT
@@ -6367,7 +6367,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 
 				// create a temp directory and copy a .wav file into it
 				Directory.CreateDirectory(destination);
-				var path = Path.Combine(DictionaryConfigurationServices.TestDataPath, "AudioFiles", "abu2.wav");
+				var path = Path.Combine(TestSetupServices.AudioFilesPath, "abu2.wav");
 				if (isWebExport)
 				{
 					WavConverter.WavToMp3(path, Path.Combine(destination, "abu2.mp3"));
@@ -6460,7 +6460,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 
 				// create a temp directory and copy a .wav file into it
 				Directory.CreateDirectory(destination);
-				var path = Path.Combine(DictionaryConfigurationServices.TestDataPath, "AudioFiles", "abu2.wav");
+				var path = Path.Combine(TestSetupServices.AudioFilesPath, "abu2.wav");
 				File.Copy(path, Path.Combine(destination, Path.GetFileName(path)), true);
 
 				// create a fake file with the same name as the destination file but different content than the destination file should have after a conversion

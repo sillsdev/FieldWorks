@@ -604,7 +604,7 @@ namespace LanguageExplorer.Impls
 			var supportedFileExtensions = new List<string>
 			{
 				".xhtml", ".css", ".html", ".htm", ".json", ".xml", ".wav",
-				".jpg", ".jpeg", ".gif", ".png", ".mp3", ".mp4", ".3gp"
+				".jpg", ".jpeg", ".gif", ".png", ".mp3", ".mp4", ".3gp", ".webm"
 			};
 			return supportedFileExtensions.Any(path.ToLowerInvariant().EndsWith);
 		}

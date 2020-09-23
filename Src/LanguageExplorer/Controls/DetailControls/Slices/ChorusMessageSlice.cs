@@ -3,6 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -19,8 +20,8 @@ namespace LanguageExplorer.Controls.DetailControls.Slices
 	/// </summary>
 	internal sealed class ChorusMessageSlice : Slice
 	{
-		private ChorusSystem m_chorusSystem;
-		private NotesBarView m_notesBar;
+		private ChorusSystem _chorusSystem;
+		private NotesBarView _notesBarView;
 
 		/// <summary>
 		/// The user that we want MessageSlice (and FLExBridge) to consider to be the current user,
@@ -34,8 +35,8 @@ namespace LanguageExplorer.Controls.DetailControls.Slices
 		/// <summary />
 		public override void FinishInit()
 		{
-			m_chorusSystem = new ChorusSystem(Cache.ProjectId.ProjectFolder);
-			m_chorusSystem.InitWithoutHg(SendReceiveUser);
+			_chorusSystem = new ChorusSystem(Cache.ProjectId.ProjectFolder);
+			_chorusSystem.InitWithoutHg(SendReceiveUser);
 			// This is a required object for CreateNotesBar. It specifies delegates for getting the information
 			// the bar requires about the current object.
 			var notesToRecordMapping = new NotesToRecordMapping
@@ -47,16 +48,16 @@ namespace LanguageExplorer.Controls.DetailControls.Slices
 			var dataFilePath = GetDataFilePath(Cache);
 			var additionalPaths = GetAdditionalLexiconFilePaths(Cache);
 			const string idAttrForOtherFiles = "guid"; // .lexdb chorus notes files identify FLEx object with a url attr of "guid".
-			m_notesBar = m_chorusSystem.WinForms.CreateNotesBar(dataFilePath, additionalPaths, idAttrForOtherFiles, notesToRecordMapping, new NullProgress());
-			m_notesBar.SetTargetObject(MyCmObject);
+			_notesBarView = _chorusSystem.WinForms.CreateNotesBar(dataFilePath, additionalPaths, idAttrForOtherFiles, notesToRecordMapping, new NullProgress());
+			_notesBarView.SetTargetObject(MyCmObject);
 			// Set the writing systems for the NoteDetailDialog.  (See FWNX-1239.)
 			var vernWs = Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
 			var labelWs = new ChorusWritingSystem(vernWs.LanguageName, vernWs.Id, vernWs.DefaultFontName, 12);
-			m_notesBar.LabelWritingSystem = labelWs;
+			_notesBarView.LabelWritingSystem = labelWs;
 			var analWs = Cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem;
 			var msgWs = new ChorusWritingSystem(analWs.LanguageName, analWs.Id, analWs.DefaultFontName, 12);
-			m_notesBar.MessageWritingSystem = msgWs;
-			Control = m_notesBar;
+			_notesBarView.MessageWritingSystem = msgWs;
+			Control = _notesBarView;
 		}
 
 		// The notes bar expects to store notes about a particular file. Our notes are currently about the lexicon,
@@ -121,6 +122,27 @@ namespace LanguageExplorer.Controls.DetailControls.Slices
 		private static IEnumerable<string> GetAdditionalIdsForObject(object targetOfNote)
 		{
 			return ((ICmObject)targetOfNote).AllOwnedObjects.Select(t => t.Guid.ToString().ToLowerInvariant());
+		}
+
+		protected override void Dispose(bool disposing)
+		{
+			Debug.WriteLineIf(!disposing, "****************** Missing Dispose() call for " + GetType().Name + ". ******************");
+			if (IsDisposed)
+			{
+				// No need to run it more than once.
+				return;
+			}
+
+			if (disposing)
+			{
+				_chorusSystem?.Dispose();
+				// _notesBarView is stored in Control, which is disposed by base.Dispose.
+			}
+
+			_chorusSystem = null;
+			_notesBarView = null;
+
+			base.Dispose(disposing);
 		}
 	}
 }

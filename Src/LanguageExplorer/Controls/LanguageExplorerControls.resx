@@ -1527,4 +1527,7 @@ Sorry, in this browser, opening the file via hyperlink presents a security risk.
   <data name="Show_in_Phonemes_list" xml:space="preserve">
     <value>Show in Phonemes list</value>
   </data>
+  <data name="ImportTranslateGrammaticalCategories" xml:space="preserve">
+    <value>import translated grammatical categories</value>
+  </data>
 </root>

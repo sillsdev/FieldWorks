@@ -102,7 +102,6 @@ namespace LanguageExplorer.Controls
 			// have to have separate lists
 			mnuAddWs.MenuItems.Add(LanguageExplorerControls.ks_VernacularWS, xmlWsV);
 			mnuAddWs.MenuItems.Add(LanguageExplorerControls.ks_AnalysisWS, xmlWsA);
-
 			mnuAddWs.Show(this, new Point(0, Height));
 		}
 
@@ -124,14 +123,13 @@ namespace LanguageExplorer.Controls
 		private void CommonAddWS(bool isAnalysis, MenuItem selectedMI)
 		{
 			CoreWritingSystemDefinition ws = null;
-
 			if (selectedMI.Text == LanguageExplorerControls.ks_DefineNew_)
 			{
-				if (FwWritingSystemSetupDlg.ShowNewDialog(FindForm(), m_cache.ServiceLocator.WritingSystemManager, m_cache.ServiceLocator.WritingSystems,
-					m_helpTopicProvider, m_app, isAnalysis ? FwWritingSystemSetupModel.ListType.Analysis : FwWritingSystemSetupModel.ListType.Vernacular,
+				if (FwWritingSystemSetupDlg.ShowNewDialog(FindForm(), m_cache, m_helpTopicProvider, m_app,
+					isAnalysis ? FwWritingSystemSetupModel.ListType.Analysis : FwWritingSystemSetupModel.ListType.Vernacular,
 					out var newWritingSystems))
 				{
-					ws = newWritingSystems.First();
+					ws = newWritingSystems.FirstOrDefault();
 				}
 			}
 			else

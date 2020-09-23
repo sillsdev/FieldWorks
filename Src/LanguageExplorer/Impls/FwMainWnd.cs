@@ -13,6 +13,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
+using System.Xml;
 using IWshRuntimeLibrary;
 using LanguageExplorer.Archiving;
 using LanguageExplorer.Areas;
@@ -228,6 +229,7 @@ namespace LanguageExplorer.Impls
 					{ Command.CmdImportInterlinearData, CmdImportInterlinearData },
 					{ Command.CmdImportSFMNotebook, CmdImportSFMNotebook },
 					{ Command.CmdImportTranslatedLists, CmdImportTranslatedLists },
+					{ Command.CmdImportTranslatedGramCats, CmdImportTranslatedGramCats },
 				{ Command.CmdExport, CmdExport },
 				{ Command.CmdExportInterlinear, CmdExportInterlinear },
 				{ Command.CmdExportDiscourseChart, CmdExportDiscourseChart },
@@ -1396,6 +1398,7 @@ namespace LanguageExplorer.Impls
 			fileMenuDictionary.Add(Command.CmdUploadToWebonary, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(UploadToWebonary_Click, () => CanCmdUploadToWebonary));
 			fileMenuDictionary.Add(Command.CmdImportSFMLexicon, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(File_Import_Standard_Format_Marker_Click, () => UiWidgetServices.CanSeeAndDo));
 			fileMenuDictionary.Add(Command.CmdImportTranslatedLists, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(File_Translated_List_Content, () => UiWidgetServices.CanSeeAndDo));
+			fileMenuDictionary.Add(Command.CmdImportTranslatedGramCats, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(File_Translated_Gram_Cats, () => UiWidgetServices.CanSeeAndDo));
 			fileMenuDictionary.Add(Command.CmdClose, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(File_CloseWindow, () => UiWidgetServices.CanSeeAndDo));
 
 			var editMenuDictionary = globalUiWidgetParameterObject.GlobalMenuItems[MainMenu.Edit];
@@ -1944,44 +1947,9 @@ namespace LanguageExplorer.Impls
 
 		private void Help_DemoMovies(object sender, EventArgs e)
 		{
-			try
-			{
-				var pathMovies = Path.Combine(FwDirectoryFinder.CodeDirectory, "Language Explorer", "Movies", "Demo Movies.html");
-				OpenDocument<Win32Exception>(pathMovies, win32err =>
-				{
-					if (win32err.NativeErrorCode == 1155)
-					{
-						// The user has the movie files, but does not have a file association for .html files.
-						// Try to launch Internet Explorer directly:
-						using (Process.Start("IExplore.exe", pathMovies))
-						{
-						}
-					}
-					else
-					{
-						// User probably does not have movies. Try to launch the "no movies" web page:
-						var pathNoMovies = Path.Combine(FwDirectoryFinder.CodeDirectory, "Language Explorer", "Movies", "notfound.html");
-						OpenDocument<Win32Exception>(pathNoMovies, win32err2 =>
-						{
-							if (win32err2.NativeErrorCode == 1155)
-							{
-								// The user does not have a file association for .html files.
-								// Try to launch Internet Explorer directly:
-								Process.Start("IExplore.exe", pathNoMovies);
-							}
-							else
-							{
-								throw win32err2;
-							}
-						});
-					}
-				});
-			}
-			catch (Exception)
-			{
-				// Some other unforeseen error:
-				MessageBox.Show(null, string.Format(LanguageExplorerResources.ksErrorCannotLaunchMovies, Path.Combine(FwDirectoryFinder.CodeDirectory, "Language Explorer", "Movies")), LanguageExplorerResources.ksError);
-			}
+				const string moviesUrl = "https://software.sil.org/fieldworks/download/demo-movies/index-of-demo-movies/";
+				OpenDocument(moviesUrl, exception =>
+					MessageBox.Show(null, string.Format(LanguageExplorerResources.ksErrorCannotOpenMovies, moviesUrl), LanguageExplorerResources.ksError));
 		}
 
 		/// <summary>
@@ -2147,24 +2115,33 @@ namespace LanguageExplorer.Impls
 
 		private void CmdVernacularWritingSystemProperties_Click(object sender, EventArgs e)
 		{
-			var model = new FwWritingSystemSetupModel(Cache.LangProject, FwWritingSystemSetupModel.ListType.Vernacular, Cache.ServiceLocator.WritingSystemManager, Cache);
-			model.WritingSystemListUpdated += OnWritingSystemListChanged;
-			using (var view = new FwWritingSystemSetupDlg(model, PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), _flexApp))
-			{
-				view.ShowDialog(this);
-			}
-			model.WritingSystemListUpdated -= OnWritingSystemListChanged;
+			ShowWsPropsDialog(FwWritingSystemSetupModel.ListType.Vernacular);
 		}
 
 		private void CmdAnalysisWritingSystemProperties_Click(object sender, EventArgs e)
 		{
-			var model = new FwWritingSystemSetupModel(Cache.LangProject, FwWritingSystemSetupModel.ListType.Analysis, Cache.ServiceLocator.WritingSystemManager, Cache);
+			ShowWsPropsDialog(FwWritingSystemSetupModel.ListType.Analysis);
+		}
+
+		private void ShowWsPropsDialog(FwWritingSystemSetupModel.ListType type)
+		{
+			var model = new FwWritingSystemSetupModel(Cache.LangProject, type, Cache.ServiceLocator.WritingSystemManager, Cache);
 			model.WritingSystemListUpdated += OnWritingSystemListChanged;
+			model.WritingSystemUpdated += OnWritingSystemUpdated;
 			using (var view = new FwWritingSystemSetupDlg(model, PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), _flexApp))
 			{
 				view.ShowDialog(this);
 			}
 			model.WritingSystemListUpdated -= OnWritingSystemListChanged;
+			model.WritingSystemUpdated -= OnWritingSystemUpdated;
+		}
+
+		/// <summary>
+		/// Performs a refresh. Intended for use with an event handler in the <code>FwWritingSystemSetupModel</code>.
+		/// </summary>
+		private void OnWritingSystemUpdated(object param, EventArgs args)
+		{
+			_flexApp.RefreshAllViews();
 		}
 
 		private void OnWritingSystemListChanged(object sender, EventArgs eventArgs)
@@ -2371,6 +2348,19 @@ namespace LanguageExplorer.Impls
 						dlg.RunTask(true, LcmCache.ImportTranslatedLists, filename, Cache);
 					}
 				});
+			}
+		}
+
+		private void File_Translated_Gram_Cats(object sender, EventArgs e)
+		{
+			if (DialogResult.OK == MessageBox.Show(LanguageExplorerResources.ImportTranslatedGramCatsPrompt, LanguageExplorerResources.ImportTranslatedGramCats, MessageBoxButtons.OKCancel))
+			{
+				using (new WaitCursor(ActiveForm ?? this, true))
+				{
+					var doc = new XmlDocument();
+					doc.Load(Path.Combine(FwDirectoryFinder.TemplateDirectory, "GOLDEtic.xml"));
+					MasterCategory.UpdatePOSStrings(Cache, doc);
+				}
 			}
 		}
 

@@ -20,13 +20,13 @@ namespace LanguageExplorer.Controls.DetailControls
 {
 	public class PossibilityAutoComplete : DisposableBase
 	{
-		private readonly LcmCache m_cache;
-		private readonly Control m_control;
+		private LcmCache m_cache;
+		private Control m_control;
 		private readonly string m_displayNameProperty;
 		private readonly string m_displayWs;
-		private readonly ComboListBox m_listBox;
-		private readonly StringSearcher<ICmPossibility> m_searcher;
-		private readonly List<ICmPossibility> m_possibilities;
+		private ComboListBox m_listBox;
+		private StringSearcher<ICmPossibility> m_searcher;
+		private List<ICmPossibility> m_possibilities;
 		private int m_curPossIndex;
 		private bool m_changingSelection;
 		private IPropertyTable _propertyTable;
@@ -72,14 +72,6 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		public ICmPossibility SelectedPossibility => ((CmPossibilityLabel)m_listBox.SelectedItem).Possibility;
 
-		protected override void DisposeManagedResources()
-		{
-			m_listBox.SelectedIndexChanged -= HandleSelectedIndexChanged;
-			m_listBox.SameItemSelected -= HandleSameItemSelected;
-			m_listBox.Dispose();
-			base.DisposeManagedResources();
-		}
-
 		protected override void Dispose(bool disposing)
 		{
 			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + " ******");
@@ -89,11 +81,27 @@ namespace LanguageExplorer.Controls.DetailControls
 				return;
 			}
 
+			// Does DisposeManagedResources an DisposeUnmanagedResources calls.
+			// That will unwire event handlers
+			base.Dispose(disposing);
 			if (disposing)
 			{
 				_propertyTable.GetValue<IFwMainWnd>(FwUtilsConstants.window).IdleQueue.Remove(PerformUpdate);
 			}
-			base.Dispose(disposing);
+			m_listBox = null;
+			m_cache = null;
+			m_control = null;
+			m_searcher = null;
+			m_possibilities = null;
+			_propertyTable = null;
+		}
+
+		protected override void DisposeManagedResources()
+		{
+			m_listBox.SelectedIndexChanged -= HandleSelectedIndexChanged;
+			m_listBox.SameItemSelected -= HandleSameItemSelected;
+			m_listBox.Dispose();
+			base.DisposeManagedResources();
 		}
 
 		protected virtual void OnItemSelected(EventArgs e)
@@ -194,7 +202,11 @@ namespace LanguageExplorer.Controls.DetailControls
 						{
 							return false;
 						}
-						m_listBox.Items.Add(ObjectLabel.CreateObjectLabel(m_cache, poss, m_displayNameProperty, m_displayWs));
+						var autoCompleteItem = ObjectLabel.CreateObjectLabel(m_cache, poss, m_displayNameProperty, m_displayWs);
+						if (m_listBox.Items.OfType<ObjectLabel>().All(item => !ReferenceEquals(item.Object, autoCompleteItem.Object)))
+						{
+							m_listBox.Items.Add(autoCompleteItem);
+						}
 					}
 				}
 				finally

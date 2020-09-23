@@ -468,7 +468,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			//
 			// ConstChartBody
 			//
-			this.AccessibleName = "MainChartBody";
+			this.AccessibleName = "Chart Body";
 			this.Name = "ConstChartBody";
 			this.ResumeLayout(false);
 

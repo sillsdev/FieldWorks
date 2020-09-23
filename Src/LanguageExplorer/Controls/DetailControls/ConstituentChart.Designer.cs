@@ -55,7 +55,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			// ConstituentChart
 			//
 			this.AccessibleDescription = "Main Chart object includes ribbon and column headers and column buttons.";
-			this.AccessibleName = "ConstituentChart";
+			this.AccessibleName = "Constituent Chart";
 			this.Name = "ConstituentChart";
 			this.ResumeLayout(false);
 

@@ -46,7 +46,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			{
 				Cache = m_cache
 			};
-			x.NullLabel.DisplayName = XmlUtils.GetOptionalAttributeValue(m_configurationNode, "nullLabel", "<EMPTY>");
+			x.NullLabel.DisplayName = XmlUtils.GetOptionalAttributeValue(m_configurationNode, "nullLabel", DetailControlsStrings.ksEMPTY);
 			return x;
 		}
 

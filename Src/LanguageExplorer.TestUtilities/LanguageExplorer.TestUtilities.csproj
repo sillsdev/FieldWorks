@@ -120,6 +120,7 @@
     <None Include="DictionaryConfiguration\TestData\ConfigurationSettings\ReversalIndex\ProjectReversalOverrides.css" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="DictionaryConfiguration\TestData\AudioFiles\bad.wav" />
     <Content Include="DictionaryConfiguration\TestData\ConfigurationSettings\Dictionary\ProjectDictionaryOverrides.css" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

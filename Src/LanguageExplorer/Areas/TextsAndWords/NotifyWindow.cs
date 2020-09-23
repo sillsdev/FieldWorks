@@ -165,8 +165,21 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			ActualWidth = 130;
 			ActualHeight = 110;
 			WaitTime = 11000;
+			InitializeComponent();
 		}
 		#endregion
+
+		private void InitializeComponent()
+		{
+			this.SuspendLayout();
+			//
+			// NotifyWindow
+			//
+			this.ClientSize = new System.Drawing.Size(284, 261);
+			this.Name = "NotifyWindow";
+			this.ShowIcon = false;
+			this.ResumeLayout(false);
+		}
 
 		#region Public Methods
 		/// <summary>

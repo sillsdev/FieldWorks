@@ -262,6 +262,10 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 				}
 				renderer.WritingSystemFactory = WritingSystemFactory;
 				IsGraphiteFont = true;
+#if JASONTODO
+				// TODO: Resharper tells me that the following line is a 'suspicious cast', since render doesn't implement IRenderingFeatures.
+				// TODO: Therefore, the code is essentially dead after the null check, since it will always be null.
+#endif
 				m_featureEngine = renderer as IRenderingFeatures;
 				if (m_featureEngine == null)
 				{
@@ -524,30 +528,6 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			return bytes.Reverse().Cast<int>().Aggregate(string.Empty, (current, value) => current + Convert.ToChar(value));
 		}
 
-		private static int ConvertFontFeatureCodeToId(string fontFeature)
-		{
-			fontFeature = new string(fontFeature.ToCharArray().Reverse().ToArray());
-			var numbers = fontFeature.Select(Convert.ToByte).ToArray();
-			return BitConverter.ToInt32(numbers, 0);
-		}
-
-		private static string ConvertFontFeatureCodesToIds(string features)
-		{
-			// If the feature is empty or has already been converted just return
-			if (features.Length < 1 || !char.IsLetter(features[0]))
-			{
-				return features;
-			}
-			var feature = features.Split(',');
-			foreach (var value in feature)
-			{
-				var keyValuePair = value.Split('=');
-				var key = ConvertFontFeatureCodeToId(keyValuePair[0]);
-				features = features.Replace(keyValuePair[0], key.ToString());
-			}
-			return features;
-		}
-
 		/// <summary />
 		private sealed class FontFeatureMenuItem : MenuItem
 		{
@@ -582,7 +562,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 				m_featureEngine.GetFeatureIDs(cfid, idsM, out cfid);
 				m_ids = MarshalEx.NativeToArray<int>(idsM, cfid);
 			}
-			FontFeatures = ConvertFontFeatureCodesToIds(FontFeatures);
+			FontFeatures = GraphiteFontFeatures.ConvertFontFeatureCodesToIds(FontFeatures);
 			m_values = ParseFeatureString(m_ids, FontFeatures);
 			Debug.Assert(m_ids.Length == m_values.Length);
 

@@ -46,7 +46,6 @@ namespace LanguageExplorer.Controls.DetailControls
 			//
 			// InterlinTaggingChild
 			//
-			this.AccessibleName = "InterlinTaggingChild";
 			this.Name = "InterlinTaggingChild";
 			this.ReadOnlyView = true;
 			this.ResumeLayout(false);

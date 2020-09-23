@@ -264,6 +264,9 @@ Continue using English as the user interface language?</value>
   <data name="ksErrorCaption" xml:space="preserve">
     <value>Error</value>
   </data>
+  <data name="ksCancelButton" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
   <data name="ksHklmCaption" xml:space="preserve">
     <value>FieldWorks can't run</value>
   </data>

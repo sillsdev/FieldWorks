@@ -17,6 +17,10 @@ namespace LanguageExplorer.TestUtilities
 {
 	public static class TestSetupServices
 	{
+		internal static string TestDataPath => Path.Combine(FwDirectoryFinder.SourceDirectory, "LanguageExplorer.TestUtilities", "DictionaryConfiguration", "TestData");
+		internal static string AudioFilesPath => Path.Combine(TestDataPath, "AudioFiles");
+		internal static string ConfigurationSettingsPath => Path.Combine(TestDataPath, "ConfigurationSettings");
+
 		public static FlexComponentParameters SetupTestTriumvirate()
 		{
 			var subscriber = new Subscriber();

@@ -60,6 +60,12 @@ namespace FieldWorks.TestUtilities.Attributes
 		}
 
 		/// <summary />
+		public Action GetSecondaryKeyboardSetupAction()
+		{
+			throw new NotSupportedException();
+		}
+
+		/// <summary />
 		public KeyboardDescription DefaultKeyboard { get; }
 
 		/// <summary />

@@ -52,6 +52,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		internal event FwPasteFixTssEventHandler PasteFixTssEvent;
 
 		private int _lastWritingSystemProcessed = int.MinValue;
+		private long _timestampOfLastGotFocus;
 
 		/// <summary>Flag to prevent reentrancy while setting keyboard.</summary>
 		private bool m_fSettingKeyboards;
@@ -404,7 +405,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// it gets deleted by a subsequent backspace).</param>
 		protected void CollectTypedInput(char chsFirst, StringBuilder buffer)
 		{
-			bool needToVerifySurrogates = char.IsSurrogate(chsFirst);
+			var needToVerifySurrogates = char.IsSurrogate(chsFirst);
 			// The first character goes into the buffer
 			buffer.Append(chsFirst);
 			if (Platform.IsMono)
@@ -2135,11 +2136,27 @@ namespace SIL.FieldWorks.Common.RootSites
 			}
 		}
 
-		private static bool ShouldRestoreKeyboardSwitchingTo(Control newFocusedControl, bool fIsChildWindow)
+		private bool ShouldRestoreKeyboardSwitchingTo(Control newFocusedControl, bool fIsChildWindow)
 		{
 			// On Linux we want to restore the default keyboard if we're switching to another
 			// application. On Windows the OS will take care of switching the keyboard.
-			return Platform.IsUnix && newFocusedControl == null || !(newFocusedControl is IRootSite) && !(newFocusedControl is ISuppressDefaultKeyboardOnKillFocus) && fIsChildWindow;
+			if (Platform.IsUnix)
+			{
+				var timeStamp = _timestampOfLastGotFocus;
+				_timestampOfLastGotFocus = 0;
+				if (newFocusedControl == null)
+				{
+					var nowTicks = DateTime.Now.Ticks;
+					// Console.WriteLine($"Timestamp={timeStamp}, DateTime.Now.Ticks={nowTicks}, diff={nowTicks - timeStamp}");
+					// If we get a LostFocus event within 0.5s after getting focus we assume this
+					// is caused by switching the keyboard. The downside is that if the user
+					// clicks in a field (which causes a keyboard switch) and then clicks on
+					// another app within 0.5s we miss switching the keyboard back to the default.
+					// But we assume that this will rarely happen. This hack fixes LT-19289.
+					return timeStamp + 5000000 < nowTicks;
+				}
+			}
+			return !(newFocusedControl is IRootSite) && !(newFocusedControl is ISuppressDefaultKeyboardOnKillFocus) && fIsChildWindow;
 		}
 
 		/// <summary>
@@ -2147,6 +2164,12 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// </summary>
 		internal void GotFocus()
 		{
+			// Console.WriteLine(string.Format("EditingHelper.GotFocus: {0} ({1}), Name={2}",
+			// 	m_control, m_control.Handle, m_control.Name));
+			if (Platform.IsGnomeShell)
+			{
+				_timestampOfLastGotFocus = DateTime.Now.Ticks;
+			}
 		}
 		#endregion
 

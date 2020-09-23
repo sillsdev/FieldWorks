@@ -103,11 +103,15 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>.\..\Output\Debug\NAudio.dll</HintPath>
     </Reference>
+    <Reference Include="netstandard">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>/opt/mono5-sil/lib/mono/xbuild/Microsoft/Microsoft.NET.Build.Extensions/net461/lib/netstandard.dll</HintPath>
+    </Reference>
     <Reference Include="NAudio.Lame">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>.\..\Output\Debug\NAudio.Lame.dll</HintPath>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+    <Reference Include="Newtonsoft.Json">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\Newtonsoft.Json.dll</HintPath>
     </Reference>

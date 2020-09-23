@@ -87,8 +87,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 					File.Delete(pathToTempForDeletion);
 				}
 			}
-			var dcFolder = Directory.GetParent(DictionaryConfigurationServices.TestDataPath);
-			var tempConfigurationSettings = Path.Combine(dcFolder.FullName, "ConfigurationSettings");
+			var tempConfigurationSettings = TestSetupServices.ConfigurationSettingsPath;
 			if (Directory.Exists(tempConfigurationSettings))
 			{
 				RobustIO.DeleteDirectoryAndContents(tempConfigurationSettings);

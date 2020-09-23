@@ -1544,7 +1544,7 @@ namespace ParatextImport.ImportTests
 			//verify that the original book of Jude has not been replaced
 			Assert.AreEqual(jude.Hvo, m_scr.FindBook(65).Hvo, "Imported BT should not replace current version");
 			IStTxtPara sh1Para = ((IStTxtPara)jude.SectionsOS[0].HeadingOA.ParagraphsOS[0]);
-			Assert.AreNotEqual("Section head", sh1Para.Contents.Text, "Import should not have affected orginal.");
+			Assert.AreNotEqual("Section head", sh1Para.Contents.Text, "Import should not have affected original.");
 			if (sh1Para.TranslationsOC.Count == 1)
 			{
 				// Make sure the original BT of the first section in Jude was not changed
@@ -1610,7 +1610,7 @@ namespace ParatextImport.ImportTests
 			Assert.AreEqual(cBooksOrig, m_scr.ScriptureBooksOS.Count);
 			Assert.AreEqual(jude.Hvo, m_scr.FindBook(65).Hvo, "Imported BT should not replace current version");
 			IStTxtPara sh1Para = ((IStTxtPara)jude.SectionsOS[iScrHead1].HeadingOA.ParagraphsOS[0]);
-			Assert.AreEqual(scrHead1Para1TextOrig, sh1Para.Contents.Text, "Import should not have affected orginal vernacular.");
+			Assert.AreEqual(scrHead1Para1TextOrig, sh1Para.Contents.Text, "Import should not have affected original vernacular.");
 			if (sh1Para.TranslationsOC.Count == 1)
 			{
 				// Make sure the original BT of the first section in Jude was changed
@@ -1691,7 +1691,7 @@ namespace ParatextImport.ImportTests
 			Assert.AreEqual(cBooksOrig, m_scr.ScriptureBooksOS.Count);
 			Assert.AreEqual(jude.Hvo, m_scr.FindBook(65).Hvo, "Imported BT should not replace current version");
 			IStTxtPara sh1Para = ((IStTxtPara)jude.SectionsOS[iScrHead1].HeadingOA.ParagraphsOS[0]);
-			Assert.AreEqual(scrHead1Para1TextOrig, sh1Para.Contents.Text, "Import should not have affected orginal vernacular.");
+			Assert.AreEqual(scrHead1Para1TextOrig, sh1Para.Contents.Text, "Import should not have affected original vernacular.");
 			if (sh1Para.TranslationsOC.Count == 1)
 			{
 				// Make sure the original BT of the first section in Jude was changed

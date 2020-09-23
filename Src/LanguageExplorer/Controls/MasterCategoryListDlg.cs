@@ -402,6 +402,11 @@ namespace LanguageExplorer.Controls
 
 		private void ResetOKBtnEnable()
 		{
+			// REVIEW (Hasso) 2020.09: the tree view has not had checkboxes for a long time.
+			// REVIEW (cont): Allowing users to check items would allow them to quickly add the categories they need;
+			// however, they would not be able to uncheck items (w/ good cause), and they may be confused that the
+			// selected item is also added, even if it is not checked.
+			// REVIEW (cont): Should we allow checking? Remove checking logic? Do anything if a user adds an existing category?
 			var selNode = m_tvMasterList.SelectedNode;
 			m_btnOK.Enabled = m_nodes.Any(node => node.Checked) || (selNode != null && !((MasterCategory)selNode.Tag).InDatabase);
 		}

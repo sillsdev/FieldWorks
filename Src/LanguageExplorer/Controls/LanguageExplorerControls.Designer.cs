@@ -70,6 +70,15 @@ namespace LanguageExplorer.Controls {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to import translated grammatical categories.
+        /// </summary>
+        internal static string ImportTranslateGrammaticalCategories {
+            get {
+                return ResourceManager.GetString("ImportTranslateGrammaticalCategories", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to &amp;Analysis Writing System.
         /// </summary>
         internal static string ks_AnalysisWS {
@@ -205,7 +214,7 @@ namespace LanguageExplorer.Controls {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &amp;Writing System:.
+        ///   Looks up a localized string similar to Writing System:.
         /// </summary>
         internal static string ks_WritingSystem_ {
             get {

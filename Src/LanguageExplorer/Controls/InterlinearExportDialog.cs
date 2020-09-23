@@ -29,7 +29,6 @@ namespace LanguageExplorer.Controls
 		private InterlinVc m_vc;
 		private IText m_text;
 		private List<ICmObject> m_objs = new List<ICmObject>();
-		private event EventHandler OnLaunchFilterScrScriptureSectionsDialog;
 
 		internal InterlinearExportDialog(ICmObject objRoot, InterlinVc vc)
 		{
@@ -51,7 +50,6 @@ namespace LanguageExplorer.Controls
 			columnHeader1.Text = LanguageExplorerResources.ksFormat;
 			columnHeader2.Text = LanguageExplorerResources.ksExtension;
 			Text = LanguageExplorerResources.ksExportInterlinear;
-			OnLaunchFilterScrScriptureSectionsDialog += LaunchFilterTextsDialog;
 		}
 
 		#endregion
@@ -74,44 +72,30 @@ namespace LanguageExplorer.Controls
 		}
 
 		/// <summary>
-		/// If the selected text is from Scripture, pop up a selection dialog to allow the user to
-		/// export more than one section (maybe even more than one book!) to a single file.
+		/// Allow the user to export more than one to a single file (LT-11483)
 		/// </summary>
 		/// <returns>true iff export can proceed to choosing an output file</returns>
 		protected override bool PrepareForExport()
 		{
 			m_objs.Clear();
-			OnLaunchFilterScrScriptureSectionsDialog?.Invoke(this, EventArgs.Empty);
-			return m_objs.Count > 0;
-		}
-
-		/// <summary>
-		/// Launch the appropriate dialog, depending on IsOkToDisplayScriptureIfPresent (currently always true).
-		/// Note that this means even the SE edition of FW requires ScrControls.dll. This is the price of making
-		/// even the SE edition able to work with Paratext, which we want to do because it was not obvious to
-		/// users that they needed the BTE edition if using Paratext rather than TE.
-		/// </summary>
-		private void LaunchFilterTextsDialog(object sender, EventArgs args)
-		{
 			var interestingTextsList = InterestingTextsDecorator.GetInterestingTextList(PropertyTable, m_cache.ServiceLocator);
-			var textsToChooseFrom = new List<IStText>(interestingTextsList.InterestingTexts);
+			var textsToShow = interestingTextsList.InterestingTexts;
 			var isOkToDisplayScripture = m_cache.ServiceLocator.GetInstance<IScrBookRepository>().AllInstances().Any();
 			if (!isOkToDisplayScripture)
-			{
-				// Mustn't show any Scripture, so remove scripture from the list
-				textsToChooseFrom = textsToChooseFrom.Where(text => !ScriptureServices.ScriptureIsResponsibleFor(text)).ToList();
+			{   // Mustn't show any Scripture, so remove scripture from the list
+				textsToShow = textsToShow.Where(text => !ScriptureServices.ScriptureIsResponsibleFor(text));
 			}
-			using (var dlg = new FilterTextsDialog(PropertyTable.GetValue<IApp>(LanguageExplorerConstants.App), m_cache, textsToChooseFrom, PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider)))
+			var selectedTexts = new List<IStText> { (IStText)m_objRoot };
+			using (var dlg = new FilterTextsDialog(PropertyTable.GetValue<IApp>("App"), m_cache, selectedTexts, PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider")))
 			{
-				// LT-12181: Was 'PruneToSelectedTexts(text) and most others were deleted.
-				// We want 'PruneToInterestingTextsAndSelect(interestingTexts, selectedText)'
-				dlg.PruneToInterestingTextsAndSelect(textsToChooseFrom, (IStText)m_objRoot);
+				dlg.TextsToShow = textsToShow.ToList();
 				dlg.TreeViewLabel = LanguageExplorerResources.ksSelectSectionsExported;
 				if (dlg.ShowDialog(this) == DialogResult.OK)
 				{
 					m_objs.AddRange(dlg.GetListOfIncludedTexts());
 				}
 			}
+			return m_objs.Count > 0;
 		}
 
 		/// <summary>Export the data according to specifications.</summary>
@@ -148,12 +132,14 @@ namespace LanguageExplorer.Controls
 					var sTransformPath = Path.Combine(FwDirectoryFinder.CodeDirectory, "Language Explorer", "Export Templates", "Interlinear");
 					switch (mode)
 					{
+						// ReSharper disable RedundantCaseLabel
 						default:
 						case "doNothing":
 						case "xml":
 						case "elan":
 							// no further processing needed.
 							break;
+						// ReSharper restore RedundantCaseLabel
 						case "applySingleTransform":
 							exporter.PostProcess(Path.Combine(sTransformPath, XmlUtils.GetOptionalAttributeValue(ddNode, "transform", string.Empty)), outPath, 1);
 							break;

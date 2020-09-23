@@ -90,6 +90,15 @@ namespace SIL.FieldWorks.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Cancel.
+        /// </summary>
+        internal static string ksCancelButton {
+            get {
+                return ResourceManager.GetString("ksCancelButton", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to FieldWorks is unable to move the following projects to the new location..
         /// </summary>
         internal static string ksCannotMoveProjects {

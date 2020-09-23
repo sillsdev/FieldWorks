@@ -223,24 +223,23 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 		{
 			const int verifiableArgs = 10;
 			var argRegEx = new Regex("{[0-9]}");
-			var argCounts = new int[verifiableArgs];
+			var originalHas = new bool[verifiableArgs];
+			var localizedHas = new bool[verifiableArgs];
 
-			// count how many of each argument we have in the original text
 			foreach (Match match in argRegEx.Matches(originalText))
 			{
-				argCounts[match.Value[1] - '0']++;
+				originalHas[match.Value[1] - '0'] = true;
 			}
 
-			// count down for each argument in the localized tet
 			foreach (Match match in argRegEx.Matches(localizedText))
 			{
-				argCounts[match.Value[1] - '0']--;
+				localizedHas[match.Value[1] - '0'] = true;
 			}
 
-			// If the original and localized texts have the same arguments, all counts should be zero (unless an argument is optional)
 			for (var i = 0; i < verifiableArgs; i++)
 			{
-				if (argCounts[i] != 0 && (comment == null || !comment.Contains($"{{{i}}}") || !comment.Contains("optional")))
+				// The original and localized texts should have the same arguments (unless an argument is optional)
+				if (originalHas[i] != localizedHas[i] && (comment == null || !comment.Contains($"{{{i}}}") || !comment.Contains("optional")))
 				{
 					LogError($"{filename} contains a value ({localizedText}) that has different arguments than the original ({originalText})");
 					return true;

@@ -3,6 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Security;
@@ -18,6 +19,7 @@ using SIL.TestUtilities;
 namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 {
 	[TestFixture]
+	[SuppressMessage("ReSharper", "StringLiteralTypo", Justification = "many are abbreviations and other languages")]
 	internal class LocalizeListsTests
 	{
 		[Test]
@@ -222,11 +224,12 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 		[Test]
 		public void ConvertListToXliff_ReverseNameAndAbbrTransUnitsCreated()
 		{
+			const string guid = "024b62c9-93b3-41a0-ab19-587a0030219a";
 			const string revName = "Dialectal Variant of";
 			const string revAbbr = "dial. var. of";
 			const string listXml = @"<Lists><List owner='LexDb' field='VariantEntryTypes' itemClass='LexEntryType'>
 				<Possibilities>
-					<LexEntryType guid='024b62c9-93b3-41a0-ab19-587a0030219a'>
+					<LexEntryType guid='" + guid + @"'>
 						<Name>
 							<AUni ws='en'>Dialectal Variant</AUni>
 						</Name>
@@ -247,10 +250,10 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 			const string xpathToPossGroup = "//group[@id='LexDb_VariantEntryTypes']/group[@id='LexDb_VariantEntryTypes_Poss']/group";
 			// Test for reverse name
 			AssertThatXmlIn.String(xliffDoc).HasSpecifiedNumberOfMatchesForXpath(
-				xpathToPossGroup + "/trans-unit[@id='LexDb_VariantEntryTypes_Poss_0_RevName']/source[text()='" + revName + "']", 1, true);
+				xpathToPossGroup + "/trans-unit[@id='LexDb_VariantEntryTypes_" + guid + "_RevName']/source[text()='" + revName + "']", 1, true);
 			// Test for reverse abbr
 			AssertThatXmlIn.String(xliffDoc).HasSpecifiedNumberOfMatchesForXpath(
-				xpathToPossGroup + "/trans-unit[@id='LexDb_VariantEntryTypes_Poss_0_RevAbbr']/source[text()='" + revAbbr + "']", 1, true);
+				xpathToPossGroup + "/trans-unit[@id='LexDb_VariantEntryTypes_" + guid + "_RevAbbr']/source[text()='" + revAbbr + "']", 1, true);
 		}
 
 		/// <summary>
@@ -328,22 +331,22 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 			// Verify that the GUID for SemanticDomain makes it to the file (ignore sil namespace via ugly hack)
 			AssertThatXmlIn.String(xliffDoc.ToString()).HasSpecifiedNumberOfMatchesForXpath("//group/*[local-name()='guid'][text()='" + guid + "']", 1);
 			// This xpath matches the first semantic domain
-			var xpathToPossGroup = "//group/group/group[@id='LangProject_SemanticDomainList_Poss_0']";
+			var xpathToPossGroup = "//group/group/group[@id='LangProject_SemanticDomainList_" + guid + "']";
 			// Verify questions group present
 			AssertThatXmlIn.String(xliffDoc.ToString()).HasSpecifiedNumberOfMatchesForXpath(
-				xpathToPossGroup + "/group[contains(@id, '_Poss_0_Qs')]", 1, true);
+				xpathToPossGroup + "/group[contains(@id, '_" + guid + "_Qs')]", 1, true);
 			// Verify first question present
 			AssertThatXmlIn.String(xliffDoc.ToString()).HasSpecifiedNumberOfMatchesForXpath(
-				xpathToPossGroup + "/group/group[contains(@id, '_Poss_0_Qs_0')]", 1, true);
+				xpathToPossGroup + "/group/group[contains(@id, '_" + guid + "_Qs_0')]", 1, true);
 			// Verify question trans-unit present
 			AssertThatXmlIn.String(xliffDoc.ToString()).HasSpecifiedNumberOfMatchesForXpath(
-				xpathToPossGroup + "/group/group/trans-unit[contains(@id, '_Poss_0_Qs_0_Q')]", 1, true);
+				xpathToPossGroup + "/group/group/trans-unit[contains(@id, '_" + guid + "_Qs_0_Q')]", 1, true);
 			// Verify ExampleWords trans-unit present
 			AssertThatXmlIn.String(xliffDoc.ToString()).HasSpecifiedNumberOfMatchesForXpath(
-				xpathToPossGroup + "/group/group/trans-unit[contains(@id, '_Poss_0_Qs_0_EW')]", 1, true);
+				xpathToPossGroup + "/group/group/trans-unit[contains(@id, '_" + guid + "_Qs_0_EW')]", 1, true);
 			// Verify ExampleSentence group present
 			AssertThatXmlIn.String(xliffDoc.ToString()).HasSpecifiedNumberOfMatchesForXpath(
-				xpathToPossGroup + "/group/group/group[contains(@id, '_Poss_0_Qs_0_ES')]", 1, true);
+				xpathToPossGroup + "/group/group/group[contains(@id, '_" + guid + "_Qs_0_ES')]", 1, true);
 		}
 
 		[Test]
@@ -435,44 +438,46 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 			var xliff = LocalizeLists.ConvertListToXliff("test.xml", xmlDoc, null).ToString();
 
 			// verify the normal LexEntryType
-			const string xpathToLexEntryType = "//group/group[@id='LexDb_VariantEntryTypes_Poss_0']";
+			const string xpathToLexEntryType = "//group/group[@id='LexDb_VariantEntryTypes_" + letGuid + "']";
 			const string xSubPathToInflTypeType = "/*[local-name()='type'][text()='LexEntryInflType']";
 			AssertThatXmlIn.String(xliff).HasNoMatchForXpath(xpathToLexEntryType + xSubPathToInflTypeType);
 			AssertThatXmlIn.String(xliff).HasSpecifiedNumberOfMatchesForXpath(xpathToLexEntryType + "/trans-unit/source[text()='" + letName + "']", 1, true);
 			// verify the parent LexEntryInflType
-			const string xpathToParentLexEntryInflType = "//group/group[@id='LexDb_VariantEntryTypes_Poss_1']";
+			const string xpathToParentLexEntryInflType = "//group/group[@id='LexDb_VariantEntryTypes_" + leItParentGuid + "']";
 			AssertThatXmlIn.String(xliff).HasSpecifiedNumberOfMatchesForXpath(xpathToParentLexEntryInflType + xSubPathToInflTypeType, 1, true);
 			AssertThatXmlIn.String(xliff).HasSpecifiedNumberOfMatchesForXpath(
 				xpathToParentLexEntryInflType + "/trans-unit/source[text()='" + leItParentName + "']", 1, true);
 			// verify the subpossibility LexEntryInflType
-			const string xPathToLeit = xpathToParentLexEntryInflType + "/group/group[@id='LexDb_VariantEntryTypes_Poss_1_SubPos_0']";
+			const string xPathToLeit = xpathToParentLexEntryInflType + "/group/group[@id='LexDb_VariantEntryTypes_" + leItGuid + "']";
 			AssertThatXmlIn.String(xliff).HasSpecifiedNumberOfMatchesForXpath(xPathToLeit + xSubPathToInflTypeType, 1, true);
 			AssertThatXmlIn.String(xliff).HasSpecifiedNumberOfMatchesForXpath(
 				xPathToLeit + "/*[local-name()='guid'][text()='" + leItGuid + "']", 1, true);
 			const string xPathToLeitTu = xPathToLeit + "/trans-unit";
 			AssertThatXmlIn.String(xliff).HasSpecifiedNumberOfMatchesForXpath(
-				xPathToLeitTu + "[@id='LexDb_VariantEntryTypes_Poss_1_SubPos_0_Name']/source[text()='" + leItName + "']", 1, true);
+				xPathToLeitTu + "[@id='LexDb_VariantEntryTypes_" + leItGuid + "_Name']/source[text()='" + leItName + "']", 1, true);
 			AssertThatXmlIn.String(xliff).HasSpecifiedNumberOfMatchesForXpath(
-				xPathToLeitTu + "[@id='LexDb_VariantEntryTypes_Poss_1_SubPos_0_Abbr']/source[text()='" + leItAbbr + "']", 1, true);
+				xPathToLeitTu + "[@id='LexDb_VariantEntryTypes_" + leItGuid + "_Abbr']/source[text()='" + leItAbbr + "']", 1, true);
 			AssertThatXmlIn.String(xliff).HasSpecifiedNumberOfMatchesForXpath(
 				xPathToLeit + "/group/trans-unit/source[text()='" + leItDesc + "']", 1, true);
 			AssertThatXmlIn.String(xliff).HasSpecifiedNumberOfMatchesForXpath(
-				xPathToLeitTu + "[@id='LexDb_VariantEntryTypes_Poss_1_SubPos_0_RevName']/source[text()='" + leItRevName + "']", 1, true);
+				xPathToLeitTu + "[@id='LexDb_VariantEntryTypes_" + leItGuid + "_RevName']/source[text()='" + leItRevName + "']", 1, true);
 			AssertThatXmlIn.String(xliff).HasSpecifiedNumberOfMatchesForXpath(
-				xPathToLeitTu + "[@id='LexDb_VariantEntryTypes_Poss_1_SubPos_0_RevAbbr']/source[text()='" + leItRevAbbr + "']", 1, true);
+				xPathToLeitTu + "[@id='LexDb_VariantEntryTypes_" + leItGuid + "_RevAbbr']/source[text()='" + leItRevAbbr + "']", 1, true);
 			AssertThatXmlIn.String(xliff).HasSpecifiedNumberOfMatchesForXpath(
-				xPathToLeitTu + "[@id='LexDb_VariantEntryTypes_Poss_1_SubPos_0_GlsApp']/source[text()='" + leItGlsAppend + "']", 1, true);
+				xPathToLeitTu + "[@id='LexDb_VariantEntryTypes_" + leItGuid + "_GlsApp']/source[text()='" + leItGlsAppend + "']", 1, true);
 		}
 
 		[Test]
 		public void ConvertListsToXliffWithTranslations()
 		{
+			const string guid = "63403699-07c1-43f3-a47c-069d6e4316e5";
 			const string name = "နေစကြာဝဠာနှင့်";
 			const string desc1 = "သက်ဆိုင်သော စာလုံးများကို ";
 			const string desc2 = "ရည်ညွှန်းဖော်ပြရန်";
 			const string ques = "(1) ကျွန်ုပ်တို့ မြင်နိုင်သော";
 			const string eWord = "whatever";
 			const string eSent = "just testing";
+			const string subPosGuid = "999581c4-1611-4acb-ae1b-5e6c1dfe6f0c";
 			const string subPosName = "မိုးကောင်းကင်";
 			const string listXml = @"<Lists date='3/10/2011 12:13:25 PM'>
 				<List field='SemanticDomainList' itemClass='CmSemanticDomain' owner='LangProject'>
@@ -485,7 +490,7 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 						</AStr>
 					</Description>
 					<Possibilities>
-						<CmSemanticDomain guid='63403699-07c1-43f3-a47c-069d6e4316e5'>
+						<CmSemanticDomain guid='" + guid + @"'>
 							<Name>
 								<AUni ws='en'>Universe, creation</AUni>
 								<AUni ws='my'>" + name + @"</AUni>
@@ -520,7 +525,7 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 								</CmDomainQ>
 							</Questions>
 							<SubPossibilities>
-								<CmSemanticDomain guid='999581c4-1611-4acb-ae1b-5e6c1dfe6f0c'>
+								<CmSemanticDomain guid='" + subPosGuid + @"'>
 									<Name>
 										<AUni ws='en'>Sky</AUni>
 										<AUni ws='my'>" + subPosName + @"</AUni>
@@ -537,15 +542,16 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 			AssertThatXmlIn.String(xliff).HasSpecifiedNumberOfMatchesForXpath("/xliff/file[@target-language='my']", 1, true);
 			// Verify contents
 			AssertThatXmlIn.String(xliff).HasNoMatchForXpath("//group[@id='LangProject_SemanticDomainList_Desc']");
-			const string poss0id = "LangProject_SemanticDomainList_Poss_0";
-			const string xpathToPoss0 = "//group/group[@id='" + poss0id + "']";
-			const string target = "/target[@state='final']";
+			const string idBase = "LangProject_SemanticDomainList_";
+			const string poss0Id = idBase + guid;
+			const string xpathToPoss0 = "//group/group[@id='" + poss0Id + "']";
+			const string target = "/target[@state='" + XliffUtils.State.Final + "']";
 			AssertThatXmlIn.String(xliff).HasSpecifiedNumberOfMatchesForXpath(
-				xpathToPoss0 + "/trans-unit[@id='" + poss0id + "_Name']" + target + "[text()='" + name + "']", 1, true);
+				xpathToPoss0 + "/trans-unit[@id='" + poss0Id + "_Name']" + target + "[text()='" + name + "']", 1, true);
 			AssertThatXmlIn.String(xliff).HasSpecifiedNumberOfMatchesForXpath(
-				xpathToPoss0 + "/group/trans-unit[@id='" + poss0id + "_Desc_0']" + target + "[text()='" + desc1 + desc2 + "']", 1, true);
+				xpathToPoss0 + "/group/trans-unit[@id='" + poss0Id + "_Desc_0']" + target + "[text()='" + desc1 + desc2 + "']", 1, true);
 			// verify questions
-			const string qid = poss0id + "_Qs_0";
+			const string qid = poss0Id + "_Qs_0";
 			const string xpathToQuestion = xpathToPoss0 + "//group[@id='" + qid + "']";
 			AssertThatXmlIn.String(xliff).HasSpecifiedNumberOfMatchesForXpath(
 				xpathToQuestion + "/trans-unit[@id='" + qid + "_Q']" + target + "[text()='" + ques + "']", 1, true);
@@ -555,7 +561,7 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 				xpathToQuestion + "//trans-unit[@id='" + qid + "_ES_0']" + target + "[text()='" + eSent + "']", 1, true);
 			// verify SubPossibilities
 			AssertThatXmlIn.String(xliff).HasSpecifiedNumberOfMatchesForXpath(
-				xpathToPoss0 + "/group/group/trans-unit[@id='" + poss0id + "_SubPos_0_Name']" + target + "[text()='" + subPosName + "']",
+				xpathToPoss0 + "/group/group/trans-unit[@id='" + idBase + subPosGuid + "_Name']" + target + "[text()='" + subPosName + "']",
 				1, true);
 		}
 
@@ -588,16 +594,16 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 						<group id='LangProject_GenreList'>
 							<trans-unit id='LangProject_GenreList_Name'>
 								<source>{englishName}</source>
-								<target state='final'>{targetName}</target>
+								<target state='{XliffUtils.State.Final}' >{targetName}</target>
 							</trans-unit>
 							<trans-unit id='LangProject_GenreList_Abbr'>
 								<source>gnrs</source>
-								<target state='needs-translation'>gnrs</target>
+								<target state='{XliffUtils.State.NeedsTranslation}'>gnrs</target>
 							</trans-unit>
 							<group id='LangProject_GenreList_Desc'>
 								<trans-unit id='LangProject_GenreList_Desc_0'>
 									<source>{englishDescription}</source>
-									<target state='translated'>{translatedDescription}</target>
+									<target state='{XliffUtils.State.Translated}'>{translatedDescription}</target>
 								</trans-unit>
 							</group>
 						</group>
@@ -623,9 +629,9 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 				$"/Lists/List/Description/AStr[@ws='{targLangNormalized}']/Run[text()='{translatedDescription}']", 1);
 		}
 
-		[TestCase("needs-translation", 0)]
-		[TestCase("translated", 1)]
-		[TestCase("final", 1)]
+		[TestCase(XliffUtils.State.NeedsTranslation, 0)]
+		[TestCase(XliffUtils.State.Translated, 1)]
+		[TestCase(XliffUtils.State.Final, 1)]
 		public void ConvertXliffToLists_TranslationStateChecked(string transState, int isTranslated)
 		{
 			const string targetLang = "de";
@@ -669,8 +675,11 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 				$"/Lists/List/Description/AStr[@ws='{targetLang}']/Run[@ws='{targetLang}' and text()='{translatedDescription}']", isTranslated);
 		}
 
+		/// <remarks>
+		/// LCM chokes on self-closing &lt;Possibilities /&gt; tags and skips importing the following list. LT-20294
+		/// </remarks>
 		[Test]
-		public void ConvertXliffToLists_EmptyPossGroupCreatesPossibilitiesElement()
+		public void ConvertXliffToLists_EmptyPossGroupDoesNotCreatePossibilitiesElement()
 		{
 			var listsElement = XElement.Parse("<Lists/>");
 			var xliffXml = @"<xliff version='1.2' xmlns:sil='software.sil.org'>
@@ -688,7 +697,7 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 					</body></file></xliff>";
 			LocalizeLists.ConvertXliffToLists(XDocument.Parse(xliffXml), listsElement);
 			// Verify Possibilities element created
-			AssertThatXmlIn.String(listsElement.ToString()).HasSpecifiedNumberOfMatchesForXpath("/Lists/List[@owner='LexDb']/Possibilities", 1);
+			AssertThatXmlIn.String(listsElement.ToString()).HasNoMatchForXpath("/Lists/List[@owner='LexDb']/Possibilities");
 		}
 
 		[Test]
@@ -764,18 +773,18 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 					<body>
 						<group id='LexDb_VariantEntryTypes'>
 							<group id='LexDb_VariantEntryTypes_Poss'>
-								<group id='LexDb_VariantEntryTypes_Poss_0'>
+								<group id='LexDb_VariantEntryTypes_" + guid + @"'>
 									<sil:guid>" + guid + @"</sil:guid>
-									<trans-unit id='LexDb_VariantEntryTypes_Poss_0_Name'>
+									<trans-unit id='LexDb_VariantEntryTypes_" + guid + @"_Name'>
 										<source>Dialectal Variant</source>
 									</trans-unit>
-									<trans-unit id='LexDb_VariantEntryTypes_Poss_0_Abbr'>
+									<trans-unit id='LexDb_VariantEntryTypes_" + guid + @"_Abbr'>
 										<source>dial. var.</source>
 									</trans-unit>
-									<trans-unit id='LexDb_VariantEntryTypes_Poss_0_RevName'>
+									<trans-unit id='LexDb_VariantEntryTypes_" + guid + @"_RevName'>
 										<source>" + revName + @"</source>
 									</trans-unit>
-									<trans-unit id='LexDb_VariantEntryTypes_Poss_0_RevAbbr'>
+									<trans-unit id='LexDb_VariantEntryTypes_" + guid + @"_RevAbbr'>
 										<source>" + revAbbr + @"</source>
 									</trans-unit>
 								</group>
@@ -843,6 +852,7 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 		[Test]
 		public void ConvertXliffToLists_SemanticDomainConvertedWithQuestions()
 		{
+			const string guid = "63403699-07c1-43f3-a47c-069d6e4316e5";
 			const string question = "(1) What words refer to everything we can see?";
 			const string exampleWords = "universe, creation, cosmos, heaven and earth, macrocosm, everything that exists";
 			const string exampleSentence = "In the beginning God created <the heavens and the earth>.";
@@ -852,29 +862,29 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 					<body>
 						<group id='LangProject_SemanticDomainList'>
 							<group id='LangProject_SemanticDomainList_Poss'>
-								<group id='LangProject_SemanticDomainList_Poss_0'>
-									<sil:guid>63403699-07c1-43f3-a47c-069d6e4316e5</sil:guid>
-									<trans-unit id='LangProject_SemanticDomainList_Poss_0_Name'>
+								<group id='LangProject_SemanticDomainList_" + guid + @"'>
+									<sil:guid>" + guid + @"</sil:guid>
+									<trans-unit id='LangProject_SemanticDomainList_" + guid + @"_Name'>
 										<source>Universe, creation</source>
 									</trans-unit>
-									<trans-unit id='LangProject_SemanticDomainList_Poss_0_Abbr'>
+									<trans-unit id='LangProject_SemanticDomainList_" + guid + @"_Abbr'>
 										<source>1</source>
 									</trans-unit>
-									<group id='LangProject_SemanticDomainList_Poss_0_Desc'>
-										<trans-unit id='LangProject_SemanticDomainList_Poss_0_Desc_0'>
+									<group id='LangProject_SemanticDomainList_" + guid + @"_Desc'>
+										<trans-unit id='LangProject_SemanticDomainList_" + guid + @"_Desc_0'>
 											<source>Use this domain for general words referring to the physical universe. Some languages may not have a single word for the universe and may have to use a phrase such as &amp;apos;rain, soil, and things of the sky&amp;apos; or &amp;apos;sky, land, and water&amp;apos; or a descriptive phrase such as &amp;apos;everything you can see&amp;apos; or &amp;apos;everything that exists&amp;apos;.</source>
 										</trans-unit>
 									</group>
-									<group id='LangProject_SemanticDomainList_Poss_0_Qs'>
-										<group id='LangProject_SemanticDomainList_Poss_0_Qs_0'>
-											<trans-unit id='LangProject_SemanticDomainList_Poss_0_Qs_0_Q'>
+									<group id='LangProject_SemanticDomainList_" + guid + @"_Qs'>
+										<group id='LangProject_SemanticDomainList_" + guid + @"_Qs_0'>
+											<trans-unit id='LangProject_SemanticDomainList_" + guid + @"_Qs_0_Q'>
 												<source>" + question + @"</source>
 											</trans-unit>
-											<trans-unit id='LangProject_SemanticDomainList_Poss_0_Qs_0_EW'>
+											<trans-unit id='LangProject_SemanticDomainList_" + guid + @"_Qs_0_EW'>
 												<source>" + exampleWords + @"</source>
 											</trans-unit>
-											<group id='LangProject_SemanticDomainList_Poss_0_Qs_0_ES'>
-												<trans-unit id='LangProject_SemanticDomainList_Poss_0_Qs_0_ES_0'>
+											<group id='LangProject_SemanticDomainList_" + guid + @"_Qs_0_ES'>
+												<trans-unit id='LangProject_SemanticDomainList_" + guid + @"_Qs_0_ES_0'>
 													<source>" + SecurityElement.Escape(exampleSentence) + @"</source>
 												</trans-unit>
 											</group>
@@ -903,7 +913,9 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 		[Test]
 		public void ConvertXliffToLists_LexEntryInflTypesCreated()
 		{
+			const string letGuid = "024b62c9-93b3-41a0-ab19-587a0030219a";
 			const string letName = "Dialectal Variant";
+			const string leItParentGuid = "01d4fbc1-3b0c-4f52-9163-7ab0d4f4711c";
 			const string leItParentName = "Irregularly Inflected Form";
 			const string leItGuid = "837ebe72-8c1d-4864-95d9-fa313c499d78";
 			const string leItName = "Past";
@@ -917,39 +929,39 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 					<body>
 						<group id='LexDb_VariantEntryTypes'>
 							<group id='LexDb_VariantEntryTypes_Poss'>
-								<group id='LexDb_VariantEntryTypes_Poss_0'>
-									<sil:guid>024b62c9-93b3-41a0-ab19-587a0030219a</sil:guid>
-									<trans-unit id='LexDb_VariantEntryTypes_Poss_0_Name'>
+								<group id='LexDb_VariantEntryTypes_" + letGuid + @"'>
+									<sil:guid>" + letGuid + @"</sil:guid>
+									<trans-unit id='LexDb_VariantEntryTypes_" + letGuid + @"_Name'>
 										<source>" + letName + @"</source>
 									</trans-unit>
 								</group>
-								<group id='LexDb_VariantEntryTypes_Poss_1'>
+								<group id='LexDb_VariantEntryTypes_" + leItParentGuid + @"'>
 									<sil:type>LexEntryInflType</sil:type>
-									<sil:guid>01d4fbc1-3b0c-4f52-9163-7ab0d4f4711c</sil:guid>
-									<trans-unit id='LexDb_VariantEntryTypes_Poss_1_Name'>
+									<sil:guid>" + leItParentGuid + @"</sil:guid>
+									<trans-unit id='LexDb_VariantEntryTypes_" + leItParentGuid + @"_Name'>
 										<source>" + leItParentName + @"</source>
 									</trans-unit>
-									<group id='LexDb_VariantEntryTypes_Poss_1_SubPos'>
-										<group id='LexDb_VariantEntryTypes_Poss_1_SubPos_0'>
+									<group id='LexDb_VariantEntryTypes_" + leItParentGuid + @"_SubPos'>
+										<group id='LexDb_VariantEntryTypes_" + leItGuid + @"'>
 											<sil:type>LexEntryInflType</sil:type>
 											<sil:guid>" + leItGuid + @"</sil:guid>
-											<trans-unit id='LexDb_VariantEntryTypes_Poss_1_SubPos_0_Name'>
+											<trans-unit id='LexDb_VariantEntryTypes_" + leItGuid + @"_Name'>
 												<source>" + leItName + @"</source>
 											</trans-unit>
-											<trans-unit id='LexDb_VariantEntryTypes_Poss_1_SubPos_0_Abbr'>
+											<trans-unit id='LexDb_VariantEntryTypes_" + leItGuid + @"_Abbr'>
 												<source>" + leItAbbr + @"</source>
 											</trans-unit>
-											<trans-unit id='LexDb_VariantEntryTypes_Poss_1_SubPos_0_RevName'>
+											<trans-unit id='LexDb_VariantEntryTypes_" + leItGuid + @"_RevName'>
 												<source>" + leItRevName + @"</source>
 											</trans-unit>
-											<trans-unit id='LexDb_VariantEntryTypes_Poss_1_SubPos_0_RevAbbr'>
+											<trans-unit id='LexDb_VariantEntryTypes_" + leItGuid + @"_RevAbbr'>
 												<source>" + leItRevAbbr + @"</source>
 											</trans-unit>
-											<trans-unit id='LexDb_VariantEntryTypes_Poss_1_SubPos_0_GlsApp'>
+											<trans-unit id='LexDb_VariantEntryTypes_" + leItGuid + @"_GlsApp'>
 												<source>" + leItGlsAppend + @"</source>
 											</trans-unit>
-											<group id='LexDb_VariantEntryTypes_Poss_1_SubPos_0_Desc'>
-												<trans-unit id='LexDb_VariantEntryTypes_Poss_1_SubPos_0_Desc_0'>
+											<group id='LexDb_VariantEntryTypes_" + leItGuid + @"_Desc'>
+												<trans-unit id='LexDb_VariantEntryTypes_" + leItGuid + @"_Desc_0'>
 													<source>" + leItDesc + @"</source>
 												</trans-unit>
 											</group>
@@ -992,11 +1004,12 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 		[Test]
 		public void RoundTrip_XmlEscapablesSurvive()
 		{
+			const string guid = "024b62c9-93b3-41a0-ab19-587a0030219a";
 			const string unescaped = "This & that <shouldn't> \"cause\" probl'ms.";
 			const string escaped = "This &amp; that &lt;shouldn&apos;t&gt; &quot;cause\" probl'ms.";
 			const string listXml = @"<Lists><List owner='LangProject' field='AnthroList' itemClass='CmAnthroItem'>
 				<Possibilities>
-					<CmAnthroItem>
+					<CmAnthroItem guid='" + guid + @"'>
 						<Name>
 							<AUni ws='en'>" + escaped + @"</AUni>
 						</Name>
@@ -1012,9 +1025,9 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 			// Test and verify the first direction
 			// ReSharper disable PossibleNullReferenceException - XPath Asserts ensure existence of XElements
 			var xliffDoc = LocalizeLists.ConvertListToXliff("test.xml", XDocument.Parse(listXml), "de");
-			const string xpathToPoss0 = "//group[@id='LangProject_AnthroList']/group/group[@id='LangProject_AnthroList_Poss_0']";
-			const string xpathToNameSource = xpathToPoss0 + "/trans-unit[@id='LangProject_AnthroList_Poss_0_Name']/source";
-			const string xpathToDescSource = xpathToPoss0 + "/group/trans-unit[@id='LangProject_AnthroList_Poss_0_Desc_0']/source";
+			const string xpathToPoss0 = "//group[@id='LangProject_AnthroList']/group/group[@id='LangProject_AnthroList_" + guid + @"']";
+			const string xpathToNameSource = xpathToPoss0 + "/trans-unit[@id='LangProject_AnthroList_" + guid + @"_Name']/source";
+			const string xpathToDescSource = xpathToPoss0 + "/group/trans-unit[@id='LangProject_AnthroList_" + guid + @"_Desc_0']/source";
 			AssertThatXmlIn.String(xliffDoc.ToString()).HasSpecifiedNumberOfMatchesForXpath(xpathToNameSource, 1, true);
 			AssertThatXmlIn.String(xliffDoc.ToString()).HasSpecifiedNumberOfMatchesForXpath(xpathToDescSource, 1, true);
 			var nameSourceElt = xliffDoc.XPathSelectElement(xpathToNameSource);

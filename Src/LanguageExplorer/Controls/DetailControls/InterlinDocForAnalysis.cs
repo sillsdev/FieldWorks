@@ -840,10 +840,10 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		internal override AnalysisOccurrence OccurrenceContainingSelection()
 		{
-			if (RootBox == null)
+			/*if (RootBox == null)
 			{
 				return null;
-			}
+			}*/
 			// This works fine for non-Sandbox panes,
 			// Sandbox panes' selection may be in the Sandbox.
 			if (ExistingFocusBox != null && ExistingFocusBox.SelectedOccurrence != null && ExistingFocusBox.SelectedOccurrence.IsValid)
@@ -864,6 +864,10 @@ namespace LanguageExplorer.Controls.DetailControls
 			get => ((InterlinDocForAnalysisVc)Vc).FocusBoxOccurrence;
 			set
 			{
+				/*if (Vc == null)
+				{
+					return;
+				}*/
 				var viewConstructor = (InterlinDocForAnalysisVc)Vc;
 				if (ReferenceEquals(viewConstructor.FocusBoxOccurrence, value))
 				{
@@ -1884,6 +1888,11 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// <returns>true, if it could hide the sandbox. false, if it was not installed.</returns>
 		internal override bool TryHideFocusBoxAndUninstall()
 		{
+			/*if (Vc == null)
+			{
+				// we're pretty well hidden already if we don't have a view
+				return false;
+			}*/
 			if (!IsFocusBoxInstalled)
 			{
 				SelectedOccurrence = null;

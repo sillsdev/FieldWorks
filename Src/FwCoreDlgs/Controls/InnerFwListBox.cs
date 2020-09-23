@@ -184,6 +184,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			}
 			Owner = null; // It will get disposed on its own, if it hasn't been already.
 			ViewConstructor = null;
+			m_wsf = null;
 
 			base.Dispose(disposing);
 		}

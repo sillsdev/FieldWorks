@@ -4,9 +4,9 @@
 
 
  /* File created by MIDL compiler version 8.00.0603 */
-/* at Thu Sep 10 10:03:25 2020
+/* at Fri Sep 04 11:21:34 2020
  */
-/* Compiler settings for C:\Dev\05_FieldWorks\Output\Common\FwKernelTlb.idl:
+/* Compiler settings for c:\fwrepo\fw\Output\Common\FwKernelTlb.idl:
     Oicf, W1, Zp8, env=Win64 (32b run), target_arch=AMD64 8.00.0603 
     protocol : dce , ms_ext, c_ext, robust
     error checks: allocation ref bounds_check enum stub_data 

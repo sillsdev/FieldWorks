@@ -18,11 +18,11 @@ using SIL.WritingSystems;
 
 namespace SIL.FieldWorks.FwCoreDlgs
 {
-	/// <summary/>
+	/// <remarks>TODO (Hasso) 2020.05: Make Localizable</remarks>
 	internal sealed partial class FwWritingSystemSetupDlg : Form
 	{
 		private FwWritingSystemSetupModel _model;
-		private IHelpTopicProvider _helpTopicProvider;
+		private readonly IHelpTopicProvider _helpTopicProvider;
 		private IApp _app;
 
 		/// <summary/>
@@ -603,36 +603,19 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		}
 		#endregion
 
-		#region List Item Model
-		private sealed class WsListItem : Tuple<string, string>
-		{
-			public WsListItem(string display, string code) : base(display, code)
-			{
-			}
-
-			public override string ToString()
-			{
-				return Item1;
-			}
-		}
-		#endregion
-
-		/// <summary>
-		/// Display a writing system dialog for the purpose of modifying a new project.
-		/// </summary>
-		internal static bool ShowNewDialog(IWin32Window parentForm, WritingSystemManager wsManager, IWritingSystemContainer wsContainer, IHelpTopicProvider helpProvider, IApp app, FwWritingSystemSetupModel.ListType type, out IEnumerable<CoreWritingSystemDefinition> newWritingSystems)
+		/// <summary />
+		internal static bool ShowNewDialog(IWin32Window parentForm, LcmCache cache, IHelpTopicProvider helpProvider, IApp app,
+			FwWritingSystemSetupModel.ListType type, out IEnumerable<CoreWritingSystemDefinition> newWritingSystems)
 		{
 			newWritingSystems = new List<CoreWritingSystemDefinition>();
-			var model = new FwWritingSystemSetupModel(wsContainer, type, wsManager);
+			var model = new FwWritingSystemSetupModel(cache.ServiceLocator.WritingSystems, type, cache.ServiceLocator.WritingSystemManager, cache);
+			var oldWsSet = new HashSet<WSListItemModel>(model.WorkingList);
 			using (var dlg = new FwWritingSystemSetupDlg(model, helpProvider, app))
 			{
 				dlg.ShowDialog(parentForm);
 				if (dlg.DialogResult == DialogResult.OK)
 				{
-					foreach (var item in model.WorkingList)
-					{
-						((List<CoreWritingSystemDefinition>)newWritingSystems).Add(item.WorkingWs);
-					}
+					newWritingSystems = model.WorkingList.Where(item => !oldWsSet.Contains(item)).Select(item => item.WorkingWs);
 					return true;
 				}
 			}
@@ -650,6 +633,18 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private void RightToLeftCheckChanged(object sender, EventArgs e)
 		{
 			_model.CurrentWsSetupModel.CurrentRightToLeftScript = _rightToLeftCheckbox.Checked;
+		}
+
+		private sealed class WsListItem : Tuple<string, string>
+		{
+			public WsListItem(string display, string code) : base(display, code)
+			{
+			}
+
+			public override string ToString()
+			{
+				return Item1;
+			}
 		}
 	}
 }

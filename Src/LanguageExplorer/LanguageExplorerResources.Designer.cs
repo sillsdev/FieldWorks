@@ -710,6 +710,24 @@ namespace LanguageExplorer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Update Grammatical Categories.
+        /// </summary>
+        internal static string ImportTranslatedGramCats {
+            get {
+                return ResourceManager.GetString("ImportTranslatedGramCats", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Importing translated grammatical category content will update all grammatical categories (parts of speech) in this project with the latest translations for all Analysis Writing Systems, including English..
+        /// </summary>
+        internal static string ImportTranslatedGramCatsPrompt {
+            get {
+                return ResourceManager.GetString("ImportTranslatedGramCatsPrompt", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Insert {0}.
         /// </summary>
         internal static string Insert_0 {
@@ -1956,11 +1974,11 @@ namespace LanguageExplorer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to An error occurred trying to launch the movies. You could try to launch them yourself. They are located in this folder: {0}.
+        ///   Looks up a localized string similar to An error occurred trying to open the movies at the following URL. Try again with your web browser. {0}.
         /// </summary>
-        internal static string ksErrorCannotLaunchMovies {
+        internal static string ksErrorCannotOpenMovies {
             get {
-                return ResourceManager.GetString("ksErrorCannotLaunchMovies", resourceCulture);
+                return ResourceManager.GetString("ksErrorCannotOpenMovies", resourceCulture);
             }
         }
         

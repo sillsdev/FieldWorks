@@ -5621,19 +5621,20 @@ namespace ParatextImport
 
 				// Get the Current para and its previous paragraph so that we can join them
 				IScrTxtPara paraCurr = subdiff.ParaCurr;
-				Debug.Assert(paraCurr.IndexInOwner - 1 >= 0,
-					"The current paragraph is the first in the section but should not be.");
-				IScrTxtPara paraPrevCurr = (IScrTxtPara)sectionCurr.ContentOA[paraCurr.IndexInOwner - 1];
+				if (paraCurr.IndexInOwner != 0)
+				{
+					IScrTxtPara paraPrevCurr = (IScrTxtPara)sectionCurr.ContentOA[paraCurr.IndexInOwner - 1];
 
-				// Append the Current paragraph's content to the previous Current paragraph.
-				int paraPrevCurrOrigLength = paraPrevCurr.Contents.Length;
+					// Append the Current paragraph's content to the previous Current paragraph.
+					int paraPrevCurrOrigLength = paraPrevCurr.Contents.Length;
 
-				// Adjust following diffs appropriately. We may have removed text with the diff and
-				// we will append the contents of the current to the previous para.
-				int adjustment = paraPrevCurrOrigLength - (subdiff.IchLimCurr - subdiff.IchMinCurr);
-				m_differences.FixFollowingParaDiffs(baseDiff, subdiff.ParaCurr, paraPrevCurr, adjustment);
+					// Adjust following diffs appropriately. We may have removed text with the diff and
+					// we will append the contents of the current to the previous para.
+					int adjustment = paraPrevCurrOrigLength - (subdiff.IchLimCurr - subdiff.IchMinCurr);
+					m_differences.FixFollowingParaDiffs(baseDiff, subdiff.ParaCurr, paraPrevCurr, adjustment);
 
-				paraPrevCurr.MergeParaWithNext();
+					paraPrevCurr.MergeParaWithNext();
+				}
 			}
 			else if (subdiff.IchMinCurr == 0 && (subdiff.IchLimCurr < subdiff.ParaCurr.Contents.Length ||
 				(fDeletingWholeParas && ((IStText)subdiff.ParaCurr.Owner).ParagraphsOS.Count == 1 &&

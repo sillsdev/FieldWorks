@@ -8,8 +8,10 @@ using System.Xml;
 using LanguageExplorer.Controls;
 using NUnit.Framework;
 using SIL.LCModel;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Infrastructure;
 
-namespace LanguageExplorerTests.Controls.LexText
+namespace LanguageExplorerTests.Controls
 {
 	/// <summary>
 	/// Start of tests for MasterCategory. Very incomplete as yet.
@@ -17,6 +19,17 @@ namespace LanguageExplorerTests.Controls.LexText
 	[TestFixture]
 	public class MasterCategoryTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
 	{
+		private const string WSEn = "en";
+		private const string WSFr = "fr";
+		private static readonly HashSet<IPartOfSpeech> POSEmptySet = new HashSet<IPartOfSpeech>();
+		private static int[] s_wssOnlyEn;
+
+		public override void FixtureSetup()
+		{
+			base.FixtureSetup();
+			s_wssOnlyEn = new[] { Cache.ServiceLocator.WritingSystemManager.GetWsFromStr(WSEn) };
+		}
+
 		[Test]
 		public void MasterCategoryWithGuidNode_MakesPosWithRightGuid()
 		{
@@ -48,13 +61,13 @@ namespace LanguageExplorerTests.Controls.LexText
 			Assert.That(posList, Is.Not.Null, "Test requires default init of cache to create POS list");
 			CheckPosDoesNotExist("ae115ea8-2cd7-4501-8ae7-dc638e4f17c5");
 			CheckPosDoesNotExist("18f1b2b8-0ce3-4889-90e9-003fed6a969f");
-			// Not checking the third one because it is non-standard guid for an imaginary POS; negligible chance it already exists.
+			CheckPosDoesNotExist("82B1250A-E64F-4AD8-8B8C-5ABBC732087A");
 
 			var doc = new XmlDocument();
 			doc.LoadXml(input);
 			var rootItem = doc.DocumentElement.ChildNodes[1];
 
-			var mc = MasterCategory.Create(new HashSet<IPartOfSpeech>(), rootItem, Cache);
+			var mc = MasterCategory.Create(POSEmptySet, rootItem, Cache);
 			mc.AddToDatabase(Cache, posList, null, null);
 			var adposition = CheckPos("ae115ea8-2cd7-4501-8ae7-dc638e4f17c5", posList);
 
@@ -104,7 +117,7 @@ namespace LanguageExplorerTests.Controls.LexText
 			var doc = new XmlDocument();
 			doc.LoadXml(input);
 			var rootItem = doc.DocumentElement.ChildNodes[1];
-			var mc = MasterCategory.Create(new HashSet<IPartOfSpeech>(), rootItem, Cache);
+			var mc = MasterCategory.Create(POSEmptySet, rootItem, Cache);
 			m_actionHandler.EndUndoTask();
 			Assert.That(posList, Is.Not.Null, "Test requires default init of cache to create POS list");
 			mc.AddToDatabase(Cache, posList, null, null);
@@ -119,16 +132,207 @@ namespace LanguageExplorerTests.Controls.LexText
 			Assert.IsFalse(firstPos.SubPossibilitiesOS[0].Guid == Guid.Empty, "Sub-Item in the category should not be Empty Guid");
 		}
 
+		[Test]
+		public void UpdatePOSStrings_UpdatesAllAnaWSs()
+		{
+			const string inputTemplate =
+				@"<eticPOSList xmlns:rdf='http://www.w3.org/1999/02/22-rdf-syntax-ns#' xmlns:rdfs='http://www.w3.org/2000/01/rdf-schema#' xmlns:owl='http://www.w3.org/2002/07/owl#'>
+   <item type='category' id='Adjective' guid='{0}'>
+	  <abbrev ws='en'>adj</abbrev>
+	  <term ws='en'>Adjective</term>
+	  <def ws='en'>An adjective is a part of speech whose members modify nouns. An adjective specifies the attributes of a noun referent. Note: this is one case among many. Adjectives are a class of modifiers.</def>
+	  <abbrev ws='fr'>{1}</abbrev>
+	  <term ws='fr'>{2}</term>
+	  <def ws='fr'>{3}</def>
+   </item>
+</eticPOSList>";
+			const string guid = "30d07580-5052-4d91-bc24-469b8b2d7df9";
+			const string abbrFr = "adj";
+			const string nameFr = "Adjectif";
+			const string defFr = "Un adjectif est un modificateur du nom.";
+
+			Cache.ServiceLocator.WritingSystemManager.GetOrSet(WSFr, out var wsDefFr);
+			Cache.ServiceLocator.WritingSystems.AnalysisWritingSystems.Add(wsDefFr);
+			var wsIdFr = wsDefFr.Handle;
+			// Commit WS changes; AddToDatabase makes its own UndoTask
+			m_actionHandler.EndUndoTask();
+
+			var posList = Cache.LangProject.PartsOfSpeechOA;
+			Assert.That(posList, Is.Not.Null, "Test requires default init of cache to create POS list");
+
+
+			var doc = new XmlDocument();
+			doc.LoadXml(string.Format(inputTemplate, guid, string.Empty, string.Empty, string.Empty));
+			var posNode = doc.DocumentElement.ChildNodes[0];
+
+			var mcChild = MasterCategory.Create(POSEmptySet, posNode, Cache);
+			mcChild.AddToDatabase(Cache, posList, null, null);
+
+			// Verify the category has been added without French text (French will be added by SUT)
+			var prePOS = CheckPos(guid, posList);
+			CollectionAssert.AreEquivalent(s_wssOnlyEn, prePOS.Abbreviation.AvailableWritingSystemIds, "Abbrev should have only English");
+			CollectionAssert.AreEquivalent(s_wssOnlyEn, prePOS.Name.AvailableWritingSystemIds, "Name should have only English");
+			CollectionAssert.AreEquivalent(s_wssOnlyEn, prePOS.Description.AvailableWritingSystemIds, "Def should have only English");
+
+			doc.LoadXml(string.Format(inputTemplate, guid, abbrFr, nameFr, defFr));
+			posNode = doc.DocumentElement.ChildNodes[0];
+
+			// SUT
+			UndoableUnitOfWorkHelper.Do("undo", "redo", m_actionHandler, () =>
+				MasterCategory.UpdatePOSStrings(Cache, posNode, prePOS));
+
+			var pos = CheckPos(guid, posList);
+			Assert.AreEqual(abbrFr, pos.Abbreviation.GetAlternativeOrBestTss(wsIdFr, out var wsActual).Text);
+			Assert.AreEqual(wsIdFr, wsActual, "Abbrev WS");
+			Assert.AreEqual(nameFr, pos.Name.GetAlternativeOrBestTss(wsIdFr, out wsActual).Text);
+			Assert.AreEqual(wsIdFr, wsActual, "Name WS");
+			Assert.AreEqual(defFr, pos.Description.GetAlternativeOrBestTss(wsIdFr, out wsActual).Text);
+			Assert.AreEqual(wsIdFr, wsActual, "Def WS");
+		}
+
+		[Test]
+		public void ImportTranslatedPOSContent()
+		{
+			const string inputTemplate =
+				@"<eticPOSList xmlns:rdf='http://www.w3.org/1999/02/22-rdf-syntax-ns#' xmlns:rdfs='http://www.w3.org/2000/01/rdf-schema#' xmlns:owl='http://www.w3.org/2002/07/owl#'>
+   <item type='category' id='Adjective' guid='{0}'>
+	  <abbrev ws='en'>adj</abbrev>
+	  <term ws='en'>Adjective</term>
+	  <def ws='en'>An adjective is a part of speech whose members modify nouns. An adjective specifies the attributes of a noun referent. Note: this is one case among many. Adjectives are a class of modifiers.</def>
+	  <abbrev ws='fr'>{1}</abbrev>
+	  <term ws='fr'>{2}</term>
+	  <def ws='fr'>{3}</def>
+   </item>
+   <item type='category' id='Adposition' guid='{4}'>
+	  <abbrev ws='en'>adp</abbrev>
+	  <abbrev ws='fr'>{5}</abbrev>
+	  <term ws='en'>Adposition</term>
+	  <term ws='fr'>{6}</term>
+	  <def ws='en'>An adposition is a part of speech whose members are of a closed set.</def>
+	  <def ws='fr'>{7}</def>
+	  <item type='category' id='Preposition' guid='{8}'>
+		 <abbrev ws='en'>prep</abbrev>
+		 <abbrev ws='fr'>{9}</abbrev>
+		 <term ws='en'>Preposition</term>
+		 <term ws='fr'>{10}</term>
+		 <def ws='en'>A preposition is an adposition that occurs before its complement.</def>
+		 <def ws='fr'>{11}</def>
+	  </item>
+	  <item type='category' id='Postposition' guid='{12}'>
+		 <abbrev ws='en'>post</abbrev>
+		 <abbrev ws='fr'>post</abbrev>
+		 <term ws='en'>Postposition</term>
+		 <term ws='fr'>Postposition</term>
+		 <def ws='en'>A postposition is an adposition that occurs after its complement.</def>
+		 <def ws='fr'>Un postposition est un adposition.</def>
+	  </item>
+   </item>
+</eticPOSList>";
+			const string ajGuid = "30d07580-5052-4d91-bc24-469b8b2d7df9";
+			const string ajAbbrFr = "adjec";
+			const string ajNameFr = "Adjectif";
+			const string ajDffnFr = "Un adjectif est un modificateur du nom.";
+			const string adGuid = "ae115ea8-2cd7-4501-8ae7-dc638e4f17c5";
+			const string adAbbrFr = "adpos";
+			const string adNameFr = "Adposition (fr)";
+			const string adDffnFr = "Un adposition est un partie du discours.";
+			const string prepGuid = "923e5aed-d84a-48b0-9b7a-331c1336864a";
+			const string prepAbbrFr = "prép";
+			const string prepNameFr = "Préposition";
+			const string prepDffnFr = "Un préposition est un adposition.";
+			const string postGuid = "18f1b2b8-0ce3-4889-90e9-003fed6a969f";
+			var inputOnlyEn = string.Format(inputTemplate, ajGuid, string.Empty, string.Empty, string.Empty,
+				adGuid, string.Empty, string.Empty, string.Empty,
+				prepGuid, string.Empty, string.Empty, string.Empty,
+				postGuid);
+			var inputEnAndFr = string.Format(inputTemplate, ajGuid, ajAbbrFr, ajNameFr, ajDffnFr,
+				adGuid, adAbbrFr, adNameFr, adDffnFr,
+				prepGuid, prepAbbrFr, prepNameFr, prepDffnFr,
+				postGuid);
+
+			Cache.ServiceLocator.WritingSystemManager.GetOrSet(WSFr, out var wsDefFr);
+			Cache.ServiceLocator.WritingSystems.AnalysisWritingSystems.Add(wsDefFr);
+			var wsIdFr = wsDefFr.Handle;
+			// Commit WS changes; AddToDatabase makes its own UndoTask
+			m_actionHandler.EndUndoTask();
+
+			var posList = Cache.LangProject.PartsOfSpeechOA;
+			Assert.That(posList, Is.Not.Null, "Test requires default init of cache to create POS list");
+
+			CheckPosDoesNotExist(postGuid);
+
+			// Create cats without fr
+			var doc = new XmlDocument();
+			doc.LoadXml(inputOnlyEn);
+			var topLevelNodes = doc.DocumentElement?.ChildNodes;
+			Assert.NotNull(topLevelNodes, "keep ReSharper happy");
+			var ajNode = topLevelNodes[0];
+			var adNode = topLevelNodes[1];
+			var prepNode = adNode.LastChild.PreviousSibling;
+
+			MasterCategory.Create(POSEmptySet, ajNode, Cache).AddToDatabase(Cache, posList, null, null);
+			CheckPosHasOnlyEnglish(CheckPos(ajGuid, posList));
+
+			var adMCat = MasterCategory.Create(POSEmptySet, adNode, Cache);
+			adMCat.AddToDatabase(Cache, posList, null, null);
+			var adPos = CheckPos(adGuid, posList);
+			CheckPosHasOnlyEnglish(adPos);
+
+			MasterCategory.Create(POSEmptySet, prepNode, Cache).AddToDatabase(Cache, posList, adMCat, adPos);
+			CheckPosHasOnlyEnglish(CheckPos(prepGuid, adPos));
+
+			CheckPosDoesNotExist(postGuid);
+
+			doc.LoadXml(inputEnAndFr);
+
+			// SUT
+			MasterCategory.UpdatePOSStrings(Cache, doc);
+
+			var ajPos = CheckPos(ajGuid, posList);
+			adPos = CheckPos(adGuid, posList);
+			var prepPos = CheckPos(prepGuid, adPos);
+			CheckPosDoesNotExist(postGuid);
+
+			CheckMSA(ajAbbrFr, wsIdFr, ajPos.Abbreviation);
+			CheckMSA(ajNameFr, wsIdFr, ajPos.Name);
+			CheckMSA(ajDffnFr, wsIdFr, ajPos.Description);
+			CheckMSA(adAbbrFr, wsIdFr, adPos.Abbreviation);
+			CheckMSA(adNameFr, wsIdFr, adPos.Name);
+			CheckMSA(adDffnFr, wsIdFr, adPos.Description);
+			CheckMSA(prepAbbrFr, wsIdFr, prepPos.Abbreviation);
+			CheckMSA(prepNameFr, wsIdFr, prepPos.Name);
+			CheckMSA(prepDffnFr, wsIdFr, prepPos.Description);
+		}
+
 		private IPartOfSpeech CheckPos(string guid, ICmObject owner)
 		{
-			Assert.That(Cache.ServiceLocator.GetInstance<IPartOfSpeechRepository>().TryGetObject(new Guid(guid), out var pos), Is.True, "expected POS should be created with the right guid");
+			Assert.True(Cache.ServiceLocator.GetInstance<IPartOfSpeechRepository>().TryGetObject(new Guid(guid), out var pos),
+				"expected POS should be created with the right guid");
 			Assert.That(pos.Owner, Is.EqualTo(owner), "POS should be created at the right place in the hierarchy");
 			return pos;
 		}
 
 		private void CheckPosDoesNotExist(string id)
 		{
-			Assert.That(Cache.ServiceLocator.GetInstance<IPartOfSpeechRepository>().TryGetObject(new Guid(id), out _), Is.False, "default possibility list should not already contain objects that this test creates");
+			Assert.False(Cache.ServiceLocator.GetInstance<IPartOfSpeechRepository>().TryGetObject(new Guid(id), out _),
+				"default possibility list should not already contain objects that this test creates");
+		}
+
+		private static void CheckPosHasOnlyEnglish(IPartOfSpeech pos)
+		{
+			CollectionAssert.AreEquivalent(s_wssOnlyEn, pos.Abbreviation.AvailableWritingSystemIds,
+				$"Abbrev {pos.Abbreviation.BestAnalysisAlternative} should have only English");
+			CollectionAssert.AreEquivalent(s_wssOnlyEn, pos.Name.AvailableWritingSystemIds,
+				$"Name {pos.Name.BestAnalysisAlternative} should have only English");
+			CollectionAssert.AreEquivalent(s_wssOnlyEn, pos.Description.AvailableWritingSystemIds,
+				$"Def of {pos.Name.BestAnalysisAlternative} should have only English");
+		}
+
+		private static void CheckMSA(string expectedText, int expectedWs, IMultiStringAccessor actual)
+		{
+			var actualText = TsStringUtils.NormalizeToNFC(actual.GetAlternativeOrBestTss(expectedWs, out var actualWs).Text);
+			Assert.AreEqual(expectedText, actualText, $"WS Handle\n{expectedWs} requested\n{actualWs} returned");
+			Assert.AreEqual(expectedWs, actualWs, expectedText);
 		}
 	}
 }

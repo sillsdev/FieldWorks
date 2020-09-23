@@ -53,6 +53,7 @@ namespace LanguageExplorer
 			CmdImportInterlinearData,
 			CmdImportSFMNotebook,
 			CmdImportTranslatedLists,
+			CmdImportTranslatedGramCats,
 		CmdExport,
 		// Separator6 goes here
 		CmdExportInterlinear,

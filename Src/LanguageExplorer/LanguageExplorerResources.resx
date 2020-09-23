@@ -1243,8 +1243,9 @@ This version of the program requires version {1}.</value>
   <data name="ksHelpForUtiltiesDlg" xml:space="preserve">
     <value>Help</value>
   </data>
-  <data name="ksErrorCannotLaunchMovies" xml:space="preserve">
-    <value>An error occurred trying to launch the movies. You could try to launch them yourself. They are located in this folder: {0}</value>
+  <data name="ksErrorCannotOpenMovies" xml:space="preserve">
+    <value>An error occurred trying to open the movies at the following URL. Try again with your web browser. {0}</value>
+    <comment>Looks up a localized string similar to An error occurred trying to open the movies at the following URL. Try again with your web browser. {0}.</comment>
   </data>
   <data name="ksCreatingWindowForX" xml:space="preserve">
     <value>Creating window for {0} Project...</value>
@@ -2183,5 +2184,11 @@ you expect.</value>
   <data name="UploadToWebonary_DeletingProjFiles" xml:space="preserve">
     <value>Server deleting project files{0}{1}</value>
     <comment>Displayed when upload to webonary is deleting a project with many files</comment>
+  </data>
+  <data name="ImportTranslatedGramCats" xml:space="preserve">
+    <value>Update Grammatical Categories</value>
+  </data>
+  <data name="ImportTranslatedGramCatsPrompt" xml:space="preserve">
+    <value>Importing translated grammatical category content will update all grammatical categories (parts of speech) in this project with the latest translations for all Analysis Writing Systems, including English.</value>
   </data>
 </root>

@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Windows.Forms;
 using LanguageExplorer.Controls;
@@ -44,12 +45,11 @@ namespace LanguageExplorer
 		/// <summary>
 		/// If the dialog is being used for exporting multiple texts at a time,
 		/// then the tree must be pruned to show only those texts (and scripture books)
-		/// that were previously selected for interlinearization. The following
-		/// three variables allow this pruning to take place at the appropriate time.
-		/// The m_selectedText variable indicates which text should be initially checked,
-		/// as per LT-12177.
+		/// that were previously selected for interlinearization.
+		/// This pruning must take place at the appropriate time.
+		/// If this property is not set, the tree will not be pruned.
 		/// </summary>
-		private IEnumerable<IStText> _textsToShow;
+		public IEnumerable<IStText> TextsToShow { private get; set; }
 		private IStText _selectedText;
 		#endregion
 
@@ -143,11 +143,12 @@ namespace LanguageExplorer
 		#endregion
 
 		/// <summary>
-		/// Load all texts.
+		/// Load all texts. Prune if necessary.
 		/// </summary>
 		private void LoadTexts()
 		{
 			_treeTexts.LoadAllTexts();
+			PruneToTextsToShowIfAny();
 		}
 
 		/// <summary>
@@ -170,8 +171,13 @@ namespace LanguageExplorer
 
 		/// <summary>
 		/// Prune all of this node's children, then return true if this node should be removed.
-		/// If this node is to be selected, set its CheckState properly, otherwise uncheck it.
+		/// Select the first node that is to be checked (so it is in the user's view if the list is long).
 		/// </summary>
+		/// <remarks>
+		/// Pruning happens before exporting texts. Only those texts selected for display are available for export.
+		/// Hasso 2020.07: To permit lazy loading of scripture sections, scripture is pruned with book granularity. That is, if any portion of a book
+		/// is selected to show, the entire book will be available to select.
+		/// </remarks>
 		private bool PruneChild(TreeNode node)
 		{
 			if (node.Nodes.Count > 0)
@@ -182,60 +188,58 @@ namespace LanguageExplorer
 					node.Nodes.Remove(subTreeNode);
 				}
 			}
-			if (node.Tag != null)
+			switch (node.Tag)
 			{
-				if (node.Tag is IStText stText)
+				case IStText text when !TextsToShow.Contains(text):
+					return true;
+				case IStText text:
 				{
-					if (!_textsToShow.Contains(stText))
-					{
-						return true;
-					}
-					if (stText == _selectedText)
+					if (text == _objList[0])
 					{
 						_treeTexts.SelectedNode = node;
-						_treeTexts.SetChecked(node, TriStateTreeViewCheckState.Checked);
 					}
-					else
-					{
-						_treeTexts.SetChecked(node, TriStateTreeViewCheckState.Unchecked);
-					}
+					return false;
 				}
-				else
-				{
-					if (node.Nodes.Count == 0)
-					{
-						return true; // Delete Genres and Books with no texts
-					}
-				}
-			}
-			else
-			{
-				// Usually this condition means 'No Genre', but could also be Testament node
-				if (node.Nodes.Count == 0)
-				{
+				// Scripture books have only a dummy child node until they are expanded, so prune books based on the texts they own.
+				case IScrBook book when TextsToShow.All(txt => txt.OwnerOfClass<IScrBook>() != book):
 					return true;
+				case IScrBook book:
+				{
+					if (_objList[0].OwnerOfClass<IScrBook>() == book)
+					{
+						// Expand this book and highlight the selected section
+						_treeTexts.CheckNodeByTag(_objList[0], TriStateTreeViewCheckState.Checked);
+						_treeTexts.SelectedNode = node.Nodes.Cast<TreeNode>().FirstOrDefault(n => n.Tag == _objList[0]);
+					}
+					return false;
+				}
+				default:
+				{
+					// Any other Tag is a Genre.
+					// Null Tag could mean 'No Genre', Bible, Old or New Testament, or a dummy node that will be replaced when its parent is expanded.
+					// Remove Genres, etc., with no texts, but preserve dummy nodes so their parents can be expanded.
+					return node.Nodes.Count == 0 && node.Name != TextsTriStateTreeView.ksDummyName;
 				}
 			}
-			return false; // Keep this node!
 		}
 
-		#region Internal Methods
 		/// <summary>
-		/// Remove all nodes that aren't in our list of interestingTexts from the tree (m_textsToShow).
-		/// Initially select the one specified (m_selectedText).
+		/// If TextsToShow is not null, remove all nodes that aren't in that list.
 		/// </summary>
-		/// <param name="interestingTexts">The list of texts to display in the dialog.</param>
-		/// <param name="selectedText">The text that should be initially checked in the dialog.</param>
-		internal void PruneToInterestingTextsAndSelect(IEnumerable<IStText> interestingTexts, IStText selectedText)
+		private void PruneToTextsToShowIfAny()
 		{
-			_textsToShow = interestingTexts;
-			_selectedText = selectedText;
+			if (TextsToShow == null)
+			{
+				return;
+			}
 			// ToList() is absolutely necessary to keep from changing node collection while looping!
 			foreach (var treeNode in _treeTexts.Nodes.Cast<TreeNode>().Where(PruneChild).ToList())
 			{
 				_treeTexts.Nodes.Remove(treeNode);
 			}
 		}
+
+		#region Internal Methods
 
 		/// <summary>
 		/// Get/set the label shown above the tree view.
@@ -305,6 +309,7 @@ namespace LanguageExplorer
 
 		#endregion
 
+		[SuppressMessage("ReSharper", "RedundantNameQualifier", Justification = "Required for designer support")]
 		private void InitializeComponent()
 		{
 			this.components = new System.ComponentModel.Container();
@@ -366,6 +371,7 @@ namespace LanguageExplorer
 			this.MaximizeBox = false;
 			this.MinimizeBox = false;
 			this.Name = "FilterTextsDialog";
+			// ReSharper disable once PossibleNullReferenceException
 			this._helpProvider.SetShowHelp(this, ((bool)(resources.GetObject("$this.ShowHelp"))));
 			this.ResumeLayout(false);
 		}

@@ -2,6 +2,7 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -13,7 +14,6 @@ using SIL.FieldWorks.Common.ScriptureUtils;
 using SIL.FieldWorks.Resources;
 using SIL.LCModel;
 using SIL.LCModel.Core.Scripture;
-using SIL.LCModel.Core.Text;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Infrastructure;
 using SIL.WritingSystems;
@@ -175,20 +175,9 @@ namespace LanguageExplorer.Controls
 			// LT-12179: Create a List for collecting selected tree nodes which we will later sort
 			// before actually adding them to the tree:
 			var foundFirstText = false;
-			CollationDefinition wsCollator = null;
-			foreach (var tex in allTexts)
+			foreach (var texItem in allTexts.Where(tex => !tex.GenresRC.Any()).Select(tex => new TreeNode(tex.ChooserNameTS.Text) { Tag = tex.ContentsOA, Name = "Text" }))
 			{
-				if (tex.GenresRC.Any())
-				{
-					continue;
-				}
-				var texItem = new TreeNode(tex.ChooserNameTS.Text)
-				{
-					Tag = tex.ContentsOA,
-					Name = "Text"
-				};
 				textsWithNoGenre.Add(texItem);
-
 				// LT-12179: If this is the first tex we've added, establish the collator's details
 				// according to the writing system at the start of the tex:
 				if (foundFirstText)
@@ -196,20 +185,28 @@ namespace LanguageExplorer.Controls
 					continue;
 				}
 				foundFirstText = true;
-				wsCollator = GetCollatorFromTextNameWs(tex);
 			}
 
 			if (!textsWithNoGenre.Any())
 			{
 				return textsNode;
 			}
-			// if the text name writing system didn't give us a collator to use then default to system
-			if (wsCollator == null)
-			{
-				wsCollator = new SystemCollationDefinition();
-			}
+			// Just grab a system collator since text titles can be in various languages. Sorting by any one ws is going to
+			// do something wrong part of the time anyhow.
+			var wsCollator = new SystemCollationDefinition();
 			// LT-12179: Order the TreeNodes alphabetically:
-			textsWithNoGenre.Sort((x, y) => wsCollator.Collator.Compare(x.Text, y.Text));
+			try
+			{
+				textsWithNoGenre.Sort((x, y) => wsCollator.Collator.Compare(x.Text, y.Text));
+			}
+			catch (AccessViolationException)
+			{
+				// sort out sorting troubles later.
+				// icu.net 2.5.4+Branch.master.Sha.aa2e04611b4... can throw an AccessViolationException in
+				// RuleBasedCollator.Compare for yet-unknown reasons. See
+				// https://github.com/sillsdev/icu-dotnet/issues/130 and LT-20194.
+				// This may be resolved in the current version of ICU.
+			}
 			// Make a TreeNode for the texts with no known genre
 			var woGenreTreeNode = new TreeNode("No Genre", textsWithNoGenre.ToArray())
 			{
@@ -217,13 +214,6 @@ namespace LanguageExplorer.Controls
 			};
 			textsNode.Nodes.Add(woGenreTreeNode);
 			return textsNode;
-		}
-
-		private static CollationDefinition GetCollatorFromTextNameWs(IText text)
-		{
-			var ws1 = text.ChooserNameTS.get_WritingSystemAt(0);
-			var wsEngine = text.Cache?.WritingSystemFactory.get_EngineOrNull(ws1);
-			return (wsEngine as WritingSystemDefinition)?.DefaultCollation;
 		}
 
 		/// <summary>
@@ -251,19 +241,14 @@ namespace LanguageExplorer.Controls
 				// before actually adding them to the tree:
 				var sortedNodes = new List<TreeNode>();
 				var foundFirstText = false;
-				CollationDefinition wsCollator = null;
-				foreach (var tex in allTexts)
+				foreach (var texItem in allTexts
+					.Where(tex => Enumerable.Contains(tex.GenresRC, gen))
+					.Select(tex =>
+						new TreeNode(tex.ChooserNameTS.Text)
+						{
+							Tag = tex.ContentsOA, Name = "Text"
+						}))
 				{
-					// This tex may not have a genre or it may claim to be in more than one
-					if (!Enumerable.Contains(tex.GenresRC, gen))
-					{
-						continue;
-					}
-					var texItem = new TreeNode(tex.ChooserNameTS.Text)
-					{
-						Tag = tex.ContentsOA,
-						Name = "Text"
-					};
 					// LT-12179: Add the new TreeNode to the (not-yet-)sorted list:
 					sortedNodes.Add(texItem);
 					// LT-12179: If this is the first tex we've added, establish the collator's details
@@ -273,15 +258,9 @@ namespace LanguageExplorer.Controls
 						continue;
 					}
 					foundFirstText = true;
-					wsCollator = GetCollatorFromTextNameWs(tex);
 				}
-
-				// if the text name writing system didn't give us a collator to use then default to system
-				if(wsCollator == null)
-				{
-					wsCollator = new SystemCollationDefinition();
-				}
-
+				// Always use the system collation definition. Texts have different writing systems anyhow.
+				var wsCollator = new SystemCollationDefinition();
 				// LT-12179:
 				if (foundFirstText)
 				{
@@ -315,7 +294,7 @@ namespace LanguageExplorer.Controls
 		/// If using lazy initialization, fill this in to make sure the relevant part of the
 		/// tree is built so that the specified tag can be checked.
 		/// </summary>
-		/// <param name="tag">The object that better be the Tag of some node </param>
+		/// <param name="tag">Some object owned at some level by an IScrBook that is the Tag of some node</param>
 		protected override void FillInIfHidden(object tag)
 		{
 			var book = (tag as ICmObject)?.OwnerOfClass<IScrBook>();

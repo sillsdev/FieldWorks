@@ -562,8 +562,13 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			{
 				try
 				{
+#if JASONTODO
+					// If this whole valid characters area wasn't such a mess I'd move this bit into a unit
+					// testable chunk to make sure the reflection didn't break again. If this breaks again
+					// maybe it will encourage us to fix the whole mess. -jn 7/2020
+#endif
 					var asm = Assembly.LoadFile(m_scrChecksDllFile);
-					var type = asm.GetType("SIL.FieldWorks.Common.FwUtils." + m_scrCheck);
+					var type = asm.GetType("SILUBS.ScriptureChecks." + m_scrCheck);
 					var scrCharInventoryBldr = (IScrCheckInventory)Activator.CreateInstance(type, this);
 					return scrCharInventoryBldr.GetReferences(m_tftList, string.Empty);
 				}
