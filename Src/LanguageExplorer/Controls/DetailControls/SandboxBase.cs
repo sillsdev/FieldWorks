@@ -26,7 +26,7 @@ using Rect = SIL.FieldWorks.Common.ViewsInterfaces.Rect;
 
 namespace LanguageExplorer.Controls.DetailControls
 {
-	internal partial class SandboxBase : RootSite, IUndoRedoHandler
+	internal partial class SandboxBase : RootSite, IUndoRedoHandler, ISandboxBase
 	{
 		#region Model
 

@@ -15,7 +15,6 @@ using System.Text;
 using System.Windows.Forms;
 using System.Xml;
 using IWshRuntimeLibrary;
-using LanguageExplorer.Archiving;
 using LanguageExplorer.Areas;
 using LanguageExplorer.Areas.TextsAndWords;
 using LanguageExplorer.Areas.TextsAndWords.Interlinear;

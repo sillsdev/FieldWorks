@@ -86,14 +86,8 @@ namespace LanguageExplorer.Filters
 
 		public ITsString Label
 		{
-			get
-			{
-				throw new NotSupportedException();
-			}
-			set
-			{
-				throw new NotSupportedException();
-			}
+			get => throw new NotSupportedException();
+			set => throw new NotSupportedException();
 		}
 
 		public ILgWritingSystemFactory WritingSystemFactory { get; set; }

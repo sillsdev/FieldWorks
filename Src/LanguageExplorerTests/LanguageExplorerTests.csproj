@@ -230,7 +230,7 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Archiving\ArchivingTests.cs" />
+    <Compile Include="Impls\ArchivingTests.cs" />
     <Compile Include="Controls\DetailControls\MockRibbon.cs" />
     <Compile Include="Areas\TextsAndWords\Interlinear\InterlinearExporterTestsBase.cs" />
     <Compile Include="Areas\TextsAndWords\Interlinear\InterlinearExporterTestsForELAN.cs" />

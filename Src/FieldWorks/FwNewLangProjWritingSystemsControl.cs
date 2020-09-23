@@ -5,9 +5,10 @@
 using System;
 using System.Linq;
 using System.Windows.Forms;
+using SIL.FieldWorks.FwCoreDlgs;
 using SIL.Windows.Forms.WritingSystems;
 
-namespace SIL.FieldWorks.FwCoreDlgs
+namespace SIL.FieldWorks
 {
 	/// <summary/>
 	internal sealed partial class FwNewLangProjWritingSystemsControl : UserControl
@@ -37,8 +38,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_defaultAnalysisAndVernSame.Visible = false;
 			if (type == FwWritingSystemSetupModel.ListType.Analysis)
 			{
-				m_lblWsTypeHeader.Text = FwCoreDlgs.NewProjectWizard_AnalysisHeader;
-				m_lblExplainWsTypeUsage.Text = FwCoreDlgs.NewLangProjWizard_AnalysisWritingSystemExplanation;
+				m_lblWsTypeHeader.Text = FwCoreDlgs.FwCoreDlgs.NewProjectWizard_AnalysisHeader;
+				m_lblExplainWsTypeUsage.Text = FwCoreDlgs.FwCoreDlgs.NewLangProjWizard_AnalysisWritingSystemExplanation;
 				if (model.WritingSystemContainer.CurrentAnalysisWritingSystems.Count > 0)
 				{
 					m_defaultWsLabel.Text = model.WritingSystemContainer.CurrentAnalysisWritingSystems[0].DisplayLabel;

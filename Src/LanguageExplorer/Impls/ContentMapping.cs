@@ -102,8 +102,8 @@ namespace LanguageExplorer.Impls
 
 		public string FwId
 		{
-			get { return m_clsFieldDescription.MeaningID; }
-			set { m_clsFieldDescription.MeaningID = value; }
+			get => m_clsFieldDescription.MeaningID;
+			set => m_clsFieldDescription.MeaningID = value;
 		}
 
 		public bool IsAbbrvField => m_LexImportField?.IsAbbrField ?? false;

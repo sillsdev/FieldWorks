@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Windows.Forms;
-using LanguageExplorer.Controls.DetailControls;
 using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
@@ -158,7 +157,7 @@ namespace LanguageExplorer.Impls
 			try
 			{
 				var originalEnabledState = _formatToolStripComboBox.Enabled;
-				if (activeView is SandboxBase)
+				if (activeView is ISandboxBase)
 				{
 					newText = StyleUtils.DefaultParaCharsStyleName;
 				}

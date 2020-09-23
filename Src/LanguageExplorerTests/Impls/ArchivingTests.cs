@@ -3,13 +3,13 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Text;
-using LanguageExplorer.Archiving;
+using LanguageExplorer.Impls;
 using NUnit.Framework;
 using SIL.Archiving;
 using SIL.Keyboarding;
 using SIL.LCModel;
 
-namespace LanguageExplorerTests.Archiving
+namespace LanguageExplorerTests.Impls
 {
 	/// <summary>
 	/// Test Archiving system

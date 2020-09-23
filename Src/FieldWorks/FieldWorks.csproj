@@ -114,6 +114,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\SIL.Core.Desktop.dll</HintPath>
     </Reference>
+    <Reference Include="SIL.Windows.Forms.WritingSystems, Version=6.0.0.0, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Output\Debug\SIL.Windows.Forms.WritingSystems.dll</HintPath>
+    </Reference>
     <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="SIL.Lexicon">
       <SpecificVersion>False</SpecificVersion>
@@ -250,6 +254,12 @@
     <Compile Include="FwNewLangProjMoreWsControl.Designer.cs">
       <DependentUpon>FwNewLangProjMoreWsControl.cs</DependentUpon>
     </Compile>
+    <Compile Include="FwNewLangProjWritingSystemsControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="FwNewLangProjWritingSystemsControl.Designer.cs">
+      <DependentUpon>FwNewLangProjWritingSystemsControl.cs</DependentUpon>
+    </Compile>
     <Compile Include="FwNewProjectProjectNameControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -347,12 +357,27 @@
       <DependentUpon>ChooseLangProjectDialog.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="FwChooseAnthroListCtrl.resx">
+      <DependentUpon>FwChooseAnthroListCtrl.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="FwDeleteProjectDlg.resx">
       <DependentUpon>FwDeleteProjectDlg.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="FwNewLangProject.resx">
       <DependentUpon>FwNewLangProject.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FwNewLangProjMoreWsControl.resx">
+      <DependentUpon>FwNewLangProjMoreWsControl.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FwNewLangProjWritingSystemsControl.resx">
+      <DependentUpon>FwNewLangProjWritingSystemsControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FwNewProjectProjectNameControl.resx">
+      <DependentUpon>FwNewProjectProjectNameControl.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="MissingOldFieldWorksDlg.resx">

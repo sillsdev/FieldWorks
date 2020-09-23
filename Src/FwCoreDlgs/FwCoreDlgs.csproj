@@ -413,18 +413,6 @@
     <Compile Include="FwCharacterCategorizer.cs" />
     <Compile Include="FwChooseAnthroListModel.cs" />
     <Compile Include="FwNewLangProjectModel.cs" />
-    <Compile Include="FwNewLangProjWritingSystemsControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="FwNewLangProjWritingSystemsControl.Designer.cs">
-      <DependentUpon>FwNewLangProjWritingSystemsControl.cs</DependentUpon>
-    </Compile>
-    <Compile Include="FwNewProjectProjectNameControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="FwNewProjectProjectNameControl.Designer.cs">
-      <DependentUpon>FwNewProjectProjectNameControl.cs</DependentUpon>
-    </Compile>
     <Compile Include="FwOverrideComboBox.cs">
       <SubType>Component</SubType>
     </Compile>

@@ -363,6 +363,7 @@
     <Compile Include="IDummyObjectSlice.cs" />
     <Compile Include="IInterlinearSlice.cs" />
     <Compile Include="IMorphTypeAtomicReferenceSlice.cs" />
+    <Compile Include="ISandboxBase.cs" />
     <Compile Include="PublicationActivator.cs" />
     <Compile Include="IMSAReferenceComboBoxSlice.cs" />
     <Compile Include="IMultiStringSlice.cs" />
@@ -3233,7 +3234,7 @@
     <Compile Include="Controls\DetailControls\LexReferenceTreeRootView.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Archiving\ReapRamp.cs" />
+    <Compile Include="Impls\ReapRamp.cs" />
     <Compile Include="Areas\Grammar\GrammarArea.cs" />
     <Compile Include="Areas\Grammar\Tools\AdhocCoprohibEdit\AdhocCoprohibitionRuleEditTool.cs" />
     <Compile Include="Areas\Grammar\Tools\BulkEditPhonemes\BulkEditPhonemesTool.cs" />

@@ -33,7 +33,6 @@ namespace SIL.FieldWorks
 		/// </summary>
 		private void InitializeComponent()
 		{
-			System.Windows.Forms.Label m_lblExplainName;
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FwNewProjectProjectNameControl));
 			this.m_txtName = new System.Windows.Forms.TextBox();
 			this.m_lblProjectName = new System.Windows.Forms.Label();
@@ -89,6 +88,7 @@ namespace SIL.FieldWorks
 
 		#endregion
 
+		private System.Windows.Forms.Label m_lblExplainName;
 		private System.Windows.Forms.TextBox m_txtName;
 		private System.Windows.Forms.Label m_lblProjectName;
 		private System.Windows.Forms.PictureBox _errorImage;

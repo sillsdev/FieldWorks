@@ -5,7 +5,6 @@
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
-using LanguageExplorer.Areas;
 using SIL.FieldWorks.Common.FwUtils;
 
 namespace LanguageExplorer.Impls

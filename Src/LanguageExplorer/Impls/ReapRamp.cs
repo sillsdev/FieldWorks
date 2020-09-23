@@ -20,7 +20,7 @@ using SIL.PlatformUtilities;
 using SIL.Reporting;
 using SIL.Windows.Forms.PortableSettingsProvider;
 
-namespace LanguageExplorer.Archiving
+namespace LanguageExplorer.Impls
 {
 	/// <summary>
 	/// Packages selected files to be archived in the REAP repository and launches the RAMP
