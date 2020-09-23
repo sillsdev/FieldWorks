@@ -103,8 +103,11 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 					itemElt.Add(XElement.Parse($"<{eltMap.ElementName} ws='{WsEn}'>{englishValue}</{eltMap.ElementName}>"));
 					foreach (var kvp in allSourcesGroups)
 					{
-						var value = TransUnitFor(kvp.Value, groupIdLength, eltMap).Element(Target)?.Value;
-						itemElt.Add(XElement.Parse($"<{eltMap.ElementName} ws='{kvp.Key}'>{value}</{eltMap.ElementName}>"));
+						var translationElt = TransUnitFor(kvp.Value, groupIdLength, eltMap).Element(Target);
+						if (XliffUtils.IsTranslated(translationElt))
+						{
+							itemElt.Add(XElement.Parse($"<{eltMap.ElementName} ws='{kvp.Key}'>{translationElt.Value}</{eltMap.ElementName}>"));
+						}
 					}
 				}
 

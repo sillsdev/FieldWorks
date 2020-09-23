@@ -138,6 +138,48 @@ namespace LexTextControlsTests
 		}
 
 		[Test]
+		public void GetBestWritingSystemForNamedNode_FallsThrough()
+		{
+			const string inputTemplate =
+				@"<eticPOSList xmlns:rdf='http://www.w3.org/1999/02/22-rdf-syntax-ns#' xmlns:rdfs='http://www.w3.org/2000/01/rdf-schema#' xmlns:owl='http://www.w3.org/2002/07/owl#'>
+   <item type='category' id='Adjective' guid='30d07580-5052-4d91-bc24-469b8b2d7df9'>
+	  <abbrev ws='en'/> <!-- self-closing -->
+	  <term ws='en'></term> <!-- empty -->
+	  <def ws='en'>{0}</def> <!-- populated -->
+	  <abbrev ws='fr'>{1}</abbrev>
+	  <term ws='fr'>{2}</term>
+	  <def ws='fr'>{3}</def>
+   </item>
+</eticPOSList>";
+			const string defEn = "An adjective modifies a noun.";
+			const string abbrFr = "adj";
+			const string nameFr = "Adjectif";
+			const string defFr = "Un adjectif est un modificateur du nom.";
+
+			Cache.ServiceLocator.WritingSystemManager.GetOrSet(WSFr, out var wsDefFr);
+			// NOT CurrentAWS. We need to be able fall through to English, even if the user has hidden it (LT-19115)
+			Cache.ServiceLocator.WritingSystems.AnalysisWritingSystems.Add(wsDefFr);
+			// Commit WS changes
+			m_actionHandler.EndUndoTask();
+
+			var doc = new XmlDocument();
+			doc.LoadXml(string.Format(inputTemplate, defEn, abbrFr, nameFr, defFr));
+			var posNode = doc.DocumentElement.ChildNodes[0];
+
+			// SUT
+			var wsAbbrev = MasterCategory.GetBestWritingSystemForNamedNode(posNode, "abbrev", WSEn, Cache, out var outAbbrev);
+			var wsTerm = MasterCategory.GetBestWritingSystemForNamedNode(posNode, "term", WSEn, Cache, out var outTerm);
+			var wsDef = MasterCategory.GetBestWritingSystemForNamedNode(posNode, "def", WSEn, Cache, out var outDef);
+
+			Assert.AreEqual(wsAbbrev, WSFr, "self-closing should fall through");
+			Assert.AreEqual(abbrFr, outAbbrev);
+			Assert.AreEqual(wsTerm, WSFr, "empty should fall through");
+			Assert.AreEqual(nameFr, outTerm);
+			Assert.AreEqual(wsDef, WSEn, "populated should be taken");
+			Assert.AreEqual(defEn, outDef);
+		}
+
+		[Test]
 		public void UpdatePOSStrings_UpdatesAllAnaWSs()
 		{
 			const string inputTemplate =
@@ -157,6 +199,7 @@ namespace LexTextControlsTests
 			const string defFr = "Un adjectif est un modificateur du nom.";
 
 			Cache.ServiceLocator.WritingSystemManager.GetOrSet(WSFr, out var wsDefFr);
+			// NOT CurrentAWS. We need to be able fall through to English, even if the user has hidden it
 			Cache.ServiceLocator.WritingSystems.AnalysisWritingSystems.Add(wsDefFr);
 			var wsIdFr = wsDefFr.Handle;
 			// Commit WS changes; AddToDatabase makes its own UndoTask
@@ -259,6 +302,7 @@ namespace LexTextControlsTests
 			const string customPosDffn = "SUT shouldn't crash if custom Parts of Speech are present, nor should they be updated.";
 
 			Cache.ServiceLocator.WritingSystemManager.GetOrSet(WSFr, out var wsDefFr);
+			// NOT CurrentAWS. We need to be able fall through to English, even if the user has hidden it (LT-19115)
 			Cache.ServiceLocator.WritingSystems.AnalysisWritingSystems.Add(wsDefFr);
 			var wsIdFr = wsDefFr.Handle;
 			// Commit WS changes; AddToDatabase makes its own UndoTask

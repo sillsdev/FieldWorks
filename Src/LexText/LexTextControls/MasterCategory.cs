@@ -76,16 +76,13 @@ namespace SIL.FieldWorks.LexText.Controls
 			return mc;
 		}
 
-		/// <summary>
-		/// TODO: unit test, resolve LT-19115
-		/// </summary>
 		internal static string GetBestWritingSystemForNamedNode(XmlNode node, string sNodeName, string sDefaultWS, LcmCache cache, out string sNodeContent)
 		{
 			string sWS;
 			var nd = node.SelectSingleNode(sNodeName + "[@ws='" + sDefaultWS + "']");
 			if (nd == null || nd.InnerText.Length == 0)
 			{
-				foreach (var ws in cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems)
+				foreach (var ws in cache.ServiceLocator.WritingSystems.AnalysisWritingSystems)
 				{
 					sWS = ws.Id;
 					if (sWS == sDefaultWS)
