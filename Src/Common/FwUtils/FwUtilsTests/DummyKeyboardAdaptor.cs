@@ -63,10 +63,13 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <summary/>
 		public Action GetKeyboardSetupAction()
 		{
-			return ()=>
-			{
-				throw new NotImplementedException();
-			};
+			return () => throw new NotImplementedException();
+		}
+
+		/// <summary/>
+		public Action GetSecondaryKeyboardSetupAction()
+		{
+			return () => throw new NotImplementedException();
 		}
 
 		/// <summary/>
