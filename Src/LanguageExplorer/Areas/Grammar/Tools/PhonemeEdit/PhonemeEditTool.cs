@@ -68,7 +68,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonemeEdit
 			}
 			if (_recordList == null)
 			{
-				_recordList = majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>(LanguageExplorerConstants.RecordListRepository).GetRecordList(GrammarAreaServices.Phonemes, majorFlexComponentParameters.StatusBar, GrammarAreaServices.PhonemesFactoryMethod);
+				_recordList = majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>(LanguageExplorerConstants.RecordListRepository).GetRecordList(GrammarToolsServices.Phonemes, majorFlexComponentParameters.StatusBar, GrammarToolsServices.PhonemesFactoryMethod);
 			}
 			var root = XDocument.Parse(GrammarResources.PhonemeEditToolParameters).Root;
 			_recordBrowseView = new RecordBrowseView(root.Element("browseview").Element("parameters"), majorFlexComponentParameters.LcmCache, _recordList, majorFlexComponentParameters.UiWidgetController);
@@ -161,7 +161,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonemeEdit
 			private IRecordList _recordList;
 			private DataTree _dataTree;
 			private ISharedEventHandlers _sharedEventHandlers;
-			private GrammarAreaServices _grammarAreaServices;
+			private GrammarToolsServices _grammarToolsServices;
 
 			internal PhonemeEditToolMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, ITool tool, RecordBrowseView recordBrowseView, IRecordList recordList, DataTree dataTree)
 			{
@@ -183,9 +183,9 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonemeEdit
 			{
 				_partiallySharedListToolsUiWidgetMenuHelper = new PartiallySharedForToolsWideMenuHelper(_majorFlexComponentParameters, _recordList);
 				_sharedEventHandlers = _majorFlexComponentParameters.SharedEventHandlers;
-				_grammarAreaServices = new GrammarAreaServices();
+				_grammarToolsServices = new GrammarToolsServices();
 				var toolUiWidgetParameterObject = new ToolUiWidgetParameterObject(tool);
-				_grammarAreaServices.Setup_CmdInsertPhoneme(_majorFlexComponentParameters.LcmCache, toolUiWidgetParameterObject);
+				_grammarToolsServices.Setup_CmdInsertPhoneme(_majorFlexComponentParameters.LcmCache, toolUiWidgetParameterObject);
 				// <command id="CmdDataTree_Insert_Phoneme_Code" label="Grapheme" message="DataTreeInsert">
 				toolUiWidgetParameterObject.MenuItemsForTool[MainMenu.Insert].Add(Command.CmdDataTree_Insert_Phoneme_Code, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(Insert_Phoneme_Code_Clicked, () => UiWidgetServices.CanSeeAndDo));
 				_majorFlexComponentParameters.UiWidgetController.AddHandlers(toolUiWidgetParameterObject);
@@ -323,7 +323,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonemeEdit
 				_recordList = null;
 				_dataTree = null;
 				_sharedEventHandlers = null;
-				_grammarAreaServices = null;
+				_grammarToolsServices = null;
 
 				_isDisposed = true;
 			}

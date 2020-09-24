@@ -125,7 +125,7 @@ namespace LanguageExplorer.Controls
 		private void LoadMasterCategories(HashSet<IPartOfSpeech> posSet)
 		{
 			var doc = new XmlDocument();
-			doc.Load(Path.Combine(FwDirectoryFinder.TemplateDirectory, "GOLDEtic.xml"));
+			doc.Load(LanguageExplorerServices.GOLDEticXmlPathname);
 			var root = doc.DocumentElement;
 			AddNodes(posSet, root.SelectNodes("/eticPOSList/item"), m_tvMasterList.Nodes, m_cache);
 			// The expand/collapse cycle is to ensure that all the folder icons get set

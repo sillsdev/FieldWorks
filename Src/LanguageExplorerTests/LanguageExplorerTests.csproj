@@ -309,7 +309,7 @@
     <Compile Include="Controls\DetailControls\LogicTest.cs" />
     <Compile Include="Controls\DetailControls\TestCCLogic.cs" />
     <Compile Include="Repository\GrammarAreaTests.cs" />
-    <Compile Include="Areas\Grammar\GoldEticGuidFixerTests.cs" />
+    <Compile Include="UtilityTools\GoldEticGuidFixerTests.cs" />
     <Compile Include="Areas\TextsAndWords\Interlinear\AddWordsToLexiconTests.cs" />
     <Compile Include="Areas\TextsAndWords\Interlinear\BIRDFormatImportTests.cs" />
     <Compile Include="Areas\TextsAndWords\Interlinear\ComboHandlerTests.cs" />

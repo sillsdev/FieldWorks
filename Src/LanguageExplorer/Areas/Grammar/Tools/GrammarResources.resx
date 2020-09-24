@@ -125,18 +125,18 @@
   </data>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="AdhocCoprohibitionRuleEditToolParameters" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\..\Resources\AdhocCoprohibitionRuleEditToolParameters.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+    <value>..\..\..\Resources\AdhocCoprohibitionRuleEditToolParameters.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
     <comment>Do Not Localize</comment>
   </data>
   <data name="Affix_Template" xml:space="preserve">
     <value>Affix Template</value>
   </data>
   <data name="BulkEditPhonemesToolParameters" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\..\Resources\BulkEditPhonemesToolParameters.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+    <value>..\..\..\Resources\BulkEditPhonemesToolParameters.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
     <comment>Do Not Localize</comment>
   </data>
   <data name="CompoundRuleAdvancedEditToolParameters" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\..\Resources\CompoundRuleAdvancedEditToolParameters.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+    <value>..\..\..\Resources\CompoundRuleAdvancedEditToolParameters.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
     <comment>Do Not Localize</comment>
   </data>
   <data name="Create_a_new_headed_compound" xml:space="preserve">
@@ -179,15 +179,15 @@
     <value>Duplicate AffixTemplate</value>
   </data>
   <data name="EnvironmentEditToolParameters" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\..\Resources\EnvironmentEditToolParameters.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+    <value>..\..\..\Resources\EnvironmentEditToolParameters.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
     <comment>Do Not Localize</comment>
   </data>
   <data name="FeaturesAdvancedEditToolParameters" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\..\Resources\FeaturesAdvancedEditToolParameters.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+    <value>..\..\..\Resources\FeaturesAdvancedEditToolParameters.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
     <comment>Do Not Localize</comment>
   </data>
   <data name="GrammarCategoryBrowserParameters" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\..\Resources\GrammarCategoryBrowserParameters.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+    <value>..\..\..\Resources\GrammarCategoryBrowserParameters.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
     <comment>Do Not Localize</comment>
   </data>
   <data name="Insert_Affix_Slot" xml:space="preserve">
@@ -254,30 +254,30 @@
     <value>Insert Stem Name</value>
   </data>
   <data name="LexiconProblemsParameters" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\..\Resources\LexiconProblemsParameters.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+    <value>..\..\..\Resources\LexiconProblemsParameters.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
     <comment>Do Not Localize</comment>
   </data>
   <data name="NaturalClassEditToolParameters" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\..\Resources\NaturalClassEditToolParameters.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+    <value>..\..\..\Resources\NaturalClassEditToolParameters.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
     <comment>Do Not Localize</comment>
   </data>
   <data name="PhonemeEditToolParameters" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\..\Resources\PhonemeEditToolParameters.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+    <value>..\..\..\Resources\PhonemeEditToolParameters.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
     <comment>Do Not Localize</comment>
   </data>
   <data name="PhonologicalFeaturesAdvancedEditToolParameters" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\..\Resources\PhonologicalFeaturesAdvancedEditToolParameters.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+    <value>..\..\..\Resources\PhonologicalFeaturesAdvancedEditToolParameters.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
     <comment>Do Not Localize</comment>
   </data>
   <data name="PhonologicalRuleEditToolParameters" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\..\Resources\PhonologicalRuleEditToolParameters.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+    <value>..\..\..\Resources\PhonologicalRuleEditToolParameters.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
     <comment>Do Not Localize</comment>
   </data>
   <data name="Phonological_Feature" xml:space="preserve">
     <value>Phonological Feature...</value>
   </data>
   <data name="ProdRestrictEditToolParameters" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\..\Resources\ProdRestrictEditToolParameters.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+    <value>..\..\..\Resources\ProdRestrictEditToolParameters.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
     <comment>Do Not Localize</comment>
   </data>
 </root>

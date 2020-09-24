@@ -12,7 +12,7 @@ using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Infrastructure;
 using SIL.LCModel.Utils;
 
-namespace LanguageExplorer.Areas.Grammar
+namespace LanguageExplorer.Areas.Grammar.Tools
 {
 	/// <summary>
 	/// A browse view which has the select column hooked to an Active boolean

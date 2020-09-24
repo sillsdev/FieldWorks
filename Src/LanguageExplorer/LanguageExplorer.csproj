@@ -295,7 +295,12 @@
     <Compile Include="Areas\AreaServices.cs" />
     <Compile Include="Areas\CustomFieldsMenuHelper.cs" />
     <Compile Include="Areas\FileExportMenuHelper.cs" />
-    <Compile Include="Areas\Grammar\GrammarAreaServices.cs" />
+    <Compile Include="Areas\Grammar\Tools\GrammarToolsServices.cs" />
+    <Compile Include="Areas\Grammar\Tools\GrammarResources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>GrammarResources.resx</DependentUpon>
+    </Compile>
     <Compile Include="Areas\Grammar\Tools\PhonologicalFeaturesAdvancedEdit\MasterPhonologicalFeatureListDlg.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -1935,7 +1940,7 @@
     <Compile Include="Areas\PossibilityRecordList.cs" />
     <Compile Include="Areas\PossibilityTreeBarHandler.cs" />
     <Compile Include="DictionaryConfiguration\PropertyType.cs" />
-    <Compile Include="Areas\Grammar\RecordBrowseActiveView.cs">
+    <Compile Include="Areas\Grammar\Tools\RecordBrowseActiveView.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="DictionaryConfiguration\SaveFile.cs" />
@@ -2719,11 +2724,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>AreaResources.resx</DependentUpon>
     </Compile>
-    <Compile Include="Areas\Grammar\GrammarResources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>GrammarResources.resx</DependentUpon>
-    </Compile>
     <Compile Include="Controls\DetailControls\AdhocCoProhibAtomicLauncher.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -2735,12 +2735,6 @@
     </Compile>
     <Compile Include="Controls\DetailControls\Slices\AdhocCoProhibVectorReferenceSlice.cs">
       <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Areas\Grammar\Tools\BulkEditPhonemes\AssignFeaturesToPhonemes.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Areas\Grammar\Tools\BulkEditPhonemes\AssignFeaturesToPhonemes.Designer.cs">
-      <DependentUpon>AssignFeaturesToPhonemes.cs</DependentUpon>
     </Compile>
     <Compile Include="Controls\DetailControls\Slices\BasicIPASymbolSlice.cs">
       <SubType>UserControl</SubType>
@@ -2818,7 +2812,7 @@
     <Compile Include="Controls\DetailControls\Slices\FeatureSystemInflectionFeatureListDlgLauncherSlice.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Areas\Grammar\Tools\PosEdit\GoldEticGuidFixer.cs" />
+    <Compile Include="UtilityTools\GoldEticGuidFixer.cs" />
     <Compile Include="Areas\Lexicon\DeleteEntriesSensesWithoutInterlinearization.cs" />
     <Compile Include="Areas\Lexicon\HomographResetter.cs" />
     <Compile Include="Controls\DetailControls\Slices\GhostLexRefSlice.cs">
@@ -3352,7 +3346,7 @@
       <LastGenOutput>AreaResources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Areas\Grammar\GrammarResources.resx">
+    <EmbeddedResource Include="Areas\Grammar\Tools\GrammarResources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>GrammarResources.Designer.cs</LastGenOutput>
     </EmbeddedResource>

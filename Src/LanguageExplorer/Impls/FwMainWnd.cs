@@ -2357,7 +2357,7 @@ namespace LanguageExplorer.Impls
 				using (new WaitCursor(ActiveForm ?? this, true))
 				{
 					var doc = new XmlDocument();
-					doc.Load(Path.Combine(FwDirectoryFinder.TemplateDirectory, "GOLDEtic.xml"));
+					doc.Load(LanguageExplorerServices.GOLDEticXmlPathname);
 					MasterCategory.UpdatePOSStrings(Cache, doc);
 				}
 			}

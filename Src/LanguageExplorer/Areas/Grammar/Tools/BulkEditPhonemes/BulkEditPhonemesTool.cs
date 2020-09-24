@@ -4,12 +4,15 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Xml.Linq;
 using LanguageExplorer.Controls;
+using LanguageExplorer.Controls.XMLViews;
+using LanguageExplorer.LcmUi;
 using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Resources;
@@ -66,7 +69,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.BulkEditPhonemes
 			}
 			if (_recordList == null)
 			{
-				_recordList = majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>(LanguageExplorerConstants.RecordListRepository).GetRecordList(GrammarAreaServices.Phonemes, majorFlexComponentParameters.StatusBar, GrammarAreaServices.PhonemesFactoryMethod);
+				_recordList = majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>(LanguageExplorerConstants.RecordListRepository).GetRecordList(GrammarToolsServices.Phonemes, majorFlexComponentParameters.StatusBar, GrammarToolsServices.PhonemesFactoryMethod);
 			}
 			_assignFeaturesToPhonemesView = new AssignFeaturesToPhonemes(XDocument.Parse(GrammarResources.BulkEditPhonemesToolParameters).Root, majorFlexComponentParameters.LcmCache, _recordList, majorFlexComponentParameters.UiWidgetController);
 			_toolMenuHelper = new BulkEditPhonemesToolMenuHelper(majorFlexComponentParameters, this, _assignFeaturesToPhonemesView, _recordList);
@@ -135,7 +138,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.BulkEditPhonemes
 			private MajorFlexComponentParameters _majorFlexComponentParameters;
 			private AssignFeaturesToPhonemes _assignFeaturesToPhonemesView;
 			private IRecordList _recordList;
-			private GrammarAreaServices _grammarAreaServices;
+			private GrammarToolsServices _grammarToolsServices;
 
 			internal BulkEditPhonemesToolMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, ITool tool, AssignFeaturesToPhonemes assignFeaturesToPhonemes, IRecordList recordList)
 			{
@@ -153,9 +156,9 @@ namespace LanguageExplorer.Areas.Grammar.Tools.BulkEditPhonemes
 
 			private void SetupUiWidgets(ITool tool)
 			{
-				_grammarAreaServices = new GrammarAreaServices();
+				_grammarToolsServices = new GrammarToolsServices();
 				var toolUiWidgetParameterObject = new ToolUiWidgetParameterObject(tool);
-				_grammarAreaServices.Setup_CmdInsertPhoneme(_majorFlexComponentParameters.LcmCache, toolUiWidgetParameterObject);
+				_grammarToolsServices.Setup_CmdInsertPhoneme(_majorFlexComponentParameters.LcmCache, toolUiWidgetParameterObject);
 				_majorFlexComponentParameters.UiWidgetController.AddHandlers(toolUiWidgetParameterObject);
 			}
 
@@ -236,10 +239,78 @@ namespace LanguageExplorer.Areas.Grammar.Tools.BulkEditPhonemes
 				_majorFlexComponentParameters = null;
 				_assignFeaturesToPhonemesView = null;
 				_recordList = null;
-				_grammarAreaServices = null;
+				_grammarToolsServices = null;
 
 				_isDisposed = true;
 			}
+			#endregion
+		}
+
+		/// <summary />
+		private sealed class AssignFeaturesToPhonemes : RecordBrowseView
+		{
+			/// <summary>
+			/// Required designer variable.
+			/// </summary>
+			private IContainer _components;
+
+			/// <summary />
+			internal AssignFeaturesToPhonemes(XElement browseViewDefinitions, LcmCache cache, IRecordList recordList, UiWidgetController uiWidgetController)
+				: base(browseViewDefinitions, cache, recordList, uiWidgetController)
+			{
+				InitializeComponent();
+			}
+
+			#region Overrides of RecordBrowseView
+
+			/// <summary>
+			/// Initialize a FLEx component with the basic interfaces.
+			/// </summary>
+			/// <param name="flexComponentParameters">Parameter object that contains the required three interfaces.</param>
+			public override void InitializeFlexComponent(FlexComponentParameters flexComponentParameters)
+			{
+				base.InitializeFlexComponent(flexComponentParameters);
+
+				var bulkEditBar = BrowseViewer.BulkEditBar;
+				// We want a custom name for the tab, the operation label, and the target item
+				// Now we use good old List Choice.  bulkEditBar.ListChoiceTab.Text = LanguageExplorerResources.ksAssignFeaturesToPhonemes;
+				bulkEditBar.OperationLabel.Text = LanguageExplorerResources.ksListChoiceDesc;
+				bulkEditBar.TargetFieldLabel.Text = LanguageExplorerResources.ksTargetFeature;
+				bulkEditBar.ChangeToLabel.Text = LanguageExplorerResources.ksChangeTo;
+			}
+
+			#endregion
+
+			protected override BrowseViewer CreateBrowseViewer(XElement nodeSpec, int hvoRoot, LcmCache cache, ISortItemProvider sortItemProvider, ISilDataAccessManaged sda, UiWidgetController uiWidgetController)
+			{
+				return new BrowseViewerPhonologicalFeatures(nodeSpec, hvoRoot, cache, sortItemProvider, sda, uiWidgetController);
+			}
+			/// <summary>
+			/// Clean up any resources being used.
+			/// </summary>
+			/// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+			protected override void Dispose(bool disposing)
+			{
+				Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
+				if (disposing)
+				{
+					_components?.Dispose();
+				}
+				base.Dispose(disposing);
+			}
+
+			#region Component Designer generated code
+
+			/// <summary>
+			/// Required method for Designer support - do not modify
+			/// the contents of this method with the code editor.
+			/// </summary>
+			private void InitializeComponent()
+			{
+				_components = new Container();
+				AutoScaleMode = AutoScaleMode.Font;
+			}
+
 			#endregion
 		}
 	}

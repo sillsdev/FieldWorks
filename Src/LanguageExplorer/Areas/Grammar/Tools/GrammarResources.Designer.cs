@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace LanguageExplorer.Areas.Grammar {
+namespace LanguageExplorer.Areas.Grammar.Tools {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace LanguageExplorer.Areas.Grammar {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("LanguageExplorer.Areas.Grammar.GrammarResources", typeof(GrammarResources).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("LanguageExplorer.Areas.Grammar.Tools.GrammarResources", typeof(GrammarResources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;

@@ -9,12 +9,12 @@ using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Application;
 
-namespace LanguageExplorer.Areas.Grammar
+namespace LanguageExplorer.Areas.Grammar.Tools
 {
 	/// <summary>
 	/// Handle partially shared code in the Grammar area.
 	/// </summary>
-	internal class GrammarAreaServices
+	internal class GrammarToolsServices
 	{
 		internal const string Phonemes = "phonemes";
 		private LcmCache _cache;

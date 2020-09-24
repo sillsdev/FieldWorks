@@ -8,13 +8,12 @@ using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using System.Xml;
-using LanguageExplorer.UtilityTools;
 using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Infrastructure;
 
-namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
+namespace LanguageExplorer.UtilityTools
 {
 	/// <summary>
 	/// This class implements a utility to allow users to fix any part of speech guids that do not match the GOLD etic file.

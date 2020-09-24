@@ -14,7 +14,6 @@ using System.Windows.Forms;
 using System.Xml;
 using System.Xml.Linq;
 using System.Xml.XPath;
-using LanguageExplorer.Areas;
 using LanguageExplorer.Controls;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
@@ -403,7 +402,7 @@ namespace LanguageExplorer.LIFT
 
 		private void LoadCategoryCatalog()
 		{
-			var sPath = Path.Combine(FwDirectoryFinder.CodeDirectory, "Templates/GOLDEtic.xml");
+			var sPath = Path.Combine(FwDirectoryFinder.CodeDirectory, LanguageExplorerServices.GOLDEticXmlPathname);
 			var xd = new XmlDocument();
 			xd.Load(sPath);
 			var xnTop = xd.SelectSingleNode("eticPOSList");

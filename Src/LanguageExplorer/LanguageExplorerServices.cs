@@ -3,6 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.IO;
 using System.Windows.Forms;
 using LanguageExplorer.Controls;
 using LanguageExplorer.DictionaryConfiguration;
@@ -17,6 +18,11 @@ namespace LanguageExplorer
 {
 	internal static class LanguageExplorerServices
 	{
+		/// <summary>
+		/// Get the pathname for the GOLDEtic.xml file.
+		/// </summary>
+		internal static string GOLDEticXmlPathname => Path.Combine(FwDirectoryFinder.TemplateDirectory, "GOLDEtic.xml");
+
 		/// <summary>
 		/// Make a standard Win32 color from three components.
 		/// </summary>

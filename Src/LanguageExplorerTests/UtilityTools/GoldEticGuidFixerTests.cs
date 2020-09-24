@@ -4,14 +4,14 @@
 
 using System.Collections.Generic;
 using System.IO;
-using LanguageExplorer.Areas.Grammar.Tools.PosEdit;
+using LanguageExplorer.UtilityTools;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Application.ApplicationServices;
 using SIL.LCModel.Core.Text;
 
-namespace LanguageExplorerTests.Areas.Grammar
+namespace LanguageExplorerTests.UtilityTools
 {
 	[TestFixture]
 	public class GoldEticGuidFixerTests
