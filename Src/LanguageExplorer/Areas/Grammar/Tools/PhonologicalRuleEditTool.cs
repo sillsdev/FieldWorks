@@ -18,18 +18,18 @@ using SIL.FieldWorks.Resources;
 using SIL.LCModel;
 using SIL.LCModel.Application;
 
-namespace LanguageExplorer.Areas.Grammar.Tools.NaturalClassEdit
+namespace LanguageExplorer.Areas.Grammar.Tools
 {
 	/// <summary>
-	/// ITool implementation for the "naturalClassEdit" tool in the "grammar" area.
+	/// ITool implementation for the "PhonologicalRuleEdit" tool in the "grammar" area.
 	/// </summary>
 	[Export(LanguageExplorerConstants.GrammarAreaMachineName, typeof(ITool))]
-	internal sealed class NaturalClassEditTool : ITool
+	internal sealed class PhonologicalRuleEditTool : ITool
 	{
-		private NaturalClassEditToolMenuHelper _toolMenuHelper;
-		private const string NaturalClasses = "naturalClasses";
+		private PhonologicalRuleEditToolMenuHelper _toolMenuHelper;
+		private const string PhonologicalRules = "phonologicalRules";
 		private MultiPane _multiPane;
-		private RecordBrowseView _recordBrowseView;
+		private RecordBrowseActiveView _recordBrowseActiveView;
 		private IRecordList _recordList;
 
 		#region Implementation of IMajorFlexComponent
@@ -46,7 +46,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.NaturalClassEdit
 			majorFlexComponentParameters.UiWidgetController.RemoveToolHandlers();
 			_toolMenuHelper.Dispose();
 			MultiPaneFactory.RemoveFromParentAndDispose(majorFlexComponentParameters.MainCollapsingSplitContainer, ref _multiPane);
-			_recordBrowseView = null;
+			_recordBrowseActiveView = null;
 			_toolMenuHelper = null;
 		}
 
@@ -60,18 +60,19 @@ namespace LanguageExplorer.Areas.Grammar.Tools.NaturalClassEdit
 		{
 			if (_recordList == null)
 			{
-				_recordList = majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>(LanguageExplorerConstants.RecordListRepository).GetRecordList(NaturalClasses, majorFlexComponentParameters.StatusBar, FactoryMethod);
+				_recordList = majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>(LanguageExplorerConstants.RecordListRepository).GetRecordList(PhonologicalRules, majorFlexComponentParameters.StatusBar, FactoryMethod);
 			}
-			var root = XDocument.Parse(GrammarResources.NaturalClassEditToolParameters).Root;
-			_recordBrowseView = new RecordBrowseView(root.Element("browseview").Element("parameters"), majorFlexComponentParameters.LcmCache, _recordList, majorFlexComponentParameters.UiWidgetController);
+			var root = XDocument.Parse(GrammarResources.PhonologicalRuleEditToolParameters).Root;
+			_recordBrowseActiveView = new RecordBrowseActiveView(root.Element("browseview").Element("parameters"), majorFlexComponentParameters.LcmCache, _recordList, majorFlexComponentParameters.UiWidgetController);
 			var showHiddenFieldsPropertyName = UiWidgetServices.CreateShowHiddenFieldsPropertyName(MachineName);
 			var dataTree = new DataTree(majorFlexComponentParameters.SharedEventHandlers, majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue(showHiddenFieldsPropertyName, false));
+			_toolMenuHelper = new PhonologicalRuleEditToolMenuHelper(majorFlexComponentParameters, this, dataTree, _recordBrowseActiveView, _recordList);
 			var recordEditView = new RecordEditView(root.Element("recordview").Element("parameters"), XDocument.Parse(LanguageExplorerResources.VisibilityFilter_All), majorFlexComponentParameters.LcmCache, _recordList, dataTree, majorFlexComponentParameters.UiWidgetController);
 			var mainMultiPaneParameters = new MultiPaneParameters
 			{
 				Orientation = Orientation.Vertical,
 				Area = Area,
-				Id = "NaturalClassItemsAndDetailMultiPane",
+				Id = "PhonologicalRuleItemsAndDetailMultiPane",
 				ToolMachineName = MachineName
 			};
 			var recordEditViewPaneBar = new PaneBar();
@@ -80,11 +81,10 @@ namespace LanguageExplorer.Areas.Grammar.Tools.NaturalClassEdit
 				Dock = DockStyle.Right
 			};
 			recordEditViewPaneBar.AddControls(new List<Control> { panelButton });
-			// Too early before now.
-			_toolMenuHelper = new NaturalClassEditToolMenuHelper(majorFlexComponentParameters, this, _recordBrowseView, _recordList);
 			_multiPane = MultiPaneFactory.CreateMultiPaneWithTwoPaneBarContainersInMainCollapsingSplitContainer(majorFlexComponentParameters.FlexComponentParameters,
-				majorFlexComponentParameters.MainCollapsingSplitContainer, mainMultiPaneParameters, _recordBrowseView, "Browse", new PaneBar(),
+				majorFlexComponentParameters.MainCollapsingSplitContainer, mainMultiPaneParameters, _recordBrowseActiveView, "Browse", new PaneBar(),
 				recordEditView, "Details", recordEditViewPaneBar);
+			// Too early before now.
 			recordEditView.FinishInitialization();
 		}
 
@@ -93,7 +93,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.NaturalClassEdit
 		/// </summary>
 		public void PrepareToRefresh()
 		{
-			_recordBrowseView.BrowseViewer.BrowseView.PrepareToRefresh();
+			_recordBrowseActiveView.BrowseViewer.BrowseView.PrepareToRefresh();
 		}
 
 		/// <summary>
@@ -121,12 +121,12 @@ namespace LanguageExplorer.Areas.Grammar.Tools.NaturalClassEdit
 		/// Get the internal name of the component.
 		/// </summary>
 		/// <remarks>NB: This is the machine friendly name, not the user friendly name.</remarks>
-		public string MachineName => LanguageExplorerConstants.NaturalClassEditMachineName;
+		public string MachineName => LanguageExplorerConstants.PhonologicalRuleEditMachineName;
 
 		/// <summary>
 		/// User-visible localized component name.
 		/// </summary>
-		public string UiName => StringTable.Table.LocalizeLiteralValue(LanguageExplorerConstants.NaturalClassEditUiName);
+		public string UiName => StringTable.Table.LocalizeLiteralValue(LanguageExplorerConstants.PhonologicalRuleEditUiName);
 
 		#endregion
 
@@ -147,33 +147,37 @@ namespace LanguageExplorer.Areas.Grammar.Tools.NaturalClassEdit
 
 		private static IRecordList FactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string recordListId, StatusBar statusBar)
 		{
-			Require.That(recordListId == NaturalClasses, $"I don't know how to create a record list with an ID of '{recordListId}', as I can only create one with an id of '{NaturalClasses}'.");
+			Require.That(recordListId == PhonologicalRules, $"I don't know how to create a record list with an ID of '{recordListId}', as I can only create one with an id of '{PhonologicalRules}'.");
 			/*
-            <clerk id="naturalClasses">
-              <recordList owner="MorphologicalData" property="NaturalClasses" />
+			 // NB: How can Flex work when the clerk claims the owner is MorphologicalData, but the real world has it PhonologicalDataOA?
+            <clerk id="phonologicalRules">
+              <recordList owner="MorphologicalData" property="PhonologicalRules" />
             </clerk>
 			*/
 			return new RecordList(recordListId, statusBar, cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), true,
-				new VectorPropertyParameterObject(cache.LanguageProject.PhonologicalDataOA, "NaturalClasses", PhPhonDataTags.kflidNaturalClasses));
+				new VectorPropertyParameterObject(cache.LanguageProject.PhonologicalDataOA, "PhonologicalRules", PhPhonDataTags.kflidPhonRules));
 		}
 
-		private sealed class NaturalClassEditToolMenuHelper : IDisposable
+		private sealed class PhonologicalRuleEditToolMenuHelper : IDisposable
 		{
 			private MajorFlexComponentParameters _majorFlexComponentParameters;
-			private RecordBrowseView _recordBrowseView;
+			private DataTree _dataTree;
+			private RecordBrowseActiveView _recordBrowseActiveView;
 			private IRecordList _recordList;
 			private ToolStripMenuItem _menu;
 			private IPhPhonData _phPhonData;
 
-			internal NaturalClassEditToolMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, ITool tool, RecordBrowseView recordBrowseView, IRecordList recordList)
+			internal PhonologicalRuleEditToolMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, ITool tool, DataTree dataTree, RecordBrowseActiveView recordBrowseActiveView, IRecordList recordList)
 			{
 				Guard.AgainstNull(majorFlexComponentParameters, nameof(majorFlexComponentParameters));
 				Guard.AgainstNull(tool, nameof(tool));
-				Guard.AgainstNull(recordBrowseView, nameof(recordBrowseView));
+				Guard.AgainstNull(dataTree, nameof(dataTree));
+				Guard.AgainstNull(recordBrowseActiveView, nameof(recordBrowseActiveView));
 				Guard.AgainstNull(recordList, nameof(recordList));
 
 				_majorFlexComponentParameters = majorFlexComponentParameters;
-				_recordBrowseView = recordBrowseView;
+				_dataTree = dataTree;
+				_recordBrowseActiveView = recordBrowseActiveView;
 				_recordList = recordList;
 				_phPhonData = _majorFlexComponentParameters.LcmCache.LanguageProject.PhonologicalDataOA;
 				SetupUiWidgets(tool);
@@ -185,39 +189,41 @@ namespace LanguageExplorer.Areas.Grammar.Tools.NaturalClassEdit
 				var toolUiWidgetParameterObject = new ToolUiWidgetParameterObject(tool);
 				var insertMenuDictionary = toolUiWidgetParameterObject.MenuItemsForTool[MainMenu.Insert];
 				var insertToolBarDictionary = toolUiWidgetParameterObject.ToolBarItemsForTool[ToolBar.Insert];
-				// <command id="CmdInsertSegmentNaturalClasses" label="Natural Class (Phonemes)" message="InsertItemInVector" icon="naturalClass" shortcut="Ctrl+I">
-				insertMenuDictionary.Add(Command.CmdInsertSegmentNaturalClasses, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(InsertSegmentNaturalClasses_Clicked, () => UiWidgetServices.CanSeeAndDo));
-				insertToolBarDictionary.Add(Command.CmdInsertSegmentNaturalClasses, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(InsertSegmentNaturalClasses_Clicked, () => UiWidgetServices.CanSeeAndDo));
-				// <command id="CmdInsertFeatureNaturalClasses" label="Natural Class (Features)" message="InsertItemInVector" icon="addFeature">
-				insertMenuDictionary.Add(Command.CmdInsertFeatureNaturalClasses, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(InsertFeatureNaturalClasses_Clicked, () => UiWidgetServices.CanSeeAndDo));
-				insertToolBarDictionary.Add(Command.CmdInsertFeatureNaturalClasses, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(InsertFeatureNaturalClasses_Clicked, () => UiWidgetServices.CanSeeAndDo));
+				UiWidgetServices.InsertPair(insertToolBarDictionary, insertMenuDictionary, Command.CmdInsertPhRegularRule, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdInsertPhRegularRule_Click, () => UiWidgetServices.CanSeeAndDo));
+				UiWidgetServices.InsertPair(insertToolBarDictionary, insertMenuDictionary, Command.CmdInsertPhMetathesisRule, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdInsertPhMetathesisRule_Click, () => UiWidgetServices.CanSeeAndDo));
 				_majorFlexComponentParameters.UiWidgetController.AddHandlers(toolUiWidgetParameterObject);
 			}
 
-			private void InsertSegmentNaturalClasses_Clicked(object sender, EventArgs e)
+			private void CmdInsertPhRegularRule_Click(object sender, EventArgs e)
 			{
 				/*
-				<command id="CmdInsertSegmentNaturalClasses" label="Natural Class (Phonemes)" message="InsertItemInVector" icon="naturalClass" shortcut="Ctrl+I">
-					<params className="PhNCSegments" />
-				</command>
+			<command id="CmdInsertPhRegularRule" label="Phonological Rule" message="InsertItemInVector" icon="environment">
+				<params className="PhRegularRule" />
+			</command>
 				*/
-				UowHelpers.UndoExtension(GrammarResources.Insert_Natural_Class_Phonemes, _majorFlexComponentParameters.LcmCache.ActionHandlerAccessor, () =>
+				IPhRegularRule newbie = null;
+				UowHelpers.UndoExtension(GrammarResources.Insert_Phonological_Rule, _majorFlexComponentParameters.LcmCache.ActionHandlerAccessor, () =>
 				{
-					_phPhonData.NaturalClassesOS.Add(_majorFlexComponentParameters.LcmCache.ServiceLocator.GetInstance<IPhNCSegmentsFactory>().Create());
+					newbie = _majorFlexComponentParameters.LcmCache.ServiceLocator.GetInstance<IPhRegularRuleFactory>().Create();
+					_phPhonData.PhonRulesOS.Add(newbie);
 				});
+				_recordList.JumpToRecord(newbie.Hvo);
 			}
 
-			private void InsertFeatureNaturalClasses_Clicked(object sender, EventArgs e)
+			private void CmdInsertPhMetathesisRule_Click(object sender, EventArgs e)
 			{
 				/*
-				<command id="CmdInsertFeatureNaturalClasses" label="Natural Class (Features)" message="InsertItemInVector" icon="addFeature">
-					<params className="PhNCFeatures" />
+				<command id="CmdInsertPhMetathesisRule" label="Metathesis Rule" message="InsertItemInVector" icon="metathesis">
+					<params className="PhMetathesisRule" />
 				</command>
 				*/
-				UowHelpers.UndoExtension(GrammarResources.Insert_Natural_Class_Features, _majorFlexComponentParameters.LcmCache.ActionHandlerAccessor, () =>
+				IPhMetathesisRule newbie = null;
+				UowHelpers.UndoExtension(GrammarResources.Insert_Metathesis_Rule, _majorFlexComponentParameters.LcmCache.ActionHandlerAccessor, () =>
 				{
-					_phPhonData.NaturalClassesOS.Add(_majorFlexComponentParameters.LcmCache.ServiceLocator.GetInstance<IPhNCFeaturesFactory>().Create());
+					newbie = _majorFlexComponentParameters.LcmCache.ServiceLocator.GetInstance<IPhMetathesisRuleFactory>().Create();
+					_phPhonData.PhonRulesOS.Add(newbie);
 				});
+				_recordList.JumpToRecord(newbie.Hvo);
 			}
 
 			private void CreateBrowseViewContextMenu()
@@ -230,17 +236,17 @@ namespace LanguageExplorer.Areas.Grammar.Tools.NaturalClassEdit
 				};
 				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(1);
 				// <command id="CmdDeleteSelectedObject" label="Delete selected {0}" message="DeleteSelectedItem"/>
-				_menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, CmdDeleteSelectedObject_Clicked, string.Format(LanguageExplorerResources.Delete_selected_0, "PhNaturalClass"));
+				_menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, CmdDeleteSelectedObject_Clicked, string.Format(LanguageExplorerResources.Delete_selected_0, StringTable.Table.GetString("PhSegmentRule", StringTable.ClassNames)));
 				contextMenuStrip.Opening += ContextMenuStrip_Opening;
 
 				// End: <menu id="mnuBrowseView" (partial) >
-				_recordBrowseView.ContextMenuStrip = contextMenuStrip;
+				_recordBrowseActiveView.ContextMenuStrip = contextMenuStrip;
 			}
 
 			private void ContextMenuStrip_Opening(object sender, System.ComponentModel.CancelEventArgs e)
 			{
-				_recordBrowseView.ContextMenuStrip.Visible = !_recordList.HasEmptyList;
-				if (!_recordBrowseView.ContextMenuStrip.Visible)
+				_recordBrowseActiveView.ContextMenuStrip.Visible = !_recordList.HasEmptyList;
+				if (!_recordBrowseActiveView.ContextMenuStrip.Visible)
 				{
 					return;
 				}
@@ -250,13 +256,19 @@ namespace LanguageExplorer.Areas.Grammar.Tools.NaturalClassEdit
 
 			private void CmdDeleteSelectedObject_Clicked(object sender, EventArgs e)
 			{
-				_recordList.DeleteRecord(((ToolStripMenuItem)sender).Text, StatusBarPanelServices.GetStatusBarProgressPanel(_majorFlexComponentParameters.StatusBar));
+				var currentSlice = _dataTree.CurrentSlice;
+				if (currentSlice == null)
+				{
+					_dataTree.GotoFirstSlice();
+					currentSlice = _dataTree.CurrentSlice;
+				}
+				currentSlice.HandleDeleteCommand();
 			}
 
 			#region Implementation of IDisposable
 			private bool _isDisposed;
 
-			~NaturalClassEditToolMenuHelper()
+			~PhonologicalRuleEditToolMenuHelper()
 			{
 				// The base class finalizer is called automatically.
 				Dispose(false);
@@ -285,18 +297,19 @@ namespace LanguageExplorer.Areas.Grammar.Tools.NaturalClassEdit
 
 				if (disposing)
 				{
-					_menu.Dispose();
-					if (_recordBrowseView?.ContextMenuStrip != null)
+					if (_recordBrowseActiveView?.ContextMenuStrip != null)
 					{
-						_recordBrowseView.ContextMenuStrip.Opening -= ContextMenuStrip_Opening;
-						_recordBrowseView.ContextMenuStrip.Dispose();
-						_recordBrowseView.ContextMenuStrip = null;
+						_recordBrowseActiveView.ContextMenuStrip.Opening -= ContextMenuStrip_Opening;
+						_recordBrowseActiveView.ContextMenuStrip.Dispose();
+						_recordBrowseActiveView.ContextMenuStrip = null;
 					}
-				}
+                }
 				_majorFlexComponentParameters = null;
-				_recordBrowseView = null;
+				_dataTree = null;
+				_recordBrowseActiveView = null;
 				_recordList = null;
 				_menu = null;
+				_phPhonData = null;
 
 				_isDisposed = true;
 			}

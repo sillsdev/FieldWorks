@@ -12,7 +12,7 @@ using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Resources;
 
-namespace LanguageExplorer.Areas.Grammar.Tools.GrammarSketch
+namespace LanguageExplorer.Areas.Grammar.Tools
 {
 	/// <summary>
 	/// ITool implementation for the "grammarSketch" tool in the "grammar" area.

@@ -12,7 +12,7 @@ using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 
-namespace LanguageExplorer.Areas.Lists.Tools
+namespace LanguageExplorer.Areas
 {
 	internal sealed class SharedListToolsUiWidgetMenuHelper : IDisposable
 	{
@@ -52,8 +52,8 @@ namespace LanguageExplorer.Areas.Lists.Tools
 			{
 				names = new Dictionary<string, string>()
 				{
-					{ AreaServices.List_Item, ListResources.Item },
-					{ AreaServices.Subitem, ListResources.Subitem }
+					{ AreaServices.List_Item, AreaResources.Item },
+					{ AreaServices.Subitem, AreaResources.Subitem }
 				};
 			}
 			if (commands == null)
@@ -164,7 +164,7 @@ namespace LanguageExplorer.Areas.Lists.Tools
 			      <parameters field="SubPossibilities" className="CmPossibility" />
 			    </command>
 			*/
-			AreaServices.CreateDeleteMenuItem(menuItems, contextMenuStrip, slice, ListResources.Delete_subitem_and_its_subitems, _sharedEventHandlers.GetEventHandler(Command.CmdDataTreeDelete));
+			AreaServices.CreateDeleteMenuItem(menuItems, contextMenuStrip, slice, AreaResources.Delete_subitem_and_its_subitems, _sharedEventHandlers.GetEventHandler(Command.CmdDataTreeDelete));
 
 			// End: <menu id="mnuDataTree_DeletePossibility">
 
@@ -185,7 +185,7 @@ namespace LanguageExplorer.Areas.Lists.Tools
 			/*
 			      <item command="CmdDataTree_Insert_Possibility" /> // Shared
 			*/
-			ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, CmdDataTree_Insert_Possibility_Click, ListResources.Insert_Subitem, image: AreaResources.AddSubItem.ToBitmap());
+			ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, CmdDataTree_Insert_Possibility_Click, AreaResources.Insert_Subitem, image: AreaResources.AddSubItem.ToBitmap());
 
 			// End: <menu id="mnuDataTree_SubPossibilities">
 
@@ -247,7 +247,7 @@ namespace LanguageExplorer.Areas.Lists.Tools
 		private void CmdInsertPossibility_Click(object sender, EventArgs e)
 		{
 			ICmPossibility newPossibility = null;
-			UowHelpers.UndoExtension(ListResources.Item, _majorFlexComponentParameters.LcmCache.ActionHandlerAccessor, () =>
+			UowHelpers.UndoExtension(AreaResources.Item, _majorFlexComponentParameters.LcmCache.ActionHandlerAccessor, () =>
 			{
 				newPossibility = _majorFlexComponentParameters.LcmCache.ServiceLocator.GetInstance<ICmPossibilityFactory>().Create(Guid.NewGuid(), _list);
 			});
@@ -262,7 +262,7 @@ namespace LanguageExplorer.Areas.Lists.Tools
 		private void CmdDataTree_Insert_Possibility_Click(object sender, EventArgs e)
 		{
 			ICmPossibility newSubPossibility = null;
-			UowHelpers.UndoExtension(ListResources.Item, _majorFlexComponentParameters.LcmCache.ActionHandlerAccessor, () =>
+			UowHelpers.UndoExtension(AreaResources.Item, _majorFlexComponentParameters.LcmCache.ActionHandlerAccessor, () =>
 			{
 				newSubPossibility = _majorFlexComponentParameters.LcmCache.ServiceLocator.GetInstance<ICmPossibilityFactory>().Create(Guid.NewGuid(), (ICmPossibility)_recordList.CurrentObject);
 			});

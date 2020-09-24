@@ -18,18 +18,18 @@ using SIL.FieldWorks.Resources;
 using SIL.LCModel;
 using SIL.LCModel.Application;
 
-namespace LanguageExplorer.Areas.Grammar.Tools.CompoundRuleAdvancedEdit
+namespace LanguageExplorer.Areas.Grammar.Tools
 {
 	/// <summary>
-	/// ITool implementation for the "compoundRuleAdvancedEdit" tool in the "grammar" area.
+	/// ITool implementation for the "naturalClassEdit" tool in the "grammar" area.
 	/// </summary>
 	[Export(LanguageExplorerConstants.GrammarAreaMachineName, typeof(ITool))]
-	internal sealed class CompoundRuleAdvancedEditTool : ITool
+	internal sealed class NaturalClassEditTool : ITool
 	{
-		private CompoundRuleAdvancedEditToolMenuHelper _toolMenuHelper;
-		private const string CompoundRules = "compoundRules";
+		private NaturalClassEditToolMenuHelper _toolMenuHelper;
+		private const string NaturalClasses = "naturalClasses";
 		private MultiPane _multiPane;
-		private RecordBrowseActiveView _recordBrowseActiveView;
+		private RecordBrowseView _recordBrowseView;
 		private IRecordList _recordList;
 
 		#region Implementation of IMajorFlexComponent
@@ -46,6 +46,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.CompoundRuleAdvancedEdit
 			majorFlexComponentParameters.UiWidgetController.RemoveToolHandlers();
 			_toolMenuHelper.Dispose();
 			MultiPaneFactory.RemoveFromParentAndDispose(majorFlexComponentParameters.MainCollapsingSplitContainer, ref _multiPane);
+			_recordBrowseView = null;
 			_toolMenuHelper = null;
 		}
 
@@ -59,19 +60,18 @@ namespace LanguageExplorer.Areas.Grammar.Tools.CompoundRuleAdvancedEdit
 		{
 			if (_recordList == null)
 			{
-				_recordList = majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>(LanguageExplorerConstants.RecordListRepository).GetRecordList(CompoundRules, majorFlexComponentParameters.StatusBar, FactoryMethod);
+				_recordList = majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>(LanguageExplorerConstants.RecordListRepository).GetRecordList(NaturalClasses, majorFlexComponentParameters.StatusBar, FactoryMethod);
 			}
-			var root = XDocument.Parse(GrammarResources.CompoundRuleAdvancedEditToolParameters).Root;
-			_recordBrowseActiveView = new RecordBrowseActiveView(root.Element("browseview").Element("parameters"), majorFlexComponentParameters.LcmCache, _recordList, majorFlexComponentParameters.UiWidgetController);
+			var root = XDocument.Parse(GrammarResources.NaturalClassEditToolParameters).Root;
+			_recordBrowseView = new RecordBrowseView(root.Element("browseview").Element("parameters"), majorFlexComponentParameters.LcmCache, _recordList, majorFlexComponentParameters.UiWidgetController);
 			var showHiddenFieldsPropertyName = UiWidgetServices.CreateShowHiddenFieldsPropertyName(MachineName);
 			var dataTree = new DataTree(majorFlexComponentParameters.SharedEventHandlers, majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue(showHiddenFieldsPropertyName, false));
-			_toolMenuHelper = new CompoundRuleAdvancedEditToolMenuHelper(majorFlexComponentParameters, this, dataTree, _recordBrowseActiveView, _recordList);
-			var recordEditView = new RecordEditView(root.Element("recordview").Element("parameters"), XDocument.Parse(AreaResources.HideAdvancedListItemFields), majorFlexComponentParameters.LcmCache, _recordList, dataTree, majorFlexComponentParameters.UiWidgetController);
+			var recordEditView = new RecordEditView(root.Element("recordview").Element("parameters"), XDocument.Parse(LanguageExplorerResources.VisibilityFilter_All), majorFlexComponentParameters.LcmCache, _recordList, dataTree, majorFlexComponentParameters.UiWidgetController);
 			var mainMultiPaneParameters = new MultiPaneParameters
 			{
 				Orientation = Orientation.Vertical,
 				Area = Area,
-				Id = "CompoundRuleItemsAndDetailMultiPane",
+				Id = "NaturalClassItemsAndDetailMultiPane",
 				ToolMachineName = MachineName
 			};
 			var recordEditViewPaneBar = new PaneBar();
@@ -80,9 +80,11 @@ namespace LanguageExplorer.Areas.Grammar.Tools.CompoundRuleAdvancedEdit
 				Dock = DockStyle.Right
 			};
 			recordEditViewPaneBar.AddControls(new List<Control> { panelButton });
-			_multiPane = MultiPaneFactory.CreateMultiPaneWithTwoPaneBarContainersInMainCollapsingSplitContainer(majorFlexComponentParameters.FlexComponentParameters, majorFlexComponentParameters.MainCollapsingSplitContainer,
-				mainMultiPaneParameters, _recordBrowseActiveView, "Browse", new PaneBar(), recordEditView, "Details", recordEditViewPaneBar);
 			// Too early before now.
+			_toolMenuHelper = new NaturalClassEditToolMenuHelper(majorFlexComponentParameters, this, _recordBrowseView, _recordList);
+			_multiPane = MultiPaneFactory.CreateMultiPaneWithTwoPaneBarContainersInMainCollapsingSplitContainer(majorFlexComponentParameters.FlexComponentParameters,
+				majorFlexComponentParameters.MainCollapsingSplitContainer, mainMultiPaneParameters, _recordBrowseView, "Browse", new PaneBar(),
+				recordEditView, "Details", recordEditViewPaneBar);
 			recordEditView.FinishInitialization();
 		}
 
@@ -91,7 +93,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.CompoundRuleAdvancedEdit
 		/// </summary>
 		public void PrepareToRefresh()
 		{
-			_recordBrowseActiveView.BrowseViewer.BrowseView.PrepareToRefresh();
+			_recordBrowseView.BrowseViewer.BrowseView.PrepareToRefresh();
 		}
 
 		/// <summary>
@@ -119,12 +121,12 @@ namespace LanguageExplorer.Areas.Grammar.Tools.CompoundRuleAdvancedEdit
 		/// Get the internal name of the component.
 		/// </summary>
 		/// <remarks>NB: This is the machine friendly name, not the user friendly name.</remarks>
-		public string MachineName => LanguageExplorerConstants.CompoundRuleAdvancedEditMachineName;
+		public string MachineName => LanguageExplorerConstants.NaturalClassEditMachineName;
 
 		/// <summary>
 		/// User-visible localized component name.
 		/// </summary>
-		public string UiName => StringTable.Table.LocalizeLiteralValue(LanguageExplorerConstants.CompoundRuleAdvancedEditUiName);
+		public string UiName => StringTable.Table.LocalizeLiteralValue(LanguageExplorerConstants.NaturalClassEditUiName);
 
 		#endregion
 
@@ -145,72 +147,76 @@ namespace LanguageExplorer.Areas.Grammar.Tools.CompoundRuleAdvancedEdit
 
 		private static IRecordList FactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string recordListId, StatusBar statusBar)
 		{
-			Require.That(recordListId == CompoundRules, $"I don't know how to create a record list with an ID of '{recordListId}', as I can only create one with an id of '{CompoundRules}'.");
+			Require.That(recordListId == NaturalClasses, $"I don't know how to create a record list with an ID of '{recordListId}', as I can only create one with an id of '{NaturalClasses}'.");
 			/*
-            <clerk id="compoundRules">
-              <recordList owner="MorphologicalData" property="CompoundRules" />
+            <clerk id="naturalClasses">
+              <recordList owner="MorphologicalData" property="NaturalClasses" />
             </clerk>
 			*/
-			return new RecordList(recordListId, statusBar,
-				cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), true,
-				new VectorPropertyParameterObject(cache.LanguageProject.MorphologicalDataOA, "CompoundRules", MoMorphDataTags.kflidCompoundRules));
+			return new RecordList(recordListId, statusBar, cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), true,
+				new VectorPropertyParameterObject(cache.LanguageProject.PhonologicalDataOA, "NaturalClasses", PhPhonDataTags.kflidNaturalClasses));
 		}
 
-		private sealed class CompoundRuleAdvancedEditToolMenuHelper : IDisposable
+		private sealed class NaturalClassEditToolMenuHelper : IDisposable
 		{
 			private MajorFlexComponentParameters _majorFlexComponentParameters;
-			private DataTree _dataTree;
-			private RecordBrowseActiveView _recordBrowseActiveView;
+			private RecordBrowseView _recordBrowseView;
 			private IRecordList _recordList;
 			private ToolStripMenuItem _menu;
-			private IMoMorphData _moMorphData;
-			private LcmCache _cache;
+			private IPhPhonData _phPhonData;
 
-			internal CompoundRuleAdvancedEditToolMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, ITool tool, DataTree dataTree, RecordBrowseActiveView recordBrowseActiveView, IRecordList recordList)
+			internal NaturalClassEditToolMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, ITool tool, RecordBrowseView recordBrowseView, IRecordList recordList)
 			{
 				Guard.AgainstNull(majorFlexComponentParameters, nameof(majorFlexComponentParameters));
 				Guard.AgainstNull(tool, nameof(tool));
-				Guard.AgainstNull(dataTree, nameof(dataTree));
-				Guard.AgainstNull(recordBrowseActiveView, nameof(recordBrowseActiveView));
+				Guard.AgainstNull(recordBrowseView, nameof(recordBrowseView));
 				Guard.AgainstNull(recordList, nameof(recordList));
 
 				_majorFlexComponentParameters = majorFlexComponentParameters;
-				_dataTree = dataTree;
-				_recordBrowseActiveView = recordBrowseActiveView;
+				_recordBrowseView = recordBrowseView;
 				_recordList = recordList;
-				_cache = _majorFlexComponentParameters.LcmCache;
-				_moMorphData = _cache.LanguageProject.MorphologicalDataOA;
-				var toolUiWidgetParameterObject = new ToolUiWidgetParameterObject(tool);
-				SetupUiWidgets(toolUiWidgetParameterObject);
-				_majorFlexComponentParameters.UiWidgetController.AddHandlers(toolUiWidgetParameterObject);
+				_phPhonData = _majorFlexComponentParameters.LcmCache.LanguageProject.PhonologicalDataOA;
+				SetupUiWidgets(tool);
 				CreateBrowseViewContextMenu();
 			}
 
-			private void SetupUiWidgets(ToolUiWidgetParameterObject toolUiWidgetParameterObject)
+			private void SetupUiWidgets(ITool tool)
 			{
+				var toolUiWidgetParameterObject = new ToolUiWidgetParameterObject(tool);
 				var insertMenuDictionary = toolUiWidgetParameterObject.MenuItemsForTool[MainMenu.Insert];
 				var insertToolBarDictionary = toolUiWidgetParameterObject.ToolBarItemsForTool[ToolBar.Insert];
-				// <command id="CmdInsertEndocentricCompound" label="Headed Compound" message="InsertItemInVector" icon="endocompoundRule">
-				insertMenuDictionary.Add(Command.CmdInsertEndocentricCompound, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(InsertEndocentricCompound_Clicked, () => UiWidgetServices.CanSeeAndDo));
-				insertToolBarDictionary.Add(Command.CmdInsertEndocentricCompound, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(InsertEndocentricCompound_Clicked, () => UiWidgetServices.CanSeeAndDo));
-				// <command id="CmdInsertExocentricCompound" label="Non-headed Compound" message="InsertItemInVector" icon="exocompoundRule">
-				insertMenuDictionary.Add(Command.CmdInsertExocentricCompound, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(InsertInsertExocentricCompound_Clicked, () => UiWidgetServices.CanSeeAndDo));
-				insertToolBarDictionary.Add(Command.CmdInsertExocentricCompound, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(InsertInsertExocentricCompound_Clicked, () => UiWidgetServices.CanSeeAndDo));
+				// <command id="CmdInsertSegmentNaturalClasses" label="Natural Class (Phonemes)" message="InsertItemInVector" icon="naturalClass" shortcut="Ctrl+I">
+				insertMenuDictionary.Add(Command.CmdInsertSegmentNaturalClasses, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(InsertSegmentNaturalClasses_Clicked, () => UiWidgetServices.CanSeeAndDo));
+				insertToolBarDictionary.Add(Command.CmdInsertSegmentNaturalClasses, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(InsertSegmentNaturalClasses_Clicked, () => UiWidgetServices.CanSeeAndDo));
+				// <command id="CmdInsertFeatureNaturalClasses" label="Natural Class (Features)" message="InsertItemInVector" icon="addFeature">
+				insertMenuDictionary.Add(Command.CmdInsertFeatureNaturalClasses, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(InsertFeatureNaturalClasses_Clicked, () => UiWidgetServices.CanSeeAndDo));
+				insertToolBarDictionary.Add(Command.CmdInsertFeatureNaturalClasses, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(InsertFeatureNaturalClasses_Clicked, () => UiWidgetServices.CanSeeAndDo));
+				_majorFlexComponentParameters.UiWidgetController.AddHandlers(toolUiWidgetParameterObject);
 			}
 
-			private void InsertEndocentricCompound_Clicked(object sender, EventArgs e)
+			private void InsertSegmentNaturalClasses_Clicked(object sender, EventArgs e)
 			{
-				UowHelpers.UndoExtension(GrammarResources.Insert_Headed_Compound, _majorFlexComponentParameters.LcmCache.ActionHandlerAccessor, () =>
+				/*
+				<command id="CmdInsertSegmentNaturalClasses" label="Natural Class (Phonemes)" message="InsertItemInVector" icon="naturalClass" shortcut="Ctrl+I">
+					<params className="PhNCSegments" />
+				</command>
+				*/
+				UowHelpers.UndoExtension(GrammarResources.Insert_Natural_Class_Phonemes, _majorFlexComponentParameters.LcmCache.ActionHandlerAccessor, () =>
 				{
-					_moMorphData.CompoundRulesOS.Add(_cache.ServiceLocator.GetInstance<IMoEndoCompoundFactory>().Create());
+					_phPhonData.NaturalClassesOS.Add(_majorFlexComponentParameters.LcmCache.ServiceLocator.GetInstance<IPhNCSegmentsFactory>().Create());
 				});
 			}
 
-			private void InsertInsertExocentricCompound_Clicked(object sender, EventArgs e)
+			private void InsertFeatureNaturalClasses_Clicked(object sender, EventArgs e)
 			{
-				UowHelpers.UndoExtension(GrammarResources.Insert_Non_headed_Compound, _majorFlexComponentParameters.LcmCache.ActionHandlerAccessor, () =>
+				/*
+				<command id="CmdInsertFeatureNaturalClasses" label="Natural Class (Features)" message="InsertItemInVector" icon="addFeature">
+					<params className="PhNCFeatures" />
+				</command>
+				*/
+				UowHelpers.UndoExtension(GrammarResources.Insert_Natural_Class_Features, _majorFlexComponentParameters.LcmCache.ActionHandlerAccessor, () =>
 				{
-					_moMorphData.CompoundRulesOS.Add(_cache.ServiceLocator.GetInstance<IMoExoCompoundFactory>().Create());
+					_phPhonData.NaturalClassesOS.Add(_majorFlexComponentParameters.LcmCache.ServiceLocator.GetInstance<IPhNCFeaturesFactory>().Create());
 				});
 			}
 
@@ -224,19 +230,17 @@ namespace LanguageExplorer.Areas.Grammar.Tools.CompoundRuleAdvancedEdit
 				};
 				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(1);
 				// <command id="CmdDeleteSelectedObject" label="Delete selected {0}" message="DeleteSelectedItem"/>
-				var currentObject = _recordList.CurrentObject;
-				var lookupName = currentObject == null ? "MoCompoundRule" : currentObject.ClassName;
-				_menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, CmdDeleteSelectedObject_Clicked, string.Format(LanguageExplorerResources.Delete_selected_0, StringTable.Table.GetString(lookupName, StringTable.ClassNames)));
+				_menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, CmdDeleteSelectedObject_Clicked, string.Format(LanguageExplorerResources.Delete_selected_0, "PhNaturalClass"));
 				contextMenuStrip.Opening += ContextMenuStrip_Opening;
 
 				// End: <menu id="mnuBrowseView" (partial) >
-				_recordBrowseActiveView.ContextMenuStrip = contextMenuStrip;
+				_recordBrowseView.ContextMenuStrip = contextMenuStrip;
 			}
 
 			private void ContextMenuStrip_Opening(object sender, System.ComponentModel.CancelEventArgs e)
 			{
-				_recordBrowseActiveView.ContextMenuStrip.Visible = !_recordList.HasEmptyList;
-				if (!_recordBrowseActiveView.ContextMenuStrip.Visible)
+				_recordBrowseView.ContextMenuStrip.Visible = !_recordList.HasEmptyList;
+				if (!_recordBrowseView.ContextMenuStrip.Visible)
 				{
 					return;
 				}
@@ -246,19 +250,13 @@ namespace LanguageExplorer.Areas.Grammar.Tools.CompoundRuleAdvancedEdit
 
 			private void CmdDeleteSelectedObject_Clicked(object sender, EventArgs e)
 			{
-				var currentSlice = _dataTree.CurrentSlice;
-				if (currentSlice == null)
-				{
-					_dataTree.GotoFirstSlice();
-					currentSlice = _dataTree.CurrentSlice;
-				}
-				currentSlice.HandleDeleteCommand();
+				_recordList.DeleteRecord(((ToolStripMenuItem)sender).Text, StatusBarPanelServices.GetStatusBarProgressPanel(_majorFlexComponentParameters.StatusBar));
 			}
 
 			#region Implementation of IDisposable
 			private bool _isDisposed;
 
-			~CompoundRuleAdvancedEditToolMenuHelper()
+			~NaturalClassEditToolMenuHelper()
 			{
 				// The base class finalizer is called automatically.
 				Dispose(false);
@@ -287,19 +285,18 @@ namespace LanguageExplorer.Areas.Grammar.Tools.CompoundRuleAdvancedEdit
 
 				if (disposing)
 				{
-					if (_recordBrowseActiveView?.ContextMenuStrip != null)
+					_menu.Dispose();
+					if (_recordBrowseView?.ContextMenuStrip != null)
 					{
-						_recordBrowseActiveView.ContextMenuStrip.Opening -= ContextMenuStrip_Opening;
-						_recordBrowseActiveView.ContextMenuStrip.Dispose();
-						_recordBrowseActiveView.ContextMenuStrip = null;
+						_recordBrowseView.ContextMenuStrip.Opening -= ContextMenuStrip_Opening;
+						_recordBrowseView.ContextMenuStrip.Dispose();
+						_recordBrowseView.ContextMenuStrip = null;
 					}
 				}
 				_majorFlexComponentParameters = null;
-				_dataTree = null;
-				_recordBrowseActiveView = null;
+				_recordBrowseView = null;
 				_recordList = null;
 				_menu = null;
-				_moMorphData = null;
 
 				_isDisposed = true;
 			}

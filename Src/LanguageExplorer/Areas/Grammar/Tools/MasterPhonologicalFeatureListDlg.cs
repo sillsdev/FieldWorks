@@ -9,7 +9,7 @@ using LanguageExplorer.MGA;
 using SIL.LCModel;
 using SIL.LCModel.Infrastructure;
 
-namespace LanguageExplorer.Areas.Grammar.Tools.PhonologicalFeaturesAdvancedEdit
+namespace LanguageExplorer.Areas.Grammar.Tools
 {
 	/// <summary />
 	internal class MasterPhonologicalFeatureListDlg : MasterListDlg

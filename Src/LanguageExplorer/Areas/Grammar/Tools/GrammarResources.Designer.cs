@@ -580,6 +580,16 @@ namespace LanguageExplorer.Areas.Grammar.Tools {
         
         /// <summary>
         ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
+        ///&lt;parameters persistContext=&quot;advancedEdit&quot; layout=&quot;default&quot; emptyTitleId=&quot;No-PartsOfSpeech&quot;/&gt;.
+        /// </summary>
+        internal static string PosEditParameters {
+            get {
+                return ResourceManager.GetString("PosEditParameters", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
         ///&lt;root&gt;
         ///	&lt;browseview&gt;
         ///		&lt;parameters id=&quot;ProdRestrictList&quot; filterBar=&quot;true&quot; editable=&quot;false&quot; altTitleId=&quot;ProdRestrict-Plural&quot;&gt;

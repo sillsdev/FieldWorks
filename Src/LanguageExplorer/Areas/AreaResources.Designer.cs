@@ -198,6 +198,15 @@ namespace LanguageExplorer.Areas {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Delete subitem and its subitems.
+        /// </summary>
+        internal static string Delete_subitem_and_its_subitems {
+            get {
+                return ResourceManager.GetString("Delete_subitem_and_its_subitems", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Warning: deleting a field cannot be undone.
         ///Are you SURE you want to delete the field {0}?.
         /// </summary>
@@ -420,11 +429,29 @@ namespace LanguageExplorer.Areas {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Insert Subitem.
+        /// </summary>
+        internal static string Insert_Subitem {
+            get {
+                return ResourceManager.GetString("Insert_Subitem", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Insert Word Boundary.
         /// </summary>
         internal static string Insert_Word_Boundary {
             get {
                 return ResourceManager.GetString("Insert_Word_Boundary", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Item.
+        /// </summary>
+        internal static string Item {
+            get {
+                return ResourceManager.GetString("Item", resourceCulture);
             }
         }
         
@@ -864,6 +891,15 @@ namespace LanguageExplorer.Areas {
         internal static string Subcategory {
             get {
                 return ResourceManager.GetString("Subcategory", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Subitem.
+        /// </summary>
+        internal static string Subitem {
+            get {
+                return ResourceManager.GetString("Subitem", resourceCulture);
             }
         }
         

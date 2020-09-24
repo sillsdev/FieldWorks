@@ -276,6 +276,9 @@
   <data name="Phonological_Feature" xml:space="preserve">
     <value>Phonological Feature...</value>
   </data>
+  <data name="PosEditParameters" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\..\..\Resources\PosEditParameters.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
   <data name="ProdRestrictEditToolParameters" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\..\..\Resources\ProdRestrictEditToolParameters.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
     <comment>Do Not Localize</comment>

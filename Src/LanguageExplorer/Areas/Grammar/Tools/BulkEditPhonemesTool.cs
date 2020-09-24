@@ -20,7 +20,7 @@ using SIL.LCModel;
 using SIL.LCModel.Application;
 using SIL.LCModel.Infrastructure;
 
-namespace LanguageExplorer.Areas.Grammar.Tools.BulkEditPhonemes
+namespace LanguageExplorer.Areas.Grammar.Tools
 {
 	/// <summary>
 	/// ITool implementation for the "bulkEditPhonemes" tool in the "grammar" area.

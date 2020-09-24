@@ -16,7 +16,7 @@ using SIL.FieldWorks.Resources;
 using SIL.LCModel;
 using SIL.LCModel.Application;
 
-namespace LanguageExplorer.Areas.Grammar.Tools.CategoryBrowse
+namespace LanguageExplorer.Areas.Grammar.Tools
 {
 	/// <summary>
 	/// ITool implementation for the "categoryBrowse" tool in the "grammar" area.

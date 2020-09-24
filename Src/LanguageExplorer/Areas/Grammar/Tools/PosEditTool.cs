@@ -9,8 +9,6 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Xml.Linq;
-using LanguageExplorer.Areas.Lists;
-using LanguageExplorer.Areas.Lists.Tools;
 using LanguageExplorer.Controls;
 using LanguageExplorer.Controls.DetailControls;
 using SIL.Code;
@@ -19,7 +17,7 @@ using SIL.FieldWorks.Resources;
 using SIL.LCModel;
 using SIL.LCModel.Application;
 
-namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
+namespace LanguageExplorer.Areas.Grammar.Tools
 {
 	/// <summary>
 	/// ITool implementation for the "posEdit" tool in the "grammar" area.
@@ -72,7 +70,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PosEdit
 			var dataTree = new DataTree(majorFlexComponentParameters.SharedEventHandlers, majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue(UiWidgetServices.CreateShowHiddenFieldsPropertyName(MachineName), false));
 			_toolMenuHelper = new PosEditToolMenuHelper(majorFlexComponentParameters, this, _recordList, dataTree);
 			_collapsingSplitContainer = CollapsingSplitContainerFactory.Create(majorFlexComponentParameters.FlexComponentParameters, majorFlexComponentParameters.MainCollapsingSplitContainer, true,
-				XDocument.Parse(ListResources.PosEditParameters).Root, XDocument.Parse(AreaResources.HideAdvancedListItemFields), MachineName,
+				XDocument.Parse(GrammarResources.PosEditParameters).Root, XDocument.Parse(AreaResources.HideAdvancedListItemFields), MachineName,
 				majorFlexComponentParameters.LcmCache, _recordList, dataTree, majorFlexComponentParameters.UiWidgetController);
 		}
 

@@ -230,10 +230,6 @@
     <value>..\..\Resources\FeatureTypesAdvancedEditRecordEditViewParameters.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
     <comment>Do Not Localize</comment>
   </data>
-  <data name="PosEditParameters" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\..\Resources\PosEditParameters.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
-    <comment>Do Not Localize</comment>
-  </data>
   <data name="ReversalToolReversalIndexPOSBrowseViewParameters" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\..\Resources\ReversalToolReversalIndexPOSBrowseViewParameters.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
     <comment>Do Not Localize</comment>
@@ -331,9 +327,6 @@ Are you sure you want to delete this list?</value>
   <data name="Location" xml:space="preserve">
     <value>Location</value>
   </data>
-  <data name="Subitem" xml:space="preserve">
-    <value>Subitem</value>
-  </data>
   <data name="Person" xml:space="preserve">
     <value>Person</value>
   </data>
@@ -382,9 +375,6 @@ Are you sure you want to delete this list?</value>
   <data name="Delete_Question" xml:space="preserve">
     <value>Delete Question</value>
   </data>
-  <data name="Delete_subitem_and_its_subitems" xml:space="preserve">
-    <value>Delete subitem and its subitems</value>
-  </data>
   <data name="Insert_Question" xml:space="preserve">
     <value>Insert Question</value>
   </data>
@@ -393,9 +383,6 @@ Are you sure you want to delete this list?</value>
   </data>
   <data name="Insert_Subdomain" xml:space="preserve">
     <value>Insert Subdomain</value>
-  </data>
-  <data name="Insert_Subitem" xml:space="preserve">
-    <value>Insert Subitem</value>
   </data>
   <data name="Insert_Subtype" xml:space="preserve">
     <value>Insert Subtype</value>
@@ -417,9 +404,6 @@ Are you sure you want to delete this list?</value>
   </data>
   <data name="Custom_Item" xml:space="preserve">
     <value>Custom Item</value>
-  </data>
-  <data name="Item" xml:space="preserve">
-    <value>Item</value>
   </data>
   <data name="List_Item" xml:space="preserve">
     <value>List Item</value>

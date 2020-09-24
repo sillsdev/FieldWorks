@@ -186,7 +186,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.DomainTypeEdit
 				_sharedListToolsUiWidgetMenuHelper.SetupToolUiWidgets(toolUiWidgetParameterObject, new Dictionary<string, string>
 				{
 					{AreaServices.List_Item, ListResources.Academic_Domain},
-					{AreaServices.Subitem, ListResources.Subitem }
+					{AreaServices.Subitem, AreaResources.Subitem }
 				});
 				_majorFlexComponentParameters.UiWidgetController.AddHandlers(toolUiWidgetParameterObject);
 			}

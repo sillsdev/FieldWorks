@@ -212,15 +212,6 @@ namespace LanguageExplorer.Areas.Lists {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Delete subitem and its subitems.
-        /// </summary>
-        internal static string Delete_subitem_and_its_subitems {
-            get {
-                return ResourceManager.GetString("Delete_subitem_and_its_subitems", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Delete this Category and any Subcategories.
         /// </summary>
         internal static string Delete_this_Category_and_any_Subcategories {
@@ -412,15 +403,6 @@ namespace LanguageExplorer.Areas.Lists {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Insert Subitem.
-        /// </summary>
-        internal static string Insert_Subitem {
-            get {
-                return ResourceManager.GetString("Insert_Subitem", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Insert Subtype.
         /// </summary>
         internal static string Insert_Subtype {
@@ -435,15 +417,6 @@ namespace LanguageExplorer.Areas.Lists {
         internal static string Insert_Type {
             get {
                 return ResourceManager.GetString("Insert_Type", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Item.
-        /// </summary>
-        internal static string Item {
-            get {
-                return ResourceManager.GetString("Item", resourceCulture);
             }
         }
         
@@ -706,16 +679,6 @@ namespace LanguageExplorer.Areas.Lists {
         
         /// <summary>
         ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
-        ///&lt;parameters persistContext=&quot;advancedEdit&quot; layout=&quot;default&quot; emptyTitleId=&quot;No-PartsOfSpeech&quot;/&gt;.
-        /// </summary>
-        internal static string PosEditParameters {
-            get {
-                return ResourceManager.GetString("PosEditParameters", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
         ///&lt;parameters persistContext=&quot;listsEdit&quot; layout=&quot;default&quot; emptyTitleId=&quot;No-Positions&quot; /&gt;.
         /// </summary>
         internal static string PositionsEditParameters {
@@ -842,15 +805,6 @@ namespace LanguageExplorer.Areas.Lists {
         internal static string Subdomain {
             get {
                 return ResourceManager.GetString("Subdomain", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Subitem.
-        /// </summary>
-        internal static string Subitem {
-            get {
-                return ResourceManager.GetString("Subitem", resourceCulture);
             }
         }
         

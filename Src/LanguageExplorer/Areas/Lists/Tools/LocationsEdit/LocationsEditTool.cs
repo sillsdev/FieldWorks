@@ -199,7 +199,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.LocationsEdit
 				AreaServices.ResetMainPossibilityInsertUiWidgetsText(_majorFlexComponentParameters.UiWidgetController, ListResources.Location);
 				insertMenuDictionary.Add(Command.CmdDataTree_Insert_Possibility, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdDataTree_Insert_Location_Click, () => CanCmdDataTree_Insert_Location));
 				insertToolbarDictionary.Add(Command.CmdDataTree_Insert_Possibility, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdDataTree_Insert_Location_Click, () => CanCmdDataTree_Insert_Location));
-				AreaServices.ResetSubitemPossibilityInsertUiWidgetsText(_majorFlexComponentParameters.UiWidgetController, ListResources.Subitem);
+				AreaServices.ResetSubitemPossibilityInsertUiWidgetsText(_majorFlexComponentParameters.UiWidgetController, AreaResources.Subitem);
 				dataTree.DataTreeSliceContextMenuParameterObject.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ContextMenuName.mnuDataTree_SubLocation, Create_mnuDataTree_SubLocation);
 				_majorFlexComponentParameters.UiWidgetController.AddHandlers(toolUiWidgetParameterObject);
 			}
@@ -226,7 +226,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.LocationsEdit
 						  <parameters field="SubPossibilities" className="CmLocation" />
 						</command>
 				*/
-				ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, CmdDataTree_Insert_Location_Click, ListResources.Insert_Subitem, image: AreaResources.AddSubItem.ToBitmap());
+				ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, CmdDataTree_Insert_Location_Click, AreaResources.Insert_Subitem, image: AreaResources.AddSubItem.ToBitmap());
 
 				// End: <menu id="mnuDataTree_SubLocation">
 

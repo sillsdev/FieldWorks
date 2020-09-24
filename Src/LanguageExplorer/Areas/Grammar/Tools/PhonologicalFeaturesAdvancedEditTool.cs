@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Drawing;
+using System.IO;
 using System.Windows.Forms;
 using System.Xml.Linq;
 using LanguageExplorer.Controls;
@@ -17,17 +18,17 @@ using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Resources;
 using SIL.LCModel;
 using SIL.LCModel.Application;
-using SIL.LCModel.Infrastructure;
 
-namespace LanguageExplorer.Areas.Grammar.Tools.PhonemeEdit
+namespace LanguageExplorer.Areas.Grammar.Tools
 {
 	/// <summary>
-	/// ITool implementation for the "phonemeEdit" tool in the "grammar" area.
+	/// ITool implementation for the "phonologicalFeaturesAdvancedEdit" tool in the "grammar" area.
 	/// </summary>
 	[Export(LanguageExplorerConstants.GrammarAreaMachineName, typeof(ITool))]
-	internal sealed class PhonemeEditTool : ITool
+	internal sealed class PhonologicalFeaturesAdvancedEditTool : ITool
 	{
-		private PhonemeEditToolMenuHelper _toolMenuHelper;
+		private PhonologicalFeaturesAdvancedEditToolMenuHelper _toolMenuHelper;
+		private const string Phonologicalfeatures = "phonologicalfeatures";
 		private MultiPane _multiPane;
 		private RecordBrowseView _recordBrowseView;
 		private IRecordList _recordList;
@@ -58,19 +59,11 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonemeEdit
 		/// </remarks>
 		public void Activate(MajorFlexComponentParameters majorFlexComponentParameters)
 		{
-			if (majorFlexComponentParameters.LcmCache.LanguageProject.PhonologicalDataOA.PhonemeSetsOS.Count == 0)
-			{
-				// Pathological...this helps the memory-only backend mainly, but makes others self-repairing.
-				NonUndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(majorFlexComponentParameters.LcmCache.ActionHandlerAccessor, () =>
-				{
-					majorFlexComponentParameters.LcmCache.LanguageProject.PhonologicalDataOA.PhonemeSetsOS.Add(majorFlexComponentParameters.LcmCache.ServiceLocator.GetInstance<IPhPhonemeSetFactory>().Create());
-				});
-			}
 			if (_recordList == null)
 			{
-				_recordList = majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>(LanguageExplorerConstants.RecordListRepository).GetRecordList(GrammarToolsServices.Phonemes, majorFlexComponentParameters.StatusBar, GrammarToolsServices.PhonemesFactoryMethod);
+				_recordList = majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>(LanguageExplorerConstants.RecordListRepository).GetRecordList(Phonologicalfeatures, majorFlexComponentParameters.StatusBar, FactoryMethod);
 			}
-			var root = XDocument.Parse(GrammarResources.PhonemeEditToolParameters).Root;
+			var root = XDocument.Parse(GrammarResources.PhonologicalFeaturesAdvancedEditToolParameters).Root;
 			_recordBrowseView = new RecordBrowseView(root.Element("browseview").Element("parameters"), majorFlexComponentParameters.LcmCache, _recordList, majorFlexComponentParameters.UiWidgetController);
 			var showHiddenFieldsPropertyName = UiWidgetServices.CreateShowHiddenFieldsPropertyName(MachineName);
 			var dataTree = new DataTree(majorFlexComponentParameters.SharedEventHandlers, majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue(showHiddenFieldsPropertyName, false));
@@ -79,7 +72,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonemeEdit
 			{
 				Orientation = Orientation.Vertical,
 				Area = Area,
-				Id = "PhonemeItemsAndDetailMultiPane",
+				Id = "PhonologicalFeatureItemsAndDetailMultiPane",
 				ToolMachineName = MachineName
 			};
 			var recordEditViewPaneBar = new PaneBar();
@@ -88,8 +81,8 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonemeEdit
 				Dock = DockStyle.Right
 			};
 			recordEditViewPaneBar.AddControls(new List<Control> { panelButton });
-			// Too early before now. Do not change the order of the following three calls.
-			_toolMenuHelper = new PhonemeEditToolMenuHelper(majorFlexComponentParameters, this, _recordBrowseView, _recordList, dataTree);
+			// Too early before now.
+			_toolMenuHelper = new PhonologicalFeaturesAdvancedEditToolMenuHelper(majorFlexComponentParameters, this, _recordBrowseView, _recordList, dataTree);
 			_multiPane = MultiPaneFactory.CreateMultiPaneWithTwoPaneBarContainersInMainCollapsingSplitContainer(majorFlexComponentParameters.FlexComponentParameters,
 				majorFlexComponentParameters.MainCollapsingSplitContainer, mainMultiPaneParameters, _recordBrowseView, "Browse", new PaneBar(),
 				recordEditView, "Details", recordEditViewPaneBar);
@@ -129,12 +122,12 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonemeEdit
 		/// Get the internal name of the component.
 		/// </summary>
 		/// <remarks>NB: This is the machine friendly name, not the user friendly name.</remarks>
-		public string MachineName => LanguageExplorerConstants.PhonemeEditMachineName;
+		public string MachineName => LanguageExplorerConstants.PhonologicalFeaturesAdvancedEditMachineName;
 
 		/// <summary>
 		/// User-visible localized component name.
 		/// </summary>
-		public string UiName => StringTable.Table.LocalizeLiteralValue(LanguageExplorerConstants.PhonemeEditUiName);
+		public string UiName => StringTable.Table.LocalizeLiteralValue(LanguageExplorerConstants.PhonologicalFeaturesAdvancedEditUiName);
 
 		#endregion
 
@@ -153,17 +146,31 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonemeEdit
 
 		#endregion
 
-		private sealed class PhonemeEditToolMenuHelper : IDisposable
+		private static IRecordList FactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string recordListId, StatusBar statusBar)
+		{
+			Require.That(recordListId == Phonologicalfeatures, $"I don't know how to create a record list with an ID of '{recordListId}', as I can only create one with an id of '{Phonologicalfeatures}'.");
+			/*
+            <clerk id="phonologicalfeatures">
+              <recordList owner="PhFeatureSystem" property="PhonologicalFeatures" />
+            </clerk>
+			*/
+			return new RecordList(recordListId, statusBar, cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), true,
+				new VectorPropertyParameterObject(cache.LanguageProject.PhFeatureSystemOA, "PhonologicalFeatures", FsFeatureSystemTags.kflidFeatures));
+		}
+
+		private sealed class PhonologicalFeaturesAdvancedEditToolMenuHelper : IDisposable
 		{
 			private MajorFlexComponentParameters _majorFlexComponentParameters;
-			private PartiallySharedForToolsWideMenuHelper _partiallySharedListToolsUiWidgetMenuHelper;
+			private SharedListToolsUiWidgetMenuHelper _sharedListToolsUiWidgetMenuHelper;
 			private RecordBrowseView _recordBrowseView;
 			private IRecordList _recordList;
 			private DataTree _dataTree;
+			private ToolStripMenuItem _menu;
+			private LcmCache _cache;
+			private IFsFeatureSystem _featureSystem;
 			private ISharedEventHandlers _sharedEventHandlers;
-			private GrammarToolsServices _grammarToolsServices;
 
-			internal PhonemeEditToolMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, ITool tool, RecordBrowseView recordBrowseView, IRecordList recordList, DataTree dataTree)
+			internal PhonologicalFeaturesAdvancedEditToolMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, ITool tool, RecordBrowseView recordBrowseView, IRecordList recordList, DataTree dataTree)
 			{
 				Guard.AgainstNull(majorFlexComponentParameters, nameof(majorFlexComponentParameters));
 				Guard.AgainstNull(tool, nameof(tool));
@@ -175,46 +182,83 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonemeEdit
 				_recordBrowseView = recordBrowseView;
 				_recordList = recordList;
 				_dataTree = dataTree;
+				_cache = _majorFlexComponentParameters.LcmCache;
+				_featureSystem = _cache.LanguageProject.PhFeatureSystemOA;
 				SetupUiWidgets(tool);
 				CreateBrowseViewContextMenu();
 			}
 
 			private void SetupUiWidgets(ITool tool)
 			{
-				_partiallySharedListToolsUiWidgetMenuHelper = new PartiallySharedForToolsWideMenuHelper(_majorFlexComponentParameters, _recordList);
+				_sharedListToolsUiWidgetMenuHelper = new SharedListToolsUiWidgetMenuHelper(_majorFlexComponentParameters, tool, _majorFlexComponentParameters.LcmCache.LanguageProject.PartsOfSpeechOA, _recordList, _dataTree);
 				_sharedEventHandlers = _majorFlexComponentParameters.SharedEventHandlers;
-				_grammarToolsServices = new GrammarToolsServices();
 				var toolUiWidgetParameterObject = new ToolUiWidgetParameterObject(tool);
-				_grammarToolsServices.Setup_CmdInsertPhoneme(_majorFlexComponentParameters.LcmCache, toolUiWidgetParameterObject);
-				// <command id="CmdDataTree_Insert_Phoneme_Code" label="Grapheme" message="DataTreeInsert">
-				toolUiWidgetParameterObject.MenuItemsForTool[MainMenu.Insert].Add(Command.CmdDataTree_Insert_Phoneme_Code, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(Insert_Phoneme_Code_Clicked, () => UiWidgetServices.CanSeeAndDo));
+				var insertMenuDictionary = toolUiWidgetParameterObject.MenuItemsForTool[MainMenu.Insert];
+				UiWidgetServices.InsertPair(toolUiWidgetParameterObject.ToolBarItemsForTool[ToolBar.Insert], insertMenuDictionary,
+					Command.CmdInsertPhonologicalClosedFeature, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(InsertPhonologicalClosedFeature_Clicked, () => UiWidgetServices.CanSeeAndDo));
+				insertMenuDictionary.Add(Command.CmdDataTree_Insert_ClosedFeature_Value, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(Insert_ClosedFeature_Value_Clicked, () => CanCmdDataTree_Insert_ClosedFeature_Value));
 				_majorFlexComponentParameters.UiWidgetController.AddHandlers(toolUiWidgetParameterObject);
 				RegisterSliceLeftEdgeMenus();
 			}
 
-			private void Insert_Phoneme_Code_Clicked(object sender, EventArgs e)
+			private void InsertPhonologicalClosedFeature_Clicked(object sender, EventArgs e)
 			{
 				/*
-				<command id="CmdDataTree_Insert_Phoneme_Code" label="Grapheme" message="DataTreeInsert">
-					<parameters field="Codes" className="PhCode" />
-				</command>
+	<command id="CmdInsertPhonologicalClosedFeature" label="_Phonological Feature..." message="InsertItemInVector" icon="addFeature">
+	  <params className="FsClosedFeature" restrictToClerkID="phonologicalfeatures" />
+	</command>
 				*/
-				_dataTree.CurrentSlice.HandleInsertCommand("Codes", PhCodeTags.kClassName);
+				using (var dlg = new MasterPhonologicalFeatureListDlg("FsClosedFeature"))
+				{
+					dlg.SetDlginfo(_featureSystem, _majorFlexComponentParameters.FlexComponentParameters.PropertyTable, "masterPhonFeatListDlg", Path.Combine(FwDirectoryFinder.CodeDirectory, "Language Explorer", "MGA", "GlossLists", "PhonFeatsEticGlossList.xml"));
+					dlg.ShowDialog((Form)_majorFlexComponentParameters.MainWindow);
+				}
+			}
+
+			private Tuple<bool, bool> CanCmdDataTree_Insert_ClosedFeature_Value => new Tuple<bool, bool>(_recordList.ListSize > 0, true);
+
+			private void Insert_ClosedFeature_Value_Clicked(object sender, EventArgs e)
+			{
+				UowHelpers.UndoExtension(GrammarResources.Phonological_Feature, _majorFlexComponentParameters.LcmCache.ActionHandlerAccessor, () =>
+				{
+					var currentFsClosedFeature = (IFsClosedFeature)_recordList.CurrentObject;
+					currentFsClosedFeature.ValuesOC.Add(_cache.ServiceLocator.GetInstance<IFsSymFeatValFactory>().Create());
+				});
 			}
 
 			private void RegisterSliceLeftEdgeMenus()
 			{
-				// <menu id="mnuDataTree_Phoneme_Codes">
-				_dataTree.DataTreeSliceContextMenuParameterObject.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ContextMenuName.mnuDataTree_Phoneme_Codes, Create_mnuDataTree_Phoneme_Codes);
-				// <menu id="mnuDataTree_Phoneme_Code">
-				_dataTree.DataTreeSliceContextMenuParameterObject.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ContextMenuName.mnuDataTree_Phoneme_Code, Create_mnuDataTree_Phoneme_Code);
+				// <menu id="mnuDataTree_ClosedFeature_Values">
+				_dataTree.DataTreeSliceContextMenuParameterObject.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ContextMenuName.mnuDataTree_ClosedFeature_Values, Create_mnuDataTree_ClosedFeature_Values);
+				// <menu id="mnuDataTree_ClosedFeature_Value">
+				_dataTree.DataTreeSliceContextMenuParameterObject.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ContextMenuName.mnuDataTree_ClosedFeature_Value, Create_Delete_ClosedFeature_Value_Values);
 			}
 
-			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_Phoneme_Codes(ISlice slice, ContextMenuName contextMenuId)
+			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_Delete_ClosedFeature_Value_Values(ISlice slice, ContextMenuName contextMenuId)
 			{
-				Require.That(contextMenuId == ContextMenuName.mnuDataTree_Phoneme_Codes, $"Expected argument value of '{ContextMenuName.mnuDataTree_Phoneme_Codes.ToString()}', but got '{contextMenuId.ToString()}' instead.");
+				Require.That(contextMenuId == ContextMenuName.mnuDataTree_ClosedFeature_Value, $"Expected argument value of '{ContextMenuName.mnuDataTree_ClosedFeature_Value.ToString()}', but got '{contextMenuId.ToString()}' instead.");
 
-				// Start: <menu id="mnuDataTree_Phoneme_Codes">
+				// Start: <menu id="mnuDataTree_ClosedFeature_Value">
+
+				var contextMenuStrip = new ContextMenuStrip
+				{
+					Name = ContextMenuName.mnuDataTree_ClosedFeature_Value.ToString()
+				};
+				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(1);
+
+				// <command id="CmdDataTree_Delete_ClosedFeature_Value" label="Delete Feature Value" message="DataTreeDelete" icon="Delete">
+				AreaServices.CreateDeleteMenuItem(menuItems, contextMenuStrip, slice, GrammarResources.Delete_Feature_Value, _sharedEventHandlers.GetEventHandler(Command.CmdDataTreeDelete));
+
+				// End: <menu id="mnuDataTree_ClosedFeature_Value">
+
+				return new Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>>(contextMenuStrip, menuItems);
+			}
+
+			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_ClosedFeature_Values(ISlice slice, ContextMenuName contextMenuId)
+			{
+				Require.That(contextMenuId == ContextMenuName.mnuDataTree_ClosedFeature_Values, $"Expected argument value of '{ContextMenuName.mnuDataTree_ClosedFeature_Values.ToString()}', but got '{contextMenuId.ToString()}' instead.");
+
+				// Start: <menu id="mnuDataTree_ClosedFeature_Values">
 
 				var contextMenuStrip = new ContextMenuStrip
 				{
@@ -222,30 +266,10 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonemeEdit
 				};
 				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(1);
 
-				// <item command="CmdDataTree_Insert_Phoneme_Code" label="Insert Grapheme" />
-				ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, Insert_Phoneme_Code_Clicked, GrammarResources.Insert_Grapheme);
+				// <item command="CmdDataTree_Insert_ClosedFeature_Value" label="Insert Feature Value" />
+				ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, Insert_ClosedFeature_Value_Clicked, GrammarResources.Insert_Feature_Value);
 
-				// End: <menu id="mnuDataTree_Phoneme_Codes">
-
-				return new Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>>(contextMenuStrip, menuItems);
-			}
-
-			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_Phoneme_Code(ISlice slice, ContextMenuName contextMenuId)
-			{
-				Require.That(contextMenuId == ContextMenuName.mnuDataTree_Phoneme_Code, $"Expected argument value of '{ContextMenuName.mnuDataTree_Phoneme_Code.ToString()}', but got '{contextMenuId.ToString()}' instead.");
-
-				// Start: <menu id="mnuDataTree_Phoneme_Code">
-
-				var contextMenuStrip = new ContextMenuStrip
-				{
-					Name = ContextMenuName.mnuDataTree_Phoneme_Code.ToString()
-				};
-				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(1);
-
-				// <item command="CmdDataTree_Delete_Phoneme_Code" />
-				AreaServices.CreateDeleteMenuItem(menuItems, contextMenuStrip, slice, GrammarResources.Delete_Grapheme, _sharedEventHandlers.GetEventHandler(Command.CmdDataTreeDelete));
-
-				// End: <menu id="mnuDataTree_Phoneme_Code">
+				// End: <menu id="mnuDataTree_ClosedFeature_Values">
 
 				return new Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>>(contextMenuStrip, menuItems);
 			}
@@ -260,7 +284,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonemeEdit
 				};
 				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(1);
 				// <command id="CmdDeleteSelectedObject" label="Delete selected {0}" message="DeleteSelectedItem"/>
-				ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, CmdDeleteSelectedObject_Clicked, string.Format(LanguageExplorerResources.Delete_selected_0, StringTable.Table.GetString("PhPhoneme", StringTable.ClassNames)));
+				_menu = ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, CmdDeleteSelectedObject_Clicked, string.Format(LanguageExplorerResources.Delete_selected_0, StringTable.Table.GetString("FsClosedFeature", StringTable.ClassNames)));
 				contextMenuStrip.Opening += ContextMenuStrip_Opening;
 
 				// End: <menu id="mnuBrowseView" (partial) >
@@ -270,6 +294,12 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonemeEdit
 			private void ContextMenuStrip_Opening(object sender, System.ComponentModel.CancelEventArgs e)
 			{
 				_recordBrowseView.ContextMenuStrip.Visible = !_recordList.HasEmptyList;
+				if (!_recordBrowseView.ContextMenuStrip.Visible)
+				{
+					return;
+				}
+				// Set to correct class
+				_menu.ResetTextIfDifferent(string.Format(LanguageExplorerResources.Delete_selected_0, StringTable.Table.GetString(_recordList.CurrentObject.ClassName, StringTable.ClassNames)));
 			}
 
 			private void CmdDeleteSelectedObject_Clicked(object sender, EventArgs e)
@@ -280,7 +310,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonemeEdit
 			#region Implementation of IDisposable
 			private bool _isDisposed;
 
-			~PhonemeEditToolMenuHelper()
+			~PhonologicalFeaturesAdvancedEditToolMenuHelper()
 			{
 				// The base class finalizer is called automatically.
 				Dispose(false);
@@ -309,7 +339,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonemeEdit
 
 				if (disposing)
 				{
-					_partiallySharedListToolsUiWidgetMenuHelper.Dispose();
+					_sharedListToolsUiWidgetMenuHelper.Dispose();
 					if (_recordBrowseView?.ContextMenuStrip != null)
 					{
 						_recordBrowseView.ContextMenuStrip.Opening -= ContextMenuStrip_Opening;
@@ -318,12 +348,14 @@ namespace LanguageExplorer.Areas.Grammar.Tools.PhonemeEdit
 					}
 				}
 				_majorFlexComponentParameters = null;
-				_partiallySharedListToolsUiWidgetMenuHelper = null;
+				_sharedListToolsUiWidgetMenuHelper = null;
 				_recordBrowseView = null;
 				_recordList = null;
 				_dataTree = null;
+				_menu = null;
+				_cache = null;
+				_featureSystem = null;
 				_sharedEventHandlers = null;
-				_grammarToolsServices = null;
 
 				_isDisposed = true;
 			}

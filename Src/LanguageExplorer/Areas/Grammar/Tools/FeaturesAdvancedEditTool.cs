@@ -9,7 +9,6 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Xml.Linq;
-using LanguageExplorer.Areas.Lists.Tools;
 using LanguageExplorer.Controls;
 using LanguageExplorer.Controls.DetailControls;
 using LanguageExplorer.Controls.PaneBar;
@@ -19,7 +18,7 @@ using SIL.FieldWorks.Resources;
 using SIL.LCModel;
 using SIL.LCModel.Application;
 
-namespace LanguageExplorer.Areas.Grammar.Tools.FeaturesAdvancedEdit
+namespace LanguageExplorer.Areas.Grammar.Tools
 {
 	/// <summary>
 	/// ITool implementation for the "featuresAdvancedEdit" tool in the "grammar" area.

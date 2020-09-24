@@ -188,7 +188,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.CustomListEdit
 				// <command id="CmdDataTree_Insert_CustomItem" label="Insert subitem" message="DataTreeInsert" icon="AddSubItem">
 				insertMenuDictionary.Add(Command.CmdDataTree_Insert_Possibility, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdInsertCustomSubItem_Click, () => CanCmdInsertCustomSubItem));
 				insertToolbarDictionary.Add(Command.CmdDataTree_Insert_Possibility, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdInsertCustomSubItem_Click, () => CanCmdInsertCustomSubItem));
-				AreaServices.ResetSubitemPossibilityInsertUiWidgetsText(_majorFlexComponentParameters.UiWidgetController, ListResources.Subitem);
+				AreaServices.ResetSubitemPossibilityInsertUiWidgetsText(_majorFlexComponentParameters.UiWidgetController, AreaResources.Subitem);
 				_majorFlexComponentParameters.UiWidgetController.AddHandlers(toolUiWidgetParameterObject);
 			}
 

@@ -18,16 +18,16 @@ using SIL.FieldWorks.Resources;
 using SIL.LCModel;
 using SIL.LCModel.Application;
 
-namespace LanguageExplorer.Areas.Grammar.Tools.EnvironmentEdit
+namespace LanguageExplorer.Areas.Grammar.Tools
 {
 	/// <summary>
-	/// ITool implementation for the "EnvironmentEdit" tool in the "grammar" area.
+	/// ITool implementation for the "ProdRestrictEdit" tool in the "grammar" area.
 	/// </summary>
 	[Export(LanguageExplorerConstants.GrammarAreaMachineName, typeof(ITool))]
-	internal sealed class EnvironmentEditTool : ITool
+	internal sealed class ProdRestrictEditTool : ITool
 	{
-		private EnvironmentEditToolMenuHelper _toolMenuHelper;
-		private const string Environments = "environments";
+		private ProdRestrictEditToolMenuHelper _toolMenuHelper;
+		private const string ProdRestrict = "ProdRestrict";
 		private MultiPane _multiPane;
 		private RecordBrowseView _recordBrowseView;
 		private IRecordList _recordList;
@@ -60,18 +60,18 @@ namespace LanguageExplorer.Areas.Grammar.Tools.EnvironmentEdit
 		{
 			if (_recordList == null)
 			{
-				_recordList = majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>(LanguageExplorerConstants.RecordListRepository).GetRecordList(Environments, majorFlexComponentParameters.StatusBar, FactoryMethod);
+				_recordList = majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>(LanguageExplorerConstants.RecordListRepository).GetRecordList(ProdRestrict, majorFlexComponentParameters.StatusBar, FactoryMethod);
 			}
-			var root = XDocument.Parse(GrammarResources.EnvironmentEditToolParameters).Root;
+			var root = XDocument.Parse(GrammarResources.ProdRestrictEditToolParameters).Root;
 			_recordBrowseView = new RecordBrowseView(root.Element("browseview").Element("parameters"), majorFlexComponentParameters.LcmCache, _recordList, majorFlexComponentParameters.UiWidgetController);
 			var showHiddenFieldsPropertyName = UiWidgetServices.CreateShowHiddenFieldsPropertyName(MachineName);
 			var dataTree = new DataTree(majorFlexComponentParameters.SharedEventHandlers, majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue(showHiddenFieldsPropertyName, false));
-			var recordEditView = new RecordEditView(root.Element("recordview").Element("parameters"), XDocument.Parse(LanguageExplorerResources.VisibilityFilter_All), majorFlexComponentParameters.LcmCache, _recordList, dataTree, majorFlexComponentParameters.UiWidgetController);
+			var recordEditView = new RecordEditView(root.Element("recordview").Element("parameters"), XDocument.Parse(AreaResources.HideAdvancedListItemFields), majorFlexComponentParameters.LcmCache, _recordList, dataTree, majorFlexComponentParameters.UiWidgetController);
 			var mainMultiPaneParameters = new MultiPaneParameters
 			{
 				Orientation = Orientation.Vertical,
 				Area = Area,
-				Id = "EnvironmentItemsAndDetailMultiPane",
+				Id = "ProductivityRestrictionItemsAndDetailMultiPane",
 				ToolMachineName = MachineName
 			};
 			var recordEditViewPaneBar = new PaneBar();
@@ -81,9 +81,10 @@ namespace LanguageExplorer.Areas.Grammar.Tools.EnvironmentEdit
 			};
 			recordEditViewPaneBar.AddControls(new List<Control> { panelButton });
 			// Too early before now.
-			_toolMenuHelper = new EnvironmentEditToolMenuHelper(majorFlexComponentParameters, this, _recordBrowseView, _recordList, dataTree);
-			_multiPane = MultiPaneFactory.CreateMultiPaneWithTwoPaneBarContainersInMainCollapsingSplitContainer(majorFlexComponentParameters.FlexComponentParameters, majorFlexComponentParameters.MainCollapsingSplitContainer,
-				mainMultiPaneParameters, _recordBrowseView, "Browse", new PaneBar(), recordEditView, "Details", recordEditViewPaneBar);
+			_toolMenuHelper = new ProdRestrictEditToolMenuHelper(majorFlexComponentParameters, this, _recordBrowseView, _recordList);
+			_multiPane = MultiPaneFactory.CreateMultiPaneWithTwoPaneBarContainersInMainCollapsingSplitContainer(majorFlexComponentParameters.FlexComponentParameters,
+				majorFlexComponentParameters.MainCollapsingSplitContainer, mainMultiPaneParameters, _recordBrowseView, "Browse", new PaneBar(),
+				recordEditView, "Details", recordEditViewPaneBar);
 			recordEditView.FinishInitialization();
 		}
 
@@ -120,12 +121,12 @@ namespace LanguageExplorer.Areas.Grammar.Tools.EnvironmentEdit
 		/// Get the internal name of the component.
 		/// </summary>
 		/// <remarks>NB: This is the machine friendly name, not the user friendly name.</remarks>
-		public string MachineName => LanguageExplorerConstants.EnvironmentEditMachineName;
+		public string MachineName => LanguageExplorerConstants.ProdRestrictEditMachineName;
 
 		/// <summary>
 		/// User-visible localized component name.
 		/// </summary>
-		public string UiName => StringTable.Table.LocalizeLiteralValue(LanguageExplorerConstants.EnvironmentEditUiName);
+		public string UiName => StringTable.Table.LocalizeLiteralValue(LanguageExplorerConstants.ProdRestrictEditUiName);
 
 		#endregion
 
@@ -146,102 +147,67 @@ namespace LanguageExplorer.Areas.Grammar.Tools.EnvironmentEdit
 
 		private static IRecordList FactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string recordListId, StatusBar statusBar)
 		{
-			Require.That(recordListId == Environments, $"I don't know how to create a record list with an ID of '{recordListId}', as I can only create one with an id of '{Environments}'.");
+			Require.That(recordListId == ProdRestrict, $"I don't know how to create a record list with an ID of '{recordListId}', as I can only create one with an id of '{ProdRestrict}'.");
 			/*
-            <clerk id="environments">
-              <recordList owner="MorphologicalData" property="Environments" />
+            <clerk id="ProdRestrict">
+              <recordList owner="MorphologicalData" property="ProdRestrict">
+                <dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.PossibilityRecordList" />
+              </recordList>
+              <treeBarHandler assemblyPath="xWorks.dll" expand="false" hierarchical="false" includeAbbr="false" ws="best analorvern" class="SIL.FieldWorks.XWorks.PossibilityTreeBarHandler" />
+              <filters />
+              <sortMethods>
+                <sortMethod label="Default" assemblyPath="Filters.dll" class="SIL.FieldWorks.Filters.PropertyRecordSorter" sortProperty="ShortName" />
+              </sortMethods>
             </clerk>
 			*/
-			return new RecordList(recordListId, statusBar, cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), true,
-				new VectorPropertyParameterObject(cache.LanguageProject.PhonologicalDataOA, "Environments", PhPhonDataTags.kflidEnvironments));
+			return new TreeBarHandlerAwarePossibilityRecordList(recordListId, statusBar, cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), cache.LanguageProject.MorphologicalDataOA.ProdRestrictOA,
+				new PossibilityTreeBarHandler(flexComponentParameters.PropertyTable, false, false, false, "best analorvern"), new RecordFilterParameterObject(allowDeletions: false));
 		}
 
-		private sealed class EnvironmentEditToolMenuHelper : IDisposable
+		private sealed class ProdRestrictEditToolMenuHelper : IDisposable
 		{
 			private MajorFlexComponentParameters _majorFlexComponentParameters;
 			private RecordBrowseView _recordBrowseView;
 			private IRecordList _recordList;
-			private DataTree _dataTree;
-			private PartiallySharedForToolsWideMenuHelper _partiallySharedForToolsWideMenuHelper;
-			private IPhPhonData _phPhonData;
 
-			internal EnvironmentEditToolMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, ITool tool, RecordBrowseView recordBrowseView, IRecordList recordList, DataTree dataTree)
+			internal ProdRestrictEditToolMenuHelper(MajorFlexComponentParameters majorFlexComponentParameters, ITool tool, RecordBrowseView recordBrowseView, IRecordList recordList)
 			{
 				Guard.AgainstNull(majorFlexComponentParameters, nameof(majorFlexComponentParameters));
 				Guard.AgainstNull(tool, nameof(tool));
 				Guard.AgainstNull(recordBrowseView, nameof(recordBrowseView));
 				Guard.AgainstNull(recordList, nameof(recordList));
-				Guard.AgainstNull(dataTree, nameof(dataTree));
 
 				_majorFlexComponentParameters = majorFlexComponentParameters;
 				_recordBrowseView = recordBrowseView;
 				_recordList = recordList;
-				_dataTree = dataTree;
-				_phPhonData = _majorFlexComponentParameters.LcmCache.LanguageProject.PhonologicalDataOA;
 				SetupUiWidgets(tool);
 				CreateBrowseViewContextMenu();
 			}
 
 			private void SetupUiWidgets(ITool tool)
 			{
-				_partiallySharedForToolsWideMenuHelper = new PartiallySharedForToolsWideMenuHelper(_majorFlexComponentParameters, _recordList);
 				var toolUiWidgetParameterObject = new ToolUiWidgetParameterObject(tool);
-
-				// {Command.CmdInsertPhEnvironment, CmdInsertPhEnvironment},
-				// {Command.CmdInsertPhEnvironment, Toolbar_CmdInsertPhEnvironment},
-				toolUiWidgetParameterObject.MenuItemsForTool[MainMenu.Insert].Add(Command.CmdInsertPhEnvironment, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdInsertPhEnvironment_Click, () => UiWidgetServices.CanSeeAndDo));
-				toolUiWidgetParameterObject.ToolBarItemsForTool[ToolBar.Insert].Add(Command.CmdInsertPhEnvironment, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdInsertPhEnvironment_Click, () => UiWidgetServices.CanSeeAndDo));
-
+				// Insert menu and tool bar.
+				/*
+				*/
+				// There are two always visible menus/buttons, and one menu that shows for two of the three classes that can be in the owning property.
+				UiWidgetServices.InsertPair(toolUiWidgetParameterObject.ToolBarItemsForTool[ToolBar.Insert], toolUiWidgetParameterObject.MenuItemsForTool[MainMenu.Insert],
+					Command.CmdInsertExceptionFeature, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(InsertExceptionFeature_Clicked, () => UiWidgetServices.CanSeeAndDo));
 				_majorFlexComponentParameters.UiWidgetController.AddHandlers(toolUiWidgetParameterObject);
-
-				RegisterSliceLeftEdgeMenus();
 			}
 
-			private void CmdInsertPhEnvironment_Click(object sender, EventArgs e)
+			private void InsertExceptionFeature_Clicked(object sender, EventArgs e)
 			{
 				/*
-			    <command id="CmdInsertPhEnvironment" label="Environment" message="InsertItemInVector" icon="environment" shortcut="Ctrl+I">
-					<params className="PhEnvironment" />
-			    </command>
+				<command id="CmdInsertExceptionFeature" label="_Exception Feature..." message="InsertItemInVector" icon="addExceptionFeature">
+					<params className="CmPossibility" restrictToClerkID="ProdRestrict" />
+				</command>
 				*/
-				IPhEnvironment newbie = null;
-				UowHelpers.UndoExtension(GrammarResources.Insert_Environment, _majorFlexComponentParameters.LcmCache.ActionHandlerAccessor, () =>
+				UowHelpers.UndoExtension(GrammarResources.Insert_Exception_Feature, _majorFlexComponentParameters.LcmCache.ActionHandlerAccessor, () =>
 				{
-					newbie = _majorFlexComponentParameters.LcmCache.ServiceLocator.GetInstance<IPhEnvironmentFactory>().Create();
-					_phPhonData.EnvironmentsOS.Add(newbie);
+					var currentOwner = _majorFlexComponentParameters.LcmCache.LanguageProject.MorphologicalDataOA.ProdRestrictOA;
+					currentOwner.PossibilitiesOS.Add(_majorFlexComponentParameters.LcmCache.ServiceLocator.GetInstance<ICmPossibilityFactory>().Create());
 				});
-				_recordList.JumpToRecord(newbie.Hvo);
-			}
-
-			private void RegisterSliceLeftEdgeMenus()
-			{
-				/*
-				<part id="PhEnvironment-Detail-StringRepresentation" type="detail">
-					<slice field="StringRepresentation" label="String Representation" editor="phenvstrrepresentation" menu="mnuDataTree_StringRepresentation_Insert">
-						<deParams ws="vernacular"/>
-					</slice>
-				</part>
-				*/
-				_dataTree.DataTreeSliceContextMenuParameterObject.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ContextMenuName.mnuDataTree_StringRepresentation_Insert, Create_mnuDataTree_StringRepresentation_Insert);
-			}
-
-			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_StringRepresentation_Insert(ISlice slice, ContextMenuName contextMenuId)
-			{
-				Require.That(contextMenuId == ContextMenuName.mnuDataTree_StringRepresentation_Insert, $"Expected argument value of '{ContextMenuName.mnuDataTree_StringRepresentation_Insert.ToString()}', but got '{contextMenuId.ToString()}' instead.");
-
-				// Start: <menu id="mnuDataTree_StringRepresentation_Insert">
-
-				var contextMenuStrip = new ContextMenuStrip
-				{
-					Name = ContextMenuName.mnuDataTree_StringRepresentation_Insert.ToString()
-				};
-				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(5);
-
-				PartiallySharedForToolsWideMenuHelper.CreateCommonEnvironmentContextMenuStripMenus(slice, menuItems, contextMenuStrip);
-
-				// End: <menu id="mnuDataTree_StringRepresentation_Insert">
-
-				return new Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>>(contextMenuStrip, menuItems);
 			}
 
 			private void CreateBrowseViewContextMenu()
@@ -253,12 +219,18 @@ namespace LanguageExplorer.Areas.Grammar.Tools.EnvironmentEdit
 					Name = ContextMenuName.mnuBrowseView.ToString()
 				};
 				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(1);
-
 				// <command id="CmdDeleteSelectedObject" label="Delete selected {0}" message="DeleteSelectedItem"/>
-				ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, CmdDeleteSelectedObject_Clicked, string.Format(LanguageExplorerResources.Delete_selected_0, StringTable.Table.GetString(PhEnvironmentTags.kClassName, StringTable.ClassNames)));
+				ToolStripMenuItemFactory.CreateToolStripMenuItemForContextMenuStrip(menuItems, contextMenuStrip, CmdDeleteSelectedObject_Clicked, string.Format(LanguageExplorerResources.Delete_selected_0, StringTable.Table.GetString("ProdRestrict", StringTable.PossibilityListItemTypeNames)));
+				contextMenuStrip.Opening += ContextMenuStrip_Opening;
 
 				// End: <menu id="mnuBrowseView" (partial) >
 				_recordBrowseView.ContextMenuStrip = contextMenuStrip;
+			}
+
+			private void ContextMenuStrip_Opening(object sender, System.ComponentModel.CancelEventArgs e)
+			{
+				_recordBrowseView.ContextMenuStrip.Visible = !_recordList.HasEmptyList;
+				_recordBrowseView.ContextMenuStrip.Enabled = _recordBrowseView.ContextMenuStrip.Visible;
 			}
 
 			private void CmdDeleteSelectedObject_Clicked(object sender, EventArgs e)
@@ -269,7 +241,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools.EnvironmentEdit
 			#region Implementation of IDisposable
 			private bool _isDisposed;
 
-			~EnvironmentEditToolMenuHelper()
+			~ProdRestrictEditToolMenuHelper()
 			{
 				// The base class finalizer is called automatically.
 				Dispose(false);
@@ -298,16 +270,16 @@ namespace LanguageExplorer.Areas.Grammar.Tools.EnvironmentEdit
 
 				if (disposing)
 				{
-					_partiallySharedForToolsWideMenuHelper.Dispose();
-					_recordBrowseView.ContextMenuStrip.Dispose();
-					_recordBrowseView.ContextMenuStrip = null;
-				}
+					if (_recordBrowseView?.ContextMenuStrip != null)
+					{
+						_recordBrowseView.ContextMenuStrip.Opening -= ContextMenuStrip_Opening;
+						_recordBrowseView.ContextMenuStrip.Dispose();
+						_recordBrowseView.ContextMenuStrip = null;
+					}
+                }
 				_majorFlexComponentParameters = null;
 				_recordBrowseView = null;
 				_recordList = null;
-				_dataTree = null;
-				_partiallySharedForToolsWideMenuHelper = null;
-				_phPhonData = null;
 
 				_isDisposed = true;
 			}
