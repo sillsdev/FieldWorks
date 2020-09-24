@@ -11,7 +11,6 @@ using System.Xml.Linq;
 using LanguageExplorer;
 using LanguageExplorer.Areas;
 using LanguageExplorer.Areas.Lexicon;
-using LanguageExplorer.Areas.Lexicon.Tools.BulkEditEntries;
 using LanguageExplorer.Controls;
 using LanguageExplorer.Controls.XMLViews;
 using LanguageExplorer.Filters;

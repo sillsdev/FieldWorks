@@ -17,7 +17,7 @@ using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel.Utils;
 
-namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
+namespace LanguageExplorer.Areas.Lexicon.Tools
 {
 	internal sealed class MergeEntryDlg : EntryGoDlg
 	{

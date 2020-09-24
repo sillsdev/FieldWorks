@@ -2,12 +2,12 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes;
+using LanguageExplorer.UtilityTools;
 using NUnit.Framework;
 using SIL.LCModel;
 using SIL.LCModel.Core.Text;
 
-namespace LanguageExplorerTests.Areas.Lexicon
+namespace LanguageExplorerTests.UtilityTools
 {
 	public sealed class SortReversalSubEntriesTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
 	{

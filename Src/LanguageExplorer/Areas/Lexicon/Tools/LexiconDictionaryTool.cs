@@ -19,7 +19,7 @@ using SIL.FieldWorks.Resources;
 using SIL.LCModel;
 using SIL.LCModel.Application;
 
-namespace LanguageExplorer.Areas.Lexicon.Tools.Dictionary
+namespace LanguageExplorer.Areas.Lexicon.Tools
 {
 	/// <summary>
 	/// ITool implementation for the "lexiconDictionary" tool in the "lexicon" area.

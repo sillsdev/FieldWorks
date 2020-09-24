@@ -18,7 +18,7 @@ using SIL.FieldWorks.Resources;
 using SIL.LCModel;
 using SIL.LCModel.Application;
 
-namespace LanguageExplorer.Areas.Lexicon.Tools.CollectWords
+namespace LanguageExplorer.Areas.Lexicon.Tools
 {
 	/// <summary>
 	/// ITool implementation for the "rapidDataEntry" tool in the "lexicon" area.

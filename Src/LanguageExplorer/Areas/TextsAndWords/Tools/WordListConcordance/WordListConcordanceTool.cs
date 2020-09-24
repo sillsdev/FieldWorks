@@ -101,7 +101,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.WordListConcordance
 			var root = XDocument.Parse(TextAndWordsResources.WordListConcordanceToolParameters).Root;
 			_mainRecordBrowseView = new RecordBrowseView(root.Element("wordList").Element("parameters"), majorFlexComponentParameters.LcmCache, _recordListProvidingOwner, majorFlexComponentParameters.UiWidgetController);
 			root.Element("wordList").Element("parameters").Element("includeColumns").ReplaceWith(XElement.Parse(TextAndWordsResources.WordListColumns));
-			root.Element("wordOccurrenceListUpper").Element("parameters").Element("includeColumns").ReplaceWith(XElement.Parse(TextAndWordsResources.ConcordanceColumns).Element("columns"));
+			root.Element("wordOccurrenceListUpper").Element("parameters").Element("includeColumns").ReplaceWith(XElement.Parse(AreaResources.ConcordanceColumns).Element("columns"));
 			_nestedRecordBrowseView = new RecordBrowseView(root.Element("wordOccurrenceListUpper").Element("parameters"), majorFlexComponentParameters.LcmCache, _subservientRecordList);
 			nestedMultiPaneParameters.FirstControlParameters.Control = _nestedRecordBrowseView;
 			_interlinMaster = new InterlinMaster(root.Element("wordOccurrenceListLower").Element("parameters"), majorFlexComponentParameters, _subservientRecordList, paneBarButtons, false);

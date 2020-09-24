@@ -7,7 +7,7 @@ using LanguageExplorer.Controls.XMLViews;
 using SIL.LCModel;
 using SIL.LCModel.Core.KernelInterfaces;
 
-namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
+namespace LanguageExplorer.Areas.Lexicon.Tools
 {
 	/// <summary />
 	internal class ConcOccurrenceBrowseView : RecordBrowseView

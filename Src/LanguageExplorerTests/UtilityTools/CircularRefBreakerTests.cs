@@ -3,11 +3,11 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Collections.Generic;
-using LanguageExplorer.Areas.Lexicon;
+using LanguageExplorer.UtilityTools;
 using NUnit.Framework;
 using SIL.LCModel;
 
-namespace LanguageExplorerTests.Areas.Lexicon
+namespace LanguageExplorerTests.UtilityTools
 {
 	public class CircularRefBreakerTests : MemoryOnlyBackendProviderTestBase
 	{

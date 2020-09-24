@@ -22,7 +22,7 @@ using SIL.LCModel.Application;
 using SIL.LCModel.Infrastructure;
 using SIL.Linq;
 
-namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
+namespace LanguageExplorer.Areas.Lexicon.Tools
 {
 	/// <summary>
 	/// ITool implementation for the "reversalEditComplete" tool in the "lexicon" area.

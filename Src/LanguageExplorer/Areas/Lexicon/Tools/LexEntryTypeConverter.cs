@@ -9,7 +9,7 @@ using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Infrastructure;
 
-namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
+namespace LanguageExplorer.Areas.Lexicon.Tools
 {
 	/// <summary>
 	/// What: This utility allows you to select which irregularly inflected form variant types should be converted

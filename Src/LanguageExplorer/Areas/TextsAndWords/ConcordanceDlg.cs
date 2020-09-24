@@ -154,7 +154,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			helpProvider.SetShowHelp(this, true);
 			PropertyTable.SetProperty("IgnoreStatusPanel", true, false, true);
 			// Gather up the elements.
-			var concordanceColumnsElement = XDocument.Parse(TextAndWordsResources.ConcordanceColumns).Root.Element("columns");
+			var concordanceColumnsElement = XDocument.Parse(AreaResources.ConcordanceColumns).Root.Element("columns");
 			var configurationElement = XElement.Parse(TextAndWordsResources.WordformInSegmentsOccurrenceList);
 			configurationElement.Add(concordanceColumnsElement);
 			// And create the RecordLists.

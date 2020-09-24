@@ -15,7 +15,7 @@ using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Resources;
 using SIL.LCModel.Application;
 
-namespace LanguageExplorer.Areas.Lexicon.Tools.Browse
+namespace LanguageExplorer.Areas.Lexicon.Tools
 {
 	/// <summary>
 	/// ITool implementation for the "lexiconBrowse" tool in the "lexicon" area.

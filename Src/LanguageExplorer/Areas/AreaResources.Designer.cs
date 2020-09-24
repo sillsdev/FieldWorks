@@ -189,6 +189,29 @@ namespace LanguageExplorer.Areas {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
+        ///&lt;root id=&quot;concordanceColumns&quot;&gt;
+        ///	&lt;columns&gt;
+        ///		&lt;column label=&quot;Ref&quot; width=&quot;60000&quot;&gt;
+        ///			&lt;span&gt;
+        ///				&lt;properties&gt;
+        ///					&lt;editable value=&quot;false&quot;/&gt;
+        ///				&lt;/properties&gt;
+        ///				&lt;string class=&quot;FakeOccurrence&quot; field=&quot;Reference&quot; ws=&quot;$ws=best vernoranal&quot;/&gt;
+        ///			&lt;/span&gt;
+        ///		&lt;/column&gt;
+        ///		&lt;column label=&quot;Occurrence&quot; width=&quot;415000&quot; multipara=&quot;true&quot;&gt;
+        ///			&lt;concpara min=&quot;FakeOccurrence.BeginOffset&quot; lim=&quot;FakeOccurrence.EndOffset&quot; align=&quot;144000&quot;&gt;
+        ///				&lt;properties&gt;
+        ///					&lt;editable value=&quot;false&quot; [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string ConcordanceColumns {
+            get {
+                return ResourceManager.GetString("ConcordanceColumns", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Dictionary....
         /// </summary>
         internal static string ConfigureDictionary {

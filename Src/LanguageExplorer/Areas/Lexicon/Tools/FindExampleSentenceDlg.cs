@@ -6,7 +6,6 @@ using System;
 using System.Linq;
 using System.Windows.Forms;
 using System.Xml.Linq;
-using LanguageExplorer.Areas.TextsAndWords;
 using LanguageExplorer.Controls.PaneBar;
 using LanguageExplorer.Controls.XMLViews;
 using SIL.Code;
@@ -16,7 +15,7 @@ using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Infrastructure;
 
-namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
+namespace LanguageExplorer.Areas.Lexicon.Tools
 {
 	/// <summary />
 	internal partial class FindExampleSentenceDlg : Form, IFlexComponent
@@ -121,7 +120,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 
 		#endregion
 
-		private static XElement BrowseViewControlParameters => XDocument.Parse(TextAndWordsResources.ConcordanceColumns).Root;
+		private static XElement BrowseViewControlParameters => XDocument.Parse(AreaResources.ConcordanceColumns).Root;
 
 		private void AddConfigurableControls()
 		{

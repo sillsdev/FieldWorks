@@ -18,7 +18,7 @@ using SIL.FieldWorks.Resources;
 using SIL.LCModel;
 using SIL.LCModel.Application;
 
-namespace LanguageExplorer.Areas.Lexicon.Tools.BulkEditReversalEntries
+namespace LanguageExplorer.Areas.Lexicon.Tools
 {
 	/// <summary>
 	/// ITool implementation for the "reversalBulkEditReversalEntries" tool in the "lexicon" area.

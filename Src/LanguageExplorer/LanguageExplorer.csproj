@@ -1512,7 +1512,7 @@
     <Compile Include="Controls\MasterListDlg.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Areas\Lexicon\Tools\Edit\MergeEntryDlg.cs">
+    <Compile Include="Areas\Lexicon\Tools\MergeEntryDlg.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Controls\DetailControls\MsaCreatorDlg.cs">
@@ -1982,7 +1982,7 @@
     <Compile Include="Areas\Lexicon\Tools\XhtmlDocView.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Areas\Lexicon\Tools\Edit\XhtmlRecordDocView.cs">
+    <Compile Include="Areas\Lexicon\Tools\XhtmlRecordDocView.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Areas\Lexicon\Tools\XmlDiagnosticsDlg.cs">
@@ -2500,7 +2500,7 @@
       <DependentUpon>MasterListDlg.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Areas\Lexicon\Tools\Edit\MergeEntryDlg.resx">
+    <EmbeddedResource Include="Areas\Lexicon\Tools\MergeEntryDlg.resx">
       <DependentUpon>MergeEntryDlg.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
@@ -2767,14 +2767,14 @@
     <Compile Include="Controls\DetailControls\Slices\AffixRuleFormulaSlice.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Areas\Lexicon\CircularRefBreaker.cs" />
+    <Compile Include="UtilityTools\CircularRefBreaker.cs" />
     <Compile Include="Controls\XMLViews\BulkReversalEntryPosEditor.cs" />
     <Compile Include="Controls\DetailControls\AddComplexFormChooserCommand.cs" />
     <Compile Include="Controls\DetailControls\AddPrimaryLexemeChooserCommand.cs" />
-    <Compile Include="Areas\Lexicon\Tools\Edit\BasicPaneBarContainer.cs">
+    <Compile Include="Areas\Lexicon\Tools\BasicPaneBarContainer.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Areas\Lexicon\Tools\Edit\ConcOccurrenceBrowseView.cs">
+    <Compile Include="Areas\Lexicon\Tools\ConcOccurrenceBrowseView.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Controls\DetailControls\EntrySequenceVectorReferenceView.cs">
@@ -2784,8 +2784,8 @@
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Controls\DetailControls\Slices\ILexReferenceSlice.cs" />
-    <Compile Include="Areas\Lexicon\Tools\Edit\LexEntryTypeConverter.cs" />
-    <Compile Include="Areas\Lexicon\Tools\Edit\LexEntryTypeConverters.cs" />
+    <Compile Include="Areas\Lexicon\Tools\LexEntryTypeConverter.cs" />
+    <Compile Include="Areas\Lexicon\Tools\LexEntryTypeConverters.cs" />
     <Compile Include="Controls\DetailControls\LexReferenceCollectionVc.cs" />
     <Compile Include="Controls\DetailControls\LexReferencePairVc.cs" />
     <Compile Include="Controls\DetailControls\LexReferenceSequenceVc.cs" />
@@ -2809,14 +2809,14 @@
     <Compile Include="Controls\DetailControls\Slices\GhostLexRefSlice.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Areas\Lexicon\Tools\Edit\LexEntryInflTypeConverter.cs" />
+    <Compile Include="Areas\Lexicon\Tools\LexEntryInflTypeConverter.cs" />
     <Compile Include="Controls\DetailControls\Slices\ChorusMessageSlice.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Controls\DetailControls\Slices\ReversalIndexEntryFormSlice.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Areas\Lexicon\Tools\ReversalIndexes\SortReversalSubEntries.cs" />
+    <Compile Include="UtilityTools\SortReversalSubEntries.cs" />
     <Compile Include="Areas\Lexicon\Tools\CommonReversalIndexMenuHelper.cs" />
     <Compile Include="Areas\MultiPaneFactory.cs" />
     <Compile Include="Controls\MultiPaneParameters.cs" />
@@ -3128,10 +3128,10 @@
     <Compile Include="Controls\DetailControls\Slices\ReversalIndexEntrySlice.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Areas\Lexicon\Tools\Edit\FindExampleSentenceDlg.cs">
+    <Compile Include="Areas\Lexicon\Tools\FindExampleSentenceDlg.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Areas\Lexicon\Tools\Edit\FindExampleSentenceDlg.Designer.cs">
+    <Compile Include="Areas\Lexicon\Tools\FindExampleSentenceDlg.Designer.cs">
       <DependentUpon>FindExampleSentenceDlg.cs</DependentUpon>
     </Compile>
     <Compile Include="Areas\Lexicon\SwapLexemeWithAllomorphDlg.cs">
@@ -3244,14 +3244,14 @@
     <Compile Include="Areas\Grammar\Tools\PosEditTool.cs" />
     <Compile Include="Areas\Grammar\Tools\ProdRestrictEditTool.cs" />
     <Compile Include="Areas\Lexicon\LexiconArea.cs" />
-    <Compile Include="Areas\Lexicon\Tools\Browse\LexiconBrowseTool.cs" />
-    <Compile Include="Areas\Lexicon\Tools\BulkEditEntries\BulkEditEntriesOrSensesTool.cs" />
-    <Compile Include="Areas\Lexicon\Tools\BulkEditReversalEntries\ReversalBulkEditReversalEntriesTool.cs" />
-    <Compile Include="Areas\Lexicon\Tools\ClassifiedDictionary\LexiconClassifiedDictionaryTool.cs" />
-    <Compile Include="Areas\Lexicon\Tools\CollectWords\RapidDataEntryTool.cs" />
-    <Compile Include="Areas\Lexicon\Tools\Dictionary\LexiconDictionaryTool.cs" />
-    <Compile Include="Areas\Lexicon\Tools\Edit\LexiconEditTool.cs" />
-    <Compile Include="Areas\Lexicon\Tools\ReversalIndexes\ReversalEditCompleteTool.cs" />
+    <Compile Include="Areas\Lexicon\Tools\LexiconBrowseTool.cs" />
+    <Compile Include="Areas\Lexicon\Tools\BulkEditEntriesOrSensesTool.cs" />
+    <Compile Include="Areas\Lexicon\Tools\ReversalBulkEditReversalEntriesTool.cs" />
+    <Compile Include="Areas\Lexicon\Tools\LexiconClassifiedDictionaryTool.cs" />
+    <Compile Include="Areas\Lexicon\Tools\RapidDataEntryTool.cs" />
+    <Compile Include="Areas\Lexicon\Tools\LexiconDictionaryTool.cs" />
+    <Compile Include="Areas\Lexicon\Tools\LexiconEditTool.cs" />
+    <Compile Include="Areas\Lexicon\Tools\ReversalEditCompleteTool.cs" />
     <Compile Include="Areas\Lists\ListsArea.cs" />
     <Compile Include="Areas\Lists\Tools\AnthroEdit\AnthroEditTool.cs" />
     <Compile Include="Areas\Lists\Tools\ChartmarkEdit\ChartmarkEditTool.cs" />
@@ -3524,7 +3524,7 @@
       <DependentUpon>ReversalIndexEntrySlice.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Areas\Lexicon\Tools\Edit\FindExampleSentenceDlg.resx">
+    <EmbeddedResource Include="Areas\Lexicon\Tools\FindExampleSentenceDlg.resx">
       <DependentUpon>FindExampleSentenceDlg.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>

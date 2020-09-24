@@ -4,13 +4,12 @@
 
 using System.Diagnostics;
 using System.Windows.Forms;
-using LanguageExplorer.UtilityTools;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.DomainServices;
 using SIL.Reporting;
 
-namespace LanguageExplorer.Areas.Lexicon
+namespace LanguageExplorer.UtilityTools
 {
 	/// <summary>
 	/// Go through all the PrimaryLexeme lists of complex form LexEntryRefs searching for and fixing any circular references.

@@ -16,7 +16,7 @@ using SIL.LCModel.Core.KernelInterfaces;
 using SIL.Windows.Forms.HtmlBrowser;
 using SIL.Xml;
 
-namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
+namespace LanguageExplorer.Areas.Lexicon.Tools
 {
 	/// <summary>
 	/// XhtmlRecordDocView implements a RecordView (view showing one object at a time from a sequence)

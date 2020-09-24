@@ -17,7 +17,7 @@ using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Resources;
 using SIL.LCModel.Application;
 
-namespace LanguageExplorer.Areas.Lexicon.Tools.ClassifiedDictionary
+namespace LanguageExplorer.Areas.Lexicon.Tools
 {
 	/// <summary>
 	/// ITool implementation for the "lexiconClassifiedDictionary" tool in the "lexicon" area.

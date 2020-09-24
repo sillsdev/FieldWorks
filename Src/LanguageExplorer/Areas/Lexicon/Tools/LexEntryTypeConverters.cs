@@ -13,7 +13,7 @@ using LanguageExplorer.UtilityTools;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 
-namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
+namespace LanguageExplorer.Areas.Lexicon.Tools
 {
 	/// <summary>
 	/// Abstract base class for the two implementations: LexEntryTypeConverter & LexEntryInflTypeConverter.

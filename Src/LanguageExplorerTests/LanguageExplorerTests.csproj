@@ -338,9 +338,9 @@
     <Compile Include="Repository\LexiconAreaTests.cs" />
     <Compile Include="Controls\DetailControls\LexEntryChangeHandlerTests.cs" />
     <Compile Include="Controls\DetailControls\Slices\LexReferenceTreeRootLauncherTests.cs" />
-    <Compile Include="Areas\Lexicon\CircularRefBreakerTests.cs" />
+    <Compile Include="UtilityTools\CircularRefBreakerTests.cs" />
     <Compile Include="Controls\DetailControls\Slices\ReversalEntryViewTests.cs" />
-    <Compile Include="Areas\Lexicon\SortReversalSubEntriesTests.cs" />
+    <Compile Include="UtilityTools\SortReversalSubEntriesTests.cs" />
     <Compile Include="LexiconTestUtils.cs" />
     <Compile Include="LIFT\LiftExportTests.cs" />
     <Compile Include="LIFT\LiftMergerTests.cs" />

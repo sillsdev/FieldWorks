@@ -24,7 +24,7 @@ using SIL.LCModel.DomainServices;
 using SIL.ObjectModel;
 using SIL.Xml;
 
-namespace LanguageExplorer.Areas.Lexicon.Tools.BulkEditEntries
+namespace LanguageExplorer.Areas.Lexicon.Tools
 {
 	/// <summary>
 	/// ITool implementation for the "bulkEditEntriesOrSenses" tool in the "lexicon" area.

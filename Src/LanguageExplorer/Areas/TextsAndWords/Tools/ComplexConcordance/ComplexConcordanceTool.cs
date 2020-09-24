@@ -93,7 +93,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 			};
 			interlinMasterPaneBar.AddControls(new List<Control> { panelButtonAddWordsToLexicon });
 			var root = XDocument.Parse(TextAndWordsResources.ComplexConcordanceToolParameters).Root;
-			var columns = XElement.Parse(TextAndWordsResources.ConcordanceColumns).Element("columns");
+			var columns = XElement.Parse(AreaResources.ConcordanceColumns).Element("columns");
 			root.Element("wordOccurrenceList").Element("parameters").Element("includeCordanceColumns").ReplaceWith(columns);
 			_interlinMaster = new InterlinMaster(root.Element("ITextControl").Element("parameters"), majorFlexComponentParameters, _recordList, paneBarButtons, false);
 			mainConcordanceContainerParameters.SecondControlParameters.Control = PaneBarContainerFactory.Create(majorFlexComponentParameters.FlexComponentParameters, _interlinMaster, interlinMasterPaneBar);
