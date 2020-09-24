@@ -1909,9 +1909,6 @@ namespace LanguageExplorer.Controls.DetailControls
 // TODO: So the recordchangehandler can be owned either by the DataTree or by the RecordListUpdater.
 // TODO: I wonder if we can do better?""
 #endif
-						// No, since it isn't owned by the data tree, even though it created it.
-						//if (m_rch != null && m_rch is IDisposable)
-						//	(m_rch as IDisposable).Dispose();
 						if (m_rch != null && !m_rch.HasRecordListUpdater)
 						{
 							// The above version of the Dispose call was bad,
@@ -1920,7 +1917,7 @@ namespace LanguageExplorer.Controls.DetailControls
 							m_rch.Dispose();
 							m_rch = null;
 						}
-						m_rch = (IRecordChangeHandler)DynamicLoader.CreateObject(node);
+						m_rch = RecordChangeHandlerFactory.CreateRecordChangeHandler(node);
 						m_rch.Disposed += m_rch_Disposed;
 						Debug.Assert(m_rch != null);
 						m_listName = XmlUtils.GetOptionalAttributeValue(node, "listName");

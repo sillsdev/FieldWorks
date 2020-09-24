@@ -8,7 +8,7 @@ using LanguageExplorer.DictionaryConfiguration;
 using LanguageExplorer.DictionaryConfiguration.DictionaryDetailsView;
 using SIL.Windows.Forms.HtmlBrowser;
 
-namespace LanguageExplorer.Areas.Lexicon.DictionaryConfiguration
+namespace LanguageExplorer.Areas.Lexicon.Tools
 {
 	partial class DictionaryConfigurationDlg
 	{

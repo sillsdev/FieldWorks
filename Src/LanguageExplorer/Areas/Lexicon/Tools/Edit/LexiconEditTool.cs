@@ -81,7 +81,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Edit
 			_propertyTable.SetDefault($"{LanguageExplorerConstants.ToolForAreaNamed_}{Area.MachineName}", MachineName, true);
 			if (_recordList == null)
 			{
-				_recordList = majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>(LanguageExplorerConstants.RecordListRepository).GetRecordList(LanguageExplorerConstants.Entries, majorFlexComponentParameters.StatusBar, LexiconArea.EntriesFactoryMethod);
+				_recordList = majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>(LanguageExplorerConstants.RecordListRepository).GetRecordList(LanguageExplorerConstants.Entries, majorFlexComponentParameters.StatusBar, RecordListActivator.EntriesFactoryMethod);
 			}
 			var root = XDocument.Parse(LexiconResources.LexiconBrowseParameters).Root;
 			// Modify the basic parameters for this tool.

@@ -9,8 +9,6 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Xml.Linq;
-using LanguageExplorer.Areas.Lexicon.DictionaryConfiguration;
-using LanguageExplorer.Areas.Lexicon.Reversals;
 using LanguageExplorer.Controls;
 using LanguageExplorer.Controls.DetailControls;
 using LanguageExplorer.Controls.PaneBar;
@@ -81,7 +79,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.BulkEditReversalEntries
 			}
 			if (_recordList == null)
 			{
-				_recordList = majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>(LanguageExplorerConstants.RecordListRepository).GetRecordList(LanguageExplorerConstants.AllReversalEntries, majorFlexComponentParameters.StatusBar, ReversalServices.AllReversalEntriesFactoryMethod);
+				_recordList = majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>(LanguageExplorerConstants.RecordListRepository).GetRecordList(LanguageExplorerConstants.AllReversalEntries, majorFlexComponentParameters.StatusBar, RecordListActivator.AllReversalEntriesFactoryMethod);
 			}
 			_recordBrowseView = new RecordBrowseView(XDocument.Parse(LexiconResources.ReversalBulkEditReversalEntriesToolParameters).Root, majorFlexComponentParameters.LcmCache, _recordList, majorFlexComponentParameters.UiWidgetController);
 			_toolMenuHelper = new ReversalBulkToolMenuHelper(majorFlexComponentParameters, this, _reversalIndexRepository, _currentReversalIndex, _recordBrowseView, _recordList);
@@ -266,7 +264,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.BulkEditReversalEntries
 				var contextMenuItem = (ToolStripMenuItem)sender;
 				_currentReversalIndex = (IReversalIndex)contextMenuItem.Tag;
 				_propertyTable.SetProperty(LanguageExplorerConstants.ReversalIndexGuid, _currentReversalIndex.Guid.ToString(), true, settingsGroup: SettingsGroup.LocalSettings);
-				((ReversalListBase)_recordList).ChangeOwningObjectIfPossible();
+				((IReversalRecordList)_recordList).ChangeOwningObjectIfPossible();
 			}
 
 			#region Implementation of IDisposable

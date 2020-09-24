@@ -10,11 +10,9 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using System.Xml.Linq;
-using LanguageExplorer.Areas.Lexicon.DictionaryConfiguration;
 using LanguageExplorer.Controls;
 using LanguageExplorer.Controls.DetailControls;
 using LanguageExplorer.Controls.PaneBar;
-using LanguageExplorer.DictionaryConfiguration;
 using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Resources;
@@ -65,7 +63,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.Dictionary
 		{
 			if (_recordList == null)
 			{
-				_recordList = majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>(LanguageExplorerConstants.RecordListRepository).GetRecordList(LanguageExplorerConstants.Entries, majorFlexComponentParameters.StatusBar, LexiconArea.EntriesFactoryMethod);
+				_recordList = majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>(LanguageExplorerConstants.RecordListRepository).GetRecordList(LanguageExplorerConstants.Entries, majorFlexComponentParameters.StatusBar, RecordListActivator.EntriesFactoryMethod);
 			}
 			var root = XDocument.Parse(LexiconResources.LexiconDictionaryToolParameters).Root;
 			_toolMenuHelper = new LexiconDictionaryToolMenuHelper(majorFlexComponentParameters, this, _recordList, root.Attribute("configureObjectName").Value);

@@ -8,7 +8,7 @@ using System.Linq;
 using SIL.LCModel;
 using SIL.LCModel.Infrastructure;
 
-namespace LanguageExplorer.Areas.Lexicon
+namespace LanguageExplorer.Controls.DetailControls
 {
 	/// <summary />
 	internal sealed class LexEntryChangeHandler : IRecordChangeHandler

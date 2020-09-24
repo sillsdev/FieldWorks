@@ -6,7 +6,7 @@ using System;
 using System.Diagnostics;
 using SIL.LCModel;
 
-namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
+namespace LanguageExplorer.Controls.DetailControls
 {
 	/// <summary />
 	internal class ReversalIndexEntryChangeHandler : IRecordChangeHandler

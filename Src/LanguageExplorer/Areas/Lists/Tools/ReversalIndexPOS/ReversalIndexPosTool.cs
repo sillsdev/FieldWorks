@@ -78,7 +78,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 			HandleReversalIndexGuid_Changed(null);
 			if (_recordList == null)
 			{
-				_recordList = majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>(LanguageExplorerConstants.RecordListRepository).GetRecordList(ReversalIndexPOSRecordList.ReversalEntriesPOS, majorFlexComponentParameters.StatusBar, FactoryMethod);
+				_recordList = majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>(LanguageExplorerConstants.RecordListRepository).GetRecordList(LanguageExplorerConstants.ReversalEntriesPOS, majorFlexComponentParameters.StatusBar, RecordListActivator.ReversalIndexPOSFactoryMethod);
 			}
 			_recordBrowseView = new RecordBrowseView(XDocument.Parse(ListResources.ReversalToolReversalIndexPOSBrowseViewParameters).Root, _cache, _recordList, majorFlexComponentParameters.UiWidgetController);
 			var showHiddenFieldsPropertyName = UiWidgetServices.CreateShowHiddenFieldsPropertyName(MachineName);
@@ -194,26 +194,6 @@ namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 			}
 		}
 
-		private IRecordList FactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string recordListId, StatusBar statusBar)
-		{
-			Require.That(recordListId == ReversalIndexPOSRecordList.ReversalEntriesPOS, $"I don't know how to create a record list with an ID of '{recordListId}', as I can only create one with an id of '{ReversalIndexPOSRecordList.ReversalEntriesPOS}'.");
-			/*
-            <clerk id="ReversalEntriesPOS">
-              <dynamicloaderinfo assemblyPath="LexEdDll.dll" class="SIL.FieldWorks.XWorks.LexEd.ReversalEntryPOSClerk" />
-              <recordList owner="ReversalIndex" property="PartsOfSpeech">
-                <dynamicloaderinfo assemblyPath="LexEdDll.dll" class="SIL.FieldWorks.XWorks.LexEd.ReversalIndexPOSRecordList" />
-              </recordList>
-              <filters />
-              <sortMethods>
-                <sortMethod label="Default" assemblyPath="Filters.dll" class="SIL.FieldWorks.Filters.PropertyRecordSorter" sortProperty="ShortName" />
-              </sortMethods>
-              <!--<recordFilterListProvider assemblyPath="Filters.dll" class="SIL.FieldWorks.Filters.WfiRecordFilterListProvider"/>-->
-            </clerk>
-			*/
-			// NB: No need to pass 'recordListId' to the constructor, since it supplies ReversalIndexPOSRecordList.ReversalEntriesPOS for the id.
-			return new ReversalIndexPOSRecordList(statusBar, cache.ServiceLocator, cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), _currentReversalIndex);
-		}
-
 		private sealed class ReversalIndexPosEditMenuHelper : IDisposable
 		{
 			private MajorFlexComponentParameters _majorFlexComponentParameters;
@@ -327,7 +307,7 @@ namespace LanguageExplorer.Areas.Lists.Tools.ReversalIndexPOS
 				var contextMenuItem = (ToolStripMenuItem)sender;
 				_currentReversalIndex = (IReversalIndex)contextMenuItem.Tag;
 				_propertyTable.SetProperty(LanguageExplorerConstants.ReversalIndexGuid, _currentReversalIndex.Guid.ToString(), true, settingsGroup: SettingsGroup.LocalSettings);
-				((ReversalListBase)_recordList).ChangeOwningObjectIfPossible();
+				((IReversalRecordList)_recordList).ChangeOwningObjectIfPossible();
 			}
 
 			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_MoveMainReversalPOS(ISlice slice, ContextMenuName contextMenuId)

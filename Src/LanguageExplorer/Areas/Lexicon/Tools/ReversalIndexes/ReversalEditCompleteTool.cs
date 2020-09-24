@@ -10,8 +10,6 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using System.Xml.Linq;
-using LanguageExplorer.Areas.Lexicon.DictionaryConfiguration;
-using LanguageExplorer.Areas.Lexicon.Reversals;
 using LanguageExplorer.Controls;
 using LanguageExplorer.Controls.DetailControls;
 using LanguageExplorer.Controls.PaneBar;
@@ -68,7 +66,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 		{
 			if (_recordList == null)
 			{
-				_recordList = majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>(LanguageExplorerConstants.RecordListRepository).GetRecordList(LanguageExplorerConstants.AllReversalEntries, majorFlexComponentParameters.StatusBar, ReversalServices.AllReversalEntriesFactoryMethod);
+				_recordList = majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>(LanguageExplorerConstants.RecordListRepository).GetRecordList(LanguageExplorerConstants.AllReversalEntries, majorFlexComponentParameters.StatusBar, RecordListActivator.AllReversalEntriesFactoryMethod);
 			}
 			var root = XDocument.Parse(LexiconResources.ReversalEditCompleteToolParameters).Root;
 			DocView = new XhtmlDocView(root.Element("docview").Element("parameters"), majorFlexComponentParameters.LcmCache, _recordList, majorFlexComponentParameters.UiWidgetController);
@@ -483,7 +481,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes
 				var contextMenuItem = (ToolStripMenuItem)sender;
 				_currentReversalIndex = (IReversalIndex)contextMenuItem.Tag;
 				_propertyTable.SetProperty(LanguageExplorerConstants.ReversalIndexGuid, _currentReversalIndex.Guid.ToString(), true, settingsGroup: SettingsGroup.LocalSettings);
-				((ReversalListBase)_recordList).ChangeOwningObjectIfPossible();
+				((IReversalRecordList)_recordList).ChangeOwningObjectIfPossible();
 				contextMenuItem.Checked = ((IReversalIndex)contextMenuItem.Tag).Guid.ToString() == _propertyTable.GetValue<string>(LanguageExplorerConstants.ReversalIndexGuid);
 			}
 

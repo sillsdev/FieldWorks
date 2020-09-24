@@ -6,13 +6,13 @@ using System.IO;
 using System.Linq;
 using System.Xml;
 using LanguageExplorer;
-using LanguageExplorer.DictionaryConfiguration;
+using LanguageExplorer.Areas.Lexicon.Tools;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.IO;
 using SIL.LCModel;
 
-namespace LanguageExplorerTests.DictionaryConfiguration
+namespace LanguageExplorerTests.Areas.Lexicon.Tools
 {
 	[TestFixture]
 	public class DictionaryConfigurationUtilsTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase

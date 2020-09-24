@@ -3,7 +3,7 @@
 <PartInventory>
 	<bin class="LexEntry">
 		<part id="LexEntry-Detail-ChangeHandler" type="detail">
-			<RecordChangeHandler assemblyPath="LanguageExplorer.dll" listName="RecordClerk-entries" class="LanguageExplorer.Areas.Lexicon.LexEntryChangeHandler"/>
+			<RecordChangeHandler class="LexEntryChangeHandler"/>
 		</part>
 		<part id="LexEntry-Detail-LexemeForm" type="detail">
 			<obj field="LexemeForm" layout="AsLexemeFormBasic" ghost="Form" ghostWs="vernacular"

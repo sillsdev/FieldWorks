@@ -5,8 +5,7 @@
 namespace LanguageExplorer.Controls.DetailControls
 {
 	/// <summary>
-	/// This interface is an extra one that must be implemented by subclasses
-	/// of IRootSite used in classes like RecordDocView.
+	/// This interface is an extra one that must be implemented by subclasses of IRootSite.
 	/// The typical implementation of SetRoot is to call SetRootObject on the
 	/// RootBox, passing also your standard view constructor and other arguments.
 	/// </summary>

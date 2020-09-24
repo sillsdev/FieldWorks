@@ -22,9 +22,6 @@ namespace LanguageExplorer
 		/// </remarks>
 		internal const string StatusBarPanelProgress = "statusBarPanelProgress";
 		/// <summary />
-		/// <remarks>
-		/// Only used by RecordDocView's ShowRecord method
-		/// </remarks>
 		internal const string StatusBarPanelProgressBar = "statusBarPanelProgressBar";
 		/// <summary>Reset on area/tool change. string.Empty</summary>
 		/// <remarks>
@@ -271,7 +268,7 @@ namespace LanguageExplorer
 		internal const string DictionaryType = "Dictionary";
 		internal const string ReversalType = "Reversal Index";
 		internal const string ReloadAreaTools = "ReloadAreaTools";
-
+		internal const string ReversalEntriesPOS = "ReversalEntriesPOS";
 		#endregion Misc
 	}
 }

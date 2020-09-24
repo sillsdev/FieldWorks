@@ -11,13 +11,12 @@ using System.Windows.Forms;
 using System.Xml;
 using Gecko;
 using Gecko.DOM;
-using LanguageExplorer.Areas;
-using LanguageExplorer.Areas.Lexicon.DictionaryConfiguration;
 using LanguageExplorer.Controls;
+using LanguageExplorer.DictionaryConfiguration;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 
-namespace LanguageExplorer.DictionaryConfiguration
+namespace LanguageExplorer.Areas.Lexicon.Tools
 {
 	/// <summary>
 	/// Group of dictionary/reversal index configuration utility functions that may be useful in XhtmlDocView

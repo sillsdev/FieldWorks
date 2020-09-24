@@ -304,6 +304,8 @@
     <Compile Include="Areas\Grammar\Tools\MasterPhonologicalFeatureListDlg.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="Controls\DetailControls\RecordChangeHandlerFactory.cs" />
+    <Compile Include="IReversalRecordList.cs" />
     <Compile Include="Controls\DetailControls\IChangeRootObject.cs" />
     <Compile Include="Areas\SharedListToolsUiWidgetMenuHelper.cs" />
     <Compile Include="Areas\Notebook\Tools\SharedNotebookToolsUiWidgetMenuHelper.cs" />
@@ -339,7 +341,6 @@
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Areas\IdAndString.cs" />
-    <Compile Include="Areas\Lexicon\Reversals\ReversalServices.cs" />
     <Compile Include="Controls\FxtType.cs" />
     <Compile Include="Controls\FxtTypes.cs" />
     <Compile Include="Controls\ProgressDialogWorkingOn.cs">
@@ -409,8 +410,6 @@
     <Compile Include="Areas\Lists\Tools\LanguagesListEdit\LanguagesListEditTool.cs" />
     <Compile Include="Controls\MainEntryFromSubEntryTargetAdjuster.cs" />
     <Compile Include="Controls\NullTargetAdjuster.cs" />
-    <Compile Include="Areas\ReversalListBase.cs" />
-    <Compile Include="Areas\Lexicon\Tools\Edit\ConcRecordList.cs" />
     <Compile Include="Areas\Lists\Tools\CustomListEdit\CustomListEditTool.cs" />
     <Compile Include="Areas\RightClickContextMenuManager.cs" />
     <Compile Include="Controls\DetailControls\Slices\RuleInsertType.cs" />
@@ -1776,10 +1775,10 @@
       <DependentUpon>DictionaryConfigMgrDlg.cs</DependentUpon>
     </Compile>
     <Compile Include="DictionaryConfiguration\DictionaryConfigurationController.cs" />
-    <Compile Include="Areas\Lexicon\DictionaryConfiguration\DictionaryConfigurationDlg.cs">
+    <Compile Include="Areas\Lexicon\Tools\DictionaryConfigurationDlg.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Areas\Lexicon\DictionaryConfiguration\DictionaryConfigurationDlg.Designer.cs">
+    <Compile Include="Areas\Lexicon\Tools\DictionaryConfigurationDlg.Designer.cs">
       <DependentUpon>DictionaryConfigurationDlg.cs</DependentUpon>
     </Compile>
     <Compile Include="DictionaryConfiguration\DictionaryConfigurationImportController.cs" />
@@ -1812,7 +1811,7 @@
     <Compile Include="DictionaryConfiguration\DictionaryConfigurationTreeControl.Designer.cs">
       <DependentUpon>DictionaryConfigurationTreeControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="DictionaryConfiguration\DictionaryConfigurationUtils.cs" />
+    <Compile Include="Areas\Lexicon\Tools\DictionaryConfigurationUtils.cs" />
     <Compile Include="DictionaryConfiguration\DictionaryDetailsController.cs" />
     <Compile Include="DictionaryConfiguration\DictionaryDetailsView\ButtonOverPanel.cs">
       <SubType>UserControl</SubType>
@@ -1864,7 +1863,6 @@
     <Compile Include="DictionaryConfiguration\DictionaryNodeWritingSystemAndParaOptions.cs" />
     <Compile Include="DictionaryConfiguration\DictionaryNodeWritingSystemOptions.cs" />
     <Compile Include="DictionaryPublicationDecorator.cs" />
-    <Compile Include="Areas\Lexicon\Tools\BulkEditEntries\EntriesOrChildClassesRecordList.cs" />
     <Compile Include="DictionaryConfiguration\Direction.cs" />
     <Compile Include="DictionaryConfiguration\ExclusionReasonCode.cs" />
     <Compile Include="Controls\ExportDialog.cs">
@@ -1952,9 +1950,6 @@
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Impls\RecordListRepository.cs" />
-    <Compile Include="Areas\Lexicon\Tools\Edit\RecordDocView.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
     <Compile Include="Controls\DetailControls\RecordEditView.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -1984,16 +1979,16 @@
     <Compile Include="Impls\WebonaryStatusCondition.cs" />
     <Compile Include="Areas\TextsAndWords\Interlinear\WordsUsedOnlyElsewhereFilter.cs" />
     <Compile Include="Impls\WritingSystemListHandler.cs" />
-    <Compile Include="Areas\Lexicon\DictionaryConfiguration\XhtmlDocView.cs">
+    <Compile Include="Areas\Lexicon\Tools\XhtmlDocView.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Areas\Lexicon\Tools\Edit\XhtmlRecordDocView.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Areas\Lexicon\DictionaryConfiguration\XmlDiagnosticsDlg.cs">
+    <Compile Include="Areas\Lexicon\Tools\XmlDiagnosticsDlg.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Areas\Lexicon\DictionaryConfiguration\XmlDiagnosticsDlg.Designer.cs">
+    <Compile Include="Areas\Lexicon\Tools\XmlDiagnosticsDlg.Designer.cs">
       <DependentUpon>XmlDiagnosticsDlg.cs</DependentUpon>
     </Compile>
     <Compile Include="Controls\XmlDocConfigureDlg.cs">
@@ -2003,9 +1998,6 @@
       <DependentUpon>XmlDocConfigureDlg.cs</DependentUpon>
     </Compile>
     <Compile Include="Controls\XmlDocView.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Areas\Lexicon\Tools\Edit\XmlDocItemView.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="DictionaryConfiguration\DictionaryConfigurationStrings.Designer.cs">
@@ -2605,7 +2597,7 @@
       <DependentUpon>DictionaryConfigMgrDlg.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Areas\Lexicon\DictionaryConfiguration\DictionaryConfigurationDlg.resx">
+    <EmbeddedResource Include="Areas\Lexicon\Tools\DictionaryConfigurationDlg.resx">
       <DependentUpon>DictionaryConfigurationDlg.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
@@ -2679,7 +2671,7 @@
       <DependentUpon>UploadToWebonaryDlg.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Areas\Lexicon\DictionaryConfiguration\XmlDiagnosticsDlg.resx">
+    <EmbeddedResource Include="Areas\Lexicon\Tools\XmlDiagnosticsDlg.resx">
       <DependentUpon>XmlDiagnosticsDlg.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\XmlDocConfigureDlg.resx">
@@ -2754,7 +2746,7 @@
     <Compile Include="Controls\DetailControls\Slices\MetaRuleFormulaSlice.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Areas\Lexicon\LexEntryChangeHandler.cs" />
+    <Compile Include="Controls\DetailControls\LexEntryChangeHandler.cs" />
     <Compile Include="Areas\Lexicon\LexiconResources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -2775,7 +2767,6 @@
     <Compile Include="Controls\DetailControls\Slices\AffixRuleFormulaSlice.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Areas\Lexicon\AllReversalEntriesRecordList.cs" />
     <Compile Include="Areas\Lexicon\CircularRefBreaker.cs" />
     <Compile Include="Controls\XMLViews\BulkReversalEntryPosEditor.cs" />
     <Compile Include="Controls\DetailControls\AddComplexFormChooserCommand.cs" />
@@ -2800,7 +2791,7 @@
     <Compile Include="Controls\DetailControls\LexReferenceSequenceVc.cs" />
     <Compile Include="Controls\DetailControls\LexReferenceTreeBranchesVc.cs" />
     <Compile Include="Controls\DetailControls\LexReferenceTreeRootVc.cs" />
-    <Compile Include="Areas\Lexicon\Tools\ReversalIndexes\ReversalIndexEntryChangeHandler.cs" />
+    <Compile Include="Controls\DetailControls\ReversalIndexEntryChangeHandler.cs" />
     <Compile Include="Areas\Lists\ListResources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -2826,8 +2817,7 @@
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Areas\Lexicon\Tools\ReversalIndexes\SortReversalSubEntries.cs" />
-    <Compile Include="Areas\Lexicon\Reversals\CommonReversalIndexMenuHelper.cs" />
-    <Compile Include="Areas\Lists\Tools\ReversalIndexPOS\ReversalIndexPOSRecordList.cs" />
+    <Compile Include="Areas\Lexicon\Tools\CommonReversalIndexMenuHelper.cs" />
     <Compile Include="Areas\MultiPaneFactory.cs" />
     <Compile Include="Controls\MultiPaneParameters.cs" />
     <Compile Include="Controls\DetailControls\RecordReferenceVectorLauncher.cs">
@@ -3132,7 +3122,7 @@
     <Compile Include="SendReceive\FLExBridgeFirstSendReceiveInstructionsDlg.Designer.cs">
       <DependentUpon>FLExBridgeFirstSendReceiveInstructionsDlg.cs</DependentUpon>
     </Compile>
-    <Compile Include="Areas\Lexicon\Reversals\ReversalEntryGoDlg.cs">
+    <Compile Include="Areas\Lexicon\Tools\ReversalEntryGoDlg.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Controls\DetailControls\Slices\ReversalIndexEntrySlice.cs">
@@ -3526,7 +3516,7 @@
       <DependentUpon>FLExBridgeFirstSendReceiveInstructionsDlg.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Areas\Lexicon\Reversals\ReversalEntryGoDlg.resx">
+    <EmbeddedResource Include="Areas\Lexicon\Tools\ReversalEntryGoDlg.resx">
       <DependentUpon>ReversalEntryGoDlg.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>

@@ -336,12 +336,12 @@
     <Compile Include="LayoutKeyUtilsTests.cs" />
     <Compile Include="LcmUi\LcmUiTests.cs" />
     <Compile Include="Repository\LexiconAreaTests.cs" />
-    <Compile Include="Areas\Lexicon\LexEntryChangeHandlerTests.cs" />
-    <Compile Include="Areas\Lexicon\LexReferenceTreeRootLauncherTests.cs" />
+    <Compile Include="Controls\DetailControls\LexEntryChangeHandlerTests.cs" />
+    <Compile Include="Controls\DetailControls\Slices\LexReferenceTreeRootLauncherTests.cs" />
     <Compile Include="Areas\Lexicon\CircularRefBreakerTests.cs" />
-    <Compile Include="Areas\Lexicon\ReversalEntryViewTests.cs" />
+    <Compile Include="Controls\DetailControls\Slices\ReversalEntryViewTests.cs" />
     <Compile Include="Areas\Lexicon\SortReversalSubEntriesTests.cs" />
-    <Compile Include="Areas\Lexicon\LexiconTestUtils.cs" />
+    <Compile Include="LexiconTestUtils.cs" />
     <Compile Include="LIFT\LiftExportTests.cs" />
     <Compile Include="LIFT\LiftMergerTests.cs" />
     <Compile Include="Controls\MasterCategoryTests.cs" />
@@ -380,7 +380,7 @@
     <Compile Include="DictionaryConfiguration\DictionaryConfigurationServicesTests.cs" />
     <Compile Include="DictionaryConfiguration\DictionaryConfigurationManagerControllerTests.cs" />
     <Compile Include="DictionaryConfiguration\DictionaryConfigurationModelTests.cs" />
-    <Compile Include="DictionaryConfiguration\DictionaryConfigurationUtilsTests.cs" />
+    <Compile Include="Areas\Lexicon\Tools\DictionaryConfigurationUtilsTests.cs" />
     <Compile Include="DictionaryConfiguration\DictionaryConfigViewerStub.cs" />
     <Compile Include="DictionaryConfiguration\DictionaryDetailsControllerTests.cs" />
     <Compile Include="DictionaryExportServiceTests.cs" />

@@ -8,14 +8,13 @@ using System.Diagnostics;
 using System.Linq;
 using System.Xml.Linq;
 using LanguageExplorer.Controls;
-using LanguageExplorer.Controls.XMLViews;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.WritingSystems;
 
-namespace LanguageExplorer.Areas.Lexicon.Reversals
+namespace LanguageExplorer.Areas.Lexicon.Tools
 {
 	/// <summary />
 	internal sealed class ReversalEntryGoDlg : BaseGoDlg

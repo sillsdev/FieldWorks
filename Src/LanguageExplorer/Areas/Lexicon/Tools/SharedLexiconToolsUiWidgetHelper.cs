@@ -6,11 +6,9 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Windows.Forms;
-using LanguageExplorer.Areas.Lexicon.DictionaryConfiguration;
 using LanguageExplorer.Controls;
 using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.LCModel;
 
 namespace LanguageExplorer.Areas.Lexicon.Tools
 {

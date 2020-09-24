@@ -5,7 +5,6 @@
 using System;
 using System.Linq;
 using System.Windows.Forms;
-using LanguageExplorer.Areas.Lexicon.Tools.Edit;
 using LanguageExplorer.Controls.DetailControls.Slices;
 using NUnit.Framework;
 using SIL.LCModel;
@@ -13,7 +12,7 @@ using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Infrastructure;
 
-namespace LanguageExplorerTests.Areas.Lexicon
+namespace LanguageExplorerTests.Controls.DetailControls.Slices
 {
 	/// <summary>
 	/// Unit tests for <see cref="DummyReversalIndexEntrySlice"/> which uses <see cref="DummyReversalIndexEntrySliceView"/>

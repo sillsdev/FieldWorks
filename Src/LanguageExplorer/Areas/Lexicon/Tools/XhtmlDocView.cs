@@ -22,7 +22,7 @@ using SIL.LCModel.Utils;
 using SIL.Windows.Forms.HtmlBrowser;
 using SIL.Xml;
 
-namespace LanguageExplorer.Areas.Lexicon.DictionaryConfiguration
+namespace LanguageExplorer.Areas.Lexicon.Tools
 {
 	/// <summary>
 	/// This class handles the display of configured xhtml for a particular publication in a dynamically loadable XWorksView.

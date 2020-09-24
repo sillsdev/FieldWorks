@@ -3,8 +3,7 @@
 <PartInventory>
 	<bin class="ReversalIndexEntry">
 		<part id="ReversalIndexEntry-Detail-ChangeHandler" type="detail">
-			<RecordChangeHandler assemblyPath="LanguageExplorer.dll" listName="RecordClerk-AllReversalEntries"
-				class="LanguageExplorer.Areas.Lexicon.Tools.ReversalIndexes.ReversalIndexEntryChangeHandler"/>
+			<RecordChangeHandler class="ReversalIndexEntryChangeHandler"/>
 		</part>
 		<part id="ReversalIndexEntry-Detail-ReversalForm" type="Detail">
 			<slice attr="ReversalForm" field="ReversalForm" label="Reversal Form" editor="reversalindexentryform" />

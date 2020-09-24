@@ -9,7 +9,6 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using LanguageExplorer.Filters;
 using LanguageExplorer.LIFT;
 using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
@@ -184,30 +183,6 @@ namespace LanguageExplorer.Areas.Lexicon
 		public ITool ActiveTool { get; set; }
 
 		#endregion
-
-		internal static IRecordList EntriesFactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string recordListId, StatusBar statusBar)
-		{
-			Require.That(recordListId == LanguageExplorerConstants.Entries, $"I don't know how to create a record list with an ID of '{recordListId}', as I can only create one with an id of '{LanguageExplorerConstants.Entries}'.");
-			/*
-			<clerk id="entries">
-				<recordList owner="LexDb" property="Entries" />
-				<filters />
-				<sortMethods>
-				<sortMethod label="Default" assemblyPath="Filters.dll" class="SIL.FieldWorks.Filters.PropertyRecordSorter" sortProperty="ShortName" />
-				<sortMethod label="Primary Gloss" assemblyPath="Filters.dll" class="SIL.FieldWorks.Filters.PropertyRecordSorter" sortProperty="PrimaryGloss" />
-				</sortMethods>
-			</clerk>
-			*/
-			var recordList = new RecordList(recordListId, statusBar,
-				cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), false,
-				new VectorPropertyParameterObject(cache.LanguageProject.LexDbOA, "Entries", cache.MetaDataCacheAccessor.GetFieldId2(cache.LanguageProject.LexDbOA.ClassID, "Entries", false)),
-				new Dictionary<string, PropertyRecordSorter>
-				{
-					{ AreaServices.Default, new PropertyRecordSorter(AreaServices.ShortName) },
-					{ "PrimaryGloss", new PropertyRecordSorter("PrimaryGloss") }
-				});
-			return recordList;
-		}
 
 		internal static IRecordList SemanticDomainList_LexiconAreaFactoryMethod(LcmCache cache, FlexComponentParameters flexComponentParameters, string recordListId, StatusBar statusBar)
 		{

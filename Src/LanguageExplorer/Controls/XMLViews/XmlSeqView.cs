@@ -256,10 +256,6 @@ namespace LanguageExplorer.Controls.XMLViews
 			var fEditable = XmlUtils.GetOptionalBooleanAttributeValue(m_specElement, "editable", true);
 			var toolChoice = PropertyTable.GetValue<string>(LanguageExplorerConstants.ToolChoice);
 			m_fShowFailingItems = PropertyTable.GetValue(UiWidgetServices.CreateShowFailingItemsPropertyName(toolChoice), false);
-			//m_xmlVc = new XmlVc(m_xnSpec, Table); // possibly reinstate for old approach?
-			// Note: we want to keep this logic similar to RecordDocView.GetLayoutName(), except that here
-			// we do NOT want to use the layoutSuffix, though it may be specified so that it can be
-			// used when the configure dialog handles a shared view.
 			string sLayout = null;
 			var sProp = XmlUtils.GetOptionalAttributeValue(m_specElement, "layoutProperty", null);
 			if (!string.IsNullOrEmpty(sProp))

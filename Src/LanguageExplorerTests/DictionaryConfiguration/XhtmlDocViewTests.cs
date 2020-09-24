@@ -9,8 +9,6 @@ using System.Xml.Linq;
 using LanguageExplorer;
 using LanguageExplorer.Areas;
 using LanguageExplorer.Areas.Lexicon;
-using LanguageExplorer.Areas.Lexicon.DictionaryConfiguration;
-using LanguageExplorer.Areas.Lexicon.Reversals;
 using LanguageExplorer.TestUtilities;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwUtils;
@@ -72,7 +70,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 				revIdx.WritingSystem = "en";
 				_flexComponentParameters.PropertyTable.SetProperty(LanguageExplorerConstants.ReversalIndexGuid, revIdx.Guid.ToString());
 			});
-			_recordList = ReversalServices.AllReversalEntriesFactoryMethod(Cache, _flexComponentParameters, LanguageExplorerConstants.AllReversalEntries, _statusBar);
+			_recordList = LanguageExplorerServices.AllReversalEntriesFactoryMethod(Cache, _flexComponentParameters, LanguageExplorerConstants.AllReversalEntries, _statusBar);
 			_recordList.InitializeFlexComponent(_flexComponentParameters);
 		}
 

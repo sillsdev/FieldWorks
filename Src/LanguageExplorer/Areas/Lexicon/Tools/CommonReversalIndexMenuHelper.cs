@@ -6,12 +6,11 @@ using System;
 using System.Diagnostics;
 using System.Linq;
 using System.Windows.Forms;
-using LanguageExplorer.Areas.Lexicon.DictionaryConfiguration;
 using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 
-namespace LanguageExplorer.Areas.Lexicon.Reversals
+namespace LanguageExplorer.Areas.Lexicon.Tools
 {
 	/// <summary />
 	internal sealed class CommonReversalIndexMenuHelper : IDisposable

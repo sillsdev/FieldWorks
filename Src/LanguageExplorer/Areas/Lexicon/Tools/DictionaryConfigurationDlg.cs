@@ -16,7 +16,7 @@ using SIL.LCModel;
 using SIL.LCModel.Infrastructure;
 using SIL.Windows.Forms;
 
-namespace LanguageExplorer.Areas.Lexicon.DictionaryConfiguration
+namespace LanguageExplorer.Areas.Lexicon.Tools
 {
 	public partial class DictionaryConfigurationDlg : Form, IDictionaryConfigurationView
 	{

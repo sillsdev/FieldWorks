@@ -6,7 +6,7 @@ using System;
 using System.Windows.Forms;
 using Gecko;
 
-namespace LanguageExplorer.Areas.Lexicon.DictionaryConfiguration
+namespace LanguageExplorer.Areas.Lexicon.Tools
 {
 	public partial class XmlDiagnosticsDlg : Form
 	{

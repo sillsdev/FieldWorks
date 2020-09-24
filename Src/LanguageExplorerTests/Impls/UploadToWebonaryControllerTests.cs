@@ -16,7 +16,6 @@ using Ionic.Zip;
 using LanguageExplorer;
 using LanguageExplorer.Areas;
 using LanguageExplorer.Areas.Lexicon;
-using LanguageExplorer.Areas.Lexicon.Reversals;
 using LanguageExplorer.DictionaryConfiguration;
 using LanguageExplorer.Impls;
 using LanguageExplorer.TestUtilities;
@@ -42,7 +41,7 @@ namespace LanguageExplorerTests.Impls
 		private StubContentControlProvider _stubContentControlProvider;
 		private StatusBar _statusBar;
 
-		#region Environment
+	#region Environment
 		[TestFixtureSetUp]
 		public override void FixtureSetup()
 		{
@@ -57,9 +56,9 @@ namespace LanguageExplorerTests.Impls
 			_stubContentControlProvider.InitializeFlexComponent(_flexComponentParameters);
 			_statusBar = new StatusBar();
 			var recordListRepositoryForTools = propertyTable.GetValue<IRecordListRepositoryForTools>(LanguageExplorerConstants.RecordListRepository);
-			_entriesRecordList = recordListRepositoryForTools.GetRecordList(LanguageExplorerConstants.Entries, _statusBar, LexiconArea.EntriesFactoryMethod);
+			_entriesRecordList = recordListRepositoryForTools.GetRecordList(LanguageExplorerConstants.Entries, _statusBar, RecordListActivator.EntriesFactoryMethod);
 			recordListRepositoryForTools.ActiveRecordList = _entriesRecordList;
-			_allReversalEntriesRecordList = recordListRepositoryForTools.GetRecordList(LanguageExplorerConstants.AllReversalEntries, _statusBar, ReversalServices.AllReversalEntriesFactoryMethod);
+			_allReversalEntriesRecordList = recordListRepositoryForTools.GetRecordList(LanguageExplorerConstants.AllReversalEntries, _statusBar, LanguageExplorerServices.AllReversalEntriesFactoryMethod);
 			recordListRepositoryForTools.ActiveRecordList = _allReversalEntriesRecordList;
 			_flexComponentParameters.PropertyTable.SetProperty($"{AreaServices.ToolForAreaNamed_}_{AreaServices.LexiconAreaMachineName}", AreaServices.LexiconDictionaryMachineName);
 			Cache.ProjectId.Path = DictionaryConfigurationServices.TestDataPath;
@@ -95,7 +94,7 @@ namespace LanguageExplorerTests.Impls
 			}
 		}
 
-		#region disposal
+	#region disposal
 		private void Dispose(bool disposing)
 		{
 			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
@@ -135,8 +134,8 @@ namespace LanguageExplorerTests.Impls
 			// from executing a second time.
 			GC.SuppressFinalize(this);
 		}
-		#endregion disposal
-		#endregion Environment
+	#endregion disposal
+	#endregion Environment
 
 		[Test]
 		public void UploadToWebonaryUsesViewConfigAndPub()
@@ -267,7 +266,7 @@ namespace LanguageExplorerTests.Impls
 			}
 		}
 
-		#region Test connection to local Webonary instance
+	#region Test connection to local Webonary instance
 		[Test]
 		[Category("ByHand")]
 		[Ignore("Used for manual testing against a real Webonary instance")]
@@ -368,7 +367,7 @@ namespace LanguageExplorerTests.Impls
 			var responseText = Encoding.ASCII.GetString(response);
 			return responseText;
 		}
-		#endregion
+	#endregion
 
 		[Test]
 		public void UploadToWebonaryThrowsOnNullInput()
@@ -701,7 +700,7 @@ namespace LanguageExplorerTests.Impls
 			}
 		}
 
-		#region Helpers
+	#region Helpers
 		/// <summary/>
 		private MockWebonaryDlg SetUpView()
 		{
@@ -874,7 +873,7 @@ namespace LanguageExplorerTests.Impls
 				return UploadURI ?? "http://192.168.33.10/test/wp-json/webonary/import";
 			}
 		}
-		#endregion
+	#endregion
 
 		/// <summary>
 		/// This class is for use in unit tests that need to use the ActivateClerk functionality. For instance to imitate switching

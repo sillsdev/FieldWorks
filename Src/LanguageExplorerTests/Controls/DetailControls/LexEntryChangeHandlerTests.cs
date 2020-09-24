@@ -4,11 +4,11 @@
 
 using System.Collections.Generic;
 using System.Linq;
-using LanguageExplorer.Areas.Lexicon;
+using LanguageExplorer.Controls.DetailControls;
 using NUnit.Framework;
 using SIL.LCModel;
 
-namespace LanguageExplorerTests.Areas.Lexicon
+namespace LanguageExplorerTests.Controls.DetailControls
 {
 	[TestFixture]
 	public sealed class LexEntryChangeHandlerTests : MemoryOnlyBackendProviderTestBase
@@ -40,7 +40,7 @@ namespace LanguageExplorerTests.Areas.Lexicon
 			Assert.AreEqual(0, referees.Count, "The remaining componentless LexEntryRef should not have a Component");
 			complexEntryTypes = remainingRefs.ElementAt(1).ComplexEntryTypesRS;
 			Assert.AreEqual(1, complexEntryTypes.Count, "The remaining componentless ref should still point to a Complex Entry Type");
-			Assert.AreEqual(t, complexEntryTypes.First(), "The remaining componentles ref should still point to the same Complex Entry Type");
+			Assert.AreEqual(t, complexEntryTypes.First(), "The remaining componentless ref should still point to the same Complex Entry Type");
 		}
 
 		[Test]
