@@ -373,7 +373,7 @@
     <Compile Include="DictionaryConfiguration\ConfiguredLcmGeneratorTests.cs" />
     <Compile Include="DictionaryConfiguration\CssGeneratorTests.cs" />
     <Compile Include="Areas\Lists\CustomListDlgTests.cs" />
-    <Compile Include="Areas\Lists\DeleteCustomListTests.cs" />
+    <Compile Include="Areas\Lists\Tools\DeleteCustomListTests.cs" />
     <Compile Include="DictionaryConfiguration\DictionaryConfigManagerTests.cs" />
     <Compile Include="DictionaryConfiguration\DictionaryConfigurationControllerTests.cs" />
     <Compile Include="DictionaryConfiguration\DictionaryConfigurationImportControllerTests.cs" />

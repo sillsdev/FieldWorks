@@ -405,12 +405,12 @@
     <Compile Include="Areas\Lists\ConfigureListDlg.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Areas\Lists\Tools\DialectsListEdit\DialectsListEditTool.cs" />
-    <Compile Include="Areas\Lists\Tools\ExtNoteTypeEdit\ExtNoteTypeEditTool.cs" />
-    <Compile Include="Areas\Lists\Tools\LanguagesListEdit\LanguagesListEditTool.cs" />
+    <Compile Include="Areas\Lists\Tools\DialectsListEditTool.cs" />
+    <Compile Include="Areas\Lists\Tools\ExtNoteTypeEditTool.cs" />
+    <Compile Include="Areas\Lists\Tools\LanguagesListEditTool.cs" />
     <Compile Include="Controls\MainEntryFromSubEntryTargetAdjuster.cs" />
     <Compile Include="Controls\NullTargetAdjuster.cs" />
-    <Compile Include="Areas\Lists\Tools\CustomListEdit\CustomListEditTool.cs" />
+    <Compile Include="Areas\Lists\Tools\CustomListEditTool.cs" />
     <Compile Include="Areas\RightClickContextMenuManager.cs" />
     <Compile Include="Controls\DetailControls\Slices\RuleInsertType.cs" />
     <Compile Include="Controls\DetailControls\IInterlinConfigurable.cs" />
@@ -1766,7 +1766,7 @@
     <Compile Include="Areas\Lists\CustomListDlg.Designer.cs">
       <DependentUpon>CustomListDlg.cs</DependentUpon>
     </Compile>
-    <Compile Include="Areas\Lists\DeleteCustomList.cs" />
+    <Compile Include="Areas\Lists\Tools\DeleteCustomList.cs" />
     <Compile Include="DictionaryConfiguration\DictionaryConfigManager.cs" />
     <Compile Include="DictionaryConfiguration\DictionaryConfigMgrDlg.cs">
       <SubType>Form</SubType>
@@ -3253,33 +3253,33 @@
     <Compile Include="Areas\Lexicon\Tools\LexiconEditTool.cs" />
     <Compile Include="Areas\Lexicon\Tools\ReversalEditCompleteTool.cs" />
     <Compile Include="Areas\Lists\ListsArea.cs" />
-    <Compile Include="Areas\Lists\Tools\AnthroEdit\AnthroEditTool.cs" />
-    <Compile Include="Areas\Lists\Tools\ChartmarkEdit\ChartmarkEditTool.cs" />
-    <Compile Include="Areas\Lists\Tools\ChartTempEdit\CharttempEditTool.cs" />
-    <Compile Include="Areas\Lists\Tools\ComplexEntryTypeEdit\ComplexEntryTypeEditTool.cs" />
-    <Compile Include="Areas\Lists\Tools\ConfidenceEdit\ConfidenceEditTool.cs" />
-    <Compile Include="Areas\Lists\Tools\DomainTypeEdit\DomainTypeEditTool.cs" />
-    <Compile Include="Areas\Lists\Tools\EducationEdit\EducationEditTool.cs" />
-    <Compile Include="Areas\Lists\Tools\FeatureTypesAdvancedEdit\FeatureTypesAdvancedEditTool.cs" />
-    <Compile Include="Areas\Lists\Tools\GenresEdit\GenresEditTool.cs" />
-    <Compile Include="Areas\Lists\Tools\LexRefEdit\LexRefEditTool.cs" />
-    <Compile Include="Areas\Lists\Tools\LocationsEdit\LocationsEditTool.cs" />
-    <Compile Include="Areas\Lists\Tools\MorphTypeEdit\MorphTypeEditTool.cs" />
-    <Compile Include="Areas\Lists\Tools\PeopleEdit\PeopleEditTool.cs" />
-    <Compile Include="Areas\Lists\Tools\PositionsEdit\PositionsEditTool.cs" />
-    <Compile Include="Areas\Lists\Tools\PublicationsEdit\PublicationsEditTool.cs" />
-    <Compile Include="Areas\Lists\Tools\RecTypeEdit\RecTypeEditTool.cs" />
-    <Compile Include="Areas\Lists\Tools\RestrictionsEdit\RestrictionsEditTool.cs" />
-    <Compile Include="Areas\Lists\Tools\ReversalIndexPOS\ReversalIndexPosTool.cs" />
-    <Compile Include="Areas\Lists\Tools\RoleEdit\RoleEditTool.cs" />
-    <Compile Include="Areas\Lists\Tools\SemanticDomainEdit\SemanticDomainEditTool.cs" />
-    <Compile Include="Areas\Lists\Tools\SenseTypeEdit\SenseTypeEditTool.cs" />
-    <Compile Include="Areas\Lists\Tools\StatusEdit\StatusEditTool.cs" />
-    <Compile Include="Areas\Lists\Tools\TextMarkupTagsEdit\TextMarkupTagsEditTool.cs" />
-    <Compile Include="Areas\Lists\Tools\TimeOfDayEdit\TimeOfDayEditTool.cs" />
-    <Compile Include="Areas\Lists\Tools\TranslationTypeEdit\TranslationTypeEditTool.cs" />
-    <Compile Include="Areas\Lists\Tools\UsageTypeEdit\UsageTypeEditTool.cs" />
-    <Compile Include="Areas\Lists\Tools\VariantEntryTypeEdit\VariantEntryTypeEditTool.cs" />
+    <Compile Include="Areas\Lists\Tools\AnthroEditTool.cs" />
+    <Compile Include="Areas\Lists\Tools\ChartmarkEditTool.cs" />
+    <Compile Include="Areas\Lists\Tools\CharttempEditTool.cs" />
+    <Compile Include="Areas\Lists\Tools\ComplexEntryTypeEditTool.cs" />
+    <Compile Include="Areas\Lists\Tools\ConfidenceEditTool.cs" />
+    <Compile Include="Areas\Lists\Tools\DomainTypeEditTool.cs" />
+    <Compile Include="Areas\Lists\Tools\EducationEditTool.cs" />
+    <Compile Include="Areas\Lists\Tools\FeatureTypesAdvancedEditTool.cs" />
+    <Compile Include="Areas\Lists\Tools\GenresEditTool.cs" />
+    <Compile Include="Areas\Lists\Tools\LexRefEditTool.cs" />
+    <Compile Include="Areas\Lists\Tools\LocationsEditTool.cs" />
+    <Compile Include="Areas\Lists\Tools\MorphTypeEditTool.cs" />
+    <Compile Include="Areas\Lists\Tools\PeopleEditTool.cs" />
+    <Compile Include="Areas\Lists\Tools\PositionsEditTool.cs" />
+    <Compile Include="Areas\Lists\Tools\PublicationsEditTool.cs" />
+    <Compile Include="Areas\Lists\Tools\RecTypeEditTool.cs" />
+    <Compile Include="Areas\Lists\Tools\RestrictionsEditTool.cs" />
+    <Compile Include="Areas\Lists\Tools\ReversalIndexPosTool.cs" />
+    <Compile Include="Areas\Lists\Tools\RoleEditTool.cs" />
+    <Compile Include="Areas\Lists\Tools\SemanticDomainEditTool.cs" />
+    <Compile Include="Areas\Lists\Tools\SenseTypeEditTool.cs" />
+    <Compile Include="Areas\Lists\Tools\StatusEditTool.cs" />
+    <Compile Include="Areas\Lists\Tools\TextMarkupTagsEditTool.cs" />
+    <Compile Include="Areas\Lists\Tools\TimeOfDayEditTool.cs" />
+    <Compile Include="Areas\Lists\Tools\TranslationTypeEditTool.cs" />
+    <Compile Include="Areas\Lists\Tools\UsageTypeEditTool.cs" />
+    <Compile Include="Areas\Lists\Tools\VariantEntryTypeEditTool.cs" />
     <Compile Include="Areas\Notebook\NotebookArea.cs" />
     <Compile Include="Areas\Notebook\Tools\NotebookBrowse\NotebookBrowseTool.cs" />
     <Compile Include="Areas\Notebook\Tools\NotebookDocument\NotebookDocumentTool.cs" />
