@@ -1259,6 +1259,11 @@ namespace SIL.FieldWorks.Common.Widgets
 			OnKeyDown(e);
 		}
 
+		internal void HandleKeyPress(KeyPressEventArgs e)
+		{
+			OnKeyPress(e);
+		}
+
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Scales a control's location, size, padding and margin.
@@ -2856,6 +2861,14 @@ namespace SIL.FieldWorks.Common.Widgets
 			{
 				return;
 			}
+
+			if (Parent is FwTextBox parent)
+			{
+				parent.HandleKeyPress(e);
+				if (e.Handled)
+					return;
+			}
+
 			base.OnKeyPress(e);
 		}
 		#endregion
