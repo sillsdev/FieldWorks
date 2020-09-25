@@ -1932,7 +1932,7 @@
     <Compile Include="Impls\MacroMenuHandler.cs" />
     <Compile Include="Areas\TextsAndWords\MatchingItemsRecordList.cs" />
     <Compile Include="Navigation.cs" />
-    <Compile Include="Areas\Notebook\NotebookExportDialog.cs">
+    <Compile Include="Areas\Notebook\Tools\NotebookExportDialog.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Areas\PossibilityRecordList.cs" />
@@ -3281,9 +3281,9 @@
     <Compile Include="Areas\Lists\Tools\UsageTypeEditTool.cs" />
     <Compile Include="Areas\Lists\Tools\VariantEntryTypeEditTool.cs" />
     <Compile Include="Areas\Notebook\NotebookArea.cs" />
-    <Compile Include="Areas\Notebook\Tools\NotebookBrowse\NotebookBrowseTool.cs" />
-    <Compile Include="Areas\Notebook\Tools\NotebookDocument\NotebookDocumentTool.cs" />
-    <Compile Include="Areas\Notebook\Tools\NotebookEdit\NotebookEditTool.cs" />
+    <Compile Include="Areas\Notebook\Tools\NotebookBrowseTool.cs" />
+    <Compile Include="Areas\Notebook\Tools\NotebookDocumentTool.cs" />
+    <Compile Include="Areas\Notebook\Tools\NotebookEditTool.cs" />
     <Compile Include="Areas\TextsAndWords\TextAndWordsArea.cs" />
     <Compile Include="Areas\TextsAndWords\Tools\Analyses\AnalysesTool.cs" />
     <Compile Include="Areas\TextsAndWords\Tools\BulkEditWordforms\BulkEditWordformsTool.cs" />

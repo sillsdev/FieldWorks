@@ -22,7 +22,7 @@ using SIL.WritingSystems;
 using SIL.Xml;
 using WaitCursor = SIL.FieldWorks.Common.FwUtils.WaitCursor;
 
-namespace LanguageExplorer.Areas.Notebook
+namespace LanguageExplorer.Areas.Notebook.Tools
 {
 	/// <summary>
 	/// Overrides various aspects of ExportDialog to support exporting from the Data Notebook

@@ -13,7 +13,7 @@ using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Resources;
 using SIL.LCModel.Application;
 
-namespace LanguageExplorer.Areas.Notebook.Tools.NotebookBrowse
+namespace LanguageExplorer.Areas.Notebook.Tools
 {
 	/// <summary>
 	/// ITool implementation for the "notebookBrowse" tool in the "notebook" area.

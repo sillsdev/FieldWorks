@@ -23,7 +23,7 @@ using SIL.LCModel;
 using SIL.LCModel.Application;
 using SIL.LCModel.Utils;
 
-namespace LanguageExplorer.Areas.Notebook.Tools.NotebookEdit
+namespace LanguageExplorer.Areas.Notebook.Tools
 {
 	/// <summary>
 	/// ITool implementation for the "notebookEdit" tool in the "notebook" area.

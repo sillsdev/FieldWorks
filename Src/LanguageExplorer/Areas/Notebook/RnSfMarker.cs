@@ -5,7 +5,7 @@
 namespace LanguageExplorer.Areas.Notebook
 {
 	/// <summary>
-	/// This struct stores the data associated with a single Standard Format Marker.
+	/// This class stores the data associated with a single Standard Format Marker.
 	/// </summary>
 	internal sealed class RnSfMarker
 	{

@@ -16,7 +16,7 @@ using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Resources;
 using SIL.LCModel.Application;
 
-namespace LanguageExplorer.Areas.Notebook.Tools.NotebookDocument
+namespace LanguageExplorer.Areas.Notebook.Tools
 {
 	/// <summary>
 	/// ITool implementation for the "notebookDocument" tool in the "notebook" area.
