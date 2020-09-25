@@ -272,6 +272,7 @@ namespace SIL.FieldWorks.Common.Widgets
 			{
 				CheckDisposed();
 
+				m_innerFwTextBox.Font = value;
 				base.Font = value;
 			}
 		}
