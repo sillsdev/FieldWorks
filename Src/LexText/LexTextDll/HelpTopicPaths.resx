@@ -2955,6 +2955,9 @@
   <data name="khtpField-variantEntryTypeEdit-LexEntryInflType-GlossAppend" xml:space="preserve">
     <value>User_Interface/Field_Descriptions/Lists/Variant_Types_flds/Append_to_Gloss.htm</value>
   </data>
+  <data name="khtpField-variantEntryTypeEdit-LexEntryInflType-GlossPrepend" xml:space="preserve">
+    <value>User_Interface/Field_Descriptions/Lists/Variant_Types_flds/Prepend_to_Gloss.htm</value>
+  </data>
   <data name="khtpField-variantEntryTypeEdit-LexEntryInflType-InflFeats" xml:space="preserve">
     <value>User_Interface/Field_Descriptions/Lists/Variant_Types_flds/Inflection_Features.htm</value>
   </data>
