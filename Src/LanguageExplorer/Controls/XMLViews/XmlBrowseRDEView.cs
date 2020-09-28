@@ -99,7 +99,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// Gets the RDE vc.
 		/// </summary>
-		protected XmlRDEBrowseViewVc RDEVc => (XmlRDEBrowseViewVc)m_xbvvc;
+		protected XmlRDEBrowseViewVc RDEVc => (XmlRDEBrowseViewVc)Vc;
 
 		/// <summary>
 		/// True if we are running the read-only version of the view that is primarily used for
@@ -229,7 +229,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		private bool CanGotoNextRow(out ITsString[] rgtss)
 		{
 			var fCanGotoNextRow = false;
-			var columns = m_xbvvc.ColumnSpecs;
+			var columns = Vc.ColumnSpecs;
 			rgtss = GetColumnStringsFromNewRow();
 			for (var i = 1; i <= columns.Count; ++i)
 			{
@@ -262,7 +262,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		private ITsString[] GetColumnStringsFromNewRow()
 		{
 			ISilDataAccess sda = m_bv.SpecialCache;
-			var columns = m_xbvvc.ColumnSpecs;
+			var columns = Vc.ColumnSpecs;
 			// Conceptual model class.
 			var rgtss = new ITsString[columns.Count];
 			for (var i = 1; i <= columns.Count; ++i)
@@ -281,7 +281,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		private void ClearColumnStringsFromNewRow()
 		{
 			var sda = m_bv.SpecialCache;
-			var columns = m_xbvvc.ColumnSpecs;
+			var columns = Vc.ColumnSpecs;
 			// Reset the new item row so that the cells are all empty.
 			for (var i = 1; i <= columns.Count; ++i)
 			{
@@ -330,7 +330,7 @@ namespace LanguageExplorer.Controls.XMLViews
 					return false;
 				}
 			}
-			var columns = m_xbvvc.ColumnSpecs;
+			var columns = Vc.ColumnSpecs;
 			if (columns == null || columns.Count == 0)
 			{
 				return false;       // Something is broken!
@@ -365,7 +365,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			if ((ModifierKeys & Keys.Shift) != Keys.Shift)
 			{
 				bool cellsAllowMove;
-				if (m_xbvvc.ShowColumnsRTL)
+				if (Vc.ShowColumnsRTL)
 				{
 					// BackTab: move Left-to-Right, Bottom-to-Top
 					// Tab: move Right-to-Left, Top-to-Bottom
@@ -400,7 +400,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		private void SetSelectionToFirstColumnInNewRow()
 		{
-			var columns = m_xbvvc.ColumnSpecs;
+			var columns = Vc.ColumnSpecs;
 			const int flidNew = XMLViewsDataCache.ktagEditColumnBase + 1;
 			var wsNew = WritingSystemServices.GetWritingSystem(m_cache, columns[0].ConvertElement(), null, m_cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle).Handle;
 			try
@@ -409,7 +409,7 @@ namespace LanguageExplorer.Controls.XMLViews
 				rgvsli[0].hvo = XmlRDEBrowseViewVc.khvoNewItem;
 				rgvsli[0].tag = -1;
 				var vwsel = RootBox.MakeTextSelection(0, rgvsli.Length, rgvsli, flidNew, 0, 0, 0, wsNew, false, -1, null, false);
-				if (m_xbvvc.ShowColumnsRTL)
+				if (Vc.ShowColumnsRTL)
 				{
 					GetCurrentTableCellInfo(vwsel, out _, out _, out _, out _, out _, out _, out var cCellBoxes, out var iCellLevel);
 					RootBox.MakeSelInBox(vwsel, true, iCellLevel, cCellBoxes - 1, true, false, true);
@@ -578,7 +578,7 @@ namespace LanguageExplorer.Controls.XMLViews
 
 		private int CreateObjectFromEntryRow(ITsString[] rgtss)
 		{
-			var columns = m_xbvvc.ColumnSpecs;
+			var columns = Vc.ColumnSpecs;
 			// Enhance JohnT: here we assume the class that creates instances is the class created plus "Factory".
 			// We may want to make it a separate attribute of the configuration XML at some point.
 			var factoryClassName = RDEVc.EditRowClass + "Factory";
@@ -796,7 +796,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				return;
 			}
-			var columns = m_xbvvc.ColumnSpecs;
+			var columns = Vc.ColumnSpecs;
 			if (columns == null || columns.Count == 0)
 			{
 				return; // Something is broken!

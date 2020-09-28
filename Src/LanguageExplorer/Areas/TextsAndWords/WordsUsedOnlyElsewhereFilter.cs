@@ -7,10 +7,10 @@ using SIL.Code;
 using SIL.LCModel;
 using SIL.LCModel.Core.KernelInterfaces;
 
-namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
+namespace LanguageExplorer.Areas.TextsAndWords
 {
 	/// <summary />
-	public class WordsUsedOnlyElsewhereFilter : RecordFilter
+	internal sealed class WordsUsedOnlyElsewhereFilter : RecordFilter
 	{
 		private LcmCache m_cache;
 		private ISilDataAccess m_sda;

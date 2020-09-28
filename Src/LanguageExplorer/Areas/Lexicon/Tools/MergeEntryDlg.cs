@@ -162,7 +162,6 @@ namespace LanguageExplorer.Areas.Lexicon.Tools
 		{
 			var searchEngine = (MergeEntrySearchEngine)SearchEngine.Get(PropertyTable, "MergeEntrySearchEngine", () => new MergeEntrySearchEngine(m_cache));
 			searchEngine.CurrentEntryHvo = m_startingEntry.Hvo;
-
 			m_matchingObjectsBrowser.Initialize(m_cache, FwUtils.StyleSheetFromPropertyTable(PropertyTable), m_parametersElement, searchEngine);
 
 			// start building index

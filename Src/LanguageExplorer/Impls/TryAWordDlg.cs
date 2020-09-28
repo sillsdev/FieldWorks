@@ -3,20 +3,29 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
+using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Windows.Forms;
+using System.Xml;
 using System.Xml.Linq;
+using System.Xml.XPath;
+using System.Xml.Xsl;
+using Gecko;
 using LanguageExplorer.Controls;
+using LanguageExplorer.LcmUi;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FwCoreDlgs;
 using SIL.FieldWorks.FwCoreDlgs.Controls;
+using SIL.FieldWorks.WordWorks.Parser.XAmple;
 using SIL.LCModel;
 
-namespace LanguageExplorer.Areas.TextsAndWords
+namespace LanguageExplorer.Impls
 {
 	/// <summary />
 	internal sealed class TryAWordDlg : Form, IFlexComponent
@@ -660,6 +669,433 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			if (Size != szOld)
 			{
 				Size = szOld;
+			}
+		}
+
+		/// <summary>
+		/// Interface for parser trace processing
+		/// </summary>
+		private interface IParserTrace
+		{
+			/// <summary>
+			/// Create an HTML page of the results
+			/// </summary>
+			string CreateResultPage(IPropertyTable propertyTable, XDocument result, bool isTrace);
+		}
+
+		private class ParserTraceUITransform
+		{
+			private readonly XslCompiledTransform m_transform;
+
+			internal ParserTraceUITransform(string xslName)
+			{
+				m_transform = M3ToXAmpleTransformer.CreateTransform(xslName, "PresentationTransforms");
+			}
+
+			internal string Transform(IPropertyTable propertyTable, XDocument doc, string baseName)
+			{
+				return Transform(propertyTable, doc, baseName, new XsltArgumentList());
+			}
+
+			internal string Transform(IPropertyTable propertyTable, XDocument doc, string baseName, XsltArgumentList args)
+			{
+				var cache = propertyTable.GetValue<LcmCache>(FwUtilsConstants.cache);
+				SetWritingSystemBasedArguments(cache, propertyTable, args);
+				args.AddParam("prmIconPath", "", IconPath);
+				var filePath = Path.Combine(Path.GetTempPath(), cache.ProjectId.Name + baseName + ".htm");
+				using (var writer = new StreamWriter(filePath))
+				{
+					m_transform.Transform(doc.CreateNavigator(), args, writer);
+				}
+				return filePath;
+			}
+
+			private static void SetWritingSystemBasedArguments(LcmCache cache, IPropertyTable propertyTable, XsltArgumentList argumentList)
+			{
+				var wsf = cache.WritingSystemFactory;
+				var wsContainer = cache.ServiceLocator.WritingSystems;
+				using (var myFont = FontHeightAdjuster.GetFontForNormalStyle(wsContainer.DefaultAnalysisWritingSystem.Handle, wsf, propertyTable))
+				{
+					argumentList.AddParam("prmAnalysisFont", "", myFont.FontFamily.Name);
+					argumentList.AddParam("prmAnalysisFontSize", "", myFont.Size + "pt");
+				}
+				var defVernWs = wsContainer.DefaultVernacularWritingSystem;
+				using (var myFont = FontHeightAdjuster.GetFontForNormalStyle(defVernWs.Handle, wsf, propertyTable))
+				{
+					argumentList.AddParam("prmVernacularFont", "", myFont.FontFamily.Name);
+					argumentList.AddParam("prmVernacularFontSize", "", myFont.Size + "pt");
+				}
+				argumentList.AddParam("prmVernacularRTL", "", defVernWs.RightToLeftScript ? "Y" : "N");
+			}
+
+			private static string TransformPath => FwDirectoryFinder.GetCodeSubDirectory(@"Language Explorer/Configuration/Words/Analyses/TraceParse");
+
+			private static string IconPath
+			{
+				get
+				{
+					var sb = new StringBuilder();
+					sb.Append("file:///");
+					sb.Append(TransformPath.Replace(@"\", "/"));
+					sb.Append("/");
+					return sb.ToString();
+				}
+			}
+		}
+
+		/// <summary />
+		private sealed class XAmpleTrace : IParserTrace
+		{
+			private static ParserTraceUITransform s_traceTransform;
+			private static ParserTraceUITransform TraceTransform => s_traceTransform ?? (s_traceTransform = new ParserTraceUITransform("FormatXAmpleTrace"));
+			private static ParserTraceUITransform s_parseTransform;
+			private static ParserTraceUITransform ParseTransform => s_parseTransform ?? (s_parseTransform = new ParserTraceUITransform("FormatXAmpleParse"));
+
+			/// <summary>
+			/// Create an HTML page of the results
+			/// </summary>
+			string IParserTrace.CreateResultPage(IPropertyTable propertyTable, XDocument result, bool isTrace)
+			{
+				ParserTraceUITransform transform;
+				string baseName;
+				if (isTrace)
+				{
+					transform = TraceTransform;
+					baseName = "XAmpleTrace";
+				}
+				else
+				{
+					transform = ParseTransform;
+					baseName = "XAmpleParse";
+				}
+				return transform.Transform(propertyTable, result, baseName);
+			}
+		}
+
+		private sealed class HCTrace : IParserTrace
+		{
+			private static ParserTraceUITransform s_traceTransform;
+			private static ParserTraceUITransform TraceTransform => s_traceTransform ?? (s_traceTransform = new ParserTraceUITransform("FormatHCTrace"));
+
+			string IParserTrace.CreateResultPage(IPropertyTable propertyTable, XDocument result, bool isTrace)
+			{
+				var args = new XsltArgumentList();
+				args.AddParam("prmHCTraceLoadErrorFile", "", Path.Combine(Path.GetTempPath(), propertyTable.GetValue<LcmCache>(FwUtilsConstants.cache).ProjectId.Name + "HCLoadErrors.xml"));
+				args.AddParam("prmShowTrace", "", isTrace.ToString().ToLowerInvariant());
+				return TraceTransform.Transform(propertyTable, result, isTrace ? "HCTrace" : "HCParse", args);
+			}
+		}
+
+		private sealed class XAmpleWordGrammarDebugger
+		{
+			private static ParserTraceUITransform s_pageTransform;
+			private static ParserTraceUITransform PageTransform => s_pageTransform ?? (s_pageTransform = new ParserTraceUITransform("FormatXAmpleWordGrammarDebuggerResult"));
+			/// <summary>
+			/// Word Grammar step stack
+			/// </summary>
+			private readonly Stack<Tuple<XDocument, string>> m_xmlHtmlStack;
+			/// <summary>
+			/// the latest word grammar debugging step xml document
+			/// </summary>
+			private XDocument m_wordGrammarDebuggerXml;
+			private IPropertyTable m_propertyTable;
+			private readonly XslCompiledTransform m_intermediateTransform;
+			private readonly LcmCache m_cache;
+			private readonly XDocument m_parseResult;
+
+			internal XAmpleWordGrammarDebugger(IPropertyTable propertyTable, XDocument parseResult)
+			{
+				m_propertyTable = propertyTable;
+				m_parseResult = parseResult;
+				m_cache = m_propertyTable.GetValue<LcmCache>(FwUtilsConstants.cache);
+				m_xmlHtmlStack = new Stack<Tuple<XDocument, string>>();
+				m_intermediateTransform = new XslCompiledTransform();
+				m_intermediateTransform.Load(Path.Combine(Path.GetTempPath(), m_cache.ProjectId.Name + "XAmpleWordGrammarDebugger.xsl"), new XsltSettings(true, false), new XmlUrlResolver());
+			}
+
+			/// <summary>
+			/// Initialize what is needed to perform the word grammar debugging and
+			/// produce an html page showing the results
+			/// </summary>
+			/// <param name="nodeId">Id of the node to use</param>
+			/// <param name="form">the wordform being tried</param>
+			/// <param name="lastUrl"></param>
+			/// <returns>temporary html file showing the results of the first step</returns>
+			internal string SetUpWordGrammarDebuggerPage(string nodeId, string form, string lastUrl)
+			{
+				m_xmlHtmlStack.Push(Tuple.Create((XDocument)null, lastUrl));
+				var doc = new XDocument();
+				using (var writer = doc.CreateWriter())
+				{
+					CreateAnalysisXml(writer, nodeId, form);
+				}
+				return CreateWordDebuggerPage(doc);
+			}
+
+			/// <summary>
+			/// Perform another step in the word grammar debugging process and
+			/// produce an html page showing the results
+			/// </summary>
+			/// <param name="nodeId">Id of the selected node to use</param>
+			/// <param name="form"></param>
+			/// <param name="lastUrl"></param>
+			/// <returns>temporary html file showing the results of the next step</returns>
+			internal string PerformAnotherWordGrammarDebuggerStepPage(string nodeId, string form, string lastUrl)
+			{
+				m_xmlHtmlStack.Push(Tuple.Create(m_wordGrammarDebuggerXml, lastUrl));
+				var doc = new XDocument();
+				using (var writer = doc.CreateWriter())
+				{
+					CreateSelectedWordGrammarXml(writer, nodeId, form);
+				}
+				return CreateWordDebuggerPage(doc);
+			}
+
+			internal string PopWordGrammarStack()
+			{
+				if (m_xmlHtmlStack.Count <= 0)
+				{
+					return "unknown";
+				}
+				var wgsp = m_xmlHtmlStack.Pop();
+				m_wordGrammarDebuggerXml = wgsp.Item1;
+				return wgsp.Item2;
+			}
+
+			private void CreateAnalysisXml(XmlWriter writer, string nodeId, string form)
+			{
+				writer.WriteStartElement("word");
+				writer.WriteElementString("form", form);
+				writer.WriteStartElement("seq");
+				WriteMorphNodes(writer, nodeId);
+				writer.WriteEndElement();
+				writer.WriteEndElement();
+			}
+
+			private void CreateSelectedWordGrammarXml(XmlWriter writer, string nodeId, string form)
+			{
+				writer.WriteStartElement("word");
+				writer.WriteElementString("form", form);
+				// Find the sNode'th seq node
+				Debug.Assert(m_wordGrammarDebuggerXml.Root != null);
+				var selectedSeqNode = m_wordGrammarDebuggerXml.Root.Elements("seq").ElementAt(int.Parse(nodeId, CultureInfo.InvariantCulture) - 1);
+				// create the "result so far node"
+				writer.WriteStartElement("resultSoFar");
+				foreach (var child in selectedSeqNode.Elements())
+				{
+					child.WriteTo(writer);
+				}
+				writer.WriteEndElement();
+				// create the seq node
+				selectedSeqNode.WriteTo(writer);
+				writer.WriteEndElement();
+			}
+
+			private string CreateWordDebuggerPage(XDocument xmlDoc)
+			{
+				// apply word grammar step transform file
+				var output = new XDocument();
+				using (var writer = output.CreateWriter())
+				{
+					m_intermediateTransform.Transform(xmlDoc.CreateNavigator(), writer);
+				}
+				m_wordGrammarDebuggerXml = output;
+				// format the result
+				return PageTransform.Transform(m_propertyTable, output, "WordGrammarDebugger" + m_xmlHtmlStack.Count);
+			}
+
+			private void WriteMorphNodes(XmlWriter writer, string nodeId)
+			{
+				var failureElem = m_parseResult.Descendants("failure").FirstOrDefault(e => ((string)e.Attribute("id")) == nodeId);
+				if (failureElem == null)
+				{
+					return;
+				}
+				foreach (var parseNodeElem in failureElem.Ancestors("parseNode").Where(e => e.Element("morph") != null).Reverse())
+				{
+					var morphElem = parseNodeElem.Element("morph");
+					Debug.Assert(morphElem != null);
+					morphElem.WriteTo(writer);
+				}
+			}
+		}
+
+		private sealed class WebPageInteractor
+		{
+			private readonly HtmlControl m_htmlControl;
+			private readonly IPublisher m_publisher;
+			private readonly LcmCache m_cache;
+			private readonly FwTextBox m_tbWordForm;
+
+			internal WebPageInteractor(HtmlControl htmlControl, IPublisher publisher, LcmCache cache, FwTextBox tbWordForm)
+			{
+				m_htmlControl = htmlControl;
+				m_publisher = publisher;
+				m_cache = cache;
+				m_tbWordForm = tbWordForm;
+				m_htmlControl.Browser.DomClick += HandleDomClick;
+			}
+
+			private static bool TryGetHvo(GeckoElement element, out int hvo)
+			{
+				while (element != null)
+				{
+					switch (element.TagName.ToLowerInvariant())
+					{
+						case "table":
+						case "span":
+						case "th":
+						case "td":
+							var id = element.GetAttribute("id");
+							if (!string.IsNullOrEmpty(id))
+							{
+								return int.TryParse(id, out hvo);
+							}
+							break;
+					}
+					element = element.ParentElement;
+				}
+				hvo = 0;
+				return false;
+			}
+
+			private void HandleDomClick(object sender, DomMouseEventArgs e)
+			{
+				if (sender == null || e?.Target == null)
+				{
+					return;
+				}
+				var elem = e.Target.CastToGeckoElement();
+				if (TryGetHvo(elem, out var hvo))
+				{
+					JumpToToolBasedOnHvo(hvo);
+				}
+				if (!elem.TagName.Equals("input", StringComparison.InvariantCultureIgnoreCase) || !elem.GetAttribute("type").Equals("button", StringComparison.InvariantCultureIgnoreCase))
+				{
+					return;
+				}
+				switch (elem.GetAttribute("name"))
+				{
+					case "ShowWordGrammarDetail":
+						ShowWordGrammarDetail(elem.GetAttribute("id"));
+						break;
+					case "TryWordGrammarAgain":
+						TryWordGrammarAgain(elem.GetAttribute("id"));
+						break;
+					case "GoToPreviousWordGrammarPage":
+						GoToPreviousWordGrammarPage();
+						break;
+				}
+			}
+
+			/// <summary>
+			/// Set the current parser to use when tracing
+			/// </summary>
+			internal XAmpleWordGrammarDebugger WordGrammarDebugger { get; set; }
+
+			/// <summary>
+			/// Have the main FLEx window jump to the appropriate item
+			/// </summary>
+			/// <param name="hvo">item whose parent will indicate where to jump to</param>
+			private void JumpToToolBasedOnHvo(int hvo)
+			{
+				if (hvo == 0)
+				{
+					return;
+				}
+				string sTool = null;
+				var parentClassId = 0;
+				var cmo = m_cache.ServiceLocator.GetObject(hvo);
+				switch (cmo.ClassID)
+				{
+					case MoFormTags.kClassId:                   // fall through
+					case MoAffixAllomorphTags.kClassId:         // fall through
+					case MoStemAllomorphTags.kClassId:          // fall through
+					case MoInflAffMsaTags.kClassId:             // fall through
+					case MoDerivAffMsaTags.kClassId:            // fall through
+					case MoUnclassifiedAffixMsaTags.kClassId:   // fall through
+					case MoStemMsaTags.kClassId:                // fall through
+					case MoMorphSynAnalysisTags.kClassId:       // fall through
+					case MoAffixProcessTags.kClassId:
+						sTool = LanguageExplorerConstants.LexiconEditMachineName;
+						parentClassId = LexEntryTags.kClassId;
+						break;
+					case MoInflAffixSlotTags.kClassId:      // fall through
+					case MoInflAffixTemplateTags.kClassId:  // fall through
+					case PartOfSpeechTags.kClassId:
+						sTool = LanguageExplorerConstants.PosEditMachineName;
+						parentClassId = PartOfSpeechTags.kClassId;
+						break;
+					// still need to test compound rule ones
+					case MoCoordinateCompoundTags.kClassId: // fall through
+					case MoEndoCompoundTags.kClassId:       // fall through
+					case MoExoCompoundTags.kClassId:
+						sTool = LanguageExplorerConstants.CompoundRuleAdvancedEditMachineName;
+						parentClassId = cmo.ClassID;
+						break;
+					case PhRegularRuleTags.kClassId:        // fall through
+					case PhMetathesisRuleTags.kClassId:
+						sTool = LanguageExplorerConstants.PhonologicalRuleEditMachineName;
+						parentClassId = cmo.ClassID;
+						break;
+					case PhPhonemeTags.kClassId:
+						sTool = LanguageExplorerConstants.PhonemeEditMachineName;
+						parentClassId = cmo.ClassID;
+						break;
+				}
+				if (parentClassId <= 0)
+				{
+					return; // do nothing
+				}
+				cmo = CmObjectUi.GetSelfOrParentOfClass(cmo, parentClassId);
+				if (cmo == null)
+				{
+					return; // do nothing
+				}
+				LinkHandler.PublishFollowLinkMessage(m_publisher, new FwLinkArgs(sTool, cmo.Guid));
+			}
+
+			/// <summary>
+			/// Show the first pass of the Word Grammar Debugger
+			/// </summary>
+			/// <param name="sNodeId">The node id in the XAmple trace to use</param>
+			private void ShowWordGrammarDetail(string sNodeId)
+			{
+				var sForm = AdjustForm(m_tbWordForm.Text);
+				m_htmlControl.URL = WordGrammarDebugger.SetUpWordGrammarDebuggerPage(sNodeId, sForm, m_htmlControl.URL);
+			}
+
+			/// <summary>
+			/// Try another pass in the Word Grammar Debugger
+			/// </summary>
+			/// <param name="sNodeId">the node id of the step to try</param>
+			private void TryWordGrammarAgain(string sNodeId)
+			{
+				var sForm = AdjustForm(m_tbWordForm.Text);
+				m_htmlControl.URL = WordGrammarDebugger.PerformAnotherWordGrammarDebuggerStepPage(sNodeId, sForm, m_htmlControl.URL);
+			}
+
+			/// <summary>
+			/// Back up a page in the Word Grammar Debugger
+			/// </summary>
+			/// <remarks>
+			/// We cannot merely use the history mechanism of the html control
+			/// because we need to keep track of the xml page source file as well as the html page.
+			/// This info is kept in the WordGrammarStack.
+			/// </remarks>
+			private void GoToPreviousWordGrammarPage()
+			{
+				m_htmlControl.URL = WordGrammarDebugger.PopWordGrammarStack();
+			}
+
+			/// <summary>
+			/// Modify the content of the form to use entities when needed
+			/// </summary>
+			/// <param name="sForm">form to adjust</param>
+			/// <returns>adjusted form</returns>
+			private static string AdjustForm(string sForm)
+			{
+				return sForm.Replace("&", "&amp;").Replace("<", "&lt;");
 			}
 		}
 	}

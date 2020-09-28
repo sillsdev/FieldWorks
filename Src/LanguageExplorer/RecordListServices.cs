@@ -6,7 +6,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Windows.Forms;
-using LanguageExplorer.Areas.TextsAndWords;
+using LanguageExplorer.Impls;
 using SIL.Code;
 
 namespace LanguageExplorer

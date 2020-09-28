@@ -34,9 +34,8 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		protected override void InitializeMatchingObjects()
 		{
-			var configParamsElement = XDocument.Parse(LanguageExplorerControls.NotebookRecordGoDlgParameters).Root;
-			var searchEngine = SearchEngine.Get(PropertyTable, "RecordGoSearchEngine", () => new RecordGoSearchEngine(m_cache));
-			m_matchingObjectsBrowser.Initialize(m_cache, FwUtils.StyleSheetFromPropertyTable(PropertyTable), configParamsElement, searchEngine);
+			m_matchingObjectsBrowser.Initialize(m_cache, FwUtils.StyleSheetFromPropertyTable(PropertyTable), XDocument.Parse(LanguageExplorerControls.NotebookRecordGoDlgParameters).Root
+				, SearchEngine.Get(PropertyTable, "RecordGoSearchEngine", () => new RecordGoSearchEngine(m_cache)));
 			// start building index
 			var ws = (CoreWritingSystemDefinition)m_cbWritingSystems.SelectedItem;
 			if (ws != null)

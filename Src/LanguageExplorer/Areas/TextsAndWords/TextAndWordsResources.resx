@@ -323,4 +323,8 @@
   <data name="Texts" xml:space="preserve">
     <value>Texts</value>
   </data>
+  <data name="ksParsing" xml:space="preserve">
+    <value>Parsing</value>
+    <comment>Status bar label</comment>
+  </data>
 </root>

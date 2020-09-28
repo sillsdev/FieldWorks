@@ -26,6 +26,11 @@ namespace LanguageExplorer.Areas
 			IsActiveInGui = true;
 		}
 
+		public override void BecomeInactive()
+		{
+			IsActiveInGui = false;
+		}
+
 		public override bool IsControllingTheRecordTreeBar
 		{
 			get => true; // assume this will be true, say for instance in the context of a dialog.

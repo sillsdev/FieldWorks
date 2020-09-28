@@ -55,8 +55,8 @@ namespace LanguageExplorer.Controls
 
 		protected override void InitializeMatchingObjects()
 		{
-			var searchEngine = SearchEngine.Get(PropertyTable, "EntryGoSearchEngine", () => new EntryGoSearchEngine(m_cache));
-			m_matchingObjectsBrowser.Initialize(m_cache, FwUtils.StyleSheetFromPropertyTable(PropertyTable), XDocument.Parse(LanguageExplorerResources.MatchingEntriesParameters).Root, searchEngine);
+			m_matchingObjectsBrowser.Initialize(m_cache, FwUtils.StyleSheetFromPropertyTable(PropertyTable), XDocument.Parse(LanguageExplorerResources.MatchingEntriesParameters).Root
+				, SearchEngine.Get(PropertyTable, "EntryGoSearchEngine", () => new EntryGoSearchEngine(m_cache)));
 			m_matchingObjectsBrowser.ColumnsChanged += m_matchingObjectsBrowser_ColumnsChanged;
 			// start building index
 			var selectedWs = (CoreWritingSystemDefinition)m_cbWritingSystems.SelectedItem;

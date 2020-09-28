@@ -216,7 +216,7 @@ namespace LanguageExplorer.Controls.XMLViews
 				// which also makes the selection for us..
 				if (ReadOnlySelect && e.Button != MouseButtons.Right)
 				{
-					if (m_xbvvc.HasSelectColumn && e.X < m_xbvvc.SelectColumnWidth)
+					if (Vc.HasSelectColumn && e.X < Vc.SelectColumnWidth)
 					{
 						base.OnMouseUp(e); // allows check box to operate.
 					}

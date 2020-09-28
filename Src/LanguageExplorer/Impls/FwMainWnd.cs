@@ -16,8 +16,6 @@ using System.Windows.Forms;
 using System.Xml;
 using IWshRuntimeLibrary;
 using LanguageExplorer.Areas;
-using LanguageExplorer.Areas.TextsAndWords;
-using LanguageExplorer.Areas.TextsAndWords.Interlinear;
 using LanguageExplorer.Controls;
 using LanguageExplorer.Controls.DetailControls;
 using LanguageExplorer.Controls.SilSidePane;

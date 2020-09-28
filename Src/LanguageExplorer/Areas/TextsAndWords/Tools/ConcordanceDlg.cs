@@ -22,7 +22,7 @@ using SIL.LCModel.Infrastructure;
 using SIL.LCModel.Utils;
 using WaitCursor = SIL.FieldWorks.Common.FwUtils.WaitCursor;
 
-namespace LanguageExplorer.Areas.TextsAndWords
+namespace LanguageExplorer.Areas.TextsAndWords.Tools
 {
 	/// <summary>
 	/// This class (Form/Dlg) allows the user to do 'bulk edits' on text instances and appropriate analyses.

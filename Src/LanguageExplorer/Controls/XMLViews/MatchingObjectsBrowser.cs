@@ -79,6 +79,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			if (disposing)
 			{
 				m_searchEngine.SearchCompleted -= m_searchEngine_SearchCompleted;
+				m_searchEngine.Dispose();
 			}
 			m_cache = null;
 
@@ -114,22 +115,14 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// Initialize the control, creating the BrowseViewer among other things.
 		/// </summary>
-		internal void Initialize(LcmCache cache, IVwStylesheet stylesheet, XElement configParamsElement, SearchEngine searchEngine)
-		{
-			Initialize(cache, stylesheet, configParamsElement, searchEngine, null);
-		}
-
-		/// <summary>
-		/// Initialize the control, creating the BrowseViewer among other things.
-		/// </summary>
-		internal void Initialize(LcmCache cache, IVwStylesheet stylesheet, XElement configParamsElement, SearchEngine searchEngine, CoreWritingSystemDefinition reversalWs)
+		internal void Initialize(LcmCache cache, IVwStylesheet stylesheet, XElement configParamsElement, SearchEngine searchEngine, CoreWritingSystemDefinition reversalWs = null, ISortItemProvider sortItemProvider = null)
 		{
 			m_cache = cache;
 			m_stylesheet = stylesheet;
 			m_searchEngine = searchEngine;
 			m_searchEngine.SearchCompleted += m_searchEngine_SearchCompleted;
 			SuspendLayout();
-			CreateBrowseViewer(configParamsElement, reversalWs);
+			CreateBrowseViewer(configParamsElement, reversalWs, sortItemProvider);
 			ResumeLayout(false);
 		}
 
@@ -252,10 +245,10 @@ namespace LanguageExplorer.Controls.XMLViews
 
 		#region Other methods
 
-		private void CreateBrowseViewer(XElement configParamsElement, CoreWritingSystemDefinition reversalWs)
+		private void CreateBrowseViewer(XElement configParamsElement, CoreWritingSystemDefinition reversalWs = null, ISortItemProvider sortItemProvider = null)
 		{
 			m_listPublisher = new ObjectListPublisher(m_cache.DomainDataByFlid as ISilDataAccessManaged, ListFlid);
-			m_bvMatches = new BrowseViewer(configParamsElement, m_cache.LanguageProject.LexDbOA.Hvo, m_cache, null, m_listPublisher);
+			m_bvMatches = new BrowseViewer(configParamsElement, m_cache.LanguageProject.LexDbOA.Hvo, m_cache, sortItemProvider, m_listPublisher);
 			m_bvMatches.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 			m_bvMatches.FinishInitialization(m_cache.LanguageProject.LexDbOA.Hvo, m_listPublisher.MadeUpFieldIdentifier);
 			m_bvMatches.SuspendLayout();

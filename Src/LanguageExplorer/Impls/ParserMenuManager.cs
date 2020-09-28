@@ -14,7 +14,7 @@ using SIL.LCModel;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Infrastructure;
 
-namespace LanguageExplorer.Areas.TextsAndWords
+namespace LanguageExplorer.Impls
 {
 	/// <summary>
 	/// This class just gets all the parser calling and event and receiving

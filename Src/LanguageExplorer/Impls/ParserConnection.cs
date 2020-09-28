@@ -8,6 +8,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Threading;
 using System.Xml.Linq;
+//using LanguageExplorer.Areas.TextsAndWords;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.WordWorks.Parser;
 using SIL.FieldWorks.WordWorks.Parser.HermitCrab;
@@ -19,7 +20,7 @@ using SIL.LCModel.Infrastructure;
 using SIL.LCModel.Utils;
 using SIL.ObjectModel;
 
-namespace LanguageExplorer.Areas.TextsAndWords
+namespace LanguageExplorer.Impls
 {
 	/// <summary>
 	/// Handles acquiring a parser and safely subscribing to and receiving events from it.
@@ -398,7 +399,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			private TaskReport m_TaskReport;
 
 			/// <summary />
-			public ParserScheduler(LcmCache cache, IdleQueue idleQueue, string dataDir)
+			internal ParserScheduler(LcmCache cache, IdleQueue idleQueue, string dataDir)
 			{
 				m_parserWorker = new ParserWorker(cache, HandleTaskUpdate, idleQueue, dataDir);
 				m_parserWorker.ParseFiler.WordformUpdated += ParseFiler_WordformUpdated;
@@ -412,7 +413,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			/// Gets the unhandled exception.
 			/// </summary>
 			/// <value>The unhandled exception.</value>
-			public Exception UnhandledException => m_thread.UnhandledException;
+			internal Exception UnhandledException => m_thread.UnhandledException;
 
 			/// <summary>
 			/// Gets the synchronization root. This is the object that should be
@@ -424,7 +425,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			/// <summary>
 			/// Get or Set state for the try A Word dialog running
 			/// </summary>
-			public bool TryAWordDialogIsRunning
+			internal bool TryAWordDialogIsRunning
 			{
 				get => m_tryAWordDialogRunning;
 				set
@@ -467,7 +468,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			/// <summary>
 			/// Reload Grammar And Lexicon
 			/// </summary>
-			public void ReloadGrammarAndLexicon()
+			internal void ReloadGrammarAndLexicon()
 			{
 				m_thread.EnqueueWork(ParserPriority.ReloadGrammarAndLexicon, new ReloadGrammarAndLexiconWork(this));
 			}
@@ -521,7 +522,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			/// <remarks> this is done with a string rather than an hvo so that we can use it
 			/// when the user is just testing different things, which might not even be real words,
 			/// and certainly might not be in the WordformInventory yet.</remarks>
-			public void ScheduleOneWordformForTryAWord(string form, bool fDoTrace, int[] sSelectTraceMorphs)
+			internal void ScheduleOneWordformForTryAWord(string form, bool fDoTrace, int[] sSelectTraceMorphs)
 			{
 				m_thread.EnqueueWork(ParserPriority.TryAWord, new TryAWordWork(this, form, fDoTrace, sSelectTraceMorphs));
 			}
@@ -565,7 +566,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			/// </summary>
 			/// <param name="sWord">wordform</param>
 			/// <returns>true if a single word; false otherwise</returns>
-			public static bool IsOneWord(string sWord)
+			internal static bool IsOneWord(string sWord)
 			{
 				var acSpaceTab = new[] { ' ', '	' };
 				var i = sWord.IndexOfAny(acSpaceTab);

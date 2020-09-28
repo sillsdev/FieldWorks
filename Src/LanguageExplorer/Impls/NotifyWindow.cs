@@ -14,7 +14,7 @@ using System.Drawing.Drawing2D;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
-namespace LanguageExplorer.Areas.TextsAndWords
+namespace LanguageExplorer.Impls
 {
 	/// <summary>
 	/// Display An MSN-Messenger-Style NotifyWindow.

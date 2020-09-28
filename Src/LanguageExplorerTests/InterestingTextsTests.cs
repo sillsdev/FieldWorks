@@ -6,7 +6,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using LanguageExplorer;
-using LanguageExplorer.Areas;
 using LanguageExplorer.TestUtilities;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwUtils;

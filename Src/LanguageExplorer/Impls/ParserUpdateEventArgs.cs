@@ -5,7 +5,7 @@
 using System;
 using SIL.FieldWorks.WordWorks.Parser;
 
-namespace LanguageExplorer.Areas.TextsAndWords
+namespace LanguageExplorer.Impls
 {
 	/// <summary>
 	/// The event args for the ParserUpdate events.

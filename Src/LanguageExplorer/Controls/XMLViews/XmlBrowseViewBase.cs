@@ -106,10 +106,10 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary />
 		public override bool RefreshDisplay()
 		{
-			var fChanged = m_xbvvc.RemoveInvalidColumns();
+			var fChanged = Vc.RemoveInvalidColumns();
 			if (fChanged)
 			{
-				m_bv.InstallNewColumns(m_xbvvc.ColumnSpecs);
+				m_bv.InstallNewColumns(Vc.ColumnSpecs);
 			}
 			base.RefreshDisplay();
 			if (!Cache.ServiceLocator.IsValidObjectId(_hvoRoot))
@@ -746,7 +746,7 @@ namespace LanguageExplorer.Controls.XMLViews
 				}
 				_hvoRoot = value;
 				_rootObjectHasBeenSet = true;
-				RootBox.SetRootObject(_hvoRoot, m_xbvvc, XmlBrowseViewVc.kfragRoot, m_styleSheet);
+				RootBox.SetRootObject(_hvoRoot, Vc, XmlBrowseViewVc.kfragRoot, m_styleSheet);
 				// This seems to be necessary to get the data entry row to resize even if the new
 				// list is the same length as the old. Must NOT remember new positions, because
 				// this can be called before Layout retrieves them!
@@ -835,7 +835,11 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				m_sortItemProvider = bv.SortItemProvider;
 			}
-			m_xbvvc = Vc;
+			if (m_xbvvc == null)
+			{
+				// Merely asking the Vc will create one, if m_xbvvc is null.
+				var dummy = Vc;
+			}
 			var sDefaultCursor = XmlUtils.GetOptionalAttributeValue(configurationSpec, "defaultCursor", null);
 			// Set a default cursor for a ReadOnly view, if none is given.
 			if (sDefaultCursor == null && ReadOnlySelect)
@@ -1492,9 +1496,9 @@ namespace LanguageExplorer.Controls.XMLViews
 
 			// Only change it if it is null or different.
 			// Otherwise, it does an unneeded disposal/creation of the layout cache.
-			if (m_xbvvc.Cache == null || m_xbvvc.Cache != m_cache)
+			if (Vc.Cache == null || Vc.Cache != m_cache)
 			{
-				m_xbvvc.Cache = m_cache;
+				Vc.Cache = m_cache;
 			}
 			SetSelectedRowHighlighting();
 			ReadOnlyView = ReadOnlySelect;
@@ -1532,9 +1536,9 @@ namespace LanguageExplorer.Controls.XMLViews
 		protected override void OnPaint(PaintEventArgs e)
 		{
 			// let the VC know when we're actually doing an OnPaint().
-			m_xbvvc.InOnPaint = true;
+			Vc.InOnPaint = true;
 			base.OnPaint(e);
-			m_xbvvc.InOnPaint = false;
+			Vc.InOnPaint = false;
 		}
 
 		/// <summary>

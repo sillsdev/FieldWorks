@@ -10,7 +10,7 @@ using System.Windows.Forms;
 using System.Xml.Linq;
 using SIL.FieldWorks.Common.FwUtils;
 
-namespace LanguageExplorer.Areas.TextsAndWords
+namespace LanguageExplorer.Impls
 {
 	/// <summary />
 	internal sealed class ParserParametersDlg : Form
@@ -52,7 +52,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			AccessibleName = GetType().Name;
 		}
 
-		public ParserParametersDlg(IHelpTopicProvider helpTopicProvider) : this()
+		internal ParserParametersDlg(IHelpTopicProvider helpTopicProvider) : this()
 		{
 			m_helpTopicProvider = helpTopicProvider;
 		}
@@ -60,7 +60,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		/// <summary>
 		///Get or set the parser parameters XML text
 		///</summary>
-		public string XmlRep { get; set; }
+		internal string XmlRep { get; set; }
 
 		/// <summary>
 		/// Clean up any resources being used.
@@ -131,7 +131,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			// dataGrid1
 			//
 			resources.ApplyResources(this.m_dataGrid1, "m_dataGrid1");
-			this.m_dataGrid1.DataMember = global::LanguageExplorer.Areas.TextsAndWords.ParserUIStrings.ksIdle_;
+			this.m_dataGrid1.DataMember = global::LanguageExplorer.ParserUIStrings.ksIdle_;
 			this.m_dataGrid1.HeaderForeColor = System.Drawing.SystemColors.ControlText;
 			this.m_dataGrid1.Name = "m_dataGrid1";
 			//
@@ -145,7 +145,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			// dataGrid2
 			//
 			resources.ApplyResources(this.m_dataGrid2, "m_dataGrid2");
-			this.m_dataGrid2.DataMember = global::LanguageExplorer.Areas.TextsAndWords.ParserUIStrings.ksIdle_;
+			this.m_dataGrid2.DataMember = global::LanguageExplorer.ParserUIStrings.ksIdle_;
 			this.m_dataGrid2.HeaderForeColor = System.Drawing.SystemColors.ControlText;
 			this.m_dataGrid2.Name = "m_dataGrid2";
 			//
@@ -224,7 +224,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			}
 		}
 
-		private void ReportChangeOfValue(string item, int value, int newValue, int min, int max)
+		private static void ReportChangeOfValue(string item, int value, int newValue, int min, int max)
 		{
 			MessageBox.Show(string.Format(ParserUIStrings.ksChangedValueReport, item, value, newValue, min, max), ParserUIStrings.ksChangeValueDialogTitle, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
 		}
@@ -232,7 +232,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		/// <summary>
 		/// Set up the dlg in preparation to showing it.
 		/// </summary>
-		public void SetDlgInfo(string title, string parserParameters)
+		internal void SetDlgInfo(string title, string parserParameters)
 		{
 			XmlRep = parserParameters;
 			Text = title;
@@ -291,12 +291,12 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			}
 		}
 
-		private DataView CreateDataView(DataTable table)
+		private static DataView CreateDataView(DataTable table)
 		{
 			return new DataView(table) { AllowNew = false };
 		}
 
-		private DataTable CreateXAmpleDataTable()
+		private static DataTable CreateXAmpleDataTable()
 		{
 			var tblXAmple = new DataTable(XAmple);
 			tblXAmple.Columns.Add(MaxNulls, typeof(int));
@@ -309,7 +309,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			return tblXAmple;
 		}
 
-		private DataTable CreateHCDataTable()
+		private static DataTable CreateHCDataTable()
 		{
 			var tblHC = new DataTable(HC);
 			tblHC.Columns.Add(DelReapps, typeof(int));

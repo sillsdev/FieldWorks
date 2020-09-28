@@ -496,9 +496,7 @@ namespace LanguageExplorer.Controls
 			try
 			{
 				IVwStylesheet stylesheet = FwUtils.StyleSheetFromPropertyTable(PropertyTable);
-				var configNode = XDocument.Parse(LanguageExplorerControls.MatchingEntriesGuiControlParameters).Root;
-				var searchEngine = SearchEngine.Get(PropertyTable, "InsertEntrySearchEngine", () => new InsertEntrySearchEngine(cache));
-				m_matchingObjectsBrowser.Initialize(cache, stylesheet, configNode, searchEngine);
+				m_matchingObjectsBrowser.Initialize(cache, stylesheet, XDocument.Parse(LanguageExplorerControls.MatchingEntriesGuiControlParameters).Root, SearchEngine.Get(PropertyTable, "InsertEntrySearchEngine", () => new InsertEntrySearchEngine(cache)));
 				m_cache = cache;
 				m_fNewlyCreated = false;
 				m_oldForm = string.Empty;

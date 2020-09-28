@@ -287,7 +287,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// Gets or sets the sort item provider.
 		/// </summary>
-		public ISortItemProvider SortItemProvider { get; internal set; }
+		internal ISortItemProvider SortItemProvider { get; private set; }
 
 		internal int ListItemsClass => BrowseView.Vc.ListItemsClass;
 
@@ -574,8 +574,9 @@ namespace LanguageExplorer.Controls.XMLViews
 			ScrollBar.ValueChanged += m_scrollBar_ValueChanged;
 			ScrollBar.TabStop = false;
 			Controls.Add(ScrollBar);
-			// Set this before creating the browse view class so that custom parts can be
-			// generated properly.
+			// Set this before creating the browse view class so that custom parts can be generated properly.
+			// NB: Only instances of IMultiListSortItemProvider do anything, so skip setting the property,
+			// if sortItemProvider does not implement that interface.
 			SortItemProvider = sortItemProvider;
 			MessageBoxTrigger = XmlUtils.GetOptionalAttributeValue(m_configParamsElement, "msgBoxTrigger", string.Empty);
 		}
@@ -711,8 +712,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			//
 			// FilterBar
 			//
-			var xa = m_configParamsElement.Attribute("filterBar");
-			if (xa != null && xa.Value == "true")
+			if (XmlUtils.GetOptionalBooleanAttributeValue(m_configParamsElement, "filterBar", false))
 			{
 				FilterBar = new FilterBar(this, PropertyTable.GetValue<IApp>(LanguageExplorerConstants.App));
 				FilterBar.FilterChanged += FilterChangedHandler;
@@ -722,8 +722,7 @@ namespace LanguageExplorer.Controls.XMLViews
 				AddControl(FilterBar);
 			}
 			AddControl(m_lvHeader); // last so on top of z-order, puts it above other things docked at top.
-			xa = m_configParamsElement.Attribute("bulkEdit");
-			if (xa != null && xa.Value == "true")
+			if (XmlUtils.GetOptionalBooleanAttributeValue(m_configParamsElement, "bulkEdit", false))
 			{
 				BulkEditBar = CreateBulkEditBar(this, m_configParamsElement, new FlexComponentParameters(PropertyTable, Publisher, Subscriber), Cache);
 				BulkEditBar.Dock = DockStyle.Bottom;
@@ -1106,6 +1105,7 @@ namespace LanguageExplorer.Controls.XMLViews
 
 		private void ConvertItemsToRelativesThatApplyToCurrentListSelections(ref IDictionary<int, object> items, bool selectItem)
 		{
+			// The calling code has made sure that SortItemProvider is an IMultiListSortItemProvider implementation.
 			((IMultiListSortItemProvider)SortItemProvider).ConvertItemsToRelativesThatApplyToCurrentList(ref items);
 			foreach (var relative in items.Keys)
 			{
@@ -2705,7 +2705,7 @@ namespace LanguageExplorer.Controls.XMLViews
 					// we want the current items list to inherit their selection status
 					// from its relatives on a previous list
 					// (LT-8986)
-					if (SortItemProvider is IMultiListSortItemProvider)
+					if (SortItemProvider != null)
 					{
 						if (m_fSavedSelectionsDuringFilterChange)
 						{
@@ -3122,12 +3122,22 @@ namespace LanguageExplorer.Controls.XMLViews
 			/// <summary>
 			/// override with our own simple constructor
 			/// </summary>
-			internal override XmlBrowseViewVc Vc => m_xbvvc ?? (m_xbvvc = new OneColumnXmlBrowseViewVc(_configurationSpec, MainTag, this));
+			internal override XmlBrowseViewVc Vc
+			{
+				get
+				{
+					if (m_xbvvc == null)
+					{
+						m_xbvvc = new XmlRDEBrowseViewVc(_configurationSpec, MainTag, this);
+					}
+					return base.Vc;
+				}
+			}
 
 			/// <summary>
-			/// effectively simulate infinite length so we do not wrap cell contents.
-			/// </summary>
-			public override int GetAvailWidth(IVwRootBox prootb)
+	/// effectively simulate infinite length so we do not wrap cell contents.
+	/// </summary>
+	public override int GetAvailWidth(IVwRootBox prootb)
 			{
 				return 1000000;
 			}

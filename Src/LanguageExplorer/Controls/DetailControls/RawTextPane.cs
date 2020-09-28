@@ -104,10 +104,13 @@ namespace LanguageExplorer.Controls.DetailControls
 
 			if (disposing)
 			{
-				var sharedEventHandlers = MyMajorFlexComponentParameters.SharedEventHandlers;
-				var jumpHandler = sharedEventHandlers.GetEventHandler(Command.CmdJumpToTool);
 				// Dispose managed resources here.
-				DisposeContextMenuStrip(sharedEventHandlers, jumpHandler);
+				if (ContextMenuStrip != null)
+				{
+					var sharedEventHandlers = MyMajorFlexComponentParameters.SharedEventHandlers;
+					var jumpHandler = sharedEventHandlers.GetEventHandler(Command.CmdJumpToTool);
+					DisposeContextMenuStrip(sharedEventHandlers, jumpHandler);
+				}
 			}
 
 			// Dispose unmanaged resources here, whether disposing is true or false.

@@ -21,6 +21,15 @@ namespace LanguageExplorer.Controls
 	/// </summary>
 	internal abstract class SearchEngine : DisposableBase, IVwNotifyChange
 	{
+		protected IPropertyTable _propertyTable;
+		protected string _searchEnginePropertyName;
+		private readonly StringSearcher<int> m_searcher;
+		private IList<ICmObject> m_searchableObjs;
+		private readonly Dictionary<Tuple<int, int>, int> m_indexObjPos;
+		private readonly ConsumerThread<int, SearchField[]> m_thread;
+		private readonly object m_syncRoot;
+		private readonly SynchronizationContext m_synchronizationContext;
+
 		/// <summary>
 		/// Gets the search engine.
 		/// </summary>
@@ -30,6 +39,8 @@ namespace LanguageExplorer.Controls
 			if (searchEngine == null)
 			{
 				searchEngine = searchEngineFactory();
+				searchEngine._propertyTable = propertyTable;
+				searchEngine._searchEnginePropertyName = propName;
 				// Don't persist it, and if anyone ever cares about hearing that it changed,
 				// then create a new override of this method that feeds the last bool parameter in as 'true'.
 				// This default method can then feed that override 'false'.
@@ -38,13 +49,6 @@ namespace LanguageExplorer.Controls
 			}
 			return searchEngine;
 		}
-
-		private readonly StringSearcher<int> m_searcher;
-		private IList<ICmObject> m_searchableObjs;
-		private readonly Dictionary<Tuple<int, int>, int> m_indexObjPos;
-		private readonly ConsumerThread<int, SearchField[]> m_thread;
-		private readonly object m_syncRoot;
-		private readonly SynchronizationContext m_synchronizationContext;
 
 		/// <summary>
 		/// Occurs when the search is completed.
@@ -72,6 +76,7 @@ namespace LanguageExplorer.Controls
 			Cache.DomainDataByFlid.RemoveNotification(this);
 			m_thread.Stop();
 			m_thread.Dispose();
+			_propertyTable.RemoveProperty(_searchEnginePropertyName);
 			base.DisposeManagedResources();
 		}
 

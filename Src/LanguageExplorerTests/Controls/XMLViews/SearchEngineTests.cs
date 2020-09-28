@@ -6,8 +6,9 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using LanguageExplorer.Controls;
-using LanguageExplorer.Controls.XMLViews;
+using LanguageExplorer.TestUtilities;
 using NUnit.Framework;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Core.Text;
@@ -19,10 +20,26 @@ namespace LanguageExplorerTests.Controls.XMLViews
 	[TestFixture]
 	public class SearchEngineTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
 	{
+		private FlexComponentParameters _flexComponentParameters;
+		private const string FauxPropertyName = "FauxPropertyName";
+
+		public override void FixtureSetup()
+		{
+			base.FixtureSetup();
+			_flexComponentParameters = TestSetupServices.SetupTestTriumvirate();
+			_flexComponentParameters.PropertyTable.SetProperty(FwUtilsConstants.cache, Cache);
+		}
+
+		public override void FixtureTeardown()
+		{
+			TestSetupServices.DisposeTrash(_flexComponentParameters);
+			base.FixtureTeardown();
+		}
+
 		[Test]
 		public void Search()
 		{
-			using (var searchEngine = new LexEntrySearchEngine(Cache))
+			using (var searchEngine = LexEntrySearchEngine.Get(_flexComponentParameters.PropertyTable, FauxPropertyName))
 			{
 				var entryFactory = Cache.ServiceLocator.GetInstance<ILexEntryFactory>();
 				var stem = Cache.ServiceLocator.GetInstance<IMoMorphTypeRepository>().GetObject(MoMorphTypeTags.kguidMorphStem);
@@ -49,7 +66,7 @@ namespace LanguageExplorerTests.Controls.XMLViews
 		[Test]
 		public void SearchFiltersResults()
 		{
-			using (var searchEngine = new LexEntrySearchEngine(Cache))
+			using (var searchEngine = LexEntrySearchEngine.Get(_flexComponentParameters.PropertyTable, FauxPropertyName))
 			{
 				var entryFactory = Cache.ServiceLocator.GetInstance<ILexEntryFactory>();
 				var stem = Cache.ServiceLocator.GetInstance<IMoMorphTypeRepository>().GetObject(MoMorphTypeTags.kguidMorphStem);
@@ -73,7 +90,7 @@ namespace LanguageExplorerTests.Controls.XMLViews
 		[Test]
 		public void ResetIndex()
 		{
-			using (var searchEngine = new LexEntrySearchEngine(Cache))
+			using (var searchEngine = LexEntrySearchEngine.Get(_flexComponentParameters.PropertyTable, FauxPropertyName))
 			{
 				var entryFactory = Cache.ServiceLocator.GetInstance<ILexEntryFactory>();
 				var stem = Cache.ServiceLocator.GetInstance<IMoMorphTypeRepository>().GetObject(MoMorphTypeTags.kguidMorphStem);
@@ -120,10 +137,27 @@ namespace LanguageExplorerTests.Controls.XMLViews
 
 		private sealed class LexEntrySearchEngine : SearchEngine
 		{
-			public LexEntrySearchEngine(LcmCache cache)
+			private LexEntrySearchEngine(LcmCache cache)
 				: base(cache, SearchType.Prefix)
 			{
 			}
+
+			internal static LexEntrySearchEngine Get(IPropertyTable propertyTable, string propName)
+			{
+				var searchEngine = new LexEntrySearchEngine(propertyTable.GetValue<LcmCache>(FwUtilsConstants.cache))
+				{
+					_propertyTable = propertyTable,
+					_searchEnginePropertyName = propName
+				};
+				// Don't persist it, and if anyone ever cares about hearing that it changed,
+				// then create a new override of this method that feeds the last bool parameter in as 'true'.
+				// This default method can then feed that override 'false'.
+				propertyTable.SetProperty(propName, searchEngine);
+				propertyTable.SetPropertyDispose(propName);
+				return searchEngine;
+			}
+
+			internal int FilterThisHvo { private get; set; }
 
 			protected override IEnumerable<ITsString> GetStrings(SearchField field, ICmObject obj)
 			{
@@ -161,8 +195,6 @@ namespace LanguageExplorerTests.Controls.XMLViews
 			{
 				return results.Where(hvo => hvo != FilterThisHvo);
 			}
-
-			public int FilterThisHvo { private get; set; }
 
 			protected override bool IsIndexResetRequired(int hvo, int flid)
 			{

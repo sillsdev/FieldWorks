@@ -542,10 +542,6 @@ Click "Cancel" to abort this import.</value>
   <data name="ksAskMergeInterlinearTextTitle" xml:space="preserve">
     <value>Duplicate text found.</value>
   </data>
-  <data name="ksParsing" xml:space="preserve">
-    <value>Parsing</value>
-    <comment>Status bar label</comment>
-  </data>
   <data name="ksMergeDuplicateWordforms" xml:space="preserve">
     <value>Merge Duplicate Wordforms</value>
     <comment>label for one of the tasks in the Utilities dialog</comment>

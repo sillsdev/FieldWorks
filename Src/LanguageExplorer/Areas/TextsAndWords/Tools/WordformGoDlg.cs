@@ -2,15 +2,23 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
+using System.Windows.Forms;
 using System.Xml.Linq;
 using LanguageExplorer.Controls;
-using LanguageExplorer.Controls.XMLViews;
+using LanguageExplorer.Filters;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
+using SIL.LCModel.Application;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel.DomainImpl;
 
-namespace LanguageExplorer.Areas.TextsAndWords
+namespace LanguageExplorer.Areas.TextsAndWords.Tools
 {
 	/// <summary />
 	internal sealed class WordformGoDlg : BaseGoDlg
@@ -46,9 +54,8 @@ namespace LanguageExplorer.Areas.TextsAndWords
 
 		protected override void InitializeMatchingObjects()
 		{
-			var configNode = XElement.Parse(TextAndWordsResources.SimpleWordListParameter);
-			var searchEngine = SearchEngine.Get(PropertyTable, "WordformGoSearchEngine", () => new WordformGoSearchEngine(m_cache));
-			m_matchingObjectsBrowser.Initialize(m_cache, FwUtils.StyleSheetFromPropertyTable(PropertyTable), configNode, searchEngine);
+			m_matchingObjectsBrowser.Initialize(m_cache, FwUtils.StyleSheetFromPropertyTable(PropertyTable), XElement.Parse(TextAndWordsResources.SimpleWordListParameter),
+				SearchEngine.Get(PropertyTable, "WordformGoSearchEngine", () => new WordformGoSearchEngine(m_cache)));
 			// start building index
 			var wsObj = (CoreWritingSystemDefinition)m_cbWritingSystems.SelectedItem;
 			if (wsObj == null)
@@ -110,6 +117,22 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		}
 		#endregion
 
+		protected override void Dispose(bool disposing)
+		{
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
+			if (IsDisposed)
+			{
+				// No need to run it more than once.
+				return;
+			}
+
+			if (disposing)
+			{
+			}
+
+			base.Dispose(disposing);
+		}
+
 		#region Windows Form Designer generated code
 		/// <summary>
 		/// Required method for Designer support - do not modify
@@ -149,5 +172,63 @@ namespace LanguageExplorer.Areas.TextsAndWords
 
 		}
 		#endregion
+
+		/// <summary>
+		/// This is the search engine for WordformGoDlg.
+		/// </summary>
+		private sealed class WordformGoSearchEngine : SearchEngine
+		{
+			private readonly Virtuals m_virtuals;
+
+			internal WordformGoSearchEngine(LcmCache cache)
+				: base(cache, SearchType.Prefix)
+			{
+				m_virtuals = Cache.ServiceLocator.GetInstance<Virtuals>();
+			}
+
+			protected override IEnumerable<ITsString> GetStrings(SearchField field, ICmObject obj)
+			{
+				switch (field.Flid)
+				{
+					case WfiWordformTags.kflidForm:
+						var form = ((IWfiWordform)obj).Form.StringOrNull(field.String.get_WritingSystemAt(0));
+						if (form != null && form.Length > 0)
+						{
+							yield return form;
+						}
+						break;
+					default:
+						throw new ArgumentException(@"Unrecognized field.", nameof(field));
+				}
+			}
+
+			protected override IList<ICmObject> GetSearchableObjects()
+			{
+				return Cache.ServiceLocator.GetInstance<IWfiWordformRepository>().AllInstances().Cast<ICmObject>().ToArray();
+			}
+
+			protected override bool IsIndexResetRequired(int hvo, int flid)
+			{
+				return flid == m_virtuals.LangProjectAllWordforms || flid == WfiWordformTags.kflidForm;
+			}
+
+			protected override bool IsFieldMultiString(SearchField field)
+			{
+				return field.Flid == WfiWordformTags.kflidForm ? true : throw new ArgumentException(@"Unrecognized field.", nameof(field));
+			}
+
+			/// <inheritdoc />
+			protected override void Dispose(bool disposing)
+			{
+				Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + " ******");
+				if (IsDisposed)
+				{
+					// No need to run it more than once.
+					return;
+				}
+
+				base.Dispose(disposing);
+			}
+		}
 	}
 }

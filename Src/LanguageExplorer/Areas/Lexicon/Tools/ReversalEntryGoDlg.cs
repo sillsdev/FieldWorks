@@ -42,10 +42,10 @@ namespace LanguageExplorer.Areas.Lexicon.Tools
 		/// <summary />
 		protected override void InitializeMatchingObjects()
 		{
-			var paramsElement = XDocument.Parse(LexiconResources.ReversalEntryMatchListParameters).Root;
 			var searchEngine = (ReversalEntrySearchEngine)SearchEngine.Get(PropertyTable, $"ReversalEntrySearchEngine-{ReversalIndex.Hvo}", () => new ReversalEntrySearchEngine(m_cache, ReversalIndex));
 			searchEngine.FilteredEntryHvos = m_FilteredReversalEntryHvos;
-			m_matchingObjectsBrowser.Initialize(m_cache, FwUtils.StyleSheetFromPropertyTable(PropertyTable), paramsElement, searchEngine, m_cache.ServiceLocator.WritingSystemManager.Get(ReversalIndex.WritingSystem));
+			m_matchingObjectsBrowser.Initialize(m_cache, FwUtils.StyleSheetFromPropertyTable(PropertyTable), XDocument.Parse(LexiconResources.ReversalEntryMatchListParameters).Root,
+				searchEngine, m_cache.ServiceLocator.WritingSystemManager.Get(ReversalIndex.WritingSystem));
 			// start building index
 			var wsObj = (CoreWritingSystemDefinition)m_cbWritingSystems.SelectedItem;
 			if (wsObj != null)

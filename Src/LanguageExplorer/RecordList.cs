@@ -2332,7 +2332,8 @@ namespace LanguageExplorer
 
 		private void TearDownFilterMenu()
 		{
-			_editFilterMenuHandler.Dispose();
+			// Temporary record lists don't have this.
+			_editFilterMenuHandler?.Dispose();
 			_editFilterMenuHandler = null;
 		}
 

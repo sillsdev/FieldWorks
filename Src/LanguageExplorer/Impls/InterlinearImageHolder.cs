@@ -5,7 +5,7 @@
 using System.Diagnostics;
 using System.Windows.Forms;
 
-namespace LanguageExplorer.Areas.TextsAndWords.Interlinear
+namespace LanguageExplorer.Impls
 {
 	/// <summary />
 	public class InterlinearImageHolder : UserControl

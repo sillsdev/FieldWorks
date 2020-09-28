@@ -394,7 +394,7 @@
     <Compile Include="DictionaryConfiguration\TempGuidOn.cs" />
     <Compile Include="DictionaryConfiguration\UnicodeCharacterEditingHelperTests.cs" />
     <Compile Include="DictionaryConfiguration\WavConverterTests.cs" />
-    <Compile Include="DictionaryConfiguration\WordsUsedOnlyElsewhereFilterTests.cs" />
+    <Compile Include="Areas\TextsAndWords\WordsUsedOnlyElsewhereFilterTests.cs" />
     <Compile Include="DictionaryConfiguration\XhtmlDocViewTests.cs" />
     <Compile Include="Impls\DummyFwMainWnd.cs">
       <SubType>Form</SubType>

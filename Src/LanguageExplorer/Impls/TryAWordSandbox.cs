@@ -3,12 +3,11 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Diagnostics;
-using LanguageExplorer.Areas.TextsAndWords.Interlinear;
 using LanguageExplorer.Controls.DetailControls;
 using SIL.LCModel;
 using SIL.LCModel.Core.KernelInterfaces;
 
-namespace LanguageExplorer.Areas.TextsAndWords
+namespace LanguageExplorer.Impls
 {
 	/// <summary>
 	/// The 'TryAWordSandbox' is an IText Sandbox that is used within the Try A word dialog.

@@ -215,8 +215,8 @@ namespace LanguageExplorer.Areas.TextsAndWords
 							var hvoFake = nextId--;
 							valuesList.Add(hvoFake);
 							var occurrence = new CaptionParaFragment();
-							occurrence.SetMyBeginOffsetInPara(ichMin);
-							occurrence.SetMyEndOffsetInPara(ichLim);
+							((IParaFragment)occurrence).SetMyBeginOffsetInPara(ichMin);
+							((IParaFragment)occurrence).SetMyEndOffsetInPara(ichLim);
 							occurrence.ContainingParaOffset = tri.ichMin;
 							occurrence.Paragraph = para;
 							occurrence.Picture = picture;
@@ -230,6 +230,60 @@ namespace LanguageExplorer.Areas.TextsAndWords
 					state.Breath();
 				}
 			}
+		}
+
+		private sealed class CaptionParaFragment : IParaFragment
+		{
+			private int _beginOffset;
+			private int _endOffset;
+
+			internal ICmPicture Picture { get; set; }
+
+			internal IStTxtPara Paragraph { get; set; }
+
+			internal int ContainingParaOffset { get; set; }
+
+
+			#region IParaFragment implementation
+
+			//For this case the begin and end offsets are relative to the caption.
+			int IParaFragment.GetMyBeginOffsetInPara()
+			{
+				return _beginOffset;
+			}
+
+			int IParaFragment.GetMyEndOffsetInPara()
+			{
+				return _endOffset;
+			}
+
+			void IParaFragment.SetMyBeginOffsetInPara(int begin)
+			{
+				_beginOffset = begin;
+			}
+
+			void IParaFragment.SetMyEndOffsetInPara(int end)
+			{
+				_endOffset = end;
+			}
+
+			ISegment IParaFragment.Segment => null;
+
+			ITsString IParaFragment.Reference => Paragraph.Reference(Paragraph.SegmentsOS.Last(seg => seg.BeginOffset <= ContainingParaOffset), ContainingParaOffset);
+
+			IStTxtPara IParaFragment.Paragraph => Paragraph;
+
+			ICmObject IParaFragment.TextObject => Picture;
+
+			int IParaFragment.TextFlid => CmPictureTags.kflidCaption;
+
+			bool IParaFragment.IsValid => true;
+
+			IAnalysis IParaFragment.Analysis => null;
+
+			AnalysisOccurrence IParaFragment.BestOccurrence => null;
+
+			#endregion IParaFragment implementation
 		}
 	}
 }

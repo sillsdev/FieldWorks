@@ -3,18 +3,20 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using System.Xml.Linq;
-using LanguageExplorer.Areas.TextsAndWords.Interlinear;
 using LanguageExplorer.Controls;
 using LanguageExplorer.Controls.XMLViews;
+using LanguageExplorer.Filters;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Resources;
 using SIL.LCModel;
+using SIL.LCModel.Application;
 using SIL.LCModel.Core.SpellChecking;
 using SIL.LCModel.DomainServices;
 using WaitCursor = SIL.FieldWorks.Common.FwUtils.WaitCursor;
@@ -48,7 +50,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		bool m_fOtherOccurrencesExist;
 		string m_lblExplainText; // original text of m_lblExplainDisabled
 		// Typically the record list of the calling Words/Analysis view that manages a list of wordforms.
-		ConcordanceRecordList m_concordanceRecordList;
+		IConcordanceRecordList m_concordanceRecordList;
 		int m_hvoNewWordform; // if we made a new wordform and changed all instances, this gets set.
 		ISegmentRepository m_repoSeg;
 		private StatusBar _statusBar;
@@ -145,6 +147,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 				if (m_srcRecordList != null)
 				{
 					PropertyTable.GetValue<IRecordListRepository>(LanguageExplorerConstants.RecordListRepository).RemoveRecordList(m_srcRecordList);
+					m_srcRecordList.Dispose();
 				}
 			}
 			m_cache = null;
@@ -193,7 +196,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		internal bool SetDlgInfo(StatusBar statusBar)
 		{
 			_statusBar = statusBar;
-			m_concordanceRecordList = (ConcordanceRecordList)PropertyTable.GetValue<IRecordListRepository>(LanguageExplorerConstants.RecordListRepository).GetRecordList(LanguageExplorerConstants.ConcordanceWords);
+			m_concordanceRecordList = (IConcordanceRecordList)PropertyTable.GetValue<IRecordListRepository>(LanguageExplorerConstants.RecordListRepository).GetRecordList(LanguageExplorerConstants.ConcordanceWords);
 			// various things trigger change record and would prevent Undo
 			m_concordanceRecordList.SuppressSaveOnChangeRecord = true;
 			//We need to re-parse the interesting texts so that the rows in the dialog show all the occurrences (make sure it is up to date)
@@ -744,6 +747,187 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			m_respellUndoaction.PreserveCase = m_cbMaintainCase.Checked;
 			m_respellUndoaction.UpdatePreviews(false);
 			m_sourceSentences.BrowseViewer.ReconstructView();
+		}
+
+		/// <summary />
+		/// <remarks>
+		/// Used only by LanguageExplorer.Areas.TextsAndWords.RespellerDlg
+		/// </remarks>
+		private sealed class RespellerTemporaryRecordList : TemporaryRecordList
+		{
+			/// <summary />
+			internal RespellerTemporaryRecordList(string id, StatusBar statusBar, ISilDataAccessManaged decorator, bool usingAnalysisWs, VectorPropertyParameterObject vectorPropertyParameterObject, RecordFilterParameterObject recordFilterParameterObject = null, RecordSorter defaultSorter = null)
+				: base(id, statusBar, decorator, usingAnalysisWs, vectorPropertyParameterObject, recordFilterParameterObject, defaultSorter)
+			{
+			}
+
+			#region Overrides of TemporaryRecordList/RecordList
+
+			/// <summary>
+			/// Initialize a FLEx component with the basic interfaces.
+			/// </summary>
+			/// <param name="flexComponentParameters">Parameter object that contains the required three interfaces.</param>
+			public override void InitializeFlexComponent(FlexComponentParameters flexComponentParameters)
+			{
+				base.InitializeFlexComponent(flexComponentParameters);
+
+				m_flid = VirtualListPublisher.MetaDataCache.GetFieldId2(WfiWordformTags.kClassId, "Occurrences", false);
+				Sorter = new OccurrenceSorter
+				{
+					Cache = PropertyTable.GetValue<LcmCache>(FwUtilsConstants.cache),
+					SpecialDataAccess = VirtualListPublisher
+				};
+			}
+
+			protected override void ReloadList()
+			{
+				base.ReloadList();
+
+				if (SortedObjects.Count > 0)
+				{
+					CurrentIndex = 0;
+				}
+			}
+
+			protected override IEnumerable<int> GetObjectSet()
+			{
+				// get the list from our decorated SDA.
+				var objs = VirtualListPublisher.VecProp(OwningObject.Hvo, m_flid);
+				// copy the list to where it's expected to be found. (should this be necessary?)
+				VirtualListPublisher.Replace(OwningObject.Hvo, VirtualFlid, 0, VirtualListPublisher.get_VecSize(OwningObject.Hvo, VirtualFlid), objs, objs.Length);
+				return objs;
+			}
+
+			public override void PropChanged(int hvo, int tag, int ivMin, int cvIns, int cvDel)
+			{
+				if (OwningObject != null && hvo == OwningObject.Hvo && tag == m_flid)
+				{
+					ReloadList();
+				}
+			}
+
+			#endregion #region Overrides of TemporaryRecordList/RecordList
+
+			private sealed class OccurrenceSorter : RecordSorter
+			{
+				private LcmCache m_cache;
+
+				public override LcmCache Cache
+				{
+					set => m_cache = value;
+				}
+
+				internal ISilDataAccessManaged SpecialDataAccess { get; set; }
+
+				protected internal override IComparer Comparer => new OccurrenceComparer(m_cache, SpecialDataAccess);
+
+				/// <summary>
+				/// Do the actual sort.
+				/// </summary>
+				public override void Sort(List<IManyOnePathSortItem> records)
+				{
+					records.Sort(new OccurrenceComparer(m_cache, SpecialDataAccess));
+				}
+
+				/// <summary>
+				/// We only ever sort this list to start with, don't think we should need this,
+				/// but it's an abstract method so we have to have it.
+				/// </summary>
+				public override void MergeInto(List<IManyOnePathSortItem> records, List<IManyOnePathSortItem> newRecords)
+				{
+					throw new NotSupportedException("The method or operation is not supported.");
+				}
+
+				/// <summary />
+				private sealed class OccurrenceComparer : IComparer
+				{
+					private readonly LcmCache _cache;
+					private readonly ISilDataAccessManaged m_sda;
+
+					/// <summary />
+					internal OccurrenceComparer(LcmCache cache, ISilDataAccessManaged sda)
+					{
+						_cache = cache;
+						m_sda = sda;
+					}
+
+					#region IComparer Members
+
+					/// <summary />
+					int IComparer.Compare(object x1, object y1)
+					{
+						var x = (IManyOnePathSortItem)x1;
+						var y = (IManyOnePathSortItem)y1;
+						var hvoX = m_sda.get_ObjectProp(x.KeyObject, ConcDecorator.kflidTextObject);
+						var hvoY = m_sda.get_ObjectProp(y.KeyObject, ConcDecorator.kflidTextObject);
+						if (hvoX == hvoY)
+						{
+							// In the same text object, we can compare offsets.
+							var offsetX = m_sda.get_IntProp(x.KeyObject, ConcDecorator.kflidBeginOffset);
+							var offsetY = m_sda.get_IntProp(y.KeyObject, ConcDecorator.kflidBeginOffset);
+							return offsetX - offsetY;
+						}
+						hvoX = m_sda.get_ObjectProp(x.KeyObject, ConcDecorator.kflidParagraph);
+						hvoY = m_sda.get_ObjectProp(y.KeyObject, ConcDecorator.kflidParagraph);
+						if (hvoX == hvoY)
+						{
+							// In the same paragraph (and not nested in the same caption), we can compare offsets.
+							var offsetX = m_sda.get_IntProp(x.KeyObject, ConcDecorator.kflidBeginOffset);
+							var offsetY = m_sda.get_IntProp(y.KeyObject, ConcDecorator.kflidBeginOffset);
+							return offsetX - offsetY;
+						}
+						// While owning objects are the same type, get the owner of each, if they are the same,
+						// compare their position in owner. Special case to put heading before body.
+						// If owners are not the same type, do some trick that will make FLEx texts come before Scripture.
+						var paraRepo = _cache.ServiceLocator.GetInstance<IStTxtParaRepository>();
+						ICmObject objX = paraRepo.GetObject(hvoX);
+						ICmObject objY = paraRepo.GetObject(hvoY);
+						for (; ; )
+						{
+							var ownerX = objX.Owner;
+							var ownerY = objY.Owner;
+							if (ownerX == null)
+							{
+								return ownerY == null ? hvoY - hvoX : -1;
+							}
+							if (ownerY == null)
+							{
+								return 1; // arbitrary, object with shorter chain comes first.
+							}
+							if (ownerX == ownerY)
+							{
+								var flidX = objX.OwningFlid;
+								var flidY = objY.OwningFlid;
+								if (flidX != flidY)
+								{
+									return flidX - flidY; // typically body and heading.
+								}
+								var indexX = _cache.MainCacheAccessor.GetObjIndex(ownerX.Hvo, flidX, objX.Hvo);
+								var indexY = _cache.MainCacheAccessor.GetObjIndex(ownerY.Hvo, flidX, objY.Hvo);
+								return indexX - indexY;
+							}
+							var clsX = ownerX.ClassID;
+							var clsY = ownerY.ClassID;
+							if (clsX != clsY)
+							{
+								// Typically one is in Scripture, the other in a Text.
+								// Arbitrarily order things by the kind of parent they're in.
+								// Enhance JohnT: this will need improvement if we go to hierarchical
+								// structures like nested sections or a folder organization of texts.
+								// We could loop all the way up, and then back down till we find a pair
+								// of owners that are different.
+								// (We reverse the usual X - Y in order to put Texts before Scripture
+								// in this list as in the Texts list in FLEx.)
+								return clsY - clsX;
+							}
+							objX = ownerX;
+							objY = ownerY;
+						}
+					}
+
+					#endregion
+				}
+			}
 		}
 	}
 }
