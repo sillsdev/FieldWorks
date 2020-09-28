@@ -27,4 +27,5 @@ RealSplashScreen.cs -whitespace
 run-app -whitespace
 Bin/ilrepack-assemblies -whitespace
 *.json -whitespace
+*.js -whitespace
 Src/LexText/ParserCore/ParserCoreTests/**/*.txt -whitespace

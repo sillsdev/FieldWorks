@@ -4,8 +4,10 @@
 
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using SIL.Acknowledgements;
 
 [assembly: AssemblyTitle("Interlinear text")]
 
 [assembly: System.Runtime.InteropServices.ComVisible(false)]
 [assembly: System.Runtime.CompilerServices.InternalsVisibleTo("ITextDllTests")]
+[assembly: Acknowledgement("Dragula", Copyright = "Nicolás Bevacqua", Url = "https://github.com/bevacqua/dragula", LicenseUrl = "https://opensource.org/licenses/MIT")]

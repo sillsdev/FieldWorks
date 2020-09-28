@@ -990,7 +990,7 @@ namespace SIL.FieldWorks.XWorks
 
 			// Scroll only if current element is not visible on browser window
 			if (currElementTop < browser.Window.ScrollY || currElementBottom > (browser.Window.ScrollY + browser.Height))
-				browser.Window.ScrollTo(0, yPosition);
+				browser.Window.ScrollTo(0, (int)yPosition);
 
 			AddClassToHtmlElement(currSelectedByGuid, CurrentSelectedEntryClass);
 			m_selectedObjectID = currentObjectGuid;

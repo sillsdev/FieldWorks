@@ -14,16 +14,12 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Xml;
-using System.Text;
-using ExCSS;
 using Gecko;
 using Gecko.DOM;
-using SIL.LCModel.Core.Text;
+using SIL.Extensions;
 using SIL.LCModel.Utils;
 using SIL.Windows.Forms.HtmlBrowser;
 using Directory = System.IO.Directory;
-using Property = ExCSS.Property;
-using StyleSheet = ExCSS.StyleSheet;
 
 namespace SIL.FieldWorks.IText
 {
@@ -203,6 +199,15 @@ namespace SIL.FieldWorks.IText
 			if (htmlPath == null)
 				throw new ArgumentNullException();
 
+			using (var fileStream = new StreamWriter(htmlPath))
+			{
+				SavePublishedHtmlAndCss(fileStream);
+
+			}
+		}
+
+		internal void SavePublishedHtmlAndCss(StreamWriter fileStream)
+		{
 			// Make the HTML write nicely
 			var htmlWriterSettings = new XmlWriterSettings()
 			{
@@ -212,7 +217,7 @@ namespace SIL.FieldWorks.IText
 
 			var cssPath = FwDirectoryFinder.TemplateDirectory + Path.DirectorySeparatorChar +
 				"ConfigureInterlinear" + Path.DirectorySeparatorChar + "ConfigureInterlinear.css";
-			using (var htmlWriter = XmlWriter.Create(htmlPath, htmlWriterSettings))
+			using (var htmlWriter = XmlWriter.Create(fileStream, htmlWriterSettings))
 			{
 				GenerateOpeningHtml(htmlWriter, cssPath);
 				GenerateHtmlTable(htmlWriter, m_choices.Mode);
@@ -228,13 +233,10 @@ namespace SIL.FieldWorks.IText
 		/// <param name="cssPath">The path of the CSS file</param>
 		private void GenerateOpeningHtml(XmlWriter htmlWriter, string cssPath)
 		{
-			var javascriptFilePaths = GetFilePaths();
 			htmlWriter.WriteRaw("\n<!doctype html>\n");
 			htmlWriter.WriteStartElement("html");
 			htmlWriter.WriteStartElement("head");
 			CreateLinkElementForStylesheet(htmlWriter, cssPath);
-			CreateScriptElement(htmlWriter, GetPathFromFile(javascriptFilePaths, "jquery.js")); // jQuery
-			CreateScriptElement(htmlWriter, GetPathFromFile(javascriptFilePaths, "jqueryui.js")); // jQuery UI
 			htmlWriter.WriteFullEndElement(); // </head>
 			htmlWriter.WriteStartElement("body");
 			htmlWriter.WriteStartElement("div");
@@ -293,405 +295,270 @@ namespace SIL.FieldWorks.IText
 		/// <param name="mode">The InterlinMode of the choices</param>
 		private void GenerateHtmlTable(XmlWriter htmlWriter, InterlinLineChoices.InterlinMode mode)
 		{
-			var rowChoicesList = InitRowChoices();
+			var rowChoicesList = InitRowChoices(m_choices);
 
-			htmlWriter.WriteStartElement("table");
-			htmlWriter.WriteStartElement("thead");
-			// The first th is for the outer .grab elements
-			// The second th is for the inner .grab elements
-			// The third th is a blank one for the row lables (Word, Word Gloss, etc.)
-			htmlWriter.WriteStartElement("tr");
-			htmlWriter.WriteStartElement("th");
-			htmlWriter.WriteFullEndElement(); // </th>
-			htmlWriter.WriteStartElement("th");
-			htmlWriter.WriteFullEndElement(); // </th>
-			htmlWriter.WriteStartElement("th");
-			htmlWriter.WriteAttributeString("class", "mainTh");
-			htmlWriter.WriteFullEndElement(); // </th>
-			GenerateWsTableColumns(htmlWriter, "mainTh");
+			htmlWriter.WriteStartElement("div");
+			var wsColumnWidths = string.Join(" ", m_columns.Select(c => "9em"));
+			htmlWriter.WriteAttributeString("style", $"display: grid; grid-template-columns: 2em 2em 8em {wsColumnWidths};");
+			htmlWriter.WriteAttributeString("id", "parent-grid");
+			htmlWriter.WriteStartElement("div");
+			htmlWriter.WriteAttributeString("class", "hamburger header");
+			htmlWriter.WriteAttributeString("id", "header-hamburger-1");
 			htmlWriter.WriteFullEndElement(); // </tr>
-			htmlWriter.WriteFullEndElement(); // </thead>
-			htmlWriter.WriteStartElement("tbody");
+			htmlWriter.WriteStartElement("div");
+			htmlWriter.WriteAttributeString("class", "hamburger header");
+			htmlWriter.WriteAttributeString("id", "header-hamburger-2");
+			htmlWriter.WriteFullEndElement(); // </tr>
+			htmlWriter.WriteStartElement("div");
+			htmlWriter.WriteAttributeString("class", "rowNames header");
+			htmlWriter.WriteAttributeString("id", "header-row-names");
+			htmlWriter.WriteFullEndElement(); // </tr>
+			GenerateWsTableColumns(htmlWriter, "header");
 
-			if (mode != InterlinLineChoices.InterlinMode.Chart)
+			foreach (var rowChoice in rowChoicesList)
 			{
-				// The UI needs to enforce the way morpheme-level options are ordered, so morpheme-level options are linked
-				// together as one unit. The Literal Translation, Free Translation, and Note options are in their own table
-				// because they must remain on the bottom of the options list.
-				foreach (var currentRow in rowChoicesList)
-				{
-					if (currentRow.Count > 1 && (currentRow.First.Value.Item2.MorphemeLevel && currentRow.First.Value.Item2.WordLevel)) // Morpheme-level option
-					{
-						GenerateTableRowWithClusterTable(htmlWriter, currentRow, "clusterTable");
-					}
-					else if (currentRow.Count == 1)
-					{
-						GenerateNormalTableRow(htmlWriter, currentRow.First.Value, true);
-					}
-				}
-				htmlWriter.WriteFullEndElement(); // </tbody>
-				htmlWriter.WriteFullEndElement(); // </table>
-				// The Literal Translation, Free Translation, and Note options are grouped in a separate table.
-				GenerateNonWordLevelLineOptions(htmlWriter, "specialTable", "clusterTable",
-					rowChoicesList.Last.Value, 3);
-			}
-			else
-			{
-				foreach (var currentRow in rowChoicesList)
-				{
-					if (currentRow.First.Value.Item2.MorphemeLevel) // The morpheme-level options are in a separate table
-					{
-						GenerateMorphemeLevelTable(htmlWriter, currentRow);
-					}
-					else
-					{
-						GenerateTableRowWithClusterTable(htmlWriter, currentRow, "clusterTable hasDashedLine");
-					}
-				}
-				htmlWriter.WriteFullEndElement(); // </tbody>
-				htmlWriter.WriteFullEndElement(); // </table>
+				rowChoice.GenerateRow(htmlWriter, m_columns, m_cachedComboContentForColumns, m_choices);
 			}
 
 			htmlWriter.WriteFullEndElement(); // </div>
 		}
 
 		/// <summary>
-		/// Generates sub-table with Morpheme Level Line Choices
+		/// This class encapsulates the data needed to render one or more rows in the Configure Interlinear Dialog
 		/// </summary>
-		private void GenerateMorphemeLevelTable(XmlWriter htmlWriter, LinkedList<Tuple<LineOption, InterlinLineSpec>> tableRowData)
+		internal sealed class InterlinearTableRow
 		{
-			htmlWriter.WriteStartElement("tr");
-			htmlWriter.WriteStartElement("td");
-			htmlWriter.WriteAttributeString("class", "grab specialGrab");
-			htmlWriter.WriteRaw("&#8801;");
-			htmlWriter.WriteFullEndElement(); // </td>
-			htmlWriter.WriteStartElement("td");
-			htmlWriter.WriteAttributeString("class", "specialTD");
-			htmlWriter.WriteAttributeString("colspan", (m_columns.Count + 2).ToString());
 
-			htmlWriter.WriteStartElement("table");
-			htmlWriter.WriteAttributeString("class", "clusterTable");
-			htmlWriter.WriteStartElement("thead");
-			htmlWriter.WriteStartElement("tr");
-			htmlWriter.WriteStartElement("th");
-			htmlWriter.WriteFullEndElement(); // </th>
-			htmlWriter.WriteStartElement("th");
-			htmlWriter.WriteAttributeString("class", "mainTh");
-			htmlWriter.WriteFullEndElement(); // </th>
-			GenerateWsTableColumns(htmlWriter, "mainTh");
-			htmlWriter.WriteFullEndElement(); // </tr>
-			htmlWriter.WriteFullEndElement(); // </thead>
-			htmlWriter.WriteStartElement("tbody");
+			private Tuple<LineOption, InterlinLineSpec> FirstRow;
 
-			var morphemesOrLexGlossWasDrawn = false;
-			foreach (var row in tableRowData)
+			/// <summary>
+			/// Morpheme level and segment level rows are grouped into a section that stick together
+			/// </summary>
+			private List<Tuple<LineOption, InterlinLineSpec>> RemainingRows = new List<Tuple<LineOption, InterlinLineSpec>>();
+
+			public InterlinearTableRow(Tuple<LineOption, InterlinLineSpec> lineInfo)
 			{
-				if ((row.Item1.Flid == InterlinLineChoices.kflidMorphemes ||
-					row.Item1.Flid == InterlinLineChoices.kflidLexGloss) && !morphemesOrLexGlossWasDrawn)
+				FirstRow = lineInfo;
+			}
+
+			public bool IsSection(InterlinLineChoices choices) => IsMorphemeRow(FirstRow, choices) || IsSegmentRow(FirstRow, choices);
+
+			/// <summary>
+			/// A row is a segment row if the InterlinLineSpec shows that it is not a word level line
+			/// </summary>
+			private bool IsSegmentRow(Tuple<LineOption, InterlinLineSpec> row, InterlinLineChoices choices)
+			{
+				if (row.Item2 == null)
 				{
-					htmlWriter.WriteStartElement("tr");
-					htmlWriter.WriteStartElement("td");
-					htmlWriter.WriteAttributeString("class", "specialTD");
-					htmlWriter.WriteAttributeString("colspan", (m_columns.Count + 2).ToString());
-					htmlWriter.WriteStartElement("table");
-					htmlWriter.WriteAttributeString("class", "clusterTable hasDashedLine");
-					htmlWriter.WriteAttributeString("id", "specialClusterTable");
-					htmlWriter.WriteStartElement("thead");
-					htmlWriter.WriteStartElement("tr");
-					htmlWriter.WriteStartElement("th");
-					htmlWriter.WriteFullEndElement(); // </th>
-					htmlWriter.WriteStartElement("th");
-					htmlWriter.WriteAttributeString("class", "mainTh");
-					htmlWriter.WriteFullEndElement(); // </th>
-					GenerateWsTableColumns(htmlWriter, "mainTh");
-					htmlWriter.WriteFullEndElement(); // </tr>
-					htmlWriter.WriteFullEndElement(); // </thead>
-					htmlWriter.WriteStartElement("tbody");
-					GenerateNormalTableRow(htmlWriter, row, false);
-					morphemesOrLexGlossWasDrawn = true;
+					return !choices.CreateSpec(row.Item1.Flid, 0).WordLevel;
 				}
-				else if ((row.Item1.Flid == InterlinLineChoices.kflidMorphemes ||
-						row.Item1.Flid == InterlinLineChoices.kflidLexGloss) && morphemesOrLexGlossWasDrawn)
+				return !row.Item2.WordLevel;
+			}
+
+			/// <summary>
+			/// A line results in a morpheme row if the specification indicates it
+			/// </summary>
+			private bool IsMorphemeRow(Tuple<LineOption, InterlinLineSpec> row, InterlinLineChoices choices)
+			{
+				if (row.Item2 == null)
 				{
-					GenerateNormalTableRow(htmlWriter, row, false);
-					htmlWriter.WriteFullEndElement(); // </tbody>
-					htmlWriter.WriteFullEndElement(); // </table>
+					return choices.CreateSpec(row.Item1.Flid, 0).MorphemeLevel;
 				}
-				else
+				return row.Item2.MorphemeLevel;
+			}
+
+			public void FillSection(Queue<Tuple<LineOption, InterlinLineSpec>> remainingChoiceRows, InterlinLineChoices choices)
+			{
+				if (IsMorphemeRow(FirstRow, choices))
 				{
-					GenerateNormalTableRow(htmlWriter, row, false);
+					while (remainingChoiceRows.Any() &&
+						IsMorphemeRow(remainingChoiceRows.Peek(), choices))
+					{
+						RemainingRows.Add(remainingChoiceRows.Dequeue());
+					}
+				}
+				else if (IsSegmentRow(FirstRow, choices))
+				{
+					while (remainingChoiceRows.Any() &&
+						IsSegmentRow(remainingChoiceRows.Peek(), choices))
+					{
+						RemainingRows.Add(remainingChoiceRows.Dequeue());
+					}
 				}
 			}
 
-			htmlWriter.WriteFullEndElement(); // </tr>
-			htmlWriter.WriteFullEndElement(); // </tbody>
-			htmlWriter.WriteFullEndElement(); // </table>
-			htmlWriter.WriteFullEndElement(); // </td>
-			htmlWriter.WriteFullEndElement(); // </tr>
-		}
+			public void GenerateRow(XmlWriter htmlWriter,
+				List<WsComboItem> columns,
+				Dictionary<ColumnConfigureDialog.WsComboContent, ComboBox.ObjectCollection> comboContentCache,
+				InterlinLineChoices choices)
+			{
+				htmlWriter.WriteStartElement("div");
+				var wsColumnWidths = string.Join(" ", columns.Select(c => "9em"));
+				htmlWriter.WriteAttributeString("style", $"grid-column-start: 1; grid-column-end: span {columns.Count + 3}; display: grid; grid-template-columns: 2em 2em 8em {wsColumnWidths};");
+				htmlWriter.WriteAttributeString("class", IsMorphemeRow(FirstRow, choices) ? "morpheme-container" : "segment-container");
+				htmlWriter.WriteAttributeString("id", $"row-grid-{FirstRow.Item1.Flid}");
+				htmlWriter.WriteStartElement("span");
+				htmlWriter.WriteAttributeString("class", "row-handle");
+				htmlWriter.WriteAttributeString("id", $"row-grab-{FirstRow.Item1.Flid}");
+				htmlWriter.WriteRaw("&#8801;");
+				htmlWriter.WriteFullEndElement(); // </span>
+				if (IsSection(choices))
+				{
+					var allRows = new List<Tuple<LineOption, InterlinLineSpec>>();
+					allRows.Add(FirstRow);
+					allRows.AddRange(RemainingRows);
+					foreach (var otherRow in allRows)
+					{
+						htmlWriter.WriteStartElement("div");
+						htmlWriter.WriteAttributeString("class", IsMorphemeRow(FirstRow, choices) ? "morpheme-row" : "segment-row");
+						htmlWriter.WriteAttributeString("style", $"grid-column-start: 2; grid-column-end: span {columns.Count + 2}; display: grid; grid-template-columns: 2em 8em {wsColumnWidths};");
+						htmlWriter.WriteAttributeString("id", $"internal-row-grid-{otherRow.Item1.Flid}");
+						htmlWriter.WriteStartElement("span");
+						htmlWriter.WriteAttributeString("class", "internal-row-handle");
+						htmlWriter.WriteAttributeString("id", $"internal-row-grab-{FirstRow.Item1.Flid}");
+						htmlWriter.WriteRaw("&#8801;");
+						htmlWriter.WriteFullEndElement();
+						GenerateRowCells(htmlWriter, otherRow, columns, comboContentCache, choices);
+						htmlWriter.WriteFullEndElement();
+					}
+				}
+				else
+				{
+					htmlWriter.WriteStartElement("div");
+					htmlWriter.WriteFullEndElement(); // </div>
+					GenerateRowCells(htmlWriter, FirstRow, columns, comboContentCache, choices);
+				}
+				htmlWriter.WriteFullEndElement(); // </div>
+			}
 
-		private void GenerateTableRowWithClusterTable(XmlWriter htmlWriter, LinkedList<Tuple<LineOption, InterlinLineSpec>> rowData, string tableClass)
-		{
-			htmlWriter.WriteStartElement("tr");
-			htmlWriter.WriteStartElement("td");
-			htmlWriter.WriteAttributeString("class", "grab specialGrab");
-			htmlWriter.WriteRaw("&#8801;");
-			htmlWriter.WriteFullEndElement(); // </td>
-			htmlWriter.WriteStartElement("td");
-			htmlWriter.WriteAttributeString("class", "specialTD");
-			htmlWriter.WriteAttributeString("colspan", (m_columns.Count + 2).ToString());
-			GenerateClusterTable(htmlWriter, rowData, "", tableClass);
-			htmlWriter.WriteFullEndElement(); // </td>
-			htmlWriter.WriteFullEndElement(); // </tr>
+			/// <summary>
+			/// Generates a Table Row which can be reordered to anywhere else in the table
+			/// </summary>
+			private void GenerateRowCells(XmlWriter htmlWriter, Tuple<LineOption, InterlinLineSpec> rowData, List<WsComboItem> columns, Dictionary<ColumnConfigureDialog.WsComboContent, ComboBox.ObjectCollection> comboContentCache, InterlinLineChoices choices)
+			{
+				htmlWriter.WriteStartElement("div");
+				htmlWriter.WriteAttributeString("class", "line-choice");
+				htmlWriter.WriteAttributeString("id", $"{rowData.Item1.Flid}");
+				htmlWriter.WriteRaw(rowData.Item1.Label);
+				htmlWriter.WriteFullEndElement(); // row label div
+				GenerateCheckboxes(htmlWriter, rowData.Item2 ?? choices.CreateSpec(rowData.Item1.Flid, 0), columns, comboContentCache, choices);
+			}
+
+
+			/// <summary>
+			/// Determines if the spec's ComboContent is contained in one of the cached keys of comboContentCache.
+			/// If it is, then loop through each column to determine if a checkbox is needed. Otherwise, write the td with no checkbox.
+			/// </summary>
+			private void GenerateCheckboxes(XmlWriter htmlWriter,
+				InterlinLineSpec spec,
+				List<WsComboItem> columns,
+				Dictionary<ColumnConfigureDialog.WsComboContent, ComboBox.ObjectCollection> comboContentCache,
+				InterlinLineChoices choices)
+			{
+				ComboBox.ObjectCollection objectCollection = null;
+
+				if (comboContentCache.ContainsKey(spec.ComboContent))
+					objectCollection = comboContentCache[spec.ComboContent];
+
+				if (objectCollection != null)
+				{
+					foreach (var column in columns)
+					{
+						if (objectCollection.Contains(column))
+						{
+							var id = spec.Flid + "%" + column.WritingSystem;
+							GenerateCheckbox(htmlWriter, choices, id, column.WritingSystemType);
+						}
+						else
+						{
+							GenerateCheckbox(htmlWriter, choices, "", column.WritingSystemType, true);
+						}
+					}
+				}
+				else
+				{
+					foreach (var column in columns)
+					{
+						GenerateCheckbox(htmlWriter, choices, "", column.WritingSystemType, true);
+					}
+				}
+			}
+
+			/// <summary>
+			/// Creates a new td with a checkbox if isEmptyTd is false. If isEmptyTd is true, then it creates
+			/// a td with no checkbox. If a className is given, then it adds the class to the td to show
+			/// a separation/distinction between the writing systems. id is typically the flid and ws
+			/// together. If blank, no id is written.
+			/// </summary>
+			/// <param name="htmlWriter">The XmlWriter to write the HTML</param>
+			/// <param name="id">The id for the checkbox to be written</param>
+			/// <param name="isEmptyTd">If true, a td is written with no checkbox</param>
+			/// <param name="className">The name of the class to attach to the td</param>
+			private void GenerateCheckbox(XmlWriter htmlWriter, InterlinLineChoices choices, string id, string className, bool isEmptyTd = false)
+			{
+				if (htmlWriter == null)
+					return;
+				htmlWriter.WriteStartElement("div");
+				htmlWriter.WriteAttributeString("class", $"grid-cell {className}");
+				htmlWriter.WriteAttributeString("id", $"div{id}");
+
+				if (!isEmptyTd)
+				{
+					var flid = int.Parse(id.Split('%')[0]);
+					var ws = int.Parse(id.Split('%')[1]);
+
+					htmlWriter.WriteStartElement("input");
+					htmlWriter.WriteAttributeString("type", "checkbox");
+					htmlWriter.WriteAttributeString("id", id);
+					htmlWriter.WriteAttributeString("class", "checkBox");
+					htmlWriter.WriteAttributeString("name", id.Split('%')[0] + "[]");
+					if (choices.IndexOf(flid, ws, true) != -1) // If the option is in choices, check it
+						htmlWriter.WriteAttributeString("checked", "checked");
+					htmlWriter.WriteEndElement(); // /> <--- End input element
+				}
+				htmlWriter.WriteFullEndElement(); // </td>
+			}
 		}
 
 		/// <summary>
 		/// Gets the Initial Row Choices for the HTML to generate
 		/// </summary>
-		private LinkedList<LinkedList<Tuple<LineOption, InterlinLineSpec>>> InitRowChoices()
+		internal static IEnumerable<InterlinearTableRow> InitRowChoices(InterlinLineChoices choices)
 		{
-			var rowChoicesList = new LinkedList<LinkedList<Tuple<LineOption, InterlinLineSpec>>>();
-			if (m_choices.Mode != InterlinLineChoices.InterlinMode.Chart)
+			var rowChoices = new List<InterlinearTableRow>();
+			var remainingChoiceRows = new Queue<Tuple<LineOption, InterlinLineSpec>>();
+			var lineOptions = choices.LineOptions();
+			foreach (var lineOption in lineOptions)
 			{
-				var choiceIndex = 0;
-				while (choiceIndex < m_choices.AllLineOptions.Count)
-				{
-					var currentRowChoiceList = new LinkedList<Tuple<LineOption, InterlinLineSpec>>();
-					var rowChoice = new LinkedListNode<Tuple<LineOption, InterlinLineSpec>>(new Tuple<LineOption, InterlinLineSpec>(m_choices.AllLineOptions[choiceIndex], m_choices.AllLineSpecs[choiceIndex]));
-					currentRowChoiceList.AddLast(rowChoice);
-					if (m_choices.AllLineSpecs[choiceIndex].MorphemeLevel && m_choices.AllLineSpecs[choiceIndex].WordLevel
-						|| !m_choices.AllLineSpecs[choiceIndex].WordLevel) // Either Morphemes, Lex. Gloss, etc. OR Notes, Literal Translation, etc...
-					{
-						var incremented = choiceIndex + 1;
-						if (incremented < m_choices.AllLineSpecs.Count)
-						{
-							var isNextChoiceValid = (m_choices.AllLineSpecs[incremented].MorphemeLevel && m_choices.AllLineSpecs[incremented].WordLevel)
-													|| !m_choices.AllLineSpecs[incremented].WordLevel;
-
-							while (isNextChoiceValid)
-							{
-								currentRowChoiceList.AddLast(new Tuple<LineOption, InterlinLineSpec>(m_choices.AllLineOptions[incremented], m_choices.AllLineSpecs[incremented++]));
-								if (incremented >= m_choices.AllLineOptions.Count || !m_choices.AllLineSpecs[incremented].MorphemeLevel && m_choices.AllLineSpecs[incremented].WordLevel)
-									isNextChoiceValid = false;
-							}
-							choiceIndex = incremented;
-						}
-					}
-					else
-					{
-						choiceIndex++;
-					}
-					rowChoicesList.AddLast(currentRowChoiceList);
-				}
+				remainingChoiceRows.Enqueue(new Tuple<LineOption, InterlinLineSpec>(lineOption,
+					choices.AllLineSpecs.FirstOrDefault(spec => spec.Flid == lineOption.Flid)));
 			}
-			else
+			do
 			{
-				var choiceIndex = 0;
-				while (choiceIndex < m_choices.AllLineOptions.Count)
+				var row = new InterlinearTableRow(remainingChoiceRows.Dequeue());
+				if (row.IsSection(choices))
 				{
-					var currentRowChoiceList = new LinkedList<Tuple<LineOption, InterlinLineSpec>>();
-					var rowChoice = new LinkedListNode<Tuple<LineOption, InterlinLineSpec>>(new Tuple<LineOption, InterlinLineSpec>(m_choices.AllLineOptions[choiceIndex], m_choices.AllLineSpecs[choiceIndex]));
-					currentRowChoiceList.AddLast(rowChoice);
-					if (m_choices.AllLineSpecs[choiceIndex].WordLevel) // Word and Morpheme-level stuff
-					{
-						var incremented = choiceIndex + 1;
-						if (incremented < m_choices.AllLineSpecs.Count)
-						{
-							var initialOptionIsWordLevel = m_choices.AllLineSpecs[choiceIndex].WordLevel &&
-															!m_choices.AllLineSpecs[choiceIndex].MorphemeLevel;
-
-							var isNextChoiceValid = m_choices.AllLineSpecs[incremented].WordLevel;
-
-							while (isNextChoiceValid)
-							{
-								currentRowChoiceList.AddLast(new Tuple<LineOption, InterlinLineSpec>(m_choices.AllLineOptions[incremented], m_choices.AllLineSpecs[incremented++]));
-								if (incremented >= m_choices.AllLineSpecs.Count ||
-									initialOptionIsWordLevel && m_choices.AllLineSpecs[incremented].MorphemeLevel || !m_choices.AllLineSpecs[incremented].WordLevel)
-									isNextChoiceValid = false;
-							}
-							choiceIndex = incremented;
-						}
-					}
-					else
-					{
-						choiceIndex++;
-					}
-					rowChoicesList.AddLast(currentRowChoiceList);
+					row.FillSection(remainingChoiceRows, choices);
 				}
-			}
-			return rowChoicesList;
+				rowChoices.Add(row);
+			} while (remainingChoiceRows.Any());
+
+			return rowChoices;
 		}
 
 		/// <summary>
 		/// Creates the writing system columns for the table
 		/// </summary>
 		/// <param name="htmlWriter">The XmlWriter to write the HTML</param>
-		/// <param name="className">The name of the class to add to the table header</param>
-		private void GenerateWsTableColumns(XmlWriter htmlWriter, string className)
+		private void GenerateWsTableColumns(XmlWriter htmlWriter, string extraClasses = "")
 		{
 			foreach (var column in m_columns)
 			{
-				htmlWriter.WriteStartElement("th");
-				htmlWriter.WriteAttributeString("class", className);
+				htmlWriter.WriteStartElement("div");
+				htmlWriter.WriteAttributeString("class", $"grid-cell {extraClasses}");
 				htmlWriter.WriteRaw(column.ToString());
-				htmlWriter.WriteFullEndElement(); // </th>
+				htmlWriter.WriteFullEndElement();
 			}
-		}
-
-		/// <summary>
-		/// Generates a Table Row which can be reordered to anywhere else in the table
-		/// </summary>
-		private void GenerateNormalTableRow(XmlWriter htmlWriter, Tuple<LineOption, InterlinLineSpec> rowDataTuple, bool needsBlankTdBefore)
-		{
-			htmlWriter.WriteStartElement("tr");
-			htmlWriter.WriteAttributeString("id", rowDataTuple.Item1.Flid.ToString());
-			htmlWriter.WriteAttributeString("class", "row");
-			if (needsBlankTdBefore)
-			{
-				htmlWriter.WriteStartElement("td");
-				htmlWriter.WriteAttributeString("class", "noBorder");
-				htmlWriter.WriteFullEndElement(); // </td>
-			}
-			htmlWriter.WriteStartElement("td");
-			htmlWriter.WriteAttributeString("class", "grab");
-			htmlWriter.WriteRaw("&#8801;"); // hamburger-looking character
-			htmlWriter.WriteFullEndElement(); // </td>
-			htmlWriter.WriteStartElement("td");
-			htmlWriter.WriteAttributeString("class", "lineChoice");
-			htmlWriter.WriteRaw(rowDataTuple.Item1.Label);
-			htmlWriter.WriteFullEndElement(); // </td>
-			GenerateCheckboxes(htmlWriter, rowDataTuple.Item2);
-			htmlWriter.WriteFullEndElement(); // </tr>
-		}
-
-		/// <summary>
-		/// Generates a sub-table row which can be re-ordered as a whole like a normal table row
-		/// but the internal elements can only be re-ordered among themselves
-		/// </summary>
-		private void GenerateClusterTable(XmlWriter htmlWriter, LinkedList<Tuple<LineOption, InterlinLineSpec>> rowData, string tableId, string tableClass = "clusterTable")
-		{
-			htmlWriter.WriteStartElement("table");
-			htmlWriter.WriteAttributeString("class", tableClass);
-			htmlWriter.WriteAttributeString("id", tableId);
-			htmlWriter.WriteStartElement("thead");
-			htmlWriter.WriteStartElement("tr");
-			htmlWriter.WriteStartElement("th");
-			htmlWriter.WriteFullEndElement(); // </th>
-			htmlWriter.WriteStartElement("th");
-			if (m_choices.Mode == InterlinLineChoices.InterlinMode.Chart)
-				htmlWriter.WriteAttributeString("class", "mainTh");
-			htmlWriter.WriteFullEndElement(); // </th>
-			GenerateWsTableColumns(htmlWriter, m_choices.Mode == InterlinLineChoices.InterlinMode.Chart ? "mainTh" : "");
-			htmlWriter.WriteFullEndElement(); // </tr>
-			htmlWriter.WriteFullEndElement(); // </thead>
-			htmlWriter.WriteStartElement("tbody");
-			foreach (var dataTuple in rowData)
-			{
-				GenerateNormalTableRow(htmlWriter, dataTuple, false);
-			}
-			htmlWriter.WriteFullEndElement(); // </tbody>
-			htmlWriter.WriteFullEndElement(); // </table>
-		}
-
-		/// <summary>
-		/// Generates Literal Translation, Free Translation, and Notes in a separate table
-		/// </summary>
-		private void GenerateNonWordLevelLineOptions(XmlWriter htmlWriter, string tableId, string tableClass, LinkedList<Tuple<LineOption, InterlinLineSpec>> rowData,
-			int numOfBlankColumns = 0)
-		{
-			htmlWriter.WriteStartElement("table");
-			htmlWriter.WriteAttributeString("id", tableId);
-			htmlWriter.WriteAttributeString("class", tableClass);
-			htmlWriter.WriteStartElement("thead");
-			htmlWriter.WriteStartElement("tr");
-			for (var i = 0; i < numOfBlankColumns; i++)
-			{
-				htmlWriter.WriteStartElement("th");
-				htmlWriter.WriteFullEndElement(); // </th>
-			}
-			GenerateWsTableColumns(htmlWriter, "");
-			htmlWriter.WriteFullEndElement(); // </tr>
-			htmlWriter.WriteFullEndElement(); // </thead>
-			htmlWriter.WriteStartElement("tbody");
-			foreach (var row in rowData)
-			{
-				var tuple = new Tuple<LineOption, InterlinLineSpec>(row.Item1,
-					row.Item2);
-				GenerateNormalTableRow(htmlWriter, tuple, true);
-			}
-			htmlWriter.WriteFullEndElement(); // </tbody>
-			htmlWriter.WriteFullEndElement(); // </table>
-		}
-
-		/// <summary>
-		/// Determines if the spec's ComboContent is contained in one of the cached keys of m_cachedComboContentForColumns.
-		/// If it is, then loop through each column to determine if a checkbox is needed. Otherwise, write the td with no checkbox.
-		/// </summary>
-		/// <param name="htmlWriter">The XmlWriter to write the HTML</param>
-		/// <param name="spec">The InterlinLineSpec that contains the ComboContent</param>
-		private void GenerateCheckboxes(XmlWriter htmlWriter, InterlinLineSpec spec)
-		{
-			ComboBox.ObjectCollection objectCollection = null;
-
-			if (m_cachedComboContentForColumns.ContainsKey(spec.ComboContent))
-				objectCollection = m_cachedComboContentForColumns[spec.ComboContent];
-
-			if (objectCollection != null)
-			{
-				foreach (var column in m_columns)
-				{
-					if (objectCollection.Contains(column))
-					{
-						var id = spec.Flid + "%" + column.WritingSystem;
-						GenerateCheckbox(htmlWriter, id, column.WritingSystemType);
-					}
-					else
-					{
-						GenerateCheckbox(htmlWriter, "", column.WritingSystemType, true);
-					}
-				}
-			}
-			else
-			{
-				foreach (var column in m_columns)
-				{
-					GenerateCheckbox(htmlWriter, "", column.WritingSystemType, true);
-				}
-			}
-		}
-
-		/// <summary>
-		/// Creates a new td with a checkbox if isEmptyTd is false. If isEmptyTd is true, then it creates
-		/// a td with no checkbox. If a className is given, then it adds the class to the td to show
-		/// a separation/distinction between the writing systems. id is typically the flid and ws
-		/// together. If blank, no id is written.
-		/// </summary>
-		/// <param name="htmlWriter">The XmlWriter to write the HTML</param>
-		/// <param name="id">The id for the checkbox to be written</param>
-		/// <param name="isEmptyTd">If true, a td is written with no checkbox</param>
-		/// <param name="className">The name of the class to attach to the td</param>
-		private void GenerateCheckbox(XmlWriter htmlWriter, string id, string className, bool isEmptyTd = false)
-		{
-			if (htmlWriter == null)
-				return;
-			htmlWriter.WriteStartElement("td");
-			htmlWriter.WriteAttributeString("class", className);
-
-			if (!isEmptyTd)
-			{
-				var flid = int.Parse(id.Split('%')[0]);
-				var ws = int.Parse(id.Split('%')[1]);
-
-				htmlWriter.WriteStartElement("input");
-				htmlWriter.WriteAttributeString("type", "checkbox");
-				htmlWriter.WriteAttributeString("id", id);
-				htmlWriter.WriteAttributeString("class", "checkBox");
-				htmlWriter.WriteAttributeString("name", id.Split('%')[0] + "[]");
-				if (m_choices.IndexOf(flid, ws, true) != -1) // If the option is in m_choices, check it
-					htmlWriter.WriteAttributeString("checked", "checked");
-				htmlWriter.WriteEndElement(); // /> <--- End input element
-			}
-			htmlWriter.WriteFullEndElement(); // </td>
 		}
 
 		/// <summary>
@@ -704,7 +571,8 @@ namespace SIL.FieldWorks.IText
 			// If we're working with a text chart, we need to enforce the UI constraints for checkboxes.
 			if (m_choices.Mode == InterlinLineChoices.InterlinMode.Chart)
 				CreateScriptElement(htmlWriter, GetPathFromFile(javascriptFilePaths, "scriptForChart.js")); // scriptForChart.js
-			CreateScriptElement(htmlWriter, GetPathFromFile(javascriptFilePaths, "script.js")); // script.js
+			CreateScriptElement(htmlWriter, GetPathFromFile(javascriptFilePaths, "dragula.min.js"));
+			CreateScriptElement(htmlWriter, GetPathFromFile(javascriptFilePaths, "configureInterlinearLines.js"));
 			htmlWriter.WriteFullEndElement(); // </body>
 			htmlWriter.WriteFullEndElement(); // </html>
 		}
@@ -956,10 +824,8 @@ namespace SIL.FieldWorks.IText
 		{
 			using (var context = new AutoJSContext(((GeckoWebBrowser)mainBrowser.NativeBrowser).Window))
 			{
-				string checkedBoxes;
-				context.EvaluateScript("getNumOfCheckedBoxes()", out checkedBoxes);
-				var numOfCheckedBoxes = Convert.ToInt32(checkedBoxes);
-				okButton.Enabled = numOfCheckedBoxes > 0;
+				context.EvaluateScript("anyCheckboxSelected()", out var anyChecked);
+				okButton.Enabled = Convert.ToBoolean(anyChecked);
 			}
 		}
 
@@ -987,7 +853,7 @@ namespace SIL.FieldWorks.IText
 				ReorderLineChoices(Array.ConvertAll(rows.Split(','), int.Parse));
 			}
 
-			m_choices.m_specs.Clear();
+			m_choices.AllLineSpecs.Clear();
 			foreach (var checkBox in checkBoxes)
 			{
 				var element = (GeckoInputElement) checkBox;
@@ -998,10 +864,11 @@ namespace SIL.FieldWorks.IText
 
 				if (element.Checked)
 				{
-					m_choices.m_specs.Add(m_choices.CreateSpec(flid, ws));
+					m_choices.AllLineSpecs.Add(m_choices.CreateSpec(flid, ws));
 				}
 			}
 		}
 		#endregion
+
 	}
 }

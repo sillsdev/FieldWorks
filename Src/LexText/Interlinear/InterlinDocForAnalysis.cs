@@ -496,7 +496,7 @@ namespace SIL.FieldWorks.IText
 			realAnalysis = null;
 			var currentText = currentPara.Owner as IStText;
 			Debug.Assert(currentText != null, "Paragraph not owned by a text.");
-			var lines = LineChoices.m_specs as IEnumerable<InterlinLineSpec>;
+			var lines = LineChoices.AllLineSpecs as IEnumerable<InterlinLineSpec>;
 			var delta = upward ? -1 : 1;
 			var nextSegIndex = delta + seg.IndexInOwner;
 			do
@@ -554,7 +554,7 @@ namespace SIL.FieldWorks.IText
 		/// <returns>The flid of the translation or note or 0 if none is found.</returns>
 		internal int GetFirstVisibleTranslationOrNoteFlid(ISegment segment, out int ws)
 		{
-			var lines = LineChoices.m_specs as IEnumerable<InterlinLineSpec>;
+			var lines = LineChoices.AllLineSpecs as IEnumerable<InterlinLineSpec>;
 			Debug.Assert(lines != null, "Interlinear line configurations not enumerable 2");
 			var annotations = lines.SkipWhile(line => line.WordLevel);
 			int tryAnnotationIndex = lines.Count() - annotations.Count();
@@ -964,7 +964,7 @@ namespace SIL.FieldWorks.IText
 				if (!haveLineInfo)
 					return ArrowChange.None;
 
-				var lines = LineChoices.m_specs as IEnumerable<InterlinLineSpec>; // so we can use linq
+				var lines = LineChoices.AllLineSpecs as IEnumerable<InterlinLineSpec>; // so we can use linq
 				Debug.Assert(lines != null, "Interlinear line configurations not enumerable");
 				bool isUpNewSeg;
 				bool isUpMove = DetectUpMove(e, lines, lineNum, curSeg, curNoteIndex, where, isRightToLeft, out isUpNewSeg);
@@ -1029,7 +1029,7 @@ namespace SIL.FieldWorks.IText
 			Debug.Assert(para != null, "Tried to move to a null paragraph ind=" + paragraphInd);
 			Debug.Assert(seg != null, "Tried to move to a null segment ind=" + seg.IndexInOwner + " in para " + paragraphInd);
 			// get the "next" segment with a real analysis or real translation or note
-			var lines = LineChoices.m_specs as IEnumerable<InterlinLineSpec>; // so we can use linq
+			var lines = LineChoices.AllLineSpecs as IEnumerable<InterlinLineSpec>; // so we can use linq
 			while (true)
 			{
 				AnalysisOccurrence realAnalysis;
