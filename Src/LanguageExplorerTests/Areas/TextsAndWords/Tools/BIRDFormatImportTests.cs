@@ -339,7 +339,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Tools
 			Assert.DoesNotThrow(() => ReadXmlForValidation(xmlReader));
 		}
 
-		private static string FlexTextPathname => Path.Combine(FwDirectoryFinder.SourceDirectory, TestUtilities.LanguageExplorerTests, "Areas", "TextsAndWords", "Interlinear", "FlexTextImport", "FlexTextExportOutput.flextext");
+		private static string FlexTextPathname => Path.Combine(FwDirectoryFinder.SourceDirectory, TestUtilities.LanguageExplorerTests, "Areas", "TextsAndWords", "Tools", "FlexTextExportOutput.flextext");
 
 		[Test]
 		public void ImportParatextExportBasic()

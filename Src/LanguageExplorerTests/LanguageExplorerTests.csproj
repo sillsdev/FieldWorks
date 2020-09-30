@@ -433,7 +433,7 @@
   <ItemGroup>
     <None Include="BuildInclude.targets" />
     <None Include="Controls\DetailControls\Test.fwlayout" />
-    <None Include="Areas\TextsAndWords\Interlinear\FlexTextImport\FlexTextExportOutput.flextext" />
+    <None Include="Areas\TextsAndWords\Tools\FlexTextExportOutput.flextext" />
     <None Include="Controls\XMLViews\LayoutMergerTestData\LexEntry.fwlayout" />
     <None Include="Controls\XMLViews\LayoutMergerTestData\LexSense.fwlayout" />
     <None Include="Controls\XMLViews\LayoutMergerTestData\Morphology.fwlayout" />
@@ -461,17 +461,8 @@
     <None Include="Controls\XMLViews\Resources\Layouts.xml" />
     <None Include="Controls\XMLViews\Resources\Parts.xml" />
     <None Include="Controls\XMLViews\Resources\TextCacheModel_LanguageExplorer.xml" />
-    <None Include="Areas\TextsAndWords\Interlinear\ExportTestFiles\Phase1-KalabaTest.xml" />
-    <None Include="Areas\TextsAndWords\Interlinear\ExportTestFiles\Phase1-KalabaTestPunctuation.xml" />
-    <None Include="Areas\TextsAndWords\Interlinear\ExportTestFiles\Phase1-KalabaTestPunctuationWordAlignedXLingPap.xml" />
-    <None Include="Areas\TextsAndWords\Interlinear\ExportTestFiles\Phase1-KalabaTestWordAlignedXLingPap.xml" />
-    <None Include="Areas\TextsAndWords\Interlinear\ExportTestFiles\Phase1-OrizabaLesson2.xml" />
-    <None Include="Areas\TextsAndWords\Interlinear\ExportTestFiles\Phase1-OrizabaLesson2WordAlignedXLingPap.xml" />
-    <None Include="Areas\TextsAndWords\Interlinear\ExportTestFiles\Phase1-SETepehuanCorn.xml" />
-    <None Include="Areas\TextsAndWords\Interlinear\ExportTestFiles\SETepehuanCornSingleListExample.xml" />
-    <None Include="Areas\TextsAndWords\Interlinear\ExportTestFiles\SETepehuanCornWordsAppendix.xml" />
-    <Content Include="Controls\DetailControls\InterlinearExporterTests.xml" />
-    <Content Include="Areas\TextsAndWords\Interlinear\ParagraphParserTestTexts.xml" />
+    <None Include="Controls\DetailControls\InterlinearExporterTests.xml" />
+    <None Include="Controls\DetailControls\ParagraphParserTestTexts.xml" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="LanguageExplorerTestsResources.resx">

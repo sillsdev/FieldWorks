@@ -13,13 +13,7 @@ using LanguageExplorer.Areas.Lists.Tools;
 using LanguageExplorer.Areas.Notebook;
 using LanguageExplorer.Areas.Notebook.Tools;
 using LanguageExplorer.Areas.TextsAndWords;
-using LanguageExplorer.Areas.TextsAndWords.Tools.Analyses;
-using LanguageExplorer.Areas.TextsAndWords.Tools.BulkEditWordforms;
-using LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance;
-using LanguageExplorer.Areas.TextsAndWords.Tools.Concordance;
-using LanguageExplorer.Areas.TextsAndWords.Tools.CorpusStatistics;
-using LanguageExplorer.Areas.TextsAndWords.Tools.InterlinearEdit;
-using LanguageExplorer.Areas.TextsAndWords.Tools.WordListConcordance;
+using LanguageExplorer.Areas.TextsAndWords.Tools;
 using LanguageExplorer.Impls;
 using SIL.FieldWorks.Common.FwUtils;
 

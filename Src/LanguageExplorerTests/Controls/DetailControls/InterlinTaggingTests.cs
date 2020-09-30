@@ -92,7 +92,7 @@ namespace LanguageExplorerTests.Controls.DetailControls
 			Cache.ServiceLocator.WritingSystems.CurrentVernacularWritingSystems.Insert(0, m_wsXkal);
 			m_textsDefn = new XmlDocument();
 			m_tagRepo = Cache.ServiceLocator.GetInstance<ITextTagRepository>();
-			var textDefinitionsPath = Path.Combine(FwDirectoryFinder.SourceDirectory, TestUtilities.LanguageExplorerTests, "Areas", "TextsAndWords", "Interlinear", "ParagraphParserTestTexts.xml");
+			var textDefinitionsPath = Path.Combine(FwDirectoryFinder.SourceDirectory, TestUtilities.LanguageExplorerTests, "Controls", "DetailControls", "ParagraphParserTestTexts.xml");
 			m_text1 = LoadTestText(textDefinitionsPath, 1, m_textsDefn);
 			m_para1 = m_text1.ContentsOA.ParagraphsOS[0] as IStTxtPara;
 			ParseTestText();

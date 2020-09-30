@@ -886,7 +886,7 @@ namespace LanguageExplorerTests.Impls
 				"LanguageExplorer.Controls.SilSidePane.Banner",
 				"LanguageExplorer.Controls.PaneBar.PaneBar",
 				"LanguageExplorer.Controls.DetailControls.AdvancedMTDialog",
-				"LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance.ClosedFeatureValue",
+				"LanguageExplorer.Areas.TextsAndWords.Tools.ClosedFeatureValue",
 				"LanguageExplorer.UtilityTools.CircularRefBreaker",
 				"LanguageExplorer.Controls.DetailControls.AddAllomorphDlg",
 				"LanguageExplorer.Impls.RestoreDefaultsDlg",

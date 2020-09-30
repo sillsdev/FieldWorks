@@ -5,7 +5,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance;
+using LanguageExplorer.Areas.TextsAndWords.Tools;
 using NUnit.Framework;
 using SIL.LCModel;
 using SIL.LCModel.Core.KernelInterfaces;

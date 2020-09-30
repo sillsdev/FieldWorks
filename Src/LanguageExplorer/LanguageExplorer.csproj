@@ -705,12 +705,12 @@
     <Compile Include="Areas\TextsAndWords\RespellingMdc.cs" />
     <Compile Include="Areas\TextsAndWords\RespellingSda.cs" />
     <Compile Include="Areas\TextsAndWords\RespellUndoAction.cs" />
-    <Compile Include="Areas\TextsAndWords\Tools\ComplexConcordance\ComplexConcordanceResources.Designer.cs">
+    <Compile Include="Areas\TextsAndWords\Tools\ComplexConcordanceResources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>ComplexConcordanceResources.resx</DependentUpon>
     </Compile>
-    <Compile Include="Areas\TextsAndWords\Tools\ComplexConcordance\ComplexConcTagDlg.cs">
+    <Compile Include="Areas\TextsAndWords\Tools\ComplexConcTagDlg.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Areas\TextsAndWords\Tools\PartiallySharedTextsAndWordsToolsMenuHelper.cs" />
@@ -2048,11 +2048,11 @@
       <DependentUpon>TriStateTreeView.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Areas\TextsAndWords\Tools\ComplexConcordance\ComplexConcordanceResources.resx">
+    <EmbeddedResource Include="Areas\TextsAndWords\Tools\ComplexConcordanceResources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>ComplexConcordanceResources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <EmbeddedResource Include="Areas\TextsAndWords\Tools\ComplexConcordance\ComplexConcTagDlg.resx">
+    <EmbeddedResource Include="Areas\TextsAndWords\Tools\ComplexConcTagDlg.resx">
       <DependentUpon>ComplexConcTagDlg.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\DetailControls\PicturePropertiesDialog.resx">
@@ -2849,32 +2849,31 @@
     <Compile Include="Controls\ChooseTextWritingSystemDlg.Designer.cs">
       <DependentUpon>ChooseTextWritingSystemDlg.cs</DependentUpon>
     </Compile>
-    <Compile Include="Areas\TextsAndWords\Tools\ComplexConcordance\ClosedFeatureNode.cs" />
-    <Compile Include="Areas\TextsAndWords\Tools\ComplexConcordance\ClosedFeatureValue.cs" />
-    <Compile Include="Areas\TextsAndWords\Tools\ComplexConcordance\ComplexConcControl.cs">
+    <Compile Include="Areas\TextsAndWords\Tools\ClosedFeatureNode.cs" />
+    <Compile Include="Areas\TextsAndWords\Tools\ClosedFeatureValue.cs" />
+    <Compile Include="Areas\TextsAndWords\Tools\ComplexConcControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Areas\TextsAndWords\Tools\ComplexConcordance\ComplexConcControl.Designer.cs">
+    <Compile Include="Areas\TextsAndWords\Tools\ComplexConcControl.Designer.cs">
       <DependentUpon>ComplexConcControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="Areas\TextsAndWords\Tools\ComplexConcordance\ComplexConcGroupNode.cs" />
-    <Compile Include="Areas\TextsAndWords\Tools\ComplexConcordance\ComplexConcLeafNode.cs" />
-    <Compile Include="Areas\TextsAndWords\Tools\ComplexConcordance\ComplexConcMorphDlg.cs">
+    <Compile Include="Areas\TextsAndWords\Tools\ComplexConcGroupNode.cs" />
+    <Compile Include="Areas\TextsAndWords\Tools\ComplexConcLeafNode.cs" />
+    <Compile Include="Areas\TextsAndWords\Tools\ComplexConcMorphDlg.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Areas\TextsAndWords\Tools\ComplexConcordance\ComplexConcMorphNode.cs" />
-    <Compile Include="Areas\TextsAndWords\Tools\ComplexConcordance\ComplexConcOrNode.cs" />
-    <Compile Include="Areas\TextsAndWords\Tools\ComplexConcordance\ComplexConcParagraphData.cs" />
-    <Compile Include="Areas\TextsAndWords\Tools\ComplexConcordance\ComplexConcPatternModel.cs" />
-    <Compile Include="Areas\TextsAndWords\Tools\ComplexConcordance\ComplexConcPatternNode.cs" />
-    <Compile Include="Areas\TextsAndWords\Tools\ComplexConcordance\ComplexConcPatternSda.cs" />
-    <Compile Include="Areas\TextsAndWords\Tools\ComplexConcordance\ComplexConcTagNode.cs" />
-    <Compile Include="Areas\TextsAndWords\Tools\ComplexConcordance\ComplexConcWordBdryNode.cs" />
-    <Compile Include="Areas\TextsAndWords\Tools\ComplexConcordance\ComplexConcWordDlg.cs">
+    <Compile Include="Areas\TextsAndWords\Tools\ComplexConcMorphNode.cs" />
+    <Compile Include="Areas\TextsAndWords\Tools\ComplexConcOrNode.cs" />
+    <Compile Include="Areas\TextsAndWords\Tools\ComplexConcParagraphData.cs" />
+    <Compile Include="Areas\TextsAndWords\Tools\ComplexConcPatternModel.cs" />
+    <Compile Include="Areas\TextsAndWords\Tools\ComplexConcPatternNode.cs" />
+    <Compile Include="Areas\TextsAndWords\Tools\ComplexConcPatternSda.cs" />
+    <Compile Include="Areas\TextsAndWords\Tools\ComplexConcTagNode.cs" />
+    <Compile Include="Areas\TextsAndWords\Tools\ComplexConcWordBdryNode.cs" />
+    <Compile Include="Areas\TextsAndWords\Tools\ComplexConcWordDlg.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Areas\TextsAndWords\Tools\ComplexConcordance\ComplexConcWordNode.cs" />
-    <Compile Include="Areas\TextsAndWords\Tools\ComplexConcordance\ComplexFeatureNode.cs" />
+    <Compile Include="Areas\TextsAndWords\Tools\ComplexConcWordNode.cs" />
     <Compile Include="Areas\ConcordanceContainer.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -2912,7 +2911,7 @@
     <Compile Include="Impls\InterlinearImageHolder.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Areas\TextsAndWords\Tools\ComplexConcordance\InflFeatureTreeModel.cs" />
+    <Compile Include="Areas\TextsAndWords\Tools\InflFeatureTreeModel.cs" />
     <Compile Include="Controls\DetailControls\InfoPane.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -2976,7 +2975,7 @@
     </Compile>
     <Compile Include="Areas\TextsAndWords\Tools\InterlinearTextImport.cs" />
     <Compile Include="UtilityTools\ParseIsCurrentFixer.cs" />
-    <Compile Include="Areas\TextsAndWords\Tools\ComplexConcordance\PossibilityComboController.cs" />
+    <Compile Include="Areas\TextsAndWords\Tools\PossibilityComboController.cs" />
     <Compile Include="Controls\DetailControls\RawTextPane.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -2993,7 +2992,7 @@
     <Compile Include="Controls\DetailControls\GetRealAnalysisMethod.cs" />
     <Compile Include="Controls\DetailControls\MorphemeBreaker.cs" />
     <Compile Include="Areas\TextsAndWords\Tools\Sfm2FlexText.cs" />
-    <Compile Include="Areas\TextsAndWords\Tools\ComplexConcordance\SymbolicValue.cs" />
+    <Compile Include="Areas\TextsAndWords\Tools\SymbolicValue.cs" />
     <Compile Include="Controls\XMLViews\TextsFilterItem.cs" />
     <Compile Include="Controls\TextsTriStateTreeView.cs">
       <SubType>Component</SubType>
@@ -3048,7 +3047,7 @@
     <Compile Include="Controls\DetailControls\OneAnalysisSandbox.Designer.cs">
       <DependentUpon>OneAnalysisSandbox.cs</DependentUpon>
     </Compile>
-    <Compile Include="Areas\TextsAndWords\Tools\Analyses\ParserAnalysisRemover.cs" />
+    <Compile Include="UtilityTools\ParserAnalysisRemover.cs" />
     <Compile Include="Impls\TryAWordDlg.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -3201,10 +3200,10 @@
     <Compile Include="Controls\GrammarSketchHtmlViewer.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Areas\TextsAndWords\Tools\CorpusStatistics\StatisticsView.cs">
+    <Compile Include="Areas\TextsAndWords\Tools\StatisticsView.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Areas\TextsAndWords\Tools\CorpusStatistics\StatisticsView.Designer.cs">
+    <Compile Include="Areas\TextsAndWords\Tools\StatisticsView.Designer.cs">
       <DependentUpon>StatisticsView.cs</DependentUpon>
     </Compile>
     <Compile Include="Areas\Grammar\Tools\GrammarSketchTool.cs" />
@@ -3257,13 +3256,13 @@
     <Compile Include="Areas\Notebook\Tools\NotebookDocumentTool.cs" />
     <Compile Include="Areas\Notebook\Tools\NotebookEditTool.cs" />
     <Compile Include="Areas\TextsAndWords\TextAndWordsArea.cs" />
-    <Compile Include="Areas\TextsAndWords\Tools\Analyses\AnalysesTool.cs" />
-    <Compile Include="Areas\TextsAndWords\Tools\BulkEditWordforms\BulkEditWordformsTool.cs" />
-    <Compile Include="Areas\TextsAndWords\Tools\ComplexConcordance\ComplexConcordanceTool.cs" />
-    <Compile Include="Areas\TextsAndWords\Tools\Concordance\ConcordanceTool.cs" />
-    <Compile Include="Areas\TextsAndWords\Tools\CorpusStatistics\CorpusStatisticsTool.cs" />
-    <Compile Include="Areas\TextsAndWords\Tools\InterlinearEdit\InterlinearEditTool.cs" />
-    <Compile Include="Areas\TextsAndWords\Tools\WordListConcordance\WordListConcordanceTool.cs" />
+    <Compile Include="Areas\TextsAndWords\Tools\AnalysesTool.cs" />
+    <Compile Include="Areas\TextsAndWords\Tools\BulkEditWordformsTool.cs" />
+    <Compile Include="Areas\TextsAndWords\Tools\ComplexConcordanceTool.cs" />
+    <Compile Include="Areas\TextsAndWords\Tools\ConcordanceTool.cs" />
+    <Compile Include="Areas\TextsAndWords\Tools\CorpusStatisticsTool.cs" />
+    <Compile Include="Areas\TextsAndWords\Tools\InterlinearEditTool.cs" />
+    <Compile Include="Areas\TextsAndWords\Tools\WordListConcordanceTool.cs" />
     <Compile Include="FlexStylesXmlAccessor.cs" />
     <Compile Include="Impls\AreaRepository.cs" />
     <Compile Include="Impls\FwMainWnd.cs">
@@ -3358,14 +3357,14 @@
       <DependentUpon>ChooseTextWritingSystemDlg.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Areas\TextsAndWords\Tools\ComplexConcordance\ComplexConcControl.resx">
+    <EmbeddedResource Include="Areas\TextsAndWords\Tools\ComplexConcControl.resx">
       <DependentUpon>ComplexConcControl.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Areas\TextsAndWords\Tools\ComplexConcordance\ComplexConcMorphDlg.resx">
+    <EmbeddedResource Include="Areas\TextsAndWords\Tools\ComplexConcMorphDlg.resx">
       <DependentUpon>ComplexConcMorphDlg.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Areas\TextsAndWords\Tools\ComplexConcordance\ComplexConcWordDlg.resx">
+    <EmbeddedResource Include="Areas\TextsAndWords\Tools\ComplexConcWordDlg.resx">
       <DependentUpon>ComplexConcWordDlg.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="FilterTextsDialog.resx">
@@ -3675,7 +3674,7 @@
       <DependentUpon>PaneBarContainer.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Areas\TextsAndWords\Tools\CorpusStatistics\StatisticsView.resx">
+    <EmbeddedResource Include="Areas\TextsAndWords\Tools\StatisticsView.resx">
       <DependentUpon>StatisticsView.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
