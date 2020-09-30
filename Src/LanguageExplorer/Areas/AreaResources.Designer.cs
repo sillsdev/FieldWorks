@@ -668,6 +668,15 @@ namespace LanguageExplorer.Areas {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Specify Concordance Criteria.
+        /// </summary>
+        internal static string ksSpecifyConcordanceCriteria {
+            get {
+                return ResourceManager.GetString("ksSpecifyConcordanceCriteria", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to A Text Markup Tag List can only have two levels (list type and tags)..
         /// </summary>
         internal static string ksTagListTooDeep {

@@ -32,7 +32,6 @@ namespace LanguageExplorer.Areas.TextsAndWords
 	{
 		[ImportMany(LanguageExplorerConstants.TextAndWordsAreaMachineName)]
 		private IEnumerable<ITool> _myTools;
-		internal const string ConcOccurrences = "ConcOccurrences";
 		private string PropertyNameForToolName => $"{LanguageExplorerConstants.ToolForAreaNamed_}{MachineName}";
 		private TextAndWordsAreaMenuHelper _textAndWordsAreaMenuHelper;
 		private bool _hasBeenActivated;

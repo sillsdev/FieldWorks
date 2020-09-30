@@ -3,7 +3,6 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using LanguageExplorer.Areas.TextsAndWords.Interlinear;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Tools
 {

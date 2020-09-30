@@ -232,16 +232,16 @@
   <ItemGroup>
     <Compile Include="Impls\ArchivingTests.cs" />
     <Compile Include="Controls\DetailControls\MockRibbon.cs" />
-    <Compile Include="Areas\TextsAndWords\Interlinear\InterlinearExporterTestsBase.cs" />
-    <Compile Include="Areas\TextsAndWords\Interlinear\InterlinearExporterTestsForELAN.cs" />
-    <Compile Include="Areas\TextsAndWords\Interlinear\LLIMergeExtension.cs" />
-    <Compile Include="Areas\TextsAndWords\Interlinear\MockInterlinDocForAnalysis.cs">
+    <Compile Include="Controls\DetailControls\InterlinearExporterTestsBase.cs" />
+    <Compile Include="Controls\DetailControls\InterlinearExporterTestsForELAN.cs" />
+    <Compile Include="Areas\TextsAndWords\Tools\InterlinearTextImportMerge.cs" />
+    <Compile Include="Controls\DetailControls\MockInterlinDocForAnalysis.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Areas\TextsAndWords\Interlinear\SandboxForTests.cs">
+    <Compile Include="Controls\DetailControls\SandboxForTests.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Areas\TextsAndWords\Interlinear\TestableFocusBox.cs">
+    <Compile Include="Controls\DetailControls\TestableFocusBox.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Controls\TriStateTreeViewTests.cs" />
@@ -264,7 +264,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>XmlViewsResources.resx</DependentUpon>
     </Compile>
-    <Compile Include="Areas\TextsAndWords\Interlinear\GlossToolLoadsGuessContentsTests.cs" />
+    <Compile Include="Controls\DetailControls\GlossToolLoadsGuessContentsTests.cs" />
     <Compile Include="DictionaryConfiguration\DictionaryConfigTestPresenter.cs" />
     <Compile Include="DisposableObjectsSetTests.cs" />
     <Compile Include="Filters\ManyOnePathSortItemsPersistenceTests.cs" />
@@ -310,19 +310,19 @@
     <Compile Include="Controls\DetailControls\TestCCLogic.cs" />
     <Compile Include="Repository\GrammarAreaTests.cs" />
     <Compile Include="UtilityTools\GoldEticGuidFixerTests.cs" />
-    <Compile Include="Areas\TextsAndWords\Interlinear\AddWordsToLexiconTests.cs" />
-    <Compile Include="Areas\TextsAndWords\Interlinear\BIRDFormatImportTests.cs" />
-    <Compile Include="Areas\TextsAndWords\Interlinear\ComboHandlerTests.cs" />
-    <Compile Include="Areas\TextsAndWords\Interlinear\ComplexConcPatternModelTests.cs" />
-    <Compile Include="Areas\TextsAndWords\Interlinear\ConcordanceControlTests.cs" />
-    <Compile Include="Areas\TextsAndWords\Interlinear\ImportInterlinearAnalysesTests.cs" />
-    <Compile Include="Areas\TextsAndWords\Interlinear\FocusBoxControllerTests.cs" />
-    <Compile Include="Areas\TextsAndWords\Interlinear\InterlinearExporterTests.cs" />
+    <Compile Include="Controls\DetailControls\AddWordsToLexiconTests.cs" />
+    <Compile Include="Areas\TextsAndWords\Tools\BIRDFormatImportTests.cs" />
+    <Compile Include="Controls\DetailControls\ComboHandlerTests.cs" />
+    <Compile Include="Areas\TextsAndWords\Tools\ComplexConcPatternModelTests.cs" />
+    <Compile Include="Areas\TextsAndWords\Tools\ConcordanceControlTests.cs" />
+    <Compile Include="Areas\TextsAndWords\Tools\ImportInterlinearAnalysesTests.cs" />
+    <Compile Include="Controls\DetailControls\FocusBoxControllerTests.cs" />
+    <Compile Include="Controls\DetailControls\InterlinearExporterTests.cs" />
     <Compile Include="Controls\DetailControls\InterlinLineChoicesTests.cs" />
-    <Compile Include="Areas\TextsAndWords\Interlinear\InterlinSfmImportTests.cs" />
-    <Compile Include="Areas\TextsAndWords\Interlinear\InterlinTaggingTests.cs" />
+    <Compile Include="Areas\TextsAndWords\Tools\InterlinSfmImportTests.cs" />
+    <Compile Include="Controls\DetailControls\InterlinTaggingTests.cs" />
     <Compile Include="Controls\DetailControls\MorphemeBreakerTests.cs" />
-    <Compile Include="Areas\TextsAndWords\Interlinear\SandboxBaseTests.cs" />
+    <Compile Include="Controls\DetailControls\SandboxBaseTests.cs" />
     <Compile Include="Controls\DetailControls\ShowSpaceDecoratorTests.cs" />
     <Compile Include="Controls\DetailControls\TestTaggingChild.cs">
       <SubType>UserControl</SubType>
@@ -346,7 +346,7 @@
     <Compile Include="LIFT\LiftMergerTests.cs" />
     <Compile Include="Controls\MasterCategoryTests.cs" />
     <Compile Include="Areas\Lists\MsaInflectionFeatureListDlgTests.cs" />
-    <Compile Include="Areas\TextsAndWords\Interlinear\WordsSfmImportTests.cs" />
+    <Compile Include="Areas\TextsAndWords\Tools\WordsSfmImportTests.cs" />
     <Compile Include="Repository\ListsAreaTests.cs" />
     <Compile Include="Repository\MefTestBase.cs" />
     <Compile Include="MGA\GlossListBoxTest.cs" />
@@ -470,7 +470,7 @@
     <None Include="Areas\TextsAndWords\Interlinear\ExportTestFiles\Phase1-SETepehuanCorn.xml" />
     <None Include="Areas\TextsAndWords\Interlinear\ExportTestFiles\SETepehuanCornSingleListExample.xml" />
     <None Include="Areas\TextsAndWords\Interlinear\ExportTestFiles\SETepehuanCornWordsAppendix.xml" />
-    <Content Include="Areas\TextsAndWords\Interlinear\InterlinearExporterTests.xml" />
+    <Content Include="Controls\DetailControls\InterlinearExporterTests.xml" />
     <Content Include="Areas\TextsAndWords\Interlinear\ParagraphParserTestTexts.xml" />
   </ItemGroup>
   <ItemGroup>

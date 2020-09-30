@@ -646,7 +646,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 							{
 								return false;
 							}
-							if (c.GetType().ToString() == "LanguageExplorer.Areas.TextsAndWords.Interlinear.Sandbox")
+							if (c.GetType().ToString() == "LanguageExplorer.Controls.DetailControls.Sandbox")
 							{
 								//Size lbSize = m_listbox.Bounds;
 								var x1Pos = MiscUtils.LoWord(m.LParam); // LOWORD(m.LParam);

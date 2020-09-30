@@ -2191,4 +2191,65 @@ you expect.</value>
   <data name="ImportTranslatedGramCatsPrompt" xml:space="preserve">
     <value>Importing translated grammatical category content will update all grammatical categories (parts of speech) in this project with the latest translations for all Analysis Writing Systems, including English.</value>
   </data>
+  <data name="ksClearParseIsCurrent" xml:space="preserve">
+    <value>Force Rechecking Word Breaks</value>
+    <comment>Label for Force Rechecking Word Breaks item in Utility dialog</comment>
+  </data>
+  <data name="ksClearParseIsCurrentDoes" xml:space="preserve">
+    <value>This utility is for fixing incorrect word alignment (division of text into words and spaces). This utility will clear the flag that FLEx uses to determine if a parse is current. It should not affect the work you have done in analyzing texts other than repairing broken tokenization but it may update unconfirmed parser analyses.</value>
+    <comment>Help text for Force Rechecking Word Breaks utility dialog item.</comment>
+  </data>
+  <data name="ksMergeAnalysesAttemptsTo" xml:space="preserve">
+    <value>This utility finds groups of analyses that have the same word category and morphological analysis. It merges such groups into a single analysis. It keeps all the glosses, except that if some glosses are duplicates (in all writing systems) such groups will also be merged. Analyzed texts which use any of the merged analyses will be made to use the merged one.</value>
+    <comment>Help information for the Merge Duplicate Analyses item in Tools/Utilities.</comment>
+  </data>
+  <data name="ksMergeAnalysesWarning" xml:space="preserve">
+    <value>Merge Duplicate Analyses deletes all but one of the merged analyses. If other copies of this project are in use, and the deleted analyses are subsequently used in those copies to analyze texts, those confirmed analyses will be reset to defaults when that copy of the project is brought up to date with this one. Ideally, all users of the project should Send/Receive right before and again right after using this command, with the system where the command is done being the last to S/R before doing it and the first afterwards. If this is not possible, try to avoid analyzing texts in other copies of the project until a Send/Receive has been done.</value>
+    <comment>Warning for Merge Duplicate Analyses item in Tools/Utilities.</comment>
+  </data>
+  <data name="ksMergeDuplicateAnalyses" xml:space="preserve">
+    <value>Merge Duplicate Analyses</value>
+  </data>
+  <data name="ksMergeDuplicateWordforms" xml:space="preserve">
+    <value>Merge Duplicate Wordforms</value>
+    <comment>Label for one of the tasks in the Utilities dialog</comment>
+  </data>
+  <data name="ksMergeWordformsAttemptsTo" xml:space="preserve">
+    <value>This utility finds groups of Wordforms that have the same text form in all writing systems (though possibly some may be missing some alternatives). It merges such groups into a single wordform. It keeps all the analyses, which may result in some duplicate analyses to sort out using the Word Analyses tool. Spelling status will be set to Correct if any of the old wordforms is Correct, and to Incorrect if any old form is Incorrect; otherwise it stays Undecided.</value>
+    <comment>Help information for the Merge Wordform option in Utilities.</comment>
+  </data>
+  <data name="ksMergeWordformsWarning" xml:space="preserve">
+    <value>Merging wordforms is not undoable. We recommend making a backup first. You may need to Refresh some views to see the full effect of this fix.</value>
+  </data>
+  <data name="ksParseIsCurrentWarning" xml:space="preserve">
+    <value>Clearing these flags is not undoable. We believe it is very safe, but you may wish to make a backup first. However, if things are out of alignment, the effects of leaving them that way are almost certainly worse than any effects of reparsing.</value>
+    <comment>Help text for Force Rechecking Word Breaks utility dialog item.</comment>
+  </data>
+  <data name="ksRedoMergeAnalyses" xml:space="preserve">
+    <value>Redo Merge Analyses</value>
+  </data>
+  <data name="ksRedoMergeWordforms" xml:space="preserve">
+    <value>Redo Merge Wordforms</value>
+  </data>
+  <data name="ksUndoMergeAnalyses" xml:space="preserve">
+    <value>Undo Merge Analyses</value>
+  </data>
+  <data name="ksUndoMergeWordforms" xml:space="preserve">
+    <value>Undo Merge Wordforms</value>
+  </data>
+  <data name="ksUseClearParseIsCurrentWhen" xml:space="preserve">
+    <value>Use this when you suspect the program does not have its analysis of texts aligned with the text. One thing that could cause this was using the Change Spelling command in FLEx 7.0 through 7.2.2. One symptom is an incorrect Word List Concordance, where what is highlighted for an occurrence is not the selected word.</value>
+    <comment>Help text for Force Rechecking Word Breaks utility dialog item.</comment>
+  </data>
+  <data name="ksUseMergeAnalysesWhen" xml:space="preserve">
+    <value>Use this when you discover (e.g., in Word Analyses) that you have more than one copy of the same analysis of the same wordform. It is especially helpful when you have many instances of this, for example, as a result of merging work done in multiple places.</value>
+  </data>
+  <data name="ksUseMergeWordformsWhen" xml:space="preserve">
+    <value>Use this when you discover (e.g., in Wordlist Concordance) that you have more than one wordform with the exact same text</value>
+    <comment>Help information for the merge wordform option in Utilies.</comment>
+  </data>
+  <data name="ksWordformMergeFailures" xml:space="preserve">
+    <value>Merge was unable to merge some wordforms because they have inconsistent forms in other writing systems: {0}</value>
+    <comment>{0} is a list of space-separated words (possibly only one).</comment>
+  </data>
 </root>

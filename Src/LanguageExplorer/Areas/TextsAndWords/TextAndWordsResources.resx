@@ -327,4 +327,47 @@
     <value>Parsing</value>
     <comment>Status bar label</comment>
   </data>
+  <data name="ConcordanceSearchCatLabel" xml:space="preserve">
+    <value>For the category: </value>
+    <comment>Alternates with ConcordanceSearchTextLabel</comment>
+  </data>
+  <data name="ConcordanceSearchTagLabel" xml:space="preserve">
+    <value>For the tag: </value>
+    <comment>Alternates with ConcordanceSearchTextLabel</comment>
+  </data>
+  <data name="ConcordanceSearchTextLabel" xml:space="preserve">
+    <value>For the text: </value>
+    <comment>Alternates with ConcordanceSearchCatLabel (or Tag)</comment>
+  </data>
+  <data name="ksBackToConcordedItem" xml:space="preserve">
+    <value>Back to concorded item...</value>
+  </data>
+  <data name="ksBaseline" xml:space="preserve">
+    <value>Baseline</value>
+  </data>
+  <data name="ksConcordedOn0" xml:space="preserve">
+    <value>Concorded on {0}</value>
+  </data>
+  <data name="ksLexEntry" xml:space="preserve">
+    <value>Lex. Entry</value>
+  </data>
+  <data name="ksMatchStringTooLong" xml:space="preserve">
+    <value>The match string is too long, and has been trimmed to the first 1000 characters.</value>
+  </data>
+  <data name="ksNotice" xml:space="preserve">
+    <value>Notice</value>
+  </data>
+  <data name="ksShowingOnlyTheFirstXXXMatches" xml:space="preserve">
+    <value>Showing only the first {0} matches, found in the first {1} of {2} paragraphs.</value>
+  </data>
+  <data name="ksSpecifyConcordanceCriteria_" xml:space="preserve">
+    <value>Specify concordance criteria...</value>
+  </data>
+  <data name="ksTagging" xml:space="preserve">
+    <value>Tagging</value>
+    <comment>Used in Concordance</comment>
+  </data>
+  <data name="ksToSpecifyAConcordance_" xml:space="preserve">
+    <value>To specify a Concordance, select a line in which to search and enter the text to search for.</value>
+  </data>
 </root>

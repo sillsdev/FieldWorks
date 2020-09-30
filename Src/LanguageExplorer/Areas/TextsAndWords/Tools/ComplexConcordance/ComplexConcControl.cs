@@ -9,7 +9,6 @@ using System.Drawing;
 using System.Globalization;
 using System.Linq;
 using System.Windows.Forms;
-using LanguageExplorer.Areas.TextsAndWords.Interlinear;
 using LanguageExplorer.Controls;
 using LanguageExplorer.Controls.DetailControls;
 using SIL.FieldWorks.Common.FwUtils;
@@ -238,6 +237,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools.ComplexConcordance
 				ParseUnparsedParagraphs();
 				foreach (var text in ConcDecorator.InterestingTexts)
 				{
+#if JASONTODO || HASSOTODO
+					// TODO: ITextStrings.ComplexConcControl_ResultsMayBeIncomplete needs the real content, as I (RandyR) just put in: "Results may be incomplete" in ITextStrings.
+#endif
 					matches.AddRange(PatternModel.Search(text));
 					if (PatternModel.CouldNotParseAllParagraphs)
 					{

@@ -44,6 +44,7 @@ namespace LanguageExplorer.Areas
 		internal const string List_Item = "List Item";
 		internal const string Subitem = "Subitem";
 		internal const string EntriesOrChildren = "entriesOrChildren";
+		internal const string ConcOccurrences = "ConcOccurrences";
 		#endregion Random strings
 
 		/// <summary>

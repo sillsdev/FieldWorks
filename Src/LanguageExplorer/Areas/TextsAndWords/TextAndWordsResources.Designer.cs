@@ -180,6 +180,33 @@ namespace LanguageExplorer.Areas.TextsAndWords {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to For the category: .
+        /// </summary>
+        internal static string ConcordanceSearchCatLabel {
+            get {
+                return ResourceManager.GetString("ConcordanceSearchCatLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to For the tag: .
+        /// </summary>
+        internal static string ConcordanceSearchTagLabel {
+            get {
+                return ResourceManager.GetString("ConcordanceSearchTagLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to For the text: .
+        /// </summary>
+        internal static string ConcordanceSearchTextLabel {
+            get {
+                return ResourceManager.GetString("ConcordanceSearchTextLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
         ///&lt;root&gt;
         ///	&lt;wordOccurrenceList&gt;
@@ -349,6 +376,24 @@ namespace LanguageExplorer.Areas.TextsAndWords {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Back to concorded item....
+        /// </summary>
+        internal static string ksBackToConcordedItem {
+            get {
+                return ResourceManager.GetString("ksBackToConcordedItem", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Baseline.
+        /// </summary>
+        internal static string ksBaseline {
+            get {
+                return ResourceManager.GetString("ksBaseline", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Sorry. We are not able to support respelling the wordform in the required writing system at this time..
         /// </summary>
         internal static string ksCannotRespellWordform {
@@ -381,6 +426,15 @@ namespace LanguageExplorer.Areas.TextsAndWords {
         internal static string ksClear {
             get {
                 return ResourceManager.GetString("ksClear", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Concorded on {0}.
+        /// </summary>
+        internal static string ksConcordedOn0 {
+            get {
+                return ResourceManager.GetString("ksConcordedOn0", resourceCulture);
             }
         }
         
@@ -457,11 +511,29 @@ namespace LanguageExplorer.Areas.TextsAndWords {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Lex. Entry.
+        /// </summary>
+        internal static string ksLexEntry {
+            get {
+                return ResourceManager.GetString("ksLexEntry", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Maintain existing case in the Baseline of texts.
         /// </summary>
         internal static string ksMaintainExistingCaseInBaseline {
             get {
                 return ResourceManager.GetString("ksMaintainExistingCaseInBaseline", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The match string is too long, and has been trimmed to the first 1000 characters..
+        /// </summary>
+        internal static string ksMatchStringTooLong {
+            get {
+                return ResourceManager.GetString("ksMatchStringTooLong", resourceCulture);
             }
         }
         
@@ -480,6 +552,15 @@ namespace LanguageExplorer.Areas.TextsAndWords {
         internal static string ksNewSpelling {
             get {
                 return ResourceManager.GetString("ksNewSpelling", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Notice.
+        /// </summary>
+        internal static string ksNotice {
+            get {
+                return ResourceManager.GetString("ksNotice", resourceCulture);
             }
         }
         
@@ -538,11 +619,47 @@ namespace LanguageExplorer.Areas.TextsAndWords {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Showing only the first {0} matches, found in the first {1} of {2} paragraphs..
+        /// </summary>
+        internal static string ksShowingOnlyTheFirstXXXMatches {
+            get {
+                return ResourceManager.GetString("ksShowingOnlyTheFirstXXXMatches", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to (Some options are disabled because they only apply when all occurrences are being changed).
         /// </summary>
         internal static string ksSomeOptionsAreDisabledBecause_ {
             get {
                 return ResourceManager.GetString("ksSomeOptionsAreDisabledBecause_", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Specify concordance criteria....
+        /// </summary>
+        internal static string ksSpecifyConcordanceCriteria_ {
+            get {
+                return ResourceManager.GetString("ksSpecifyConcordanceCriteria_", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Tagging.
+        /// </summary>
+        internal static string ksTagging {
+            get {
+                return ResourceManager.GetString("ksTagging", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to To specify a Concordance, select a line in which to search and enter the text to search for..
+        /// </summary>
+        internal static string ksToSpecifyAConcordance_ {
+            get {
+                return ResourceManager.GetString("ksToSpecifyAConcordance_", resourceCulture);
             }
         }
         

@@ -1479,6 +1479,24 @@ namespace LanguageExplorer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Force Rechecking Word Breaks.
+        /// </summary>
+        internal static string ksClearParseIsCurrent {
+            get {
+                return ResourceManager.GetString("ksClearParseIsCurrent", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This utility is for fixing incorrect word alignment (division of text into words and spaces). This utility will clear the flag that FLEx uses to determine if a parse is current. It should not affect the work you have done in analyzing texts other than repairing broken tokenization but it may update unconfirmed parser analyses..
+        /// </summary>
+        internal static string ksClearParseIsCurrentDoes {
+            get {
+                return ResourceManager.GetString("ksClearParseIsCurrentDoes", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to &amp;Close.
         /// </summary>
         internal static string ksClose {
@@ -2700,11 +2718,65 @@ namespace LanguageExplorer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to This utility finds groups of analyses that have the same word category and morphological analysis. It merges such groups into a single analysis. It keeps all the glosses, except that if some glosses are duplicates (in all writing systems) such groups will also be merged. Analyzed texts which use any of the merged analyses will be made to use the merged one..
+        /// </summary>
+        internal static string ksMergeAnalysesAttemptsTo {
+            get {
+                return ResourceManager.GetString("ksMergeAnalysesAttemptsTo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Merge Duplicate Analyses deletes all but one of the merged analyses. If other copies of this project are in use, and the deleted analyses are subsequently used in those copies to analyze texts, those confirmed analyses will be reset to defaults when that copy of the project is brought up to date with this one. Ideally, all users of the project should Send/Receive right before and again right after using this command, with the system where the command is done being the last to S/R before doing it and the fir [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string ksMergeAnalysesWarning {
+            get {
+                return ResourceManager.GetString("ksMergeAnalysesWarning", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Merge with Cell before this.
         /// </summary>
         internal static string ksMergeBeforeMenuItem {
             get {
                 return ResourceManager.GetString("ksMergeBeforeMenuItem", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Merge Duplicate Analyses.
+        /// </summary>
+        internal static string ksMergeDuplicateAnalyses {
+            get {
+                return ResourceManager.GetString("ksMergeDuplicateAnalyses", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Merge Duplicate Wordforms.
+        /// </summary>
+        internal static string ksMergeDuplicateWordforms {
+            get {
+                return ResourceManager.GetString("ksMergeDuplicateWordforms", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This utility finds groups of Wordforms that have the same text form in all writing systems (though possibly some may be missing some alternatives). It merges such groups into a single wordform. It keeps all the analyses, which may result in some duplicate analyses to sort out using the Word Analyses tool. Spelling status will be set to Correct if any of the old wordforms is Correct, and to Incorrect if any old form is Incorrect; otherwise it stays Undecided..
+        /// </summary>
+        internal static string ksMergeWordformsAttemptsTo {
+            get {
+                return ResourceManager.GetString("ksMergeWordformsAttemptsTo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Merging wordforms is not undoable. We recommend making a backup first. You may need to Refresh some views to see the full effect of this fix..
+        /// </summary>
+        internal static string ksMergeWordformsWarning {
+            get {
+                return ResourceManager.GetString("ksMergeWordformsWarning", resourceCulture);
             }
         }
         
@@ -3137,6 +3209,15 @@ namespace LanguageExplorer {
         internal static string ksParagraphStyleForContent {
             get {
                 return ResourceManager.GetString("ksParagraphStyleForContent", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Clearing these flags is not undoable. We believe it is very safe, but you may wish to make a backup first. However, if things are out of alignment, the effects of leaving them that way are almost certainly worse than any effects of reparsing..
+        /// </summary>
+        internal static string ksParseIsCurrentWarning {
+            get {
+                return ResourceManager.GetString("ksParseIsCurrentWarning", resourceCulture);
             }
         }
         
@@ -3627,11 +3708,29 @@ namespace LanguageExplorer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Redo Merge Analyses.
+        /// </summary>
+        internal static string ksRedoMergeAnalyses {
+            get {
+                return ResourceManager.GetString("ksRedoMergeAnalyses", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Redo Merge Cells.
         /// </summary>
         internal static string ksRedoMergeCells {
             get {
                 return ResourceManager.GetString("ksRedoMergeCells", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Redo Merge Wordforms.
+        /// </summary>
+        internal static string ksRedoMergeWordforms {
+            get {
+                return ResourceManager.GetString("ksRedoMergeWordforms", resourceCulture);
             }
         }
         
@@ -4580,11 +4679,29 @@ namespace LanguageExplorer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Undo Merge Analyses.
+        /// </summary>
+        internal static string ksUndoMergeAnalyses {
+            get {
+                return ResourceManager.GetString("ksUndoMergeAnalyses", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Undo Merge Cells.
         /// </summary>
         internal static string ksUndoMergeCells {
             get {
                 return ResourceManager.GetString("ksUndoMergeCells", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Undo Merge Wordforms.
+        /// </summary>
+        internal static string ksUndoMergeWordforms {
+            get {
+                return ResourceManager.GetString("ksUndoMergeWordforms", resourceCulture);
             }
         }
         
@@ -4832,6 +4949,15 @@ namespace LanguageExplorer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Use this when you suspect the program does not have its analysis of texts aligned with the text. One thing that could cause this was using the Change Spelling command in FLEx 7.0 through 7.2.2. One symptom is an incorrect Word List Concordance, where what is highlighted for an occurrence is not the selected word..
+        /// </summary>
+        internal static string ksUseClearParseIsCurrentWhen {
+            get {
+                return ResourceManager.GetString("ksUseClearParseIsCurrentWhen", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Use default analysis.
         /// </summary>
         internal static string ksUseDefaultAnalysis {
@@ -4855,6 +4981,24 @@ namespace LanguageExplorer {
         internal static string ksUseErrorFixerWhen {
             get {
                 return ResourceManager.GetString("ksUseErrorFixerWhen", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Use this when you discover (e.g., in Word Analyses) that you have more than one copy of the same analysis of the same wordform. It is especially helpful when you have many instances of this, for example, as a result of merging work done in multiple places..
+        /// </summary>
+        internal static string ksUseMergeAnalysesWhen {
+            get {
+                return ResourceManager.GetString("ksUseMergeAnalysesWhen", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Use this when you discover (e.g., in Wordlist Concordance) that you have more than one wordform with the exact same text.
+        /// </summary>
+        internal static string ksUseMergeWordformsWhen {
+            get {
+                return ResourceManager.GetString("ksUseMergeWordformsWhen", resourceCulture);
             }
         }
         
@@ -5108,6 +5252,15 @@ namespace LanguageExplorer {
         internal static string ksWordCat {
             get {
                 return ResourceManager.GetString("ksWordCat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Merge was unable to merge some wordforms because they have inconsistent forms in other writing systems: {0}.
+        /// </summary>
+        internal static string ksWordformMergeFailures {
+            get {
+                return ResourceManager.GetString("ksWordformMergeFailures", resourceCulture);
             }
         }
         
