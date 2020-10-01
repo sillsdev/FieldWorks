@@ -4,6 +4,7 @@
 
 using System.IO;
 using System.Text;
+using System.Xml;
 using System.Xml.Linq;
 using System.Xml.XPath;
 using System.Xml.Xsl;
@@ -19,11 +20,12 @@ namespace SIL.FieldWorks.LexText.Controls
 {
 	public class ParserTraceUITransform
 	{
+		private const string PresentationTransforms = "PresentationTransforms";
 		private readonly XslCompiledTransform m_transform;
 
 		public ParserTraceUITransform(string xslName)
 		{
-			m_transform = XmlUtils.CreateTransform(xslName, "PresentationTransforms");
+			m_transform = XmlUtils.CreateTransform(xslName, PresentationTransforms);
 		}
 
 		public string Transform(PropertyTable propertyTable, XDocument doc, string baseName)
@@ -38,7 +40,12 @@ namespace SIL.FieldWorks.LexText.Controls
 			args.AddParam("prmIconPath", "", IconPath);
 			string filePath = Path.Combine(Path.GetTempPath(), cache.ProjectId.Name + baseName + ".htm");
 			using (var writer = new StreamWriter(filePath))
-				m_transform.Transform(doc.CreateNavigator(), args, writer);
+			using (var xmlWriter = new XmlTextWriter(writer))
+			{
+				m_transform.Transform(doc.CreateNavigator(), args, xmlWriter,
+					XmlUtils.GetResourceResolver(PresentationTransforms));
+			}
+
 			return filePath;
 		}
 

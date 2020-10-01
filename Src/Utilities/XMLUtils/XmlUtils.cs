@@ -18,6 +18,7 @@ using System.Xml.Serialization;
 using System.Xml.Xsl;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel.Utils;
+using SIL.PlatformUtilities;
 
 namespace SIL.Utils
 {
@@ -717,7 +718,10 @@ namespace SIL.Utils
 
 		public static XslCompiledTransform CreateTransform(string xslName, string assemblyName)
 		{
-			var transform = new XslCompiledTransform();
+			// If we're running on Mono we enable debug for XslCompiledTransform. This works
+			// around a crash somewhere deep in Mono (LT-20249). We could always pass true here,
+			// but it's probably a little bit faster if we only do it where we need it.
+			var transform = new XslCompiledTransform(Platform.IsMono);
 			if (MiscUtils.IsDotNet)
 			{
 				// Assumes the XSL has been precompiled.  xslName is the name of the precompiled class
