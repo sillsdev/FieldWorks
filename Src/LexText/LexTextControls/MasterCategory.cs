@@ -142,12 +142,12 @@ namespace SIL.FieldWorks.LexText.Controls
 		}
 
 		/// <summary>
-		/// Updates the text of the projects grammatical categories with text from provided goldEticDoc
+		/// Updates the text of the projects' grammatical categories with text from provided goldEticDoc
 		/// </summary>
 		public static void UpdatePOSStrings(LcmCache cache, XmlDocument goldEticDoc)
 		{
-			var posDict = cache.LangProject.PartsOfSpeechOA.ReallyReallyAllPossibilities
-				.Cast<IPartOfSpeech>().ToDictionary(pos => pos.CatalogSourceId);
+			var posDict = cache.LangProject.PartsOfSpeechOA.ReallyReallyAllPossibilities.Cast<IPartOfSpeech>()
+				.Where(pos => !string.IsNullOrEmpty(pos.CatalogSourceId)).ToDictionary(pos => pos.CatalogSourceId);
 			var posNodes = goldEticDoc.DocumentElement?.SelectNodes("/eticPOSList/item");
 			Debug.Assert(posNodes != null);
 

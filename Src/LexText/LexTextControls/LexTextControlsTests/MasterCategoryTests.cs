@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2017 SIL International
+// Copyright (c) 2015-2020 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -8,6 +8,7 @@ using System.Xml;
 using NUnit.Framework;
 using SIL.LCModel;
 using SIL.FieldWorks.LexText.Controls;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Infrastructure;
 
@@ -253,6 +254,9 @@ namespace LexTextControlsTests
 				adGuid, adAbbrFr, adNameFr, adDffnFr,
 				prepGuid, prepAbbrFr, prepNameFr, prepDffnFr,
 				postGuid);
+			const string customPosName = "should not crash";
+			const string customPosAbbr = "shouldn't crash";
+			const string customPosDffn = "SUT shouldn't crash if custom Parts of Speech are present, nor should they be updated.";
 
 			Cache.ServiceLocator.WritingSystemManager.GetOrSet(WSFr, out var wsDefFr);
 			Cache.ServiceLocator.WritingSystems.AnalysisWritingSystems.Add(wsDefFr);
@@ -285,6 +289,8 @@ namespace LexTextControlsTests
 			MasterCategory.Create(POSEmptySet, prepNode, Cache).AddToDatabase(Cache, posList, adMCat, adPos);
 			CheckPosHasOnlyEnglish(CheckPos(prepGuid, adPos));
 
+			var customPosGuid = CreateCustomPos(customPosName, customPosAbbr, customPosDffn, wsIdFr, posList).Guid.ToString();
+
 			CheckPosDoesNotExist(postGuid);
 
 			doc.LoadXml(inputEnAndFr);
@@ -295,6 +301,7 @@ namespace LexTextControlsTests
 			var ajPos = CheckPos(ajGuid, posList);
 			adPos = CheckPos(adGuid, posList);
 			var prepPos = CheckPos(prepGuid, adPos);
+			var customPos = CheckPos(customPosGuid, posList);
 			CheckPosDoesNotExist(postGuid);
 
 			CheckMSA(ajAbbrFr, wsIdFr, ajPos.Abbreviation);
@@ -306,6 +313,9 @@ namespace LexTextControlsTests
 			CheckMSA(prepAbbrFr, wsIdFr, prepPos.Abbreviation);
 			CheckMSA(prepNameFr, wsIdFr, prepPos.Name);
 			CheckMSA(prepDffnFr, wsIdFr, prepPos.Description);
+			CheckMSA(customPosAbbr, wsIdFr, customPos.Abbreviation);
+			CheckMSA(customPosName, wsIdFr, customPos.Name);
+			CheckMSA(customPosDffn, wsIdFr, customPos.Description);
 		}
 
 		private IPartOfSpeech CheckPos(string guid, ICmObject owner)
@@ -320,6 +330,20 @@ namespace LexTextControlsTests
 		{
 			Assert.False(Cache.ServiceLocator.GetInstance<IPartOfSpeechRepository>().TryGetObject(new Guid(id), out _),
 				"default possibility list should not already contain objects that this test creates");
+		}
+
+		private IPartOfSpeech CreateCustomPos(string name, string abbrev, string definition, int ws, ICmPossibilityList owner)
+		{
+			var guid = Guid.NewGuid();
+			UndoableUnitOfWorkHelper.Do(LexTextControls.ksUndoCreateCategory, LexTextControls.ksRedoCreateCategory,
+				Cache.ServiceLocator.GetInstance<IActionHandler>(), () =>
+				{
+					var pos = Cache.ServiceLocator.GetInstance<IPartOfSpeechFactory>().Create(guid, owner);
+					pos.Name.set_String(ws, TsStringUtils.MakeString(name, ws));
+					pos.Abbreviation.set_String(ws, TsStringUtils.MakeString(abbrev, ws));
+					pos.Description.set_String(ws, TsStringUtils.MakeString(definition, ws));
+				});
+			return CheckPos(guid.ToString(), owner);
 		}
 
 		private static void CheckPosHasOnlyEnglish(IPartOfSpeech pos)
