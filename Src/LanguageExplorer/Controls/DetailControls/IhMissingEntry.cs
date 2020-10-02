@@ -339,7 +339,7 @@ namespace LanguageExplorer.Controls.DetailControls
 					var tssSense = TsStringUtils.MakeString(mi.m_nameSense, m_caches.MainCache.DefaultAnalWs);
 					tisb.AppendTsString(tssSense);
 					tisb.Append(", ");
-					var sPos = mi.m_nameMsa ?? LanguageExplorerResources.ksQuestions;
+					var sPos = mi.m_nameMsa ?? FwUtilsStrings.ksThreeQuestionMarks;
 					tisb.Append(sPos);
 					tisb.Append(", ");
 					// append lex entry form info

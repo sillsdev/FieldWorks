@@ -649,7 +649,7 @@ namespace LanguageExplorer.Controls.DetailControls.Slices
 			private static IPartOfSpeech GetHighestPOS(IPartOfSpeech pos, out string topPOS)
 			{
 				IPartOfSpeech result = null;
-				topPOS = LanguageExplorerResources.ksQuestions;
+				topPOS = FwUtilsStrings.ksThreeQuestionMarks;
 				ICmObject obj = pos;
 				while (obj.ClassID == PartOfSpeechTags.kClassId)
 				{
@@ -945,7 +945,7 @@ namespace LanguageExplorer.Controls.DetailControls.Slices
 			{
 				if (slot == null)
 				{
-					return TsStringUtils.MakeString(LanguageExplorerResources.ksQuestions, Cache.DefaultUserWs);
+					return TsStringUtils.MakeString(FwUtilsStrings.ksThreeQuestionMarks, Cache.DefaultUserWs);
 				}
 				if (slot.Name.AnalysisDefaultWritingSystem.Text == _newSlotName)
 				{

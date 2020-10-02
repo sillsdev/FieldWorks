@@ -4,20 +4,20 @@
 
 using System.Collections.Generic;
 using System.IO;
-using LanguageExplorer.UtilityTools;
 using NUnit.Framework;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Application.ApplicationServices;
 using SIL.LCModel.Core.Text;
 
-namespace LanguageExplorerTests.UtilityTools
+namespace SIL.FieldWorks.Common.FwUtils
 {
+	/// <summary />
 	[TestFixture]
-	public class GoldEticGuidFixerTests
+	public class ReplacePOSGuidsWithGoldEticGuidsTests
 	{
 		private LcmCache Cache { get; set; }
 
+		/// <summary />
 		[SetUp]
 		public void TestSetup()
 		{
@@ -39,6 +39,7 @@ namespace LanguageExplorerTests.UtilityTools
 			Cache = null;
 		}
 
+		/// <summary />
 		[Test]
 		public void ReplacePOSGuidsWithGoldEticGuids_WrongPosGuidChangedToMatchStandard()
 		{
@@ -57,11 +58,12 @@ namespace LanguageExplorerTests.UtilityTools
 			myNewPos.CatalogSourceId = firstDefaultPos.CatalogSourceId;
 			var nonStandardGuid = myNewPos.Guid;
 			// SUT
-			Assert.That(GoldEticGuidFixer.ReplacePOSGuidsWithGoldEticGuids(Cache), Is.True);
+			Assert.That(Cache.ReplacePOSGuidsWithGoldEticGuids(), Is.True);
 			Assert.Throws<KeyNotFoundException>(() => Cache.ServiceLocator.ObjectRepository.GetObject(nonStandardGuid));
 			Assert.NotNull(Cache.ServiceLocator.ObjectRepository.GetObject(goldGuid));
 		}
 
+		/// <summary />
 		[Test]
 		public void ReplacePOSGuidsWithGoldEticGuids_WrongPosGuidInWrongPlaceGuidChangedToMatchStandard()
 		{
@@ -79,11 +81,12 @@ namespace LanguageExplorerTests.UtilityTools
 			myNewPos.CatalogSourceId = firstDefaultPos.CatalogSourceId;
 			var nonStandardGuid = myNewPos.Guid;
 			// SUT
-			Assert.That(GoldEticGuidFixer.ReplacePOSGuidsWithGoldEticGuids(Cache), Is.True);
+			Assert.That(Cache.ReplacePOSGuidsWithGoldEticGuids(), Is.True);
 			Assert.Throws<KeyNotFoundException>(() => Cache.ServiceLocator.ObjectRepository.GetObject(nonStandardGuid));
 			Assert.NotNull(Cache.ServiceLocator.ObjectRepository.GetObject(goldGuid));
 		}
 
+		/// <summary />
 		[Test]
 		public void ReplacePOSGuidsWithGoldEticGuids_EntriesUsingChangingPosAreNotNegativelyAffected()
 		{
@@ -104,11 +107,12 @@ namespace LanguageExplorerTests.UtilityTools
 			sense.MorphoSyntaxAnalysisRA = msa;
 			msa.PartOfSpeechRA = myNewPos;
 			// SUT
-			Assert.That(GoldEticGuidFixer.ReplacePOSGuidsWithGoldEticGuids(Cache), Is.True);
+			Assert.That(Cache.ReplacePOSGuidsWithGoldEticGuids(), Is.True);
 			Assert.NotNull(msa.PartOfSpeechRA);
 			Assert.AreEqual(originalText, msa.PartOfSpeechRA.Name.BestVernacularAnalysisAlternative.Text);
 		}
 
+		/// <summary />
 		[Test]
 		public void ReplacePOSGuidsWithGoldEticGuids_CustomPosItemsAreUnaffected()
 		{
@@ -119,14 +123,15 @@ namespace LanguageExplorerTests.UtilityTools
 			myNewPos.Name.set_String(wsEn, TsStringUtils.MakeString("Mine", wsEn));
 			var myNewPosGuid = myNewPos.Guid;
 			// SUT
-			Assert.That(GoldEticGuidFixer.ReplacePOSGuidsWithGoldEticGuids(Cache), Is.False);
+			Assert.That(Cache.ReplacePOSGuidsWithGoldEticGuids(), Is.False);
 			Assert.AreEqual(myNewPos, Cache.ServiceLocator.GetObject(myNewPosGuid), "Guid should not have been replaced");
 		}
 
+		/// <summary />
 		[Test]
 		public void ReplacePOSGuidsWithGoldEticGuids_NoChangesReturnsFalse()
 		{
-			Assert.That(GoldEticGuidFixer.ReplacePOSGuidsWithGoldEticGuids(Cache), Is.False);
+			Assert.That(Cache.ReplacePOSGuidsWithGoldEticGuids(), Is.False);
 		}
 	}
 }

@@ -7,7 +7,7 @@ using SIL.LCModel;
 using SIL.LCModel.Core.Cellar;
 using SIL.LCModel.Infrastructure;
 
-namespace LanguageExplorer.Areas
+namespace LanguageExplorer
 {
 	internal class ConcMdc : LcmMetaDataCacheDecoratorBase
 	{

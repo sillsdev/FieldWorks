@@ -240,6 +240,7 @@
     <Compile Include="IScrCheckInventory.cs" />
     <Compile Include="LcmExtensions.cs" />
     <Compile Include="LinkProperty.cs" />
+    <Compile Include="ManagedLgIcuCollator.cs" />
     <Compile Include="MsrSysType.cs" />
     <Compile Include="ParagraphContinuationType.cs" />
     <Compile Include="ProjectId.cs" />

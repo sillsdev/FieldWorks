@@ -274,7 +274,6 @@
     <Compile Include="Impls\FwFindReplaceDlgBaseTests.cs" />
     <Compile Include="Impls\FwFindReplaceDlgWithLiteralStringsTests.cs" />
     <Compile Include="Impls\FwFindReplaceDlgWithObjectsRepeatedInDisplayTests.cs" />
-    <Compile Include="ManagedLgIcuCollatorTests.cs" />
     <Compile Include="MeasurementUtilsTest.cs" />
     <Compile Include="MGA\GlossListTreeViewTest.cs" />
     <Compile Include="ProgressStateTests.cs" />
@@ -309,7 +308,6 @@
     <Compile Include="Controls\DetailControls\LogicTest.cs" />
     <Compile Include="Controls\DetailControls\TestCCLogic.cs" />
     <Compile Include="Repository\GrammarAreaTests.cs" />
-    <Compile Include="UtilityTools\GoldEticGuidFixerTests.cs" />
     <Compile Include="Controls\DetailControls\AddWordsToLexiconTests.cs" />
     <Compile Include="Areas\TextsAndWords\Tools\BIRDFormatImportTests.cs" />
     <Compile Include="Controls\DetailControls\ComboHandlerTests.cs" />
@@ -338,10 +336,7 @@
     <Compile Include="Repository\LexiconAreaTests.cs" />
     <Compile Include="Controls\DetailControls\LexEntryChangeHandlerTests.cs" />
     <Compile Include="Controls\DetailControls\Slices\LexReferenceTreeRootLauncherTests.cs" />
-    <Compile Include="UtilityTools\CircularRefBreakerTests.cs" />
     <Compile Include="Controls\DetailControls\Slices\ReversalEntryViewTests.cs" />
-    <Compile Include="UtilityTools\SortReversalSubEntriesTests.cs" />
-    <Compile Include="LexiconTestUtils.cs" />
     <Compile Include="LIFT\LiftExportTests.cs" />
     <Compile Include="LIFT\LiftMergerTests.cs" />
     <Compile Include="Controls\MasterCategoryTests.cs" />

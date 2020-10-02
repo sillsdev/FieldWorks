@@ -7,7 +7,7 @@ using SIL.LCModel;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Infrastructure;
 
-namespace LanguageExplorerTests
+namespace FieldWorks.TestUtilities
 {
 	internal static class LexiconTestUtils
 	{

@@ -311,7 +311,7 @@
     <Compile Include="Areas\SharedListToolsUiWidgetMenuHelper.cs" />
     <Compile Include="Areas\Notebook\Tools\SharedNotebookToolsUiWidgetMenuHelper.cs" />
     <Compile Include="Areas\PartiallySharedForToolsWideMenuHelper.cs" />
-    <Compile Include="Areas\ConcMdc.cs" />
+    <Compile Include="ConcMdc.cs" />
     <Compile Include="Areas\ConfigParentNode.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -492,7 +492,6 @@
     <Compile Include="ISummarySlice.cs" />
     <Compile Include="IViewSlice.cs" />
     <Compile Include="LanguageExplorerServices.cs" />
-    <Compile Include="ManagedLgIcuCollator.cs" />
     <Compile Include="MatchType.cs" />
     <Compile Include="ISeparatorMenuBundle.cs" />
     <Compile Include="ISeparatorToolStripBundle.cs" />
@@ -1695,7 +1694,6 @@
     <Compile Include="LcmUi\LexPronunciationUi.cs" />
     <Compile Include="LcmUi\PartOfSpeechUi.cs" />
     <Compile Include="LcmUi\PhonologicalFeatureEditor.cs" />
-    <Compile Include="LcmUi\ProgressBarWrapper.cs" />
     <Compile Include="LcmUi\Resources.Designer.cs">
       <DependentUpon>Resources.resx</DependentUpon>
       <AutoGen>True</AutoGen>
@@ -1737,17 +1735,15 @@
     <Compile Include="SimpleLogger.cs" />
     <Compile Include="StatusBarPanelServices.cs" />
     <Compile Include="Unicode.cs" />
-    <Compile Include="UtilityTools\ErrorFixer.cs" />
-    <Compile Include="IUtility.cs" />
+    <Compile Include="UtilityTools\IUtility.cs" />
     <Compile Include="UtilityTools\UtilityDlg.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="UtilityTools\WriteAllObjectsUtility.cs" />
     <Compile Include="ViewSizeEvents.cs" />
     <Compile Include="Areas\AddCustomFieldDlg.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Areas\ConcDecorator.cs" />
+    <Compile Include="ConcDecorator.cs" />
     <Compile Include="DictionaryConfiguration\ConfigurableDictionaryNode.cs" />
     <Compile Include="DictionaryConfiguration\ConfiguredLcmGenerator.cs" />
     <Compile Include="DictionaryConfiguration\CssGenerator.cs" />
@@ -2757,7 +2753,6 @@
     <Compile Include="Controls\DetailControls\Slices\AffixRuleFormulaSlice.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="UtilityTools\CircularRefBreaker.cs" />
     <Compile Include="Controls\XMLViews\BulkReversalEntryPosEditor.cs" />
     <Compile Include="Controls\DetailControls\AddComplexFormChooserCommand.cs" />
     <Compile Include="Controls\DetailControls\AddPrimaryLexemeChooserCommand.cs" />
@@ -2774,8 +2769,6 @@
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Controls\DetailControls\Slices\ILexReferenceSlice.cs" />
-    <Compile Include="Areas\Lexicon\Tools\LexEntryTypeConverter.cs" />
-    <Compile Include="Areas\Lexicon\Tools\LexEntryTypeConverters.cs" />
     <Compile Include="Controls\DetailControls\LexReferenceCollectionVc.cs" />
     <Compile Include="Controls\DetailControls\LexReferencePairVc.cs" />
     <Compile Include="Controls\DetailControls\LexReferenceSequenceVc.cs" />
@@ -2793,20 +2786,15 @@
     <Compile Include="Controls\DetailControls\Slices\FeatureSystemInflectionFeatureListDlgLauncherSlice.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="UtilityTools\GoldEticGuidFixer.cs" />
-    <Compile Include="Areas\Lexicon\DeleteEntriesSensesWithoutInterlinearization.cs" />
-    <Compile Include="Areas\Lexicon\HomographResetter.cs" />
     <Compile Include="Controls\DetailControls\Slices\GhostLexRefSlice.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Areas\Lexicon\Tools\LexEntryInflTypeConverter.cs" />
     <Compile Include="Controls\DetailControls\Slices\ChorusMessageSlice.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Controls\DetailControls\Slices\ReversalIndexEntryFormSlice.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="UtilityTools\SortReversalSubEntries.cs" />
     <Compile Include="Areas\Lexicon\Tools\CommonReversalIndexMenuHelper.cs" />
     <Compile Include="Areas\MultiPaneFactory.cs" />
     <Compile Include="Controls\MultiPaneParameters.cs" />
@@ -2892,8 +2880,6 @@
     <Compile Include="Controls\DetailControls\CreateAllomorphTypeMismatchDlg.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="UtilityTools\DuplicateAnalysisFixer.cs" />
-    <Compile Include="UtilityTools\DuplicateWordformFixer.cs" />
     <Compile Include="Controls\EditMorphBreaksDlg.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -2974,7 +2960,6 @@
       <DesignTime>True</DesignTime>
     </Compile>
     <Compile Include="Areas\TextsAndWords\Tools\InterlinearTextImport.cs" />
-    <Compile Include="UtilityTools\ParseIsCurrentFixer.cs" />
     <Compile Include="Areas\TextsAndWords\Tools\PossibilityComboController.cs" />
     <Compile Include="Controls\DetailControls\RawTextPane.cs">
       <SubType>UserControl</SubType>
@@ -3047,7 +3032,6 @@
     <Compile Include="Controls\DetailControls\OneAnalysisSandbox.Designer.cs">
       <DependentUpon>OneAnalysisSandbox.cs</DependentUpon>
     </Compile>
-    <Compile Include="UtilityTools\ParserAnalysisRemover.cs" />
     <Compile Include="Impls\TryAWordDlg.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -3296,12 +3280,6 @@
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="SendReceive\LiftImportFailureServices.cs" />
-    <Compile Include="UtilityTools\TransductionSample.cs" />
-    <Compile Include="UtilityTools\TransductionSampleStrings.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>TransductionSampleStrings.resx</DependentUpon>
-    </Compile>
     <EmbeddedResource Include="Areas\AreaResources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>AreaResources.Designer.cs</LastGenOutput>
@@ -3547,10 +3525,6 @@
     <EmbeddedResource Include="Controls\DetailControls\LexReferenceTreeRootView.resx">
       <DependentUpon>LexReferenceTreeRootView.cs</DependentUpon>
       <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UtilityTools\TransductionSampleStrings.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>TransductionSampleStrings.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

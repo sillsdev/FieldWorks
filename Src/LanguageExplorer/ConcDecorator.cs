@@ -14,7 +14,7 @@ using SIL.LCModel.Core.Text;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Infrastructure;
 
-namespace LanguageExplorer.Areas
+namespace LanguageExplorer
 {
 	/// <summary>
 	/// This class exists to decorate the main SDA for concordance views and browse views that show occurrence counts.

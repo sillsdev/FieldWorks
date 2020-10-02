@@ -142,10 +142,6 @@
     <value>Automatically generated null affix for the {0} irregularly inflected form</value>
     <comment>Content used when showing the details of a parse in Try a Word for these inflectional affix slot fillers.  {0} is the Name of the irregularly inflected form variant type.</comment>
   </data>
-  <data name="ksQuestions" xml:space="preserve">
-    <value>???</value>
-    <comment>missiing/undefined information</comment>
-  </data>
   <data name="ksReachedMaxAnalysesAllowed" xml:space="preserve">
     <value>Maximum permitted analyses ({0}) reached.</value>
   </data>

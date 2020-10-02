@@ -4,6 +4,7 @@
 
 using System.Collections;
 using System.Xml.Linq;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.Xml;
 
 namespace LanguageExplorer.Filters

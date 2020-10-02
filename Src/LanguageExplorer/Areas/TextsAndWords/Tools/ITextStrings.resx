@@ -203,10 +203,6 @@
     <value>Process</value>
     <comment>button label</comment>
   </data>
-  <data name="ksQuestions" xml:space="preserve">
-    <value>???</value>
-    <comment>signals unknown/missing value</comment>
-  </data>
   <data name="ksRedoAddFreeformTranslation" xml:space="preserve">
     <value>Redo insert Freeform Translation</value>
   </data>

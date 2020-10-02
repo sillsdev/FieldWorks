@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
@@ -312,6 +313,65 @@ namespace SIL.FieldWorks.Common.FwUtils
 			return (ISilDataAccessManaged)me.DomainDataByFlid;
 		}
 
+		public static bool ReplacePOSGuidsWithGoldEticGuids(this LcmCache me)
+		{
+			var goldDocument = new XmlDocument();
+			goldDocument.Load(Path.Combine(FwDirectoryFinder.TemplateDirectory, "GOLDEtic.xml"));
+			var itemsWithBadGuids = new Dictionary<IPartOfSpeech, string>();
+			foreach (IPartOfSpeech pos in me.LangProject.PartsOfSpeechOA.PossibilitiesOS)
+			{
+				CheckPossibilityGuidAgainstGold(pos, goldDocument, itemsWithBadGuids);
+			}
+			if (!itemsWithBadGuids.Any())
+			{
+				return false;
+			}
+			foreach (var badItem in itemsWithBadGuids)
+			{
+				ReplacePosItemWithCloneWithNewGuid(me, badItem);
+			}
+			return true;
+		}
+
+		private static void CheckPossibilityGuidAgainstGold(IPartOfSpeech pos, XmlDocument dom, Dictionary<IPartOfSpeech, string> itemsWithBadGuids)
+		{
+			if (!string.IsNullOrEmpty(pos.CatalogSourceId))
+			{
+				if (dom.SelectSingleNode($"//item[@id='{pos.CatalogSourceId}' and @guid='{pos.Guid}']") == null)
+				{
+					var selectNodeWithoutGuid = dom.SelectSingleNode($"//item[@id='{pos.CatalogSourceId}']");
+					itemsWithBadGuids[pos] = selectNodeWithoutGuid.Attributes["guid"].Value;
+				}
+			}
+			if (pos.SubPossibilitiesOS != null)
+			{
+				foreach (IPartOfSpeech subPos in pos.SubPossibilitiesOS)
+				{
+					CheckPossibilityGuidAgainstGold(subPos, dom, itemsWithBadGuids);
+				}
+			}
+		}
+
+		private static void ReplacePosItemWithCloneWithNewGuid(LcmCache cache, KeyValuePair<IPartOfSpeech, string> badItem)
+		{
+			IPartOfSpeech replacementPos;
+			var badPartOfSpeech = badItem.Key;
+			var correctedGuid = new Guid(badItem.Value);
+			var ownerList = badPartOfSpeech.Owner as ICmPossibilityList;
+			if (ownerList != null)
+			{
+				replacementPos = cache.ServiceLocator.GetInstance<IPartOfSpeechFactory>().Create(correctedGuid, ownerList);
+				ownerList.PossibilitiesOS.Insert(badPartOfSpeech.IndexInOwner, replacementPos);
+			}
+			else
+			{
+				var badPartOfSpeechOwner = badPartOfSpeech.Owner as IPartOfSpeech;
+				replacementPos = cache.ServiceLocator.GetInstance<IPartOfSpeechFactory>().Create(correctedGuid, badPartOfSpeechOwner);
+				badPartOfSpeechOwner.SubPossibilitiesOS.Insert(badPartOfSpeech.IndexInOwner, replacementPos);
+			}
+			replacementPos.MergeObject(badPartOfSpeech);
+		}
+
 		public static ILexEntryType Create(this ILexEntryTypeFactory me, ICmPossibilityList owner)
 		{
 			Guard.AgainstNull(owner, nameof(owner));
@@ -452,6 +512,27 @@ namespace SIL.FieldWorks.Common.FwUtils
 			}
 			max++; //Increment so the latest duplicate has the highest duplicate number
 			return prefix + " (Copy) (" + max + ")";
+		}
+
+		/// <summary />
+		public static void SortReversalSubEntriesInPlace(this LcmCache me)
+		{
+			var allReversalIndexes = me.ServiceLocator.GetInstance<IReversalIndexRepository>().AllInstances();
+			foreach (var reversalIndex in allReversalIndexes)
+			{
+				using (var comp = new ReversalSubEntryIcuComparer(me, reversalIndex.WritingSystem))
+				{
+					foreach (var reversalIndexEntry in reversalIndex.EntriesOC.Where(rie => rie.SubentriesOS.Count > 1))
+					{
+						var subEntryArray = reversalIndexEntry.SubentriesOS.ToArray();
+						Array.Sort(subEntryArray, comp);
+						for (var i = 0; i < subEntryArray.Length; ++i)
+						{
+							reversalIndexEntry.SubentriesOS.Insert(i, subEntryArray[i]);
+						}
+					}
+				}
+			}
 		}
 
 		public static Guid GetOrCreateWsGuid(this IReversalIndexRepository me, CoreWritingSystemDefinition wsObj, LcmCache cache)
@@ -679,6 +760,60 @@ namespace SIL.FieldWorks.Common.FwUtils
 			var doc = new XmlDocument();
 			doc.LoadXml(me.GetOuterXml());
 			return doc.FirstChild;
+		}
+
+
+		/// <summary />
+		private sealed class ReversalSubEntryIcuComparer : IComparer<IReversalIndexEntry>, IDisposable
+		{
+			private readonly int m_ws;
+			private ManagedLgIcuCollator m_collator;
+
+			/// <summary />
+			public ReversalSubEntryIcuComparer(LcmCache cache, string ws)
+			{
+				m_collator = new ManagedLgIcuCollator();
+				m_ws = cache.WritingSystemFactory.GetWsFromStr(ws);
+				m_collator.Open(ws);
+			}
+
+			/// <summary />
+			public int Compare(IReversalIndexEntry x, IReversalIndexEntry y)
+			{
+				var xString = x.ReversalForm.get_String(m_ws);
+				var yString = y.ReversalForm.get_String(m_ws);
+				return m_collator.Compare(xString.Text, yString.Text);
+			}
+
+			#region disposal
+			private bool _isDisposed;
+			~ReversalSubEntryIcuComparer() { Dispose(false); }
+
+			/// <summary />
+			public void Dispose()
+			{
+				Dispose(true);
+				GC.SuppressFinalize(this);
+			}
+
+			/// <summary />
+			private void Dispose(bool disposing)
+			{
+				Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
+				if (_isDisposed)
+				{
+					// No need to run it more than once.
+					return;
+				}
+				if (disposing)
+				{
+					m_collator?.Dispose();
+				}
+				m_collator = null;
+
+				_isDisposed = true;
+			}
+			#endregion disposal
 		}
 	}
 }

@@ -2,14 +2,14 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using LanguageExplorer.UtilityTools;
 using NUnit.Framework;
 using SIL.LCModel;
 using SIL.LCModel.Core.Text;
 
-namespace LanguageExplorerTests.UtilityTools
+namespace SIL.FieldWorks.Common.FwUtils
 {
-	public sealed class SortReversalSubEntriesTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
+	/// <summary />
+	public sealed class SortReversalSubEntriesInPlaceTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
 	{
 		private IReversalIndexRepository m_revIndexRepo;
 		private IReversalIndexEntryFactory m_revIndexEntryFactory;
@@ -24,14 +24,16 @@ namespace LanguageExplorerTests.UtilityTools
 		}
 		#endregion
 
+		/// <summary />
 		[Test]
 		public void SortReversalSubEntries_NoReversalIndexesDoesNotThrow()
 		{
 			// verify test conditions
 			Assert.AreEqual(m_revIndexRepo.Count, 0, "Test setup is broken, should be no RIs");
-			Assert.DoesNotThrow(() => SortReversalSubEntries.SortReversalSubEntriesInPlace(Cache));
+			Assert.DoesNotThrow(() => Cache.SortReversalSubEntriesInPlace());
 		}
 
+		/// <summary />
 		[Test]
 		public void SortReversalSubEntries_SortWorks()
 		{
@@ -43,12 +45,13 @@ namespace LanguageExplorerTests.UtilityTools
 			CollectionAssert.AreEqual(reversalMainEntry.SubentriesOS, new[] { subEntryZ, subEntryB, subEntryA });
 
 			// SUT
-			SortReversalSubEntries.SortReversalSubEntriesInPlace(Cache);
+			Cache.SortReversalSubEntriesInPlace();
 
 			// Verify
 			CollectionAssert.AreEqual(reversalMainEntry.SubentriesOS, new[] { subEntryA, subEntryB, subEntryZ });
 		}
 
+		/// <summary />
 		private IReversalIndexEntry CreateReversalIndexEntry(string riForm)
 		{
 			var revIndexEntry = m_revIndexEntryFactory.Create();
@@ -60,6 +63,7 @@ namespace LanguageExplorerTests.UtilityTools
 			return revIndexEntry;
 		}
 
+		/// <summary />
 		private IReversalIndexEntry CreateReversalIndexSubEntry(string subEntryForm, IReversalIndexEntry indexEntry)
 		{
 			var wsObj = Cache.LanguageProject.DefaultAnalysisWritingSystem;

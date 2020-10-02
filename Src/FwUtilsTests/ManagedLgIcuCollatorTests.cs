@@ -3,11 +3,11 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using LanguageExplorer;
 using NUnit.Framework;
 
-namespace LanguageExplorerTests
+namespace SIL.FieldWorks.Common.FwUtils
 {
+	/// <summary />
 	[TestFixture]
 	public class ManagedLgIcuCollatorTests
 	{
@@ -18,6 +18,7 @@ namespace LanguageExplorerTests
 			return icuCollator;
 		}
 
+		/// <summary />
 		[Test]
 		public void OpenTest()
 		{
@@ -27,6 +28,7 @@ namespace LanguageExplorerTests
 			}
 		}
 
+		/// <summary />
 		[Test]
 		public void GeneralTestWithTwoDifferentWs()
 		{
@@ -42,6 +44,7 @@ namespace LanguageExplorerTests
 			}
 		}
 
+		/// <summary />
 		[Test]
 		public void CloseTest()
 		{
@@ -52,6 +55,7 @@ namespace LanguageExplorerTests
 			}
 		}
 
+		/// <summary />
 		[Test]
 		public void GetSortKeyVariantTest()
 		{
@@ -65,6 +69,7 @@ namespace LanguageExplorerTests
 			}
 		}
 
+		/// <summary />
 		[Test]
 		public void SortKeyVariantTestWithValues()
 		{
@@ -86,7 +91,7 @@ namespace LanguageExplorerTests
 			}
 		}
 
-
+		/// <summary />
 		[Test]
 		public void CompareVariantTest1()
 		{
@@ -104,6 +109,7 @@ namespace LanguageExplorerTests
 			}
 		}
 
+		/// <summary />
 		[Test]
 		public void CompareVariantTest2()
 		{
@@ -137,6 +143,7 @@ namespace LanguageExplorerTests
 			}
 		}
 
+		/// <summary />
 		[Test]
 		public void CompareTest()
 		{

@@ -212,7 +212,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CircularReferenceBreakerTests.cs" />
     <Compile Include="FontHeightAdjusterTests.cs" />
+    <Compile Include="ManagedLgIcuCollatorTests.cs" />
+    <Compile Include="ReplacePOSGuidsWithGoldEticGuidsTests.cs" />
     <Compile Include="InterfacesTests.cs" />
     <Compile Include="IVwCacheDaTests.cs" />
     <Compile Include="LcmExtensionsTests.cs" />
@@ -221,6 +224,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="SortReversalSubEntriesInPlaceTests.cs" />
     <Compile Include="StringTableTests.cs" />
     <Compile Include="TempSFFileMaker.cs" />
     <Compile Include="TempSFFileMakerTests.cs" />

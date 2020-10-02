@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	<!-- Add 'utility' child elements for each user defined assembly.
+		Each 'utility' element will need to have one required attribute named 'assembly',
+		which is the name of the dll that contins one or more implementations of the IUtility interface.
+		Each implementation should have a public contructor that takes a UtilityDlg parameter.
+	-->
+</root>

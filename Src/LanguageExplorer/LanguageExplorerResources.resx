@@ -1030,9 +1030,6 @@ If you click No, you will see various options for starting work in Language Expl
   <data name="ksUnknownBulNumSchemeValue" xml:space="preserve">
     <value>Unrecognized value for paragraph 'bulNumScheme' attribute of {0} style in {1}</value>
   </data>
-  <data name="ksQuestions" xml:space="preserve">
-    <value>???</value>
-  </data>
   <data name="ksDeleteSequenceCollectionB" xml:space="preserve">
     <value>relation.</value>
   </data>

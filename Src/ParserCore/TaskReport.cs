@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Xml.Linq;
+using SIL.FieldWorks.Common.FwUtils;
 
 namespace SIL.FieldWorks.WordWorks.Parser
 {
@@ -202,7 +203,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 					case TaskPhase.ErrorEncountered:
 						return ParserCoreStrings.ksErrorEncountered;
 					default:
-						return ParserCoreStrings.ksQuestions;
+						return FwUtilsStrings.ksThreeQuestionMarks;
 				}
 
 			}

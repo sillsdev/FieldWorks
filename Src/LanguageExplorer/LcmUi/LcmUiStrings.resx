@@ -189,9 +189,6 @@ Without these, we cannot find related entries.</value>
     <value>Program error</value>
     <comment>title for message box</comment>
   </data>
-  <data name="ksQuestions" xml:space="preserve">
-    <value>???</value>
-  </data>
   <data name="ksRedoBEInflClass" xml:space="preserve">
     <value>Redo Bulk Edit Inflection Class</value>
   </data>

@@ -3,14 +3,17 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Collections.Generic;
-using LanguageExplorer.UtilityTools;
+using FieldWorks.TestUtilities;
 using NUnit.Framework;
 using SIL.LCModel;
+using SIL.LCModel.DomainServices;
 
-namespace LanguageExplorerTests.UtilityTools
+namespace SIL.FieldWorks.Common.FwUtils
 {
-	public class CircularRefBreakerTests : MemoryOnlyBackendProviderTestBase
+	/// <summary />
+	public class CircularReferenceBreakerTests : MemoryOnlyBackendProviderTestBase
 	{
+		/// <summary />
 		[Test]
 		public void BreakCircularEntryRefs()
 		{
@@ -31,10 +34,11 @@ namespace LanguageExplorerTests.UtilityTools
 			LexiconTestUtils.AddComplexFormComponents(Cache, c, new List<ICmObject> { ac.SensesOS[0] });
 
 			// SUT
-			var breaker = new CircularRefBreaker();
+			var count = int.MinValue;
+			var circular = int.MinValue;
+			Assert.DoesNotThrow(() => CircularRefBreakerService.ReferenceBreaker(Cache, out count, out circular, out _), "The CircularRefBreakerService.ReferenceBreaker method does not throw an exception");
 
 			// Verify
-			Assert.DoesNotThrow(() => breaker.Process(Cache), "The BreakCircularRefs.Process(cache) method does not throw an exception");
 			Assert.AreEqual(0, a.EntryRefsOS.Count, "Invalid LexEntryRef should be be removed from 'a'");
 			Assert.AreEqual(0, b.EntryRefsOS.Count, "Invalid LexEntryRef should be be removed from 'b'");
 			Assert.AreEqual(0, c.EntryRefsOS.Count, "Invalid LexEntryRef should be be removed from 'c'");
@@ -42,9 +46,13 @@ namespace LanguageExplorerTests.UtilityTools
 			Assert.AreEqual(1, ab.EntryRefsOS.Count, "'ab' should have a single LexEntryRef");
 			Assert.AreEqual(1, ac.EntryRefsOS.Count, "'ac' should have a single LexEntryRef");
 			Assert.AreEqual(1, abcd.EntryRefsOS.Count, "'abcd' should have a single LexEntryRef");
-			Assert.AreEqual(6, breaker.Count, "There should have been 6 LexEntryRef objects to process for this test");
-			Assert.AreEqual(5, breaker.Circular, "There should have been 5 circular references fixed");
-			Assert.DoesNotThrow(() => breaker.Process(Cache), "The BreakCircularRefs.Process(cache) method still does not throw an exception");
+			Assert.AreEqual(6, count, "There should have been 6 LexEntryRef objects to process for this test");
+			Assert.AreEqual(5, circular, "There should have been 5 circular references fixed");
+
+			// SUT
+			Assert.DoesNotThrow(() => CircularRefBreakerService.ReferenceBreaker(Cache, out count, out circular, out _), "The CircularRefBreakerService.ReferenceBreaker method still does not throw an exception");
+
+			// Verify
 			Assert.AreEqual(0, a.EntryRefsOS.Count, "'a' should still not have any LexEntryRef objects");
 			Assert.AreEqual(0, b.EntryRefsOS.Count, "'b' should still not have any LexEntryRef objects");
 			Assert.AreEqual(0, c.EntryRefsOS.Count, "'c' should still not have any LexEntryRef objects");
@@ -52,8 +60,8 @@ namespace LanguageExplorerTests.UtilityTools
 			Assert.AreEqual(1, ab.EntryRefsOS.Count, "'ab' should still have a single LexEntryRef");
 			Assert.AreEqual(1, ac.EntryRefsOS.Count, "'ac' should still have a single LexEntryRef");
 			Assert.AreEqual(1, abcd.EntryRefsOS.Count, "'abcd' should still have a single LexEntryRef");
-			Assert.AreEqual(3, breaker.Count, "There should have been 3 LexEntryRef objects to process for this test");
-			Assert.AreEqual(0, breaker.Circular, "There should have been 0 circular references fixed");
+			Assert.AreEqual(3, count, "There should have been 3 LexEntryRef objects to process for this test");
+			Assert.AreEqual(0, circular, "There should have been 0 circular references fixed");
 		}
 	}
 }

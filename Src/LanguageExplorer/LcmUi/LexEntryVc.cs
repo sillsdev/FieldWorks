@@ -4,6 +4,7 @@
 
 using System.Linq;
 using LanguageExplorer.Controls;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.LCModel;
 using SIL.LCModel.Core.KernelInterfaces;
@@ -173,7 +174,7 @@ namespace LanguageExplorer.LcmUi
 				{
 					vwenv.AddString(TsStringUtils.MakeString(sPrefix, wsActual));
 				}
-				vwenv.AddString(TsStringUtils.MakeString(LcmUiStrings.ksQuestions, defUserWs)); // was "??", not "???"
+				vwenv.AddString(TsStringUtils.MakeString(FwUtilsStrings.ksThreeQuestionMarks, defUserWs)); // was "??", not "???"
 			}
 			// If we have a lexeme form type show the appropriate postfix.
 			if (hvoType != 0)

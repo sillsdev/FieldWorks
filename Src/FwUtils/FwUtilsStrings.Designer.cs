@@ -217,6 +217,15 @@ namespace SIL.FieldWorks.Common.FwUtils {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to ???.
+        /// </summary>
+        public static string ksThreeQuestionMarks {
+            get {
+                return ResourceManager.GetString("ksThreeQuestionMarks", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Version: {0}  {1}  {2}.
         /// </summary>
         public static string kstidAppVersionFmt {

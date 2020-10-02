@@ -386,15 +386,6 @@ namespace LanguageExplorer.LcmUi {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to ???.
-        /// </summary>
-        internal static string ksQuestions {
-            get {
-                return ResourceManager.GetString("ksQuestions", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Redo Bulk Edit Inflection Class.
         /// </summary>
         internal static string ksRedoBEInflClass {

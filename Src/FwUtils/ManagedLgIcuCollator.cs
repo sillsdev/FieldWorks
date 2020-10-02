@@ -1,4 +1,4 @@
-// Copyright (c) 2010-2018 SIL International
+// Copyright (c) 2010-2020 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -7,10 +7,10 @@ using System.Diagnostics;
 using Icu;
 using Icu.Collation;
 
-namespace LanguageExplorer
+namespace SIL.FieldWorks.Common.FwUtils
 {
 	/// <summary />
-	internal sealed class ManagedLgIcuCollator : IDisposable
+	public sealed class ManagedLgIcuCollator : IDisposable
 	{
 		private string _locale;
 		private Collator _collator;
@@ -67,13 +67,13 @@ namespace LanguageExplorer
 			}
 		}
 
-		internal int Compare(string value1, string value2)
+		public int Compare(string value1, string value2)
 		{
 			EnsureCollator();
 			return CompareVariant(_collator.GetSortKey(value1).KeyData, _collator.GetSortKey(value2).KeyData);
 		}
 
-		internal int CompareVariant(object saValue1, object saValue2)
+		public int CompareVariant(object saValue1, object saValue2)
 		{
 			EnsureCollator();
 
@@ -100,7 +100,7 @@ namespace LanguageExplorer
 			return key1.Length > key2.Length ? 1 : key2.Length > key1.Length ? -1 : 0;
 		}
 
-		internal object SortKeyVariant(string value)
+		public object SortKeyVariant(string value)
 		{
 			EnsureCollator();
 			var sortKey = _collator.GetSortKey(value).KeyData;
@@ -108,7 +108,7 @@ namespace LanguageExplorer
 			return sortKey;
 		}
 
-		internal void Open(string locale)
+		public void Open(string locale)
 		{
 			if (_collator != null)
 			{
@@ -119,7 +119,7 @@ namespace LanguageExplorer
 			EnsureCollator();
 		}
 
-		internal void Close()
+		public void Close()
 		{
 			if (_collator != null)
 			{

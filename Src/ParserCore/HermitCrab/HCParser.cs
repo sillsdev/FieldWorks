@@ -11,6 +11,7 @@ using System.Linq;
 using System.Text;
 using System.Xml;
 using System.Xml.Linq;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.HermitCrab;
 using SIL.HermitCrab.MorphologicalRules;
 using SIL.HermitCrab.PhonologicalRules;
@@ -475,7 +476,7 @@ namespace SIL.FieldWorks.WordWorks.Parser.HermitCrab
 				}
 			}
 			var sense = msa.OwnerOfClass<ILexEntry>().SenseWithMsa(msa);
-			glossSB.Append(sense == null ? ParserCoreStrings.ksQuestions : sense.Gloss.BestAnalysisAlternative.Text);
+			glossSB.Append(sense == null ? FwUtilsStrings.ksThreeQuestionMarks : sense.Gloss.BestAnalysisAlternative.Text);
 			if (inflType != null)
 			{
 				var append = inflType.GlossAppend.BestAnalysisAlternative.Text;

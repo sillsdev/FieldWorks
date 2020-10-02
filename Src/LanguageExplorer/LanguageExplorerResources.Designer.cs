@@ -3294,15 +3294,6 @@ namespace LanguageExplorer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to ???.
-        /// </summary>
-        internal static string ksQuestions {
-            get {
-                return ResourceManager.GetString("ksQuestions", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Do you really want to delete this Reversal Index?.
         /// </summary>
         internal static string ksReallyWantToDeleteRevIndex {
