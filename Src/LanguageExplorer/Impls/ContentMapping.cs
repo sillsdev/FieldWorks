@@ -13,47 +13,47 @@ namespace LanguageExplorer.Impls
 	/// used in the content mapping display of the data.  It lives in the MarkerPresenter
 	/// class as a public subclass.
 	/// </summary>
-	public class ContentMapping
+	internal sealed class ContentMapping
 	{
 		private ClsFieldDescription m_clsFieldDescription;
 		private LexImportField m_LexImportField;
 
-		public static string Ignore => LanguageExplorerControls.ksIgnore;
+		internal static string Ignore => LanguageExplorerControls.ksIgnore;
 
-		public static string Unknown => LanguageExplorerControls.ksUnknown;
+		internal static string Unknown => LanguageExplorerControls.ksUnknown;
 
-		public string Marker { get; }
+		internal string Marker { get; }
 
-		public string Description { get; set; }
+		internal string Description { get; set; }
 
-		public string DestinationClass { get; set; }
+		internal string DestinationClass { get; set; }
 
-		public string RawDestinationField { get; set; }
+		internal string RawDestinationField { get; set; }
 
-		public string LanguageDescriptorRaw { get; private set; }
+		internal string LanguageDescriptorRaw { get; private set; }
 
-		public string LanguageDescriptor
+		internal string LanguageDescriptor
 		{
 			get => IsLangIgnore ? string.Format(LanguageExplorerControls.ksX_Ignored, LanguageDescriptorRaw) : LanguageDescriptorRaw;
 			set => LanguageDescriptorRaw = value;
 		}
 
-		public string WritingSystem { get; private set; }
+		internal string WritingSystem { get; private set; }
 
-		public bool IsBeginMarker { get; set; }
+		internal bool IsBeginMarker { get; set; }
 
-		public void UpdateLanguageValues(string writingSystemName, string shortName, string langDescriptor)
+		internal void UpdateLanguageValues(string writingSystemName, string shortName, string langDescriptor)
 		{
 			WritingSystem = writingSystemName;
 			LanguageDescriptorRaw = langDescriptor;
 			m_clsFieldDescription.UpdateLanguageValues(LanguageDescriptorRaw, shortName);
 		}
 
-		public int Count { get; set; }
+		internal int Count { get; set; }
 
-		public int Order { get; set; }
+		internal int Order { get; set; }
 
-		public void AddLexImportCustomField(ILexImportField field, string uiClass)
+		internal void AddLexImportCustomField(ILexImportField field, string uiClass)
 		{
 			AddLexImportField(field);
 			((ILexImportCustomField)m_LexImportField).UIClass = uiClass;
@@ -61,56 +61,56 @@ namespace LanguageExplorer.Impls
 			m_clsFieldDescription = xyz;
 		}
 
-		public void AddLexImportField(ILexImportField field)
+		internal void AddLexImportField(ILexImportField field)
 		{
 			m_LexImportField = field as LexImportField;
 			m_clsFieldDescription.Type = field != null ? field.DataType : "string";
 		}
 
-		public ILexImportField LexImportField => m_LexImportField;
+		internal ILexImportField LexImportField => m_LexImportField;
 
-		public bool Exclude
+		internal bool Exclude
 		{
 			get => m_clsFieldDescription.IsExcluded;
 			set => m_clsFieldDescription.IsExcluded = value;
 		}
 
-		public bool AutoImport
+		internal bool AutoImport
 		{
 			get => m_clsFieldDescription.IsAutoImportField;
 			set => m_clsFieldDescription.IsAutoImportField = value;
 		}
 
-		public void ClearRef()
+		internal void ClearRef()
 		{
 			m_clsFieldDescription.ClearRef();
 		}
 
-		public bool IsRefField => m_clsFieldDescription.IsRef;
+		internal bool IsRefField => m_clsFieldDescription.IsRef;
 
-		public string RefField
+		internal string RefField
 		{
 			get => m_clsFieldDescription.RefFunc;
 			set => m_clsFieldDescription.RefFunc = value;
 		}
 
-		public string RefFieldWS
+		internal string RefFieldWS
 		{
 			get => m_clsFieldDescription.RefFuncWS;
 			set => m_clsFieldDescription.RefFuncWS = value;
 		}
 
-		public string FwId
+		internal string FwId
 		{
 			get => m_clsFieldDescription.MeaningID;
 			set => m_clsFieldDescription.MeaningID = value;
 		}
 
-		public bool IsAbbrvField => m_LexImportField?.IsAbbrField ?? false;
+		internal bool IsAbbrvField => m_LexImportField?.IsAbbrField ?? false;
 
-		public bool IsAbbr => m_LexImportField != null && m_clsFieldDescription.IsAbbr;
+		internal bool IsAbbr => m_LexImportField != null && m_clsFieldDescription.IsAbbr;
 
-		public void UpdateAbbrValue(bool isAbbr)
+		internal void UpdateAbbrValue(bool isAbbr)
 		{
 			if (!IsAbbrvField)
 			{
@@ -119,7 +119,7 @@ namespace LanguageExplorer.Impls
 			m_clsFieldDescription.IsAbbr = isAbbr;
 		}
 
-		public string[] ListViewStrings()
+		internal string[] ListViewStrings()
 		{
 			var customTag = string.Empty;
 			if (LexImportField is LexImportCustomField lexImportCustomField)
@@ -138,12 +138,12 @@ namespace LanguageExplorer.Impls
 				LanguageDescriptor };           // col 6
 		}
 
-		public bool IsLangIgnore => WritingSystem == Ignore;
+		internal bool IsLangIgnore => WritingSystem == Ignore;
 
 		// field level exclusion
-		public string DestinationField => Exclude ? LanguageExplorerControls.ksDoNotImport : AutoImport ? LanguageExplorerControls.ksImportResidue_Auto : RawDestinationField;
+		internal string DestinationField => Exclude ? LanguageExplorerControls.ksDoNotImport : AutoImport ? LanguageExplorerControls.ksImportResidue_Auto : RawDestinationField;
 
-		public ContentMapping(string marker, string desc, string className, string fwDest, string ws, string langDescriptor, int count, int order, ClsFieldDescription fdesc, bool isCustom)
+		internal ContentMapping(string marker, string desc, string className, string fwDest, string ws, string langDescriptor, int count, int order, ClsFieldDescription fdesc, bool isCustom)
 		{
 			Marker = marker;
 			Description = desc;
@@ -170,7 +170,7 @@ namespace LanguageExplorer.Impls
 			IsBeginMarker = false;
 		}
 
-		public ClsFieldDescription ClsFieldDescription
+		internal ClsFieldDescription ClsFieldDescription
 		{
 			get
 			{
@@ -187,7 +187,7 @@ namespace LanguageExplorer.Impls
 			}
 		}
 
-		public void DoAutoImportWork()
+		internal void DoAutoImportWork()
 		{
 			m_LexImportField = null;
 		}

@@ -11,7 +11,7 @@ namespace LanguageExplorer.SfmToXml
 	/// that were read in from the controlled xml file that is used for remembering the
 	/// settings in the import process used in FieldWorks.
 	/// </summary>
-	public interface ILexImportOption
+	internal interface ILexImportOption
 	{
 		string Id { get; }      // this is the key to a checkbox in the Import Wizard
 		string Type { get; }    // currently supported: "Checkbox"

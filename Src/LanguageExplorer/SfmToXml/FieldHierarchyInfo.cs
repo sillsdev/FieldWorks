@@ -12,7 +12,7 @@ namespace LanguageExplorer.SfmToXml
 	/// - one for non-AutoImport fields and
 	/// - one for AutoImport fields
 	/// </summary>
-	public class FieldHierarchyInfo
+	internal sealed class FieldHierarchyInfo
 	{
 		/// <summary>
 		/// Constructor for non-auto import items
@@ -22,7 +22,7 @@ namespace LanguageExplorer.SfmToXml
 		/// <param name="lang">language</param>
 		/// <param name="begin">true if begin marker</param>
 		/// <param name="destClass"></param>
-		public FieldHierarchyInfo(string marker, string dest, string lang, bool begin, string destClass)
+		internal FieldHierarchyInfo(string marker, string dest, string lang, bool begin, string destClass)
 		{
 			SFM = marker;
 			FwDestID = dest;
@@ -42,7 +42,7 @@ namespace LanguageExplorer.SfmToXml
 		/// </summary>
 		/// <param name="marker">sfm marker</param>
 		/// <param name="lang">language</param>
-		public FieldHierarchyInfo(string marker, string lang)
+		internal FieldHierarchyInfo(string marker, string lang)
 		{
 			SFM = marker;
 			Lang = lang;
@@ -57,28 +57,28 @@ namespace LanguageExplorer.SfmToXml
 			FwDestClass = string.Empty;
 		}
 
-		public string SFM { get; }
+		internal string SFM { get; }
 
-		public string FwDestID { get; private set; }
+		internal string FwDestID { get; private set; }
 
-		public string FwDestID_Changed { set => FwDestID = value; }
+		internal string FwDestID_Changed { set => FwDestID = value; }
 
-		public string Lang { get; }
+		internal string Lang { get; }
 
-		public bool IsBegin { get; }
+		internal bool IsBegin { get; }
 
-		public bool IsAuto { get; }
+		internal bool IsAuto { get; }
 
-		public string FwDestClass { get; }
+		internal string FwDestClass { get; }
 
-		public string RefFunc { get; set; }
+		internal string RefFunc { get; set; }
 
-		public string RefFuncWS { get; set; }
+		internal string RefFuncWS { get; set; }
 
-		public bool IsExcluded { get; set; }
+		internal bool IsExcluded { get; set; }
 
-		public bool IsAbbrvField { get; set; }
+		internal bool IsAbbrvField { get; set; }
 
-		public bool IsAbbr { get; set; }
+		internal bool IsAbbr { get; set; }
 	}
 }

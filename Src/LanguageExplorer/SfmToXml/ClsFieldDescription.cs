@@ -16,7 +16,7 @@ namespace LanguageExplorer.SfmToXml
 	/// Attributes of "field":
 	/// - sfm : this is the text of the field / marker that is used in the input file.
 	/// </summary>
-	public class ClsFieldDescription
+	internal class ClsFieldDescription
 	{
 		// this static variable is used to track all new sfms
 		private static int g_nextNewSFM = 1;
@@ -32,7 +32,7 @@ namespace LanguageExplorer.SfmToXml
 		protected string m_autoFieldClass;  // used for xml lang output of multiple auto fields
 		protected Dictionary<string, string> m_autofieldInfo;    // key=string[className], value=string[fwDest]
 
-		public ClsFieldDescription(string marker, string name, string datatype, string lang, bool abbr, string fwID)
+		internal ClsFieldDescription(string marker, string name, string datatype, string lang, bool abbr, string fwID)
 		{
 			Init();
 			SFM = marker;
@@ -58,13 +58,13 @@ namespace LanguageExplorer.SfmToXml
 			SetAutoSfm();
 		}
 
-		public ClsFieldDescription()
+		internal ClsFieldDescription()
 		{
 			Init();
 			SetAutoSfm();
 		}
 
-		public ClsFieldDescription(string sfm)
+		internal ClsFieldDescription(string sfm)
 		{
 			Init();
 			SFM = sfm;
@@ -195,7 +195,7 @@ namespace LanguageExplorer.SfmToXml
 			}
 		}
 
-		public void AddAutoFieldInfo(string className, string fwDest)
+		internal void AddAutoFieldInfo(string className, string fwDest)
 		{
 			if (!m_autofieldInfo.ContainsKey(className))
 			{
@@ -205,27 +205,27 @@ namespace LanguageExplorer.SfmToXml
 
 		public string SFM { get; protected set; }
 
-		public string SFMxmlSafe => m_autoSfm.Length > 0 ? m_autoSfm : SFM;
+		internal string SFMxmlSafe => m_autoSfm.Length > 0 ? m_autoSfm : SFM;
 
-		public string KEY => SFM;
+		internal string KEY => SFM;
 
 		public string Name { get; protected set; }
 
 		public string Language { get; protected set; }
 
-		public void UpdateLanguageValues(string longName, string shortName)
+		internal void UpdateLanguageValues(string longName, string shortName)
 		{
 			Language = longName;
 			m_xmlLanguage = shortName;
 		}
 
-		public string Type { get; set; }
+		internal string Type { get; set; }
 
-		public string MeaningId { get; set; }
+		internal string MeaningId { get; set; }
 
 		public bool IsAbbrField { get; protected set; }
 
-		public bool IsAbbr
+		internal bool IsAbbr
 		{
 			get => IsAbbrField && m_abbr;
 			set
@@ -235,18 +235,18 @@ namespace LanguageExplorer.SfmToXml
 			}
 		}
 
-		public bool IsExcluded { get; set; }
+		internal bool IsExcluded { get; set; }
 
-		public bool IsAutoImportField { get; set; }
+		internal bool IsAutoImportField { get; set; }
 
-		public bool IsRef => m_refFunc.Length > 0;
+		internal bool IsRef => m_refFunc.Length > 0;
 
-		public void ClearRef()
+		internal void ClearRef()
 		{
 			m_refFunc = m_refFuncWS = string.Empty;
 		}
 
-		public string RefFunc
+		internal string RefFunc
 		{
 			get => m_refFunc;
 			set
@@ -256,7 +256,7 @@ namespace LanguageExplorer.SfmToXml
 			}
 		}
 
-		public string RefFuncWS
+		internal string RefFuncWS
 		{
 			get => m_refFuncWS;
 			set
@@ -309,7 +309,7 @@ namespace LanguageExplorer.SfmToXml
 
 		public string MeaningApp { get; protected set; }
 
-		public string MeaningID
+		internal string MeaningID
 		{
 			get => MeaningId;
 			set
@@ -324,12 +324,12 @@ namespace LanguageExplorer.SfmToXml
 			return SFM;
 		}
 
-		public string ToXmlString()
+		internal string ToXmlString()
 		{
 			return ToXmlBaseString(false, null);
 		}
 
-		public string ToXmlLangString(XmlTextWriter xmlOutput)
+		internal string ToXmlLangString(XmlTextWriter xmlOutput)
 		{
 			if (m_autofieldInfo.Count == 0)
 			{
@@ -431,12 +431,12 @@ namespace LanguageExplorer.SfmToXml
 		}
 
 
-		public bool Output(Hashtable languages, XmlTextWriter xmlOutput, ref Hashtable langsToIgnore, ref Hashtable fieldsToIgnore)
+		internal bool Output(Hashtable languages, XmlTextWriter xmlOutput, ref Hashtable langsToIgnore, ref Hashtable fieldsToIgnore)
 		{
 			if (Language != null && langsToIgnore.ContainsKey(Language))
 			{
 				fieldsToIgnore.Add(SFM, null);
-				Converter.Log.AddWarning(string.Format(SfmToXmlStrings.FieldDescWithSFMOf0IsBeingIGNORED, SFM));
+				SfmToXmlServices.Log.AddWarning(string.Format(SfmToXmlStrings.FieldDescWithSFMOf0IsBeingIGNORED, SFM));
 				return false;   // no output for this field
 			}
 			// just add it to the list of fields to ignore and allow everything else to process the same
@@ -452,7 +452,7 @@ namespace LanguageExplorer.SfmToXml
 		}
 
 
-		public bool ReadAndOutputXmlNode(XmlNode fieldNode, Hashtable languages, string topAnalysisWS, XmlTextWriter xmlOutput, ref Hashtable langsToIgnore, ref Hashtable fieldsToIgnore)
+		internal bool ReadAndOutputXmlNode(XmlNode fieldNode, Hashtable languages, string topAnalysisWS, XmlTextWriter xmlOutput, ref Hashtable langsToIgnore, ref Hashtable fieldsToIgnore)
 		{
 			var rval = false;
 			if (ReadXmlNode(fieldNode, languages, topAnalysisWS))
@@ -463,7 +463,7 @@ namespace LanguageExplorer.SfmToXml
 		}
 
 
-		public virtual bool ReadXmlNode(XmlNode fieldNode, Hashtable languages, string topAnalysisWS)
+		internal virtual bool ReadXmlNode(XmlNode fieldNode, Hashtable languages, string topAnalysisWS)
 		{
 			m_otherAttributes = string.Empty;
 			foreach (XmlAttribute attribute in fieldNode.Attributes)
@@ -487,7 +487,7 @@ namespace LanguageExplorer.SfmToXml
 						var language = languages[attribute.Value] as ClsLanguage;
 						if (language == null)
 						{
-							Converter.Log.AddError(string.Format(SfmToXmlStrings.UnknownLangValue0InFieldDescs, attribute.Value));
+							SfmToXmlServices.Log.AddError(string.Format(SfmToXmlStrings.UnknownLangValue0InFieldDescs, attribute.Value));
 							m_xmlLanguage = newValue;
 						}
 						else
@@ -516,7 +516,7 @@ namespace LanguageExplorer.SfmToXml
 			var meaning = fieldNode.SelectSingleNode("meaning");
 			if (meaning == null)
 			{
-				Converter.Log.AddError(string.Format(SfmToXmlStrings.MissingMeaningElementInField0InFieldDescs, SFM));
+				SfmToXmlServices.Log.AddError(string.Format(SfmToXmlStrings.MissingMeaningElementInField0InFieldDescs, SFM));
 			}
 			else
 			{
@@ -546,15 +546,15 @@ namespace LanguageExplorer.SfmToXml
 			SetAutoSfm();
 			if (SFM == null)
 			{
-				Converter.Log.AddError(SfmToXmlStrings.FieldDefinedWithNoSfmAttributeInTheFieldDescs);
+				SfmToXmlServices.Log.AddError(SfmToXmlStrings.FieldDefinedWithNoSfmAttributeInTheFieldDescs);
 			}
 			else if (Language == null)
 			{
-				Converter.Log.AddError(string.Format(SfmToXmlStrings.FieldDescWithSFMOf0HasNoLangAttribute, SFM));
+				SfmToXmlServices.Log.AddError(string.Format(SfmToXmlStrings.FieldDescWithSFMOf0HasNoLangAttribute, SFM));
 			}
 			if (Type == null)
 			{
-				Converter.Log.AddWarning(string.Format(SfmToXmlStrings.FieldDescWithSFMOf0HasNoTypeAttribute, SFM));
+				SfmToXmlServices.Log.AddWarning(string.Format(SfmToXmlStrings.FieldDescWithSFMOf0HasNoTypeAttribute, SFM));
 			}
 			else
 			{

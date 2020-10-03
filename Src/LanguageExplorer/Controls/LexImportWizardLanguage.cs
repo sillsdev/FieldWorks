@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Windows.Forms;
+using LanguageExplorer.SfmToXml;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FwCoreDlgs;
 using SIL.LCModel;
@@ -37,7 +38,7 @@ namespace LanguageExplorer.Controls
 		// REVIEW: This is kept updated, but its contents are never read.
 #endif
 		private readonly Dictionary<string, WsInfo> m_wsInfo;   // hash of wsInfo
-		private string m_blankEC = SfmToXml.SfmToXmlServices.AlreadyInUnicode;
+		private string m_blankEC = SfmToXmlServices.AlreadyInUnicode;
 		private string m_LangDesc;
 		private string m_wsName;
 		private string m_encConverter;

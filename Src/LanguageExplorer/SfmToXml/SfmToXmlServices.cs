@@ -16,12 +16,19 @@ namespace LanguageExplorer.SfmToXml
 	/// <summary>
 	/// This class exists as a common place for putting static methods for the SfmToXml namespace.
 	/// </summary>
-	public class SfmToXmlServices
+	internal static class SfmToXmlServices
 	{
+		internal static ClsLog Log;
+
+		static SfmToXmlServices()
+		{
+			Log = new ClsLog();
+		}
+
 		/// <summary>
 		/// This maps to FW release 8.3Beta, prev release was 6.0
 		/// </summary>
-		public static string MapFileVersion => "6.1";
+		internal static string MapFileVersion => "6.1";
 
 		/// <summary>
 		/// Determine if the passed in string represents a 'true' or 'false' string
@@ -29,7 +36,7 @@ namespace LanguageExplorer.SfmToXml
 		/// </summary>
 		/// <param name="text">string to examine for t or f</param>
 		/// <param name="defaultValueIfUnknown">true or false</param>
-		public static bool IsBoolString(string text, bool defaultValueIfUnknown)
+		internal static bool IsBoolString(string text, bool defaultValueIfUnknown)
 		{
 			if (text == null)
 			{
@@ -57,7 +64,7 @@ namespace LanguageExplorer.SfmToXml
 		/// </summary>
 		/// <param name="xyz">string to split</param>
 		/// <returns>array of strings</returns>
-		public static string[] SplitString(string xyz)
+		internal static string[] SplitString(string xyz)
 		{
 			var delim = new[] { ' ', '\n', (char)0x0D, (char)0x0A };
 			var values = xyz.Split(delim);
@@ -87,7 +94,7 @@ namespace LanguageExplorer.SfmToXml
 		/// </summary>
 		/// <param name="xyz">string to break up</param>
 		/// <param name="list">hashtable to get the sub items</param>
-		public static void SplitString(string xyz, ref Hashtable list)
+		internal static void SplitString(string xyz, ref Hashtable list)
 		{
 			var delim = new[] { ' ', '\n', (char)0x0D, (char)0x0A };
 			var values = xyz.Split(delim);
@@ -107,8 +114,8 @@ namespace LanguageExplorer.SfmToXml
 		/// </summary>
 		/// <param name="xyz">string to break up</param>
 		/// <param name="delim">list of delimeters to use</param>
-		/// <param name="list">ref to array list results</param>
-		public static void SplitString(string xyz, char[] delim, ref ArrayList list)
+		/// <param name="list">ref to list results</param>
+		internal static void SplitString(string xyz, char[] delim, ref List<string> list)
 		{
 			if (string.IsNullOrEmpty(xyz))
 			{
@@ -126,11 +133,11 @@ namespace LanguageExplorer.SfmToXml
 		}
 
 		// Common strings: ignore, Unknown, and <Already in Unicode>
-		public static string AlreadyInUnicode => SfmToXmlStrings.AlreadyInUnicode;
+		internal static string AlreadyInUnicode => SfmToXmlStrings.AlreadyInUnicode;
 
-		public static string Ignore => SfmToXmlStrings.Ignore;
+		internal static string Ignore => SfmToXmlStrings.Ignore;
 
-		public static string Unknown => SfmToXmlStrings.Unknown;
+		internal static string Unknown => SfmToXmlStrings.Unknown;
 
 		/// <summary>
 		/// Private helper method that is used for adding comment sections to the xml map and output
@@ -149,7 +156,7 @@ namespace LanguageExplorer.SfmToXml
 		/// This is the common method for building a map file.  The map file is a key part of the import
 		/// process: used for generating all the output files.
 		/// </summary>
-		public static void NewMapFileBuilder(Hashtable uiLangs, ILexImportFields lexFields, ILexImportFields customFields, List<FieldHierarchyInfo> sfmInfo, List<ClsInFieldMarker> listInFieldMarkers,
+		internal static void NewMapFileBuilder(Hashtable uiLangs, ILexImportFields lexFields, ILexImportFields customFields, List<FieldHierarchyInfo> sfmInfo, List<ClsInFieldMarker> listInFieldMarkers,
 			string saveAsFileName, List<ILexImportOption> listOptions = null)
 		{
 			var xmlText = new StringBuilder(8192);
@@ -335,6 +342,76 @@ namespace LanguageExplorer.SfmToXml
 			{
 				outMapFile.Write(xmlText);
 				outMapFile.Close();
+			}
+		}
+
+		/// <summary>
+		/// Find the first match of 'item' in the 'inData' returning the index or -1 if not found.
+		/// </summary>
+		/// <param name="inData">data to search through</param>
+		/// <param name="startPos">index in the data to start at</param>
+		/// <param name="item">data to search for</param>
+		/// <returns>index where data starts or -1 if not found</returns>
+		internal static long FindFirstMatch(byte[] inData, int startPos, byte[] item)
+		{
+			// none
+			long index = -1;
+			// if the inData length is too small, just return
+			if (inData.Length - startPos < item.Length)
+			{
+				return index;
+			}
+			// position into the item
+			var matchPos = 0;
+			for (var pos = startPos; pos < inData.Length; pos++)
+			{
+				if (inData[pos] == item[matchPos])  // match at this item index
+				{
+					if (matchPos == item.Length - 1)    // complete item match
+					{
+						index = pos - matchPos;         // found match
+						break;
+					}
+					matchPos++;     // keep looking through the whole item
+				}
+				else
+				{
+					matchPos = 0;
+				}
+			}
+			return index;
+		}
+
+		internal static string MultiToWideWithERROR(byte[] multi, int start, int end, Encoding encodingToUse, out MultiToWideError err, out byte[] badBytes)
+		{
+			err = MultiToWideError.None;
+			badBytes = null;
+			Encoding encoding = new UTF8Encoding(false, true);
+			if (encodingToUse == Encoding.ASCII)
+			{
+				encoding = new ASCIIEncoding();
+			}
+			try
+			{
+				var charCount = encoding.GetCharCount(multi, start, end - start + 1);
+				var chars = new char[charCount];
+				encoding.GetChars(multi, start, end - start + 1, chars, 0);
+				return new string(chars);
+			}
+			catch (DecoderFallbackException dfe)    //(Exception e)
+			{
+				err = MultiToWideError.InvalidCodePoint;
+				// TODO-Linux: BytesUnknown is marked with a [MonoTODO] attribute.
+				badBytes = dfe.BytesUnknown;
+				// have an invalid utf8 char most likely, so switch to ascii
+				if (encoding.EncodingName == Encoding.UTF8.EncodingName)
+				{
+					encoding = new ASCIIEncoding();
+				}
+				var charCount = encoding.GetCharCount(multi, start, end - start + 1);
+				var chars = new char[charCount];
+				encoding.GetChars(multi, start, end - start + 1, chars, 0);
+				return new string(chars);
 			}
 		}
 	}

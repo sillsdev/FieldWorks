@@ -14,7 +14,7 @@ using SilEncConverters40;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Tools
 {
-	public class Sfm2FlexTextBase<TMapping> where TMapping : Sfm2FlexTextMappingBase
+	internal class Sfm2FlexTextBase<TMapping> where TMapping : InterlinearMapping
 	{
 		protected Dictionary<string, TMapping> m_mappings = new Dictionary<string, TMapping>();
 		protected EncConverters m_encConverters;
@@ -26,12 +26,12 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools
 		protected byte[] m_pendingData; // data corresponding to m_pendingMarker.
 		private IList<string> m_docStructure = new List<string>();
 
-		public Sfm2FlexTextBase(IList<string> docStructure)
+		internal Sfm2FlexTextBase(IList<string> docStructure)
 		{
 			m_docStructure = docStructure;
 		}
 
-		public byte[] Convert(ByteReader reader, List<TMapping> mappings, WritingSystemManager wsManager)
+		internal byte[] Convert(ByteReader reader, List<TMapping> mappings, WritingSystemManager wsManager)
 		{
 			m_reader = reader;
 			m_wsManager = wsManager;

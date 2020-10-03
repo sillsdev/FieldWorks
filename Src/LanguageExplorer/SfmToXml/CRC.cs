@@ -7,13 +7,13 @@ using System.Windows.Forms;
 
 namespace LanguageExplorer.SfmToXml
 {
-	public class CRC
+	internal sealed class CRC
 	{
 		private const uint CRC32_POLYNOMIAL = 0xEDB88320;
 		private const uint CRC32_STARTVALUE = 0xFFFFFFFF;
 		private static uint[] m_CRCTable;
 
-		public CRC()
+		internal CRC()
 		{
 			m_CRCTable = new uint[256];
 			BuildCRCTable();
@@ -39,7 +39,7 @@ namespace LanguageExplorer.SfmToXml
 			}
 		}
 
-		public uint CalculateCRC(byte[] buffer, int count)
+		internal uint CalculateCRC(byte[] buffer, int count)
 		{
 			var crc = CRC32_STARTVALUE;
 			uint index = 0;
@@ -72,7 +72,7 @@ namespace LanguageExplorer.SfmToXml
 			return bLast ? crc ^ CRC32_STARTVALUE : crc;
 		}
 
-		public uint FileCRC(string fileName)
+		internal uint FileCRC(string fileName)
 		{
 			uint crc = 0;
 			if (!File.Exists(fileName))

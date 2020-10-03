@@ -3,6 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Xml.Serialization;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Tools
 {
@@ -12,14 +13,30 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools
 	/// It is public only because XmlSerializer requires everything to be.
 	/// </summary>
 	[Serializable]
-	public class InterlinearMapping : Sfm2FlexTextMappingBase
+	public class InterlinearMapping
 	{
 		public InterlinearMapping()
 		{
 		}
+
 		public InterlinearMapping(InterlinearMapping copyFrom)
-			: base(copyFrom)
 		{
+			Marker = copyFrom.Marker;
+			Destination = copyFrom.Destination;
+			Converter = copyFrom.Converter;
+			WritingSystem = copyFrom.WritingSystem;
+			Count = copyFrom.Count;
 		}
+
+		public string Marker;
+
+		public InterlinDestination Destination;
+
+		public string WritingSystem;
+
+		public string Converter;
+
+		[XmlIgnore]
+		public string Count;
 	}
 }

@@ -6,7 +6,7 @@ using System;
 
 namespace LanguageExplorer.SfmToXml
 {
-	public interface ILexImportCustomField : ILexImportField
+	internal interface ILexImportCustomField : ILexImportField
 	{
 		int WsSelector { get; }
 		bool Big { get; }

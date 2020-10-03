@@ -419,12 +419,12 @@
     </Compile>
     <Compile Include="Controls\XDumper.cs" />
     <Compile Include="Controls\CollectorEnv.cs" />
-    <Compile Include="Controls\DetailControls\SfmFileReader.cs" />
+    <Compile Include="SfmToXml\SfmFileReader.cs" />
     <Compile Include="Controls\FileLocationChoice.cs" />
     <Compile Include="Controls\HelperContextMenu.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Controls\ILexImportWizard.cs" />
+    <Compile Include="SfmToXml\ILexImportWizard.cs" />
     <Compile Include="Controls\IWizardPaintPanSteps.cs" />
     <Compile Include="Controls\LineDrawing.cs">
       <SubType>Component</SubType>
@@ -521,9 +521,8 @@
     <Compile Include="SeparatorMenuBundle.cs" />
     <Compile Include="SeparatorToolStripBundle.cs" />
     <Compile Include="SfmToXml\IsSfmFile.cs" />
-    <Compile Include="Areas\Notebook\SfmFile.cs" />
+    <Compile Include="SfmToXml\SfmFile.cs" />
     <Compile Include="Controls\ProgressHandler.cs" />
-    <Compile Include="Impls\IFlexConverterOnlyForTesting.cs" />
     <Compile Include="Impls\ILexImportOnlyForTesting.cs" />
     <Compile Include="Impls\LexImportCustomField.cs" />
     <Compile Include="Impls\LexImportField.cs" />
@@ -875,7 +874,6 @@
     <Compile Include="Controls\DetailControls\PossibilityListPopupTreeManager.cs" />
     <Compile Include="LIFT\RangeNames.cs" />
     <Compile Include="Areas\TextsAndWords\Tools\Sfm2FlexTextBase.cs" />
-    <Compile Include="Areas\TextsAndWords\Tools\Sfm2FlexTextMappingBase.cs" />
     <Compile Include="Impls\UserInterfaceChooser.cs">
       <SubType>Component</SubType>
     </Compile>

@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
@@ -541,9 +542,9 @@ namespace LanguageExplorer.Impls
 			}
 			else
 			{
-				var list = new ArrayList();
+				var list = new List<string>();
 				SfmToXmlServices.SplitString(tbEndMarker.Text.Trim(), delim, ref list);
-				foreach (string s in list)
+				foreach (var s in list)
 				{
 					if (m_existingBeginMarkers.ContainsKey(s) || tbBeginMarker.Text == s)
 					{

@@ -9,7 +9,7 @@ using SilEncConverters40;
 namespace LanguageExplorer.SfmToXml
 {
 	/// <summary />
-	public class ClsLanguage
+	internal sealed class ClsLanguage
 	{
 		public ClsLanguage()
 		{
@@ -114,18 +114,18 @@ namespace LanguageExplorer.SfmToXml
 						}
 						break;
 					default:
-						Converter.Log.AddWarning(string.Format(SfmToXmlStrings.UnknownAttribute0InTheLanguages, attribute.Name));
+						SfmToXmlServices.Log.AddWarning(string.Format(SfmToXmlStrings.UnknownAttribute0InTheLanguages, attribute.Name));
 						break;
 				}
 			}
 			if (KEY == null)
 			{
-				Converter.Log.AddError(SfmToXmlStrings.IdNotDefinedInALanguage);
+				SfmToXmlServices.Log.AddError(SfmToXmlStrings.IdNotDefinedInALanguage);
 				success = false;
 			}
 			if (XmlLang == null)
 			{
-				Converter.Log.AddError(string.Format(SfmToXmlStrings.Language0LacksXmlLangAttribute + KEY));
+				SfmToXmlServices.Log.AddError(string.Format(SfmToXmlStrings.Language0LacksXmlLangAttribute + KEY));
 				success = false;
 			}
 			return success;

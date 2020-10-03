@@ -8,7 +8,7 @@ using System.Xml;
 
 namespace LanguageExplorer.SfmToXml
 {
-	public class ClsCustomFieldDescription : ClsFieldDescription
+	internal sealed class ClsCustomFieldDescription : ClsFieldDescription
 	{
 		/// <summary>
 		/// LexEntry or LexSense
@@ -27,7 +27,7 @@ namespace LanguageExplorer.SfmToXml
 		/// </summary>
 		private bool m_big;
 
-		public ClsCustomFieldDescription()
+		internal ClsCustomFieldDescription()
 		{
 			m_class = string.Empty;
 			ClassNameUI = string.Empty;
@@ -36,7 +36,7 @@ namespace LanguageExplorer.SfmToXml
 			m_big = false;
 		}
 
-		public ClsCustomFieldDescription(string fdClass, string uiClass, int flid, bool big, int wsSelector, ClsFieldDescription baseFD)
+		internal ClsCustomFieldDescription(string fdClass, string uiClass, int flid, bool big, int wsSelector, ClsFieldDescription baseFD)
 			: base(baseFD.SFM, baseFD.Name, baseFD.Type, baseFD.Language, baseFD.IsAbbr, baseFD.MeaningID)
 		{
 			m_class = fdClass;
@@ -46,7 +46,7 @@ namespace LanguageExplorer.SfmToXml
 			m_wsSelector = wsSelector;
 		}
 
-		public ClsCustomFieldDescription(string fdClass, string uiClass, int flid, bool big, int wsSelector, string marker, string name, string datatype, string lang, bool abbr, string fwID)
+		internal ClsCustomFieldDescription(string fdClass, string uiClass, int flid, bool big, int wsSelector, string marker, string name, string datatype, string lang, bool abbr, string fwID)
 			: base(marker, name, datatype, lang, abbr, fwID)
 		{
 			m_class = fdClass;
@@ -56,17 +56,17 @@ namespace LanguageExplorer.SfmToXml
 			m_wsSelector = wsSelector;
 		}
 
-		public string ClassNameUI { get; private set; }
+		internal string ClassNameUI { get; private set; }
 
-		public string CustomKey => $"_n:{Name}_c:{m_class}_t:{Type}";
+		internal string CustomKey => $"_n:{Name}_c:{m_class}_t:{Type}";
 
-		public override bool ReadXmlNode(XmlNode customfieldNode, Hashtable languages, string topAnalysisWS)
+		internal override bool ReadXmlNode(XmlNode customfieldNode, Hashtable languages, string topAnalysisWS)
 		{
 			// Iterate through all the attributes of the "field" sub-element of this custom field:
 			var fieldNode = customfieldNode.SelectSingleNode("field");
 			if (fieldNode == null)
 			{
-				Converter.Log.AddError(string.Format(SfmToXmlStrings.NoFieldNodeInTheCustomField, SFM));
+				SfmToXmlServices.Log.AddError(string.Format(SfmToXmlStrings.NoFieldNodeInTheCustomField, SFM));
 				return false;
 			}
 			if (!base.ReadXmlNode(fieldNode, languages, "en"))

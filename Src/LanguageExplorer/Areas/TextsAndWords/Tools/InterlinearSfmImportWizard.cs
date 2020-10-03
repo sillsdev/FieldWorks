@@ -10,7 +10,6 @@ using System.Linq;
 using System.Windows.Forms;
 using System.Xml.Serialization;
 using LanguageExplorer.Controls;
-using LanguageExplorer.Controls.DetailControls;
 using LanguageExplorer.SfmToXml;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FwCoreDlgs;
@@ -796,7 +795,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools
 				private set;
 			}
 
-			public SfmFileReaderEx(string filename) : base(filename)
+			internal SfmFileReaderEx(string filename) : base(filename)
 			{
 				GetByteCounts = new int[256];
 				CountBytes();

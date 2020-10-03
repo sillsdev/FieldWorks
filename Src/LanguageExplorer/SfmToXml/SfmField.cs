@@ -10,24 +10,23 @@ namespace LanguageExplorer.SfmToXml
 	/// This class represents one field (which may be one line or multiple lines) from a
 	/// standard format file.
 	/// </summary>
-	public class SfmField
+	internal sealed class SfmField
 	{
 		private string m_sData;
 		private MultiToWideError m_mwError;
-		private byte[] m_badBytes;
 
-		public SfmField(string sMkr, byte[] rgbData, int lineNum)
+		internal SfmField(string sMkr, byte[] rgbData, int lineNum)
 		{
 			Marker = sMkr;
 			RawData = rgbData;
-			var sData = Converter.MultiToWideWithERROR(rgbData, 0, rgbData.Length - 1, Encoding.UTF8, out m_mwError, out m_badBytes);
+			var sData = SfmToXmlServices.MultiToWideWithERROR(rgbData, 0, rgbData.Length - 1, Encoding.UTF8, out m_mwError, out _);
 			m_sData = sData.Trim();
 			LineNumber = lineNum;
 		}
 
-		public string Marker { get; }
+		internal string Marker { get; }
 
-		public string Data
+		internal string Data
 		{
 			get => m_sData;
 			set
@@ -37,10 +36,10 @@ namespace LanguageExplorer.SfmToXml
 			}
 		}
 
-		public byte[] RawData { get; }
+		internal byte[] RawData { get; }
 
-		public bool ErrorConvertingData => m_mwError != MultiToWideError.None;
+		internal bool ErrorConvertingData => m_mwError != MultiToWideError.None;
 
-		public int LineNumber { get; }
+		internal int LineNumber { get; }
 	}
 }

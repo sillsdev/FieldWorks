@@ -5,6 +5,7 @@
 using System;
 using System.Windows.Forms;
 using LanguageExplorer.Controls;
+using LanguageExplorer.SfmToXml;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FwCoreDlgs;
 using SilEncConverters40;
@@ -16,7 +17,7 @@ namespace LanguageExplorer.Areas.Notebook
 	/// </summary>
 	public partial class ImportEncCvtrDlg : Form
 	{
-		private string m_sBlankEC = SfmToXml.SfmToXmlServices.AlreadyInUnicode;
+		private string m_sBlankEC = SfmToXmlServices.AlreadyInUnicode;
 		private string m_sDescriptionFmt;
 		private string m_sEncConverter;
 		private IHelpTopicProvider m_helpTopicProvider;

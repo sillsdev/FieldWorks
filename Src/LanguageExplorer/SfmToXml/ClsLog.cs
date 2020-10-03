@@ -12,7 +12,7 @@ namespace LanguageExplorer.SfmToXml
 	/// warning messages that are captured during the conversion process.
 	/// They are accumulated and then added to the output xml file at the end.
 	/// </summary>
-	public class ClsLog
+	internal sealed class ClsLog
 	{
 		// Errors and warnings are kept and shown separately
 		private List<WrnErrInfo> m_fatalErrors;
@@ -35,12 +35,12 @@ namespace LanguageExplorer.SfmToXml
 		private const int NumErrorsWithInfo = 2000; // after this number of errors just keep a count
 		private const int NumCautionsMAX = 2000; // after this number of cautions, just keep a count...
 
-		public ClsLog()
+		internal ClsLog()
 		{
 			Reset();
 		}
 
-		public void Reset()
+		internal void Reset()
 		{
 			m_fatalErrors = new List<WrnErrInfo>();
 			m_errors = new List<WrnErrInfo>();
@@ -115,17 +115,17 @@ namespace LanguageExplorer.SfmToXml
 			}
 		}
 
-		public void AddSFMWithData(string sfm)
+		internal void AddSFMWithData(string sfm)
 		{
 			FoundSFMWithData(sfm);
 		}
 
-		public void AddSFMNotDefined(string sfm)
+		internal void AddSFMNotDefined(string sfm)
 		{
 			FoundSFMNotDefined(sfm);
 		}
 
-		public void AddSFMNoData(string sfm)
+		internal void AddSFMNoData(string sfm)
 		{
 			FoundSFMWithoutData(sfm);
 		}
@@ -149,12 +149,12 @@ namespace LanguageExplorer.SfmToXml
 			return result;
 		}
 
-		public void AddSFMWarning(string sfm, string text)
+		internal void AddSFMWarning(string sfm, string text)
 		{
 			AddSFMWarning(string.Empty, -1, sfm, text);
 		}
 
-		public void AddSFMWarning(string file, int line, string sfm, string text)
+		internal void AddSFMWarning(string file, int line, string sfm, string text)
 		{
 			if (m_sfmWarningsAndErrors.TryGetValue(sfm, out var counter))
 			{
@@ -168,13 +168,14 @@ namespace LanguageExplorer.SfmToXml
 			}
 			FoundSFMWarning(sfm);
 		}
-		public void AddSFMError(string sfm, string text)
+
+		internal void AddSFMError(string sfm, string text)
 		{
 			AddSFMError(string.Empty, -1, sfm, text);
 		}
 
 
-		public void AddSFMError(string file, int line, string sfm, string text)
+		internal void AddSFMError(string file, int line, string sfm, string text)
 		{
 			if (m_sfmWarningsAndErrors.TryGetValue(sfm, out var counter))
 			{
@@ -189,12 +190,12 @@ namespace LanguageExplorer.SfmToXml
 			FoundSFMError(sfm);
 		}
 
-		public void AddWarning(string text)
+		internal void AddWarning(string text)
 		{
 			AddWarning(string.Empty, -1, text);
 		}
 
-		public void AddWarning(string file, int line, string text)
+		internal void AddWarning(string file, int line, string text)
 		{
 			if (m_warnings.Count > NumErrorsWithInfo)
 			{
@@ -205,12 +206,12 @@ namespace LanguageExplorer.SfmToXml
 
 		}
 
-		public void AddError(string text)
+		internal void AddError(string text)
 		{
 			AddError(string.Empty, -1, text);
 		}
 
-		public void AddError(string file, int line, string text)
+		internal void AddError(string file, int line, string text)
 		{
 			if (m_errors.Count > NumErrorsWithInfo)
 			{
@@ -220,12 +221,12 @@ namespace LanguageExplorer.SfmToXml
 			m_errors.Add(new WrnErrInfo(file, line, text));
 		}
 
-		public void AddFatalError(string text)
+		internal void AddFatalError(string text)
 		{
 			AddFatalError(string.Empty, -1, text);
 		}
 
-		public void AddFatalError(string file, int line, string text)
+		internal void AddFatalError(string file, int line, string text)
 		{
 			if (m_fatalErrors.Count > NumErrorsWithInfo)
 			{
@@ -235,7 +236,7 @@ namespace LanguageExplorer.SfmToXml
 			m_fatalErrors.Add(new WrnErrInfo(file, line, text));
 		}
 
-		public void AddOutOfOrderCaution(string entryKey, string marker, int line)
+		internal void AddOutOfOrderCaution(string entryKey, string marker, int line)
 		{
 			Dictionary<string, List<int>> markers;
 			if (m_outOfOrderWarningsEntries.ContainsKey(entryKey))
@@ -271,7 +272,7 @@ namespace LanguageExplorer.SfmToXml
 		/// Put the contents of the error and warning information to the
 		/// passed in xml text writer.
 		/// </summary>
-		public void FlushTo(XmlTextWriter xmlOutput)
+		internal void FlushTo(XmlTextWriter xmlOutput)
 		{
 			xmlOutput.Flush();
 			var ttlWarnings = m_warnings.Count + m_sfmsWithOutData; // warnings and sfm's w/o data

@@ -4,33 +4,34 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Text;
 using System.Xml;
 
 namespace LanguageExplorer.SfmToXml
 {
 	/// <summary />
-	public class ClsInFieldMarker
+	internal sealed class ClsInFieldMarker
 	{
 		private string m_xmlElementName;
-		private ArrayList m_endList;
+		private List<string> m_endList;
 		private string m_xmlLang;       // actual ws for language
 		private bool m_useXmlLangValue; // true if we should use the xmlLang value for language
-		private char[] delim = { ' ' };
+		private readonly char[] _delim = { ' ' };
 
-		public ClsInFieldMarker()
+		internal ClsInFieldMarker()
 		{
-			m_endList = new ArrayList();
+			m_endList = new List<string>();
 			Language = m_xmlLang = Style = string.Empty;
 			m_useXmlLangValue = false;
 		}
 
-		public ClsInFieldMarker(string begin, string endList, bool fEndWithWord, bool fEndWithField, string lang, string xmlLang, string style, bool ignore)
+		internal ClsInFieldMarker(string begin, string endList, bool fEndWithWord, bool fEndWithField, string lang, string xmlLang, string style, bool ignore)
 		{
-			m_endList = new ArrayList();
+			m_endList = new List<string>();
 			Begin = begin;
-			// change from a delimited string to an arraylist
-			SfmToXmlServices.SplitString(endList, delim, ref m_endList);
+			// change from a delimited string to a list
+			SfmToXmlServices.SplitString(endList, _delim, ref m_endList);
 			EndWithWord = fEndWithWord;
 			EndWithField = fEndWithField;
 			Language = lang;
@@ -40,12 +41,12 @@ namespace LanguageExplorer.SfmToXml
 			m_useXmlLangValue = false;
 		}
 
-		public string EndListToString()
+		internal string EndListToString()
 		{
 			var result = string.Empty;
 			if (m_endList.Count > 0)
 			{
-				foreach (string marker in m_endList)
+				foreach (var marker in m_endList)
 				{
 					if (result.Length > 0)
 					{
@@ -65,7 +66,7 @@ namespace LanguageExplorer.SfmToXml
 			return result;
 		}
 
-		public string OptionsString()
+		internal string OptionsString()
 		{
 			var output = string.Empty;
 			if (Language.Length > 0)
@@ -86,7 +87,7 @@ namespace LanguageExplorer.SfmToXml
 		/// <summary>
 		/// Convert the XML element name to a valid element name as needed.
 		/// </summary>
-		public void GenerateElementName(Hashtable htMarkers)
+		internal void GenerateElementName(Hashtable htMarkers)
 		{
 			var sbElementName = new StringBuilder(Begin + "_");
 			if (m_endList.Count > 0)
@@ -143,7 +144,7 @@ namespace LanguageExplorer.SfmToXml
 			{
 				GenerateElementName(null);
 			}
-			var sbOutput = new System.Text.StringBuilder();
+			var sbOutput = new StringBuilder();
 			sbOutput.Append("element=\"");
 			sbOutput.Append(m_xmlElementName);
 			sbOutput.Append("\" begin=\"");
@@ -164,7 +165,7 @@ namespace LanguageExplorer.SfmToXml
 				{
 					// put out the first one with the 'end' attribute
 					sbOutput.Append(" end=\"");
-					sbOutput.Append(m_endList[0] as string);
+					sbOutput.Append(m_endList[0]);
 					sbOutput.Append("\"");
 
 					sbOutput.Append(" endList=\"");
@@ -220,7 +221,7 @@ namespace LanguageExplorer.SfmToXml
 			return sbOutput.ToString();
 		}
 
-		public string ElementAndAttributes()
+		internal string ElementAndAttributes()
 		{
 			var sbOutput = new StringBuilder("<");
 			sbOutput.Append(m_xmlElementName);
@@ -247,7 +248,7 @@ namespace LanguageExplorer.SfmToXml
 			return sbOutput.ToString();
 		}
 
-		public string ToXmlString()
+		internal string ToXmlString()
 		{
 			var result = ToString(); // get the data portion of the string
 			result = result.Replace("&", "&amp;");
@@ -258,13 +259,13 @@ namespace LanguageExplorer.SfmToXml
 			return result;
 		}
 
-		public bool HasStyle => Style.Length > 0;
+		internal bool HasStyle => Style.Length > 0;
 
-		public string Style { get; private set; }
+		internal string Style { get; private set; }
 
-		public bool Ignore { get; private set; }
+		internal bool Ignore { get; private set; }
 
-		public string ElementName
+		internal string ElementName
 		{
 			get
 			{
@@ -277,11 +278,11 @@ namespace LanguageExplorer.SfmToXml
 			}
 		}
 
-		public string Begin { get; private set; }
+		internal string Begin { get; private set; }
 
-		public ICollection End => m_endList;
+		internal ICollection End => m_endList;
 
-		public bool ContainsEndMarker(string endMarker)
+		internal bool ContainsEndMarker(string endMarker)
 		{
 			if (m_endList.Contains(endMarker))
 			{
@@ -294,15 +295,15 @@ namespace LanguageExplorer.SfmToXml
 			return EndWithField && endMarker.Length == 0;
 		}
 
-		public bool EndWithWord { get; private set; }
+		internal bool EndWithWord { get; private set; }
 
-		public bool EndWithField { get; private set; }
+		internal bool EndWithField { get; private set; }
 
-		public string KEY => Begin;
+		internal string KEY => Begin;
 
-		public string Language { get; private set; }
+		internal string Language { get; private set; }
 
-		public bool ReadXmlNode(XmlNode node, Hashtable languages)
+		internal bool ReadXmlNode(XmlNode node, Hashtable languages)
 		{
 			var success = true;
 			EndWithField = false;
@@ -321,7 +322,7 @@ namespace LanguageExplorer.SfmToXml
 						break;
 					case "end":
 					case "endList":
-						SfmToXmlServices.SplitString(newValue, delim, ref m_endList);
+						SfmToXmlServices.SplitString(newValue, _delim, ref m_endList);
 						break;
 					case "endWithField":
 						EndWithField = IsTrue(attribute.Value);
@@ -338,7 +339,7 @@ namespace LanguageExplorer.SfmToXml
 						}
 						else
 						{
-							Converter.Log.AddError(string.Format(SfmToXmlStrings.UnknownLangValue0InTheInFieldMarkers, attribute.Value));
+							SfmToXmlServices.Log.AddError(string.Format(SfmToXmlStrings.UnknownLangValue0InTheInFieldMarkers, attribute.Value));
 						}
 						break;
 					case "style":
@@ -348,24 +349,24 @@ namespace LanguageExplorer.SfmToXml
 						Ignore = SfmToXmlServices.IsBoolString(attribute.Value, false);
 						break;
 					default:
-						Converter.Log.AddWarning(string.Format(SfmToXmlStrings.UnknownAttribute0InTheInFieldMarkers, attribute.Name));
+						SfmToXmlServices.Log.AddWarning(string.Format(SfmToXmlStrings.UnknownAttribute0InTheInFieldMarkers, attribute.Name));
 						success = false;
 						break;
 				}
 			}
 			if (Begin == null)
 			{
-				Converter.Log.AddError(SfmToXmlStrings.BeginNotDefinedInAnInFieldMarker);
+				SfmToXmlServices.Log.AddError(SfmToXmlStrings.BeginNotDefinedInAnInFieldMarker);
 				success = false;
 			}
 			if (m_endList.Count == 0 && !EndWithWord && !EndWithField)
 			{
-				Converter.Log.AddError(string.Format(SfmToXmlStrings.InFieldMarker0HasNoEndAttribute, Begin));
+				SfmToXmlServices.Log.AddError(string.Format(SfmToXmlStrings.InFieldMarker0HasNoEndAttribute, Begin));
 				success = false;
 			}
 			if (m_xmlElementName == null)
 			{
-				Converter.Log.AddError(string.Format(SfmToXmlStrings.InFieldMarker0HasNoElementNameAttribute, Begin));
+				SfmToXmlServices.Log.AddError(string.Format(SfmToXmlStrings.InFieldMarker0HasNoElementNameAttribute, Begin));
 				success = false;
 			}
 			return success;
@@ -376,7 +377,7 @@ namespace LanguageExplorer.SfmToXml
 			return p == true.ToString() || p.ToLowerInvariant() == "true" || p.ToLowerInvariant() == "yes";
 		}
 
-		public bool OutputXml(XmlTextWriter xmlOutput, bool useXmlLangValue)
+		internal bool OutputXml(XmlTextWriter xmlOutput, bool useXmlLangValue)
 		{
 			if (xmlOutput != null)
 			{

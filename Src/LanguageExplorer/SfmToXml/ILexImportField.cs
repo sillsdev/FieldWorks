@@ -12,7 +12,7 @@ namespace LanguageExplorer.SfmToXml
 	/// were read in from the controlled xml file that is used for mapping the
 	/// markers in the import data to the fields used in FieldWorks.
 	/// </summary>
-	public interface ILexImportField
+	internal interface ILexImportField
 	{
 		/// <summary>
 		/// the FW field id

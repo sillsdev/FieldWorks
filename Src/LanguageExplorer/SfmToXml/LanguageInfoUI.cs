@@ -9,9 +9,9 @@ namespace LanguageExplorer.SfmToXml
 	/// It's primarily used for mapping the FW writing system and encoding converter to
 	/// the key that is used in the map file.
 	/// </summary>
-	public class LanguageInfoUI
+	internal sealed class LanguageInfoUI
 	{
-		public LanguageInfoUI(string key, string fwName, string enc, string icu)
+		internal LanguageInfoUI(string key, string fwName, string enc, string icu)
 		{
 			Key = key;
 			FwName = fwName;
@@ -23,19 +23,19 @@ namespace LanguageExplorer.SfmToXml
 			ICUName = icu;
 		}
 
-		public string Key { get; }
+		internal string Key { get; }
 
-		public string FwName { get; }
+		internal string FwName { get; }
 
-		public string ICUName { get; }
+		internal string ICUName { get; }
 
-		public string EncodingConverterName { get; }
+		internal string EncodingConverterName { get; }
 
 		public override string ToString()
 		{
 			return FwName == SfmToXmlServices.Ignore ? string.Format(SfmToXmlStrings.XIgnored, Key) : Key;
 		}
 
-		public ClsLanguage ClsLanguage => new ClsLanguage(Key, ICUName, EncodingConverterName);
+		internal ClsLanguage ClsLanguage => new ClsLanguage(Key, ICUName, EncodingConverterName);
 	}
 }

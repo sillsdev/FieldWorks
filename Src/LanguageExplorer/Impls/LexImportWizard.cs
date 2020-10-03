@@ -5,10 +5,12 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Resources;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
@@ -16,7 +18,6 @@ using System.Xml;
 using System.Xml.Linq;
 using System.Xml.Xsl;
 using LanguageExplorer.Controls;
-using LanguageExplorer.Controls.DetailControls;
 using LanguageExplorer.SfmToXml;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FwCoreDlgs;
@@ -35,6 +36,10 @@ namespace LanguageExplorer.Impls
 {
 	internal sealed class LexImportWizard : WizardDialog, IFwExtension, IImportForm, ILexImportWizard
 	{
+		internal static readonly string s_sPhase1FileName = "Phase1Output.xml";
+		internal static readonly string s_sPhase2FileName = "Phase2Output.xml";
+		internal static readonly string s_sPhase3FileName = "Phase3Output.xml";
+		internal static readonly string s_sPhase4FileName = "Phase4Output.xml";
 		private bool m_FeasabilityReportGenerated;  // has to run before import
 		private LcmCache m_cache;
 		private IApp m_app;
@@ -96,59 +101,59 @@ namespace LanguageExplorer.Impls
 		/// </summary>
 		public IPublisher Publisher { get; private set; }
 		#region Dialog controls
-		private System.Windows.Forms.TabPage tabPage1;
-		private System.Windows.Forms.TabPage tabPage2;
-		private System.Windows.Forms.TabPage tabPage3;
-		private System.Windows.Forms.TabPage tabPage4;
-		private System.Windows.Forms.TabPage tabPage6;
-		private System.Windows.Forms.TabPage tabPage5;
-		private System.Windows.Forms.TabPage tabPage7;
-		private System.Windows.Forms.TabPage tabPage8;
-		private System.Windows.Forms.ColumnHeader LangcolumnHeader1;
-		private System.Windows.Forms.ColumnHeader LangcolumnHeader2;
-		private System.Windows.Forms.ColumnHeader LangcolumnHeader3;
-		private System.Windows.Forms.ColumnHeader columnHeader1;
-		private System.Windows.Forms.ColumnHeader columnHeader2;
-		private System.Windows.Forms.ColumnHeader columnHeader3;
-		private System.Windows.Forms.ColumnHeader columnHeader4;
-		private System.Windows.Forms.Label lblOverview;
-		private System.Windows.Forms.Label lblOverviewInstructions;
-		private System.Windows.Forms.Label lblBackupInstructions;
-		private System.Windows.Forms.Label lblBackup;
-		private System.Windows.Forms.Button btnBackup;
-		private System.Windows.Forms.Label lblDatabaseInstructions;
-		private System.Windows.Forms.Label lblDatabase;
-		private System.Windows.Forms.Label lblSettingsInstructions;
-		private System.Windows.Forms.Label lblSettings;
-		private System.Windows.Forms.Label lblSaveAsInstructions;
-		private System.Windows.Forms.Label lblSaveAs;
-		private System.Windows.Forms.TextBox m_DatabaseFileName;
-		private System.Windows.Forms.Button btnDatabaseBrowse;
-		private System.Windows.Forms.Button btnSettingsBrowse;
-		private System.Windows.Forms.Button btnSaveAsBrowse;
-		private System.Windows.Forms.TextBox m_SaveAsFileName;
-		private System.Windows.Forms.Label lblMappingLanguages;
-		private System.Windows.Forms.Label lblMappingLanguagesInstructions;
-		private System.Windows.Forms.ListView listViewMappingLanguages;
-		private System.Windows.Forms.Button btnAddMappingLanguage;
-		private System.Windows.Forms.Button btnModifyMappingLanguage;
-		private System.Windows.Forms.Label lblContentMappings;
-		private System.Windows.Forms.Label lblContentInstructions1;
-		private System.Windows.Forms.Label lblContentInstructions2;
-		private System.Windows.Forms.ListView listViewContentMapping;
-		private System.Windows.Forms.Button btnModifyContentMapping;
+		private TabPage tabPage1;
+		private TabPage tabPage2;
+		private TabPage tabPage3;
+		private TabPage tabPage4;
+		private TabPage tabPage6;
+		private TabPage tabPage5;
+		private TabPage tabPage7;
+		private TabPage tabPage8;
+		private ColumnHeader LangcolumnHeader1;
+		private ColumnHeader LangcolumnHeader2;
+		private ColumnHeader LangcolumnHeader3;
+		private ColumnHeader columnHeader1;
+		private ColumnHeader columnHeader2;
+		private ColumnHeader columnHeader3;
+		private ColumnHeader columnHeader4;
+		private Label lblOverview;
+		private Label lblOverviewInstructions;
+		private Label lblBackupInstructions;
+		private Label lblBackup;
+		private Button btnBackup;
+		private Label lblDatabaseInstructions;
+		private Label lblDatabase;
+		private Label lblSettingsInstructions;
+		private Label lblSettings;
+		private Label lblSaveAsInstructions;
+		private Label lblSaveAs;
+		private TextBox m_DatabaseFileName;
+		private Button btnDatabaseBrowse;
+		private Button btnSettingsBrowse;
+		private Button btnSaveAsBrowse;
+		private TextBox m_SaveAsFileName;
+		private Label lblMappingLanguages;
+		private Label lblMappingLanguagesInstructions;
+		private ListView listViewMappingLanguages;
+		private Button btnAddMappingLanguage;
+		private Button btnModifyMappingLanguage;
+		private Label lblContentMappings;
+		private Label lblContentInstructions1;
+		private Label lblContentInstructions2;
+		private ListView listViewContentMapping;
+		private Button btnModifyContentMapping;
 		private FwOverrideComboBox m_SettingsFileName;
-		private System.Windows.Forms.Label label3;
-		private System.Windows.Forms.Label FeasabilityCheckInstructions;
-		private System.Windows.Forms.Button btnGenerateReport;
-		private System.Windows.Forms.Label lblReadyToImportInstructions;
-		private System.Windows.Forms.Label lblReadyToImport;
-		private System.Windows.Forms.CheckBox m_DisplayImportReport;
-		private System.Windows.Forms.Label lblTotalMarkers;
-		private System.Windows.Forms.Label lblFile;
-		private System.Windows.Forms.Label lblSettingsTag;
-		private System.Windows.Forms.ColumnHeader columnHeader5;
-		private System.ComponentModel.IContainer components = null;
+		private Label label3;
+		private Label FeasabilityCheckInstructions;
+		private Button btnGenerateReport;
+		private Label lblReadyToImportInstructions;
+		private Label lblReadyToImport;
+		private CheckBox m_DisplayImportReport;
+		private Label lblTotalMarkers;
+		private Label lblFile;
+		private Label lblSettingsTag;
+		private ColumnHeader columnHeader5;
+		private IContainer components = null;
 		#endregion
 
 		#region Constructor and init routines
@@ -259,7 +264,7 @@ namespace LanguageExplorer.Impls
 			m_DatabaseFileName.AppendText(string.Empty);
 		}
 
-		private void LexImportWizard_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+		private void LexImportWizard_Closing(object sender, CancelEventArgs e)
 		{
 			if (DialogResult != DialogResult.OK)    // only simulate a cancel button if not finished normally
 			{
@@ -273,17 +278,17 @@ namespace LanguageExplorer.Impls
 		/// retrieve previous settings for selected database file names.
 		#region Step 2 event handlers and routines
 
-		private void btnDatabaseBrowse_Click(object sender, System.EventArgs e)
+		private void btnDatabaseBrowse_Click(object sender, EventArgs e)
 		{
 			m_DatabaseFileName.Text = GetFile(OFType.Database, m_DatabaseFileName.Text);
 		}
 
-		private void btnSettingsBrowse_Click(object sender, System.EventArgs e)
+		private void btnSettingsBrowse_Click(object sender, EventArgs e)
 		{
 			m_SettingsFileName.Text = GetFile(OFType.Settings, m_SettingsFileName.Text);
 		}
 
-		private void btnSaveAsBrowse_Click(object sender, System.EventArgs e)
+		private void btnSaveAsBrowse_Click(object sender, EventArgs e)
 		{
 			m_SaveAsFileName.Text = GetFile(OFType.SaveAs, m_SaveAsFileName.Text);
 		}
@@ -373,7 +378,7 @@ namespace LanguageExplorer.Impls
 			return currentFile;
 		}
 
-		private void m_SettingsFileName_TextChanged(object sender, System.EventArgs e)
+		private void m_SettingsFileName_TextChanged(object sender, EventArgs e)
 		{
 			if (m_formHasLoaded)
 			{
@@ -383,7 +388,7 @@ namespace LanguageExplorer.Impls
 			}
 		}
 
-		private void m_DatabaseFileName_TextChanged(object sender, System.EventArgs e)
+		private void m_DatabaseFileName_TextChanged(object sender, EventArgs e)
 		{
 			if (m_formHasLoaded)
 			{
@@ -477,7 +482,7 @@ namespace LanguageExplorer.Impls
 			listViewMappingLanguages.BeginUpdate();
 			foreach (DictionaryEntry languageEntry in langs)
 			{
-				var lang = languageEntry.Value as SfmToXml.ClsLanguage;
+				var lang = languageEntry.Value as ClsLanguage;
 				var encodingconverter = lang.EncCvtrMap;
 				var langkey = lang.KEY;
 				var xmlLang = lang.XmlLang;
@@ -514,7 +519,7 @@ namespace LanguageExplorer.Impls
 
 		private void SetDatabaseNameIntoLabel()
 		{
-			var resources = new System.Resources.ResourceManager(typeof(LexImportWizard));
+			var resources = new ResourceManager(typeof(LexImportWizard));
 			var lblText = resources.GetString("lblMappingLanguagesInstructions.Text");  //dbLabelText");
 			lblMappingLanguagesInstructions.Text = string.Format(lblText, m_cache.ProjectId.Name);
 		}
@@ -1304,14 +1309,14 @@ namespace LanguageExplorer.Impls
 		/// This button runs the feasibility check and then enables the next button
 		/// so the user can continue on.
 		/// </summary>
-		private void btnGenerateReport_Click(object sender, System.EventArgs e)
+		private void btnGenerateReport_Click(object sender, EventArgs e)
 		{
 			using (new WaitCursor(this))
 			{
 				SaveSettings(); // saves to registry and creates the new map file
 				btnGenerateReport.Enabled = false;
 				Converter importConverter = new FlexConverter(m_cache);
-				Converter.Log.Reset();  // remove any previous error msgs
+				SfmToXmlServices.Log.Reset();  // remove any previous error msgs
 				// if there are auto fields in the xml file, pass them on to the converter
 				var autoFields = m_MappingMgr.LexImportFields.GetAutoFields();
 				foreach (var kvp in autoFields)
@@ -1394,7 +1399,7 @@ namespace LanguageExplorer.Impls
 			m_sMDFImportMap = sTransformDir + "MDFImport.map";
 
 			// Output files
-			m_sPhase1Output = Path.Combine(m_sTempDir, LexImport.s_sPhase1FileName);
+			m_sPhase1Output = Path.Combine(m_sTempDir, s_sPhase1FileName);
 			m_sImportFields = sTransformDir + "ImportFields.xml";
 		}
 
@@ -1467,7 +1472,7 @@ namespace LanguageExplorer.Impls
 					var lexImport = new LexImport(m_cache, m_sTempDir, sTransformDir);
 					lexImport.Error += OnImportError;
 					var fRet = (bool)dlg.RunTask(true, ((ILexImportOnlyForTesting)lexImport).Import, runToCompletion, lastStep, startPhase, m_DatabaseFileName.Text, m_cEntries,
-						m_DisplayImportReport.Checked, m_sPhase1HtmlReport, LexImport.s_sPhase1FileName, m_chkCreateMissingLinks.Checked);
+						m_DisplayImportReport.Checked, m_sPhase1HtmlReport, m_chkCreateMissingLinks.Checked);
 					if (fRet)
 					{
 						DialogResult = DialogResult.OK; // only 'OK' if not exception
@@ -1784,19 +1789,19 @@ namespace LanguageExplorer.Impls
 		/// </summary>
 		private static int GetDictionaryFileAsPhaseFileNumber(string fileName)
 		{
-			if (fileName.EndsWith(LexImport.s_sPhase1FileName))
+			if (fileName.EndsWith(s_sPhase1FileName))
 			{
 				return 1;
 			}
-			if (fileName.EndsWith(LexImport.s_sPhase2FileName))
+			if (fileName.EndsWith(s_sPhase2FileName))
 			{
 				return 2;
 			}
-			if (fileName.EndsWith(LexImport.s_sPhase3FileName))
+			if (fileName.EndsWith(s_sPhase3FileName))
 			{
 				return 3;
 			}
-			return fileName.EndsWith(LexImport.s_sPhase4FileName) ? 4 : 0;
+			return fileName.EndsWith(s_sPhase4FileName) ? 4 : 0;
 		}
 
 		private void ShowSaveButtonOrNot()
@@ -1941,82 +1946,82 @@ namespace LanguageExplorer.Impls
 		/// </summary>
 		private void InitializeComponent()
 		{
-			this.components = new System.ComponentModel.Container();
-			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(LexImportWizard));
-			this.tabPage1 = new System.Windows.Forms.TabPage();
-			this.label1 = new System.Windows.Forms.Label();
-			this.btnBackup = new System.Windows.Forms.Button();
-			this.lblBackupInstructions = new System.Windows.Forms.Label();
-			this.lblBackup = new System.Windows.Forms.Label();
-			this.lblOverviewInstructions = new System.Windows.Forms.Label();
-			this.lblOverview = new System.Windows.Forms.Label();
-			this.tabPage2 = new System.Windows.Forms.TabPage();
-			this.lblSettingsTag = new System.Windows.Forms.Label();
-			this.lblFile = new System.Windows.Forms.Label();
-			this.m_SettingsFileName = new SIL.FieldWorks.FwCoreDlgs.FwOverrideComboBox();
-			this.btnSaveAsBrowse = new System.Windows.Forms.Button();
-			this.m_SaveAsFileName = new System.Windows.Forms.TextBox();
-			this.lblSaveAs = new System.Windows.Forms.Label();
-			this.lblSaveAsInstructions = new System.Windows.Forms.Label();
-			this.btnSettingsBrowse = new System.Windows.Forms.Button();
-			this.lblSettings = new System.Windows.Forms.Label();
-			this.lblSettingsInstructions = new System.Windows.Forms.Label();
-			this.btnDatabaseBrowse = new System.Windows.Forms.Button();
-			this.m_DatabaseFileName = new System.Windows.Forms.TextBox();
-			this.lblDatabase = new System.Windows.Forms.Label();
-			this.lblDatabaseInstructions = new System.Windows.Forms.Label();
-			this.tabPage3 = new System.Windows.Forms.TabPage();
-			this.btnModifyMappingLanguage = new System.Windows.Forms.Button();
-			this.btnAddMappingLanguage = new System.Windows.Forms.Button();
-			this.listViewMappingLanguages = new System.Windows.Forms.ListView();
-			this.LangcolumnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-			this.LangcolumnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-			this.LangcolumnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-			this.lblMappingLanguagesInstructions = new System.Windows.Forms.Label();
-			this.lblMappingLanguages = new System.Windows.Forms.Label();
-			this.tabPage4 = new System.Windows.Forms.TabPage();
-			this.m_chkCreateMissingLinks = new System.Windows.Forms.CheckBox();
-			this.lblTotalMarkers = new System.Windows.Forms.Label();
-			this.btnModifyContentMapping = new System.Windows.Forms.Button();
-			this.lblContentInstructions2 = new System.Windows.Forms.Label();
-			this.lblContentInstructions1 = new System.Windows.Forms.Label();
-			this.lblContentMappings = new System.Windows.Forms.Label();
-			this.listViewContentMapping = new System.Windows.Forms.ListView();
-			this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-			this.columnHeader6 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-			this.columnHeader5 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-			this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-			this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-			this.columnHeader4 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-			this.tabPage6 = new System.Windows.Forms.TabPage();
-			this.btnDeleteCharMapping = new System.Windows.Forms.Button();
-			this.btnModifyCharMapping = new System.Windows.Forms.Button();
-			this.btnAddCharMapping = new System.Windows.Forms.Button();
-			this.label2 = new System.Windows.Forms.Label();
-			this.label4 = new System.Windows.Forms.Label();
-			this.listViewCharMappings = new System.Windows.Forms.ListView();
-			this.columnHeaderCM1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-			this.columnHeaderCM2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-			this.columnHeaderCM3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-			this.columnHeaderCM4 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-			this.tabPage5 = new System.Windows.Forms.TabPage();
-			this.tvBeginMarkers = new System.Windows.Forms.TreeView();
-			this.imageList1 = new System.Windows.Forms.ImageList(this.components);
-			this.lblStep5KeyMarkers = new System.Windows.Forms.Label();
-			this.labelStep5Description = new System.Windows.Forms.Label();
-			this.tabPage7 = new System.Windows.Forms.TabPage();
-			this.lblGenerateReportMsg = new System.Windows.Forms.Label();
-			this.btnGenerateReport = new System.Windows.Forms.Button();
-			this.FeasabilityCheckInstructions = new System.Windows.Forms.Label();
-			this.label3 = new System.Windows.Forms.Label();
-			this.gbGenerateReport = new System.Windows.Forms.GroupBox();
-			this.tabPage8 = new System.Windows.Forms.TabPage();
-			this.lblFinishWOImport = new System.Windows.Forms.Label();
-			this.m_DisplayImportReport = new System.Windows.Forms.CheckBox();
-			this.lblReadyToImportInstructions = new System.Windows.Forms.Label();
-			this.lblReadyToImport = new System.Windows.Forms.Label();
-			this.btnQuickFinish = new System.Windows.Forms.Button();
-			this.btnSaveMapFile = new System.Windows.Forms.Button();
+			this.components = new Container();
+			ComponentResourceManager resources = new ComponentResourceManager(typeof(LexImportWizard));
+			this.tabPage1 = new TabPage();
+			this.label1 = new Label();
+			this.btnBackup = new Button();
+			this.lblBackupInstructions = new Label();
+			this.lblBackup = new Label();
+			this.lblOverviewInstructions = new Label();
+			this.lblOverview = new Label();
+			this.tabPage2 = new TabPage();
+			this.lblSettingsTag = new Label();
+			this.lblFile = new Label();
+			this.m_SettingsFileName = new FwOverrideComboBox();
+			this.btnSaveAsBrowse = new Button();
+			this.m_SaveAsFileName = new TextBox();
+			this.lblSaveAs = new Label();
+			this.lblSaveAsInstructions = new Label();
+			this.btnSettingsBrowse = new Button();
+			this.lblSettings = new Label();
+			this.lblSettingsInstructions = new Label();
+			this.btnDatabaseBrowse = new Button();
+			this.m_DatabaseFileName = new TextBox();
+			this.lblDatabase = new Label();
+			this.lblDatabaseInstructions = new Label();
+			this.tabPage3 = new TabPage();
+			this.btnModifyMappingLanguage = new Button();
+			this.btnAddMappingLanguage = new Button();
+			this.listViewMappingLanguages = new ListView();
+			this.LangcolumnHeader1 = ((ColumnHeader)(new ColumnHeader()));
+			this.LangcolumnHeader2 = ((ColumnHeader)(new ColumnHeader()));
+			this.LangcolumnHeader3 = ((ColumnHeader)(new ColumnHeader()));
+			this.lblMappingLanguagesInstructions = new Label();
+			this.lblMappingLanguages = new Label();
+			this.tabPage4 = new TabPage();
+			this.m_chkCreateMissingLinks = new CheckBox();
+			this.lblTotalMarkers = new Label();
+			this.btnModifyContentMapping = new Button();
+			this.lblContentInstructions2 = new Label();
+			this.lblContentInstructions1 = new Label();
+			this.lblContentMappings = new Label();
+			this.listViewContentMapping = new ListView();
+			this.columnHeader1 = ((ColumnHeader)(new ColumnHeader()));
+			this.columnHeader6 = ((ColumnHeader)(new ColumnHeader()));
+			this.columnHeader5 = ((ColumnHeader)(new ColumnHeader()));
+			this.columnHeader2 = ((ColumnHeader)(new ColumnHeader()));
+			this.columnHeader3 = ((ColumnHeader)(new ColumnHeader()));
+			this.columnHeader4 = ((ColumnHeader)(new ColumnHeader()));
+			this.tabPage6 = new TabPage();
+			this.btnDeleteCharMapping = new Button();
+			this.btnModifyCharMapping = new Button();
+			this.btnAddCharMapping = new Button();
+			this.label2 = new Label();
+			this.label4 = new Label();
+			this.listViewCharMappings = new ListView();
+			this.columnHeaderCM1 = ((ColumnHeader)(new ColumnHeader()));
+			this.columnHeaderCM2 = ((ColumnHeader)(new ColumnHeader()));
+			this.columnHeaderCM3 = ((ColumnHeader)(new ColumnHeader()));
+			this.columnHeaderCM4 = ((ColumnHeader)(new ColumnHeader()));
+			this.tabPage5 = new TabPage();
+			this.tvBeginMarkers = new TreeView();
+			this.imageList1 = new ImageList(this.components);
+			this.lblStep5KeyMarkers = new Label();
+			this.labelStep5Description = new Label();
+			this.tabPage7 = new TabPage();
+			this.lblGenerateReportMsg = new Label();
+			this.btnGenerateReport = new Button();
+			this.FeasabilityCheckInstructions = new Label();
+			this.label3 = new Label();
+			this.gbGenerateReport = new GroupBox();
+			this.tabPage8 = new TabPage();
+			this.lblFinishWOImport = new Label();
+			this.m_DisplayImportReport = new CheckBox();
+			this.lblReadyToImportInstructions = new Label();
+			this.lblReadyToImport = new Label();
+			this.btnQuickFinish = new Button();
+			this.btnSaveMapFile = new Button();
 			this.tabSteps.SuspendLayout();
 			this.tabPage1.SuspendLayout();
 			this.tabPage2.SuspendLayout();
@@ -2078,7 +2083,7 @@ namespace LanguageExplorer.Impls
 			//
 			// label1
 			//
-			this.label1.ForeColor = System.Drawing.SystemColors.ControlText;
+			this.label1.ForeColor = SystemColors.ControlText;
 			resources.ApplyResources(this.label1, "label1");
 			this.label1.Name = "label1";
 			//
@@ -2086,7 +2091,7 @@ namespace LanguageExplorer.Impls
 			//
 			resources.ApplyResources(this.btnBackup, "btnBackup");
 			this.btnBackup.Name = "btnBackup";
-			this.btnBackup.Click += new System.EventHandler(this.btnBackup_Click);
+			this.btnBackup.Click += new EventHandler(this.btnBackup_Click);
 			//
 			// lblBackupInstructions
 			//
@@ -2143,20 +2148,20 @@ namespace LanguageExplorer.Impls
 			resources.ApplyResources(this.m_SettingsFileName, "m_SettingsFileName");
 			this.m_SettingsFileName.AllowSpaceInEditBox = true;
 			this.m_SettingsFileName.Name = "m_SettingsFileName";
-			this.m_SettingsFileName.TextChanged += new System.EventHandler(this.m_SettingsFileName_TextChanged);
+			this.m_SettingsFileName.TextChanged += new EventHandler(this.m_SettingsFileName_TextChanged);
 			//
 			// btnSaveAsBrowse
 			//
 			resources.ApplyResources(this.btnSaveAsBrowse, "btnSaveAsBrowse");
 			this.btnSaveAsBrowse.Name = "btnSaveAsBrowse";
 			this.btnSaveAsBrowse.Tag = "";
-			this.btnSaveAsBrowse.Click += new System.EventHandler(this.btnSaveAsBrowse_Click);
+			this.btnSaveAsBrowse.Click += new EventHandler(this.btnSaveAsBrowse_Click);
 			//
 			// m_SaveAsFileName
 			//
 			resources.ApplyResources(this.m_SaveAsFileName, "m_SaveAsFileName");
 			this.m_SaveAsFileName.Name = "m_SaveAsFileName";
-			this.m_SaveAsFileName.TextChanged += new System.EventHandler(this.m_SaveAsFileName_TextChanged);
+			this.m_SaveAsFileName.TextChanged += new EventHandler(this.m_SaveAsFileName_TextChanged);
 			//
 			// lblSaveAs
 			//
@@ -2173,7 +2178,7 @@ namespace LanguageExplorer.Impls
 			resources.ApplyResources(this.btnSettingsBrowse, "btnSettingsBrowse");
 			this.btnSettingsBrowse.Name = "btnSettingsBrowse";
 			this.btnSettingsBrowse.Tag = "";
-			this.btnSettingsBrowse.Click += new System.EventHandler(this.btnSettingsBrowse_Click);
+			this.btnSettingsBrowse.Click += new EventHandler(this.btnSettingsBrowse_Click);
 			//
 			// lblSettings
 			//
@@ -2190,13 +2195,13 @@ namespace LanguageExplorer.Impls
 			resources.ApplyResources(this.btnDatabaseBrowse, "btnDatabaseBrowse");
 			this.btnDatabaseBrowse.Name = "btnDatabaseBrowse";
 			this.btnDatabaseBrowse.Tag = "";
-			this.btnDatabaseBrowse.Click += new System.EventHandler(this.btnDatabaseBrowse_Click);
+			this.btnDatabaseBrowse.Click += new EventHandler(this.btnDatabaseBrowse_Click);
 			//
 			// m_DatabaseFileName
 			//
 			resources.ApplyResources(this.m_DatabaseFileName, "m_DatabaseFileName");
 			this.m_DatabaseFileName.Name = "m_DatabaseFileName";
-			this.m_DatabaseFileName.TextChanged += new System.EventHandler(this.m_DatabaseFileName_TextChanged);
+			this.m_DatabaseFileName.TextChanged += new EventHandler(this.m_DatabaseFileName_TextChanged);
 			//
 			// lblDatabase
 			//
@@ -2223,30 +2228,30 @@ namespace LanguageExplorer.Impls
 			//
 			resources.ApplyResources(this.btnModifyMappingLanguage, "btnModifyMappingLanguage");
 			this.btnModifyMappingLanguage.Name = "btnModifyMappingLanguage";
-			this.btnModifyMappingLanguage.Click += new System.EventHandler(this.btnModifyMappingLanguage_Click);
+			this.btnModifyMappingLanguage.Click += new EventHandler(this.btnModifyMappingLanguage_Click);
 			//
 			// btnAddMappingLanguage
 			//
 			resources.ApplyResources(this.btnAddMappingLanguage, "btnAddMappingLanguage");
 			this.btnAddMappingLanguage.Name = "btnAddMappingLanguage";
-			this.btnAddMappingLanguage.Click += new System.EventHandler(this.btnAddMappingLanguage_Click);
+			this.btnAddMappingLanguage.Click += new EventHandler(this.btnAddMappingLanguage_Click);
 			//
 			// listViewMappingLanguages
 			//
 			resources.ApplyResources(this.listViewMappingLanguages, "listViewMappingLanguages");
-			this.listViewMappingLanguages.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+			this.listViewMappingLanguages.Columns.AddRange(new ColumnHeader[] {
 				this.LangcolumnHeader1,
 				this.LangcolumnHeader2,
 				this.LangcolumnHeader3});
 			this.listViewMappingLanguages.FullRowSelect = true;
-			this.listViewMappingLanguages.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
+			this.listViewMappingLanguages.HeaderStyle = ColumnHeaderStyle.Nonclickable;
 			this.listViewMappingLanguages.HideSelection = false;
 			this.listViewMappingLanguages.MultiSelect = false;
 			this.listViewMappingLanguages.Name = "listViewMappingLanguages";
 			this.listViewMappingLanguages.UseCompatibleStateImageBehavior = false;
-			this.listViewMappingLanguages.View = System.Windows.Forms.View.Details;
-			this.listViewMappingLanguages.SelectedIndexChanged += new System.EventHandler(this.listViewMappingLanguages_SelectedIndexChanged);
-			this.listViewMappingLanguages.DoubleClick += new System.EventHandler(this.listViewMappingLanguages_DoubleClick);
+			this.listViewMappingLanguages.View = View.Details;
+			this.listViewMappingLanguages.SelectedIndexChanged += new EventHandler(this.listViewMappingLanguages_SelectedIndexChanged);
+			this.listViewMappingLanguages.DoubleClick += new EventHandler(this.listViewMappingLanguages_DoubleClick);
 			//
 			// LangcolumnHeader1
 			//
@@ -2292,14 +2297,14 @@ namespace LanguageExplorer.Impls
 			// lblTotalMarkers
 			//
 			resources.ApplyResources(this.lblTotalMarkers, "lblTotalMarkers");
-			this.lblTotalMarkers.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+			this.lblTotalMarkers.BorderStyle = BorderStyle.Fixed3D;
 			this.lblTotalMarkers.Name = "lblTotalMarkers";
 			//
 			// btnModifyContentMapping
 			//
 			resources.ApplyResources(this.btnModifyContentMapping, "btnModifyContentMapping");
 			this.btnModifyContentMapping.Name = "btnModifyContentMapping";
-			this.btnModifyContentMapping.Click += new System.EventHandler(this.btnModifyContentMapping_Click);
+			this.btnModifyContentMapping.Click += new EventHandler(this.btnModifyContentMapping_Click);
 			//
 			// lblContentInstructions2
 			//
@@ -2319,7 +2324,7 @@ namespace LanguageExplorer.Impls
 			// listViewContentMapping
 			//
 			resources.ApplyResources(this.listViewContentMapping, "listViewContentMapping");
-			this.listViewContentMapping.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+			this.listViewContentMapping.Columns.AddRange(new ColumnHeader[] {
 				this.columnHeader1,
 				this.columnHeader6,
 				this.columnHeader5,
@@ -2330,12 +2335,12 @@ namespace LanguageExplorer.Impls
 			this.listViewContentMapping.HideSelection = false;
 			this.listViewContentMapping.MultiSelect = false;
 			this.listViewContentMapping.Name = "listViewContentMapping";
-			this.listViewContentMapping.Sorting = System.Windows.Forms.SortOrder.Ascending;
+			this.listViewContentMapping.Sorting = SortOrder.Ascending;
 			this.listViewContentMapping.UseCompatibleStateImageBehavior = false;
-			this.listViewContentMapping.View = System.Windows.Forms.View.Details;
-			this.listViewContentMapping.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.listViewContentMapping_ColumnClick);
-			this.listViewContentMapping.SelectedIndexChanged += new System.EventHandler(this.listViewContentMapping_SelectedIndexChanged);
-			this.listViewContentMapping.DoubleClick += new System.EventHandler(this.listViewContentMapping_DoubleClick);
+			this.listViewContentMapping.View = View.Details;
+			this.listViewContentMapping.ColumnClick += new ColumnClickEventHandler(this.listViewContentMapping_ColumnClick);
+			this.listViewContentMapping.SelectedIndexChanged += new EventHandler(this.listViewContentMapping_SelectedIndexChanged);
+			this.listViewContentMapping.DoubleClick += new EventHandler(this.listViewContentMapping_DoubleClick);
 			//
 			// columnHeader1
 			//
@@ -2377,19 +2382,19 @@ namespace LanguageExplorer.Impls
 			//
 			resources.ApplyResources(this.btnDeleteCharMapping, "btnDeleteCharMapping");
 			this.btnDeleteCharMapping.Name = "btnDeleteCharMapping";
-			this.btnDeleteCharMapping.Click += new System.EventHandler(this.btnDeleteCharMapping_Click);
+			this.btnDeleteCharMapping.Click += new EventHandler(this.btnDeleteCharMapping_Click);
 			//
 			// btnModifyCharMapping
 			//
 			resources.ApplyResources(this.btnModifyCharMapping, "btnModifyCharMapping");
 			this.btnModifyCharMapping.Name = "btnModifyCharMapping";
-			this.btnModifyCharMapping.Click += new System.EventHandler(this.btnModifyCharMapping_Click);
+			this.btnModifyCharMapping.Click += new EventHandler(this.btnModifyCharMapping_Click);
 			//
 			// btnAddCharMapping
 			//
 			resources.ApplyResources(this.btnAddCharMapping, "btnAddCharMapping");
 			this.btnAddCharMapping.Name = "btnAddCharMapping";
-			this.btnAddCharMapping.Click += new System.EventHandler(this.btnAddCharMapping_Click);
+			this.btnAddCharMapping.Click += new EventHandler(this.btnAddCharMapping_Click);
 			//
 			// label2
 			//
@@ -2403,21 +2408,21 @@ namespace LanguageExplorer.Impls
 			//
 			// listViewCharMappings
 			//
-			this.listViewCharMappings.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+			this.listViewCharMappings.Columns.AddRange(new ColumnHeader[] {
 				this.columnHeaderCM1,
 				this.columnHeaderCM2,
 				this.columnHeaderCM3,
 				this.columnHeaderCM4});
 			this.listViewCharMappings.FullRowSelect = true;
-			this.listViewCharMappings.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
+			this.listViewCharMappings.HeaderStyle = ColumnHeaderStyle.Nonclickable;
 			this.listViewCharMappings.HideSelection = false;
 			resources.ApplyResources(this.listViewCharMappings, "listViewCharMappings");
 			this.listViewCharMappings.MultiSelect = false;
 			this.listViewCharMappings.Name = "listViewCharMappings";
 			this.listViewCharMappings.UseCompatibleStateImageBehavior = false;
-			this.listViewCharMappings.View = System.Windows.Forms.View.Details;
-			this.listViewCharMappings.SelectedIndexChanged += new System.EventHandler(this.listViewCharMappings_SelectedIndexChanged);
-			this.listViewCharMappings.DoubleClick += new System.EventHandler(this.listViewCharMappings_DoubleClick);
+			this.listViewCharMappings.View = View.Details;
+			this.listViewCharMappings.SelectedIndexChanged += new EventHandler(this.listViewCharMappings_SelectedIndexChanged);
+			this.listViewCharMappings.DoubleClick += new EventHandler(this.listViewCharMappings_DoubleClick);
 			//
 			// columnHeaderCM1
 			//
@@ -2452,14 +2457,14 @@ namespace LanguageExplorer.Impls
 			this.tvBeginMarkers.Name = "tvBeginMarkers";
 			this.tvBeginMarkers.ShowLines = false;
 			this.tvBeginMarkers.ShowRootLines = false;
-			this.tvBeginMarkers.BeforeCollapse += new System.Windows.Forms.TreeViewCancelEventHandler(this.tvBeginMarkers_BeforeCollapse);
-			this.tvBeginMarkers.KeyUp += new System.Windows.Forms.KeyEventHandler(this.tvBeginMarkers_KeyUp);
-			this.tvBeginMarkers.MouseDown += new System.Windows.Forms.MouseEventHandler(this.tvBeginMarkers_MouseUp);
+			this.tvBeginMarkers.BeforeCollapse += new TreeViewCancelEventHandler(this.tvBeginMarkers_BeforeCollapse);
+			this.tvBeginMarkers.KeyUp += new KeyEventHandler(this.tvBeginMarkers_KeyUp);
+			this.tvBeginMarkers.MouseDown += new MouseEventHandler(this.tvBeginMarkers_MouseUp);
 			//
 			// imageList1
 			//
-			this.imageList1.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageList1.ImageStream")));
-			this.imageList1.TransparentColor = System.Drawing.Color.Fuchsia;
+			this.imageList1.ImageStream = ((ImageListStreamer)(resources.GetObject("imageList1.ImageStream")));
+			this.imageList1.TransparentColor = Color.Fuchsia;
 			this.imageList1.Images.SetKeyName(0, "CheckedBox");
 			this.imageList1.Images.SetKeyName(1, "Bullet");
 			this.imageList1.Images.SetKeyName(2, "CheckBox");
@@ -2494,7 +2499,7 @@ namespace LanguageExplorer.Impls
 			//
 			resources.ApplyResources(this.btnGenerateReport, "btnGenerateReport");
 			this.btnGenerateReport.Name = "btnGenerateReport";
-			this.btnGenerateReport.Click += new System.EventHandler(this.btnGenerateReport_Click);
+			this.btnGenerateReport.Click += new EventHandler(this.btnGenerateReport_Click);
 			//
 			// FeasabilityCheckInstructions
 			//
@@ -2524,19 +2529,19 @@ namespace LanguageExplorer.Impls
 			//
 			// lblFinishWOImport
 			//
-			this.lblFinishWOImport.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+			this.lblFinishWOImport.BorderStyle = BorderStyle.Fixed3D;
 			resources.ApplyResources(this.lblFinishWOImport, "lblFinishWOImport");
-			this.lblFinishWOImport.ForeColor = System.Drawing.SystemColors.ActiveCaption;
+			this.lblFinishWOImport.ForeColor = SystemColors.ActiveCaption;
 			this.lblFinishWOImport.Name = "lblFinishWOImport";
 			//
 			// m_DisplayImportReport
 			//
 			resources.ApplyResources(this.m_DisplayImportReport, "m_DisplayImportReport");
 			this.m_DisplayImportReport.Checked = true;
-			this.m_DisplayImportReport.CheckState = System.Windows.Forms.CheckState.Checked;
+			this.m_DisplayImportReport.CheckState = CheckState.Checked;
 			this.m_DisplayImportReport.Name = "m_DisplayImportReport";
-			this.m_DisplayImportReport.KeyDown += new System.Windows.Forms.KeyEventHandler(this.m_DisplayImportReport_KeyDown);
-			this.m_DisplayImportReport.KeyUp += new System.Windows.Forms.KeyEventHandler(this.m_DisplayImportReport_KeyUp);
+			this.m_DisplayImportReport.KeyDown += new KeyEventHandler(this.m_DisplayImportReport_KeyDown);
+			this.m_DisplayImportReport.KeyUp += new KeyEventHandler(this.m_DisplayImportReport_KeyUp);
 			//
 			// lblReadyToImportInstructions
 			//
@@ -2552,20 +2557,20 @@ namespace LanguageExplorer.Impls
 			//
 			resources.ApplyResources(this.btnQuickFinish, "btnQuickFinish");
 			this.btnQuickFinish.Name = "btnQuickFinish";
-			this.btnQuickFinish.Click += new System.EventHandler(this.btnQuickFinish_Click);
+			this.btnQuickFinish.Click += new EventHandler(this.btnQuickFinish_Click);
 			//
 			// btnSaveMapFile
 			//
 			resources.ApplyResources(this.btnSaveMapFile, "btnSaveMapFile");
 			this.btnSaveMapFile.Name = "btnSaveMapFile";
-			this.btnSaveMapFile.Click += new System.EventHandler(this.btnSaveMapFile_Click);
+			this.btnSaveMapFile.Click += new EventHandler(this.btnSaveMapFile_Click);
 			//
 			// LexImportWizard
 			//
 			resources.ApplyResources(this, "$this");
 			this.Controls.Add(this.btnSaveMapFile);
 			this.Controls.Add(this.btnQuickFinish);
-			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Sizable;
+			this.FormBorderStyle = FormBorderStyle.Sizable;
 			this.Name = "LexImportWizard";
 			this.ShowIcon = false;
 			this.ShowInTaskbar = false;
@@ -2579,8 +2584,8 @@ namespace LanguageExplorer.Impls
 				resources.GetString("$this.StepNames6"),
 				resources.GetString("$this.StepNames7")};
 			this.StepPageCount = 8;
-			this.Closing += new System.ComponentModel.CancelEventHandler(this.LexImportWizard_Closing);
-			this.Load += new System.EventHandler(this.LexImportWizard_Load);
+			this.Closing += new CancelEventHandler(this.LexImportWizard_Closing);
+			this.Load += new EventHandler(this.LexImportWizard_Load);
 			this.Controls.SetChildIndex(this.btnQuickFinish, 0);
 			this.Controls.SetChildIndex(this.panSteps, 0);
 			this.Controls.SetChildIndex(this.tabSteps, 0);
@@ -2842,9 +2847,9 @@ namespace LanguageExplorer.Impls
 						bldr.AppendFormat(LanguageExplorerControls.ksXErrors, errorCount);
 					}
 					bldr.Append("</h3>");
-					bldr.Append(System.Environment.NewLine);
+					bldr.Append(Environment.NewLine);
 					bldr.Append("<ul>");
-					bldr.Append(System.Environment.NewLine);
+					bldr.Append(Environment.NewLine);
 					var errorList = errorsNode.SelectNodes("Error");
 					foreach (XmlNode errorNode in errorList)
 					{
@@ -2995,7 +3000,7 @@ namespace LanguageExplorer.Impls
 					}
 					sHtml.Append("</h3>");
 					sHtml.Append(Environment.NewLine);
-					var phase10utputName = Path.Combine(GetTempDir(), LexImport.s_sPhase1FileName);
+					var phase10utputName = Path.Combine(GetTempDir(), s_sPhase1FileName);
 					phase10utputName = phase10utputName.Replace(@"\", @"\\");
 					sHtml.AppendFormat("<p>{0}", LanguageExplorerControls.ksMisorderedMarkers);
 					sHtml.AppendFormat("<p>{0}", string.Format(LanguageExplorerControls.ksClickToPreviewAssumptions, "<A HREF=\"javascript: void 0\" ONCLICK=\"exec('" + phase10utputName + "'); return false;\" >", "</A>"));
@@ -3071,7 +3076,7 @@ namespace LanguageExplorer.Impls
 				return;
 			}
 			var bldr = new StringBuilder();
-			bldr.AppendFormat("<h3>{0}</h3>{1}", LanguageExplorerControls.ksStatsForSFMarkers, System.Environment.NewLine);
+			bldr.AppendFormat("<h3>{0}</h3>{1}", LanguageExplorerControls.ksStatsForSFMarkers, Environment.NewLine);
 			bldr.Append("<table border=\"1\" cellpadding=\"2\" cellspacing=\"2\">");
 			bldr.Append(Environment.NewLine);
 			bldr.Append("<tbody>");
@@ -3363,7 +3368,7 @@ namespace LanguageExplorer.Impls
 			btn.Location = oldPoint;
 		}
 
-		private void btnSaveMapFile_Click(object sender, System.EventArgs e)
+		private void btnSaveMapFile_Click(object sender, EventArgs e)
 		{
 			// LT-6620
 			if (UsesInvalidFileNames(false))
@@ -3512,7 +3517,7 @@ namespace LanguageExplorer.Impls
 			}
 		}
 
-		private void btnModifyCharMapping_Click(object sender, System.EventArgs e)
+		private void btnModifyCharMapping_Click(object sender, EventArgs e)
 		{
 			var selIndexes = listViewCharMappings.SelectedIndices;
 			if (selIndexes.Count < 1 || selIndexes.Count > 1)
@@ -3666,7 +3671,7 @@ namespace LanguageExplorer.Impls
 		/// </summary>
 		private sealed class IFMReader : Converter
 		{
-			public Hashtable IFMS(string mapFile, Hashtable languages)
+			internal Hashtable IFMS(string mapFile, Hashtable languages)
 			{
 				var xmlMap = new XmlDocument();
 				try
@@ -3693,7 +3698,7 @@ namespace LanguageExplorer.Impls
 		/// </summary>
 		private sealed class LangConverter : Converter
 		{
-			public Hashtable Languages(string mapFile)
+			internal Hashtable Languages(string mapFile)
 			{
 				var xmlMap = new XmlDocument();
 				try
@@ -3724,33 +3729,31 @@ namespace LanguageExplorer.Impls
 			private string m_rootDir;
 			public Hashtable ContentMappingItems { get; private set; }
 
-			public ContentMapping ContentMappingItem(string sfmKEY)
+			internal ContentMapping ContentMappingItem(string sfmKEY)
 			{
 				return ContentMappingItems[sfmKEY] as ContentMapping;
 			}
 
-			public bool ReplaceContentMappingItem(ContentMapping contentMapping)
+			internal void ReplaceContentMappingItem(ContentMapping contentMapping)
 			{
 				var sfmKey = contentMapping.Marker;
 				if (ContentMappingItems.ContainsKey(sfmKey))
 				{
 					ContentMappingItems.Remove(sfmKey);
 					ContentMappingItems.Add(sfmKey, contentMapping);
-					return true;
 				}
-				return false;
 			}
 
 			internal LexImportFields LexImportFields { get; private set; }
 
-			public bool GetAndChangeColumnSortOrder(int col)
+			internal bool GetAndChangeColumnSortOrder(int col)
 			{
 				var rval = (bool)m_SortOrder[col];
 				m_SortOrder[col] = !rval;
 				return rval;
 			}
 
-			public MarkerPresenter(string rootDir, Hashtable uiLangInfo, string topAnalysisWS, string mapfile, string datafile, string fwFile, int numColumns, ILexImportFields customFields)
+			internal MarkerPresenter(string rootDir, Hashtable uiLangInfo, string topAnalysisWS, string mapfile, string datafile, string fwFile, int numColumns, ILexImportFields customFields)
 			{
 				m_rootDir = rootDir;
 				m_topAnalysisWS = topAnalysisWS;
@@ -3772,14 +3775,14 @@ namespace LanguageExplorer.Impls
 				MergeData(false);
 			}
 
-			public void UpdateLexFieldsWithCustomFields(ILexImportFields customFields)
+			internal void UpdateLexFieldsWithCustomFields(ILexImportFields customFields)
 			{
 				LexImportFields = customFields as LexImportFields;
 				var sImportFields = Path.Combine(m_rootDir, "Language Explorer", "Import", "ImportFields.xml");
 				LexImportFields.ReadLexImportFields(sImportFields);
 			}
 
-			public bool UpdateSfmDataChanged()
+			internal bool UpdateSfmDataChanged()
 			{
 				m_DataInfo = new SfmFileReader(m_dataFile);
 				return MergeData(true);
@@ -3981,7 +3984,7 @@ namespace LanguageExplorer.Impls
 							var mapWS = mapField.Language;
 							if (m_htUILangInfo.ContainsKey(mapWS))
 							{
-								ws = (m_htUILangInfo[mapWS] as SfmToXml.LanguageInfoUI).FwName;
+								ws = (m_htUILangInfo[mapWS] as LanguageInfoUI).FwName;
 								langDesc = mapWS;
 							}
 						}
@@ -3996,7 +3999,7 @@ namespace LanguageExplorer.Impls
 							else
 							{
 								startMapFieldData = licf.ClsFieldDescriptionWith(startMapFieldData);
-								licf.UIClass = (startMapFieldData as SfmToXml.ClsCustomFieldDescription).ClassNameUI;
+								licf.UIClass = (startMapFieldData as ClsCustomFieldDescription).ClassNameUI;
 							}
 							isCustom = true;
 						}
@@ -4128,22 +4131,18 @@ namespace LanguageExplorer.Impls
 			}
 		}
 
-		internal static IFlexConverterOnlyForTesting CreateFlexConverterForTesting(LcmCache cache)
+		internal static Converter CreateFlexConverterForTesting(LcmCache cache)
 		{
 			return new FlexConverter(cache);
 		}
 
 		/// <summary />
-		/// <remarks>
-		/// This class could be made private to LexImportWizard, but for
-		/// </remarks>
-		private sealed class FlexConverter : Converter, IFlexConverterOnlyForTesting
+		private sealed class FlexConverter : Converter
 		{
 			private LcmCache m_cache;
 			private int m_wsEn;
 
-			public FlexConverter(LcmCache cache)
-				: base()
+			internal FlexConverter(LcmCache cache)
 			{
 				m_cache = cache;
 				m_wsEn = m_cache.WritingSystemFactory.GetWsFromStr("en");
@@ -4181,10 +4180,6 @@ namespace LanguageExplorer.Impls
 
 			public delegate void ErrorHandler(object sender, string message, string caption);
 			public event ErrorHandler Error;
-			public static readonly string s_sPhase1FileName = "Phase1Output.xml";
-			public static readonly string s_sPhase2FileName = "Phase2Output.xml";
-			public static readonly string s_sPhase3FileName = "Phase3Output.xml";
-			public static readonly string s_sPhase4FileName = "Phase4Output.xml";
 
 			/// <summary />
 			public LexImport(LcmCache cache, string tempDir, string transformDir)
@@ -4210,7 +4205,7 @@ namespace LanguageExplorer.Impls
 			/// <returns><c>true</c> if import was successful, otherwise <c>false</c>.</returns>
 			object ILexImportOnlyForTesting.Import(IThreadedProgress dlg, object[] parameters)
 			{
-				Debug.Assert(parameters.Length == 9);
+				Debug.Assert(parameters.Length == 8);
 				var runToCompletion = (bool)parameters[0];
 				var lastStep = (int)parameters[1];
 				var startPhase = (int)parameters[2];
@@ -4218,8 +4213,8 @@ namespace LanguageExplorer.Impls
 				var cEntries = (int)parameters[4];
 				m_fDisplayImportReport = (bool)parameters[5];
 				m_sPhase1HtmlReport = (string)parameters[6];
-				m_sPhase1FileName = (string)parameters[7];
-				var fCreateMissingLinks = (bool)parameters[8];
+				var fCreateMissingLinks = (bool)parameters[7];
+				m_sPhase1FileName = s_sPhase1FileName;
 				var sErrorMsg = LanguageExplorerControls.ksTransformProblem_X;
 				var fAttemptedXml = false;
 				var processedInputFile = databaseFileName;
@@ -4329,8 +4324,6 @@ namespace LanguageExplorer.Impls
 				return false;
 			}
 
-			string ILexImportOnlyForTesting.Phase1FileName => s_sPhase1FileName;
-
 			private static void DoTransform(string xsl, string xml, string output)
 			{
 				// Create the XslTransform and load the stylesheet.
@@ -4339,7 +4332,7 @@ namespace LanguageExplorer.Impls
 				// Create an XmlReader for input to the transform.
 				// Create an XmlTextWriter to output the result of the transform.
 				using (var reader = XmlReader.Create(xml))
-				using (var writer = new XmlTextWriter(output, System.Text.Encoding.UTF8))
+				using (var writer = new XmlTextWriter(output, Encoding.UTF8))
 				{
 					// Do NOT set writer.Formatting to Formatting.Indented. It can insert spurious white space, for example,
 					// when the first child of a Custom element in phase 2 is an InFieldMarker, it inserts

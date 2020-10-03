@@ -18,7 +18,7 @@ using SilEncConverters40;
 namespace LanguageExplorer.SfmToXml
 {
 	/// <summary />
-	public class Converter
+	internal class Converter
 	{
 		// Container for options section of map file:
 		// Container for languages section of map file:
@@ -44,7 +44,6 @@ namespace LanguageExplorer.SfmToXml
 		private Hashtable m_sfmToHierarchy;
 		// this hash keeps track of all the markers that aren't used in the hierarchy
 		private Hashtable m_markersNotInHierarchy;
-		public static ClsLog Log = new ClsLog();
 		private int m_sfmLineNumber;
 		private string m_sfmFileName;
 		private string m_mappingFileName;
@@ -60,7 +59,7 @@ namespace LanguageExplorer.SfmToXml
 		/// This class requires that the map file already exist.  So this is just a black box that
 		/// acts on the input files that it's given - with Convert being the main entry point.
 		/// </summary>
-		public Converter()
+		internal Converter()
 			: this(new EncConverters())
 		{
 		}
@@ -89,18 +88,7 @@ namespace LanguageExplorer.SfmToXml
 			m_topAnalysisWS = "en";
 		}
 
-		// only one entry per class - iow, the key is the classname
-		public bool AddPossibleAutoField(string className, string fwID)
-		{
-			if (!m_autoFieldsPossible.ContainsKey(className))
-			{
-				m_autoFieldsPossible.Add(className, fwID);
-				return true;
-			}
-			return false;   // not added
-		}
-
-		public int LevelOneElements { get; private set; }
+		internal int LevelOneElements { get; private set; }
 
 		protected ClsFieldDescription GetFieldDescription(string key)
 		{
@@ -112,7 +100,7 @@ namespace LanguageExplorer.SfmToXml
 		protected Hashtable FieldMarkerHashTable { get; }
 		protected Hashtable InFieldMarkerHashTable { get; }
 
-		private void TestFile(string fileName)
+		private static void TestFile(string fileName)
 		{
 			if (!File.Exists(fileName))
 			{
@@ -238,7 +226,8 @@ namespace LanguageExplorer.SfmToXml
 						msg = !string.IsNullOrEmpty(map) ? string.Format(SfmToXmlStrings.LanguagesEntry_0_map_1_2, langId, lang.EncCvtrMap, map)
 							: string.Format(SfmToXmlStrings.LanguagesEntry_0_map_1, langId, lang.EncCvtrMap);
 					}
-					Log.AddWarning(msg);
+
+					SfmToXmlServices.Log.AddWarning(msg);
 					lang.Convert(xmlLang, map);
 				}
 			}
@@ -266,12 +255,25 @@ namespace LanguageExplorer.SfmToXml
 			return ok;
 		}
 
+		#region IFlexConverterOnlyForTesting implementation
+		// only one entry per class - iow, the key is the classname
+		public bool AddPossibleAutoField(string className, string fwID)
+		{
+			if (!m_autoFieldsPossible.ContainsKey(className))
+			{
+				m_autoFieldsPossible.Add(className, fwID);
+				return true;
+			}
+			return false;   // not added
+		}
+
 		public void Convert(string sfmFileName, string mappingFileName, string outputFileName)
 		{
 			Convert(sfmFileName, mappingFileName, outputFileName, string.Empty, string.Empty, string.Empty);
 		}
+		#endregion  IFlexConverterOnlyForTesting implementation
 
-		public void Convert(string sfmFileName, string mappingFileName, string outputFileName, string vernWs, string regWs, string natWs)
+		internal void Convert(string sfmFileName, string mappingFileName, string outputFileName, string vernWs, string regWs, string natWs)
 		{
 			LevelOneElements = 0;
 			// Log.Open(LogFileName);
@@ -293,9 +295,9 @@ namespace LanguageExplorer.SfmToXml
 				}
 				catch (XmlException e)
 				{
-					Log.AddError(string.Format(SfmToXmlStrings.InvalidMappingFile0_1, m_mappingFileName, e.Message));
+					SfmToXmlServices.Log.AddError(string.Format(SfmToXmlStrings.InvalidMappingFile0_1, m_mappingFileName, e.Message));
 					// put out the warnings and errors
-					Log.FlushTo(xmlOutput);
+					SfmToXmlServices.Log.FlushTo(xmlOutput);
 					xmlOutput.WriteEndElement(); // Close the Database node
 					xmlOutput.Close();
 					return;
@@ -359,7 +361,7 @@ namespace LanguageExplorer.SfmToXml
 				}
 				catch (Exception e)
 				{
-					Log.AddError(string.Format(SfmToXmlStrings.UnhandledException0, e.Message));
+					SfmToXmlServices.Log.AddError(string.Format(SfmToXmlStrings.UnhandledException0, e.Message));
 				}
 				var nl = Environment.NewLine;
 				var comments = nl;
@@ -374,7 +376,7 @@ namespace LanguageExplorer.SfmToXml
 				}
 				catch (Exception e)
 				{
-					Log.AddError(string.Format(SfmToXmlStrings.UnhandledException0, e.Message));
+					SfmToXmlServices.Log.AddError(string.Format(SfmToXmlStrings.UnhandledException0, e.Message));
 				}
 				// put out the field descriptions with the autofield info integrated in: for xslt processing...
 				comments = nl;
@@ -422,7 +424,7 @@ namespace LanguageExplorer.SfmToXml
 				xmlOutput.WriteComment(comments);
 				OutputInFieldMarkers(xmlOutput);
 				// put out the warnings and errors
-				Log.FlushTo(xmlOutput);
+				SfmToXmlServices.Log.FlushTo(xmlOutput);
 				xmlOutput.WriteEndElement(); // Close the Database node
 				xmlOutput.Close();
 			}
@@ -472,7 +474,7 @@ namespace LanguageExplorer.SfmToXml
 			}
 			if (numFound > 1)
 			{
-				Log.AddWarning(SfmToXmlStrings.DuplicateSettingsFoundForFwSilOrg);
+				SfmToXmlServices.Log.AddWarning(SfmToXmlStrings.DuplicateSettingsFoundForFwSilOrg);
 			}
 			return true;
 		}
@@ -487,12 +489,12 @@ namespace LanguageExplorer.SfmToXml
 				var isValidLanguageNode = language.ReadXmlNode(languageNode);
 				if (LanguagesHashTable.ContainsKey(language.KEY))
 				{
-					Log.AddError(string.Format(SfmToXmlStrings.DuplicateId0InLanguages, language.KEY));
+					SfmToXmlServices.Log.AddError(string.Format(SfmToXmlStrings.DuplicateId0InLanguages, language.KEY));
 					success = false;
 				}
 				else if (string.IsNullOrEmpty(language.KEY))
 				{
-					Log.AddError(SfmToXmlStrings.LanguageWithEmptyMissingIdInLanguages);
+					SfmToXmlServices.Log.AddError(SfmToXmlStrings.LanguageWithEmptyMissingIdInLanguages);
 					success = false;
 				}
 				else
@@ -513,7 +515,7 @@ namespace LanguageExplorer.SfmToXml
 			}
 			if (LanguagesHashTable.Count == 0)
 			{
-				Log.AddError(SfmToXmlStrings.NoValidLanguagesDefined);
+				SfmToXmlServices.Log.AddError(SfmToXmlStrings.NoValidLanguagesDefined);
 				success = false;
 			}
 			return success;
@@ -532,7 +534,7 @@ namespace LanguageExplorer.SfmToXml
 				}
 				if (GetOptions.ContainsKey(option.Id))
 				{
-					Log.AddError(string.Format(SfmToXmlStrings.DuplicateId0InOptions, option.Id));
+					SfmToXmlServices.Log.AddError(string.Format(SfmToXmlStrings.DuplicateId0InOptions, option.Id));
 					success = false;
 				}
 				else
@@ -542,7 +544,7 @@ namespace LanguageExplorer.SfmToXml
 			}
 			if (GetOptions.Count == 0)
 			{
-				Log.AddError(SfmToXmlStrings.NoValidOptionsDefined);
+				SfmToXmlServices.Log.AddError(SfmToXmlStrings.NoValidOptionsDefined);
 				success = false;
 			}
 			return success;
@@ -562,7 +564,7 @@ namespace LanguageExplorer.SfmToXml
 				// Assign the encoding converter specified in the mapping file:
 				if (!string.IsNullOrEmpty(language.EncCvtrMap) && !language.SetConverter(m_converters))
 				{
-					Log.AddFatalError(string.Format(SfmToXmlStrings.UnknownEncodingConvertersMap0InLanguage1, language.EncCvtrMap, language.KEY));
+					SfmToXmlServices.Log.AddFatalError(string.Format(SfmToXmlStrings.UnknownEncodingConvertersMap0InLanguage1, language.EncCvtrMap, language.KEY));
 				}
 			}
 		}
@@ -578,7 +580,7 @@ namespace LanguageExplorer.SfmToXml
 				{
 					if (HierarchyHashTable.ContainsKey(hierarchyEntry.KEY))
 					{
-						Log.AddError(string.Format(SfmToXmlStrings.HierarchyEntry0MultiplyDefined, hierarchyEntry.Name));
+						SfmToXmlServices.Log.AddError(string.Format(SfmToXmlStrings.HierarchyEntry0MultiplyDefined, hierarchyEntry.Name));
 						success = false;
 					}
 					else
@@ -593,7 +595,7 @@ namespace LanguageExplorer.SfmToXml
 			}
 			if (HierarchyHashTable.Count == 0)
 			{
-				Log.AddError(SfmToXmlStrings.NoValidHierarchyEntriesDefined);
+				SfmToXmlServices.Log.AddError(SfmToXmlStrings.NoValidHierarchyEntriesDefined);
 				success = false;
 			}
 			// Now populate the children hashtable: key is parent and value is ArrayList of children.
@@ -614,7 +616,7 @@ namespace LanguageExplorer.SfmToXml
 					}
 					else
 					{
-						Log.AddWarning(string.Format(SfmToXmlStrings.DuplicateHierarchy0IsAlreadyChildOf1, entry.Name, name));
+						SfmToXmlServices.Log.AddWarning(string.Format(SfmToXmlStrings.DuplicateHierarchy0IsAlreadyChildOf1, entry.Name, name));
 					}
 				}
 			}
@@ -661,7 +663,7 @@ namespace LanguageExplorer.SfmToXml
 			{
 				if (root.Count == 0)
 				{
-					Log.AddError(SfmToXmlStrings.NoRootImpliedInTheHierarchy);
+					SfmToXmlServices.Log.AddError(SfmToXmlStrings.NoRootImpliedInTheHierarchy);
 				}
 				else
 				{
@@ -670,7 +672,8 @@ namespace LanguageExplorer.SfmToXml
 					{
 						sb.AppendFormat(SfmToXmlStrings.ksQuotedItem, dictEntry.Key);
 					}
-					Log.AddError(string.Format(SfmToXmlStrings.ThereAre0RootsImpliedInTheHierarchy1, root.Count, sb));
+
+					SfmToXmlServices.Log.AddError(string.Format(SfmToXmlStrings.ThereAre0RootsImpliedInTheHierarchy1, root.Count, sb));
 				}
 
 				// Add a dummy root to avoid a crash later:
@@ -700,7 +703,7 @@ namespace LanguageExplorer.SfmToXml
 					{
 						if (m_beginMarkerHierarchyEntries.ContainsKey(beginSfm))
 						{
-							Log.AddError(string.Format(SfmToXmlStrings.HierarchyEntry0HasDuplicateBeginField1_2, hierarchy.Name, beginSfm, (m_beginMarkerHierarchyEntries[beginSfm] as ClsHierarchyEntry).Name));
+							SfmToXmlServices.Log.AddError(string.Format(SfmToXmlStrings.HierarchyEntry0HasDuplicateBeginField1_2, hierarchy.Name, beginSfm, (m_beginMarkerHierarchyEntries[beginSfm] as ClsHierarchyEntry).Name));
 						}
 						else
 						{
@@ -713,7 +716,7 @@ namespace LanguageExplorer.SfmToXml
 						// Make sure beginfields don't appear in additionalfields:
 						if (hierarchy.AdditionalFieldsContains(beginSfm))
 						{
-							Log.AddError(string.Format(SfmToXmlStrings.HierarchyEntry0HasField1WhichIsInBeginFields, hierarchy.Name, beginSfm));
+							SfmToXmlServices.Log.AddError(string.Format(SfmToXmlStrings.HierarchyEntry0HasField1WhichIsInBeginFields, hierarchy.Name, beginSfm));
 						}
 					}
 				}
@@ -722,7 +725,7 @@ namespace LanguageExplorer.SfmToXml
 				{
 					if (!hierarchy.BeginFieldsContains(multiSfm) && !hierarchy.AdditionalFieldsContains(multiSfm))
 					{
-						Log.AddError(string.Format(SfmToXmlStrings.HierarchyEntry0HasUnexpectedMultiField1, hierarchy.Name, multiSfm));
+						SfmToXmlServices.Log.AddError(string.Format(SfmToXmlStrings.HierarchyEntry0HasUnexpectedMultiField1, hierarchy.Name, multiSfm));
 					}
 				}
 				// Continue to build list of all hierarchy SFMs:
@@ -742,7 +745,7 @@ namespace LanguageExplorer.SfmToXml
 			foreach (var hierarchySfmPair in allHierarchySfms.Cast<DictionaryEntry>().Where(hierarchySfmPair => !FieldMarkerHashTable.ContainsKey(hierarchySfmPair.Key)
 																												&& !m_fieldsToIgnore.ContainsKey(hierarchySfmPair.Key)))
 			{
-				Log.AddError(string.Format(SfmToXmlStrings.HierarchyEntry0RefersToInvalidSFM1, ((ClsHierarchyEntry)hierarchySfmPair.Value).Name, hierarchySfmPair.Key));
+				SfmToXmlServices.Log.AddError(string.Format(SfmToXmlStrings.HierarchyEntry0RefersToInvalidSFM1, ((ClsHierarchyEntry)hierarchySfmPair.Value).Name, hierarchySfmPair.Key));
 			}
 		}
 
@@ -759,7 +762,7 @@ namespace LanguageExplorer.SfmToXml
 				{
 					if (InFieldMarkerHashTable.ContainsKey(marker.KEY))
 					{
-						Log.AddError(string.Format(SfmToXmlStrings.InFieldMarker0MultiplyDefined, marker.Begin));
+						SfmToXmlServices.Log.AddError(string.Format(SfmToXmlStrings.InFieldMarker0MultiplyDefined, marker.Begin));
 						success = false;
 					}
 					else
@@ -801,12 +804,12 @@ namespace LanguageExplorer.SfmToXml
 				// Check that the given language exists in the languages list:
 				if (!string.IsNullOrEmpty(inFieldMarker.Language) && !LanguagesHashTable.ContainsKey(inFieldMarker.Language))
 				{
-					Log.AddError(string.Format(SfmToXmlStrings.InFieldMarker0RefersToInvalidLanguage1, inFieldMarker.Begin, inFieldMarker.Language));
+					SfmToXmlServices.Log.AddError(string.Format(SfmToXmlStrings.InFieldMarker0RefersToInvalidLanguage1, inFieldMarker.Begin, inFieldMarker.Language));
 				}
 				// Check that the XML element name is unique:
 				if (xmlElementNames.Contains(inFieldMarker.ElementName))
 				{
-					Log.AddError(string.Format(SfmToXmlStrings.InFieldMarker0DuplicatesUsingElement1, inFieldMarker.Begin, inFieldMarker.ElementName));
+					SfmToXmlServices.Log.AddError(string.Format(SfmToXmlStrings.InFieldMarker0DuplicatesUsingElement1, inFieldMarker.Begin, inFieldMarker.ElementName));
 				}
 				else
 				{
@@ -836,7 +839,7 @@ namespace LanguageExplorer.SfmToXml
 			return text;
 		}
 
-		private void WriteOutputFileComment(string sfmFileName, string mappingFileName, string outputFileName, XmlTextWriter xmlOutput)
+		private static void WriteOutputFileComment(string sfmFileName, string mappingFileName, string outputFileName, XmlTextWriter xmlOutput)
 		{
 			var nl = Environment.NewLine;
 			var comments = nl;
@@ -871,7 +874,7 @@ namespace LanguageExplorer.SfmToXml
 				{
 					if (FieldMarkerHashTable.ContainsKey(fieldDescription.KEY))
 					{
-						Log.AddError(string.Format(SfmToXmlStrings.FieldDescriptionsHaveMoreThanOneInstanceOf0, fieldDescription.SFM));
+						SfmToXmlServices.Log.AddError(string.Format(SfmToXmlStrings.FieldDescriptionsHaveMoreThanOneInstanceOf0, fieldDescription.SFM));
 						success = false;
 					}
 					else
@@ -887,7 +890,7 @@ namespace LanguageExplorer.SfmToXml
 			xmlOutput?.WriteEndElement(); // Close FieldDescriptions node
 			if (FieldMarkerHashTable.Count == 0)
 			{
-				Log.AddError(SfmToXmlStrings.NoValidFieldDescriptionsDefined);
+				SfmToXmlServices.Log.AddError(SfmToXmlStrings.NoValidFieldDescriptionsDefined);
 				success = false;
 			}
 			return success;
@@ -900,12 +903,13 @@ namespace LanguageExplorer.SfmToXml
 				// Check that the given language exists in the languages list:
 				if (!LanguagesHashTable.ContainsKey(fldDesc.Language))
 				{
-					Log.AddError(string.Format(SfmToXmlStrings.FieldDescription0RefersToInvalidLanguage1, fldDesc.SFM, fldDesc.Language));
+					SfmToXmlServices.Log.AddError(string.Format(SfmToXmlStrings.FieldDescription0RefersToInvalidLanguage1, fldDesc.SFM, fldDesc.Language));
 					if (!m_fieldsToIgnore.ContainsKey(fldDesc.SFM))
 					{
 						m_fieldsToIgnore.Add(fldDesc.SFM, null);
 					}
-					Log.AddWarning(string.Format(SfmToXmlStrings.FieldDescWithSFMOf0IsBeingIGNORED, fldDesc.SFM));
+
+					SfmToXmlServices.Log.AddWarning(string.Format(SfmToXmlStrings.FieldDescWithSFMOf0IsBeingIGNORED, fldDesc.SFM));
 					continue;
 				}
 				if (fldDesc.IsAutoImportField)
@@ -918,7 +922,7 @@ namespace LanguageExplorer.SfmToXml
 					// LT-2217: only show errors for fields that are not 'ignored'
 					if (!m_fieldsToIgnore.ContainsKey(fldDesc.SFM))
 					{
-						Log.AddSFMError(fldDesc.SFM, string.Format(SfmToXmlStrings.FieldDescription0UnusedInHierarchy, fldDesc.SFM));
+						SfmToXmlServices.Log.AddSFMError(fldDesc.SFM, string.Format(SfmToXmlStrings.FieldDescription0UnusedInHierarchy, fldDesc.SFM));
 					}
 					if (!m_markersNotInHierarchy.ContainsKey(fldDesc.SFM))
 					{
@@ -945,7 +949,7 @@ namespace LanguageExplorer.SfmToXml
 				{
 					if (FieldMarkerHashTable.ContainsKey(fieldDescription.KEY))
 					{
-						Log.AddError(string.Format(SfmToXmlStrings.FieldDescriptionsHaveMoreThanOneInstanceOf0, fieldDescription.SFM));
+						SfmToXmlServices.Log.AddError(string.Format(SfmToXmlStrings.FieldDescriptionsHaveMoreThanOneInstanceOf0, fieldDescription.SFM));
 						success = false;
 					}
 					else
@@ -962,7 +966,7 @@ namespace LanguageExplorer.SfmToXml
 			xmlOutput?.WriteEndElement(); // Close FieldDescriptions node
 			if (FieldMarkerHashTable.Count == 0)
 			{
-				Log.AddError(SfmToXmlStrings.NoValidFieldDescriptionsDefined);
+				SfmToXmlServices.Log.AddError(SfmToXmlStrings.NoValidFieldDescriptionsDefined);
 				success = false;
 			}
 			return success;
@@ -975,12 +979,13 @@ namespace LanguageExplorer.SfmToXml
 				// Check that the given language exists in the languages list:
 				if (!LanguagesHashTable.ContainsKey(fldDesc.Language))
 				{
-					Log.AddError(string.Format(SfmToXmlStrings.FieldDescription0RefersToInvalidLanguage1, fldDesc.SFM, fldDesc.Language));
+					SfmToXmlServices.Log.AddError(string.Format(SfmToXmlStrings.FieldDescription0RefersToInvalidLanguage1, fldDesc.SFM, fldDesc.Language));
 					if (!m_fieldsToIgnore.ContainsKey(fldDesc.SFM))
 					{
 						m_fieldsToIgnore.Add(fldDesc.SFM, null);
 					}
-					Log.AddWarning(string.Format(SfmToXmlStrings.FieldDescWithSFMOf0IsBeingIGNORED, fldDesc.SFM));
+
+					SfmToXmlServices.Log.AddWarning(string.Format(SfmToXmlStrings.FieldDescWithSFMOf0IsBeingIGNORED, fldDesc.SFM));
 					continue;
 				}
 				if (fldDesc.IsAutoImportField)
@@ -993,7 +998,7 @@ namespace LanguageExplorer.SfmToXml
 					// LT-2217: only show errors for fields that are not 'ignored'
 					if (!m_fieldsToIgnore.ContainsKey(fldDesc.SFM))
 					{
-						Log.AddSFMError(fldDesc.SFM, string.Format(SfmToXmlStrings.FieldDescription0UnusedInHierarchy, fldDesc.SFM));
+						SfmToXmlServices.Log.AddSFMError(fldDesc.SFM, string.Format(SfmToXmlStrings.FieldDescription0UnusedInHierarchy, fldDesc.SFM));
 					}
 					if (!m_markersNotInHierarchy.ContainsKey(fldDesc.SFM))
 					{
@@ -1003,95 +1008,12 @@ namespace LanguageExplorer.SfmToXml
 			}
 		}
 
-
-		/// <summary>
-		/// Find the first match of 'item' in the 'inData' returning the index or -1 if not found.
-		/// </summary>
-		/// <param name="inData">data to search through</param>
-		/// <param name="startPos">index in the data to start at</param>
-		/// <param name="item">data to search for</param>
-		/// <returns>index where data starts or -1 if not found</returns>
-		public static long FindFirstMatch(byte[] inData, int startPos, byte[] item)
+		private static string MultiToWide(byte[] multi, int start, int end, Encoding encodingToUse)
 		{
-			// none
-			long index = -1;
-			// if the inData length is too small, just return
-			if (inData.Length - startPos < item.Length)
-			{
-				return index;
-			}
-			// position into the item
-			var matchPos = 0;
-			for (var pos = startPos; pos < inData.Length; pos++)
-			{
-				if (inData[pos] == item[matchPos])  // match at this item index
-				{
-					if (matchPos == item.Length - 1)    // complete item match
-					{
-						index = pos - matchPos;         // found match
-						break;
-					}
-					matchPos++;     // keep looking through the whole item
-				}
-				else
-				{
-					matchPos = 0;
-				}
-			}
-			return index;
+			return SfmToXmlServices.MultiToWideWithERROR(multi, start, end, encodingToUse, out _, out _);
 		}
 
-		public static byte[] WideToMulti(string wide, Encoding encodingToUse)
-		{
-			Encoding encoding = new UTF8Encoding(false, true);
-			if (encodingToUse == Encoding.ASCII)
-			{
-				encoding = new ASCIIEncoding();
-			}
-			var data = new byte[encoding.GetByteCount(wide.ToCharArray())];
-			encoding.GetBytes(wide, 0, wide.Length, data, 0);
-			return data;
-		}
-
-		public static string MultiToWide(byte[] multi, int start, int end, Encoding encodingToUse)
-		{
-			return MultiToWideWithERROR(multi, start, end, encodingToUse, out _, out _);
-		}
-
-		public static string MultiToWideWithERROR(byte[] multi, int start, int end, Encoding encodingToUse, out MultiToWideError err, out byte[] badBytes)
-		{
-			err = MultiToWideError.None;
-			badBytes = null;
-			Encoding encoding = new UTF8Encoding(false, true);
-			if (encodingToUse == Encoding.ASCII)
-			{
-				encoding = new ASCIIEncoding();
-			}
-			try
-			{
-				var charCount = encoding.GetCharCount(multi, start, end - start + 1);
-				var chars = new char[charCount];
-				encoding.GetChars(multi, start, end - start + 1, chars, 0);
-				return new string(chars);
-			}
-			catch (DecoderFallbackException dfe)    //(Exception e)
-			{
-				err = MultiToWideError.InvalidCodePoint;
-				// TODO-Linux: BytesUnknown is marked with a [MonoTODO] attribute.
-				badBytes = dfe.BytesUnknown;
-				// have an invalid utf8 char most likely, so switch to ascii
-				if (encoding.EncodingName == Encoding.UTF8.EncodingName)
-				{
-					encoding = new ASCIIEncoding();
-				}
-				var charCount = encoding.GetCharCount(multi, start, end - start + 1);
-				var chars = new char[charCount];
-				encoding.GetChars(multi, start, end - start + 1, chars, 0);
-				return new string(chars);
-			}
-		}
-
-		public static string MultiToWide(byte[] multi, Encoding encodingToUse)
+		private static string MultiToWide(byte[] multi, Encoding encodingToUse)
 		{
 			return MultiToWide(multi, 0, multi.Length - 1, encodingToUse);
 		}
@@ -1102,7 +1024,7 @@ namespace LanguageExplorer.SfmToXml
 		private static long SearchForInFieldMarker(byte[] data, int startIndex, string inFieldMarker)
 		{
 			var stringToBytes = new ClsStringToOrFromBytes(inFieldMarker);
-			return FindFirstMatch(data, startIndex, stringToBytes.ToBytes());
+			return SfmToXmlServices.FindFirstMatch(data, startIndex, stringToBytes.ToBytes());
 		}
 
 		private string ConvertBytes(string marker, byte[] data, int start, int end, IEncConverter converter, int lineNumber)
@@ -1127,7 +1049,7 @@ namespace LanguageExplorer.SfmToXml
 				}
 				catch (Exception e)
 				{
-					Log.AddUniqueHighPriorityError(converter.Name, string.Format(SfmToXmlStrings.EncodingConverter0Failed1, converter.Name, e.Message));
+					SfmToXmlServices.Log.AddUniqueHighPriorityError(converter.Name, string.Format(SfmToXmlStrings.EncodingConverter0Failed1, converter.Name, e.Message));
 				}
 			}
 			else
@@ -1147,21 +1069,21 @@ namespace LanguageExplorer.SfmToXml
 						// contains non-utf8 data
 						if (badByteCount > ClsStringToOrFromBytes.MaxInvalidBytes)
 						{
-							Log.AddError(m_sfmFileName, lineNumber, string.Format(SfmToXmlStrings.Line0_SFM1ContainsIllegalUTF8Count2Max3IndexData4, lineNumber, marker, badByteCount, ClsStringToOrFromBytes.MaxInvalidBytes, workspaceAsString.InvalidByteString()));
+							SfmToXmlServices.Log.AddError(m_sfmFileName, lineNumber, string.Format(SfmToXmlStrings.Line0_SFM1ContainsIllegalUTF8Count2Max3IndexData4, lineNumber, marker, badByteCount, ClsStringToOrFromBytes.MaxInvalidBytes, workspaceAsString.InvalidByteString()));
 						}
 						else if (badByteCount > 1)
 						{
-							Log.AddError(m_sfmFileName, lineNumber, string.Format(SfmToXmlStrings.Line0_SFM1ContainsIllegalUTF8Count2IndexData3, lineNumber, marker, badByteCount, workspaceAsString.InvalidByteString()));
+							SfmToXmlServices.Log.AddError(m_sfmFileName, lineNumber, string.Format(SfmToXmlStrings.Line0_SFM1ContainsIllegalUTF8Count2IndexData3, lineNumber, marker, badByteCount, workspaceAsString.InvalidByteString()));
 						}
 						else
 						{
-							Log.AddError(m_sfmFileName, lineNumber, string.Format(SfmToXmlStrings.Line0_SFM1ContainsIllegalUTF8Code2, lineNumber, marker, System.Convert.ToString(badCodePoint, 16)));
+							SfmToXmlServices.Log.AddError(m_sfmFileName, lineNumber, string.Format(SfmToXmlStrings.Line0_SFM1ContainsIllegalUTF8Code2, lineNumber, marker, System.Convert.ToString(badCodePoint, 16)));
 						}
 
 						m_illegalCodes++;  // += badByteCount;
 						if (m_illegalCodes == cMaxCodes)
 						{
-							Log.AddError(m_sfmFileName, m_sfmLineNumber, string.Format(SfmToXmlStrings.InvalidCodepointsHaveBeenLogged, cMaxCodes));
+							SfmToXmlServices.Log.AddError(m_sfmFileName, m_sfmLineNumber, string.Format(SfmToXmlStrings.InvalidCodepointsHaveBeenLogged, cMaxCodes));
 						}
 					}
 				}
@@ -1229,8 +1151,7 @@ namespace LanguageExplorer.SfmToXml
 		/// <param name="markerSFM">key to the sfms</param>
 		/// <param name="markerData">data that has been read in the proper encoding</param>
 		/// <param name="lineNumber">line number for this data so error msgs are correct</param>
-		/// <returns></returns>
-		public string ProcessSFMData(string markerSFM, byte[] markerData, int lineNumber)
+		internal string ProcessSFMData(string markerSFM, byte[] markerData, int lineNumber)
 		{
 			var output = string.Empty;
 			// Determine the default Encoding Converter based on the given SFM marker:
@@ -1373,7 +1294,7 @@ namespace LanguageExplorer.SfmToXml
 							var matchingMarker = (ClsFoundInFieldMarker)foundMarkers[foundPos];
 							if (matchingMarker.IsBegin) // can't also be begin , must be end to be valid
 							{
-								Log.AddError(string.Format(SfmToXmlStrings.InFieldMarker0IsMultiplyDefined, currentMarker.Marker));
+								SfmToXmlServices.Log.AddError(string.Format(SfmToXmlStrings.InFieldMarker0IsMultiplyDefined, currentMarker.Marker));
 							}
 						}
 						else
@@ -1402,7 +1323,7 @@ namespace LanguageExplorer.SfmToXml
 
 					if (newDate.IndexOf(convertedDataString) < 0)
 					{
-						Log.AddSFMWarning(mainFieldDescription.SFM, string.Format(SfmToXmlStrings.DateChangedFrom1To2, mainFieldDescription.SFM, convertedDataString, newDate));
+						SfmToXmlServices.Log.AddSFMWarning(mainFieldDescription.SFM, string.Format(SfmToXmlStrings.DateChangedFrom1To2, mainFieldDescription.SFM, convertedDataString, newDate));
 					}
 					convertedDataString = newDate;
 				}
@@ -1411,7 +1332,7 @@ namespace LanguageExplorer.SfmToXml
 					// LT-5352: don't log date errors if the dt field is empty
 					if (convertedDataString.Trim().Length > 0)
 					{
-						Log.AddError(m_sfmFileName, lineNumber, string.Format(SfmToXmlStrings.X1HasAnUnrecognizedDateForm2, lineNumber.ToString(), mainFieldDescription.SFM, convertedDataString));
+						SfmToXmlServices.Log.AddError(m_sfmFileName, lineNumber, string.Format(SfmToXmlStrings.X1HasAnUnrecognizedDateForm2, lineNumber.ToString(), mainFieldDescription.SFM, convertedDataString));
 						convertedDataString = string.Empty;   // don't pass it on - ignore it
 					}
 				}
@@ -1453,7 +1374,7 @@ namespace LanguageExplorer.SfmToXml
 			return foundPos;
 		}
 
-		public void ProcessSFMandData(string currentSfm, byte[] sfmData, int lineNumber, XmlTextWriter xmlOutput)
+		internal void ProcessSFMandData(string currentSfm, byte[] sfmData, int lineNumber, XmlTextWriter xmlOutput)
 		{
 			// now process the data for this sfm
 			var processedText = ProcessSFMData(currentSfm, sfmData, lineNumber);
@@ -1475,7 +1396,7 @@ namespace LanguageExplorer.SfmToXml
 				}
 				else
 				{
-					Log.AddError(m_sfmFileName, lineNumber, string.Format(SfmToXmlStrings.SFM1ContainsInvalidCharValue2H, lineNumber, currentSfm, ((int)c).ToString("X")));
+					SfmToXmlServices.Log.AddError(m_sfmFileName, lineNumber, string.Format(SfmToXmlStrings.SFM1ContainsInvalidCharValue2H, lineNumber, currentSfm, ((int)c).ToString("X")));
 					strTemp.Remove(pos, 1);
 					lastPos--;
 					// don't bump the pos as we need to process the new char at this position
@@ -1484,11 +1405,11 @@ namespace LanguageExplorer.SfmToXml
 			var cfd = (ClsFieldDescription)FieldMarkerHashTable[currentSfm];
 			if (strTemp.Length > 0)
 			{
-				Log.AddSFMWithData(currentSfm);
+				SfmToXmlServices.Log.AddSFMWithData(currentSfm);
 			}
 			else
 			{
-				Log.AddSFMNoData(currentSfm);
+				SfmToXmlServices.Log.AddSFMNoData(currentSfm);
 			}
 			// Per LT-11134 we want to generate the element for the main lex field even if it is empty.
 			// This allows us to import an entry with no form and keep POS information.
@@ -1530,7 +1451,7 @@ namespace LanguageExplorer.SfmToXml
 						{
 							// We have something we can't interpret. Give the user an Error message, but continue on if
 							// the user ignores it. To continue on we use the entire string and assume it is a stem.
-							Log.AddFatalError(m_sfmFileName, lineNumber, string.Format(SfmToXmlStrings.BadMorphMarkers012, lineNumber, cfd.SFMxmlSafe, ex.Message));
+							SfmToXmlServices.Log.AddFatalError(m_sfmFileName, lineNumber, string.Format(SfmToXmlStrings.BadMorphMarkers012, lineNumber, cfd.SFMxmlSafe, ex.Message));
 							xmlOutput.WriteAttributeString("morphTypeWs", "en");
 							xmlOutput.WriteAttributeString("morphType", "stem");
 							xmlOutput.WriteAttributeString("allomorphClass", "MoStemAllomorph");
@@ -1602,7 +1523,7 @@ namespace LanguageExplorer.SfmToXml
 			long errCount = 0;
 			try
 			{
-				var reader = new ByteReader(m_sfmFileName, ref Log);
+				var reader = new ByteReader(m_sfmFileName, ref SfmToXmlServices.Log);
 				var mgr = new ImportObjectManager(m_root.Name, this);
 				xmlOutput.WriteStartElement(m_root.Name);
 				while (reader.GetNextSfmMarkerAndData(out var currentSfm, out var sfmData, out var badMarkerBytes))
@@ -1632,7 +1553,8 @@ namespace LanguageExplorer.SfmToXml
 						{
 							continue;
 						}
-						Log.AddError(m_sfmFileName, m_sfmLineNumber, CharDataBeforeMarkerMessage(sfmData, m_sfmLineNumber));
+
+						SfmToXmlServices.Log.AddError(m_sfmFileName, m_sfmLineNumber, CharDataBeforeMarkerMessage(sfmData, m_sfmLineNumber));
 						// add an entry to the help xml file
 						errCount++;
 						continue;
@@ -1655,15 +1577,16 @@ namespace LanguageExplorer.SfmToXml
 						if (!m_fieldDescriptionsTableNotFound.ContainsKey(currentSfm) && !m_fieldsToIgnore.ContainsKey(currentSfm))
 						{
 							m_fieldDescriptionsTableNotFound.Add(currentSfm, null);
-							Log.AddSFMError(m_sfmFileName, m_sfmLineNumber, currentSfm, string.Format(SfmToXmlStrings.SFM1IsUndefinedOrInvalid, m_sfmLineNumber, currentSfm));
+							SfmToXmlServices.Log.AddSFMError(m_sfmFileName, m_sfmLineNumber, currentSfm, string.Format(SfmToXmlStrings.SFM1IsUndefinedOrInvalid, m_sfmLineNumber, currentSfm));
 						}
-						Log.AddSFMNotDefined(currentSfm);
+
+						SfmToXmlServices.Log.AddSFMNotDefined(currentSfm);
 						continue;
 					}
 					// log the case where bad bytes are in the marker itself, but continue processing
 					if (badMarkerBytes != null && badMarkerBytes.Length > 0)
 					{
-						Log.AddSFMError(m_sfmFileName, m_sfmLineNumber, currentSfm, string.Format(SfmToXmlStrings.Line0SFM1Count2InvalidBytes, m_sfmLineNumber, currentSfm, badMarkerBytes.Length));
+						SfmToXmlServices.Log.AddSFMError(m_sfmFileName, m_sfmLineNumber, currentSfm, string.Format(SfmToXmlStrings.Line0SFM1Count2InvalidBytes, m_sfmLineNumber, currentSfm, badMarkerBytes.Length));
 					}
 					var currentLocation = HierarchyHashTable[mgr.Current.Name] as ClsHierarchyEntry;
 					if (currentLocation == null)
@@ -1679,7 +1602,7 @@ namespace LanguageExplorer.SfmToXml
 						// see if this is a marker that isn't used in the hierarchy
 						if (m_markersNotInHierarchy.ContainsKey(currentSfm))
 						{
-							Log.AddSFMError(m_sfmFileName, m_sfmLineNumber, currentSfm, string.Format(SfmToXmlStrings.SFM1IsNotUsedInAnyHierarchyItems, m_sfmLineNumber, currentSfm));
+							SfmToXmlServices.Log.AddSFMError(m_sfmFileName, m_sfmLineNumber, currentSfm, string.Format(SfmToXmlStrings.SFM1IsNotUsedInAnyHierarchyItems, m_sfmLineNumber, currentSfm));
 							continue;
 						}
 						// if we are able to add the current sfm to any open objects then do so and continue processing
@@ -1693,7 +1616,7 @@ namespace LanguageExplorer.SfmToXml
 							if (needed.ContainsAncestor(m_root.Name))   // don't add a new entry or base level node
 							{
 								var errMsg = string.Format(SfmToXmlStrings.SFM1AlreadyExistsIn2MarkerIsIgnored, m_sfmLineNumber, currentSfm, needed.Name);
-								Log.AddError(m_sfmFileName, m_sfmLineNumber, errMsg);
+								SfmToXmlServices.Log.AddError(m_sfmFileName, m_sfmLineNumber, errMsg);
 								continue;
 							}
 							// for all other elements - > be hopeful ....
@@ -1711,7 +1634,7 @@ namespace LanguageExplorer.SfmToXml
 								entryData = entryData.Replace(System.Environment.NewLine, " "); // remove newlines
 								entryData = entryData.Trim();   // remove whitespace
 								entryData = $"{eleLine}:{entryData}";
-								Log.AddOutOfOrderCaution(entryData, currentSfm, m_sfmLineNumber);
+								SfmToXmlServices.Log.AddOutOfOrderCaution(entryData, currentSfm, m_sfmLineNumber);
 								mgr.WriteOutClosedLexEntries(xmlOutput);
 								if (mgr.AddToOpenObjects(currentSfm, sfmData, m_sfmLineNumber))
 								{

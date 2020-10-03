@@ -2,7 +2,6 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml;
@@ -25,7 +24,7 @@ namespace LanguageExplorer.SfmToXml
 	///		 time in each entry.  It is used to override allowing multiple begin fields that are
 	///		 different to be combined in a given field/object.
 	/// </summary>
-	public class ClsHierarchyEntry
+	internal sealed class ClsHierarchyEntry
 	{
 		private HashSet<string> m_ancestors = new HashSet<string>();
 		private HashSet<string> m_beginFields = new HashSet<string>();
@@ -33,16 +32,16 @@ namespace LanguageExplorer.SfmToXml
 		private HashSet<string> m_multiFields = new HashSet<string>();
 		private HashSet<string> m_uniqueFields = new HashSet<string>();
 
-		public ClsHierarchyEntry()
+		internal ClsHierarchyEntry()
 		{
 		}
 
-		public ClsHierarchyEntry(string name)
+		internal ClsHierarchyEntry(string name)
 		{
 			Name = name;
 		}
 
-		public ClsHierarchyEntry(string name, string partof, string beginFields, string additionalFields, string multiFields, string uniqueFields)
+		internal ClsHierarchyEntry(string name, string partof, string beginFields, string additionalFields, string multiFields, string uniqueFields)
 			: this(name)
 		{
 			if (partof != null)
@@ -67,7 +66,7 @@ namespace LanguageExplorer.SfmToXml
 			}
 		}
 
-		public bool UsesSFM(string sfm)
+		internal bool UsesSFM(string sfm)
 		{
 			return m_beginFields.Contains(sfm) || m_additionalFields.Contains(sfm) || m_multiFields.Contains(sfm) || m_uniqueFields.Contains(sfm);
 		}
@@ -109,7 +108,7 @@ namespace LanguageExplorer.SfmToXml
 			return levelData;
 		}
 
-		public string ToXmlString()
+		internal string ToXmlString()
 		{
 			var result = ToString(); // get the data portion of the string
 			result = result.Replace("&", "&amp;");
@@ -120,15 +119,15 @@ namespace LanguageExplorer.SfmToXml
 			return result;
 		}
 
-		public string Name { get; private set; }
+		internal string Name { get; private set; }
 
-		public string KEY => Name;
+		internal string KEY => Name;
 
-		public int AncestorCount => m_ancestors.Count;
+		internal int AncestorCount => m_ancestors.Count;
 
-		public IReadOnlyCollection<string> Ancestors => m_ancestors;
+		internal IReadOnlyCollection<string> Ancestors => m_ancestors;
 
-		public bool AddAncestor(string ancestor)
+		internal bool AddAncestor(string ancestor)
 		{
 			if (m_ancestors.Contains(ancestor))
 			{
@@ -137,23 +136,24 @@ namespace LanguageExplorer.SfmToXml
 			m_ancestors.Add(ancestor);
 			return true;
 		}
-		public void RemoveAncestor(string ancestor)
+
+		internal void RemoveAncestor(string ancestor)
 		{
 			m_ancestors.Remove(ancestor);
 		}
 
-		public bool ContainsAncestor(string ancestor)
+		internal bool ContainsAncestor(string ancestor)
 		{
 			return m_ancestors.Contains(ancestor);
 		}
 
-		public IReadOnlyCollection<string> BeginFields => m_beginFields;
+		internal IReadOnlyCollection<string> BeginFields => m_beginFields;
 
-		public IReadOnlyCollection<string> AdditionalFields => m_additionalFields;
+		internal IReadOnlyCollection<string> AdditionalFields => m_additionalFields;
 
-		public IReadOnlyCollection<string> MultiFields => m_multiFields;
+		internal IReadOnlyCollection<string> MultiFields => m_multiFields;
 
-		public IReadOnlyCollection<string> UniqueFields => m_uniqueFields;
+		internal IReadOnlyCollection<string> UniqueFields => m_uniqueFields;
 
 		private static void SplitString(string xyz, ISet<string> list)
 		{
@@ -169,9 +169,9 @@ namespace LanguageExplorer.SfmToXml
 			}
 		}
 
-		public bool ReadXmlNode(XmlNode Level)
+		internal bool ReadXmlNode(XmlNode level)
 		{
-			foreach (XmlAttribute xmlAttribute in Level.Attributes)
+			foreach (XmlAttribute xmlAttribute in level.Attributes)
 			{
 				switch (xmlAttribute.Name)
 				{
@@ -194,35 +194,35 @@ namespace LanguageExplorer.SfmToXml
 						SplitString(xmlAttribute.Value, m_uniqueFields);
 						break;
 					default:
-						Converter.Log.AddWarning(string.Format(SfmToXmlStrings.UnknownAttribute0InTheHierarchySection, xmlAttribute.Name));
+						SfmToXmlServices.Log.AddWarning(string.Format(SfmToXmlStrings.UnknownAttribute0InTheHierarchySection, xmlAttribute.Name));
 						break;
 				}
 			}
 			var success = true;
 			if (Name == null)
 			{
-				Converter.Log.AddError(SfmToXmlStrings.NameNotDefinedInAHierarchyLevel);
+				SfmToXmlServices.Log.AddError(SfmToXmlStrings.NameNotDefinedInAHierarchyLevel);
 				success = false;
 			}
 			if (AncestorCount == 0)
 			{
-				Converter.Log.AddError(string.Format(SfmToXmlStrings.HierarchyLevel0PartOfAttributeNotDefined, Name));
+				SfmToXmlServices.Log.AddError(string.Format(SfmToXmlStrings.HierarchyLevel0PartOfAttributeNotDefined, Name));
 				success = false;
 			}
 			if (m_beginFields.Count == 0)
 			{
-				Converter.Log.AddError(string.Format(SfmToXmlStrings.HierarchyLevel0LacksBeginWithAtLeast1SFM, Name));
+				SfmToXmlServices.Log.AddError(string.Format(SfmToXmlStrings.HierarchyLevel0LacksBeginWithAtLeast1SFM, Name));
 				success = false;
 			}
 			return success;
 		}
 
-		public bool BeginFieldsContains(string sfm)
+		internal bool BeginFieldsContains(string sfm)
 		{
 			return m_beginFields.Contains(sfm);
 		}
 
-		public bool AddBeginField(string sfm)
+		internal bool AddBeginField(string sfm)
 		{
 			if (m_beginFields.Contains(sfm))
 			{
@@ -232,17 +232,12 @@ namespace LanguageExplorer.SfmToXml
 			return true;
 		}
 
-		public void RemoveBeginField(string sfm)
-		{
-			m_beginFields.Remove(sfm);
-		}
-
-		public bool MultiFieldsContains(string sfm)
+		internal bool MultiFieldsContains(string sfm)
 		{
 			return m_multiFields.Contains(sfm);
 		}
 
-		public bool AddMultiField(string sfm)
+		internal bool AddMultiField(string sfm)
 		{
 			if (m_multiFields.Contains(sfm))
 			{
@@ -252,17 +247,12 @@ namespace LanguageExplorer.SfmToXml
 			return true;
 		}
 
-		public void RemoveMultiField(string sfm)
-		{
-			m_multiFields.Remove(sfm);
-		}
-
-		public bool AdditionalFieldsContains(string sfm)
+		internal bool AdditionalFieldsContains(string sfm)
 		{
 			return m_additionalFields.Contains(sfm);
 		}
 
-		public bool AddAdditionalField(string sfm)
+		internal bool AddAdditionalField(string sfm)
 		{
 			if (m_additionalFields.Contains(sfm))
 			{
@@ -272,18 +262,13 @@ namespace LanguageExplorer.SfmToXml
 			return true;
 		}
 
-		public void RemoveAdditionalField(string sfm)
-		{
-			m_additionalFields.Remove(sfm);
-		}
-
 		// Unique field processing
-		public bool UniqueFieldsContains(string sfm)
+		internal bool UniqueFieldsContains(string sfm)
 		{
 			return m_uniqueFields.Contains(sfm);
 		}
 
-		public bool AddUniqueField(string sfm)
+		internal bool AddUniqueField(string sfm)
 		{
 			if (m_uniqueFields.Contains(sfm))
 			{
@@ -291,70 +276,6 @@ namespace LanguageExplorer.SfmToXml
 			}
 			m_uniqueFields.Add(sfm);
 			return true;
-		}
-
-		public void RemoveUniqueField(string sfm)
-		{
-			m_uniqueFields.Remove(sfm);
-		}
-
-		// Create a way to put in test data
-		protected void TestMethodAddAncestors(ICollection<string> names)
-		{
-			foreach (string name in names)
-			{
-				m_ancestors.Add(name);
-			}
-		}
-
-		public static string FindRootFromHash(Hashtable hierarchy)
-		{
-			var rootString = string.Empty;
-			// determine what the leaf and root nodes are
-			var leaf = new Hashtable();
-			var root = new Hashtable();
-			foreach (DictionaryEntry dictionaryEntry in hierarchy)
-			{
-				var entry = dictionaryEntry.Value as ClsHierarchyEntry;
-				leaf.Add(entry.Name, null);     // in C++ this would be a 'set' type
-				foreach (var name in entry.Ancestors)
-				{
-					if (!root.ContainsKey(name))
-					{
-						root.Add(name, null);
-					}
-				}
-			}
-			// now walk through one of the lists and mark items that exist in both lists
-			var myEnumerator = leaf.GetEnumerator();
-			while (myEnumerator.MoveNext())
-			{
-				// see if it's in both lists
-				if (root.ContainsKey(myEnumerator.Key))
-				{
-					root.Remove(myEnumerator.Key);
-					leaf.Remove(myEnumerator.Key);
-					myEnumerator = leaf.GetEnumerator();
-				}
-			}
-			// if we have more or less than 1 root item, this is an error
-			if (root.Count != 1)
-			{
-				if (root.Count != 0)
-				{
-					foreach (DictionaryEntry dictEntry in root)
-					{
-						rootString += $" '{dictEntry.Key}'";
-					}
-				}
-			}
-			else
-			{
-				myEnumerator = root.GetEnumerator();
-				myEnumerator.MoveNext();    // get on the first element
-				rootString = myEnumerator.Key.ToString();
-			}
-			return rootString;
 		}
 	}
 }

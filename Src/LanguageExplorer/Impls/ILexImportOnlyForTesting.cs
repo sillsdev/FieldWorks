@@ -12,7 +12,5 @@ namespace LanguageExplorer.Impls
 	internal interface ILexImportOnlyForTesting
 	{
 		object Import(IThreadedProgress dlg, object[] parameters);
-
-		string Phase1FileName { get; }
 	}
 }

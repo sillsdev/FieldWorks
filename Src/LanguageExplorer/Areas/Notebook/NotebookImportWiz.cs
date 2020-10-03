@@ -329,7 +329,7 @@ namespace LanguageExplorer.Areas.Notebook
 
 		private ListViewItem CreateListViewItemForWS(CoreWritingSystemDefinition ws)
 		{
-			var sEncCnv = string.IsNullOrEmpty(ws.LegacyMapping) ? SfmToXml.SfmToXmlServices.AlreadyInUnicode : ws.LegacyMapping;
+			var sEncCnv = string.IsNullOrEmpty(ws.LegacyMapping) ? SfmToXmlServices.AlreadyInUnicode : ws.LegacyMapping;
 			if (m_mapWsEncConv.TryGetValue(ws.Id, out var ecc))
 			{
 				ecc.ConverterName = sEncCnv;
@@ -709,7 +709,7 @@ namespace LanguageExplorer.Areas.Notebook
 							xw.WriteWhitespace(Environment.NewLine);
 							xw.WriteStartElement("EncodingConverter");
 							xw.WriteAttributeString("ws", ecc.WritingSystem.Id);
-							if (!string.IsNullOrEmpty(ecc.ConverterName) && ecc.ConverterName != SfmToXml.SfmToXmlServices.AlreadyInUnicode)
+							if (!string.IsNullOrEmpty(ecc.ConverterName) && ecc.ConverterName != SfmToXmlServices.AlreadyInUnicode)
 							{
 								xw.WriteAttributeString("converter", ecc.ConverterName);
 							}
@@ -1166,7 +1166,7 @@ namespace LanguageExplorer.Areas.Notebook
 					case "+db":
 						if (sfmData.Length > 0)
 						{
-							var sData = Converter.MultiToWideWithERROR(sfmData, 0, sfmData.Length - 1, Encoding.UTF8, out mwError, out _);
+							var sData = SfmToXmlServices.MultiToWideWithERROR(sfmData, 0, sfmData.Length - 1, Encoding.UTF8, out mwError, out _);
 							if (mwError == MultiToWideError.None)
 							{
 								var sFile = Path.GetFileName(sData.Trim());
@@ -1180,7 +1180,7 @@ namespace LanguageExplorer.Areas.Notebook
 					case "mkrPriKey":
 						if (fInDataDefs && sfmData.Length > 0)
 						{
-							var sData = Converter.MultiToWideWithERROR(sfmData, 0, sfmData.Length - 1, Encoding.UTF8, out mwError, out _);
+							var sData = SfmToXmlServices.MultiToWideWithERROR(sfmData, 0, sfmData.Length - 1, Encoding.UTF8, out mwError, out _);
 							if (mwError == MultiToWideError.None)
 							{
 								m_recMkr = sData.Trim();

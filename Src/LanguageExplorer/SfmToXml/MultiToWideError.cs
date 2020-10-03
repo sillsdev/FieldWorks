@@ -4,7 +4,7 @@
 
 namespace LanguageExplorer.SfmToXml
 {
-	public enum MultiToWideError
+	internal enum MultiToWideError
 	{
 		InvalidCodePoint,
 		None

@@ -10,7 +10,7 @@ namespace LanguageExplorer.SfmToXml
 	/// <summary>
 	/// This interface exists to serve as a contract between the import process and the object.
 	/// </summary>
-	public interface ILexImportFields
+	internal interface ILexImportFields
 	{
 		Dictionary<string, ILexImportField> GetAutoFields();
 		ILexImportField GetAutoField(string className);

@@ -4,10 +4,8 @@
 
 using System;
 using System.Collections.Generic;
-using LanguageExplorer.Controls.DetailControls;
-using LanguageExplorer.SfmToXml;
 
-namespace LanguageExplorer.Areas.Notebook
+namespace LanguageExplorer.SfmToXml
 {
 	/// <summary>
 	/// This is like SfmReader except that it stores the data for all the lines.

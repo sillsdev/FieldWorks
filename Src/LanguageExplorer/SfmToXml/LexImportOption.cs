@@ -11,7 +11,7 @@ namespace LanguageExplorer.SfmToXml
 	/// the settings used in the import process in FieldWorks. Currently the only type of option
 	/// that is supported is whether or not a checkbox is checked.
 	/// </summary>
-	public class LexImportOption : ILexImportOption
+	internal sealed class LexImportOption : ILexImportOption
 	{
 		public string Id { get; private set; }
 
@@ -19,14 +19,14 @@ namespace LanguageExplorer.SfmToXml
 
 		public bool IsChecked { get; private set; }
 
-		public LexImportOption()
+		internal LexImportOption()
 		{
 			Id = string.Empty;
 			Type = string.Empty;
 			IsChecked = false;
 		}
 
-		public LexImportOption(string id, string type, bool isChecked)
+		internal LexImportOption(string id, string type, bool isChecked)
 		{
 			Id = id;
 			Type = type;
@@ -76,7 +76,7 @@ namespace LanguageExplorer.SfmToXml
 						}
 						break;
 					default:
-						Converter.Log.AddWarning(string.Format(SfmToXmlStrings.UnknownAttribute0InTheOptions, attribute.Name));
+						SfmToXmlServices.Log.AddWarning(string.Format(SfmToXmlStrings.UnknownAttribute0InTheOptions, attribute.Name));
 						break;
 				}
 			}
@@ -84,7 +84,7 @@ namespace LanguageExplorer.SfmToXml
 			{
 				return success;
 			}
-			Converter.Log.AddError(SfmToXmlStrings.IdNotDefinedInAnOption);
+			SfmToXmlServices.Log.AddError(SfmToXmlStrings.IdNotDefinedInAnOption);
 			return false;
 		}
 	}

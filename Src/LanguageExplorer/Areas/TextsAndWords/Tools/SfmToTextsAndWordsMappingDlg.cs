@@ -8,6 +8,7 @@ using System.Linq;
 using System.Resources;
 using System.Windows.Forms;
 using LanguageExplorer.Controls;
+using LanguageExplorer.SfmToXml;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FwCoreDlgs;
 using SIL.LCModel;
@@ -21,8 +22,8 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools
 		protected string m_helpTopicID;
 		private LcmCache m_cache;
 		private string m_orginalLabel;
-		private readonly string m_blankEC = SfmToXml.SfmToXmlServices.AlreadyInUnicode;
-		private Sfm2FlexTextMappingBase m_mapping; // the object we are editing.
+		private readonly string m_blankEC = SfmToXmlServices.AlreadyInUnicode;
+		private InterlinearMapping m_mapping; // the object we are editing.
 		private IEnumerable<InterlinDestination> m_destinationsToDisplay; // applied filter for Destinations
 		private IHelpTopicProvider m_helpTopicProvider;
 		private IApp m_app;
@@ -43,7 +44,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools
 			}
 		}
 
-		public void SetupDlg(IHelpTopicProvider helpTopicProvider, IApp app, LcmCache cache, Sfm2FlexTextMappingBase mappingToModify, IEnumerable<InterlinDestination> destinationsToDisplay)
+		public void SetupDlg(IHelpTopicProvider helpTopicProvider, IApp app, LcmCache cache, InterlinearMapping mappingToModify, IEnumerable<InterlinDestination> destinationsToDisplay)
 		{
 			m_helpTopicProvider = helpTopicProvider;
 			m_app = app;

@@ -12,7 +12,7 @@ namespace LanguageExplorer.SfmToXml
 	/// <summary>
 	/// Replacement reader class for byte reading.
 	/// </summary>
-	public class ByteReader
+	internal class ByteReader
 	{
 		private int m_FoundLineNumber;  // line number when the marker was found
 		private byte[] m_NL;        // bytes for newline
@@ -42,12 +42,12 @@ namespace LanguageExplorer.SfmToXml
 			Init(filename);
 		}
 
-		public string FileName => m_FileName;
+		internal string FileName => m_FileName;
 
 		/// <summary>
 		/// Constructor requires a file name
 		/// </summary>
-		public ByteReader(string filename)
+		internal ByteReader(string filename)
 		{
 			Init(filename);
 		}
@@ -55,12 +55,12 @@ namespace LanguageExplorer.SfmToXml
 		/// <summary>
 		/// Constructor (used for tests) take spurious file name and pretends contents are the byte array
 		/// </summary>
-		public ByteReader(string filename, byte[] contents)
+		internal ByteReader(string filename, byte[] contents)
 		{
 			Init(filename, contents);
 		}
 
-		public void Rewind()
+		internal void Rewind()
 		{
 			LineNumber = 0;
 			m_FoundLineNumber = 0;
@@ -99,8 +99,8 @@ namespace LanguageExplorer.SfmToXml
 			m_foundBOM = false;
 			m_LookAheadLineNumber = 0;
 			// save the new line and space as byte[] for future testing:
-			m_NL = Converter.WideToMulti(Environment.NewLine, Encoding.ASCII);
-			m_space = Converter.WideToMulti(" ", Encoding.ASCII);
+			m_NL = WideToMulti(Environment.NewLine, Encoding.ASCII);
+			m_space = WideToMulti(" ", Encoding.ASCII);
 			m_FileData = content;
 			// read and process a BOM if present
 			CheckforAndHandleBOM();
@@ -209,12 +209,12 @@ namespace LanguageExplorer.SfmToXml
 		/// <summary>
 		/// Get the line number of the last read newline
 		/// </summary>
-		public int LineNumber { get; private set; }
+		internal int LineNumber { get; private set; }
 
 		/// <summary>
 		/// Return the last line number that the marker was found on (can be different from "LineNumber"
 		/// </summary>
-		public int FoundLineNumber => m_FoundLineNumber + 1;
+		internal int FoundLineNumber => m_FoundLineNumber + 1;
 
 		/// <summary>
 		/// Helper method to look through an array of bytes and return true if it's found
@@ -233,7 +233,7 @@ namespace LanguageExplorer.SfmToXml
 		/// duplication of memory - the contents being stored twice.)  So, for now as it isn't
 		/// needed, we'll just read ahead one token.
 		/// </summary>
-		public bool GetNextSfmMarkerAndData(out string sfmMarker, out byte[] sfmData, out byte[] badSfmData)
+		internal bool GetNextSfmMarkerAndData(out string sfmMarker, out byte[] sfmData, out byte[] badSfmData)
 		{
 			// on the first time through, get the 'look ahead' sfm and data too.
 			// on following calls, return the look ahead and continue to find next and put in lookahead
@@ -315,7 +315,7 @@ namespace LanguageExplorer.SfmToXml
 				// have hit our first whitespace data or the end of the file
 				var endOfMarker = (int)m_position - 1;
 				// convert the bytes of the sfm marker to the string for it
-				sfmMarker = Converter.MultiToWideWithERROR(m_FileData, startOfMarker + 1, endOfMarker, Encoding.UTF8, out _, out badSfmBytes);
+				sfmMarker = SfmToXmlServices.MultiToWideWithERROR(m_FileData, startOfMarker + 1, endOfMarker, Encoding.UTF8, out _, out badSfmBytes);
 				if (m_position < m_FileData.Length)
 				{
 					// eat all the white space after the marker
@@ -414,7 +414,7 @@ namespace LanguageExplorer.SfmToXml
 			while (true)
 			{
 				// find the next newline sequence of bytes
-				foundPos = Converter.FindFirstMatch(m_FileData, (int)loopPos, m_EOL);
+				foundPos = SfmToXmlServices.FindFirstMatch(m_FileData, (int)loopPos, m_EOL);
 				if (foundPos == -1 || foundPos == m_FileData.Length - m_EOL.Length)
 				{
 					// not found, then return everything
@@ -437,7 +437,7 @@ namespace LanguageExplorer.SfmToXml
 			long writePos = 0;
 			// Copy relevant portion of m_FileData into returnData,
 			// replacing Tab, CR/LF characters (except for CR/LF at end) with spaces:
-			var tab = Converter.WideToMulti("	", System.Text.Encoding.ASCII);
+			var tab = WideToMulti("	", Encoding.ASCII);
 			while (readPos <= foundPos)
 			{
 				if (CopySpaceIfMatched(m_FileData, ref readPos, foundPos, ref returnData, ref writePos, m_EOL))
@@ -543,6 +543,18 @@ namespace LanguageExplorer.SfmToXml
 			}
 			// The byte sequence was not found, so return "no work done" value:
 			return false;
+		}
+
+		private static byte[] WideToMulti(string wide, Encoding encodingToUse)
+		{
+			Encoding encoding = new UTF8Encoding(false, true);
+			if (encodingToUse == Encoding.ASCII)
+			{
+				encoding = new ASCIIEncoding();
+			}
+			var data = new byte[encoding.GetByteCount(wide.ToCharArray())];
+			encoding.GetBytes(wide, 0, wide.Length, data, 0);
+			return data;
 		}
 	}
 }

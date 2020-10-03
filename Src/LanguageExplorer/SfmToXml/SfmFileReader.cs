@@ -4,19 +4,17 @@
 
 using System.Collections;
 using System.Collections.Generic;
-using LanguageExplorer.SfmToXml;
 
-namespace LanguageExplorer.Controls.DetailControls
+namespace LanguageExplorer.SfmToXml
 {
-	public class SfmFileReader : ByteReader
+	internal class SfmFileReader : ByteReader
 	{
 		protected int m_longestSfmSize; // number of bytes in the longest sfm
-		public int LongestSfm => m_longestSfmSize;
 		protected Dictionary<string, int> m_sfmUsage;           // count of all usage of a sfm
 		protected Dictionary<string, int> m_sfmWithDataUsage;   // count of sfms with data
 		protected List<string> m_sfmOrder;
 
-		public SfmFileReader(string filename) : base(filename)
+		internal SfmFileReader(string filename) : base(filename)
 		{
 			m_sfmUsage = new Dictionary<string, int>();
 			m_sfmWithDataUsage = new Dictionary<string, int>();
@@ -89,26 +87,26 @@ namespace LanguageExplorer.Controls.DetailControls
 			return false;
 		}
 
-		public int GetSFMWithDataCount(string sfm)
+		internal int GetSFMWithDataCount(string sfm)
 		{
 			return m_sfmWithDataUsage.ContainsKey(sfm) ? m_sfmWithDataUsage[sfm] : 0;
 		}
 
-		public int GetSFMCount(string sfm)
+		internal int GetSFMCount(string sfm)
 		{
 			return m_sfmUsage.ContainsKey(sfm) ? m_sfmUsage[sfm] : 0;
 		}
 
-		public int GetSFMOrder(string sfm)
+		internal int GetSFMOrder(string sfm)
 		{
 			return m_sfmOrder.Contains(sfm) ? m_sfmOrder.IndexOf(sfm) + 1 : -1;
 		}
 
-		public int Count => m_sfmUsage.Count;
+		internal int Count => m_sfmUsage.Count;
 
-		public ICollection SfmInfo => m_sfmUsage.Keys;
+		internal ICollection SfmInfo => m_sfmUsage.Keys;
 
-		public bool ContainsSfm(string sfm)
+		internal bool ContainsSfm(string sfm)
 		{
 			return m_sfmUsage.ContainsKey(sfm);
 		}

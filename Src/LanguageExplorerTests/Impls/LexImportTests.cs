@@ -250,7 +250,7 @@ namespace LanguageExplorerTests.Impls
 
 				SfmToXmlServices.NewMapFileBuilder(uiLangsNew, lexFields, customFields, sfmInfo, ifMarker, mapFile);
 
-				var phase1Output = Path.Combine(tempDir, sut.Phase1FileName);
+				var phase1Output = Path.Combine(tempDir, LexImportWizard.s_sPhase1FileName);
 
 				var converter = LexImportWizard.CreateFlexConverterForTesting(Cache);
 				converter.AddPossibleAutoField("Entry", "eires"); // found these by running an example.
@@ -270,7 +270,6 @@ namespace LanguageExplorerTests.Impls
 					3, // lex entries in file
 					false, // don't want to display import report
 					string.Empty, // phase 1 html report, only used in generating messages, I think.
-					sut.Phase1FileName, // required always
 					true // create entries for missing link targets
 				});
 				Assert.That(entryRepo.AllInstances().Count(), Is.EqualTo(expectedCreations), "wrong number of entries created");
