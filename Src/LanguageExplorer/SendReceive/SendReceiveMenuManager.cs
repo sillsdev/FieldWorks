@@ -9,12 +9,14 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using System.Xml.Linq;
 using LanguageExplorer.Controls;
 using LanguageExplorer.LIFT;
 using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FwCoreDlgs;
 using SIL.FieldWorks.Resources;
 using SIL.IO;
@@ -25,6 +27,7 @@ using SIL.LCModel.Utils;
 using SIL.Lift;
 using SIL.Lift.Migration;
 using SIL.Lift.Parsing;
+using SIL.Lift.Validation;
 
 namespace LanguageExplorer.SendReceive
 {
@@ -42,16 +45,11 @@ namespace LanguageExplorer.SendReceive
 		private IFwMainWnd MainWindow { get; set; }
 		private IFlexApp FlexApp { get; set; }
 		private LcmCache Cache { get; set; }
-		/// <summary>
-		/// This is the file that our Message slice is configured to look for in the root project folder.
-		/// The actual Lexicon.fwstub doesn't contain anything.
-		/// Lexicon.fwstub.ChorusNotes contains notes about lexical entries.
-		/// </summary>
-		public const string FakeLexiconFileName = "Lexicon.fwstub";
-		/// <summary>
-		/// This is the file that actually holds the chorus notes for the lexicon.
-		/// </summary>
-		public const string FlexLexiconNotesFileName = FakeLexiconFileName + CommonBridgeServices.kChorusNotesExtension;
+
+		// For send/receive involving LIFT projects, use the lift version "0.13_ldml3" so the version 3 ldml files will exist on a different chorus branch
+		private const string LiftModelVersion = "0.13_ldml3";
+
+		private const string NoBridgeUsedYet = "NoBridgeUsedYet";
 
 		/// <summary />
 		internal SendReceiveMenuManager(IdleQueue idleQueue, IFwMainWnd mainWindow, IFlexApp flexApp, LcmCache cache, GlobalUiWidgetParameterObject globalParameterObject)
@@ -85,16 +83,16 @@ namespace LanguageExplorer.SendReceive
 				{
 					switch (lastBridgeUsed.Name)
 					{
-						case CommonBridgeServices.FLExBridge:
+						case LanguageExplorerConstants.FLExBridge:
 							// If Fix it app does not exist, then disable main FLEx S/R, since FB needs to call it, after a merge.
 							// If !IsConfiguredForSR (failed the first time), disable the button and hotkey
-							enabled = FLExBridgeHelper.FixItAppExists && CommonBridgeServices.IsConfiguredForSR(Cache.ProjectId.ProjectFolder);
+							enabled = FLExBridgeHelper.FixItAppExists && IsConfiguredForSR(Cache.ProjectId.ProjectFolder);
 							break;
-						case CommonBridgeServices.LiftBridge:
+						case LanguageExplorerConstants.LiftBridge:
 							// If !IsConfiguredForLiftSR (failed first time), disable the button and hotkey
 							enabled = IsConfiguredForLiftSR(Cache.ProjectId.ProjectFolder);
 							break;
-						case CommonBridgeServices.NoBridgeUsedYet: // Fall through. This isn't really needed, but it is clearer that it covers the case.
+						case NoBridgeUsedYet: // Fall through. This isn't really needed, but it is clearer that it covers the case.
 						default:
 							enabled = false;
 							break;
@@ -136,13 +134,13 @@ namespace LanguageExplorer.SendReceive
 			Publisher = flexComponentParameters.Publisher;
 			Subscriber = flexComponentParameters.Subscriber;
 
-			_bridges.Add(CommonBridgeServices.FLExBridge, new FlexBridge(Cache, FlexApp));
-			_bridges.Add(CommonBridgeServices.LiftBridge, new LiftBridge(Cache, MainWindow, FlexApp));
-			_bridges.Add(CommonBridgeServices.NoBridgeUsedYet, null);
-			var flexBridge = _bridges[CommonBridgeServices.FLExBridge];
+			_bridges.Add(LanguageExplorerConstants.FLExBridge, new FlexBridge(Cache, FlexApp));
+			_bridges.Add(LanguageExplorerConstants.LiftBridge, new LiftBridge(Cache, MainWindow, FlexApp));
+			_bridges.Add(NoBridgeUsedYet, null);
+			var flexBridge = _bridges[LanguageExplorerConstants.FLExBridge];
 			flexBridge.InitializeFlexComponent(flexComponentParameters);
 			flexBridge.RegisterHandlers(_globalUiWidgetParameterObject);
-			var liftBridge = _bridges[CommonBridgeServices.LiftBridge];
+			var liftBridge = _bridges[LanguageExplorerConstants.LiftBridge];
 			liftBridge.InitializeFlexComponent(flexComponentParameters);
 			liftBridge.RegisterHandlers(_globalUiWidgetParameterObject);
 			// Common to Project and LIFT S/R.
@@ -159,14 +157,14 @@ namespace LanguageExplorer.SendReceive
 
 		private void HelpAboutFLEXBridge_Click(object sender, EventArgs e)
 		{
-			FLExBridgeHelper.LaunchFieldworksBridge(CommonBridgeServices.GetFullProjectFileName(Cache), CommonBridgeServices.SendReceiveUser, FLExBridgeHelper.AboutFLExBridge,
-				null, LcmCache.ModelVersion, CommonBridgeServices.LiftModelVersion, null, null, out _, out _);
+			FLExBridgeHelper.LaunchFieldworksBridge(Cache.GetFullProjectFileName(), LanguageExplorerConstants.SendReceiveUser, FLExBridgeHelper.AboutFLExBridge,
+				null, LcmCache.ModelVersion, LiftModelVersion, null, null, out _, out _);
 		}
 
 		private void CheckForFlexBridgeUpdates_Click(object sender, EventArgs e)
 		{
-			FLExBridgeHelper.LaunchFieldworksBridge(CommonBridgeServices.GetFullProjectFileName(Cache), CommonBridgeServices.SendReceiveUser, FLExBridgeHelper.CheckForUpdates,
-				null, LcmCache.ModelVersion, CommonBridgeServices.LiftModelVersion, null, null, out _, out _);
+			FLExBridgeHelper.LaunchFieldworksBridge(Cache.GetFullProjectFileName(), LanguageExplorerConstants.SendReceiveUser, FLExBridgeHelper.CheckForUpdates,
+				null, LcmCache.ModelVersion, LiftModelVersion, null, null, out _, out _);
 		}
 
 		private void HelpChorus_Click(object sender, EventArgs eventArgs)
@@ -192,7 +190,7 @@ namespace LanguageExplorer.SendReceive
 
 		private IBridge GetLastBridge()
 		{
-			return _bridges[PropertyTable.GetValue(CommonBridgeServices.LastBridgeUsed, CommonBridgeServices.NoBridgeUsedYet, SettingsGroup.LocalSettings)];
+			return _bridges[PropertyTable.GetValue<string>(LanguageExplorerConstants.LastBridgeUsed, NoBridgeUsedYet, SettingsGroup.LocalSettings)];
 		}
 
 		private void Flex_Or_Lift_Bridge_Clicked(object sender, EventArgs e)
@@ -226,7 +224,202 @@ namespace LanguageExplorer.SendReceive
 				return false;
 			}
 			var liftFolder = Directory.EnumerateDirectories(otherRepoPath, "*_LIFT").FirstOrDefault();
-			return !string.IsNullOrEmpty(liftFolder) && CommonBridgeServices.IsConfiguredForSR(liftFolder);
+			return !string.IsNullOrEmpty(liftFolder) && IsConfiguredForSR(liftFolder);
+		}
+
+		private static void PrepareForSR(IPropertyTable propertyTable, IPublisher publisher, LcmCache cache, IBridge lastBridgeUsed)
+		{
+			//Make sure any last changes are saved. (Process focus lost for controls)
+			Application.DoEvents();
+			StopParser(publisher);
+			//Give all forms the opportunity to save any uncommitted data
+			//(important for analysis sandboxes)
+			var activeForm = propertyTable.GetValue<Form>(FwUtilsConstants.window);
+			activeForm?.ValidateChildren(ValidationConstraints.Enabled);
+			//Commit all the data in the cache and save to disk
+			ProjectLockingService.UnlockCurrentProject(cache);
+			propertyTable.SetProperty(LanguageExplorerConstants.LastBridgeUsed, lastBridgeUsed.Name, true, settingsGroup: SettingsGroup.LocalSettings);
+		}
+
+		private static void StopParser(IPublisher publisher)
+		{
+			publisher.Publish(new PublisherParameterObject(LanguageExplorerConstants.StopParser));
+		}
+
+		/// <summary>Callback to refresh the Message Slice after OnView[Lift]Messages</summary>
+		private static void BroadcastMasterRefresh(IPublisher publisher)
+		{
+			publisher.Publish(new PublisherParameterObject(LanguageExplorerConstants.MasterRefresh));
+		}
+
+		private static bool ShowMessageBeforeFirstSendReceive_IsUserReady(IHelpTopicProvider helpTopicProvider)
+		{
+			using (var firstTimeDlg = new FLExBridgeFirstSendReceiveInstructionsDlg(helpTopicProvider))
+			{
+				return DialogResult.OK == firstTimeDlg.ShowDialog();
+			}
+		}
+
+		private static void PublishHandleLocalHotlinkMessage(IPublisher publisher, object sender, FLExJumpEventArgs e)
+		{
+			if (!string.IsNullOrEmpty(e.JumpUrl))
+			{
+				publisher.Publish(new PublisherParameterObject(FwUtilsConstants.HandleLocalHotlink, new LocalLinkArgs { Link = e.JumpUrl }));
+			}
+		}
+
+		private static void ReportDuplicateBridge()
+		{
+			ObtainProjectMethod.ReportDuplicateBridge();
+		}
+
+		private static void RefreshCacheWindowAndAll(IFieldWorksManager manager, string fullProjectFileName, string publisherMessage, bool conflictOccurred)
+		{
+			var appArgs = new FwAppArgs(fullProjectFileName);
+			var newAppWindow = (IFwMainWnd)manager.ReopenProject(manager.Cache.ProjectId.Name, appArgs).ActiveMainWindow;
+			if (newAppWindow.PropertyTable.GetValue(LanguageExplorerConstants.UseVernSpellingDictionary, true))
+			{
+				WfiWordformServices.ConformSpellingDictToWordforms(newAppWindow.Cache);
+			}
+			// Clear out any sort cache files (or whatever else might mess us up) and then refresh
+			newAppWindow.ClearInvalidatedStoredData();
+			newAppWindow.RefreshAllViews();
+			if (conflictOccurred)
+			{
+				// Send a message for the reopened instance to display the message viewer (used to be conflict report).
+				// Caller has been disposed by now.
+				newAppWindow.Publisher.Publish(new PublisherParameterObject(publisherMessage));
+			}
+		}
+
+		private static bool IsConfiguredForSR(string projectFolder)
+		{
+			return Directory.Exists(Path.Combine(projectFolder, ".hg"));
+		}
+
+		/// <summary>
+		/// Returns true if there are any Chorus Notes to view in the main FW repo or in the Lift repo.
+		/// </summary>
+		/// <param name="cache"></param>
+		/// <param name="checkForLiftNotes">
+		/// When 'false', then don't consider any Lift notes files in considering those present.
+		/// When 'true', then skip any Flex notes, and only consider the Lift notes.
+		/// </param>
+		/// <returns>'true' if there are any Chorus Notes files at the given level. Otherwise, it returns 'false'.</returns>
+		private static bool NotesFileIsPresent(LcmCache cache, bool checkForLiftNotes)
+		{
+			// Default to look for notes in the main FW repo.
+			var folderToSearchIn = cache.ProjectId.ProjectFolder;
+			var liftFolder = GetLiftRepositoryFolderFromFwProjectFolder(folderToSearchIn);
+			if (checkForLiftNotes)
+			{
+				if (!Directory.Exists(liftFolder))
+				{
+					return false; // If the folder doesn't even exist, there can't be any lift notes.
+				}
+
+				// Switch to look for note files in the Lift repo.
+				folderToSearchIn = liftFolder;
+			}
+			if (!Directory.Exists(Path.Combine(folderToSearchIn, ".hg")))
+			{
+				return false; // No repo, so there can be no notes files.
+			}
+			foreach (var notesPathname in Directory.GetFiles(folderToSearchIn, "*.ChorusNotes", SearchOption.AllDirectories))
+			{
+				if (!NotesFileHasContent(notesPathname) || checkForLiftNotes)
+				{
+					continue; // Skip ones with no content.
+				}
+				if (!notesPathname.Contains(liftFolder)/* Skip any lift ones down in a nested repo. */)
+				{
+					return true;
+				}
+				// Must be a nested lift one to get here, so try another one.
+			}
+			return false;
+		}
+
+		private static bool NotesFileHasContent(string chorusNotesPathname)
+		{
+			var doc = XDocument.Load(chorusNotesPathname);
+			return doc.Root.HasElements; // Files with no notes (e.g., "Lexicon.fwstub.ChorusNotes") are not interesting.
+		}
+
+		/// <summary>
+		/// Convert FLEx ChorusNotes file referencing lex entries to LIFT notes by adjusting the "ref" attributes.
+		/// </summary>
+		/// <remarks>
+		/// This method is internal, rather than static to let a test call it.
+		/// </remarks>
+		internal static void ConvertFlexNotesToLift(TextReader reader, TextWriter writer, string liftFileName)
+		{
+			// Typical input is something like
+			// silfw://localhost/link?app=flex&amp;database=current&amp;server=&amp;tool=default&amp;guid=bab7776e-531b-4ce1-997f-fa638c09e381&amp;tag=&amp;id=bab7776e-531b-4ce1-997f-fa638c09e381&amp;label=Entry &quot;pintu&quot;
+			// produce: lift://John.lift?type=entry&amp;label=fox&amp;id=f3093b9b-ea2f-422b-86b6-0defaa4646fe
+			ConvertRefAttrs(reader, writer, liftFileName, "lift://{0}?type=entry&amp;label={1}&amp;id={2}");
+		}
+
+		/// <summary>
+		/// Convert LIFT ChorusNotes file to FLEx notes by adjusting the "ref" attributes.
+		/// </summary>
+		/// <remarks>
+		/// This method is internal, rather than static to let a test call it.
+		/// </remarks>
+		internal static void ConvertLiftNotesToFlex(TextReader reader, TextWriter writer)
+		{
+			// produce: silfw://localhost/link?app=flex&amp;database=current&amp;server=&amp;tool=default&amp;guid=bab7776e-531b-4ce1-997f-fa638c09e381&amp;tag=&amp;id=bab7776e-531b-4ce1-997f-fa638c09e381&amp;label=Entry &quot;pintu&quot;
+			ConvertRefAttrs(reader, writer, String.Empty, "silfw://localhost/link?app=flex&amp;database=current&amp;server=&amp;tool=default&amp;guid={2}&amp;tag=&amp;id={2}&amp;label={1}");
+		}
+
+		private static void ConvertRefAttrs(TextReader reader, TextWriter writer, string liftFileName, string outputTemplate)
+		{
+			// Typical input is something like
+			// silfw://localhost/link?app=flex&amp;database=current&amp;server=&amp;tool=default&amp;guid=bab7776e-531b-4ce1-997f-fa638c09e381&amp;tag=&amp;id=bab7776e-531b-4ce1-997f-fa638c09e381&amp;label=Entry &quot;pintu&quot;
+			// or: lift://John.lift?type=entry&amp;label=fox&amp;id=f3093b9b-ea2f-422b-86b6-0defaa4646fe
+			// both contain id=...&amp; and label=...&amp. One may be at the end without following &amp;.
+			// Note that the ? is essential to prevent the greedy match including multiple parameters.
+			// A label may contain things like &quot; so we can't just search for [^&]*.
+			var reOuter = new Regex("ref=\\\"([^\\\"]*)\"");
+			var reLabel = new Regex("label=(.*?)(&amp;|$)");
+			var reId = new Regex("id=(.*?)(&amp;|$)");
+			string line;
+			while ((line = reader.ReadLine()) != null)
+			{
+				var matchLine = reOuter.Match(line);
+				if (matchLine.Success)
+				{
+					var input = matchLine.Groups[1].Value;
+					var matchLabel = reLabel.Match(input);
+					var matchId = reId.Match(input);
+					if (matchLabel.Success && matchId.Success)
+					{
+						var guid = matchId.Groups[1].Value;
+						var label = matchLabel.Groups[1].Value;
+						var output = string.Format(outputTemplate, liftFileName, label, guid);
+						writer.WriteLine(line.Replace(input, output));
+						continue;
+					}
+				}
+				writer.WriteLine(line);
+			}
+		}
+
+		/// <summary />
+		internal static string GetLiftRepositoryFolderFromFwProjectFolder(string projectFolder)
+		{
+			var otherDir = Path.Combine(projectFolder, LcmFileHelper.OtherRepositories);
+			if (Directory.Exists(otherDir))
+			{
+				var extantOtherFolders = Directory.GetDirectories(otherDir);
+				var extantLiftFolder = extantOtherFolders.FirstOrDefault(folder => folder.EndsWith("_LIFT"));
+				if (extantLiftFolder != null)
+				{
+					return extantLiftFolder; // Reuse the old one, no matter what the new project dir name is.
+				}
+			}
+			var flexProjName = Path.GetFileName(projectFolder);
+			return Path.Combine(projectFolder, LcmFileHelper.OtherRepositories, flexProjName + '_' + FLExBridgeHelper.LIFT);
 		}
 
 		#region IDisposable
@@ -278,7 +471,7 @@ namespace LanguageExplorer.SendReceive
 		/// from ChoooseLangProjectDialog.CreateProjectFromLift().
 		/// If you are tempted to rename the method, be sure to do so in ChooseLangProjectDialog.CreateProjectFromLift(), as well.
 		/// </summary>
-		public static bool ImportObtainedLexicon(LcmCache cache, string liftPath, Form parentForm)
+		internal static bool ImportObtainedLexicon(LcmCache cache, string liftPath, Form parentForm)
 		{
 			using (var liftBridge = new LiftBridge(cache, liftPath, parentForm))
 			{
@@ -286,6 +479,30 @@ namespace LanguageExplorer.SendReceive
 			}
 		}
 		#endregion
+
+		/// <summary>
+		/// Interface that allows for running different kinds of S/R bridges.
+		/// </summary>
+		private interface IBridge : IFlexComponent, IDisposable
+		{
+			/// <summary>
+			/// Get the name of the bridge.
+			/// </summary>
+			/// <remarks>
+			/// Names of all implementations, *must* be unique!
+			/// </remarks>
+			string Name { get; }
+
+			/// <summary>
+			/// Run the bridge.
+			/// </summary>
+			void RunBridge();
+
+			/// <summary>
+			/// Register UI widgets.
+			/// </summary>
+			void RegisterHandlers(GlobalUiWidgetParameterObject globalParameterObject);
+		}
 
 		private sealed class FlexBridge : IBridge
 		{
@@ -301,22 +518,22 @@ namespace LanguageExplorer.SendReceive
 				FlexApp = flexApp;
 			}
 
-			private Tuple<bool, bool> CanDoCmdFLExBridge => new Tuple<bool, bool>(true, CommonBridgeServices.IsConfiguredForSR(Cache.ProjectId.ProjectFolder) && FLExBridgeHelper.FixItAppExists);
+			private Tuple<bool, bool> CanDoCmdFLExBridge => new Tuple<bool, bool>(true, IsConfiguredForSR(Cache.ProjectId.ProjectFolder) && FLExBridgeHelper.FixItAppExists);
 
-			private Tuple<bool, bool> CanDoCmdViewMessages => new Tuple<bool, bool>(true, CommonBridgeServices.NotesFileIsPresent(Cache, false));
+			private Tuple<bool, bool> CanDoCmdViewMessages => new Tuple<bool, bool>(true, NotesFileIsPresent(Cache, false));
 
-			private Tuple<bool, bool> CanDoCmdObtainAnyFlexBridgeProject => new Tuple<bool, bool>(true, CommonBridgeServices.IsConfiguredForSR(Cache.ProjectId.ProjectFolder) && FLExBridgeHelper.FixItAppExists);
+			private Tuple<bool, bool> CanDoCmdObtainAnyFlexBridgeProject => new Tuple<bool, bool>(true, IsConfiguredForSR(Cache.ProjectId.ProjectFolder) && FLExBridgeHelper.FixItAppExists);
 
-			private Tuple<bool, bool> CanDoCmdObtainFirstFlexBridgeProject => new Tuple<bool, bool>(true, !CommonBridgeServices.IsConfiguredForSR(Cache.ProjectId.ProjectFolder));
+			private Tuple<bool, bool> CanDoCmdObtainFirstFlexBridgeProject => new Tuple<bool, bool>(true, !IsConfiguredForSR(Cache.ProjectId.ProjectFolder));
 
 			#region Implementation of IBridge
 			/// <inheritdoc />
-			public string Name => CommonBridgeServices.FLExBridge;
+			public string Name => LanguageExplorerConstants.FLExBridge;
 
 			/// <inheritdoc />
 			public void RunBridge()
 			{
-				CommonBridgeServices.PrepareForSR(PropertyTable, Publisher, Cache, this);
+				PrepareForSR(PropertyTable, Publisher, Cache, this);
 				if (!LcmFileHelper.GetDefaultLinkedFilesDir(Cache.ServiceLocator.DataSetup.ProjectId.ProjectFolder).Equals(Cache.LanguageProject.LinkedFilesRootDir))
 				{
 					using (var dlg = new WarningNotUsingDefaultLinkedFilesLocation(FlexApp))
@@ -351,23 +568,42 @@ namespace LanguageExplorer.SendReceive
 				bool dataChanged;
 				using (CopyDictionaryConfigFileToTemp(projectFolder))
 				{
-					var success = FLExBridgeHelper.LaunchFieldworksBridge(fullProjectFileName, CommonBridgeServices.SendReceiveUser, FLExBridgeHelper.SendReceive, null, LcmCache.ModelVersion,
-						CommonBridgeServices.LiftModelVersion, Cache.LangProject.DefaultVernacularWritingSystem.Id, null, out dataChanged, out _);
+					var success = FLExBridgeHelper.LaunchFieldworksBridge(fullProjectFileName, LanguageExplorerConstants.SendReceiveUser, FLExBridgeHelper.SendReceive, null, LcmCache.ModelVersion,
+						LiftModelVersion, Cache.LangProject.DefaultVernacularWritingSystem.Id, null, out dataChanged, out _);
 					if (!success)
 					{
-						CommonBridgeServices.ReportDuplicateBridge();
+						ReportDuplicateBridge();
 						ProjectLockingService.LockCurrentProject(Cache);
 						return;
 					}
 				}
 				if (dataChanged)
 				{
-					CommonBridgeServices.RefreshCacheWindowAndAll(FlexApp.FwManager, fullProjectFileName, "ViewMessages", CommonBridgeServices.DetectMainConflicts(projectFolder, savedState));
+					RefreshCacheWindowAndAll(FlexApp.FwManager, fullProjectFileName, "ViewMessages", DetectMainConflicts(projectFolder, savedState));
 				}
 				else //Re-lock project if we aren't trying to close the app
 				{
 					ProjectLockingService.LockCurrentProject(Cache);
 				}
+			}
+
+			private static bool DetectMainConflicts(string path, IReadOnlyDictionary<string, long> savedState)
+			{
+				foreach (var file in Directory.GetFiles(path, "*.ChorusNotes", SearchOption.AllDirectories))
+				{
+					// TODO: Test to see if one conflict tool can do both FLEx and LIFT conflicts.
+					if (file.Contains(LcmFileHelper.OtherRepositories))
+					{
+						continue; // Skip them, since they are part of some other repository.
+					}
+					savedState.TryGetValue(file, out var oldLength);
+					if (new FileInfo(file).Length == oldLength)
+					{
+						continue; // no new notes in this file.
+					}
+					return true; // Review JohnT: do we need to look in the file to see if what was added is a conflict?
+				}
+				return false; // no conflicts added.
 			}
 
 			/// <inheritdoc />
@@ -457,7 +693,7 @@ namespace LanguageExplorer.SendReceive
 
 			private void SendFlexBridgeFirstTime_Click(object sender, EventArgs e)
 			{
-				if (CommonBridgeServices.ShowMessageBeforeFirstSendReceive_IsUserReady(FlexApp))
+				if (ShowMessageBeforeFirstSendReceive_IsUserReady(FlexApp))
 				{
 					RunBridge();
 				}
@@ -470,7 +706,7 @@ namespace LanguageExplorer.SendReceive
 				{
 					return; // We dealt with it.
 				}
-				PropertyTable.SetProperty(CommonBridgeServices.LastBridgeUsed, obtainedProjectType == ObtainedProjectType.Lift ? CommonBridgeServices.LiftBridge : CommonBridgeServices.FLExBridge, true, settingsGroup: SettingsGroup.LocalSettings);
+				PropertyTable.SetProperty(LanguageExplorerConstants.LastBridgeUsed, obtainedProjectType == ObtainedProjectType.Lift ? LanguageExplorerConstants.LiftBridge : LanguageExplorerConstants.FLExBridge, true, settingsGroup: SettingsGroup.LocalSettings);
 				var fieldWorksAssembly = Assembly.Load("FieldWorks.exe");
 				var fieldWorksType = fieldWorksAssembly.GetType("SIL.FieldWorks.FieldWorks");
 				var methodInfo = fieldWorksType.GetMethod("OpenNewProject", BindingFlags.Static | BindingFlags.Public);
@@ -486,18 +722,18 @@ namespace LanguageExplorer.SendReceive
 			{
 				FLExBridgeHelper.FLExJumpUrlChanged += JumpToFlexObject;
 				var success = FLExBridgeHelper.LaunchFieldworksBridge(Path.Combine(Cache.ProjectId.ProjectFolder, Cache.ProjectId.Name + LcmFileHelper.ksFwDataXmlFileExtension),
-					CommonBridgeServices.SendReceiveUser, FLExBridgeHelper.ConflictViewer, null, LcmCache.ModelVersion, CommonBridgeServices.LiftModelVersion, null,
-					() => CommonBridgeServices.BroadcastMasterRefresh(Publisher), out _, out _);
+					LanguageExplorerConstants.SendReceiveUser, FLExBridgeHelper.ConflictViewer, null, LcmCache.ModelVersion, LiftModelVersion, null,
+					() => BroadcastMasterRefresh(Publisher), out _, out _);
 				if (!success)
 				{
-					CommonBridgeServices.ReportDuplicateBridge();
+					ReportDuplicateBridge();
 				}
 				FLExBridgeHelper.FLExJumpUrlChanged -= JumpToFlexObject;
 			}
 
 			private void JumpToFlexObject(object sender, FLExJumpEventArgs e)
 			{
-				CommonBridgeServices.PublishHandleLocalHotlinkMessage(Publisher, sender, e);
+				PublishHandleLocalHotlinkMessage(Publisher, sender, e);
 			}
 
 			/// <summary>
@@ -569,7 +805,7 @@ namespace LanguageExplorer.SendReceive
 			/// <summary>
 			/// This is the file that actually holds the chorus notes for the lexicon.
 			/// </summary>
-			private const string FlexLexiconNotesFileName = FakeLexiconFileName + CommonBridgeServices.kChorusNotesExtension;
+			private const string FlexLexiconNotesFileName = FakeLexiconFileName + LanguageExplorerConstants.kChorusNotesExtension;
 			/// <summary>
 			/// Get the Flex notes pathname.
 			/// </summary>
@@ -577,7 +813,7 @@ namespace LanguageExplorer.SendReceive
 			/// <summary>
 			/// Get the Lift notes pathname.
 			/// </summary>
-			private string LiftNotesPath => _liftPathname + CommonBridgeServices.kChorusNotesExtension;
+			private string LiftNotesPath => _liftPathname + LanguageExplorerConstants.kChorusNotesExtension;
 
 			internal LiftBridge(LcmCache cache, IFwMainWnd mainWindow, IFlexApp flexApp)
 			{
@@ -600,7 +836,7 @@ namespace LanguageExplorer.SendReceive
 						_oldLiftBridgeProjects.Add(mappingNode.Attribute("projectguid").Value);
 					}
 				}
-				_liftProjectDir = CommonBridgeServices.GetLiftRepositoryFolderFromFwProjectFolder(Cache.ProjectId.ProjectFolder);
+				_liftProjectDir = GetLiftRepositoryFolderFromFwProjectFolder(Cache.ProjectId.ProjectFolder);
 				_liftPathname = GetLiftPathname();
 				_isInFullBlownDisposeMode = true; // Help the dispose method know what to do.
 			}
@@ -617,7 +853,7 @@ namespace LanguageExplorer.SendReceive
 
 				Cache = cache;
 				ParentForm = parentForm;
-				_liftProjectDir = CommonBridgeServices.GetLiftRepositoryFolderFromFwProjectFolder(Cache.ProjectId.ProjectFolder);
+				_liftProjectDir = GetLiftRepositoryFolderFromFwProjectFolder(Cache.ProjectId.ProjectFolder);
 				_liftPathname = liftPath;
 
 				_isInFullBlownDisposeMode = false; // Help the dispose method know what to *not* do.
@@ -625,20 +861,20 @@ namespace LanguageExplorer.SendReceive
 
 			private Tuple<bool, bool> CanDoCmdLiftBridge => new Tuple<bool, bool>(true, _oldLiftBridgeProjects.Contains(Cache.LangProject.Guid.ToString()) && SendReceiveMenuManager.IsConfiguredForLiftSR(Cache.ProjectId.ProjectFolder));
 
-			private Tuple<bool, bool> CanDoCmdViewLiftMessages => new Tuple<bool, bool>(true, CommonBridgeServices.NotesFileIsPresent(Cache, true));
+			private Tuple<bool, bool> CanDoCmdViewLiftMessages => new Tuple<bool, bool>(true, NotesFileIsPresent(Cache, true));
 
-			private Tuple<bool, bool> CanDoCmdObtainLiftProject => new Tuple<bool, bool>(true, !Directory.Exists(CommonBridgeServices.GetLiftRepositoryFolderFromFwProjectFolder(Cache.ProjectId.ProjectFolder)));
+			private Tuple<bool, bool> CanDoCmdObtainLiftProject => new Tuple<bool, bool>(true, !Directory.Exists(GetLiftRepositoryFolderFromFwProjectFolder(Cache.ProjectId.ProjectFolder)));
 
 			private Tuple<bool, bool> CanDoCmdObtainFirstLiftProject => new Tuple<bool, bool>(true, !_oldLiftBridgeProjects.Contains(Cache.LangProject.Guid.ToString()) && !SendReceiveMenuManager.IsConfiguredForLiftSR(Cache.ProjectId.ProjectFolder));
 
 			#region Implementation of IBridge
 			/// <inheritdoc />
-			public string Name => CommonBridgeServices.LiftBridge;
+			public string Name => LanguageExplorerConstants.LiftBridge;
 
 			/// <inheritdoc />
 			public void RunBridge()
 			{
-				CommonBridgeServices.PrepareForSR(PropertyTable, Publisher, Cache, this);
+				PrepareForSR(PropertyTable, Publisher, Cache, this);
 				// Step 0. Try to move an extant lift repo from old location to new.
 				if (!MoveOldLiftRepoIfNeeded())
 				{
@@ -657,7 +893,7 @@ namespace LanguageExplorer.SendReceive
 				}
 				// Step 3. Have Flex Bridge do the S/R.
 				// after saving the state enough to detect if conflicts are created.
-				var fullProjectFileName = CommonBridgeServices.GetFullProjectFileName(Cache);
+				var fullProjectFileName = Cache.GetFullProjectFileName();
 				if (!DoSendReceiveForLift(fullProjectFileName, out var dataChanged))
 				{
 					// Bail out, since the S/R failed for some reason.
@@ -672,7 +908,7 @@ namespace LanguageExplorer.SendReceive
 				{
 					return;
 				}
-				var liftFolder = CommonBridgeServices.GetLiftRepositoryFolderFromFwProjectFolder(Cache.ProjectId.ProjectFolder);
+				var liftFolder = GetLiftRepositoryFolderFromFwProjectFolder(Cache.ProjectId.ProjectFolder);
 				HandlePotentialConflicts(FlexApp.FwManager, liftFolder, PrepareToDetectLiftConflicts(liftFolder), fullProjectFileName);
 			}
 
@@ -785,12 +1021,12 @@ namespace LanguageExplorer.SendReceive
 				{
 					return;
 				}
-				CommonBridgeServices.RefreshCacheWindowAndAll(manager, fullProjectFileName, "ViewLiftMessages", true);
+				RefreshCacheWindowAndAll(manager, fullProjectFileName, "ViewLiftMessages", true);
 			}
 
 			private void SendLiftBridgeFirstTime_Click(object sender, EventArgs e)
 			{
-				if (CommonBridgeServices.ShowMessageBeforeFirstSendReceive_IsUserReady(FlexApp))
+				if (ShowMessageBeforeFirstSendReceive_IsUserReady(FlexApp))
 				{
 					RunBridge();
 				}
@@ -798,14 +1034,14 @@ namespace LanguageExplorer.SendReceive
 
 			private void ObtainLiftBridgeProject_Click(object sender, EventArgs e)
 			{
-				if (Directory.Exists(CommonBridgeServices.GetLiftRepositoryFolderFromFwProjectFolder(Cache.ProjectId.ProjectFolder)))
+				if (Directory.Exists(GetLiftRepositoryFolderFromFwProjectFolder(Cache.ProjectId.ProjectFolder)))
 				{
 					MessageBox.Show(ParentForm, LanguageExplorerResources.kProjectAlreadyHasLiftRepo, LanguageExplorerResources.kCannotDoGetAndMergeAgain, MessageBoxButtons.OK);
 					return;
 				}
-				CommonBridgeServices.StopParser(Publisher);
+				StopParser(Publisher);
 				var success = FLExBridgeHelper.LaunchFieldworksBridge(Cache.ProjectId.ProjectFolder, null, FLExBridgeHelper.ObtainLift, null,
-					LcmCache.ModelVersion, CommonBridgeServices.LiftModelVersion, null, null, out _, out _liftPathname);
+					LcmCache.ModelVersion, LiftModelVersion, null, null, out _, out _liftPathname);
 				if (!success || string.IsNullOrEmpty(_liftPathname))
 				{
 					_liftPathname = null;
@@ -813,8 +1049,8 @@ namespace LanguageExplorer.SendReceive
 				}
 				// Do merciful import.
 				ImportLiftCommon(MergeStyle.MsKeepBoth);
-				PropertyTable.SetProperty(CommonBridgeServices.LastBridgeUsed, CommonBridgeServices.LiftBridge, true, settingsGroup: SettingsGroup.LocalSettings);
-				Publisher.Publish(new PublisherParameterObject("MasterRefresh"));
+				PropertyTable.SetProperty(LanguageExplorerConstants.LastBridgeUsed, LanguageExplorerConstants.LiftBridge, true, settingsGroup: SettingsGroup.LocalSettings);
+				Publisher.Publish(new PublisherParameterObject(LanguageExplorerConstants.MasterRefresh));
 			}
 
 			private void ViewMessages(object obj)
@@ -830,18 +1066,18 @@ namespace LanguageExplorer.SendReceive
 			private void ViewMessages_LiftBridge_Click(object sender, EventArgs e)
 			{
 				FLExBridgeHelper.FLExJumpUrlChanged += JumpToFlexObject;
-				var success = FLExBridgeHelper.LaunchFieldworksBridge(CommonBridgeServices.GetFullProjectFileName(Cache), CommonBridgeServices.SendReceiveUser, FLExBridgeHelper.LiftConflictViewer,
-					null, LcmCache.ModelVersion, CommonBridgeServices.LiftModelVersion, null, () => CommonBridgeServices.BroadcastMasterRefresh(Publisher), out _, out _);
+				var success = FLExBridgeHelper.LaunchFieldworksBridge(Cache.GetFullProjectFileName(), LanguageExplorerConstants.SendReceiveUser, FLExBridgeHelper.LiftConflictViewer,
+					null, LcmCache.ModelVersion, LiftModelVersion, null, () => BroadcastMasterRefresh(Publisher), out _, out _);
 				if (!success)
 				{
-					CommonBridgeServices.ReportDuplicateBridge();
+					ReportDuplicateBridge();
 				}
 				FLExBridgeHelper.FLExJumpUrlChanged -= JumpToFlexObject;
 			}
 
 			private void JumpToFlexObject(object sender, FLExJumpEventArgs e)
 			{
-				CommonBridgeServices.PublishHandleLocalHotlinkMessage(Publisher, sender, e);
+				PublishHandleLocalHotlinkMessage(Publisher, sender, e);
 			}
 
 			/// <summary>
@@ -862,7 +1098,7 @@ namespace LanguageExplorer.SendReceive
 			/// Return 'false', if the calling code should quit its work.</returns>
 			private bool MoveOldLiftRepoIfNeeded()
 			{
-				var liftProjectDir = CommonBridgeServices.GetLiftRepositoryFolderFromFwProjectFolder(Cache.ProjectId.ProjectFolder);
+				var liftProjectDir = GetLiftRepositoryFolderFromFwProjectFolder(Cache.ProjectId.ProjectFolder);
 				// It is fine to try the repo move if the liftProjectDir exists, but *only* if it is completely empty.
 				// Mercurial can't do a clone into a folder that has contents of any sort.
 				if (Directory.Exists(liftProjectDir) && (Directory.GetDirectories(liftProjectDir).Length > 0 || Directory.GetFiles(liftProjectDir).Length > 0))
@@ -870,11 +1106,11 @@ namespace LanguageExplorer.SendReceive
 					return true;
 				}
 				// flexbridge -p <path to fwdata file> -u <username> -v move_lift -g Langprojguid
-				var success = FLExBridgeHelper.LaunchFieldworksBridge(CommonBridgeServices.GetFullProjectFileName(Cache), CommonBridgeServices.SendReceiveUser, FLExBridgeHelper.MoveLift,
+				var success = FLExBridgeHelper.LaunchFieldworksBridge(Cache.GetFullProjectFileName(), LanguageExplorerConstants.SendReceiveUser, FLExBridgeHelper.MoveLift,
 					Cache.LanguageProject.Guid.ToString().ToLowerInvariant(), LcmCache.ModelVersion, "0.13", null, null, out _, out _liftPathname); // _liftPathname will be null, if no repo was moved.
 				if (!success)
 				{
-					CommonBridgeServices.ReportDuplicateBridge();
+					ReportDuplicateBridge();
 					_liftPathname = null;
 					return false;
 				}
@@ -993,7 +1229,7 @@ namespace LanguageExplorer.SendReceive
 					using (var reader = new StreamReader(LiftNotesPath, Encoding.UTF8))
 					using (var writer = new StreamWriter(FlexNotesPath, false, Encoding.UTF8))
 					{
-						CommonBridgeServices.ConvertLiftNotesToFlex(reader, writer);
+						ConvertLiftNotesToFlex(reader, writer);
 					}
 				}
 				NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
@@ -1002,8 +1238,8 @@ namespace LanguageExplorer.SendReceive
 					var fMigrationNeeded = Migrator.IsMigrationNeeded(liftPathname);
 					if (fMigrationNeeded)
 					{
-						var sOldVersion = SIL.Lift.Validation.Validator.GetLiftVersion(liftPathname);
-						progressDialog.Message = string.Format(ResourceHelper.GetResourceString("kstidLiftVersionMigration"), sOldVersion, SIL.Lift.Validation.Validator.LiftVersion);
+						var sOldVersion = Validator.GetLiftVersion(liftPathname);
+						progressDialog.Message = string.Format(ResourceHelper.GetResourceString("kstidLiftVersionMigration"), sOldVersion, Validator.LiftVersion);
 						sFilename = Migrator.MigrateToLatestVersion(liftPathname);
 					}
 					else
@@ -1023,7 +1259,7 @@ namespace LanguageExplorer.SendReceive
 					{
 						// Try to move the migrated file to the temp directory, even if a copy of it
 						// already exists there.
-						var sTempMigrated = Path.Combine(Path.GetTempPath(), Path.ChangeExtension(Path.GetFileName(sFilename), "." + SIL.Lift.Validation.Validator.LiftVersion + ".lift"));
+						var sTempMigrated = Path.Combine(Path.GetTempPath(), Path.ChangeExtension(Path.GetFileName(sFilename), "." + Validator.LiftVersion + ".lift"));
 						if (File.Exists(sTempMigrated))
 						{
 							File.Delete(sTempMigrated);
@@ -1101,8 +1337,8 @@ namespace LanguageExplorer.SendReceive
 			{
 				// Have FLEx Bridge do its 'undo'
 				// flexbridge -p <project folder name> #-u username -v undo_export_lift)
-				FLExBridgeHelper.LaunchFieldworksBridge(Cache.ProjectId.ProjectFolder, CommonBridgeServices.SendReceiveUser, FLExBridgeHelper.UndoExportLift, null, LcmCache.ModelVersion,
-					CommonBridgeServices.LiftModelVersion, null, null, out _, out _);
+				FLExBridgeHelper.LaunchFieldworksBridge(Cache.ProjectId.ProjectFolder, LanguageExplorerConstants.SendReceiveUser, FLExBridgeHelper.UndoExportLift, null, LcmCache.ModelVersion,
+					LiftModelVersion, null, null, out _, out _);
 			}
 
 			/// <summary>
@@ -1155,7 +1391,7 @@ namespace LanguageExplorer.SendReceive
 						using (var reader = new StreamReader(FlexNotesPath, Encoding.UTF8))
 						using (var writer = new StreamWriter(LiftNotesPath, false, Encoding.UTF8))
 						{
-							CommonBridgeServices.ConvertFlexNotesToLift(reader, writer, Path.GetFileName(_liftPathname));
+							ConvertFlexNotesToLift(reader, writer, Path.GetFileName(_liftPathname));
 						}
 					}
 					return _liftPathname;
@@ -1210,8 +1446,8 @@ namespace LanguageExplorer.SendReceive
 				{
 					return false;
 				}
-				var liftFolder = CommonBridgeServices.GetLiftRepositoryFolderFromFwProjectFolder(Cache.ProjectId.ProjectFolder);
-				HandlePotentialConflicts(FlexApp.FwManager, liftFolder, PrepareToDetectLiftConflicts(liftFolder), CommonBridgeServices.GetFullProjectFileName(Cache));
+				var liftFolder = GetLiftRepositoryFolderFromFwProjectFolder(Cache.ProjectId.ProjectFolder);
+				HandlePotentialConflicts(FlexApp.FwManager, liftFolder, PrepareToDetectLiftConflicts(liftFolder), Cache.GetFullProjectFileName());
 				return true;
 			}
 
@@ -1228,12 +1464,12 @@ namespace LanguageExplorer.SendReceive
 				_liftPathname = GetLiftPathname();
 				PrepareToDetectLiftConflicts(_liftPathname);
 				// flexbridge -p <path to fwdata/fwdb file> -u <username> -v send_receive_lift
-				var success = FLExBridgeHelper.LaunchFieldworksBridge(fullProjectFileName, CommonBridgeServices.SendReceiveUser,
+				var success = FLExBridgeHelper.LaunchFieldworksBridge(fullProjectFileName, LanguageExplorerConstants.SendReceiveUser,
 					FLExBridgeHelper.SendReceiveLift, // May create a new lift repo in the process of doing the S/R. Or, it may just use the extant lift repo.
 					null, LcmCache.ModelVersion, "0.13", Cache.LangProject.DefaultVernacularWritingSystem.Id, null, out dataChanged, out _);
 				if (!success)
 				{
-					CommonBridgeServices.ReportDuplicateBridge();
+					ReportDuplicateBridge();
 					dataChanged = false;
 					_liftPathname = null;
 					return false;

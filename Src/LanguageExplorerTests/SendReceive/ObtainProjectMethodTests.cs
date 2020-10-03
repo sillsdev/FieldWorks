@@ -138,11 +138,15 @@ namespace LanguageExplorerTests.SendReceive
 			const string ImportLexiconDll = @"LanguageExplorer.dll";
 			const string ImportLexiconClass = @"LanguageExplorer.SendReceive.SendReceiveMenuManager";
 			const string ImportLexiconMethod = @"ImportObtainedLexicon";
-			var flags = (BindingFlags.NonPublic | BindingFlags.Static);
 			var type = ReflectionHelper.GetType(ImportLexiconDll, ImportLexiconClass);
 			Assert.NotNull(type, $"'{ImportLexiconClass}' has moved.");
-			var method = type.GetMethod(ImportLexiconMethod, new[] { typeof(LcmCache), typeof(string), typeof(System.Windows.Forms.Form) });
-			Assert.NotNull(method, $"'{ImportLexiconMethod}' method name on '{ImportLexiconClass}' has changed, or its parameters have changed.");
+			var method = type.GetMethod(ImportLexiconMethod, BindingFlags.NonPublic | BindingFlags.Static);
+			Assert.NotNull(method, $"'{ImportLexiconMethod}' method name on '{ImportLexiconClass}' has changed.");
+			var parameterInfo = method.GetParameters();
+			Assert.AreEqual(parameterInfo.Length, 3, "Wrong number of parameters.");
+			Assert.AreEqual(parameterInfo[0].ParameterType.Name, "LcmCache", "Wrong class name for parameter.");
+			Assert.AreEqual(parameterInfo[1].ParameterType.Name, "String", "Wrong class name for parameter.");
+			Assert.AreEqual(parameterInfo[2].ParameterType.Name, "Form", "Wrong class name for parameter.");
 		}
 	}
 }

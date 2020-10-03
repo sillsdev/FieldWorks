@@ -333,6 +333,11 @@ namespace SIL.FieldWorks.Common.FwUtils
 			return true;
 		}
 
+		public static string GetFullProjectFileName(this LcmCache me)
+		{
+			return Path.Combine(me.ProjectId.ProjectFolder, me.ProjectId.Name + LcmFileHelper.ksFwDataXmlFileExtension);
+		}
+
 		private static void CheckPossibilityGuidAgainstGold(IPartOfSpeech pos, XmlDocument dom, Dictionary<IPartOfSpeech, string> itemsWithBadGuids)
 		{
 			if (!string.IsNullOrEmpty(pos.CatalogSourceId))

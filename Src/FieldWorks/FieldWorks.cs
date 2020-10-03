@@ -430,7 +430,7 @@ namespace SIL.FieldWorks
 			Project = projectId;
 
 			// Warn user about failed Lift import if necessary.
-			var liftFolder = CommonBridgeServices.GetLiftRepositoryFolderFromFwProjectFolder(Cache.ProjectId.ProjectFolder);
+			var liftFolder = SendReceiveMenuManager.GetLiftRepositoryFolderFromFwProjectFolder(Cache.ProjectId.ProjectFolder);
 			if (LiftImportFailureServices.GetFailureStatus(liftFolder) != ImportFailureStatus.NoImportNeeded)
 			{
 				MessageBox.Show(LanguageExplorerResources.LiftSRFailureDetectedOnStartupMessage, LanguageExplorerResources.LiftSRFailureDetectedOnStartupTitle,
@@ -1624,8 +1624,8 @@ namespace SIL.FieldWorks
 								if (activeWindow != null)
 								{
 									var activeWindowInterface = (IFwMainWnd)activeWindow;
-									activeWindowInterface.PropertyTable.SetProperty(CommonBridgeServices.LastBridgeUsed,
-										obtainedProjectType == ObtainedProjectType.Lift ? CommonBridgeServices.LiftBridge : CommonBridgeServices.FLExBridge,
+									activeWindowInterface.PropertyTable.SetProperty(LanguageExplorerConstants.LastBridgeUsed,
+										obtainedProjectType == ObtainedProjectType.Lift ? LanguageExplorerConstants.LiftBridge : LanguageExplorerConstants.FLExBridge,
 										true, settingsGroup: SettingsGroup.LocalSettings);
 								}
 							}
@@ -1696,8 +1696,8 @@ namespace SIL.FieldWorks
 				if (activeWindow != null && dlg.ObtainedProjectType != ObtainedProjectType.None)
 				{
 					var activeWindowInterface = (IFwMainWnd)activeWindow;
-					activeWindowInterface.PropertyTable.SetProperty(CommonBridgeServices.LastBridgeUsed,
-						dlg.ObtainedProjectType == ObtainedProjectType.Lift ? CommonBridgeServices.LiftBridge : CommonBridgeServices.FLExBridge,
+					activeWindowInterface.PropertyTable.SetProperty(LanguageExplorerConstants.LastBridgeUsed,
+						dlg.ObtainedProjectType == ObtainedProjectType.Lift ? LanguageExplorerConstants.LiftBridge : LanguageExplorerConstants.FLExBridge,
 						true, settingsGroup: SettingsGroup.LocalSettings);
 				}
 

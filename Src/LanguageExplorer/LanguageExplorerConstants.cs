@@ -2,6 +2,8 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System;
+
 namespace LanguageExplorer
 {
 	/// <summary>
@@ -269,6 +271,15 @@ namespace LanguageExplorer
 		internal const string ReversalType = "Reversal Index";
 		internal const string ReloadAreaTools = "ReloadAreaTools";
 		internal const string ReversalEntriesPOS = "ReversalEntriesPOS";
+		internal const string MasterRefresh = "MasterRefresh";
+		internal const string kChorusNotesExtension = ".ChorusNotes";
+		internal const string FLExBridge = "FLExBridge";
+		internal const string LiftBridge = "LiftBridge";
+		internal const string LastBridgeUsed = "LastBridgeUsed";
+		internal static string SendReceiveUser => Environment.UserName;
+		public const string FakeLexiconFileName = "Lexicon.fwstub";
+		public const string FlexLexiconNotesFileName = FakeLexiconFileName + kChorusNotesExtension;
+
 		#endregion Misc
 	}
 }

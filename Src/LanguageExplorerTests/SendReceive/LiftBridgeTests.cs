@@ -43,7 +43,7 @@ namespace LanguageExplorerTests.SendReceive
 			using (var reader = new StringReader(_flexNote))
 			using (var writer = new StringWriter(builder))
 			{
-				CommonBridgeServices.ConvertFlexNotesToLift(reader, writer, "Fred.lift");
+				SendReceiveMenuManager.ConvertFlexNotesToLift(reader, writer, "Fred.lift");
 			}
 			Assert.That(builder.ToString(), Is.EqualTo(_liftNote));
 		}
@@ -55,7 +55,7 @@ namespace LanguageExplorerTests.SendReceive
 			using (var reader = new StringReader(_liftNote))
 			using (var writer = new StringWriter(builder))
 			{
-				CommonBridgeServices.ConvertLiftNotesToFlex(reader, writer);
+				SendReceiveMenuManager.ConvertLiftNotesToFlex(reader, writer);
 			}
 			Assert.That(builder.ToString(), Is.EqualTo(_flexNote));
 		}

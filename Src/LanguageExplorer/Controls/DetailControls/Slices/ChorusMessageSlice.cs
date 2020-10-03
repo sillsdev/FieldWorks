@@ -9,7 +9,6 @@ using System.Linq;
 using System.Text;
 using Chorus;
 using Chorus.UI.Notes.Bar;
-using LanguageExplorer.SendReceive;
 using SIL.LCModel;
 using SIL.Progress;
 
@@ -30,7 +29,7 @@ namespace LanguageExplorer.Controls.DetailControls.Slices
 		/// (see HgRepository.SetUserNameInIni/GetUserNameFromIni). But until we merge FlexBridge,
 		/// FLEx does not have access to code that knows about Mercurial.
 		/// </summary>
-		internal static string SendReceiveUser => CommonBridgeServices.SendReceiveUser;
+		internal static string SendReceiveUser => LanguageExplorerConstants.SendReceiveUser;
 
 		/// <summary />
 		public override void FinishInit()
@@ -69,12 +68,12 @@ namespace LanguageExplorer.Controls.DetailControls.Slices
 		// someone finds it in a browser.
 		private static string GetDataFilePath(LcmCache cache)
 		{
-			var dataFilePath = Path.Combine(cache.ProjectId.ProjectFolder, SendReceiveMenuManager.FakeLexiconFileName);
+			var dataFilePath = Path.Combine(cache.ProjectId.ProjectFolder, LanguageExplorerConstants.FakeLexiconFileName);
 			if (!File.Exists(dataFilePath))
 			{
 				using (var writer = new StreamWriter(dataFilePath, false, Encoding.UTF8))
 				{
-					writer.WriteLine("This is a stub file to provide an attachment point for " + SendReceiveMenuManager.FlexLexiconNotesFileName);
+					writer.WriteLine("This is a stub file to provide an attachment point for " + LanguageExplorerConstants.FlexLexiconNotesFileName);
 				}
 			}
 			return dataFilePath;
@@ -97,7 +96,7 @@ namespace LanguageExplorer.Controls.DetailControls.Slices
 			}
 			foreach (var path in Directory.EnumerateFiles(lexiconFolder, "*.lexdb"))
 			{
-				var notesFile = path + CommonBridgeServices.kChorusNotesExtension;
+				var notesFile = path + LanguageExplorerConstants.kChorusNotesExtension;
 				if (File.Exists(notesFile))
 				{
 					results.Add(path);

@@ -329,7 +329,7 @@ namespace LanguageExplorer
 				UpdateFiltersAndSortersIfNeeded(); // Load the index-specific sorter
 				OnChangeSorter(); // Update the column headers with sort arrows
 				OwningObject = newOwningObj; // This automatically reloads (and sorts) the list
-				Publisher.Publish(new PublisherParameterObject("MasterRefresh"));
+				Publisher.Publish(new PublisherParameterObject(LanguageExplorerConstants.MasterRefresh));
 			}
 
 			/// <summary />

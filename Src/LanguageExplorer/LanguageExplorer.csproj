@@ -513,10 +513,10 @@
     <Compile Include="RuntimeConfigurationException.cs" />
     <Compile Include="SendReceive\ObtainedProjectType.cs" />
     <Compile Include="SendReceive\ObtainProjectMethod.cs" />
-    <Compile Include="SendReceive\SendReceiveResources.Designer.cs">
+    <Compile Include="SendReceive\ObtainProjectMethodResources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
-      <DependentUpon>SendReceiveResources.resx</DependentUpon>
+      <DependentUpon>ObtainProjectMethodResources.resx</DependentUpon>
     </Compile>
     <Compile Include="SeparatorMenuBundle.cs" />
     <Compile Include="SeparatorToolStripBundle.cs" />
@@ -1726,9 +1726,6 @@
     </Compile>
     <Compile Include="PersistenceProviderFactory.cs" />
     <Compile Include="RecordListServices.cs" />
-    <Compile Include="SendReceive\BridgeMenuInstallRound.cs" />
-    <Compile Include="SendReceive\CommonBridgeServices.cs" />
-    <Compile Include="SendReceive\IBridge.cs" />
     <Compile Include="SendReceive\SendReceiveMenuManager.cs" />
     <Compile Include="SimpleLogger.cs" />
     <Compile Include="StatusBarPanelServices.cs" />
@@ -2675,9 +2672,9 @@
       <DependentUpon>ViewBase.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="SendReceive\SendReceiveResources.resx">
+    <EmbeddedResource Include="SendReceive\ObtainProjectMethodResources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>SendReceiveResources.Designer.cs</LastGenOutput>
+      <LastGenOutput>ObtainProjectMethodResources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="SfmToXml\SfmToXmlStrings.resx">
       <Generator>ResXFileCodeGenerator</Generator>

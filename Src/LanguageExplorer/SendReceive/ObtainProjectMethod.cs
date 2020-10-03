@@ -91,7 +91,7 @@ namespace LanguageExplorer.SendReceive
 			var anthroListFile = Path.Combine(FwDirectoryFinder.TemplateDirectory, FwDirectoryFinder.ksOCMFrameFilename);
 			using (var progressDlg = new ProgressDialogWithTask(parent))
 			{
-				progressDlg.Title = SendReceiveResources.ksCreatingLiftProject;
+				progressDlg.Title = ObtainProjectMethodResources.ksCreatingLiftProject;
 				var cacheReceiver = new LcmCache[1]; // a clumsy way of handling an out parameter, consistent with RunTask
 				projectPath = (string)progressDlg.RunTask(true, CreateProjectTask, liftPath, parent, anthroListFile, cacheReceiver);
 				cache = cacheReceiver[0];
@@ -156,6 +156,7 @@ namespace LanguageExplorer.SendReceive
 		/// We get the vernacular WS from the first form element nested in a lexical-unit with a lang attribute,
 		/// and the analysis WS form the first form element nested in a definition or gloss with a lang attribute.
 		/// </summary>
+		/// <remarks>It is not private, because it is called in tests.</remarks>
 		internal static void RetrieveDefaultWritingSystemIdsFromLift(XmlReader reader, out string vernWs, out string analysisWs)
 		{
 			vernWs = analysisWs = null;
@@ -227,9 +228,9 @@ namespace LanguageExplorer.SendReceive
 		/// <summary>
 		/// Reports to the user that a copy of FLExBridge is already running.
 		/// </summary>
-		public static void ReportDuplicateBridge()
+		internal static void ReportDuplicateBridge()
 		{
-			MessageBox.Show(SendReceiveResources.kBridgeAlreadyRunning, SendReceiveResources.kFlexBridge, MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
+			MessageBox.Show(ObtainProjectMethodResources.kBridgeAlreadyRunning, ObtainProjectMethodResources.kFlexBridge, MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
 		}
 	}
 }

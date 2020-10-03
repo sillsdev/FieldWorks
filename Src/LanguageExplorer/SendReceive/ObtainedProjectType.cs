@@ -7,7 +7,7 @@ namespace LanguageExplorer.SendReceive
 	/// <summary>
 	/// Enumeration of possible sources of a new FW project.
 	/// </summary>
-	public enum ObtainedProjectType
+	internal enum ObtainedProjectType
 	{
 		/// <summary>Default value for no source</summary>
 		None,
