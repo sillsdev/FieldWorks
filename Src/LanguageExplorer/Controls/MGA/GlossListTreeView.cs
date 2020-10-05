@@ -13,7 +13,7 @@ using SIL.LCModel.Core.Text;
 using SIL.LCModel.DomainServices;
 using SIL.Xml;
 
-namespace LanguageExplorer.MGA
+namespace LanguageExplorer.Controls.MGA
 {
 	/// <summary />
 	internal class GlossListTreeView : TreeView

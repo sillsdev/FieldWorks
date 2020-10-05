@@ -8,7 +8,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
-using LanguageExplorer.MGA;
+using LanguageExplorer.Controls.MGA;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.Windows.Forms;

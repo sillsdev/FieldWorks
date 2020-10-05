@@ -4,12 +4,12 @@
 
 using System.IO;
 using System.Xml;
-using LanguageExplorer.MGA;
+using LanguageExplorer.Controls.MGA;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.Xml;
 
-namespace LanguageExplorerTests.MGA
+namespace LanguageExplorerTests.Controls.MGA
 {
 	/// <summary>
 	/// Test sets for the GlossListTreeView class.

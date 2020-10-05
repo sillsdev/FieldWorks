@@ -275,7 +275,7 @@
     <Compile Include="Impls\FwFindReplaceDlgWithLiteralStringsTests.cs" />
     <Compile Include="Impls\FwFindReplaceDlgWithObjectsRepeatedInDisplayTests.cs" />
     <Compile Include="MeasurementUtilsTest.cs" />
-    <Compile Include="MGA\GlossListTreeViewTest.cs" />
+    <Compile Include="Controls\MGA\GlossListTreeViewTest.cs" />
     <Compile Include="ProgressStateTests.cs" />
     <Compile Include="ReveralIndexServicesTests.cs" />
     <Compile Include="SendReceive\ObtainProjectMethodTests.cs" />
@@ -344,7 +344,7 @@
     <Compile Include="Areas\TextsAndWords\Tools\WordsSfmImportTests.cs" />
     <Compile Include="Repository\ListsAreaTests.cs" />
     <Compile Include="Repository\MefTestBase.cs" />
-    <Compile Include="MGA\GlossListBoxTest.cs" />
+    <Compile Include="Controls\MGA\GlossListBoxTest.cs" />
     <Compile Include="Repository\NotebookAreaTests.cs" />
     <Compile Include="SendReceive\LiftBridgeTests.cs" />
     <Compile Include="Controls\SilSidePane\ItemTests.cs" />

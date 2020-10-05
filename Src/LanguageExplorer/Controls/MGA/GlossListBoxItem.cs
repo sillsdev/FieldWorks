@@ -7,7 +7,7 @@ using SIL.Code;
 using SIL.LCModel;
 using SIL.Xml;
 
-namespace LanguageExplorer.MGA
+namespace LanguageExplorer.Controls.MGA
 {
 	// NB: I'd prefer to subclass XmlNode and override its ToString() class.
 	//     When I tried that, however, it appears that XmlNode is protected and one

@@ -14,7 +14,7 @@ using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FwCoreDlgs;
 using SIL.LCModel;
 
-namespace LanguageExplorer.MGA
+namespace LanguageExplorer.Controls.MGA
 {
 	/// <summary>
 	/// Base class for MGAHtmlHelpDialog. Can be used standalone to show dialog without html help.
@@ -387,8 +387,8 @@ namespace LanguageExplorer.MGA
 			this.labelAllomorph = new System.Windows.Forms.Label();
 			this.textBoxResult = new System.Windows.Forms.TextBox();
 			this.splitContainerHorizontal = new System.Windows.Forms.SplitContainer();
-			this.treeViewGlossListItem = new LanguageExplorer.MGA.GlossListTreeView();
-			this.glossListBoxGloss = new LanguageExplorer.MGA.GlossListBox();
+			this.treeViewGlossListItem = new GlossListTreeView();
+			this.glossListBoxGloss = new GlossListBox();
 			panelGlossComponents = new System.Windows.Forms.TableLayoutPanel();
 			tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
 			panel1 = new System.Windows.Forms.Panel();

@@ -10,7 +10,7 @@ using System.Xml;
 using SIL.LCModel;
 using SIL.Xml;
 
-namespace LanguageExplorer.MGA
+namespace LanguageExplorer.Controls.MGA
 {
 	internal class MasterItem
 	{

@@ -13,7 +13,7 @@ using Gecko;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 
-namespace LanguageExplorer.MGA
+namespace LanguageExplorer.Controls.MGA
 {
 	internal sealed class MGAHtmlHelpDialog : MGADialog
 	{

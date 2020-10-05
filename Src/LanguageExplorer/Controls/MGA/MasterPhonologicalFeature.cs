@@ -7,7 +7,7 @@ using SIL.LCModel;
 using SIL.LCModel.Infrastructure;
 using SIL.Xml;
 
-namespace LanguageExplorer.MGA
+namespace LanguageExplorer.Controls.MGA
 {
 	internal sealed class MasterPhonologicalFeature : MasterItem
 	{

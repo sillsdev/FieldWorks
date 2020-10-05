@@ -5,7 +5,7 @@
 using System.Linq;
 using System.Windows.Forms;
 using LanguageExplorer.Controls;
-using LanguageExplorer.MGA;
+using LanguageExplorer.Controls.MGA;
 using SIL.LCModel;
 using SIL.LCModel.Infrastructure;
 

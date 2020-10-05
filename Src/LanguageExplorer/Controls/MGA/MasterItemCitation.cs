@@ -5,7 +5,7 @@
 using System;
 using System.Windows.Forms;
 
-namespace LanguageExplorer.MGA
+namespace LanguageExplorer.Controls.MGA
 {
 	internal sealed class MasterItemCitation
 	{

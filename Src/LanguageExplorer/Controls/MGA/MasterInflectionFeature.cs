@@ -8,7 +8,7 @@ using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Infrastructure;
 using SIL.Xml;
 
-namespace LanguageExplorer.MGA
+namespace LanguageExplorer.Controls.MGA
 {
 	internal sealed class MasterInflectionFeature : MasterItem
 	{

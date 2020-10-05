@@ -7,7 +7,7 @@ using System.Windows.Forms;
 using System.Xml;
 using SIL.LCModel.Core.Text;
 
-namespace LanguageExplorer.MGA
+namespace LanguageExplorer.Controls.MGA
 {
 	/// <summary />
 	internal sealed class PhonologicalFeaturesTreeView : GlossListTreeView

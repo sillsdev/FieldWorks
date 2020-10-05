@@ -4,7 +4,7 @@
 
 using System;
 
-namespace LanguageExplorer.MGA
+namespace LanguageExplorer.Controls.MGA
 {
 	internal delegate void GlossListEventHandler(object sender, GlossListEventArgs e);
 

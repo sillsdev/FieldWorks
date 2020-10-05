@@ -1292,8 +1292,8 @@
     <Compile Include="LcmUi\VcFrags.cs" />
     <Compile Include="LcmUi\WfiAnalysisUi.cs" />
     <Compile Include="LcmUi\WfiGlossUi.cs" />
-    <Compile Include="MGA\MGAImageKind.cs" />
-    <Compile Include="MGA\MasterItemCitation.cs" />
+    <Compile Include="Controls\MGA\MGAImageKind.cs" />
+    <Compile Include="Controls\MGA\MasterItemCitation.cs" />
     <Compile Include="ReadOnlyPropertyTable.cs" />
     <Compile Include="IRecordFilterListProvider.cs" />
     <Compile Include="RecordFilterParameterObject.cs" />
@@ -1699,29 +1699,29 @@
     </Compile>
     <Compile Include="LcmUi\ReversalIndexEntryUi.cs" />
     <Compile Include="LcmUi\WfiWordformUi.cs" />
-    <Compile Include="MGA\GlossListBox.cs">
+    <Compile Include="Controls\MGA\GlossListBox.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="MGA\GlossListBoxItem.cs" />
-    <Compile Include="MGA\GlossListEventArgs.cs" />
-    <Compile Include="MGA\GlossListTreeView.cs">
+    <Compile Include="Controls\MGA\GlossListBoxItem.cs" />
+    <Compile Include="Controls\MGA\GlossListEventArgs.cs" />
+    <Compile Include="Controls\MGA\GlossListTreeView.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="MGA\MasterInflectionFeature.cs" />
-    <Compile Include="MGA\MasterItem.cs" />
-    <Compile Include="MGA\MasterPhonologicalFeature.cs" />
-    <Compile Include="MGA\MGADialog.cs">
+    <Compile Include="Controls\MGA\MasterInflectionFeature.cs" />
+    <Compile Include="Controls\MGA\MasterItem.cs" />
+    <Compile Include="Controls\MGA\MasterPhonologicalFeature.cs" />
+    <Compile Include="Controls\MGA\MGADialog.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="MGA\MGAHtmlHelpDialog.cs">
+    <Compile Include="Controls\MGA\MGAHtmlHelpDialog.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="MGA\MGAStrings.Designer.cs">
+    <Compile Include="Controls\MGA\MGAStrings.Designer.cs">
       <DependentUpon>MGAStrings.resx</DependentUpon>
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
     </Compile>
-    <Compile Include="MGA\PhonologicalFeaturesTreeView.cs">
+    <Compile Include="Controls\MGA\PhonologicalFeaturesTreeView.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="PersistenceProviderFactory.cs" />
@@ -2255,15 +2255,15 @@
     <EmbeddedResource Include="Impls\RestoreDefaultsDlg.resx">
       <DependentUpon>RestoreDefaultsDlg.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="MGA\CheckBox.bmp" />
-    <EmbeddedResource Include="MGA\CheckedBox.bmp" />
-    <EmbeddedResource Include="MGA\CLSDFOLD.BMP" />
-    <EmbeddedResource Include="MGA\Complex.bmp" />
-    <EmbeddedResource Include="MGA\FSType.bmp" />
-    <EmbeddedResource Include="MGA\OPENFOLD.BMP" />
-    <EmbeddedResource Include="MGA\Radio.bmp" />
-    <EmbeddedResource Include="MGA\RadioSelected.bmp" />
-    <EmbeddedResource Include="MGA\UserChoice.bmp" />
+    <EmbeddedResource Include="Controls\MGA\CheckBox.bmp" />
+    <EmbeddedResource Include="Controls\MGA\CheckedBox.bmp" />
+    <EmbeddedResource Include="Controls\MGA\CLSDFOLD.BMP" />
+    <EmbeddedResource Include="Controls\MGA\Complex.bmp" />
+    <EmbeddedResource Include="Controls\MGA\FSType.bmp" />
+    <EmbeddedResource Include="Controls\MGA\OPENFOLD.BMP" />
+    <EmbeddedResource Include="Controls\MGA\Radio.bmp" />
+    <EmbeddedResource Include="Controls\MGA\RadioSelected.bmp" />
+    <EmbeddedResource Include="Controls\MGA\UserChoice.bmp" />
     <EmbeddedResource Include="Controls\DetailControls\AtomicReferenceLauncher.resx">
       <DependentUpon>AtomicReferenceLauncher.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -2553,15 +2553,15 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="MGA\GlossListBox.resx">
+    <EmbeddedResource Include="Controls\MGA\GlossListBox.resx">
       <DependentUpon>GlossListBox.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="MGA\MGADialog.resx">
+    <EmbeddedResource Include="Controls\MGA\MGADialog.resx">
       <DependentUpon>MGADialog.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="MGA\MGAStrings.resx">
+    <EmbeddedResource Include="Controls\MGA\MGAStrings.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>MGAStrings.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
