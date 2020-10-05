@@ -9,14 +9,14 @@ using SIL.Xml;
 
 namespace LanguageExplorer.MGA
 {
-	internal class MasterPhonologicalFeature : MasterItem
+	internal sealed class MasterPhonologicalFeature : MasterItem
 	{
 		internal MasterPhonologicalFeature(XmlNode node, MGAImageKind kind, string sTerm)
 			: base(node, kind, sTerm)
 		{
 		}
 
-		public override bool KindCanBeInDatabase()
+		internal override bool KindCanBeInDatabase()
 		{
 			return !IsAGroup();
 		}
@@ -30,13 +30,12 @@ namespace LanguageExplorer.MGA
 		/// <summary>
 		/// figure out if the feature represented by the node is already in the database
 		/// </summary>
-		public override void DetermineInDatabase(LcmCache cache)
+		internal override void DetermineInDatabase(LcmCache cache)
 		{
-			var sId = XmlUtils.GetOptionalAttributeValue(Node, "id");
-			InDatabase = !IsAGroup() && cache.LanguageProject.PhFeatureSystemOA.GetFeature(sId) != null;
+			_inDatabase = !IsAGroup() && cache.LanguageProject.PhFeatureSystemOA.GetFeature(XmlUtils.GetOptionalAttributeValue(Node, "id")) != null;
 		}
 
-		public override void AddToDatabase(LcmCache cache)
+		internal override void AddToDatabase(LcmCache cache)
 		{
 			if (InDatabase)
 			{
@@ -47,7 +46,7 @@ namespace LanguageExplorer.MGA
 			{
 				UndoableUnitOfWorkHelper.Do(MGAStrings.ksUndoCreatePhonologicalFeature, MGAStrings.ksRedoCreatePhonologicalFeature, cache.ActionHandlerAccessor, () =>
 				{
-					FeatureDefn = cache.LangProject.PhFeatureSystemOA.AddFeatureFromXml(Node);
+					_featureDefn = cache.LangProject.PhFeatureSystemOA.AddFeatureFromXml(Node);
 				});
 			}
 		}

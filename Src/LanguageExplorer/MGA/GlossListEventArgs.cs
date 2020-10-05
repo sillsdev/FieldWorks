@@ -3,29 +3,22 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using System.Xml;
-using SIL.LCModel;
 
 namespace LanguageExplorer.MGA
 {
-	public delegate void GlossListEventHandler(object sender, GlossListEventArgs e);
+	internal delegate void GlossListEventHandler(object sender, GlossListEventArgs e);
 
 	/// <summary />
-	public class GlossListEventArgs : EventArgs
+	internal sealed class GlossListEventArgs : EventArgs
 	{
-		public GlossListEventArgs(GlossListBoxItem glbi)
+		internal GlossListEventArgs(GlossListBoxItem glbi)
 		{
 			GlossListBoxItem = glbi;
-		}
-
-		public GlossListEventArgs(LcmCache cache, XmlNode node, string sAfterSeparator, string sComplexNameSeparator, bool fComplexNameFirst)
-		{
-			GlossListBoxItem = new GlossListBoxItem(cache, node, sAfterSeparator, sComplexNameSeparator, fComplexNameFirst);
 		}
 
 		/// <summary>
 		/// Gets the item.
 		/// </summary>
-		public GlossListBoxItem GlossListBoxItem { get; }
+		internal GlossListBoxItem GlossListBoxItem { get; }
 	}
 }

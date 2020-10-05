@@ -10,7 +10,7 @@ using SIL.Xml;
 
 namespace LanguageExplorer.MGA
 {
-	internal class MasterInflectionFeature : MasterItem
+	internal sealed class MasterInflectionFeature : MasterItem
 	{
 		internal MasterInflectionFeature(XmlNode node, MGAImageKind kind, string sTerm)
 			: base(node, kind, sTerm)
@@ -20,13 +20,13 @@ namespace LanguageExplorer.MGA
 		/// <summary>
 		/// figure out if the feature represented by the node is already in the database
 		/// </summary>
-		public override void DetermineInDatabase(LcmCache cache)
+		internal override void DetermineInDatabase(LcmCache cache)
 		{
 			var item = Node.SelectSingleNode(".");
 			var sId = XmlUtils.GetOptionalAttributeValue(item, "id");
 			if (m_eKind == MGAImageKind.closedFolder || m_eKind == MGAImageKind.openFolder)
 			{
-				InDatabase = false;
+				_inDatabase = false;
 			}
 			if (!KindCanBeInDatabase())
 			{
@@ -40,27 +40,27 @@ namespace LanguageExplorer.MGA
 				case MGAImageKind.checkBox: // fall through
 				case MGAImageKind.checkedBox:
 					// these are all feature values
-					InDatabase = featSys.GetSymbolicValue(sId) != null;
+					_inDatabase = featSys.GetSymbolicValue(sId) != null;
 					break;
 				case MGAImageKind.complex:
-					InDatabase = featSys.GetFeature(sId) != null;
+					_inDatabase = featSys.GetFeature(sId) != null;
 					break;
 				case MGAImageKind.userChoice: // closed feature
 					var sStatus = XmlUtils.GetOptionalAttributeValue(Node, "status");
-					InDatabase = featSys.GetFeature(sId) != null;
+					_inDatabase = featSys.GetFeature(sId) != null;
 					if (sStatus == "proxy")
 					{
 						var xnType = Node.SelectSingleNode("ancestor::item[@type='fsType']/@id");
 						if (xnType != null)
 						{
 							var type = featSys.GetFeatureType(xnType.InnerText);
-							InDatabase = type?.GetFeature(sId) != null && InDatabase;
+							_inDatabase = type?.GetFeature(sId) != null && InDatabase;
 						}
 					}
 					break;
 			}
 		}
-		public override void AddToDatabase(LcmCache cache)
+		internal override void AddToDatabase(LcmCache cache)
 		{
 			if (InDatabase)
 			{
@@ -68,7 +68,7 @@ namespace LanguageExplorer.MGA
 			}
 			using (var undoHelper = new UndoableUnitOfWorkHelper(cache.ServiceLocator.GetInstance<IActionHandler>(), MGAStrings.ksUndoCreateInflectionFeature, MGAStrings.ksRedoCreateInflectionFeature))
 			{
-				FeatureDefn = cache.LanguageProject.MsFeatureSystemOA.AddFeatureFromXml(Node);
+				_featureDefn = cache.LanguageProject.MsFeatureSystemOA.AddFeatureFromXml(Node);
 				// Attempt to add feature to category as an inflectable feature
 				var sPosId = XmlUtils.GetOptionalAttributeValue(Node, "posid");
 				var node = Node;

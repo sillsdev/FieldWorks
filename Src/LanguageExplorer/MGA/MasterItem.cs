@@ -22,8 +22,10 @@ namespace LanguageExplorer.MGA
 		protected string m_def;
 		protected string m_defWs;
 		protected List<MasterItemCitation> m_citations;
+		protected IFsFeatDefn _featureDefn;
+		protected bool _inDatabase;
 
-		public MasterItem()
+		internal MasterItem()
 		{
 			m_citations = new List<MasterItemCitation>();
 		}
@@ -56,34 +58,40 @@ namespace LanguageExplorer.MGA
 		/// <summary>
 		/// figure out if the feature represented by the node is already in the database
 		/// </summary>
-		public virtual void DetermineInDatabase(LcmCache cache)
+		internal virtual void DetermineInDatabase(LcmCache cache)
 		{
 		}
 
-		public virtual bool KindCanBeInDatabase()
+		internal virtual bool KindCanBeInDatabase()
 		{
 			return m_eKind == MGAImageKind.radio || m_eKind == MGAImageKind.radioSelected || m_eKind == MGAImageKind.checkBox || m_eKind == MGAImageKind.checkedBox
 				   || m_eKind == MGAImageKind.userChoice || m_eKind == MGAImageKind.complex;
 		}
 
-		public virtual void AddToDatabase(LcmCache cache)
+		internal virtual void AddToDatabase(LcmCache cache)
 		{
 		}
 
-		public IFsFeatDefn FeatureDefn { get; protected set; }
+		internal IFsFeatDefn FeatureDefn
+		{
+			get => _featureDefn;
+		}
 
-		public XmlNode Node { get; }
+		internal XmlNode Node { get; }
 
-		public bool InDatabase { get; protected set; }
+		internal bool InDatabase
+		{
+			get => _inDatabase;
+		}
 
-		public bool IsChosen => (m_eKind == MGAImageKind.radioSelected || m_eKind == MGAImageKind.checkedBox);
+		internal bool IsChosen => (m_eKind == MGAImageKind.radioSelected || m_eKind == MGAImageKind.checkedBox);
 
 		public override string ToString()
 		{
 			return InDatabase ? string.Format(MGAStrings.ksX_InFwProject, m_term) : m_term;
 		}
 
-		public void ResetDescription(RichTextBox rtbDescription)
+		internal void ResetDescription(RichTextBox rtbDescription)
 		{
 			rtbDescription.Clear();
 			var doubleNewLine = Environment.NewLine + Environment.NewLine;

@@ -19,7 +19,7 @@ namespace LanguageExplorer.MGA
 	/// <summary>
 	/// Base class for MGAHtmlHelpDialog. Can be used standalone to show dialog without html help.
 	/// </summary>
-	public class MGADialog : Form
+	internal class MGADialog : Form
 	{
 		#region Member variables
 		private int m_panelBottomHeight;
@@ -54,28 +54,28 @@ namespace LanguageExplorer.MGA
 		#endregion
 
 		#region event handlers
-		public event GlossListEventHandler InsertMGAGlossListItem;
+		internal event GlossListEventHandler InsertMGAGlossListItem;
 
 		protected virtual void OnInsertMGAGlossListItem(GlossListEventArgs glea)
 		{
 			InsertMGAGlossListItem?.Invoke(this, glea);
 		}
 
-		public event EventHandler RemoveMGAGlossListItem;
+		internal event EventHandler RemoveMGAGlossListItem;
 
 		protected virtual void OnRemoveMGAGlossListItem(EventArgs e)
 		{
 			RemoveMGAGlossListItem?.Invoke(this, e);
 		}
 
-		public event EventHandler MoveDownMGAGlossListItem;
+		internal event EventHandler MoveDownMGAGlossListItem;
 
 		protected virtual void OnMoveDownMGAGlossListItem(EventArgs e)
 		{
 			MoveDownMGAGlossListItem?.Invoke(this, e);
 		}
 
-		public event EventHandler MoveUpMGAGlossListItem;
+		internal event EventHandler MoveUpMGAGlossListItem;
 
 		protected virtual void OnMoveUpMGAGlossListItem(EventArgs e)
 		{
@@ -207,7 +207,7 @@ namespace LanguageExplorer.MGA
 			}
 		}
 
-		public void OnInsertButtonClick(object obj, EventArgs ea)
+		internal void OnInsertButtonClick(object obj, EventArgs ea)
 		{
 			ProcessAnySelectedNodes(treeViewGlossListItem.Nodes);
 		}
@@ -678,12 +678,12 @@ namespace LanguageExplorer.MGA
 		/// <summary>
 		/// Get gloss string result
 		/// </summary>
-		public string Result => textBoxResult.Text;
+		internal string Result => textBoxResult.Text;
 
 		/// <summary>
 		/// Get items in the gloss list
 		/// </summary>
-		public ListBox.ObjectCollection Items => glossListBoxGloss.Items;
+		internal ListBox.ObjectCollection Items => glossListBoxGloss.Items;
 		#endregion
 	}
 }

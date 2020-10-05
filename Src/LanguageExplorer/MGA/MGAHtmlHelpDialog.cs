@@ -15,7 +15,7 @@ using SIL.LCModel;
 
 namespace LanguageExplorer.MGA
 {
-	public class MGAHtmlHelpDialog : MGADialog
+	internal sealed class MGAHtmlHelpDialog : MGADialog
 	{
 		private GeckoWebBrowser m_browser;
 		private XslCompiledTransform m_xslShowInfoTransform;
@@ -23,7 +23,7 @@ namespace LanguageExplorer.MGA
 		private readonly string m_sHelpHtm = Path.Combine(FwDirectoryFinder.CodeDirectory, string.Format("Language Explorer{0}MGA{0}Help.htm", Path.DirectorySeparatorChar));
 
 		/// <summary />
-		public MGAHtmlHelpDialog(LcmCache cache, IHelpTopicProvider helpTopicProvider, string sMorphemeForm)
+		internal MGAHtmlHelpDialog(LcmCache cache, IHelpTopicProvider helpTopicProvider, string sMorphemeForm)
 			: base(cache, helpTopicProvider, sMorphemeForm)
 		{
 			m_browser = new GeckoWebBrowser

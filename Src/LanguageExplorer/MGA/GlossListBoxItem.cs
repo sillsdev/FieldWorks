@@ -12,12 +12,12 @@ namespace LanguageExplorer.MGA
 	// NB: I'd prefer to subclass XmlNode and override its ToString() class.
 	//     When I tried that, however, it appears that XmlNode is protected and one
 	//     cannot inherit from it.
-	public class GlossListBoxItem
+	internal sealed class GlossListBoxItem
 	{
 		private readonly LcmCache m_cache;
 
 		#region Construction
-		public GlossListBoxItem(LcmCache cache, XmlNode node, string sAfterSeparator, string sComplexNameSeparator, bool fComplexNameFirst)
+		internal GlossListBoxItem(LcmCache cache, XmlNode node, string sAfterSeparator, string sComplexNameSeparator, bool fComplexNameFirst)
 		{
 			Guard.AgainstNull(cache, nameof(cache));
 
@@ -83,47 +83,47 @@ namespace LanguageExplorer.MGA
 		/// <summary>
 		/// Gets the abbreviation of the item.
 		/// </summary>
-		public string Abbrev { get; private set; }
+		internal string Abbrev { get; private set; }
 
 		/// <summary>
 		/// Gets default after separator character for glossing.
 		/// </summary>
-		public string AfterSeparator { get; private set; }
+		internal string AfterSeparator { get; private set; }
 
 		/// <summary>
 		/// Gets flag whether the name of the complex item comes first or not.
 		/// </summary>
-		public bool ComplexNameFirst { get; private set; }
+		internal bool ComplexNameFirst { get; private set; }
 
 		/// <summary>
 		/// Gets default separator character to occur after a complex name in glossing.
 		/// </summary>
-		public string ComplexNameSeparator { get; private set; }
+		internal string ComplexNameSeparator { get; private set; }
 
 		/// <summary>
 		/// Gets flag whether the item is complex or not.
 		/// </summary>
-		public bool IsComplex { get; private set; }
+		internal bool IsComplex { get; private set; }
 
 		/// <summary>
 		/// Gets flag whether the item is a feature value or not.
 		/// </summary>
-		public bool IsValue { get; private set; }
+		internal bool IsValue { get; private set; }
 
 		/// <summary>
 		/// Gets the MoGlossItem of the item.
 		/// </summary>
-		public IMoGlossItem MoGlossItem { get; }
+		internal IMoGlossItem MoGlossItem { get; }
 
 		/// <summary>
 		/// Gets the term definition of the item.
 		/// </summary>
-		public string Term { get; private set; }
+		internal string Term { get; private set; }
 
 		/// <summary>
 		/// Gets/sets the XmlNode of the item.
 		/// </summary>
-		public XmlNode XmlNode { get; set; }
+		internal XmlNode XmlNode { get; set; }
 
 		#endregion
 		public override string ToString()

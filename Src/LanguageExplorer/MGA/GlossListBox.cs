@@ -9,7 +9,7 @@ using System.Windows.Forms;
 namespace LanguageExplorer.MGA
 {
 	/// <summary />
-	public class GlossListBox : ListBox
+	internal sealed class GlossListBox : ListBox
 	{
 		private MGADialog m_MGAForm;
 

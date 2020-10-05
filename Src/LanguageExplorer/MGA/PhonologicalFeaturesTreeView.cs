@@ -10,7 +10,7 @@ using SIL.LCModel.Core.Text;
 namespace LanguageExplorer.MGA
 {
 	/// <summary />
-	internal class PhonologicalFeaturesTreeView : GlossListTreeView
+	internal sealed class PhonologicalFeaturesTreeView : GlossListTreeView
 	{
 		protected override TreeNode CreateNewNode(XmlNode currentNode, string sType, StringBuilder sbNode, string sTerm)
 		{
