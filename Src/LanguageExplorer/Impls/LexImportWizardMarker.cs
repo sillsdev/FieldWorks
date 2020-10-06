@@ -779,7 +779,7 @@ namespace LanguageExplorer.Impls
 				}
 				else if (field.ID == "var")
 				{
-					lblFunction.Text = LanguageExplorerControls.ksVariantType;
+					lblFunction.Text = LanguageExplorerResources.ksVariantType;
 					// fill the comboBox with the names of the Variant objects
 					foreach (var let in m_cache.LangProject.LexDbOA.VariantEntryTypesOA.ReallyReallyAllPossibilities)
 					{
@@ -788,7 +788,7 @@ namespace LanguageExplorer.Impls
 				}
 				else if (field.ID == "sub")
 				{
-					lblFunction.Text = LanguageExplorerControls.ksComplexFormType;
+					lblFunction.Text = LanguageExplorerResources.ksComplexFormType;
 					// fill the comboBox with the names of the Complex Form objects
 					foreach (var let in m_cache.LangProject.LexDbOA.ComplexEntryTypesOA.ReallyReallyAllPossibilities)
 					{

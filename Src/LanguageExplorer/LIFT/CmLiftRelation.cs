@@ -11,23 +11,23 @@ namespace LanguageExplorer.LIFT
 	/// This class implements "relation" from the LIFT standard.
 	/// It relates to LexRelation or LexEntryRef in the FieldWorks model.
 	/// </summary>
-	public class CmLiftRelation : LiftObject, ICmLiftObject
+	internal sealed class CmLiftRelation : LiftObject
 	{
-		public CmLiftRelation()
+		internal CmLiftRelation()
 		{
 			Order = -1;
 		}
 
-		public ICmObject CmObject { get; set; }
-
-		public string Type { get; set; }
-
-		public string Ref { get; set; }
-
-		public int Order { get; set; }
-
-		public LiftMultiText Usage { get; set; } // safe XML
-
 		public override string XmlTag => "relation";
+
+		internal ICmObject CmObject { get; set; }
+
+		internal string Type { get; set; }
+
+		internal string Ref { get; set; }
+
+		internal int Order { get; set; }
+
+		internal LiftMultiText Usage { get; set; } // safe XML
 	}
 }

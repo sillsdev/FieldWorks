@@ -10,19 +10,19 @@ namespace LanguageExplorer.LIFT
 	/// This class implements "note" from the LIFT standard.
 	/// It doesn't really correspond to any CmObject in the FieldWorks model.
 	/// </summary>
-	public class CmLiftNote : LiftObject
+	internal sealed class CmLiftNote : LiftObject
 	{
 		/// <summary />
-		public CmLiftNote(string type, LiftMultiText contents)
+		internal CmLiftNote(string type, LiftMultiText contents)
 		{
 			Type = type;
 			Content = contents;
 		}
 
-		public string Type { get; set; }
-
-		public LiftMultiText Content { get; set; } // safe XML
-
 		public override string XmlTag => "note";
+
+		internal string Type { get; set; }
+
+		internal LiftMultiText Content { get; set; } // safe XML
 	}
 }

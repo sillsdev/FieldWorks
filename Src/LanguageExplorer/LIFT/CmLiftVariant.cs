@@ -13,26 +13,26 @@ namespace LanguageExplorer.LIFT
 	/// FieldWorks understands to be a Variant.)
 	/// It corresponds to MoForm (or one of its subclasses) in the FieldWorks model.
 	/// </summary>
-	public class CmLiftVariant : LiftObject, ICmLiftObject
+	internal sealed class CmLiftVariant : LiftObject
 	{
-		public CmLiftVariant()
+		internal CmLiftVariant()
 		{
 			Relations = new List<CmLiftRelation>();
 			Pronunciations = new List<CmLiftPhonetic>();
 		}
 
-		public ICmObject CmObject { get; set; }
-
-		public string Ref { get; set; }
-
-		public LiftMultiText Form { get; set; } // safe XML
-
-		public List<CmLiftPhonetic> Pronunciations { get; }
-
-		public List<CmLiftRelation> Relations { get; }
-
-		public string RawXml { get; set; }
-
 		public override string XmlTag => "variant";
+
+		internal ICmObject CmObject { get; set; }
+
+		internal string Ref { get; set; }
+
+		internal LiftMultiText Form { get; set; } // safe XML
+
+		internal List<CmLiftPhonetic> Pronunciations { get; }
+
+		internal List<CmLiftRelation> Relations { get; }
+
+		internal string RawXml { get; set; }
 	}
 }

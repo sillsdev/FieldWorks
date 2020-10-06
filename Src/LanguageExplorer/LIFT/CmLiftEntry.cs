@@ -13,9 +13,9 @@ namespace LanguageExplorer.LIFT
 	/// This class implements "entry" from the LIFT standard.
 	/// It corresponds to LexEntry in the FieldWorks model.
 	/// </summary>
-	public class CmLiftEntry : LiftObject, ICmLiftObject
+	internal sealed class CmLiftEntry : LiftObject
 	{
-		public CmLiftEntry()
+		private CmLiftEntry()
 		{
 			Etymologies = new List<CmLiftEtymology>();
 			Relations = new List<CmLiftRelation>();
@@ -27,51 +27,45 @@ namespace LanguageExplorer.LIFT
 			DateDeleted = DateTime.MinValue;
 		}
 
-		public CmLiftEntry(Extensible info, Guid guid, int order, FlexLiftMerger merger)
+		internal CmLiftEntry(Extensible info, Guid guid, int order, FlexLiftMerger merger)
+			: this()
 		{
-			Etymologies = new List<CmLiftEtymology>();
-			Relations = new List<CmLiftRelation>();
-			Notes = new List<CmLiftNote>();
-			Senses = new List<CmLiftSense>();
-			Variants = new List<CmLiftVariant>();
-			Pronunciations = new List<CmLiftPhonetic>();
 			Id = info.Id;
 			Guid = guid;
 			CmObject = guid == Guid.Empty ? null : merger.GetObjectForGuid(guid);
 			DateCreated = info.CreationTime;
 			DateModified = info.ModificationTime;
-			DateDeleted = DateTime.MinValue;
-			Order = order;
+			Order = order; // Reset from default constructor tp provided value.
 		}
-
-		public ICmObject CmObject { get; set; }
-
-		public int Order { get; set; }
-
-		public DateTime DateDeleted { get; set; }
-
-		public LiftMultiText LexicalForm { get; set; } // safe-XML
-
-		public LiftMultiText CitationForm { get; set; } // safe-XML
-
-		public List<CmLiftPhonetic> Pronunciations { get; }
-
-		public List<CmLiftVariant> Variants { get; }
-
-		public List<CmLiftSense> Senses { get; }
-
-		public List<CmLiftNote> Notes { get; }
-
-		public List<CmLiftRelation> Relations { get; }
-
-		public List<CmLiftEtymology> Etymologies { get; }
 
 		public override string XmlTag => "entry";
 
-		public string EntryType { get; set; }
+		internal ICmObject CmObject { get; set; }
 
-		public string MinorEntryCondition { get; set; }
+		internal int Order { get; set; }
 
-		public bool ExcludeAsHeadword { get; set; }
+		internal DateTime DateDeleted { get; set; }
+
+		internal LiftMultiText LexicalForm { get; set; } // safe-XML
+
+		internal LiftMultiText CitationForm { get; set; } // safe-XML
+
+		internal List<CmLiftPhonetic> Pronunciations { get; }
+
+		internal List<CmLiftVariant> Variants { get; }
+
+		internal List<CmLiftSense> Senses { get; }
+
+		internal List<CmLiftNote> Notes { get; }
+
+		internal List<CmLiftRelation> Relations { get; }
+
+		internal List<CmLiftEtymology> Etymologies { get; }
+
+		internal string EntryType { get; set; }
+
+		internal string MinorEntryCondition { get; set; }
+
+		internal bool ExcludeAsHeadword { get; set; }
 	}
 }

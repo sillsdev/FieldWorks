@@ -12,7 +12,6 @@ using System.Xml.Linq;
 using System.Xml.XPath;
 using Ionic.Zip;
 using LanguageExplorer.LIFT;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FwCoreDlgs.FileDialog;
 using SIL.LCModel;
 using SIL.LCModel.Infrastructure;

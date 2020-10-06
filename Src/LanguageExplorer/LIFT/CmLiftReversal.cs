@@ -11,18 +11,18 @@ namespace LanguageExplorer.LIFT
 	/// This class implements "reversal" from the LIFT standard.
 	/// It roughly corresponds to ReversalIndexEntry in the FieldWorks model.
 	/// </summary>
-	public class CmLiftReversal : LiftObject, ICmLiftObject
+	internal sealed class CmLiftReversal : LiftObject
 	{
-		public ICmObject CmObject { get; set; }
-
-		public string Type { get; set; }
-
-		public LiftMultiText Form { get; set; } // safe XML
-
-		public CmLiftReversal Main { get; set; }
-
-		public LiftGrammaticalInfo GramInfo { get; set; }
-
 		public override string XmlTag => "reversal";
+
+		internal ICmObject CmObject { get; set; }
+
+		internal string Type { get; set; }
+
+		internal LiftMultiText Form { get; set; } // safe XML
+
+		internal CmLiftReversal Main { get; set; }
+
+		internal LiftGrammaticalInfo GramInfo { get; set; }
 	}
 }

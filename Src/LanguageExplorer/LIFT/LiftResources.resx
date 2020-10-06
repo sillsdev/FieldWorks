@@ -1,0 +1,348 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="ksAddedItem" xml:space="preserve">
+    <value>Added Item</value>
+  </data>
+  <data name="ksAddedToCombinedCollection" xml:space="preserve">
+    <value>{0} added to the {1} of {2}.</value>
+  </data>
+  <data name="ksAnthropologyCodesAdded" xml:space="preserve">
+    <value>The following Anthropology Codes were added to the language project:</value>
+  </data>
+  <data name="ksCannotParseFeature" xml:space="preserve">
+    <value>Cannot parse the feature string</value>
+  </data>
+  <data name="ksClickOnHyperLinks" xml:space="preserve">
+    <value>&lt;b&gt;Tip:&lt;/b&gt; click on the hyperlinks to view the entries in question.</value>
+  </data>
+  <data name="ksCombinedCollections" xml:space="preserve">
+    <value>Combined Collections</value>
+  </data>
+  <data name="ksComplexFormTypesAdded" xml:space="preserve">
+    <value>The following complex form types were added to the language project:</value>
+  </data>
+  <data name="ksConditionsAdded" xml:space="preserve">
+    <value>The following Conditions were added to the language project:</value>
+  </data>
+  <data name="ksConflictingField" xml:space="preserve">
+    <value>Conflicting field</value>
+  </data>
+  <data name="ksConflictsResultedInDup" xml:space="preserve">
+    <value>The following conflicts resulted in duplicated entries or senses:</value>
+  </data>
+  <data name="ksContinueLiftImportQuestion" xml:space="preserve">
+    <value>Not all validation errors prevent successful importing.  Do you want to continue with the LIFT import?</value>
+  </data>
+  <data name="ksCustomFieldsAdded" xml:space="preserve">
+    <value>The following custom fields were added to the project:</value>
+  </data>
+  <data name="ksDeletingUnwantedEntries" xml:space="preserve">
+    <value>Deleting unwanted entries and senses</value>
+  </data>
+  <data name="ksDialectsAdded" xml:space="preserve">
+    <value>The following Dialect labels were added to the language project:</value>
+  </data>
+  <data name="ksDomainTypesAdded" xml:space="preserve">
+    <value>The following Domain Types were added to the language project:</value>
+  </data>
+  <data name="ksDuplicateIdValue" xml:space="preserve">
+    <value>A duplicate id value for a {0} was encountered: {1}</value>
+  </data>
+  <data name="ksEntriesImportCounts" xml:space="preserve">
+    <value>{0} entries processed on import, adding {1} entries and {2} senses to the project, and deleting {3} entries.</value>
+  </data>
+  <data name="ksEntry" xml:space="preserve">
+    <value>Entry</value>
+  </data>
+  <data name="ksEntryInvalidRef" xml:space="preserve">
+    <value>A relation in the entry had an invalid reference value.</value>
+  </data>
+  <data name="ksEnvironmentsAdded" xml:space="preserve">
+    <value>The following Environments were added to the language project:</value>
+  </data>
+  <data name="ksErrorMessage" xml:space="preserve">
+    <value>Error message</value>
+  </data>
+  <data name="ksErrorsEncounteredHeader" xml:space="preserve">
+    <value>The following errors were encountered during import:</value>
+  </data>
+  <data name="ksExceptionFeaturesAdded" xml:space="preserve">
+    <value>The following Exception "Features" were added to the language project:</value>
+  </data>
+  <data name="ksFeatureTypesAdded" xml:space="preserve">
+    <value>The following Feature Types were added to the language project:</value>
+  </data>
+  <data name="ksField" xml:space="preserve">
+    <value>Field</value>
+  </data>
+  <data name="ksFileNotALIFTFile" xml:space="preserve">
+    <value>The given input file {0} is not a LIFT file.  Expect import to fail!</value>
+  </data>
+  <data name="ksImportLogFor0" xml:space="preserve">
+    <value>Import Log for {0}</value>
+  </data>
+  <data name="ksInflectionalAffixSlotsAdded" xml:space="preserve">
+    <value>The following Inflectional Affix Slots were added to the language project:</value>
+  </data>
+  <data name="ksInflectionClassesAdded" xml:space="preserve">
+    <value>The following Inflection Classes were added to the language project:</value>
+  </data>
+  <data name="ksInflectionFeaturesAdded" xml:space="preserve">
+    <value>The following Inflection Features were added to the language project:</value>
+  </data>
+  <data name="ksInvalidDataImported" xml:space="preserve">
+    <value>The following invalid data was imported:</value>
+  </data>
+  <data name="ksInvalidLiftFile" xml:space="preserve">
+    <value>The given input file {0}, produced by {1}, does not validate against the current LIFT standard.  Report this to the creators of that program as an export bug.  Import may fail.</value>
+  </data>
+  <data name="ksInvalidMigratedLiftFile" xml:space="preserve">
+    <value>The given input file {0}, produced by {1}, does not migrate into a valid LIFT file according to the current LIFT standard.  Report this to the creators of that program, as either an export or migration bug.  Import may fail.</value>
+  </data>
+  <data name="ksInvalidReference" xml:space="preserve">
+    <value>Invalid Reference</value>
+  </data>
+  <data name="ksInvalidRelationsHeader" xml:space="preserve">
+    <value>The following invalid relations were found in the imported file:</value>
+  </data>
+  <data name="ksInvalidValue" xml:space="preserve">
+    <value>Invalid value</value>
+  </data>
+  <data name="ksLanguagesAdded" xml:space="preserve">
+    <value>The following Languages were added to the language project:</value>
+  </data>
+  <data name="ksLexicalReferenceTypesAdded" xml:space="preserve">
+    <value>The following Lexical Reference Types were added to the language project:</value>
+  </data>
+  <data name="ksLIFTImportProblem" xml:space="preserve">
+    <value>Something went wrong while FieldWorks was attempting to import {0}.
+{1}
+
+A stack dump has been copied to the clipboard.  Please email it and your LIFT file to Flex_Errors@sil.org so that we can improve the program.</value>
+  </data>
+  <data name="ksLoadingVariousLists" xml:space="preserve">
+    <value>Loading various lists for lookup during import...</value>
+  </data>
+  <data name="ksLocationsAdded" xml:space="preserve">
+    <value>The following Locations were added to the language project:</value>
+  </data>
+  <data name="ksMigratingLiftFile" xml:space="preserve">
+    <value>Migrating from LIFT version {0} to version {1}</value>
+  </data>
+  <data name="ksMorphTypesAdded" xml:space="preserve">
+    <value>The following Morph Types were added to the language project:</value>
+  </data>
+  <data name="ksName" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="ksNewDuplicate" xml:space="preserve">
+    <value>New duplicate</value>
+  </data>
+  <data name="ksNonMatchingRelation" xml:space="preserve">
+    <value>The LIFT ranges file had a conflicting value ({0} instead of {1}) for the {2} of the lexical relation {3}. The value in the LIFT file was ignored.</value>
+  </data>
+  <data name="ksOriginal" xml:space="preserve">
+    <value>Original</value>
+  </data>
+  <data name="ksPartsOfSpeechAdded" xml:space="preserve">
+    <value>The following Grammatical Categories were added to the language project:</value>
+  </data>
+  <data name="ksPeopleAdded" xml:space="preserve">
+    <value>The following People were added to the language project:</value>
+  </data>
+  <data name="ksProblemId" xml:space="preserve">
+    <value>A problem was encountered trying to store this id for a {0}: {1}</value>
+  </data>
+  <data name="ksProblemImporting" xml:space="preserve">
+    <value>Problem Importing</value>
+  </data>
+  <data name="ksProcessingRelationLinks" xml:space="preserve">
+    <value>Processing {0} relation links between imported entries</value>
+  </data>
+  <data name="ksPublicationTypesAdded" xml:space="preserve">
+    <value>The following Publication Types were added to the language project:</value>
+  </data>
+  <data name="ksReferenceCount" xml:space="preserve">
+    <value>Reference Count</value>
+  </data>
+  <data name="ksRelationType" xml:space="preserve">
+    <value>Relation Type</value>
+  </data>
+  <data name="ksSemanticDomainsAdded" xml:space="preserve">
+    <value>The following Semantic Domains were added to the language project:</value>
+  </data>
+  <data name="ksSense" xml:space="preserve">
+    <value>Sense</value>
+  </data>
+  <data name="ksSenseInvalidRef" xml:space="preserve">
+    <value>A relation in a sense ({0}) had an invalid reference value.</value>
+  </data>
+  <data name="ksSenseTypesAdded" xml:space="preserve">
+    <value>The following Sense Types were added to the language project:</value>
+  </data>
+  <data name="ksSettingCollectionRelationLinks" xml:space="preserve">
+    <value>Setting {0} collection type relation links</value>
+  </data>
+  <data name="ksSettingEntryModificationTimes" xml:space="preserve">
+    <value>Setting entry modification times</value>
+  </data>
+  <data name="ksSettingTreeRelationLinks" xml:space="preserve">
+    <value>Setting {0} tree type relation links</value>
+  </data>
+  <data name="ksStatusValuesAdded" xml:space="preserve">
+    <value>The following Status values were added to the language project:</value>
+  </data>
+  <data name="ksStemNamesAdded" xml:space="preserve">
+    <value>The following Stem Names were added to the project:</value>
+  </data>
+  <data name="ksStoringLexicalEntryReferences" xml:space="preserve">
+    <value>Storing {0} lexical entry references for complex entries and variants</value>
+  </data>
+  <data name="ksTranslationTypesAdded" xml:space="preserve">
+    <value>The following Translation Types were added to the language project:</value>
+  </data>
+  <data name="ksType" xml:space="preserve">
+    <value>Type</value>
+  </data>
+  <data name="ksUnknownMorphTypes" xml:space="preserve">
+    <value>The following unknown morph-types were found in the imported file:</value>
+  </data>
+  <data name="ksUsageTypesAdded" xml:space="preserve">
+    <value>The following Usage Types were added to the language project:</value>
+  </data>
+  <data name="ksValidatingInputFile" xml:space="preserve">
+    <value>Validating the input file</value>
+  </data>
+  <data name="ksVariantTypesAdded" xml:space="preserve">
+    <value>The following variant types were added to the language project:</value>
+  </data>
+  <data name="ksWritingAccumulatedResidue" xml:space="preserve">
+    <value>Writing accumulated residue</value>
+  </data>
+  <data name="ksWritingSystemsAdded" xml:space="preserve">
+    <value>The following Writing Systems were added to the language project:</value>
+  </data>
+  <data name="openFileDialog1_Filter" xml:space="preserve">
+    <value>LIFT files|*.lift|XML files|*.xml|All files|*.*</value>
+  </data>
+  <data name="openFileDialog1_Title" xml:space="preserve">
+    <value>Open Lexicon Interchange FormaT File</value>
+  </data>
+</root>

@@ -1506,6 +1506,15 @@ namespace LanguageExplorer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Subentry/Complex Form Type :.
+        /// </summary>
+        internal static string ksComplexFormType {
+            get {
+                return ResourceManager.GetString("ksComplexFormType", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Complex Form Types:.
         /// </summary>
         internal static string ksComplexFormTypes {
@@ -2417,6 +2426,24 @@ namespace LanguageExplorer {
         internal static string ksIllegalXmlChars {
             get {
                 return ResourceManager.GetString("ksIllegalXmlChars", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Importing from {0}.
+        /// </summary>
+        internal static string ksImportingFrom0 {
+            get {
+                return ResourceManager.GetString("ksImportingFrom0", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Importing {0} took {1}.{2} seconds.
+        /// </summary>
+        internal static string ksImportingTookTime {
+            get {
+                return ResourceManager.GetString("ksImportingTookTime", resourceCulture);
             }
         }
         
@@ -5027,6 +5054,15 @@ namespace LanguageExplorer {
         internal static string ksVariantOf_ {
             get {
                 return ResourceManager.GetString("ksVariantOf_", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Variant Type :.
+        /// </summary>
+        internal static string ksVariantType {
+            get {
+                return ResourceManager.GetString("ksVariantType", resourceCulture);
             }
         }
         

@@ -9,7 +9,6 @@ using System.Text;
 using System.Threading;
 using System.Windows.Forms;
 using System.Xml;
-using LanguageExplorer.Controls;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FwCoreDlgs;
 using SIL.FieldWorks.FwCoreDlgs.BackupRestore;
@@ -26,7 +25,7 @@ using FileUtils = SIL.LCModel.Utils.FileUtils;
 
 namespace LanguageExplorer.LIFT
 {
-	public partial class LiftImportDlg : Form, IFwExtension, IImportForm
+	internal sealed partial class LiftImportDlg : Form, IFwExtension, IImportForm
 	{
 		private LcmCache m_cache;
 		private IPropertyTable m_propertyTable;
@@ -34,11 +33,11 @@ namespace LanguageExplorer.LIFT
 		private string m_sLogFile;      // name of HTML log file (if successful).
 		private MergeStyle m_msImport = MergeStyle.MsKeepOld;
 
-		public LiftImportDlg()
+		internal LiftImportDlg()
 		{
 			InitializeComponent();
-			openFileDialog1.Title = LanguageExplorerControls.openFileDialog1_Title;
-			openFileDialog1.Filter = FileUtils.FileDialogFilterCaseInsensitiveCombinations(LanguageExplorerControls.openFileDialog1_Filter);
+			openFileDialog1.Title = LiftResources.openFileDialog1_Title;
+			openFileDialog1.Filter = FileUtils.FileDialogFilterCaseInsensitiveCombinations(LiftResources.openFileDialog1_Filter);
 		}
 
 		/// <summary>
@@ -83,7 +82,7 @@ namespace LanguageExplorer.LIFT
 		/// <summary>
 		/// (IFwImportDialog)Shows the dialog as a modal dialog
 		/// </summary>
-		public new DialogResult Show(IWin32Window owner)
+		internal new DialogResult Show(IWin32Window owner)
 		{
 			return ShowDialog(owner);
 		}
@@ -148,7 +147,7 @@ namespace LanguageExplorer.LIFT
 					progressDlg.Maximum = 100;
 					progressDlg.AllowCancel = true;
 					progressDlg.Restartable = true;
-					progressDlg.Title = string.Format(LanguageExplorerControls.ksImportingFrom0, tbPath.Text);
+					progressDlg.Title = string.Format(LanguageExplorerResources.ksImportingFrom0, tbPath.Text);
 					try
 					{
 						m_cache.DomainDataByFlid.BeginNonUndoableTask();
@@ -209,7 +208,7 @@ namespace LanguageExplorer.LIFT
 				if (fMigrationNeeded)
 				{
 					var sOldVersion = Validator.GetLiftVersion(sTempOrigFile);
-					m_progressDlg.Message = string.Format(LanguageExplorerControls.ksMigratingLiftFile, sOldVersion, Validator.LiftVersion);
+					m_progressDlg.Message = string.Format(LiftResources.ksMigratingLiftFile, sOldVersion, Validator.LiftVersion);
 					sFilename = Migrator.MigrateToLatestVersion(sTempOrigFile);
 				}
 				else
@@ -222,7 +221,7 @@ namespace LanguageExplorer.LIFT
 					return null;
 				}
 				//Import the LIFT file and ranges file.
-				m_progressDlg.Message = LanguageExplorerControls.ksLoadingVariousLists;
+				m_progressDlg.Message = LiftResources.ksLoadingVariousLists;
 				var flexImporter = new FlexLiftMerger(m_cache, m_msImport, m_chkTrustModTimes.Checked);
 				var parser = new LiftParser<LiftObject, CmLiftEntry, CmLiftSense, CmLiftExample>(flexImporter);
 				parser.SetTotalNumberSteps += parser_SetTotalNumberSteps;
@@ -251,7 +250,7 @@ namespace LanguageExplorer.LIFT
 			}
 			catch (Exception error)
 			{
-				var sMsg = string.Format(LanguageExplorerControls.ksLIFTImportProblem, sOrigFile, error.Message);
+				var sMsg = string.Format(LiftResources.ksLIFTImportProblem, sOrigFile, error.Message);
 				try
 				{
 					var bldr = new StringBuilder();
@@ -274,7 +273,7 @@ namespace LanguageExplorer.LIFT
 				catch
 				{
 				}
-				MessageBox.Show(sMsg, LanguageExplorerControls.ksProblemImporting, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+				MessageBox.Show(sMsg, LiftResources.ksProblemImporting, MessageBoxButtons.OK, MessageBoxIcon.Warning);
 				return null;
 			}
 		}
@@ -283,7 +282,7 @@ namespace LanguageExplorer.LIFT
 		{
 			try
 			{
-				m_progressDlg.Message = LanguageExplorerControls.ksValidatingInputFile;
+				m_progressDlg.Message = LiftResources.ksValidatingInputFile;
 				Validator.CheckLiftWithPossibleThrow(sFilename);
 				return true;
 			}
@@ -293,21 +292,21 @@ namespace LanguageExplorer.LIFT
 				string sMsg;
 				if (sProducer == null)
 				{
-					sMsg = string.Format(LanguageExplorerControls.ksFileNotALIFTFile, sOrigFile);
+					sMsg = string.Format(LiftResources.ksFileNotALIFTFile, sOrigFile);
 				}
 				else if (sFilename == sOrigFile)
 				{
-					sMsg = string.Format(LanguageExplorerControls.ksInvalidLiftFile, sOrigFile, sProducer);
+					sMsg = string.Format(LiftResources.ksInvalidLiftFile, sOrigFile, sProducer);
 				}
 				else
 				{
-					sMsg = string.Format(LanguageExplorerControls.ksInvalidMigratedLiftFile, sOrigFile, sProducer);
+					sMsg = string.Format(LiftResources.ksInvalidMigratedLiftFile, sOrigFile, sProducer);
 				}
 				// Show the pretty yellow semi-crash dialog box, with instructions for the
 				// user to report the bug.  Then ask the user whether to continue.
 				var app = m_propertyTable.GetValue<IApp>(LanguageExplorerConstants.App);
 				ErrorReporter.ReportException(new Exception(sMsg, lfe), app.SettingsKey, app.SupportEmailAddress, this, false);
-				return MessageBox.Show(LanguageExplorerControls.ksContinueLiftImportQuestion, LanguageExplorerControls.ksProblemImporting, MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes;
+				return MessageBox.Show(LiftResources.ksContinueLiftImportQuestion, LiftResources.ksProblemImporting, MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes;
 			}
 		}
 

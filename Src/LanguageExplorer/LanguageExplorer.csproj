@@ -370,6 +370,11 @@
     <Compile Include="IInterlinearSlice.cs" />
     <Compile Include="IMorphTypeAtomicReferenceSlice.cs" />
     <Compile Include="ISandboxBase.cs" />
+    <Compile Include="LIFT\LiftResources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>LiftResources.resx</DependentUpon>
+    </Compile>
     <Compile Include="PublicationActivator.cs" />
     <Compile Include="IMSAReferenceComboBoxSlice.cs" />
     <Compile Include="IMultiStringSlice.cs" />
@@ -387,7 +392,7 @@
       <DependentUpon>FwHelpButton.cs</DependentUpon>
     </Compile>
     <Compile Include="Controls\IFormReplacementNeeded.cs" />
-    <Compile Include="Controls\IImportForm.cs" />
+    <Compile Include="IImportForm.cs" />
     <Compile Include="Controls\DetailControls\Slices\InsertOption.cs" />
     <Compile Include="IPhEnvSliceCommon.cs" />
     <Compile Include="Controls\IPreferredTargetAdjuster.cs" />
@@ -522,7 +527,7 @@
     <Compile Include="SeparatorToolStripBundle.cs" />
     <Compile Include="SfmToXml\IsSfmFile.cs" />
     <Compile Include="SfmToXml\SfmFile.cs" />
-    <Compile Include="Controls\ProgressHandler.cs" />
+    <Compile Include="ProgressHandler.cs" />
     <Compile Include="Impls\ILexImportOnlyForTesting.cs" />
     <Compile Include="Impls\LexImportCustomField.cs" />
     <Compile Include="Impls\LexImportField.cs" />
@@ -861,7 +866,6 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Controls\FeatureTreeNode.cs" />
-    <Compile Include="LIFT\ICmLiftObject.cs" />
     <Compile Include="Controls\DetailControls\InsertVariantDlg.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -2671,6 +2675,10 @@
     <EmbeddedResource Include="Controls\DetailControls\ViewBase.resx">
       <DependentUpon>ViewBase.cs</DependentUpon>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="LIFT\LiftResources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>LiftResources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="SendReceive\ObtainProjectMethodResources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

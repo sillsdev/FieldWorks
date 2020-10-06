@@ -14,7 +14,6 @@ using System.Windows.Forms;
 using System.Xml;
 using System.Xml.Linq;
 using System.Xml.XPath;
-using LanguageExplorer.Controls;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Application;
@@ -36,13 +35,13 @@ namespace LanguageExplorer.LIFT
 	/// This class is called by the LiftParser, as it encounters each element of a lift file.
 	/// There is at least one other ILexiconMerger implementation, used in WeSay.
 	/// </summary>
-	public class FlexLiftMerger : ILexiconMerger<LiftObject, CmLiftEntry, CmLiftSense, CmLiftExample>
+	internal sealed class FlexLiftMerger : ILexiconMerger<LiftObject, CmLiftEntry, CmLiftSense, CmLiftExample>
 	{
 		private readonly LcmCache m_cache;
 		private ITsString m_tssEmpty;
-		public const string LiftDateTimeFormat = "yyyy-MM-ddTHH:mm:ssK";    // wants UTC, but works with Local
+		internal const string LiftDateTimeFormat = "yyyy-MM-ddTHH:mm:ssK";    // wants UTC, but works with Local
 		private readonly WritingSystemManager m_wsManager;
-		readonly Regex m_regexGuid = new Regex("[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+		private readonly Regex m_regexGuid = new Regex("[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}", RegexOptions.IgnoreCase | RegexOptions.Compiled);
 		private ConflictingData m_cdConflict;
 		private List<ConflictingData> m_rgcdConflicts = new List<ConflictingData>();
 		private List<EticCategory> m_rgcats = new List<EticCategory>();
@@ -229,7 +228,7 @@ namespace LanguageExplorer.LIFT
 		/// <summary>
 		/// Get or set the LIFT file being imported (merged from).
 		/// </summary>
-		public string LiftFile
+		internal string LiftFile
 		{
 			get { return m_sLiftFile; }
 			set
@@ -467,6 +466,7 @@ namespace LanguageExplorer.LIFT
 				}
 			}
 		}
+
 		private void InitializePossibilityMaps()
 		{
 			if (m_cache.LangProject.PartsOfSpeechOA != null)
@@ -2113,12 +2113,12 @@ namespace LanguageExplorer.LIFT
 				{
 					if (cmo != cmo2)
 					{
-						msg = string.Format(LanguageExplorerControls.ksDuplicateIdValue, cmo.ClassName, id);
+						msg = string.Format(LiftResources.ksDuplicateIdValue, cmo.ClassName, id);
 					}
 				}
 				if (string.IsNullOrEmpty(msg))
 				{
-					msg = string.Format(LanguageExplorerControls.ksProblemId, cmo.ClassName, id);
+					msg = string.Format(LiftResources.ksProblemId, cmo.ClassName, id);
 				}
 				m_rgErrorMsgs.Add(msg);
 			}
@@ -4800,7 +4800,7 @@ namespace LanguageExplorer.LIFT
 
 		private void LogInvalidFeatureString(ILexEntry le, string sInflectionFeature, int flid)
 		{
-			var bad = new InvalidData(LanguageExplorerControls.ksCannotParseFeature, le.Guid, flid, sInflectionFeature, 0, m_cache, this);
+			var bad = new InvalidData(LiftResources.ksCannotParseFeature, le.Guid, flid, sInflectionFeature, 0, m_cache, this);
 			if (!m_rgInvalidData.Contains(bad))
 			{
 				m_rgInvalidData.Add(bad);
@@ -6820,7 +6820,7 @@ namespace LanguageExplorer.LIFT
 		/// <summary>
 		/// Is this entry an affix type?
 		/// </summary>
-		public bool IsAffixType(ILexEntry le)
+		internal bool IsAffixType(ILexEntry le)
 		{
 			var lfForm = le.LexemeFormOA;
 			var cTypes = 0;
@@ -7177,7 +7177,7 @@ namespace LanguageExplorer.LIFT
 		/// <summary>
 		/// Summarize what we added to the known lists.
 		/// </summary>
-		public string DisplayNewListItems(string sLIFTFile, int cEntriesRead)
+		internal string DisplayNewListItems(string sLIFTFile, int cEntriesRead)
 		{
 			var sDir = Path.GetDirectoryName(sLIFTFile);
 			var sLogFile = $"{Path.GetFileNameWithoutExtension(sLIFTFile)}-ImportLog.htm";
@@ -7185,7 +7185,7 @@ namespace LanguageExplorer.LIFT
 			var dtEnd = DateTime.Now;
 			using (var writer = new StreamWriter(sHtmlFile, false, System.Text.Encoding.UTF8))
 			{
-				var sTitle = string.Format(LanguageExplorerControls.ksImportLogFor0, sLIFTFile);
+				var sTitle = string.Format(LiftResources.ksImportLogFor0, sLIFTFile);
 				writer.WriteLine("<html>");
 				writer.WriteLine("<head>");
 				writer.WriteLine("<title>{0}</title>", sTitle);
@@ -7195,38 +7195,38 @@ namespace LanguageExplorer.LIFT
 				var deltaTicks = dtEnd.Ticks - m_dtStart.Ticks; // number of 100-nanosecond intervals
 				var deltaMsec = (int)((deltaTicks + 5000L) / 10000L);   // round off to milliseconds
 				var deltaSec = deltaMsec / 1000;
-				var sDeltaTime = string.Format(LanguageExplorerControls.ksImportingTookTime, Path.GetFileName(sLIFTFile), deltaSec, deltaMsec % 1000);
+				var sDeltaTime = string.Format(LanguageExplorerResources.ksImportingTookTime, Path.GetFileName(sLIFTFile), deltaSec, deltaMsec % 1000);
 				writer.WriteLine("<p>{0}</p>", sDeltaTime);
-				var sEntryCounts = string.Format(LanguageExplorerControls.ksEntriesImportCounts, cEntriesRead, m_cEntriesAdded, m_cSensesAdded, m_cEntriesDeleted);
+				var sEntryCounts = string.Format(LiftResources.ksEntriesImportCounts, cEntriesRead, m_cEntriesAdded, m_cSensesAdded, m_cEntriesDeleted);
 				writer.WriteLine("<p><h3>{0}</h3></p>", sEntryCounts);
-				ListNewPossibilities(writer, LanguageExplorerControls.ksPartsOfSpeechAdded, m_rgnewPos);
-				ListNewPossibilities(writer, LanguageExplorerControls.ksMorphTypesAdded, m_rgnewMmt);
-				ListNewLexEntryTypes(writer, LanguageExplorerControls.ksComplexFormTypesAdded, m_rgnewComplexFormType);
-				ListNewLexEntryTypes(writer, LanguageExplorerControls.ksVariantTypesAdded, m_rgnewVariantType);
-				ListNewPossibilities(writer, LanguageExplorerControls.ksSemanticDomainsAdded, m_rgnewSemDom);
-				ListNewPossibilities(writer, LanguageExplorerControls.ksTranslationTypesAdded, m_rgnewTransType);
-				ListNewPossibilities(writer, LanguageExplorerControls.ksConditionsAdded, m_rgnewCondition);
-				ListNewPossibilities(writer, LanguageExplorerControls.ksAnthropologyCodesAdded, m_rgnewAnthroCode);
-				ListNewPossibilities(writer, LanguageExplorerControls.ksDialectsAdded, m_rgnewDialects);
-				ListNewPossibilities(writer, LanguageExplorerControls.ksDomainTypesAdded, m_rgnewDomainType);
-				ListNewPossibilities(writer, LanguageExplorerControls.ksSenseTypesAdded, m_rgnewSenseType);
-				ListNewPossibilities(writer, LanguageExplorerControls.ksPeopleAdded, m_rgnewPerson);
-				ListNewPossibilities(writer, LanguageExplorerControls.ksStatusValuesAdded, m_rgnewStatus);
-				ListNewPossibilities(writer, LanguageExplorerControls.ksUsageTypesAdded, m_rgnewUsageType);
-				ListNewPossibilities(writer, LanguageExplorerControls.ksLocationsAdded, m_rgnewLocation);
-				ListNewPossibilities(writer, LanguageExplorerControls.ksLanguagesAdded, m_rgnewLanguage);
-				ListNewEnvironments(writer, LanguageExplorerControls.ksEnvironmentsAdded, m_rgnewEnvirons);
-				ListNewPossibilities(writer, LanguageExplorerControls.ksLexicalReferenceTypesAdded, m_rgnewLexRefTypes);
-				ListNewWritingSystems(writer, LanguageExplorerControls.ksWritingSystemsAdded, m_addedWss);
-				ListNewInflectionClasses(writer, LanguageExplorerControls.ksInflectionClassesAdded, m_rgnewInflClasses);
-				ListNewSlots(writer, LanguageExplorerControls.ksInflectionalAffixSlotsAdded, m_rgnewSlots);
-				ListNewPossibilities(writer, LanguageExplorerControls.ksExceptionFeaturesAdded, m_rgnewExceptFeat);
-				ListNewInflectionalFeatures(writer, LanguageExplorerControls.ksInflectionFeaturesAdded, m_rgnewFeatDefn);
-				ListNewFeatureTypes(writer, LanguageExplorerControls.ksFeatureTypesAdded, m_rgnewFeatStrucType);
-				ListNewStemNames(writer, LanguageExplorerControls.ksStemNamesAdded, m_rgnewStemName);
-				ListNewPossibilities(writer, LanguageExplorerControls.ksPublicationTypesAdded, m_rgnewPublicationType);
-				ListNewCustomFields(writer, LanguageExplorerControls.ksCustomFieldsAdded, m_rgnewCustomFields);
-				ListConflictsFound(writer, LanguageExplorerControls.ksConflictsResultedInDup, m_rgcdConflicts);
+				ListNewPossibilities(writer, LiftResources.ksPartsOfSpeechAdded, m_rgnewPos);
+				ListNewPossibilities(writer, LiftResources.ksMorphTypesAdded, m_rgnewMmt);
+				ListNewLexEntryTypes(writer, LiftResources.ksComplexFormTypesAdded, m_rgnewComplexFormType);
+				ListNewLexEntryTypes(writer, LiftResources.ksVariantTypesAdded, m_rgnewVariantType);
+				ListNewPossibilities(writer, LiftResources.ksSemanticDomainsAdded, m_rgnewSemDom);
+				ListNewPossibilities(writer, LiftResources.ksTranslationTypesAdded, m_rgnewTransType);
+				ListNewPossibilities(writer, LiftResources.ksConditionsAdded, m_rgnewCondition);
+				ListNewPossibilities(writer, LiftResources.ksAnthropologyCodesAdded, m_rgnewAnthroCode);
+				ListNewPossibilities(writer, LiftResources.ksDialectsAdded, m_rgnewDialects);
+				ListNewPossibilities(writer, LiftResources.ksDomainTypesAdded, m_rgnewDomainType);
+				ListNewPossibilities(writer, LiftResources.ksSenseTypesAdded, m_rgnewSenseType);
+				ListNewPossibilities(writer, LiftResources.ksPeopleAdded, m_rgnewPerson);
+				ListNewPossibilities(writer, LiftResources.ksStatusValuesAdded, m_rgnewStatus);
+				ListNewPossibilities(writer, LiftResources.ksUsageTypesAdded, m_rgnewUsageType);
+				ListNewPossibilities(writer, LiftResources.ksLocationsAdded, m_rgnewLocation);
+				ListNewPossibilities(writer, LiftResources.ksLanguagesAdded, m_rgnewLanguage);
+				ListNewEnvironments(writer, LiftResources.ksEnvironmentsAdded, m_rgnewEnvirons);
+				ListNewPossibilities(writer, LiftResources.ksLexicalReferenceTypesAdded, m_rgnewLexRefTypes);
+				ListNewWritingSystems(writer, LiftResources.ksWritingSystemsAdded, m_addedWss);
+				ListNewInflectionClasses(writer, LiftResources.ksInflectionClassesAdded, m_rgnewInflClasses);
+				ListNewSlots(writer, LiftResources.ksInflectionalAffixSlotsAdded, m_rgnewSlots);
+				ListNewPossibilities(writer, LiftResources.ksExceptionFeaturesAdded, m_rgnewExceptFeat);
+				ListNewInflectionalFeatures(writer, LiftResources.ksInflectionFeaturesAdded, m_rgnewFeatDefn);
+				ListNewFeatureTypes(writer, LiftResources.ksFeatureTypesAdded, m_rgnewFeatStrucType);
+				ListNewStemNames(writer, LiftResources.ksStemNamesAdded, m_rgnewStemName);
+				ListNewPossibilities(writer, LiftResources.ksPublicationTypesAdded, m_rgnewPublicationType);
+				ListNewCustomFields(writer, LiftResources.ksCustomFieldsAdded, m_rgnewCustomFields);
+				ListConflictsFound(writer, LiftResources.ksConflictsResultedInDup, m_rgcdConflicts);
 				ListInvalidData(writer);
 				ListInvalidRelations(writer);
 				ListCombinedCollections(writer);
@@ -7249,10 +7249,10 @@ namespace LanguageExplorer.LIFT
 			writer.WriteLine("<tbody>");
 			writer.WriteLine("<caption><h3>{0}</h3></caption>", sMsg);
 			writer.WriteLine("<tr>");
-			writer.WriteLine("<th width=\"16%\">{0}</th>", LanguageExplorerControls.ksType);
-			writer.WriteLine("<th width=\"28%\">{0}</th>", LanguageExplorerControls.ksConflictingField);
-			writer.WriteLine("<th width=\"28%\">{0}</th>", LanguageExplorerControls.ksOriginal);
-			writer.WriteLine("<th width=\"28%\">{0}</th>", LanguageExplorerControls.ksNewDuplicate);
+			writer.WriteLine("<th width=\"16%\">{0}</th>", LiftResources.ksType);
+			writer.WriteLine("<th width=\"28%\">{0}</th>", LiftResources.ksConflictingField);
+			writer.WriteLine("<th width=\"28%\">{0}</th>", LiftResources.ksOriginal);
+			writer.WriteLine("<th width=\"28%\">{0}</th>", LiftResources.ksNewDuplicate);
 			writer.WriteLine("</tr>");
 			foreach (var cd in list)
 			{
@@ -7265,7 +7265,7 @@ namespace LanguageExplorer.LIFT
 			}
 			writer.WriteLine("</tbody>");
 			writer.WriteLine("</table>");
-			writer.WriteLine("<p>{0}</p>", LanguageExplorerControls.ksClickOnHyperLinks);
+			writer.WriteLine("<p>{0}</p>", LiftResources.ksClickOnHyperLinks);
 		}
 
 		private void ListInvalidData(StreamWriter writer)
@@ -7276,12 +7276,12 @@ namespace LanguageExplorer.LIFT
 			}
 			writer.WriteLine("<table border=\"1\" width=\"100%\">");
 			writer.WriteLine("<tbody>");
-			writer.WriteLine("<caption><h3>{0}</h3></caption>", LanguageExplorerControls.ksInvalidDataImported);
+			writer.WriteLine("<caption><h3>{0}</h3></caption>", LiftResources.ksInvalidDataImported);
 			writer.WriteLine("<tr>");
-			writer.WriteLine("<th width=\"17%\">{0}</th>", LanguageExplorerControls.ksEntry);
-			writer.WriteLine("<th width=\"17%\">{0}</th>", LanguageExplorerControls.ksField);
-			writer.WriteLine("<th width=\"17%\">{0}</th>", LanguageExplorerControls.ksInvalidValue);
-			writer.WriteLine("<th width=\"49%\">{0}</th>", LanguageExplorerControls.ksErrorMessage);
+			writer.WriteLine("<th width=\"17%\">{0}</th>", LiftResources.ksEntry);
+			writer.WriteLine("<th width=\"17%\">{0}</th>", LiftResources.ksField);
+			writer.WriteLine("<th width=\"17%\">{0}</th>", LiftResources.ksInvalidValue);
+			writer.WriteLine("<th width=\"49%\">{0}</th>", LiftResources.ksErrorMessage);
 			writer.WriteLine("</tr>");
 			foreach (var bad in m_rgInvalidData)
 			{
@@ -7294,7 +7294,7 @@ namespace LanguageExplorer.LIFT
 			}
 			writer.WriteLine("</tbody>");
 			writer.WriteLine("</table>");
-			writer.WriteLine("<p>{0}</p>", LanguageExplorerControls.ksClickOnHyperLinks);
+			writer.WriteLine("<p>{0}</p>", LiftResources.ksClickOnHyperLinks);
 		}
 
 		private void ListInvalidRelations(StreamWriter writer)
@@ -7305,12 +7305,12 @@ namespace LanguageExplorer.LIFT
 			}
 			writer.WriteLine("<table border=\"1\" width=\"100%\">");
 			writer.WriteLine("<tbody>");
-			writer.WriteLine("<caption><h3>{0}</h3></caption>", LanguageExplorerControls.ksInvalidRelationsHeader);
+			writer.WriteLine("<caption><h3>{0}</h3></caption>", LiftResources.ksInvalidRelationsHeader);
 			writer.WriteLine("<tr>");
-			writer.WriteLine("<th width=\"17%\">{0}</th>", LanguageExplorerControls.ksEntry);
-			writer.WriteLine("<th width=\"17%\">{0}</th>", LanguageExplorerControls.ksRelationType);
-			writer.WriteLine("<th width=\"17%\">{0}</th>", LanguageExplorerControls.ksInvalidReference);
-			writer.WriteLine("<th width=\"49%\">{0}</th>", LanguageExplorerControls.ksErrorMessage);
+			writer.WriteLine("<th width=\"17%\">{0}</th>", LiftResources.ksEntry);
+			writer.WriteLine("<th width=\"17%\">{0}</th>", LiftResources.ksRelationType);
+			writer.WriteLine("<th width=\"17%\">{0}</th>", LiftResources.ksInvalidReference);
+			writer.WriteLine("<th width=\"49%\">{0}</th>", LiftResources.ksErrorMessage);
 			writer.WriteLine("</tr>");
 			foreach (var bad in m_rgInvalidRelation)
 			{
@@ -7323,7 +7323,7 @@ namespace LanguageExplorer.LIFT
 			}
 			writer.WriteLine("</tbody>");
 			writer.WriteLine("</table>");
-			writer.WriteLine("<p>{0}</p>", LanguageExplorerControls.ksClickOnHyperLinks);
+			writer.WriteLine("<p>{0}</p>", LiftResources.ksClickOnHyperLinks);
 		}
 
 		private void ListCombinedCollections(StreamWriter writer)
@@ -7334,12 +7334,12 @@ namespace LanguageExplorer.LIFT
 			}
 			writer.WriteLine("<table border=\"1\" width=\"100%\">");
 			writer.WriteLine("<tbody>");
-			writer.WriteLine("<caption><h3>{0}</h3></caption>", LanguageExplorerControls.ksCombinedCollections);
+			writer.WriteLine("<caption><h3>{0}</h3></caption>", LiftResources.ksCombinedCollections);
 			writer.WriteLine("<tr>");
-			writer.WriteLine("<th width=\"17%\">{0}</th>", LanguageExplorerControls.ksEntry);
-			writer.WriteLine("<th width=\"17%\">{0}</th>", LanguageExplorerControls.ksRelationType);
-			writer.WriteLine("<th width=\"17%\">{0}</th>", LanguageExplorerControls.ksAddedItem); //column header for items added in combining two collections during lift merge
-			writer.WriteLine("<th width=\"49%\">{0}</th>", LanguageExplorerControls.ksErrorMessage);
+			writer.WriteLine("<th width=\"17%\">{0}</th>", LiftResources.ksEntry);
+			writer.WriteLine("<th width=\"17%\">{0}</th>", LiftResources.ksRelationType);
+			writer.WriteLine("<th width=\"17%\">{0}</th>", LiftResources.ksAddedItem); //column header for items added in combining two collections during lift merge
+			writer.WriteLine("<th width=\"49%\">{0}</th>", LiftResources.ksErrorMessage);
 			writer.WriteLine("</tr>");
 			foreach (var bad in m_combinedCollections)
 			{
@@ -7362,10 +7362,10 @@ namespace LanguageExplorer.LIFT
 			}
 			writer.WriteLine("<table border=\"1\" width=\"100%\">");
 			writer.WriteLine("<tbody>");
-			writer.WriteLine("<caption><h3>{0}</h3></caption>", LanguageExplorerControls.ksUnknownMorphTypes);
+			writer.WriteLine("<caption><h3>{0}</h3></caption>", LiftResources.ksUnknownMorphTypes);
 			writer.WriteLine("<tr>");
-			writer.WriteLine("<th width=\"83%\">{0}</th>", LanguageExplorerControls.ksName);
-			writer.WriteLine("<th width=\"17%\">{0}</th>", LanguageExplorerControls.ksReferenceCount);
+			writer.WriteLine("<th width=\"83%\">{0}</th>", LiftResources.ksName);
+			writer.WriteLine("<th width=\"17%\">{0}</th>", LiftResources.ksReferenceCount);
 			writer.WriteLine("</tr>");
 			foreach (var bad in m_mapMorphTypeUnknownCount)
 			{
@@ -7384,7 +7384,7 @@ namespace LanguageExplorer.LIFT
 			{
 				return;
 			}
-			writer.WriteLine("<p><h3>{0}</h3></p>", LanguageExplorerControls.ksErrorsEncounteredHeader);
+			writer.WriteLine("<p><h3>{0}</h3></p>", LiftResources.ksErrorsEncounteredHeader);
 			writer.WriteLine("<ul>");
 			foreach (var msg in m_rgErrorMsgs)
 			{
@@ -7811,7 +7811,7 @@ namespace LanguageExplorer.LIFT
 			m_fAddNewWsToAnal = false;
 		}
 
-		public int GetWsFromLiftLang(string key)
+		internal int GetWsFromLiftLang(string key)
 		{
 			if (m_mapLangWs.TryGetValue(key, out var hvo))
 			{
@@ -7919,14 +7919,14 @@ namespace LanguageExplorer.LIFT
 						if (!m_reportedMergeProblems.Contains(key))
 						{
 							m_reportedMergeProblems.Add(key);
-							m_rgErrorMsgs.Add(string.Format(LanguageExplorerControls.ksNonMatchingRelation, liftString.Text, ourString.Text, attr, obj.ShortName));
+							m_rgErrorMsgs.Add(string.Format(LiftResources.ksNonMatchingRelation, liftString.Text, ourString.Text, attr, obj.ShortName));
 						}
 					}
 				}
 			}
 		}
 
-		public bool TsStringIsNullOrEmpty(ITsString tss)
+		internal bool TsStringIsNullOrEmpty(ITsString tss)
 		{
 			return tss == null || tss.Length == 0;
 		}
@@ -8170,7 +8170,7 @@ namespace LanguageExplorer.LIFT
 		/// <summary>
 		/// Write the string as HTML, interpreting the string properties as best we can.
 		/// </summary>
-		public string TsStringAsHtml(ITsString tss, LcmCache cache)
+		internal string TsStringAsHtml(ITsString tss, LcmCache cache)
 		{
 			var sb = new StringBuilder();
 			var crun = tss.RunCount;
@@ -8841,7 +8841,7 @@ namespace LanguageExplorer.LIFT
 			}
 		}
 
-		public bool IsDateSet(DateTime dt)
+		internal bool IsDateSet(DateTime dt)
 		{
 			return dt != default && dt != m_defaultDateTime;
 		}
@@ -9476,7 +9476,7 @@ namespace LanguageExplorer.LIFT
 		}
 
 		/// <summary />
-		ICmPossibility FindMatchingPossibility(ILcmOwningSequence<ICmPossibility> possibilities, LiftMultiText label, LiftMultiText abbrev)
+		private ICmPossibility FindMatchingPossibility(ILcmOwningSequence<ICmPossibility> possibilities, LiftMultiText label, LiftMultiText abbrev)
 		{
 			IgnoreNewWs();
 			foreach (var item in possibilities)
@@ -9794,7 +9794,7 @@ namespace LanguageExplorer.LIFT
 		/// This is also an opportunity to delete unwanted objects if we're keeping only
 		/// the imported data.
 		/// </summary>
-		public void ProcessPendingRelations(IProgress progress)
+		internal void ProcessPendingRelations(IProgress progress)
 		{
 			var lexRefRepo = m_cache.ServiceLocator.GetInstance<ILexReferenceRepository>();
 			var lexEntryRefRepo = m_cache.ServiceLocator.GetInstance<ILexEntryRefRepository>();
@@ -9813,7 +9813,7 @@ namespace LanguageExplorer.LIFT
 			}
 			if (m_rgPendingRelation.Count > 0)
 			{
-				progress.Message = string.Format(LanguageExplorerControls.ksProcessingRelationLinks, m_rgPendingRelation.Count);
+				progress.Message = string.Format(LiftResources.ksProcessingRelationLinks, m_rgPendingRelation.Count);
 				progress.Position = 0;
 				progress.Minimum = 0;
 				progress.Maximum = m_rgPendingRelation.Count;
@@ -9843,18 +9843,18 @@ namespace LanguageExplorer.LIFT
 			StorePendingLexEntryRefs(originalLexEntryRefs, progress);
 			// We can now store residue everywhere since any bogus relations have been added
 			// to residue.
-			progress.Message = LanguageExplorerControls.ksWritingAccumulatedResidue;
+			progress.Message = LiftResources.ksWritingAccumulatedResidue;
 			WriteAccumulatedResidue();
 			// If we're keeping only the imported data, erase any unused entries or senses.
 			if (m_msImport == MergeStyle.MsKeepOnlyNew)
 			{
-				progress.Message = LanguageExplorerControls.ksDeletingUnwantedEntries;
+				progress.Message = LiftResources.ksDeletingUnwantedEntries;
 				GatherUnwantedObjects(originalLexEntryRefs, originalLexRefs); //at this point any LexRefs which haven't been matched are dead.
 				DeleteUnwantedObjects();
 			}
 			// Now that the relations have all been set, it's safe to set the entry
 			// modification times.
-			progress.Message = LanguageExplorerControls.ksSettingEntryModificationTimes;
+			progress.Message = LiftResources.ksSettingEntryModificationTimes;
 			foreach (var pmt in m_rgPendingModifyTimes)
 			{
 				pmt.SetModifyTime();
@@ -9866,7 +9866,7 @@ namespace LanguageExplorer.LIFT
 			// Now create the LexEntryRef type links.
 			if (m_rgPendingLexEntryRefs.Count > 0)
 			{
-				progress.Message = string.Format(LanguageExplorerControls.ksStoringLexicalEntryReferences, m_rgPendingLexEntryRefs.Count);
+				progress.Message = string.Format(LiftResources.ksStoringLexicalEntryReferences, m_rgPendingLexEntryRefs.Count);
 				progress.Position = 0;
 				progress.Minimum = 0;
 				progress.Maximum = m_rgPendingLexEntryRefs.Count;
@@ -9903,7 +9903,7 @@ namespace LanguageExplorer.LIFT
 						bldr.AppendFormat("{0}\t\t:\t{1}{2}", missingRefPair.Item1, missingRefPair.Item2, Environment.NewLine);
 					}
 					bldr.AppendLine();
-					MessageBoxUtils.Show(bldr.ToString(), LanguageExplorerControls.ksProblemImporting, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+					MessageBoxUtils.Show(bldr.ToString(), LiftResources.ksProblemImporting, MessageBoxButtons.OK, MessageBoxIcon.Warning);
 				}
 			}
 		}
@@ -9914,7 +9914,7 @@ namespace LanguageExplorer.LIFT
 			{
 				return;
 			}
-			progress.Message = string.Format(LanguageExplorerControls.ksSettingTreeRelationLinks, m_rgPendingTreeTargets.Count);
+			progress.Message = string.Format(LiftResources.ksSettingTreeRelationLinks, m_rgPendingTreeTargets.Count);
 			progress.Position = 0;
 			progress.Minimum = 0;
 			progress.Maximum = m_rgPendingTreeTargets.Count;
@@ -10215,7 +10215,7 @@ namespace LanguageExplorer.LIFT
 						bldr.AppendLine();
 						bldr.AppendFormat("RelationType is:     {0}", rgRefs[0].RelationType);
 					}
-					MessageBox.Show(bldr.ToString(), LanguageExplorerControls.ksProblemImporting, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+					MessageBox.Show(bldr.ToString(), LiftResources.ksProblemImporting, MessageBoxButtons.OK, MessageBoxIcon.Warning);
 				}
 				ler.HideMinorEntry = rgRefs[0].HideMinorEntry;
 				AddNewWsToAnalysis();
@@ -10245,7 +10245,7 @@ namespace LanguageExplorer.LIFT
 		/// </summary>
 		private void AdjustCollectionContents<T>(List<T> complexEntryTypes, ILcmReferenceSequence<T> referenceCollection, ILexEntryRef lexEntryRef) where T : class, ICmObject
 		{
-			AdjustCollectionContents(complexEntryTypes, referenceCollection, !lexEntryRef.VariantEntryTypesRS.Any() ? LanguageExplorerControls.ksComplexFormType : LanguageExplorerControls.ksVariantType, lexEntryRef.Owner);
+			AdjustCollectionContents(complexEntryTypes, referenceCollection, !lexEntryRef.VariantEntryTypesRS.Any() ? LanguageExplorerResources.ksComplexFormType : LanguageExplorerResources.ksVariantType, lexEntryRef.Owner);
 		}
 		private void AdjustCollectionContents<T>(List<T> complexEntryTypes, ILcmReferenceSequence<T> referenceCollection, ILexReference lexEntryRef) where T : class, ICmObject
 		{
@@ -10672,7 +10672,7 @@ namespace LanguageExplorer.LIFT
 		private void StorePendingCollectionRelations(ICollection<ILexReference> originalLexRefs, IProgress progress,
 			Dictionary<string, List<Tuple<HashSet<int>, HashSet<PendingRelation>>>> relationMap)
 		{
-			progress.Message = string.Format(LanguageExplorerControls.ksSettingCollectionRelationLinks, m_rgPendingCollectionRelations.Count);
+			progress.Message = string.Format(LiftResources.ksSettingCollectionRelationLinks, m_rgPendingCollectionRelations.Count);
 			progress.Minimum = 0;
 			progress.Maximum = relationMap.Count;
 			progress.Position = 0;
@@ -11768,7 +11768,7 @@ namespace LanguageExplorer.LIFT
 		///
 		/// ADDITION June 2001:  This method also imports custom lists from the .lift-ranges file.
 		/// </summary>
-		public void LoadLiftRanges(string sRangesFile)
+		internal void LoadLiftRanges(string sRangesFile)
 		{
 			//Store the Guids of all existing possibility lists so that we do not create duplicate custom lists.
 			var repo = m_cache.ServiceLocator.GetInstance<ICmPossibilityListRepository>();
@@ -12229,7 +12229,7 @@ namespace LanguageExplorer.LIFT
 		private Dictionary<string, string> m_writingsytemChangeMap = new Dictionary<string, string>();
 
 		/// <summary />
-		public void LdmlFilesMigration(string sLIFTfilesPath, string sLIFTdatafile, string sLIFTrangesfile)
+		internal void LdmlFilesMigration(string sLIFTfilesPath, string sLIFTdatafile, string sLIFTrangesfile)
 		{
 			var ldmlFolder = Path.Combine(sLIFTfilesPath, "WritingSystems");
 			// TODO (WS_FIX): do we need settings data mappers here?
@@ -12385,7 +12385,7 @@ namespace LanguageExplorer.LIFT
 			private readonly string m_text;
 			private readonly int m_ws;
 
-			public MuElement(int ws, string text)
+			internal MuElement(int ws, string text)
 			{
 				m_text = text;
 				m_ws = ws;
@@ -12433,7 +12433,7 @@ namespace LanguageExplorer.LIFT
 			private ILexEntry m_leNew;
 
 			internal ConflictingEntry(string sField, ILexEntry leOrig, FlexLiftMerger merger)
-				: base(LanguageExplorerControls.ksEntry, sField, merger)
+				: base(LiftResources.ksEntry, sField, merger)
 			{
 				m_leOrig = leOrig;
 			}
@@ -12461,7 +12461,7 @@ namespace LanguageExplorer.LIFT
 			private readonly ILexSense m_lsOrig;
 
 			internal ConflictingSense(string sField, ILexSense lsOrig, FlexLiftMerger merger)
-				: base(LanguageExplorerControls.ksSense, sField, merger)
+				: base(LiftResources.ksSense, sField, merger)
 			{
 				m_lsOrig = lsOrig;
 			}
@@ -12556,8 +12556,8 @@ namespace LanguageExplorer.LIFT
 
 		private sealed class ParaData
 		{
-			public string StyleName { get; set; }
-			public ITsString Contents { get; set; }
+			internal string StyleName { get; set; }
+			internal ITsString Contents { get; set; }
 		}
 
 		/// <summary>
@@ -12566,7 +12566,7 @@ namespace LanguageExplorer.LIFT
 		/// </summary>
 		private sealed class InvalidData : PendingErrorReport
 		{
-			public InvalidData(string sMsg, Guid guid, int flid, string val, int ws, LcmCache cache, FlexLiftMerger merger)
+			internal InvalidData(string sMsg, Guid guid, int flid, string val, int ws, LcmCache cache, FlexLiftMerger merger)
 				: base(guid, flid, ws, cache, merger)
 			{
 				ErrorMessage = sMsg;
@@ -12596,7 +12596,7 @@ namespace LanguageExplorer.LIFT
 		{
 			readonly PendingLexEntryRef m_pendRef;
 
-			public InvalidRelation(PendingLexEntryRef pend, LcmCache cache, FlexLiftMerger merger)
+			internal InvalidRelation(PendingLexEntryRef pend, LcmCache cache, FlexLiftMerger merger)
 				: base(pend.CmObject.Guid, 0, 0, cache, merger)
 			{
 				m_pendRef = pend;
@@ -12612,10 +12612,10 @@ namespace LanguageExplorer.LIFT
 				{
 					if (m_pendRef.CmObject is ILexEntry)
 					{
-						return LanguageExplorerControls.ksEntryInvalidRef;
+						return LiftResources.ksEntryInvalidRef;
 					}
 					Debug.Assert(m_pendRef.CmObject is ILexSense);
-					return string.Format(LanguageExplorerControls.ksSenseInvalidRef, ((ILexSense)m_pendRef.CmObject).OwnerOutlineNameForWs(m_cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Handle).Text);
+					return string.Format(LiftResources.ksSenseInvalidRef, ((ILexSense)m_pendRef.CmObject).OwnerOutlineNameForWs(m_cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Handle).Text);
 				}
 			}
 
@@ -12629,7 +12629,7 @@ namespace LanguageExplorer.LIFT
 		private sealed class CombinedCollection : PendingErrorReport
 		{
 			private ICmObject _cmObject;
-			public CombinedCollection(ICmObject owner, LcmCache cache, FlexLiftMerger merger)
+			internal CombinedCollection(ICmObject owner, LcmCache cache, FlexLiftMerger merger)
 				: base(owner.Guid, 0, 0, cache, merger)
 			{
 				_cmObject = owner;
@@ -12645,7 +12645,7 @@ namespace LanguageExplorer.LIFT
 				get; set;
 			}
 
-			internal string ErrorMessage => string.Format(LanguageExplorerControls.ksAddedToCombinedCollection, BadValue, TypeName, EntryHtmlReference());
+			internal string ErrorMessage => string.Format(LiftResources.ksAddedToCombinedCollection, BadValue, TypeName, EntryHtmlReference());
 		}
 
 		/// <summary>
@@ -12701,7 +12701,7 @@ namespace LanguageExplorer.LIFT
 		{
 			readonly CmLiftRelation m_rel;
 
-			public PendingRelation(ICmObject obj, CmLiftRelation rel, string sResidue)
+			internal PendingRelation(ICmObject obj, CmLiftRelation rel, string sResidue)
 			{
 				CmObject = obj;
 				Target = null;
@@ -12709,23 +12709,23 @@ namespace LanguageExplorer.LIFT
 				Residue = sResidue;
 			}
 
-			public ICmObject CmObject { get; private set; }
+			internal ICmObject CmObject { get; private set; }
 
-			public int ObjectHvo => CmObject?.Hvo ?? 0;
+			internal int ObjectHvo => CmObject?.Hvo ?? 0;
 
-			public string RelationType => m_rel.Type;
+			internal string RelationType => m_rel.Type;
 
-			public string TargetId => m_rel.Ref;
+			internal string TargetId => m_rel.Ref;
 
-			public ICmObject Target { get; set; }
+			internal ICmObject Target { get; set; }
 
-			public int TargetHvo => Target?.Hvo ?? 0;
+			internal int TargetHvo => Target?.Hvo ?? 0;
 
-			public string Residue { get; private set; }
+			internal string Residue { get; private set; }
 
-			public DateTime DateCreated => m_rel.DateCreated;
+			internal DateTime DateCreated => m_rel.DateCreated;
 
-			public DateTime DateModified => m_rel.DateModified;
+			internal DateTime DateModified => m_rel.DateModified;
 
 			internal bool IsSameOrMirror(PendingRelation rel)
 			{
@@ -12780,7 +12780,7 @@ namespace LanguageExplorer.LIFT
 			private int m_nHideMinorEntry;
 
 			// preserve trait values from older LIFT files based on old FieldWorks model
-			public PendingLexEntryRef(ICmObject obj, CmLiftRelation rel, CmLiftEntry entry)
+			internal PendingLexEntryRef(ICmObject obj, CmLiftRelation rel, CmLiftEntry entry)
 			{
 				CmObject = obj;
 				m_rel = rel;
@@ -12843,35 +12843,35 @@ namespace LanguageExplorer.LIFT
 				}
 			}
 
-			public ICmObject CmObject { get; }
+			internal ICmObject CmObject { get; }
 
-			public int ObjectHvo => CmObject?.Hvo ?? 0;
+			internal int ObjectHvo => CmObject?.Hvo ?? 0;
 
-			public string RelationType => m_rel.Type;
+			internal string RelationType => m_rel.Type;
 
-			public string TargetId => m_rel.Ref;
+			internal string TargetId => m_rel.Ref;
 
-			public ICmObject Target { get; set; }
+			internal ICmObject Target { get; set; }
 
-			public DateTime DateCreated => m_rel.DateCreated;
+			internal DateTime DateCreated => m_rel.DateCreated;
 
-			public DateTime DateModified => m_rel.DateModified;
+			internal DateTime DateModified => m_rel.DateModified;
 
 			internal int Order => m_rel.Order;
 
-			public string EntryType { get; }
+			internal string EntryType { get; }
 
-			public string MinorEntryCondition { get; }
+			internal string MinorEntryCondition { get; }
 
-			public bool ExcludeAsHeadword { get; private set; }
+			internal bool ExcludeAsHeadword { get; private set; }
 
-			public List<string> ComplexFormTypes { get; } = new List<string>();
+			internal List<string> ComplexFormTypes { get; } = new List<string>();
 
-			public List<string> VariantTypes { get; } = new List<string>();
+			internal List<string> VariantTypes { get; } = new List<string>();
 
-			public bool IsPrimary { get; private set; }
+			internal bool IsPrimary { get; private set; }
 
-			public int HideMinorEntry
+			internal int HideMinorEntry
 			{
 				get => m_nHideMinorEntry;
 				set => m_nHideMinorEntry = value;
@@ -12880,14 +12880,14 @@ namespace LanguageExplorer.LIFT
 			/// <summary>
 			/// safe-XML
 			/// </summary>
-			public LiftField Summary { get; private set; }
+			internal LiftField Summary { get; private set; }
 
 			/// <summary>
 			/// This is used to better error reporting to the user when the default vernacular of the LIFT import file
 			/// does not match the project doing the import.
 			/// safe-XML
 			/// </summary>
-			public LiftMultiText LexemeForm { get; }
+			internal LiftMultiText LexemeForm { get; }
 		}
 
 		private sealed class PendingModifyTime
@@ -12895,13 +12895,13 @@ namespace LanguageExplorer.LIFT
 			private readonly ILexEntry m_le;
 			private readonly DateTime m_dt;
 
-			public PendingModifyTime(ILexEntry le, DateTime dt)
+			internal PendingModifyTime(ILexEntry le, DateTime dt)
 			{
 				m_le = le;
 				m_dt = dt;
 			}
 
-			public void SetModifyTime()
+			internal void SetModifyTime()
 			{
 				if (!AreDatesInSameSecond(m_le.DateModified.ToUniversalTime(), m_dt.ToUniversalTime()))
 				{
@@ -12915,30 +12915,30 @@ namespace LanguageExplorer.LIFT
 		/// </summary>
 		private sealed class LiftResidue
 		{
-			public LiftResidue(int flid, XmlDocument xdoc)
+			internal LiftResidue(int flid, XmlDocument xdoc)
 			{
 				Flid = flid;
 				Document = xdoc;
 			}
 
-			public int Flid { get; }
+			internal int Flid { get; }
 
-			public XmlDocument Document { get; }
+			internal XmlDocument Document { get; }
 		}
 
 		private sealed class EticCategory
 		{
-			public string Id { get; set; }
+			internal string Id { get; set; }
 
-			public string ParentId { get; set; }
+			internal string ParentId { get; set; }
 
 			/// <summary>
 			/// Dictionary mapping WS ids to non-safe-XML strings.
 			/// </summary>
-			public Dictionary<string, string> MultilingualName { get; } = new Dictionary<string, string>();
+			internal Dictionary<string, string> MultilingualName { get; } = new Dictionary<string, string>();
 
 			/// <summary />
-			public void SetName(string lang, string name)
+			internal void SetName(string lang, string name)
 			{
 				if (MultilingualName.ContainsKey(lang))
 				{
@@ -12949,10 +12949,11 @@ namespace LanguageExplorer.LIFT
 					MultilingualName.Add(lang, name);
 				}
 			}
-			public Dictionary<string, string> MultilingualAbbrev { get; } = new Dictionary<string, string>();
+
+			internal Dictionary<string, string> MultilingualAbbrev { get; } = new Dictionary<string, string>();
 
 			/// <summary />
-			public void SetAbbrev(string lang, string abbrev)
+			internal void SetAbbrev(string lang, string abbrev)
 			{
 				if (MultilingualAbbrev.ContainsKey(lang))
 				{
@@ -12967,10 +12968,10 @@ namespace LanguageExplorer.LIFT
 			/// <summary>
 			/// Values are non-safe XML
 			/// </summary>
-			public Dictionary<string, string> MultilingualDesc { get; } = new Dictionary<string, string>();
+			internal Dictionary<string, string> MultilingualDesc { get; } = new Dictionary<string, string>();
 
 			/// <summary />
-			public void SetDesc(string lang, string desc)
+			internal void SetDesc(string lang, string desc)
 			{
 				if (MultilingualDesc.ContainsKey(lang))
 				{

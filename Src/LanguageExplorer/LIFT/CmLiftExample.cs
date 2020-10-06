@@ -12,24 +12,24 @@ namespace LanguageExplorer.LIFT
 	/// This class implements "example" from the LIFT standard.
 	/// It corresponds to LexExampleSentence in the FieldWorks model.
 	/// </summary>
-	public class CmLiftExample : LiftObject, ICmLiftObject
+	internal sealed class CmLiftExample : LiftObject
 	{
-		public CmLiftExample()
+		internal CmLiftExample()
 		{
 			Notes = new List<CmLiftNote>();
 			Translations = new List<LiftTranslation>();
 		}
 
-		public ICmObject CmObject { get; set; }
-
-		public string Source { get; set; }
-
-		public LiftMultiText Content { get; set; } // safe XML
-
-		public List<LiftTranslation> Translations { get; }
-
-		public List<CmLiftNote> Notes { get; }
-
 		public override string XmlTag => "example";
+
+		internal ICmObject CmObject { get; set; }
+
+		internal string Source { get; set; }
+
+		internal LiftMultiText Content { get; set; } // safe XML
+
+		internal List<LiftTranslation> Translations { get; }
+
+		internal List<CmLiftNote> Notes { get; }
 	}
 }

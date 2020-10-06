@@ -11,18 +11,18 @@ namespace LanguageExplorer.LIFT
 	/// This class implements "etymology" from the LIFT standard.
 	/// It corresponds to LexEtymology in the FieldWorks model.
 	/// </summary>
-	public class CmLiftEtymology : LiftObject, ICmLiftObject
+	internal sealed class CmLiftEtymology : LiftObject
 	{
-		public string Type { get; set; }
-
-		public string Source { get; set; }
-
-		public LiftMultiText Gloss { get; set; } // safe XML
-
-		public LiftMultiText Form { get; set; } // safe XML
-
-		public ICmObject CmObject { get; set; }
-
 		public override string XmlTag => "etymology";
+
+		internal string Type { get; set; }
+
+		internal string Source { get; set; }
+
+		internal LiftMultiText Gloss { get; set; } // safe XML
+
+		internal LiftMultiText Form { get; set; } // safe XML
+
+		internal ICmObject CmObject { get; set; }
 	}
 }

@@ -349,24 +349,6 @@ namespace LanguageExplorer.Controls {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Added Item.
-        /// </summary>
-        internal static string ksAddedItem {
-            get {
-                return ResourceManager.GetString("ksAddedItem", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to {0} added to the {1} of {2}..
-        /// </summary>
-        internal static string ksAddedToCombinedCollection {
-            get {
-                return ResourceManager.GetString("ksAddedToCombinedCollection", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to The inflection feature I need is not shown here.  Add inflection features to {0}..
         /// </summary>
         internal static string ksAddFeaturesToX {
@@ -471,15 +453,6 @@ namespace LanguageExplorer.Controls {
         internal static string ksAlternateForms {
             get {
                 return ResourceManager.GetString("ksAlternateForms", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The following Anthropology Codes were added to the language project:.
-        /// </summary>
-        internal static string ksAnthropologyCodesAdded {
-            get {
-                return ResourceManager.GetString("ksAnthropologyCodesAdded", resourceCulture);
             }
         }
         
@@ -597,15 +570,6 @@ namespace LanguageExplorer.Controls {
         internal static string ksCannotParseDateTime {
             get {
                 return ResourceManager.GetString("ksCannotParseDateTime", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Cannot parse the feature string.
-        /// </summary>
-        internal static string ksCannotParseFeature {
-            get {
-                return ResourceManager.GetString("ksCannotParseFeature", resourceCulture);
             }
         }
         
@@ -728,15 +692,6 @@ namespace LanguageExplorer.Controls {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &lt;b&gt;Tip:&lt;/b&gt; click on the hyperlinks to view the entries in question..
-        /// </summary>
-        internal static string ksClickOnHyperLinks {
-            get {
-                return ResourceManager.GetString("ksClickOnHyperLinks", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Click on the View Preview Results button to see the full list of results..
         /// </summary>
         internal static string ksClickOnViewPreviewResults {
@@ -751,15 +706,6 @@ namespace LanguageExplorer.Controls {
         internal static string ksClickToPreviewAssumptions {
             get {
                 return ResourceManager.GetString("ksClickToPreviewAssumptions", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Combined Collections.
-        /// </summary>
-        internal static string ksCombinedCollections {
-            get {
-                return ResourceManager.GetString("ksCombinedCollections", resourceCulture);
             }
         }
         
@@ -782,51 +728,6 @@ namespace LanguageExplorer.Controls {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Subentry/Complex Form Type :.
-        /// </summary>
-        internal static string ksComplexFormType {
-            get {
-                return ResourceManager.GetString("ksComplexFormType", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The following complex form types were added to the language project:.
-        /// </summary>
-        internal static string ksComplexFormTypesAdded {
-            get {
-                return ResourceManager.GetString("ksComplexFormTypesAdded", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The following Conditions were added to the language project:.
-        /// </summary>
-        internal static string ksConditionsAdded {
-            get {
-                return ResourceManager.GetString("ksConditionsAdded", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Conflicting field.
-        /// </summary>
-        internal static string ksConflictingField {
-            get {
-                return ResourceManager.GetString("ksConflictingField", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The following conflicts resulted in duplicated entries or senses:.
-        /// </summary>
-        internal static string ksConflictsResultedInDup {
-            get {
-                return ResourceManager.GetString("ksConflictsResultedInDup", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Contains Data(%).
         /// </summary>
         internal static string ksContainsData_ {
@@ -841,15 +742,6 @@ namespace LanguageExplorer.Controls {
         internal static string ksContextOccurrenceDlgError {
             get {
                 return ResourceManager.GetString("ksContextOccurrenceDlgError", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Not all validation errors prevent successful importing.  Do you want to continue with the LIFT import?.
-        /// </summary>
-        internal static string ksContinueLiftImportQuestion {
-            get {
-                return ResourceManager.GetString("ksContinueLiftImportQuestion", resourceCulture);
             }
         }
         
@@ -899,15 +791,6 @@ namespace LanguageExplorer.Controls {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The following custom fields were added to the project:.
-        /// </summary>
-        internal static string ksCustomFieldsAdded {
-            get {
-                return ResourceManager.GetString("ksCustomFieldsAdded", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Date/Time field import options.
         /// </summary>
         internal static string ksDateTimeImportOptions {
@@ -926,15 +809,6 @@ namespace LanguageExplorer.Controls {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Deleting unwanted entries and senses.
-        /// </summary>
-        internal static string ksDeletingUnwantedEntries {
-            get {
-                return ResourceManager.GetString("ksDeletingUnwantedEntries", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Derivational.
         /// </summary>
         internal static string ksDerivational {
@@ -944,29 +818,11 @@ namespace LanguageExplorer.Controls {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The following Dialect labels were added to the language project:.
-        /// </summary>
-        internal static string ksDialectsAdded {
-            get {
-                return ResourceManager.GetString("ksDialectsAdded", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Discarded field.
         /// </summary>
         internal static string ksDiscardedField {
             get {
                 return ResourceManager.GetString("ksDiscardedField", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The following Domain Types were added to the language project:.
-        /// </summary>
-        internal static string ksDomainTypesAdded {
-            get {
-                return ResourceManager.GetString("ksDomainTypesAdded", resourceCulture);
             }
         }
         
@@ -985,15 +841,6 @@ namespace LanguageExplorer.Controls {
         internal static string ksDoNotImport {
             get {
                 return ResourceManager.GetString("ksDoNotImport", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to A duplicate id value for a {0} was encountered: {1}.
-        /// </summary>
-        internal static string ksDuplicateIdValue {
-            get {
-                return ResourceManager.GetString("ksDuplicateIdValue", resourceCulture);
             }
         }
         
@@ -1025,33 +872,6 @@ namespace LanguageExplorer.Controls {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to {0} entries processed on import, adding {1} entries and {2} senses to the project, and deleting {3} entries..
-        /// </summary>
-        internal static string ksEntriesImportCounts {
-            get {
-                return ResourceManager.GetString("ksEntriesImportCounts", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Entry.
-        /// </summary>
-        internal static string ksEntry {
-            get {
-                return ResourceManager.GetString("ksEntry", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to A relation in the entry had an invalid reference value..
-        /// </summary>
-        internal static string ksEntryInvalidRef {
-            get {
-                return ResourceManager.GetString("ksEntryInvalidRef", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Entry &quot;{0}&quot; will be merged into the entry you select above,{1}resulting in one entry..
         /// </summary>
         internal static string ksEntryXMergedIntoSel {
@@ -1066,15 +886,6 @@ namespace LanguageExplorer.Controls {
         internal static string ksEntryXMergedIntoY {
             get {
                 return ResourceManager.GetString("ksEntryXMergedIntoY", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The following Environments were added to the language project:.
-        /// </summary>
-        internal static string ksEnvironmentsAdded {
-            get {
-                return ResourceManager.GetString("ksEnvironmentsAdded", resourceCulture);
             }
         }
         
@@ -1115,38 +926,11 @@ namespace LanguageExplorer.Controls {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Error message.
-        /// </summary>
-        internal static string ksErrorMessage {
-            get {
-                return ResourceManager.GetString("ksErrorMessage", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The following errors were encountered during import:.
-        /// </summary>
-        internal static string ksErrorsEncounteredHeader {
-            get {
-                return ResourceManager.GetString("ksErrorsEncounteredHeader", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Error Showing Report.
         /// </summary>
         internal static string ksErrorShowingReport {
             get {
                 return ResourceManager.GetString("ksErrorShowingReport", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The following Exception &quot;Features&quot; were added to the language project:.
-        /// </summary>
-        internal static string ksExceptionFeaturesAdded {
-            get {
-                return ResourceManager.GetString("ksExceptionFeaturesAdded", resourceCulture);
             }
         }
         
@@ -1174,33 +958,6 @@ namespace LanguageExplorer.Controls {
         internal static string ksFeaturesForX {
             get {
                 return ResourceManager.GetString("ksFeaturesForX", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The following Feature Types were added to the language project:.
-        /// </summary>
-        internal static string ksFeatureTypesAdded {
-            get {
-                return ResourceManager.GetString("ksFeatureTypesAdded", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Field.
-        /// </summary>
-        internal static string ksField {
-            get {
-                return ResourceManager.GetString("ksField", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The given input file {0} is not a LIFT file.  Expect import to fail!.
-        /// </summary>
-        internal static string ksFileNotALIFTFile {
-            get {
-                return ResourceManager.GetString("ksFileNotALIFTFile", resourceCulture);
             }
         }
         
@@ -1457,15 +1214,6 @@ namespace LanguageExplorer.Controls {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Importing from {0}.
-        /// </summary>
-        internal static string ksImportingFrom0 {
-            get {
-                return ResourceManager.GetString("ksImportingFrom0", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Importing new records....
         /// </summary>
         internal static string ksImportingNewRecords {
@@ -1475,29 +1223,11 @@ namespace LanguageExplorer.Controls {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Importing {0} took {1}.{2} seconds.
-        /// </summary>
-        internal static string ksImportingTookTime {
-            get {
-                return ResourceManager.GetString("ksImportingTookTime", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Importing {0} entries from {1}.
         /// </summary>
         internal static string ksImportingXEntriesFromY {
             get {
                 return ResourceManager.GetString("ksImportingXEntriesFromY", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Import Log for {0}.
-        /// </summary>
-        internal static string ksImportLogFor0 {
-            get {
-                return ResourceManager.GetString("ksImportLogFor0", resourceCulture);
             }
         }
         
@@ -1547,24 +1277,6 @@ namespace LanguageExplorer.Controls {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The following Inflectional Affix Slots were added to the language project:.
-        /// </summary>
-        internal static string ksInflectionalAffixSlotsAdded {
-            get {
-                return ResourceManager.GetString("ksInflectionalAffixSlotsAdded", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The following Inflection Classes were added to the language project:.
-        /// </summary>
-        internal static string ksInflectionClassesAdded {
-            get {
-                return ResourceManager.GetString("ksInflectionClassesAdded", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to inflection feature.
         /// </summary>
         internal static string ksInflectionFeature {
@@ -1610,15 +1322,6 @@ namespace LanguageExplorer.Controls {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The following Inflection Features were added to the language project:.
-        /// </summary>
-        internal static string ksInflectionFeaturesAdded {
-            get {
-                return ResourceManager.GetString("ksInflectionFeaturesAdded", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Info:.
         /// </summary>
         internal static string ksInfo_ {
@@ -1651,15 +1354,6 @@ namespace LanguageExplorer.Controls {
         internal static string ksInternalProblem {
             get {
                 return ResourceManager.GetString("ksInternalProblem", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The following invalid data was imported:.
-        /// </summary>
-        internal static string ksInvalidDataImported {
-            get {
-                return ResourceManager.GetString("ksInvalidDataImported", resourceCulture);
             }
         }
         
@@ -1700,42 +1394,6 @@ namespace LanguageExplorer.Controls {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The given input file {0}, produced by {1}, does not validate against the current LIFT standard.  Report this to the creators of that program as an export bug.  Import may fail..
-        /// </summary>
-        internal static string ksInvalidLiftFile {
-            get {
-                return ResourceManager.GetString("ksInvalidLiftFile", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The given input file {0}, produced by {1}, does not migrate into a valid LIFT file according to the current LIFT standard.  Report this to the creators of that program, as either an export or migration bug.  Import may fail..
-        /// </summary>
-        internal static string ksInvalidMigratedLiftFile {
-            get {
-                return ResourceManager.GetString("ksInvalidMigratedLiftFile", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Invalid Reference.
-        /// </summary>
-        internal static string ksInvalidReference {
-            get {
-                return ResourceManager.GetString("ksInvalidReference", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The following invalid relations were found in the imported file:.
-        /// </summary>
-        internal static string ksInvalidRelationsHeader {
-            get {
-                return ResourceManager.GetString("ksInvalidRelationsHeader", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to The selected settings file ({0}) is not valid..
         /// </summary>
         internal static string ksInvalidSettingsFileX {
@@ -1754,29 +1412,11 @@ namespace LanguageExplorer.Controls {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Invalid value.
-        /// </summary>
-        internal static string ksInvalidValue {
-            get {
-                return ResourceManager.GetString("ksInvalidValue", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Language Definition.
         /// </summary>
         internal static string ksLanguageDefinition {
             get {
                 return ResourceManager.GetString("ksLanguageDefinition", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The following Languages were added to the language project:.
-        /// </summary>
-        internal static string ksLanguagesAdded {
-            get {
-                return ResourceManager.GetString("ksLanguagesAdded", resourceCulture);
             }
         }
         
@@ -1808,32 +1448,11 @@ namespace LanguageExplorer.Controls {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The following Lexical Reference Types were added to the language project:.
-        /// </summary>
-        internal static string ksLexicalReferenceTypesAdded {
-            get {
-                return ResourceManager.GetString("ksLexicalReferenceTypesAdded", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Lexical Relation Type :.
         /// </summary>
         internal static string ksLexicalRelationType {
             get {
                 return ResourceManager.GetString("ksLexicalRelationType", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Something went wrong while FieldWorks was attempting to import {0}.
-        ///{1}
-        ///
-        ///A stack dump has been copied to the clipboard.  Please email it and your LIFT file to Flex_Errors@sil.org so that we can improve the program..
-        /// </summary>
-        internal static string ksLIFTImportProblem {
-            get {
-                return ResourceManager.GetString("ksLIFTImportProblem", resourceCulture);
             }
         }
         
@@ -1852,24 +1471,6 @@ namespace LanguageExplorer.Controls {
         internal static string ksListRefImportOptions {
             get {
                 return ResourceManager.GetString("ksListRefImportOptions", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Loading various lists for lookup during import....
-        /// </summary>
-        internal static string ksLoadingVariousLists {
-            get {
-                return ResourceManager.GetString("ksLoadingVariousLists", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The following Locations were added to the language project:.
-        /// </summary>
-        internal static string ksLocationsAdded {
-            get {
-                return ResourceManager.GetString("ksLocationsAdded", resourceCulture);
             }
         }
         
@@ -2009,15 +1610,6 @@ namespace LanguageExplorer.Controls {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Migrating from LIFT version {0} to version {1}.
-        /// </summary>
-        internal static string ksMigratingLiftFile {
-            get {
-                return ResourceManager.GetString("ksMigratingLiftFile", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to The import process has detected some entries in which the field markers were not ordered as expected. (Refer to the list below to see which entries are affected.) The links will open Zedit in the original SFM file at the location of interest. It only works in Internet Explorer. To use it, when the page opens, at the bottom of the browser, it displays, &quot;Internet Explorer restricted this webpage from running scripts or ActiveX controls&quot;. Click &quot;Allow blocked content&quot;. After the first link is clicked, the foll [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string ksMisorderedMarkers {
@@ -2063,29 +1655,11 @@ namespace LanguageExplorer.Controls {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The following Morph Types were added to the language project:.
-        /// </summary>
-        internal static string ksMorphTypesAdded {
-            get {
-                return ResourceManager.GetString("ksMorphTypesAdded", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Multilingual string field import options.
         /// </summary>
         internal static string ksMultiStringImportOptions {
             get {
                 return ResourceManager.GetString("ksMultiStringImportOptions", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Name.
-        /// </summary>
-        internal static string ksName {
-            get {
-                return ResourceManager.GetString("ksName", resourceCulture);
             }
         }
         
@@ -2122,15 +1696,6 @@ namespace LanguageExplorer.Controls {
         internal static string ksNewCustomListItems {
             get {
                 return ResourceManager.GetString("ksNewCustomListItems", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to New duplicate.
-        /// </summary>
-        internal static string ksNewDuplicate {
-            get {
-                return ResourceManager.GetString("ksNewDuplicate", resourceCulture);
             }
         }
         
@@ -2262,15 +1827,6 @@ namespace LanguageExplorer.Controls {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The LIFT ranges file had a conflicting value ({0} instead of {1}) for the {2} of the lexical relation {3}. The value in the LIFT file was ignored..
-        /// </summary>
-        internal static string ksNonMatchingRelation {
-            get {
-                return ResourceManager.GetString("ksNonMatchingRelation", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to No senses in entry.
         /// </summary>
         internal static string ksNoSensesInEntry {
@@ -2325,38 +1881,11 @@ namespace LanguageExplorer.Controls {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Original.
-        /// </summary>
-        internal static string ksOriginal {
-            get {
-                return ResourceManager.GetString("ksOriginal", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Original value.
         /// </summary>
         internal static string ksOriginalValue {
             get {
                 return ResourceManager.GetString("ksOriginalValue", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The following Grammatical Categories were added to the language project:.
-        /// </summary>
-        internal static string ksPartsOfSpeechAdded {
-            get {
-                return ResourceManager.GetString("ksPartsOfSpeechAdded", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The following People were added to the language project:.
-        /// </summary>
-        internal static string ksPeopleAdded {
-            get {
-                return ResourceManager.GetString("ksPeopleAdded", resourceCulture);
             }
         }
         
@@ -2506,24 +2035,6 @@ namespace LanguageExplorer.Controls {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to A problem was encountered trying to store this id for a {0}: {1}.
-        /// </summary>
-        internal static string ksProblemId {
-            get {
-                return ResourceManager.GetString("ksProblemId", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Problem Importing.
-        /// </summary>
-        internal static string ksProblemImporting {
-            get {
-                return ResourceManager.GetString("ksProblemImporting", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Problem importing from {0}: {1}.
         /// </summary>
         internal static string ksProblemImportingFrom {
@@ -2538,24 +2049,6 @@ namespace LanguageExplorer.Controls {
         internal static string ksProblemSavingSettings {
             get {
                 return ResourceManager.GetString("ksProblemSavingSettings", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Processing {0} relation links between imported entries.
-        /// </summary>
-        internal static string ksProcessingRelationLinks {
-            get {
-                return ResourceManager.GetString("ksProcessingRelationLinks", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The following Publication Types were added to the language project:.
-        /// </summary>
-        internal static string ksPublicationTypesAdded {
-            get {
-                return ResourceManager.GetString("ksPublicationTypesAdded", resourceCulture);
             }
         }
         
@@ -2722,15 +2215,6 @@ namespace LanguageExplorer.Controls {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Reference Count.
-        /// </summary>
-        internal static string ksReferenceCount {
-            get {
-                return ResourceManager.GetString("ksReferenceCount", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to References.
         /// </summary>
         internal static string ksReferences {
@@ -2754,15 +2238,6 @@ namespace LanguageExplorer.Controls {
         internal static string ksRegRuleUndoSetOccurrence {
             get {
                 return ResourceManager.GetString("ksRegRuleUndoSetOccurrence", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Relation Type.
-        /// </summary>
-        internal static string ksRelationType {
-            get {
-                return ResourceManager.GetString("ksRelationType", resourceCulture);
             }
         }
         
@@ -3028,60 +2503,6 @@ namespace LanguageExplorer.Controls {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The following Semantic Domains were added to the language project:.
-        /// </summary>
-        internal static string ksSemanticDomainsAdded {
-            get {
-                return ResourceManager.GetString("ksSemanticDomainsAdded", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Sense.
-        /// </summary>
-        internal static string ksSense {
-            get {
-                return ResourceManager.GetString("ksSense", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to A relation in a sense ({0}) had an invalid reference value..
-        /// </summary>
-        internal static string ksSenseInvalidRef {
-            get {
-                return ResourceManager.GetString("ksSenseInvalidRef", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The following Sense Types were added to the language project:.
-        /// </summary>
-        internal static string ksSenseTypesAdded {
-            get {
-                return ResourceManager.GetString("ksSenseTypesAdded", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Setting {0} collection type relation links.
-        /// </summary>
-        internal static string ksSettingCollectionRelationLinks {
-            get {
-                return ResourceManager.GetString("ksSettingCollectionRelationLinks", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Setting entry modification times.
-        /// </summary>
-        internal static string ksSettingEntryModificationTimes {
-            get {
-                return ResourceManager.GetString("ksSettingEntryModificationTimes", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Settings Saved.
         /// </summary>
         internal static string ksSettingsSaved {
@@ -3096,15 +2517,6 @@ namespace LanguageExplorer.Controls {
         internal static string ksSettingsSaveFileSameAsDatabaseFile {
             get {
                 return ResourceManager.GetString("ksSettingsSaveFileSameAsDatabaseFile", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Setting {0} tree type relation links.
-        /// </summary>
-        internal static string ksSettingTreeRelationLinks {
-            get {
-                return ResourceManager.GetString("ksSettingTreeRelationLinks", resourceCulture);
             }
         }
         
@@ -3190,38 +2602,11 @@ namespace LanguageExplorer.Controls {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The following Status values were added to the language project:.
-        /// </summary>
-        internal static string ksStatusValuesAdded {
-            get {
-                return ResourceManager.GetString("ksStatusValuesAdded", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The following Stem Names were added to the project:.
-        /// </summary>
-        internal static string ksStemNamesAdded {
-            get {
-                return ResourceManager.GetString("ksStemNamesAdded", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Stored length.
         /// </summary>
         internal static string ksStoredLength {
             get {
                 return ResourceManager.GetString("ksStoredLength", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Storing {0} lexical entry references for complex entries and variants.
-        /// </summary>
-        internal static string ksStoringLexicalEntryReferences {
-            get {
-                return ResourceManager.GetString("ksStoringLexicalEntryReferences", resourceCulture);
             }
         }
         
@@ -3325,15 +2710,6 @@ namespace LanguageExplorer.Controls {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The following Translation Types were added to the language project:.
-        /// </summary>
-        internal static string ksTranslationTypesAdded {
-            get {
-                return ResourceManager.GetString("ksTranslationTypesAdded", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Truncated field.
         /// </summary>
         internal static string ksTruncatedField {
@@ -3348,15 +2724,6 @@ namespace LanguageExplorer.Controls {
         internal static string ksTruncatedOnImport {
             get {
                 return ResourceManager.GetString("ksTruncatedOnImport", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Type.
-        /// </summary>
-        internal static string ksType {
-            get {
-                return ResourceManager.GetString("ksType", resourceCulture);
             }
         }
         
@@ -3550,29 +2917,11 @@ namespace LanguageExplorer.Controls {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The following unknown morph-types were found in the imported file:.
-        /// </summary>
-        internal static string ksUnknownMorphTypes {
-            get {
-                return ResourceManager.GetString("ksUnknownMorphTypes", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Consultants or people who work on several unrelated projects may want to select this..
         /// </summary>
         internal static string ksUpdateGlobalWsTooltip {
             get {
                 return ResourceManager.GetString("ksUpdateGlobalWsTooltip", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The following Usage Types were added to the language project:.
-        /// </summary>
-        internal static string ksUsageTypesAdded {
-            get {
-                return ResourceManager.GetString("ksUsageTypesAdded", resourceCulture);
             }
         }
         
@@ -3604,38 +2953,11 @@ namespace LanguageExplorer.Controls {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Validating the input file.
-        /// </summary>
-        internal static string ksValidatingInputFile {
-            get {
-                return ResourceManager.GetString("ksValidatingInputFile", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Variant not found?.
         /// </summary>
         internal static string ksVariantNotFoundQuestion {
             get {
                 return ResourceManager.GetString("ksVariantNotFoundQuestion", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Variant Type :.
-        /// </summary>
-        internal static string ksVariantType {
-            get {
-                return ResourceManager.GetString("ksVariantType", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The following variant types were added to the language project:.
-        /// </summary>
-        internal static string ksVariantTypesAdded {
-            get {
-                return ResourceManager.GetString("ksVariantTypesAdded", resourceCulture);
             }
         }
         
@@ -3667,29 +2989,11 @@ namespace LanguageExplorer.Controls {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Writing accumulated residue.
-        /// </summary>
-        internal static string ksWritingAccumulatedResidue {
-            get {
-                return ResourceManager.GetString("ksWritingAccumulatedResidue", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Writing system.
         /// </summary>
         internal static string ksWritingSystem {
             get {
                 return ResourceManager.GetString("ksWritingSystem", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The following Writing Systems were added to the language project:.
-        /// </summary>
-        internal static string ksWritingSystemsAdded {
-            get {
-                return ResourceManager.GetString("ksWritingSystemsAdded", resourceCulture);
             }
         }
         
@@ -3920,24 +3224,6 @@ namespace LanguageExplorer.Controls {
         internal static string Occurs_zero_or_more_times {
             get {
                 return ResourceManager.GetString("Occurs_zero_or_more_times", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to LIFT files|*.lift|XML files|*.xml|All files|*.*.
-        /// </summary>
-        internal static string openFileDialog1_Filter {
-            get {
-                return ResourceManager.GetString("openFileDialog1_Filter", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Open Lexicon Interchange FormaT File.
-        /// </summary>
-        internal static string openFileDialog1_Title {
-            get {
-                return ResourceManager.GetString("openFileDialog1_Title", resourceCulture);
             }
         }
         

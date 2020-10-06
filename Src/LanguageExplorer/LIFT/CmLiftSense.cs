@@ -13,9 +13,9 @@ namespace LanguageExplorer.LIFT
 	/// This class implements "sense" from the LIFT standard.
 	/// It corresponds to LexSense from the FieldWorks model.
 	/// </summary>
-	public class CmLiftSense : LiftObject, ICmLiftObject
+	internal sealed class CmLiftSense : LiftObject
 	{
-		public CmLiftSense()
+		private CmLiftSense()
 		{
 			Subsenses = new List<CmLiftSense>();
 			Illustrations = new List<LiftUrlRef>();
@@ -25,14 +25,9 @@ namespace LanguageExplorer.LIFT
 			Relations = new List<CmLiftRelation>();
 		}
 
-		public CmLiftSense(Extensible info, Guid guid, LiftObject owner, FlexLiftMerger merger)
+		internal CmLiftSense(Extensible info, Guid guid, LiftObject owner, FlexLiftMerger merger)
+			: this()
 		{
-			Subsenses = new List<CmLiftSense>();
-			Illustrations = new List<LiftUrlRef>();
-			Reversals = new List<CmLiftReversal>();
-			Examples = new List<CmLiftExample>();
-			Notes = new List<CmLiftNote>();
-			Relations = new List<CmLiftRelation>();
 			Id = info.Id;
 			Guid = guid;
 			CmObject = guid == Guid.Empty ? null : merger.GetObjectForGuid(guid);
@@ -41,31 +36,33 @@ namespace LanguageExplorer.LIFT
 			Owner = owner;
 		}
 
-		public ICmObject CmObject { get; set; }
+		public override string XmlTag => "sense/subsense";
 
-		public int Order { get; set; }
+		internal ICmObject CmObject { get; set; }
 
-		public LiftGrammaticalInfo GramInfo { get; set; }
+		internal int Order { get; set; }
 
-		public LiftMultiText Gloss { get; set; }  // safe-XML
+		internal LiftGrammaticalInfo GramInfo { get; set; }
 
-		public LiftMultiText Definition { get; set; } // safe-XML
+		internal LiftMultiText Gloss { get; set; }  // safe-XML
 
-		public List<CmLiftRelation> Relations { get; }
+		internal LiftMultiText Definition { get; set; } // safe-XML
 
-		public List<CmLiftNote> Notes { get; }
+		internal List<CmLiftRelation> Relations { get; }
 
-		public List<CmLiftExample> Examples { get; }
+		internal List<CmLiftNote> Notes { get; }
 
-		public List<CmLiftReversal> Reversals { get; }
+		internal List<CmLiftExample> Examples { get; }
 
-		public List<LiftUrlRef> Illustrations { get; }
+		internal List<CmLiftReversal> Reversals { get; }
 
-		public List<CmLiftSense> Subsenses { get; }
+		internal List<LiftUrlRef> Illustrations { get; }
 
-		public LiftObject Owner { get; }
+		internal List<CmLiftSense> Subsenses { get; }
 
-		public CmLiftEntry OwningEntry
+		internal LiftObject Owner { get; }
+
+		internal CmLiftEntry OwningEntry
 		{
 			get
 			{
@@ -76,7 +73,5 @@ namespace LanguageExplorer.LIFT
 				return owner as CmLiftEntry;
 			}
 		}
-
-		public override string XmlTag => "sense/subsense";
 	}
 }

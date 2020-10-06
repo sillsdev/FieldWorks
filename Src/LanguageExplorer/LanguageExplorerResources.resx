@@ -2249,4 +2249,16 @@ you expect.</value>
     <value>Merge was unable to merge some wordforms because they have inconsistent forms in other writing systems: {0}</value>
     <comment>{0} is a list of space-separated words (possibly only one).</comment>
   </data>
+  <data name="ksComplexFormType" xml:space="preserve">
+    <value>Subentry/Complex Form Type :</value>
+  </data>
+  <data name="ksImportingFrom0" xml:space="preserve">
+    <value>Importing from {0}</value>
+  </data>
+  <data name="ksImportingTookTime" xml:space="preserve">
+    <value>Importing {0} took {1}.{2} seconds</value>
+  </data>
+  <data name="ksVariantType" xml:space="preserve">
+    <value>Variant Type :</value>
+  </data>
 </root>

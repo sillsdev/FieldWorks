@@ -12,19 +12,19 @@ namespace LanguageExplorer.LIFT
 	/// This class implements "phonetic" from the LIFT standard.
 	/// It corresponds to LexPronunciation in the FieldWorks model.
 	/// </summary>
-	public class CmLiftPhonetic : LiftObject, ICmLiftObject
+	internal sealed class CmLiftPhonetic : LiftObject
 	{
-		public CmLiftPhonetic()
+		internal CmLiftPhonetic()
 		{
 			Media = new List<LiftUrlRef>();
 		}
 
-		public ICmObject CmObject { get; set; }
-
-		public LiftMultiText Form { get; set; } // safe XML
-
-		public List<LiftUrlRef> Media { get; }
-
 		public override string XmlTag => "pronunciation";
+
+		internal ICmObject CmObject { get; set; }
+
+		internal LiftMultiText Form { get; set; } // safe XML
+
+		internal List<LiftUrlRef> Media { get; }
 	}
 }

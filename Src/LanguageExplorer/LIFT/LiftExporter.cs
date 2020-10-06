@@ -11,7 +11,6 @@ using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
 using System.Xml;
-using LanguageExplorer.Controls;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Application;
@@ -30,18 +29,18 @@ namespace LanguageExplorer.LIFT
 	/// <summary>
 	/// Export the lexicon as a LIFT file.
 	/// </summary>
-	public class LiftExporter
+	internal sealed class LiftExporter
 	{
 		/// <summary>
 		/// Notify the progress dialog (if there is one) to update the progress bar.
 		/// </summary>
-		public event ProgressHandler UpdateProgress;
+		internal event ProgressHandler UpdateProgress;
 
 		/// <summary>
 		/// Notify the progress dialog (if there is one) to update the progress message and the
 		/// maximum limit of the progress bar.
 		/// </summary>
-		public event EventHandler<ProgressMessageArgs> SetProgressMessage;
+		internal event EventHandler<ProgressMessageArgs> SetProgressMessage;
 
 		private readonly LcmCache m_cache;
 		private readonly IFwMetaDataCacheManaged m_mdc;
@@ -57,7 +56,7 @@ namespace LanguageExplorer.LIFT
 		private readonly ICmPossibilityListRepository m_repoCmPossibilityLists;
 		private readonly ISilDataAccessManaged m_sda;
 
-		public LiftExporter(LcmCache cache)
+		internal LiftExporter(LcmCache cache)
 		{
 			m_cache = cache;
 			m_mdc = cache.MetaDataCacheAccessor as IFwMetaDataCacheManaged;
@@ -79,7 +78,7 @@ namespace LanguageExplorer.LIFT
 		/// <summary>
 		/// Flag whether or not to export external files along with the lexical data.
 		/// </summary>
-		public bool ExportPicturesAndMedia { get; set; }
+		internal bool ExportPicturesAndMedia { get; set; }
 
 		/// <summary>
 		/// Path to the folder where the output is being written. Referenced files are copied to subfolders within this,
@@ -90,7 +89,7 @@ namespace LanguageExplorer.LIFT
 		/// <summary>
 		/// Export without pictures (mainly for testing).
 		/// </summary>
-		public void ExportLift(TextWriter w)
+		internal void ExportLift(TextWriter w)
 		{
 			ExportPicturesAndMedia = false;
 			ExportLift(w, null);
@@ -99,13 +98,13 @@ namespace LanguageExplorer.LIFT
 		/// <summary>
 		/// Export the lexicon.
 		/// </summary>
-		public void ExportLift(TextWriter w, string folderPath)
+		internal void ExportLift(TextWriter w, string folderPath)
 		{
 			var repoLexEntry = m_cache.ServiceLocator.GetInstance<ILexEntryRepository>();
 			ExportLift(w, folderPath, repoLexEntry.AllInstances(), repoLexEntry.Count);
 		}
 
-		public void ExportLift(TextWriter w, string folderPath, IEnumerable<ILexEntry> entries, int entryCount)
+		internal void ExportLift(TextWriter w, string folderPath, IEnumerable<ILexEntry> entries, int entryCount)
 		{
 			FolderPath = folderPath;
 			if (SetProgressMessage != null)
@@ -148,7 +147,7 @@ namespace LanguageExplorer.LIFT
 		/// Export the lexicon entries filtered into the list given by flid with relation to
 		/// the LexDb object.
 		/// </summary>
-		public void ExportLift(TextWriter w, string folderPath, ISilDataAccess sda, int flid)
+		internal void ExportLift(TextWriter w, string folderPath, ISilDataAccess sda, int flid)
 		{
 			var hvoObject = m_cache.LangProject.LexDbOA.Hvo;
 			var chvo = sda.get_VecSize(hvoObject, flid);
@@ -486,7 +485,7 @@ namespace LanguageExplorer.LIFT
 			w.WriteLine(str);
 		}
 
-		public static string GetPossibilityBestAlternative(int possibilityHvo, LcmCache cache)
+		internal static string GetPossibilityBestAlternative(int possibilityHvo, LcmCache cache)
 		{
 			var tsm = cache.DomainDataByFlid.get_MultiStringProp(possibilityHvo, CmPossibilityTags.kflidName);
 			var str = BestAlternative(tsm as IMultiAccessorBase, cache.DefaultUserWs);
@@ -504,7 +503,7 @@ namespace LanguageExplorer.LIFT
 			}
 		}
 
-		public static string GetGenDateAttribute(GenDate dataProperty)
+		internal static string GetGenDateAttribute(GenDate dataProperty)
 		{
 			var genDateStr = "0";
 			if (!dataProperty.IsEmpty)
@@ -517,7 +516,7 @@ namespace LanguageExplorer.LIFT
 		/// <summary>
 		/// Given its integer representation, return a GenDate object.
 		/// </summary>
-		public static GenDate GetGenDateFromInt(int nVal)
+		internal static GenDate GetGenDateFromInt(int nVal)
 		{
 			var fAD = true;
 			if (nVal < 0)
@@ -919,7 +918,7 @@ namespace LanguageExplorer.LIFT
 
 		// Dictionary containing the path of every file we created (or deliberately overwrote) in ExportFile.
 		// Indexed by the actual file path to a Tuple containing the relative file path and the full destination path.
-		Dictionary<string, Tuple<string, string>> m_filesCreated = new Dictionary<string, Tuple<string, string>>();
+		private Dictionary<string, Tuple<string, string>> m_filesCreated = new Dictionary<string, Tuple<string, string>>();
 
 		private string ExportFile(string internalPath, string actualPath, string liftFolderName, string expectRootFolder)
 		{
@@ -1405,7 +1404,7 @@ namespace LanguageExplorer.LIFT
 		/// does not return the desired strings for LIFT export.
 		/// Must be consistent with FlexLiftMerger.GetLiftExportMagicWsIdFromName
 		/// </summary>
-		private string GetLiftExportMagicWsNameFromId(int ws)
+		private static string GetLiftExportMagicWsNameFromId(int ws)
 		{
 			switch (ws)
 			{
@@ -1781,7 +1780,7 @@ namespace LanguageExplorer.LIFT
 			}
 		}
 
-		protected object GetProperty(ICmObject target, string property)
+		private static object GetProperty(ICmObject target, string property)
 		{
 			if (target == null)
 			{
@@ -1827,7 +1826,7 @@ namespace LanguageExplorer.LIFT
 		/// Write the .lift-ranges data into the string writer.
 		/// <note>Does not write to a file, anymore.</note>
 		/// </summary>
-		public void ExportLiftRanges(StringWriter w)
+		internal void ExportLiftRanges(StringWriter w)
 		{
 			w.WriteLine("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
 			w.WriteLine("<!-- See http://github.com/sillsdev/lift-standard for more information on the format used here. -->");
@@ -1902,7 +1901,7 @@ namespace LanguageExplorer.LIFT
 			var liftId = pos.Name.BestAnalysisVernacularAlternative.Text;
 			if (pos.Owner is IPartOfSpeech partOfSpeech)
 			{
-				var liftIdOwner = ((IPartOfSpeech)partOfSpeech).Name.BestAnalysisVernacularAlternative.Text;
+				var liftIdOwner = partOfSpeech.Name.BestAnalysisVernacularAlternative.Text;
 				w.WriteLine("<range-element id=\"{0}\" guid=\"{1}\" parent=\"{2}\">", XmlUtils.MakeSafeXmlAttribute(liftId), pos.Guid, MakeSafeAndNormalizedAttribute(liftIdOwner));
 			}
 			else
@@ -1956,7 +1955,7 @@ namespace LanguageExplorer.LIFT
 			w.WriteLine("</range-element>");
 		}
 
-		static void WriteNoteTypeRange(TextWriter w)
+		private static void WriteNoteTypeRange(TextWriter w)
 		{
 			w.WriteLine("<range id=\"note-type\">");
 			w.WriteLine("<!-- The following elements are defined by the LIFT standard. -->");
@@ -2032,7 +2031,7 @@ namespace LanguageExplorer.LIFT
 			w.WriteLine("</range>");
 		}
 
-		void WriteParadigmRange(TextWriter w)
+		private static void WriteParadigmRange(TextWriter w)
 		{
 			w.WriteLine("<range id=\"paradigm\">");
 			w.WriteLine("<range-element id=\"1d\">");

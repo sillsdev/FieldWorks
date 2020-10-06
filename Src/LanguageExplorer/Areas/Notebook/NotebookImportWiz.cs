@@ -1854,7 +1854,7 @@ namespace LanguageExplorer.Areas.Notebook
 					progressDlg.Maximum = 100;
 					progressDlg.AllowCancel = true;
 					progressDlg.Restartable = true;
-					progressDlg.Title = string.Format(LanguageExplorerControls.ksImportingFrom0, m_sSfmDataFile);
+					progressDlg.Title = string.Format(LanguageExplorerResources.ksImportingFrom0, m_sSfmDataFile);
 					m_sLogFile = (string)progressDlg.RunTask(true, ImportStdFmtFile, m_sSfmDataFile);
 					if (m_chkDisplayImportReport.Checked && !string.IsNullOrEmpty(m_sLogFile))
 					{
@@ -1879,7 +1879,7 @@ namespace LanguageExplorer.Areas.Notebook
 					m_dtStart = DateTime.Now;
 					FixSettingsForThisDatabase();
 					var cLines = m_SfmFile.Lines.Count;
-					progressDlg.Title = string.Format(LanguageExplorerControls.ksImportingFrom0, Path.GetFileName(m_sSfmDataFile));
+					progressDlg.Title = string.Format(LanguageExplorerResources.ksImportingFrom0, Path.GetFileName(m_sSfmDataFile));
 					progressDlg.StepSize = 1;
 					var cExistingRecords = m_cache.LangProject.ResearchNotebookOA.RecordsOC.Count;
 					if (m_rbReplaceAllEntries.Checked && cExistingRecords > 0)
@@ -2049,7 +2049,7 @@ namespace LanguageExplorer.Areas.Notebook
 				var deltaTicks = m_dtEnd.Ticks - m_dtStart.Ticks;   // number of 100-nanosecond intervals
 				var deltaMsec = (int)((deltaTicks + 5000L) / 10000L);   // round off to milliseconds
 				var deltaSec = deltaMsec / 1000;
-				var sDeltaTime = string.Format(LanguageExplorerControls.ksImportingTookTime, Path.GetFileName(m_sSfmDataFile), deltaSec, deltaMsec % 1000);
+				var sDeltaTime = string.Format(LanguageExplorerResources.ksImportingTookTime, Path.GetFileName(m_sSfmDataFile), deltaSec, deltaMsec % 1000);
 				sw.WriteLine("<p>{0}</p>", sDeltaTime);
 				sw.Write("<h3>");
 				if (m_cRecordsDeleted == 0)
