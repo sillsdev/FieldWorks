@@ -6,7 +6,6 @@ using System;
 using System.ComponentModel;
 using System.IO;
 using System.Windows.Forms;
-using LanguageExplorer.LcmUi.Dialogs;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FwCoreDlgs;
 using SIL.LCModel;
@@ -174,8 +173,8 @@ namespace LanguageExplorer.LcmUi
 		/// </summary>
 		public bool OfferToRestore(string projectPath, string backupPath)
 		{
-			return SynchronizeInvoke.Invoke(() => MessageBox.Show(string.Format(LcmUiStrings.kstidOfferToRestore, projectPath, File.GetLastWriteTime(projectPath),
-				backupPath, File.GetLastWriteTime(backupPath)), LcmUiStrings.kstidProblemOpeningFile, MessageBoxButtons.YesNo, MessageBoxIcon.Error) == DialogResult.Yes);
+			return SynchronizeInvoke.Invoke(() => MessageBox.Show(string.Format(LcmUiResources.kstidOfferToRestore, projectPath, File.GetLastWriteTime(projectPath),
+				backupPath, File.GetLastWriteTime(backupPath)), LcmUiResources.kstidProblemOpeningFile, MessageBoxButtons.YesNo, MessageBoxIcon.Error) == DialogResult.Yes);
 		}
 
 		/// <summary>

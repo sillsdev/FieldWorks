@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Windows.Forms;
-using LanguageExplorer.Areas;
 using LanguageExplorer.Controls.XMLViews;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
@@ -16,7 +15,7 @@ using SIL.LCModel;
 using SIL.LCModel.Application;
 using SIL.LCModel.Core.KernelInterfaces;
 
-namespace LanguageExplorer.LcmUi.Dialogs
+namespace LanguageExplorer.LcmUi
 {
 	/// <summary>
 	/// SummaryDialogForm is the dialog that TE launches from its Find In Lexicon command,

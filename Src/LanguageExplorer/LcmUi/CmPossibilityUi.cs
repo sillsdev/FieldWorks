@@ -93,7 +93,7 @@ namespace LanguageExplorer.LcmUi
 			// Confirm the two-level rule.
 			if (hvoItem != hvoRootItem)
 			{
-				MessageBox.Show(LcmUiStrings.ksMarkupTagsTooDeep, LcmUiStrings.ksHierarchyLimit, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+				MessageBox.Show(LcmUiResources.ksMarkupTagsTooDeep, LcmUiResources.ksHierarchyLimit, MessageBoxButtons.OK, MessageBoxIcon.Warning);
 				return true;
 			}
 			return false;
@@ -125,7 +125,7 @@ namespace LanguageExplorer.LcmUi
 			var owner = cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvoItem).Owner;
 			if (hvoItem != hvoRootItem && owner != null && owner.Hvo != hvoRootItem)
 			{
-				MessageBox.Show(LcmUiStrings.ksTemplateTooDeep, LcmUiStrings.ksHierarchyLimit, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+				MessageBox.Show(LcmUiResources.ksTemplateTooDeep, LcmUiResources.ksHierarchyLimit, MessageBoxButtons.OK, MessageBoxIcon.Warning);
 				return true;
 			}
 			return false;
@@ -144,7 +144,7 @@ namespace LanguageExplorer.LcmUi
 		{
 			if (!CanModifyChartColumn(out var msg))
 			{
-				MessageBoxUtils.Show(msg, LcmUiStrings.ksWarningCaption, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+				MessageBoxUtils.Show(msg, LcmUiResources.ksWarningCaption, MessageBoxButtons.OK, MessageBoxIcon.Warning);
 				return true;
 			}
 			return false;
@@ -155,7 +155,7 @@ namespace LanguageExplorer.LcmUi
 			var poss = (ICmPossibility)MyCmObject;
 			if (poss.IsDefaultDiscourseTemplate)
 			{
-				msg = LcmUiStrings.ksCantDeleteDefaultDiscourseTemplate;
+				msg = LcmUiResources.ksCantDeleteDefaultDiscourseTemplate;
 				return false;
 			}
 			if (poss.IsThisOrDescendantInUseAsChartColumn)
@@ -168,7 +168,7 @@ namespace LanguageExplorer.LcmUi
 				var chart = rootPossibility.Services.GetInstance<IDsChartRepository>().InstancesWithTemplate(rootPossibility).First();
 				var textName = ((IDsConstChart)chart).BasedOnRA.Title.BestAnalysisVernacularAlternative.Text;
 				// This is an actual column; it's a problem if it has instances
-				msg = string.Format(LcmUiStrings.ksCantModifyTemplateInUse, textName);
+				msg = string.Format(LcmUiResources.ksCantModifyTemplateInUse, textName);
 				return false;
 			}
 			msg = null;
@@ -180,7 +180,7 @@ namespace LanguageExplorer.LcmUi
 			var poss = (ICmPossibility)MyCmObject;
 			if (poss.IsOnlyTextMarkupTag)
 			{
-				msg = LcmUiStrings.ksCantDeleteLastTagList;
+				msg = LcmUiResources.ksCantDeleteLastTagList;
 				return false;
 			}
 			var usedTag = poss.Services.GetInstance<ITextTagRepository>().GetByTextMarkupTag(poss).FirstOrDefault();
@@ -197,7 +197,7 @@ namespace LanguageExplorer.LcmUi
 						textName = text.ShortName;
 					}
 				}
-				msg = string.Format(poss.SubPossibilitiesOS.Count == 0 ? LcmUiStrings.ksCantDeleteMarkupTagInUse : LcmUiStrings.ksCantDeleteMarkupTypeInUse, textName);
+				msg = string.Format(poss.SubPossibilitiesOS.Count == 0 ? LcmUiResources.ksCantDeleteMarkupTagInUse : LcmUiResources.ksCantDeleteMarkupTypeInUse, textName);
 				return false;
 			}
 			msg = null;

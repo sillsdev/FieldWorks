@@ -30,13 +30,13 @@ namespace LanguageExplorer.LcmUi
 
 		protected override DummyCmObject GetMergeinfo(WindowParams wp, List<DummyCmObject> mergeCandidates, out XElement guiControlParameters, out string helpTopic)
 		{
-			wp.m_title = LcmUiStrings.ksMergeReversalEntry;
-			wp.m_label = LcmUiStrings.ksEntries;
+			wp.m_title = LcmUiResources.ksMergeReversalEntry;
+			wp.m_label = LcmUiResources.ksEntries;
 			var rie = (IReversalIndexEntry)MyCmObject;
 			var filteredHvos = new HashSet<int>(rie.AllOwnedObjects.Select(obj => obj.Hvo)) { rie.Hvo }; // exclude `rie` and all of its subentries
 			var wsIndex = m_cache.ServiceLocator.WritingSystemManager.GetWsFromStr(rie.ReversalIndex.WritingSystem);
 			mergeCandidates.AddRange(rie.ReversalIndex.AllEntries.Where(rieInner => !filteredHvos.Contains(rieInner.Hvo)).Select(rieInner => new DummyCmObject(rieInner.Hvo, rieInner.ShortName, wsIndex)));
-			guiControlParameters = XElement.Parse(LcmUiStrings.MergeReversalEntryListParameters);
+			guiControlParameters = XElement.Parse(LcmUiResources.MergeReversalEntryListParameters);
 			helpTopic = "khtpMergeReversalEntry";
 			return new DummyCmObject(m_hvo, rie.ShortName, wsIndex);
 		}

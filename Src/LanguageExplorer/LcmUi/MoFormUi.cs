@@ -18,8 +18,8 @@ namespace LanguageExplorer.LcmUi
 
 		protected override DummyCmObject GetMergeinfo(WindowParams wp, List<DummyCmObject> mergeCandidates, out XElement guiControlParameters, out string helpTopic)
 		{
-			wp.m_title = LcmUiStrings.ksMergeAllomorph;
-			wp.m_label = LcmUiStrings.ksAlternateForms;
+			wp.m_title = LcmUiResources.ksMergeAllomorph;
+			wp.m_label = LcmUiResources.ksAlternateForms;
 			var defVernWs = m_cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Handle;
 			var le = (ILexEntry)MyCmObject.Owner;
 			foreach (var allo in le.AlternateFormsOS)
@@ -34,7 +34,7 @@ namespace LanguageExplorer.LcmUi
 				// Add the lexeme form.
 				mergeCandidates.Add(new DummyCmObject(le.LexemeFormOA.Hvo, le.LexemeFormOA.Form.VernacularDefaultWritingSystem.Text, defVernWs));
 			}
-			guiControlParameters = XElement.Parse(LcmUiStrings.MergeAllomorphListParameters);
+			guiControlParameters = XElement.Parse(LcmUiResources.MergeAllomorphListParameters);
 			helpTopic = "khtpMergeAllomorph";
 			return new DummyCmObject(m_hvo, ((IMoForm)MyCmObject).Form.VernacularDefaultWritingSystem.Text, defVernWs);
 		}

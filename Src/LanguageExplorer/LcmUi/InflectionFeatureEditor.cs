@@ -8,7 +8,6 @@ using System.Diagnostics;
 using System.Linq;
 using System.Windows.Forms;
 using System.Xml.Linq;
-using LanguageExplorer.Areas;
 using LanguageExplorer.Controls;
 using LanguageExplorer.Controls.XMLViews;
 using SIL.FieldWorks.Common.FwUtils;
@@ -286,7 +285,7 @@ namespace LanguageExplorer.LcmUi
 				sensesByEntry[hvoEntry].Add(ls);
 			}
 			//REVIEW: Should these really be the same Undo/Redo strings as for InflectionClassEditor.cs?
-			m_cache.DomainDataByFlid.BeginUndoTask(LcmUiStrings.ksUndoBEInflClass, LcmUiStrings.ksRedoBEInflClass);
+			m_cache.DomainDataByFlid.BeginUndoTask(LcmUiResources.ksUndoBEInflClass, LcmUiResources.ksRedoBEInflClass);
 			i = 0;
 			interval = Math.Min(100, Math.Max(sensesByEntry.Count / 50, 1));
 			IFsFeatStruc fsTarget = null;

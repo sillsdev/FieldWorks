@@ -9,7 +9,6 @@ using System.IO;
 using System.Windows.Forms;
 using System.Xml.Linq;
 using LanguageExplorer.Controls;
-using LanguageExplorer.LcmUi.Dialogs;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.LCModel;
@@ -248,7 +247,7 @@ namespace LanguageExplorer.LcmUi
 		internal static CmObjectUi MakeLcmModelUiObject(int classId, int hvoOwner, int flid, int insertionPosition, LcmCache cache)
 		{
 			CmObjectUi newUiObj = null;
-			UndoableUnitOfWorkHelper.Do(LcmUiStrings.ksUndoInsert, LcmUiStrings.ksRedoInsert, cache.ServiceLocator.GetInstance<IActionHandler>(), () =>
+			UndoableUnitOfWorkHelper.Do(LcmUiResources.ksUndoInsert, LcmUiResources.ksRedoInsert, cache.ServiceLocator.GetInstance<IActionHandler>(), () =>
 			{
 				var newHvo = cache.DomainDataByFlid.MakeNewObject(classId, hvoOwner, flid, insertionPosition);
 				newUiObj = MakeLcmModelUiObject(cache, newHvo, classId);
@@ -386,7 +385,7 @@ namespace LanguageExplorer.LcmUi
 				cannotDeleteMsg = null;
 				return true;
 			}
-			cannotDeleteMsg = LcmUiStrings.ksCannotDeleteItem;
+			cannotDeleteMsg = LcmUiResources.ksCannotDeleteItem;
 			return false;
 		}
 
@@ -468,8 +467,8 @@ namespace LanguageExplorer.LcmUi
 			{
 				return false; // don't delete external file
 			}
-			var msg = string.Format(LcmUiStrings.ksDeleteFileAlso, path);
-			if (MessageBox.Show(Form.ActiveForm, msg, LcmUiStrings.ksDeleteFileCaption, MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes)
+			var msg = string.Format(LcmUiResources.ksDeleteFileAlso, path);
+			if (MessageBox.Show(Form.ActiveForm, msg, LcmUiResources.ksDeleteFileCaption, MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes)
 			{
 				return false;
 			}
@@ -502,7 +501,7 @@ namespace LanguageExplorer.LcmUi
 		protected virtual void ReallyDeleteUnderlyingObject()
 		{
 			Logger.WriteEvent("Deleting '" + MyCmObject.ShortName + "'...");
-			UndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(LcmUiStrings.ksUndoDelete, LcmUiStrings.ksRedoDelete, m_cache.ActionHandlerAccessor, () =>
+			UndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(LcmUiResources.ksUndoDelete, LcmUiResources.ksRedoDelete, m_cache.ActionHandlerAccessor, () =>
 			{
 				DoRelatedCleanupForDeleteObject();
 				MyCmObject.Cache.DomainDataByFlid.DeleteObj(MyCmObject.Hvo);
@@ -547,7 +546,7 @@ namespace LanguageExplorer.LcmUi
 			var survivor = m_cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(survivorHvo);
 			Logger.WriteEvent("Merging '" + MyCmObject.ShortName + "' into '" + survivor.ShortName + "'.");
 			var ah = m_cache.ServiceLocator.GetInstance<IActionHandler>();
-			UndoableUnitOfWorkHelper.Do(LcmUiStrings.ksUndoMerge, LcmUiStrings.ksRedoMerge, ah, () => survivor.MergeObject(MyCmObject, fLoseNoTextData));
+			UndoableUnitOfWorkHelper.Do(LcmUiResources.ksUndoMerge, LcmUiResources.ksRedoMerge, ah, () => survivor.MergeObject(MyCmObject, fLoseNoTextData));
 			Logger.WriteEvent("Done Merging.");
 			m_cmObject = null;
 		}
@@ -563,7 +562,7 @@ namespace LanguageExplorer.LcmUi
 		/// <summary />
 		public virtual void MoveUnderlyingObjectToCopyOfOwner()
 		{
-			MessageBox.Show(PropertyTable.GetValue<Form>(FwUtilsConstants.window), LcmUiStrings.ksCannotMoveObjectToCopy, LcmUiStrings.ksBUG);
+			MessageBox.Show(PropertyTable.GetValue<Form>(FwUtilsConstants.window), LcmUiResources.ksCannotMoveObjectToCopy, LcmUiResources.ksBUG);
 		}
 
 		#endregion Other methods

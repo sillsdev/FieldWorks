@@ -10,7 +10,6 @@ using System.Linq;
 using System.Windows.Forms;
 using System.Xml.Serialization;
 using Ionic.Zip;
-using LanguageExplorer.LcmUi.Dialogs;
 using LanguageExplorer.LIFT;
 using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;

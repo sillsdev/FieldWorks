@@ -8,7 +8,6 @@ using System.Diagnostics;
 using System.Linq;
 using System.Windows.Forms;
 using LanguageExplorer.Controls;
-using LanguageExplorer.LcmUi.Dialogs;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.LCModel;
@@ -70,7 +69,7 @@ namespace LanguageExplorer.LcmUi
 			var retval = cache.ServiceLocator.GetInstance<ILexEntryRepository>().FindEntriesForWordform(cache, tssWf, wfa, ref duplicates);
 			if (duplicates)
 			{
-				MessageBox.Show(Form.ActiveForm, string.Format(LcmUiStrings.ksDuplicateWordformsMsg, tssWf.Text), LcmUiStrings.ksDuplicateWordformsCaption, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+				MessageBox.Show(Form.ActiveForm, string.Format(LcmUiResources.ksDuplicateWordformsMsg, tssWf.Text), LcmUiResources.ksDuplicateWordformsCaption, MessageBoxButtons.OK, MessageBoxIcon.Warning);
 			}
 			return retval;
 		}
@@ -347,9 +346,9 @@ namespace LanguageExplorer.LcmUi
 				SetCurrentModalForm(entryGoDlg);
 				var wp = new WindowParams
 				{
-					m_btnText = LcmUiStrings.ksShow,
-					m_title = LcmUiStrings.ksFindInDictionary,
-					m_label = LcmUiStrings.ksFind_
+					m_btnText = LcmUiResources.ksShow,
+					m_title = LcmUiResources.ksFindInDictionary,
+					m_label = LcmUiResources.ksFind_
 				};
 				if (owner == null)
 				{

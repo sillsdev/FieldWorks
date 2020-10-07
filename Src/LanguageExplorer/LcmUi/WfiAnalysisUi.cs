@@ -23,7 +23,7 @@ namespace LanguageExplorer.LcmUi
 			var preUACount = wf.UserCount;
 			// we need to include resetting the wordform's checksum as part of the undo action
 			// for deleting this analysis.
-			using (var helper = new UndoableUnitOfWorkHelper(m_cache.ActionHandlerAccessor, LcmUiStrings.ksUndoDelete, LcmUiStrings.ksRedoDelete))
+			using (var helper = new UndoableUnitOfWorkHelper(m_cache.ActionHandlerAccessor, LcmUiResources.ksUndoDelete, LcmUiResources.ksRedoDelete))
 			{
 				base.ReallyDeleteUnderlyingObject();
 				// We need to fire off a notification about the deletion for several virtual fields.

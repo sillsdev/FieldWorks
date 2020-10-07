@@ -227,7 +227,7 @@ namespace LanguageExplorer.LcmUi
 					if (sender is PhonologicalFeaturePopupTreeManager ptm)
 					{
 						SelectedHvo = ptm.ClosedFeature.Hvo;
-						SelectedLabel = LcmUiStrings.ksRemoveThisFeature;
+						SelectedLabel = LcmUiResources.ksRemoveThisFeature;
 						EnableTargetFeatureCombo?.Invoke(this, new TargetFeatureEventArgs(true));
 					}
 				}
@@ -295,7 +295,7 @@ namespace LanguageExplorer.LcmUi
 			var i = 0;
 			// Report progress 50 times or every 100 items, whichever is more (but no more than once per item!)
 			var interval = Math.Min(100, Math.Max(itemsToChange.Count() / 50, 1));
-			m_cache.DomainDataByFlid.BeginUndoTask(LcmUiStrings.ksUndoBEPhonemeFeatures, LcmUiStrings.ksRedoBEPhonemeFeatures);
+			m_cache.DomainDataByFlid.BeginUndoTask(LcmUiResources.ksUndoBEPhonemeFeatures, LcmUiResources.ksRedoBEPhonemeFeatures);
 			if (SelectedHvo != 0)
 			{
 				var fsTarget = GetTargetFsFeatStruc();

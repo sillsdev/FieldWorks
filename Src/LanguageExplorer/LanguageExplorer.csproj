@@ -1646,45 +1646,45 @@
     <Compile Include="LanguageExplorerConstants.cs" />
     <Compile Include="LayoutKeyUtils.cs" />
     <Compile Include="LcmUi\BulkPosEditor.cs" />
-    <Compile Include="LcmUi\Dialogs\CantRestoreLinkedFilesToOriginalLocation.cs">
+    <Compile Include="LcmUi\CantRestoreLinkedFilesToOriginalLocation.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="LcmUi\Dialogs\CantRestoreLinkedFilesToOriginalLocation.Designer.cs">
+    <Compile Include="LcmUi\CantRestoreLinkedFilesToOriginalLocation.Designer.cs">
       <DependentUpon>CantRestoreLinkedFilesToOriginalLocation.cs</DependentUpon>
     </Compile>
-    <Compile Include="LcmUi\Dialogs\ConfirmDeleteObjectDlg.cs">
+    <Compile Include="ConfirmDeleteObjectDlg.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="LcmUi\Dialogs\ConflictingSaveDlg.cs">
+    <Compile Include="LcmUi\ConflictingSaveDlg.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="LcmUi\Dialogs\ConflictingSaveDlg.Designer.cs">
+    <Compile Include="LcmUi\ConflictingSaveDlg.Designer.cs">
       <DependentUpon>ConflictingSaveDlg.cs</DependentUpon>
     </Compile>
-    <Compile Include="LcmUi\Dialogs\FilesToRestoreAreOlder.cs">
+    <Compile Include="LcmUi\FilesToRestoreAreOlder.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="LcmUi\Dialogs\FilesToRestoreAreOlder.Designer.cs">
+    <Compile Include="LcmUi\FilesToRestoreAreOlder.Designer.cs">
       <DependentUpon>FilesToRestoreAreOlder.cs</DependentUpon>
     </Compile>
-    <Compile Include="LcmUi\Dialogs\MergeObjectDlg.cs">
+    <Compile Include="LcmUi\MergeObjectDlg.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="LcmUi\Dialogs\RelatedWords.cs">
+    <Compile Include="LcmUi\RelatedWords.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="LcmUi\Dialogs\RestoreLinkedFilesToProjectsFolder.cs">
+    <Compile Include="LcmUi\RestoreLinkedFilesToProjectsFolder.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="LcmUi\Dialogs\RestoreLinkedFilesToProjectsFolder.Designer.cs">
+    <Compile Include="LcmUi\RestoreLinkedFilesToProjectsFolder.Designer.cs">
       <DependentUpon>RestoreLinkedFilesToProjectsFolder.cs</DependentUpon>
     </Compile>
-    <Compile Include="LcmUi\Dialogs\SummaryDialogForm.cs">
+    <Compile Include="LcmUi\SummaryDialogForm.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="LcmUi\DummyCmObject.cs" />
-    <Compile Include="LcmUi\LcmUiStrings.Designer.cs">
-      <DependentUpon>LcmUiStrings.resx</DependentUpon>
+    <Compile Include="LcmUi\LcmUiResources.Designer.cs">
+      <DependentUpon>LcmUiResources.resx</DependentUpon>
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
     </Compile>
@@ -1696,11 +1696,6 @@
     <Compile Include="LcmUi\LexPronunciationUi.cs" />
     <Compile Include="LcmUi\PartOfSpeechUi.cs" />
     <Compile Include="LcmUi\PhonologicalFeatureEditor.cs" />
-    <Compile Include="LcmUi\Resources.Designer.cs">
-      <DependentUpon>Resources.resx</DependentUpon>
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-    </Compile>
     <Compile Include="LcmUi\ReversalIndexEntryUi.cs" />
     <Compile Include="LcmUi\WfiWordformUi.cs" />
     <Compile Include="Controls\MGA\GlossListBox.cs">
@@ -2515,46 +2510,41 @@
       <DependentUpon>SfmToTextsAndWordsMappingDlg.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="LcmUi\Dialogs\CantRestoreLinkedFilesToOriginalLocation.resx">
+    <EmbeddedResource Include="LcmUi\CantRestoreLinkedFilesToOriginalLocation.resx">
       <DependentUpon>CantRestoreLinkedFilesToOriginalLocation.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="LcmUi\Dialogs\ConfirmDeleteObjectDlg.resx">
+    <EmbeddedResource Include="ConfirmDeleteObjectDlg.resx">
       <DependentUpon>ConfirmDeleteObjectDlg.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="LcmUi\Dialogs\ConflictingSaveDlg.resx">
+    <EmbeddedResource Include="LcmUi\ConflictingSaveDlg.resx">
       <DependentUpon>ConflictingSaveDlg.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="LcmUi\Dialogs\FilesToRestoreAreOlder.resx">
+    <EmbeddedResource Include="LcmUi\FilesToRestoreAreOlder.resx">
       <DependentUpon>FilesToRestoreAreOlder.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="LcmUi\Dialogs\MergeObjectDlg.resx">
+    <EmbeddedResource Include="LcmUi\MergeObjectDlg.resx">
       <DependentUpon>MergeObjectDlg.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="LcmUi\Dialogs\RelatedWords.resx">
+    <EmbeddedResource Include="LcmUi\RelatedWords.resx">
       <DependentUpon>RelatedWords.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="LcmUi\Dialogs\RestoreLinkedFilesToProjectsFolder.resx">
+    <EmbeddedResource Include="LcmUi\RestoreLinkedFilesToProjectsFolder.resx">
       <DependentUpon>RestoreLinkedFilesToProjectsFolder.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="LcmUi\Dialogs\SummaryDialogForm.resx">
+    <EmbeddedResource Include="LcmUi\SummaryDialogForm.resx">
       <DependentUpon>SummaryDialogForm.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="LcmUi\LcmUiStrings.resx">
+    <EmbeddedResource Include="LcmUi\LcmUiResources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>LcmUiStrings.Designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="LcmUi\Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <LastGenOutput>LcmUiResources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\MGA\GlossListBox.resx">

@@ -4,7 +4,7 @@
 
 using System.Diagnostics;
 
-namespace LanguageExplorer.LcmUi.Dialogs
+namespace LanguageExplorer.LcmUi
 {
 	partial class ConflictingSaveDlg
 	{

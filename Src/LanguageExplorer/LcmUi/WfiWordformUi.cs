@@ -59,7 +59,7 @@ namespace LanguageExplorer.LcmUi
 			{
 				return true;
 			}
-			cannotDeleteMsg = LcmUiStrings.ksCannotDeleteWordform;
+			cannotDeleteMsg = LcmUiResources.ksCannotDeleteWordform;
 			return false;
 		}
 	}

@@ -2261,4 +2261,8 @@ you expect.</value>
   <data name="ksVariantType" xml:space="preserve">
     <value>Variant Type :</value>
   </data>
+  <data name="ksDeleteX" xml:space="preserve">
+    <value>Delete {0}</value>
+    <comment>Title of delete confirmation dialog box</comment>
+  </data>
 </root>

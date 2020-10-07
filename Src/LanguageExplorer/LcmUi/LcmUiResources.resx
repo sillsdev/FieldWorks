@@ -135,10 +135,6 @@
     <value>Do not know how to move this object to a new copy of its owner.</value>
     <comment>error message displayed in message box</comment>
   </data>
-  <data name="ksDeleteX" xml:space="preserve">
-    <value>Delete {0}</value>
-    <comment>Title of delete confirmation dialog box</comment>
-  </data>
   <data name="ksEntries" xml:space="preserve">
     <value>Select the entry to merge the current entry into:</value>
   </data>
@@ -339,5 +335,8 @@ Without these, we cannot find related entries.</value>
   </data>
   <data name="MergeWordGlossListParameters" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\MergeWordGlossListParameters.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="question" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\question.ico;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>

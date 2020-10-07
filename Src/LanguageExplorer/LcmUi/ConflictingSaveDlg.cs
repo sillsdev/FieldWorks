@@ -5,7 +5,7 @@
 using System.Drawing;
 using System.Windows.Forms;
 
-namespace LanguageExplorer.LcmUi.Dialogs
+namespace LanguageExplorer.LcmUi
 {
 	/// <summary>
 	/// This dialog is like a message box, but offers two buttons, OK and "Refresh Now", which

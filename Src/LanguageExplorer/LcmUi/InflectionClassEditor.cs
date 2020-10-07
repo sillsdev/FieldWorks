@@ -279,7 +279,7 @@ namespace LanguageExplorer.LcmUi
 				}
 				sensesByEntryAndPos[key].Add(ls);
 			}
-			m_cache.DomainDataByFlid.BeginUndoTask(LcmUiStrings.ksUndoBEInflClass, LcmUiStrings.ksRedoBEInflClass);
+			m_cache.DomainDataByFlid.BeginUndoTask(LcmUiResources.ksUndoBEInflClass, LcmUiResources.ksRedoBEInflClass);
 			i = 0;
 			interval = Math.Min(100, Math.Max(sensesByEntryAndPos.Count / 50, 1));
 			foreach (var kvp in sensesByEntryAndPos)

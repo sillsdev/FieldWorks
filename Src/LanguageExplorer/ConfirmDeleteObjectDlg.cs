@@ -12,7 +12,7 @@ using SIL.LCModel;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Core.Text;
 
-namespace LanguageExplorer.LcmUi.Dialogs
+namespace LanguageExplorer
 {
 	/// <summary>
 	/// This dialog window allows for a user to confirm deleting an object, or cancel the deletion.
@@ -116,7 +116,7 @@ namespace LanguageExplorer.LcmUi.Dialogs
 			IVwStylesheet stylesheet = FwUtils.StyleSheetFromPropertyTable(propertyTable);
 			Debug.Assert(obj != null);
 			Debug.Assert(obj != null);
-			Text = string.Format(LcmUiStrings.ksDeleteX, obj.DisplayNameOfClass());
+			Text = string.Format(LanguageExplorerResources.ksDeleteX, obj.DisplayNameOfClass());
 			// Set the s_helpTopic based on the window title and rearrange the buttons if necessary
 			switch (obj.ClassName)
 			{

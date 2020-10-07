@@ -2,7 +2,6 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System;
 using System.Diagnostics;
 using SIL.Code;
 using SIL.LCModel;
@@ -34,7 +33,7 @@ namespace LanguageExplorer.LcmUi
 			Guard.AgainstNull(cache, nameof(cache));
 
 			LexPronunciationUi result = null;
-			UndoableUnitOfWorkHelper.Do(LcmUiStrings.ksUndoInsert, LcmUiStrings.ksRedoInsert, cache.ActionHandlerAccessor, () =>
+			UndoableUnitOfWorkHelper.Do(LcmUiResources.ksUndoInsert, LcmUiResources.ksRedoInsert, cache.ActionHandlerAccessor, () =>
 			{
 				var newHvo = cache.DomainDataByFlid.MakeNewObject(classId, hvoOwner, flid, insertionPosition);
 				result = (LexPronunciationUi)MakeLcmModelUiObject(cache, newHvo);

@@ -6,7 +6,7 @@ using System;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwUtils;
 
-namespace LanguageExplorer.LcmUi.Dialogs
+namespace LanguageExplorer.LcmUi
 {
 	/// <summary>
 	///

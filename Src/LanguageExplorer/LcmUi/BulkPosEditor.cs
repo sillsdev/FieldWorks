@@ -56,7 +56,7 @@ namespace LanguageExplorer.LcmUi
 				}
 				senses.Add(sense);
 			}
-			UndoableUnitOfWorkHelper.Do(LcmUiStrings.ksUndoBulkEditPOS, LcmUiStrings.ksRedoBulkEditPOS, m_cache.ActionHandlerAccessor, () => DoUpdatePos(state, sensesByEntry, posWanted));
+			UndoableUnitOfWorkHelper.Do(LcmUiResources.ksUndoBulkEditPOS, LcmUiResources.ksRedoBulkEditPOS, m_cache.ActionHandlerAccessor, () => DoUpdatePos(state, sensesByEntry, posWanted));
 		}
 
 		private void DoUpdatePos(ProgressState state, Dictionary<ILexEntry, List<ILexSense>> sensesByEntry, IPartOfSpeech posWanted)

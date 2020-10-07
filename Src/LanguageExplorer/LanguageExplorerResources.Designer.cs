@@ -1857,6 +1857,15 @@ namespace LanguageExplorer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Delete {0}.
+        /// </summary>
+        internal static string ksDeleteX {
+            get {
+                return ResourceManager.GetString("ksDeleteX", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to You are deleting the following Reversal Index:.
         /// </summary>
         internal static string ksDeletingThisRevIndex {

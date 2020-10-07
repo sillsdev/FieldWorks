@@ -28,8 +28,8 @@ namespace LanguageExplorer.LcmUi
 
 		protected override DummyCmObject GetMergeinfo(WindowParams wp, List<DummyCmObject> mergeCandidates, out XElement guiControlParameters, out string helpTopic)
 		{
-			wp.m_title = LcmUiStrings.ksMergeWordGloss;
-			wp.m_label = LcmUiStrings.ksGlosses;
+			wp.m_title = LcmUiResources.ksMergeWordGloss;
+			wp.m_label = LcmUiResources.ksGlosses;
 			var anal = (IWfiAnalysis)MyCmObject.Owner;
 			ITsString tss;
 			int ws;
@@ -43,7 +43,7 @@ namespace LanguageExplorer.LcmUi
 				ws = tss.get_PropertiesAt(0).GetIntPropValues((int)FwTextPropType.ktptWs, out _);
 				mergeCandidates.Add(new DummyCmObject(gloss.Hvo, tss.Text, ws));
 			}
-			guiControlParameters = XElement.Parse(LcmUiStrings.MergeWordGlossListParameters);
+			guiControlParameters = XElement.Parse(LcmUiResources.MergeWordGlossListParameters);
 			helpTopic = "khtpMergeWordGloss";
 			var me = (IWfiGloss)MyCmObject;
 			tss = me.ShortNameTSS;

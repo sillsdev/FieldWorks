@@ -4,7 +4,7 @@
 
 using System.Diagnostics;
 
-namespace LanguageExplorer.LcmUi.Dialogs
+namespace LanguageExplorer.LcmUi
 {
 	partial class FilesToRestoreAreOlder
 	{
@@ -65,7 +65,7 @@ namespace LanguageExplorer.LcmUi.Dialogs
 			// 
 			// pictureBox1
 			// 
-			this.pictureBox1.Image = global::LanguageExplorer.LcmUi.Resources.question;
+			this.pictureBox1.Image = global::LanguageExplorer.LcmUi.LcmUiResources.question;
 			resources.ApplyResources(this.pictureBox1, "pictureBox1");
 			this.pictureBox1.Name = "pictureBox1";
 			this.pictureBox1.TabStop = false;

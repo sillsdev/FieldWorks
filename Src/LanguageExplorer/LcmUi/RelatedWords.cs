@@ -18,7 +18,7 @@ using SIL.LCModel;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Core.Text;
 
-namespace LanguageExplorer.LcmUi.Dialogs
+namespace LanguageExplorer.LcmUi
 {
 	/// <summary />
 	public class RelatedWords : Form
@@ -41,7 +41,7 @@ namespace LanguageExplorer.LcmUi.Dialogs
 		/// </summary>
 		internal static void ShowNotInDictMessage(IWin32Window owner)
 		{
-			MessageBox.Show(owner, LcmUiStrings.kstidFindRelWordsNotInDict, LcmUiStrings.kstidFindRelWordsTitle);
+			MessageBox.Show(owner, LcmUiResources.kstidFindRelWordsNotInDict, LcmUiResources.kstidFindRelWordsTitle);
 		}
 
 		/// <summary>
@@ -55,12 +55,12 @@ namespace LanguageExplorer.LcmUi.Dialogs
 			var fHaveLexRels = LoadLexicalRelationInfo(cache, hvoEntry, out lexrelsOut, cdaTemp);
 			if (!fHaveSemDomains && !fHaveLexRels)
 			{
-				MessageBox.Show(owner, LcmUiStrings.ksNoSemanticDomainsListedForEntry, LcmUiStrings.ksFindRelatedWords);
+				MessageBox.Show(owner, LcmUiResources.ksNoSemanticDomainsListedForEntry, LcmUiResources.ksFindRelatedWords);
 				return false;
 			}
 			if (domainsOut.Length == 0 && lexrelsOut.Length == 0)
 			{
-				MessageBox.Show(owner, LcmUiStrings.ksNoEntriesWithSameSemanticDomain, LcmUiStrings.ksFindRelatedWords);
+				MessageBox.Show(owner, LcmUiResources.ksNoEntriesWithSameSemanticDomain, LcmUiResources.ksFindRelatedWords);
 				return false;
 			}
 			return true;
@@ -606,8 +606,8 @@ namespace LanguageExplorer.LcmUi.Dialogs
 				m_wsDefault = wsUser;
 				m_tssColon = TsStringUtils.MakeString(": ", wsUser);
 				m_tssComma = TsStringUtils.MakeString(", ", wsUser);
-				m_tssSdRelation = TsStringUtils.MakeString(LcmUiStrings.ksWordsRelatedBySemanticDomain, wsUser);
-				m_tssLexRelation = TsStringUtils.MakeString(LcmUiStrings.ksLexicallyRelatedWords, wsUser);
+				m_tssSdRelation = TsStringUtils.MakeString(LcmUiResources.ksWordsRelatedBySemanticDomain, wsUser);
+				m_tssLexRelation = TsStringUtils.MakeString(LcmUiResources.ksLexicallyRelatedWords, wsUser);
 				var semanticDomainStrBuilder = m_tssSdRelation.GetBldr();
 				var index = semanticDomainStrBuilder.Text.IndexOf("{0}");
 				if (index > 0)

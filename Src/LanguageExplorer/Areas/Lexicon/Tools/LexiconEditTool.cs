@@ -411,7 +411,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools
 			private void Insert_Allomorph_Clicked(object sender, EventArgs e)
 			{
 				var lexEntry = (ILexEntry)_recordList.CurrentObject;
-				UndoableUnitOfWorkHelper.Do(LcmUiStrings.ksUndoInsert, LcmUiStrings.ksRedoInsert, _cache.ServiceLocator.GetInstance<IActionHandler>(), () =>
+				UndoableUnitOfWorkHelper.Do(LcmUiResources.ksUndoInsert, LcmUiResources.ksRedoInsert, _cache.ServiceLocator.GetInstance<IActionHandler>(), () =>
 				{
 					_cache.DomainDataByFlid.MakeNewObject(lexEntry.GetDefaultClassForNewAllomorph(), lexEntry.Hvo, LexEntryTags.kflidAlternateForms, lexEntry.AlternateFormsOS.Count);
 				});
@@ -429,7 +429,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools
 			private void Insert_Pronunciation_Clicked(object sender, EventArgs e)
 			{
 				var lexEntry = (ILexEntry)_recordList.CurrentObject;
-				UndoableUnitOfWorkHelper.Do(LcmUiStrings.ksUndoInsert, LcmUiStrings.ksRedoInsert, _cache.ServiceLocator.GetInstance<IActionHandler>(), () =>
+				UndoableUnitOfWorkHelper.Do(LcmUiResources.ksUndoInsert, LcmUiResources.ksRedoInsert, _cache.ServiceLocator.GetInstance<IActionHandler>(), () =>
 				{
 					_cache.DomainDataByFlid.MakeNewObject(LexPronunciationTags.kClassId, lexEntry.Hvo, LexEntryTags.kflidPronunciations, lexEntry.PronunciationsOS.Count);
 					// Forces them to be created (lest it try to happen while displaying the new object in PropChanged).

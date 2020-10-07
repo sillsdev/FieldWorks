@@ -32,8 +32,8 @@ namespace LanguageExplorer.LcmUi
 
 		protected override DummyCmObject GetMergeinfo(WindowParams wp, List<DummyCmObject> mergeCandidates, out XElement guiControlParameters, out string helpTopic)
 		{
-			wp.m_title = LcmUiStrings.ksMergeSense;
-			wp.m_label = LcmUiStrings.ksSenses;
+			wp.m_title = LcmUiResources.ksMergeSense;
+			wp.m_label = LcmUiResources.ksSenses;
 			var sense = (ILexSense)MyCmObject;
 			var le = sense.Entry;
 			// Exclude subsenses of the chosen sense.  See LT-6107.
@@ -53,7 +53,7 @@ namespace LanguageExplorer.LcmUi
 				var tssName = senseInner.ShortNameTSS;
 				mergeCandidates.Add(new DummyCmObject(senseInner.Hvo, tssName.Text, TsStringUtils.GetWsAtOffset(tssName, 0)));
 			}
-			guiControlParameters = XElement.Parse(LcmUiStrings.MergeSenseListParameters);
+			guiControlParameters = XElement.Parse(LcmUiResources.MergeSenseListParameters);
 			helpTopic = "khtpMergeSense";
 			var tss = MyCmObject.ShortNameTSS;
 			return new DummyCmObject(m_hvo, tss.Text, TsStringUtils.GetWsAtOffset(tss, 0));
@@ -115,7 +115,7 @@ namespace LanguageExplorer.LcmUi
 		internal static ILexSense CreateNewLexSense(LcmCache cache, ILexEntry ownerEntry, int insertionPosition = int.MaxValue)
 		{
 			ILexSense newSense = null;
-			UndoableUnitOfWorkHelper.Do(LcmUiStrings.ksUndoInsertSense, LcmUiStrings.ksRedoInsertSense, cache.ServiceLocator.GetInstance<IActionHandler>(), () =>
+			UndoableUnitOfWorkHelper.Do(LcmUiResources.ksUndoInsertSense, LcmUiResources.ksRedoInsertSense, cache.ServiceLocator.GetInstance<IActionHandler>(), () =>
 			{
 				IMoMorphSynAnalysis msa;
 				var entrySenseCount = ownerEntry.SensesOS.Count;
@@ -167,7 +167,7 @@ namespace LanguageExplorer.LcmUi
 		internal static ILexSense CreateNewLexSense(LcmCache cache, ILexSense ownerSense, int insertionPosition = int.MaxValue)
 		{
 			ILexSense newSense = null;
-			UndoableUnitOfWorkHelper.Do(LcmUiStrings.ksUndoInsertSense, LcmUiStrings.ksRedoInsertSense, cache.ServiceLocator.GetInstance<IActionHandler>(), () =>
+			UndoableUnitOfWorkHelper.Do(LcmUiResources.ksUndoInsertSense, LcmUiResources.ksRedoInsertSense, cache.ServiceLocator.GetInstance<IActionHandler>(), () =>
 			{
 				IMoMorphSynAnalysis msa;
 				var senseSubsenseCount = ownerSense.SensesOS.Count;
