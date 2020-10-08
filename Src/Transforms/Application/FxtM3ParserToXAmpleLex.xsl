@@ -191,7 +191,7 @@ Main template
 						<xsl:with-param name="allos" select="$allos"/>
 					</xsl:call-template>
 					<xsl:call-template name="CircumfixMCCs">
-						<xsl:with-param name="morphname" select="@dst"/>
+						<xsl:with-param name="morphname" select="@Id"/>
 					</xsl:call-template>
 				</xsl:if>
 				<xsl:if test="contains($sTypes, 'infix')">
@@ -211,7 +211,7 @@ Main template
 						<xsl:with-param name="allos" select="$allos"/>
 					</xsl:call-template>
 					<xsl:call-template name="CircumfixMCCs">
-						<xsl:with-param name="morphname" select="@dst"/>
+						<xsl:with-param name="morphname" select="@Id"/>
 					</xsl:call-template>
 					<xsl:text>
 \fd Infix</xsl:text>
@@ -230,7 +230,7 @@ Main template
 						<xsl:with-param name="allos" select="$allos"/>
 					</xsl:call-template>
 					<xsl:call-template name="CircumfixMCCs">
-						<xsl:with-param name="morphname" select="@dst"/>
+						<xsl:with-param name="morphname" select="@Id"/>
 					</xsl:call-template>
 				</xsl:if>
 			</xsl:when>
@@ -272,7 +272,7 @@ Main template
 						<xsl:with-param name="allos" select="$allos"/>
 					</xsl:call-template>
 					<xsl:call-template name="CircumfixMCCs">
-						<xsl:with-param name="morphname" select="@Id"/>
+						<xsl:with-param name="morphname" select="@dst"/>
 					</xsl:call-template>
 				</xsl:if>
 				<xsl:if test="contains($sTypes, 'infix')">
@@ -1198,17 +1198,35 @@ DoDerivAffix
 					<xsl:variable name="bCompoundRuleCouldCauseOrderClassProblem">
 						<xsl:call-template name="DetermineIfCompoundRuleCouldCauseOrderClassProblem"/>
 					</xsl:variable>
+					<xsl:variable name="sMin" select="substring(orderclass/minValue,3)"/>
+					<xsl:variable name="sMax" select="substring(orderclass/maxValue,3)"/>
+					<!-- If either sMin or sMax are zero, then GAFAWS failed to figure out a consistent value.
+						We try and use what it did figure out or zero if it found nothing.  -->
+					<xsl:variable name="iMinToUse" select="number(concat($sSign,string(number($sMin + 1))))"/>
+					<xsl:variable name="iMaxToUse" select="number(concat($sSign,string(number($sMax + 1))))"/>
 					<xsl:variable name="sMinOrderClass">
 						<xsl:choose>
 							<xsl:when test="contains($bCompoundRuleCouldCauseOrderClassProblem,'Y')">
 								<xsl:text>0</xsl:text>
 							</xsl:when>
-							<xsl:when test="contains($sTypes, 'prefix') or contains($sTypes, 'infix')">
-								<!-- prefix orderclass is negative so need to flip -->
-								<xsl:value-of select="orderclass/maxValue"/>
-							</xsl:when>
 							<xsl:otherwise>
-								<xsl:value-of select="orderclass/minValue"/>
+								<xsl:choose>
+									<xsl:when test="$sMin='0' and $sMax!='0'">
+										<xsl:value-of select="$iMaxToUse"/>
+									</xsl:when>
+									<xsl:when test="$sMin!='0' and $sMax='0'">
+										<xsl:value-of select="$iMinToUse"/>
+									</xsl:when>
+									<xsl:when test="$sMin='0' and $sMax='0'">
+										<xsl:text>0</xsl:text>
+									</xsl:when>
+									<xsl:when test="$iMinToUse &gt; $iMaxToUse">
+										<xsl:value-of select="$iMaxToUse"/>
+									</xsl:when>
+									<xsl:otherwise>
+										<xsl:value-of select="$iMinToUse"/>
+									</xsl:otherwise>
+								</xsl:choose>
 							</xsl:otherwise>
 						</xsl:choose>
 					</xsl:variable>
@@ -1217,27 +1235,33 @@ DoDerivAffix
 							<xsl:when test="contains($bCompoundRuleCouldCauseOrderClassProblem,'Y')">
 								<xsl:text>0</xsl:text>
 							</xsl:when>
-							<!-- prefix orderclass is negative so need to flip -->
-							<xsl:when test="contains($sTypes, 'prefix') or contains($sTypes, 'infix')">
-								<xsl:value-of select="orderclass/minValue"/>
-							</xsl:when>
 							<xsl:otherwise>
-								<xsl:value-of select="orderclass/maxValue"/>
+								<xsl:choose>
+									<xsl:when test="$sMin='0' and $sMax!='0'">
+										<xsl:value-of select="$iMaxToUse"/>
+									</xsl:when>
+									<xsl:when test="$sMin!='0' and $sMax='0'">
+										<xsl:value-of select="$iMinToUse"/>
+									</xsl:when>
+									<xsl:when test="$sMin='0' and $sMax='0'">
+										<xsl:text>0</xsl:text>
+									</xsl:when>
+									<xsl:when test="$iMaxToUse &gt; $iMinToUse">
+										<xsl:value-of select="$iMaxToUse"/>
+									</xsl:when>
+									<xsl:otherwise>
+										<xsl:value-of select="$iMinToUse"/>
+									</xsl:otherwise>
+								</xsl:choose>
 							</xsl:otherwise>
 						</xsl:choose>
 					</xsl:variable>
 					<xsl:call-template name="OutputOrderClass">
-						<xsl:with-param name="sSign">
-							<xsl:value-of select="$sSign"/>
-						</xsl:with-param>
 						<xsl:with-param name="sValue">
 							<xsl:value-of select="$sMinOrderClass"/>
 						</xsl:with-param>
 					</xsl:call-template>
 					<xsl:call-template name="OutputOrderClass">
-						<xsl:with-param name="sSign">
-							<xsl:value-of select="$sSign"/>
-						</xsl:with-param>
 						<xsl:with-param name="sValue">
 							<xsl:value-of select="$sMaxOrderClass"/>
 						</xsl:with-param>
@@ -2117,22 +2141,12 @@ OutputAffixMECorMCC
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 OutputOrderClass
 	Output an orderclass value (based on GAFAWS output)
-		Parameters: sSign = sign of the value
-							sValue = the value itself
+		Parameters: sValue = the value itself
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 -->
 	<xsl:template name="OutputOrderClass">
-		<xsl:param name="sSign"/>
 		<xsl:param name="sValue"/>
-		<xsl:choose>
-			<xsl:when test="$sValue='0'">
-				<xsl:text>0</xsl:text>
-			</xsl:when>
-			<xsl:otherwise>
-				<xsl:value-of select="$sSign"/>
-				<xsl:value-of select="string(number(substring($sValue,3)) + 1)"/>
-			</xsl:otherwise>
-		</xsl:choose>
+		<xsl:value-of select="$sValue"/>
 		<xsl:text>&#x20;</xsl:text>
 	</xsl:template>
 	<!--

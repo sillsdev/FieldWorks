@@ -1,0 +1,6609 @@
+
+\lx 78588
+\g sermon
+\c W
+\wc root
+\mp RootPOS89446
+\a уаз {122236}
+ 
+\lx 30307
+\g Amittai
+\c W
+\wc root
+\mp RootPOS89427
+\a Амиттай {86881}
+ 
+\lx 51175
+\g commission
+\c W
+\wc root
+\mp RootPOS71455
+\a хъвдаквцӀа {12907}
+ 
+\lx 78307
+\g ITERATIVE
+\c W/W
+\o 2 2 
+\wc 95290
+\a л {12534}
+\a ла {51687}
+\eType suffix
+ 
+\lx 115082
+\g turn.from.right.way
+\c W
+\wc root
+\mp RootPOS71455
+\a мыгӀвхъга {67484}
+ 
+\lx 50971
+\g here
+\c W
+\wc root
+\mp RootPOS37652
+\a араъа {55328}
+ 
+\lx 77830
+\g PVхън
+\c W
+\wc root
+\mp RootPOS41575
+\a хъны {29742}
+\a хън {73982}
+ 
+\lx 34775
+\g only
+\c W/W
+\o 1
+\wc derivSfx
+\a xyzгӀваца {4194}
+\eType suffix
+\fd FromPOS63940
+ 
+\lx 80305
+\g remain
+\c W
+\wc root
+\mp RootPOS36310
+\a гӀанха {113154}
+ 
+\lx 57296
+\g name
+\c W
+\wc root
+\mp RootPOS89446
+\a хьыз {22372}
+\a хьызы {86090}
+\a хьзы {8619}
+ 
+\lx 33915
+\g before
+\c W
+\wc root
+\mp RootPOS13237
+\a пахь {126437}
+ 
+\lx 49583
+\g AOR.IND
+\c W/W
+\o 3 3 
+\wc 2380
+\fd InflectionFS119201
+\a тӀ {116663}
+\eType suffix
+ 
+\lx 128464
+\g PL
+\c W/W
+\o 3 3 
+\wc 93318
+\a кв {30640}
+\a ква {90829}
+\eType suffix
+ 
+\lx 15083
+\g ring
+\c W
+\wc root
+\mp RootPOS89446
+\a ъатлын {28268}
+ 
+\lx 94770
+\g one
+\c W
+\wc root
+\mp RootPOS86476
+\a аджв {96943}
+ 
+\lx 92615
+\g PVахъ
+\c W
+\wc root
+\mp RootPOS41575
+\a ахъы {41405}
+\a ахъ {20363}
+ 
+\lx 125144
+\g very
+\c W/W
+\o 1
+\wc derivSfx
+\a дздза {109347}
+\a дза {45661}
+\eType suffix
+\fd FromPOS89446
+ 
+\lx 84395
+\g sin
+\c W
+\wc root
+\mp RootPOS89446
+\a гванахӀ {109028}
+ 
+\lx 99074
+\g Media
+\c W
+\wc root
+\mp RootPOS89427
+\a Миди {109547}
+\a Мидия {130386}
+ 
+\lx 58836
+\g INT
+\c W/W
+\o 1
+\wc derivSfx
+\a xyzгьи {60216}
+\eType suffix
+\fd FromPOS63940
+ 
+\lx 80363
+\g Babylon
+\c W
+\wc root
+\mp RootPOS89427
+\a Вавилон {115432}
+ 
+\lx 24995
+\g invite
+\c W
+\wc root
+\mp RootPOS44652
+\a райгва {103721}
+ 
+\lx 71623
+\g Purim
+\c W
+\wc root
+\mp RootPOS89427
+\a Пурим {59796}
+ 
+\lx 51796
+\g Moab
+\c W
+\wc root
+\mp RootPOS89427
+\a Моав {80810}
+ 
+\lx 111276
+\g father
+\c W
+\wc root
+\mp RootPOS89446
+\a Аба {55529}
+\a аба {81616}
+ 
+\lx 59664
+\g DIST.PST.INDEF.IND
+\c W/W
+\o 3 3 
+\wc 2380
+\fd InflectionFS100020
+\a хьан {14143}
+\eType suffix
+ 
+\lx 10784
+\g FUT2.IND
+\c W/W
+\o 3 3 
+\wc 2380
+\fd InflectionFS39821
+\a уштӀ {48831}
+\a уаштӀ {93524}
+\eType suffix
+ 
+\lx 87775
+\g throw
+\c W
+\wc root
+\mp RootPOS71455
+\a жьы {119846}
+ 
+\lx 930
+\g sea
+\c W
+\wc root
+\mp RootPOS89446
+\a тенгьыз {50082}
+ 
+\lx 131503
+\g then
+\c W
+\wc root
+\mp RootPOS37652
+\a уадыргӀвана {8132}
+ 
+\lx 114415
+\g IMPER
+\c W/W
+\o 3 3 
+\wc 2380
+\a с {76567}
+\eType suffix
+ 
+\lx 87442
+\g PVгӀал
+\c W
+\wc root
+\mp RootPOS41575
+\a гӀалы {1531}
+\a гӀал {55985}
+ 
+\lx 75940
+\g go.out
+\c W
+\wc root
+\mp RootPOS36310
+\a къвыцӀ {128430}
+ 
+\lx 112423
+\g 2p
+\c W
+\wc root
+\mp RootPOS86476
+\a швар {62279}
+\a швара {68622}
+ 
+\lx 108812
+\g clothes
+\c W
+\wc root
+\mp RootPOS89446
+\a чгӀвыча {16732}
+ 
+\lx 8604
+\g RECP
+\c W/W
+\o -2 -2 
+\wc 112431
+\a аба {193}
+\eType prefix nterfix
+ 
+\lx 3524
+\g E2p
+\c W/W
+\o -2 -2 
+\wc 112431
+\a швы {23495}
+\a жв {71710}
+\a шв {131995}
+\eType prefix nterfix
+ 
+\lx 34689
+\g E2p
+\c W/W
+\o 0 0 
+\wc 46301
+\a швы {23495}
+\a жв {71710}
+\a шв {131995}
+\eType prefix nterfix
+ 
+\lx 58243
+\g E2p
+\c W/W
+\o -3 -2 
+\wc 129177
+\a швы {23495}
+\a жв {71710}
+\a шв {131995}
+\eType prefix nterfix
+ 
+\lx 66333
+\g E2p
+\c W/W
+\o -3 -3 
+\wc 55491
+\a швы {23495}
+\a жв {71710}
+\a шв {131995}
+\eType prefix nterfix
+ 
+\lx 89534
+\g E2p
+\c W/W
+\o -3 -3 
+\wc 11759
+\a швы {23495}
+\a жв {71710}
+\a шв {131995}
+\eType prefix nterfix
+ 
+\lx 121041
+\g E2p
+\c W/W
+\o -3 -2 
+\wc 98428
+\a швы {23495}
+\a жв {71710}
+\a шв {131995}
+\eType prefix nterfix
+ 
+\lx 75631
+\g go.up
+\c W
+\wc root
+\mp RootPOS36310
+\a хъалы {15128}
+ 
+\lx 70561
+\g be.more
+\c W
+\wc root
+\mp RootPOS34430
+\a айхӀа {128008}
+ 
+\lx 7599
+\g synagogue
+\c W
+\wc root
+\mp RootPOS89446
+\a синагога {89653}
+ 
+\lx 53688
+\g LY
+\c W/W
+\o 1
+\wc derivSfx
+\a та {19764}
+\eType suffix
+\fd FromPOS25941
+\fd ToPOS37652
+ 
+\lx 88048
+\g time.period
+\c W
+\wc root
+\mp RootPOS89446
+\a гӀамта {6700}
+ 
+\lx 55290
+\g wander
+\c W
+\wc root
+\mp RootPOS123432
+\a къва {8899}
+ 
+\lx 83057
+\g this
+\c W
+\wc root
+\mp RootPOS87424
+\a ари {104843}
+ 
+\lx 103189
+\g Nineveh
+\c W
+\wc root
+\mp RootPOS89427
+\a Ниневия {61875}
+ 
+\lx 17118
+\g wharf?
+\c W
+\wc root
+\mp RootPOS89446
+\a хъвахӀ {101568}
+ 
+\lx 69641
+\g seek
+\c W
+\wc root
+\mp RootPOS44652
+\a пшгӀа {135680}
+ 
+\lx 40117
+\g other
+\c W
+\wc root
+\mp RootPOS86476
+\a анахьанат {74936}
+ 
+\lx 32806
+\g foreward
+\c W
+\wc root
+\mp RootPOS25941
+\a апхъ {37941}
+ 
+\lx 64879
+\g Tarshish
+\c W
+\wc root
+\mp RootPOS89427
+\a Фарсис {59497}
+ 
+\lx 67890
+\g gather
+\c W
+\wc root
+\mp RootPOS71455
+\a ацӀага {110436}
+ 
+\lx 115271
+\g business
+\c W
+\wc root
+\mp RootPOS89446
+\a уыс {66227}
+ 
+\lx 107688
+\g sow
+\c W
+\wc root
+\mp RootPOS123432
+\a пс {65758}
+\a пса {11068}
+ 
+\lx 24656
+\g COM
+\c W/W
+\o 0 0 
+\wc 112940
+\a цы {21560}
+\a ц {17598}
+\eType prefix
+ 
+\lx 115224
+\g own
+\c W
+\wc root
+\mp RootPOS89446
+\a цри {90152}
+ 
+\lx 79800
+\g Persian
+\c W
+\wc root
+\mp RootPOS89427
+\a перс {75266}
+ 
+\lx 13179
+\g food
+\c W
+\wc root
+\mp RootPOS89446
+\a фачӀвы {12830}
+ 
+\lx 132780
+\g call
+\c W
+\wc root
+\mp RootPOS8719
+\a цӀ {36877}
+ 
+\lx 27835
+\g custom
+\c W
+\wc root
+\mp RootPOS89446
+\a цӀас {3417}
+ 
+\lx 58369
+\g TO
+\c W/W
+\o -1
+\wc derivPfx
+\a xyzа {92882}
+\eType prefix
+\fd FromPOS63940
+ 
+\lx 13443
+\g hair
+\c W
+\wc root
+\mp RootPOS89446
+\a хъвыц {42968}
+ 
+\lx 70968
+\g prince
+\c W
+\wc root
+\mp RootPOS89446
+\a ахӀ {95840}
+ 
+\lx 62696
+\g fast
+\c W
+\wc root
+\mp RootPOS36310
+\a чаражв {49099}
+ 
+\lx 45260
+\g for
+\c W
+\wc root
+\mp RootPOS13237
+\a хъаз {71504}
+ 
+\lx 3381
+\g COND.IRR
+\c W/W
+\o 3 3 
+\wc 2380
+\a рквыныз {106250}
+\eType suffix
+ 
+\lx 44428
+\g within
+\c W
+\wc root
+\mp RootPOS13237
+\a л {43680}
+ 
+\lx 104291
+\g REL.IMPF
+\c W/W
+\o 3 3 
+\wc 134179
+\fd InflectionFS95254
+\a уз {64482}
+\a уыз {55614}
+\a уаз {38334}
+\eType suffix
+ 
+\lx 43931
+\g cold
+\c W
+\wc root
+\mp RootPOS25941
+\a швашва {132121}
+ 
+\lx 23327
+\g desire
+\c W
+\wc root
+\mp RootPOS89446
+\a гвапхара {131858}
+ 
+\lx 31477
+\g get.ready
+\c W
+\wc root
+\mp RootPOS71455
+\a тшадгал {100760}
+ 
+\lx 65255
+\g PVп
+\c W
+\wc root
+\mp RootPOS41575
+\a пы {95023}
+\a п {125282}
+ 
+\lx 101753
+\g defect
+\c W
+\wc root
+\mp RootPOS89446
+\a цӀба {5227}
+ 
+\lx 10580
+\g No
+\c W
+\wc root
+\mp RootPOS58395
+\a момо {131264}
+ 
+\lx 68648
+\g garden
+\c W
+\wc root
+\mp RootPOS89446
+\a уатра {50124}
+ 
+\lx 105621
+\g eat
+\c W
+\wc root
+\mp RootPOS36310
+\a ч {109166}
+\a ча {66278}
+ 
+\lx 27581
+\g wind
+\c W
+\wc root
+\mp RootPOS89446
+\a пша {54751}
+ 
+\lx 34185
+\g take
+\c W
+\wc root
+\mp RootPOS71455
+\a ахв {31601}
+\a нахв {65283}
+ 
+\lx 119757
+\g crawl.through
+\c W
+\wc root
+\mp RootPOS71455
+\a хъыс {24558}
+ 
+\lx 537
+\g face
+\c W
+\wc root
+\mp RootPOS89446
+\a лакта {98478}
+ 
+\lx 28572
+\g help
+\c W
+\wc root
+\mp RootPOS36310
+\a цхърагӀа {46378}
+ 
+\lx 88834
+\g otherwise
+\c W
+\wc root
+\mp RootPOS62228
+\a ауи.акӀвмызтын {15167}
+ 
+\lx 130684
+\g lamp
+\c W
+\wc root
+\mp RootPOS89446
+\a мза {134931}
+ 
+\lx 117840
+\g FUT1.IND
+\c W/W
+\o 3 3 
+\wc 2380
+\fd InflectionFS56590
+\a пӀ {33951}
+\eType suffix
+ 
+\lx 15194
+\g REL.PRS
+\c W/W
+\o 3 3 
+\wc 134179
+\fd InflectionFS52659
+\a у {12145}
+\a уа {5902}
+\eType suffix
+ 
+\lx 64541
+\g REL.PRS
+\c W/W
+\o 2 4 
+\wc 83432
+\a у {12145}
+\a уа {5902}
+\eType suffix
+ 
+\lx 49245
+\g bad
+\c W
+\wc root
+\mp RootPOS25941
+\a гвымха {129954}
+ 
+\lx 117581
+\g be.unsettled
+\c W
+\wc root
+\mp RootPOS123432
+\a гвыргӀва {18489}
+ 
+\lx 76064
+\g David
+\c W
+\wc root
+\mp RootPOS89427
+\a Дауыт {122162}
+ 
+\lx 125502
+\g threshing.floor
+\c W
+\wc root
+\mp RootPOS89446
+\a машв {77918}
+ 
+\lx 26392
+\g hear
+\c W
+\wc root
+\mp RootPOS44652
+\a гӀа {21201}
+\a гӀ {26976}
+\a гӀа {102762}
+ 
+\lx 81228
+\g women
+\c W
+\wc root
+\mp RootPOS89446
+\a хӀвсыса {62827}
+ 
+\lx 43601
+\g world
+\c W
+\wc root
+\mp RootPOS89446
+\a дунай {42810}
+ 
+\lx 85637
+\g O
+\c W
+\wc root
+\mp RootPOS58395
+\a О {3255}
+ 
+\lx 37850
+\g cry
+\c W
+\wc root
+\mp RootPOS71455
+\a цӀры {98285}
+ 
+\lx 61272
+\g approach
+\c W
+\wc root
+\mp RootPOS123432
+\a дгылы {7903}
+\a дгыл {58142}
+ 
+\lx 16862
+\g pity
+\c W
+\wc root
+\mp RootPOS71455
+\a жьыхь {55588}
+ 
+\lx 15792
+\g gate
+\c W
+\wc root
+\mp RootPOS89446
+\a гвашв {20127}
+ 
+\lx 106497
+\g daughter-in-law
+\c W
+\wc root
+\mp RootPOS89446
+\a таца {113012}
+ 
+\lx 83461
+\g wear
+\c W
+\wc root
+\mp RootPOS8621
+\a цӀа {12053}
+ 
+\lx 75271
+\g Machlon
+\c W
+\wc root
+\mp RootPOS89427
+\a МахІлон {115570}
+ 
+\lx 102737
+\g PVаз
+\c W
+\wc root
+\mp RootPOS41575
+\a аз {14902}
+ 
+\lx 70942
+\g Egypt
+\c W
+\wc root
+\mp RootPOS89427
+\a Мсыр {43044}
+ 
+\lx 100974
+\g criticize
+\c W
+\wc root
+\mp RootPOS8719
+\a б {97092}
+\a ба {114183}
+ 
+\lx 1732
+\g beside
+\c W/W
+\o 0 0 
+\wc 112940
+\a дзхъа {81273}
+\eType prefix
+ 
+\lx 26575
+\g people
+\c W
+\wc root
+\mp RootPOS89446
+\a жвлара {15469}
+ 
+\lx 75235
+\g Vashti
+\c W
+\wc root
+\mp RootPOS89427
+\a Уашти {132993}
+ 
+\lx 38018
+\g ask
+\c W
+\wc root
+\mp RootPOS36310
+\a цӀгӀа {117329}
+\a цӀгӀа {59834}
+ 
+\lx 17037
+\g she
+\c W
+\wc root
+\mp RootPOS86476
+\a лар {37108}
+\a лара {133118}
+ 
+\lx 8566
+\g consume
+\c W
+\wc root
+\mp RootPOS8621
+\a хъшвалы {16701}
+\a хъшвал {35349}
+ 
+\lx 27013
+\g PL.hum
+\c W/W
+\o 2 2 
+\wc 44160
+\a чв {115395}
+\a чва {89749}
+\eType suffix
+ 
+\lx 87365
+\g A2sf
+\c W/W
+\o -5 -5 
+\wc 33256
+\a бы {93717} /#_  | /#_ 
+		
+\a Б {53596}  
+ 
+ ~/#_  | ~/#_ 
+		
+\a б {45337} /#_  | /#_ 
+		
+\eType prefix
+ 
+\lx 120243
+\g A2sf
+\c W/W
+\o -5 -5 
+\wc 70577
+\a бы {93717} /#_  | /#_ 
+		
+\a Б {53596}  
+ 
+ ~/#_  | ~/#_ 
+		
+\a б {45337} /#_  | /#_ 
+		
+\eType prefix
+ 
+\lx 50073
+\g DESID.PST
+\c W/W
+\o 2 4 
+\wc 133872
+\a ндаз {79425}
+\eType suffix
+ 
+\lx 72792
+\g DESID.PST
+\c W/W
+\o 3 3 
+\wc 2380
+\a ндаз {79425}
+\eType suffix
+ 
+\lx 14776
+\g city
+\c W
+\wc root
+\mp RootPOS89446
+\a къала {82945}
+ 
+\lx 117570
+\g today
+\c W
+\wc root
+\mp RootPOS37652
+\a УахьчӀва {45715}
+\a уахьчӀва {15925}
+ 
+\lx 104373
+\g horse
+\c W
+\wc root
+\mp RootPOS89446
+\a тшы {131638}
+\a тш {60374}
+ 
+\lx 94090
+\g he
+\c W
+\wc root
+\mp RootPOS86476
+\a Йар {105544}
+\a йар {79896}
+\a йара {126036}
+ 
+\lx 8917
+\g wide
+\c W
+\wc root
+\mp RootPOS25941
+\a гъагъа {112459}
+ 
+\lx 46447
+\g daughter
+\c W
+\wc root
+\mp RootPOS89446
+\a пхӀ {48805}
+\a пхӀа {51781}
+ 
+\lx 34242
+\g prepare
+\c W
+\wc root
+\mp RootPOS8621
+\a гал {695}
+ 
+\lx 33517
+\g obey
+\c W
+\wc root
+\mp RootPOS71455
+\a дзыргӀв {130174}
+ 
+\lx 8398
+\g PstNegPrt
+\c W/W
+\o 1
+\wc derivSfx
+\a xyzкӀва {122115}
+\eType suffix
+\fd FromPOS63940
+ 
+\lx 100077
+\g A2p
+\c W/W
+\o -5 -5 
+\wc 70577
+\a швы {101410} /#_  | /#_ 
+		
+\a Шв {62538} /#_  | /#_ 
+		
+\a шв {109713} /#_  | /#_ 
+		
+\eType prefix
+ 
+\lx 128526
+\g A2p
+\c W/W
+\o -5 -5 
+\wc 33256
+\a швы {101410} /#_  | /#_ 
+		
+\a Шв {62538} /#_  | /#_ 
+		
+\a шв {109713} /#_  | /#_ 
+		
+\eType prefix
+ 
+\lx 134101
+\g this
+\c W
+\wc root
+\mp RootPOS86476
+\a абар {23878}
+ 
+\lx 21538
+\g voice
+\c W
+\wc root
+\mp RootPOS89446
+\a бжьы {71392}
+ 
+\lx 12092
+\g harvest
+\c W
+\wc root
+\mp RootPOS89446
+\a тшыгӀвра {40154}
+ 
+\lx 44460
+\g consider
+\c W
+\wc root
+\mp RootPOS8621
+\a пхьа {5003}
+ 
+\lx 21583
+\g under
+\c W/W
+\o 0 0 
+\wc 112940
+\a цӀа {36297}
+\eType prefix
+ 
+\lx 106710
+\g therefore
+\c W
+\wc root
+\mp RootPOS62228
+\a йауа.ухӀварыквын {1058}
+\a йауа.швхӀварыквын {133821}
+ 
+\lx 109087
+\g inside
+\c W
+\wc root
+\mp RootPOS13237
+\a уацӀа {43637}
+ 
+\lx 60879
+\g PVщтӀа
+\c W
+\wc root
+\mp RootPOS41575
+\a щтӀа {97990}
+ 
+\lx 6917
+\g why
+\c W
+\wc root
+\mp RootPOS87424
+\a ЙачӀвыйа {129291}
+ 
+\lx 114082
+\g REPETITIVE
+\c W/W
+\o 2 2 
+\wc 95290
+\a хы {83373}
+\a х {118693}
+\eType suffix
+ 
+\lx 115787
+\g ear
+\c W
+\wc root
+\mp RootPOS89446
+\a лымхӀа {122443}
+ 
+\lx 67104
+\g beautiful
+\c W
+\wc root
+\mp RootPOS25941
+\a пшдза {39045}
+ 
+\lx 9402
+\g winnow
+\c W
+\wc root
+\mp RootPOS44652
+\a рыпш {30995}
+\a рыпша {7090}
+ 
+\lx 57306
+\g sit
+\c W
+\wc root
+\mp RootPOS36310
+\a чӀва {17685}
+ 
+\lx 69317
+\g book
+\c W
+\wc root
+\mp RootPOS89446
+\a книга {91893}
+ 
+\lx 75539
+\g be.on
+\c W
+\wc root
+\mp RootPOS34430
+\a кв {62857}
+ 
+\lx 41779
+\g open
+\c W
+\wc root
+\mp RootPOS8621
+\a тӀ {132784}
+ 
+\lx 63023
+\g unhappy
+\c W
+\wc root
+\mp RootPOS25941
+\a наспынтша {86608}
+ 
+\lx 105724
+\g kill
+\c W
+\wc root
+\mp RootPOS44652
+\a щы {124491}
+\a щ {120936}
+ 
+\lx 52040
+\g lead.to
+\c W
+\wc root
+\mp RootPOS44652
+\a нардза {78407}
+ 
+\lx 32953
+\g heaven/sky
+\c W
+\wc root
+\mp RootPOS89446
+\a ЖвгӀванд {71687}
+\a жвгӀванд {84531}
+\a жвгӀванд {37971}
+ 
+\lx 23124
+\g Lord
+\c W
+\wc root
+\mp RootPOS89427
+\a ЙхӀыхвиту {27068}
+\a ЙхІыхвиту {112321}
+ 
+\lx 2693
+\g king.throne
+\c W
+\wc root
+\mp RootPOS89446
+\a паштыхӀыгӀва {84059}
+ 
+\lx 29443
+\g slave
+\c W
+\wc root
+\mp RootPOS89446
+\a лыг {22278}
+ 
+\lx 127250
+\g slave
+\c W
+\wc root
+\mp RootPOS44652
+\a лыг {22278}
+ 
+\lx 84994
+\g RECIP
+\c W/W
+\o -1
+\wc derivPfx
+\a xyzай {62464}
+\eType prefix
+\fd FromPOS63940
+ 
+\lx 132893
+\g enter
+\c W
+\wc root
+\mp RootPOS36310
+\a тшкӀарал {39386}
+ 
+\lx 45826
+\g free
+\c W
+\wc root
+\mp RootPOS25941
+\a хвит {121088}
+ 
+\lx 23342
+\g container
+\c W
+\wc root
+\mp RootPOS89446
+\a тара {119352}
+ 
+\lx 68215
+\g go/drive
+\c W
+\wc root
+\mp RootPOS71455
+\a зца {64307}
+ 
+\lx 80526
+\g DIR.to
+\c W/W
+\o 0 0 
+\wc 7551
+\a на {108649}
+\eType prefix
+ 
+\lx 59990
+\g wash
+\c W
+\wc root
+\mp RootPOS44652
+\a джвджва {51073}
+ 
+\lx 106887
+\g people
+\c W
+\wc root
+\mp RootPOS89446
+\a уагӀа {60209}
+\a уагӀ {78654}
+\a УагӀа {25144}
+\a уагӀа {118429}
+ 
+\lx 3424
+\g heaven
+\c W
+\wc root
+\mp RootPOS89446
+\a гӀарщ {67631}
+ 
+\lx 121045
+\g eye
+\c W
+\wc root
+\mp RootPOS89446
+\a ла {71430}
+ 
+\lx 96011
+\g sad
+\c W
+\wc root
+\mp RootPOS25941
+\a хъващы {25811}
+ 
+\lx 11875
+\g door
+\c W
+\wc root
+\mp RootPOS89446
+\a шв {93737}
+\a швы {90660}
+ 
+\lx 92902
+\g bottom
+\c W
+\wc root
+\mp RootPOS89446
+\a цӀгӀва {64288}
+ 
+\lx 38470
+\g E3sn
+\c W/W
+\o -2 -2 
+\wc 112431
+\a на {15635}
+\eType prefix nterfix
+ 
+\lx 79874
+\g PVла
+\c W
+\wc root
+\mp RootPOS41575
+\a ла {30190}
+ 
+\lx 106329
+\g PVгвын
+\c W
+\wc root
+\mp RootPOS41575
+\a гвын {29417}
+ 
+\lx 40576
+\g fashionable.clothes
+\c W
+\wc root
+\mp RootPOS89446
+\a фаша {97540}
+ 
+\lx 15163
+\g fall
+\c W
+\wc root
+\mp RootPOS71455
+\a кӀахӀа {122972}
+ 
+\lx 106945
+\g beat
+\c W
+\wc root
+\mp RootPOS36310
+\a аквс {24488}
+ 
+\lx 29445
+\g each other
+\c W
+\wc root
+\mp RootPOS87424
+\a аджв.аджв {88155}
+ 
+\lx 87469
+\g week
+\c W
+\wc root
+\mp RootPOS89446
+\a мчыбжьыкӀ {16403}
+ 
+\lx 45927
+\g INST
+\c W/W
+\o 0 0 
+\wc 112940
+\a ла {131919}
+\eType prefix
+ 
+\lx 14654
+\g benefit
+\c W
+\wc root
+\mp RootPOS89446
+\a сабап {84346}
+ 
+\lx 80720
+\g PVгӀа
+\c W
+\wc root
+\mp RootPOS41575
+\a гӀа {22087}
+ 
+\lx 43552
+\g know.how
+\c W
+\wc root
+\mp RootPOS36310
+\a лш {120769}
+\a лша {114246}
+ 
+\lx 57291
+\g PRED
+\c W/W
+\o 1
+\wc derivSfx
+\a xyzта {93710}
+\eType suffix
+\fd FromPOS63940
+ 
+\lx 25232
+\g remain
+\c W
+\wc root
+\mp RootPOS36310
+\a гӀашӀас {108041}
+ 
+\lx 32785
+\g Mara
+\c W
+\wc root
+\mp RootPOS89427
+\a Мара {65742}
+ 
+\lx 20732
+\g set.out
+\c W
+\wc root
+\mp RootPOS71455
+\a гӀаджвыквыл {101507}
+ 
+\lx 10215
+\g EVID.PST
+\c W/W
+\o 2 4 
+\wc 133872
+\a зарын {27129}
+\eType suffix
+ 
+\lx 130248
+\g EVID.PST
+\c W/W
+\o 3 3 
+\wc 2380
+\a зарын {27129}
+\eType suffix
+ 
+\lx 79599
+\g soul
+\c W
+\wc root
+\mp RootPOS89446
+\a пс {87762}
+\a псы {131532}
+ 
+\lx 66737
+\g near
+\c W/W
+\o 0 0 
+\wc 112940
+\a ды {114061}
+\a д {32600}
+\eType prefix
+ 
+\lx 47404
+\g five
+\c W/W
+\o -2 -2 
+\wc 75070
+\a хвы {1009}
+\a хв {93950}
+\eType prefix
+ 
+\lx 27107
+\g REL.INDEF
+\c W/W
+\o 2 4 
+\wc 83432
+\a з {1573}
+\eType suffix
+ 
+\lx 50110
+\g REL.INDEF
+\c W/W
+\o 3 3 
+\wc 134179
+\fd InflectionFS8558
+\a з {1573}
+\eType suffix
+ 
+\lx 118635
+\g be.satisfied
+\c W
+\wc root
+\mp RootPOS71455
+\a разы {74600}
+ 
+\lx 111075
+\g boil
+\c W
+\wc root
+\mp RootPOS71455
+\a гӀаш {34930}
+ 
+\lx 17305
+\g Jesus
+\c W
+\wc root
+\mp RootPOS89427
+\a Иисус {76789}
+ 
+\lx 22672
+\g bird
+\c W
+\wc root
+\mp RootPOS89446
+\a пссгӀачӀв {120166}
+ 
+\lx 74160
+\g PVцӀ
+\c W
+\wc root
+\mp RootPOS41575
+\a цӀы {16980}
+\a цӀ {63556}
+ 
+\lx 126332
+\g dress
+\c W
+\wc root
+\mp RootPOS8621
+\a цӀ {85413}
+ 
+\lx 130668
+\g at
+\c W
+\wc root
+\mp RootPOS13237
+\a пын {113863}
+\a пны {32308}
+ 
+\lx 109577
+\g first
+\c W
+\wc root
+\mp RootPOS25941
+\a апхъа {88166}
+ 
+\lx 37071
+\g go.out
+\c W
+\wc root
+\mp RootPOS36310
+\a гӀаквыл {122536}
+ 
+\lx 58998
+\g on
+\c W/W
+\o 0 0 
+\wc 112940
+\a квы {119918}
+\a кв {101498}
+\eType prefix
+ 
+\lx 48808
+\g lose
+\c W
+\wc root
+\mp RootPOS44652
+\a чвыдз {50135}
+ 
+\lx 34362
+\g quiet
+\c W
+\wc root
+\mp RootPOS25941
+\a тынч {77990}
+ 
+\lx 51423
+\g fish
+\c W
+\wc root
+\mp RootPOS89446
+\a пслачва {30255}
+ 
+\lx 130604
+\g two.HUM
+\c W
+\wc root
+\mp RootPOS105028
+\a гӀвыджь {18136}
+\a гӀвыджь {62770}
+ 
+\lx 101912
+\g Chilion
+\c W
+\wc root
+\mp RootPOS89427
+\a Хилеон {31763}
+ 
+\lx 9714
+\g need
+\c W
+\wc root
+\mp RootPOS34430
+\a бж {30698}
+ 
+\lx 67695
+\g daytime
+\c W
+\wc root
+\mp RootPOS89446
+\a тшын {88059}
+ 
+\lx 124408
+\g 1s
+\c W
+\wc root
+\mp RootPOS86476
+\a сар {28333}
+\a сара {20679}
+ 
+\lx 121106
+\g hundred
+\c W
+\wc root
+\mp RootPOS105028
+\a швкӀ {81719}
+ 
+\lx 66019
+\g pit
+\c W
+\wc root
+\mp RootPOS89446
+\a маша {21728}
+ 
+\lx 113922
+\g land
+\c W
+\wc root
+\mp RootPOS89446
+\a анышв {99130}
+ 
+\lx 60616
+\g NEG
+\c W/W
+\o 1
+\wc derivSfx
+\a xyzмы {106277}
+\a xyzм {11325}
+\eType suffix
+\fd FromPOS63940
+ 
+\lx 33348
+\g before
+\c W/W
+\o 1
+\wc derivSfx
+\a xyzскӀва {69608}
+\eType suffix
+\fd FromPOS63940
+ 
+\lx 130181
+\g break
+\c W
+\wc root
+\mp RootPOS8621
+\a тшы {86623}
+\a тш {125663}
+ 
+\lx 50859
+\g spouse
+\c W
+\wc root
+\mp RootPOS89446
+\a хъапщыла {133878}
+ 
+\lx 21225
+\g AGT
+\c W/W
+\o 1
+\wc derivSfx
+\a гӀв {18370}
+\a гӀв {129101}
+\eType suffix
+\fd FromPOS71455
+\fd ToPOS89446
+ 
+\lx 106223
+\g stranger
+\c W
+\wc root
+\mp RootPOS89446
+\a гӀвыма {88223}
+ 
+\lx 63600
+\g clothe
+\c W
+\wc root
+\mp RootPOS44652
+\a гӀвыч {92050}
+\a гӀвыча {110115}
+ 
+\lx 21041
+\g righteous
+\c W
+\wc root
+\mp RootPOS25941
+\a цӀабырг {22297}
+\a цӀабыргы {30095}
+ 
+\lx 12167
+\g cliff
+\c W
+\wc root
+\mp RootPOS89446
+\a быхъв {17560}
+ 
+\lx 133582
+\g very
+\c W
+\wc root
+\mp RootPOS37652
+\a швабыжта {1932}
+ 
+\lx 128579
+\g heavy
+\c W
+\wc root
+\mp RootPOS25941
+\a хьанта {82027}
+ 
+\lx 118299
+\g powerful
+\c W
+\wc root
+\mp RootPOS25941
+\a макъ {79774}
+\a макъы {63206}
+ 
+\lx 70725
+\g body.parts
+\c W
+\wc root
+\mp RootPOS89446
+\a ъапӀкътлапӀкъ {66005}
+\a ъапӀкътлапӀкъ {1259}
+ 
+\lx 23093
+\g as.if
+\c W
+\wc root
+\mp RootPOS58395
+\a ага {82413}
+ 
+\lx 68382
+\g understand
+\c W
+\wc root
+\mp RootPOS8621
+\a гӀв {104622}
+ 
+\lx 97897
+\g new
+\c W
+\wc root
+\mp RootPOS25941
+\a шӀыц {90391}
+ 
+\lx 90626
+\g news
+\c W
+\wc root
+\mp RootPOS89446
+\a хабар {93200}
+ 
+\lx 102643
+\g quick
+\c W
+\wc root
+\mp RootPOS89446
+\a швабыж {43149}
+ 
+\lx 35204
+\g disciple
+\c W
+\wc root
+\mp RootPOS89446
+\a апхьагӀв {86494}
+ 
+\lx 56807
+\g city
+\c W
+\wc root
+\mp RootPOS89446
+\a город {9114}
+ 
+\lx 2585
+\g 1s
+\c W
+\wc root
+\mp RootPOS86476
+\a са {16388}
+ 
+\lx 47430
+\g Mordecai
+\c W
+\wc root
+\mp RootPOS89427
+\a мардухай {49129}
+ 
+\lx 94261
+\g catch
+\c W
+\wc root
+\mp RootPOS44652
+\a кӀы {29561}
+\a кӀ {38163}
+ 
+\lx 79046
+\g night
+\c W
+\wc root
+\mp RootPOS89446
+\a уахъы {28778}
+ 
+\lx 8353
+\g COND
+\c W/W
+\o 3 3 
+\wc 2380
+\a ргьи {54837}
+\eType suffix
+ 
+\lx 66951
+\g sell
+\c W
+\wc root
+\mp RootPOS44652
+\a тйы {111724}
+\a ти {81558}
+ 
+\lx 25535
+\g sheaf
+\c W
+\wc root
+\mp RootPOS89446
+\a кврыс {72177}
+ 
+\lx 85207
+\g strong
+\c W
+\wc root
+\mp RootPOS89446
+\a багъьа {81964}
+ 
+\lx 16137
+\g tail
+\c W
+\wc root
+\mp RootPOS89446
+\a цӀыхъва {21494}
+ 
+\lx 124440
+\g drive
+\c W
+\wc root
+\mp RootPOS71455
+\a амца {117883}
+ 
+\lx 28907
+\g greeting
+\c W
+\wc root
+\mp RootPOS58395
+\a сальам {125331}
+ 
+\lx 27110
+\g with
+\c W
+\wc root
+\mp RootPOS13237
+\a цы {4396}
+\a ц {66271}
+ 
+\lx 134285
+\g lily
+\c W
+\wc root
+\mp RootPOS89446
+\a лилия {110177}
+ 
+\lx 12353
+\g ten
+\c W/W
+\o -2 -2 
+\wc 75070
+\a жва {90960}
+\eType prefix
+ 
+\lx 106302
+\g food
+\c W
+\wc root
+\mp RootPOS89446
+\a рызкъы {15114}
+ 
+\lx 116703
+\g migrate
+\c W
+\wc root
+\mp RootPOS36310
+\a квач {6807}
+ 
+\lx 101686
+\g tithe
+\c W
+\wc root
+\mp RootPOS89446
+\a сагьыт {62114}
+ 
+\lx 7747
+\g field
+\c W
+\wc root
+\mp RootPOS89446
+\a рхъа {93103}
+ 
+\lx 19868
+\g so.that
+\c W
+\wc root
+\mp RootPOS62228
+\a йауа {26700}
+ 
+\lx 26225
+\g someone
+\c W
+\wc root
+\mp RootPOS86476
+\a заджвы {5816}
+ 
+\lx 46008
+\g Esther
+\c W
+\wc root
+\mp RootPOS89427
+\a эстер {25351}
+ 
+\lx 10306
+\g deceive
+\c W
+\wc root
+\mp RootPOS44652
+\a жьа {124895}
+ 
+\lx 96945
+\g discuss
+\c W
+\wc root
+\mp RootPOS44652
+\a квчважва {2061}
+\a ыквчважва {93886}
+\a аквчважва {118733}
+ 
+\lx 118688
+\g Cush
+\c W
+\wc root
+\mp RootPOS89427
+\a Квышв {60121}
+ 
+\lx 90402
+\g little
+\c W
+\wc root
+\mp RootPOS25941
+\a мачӀ {12654}
+ 
+\lx 57014
+\g corpse
+\c W
+\wc root
+\mp RootPOS89446
+\a хъвади {108938}
+ 
+\lx 133231
+\g after
+\c W
+\wc root
+\mp RootPOS13237
+\a мщтахь {126064}
+ 
+\lx 45612
+\g PVзына
+\c W
+\wc root
+\mp RootPOS41575
+\a зына {39681}
+ 
+\lx 77924
+\g approach
+\c W
+\wc root
+\mp RootPOS36310
+\a згӀай {121155}
+\a згӀай {73949}
+\a азгӀай {112976}
+ 
+\lx 123624
+\g relative
+\c W
+\wc root
+\mp RootPOS89446
+\a заъа {75844}
+ 
+\lx 105746
+\g Persia
+\c W
+\wc root
+\mp RootPOS89427
+\a перси {81234}
+\a Персия {54342}
+ 
+\lx 14199
+\g evening
+\c W
+\wc root
+\mp RootPOS89446
+\a хъвлапны {3325}
+ 
+\lx 24744
+\g break
+\c W
+\wc root
+\mp RootPOS8621
+\a хъы {112778}
+\a хъ {14130}
+ 
+\lx 31620
+\g ADVERSATIVE
+\c W/W
+\o 0 0 
+\wc 112940
+\a чвы {23376}
+\eType prefix
+ 
+\lx 2688
+\g CAUSEn
+\c W/W
+\o -1
+\wc derivPfx
+\a ры {134029}
+\a р {134310}
+\eType prefix nterfix
+\fd FromPOS123432
+\fd ToPOS8621
+\fd ToMSFS56938
+\mp ToExcpFeat82366Plus
+ 
+\lx 17535
+\g CAUSEn
+\c W/W
+\o -1
+\wc derivPfx
+\a ры {134029}
+\a р {134310}
+\eType prefix nterfix
+\fd FromPOS36310
+\fd ToPOS44652
+\fd ToMSFS123670
+\mp ToExcpFeat82366Plus
+ 
+\lx 33054
+\g CAUSEn
+\c W/W
+\o -1
+\wc derivPfx
+\a ры {134029}
+\a р {134310}
+\eType prefix nterfix
+\fd FromPOS89446
+\fd ToPOS34430
+\fd ToMSFS69306
+ 
+\lx 2334
+\g over
+\c W
+\wc root
+\mp RootPOS25941
+\a хъахьквцӀа {71887}
+ 
+\lx 45446
+\g much
+\c W
+\wc root
+\mp RootPOS37652
+\a щарда {46782}
+ 
+\lx 130834
+\g lose
+\c W
+\wc root
+\mp RootPOS8621
+\a дза {124789}
+ 
+\lx 106217
+\g bread
+\c W
+\wc root
+\mp RootPOS89446
+\a чӀахъва {106929}
+ 
+\lx 9008
+\g BECOME
+\c W/W
+\o 1
+\wc derivSfx
+\a х {121943} /_и  | /_и 
+		
+\a хы {102558}  
+ 
+ ~/_и  | ~/_и 
+		
+\a ха {47785}  
+ 
+ ~/_и  | ~/_и 
+		
+\eType suffix
+\fd FromPOS89446
+\fd ToPOS71455
+ 
+\lx 91931
+\g month
+\c W
+\wc root
+\mp RootPOS89446
+\a мыз {66764}
+\a мзы {69236}
+ 
+\lx 133979
+\g glass
+\c W
+\wc root
+\mp RootPOS89446
+\a чӀвыца {30312}
+ 
+\lx 8201
+\g hypocrite
+\c W
+\wc root
+\mp RootPOS89446
+\a чвалатшычпагӀв {36483}
+ 
+\lx 1315
+\g first
+\c W
+\wc root
+\mp RootPOS37652
+\a апхъапхъа {92426}
+ 
+\lx 119857
+\g midday
+\c W
+\wc root
+\mp RootPOS37652
+\a щыбжьан {61313}
+ 
+\lx 83234
+\g Naomi
+\c W
+\wc root
+\mp RootPOS89427
+\a НагӀоми {55009}
+ 
+\lx 3200
+\g like
+\c W
+\wc root
+\mp RootPOS13237
+\a апшы {26353}
+\a апш {357}
+ 
+\lx 123466
+\g mouth
+\c W
+\wc root
+\mp RootPOS89446
+\a шӀа {53887}
+ 
+\lx 47200
+\g in
+\c W/W
+\o 0 0 
+\wc 112940
+\a та {91331}
+\eType prefix
+ 
+\lx 94988
+\g in
+\c W/W
+\o 0 0 
+\wc 7551
+\a та {91331}
+\eType prefix
+ 
+\lx 89525
+\g word
+\c W
+\wc root
+\mp RootPOS89446
+\a ажва {52931}
+ 
+\lx 22040
+\g DYN
+\c W/W
+\o 1
+\wc derivSfx
+\a зл {32697}
+\a зла {86420}
+\eType suffix
+\fd FromPOS119045
+\fd ToPOS71455
+ 
+\lx 110865
+\g defend
+\c W
+\wc root
+\mp RootPOS71455
+\a хча {27439}
+ 
+\lx 10948
+\g PVкв
+\c W
+\wc root
+\mp RootPOS41575
+\a кв {129963}
+ 
+\lx 24216
+\g feed
+\c W
+\wc root
+\mp RootPOS8621
+\a цӀа {15704}
+ 
+\lx 4869
+\g land
+\c W
+\wc root
+\mp RootPOS89446
+\a адгьыл {29046}
+ 
+\lx 110211
+\g IMPER
+\c W/W
+\o 3 3 
+\wc 2380
+\a стӀ {111874}
+\eType suffix
+ 
+\lx 14648
+\g ephah
+\c W
+\wc root
+\mp RootPOS89446
+\a ефа {97509}
+ 
+\lx 56944
+\g holy
+\c W
+\wc root
+\mp RootPOS89446
+\a шийх {129260}
+ 
+\lx 9548
+\g sun
+\c W
+\wc root
+\mp RootPOS89446
+\a мара {1018}
+ 
+\lx 39415
+\g now
+\c W
+\wc root
+\mp RootPOS37652
+\a Ужвы {121240}
+\a ужвы {122130}
+ 
+\lx 27726
+\g fall.on
+\c W
+\wc root
+\mp RootPOS44652
+\a ыквшва {2785}
+ 
+\lx 103024
+\g sleep
+\c W
+\wc root
+\mp RootPOS36310
+\a чв {113732}
+ 
+\lx 102608
+\g Moabite
+\c W
+\wc root
+\mp RootPOS89427
+\a моавит {73382}
+ 
+\lx 88076
+\g Agag
+\c W
+\wc root
+\mp RootPOS89427
+\a ъагаг {80234}
+ 
+\lx 22196
+\g lie.down
+\c W
+\wc root
+\mp RootPOS36310
+\a щтӀалы {21734}
+ 
+\lx 20635
+\g peace
+\c W
+\wc root
+\mp RootPOS89446
+\a мамыр {6026}
+ 
+\lx 74343
+\g suffice
+\c W
+\wc root
+\mp RootPOS36310
+\a нахъ {109955}
+\a нахъа {109876}
+ 
+\lx 103291
+\g PVкӀа
+\c W
+\wc root
+\mp RootPOS41575
+\a кӀа {76390}
+\a кӀа {36057}
+ 
+\lx 1074
+\g go.out
+\c W
+\wc root
+\mp RootPOS36310
+\a гIацIцIы {85998}
+\a гӀацӀцӀ {123902}
+ 
+\lx 100387
+\g few
+\c W
+\wc root
+\mp RootPOS25941
+\a мачӀы {14416}
+ 
+\lx 125569
+\g Bethlehem
+\c W
+\wc root
+\mp RootPOS89427
+\a БетлехІем {7999}
+ 
+\lx 103336
+\g gray
+\c W
+\wc root
+\mp RootPOS25941
+\a срыхв {89518}
+ 
+\lx 9378
+\g three
+\c W/W
+\o -2 -2 
+\wc 75070
+\a хы {62472}
+\a х {7200}
+\eType prefix
+ 
+\lx 84371
+\g EVID.FUT2
+\c W/W
+\o 2 4 
+\wc 133872
+\a хуштӀ {23589}
+\eType suffix
+ 
+\lx 95792
+\g way
+\c W
+\wc root
+\mp RootPOS89446
+\a МгӀва {97778}
+\a мгӀв {42710}
+\a мгӀва {43941}
+ 
+\lx 88148
+\g then
+\c W
+\wc root
+\mp RootPOS62228
+\a асхъан {112955}
+ 
+\lx 1928
+\g big
+\c W
+\wc root
+\mp RootPOS25941
+\a ду {60770}
+ 
+\lx 85582
+\g display
+\c W
+\wc root
+\mp RootPOS8621
+\a кӀькӀьы {19684}
+\a кӀькӀь {7994}
+ 
+\lx 125778
+\g manuscript
+\c W
+\wc root
+\mp RootPOS89446
+\a гӀвыра {9469}
+ 
+\lx 61856
+\g fare
+\c W
+\wc root
+\mp RootPOS89446
+\a мгӀвахв {48873}
+ 
+\lx 129251
+\g left.dir
+\c W
+\wc root
+\mp RootPOS89446
+\a арма {12010}
+ 
+\lx 79757
+\g A2sm
+\c W/W
+\o -5 -5 
+\wc 70577
+\a уы {44185} /#_  | /#_ 
+		
+\a У {87169} /#_  | /#_ 
+		
+\a у {1906} /#_  | /#_ 
+		
+\eType prefix
+ 
+\lx 83301
+\g A2sm
+\c W/W
+\o -5 -5 
+\wc 33256
+\a уы {44185} /#_  | /#_ 
+		
+\a У {87169} /#_  | /#_ 
+		
+\a у {1906} /#_  | /#_ 
+		
+\eType prefix
+ 
+\lx 129716
+\g but
+\c W
+\wc root
+\mp RootPOS62228
+\a а {97604}
+ 
+\lx 68289
+\g oath
+\c W
+\wc root
+\mp RootPOS89446
+\a ныха {44888}
+ 
+\lx 3415
+\g two
+\c W/W
+\o -2 -2 
+\wc 75070
+\a гӀвы {121695}
+\a гӀв {121253}
+\a гӀв {44083}
+\eType prefix
+ 
+\lx 117583
+\g each
+\c W/W
+\o 3 3 
+\wc 93318
+\a ипхьа {46244}
+\eType suffix
+ 
+\lx 59998
+\g PERMISSIVE
+\c W/W
+\o 2 4 
+\wc 133872
+\a зтӀ {129046}
+\a зтӀ {127969}
+\eType suffix
+ 
+\lx 85226
+\g get.old
+\c W
+\wc root
+\mp RootPOS36310
+\a ажвы {11168}
+ 
+\lx 131659
+\g kingdom
+\c W
+\wc root
+\mp RootPOS89446
+\a хъа́ра {71728}
+\a Хъа́р {73537}
+\a Хъа́ра {29727}
+ 
+\lx 97504
+\g 3s
+\c W
+\wc root
+\mp RootPOS86476
+\a Ауи {40061}
+\a ауи {128995}
+ 
+\lx 99798
+\g house
+\c W
+\wc root
+\mp RootPOS89446
+\a тдзы {61470}
+\a тыдз {40639}
+ 
+\lx 33056
+\g E3sf
+\c W/W
+\o -3 -2 
+\wc 129177
+\a лы {99102}
+\a л {113792}
+\eType prefix nterfix
+ 
+\lx 36742
+\g E3sf
+\c W/W
+\o -3 -2 
+\wc 98428
+\a лы {99102}
+\a л {113792}
+\eType prefix nterfix
+ 
+\lx 77314
+\g E3sf
+\c W/W
+\o -3 -3 
+\wc 11759
+\a лы {99102}
+\a л {113792}
+\eType prefix nterfix
+ 
+\lx 82279
+\g E3sf
+\c W/W
+\o -2 -2 
+\wc 112431
+\a лы {99102}
+\a л {113792}
+\eType prefix nterfix
+ 
+\lx 91183
+\g E3sf
+\c W/W
+\o 0 0 
+\wc 46301
+\a лы {99102}
+\a л {113792}
+\eType prefix nterfix
+ 
+\lx 107407
+\g E3sf
+\c W/W
+\o -3 -3 
+\wc 55491
+\a лы {99102}
+\a л {113792}
+\eType prefix nterfix
+ 
+\lx 67474
+\g praise
+\c W
+\wc root
+\mp RootPOS44652
+\a ртшхъва {7324}
+ 
+\lx 104377
+\g Ruth
+\c W
+\wc root
+\mp RootPOS89427
+\a Рут {13781}
+\a рут {87208}
+ 
+\lx 48757
+\g beggar
+\c W
+\wc root
+\mp RootPOS89446
+\a факъра {48866}
+ 
+\lx 58271
+\g God
+\c W
+\wc root
+\mp RootPOS89446
+\a Нчва {85730}
+\a -Нчва {132387}
+\a Анчва {86081}
+\a анчва {65484}
+\a нчва {36254}
+ 
+\lx 44137
+\g Israel
+\c W
+\wc root
+\mp RootPOS89427
+\a израиль {5804}
+\a Израиль {36109}
+ 
+\lx 125840
+\g slumber
+\c W
+\wc root
+\mp RootPOS89446
+\a чва {42122}
+ 
+\lx 12749
+\g twice
+\c W
+\wc root
+\mp RootPOS37652
+\a гӀван {93231}
+ 
+\lx 124904
+\g person
+\c W
+\wc root
+\mp RootPOS89446
+\a гӀв {120299}
+ 
+\lx 112039
+\g REL.DIST.PST
+\c W/W
+\o 3 3 
+\wc 134179
+\fd InflectionFS53424
+\a хьу {1203}
+\eType suffix
+ 
+\lx 25520
+\g fool
+\c W
+\wc root
+\mp RootPOS89446
+\a лага {37956}
+ 
+\lx 366
+\g be.glad
+\c W
+\wc root
+\mp RootPOS71455
+\a гвыргъьа {131592}
+ 
+\lx 12480
+\g year
+\c W
+\wc root
+\mp RootPOS89446
+\a сквш {28272}
+\a сквша {2757}
+\a сквшы {90217}
+ 
+\lx 5795
+\g Elimelech
+\c W
+\wc root
+\mp RootPOS89427
+\a Елимелех {6514}
+\a Елимелех {58713}
+ 
+\lx 20397
+\g COND.FUT
+\c W/W
+\o 3 3 
+\wc 2380
+\a рыквын {118835}
+\a рквын {29504}
+\eType suffix
+ 
+\lx 56601
+\g REL.DIST.PST.INDF
+\c W/W
+\o 3 3 
+\wc 134179
+\fd InflectionFS74671
+\a хьаз {106971}
+\eType suffix
+ 
+\lx 53968
+\g enemy
+\c W
+\wc root
+\mp RootPOS89446
+\a агъа {104513}
+ 
+\lx 98367
+\g belong
+\c W
+\wc root
+\mp RootPOS34430
+\a чӀв {732}
+\a чӀвы {52272}
+ 
+\lx 65807
+\g and
+\c W
+\wc root
+\mp RootPOS62228
+\a йгьи {9265}
+ 
+\lx 40262
+\g somewhere
+\c W
+\wc root
+\mp RootPOS86476
+\a зджьара {90772}
+ 
+\lx 33623
+\g man
+\c W
+\wc root
+\mp RootPOS89446
+\a хъацӀ {64961}
+\a хъацӀа {46595}
+ 
+\lx 5377
+\g SUBJ2
+\c W/W
+\o 3 3 
+\wc 2380
+\a ушын {115845}
+\eType suffix
+ 
+\lx 123889
+\g SUBJ2
+\c W/W
+\o 2 4 
+\wc 133872
+\a ушын {115845}
+\eType suffix
+ 
+\lx 74790
+\g mountain
+\c W
+\wc root
+\mp RootPOS89446
+\a щхъа {23298}
+ 
+\lx 13899
+\g work
+\c W
+\wc root
+\mp RootPOS36310
+\a нх {59392}
+\a нха {21786}
+ 
+\lx 81406
+\g behind
+\c W/W
+\o 0 0 
+\wc 112940
+\a щта {74320}
+\eType prefix
+ 
+\lx 57725
+\g nothing
+\c W
+\wc root
+\mp RootPOS86476
+\a закӀгьи {77633}
+ 
+\lx 124637
+\g grass
+\c W
+\wc root
+\mp RootPOS89446
+\a хӀвра {16843}
+ 
+\lx 116129
+\g INDEF
+\c W/W
+\o 4 4 
+\wc 46303
+\a кӀы {50016}
+\a кӀ {42212}
+\eType suffix
+ 
+\lx 81723
+\g there
+\c W
+\wc root
+\mp RootPOS37652
+\a ауаъа {89010}
+ 
+\lx 16485
+\g oil
+\c W
+\wc root
+\mp RootPOS44652
+\a ахьыщ {43431}
+ 
+\lx 120560
+\g prophet
+\c W
+\wc root
+\mp RootPOS89446
+\a фигӀамбар {112285}
+ 
+\lx 121954
+\g sick
+\c W
+\wc root
+\mp RootPOS89446
+\a чмазагӀв {13573}
+ 
+\lx 187
+\g dawn
+\c W
+\wc root
+\mp RootPOS89446
+\a шарпны {14774}
+ 
+\lx 31208
+\g Boaz
+\c W
+\wc root
+\mp RootPOS89427
+\a МугӀаз {39113}
+ 
+\lx 115943
+\g command
+\c W
+\wc root
+\mp RootPOS89446
+\a Унашва {24717}
+\a унашва {6566}
+ 
+\lx 30609
+\g Ewh
+\c W/W
+\o -3 -3 
+\wc 11759
+\fd InflectionFS106616
+\a зы {134164}
+\a з {80914}
+\eType prefix nterfix
+ 
+\lx 33542
+\g Ewh
+\c W/W
+\o -3 -2 
+\wc 98428
+\fd InflectionFS74035
+\a зы {134164}
+\a з {80914}
+\eType prefix nterfix
+ 
+\lx 55040
+\g Ewh
+\c W/W
+\o -3 -3 
+\wc 55491
+\fd InflectionFS70953
+\a зы {134164}
+\a з {80914}
+\eType prefix nterfix
+ 
+\lx 66201
+\g Ewh
+\c W/W
+\o -2 -2 
+\wc 112431
+\fd InflectionFS99252
+\a зы {134164}
+\a з {80914}
+\eType prefix nterfix
+ 
+\lx 105946
+\g Ewh
+\c W/W
+\o -3 -2 
+\wc 129177
+\fd InflectionFS73122
+\a зы {134164}
+\a з {80914}
+\eType prefix nterfix
+ 
+\lx 135277
+\g Ewh
+\c W/W
+\o 0 0 
+\wc 46301
+\fd InflectionFS19952
+\a зы {134164}
+\a з {80914}
+\eType prefix nterfix
+ 
+\lx 5414
+\g Solomon
+\c W
+\wc root
+\mp RootPOS89427
+\a Сольман {113217}
+ 
+\lx 129074
+\g who
+\c W
+\wc root
+\mp RootPOS86476
+\a ДзачӀвыйа {62692}
+\a дзачӀвыйа {40506}
+ 
+\lx 57435
+\g defect
+\c W
+\wc root
+\mp RootPOS89446
+\a льажь {82489}
+\a льажьа {2804}
+ 
+\lx 55065
+\g rain
+\c W
+\wc root
+\mp RootPOS89446
+\a ква {63631}
+ 
+\lx 18802
+\g PVан
+\c W
+\wc root
+\mp RootPOS41575
+\a ан {127626}
+ 
+\lx 96908
+\g sailor
+\c W
+\wc root
+\mp RootPOS89446
+\a моряк {74703}
+ 
+\lx 91558
+\g advice
+\c W
+\wc root
+\mp RootPOS89446
+\a кьангьаш {124458}
+ 
+\lx 6094
+\g cold
+\c W
+\wc root
+\mp RootPOS25941
+\a хьшвашва {90123}
+ 
+\lx 62694
+\g swine
+\c W
+\wc root
+\mp RootPOS89446
+\a хӀва {107417}
+ 
+\lx 71469
+\g know
+\c W
+\wc root
+\mp RootPOS44652
+\a дыры {26249}
+\a дыр {111187}
+ 
+\lx 1162
+\g Jonah
+\c W
+\wc root
+\mp RootPOS89427
+\a Инус {126661}
+ 
+\lx 82707
+\g dog
+\c W
+\wc root
+\mp RootPOS89446
+\a ла {101631}
+ 
+\lx 128965
+\g Hammedatha
+\c W
+\wc root
+\mp RootPOS89427
+\a ХӀаммыдата {56330}
+ 
+\lx 66847
+\g live
+\c W
+\wc root
+\mp RootPOS36310
+\a нцӀ {66535}
+ 
+\lx 123752
+\g cry
+\c W
+\wc root
+\mp RootPOS89446
+\a цӀырбжьы {76171}
+ 
+\lx 42143
+\g thousand
+\c W
+\wc root
+\mp RootPOS105028
+\a зкьы {41159}
+ 
+\lx 25865
+\g rest
+\c W
+\wc root
+\mp RootPOS44652
+\a тшпсща {69348}
+ 
+\lx 88277
+\g NEG
+\c W/W
+\o -1
+\wc derivPfx
+\a xyzмы {132243}
+\a xyzм {29912}
+\eType prefix
+\fd FromPOS63940
+ 
+\lx 49547
+\g debt
+\c W
+\wc root
+\mp RootPOS89446
+\a псарчӀв {54273}
+\a псарчӀвы {82284}
+ 
+\lx 13669
+\g go.in
+\c W
+\wc root
+\mp RootPOS36310
+\a пшцӀал {79845}
+ 
+\lx 17942
+\g drink
+\c W
+\wc root
+\mp RootPOS36310
+\a жвы {23587}
+\a жв {37488}
+ 
+\lx 109430
+\g hide
+\c W
+\wc root
+\mp RootPOS71455
+\a гӀаркӀы {33415}
+ 
+\lx 40212
+\g measure
+\c W
+\wc root
+\mp RootPOS89446
+\a швагазага {73216}
+ 
+\lx 74362
+\g force
+\c W
+\wc root
+\mp RootPOS89446
+\a зальмыгӀа {44033}
+ 
+\lx 117612
+\g empty
+\c W
+\wc root
+\mp RootPOS25941
+\a мцыра {95072}
+ 
+\lx 25806
+\g near
+\c W
+\wc root
+\mp RootPOS25941
+\a аргван {73659}
+\a аргваны {115344}
+ 
+\lx 126958
+\g do/make
+\c W
+\wc root
+\mp RootPOS44652
+\a чп {2990}
+\a чпа {51571}
+ 
+\lx 69497
+\g ready
+\c W
+\wc root
+\mp RootPOS36310
+\a хIазыры {69976}
+\a хӀазыры {113156}
+\a хӀазыр {95154}
+ 
+\lx 103371
+\g PVчв
+\c W
+\wc root
+\mp RootPOS41575
+\a чв {83992}
+ 
+\lx 65073
+\g die
+\c W
+\wc root
+\mp RootPOS36310
+\a пс {31989}
+\a псы {43462}
+ 
+\lx 73389
+\g rich
+\c W
+\wc root
+\mp RootPOS25941
+\a байа {82253}
+ 
+\lx 11372
+\g woe
+\c W
+\wc root
+\mp RootPOS89446
+\a гвыргӀв {32091}
+\a гвыргӀва {41657}
+ 
+\lx 97672
+\g fulfill
+\c W
+\wc root
+\mp RootPOS44652
+\a рхъйа {68001}
+ 
+\lx 79029
+\g empire
+\c W
+\wc root
+\mp RootPOS89446
+\a империя {48022}
+ 
+\lx 352
+\g PVн
+\c W
+\wc root
+\mp RootPOS41575
+\a ны {54407}
+ 
+\lx 40272
+\g PVшвы
+\c W
+\wc root
+\mp RootPOS41575
+\a швы {39027}
+ 
+\lx 16313
+\g family
+\c W
+\wc root
+\mp RootPOS89446
+\a тгӀачв {36097}
+ 
+\lx 130159
+\g thus
+\c W
+\wc root
+\mp RootPOS58395
+\a араса {107789}
+ 
+\lx 96139
+\g alone
+\c W
+\wc root
+\mp RootPOS25941
+\a хъазы {83516}
+ 
+\lx 120726
+\g peaceful
+\c W
+\wc root
+\mp RootPOS89446
+\a тосын {84146}
+ 
+\lx 89963
+\g book
+\c W
+\wc root
+\mp RootPOS89446
+\a кьтап {57185}
+ 
+\lx 108437
+\g Xerxes
+\c W
+\wc root
+\mp RootPOS89427
+\a ксеркс {30397}
+ 
+\lx 51352
+\g boy
+\c W
+\wc root
+\mp RootPOS89446
+\a чкӀвын {10563}
+ 
+\lx 94657
+\g answer
+\c W
+\wc root
+\mp RootPOS89446
+\a джьауап {35617}
+ 
+\lx 37218
+\g above
+\c W
+\wc root
+\mp RootPOS13237
+\a хъахь {72733}
+ 
+\lx 9219
+\g signify
+\c W
+\wc root
+\mp RootPOS36310
+\a гӀаныцӀ {67739}
+ 
+\lx 30407
+\g blow
+\c W
+\wc root
+\mp RootPOS36310
+\a чвхӀва {121389}
+ 
+\lx 126050
+\g CAN
+\c W/W
+\o -1
+\wc derivPfx
+\a зы {61571}
+\a з {75112}
+\eType prefix
+\fd FromPOS71455
+ 
+\lx 23429
+\g prophet
+\c W
+\wc root
+\mp RootPOS89446
+\a пигӀамбар {133593}
+ 
+\lx 49500
+\g six
+\c W/W
+\o -2 -2 
+\wc 75070
+\a цы {99153}
+\a ц {57908}
+\eType prefix
+ 
+\lx 127611
+\g come.near
+\c W
+\wc root
+\mp RootPOS36310
+\a адщщыл {102309}
+ 
+\lx 10276
+\g secret
+\c W
+\wc root
+\mp RootPOS89446
+\a мадза {50896}
+ 
+\lx 83591
+\g A1s
+\c W/W
+\o -5 -5 
+\wc 33256
+\a сы {5470} /#_  | /#_ 
+		
+\a С {63637} /#_  | /#_ 
+		
+\a с {103235} /#_  | /#_ 
+		
+\eType prefix
+ 
+\lx 103487
+\g A1s
+\c W/W
+\o -5 -5 
+\wc 70577
+\a сы {5470} /#_  | /#_ 
+		
+\a С {63637} /#_  | /#_ 
+		
+\a с {103235} /#_  | /#_ 
+		
+\eType prefix
+ 
+\lx 91152
+\g go.up
+\c W
+\wc root
+\mp RootPOS36310
+\a гӀадза {67437}
+ 
+\lx 13620
+\g whole
+\c W
+\wc root
+\mp RootPOS25941
+\a абг {4775}
+\a абга {74787}
+ 
+\lx 9527
+\g child
+\c W
+\wc root
+\mp RootPOS89446
+\a саби {59255}
+ 
+\lx 21432
+\g Orpah
+\c W
+\wc root
+\mp RootPOS89427
+\a Орфа {32011}
+ 
+\lx 11978
+\g Haman
+\c W
+\wc root
+\mp RootPOS89427
+\a ХӀаман {74285}
+ 
+\lx 69520
+\g Hegai
+\c W
+\wc root
+\mp RootPOS89427
+\a ХӀегай {28382}
+ 
+\lx 65529
+\g live
+\c W
+\wc root
+\mp RootPOS36310
+\a бзаз {59911}
+\a бзаза {27260}
+ 
+\lx 75602
+\g right.dir
+\c W
+\wc root
+\mp RootPOS89446
+\a агъьма {66922}
+ 
+\lx 133146
+\g PVад
+\c W
+\wc root
+\mp RootPOS41575
+\a ады {53728}
+\a ад {30225}
+ 
+\lx 123566
+\g salt
+\c W
+\wc root
+\mp RootPOS89446
+\a джьыкӀ {73436}
+\a джьыкӀа {105577}
+\a джькӀа {68942}
+ 
+\lx 111095
+\g PVна
+\c W
+\wc root
+\mp RootPOS41575
+\a на {55557}
+ 
+\lx 95218
+\g lie
+\c W
+\wc root
+\mp RootPOS34430
+\a квы {39251}
+ 
+\lx 38561
+\g grow
+\c W
+\wc root
+\mp RootPOS36310
+\a рйы {105242}
+ 
+\lx 51773
+\g mile
+\c W
+\wc root
+\mp RootPOS89446
+\a миля {20932}
+ 
+\lx 55155
+\g street
+\c W
+\wc root
+\mp RootPOS89446
+\a урам {85676}
+ 
+\lx 22451
+\g trample
+\c W
+\wc root
+\mp RootPOS44652
+\a гвычӀ {134575}
+\a гвычӀа {49923}
+ 
+\lx 31521
+\g gravel
+\c W
+\wc root
+\mp RootPOS89446
+\a хӀакъвара {59088}
+ 
+\lx 43792
+\g receive
+\c W
+\wc root
+\mp RootPOS8621
+\a дзы {132141}
+\a дз {1351}
+\a адза {38269}
+\a адз {21004}
+\a дза {41359}
+ 
+\lx 95521
+\g DIR.from
+\c W/W
+\o 0 0 
+\wc 7551
+\a гӀа {107467}
+\eType prefix nterfix
+ 
+\lx 62205
+\g something
+\c W
+\wc root
+\mp RootPOS86476
+\a кӀара {64212}
+ 
+\lx 119081
+\g evil.eye
+\c W
+\wc root
+\mp RootPOS89446
+\a лапш {37082}
+ 
+\lx 12848
+\g E3sm
+\c W/W
+\o -3 -3 
+\wc 55491
+\a и {126016}
+\a йы {38316}
+\a й {7692}
+\eType prefix nterfix
+ 
+\lx 42770
+\g E3sm
+\c W/W
+\o 0 0 
+\wc 46301
+\a и {126016}
+\a йы {38316}
+\a й {7692}
+\eType prefix nterfix
+ 
+\lx 54099
+\g E3sm
+\c W/W
+\o -3 -3 
+\wc 11759
+\a и {126016}
+\a йы {38316}
+\a й {7692}
+\eType prefix nterfix
+ 
+\lx 91059
+\g E3sm
+\c W/W
+\o -2 -2 
+\wc 112431
+\a и {126016}
+\a йы {38316}
+\a й {7692}
+\eType prefix nterfix
+ 
+\lx 111698
+\g E3sm
+\c W/W
+\o -3 -2 
+\wc 129177
+\a и {126016}
+\a йы {38316}
+\a й {7692}
+\eType prefix nterfix
+ 
+\lx 134554
+\g E3sm
+\c W/W
+\o -3 -2 
+\wc 98428
+\a и {126016}
+\a йы {38316}
+\a й {7692}
+\eType prefix nterfix
+ 
+\lx 35589
+\g stomach
+\c W
+\wc root
+\mp RootPOS89446
+\a мгва {25654}
+ 
+\lx 17642
+\g so.much
+\c W
+\wc root
+\mp RootPOS58395
+\a аъара {56261}
+ 
+\lx 61816
+\g captain
+\c W
+\wc root
+\mp RootPOS89446
+\a капитан {68104}
+ 
+\lx 17903
+\g blessed
+\c W
+\wc root
+\mp RootPOS25941
+\a зымшыра {32176}
+ 
+\lx 64459
+\g head
+\c W
+\wc root
+\mp RootPOS89446
+\a хъа {26015}
+ 
+\lx 50738
+\g look
+\c W
+\wc root
+\mp RootPOS71455
+\a пшы {105204}
+\a пш {26171}
+ 
+\lx 6224
+\g forgive
+\c W
+\wc root
+\mp RootPOS8621
+\a ргӀв {80929}
+\a ргӀва {45971}
+ 
+\lx 46636
+\g ear.of.grain
+\c W
+\wc root
+\mp RootPOS89446
+\a чхъа {72433}
+ 
+\lx 35346
+\g E3si
+\c W/W
+\o -3 -2 
+\wc 129177
+\a а {39532}
+\eType prefix nterfix
+ 
+\lx 37986
+\g E3si
+\c W/W
+\o -3 -3 
+\wc 11759
+\a а {39532}
+\eType prefix nterfix
+ 
+\lx 58795
+\g E3si
+\c W/W
+\o 0 0 
+\wc 46301
+\a а {39532}
+\eType prefix nterfix
+ 
+\lx 88054
+\g E3si
+\c W/W
+\o -2 -2 
+\wc 112431
+\a а {39532}
+\eType prefix nterfix
+ 
+\lx 102828
+\g E3si
+\c W/W
+\o -3 -3 
+\wc 55491
+\a а {39532}
+\eType prefix nterfix
+ 
+\lx 110732
+\g E3si
+\c W/W
+\o -3 -2 
+\wc 98428
+\a а {39532}
+\eType prefix nterfix
+ 
+\lx 126028
+\g hand
+\c W
+\wc root
+\mp RootPOS89446
+\a напӀы {43584}
+\a напӀ {74255}
+ 
+\lx 114398
+\g place.of
+\c W/W
+\o 1
+\wc derivSfx
+\a рта {97556}
+\eType suffix
+\fd FromPOS71455
+\fd ToPOS89446
+ 
+\lx 110970
+\g travel
+\c W
+\wc root
+\mp RootPOS36310
+\a мгӀвайс {61382}
+ 
+\lx 106590
+\g tree
+\c W
+\wc root
+\mp RootPOS89446
+\a цӏла {51948}
+ 
+\lx 33574
+\g Ephratha
+\c W
+\wc root
+\mp RootPOS89427
+\a Ефрафа {94923}
+ 
+\lx 4678
+\g day
+\c W
+\wc root
+\mp RootPOS89446
+\a мыш {73282}
+\a мш {127664}
+ 
+\lx 8502
+\g darkness
+\c W
+\wc root
+\mp RootPOS89446
+\a лащцара {88167}
+ 
+\lx 63240
+\g evil
+\c W
+\wc root
+\mp RootPOS89446
+\a чвгьа {116772}
+ 
+\lx 36030
+\g Joppa
+\c W
+\wc root
+\mp RootPOS89427
+\a Иоппия {73592}
+ 
+\lx 125417
+\g PVгӀаз
+\c W
+\wc root
+\mp RootPOS41575
+\a гӀазы {60223}
+\a гӀаз {65376}
+ 
+\lx 56323
+\g cabin
+\c W
+\wc root
+\mp RootPOS89446
+\a тып {12196}
+ 
+\lx 22913
+\g eat
+\c W
+\wc root
+\mp RootPOS44652
+\a ф {62019}
+\a фа {98539}
+ 
+\lx 127145
+\g go
+\c W
+\wc root
+\mp RootPOS36310
+\a нашыл {93955}
+ 
+\lx 34632
+\g sly
+\c W
+\wc root
+\mp RootPOS25941
+\a къвыш {60431}
+ 
+\lx 54250
+\g church
+\c W
+\wc root
+\mp RootPOS89446
+\a кьльиса {75938}
+ 
+\lx 117747
+\g be
+\c W
+\wc root
+\mp RootPOS34430
+\a акӀвы {108383}
+\a акӀв {90989}
+ 
+\lx 6054
+\g how
+\c W/W
+\o -4 -4 
+\wc 84882
+\fd InflectionFS59804
+\a шы {122498}
+\a ш {108257}
+\eType prefix
+ 
+\lx 10989
+\g how
+\c W/W
+\o -4 -4 
+\wc 18472
+\a шы {122498}
+\a ш {108257}
+\eType prefix
+ 
+\lx 74729
+\g fear
+\c W
+\wc root
+\mp RootPOS36310
+\a чвшв {11789}
+\a чвышв {45487}
+\a чвшва {71982}
+ 
+\lx 85630
+\g resting.place
+\c W
+\wc root
+\mp RootPOS89446
+\a та {116961}
+ 
+\lx 82856
+\g arrive.after
+\c W
+\wc root
+\mp RootPOS71455
+\a ащтагӀай {114779}
+ 
+\lx 58782
+\g room
+\c W
+\wc root
+\mp RootPOS89446
+\a пещ {14394}
+ 
+\lx 113153
+\g PVгӀацӀа
+\c W
+\wc root
+\mp RootPOS41575
+\a гӀацӀа {132262}
+ 
+\lx 50104
+\g small
+\c W
+\wc root
+\mp RootPOS89446
+\a хвыц {122581}
+\a хвыцы {119080}
+ 
+\lx 115232
+\g separate
+\c W
+\wc root
+\mp RootPOS44652
+\a къвыцӀы {37371}
+ 
+\lx 103366
+\g shadow
+\c W
+\wc root
+\mp RootPOS89446
+\a жьора {59541}
+ 
+\lx 27891
+\g soap
+\c W
+\wc root
+\mp RootPOS89446
+\a сабын {29281}
+ 
+\lx 106613
+\g Jew
+\c W
+\wc root
+\mp RootPOS89427
+\a джьуты {133651}
+\a джьут {23846}
+ 
+\lx 105166
+\g amass
+\c W
+\wc root
+\mp RootPOS8621
+\a цӀа {116279}
+ 
+\lx 121215
+\g person
+\c W
+\wc root
+\mp RootPOS89446
+\a гӀвычӀвгӀвыс {102897}
+\a гӀвычӀвгӀвыс {81240}
+ 
+\lx 20295
+\g but
+\c W
+\wc root
+\mp RootPOS62228
+\a ауаса {107760}
+ 
+\lx 116044
+\g snow
+\c W
+\wc root
+\mp RootPOS89446
+\a с {46760}
+\a сы {15275}
+ 
+\lx 28716
+\g judge
+\c W
+\wc root
+\mp RootPOS89446
+\a хӀаквымхагӀв {48150}
+ 
+\lx 65037
+\g each
+\c W
+\wc root
+\mp RootPOS86476
+\a заджвыкӀгьи {120114}
+ 
+\lx 100372
+\g 2sf
+\c W
+\wc root
+\mp RootPOS86476
+\a бар {57670}
+\a Бара {65687}
+\a бара {40436}
+ 
+\lx 86637
+\g old
+\c W
+\wc root
+\mp RootPOS25941
+\a жв {67266}
+ 
+\lx 21825
+\g depth
+\c W
+\wc root
+\mp RootPOS89446
+\a цӀолара {107848}
+ 
+\lx 97378
+\g happy
+\c W
+\wc root
+\mp RootPOS25941
+\a кьахв {54890}
+ 
+\lx 71499
+\g Joppa
+\c W
+\wc root
+\mp RootPOS89427
+\a Йаффа {113402}
+ 
+\lx 61357
+\g worm
+\c W
+\wc root
+\mp RootPOS89446
+\a хва {105070}
+ 
+\lx 85394
+\g appear
+\c W
+\wc root
+\mp RootPOS71455
+\a гӀанша {64044}
+ 
+\lx 74121
+\g hunger
+\c W
+\wc root
+\mp RootPOS89446
+\a мла {15732}
+ 
+\lx 62130
+\g pray
+\c W
+\wc root
+\mp RootPOS36310
+\a ныхӀва {26665}
+\a ныхӀва {80941}
+ 
+\lx 7396
+\g shirt
+\c W
+\wc root
+\mp RootPOS89446
+\a ас {118705}
+\a асы {118036}
+ 
+\lx 67357
+\g nine
+\c W/W
+\o -2 -2 
+\wc 75070
+\a жвы {86124}
+\a жв {43737}
+\eType prefix
+ 
+\lx 108790
+\g LIGHT.VERB
+\c W
+\wc root
+\mp RootPOS44652
+\a х {75199}
+ 
+\lx 69799
+\g go
+\c W
+\wc root
+\mp RootPOS36310
+\a най {76793}
+ 
+\lx 23816
+\g brother
+\c W
+\wc root
+\mp RootPOS89446
+\a ащ {34663}
+\a аща {32679}
+ 
+\lx 45921
+\g shine.on
+\c W
+\wc root
+\mp RootPOS44652
+\a квпх {8067}
+ 
+\lx 86258
+\g light
+\c W
+\wc root
+\mp RootPOS89446
+\a лашар {73611}
+\a лашара {133960}
+ 
+\lx 70722
+\g request
+\c W
+\wc root
+\mp RootPOS44652
+\a ыхӀва {58881}
+\a ахӏва {3023}
+\a ахӀва {76577}
+ 
+\lx 114968
+\g request
+\c W
+\wc root
+\mp RootPOS36310
+\a ыхӀва {58881}
+\a ахӏва {3023}
+\a ахӀва {76577}
+ 
+\lx 33261
+\g be.necessary
+\c W
+\wc root
+\mp RootPOS34430
+\a атахъы {82758}
+\a атахъ {87900}
+ 
+\lx 127594
+\g PVщтӀ
+\c W
+\wc root
+\mp RootPOS41575
+\a щтӀ {68035}
+\a щтӀы {97461}
+ 
+\lx 28501
+\g PURP
+\c W/W
+\o 2 4 
+\wc 133872
+\a ныс {109775}
+\eType suffix
+ 
+\lx 118970
+\g PURP
+\c W/W
+\o 3 3 
+\wc 2380
+\a ныс {109775}
+\eType suffix
+ 
+\lx 5378
+\g PVхь
+\c W
+\wc root
+\mp RootPOS41575
+\a хьы {41749}
+\a хь {43664}
+ 
+\lx 85355
+\g strike
+\c W
+\wc root
+\mp RootPOS44652
+\a ылас {10777}
+ 
+\lx 11718
+\g speak
+\c W
+\wc root
+\mp RootPOS36310
+\a чважв {86692}
+\a чважва {125352}
+ 
+\lx 121787
+\g tomorrow
+\c W
+\wc root
+\mp RootPOS37652
+\a уачӀвы {81926}
+ 
+\lx 125020
+\g there
+\c W
+\wc root
+\mp RootPOS25941
+\a аъ {56712}
+\a аъа {43170}
+ 
+\lx 40257
+\g COND.PRS
+\c W/W
+\o 2 4 
+\wc 133872
+\a уазтын {115788}
+\a узтын {125719}
+\eType suffix
+ 
+\lx 63892
+\g COND.PRS
+\c W/W
+\o 3 3 
+\wc 2380
+\a уазтын {115788}
+\a узтын {125719}
+\eType suffix
+ 
+\lx 22402
+\g thick
+\c W
+\wc root
+\mp RootPOS89446
+\a жвпӀа {87327}
+ 
+\lx 2029
+\g Boaz
+\c W
+\wc root
+\mp RootPOS89427
+\a Боаз {117337}
+ 
+\lx 133422
+\g strength
+\c W
+\wc root
+\mp RootPOS89446
+\a къару {14354}
+ 
+\lx 12307
+\g 3sa
+\c W
+\wc root
+\mp RootPOS86476
+\a дар {11324}
+\a дара {100652}
+ 
+\lx 108162
+\g eight
+\c W/W
+\o -2 -2 
+\wc 75070
+\a гӀа {23095}
+\a агӀ {83989}
+\eType prefix
+ 
+\lx 109338
+\g Naomi
+\c W
+\wc root
+\mp RootPOS89427
+\a Ноеминь {35728}
+\a Ноемин {100886}
+ 
+\lx 7003
+\g permitted
+\c W
+\wc root
+\mp RootPOS25941
+\a йауаш {29735}
+ 
+\lx 7756
+\g time
+\c W
+\wc root
+\mp RootPOS89446
+\a заман {74083}
+ 
+\lx 119946
+\g rain
+\c W
+\wc root
+\mp RootPOS123432
+\a кв {64388}
+ 
+\lx 132299
+\g go.out
+\c W
+\wc root
+\mp RootPOS36310
+\a гӀатыцӀы {54830}
+\a гӀатыцӀ {50823}
+ 
+\lx 81322
+\g burn
+\c W
+\wc root
+\mp RootPOS36310
+\a блыбыл {97730}
+ 
+\lx 125709
+\g care
+\c W
+\wc root
+\mp RootPOS36310
+\a АйгвыгӀв {40448}
+ 
+\lx 116881
+\g want
+\c W
+\wc root
+\mp RootPOS34430
+\a тахъы {42583}
+\a тахъ {37280}
+ 
+\lx 9753
+\g back
+\c W
+\wc root
+\mp RootPOS89446
+\a зыкв {52284}
+\a зквы {104335}
+ 
+\lx 42157
+\g raise
+\c W
+\wc root
+\mp RootPOS8621
+\a х {10153}
+ 
+\lx 104381
+\g turn
+\c W
+\wc root
+\mp RootPOS123432
+\a хӀвы {135705}
+\a хӀв {101260}
+ 
+\lx 3874
+\g poor
+\c W
+\wc root
+\mp RootPOS25941
+\a рыцхӀагӀа {20815}
+ 
+\lx 25969
+\g PVа
+\c W
+\wc root
+\mp RootPOS41575
+\a а {36347}
+ 
+\lx 131829
+\g strength
+\c W
+\wc root
+\mp RootPOS89446
+\a мчы {19322}
+ 
+\lx 15625
+\g raise
+\c W
+\wc root
+\mp RootPOS8621
+\a гыл {10538}
+ 
+\lx 18657
+\g spin
+\c W
+\wc root
+\mp RootPOS36310
+\a хых {41235}
+\a хыха {123446}
+ 
+\lx 30427
+\g more
+\c W
+\wc root
+\mp RootPOS37652
+\a рахӀа {72959}
+ 
+\lx 26767
+\g poor
+\c W
+\wc root
+\mp RootPOS25941
+\a рыцхӀа {84308}
+ 
+\lx 24466
+\g Judea
+\c W
+\wc root
+\mp RootPOS89427
+\a Иудея {8806}
+ 
+\lx 16958
+\g thief
+\c W
+\wc root
+\mp RootPOS89446
+\a гъыч {53740}
+ 
+\lx 11288
+\g Jerusalem
+\c W
+\wc root
+\mp RootPOS89427
+\a Иерусалим {31139}
+ 
+\lx 107858
+\g then
+\c W
+\wc root
+\mp RootPOS62228
+\a Ауи.асхъан {2899}
+ 
+\lx 12159
+\g be.located
+\c W
+\wc root
+\mp RootPOS34430
+\a н {43104}
+ 
+\lx 117606
+\g be.afraid
+\c W
+\wc root
+\mp RootPOS71455
+\a шва {55645}
+ 
+\lx 104021
+\g do
+\c W
+\wc root
+\mp RootPOS36310
+\a ха {26544}
+ 
+\lx 59899
+\g immediately
+\c W
+\wc root
+\mp RootPOS37652
+\a зынла {77737}
+ 
+\lx 80789
+\g once
+\c W
+\wc root
+\mp RootPOS37652
+\a зны {104539}
+ 
+\lx 13371
+\g test
+\c W
+\wc root
+\mp RootPOS44652
+\a рхъвых {25062}
+ 
+\lx 105712
+\g blow
+\c W
+\wc root
+\mp RootPOS71455
+\a с {31466}
+ 
+\lx 37404
+\g PVз
+\c W
+\wc root
+\mp RootPOS41575
+\a з {116136}
+ 
+\lx 13422
+\g son
+\c W
+\wc root
+\mp RootPOS89446
+\a па {24509}
+ 
+\lx 8008
+\g COND.IRR
+\c W/W
+\o 2 4 
+\wc 133872
+\a зарквын {31277}
+\eType suffix
+ 
+\lx 4454
+\g A3sr
+\c W/W
+\o -5 -5 
+\wc 33256
+\a ды {60562} /#_  | /#_ 
+		
+\a Д {3140}  
+ 
+ ~/#_  | ~/#_ 
+		
+\a д {71905} /#_  | /#_ 
+		
+\eType prefix
+ 
+\lx 135650
+\g A3sr
+\c W/W
+\o -5 -5 
+\wc 70577
+\a ды {60562} /#_  | /#_ 
+		
+\a Д {3140}  
+ 
+ ~/#_  | ~/#_ 
+		
+\a д {71905} /#_  | /#_ 
+		
+\eType prefix
+ 
+\lx 84354
+\g moth
+\c W
+\wc root
+\mp RootPOS89446
+\a хӀвын {68159}
+ 
+\lx 13470
+\g put.under.one's.arm
+\c W
+\wc root
+\mp RootPOS36310
+\a гӀвыцӀаракӀ {119283}
+ 
+\lx 91010
+\g what
+\c W
+\wc root
+\mp RootPOS86476
+\a АчӀвыйа {49627}
+\a ачӀвыйа {33263}
+ 
+\lx 40983
+\g go
+\c W
+\wc root
+\mp RootPOS36310
+\a ц {101740}
+\a ца {38527}
+ 
+\lx 918
+\g E1p
+\c W/W
+\o -3 -3 
+\wc 11759
+\a хIы {55142}
+\a хӀ {42137}
+\eType prefix nterfix
+ 
+\lx 1945
+\g E1p
+\c W/W
+\o 0 0 
+\wc 46301
+\a хIы {55142}
+\a хӀ {42137}
+\eType prefix nterfix
+ 
+\lx 63796
+\g E1p
+\c W/W
+\o -2 -2 
+\wc 112431
+\a хIы {55142}
+\a хӀ {42137}
+\eType prefix nterfix
+ 
+\lx 91421
+\g E1p
+\c W/W
+\o -3 -2 
+\wc 98428
+\a хIы {55142}
+\a хӀ {42137}
+\eType prefix nterfix
+ 
+\lx 103938
+\g E1p
+\c W/W
+\o -3 -2 
+\wc 129177
+\a хIы {55142}
+\a хӀ {42137}
+\eType prefix nterfix
+ 
+\lx 134687
+\g E1p
+\c W/W
+\o -3 -3 
+\wc 55491
+\a хIы {55142}
+\a хӀ {42137}
+\eType prefix nterfix
+ 
+\lx 41598
+\g say
+\c W
+\wc root
+\mp RootPOS44652
+\a хIва {40515}
+\a ахIв {73202}
+\a хӀва {101973}
+\a хӀв {120970}
+\a ахӀв {61051}
+\a хӀвы {69146}
+\a хӀв {33625}
+\a хӀв {47732}
+ 
+\lx 101154
+\g sinner
+\c W
+\wc root
+\mp RootPOS89446
+\a гвнахӀчы {9919}
+ 
+\lx 57540
+\g thus
+\c W
+\wc root
+\mp RootPOS37652
+\a ауаса {93543}
+ 
+\lx 105195
+\g fire
+\c W
+\wc root
+\mp RootPOS89446
+\a мца {85341}
+ 
+\lx 39451
+\g PRS.IND
+\c W/W
+\o 3 3 
+\wc 2380
+\fd InflectionFS114066
+\a итӀ {37589}
+\a итӀ {52475}
+\eType suffix
+ 
+\lx 5716
+\g hour
+\c W
+\wc root
+\mp RootPOS89446
+\a сахӀат {116394}
+ 
+\lx 67314
+\g think
+\c W
+\wc root
+\mp RootPOS36310
+\a хъвыц {95219}
+\a хъвыцы {34408}
+ 
+\lx 131418
+\g other
+\c W
+\wc root
+\mp RootPOS25941
+\a датша {84233}
+ 
+\lx 103312
+\g go.down?
+\c W
+\wc root
+\mp RootPOS36310
+\a гӀакӀнырцӀа {3725}
+ 
+\lx 7046
+\g COND.Dist.PST
+\c W/W
+\o 3 3 
+\wc 2380
+\a хьазтын {75103}
+\eType suffix
+ 
+\lx 21126
+\g story
+\c W
+\wc root
+\mp RootPOS89446
+\a турых {117507}
+ 
+\lx 11000
+\g sacrifice
+\c W
+\wc root
+\mp RootPOS89446
+\a къвырман {85279}
+ 
+\lx 19480
+\g twenty
+\c W
+\wc root
+\mp RootPOS105028
+\a гӀважва {30201}
+ 
+\lx 123989
+\g 3p
+\c W
+\wc root
+\mp RootPOS86476
+\a ауат {129746}
+ 
+\lx 54550
+\g hang
+\c W
+\wc root
+\mp RootPOS8621
+\a хӀ {42149}
+\a хӀа {87507}
+ 
+\lx 120840
+\g fruit
+\c W
+\wc root
+\mp RootPOS89446
+\a швыр {46515}
+ 
+\lx 28022
+\g A1p
+\c W/W
+\o -5 -5 
+\wc 33256
+\a хIы {35942} /#_  | /#_ 
+		
+\a ХI {99850} /#_  | /#_ 
+		
+\a хӀ {268}  
+ 
+ ~/#_  | ~/#_ 
+		  
+ 
+ ~/#_  | ~/#_ 
+		
+\a хӀ {47453}  
+ 
+ ~/#_  | ~/#_ 
+		  
+ 
+ ~/#_  | ~/#_ 
+		
+\a хӀ {111001} /#_  | /#_ 
+		
+\eType prefix
+ 
+\lx 98665
+\g A1p
+\c W/W
+\o -5 -5 
+\wc 70577
+\a хIы {35942} /#_  | /#_ 
+		
+\a ХI {99850} /#_  | /#_ 
+		
+\a хӀ {268}  
+ 
+ ~/#_  | ~/#_ 
+		  
+ 
+ ~/#_  | ~/#_ 
+		
+\a хӀ {47453}  
+ 
+ ~/#_  | ~/#_ 
+		  
+ 
+ ~/#_  | ~/#_ 
+		
+\a хӀ {111001} /#_  | /#_ 
+		
+\eType prefix
+ 
+\lx 45544
+\g from
+\c W
+\wc root
+\mp RootPOS13237
+\a ахьыла {120348}
+ 
+\lx 61864
+\g tonight
+\c W
+\wc root
+\mp RootPOS37652
+\a уахъа {48532}
+ 
+\lx 56406
+\g where
+\c W/W
+\o -4 -4 
+\wc 18472
+\a аба {47496}
+\eType prefix
+ 
+\lx 119104
+\g where
+\c W/W
+\o -4 -4 
+\wc 84882
+\fd InflectionFS1565
+\a аба {47496}
+\eType prefix
+ 
+\lx 13233
+\g cost
+\c W
+\wc root
+\mp RootPOS89446
+\a хв {102886}
+\a хвы {100183}
+ 
+\lx 118142
+\g law
+\c W
+\wc root
+\mp RootPOS89446
+\a хабз {77071}
+\a хабза {80219}
+ 
+\lx 128072
+\g tax
+\c W
+\wc root
+\mp RootPOS89446
+\a швахчӀв {37137}
+ 
+\lx 106230
+\g COND.if.even
+\c W/W
+\o 2 4 
+\wc 133872
+\a заргьи {101207}
+\eType suffix
+ 
+\lx 36182
+\g for
+\c W
+\wc root
+\mp RootPOS62228
+\a йауа.швхӀвузтын {133884}
+ 
+\lx 61813
+\g DIST.PST.IND
+\c W/W
+\o 3 3 
+\wc 2380
+\fd InflectionFS112533
+\a хьатӀ {132215}
+\eType suffix
+ 
+\lx 72549
+\g lie
+\c W
+\wc root
+\mp RootPOS89446
+\a мц {2279}
+\a мцы {106191}
+ 
+\lx 57613
+\g from
+\c W
+\wc root
+\mp RootPOS25941
+\a ыуа {128907}
+\a ауа {97257}
+ 
+\lx 82340
+\g heart
+\c W
+\wc root
+\mp RootPOS89446
+\a гв {89633}
+\a гвы {102613}
+ 
+\lx 12701
+\g white
+\c W
+\wc root
+\mp RootPOS25941
+\a шкӀвокӀва {30290}
+ 
+\lx 33529
+\g E1s
+\c W/W
+\o -3 -3 
+\wc 55491
+\a сы {95886}
+\a з {15242} / _ [83103]  | / _ [Vd] 
+		
+\a с {16489}  
+ 
+ ~/ _ [83103]  | ~/ _ [Vd] 
+		
+\eType prefix nterfix
+ 
+\lx 91079
+\g E1s
+\c W/W
+\o -3 -3 
+\wc 11759
+\a сы {95886}
+\a з {15242} / _ [83103]  | / _ [Vd] 
+		
+\a с {16489}  
+ 
+ ~/ _ [83103]  | ~/ _ [Vd] 
+		
+\eType prefix nterfix
+ 
+\lx 99700
+\g E1s
+\c W/W
+\o -3 -2 
+\wc 129177
+\a сы {95886}
+\a з {15242} / _ [83103]  | / _ [Vd] 
+		
+\a с {16489}  
+ 
+ ~/ _ [83103]  | ~/ _ [Vd] 
+		
+\eType prefix nterfix
+ 
+\lx 102735
+\g E1s
+\c W/W
+\o -2 -2 
+\wc 112431
+\a сы {95886}
+\a з {15242} / _ [83103]  | / _ [Vd] 
+		
+\a с {16489}  
+ 
+ ~/ _ [83103]  | ~/ _ [Vd] 
+		
+\eType prefix nterfix
+ 
+\lx 121298
+\g E1s
+\c W/W
+\o 0 0 
+\wc 46301
+\a сы {95886}
+\a з {15242} / _ [83103]  | / _ [Vd] 
+		
+\a с {16489}  
+ 
+ ~/ _ [83103]  | ~/ _ [Vd] 
+		
+\eType prefix nterfix
+ 
+\lx 126167
+\g E1s
+\c W/W
+\o -3 -2 
+\wc 98428
+\a сы {95886}
+\a з {15242} / _ [83103]  | / _ [Vd] 
+		
+\a с {16489}  
+ 
+ ~/ _ [83103]  | ~/ _ [Vd] 
+		
+\eType prefix nterfix
+ 
+\lx 38918
+\g wave
+\c W
+\wc root
+\mp RootPOS89446
+\a толкъвын {36892}
+ 
+\lx 131350
+\g snail
+\c W
+\wc root
+\mp RootPOS89446
+\a хъарчвыгъь {97343}
+ 
+\lx 99584
+\g wait
+\c W
+\wc root
+\mp RootPOS36310
+\a зпш {22210}
+\a азпшы {466}
+\a азпш {43697}
+ 
+\lx 105971
+\g A3si/p
+\c W/W
+\o -5 -5 
+\wc 70577
+\a йы {25201} /#_  | /#_ 
+		
+\a Й {130621} /#_  | /#_ 
+		
+\a 0 {30249} /#_  | /#_ 
+		
+\a Йы {32106}  
+ 
+ ~/#_  | ~/#_ 
+		  
+ 
+ ~/#_  | ~/#_ 
+		  
+ 
+ ~/#_  | ~/#_ 
+		
+\a й {126877} /#_  | /#_ 
+		
+\eType prefix
+ 
+\lx 118926
+\g A3si/p
+\c W/W
+\o -5 -5 
+\wc 33256
+\a йы {25201} /#_  | /#_ 
+		
+\a Й {130621} /#_  | /#_ 
+		
+\a 0 {30249} /#_  | /#_ 
+		
+\a Йы {32106}  
+ 
+ ~/#_  | ~/#_ 
+		  
+ 
+ ~/#_  | ~/#_ 
+		  
+ 
+ ~/#_  | ~/#_ 
+		
+\a й {126877} /#_  | /#_ 
+		
+\eType prefix
+ 
+\lx 104935
+\g cry.out
+\c W
+\wc root
+\mp RootPOS36310
+\a чӀвагӀ {22975}
+ 
+\lx 66040
+\g REL.FUT1
+\c W/W
+\o 3 3 
+\wc 134179
+\fd InflectionFS91335
+\a ра {78207}
+\eType suffix
+ 
+\lx 79476
+\g suffer
+\c W
+\wc root
+\mp RootPOS44652
+\a чхӀа {14422}
+ 
+\lx 113206
+\g four
+\c W/W
+\o -2 -2 
+\wc 75070
+\a пщы {13757}
+\a пщ {5175}
+\eType prefix
+ 
+\lx 82501
+\g TO
+\c W/W
+\o 1
+\wc derivSfx
+\a дза {55959}
+\eType suffix
+\fd FromPOS89446
+ 
+\lx 19105
+\g stand
+\c W
+\wc root
+\mp RootPOS36310
+\a гылы {28133}
+\a гыл {126903}
+ 
+\lx 27165
+\g WHY
+\c W/W
+\o -4 -4 
+\wc 18472
+\a зы {106549}
+\a з {32472}
+\eType prefix
+ 
+\lx 128774
+\g WHY
+\c W/W
+\o -4 -4 
+\wc 84882
+\fd InflectionFS38525
+\a зы {106549}
+\a з {32472}
+\eType prefix
+ 
+\lx 107034
+\g beat
+\c W
+\wc root
+\mp RootPOS112341
+\a асы {77976}
+\a ас {4932}
+ 
+\lx 69523
+\g sail
+\c W
+\wc root
+\mp RootPOS36310
+\a дзца {81868}
+ 
+\lx 78131
+\g DIR.out.of
+\c W/W
+\o 0 0 
+\wc 7551
+\a джвылы {68373}
+\a джвылы {27056}
+\eType prefix
+ 
+\lx 128330
+\g seven
+\c W/W
+\o -2 -2 
+\wc 75070
+\a бжь {52909}
+\eType prefix
+ 
+\lx 1661
+\g bolt
+\c W
+\wc root
+\mp RootPOS89446
+\a чӀвы {110214}
+ 
+\lx 23209
+\g when
+\c W
+\wc root
+\mp RootPOS62228
+\a агӀан {35383}
+ 
+\lx 134647
+\g spill
+\c W
+\wc root
+\mp RootPOS36310
+\a кӀапӀла {97168}
+ 
+\lx 133931
+\g 2sm
+\c W
+\wc root
+\mp RootPOS86476
+\a уар {38238}
+\a уара {73699}
+ 
+\lx 70582
+\g gather
+\c W
+\wc root
+\mp RootPOS8621
+\a г {4927}
+\a га {73781}
+ 
+\lx 15513
+\g put/toss
+\c W
+\wc root
+\mp RootPOS44652
+\a шв {64000}
+ 
+\lx 31790
+\g sue
+\c W
+\wc root
+\mp RootPOS36310
+\a дауа {119783}
+ 
+\lx 105177
+\g plant
+\c W
+\wc root
+\mp RootPOS89446
+\a ГIайыра {40156}
+\a гӀайыра {79681}
+ 
+\lx 40626
+\g IMPF.IND
+\c W/W
+\o 3 3 
+\wc 2380
+\fd InflectionFS14441
+\a уан {94492}
+\a ун {31594}
+\eType suffix
+ 
+\lx 86058
+\g king
+\c W
+\wc root
+\mp RootPOS89446
+\a ПаштыхӀ {9328}
+\a паштыхӀ {97393}
+ 
+\lx 67402
+\g better
+\c W
+\wc root
+\mp RootPOS89446
+\a агъь {36583}
+ 
+\lx 99141
+\g be.attentive
+\c W
+\wc root
+\mp RootPOS34430
+\a гватшны {48617}
+ 
+\lx 44996
+\g when
+\c W/W
+\o -4 -4 
+\wc 18472
+\a аны {108038}
+\a ан {128305}
+\eType prefix
+ 
+\lx 127462
+\g when
+\c W/W
+\o -4 -4 
+\wc 84882
+\fd InflectionFS45182
+\a аны {108038}
+\a ан {128305}
+\eType prefix
+ 
+\lx 100780
+\g compel
+\c W
+\wc root
+\mp RootPOS8621
+\a цалы {12220}
+\a цал {62349}
+ 
+\lx 11912
+\g thanks.to
+\c W
+\wc root
+\mp RootPOS13237
+\a йгӀалцӀла {63960}
+ 
+\lx 42454
+\g cuckoo
+\c W
+\wc root
+\mp RootPOS89446
+\a кӀвыкӀва {67841}
+ 
+\lx 102366
+\g height
+\c W
+\wc root
+\mp RootPOS89446
+\a хӀагӀа {118118}
+ 
+\lx 124521
+\g Susa
+\c W
+\wc root
+\mp RootPOS89427
+\a Шушан {100623}
+ 
+\lx 3192
+\g PVшӀа
+\c W
+\wc root
+\mp RootPOS41575
+\a шӀа {12256}
+ 
+\lx 28630
+\g cry
+\c W
+\wc root
+\mp RootPOS36310
+\a чӀвыу {132667}
+ 
+\lx 65457
+\g who
+\c W
+\wc root
+\mp RootPOS87424
+\a дзачӀву {4307}
+ 
+\lx 60304
+
+\lx 60304
+\g QUOT
+\c W/W
+\wc enclitic
+\eType suffix
+\o 32000
+\a -хӀва {24828}
+\a хӀва {119889}
+\mp Enclitic
+
+\lx 60304
+\g QUOT
+\c Prt
+\wc clitic
+\a -хӀва {24828}
+\a хӀва {119889}
+\fd CliticPOS58395
+ 
+\lx 40068
+\g locality
+\c W
+\wc root
+\mp RootPOS89446
+\a шӀыпӀа {109199}
+ 
+\lx 20339
+\g Machlon
+\c W
+\wc root
+\mp RootPOS89427
+\a Махлон {72303}
+ 
+\lx 59633
+\g SUBJ1
+\c W/W
+\o 3 3 
+\wc 2380
+\a рын {15033}
+\eType suffix
+ 
+\lx 65669
+\g SUBJ1
+\c W/W
+\o 2 4 
+\wc 133872
+\a рын {15033}
+\eType suffix
+ 
+\lx 10932
+\g long
+\c W
+\wc root
+\mp RootPOS25941
+\a ау {56903}
+\a ауы {42944}
+ 
+\lx 14592
+\g rust
+\c W
+\wc root
+\mp RootPOS36310
+\a жьагаца {123021}
+ 
+\lx 45095
+\g EVID.PST.REP
+\c W/W
+\o 3 3 
+\wc 2380
+\a уазарын {125771}
+\a узарын {99866}
+\eType suffix
+ 
+\lx 116888
+\g mother
+\c W
+\wc root
+\mp RootPOS89446
+\a Ан {41615}
+\a ан {124656}
+ 
+\lx 7141
+\g COND.PST
+\c W/W
+\o 2 4 
+\wc 133872
+\a зтын {98059}
+\eType suffix
+ 
+\lx 69190
+\g COND.PST
+\c W/W
+\o 3 3 
+\wc 2380
+\a зтын {98059}
+\eType suffix
+ 
+\lx 61004
+\g narrow
+\c W
+\wc root
+\mp RootPOS25941
+\a тшва {21917}
+ 
+\lx 116971
+\g elder
+\c W
+\wc root
+\mp RootPOS89446
+\a АхӀба {74205}
+\a ахӀба {75601}
+ 
+\lx 19067
+\g have
+\c W
+\wc root
+\mp RootPOS34430
+\a ым {35904}
+\a ма {24106} /а_  | /а_ 
+		
+\a ыма {54151}  
+ 
+ ~/а_  | ~/а_ 
+		
+ 
+\lx 129085
+\g side
+\c W
+\wc root
+\mp RootPOS89446
+\a гьаба {31323}
+ 
+\lx 87995
+\g PVхъа
+\c W
+\wc root
+\mp RootPOS41575
+\a хъа {107697}
+ 
+\lx 73278
+\g snowstorm
+\c W
+\wc root
+\mp RootPOS89446
+\a срычвхӀва {113330}
+ 
+\lx 37604
+\g EVID.PST
+\c W/W
+\o 3 3 
+\wc 2380
+\a запӀ {126527}
+\eType suffix
+ 
+\lx 132709
+\g EVID.PST
+\c W/W
+\o 2 4 
+\wc 133872
+\a запӀ {126527}
+\eType suffix
+ 
+\lx 85363
+\g song
+\c W
+\wc root
+\mp RootPOS89446
+\a уарад {56243}
+ 
+\lx 114651
+\g far
+\c W
+\wc root
+\mp RootPOS25941
+\a хъара {30376}
+ 
+\lx 124808
+\g army
+\c W
+\wc root
+\mp RootPOS89446
+\a р {51826}
+ 
+\lx 76234
+\g Jereboam
+\c W
+\wc root
+\mp RootPOS89427
+\a Иеровоам {26661}
+ 
+\lx 45002
+\g country
+\c W
+\wc root
+\mp RootPOS89446
+\a къраль {118590}
+ 
+\lx 29920
+\g full
+\c W
+\wc root
+\mp RootPOS25941
+\a чвы {40148}
+ 
+\lx 62003
+\g 1p
+\c W
+\wc root
+\mp RootPOS86476
+\a хIар {84299}
+\a хӀара {9098}
+\a хӀара {65874}
+ 
+\lx 75053
+\g fall.on
+\c W
+\wc root
+\mp RootPOS71455
+\a гвыквсы {69270}
+ 
+\lx 129264
+\g courtyard
+\c W
+\wc root
+\mp RootPOS89446
+\a пшцӀа {130351}
+ 
+\lx 87180
+\g woman
+\c W
+\wc root
+\mp RootPOS89446
+\a пхӀвыс {56416}
+ 
+\lx 116621
+\g lose
+\c W
+\wc root
+\mp RootPOS44652
+\a махы {76783}
+ 
+\lx 59659
+\g one
+\c W
+\wc root
+\mp RootPOS105028
+\a закӀы {118237}
+ 
+\lx 39622
+\g take.away
+\c W
+\wc root
+\mp RootPOS8621
+\a хы {73355}
+\a х {25851}
+ 
+\lx 4805
+\g COND.CONC
+\c W/W
+\o 3 3 
+\wc 2380
+\a зтынгьи {5570}
+\eType suffix
+ 
+\lx 116751
+\g COND.CONC
+\c W/W
+\o 2 4 
+\wc 133872
+\a зтынгьи {5570}
+\eType suffix
+ 
+\lx 62798
+\g begin
+\c W
+\wc root
+\mp RootPOS36310
+\a алага {55488}
+ 
+\lx 74186
+\g Tarshish
+\c W
+\wc root
+\mp RootPOS89427
+\a Таршиш {6838}
+ 
+\lx 125155
+\g break.to.pieces
+\c W
+\wc root
+\mp RootPOS36310
+\a хчӀ {4162}
+ 
+\lx 27644
+\g hammer.in
+\c W
+\wc root
+\mp RootPOS8621
+\a рсы {99326}
+\a рс {36778}
+\a рыс {73846}
+ 
+\lx 81998
+\g COND.IRR
+\c W/W
+\o 3 3 
+\wc 2380
+\a зарыквыныз {10413}
+\eType suffix
+ 
+\lx 100318
+\g COND.IRR
+\c W/W
+\o 2 4 
+\wc 133872
+\a зарыквыныз {10413}
+\eType suffix
+ 
+\lx 61461
+\g turn.to
+\c W
+\wc root
+\mp RootPOS8719
+\a рха {36847}
+ 
+\lx 105265
+\g ST.PRS.IND
+\c W/W
+\o 2 4 
+\wc 133872
+\fd InflectionFS37372
+\a пӀ {30879}
+\eType suffix
+ 
+\lx 36322
+\g DESID.PST.FUT
+\c W/W
+\o 3 3 
+\wc 2380
+\a ндарыз {90920}
+\eType suffix
+ 
+\lx 110035
+\g DESID.PST.FUT
+\c W/W
+\o 2 4 
+\wc 133872
+\a ндарыз {90920}
+\eType suffix
+ 
+\lx 70309
+\g Ruth
+\c W
+\wc root
+\mp RootPOS89427
+\a руф {125238}
+\a Руф {135120}
+ 
+\lx 84815
+\g go.to
+\c W
+\wc root
+\mp RootPOS36310
+\a ыцIал {103459}
+\a ацӀал {95953}
+ 
+\lx 2309
+\g INF
+\c W/W
+\o 1
+\wc derivSfx
+\a р {50154}
+\a ра {14660}
+\eType suffix
+\fd FromPOS71455
+\fd ToPOS89446
+ 
+\lx 50089
+\g mother-in-law
+\c W
+\wc root
+\mp RootPOS89446
+\a анхъва {17550}
+ 
+\lx 127085
+\g smother
+\c W
+\wc root
+\mp RootPOS44652
+\a хъватшы {117176}
+ 
+\lx 133413
+\g give
+\c W
+\wc root
+\mp RootPOS127148
+\a та {123385}
+\a ты {27736}
+\a т {82648}
+ 
+\lx 78629
+\g cheek
+\c W
+\wc root
+\mp RootPOS89446
+\a дзамгӀва {102631}
+ 
+\lx 40246
+\g service
+\c W
+\wc root
+\mp RootPOS89446
+\a квнаг {74947}
+\a квнага {129865}
+ 
+\lx 111420
+\g REFL
+\c W/W
+\o -5 -5 
+\wc 70577
+\a тшы {17168}
+\a тш {93556}
+\eType prefix
+ 
+\lx 72919
+\g good
+\c W
+\wc root
+\mp RootPOS25941
+\a бзийы {68110}
+\a бзи {125080}
+ 
+\lx 131144
+\g look.up
+\c W
+\wc root
+\mp RootPOS36310
+\a хъапшылы {7693}
+ 
+\lx 10536
+\g ST.PST.IND
+\c W/W
+\o 2 4 
+\wc 133872
+\fd InflectionFS27062
+\a xyzн {65715}
+\eType suffix
+ 
+\lx 129753
+\g ST.PST.IND
+\c W/W
+\o 1
+\wc derivSfx
+\a xyzн {65715}
+\eType suffix
+\fd FromPOS63940
+ 
+\lx 93887
+\g where
+\c W/W
+\o 0 0 
+\wc 7551
+\fd InflectionFS114482
+\a ъ {48819}
+\a ъа {11547}
+\eType prefix
+ 
+\lx 89061
+\g be.in
+\c W
+\wc root
+\mp RootPOS34430
+\a та {74460}
+ 
+\lx 17015
+\g be.like
+\c W
+\wc root
+\mp RootPOS34430
+\a пшы {84649}
+\a пш {114699}
+ 
+\lx 46453
+\g Awh
+\c W/W
+\o -5 -5 
+\wc 70577
+\fd InflectionFS79359
+\a й {72480}
+\a йы {43434}
+\eType prefix
+ 
+\lx 59574
+\g Awh
+\c W/W
+\o -5 -5 
+\wc 33256
+\fd InflectionFS80517
+\a й {72480}
+\a йы {43434}
+\eType prefix
+ 
+\lx 84123
+\g stove
+\c W
+\wc root
+\mp RootPOS89446
+\a хӀакв {1040}
+ 
+\lx 54101
+\g CONCESSIVE
+\c W/W
+\o 3 3 
+\wc 2380
+\a зтӀхӀва {52491}
+\eType suffix
+ 
+\lx 87363
+\g CONCESSIVE
+\c W/W
+\o 2 4 
+\wc 133872
+\a зтӀхӀва {52491}
+\eType suffix
+ 
+\lx 110575
+\g AGT
+\c W/W
+\o 1
+\wc derivSfx
+\a гӀвы {18542}
+\a гӀвы {37021}
+\eType suffix
+\fd FromPOS71455
+\fd ToPOS89446
+ 
+\lx 28335
+\g namely
+\c W
+\wc root
+\mp RootPOS62228
+\a йара {113977}
+ 
+\lx 104098
+\g what
+\c W
+\wc root
+\mp RootPOS86476
+\a йачӀвыйа {95081}
+ 
+\lx 70973
+\g diminish
+\c W
+\wc root
+\mp RootPOS123432
+\a къв {125437}
+ 
+\lx 54576
+\g hearth
+\c W
+\wc root
+\mp RootPOS89446
+\a гӀвн {126565}
+\a гӀвна {71877}
+ 
+\lx 93665
+\g go.out
+\c W
+\wc root
+\mp RootPOS36310
+\a ахъыцӀ {61449}
+ 
+\lx 44132
+\g dry
+\c W
+\wc root
+\mp RootPOS71455
+\a гӀва {76733}
+ 
+\lx 102827
+\g gather
+\c W
+\wc root
+\mp RootPOS8621
+\a кӀкӀы {19290}
+\a кӀкӀ {10938}
+ 
+\lx 18661
+\g other
+\c W
+\wc root
+\mp RootPOS86476
+\a анахьаны {92016}
+\a анахьани {110925}
+ 
+\lx 44780
+\g ship
+\c W
+\wc root
+\mp RootPOS89446
+\a хъвыхӀ {16731}
+ 
+\lx 126079
+\g EVID.FUT1
+\c W/W
+\o 2 4 
+\wc 133872
+\a хапӀ {17337}
+\eType suffix
+ 
+\lx 63415
+\g Judah
+\c W
+\wc root
+\mp RootPOS89427
+\a Иуда {125961}
+ 
+\lx 65923
+\g than
+\c W
+\wc root
+\mp RootPOS58395
+\a ацкӀыс {107960}
+ 
+\lx 46432
+\g E2sf
+\c W/W
+\o -3 -2 
+\wc 98428
+\a бы {83929}
+\a б {81798}
+\eType prefix nterfix
+ 
+\lx 65405
+\g E2sf
+\c W/W
+\o -3 -3 
+\wc 55491
+\a бы {83929}
+\a б {81798}
+\eType prefix nterfix
+ 
+\lx 68206
+\g E2sf
+\c W/W
+\o -3 -2 
+\wc 129177
+\a бы {83929}
+\a б {81798}
+\eType prefix nterfix
+ 
+\lx 110597
+\g E2sf
+\c W/W
+\o -2 -2 
+\wc 112431
+\a бы {83929}
+\a б {81798}
+\eType prefix nterfix
+ 
+\lx 111356
+\g E2sf
+\c W/W
+\o -3 -3 
+\wc 11759
+\a бы {83929}
+\a б {81798}
+\eType prefix nterfix
+ 
+\lx 115816
+\g E2sf
+\c W/W
+\o 0 0 
+\wc 46301
+\a бы {83929}
+\a б {81798}
+\eType prefix nterfix
+ 
+\lx 81867
+\g INT.neg
+\c W/W
+\o -1
+\wc derivPfx
+\a xyzгьы {2363}
+\a xyzгь {65254}
+\eType prefix
+\fd FromPOS63940
+ 
+\lx 14849
+\g get.angry
+\c W
+\wc root
+\mp RootPOS36310
+\a гвыжвкӀ {70325}
+ 
+\lx 46946
+\g PERMISSIVE
+\c W/W
+\o 3 3 
+\wc 2380
+\a рагӀатӀ {95517}
+\a ргӀатӀ {92167}
+\eType suffix
+ 
+\lx 83430
+\g EVID.PRS
+\c W/W
+\o 3 3 
+\wc 2380
+\a уазапӀ {50771}
+\a узапӀ {120334}
+\eType suffix
+ 
+\lx 61321
+\g fear
+\c W
+\wc root
+\mp RootPOS71455
+\a рхӀа {108032}
+ 
+\lx 96171
+\g poison.snake
+\c W
+\wc root
+\mp RootPOS89446
+\a щтанчӀв {126311}
+\a щтанчӀвиы {47918}
+ 
+\lx 27555
+\g meet
+\c W
+\wc root
+\mp RootPOS123432
+\a йа {121947}
+ 
+\lx 123860
+\g meet
+\c W
+\wc root
+\mp RootPOS62228
+\a йа {121947}
+ 
+\lx 31674
+\g drive.out
+\c W
+\wc root
+\mp RootPOS71455
+\a гӀацӀца {54485}
+ 
+\lx 73452
+\g shore
+\c W
+\wc root
+\mp RootPOS89446
+\a тшпы {98671}
+ 
+\lx 116127
+\g INST
+\c W/W
+\o 1
+\wc derivSfx
+\a xyzла {80799}
+\eType suffix
+\fd FromPOS63940
+ 
+\lx 22779
+\g document
+\c W
+\wc root
+\mp RootPOS89446
+\a швъа {45512}
+ 
+\lx 17508
+\g gather.harvest
+\c W
+\wc root
+\mp RootPOS8621
+\a гах {14504}
+ 
+\lx 49150
+\g shine
+\c W
+\wc root
+\mp RootPOS36310
+\a кӀкӀа {84078}
+ 
+\lx 87405
+\g leg
+\c W
+\wc root
+\mp RootPOS89446
+\a щапӀ {116079}
+\a щапӀы {46319}
+ 
+\lx 1552
+\g hill
+\c W
+\wc root
+\mp RootPOS89446
+\a тоба {24672}
+ 
+\lx 127849
+\g homeland
+\c W
+\wc root
+\mp RootPOS89446
+\a хьакв {94605}
+ 
+\lx 94368
+\g bow
+\c W
+\wc root
+\mp RootPOS89446
+\a квырмыш {70125}
+ 
+\lx 46942
+\g come
+\c W
+\wc root
+\mp RootPOS36310
+\a гIайы {110703}
+\a гӀайы {86589}
+\a гӀай {109712}
+ 
+\lx 36964
+\g all
+\c W
+\wc root
+\mp RootPOS89446
+\a зымгӀва {134370}
+\a ЗымгӀва {109481}
+\a ЗымгІва {109624}
+\a зымгӀва {32027}
+ 
+\lx 896
+\g E2sm
+\c W/W
+\o -3 -2 
+\wc 98428
+\a уы {72223}
+\a у {46810}
+\eType prefix nterfix
+ 
+\lx 13148
+\g E2sm
+\c W/W
+\o 0 0 
+\wc 46301
+\a уы {72223}
+\a у {46810}
+\eType prefix nterfix
+ 
+\lx 41517
+\g E2sm
+\c W/W
+\o -3 -3 
+\wc 11759
+\a уы {72223}
+\a у {46810}
+\eType prefix nterfix
+ 
+\lx 111539
+\g E2sm
+\c W/W
+\o -3 -3 
+\wc 55491
+\a уы {72223}
+\a у {46810}
+\eType prefix nterfix
+ 
+\lx 119187
+\g E2sm
+\c W/W
+\o -3 -2 
+\wc 129177
+\a уы {72223}
+\a у {46810}
+\eType prefix nterfix
+ 
+\lx 132288
+\g E2sm
+\c W/W
+\o -2 -2 
+\wc 112431
+\a уы {72223}
+\a у {46810}
+\eType prefix nterfix
+ 
+\lx 76258
+\g that
+\c W
+\wc root
+\mp RootPOS86476
+\a абарауи {82495}
+ 
+\lx 36622
+\g cool
+\c W
+\wc root
+\mp RootPOS71455
+\a хь {70628}
+ 
+\lx 52655
+\g yes
+\c W
+\wc root
+\mp RootPOS58395
+\a щта {40550}
+ 
+\lx 27162
+\g seed
+\c W
+\wc root
+\mp RootPOS89446
+\a жвла {126499}
+ 
+\lx 70260
+\g REL.AOR
+\c W/W
+\o 3 3 
+\wc 134179
+\fd InflectionFS39195
+\a 0 {42061}
+\eType suffix
+ 
+\lx 127368
+\g carry
+\c W
+\wc root
+\mp RootPOS44652
+\a г {68408}
+\a га {90187}
+ 
+\lx 30535
+\g how
+\c W/W
+\o -1
+\wc derivPfx
+\a xyzшпа {57773}
+\a xyzшп {124239}
+\eType prefix
+\fd FromPOS63940
+ 
+\lx 53880
+\g how
+\c W/W
+\o -4 -4 
+\wc 18472
+\a xyzшпа {57773}
+\a xyzшп {124239}
+\eType prefix
+ 
+\lx 74740
+\g REL.FUT2
+\c W/W
+\o 3 3 
+\wc 134179
+\fd InflectionFS71414
+\a *** {135295}
+\a уш {90797}
+\a ушы {116662}
+\a уаш {88145}
+\eType suffix
+ 
+\lx 72829
+\g DESID.FUT
+\c W/W
+\o 2 4 
+\wc 133872
+\a ндара {15767}
+\eType suffix
+ 
+\lx 78201
+\g DESID.FUT
+\c W/W
+\o 3 3 
+\wc 2380
+\a ндара {15767}
+\eType suffix
+ 
+\lx 65488
+\g and
+\c W/W
+\o 1
+\wc derivSfx
+\a xyzи {129729}
+\eType suffix
+\fd FromPOS89446
+ 
+\lx 67637
+\g one
+\c W
+\wc root
+\mp RootPOS86476
+\a заджв {36749}
+ 
+\lx 9556
+\g water
+\c W
+\wc root
+\mp RootPOS89446
+\a дз {60935}
+\a дзы {94519}
+ 
+\lx 52057
+\g gift
+\c W
+\wc root
+\mp RootPOS89446
+\a согӀа {120778}
+ 
+\lx 118998
+\g more
+\c W
+\wc root
+\mp RootPOS58395
+\a рыцӀа {8492}
+ 
+\lx 56297
+\g blood.avenge
+\c W
+\wc root
+\mp RootPOS36310
+\a щахах {7126}
+ 
+\lx 101201
+\g COND.FUT
+\c W/W
+\o 3 3 
+\wc 2380
+\a ушызтын {110208}
+\eType suffix
+ 
+\lx 28839
+\g set.out.from
+\c W
+\wc root
+\mp RootPOS36310
+\a джвыквыл {125416}
+ 
+\lx 2364
+\g E3p
+\c W/W
+\o -3 -3 
+\wc 55491
+\a ры {56724} MSEnvFSNot77180Not88954
+\a ды {122795} MSEnvFS88954
+\a д {63856} MSEnvFS77180
+\a р {90450} MSEnvFSNot77180Not88954
+\eType prefix nterfix
+ 
+\lx 26483
+\g E3p
+\c W/W
+\o -2 -2 
+\wc 112431
+\a ры {56724} MSEnvFSNot77180Not88954
+\a ды {122795} MSEnvFS88954
+\a д {63856} MSEnvFS77180
+\a р {90450} MSEnvFSNot77180Not88954
+\eType prefix nterfix
+ 
+\lx 69984
+\g E3p
+\c W/W
+\o -3 -2 
+\wc 129177
+\a ры {56724} MSEnvFSNot77180Not88954
+\a ды {122795} MSEnvFS88954
+\a д {63856} MSEnvFS77180
+\a р {90450} MSEnvFSNot77180Not88954
+\eType prefix nterfix
+ 
+\lx 74869
+\g E3p
+\c W/W
+\o 0 0 
+\wc 46301
+\a ры {56724} MSEnvFSNot77180Not88954
+\a ды {122795} MSEnvFS88954
+\a д {63856} MSEnvFS77180
+\a р {90450} MSEnvFSNot77180Not88954
+\eType prefix nterfix
+ 
+\lx 106365
+\g E3p
+\c W/W
+\o -3 -2 
+\wc 98428
+\a ры {56724} MSEnvFSNot77180Not88954
+\a ды {122795} MSEnvFS88954
+\a д {63856} MSEnvFS77180
+\a р {90450} MSEnvFSNot77180Not88954
+\eType prefix nterfix
+ 
+\lx 126817
+\g E3p
+\c W/W
+\o -3 -3 
+\wc 11759
+\a ры {56724} MSEnvFSNot77180Not88954
+\a ды {122795} MSEnvFS88954
+\a д {63856} MSEnvFS77180
+\a р {90450} MSEnvFSNot77180Not88954
+\eType prefix nterfix
+ 
+\lx 77220
+\g break.up
+\c W
+\wc root
+\mp RootPOS36310
+\a хъваша {94427}
+ 
+\lx 61266
+\g log
+\c W
+\wc root
+\mp RootPOS89446
+\a кды {8928}
+ 
+\lx 87392
+\g INDEF.IND
+\c W/W
+\o 3 3 
+\wc 2380
+\fd InflectionFS75689
+\a н {36285}
+\eType suffix
+ 
+\lx 6240
+\g ship.hold
+\c W
+\wc root
+\mp RootPOS89446
+\a трюм {75703}
+ 
+\lx 51969
+\g mercy
+\c W
+\wc root
+\mp RootPOS89446
+\a гвчӀагӀв {101097}
+ 
+\lx 39365
+\g PURP
+\c W/W
+\o 3 3 
+\wc 2380
+\a рныс {32933}
+\eType suffix
+ 
+\lx 63389
+\g PURP
+\c W/W
+\o 2 4 
+\wc 133872
+\a рныс {32933}
+\eType suffix
+ 
+\lx 69305
+\g hate
+\c W
+\wc root
+\mp RootPOS34430
+\a чвымыгъ {2}
+ 
+\lx 5559
+\g bear
+\c W
+\wc root
+\mp RootPOS36310
+\a ау {66867}
+ 
+\lx 111192
+\g fast
+\c W
+\wc root
+\mp RootPOS36310
+\a урыч {28173}
+ 
+\lx 105093
+\g pagan
+\c W
+\wc root
+\mp RootPOS89446
+\a маджьуси {31518}
+ 
+\lx 11106
+\g amen
+\c W
+\wc root
+\mp RootPOS58395
+\a амин {110437}
+ 
+\lx 91479
+\g more
+\c W
+\wc root
+\mp RootPOS58395
+\a хӀ {133562}
+ 
+\lx 119353
+\g add
+\c W
+\wc root
+\mp RootPOS36310
+\a гӀацыл {56514}
+ 
+\lx 42058
+\g see
+\c W
+\wc root
+\mp RootPOS44652
+\a б {119076}
+\a ба {93130}
+ 
+\lx 103716
+\g root
+\c W
+\wc root
+\mp RootPOS89446
+\a щата {124183}
+ 
+\lx 43498
+\g PVазад
+\c W
+\wc root
+\mp RootPOS41575
+\a азад {48029}
+ 
+\lx 21866
+\g PVкӀны
+\c W
+\wc root
+\mp RootPOS41575
+\a кӀын {92604}
+\a кӀн {71365}
+\a кӀны {131233}
+ 
+\lx 40357
+\g satan
+\c W
+\wc root
+\mp RootPOS89446
+\a шитан {69549}
+ 
+\lx 23873
+\g descend
+\c W
+\wc root
+\mp RootPOS36310
+\a талы {95900}
+\a тал {101192}
+ 
+\lx 38826
+\g find
+\c W
+\wc root
+\mp RootPOS8621
+\a ауы {127278}
+\a у {49368} /а_  | /а_ 
+		
+\a ауа {127256}  
+ 
+ ~/а_  | ~/а_ 
+		
+\a ау {58781}  
+ 
+ ~/а_  | ~/а_ 
+		
+ 
+\lx 10113
+\g go.out
+\c W
+\wc root
+\mp RootPOS36310
+\a тыцӀ {135124}
+\a тыцӀы {29527}
+ 
+\lx 49847
+\g BEN
+\c W/W
+\o 0 0 
+\wc 112940
+\a зы {21793}
+\a за {104472} / _ гӀ  | / _ гӀ 
+		
+\a з {95572}  
+ 
+ ~/ _ гӀ  | ~/ _ гӀ 
+		
+\eType prefix
+ 
+\lx 73633
+\g DESID
+\c W/W
+\o 3 3 
+\wc 2380
+\a нда {84687}
+\eType suffix
+ 
+\lx 86385
+\g DESID
+\c W/W
+\o 2 4 
+\wc 133872
+\a нда {84687}
+\eType suffix
+ 
+\lx 8461
+\g Pharisee
+\c W
+\wc root
+\mp RootPOS89427
+\a фарисейы {34585}
+\a фарисей {114440}
+ 
+\lx 18140
+\g India
+\c W
+\wc root
+\mp RootPOS89427
+\a Индия {72599}
+ 
+\lx 74409
+\g black
+\c W
+\wc root
+\mp RootPOS25941
+\a квайчӀва {42062}
+ 
+\lx 40549
+\g clean
+\c W
+\wc root
+\mp RootPOS25941
+\a цкь {38977}
+\a цкьа {20981}
+ 
+\lx 30596
+\g one
+\c W
+\wc root
+\mp RootPOS86476
+\a зджьакӀы {122083}
+ 
+\lx 16939
+\g root
+\c W
+\wc root
+\mp RootPOS89446
+\a щайдза {86289}
+ 
+\lx 91621
+\g forty
+\c W
+\wc root
+\mp RootPOS105028
+\a гӀвынгӀважва {68294}
+ 
+\lx 98903
+\g stone
+\c W
+\wc root
+\mp RootPOS89446
+\a хӀахъв {12855}
+\a хӀахъвы {122168}
+ 
+\lx 33381
+\g cattle
+\c W
+\wc root
+\mp RootPOS89446
+\a рахв {101728}
+ 

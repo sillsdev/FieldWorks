@@ -18,7 +18,7 @@
 \lx 6057
 \g 1SgSubj
 \c W/W
-\o -NaN -NaN 
+\o NaN NaN 
 \wc 181
 \a ni {6059}
 \eType prefix
@@ -26,7 +26,7 @@
 \lx 6061
 \g 3SgObj
 \c W/W
-\o -NaN -NaN 
+\o NaN NaN 
 \wc 182
 \a hin {6064} / _ [7565]  | / _ [+cor,+vd] 
 		
@@ -247,7 +247,7 @@
 \lx 6132
 \g 2SgSubj
 \c W/W
-\o -NaN -NaN 
+\o NaN NaN 
 \wc 181
 \a ti {6134}
 \eType prefix
@@ -255,7 +255,7 @@
 \lx 6136
 \g 1PlSubj
 \c W/W
-\o -NaN -NaN 
+\o NaN NaN 
 \wc 181
 \a mo {6138}
 \eType prefix
@@ -263,7 +263,7 @@
 \lx 6140
 \g 2PlSubj
 \c W/W
-\o -NaN -NaN 
+\o NaN NaN 
 \wc 181
 \a se {6142}
 \eType prefix
@@ -271,7 +271,7 @@
 \lx 6144
 \g 1SgObj
 \c W/W
-\o -NaN -NaN 
+\o NaN NaN 
 \wc 182
 \a mi {6146}
 \eType prefix
@@ -279,7 +279,7 @@
 \lx 6148
 \g 2SgObj
 \c W/W
-\o -NaN -NaN 
+\o NaN NaN 
 \wc 182
 \a yu {6150}
 \eType prefix
@@ -287,7 +287,7 @@
 \lx 6152
 \g 1PlObj
 \c W/W
-\o -NaN -NaN 
+\o NaN NaN 
 \wc 182
 \a us {6154}
 \eType prefix
@@ -295,7 +295,7 @@
 \lx 6156
 \g 2PlObj
 \c W/W
-\o -NaN -NaN 
+\o NaN NaN 
 \wc 182
 \a yul {6158}
 \eType prefix
@@ -303,7 +303,7 @@
 \lx 6160
 \g 3PlObj
 \c W/W
-\o -NaN -NaN 
+\o NaN NaN 
 \wc 182
 \a dem {6163} / _ b  | / _ b 
 		
@@ -453,7 +453,7 @@
 \lx 6221
 \g 3PlSubj
 \c W/W
-\o -NaN -NaN 
+\o NaN NaN 
 \wc 181
 \a de {6223}
 \eType prefix
