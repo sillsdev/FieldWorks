@@ -1289,5 +1289,6 @@ Sorry, in this browser, opening the file via hyperlink presents a security risk.
   </data>
   <data name="ImportTranslateGrammaticalCategories" xml:space="preserve">
     <value>import translated grammatical categories</value>
+    <comment>This string is used in the Undo command, as in "Undo {0}" or "Redo {0}.</comment>
   </data>
 </root>

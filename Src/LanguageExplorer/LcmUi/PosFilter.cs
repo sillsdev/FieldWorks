@@ -12,12 +12,12 @@ namespace LanguageExplorer.LcmUi
 	/// A special filter, where items are LexSenses, and matches are ones where an MSA is an MoStemMsa that
 	/// has the correct POS.
 	/// </summary>
-	internal class PosFilter : ColumnSpecFilter
+	internal sealed class PosFilter : ColumnSpecFilter
 	{
 		/// <summary>
 		/// Default constructor for persistence.
 		/// </summary>
-		public PosFilter() { }
+		internal PosFilter() { }
 
 		internal PosFilter(LcmCache cache, ListMatchOptions mode, int[] targets, XElement colSpec)
 			: base(cache, mode, targets, colSpec)
@@ -41,7 +41,7 @@ namespace LanguageExplorer.LcmUi
 		/// <summary>
 		/// Return the HVO of the list from which choices can be made.
 		/// </summary>
-		public static int List(LcmCache cache)
+		internal static int List(LcmCache cache)
 		{
 			return cache.LanguageProject.PartsOfSpeechOA.Hvo;
 		}
@@ -49,6 +49,6 @@ namespace LanguageExplorer.LcmUi
 		/// <summary>
 		/// This is a filter for an atomic property, and the "all" and "only" options should not be presented.
 		/// </summary>
-		public static bool Atomic => true;
+		internal static bool Atomic => true;
 	}
 }

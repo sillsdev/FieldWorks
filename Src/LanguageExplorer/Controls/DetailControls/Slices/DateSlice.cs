@@ -5,7 +5,6 @@
 using System;
 using System.Diagnostics;
 using System.Windows.Forms;
-using LanguageExplorer.Controls.DetailControls.Resources;
 using SIL.LCModel;
 using SIL.LCModel.Core.Cellar;
 using SIL.LCModel.Core.KernelInterfaces;

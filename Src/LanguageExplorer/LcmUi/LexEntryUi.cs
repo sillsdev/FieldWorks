@@ -12,19 +12,18 @@ using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.LCModel;
 using SIL.LCModel.Core.KernelInterfaces;
-using SIL.LCModel.Core.Text;
 
 namespace LanguageExplorer.LcmUi
 {
 	/// <summary>
 	/// User-interface behavior for LexEntries.
 	/// </summary>
-	public class LexEntryUi : CmObjectUi
+	internal sealed class LexEntryUi : CmObjectUi
 	{
 		/// <summary>
 		/// Make one. The argument should really be a LexEntry.
 		/// </summary>
-		public LexEntryUi(ICmObject obj)
+		private LexEntryUi(ICmObject obj)
 			: base(obj)
 		{
 			Debug.Assert(obj is ILexEntry);
@@ -38,32 +37,12 @@ namespace LanguageExplorer.LcmUi
 		}
 
 		/// <summary />
-		public override IVwViewConstructor VernVc => new LexEntryVc(m_cache);
-
-		/// <summary>
-		/// Given an object id, a (string-valued) property ID, and a range of characters,
-		/// return the LexEntry that is the best guess as to a useful LE to show to
-		/// provide information about that wordform.
-		///
-		/// Note: the interface takes this form because eventually we may want to query to
-		/// see whether the text has been analyzed and we have a known morpheme breakdown
-		/// for this wordform. Otherwise, at present we could just pass the text.
-		/// </summary>
-		public static LexEntryUi FindEntryForWordform(LcmCache cache, int hvoSrc, int tagSrc, int ichMin, int ichLim)
-		{
-			var tssContext = cache.DomainDataByFlid.get_StringProp(hvoSrc, tagSrc);
-			if (tssContext == null)
-			{
-				return null;
-			}
-			var tssWf = tssContext.GetSubstring(ichMin, ichLim);
-			return FindEntryForWordform(cache, tssWf);
-		}
+		internal override IVwViewConstructor VernVc => new LexEntryVc(m_cache);
 
 		/// <summary>
 		/// Find the list of LexEntry objects which conceivably match the given wordform.
 		/// </summary>
-		public static List<ILexEntry> FindEntriesForWordformUI(LcmCache cache, ITsString tssWf, IWfiAnalysis wfa)
+		private static List<ILexEntry> FindEntriesForWordformUI(LcmCache cache, ITsString tssWf, IWfiAnalysis wfa)
 		{
 			var duplicates = false;
 			var retval = cache.ServiceLocator.GetInstance<ILexEntryRepository>().FindEntriesForWordform(cache, tssWf, wfa, ref duplicates);
@@ -77,14 +56,14 @@ namespace LanguageExplorer.LcmUi
 		/// <summary>
 		/// Find wordform given a cache and the string.
 		/// </summary>
-		public static LexEntryUi FindEntryForWordform(LcmCache cache, ITsString tssWf)
+		internal static LexEntryUi FindEntryForWordform(LcmCache cache, ITsString tssWf)
 		{
 			var matchingEntry = cache.ServiceLocator.GetInstance<ILexEntryRepository>().FindEntryForWordform(cache, tssWf);
 			return matchingEntry == null ? null : new LexEntryUi(matchingEntry);
 		}
 
 		/// <summary />
-		public static void DisplayOrCreateEntry(LcmCache cache, int hvoSrc, int tagSrc, int wsSrc, int ichMin, int ichLim, IWin32Window owner, FlexComponentParameters flexComponentParameters, IHelpTopicProvider helpProvider, string helpFileKey)
+		internal static void DisplayOrCreateEntry(LcmCache cache, int hvoSrc, int tagSrc, int wsSrc, int ichMin, int ichLim, IWin32Window owner, FlexComponentParameters flexComponentParameters, IHelpTopicProvider helpProvider, string helpFileKey)
 		{
 			var tssContext = cache.DomainDataByFlid.get_StringProp(hvoSrc, tagSrc);
 			if (tssContext == null)
@@ -146,48 +125,7 @@ namespace LanguageExplorer.LcmUi
 			DisplayEntries(cache, owner, flexComponentParameters, helpProvider, helpFileKey, tssWf, wfa);
 		}
 
-		internal static void DisplayEntry(LcmCache cache, IWin32Window owner, FlexComponentParameters flexComponentParameters, IHelpTopicProvider helpProvider, string helpFileKey, ITsString tssWfIn)
-		{
-			var tssWf = tssWfIn;
-			LexEntryUi leui = null;
-			try
-			{
-				leui = FindEntryForWordform(cache, tssWf);
-
-				// if we do not find a match for the word then try converting it to lowercase and see if there
-				// is an entry in the lexicon for the Wordform in lowercase. This is needed for occurences of
-				// words which are capitalized at the beginning of sentences.  LT-7444 RickM
-				if (leui == null)
-				{
-					//We need to be careful when converting to lowercase therefore use Icu.UnicodeString.ToLower()
-					//get the WS of the tsString
-					var wsWf = TsStringUtils.GetWsAtOffset(tssWf, 0);
-					//use that to get the locale for the WS, which is used for
-					var wsLocale = cache.ServiceLocator.WritingSystemManager.Get(wsWf).IcuLocale;
-					var sLower = Icu.UnicodeString.ToLower(tssWf.Text, wsLocale);
-					var ttp = tssWf.get_PropertiesAt(0);
-					tssWf = TsStringUtils.MakeString(sLower, ttp);
-					leui = FindEntryForWordform(cache, tssWf);
-				}
-				var styleSheet = FwUtils.StyleSheetFromPropertyTable(flexComponentParameters.PropertyTable);
-				if (leui == null)
-				{
-					var entry = ShowFindEntryDialog(cache, flexComponentParameters, tssWf, owner);
-					if (entry == null)
-					{
-						return;
-					}
-					leui = new LexEntryUi(entry);
-				}
-				leui.ShowSummaryDialog(owner, tssWf, helpProvider, helpFileKey, styleSheet);
-			}
-			finally
-			{
-				leui?.Dispose();
-			}
-		}
-
-		public static void DisplayEntries(LcmCache cache, IWin32Window owner, FlexComponentParameters flexComponentParameters, IHelpTopicProvider helpProvider, string helpFileKey, ITsString tssWfIn, IWfiAnalysis wfa)
+		internal static void DisplayEntries(LcmCache cache, IWin32Window owner, FlexComponentParameters flexComponentParameters, IHelpTopicProvider helpProvider, string helpFileKey, ITsString tssWfIn, IWfiAnalysis wfa)
 		{
 			var tssWf = tssWfIn;
 			var entries = FindEntriesForWordformUI(cache, tssWf, wfa);
@@ -261,7 +199,7 @@ namespace LanguageExplorer.LcmUi
 		/// but we don't want it to stay on top if the User switches to another application,
 		/// so reset TopMost to false after it has launched to the top.
 		/// </summary>
-		static void s_activeModalForm_Activated(object sender, EventArgs e)
+		private static void s_activeModalForm_Activated(object sender, EventArgs e)
 		{
 			((Form)sender).TopMost = false;
 		}
@@ -273,7 +211,7 @@ namespace LanguageExplorer.LcmUi
 		/// <remarks>
 		/// Currently only called from WCF (11/21/2013 - AP)
 		/// </remarks>
-		public static void DisplayRelatedEntries(LcmCache cache, IWin32Window owner, IVwStylesheet styleSheet, IHelpTopicProvider helpProvider, string helpFileKey, ITsString tssWf,
+		internal static void DisplayRelatedEntries(LcmCache cache, IWin32Window owner, IVwStylesheet styleSheet, IHelpTopicProvider helpProvider, string helpFileKey, ITsString tssWf,
 			bool hideInsertButton, IVwSelection sel = null)
 		{
 			if (tssWf == null || tssWf.Length == 0)
@@ -300,43 +238,10 @@ namespace LanguageExplorer.LcmUi
 		}
 
 		/// <summary>
-		/// Assuming the selection can be expanded to a word and a corresponding LexEntry can
-		/// be found, show the related words dialog with the words related to the selected one.
-		/// </summary>
-		/// <remarks>
-		/// Currently only called from WCF (11/21/2013 - AP)
-		/// </remarks>
-		public static void DisplayRelatedEntries(LcmCache cache, IWin32Window owner, IPropertyTable propertyTable, IHelpTopicProvider helpProvider, string helpFileKey, ITsString tssWf, bool hideInsertButton)
-		{
-			DisplayRelatedEntries(cache, owner, FwUtils.StyleSheetFromPropertyTable(propertyTable), helpProvider, helpFileKey, tssWf, hideInsertButton);
-		}
-
-		/// <summary>
-		/// Assuming the selection can be expanded to a word and a corresponding LexEntry can
-		/// be found, show the related words dialog with the words related to the selected one.
-		/// </summary>
-		public static void DisplayRelatedEntries(LcmCache cache, IVwSelection sel, IWin32Window owner, IPropertyTable propertyTable, IHelpTopicProvider helpProvider, string helpFileKey)
-		{
-			var sel2 = sel?.EndPoint(false);
-			var sel3 = sel2?.GrowToWord();
-			if (sel3 == null)
-			{
-				return;
-			}
-			sel3.TextSelInfo(false, out var tss, out var ichMin, out _, out _, out _, out _);
-			sel3.TextSelInfo(true, out tss, out var ichLim, out _, out _, out _, out _);
-			if (tss.Text == null)
-			{
-				return;
-			}
-			DisplayRelatedEntries(cache, owner, FwUtils.StyleSheetFromPropertyTable(propertyTable), helpProvider, helpFileKey, tss.GetSubstring(ichMin, ichLim), false, sel);
-		}
-
-		/// <summary>
 		/// Launch the Find Entry dialog, and if one is created or selected return it.
 		/// </summary>
 		/// <returns>The HVO of the selected or created entry</returns>
-		internal static ILexEntry ShowFindEntryDialog(LcmCache cache, FlexComponentParameters flexComponentParameters, ITsString tssForm, IWin32Window owner)
+		private static ILexEntry ShowFindEntryDialog(LcmCache cache, FlexComponentParameters flexComponentParameters, ITsString tssForm, IWin32Window owner)
 		{
 			using (var entryGoDlg = new EntryGoDlg())
 			{
@@ -365,37 +270,6 @@ namespace LanguageExplorer.LcmUi
 				}
 			}
 			return null;
-		}
-
-		/// <summary />
-		private void ShowSummaryDialog(IWin32Window owner, ITsString tssWf, IHelpTopicProvider helpProvider, string helpFileKey, IVwStylesheet styleSheet)
-		{
-			bool otherButtonClicked;
-			using (var form = new SummaryDialogForm(this, helpProvider, helpFileKey, styleSheet))
-			{
-				form.ShowDialog(owner);
-				if (form.ShouldLink)
-				{
-					form.LinkToLexicon();
-				}
-				otherButtonClicked = form.OtherButtonClicked;
-			}
-			if (otherButtonClicked)
-			{
-				var entry = ShowFindEntryDialog(MyCmObject.Cache, new FlexComponentParameters(PropertyTable, Publisher, Subscriber), tssWf, owner);
-				if (entry != null)
-				{
-					using (var leuiNew = new LexEntryUi(entry))
-					{
-						leuiNew.ShowSummaryDialog(owner, entry.HeadWord, helpProvider, helpFileKey, styleSheet);
-					}
-				}
-				else
-				{
-					// redisplay the original entry (recursively)
-					ShowSummaryDialog(owner, tssWf, helpProvider, helpFileKey, styleSheet);
-				}
-			}
 		}
 	}
 }

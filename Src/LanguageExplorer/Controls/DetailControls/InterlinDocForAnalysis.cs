@@ -840,10 +840,15 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		internal override AnalysisOccurrence OccurrenceContainingSelection()
 		{
-			/*if (RootBox == null)
+#if RANDYTODO
+			// TODO (it can be anybody): When the crash comes up, then fix the core bug. That would be why call this method:
+			// TODO: 1) before RootBox is set, or
+			// TODO: 2) after it has been set to null (in Dispose call)?
+			if (RootBox == null)
 			{
 				return null;
-			}*/
+			}
+#endif
 			// This works fine for non-Sandbox panes,
 			// Sandbox panes' selection may be in the Sandbox.
 			if (ExistingFocusBox != null && ExistingFocusBox.SelectedOccurrence != null && ExistingFocusBox.SelectedOccurrence.IsValid)

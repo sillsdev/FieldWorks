@@ -14,5 +14,6 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 [assembly: InternalsVisibleTo("FieldWorks")]
+[assembly: InternalsVisibleTo("LCMBrowser")]
 [assembly: InternalsVisibleTo("LanguageExplorer.TestUtilities")]
 [assembly: InternalsVisibleTo("LanguageExplorerTests")]

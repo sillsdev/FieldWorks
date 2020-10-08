@@ -158,6 +158,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		{
 			if (m_items != null)
 			{
+				Debug.Fail("Don't call method more than once!");
 				return; // already made.
 			}
 			MakeOrReuseItems();
@@ -171,6 +172,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		{
 			if (m_bv.BrowseView == null || m_bv.BrowseView.Vc == null)
 			{
+				Debug.Fail("Don't call method too soon!");
 				return; // too soon.
 			}
 			ColumnOffset = m_bv.BrowseView.Vc.HasSelectColumn ? 1 : 0;

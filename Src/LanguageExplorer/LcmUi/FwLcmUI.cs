@@ -16,15 +16,16 @@ namespace LanguageExplorer.LcmUi
 	/// <summary>
 	/// The implementation of ILcmUI for FieldWorks apps.
 	/// </summary>
-	public class FwLcmUI : ILcmUI
+	internal sealed class FwLcmUI : ILcmUI
 	{
 		private readonly IHelpTopicProvider m_helpTopicProvider;
 		private readonly UserActivityMonitor m_activityMonitor;
+		private readonly ISynchronizeInvoke _synchronizeInvoke;
 
-		public FwLcmUI(IHelpTopicProvider helpTopicProvider, ISynchronizeInvoke synchronizeInvoke)
+		internal FwLcmUI(IHelpTopicProvider helpTopicProvider, ISynchronizeInvoke synchronizeInvoke)
 		{
 			m_helpTopicProvider = helpTopicProvider;
-			SynchronizeInvoke = synchronizeInvoke;
+			_synchronizeInvoke = synchronizeInvoke;
 			m_activityMonitor = new UserActivityMonitor();
 			m_activityMonitor.StartMonitoring();
 		}
@@ -32,13 +33,13 @@ namespace LanguageExplorer.LcmUi
 		/// <summary>
 		/// Gets the object that is used to invoke methods on the main UI thread.
 		/// </summary>
-		public ISynchronizeInvoke SynchronizeInvoke { get; }
+		ISynchronizeInvoke ILcmUI.SynchronizeInvoke => _synchronizeInvoke;
 
 		/// <summary>
 		/// Check with user regarding conflicting changes
 		/// </summary>
 		/// <returns>True if user wishes to revert to saved state. False otherwise.</returns>
-		public bool ConflictingSave()
+		bool ILcmUI.ConflictingSave()
 		{
 			using (var dlg = new ConflictingSaveDlg())
 			{
@@ -47,11 +48,13 @@ namespace LanguageExplorer.LcmUi
 			}
 		}
 
+		DateTime ILcmUI.LastActivityTime => m_activityMonitor.LastActivityTime;
+
 		/// <summary>
 		/// Check with user regarding which files to use
 		/// </summary>
 		/// <returns></returns>
-		public FileSelection ChooseFilesToUse()
+		FileSelection ILcmUI.ChooseFilesToUse()
 		{
 			using (var dlg = new FilesToRestoreAreOlder(m_helpTopicProvider))
 			{
@@ -74,7 +77,7 @@ namespace LanguageExplorer.LcmUi
 		/// Check with user regarding restoring linked files in the project folder or original path
 		/// </summary>
 		/// <returns>True if user wishes to restore linked files in project folder. False to leave them in the original location.</returns>
-		public bool RestoreLinkedFilesInProjectFolder()
+		bool ILcmUI.RestoreLinkedFilesInProjectFolder()
 		{
 			using (var dlg = new RestoreLinkedFilesToProjectsFolder(m_helpTopicProvider))
 			{
@@ -87,7 +90,7 @@ namespace LanguageExplorer.LcmUi
 		/// Check with user regarding restoring linked files in the project folder or not at all
 		/// </summary>
 		/// <returns>OkYes to restore to project folder, OkNo to skip restoring linked files, Cancel otherwise</returns>
-		public YesNoCancel CannotRestoreLinkedFilesToOriginalLocation()
+		YesNoCancel ILcmUI.CannotRestoreLinkedFilesToOriginalLocation()
 		{
 			using (var dlgCantWriteFiles = new CantRestoreLinkedFilesToOriginalLocation(m_helpTopicProvider))
 			{
@@ -109,7 +112,7 @@ namespace LanguageExplorer.LcmUi
 		/// <summary>
 		/// Displays the message.
 		/// </summary>
-		public void DisplayMessage(MessageType type, string message, string caption, string helpTopic)
+		void ILcmUI.DisplayMessage(MessageType type, string message, string caption, string helpTopic)
 		{
 			var icon = MessageBoxIcon.Information;
 			switch (type)
@@ -124,7 +127,7 @@ namespace LanguageExplorer.LcmUi
 					icon = MessageBoxIcon.Warning;
 					break;
 			}
-			SynchronizeInvoke.Invoke(() =>
+			_synchronizeInvoke.Invoke(() =>
 			{
 				if (MiscUtils.IsMono)
 				{
@@ -143,47 +146,45 @@ namespace LanguageExplorer.LcmUi
 		}
 
 		/// <summary>
-		/// Displays the circular reference breaker report.
-		/// </summary>
-		public void DisplayCircularRefBreakerReport(string report, string caption)
-		{
-			SynchronizeInvoke.Invoke(() => MessageBox.Show(report, caption, MessageBoxButtons.OK, MessageBoxIcon.Information));
-		}
-
-		/// <summary>
 		/// show a dialog or output to the error log, as appropriate.
 		/// </summary>
-		public void ReportException(Exception error, bool isLethal)
+		void ILcmUI.ReportException(Exception error, bool isLethal)
 		{
-			SynchronizeInvoke.Invoke(() => ErrorReporter.ReportException(error, null, null, null, isLethal));
+			_synchronizeInvoke.Invoke(() => ErrorReporter.ReportException(error, null, null, null, isLethal));
 		}
-
-		public DateTime LastActivityTime => m_activityMonitor.LastActivityTime;
 
 		/// <summary>
 		/// Reports duplicate guids to the user
 		/// </summary>
-		public void ReportDuplicateGuids(string errorText)
+		void ILcmUI.ReportDuplicateGuids(string errorText)
 		{
-			SynchronizeInvoke.Invoke(() => ErrorReporter.ReportDuplicateGuids(FwRegistryHelper.FieldWorksRegistryKey, "FLExErrors@sil.org", null, errorText));
+			_synchronizeInvoke.Invoke(() => ErrorReporter.ReportDuplicateGuids(FwRegistryHelper.FieldWorksRegistryKey, "FLExErrors@sil.org", null, errorText));
 		}
 
 		/// <summary>
-		/// Ask user if they wish to restore an XML project from a backup project file.
+		/// Displays the circular reference breaker report.
 		/// </summary>
-		public bool OfferToRestore(string projectPath, string backupPath)
+		void ILcmUI.DisplayCircularRefBreakerReport(string report, string caption)
 		{
-			return SynchronizeInvoke.Invoke(() => MessageBox.Show(string.Format(LcmUiResources.kstidOfferToRestore, projectPath, File.GetLastWriteTime(projectPath),
-				backupPath, File.GetLastWriteTime(backupPath)), LcmUiResources.kstidProblemOpeningFile, MessageBoxButtons.YesNo, MessageBoxIcon.Error) == DialogResult.Yes);
+			_synchronizeInvoke.Invoke(() => MessageBox.Show(report, caption, MessageBoxButtons.OK, MessageBoxIcon.Information));
 		}
 
 		/// <summary>
 		/// Present a message to the user and allow the options to Retry or Cancel
 		/// </summary>
 		/// <returns>True to retry. False otherwise.</returns>
-		public bool Retry(string msg, string caption)
+		bool ILcmUI.Retry(string msg, string caption)
 		{
-			return SynchronizeInvoke.Invoke(() => MessageBox.Show(msg, caption, MessageBoxButtons.RetryCancel, MessageBoxIcon.None) == DialogResult.Retry);
+			return _synchronizeInvoke.Invoke(() => MessageBox.Show(msg, caption, MessageBoxButtons.RetryCancel, MessageBoxIcon.None) == DialogResult.Retry);
+		}
+
+		/// <summary>
+		/// Ask user if they wish to restore an XML project from a backup project file.
+		/// </summary>
+		bool ILcmUI.OfferToRestore(string projectPath, string backupPath)
+		{
+			return _synchronizeInvoke.Invoke(() => MessageBox.Show(string.Format(LcmUiResources.kstidOfferToRestore, projectPath, File.GetLastWriteTime(projectPath),
+				backupPath, File.GetLastWriteTime(backupPath)), LcmUiResources.kstidProblemOpeningFile, MessageBoxButtons.YesNo, MessageBoxIcon.Error) == DialogResult.Yes);
 		}
 	}
 }

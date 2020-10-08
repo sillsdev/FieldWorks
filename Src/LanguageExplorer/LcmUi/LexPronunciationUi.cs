@@ -2,7 +2,6 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System.Diagnostics;
 using SIL.Code;
 using SIL.LCModel;
 using SIL.LCModel.Infrastructure;
@@ -12,23 +11,15 @@ namespace LanguageExplorer.LcmUi
 	/// <summary>
 	/// UI for LexPronunciation.
 	/// </summary>
-	public class LexPronunciationUi : CmObjectUi
+	internal sealed class LexPronunciationUi : CmObjectUi
 	{
-		/// <summary>
-		/// Create one. Argument must be a LexPronunciation.
-		/// </summary>
-		public LexPronunciationUi(ICmObject obj) : base(obj)
-		{
-			Debug.Assert(obj is ILexPronunciation);
-		}
-
 		// For MakeLcmModelUiObject method.
 		internal LexPronunciationUi() { }
 
 		/// <summary>
 		/// Handle the context menu for inserting a LexPronunciation.
 		/// </summary>
-		public static LexPronunciationUi MakeLcmModelUiObject(LcmCache cache, int classId, int hvoOwner, int flid, int insertionPosition)
+		internal static LexPronunciationUi MakeLcmModelUiObject(LcmCache cache, int classId, int hvoOwner, int flid, int insertionPosition)
 		{
 			Guard.AgainstNull(cache, nameof(cache));
 

@@ -11,12 +11,10 @@ namespace LanguageExplorer.LcmUi
 	/// This dialog is like a message box, but offers two buttons, OK and "Refresh Now", which
 	/// when clicked produces a DialogResult of 'Yes'.
 	/// </summary>
-	public partial class ConflictingSaveDlg : Form
+	internal sealed partial class ConflictingSaveDlg : Form
 	{
-		/// <summary>
-		/// Make one.
-		/// </summary>
-		public ConflictingSaveDlg()
+		/// <summary />
+		internal ConflictingSaveDlg()
 		{
 			InitializeComponent();
 			pictureBox1.BackgroundImage = SystemIcons.Warning.ToBitmap();

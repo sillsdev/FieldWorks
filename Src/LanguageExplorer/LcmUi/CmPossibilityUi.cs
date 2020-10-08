@@ -15,7 +15,7 @@ namespace LanguageExplorer.LcmUi
 	/// <summary>
 	/// Special UI behaviors for the CmPossibility class.
 	/// </summary>
-	public class CmPossibilityUi : CmObjectUi
+	internal class CmPossibilityUi : CmObjectUi
 	{
 		/// <summary>
 		/// Create one. Argument must be a CmPossibility.
@@ -35,7 +35,7 @@ namespace LanguageExplorer.LcmUi
 			return new CmPossibilityUi(obj);
 		}
 
-		public static CmObjectUi MakeLcmModelUiObject(LcmCache cache, int classId, int hvoOwner, int flid, int insertionPosition)
+		internal static CmObjectUi MakeLcmModelUiObject(LcmCache cache, int classId, int hvoOwner, int flid, int insertionPosition)
 		{
 			Guard.AgainstNull(cache, nameof(cache));
 
@@ -45,7 +45,7 @@ namespace LanguageExplorer.LcmUi
 		/// <summary>
 		/// Gets a special VC that knows to use the abbr for the shortname, etc.
 		/// </summary>
-		public override IVwViewConstructor Vc
+		internal override IVwViewConstructor Vc
 		{
 			get
 			{
@@ -131,7 +131,7 @@ namespace LanguageExplorer.LcmUi
 			return false;
 		}
 
-		public override bool CanDelete(out string cannotDeleteMsg)
+		internal override bool CanDelete(out string cannotDeleteMsg)
 		{
 			if (!CanModifyChartColumn(out cannotDeleteMsg))
 			{
@@ -140,7 +140,7 @@ namespace LanguageExplorer.LcmUi
 			return CanDeleteTextMarkupTag(out cannotDeleteMsg) && base.CanDelete(out cannotDeleteMsg);
 		}
 
-		public bool CheckAndReportProtectedChartColumn()
+		internal bool CheckAndReportProtectedChartColumn()
 		{
 			if (!CanModifyChartColumn(out var msg))
 			{
@@ -202,6 +202,27 @@ namespace LanguageExplorer.LcmUi
 			}
 			msg = null;
 			return true;
+		}
+
+		/// <summary>
+		/// Special VC for classes that have name and abbreviation, both displayed in UI WS.
+		/// </summary>
+		private sealed class CmNameAbbrObjVc : CmObjectVc
+		{
+			private readonly int _flidName;
+			private readonly int _flidAbbr;
+
+			internal CmNameAbbrObjVc(LcmCache cache, int flidName, int flidAbbr)
+				: base(cache)
+			{
+				_flidName = flidName;
+				_flidAbbr = flidAbbr;
+			}
+
+			public override void Display(IVwEnv vwenv, int hvo, int frag)
+			{
+				vwenv.AddStringAltMember(frag == (int)VcFrags.kfragShortName ? _flidAbbr : _flidName, vwenv.DataAccess.WritingSystemFactory.UserWs, this);
+			}
 		}
 	}
 }

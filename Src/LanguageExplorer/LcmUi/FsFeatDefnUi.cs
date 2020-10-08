@@ -14,24 +14,22 @@ namespace LanguageExplorer.LcmUi
 	/// <summary>
 	/// FsFeatDefnUi provides UI-specific methods for the PartOfSpeech class.
 	/// </summary>
-	public class FsFeatDefnUi : CmObjectUi
+	internal sealed class FsFeatDefnUi : CmObjectUi
 	{
 		/// <summary>
 		/// Create one. Argument must be a FsFeatDefn.
 		/// Note that declaring it to be forces us to just do a cast in every case of MakeLcmModelUiObject, which is
 		/// passed an obj anyway.
 		/// </summary>
-		protected FsFeatDefnUi(ICmObject obj) : base(obj)
+		private FsFeatDefnUi(ICmObject obj) : base(obj)
 		{
 			Debug.Assert(obj is IFsFeatDefn);
 		}
 
-		internal FsFeatDefnUi() { }
-
 		/// <summary>
 		/// Handle the context menu for inserting an FsFeatDefn.
 		/// </summary>
-		public static FsFeatDefnUi MakeLcmModelUiObject(LcmCache cache, IPropertyTable propertyTable, IPublisher publisher, int classId, int hvoOwner, int flid, int insertionPosition)
+		internal static FsFeatDefnUi MakeLcmModelUiObject(LcmCache cache, IPropertyTable propertyTable, IPublisher publisher, int classId, int hvoOwner, int flid, int insertionPosition)
 		{
 			Guard.AgainstNull(cache, nameof(cache));
 

@@ -4,7 +4,6 @@
 
 using System.Collections.Generic;
 using System.Xml.Linq;
-using LanguageExplorer.Controls;
 using SIL.LCModel;
 
 namespace LanguageExplorer.LcmUi
@@ -12,10 +11,8 @@ namespace LanguageExplorer.LcmUi
 	/// <summary>
 	/// UI functions for MoMorphSynAnalysis.
 	/// </summary>
-	public class MoFormUi : CmObjectUi
+	internal sealed class MoFormUi : CmObjectUi
 	{
-		internal MoFormUi() { }
-
 		protected override DummyCmObject GetMergeinfo(WindowParams wp, List<DummyCmObject> mergeCandidates, out XElement guiControlParameters, out string helpTopic)
 		{
 			wp.m_title = LcmUiResources.ksMergeAllomorph;

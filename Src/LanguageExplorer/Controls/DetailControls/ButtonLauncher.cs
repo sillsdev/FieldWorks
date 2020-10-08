@@ -7,7 +7,6 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Windows.Forms;
 using System.Xml.Linq;
-using LanguageExplorer.Controls.DetailControls.Resources;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 

@@ -3,9 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Xml.Linq;
-using LanguageExplorer.Controls;
 using SIL.LCModel;
 using SIL.LCModel.Core.KernelInterfaces;
 
@@ -14,18 +12,8 @@ namespace LanguageExplorer.LcmUi
 	/// <summary>
 	/// UI functions for WfiGloss.
 	/// </summary>
-	public class WfiGlossUi : CmObjectUi
+	internal sealed class WfiGlossUi : CmObjectUi
 	{
-		/// <summary />
-		public WfiGlossUi(ICmObject obj)
-			: base(obj)
-		{
-			Debug.Assert(obj is IWfiGloss);
-		}
-
-		internal WfiGlossUi()
-		{ }
-
 		protected override DummyCmObject GetMergeinfo(WindowParams wp, List<DummyCmObject> mergeCandidates, out XElement guiControlParameters, out string helpTopic)
 		{
 			wp.m_title = LcmUiResources.ksMergeWordGloss;

@@ -196,13 +196,5 @@ namespace LanguageExplorer.LcmUi
 			}
 			return canFakeit;
 		}
-
-		/// <summary>
-		/// Get a type we can use to create a compatible filter.
-		/// </summary>
-		public static Type FilterType()
-		{
-			return typeof(PosFilter);
-		}
 	}
 }

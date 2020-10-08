@@ -21,7 +21,7 @@ using SIL.LCModel.Core.Text;
 namespace LanguageExplorer.LcmUi
 {
 	/// <summary />
-	public class RelatedWords : Form
+	internal sealed class RelatedWords : Form
 	{
 		private Button m_btnInsert;
 		private Button m_btnClose;
@@ -152,7 +152,7 @@ namespace LanguageExplorer.LcmUi
 			return xv;
 		}
 
-		public RelatedWords(LcmCache cache, IVwSelection sel, int hvoEntry, int[] domains, int[] lexrels, IVwCacheDa cdaTemp, IVwStylesheet styleSheet, bool hideInsertButton)
+		internal RelatedWords(LcmCache cache, IVwSelection sel, int hvoEntry, int[] domains, int[] lexrels, IVwCacheDa cdaTemp, IVwStylesheet styleSheet, bool hideInsertButton)
 		{
 			m_cache = cache;
 			m_sel = sel;
@@ -586,12 +586,12 @@ namespace LanguageExplorer.LcmUi
 		/// <summary />
 		private sealed class RelatedWordsVc : FwBaseVc
 		{
-			public const int ktagDomains = 45671;
-			public const int ktagName = 45672;
-			public const int ktagWords = 45673;
+			internal const int ktagDomains = 45671;
+			internal const int ktagName = 45672;
+			internal const int ktagWords = 45673;
 			private const int ktagCf = 45674;
-			public const int ktagLexRels = 45675;
-			public const int kfragRoot = 333331;
+			internal const int ktagLexRels = 45675;
+			internal const int kfragRoot = 333331;
 			private const int kfragEntryList = 3333332;
 			private const int kfragWords = 3333333;
 			private const int kfragName = 3333334;
@@ -601,7 +601,7 @@ namespace LanguageExplorer.LcmUi
 			private ITsString m_tssLexRelation;
 
 			/// <summary />
-			public RelatedWordsVc(int wsUser, ITsString headword)
+			internal RelatedWordsVc(int wsUser, ITsString headword)
 			{
 				m_wsDefault = wsUser;
 				m_tssColon = TsStringUtils.MakeString(": ", wsUser);

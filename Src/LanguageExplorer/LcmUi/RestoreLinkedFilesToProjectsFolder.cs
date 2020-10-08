@@ -9,19 +9,19 @@ using SIL.FieldWorks.Common.FwUtils;
 namespace LanguageExplorer.LcmUi
 {
 	/// <summary />
-	public partial class RestoreLinkedFilesToProjectsFolder : Form
+	internal sealed partial class RestoreLinkedFilesToProjectsFolder : Form
 	{
 		private readonly IHelpTopicProvider m_helpTopicProvider;
 
 		/// <summary />
-		public RestoreLinkedFilesToProjectsFolder(IHelpTopicProvider helpTopicProvider)
+		internal RestoreLinkedFilesToProjectsFolder(IHelpTopicProvider helpTopicProvider)
 		{
 			m_helpTopicProvider = helpTopicProvider;
 			InitializeComponent();
 		}
 
 		/// <summary />
-		public bool RestoreLinkedFilesToProjectFolder => radio_Yes.Checked;
+		internal bool RestoreLinkedFilesToProjectFolder => radio_Yes.Checked;
 
 		private void button_OK_Click(object sender, EventArgs e)
 		{

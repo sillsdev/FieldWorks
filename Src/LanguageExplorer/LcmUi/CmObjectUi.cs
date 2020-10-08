@@ -8,7 +8,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Windows.Forms;
 using System.Xml.Linq;
-using LanguageExplorer.Controls;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.LCModel;
@@ -20,7 +19,7 @@ using SIL.Reporting;
 
 namespace LanguageExplorer.LcmUi
 {
-	public class CmObjectUi : IFlexComponent, IDisposable
+	internal class CmObjectUi : IFlexComponent, IDisposable
 	{
 		#region Data members
 
@@ -42,9 +41,9 @@ namespace LanguageExplorer.LcmUi
 		/// <summary>
 		/// Retrieve the CmObject we are providing UI functions for.
 		/// </summary>
-		public ICmObject MyCmObject => m_cmObject ?? (m_cmObject = m_cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(m_hvo));
+		internal ICmObject MyCmObject => m_cmObject ?? (m_cmObject = m_cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(m_hvo));
 
-		public string ClassName => MyCmObject.ClassName;
+		internal string ClassName => MyCmObject.ClassName;
 
 		/// <summary>
 		/// Returns a View Constructor that can be used to produce various displays of the
@@ -79,7 +78,7 @@ namespace LanguageExplorer.LcmUi
 		///				...
 		///				break;
 		/// </summary>
-		public virtual IVwViewConstructor Vc => m_vc ?? (m_vc = new CmObjectVc(m_cache));
+		internal virtual IVwViewConstructor Vc => m_vc ?? (m_vc = new CmObjectVc(m_cache));
 
 		/// <summary>
 		/// Returns a View Constructor that can be used to produce various displays of the
@@ -116,9 +115,9 @@ namespace LanguageExplorer.LcmUi
 		///				...
 		///				break;
 		/// </summary>
-		public virtual IVwViewConstructor VernVc => new CmVernObjectVc(m_cache);
+		internal virtual IVwViewConstructor VernVc => new CmVernObjectVc(m_cache);
 
-		public virtual IVwViewConstructor AnalVc => new CmAnalObjectVc(m_cache);
+		internal virtual IVwViewConstructor AnalVc => new CmAnalObjectVc(m_cache);
 		#endregion Properties
 
 		#region Construction and initialization
@@ -144,7 +143,7 @@ namespace LanguageExplorer.LcmUi
 		/// In many cases we don't really need the LCM object, which can be relatively expensive
 		/// to create. This version saves the information, and creates it when needed.
 		/// </summary>
-		public static CmObjectUi MakeLcmModelUiObject(LcmCache cache, int hvo)
+		internal static CmObjectUi MakeLcmModelUiObject(LcmCache cache, int hvo)
 		{
 			return MakeLcmModelUiObject(cache, hvo, cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvo).ClassID);
 		}
@@ -352,7 +351,7 @@ namespace LanguageExplorer.LcmUi
 		/// the desired class.  Being a subclass of the desired class also matches, unlike
 		/// ICmObject.OwnerOfClass() where the class must match exactly.
 		/// </summary>
-		public static ICmObject GetSelfOrParentOfClass(ICmObject cmo, int classIdToSearchFor)
+		internal static ICmObject GetSelfOrParentOfClass(ICmObject cmo, int classIdToSearchFor)
 		{
 			if (cmo == null)
 			{
@@ -378,7 +377,7 @@ namespace LanguageExplorer.LcmUi
 
 		#region Other methods
 
-		public virtual bool CanDelete(out string cannotDeleteMsg)
+		internal virtual bool CanDelete(out string cannotDeleteMsg)
 		{
 			if (MyCmObject.CanDelete)
 			{
@@ -393,7 +392,7 @@ namespace LanguageExplorer.LcmUi
 		/// Delete the object, after showing a confirmation dialog.
 		/// Return true if deleted, false, if cancelled.
 		/// </summary>
-		public bool DeleteUnderlyingObject()
+		internal bool DeleteUnderlyingObject()
 		{
 			var cmo = GetCurrentCmObject();
 			if (cmo != null && m_cmObject != null && cmo.Hvo == m_cmObject.Hvo)
@@ -451,7 +450,7 @@ namespace LanguageExplorer.LcmUi
 			ConsiderDeletingRelatedFile(file, PropertyTable);
 		}
 
-		public static bool ConsiderDeletingRelatedFile(ICmFile file, IPropertyTable propertyTable)
+		internal static bool ConsiderDeletingRelatedFile(ICmFile file, IPropertyTable propertyTable)
 		{
 			if (file == null)
 			{
@@ -516,7 +515,7 @@ namespace LanguageExplorer.LcmUi
 		/// strings and owned atomic objects; otherwise, we don't change any that aren't null
 		/// to begin with.
 		/// </summary>
-		public void MergeUnderlyingObject(bool fLoseNoTextData)
+		internal void MergeUnderlyingObject(bool fLoseNoTextData)
 		{
 			var mainWindow = PropertyTable.GetValue<Form>(FwUtilsConstants.window);
 			using (new WaitCursor(mainWindow))
@@ -560,7 +559,7 @@ namespace LanguageExplorer.LcmUi
 		}
 
 		/// <summary />
-		public virtual void MoveUnderlyingObjectToCopyOfOwner()
+		internal virtual void MoveUnderlyingObjectToCopyOfOwner()
 		{
 			MessageBox.Show(PropertyTable.GetValue<Form>(FwUtilsConstants.window), LcmUiResources.ksCannotMoveObjectToCopy, LcmUiResources.ksBUG);
 		}

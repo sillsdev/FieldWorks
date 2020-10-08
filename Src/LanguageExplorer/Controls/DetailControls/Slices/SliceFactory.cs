@@ -8,7 +8,7 @@ using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.IO;
 using System.Xml.Linq;
-using LanguageExplorer.Controls.DetailControls.Resources;
+//using LanguageExplorer.Controls.DetailControls.Resources;
 using LanguageExplorer.Controls.XMLViews;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
@@ -62,23 +62,21 @@ namespace LanguageExplorer.Controls.DetailControls.Slices
 					}
 				case "defaultvectorreference": // second most common.
 					{
-						var rvSlice = reuseMap.GetSliceToReuse("ReferenceVectorSlice") as ReferenceVectorSlice;
-						if (rvSlice == null)
+						if (!(reuseMap.GetSliceToReuse("ReferenceVectorSlice") is ReferenceVectorSlice prvSlice))
 						{
 							newSlice = new ReferenceVectorSlice(cache, obj, flid);
 						}
 						else
 						{
 							sliceWasRecyled = true;
-							newSlice = rvSlice;
-							rvSlice.Reuse(obj, flid);
+							newSlice = prvSlice;
+							prvSlice.Reuse(obj, flid);
 						}
 						break;
 					}
 				case "possvectorreference":
 					{
-						var prvSlice = reuseMap.GetSliceToReuse("PossibilityReferenceVectorSlice") as PossibilityReferenceVectorSlice;
-						if (prvSlice == null)
+						if (!(reuseMap.GetSliceToReuse("PossibilityReferenceVectorSlice") is PossibilityReferenceVectorSlice prvSlice))
 						{
 							newSlice = new PossibilityReferenceVectorSlice(cache, obj, flid);
 						}
@@ -92,8 +90,7 @@ namespace LanguageExplorer.Controls.DetailControls.Slices
 					}
 				case "semdomvectorreference":
 					{
-						var prvSlice = reuseMap.GetSliceToReuse("SemanticDomainReferenceVectorSlice") as SemanticDomainReferenceVectorSlice;
-						if (prvSlice == null)
+						if (!(reuseMap.GetSliceToReuse("SemanticDomainReferenceVectorSlice") is SemanticDomainReferenceVectorSlice prvSlice))
 						{
 							newSlice = new SemanticDomainReferenceVectorSlice(cache, obj, flid);
 						}

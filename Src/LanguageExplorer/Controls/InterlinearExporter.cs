@@ -300,7 +300,7 @@ namespace LanguageExplorer.Controls
 		{
 			switch (frag)
 			{
-				case (int)LcmUi.VcFrags.kfragHeadWord:
+				case (int)VcFrags.kfragHeadWord:
 					// In the course of this AddObj, typically we get AddString calls for
 					// morpheme separators, AddObjProp for kflidLexemeForm,
 					// AddStringAltMember for the form of the LF, NoteDependency for a homograph number,
@@ -329,7 +329,7 @@ namespace LanguageExplorer.Controls
 			base.AddObj(hvoItem, vc, frag);
 			switch (frag)
 			{
-				case (int)LcmUi.VcFrags.kfragHeadWord:
+				case (int)VcFrags.kfragHeadWord:
 					CloseItem();
 					m_fDoingHeadword = false;
 					m_fDoingHomographNumber = false;

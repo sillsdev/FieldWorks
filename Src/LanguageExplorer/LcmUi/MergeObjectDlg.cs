@@ -10,7 +10,6 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using System.Xml.Linq;
-using LanguageExplorer.Controls;
 using LanguageExplorer.Controls.XMLViews;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FwCoreDlgs.Controls;
@@ -23,7 +22,7 @@ using SIL.Windows.Forms;
 namespace LanguageExplorer.LcmUi
 {
 	/// <summary />
-	public class MergeObjectDlg : Form, IFlexComponent
+	internal sealed class MergeObjectDlg : Form, IFlexComponent
 	{
 		private FwTextBox m_fwTextBoxBottomMsg;
 		private LcmCache m_cache;
@@ -43,7 +42,7 @@ namespace LanguageExplorer.LcmUi
 		private HelpProvider helpProvider;
 		private Dictionary<int, DummyCmObject> m_candidates;
 
-		public int Hvo => m_obj.Hvo;
+		internal int Hvo => m_obj.Hvo;
 
 		private MergeObjectDlg()
 		{
@@ -57,7 +56,7 @@ namespace LanguageExplorer.LcmUi
 			AutoSize = true;
 		}
 
-		public MergeObjectDlg(IHelpTopicProvider helpTopicProvider) : this()
+		internal MergeObjectDlg(IHelpTopicProvider helpTopicProvider) : this()
 		{
 			m_helpTopicProvider = helpTopicProvider;
 		}
@@ -65,7 +64,7 @@ namespace LanguageExplorer.LcmUi
 		/// <summary>
 		/// Set up the dlg in preparation to showing it.
 		/// </summary>
-		public void SetDlgInfo(LcmCache cache, WindowParams wp, DummyCmObject mainObj, List<DummyCmObject> mergeCandidates, XElement guiControlParameters, string helpTopic)
+		internal void SetDlgInfo(LcmCache cache, WindowParams wp, DummyCmObject mainObj, List<DummyCmObject> mergeCandidates, XElement guiControlParameters, string helpTopic)
 		{
 			Debug.Assert(cache != null);
 			m_cache = cache;

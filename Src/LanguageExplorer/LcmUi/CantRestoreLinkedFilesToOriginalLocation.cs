@@ -8,25 +8,23 @@ using SIL.FieldWorks.Common.FwUtils;
 
 namespace LanguageExplorer.LcmUi
 {
-	/// <summary>
-	///
-	/// </summary>
-	public partial class CantRestoreLinkedFilesToOriginalLocation : Form
+	/// <summary />
+	internal sealed partial class CantRestoreLinkedFilesToOriginalLocation : Form
 	{
 		private readonly IHelpTopicProvider m_helpTopicProvider;
 
 		/// <summary />
-		public CantRestoreLinkedFilesToOriginalLocation(IHelpTopicProvider helpTopicProvider)
+		internal CantRestoreLinkedFilesToOriginalLocation(IHelpTopicProvider helpTopicProvider)
 		{
 			m_helpTopicProvider = helpTopicProvider;
 			InitializeComponent();
 		}
 
 		/// <summary />
-		public bool RestoreLinkedFilesToProjectFolder => radio_Thanks.Checked;
+		internal bool RestoreLinkedFilesToProjectFolder => radio_Thanks.Checked;
 
 		/// <summary />
-		public bool DoNotRestoreLinkedFiles => radio_NoThanks.Checked;
+		internal bool DoNotRestoreLinkedFiles => radio_NoThanks.Checked;
 
 		private void button_OK_Click(object sender, EventArgs e)
 		{

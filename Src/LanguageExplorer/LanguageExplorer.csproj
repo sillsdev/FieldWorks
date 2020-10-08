@@ -305,6 +305,11 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Areas\TextsAndWords\IConcordanceRecordList.cs" />
+    <Compile Include="Controls\DetailControls\DetailControlsStrings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>DetailControlsStrings.resx</DependentUpon>
+    </Compile>
     <Compile Include="Controls\DetailControls\RecordChangeHandlerFactory.cs" />
     <Compile Include="IReversalRecordList.cs" />
     <Compile Include="Controls\DetailControls\IChangeRootObject.cs" />
@@ -1203,11 +1208,6 @@
     <Compile Include="Controls\DetailControls\ReferenceViewBase.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Controls\DetailControls\Resources\DetailControlsStrings.Designer.cs">
-      <DependentUpon>DetailControlsStrings.resx</DependentUpon>
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-    </Compile>
     <Compile Include="Controls\DetailControls\SemanticDomainReferenceLauncher.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -1274,13 +1274,8 @@
     <Compile Include="Controls\BaseGoDlg.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="LcmUi\BrowseViewerPhonologicalFeatures.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
     <Compile Include="Controls\XMLViews\BulkPosEditorBase.cs" />
     <Compile Include="LcmUi\CmAnalObjectVc.cs" />
-    <Compile Include="LcmUi\CmNameAbbrObjVc.cs" />
-    <Compile Include="LcmUi\CmNamedObjVc.cs" />
     <Compile Include="LcmUi\CmObjectUi.cs" />
     <Compile Include="LcmUi\CmObjectVc.cs" />
     <Compile Include="LcmUi\CmPossibilityUi.cs" />
@@ -1292,8 +1287,8 @@
     <Compile Include="LcmUi\MoMorphSynAnalysisUi.cs" />
     <Compile Include="LcmUi\MsaVc.cs" />
     <Compile Include="LcmUi\PosFilter.cs" />
-    <Compile Include="LcmUi\TargetFeatureEventArgs.cs" />
-    <Compile Include="LcmUi\VcFrags.cs" />
+    <Compile Include="Controls\XMLViews\TargetFeatureEventArgs.cs" />
+    <Compile Include="VcFrags.cs" />
     <Compile Include="LcmUi\WfiAnalysisUi.cs" />
     <Compile Include="LcmUi\WfiGlossUi.cs" />
     <Compile Include="Controls\MGA\MGAImageKind.cs" />
@@ -1429,12 +1424,11 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Controls\EntryGoSearchEngine.cs" />
-    <Compile Include="Controls\WindowParams.cs" />
+    <Compile Include="WindowParams.cs" />
     <Compile Include="Controls\FeatureStructureTreeView.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="IFwExtension.cs" />
-    <Compile Include="LcmUi\InflectionClassPopupTreeManager.cs" />
     <Compile Include="Controls\InsertEntryDlg.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -1690,12 +1684,10 @@
     </Compile>
     <Compile Include="LcmUi\FsFeatDefnUi.cs" />
     <Compile Include="LcmUi\FwLcmUI.cs" />
-    <Compile Include="LcmUi\InflectionClassEditor.cs" />
-    <Compile Include="LcmUi\InflectionFeatureEditor.cs" />
     <Compile Include="LcmUi\LexEntryUi.cs" />
     <Compile Include="LcmUi\LexPronunciationUi.cs" />
     <Compile Include="LcmUi\PartOfSpeechUi.cs" />
-    <Compile Include="LcmUi\PhonologicalFeatureEditor.cs" />
+    <Compile Include="Controls\XMLViews\PhonologicalFeatureEditor.cs" />
     <Compile Include="LcmUi\ReversalIndexEntryUi.cs" />
     <Compile Include="LcmUi\WfiWordformUi.cs" />
     <Compile Include="Controls\MGA\GlossListBox.cs">
@@ -2311,10 +2303,10 @@
       <DependentUpon>ReferenceLauncher.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Controls\DetailControls\Resources\DetailControlsStrings.resx">
+    <EmbeddedResource Include="Controls\DetailControls\DetailControlsStrings.resx">
       <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>DetailControlsStrings.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
+      <LastGenOutput>DetailControlsStrings.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\DetailControls\SemanticDomainsChooser.resx">
       <DependentUpon>SemanticDomainsChooser.cs</DependentUpon>
@@ -3811,7 +3803,7 @@
     <None Include="Controls\DetailControls\atomicNode.bmp" />
     <None Include="Controls\DetailControls\CollectionNode.bmp" />
     <None Include="Controls\DetailControls\SequenceSmall.bmp" />
-    <None Include="Controls\DetailControls\Resources\gotoLinkPic.png" />
+    <None Include="Controls\DetailControls\gotoLinkPic.png" />
     <None Include="Controls\DetailControls\PartGenerator\LayoutGenerate.xslt" />
     <None Include="Controls\DetailControls\PartGenerator\PartGenerate.xslt" />
     <None Include="images\LexTextImages\Bullet.bmp" />

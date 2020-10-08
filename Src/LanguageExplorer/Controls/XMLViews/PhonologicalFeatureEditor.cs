@@ -8,8 +8,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Windows.Forms;
 using System.Xml.Linq;
-using LanguageExplorer.Controls;
-using LanguageExplorer.Controls.XMLViews;
+using LanguageExplorer.LcmUi;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Core.KernelInterfaces;
@@ -17,19 +16,19 @@ using SIL.LCModel.Core.Text;
 using SIL.LCModel.DomainServices;
 using SIL.Xml;
 
-namespace LanguageExplorer.LcmUi
+namespace LanguageExplorer.Controls.XMLViews
 {
 	/// <summary>
 	/// PhonologicalFeatureEditor is the spec/display component of the Bulk Edit bar used to
 	/// set the Phonological features of a PhPhoneme.
 	/// </summary>
-	public class PhonologicalFeatureEditor : IBulkEditSpecControl, IDisposable
+	internal sealed class PhonologicalFeatureEditor : IBulkEditSpecControl, IDisposable
 	{
 		private TreeCombo m_tree;
 		private LcmCache m_cache;
 		private IPublisher m_publisher;
 		private ISubscriber _subscriber;
-		protected XMLViewsDataCache m_sda;
+		private XMLViewsDataCache m_sda;
 		private PhonologicalFeaturePopupTreeManager m_PhonologicalFeatureTreeManager;
 		private int m_displayWs;
 		private IFsClosedFeature m_closedFeature;
@@ -44,7 +43,7 @@ namespace LanguageExplorer.LcmUi
 			//	Handle AfterSelect event in m_tree_TreeLoad() through m_pOSPopupTreeManager
 		}
 
-		public PhonologicalFeatureEditor(IPublisher publisher, ISubscriber subscriber, XElement configurationNode)
+		internal PhonologicalFeatureEditor(IPublisher publisher, ISubscriber subscriber, XElement configurationNode)
 			: this()
 		{
 			m_publisher = publisher;
@@ -116,7 +115,7 @@ namespace LanguageExplorer.LcmUi
 		///
 		/// If subclasses override this method, they should call the base implementation.
 		/// </remarks>
-		protected virtual void Dispose(bool disposing)
+		private void Dispose(bool disposing)
 		{
 			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			if (IsDisposed)

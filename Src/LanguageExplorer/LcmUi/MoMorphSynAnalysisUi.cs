@@ -9,16 +9,12 @@ namespace LanguageExplorer.LcmUi
 	/// <summary>
 	/// Special UI behaviors for the MoMorphSynAnalysis class.
 	/// </summary>
-	public class MoMorphSynAnalysisUi : CmObjectUi
+	internal sealed class MoMorphSynAnalysisUi : CmObjectUi
 	{
-		internal MoMorphSynAnalysisUi()
-		{
-		}
-
 		/// <summary>
 		/// Gets a special VC that knows to display the name or abbr of the PartOfSpeech.
 		/// </summary>
-		public override IVwViewConstructor Vc
+		internal override IVwViewConstructor Vc
 		{
 			get
 			{

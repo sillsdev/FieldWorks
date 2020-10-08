@@ -4,15 +4,15 @@
 
 using System;
 
-namespace LanguageExplorer.LcmUi
+namespace LanguageExplorer.Controls.XMLViews
 {
-	public class TargetFeatureEventArgs : EventArgs
+	internal sealed class TargetFeatureEventArgs : EventArgs
 	{
-		public TargetFeatureEventArgs(bool enable)
+		internal TargetFeatureEventArgs(bool enable)
 		{
 			Enable = enable;
 		}
 
-		public bool Enable { get; }
+		internal bool Enable { get; }
 	}
 }

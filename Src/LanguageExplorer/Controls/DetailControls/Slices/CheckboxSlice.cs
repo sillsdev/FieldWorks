@@ -6,7 +6,6 @@ using System;
 using System.Diagnostics;
 using System.Windows.Forms;
 using System.Xml.Linq;
-using LanguageExplorer.Controls.DetailControls.Resources;
 using SIL.LCModel;
 using SIL.LCModel.Application;
 using SIL.LCModel.Application.ApplicationServices;

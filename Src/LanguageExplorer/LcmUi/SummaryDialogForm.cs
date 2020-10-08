@@ -32,7 +32,7 @@ namespace LanguageExplorer.LcmUi
 	/// Clients should also test the OtherButtonClicked property to see if a "find entry" dialog
 	/// should pop up to find a different entry to display with a new SummaryDialogForm.
 	/// </remarks>
-	internal class SummaryDialogForm : Form
+	internal sealed class SummaryDialogForm : Form
 	{
 		#region Member variables
 		private List<int> m_rghvo;
@@ -56,14 +56,7 @@ namespace LanguageExplorer.LcmUi
 		private bool m_fInSelChange;
 		#endregion
 
-		#region Constructor/destructor
-		/// <summary>
-		/// Constructor for a single LexEntry object.
-		/// </summary>
-		internal SummaryDialogForm(LexEntryUi leui, IHelpTopicProvider helpProvider, string helpFileKey, IVwStylesheet styleSheet)
-			: this(new List<int>(leui.MyCmObject.Hvo), helpProvider, helpFileKey, styleSheet, leui.MyCmObject.Cache, leui.PropertyTable)
-		{
-		}
+		#region Constructor
 
 		/// <summary>
 		/// Constructor for multiple matching LexEntry objects.

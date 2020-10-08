@@ -13,7 +13,7 @@ namespace LanguageExplorer.LcmUi
 	/// <summary>
 	/// PartOfSpeechUi provides UI-specific methods for the PartOfSpeech class.
 	/// </summary>
-	public class PartOfSpeechUi : CmPossibilityUi
+	internal sealed class PartOfSpeechUi : CmPossibilityUi
 	{
 		/// <summary>
 		/// Create one. Argument must be a PartOfSpeech.
@@ -29,7 +29,7 @@ namespace LanguageExplorer.LcmUi
 		/// <summary>
 		/// Handle the context menu for inserting a POS.
 		/// </summary>
-		public static PartOfSpeechUi MakeLcmModelUiObject(LcmCache cache, IPropertyTable propertyTable, IPublisher publisher, int classId, int hvoOwner, int flid, int insertionPosition)
+		internal static PartOfSpeechUi MakeLcmModelUiObject(LcmCache cache, IPropertyTable propertyTable, IPublisher publisher, int classId, int hvoOwner, int flid, int insertionPosition)
 		{
 			Guard.AgainstNull(cache, nameof(cache));
 

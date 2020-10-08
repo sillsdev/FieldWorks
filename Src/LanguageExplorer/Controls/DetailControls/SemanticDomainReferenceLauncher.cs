@@ -2,7 +2,6 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System.Diagnostics;
 using System.Windows.Forms;
 using System.Xml.XPath;
 using SIL.FieldWorks.Common.FwUtils;
@@ -42,7 +41,7 @@ namespace LanguageExplorer.Controls.DetailControls
 				var result = chooser.ShowDialog();
 				if (result == DialogResult.OK)
 				{
-					UndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(Resources.DetailControlsStrings.ksUndoSet, Resources.DetailControlsStrings.ksRedoSet, m_cache.ActionHandlerAccessor,
+					UndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(DetailControlsStrings.ksUndoSet, DetailControlsStrings.ksRedoSet, m_cache.ActionHandlerAccessor,
 						() => sense.SemanticDomainsRC.Replace(sense.SemanticDomainsRC, chooser.SemanticDomains));
 				}
 			}

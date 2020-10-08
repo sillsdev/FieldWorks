@@ -9,24 +9,24 @@ namespace LanguageExplorer.LcmUi
 	/// <summary>
 	/// A light weight object used in the merge dlg to show relevant objects.
 	/// </summary>
-	public class DummyCmObject : IComparable
+	internal sealed class DummyCmObject : IComparable
 	{
 		private string m_displayName;
 
 		/// <summary>
 		/// Get the HVO for the dummy object.
 		/// </summary>
-		public int Hvo { get; }
+		internal int Hvo { get; }
 
 		/// <summary>
 		/// Get the writing system integer.
 		/// </summary>
-		public int WS { get; }
+		internal int WS { get; }
 
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-		public DummyCmObject(int hvo, string displayName, int ws)
+		internal DummyCmObject(int hvo, string displayName, int ws)
 		{
 			Hvo = hvo;
 			m_displayName = displayName ?? " ";
@@ -46,7 +46,7 @@ namespace LanguageExplorer.LcmUi
 
 		public int CompareTo(object obj)
 		{
-			return !(obj is DummyCmObject that) ? -1 : m_displayName.CompareTo(that.m_displayName);
+			return !(obj is DummyCmObject otherGuy) ? -1 : m_displayName.CompareTo(otherGuy.m_displayName);
 		}
 
 		#endregion

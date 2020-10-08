@@ -22,7 +22,7 @@ namespace LanguageExplorer.LcmUi
 		/// <summary>
 		/// Default constructor for persistence.
 		/// </summary>
-		public EntryPosFilter() { }
+		internal EntryPosFilter() { }
 
 		internal EntryPosFilter(LcmCache cache, ListMatchOptions mode, int[] targets)
 			: base(cache, mode, targets)
@@ -110,7 +110,7 @@ namespace LanguageExplorer.LcmUi
 		/// <summary>
 		/// Return the HVO of the list from which choices can be made.
 		/// </summary>
-		public static int List(LcmCache cache)
+		internal static int List(LcmCache cache)
 		{
 			return cache.LanguageProject.PartsOfSpeechOA.Hvo;
 		}

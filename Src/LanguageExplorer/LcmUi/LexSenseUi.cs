@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Xml.Linq;
-using LanguageExplorer.Controls;
 using SIL.Code;
 using SIL.LCModel;
 using SIL.LCModel.Core.KernelInterfaces;
@@ -19,10 +18,10 @@ namespace LanguageExplorer.LcmUi
 	/// <summary>
 	/// UI functions for MoMorphSynAnalysis.
 	/// </summary>
-	public class LexSenseUi : CmObjectUi
+	internal sealed class LexSenseUi : CmObjectUi
 	{
 		/// <summary />
-		public LexSenseUi(ICmObject obj)
+		internal LexSenseUi(ICmObject obj)
 			: base(obj)
 		{
 			Debug.Assert(obj is ILexSense);
@@ -59,7 +58,7 @@ namespace LanguageExplorer.LcmUi
 			return new DummyCmObject(m_hvo, tss.Text, TsStringUtils.GetWsAtOffset(tss, 0));
 		}
 
-		public override void MoveUnderlyingObjectToCopyOfOwner()
+		internal override void MoveUnderlyingObjectToCopyOfOwner()
 		{
 			var obj = MyCmObject.Owner;
 			var clid = obj.ClassID;
@@ -77,26 +76,26 @@ namespace LanguageExplorer.LcmUi
 		/// first one.  If this is the first one, we may need to create an MSA if the owning entry
 		/// does not have an appropriate one.
 		/// </summary>
-		public static LexSenseUi MakeLcmModelUiObject(LcmCache cache, int hvoOwner, int insertionPosition = int.MaxValue)
+		internal static LexSenseUi MakeLcmModelUiObject(LcmCache cache, int hvoOwner, int insertionPosition = int.MaxValue)
 		{
 			Guard.AgainstNull(cache, nameof(cache));
 
 			var owner = cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvoOwner);
-			if (owner is ILexEntry)
+			switch (owner)
 			{
-				return CreateNewLexSenseUiObject(cache, owner as ILexEntry, insertionPosition);
+				case ILexEntry entry:
+					return CreateNewLexSenseUiObject(cache, entry, insertionPosition);
+				case ILexSense sense:
+					return CreateNewLexSenseUiObject(cache, sense, insertionPosition);
+				default:
+					throw new ArgumentOutOfRangeException(nameof(hvoOwner), $"Owner must be an ILexEntry or an ILexSense, but it was: '{owner.ClassName}'.");
 			}
-			if (owner is ILexSense)
-			{
-				return CreateNewLexSenseUiObject(cache, owner as ILexSense, insertionPosition);
-			}
-			throw new ArgumentOutOfRangeException(nameof(hvoOwner), $"Owner must be an ILexEntry or an ILexSense, but it was: '{owner.ClassName}'.");
 		}
 
 		/// <summary>
 		/// Create a new LexSenseUi in the given entry.
 		/// </summary>
-		internal static LexSenseUi CreateNewLexSenseUiObject(LcmCache cache, ILexEntry ownerEntry, int insertionPosition)
+		private static LexSenseUi CreateNewLexSenseUiObject(LcmCache cache, ILexEntry ownerEntry, int insertionPosition)
 		{
 			return new LexSenseUi(CreateNewLexSense(cache, ownerEntry, insertionPosition));
 		}
@@ -104,7 +103,7 @@ namespace LanguageExplorer.LcmUi
 		/// <summary>
 		/// Create a new LexSenseUi in the given sense.
 		/// </summary>
-		internal static LexSenseUi CreateNewLexSenseUiObject(LcmCache cache, ILexSense ownerSense, int insertionPosition = int.MaxValue)
+		private static LexSenseUi CreateNewLexSenseUiObject(LcmCache cache, ILexSense ownerSense, int insertionPosition = int.MaxValue)
 		{
 			return new LexSenseUi(CreateNewLexSense(cache, ownerSense, insertionPosition));
 		}

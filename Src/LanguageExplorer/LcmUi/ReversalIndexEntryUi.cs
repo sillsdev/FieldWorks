@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Xml.Linq;
-using LanguageExplorer.Controls;
 using SIL.LCModel;
 
 namespace LanguageExplorer.LcmUi
@@ -14,14 +13,14 @@ namespace LanguageExplorer.LcmUi
 	/// <summary>
 	/// ReversalIndexEntryUi provides UI-specific methods for the ReversalIndexEntryUi class.
 	/// </summary>
-	public class ReversalIndexEntryUi : CmObjectUi
+	internal sealed class ReversalIndexEntryUi : CmObjectUi
 	{
 		/// <summary>
 		/// Create one. Argument must be a PartOfSpeech.
 		/// Note that declaring it to be forces us to just do a cast in every case of MakeLcmModelUiObject, which is
 		/// passed an obj anyway.
 		/// </summary>
-		public ReversalIndexEntryUi(ICmObject obj) : base(obj)
+		internal ReversalIndexEntryUi(ICmObject obj) : base(obj)
 		{
 			Debug.Assert(obj is IReversalIndexEntry);
 		}

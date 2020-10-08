@@ -7,7 +7,6 @@ using System.Diagnostics;
 using System.Linq;
 using System.Xml.Linq;
 using System.Xml.XPath;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Core.KernelInterfaces;
 

@@ -8,25 +8,23 @@ using SIL.FieldWorks.Common.FwUtils;
 
 namespace LanguageExplorer.LcmUi
 {
-	/// <summary>
-	///
-	/// </summary>
-	public partial class FilesToRestoreAreOlder : Form
+	/// <summary />
+	internal sealed partial class FilesToRestoreAreOlder : Form
 	{
 		private readonly IHelpTopicProvider m_helpTopicProvider;
 
 		/// <summary />
-		public FilesToRestoreAreOlder(IHelpTopicProvider helpTopicProvider)
+		internal FilesToRestoreAreOlder(IHelpTopicProvider helpTopicProvider)
 		{
 			m_helpTopicProvider = helpTopicProvider;
 			InitializeComponent();
 		}
 
 		/// <summary />
-		public bool KeepFilesThatAreNewer => radio_Keep.Checked;
+		internal bool KeepFilesThatAreNewer => radio_Keep.Checked;
 
 		/// <summary />
-		public bool OverWriteThatAreNewer => radio_Overwrite.Checked;
+		internal bool OverWriteThatAreNewer => radio_Overwrite.Checked;
 
 		private void button_OK_Click(object sender, EventArgs e)
 		{
