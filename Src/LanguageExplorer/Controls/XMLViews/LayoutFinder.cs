@@ -295,7 +295,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// more efficient. This one looks to see whether its ColSpec specifies a preload,
 		/// and if so, invokes it.
 		/// </summary>
-		public void Preload(object rootObj)
+		public void Preload(ICmObject rootObj)
 		{
 			m_vc?.SetReversalWritingSystemFromRootObject(rootObj);
 			var preload = XmlUtils.GetOptionalAttributeValue(m_colSpec, "preload", null);

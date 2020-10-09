@@ -2,7 +2,7 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System.Collections;
+using System.Collections.Generic;
 using LanguageExplorer.Filters;
 using SIL.FieldWorks.Common.FwUtils;
 
@@ -18,16 +18,16 @@ namespace LanguageExplorer
 		/// <summary>
 		/// Get the list of filters.
 		/// </summary>
-		ArrayList Filters { get; }
+		List<IRecordFilter> Filters { get; }
 
 		/// <summary>
 		/// Get a filter with the given name.
 		/// </summary>
-		RecordFilter GetFilter(string filterName);
+		IRecordFilter GetFilter(string filterName);
 
 		/// <summary>
 		/// May want to update / reload the list based on user selection.
 		/// </summary>
-		bool OnAdjustFilterSelection(RecordFilter recordFilter);
+		bool AdjustFilterSelection(IRecordFilter recordFilter);
 	}
 }

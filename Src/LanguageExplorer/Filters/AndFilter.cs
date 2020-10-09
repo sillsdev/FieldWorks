@@ -2,7 +2,7 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System.Collections;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Xml.Linq;
@@ -24,31 +24,31 @@ namespace LanguageExplorer.Filters
 		/// </summary>
 		public override bool Accept(IManyOnePathSortItem item)
 		{
-			return Filters.Cast<RecordFilter>().All(f => f.Accept(item));
+			return Filters.All(f => f.Accept(item));
 		}
 
 		/// <summary>
 		/// Gets the filters.
 		/// </summary>
-		public ArrayList Filters { get; private set; } = new ArrayList();
+		public List<IRecordFilter> Filters { get; private set; } = new List<IRecordFilter>();
 
 		/// <summary>
-		/// Adds the specified f.
+		/// Adds the specified filter.
 		/// </summary>
-		public void Add(RecordFilter f)
+		public void Add(IRecordFilter newbieFilter)
 		{
-			Debug.Assert(!Contains(f), "This filter (" + f + ") has already been added to the list.");
-			Filters.Add(f);
+			Debug.Assert(!Contains(newbieFilter), "This filter (" + newbieFilter + ") has already been added to the list.");
+			Filters.Add(newbieFilter);
 		}
 
 		/// <summary>
-		/// Removes the specified f.
+		/// Removes the specified filter.
 		/// </summary>
-		public void Remove(RecordFilter f)
+		public void Remove(IRecordFilter gonnerFilter)
 		{
 			for (var i = 0; i < Filters.Count; ++i)
 			{
-				if (((RecordFilter)Filters[i]).SameFilter(f))
+				if (Filters[i].SameFilter(gonnerFilter))
 				{
 					Filters.RemoveAt(i);
 					break;
@@ -67,7 +67,7 @@ namespace LanguageExplorer.Filters
 		public override void PersistAsXml(XElement element)
 		{
 			base.PersistAsXml(element);
-			foreach (RecordFilter rf in Filters)
+			foreach (var rf in Filters)
 			{
 				DynamicLoader.PersistObject(rf, element, "filter");
 			}
@@ -80,10 +80,10 @@ namespace LanguageExplorer.Filters
 		{
 			base.InitXml(element);
 			Debug.Assert(Filters != null && Filters.Count == 0);
-			Filters = new ArrayList(element.Elements().Count());
+			Filters = new List<IRecordFilter>(element.Elements().Count());
 			foreach (var child in element.Elements())
 			{
-				Filters.Add(DynamicLoader.RestoreObject(child.XPathSelectElement(".")));
+				Filters.Add((IRecordFilter)DynamicLoader.RestoreObject(child.XPathSelectElement(".")));
 			}
 		}
 
@@ -97,7 +97,10 @@ namespace LanguageExplorer.Filters
 				base.Cache = value;
 				foreach (var obj in Filters)
 				{
-					SetCache(obj, value);
+					if (obj is IStoresLcmCache cacheStorer)
+					{
+						cacheStorer.Cache = value;
+					}
 				}
 			}
 		}
@@ -127,14 +130,14 @@ namespace LanguageExplorer.Filters
 		{
 			get
 			{
-				return Filters.Cast<RecordFilter>().Any(f => f.IsUserVisible);
+				return Filters.Any(f => f.IsUserVisible);
 			}
 		}
 
 		/// <summary>
 		/// Does our AndFilter Contain the other recordfilter or one equal to it? If so answer the equal one.
 		/// </summary>
-		public override RecordFilter EqualContainedFilter(RecordFilter other)
+		protected internal override IRecordFilter EqualContainedFilter(IRecordFilter other)
 		{
 			return Filters.Cast<RecordFilter>().Select(recordFilter => recordFilter.EqualContainedFilter(other)).FirstOrDefault();
 		}

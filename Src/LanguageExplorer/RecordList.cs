@@ -57,8 +57,8 @@ namespace LanguageExplorer
 		/// <summary>
 		/// A reference to a filter.
 		/// </summary>
-		protected RecordFilter m_filter;
-		protected RecordFilter m_filterPrev;
+		protected IRecordFilter m_filter;
+		protected IRecordFilter m_filterPrev;
 		protected string m_fontName;
 		protected int m_typeSize = 10;
 		protected bool m_reloadingList;
@@ -126,7 +126,7 @@ namespace LanguageExplorer
 		/// RecordList. That list would contain filters contributed from other sources, in particular
 		/// the FilterBar.
 		/// </summary>
-		protected RecordFilter _activeMenuBarFilter;
+		protected IRecordFilter _activeMenuBarFilter;
 		/// <summary>
 		/// false, if the dependent record list is to handle deletion, as for reversals.
 		/// </summary>
@@ -136,7 +136,7 @@ namespace LanguageExplorer
 		/// this does not include the filters they can get that by using the FilterBar.
 		/// </summary>
 		protected IRecordFilterListProvider _filterProvider;
-		private RecordFilter _defaultFilter;
+		private IRecordFilter _defaultFilter;
 		private string _defaultSortLabel;
 		/// <summary>
 		/// true during delete and insert and ShowRecord calls caused by them.
@@ -356,15 +356,15 @@ namespace LanguageExplorer
 					// That record list is used in these tools: AnalysesTool, BulkEditWordformsTool, & WordListConcordanceTool
 					// find any matching persisted menubar filter
 					// NOTE: for now assume we can only set/persist one such menubar filter at a time.
-					foreach (RecordFilter menuBarFilterOption in _filterProvider.Filters)
+					foreach (var menuBarFilterOption in _filterProvider.Filters)
 					{
 						if (!Filter.Contains(menuBarFilterOption))
 						{
 							continue;
 						}
 						_activeMenuBarFilter = menuBarFilterOption;
-						_filterProvider.OnAdjustFilterSelection(_activeMenuBarFilter);
-						PropertyTable.SetDefault(CurrentFilterPropertyTableId, _activeMenuBarFilter.id);
+						_filterProvider.AdjustFilterSelection(_activeMenuBarFilter);
+						PropertyTable.SetDefault(CurrentFilterPropertyTableId, _activeMenuBarFilter.Id);
 						setFilterMenu = true;
 						break;
 					}
@@ -750,7 +750,7 @@ namespace LanguageExplorer
 
 		public bool Editable { get; set; } = true;
 
-		public virtual RecordFilter Filter
+		public virtual IRecordFilter Filter
 		{
 			get => m_filter;
 			set => m_filter = value;
@@ -956,7 +956,7 @@ namespace LanguageExplorer
 					// leaving empty, so the status bar can show that there is then no filter.
 					if (andFilter.Filters.Count == 1)
 					{
-						m_filter = andFilter.Filters[0] as RecordFilter;
+						m_filter = andFilter.Filters[0];
 					}
 				}
 				else
@@ -968,7 +968,7 @@ namespace LanguageExplorer
 					{
 						// We already checked for m_filter being null, so we now have two filters,
 						// and need to make an AndFilter.
-						m_filter = CreateNewAndFilter(m_filter, args.Added);
+						m_filter = CreateNewAndFilter(new List<IRecordFilter> { m_filter, args.Added });
 					}
 				}
 				// Now we have a new filter, we have to recompute what to show.
@@ -999,8 +999,8 @@ namespace LanguageExplorer
 			{
 				// If some parts are not user visible we should not remove them.
 				var children = andFilter.Filters;
-				var childrenToKeep = children.Cast<RecordFilter>().Where(filter => !filter.IsUserVisible);
-				var count = childrenToKeep.Count();
+				var childrenToKeep = children.Where(filter => !filter.IsUserVisible).ToList();
+				var count = childrenToKeep.Count;
 				if (count == 1)
 				{
 					OnChangeFilter(new FilterChangeEventArgs(childrenToKeep.First(), andFilter));
@@ -1008,7 +1008,7 @@ namespace LanguageExplorer
 				}
 				if (count > 0)
 				{
-					var af2 = CreateNewAndFilter(childrenToKeep.ToArray());
+					var af2 = CreateNewAndFilter(childrenToKeep);
 					OnChangeFilter(new FilterChangeEventArgs(af2, Filter));
 					return;
 				}
@@ -2088,8 +2088,8 @@ namespace LanguageExplorer
 		private void OnChangeFilterToCheckedListPropertyChoice()
 		{
 			var filterName = PropertyTable.GetValue(CurrentFilterPropertyTableId, string.Empty, SettingsGroup.LocalSettings);
-			RecordFilter addf = null;
-			RecordFilter remf = null;
+			IRecordFilter addf = null;
+			IRecordFilter remf = null;
 			var nof = new NoFilters();
 			// Check for special cases.
 			if (filterName == FiltersStrings.ksUncheckAll)
@@ -2145,9 +2145,9 @@ namespace LanguageExplorer
 		/// <summary>
 		/// Creates a new AndFilter and registers it for later disposal.
 		/// </summary>
-		private static AndFilter CreateNewAndFilter(params RecordFilter[] filters)
+		private static AndFilter CreateNewAndFilter(IReadOnlyCollection<IRecordFilter> filters)
 		{
-			Debug.Assert(filters.Length > 1, "Need at least two filters to construct an AndFilter");
+			Debug.Assert(filters.Count > 1, "Need at least two filters to construct an AndFilter");
 			var af = new AndFilter();
 			foreach (var filter in filters)
 			{
@@ -2359,7 +2359,7 @@ namespace LanguageExplorer
 		/// <c>false</c> if the one installed matches the one we had stored to persist.</returns>
 		protected virtual bool TryRestoreFilter()
 		{
-			RecordFilter filter = null;
+			IRecordFilter filter = null;
 			var persistFilter = PropertyTable.GetValue<string>(FilterPropertyTableId, SettingsGroup.LocalSettings);
 			if (Filter != null)
 			{
@@ -2375,7 +2375,7 @@ namespace LanguageExplorer
 			{
 				try
 				{
-					filter = DynamicLoader.RestoreObject(XDocument.Parse(persistFilter).Root) as RecordFilter;
+					filter = DynamicLoader.RestoreObject(XDocument.Parse(persistFilter).Root) as IRecordFilter;
 					if (filter != null)
 					{
 						// (LT-9515) restored filters need these set, because they can't be persisted.

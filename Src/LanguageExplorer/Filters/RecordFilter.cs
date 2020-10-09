@@ -43,32 +43,33 @@ using SIL.Xml;
 namespace LanguageExplorer.Filters
 {
 	/// <summary />
-	public abstract class RecordFilter : IPersistAsXml, IStoresLcmCache, IStoresDataAccess
+	public abstract class RecordFilter : IRecordFilter
 	{
 		/// <summary />
 		protected RecordFilter()
 		{
 			Name = FiltersStrings.ksUnknown;
-			id = "Unknown";
+			Id = "Unknown";
 		}
 
 		/// <summary>
-		/// Set the cache on the specified object if it wants it.
+		/// a factory method for filters
 		/// </summary>
-		internal void SetCache(object obj, LcmCache cache)
+		public static IRecordFilter Create(LcmCache cache, XElement configuration)
 		{
-			if (obj is IStoresLcmCache sfc)
-			{
-				sfc.Cache = cache;
-			}
+			var filter = (RecordFilter)DynamicLoader.CreateObject(configuration);
+			filter.Init(cache, configuration);
+			return filter;
 		}
 
-		internal void SetDataAccess(object obj, ISilDataAccess sda)
+		/// <summary>
+		/// If this or a contained filter is considered equal to the argument, answer the filter
+		/// or subfilter that is considered equal.
+		/// Record Filters that can contain more than one filter (e.g. AndFilter) should override this.
+		/// </summary>
+		protected internal virtual IRecordFilter EqualContainedFilter(IRecordFilter other)
 		{
-			if (obj is IStoresDataAccess sfc)
-			{
-				sfc.DataAccess = sda;
-			}
+			return SameFilter(other) ? this : null;
 		}
 
 		/// <summary>
@@ -79,17 +80,12 @@ namespace LanguageExplorer.Filters
 		/// <summary>
 		/// this is used, for example, and persist in the selected id in the users xml preferences
 		/// </summary>
-		public string id { get; protected set; }
-
-		/// <summary>
-		/// Gets the name of the image.
-		/// </summary>
-		public virtual string imageName => "SimpleFilter";
+		public string Id { get; protected set; }
 
 		/// <summary>
 		/// May be used to preload data for efficient filtering of many instances.
 		/// </summary>
-		public virtual void Preload(object rootObj)
+		public virtual void Preload(ICmObject rootObj)
 		{
 		}
 
@@ -112,16 +108,6 @@ namespace LanguageExplorer.Filters
 		public virtual bool IsValid => true;
 
 		/// <summary>
-		/// a factory method for filters
-		/// </summary>
-		public static RecordFilter Create(LcmCache cache, XElement configuration)
-		{
-			var filter = (RecordFilter)DynamicLoader.CreateObject(configuration);
-			filter.Init(cache, configuration);
-			return filter;
-		}
-
-		/// <summary>
 		/// Initialize the filter
 		/// </summary>
 		public virtual void Init(LcmCache cache, XElement filterNode)
@@ -135,7 +121,7 @@ namespace LanguageExplorer.Filters
 		/// hash function. It is mainly for FilterBarRecordFilters, so for now other classes
 		/// just answer false.
 		/// </summary>
-		public virtual bool SameFilter(RecordFilter other)
+		public virtual bool SameFilter(IRecordFilter other)
 		{
 			return other == this;
 		}
@@ -143,19 +129,9 @@ namespace LanguageExplorer.Filters
 		/// <summary>
 		/// If this or a contained filter is considered equal to the argument, answer true
 		/// </summary>
-		public bool Contains(RecordFilter other)
+		public bool Contains(IRecordFilter other)
 		{
 			return EqualContainedFilter(other) != null;
-		}
-
-		/// <summary>
-		/// If this or a contained filter is considered equal to the argument, answer the filter
-		/// or subfilter that is considered equal.
-		/// Record Filters that can contain more than one filter (e.g. AndFilter) should override this.
-		/// </summary>
-		public virtual RecordFilter EqualContainedFilter(RecordFilter other)
-		{
-			return SameFilter(other) ? this : null;
 		}
 
 		#region IPersistAsXml Members

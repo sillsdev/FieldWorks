@@ -5,7 +5,6 @@
 using System.Diagnostics;
 using System.Xml.Linq;
 using System.Xml.XPath;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Core.KernelInterfaces;
 
@@ -58,7 +57,7 @@ namespace LanguageExplorer.Filters
 		/// <summary>
 		/// Let your finder preload whatever it wants to.
 		/// </summary>
-		public override void Preload(object rootObj)
+		public override void Preload(ICmObject rootObj)
 		{
 			Finder.Preload(rootObj);
 		}
@@ -75,7 +74,7 @@ namespace LanguageExplorer.Filters
 		/// hash function. It is mainly for FilterBarRecordFilters, so for now other classes
 		/// just answer false.
 		/// </summary>
-		public override bool SameFilter(RecordFilter other)
+		public override bool SameFilter(IRecordFilter other)
 		{
 			return other is FilterBarCellFilter fbcOther && fbcOther.Finder.SameFinder(Finder) && fbcOther.Matcher.SameMatcher(Matcher);
 		}
@@ -113,8 +112,14 @@ namespace LanguageExplorer.Filters
 			set
 			{
 				base.Cache = value;
-				SetCache(Finder, value);
-				SetCache(Matcher, value);
+				if (Finder is IStoresLcmCache finderCacheStorer)
+				{
+					finderCacheStorer.Cache = value;
+				}
+				if (Matcher is IStoresLcmCache matcherCacheStorer)
+				{
+					matcherCacheStorer.Cache = value;
+				}
 			}
 		}
 
@@ -123,8 +128,14 @@ namespace LanguageExplorer.Filters
 			set
 			{
 				base.DataAccess = value;
-				SetDataAccess(Finder, value);
-				SetDataAccess(Matcher, value);
+				if (Finder is IStoresDataAccess finderStoresDataAccess)
+				{
+					finderStoresDataAccess.DataAccess = value;
+				}
+				if (Matcher is IStoresDataAccess matcherStoresDataAccess)
+				{
+					matcherStoresDataAccess.DataAccess = value;
+				}
 			}
 		}
 

@@ -299,7 +299,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			m_idToDisplayCommand[fragId].PerformDisplay(this, fragId, hvo, vwenv);
 		}
 
-		internal void SetReversalWritingSystemFromRootObject(object obj)
+		internal void SetReversalWritingSystemFromRootObject(ICmObject obj)
 		{
 			if (obj is IReversalIndex index)
 			{

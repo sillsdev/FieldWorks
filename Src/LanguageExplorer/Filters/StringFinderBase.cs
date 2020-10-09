@@ -82,7 +82,7 @@ namespace LanguageExplorer.Filters
 		/// of the ones in existence. May preload data to make such a large succession of finds
 		/// more efficient. Also permitted to do nothing, as in this default implementation.
 		/// </summary>
-		public virtual void Preload(object rootObj)
+		public void Preload(ICmObject rootObj)
 		{
 		}
 

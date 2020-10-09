@@ -311,6 +311,7 @@
       <DependentUpon>DetailControlsStrings.resx</DependentUpon>
     </Compile>
     <Compile Include="Controls\DetailControls\RecordChangeHandlerFactory.cs" />
+    <Compile Include="Filters\IRecordFilter.cs" />
     <Compile Include="IReversalRecordList.cs" />
     <Compile Include="Controls\DetailControls\IChangeRootObject.cs" />
     <Compile Include="Areas\SharedListToolsUiWidgetMenuHelper.cs" />

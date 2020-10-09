@@ -47,7 +47,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		private Container components;
 		/// <summary />
-		protected internal RecordFilter m_currentFilter;
+		protected internal IRecordFilter m_currentFilter;
 		private int m_lastLayoutWidth;
 		/// <summary />
 		protected int m_icolCurrent;
@@ -301,7 +301,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// ensure that it is synchronized with the current filter in the record list.
 		/// </summary>
 		/// <param name="currentFilter">The current filter.</param>
-		public void UpdateFilterBar(RecordFilter currentFilter)
+		public void UpdateFilterBar(IRecordFilter currentFilter)
 		{
 			if (FilterBar != null)
 			{
@@ -2220,7 +2220,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// an FwLink which brought us here. If this is the case, generate a corresponding filter and
 		/// return it; otherwise, return null.
 		/// </summary>
-		internal RecordFilter FilterFromLink(FwLinkArgs linkArgs)
+		internal IRecordFilter FilterFromLink(FwLinkArgs linkArgs)
 		{
 			if (linkArgs == null)
 			{
@@ -2466,7 +2466,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// Append hidden columns that match the given (active) filter to our active columns list.
 		/// </summary>
-		internal bool AppendMatchingHiddenColumns(RecordFilter filter)
+		internal bool AppendMatchingHiddenColumns(IRecordFilter filter)
 		{
 			if (FilterInitializationComplete || filter == null)
 			{

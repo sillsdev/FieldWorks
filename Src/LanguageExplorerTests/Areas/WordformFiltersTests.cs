@@ -2,6 +2,7 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using LanguageExplorer;
 using LanguageExplorer.Areas;
 using LanguageExplorer.Filters;
 using LanguageExplorer.TestUtilities;
@@ -17,7 +18,7 @@ namespace LanguageExplorerTests.Areas
 		[Test]
 		public void OnAdjustFilterSelection()
 		{
-			var flp = new WfiRecordFilterListProvider();
+			IRecordFilterListProvider flp = new WfiRecordFilterListProvider();
 			var wfiset = Cache.ServiceLocator.GetInstance<IWfiWordSetFactory>().Create();
 			Cache.LangProject.MorphologicalDataOA.TestSetsOC.Add(wfiset);
 			var wf1 = Cache.ServiceLocator.GetInstance<IWfiWordformFactory>().Create();
@@ -33,7 +34,7 @@ namespace LanguageExplorerTests.Areas
 				wsf.Cache = Cache;
 				andFilter.Add(wsf);
 				flp.Filters.Add(wsf);
-				flp.OnAdjustFilterSelection(andFilter);
+				flp.AdjustFilterSelection(andFilter);
 			}
 			finally
 			{

@@ -3,6 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Collections.Generic;
+using SIL.LCModel;
 using SIL.LCModel.Core.KernelInterfaces;
 
 namespace LanguageExplorer.Filters
@@ -48,7 +49,7 @@ namespace LanguageExplorer.Filters
 		/// of the ones in existence. May preload data to make such a large succession of finds
 		/// more efficient. Also permitted to do nothing.
 		/// </summary>
-		void Preload(object rootObj);
+		void Preload(ICmObject rootObj);
 
 		/// <summary>
 		/// Called if we need to ensure that a particular (typically decorator) DA is used to

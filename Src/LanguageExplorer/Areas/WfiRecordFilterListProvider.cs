@@ -2,7 +2,7 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using LanguageExplorer.Filters;
 using SIL.FieldWorks.Common.FwUtils;
@@ -10,15 +10,17 @@ using SIL.LCModel;
 
 namespace LanguageExplorer.Areas
 {
-	public class WfiRecordFilterListProvider : IRecordFilterListProvider
+	internal sealed class WfiRecordFilterListProvider : IRecordFilterListProvider
 	{
 		/// <summary />
-		protected LcmCache _cache;
+		private LcmCache _cache;
+		private readonly List<IRecordFilter> _filters;
+		private IRecordFilterListProvider AsIRecordFilterListProvider => this;
 
 		/// <summary />
 		public WfiRecordFilterListProvider()
 		{
-			Filters = new ArrayList();
+			_filters = new List<IRecordFilter>();
 		}
 
 		#region Implementation of IPropertyTableProvider
@@ -61,31 +63,32 @@ namespace LanguageExplorer.Areas
 
 		#endregion
 
+		#region Implementation of IRecordFilterListProvider
 		/// <summary>
 		/// Reload the data items
 		/// </summary>
 		public void ReLoad()
 		{
-			Filters.Clear();
+			AsIRecordFilterListProvider.Filters.Clear();
 			foreach (var words in _cache.LangProject.MorphologicalDataOA.TestSetsOC)
 			{
-				Filters.Add(new WordSetFilter(words));
+				AsIRecordFilterListProvider.Filters.Add(new WordSetFilter(words));
 			}
 		}
 
 		/// <inheritdoc />
-		public ArrayList Filters { get; }
+		List<IRecordFilter> IRecordFilterListProvider.Filters => _filters;
 
 		/// <inheritdoc />
-		public RecordFilter GetFilter(string filterName)
+		IRecordFilter IRecordFilterListProvider.GetFilter(string filterName)
 		{
-			return Filters.Cast<RecordFilter>().FirstOrDefault(filter => filter.id == filterName);
+			return AsIRecordFilterListProvider.Filters.FirstOrDefault(filter => filter.Id == filterName);
 		}
 
 		/// <inheritdoc />
-		public bool OnAdjustFilterSelection(RecordFilter argument)
+		bool IRecordFilterListProvider.AdjustFilterSelection(IRecordFilter argument)
 		{
-			if (Filters.Count == 0)
+			if (AsIRecordFilterListProvider.Filters.Count == 0)
 			{
 				return false;   // we aren't providing any items.
 			}
@@ -93,36 +96,38 @@ namespace LanguageExplorer.Areas
 			if (ContainsOurFilter(currentFilter, out var matchingFilter))
 			{
 				// we found a match. if we don't already have a WordSetNullFilter, add it now.
-				if (!(Filters[0] is WordSetNullFilter))
+				if (!(AsIRecordFilterListProvider.Filters[0] is WordSetNullFilter))
 				{
-					Filters.Insert(0, new WordSetNullFilter());
+					AsIRecordFilterListProvider.Filters.Insert(0, new WordSetNullFilter());
 				}
 				// make sure the current filter has a valid set of wordform references.
 				var wordSetFilter = matchingFilter as WordSetFilter;
 				wordSetFilter.ReloadWordSet(_cache);
 			}
-			else if (Filters[0] is WordSetNullFilter)
+			else if (AsIRecordFilterListProvider.Filters[0] is WordSetNullFilter)
 			{
 				// the current filter doesn't have one of our filters, so remove the WordSetNullFilter.
-				Filters.RemoveAt(0);
+				AsIRecordFilterListProvider.Filters.RemoveAt(0);
 			}
 			// allow others to handle this message.
 			return false;
 		}
 
+		#endregion
+
 		/// <summary />
-		private bool ContainsOurFilter(RecordFilter filter, out RecordFilter matchingFilter)
+		private bool ContainsOurFilter(IRecordFilter filter, out IRecordFilter matchingFilter)
 		{
 			matchingFilter = null;
 			if (filter == null)
 			{
 				return false;
 			}
-			foreach (var currentFilter in Filters)
+			foreach (var currentFilter in AsIRecordFilterListProvider.Filters)
 			{
-				if (filter.Contains(currentFilter as RecordFilter))
+				if (filter.Contains(currentFilter))
 				{
-					matchingFilter = (RecordFilter)currentFilter;
+					matchingFilter = currentFilter;
 					return true;
 				}
 			}

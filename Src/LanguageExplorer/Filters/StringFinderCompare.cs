@@ -63,7 +63,7 @@ namespace LanguageExplorer.Filters
 		/// Currently will not be called if the column is also filtered; typically the same Preload() would end
 		/// up being done.
 		/// </summary>
-		public virtual void Preload(object rootObj)
+		public virtual void Preload(ICmObject rootObj)
 		{
 			Finder.Preload(rootObj);
 		}

@@ -63,7 +63,7 @@ namespace LanguageExplorerTests.Filters
 		// IntStringComparer (SortersEtc)
 
 		// Filters:
-		// RecordFilter (abstract)
+		// IRecordFilter (abstract)
 		// ProblemAnnotationFilter (PersistMatchersEtc)
 		// FilterBarCellFilter (PersistMatchersEtc)
 		// AndFilter (PersistMatchersEtc)

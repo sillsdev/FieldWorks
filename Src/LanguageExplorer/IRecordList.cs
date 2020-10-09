@@ -30,7 +30,7 @@ namespace LanguageExplorer
 		ICmObject CurrentObject { get; }
 		int CurrentObjectHvo { get; }
 		bool Editable { get; set; }
-		RecordFilter Filter { get; set; }
+		IRecordFilter Filter { get; set; }
 		string FontName { get; }
 		bool HasEmptyList { get; }
 		string Id { get; }

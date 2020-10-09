@@ -17,21 +17,21 @@ namespace LanguageExplorer
 	public class FilterChangeEventArgs
 	{
 		/// <summary />
-		public FilterChangeEventArgs(RecordFilter added, RecordFilter removed)
+		public FilterChangeEventArgs(IRecordFilter added, IRecordFilter removed)
 		{
 			Added = added;
 			Removed = removed;
 		}
 
 		/// <summary>
-		/// Gets the added RecordFilter.
+		/// Gets the added IRecordFilter.
 		/// </summary>
-		public RecordFilter Added { get; }
+		public IRecordFilter Added { get; }
 
 		/// <summary>
-		/// Gets the removed RecordFilter.
+		/// Gets the removed IRecordFilter.
 		/// </summary>
-		public RecordFilter Removed { get; }
+		public IRecordFilter Removed { get; }
 	}
 
 	/// <summary />

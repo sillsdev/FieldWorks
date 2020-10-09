@@ -147,10 +147,9 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// when this filter is active. Otherwise return null.
 		/// By default, if the filter is exactly the same, just return your label.
 		/// </summary>
-		public virtual ITsString SetFromFilter(RecordFilter recordFilter, FilterSortItem item)
+		public virtual ITsString SetFromFilter(IRecordFilter recordFilter, FilterSortItem item)
 		{
-			var filter = recordFilter as FilterBarCellFilter;
-			if (filter == null)
+			if (!(recordFilter is FilterBarCellFilter filter))
 			{
 				return null; // combo items that don't produce FilterBarCellFilters should override.
 			}

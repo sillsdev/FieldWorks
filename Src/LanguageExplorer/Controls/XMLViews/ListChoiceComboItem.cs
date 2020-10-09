@@ -268,7 +268,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// when this filter is active. Otherwise return null.
 		/// By default, if the filter is exactly the same, just return your label.
 		/// </summary>
-		public override ITsString SetFromFilter(RecordFilter recordFilter, FilterSortItem item)
+		public override ITsString SetFromFilter(IRecordFilter recordFilter, FilterSortItem item)
 		{
 			return !(recordFilter is ListChoiceFilter filter) ? null : (!filter.CompatibleFilter(m_colSpec) ? null : MakeLabel(filter));
 		}

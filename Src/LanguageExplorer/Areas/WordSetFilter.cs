@@ -21,7 +21,7 @@ namespace LanguageExplorer.Areas
 		/// <summary />
 		public WordSetFilter(IWfiWordSet wordSet)
 		{
-			id = wordSet.Hvo.ToString();
+			Id = wordSet.Hvo.ToString();
 			Name = wordSet.Name.AnalysisDefaultWritingSystem.Text;
 			LoadCases(wordSet);
 		}
@@ -38,7 +38,7 @@ namespace LanguageExplorer.Areas
 		/// </summary>
 		internal void ReloadWordSet(LcmCache cache)
 		{
-			LoadCases((IWfiWordSet)cache.ServiceLocator.GetObject(int.Parse(id)));
+			LoadCases((IWfiWordSet)cache.ServiceLocator.GetObject(int.Parse(Id)));
 		}
 
 		/// <summary>
@@ -54,7 +54,7 @@ namespace LanguageExplorer.Areas
 		public override void PersistAsXml(XElement element)
 		{
 			base.PersistAsXml(element);
-			XmlUtils.SetAttribute(element, "id", id);
+			XmlUtils.SetAttribute(element, "id", Id);
 			XmlUtils.SetAttribute(element, "wordlist", XmlUtils.MakeStringFromList(m_hvos.ToList()));
 		}
 
@@ -64,16 +64,16 @@ namespace LanguageExplorer.Areas
 		public override void InitXml(XElement element)
 		{
 			base.InitXml(element);
-			id = XmlUtils.GetMandatoryAttributeValue(element, "id");
+			Id = XmlUtils.GetMandatoryAttributeValue(element, "id");
 			m_hvos = XmlUtils.GetMandatoryIntegerListAttributeValue(element, "wordlist");
 		}
 
 		/// <summary>
 		/// Test to see if this filter matches the other filter.
 		/// </summary>
-		public override bool SameFilter(RecordFilter other)
+		public override bool SameFilter(IRecordFilter other)
 		{
-			return other is WordSetFilter && other.id == id && other.Name == Name;
+			return other is WordSetFilter && other.Id == Id && other.Name == Name;
 		}
 
 		/// <summary>

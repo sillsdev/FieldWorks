@@ -37,7 +37,7 @@ namespace LanguageExplorer.Filters
 		/// <summary>
 		/// See whether the comparer can preload. Currently we only know about one kind that can.
 		/// </summary>
-		public override void Preload(object rootObj)
+		public override void Preload(ICmObject rootObj)
 		{
 			base.Preload(rootObj);
 			if (Comparer is StringFinderCompare stringFinderCompare)

@@ -19,16 +19,16 @@ namespace LanguageExplorer.Controls.XMLViews
 	/// column.</summary>
 	/// <remarks>
 	/// Todo: for reasonable efficiency, need a way to preload the information needed to
-	/// evaluate filter for all items. This might be a method on RecordFilter.
+	/// evaluate filter for all items. This might be a method on IRecordFilter.
 	/// </remarks>
 	internal sealed class FilterSortItem : IDisposable
 	{
 		private IStringFinder m_finder;
 		private FwComboBox m_combo;
 		private IMatcher m_matcher;
-		private RecordFilter m_filter;
+		private IRecordFilter m_filter;
 		private RecordSorter m_sorter;
-		private readonly DisposableObjectsSet<RecordFilter> m_FiltersToDispose = new DisposableObjectsSet<RecordFilter>();
+		private readonly DisposableObjectsSet<IRecordFilter> m_FiltersToDispose = new DisposableObjectsSet<IRecordFilter>();
 
 		/// <summary />
 		internal event FilterChangeHandler FilterChanged;
@@ -192,7 +192,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		/// <value>The filter.</value>
 		/// <remarks>A Filter assigned here will be disposed by FilterSortItem.Dispose.</remarks>
-		internal RecordFilter Filter
+		internal IRecordFilter Filter
 		{
 			get => m_filter;
 			set
@@ -213,7 +213,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// filter and update your display accordingly, and answer true. Otherwise
 		/// answer false.
 		/// </summary>
-		internal bool SetFromFilter(RecordFilter filter)
+		internal bool SetFromFilter(IRecordFilter filter)
 		{
 			// Need to set even if set previously. Otherwise it doesn't refresh properly.
 			if (m_combo == null)

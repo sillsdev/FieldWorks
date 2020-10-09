@@ -3,7 +3,6 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
@@ -205,7 +204,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// filters could have been created by any of your filter sort items, and if so,
 		/// update the filter bar to show they are active.
 		/// </summary>
-		public void UpdateActiveItems(RecordFilter currentFilter)
+		public void UpdateActiveItems(IRecordFilter currentFilter)
 		{
 			try
 			{
@@ -215,8 +214,8 @@ namespace LanguageExplorer.Controls.XMLViews
 					// We have to copy the list, because the internal operation of this loop
 					// may change the original list, invalidating the (implicit) enumerator.
 					// See LT-1133 for an example of what happens without making this copy.
-					var filters = (ArrayList)andFilter.Filters.Clone();
-					foreach (RecordFilter filter in filters)
+					var filters = new List<IRecordFilter>(andFilter.Filters);
+					foreach (var filter in filters)
 					{
 						ActivateCompatibleFilter(filter);
 					}
@@ -252,7 +251,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// (Except: if it's not a user-visible filter, we don't expect to show it, so
 		/// skip it.)
 		/// </summary>
-		private void ActivateCompatibleFilter(RecordFilter filter)
+		private void ActivateCompatibleFilter(IRecordFilter filter)
 		{
 			if (filter == null || !filter.IsUserVisible)
 			{
@@ -275,14 +274,14 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// column specification.
 		/// </summary>
 		/// <returns>true, if the column node spec can use the filter.</returns>
-		public bool CanActivateFilter(RecordFilter filter, XElement colSpec)
+		public bool CanActivateFilter(IRecordFilter filter, XElement colSpec)
 		{
 			switch (filter)
 			{
 				case AndFilter andFilter:
 				{
 					var filters = andFilter.Filters;
-					if (filters.Cast<RecordFilter>().Any(rf => (rf is FilterBarCellFilter || rf is ListChoiceFilter) && CanActivateFilter(rf, colSpec)))
+					if (filters.Any(rf => (rf is FilterBarCellFilter || rf is ListChoiceFilter) && CanActivateFilter(rf, colSpec)))
 					{
 						return true;
 					}

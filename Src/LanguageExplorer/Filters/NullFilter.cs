@@ -17,13 +17,8 @@ namespace LanguageExplorer.Filters
 		public NullFilter()
 		{
 			Name = FiltersStrings.ksNoFilter;
-			id = "No Filter";
+			Id = "No Filter";
 		}
-
-		/// <summary>
-		/// Gets the name of the image.
-		/// </summary>
-		public override string imageName => "NoFilter";
 
 		/// <summary>
 		/// decide whether this object should be included
