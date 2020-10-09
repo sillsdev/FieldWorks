@@ -53,7 +53,7 @@ namespace LanguageExplorer
 		/// <summary>
 		/// A reference to a sorter.
 		/// </summary>
-		protected RecordSorter m_sorter;
+		protected IRecordSorter m_sorter;
 		/// <summary>
 		/// A reference to a filter.
 		/// </summary>
@@ -117,7 +117,7 @@ namespace LanguageExplorer
 		private ListUpdateHelper _bulkEditListUpdateHelper;
 		private const string SelectedListBarNodeErrorMessage = "An item stored in the Property Table under SelectedListBarNode (typically from the ListView of an xWindow's record bar) should have an Hvo stored in its Tag property.";
 		private bool _isDefaultSort;
-		private RecordSorter _defaultSorter;
+		private IRecordSorter _defaultSorter;
 		private bool _reloadingDueToMissingObject;
 		/// <summary>
 		/// We need to store what filter we are responsible for setting, locally, so
@@ -166,7 +166,7 @@ namespace LanguageExplorer
 			VirtualListPublisher = new ObjectListPublisher(decorator, RecordListFlid);
 		}
 
-		internal RecordList(string id, StatusBar statusBar, ISilDataAccessManaged decorator, bool usingAnalysisWs, VectorPropertyParameterObject vectorPropertyParameterObject, RecordFilterParameterObject recordFilterParameterObject = null, RecordSorter defaultSorter = null)
+		internal RecordList(string id, StatusBar statusBar, ISilDataAccessManaged decorator, bool usingAnalysisWs, VectorPropertyParameterObject vectorPropertyParameterObject, RecordFilterParameterObject recordFilterParameterObject = null, IRecordSorter defaultSorter = null)
 			: this(decorator)
 		{
 			Guard.AgainstNullOrEmptyString(id, nameof(id));
@@ -1178,7 +1178,7 @@ namespace LanguageExplorer
 			}
 		}
 
-		public void OnSorterChanged(RecordSorter sorter, string sortName, bool isDefaultSort)
+		public void OnSorterChanged(IRecordSorter sorter, string sortName, bool isDefaultSort)
 		{
 			_isDefaultSort = isDefaultSort;
 			SortName = sortName;
@@ -1397,7 +1397,7 @@ namespace LanguageExplorer
 		/// <summary>
 		/// Gets or sets a sorter.
 		/// </summary>
-		public RecordSorter Sorter
+		public IRecordSorter Sorter
 		{
 			get => m_sorter;
 			set
@@ -2416,12 +2416,12 @@ namespace LanguageExplorer
 					return false;
 				}
 			}
-			RecordSorter sorter = null;
+			IRecordSorter sorter = null;
 			if (persistSorter != null)
 			{
 				try
 				{
-					sorter = DynamicLoader.RestoreObject(XDocument.Parse(persistSorter).Root) as RecordSorter;
+					sorter = DynamicLoader.RestoreObject(XDocument.Parse(persistSorter).Root) as IRecordSorter;
 				}
 				catch
 				{
@@ -3190,7 +3190,7 @@ namespace LanguageExplorer
 		/// Change the sorter...and resort if the list already exists.
 		/// </summary>
 		/// <param name="sorter"></param>
-		protected virtual void ChangeSorter(RecordSorter sorter)
+		protected virtual void ChangeSorter(IRecordSorter sorter)
 		{
 			Sorter = sorter;
 

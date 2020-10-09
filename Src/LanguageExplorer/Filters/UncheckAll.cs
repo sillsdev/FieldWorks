@@ -7,7 +7,7 @@ namespace LanguageExplorer.Filters
 	/// <summary>
 	/// A dummy filter to uncheck any selections in the View/Filters menu
 	/// </summary>
-	public class UncheckAll : NullFilter
+	internal class UncheckAll : NullFilter
 	{
 		public UncheckAll()
 		{

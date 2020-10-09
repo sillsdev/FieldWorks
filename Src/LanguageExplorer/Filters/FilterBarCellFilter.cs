@@ -20,10 +20,10 @@ namespace LanguageExplorer.Filters
 	/// it would be well to pre-load the cache with all relevant properties in as few queries as
 	/// possible. It is designed to allow easy conversion to passing an HVO to Accept.
 	/// </summary>
-	public class FilterBarCellFilter : RecordFilter
+	internal class FilterBarCellFilter : RecordFilter
 	{
 		/// <summary />
-		public FilterBarCellFilter(IStringFinder finder, IMatcher matcher)
+		internal FilterBarCellFilter(IStringFinder finder, IMatcher matcher)
 		{
 			Finder = finder;
 			Matcher = matcher;

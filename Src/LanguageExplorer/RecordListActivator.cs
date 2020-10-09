@@ -197,7 +197,7 @@ namespace LanguageExplorer
 
 		private abstract class ReversalListBase : RecordList, IReversalRecordList
 		{
-			internal ReversalListBase(string id, StatusBar statusBar, ISilDataAccessManaged decorator, bool usingAnalysisWs, VectorPropertyParameterObject vectorPropertyParameterObject, RecordFilterParameterObject recordFilterParameterObject = null, RecordSorter defaultSorter = null)
+			internal ReversalListBase(string id, StatusBar statusBar, ISilDataAccessManaged decorator, bool usingAnalysisWs, VectorPropertyParameterObject vectorPropertyParameterObject, RecordFilterParameterObject recordFilterParameterObject = null, IRecordSorter defaultSorter = null)
 				: base(id, statusBar, decorator, usingAnalysisWs, vectorPropertyParameterObject, recordFilterParameterObject, defaultSorter)
 			{
 			}

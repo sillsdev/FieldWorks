@@ -2,8 +2,6 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using LanguageExplorer.Filters;
-
 namespace LanguageExplorer
 {
 	/// <summary>
@@ -14,10 +12,10 @@ namespace LanguageExplorer
 	/// need for this, and if we do, we can easily keep the current constructor but change
 	/// the accessors, which are probably rather less used.
 	/// </summary>
-	public class FilterChangeEventArgs
+	internal class FilterChangeEventArgs
 	{
 		/// <summary />
-		public FilterChangeEventArgs(IRecordFilter added, IRecordFilter removed)
+		internal FilterChangeEventArgs(IRecordFilter added, IRecordFilter removed)
 		{
 			Added = added;
 			Removed = removed;
@@ -26,14 +24,14 @@ namespace LanguageExplorer
 		/// <summary>
 		/// Gets the added IRecordFilter.
 		/// </summary>
-		public IRecordFilter Added { get; }
+		internal IRecordFilter Added { get; }
 
 		/// <summary>
 		/// Gets the removed IRecordFilter.
 		/// </summary>
-		public IRecordFilter Removed { get; }
+		internal IRecordFilter Removed { get; }
 	}
 
 	/// <summary />
-	public delegate void FilterChangeHandler(object sender, FilterChangeEventArgs e);
+	internal delegate void FilterChangeHandler(object sender, FilterChangeEventArgs e);
 }

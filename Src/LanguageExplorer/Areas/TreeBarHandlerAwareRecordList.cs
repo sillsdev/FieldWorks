@@ -23,7 +23,7 @@ namespace LanguageExplorer.Areas
 		private ITreeBarHandler _treeBarHandler;
 
 		/// <summary />
-		internal TreeBarHandlerAwareRecordList(string id, StatusBar statusBar, ISilDataAccessManaged decorator, bool usingAnalysisWs, ITreeBarHandler treeBarHandler, VectorPropertyParameterObject vectorPropertyParameterObject, RecordFilterParameterObject recordFilterParameterObject = null, RecordSorter defaultSorter = null)
+		internal TreeBarHandlerAwareRecordList(string id, StatusBar statusBar, ISilDataAccessManaged decorator, bool usingAnalysisWs, ITreeBarHandler treeBarHandler, VectorPropertyParameterObject vectorPropertyParameterObject, RecordFilterParameterObject recordFilterParameterObject = null, IRecordSorter defaultSorter = null)
 			: base(id, statusBar, decorator, usingAnalysisWs, vectorPropertyParameterObject, recordFilterParameterObject, defaultSorter)
 		{
 			Guard.AgainstNull(treeBarHandler, nameof(treeBarHandler));

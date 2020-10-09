@@ -15,7 +15,7 @@ namespace LanguageExplorer.Filters
 	/// <summary>
 	/// sort (in memory) based on in LCM property
 	/// </summary>
-	public class PropertyRecordSorter : RecordSorter
+	internal class PropertyRecordSorter : RecordSorter
 	{
 		private IComparer _comparer;
 		private LcmCache _cache;
@@ -83,7 +83,7 @@ namespace LanguageExplorer.Filters
 		/// <summary>
 		/// Get the object that does the comparisons.
 		/// </summary>
-		protected internal override IComparer Comparer => _comparer ?? (_comparer = new LcmCompare(PropertyName, _cache));
+		public override IComparer Comparer => _comparer ?? (_comparer = new LcmCompare(PropertyName, _cache));
 
 		/// <summary>
 		/// Sorts the specified records.

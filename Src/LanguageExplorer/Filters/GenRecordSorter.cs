@@ -17,7 +17,7 @@ namespace LanguageExplorer.Filters
 	/// A very general record sorter class, based on an arbitrary implementation of IComparer
 	/// that can compare two LCM objects.
 	/// </summary>
-	public class GenRecordSorter : RecordSorter
+	internal class GenRecordSorter : RecordSorter
 	{
 		protected IComparer _comparer;
 
@@ -65,7 +65,7 @@ namespace LanguageExplorer.Filters
 		/// Return true if the other sorter is 'compatible' with this, in the sense that
 		/// either they produce the same sort sequence, or one derived from it (e.g., by reversing).
 		/// </summary>
-		public override bool CompatibleSorter(RecordSorter other)
+		public override bool CompatibleSorter(IRecordSorter other)
 		{
 			if (!(other is GenRecordSorter grsOther))
 			{
@@ -133,7 +133,7 @@ namespace LanguageExplorer.Filters
 		/// <summary>
 		/// Gets the comparer.
 		/// </summary>
-		protected internal override IComparer Comparer => _comparer;
+		public override IComparer Comparer => _comparer;
 
 		/// <summary>
 		/// Add to the specified XML node information required to create a new

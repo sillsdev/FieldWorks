@@ -5,9 +5,9 @@
 using System.Xml.Linq;
 using SIL.LCModel;
 
-namespace LanguageExplorer.Filters
+namespace LanguageExplorer
 {
-	public interface IRecordFilter : IPersistAsXml, IStoresLcmCache, IStoresDataAccess
+	internal interface IRecordFilter : IPersistAsXml, IStoresLcmCache, IStoresDataAccess
 	{
 		/// <summary>
 		/// Gets the name.

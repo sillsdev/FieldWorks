@@ -756,7 +756,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		private sealed class RespellerTemporaryRecordList : TemporaryRecordList
 		{
 			/// <summary />
-			internal RespellerTemporaryRecordList(string id, StatusBar statusBar, ISilDataAccessManaged decorator, bool usingAnalysisWs, VectorPropertyParameterObject vectorPropertyParameterObject, RecordFilterParameterObject recordFilterParameterObject = null, RecordSorter defaultSorter = null)
+			internal RespellerTemporaryRecordList(string id, StatusBar statusBar, ISilDataAccessManaged decorator, bool usingAnalysisWs, VectorPropertyParameterObject vectorPropertyParameterObject, RecordFilterParameterObject recordFilterParameterObject = null, IRecordSorter defaultSorter = null)
 				: base(id, statusBar, decorator, usingAnalysisWs, vectorPropertyParameterObject, recordFilterParameterObject, defaultSorter)
 			{
 			}
@@ -819,7 +819,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 
 				internal ISilDataAccessManaged SpecialDataAccess { get; set; }
 
-				protected internal override IComparer Comparer => new OccurrenceComparer(m_cache, SpecialDataAccess);
+				public override IComparer Comparer => new OccurrenceComparer(m_cache, SpecialDataAccess);
 
 				/// <summary>
 				/// Do the actual sort.

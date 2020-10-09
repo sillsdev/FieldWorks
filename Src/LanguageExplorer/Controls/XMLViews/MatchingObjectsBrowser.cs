@@ -280,7 +280,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		{
 			var firstSearchStr = firstField.String;
 			// if the firstSearchStr is null we can't get its writing system
-			RecordSorter sorter = null;
+			IRecordSorter sorter = null;
 			if (firstSearchStr != null)
 			{
 				var ws = firstSearchStr.get_WritingSystemAt(0);

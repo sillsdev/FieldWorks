@@ -43,7 +43,7 @@ using SIL.Xml;
 namespace LanguageExplorer.Filters
 {
 	/// <summary />
-	public abstract class RecordFilter : IRecordFilter
+	internal abstract class RecordFilter : IRecordFilter
 	{
 		/// <summary />
 		protected RecordFilter()

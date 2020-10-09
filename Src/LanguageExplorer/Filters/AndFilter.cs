@@ -17,7 +17,7 @@ namespace LanguageExplorer.Filters
 	/// they all accept. Typically there is one item for each non-blank cell in the FilterBar,
 	/// plus possibly the original filter that helps define the collection we are viewing.
 	/// </summary>
-	public class AndFilter : RecordFilter
+	internal class AndFilter : RecordFilter
 	{
 		/// <summary>
 		/// decide whether this object should be included

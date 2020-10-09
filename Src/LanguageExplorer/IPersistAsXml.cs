@@ -6,7 +6,7 @@ using System.Xml.Linq;
 
 namespace LanguageExplorer
 {
-	public interface IPersistAsXml
+	internal interface IPersistAsXml
 	{
 		/// <summary>
 		/// Add to the specified XML element information required to create a new

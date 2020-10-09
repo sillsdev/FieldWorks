@@ -7,7 +7,7 @@ namespace LanguageExplorer.Filters
 	/// <summary>
 	/// A filter for the View/Filter menu/toolbar to turn off all filters.
 	/// </summary>
-	public class NoFilters : NullFilter
+	internal class NoFilters : NullFilter
 	{
 		public NoFilters() : base()
 		{

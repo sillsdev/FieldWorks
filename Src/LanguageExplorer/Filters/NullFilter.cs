@@ -11,7 +11,7 @@ namespace LanguageExplorer.Filters
 	/// the RecordList will recognize this has been set and will actually clear
 	/// its filter... so this will not actually be used and us what actually slow down showing everything.
 	/// </summary>
-	public class NullFilter : RecordFilter
+	internal class NullFilter : RecordFilter
 	{
 		/// <summary />
 		public NullFilter()

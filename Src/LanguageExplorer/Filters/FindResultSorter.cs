@@ -11,9 +11,9 @@ namespace LanguageExplorer.Filters
 	/// <summary>
 	/// Extends the GenRecordSorter to prioritize the sorting of more exact matches
 	/// </summary>
-	public class FindResultSorter : GenRecordSorter
+	internal class FindResultSorter : GenRecordSorter
 	{
-		public FindResultSorter(ITsString searchString, RecordSorter sorter)
+		internal FindResultSorter(ITsString searchString, IRecordSorter sorter)
 		{
 			_comparer = searchString.Text != null ? new ExactMatchFirstComparer(searchString.Text, sorter.Comparer) : sorter.Comparer;
 		}

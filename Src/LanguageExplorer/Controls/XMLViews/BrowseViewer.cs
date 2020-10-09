@@ -37,7 +37,7 @@ namespace LanguageExplorer.Controls.XMLViews
 	internal class BrowseViewer : MainUserControl, ISnapSplitPosition, IMainContentControl, IPostLayoutInit, IRefreshableRoot
 	{
 		private ContextMenuStrip _browseViewContextMenu;
-		private readonly DisposableObjectsSet<RecordSorter> m_SortersToDispose = new DisposableObjectsSet<RecordSorter>();
+		private readonly DisposableObjectsSet<IRecordSorter> m_SortersToDispose = new DisposableObjectsSet<IRecordSorter>();
 		private UiWidgetController _uiWidgetController;
 		private XElement m_configParamsElement;
 		/// <summary />
@@ -413,12 +413,12 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// Set/Get the sorter. Setting using this does not raise SorterChanged...it's meant
 		/// to be used to initialize it by the client.
 		/// </summary>
-		public RecordSorter Sorter { get; set; }
+		public IRecordSorter Sorter { get; set; }
 
 		/// <summary>
 		/// Set the sorter and raise the SortChanged event.
 		/// </summary>
-		private void SetAndRaiseSorter(RecordSorter sorter, bool fTriggerChanged)
+		private void SetAndRaiseSorter(IRecordSorter sorter, bool fTriggerChanged)
 		{
 			SyncSortArrows(sorter);
 			Sorter = sorter;
@@ -436,21 +436,21 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// Set up all of the sort arrows based on the sorter
 		/// </summary>
-		private void SyncSortArrows(RecordSorter sorter)
+		private void SyncSortArrows(IRecordSorter sorter)
 		{
 			ResetSortArrowColumn();
 			if (sorter == null)
 			{
 				return;
 			}
-			List<RecordSorter> sorters;
+			List<IRecordSorter> sorters;
 			if (sorter is AndSorter andSorter)
 			{
 				sorters = andSorter.Sorters;
 			}
 			else
 			{
-				sorters = new List<RecordSorter>
+				sorters = new List<IRecordSorter>
 				{
 					sorter
 				};
@@ -889,13 +889,13 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <param name="sorter"></param>
 		/// <param name="fSortChanged">true to force updating the sorter (even if the new one is the same)</param>
 		/// <returns>true if it changed the sorter.</returns>
-		public bool InitSorter(RecordSorter sorter, bool fSortChanged = false)
+		public bool InitSorter(IRecordSorter sorter, bool fSortChanged = false)
 		{
 			if (FilterBar == null || FilterBar.ColumnInfo.Length <= 0)
 			{
 				return false;
 			}
-			List<RecordSorter> sorters;
+			List<IRecordSorter> sorters;
 			var andSorter = sorter as AndSorter;
 			if (andSorter != null)
 			{
@@ -903,13 +903,13 @@ namespace LanguageExplorer.Controls.XMLViews
 			}
 			else
 			{
-				sorters = new List<RecordSorter>();
+				sorters = new List<IRecordSorter>();
 				if (sorter != null)
 				{
 					sorters.Add(sorter);
 				}
 			}
-			var newSorters = new List<RecordSorter>();
+			var newSorters = new List<IRecordSorter>();
 			for (var i = 0; i < sorters.Count; i++)
 			{
 				var ifsi = ColumnInfoIndexOfCompatibleSorter(sorters[i]);
@@ -974,7 +974,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		}
 
 		/// <summary />
-		protected int ColumnInfoIndexOfCompatibleSorter(RecordSorter sorter)
+		protected int ColumnInfoIndexOfCompatibleSorter(IRecordSorter sorter)
 		{
 			var iSortColumn = -1;
 			for (var icol = 0; icol < FilterBar.ColumnInfo.Length; icol++)
@@ -1776,7 +1776,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			SetAndRaiseSorter(newSorter, true);
 		}
 
-		private static RecordSorter ReverseNewSorter(RecordSorter newSorter, RecordSorter oldSorter)
+		private static IRecordSorter ReverseNewSorter(IRecordSorter newSorter, IRecordSorter oldSorter)
 		{
 			var origNewSorter = newSorter; // In case of complete failure
 			if (!(oldSorter is GenRecordSorter grs))
@@ -1810,7 +1810,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				return false; // If there isn't a sorter, no columns can be actively sorted
 			}
-			var sorters = Sorter is AndSorter sorter ? sorter.Sorters : new List<RecordSorter> { Sorter };
+			var sorters = Sorter is AndSorter sorter ? sorter.Sorters : new List<IRecordSorter> { Sorter };
 			// Attempts to locate the sorter in the list of active sorters that responsible for the column in question
 			return sorters.Any(rs => ColumnInfoIndexOfCompatibleSorter(rs) == icol - FilterBar.ColumnOffset) && SpecificColumnSortedFromEnd(icol);
 		}
@@ -2522,7 +2522,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// class (vernacular or analysis).
 		/// </summary>
 		/// <remarks>This is needed for LT-10293.</remarks>
-		public RecordSorter CreateSorterForFirstColumn(int ws)
+		public IRecordSorter CreateSorterForFirstColumn(int ws)
 		{
 			XElement colSpec = null;
 			CoreWritingSystemDefinition colWs = null;
@@ -2563,12 +2563,12 @@ namespace LanguageExplorer.Controls.XMLViews
 			}
 		}
 
-		private RecordSorter GetCurrentColumnSorter()
+		private IRecordSorter GetCurrentColumnSorter()
 		{
 			return GetColumnSorter(m_icolCurrent);
 		}
 
-		private RecordSorter GetColumnSorter(int icol)
+		private IRecordSorter GetColumnSorter(int icol)
 		{
 			if (FilterBar == null)
 			{

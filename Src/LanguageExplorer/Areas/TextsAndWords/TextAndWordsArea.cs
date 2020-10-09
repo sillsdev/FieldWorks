@@ -298,7 +298,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 				return base.NeedToReloadList() || ReloadRequested;
 			}
 
-			protected override void ChangeSorter(RecordSorter sorter)
+			protected override void ChangeSorter(IRecordSorter sorter)
 			{
 				RequestRefresh();
 				base.ChangeSorter(sorter);

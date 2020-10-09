@@ -9,16 +9,15 @@ using System.Diagnostics;
 using System.Linq;
 using System.Xml.Linq;
 using System.Xml.XPath;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 
 namespace LanguageExplorer.Filters
 {
-	public class AndSorter : RecordSorter
+	internal class AndSorter : RecordSorter
 	{
 		public AndSorter() { }
 
-		public AndSorter(List<RecordSorter> sorters) : this()
+		public AndSorter(List<IRecordSorter> sorters) : this()
 		{
 			foreach (var recordSorter in sorters)
 			{
@@ -29,7 +28,7 @@ namespace LanguageExplorer.Filters
 		/// <summary>
 		/// Adds a sorter
 		/// </summary>
-		public void Add(RecordSorter sorter)
+		public void Add(IRecordSorter sorter)
 		{
 			Sorters.Add(sorter);
 		}
@@ -40,7 +39,7 @@ namespace LanguageExplorer.Filters
 		/// <param name="index">The index where we want to replace the sorter</param>
 		/// <param name="oldSorter">A reference to the old sorter</param>
 		/// <param name="newSorter">A reference to the new sorter</param>
-		public void ReplaceAt(int index, RecordSorter oldSorter, RecordSorter newSorter)
+		public void ReplaceAt(int index, IRecordSorter oldSorter, IRecordSorter newSorter)
 		{
 			if (index < 0 || index >= Sorters.Count)
 			{
@@ -52,7 +51,7 @@ namespace LanguageExplorer.Filters
 		/// <summary>
 		/// Gets the list of sorters.
 		/// </summary>
-		public List<RecordSorter> Sorters { get; private set; } = new List<RecordSorter>();
+		public List<IRecordSorter> Sorters { get; private set; } = new List<IRecordSorter>();
 
 		/// <summary>
 		/// Add to collector the ManyOnePathSortItems which this sorter derives from
@@ -84,7 +83,7 @@ namespace LanguageExplorer.Filters
 		}
 
 		// This will probably never be used, but for the sake of completeness, here it is
-		protected internal override IComparer Comparer => new AndSorterComparer(Sorters);
+		public override IComparer Comparer => new AndSorterComparer(Sorters);
 
 		public override void Sort(List<IManyOnePathSortItem> records)
 		{
@@ -112,12 +111,12 @@ namespace LanguageExplorer.Filters
 			MergeInto(records, newRecords, new AndSorterComparer(Sorters));
 		}
 
-		public override bool CompatibleSorter(RecordSorter other)
+		public override bool CompatibleSorter(IRecordSorter other)
 		{
 			return Sorters.Any(recordSorter => recordSorter.CompatibleSorter(other));
 		}
 
-		public int CompatibleSorterIndex(RecordSorter other)
+		public int CompatibleSorterIndex(IRecordSorter other)
 		{
 			for (var i = 0; i < Sorters.Count; i++)
 			{
@@ -136,10 +135,10 @@ namespace LanguageExplorer.Filters
 		public override void InitXml(XElement element)
 		{
 			base.InitXml(element);
-			Sorters = new List<RecordSorter>(element.Elements().Count());
+			Sorters = new List<IRecordSorter>(element.Elements().Count());
 			foreach (var child in element.Elements())
 			{
-				Sorters.Add((RecordSorter)DynamicLoader.RestoreObject(child.XPathSelectElement(".")));
+				Sorters.Add((IRecordSorter)DynamicLoader.RestoreObject(child.XPathSelectElement(".")));
 			}
 		}
 
@@ -156,13 +155,13 @@ namespace LanguageExplorer.Filters
 
 		private sealed class AndSorterComparer : IComparer, ICloneable
 		{
-			private List<RecordSorter> m_sorters;
+			private List<IRecordSorter> m_sorters;
 			private List<IComparer> m_comps;
 
 			/// <summary>
 			/// Creates a new AndSortComparer
 			/// </summary>
-			public AndSorterComparer(List<RecordSorter> sorters)
+			public AndSorterComparer(List<IRecordSorter> sorters)
 			{
 				m_sorters = sorters;
 				m_comps = new List<IComparer>();

@@ -16,7 +16,7 @@ namespace LanguageExplorer.Controls.XMLViews
 	/// from the list item, since the list item (and hence flid and subflid)
 	/// may change.
 	/// </summary>
-	public class ColumnSpecFilter : ListChoiceFilter
+	internal class ColumnSpecFilter : ListChoiceFilter
 	{
 		XElement m_colSpec;
 		XmlBrowseViewVc m_vc;

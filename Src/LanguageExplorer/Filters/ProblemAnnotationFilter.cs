@@ -5,7 +5,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.Xml;
 
@@ -15,7 +14,7 @@ namespace LanguageExplorer.Filters
 	/// this filter passes CmAnnotations which are pointing at objects of the class listed
 	/// in the targetClasses attribute.
 	/// </summary>
-	public class ProblemAnnotationFilter : RecordFilter
+	internal class ProblemAnnotationFilter : RecordFilter
 	{
 		private LcmCache m_cache;
 

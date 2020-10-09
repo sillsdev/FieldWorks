@@ -180,7 +180,7 @@ namespace LanguageExplorer.Areas
 
 		#region Message Handlers
 
-		private static bool AreSortersCompatible(RecordSorter first, RecordSorter second)
+		private static bool AreSortersCompatible(IRecordSorter first, IRecordSorter second)
 		{
 			return first.CompatibleSorter(second);
 		}

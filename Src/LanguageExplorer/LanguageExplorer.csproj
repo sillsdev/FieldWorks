@@ -311,7 +311,8 @@
       <DependentUpon>DetailControlsStrings.resx</DependentUpon>
     </Compile>
     <Compile Include="Controls\DetailControls\RecordChangeHandlerFactory.cs" />
-    <Compile Include="Filters\IRecordFilter.cs" />
+    <Compile Include="IRecordFilter.cs" />
+    <Compile Include="IRecordSorter.cs" />
     <Compile Include="IReversalRecordList.cs" />
     <Compile Include="Controls\DetailControls\IChangeRootObject.cs" />
     <Compile Include="Areas\SharedListToolsUiWidgetMenuHelper.cs" />
@@ -977,13 +978,13 @@
     <Compile Include="Filters\GenRecordSorter.cs" />
     <Compile Include="Filters\IcuComparer.cs" />
     <Compile Include="Filters\IMatcher.cs" />
-    <Compile Include="Filters\INoteComparision.cs" />
+    <Compile Include="INoteComparision.cs" />
     <Compile Include="Filters\IntFinder.cs" />
     <Compile Include="Filters\IntMatcher.cs" />
     <Compile Include="Filters\IntStringComparer.cs" />
     <Compile Include="Filters\InvalidObjectGuidException.cs" />
     <Compile Include="Filters\InvertMatcher.cs" />
-    <Compile Include="Filters\IReportsSortProgress.cs" />
+    <Compile Include="IReportsSortProgress.cs" />
     <Compile Include="Filters\IStringFinder.cs" />
     <Compile Include="Filters\LcmCompare.cs" />
     <Compile Include="Filters\ManyOnePathSortItem.cs" />

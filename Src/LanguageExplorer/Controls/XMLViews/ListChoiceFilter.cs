@@ -20,7 +20,7 @@ namespace LanguageExplorer.Controls.XMLViews
 	/// we are only showing one item from the property in this row. In this case, for Any
 	/// show items in the list, for None show items not in the list, for All probably show items in the list.
 	/// </summary>
-	public abstract class ListChoiceFilter : RecordFilter
+	internal abstract class ListChoiceFilter : RecordFilter
 	{
 		private bool m_fIsUserVisible;
 		/// <summary />

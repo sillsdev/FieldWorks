@@ -5,7 +5,6 @@
 using System;
 using System.Collections.Generic;
 using LanguageExplorer.Controls;
-using LanguageExplorer.Filters;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Application;
@@ -55,7 +54,7 @@ namespace LanguageExplorer
 		bool OnFirst { get; }
 		bool OnLast { get; }
 		bool OnRefresh(object argument);
-		void OnSorterChanged(RecordSorter sorter, string sortName, bool isDefaultSort);
+		void OnSorterChanged(IRecordSorter sorter, string sortName, bool isDefaultSort);
 		ICmObject OwningObject { get; set; }
 		int OwningFlid { get; }
 		IRecordList ParentList { get; }
@@ -73,7 +72,7 @@ namespace LanguageExplorer
 		bool ShouldNotHandleDeletionMessage { get; }
 		bool SkipShowRecord { get; set; }
 		List<IManyOnePathSortItem> SortedObjects { get; set; }
-		RecordSorter Sorter { get; }
+		IRecordSorter Sorter { get; }
 		string SortName { get; set; }
 		IRecordList SubservientRecordList { get; }
 		bool SuppressSaveOnChangeRecord { get; set; }

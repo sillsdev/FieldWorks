@@ -14,11 +14,30 @@ namespace LanguageExplorer.Filters
 	/// <summary>
 	/// Abstract RecordSorter base class.
 	/// </summary>
-	public abstract class RecordSorter : IPersistAsXml, IStoresLcmCache, IReportsSortProgress, INoteComparision
+	internal abstract class RecordSorter : IRecordSorter
 	{
 		internal int m_comparisonsDone;
 		internal int m_comparisonsEstimated;
 		internal int m_percentDone;
+
+		/// <summary>
+		/// Merge the new records into the original list using the specified comparer
+		/// </summary>
+		protected void MergeInto(List<IManyOnePathSortItem> records, List<IManyOnePathSortItem> newRecords, IComparer comparer)
+		{
+			for (int i = 0, j = 0; j < newRecords.Count; i++)
+			{
+				if (i >= records.Count || comparer.Compare(records[i], newRecords[j]) > 0)
+				{
+					// object at i is greater than current object to insert, or no more obejcts in records;
+					// insert next object here.
+					records.Insert(i, newRecords[j]);
+					j++;
+					// i gets incremented as usual past the inserted object. It will index the same
+					// object next iteration as it did this one.
+				}
+			}
+		}
 
 		#region IPersistAsXml implementation
 
@@ -86,6 +105,8 @@ namespace LanguageExplorer.Filters
 		}
 		#endregion
 
+		#region IRecordSorter implementation.
+
 		/// <summary>
 		/// Set the data access to use in interpreting properties of objects.
 		/// Call this AFTER setting Cache, otherwise, it may be overridden.
@@ -94,11 +115,6 @@ namespace LanguageExplorer.Filters
 		{
 			set { }// do nothing by default.
 		}
-
-		/// <summary>
-		/// Method to retrieve the IComparer used by this sorter
-		/// </summary>
-		protected internal abstract IComparer Comparer { get; }
 
 		/// <summary>
 		/// Sorts the specified records.
@@ -111,23 +127,9 @@ namespace LanguageExplorer.Filters
 		public abstract void MergeInto(List<IManyOnePathSortItem> records, List<IManyOnePathSortItem> newRecords);
 
 		/// <summary>
-		/// Merge the new records into the original list using the specified comparer
+		/// Property to retrieve the IComparer used by this sorter
 		/// </summary>
-		protected void MergeInto(List<IManyOnePathSortItem> records, List<IManyOnePathSortItem> newRecords, IComparer comparer)
-		{
-			for (int i = 0, j = 0; j < newRecords.Count; i++)
-			{
-				if (i >= records.Count || comparer.Compare(records[i], newRecords[j]) > 0)
-				{
-					// object at i is greater than current object to insert, or no more obejcts in records;
-					// insert next object here.
-					records.Insert(i, newRecords[j]);
-					j++;
-					// i gets incremented as usual past the inserted object. It will index the same
-					// object next iteration as it did this one.
-				}
-			}
-		}
+		public abstract IComparer Comparer { get; }
 
 		/// <summary>
 		/// Add to collector the ManyOnePathSortItems which this sorter derives from
@@ -152,9 +154,10 @@ namespace LanguageExplorer.Filters
 		/// Return true if the other sorter is 'compatible' with this, in the sense that
 		/// either they produce the same sort sequence, or one derived from it (e.g., by reversing).
 		/// </summary>
-		public virtual bool CompatibleSorter(RecordSorter other)
+		public virtual bool CompatibleSorter(IRecordSorter other)
 		{
 			return false;
 		}
+		#endregion
 	}
 }

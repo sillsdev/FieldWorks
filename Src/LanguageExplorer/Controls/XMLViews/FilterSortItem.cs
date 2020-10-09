@@ -27,7 +27,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		private FwComboBox m_combo;
 		private IMatcher m_matcher;
 		private IRecordFilter m_filter;
-		private RecordSorter m_sorter;
+		private IRecordSorter m_sorter;
 		private readonly DisposableObjectsSet<IRecordFilter> m_FiltersToDispose = new DisposableObjectsSet<IRecordFilter>();
 
 		/// <summary />
@@ -177,7 +177,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// Gets or sets the sorter.
 		/// </summary>
 		/// <remarks>A Sorter assigned here will be disposed by FilterSortItem.Dispose.</remarks>
-		internal RecordSorter Sorter
+		internal IRecordSorter Sorter
 		{
 			get => m_sorter;
 			set

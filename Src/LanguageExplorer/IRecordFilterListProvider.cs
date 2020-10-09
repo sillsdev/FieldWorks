@@ -3,7 +3,6 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Collections.Generic;
-using LanguageExplorer.Filters;
 using SIL.FieldWorks.Common.FwUtils;
 
 namespace LanguageExplorer

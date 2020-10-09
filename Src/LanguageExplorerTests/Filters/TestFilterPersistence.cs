@@ -51,7 +51,7 @@ namespace LanguageExplorerTests.Filters
 		// Checklist of classes we need to test
 
 		// Sorters:
-		// RecordSorter (covered by many concrete classes, including GenRecordSorter in PersistSimpleSorter)
+		// IRecordSorter (covered by many concrete classes, including GenRecordSorter in PersistSimpleSorter)
 		// GenRecordSorter (PersistSimpleSorter)
 		// PropertyRecordSorter (SortersEtc)
 
@@ -82,7 +82,7 @@ namespace LanguageExplorerTests.Filters
 		// Matchers: (all in PersistMatchersEtc)
 
 		/// <summary>
-		/// A simple test to get us started, covers IcuComparer, GenRecordSorter, hence RecordSorter.
+		/// A simple test to get us started, covers IcuComparer, GenRecordSorter, hence IRecordSorter.
 		/// </summary>
 		[Test]
 		public void PersistSimpleSorter()
@@ -116,7 +116,7 @@ namespace LanguageExplorerTests.Filters
 		{
 			IcuComparer icomp1 = new IcuComparer("fr"), icomp2 = new IcuComparer("en");
 			GenRecordSorter grs1 = new GenRecordSorter(icomp1), grs2 = new GenRecordSorter(icomp2);
-			var sorters = new List<RecordSorter> { grs1, grs2 };
+			var sorters = new List<IRecordSorter> { grs1, grs2 };
 			var asorter = new AndSorter(sorters);
 			var xml = DynamicLoader.PersistObject(asorter, "sorter");
 			var doc = XDocument.Parse(xml);

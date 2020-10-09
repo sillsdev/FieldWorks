@@ -4,12 +4,12 @@
 
 using System;
 
-namespace LanguageExplorer.Filters
+namespace LanguageExplorer
 {
 	/// <summary>
-	/// Interface implemented by RecordSorter if it can send percent done messages.
+	/// Interface implemented by IRecordSorter implementations if it can send percent done messages.
 	/// </summary>
-	public interface IReportsSortProgress
+	internal interface IReportsSortProgress
 	{
 		Action<int> SetPercentDone { get; set; }
 	}
