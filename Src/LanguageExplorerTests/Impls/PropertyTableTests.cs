@@ -849,7 +849,7 @@ namespace LanguageExplorerTests.Impls
 		{
 			Assert.That(_propertyTable.GetValue(LanguageExplorerConstants.PropertyTableVersion, 0), Is.EqualTo(0));
 			var lotsOfAssimilatedAssemblies = _propertyTable.GetValue<string>("LotsOfAssimilatedAssemblies");
-			var element = XElement.Parse(lotsOfAssimilatedAssemblies);
+			var rootElement = XElement.Parse(lotsOfAssimilatedAssemblies);
 			var before = new Dictionary<string, string>
 			{
 				{"xCore.dll",  "XCore.Inventory"},
@@ -867,7 +867,7 @@ namespace LanguageExplorerTests.Impls
 				{"DetailControls.dll", "SIL.FieldWorks.Common.Framework.DetailControls.AtomicReferenceLauncher" },
 				{"XMLViews.dll", "SIL.FieldWorks.Common.Controls.BrowseViewer" }
 			};
-			foreach (var childElement in element.Elements())
+			foreach (var childElement in rootElement.Elements())
 			{
 				var assemblyPath = childElement.Attribute("assemblyPath").Value;
 				var classValue = childElement.Attribute("class").Value;
@@ -876,9 +876,10 @@ namespace LanguageExplorerTests.Impls
 
 			// SUT
 			_propertyTable.ConvertOldPropertiesToNewIfPresent();
+
 			Assert.That(_propertyTable.GetValue<int>(LanguageExplorerConstants.PropertyTableVersion), Is.EqualTo(1));
 			lotsOfAssimilatedAssemblies = _propertyTable.GetValue<string>("LotsOfAssimilatedAssemblies");
-			element = XElement.Parse(lotsOfAssimilatedAssemblies);
+			rootElement = XElement.Parse(lotsOfAssimilatedAssemblies);
 			var after = new List<string>
 			{
 				"LanguageExplorer.Inventory",
@@ -897,10 +898,8 @@ namespace LanguageExplorerTests.Impls
 				"LanguageExplorer.Controls.XMLViews.BrowseViewer"
 			};
 			var idx = 0;
-			foreach (var childElement in element.Elements())
+			foreach (var childElement in rootElement.Elements())
 			{
-				var assemblyPath = childElement.Attribute("assemblyPath").Value;
-				Assert.That(assemblyPath, Is.EqualTo("LanguageExplorer.dll"));
 				var currentClassValue = childElement.Attribute("class").Value;
 				var expectedClassValue = after[idx++];
 				Assert.That(currentClassValue, Is.EqualTo(expectedClassValue));

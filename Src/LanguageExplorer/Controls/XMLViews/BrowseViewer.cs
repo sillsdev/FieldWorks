@@ -37,7 +37,6 @@ namespace LanguageExplorer.Controls.XMLViews
 	internal class BrowseViewer : MainUserControl, ISnapSplitPosition, IMainContentControl, IPostLayoutInit, IRefreshableRoot
 	{
 		private ContextMenuStrip _browseViewContextMenu;
-		private readonly DisposableObjectsSet<IRecordSorter> m_SortersToDispose = new DisposableObjectsSet<IRecordSorter>();
 		private UiWidgetController _uiWidgetController;
 		private XElement m_configParamsElement;
 		/// <summary />
@@ -952,9 +951,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			}
 			if (newSorters.Count > 1)
 			{
-				var asorter = new AndSorter(newSorters);
-				Sorter = asorter;
-				m_SortersToDispose.Add(asorter);
+				Sorter = new AndSorter(newSorters);
 			}
 			else if (newSorters.Count == 1)
 			{
@@ -1269,7 +1266,6 @@ namespace LanguageExplorer.Controls.XMLViews
 				} // end of m_scrollContainer != null
 				m_tooltip?.Dispose();
 				components?.Dispose();
-				m_SortersToDispose.Dispose();
 			}
 
 			_uiWidgetController = null;
@@ -1769,7 +1765,6 @@ namespace LanguageExplorer.Controls.XMLViews
 					andSorter = new AndSorter();
 					andSorter.Add(Sorter);
 					andSorter.Add(newSorter);
-					m_SortersToDispose.Add(andSorter);
 				}
 				newSorter = andSorter;
 			}

@@ -4,7 +4,6 @@
 
 using System.Xml.Linq;
 using System.Xml.XPath;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Core.KernelInterfaces;
 
@@ -62,7 +61,7 @@ namespace LanguageExplorer.Filters
 		public override void InitXml(XElement element)
 		{
 			base.InitXml(element);
-			MatcherToInvert = DynamicLoader.RestoreObject(element.XPathSelectElement("invertMatcher")) as IMatcher;
+			MatcherToInvert = DynamicLoader.RestoreObject<IMatcher>(element.XPathSelectElement("invertMatcher"));
 		}
 
 		#region IStoresLcmCache Members

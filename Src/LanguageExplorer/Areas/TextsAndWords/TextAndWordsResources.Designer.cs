@@ -345,8 +345,7 @@ namespace LanguageExplorer.Areas.TextsAndWords {
         ///	&lt;recordbrowseview&gt;
         ///		&lt;parameters id=&quot;textsChooser&quot; filterBar=&quot;true&quot; treeBarAvailability=&quot;NotAllowed&quot; defaultCursor=&quot;Arrow&quot; altTitleId=&quot;Text-Plural&quot; editable=&quot;false&quot;&gt;
         ///			&lt;columns&gt;
-        ///				&lt;column label=&quot;Title&quot; width=&quot;144000&quot; chooserFilter=&quot;textsFilterItem&quot;&gt;
-        ///					&lt;dynamicloaderinfo assemblyPath=&quot;LanguageExplorer.dll&quot; class=&quot;LanguageExplorer.Controls.XMLViews.TextsFilterItem&quot;/&gt;
+        ///				&lt;column label=&quot;Title&quot; width=&quot;144000&quot; chooserFilter=&quot;textsFilterItem&quot; class=&quot;LanguageExplorer.Controls.XMLViews.TextsFilterItem&quot;&gt;
         ///					&lt;string field=&quot;Title&quot; ws=&quot;$ws=best vernoranal&quot;/&gt;
         ///				&lt;/column&gt;
         ///				&lt;column l [rest of string was truncated]&quot;;.

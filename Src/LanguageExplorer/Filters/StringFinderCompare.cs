@@ -20,14 +20,14 @@ namespace LanguageExplorer.Filters
 	/// object to obtain strings from the KeyObject hvo, then
 	/// a (simpler) IComparer to compare the strings.
 	/// </summary>
-	public class StringFinderCompare : IComparer, IPersistAsXml, IStoresLcmCache, IStoresDataAccess, ICloneable
+	internal sealed class StringFinderCompare : IComparer, IPersistAsXml, IStoresLcmCache, IStoresDataAccess, ICloneable
 	{
 		/// <summary>This is used, during a single sort, to cache keys.</summary>
-		protected Hashtable m_objToKey = new Hashtable();
+		private Hashtable m_objToKey = new Hashtable();
 		internal INoteComparision ComparisonNoter { get; set; }
 
 		/// <summary />
-		public StringFinderCompare(IStringFinder finder, IComparer subComp)
+		internal StringFinderCompare(IStringFinder finder, IComparer subComp)
 		{
 			Finder = finder;
 			SubComparer = subComp;
@@ -38,14 +38,14 @@ namespace LanguageExplorer.Filters
 		/// <summary>
 		/// For use with IPersistAsXml
 		/// </summary>
-		public StringFinderCompare() : this(null, null)
+		internal StringFinderCompare() : this(null, null)
 		{
 		}
 
 		/// <summary>
 		/// Gets the finder.
 		/// </summary>
-		public IStringFinder Finder { get; protected set; }
+		public IStringFinder Finder { get; private set; }
 
 		public ISilDataAccess DataAccess
 		{
@@ -63,7 +63,7 @@ namespace LanguageExplorer.Filters
 		/// Currently will not be called if the column is also filtered; typically the same Preload() would end
 		/// up being done.
 		/// </summary>
-		public virtual void Preload(ICmObject rootObj)
+		public void Preload(ICmObject rootObj)
 		{
 			Finder.Preload(rootObj);
 		}
@@ -71,7 +71,7 @@ namespace LanguageExplorer.Filters
 		/// <summary>
 		/// Gets the sub comparer.
 		/// </summary>
-		public IComparer SubComparer { get; protected set; }
+		public IComparer SubComparer { get; private set; }
 
 		/// <summary>
 		/// Copy our comparer's SubComparer and SortedFromEnd to another comparer.
@@ -165,7 +165,7 @@ namespace LanguageExplorer.Filters
 			SubComparer = ReverseComparer.Reverse(SubComparer);
 		}
 
-		protected internal string[] GetValue(object key, bool sortedFromEnd)
+		internal string[] GetValue(object key, bool sortedFromEnd)
 		{
 			try
 			{
@@ -319,7 +319,7 @@ namespace LanguageExplorer.Filters
 		}
 		#endregion
 
-		#region IPersistAsXml Members
+		#region IPersistAsXml MembersT
 
 		/// <summary>
 		/// Persists as XML.
@@ -343,8 +343,8 @@ namespace LanguageExplorer.Filters
 		/// </summary>
 		public void InitXml(XElement element)
 		{
-			Finder = DynamicLoader.RestoreObject(element.XPathSelectElement("finder")) as IStringFinder;
-			SubComparer = DynamicLoader.RestoreObject(element.XPathSelectElement("comparer")) as IComparer;
+			Finder = DynamicLoader.RestoreObject<IStringFinder>(element.Element("finder"));
+			SubComparer = DynamicLoader.RestoreObject<IComparer>(element.Element("comparer"));
 			SortedFromEnd = XmlUtils.GetOptionalBooleanAttributeValue(element, "sortFromEnd", false);
 			SortedByLength = XmlUtils.GetOptionalBooleanAttributeValue(element, "sortByLength", false);
 		}

@@ -145,7 +145,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			if (decoratorSpec != null)
 			{
 				// For example, this may create a DictionaryPublicationDecorator.
-				useSda = (ISilDataAccessManaged)DynamicLoader.CreateObject(decoratorSpec, new object[] { cache, sda, flid, publication });
+				useSda = DynamicLoader.CreateObject<ISilDataAccessManaged>(decoratorSpec, new object[] { cache, sda, flid, publication });
 			}
 			InitXmlViewRootSpec(hvoRoot, flid, configurationParametersElement, useSda);
 		}

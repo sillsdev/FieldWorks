@@ -6,13 +6,7 @@
 		<column label="Phoneme" width="5%" layout="Name" ws="$ws=best vernacular" field="Name"/>
 		<!-- Phonological Feature Defns (generated)-->
 		<generate class="FsFeatureSystem" fieldType="vector" restrictions="featureDefns" objectPath="PhFeatureSystem.Features">
-			<column layout="CustomMultiStringForFeatureDefn_$fieldName" label="$label" bulkEdit="phonemeFlatListItem" common="true" ws="$ws=best analysis" cansortbylength="true" visibility="always" width="4%">
-				<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.LcmUi.PhonologicalFeatureEditor">
-					<args>
-						<arg name="xpathToConfigurationNode" value="ancestor::column"/>
-					</args>
-				</dynamicloaderinfo>
-			</column>
+			<column layout="CustomMultiStringForFeatureDefn_$fieldName" label="$label" bulkEdit="phonemeFlatListItem" class="LanguageExplorer.LcmUi.PhonologicalFeatureEditor" common="true" ws="$ws=best analysis" cansortbylength="true" visibility="always" width="4%" />
 		</generate>
 		<column label="Description" width="33%" layout="Description" ws="$ws=best analysis" field="Description" visibility="menu"/>
 		<column label="Graphemes" width="34%" multipara="true" layout="Codes" visibility="menu"/>

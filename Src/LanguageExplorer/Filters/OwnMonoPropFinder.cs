@@ -12,10 +12,10 @@ namespace LanguageExplorer.Filters
 	/// This class implements StringFinder by looking up one monolingual property of the object
 	/// itself.
 	/// </summary>
-	public class OwnMonoPropFinder : StringFinderBase
+	internal sealed class OwnMonoPropFinder : StringFinderBase
 	{
 		/// <summary />
-		public OwnMonoPropFinder(ISilDataAccess sda, int flid)
+		internal OwnMonoPropFinder(ISilDataAccess sda, int flid)
 			: base(sda)
 		{
 			Flid = flid;
@@ -29,7 +29,7 @@ namespace LanguageExplorer.Filters
 		/// <summary>
 		/// Gets the flid.
 		/// </summary>
-		public int Flid { get; private set; }
+		internal int Flid { get; private set; }
 
 		/// <summary>
 		/// Persists as XML.

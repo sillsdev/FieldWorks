@@ -4,7 +4,6 @@
 
 using System;
 using System.Diagnostics;
-using System.IO;
 using System.Reflection;
 using System.Text;
 using System.Xml.Linq;
@@ -13,50 +12,29 @@ using SIL.Xml;
 namespace LanguageExplorer
 {
 	/// <summary />
-	public static class DynamicLoader
+	internal static class DynamicLoader
 	{
-		// Return the class of object that will be created if CreateObjectUsingLoaderNode is called with this argument.
-		// Return null if dynamic loader node not found or if it doesn't specify a valid class.
-		public static Type TypeForLoaderNode(XElement parentConfigNode)
+		// Return the class of object that will be created if CreateObject is called with this argument.
+		internal static Type TypeForLoaderNode(XElement configurationElement)
 		{
-			var configuration = parentConfigNode.Element("dynamicloaderinfo");
-			if (configuration == null)
-			{
-				return null;
-			}
-			var assemblyPath = XmlUtils.GetMandatoryAttributeValue(configuration, "assemblyPath");
-			if (assemblyPath == "null")
-			{
-				return null;
-			}
-			var className = XmlUtils.GetMandatoryAttributeValue(configuration, "class");
-			GetAssembly(assemblyPath, out var assembly);
-			return assembly.GetType(className.Trim());
+			return Assembly.GetExecutingAssembly().GetType(XmlUtils.GetMandatoryAttributeValue(configurationElement, "class").Trim());
 		}
 
 		/// <summary>
 		/// Dynamically find an assembly and create an object of the name to class.
-		/// configuration has assemblyPath and class (fully qualified) as in other overloads.
+		/// configuration has class (fully qualified) as in other overloads.
 		/// The constructor arguments are supplied explicitly.
 		/// </summary>
-		/// <returns></returns>
-		public static object CreateObject(XElement configuration, object[] args = null)
+		internal static T CreateObject<T>(XElement configuration, object[] args = null) where T : class
 		{
-			var assemblyPath = XmlUtils.GetMandatoryAttributeValue(configuration, "assemblyPath");
-			// JohnT: see AddAssemblyPathInfo. We use this when the object we're trying to persist
-			// as a child of another object is null.
-			if (assemblyPath == "null")
-			{
-				return null;
-			}
-			assemblyPath = GetAssembly(assemblyPath, out var assembly);
+			var assembly = Assembly.GetExecutingAssembly();
 			var className = XmlUtils.GetMandatoryAttributeValue(configuration, "class").Trim();
-			var errorMessage = $"Found the DLL '{assemblyPath}' but could not create the class: '{className}'. If there are no 'InnerExceptions' below, then make sure capitalization is correct and that you include the namespace.";
+			var errorMessage = $"Found LanguageExplorer.dll, but could not create the class: '{className}'. If there are no 'InnerExceptions' below, then make sure capitalization is correct and that you include the namespace.";
 			object thing;
 			try
 			{
 				//make the object
-				thing = assembly.CreateInstance(className, false, BindingFlags.Instance | BindingFlags.Public, null, args, null, null);
+				thing = assembly.CreateInstance(className, false, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic, null, args, null, null);
 			}
 			catch (Exception err)
 			{
@@ -77,56 +55,28 @@ namespace LanguageExplorer
 				// find the specified class. But we want one.
 				throw new FwConfigurationException(errorMessage);
 			}
-			return thing;
-		}
-
-		private static string GetAssembly(string assemblyPath1, out Assembly assembly)
-		{
-			// Whitespace will cause failures.
-			var assemblyPath = assemblyPath1.Trim();
-			var baseDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-
-			try
-			{
-				assembly = Assembly.LoadFrom(Path.Combine(baseDir, assemblyPath));
-			}
-			catch (Exception)
-			{
-				try
-				{
-					//Try to find without specifying the directory,
-					//so that we find things that are in the Path environment variable
-					//This is useful in extension situations where the extension's bin directory
-					//is not the same as the FieldWorks binary directory (e.g. WeSay)
-					assembly = Assembly.LoadFrom(assemblyPath);
-				}
-				catch (Exception error)
-				{
-					throw new RuntimeConfigurationException("Could not find the DLL at :" + assemblyPath, error);
-				}
-			}
-			return assemblyPath;
+			return (T)thing;
 		}
 
 		/// <summary>
-		/// Create the object specified by the assemblyPath and class attributes of node,
+		/// Create the object specified by the class attribute of element,
 		/// and if the resulting object implements IPersistAsXml, call InitXml.
 		/// </summary>
-		public static object RestoreObject(XElement node)
+		internal static T RestoreObject<T>(XElement element) where T : class
 		{
-			var obj = CreateObject(node);
-			(obj as IPersistAsXml)?.InitXml(node.Clone());
+			var obj = CreateObject<T>(element);
+			(obj as IPersistAsXml)?.InitXml(element.Clone());
 			return obj;
 		}
 
 		/// <summary>
 		/// Creates a string representation of the supplied object, an XML string
-		/// containing the required assemblyPath and class attributes needed to create an
+		/// containing the required class attribute needed to create an
 		/// instance using CreateObject, plus whatever gets added to the node by passing
 		/// it to the PersistAsXml method of the object. The root element name is supplied
 		/// as the elementName argument.
 		/// </summary>
-		public static string PersistObject(object src, string elementName)
+		internal static string PersistObject(object src, string elementName)
 		{
 			if (src == null)
 			{
@@ -137,7 +87,7 @@ namespace LanguageExplorer
 			return element.ToString();
 		}
 
-		public static void PersistObject(object src, XElement parent, string elementName)
+		internal static void PersistObject(object src, XElement parent, string elementName)
 		{
 			var element = new XElement(elementName);
 			parent.Add(element);
@@ -148,10 +98,8 @@ namespace LanguageExplorer
 		{
 			if (persistAsXml == null)
 			{
-				element.Add(new XAttribute("assemblyPath", "null"));
 				return;
 			}
-			element.Add(new XAttribute("assemblyPath", persistAsXml.GetType().Assembly.GetName().Name + ".dll"));
 			element.Add(new XAttribute("class", persistAsXml.GetType().FullName));
 			persistAsXml.PersistAsXml(element);
 		}

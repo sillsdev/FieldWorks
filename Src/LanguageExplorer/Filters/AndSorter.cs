@@ -138,7 +138,7 @@ namespace LanguageExplorer.Filters
 			Sorters = new List<IRecordSorter>(element.Elements().Count());
 			foreach (var child in element.Elements())
 			{
-				Sorters.Add((IRecordSorter)DynamicLoader.RestoreObject(child.XPathSelectElement(".")));
+				Sorters.Add(DynamicLoader.RestoreObject<IRecordSorter>(child.XPathSelectElement(".")));
 			}
 		}
 

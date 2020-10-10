@@ -16,10 +16,10 @@ namespace LanguageExplorer.Filters
 	/// leaves. Leaf objects are found from the root by taking retrieving property flidVec[0]
 	/// of the root object, then flidVec[1] of the resulting object, and so forth.
 	/// </summary>
-	public class MultiIndirectMlPropFinder : StringFinderBase
+	internal sealed class MultiIndirectMlPropFinder : StringFinderBase
 	{
 		/// <summary />
-		public MultiIndirectMlPropFinder(ISilDataAccess sda, int[] flidVec, int flidString, int ws)
+		internal MultiIndirectMlPropFinder(ISilDataAccess sda, int[] flidVec, int flidString, int ws)
 			: base(sda)
 		{
 			VecFlids = flidVec;
@@ -37,17 +37,17 @@ namespace LanguageExplorer.Filters
 		/// <summary>
 		/// Gets the vec flids.
 		/// </summary>
-		public int[] VecFlids { get; private set; }
+		internal int[] VecFlids { get; private set; }
 
 		/// <summary>
 		/// Gets the flid string.
 		/// </summary>
-		public int FlidString { get; private set; }
+		internal int FlidString { get; private set; }
 
 		/// <summary>
 		/// Gets the ws.
 		/// </summary>
-		public int Ws { get; private set; }
+		internal int Ws { get; private set; }
 
 		/// <summary>
 		/// Persists as XML.

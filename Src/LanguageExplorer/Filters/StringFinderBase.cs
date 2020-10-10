@@ -12,7 +12,7 @@ using SIL.LCModel.Core.Text;
 namespace LanguageExplorer.Filters
 {
 	/// <summary />
-	public abstract class StringFinderBase : IStringFinder, IPersistAsXml, IStoresLcmCache
+	internal abstract class StringFinderBase : IStringFinder
 	{
 		/// <summary />
 		protected StringFinderBase()

@@ -870,11 +870,11 @@ namespace LanguageExplorer.Controls.XMLViews
 		}
 
 		/// <summary>
-		/// Any of these nodes can be skipped in processing, such as that for the ProcessFrag method.
+		/// This node can be skipped in processing, such as that for the ProcessFrag method.
 		/// </summary>
 		public static bool CanSkipNode(XElement frag)
 		{
-			return frag.Name == "properties" || frag.Name == "dynamicloaderinfo";
+			return frag.Name == "properties";
 		}
 
 		private void AddMultipleAlternatives(IEnumerable<int> wsIds, IVwEnv vwenv, int hvo, int flid, XElement caller, bool fCurrentHvo)
@@ -1262,7 +1262,7 @@ namespace LanguageExplorer.Controls.XMLViews
 						}
 					case "objectOfRowUsingViewConstructor": // display the current object using an external VC.
 						//notice this assumes that it wants a LcmCache as an argument
-						var vc = (IVwViewConstructor)DynamicLoader.CreateObject(frag, new object[]{ m_cache });
+						var vc = DynamicLoader.CreateObject<IVwViewConstructor>(frag, new object[]{ m_cache });
 						var selectorId = Convert.ToInt32(XmlUtils.GetMandatoryAttributeValue(frag, "selector"));
 						// Note this is AddObj, not AddObjProp, and it explicitly adds the current object using the new vc and fragId
 						vwenv.AddObj(hvo, vc, selectorId);

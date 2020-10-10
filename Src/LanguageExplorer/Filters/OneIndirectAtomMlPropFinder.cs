@@ -13,10 +13,10 @@ namespace LanguageExplorer.Filters
 	/// ML alternative from an object that is the value of an atomic property. We return the value of the
 	/// displayed property for the target object.
 	/// </summary>
-	public class OneIndirectAtomMlPropFinder : StringFinderBase
+	internal sealed class OneIndirectAtomMlPropFinder : StringFinderBase
 	{
 		/// <summary />
-		public OneIndirectAtomMlPropFinder(ISilDataAccess sda, int flidAtom, int flidString, int ws)
+		internal OneIndirectAtomMlPropFinder(ISilDataAccess sda, int flidAtom, int flidString, int ws)
 			: base(sda)
 		{
 			FlidAtom = flidAtom;
@@ -32,17 +32,17 @@ namespace LanguageExplorer.Filters
 		/// <summary>
 		/// Gets the flid atom.
 		/// </summary>
-		public int FlidAtom { get; private set; }
+		internal int FlidAtom { get; private set; }
 
 		/// <summary>
 		/// Gets the flid string.
 		/// </summary>
-		public int FlidString { get; private set; }
+		internal int FlidString { get; private set; }
 
 		/// <summary>
 		/// Gets the ws.
 		/// </summary>
-		public int Ws { get; private set; }
+		internal int Ws { get; private set; }
 
 		/// <summary>
 		/// Persists as XML.

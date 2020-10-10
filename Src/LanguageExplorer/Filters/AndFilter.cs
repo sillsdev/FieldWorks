@@ -83,7 +83,7 @@ namespace LanguageExplorer.Filters
 			Filters = new List<IRecordFilter>(element.Elements().Count());
 			foreach (var child in element.Elements())
 			{
-				Filters.Add((IRecordFilter)DynamicLoader.RestoreObject(child.XPathSelectElement(".")));
+				Filters.Add(DynamicLoader.RestoreObject<IRecordFilter>(child.XPathSelectElement(".")));
 			}
 		}
 

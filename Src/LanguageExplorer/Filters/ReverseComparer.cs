@@ -80,7 +80,7 @@ namespace LanguageExplorer.Filters
 		/// </summary>
 		public void InitXml(XElement element)
 		{
-			SubComp = DynamicLoader.RestoreObject(element.XPathSelectElement("comparer")) as IComparer;
+			SubComp = DynamicLoader.RestoreObject<IComparer>(element.XPathSelectElement("comparer"));
 		}
 
 		#endregion

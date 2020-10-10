@@ -8,7 +8,6 @@ using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Xml.Linq;
-using LanguageExplorer.Filters;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Core.KernelInterfaces;
@@ -109,16 +108,20 @@ namespace LanguageExplorer.Controls.XMLViews
 			ListChoiceFilter filter;
 			if (m_filterType != null)
 			{
+				Type[] types;
+				object[] objects;
 				if (m_filterType.IsSubclassOf(typeof(ColumnSpecFilter)))
 				{
-					var ci = m_filterType.GetConstructor(new[] { typeof(LcmCache), typeof(ListMatchOptions), typeof(int[]), typeof(XElement) });
-					filter = (ListChoiceFilter)ci.Invoke(new object[] { m_cache, matchMode, chosenHvos, m_fsi.Spec });
+					types = new[] { typeof(LcmCache), typeof(ListMatchOptions), typeof(int[]), typeof(XElement) };
+					objects = new object[] { m_cache, matchMode, chosenHvos, m_fsi.Spec };
 				}
 				else
 				{
-					var ci = m_filterType.GetConstructor(new[] { typeof(LcmCache), typeof(ListMatchOptions), typeof(int[]) });
-					filter = (ListChoiceFilter)ci.Invoke(new object[] { m_cache, matchMode, chosenHvos });
+					types = new[] { typeof(LcmCache), typeof(ListMatchOptions), typeof(int[]) };
+					objects = new object[] { m_cache, matchMode, chosenHvos };
 				}
+				var ci = m_filterType.GetConstructor(types);
+				filter = (ListChoiceFilter)ci.Invoke(objects);
 			}
 			else
 			{

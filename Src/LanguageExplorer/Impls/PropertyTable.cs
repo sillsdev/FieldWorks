@@ -14,7 +14,6 @@ using System.Security;
 using System.Windows.Forms;
 using System.Xml.Linq;
 using System.Xml.Serialization;
-using LanguageExplorer.Areas;
 using SIL.FieldWorks.Common.FwUtils;
 
 namespace LanguageExplorer.Impls
@@ -238,6 +237,17 @@ namespace LanguageExplorer.Impls
 				AsIPropertyTable.RemoveProperty("currentContentControl");
 				AsIPropertyTable.SetProperty(LanguageExplorerConstants.ToolChoice, oldStringValue, true, settingsGroup: SettingsGroup.LocalSettings);
 			}
+			// Some old properties have stored old dlls that have been assimilated, as well as classes to construct that still have those old namespaces.
+			// We want to fix all of those to use the correct assembly (LanguageExplorer) and new namespace.
+			var interestingTypeInfo = new Dictionary<string, string>();
+			foreach (var type in Assembly.GetExecutingAssembly().GetTypes())
+			{
+				if (!type.IsClass || type.IsAbstract || type.Name == "ImageList" || type.Name.StartsWith("<") || interestingTypeInfo.ContainsKey(type.Name))
+				{
+					continue;
+				}
+				interestingTypeInfo.Add(type.Name, type.FullName);
+			}
 			// This does not need to list every assimilated project, but only those that had persisted properties to upgrade.
 			var assimilatedAssemblies = new HashSet<string>
 			{
@@ -257,17 +267,6 @@ namespace LanguageExplorer.Impls
 				"XMLViews.dll",
 				"Filters.dll"
 			};
-			// Some old properties have stored old dlls that have been assimilated, as well as classes to construct that still have those old namespaces.
-			// We want to fix all of those to use the correct assembly (LanguageExplorer) and new namespace.
-			var interestingTypeInfo = new Dictionary<string, string>();
-			foreach (var type in Assembly.GetExecutingAssembly().GetTypes())
-			{
-				if (!type.IsClass || type.IsAbstract || type.Name == "ImageList" || type.Name.StartsWith("<") || interestingTypeInfo.ContainsKey(type.Name))
-				{
-					continue;
-				}
-				interestingTypeInfo.Add(type.Name, type.FullName);
-			}
 			foreach (var propertykvp in m_properties.ToList())
 			{
 				if (propertykvp.Value == null)
@@ -294,7 +293,7 @@ namespace LanguageExplorer.Impls
 
 					var classAttr = elementWithAssemblyPathAttr.Attribute("class");
 					var newRelocatedClassFullName = interestingTypeInfo[classAttr.Value.Split('.').Last()];
-					assemblyPathAttr.SetValue("LanguageExplorer.dll");
+					assemblyPathAttr.Remove();
 					classAttr.SetValue(newRelocatedClassFullName);
 				}
 				SetPropertyInternal(propertykvp.Value.name, element.ToString(), true, false);

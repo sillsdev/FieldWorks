@@ -266,7 +266,6 @@
     </Compile>
     <Compile Include="Controls\DetailControls\GlossToolLoadsGuessContentsTests.cs" />
     <Compile Include="DictionaryConfiguration\DictionaryConfigTestPresenter.cs" />
-    <Compile Include="DisposableObjectsSetTests.cs" />
     <Compile Include="Filters\ManyOnePathSortItemsPersistenceTests.cs" />
     <Compile Include="Impls\DummyFwFindReplaceDlg.cs">
       <SubType>Form</SubType>

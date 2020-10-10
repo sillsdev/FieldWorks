@@ -13,10 +13,10 @@ namespace LanguageExplorer.Filters
 	/// of values from some kind of sequence or collection. We return the values of the
 	/// displayed property for each item in the sequence.
 	/// </summary>
-	public class OneIndirectMlPropFinder : StringFinderBase
+	internal sealed class OneIndirectMlPropFinder : StringFinderBase
 	{
 		/// <summary />
-		public OneIndirectMlPropFinder(ISilDataAccess sda, int flidVec, int flidString, int ws)
+		internal OneIndirectMlPropFinder(ISilDataAccess sda, int flidVec, int flidString, int ws)
 			: base(sda)
 		{
 			FlidVec = flidVec;
@@ -25,26 +25,26 @@ namespace LanguageExplorer.Filters
 		}
 
 		/// <summary>
-		/// Gets the flid vec.
-		/// </summary>
-		public int FlidVec { get; private set; }
-
-		/// <summary>
-		/// Gets the flid string.
-		/// </summary>
-		public int FlidString { get; private set; }
-
-		/// <summary>
-		/// Gets the ws.
-		/// </summary>
-		public int Ws { get; private set; }
-
-		/// <summary>
 		/// For use with IPersistAsXml
 		/// </summary>
 		public OneIndirectMlPropFinder()
 		{
 		}
+
+		/// <summary>
+		/// Gets the flid vec.
+		/// </summary>
+		internal int FlidVec { get; private set; }
+
+		/// <summary>
+		/// Gets the flid string.
+		/// </summary>
+		internal int FlidString { get; private set; }
+
+		/// <summary>
+		/// Gets the ws.
+		/// </summary>
+		internal int Ws { get; private set; }
 
 		/// <summary>
 		/// Persists as XML.

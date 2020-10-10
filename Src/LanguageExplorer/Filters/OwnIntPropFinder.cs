@@ -13,12 +13,12 @@ namespace LanguageExplorer.Filters
 	/// (This is not an especially efficient way to handle integer properties, but it keeps the
 	/// whole interface arrangement so much simpler that I think it is worth it.)
 	/// </summary>
-	public class OwnIntPropFinder : StringFinderBase
+	internal sealed class OwnIntPropFinder : StringFinderBase
 	{
 		/// <summary>
 		/// Construct one that retrieves a particular integer property from the SDA.
 		/// </summary>
-		public OwnIntPropFinder(ISilDataAccess sda, int flid)
+		internal OwnIntPropFinder(ISilDataAccess sda, int flid)
 			: base(sda)
 		{
 			Flid = flid;
@@ -32,7 +32,7 @@ namespace LanguageExplorer.Filters
 		/// <summary>
 		/// Gets the flid.
 		/// </summary>
-		public int Flid { get; private set; }
+		internal int Flid { get; private set; }
 
 		/// <summary>
 		/// Persists as XML.

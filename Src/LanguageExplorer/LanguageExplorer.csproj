@@ -479,7 +479,6 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Controls\XMLViews\VwPatternSerializableSettings.cs" />
-    <Compile Include="DisposableObjectsSet.cs" />
     <Compile Include="DynamicLoader.cs" />
     <Compile Include="ExportStyleInfo.cs" />
     <Compile Include="FwConfigurationException.cs" />
@@ -979,7 +978,7 @@
     <Compile Include="Filters\IcuComparer.cs" />
     <Compile Include="Filters\IMatcher.cs" />
     <Compile Include="INoteComparision.cs" />
-    <Compile Include="Filters\IntFinder.cs" />
+    <Compile Include="Filters\OwnIntPropFinder.cs" />
     <Compile Include="Filters\IntMatcher.cs" />
     <Compile Include="Filters\IntStringComparer.cs" />
     <Compile Include="Filters\InvalidObjectGuidException.cs" />
@@ -1993,7 +1992,6 @@
     <Content Include="Resources\GlossInSegmentsOccurrenceList.xml" />
     <None Include="Resources\MergeReversalEntryListParameters.xml" />
     <None Include="Resources\MatchingEntriesParameters1.xml" />
-    <None Include="Resources\LexiconClassifiedDictionaryParameters1.xml" />
     <None Include="Resources\GrammarSketchTransforms1.xml" />
     <Content Include="Resources\MergeAllomorphListParameters.xml" />
     <Content Include="Resources\MergeSenseListParameters.xml" />

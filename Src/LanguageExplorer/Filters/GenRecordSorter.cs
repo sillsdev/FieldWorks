@@ -167,7 +167,7 @@ namespace LanguageExplorer.Filters
 			{
 				throw new Exception("persist info for GenRecordSorter must have comparer child element");
 			}
-			_comparer = DynamicLoader.RestoreObject(compNode) as IComparer;
+			_comparer = DynamicLoader.RestoreObject<IComparer>(compNode);
 			if (_comparer == null)
 			{
 				throw new Exception("restoring sorter failed...comparer does not implement IComparer");

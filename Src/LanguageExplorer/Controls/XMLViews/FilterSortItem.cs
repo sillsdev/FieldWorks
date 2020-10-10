@@ -23,12 +23,9 @@ namespace LanguageExplorer.Controls.XMLViews
 	/// </remarks>
 	internal sealed class FilterSortItem : IDisposable
 	{
-		private IStringFinder m_finder;
 		private FwComboBox m_combo;
 		private IMatcher m_matcher;
 		private IRecordFilter m_filter;
-		private IRecordSorter m_sorter;
-		private readonly DisposableObjectsSet<IRecordFilter> m_FiltersToDispose = new DisposableObjectsSet<IRecordFilter>();
 
 		/// <summary />
 		internal event FilterChangeHandler FilterChanged;
@@ -98,24 +95,14 @@ namespace LanguageExplorer.Controls.XMLViews
 			if (disposing)
 			{
 				// Dispose managed resources here.
-				// We didn't make these either, but we need to deal with them.
-				// No. These belong to the RecordList.
-				//if (m_matcher != null && m_matcher is IDisposable)
-				//	(m_matcher as IDisposable).Dispose();
-
-				// At least in the tests these get created for us; we're the only one using them,
-				// so we should dispose them.
-				(Finder as IDisposable)?.Dispose();
-				(Sorter as IDisposable)?.Dispose();
-				m_FiltersToDispose.Dispose();
 				m_combo?.Dispose();
 			}
 
 			// Dispose unmanaged resources here, whether disposing is true or false.
 			Spec = null;
 			m_combo = null;
-			m_finder = null;
-			m_sorter = null;
+			Finder = null;
+			Sorter = null;
 			m_filter = null;
 			m_matcher = null;
 
@@ -133,15 +120,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// Gets or sets the finder.
 		/// </summary>
 		/// <remarks>A Finder assigned here will be disposed by FilterSortItem.Dispose.</remarks>
-		internal IStringFinder Finder
-		{
-			get => m_finder;
-			set
-			{
-				(m_finder as IDisposable)?.Dispose();
-				m_finder = value;
-			}
-		}
+		internal IStringFinder Finder { get; set; }
 
 		/// <summary>
 		/// Gets or sets the combo.
@@ -152,7 +131,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			get => m_combo;
 			set
 			{
-				(m_combo as IDisposable)?.Dispose();
+				m_combo.Dispose();
 				m_combo = value;
 			}
 		}
@@ -177,15 +156,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// Gets or sets the sorter.
 		/// </summary>
 		/// <remarks>A Sorter assigned here will be disposed by FilterSortItem.Dispose.</remarks>
-		internal IRecordSorter Sorter
-		{
-			get => m_sorter;
-			set
-			{
-				(m_sorter as IDisposable)?.Dispose();
-				m_sorter = value;
-			}
-		}
+		internal IRecordSorter Sorter { get; set; }
 
 		/// <summary>
 		/// Gets or sets the filter.
@@ -199,7 +170,6 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				var old = m_filter;
 				m_filter = value;
-				m_FiltersToDispose.Add(value);
 				// Change the filter if they are not the same );
 				if (FilterChanged != null && (m_filter != null && !m_filter.SameFilter(old)) || (old != null && !old.SameFilter(m_filter)))
 				{

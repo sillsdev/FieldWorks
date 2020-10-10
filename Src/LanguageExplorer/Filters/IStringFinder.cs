@@ -18,7 +18,7 @@ namespace LanguageExplorer.Filters
 	/// complex, and I expect in most cases most objects will fail, and for those objects we have
 	/// to try all the strings anyway.
 	/// </summary>
-	public interface IStringFinder
+	internal interface IStringFinder : IPersistAsXml, IStoresLcmCache, IStoresDataAccess
 	{
 		/// <summary>
 		/// Strings the specified hvo.
@@ -50,11 +50,5 @@ namespace LanguageExplorer.Filters
 		/// more efficient. Also permitted to do nothing.
 		/// </summary>
 		void Preload(ICmObject rootObj);
-
-		/// <summary>
-		/// Called if we need to ensure that a particular (typically decorator) DA is used to
-		/// interpret properties.
-		/// </summary>
-		ISilDataAccess DataAccess { set; }
 	}
 }

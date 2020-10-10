@@ -22,30 +22,12 @@ namespace LanguageExplorerTests.Filters
 	public class TestFilterPersistence : MemoryOnlyBackendProviderTestBase
 	{
 		private ISilDataAccess m_sda;
-		private DisposableObjectsSet<object> m_objectsToDispose;
 
 		public override void FixtureSetup()
 		{
 			base.FixtureSetup();
 
 			m_sda = Cache.DomainDataByFlid;
-			m_objectsToDispose = new DisposableObjectsSet<object>();
-		}
-
-		public override void FixtureTeardown()
-		{
-			try
-			{
-				m_objectsToDispose.Dispose();
-			}
-			catch (Exception err)
-			{
-				throw new Exception($"Error in running {GetType().Name} FixtureTeardown method.", err);
-			}
-			finally
-			{
-				base.FixtureTeardown();
-			}
 		}
 
 		// Checklist of classes we need to test
@@ -92,12 +74,10 @@ namespace LanguageExplorerTests.Filters
 			var xml = DynamicLoader.PersistObject(grs, "sorter");
 			var doc = XDocument.Parse(xml);
 			Assert.IsTrue("sorter" == doc.Root.Name);
-			var obj = DynamicLoader.RestoreObject(doc.Root);
+			var obj = DynamicLoader.RestoreObject<GenRecordSorter>(doc.Root);
 			try
 			{
-				Assert.IsInstanceOf<GenRecordSorter>(obj);
-				var grsOut = obj as GenRecordSorter;
-				var compOut = grsOut.Comparer;
+				var compOut = obj.Comparer;
 				Assert.IsTrue(compOut is IcuComparer);
 				Assert.AreEqual("fr", (compOut as IcuComparer).WsCode);
 			}
@@ -121,10 +101,8 @@ namespace LanguageExplorerTests.Filters
 			var xml = DynamicLoader.PersistObject(asorter, "sorter");
 			var doc = XDocument.Parse(xml);
 			Assert.IsTrue("sorter" == doc.Root.Name);
-			var obj = DynamicLoader.RestoreObject(doc.Root);
-			m_objectsToDispose.Add(obj);
-			Assert.IsInstanceOf<AndSorter>(obj);
-			var sortersOut = ((AndSorter)obj).Sorters;
+			var andSorter = DynamicLoader.RestoreObject<AndSorter>(doc.Root);
+			var sortersOut = andSorter.Sorters;
 			var grsOut1 = (GenRecordSorter)sortersOut[0];
 			var grsOut2 = (GenRecordSorter)sortersOut[1];
 			var compOut1 = grsOut1.Comparer;
@@ -167,9 +145,7 @@ namespace LanguageExplorerTests.Filters
 			var ownIntFinder = new OwnIntPropFinder(m_sda, 551);
 
 			var rangeIntFilter = new FilterBarCellFilter(ownIntFinder, rangeIntMatch);
-			m_objectsToDispose.Add(rangeIntFilter);
 			var andFilter = new AndFilter();
-			m_objectsToDispose.Add(andFilter);
 
 			andFilter.Add(rangeIntFilter);
 
@@ -182,14 +158,12 @@ namespace LanguageExplorerTests.Filters
 			pattern.UseRegularExpressions = false;
 
 			var otherFilter = new FilterBarCellFilter(ownIntFinder, new NotEqualIntMatcher(77));
-			m_objectsToDispose.Add(otherFilter);
 
 			andFilter.Add(otherFilter);
 
 			var mlPropFinder = new OwnMlPropFinder(m_sda, 788, 23);
 			pattern.Pattern = TsStringUtils.MakeString("hello", ws);
 			var filter = new FilterBarCellFilter(mlPropFinder, new ExactMatcher(pattern));
-			m_objectsToDispose.Add(filter);
 			andFilter.Add(filter);
 
 			var monoPropFinder = new OwnMonoPropFinder(m_sda, 954);
@@ -201,7 +175,6 @@ namespace LanguageExplorerTests.Filters
 			pattern.UseRegularExpressions = false;
 			pattern.Pattern = TsStringUtils.MakeString("goodbye", ws);
 			filter = new FilterBarCellFilter(monoPropFinder, new BeginMatcher(pattern));
-			m_objectsToDispose.Add(filter);
 			andFilter.Add(filter);
 
 			var oneIndMlPropFinder = new OneIndirectMlPropFinder(m_sda, 221, 222, 27);
@@ -213,7 +186,6 @@ namespace LanguageExplorerTests.Filters
 			pattern.UseRegularExpressions = false;
 			pattern.Pattern = TsStringUtils.MakeString("exit", ws);
 			filter = new FilterBarCellFilter(oneIndMlPropFinder, new EndMatcher(pattern));
-			m_objectsToDispose.Add(filter);
 			andFilter.Add(filter);
 
 			var mimlPropFinder = new MultiIndirectMlPropFinder(m_sda, new[] { 444, 555 }, 666, 87);
@@ -225,16 +197,13 @@ namespace LanguageExplorerTests.Filters
 			pattern.UseRegularExpressions = false;
 			pattern.Pattern = TsStringUtils.MakeString("whatever", ws);
 			filter = new FilterBarCellFilter(mimlPropFinder, new AnywhereMatcher(pattern));
-			m_objectsToDispose.Add(filter);
 			andFilter.Add(filter);
 
 			var oneIndAtomFinder = new OneIndirectAtomMlPropFinder(m_sda, 543, 345, 43);
 			filter = new FilterBarCellFilter(oneIndAtomFinder, new BlankMatcher());
-			m_objectsToDispose.Add(filter);
 			andFilter.Add(filter);
 
 			filter = new FilterBarCellFilter(oneIndAtomFinder, new NonBlankMatcher());
-			m_objectsToDispose.Add(filter);
 			andFilter.Add(filter);
 
 			pattern = VwPatternClass.Create();
@@ -245,7 +214,6 @@ namespace LanguageExplorerTests.Filters
 			pattern.UseRegularExpressions = false;
 			pattern.Pattern = TsStringUtils.MakeString("pattern", ws);
 			filter = new FilterBarCellFilter(oneIndAtomFinder, new InvertMatcher(new RegExpMatcher(pattern)));
-			m_objectsToDispose.Add(filter);
 			andFilter.Add(filter);
 
 			andFilter.Add(new NullFilter());
@@ -260,8 +228,7 @@ namespace LanguageExplorerTests.Filters
 			var doc = XDocument.Parse(xml);
 
 			// And check all the pieces...
-			var andFilterOut = (AndFilter)DynamicLoader.RestoreObject(doc.Root);
-			m_objectsToDispose.Add(andFilterOut);
+			var andFilterOut = DynamicLoader.RestoreObject<AndFilter>(doc.Root);
 			andFilterOut.Cache = Cache;
 
 			Assert.IsNotNull(andFilterOut);
@@ -357,7 +324,7 @@ namespace LanguageExplorerTests.Filters
 			var doc = XDocument.Parse(xml);
 
 			// And check all the pieces...
-			var prsOut = (PropertyRecordSorter)DynamicLoader.RestoreObject(doc.Root);
+			var prsOut = DynamicLoader.RestoreObject<PropertyRecordSorter>(doc.Root);
 			prsOut.Cache = Cache;
 			Assert.AreEqual("longName", prsOut.PropertyName);
 		}
@@ -372,8 +339,7 @@ namespace LanguageExplorerTests.Filters
 			var xml = DynamicLoader.PersistObject(sfComp, "comparer");
 			var doc = XDocument.Parse(xml);
 			// And check all the pieces...
-			var sfCompOut = (StringFinderCompare)DynamicLoader.RestoreObject(doc.Root);
-			m_objectsToDispose.Add(sfCompOut);
+			var sfCompOut = DynamicLoader.RestoreObject<StringFinderCompare>(doc.Root);
 			sfCompOut.Cache = Cache;
 
 			Assert.IsTrue(sfCompOut.Finder is OwnMonoPropFinder);

@@ -3,8 +3,7 @@
 	<recordbrowseview>
 		<parameters id="textsChooser" filterBar="true" treeBarAvailability="NotAllowed" defaultCursor="Arrow" altTitleId="Text-Plural" editable="false">
 			<columns>
-				<column label="Title" width="144000" chooserFilter="textsFilterItem">
-					<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.Controls.XMLViews.TextsFilterItem"/>
+				<column label="Title" width="144000" chooserFilter="textsFilterItem" class="LanguageExplorer.Controls.XMLViews.TextsFilterItem">
 					<string field="Title" ws="$ws=best vernoranal"/>
 				</column>
 				<column label="Abbreviation" visibility="menu" width="72000">

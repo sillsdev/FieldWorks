@@ -12,10 +12,10 @@ namespace LanguageExplorer.Filters
 	/// This class implements StringFinder by looking up one multilingual property of the object
 	/// itself.
 	/// </summary>
-	public class OwnMlPropFinder : StringFinderBase
+	internal sealed class OwnMlPropFinder : StringFinderBase
 	{
 		/// <summary />
-		public OwnMlPropFinder(ISilDataAccess sda, int flid, int ws)
+		internal OwnMlPropFinder(ISilDataAccess sda, int flid, int ws)
 			: base(sda)
 		{
 			Flid = flid;
@@ -32,12 +32,12 @@ namespace LanguageExplorer.Filters
 		/// <summary>
 		/// Gets the flid.
 		/// </summary>
-		public int Flid { get; private set; }
+		internal int Flid { get; private set; }
 
 		/// <summary>
 		/// Gets the ws.
 		/// </summary>
-		public int Ws { get; }
+		internal int Ws { get; }
 
 		/// <summary>
 		/// Persists as XML.

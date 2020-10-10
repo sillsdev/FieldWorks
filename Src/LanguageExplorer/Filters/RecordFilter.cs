@@ -57,7 +57,7 @@ namespace LanguageExplorer.Filters
 		/// </summary>
 		public static IRecordFilter Create(LcmCache cache, XElement configuration)
 		{
-			var filter = (RecordFilter)DynamicLoader.CreateObject(configuration);
+			var filter = DynamicLoader.CreateObject<IRecordFilter>(configuration);
 			filter.Init(cache, configuration);
 			return filter;
 		}

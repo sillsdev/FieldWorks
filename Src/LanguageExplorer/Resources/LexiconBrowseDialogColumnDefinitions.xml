@@ -15,12 +15,8 @@
 	<column layout="GlossesForSense" label="Glosses" multipara="true" width="72000" ws="$ws=analysis"
 			transduce="LexSense.Gloss" cansortbylength="true" visibility="always"/>
 	<column layout="DefinitionsForSense" label="Definition" multipara="true" ws="$ws=analysis" transduce="LexSense.Definition" cansortbylength="true" visibility="always" width="96000"/>
-	<column layout="GrammaticalInfoFullForSense" headerlabel="Grammatical Info." chooserFilter="external" label="Grammatical Info. (Full)" multipara="true" width="72000" visibility="always">
-		<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.LcmUi.PosFilter"/>
-	</column>
-	<column layout="GrammaticalInfoAbbrForSense" headerlabel="Grammatical Info." chooserFilter="external" label="Grammatical Info. (Abbr.)" multipara="true"  width="72000" visibility="dialog">
-		<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.LcmUi.PosFilter"/>
-	</column>
+	<column layout="GrammaticalInfoFullForSense" headerlabel="Grammatical Info." chooserFilter="external" label="Grammatical Info. (Full)" multipara="true" width="72000" visibility="always" class="LanguageExplorer.LcmUi.PosFilter" />
+	<column layout="GrammaticalInfoAbbrForSense" headerlabel="Grammatical Info." chooserFilter="external" label="Grammatical Info. (Abbr.)" multipara="true"  width="72000" visibility="dialog" class="LanguageExplorer.LcmUi.PosFilter" />
 	<column layout="GrammaticalCategoryForSense" label="Grammatical Category" multipara="true" visibility="dialog" width="72000" bulkEdit="BulkPosEditor" />
 	<column layout="OutlineForSense" label="Sense Number" multipara="true" ws="$ws=analysis" field="LexEntry.Senses" visibility="dialog" />
 	<column layout="ReversalEntriesForSense" editLayout ="ReversalEntriesForSenseEdit" label="Reversals" multipara="true" transduce="LexSense.ReversalEntriesBulkText"
@@ -123,13 +119,7 @@
 	<column layout="PublishInForPicture" multipara="true" label="Publish Picture In"
 			width="72000" bulkEdit="complexListMultiple" field="CmPicture.PublishIn" list="LexDb.PublicationTypes" ghostListField="LexDb.AllPossiblePictures" displayNameProperty="ShortNameTSS" displayWs="best analysis" visibility="dialog"/>
 	<column layout="InflectionClassForAffix" label="Inflection Classes (Affix)" multipara="true" editable="false"
-			chooserFilter="external" visibility="dialog" displayWs="best analysis">
-		<dynamicloaderinfo assemblyPath="LanguageExplorer.dll" class="LanguageExplorer.LcmUi.InflectionClassEditor">
-			<args>
-				<arg name="xpathToConfigurationNode" value="ancestor::column"/>
-			</args>
-		</dynamicloaderinfo>
-	</column>
+			chooserFilter="external" visibility="dialog" displayWs="best analysis" class="LanguageExplorer.LcmUi.InflectionClassEditor" />
 	<!--bulkEdit="customCollection" field="MoAffixForm.InflectionClasses" list="" -->
 	<column layout="RequiredFeatures" multipara="true" label="Required Features (Allomorph)" visibility="dialog"/>
 	<!-- editable requested by LT-4688 -->

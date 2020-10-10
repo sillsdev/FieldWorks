@@ -24,7 +24,7 @@ namespace LanguageExplorer.Controls.XMLViews
 	/// LayoutFinder is an implementation of IStringFinder that finds a string based
 	/// on looking up a layout for a particular HVO.
 	/// </summary>
-	internal class LayoutFinder : IStringFinder, IPersistAsXml, IStoresLcmCache, IStoresDataAccess
+	internal class LayoutFinder : IStringFinder
 	{
 		#region Data members
 		internal ISilDataAccess m_sda;
