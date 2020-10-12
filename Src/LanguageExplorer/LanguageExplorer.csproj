@@ -964,7 +964,6 @@
     <Compile Include="Filters\DateMatchType.cs" />
     <Compile Include="Filters\DateTimeMatcher.cs" />
     <Compile Include="Filters\EndMatcher.cs" />
-    <Compile Include="Filters\ExactLiteralMatcher.cs" />
     <Compile Include="Filters\ExactMatcher.cs" />
     <Compile Include="Filters\FilterBarCellFilter.cs" />
     <Compile Include="FilterChangeEventArgs.cs" />
@@ -979,7 +978,7 @@
     <Compile Include="Filters\IMatcher.cs" />
     <Compile Include="INoteComparision.cs" />
     <Compile Include="Filters\OwnIntPropFinder.cs" />
-    <Compile Include="Filters\IntMatcher.cs" />
+    <Compile Include="Filters\IIntMatcher.cs" />
     <Compile Include="Filters\IntStringComparer.cs" />
     <Compile Include="Filters\InvalidObjectGuidException.cs" />
     <Compile Include="Filters\InvertMatcher.cs" />

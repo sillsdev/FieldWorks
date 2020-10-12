@@ -10,7 +10,7 @@ namespace LanguageExplorer.Filters
 	/// <summary>
 	/// Matches if the pattern occurs at the start of the argument
 	/// </summary>
-	public class BeginMatcher : SimpleStringMatcher
+	internal sealed class BeginMatcher : SimpleStringMatcher
 	{
 		/// <summary />
 		public BeginMatcher(IVwPattern pattern) : base(pattern) { }

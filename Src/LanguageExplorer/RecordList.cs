@@ -3400,16 +3400,12 @@ namespace LanguageExplorer
 		/// </summary>
 		protected virtual int PrevItemIndex => m_sortedObjects == null || m_sortedObjects.Count == 0 || m_currentIndex == -1 ? -1 : Math.Max(m_currentIndex - 1, 0);
 
-		protected virtual string PropertyTableId(string sorterOrFilter)
+		protected virtual string PropertyTableId(string suffix)
 		{
 			// Dependent lists do not have owner/property set. Rather they have class/field.
-			var className = VirtualListPublisher.MetaDataCache.GetOwnClsName(m_flid);
 			var fieldName = VirtualListPublisher.MetaDataCache.GetFieldName(m_flid);
-			if (string.IsNullOrEmpty(PropertyName) || PropertyName == fieldName)
-			{
-				return $"{className}.{fieldName}_{sorterOrFilter}";
-			}
-			return $"{className}.{PropertyName}_{sorterOrFilter}";
+			var writePropertyName = string.IsNullOrEmpty(PropertyName) || PropertyName == fieldName ? fieldName : PropertyName;
+			return $"{VirtualListPublisher.MetaDataCache.GetOwnClsName(m_flid)}.{writePropertyName}_{suffix}";
 		}
 
 		protected virtual bool TryListProvidingRootObject(out IRecordList recordListProvidingRootObject)

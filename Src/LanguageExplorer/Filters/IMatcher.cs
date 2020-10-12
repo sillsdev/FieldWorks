@@ -9,7 +9,7 @@ namespace LanguageExplorer.Filters
 	/// <summary>
 	/// Matchers are able to tell whether a string matches a pattern.
 	/// </summary>
-	public interface IMatcher
+	internal interface IMatcher : IPersistAsXml
 	{
 		/// <summary />
 		bool Accept(ITsString tssKey);

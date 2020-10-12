@@ -11,7 +11,7 @@ using SIL.Xml;
 
 namespace LanguageExplorer.Filters
 {
-	public class DateTimeMatcher : BaseMatcher
+	internal sealed class DateTimeMatcher : BaseMatcher
 	{
 		/// <summary>
 		/// Default constructor for IPersistAsXml

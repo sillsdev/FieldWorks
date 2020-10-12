@@ -58,7 +58,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// Gets the resulting matcher.
 		/// </summary>
-		public IMatcher ResultingMatcher
+		internal IMatcher ResultingMatcher
 		{
 			get
 			{

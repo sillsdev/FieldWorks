@@ -98,8 +98,8 @@ namespace LanguageExplorer.Filters
 		{
 			base.InitXml(element);
 			Debug.Assert(Finder == null);
-			Finder = DynamicLoader.RestoreObject<IStringFinder>(element.XPathSelectElement("finder"));
-			Matcher = DynamicLoader.RestoreObject<IMatcher>(element.XPathSelectElement("matcher"));
+			Finder = DynamicLoader.RestoreObject<IStringFinder>(element.Element("finder"));
+			Matcher = DynamicLoader.RestoreObject<IMatcher>(element.Element("matcher"));
 		}
 
 		#endregion

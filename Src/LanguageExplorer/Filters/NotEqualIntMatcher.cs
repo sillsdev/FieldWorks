@@ -12,7 +12,7 @@ namespace LanguageExplorer.Filters
 	/// A matcher that passes if the string, interpreted as an integer base 10, is not equal
 	/// to the argument.
 	/// </summary>
-	public class NotEqualIntMatcher : IntMatcher
+	internal sealed class NotEqualIntMatcher : BaseMatcher, IIntMatcher
 	{
 		/// <summary>
 		/// Get the value to not match. Used for testing.

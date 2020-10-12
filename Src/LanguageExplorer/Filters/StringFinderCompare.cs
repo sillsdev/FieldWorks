@@ -327,7 +327,7 @@ namespace LanguageExplorer.Filters
 		public void PersistAsXml(XElement element)
 		{
 			DynamicLoader.PersistObject(Finder, element, "finder");
-			DynamicLoader.PersistObject(SubComparer, element, "comparer");
+			DynamicLoader.PersistObject((IPersistAsXml)SubComparer, element, "comparer");
 			if (SortedFromEnd)
 			{
 				XmlUtils.SetAttribute(element, "sortFromEnd", "true");

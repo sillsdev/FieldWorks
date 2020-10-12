@@ -9,6 +9,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+using System.Xml.Linq;
 using LanguageExplorer.Controls;
 using LanguageExplorer.Filters;
 using SIL.Code;
@@ -287,97 +288,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools
 			PropertyTable.SetProperty("ConcordanceMatchCase", m_chkMatchCase.Checked, true, settingsGroup: SettingsGroup.LocalSettings);
 			PropertyTable.SetProperty("ConcordanceMatchDiacritics", m_chkMatchDiacritics.Checked, true, settingsGroup: SettingsGroup.LocalSettings);
 			PropertyTable.SetProperty("ConcordanceOption", GetConcordanceOption(), true, settingsGroup: SettingsGroup.LocalSettings);
-		}
-
-		#endregion
-
-		#region Internal types
-
-		private enum ConcordanceLines
-		{
-			kBaseline,
-			kWord,
-			kMorphemes,
-			kLexEntry,
-			kLexGloss,
-			kWordGloss,
-			kFreeTranslation,
-			kLiteralTranslation,
-			kNote,
-			kGramCategory,
-			kWordCategory,
-			kTags,
-			kCustom
-		};
-
-		/// <summary>
-		/// Like the base class, but match ignores case.
-		/// </summary>
-		private sealed class ExactCaseInsensitiveLiteralMatcher : ExactLiteralMatcher
-		{
-			public ExactCaseInsensitiveLiteralMatcher(string target, int ws)
-				: base(target.ToLower(), ws)
-			{
-			}
-
-			internal override bool MatchText(string p)
-			{
-				return base.MatchText(p.ToLower());
-			}
-		}
-
-		/// <summary>
-		/// This class stores the objects used by the combo box by the Word Cat. and Lex. Gram. Info. lines.
-		/// </summary>
-		private sealed class POSComboController : POSPopupTreeManager
-		{
-			/// <summary />
-			internal POSComboController(TreeCombo treeCombo, LcmCache cache, ICmPossibilityList list, int ws, bool useAbbr, FlexComponentParameters flexComponentParameters, Form parent) :
-				base(treeCombo, cache, list, ws, useAbbr, flexComponentParameters, parent)
-			{
-				Sorted = true;
-			}
-
-			protected override TreeNode MakeMenuItems(PopupTree popupTree, int hvoTarget)
-			{
-				popupTree.Sorted = Sorted;
-				TreeNode match = null;
-				if (List != null)
-				{
-					match = AddNodes(popupTree.Nodes, List.Hvo, CmPossibilityListTags.kflidPossibilities, hvoTarget, UseAbbr ? CmPossibilityTags.kflidAbbreviation : CmPossibilityTags.kflidName);
-				}
-				return match ?? popupTree.Nodes[0];
-			}
-
-			internal bool Sorted { get; set; }
-		}
-
-		/// <summary>
-		/// This class stores the objects used by the Line combo box.
-		/// </summary>
-		private sealed class ConcordLine
-		{
-			internal ConcordLine(string name, int wsMagic, ConcordanceLines line, int flidIfCustom = 0)
-			{
-				Name = name;
-				MagicWs = wsMagic;
-				Line = line;
-				FlidIfCustom = flidIfCustom;
-			}
-
-			private string Name { get; }
-
-			internal int MagicWs { get; }
-
-			internal ConcordanceLines Line { get; }
-
-			/// <remarks>Only for custom fields!</remarks>
-			internal int FlidIfCustom { get; }
-
-			public override string ToString()
-			{
-				return Name;
-			}
 		}
 
 		#endregion
@@ -953,7 +863,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools
 
 		private List<IParaFragment> UpdateConcordanceForCustomField(int flid, int ws)
 		{
-			var matcher = GetMatcher(ws) as SimpleStringMatcher;
+			var matcher = (SimpleStringMatcher)GetMatcher(ws);
 			var sda = m_cache.MainCacheAccessor;
 			var paragraphsToSearch = ParagraphsToSearch;
 			return GetOccurrencesInCustomField(flid, paragraphsToSearch, sda, matcher);
@@ -1587,5 +1497,212 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools
 				m_recordList.SuspendLoadingRecordUntilOnJumpToRecord = false;
 			}
 		}
+
+		#region private types
+
+		private enum ConcordanceLines
+		{
+			kBaseline,
+			kWord,
+			kMorphemes,
+			kLexEntry,
+			kLexGloss,
+			kWordGloss,
+			kFreeTranslation,
+			kLiteralTranslation,
+			kNote,
+			kGramCategory,
+			kWordCategory,
+			kTags,
+			kCustom
+		};
+
+		/// <summary>
+		/// This class takes a string and a writing system and matches strings that have exactly the
+		/// same characters all in exactly that writing system.
+		/// </summary>
+		/// <remarks>
+		/// This class and it subclass are never persisted, like the BaseMatcher class, which adds IPersistAsXml and IStoresLcmCache implementations.
+		/// </remarks>
+		private class ExactLiteralMatcher : IMatcher
+		{
+			private string m_target;
+			private readonly int _writingSystem;
+			private IMatcher AsIMatcher => this;
+
+			/// <summary />
+			internal ExactLiteralMatcher(string target, int ws)
+			{
+				m_target = target;
+				_writingSystem = ws;
+			}
+
+			#region IMatcher Members
+
+			bool IMatcher.Accept(ITsString tssKey)
+			{
+				// Fail fast if text doesn't match exactly.
+				if (!MatchText(tssKey.Length == 0 ? "" : tssKey.Text))
+				{
+					return false;
+				}
+				// Writing system must also match.
+				var crun = tssKey.RunCount;
+				for (var irun = 0; irun < crun; irun++)
+				{
+					if (tssKey.get_Properties(irun).GetIntPropValues((int)FwTextPropType.ktptWs, out _) != _writingSystem)
+					{
+						return false;
+					}
+				}
+				return true;
+			}
+
+			internal virtual bool MatchText(string p)
+			{
+				return p == m_target;
+			}
+
+			bool IMatcher.Matches(ITsString arg)
+			{
+				return AsIMatcher.Accept(arg);
+			}
+
+			bool IMatcher.SameMatcher(IMatcher other)
+			{
+				// TODO-Linux: System.Boolean System.Type::op_Inequality(System.Type,System.Type)
+				// is marked with [MonoTODO] and might not work as expected in 4.0.
+				if (other.GetType() != GetType())
+				{
+					return false;
+				}
+				var other1 = other as ExactLiteralMatcher;
+				return m_target == other1.m_target && AsIMatcher.WritingSystem == other1.AsIMatcher.WritingSystem;
+			}
+
+			bool IMatcher.IsValid()
+			{
+				return true;
+			}
+
+			string IMatcher.ErrorMessage()
+			{
+				return string.Empty;
+			}
+
+			bool IMatcher.CanMakeValid()
+			{
+				return true;
+			}
+
+			ITsString IMatcher.MakeValid()
+			{
+				throw new NotSupportedException();
+			}
+
+			ITsString IMatcher.Label
+			{
+				get => throw new NotSupportedException();
+				set => throw new NotSupportedException();
+			}
+
+			ILgWritingSystemFactory IMatcher.WritingSystemFactory { get; set; }
+
+			/// <summary>
+			/// This class explicitly looks for a particular ws.
+			/// </summary>
+			int IMatcher.WritingSystem => _writingSystem;
+			#endregion
+
+			#region IPersistAsXml Members
+
+			/// <inheritdoc />
+			public void PersistAsXml(XElement element)
+			{
+				throw new NotSupportedException();
+			}
+
+			/// <inheritdoc />
+			public void InitXml(XElement element)
+			{
+				throw new NotSupportedException();
+				#endregion
+			}
+		}
+
+		/// <summary>
+		/// Like the base class, but match ignores case.
+		/// </summary>
+		/// <remarks>
+		/// This class is never persisted, like the BaseMatcher class, which adds IPersistAsXml and IStoresLcmCache implementations.
+		/// </remarks>
+		private sealed class ExactCaseInsensitiveLiteralMatcher : ExactLiteralMatcher
+		{
+			internal ExactCaseInsensitiveLiteralMatcher(string target, int ws)
+				: base(target.ToLower(), ws)
+			{
+			}
+
+			internal override bool MatchText(string p)
+			{
+				return base.MatchText(p.ToLower());
+			}
+		}
+
+		/// <summary>
+		/// This class stores the objects used by the combo box by the Word Cat. and Lex. Gram. Info. lines.
+		/// </summary>
+		private sealed class POSComboController : POSPopupTreeManager
+		{
+			/// <summary />
+			internal POSComboController(TreeCombo treeCombo, LcmCache cache, ICmPossibilityList list, int ws, bool useAbbr, FlexComponentParameters flexComponentParameters, Form parent) :
+				base(treeCombo, cache, list, ws, useAbbr, flexComponentParameters, parent)
+			{
+				Sorted = true;
+			}
+
+			protected override TreeNode MakeMenuItems(PopupTree popupTree, int hvoTarget)
+			{
+				popupTree.Sorted = Sorted;
+				TreeNode match = null;
+				if (List != null)
+				{
+					match = AddNodes(popupTree.Nodes, List.Hvo, CmPossibilityListTags.kflidPossibilities, hvoTarget, UseAbbr ? CmPossibilityTags.kflidAbbreviation : CmPossibilityTags.kflidName);
+				}
+				return match ?? popupTree.Nodes[0];
+			}
+
+			internal bool Sorted { get; set; }
+		}
+
+		/// <summary>
+		/// This class stores the objects used by the Line combo box.
+		/// </summary>
+		private sealed class ConcordLine
+		{
+			internal ConcordLine(string name, int wsMagic, ConcordanceLines line, int flidIfCustom = 0)
+			{
+				Name = name;
+				MagicWs = wsMagic;
+				Line = line;
+				FlidIfCustom = flidIfCustom;
+			}
+
+			private string Name { get; }
+
+			internal int MagicWs { get; }
+
+			internal ConcordanceLines Line { get; }
+
+			/// <remarks>Only for custom fields!</remarks>
+			internal int FlidIfCustom { get; }
+
+			public override string ToString()
+			{
+				return Name;
+			}
+		}
+
+		#endregion
 	}
 }

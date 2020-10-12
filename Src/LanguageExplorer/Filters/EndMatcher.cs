@@ -10,7 +10,7 @@ namespace LanguageExplorer.Filters
 	/// <summary>
 	/// Matches if the pattern occurs at the end of the argument
 	/// </summary>
-	public class EndMatcher : SimpleStringMatcher
+	internal sealed class EndMatcher : SimpleStringMatcher
 	{
 		/// <summary>
 		/// normal constructor

@@ -13,7 +13,7 @@ namespace LanguageExplorer.Filters
 	/// <summary>
 	/// This is a base class for matchers; so far it just implements storing the label.
 	/// </summary>
-	public abstract class BaseMatcher : IMatcher, IPersistAsXml, IStoresLcmCache
+	internal abstract class BaseMatcher : IMatcher, IStoresLcmCache
 	{
 		// Todo: get this initialized somehow.
 		// This is used only to save the value restored by InitXml until the Cache is set

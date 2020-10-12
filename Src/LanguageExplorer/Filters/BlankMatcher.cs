@@ -10,7 +10,7 @@ namespace LanguageExplorer.Filters
 	/// <summary>
 	/// Matches blanks.
 	/// </summary>
-	public class BlankMatcher : BaseMatcher
+	internal sealed class BlankMatcher : BaseMatcher
 	{
 		/// <summary>
 		/// Matches any empty or null string, or one consisting entirely of white space

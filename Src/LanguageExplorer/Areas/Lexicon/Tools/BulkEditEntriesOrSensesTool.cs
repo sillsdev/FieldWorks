@@ -530,11 +530,9 @@ namespace LanguageExplorer.Areas.Lexicon.Tools
 			/// these bulk edit column filters/sorters can be considered Entries based, so that they can possibly
 			/// be reusable in other Entries record lists (e.g. the one used by Lexicon Edit, Browse, Dictionary).
 			/// </summary>
-			/// <param name="sorterOrFilter"></param>
-			/// <returns></returns>
-			protected override string PropertyTableId(string sorterOrFilter)
+			protected override string PropertyTableId(string suffix)
 			{
-				return $"LexDb.Entries_{sorterOrFilter}";
+				return $"LexDb.Entries_{suffix}";
 			}
 
 			#endregion

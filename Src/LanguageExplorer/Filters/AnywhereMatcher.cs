@@ -10,7 +10,7 @@ namespace LanguageExplorer.Filters
 	/// <summary>
 	/// Matches if the pattern occurs anywhere in the argument
 	/// </summary>
-	public class AnywhereMatcher : SimpleStringMatcher
+	internal sealed class AnywhereMatcher : SimpleStringMatcher
 	{
 		/// <summary>
 		/// normal constructor

@@ -15,7 +15,7 @@ namespace LanguageExplorer.Filters
 	/// <summary>
 	/// A BadSpellingMatcher
 	/// </summary>
-	public class BadSpellingMatcher : BaseMatcher
+	internal sealed class BadSpellingMatcher : BaseMatcher
 	{
 		private int m_ws;
 

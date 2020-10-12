@@ -13,10 +13,10 @@ namespace LanguageExplorer.Filters
 	/// <summary>
 	/// A matcher that tests for integers in a specified range.
 	/// </summary>
-	public class RangeIntMatcher : IntMatcher
+	internal sealed class RangeIntMatcher : BaseMatcher, IIntMatcher
 	{
 		/// <summary />
-		public RangeIntMatcher(long min, long max)
+		internal RangeIntMatcher(long min, long max)
 		{
 			Min = min;
 			Max = max;
@@ -32,12 +32,12 @@ namespace LanguageExplorer.Filters
 		/// <summary>
 		/// Gets the min.
 		/// </summary>
-		public long Min { get; private set; }
+		internal long Min { get; private set; }
 
 		/// <summary>
 		/// Gets the max.
 		/// </summary>
-		public long Max { get; private set; }
+		internal long Max { get; private set; }
 
 		/// <summary>
 		/// Persists as XML.

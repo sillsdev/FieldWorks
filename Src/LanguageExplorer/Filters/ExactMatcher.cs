@@ -9,7 +9,7 @@ namespace LanguageExplorer.Filters
 	/// <summary>
 	/// Matches if the pattern is exactly the argument.
 	/// </summary>
-	public class ExactMatcher : SimpleStringMatcher
+	internal sealed class ExactMatcher : SimpleStringMatcher
 	{
 		/// <summary />
 		public ExactMatcher(IVwPattern pattern) : base(pattern) { }

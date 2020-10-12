@@ -114,7 +114,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// Gets the resulting matcher.
 		/// </summary>
-		public IMatcher ResultingMatcher
+		internal IMatcher ResultingMatcher
 		{
 			get
 			{
@@ -178,7 +178,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// Initialize the dialog, based on the old matcher, if any, and if recognized.
 		/// </summary>
-		public void SetDlgValues(IMatcher matcher1)
+		internal void SetDlgValues(IMatcher matcher1)
 		{
 			if (!(matcher1 is DateTimeMatcher matcher))
 			{

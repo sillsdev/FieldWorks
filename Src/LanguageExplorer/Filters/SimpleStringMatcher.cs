@@ -18,7 +18,7 @@ namespace LanguageExplorer.Filters
 	/// <summary>
 	/// A base class for several kinds of matcher that do various kinds of string equality/inequality testing.
 	/// </summary>
-	public abstract class SimpleStringMatcher : BaseMatcher
+	internal abstract class SimpleStringMatcher : BaseMatcher
 	{
 		/// <summary />
 		protected IVwTxtSrcInit m_textSourceInit;

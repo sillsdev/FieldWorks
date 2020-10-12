@@ -1018,7 +1018,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			/// </summary>
 			internal override ITsString SetFromMatcher(IMatcher matcher)
 			{
-				return matcher is IntMatcher ? matcher.Label : null;
+				return matcher is IIntMatcher ? matcher.Label : null;
 			}
 		}
 	}

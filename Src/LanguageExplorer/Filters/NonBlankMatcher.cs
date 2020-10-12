@@ -10,7 +10,7 @@ namespace LanguageExplorer.Filters
 	/// <summary>
 	/// Matches non-blanks.
 	/// </summary>
-	public class NonBlankMatcher : BaseMatcher
+	internal sealed class NonBlankMatcher : BaseMatcher
 	{
 		/// <summary>
 		/// The exact opposite of BlankMatcher.

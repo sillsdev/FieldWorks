@@ -228,7 +228,7 @@ namespace LanguageExplorer.LIFT
 				parser.SetStepsCompleted += parser_SetStepsCompleted;
 				parser.SetProgressMessage += parser_SetProgressMessage;
 				flexImporter.LiftFile = sTempOrigFile;
-				//Before imporing the LIFT files ensure the LDML (language definition files) have the correct writing system codes.
+				//Before importing the LIFT files ensure the LDML (language definition files) have the correct writing system codes.
 				flexImporter.LdmlFilesMigration(sLIFTtempFolder, sFilename, sTempOrigFile + "-ranges");
 				//Import the Ranges file.
 				flexImporter.LoadLiftRanges(sTempOrigFile + "-ranges");

@@ -3,7 +3,6 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Xml.Linq;
-using System.Xml.XPath;
 using SIL.LCModel;
 using SIL.LCModel.Core.KernelInterfaces;
 
@@ -12,7 +11,7 @@ namespace LanguageExplorer.Filters
 	/// <summary>
 	/// Matches if the embedded matcher fails.
 	/// </summary>
-	public class InvertMatcher : BaseMatcher, IStoresLcmCache, IStoresDataAccess
+	internal sealed class InvertMatcher : BaseMatcher, IStoresDataAccess
 	{
 		/// <summary />
 		public InvertMatcher(IMatcher matcher)
@@ -61,12 +60,12 @@ namespace LanguageExplorer.Filters
 		public override void InitXml(XElement element)
 		{
 			base.InitXml(element);
-			MatcherToInvert = DynamicLoader.RestoreObject<IMatcher>(element.XPathSelectElement("invertMatcher"));
+			MatcherToInvert = DynamicLoader.RestoreObject<IMatcher>(element.Element("invertMatcher"));
 		}
 
 		#region IStoresLcmCache Members
 
-		LcmCache IStoresLcmCache.Cache
+		public override LcmCache Cache
 		{
 			set
 			{

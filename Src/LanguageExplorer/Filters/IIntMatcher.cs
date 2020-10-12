@@ -5,9 +5,9 @@
 namespace LanguageExplorer.Filters
 {
 	/// <summary>
-	/// An abstract class that currently just serves to group matchers that deal with integers.
+	/// An interface that currently just serves to group matchers that deal with integers.
 	/// </summary>
-	public abstract class IntMatcher : BaseMatcher
+	internal interface IIntMatcher
 	{
 	}
 }

@@ -418,22 +418,23 @@ namespace LanguageExplorer
 			}
 
 			/// <summary />
-			protected override string PropertyTableId(string sorterOrFilter)
+			protected override string PropertyTableId(string suffix)
 			{
 				var reversalPub = PropertyTable.GetValue<string>("ReversalIndexPublicationLayout");
 				if (reversalPub == null)
 				{
 					return null; // there is no current Reversal Index; don't try to find Properties (sorter & filter) for a nonexistent Reversal Index
 				}
-				var reversalLang = reversalPub.Substring(reversalPub.IndexOf('-') + 1); // strip initial "publishReversal-"
-																						// Dependent lists do not have owner/property set. Rather they have class/field.
+				// strip initial "publishReversal-"
+				var reversalLang = reversalPub.Substring(reversalPub.IndexOf('-') + 1);
+				// Dependent lists do not have owner/property set. Rather they have class/field.
 				var className = VirtualListPublisher.MetaDataCache.GetOwnClsName((int)m_flid);
 				var fieldName = VirtualListPublisher.MetaDataCache.GetFieldName((int)m_flid);
 				if (string.IsNullOrEmpty(PropertyName) || PropertyName == fieldName)
 				{
-					return $"{className}.{fieldName}-{reversalLang}_{sorterOrFilter}";
+					return $"{className}.{fieldName}-{reversalLang}_{suffix}";
 				}
-				return $"{className}.{PropertyName}-{reversalLang}_{sorterOrFilter}";
+				return $"{className}.{PropertyName}-{reversalLang}_{suffix}";
 			}
 
 			#endregion

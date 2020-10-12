@@ -86,7 +86,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// Initialize the dialog, based on the old matcher, if any, and if recognized.
 		/// </summary>
-		public void SetDlgValues(IMatcher matcher, IVwStylesheet stylesheet)
+		internal void SetDlgValues(IMatcher matcher, IVwStylesheet stylesheet)
 		{
 			switch (matcher)
 			{
@@ -120,7 +120,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// Gets the resulting matcher.
 		/// </summary>
-		public IMatcher ResultingMatcher
+		internal IMatcher ResultingMatcher
 		{
 			get
 			{

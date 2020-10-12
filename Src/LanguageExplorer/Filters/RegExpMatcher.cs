@@ -11,7 +11,7 @@ namespace LanguageExplorer.Filters
 	/// <summary>
 	/// Matches if the pattern (interpreted as a regular expression) matches the argument
 	/// </summary>
-	public class RegExpMatcher : SimpleStringMatcher
+	internal sealed class RegExpMatcher : SimpleStringMatcher
 	{
 		/// <summary />
 		public RegExpMatcher(IVwPattern pattern) : base(pattern)
