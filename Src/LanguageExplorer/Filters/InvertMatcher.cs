@@ -51,7 +51,7 @@ namespace LanguageExplorer.Filters
 		public override void PersistAsXml(XElement element)
 		{
 			base.PersistAsXml(element);
-			DynamicLoader.PersistObject(MatcherToInvert, element, "invertMatcher");
+			LanguageExplorerServices.PersistObject(MatcherToInvert, element, "invertMatcher");
 		}
 
 		/// <summary>

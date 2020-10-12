@@ -7,7 +7,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Windows.Forms;
 using System.Xml.Linq;
-using System.Xml.XPath;
 using SIL.LCModel;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Utils;
@@ -326,8 +325,8 @@ namespace LanguageExplorer.Filters
 		/// </summary>
 		public void PersistAsXml(XElement element)
 		{
-			DynamicLoader.PersistObject(Finder, element, "finder");
-			DynamicLoader.PersistObject((IPersistAsXml)SubComparer, element, "comparer");
+			LanguageExplorerServices.PersistObject(Finder, element, "finder");
+			LanguageExplorerServices.PersistObject((IPersistAsXml)SubComparer, element, "comparer");
 			if (SortedFromEnd)
 			{
 				XmlUtils.SetAttribute(element, "sortFromEnd", "true");

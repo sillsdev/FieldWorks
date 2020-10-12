@@ -7,7 +7,6 @@ using System.Diagnostics;
 using System.Reflection;
 using System.Text;
 using System.Xml.Linq;
-using SIL.Code;
 using SIL.Xml;
 
 namespace LanguageExplorer
@@ -68,36 +67,6 @@ namespace LanguageExplorer
 			var obj = CreateObject<T>(element);
 			(obj as IPersistAsXml)?.InitXml(element.Clone());
 			return obj;
-		}
-
-		/// <summary>
-		/// Creates a string representation of the supplied object, an XML string
-		/// containing the required class attribute needed to create an
-		/// instance using CreateObject, plus whatever gets added to the node by passing
-		/// it to the PersistAsXml method of the object. The root element name is supplied
-		/// as the elementName argument.
-		/// </summary>
-		internal static string PersistObject(IPersistAsXml persistAsXml, string elementName)
-		{
-			Guard.AgainstNull(persistAsXml, nameof(persistAsXml));
-			var element = new XElement(elementName);
-			PersistObject(persistAsXml, element);
-			return element.ToString();
-		}
-
-		internal static void PersistObject(IPersistAsXml persistAsXml, XElement parent, string elementName)
-		{
-			Guard.AgainstNull(persistAsXml, nameof(persistAsXml));
-			var element = new XElement(elementName);
-			parent.Add(element);
-			PersistObject(persistAsXml, element);
-		}
-
-		private static void PersistObject(IPersistAsXml persistAsXml, XElement element)
-		{
-			Guard.AgainstNull(persistAsXml, nameof(persistAsXml));
-			element.Add(new XAttribute("class", persistAsXml.GetType().FullName));
-			persistAsXml.PersistAsXml(element);
 		}
 	}
 }

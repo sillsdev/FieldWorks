@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Xml.Linq;
-using System.Xml.XPath;
 using SIL.LCModel;
 using SIL.LCModel.Core.KernelInterfaces;
 
@@ -69,7 +68,7 @@ namespace LanguageExplorer.Filters
 			base.PersistAsXml(element);
 			foreach (var rf in Filters)
 			{
-				DynamicLoader.PersistObject(rf, element, "filter");
+				LanguageExplorerServices.PersistObject(rf, element, "filter");
 			}
 		}
 
@@ -83,7 +82,7 @@ namespace LanguageExplorer.Filters
 			Filters = new List<IRecordFilter>(element.Elements().Count());
 			foreach (var child in element.Elements())
 			{
-				Filters.Add(DynamicLoader.RestoreObject<IRecordFilter>(child.XPathSelectElement(".")));
+				Filters.Add(DynamicLoader.RestoreObject<IRecordFilter>(child));
 			}
 		}
 

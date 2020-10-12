@@ -72,7 +72,7 @@ namespace LanguageExplorer.Filters
 		/// </summary>
 		public void PersistAsXml(XElement element)
 		{
-			DynamicLoader.PersistObject((IPersistAsXml)SubComp, element, "comparer");
+			LanguageExplorerServices.PersistObject((IPersistAsXml)SubComp, element, "comparer");
 		}
 
 		/// <summary>

@@ -974,7 +974,7 @@ namespace LanguageExplorer
 				// Now we have a new filter, we have to recompute what to show.
 				ReloadList();
 				// Remember the active filter for this list.
-				var persistFilter = DynamicLoader.PersistObject(Filter, "filter");
+				var persistFilter = LanguageExplorerServices.PersistObject(Filter, "filter");
 				PropertyTable.SetProperty(FilterPropertyTableId, persistFilter, true, true, SettingsGroup.LocalSettings);
 				// adjust menu bar items according to current state of Filter, where needed.
 				Publisher.Publish(new PublisherParameterObject("AdjustFilterSelection", Filter));
@@ -1185,7 +1185,7 @@ namespace LanguageExplorer
 			PropertyTable.SetProperty(SortNamePropertyTableId, SortName, true, true, SettingsGroup.LocalSettings);
 			ChangeSorter(sorter);
 			// Remember how we're sorted.
-			var persistSorter = DynamicLoader.PersistObject(Sorter, "sorter");
+			var persistSorter = LanguageExplorerServices.PersistObject(Sorter, "sorter");
 			PropertyTable.SetProperty(SorterPropertyTableId, persistSorter, true, true, SettingsGroup.LocalSettings);
 			UpdateSortStatusBarPanel();
 		}
@@ -2365,7 +2365,7 @@ namespace LanguageExplorer
 			{
 				// if the persisted object string of the existing filter matches the one in the property table
 				// do nothing.
-				var currentFilter = DynamicLoader.PersistObject(Filter, "filter");
+				var currentFilter = LanguageExplorerServices.PersistObject(Filter, "filter");
 				if (currentFilter == persistFilter)
 				{
 					return false;
@@ -2410,7 +2410,7 @@ namespace LanguageExplorer
 			{
 				// if the persisted object string of the existing sorter matches the one in the property table
 				// do nothing
-				var currentSorter = DynamicLoader.PersistObject(Sorter, "sorter");
+				var currentSorter = LanguageExplorerServices.PersistObject(Sorter, "sorter");
 				if (currentSorter == persistSorter)
 				{
 					return false;

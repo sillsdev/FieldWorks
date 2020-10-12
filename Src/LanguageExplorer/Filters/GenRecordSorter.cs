@@ -152,7 +152,7 @@ namespace LanguageExplorer.Filters
 			{
 				throw new Exception($"cannot persist GenRecSorter with comparer class {Comparer.GetType().AssemblyQualifiedName}");
 			}
-			DynamicLoader.PersistObject(persistComparer, element, "comparer");
+			LanguageExplorerServices.PersistObject(persistComparer, element, "comparer");
 		}
 
 		/// <summary>

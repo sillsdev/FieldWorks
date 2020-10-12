@@ -71,7 +71,7 @@ namespace LanguageExplorerTests.Filters
 		{
 			var icomp = new IcuComparer("fr");
 			var grs = new GenRecordSorter(icomp);
-			var xml = DynamicLoader.PersistObject(grs, "sorter");
+			var xml = LanguageExplorerServices.PersistObject(grs, "sorter");
 			var doc = XDocument.Parse(xml);
 			Assert.IsTrue("sorter" == doc.Root.Name);
 			var obj = DynamicLoader.RestoreObject<GenRecordSorter>(doc.Root);
@@ -98,7 +98,7 @@ namespace LanguageExplorerTests.Filters
 			GenRecordSorter grs1 = new GenRecordSorter(icomp1), grs2 = new GenRecordSorter(icomp2);
 			var sorters = new List<IRecordSorter> { grs1, grs2 };
 			var asorter = new AndSorter(sorters);
-			var xml = DynamicLoader.PersistObject(asorter, "sorter");
+			var xml = LanguageExplorerServices.PersistObject(asorter, "sorter");
 			var doc = XDocument.Parse(xml);
 			Assert.IsTrue("sorter" == doc.Root.Name);
 			var andSorter = DynamicLoader.RestoreObject<AndSorter>(doc.Root);
@@ -224,7 +224,7 @@ namespace LanguageExplorerTests.Filters
 			andFilter.Add(paf);
 
 			// Save and restore!
-			var xml = DynamicLoader.PersistObject(andFilter, "filter");
+			var xml = LanguageExplorerServices.PersistObject(andFilter, "filter");
 			var doc = XDocument.Parse(xml);
 
 			// And check all the pieces...
@@ -320,7 +320,7 @@ namespace LanguageExplorerTests.Filters
 		{
 			var prs = new PropertyRecordSorter("longName");
 			// Save and restore!
-			var xml = DynamicLoader.PersistObject(prs, "sorter");
+			var xml = LanguageExplorerServices.PersistObject(prs, "sorter");
 			var doc = XDocument.Parse(xml);
 
 			// And check all the pieces...
@@ -336,7 +336,7 @@ namespace LanguageExplorerTests.Filters
 			var sfComp = new StringFinderCompare(new OwnMonoPropFinder(m_sda, 445), new ReverseComparer(new IntStringComparer()));
 			sfComp.SortedFromEnd = true;
 			// Save and restore!
-			var xml = DynamicLoader.PersistObject(sfComp, "comparer");
+			var xml = LanguageExplorerServices.PersistObject(sfComp, "comparer");
 			var doc = XDocument.Parse(xml);
 			// And check all the pieces...
 			var sfCompOut = DynamicLoader.RestoreObject<StringFinderCompare>(doc.Root);

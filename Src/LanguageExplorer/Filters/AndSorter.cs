@@ -78,7 +78,7 @@ namespace LanguageExplorer.Filters
 			base.PersistAsXml(element);
 			foreach (var rs in Sorters)
 			{
-				DynamicLoader.PersistObject(rs, element, "sorter");
+				LanguageExplorerServices.PersistObject(rs, element, "sorter");
 			}
 		}
 
@@ -138,7 +138,7 @@ namespace LanguageExplorer.Filters
 			Sorters = new List<IRecordSorter>(element.Elements().Count());
 			foreach (var child in element.Elements())
 			{
-				Sorters.Add(DynamicLoader.RestoreObject<IRecordSorter>(child.XPathSelectElement(".")));
+				Sorters.Add(DynamicLoader.RestoreObject<IRecordSorter>(child));
 			}
 		}
 

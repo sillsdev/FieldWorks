@@ -4,7 +4,6 @@
 
 using System.Diagnostics;
 using System.Xml.Linq;
-using System.Xml.XPath;
 using SIL.LCModel;
 using SIL.LCModel.Core.KernelInterfaces;
 
@@ -87,8 +86,8 @@ namespace LanguageExplorer.Filters
 		public override void PersistAsXml(XElement element)
 		{
 			base.PersistAsXml(element);
-			DynamicLoader.PersistObject(Finder, element, "finder");
-			DynamicLoader.PersistObject(Matcher, element, "matcher");
+			LanguageExplorerServices.PersistObject(Finder, element, "finder");
+			LanguageExplorerServices.PersistObject(Matcher, element, "matcher");
 		}
 
 		/// <summary>
