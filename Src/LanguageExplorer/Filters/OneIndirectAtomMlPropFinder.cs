@@ -19,14 +19,24 @@ namespace LanguageExplorer.Filters
 		internal OneIndirectAtomMlPropFinder(ISilDataAccess sda, int flidAtom, int flidString, int ws)
 			: base(sda)
 		{
+			ConstructorSurrogate(flidAtom, flidString, ws);
+		}
+
+		/// <summary>
+		/// For use with IPersistAsXml
+		/// </summary>
+		internal OneIndirectAtomMlPropFinder(XElement element)
+		{
+			ConstructorSurrogate(XmlUtils.GetMandatoryIntegerAttributeValue(element, "flidAtom"),
+				XmlUtils.GetMandatoryIntegerAttributeValue(element, "flidString"),
+				XmlUtils.GetMandatoryIntegerAttributeValue(element, "ws"));
+		}
+
+		private void ConstructorSurrogate(int flidAtom, int flidString, int ws)
+		{
 			FlidAtom = flidAtom;
 			FlidString = flidString;
 			Ws = ws;
-		}
-
-		/// <summary />
-		public OneIndirectAtomMlPropFinder()
-		{
 		}
 
 		/// <summary>
@@ -49,21 +59,9 @@ namespace LanguageExplorer.Filters
 		/// </summary>
 		public override void PersistAsXml(XElement element)
 		{
-			base.PersistAsXml(element);
 			XmlUtils.SetAttribute(element, "flidAtom", FlidAtom.ToString());
 			XmlUtils.SetAttribute(element, "flidString", FlidString.ToString());
 			XmlUtils.SetAttribute(element, "ws", Ws.ToString());
-		}
-
-		/// <summary>
-		/// Inits the XML.
-		/// </summary>
-		public override void InitXml(IPersistAsXmlFactory factory, XElement element)
-		{
-			base.InitXml(factory, element);
-			FlidAtom = XmlUtils.GetMandatoryIntegerAttributeValue(element, "flidAtom");
-			FlidString = XmlUtils.GetMandatoryIntegerAttributeValue(element, "flidString");
-			Ws = XmlUtils.GetMandatoryIntegerAttributeValue(element, "ws");
 		}
 
 		#region StringFinder Members

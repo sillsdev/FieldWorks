@@ -312,6 +312,9 @@
     </Compile>
     <Compile Include="Controls\DetailControls\RecordChangeHandlerFactory.cs" />
     <Compile Include="FactoryNames.cs" />
+    <Compile Include="Filters\IntCompareFinder.cs" />
+    <Compile Include="Filters\PersistAsXmlFinderFactoryStrategy.cs" />
+    <Compile Include="Filters\SortMethodFinder.cs" />
     <Compile Include="IPersistAsXmlFactoryStrategy.cs" />
     <Compile Include="IPersistAsXmlFactory.cs" />
     <Compile Include="IRecordFilter.cs" />
@@ -1569,7 +1572,7 @@
     <Compile Include="Controls\XMLViews\GhostParentHelper.cs" />
     <Compile Include="Controls\XMLViews\LabelNode.cs" />
     <Compile Include="Controls\LayoutCache.cs" />
-    <Compile Include="Controls\XMLViews\LayoutFinder.cs" />
+    <Compile Include="Filters\LayoutFinder.cs" />
     <Compile Include="Controls\LayoutMerger.cs" />
     <Compile Include="Controls\XMLViews\MatchingObjectsBrowser.cs">
       <SubType>UserControl</SubType>

@@ -22,16 +22,22 @@ namespace LanguageExplorer.Filters
 		internal MultiIndirectMlPropFinder(ISilDataAccess sda, int[] flidVec, int flidString, int ws)
 			: base(sda)
 		{
-			VecFlids = flidVec;
-			FlidString = flidString;
-			Ws = ws;
+			ConstructorSurrogate(flidVec, flidString, ws);
 		}
 
 		/// <summary>
 		/// For use with IPersistAsXml
 		/// </summary>
-		public MultiIndirectMlPropFinder()
+		internal MultiIndirectMlPropFinder(XElement element)
 		{
+			ConstructorSurrogate(XmlUtils.GetMandatoryIntegerListAttributeValue(element, "flidVec"), XmlUtils.GetMandatoryIntegerAttributeValue(element, "flidString"), XmlUtils.GetMandatoryIntegerAttributeValue(element, "ws"));
+		}
+
+		private void ConstructorSurrogate(int[] flidVec, int flidString, int ws)
+		{
+			VecFlids = flidVec;
+			FlidString = flidString;
+			Ws = ws;
 		}
 
 		/// <summary>
@@ -54,21 +60,9 @@ namespace LanguageExplorer.Filters
 		/// </summary>
 		public override void PersistAsXml(XElement element)
 		{
-			base.PersistAsXml(element);
 			XmlUtils.SetAttribute(element, "flidVec", XmlUtils.MakeIntegerListValue(VecFlids));
 			XmlUtils.SetAttribute(element, "flidString", FlidString.ToString());
 			XmlUtils.SetAttribute(element, "ws", Ws.ToString());
-		}
-
-		/// <summary>
-		/// Inits the XML.
-		/// </summary>
-		public override void InitXml(IPersistAsXmlFactory factory, XElement element)
-		{
-			base.InitXml(factory, element);
-			VecFlids = XmlUtils.GetMandatoryIntegerListAttributeValue(element, "flidVec");
-			FlidString = XmlUtils.GetMandatoryIntegerAttributeValue(element, "flidString");
-			Ws = XmlUtils.GetMandatoryIntegerAttributeValue(element, "ws");
 		}
 
 		// Return the number of values in the tree rooted at hvo, where index (into m_flidVec)

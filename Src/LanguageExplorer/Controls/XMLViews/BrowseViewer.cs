@@ -2533,8 +2533,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			}
 			if (colSpec != null)
 			{
-				var finder = LayoutFinder.CreateFinder(Cache, colSpec, BrowseView.Vc, PropertyTable.GetValue<IApp>(LanguageExplorerConstants.App));
-				return new GenRecordSorter(new StringFinderCompare(finder, new WritingSystemComparer(colWs)));
+				return new GenRecordSorter(new StringFinderCompare(LayoutFinder.CreateFinder(Cache, colSpec, BrowseView.Vc, PropertyTable.GetValue<IApp>(LanguageExplorerConstants.App)), new WritingSystemComparer(colWs)));
 			}
 			return null;
 		}

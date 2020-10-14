@@ -18,15 +18,22 @@ namespace LanguageExplorer.Filters
 		internal OwnMlPropFinder(ISilDataAccess sda, int flid, int ws)
 			: base(sda)
 		{
-			Flid = flid;
-			Ws = ws;
+			ConstructorSurrogate(flid, ws);
 		}
 
 		/// <summary>
 		/// For persistence with IPersistAsXml
 		/// </summary>
-		public OwnMlPropFinder()
+		internal OwnMlPropFinder(XElement element)
 		{
+			ConstructorSurrogate(XmlUtils.GetMandatoryIntegerAttributeValue(element, "flid"),
+				XmlUtils.GetMandatoryIntegerAttributeValue(element, "ws"));
+		}
+
+		private void ConstructorSurrogate(int flid, int ws)
+		{
+			Flid = flid;
+			Ws = ws;
 		}
 
 		/// <summary>
@@ -37,24 +44,15 @@ namespace LanguageExplorer.Filters
 		/// <summary>
 		/// Gets the ws.
 		/// </summary>
-		internal int Ws { get; }
+		internal int Ws { get; private set; }
 
 		/// <summary>
 		/// Persists as XML.
 		/// </summary>
 		public override void PersistAsXml(XElement element)
 		{
-			base.PersistAsXml(element);
 			XmlUtils.SetAttribute(element, "flid", Flid.ToString());
-		}
-
-		/// <summary>
-		/// Inits the XML.
-		/// </summary>
-		public override void InitXml(IPersistAsXmlFactory factory, XElement element)
-		{
-			base.InitXml(factory, element);
-			Flid = XmlUtils.GetMandatoryIntegerAttributeValue(element, "flid");
+			XmlUtils.SetAttribute(element, "ws", Ws.ToString());
 		}
 
 		#region StringFinder Members

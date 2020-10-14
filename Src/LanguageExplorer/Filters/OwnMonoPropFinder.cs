@@ -18,12 +18,20 @@ namespace LanguageExplorer.Filters
 		internal OwnMonoPropFinder(ISilDataAccess sda, int flid)
 			: base(sda)
 		{
-			Flid = flid;
+			ConstructorSurrogate(flid);
 		}
 
-		/// <summary />
-		public OwnMonoPropFinder()
+		/// <summary>
+		/// For use with IPersistAsXml
+		/// </summary>
+		internal OwnMonoPropFinder(XElement element)
 		{
+			ConstructorSurrogate(XmlUtils.GetMandatoryIntegerAttributeValue(element, "flid"));
+		}
+
+		private void ConstructorSurrogate(int flid)
+		{
+			Flid = flid;
 		}
 
 		/// <summary>
@@ -36,17 +44,7 @@ namespace LanguageExplorer.Filters
 		/// </summary>
 		public override void PersistAsXml(XElement element)
 		{
-			base.PersistAsXml(element);
 			XmlUtils.SetAttribute(element, "flid", Flid.ToString());
-		}
-
-		/// <summary>
-		/// Inits the XML.
-		/// </summary>
-		public override void InitXml(IPersistAsXmlFactory factory, XElement element)
-		{
-			base.InitXml(factory, element);
-			Flid = XmlUtils.GetMandatoryIntegerAttributeValue(element, "flid");
 		}
 
 		#region StringFinder Members

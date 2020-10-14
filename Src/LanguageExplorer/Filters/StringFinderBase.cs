@@ -52,7 +52,7 @@ namespace LanguageExplorer.Filters
 
 		public virtual ITsString Key(IManyOnePathSortItem item)
 		{
-			throw new NotSupportedException("Don't have new Key function implemented on class " + this.GetType());
+			throw new NotSupportedException("Don't have new Key function implemented on class " + GetType());
 		}
 
 		public ISilDataAccess DataAccess { get; set; }
@@ -91,17 +91,14 @@ namespace LanguageExplorer.Filters
 		/// <summary>
 		/// Persists as XML.
 		/// </summary>
-		public virtual void PersistAsXml(XElement element)
-		{
-			// nothing to do in base class
-		}
+		public abstract void PersistAsXml(XElement element);
 
 		/// <summary>
 		/// Inits the XML.
 		/// </summary>
-		public virtual void InitXml(IPersistAsXmlFactory factory, XElement element)
+		public void InitXml(IPersistAsXmlFactory factory, XElement element)
 		{
-			// nothing to do in base class
+			// Now done in special constructors.
 		}
 
 		#endregion

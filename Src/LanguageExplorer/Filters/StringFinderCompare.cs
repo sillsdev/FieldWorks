@@ -45,7 +45,7 @@ namespace LanguageExplorer.Filters
 		/// For use with IPersistAsXml
 		/// </summary>
 		internal StringFinderCompare(IPersistAsXmlFactory persistAsXmlFactory, XElement element)
-			: this(DynamicLoader.RestoreObject<IStringFinder>(persistAsXmlFactory, element.Element("finder")),
+			: this(persistAsXmlFactory.Create<IStringFinder>(element.Element("finder")),
 				persistAsXmlFactory.Create<IComparer>(element.Element("comparer")),
 			XmlUtils.GetOptionalBooleanAttributeValue(element, "sortFromEnd", false),
 			XmlUtils.GetOptionalBooleanAttributeValue(element, "sortByLength", false))
