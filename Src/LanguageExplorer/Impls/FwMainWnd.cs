@@ -1031,6 +1031,7 @@ namespace LanguageExplorer.Impls
 				LanguageExplorerConstants.App,
 				FwUtilsConstants.cache,
 				LanguageExplorerConstants.HelpTopicProvider,
+				LanguageExplorerConstants.PersistAsXmlFactory,
 				FwUtilsConstants.FlexStyleSheet,
 				LanguageExplorerConstants.LinkHandler,
 				LanguageExplorerConstants.MajorFlexComponentParameters,
@@ -1052,6 +1053,9 @@ namespace LanguageExplorer.Impls
 						break;
 					case LanguageExplorerConstants.HelpTopicProvider:
 						PropertyTable.SetProperty(key, _flexApp);
+						break;
+					case LanguageExplorerConstants.PersistAsXmlFactory:
+						PropertyTable.SetProperty(key, new PersistAsXmlFactory());
 						break;
 					case FwUtilsConstants.FlexStyleSheet:
 						PropertyTable.SetProperty(key, _stylesheet);

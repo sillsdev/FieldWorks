@@ -10,7 +10,7 @@ using SIL.Xml;
 namespace LanguageExplorer.Filters
 {
 	/// <summary />
-	public class IcuComparer : IComparer, IPersistAsXml
+	internal sealed class IcuComparer : IComparer, IPersistAsXml
 	{
 		/// <summary />
 		private ManagedLgIcuCollator _managedLgIcuCollator;
@@ -18,32 +18,33 @@ namespace LanguageExplorer.Filters
 		/// <summary>
 		/// Key for the Hashtable is a string. Value is a byte[].
 		/// </summary>
-		protected Hashtable m_htskey = new Hashtable();
+		private Hashtable m_htskey = new Hashtable();
 
 		/// <summary>
 		/// Made accessible for testing.
 		/// </summary>
-		public string WsCode { get; protected set; }
+		internal string WsCode { get; }
 
 		#region Constructors, etc.
 
 		/// <summary />
-		public IcuComparer(string sWs)
+		internal IcuComparer(string sWs)
 		{
 			WsCode = sWs;
 		}
 
 		/// <summary>
-		/// Default constructor for use with IPersistAsXml
+		/// For use with IPersistAsXml
 		/// </summary>
-		public IcuComparer() : this(null)
+		internal IcuComparer(XElement element)
+			: this(XmlUtils.GetMandatoryAttributeValue(element, "ws"))
 		{
 		}
 
 		/// <summary>
 		/// Opens the collating engine.
 		/// </summary>
-		public void OpenCollatingEngine()
+		internal void OpenCollatingEngine()
 		{
 			if (_managedLgIcuCollator == null)
 			{
@@ -59,7 +60,7 @@ namespace LanguageExplorer.Filters
 		/// <summary>
 		/// Closes the collating engine.
 		/// </summary>
-		public void CloseCollatingEngine()
+		internal void CloseCollatingEngine()
 		{
 			if (_managedLgIcuCollator != null)
 			{
@@ -169,9 +170,9 @@ namespace LanguageExplorer.Filters
 		/// <summary>
 		/// Inits the XML.
 		/// </summary>
-		public void InitXml(XElement element)
+		public void InitXml(IPersistAsXmlFactory factory, XElement element)
 		{
-			WsCode = XmlUtils.GetMandatoryAttributeValue(element, "ws");
+			// Now done in special constructor.
 		}
 
 		#endregion

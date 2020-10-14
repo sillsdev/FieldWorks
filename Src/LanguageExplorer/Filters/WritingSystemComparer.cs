@@ -15,7 +15,7 @@ namespace LanguageExplorer.Filters
 	/// <summary>
 	/// A comparer which uses the writing system collator to compare strings.
 	/// </summary>
-	public class WritingSystemComparer : IComparer, IPersistAsXml, IStoresLcmCache
+	internal sealed class WritingSystemComparer : IComparer, IPersistAsXml, IStoresLcmCache
 	{
 		private LcmCache m_cache;
 		private CoreWritingSystemDefinition m_ws;
@@ -23,17 +23,18 @@ namespace LanguageExplorer.Filters
 		#region Constructors, etc.
 
 		/// <summary />
-		public WritingSystemComparer(CoreWritingSystemDefinition ws)
+		internal WritingSystemComparer(CoreWritingSystemDefinition ws)
 		{
 			m_ws = ws;
 			WsId = ws.Id;
 		}
 
 		/// <summary>
-		/// Default constructor for use with IPersistAsXml
+		/// For use with IPersistAsXml
 		/// </summary>
-		public WritingSystemComparer()
+		internal WritingSystemComparer(XElement element)
 		{
+			WsId = XmlUtils.GetMandatoryAttributeValue(element, "ws");
 		}
 
 		public LcmCache Cache
@@ -43,14 +44,14 @@ namespace LanguageExplorer.Filters
 
 		#endregion
 
-		public string WsId { get; private set; }
+		public string WsId { get; }
 
 		/// <summary>
 		/// An ICURulesCollationDefinition with empty rules was causing access violations in ICU. (LT-20268)
 		/// This method supports the band-aid fallback to SystemCollationDefinition.
 		/// </summary>
 		/// <returns>true if the CollationDefinition is a RulesCollationDefinition with valid non empty rules</returns>
-		private bool HasValidRules(CollationDefinition cd)
+		private static bool HasValidRules(CollationDefinition cd)
 		{
 			return !(cd is RulesCollationDefinition rulesCollationDefinition) || !string.IsNullOrEmpty(rulesCollationDefinition.CollationRules) && rulesCollationDefinition.IsValid;
 		}
@@ -92,9 +93,9 @@ namespace LanguageExplorer.Filters
 		/// <summary>
 		/// Inits the XML.
 		/// </summary>
-		public void InitXml(XElement element)
+		public void InitXml(IPersistAsXmlFactory factory, XElement element)
 		{
-			WsId = XmlUtils.GetMandatoryAttributeValue(element, "ws");
+			// Now done in special constructor.
 		}
 
 		#endregion

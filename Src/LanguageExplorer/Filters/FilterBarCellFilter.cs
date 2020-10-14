@@ -93,12 +93,12 @@ namespace LanguageExplorer.Filters
 		/// <summary>
 		/// Inits the XML.
 		/// </summary>
-		public override void InitXml(XElement element)
+		public override void InitXml(IPersistAsXmlFactory factory, XElement element)
 		{
-			base.InitXml(element);
+			base.InitXml(factory, element);
 			Debug.Assert(Finder == null);
-			Finder = DynamicLoader.RestoreObject<IStringFinder>(element.Element("finder"));
-			Matcher = DynamicLoader.RestoreObject<IMatcher>(element.Element("matcher"));
+			Finder = DynamicLoader.RestoreObject<IStringFinder>(factory, element.Element("finder"));
+			Matcher = DynamicLoader.RestoreObject<IMatcher>(factory, element.Element("matcher"));
 		}
 
 		#endregion

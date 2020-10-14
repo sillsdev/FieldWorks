@@ -5,7 +5,6 @@
 using System;
 using System.Collections;
 using System.Xml.Linq;
-using System.Xml.XPath;
 using SIL.LCModel;
 using SIL.LCModel.Core.KernelInterfaces;
 
@@ -17,18 +16,19 @@ namespace LanguageExplorer.Filters
 	/// a ReverseComparer if necessary, but can also unwrap an existing one to retrieve
 	/// the original comparer.
 	/// </summary>
-	public class ReverseComparer : IComparer, IPersistAsXml, IStoresLcmCache, IStoresDataAccess, ICloneable
+	internal sealed class ReverseComparer : IComparer, IPersistAsXml, IStoresLcmCache, IStoresDataAccess, ICloneable
 	{
 		/// <summary />
-		public ReverseComparer(IComparer comp)
+		internal ReverseComparer(IComparer comp)
 		{
 			SubComp = comp;
 		}
 
 		/// <summary>
-		/// default for persistence
+		/// For use with IPersistAsXml
 		/// </summary>
-		public ReverseComparer()
+		internal ReverseComparer(IPersistAsXmlFactory factory, XElement element)
+			: this(factory.Create<IComparer>(element.Element("comparer")))
 		{
 		}
 
@@ -53,7 +53,7 @@ namespace LanguageExplorer.Filters
 		/// <summary>
 		/// Gets the sub comp.
 		/// </summary>
-		public IComparer SubComp { get; private set; }
+		public IComparer SubComp { get; }
 
 		/// <summary>
 		/// Return a comparer with the opposite sense of comp. If it is itself a ReverseComparer,
@@ -78,9 +78,9 @@ namespace LanguageExplorer.Filters
 		/// <summary>
 		/// Inits the XML.
 		/// </summary>
-		public void InitXml(XElement element)
+		public void InitXml(IPersistAsXmlFactory factory, XElement element)
 		{
-			SubComp = DynamicLoader.RestoreObject<IComparer>(element.XPathSelectElement("comparer"));
+			// Now done in special constructor.
 		}
 
 		#endregion

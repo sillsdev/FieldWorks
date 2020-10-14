@@ -1623,11 +1623,11 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools
 			}
 
 			/// <inheritdoc />
-			public void InitXml(XElement element)
+			public void InitXml(IPersistAsXmlFactory factory, XElement element)
 			{
 				throw new NotSupportedException();
-				#endregion
 			}
+			#endregion
 		}
 
 		/// <summary>

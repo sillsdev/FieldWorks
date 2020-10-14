@@ -34,11 +34,12 @@ namespace LanguageExplorer.Filters
 		}
 
 		/// <summary>
-		/// This constructor is intended to be used for persistence with IPersistAsXml
+		/// For use with IPersistAsXml
 		/// </summary>
-		public LcmCompare()
+		public LcmCompare(XElement element)
 		{
 			Init();
+			PropertyName = XmlUtils.GetMandatoryAttributeValue(element, "property");
 		}
 
 		private void Init()
@@ -51,7 +52,7 @@ namespace LanguageExplorer.Filters
 		/// <summary>
 		/// Gets the name of the property.
 		/// </summary>
-		public string PropertyName { get; private set; }
+		public string PropertyName { get; }
 
 		/// <summary>
 		/// Add to the specified XML node information required to create a new
@@ -67,15 +68,15 @@ namespace LanguageExplorer.Filters
 		/// Initialize an instance into the state indicated by the node, which was
 		/// created by a call to PersistAsXml.
 		/// </summary>
-		public void InitXml(XElement element)
+		public void InitXml(IPersistAsXmlFactory factory, XElement element)
 		{
-			PropertyName = XmlUtils.GetMandatoryAttributeValue(element, "property");
+			// Now done in special constructor.
 		}
 
 		/// <summary>
 		/// Gets the property.
 		/// </summary>
-		private object GetProperty(ICmObject target, string property)
+		private static object GetProperty(ICmObject target, string property)
 		{
 			var type = target.GetType();
 			var info = type.GetProperty(property, BindingFlags.Instance | BindingFlags.Public | BindingFlags.FlattenHierarchy);

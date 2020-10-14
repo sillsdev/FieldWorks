@@ -159,15 +159,15 @@ namespace LanguageExplorer.Filters
 		/// Initialize an instance into the state indicated by the node, which was
 		/// created by a call to PersistAsXml.
 		/// </summary>
-		public override void InitXml(XElement element)
+		public override void InitXml(IPersistAsXmlFactory factory, XElement element)
 		{
-			base.InitXml(element);
+			base.InitXml(factory, element);
 			var compNode = element.Elements().First();
 			if (compNode.Name != "comparer")
 			{
 				throw new Exception("persist info for GenRecordSorter must have comparer child element");
 			}
-			_comparer = DynamicLoader.RestoreObject<IComparer>(compNode);
+			_comparer = factory.Create<IComparer>(compNode);
 			if (_comparer == null)
 			{
 				throw new Exception("restoring sorter failed...comparer does not implement IComparer");

@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Xml.Linq;
 using LanguageExplorer;
 using LanguageExplorer.Filters;
+using LanguageExplorer.Impls;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.LCModel;
@@ -21,13 +22,15 @@ namespace LanguageExplorerTests.Filters
 	[TestFixture]
 	public class TestFilterPersistence : MemoryOnlyBackendProviderTestBase
 	{
-		private ISilDataAccess m_sda;
+		private ISilDataAccess _sda;
+		private IPersistAsXmlFactory _persistAsXmlFactory;
 
 		public override void FixtureSetup()
 		{
 			base.FixtureSetup();
 
-			m_sda = Cache.DomainDataByFlid;
+			_sda = Cache.DomainDataByFlid;
+			_persistAsXmlFactory = new PersistAsXmlFactory();
 		}
 
 		// Checklist of classes we need to test
@@ -74,7 +77,7 @@ namespace LanguageExplorerTests.Filters
 			var xml = LanguageExplorerServices.PersistObject(grs, "sorter");
 			var doc = XDocument.Parse(xml);
 			Assert.IsTrue("sorter" == doc.Root.Name);
-			var obj = DynamicLoader.RestoreObject<GenRecordSorter>(doc.Root);
+			var obj = DynamicLoader.RestoreObject<GenRecordSorter>(_persistAsXmlFactory, doc.Root);
 			try
 			{
 				var compOut = obj.Comparer;
@@ -101,7 +104,7 @@ namespace LanguageExplorerTests.Filters
 			var xml = LanguageExplorerServices.PersistObject(asorter, "sorter");
 			var doc = XDocument.Parse(xml);
 			Assert.IsTrue("sorter" == doc.Root.Name);
-			var andSorter = DynamicLoader.RestoreObject<AndSorter>(doc.Root);
+			var andSorter = DynamicLoader.RestoreObject<AndSorter>(_persistAsXmlFactory, doc.Root);
 			var sortersOut = andSorter.Sorters;
 			var grsOut1 = (GenRecordSorter)sortersOut[0];
 			var grsOut2 = (GenRecordSorter)sortersOut[1];
@@ -142,7 +145,7 @@ namespace LanguageExplorerTests.Filters
 			rangeIntMatch.WritingSystemFactory = Cache.WritingSystemFactory;
 			var tssLabel = TsStringUtils.MakeString("label1", defAnalWs.Handle);
 			rangeIntMatch.Label = tssLabel;
-			var ownIntFinder = new OwnIntPropFinder(m_sda, 551);
+			var ownIntFinder = new OwnIntPropFinder(_sda, 551);
 
 			var rangeIntFilter = new FilterBarCellFilter(ownIntFinder, rangeIntMatch);
 			var andFilter = new AndFilter();
@@ -161,12 +164,12 @@ namespace LanguageExplorerTests.Filters
 
 			andFilter.Add(otherFilter);
 
-			var mlPropFinder = new OwnMlPropFinder(m_sda, 788, 23);
+			var mlPropFinder = new OwnMlPropFinder(_sda, 788, 23);
 			pattern.Pattern = TsStringUtils.MakeString("hello", ws);
 			var filter = new FilterBarCellFilter(mlPropFinder, new ExactMatcher(pattern));
 			andFilter.Add(filter);
 
-			var monoPropFinder = new OwnMonoPropFinder(m_sda, 954);
+			var monoPropFinder = new OwnMonoPropFinder(_sda, 954);
 			pattern = VwPatternClass.Create();
 			pattern.MatchOldWritingSystem = false;
 			pattern.MatchDiacritics = false;
@@ -177,7 +180,7 @@ namespace LanguageExplorerTests.Filters
 			filter = new FilterBarCellFilter(monoPropFinder, new BeginMatcher(pattern));
 			andFilter.Add(filter);
 
-			var oneIndMlPropFinder = new OneIndirectMlPropFinder(m_sda, 221, 222, 27);
+			var oneIndMlPropFinder = new OneIndirectMlPropFinder(_sda, 221, 222, 27);
 			pattern = VwPatternClass.Create();
 			pattern.MatchOldWritingSystem = false;
 			pattern.MatchDiacritics = false;
@@ -188,7 +191,7 @@ namespace LanguageExplorerTests.Filters
 			filter = new FilterBarCellFilter(oneIndMlPropFinder, new EndMatcher(pattern));
 			andFilter.Add(filter);
 
-			var mimlPropFinder = new MultiIndirectMlPropFinder(m_sda, new[] { 444, 555 }, 666, 87);
+			var mimlPropFinder = new MultiIndirectMlPropFinder(_sda, new[] { 444, 555 }, 666, 87);
 			pattern = VwPatternClass.Create();
 			pattern.MatchOldWritingSystem = false;
 			pattern.MatchDiacritics = false;
@@ -199,7 +202,7 @@ namespace LanguageExplorerTests.Filters
 			filter = new FilterBarCellFilter(mimlPropFinder, new AnywhereMatcher(pattern));
 			andFilter.Add(filter);
 
-			var oneIndAtomFinder = new OneIndirectAtomMlPropFinder(m_sda, 543, 345, 43);
+			var oneIndAtomFinder = new OneIndirectAtomMlPropFinder(_sda, 543, 345, 43);
 			filter = new FilterBarCellFilter(oneIndAtomFinder, new BlankMatcher());
 			andFilter.Add(filter);
 
@@ -228,7 +231,7 @@ namespace LanguageExplorerTests.Filters
 			var doc = XDocument.Parse(xml);
 
 			// And check all the pieces...
-			var andFilterOut = DynamicLoader.RestoreObject<AndFilter>(doc.Root);
+			var andFilterOut = DynamicLoader.RestoreObject<AndFilter>(_persistAsXmlFactory, doc.Root);
 			andFilterOut.Cache = Cache;
 
 			Assert.IsNotNull(andFilterOut);
@@ -277,29 +280,29 @@ namespace LanguageExplorerTests.Filters
 			Assert.IsNotNull(invertMatchOut);
 
 			var mlPropFinderOut = (OwnMlPropFinder)GetFinder(andFilter, 2);
-			Assert.AreEqual(m_sda, mlPropFinderOut.DataAccess);
+			Assert.AreEqual(_sda, mlPropFinderOut.DataAccess);
 			Assert.AreEqual(788, mlPropFinderOut.Flid);
 			Assert.AreEqual(23, mlPropFinderOut.Ws);
 
 			var monoPropFinderOut = (OwnMonoPropFinder)GetFinder(andFilter, 3);
-			Assert.AreEqual(m_sda, monoPropFinderOut.DataAccess);
+			Assert.AreEqual(_sda, monoPropFinderOut.DataAccess);
 			Assert.AreEqual(954, monoPropFinderOut.Flid);
 
 			var oneIndMlPropFinderOut = (OneIndirectMlPropFinder)GetFinder(andFilter, 4);
-			Assert.AreEqual(m_sda, oneIndMlPropFinderOut.DataAccess);
+			Assert.AreEqual(_sda, oneIndMlPropFinderOut.DataAccess);
 			Assert.AreEqual(221, oneIndMlPropFinderOut.FlidVec);
 			Assert.AreEqual(222, oneIndMlPropFinderOut.FlidString);
 			Assert.AreEqual(27, oneIndMlPropFinderOut.Ws);
 
 			var mimlPropFinderOut = (MultiIndirectMlPropFinder)GetFinder(andFilter, 5);
-			Assert.AreEqual(m_sda, mimlPropFinderOut.DataAccess);
+			Assert.AreEqual(_sda, mimlPropFinderOut.DataAccess);
 			Assert.AreEqual(444, mimlPropFinderOut.VecFlids[0]);
 			Assert.AreEqual(555, mimlPropFinderOut.VecFlids[1]);
 			Assert.AreEqual(666, mimlPropFinderOut.FlidString);
 			Assert.AreEqual(87, mimlPropFinderOut.Ws);
 
 			var oneIndAtomFinderOut = (OneIndirectAtomMlPropFinder)GetFinder(andFilter, 6);
-			Assert.AreEqual(m_sda, oneIndAtomFinderOut.DataAccess);
+			Assert.AreEqual(_sda, oneIndAtomFinderOut.DataAccess);
 			Assert.AreEqual(543, oneIndAtomFinderOut.FlidAtom);
 			Assert.AreEqual(345, oneIndAtomFinderOut.FlidString);
 			Assert.AreEqual(43, oneIndAtomFinderOut.Ws);
@@ -324,7 +327,7 @@ namespace LanguageExplorerTests.Filters
 			var doc = XDocument.Parse(xml);
 
 			// And check all the pieces...
-			var prsOut = DynamicLoader.RestoreObject<PropertyRecordSorter>(doc.Root);
+			var prsOut = DynamicLoader.RestoreObject<PropertyRecordSorter>(_persistAsXmlFactory, doc.Root);
 			prsOut.Cache = Cache;
 			Assert.AreEqual("longName", prsOut.PropertyName);
 		}
@@ -333,13 +336,13 @@ namespace LanguageExplorerTests.Filters
 		public void PersistReverseComparer()
 		{
 			// Putting an IntStringComparer here is utterly bizarre, but it tests out one more class.
-			var sfComp = new StringFinderCompare(new OwnMonoPropFinder(m_sda, 445), new ReverseComparer(new IntStringComparer()));
+			var sfComp = new StringFinderCompare(new OwnMonoPropFinder(_sda, 445), new ReverseComparer(new IntStringComparer()));
 			sfComp.SortedFromEnd = true;
 			// Save and restore!
 			var xml = LanguageExplorerServices.PersistObject(sfComp, "comparer");
 			var doc = XDocument.Parse(xml);
 			// And check all the pieces...
-			var sfCompOut = DynamicLoader.RestoreObject<StringFinderCompare>(doc.Root);
+			var sfCompOut = _persistAsXmlFactory.Create<StringFinderCompare>(doc.Root);
 			sfCompOut.Cache = Cache;
 
 			Assert.IsTrue(sfCompOut.Finder is OwnMonoPropFinder);

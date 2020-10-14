@@ -53,9 +53,9 @@ namespace LanguageExplorer.Filters
 		/// Initialize an instance into the state indicated by the node, which was
 		/// created by a call to PersistAsXml.
 		/// </summary>
-		public override void InitXml(XElement element)
+		public override void InitXml(IPersistAsXmlFactory factory, XElement element)
 		{
-			Init(element);
+			PropertyName = XmlUtils.GetMandatoryAttributeValue(element, "sortProperty");
 		}
 
 		public override LcmCache Cache
@@ -71,14 +71,6 @@ namespace LanguageExplorer.Filters
 		/// Gets the name of the property.
 		/// </summary>
 		public string PropertyName { get; protected set; }
-
-		/// <summary>
-		/// Inits the specified configuration.
-		/// </summary>
-		protected void Init(XElement configuration)
-		{
-			PropertyName = XmlUtils.GetMandatoryAttributeValue(configuration, "sortProperty");
-		}
 
 		/// <summary>
 		/// Get the object that does the comparisons.

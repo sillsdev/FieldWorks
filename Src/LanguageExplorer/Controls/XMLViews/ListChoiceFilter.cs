@@ -132,9 +132,9 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// Inits the XML.
 		/// </summary>
-		public override void InitXml(XElement element)
+		public override void InitXml(IPersistAsXmlFactory factory, XElement element)
 		{
-			base.InitXml(element);
+			base.InitXml(factory, element);
 			Mode = (ListMatchOptions)XmlUtils.GetMandatoryIntegerAttributeValue(element, "mode");
 			Targets = XmlUtils.GetMandatoryIntegerListAttributeValue(element, "targets");
 			m_fIsUserVisible = XmlUtils.GetBooleanAttributeValue(element, "visible");

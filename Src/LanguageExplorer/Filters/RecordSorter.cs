@@ -59,7 +59,7 @@ namespace LanguageExplorer.Filters
 		/// Initialize an instance into the state indicated by the node, which was
 		/// created by a call to PersistAsXml.
 		/// </summary>
-		public virtual void InitXml(XElement element)
+		public virtual void InitXml(IPersistAsXmlFactory factory, XElement element)
 		{
 		}
 		#endregion IPersistAsXml

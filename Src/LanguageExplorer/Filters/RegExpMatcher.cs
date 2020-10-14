@@ -25,7 +25,7 @@ namespace LanguageExplorer.Filters
 		public RegExpMatcher() { }
 
 		/// <summary />
-		void Init()
+		private void Init()
 		{
 			Pattern.UseRegularExpressions = true;
 		}

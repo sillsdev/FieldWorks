@@ -25,19 +25,30 @@ namespace LanguageExplorer.Filters
 		private Hashtable m_objToKey = new Hashtable();
 		internal INoteComparision ComparisonNoter { get; set; }
 
+		/// <summary>
+		///  Only used for cloning.
+		/// </summary>
+		private StringFinderCompare()
+		{
+		}
+
 		/// <summary />
-		internal StringFinderCompare(IStringFinder finder, IComparer subComp)
+		internal StringFinderCompare(IStringFinder finder, IComparer subComp, bool sortedFromEnd = false, bool sortedByLength = false)
 		{
 			Finder = finder;
 			SubComparer = subComp;
-			SortedFromEnd = false;
-			SortedByLength = false;
+			SortedFromEnd = sortedFromEnd;
+			SortedByLength = sortedByLength;
 		}
 
 		/// <summary>
 		/// For use with IPersistAsXml
 		/// </summary>
-		internal StringFinderCompare() : this(null, null)
+		internal StringFinderCompare(IPersistAsXmlFactory persistAsXmlFactory, XElement element)
+			: this(DynamicLoader.RestoreObject<IStringFinder>(persistAsXmlFactory, element.Element("finder")),
+				persistAsXmlFactory.Create<IComparer>(element.Element("comparer")),
+			XmlUtils.GetOptionalBooleanAttributeValue(element, "sortFromEnd", false),
+			XmlUtils.GetOptionalBooleanAttributeValue(element, "sortByLength", false))
 		{
 		}
 
@@ -340,12 +351,9 @@ namespace LanguageExplorer.Filters
 		/// <summary>
 		/// Inits the XML.
 		/// </summary>
-		public void InitXml(XElement element)
+		public void InitXml(IPersistAsXmlFactory factory, XElement element)
 		{
-			Finder = DynamicLoader.RestoreObject<IStringFinder>(element.Element("finder"));
-			SubComparer = DynamicLoader.RestoreObject<IComparer>(element.Element("comparer"));
-			SortedFromEnd = XmlUtils.GetOptionalBooleanAttributeValue(element, "sortFromEnd", false);
-			SortedByLength = XmlUtils.GetOptionalBooleanAttributeValue(element, "sortByLength", false);
+			// Now done in special constructor.
 		}
 
 		#endregion

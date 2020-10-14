@@ -54,9 +54,9 @@ namespace LanguageExplorer.Controls.XMLViews
 		}
 
 		/// <summary />
-		public override void InitXml(XElement element)
+		public override void InitXml(IPersistAsXmlFactory factory, XElement element)
 		{
-			base.InitXml(element);
+			base.InitXml(factory, element);
 			// Review: How do we validate this columnSpec is still valid?
 			var colSpec = element.XPathSelectElement("./column");
 			if (colSpec != null)

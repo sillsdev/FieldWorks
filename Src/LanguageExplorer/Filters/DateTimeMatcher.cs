@@ -314,9 +314,9 @@ namespace LanguageExplorer.Filters
 			}
 		}
 
-		public override void InitXml(XElement element)
+		public override void InitXml(IPersistAsXmlFactory factory, XElement element)
 		{
-			base.InitXml(element);
+			base.InitXml(factory, element);
 			Start = DateTime.Parse(XmlUtils.GetMandatoryAttributeValue(element, "start"), DateTimeFormatInfo.InvariantInfo);
 			End = DateTime.Parse(XmlUtils.GetMandatoryAttributeValue(element, "end"), DateTimeFormatInfo.InvariantInfo);
 			MatchType = (DateMatchType)XmlUtils.GetMandatoryIntegerAttributeValue(element, "type");

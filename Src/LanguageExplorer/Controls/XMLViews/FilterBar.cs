@@ -27,9 +27,10 @@ namespace LanguageExplorer.Controls.XMLViews
 	/// <summary>
 	/// A FilterBar contains a sequence of combos or grey areas, one for each column of a browse view.
 	/// </summary>
-	internal class FilterBar : UserControl
+	internal sealed class FilterBar : UserControl
 	{
 		private BrowseViewer m_bv;
+		private IPersistAsXmlFactory _persistAsXmlFactory;
 		private List<XElement> m_columns;
 		private FilterSortItems m_items;
 		private IFwMetaDataCache m_mdc;
@@ -46,12 +47,13 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// This is invoked when the user sets up, removes, or changes the filter for a column.
 		/// </summary>
-		public event FilterChangeHandler FilterChanged;
+		internal event FilterChangeHandler FilterChanged;
 
 		/// <summary />
-		public FilterBar(BrowseViewer bv, IApp app)
+		internal FilterBar(BrowseViewer bv, IApp app)
 		{
 			m_bv = bv;
+			_persistAsXmlFactory = m_bv.PropertyTable.GetValue<IPersistAsXmlFactory>(LanguageExplorerConstants.PersistAsXmlFactory);
 			m_columns = m_bv.ColumnSpecs;
 			m_app = app;
 			m_cache = bv.Cache;
@@ -134,7 +136,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// Updates the column list. User has changed list of columns. Rework everything.
 		/// </summary>
-		public void UpdateColumnList()
+		internal void UpdateColumnList()
 		{
 			m_columns = m_bv.ColumnSpecs;
 			SuspendLayout();
@@ -153,7 +155,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// Makes the items.
 		/// </summary>
-		public void MakeItems()
+		internal void MakeItems()
 		{
 			if (m_items != null)
 			{
@@ -204,7 +206,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// filters could have been created by any of your filter sort items, and if so,
 		/// update the filter bar to show they are active.
 		/// </summary>
-		public void UpdateActiveItems(IRecordFilter currentFilter)
+		internal void UpdateActiveItems(IRecordFilter currentFilter)
 		{
 			try
 			{
@@ -274,7 +276,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// column specification.
 		/// </summary>
 		/// <returns>true, if the column node spec can use the filter.</returns>
-		public bool CanActivateFilter(IRecordFilter filter, XElement colSpec)
+		internal bool CanActivateFilter(IRecordFilter filter, XElement colSpec)
 		{
 			switch (filter)
 			{
@@ -303,7 +305,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// Set the widths of the columns.
 		/// </summary>
-		public void SetColWidths(int[] widths)
+		internal void SetColWidths(int[] widths)
 		{
 			// We can only do this meaningfully if given the right number of lengths.
 			// If this is wrong (which for example can happen if this routine gets
@@ -348,20 +350,21 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// 		<stringalt class="LexEntry" field="CitationForm" ws="vernacular"/>
 		/// 	</para>
 		/// </summary>
-		protected internal FilterSortItem MakeItem(XElement colSpec)
+		private FilterSortItem MakeItem(XElement colSpec)
 		{
 			return MakeLayoutItem(colSpec);
 		}
 
-		static string GetStringAtt(XElement node, string name)
+		/* Not used.
+		private static string GetStringAtt(XElement node, string name)
 		{
 			return node.Attribute(name)?.Value;
-		}
+		}*/
 
 		/// <summary>
 		/// Make a FilterSortItem with a finder that is a LayoutFinder with the specified layout name.
 		/// </summary>
-		protected FilterSortItem MakeLayoutItem(XElement colSpec)
+		private FilterSortItem MakeLayoutItem(XElement colSpec)
 		{
 			var result = new FilterSortItem
 			{
@@ -374,12 +377,13 @@ namespace LanguageExplorer.Controls.XMLViews
 			return result;
 		}
 
+		/* Not used.
 		/// <summary>
 		/// Make a FilterSortItem with a Finder that is an OneIndirectMlPropFinder based on
 		/// saSpec, which is a stringalt element, and flidSeq, which is the sequence containing
 		/// the named items.
 		/// </summary>
-		protected FilterSortItem MakeOneIndirectItem(XElement viewSpec, int flidSeq, XElement saSpec, bool fAtomic)
+		private FilterSortItem MakeOneIndirectItem(XElement viewSpec, int flidSeq, XElement saSpec, bool fAtomic)
 		{
 			var className = GetStringAtt(saSpec, "class");
 			var attrName = GetStringAtt(saSpec, "field");
@@ -397,12 +401,13 @@ namespace LanguageExplorer.Controls.XMLViews
 			SetupFsi(result);
 			result.Sorter = new GenRecordSorter(new StringFinderCompare(result.Finder, new WritingSystemComparer(ws)));
 			return result;
-		}
+		}*/
 
+		/* Not used.
 		/// <summary>
 		/// Make a FilterSortItem with a Finder that is an OwnMlPropFinder based on saSpec, which is a stringalt element.
 		/// </summary>
-		protected FilterSortItem MakeStringAltItem(XElement viewSpec, XElement saSpec)
+		private FilterSortItem MakeStringAltItem(XElement viewSpec, XElement saSpec)
 		{
 			var className = GetStringAtt(saSpec, "class");
 			var attrName = GetStringAtt(saSpec, "field");
@@ -420,13 +425,14 @@ namespace LanguageExplorer.Controls.XMLViews
 			SetupFsi(result);
 			result.Sorter = new GenRecordSorter(new StringFinderCompare(result.Finder, new WritingSystemComparer(ws)));
 			return result;
-		}
+		}*/
 
+		/* Not used.
 		/// <summary>
 		/// Make a FilterSortItem with a Finder that is an OwnIntPropFinder based on intSpec,
 		/// which is an &lt;int&gt; element..
 		/// </summary>
-		protected FilterSortItem MakeIntItem(XElement viewSpec, XElement intSpec)
+		private FilterSortItem MakeIntItem(XElement viewSpec, XElement intSpec)
 		{
 			var className = GetStringAtt(intSpec, "class");
 			var attrName = GetStringAtt(intSpec, "field");
@@ -444,7 +450,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			result.FilterChanged += FilterChangedHandler;
 			result.Sorter = new GenRecordSorter(new StringFinderCompare(result.Finder, new IntStringComparer()));
 			return result;
-		}
+		}*/
 
 		/// <summary>
 		/// Get a default size for a FilterBar. The width is arbitrary, as it is always docked
@@ -471,7 +477,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// The stuff common to all the ways we mak an FSI.
 		/// </summary>
-		protected void SetupFsi(FilterSortItem item)
+		private void SetupFsi(FilterSortItem item)
 		{
 			MakeCombo(item);
 			item.FilterChanged += FilterChangedHandler;
@@ -485,7 +491,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// Create the common options for all FSI combos (except Integer).
 		/// </summary>
-		protected void MakeCombo(FilterSortItem item)
+		private void MakeCombo(FilterSortItem item)
 		{
 			var combo = new FwComboBox
 			{
@@ -641,6 +647,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			return pattern;
 		}
 
+		/* Not used.
 		internal IVwPattern MatchAnywherePattern(string str, int ws)
 		{
 			IVwPattern pattern = VwPatternClass.Create();
@@ -652,7 +659,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			pattern.Pattern = TsStringUtils.MakeString(str, ws);
 			pattern.IcuLocale = m_cache.WritingSystemFactory.GetStrFromWs(ws);
 			return pattern;
-		}
+		}*/
 
 		/// <summary>
 		/// Make a combo menu item (and install it) for choosing from a list, based on the column
@@ -660,10 +667,29 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		private void MakeListChoiceFilterItem(FilterSortItem item, FwComboBox combo, string beSpec, IPropertyTable propertyTable)
 		{
+			/*
+			// Non-recursive caller: "bulkEdit" OR "chooserFilter"
+			var beSpec = XmlUtils.GetOptionalAttributeValue(item.Spec, "bulkEdit", string.Empty);
+			if (string.IsNullOrEmpty(beSpec))
+			{
+				beSpec = XmlUtils.GetOptionalAttributeValue(item.Spec, "chooserFilter", string.Empty);
+			}
+			// Recursive caller: "chooserFilter"
+			// if we didn't find it, try "chooserFilter", if we haven't already.
+			var chooserFilter = XmlUtils.GetOptionalAttributeValue(item.Spec, "chooserFilter", string.Empty);
+			if (!string.IsNullOrEmpty(chooserFilter) && chooserFilter != beSpec)
+			{
+				MakeListChoiceFilterItem(item, combo, chooserFilter, propertyTable);
+			}
+			 */
 			switch (beSpec)
 			{
 				case "complexListMultiple":
 					combo.Items.Add(new ListChoiceComboItem(MakeLabel(XMLViewsStrings.ksChoose_), item, m_cache, propertyTable, combo, false));
+					break;
+				case "EntryPosFilter":
+					break;
+				case "PosFilter":
 					break;
 				case "external":
 					var beType = DynamicLoader.TypeForLoaderNode(item.Spec);
@@ -704,8 +730,7 @@ namespace LanguageExplorer.Controls.XMLViews
 					combo.Items.Add(new TextsFilterItem(MakeLabel(XmlUtils.GetOptionalAttributeValue(item.Spec, "specialItemName", XMLViewsStrings.ksChoose_)), m_bv.Publisher));
 					break;
 				case "atomicFlatListItem": // Fall through
-				case "morphTypeListItem":  // Fall through
-				case "variantConditionListItem": // RBR: Not found in develop or master branches.
+				case "morphTypeListItem":
 					combo.Items.Add(new ListChoiceComboItem(MakeLabel(XMLViewsStrings.ksChoose_), item, m_cache, propertyTable, combo, true));
 					break;
 				default:
@@ -719,10 +744,11 @@ namespace LanguageExplorer.Controls.XMLViews
 			}
 		}
 
+		/* Not used.
 		/// <summary>
 		/// Makes the int combo.
 		/// </summary>
-		protected void MakeIntCombo(FilterSortItem item)
+		private void MakeIntCombo(FilterSortItem item)
 		{
 			// This is just similar enough to MakeCombo to be annoying.
 			var combo = new FwComboBox
@@ -739,14 +765,13 @@ namespace LanguageExplorer.Controls.XMLViews
 			combo.SelectedIndexChanged += Combo_SelectedIndexChanged;
 			combo.AccessibleName = "FwComboBox";
 			Controls.Add(combo);
-		}
+		}*/
 
 		private bool m_fInSelectedIndexChanged;
 
 		private void Combo_SelectedIndexChanged(object sender, EventArgs e)
 		{
-			var combo = sender as FwComboBox;
-			if (combo == null || m_fInSelectedIndexChanged)
+			if (!(sender is FwComboBox combo) || m_fInSelectedIndexChanged)
 			{
 				return;
 			}
@@ -759,8 +784,7 @@ namespace LanguageExplorer.Controls.XMLViews
 					combo.BackColor = combo.SelectedIndex == 0 ? SystemColors.Window : Color.Yellow;
 					return;
 				}
-				var fci = combo.SelectedItem as FilterComboItem;
-				if (fci != null) // Happens when we set the text to what the user typed.
+				if (combo.SelectedItem is FilterComboItem fci) // Happens when we set the text to what the user typed.
 				{
 					if (fci.Invoke())
 					{
@@ -784,7 +808,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// Reset any filters to empty.  This assumes that index 0 of the internal combobox
 		///  selects the "no filter".
 		/// </summary>
-		public void RemoveAllFilters()
+		internal void RemoveAllFilters()
 		{
 			if (m_items == null)
 			{
@@ -877,7 +901,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			bool m_fGenDate;
 
 			/// <summary />
-			public RestrictDateComboItem(ITsString tssName, IHelpTopicProvider helpTopicProvider, FilterSortItem fsi, int ws, bool fGenDate, FwComboBox combo) : base(tssName, null, fsi)
+			internal RestrictDateComboItem(ITsString tssName, IHelpTopicProvider helpTopicProvider, FilterSortItem fsi, int ws, bool fGenDate, FwComboBox combo) : base(tssName, null, fsi)
 			{
 				m_helpTopicProvider = helpTopicProvider;
 				m_combo = combo;
@@ -955,7 +979,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			private IHelpTopicProvider m_helpTopicProvider;
 
 			/// <summary />
-			public RestrictComboItem(ITsString tssName, IHelpTopicProvider helpTopicProvider, FilterSortItem fsi, int ws, FwComboBox combo) : base(tssName, null, fsi)
+			internal RestrictComboItem(ITsString tssName, IHelpTopicProvider helpTopicProvider, FilterSortItem fsi, int ws, FwComboBox combo) : base(tssName, null, fsi)
 			{
 				m_helpTopicProvider = helpTopicProvider;
 				m_combo = combo;

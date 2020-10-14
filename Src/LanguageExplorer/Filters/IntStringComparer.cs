@@ -10,7 +10,7 @@ namespace LanguageExplorer.Filters
 	/// <summary>
 	/// This class compares two integers represented as strings using integer comparison.
 	/// </summary>
-	public class IntStringComparer : IComparer, IPersistAsXml
+	internal sealed class IntStringComparer : IComparer, IPersistAsXml
 	{
 		#region IComparer Members
 
@@ -45,9 +45,9 @@ namespace LanguageExplorer.Filters
 		/// <summary>
 		/// Inits the XML.
 		/// </summary>
-		public void InitXml(XElement element)
+		public void InitXml(IPersistAsXmlFactory factory, XElement element)
 		{
-			// Nothing to do
+			// Normally done in special constructor, but this class does nothing special for IPersistAsXml.
 		}
 
 		#endregion

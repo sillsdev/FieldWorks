@@ -42,9 +42,6 @@ namespace LanguageExplorer
 		/// </summary>
 		bool Accept(IManyOnePathSortItem item);
 
-#if RANDYTODO
-		// TODO: See if this method can go away, when the filter factory is set up. A simple constructor might be a place to do this.
-#endif
 		/// <summary>
 		/// Initialize the filter
 		/// </summary>

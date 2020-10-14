@@ -29,7 +29,7 @@ namespace LanguageExplorer.LcmUi
 		{
 		}
 
-		protected override string BeSpec => "external";
+		protected override string BeSpec => "EntryPosFilter";
 
 		public override bool CompatibleFilter(XElement colSpec)
 		{

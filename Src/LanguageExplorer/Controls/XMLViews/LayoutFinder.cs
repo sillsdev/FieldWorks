@@ -343,7 +343,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// Inits the XML.
 		/// </summary>
-		public virtual void InitXml(XElement element)
+		public virtual void InitXml(IPersistAsXmlFactory factory, XElement element)
 		{
 			m_layoutName = XmlUtils.GetMandatoryAttributeValue(element, "layout");
 			m_colSpec = element.Element("column");
@@ -652,9 +652,9 @@ namespace LanguageExplorer.Controls.XMLViews
 			/// <summary>
 			/// Inits the XML.
 			/// </summary>
-			public override void InitXml(XElement element)
+			public override void InitXml(IPersistAsXmlFactory factory, XElement element)
 			{
-				base.InitXml(element);
+				base.InitXml(factory, element);
 				SortMethod = XmlUtils.GetMandatoryAttributeValue(element, "sortmethod");
 				WritingSystemName = XmlUtils.GetOptionalAttributeValue(element, "ws", null);
 				// Enhance JohnT: if we start using string tables for browse views,

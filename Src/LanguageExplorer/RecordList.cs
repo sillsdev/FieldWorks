@@ -2375,7 +2375,7 @@ namespace LanguageExplorer
 			{
 				try
 				{
-					filter = DynamicLoader.RestoreObject<IRecordFilter>(XDocument.Parse(persistFilter).Root);
+					filter = DynamicLoader.RestoreObject<IRecordFilter>(PropertyTable.GetValue<IPersistAsXmlFactory>(LanguageExplorerConstants.PersistAsXmlFactory), XDocument.Parse(persistFilter).Root);
 					if (filter != null)
 					{
 						// (LT-9515) restored filters need these set, because they can't be persisted.
@@ -2421,7 +2421,7 @@ namespace LanguageExplorer
 			{
 				try
 				{
-					sorter = DynamicLoader.RestoreObject<IRecordSorter>(XDocument.Parse(persistSorter).Root);
+					sorter = DynamicLoader.RestoreObject<IRecordSorter>(PropertyTable.GetValue<IPersistAsXmlFactory>(LanguageExplorerConstants.PersistAsXmlFactory), XDocument.Parse(persistSorter).Root);
 				}
 				catch
 				{

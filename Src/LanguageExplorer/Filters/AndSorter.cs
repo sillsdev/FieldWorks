@@ -8,7 +8,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Xml.Linq;
-using System.Xml.XPath;
 using SIL.LCModel;
 
 namespace LanguageExplorer.Filters
@@ -132,13 +131,13 @@ namespace LanguageExplorer.Filters
 		/// <summary>
 		/// Inits the XML.
 		/// </summary>
-		public override void InitXml(XElement element)
+		public override void InitXml(IPersistAsXmlFactory factory, XElement element)
 		{
-			base.InitXml(element);
+			base.InitXml(factory, element);
 			Sorters = new List<IRecordSorter>(element.Elements().Count());
 			foreach (var child in element.Elements())
 			{
-				Sorters.Add(DynamicLoader.RestoreObject<IRecordSorter>(child));
+				Sorters.Add(DynamicLoader.RestoreObject<IRecordSorter>(factory, child));
 			}
 		}
 

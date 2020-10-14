@@ -75,14 +75,14 @@ namespace LanguageExplorer.Filters
 		/// <summary>
 		/// Inits the XML.
 		/// </summary>
-		public override void InitXml(XElement element)
+		public override void InitXml(IPersistAsXmlFactory factory, XElement element)
 		{
-			base.InitXml(element);
+			base.InitXml(factory, element);
 			Debug.Assert(Filters != null && Filters.Count == 0);
 			Filters = new List<IRecordFilter>(element.Elements().Count());
 			foreach (var child in element.Elements())
 			{
-				Filters.Add(DynamicLoader.RestoreObject<IRecordFilter>(child));
+				Filters.Add(DynamicLoader.RestoreObject<IRecordFilter>(factory, child));
 			}
 		}
 

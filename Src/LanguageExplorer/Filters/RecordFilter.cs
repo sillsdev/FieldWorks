@@ -147,7 +147,7 @@ namespace LanguageExplorer.Filters
 		/// <summary>
 		/// Inits the XML.
 		/// </summary>
-		public virtual void InitXml(XElement element)
+		public virtual void InitXml(IPersistAsXmlFactory factory, XElement element)
 		{
 			Name = XmlUtils.GetMandatoryAttributeValue(element, "name");
 		}

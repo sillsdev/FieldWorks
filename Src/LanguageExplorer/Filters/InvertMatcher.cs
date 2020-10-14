@@ -57,10 +57,10 @@ namespace LanguageExplorer.Filters
 		/// <summary>
 		/// Inits the XML.
 		/// </summary>
-		public override void InitXml(XElement element)
+		public override void InitXml(IPersistAsXmlFactory factory, XElement element)
 		{
-			base.InitXml(element);
-			MatcherToInvert = DynamicLoader.RestoreObject<IMatcher>(element.Element("invertMatcher"));
+			base.InitXml(factory, element);
+			MatcherToInvert = DynamicLoader.RestoreObject<IMatcher>(factory, element.Element("invertMatcher"));
 		}
 
 		#region IStoresLcmCache Members

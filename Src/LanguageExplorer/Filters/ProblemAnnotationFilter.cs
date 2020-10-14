@@ -37,9 +37,9 @@ namespace LanguageExplorer.Filters
 		/// <summary>
 		/// Inits the XML.
 		/// </summary>
-		public override void InitXml(XElement element)
+		public override void InitXml(IPersistAsXmlFactory factory, XElement element)
 		{
-			base.InitXml(element);
+			base.InitXml(factory, element);
 			ClassIds = new List<int>(XmlUtils.GetMandatoryIntegerListAttributeValue(element, "classIds"));
 		}
 

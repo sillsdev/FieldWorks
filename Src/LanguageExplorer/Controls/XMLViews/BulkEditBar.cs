@@ -626,9 +626,6 @@ namespace LanguageExplorer.Controls.XMLViews
 					ws = WritingSystemServices.GetWritingSystem(m_cache, colSpec.ConvertElement(), null, WritingSystemServices.kwsAnal).Handle;
 					besc = new MorphTypeChooserBEditControl(flid, flidSub, hvoList, ws, m_bv);
 					break;
-				case "variantConditionListItem":
-					besc = new VariantEntryTypesChooserBEditControl(m_cache, PropertyTable, colSpec);
-					break;
 				case "integer":
 					flid = GetFlidFromClassDotName(colSpec, "field");
 					var stringList = m_bv.BrowseView.GetStringList(colSpec);
@@ -5530,7 +5527,7 @@ namespace LanguageExplorer.Controls.XMLViews
 				// Make a Dictionary from HVO of entry to list of modified senses.
 				var sensesByEntryAndPos = new Dictionary<Tuple<ILexEntry, IPartOfSpeech>, List<ILexSense>>();
 				var i = 0;
-				// Report progress 50 times or every 100 items, whichever is more (but no more than once per item!)
+				// Report progress 50 times or every 100 items, whichever is more (but no more than once per itTem!)
 				var interval = Math.Min(100, Math.Max(itemsToChange.Count() / 50, 1));
 				foreach (var hvoSense in itemsToChange)
 				{
