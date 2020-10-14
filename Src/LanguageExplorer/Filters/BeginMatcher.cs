@@ -2,6 +2,7 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System.Xml.Linq;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.LCModel.Core.KernelInterfaces;
 
@@ -13,12 +14,14 @@ namespace LanguageExplorer.Filters
 	internal sealed class BeginMatcher : SimpleStringMatcher
 	{
 		/// <summary />
-		public BeginMatcher(IVwPattern pattern) : base(pattern) { }
+		internal BeginMatcher(IVwPattern pattern) : base(pattern) { }
 
 		/// <summary>
-		/// default for persistence
+		/// For use with IPersistAsXml
 		/// </summary>
-		public BeginMatcher() { }
+		internal BeginMatcher(XElement element)
+			: base(element)
+		{}
 
 		/// <summary />
 		public override bool Matches(ITsString arg)

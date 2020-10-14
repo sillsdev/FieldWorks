@@ -3,6 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Linq;
+using System.Xml.Linq;
 using SIL.LCModel.Core.KernelInterfaces;
 
 namespace LanguageExplorer.Filters
@@ -12,6 +13,18 @@ namespace LanguageExplorer.Filters
 	/// </summary>
 	internal sealed class NonBlankMatcher : BaseMatcher
 	{
+		/// <summary />
+		internal NonBlankMatcher()
+		{ }
+
+		/// <summary>
+		/// For use with IPersistAsXml
+		/// </summary>
+		internal NonBlankMatcher(XElement element)
+			: base(element)
+		{
+		}
+
 		/// <summary>
 		/// The exact opposite of BlankMatcher.
 		/// </summary>

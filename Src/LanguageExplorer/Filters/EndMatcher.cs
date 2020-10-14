@@ -2,6 +2,7 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System.Xml.Linq;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.LCModel.Core.KernelInterfaces;
 
@@ -15,12 +16,14 @@ namespace LanguageExplorer.Filters
 		/// <summary>
 		/// normal constructor
 		/// </summary>
-		public EndMatcher(IVwPattern pattern) : base(pattern) { }
+		internal EndMatcher(IVwPattern pattern) : base(pattern) { }
 
 		/// <summary>
-		/// default for persistence
+		/// For use with IPersistAsXml
 		/// </summary>
-		public EndMatcher() { }
+		internal EndMatcher(XElement element)
+			: base(element)
+		{ }
 
 		/// <summary />
 		public override bool Matches(ITsString arg)

@@ -98,7 +98,7 @@ namespace LanguageExplorer.Filters
 			base.InitXml(factory, element);
 			Debug.Assert(Finder == null);
 			Finder = factory.Create<IStringFinder>(element.Element("finder"));
-			Matcher = DynamicLoader.RestoreObject<IMatcher>(factory, element.Element("matcher"));
+			Matcher = factory.Create<IMatcher>(element.Element("matcher"));
 		}
 
 		#endregion

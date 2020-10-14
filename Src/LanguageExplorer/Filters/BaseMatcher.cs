@@ -20,6 +20,17 @@ namespace LanguageExplorer.Filters
 		// so that m_tssLabel can be computed.
 		private string m_xmlLabel;
 
+		internal BaseMatcher()
+		{}
+
+		/// <summary>
+		/// For use with IPersistAsXml
+		/// </summary>
+		internal BaseMatcher(XElement element)
+		{
+			m_xmlLabel = XmlUtils.GetOptionalAttributeValue(element, "label");
+		}
+
 		#region IMatcher Members
 
 		/// <summary />
@@ -92,9 +103,9 @@ namespace LanguageExplorer.Filters
 		/// <summary>
 		/// Inits the XML.
 		/// </summary>
-		public virtual void InitXml(IPersistAsXmlFactory factory, XElement element)
+		public void InitXml(IPersistAsXmlFactory factory, XElement element)
 		{
-			m_xmlLabel = XmlUtils.GetOptionalAttributeValue(element, "label");
+			// Now done in special constructors.
 		}
 
 		#endregion

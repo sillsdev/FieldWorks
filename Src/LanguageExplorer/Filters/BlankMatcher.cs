@@ -3,6 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Linq;
+using System.Xml.Linq;
 using SIL.LCModel.Core.KernelInterfaces;
 
 namespace LanguageExplorer.Filters
@@ -12,6 +13,17 @@ namespace LanguageExplorer.Filters
 	/// </summary>
 	internal sealed class BlankMatcher : BaseMatcher
 	{
+		/// <summary />
+		internal BlankMatcher()
+		{}
+
+		/// <summary>
+		/// For use with IPersistAsXml
+		/// </summary>
+		internal BlankMatcher(XElement element)
+			:base(element)
+		{}
+
 		/// <summary>
 		/// Matches any empty or null string, or one consisting entirely of white space
 		/// characters. I think the .NET definition of white space is good enough; it's unlikely

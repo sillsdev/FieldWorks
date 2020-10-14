@@ -20,13 +20,15 @@ namespace LanguageExplorer.Filters
 		private int m_ws;
 
 		/// <summary>
-		/// Required constructor for persistence.
+		/// For use with IPersistAsXml
 		/// </summary>
-		public BadSpellingMatcher()
+		internal BadSpellingMatcher(XElement element)
+			: base(element)
 		{
+			m_ws = XmlUtils.GetMandatoryIntegerAttributeValue(element, "ws");
 		}
 
-		public BadSpellingMatcher(int ws)
+		internal BadSpellingMatcher(int ws)
 		{
 			m_ws = ws;
 		}
@@ -54,15 +56,6 @@ namespace LanguageExplorer.Filters
 		{
 			base.PersistAsXml(element);
 			XmlUtils.SetAttribute(element, "ws", m_ws.ToString());
-		}
-
-		/// <summary>
-		/// Inits the XML.
-		/// </summary>
-		public override void InitXml(IPersistAsXmlFactory factory, XElement element)
-		{
-			base.InitXml(factory, element);
-			m_ws = XmlUtils.GetMandatoryIntegerAttributeValue(element, "ws");
 		}
 
 		/// <summary>

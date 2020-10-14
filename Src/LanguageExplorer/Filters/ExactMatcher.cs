@@ -2,6 +2,7 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System.Xml.Linq;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 
 namespace LanguageExplorer.Filters
@@ -12,12 +13,14 @@ namespace LanguageExplorer.Filters
 	internal sealed class ExactMatcher : SimpleStringMatcher
 	{
 		/// <summary />
-		public ExactMatcher(IVwPattern pattern) : base(pattern) { }
+		internal ExactMatcher(IVwPattern pattern) : base(pattern) { }
 
 		/// <summary>
-		/// default for persistence
+		/// For use with IPersistAsXml
 		/// </summary>
-		public ExactMatcher() { }
+		internal ExactMatcher(XElement element)
+			: base(element)
+		{ }
 
 		protected override bool CurrentResultDoesMatch(MatchRangePair match)
 		{

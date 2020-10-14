@@ -14,13 +14,21 @@ namespace LanguageExplorer.Filters
 	internal sealed class DateTimeMatcher : BaseMatcher
 	{
 		/// <summary>
-		/// Default constructor for IPersistAsXml
+		/// For use with IPersistAsXml
 		/// </summary>
-		public DateTimeMatcher()
+		internal DateTimeMatcher(XElement element)
+			: base(element)
 		{
+			Start = DateTime.Parse(XmlUtils.GetMandatoryAttributeValue(element, "start"), DateTimeFormatInfo.InvariantInfo);
+			End = DateTime.Parse(XmlUtils.GetMandatoryAttributeValue(element, "end"), DateTimeFormatInfo.InvariantInfo);
+			MatchType = (DateMatchType)XmlUtils.GetMandatoryIntegerAttributeValue(element, "type");
+			HandleGenDate = XmlUtils.GetOptionalBooleanAttributeValue(element, "genDate", false);
+			IsStartAD = XmlUtils.GetOptionalBooleanAttributeValue(element, "startAD", true);
+			IsEndAD = XmlUtils.GetOptionalBooleanAttributeValue(element, "endAD", true);
+			UnspecificMatching = XmlUtils.GetOptionalBooleanAttributeValue(element, "unspecific", false);
 		}
 
-		public DateTimeMatcher(DateTime start, DateTime end, DateMatchType type)
+		internal DateTimeMatcher(DateTime start, DateTime end, DateMatchType type)
 		{
 			Start = start;
 			End = end;
@@ -33,24 +41,24 @@ namespace LanguageExplorer.Filters
 		/// <summary>
 		/// The start time (used for start of range and not range, on or after)
 		/// </summary>
-		public DateTime Start { get; private set; }
+		internal DateTime Start { get; }
 
-		public DateMatchType MatchType { get; private set; }
+		internal DateMatchType MatchType { get; }
 
 		/// <summary>
 		/// The end time (used for end of range and not range, on or before)
 		/// </summary>
-		public DateTime End { get; private set; }
+		internal DateTime End { get; }
 
 		/// <summary>
 		/// Flag whether we are matching GenDate objects instead of DateTime objects.
 		/// </summary>
-		public bool HandleGenDate { get; set; }
+		internal bool HandleGenDate { get; set; }
 
 		// The next three properties are also used with GenDate comparisons.
-		public bool IsStartAD { get; set; }
-		public bool IsEndAD { get; set; }
-		public bool UnspecificMatching { get; set; }
+		internal bool IsStartAD { get; set; }
+		internal bool IsEndAD { get; set; }
+		internal bool UnspecificMatching { get; set; }
 
 		public override bool Matches(ITsString arg)
 		{
@@ -312,18 +320,6 @@ namespace LanguageExplorer.Filters
 				XmlUtils.SetAttribute(element, "endAD", IsEndAD.ToString());
 				XmlUtils.SetAttribute(element, "unspecific", UnspecificMatching.ToString());
 			}
-		}
-
-		public override void InitXml(IPersistAsXmlFactory factory, XElement element)
-		{
-			base.InitXml(factory, element);
-			Start = DateTime.Parse(XmlUtils.GetMandatoryAttributeValue(element, "start"), DateTimeFormatInfo.InvariantInfo);
-			End = DateTime.Parse(XmlUtils.GetMandatoryAttributeValue(element, "end"), DateTimeFormatInfo.InvariantInfo);
-			MatchType = (DateMatchType)XmlUtils.GetMandatoryIntegerAttributeValue(element, "type");
-			HandleGenDate = XmlUtils.GetOptionalBooleanAttributeValue(element, "genDate", false);
-			IsStartAD = XmlUtils.GetOptionalBooleanAttributeValue(element, "startAD", true);
-			IsEndAD = XmlUtils.GetOptionalBooleanAttributeValue(element, "endAD", true);
-			UnspecificMatching = XmlUtils.GetOptionalBooleanAttributeValue(element, "unspecific", false);
 		}
 	}
 }

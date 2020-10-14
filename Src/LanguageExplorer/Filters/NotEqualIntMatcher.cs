@@ -15,21 +15,23 @@ namespace LanguageExplorer.Filters
 	internal sealed class NotEqualIntMatcher : BaseMatcher, IIntMatcher
 	{
 		/// <summary>
-		/// Get the value to not match. Used for testing.
+		/// For use with IPersistAsXml
 		/// </summary>
-		public int NotEqualValue { get; private set; }
-
-		/// <summary />
-		public NotEqualIntMatcher(int val)
+		internal NotEqualIntMatcher(XElement element)
+			:base(element)
 		{
-			NotEqualValue = val;
+			NotEqualValue = XmlUtils.GetMandatoryIntegerAttributeValue(element, "val");
 		}
 
 		/// <summary>
-		/// default constructor for persistence
+		/// Get the value to not match. Used for testing.
 		/// </summary>
-		public NotEqualIntMatcher()
+		internal int NotEqualValue { get; }
+
+		/// <summary />
+		internal NotEqualIntMatcher(int val)
 		{
+			NotEqualValue = val;
 		}
 
 		#region IMatcher Members
@@ -59,15 +61,6 @@ namespace LanguageExplorer.Filters
 		{
 			base.PersistAsXml(element);
 			XmlUtils.SetAttribute(element, "val", NotEqualValue.ToString());
-		}
-
-		/// <summary>
-		/// Inits the XML.
-		/// </summary>
-		public override void InitXml(IPersistAsXmlFactory factory, XElement element)
-		{
-			base.InitXml(factory, element);
-			NotEqualValue = XmlUtils.GetMandatoryIntegerAttributeValue(element, "val");
 		}
 	}
 }

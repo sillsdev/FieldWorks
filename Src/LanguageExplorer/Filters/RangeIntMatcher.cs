@@ -23,21 +23,24 @@ namespace LanguageExplorer.Filters
 		}
 
 		/// <summary>
-		/// Default constructor for IPersistAsXml
+		/// For use with IPersistAsXml
 		/// </summary>
-		public RangeIntMatcher()
+		public RangeIntMatcher(XElement element)
+			: base(element)
 		{
+			Min = XmlUtils.GetMandatoryIntegerAttributeValue(element, "min");
+			Max = XmlUtils.GetMandatoryIntegerAttributeValue(element, "max");
 		}
 
 		/// <summary>
 		/// Gets the min.
 		/// </summary>
-		internal long Min { get; private set; }
+		internal long Min { get; }
 
 		/// <summary>
 		/// Gets the max.
 		/// </summary>
-		internal long Max { get; private set; }
+		internal long Max { get; }
 
 		/// <summary>
 		/// Persists as XML.
@@ -47,16 +50,6 @@ namespace LanguageExplorer.Filters
 			base.PersistAsXml(element);
 			XmlUtils.SetAttribute(element, "min", Min.ToString());
 			XmlUtils.SetAttribute(element, "max", Max.ToString());
-		}
-
-		/// <summary>
-		/// Inits the XML.
-		/// </summary>
-		public override void InitXml(IPersistAsXmlFactory factory, XElement element)
-		{
-			base.InitXml(factory, element);
-			Min = XmlUtils.GetMandatoryIntegerAttributeValue(element, "min");
-			Max = XmlUtils.GetMandatoryIntegerAttributeValue(element, "max");
 		}
 
 		#region Matcher Members

@@ -38,6 +38,17 @@ namespace LanguageExplorer.Filters
 		protected List<MatchRangePair> m_results = new List<MatchRangePair>();
 
 		/// <summary>
+		/// For use with IPersistAsXml
+		/// </summary>
+		protected SimpleStringMatcher(XElement element)
+			: base(element)
+		{
+			// The xml contents are used when the Cache property is set.
+			m_persistNode = element;
+			Init();
+		}
+
+		/// <summary>
 		/// normal constructor
 		/// </summary>
 		protected SimpleStringMatcher(IVwPattern pattern)
@@ -267,15 +278,6 @@ namespace LanguageExplorer.Filters
 			XmlUtils.SetAttribute(element, "matchDiacritics", Pattern.MatchDiacritics.ToString());
 			// NOTE!! if any more properties of the matcher become significant, they should be
 			// accounted for also in SameMatcher!
-		}
-
-		/// <summary>
-		/// Inits the XML.
-		/// </summary>
-		public override void InitXml(IPersistAsXmlFactory factory, XElement element)
-		{
-			base.InitXml(factory, element);
-			m_persistNode = element;
 		}
 
 		/// <summary>

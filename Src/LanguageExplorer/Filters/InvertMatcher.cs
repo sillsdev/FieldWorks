@@ -14,22 +14,24 @@ namespace LanguageExplorer.Filters
 	internal sealed class InvertMatcher : BaseMatcher, IStoresDataAccess
 	{
 		/// <summary />
-		public InvertMatcher(IMatcher matcher)
+		internal InvertMatcher(IMatcher matcher)
 		{
 			MatcherToInvert = matcher;
 		}
 
 		/// <summary>
-		/// default for persistence.
+		/// For use with IPersistAsXml
 		/// </summary>
-		public InvertMatcher()
+		internal InvertMatcher(IPersistAsXmlFactory factory, XElement element)
+			: base(element)
 		{
+			MatcherToInvert = factory.Create<IMatcher>(element.Element("matcher"));
 		}
 
 		/// <summary>
 		/// Gets the matcher to invert.
 		/// </summary>
-		public IMatcher MatcherToInvert { get; private set; }
+		internal IMatcher MatcherToInvert { get; }
 
 		/// <summary />
 		public override bool Matches(ITsString arg)
@@ -51,16 +53,7 @@ namespace LanguageExplorer.Filters
 		public override void PersistAsXml(XElement element)
 		{
 			base.PersistAsXml(element);
-			LanguageExplorerServices.PersistObject(MatcherToInvert, element, "invertMatcher");
-		}
-
-		/// <summary>
-		/// Inits the XML.
-		/// </summary>
-		public override void InitXml(IPersistAsXmlFactory factory, XElement element)
-		{
-			base.InitXml(factory, element);
-			MatcherToInvert = DynamicLoader.RestoreObject<IMatcher>(factory, element.Element("invertMatcher"));
+			LanguageExplorerServices.PersistObject(MatcherToInvert, element, "matcher");
 		}
 
 		#region IStoresLcmCache Members

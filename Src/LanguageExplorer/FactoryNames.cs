@@ -10,7 +10,6 @@ namespace LanguageExplorer
 		filter,
 		finder,
 		matcher,
-		comparer,
-		invertMatcher
+		comparer
 	}
 }

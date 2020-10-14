@@ -314,6 +314,7 @@
     <Compile Include="FactoryNames.cs" />
     <Compile Include="Filters\IntCompareFinder.cs" />
     <Compile Include="Filters\PersistAsXmlFinderFactoryStrategy.cs" />
+    <Compile Include="Filters\PersistAsXmlMatcherFactoryStrategy.cs" />
     <Compile Include="Filters\SortMethodFinder.cs" />
     <Compile Include="IPersistAsXmlFactoryStrategy.cs" />
     <Compile Include="IPersistAsXmlFactory.cs" />

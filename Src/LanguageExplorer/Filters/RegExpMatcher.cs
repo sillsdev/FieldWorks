@@ -2,6 +2,7 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System.Xml.Linq;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.LCModel;
 using SIL.LCModel.Core.KernelInterfaces;
@@ -14,15 +15,17 @@ namespace LanguageExplorer.Filters
 	internal sealed class RegExpMatcher : SimpleStringMatcher
 	{
 		/// <summary />
-		public RegExpMatcher(IVwPattern pattern) : base(pattern)
+		internal RegExpMatcher(IVwPattern pattern) : base(pattern)
 		{
 			Init();
 		}
 
 		/// <summary>
-		/// default for persistence
+		/// For use with IPersistAsXml
 		/// </summary>
-		public RegExpMatcher() { }
+		internal RegExpMatcher(XElement element)
+			: base(element)
+		{ }
 
 		/// <summary />
 		private void Init()
