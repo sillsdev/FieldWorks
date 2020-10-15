@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Xml.Linq;
+using SIL.Code;
 using SIL.LCModel;
 using SIL.LCModel.Core.KernelInterfaces;
 
@@ -22,16 +23,24 @@ namespace LanguageExplorer.Filters
 		protected IComparer _comparer;
 
 		/// <summary />
-		public GenRecordSorter(IComparer comp) : this()
+		internal GenRecordSorter()
 		{
+		}
+
+		/// <summary />
+		internal GenRecordSorter(IComparer comp)
+			: this()
+		{
+			Require.That(comp is IPersistAsXml, $"cannot persist GenRecSorter with comparer class {comp.GetType().AssemblyQualifiedName}");
 			_comparer = comp;
 		}
 
 		/// <summary>
-		/// Default constructor for IPersistAsXml
+		/// For use with IPersistAsXml
 		/// </summary>
-		public GenRecordSorter()
+		internal GenRecordSorter(IPersistAsXmlFactory factory, XElement element)
 		{
+			_comparer = factory.Create<IComparer>(element.Elements().First());
 		}
 
 		/// <summary>
@@ -147,31 +156,7 @@ namespace LanguageExplorer.Filters
 		/// </summary>
 		public override void PersistAsXml(XElement element)
 		{
-			base.PersistAsXml(element); // does nothing, but in case needed later...
-			if (!(Comparer is IPersistAsXml persistComparer))
-			{
-				throw new Exception($"cannot persist GenRecSorter with comparer class {Comparer.GetType().AssemblyQualifiedName}");
-			}
-			LanguageExplorerServices.PersistObject(persistComparer, element, "comparer");
-		}
-
-		/// <summary>
-		/// Initialize an instance into the state indicated by the node, which was
-		/// created by a call to PersistAsXml.
-		/// </summary>
-		public override void InitXml(IPersistAsXmlFactory factory, XElement element)
-		{
-			base.InitXml(factory, element);
-			var compNode = element.Elements().First();
-			if (compNode.Name != "comparer")
-			{
-				throw new Exception("persist info for GenRecordSorter must have comparer child element");
-			}
-			_comparer = factory.Create<IComparer>(compNode);
-			if (_comparer == null)
-			{
-				throw new Exception("restoring sorter failed...comparer does not implement IComparer");
-			}
+			LanguageExplorerServices.PersistObject((IPersistAsXml)Comparer, element, "comparer");
 		}
 
 		/// <summary>

@@ -1622,11 +1622,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools
 				throw new NotSupportedException();
 			}
 
-			/// <inheritdoc />
-			public void InitXml(IPersistAsXmlFactory factory, XElement element)
-			{
-				throw new NotSupportedException();
-			}
 			#endregion
 		}
 

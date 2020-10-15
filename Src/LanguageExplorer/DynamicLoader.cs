@@ -57,16 +57,5 @@ namespace LanguageExplorer
 			}
 			return (T)thing;
 		}
-
-		/// <summary>
-		/// Create the object specified by the class attribute of element,
-		/// and if the resulting object implements IPersistAsXml, call InitXml.
-		/// </summary>
-		internal static T RestoreObject<T>(IPersistAsXmlFactory factory, XElement element) where T : class
-		{
-			var obj = CreateObject<T>(element);
-			(obj as IPersistAsXml)?.InitXml(factory, element.Clone());
-			return obj;
-		}
 	}
 }

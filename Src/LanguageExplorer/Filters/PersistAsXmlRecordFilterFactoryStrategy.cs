@@ -32,22 +32,20 @@ namespace LanguageExplorer.Filters
 					return new WordSetFilter(element);
 				case "WordsUsedOnlyElsewhereFilter":
 					return new WordsUsedOnlyElsewhereFilter(element);
-				//// All derive from NullFilter, which derives from RecordFilter (abstract class)
+				// All derive from NullFilter, which derives from RecordFilter (abstract class)
 				case "NullFilter":
 					return new NullFilter(element);
 				case "NoFilters":
 					return new NoFilters(element);
 				case "UncheckAll":
 					return new UncheckAll(element);
-				//// All derive from ListChoiceFilter (abstract class), which derives from RecordFilter (abstract class)
+				// All derive from ListChoiceFilter (abstract class), which derives from RecordFilter (abstract class)
 				case "EntryPosFilter":
 					return new EntryPosFilter(element);
 				case "ColumnSpecFilter":
 					return new ColumnSpecFilter(element);
 				case "PosFilter":
 					return new PosFilter(element);
-				//case "RegExpMatcher":
-				//	return new RegExpMatcher(element);
 				default:
 					throw new InvalidEnumArgumentException($"{className} not recognized by matcher factory.");
 			}

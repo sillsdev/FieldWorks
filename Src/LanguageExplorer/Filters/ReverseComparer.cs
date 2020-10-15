@@ -75,14 +75,6 @@ namespace LanguageExplorer.Filters
 			LanguageExplorerServices.PersistObject((IPersistAsXml)SubComp, element, "comparer");
 		}
 
-		/// <summary>
-		/// Inits the XML.
-		/// </summary>
-		public void InitXml(IPersistAsXmlFactory factory, XElement element)
-		{
-			// Now done in special constructor.
-		}
-
 		#endregion
 
 		/// <summary />

@@ -295,6 +295,7 @@ namespace LanguageExplorer.Filters
 				XmlUtils.SetAttribute(element, "ws", m_wsName);
 			}
 		}
+
 		#endregion
 	}
 }

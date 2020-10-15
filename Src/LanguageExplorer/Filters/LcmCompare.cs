@@ -65,15 +65,6 @@ namespace LanguageExplorer.Filters
 		}
 
 		/// <summary>
-		/// Initialize an instance into the state indicated by the node, which was
-		/// created by a call to PersistAsXml.
-		/// </summary>
-		public void InitXml(IPersistAsXmlFactory factory, XElement element)
-		{
-			// Now done in special constructor.
-		}
-
-		/// <summary>
 		/// Gets the property.
 		/// </summary>
 		private static object GetProperty(ICmObject target, string property)

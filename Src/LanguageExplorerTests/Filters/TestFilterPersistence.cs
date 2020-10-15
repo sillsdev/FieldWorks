@@ -77,7 +77,7 @@ namespace LanguageExplorerTests.Filters
 			var xml = LanguageExplorerServices.PersistObject(grs, "sorter");
 			var doc = XDocument.Parse(xml);
 			Assert.IsTrue("sorter" == doc.Root.Name);
-			var obj = DynamicLoader.RestoreObject<GenRecordSorter>(_persistAsXmlFactory, doc.Root);
+			var obj = _persistAsXmlFactory.Create<GenRecordSorter>(doc.Root);
 			try
 			{
 				var compOut = obj.Comparer;
@@ -104,7 +104,7 @@ namespace LanguageExplorerTests.Filters
 			var xml = LanguageExplorerServices.PersistObject(asorter, "sorter");
 			var doc = XDocument.Parse(xml);
 			Assert.IsTrue("sorter" == doc.Root.Name);
-			var andSorter = DynamicLoader.RestoreObject<AndSorter>(_persistAsXmlFactory, doc.Root);
+			var andSorter = _persistAsXmlFactory.Create<AndSorter>(doc.Root);
 			var sortersOut = andSorter.Sorters;
 			var grsOut1 = (GenRecordSorter)sortersOut[0];
 			var grsOut2 = (GenRecordSorter)sortersOut[1];
@@ -327,7 +327,7 @@ namespace LanguageExplorerTests.Filters
 			var doc = XDocument.Parse(xml);
 
 			// And check all the pieces...
-			var prsOut = DynamicLoader.RestoreObject<PropertyRecordSorter>(_persistAsXmlFactory, doc.Root);
+			var prsOut = _persistAsXmlFactory.Create<PropertyRecordSorter>(doc.Root);
 			prsOut.Cache = Cache;
 			Assert.AreEqual("longName", prsOut.PropertyName);
 		}

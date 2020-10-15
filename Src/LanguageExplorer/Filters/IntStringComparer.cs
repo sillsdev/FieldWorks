@@ -42,14 +42,6 @@ namespace LanguageExplorer.Filters
 			// nothing to do.
 		}
 
-		/// <summary>
-		/// Inits the XML.
-		/// </summary>
-		public void InitXml(IPersistAsXmlFactory factory, XElement element)
-		{
-			// Normally done in special constructor, but this class does nothing special for IPersistAsXml.
-		}
-
 		#endregion
 
 		/// <summary />

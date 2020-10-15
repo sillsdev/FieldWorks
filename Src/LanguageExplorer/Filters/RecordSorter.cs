@@ -51,17 +51,8 @@ namespace LanguageExplorer.Filters
 		/// re-created sorter.
 		/// This default implementation does nothing.
 		/// </summary>
-		public virtual void PersistAsXml(XElement element)
-		{
-		}
+		public abstract void PersistAsXml(XElement element);
 
-		/// <summary>
-		/// Initialize an instance into the state indicated by the node, which was
-		/// created by a call to PersistAsXml.
-		/// </summary>
-		public virtual void InitXml(IPersistAsXmlFactory factory, XElement element)
-		{
-		}
 		#endregion IPersistAsXml
 
 		#region IStoresLcmCache implementation

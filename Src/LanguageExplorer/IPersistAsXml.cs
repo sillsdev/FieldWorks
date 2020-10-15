@@ -14,11 +14,5 @@ namespace LanguageExplorer
 		/// sufficient to create an instance of the proper class.
 		/// </summary>
 		void PersistAsXml(XElement element);
-
-		/// <summary>
-		/// Initialize an instance into the state indicated by the element, which was
-		/// created by a call to PersistAsXml.
-		/// </summary>
-		void InitXml(IPersistAsXmlFactory factory, XElement element);
 	}
 }

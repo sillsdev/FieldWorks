@@ -167,14 +167,6 @@ namespace LanguageExplorer.Filters
 			XmlUtils.SetAttribute(element, "ws", WsCode);
 		}
 
-		/// <summary>
-		/// Inits the XML.
-		/// </summary>
-		public void InitXml(IPersistAsXmlFactory factory, XElement element)
-		{
-			// Now done in special constructor.
-		}
-
 		#endregion
 
 		/// <summary />

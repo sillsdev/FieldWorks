@@ -343,14 +343,6 @@ namespace LanguageExplorer.Filters
 			element.Add(m_colSpec);
 		}
 
-		/// <summary>
-		/// Inits the XML.
-		/// </summary>
-		public void InitXml(IPersistAsXmlFactory factory, XElement element)
-		{
-			// Now done in special constructors.
-		}
-
 		#endregion
 
 		#region IStoresLcmCache Members

@@ -15,28 +15,23 @@ namespace LanguageExplorer.Filters
 	/// <summary>
 	/// sort (in memory) based on in LCM property
 	/// </summary>
-	internal class PropertyRecordSorter : RecordSorter
+	internal sealed class PropertyRecordSorter : RecordSorter
 	{
 		private IComparer _comparer;
 		private LcmCache _cache;
 
 		/// <summary />
-		public PropertyRecordSorter(string propertyName)
+		internal PropertyRecordSorter(string propertyName)
 		{
-			Init(propertyName);
-		}
-
-		/// <summary />
-		public PropertyRecordSorter()
-		{
+			PropertyName = propertyName;
 		}
 
 		/// <summary>
-		/// Inits the specified property name.
+		/// For use with IPersistAsXml
 		/// </summary>
-		protected void Init(string propertyName)
+		internal PropertyRecordSorter(XElement element)
+			: this(XmlUtils.GetMandatoryAttributeValue(element, "sortProperty"))
 		{
-			PropertyName = propertyName;
 		}
 
 		/// <summary>
@@ -47,15 +42,6 @@ namespace LanguageExplorer.Filters
 		public override void PersistAsXml(XElement element)
 		{
 			element.Add(new XAttribute("sortProperty", PropertyName));
-		}
-
-		/// <summary>
-		/// Initialize an instance into the state indicated by the node, which was
-		/// created by a call to PersistAsXml.
-		/// </summary>
-		public override void InitXml(IPersistAsXmlFactory factory, XElement element)
-		{
-			PropertyName = XmlUtils.GetMandatoryAttributeValue(element, "sortProperty");
 		}
 
 		public override LcmCache Cache
@@ -70,7 +56,7 @@ namespace LanguageExplorer.Filters
 		/// <summary>
 		/// Gets the name of the property.
 		/// </summary>
-		public string PropertyName { get; protected set; }
+		internal string PropertyName { get; }
 
 		/// <summary>
 		/// Get the object that does the comparisons.

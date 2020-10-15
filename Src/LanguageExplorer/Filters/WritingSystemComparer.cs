@@ -90,14 +90,6 @@ namespace LanguageExplorer.Filters
 			XmlUtils.SetAttribute(element, "ws", WsId);
 		}
 
-		/// <summary>
-		/// Inits the XML.
-		/// </summary>
-		public void InitXml(IPersistAsXmlFactory factory, XElement element)
-		{
-			// Now done in special constructor.
-		}
-
 		#endregion
 
 		public override bool Equals(object obj)

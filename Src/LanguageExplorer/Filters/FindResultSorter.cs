@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections;
+using System.Xml.Linq;
 using SIL.LCModel.Core.KernelInterfaces;
 
 namespace LanguageExplorer.Filters
@@ -11,11 +12,19 @@ namespace LanguageExplorer.Filters
 	/// <summary>
 	/// Extends the GenRecordSorter to prioritize the sorting of more exact matches
 	/// </summary>
-	internal class FindResultSorter : GenRecordSorter
+	internal sealed class FindResultSorter : GenRecordSorter
 	{
 		internal FindResultSorter(ITsString searchString, IRecordSorter sorter)
 		{
 			_comparer = searchString.Text != null ? new ExactMatchFirstComparer(searchString.Text, sorter.Comparer) : sorter.Comparer;
+		}
+
+		/// <summary>
+		/// For use with IPersistAsXml
+		/// </summary>
+		internal FindResultSorter(IPersistAsXmlFactory factory, XElement element)
+			: base(factory, element)
+		{
 		}
 
 		private sealed class ExactMatchFirstComparer : IComparer
@@ -23,7 +32,7 @@ namespace LanguageExplorer.Filters
 			private string _searchString { get; }
 			private IComparer _comparer { get; }
 
-			public ExactMatchFirstComparer(string text, IComparer comparer)
+			internal ExactMatchFirstComparer(string text, IComparer comparer)
 			{
 				_comparer = comparer;
 				_searchString = text;

@@ -812,6 +812,12 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			{
 				private LcmCache m_cache;
 
+				/// <inheritdoc />
+				public override void PersistAsXml(XElement element)
+				{
+					throw new NotSupportedException();
+				}
+
 				public override LcmCache Cache
 				{
 					set => m_cache = value;

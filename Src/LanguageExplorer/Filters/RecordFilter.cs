@@ -62,16 +62,6 @@ namespace LanguageExplorer.Filters
 		}
 
 		/// <summary>
-		/// a factory method for filters
-		/// </summary>
-		public static IRecordFilter Create(LcmCache cache, XElement configuration)
-		{
-			var filter = DynamicLoader.CreateObject<IRecordFilter>(configuration);
-			filter.Init(cache, configuration);
-			return filter;
-		}
-
-		/// <summary>
 		/// If this or a contained filter is considered equal to the argument, answer the filter
 		/// or subfilter that is considered equal.
 		/// Record Filters that can contain more than one filter (e.g. AndFilter) should override this.
@@ -151,14 +141,6 @@ namespace LanguageExplorer.Filters
 		public virtual void PersistAsXml(XElement element)
 		{
 			XmlUtils.SetAttribute(element, "name", Name);
-		}
-
-		/// <summary>
-		/// Inits the XML.
-		/// </summary>
-		public void InitXml(IPersistAsXmlFactory factory, XElement element)
-		{
-			// Now done in special constructors.
 		}
 
 		#endregion

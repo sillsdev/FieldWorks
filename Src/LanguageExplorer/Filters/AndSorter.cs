@@ -12,11 +12,26 @@ using SIL.LCModel;
 
 namespace LanguageExplorer.Filters
 {
-	internal class AndSorter : RecordSorter
+	internal sealed class AndSorter : RecordSorter
 	{
-		public AndSorter() { }
+		/// <summary>
+		/// Regular usage.
+		/// </summary>
+		internal AndSorter() { }
 
-		public AndSorter(List<IRecordSorter> sorters) : this()
+		/// <summary>
+		/// For use with IPersistAsXml
+		/// </summary>
+		internal AndSorter(IPersistAsXmlFactory persistAsXmlFactory, XElement element)
+		{
+			Sorters = new List<IRecordSorter>(element.Elements().Count());
+			foreach (var child in element.Elements())
+			{
+				Sorters.Add(persistAsXmlFactory.Create<IRecordSorter>(child));
+			}
+		}
+
+		internal AndSorter(List<IRecordSorter> sorters)
 		{
 			foreach (var recordSorter in sorters)
 			{
@@ -27,7 +42,7 @@ namespace LanguageExplorer.Filters
 		/// <summary>
 		/// Adds a sorter
 		/// </summary>
-		public void Add(IRecordSorter sorter)
+		internal void Add(IRecordSorter sorter)
 		{
 			Sorters.Add(sorter);
 		}
@@ -38,7 +53,7 @@ namespace LanguageExplorer.Filters
 		/// <param name="index">The index where we want to replace the sorter</param>
 		/// <param name="oldSorter">A reference to the old sorter</param>
 		/// <param name="newSorter">A reference to the new sorter</param>
-		public void ReplaceAt(int index, IRecordSorter oldSorter, IRecordSorter newSorter)
+		internal void ReplaceAt(int index, IRecordSorter oldSorter, IRecordSorter newSorter)
 		{
 			if (index < 0 || index >= Sorters.Count)
 			{
@@ -50,7 +65,7 @@ namespace LanguageExplorer.Filters
 		/// <summary>
 		/// Gets the list of sorters.
 		/// </summary>
-		public List<IRecordSorter> Sorters { get; private set; } = new List<IRecordSorter>();
+		internal List<IRecordSorter> Sorters { get; private set; } = new List<IRecordSorter>();
 
 		/// <summary>
 		/// Add to collector the ManyOnePathSortItems which this sorter derives from
@@ -74,7 +89,6 @@ namespace LanguageExplorer.Filters
 		/// </summary>
 		public override void PersistAsXml(XElement element)
 		{
-			base.PersistAsXml(element);
 			foreach (var rs in Sorters)
 			{
 				LanguageExplorerServices.PersistObject(rs, element, "sorter");
@@ -115,7 +129,7 @@ namespace LanguageExplorer.Filters
 			return Sorters.Any(recordSorter => recordSorter.CompatibleSorter(other));
 		}
 
-		public int CompatibleSorterIndex(IRecordSorter other)
+		internal int CompatibleSorterIndex(IRecordSorter other)
 		{
 			for (var i = 0; i < Sorters.Count; i++)
 			{
@@ -126,19 +140,6 @@ namespace LanguageExplorer.Filters
 			}
 
 			return -1;
-		}
-
-		/// <summary>
-		/// Inits the XML.
-		/// </summary>
-		public override void InitXml(IPersistAsXmlFactory factory, XElement element)
-		{
-			base.InitXml(factory, element);
-			Sorters = new List<IRecordSorter>(element.Elements().Count());
-			foreach (var child in element.Elements())
-			{
-				Sorters.Add(DynamicLoader.RestoreObject<IRecordSorter>(factory, child));
-			}
 		}
 
 		public override LcmCache Cache

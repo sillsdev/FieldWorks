@@ -31,10 +31,7 @@ namespace LanguageExplorer.Impls
 		/// <inheritdoc />
 		public T Create<T>(XElement element)
 		{
-			var currentFactory = _strategies.First(factory => factory.Name == (FactoryNames)Enum.Parse(typeof(FactoryNames), element.Name.LocalName));
-			var newbie = currentFactory.Create(this, element);
-			newbie.InitXml(this, element.Clone());
-			return (T)newbie;
+			return (T)_strategies.First(factory => factory.Name == (FactoryNames)Enum.Parse(typeof(FactoryNames), element.Name.LocalName)).Create(this, element);
 		}
 	}
 }

@@ -2421,7 +2421,7 @@ namespace LanguageExplorer
 			{
 				try
 				{
-					sorter = DynamicLoader.RestoreObject<IRecordSorter>(PropertyTable.GetValue<IPersistAsXmlFactory>(LanguageExplorerConstants.PersistAsXmlFactory), XDocument.Parse(persistSorter).Root);
+					sorter = PropertyTable.GetValue<IPersistAsXmlFactory>(LanguageExplorerConstants.PersistAsXmlFactory).Create<IRecordSorter>(XDocument.Parse(persistSorter).Root);
 				}
 				catch
 				{
@@ -2447,7 +2447,7 @@ namespace LanguageExplorer
 				WritingSystemComparer subComparer = null;
 				if (comparer != null)
 				{
-					subComparer = ((StringFinderCompare)comparer).SubComparer as WritingSystemComparer;
+					subComparer = (WritingSystemComparer)((StringFinderCompare)comparer).SubComparer;
 				}
 				if (subComparer != null)
 				{

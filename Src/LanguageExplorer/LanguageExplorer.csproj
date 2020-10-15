@@ -316,6 +316,7 @@
     <Compile Include="Filters\PersistAsXmlFinderFactoryStrategy.cs" />
     <Compile Include="Filters\PersistAsXmlMatcherFactoryStrategy.cs" />
     <Compile Include="Filters\PersistAsXmlRecordFilterFactoryStrategy.cs" />
+    <Compile Include="Filters\PersistAsXmlRecordSorterFactoryStrategy.cs" />
     <Compile Include="Filters\SortMethodFinder.cs" />
     <Compile Include="IPersistAsXmlFactoryStrategy.cs" />
     <Compile Include="IPersistAsXmlFactory.cs" />

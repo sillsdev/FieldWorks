@@ -100,14 +100,6 @@ namespace LanguageExplorer.Filters
 			}
 		}
 
-		/// <summary>
-		/// Inits the XML.
-		/// </summary>
-		public void InitXml(IPersistAsXmlFactory factory, XElement element)
-		{
-			// Now done in special constructors.
-		}
-
 		#endregion
 
 		#region Implementation of IStoresLcmCache
