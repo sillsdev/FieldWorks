@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using LanguageExplorer.Controls.XMLViews;
+using LanguageExplorer.Filters;
 using SIL.LCModel;
 using SIL.LCModel.Infrastructure;
 
@@ -195,6 +196,15 @@ namespace LanguageExplorer.LcmUi
 				canFakeit = (clsid == MoStemMsaTags.kClassId);
 			}
 			return canFakeit;
+		}
+
+		/// <summary>
+		/// Get a type we can use to create a compatible filter.
+		/// </summary>
+		/// <remarks>NB: Used by reflection.</remarks>
+		internal static Type FilterType()
+		{
+			return typeof(PosFilter);
 		}
 	}
 }

@@ -3,10 +3,11 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Collections.Generic;
+using System.Linq;
 using System.Xml.Linq;
-using LanguageExplorer.Controls.XMLViews;
 using SIL.LCModel;
 using SIL.LCModel.Core.KernelInterfaces;
+using SIL.Xml;
 
 namespace LanguageExplorer.Filters
 {
@@ -40,7 +41,7 @@ namespace LanguageExplorer.Filters
 			{
 				return false;
 			}
-			return DynamicLoader.TypeForLoaderNode(colSpec) == GetType();
+			return XmlUtils.GetMandatoryAttributeValue(colSpec, "class").Split('.').Last().Trim() == "EntryPosFilter";
 		}
 
 		/// <summary>
@@ -113,6 +114,7 @@ namespace LanguageExplorer.Filters
 		/// <summary>
 		/// Return the HVO of the list from which choices can be made.
 		/// </summary>
+		/// <remarks>NB: Used by reflection.</remarks>
 		internal static int List(LcmCache cache)
 		{
 			return cache.LanguageProject.PartsOfSpeechOA.Hvo;

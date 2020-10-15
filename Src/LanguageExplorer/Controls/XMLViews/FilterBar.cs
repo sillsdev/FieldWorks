@@ -30,7 +30,6 @@ namespace LanguageExplorer.Controls.XMLViews
 	internal sealed class FilterBar : UserControl
 	{
 		private BrowseViewer m_bv;
-		private IPersistAsXmlFactory _persistAsXmlFactory;
 		private List<XElement> m_columns;
 		private FilterSortItems m_items;
 		private IFwMetaDataCache m_mdc;
@@ -53,7 +52,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		internal FilterBar(BrowseViewer bv, IApp app)
 		{
 			m_bv = bv;
-			_persistAsXmlFactory = m_bv.PropertyTable.GetValue<IPersistAsXmlFactory>(LanguageExplorerConstants.PersistAsXmlFactory);
 			m_columns = m_bv.ColumnSpecs;
 			m_app = app;
 			m_cache = bv.Cache;
@@ -377,81 +375,6 @@ namespace LanguageExplorer.Controls.XMLViews
 			return result;
 		}
 
-		/* Not used.
-		/// <summary>
-		/// Make a FilterSortItem with a Finder that is an OneIndirectMlPropFinder based on
-		/// saSpec, which is a stringalt element, and flidSeq, which is the sequence containing
-		/// the named items.
-		/// </summary>
-		private FilterSortItem MakeOneIndirectItem(XElement viewSpec, int flidSeq, XElement saSpec, bool fAtomic)
-		{
-			var className = GetStringAtt(saSpec, "class");
-			var attrName = GetStringAtt(saSpec, "field");
-			var ws = WritingSystemServices.GetWritingSystem(m_cache, saSpec.ConvertElement(), null, 0);
-			if (className == null || attrName == null || ws == null)
-			{
-				return null; // Can't interpret an incomplete stringalt.
-			}
-			var flid = m_mdc.GetFieldId(className, attrName, true);
-			var result = new FilterSortItem
-			{
-				Spec = viewSpec,
-				Finder = fAtomic ? (IStringFinder)new OneIndirectAtomMlPropFinder(m_sda, flidSeq, flid, ws.Handle) : new OneIndirectMlPropFinder(m_sda, flidSeq, flid, ws.Handle)
-			};
-			SetupFsi(result);
-			result.Sorter = new GenRecordSorter(new StringFinderCompare(result.Finder, new WritingSystemComparer(ws)));
-			return result;
-		}*/
-
-		/* Not used.
-		/// <summary>
-		/// Make a FilterSortItem with a Finder that is an OwnMlPropFinder based on saSpec, which is a stringalt element.
-		/// </summary>
-		private FilterSortItem MakeStringAltItem(XElement viewSpec, XElement saSpec)
-		{
-			var className = GetStringAtt(saSpec, "class");
-			var attrName = GetStringAtt(saSpec, "field");
-			var ws = WritingSystemServices.GetWritingSystem(m_cache, saSpec.ConvertElement(), null, 0);
-			if (className == null || attrName == null || ws == null)
-			{
-				return null; // Can't interpret an incomplete stringalt.
-			}
-			var flid = m_mdc.GetFieldId(className, attrName, true);
-			var result = new FilterSortItem
-			{
-				Spec = viewSpec,
-				Finder = new OwnMlPropFinder(m_sda, flid, ws.Handle)
-			};
-			SetupFsi(result);
-			result.Sorter = new GenRecordSorter(new StringFinderCompare(result.Finder, new WritingSystemComparer(ws)));
-			return result;
-		}*/
-
-		/* Not used.
-		/// <summary>
-		/// Make a FilterSortItem with a Finder that is an OwnIntPropFinder based on intSpec,
-		/// which is an &lt;int&gt; element..
-		/// </summary>
-		private FilterSortItem MakeIntItem(XElement viewSpec, XElement intSpec)
-		{
-			var className = GetStringAtt(intSpec, "class");
-			var attrName = GetStringAtt(intSpec, "field");
-			if (className == null || attrName == null)
-			{
-				return null; // Can't interpret an incomplete int.
-			}
-			var flid = m_mdc.GetFieldId(className, attrName, true);
-			var result = new FilterSortItem
-			{
-				Spec = viewSpec,
-				Finder = new OwnIntPropFinder(m_sda, flid)
-			};
-			MakeIntCombo(result);
-			result.FilterChanged += FilterChangedHandler;
-			result.Sorter = new GenRecordSorter(new StringFinderCompare(result.Finder, new IntStringComparer()));
-			return result;
-		}*/
-
 		/// <summary>
 		/// Get a default size for a FilterBar. The width is arbitrary, as it is always docked
 		/// top, but the height is important and should match a standard combo.
@@ -647,20 +570,6 @@ namespace LanguageExplorer.Controls.XMLViews
 			return pattern;
 		}
 
-		/* Not used.
-		internal IVwPattern MatchAnywherePattern(string str, int ws)
-		{
-			IVwPattern pattern = VwPatternClass.Create();
-			pattern.MatchOldWritingSystem = false;
-			pattern.MatchDiacritics = false;
-			pattern.MatchWholeWord = false;
-			pattern.MatchCase = false;
-			pattern.UseRegularExpressions = false;
-			pattern.Pattern = TsStringUtils.MakeString(str, ws);
-			pattern.IcuLocale = m_cache.WritingSystemFactory.GetStrFromWs(ws);
-			return pattern;
-		}*/
-
 		/// <summary>
 		/// Make a combo menu item (and install it) for choosing from a list, based on the column
 		/// spec at item.Spec.
@@ -687,51 +596,21 @@ namespace LanguageExplorer.Controls.XMLViews
 				case "complexListMultiple":
 					combo.Items.Add(new ListChoiceComboItem(MakeLabel(XMLViewsStrings.ksChoose_), item, m_cache, propertyTable, combo, false));
 					break;
-				case "EntryPosFilter":
-					break;
-				case "PosFilter":
-					break;
-				case "external":
-					var beType = DynamicLoader.TypeForLoaderNode(item.Spec);
-					Type filterType = null;
-					if (typeof(ListChoiceFilter).IsAssignableFrom(beType))
-					{
-						// typically it is a chooserFilter attribute, and gives the actual filter.
-						filterType = beType;
-					}
-					else
-					{
-						// typically got a bulkEdit spec, and the editor class may know a compatible filter class.
-						var mi = beType.GetMethod("FilterType", BindingFlags.Static | BindingFlags.Public);
-						if (mi != null)
-						{
-							filterType = mi.Invoke(null, null) as Type;
-						}
-					}
-					if (filterType != null)
-					{
-						var pi = filterType.GetProperty("Atomic", BindingFlags.Public | BindingFlags.Static);
-						var fAtomic = false;
-						if (pi != null)
-						{
-							fAtomic = (bool)pi.GetValue(null, null);
-						}
-						var comboItem = new ListChoiceComboItem(MakeLabel(XMLViewsStrings.ksChoose_), item, m_cache, propertyTable, combo, fAtomic, filterType);
-						combo.Items.Add(comboItem);
-
-						var piLeaf = filterType.GetProperty("LeafFlid", BindingFlags.Public | BindingFlags.Static);
-						if (piLeaf != null)
-						{
-							comboItem.LeafFlid = (int)piLeaf.GetValue(null, null);
-						}
-					}
-					break;
 				case "textsFilterItem":
 					combo.Items.Add(new TextsFilterItem(MakeLabel(XmlUtils.GetOptionalAttributeValue(item.Spec, "specialItemName", XMLViewsStrings.ksChoose_)), m_bv.Publisher));
 					break;
 				case "atomicFlatListItem": // Fall through
 				case "morphTypeListItem":
 					combo.Items.Add(new ListChoiceComboItem(MakeLabel(XMLViewsStrings.ksChoose_), item, m_cache, propertyTable, combo, true));
+					break;
+				case "EntryPosFilter":
+					SetUpConfusedCases(propertyTable, combo, item, typeof(EntryPosFilter));
+					break;
+				case "PosFilter":
+					SetUpConfusedCases(propertyTable, combo, item, typeof(PosFilter));
+					break;
+				case "InflectionClassFilter":
+					SetUpConfusedCases(propertyTable, combo, item, typeof(InflectionClassFilter));
 					break;
 				default:
 					// if we didn't find it, try "chooserFilter", if we haven't already.
@@ -744,28 +623,44 @@ namespace LanguageExplorer.Controls.XMLViews
 			}
 		}
 
-		/* Not used.
 		/// <summary>
-		/// Makes the int combo.
+		/// These cases cannot be created until much later, and are created via Reflection,
+		/// when more context is available for the filters to use.
 		/// </summary>
-		private void MakeIntCombo(FilterSortItem item)
+		private void SetUpConfusedCases(IPropertyTable propertyTable, FwComboBox combo, FilterSortItem item, Type beType)
 		{
-			// This is just similar enough to MakeCombo to be annoying.
-			var combo = new FwComboBox
+			Type filterType = null;
+			if (typeof(ListChoiceFilter).IsAssignableFrom(beType))
 			{
-				DropDownStyle = ComboBoxStyle.DropDownList,
-				WritingSystemFactory = m_wsf
-			};
-			item.Combo = combo;
-			combo.Items.Add(new FilterComboItem(MakeLabel(XMLViewsStrings.ksShowAll), null, item));
-			combo.Items.Add(new RestrictComboItem(MakeLabel(XMLViewsStrings.ksRestrict_), m_bv.PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider),
-				item, m_cache.ServiceLocator.WritingSystemManager.UserWs, combo));
-			combo.SelectedIndex = 0;
-			// Do this after selecting initial item, so we don't get a spurious notification.
-			combo.SelectedIndexChanged += Combo_SelectedIndexChanged;
-			combo.AccessibleName = "FwComboBox";
-			Controls.Add(combo);
-		}*/
+				// typically it is a chooserFilter attribute, and gives the actual filter.
+				filterType = beType;
+			}
+			else
+			{
+				// typically got a bulkEdit spec, and the editor class may know a compatible filter class.
+				var mi = beType.GetMethod("FilterType", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static);
+				if (mi != null)
+				{
+					filterType = mi.Invoke(null, null) as Type;
+				}
+			}
+			if (filterType != null)
+			{
+				var fAtomic = false;
+				var pi = filterType.GetProperty("Atomic", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static);
+				if (pi != null)
+				{
+					fAtomic = (bool)pi.GetValue(null, null);
+				}
+				var comboItem = new ListChoiceComboItem(MakeLabel(XMLViewsStrings.ksChoose_), item, m_cache, propertyTable, combo, fAtomic, filterType);
+				combo.Items.Add(comboItem);
+				var piLeaf = filterType.GetProperty("LeafFlid", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static);
+				if (piLeaf != null)
+				{
+					comboItem.LeafFlid = (int)piLeaf.GetValue(null, null);
+				}
+			}
+		}
 
 		private bool m_fInSelectedIndexChanged;
 

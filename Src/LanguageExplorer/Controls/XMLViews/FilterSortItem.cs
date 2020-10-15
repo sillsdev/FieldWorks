@@ -131,7 +131,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			get => m_combo;
 			set
 			{
-				m_combo.Dispose();
+				m_combo?.Dispose();
 				m_combo = value;
 			}
 		}

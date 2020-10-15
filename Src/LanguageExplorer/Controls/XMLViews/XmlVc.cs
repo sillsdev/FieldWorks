@@ -1260,13 +1260,6 @@ namespace LanguageExplorer.Controls.XMLViews
 							AddObjectVector(frag, vwenv, flid, fragId, caller);
 							break;
 						}
-					case "objectOfRowUsingViewConstructor": // display the current object using an external VC.
-						//notice this assumes that it wants a LcmCache as an argument
-						var vc = DynamicLoader.CreateObject<IVwViewConstructor>(frag, new object[]{ m_cache });
-						var selectorId = Convert.ToInt32(XmlUtils.GetMandatoryAttributeValue(frag, "selector"));
-						// Note this is AddObj, not AddObjProp, and it explicitly adds the current object using the new vc and fragId
-						vwenv.AddObj(hvo, vc, selectorId);
-						break;
 					case "obj":
 						{
 							var flid = GetFlid(frag, hvo);

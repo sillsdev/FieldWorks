@@ -101,24 +101,24 @@ namespace LanguageExplorer.Controls.XMLViews
 	//		</innerpile>
 	//	</frag>
 	// </XmlView>
-	internal class XmlSeqView : RootSite
+	internal sealed class XmlSeqView : RootSite
 	{
 		/// <summary />
-		protected string m_sXmlSpec;
+		private string m_sXmlSpec;
 		/// <summary />
-		protected int m_hvoRoot;
+		private int m_hvoRoot;
 		/// <summary />
-		protected int m_mainFlid;
+		private int m_mainFlid;
 		/// <summary>
 		/// The data access that can interpret m_mainFlid of _hvoRoot, typically a RecordListPublisher.
 		/// The SDA mainly used in the view is a further decoration of this.
 		/// </summary>
-		protected ISilDataAccessManaged m_sdaSource;
+		private ISilDataAccessManaged m_sdaSource;
 		/// <summary />
-		protected XElement m_specElement;
+		private XElement m_specElement;
 
 		/// <summary />
-		protected IFwMetaDataCache m_mdc;
+		private IFwMetaDataCache m_mdc;
 		private bool m_fShowFailingItems; // display items that fail the condition specified in the view.
 		private IFlexApp m_app;
 
@@ -128,15 +128,15 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// even if the selection moves from one occurrence of an object to another occurrence
 		/// of the same object.
 		/// </summary>
-		public event FwSelectionChangedEventHandler SelectionChangedEvent;
+		internal event FwSelectionChangedEventHandler SelectionChangedEvent;
 
 		/// <summary />
-		public XmlSeqView() : base(null)
+		internal XmlSeqView() : base(null)
 		{
 		}
 
 		/// <summary />
-		public XmlSeqView(LcmCache cache, int hvoRoot, int flid, XElement configurationParametersElement, ISilDataAccessManaged sda, IFlexApp app, ICmPossibility publication)
+		internal XmlSeqView(LcmCache cache, int hvoRoot, int flid, XElement configurationParametersElement, ISilDataAccessManaged sda, IFlexApp app, ICmPossibility publication)
 			: base(null)
 		{
 			m_app = app;
@@ -144,8 +144,8 @@ namespace LanguageExplorer.Controls.XMLViews
 			var decoratorSpec = XmlUtils.FindElement(configurationParametersElement, "decoratorClass");
 			if (decoratorSpec != null)
 			{
-				// For example, this may create a DictionaryPublicationDecorator.
-				useSda = DynamicLoader.CreateObject<ISilDataAccessManaged>(decoratorSpec, new object[] { cache, sda, flid, publication });
+				// There is only one place a "decoratorClass" element is used now, and that is for DictionaryPublicationDecorator.
+				useSda = new DictionaryPublicationDecorator(cache, sda, flid, publication);
 			}
 			InitXmlViewRootSpec(hvoRoot, flid, configurationParametersElement, useSda);
 		}
@@ -153,7 +153,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// Resets the tables.
 		/// </summary>
-		public void ResetTables()
+		internal void ResetTables()
 		{
 			// Don't crash if we don't have any view content yet.  See LT-7244.
 			Vc?.ResetTables();
@@ -163,7 +163,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// Resets the tables.
 		/// </summary>
-		public void ResetTables(string sLayoutName)
+		internal void ResetTables(string sLayoutName)
 		{
 			// Don't crash if we don't have any view content yet.  See LT-7244.
 			Vc?.ResetTables(sLayoutName);
@@ -181,7 +181,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// Gets the vc.
 		/// </summary>
-		protected internal XmlVc Vc { get; protected set; }
+		internal XmlVc Vc { get; private set; }
 
 		private void InitXmlViewRootSpec(int hvoRoot, int flid, XElement element, ISilDataAccessManaged sda)
 		{
@@ -223,12 +223,12 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// Causes XMLViews to be editable by default.
 		/// </summary>
-		public new static Color DefaultBackColor => SystemColors.Window;
+		internal new static Color DefaultBackColor => SystemColors.Window;
 
 		/// <summary>
 		/// Reset the main object being shown.
 		/// </summary>
-		public void ResetRoot(int hvoRoot)
+		internal void ResetRoot(int hvoRoot)
 		{
 			m_hvoRoot = hvoRoot;
 			RootBox.SetRootObject(m_hvoRoot, Vc, RootFrag, m_styleSheet);
@@ -238,7 +238,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// Magic number ALWAYS used for root fragment in this type of view.
 		/// </summary>
-		public int RootFrag => 2;
+		internal int RootFrag => 2;
 
 		#region overrides
 		/// <summary>
@@ -383,7 +383,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// Print method for printing one record (e.g. from RecordEditView)
 		/// in Document View.
 		///</summary>
-		public void PrintFromDetail(PrintDocument printDoc, int mainObjHvo)
+		internal void PrintFromDetail(PrintDocument printDoc, int mainObjHvo)
 		{
 			var oldSda = RootBox.DataAccess;
 			RootBox.DataAccess = CachePrintDecorator(m_sdaSource, m_hvoRoot, m_mainFlid, new[] {mainObjHvo});
@@ -426,7 +426,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		///<summary>
 		/// Decorate an ISilDataAccessManaged object with another layer limiting objects to print.
 		///</summary>
-		public static ISilDataAccessManaged CachePrintDecorator(ISilDataAccessManaged oldSda, int rootHvo, int mainFlid, int[] selectedObjects)
+		internal static ISilDataAccessManaged CachePrintDecorator(ISilDataAccessManaged oldSda, int rootHvo, int mainFlid, int[] selectedObjects)
 		{
 			var printDecorator = new ObjectListPublisher(oldSda, mainFlid);
 			printDecorator.CacheVecProp(rootHvo, selectedObjects);

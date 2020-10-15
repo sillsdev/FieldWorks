@@ -4,7 +4,6 @@
 
 using System.Linq;
 using System.Xml.Linq;
-using LanguageExplorer.LcmUi;
 using SIL.LCModel;
 using SIL.Xml;
 
@@ -14,21 +13,22 @@ namespace LanguageExplorer.Filters
 	/// A special filter, where items are LexSenses, and matches are ones where an MSA is an MoStemMsa that
 	/// has the correct POS.
 	/// </summary>
-	internal sealed class PosFilter : ColumnSpecFilter
+	internal sealed class InflectionClassFilter : ColumnSpecFilter
 	{
 		/// <summary>
 		/// For use with IPersistAsXml
 		/// </summary>
-		internal PosFilter(XElement element)
+		internal InflectionClassFilter(XElement element)
 			: base(element)
-		{}
+		{
+		}
 
-		internal PosFilter(LcmCache cache, ListMatchOptions mode, int[] targets, XElement colSpec)
+		internal InflectionClassFilter(LcmCache cache, ListMatchOptions mode, int[] targets, XElement colSpec)
 			: base(cache, mode, targets, colSpec)
 		{
 		}
 
-		protected override string BeSpec => "PosFilter";
+		protected override string BeSpec => "InflectionClassFilter";
 
 		internal override bool CompatibleFilter(XElement colSpec)
 		{
@@ -36,15 +36,15 @@ namespace LanguageExplorer.Filters
 			{
 				return false;
 			}
-			var typeForLoaderNode = XmlUtils.GetMandatoryAttributeValue(colSpec, "class").Split('.').Last().Trim();
-			// Naturally we are compatible with ourself, and BulkPosEditor has a FilterType which causes
-			// a filter of this type to be created, too.
-			return typeForLoaderNode == "BulkPosEditor" || typeForLoaderNode == "PosFilter";
+			return XmlUtils.GetMandatoryAttributeValue(colSpec, "class").Split('.').Last().Trim() == "InflectionClassEditor";
 		}
 
 		/// <summary>
 		/// Return the HVO of the list from which choices can be made.
+		/// Critical TODO JohnT: this isn't right; need to get the simple list chooser populated with the
+		/// items we put in the chooser; but how??
 		/// </summary>
+		/// <remarks>NB: Used by reflection.</remarks>
 		internal static int List(LcmCache cache)
 		{
 			return cache.LanguageProject.PartsOfSpeechOA.Hvo;
@@ -52,8 +52,16 @@ namespace LanguageExplorer.Filters
 
 		/// <summary>
 		/// This is a filter for an atomic property, and the "all" and "only" options should not be presented.
+		/// Review JOhnT: is this true?
 		/// </summary>
 		/// <remarks>NB: Used by reflection.</remarks>
 		internal static bool Atomic => true;
+
+		/// <summary>
+		/// The items for this filter are the leaves of the tree formed by the possibilities in the list,
+		/// by following the InflectionClasses property of each PartOfSpeech.
+		/// </summary>
+		/// <remarks>NB: Used by reflection.</remarks>
+		internal static int LeafFlid => PartOfSpeechTags.kflidInflectionClasses;
 	}
 }

@@ -53,7 +53,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			}
 			else
 			{
-				var mi = filterType.GetMethod("List", BindingFlags.Public | BindingFlags.Static);
+				var mi = filterType.GetMethod("List", BindingFlags.NonPublic | BindingFlags.Static);
 				m_hvoList = (int)mi.Invoke(null, new object[] { cache });
 			}
 			m_cache = cache;

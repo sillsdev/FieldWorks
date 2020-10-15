@@ -312,6 +312,7 @@
     </Compile>
     <Compile Include="Controls\DetailControls\RecordChangeHandlerFactory.cs" />
     <Compile Include="FactoryNames.cs" />
+    <Compile Include="Filters\InflectionClassFilter.cs" />
     <Compile Include="Filters\IntCompareFinder.cs" />
     <Compile Include="Filters\PersistAsXmlFinderFactoryStrategy.cs" />
     <Compile Include="Filters\PersistAsXmlMatcherFactoryStrategy.cs" />
@@ -490,7 +491,6 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Controls\XMLViews\VwPatternSerializableSettings.cs" />
-    <Compile Include="DynamicLoader.cs" />
     <Compile Include="ExportStyleInfo.cs" />
     <Compile Include="FwConfigurationException.cs" />
     <Compile Include="FwRegistrySettings.cs" />

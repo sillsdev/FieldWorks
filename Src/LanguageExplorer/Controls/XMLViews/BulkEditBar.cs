@@ -5720,6 +5720,15 @@ namespace LanguageExplorer.Controls.XMLViews
 			}
 
 			/// <summary>
+			/// Get a type we can use to create a compatible filter.
+			/// </summary>
+			/// <remarks>NB: Used by reflection.</remarks>
+			internal static Type FilterType()
+			{
+				return typeof(InflectionClassFilter);
+			}
+
+			/// <summary>
 			/// Handles a TreeCombo control for use in selecting inflection classes.
 			/// </summary>
 			private sealed class InflectionClassPopupTreeManager : PopupTreeManager
