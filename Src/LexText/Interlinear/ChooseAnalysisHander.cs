@@ -560,7 +560,6 @@ namespace SIL.FieldWorks.IText
 			FwComboBox combo = m_combo as FwComboBox;
 			if (combo != null)
 			{
-
 				combo.Location = new System.Drawing.Point(loc.left, loc.top);
 				// 21 is the default height of a combo, the smallest reasonable size.
 				combo.Size = new System.Drawing.Size(Math.Max(loc.right - loc.left + 30, 200), Math.Max( loc.bottom - loc.top, 50));
@@ -571,6 +570,8 @@ namespace SIL.FieldWorks.IText
 			{
 				ComboListBox c = (m_combo as ComboListBox);
 				c.AdjustSize(500, 400); // these are maximums!
+				c.LaunchingForm = m_owner.ParentForm;
+				c.FormHidden += ComboListHidden;
 				c.Launch(m_owner.RectangleToScreen(loc), Screen.GetWorkingArea(m_owner));
 			}
 		}
@@ -642,6 +643,19 @@ namespace SIL.FieldWorks.IText
 			ComboListBox clb = m_combo as ComboListBox;
 			if (clb != null)
 				clb.HideForm();
+		}
+
+		public void ComboListHidden(object sender, EventArgs args)
+		{
+			if (!(sender is ComboListBox))
+			{
+				throw new ApplicationException("Unexpected origin of ComboListHidden event.");
+			}
+			((ComboListBox)sender).FormHidden -= ComboListHidden;
+			if (m_owner != null && !m_owner.IsDisposed)
+			{
+				m_owner.Focus();
+			}
 		}
 	}
 }

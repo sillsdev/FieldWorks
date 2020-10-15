@@ -11,6 +11,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
+using System.Xml;
 using Microsoft.Win32;
 using SIL.LCModel.Core.WritingSystems;
 using SIL.FieldWorks.Common.ViewsInterfaces;
@@ -28,6 +29,7 @@ using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.FwCoreDlgControls;
 using StyleInfo = SIL.FieldWorks.FwCoreDlgControls.StyleInfo;
 using SIL.FieldWorks.FwCoreDlgs;
+using SIL.FieldWorks.LexText.Controls;
 using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.XWorks.Archiving;
 using SIL.IO;
@@ -1488,8 +1490,11 @@ namespace SIL.FieldWorks.XWorks
 			var model = new FwWritingSystemSetupModel(Cache.LangProject, type, Cache.ServiceLocator.WritingSystemManager, Cache);
 			model.WritingSystemListUpdated += OnWritingSystemListChanged;
 			model.WritingSystemUpdated += OnWritingSystemUpdated;
-			var view = new FwWritingSystemSetupDlg(model, m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), m_app);
-			view.ShowDialog(this);
+			using (var view = new FwWritingSystemSetupDlg(model,
+				m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), m_app))
+			{
+				view.ShowDialog(this);
+			}
 		}
 
 		private Control GetFocusControl()
@@ -1975,6 +1980,24 @@ namespace SIL.FieldWorks.XWorks
 				dlg.Message = filename;
 				dlg.RunTask(true, LcmCache.ImportTranslatedLists, filename, Cache);
 			}
+		}
+
+		/// <summary>
+		/// Import the latest strings from GOLDEtic.xml
+		/// </summary>
+		/// <remarks>LT-20371</remarks>
+		public bool OnImportTranslatedGramCats(object commandObject)
+		{
+			if(DialogResult.OK == MessageBox.Show(xWorksStrings.ImportTranslatedGramCatsPrompt,
+				xWorksStrings.ImportTranslatedGramCats, MessageBoxButtons.OKCancel))
+			{
+				using (new WaitCursor(ActiveForm ?? this, true))
+				{
+					var doc = new XmlDocument();
+					doc.Load(Path.Combine(FwDirectoryFinder.TemplateDirectory, "GOLDEtic.xml"));
+					MasterCategory.UpdatePOSStrings(Cache, doc);
+				}
+			}	return true;
 		}
 
 		#endregion // XCore Message Handlers

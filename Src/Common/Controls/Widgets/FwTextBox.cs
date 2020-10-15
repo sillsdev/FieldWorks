@@ -272,6 +272,7 @@ namespace SIL.FieldWorks.Common.Widgets
 			{
 				CheckDisposed();
 
+				m_innerFwTextBox.Font = value;
 				base.Font = value;
 			}
 		}
@@ -1256,6 +1257,11 @@ namespace SIL.FieldWorks.Common.Widgets
 		internal void HandleKeyDown(KeyEventArgs e)
 		{
 			OnKeyDown(e);
+		}
+
+		internal void HandleKeyPress(KeyPressEventArgs e)
+		{
+			OnKeyPress(e);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -2855,6 +2861,14 @@ namespace SIL.FieldWorks.Common.Widgets
 			{
 				return;
 			}
+
+			if (Parent is FwTextBox parent)
+			{
+				parent.HandleKeyPress(e);
+				if (e.Handled)
+					return;
+			}
+
 			base.OnKeyPress(e);
 		}
 		#endregion

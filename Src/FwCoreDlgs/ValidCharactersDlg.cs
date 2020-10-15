@@ -664,7 +664,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_helpTopicProvider = helpTopicProvider;
 			m_app = app;
 			if (string.IsNullOrEmpty(wsName))
-				throw new ArgumentException("Parameter must not be null or empty.", "wsName");
+				throw new ArgumentException("Parameter must not be null or empty.", nameof(wsName));
 
 			if (cache != null)
 				m_wsManager = cache.ServiceLocator.WritingSystemManager;
@@ -1390,18 +1390,19 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			AcceptButton = btnAddCharacters;
 
-			// Ensure keyboard assocated for writing system is active is used in the FwTextBox's.
+			// Ensure keyboard associated for writing system is active is used in the FwTextBox's.
 			var textBox = sender as FwTextBox;
 			Debug.Assert(textBox != null); // This event handler should only be used for FwTextBox's
 
 			if (textBox == null)
 				return;
 
-			// JohnT: Since Eberhard changed things so we're using a shared WS Manager which this
-			// WS is already known to, we don't need to (and mustn't) call this.
-			//WsManager.Set(m_ws);
 			textBox.WritingSystemFactory = WsManager;
-			textBox.WritingSystemCode = m_ws.Handle;
+
+			// Get WS Code from WsManager instead of using Handle - ws might not be completely
+			// set up (LT-19904)
+			var wsCode = WsManager.GetWsFromStr(m_ws.Id);
+			textBox.WritingSystemCode = wsCode;
 		}
 
 		/// ------------------------------------------------------------------------------------

@@ -591,6 +591,24 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Update Grammatical Categories.
+        /// </summary>
+        internal static string ImportTranslatedGramCats {
+            get {
+                return ResourceManager.GetString("ImportTranslatedGramCats", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Importing translated grammatical category content will update all grammatical categories (parts of speech) in this project with the latest translations for all Analysis Writing Systems, including English..
+        /// </summary>
+        internal static string ImportTranslatedGramCatsPrompt {
+            get {
+                return ResourceManager.GetString("ImportTranslatedGramCatsPrompt", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Import a view.
         /// </summary>
         internal static string ImportView {

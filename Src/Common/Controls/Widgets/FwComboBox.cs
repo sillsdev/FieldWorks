@@ -60,6 +60,11 @@ namespace SIL.FieldWorks.Common.Widgets
 	}
 
 	/// <summary>
+	/// Event fired whenever the combo box form is hidden
+	/// </summary>
+	public delegate void FormHidden(object sender, EventArgs args);
+
+	/// <summary>
 	/// This interface is implemented by all drop down boxes.
 	/// </summary>
 	public interface IDropDownBox : IDisposable
@@ -1070,25 +1075,22 @@ namespace SIL.FieldWorks.Common.Widgets
 
 			if (sz != m_dropDownBox.Form.Size)
 				m_dropDownBox.Form.Size = sz;
-			if (Platform.IsMono)
+			// FWNX-748: ensure a launching form that is not m_dropDownBox itself.
+			// In Mono, Form.ActiveForm occasionally returns m_dropDownBox at this point.  So we
+			// try another approach to finding the launching form for displaying m_dropDownBox.
+			// Note that the launching form never changes, so it needs to be set only once.
+			if (m_dropDownBox.LaunchingForm == null)
 			{
-				// FWNX-748: ensure a launching form that is not m_dropDownBox itself.
-				// In Mono, Form.ActiveForm occasionally returns m_dropDownBox at this point.  So we
-				// try another approach to finding the launching form for displaying m_dropDownBox.
-				// Note that the launching form never changes, so it needs to be set only once.
-				if (m_dropDownBox.LaunchingForm == null)
+				Control parent = this;
+				Form launcher = parent as Form;
+				while (parent != null && launcher == null)
 				{
-					Control parent = this;
-					Form launcher = parent as Form;
-					while (parent != null && launcher == null)
-					{
-						parent = parent.Parent;
-						launcher = parent as Form;
-					}
-
-					if (launcher != null)
-						m_dropDownBox.LaunchingForm = launcher;
+					parent = parent.Parent;
+					launcher = parent as Form;
 				}
+
+				if (launcher != null)
+					m_dropDownBox.LaunchingForm = launcher;
 			}
 
 			m_dropDownBox.Launch(Parent.RectangleToScreen(Bounds), workingArea);
@@ -1779,6 +1781,8 @@ namespace SIL.FieldWorks.Common.Widgets
 	/// </summary>
 	public class ComboListBox : FwListBox, IComboList, IDropDownBox
 	{
+		private delegate void HideComboBoxDelegate(object sender, EventArgs args);
+
 		#region Data members
 
 		// This is a Form to contain the ListBox. I tried just making the list box visible,
@@ -1787,7 +1791,6 @@ namespace SIL.FieldWorks.Common.Widgets
 		// We track the form that was active when we launched, in hopes of working around
 		// a peculiar bug that brings another window to the front when we close on some
 		// systems (LT-2962).
-		Form m_previousForm;
 		// This filter captures clicks outside the list box while it is displayed.
 		FwComboMessageFilter m_comboMessageFilter;
 		// This flag determines whether we close the Dropdown List during a selection.
@@ -1800,6 +1803,8 @@ namespace SIL.FieldWorks.Common.Widgets
 		ComboBoxState m_state = ComboBoxState.Normal;
 
 		private bool m_activateOnShow;
+
+		private event HideComboBoxDelegate HideComboBoxForm;
 
 		#endregion Data members
 
@@ -1993,6 +1998,11 @@ namespace SIL.FieldWorks.Common.Widgets
 			}
 		}
 
+		/// <summary>
+		/// Event fired whenever the combo box is hidden
+		/// </summary>
+		public event FormHidden FormHidden;
+
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		///
@@ -2029,9 +2039,6 @@ namespace SIL.FieldWorks.Common.Widgets
 			m_listForm.Controls.Add(this);
 			m_listForm.Deactivate += m_ListForm_Deactivate;
 			Tracking = true;
-
-			// Make sure this isn't null, allow launch to update its value
-			m_previousForm = Form.ActiveForm;
 		}
 
 		#region IDisposable & Co. implementation
@@ -2114,15 +2121,6 @@ namespace SIL.FieldWorks.Common.Widgets
 		{
 			CheckDisposed();
 
-			m_previousForm = Form.ActiveForm;
-			if (Platform.IsMono)
-			{
-				// FWNX-908: Crash closing combobox.
-				// Somehow on Mono, Form.ActiveForm can sometimes return m_listForm at this point.
-				if (m_previousForm == null || m_previousForm == m_listForm)
-					m_previousForm = LaunchingForm;
-			}
-
 			m_listForm.ShowInTaskbar = false; // this is mainly to prevent it showing in the task bar.
 			//Figure where to put it. First try right below the main combo box.
 			// Pathologically the list box may be bigger than the available height. If so shrink it.
@@ -2152,9 +2150,9 @@ namespace SIL.FieldWorks.Common.Widgets
 			m_listForm.Location = new Point(popupBounds.Left, popupBounds.Top);
 
 			if (m_activateOnShow)
-				m_listForm.Show(m_previousForm);
+				m_listForm.Show(LaunchingForm);
 			else
-				ShowInactiveTopmost(m_previousForm, m_listForm);
+				ShowInactiveTopmost(LaunchingForm, m_listForm);
 
 			if (m_comboMessageFilter != null)
 			{
@@ -2167,7 +2165,10 @@ namespace SIL.FieldWorks.Common.Widgets
 			m_comboMessageFilter = new FwComboMessageFilter(this);
 			Application.AddMessageFilter(m_comboMessageFilter);
 			if (m_activateOnShow)
+			{
 				FocusAndCapture();
+				HideComboBoxForm += HideComboBox;
+			}
 		}
 
 		private const int SW_SHOWNOACTIVATE = 4;
@@ -2206,11 +2207,18 @@ namespace SIL.FieldWorks.Common.Widgets
 		}
 
 		/// <summary>
-		/// Hide the containing form (and thus the list box as a whole).
+		/// Hide the from that the listbox is drawn in (and thus the list box as a whole).
 		/// </summary>
 		public void HideForm()
 		{
+			HideComboBoxForm?.Invoke(this, EventArgs.Empty);
+		}
+
+		private void HideComboBox(object sender, EventArgs args)
+		{
 			CheckDisposed();
+			HideComboBoxForm -= HideComboBox; // remove to avoid recursive calls
+
 			// There have been several historical bugs about Flex losing focus or failing to activate
 			// the right windows when dismissing combo boxes. LT-2962, LT-19219 and probably others.
 			// It seems that setting TopMost to false on the listForm before activating the previous form
@@ -2222,7 +2230,7 @@ namespace SIL.FieldWorks.Common.Widgets
 				m_listForm.TopMost = false;
 			}
 
-			m_previousForm?.Activate();
+			LaunchingForm?.Activate();
 
 			if (m_listForm != null)
 			{
@@ -2230,6 +2238,7 @@ namespace SIL.FieldWorks.Common.Widgets
 				// set the TopMost back after hiding just in case we re-show the combobox
 				m_listForm.TopMost = listTopMostValue;
 			}
+
 			// reset HighlightedItem to current selected.
 			HighlightedIndex = SelectedIndex;
 			if (m_comboMessageFilter != null)
@@ -2238,6 +2247,8 @@ namespace SIL.FieldWorks.Common.Widgets
 				m_comboMessageFilter.Dispose();
 				m_comboMessageFilter = null;
 			}
+			// If anyone is listening for our closing events notify them
+			FormHidden?.Invoke(this, EventArgs.Empty);
 		}
 
 		/// <summary>

@@ -252,6 +252,7 @@ namespace SIL.FieldWorks.IText
 			}
 			finally
 			{
+				Focus();
 				m_fAdjustingSize = false;
 			}
 		}

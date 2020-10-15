@@ -364,7 +364,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <summary>
 		/// Commits the or reset.
 		/// </summary>
-		/// <returns><c>true</c>, if or reset was commited, <c>false</c> otherwise.</returns>
+		/// <returns><c>true</c>, if or reset was committed, <c>false</c> otherwise.</returns>
 		public bool CommitOrReset()
 		{
 			// don't check if we have focus - we won't if this gets called from OnLostFocus.
