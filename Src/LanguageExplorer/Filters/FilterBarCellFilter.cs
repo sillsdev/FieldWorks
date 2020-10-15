@@ -19,7 +19,7 @@ namespace LanguageExplorer.Filters
 	/// it would be well to pre-load the cache with all relevant properties in as few queries as
 	/// possible. It is designed to allow easy conversion to passing an HVO to Accept.
 	/// </summary>
-	internal class FilterBarCellFilter : RecordFilter
+	internal sealed class FilterBarCellFilter : RecordFilter
 	{
 		/// <summary />
 		internal FilterBarCellFilter(IStringFinder finder, IMatcher matcher)
@@ -29,21 +29,24 @@ namespace LanguageExplorer.Filters
 		}
 
 		/// <summary>
-		/// Default constructor for IPersistAsXml
+		/// For use with IPersistAsXml
 		/// </summary>
-		public FilterBarCellFilter()
+		internal FilterBarCellFilter(IPersistAsXmlFactory factory, XElement element)
+			: base(element)
 		{
+			Finder = factory.Create<IStringFinder>(element.Element("finder"));
+			Matcher = factory.Create<IMatcher>(element.Element("matcher"));
 		}
 
 		/// <summary>
 		/// Get the finder
 		/// </summary>
-		public IStringFinder Finder { get; private set; }
+		internal IStringFinder Finder { get; }
 
 		/// <summary>
 		/// Get the matcher.
 		/// </summary>
-		public IMatcher Matcher { get; private set; }
+		internal IMatcher Matcher { get; }
 
 		/// <summary>
 		/// decide whether this object should be included
@@ -88,17 +91,6 @@ namespace LanguageExplorer.Filters
 			base.PersistAsXml(element);
 			LanguageExplorerServices.PersistObject(Finder, element, "finder");
 			LanguageExplorerServices.PersistObject(Matcher, element, "matcher");
-		}
-
-		/// <summary>
-		/// Inits the XML.
-		/// </summary>
-		public override void InitXml(IPersistAsXmlFactory factory, XElement element)
-		{
-			base.InitXml(factory, element);
-			Debug.Assert(Finder == null);
-			Finder = factory.Create<IStringFinder>(element.Element("finder"));
-			Matcher = factory.Create<IMatcher>(element.Element("matcher"));
 		}
 
 		#endregion

@@ -53,6 +53,15 @@ namespace LanguageExplorer.Filters
 		}
 
 		/// <summary>
+		/// For use with IPersistAsXml
+		/// </summary>
+		protected RecordFilter(XElement element)
+			: this()
+		{
+			Name = XmlUtils.GetMandatoryAttributeValue(element, "name");
+		}
+
+		/// <summary>
 		/// a factory method for filters
 		/// </summary>
 		public static IRecordFilter Create(LcmCache cache, XElement configuration)
@@ -147,9 +156,9 @@ namespace LanguageExplorer.Filters
 		/// <summary>
 		/// Inits the XML.
 		/// </summary>
-		public virtual void InitXml(IPersistAsXmlFactory factory, XElement element)
+		public void InitXml(IPersistAsXmlFactory factory, XElement element)
 		{
-			Name = XmlUtils.GetMandatoryAttributeValue(element, "name");
+			// Now done in special constructors.
 		}
 
 		#endregion

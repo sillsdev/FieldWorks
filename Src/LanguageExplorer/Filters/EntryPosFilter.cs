@@ -8,21 +8,24 @@ using LanguageExplorer.Controls.XMLViews;
 using SIL.LCModel;
 using SIL.LCModel.Core.KernelInterfaces;
 
-namespace LanguageExplorer.LcmUi
+namespace LanguageExplorer.Filters
 {
 	/// <summary>
 	/// A special filter, where items are LexEntries, and matches are ones where an MSA is an MoStemMsa that
 	/// has the correct POS.
 	/// </summary>
-	internal class EntryPosFilter : ListChoiceFilter
+	internal sealed class EntryPosFilter : ListChoiceFilter
 	{
 		private const int kflidMsas = LexEntryTags.kflidMorphoSyntaxAnalyses;
 		private const int kflidEntrySenses = LexEntryTags.kflidSenses;
 
 		/// <summary>
-		/// Default constructor for persistence.
+		/// For use with IPersistAsXml
 		/// </summary>
-		internal EntryPosFilter() { }
+		internal EntryPosFilter(XElement element)
+			: base(element)
+		{
+		}
 
 		internal EntryPosFilter(LcmCache cache, ListMatchOptions mode, int[] targets)
 			: base(cache, mode, targets)
@@ -31,7 +34,7 @@ namespace LanguageExplorer.LcmUi
 
 		protected override string BeSpec => "EntryPosFilter";
 
-		public override bool CompatibleFilter(XElement colSpec)
+		internal override bool CompatibleFilter(XElement colSpec)
 		{
 			if (!base.CompatibleFilter(colSpec))
 			{

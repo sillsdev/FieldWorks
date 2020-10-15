@@ -5,11 +5,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
-using System.Xml.XPath;
+using LanguageExplorer.Controls.XMLViews;
 using SIL.LCModel;
 using SIL.Xml;
 
-namespace LanguageExplorer.Controls.XMLViews
+namespace LanguageExplorer.Filters
 {
 	/// <summary>
 	/// this class depends upon column spec for figuring path information
@@ -22,10 +22,18 @@ namespace LanguageExplorer.Controls.XMLViews
 		XmlBrowseViewVc m_vc;
 
 		/// <summary>
-		/// Required for persistence. Do not remove!
+		/// For use with IPersistAsXml
 		/// </summary>
-		public ColumnSpecFilter()
-		{ }
+		internal ColumnSpecFilter(XElement element)
+			: base(element)
+		{
+			// Review: How do we validate this columnSpec is still valid?
+			var colSpec = element.Element("column");
+			if (colSpec != null)
+			{
+				m_colSpec = colSpec.Clone();
+			}
+		}
 
 		/// <summary>
 		/// Filter used to compare against the hvos in a cell in rows described by IManyOnePathSortItem items.
@@ -50,18 +58,6 @@ namespace LanguageExplorer.Controls.XMLViews
 			if (m_colSpec != null)
 			{
 				element.Add(m_colSpec.Clone());
-			}
-		}
-
-		/// <summary />
-		public override void InitXml(IPersistAsXmlFactory factory, XElement element)
-		{
-			base.InitXml(factory, element);
-			// Review: How do we validate this columnSpec is still valid?
-			var colSpec = element.XPathSelectElement("./column");
-			if (colSpec != null)
-			{
-				m_colSpec = colSpec.Clone();
 			}
 		}
 
@@ -99,7 +95,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		}
 
 		/// <summary />
-		public override bool CompatibleFilter(XElement colSpec)
+		internal override bool CompatibleFilter(XElement colSpec)
 		{
 			if (!base.CompatibleFilter(colSpec))
 			{

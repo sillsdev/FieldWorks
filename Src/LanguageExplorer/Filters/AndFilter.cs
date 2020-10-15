@@ -16,8 +16,29 @@ namespace LanguageExplorer.Filters
 	/// they all accept. Typically there is one item for each non-blank cell in the FilterBar,
 	/// plus possibly the original filter that helps define the collection we are viewing.
 	/// </summary>
-	internal class AndFilter : RecordFilter
+	internal sealed class AndFilter : RecordFilter
 	{
+		/// <summary>
+		/// Regular usage.
+		/// </summary>
+		internal AndFilter()
+		{
+			Filters = new List<IRecordFilter>();
+		}
+
+		/// <summary>
+		/// For use with IPersistAsXml
+		/// </summary>
+		internal AndFilter(IPersistAsXmlFactory factory, XElement element)
+			: base(element)
+		{
+			Filters = new List<IRecordFilter>(element.Elements().Count());
+			foreach (var child in element.Elements())
+			{
+				Filters.Add(factory.Create<IRecordFilter>(child));
+			}
+		}
+
 		/// <summary>
 		/// decide whether this object should be included
 		/// </summary>
@@ -29,12 +50,12 @@ namespace LanguageExplorer.Filters
 		/// <summary>
 		/// Gets the filters.
 		/// </summary>
-		public List<IRecordFilter> Filters { get; private set; } = new List<IRecordFilter>();
+		internal List<IRecordFilter> Filters { get; } = new List<IRecordFilter>();
 
 		/// <summary>
 		/// Adds the specified filter.
 		/// </summary>
-		public void Add(IRecordFilter newbieFilter)
+		internal void Add(IRecordFilter newbieFilter)
 		{
 			Debug.Assert(!Contains(newbieFilter), "This filter (" + newbieFilter + ") has already been added to the list.");
 			Filters.Add(newbieFilter);
@@ -43,7 +64,7 @@ namespace LanguageExplorer.Filters
 		/// <summary>
 		/// Removes the specified filter.
 		/// </summary>
-		public void Remove(IRecordFilter gonnerFilter)
+		internal void Remove(IRecordFilter gonnerFilter)
 		{
 			for (var i = 0; i < Filters.Count; ++i)
 			{
@@ -58,7 +79,7 @@ namespace LanguageExplorer.Filters
 		/// <summary>
 		/// Gets the count.
 		/// </summary>
-		public int Count => Filters.Count;
+		internal int Count => Filters.Count;
 
 		/// <summary>
 		/// Persists as XML.
@@ -69,20 +90,6 @@ namespace LanguageExplorer.Filters
 			foreach (var rf in Filters)
 			{
 				LanguageExplorerServices.PersistObject(rf, element, "filter");
-			}
-		}
-
-		/// <summary>
-		/// Inits the XML.
-		/// </summary>
-		public override void InitXml(IPersistAsXmlFactory factory, XElement element)
-		{
-			base.InitXml(factory, element);
-			Debug.Assert(Filters != null && Filters.Count == 0);
-			Filters = new List<IRecordFilter>(element.Elements().Count());
-			foreach (var child in element.Elements())
-			{
-				Filters.Add(DynamicLoader.RestoreObject<IRecordFilter>(factory, child));
 			}
 		}
 

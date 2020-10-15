@@ -2,12 +2,12 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using LanguageExplorer.Filters;
+using System.Xml.Linq;
 using SIL.Code;
 using SIL.LCModel;
 using SIL.LCModel.Core.KernelInterfaces;
 
-namespace LanguageExplorer.Areas.TextsAndWords
+namespace LanguageExplorer.Filters
 {
 	/// <summary />
 	internal sealed class WordsUsedOnlyElsewhereFilter : RecordFilter
@@ -21,6 +21,14 @@ namespace LanguageExplorer.Areas.TextsAndWords
 		{
 			Guard.AgainstNull(cache, nameof(cache));
 			Cache = cache;
+		}
+
+		/// <summary>
+		/// For use with IPersistAsXml
+		/// </summary>
+		internal WordsUsedOnlyElsewhereFilter(XElement element)
+			: base(element)
+		{
 		}
 
 		/// <summary>

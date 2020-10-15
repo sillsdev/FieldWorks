@@ -231,7 +231,7 @@ namespace LanguageExplorerTests.Filters
 			var doc = XDocument.Parse(xml);
 
 			// And check all the pieces...
-			var andFilterOut = DynamicLoader.RestoreObject<AndFilter>(_persistAsXmlFactory, doc.Root);
+			var andFilterOut = _persistAsXmlFactory.Create<AndFilter>(doc.Root);
 			andFilterOut.Cache = Cache;
 
 			Assert.IsNotNull(andFilterOut);

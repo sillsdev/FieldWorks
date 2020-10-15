@@ -2375,7 +2375,7 @@ namespace LanguageExplorer
 			{
 				try
 				{
-					filter = DynamicLoader.RestoreObject<IRecordFilter>(PropertyTable.GetValue<IPersistAsXmlFactory>(LanguageExplorerConstants.PersistAsXmlFactory), XDocument.Parse(persistFilter).Root);
+					filter = PropertyTable.GetValue<IPersistAsXmlFactory>(LanguageExplorerConstants.PersistAsXmlFactory).Create<IRecordFilter>(XDocument.Parse(persistFilter).Root);
 					if (filter != null)
 					{
 						// (LT-9515) restored filters need these set, because they can't be persisted.

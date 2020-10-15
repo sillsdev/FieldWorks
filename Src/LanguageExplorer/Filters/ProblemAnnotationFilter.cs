@@ -14,15 +14,23 @@ namespace LanguageExplorer.Filters
 	/// this filter passes CmAnnotations which are pointing at objects of the class listed
 	/// in the targetClasses attribute.
 	/// </summary>
-	internal class ProblemAnnotationFilter : RecordFilter
+	internal sealed class ProblemAnnotationFilter : RecordFilter
 	{
 		private LcmCache m_cache;
 
 		/// <summary />
-		/// <remarks>must have a constructor with no parameters, to use with the dynamic loader or IPersistAsXml</remarks>
-		public ProblemAnnotationFilter()
+		internal ProblemAnnotationFilter()
 		{
 			ClassIds = new List<int>();
+		}
+
+		/// <summary>
+		/// For use with IPersistAsXml
+		/// </summary>
+		internal ProblemAnnotationFilter(XElement element)
+			: base(element)
+		{
+			ClassIds = new List<int>(XmlUtils.GetMandatoryIntegerListAttributeValue(element, "classIds"));
 		}
 
 		/// <summary>
@@ -35,18 +43,9 @@ namespace LanguageExplorer.Filters
 		}
 
 		/// <summary>
-		/// Inits the XML.
-		/// </summary>
-		public override void InitXml(IPersistAsXmlFactory factory, XElement element)
-		{
-			base.InitXml(factory, element);
-			ClassIds = new List<int>(XmlUtils.GetMandatoryIntegerListAttributeValue(element, "classIds"));
-		}
-
-		/// <summary>
 		/// Gets the class ids.
 		/// </summary>
-		public List<int> ClassIds { get; protected set; }
+		internal List<int> ClassIds { get; }
 
 		public override LcmCache Cache
 		{

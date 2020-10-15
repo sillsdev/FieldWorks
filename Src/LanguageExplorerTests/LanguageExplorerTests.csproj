@@ -283,7 +283,7 @@
     <Compile Include="Filters\FindResultsSorterTests.cs" />
     <Compile Include="Filters\RangeIntMatcherTests.cs" />
     <Compile Include="Filters\TestFilterPersistence.cs" />
-    <Compile Include="Areas\WordformFiltersTests.cs" />
+    <Compile Include="Filters\WordformFiltersTests.cs" />
     <Compile Include="InventoryTests.cs" />
     <Compile Include="Repository\AreaRepositoryTests.cs" />
     <Compile Include="Repository\AreaTestBase.cs" />
@@ -388,7 +388,7 @@
     <Compile Include="DictionaryConfiguration\TempGuidOn.cs" />
     <Compile Include="DictionaryConfiguration\UnicodeCharacterEditingHelperTests.cs" />
     <Compile Include="DictionaryConfiguration\WavConverterTests.cs" />
-    <Compile Include="Areas\TextsAndWords\WordsUsedOnlyElsewhereFilterTests.cs" />
+    <Compile Include="Filters\WordsUsedOnlyElsewhereFilterTests.cs" />
     <Compile Include="DictionaryConfiguration\XhtmlDocViewTests.cs" />
     <Compile Include="Impls\DummyFwMainWnd.cs">
       <SubType>Form</SubType>

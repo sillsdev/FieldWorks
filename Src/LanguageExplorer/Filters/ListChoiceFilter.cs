@@ -5,12 +5,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
-using LanguageExplorer.Filters;
 using SIL.LCModel;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.Xml;
 
-namespace LanguageExplorer.Controls.XMLViews
+namespace LanguageExplorer.Filters
 {
 	/// <summary>
 	/// A list choice filter accepts items based on whether an object field in the root object
@@ -41,10 +40,14 @@ namespace LanguageExplorer.Controls.XMLViews
 		}
 
 		/// <summary>
-		/// Need zero-argument constructor for persistence. Don't use otherwise.
+		/// For use with IPersistAsXml
 		/// </summary>
-		protected ListChoiceFilter()
+		protected ListChoiceFilter(XElement element)
+			: base(element)
 		{
+			Mode = (ListMatchOptions)XmlUtils.GetMandatoryIntegerAttributeValue(element, "mode");
+			Targets = XmlUtils.GetMandatoryIntegerListAttributeValue(element, "targets");
+			m_fIsUserVisible = XmlUtils.GetBooleanAttributeValue(element, "visible");
 		}
 
 		internal int[] Targets
@@ -57,7 +60,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			}
 		}
 
-		internal ListMatchOptions Mode { get; private set; }
+		internal ListMatchOptions Mode { get; }
 
 		/// <summary>
 		/// decide whether this object should be included
@@ -130,20 +133,9 @@ namespace LanguageExplorer.Controls.XMLViews
 		}
 
 		/// <summary>
-		/// Inits the XML.
-		/// </summary>
-		public override void InitXml(IPersistAsXmlFactory factory, XElement element)
-		{
-			base.InitXml(factory, element);
-			Mode = (ListMatchOptions)XmlUtils.GetMandatoryIntegerAttributeValue(element, "mode");
-			Targets = XmlUtils.GetMandatoryIntegerListAttributeValue(element, "targets");
-			m_fIsUserVisible = XmlUtils.GetBooleanAttributeValue(element, "visible");
-		}
-
-		/// <summary>
 		/// Compatibles the filter.
 		/// </summary>
-		public virtual bool CompatibleFilter(XElement colSpec)
+		internal virtual bool CompatibleFilter(XElement colSpec)
 		{
 			var beSpec = BeSpec;
 			return beSpec == XmlUtils.GetOptionalAttributeValue(colSpec, "bulkEdit", null) || beSpec == XmlUtils.GetOptionalAttributeValue(colSpec, "chooserFilter", null);
@@ -169,7 +161,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// Provides a setter for IsUserVisible.  Needed to fix LT-6250.
 		/// </summary>
-		public void MakeUserVisible(bool fVisible)
+		internal void MakeUserVisible(bool fVisible)
 		{
 			m_fIsUserVisible = fVisible;
 		}

@@ -2,11 +2,13 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System.Xml.Linq;
+
 namespace LanguageExplorer.Filters
 {
 	/// <summary>
 	/// not certain we will want to continue to have this... it simplifies the task I have
-	/// at hand, which is providing a way,from the menu bar to clear all filters
+	/// at hand, which is providing a way, from the menu bar to clear all filters.
 	///
 	/// the RecordList will recognize this has been set and will actually clear
 	/// its filter... so this will not actually be used and us what actually slow down showing everything.
@@ -14,10 +16,24 @@ namespace LanguageExplorer.Filters
 	internal class NullFilter : RecordFilter
 	{
 		/// <summary />
-		public NullFilter()
+		internal NullFilter()
+		{
+			ConstructorSurrogate();
+		}
+
+		private void ConstructorSurrogate()
 		{
 			Name = FiltersStrings.ksNoFilter;
 			Id = "No Filter";
+		}
+
+		/// <summary>
+		/// For use with IPersistAsXml
+		/// </summary>
+		internal NullFilter(XElement element)
+			:base(element)
+		{
+			ConstructorSurrogate();
 		}
 
 		/// <summary>

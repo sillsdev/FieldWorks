@@ -10,7 +10,7 @@ using NUnit.Framework;
 using SIL.LCModel;
 using SIL.LCModel.Core.Text;
 
-namespace LanguageExplorerTests.Areas
+namespace LanguageExplorerTests.Filters
 {
 	[TestFixture]
 	public class WordformFiltersTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase

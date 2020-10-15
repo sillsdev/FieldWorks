@@ -4,7 +4,6 @@
 
 using System;
 using System.Collections.Generic;
-using LanguageExplorer.Areas.TextsAndWords;
 using LanguageExplorer.Filters;
 using NUnit.Framework;
 using SIL.LCModel;
@@ -13,7 +12,7 @@ using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Infrastructure;
 
-namespace LanguageExplorerTests.Areas.TextsAndWords
+namespace LanguageExplorerTests.Filters
 {
 	/// <summary>
 	/// Test the filter which eliminates words which occur only in texts not included in the

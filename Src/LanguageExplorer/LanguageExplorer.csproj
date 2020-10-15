@@ -315,6 +315,7 @@
     <Compile Include="Filters\IntCompareFinder.cs" />
     <Compile Include="Filters\PersistAsXmlFinderFactoryStrategy.cs" />
     <Compile Include="Filters\PersistAsXmlMatcherFactoryStrategy.cs" />
+    <Compile Include="Filters\PersistAsXmlRecordFilterFactoryStrategy.cs" />
     <Compile Include="Filters\SortMethodFinder.cs" />
     <Compile Include="IPersistAsXmlFactoryStrategy.cs" />
     <Compile Include="IPersistAsXmlFactory.cs" />
@@ -926,7 +927,7 @@
     <Compile Include="Controls\CmPossibilityLabel.cs" />
     <Compile Include="Controls\XMLViews\ColumnDragDropReorderedEventArgs.cs" />
     <Compile Include="Controls\XMLViews\ColumnRightClickEventArgs.cs" />
-    <Compile Include="Controls\XMLViews\ColumnSpecFilter.cs" />
+    <Compile Include="Filters\ColumnSpecFilter.cs" />
     <Compile Include="Controls\XMLViews\ComplexListChooserBEditControl.cs" />
     <Compile Include="Controls\XMLViews\ConfigIconClickEventArgs.cs" />
     <Compile Include="Controls\XMLViews\CssType.cs" />
@@ -1018,7 +1019,7 @@
     <Compile Include="Filters\StringFinderCompare.cs" />
     <Compile Include="Filters\UncheckAll.cs" />
     <Compile Include="Areas\WfiRecordFilterListProvider.cs" />
-    <Compile Include="Areas\WordSetFilter.cs" />
+    <Compile Include="Filters\WordSetFilter.cs" />
     <Compile Include="Filters\WritingSystemComparer.cs" />
     <Compile Include="Impls\ArchiveWithRamp.cs">
       <SubType>Form</SubType>
@@ -1052,8 +1053,8 @@
     <Compile Include="Controls\XMLViews\IntComboItem.cs" />
     <Compile Include="Controls\XMLViews\ITextChangedNotification.cs" />
     <Compile Include="Controls\XMLViews\ListChoiceComboItem.cs" />
-    <Compile Include="Controls\XMLViews\ListChoiceFilter.cs" />
-    <Compile Include="Controls\XMLViews\ListMatchOptions.cs" />
+    <Compile Include="Filters\ListChoiceFilter.cs" />
+    <Compile Include="Filters\ListMatchOptions.cs" />
     <Compile Include="Controls\XMLViews\NoChangeFilterComboItem.cs" />
     <Compile Include="Controls\XMLViews\ReconstructPreservingBVScrollPosition.cs" />
     <Compile Include="Controls\XMLViews\SemanticDomainChooserBEditControl.cs" />
@@ -1289,13 +1290,13 @@
     <Compile Include="LcmUi\CmObjectVc.cs" />
     <Compile Include="LcmUi\CmPossibilityUi.cs" />
     <Compile Include="LcmUi\CmVernObjectVc.cs" />
-    <Compile Include="LcmUi\EntryPosFilter.cs" />
+    <Compile Include="Filters\EntryPosFilter.cs" />
     <Compile Include="LcmUi\LexEntryVc.cs" />
     <Compile Include="LcmUi\LexSenseUi.cs" />
     <Compile Include="LcmUi\MoFormUi.cs" />
     <Compile Include="LcmUi\MoMorphSynAnalysisUi.cs" />
     <Compile Include="LcmUi\MsaVc.cs" />
-    <Compile Include="LcmUi\PosFilter.cs" />
+    <Compile Include="Filters\PosFilter.cs" />
     <Compile Include="Controls\XMLViews\TargetFeatureEventArgs.cs" />
     <Compile Include="VcFrags.cs" />
     <Compile Include="LcmUi\WfiAnalysisUi.cs" />
@@ -1958,7 +1959,7 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Impls\WebonaryStatusCondition.cs" />
-    <Compile Include="Areas\TextsAndWords\WordsUsedOnlyElsewhereFilter.cs" />
+    <Compile Include="Filters\WordsUsedOnlyElsewhereFilter.cs" />
     <Compile Include="Impls\WritingSystemListHandler.cs" />
     <Compile Include="Areas\Lexicon\Tools\XhtmlDocView.cs">
       <SubType>UserControl</SubType>

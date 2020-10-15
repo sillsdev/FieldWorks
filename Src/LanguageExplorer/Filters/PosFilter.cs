@@ -3,10 +3,10 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Xml.Linq;
-using LanguageExplorer.Controls.XMLViews;
+using LanguageExplorer.LcmUi;
 using SIL.LCModel;
 
-namespace LanguageExplorer.LcmUi
+namespace LanguageExplorer.Filters
 {
 	/// <summary>
 	/// A special filter, where items are LexSenses, and matches are ones where an MSA is an MoStemMsa that
@@ -15,9 +15,11 @@ namespace LanguageExplorer.LcmUi
 	internal sealed class PosFilter : ColumnSpecFilter
 	{
 		/// <summary>
-		/// Default constructor for persistence.
+		/// For use with IPersistAsXml
 		/// </summary>
-		internal PosFilter() { }
+		internal PosFilter(XElement element)
+			: base(element)
+		{}
 
 		internal PosFilter(LcmCache cache, ListMatchOptions mode, int[] targets, XElement colSpec)
 			: base(cache, mode, targets, colSpec)
@@ -26,7 +28,7 @@ namespace LanguageExplorer.LcmUi
 
 		protected override string BeSpec => "EntryPosFilter";
 
-		public override bool CompatibleFilter(XElement colSpec)
+		internal override bool CompatibleFilter(XElement colSpec)
 		{
 			if (!base.CompatibleFilter(colSpec))
 			{

@@ -4,11 +4,10 @@
 
 using System.Linq;
 using System.Xml.Linq;
-using LanguageExplorer.Filters;
 using SIL.LCModel;
 using SIL.Xml;
 
-namespace LanguageExplorer.Areas
+namespace LanguageExplorer.Filters
 {
 	/// <summary>
 	/// A filter for selecting a group of wordform spaced on a "IWfiWordSet"
@@ -19,11 +18,21 @@ namespace LanguageExplorer.Areas
 		private int[] m_hvos;
 
 		/// <summary />
-		public WordSetFilter(IWfiWordSet wordSet)
+		internal WordSetFilter(IWfiWordSet wordSet)
 		{
 			Id = wordSet.Hvo.ToString();
 			Name = wordSet.Name.AnalysisDefaultWritingSystem.Text;
 			LoadCases(wordSet);
+		}
+
+		/// <summary>
+		/// For use with IPersistAsXml
+		/// </summary>
+		internal WordSetFilter(XElement element)
+			: base(element)
+		{
+			Id = XmlUtils.GetMandatoryAttributeValue(element, "id");
+			m_hvos = XmlUtils.GetMandatoryIntegerListAttributeValue(element, "wordlist");
 		}
 
 		private void LoadCases(IWfiWordSet wordSet)
@@ -56,16 +65,6 @@ namespace LanguageExplorer.Areas
 			base.PersistAsXml(element);
 			XmlUtils.SetAttribute(element, "id", Id);
 			XmlUtils.SetAttribute(element, "wordlist", XmlUtils.MakeStringFromList(m_hvos.ToList()));
-		}
-
-		/// <summary>
-		/// Inits the XML.
-		/// </summary>
-		public override void InitXml(IPersistAsXmlFactory factory, XElement element)
-		{
-			base.InitXml(factory, element);
-			Id = XmlUtils.GetMandatoryAttributeValue(element, "id");
-			m_hvos = XmlUtils.GetMandatoryIntegerListAttributeValue(element, "wordlist");
 		}
 
 		/// <summary>

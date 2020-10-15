@@ -893,7 +893,7 @@ namespace LanguageExplorerTests.Impls
 				"LanguageExplorer.Impls.RestoreDefaultsDlg",
 				"LanguageExplorer.Controls.DetailControls.AdhocCoProhibAtomicLauncher",
 				"LanguageExplorer.Areas.TextsAndWords.ImportWordSetDlg",
-				"LanguageExplorer.LcmUi.PosFilter",
+				"LanguageExplorer.Filters.PosFilter",
 				"LanguageExplorer.Controls.DetailControls.AtomicReferenceLauncher",
 				"LanguageExplorer.Controls.XMLViews.BrowseViewer"
 			};
