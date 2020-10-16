@@ -7,15 +7,6 @@ body{
 	margin:0px;
 	font-family:sans-serif;
 }
-.statid-grid-container {
-  display: grid;
-  grid-template-columns: 2em 2em 8em 9em 9em 9em 9em;
-}
-
-.row-grid {
-  grid-column-start: 1;
-  grid-column-end: span 7;
-}
 
 .morpheme-row {
 	background:#c18cb1;
@@ -28,24 +19,10 @@ body{
 	background: #5e9eff;
 }
 
-.internal-row-grid {
-  display:grid;
-  grid-template-columns: 2em 8em 9em 9em 9em 9em;
-  grid-column-start: 2;
-  grid-column-end: span 6;
-}
-
 .grid-cell {
   border-top: 1px solid #dfdfdf;
   border-left: 1px solid #dfdfdf;
   flex: 1;
-}
-
-.rownames {
-  flex: 0 0 10em;
-}
-
-.grid-cell {
   text-align: center;
   vertical-align: middle;
 }

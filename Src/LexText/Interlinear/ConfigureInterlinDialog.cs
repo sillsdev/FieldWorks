@@ -26,18 +26,13 @@ namespace SIL.FieldWorks.IText
 	/// <summary>
 	/// Summary description for ConfigureInterlinDialog.
 	/// </summary>
-	public class ConfigureInterlinDialog : Form
+	public partial class ConfigureInterlinDialog : Form
 	{
-		private Label label1;
-		private Button helpButton;
-		private Button cancelButton;
-		private Button okButton;
 
 		private const string s_helpTopic = "khtpConfigureInterlinearLines";
 		private HelpProvider helpProvider;
 
 		private Dictionary<ColumnConfigureDialog.WsComboContent, ComboBox.ObjectCollection> m_cachedComboContentForColumns;
-		private IContainer components;
 
 		bool m_fUpdatingWsCombo = false; // true during UpdateWsCombo
 		private LcmCache m_cache;
@@ -45,9 +40,6 @@ namespace SIL.FieldWorks.IText
 
 		InterlinLineChoices m_choices;
 		private ComboBox wsCombo;
-		private XWebBrowser mainBrowser;
-		private FlowLayoutPanel mainLayoutPanel;
-		private FlowLayoutPanel buttonLayoutPanel;
 		private List<WsComboItem> m_columns;
 
 		public ConfigureInterlinDialog(LcmCache cache, IHelpTopicProvider helpTopicProvider,
@@ -80,91 +72,6 @@ namespace SIL.FieldWorks.IText
 			mainBrowser.Url = new Uri(htmlPath);
 			browser.DomContentChanged += Browser_DomContentChanged;
 		}
-
-		#region Windows Form Designer generated code
-		/// <summary>
-		/// Required method for Designer support - do not modify
-		/// the contents of this method with the code editor.
-		/// </summary>
-		private void InitializeComponent()
-		{
-			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ConfigureInterlinDialog));
-			this.label1 = new System.Windows.Forms.Label();
-			this.helpButton = new System.Windows.Forms.Button();
-			this.cancelButton = new System.Windows.Forms.Button();
-			this.okButton = new System.Windows.Forms.Button();
-			this.mainBrowser = new SIL.Windows.Forms.HtmlBrowser.XWebBrowser();
-			this.mainLayoutPanel = new System.Windows.Forms.FlowLayoutPanel();
-			this.buttonLayoutPanel = new System.Windows.Forms.FlowLayoutPanel();
-			this.mainLayoutPanel.SuspendLayout();
-			this.buttonLayoutPanel.SuspendLayout();
-			this.SuspendLayout();
-			//
-			// label1
-			//
-			resources.ApplyResources(this.label1, "label1");
-			this.label1.Name = "label1";
-			//
-			// helpButton
-			//
-			resources.ApplyResources(this.helpButton, "helpButton");
-			this.helpButton.Name = "helpButton";
-			this.helpButton.Click += new System.EventHandler(this.HelpButton_Click);
-			//
-			// cancelButton
-			//
-			resources.ApplyResources(this.cancelButton, "cancelButton");
-			this.cancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-			this.cancelButton.Name = "cancelButton";
-			//
-			// okButton
-			//
-			resources.ApplyResources(this.okButton, "okButton");
-			this.okButton.DialogResult = System.Windows.Forms.DialogResult.OK;
-			this.okButton.Name = "okButton";
-			this.okButton.Click += OkButton_Click;
-			//
-			// mainBrowser
-			//
-			resources.ApplyResources(this.mainBrowser, "mainBrowser");
-			this.mainBrowser.IsWebBrowserContextMenuEnabled = false;
-			this.mainBrowser.Anchor = AnchorStyles.Left | AnchorStyles.Right;
-			this.mainBrowser.Margin = new Padding(10, 10, 10, 10);
-			this.mainBrowser.Height = 300;
-			this.mainBrowser.Name = "mainBrowser";
-			//
-			// mainLayoutPanel
-			//
-			this.mainLayoutPanel.Controls.Add(this.label1);
-			this.mainLayoutPanel.Controls.Add(this.mainBrowser);
-			this.mainLayoutPanel.Controls.Add(this.buttonLayoutPanel);
-			resources.ApplyResources(this.mainLayoutPanel, "mainLayoutPanel");
-			this.mainLayoutPanel.Name = "mainLayoutPanel";
-			//
-			// buttonLayoutPanel
-			//
-			this.buttonLayoutPanel.Controls.Add(this.helpButton);
-			this.buttonLayoutPanel.Controls.Add(this.cancelButton);
-			this.buttonLayoutPanel.Controls.Add(this.okButton);
-			resources.ApplyResources(this.buttonLayoutPanel, "buttonLayoutPanel");
-			this.buttonLayoutPanel.Name = "buttonLayoutPanel";
-			//
-			// ConfigureInterlinDialog
-			//
-			this.AcceptButton = this.okButton;
-			resources.ApplyResources(this, "$this");
-			this.CancelButton = this.cancelButton;
-			this.Controls.Add(this.mainLayoutPanel);
-			this.Name = "ConfigureInterlinDialog";
-			this.FormBorderStyle = FormBorderStyle.FixedDialog;
-			this.MaximizeBox = false;
-			this.MinimizeBox = false;
-			this.mainLayoutPanel.ResumeLayout(false);
-			this.buttonLayoutPanel.ResumeLayout(false);
-			this.ResumeLayout(false);
-
-		}
-		#endregion
 
 		/// <summary>
 		/// Saves the generated content in the temp directory, to a unique but discoverable and somewhat stable location.
