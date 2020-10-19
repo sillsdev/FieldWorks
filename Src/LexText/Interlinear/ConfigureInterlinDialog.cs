@@ -4,7 +4,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.Controls; // for XmlViews stuff, especially borrowed form ColumnConfigureDialog
 using SIL.LCModel;
@@ -16,9 +15,7 @@ using System.Linq;
 using System.Xml;
 using Gecko;
 using Gecko.DOM;
-using SIL.Extensions;
 using SIL.LCModel.Utils;
-using SIL.Windows.Forms.HtmlBrowser;
 using Directory = System.IO.Directory;
 
 namespace SIL.FieldWorks.IText
@@ -34,7 +31,6 @@ namespace SIL.FieldWorks.IText
 
 		private Dictionary<ColumnConfigureDialog.WsComboContent, ComboBox.ObjectCollection> m_cachedComboContentForColumns;
 
-		bool m_fUpdatingWsCombo = false; // true during UpdateWsCombo
 		private LcmCache m_cache;
 		private IHelpTopicProvider m_helpTopicProvider;
 
@@ -224,7 +220,7 @@ namespace SIL.FieldWorks.IText
 
 			foreach (var rowChoice in rowChoicesList)
 			{
-				rowChoice.GenerateRow(htmlWriter, m_columns, m_cachedComboContentForColumns, m_choices);
+				rowChoice.GenerateRow(htmlWriter, m_columns, m_cache, m_choices);
 			}
 
 			htmlWriter.WriteFullEndElement(); // </div>
@@ -233,19 +229,19 @@ namespace SIL.FieldWorks.IText
 		/// <summary>
 		/// This class encapsulates the data needed to render one or more rows in the Configure Interlinear Dialog
 		/// </summary>
-		internal sealed class InterlinearTableRow
+		internal sealed class InterlinearTableGroup
 		{
 
-			private Tuple<LineOption, InterlinLineSpec> FirstRow;
+			private InterlinearTableRow FirstRow;
 
 			/// <summary>
 			/// Morpheme level and segment level rows are grouped into a section that stick together
 			/// </summary>
-			private List<Tuple<LineOption, InterlinLineSpec>> RemainingRows = new List<Tuple<LineOption, InterlinLineSpec>>();
+			private List<InterlinearTableRow> RemainingRows = new List<InterlinearTableRow>();
 
-			public InterlinearTableRow(Tuple<LineOption, InterlinLineSpec> lineInfo)
+			public InterlinearTableGroup(InterlinearTableRow row)
 			{
-				FirstRow = lineInfo;
+				FirstRow = row;
 			}
 
 			public bool IsSection(InterlinLineChoices choices) => IsMorphemeRow(FirstRow, choices) || IsSegmentRow(FirstRow, choices);
@@ -253,28 +249,28 @@ namespace SIL.FieldWorks.IText
 			/// <summary>
 			/// A row is a segment row if the InterlinLineSpec shows that it is not a word level line
 			/// </summary>
-			private bool IsSegmentRow(Tuple<LineOption, InterlinLineSpec> row, InterlinLineChoices choices)
+			private bool IsSegmentRow(InterlinearTableRow row, InterlinLineChoices choices)
 			{
-				if (row.Item2 == null)
+				if (row.HasSpecs)
 				{
-					return !choices.CreateSpec(row.Item1.Flid, 0).WordLevel;
+					return !row.FirstSpec.WordLevel;
 				}
-				return !row.Item2.WordLevel;
+				return !choices.CreateSpec(row.Flid, 0).WordLevel;
 			}
 
 			/// <summary>
 			/// A line results in a morpheme row if the specification indicates it
 			/// </summary>
-			private bool IsMorphemeRow(Tuple<LineOption, InterlinLineSpec> row, InterlinLineChoices choices)
+			private bool IsMorphemeRow(InterlinearTableRow row, InterlinLineChoices choices)
 			{
-				if (row.Item2 == null)
+				if (row.HasSpecs)
 				{
-					return choices.CreateSpec(row.Item1.Flid, 0).MorphemeLevel;
+					return row.FirstSpec.MorphemeLevel;
 				}
-				return row.Item2.MorphemeLevel;
+				return choices.CreateSpec(row.Flid, 0).MorphemeLevel;
 			}
 
-			public void FillSection(Queue<Tuple<LineOption, InterlinLineSpec>> remainingChoiceRows, InterlinLineChoices choices)
+			public void FillSection(Queue<InterlinearTableRow> remainingChoiceRows, InterlinLineChoices choices)
 			{
 				if (IsMorphemeRow(FirstRow, choices))
 				{
@@ -296,22 +292,27 @@ namespace SIL.FieldWorks.IText
 
 			public void GenerateRow(XmlWriter htmlWriter,
 				List<WsComboItem> columns,
-				Dictionary<ColumnConfigureDialog.WsComboContent, ComboBox.ObjectCollection> comboContentCache,
+				LcmCache cache,
 				InterlinLineChoices choices)
 			{
 				htmlWriter.WriteStartElement("div");
 				var wsColumnWidths = string.Join(" ", columns.Select(c => "9em"));
 				htmlWriter.WriteAttributeString("style", $"grid-column-start: 1; grid-column-end: span {columns.Count + 3}; display: grid; grid-template-columns: 2em 2em 8em {wsColumnWidths};");
-				htmlWriter.WriteAttributeString("class", IsMorphemeRow(FirstRow, choices) ? "morpheme-container" : "segment-container");
-				htmlWriter.WriteAttributeString("id", $"row-grid-{FirstRow.Item1.Flid}");
+				htmlWriter.WriteAttributeString("class", IsMorphemeRow(FirstRow, choices)
+					? "morpheme-container"
+					: IsSegmentRow(FirstRow, choices) ? "segment-container" : "word-container");
+				htmlWriter.WriteAttributeString("id", $"row-grid-{FirstRow.Flid}");
 				htmlWriter.WriteStartElement("span");
-				htmlWriter.WriteAttributeString("class", "row-handle");
-				htmlWriter.WriteAttributeString("id", $"row-grab-{FirstRow.Item1.Flid}");
-				htmlWriter.WriteRaw("&#8801;");
+				if (!IsSegmentRow(FirstRow, choices))
+				{
+					htmlWriter.WriteAttributeString("class", "row-handle");
+					htmlWriter.WriteAttributeString("id", $"row-grab-{FirstRow.Flid}");
+					htmlWriter.WriteRaw("&#8801;");
+				}
 				htmlWriter.WriteFullEndElement(); // </span>
 				if (IsSection(choices))
 				{
-					var allRows = new List<Tuple<LineOption, InterlinLineSpec>>();
+					var allRows = new List<InterlinearTableRow>();
 					allRows.Add(FirstRow);
 					allRows.AddRange(RemainingRows);
 					foreach (var otherRow in allRows)
@@ -319,13 +320,13 @@ namespace SIL.FieldWorks.IText
 						htmlWriter.WriteStartElement("div");
 						htmlWriter.WriteAttributeString("class", IsMorphemeRow(FirstRow, choices) ? "morpheme-row" : "segment-row");
 						htmlWriter.WriteAttributeString("style", $"grid-column-start: 2; grid-column-end: span {columns.Count + 2}; display: grid; grid-template-columns: 2em 8em {wsColumnWidths};");
-						htmlWriter.WriteAttributeString("id", $"internal-row-grid-{otherRow.Item1.Flid}");
+						htmlWriter.WriteAttributeString("id", $"internal-row-grid-{otherRow.Flid}");
 						htmlWriter.WriteStartElement("span");
 						htmlWriter.WriteAttributeString("class", "internal-row-handle");
-						htmlWriter.WriteAttributeString("id", $"internal-row-grab-{FirstRow.Item1.Flid}");
+						htmlWriter.WriteAttributeString("id", $"internal-row-grab-{FirstRow.Flid}");
 						htmlWriter.WriteRaw("&#8801;");
 						htmlWriter.WriteFullEndElement();
-						GenerateRowCells(htmlWriter, otherRow, columns, comboContentCache, choices);
+						GenerateRowCells(htmlWriter, otherRow, columns, cache, choices);
 						htmlWriter.WriteFullEndElement();
 					}
 				}
@@ -333,7 +334,7 @@ namespace SIL.FieldWorks.IText
 				{
 					htmlWriter.WriteStartElement("div");
 					htmlWriter.WriteFullEndElement(); // </div>
-					GenerateRowCells(htmlWriter, FirstRow, columns, comboContentCache, choices);
+					GenerateRowCells(htmlWriter, FirstRow, columns, cache, choices);
 				}
 				htmlWriter.WriteFullEndElement(); // </div>
 			}
@@ -341,39 +342,38 @@ namespace SIL.FieldWorks.IText
 			/// <summary>
 			/// Generates a Table Row which can be reordered to anywhere else in the table
 			/// </summary>
-			private void GenerateRowCells(XmlWriter htmlWriter, Tuple<LineOption, InterlinLineSpec> rowData, List<WsComboItem> columns, Dictionary<ColumnConfigureDialog.WsComboContent, ComboBox.ObjectCollection> comboContentCache, InterlinLineChoices choices)
+			private void GenerateRowCells(XmlWriter htmlWriter, InterlinearTableRow rowData, List<WsComboItem> columns, LcmCache cache, InterlinLineChoices choices)
 			{
 				htmlWriter.WriteStartElement("div");
 				htmlWriter.WriteAttributeString("class", "line-choice");
-				htmlWriter.WriteAttributeString("id", $"{rowData.Item1.Flid}");
-				htmlWriter.WriteRaw(rowData.Item1.Label);
+				htmlWriter.WriteAttributeString("id", $"{rowData.Flid}");
+				htmlWriter.WriteRaw(rowData.Label);
 				htmlWriter.WriteFullEndElement(); // row label div
-				GenerateCheckboxes(htmlWriter, rowData.Item2 ?? choices.CreateSpec(rowData.Item1.Flid, 0), columns, comboContentCache, choices);
+				GenerateCheckboxes(htmlWriter, rowData, columns, cache, choices);
 			}
 
 
 			/// <summary>
-			/// Determines if the spec's ComboContent is contained in one of the cached keys of comboContentCache.
+			/// Determines if the row's ComboContent is contained in one of the cached keys of comboContentCache.
 			/// If it is, then loop through each column to determine if a checkbox is needed. Otherwise, write the td with no checkbox.
 			/// </summary>
 			private void GenerateCheckboxes(XmlWriter htmlWriter,
-				InterlinLineSpec spec,
+				InterlinearTableRow row,
 				List<WsComboItem> columns,
-				Dictionary<ColumnConfigureDialog.WsComboContent, ComboBox.ObjectCollection> comboContentCache,
+				LcmCache cache,
 				InterlinLineChoices choices)
 			{
-				ComboBox.ObjectCollection objectCollection = null;
-
-				if (comboContentCache.ContainsKey(spec.ComboContent))
-					objectCollection = comboContentCache[spec.ComboContent];
-
-				if (objectCollection != null)
-				{
 					foreach (var column in columns)
 					{
-						if (objectCollection.Contains(column))
+						var interlinSpec = row.HasSpecs
+							? row.FirstSpec
+							: choices.CreateSpec(row.Flid, 0);
+						var wsItems = new List<WsComboItem>();
+						ColumnConfigureDialog.AddWritingSystemsToCombo(cache,wsItems, interlinSpec.ComboContent);
+
+						if (wsItems.Exists(wsItem => wsItem.Id == column.Id))
 						{
-							var id = spec.Flid + "%" + column.WritingSystem;
+							var id = row.Flid + "%" + column.WritingSystem;
 							GenerateCheckbox(htmlWriter, choices, id, column.WritingSystemType);
 						}
 						else
@@ -381,27 +381,20 @@ namespace SIL.FieldWorks.IText
 							GenerateCheckbox(htmlWriter, choices, "", column.WritingSystemType, true);
 						}
 					}
-				}
-				else
-				{
-					foreach (var column in columns)
-					{
-						GenerateCheckbox(htmlWriter, choices, "", column.WritingSystemType, true);
-					}
-				}
 			}
 
 			/// <summary>
-			/// Creates a new td with a checkbox if isEmptyTd is false. If isEmptyTd is true, then it creates
-			/// a td with no checkbox. If a className is given, then it adds the class to the td to show
+			/// Creates a new div with a checkbox if isEmptyCell is false. If isEmptyCell is true, then it creates
+			/// a div with no checkbox. If a className is given, then it adds the class to the div to show
 			/// a separation/distinction between the writing systems. id is typically the flid and ws
 			/// together. If blank, no id is written.
 			/// </summary>
 			/// <param name="htmlWriter">The XmlWriter to write the HTML</param>
+			/// <param name="choices"></param>
 			/// <param name="id">The id for the checkbox to be written</param>
-			/// <param name="isEmptyTd">If true, a td is written with no checkbox</param>
-			/// <param name="className">The name of the class to attach to the td</param>
-			private void GenerateCheckbox(XmlWriter htmlWriter, InterlinLineChoices choices, string id, string className, bool isEmptyTd = false)
+			/// <param name="className">The name of the class to attach to the div</param>
+			/// <param name="isEmptyCell">If true, a div is written with no checkbox</param>
+			private void GenerateCheckbox(XmlWriter htmlWriter, InterlinLineChoices choices, string id, string className, bool isEmptyCell = false)
 			{
 				if (htmlWriter == null)
 					return;
@@ -409,7 +402,7 @@ namespace SIL.FieldWorks.IText
 				htmlWriter.WriteAttributeString("class", $"grid-cell {className}");
 				htmlWriter.WriteAttributeString("id", $"div{id}");
 
-				if (!isEmptyTd)
+				if (!isEmptyCell)
 				{
 					var flid = int.Parse(id.Split('%')[0]);
 					var ws = int.Parse(id.Split('%')[1]);
@@ -430,19 +423,19 @@ namespace SIL.FieldWorks.IText
 		/// <summary>
 		/// Gets the Initial Row Choices for the HTML to generate
 		/// </summary>
-		internal static IEnumerable<InterlinearTableRow> InitRowChoices(InterlinLineChoices choices)
+		internal static IEnumerable<InterlinearTableGroup> InitRowChoices(InterlinLineChoices choices)
 		{
-			var rowChoices = new List<InterlinearTableRow>();
-			var remainingChoiceRows = new Queue<Tuple<LineOption, InterlinLineSpec>>();
+			var rowChoices = new List<InterlinearTableGroup>();
+			var remainingChoiceRows = new Queue<InterlinearTableRow>();
 			var lineOptions = choices.LineOptions();
 			foreach (var lineOption in lineOptions)
 			{
-				remainingChoiceRows.Enqueue(new Tuple<LineOption, InterlinLineSpec>(lineOption,
-					choices.AllLineSpecs.FirstOrDefault(spec => spec.Flid == lineOption.Flid)));
+				remainingChoiceRows.Enqueue(new InterlinearTableRow(new Tuple<LineOption, InterlinLineSpec[]>(lineOption,
+					choices.AllLineSpecs.Where(spec => spec.Flid == lineOption.Flid).ToArray())));
 			}
 			do
 			{
-				var row = new InterlinearTableRow(remainingChoiceRows.Dequeue());
+				var row = new InterlinearTableGroup(remainingChoiceRows.Dequeue());
 				if (row.IsSection(choices))
 				{
 					row.FillSection(remainingChoiceRows, choices);
@@ -777,5 +770,25 @@ namespace SIL.FieldWorks.IText
 		}
 		#endregion
 
+	}
+
+	/// <summary>
+	/// A row on a table will represent a single LineOption and the status of its available writing systems.
+	/// Each writing system represents a separate InterlinLineSpec
+	/// </summary>
+	internal sealed class InterlinearTableRow
+	{
+		private Tuple<LineOption, InterlinLineSpec[]> _lineInfo;
+
+		public InterlinearTableRow(Tuple<LineOption, InterlinLineSpec[]> lineInfo)
+		{
+			_lineInfo = lineInfo;
+		}
+
+		public int Flid => _lineInfo.Item1.Flid;
+		public string Label => _lineInfo.Item1.Label;
+		public ColumnConfigureDialog.WsComboContent ComboContent { get; set; }
+		public bool HasSpecs => _lineInfo.Item2.Length > 0;
+		public InterlinLineSpec FirstSpec => _lineInfo.Item2?[0];
 	}
 }

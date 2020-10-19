@@ -35,7 +35,6 @@ namespace SIL.FieldWorks.IText
 	{
 		Color kMorphLevelColor = Color.Purple;
 		Color kWordLevelColor = Color.Blue;
-		internal List<LineOption> m_allLineOptions = new List<LineOption>();
 		internal int m_wsDefVern; // The default vernacular writing system.
 		internal int m_wsDefAnal; // The default analysis writing system.
 		internal LcmCache m_cache;
@@ -60,6 +59,7 @@ namespace SIL.FieldWorks.IText
 			m_wsDefVern = defaultVernacularWs;
 			m_wsDefAnal = defaultAnalysisWs == WritingSystemServices.kwsAnal ? m_cache.DefaultAnalWs : defaultAnalysisWs;
 			AllLineOptions = LineOptions(mode).ToList();
+			AllLineSpecs = new List<InterlinLineSpec>();
 		}
 
 		public InterlinLineChoices(ILangProject proj, int defaultVernacularWs, int defaultAnalysisWs, InterlinMode mode)
@@ -84,23 +84,7 @@ namespace SIL.FieldWorks.IText
 			}
 		}
 
-		internal List<LineOption> AllLineOptions
-		{
-			get { return m_allLineOptions; }
-			set
-			{
-				m_allLineOptions = value;
-
-				// AllLineOptions and AllLineSpecs will be identical
-				// On a set of AllLineOptions, AllLineSpecs will also be updated.
-				var newLineSpecs = new List<InterlinLineSpec>();
-				foreach (var option in value)
-				{
-					newLineSpecs.Add(CreateSpec(option.Flid, 0));
-				}
-				AllLineSpecs = newLineSpecs;
-			}
-		}
+		internal List<LineOption> AllLineOptions { get; set; }
 
 		internal List<InterlinLineSpec> AllLineSpecs { get; private set; }
 
@@ -186,13 +170,15 @@ namespace SIL.FieldWorks.IText
 		public string Persist(ILgWritingSystemFactory wsf)
 		{
 			StringBuilder builder = new StringBuilder();
-			builder.Append(this.GetType().Name);
+			builder.Append(GetType().Name);
 			foreach (InterlinLineSpec spec in AllLineSpecs)
 			{
 				builder.Append(",");
 				builder.Append(spec.Flid);
 				builder.Append("%");
-				builder.Append(wsf.GetStrFromWs(spec.WritingSystem));
+				builder.Append(spec.IsMagicWritingSystem
+					? $"{WritingSystemServices.GetMagicWsNameFromId(spec.WritingSystem)}"
+					: wsf.GetStrFromWs(spec.WritingSystem));
 			}
 			return builder.ToString();
 		}
@@ -224,6 +210,11 @@ namespace SIL.FieldWorks.IText
 					throw new Exception("Unrecognized InterlinLineSpec: " + parts[i]);
 				int flid = Int32.Parse(flidAndWs[0]);
 				int ws = wsf.GetWsFromStr(flidAndWs[1]);
+				// try magic writing system
+				if (ws == 0)
+				{
+					ws = WritingSystemServices.GetMagicWsIdFromName(flidAndWs[1]);
+				}
 				// Some virtual Ids such as -61 and 103 create standard items. so, we need to add those items always
 				if (flid <= ComplexConcPatternVc.kfragFeatureLine || ((IFwMetaDataCacheManaged)proj.Cache.MetaDataCacheAccessor).FieldExists(flid))
 					result.Add(flid, ws);

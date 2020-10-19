@@ -57,6 +57,7 @@ namespace SIL.FieldWorks.IText
 			this.helpButton.BackColor = System.Drawing.SystemColors.Control;
 			this.helpButton.Name = "helpButton";
 			this.helpButton.UseVisualStyleBackColor = false;
+			this.helpButton.Click += HelpButton_Click;
 			// 
 			// cancelButton
 			// 
@@ -73,6 +74,7 @@ namespace SIL.FieldWorks.IText
 			this.okButton.DialogResult = System.Windows.Forms.DialogResult.OK;
 			this.okButton.Name = "okButton";
 			this.okButton.UseVisualStyleBackColor = false;
+			this.okButton.Click += OkButton_Click;
 			// 
 			// mainBrowser
 			// 

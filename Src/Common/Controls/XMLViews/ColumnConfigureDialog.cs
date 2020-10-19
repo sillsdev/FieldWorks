@@ -3,6 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -318,7 +319,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// Initialize the combo box for the standard set of writing systems.
 		/// </summary>
 		public static void AddWritingSystemsToCombo(LcmCache cache,
-			ComboBox.ObjectCollection items, WsComboContent contentToAdd)
+			IList items, WsComboContent contentToAdd)
 		{
 			AddWritingSystemsToCombo(cache, items, contentToAdd, false, false);
 		}
@@ -346,7 +347,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// Ignored if skipDefaults is true.</param>
 		/// <remarks>This is static because ConfigureInterlinDialog uses it</remarks>
 		public static void AddWritingSystemsToCombo(LcmCache cache,
-			ComboBox.ObjectCollection items, WsComboContent contentToAdd, bool skipDefaults,
+			IList items, WsComboContent contentToAdd, bool skipDefaults,
 			bool allowMultiple)
 		{
 			string sAllAnal = XMLViewsStrings.ksAllAnal;
@@ -536,7 +537,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="items">The items.</param>
 		/// <param name="wss">The ws array.</param>
 		/// ------------------------------------------------------------------------------------
-		public static void AddWritingSystemsToCombo(LcmCache cache, ComboBox.ObjectCollection items, IEnumerable<CoreWritingSystemDefinition> wss)
+		public static void AddWritingSystemsToCombo(LcmCache cache, IList items, IEnumerable<CoreWritingSystemDefinition> wss)
 		{
 			foreach (CoreWritingSystemDefinition ws in wss)
 				items.Add(new WsComboItem(ws.DisplayLabel, ws.Id));
