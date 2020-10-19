@@ -1,5 +1,5 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
-<parameters id="featureTypesList" filterBar="true" treeBarAvailability="NotAllowed" defaultCursor="Arrow" hscroll="true" altTitleId="FsFeatStrucType-Plural" editable="false">
+<?xml version="1.0" encoding="utf-8" ?>
+<parameters id="featureTypesList" wantFilterBar="true" treeBarAvailability="NotAllowed" defaultCursor="Arrow" hscroll="true" altTitleId="FsFeatStrucType-Plural" editable="false">
 	<columns>
 		<!-- explicit layout of these columns (rather than having a layout attribute) causes display problems in Mono/Linux -->
 		<column label="Name" ws="$ws=best analysis" width="50%" field="Name" layout="Name"/>

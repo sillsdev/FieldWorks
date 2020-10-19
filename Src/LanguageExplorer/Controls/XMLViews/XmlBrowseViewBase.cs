@@ -47,7 +47,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary />
 		protected XmlBrowseViewVc m_xbvvc;
 		/// <summary />
-		protected XElement _configurationSpec;
+		protected XElement _configParamsElement;
 		/// <summary />
 		protected internal BrowseViewer m_bv;
 		/// <summary> record list supplying browse view content </summary>
@@ -711,7 +711,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// True if we are running the read-only version of the view that is primarily used for
 		/// selecting.
 		/// </summary>
-		protected virtual bool ReadOnlySelect => PropertyTable != null && _configurationSpec?.Attribute("editable") != null && !XmlUtils.GetBooleanAttributeValue(_configurationSpec, "editable");
+		protected virtual bool ReadOnlySelect => PropertyTable != null && _configParamsElement?.Attribute("editable") != null && !XmlUtils.GetBooleanAttributeValue(_configParamsElement, "editable");
 
 		/// <summary>
 		/// the object that has properties that are shown by this view.
@@ -810,21 +810,21 @@ namespace LanguageExplorer.Controls.XMLViews
 		}
 
 		/// <summary>
-		/// Initializes using <paramref name="configurationSpec"/>.
+		/// Initializes using <paramref name="configParamsElement"/>.
 		/// </summary>
-		public virtual void Init(XElement configurationSpec, int hvoRoot, int madeUpFieldIdentifier, LcmCache cache, BrowseViewer bv)
+		public virtual void Init(XElement configParamsElement, int hvoRoot, int madeUpFieldIdentifier, LcmCache cache, BrowseViewer bv)
 		{
 			Debug.Assert((m_selectedIndex == -1), "Cannot set the index to less than zero before initializing.");
-			Debug.Assert(_configurationSpec == null || _configurationSpec == configurationSpec, "XmlBrowseViewBase.Init: Mismatched configuration parameters.");
+			Debug.Assert(_configParamsElement == null || _configParamsElement == configParamsElement, "XmlBrowseViewBase.Init: Mismatched configuration parameters.");
 
 			_hvoRoot = hvoRoot;
 			MainTag = madeUpFieldIdentifier;
-			if (_configurationSpec == null)
+			if (_configParamsElement == null)
 			{
-				_configurationSpec = configurationSpec;
+				_configParamsElement = configParamsElement;
 			}
 			// Do this early...we need the ID to restore the columns when the VC is created.
-			m_id = XmlUtils.GetOptionalAttributeValue(_configurationSpec, "id", "NeedsId");
+			m_id = XmlUtils.GetOptionalAttributeValue(_configParamsElement, "id", "NeedsId");
 			m_bv = bv;
 			m_cache = cache;
 			SpecialCache = m_bv.SpecialCache;
@@ -840,7 +840,7 @@ namespace LanguageExplorer.Controls.XMLViews
 				// Merely asking the Vc will create one, if m_xbvvc is null.
 				var dummy = Vc;
 			}
-			var sDefaultCursor = XmlUtils.GetOptionalAttributeValue(configurationSpec, "defaultCursor", null);
+			var sDefaultCursor = XmlUtils.GetOptionalAttributeValue(configParamsElement, "defaultCursor", null);
 			// Set a default cursor for a ReadOnly view, if none is given.
 			if (sDefaultCursor == null && ReadOnlySelect)
 			{
@@ -905,7 +905,7 @@ namespace LanguageExplorer.Controls.XMLViews
 				}
 			}
 			m_xbvvc = null;
-			_configurationSpec = null;
+			_configParamsElement = null;
 			m_bv = null;
 		}
 
@@ -1226,7 +1226,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		public virtual void SetSelectedRowHighlighting()
 		{
-			switch (XmlUtils.GetOptionalAttributeValue(_configurationSpec, "selectionStyle", string.Empty))
+			switch (XmlUtils.GetOptionalAttributeValue(_configParamsElement, "selectionStyle", string.Empty))
 			{
 				case "all":
 					SelectedRowHighlighting = SelectionHighlighting.all;
@@ -1356,7 +1356,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			rgvsli[0].cpropPrevious = 0;
 			rgvsli[0].tag = MainTag;
 			IVwSelection vwselNew = null;
-			var isEditable = XmlUtils.GetOptionalBooleanAttributeValue(_configurationSpec, "editable", true);
+			var isEditable = XmlUtils.GetOptionalBooleanAttributeValue(_configParamsElement, "editable", true);
 			var fInstalledNewSelection = false;
 			if (isEditable) //hack to get around bug XW-38
 			{
@@ -1512,8 +1512,6 @@ namespace LanguageExplorer.Controls.XMLViews
 			m_bv.SpecialCache.AddNotification(this);
 			// Don't try to draw until we get OnSize and do layout.
 			m_dxdLayoutWidth = kForceLayout;
-			// Filter bar uses info from our VC and can't finish init until we make it.
-			m_bv.FilterBar?.MakeItems();
 		}
 
 		/// <summary>

@@ -48,7 +48,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// Specifications of columns to display
 		/// </summary>
-		protected List<XElement> m_columns = new List<XElement>();
+		protected List<XElement> _columnSpecificationElements = new List<XElement>();
 		/// <summary>Top-level fake property for list of objects.</summary>
 		protected int m_madeUpFieldIdentifier;
 		/// <summary />
@@ -132,14 +132,14 @@ namespace LanguageExplorer.Controls.XMLViews
 		}
 
 		/// <summary />
-		internal XmlBrowseViewVc(XElement xnSpec, int madeUpFieldIdentifier, XmlBrowseViewBase xbv)
+		internal XmlBrowseViewVc(XElement configParamsElement, int madeUpFieldIdentifier, XmlBrowseViewBase xbv)
 			: this(xbv)
 		{
-			Debug.Assert(xnSpec != null);
+			Debug.Assert(configParamsElement != null);
 			Debug.Assert(xbv != null);
 			DataAccess = xbv.SpecialCache;
 			m_xbv = xbv;
-			m_xnSpec = xnSpec;
+			_configParamsElement = configParamsElement;
 			// This column list is saved in BrowseViewer.UpdateColumnList
 			var savedCols = m_xbv.m_bv.PropertyTable.GetValue<string>(ColListId, SettingsGroup.LocalSettings);
 			SortItemProvider = xbv.SortItemProvider;
@@ -157,7 +157,7 @@ namespace LanguageExplorer.Controls.XMLViews
 				{
 					if (XmlUtils.GetOptionalAttributeValue(node, "visibility", "always") == "always")
 					{
-						m_columns.Add(node);
+						_columnSpecificationElements.Add(node);
 					}
 				}
 			}
@@ -167,7 +167,7 @@ namespace LanguageExplorer.Controls.XMLViews
 				{
 					if (IsValidColumnSpec(node))
 					{
-						m_columns.Add(node);
+						_columnSpecificationElements.Add(node);
 					}
 				}
 			}
@@ -439,7 +439,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		protected virtual void SetupSelectColumn()
 		{
-			var xa = m_xnSpec.Attribute("selectColumn");
+			var xa = _configParamsElement.Attribute("selectColumn");
 			HasSelectColumn = xa != null && xa.Value == "true";
 			if (HasSelectColumn)
 			{
@@ -464,7 +464,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		public List<XElement> ComputePossibleColumns()
 		{
-			PossibleColumnSpecs = PartGenerator.GetGeneratedChildren(m_xnSpec.Element("columns"), m_xbv.Cache, ListItemsClass != 0 ? this : null, ListItemsClass);
+			PossibleColumnSpecs = PartGenerator.GetGeneratedChildren(_configParamsElement.Element("columns"), m_xbv.Cache, ListItemsClass != 0 ? this : null, ListItemsClass);
 			return PossibleColumnSpecs;
 		}
 
@@ -490,7 +490,7 @@ namespace LanguageExplorer.Controls.XMLViews
 				else
 				{
 					// we still need to know what listItemsClass to expect this list to be based on.
-					var listItemsClass = XmlUtils.GetMandatoryAttributeValue(m_xnSpec, "listItemsClass");
+					var listItemsClass = XmlUtils.GetMandatoryAttributeValue(_configParamsElement, "listItemsClass");
 					m_listItemsClass = m_cache.MetaDataCacheAccessor.GetClassId(listItemsClass);
 
 				}
@@ -614,8 +614,8 @@ namespace LanguageExplorer.Controls.XMLViews
 
 		internal virtual List<XElement> ColumnSpecs
 		{
-			get => m_columns;
-			set => m_columns = value;
+			get => _columnSpecificationElements;
+			set => _columnSpecificationElements = value;
 		}
 
 		protected internal List<XElement> PossibleColumnSpecs { get; protected set; }
@@ -703,7 +703,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			}
 			// Make a table.
 			var rglength = m_xbv.GetColWidthInfo();
-			var colCount = m_columns.Count;
+			var colCount = _columnSpecificationElements.Count;
 			if (HasSelectColumn)
 			{
 				colCount++;
@@ -770,14 +770,14 @@ namespace LanguageExplorer.Controls.XMLViews
 			var cAdjCol = HasSelectColumn ? 0 : 1;
 			if (ShowColumnsRTL)
 			{
-				for (var icol = m_columns.Count; icol > 0; --icol)
+				for (var icol = _columnSpecificationElements.Count; icol > 0; --icol)
 				{
 					AddTableCell(vwenv, hvo, index, hvoRoot, icolActive, cAdjCol, icol);
 				}
 			}
 			else
 			{
-				for (var icol = 1; icol <= m_columns.Count; ++icol)
+				for (var icol = 1; icol <= _columnSpecificationElements.Count; ++icol)
 				{
 					AddTableCell(vwenv, hvo, index, hvoRoot, icolActive, cAdjCol, icol);
 				}
@@ -806,12 +806,12 @@ namespace LanguageExplorer.Controls.XMLViews
 
 		private void AddTableCell(IVwEnv vwenv, int hvo, int index, int hvoRoot, int icolActive, int cAdjCol, int icol)
 		{
-			var node = m_columns[icol - 1];
+			var columnSpecificationElement = _columnSpecificationElements[icol - 1];
 			// Figure out the underlying Right-To-Left value.
 			var fRightToLeft = false;
 			// Figure out if this column's writing system is audio.
 			var fVoice = false;
-			m_wsBest = GetBestWsForNode(node, hvo);
+			m_wsBest = GetBestWsForElement(columnSpecificationElement, hvo);
 			if (m_wsBest != 0)
 			{
 				var ws = m_cache.ServiceLocator.WritingSystemManager.Get(m_wsBest);
@@ -847,16 +847,16 @@ namespace LanguageExplorer.Controls.XMLViews
 				}
 			}
 			// Make a cell and embed the contents of the column node.
-			ProcessProperties(node, vwenv);
-			SetCellProperties(index, icol, node, hvo, vwenv, fIsCellActive);
+			ProcessProperties(columnSpecificationElement, vwenv);
+			SetCellProperties(index, icol, columnSpecificationElement, hvo, vwenv, fIsCellActive);
 			vwenv.set_IntProperty((int)FwTextPropType.ktptPadTop, (int)FwTextPropVar.ktpvMilliPoint, 1607);
 			vwenv.OpenTableCell(1, 1);
 			vwenv.set_IntProperty((int)FwTextPropType.ktptPadTrailing, (int)FwTextPropVar.ktpvMilliPoint, 1607);
 			vwenv.set_IntProperty((int)FwTextPropType.ktptPadLeading, (int)FwTextPropVar.ktpvMilliPoint, 1607);
-			if (node.Name == "column")
+			if (columnSpecificationElement.Name == "column")
 			{
 				// Paragraph directionality must be set before the paragraph is opened.
-				vwenv.set_IntProperty((int)FwTextPropType.ktptRightToLeft, (int)FwTextPropVar.ktpvEnum, IsWritingSystemRTL(node) ? -1 : 0);
+				vwenv.set_IntProperty((int)FwTextPropType.ktptRightToLeft, (int)FwTextPropVar.ktpvEnum, IsWritingSystemRTL(columnSpecificationElement) ? -1 : 0);
 			}
 			// According to LT-8947, in bulk edit preview mode, we want to try to show the
 			// original cell contents on the same line with the preview arrow and the new cell contents.
@@ -877,7 +877,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			// </Paragraph>
 			//
 			vwenv.OpenParagraph(); // <Paragraph>
-			var multiPara = XmlUtils.GetOptionalBooleanAttributeValue(node, "multipara", false);
+			var multiPara = XmlUtils.GetOptionalBooleanAttributeValue(columnSpecificationElement, "multipara", false);
 			// <InnerPile>
 			vwenv.OpenInnerPile();
 			// if the multi-para attribute is not specified, create a paragraph to wrap the cell contents.
@@ -891,11 +891,11 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				try
 				{
-					if (node.Name == "column")
+					if (columnSpecificationElement.Name == "column")
 					{
-						SetForcedWs(node);
+						SetForcedWs(columnSpecificationElement);
 					}
-					var nodeToProcess = GetColumnNode(node, hvo, m_sda, LayoutCache);
+					var nodeToProcess = GetColumnNode(columnSpecificationElement, hvo, m_sda, LayoutCache);
 					ProcessChildren(nodeToProcess, vwenv, hvo, null);
 				}
 				finally
@@ -912,7 +912,7 @@ namespace LanguageExplorer.Controls.XMLViews
 				var item = m_sortItemProvider.SortItemAt(ihvo);
 				if (item != null)
 				{
-					DisplayCell(item, node, hvo, vwenv); // (Original) cell contents
+					DisplayCell(item, columnSpecificationElement, hvo, vwenv); // (Original) cell contents
 				}
 			}
 
@@ -924,7 +924,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			vwenv.CloseInnerPile(); // </InnerPile>
 			if (fIsCellActive)
 			{
-				AddPreviewPiles(vwenv, node, icol);
+				AddPreviewPiles(vwenv, columnSpecificationElement, icol);
 			}
 			vwenv.CloseParagraph(); // </Paragraph>
 			vwenv.CloseTableCell();
@@ -1259,14 +1259,14 @@ namespace LanguageExplorer.Controls.XMLViews
 			return fAllowEdit;
 		}
 
-		private int GetBestWsForNode(XElement node, int hvo)
+		private int GetBestWsForElement(XElement columnSpecificationElement, int hvo)
 		{
 			// look for a writing system ID.
-			var xa = node.Attribute("ws");
-			var xn = node;
+			var xa = columnSpecificationElement.Attribute("ws");
+			var xn = columnSpecificationElement;
 			if (xa == null)
 			{
-				xn = XmlUtils.FindElement(node, "string");
+				xn = XmlUtils.FindElement(columnSpecificationElement, "string");
 			}
 			var wsBest = 0;
 			if (xn == null)
@@ -1280,7 +1280,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				hvoBest = GetBestHvoAndFlid(hvo, xn, out flidBest);
 			}
-			if (StringServices.GetWsSpecWithoutPrefix(XmlUtils.GetOptionalAttributeValue(node, "ws")) == "reversal")
+			if (StringServices.GetWsSpecWithoutPrefix(XmlUtils.GetOptionalAttributeValue(columnSpecificationElement, "ws")) == "reversal")
 			{
 				// This can happen, for instance, in the Merge Entry dialog's browse view.
 				// See FWR-2807.
@@ -1316,7 +1316,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			// Figure out if this column's writing system is audio.
 			var fVoice = false;
 			// Enhance GJM: Can we just test m_wsBest here?
-			var bestWsHandle = GetBestWsForNode(node, hvo);
+			var bestWsHandle = GetBestWsForElement(node, hvo);
 			if (bestWsHandle == 0)
 			{
 				return false;
@@ -1478,10 +1478,10 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		internal bool RemoveInvalidColumns()
 		{
-			var invalidColumns = m_columns.Where(column => !IsValidColumnSpec(column)).ToList();
+			var invalidColumns = _columnSpecificationElements.Where(column => !IsValidColumnSpec(column)).ToList();
 			foreach (var invalidColumn in invalidColumns)
 			{
-				m_columns.Remove(invalidColumn);
+				_columnSpecificationElements.Remove(invalidColumn);
 			}
 			return invalidColumns.Any();
 		}

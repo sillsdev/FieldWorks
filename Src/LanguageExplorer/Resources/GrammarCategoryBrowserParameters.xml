@@ -1,5 +1,5 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
-<parameters id="POSList" field="PartsOfSpeech" altTitleId="PartOfSpeech-Plural" filterBar="true" editable="false">
+<?xml version="1.0" encoding="utf-8" ?>
+<parameters id="POSList" field="PartsOfSpeech" altTitleId="PartOfSpeech-Plural" wantFilterBar="true" editable="false">
 <!-- Please increment BrowseViewer.kBrowseViewVersion when you change these specs,
  so that XmlBrowseViewBaseVc can invalidate obsoleted columns that have been saved in each current control's ColumnList -->
 	<columns>

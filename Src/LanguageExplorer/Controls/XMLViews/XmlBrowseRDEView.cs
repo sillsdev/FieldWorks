@@ -90,7 +90,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				if (m_xbvvc == null)
 				{
-					m_xbvvc = new XmlRDEBrowseViewVc(_configurationSpec, MainTag, this);
+					m_xbvvc = new XmlRDEBrowseViewVc(_configParamsElement, MainTag, this);
 				}
 				return base.Vc;
 			}

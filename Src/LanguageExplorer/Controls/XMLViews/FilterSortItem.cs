@@ -99,7 +99,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			}
 
 			// Dispose unmanaged resources here, whether disposing is true or false.
-			Spec = null;
+			ColumnSpecificationElement = null;
 			m_combo = null;
 			Finder = null;
 			Sorter = null;
@@ -114,7 +114,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// Gets or sets the spec.
 		/// </summary>
-		internal XElement Spec { get; set; }
+		internal XElement ColumnSpecificationElement { get; set; }
 
 		/// <summary>
 		/// Gets or sets the finder.

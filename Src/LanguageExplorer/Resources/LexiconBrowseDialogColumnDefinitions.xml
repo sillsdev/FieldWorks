@@ -17,7 +17,7 @@
 	<column layout="DefinitionsForSense" label="Definition" multipara="true" ws="$ws=analysis" transduce="LexSense.Definition" cansortbylength="true" visibility="always" width="96000"/>
 	<column layout="GrammaticalInfoFullForSense" headerlabel="Grammatical Info." chooserFilter="PosFilter" label="Grammatical Info. (Full)" multipara="true" width="72000" visibility="always" />
 	<column layout="GrammaticalInfoAbbrForSense" headerlabel="Grammatical Info." chooserFilter="PosFilter" label="Grammatical Info. (Abbr.)" multipara="true"  width="72000" visibility="dialog" />
-	<column layout="GrammaticalCategoryForSense" label="Grammatical Category" multipara="true" visibility="dialog" width="72000" bulkEdit="BulkPosEditor" />
+	<column layout="GrammaticalCategoryForSense" label="Grammatical Category" multipara="true" visibility="dialog" width="72000" chooserFilter="PosFilter" />
 	<column layout="OutlineForSense" label="Sense Number" multipara="true" ws="$ws=analysis" field="LexEntry.Senses" visibility="dialog" />
 	<column layout="ReversalEntriesForSense" editLayout ="ReversalEntriesForSenseEdit" label="Reversals" multipara="true" transduce="LexSense.ReversalEntriesBulkText"
 		  ws="$ws=analysis" visibility="dialog"/>
@@ -29,14 +29,14 @@
 	<column layout="ExceptionFeatures" label="Exception 'Features'" multipara="true" width="25%"
 		editable="false" visibility="dialog" displayWs="best analysis">
 	</column>
-	<column layout="DialectLabelsEntry" label="Dialect Labels (Entry)"  multipara="true" field="LexEntry.DialectLabels" width="72000" visibility="dialog" chooserFilter="complexListMultiple" list="LexDb.DialectLabels" bulkEdit="complexListMultiple" displayWs="best vernoranal" displayNameProperty="VernOrAnalAbbrTSS" ws="$ws=vernacular analysis"/>
-	<column layout="DialectLabelsSense" label="Dialect Labels (Sense)"  multipara="true" field="LexSense.DialectLabels" width="72000" visibility="dialog" chooserFilter="complexListMultiple" list="LexDb.DialectLabels" bulkEdit="complexListMultiple" displayWs="best vernoranal" displayNameProperty="VernOrAnalAbbrTSS" ws="$ws=vernacular analysis"/>
+	<column layout="DialectLabelsEntry" label="Dialect Labels (Entry)"  multipara="true" field="LexEntry.DialectLabels" width="72000" visibility="dialog" list="LexDb.DialectLabels" bulkEdit="complexListMultiple" displayWs="best vernoranal" displayNameProperty="VernOrAnalAbbrTSS" ws="$ws=vernacular analysis"/>
+	<column layout="DialectLabelsSense" label="Dialect Labels (Sense)"  multipara="true" field="LexSense.DialectLabels" width="72000" visibility="dialog" list="LexDb.DialectLabels" bulkEdit="complexListMultiple" displayWs="best vernoranal" displayNameProperty="VernOrAnalAbbrTSS" ws="$ws=vernacular analysis"/>
 	<column layout="DomainsOfSensesForSense" label="Semantic Domains" width="72000" multipara="true" visibility="dialog"
 		chooserFilter="complexListMultiple"
 		bulkEdit="semanticDomainListMultiple" field="LexSense.SemanticDomains" list="SemanticDomainList" displayNameProperty="AbbrAndNameTSS"/>
 	<column layout="NumberOfSensesForEntry" label="Number of Senses (Entry)" sortType="integer" blankPossible="false" visibility="dialog"/>
 	<column layout="EtymologyPrecComment" label="Etym.-Preceding Annotation"  multipara="true" ws="$ws=analysis" transduce="LexEtymology.PrecComment" ghostListField="LexDb.AllPossibleEtymologies" editable="false" visibility="dialog" />
-	<column layout="EtymologyLanguage" label="Etym.-Source Language"  multipara="true" field="LexEtymology.Language" ghostListField="LexDb.AllPossibleEtymologies" visibility="dialog" list="LexDb.Languages" chooserFilter="complexListMultiple" bulkEdit="complexListMultiple" displayNameProperty="AbbrAndNameTSS" />
+	<column layout="EtymologyLanguage" label="Etym.-Source Language"  multipara="true" field="LexEtymology.Language" ghostListField="LexDb.AllPossibleEtymologies" visibility="dialog" list="LexDb.Languages" bulkEdit="complexListMultiple" displayNameProperty="AbbrAndNameTSS" />
 	<column layout="EtymologyLanguageNotes" label="Etym.-Source Language Notes"  multipara="true" ws="$ws=analysis" transduce="LexEtymology.LanguageNotes" ghostListField="LexDb.AllPossibleEtymologies" editable="false" visibility="dialog" />
 	<column layout="EtymologyForm" label="Etym.-Source Form"  multipara="true" ws="$ws=analysis vernacular" transduce="LexEtymology.Form" ghostListField="LexDb.AllPossibleEtymologies" editable="false" visibility="dialog" />
 	<column layout="EtymologyGloss" label="Etym.-Gloss"  multipara="true" ws="$ws=analysis" transduce="LexEtymology.Gloss" ghostListField="LexDb.AllPossibleEtymologies" editable="false" visibility="dialog" />
@@ -100,11 +100,8 @@
 			ghostListField="LexDb.AllPossibleAllomorphs"
 			bulkEdit="boolean" field="MoForm.IsAbstract" items="0:no;1:yes"/>
 	<column layout="MorphTypeForAllomorph" multipara="true" label="Morph Type (Allomorph)" visibility="dialog"/>
-	<!--bulkEdit="morphTypeListItemForVectorOwner" field="MoForm.MorphType" bulkDelete="false" list="LexDb.MorphTypes"/>-->
 	<column layout="EnvironmentsForLexemeForm" multipara="true" label="Environments" visibility="dialog"/>
 	<column layout="EnvironmentsForAllomorphs" multipara="true" label="Environments (Allomorph)" visibility="dialog"/>
-	<!--bulkEdit="customCollection" field="MoForm.PhoneEnv(isnot="MoAffixProcess")"  list="PhPhonData.Environments"
-				displayWs="best analysis" displayNameProperty="ShortNameTSS" /> -->
 	<column layout="PublishInForEntries" multipara="true" label="Publish Entry In" width="72000"
 			bulkEdit="complexListMultiple" field="LexEntry.PublishIn" list="LexDb.PublicationTypes" displayNameProperty="ShortNameTSS"
 			displayWs="best analysis" visibility="dialog"/>
@@ -120,7 +117,6 @@
 			width="72000" bulkEdit="complexListMultiple" field="CmPicture.PublishIn" list="LexDb.PublicationTypes" ghostListField="LexDb.AllPossiblePictures" displayNameProperty="ShortNameTSS" displayWs="best analysis" visibility="dialog"/>
 	<column layout="InflectionClassForAffix" label="Inflection Classes (Affix)" multipara="true" editable="false"
           bulkEdit="InflectionClassEditor" visibility="dialog" displayWs="best analysis" />
-	<!--bulkEdit="customCollection" field="MoAffixForm.InflectionClasses" list="" -->
 	<column layout="RequiredFeatures" multipara="true" label="Required Features (Allomorph)" visibility="dialog"/>
 	<!-- editable requested by LT-4688 -->
 	<column layout="HomographNumberForEntry" label="Homograph number" visibility="dialog" editable="true" sortType="integer" blankPossible="false" />

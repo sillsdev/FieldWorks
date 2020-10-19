@@ -1,7 +1,7 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
+<?xml version="1.0" encoding="utf-8" ?>
 <root>
 	<browseview>
-		<parameters id="PhonemeList" filterBar="true" editable="false" altTitleId="PhPhoneme-Plural">
+		<parameters id="PhonemeList" wantFilterBar="true" editable="false" altTitleId="PhPhoneme-Plural">
 			<columns>
 				<column label="Refer to as" width="33%" layout="Name" ws="$ws=best vernacular" field="Name"/>
 				<column label="Description" width="33%" layout="Description" ws="$ws=best analysis" field="Description"/>

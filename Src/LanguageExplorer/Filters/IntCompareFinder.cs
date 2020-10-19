@@ -17,8 +17,8 @@ namespace LanguageExplorer.Filters
 	internal sealed class IntCompareFinder : LayoutFinder
 	{
 		/// <summary />
-		internal IntCompareFinder(LcmCache cache, string layoutName, XElement colSpec, IApp app)
-			: base(cache, layoutName, colSpec, app)
+		internal IntCompareFinder(LcmCache cache, string layoutName, XElement columnSpecificationElement, IApp app)
+			: base(cache, layoutName, columnSpecificationElement, app)
 		{
 		}
 

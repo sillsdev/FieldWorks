@@ -133,7 +133,7 @@ namespace LanguageExplorer.Filters
 		}
 
 		/// <summary>
-		/// Compatibles the filter.
+		/// Compatible check of the filter.
 		/// </summary>
 		internal virtual bool CompatibleFilter(XElement colSpec)
 		{

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<parameters toolId="bulkEditPhonemes" clerk="phonemes" treeBarAvailability="NotAllowed" filterBar="true" bulkEdit="true" bulkEditListItemsClasses="PhPhoneme" selectColumn="true" altTitleId="PhPhoneme-Plural">
+<parameters toolId="bulkEditPhonemes" treeBarAvailability="NotAllowed" wantFilterBar="true" wantBulkEdit="true" bulkEditListItemsClasses="PhPhoneme" selectColumn="true" altTitleId="PhPhoneme-Plural">
 	<enableBulkEditTabs enableBEListChoice="true" enableBEBulkCopy="false" enableBEClickCopy="false" enableBEProcess="false" enableBEFindReplace="false" enableBEOther="false" bulkEditListItemsGhostFields="PhonFeats" bulkEditListItemsClasses="PhPhoneme"/>
 	<!-- NOTE Overrides syntax: override nodes that have children replace entire target (included) node -->
 	<columns generate="objectValuePartsForParentLayouts">

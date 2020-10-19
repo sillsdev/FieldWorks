@@ -16,8 +16,8 @@ namespace LanguageExplorer
 	public class FwConfigurationException : ApplicationException
 	{
 		/// <summary />
-		public FwConfigurationException(string message, XElement node, Exception exInner)
-			: base(message + Environment.NewLine + node, exInner)
+		public FwConfigurationException(string message, XElement columnSpecificationElement, Exception exInner)
+			: base(message + Environment.NewLine + columnSpecificationElement, exInner)
 		{
 		}
 
@@ -28,8 +28,8 @@ namespace LanguageExplorer
 		}
 
 		/// <summary />
-		public FwConfigurationException(string message, XElement node)
-			: base(message + Environment.NewLine + node)
+		public FwConfigurationException(string message, XElement columnSpecificationElement)
+			: base(message + Environment.NewLine + columnSpecificationElement)
 		{
 		}
 

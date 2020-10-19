@@ -25,27 +25,26 @@ namespace LanguageExplorer.Filters
 	internal class LayoutFinder : IStringFinder
 	{
 		#region Data members
-		internal ISilDataAccess m_sda;
-		internal string m_layoutName;
-		internal IFwMetaDataCache m_mdc;
-		internal LcmCache m_cache;
-		internal LayoutCache m_layouts;
-		internal XElement m_colSpec;
-		/// <summary />
+		protected ISilDataAccess m_sda;
+		protected string m_layoutName;
+		protected IFwMetaDataCache m_mdc;
+		protected LcmCache m_cache;
+		protected LayoutCache m_layouts;
+		private readonly XElement _columnSpecificationElement;
 		protected XmlBrowseViewVc m_vc;
-		private IApp m_app;
+		private readonly IApp m_app;
 		#endregion
 
 		/// <summary />
-		private LayoutFinder(XElement colSpec, string layoutName)
+		private LayoutFinder(XElement columnSpecificationElement, string layoutName)
 		{
 			m_layoutName = layoutName;
-			m_colSpec = colSpec;
+			_columnSpecificationElement = columnSpecificationElement;
 		}
 
 		/// <summary />
-		internal LayoutFinder(LcmCache cache, string layoutName, XElement colSpec, IApp app)
-			: this(colSpec, layoutName)
+		internal LayoutFinder(LcmCache cache, string layoutName, XElement columnSpecificationElement, IApp app)
+			: this(columnSpecificationElement, layoutName)
 		{
 			m_app = app;
 			Cache = cache;
@@ -62,39 +61,42 @@ namespace LanguageExplorer.Filters
 		/// <summary>
 		/// Make a finder appropriate to the given column specification
 		/// </summary>
-		internal static IStringFinder CreateFinder(LcmCache cache, XElement colSpec, XmlBrowseViewVc vc, IApp app)
+		internal static IStringFinder CreateFinder(LcmCache cache, XElement columnSpecificationElement, XmlBrowseViewVc vc, IApp app)
 		{
-			var layoutName = XmlUtils.GetOptionalAttributeValue(colSpec, "layout");
-			var sSortMethod = XmlUtils.GetOptionalAttributeValue(colSpec, "sortmethod");
-			var sortType = XmlUtils.GetOptionalAttributeValue(colSpec, "sortType", null);
+			var layoutName = XmlUtils.GetOptionalAttributeValue(columnSpecificationElement, "layout");
+			var sSortMethod = XmlUtils.GetOptionalAttributeValue(columnSpecificationElement, "sortmethod");
 			LayoutFinder result;
 			if (sSortMethod != null)
 			{
-				result = new SortMethodFinder(cache, sSortMethod, layoutName, colSpec, app);
-			}
-			else if (sortType != null)
-			{
-				switch (sortType)
-				{
-					case "integer":
-						result = new IntCompareFinder(cache, layoutName, colSpec, app);
-						break;
-					case "date":
-					case "YesNo":
-					case "stringList":
-					case "genDate":
-						// no special action needed here for sorting dates or date that shows as 'yes" or "no";
-						// Using a SortCollectorEnv triggers special
-						// action in case "datetime"/"gendate" of XmlVc.ProcessFrag().
-						result = new LayoutFinder(cache, layoutName, colSpec, app);
-						break;
-					default:
-						throw new FwConfigurationException("unexpected sort type: " + sortType, colSpec);
-				}
+				result = new SortMethodFinder(cache, sSortMethod, layoutName, columnSpecificationElement, app);
 			}
 			else
 			{
-				result = new LayoutFinder(cache, layoutName, colSpec, app);
+				var sortType = XmlUtils.GetOptionalAttributeValue(columnSpecificationElement, "sortType", null);
+				if (sortType == null)
+				{
+					result = new LayoutFinder(cache, layoutName, columnSpecificationElement, app);
+				}
+				else
+				{
+					switch (sortType)
+					{
+						case "integer":
+							result = new IntCompareFinder(cache, layoutName, columnSpecificationElement, app);
+							break;
+						case "date":
+						case "YesNo":
+						case "stringList":
+						case "genDate":
+							// no special action needed here for sorting dates or date that shows as 'yes" or "no";
+							// Using a SortCollectorEnv triggers special
+							// action in case "datetime"/"gendate" of XmlVc.ProcessFrag().
+							result = new LayoutFinder(cache, layoutName, columnSpecificationElement, app);
+							break;
+						default:
+							throw new FwConfigurationException($"unexpected sort type: {sortType}", columnSpecificationElement);
+					}
+				}
 			}
 			result.Vc = vc;
 			return result;
@@ -135,7 +137,7 @@ namespace LanguageExplorer.Filters
 				string[] result = null;
 				if (m_layoutName == null)
 				{
-					result = StringsFor(hvo, m_colSpec, m_vc.WsForce);
+					result = StringsFor(hvo, _columnSpecificationElement, m_vc.WsForce);
 				}
 				if (result == null)
 				{
@@ -192,7 +194,7 @@ namespace LanguageExplorer.Filters
 			}
 			var hvo = item.RootObjectHvo;
 			var collector = fForSorting ? new SortCollectorEnv(null, m_sda, hvo) : new TsStringCollectorEnv(null, m_sda, hvo);
-			// This will check to see if the VC is either null or disposed.  The disposed check is neccesary because
+			// This will check to see if the VC is either null or disposed.  The disposed check is necessary because
 			// there are several instances where we can have a reference to an instance that was disposed, which will
 			// cause problems later on.
 			// Enhance CurtisH/EricP: If this VC gets used in other places, rather than adding more checks like this one,
@@ -218,7 +220,7 @@ namespace LanguageExplorer.Filters
 					throw new ApplicationException("There's no way the browse VC (m_vc) can get a string in its current state.");
 				}
 			}
-			m_vc.DisplayCell(item, m_colSpec, hvo, collector);
+			m_vc.DisplayCell(item, _columnSpecificationElement, hvo, collector);
 			return collector.Result;
 		}
 
@@ -238,7 +240,7 @@ namespace LanguageExplorer.Filters
 		/// </summary>
 		public void CollectItems(int hvo, List<IManyOnePathSortItem> collector)
 		{
-			XmlViewsUtils.CollectBrowseItems(hvo, m_colSpec, collector, m_mdc, m_sda, m_layouts);
+			XmlViewsUtils.CollectBrowseItems(hvo, _columnSpecificationElement, collector, m_mdc, m_sda, m_layouts);
 		}
 
 		private string[] StringsFor(int hvo, XElement layout, int wsForce)
@@ -251,22 +253,22 @@ namespace LanguageExplorer.Filters
 		/// </summary>
 		public virtual bool SameFinder(IStringFinder other)
 		{
-			return other is LayoutFinder otherLf && SameLayoutName(otherLf) && SameData(otherLf) && SameConfiguration(otherLf);
+			return other is LayoutFinder otherLayoutFinder && SameLayoutName(otherLayoutFinder) && SameData(otherLayoutFinder) && SameConfiguration(otherLayoutFinder);
 		}
 
-		private bool SameLayoutName(LayoutFinder otherLf)
+		private bool SameLayoutName(LayoutFinder otherLayoutFinder)
 		{
-			return otherLf.m_layoutName == m_layoutName || (string.IsNullOrEmpty(otherLf.m_layoutName) && string.IsNullOrEmpty(m_layoutName));
+			return otherLayoutFinder.m_layoutName == m_layoutName || (string.IsNullOrEmpty(otherLayoutFinder.m_layoutName) && string.IsNullOrEmpty(m_layoutName));
 		}
 
-		private bool SameData(LayoutFinder otherLf)
+		private bool SameData(LayoutFinder otherLayoutFinder)
 		{
-			if (otherLf.m_sda == m_sda)
+			if (otherLayoutFinder.m_sda == m_sda)
 			{
 				return true;
 			}
 			var first = RootSdaOf(m_sda);
-			return first == RootSdaOf(otherLf.m_sda) && first != null;
+			return first == RootSdaOf(otherLayoutFinder.m_sda) && first != null;
 		}
 
 		private static ISilDataAccessManaged RootSdaOf(ISilDataAccess sda)
@@ -278,18 +280,18 @@ namespace LanguageExplorer.Filters
 			return sda as ISilDataAccessManaged;
 		}
 
-		private bool SameConfiguration(LayoutFinder otherLf)
+		private bool SameConfiguration(LayoutFinder otherLayoutFinder)
 		{
 			// XmlUtils.NodesMatch() is too strict a comparison for identifying column configurations that will
 			// display the same value (e.g. we don't care about differences in width), causing us to
 			// lose the sort arrow when switching between tools sharing common columns (LT-2858).
 			// For now, just assume that columns with the same label will display the same value.
 			// If this proves too loose for a particular column, try implementing a sortmethod instead.
-			var colSpecLabel = XmlUtils.GetMandatoryAttributeValue(m_colSpec, "label");
-			var otherLfLabel = XmlUtils.GetMandatoryAttributeValue(otherLf.m_colSpec, "label");
-			var colSpecLabel2 = XmlUtils.GetOptionalAttributeValue(m_colSpec, "headerlabel");
-			var otherLfLabel2 = XmlUtils.GetOptionalAttributeValue(otherLf.m_colSpec, "headerlabel");
-			return colSpecLabel == otherLfLabel || colSpecLabel == otherLfLabel2 || colSpecLabel2 == otherLfLabel || colSpecLabel2 == otherLfLabel2 && otherLfLabel2 != null;
+			var colSpecLabel = XmlUtils.GetMandatoryAttributeValue(_columnSpecificationElement, "label");
+			var otherLayoutFinderLabel = XmlUtils.GetMandatoryAttributeValue(otherLayoutFinder._columnSpecificationElement, "label");
+			var colSpecLabel2 = XmlUtils.GetOptionalAttributeValue(_columnSpecificationElement, "headerlabel");
+			var otherLayoutFinderLabel2 = XmlUtils.GetOptionalAttributeValue(otherLayoutFinder._columnSpecificationElement, "headerlabel");
+			return colSpecLabel == otherLayoutFinderLabel || colSpecLabel == otherLayoutFinderLabel2 || colSpecLabel2 == otherLayoutFinderLabel || colSpecLabel2 == otherLayoutFinderLabel2 && otherLayoutFinderLabel2 != null;
 		}
 
 		/// <summary>
@@ -301,7 +303,7 @@ namespace LanguageExplorer.Filters
 		public void Preload(ICmObject rootObj)
 		{
 			m_vc?.SetReversalWritingSystemFromRootObject(rootObj);
-			var preload = XmlUtils.GetOptionalAttributeValue(m_colSpec, "preload", null);
+			var preload = XmlUtils.GetOptionalAttributeValue(_columnSpecificationElement, "preload", null);
 			if (string.IsNullOrEmpty(preload))
 			{
 				return;
@@ -340,7 +342,7 @@ namespace LanguageExplorer.Filters
 		public virtual void PersistAsXml(XElement element)
 		{
 			XmlUtils.SetAttribute(element, "layout", m_layoutName ?? string.Empty);
-			element.Add(m_colSpec);
+			element.Add(_columnSpecificationElement);
 		}
 
 		#endregion

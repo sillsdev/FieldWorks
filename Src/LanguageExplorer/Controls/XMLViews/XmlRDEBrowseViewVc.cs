@@ -32,27 +32,27 @@ namespace LanguageExplorer.Controls.XMLViews
 		#region Constructiona and initialization
 
 		/// <summary />
-		internal XmlRDEBrowseViewVc(XElement xnSpec, int madeUpFieldIdentifier, XmlBrowseViewBase xbv)
-			: base(xnSpec, madeUpFieldIdentifier, xbv)
+		internal XmlRDEBrowseViewVc(XElement configParamsElement, int madeUpFieldIdentifier, XmlBrowseViewBase xbv)
+			: base(configParamsElement, madeUpFieldIdentifier, xbv)
 		{
 			// set the border color
 			BorderColor = SystemColors.ControlDark;
 			// Check for the special editable row attributes.
 			// this one is independently optional so we can handle it separately.
-			EditRowMergeMethod = XmlUtils.GetOptionalAttributeValue(xnSpec, "editRowMergeMethod", null);
-			var xa = xnSpec.Attribute("editRowModelClass");
+			EditRowMergeMethod = XmlUtils.GetOptionalAttributeValue(configParamsElement, "editRowMergeMethod", null);
+			var xa = configParamsElement.Attribute("editRowModelClass");
 			if (xa != null && xa.Value.Length != 0)
 			{
 				EditRowModelClass = xa.Value;
-				xa = xnSpec.Attribute("editRowSaveMethod");
+				xa = configParamsElement.Attribute("editRowSaveMethod");
 				if (xa != null && xa.Value.Length != 0)
 				{
 					EditRowSaveMethod = xa.Value;
-					xa = xnSpec.Attribute("editRowAssembly");
+					xa = configParamsElement.Attribute("editRowAssembly");
 					if (xa != null && xa.Value.Length != 0)
 					{
 						EditRowAssembly = xa.Value;
-						xa = xnSpec.Attribute("editRowClass");
+						xa = configParamsElement.Attribute("editRowClass");
 						if (xa != null && xa.Value.Length != 0)
 						{
 							EditRowClass = xa.Value;
@@ -298,7 +298,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		private bool ShouldSuppressNoForOtherColumn(XElement frag)
 		{
 			var suppressNoForColumn = XmlUtils.GetOptionalAttributeValue(frag, @"suppressNoForColumn");
-			return !string.IsNullOrEmpty(suppressNoForColumn) && m_columns.Any(col => XmlUtils.GetOptionalAttributeValue(col, @"label").Contains(suppressNoForColumn));
+			return !string.IsNullOrEmpty(suppressNoForColumn) && _columnSpecificationElements.Any(col => XmlUtils.GetOptionalAttributeValue(col, @"label").Contains(suppressNoForColumn));
 		}
 
 		private bool InEditableRow(IVwEnv vwenv)
@@ -324,7 +324,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			vwenv.set_IntProperty((int)FwTextPropType.ktptBorderColor, (int)FwTextPropVar.ktpvDefault, (int)RGB(BorderColor));
 			// Make a table
 			var rglength = m_xbv.GetColWidthInfo();
-			var colCount = m_columns.Count;
+			var colCount = _columnSpecificationElements.Count;
 			if (HasSelectColumn)
 			{
 				colCount++;
@@ -357,14 +357,14 @@ namespace LanguageExplorer.Controls.XMLViews
 			// Make the cells.
 			if (ShowColumnsRTL)
 			{
-				for (var i = m_columns.Count; i > 0; --i)
+				for (var i = _columnSpecificationElements.Count; i > 0; --i)
 				{
 					AddEditCell(vwenv, cda, i);
 				}
 			}
 			else
 			{
-				for (var i = 1; i <= m_columns.Count; ++i)
+				for (var i = 1; i <= _columnSpecificationElements.Count; ++i)
 				{
 					AddEditCell(vwenv, cda, i);
 				}
@@ -376,7 +376,7 @@ namespace LanguageExplorer.Controls.XMLViews
 
 		private void AddEditCell(IVwEnv vwenv, IVwCacheDa cda, int i)
 		{
-			var node = m_columns[i - 1];
+			var node = _columnSpecificationElements[i - 1];
 			// Make a cell and embed an editable virtual string for the column.
 			var editable = XmlUtils.GetOptionalBooleanAttributeValue(node, "editable", true);
 			if (!editable)

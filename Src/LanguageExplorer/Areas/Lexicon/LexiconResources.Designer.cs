@@ -99,7 +99,7 @@ namespace LanguageExplorer.Areas.Lexicon {
         /// <summary>
         ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
         ///&lt;root&gt;
-        ///	&lt;parameters toolId=&quot;bulkEditEntriesOrSenses&quot; filterBar=&quot;true&quot; bulkEdit=&quot;true&quot; selectColumn=&quot;true&quot; bulkEditListItemsClasses=&quot;LexEntry,LexSense,LexEntryRef,LexPronunciation,LexEtymology,MoForm,LexExampleSentence,CmTranslation,LexExtendedNote&quot; bulkEditListItemsGhostFields=&quot;LexDb.AllPossiblePronunciations,LexDb.AllPossibleEtymologies,LexDb.AllPossibleAllomorphs,LexDb.AllExampleSentenceTargets,LexDb.AllExampleTranslationTargets,LexDb.AllComplexEntryRefPropertyTar [rest of string was truncated]&quot;;.
+        ///	&lt;parameters toolId=&quot;bulkEditEntriesOrSenses&quot; wantFilterBar=&quot;true&quot; wantBulkEdit=&quot;true&quot; selectColumn=&quot;true&quot; bulkEditListItemsClasses=&quot;LexEntry,LexSense,LexEntryRef,LexPronunciation,LexEtymology,MoForm,LexExampleSentence,CmTranslation,LexExtendedNote&quot; bulkEditListItemsGhostFields=&quot;LexDb.AllPossiblePronunciations,LexDb.AllPossibleEtymologies,LexDb.AllPossibleAllomorphs,LexDb.AllExampleSentenceTargets,LexDb.AllExampleTranslationTargets,LexDb.AllComplexEntryRefPro [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string BulkEditEntriesOrSensesToolParameters {
             get {
@@ -959,7 +959,7 @@ namespace LanguageExplorer.Areas.Lexicon {
         
         /// <summary>
         ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
-        ///&lt;parameters area=&quot;lexicon&quot; id=&quot;EntriesList&quot; clerk=&quot;entries&quot; field=&quot;Entries&quot; filterBar=&quot;true&quot; altTitleId=&quot;LexEntry-Plural&quot; /&gt;.
+        ///&lt;parameters area=&quot;lexicon&quot; id=&quot;EntriesList&quot; recordListId=&quot;entries&quot; field=&quot;Entries&quot; wantFilterBar=&quot;true&quot; altTitleId=&quot;LexEntry-Plural&quot; /&gt;.
         /// </summary>
         internal static string LexiconBrowseParameters {
             get {
@@ -985,7 +985,7 @@ namespace LanguageExplorer.Areas.Lexicon {
         
         /// <summary>
         ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
-        ///&lt;parameters clerk=&quot;entries&quot; altTitleId=&quot;LexEntry-Plural&quot; persistContext=&quot;Dict&quot; backColor=&quot;White&quot; layout=&quot;&quot; layoutProperty=&quot;DictionaryPublicationLayout&quot; layoutSuffix=&quot;Preview&quot; editable=&quot;false&quot; configureObjectName=&quot;Dictionary&quot; /&gt;.
+        ///&lt;parameters recordListId=&quot;entries&quot; altTitleId=&quot;LexEntry-Plural&quot; persistContext=&quot;Dict&quot; backColor=&quot;White&quot; layout=&quot;&quot; layoutProperty=&quot;DictionaryPublicationLayout&quot; layoutSuffix=&quot;Preview&quot; editable=&quot;false&quot; configureObjectName=&quot;Dictionary&quot; /&gt;.
         /// </summary>
         internal static string LexiconDictionaryToolParameters {
             get {
@@ -1304,7 +1304,7 @@ namespace LanguageExplorer.Areas.Lexicon {
         ///		&lt;parameters treeBarAvailability=&quot;Required&quot; layout=&quot;RDE&quot; msgBoxTrigger=&quot;CategorizedEntry-Intro&quot; allowInsertDeleteRecord=&quot;false&quot; /&gt;
         ///	&lt;/recordeditview&gt;
         ///	&lt;recordbrowseview&gt;
-        ///		&lt;parameters id=&quot;wordList&quot; filterBar=&quot;false&quot; forceReloadListOnInitOrChangeRoot=&quot;true&quot; editRowModelClass=&quot;LexSense&quot; editRowAssembly=&quot;SIL.LCModel.dll&quot; editRowClass=&quot;SIL.LCModel.ILexSense&quot; editRowSaveMethod=&quot;RDENewSense&quot; editRowMergeMethod=&quot;RDEMergeSense&quot; ShowOwnerShortna [rest of string was truncated]&quot;;.
+        ///		&lt;parameters id=&quot;wordList&quot; forceReloadListOnInitOrChangeRoot=&quot;true&quot; editRowModelClass=&quot;LexSense&quot; editRowAssembly=&quot;SIL.LCModel.dll&quot; editRowClass=&quot;SIL.LCModel.ILexSense&quot; editRowSaveMethod=&quot;RDENewSense&quot; editRowMergeMethod=&quot;RDEMergeSense&quot; ShowOwnerShortname=&quot;true&quot; TitleFor [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string RapidDataEntryToolParameters {
             get {
@@ -1341,10 +1341,10 @@ namespace LanguageExplorer.Areas.Lexicon {
         
         /// <summary>
         ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
-        ///&lt;parameters toolId=&quot;reversalBulkEditReversalEntries&quot; clerk=&quot;AllReversalEntries&quot; filterBar=&quot;true&quot; bulkEdit=&quot;true&quot; bulkEditListItemsClasses=&quot;ReversalIndexEntry&quot; selectColumn=&quot;true&quot; altTitleId=&quot;ReversalIndexEntry-Plural&quot; ShowOwnerShortname=&quot;true&quot; &gt;
+        ///&lt;parameters toolId=&quot;reversalBulkEditReversalEntries&quot; recordListId=&quot;AllReversalEntries&quot; wantFilterBar=&quot;true&quot; wantBulkEdit=&quot;true&quot; bulkEditListItemsClasses=&quot;ReversalIndexEntry&quot; selectColumn=&quot;true&quot; altTitleId=&quot;ReversalIndexEntry-Plural&quot; ShowOwnerShortname=&quot;true&quot; &gt;
         ///	&lt;enableBulkEditTabs enableBEListChoice=&quot;true&quot; enableBEBulkCopy=&quot;true&quot; enableBEClickCopy=&quot;true&quot; enableBEProcess=&quot;true&quot; enableBEFindReplace=&quot;true&quot; enableBEOther=&quot;true&quot; /&gt;
         ///	&lt;columns&gt;
-        ///		&lt;!-- If you add a new column and it is  [rest of string was truncated]&quot;;.
+        ///		&lt;!-- If you add a new co [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string ReversalBulkEditReversalEntriesToolParameters {
             get {
@@ -1356,10 +1356,10 @@ namespace LanguageExplorer.Areas.Lexicon {
         ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
         ///&lt;root&gt;
         ///	&lt;docview&gt;
-        ///		&lt;parameters clerk=&quot;AllReversalEntries&quot;  persistContext=&quot;Reversal&quot; backColor=&quot;White&quot; layout=&quot;&quot; layoutProperty=&quot;ReversalIndexPublicationLayout&quot; layoutSuffix=&quot;Preview&quot; editable=&quot;false&quot; configureObjectName=&quot;ReversalIndex&quot; altTitleId=&quot;ReversalIndexEntry-Plural&quot; &gt;
+        ///		&lt;parameters recordListId=&quot;AllReversalEntries&quot;  persistContext=&quot;Reversal&quot; backColor=&quot;White&quot; layout=&quot;&quot; layoutProperty=&quot;ReversalIndexPublicationLayout&quot; layoutSuffix=&quot;Preview&quot; editable=&quot;false&quot; configureObjectName=&quot;ReversalIndex&quot; altTitleId=&quot;ReversalIndexEntry-Plural&quot; &gt;
         ///			&lt;!-- The following configureLayouts node is required only to help migrate old configurations to the new format --&gt;
         ///			&lt;configureLayouts&gt;
-        ///				&lt;layoutType label=&quot;All Reversal Indexes&quot; la [rest of string was truncated]&quot;;.
+        ///				&lt;layoutType label=&quot;All Reversal Inde [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string ReversalEditCompleteToolParameters {
             get {
@@ -1378,14 +1378,14 @@ namespace LanguageExplorer.Areas.Lexicon {
         
         /// <summary>
         ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
-        ///&lt;parameters id=&quot;ReversalEntryMatchList&quot; listItemsClass=&quot;ReversalIndexEntry&quot; filterBar=&quot;false&quot; treeBarAvailability=&quot;NotAllowed&quot; defaultCursor=&quot;Arrow&quot; hscroll=&quot;true&quot; altTitleId=&quot;ReversalIndexEntry-Plural&quot; editable=&quot;false&quot; disableConfigButton=&quot;true&quot;&gt;
+        ///&lt;parameters id=&quot;ReversalEntryMatchList&quot; listItemsClass=&quot;ReversalIndexEntry&quot; treeBarAvailability=&quot;NotAllowed&quot; defaultCursor=&quot;Arrow&quot; hscroll=&quot;true&quot; altTitleId=&quot;ReversalIndexEntry-Plural&quot; editable=&quot;false&quot; disableConfigButton=&quot;true&quot;&gt;
         ///  &lt;columns&gt;
         ///    &lt;column label=&quot;Form&quot; sortmethod=&quot;FullSortKey&quot; ws=&quot;$ws=reversal&quot; editable=&quot;false&quot; width=&quot;96000&quot;&gt;
         ///      &lt;span&gt;
         ///        &lt;properties&gt;
         ///          &lt;editable value=&quot;false&quot;/&gt;
         ///        &lt;/properties&gt;
-        ///        &lt;str [rest of string was truncated]&quot;;.
+        ///        &lt;string field=&quot;Reversa [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string ReversalEntryMatchListParameters {
             get {

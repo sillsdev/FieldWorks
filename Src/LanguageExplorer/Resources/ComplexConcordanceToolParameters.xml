@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <root>
 	<wordOccurrenceList>
-		<parameters id="wordOccurrenceList" editable="false" filterBar="true" altTitleId="Concordance-Matches">
+		<parameters id="wordOccurrenceList" editable="false" wantFilterBar="true" altTitleId="Concordance-Matches">
 			<includeCordanceColumns />
 		</parameters>
 	</wordOccurrenceList>

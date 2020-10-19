@@ -1,5 +1,5 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
-<parameters toolId="reversalBulkEditReversalEntries" clerk="AllReversalEntries" filterBar="true" bulkEdit="true" bulkEditListItemsClasses="ReversalIndexEntry" selectColumn="true" altTitleId="ReversalIndexEntry-Plural" ShowOwnerShortname="true" >
+<?xml version="1.0" encoding="utf-8" ?>
+<parameters toolId="reversalBulkEditReversalEntries" recordListId="AllReversalEntries" wantFilterBar="true" wantBulkEdit="true" bulkEditListItemsClasses="ReversalIndexEntry" selectColumn="true" altTitleId="ReversalIndexEntry-Plural" ShowOwnerShortname="true" >
 	<enableBulkEditTabs enableBEListChoice="true" enableBEBulkCopy="true" enableBEClickCopy="true" enableBEProcess="true" enableBEFindReplace="true" enableBEOther="true" />
 	<columns>
 		<!-- If you add a new column and it is has a multi-lingual string you will need to review AreSortersCompatible in ReversalListener -->

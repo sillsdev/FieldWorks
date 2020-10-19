@@ -1,2 +1,2 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
-<parameters id="RecordsList" altTitleId="RnGenericRec-Plural" area="notebook" clerk="records" field="Records" filterBar="true"  />
+<?xml version="1.0" encoding="utf-8" ?>
+<parameters id="RecordsList" altTitleId="RnGenericRec-Plural" area="notebook" field="Records" wantFilterBar="true"  />

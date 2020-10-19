@@ -1,2 +1,2 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
-<parameters id="recordList" clerk="records" filterBar="true" treeBarAvailability="NotAllowed" defaultCursor="Arrow" hscroll="true" altTitleId="RnGenericRec-Plural" />
+<?xml version="1.0" encoding="utf-8" ?>
+<parameters id="recordList" wantFilterBar="true" treeBarAvailability="NotAllowed" defaultCursor="Arrow" hscroll="true" altTitleId="RnGenericRec-Plural" />

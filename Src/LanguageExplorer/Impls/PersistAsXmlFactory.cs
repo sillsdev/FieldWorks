@@ -9,7 +9,6 @@ using System.ComponentModel.Composition.Hosting;
 using System.Linq;
 using System.Reflection;
 using System.Xml.Linq;
-using SIL.Xml;
 
 namespace LanguageExplorer.Impls
 {

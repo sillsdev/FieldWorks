@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<parameters id="lexentryMatchList" listItemsClass="LexEntry" filterBar="false" treeBarAvailability="NotAllowed" defaultCursor="Arrow" hscroll="true" altTitleId="LexEntry-Plural" editable="false">
+<parameters id="lexentryMatchList" listItemsClass="LexEntry" treeBarAvailability="NotAllowed" defaultCursor="Arrow" hscroll="true" altTitleId="LexEntry-Plural" editable="false">
 	<columns>
 		<column label="Headword" sortmethod="FullSortKey" ws="$ws=best vernoranal" editable="false" width="68000" layout="EntryHeadwordForFindEntry" />
 		<column label="Lexeme Form" visibility="menu" common="true" sortmethod="MorphSortKey" ws="$ws=best vernoranal" editable="false" layout="LexemeFormForFindEntry" />

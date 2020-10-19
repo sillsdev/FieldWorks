@@ -1511,7 +1511,7 @@ you expect.</value>
     <value>Classified Dictionary...</value>
   </data>
   <data name="ConstituentChartStyleInfo" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Resources\ConstituentChartStyleInfo1.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+    <value>Resources\ConstituentChartStyleInfo.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
   </data>
   <data name="CtrlClick" xml:space="preserve">
     <value>(Ctrl-Click)</value>
@@ -1527,7 +1527,7 @@ you expect.</value>
     <value>Export to {0}</value>
   </data>
   <data name="GrammarSketchTransforms" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Resources\GrammarSketchTransforms1.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+    <value>Resources\GrammarSketchTransforms.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>
   <data name="InsertNote" xml:space="preserve">
     <value>insert Note</value>
@@ -1996,7 +1996,7 @@ you expect.</value>
     <comment>short for Grammatical Information; note indentation formed by leading spaces</comment>
   </data>
   <data name="MatchingEntriesParameters" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Resources\MatchingEntriesParameters1.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+    <value>Resources\MatchingEntriesParameters.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
     <comment>Do Not Localize</comment>
   </data>
   <data name="Morph" xml:space="preserve">
@@ -2012,7 +2012,7 @@ you expect.</value>
     <value>There is no description available for this item.</value>
   </data>
   <data name="NotebookDocumentParameters" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Resources\NotebookDocumentParameters1.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+    <value>Resources\NotebookDocumentParameters.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>
   <data name="ProcessingIntoFinalForm" xml:space="preserve">
     <value>Processing exported data into final form</value>
@@ -2069,7 +2069,7 @@ you expect.</value>
     <value>Undo insert text</value>
   </data>
   <data name="VisibilityFilter_All" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Resources\VisibilityFilter_All1.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+    <value>Resources\VisibilityFilter_All.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>
   <data name="Word_Gloss" xml:space="preserve">
     <value>Word Gloss</value>

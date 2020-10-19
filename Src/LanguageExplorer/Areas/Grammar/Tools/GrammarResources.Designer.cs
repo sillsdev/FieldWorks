@@ -82,13 +82,13 @@ namespace LanguageExplorer.Areas.Grammar.Tools {
         ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
         ///&lt;root&gt;
         ///	&lt;browseview&gt;
-        ///		&lt;parameters id=&quot;AdhocCoprohibList&quot; filterBar=&quot;true&quot; editable=&quot;false&quot; altTitleId=&quot;MoAdhocProhib-Plural&quot;&gt;
+        ///		&lt;parameters id=&quot;AdhocCoprohibList&quot; wantFilterBar=&quot;true&quot; editable=&quot;false&quot; altTitleId=&quot;MoAdhocProhib-Plural&quot;&gt;
         ///			&lt;columns&gt;
         ///				&lt;column label=&quot;Active&quot; width=&quot;10%&quot; layout=&quot;Active&quot; editable=&quot;true&quot;/&gt;
         ///				&lt;column label=&quot;Type&quot; width=&quot;10%&quot; layout=&quot;Type&quot;/&gt;
         ///				&lt;column label=&quot;Key Item&quot; width=&quot;30%&quot; layout=&quot;KeyItem&quot;/&gt;
         ///				&lt;column label=&quot;Cannot Occur&quot; width=&quot;20%&quot; layout=&quot;CannotOccur&quot;/&gt;
-        ///				&lt;column label=&quot;Other Items&quot; width=&quot;30%&quot; multipara=&quot;true&quot; layout=&quot; [rest of string was truncated]&quot;;.
+        ///				&lt;column label=&quot;Other Items&quot; width=&quot;30%&quot; multipara=&quot;true&quot; layo [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string AdhocCoprohibitionRuleEditToolParameters {
             get {
@@ -107,9 +107,9 @@ namespace LanguageExplorer.Areas.Grammar.Tools {
         
         /// <summary>
         ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
-        ///&lt;parameters toolId=&quot;bulkEditPhonemes&quot; clerk=&quot;phonemes&quot; treeBarAvailability=&quot;NotAllowed&quot; filterBar=&quot;true&quot; bulkEdit=&quot;true&quot; bulkEditListItemsClasses=&quot;PhPhoneme&quot; selectColumn=&quot;true&quot; altTitleId=&quot;PhPhoneme-Plural&quot;&gt;
+        ///&lt;parameters toolId=&quot;bulkEditPhonemes&quot; treeBarAvailability=&quot;NotAllowed&quot; wantFilterBar=&quot;true&quot; wantBulkEdit=&quot;true&quot; bulkEditListItemsClasses=&quot;PhPhoneme&quot; selectColumn=&quot;true&quot; altTitleId=&quot;PhPhoneme-Plural&quot;&gt;
         ///	&lt;enableBulkEditTabs enableBEListChoice=&quot;true&quot; enableBEBulkCopy=&quot;false&quot; enableBEClickCopy=&quot;false&quot; enableBEProcess=&quot;false&quot; enableBEFindReplace=&quot;false&quot; enableBEOther=&quot;false&quot; bulkEditListItemsGhostFields=&quot;PhonFeats&quot; bulkEditListItemsClasses=&quot;PhPhoneme&quot;/&gt;
-        ///	&lt;!-- NO [rest of string was truncated]&quot;;.
+        ///	&lt;!-- NOTE Overri [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string BulkEditPhonemesToolParameters {
             get {
@@ -121,11 +121,11 @@ namespace LanguageExplorer.Areas.Grammar.Tools {
         ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
         ///&lt;root&gt;
         ///	&lt;browseview&gt;
-        ///		&lt;parameters id=&quot;CompoundRuleList&quot; filterBar=&quot;true&quot; editable=&quot;false&quot; altTitleId=&quot;MoCompoundRule-Plural&quot; selectColumn=&quot;true&quot;&gt;
+        ///		&lt;parameters id=&quot;CompoundRuleList&quot; wantFilterBar=&quot;true&quot; editable=&quot;false&quot; altTitleId=&quot;MoCompoundRule-Plural&quot; selectColumn=&quot;true&quot;&gt;
         ///			&lt;columns&gt;
         ///				&lt;column label=&quot;Active&quot; width=&quot;10%&quot; layout=&quot;Active&quot; editable=&quot;true&quot; items=&quot;0:no;1:yes&quot; blankPossible=&quot;false&quot; sortType=&quot;YesNo&quot;/&gt;
         ///				&lt;column label=&quot;Name&quot; width=&quot;15%&quot; layout=&quot;Name&quot; ws=&quot;$ws=best analysis&quot; field=&quot;Name&quot;/&gt;
-        ///				&lt;column label=&quot;Description&quot; width=&quot;15%&quot; layout=&quot;Description&quot; ws=&quot;$ws=best analysi [rest of string was truncated]&quot;;.
+        ///				&lt;column label=&quot;Description&quot; width=&quot;15%&quot; layout=&quot;Description&quot; ws=&quot;$ws=best ana [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string CompoundRuleAdvancedEditToolParameters {
             get {
@@ -254,13 +254,14 @@ namespace LanguageExplorer.Areas.Grammar.Tools {
         ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
         ///&lt;root&gt;
         ///	&lt;browseview&gt;
-        ///		&lt;parameters id=&quot;EnvironmentList&quot; filterBar=&quot;true&quot; editable=&quot;false&quot; clerk=&quot;environments&quot; altTitleId=&quot;PhEnvironment-Plural&quot;&gt;
+        ///		&lt;parameters id=&quot;EnvironmentList&quot; wantFilterBar=&quot;true&quot; editable=&quot;false&quot; altTitleId=&quot;PhEnvironment-Plural&quot;&gt;
         ///			&lt;columns&gt;
         ///				&lt;column label=&quot;Name&quot; width=&quot;33%&quot; layout=&quot;Name&quot; ws=&quot;$ws=best analysis&quot; field=&quot;Name&quot;/&gt;
         ///				&lt;column label=&quot;Description&quot; width=&quot;33%&quot; layout=&quot;Description&quot; ws=&quot;$ws=best analysis&quot; field=&quot;Description&quot;/&gt;
         ///				&lt;column label=&quot;Representation&quot; width=&quot;34%&quot; layout=&quot;StringRepresentation&quot;/&gt;
         ///			&lt;/columns&gt;
-        ///		&lt;/paramete [rest of string was truncated]&quot;;.
+        ///		&lt;/parameters&gt;
+        ///	&lt;/browsevie [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string EnvironmentEditToolParameters {
             get {
@@ -272,12 +273,12 @@ namespace LanguageExplorer.Areas.Grammar.Tools {
         ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
         ///&lt;root&gt;
         ///	&lt;browseview&gt;
-        ///		&lt;parameters id=&quot;FeaturesList&quot; filterBar=&quot;true&quot; editable=&quot;false&quot; altTitleId=&quot;FsFeatDefn-Plural&quot;&gt;
+        ///		&lt;parameters id=&quot;FeaturesList&quot; wantFilterBar=&quot;true&quot; editable=&quot;false&quot; altTitleId=&quot;FsFeatDefn-Plural&quot;&gt;
         ///			&lt;columns&gt;
         ///				&lt;column label=&quot;Kind&quot; width=&quot;10%&quot; layout=&quot;Kind&quot;/&gt;
         ///				&lt;column label=&quot;Name&quot; width=&quot;13%&quot; layout=&quot;Name&quot; ws=&quot;$ws=best analysis&quot; field=&quot;Name&quot;/&gt;
         ///				&lt;column label=&quot;Abbreviation&quot; width=&quot;10%&quot; layout=&quot;Abbreviation&quot; ws=&quot;$ws=best analysis&quot; field=&quot;Abbreviation&quot;/&gt;
-        ///				&lt;column label=&quot;Description&quot; width=&quot;43%&quot; layout=&quot;Description&quot; ws=&quot;$ws=best [rest of string was truncated]&quot;;.
+        ///				&lt;column label=&quot;Description&quot; width=&quot;43%&quot; layout=&quot;Description&quot; ws=&quot;$ws= [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string FeaturesAdvancedEditToolParameters {
             get {
@@ -287,12 +288,12 @@ namespace LanguageExplorer.Areas.Grammar.Tools {
         
         /// <summary>
         ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
-        ///&lt;parameters id=&quot;POSList&quot; field=&quot;PartsOfSpeech&quot; altTitleId=&quot;PartOfSpeech-Plural&quot; filterBar=&quot;true&quot; editable=&quot;false&quot;&gt;
+        ///&lt;parameters id=&quot;POSList&quot; field=&quot;PartsOfSpeech&quot; altTitleId=&quot;PartOfSpeech-Plural&quot; wantFilterBar=&quot;true&quot; editable=&quot;false&quot;&gt;
         ///&lt;!-- Please increment BrowseViewer.kBrowseViewVersion when you change these specs,
         /// so that XmlBrowseViewBaseVc can invalidate obsoleted columns that have been saved in each current control&apos;s ColumnList --&gt;
         ///	&lt;columns&gt;
         ///		&lt;column label=&quot;Name&quot; width=&quot;16%&quot; layout=&quot;Name&quot; ws=&quot;$ws=best analysis&quot; field=&quot;Name&quot; /&gt;
-        ///		&lt;column label=&quot;Abbreviation&quot; width=&quot;16%&quot; la [rest of string was truncated]&quot;;.
+        ///		&lt;column label=&quot;Abbreviation&quot; width=&quot;16% [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string GrammarCategoryBrowserParameters {
             get {
@@ -506,12 +507,12 @@ namespace LanguageExplorer.Areas.Grammar.Tools {
         ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
         ///&lt;root&gt;
         ///	&lt;browseview&gt;
-        ///		&lt;parameters id=&quot;NaturalClassList&quot; filterBar=&quot;true&quot; editable=&quot;false&quot; altTitleId=&quot;PhNCSegments-Plural&quot;&gt;
+        ///		&lt;parameters id=&quot;NaturalClassList&quot; wantFilterBar=&quot;true&quot; editable=&quot;false&quot; altTitleId=&quot;PhNCSegments-Plural&quot;&gt;
         ///			&lt;columns&gt;
         ///				&lt;column label=&quot;Name&quot; width=&quot;25%&quot; layout=&quot;Name&quot; ws=&quot;$ws=best analysis&quot; field=&quot;Name&quot;/&gt;
         ///				&lt;column label=&quot;Abbreviation&quot; width=&quot;15%&quot; layout=&quot;Abbreviation&quot; ws=&quot;$ws=best analysis&quot; field=&quot;Abbreviation&quot;/&gt;
         ///				&lt;column label=&quot;Description&quot; width=&quot;40%&quot; layout=&quot;Description&quot; ws=&quot;$ws=best analysis&quot; field=&quot;Description&quot;/&gt;
-        ///				&lt;column la [rest of string was truncated]&quot;;.
+        ///				&lt;colum [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string NaturalClassEditToolParameters {
             get {
@@ -523,12 +524,12 @@ namespace LanguageExplorer.Areas.Grammar.Tools {
         ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
         ///&lt;root&gt;
         ///	&lt;browseview&gt;
-        ///		&lt;parameters id=&quot;PhonemeList&quot; filterBar=&quot;true&quot; editable=&quot;false&quot; altTitleId=&quot;PhPhoneme-Plural&quot;&gt;
+        ///		&lt;parameters id=&quot;PhonemeList&quot; wantFilterBar=&quot;true&quot; editable=&quot;false&quot; altTitleId=&quot;PhPhoneme-Plural&quot;&gt;
         ///			&lt;columns&gt;
         ///				&lt;column label=&quot;Refer to as&quot; width=&quot;33%&quot; layout=&quot;Name&quot; ws=&quot;$ws=best vernacular&quot; field=&quot;Name&quot;/&gt;
         ///				&lt;column label=&quot;Description&quot; width=&quot;33%&quot; layout=&quot;Description&quot; ws=&quot;$ws=best analysis&quot; field=&quot;Description&quot;/&gt;
         ///				&lt;column label=&quot;Graphemes&quot; width=&quot;34%&quot; multipara=&quot;true&quot; layout=&quot;Codes&quot;/&gt;
-        ///				&lt;column label=&quot;IPA Symbol&quot; width=&quot;33%&quot; layout= [rest of string was truncated]&quot;;.
+        ///				&lt;column label=&quot;IPA Symbol&quot; width=&quot;33%&quot; lay [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string PhonemeEditToolParameters {
             get {
@@ -549,12 +550,11 @@ namespace LanguageExplorer.Areas.Grammar.Tools {
         ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
         ///&lt;root&gt;
         ///	&lt;browseview&gt;
-        ///		&lt;parameters id=&quot;PhonologicalFeaturesList&quot; filterBar=&quot;true&quot; editable=&quot;false&quot; altTitleId=&quot;FsFeatDefn-Phonological&quot;&gt;
+        ///		&lt;parameters id=&quot;PhonologicalFeaturesList&quot; wantFilterBar=&quot;true&quot; editable=&quot;false&quot; altTitleId=&quot;FsFeatDefn-Phonological&quot;&gt;
         ///			&lt;columns&gt;
         ///				&lt;column label=&quot;Name&quot; width=&quot;13%&quot; layout=&quot;Name&quot; ws=&quot;$ws=best analysis&quot; field=&quot;Name&quot;/&gt;
         ///				&lt;column label=&quot;Abbreviation&quot; width=&quot;10%&quot; layout=&quot;Abbreviation&quot; ws=&quot;$ws=best analysis&quot; field=&quot;Abbreviation&quot;/&gt;
-        ///				&lt;column label=&quot;Description&quot; width=&quot;77%&quot; layout=&quot;Description&quot; ws=&quot;$ws=best analysis&quot; field=&quot;Description&quot;/&gt;
-        ///		 [rest of string was truncated]&quot;;.
+        ///				&lt;column label=&quot;Description&quot; width=&quot;77%&quot; layout=&quot;Description&quot; ws=&quot;$ws=best analysis&quot; field=&quot;Description&quot;/&gt; [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string PhonologicalFeaturesAdvancedEditToolParameters {
             get {
@@ -566,11 +566,11 @@ namespace LanguageExplorer.Areas.Grammar.Tools {
         ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
         ///&lt;root&gt;
         ///	&lt;browseview&gt;
-        ///		&lt;parameters id=&quot;PhonologicalRuleList&quot; filterBar=&quot;true&quot; altTitleId=&quot;PhSegmentRule-Plural&quot; selectColumn=&quot;true&quot;&gt;
+        ///		&lt;parameters id=&quot;PhonologicalRuleList&quot; wantFilterBar=&quot;true&quot; altTitleId=&quot;PhSegmentRule-Plural&quot; selectColumn=&quot;true&quot;&gt;
         ///			&lt;columns&gt;
         ///				&lt;column label=&quot;Active&quot; width=&quot;10%&quot; layout=&quot;Active&quot; editable=&quot;true&quot; items=&quot;0:no;1:yes&quot; blankPossible=&quot;false&quot; sortType=&quot;YesNo&quot;/&gt;
         ///				&lt;column label=&quot;Order&quot; width=&quot;15%&quot; layout=&quot;Order&quot; editable=&quot;true&quot; sortType=&quot;integer&quot; blankPossible=&quot;false&quot;/&gt;
-        ///				&lt;column label=&quot;Name&quot; width=&quot;35%&quot; layout=&quot;Name&quot; ws=&quot;$ws=best analysis&quot; fi [rest of string was truncated]&quot;;.
+        ///				&lt;column label=&quot;Name&quot; width=&quot;35%&quot; layout=&quot;Name&quot; ws=&quot;$ws=best analysis [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string PhonologicalRuleEditToolParameters {
             get {
@@ -592,12 +592,12 @@ namespace LanguageExplorer.Areas.Grammar.Tools {
         ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
         ///&lt;root&gt;
         ///	&lt;browseview&gt;
-        ///		&lt;parameters id=&quot;ProdRestrictList&quot; filterBar=&quot;true&quot; editable=&quot;false&quot; altTitleId=&quot;ProdRestrict-Plural&quot;&gt;
+        ///		&lt;parameters id=&quot;ProdRestrictList&quot; wantFilterBar=&quot;true&quot; editable=&quot;false&quot; altTitleId=&quot;ProdRestrict-Plural&quot;&gt;
         ///			&lt;columns&gt;
         ///				&lt;column label=&quot;Name&quot; width=&quot;20%&quot; layout=&quot;Name&quot; ws=&quot;$ws=best analysis&quot; field=&quot;Name&quot;/&gt;
         ///				&lt;column label=&quot;Abbreviation&quot; width=&quot;20%&quot; layout=&quot;Abbreviation&quot; ws=&quot;$ws=best analysis&quot; field=&quot;Abbreviation&quot;/&gt;
         ///				&lt;column label=&quot;Description&quot; width=&quot;60%&quot; layout=&quot;Description&quot; ws=&quot;$ws=best analysis&quot; field=&quot;Description&quot;/&gt;
-        ///			&lt;/columns&gt;        /// [rest of string was truncated]&quot;;.
+        ///			&lt;/colum [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string ProdRestrictEditToolParameters {
             get {

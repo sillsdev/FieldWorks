@@ -258,7 +258,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary />
 		internal static string GetBulkEditBarToolId(BulkEditBar bulkEditBar)
 		{
-			return bulkEditBar.ConfigurationNode.Attribute("toolId").Value;
+			return bulkEditBar.ConfigurationParametersElement.Attribute("toolId").Value;
 		}
 
 		/// <summary>

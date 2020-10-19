@@ -41,7 +41,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				if (m_xbvvc == null)
 				{
-					m_xbvvc = new XmlBrowseViewVc(_configurationSpec, MainTag, this);
+					m_xbvvc = new XmlBrowseViewVc(_configParamsElement, MainTag, this);
 				}
 				return base.Vc;
 			}

@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <root>
 	<wordList>
-		<parameters id="wordList" filterBar="true" editable="false" treeBarAvailability="NotAllowed" defaultCursor="Arrow" hscroll="true" altTitleId="WfiWordform-Plural">
+		<parameters id="wordList" wantFilterBar="true" editable="false" treeBarAvailability="NotAllowed" defaultCursor="Arrow" hscroll="true" altTitleId="WfiWordform-Plural">
 			<includeColumns />
 		</parameters>
 	</wordList>
 	<wordOccurrenceListUpper>
-		<parameters id="wordOccurrenceList" editable="false" filterBar="true" ShowOwnerShortname="true" altTitleId="WordListConcordance-Matches">
+		<parameters id="wordOccurrenceList" editable="false" wantFilterBar="true" ShowOwnerShortname="true" altTitleId="WordListConcordance-Matches">
 			<includeColumns />
 		</parameters>
 	</wordOccurrenceListUpper>

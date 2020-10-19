@@ -1991,23 +1991,17 @@
     <Compile Include="Controls\DetailControls\ViewBase.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <None Include="Resources\VisibilityFilter_All1.xml" />
     <None Include="images\FwContorls\ExplorerBar_Collapse_Glyph.png" />
     <None Include="images\FwContorls\ExplorerBar_Epand_Glyph.png" />
     <Content Include="Controls\MessageBoxEx\Notes.txt" />
     <Content Include="images\Usage.ico" />
     <Content Include="Resources\AnalysisInSegmentsOccurrenceList.xml" />
     <None Include="Resources\ConstituentChartStyleInfo.xml" />
-    <None Include="Resources\ConstituentChartStyleInfo1.xml" />
     <Content Include="Resources\GlossInSegmentsOccurrenceList.xml" />
     <None Include="Resources\MergeReversalEntryListParameters.xml" />
-    <None Include="Resources\MatchingEntriesParameters1.xml" />
-    <None Include="Resources\GrammarSketchTransforms1.xml" />
     <Content Include="Resources\MergeAllomorphListParameters.xml" />
     <Content Include="Resources\MergeSenseListParameters.xml" />
     <Content Include="Resources\MergeWordGlossListParameters.xml" />
-    <None Include="Resources\NotebookRecordGoDlgParameters1.xml" />
-    <None Include="Resources\NotebookDocumentParameters1.xml" />
     <Content Include="Resources\ReversalEntryMatchListParameters.xml" />
     <Content Include="Resources\SrcSentencesList.xml" />
     <None Include="Resources\WordformInSegmentsOccurrenceList.xml" />

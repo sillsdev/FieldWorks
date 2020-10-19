@@ -1,10 +1,10 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
+<?xml version="1.0" encoding="utf-8" ?>
 <root>
 	<recordeditview>
 		<parameters treeBarAvailability="Required" layout="RDE" msgBoxTrigger="CategorizedEntry-Intro" allowInsertDeleteRecord="false" />
 	</recordeditview>
 	<recordbrowseview>
-		<parameters id="wordList" filterBar="false" forceReloadListOnInitOrChangeRoot="true" editRowModelClass="LexSense" editRowAssembly="SIL.LCModel.dll" editRowClass="SIL.LCModel.ILexSense" editRowSaveMethod="RDENewSense" editRowMergeMethod="RDEMergeSense" ShowOwnerShortname="true" TitleFormat="Words for {0}" treeBarAvailability="Required">
+		<parameters id="wordList" forceReloadListOnInitOrChangeRoot="true" editRowModelClass="LexSense" editRowAssembly="SIL.LCModel.dll" editRowClass="SIL.LCModel.ILexSense" editRowSaveMethod="RDENewSense" editRowMergeMethod="RDEMergeSense" ShowOwnerShortname="true" TitleFormat="Words for {0}" treeBarAvailability="Required">
 			<!-- Note that currently the labels of these columns are known to LexSenseFactory.RDENewSense-->
 			<columns generate="childPartsForParentLayouts" leadingUnsortedColumns="4">
 				<column label="Word (Citation Form)" width="144000" ws="$ws=vernacular" visibility="always">

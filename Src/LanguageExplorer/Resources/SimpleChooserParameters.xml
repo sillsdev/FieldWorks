@@ -1,7 +1,7 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <guicontrols>
 	<guicontrol id="PeopleFlatList">
-		<parameters id="peopleList" listItemsClass="CmPerson" filterBar="false" treeBarAvailability="NotAllowed" defaultCursor="Arrow" hscroll="true" editable="false" selectColumn="true">
+		<parameters id="peopleList" listItemsClass="CmPerson" treeBarAvailability="NotAllowed" defaultCursor="Arrow" hscroll="true" editable="false" selectColumn="true">
 			<columns>
 				<column label="Name" sortmethod="Name" ws="$ws=best vernoranal" editable="false" width="100%" field="Name">
 					<span>
@@ -15,7 +15,7 @@
 		</parameters>
 	</guicontrol>
 	<guicontrol id="PhonemeFlatList">
-		<parameters id="phonemeList" listItemsClass="PhTerminalUnit" filterBar="false" treeBarAvailability="NotAllowed" defaultCursor="Arrow" hscroll="true" editable="false" selectColumn="true">
+		<parameters id="phonemeList" listItemsClass="PhTerminalUnit" treeBarAvailability="NotAllowed" defaultCursor="Arrow" hscroll="true" editable="false" selectColumn="true">
 			<columns>
 				<column label="Phoneme" width="33%" layout="Name" ws="$ws=best vernacular" field="Name"/>
 				<column label="Description" width="33%" layout="Description" ws="$ws=best analysis" field="Description"/>
@@ -24,7 +24,7 @@
 		</parameters>
 	</guicontrol>
 	<guicontrol id="PhonologicalFeaturesFlatList">
-		<parameters id="PhonologicalFeaturesList" listItemsClass="FsClosedFeature" filterBar="false" treeBarAvailability="NotAllowed" defaultCursor="Arrow" hscroll="true" editable="false" selectColumn="false">
+		<parameters id="PhonologicalFeaturesList" listItemsClass="FsClosedFeature" treeBarAvailability="NotAllowed" defaultCursor="Arrow" hscroll="true" editable="false" selectColumn="false">
 			<columns>
 				<column label="Value" width="20%">
 					<choice>
@@ -45,7 +45,7 @@
 		</parameters>
 	</guicontrol>
 	<guicontrol id="FeatureConstraintFlatList">
-		<parameters id="FeatureConstraintList" listItemsClass="FsClosedFeature" filterBar="false" treeBarAvailability="NotAllowed" defaultCursor="Arrow" hscroll="true" editable="false" selectColumn="false">
+		<parameters id="FeatureConstraintList" listItemsClass="FsClosedFeature" treeBarAvailability="NotAllowed" defaultCursor="Arrow" hscroll="true" editable="false" selectColumn="false">
 			<columns>
 				<column label="Polarity" width="20%">
 					<string field="DummyPolarity"/>
@@ -57,7 +57,7 @@
 		</parameters>
 	</guicontrol>
 	<guicontrol id="EnvironmentFlatList">
-		<parameters id="environmentList" listItemsClass="PhEnvironment" filterBar="false" treeBarAvailability="NotAllowed" defaultCursor="Arrow" hscroll="true" editable="false" selectColumn="true">
+		<parameters id="environmentList" listItemsClass="PhEnvironment" treeBarAvailability="NotAllowed" defaultCursor="Arrow" hscroll="true" editable="false" selectColumn="true">
 			<columns>
 				<column label="Environment" width="100%" layout="StringRepresentation" ws="$ws=vernacular"/>
 				<column label="Name" width="33%" layout="Name" ws="$ws=analysis" visibility="menu"/>
@@ -66,7 +66,7 @@
 		</parameters>
 	</guicontrol>
 	<guicontrol id="RuleEnvironmentFlatList">
-		<parameters id="ruleEnvironmentList" listItemsClass="PhEnvironment" filterBar="false" treeBarAvailability="NotAllowed" defaultCursor="Arrow" hscroll="true" editable="false" selectColumn="false">
+		<parameters id="ruleEnvironmentList" listItemsClass="PhEnvironment" treeBarAvailability="NotAllowed" defaultCursor="Arrow" hscroll="true" editable="false" selectColumn="false">
 			<columns>
 				<column label="Environment" width="100%" layout="StringRepresentation" ws="$ws=vernacular"/>
 				<column label="Name" width="33%" layout="Name" ws="$ws=best analysis" field="Name" visibility="menu"/>
@@ -75,7 +75,7 @@
 		</parameters>
 	</guicontrol>
 	<guicontrol id="RulePhonemeFlatList">
-		<parameters id="rulePhonemeList" listItemsClass="PhPhoneme" filterBar="false" treeBarAvailability="NotAllowed" defaultCursor="Arrow" hscroll="true" editable="false" selectColumn="false">
+		<parameters id="rulePhonemeList" listItemsClass="PhPhoneme" treeBarAvailability="NotAllowed" defaultCursor="Arrow" hscroll="true" editable="false" selectColumn="false">
 			<columns>
 				<column label="Phoneme" width="33%" layout="Name" ws="$ws=best vernacular" field="Name"/>
 				<column label="Description" width="33%" layout="Description" ws="$ws=best analysis" field="Description"/>
@@ -84,7 +84,7 @@
 		</parameters>
 	</guicontrol>
 	<guicontrol id="RuleNaturalClassFlatList">
-		<parameters id="ruleNaturalClassList" listItemsClass="PhNaturalClass" filterBar="false" treeBarAvailability="NotAllowed" defaultCursor="Arrow" hscroll="true" editable="false" selectColumn="false">
+		<parameters id="ruleNaturalClassList" listItemsClass="PhNaturalClass" treeBarAvailability="NotAllowed" defaultCursor="Arrow" hscroll="true" editable="false" selectColumn="false">
 			<columns>
 				<column label="Name" width="33%" layout="Name" ws="$ws=best analysis" field="Name"/>
 				<column label="Abbreviation" width="33%" layout="Abbreviation" ws="$ws=best analysis" field="Abbreviation"/>
@@ -94,7 +94,7 @@
 		</parameters>
 	</guicontrol>
 	<guicontrol id="InflAffixMsaFlatList">
-		<parameters id="inflAffixMsaList" listItemsClass="MoInflAffMsa" filterBar="false" treeBarAvailability="NotAllowed" defaultCursor="Arrow" hscroll="true" editable="false" selectColumn="true">
+		<parameters id="inflAffixMsaList" listItemsClass="MoInflAffMsa" treeBarAvailability="NotAllowed" defaultCursor="Arrow" hscroll="true" editable="false" selectColumn="true">
 			<columns>
 				<column label="Headword" editable="false" ws="$ws=vernacular" width="50%">
 					<span>

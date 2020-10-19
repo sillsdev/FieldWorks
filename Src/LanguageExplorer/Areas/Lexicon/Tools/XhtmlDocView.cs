@@ -111,7 +111,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools
 			Controls.Add(m_mainView);
 			if (m_mainView.NativeBrowser is GeckoWebBrowser browser)
 			{
-				var recordListId = XmlUtils.GetOptionalAttributeValue(m_configurationParametersElement, "clerk");
+				var recordListId = XmlUtils.GetOptionalAttributeValue(m_configurationParametersElement, "recordListId");
 				if (recordListId == LanguageExplorerConstants.Entries || recordListId == LanguageExplorerConstants.AllReversalEntries)
 				{
 					browser.DomClick += OnDomClick;

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<parameters id="recordMatchList" listItemsClass="RnGenericRec" filterBar="false" treeBarAvailability="NotAllowed" defaultCursor="Arrow" hscroll="true" altTitleId="RnGenericRec-Plural" editable="false">
+<parameters id="recordMatchList" listItemsClass="RnGenericRec" treeBarAvailability="NotAllowed" defaultCursor="Arrow" hscroll="true" altTitleId="RnGenericRec-Plural" editable="false">
 	<columns>
 		<column label="Record Type" editable="false" width="72000">
 			<obj field="Type" layout="Name"/>

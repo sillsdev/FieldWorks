@@ -194,7 +194,7 @@ namespace LanguageExplorer.Areas.Notebook {
         
         /// <summary>
         ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
-        ///&lt;parameters id=&quot;RecordsList&quot; altTitleId=&quot;RnGenericRec-Plural&quot; area=&quot;notebook&quot; clerk=&quot;records&quot; field=&quot;Records&quot; filterBar=&quot;true&quot;  /&gt;
+        ///&lt;parameters id=&quot;RecordsList&quot; altTitleId=&quot;RnGenericRec-Plural&quot; area=&quot;notebook&quot; field=&quot;Records&quot; wantFilterBar=&quot;true&quot;  /&gt;
         ///.
         /// </summary>
         internal static string NotebookBrowseParameters {
@@ -205,7 +205,7 @@ namespace LanguageExplorer.Areas.Notebook {
         
         /// <summary>
         ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
-        ///&lt;parameters id=&quot;recordList&quot; clerk=&quot;records&quot; filterBar=&quot;true&quot; treeBarAvailability=&quot;NotAllowed&quot; defaultCursor=&quot;Arrow&quot; hscroll=&quot;true&quot; altTitleId=&quot;RnGenericRec-Plural&quot; /&gt;.
+        ///&lt;parameters id=&quot;recordList&quot; wantFilterBar=&quot;true&quot; treeBarAvailability=&quot;NotAllowed&quot; defaultCursor=&quot;Arrow&quot; hscroll=&quot;true&quot; altTitleId=&quot;RnGenericRec-Plural&quot; /&gt;.
         /// </summary>
         internal static string NotebookEditBrowseParameters {
             get {

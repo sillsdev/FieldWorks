@@ -53,7 +53,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		protected Control m_listChoiceControl;
 		internal Control ListChoiceControl => m_listChoiceControl;
 		private IContainer components;
-		internal XElement ConfigurationNode { get; }
+		internal XElement ConfigurationParametersElement { get; }
 		/// <summary>
 		/// Browse viewer
 		/// </summary>
@@ -156,7 +156,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// 'columns' elements that specify the BE bar (among other things).</param>
 		/// <param name="flexComponentParameters"></param>
 		/// <param name="cache">The cache.</param>
-		public BulkEditBar(BrowseViewer bv, XElement spec, FlexComponentParameters flexComponentParameters, LcmCache cache)
+		public BulkEditBar(BrowseViewer bv, XElement parametersElement, FlexComponentParameters flexComponentParameters, LcmCache cache)
 			: this()
 		{
 			PropertyTable = flexComponentParameters.PropertyTable;
@@ -166,9 +166,9 @@ namespace LanguageExplorer.Controls.XMLViews
 			m_bv.FilterChanged += BrowseViewFilterChanged;
 			m_bv.RefreshCompleted += BrowseViewSorterChanged;
 			m_cache = cache;
-			ConfigurationNode = spec;
+			ConfigurationParametersElement = parametersElement;
 			// (EricP) we should probably try find someway to get these classes from the RecordList/List
-			var bulkEditListItemsClassesValue = XmlUtils.GetMandatoryAttributeValue(spec, "bulkEditListItemsClasses");
+			var bulkEditListItemsClassesValue = XmlUtils.GetMandatoryAttributeValue(parametersElement, "bulkEditListItemsClasses");
 			var bulkEditListItemsClasses = bulkEditListItemsClassesValue.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
 			foreach (var className in bulkEditListItemsClasses)
 			{
@@ -176,7 +176,7 @@ namespace LanguageExplorer.Controls.XMLViews
 				m_bulkEditListItemsClasses.Add((int)classId);
 			}
 			// get any fields that have ghosts we may want to edit (see also "ghostListField" in columnSpecs)
-			var bulkEditListItemsGhostFieldsValue = XmlUtils.GetOptionalAttributeValue(spec, "bulkEditListItemsGhostFields");
+			var bulkEditListItemsGhostFieldsValue = XmlUtils.GetOptionalAttributeValue(parametersElement, "bulkEditListItemsGhostFields");
 			if (!string.IsNullOrEmpty(bulkEditListItemsGhostFieldsValue))
 			{
 				var bulkEditListItemsGhostFields = bulkEditListItemsGhostFieldsValue.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
@@ -186,7 +186,7 @@ namespace LanguageExplorer.Controls.XMLViews
 				}
 			}
 			MakeItems();
-			m_sBulkDeleteIfZero = XmlUtils.GetOptionalAttributeValue(spec, "bulkDeleteIfZero");
+			m_sBulkDeleteIfZero = XmlUtils.GetOptionalAttributeValue(parametersElement, "bulkDeleteIfZero");
 			AccessibilityObject.Name = @"BulkEditBar";
 			m_listChoiceTargetCombo.SelectedIndexChanged += m_listChoiceTargetCombo_SelectedIndexChanged;
 			// Finish init of the FwTextBox
@@ -222,7 +222,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			// todo: give it a tab stop.
 			TransduceTab.Controls.Add(TrdNonEmptyTargetControl);
 			TransduceTargetCombo.SelectedIndexChanged += m_transduceTargetCombo_SelectedIndexChanged;
-			m_enableBulkEditTabsNode = XmlUtils.FindElement(spec, "enableBulkEditTabs");
+			m_enableBulkEditTabsNode = XmlUtils.FindElement(parametersElement, "enableBulkEditTabs");
 			if (m_enableBulkEditTabsNode != null)
 			{
 				BulkCopyTab.Enabled = XmlUtils.GetOptionalBooleanAttributeValue(m_enableBulkEditTabsNode, "enableBEBulkCopy", true);
@@ -5717,15 +5717,6 @@ namespace LanguageExplorer.Controls.XMLViews
 					}
 				}
 				return possiblePOS;
-			}
-
-			/// <summary>
-			/// Get a type we can use to create a compatible filter.
-			/// </summary>
-			/// <remarks>NB: Used by reflection.</remarks>
-			internal static Type FilterType()
-			{
-				return typeof(InflectionClassFilter);
 			}
 
 			/// <summary>

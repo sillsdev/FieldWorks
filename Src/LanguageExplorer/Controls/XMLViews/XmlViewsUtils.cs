@@ -30,6 +30,9 @@ namespace LanguageExplorer.Controls.XMLViews
 	/// </summary>
 	public static class XmlViewsUtils
 	{
+		internal const string EntryPosFilter = "EntryPosFilter";
+		internal const string PosFilter = "PosFilter";
+		internal const string InflectionClassFilter = "InflectionClassFilter";
 		/// <summary>
 		/// Current writing system id being used in multilingual fragment.
 		/// Some methods that refer to this variable are static, so it must be static also.

@@ -35,9 +35,9 @@ namespace LanguageExplorer.Controls.XMLViews
 	/// </summary>
 	internal class XmlVc : FwBaseVc
 	{
-		// The specification node that contains fragments (in the old approach). Null in new.
+		// The specification parameteres element that contains fragments (in the old approach). Null in new.
 		/// <summary></summary>
-		protected XElement m_xnSpec;
+		protected XElement _configParamsElement;
 		// Summary of how we use frag IDs.
 		//
 		// Reserved IDs.
@@ -61,7 +61,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		// Map from DisplayInfo to int: used to avoid adding duplicate items
 		// to m_idToDisplayInfo.
 		internal Dictionary<DisplayCommand, int> m_displayCommandToId = new Dictionary<DisplayCommand, int>();
-		// Cache for results of asking the string table to GetStringsFromListNode on a particular node.
+		// Cache for results of asking the string table to GetStringsFromListNode on a particular element.
 		internal Dictionary<XElement, string[]> m_StringsFromListNode = new Dictionary<XElement, string[]>();
 
 		/// <summary>
@@ -4088,16 +4088,16 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// Processes the properties.
 		/// </summary>
-		public static void ProcessProperties(XElement frag, IVwEnv vwenv)
+		public static void ProcessProperties(XElement columnSpecificationElement, IVwEnv vwenv)
 		{
-			var props = XmlUtils.GetFirstNonCommentChild(frag);
+			var props = XmlUtils.GetFirstNonCommentChild(columnSpecificationElement);
 			if (props == null || props.Name != "properties")
 			{
 				return;
 			}
-			foreach (var node in props.Elements())
+			foreach (var propertyElement in props.Elements())
 			{
-				ProcessProperty(node, vwenv);
+				ProcessProperty(propertyElement, vwenv);
 			}
 		}
 
@@ -4107,43 +4107,43 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// We may switch to making &lt;property&gt; have attributes, in which case,
 		/// The nodes will be attribute nodes and we'll just get their values.
 		/// </summary>
-		public static string GetPropVal(XElement node)
+		public static string GetPropVal(XElement propertyElement)
 		{
-			return XmlUtils.GetOptionalAttributeValue(node, "value");
+			return XmlUtils.GetOptionalAttributeValue(propertyElement, "value");
 		}
 
 		/// <summary>
 		/// Processes the property.
 		/// </summary>
-		public static void ProcessProperty(XElement node, IVwEnv vwenv)
+		public static void ProcessProperty(XElement propertyElement, IVwEnv vwenv)
 		{
-			switch (node.Name.LocalName)
+			switch (propertyElement.Name.LocalName)
 			{
 				case "fontfamily":
 					{
-						vwenv.set_StringProperty((int)FwTextPropType.ktptFontFamily, GetPropVal(node));
+						vwenv.set_StringProperty((int)FwTextPropType.ktptFontFamily, GetPropVal(propertyElement));
 						break;
 					}
 				case "italic": // <italic/> || <italic value='on|off|invert'/>
 					{
-						var val = OnOffInvert(node);
+						var val = OnOffInvert(propertyElement);
 						vwenv.set_IntProperty((int)FwTextPropType.ktptItalic, (int)FwTextPropVar.ktpvEnum, val);
 						break;
 					}
 				case "bold": // <bold/> || <bold value='on|off|invert'/>
 					{
-						var val = OnOffInvert(node);
+						var val = OnOffInvert(propertyElement);
 						vwenv.set_IntProperty((int)FwTextPropType.ktptBold, (int)FwTextPropVar.ktpvEnum, val);
 						break;
 					}
 				case "style":
 					{
-						vwenv.set_StringProperty((int)FwTextPropType.ktptNamedStyle, GetPropVal(node));
+						vwenv.set_StringProperty((int)FwTextPropType.ktptNamedStyle, GetPropVal(propertyElement));
 						break;
 					}
 				case "superscript": // <superscript/> || <superscript value='super|sub|off'/>
 					{
-						var strVal = GetPropVal(node);
+						var strVal = GetPropVal(propertyElement);
 						var val = (int)FwSuperscriptVal.kssvSuper; // default
 						switch (strVal)
 						{
@@ -4166,14 +4166,14 @@ namespace LanguageExplorer.Controls.XMLViews
 					}
 				case "underline": // <underline/> || <underline value='single|none|double|dotted|dashed|squiggle'/>
 					{
-						var strVal = GetPropVal(node);
+						var strVal = GetPropVal(propertyElement);
 						var val = InterpretUnderlineType(strVal);
 						vwenv.set_IntProperty((int)FwTextPropType.ktptUnderline, (int)FwTextPropVar.ktpvEnum, val);
 						break;
 					}
 				case "fontsize": // <fontsize value='millipoints'/>
 					{
-						var sval = GetPropVal(node);
+						var sval = GetPropVal(propertyElement);
 						if (string.IsNullOrEmpty(sval))
 						{
 							break;
@@ -4187,145 +4187,145 @@ namespace LanguageExplorer.Controls.XMLViews
 						}
 						else
 						{
-							var val = MillipointVal(node);
+							var val = MillipointVal(propertyElement);
 							vwenv.set_IntProperty((int)FwTextPropType.ktptFontSize, (int)FwTextPropVar.ktpvMilliPoint, val);
 						}
 						break;
 					}
 				case "offset": // <offset value='millipoints'/>
 					{
-						var val = MillipointVal(node);
+						var val = MillipointVal(propertyElement);
 						vwenv.set_IntProperty((int)FwTextPropType.ktptOffset, (int)FwTextPropVar.ktpvMilliPoint, val);
 						break;
 					}
 				case "backcolor":
 					{
 						vwenv.set_IntProperty((int)FwTextPropType.ktptBackColor, (int)FwTextPropVar.ktpvDefault,
-							ColorVal(node));
+							ColorVal(propertyElement));
 						break;
 					}
 				case "forecolor":
 					{
-						vwenv.set_IntProperty((int)FwTextPropType.ktptForeColor, (int)FwTextPropVar.ktpvDefault, ColorVal(node));
+						vwenv.set_IntProperty((int)FwTextPropType.ktptForeColor, (int)FwTextPropVar.ktpvDefault, ColorVal(propertyElement));
 						break;
 					}
 				case "underlinecolor": // underlineColor? But for now I'm sticking to the ktpt names...
 					{
-						vwenv.set_IntProperty((int)FwTextPropType.ktptUnderColor, (int)FwTextPropVar.ktpvDefault, ColorVal(node));
+						vwenv.set_IntProperty((int)FwTextPropType.ktptUnderColor, (int)FwTextPropVar.ktpvDefault, ColorVal(propertyElement));
 						break;
 					}
 				case "alignment":
 					{
-						vwenv.set_IntProperty((int)FwTextPropType.ktptAlign, (int)FwTextPropVar.ktpvEnum, Alignment(node));
+						vwenv.set_IntProperty((int)FwTextPropType.ktptAlign, (int)FwTextPropVar.ktpvEnum, Alignment(propertyElement));
 						break;
 					}
 				case "firstindent": // <firstindent value='millipoints'/>
 					{
-						var val = MillipointVal(node);
+						var val = MillipointVal(propertyElement);
 						vwenv.set_IntProperty((int)FwTextPropType.ktptFirstIndent, (int)FwTextPropVar.ktpvMilliPoint, val);
 						break;
 					}
 				case "marginleading":
 				case "leadingindent": // <leadingindent value='millipoints'/>
 					{
-						var val = MillipointVal(node);
+						var val = MillipointVal(propertyElement);
 						vwenv.set_IntProperty((int)FwTextPropType.ktptLeadingIndent, (int)FwTextPropVar.ktpvMilliPoint, val);
 						break;
 					}
 				case "margintrailing":
 				case "trailingindent": // <trailingindent value='millipoints'/>
 					{
-						var val = MillipointVal(node);
+						var val = MillipointVal(propertyElement);
 						vwenv.set_IntProperty((int)FwTextPropType.ktptTrailingIndent, (int)FwTextPropVar.ktpvMilliPoint, val);
 						break;
 					}
 				case "spacebefore": // <spacebefore value='millipoints'/>
 					{
-						var val = MillipointVal(node);
+						var val = MillipointVal(propertyElement);
 						vwenv.set_IntProperty((int)FwTextPropType.ktptSpaceBefore, (int)FwTextPropVar.ktpvMilliPoint, val);
 						break;
 					}
 				case "marginbottom":
 				case "spaceafter": // <spaceafter value='millipoints'/>
 					{
-						var val = MillipointVal(node);
+						var val = MillipointVal(propertyElement);
 						vwenv.set_IntProperty((int)FwTextPropType.ktptSpaceAfter, (int)FwTextPropVar.ktpvMilliPoint, val);
 						break;
 					}
 				case "lineheight": // <lineheight value='millipoints'/>
 					{
 						// Todo JohnT: add support for relative.
-						var val = MillipointVal(node);
+						var val = MillipointVal(propertyElement);
 						vwenv.set_IntProperty((int)FwTextPropType.ktptLineHeight, (int)FwTextPropVar.ktpvMilliPoint, val);
 						break;
 					}
 				case "margintop": // <margintop value='millipoints'/>
 					{
-						var val = MillipointVal(node);
+						var val = MillipointVal(propertyElement);
 						vwenv.set_IntProperty((int)FwTextPropType.ktptMarginTop, (int)FwTextPropVar.ktpvMilliPoint, val);
 						break;
 					}
 				case "padleading": // <padleading value='millipoints'/>
 					{
-						var val = MillipointVal(node);
+						var val = MillipointVal(propertyElement);
 						vwenv.set_IntProperty((int)FwTextPropType.ktptPadLeading, (int)FwTextPropVar.ktpvMilliPoint, val);
 						break;
 					}
 				case "padtrailing": // <padtrailing value='millipoints'/>
 					{
-						var val = MillipointVal(node);
+						var val = MillipointVal(propertyElement);
 						vwenv.set_IntProperty((int)FwTextPropType.ktptPadTrailing, (int)FwTextPropVar.ktpvMilliPoint, val);
 						break;
 					}
 				case "padtop": // <padtop value='millipoints'/>
 					{
-						var val = MillipointVal(node);
+						var val = MillipointVal(propertyElement);
 						vwenv.set_IntProperty((int)FwTextPropType.ktptPadTop, (int)FwTextPropVar.ktpvMilliPoint, val);
 						break;
 					}
 				case "padbottom": // <padbottom value='millipoints'/>
 					{
-						var val = MillipointVal(node);
+						var val = MillipointVal(propertyElement);
 						vwenv.set_IntProperty((int)FwTextPropType.ktptPadBottom, (int)FwTextPropVar.ktpvMilliPoint, val);
 						break;
 					}
 				case "borderleading": // <borderleading value='millipoints'/>
 					{
-						var val = MillipointVal(node);
+						var val = MillipointVal(propertyElement);
 						vwenv.set_IntProperty((int)FwTextPropType.ktptBorderLeading, (int)FwTextPropVar.ktpvMilliPoint, val);
 						break;
 					}
 				case "bordertrailing": // <bordertrailing value='millipoints'/>
 					{
-						var val = MillipointVal(node);
+						var val = MillipointVal(propertyElement);
 						vwenv.set_IntProperty((int)FwTextPropType.ktptBorderTrailing, (int)FwTextPropVar.ktpvMilliPoint, val);
 						break;
 					}
 				case "bordertop": // <bordertop value='millipoints'/>
 					{
-						var val = MillipointVal(node);
+						var val = MillipointVal(propertyElement);
 						vwenv.set_IntProperty((int)FwTextPropType.ktptBorderTop, (int)FwTextPropVar.ktpvMilliPoint, val);
 						break;
 					}
 				case "borderbottom": // <borderbottom value='millipoints'/>
 					{
-						var val = MillipointVal(node);
+						var val = MillipointVal(propertyElement);
 						vwenv.set_IntProperty((int)FwTextPropType.ktptBorderBottom, (int)FwTextPropVar.ktpvMilliPoint, val);
 						break;
 					}
 				case "editable":
 					{
-						vwenv.set_IntProperty((int)FwTextPropType.ktptEditable, (int)FwTextPropVar.ktpvEnum, GetEditable(node));
+						vwenv.set_IntProperty((int)FwTextPropType.ktptEditable, (int)FwTextPropVar.ktpvEnum, GetEditable(propertyElement));
 						break;
 					}
 				case "righttoleft":
 					{
-						vwenv.set_IntProperty((int)FwTextPropType.ktptRightToLeft, (int)FwTextPropVar.ktpvEnum, OnOffInvert(node));
+						vwenv.set_IntProperty((int)FwTextPropType.ktptRightToLeft, (int)FwTextPropVar.ktpvEnum, OnOffInvert(propertyElement));
 						break;
 					}
 				case "maxlines":
 					{
-						var value = GetPropVal(node);
+						var value = GetPropVal(propertyElement);
 						vwenv.set_IntProperty((int)FwTextPropType.ktptMaxLines, (int)FwTextPropVar.ktpvDefault, Convert.ToInt32(value));
 						break;
 					}
@@ -4371,18 +4371,18 @@ namespace LanguageExplorer.Controls.XMLViews
 			return val;
 		}
 
-		private static int MillipointVal(XElement node)
+		private static int MillipointVal(XElement propertyElement)
 		{
-			return Convert.ToInt32(GetPropVal(node));
+			return Convert.ToInt32(GetPropVal(propertyElement));
 		}
 
 		/// <summary>
 		/// Look for an attribute called 'value' and return the appropriate enumeration member for
 		/// 'on', 'off', 'invert', or missing.
 		/// </summary>
-		private static int OnOffInvert(XElement node)
+		private static int OnOffInvert(XElement propertyElement)
 		{
-			var strVal = GetPropVal(node);
+			var strVal = GetPropVal(propertyElement);
 			var val = (int)FwTextToggleVal.kttvForceOn; // default
 			switch (strVal)
 			{
@@ -4407,9 +4407,9 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// Color value may be (red, green, blue) or one of the KnownColor values.
 		/// Note: much of logic is duplicated in StylesXmlAccessor method of same name.
 		/// </summary>
-		private static int ColorVal(XElement node)
+		private static int ColorVal(XElement propertyElement)
 		{
-			var val = GetPropVal(node);
+			var val = GetPropVal(propertyElement);
 			if (val[0] == '(')
 			{
 				var firstComma = val.IndexOf(',');
@@ -4423,9 +4423,9 @@ namespace LanguageExplorer.Controls.XMLViews
 			return col.R + (col.B * 256 + col.G) * 256;
 		}
 
-		private static int Alignment(XElement node)
+		private static int Alignment(XElement propertyElement)
 		{
-			var val = GetPropVal(node);
+			var val = GetPropVal(propertyElement);
 			switch (val)
 			{
 				case "left":
@@ -4444,9 +4444,9 @@ namespace LanguageExplorer.Controls.XMLViews
 			return (int)FwTextAlign.ktalLeading; // default
 		}
 
-		private static int GetEditable(XElement node)
+		private static int GetEditable(XElement propertyElement)
 		{
-			switch (GetPropVal(node))
+			switch (GetPropVal(propertyElement))
 			{
 				case "noteditable":
 				case "no":

@@ -4,7 +4,6 @@
 
 using System.Linq;
 using System.Xml.Linq;
-using LanguageExplorer.LcmUi;
 using SIL.LCModel;
 using SIL.Xml;
 
@@ -36,6 +35,9 @@ namespace LanguageExplorer.Filters
 			{
 				return false;
 			}
+#if RANDYTODO
+			// TODO: Is this still needed now?
+#endif
 			var typeForLoaderNode = XmlUtils.GetMandatoryAttributeValue(colSpec, "class").Split('.').Last().Trim();
 			// Naturally we are compatible with ourself, and BulkPosEditor has a FilterType which causes
 			// a filter of this type to be created, too.

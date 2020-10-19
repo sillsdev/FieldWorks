@@ -29,11 +29,11 @@ namespace LanguageExplorer.Filters
 		private int m_ws;
 
 		/// <summary />
-		internal SortMethodFinder(LcmCache cache, string methodName, string layoutName, XElement colSpec, IApp app)
-			: base(cache, layoutName, colSpec, app)
+		internal SortMethodFinder(LcmCache cache, string methodName, string layoutName, XElement columnSpecificationElement, IApp app)
+			: base(cache, layoutName, columnSpecificationElement, app)
 		{
 			SortMethod = methodName;
-			WritingSystemName = StringServices.GetWsSpecWithoutPrefix(XmlUtils.GetOptionalAttributeValue(colSpec, "ws"));
+			WritingSystemName = StringServices.GetWsSpecWithoutPrefix(XmlUtils.GetOptionalAttributeValue(columnSpecificationElement, "ws"));
 		}
 
 		/// <summary>

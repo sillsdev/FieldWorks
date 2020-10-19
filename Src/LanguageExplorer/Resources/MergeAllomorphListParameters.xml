@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<parameters id="mergeAllomorphList" listItemsClass="MoForm" filterBar="false" treeBarAvailability="NotAllowed" defaultCursor="Arrow" hscroll="true" editable="false" selectColumn="false">
+<parameters id="mergeAllomorphList" listItemsClass="MoForm" treeBarAvailability="NotAllowed" defaultCursor="Arrow" hscroll="true" editable="false" selectColumn="false">
 	<columns>
 		<column label="Form" width="80%" layout="Allomorph" ws="$ws=vernacular"/>
 		<column label="Type" width="20%" layout="MorphTypeName"/>

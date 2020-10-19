@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<parameters id="srcSentencesList" selectColumn="true" defaultChecked="true" allowInsertDeleteRecord="false" editable="false" clerk="SrcWfiWordformConc" filterBar="false" ShowOwnerShortname="true" selectionStyle="none">
+<parameters id="srcSentencesList" selectColumn="true" defaultChecked="true" allowInsertDeleteRecord="false" editable="false" ShowOwnerShortname="true" selectionStyle="none">
   <columns>
     <column label="Ref" width="60000">
       <span>

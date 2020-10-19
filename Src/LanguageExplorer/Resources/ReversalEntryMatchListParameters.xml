@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<parameters id="ReversalEntryMatchList" listItemsClass="ReversalIndexEntry" filterBar="false" treeBarAvailability="NotAllowed" defaultCursor="Arrow" hscroll="true" altTitleId="ReversalIndexEntry-Plural" editable="false" disableConfigButton="true">
+<parameters id="ReversalEntryMatchList" listItemsClass="ReversalIndexEntry" treeBarAvailability="NotAllowed" defaultCursor="Arrow" hscroll="true" altTitleId="ReversalIndexEntry-Plural" editable="false" disableConfigButton="true">
   <columns>
     <column label="Form" sortmethod="FullSortKey" ws="$ws=reversal" editable="false" width="96000">
       <span>

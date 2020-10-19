@@ -711,7 +711,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			//
 			// FilterBar
 			//
-			if (XmlUtils.GetOptionalBooleanAttributeValue(m_configParamsElement, "filterBar", false))
+			if (XmlUtils.GetOptionalBooleanAttributeValue(m_configParamsElement, "wantFilterBar", false))
 			{
 				FilterBar = new FilterBar(this, PropertyTable.GetValue<IApp>(LanguageExplorerConstants.App));
 				FilterBar.FilterChanged += FilterChangedHandler;
@@ -721,7 +721,7 @@ namespace LanguageExplorer.Controls.XMLViews
 				AddControl(FilterBar);
 			}
 			AddControl(m_lvHeader); // last so on top of z-order, puts it above other things docked at top.
-			if (XmlUtils.GetOptionalBooleanAttributeValue(m_configParamsElement, "bulkEdit", false))
+			if (XmlUtils.GetOptionalBooleanAttributeValue(m_configParamsElement, "wantBulkEdit", false))
 			{
 				BulkEditBar = CreateBulkEditBar(this, m_configParamsElement, new FlexComponentParameters(PropertyTable, Publisher, Subscriber), Cache);
 				BulkEditBar.Dock = DockStyle.Bottom;
@@ -866,9 +866,9 @@ namespace LanguageExplorer.Controls.XMLViews
 		}
 
 		/// <summary />
-		protected virtual BulkEditBar CreateBulkEditBar(BrowseViewer bv, XElement spec, FlexComponentParameters flexComponentParameters, LcmCache cache)
+		protected virtual BulkEditBar CreateBulkEditBar(BrowseViewer bv, XElement parametersElement, FlexComponentParameters flexComponentParameters, LcmCache cache)
 		{
-			return new BulkEditBar(bv, spec, flexComponentParameters, cache);
+			return new BulkEditBar(bv, parametersElement, flexComponentParameters, cache);
 		}
 
 		/// <summary/>
@@ -3081,9 +3081,9 @@ namespace LanguageExplorer.Controls.XMLViews
 				((OneColumnXmlBrowseViewVc)Vc).SetupOneColumnSpec(bv, icolLvHeaderToAdd);
 			}
 
-			private OneColumnXmlBrowseView(XElement nodeSpec, int hvoRoot, int mainTag, LcmCache cache, IPropertyTable propertyTable, IVwStylesheet styleSheet, BrowseViewer bv, int icolLvHeaderToAdd)
+			private OneColumnXmlBrowseView(XElement configParamsElement, int hvoRoot, int mainTag, LcmCache cache, IPropertyTable propertyTable, IVwStylesheet styleSheet, BrowseViewer bv, int icolLvHeaderToAdd)
 			{
-				Init(nodeSpec, hvoRoot, mainTag, cache, bv);
+				Init(configParamsElement, hvoRoot, mainTag, cache, bv);
 				m_styleSheet = styleSheet;
 				// add only the specified column to this browseview.
 				((OneColumnXmlBrowseViewVc)Vc).SetupOneColumnSpec(bv, icolLvHeaderToAdd);
@@ -3122,7 +3122,7 @@ namespace LanguageExplorer.Controls.XMLViews
 				{
 					if (m_xbvvc == null)
 					{
-						m_xbvvc = new XmlRDEBrowseViewVc(_configurationSpec, MainTag, this);
+						m_xbvvc = new XmlRDEBrowseViewVc(_configParamsElement, MainTag, this);
 					}
 					return base.Vc;
 				}
@@ -3219,8 +3219,8 @@ namespace LanguageExplorer.Controls.XMLViews
 				return -1;
 			}
 
-			public OneColumnXmlBrowseViewVc(XElement xnSpec, int madeUpFieldIdentifier, XmlBrowseViewBase xbv)
-				: base(xnSpec, madeUpFieldIdentifier, xbv)
+			public OneColumnXmlBrowseViewVc(XElement configParamsElement, int madeUpFieldIdentifier, XmlBrowseViewBase xbv)
+				: base(configParamsElement, madeUpFieldIdentifier, xbv)
 			{
 			}
 		}

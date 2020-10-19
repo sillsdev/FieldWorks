@@ -6,7 +6,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Reflection;
 using System.Xml.Linq;
 using LanguageExplorer.Filters;
 using SIL.FieldWorks.Common.FwUtils;
@@ -27,7 +26,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		private bool m_fAtomic;
 		private XElement m_colSpec;
 		/// <summary>non-null for external fields.</summary>
-		private Type m_filterType;
+		private string _filterClassName;
 		/// <summary />
 		private bool m_includeAbbr;
 		/// <summary />
@@ -36,14 +35,16 @@ namespace LanguageExplorer.Controls.XMLViews
 		private string GetDisplayPropertyName => m_includeAbbr ? "LongName" : "ShortNameTSS";
 
 		/// <summary />
-		internal ListChoiceComboItem(ITsString tssName, FilterSortItem fsi, LcmCache cache, IPropertyTable propertyTable, FwComboBox combo, bool fAtomic, Type filterType = null)
+		internal ListChoiceComboItem(ITsString tssName, FilterSortItem fsi, LcmCache cache, IPropertyTable propertyTable, FwComboBox combo, bool fAtomic, string filterClassName = null)
 			: base(tssName, null, fsi)
 		{
-			m_colSpec = fsi.Spec;
-			if (filterType == null)
+			m_colSpec = fsi.ColumnSpecificationElement;
+			// Start as default value.
+			m_hvoList = cache.LanguageProject.PartsOfSpeechOA.Hvo;
+			if (string.IsNullOrWhiteSpace(filterClassName))
 			{
 				// If the list doesn't exist, m_hvoList (below) will be SpecialHVOValues.kHvoUninitializedObject.
-				m_hvoList = BulkEditBar.GetNamedListHvo(cache, fsi.Spec, "list");
+				m_hvoList = BulkEditBar.GetNamedListHvo(cache, fsi.ColumnSpecificationElement, "list");
 				var treeBarHandler = propertyTable.GetValue<IRecordListRepository>(LanguageExplorerConstants.RecordListRepository).ActiveRecordList.MyTreeBarHandler;
 				if (treeBarHandler != null)
 				{
@@ -51,16 +52,11 @@ namespace LanguageExplorer.Controls.XMLViews
 					m_bestWS = treeBarHandler.BestWritingSystem;
 				}
 			}
-			else
-			{
-				var mi = filterType.GetMethod("List", BindingFlags.NonPublic | BindingFlags.Static);
-				m_hvoList = (int)mi.Invoke(null, new object[] { cache });
-			}
 			m_cache = cache;
 			m_propertyTable = propertyTable;
 			m_combo = combo;
 			m_fAtomic = fAtomic;
-			m_filterType = filterType;
+			_filterClassName = filterClassName;
 		}
 
 		/// <summary>
@@ -107,27 +103,21 @@ namespace LanguageExplorer.Controls.XMLViews
 		private ListChoiceFilter MakeFilter(ListMatchOptions matchMode, int[] chosenHvos)
 		{
 			ListChoiceFilter filter;
-			if (m_filterType != null)
+			switch (_filterClassName)
 			{
-				Type[] types;
-				object[] objects;
-				if (m_filterType.IsSubclassOf(typeof(ColumnSpecFilter)))
-				{
-					types = new[] { typeof(LcmCache), typeof(ListMatchOptions), typeof(int[]), typeof(XElement) };
-					objects = new object[] { m_cache, matchMode, chosenHvos, m_fsi.Spec };
-				}
-				else
-				{
-					types = new[] { typeof(LcmCache), typeof(ListMatchOptions), typeof(int[]) };
-					objects = new object[] { m_cache, matchMode, chosenHvos };
-				}
-				var ci = m_filterType.GetConstructor(types);
-				filter = (ListChoiceFilter)ci.Invoke(objects);
-			}
-			else
-			{
-				// make a filter that figures path information from the column specs
-				filter = new ColumnSpecFilter(m_cache, matchMode, chosenHvos, m_fsi.Spec);
+				case XmlViewsUtils.EntryPosFilter:
+					filter = new EntryPosFilter(m_cache, matchMode, chosenHvos);
+					break;
+				case XmlViewsUtils.PosFilter:
+					filter = new PosFilter(m_cache, matchMode, chosenHvos, m_fsi.ColumnSpecificationElement);
+					break;
+				case XmlViewsUtils.InflectionClassFilter:
+					filter = new InflectionClassFilter(m_cache, matchMode, chosenHvos, m_fsi.ColumnSpecificationElement);
+					break;
+				default:
+					// make a filter that figures path information from the column specs
+					filter = new ColumnSpecFilter(m_cache, matchMode, chosenHvos, m_fsi.ColumnSpecificationElement);
+					break;
 			}
 			return filter;
 		}
@@ -144,7 +134,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary />
 		public void InvokeWithColumnSpecFilter(ListMatchOptions matchMode, List<string> chosenLabels)
 		{
-			if (m_fsi.Spec == null)
+			if (m_fsi.ColumnSpecificationElement == null)
 			{
 				return; // doesn't have a spec to create ColumnSpecFilter
 			}

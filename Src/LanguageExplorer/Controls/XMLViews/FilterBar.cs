@@ -8,7 +8,6 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
-using System.Reflection;
 using System.Windows.Forms;
 using System.Xml.Linq;
 using LanguageExplorer.Filters;
@@ -30,7 +29,7 @@ namespace LanguageExplorer.Controls.XMLViews
 	internal sealed class FilterBar : UserControl
 	{
 		private BrowseViewer m_bv;
-		private List<XElement> m_columns;
+		private List<XElement> _columnElements;
 		private FilterSortItems m_items;
 		private IFwMetaDataCache m_mdc;
 		private LcmCache m_cache; // Use minimally, may want to factor out for non-db use.
@@ -42,6 +41,16 @@ namespace LanguageExplorer.Controls.XMLViews
 		// True during UpdateActiveItems to suppress side-effects of setting text of combo.
 		private bool m_fInUpdateActive;
 		private IApp m_app;
+		private HashSet<string> _supportedInMakeListChoiceFilterItem = new HashSet<string>
+		{
+			"complexListMultiple",
+			"textsFilterItem",
+			"atomicFlatListItem",
+			"morphTypeListItem",
+			XmlViewsUtils.EntryPosFilter,
+			XmlViewsUtils.PosFilter,
+			XmlViewsUtils.InflectionClassFilter
+		};
 
 		/// <summary>
 		/// This is invoked when the user sets up, removes, or changes the filter for a column.
@@ -52,7 +61,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		internal FilterBar(BrowseViewer bv, IApp app)
 		{
 			m_bv = bv;
-			m_columns = m_bv.ColumnSpecs;
+			_columnElements = m_bv.ColumnSpecs;
 			m_app = app;
 			m_cache = bv.Cache;
 			m_mdc = m_cache.DomainDataByFlid.MetaDataCache;
@@ -67,7 +76,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			// This light grey background shows through for any columns where we don't have a combo
 			// because we can't figure a IStringFinder from the XmlParameters.
 			BackColor = Color.FromKnownColor(KnownColor.ControlLight);
-			MakeItems();
+			MakeOrReuseItems();
 			AccessibilityObject.Name = "FilterBar";
 		}
 
@@ -112,7 +121,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			// Dispose unmanaged resources here, whether disposing is true or false.
 			m_bv = null; // Parent window.
 			m_cache = null;
-			m_columns = null; // Client needs to deal with the columns.
+			_columnElements = null; // Client needs to deal with the columns.
 			m_items = null;
 			m_mdc = null;
 			m_sda = null;
@@ -136,7 +145,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		internal void UpdateColumnList()
 		{
-			m_columns = m_bv.ColumnSpecs;
+			_columnElements = m_bv.ColumnSpecs;
 			SuspendLayout();
 			foreach (var fsi in m_items)
 			{
@@ -148,19 +157,6 @@ namespace LanguageExplorer.Controls.XMLViews
 			}
 			MakeOrReuseItems();
 			ResumeLayout();
-		}
-
-		/// <summary>
-		/// Makes the items.
-		/// </summary>
-		internal void MakeItems()
-		{
-			if (m_items != null)
-			{
-				Debug.Fail("Don't call method more than once!");
-				return; // already made.
-			}
-			MakeOrReuseItems();
 		}
 
 		/// <summary>
@@ -178,18 +174,18 @@ namespace LanguageExplorer.Controls.XMLViews
 			var oldItems = m_items ?? new FilterSortItems();
 			m_items = new FilterSortItems();
 			// Here we figure which columns we can filter on.
-			foreach (var colSpec in m_columns)
+			foreach (var columnSpecificationElement in _columnElements)
 			{
-				if (oldItems.Contains(colSpec))
+				if (oldItems.Contains(columnSpecificationElement))
 				{
-					var item = oldItems[colSpec];
+					var item = oldItems[columnSpecificationElement];
 					m_items.Add(item);
 					Controls.Add(item.Combo);
-					oldItems.Remove(colSpec);
+					oldItems.Remove(columnSpecificationElement);
 				}
 				else
 				{
-					m_items.Add(MakeItem(colSpec));
+					m_items.Add(MakeItem(columnSpecificationElement));
 				}
 			}
 			foreach (var item in oldItems)
@@ -348,29 +344,15 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// 		<stringalt class="LexEntry" field="CitationForm" ws="vernacular"/>
 		/// 	</para>
 		/// </summary>
-		private FilterSortItem MakeItem(XElement colSpec)
-		{
-			return MakeLayoutItem(colSpec);
-		}
-
-		/* Not used.
-		private static string GetStringAtt(XElement node, string name)
-		{
-			return node.Attribute(name)?.Value;
-		}*/
-
-		/// <summary>
-		/// Make a FilterSortItem with a finder that is a LayoutFinder with the specified layout name.
-		/// </summary>
-		private FilterSortItem MakeLayoutItem(XElement colSpec)
+		private FilterSortItem MakeItem(XElement columnSpecificationElement)
 		{
 			var result = new FilterSortItem
 			{
-				Spec = colSpec,
-				Finder = LayoutFinder.CreateFinder(m_cache, colSpec, m_bv.BrowseView.Vc, m_app)
+				ColumnSpecificationElement = columnSpecificationElement,
+				Finder = LayoutFinder.CreateFinder(m_cache, columnSpecificationElement, m_bv.BrowseView.Vc, m_app)
 			};
 			SetupFsi(result);
-			var ws = WritingSystemServices.GetWritingSystem(m_cache, colSpec.ConvertElement(), null, 0) ?? m_cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
+			var ws = WritingSystemServices.GetWritingSystem(m_cache, columnSpecificationElement.ConvertElement(), null, 0) ?? m_cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
 			result.Sorter = new GenRecordSorter(new StringFinderCompare(result.Finder, new WritingSystemComparer(ws)));
 			return result;
 		}
@@ -425,7 +407,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			};
 			item.Combo = combo;
 			combo.Items.Add(new FilterComboItem(MakeLabel(XMLViewsStrings.ksShowAll), null, item));
-			var blankPossible = XmlUtils.GetOptionalAttributeValue(item.Spec, "blankPossible", "true");
+			var blankPossible = XmlUtils.GetOptionalAttributeValue(item.ColumnSpecificationElement, "blankPossible", "true");
 			if (blankPossible == "true")
 			{
 				combo.Items.Add(new FilterComboItem(MakeLabel(XMLViewsStrings.ksBlanks), new BlankMatcher(), item));
@@ -433,12 +415,12 @@ namespace LanguageExplorer.Controls.XMLViews
 			}
 			// Enhance JohnT: figure whether the column has vernacular or analysis data...
 			var ws = 0;
-			if (item.Spec != null)
+			if (item.ColumnSpecificationElement != null)
 			{
-				var wsParam = XmlViewsUtils.FindWsParam(item.Spec);
+				var wsParam = XmlViewsUtils.FindWsParam(item.ColumnSpecificationElement);
 				if (wsParam.Length == 0)
 				{
-					wsParam = XmlUtils.GetOptionalAttributeValue(item.Spec, "ws", string.Empty);
+					wsParam = XmlUtils.GetOptionalAttributeValue(item.ColumnSpecificationElement, "ws", string.Empty);
 				}
 				ws = XmlViewsUtils.GetWsFromString(wsParam, m_cache);
 			}
@@ -446,12 +428,10 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				ws = m_cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Handle; // some sort of fall-back in case we can't determine a WS from the spec.
 			}
-			var beSpec = XmlUtils.GetOptionalAttributeValue(item.Spec, "bulkEdit", string.Empty);
-			if (string.IsNullOrEmpty(beSpec))
-			{
-				beSpec = XmlUtils.GetOptionalAttributeValue(item.Spec, "chooserFilter", string.Empty);
-			}
-			var sortType = XmlUtils.GetOptionalAttributeValue(item.Spec, "sortType", null);
+			var optionalAttributeValue = OptionalAttributeValue(item.ColumnSpecificationElement, out var options);
+			var bulkEdit_xor_chooseFilter = options.FirstOrDefault(option => _supportedInMakeListChoiceFilterItem.Contains(option));
+			var canbeMadeInMakeListChoiceFilterItem = !string.IsNullOrWhiteSpace(bulkEdit_xor_chooseFilter);
+			var sortType = XmlUtils.GetOptionalAttributeValue(item.ColumnSpecificationElement, "sortType", null);
 			switch (sortType)
 			{
 				case "integer":
@@ -485,7 +465,7 @@ namespace LanguageExplorer.Controls.XMLViews
 					combo.Items.Add(new FilterComboItem(MakeLabel(LanguageExplorerResources.ksNo.ToLowerInvariant()), new ExactMatcher(MatchExactPattern(LanguageExplorerResources.ksNo.ToLowerInvariant())), item));
 					break;
 				case "stringList":
-					var labels = m_bv.BrowseView.GetStringList(item.Spec);
+					var labels = m_bv.BrowseView.GetStringList(item.ColumnSpecificationElement);
 					if (labels == null)
 					{
 						break;
@@ -505,7 +485,7 @@ namespace LanguageExplorer.Controls.XMLViews
 				default:
 					// If it isn't any of those, include the bad spelling item, provided we have a dictionary
 					// for the relevant language, and provided it is NOT a list (for which we will make a chooser).
-					if (!string.IsNullOrEmpty(beSpec))
+					if (!string.IsNullOrEmpty(optionalAttributeValue))
 					{
 						break;
 					}
@@ -513,9 +493,9 @@ namespace LanguageExplorer.Controls.XMLViews
 					break;
 			}
 			combo.Items.Add(new FindComboItem(MakeLabel(XMLViewsStrings.ksFilterFor_), item, ws, combo, m_bv));
-			if (!string.IsNullOrEmpty(beSpec))
+			if (canbeMadeInMakeListChoiceFilterItem)
 			{
-				MakeListChoiceFilterItem(item, combo, beSpec, m_bv.PropertyTable);
+				MakeListChoiceFilterItem(item, combo, bulkEdit_xor_chooseFilter, m_bv.PropertyTable);
 			}
 			// Todo: lots more interesting items.
 			// - search the list for existing names
@@ -533,23 +513,41 @@ namespace LanguageExplorer.Controls.XMLViews
 			Controls.Add(combo);
 		}
 
+		private static string OptionalAttributeValue(XElement columnSpecificationElement, out List<string> options)
+		{
+			options = new List<string>();
+			var optionalAttributeValue = XmlUtils.GetOptionalAttributeValue(columnSpecificationElement, "bulkEdit", string.Empty);
+			if (!string.IsNullOrWhiteSpace(optionalAttributeValue))
+			{
+				options.Add(optionalAttributeValue);
+			}
+			if (string.IsNullOrEmpty(optionalAttributeValue))
+			{
+				optionalAttributeValue = XmlUtils.GetOptionalAttributeValue(columnSpecificationElement, "chooserFilter", string.Empty);
+				if (!string.IsNullOrWhiteSpace(optionalAttributeValue))
+				{
+					options.Add(optionalAttributeValue);
+				}
+			}
+			return optionalAttributeValue;
+		}
+
 		private void AddSpellingErrorsIfAppropriate(FilterSortItem item, FwComboBox combo, int ws)
 		{
 			// LT-9047 For certain fields, filtering on Spelling Errors just doesn't make sense.
-			var layoutNode = item.Spec.Attribute("layout") ?? item.Spec.Attribute("label");
-			var layout = string.Empty;
-			if (layoutNode != null)
+			var attribute = item.ColumnSpecificationElement.Attribute("layout") ?? item.ColumnSpecificationElement.Attribute("label");
+			var attributeValue = string.Empty;
+			if (attribute != null)
 			{
-				layout = layoutNode.Value;
+				attributeValue = attribute.Value;
 			}
-			switch (layout)
+			switch (attributeValue)
 			{
 				case "Pronunciation":
 				case "CVPattern":
 					break;
 				default:
-					var dict = m_bv.BrowseView.RootSiteEditingHelper.GetDictionary(ws);
-					if (dict != null)
+					if (m_bv.BrowseView.RootSiteEditingHelper.GetDictionary(ws) != null)
 					{
 						combo.Items.Add(new FilterComboItem(MakeLabel(XMLViewsStrings.ksSpellingErrors), new BadSpellingMatcher(ws), item));
 					}
@@ -574,91 +572,45 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// Make a combo menu item (and install it) for choosing from a list, based on the column
 		/// spec at item.Spec.
 		/// </summary>
-		private void MakeListChoiceFilterItem(FilterSortItem item, FwComboBox combo, string beSpec, IPropertyTable propertyTable)
+		private void MakeListChoiceFilterItem(FilterSortItem item, FwComboBox combo, string bulkEdit_xor_chooseFilter, IPropertyTable propertyTable)
 		{
-			/*
-			// Non-recursive caller: "bulkEdit" OR "chooserFilter"
-			var beSpec = XmlUtils.GetOptionalAttributeValue(item.Spec, "bulkEdit", string.Empty);
-			if (string.IsNullOrEmpty(beSpec))
+			switch (bulkEdit_xor_chooseFilter)
 			{
-				beSpec = XmlUtils.GetOptionalAttributeValue(item.Spec, "chooserFilter", string.Empty);
-			}
-			// Recursive caller: "chooserFilter"
-			// if we didn't find it, try "chooserFilter", if we haven't already.
-			var chooserFilter = XmlUtils.GetOptionalAttributeValue(item.Spec, "chooserFilter", string.Empty);
-			if (!string.IsNullOrEmpty(chooserFilter) && chooserFilter != beSpec)
-			{
-				MakeListChoiceFilterItem(item, combo, chooserFilter, propertyTable);
-			}
-			 */
-			switch (beSpec)
-			{
-				case "complexListMultiple":
+				case "complexListMultiple": // chooserFilter & bulkEdit
 					combo.Items.Add(new ListChoiceComboItem(MakeLabel(XMLViewsStrings.ksChoose_), item, m_cache, propertyTable, combo, false));
 					break;
-				case "textsFilterItem":
-					combo.Items.Add(new TextsFilterItem(MakeLabel(XmlUtils.GetOptionalAttributeValue(item.Spec, "specialItemName", XMLViewsStrings.ksChoose_)), m_bv.Publisher));
+				case "textsFilterItem": // chooserFilter
+					// This was the "special" case in develop. Both of those used TextsFilterItem.
+					combo.Items.Add(new TextsFilterItem(MakeLabel(XmlUtils.GetOptionalAttributeValue(item.ColumnSpecificationElement, "specialItemName", XMLViewsStrings.ksChoose_)), m_bv.Publisher));
 					break;
-				case "atomicFlatListItem": // Fall through
-				case "morphTypeListItem":
+				//case "variantConditionListItem": // Fall through // Not used in develop.
+				case "atomicFlatListItem": // Fall through // chooserFilter & bulkEdit
+				case "morphTypeListItem": //  bulkEdit
 					combo.Items.Add(new ListChoiceComboItem(MakeLabel(XMLViewsStrings.ksChoose_), item, m_cache, propertyTable, combo, true));
 					break;
-				case "EntryPosFilter":
-					SetUpConfusedCases(propertyTable, combo, item, typeof(EntryPosFilter));
-					break;
-				case "PosFilter":
-					SetUpConfusedCases(propertyTable, combo, item, typeof(PosFilter));
-					break;
-				case "InflectionClassFilter":
-					SetUpConfusedCases(propertyTable, combo, item, typeof(InflectionClassFilter));
-					break;
-				default:
-					// if we didn't find it, try "chooserFilter", if we haven't already.
-					var chooserFilter = XmlUtils.GetOptionalAttributeValue(item.Spec, "chooserFilter", string.Empty);
-					if (!string.IsNullOrEmpty(chooserFilter) && chooserFilter != beSpec)
+				case XmlViewsUtils.EntryPosFilter: // chooserFilter // Fall through
+				case XmlViewsUtils.PosFilter: // chooserFilter // Fall through
+				case XmlViewsUtils.InflectionClassFilter: // Not in xml
+					var fAtomic = false;
+					var leafFlidValue = 0;
+					switch (bulkEdit_xor_chooseFilter)
 					{
-						MakeListChoiceFilterItem(item, combo, chooserFilter, propertyTable);
+						case XmlViewsUtils.EntryPosFilter:
+							break;
+						case XmlViewsUtils.PosFilter:
+							fAtomic = PosFilter.Atomic;
+							break;
+						case XmlViewsUtils.InflectionClassFilter:
+							fAtomic = InflectionClassFilter.Atomic;
+							leafFlidValue = InflectionClassFilter.LeafFlid;
+							break;
+						default:
+							throw new ArgumentException($"{bulkEdit_xor_chooseFilter} is not currently recognized/implemented.");
 					}
-					return;
-			}
-		}
-
-		/// <summary>
-		/// These cases cannot be created until much later, and are created via Reflection,
-		/// when more context is available for the filters to use.
-		/// </summary>
-		private void SetUpConfusedCases(IPropertyTable propertyTable, FwComboBox combo, FilterSortItem item, Type beType)
-		{
-			Type filterType = null;
-			if (typeof(ListChoiceFilter).IsAssignableFrom(beType))
-			{
-				// typically it is a chooserFilter attribute, and gives the actual filter.
-				filterType = beType;
-			}
-			else
-			{
-				// typically got a bulkEdit spec, and the editor class may know a compatible filter class.
-				var mi = beType.GetMethod("FilterType", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static);
-				if (mi != null)
-				{
-					filterType = mi.Invoke(null, null) as Type;
-				}
-			}
-			if (filterType != null)
-			{
-				var fAtomic = false;
-				var pi = filterType.GetProperty("Atomic", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static);
-				if (pi != null)
-				{
-					fAtomic = (bool)pi.GetValue(null, null);
-				}
-				var comboItem = new ListChoiceComboItem(MakeLabel(XMLViewsStrings.ksChoose_), item, m_cache, propertyTable, combo, fAtomic, filterType);
-				combo.Items.Add(comboItem);
-				var piLeaf = filterType.GetProperty("LeafFlid", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static);
-				if (piLeaf != null)
-				{
-					comboItem.LeafFlid = (int)piLeaf.GetValue(null, null);
-				}
+					var comboItem = new ListChoiceComboItem(MakeLabel(XMLViewsStrings.ksChoose_), item, m_cache, propertyTable, combo, fAtomic, bulkEdit_xor_chooseFilter);
+					combo.Items.Add(comboItem);
+					comboItem.LeafFlid = leafFlidValue;
+					break;
 			}
 		}
 
@@ -783,7 +735,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		{
 			protected override XElement GetKeyForItem(FilterSortItem item)
 			{
-				return item.Spec;
+				return item.ColumnSpecificationElement;
 			}
 		}
 
