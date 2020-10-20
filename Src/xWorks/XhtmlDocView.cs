@@ -986,10 +986,10 @@ namespace SIL.FieldWorks.XWorks
 			var currElementRect = currSelectedByGuid.GetBoundingClientRect();
 			var currElementTop = currElementRect.Top + browser.Window.ScrollY;
 			var currElementBottom = currElementRect.Bottom + browser.Window.ScrollY;
-			var yPosition = currElementTop - (browser.Height / 4);
+			var yPosition = currElementTop - browser.Height / 4.0;
 
 			// Scroll only if current element is not visible on browser window
-			if (currElementTop < browser.Window.ScrollY || currElementBottom > (browser.Window.ScrollY + browser.Height))
+			if (currElementTop < browser.Window.ScrollY || currElementBottom > browser.Window.ScrollY + browser.Height)
 				browser.Window.ScrollTo(0, (int)yPosition);
 
 			AddClassToHtmlElement(currSelectedByGuid, CurrentSelectedEntryClass);

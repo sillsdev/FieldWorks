@@ -394,7 +394,7 @@ namespace SIL.FieldWorks.IText
 			/// <param name="id">The id for the checkbox to be written</param>
 			/// <param name="className">The name of the class to attach to the div</param>
 			/// <param name="isEmptyCell">If true, a div is written with no checkbox</param>
-			private void GenerateCheckbox(XmlWriter htmlWriter, InterlinLineChoices choices, string id, string className, bool isEmptyCell = false)
+			private static void GenerateCheckbox(XmlWriter htmlWriter, InterlinLineChoices choices, string id, string className, bool isEmptyCell = false)
 			{
 				if (htmlWriter == null)
 					return;

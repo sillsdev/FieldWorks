@@ -45,11 +45,12 @@
 	</Target>
 
 	<!-- Copy (or delete copied) TECKit files -->
+	<!-- REVIEW (Hasso) 2020.10: there no longer seem to be any libTECkit files under DistFiles -->
 	<Target Name="teckit">
-		<CreateProperty Value="x86" Condition="'$(arch)'!='x86_64'">
+		<CreateProperty Value="x86" Condition="'$(arch)'!='x64'">
 			<Output TaskParameter="Value" PropertyName="teckit-ext"/>
 		</CreateProperty>
-		<CreateProperty Value="x86_64" Condition="'$(arch)'=='x86_64'">
+		<CreateProperty Value="x86_64" Condition="'$(arch)'=='x64'">
 			<Output TaskParameter="Value" PropertyName="teckit-ext"/>
 		</CreateProperty>
 		<CreateItem Include="$(dir-fwdistfiles)/libTECkit_*$(teckit-ext).so">
