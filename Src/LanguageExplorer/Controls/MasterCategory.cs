@@ -1,4 +1,4 @@
-// Copyright (c) 2005-2020 SIL International
+// Copyright (c) 2015-2020 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -18,7 +18,7 @@ using SIL.Xml;
 
 namespace LanguageExplorer.Controls
 {
-	internal sealed class MasterCategory
+	public class MasterCategory
 	{
 		private string m_id;
 		private string m_abbrev;
@@ -27,26 +27,28 @@ namespace LanguageExplorer.Controls
 		private string m_termWs;
 		private string m_def;
 		private string m_defWs;
-		private List<MasterCategoryCitation> m_citations;
+		private readonly List<MasterCategoryCitation> m_citations;
 		private XmlNode m_node; // need to remember the node so can put info for *all* writing systems into database
 
 		public static MasterCategory Create(ISet<IPartOfSpeech> posSet, XmlNode node, LcmCache cache)
 		{
 			/*
-			<item type="category" id="Adjective" guid="30d07580-5052-4d91-bc24-469b8b2d7df9">
-				<abbrev ws="en">adj</abbrev>
-				<term ws="en">adjective</term>
-				<def ws="en">An adjective is a part of speech whose members modify nouns. An adjective specifies the attributes of a noun referent. Note: this is one case among many. Adjectives are a class of modifiers.</def>
-				<citation ws="en">Crystal 1997:8</citation>
-				<citation ws="en">Mish et al. 1990:56</citation>
-				<citation ws="en">Payne 1997:63</citation>
-			</item>
-			*/
+				<item type="category" id="Adjective" guid="30d07580-5052-4d91-bc24-469b8b2d7df9">
+					<abbrev ws="en">adj</abbrev>
+					<term ws="en">adjective</term>
+					<def ws="en">An adjective is a part of speech whose members modify nouns. An adjective specifies the attributes of a noun referent. Note: this is one case among many. Adjectives are a class of modifiers.</def>
+					<citation ws="en">Crystal 1997:8</citation>
+					<citation ws="en">Mish et al. 1990:56</citation>
+					<citation ws="en">Payne 1997:63</citation>
+				</item>
+				*/
+
 			var mc = new MasterCategory
 			{
 				IsGroup = node.SelectNodes("item") != null,
 				m_id = XmlUtils.GetMandatoryAttributeValue(node, "id")
 			};
+
 			foreach (var pos in posSet)
 			{
 				if (pos.CatalogSourceId == mc.m_id)
@@ -55,48 +57,44 @@ namespace LanguageExplorer.Controls
 					break;
 				}
 			}
+
 			mc.m_node = node; // remember node, too, so can put info for all WSes in database
+
 			var sDefaultWS = cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Id;
 			mc.m_abbrevWs = GetBestWritingSystemForNamedNode(node, "abbrev", sDefaultWS, cache, out var sContent);
 			mc.m_abbrev = sContent;
+
 			mc.m_termWs = GetBestWritingSystemForNamedNode(node, "term", sDefaultWS, cache, out sContent);
 			mc.m_term = NameFixer(sContent);
+
 			mc.m_defWs = GetBestWritingSystemForNamedNode(node, "def", sDefaultWS, cache, out sContent);
 			mc.m_def = sContent;
+
 			// ReSharper disable once PossibleNullReferenceException
 			foreach (XmlNode citNode in node.SelectNodes("citation"))
-			{
 				mc.m_citations.Add(new MasterCategoryCitation(XmlUtils.GetMandatoryAttributeValue(citNode, "ws"), citNode.InnerText));
-			}
 			return mc;
 		}
 
-		/// <summary>
-		/// TODO: unit test, resolve LT-19115
-		/// </summary>
-		private static string GetBestWritingSystemForNamedNode(XmlNode node, string sNodeName, string sDefaultWS, LcmCache cache, out string sNodeContent)
+		internal static string GetBestWritingSystemForNamedNode(XmlNode node, string sNodeName, string sDefaultWS, LcmCache cache, out string sNodeContent)
 		{
 			string sWS;
 			var nd = node.SelectSingleNode(sNodeName + "[@ws='" + sDefaultWS + "']");
 			if (nd == null || nd.InnerText.Length == 0)
 			{
-				foreach (var ws in cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems)
+				foreach (var ws in cache.ServiceLocator.WritingSystems.AnalysisWritingSystems)
 				{
 					sWS = ws.Id;
 					if (sWS == sDefaultWS)
-					{
 						continue;
-					}
 					nd = node.SelectSingleNode(sNodeName + "[@ws='" + sWS + "']");
 					if (nd != null && nd.InnerText.Length > 0)
-					{
 						break;
-					}
 				}
 			}
 			if (nd == null)
 			{
-				sNodeContent = string.Empty;
+				sNodeContent = "";
 				sWS = sDefaultWS;
 			}
 			else
@@ -114,6 +112,7 @@ namespace LanguageExplorer.Controls
 			{
 				return;
 			}
+
 			UndoableUnitOfWorkHelper.Do(LanguageExplorerControls.ksUndoCreateCategory, LanguageExplorerControls.ksRedoCreateCategory,
 				cache.ServiceLocator.GetInstance<IActionHandler>(), () =>
 				{
@@ -134,22 +133,27 @@ namespace LanguageExplorer.Controls
 					{
 						UpdatePOSStrings(cache, m_node, POS);
 					}
+
 					POS.CatalogSourceId = m_id;
 				});
 		}
+
 		/// <summary>
-		/// Updates the text of the projects grammatical categories with text from provided goldEticDoc
+		/// Updates the text of the projects' grammatical categories with text from provided goldEticDoc
 		/// </summary>
-		internal static void UpdatePOSStrings(LcmCache cache, XmlDocument goldEticDoc)
+		public static void UpdatePOSStrings(LcmCache cache, XmlDocument goldEticDoc)
 		{
-			var posDict = cache.LangProject.PartsOfSpeechOA.ReallyReallyAllPossibilities
-				.Cast<IPartOfSpeech>().ToDictionary(pos => pos.CatalogSourceId);
+			var posDict = cache.LangProject.PartsOfSpeechOA.ReallyReallyAllPossibilities.Cast<IPartOfSpeech>()
+				.Where(pos => !string.IsNullOrEmpty(pos.CatalogSourceId)).ToDictionary(pos => pos.CatalogSourceId);
 			var posNodes = goldEticDoc.DocumentElement?.SelectNodes("/eticPOSList/item");
 			Debug.Assert(posNodes != null);
-			UowHelpers.UndoExtension(LanguageExplorerControls.ImportTranslateGrammaticalCategories, cache.ServiceLocator.GetInstance<IActionHandler>(), () =>
-			{
-				UpdatePOSStrings(cache, goldEticDoc.DocumentElement, posDict);
-			});
+
+			UndoableUnitOfWorkHelper.Do(LanguageExplorerControls.ksUndoImportTranslateGrammaticalCategories,
+				LanguageExplorerControls.ksRedoImportTranslateGrammaticalCategories,
+				cache.ServiceLocator.GetInstance<IActionHandler>(), () =>
+				{
+					UpdatePOSStrings(cache, goldEticDoc.DocumentElement, posDict);
+				});
 		}
 
 		private static void UpdatePOSStrings(LcmCache cache, XmlElement goldEticElt, Dictionary<string, IPartOfSpeech> posDict)
@@ -237,23 +241,20 @@ namespace LanguageExplorer.Controls
 		private static string NameFixer(string name)
 		{
 			if (string.IsNullOrEmpty(name))
-			{
 				return name;
-			}
+
 			var c = name[0];
 			if (char.IsLetter(c) && char.IsLower(c))
-			{
 				name = char.ToUpper(c) + name.Substring(1, name.Length - 1);
-			}
+
 			// Add space before each upper case letter, after the first one.
 			for (var i = name.Length - 1; i > 0; --i)
 			{
 				c = name[i];
 				if (char.IsLetter(c) && char.IsUpper(c))
-				{
 					name = name.Insert(i, " ");
-				}
 			}
+
 			return name;
 		}
 
@@ -270,7 +271,9 @@ namespace LanguageExplorer.Controls
 
 		public void ResetDescription(RichTextBox rtbDescription)
 		{
+
 			rtbDescription.Clear();
+
 			var doubleNewLine = Environment.NewLine + Environment.NewLine;
 			var original = rtbDescription.SelectionFont;
 			var fntBold = new Font(original.FontFamily, original.Size, FontStyle.Bold);
@@ -278,24 +281,26 @@ namespace LanguageExplorer.Controls
 			rtbDescription.SelectionFont = fntBold;
 			rtbDescription.AppendText(m_term);
 			rtbDescription.AppendText(doubleNewLine);
+
 			rtbDescription.SelectionFont = string.IsNullOrEmpty(m_def) ? fntItalic : original;
 			rtbDescription.AppendText(string.IsNullOrEmpty(m_def) ? LanguageExplorerControls.ksUndefinedItem : m_def);
 			rtbDescription.AppendText(doubleNewLine);
+
 			if (m_citations.Count > 0)
 			{
 				rtbDescription.SelectionFont = fntItalic;
 				rtbDescription.AppendText(LanguageExplorerControls.ksReferences);
 				rtbDescription.AppendText(doubleNewLine);
+
 				rtbDescription.SelectionFont = original;
 				foreach (var mcc in m_citations)
-				{
 					mcc.ResetDescription(rtbDescription);
-				}
 			}
+
 			if (Platform.IsMono)
 			{
 				// Ensure that the top of the description is showing (FWNX-521).
-				rtbDescription.Select(0, 0);
+				rtbDescription.Select(0,0);
 				rtbDescription.ScrollToCaret();
 			}
 		}
@@ -305,11 +310,11 @@ namespace LanguageExplorer.Controls
 			return InDatabase ? string.Format(LanguageExplorerControls.ksXInFwProject, m_term) : m_term;
 		}
 
-		private sealed class MasterCategoryCitation
+		internal class MasterCategoryCitation
 		{
-			private string WS { get; }
+			public string WS { get; }
 
-			private string Citation { get; }
+			public string Citation { get; }
 
 			public MasterCategoryCitation(string ws, string citation)
 			{

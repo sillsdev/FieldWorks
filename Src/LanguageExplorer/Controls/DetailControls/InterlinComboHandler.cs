@@ -216,7 +216,7 @@ namespace LanguageExplorer.Controls.DetailControls
 					handler = new IhWordPos();
 					break;
 				case SandboxBase.ktagAnalysisIcon:
-					var clb2 = new ComboListBox(mainFlexWindow);
+					var clb2 = new ComboListBox();
 					clb2.StyleSheet = sandbox.StyleSheet;
 					var caHandler = new ChooseAnalysisHandler(caches.MainCache, hvoSbWord, sandbox.Analysis, clb2);
 					caHandler.Owner = sandbox;
@@ -244,7 +244,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			// Use the base class handler for most handlers. Override where needed.
 			if (!(handler is IhWordPos))
 			{
-				var clb = new ComboListBox(mainFlexWindow);
+				var clb = new ComboListBox();
 				handler.ComboList = clb;
 				clb.SelectedIndexChanged += handler.HandleComboSelChange;
 				clb.SameItemSelected += handler.HandleComboSelSame;
@@ -275,6 +275,20 @@ namespace LanguageExplorer.Controls.DetailControls
 			return handler;
 		}
 
+		private void ComboListHidden(object sender, EventArgs args)
+		{
+
+			if (!(sender is ComboListBox))
+			{
+				throw new ApplicationException("Unexpected origin of ComboListHidden event.");
+			}
+			((ComboListBox)sender).FormHidden -= ComboListHidden;
+			if (m_sandbox != null && !m_sandbox.IsDisposed)
+			{
+				m_sandbox.Focus();
+			}
+		}
+
 		/// <summary>
 		/// Hide yourself.
 		/// </summary>
@@ -287,12 +301,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		// Likewise if it is a combo list.
 		internal void HideCombo()
 		{
-			if (m_sandbox.ParentForm == Form.ActiveForm)
-			{
-				m_sandbox.Focus();
-			}
-			var clb = ComboList as ComboListBox;
-			if (clb == null)
+			if (!(ComboList is ComboListBox clb))
 			{
 				return;
 			}
@@ -315,8 +324,9 @@ namespace LanguageExplorer.Controls.DetailControls
 		public virtual void Activate(Rect loc)
 		{
 			AdjustListBoxSize();
-			var comboListBox = ((ComboListBox)ComboList);
+			var comboListBox = (ComboListBox)ComboList;
 			comboListBox.AdjustSize(500, 400); // these are maximums!
+			comboListBox.FormHidden += ComboListHidden;
 			comboListBox.Launch(m_sandbox.RectangleToScreen(loc), Screen.GetWorkingArea(m_sandbox));
 		}
 

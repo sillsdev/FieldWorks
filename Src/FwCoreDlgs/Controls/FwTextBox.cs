@@ -229,6 +229,17 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			set => m_innerFwTextBox.SuppressEnter = value;
 		}
 
+		/// <inheritdoc />
+		public override Font Font
+		{
+			get => base.Font;
+			set
+			{
+				m_innerFwTextBox.Font = value;
+				base.Font = value;
+			}
+		}
+
 		/// <summary>
 		/// calculate the height of the edit boxes in millipoints.
 		/// </summary>
@@ -855,6 +866,29 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		internal void HandleKeyDown(KeyEventArgs e)
 		{
 			OnKeyDown(e);
+		}
+
+		internal void HandleKeyPress(KeyPressEventArgs e)
+		{
+			OnKeyPress(e);
+		}
+
+		/// <summary />
+		protected override void OnKeyPress(KeyPressEventArgs e)
+		{
+			if (SuppressEnter && e.KeyChar == '\r')
+			{
+				return;
+			}
+			if (Parent is FwTextBox parent)
+			{
+				parent.HandleKeyPress(e);
+				if (e.Handled)
+				{
+					return;
+				}
+			}
+			base.OnKeyPress(e);
 		}
 
 		/// <summary>

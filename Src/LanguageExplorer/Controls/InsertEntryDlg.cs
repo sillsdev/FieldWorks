@@ -414,12 +414,8 @@ namespace LanguageExplorer.Controls
 			{
 				Size = size;
 			}
-			if (Platform.IsMono)
-			{
-				// Mono doesn't seem to fire the Activated event, so call the method here.
-				// This fixes FWNX-783, setting the focus in the gloss textbox.
-				SetInitialFocus();
-			}
+			// Setting the initial focus fixes LT-20117 (as well as FWNX-783 and LT-4719)
+			SetInitialFocus();
 		}
 
 		/// <summary>
@@ -427,43 +423,28 @@ namespace LanguageExplorer.Controls
 		/// </summary>
 		private void SetInitialFocus()
 		{
-			if (!m_fInitialized)
+			if (m_fLexicalFormInitialFocus)
 			{
-				if (m_fLexicalFormInitialFocus)
+				if (msLexicalForm == null)
 				{
-					if (msLexicalForm == null)
-					{
-						m_tbLexicalForm.Select();
-					}
-					else
-					{
-						msLexicalForm.Select();
-					}
+					m_tbLexicalForm.Select();
 				}
 				else
 				{
-					if (msGloss == null)
-					{
-						m_tbGloss.Select();
-					}
-					else
-					{
-						msGloss.Select();
-					}
+					msLexicalForm.Select();
 				}
-				m_fInitialized = true;
 			}
-		}
-
-		/// <summary>
-		/// This shouldn't be needed, but without it, the dialog can start up with the focus
-		/// in the lexical form text box, but the keyboard set to the analysis writing system
-		/// instead of the vernacular writing system.  See LT-4719.
-		/// </summary>
-		protected override void OnActivated(EventArgs e)
-		{
-			base.OnActivated(e);
-			SetInitialFocus();
+			else
+			{
+				if (msGloss == null)
+				{
+					m_tbGloss.Select();
+				}
+				else
+				{
+					msGloss.Select();
+				}
+			}
 		}
 
 		/// <summary />

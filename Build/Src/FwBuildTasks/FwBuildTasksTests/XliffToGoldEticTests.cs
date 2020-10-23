@@ -300,16 +300,22 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 		[TestCase(XliffUtils.State.NeedsTranslation, false)]
 		[TestCase(XliffUtils.State.Translated, true)]
 		[TestCase(XliffUtils.State.Final, true)]
-		public void CitationsFilteredByState(string state, bool isTranslated)
+		public void TranslationStateChecked(string state, bool isTranslated)
 		{
 			const string id = "Adjective";
 			const string guid = "30d07580-5052-4d91-bc24-469b8b2d7df9";
+			const string abbrEn = "adj";
+			const string abbrEs = "adj";
+			const string termEn = "Adjective";
+			const string termEs = "Adjetivo";
+			const string defEn = "An adjective is a part of speech whose members modify nouns.";
+			const string defEs = "Un adjectif est un modificateur du nom.";
 			const string citEn = "Crystal 1997:8";
 			const string citEs = "Mish et al. 1990:56";
 			var xlfEs = XDocument.Parse($@"<xliff version='1.2' xmlns:sil='software.sil.org'>
 	<file source-language='EN' datatype='plaintext' original='test.xml' target-language='{WsEs}'>
 		<body><sil:source/>
-			{BuildXliffGroup(id, guid, "abbr", "abr", "term", "terme", "def", "dffn", citEn, citEs)}
+			{BuildXliffGroup(id, guid, abbrEn, abbrEs, termEn, termEs, defEn, defEs, citEn, citEs)}
 		</body></file></xliff>");
 			foreach (var targetElt in xlfEs.XPathSelectElements("//target"))
 			{
@@ -319,18 +325,30 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 
 			var result = _task.CombineXliffs(new List<XDocument> {xlfEs}).ToString();
 
+			const string abbrevXpath = "/eticPOSList/item/abbrev";
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(abbrevXpath, isTranslated ? 2 : 1);
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(
+				abbrevXpath + "[@ws='" + WsEs + "' and text()='" + abbrEs + "']", isTranslated ? 1 : 0);
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(
+				abbrevXpath + "[@ws='" + WsEn + "' and text()='" + abbrEn + "']", 1);
+			const string termXpath = "/eticPOSList/item/term";
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(termXpath, isTranslated ? 2 : 1);
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(
+				termXpath + "[@ws='" + WsEs + "' and text()='" + termEs + "']", isTranslated ? 1 : 0);
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(
+				termXpath + "[@ws='" + WsEn + "' and text()='" + termEn + "']", 1);
+			const string defXpath = "/eticPOSList/item/def";
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(defXpath, isTranslated ? 2 : 1);
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(
+				defXpath + "[@ws='" + WsEs + "' and text()='" + defEs + "']", isTranslated ? 1 : 0);
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(
+				defXpath + "[@ws='" + WsEn + "' and text()='" + defEn + "']", 1);
 			const string citationXpath = "/eticPOSList/item/citation";
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(citationXpath, isTranslated ? 2 : 1);
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(
 				citationXpath + "[@ws='" + WsEs + "' and text()='" + citEs + "']", isTranslated ? 1 : 0);
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(
 				citationXpath + "[@ws='" + WsEn + "' and text()='" + citEn + "']", 1);
-		}
-
-		[Test]
-		[Ignore("not implemented")]
-		public void TranslationStateChecked()
-		{
 		}
 
 		private string BuildXliffGroup(string id, string guid, string subItems = "")

@@ -1,18 +1,18 @@
-// Copyright (c) 2013-2020 SIL International
+// Copyright (c) 2015-2020 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections.Generic;
 using System.Xml;
-using LanguageExplorer.Controls;
 using NUnit.Framework;
 using SIL.LCModel;
+using SIL.FieldWorks.LexText.Controls;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Infrastructure;
 
-namespace LanguageExplorerTests.Controls
+namespace LexTextControlsTests
 {
 	/// <summary>
 	/// Start of tests for MasterCategory. Very incomplete as yet.
@@ -25,16 +25,19 @@ namespace LanguageExplorerTests.Controls
 		private static readonly HashSet<IPartOfSpeech> POSEmptySet = new HashSet<IPartOfSpeech>();
 		private static int[] s_wssOnlyEn;
 
-		public override void FixtureSetup()
+		[TestFixtureSetUp]
+		public void TestFixtureSetup()
 		{
 			base.FixtureSetup();
+
 			s_wssOnlyEn = new[] { Cache.ServiceLocator.WritingSystemManager.GetWsFromStr(WSEn) };
 		}
 
 		[Test]
 		public void MasterCategoryWithGuidNode_MakesPosWithRightGuid()
 		{
-			const string input = @"<eticPOSList xmlns:rdf='http://www.w3.org/1999/02/22-rdf-syntax-ns#' xmlns:rdfs='http://www.w3.org/2000/01/rdf-schema#' xmlns:owl='http://www.w3.org/2002/07/owl#'>
+			string input =
+				@"<eticPOSList xmlns:rdf='http://www.w3.org/1999/02/22-rdf-syntax-ns#' xmlns:rdfs='http://www.w3.org/2000/01/rdf-schema#' xmlns:owl='http://www.w3.org/2002/07/owl#'>
    <item type='category' id='Adjective' guid='30d07580-5052-4d91-bc24-469b8b2d7df9'>
 	  <abbrev ws='en'>adj</abbrev>
 	  <term ws='en'>Adjective</term>
@@ -73,12 +76,12 @@ namespace LanguageExplorerTests.Controls
 			var adposition = CheckPos("ae115ea8-2cd7-4501-8ae7-dc638e4f17c5", posList);
 
 			var childItem = rootItem.ChildNodes[3];
-			var mcChild = MasterCategory.Create(new HashSet<IPartOfSpeech> { adposition }, childItem, Cache);
+			var mcChild = MasterCategory.Create(new HashSet<IPartOfSpeech> {adposition}, childItem, Cache);
 			mcChild.AddToDatabase(Cache, posList, null, adposition);
 			var postPosition = CheckPos("18f1b2b8-0ce3-4889-90e9-003fed6a969f", adposition);
 
 			var grandChildItem = childItem.ChildNodes[3];
-			var mcGrandChild = MasterCategory.Create(new HashSet<IPartOfSpeech> { adposition, postPosition }, grandChildItem, Cache);
+			var mcGrandChild = MasterCategory.Create(new HashSet<IPartOfSpeech> {adposition, postPosition}, grandChildItem, Cache);
 			mcGrandChild.AddToDatabase(Cache, posList, mcChild, null);
 			CheckPos("82B1250A-E64F-4AD8-8B8C-5ABBC732087A", postPosition);
 		}
@@ -86,7 +89,8 @@ namespace LanguageExplorerTests.Controls
 		[Test]
 		public void MasterCategoryWithGuidNode_ValidatePosInReversalGuid()
 		{
-			const string input = @"<eticPOSList xmlns:rdf='http://www.w3.org/1999/02/22-rdf-syntax-ns#' xmlns:rdfs='http://www.w3.org/2000/01/rdf-schema#' xmlns:owl='http://www.w3.org/2002/07/owl#'>
+			string input =
+				@"<eticPOSList xmlns:rdf='http://www.w3.org/1999/02/22-rdf-syntax-ns#' xmlns:rdfs='http://www.w3.org/2000/01/rdf-schema#' xmlns:owl='http://www.w3.org/2002/07/owl#'>
 				   <item type='category' id='Adjective' guid='30d07580-5052-4d91-bc24-469b8b2d7df9'>
 					  <abbrev ws='en'>adj</abbrev>
 					  <term ws='en'>Adjective</term>
@@ -112,7 +116,7 @@ namespace LanguageExplorerTests.Controls
 			var mRevIndexFactory = Cache.ServiceLocator.GetInstance<IReversalIndexFactory>();
 			var index = mRevIndexFactory.Create();
 			Cache.LangProject.LexDbOA.ReversalIndexesOC.Add(index);
-			var fact = Cache.ServiceLocator.GetInstance<ICmPossibilityListFactory>();
+			ICmPossibilityListFactory fact = Cache.ServiceLocator.GetInstance<ICmPossibilityListFactory>();
 			index.PartsOfSpeechOA = fact.Create();
 			var posList = index.PartsOfSpeechOA;
 			var doc = new XmlDocument();
@@ -124,7 +128,7 @@ namespace LanguageExplorerTests.Controls
 			mc.AddToDatabase(Cache, posList, null, null);
 
 			var childItem = rootItem.ChildNodes[3];
-			var firstPos = (IPartOfSpeech)posList.PossibilitiesOS[0];
+			var firstPos = (IPartOfSpeech) posList.PossibilitiesOS[0];
 			var mcChild = MasterCategory.Create(new HashSet<IPartOfSpeech> { firstPos }, childItem, Cache);
 			mcChild.AddToDatabase(Cache, posList, null, firstPos);
 
@@ -375,7 +379,7 @@ namespace LanguageExplorerTests.Controls
 		private IPartOfSpeech CreateCustomPos(string name, string abbrev, string definition, int ws, ICmPossibilityList owner)
 		{
 			var guid = Guid.NewGuid();
-			UndoableUnitOfWorkHelper.Do(LanguageExplorerControls.ksUndoCreateCategory, LanguageExplorerControls.ksRedoCreateCategory,
+			UndoableUnitOfWorkHelper.Do(LexTextControls.ksUndoCreateCategory, LexTextControls.ksRedoCreateCategory,
 				Cache.ServiceLocator.GetInstance<IActionHandler>(), () =>
 				{
 					var pos = Cache.ServiceLocator.GetInstance<IPartOfSpeechFactory>().Create(guid, owner);

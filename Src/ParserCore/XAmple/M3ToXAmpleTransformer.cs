@@ -12,6 +12,7 @@ using System.Xml.Linq;
 using System.Xml.XPath;
 using System.Xml.Xsl;
 using SIL.LCModel.Utils;
+using SIL.PlatformUtilities;
 using SIL.WordWorks.GAFAWS.PositionAnalysis;
 
 namespace SIL.FieldWorks.WordWorks.Parser.XAmple
@@ -126,49 +127,77 @@ namespace SIL.FieldWorks.WordWorks.Parser.XAmple
 			}
 		}
 
-		private XslCompiledTransform CreateTransform(string xslName)
+		private static XslCompiledTransform CreateTransform(string xslName)
 		{
 			return CreateTransform(xslName, "ApplicationTransforms");
 		}
 
 		internal static XslCompiledTransform CreateTransform(string xslName, string assemblyName)
 		{
-			var transform = new XslCompiledTransform();
-			var type = Type.GetType($"{xslName},{assemblyName}");
-			var libPath = Path.GetDirectoryName(FileUtils.StripFilePrefix(Assembly.GetExecutingAssembly().CodeBase));
+			// If we're running on Mono we enable debug for XslCompiledTransform. This works
+			// around a crash somewhere deep in Mono (LT-20249). We could always pass true here,
+			// but it's probably a little bit faster if we only do it where we need it.
+			var transform = new XslCompiledTransform(Platform.IsMono);
 			if (MiscUtils.IsDotNet)
 			{
 				// Assumes the XSL has been precompiled.  xslName is the name of the precompiled class
+				var type = Type.GetType($"{xslName},{assemblyName}");
 				Debug.Assert(type != null);
 				transform.Load(type);
 			}
 			else
 			{
-				var transformAssembly = Assembly.LoadFrom(Path.Combine(libPath, assemblyName + ".dll"));
+				//var libPath = Path.GetDirectoryName(FileUtils.StripFilePrefix(Assembly.GetExecutingAssembly().CodeBase));
+				//var transformAssembly = Assembly.LoadFrom(Path.Combine(libPath, assemblyName + ".dll"));
+				var resolver = GetResourceResolver(assemblyName);
+				var transformAssembly = ((XmlResourceResolver)resolver).Assembly;
 				using (var stream = transformAssembly.GetManifestResourceStream(xslName + ".xsl"))
 				{
 					Debug.Assert(stream != null);
 					using (var reader = XmlReader.Create(stream))
 					{
-						transform.Load(reader, new XsltSettings(true, false), new XmlResourceResolver(transformAssembly));
+						transform.Load(reader, new XsltSettings(true, false), resolver);
 					}
 				}
 			}
 			return transform;
 		}
 
+		internal static XmlResolver GetResourceResolver(string assemblyName)
+		{
+			var libPath = Path.GetDirectoryName(FileUtils.StripFilePrefix(Assembly.GetExecutingAssembly().CodeBase));
+			var transformAssembly = Assembly.LoadFrom(Path.Combine(libPath, assemblyName + ".dll"));
+			return new XmlResourceResolver(transformAssembly);
+		}
+
 		private sealed class XmlResourceResolver : XmlUrlResolver
 		{
-			private readonly Assembly m_assembly;
+			internal Assembly Assembly { get; }
 
 			internal XmlResourceResolver(Assembly assembly)
 			{
-				m_assembly = assembly;
+				Assembly = assembly;
 			}
 
 			public override Uri ResolveUri(Uri baseUri, string relativeUri)
 			{
-				return baseUri == null ? new Uri($"res://{relativeUri}") : base.ResolveUri(baseUri, relativeUri);
+				if (baseUri != null)
+				{
+					return base.ResolveUri(baseUri, relativeUri);
+				}
+#if JASONTODO
+				// TODO: VS says "baseUri" is never null, so the following code is unreachable.
+#endif
+				var uri = new Uri(relativeUri, UriKind.RelativeOrAbsolute);
+				if (uri.IsAbsoluteUri)
+				{
+					if (uri.Scheme == "res")
+					{
+						return uri;
+					}
+					relativeUri = uri.AbsolutePath;
+				}
+				return new Uri($"res://{relativeUri}");
 			}
 
 			public override object GetEntity(Uri absoluteUri, string role, Type ofObjectToReturn)
@@ -176,8 +205,8 @@ namespace SIL.FieldWorks.WordWorks.Parser.XAmple
 				switch (absoluteUri.Scheme)
 				{
 					case "res":
-						return m_assembly.GetManifestResourceStream(absoluteUri.OriginalString.Substring(6));
-
+						// strip off res://
+						return Assembly.GetManifestResourceStream(absoluteUri.OriginalString.Substring(6));
 					default:
 						// Handle file:// and http://
 						// requests from the XmlUrlResolver base class

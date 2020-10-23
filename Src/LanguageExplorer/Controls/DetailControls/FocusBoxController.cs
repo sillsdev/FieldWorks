@@ -310,6 +310,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			}
 			finally
 			{
+				Focus();
 				_adjustingSize = false;
 			}
 		}

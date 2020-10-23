@@ -191,5 +191,49 @@ namespace SIL.FieldWorks.WordWorks.Parser.XAmple
 			sb.AppendLine(sActualResultFile);
 			Assert.AreEqual(sExpected, sActual, sb.ToString());
 		}
+
+		[TestCase(null, typeof(ArgumentNullException))]
+		public void ResolveUri_ThrowsException(string relativeUri, Type expectedException)
+		{
+			var sut = M3ToXAmpleTransformer.GetResourceResolver("ParserCoreTests");
+
+			Assert.That(() => sut.ResolveUri(null, relativeUri), Throws.InstanceOf(expectedException));
+		}
+
+		[Platform(Include = "Linux")]
+		[TestCase("/tmp/foo", "bar", "file:///tmp/bar")]
+		[TestCase("/tmp/foo/", "bar", "file:///tmp/foo/bar")]
+		public void ResolveUri_Linux(string baseUriString, string relativeUri, string resultUri)
+		{
+			var sut = M3ToXAmpleTransformer.GetResourceResolver("ParserCoreTests");
+
+			var baseUri = baseUriString == null ? null : new Uri(baseUriString);
+			Assert.That(sut.ResolveUri(baseUri, relativeUri), Is.EqualTo(new Uri(resultUri)));
+		}
+
+		[TestCase(null, "", "res:///")]
+		[TestCase(null, "foo", "res://foo")]
+		[TestCase(null, "/foo", "res:///foo")]
+		[TestCase(null, "/tmp/foo", "res:///tmp/foo")]
+		[TestCase(null, @"c:\tmp\foo", "res:///c:/tmp/foo")]
+		[TestCase(null, "res:///tmp/foo", "res:///tmp/foo")]
+		[TestCase(null, "file:///tmp/foo", "res:///tmp/foo")]
+		[TestCase("res:///tmp/foo", "bar", "res:///tmp/bar")]
+		[TestCase("file:///tmp/foo", "bar", "file:///tmp/bar")]
+		[TestCase("file:///tmp/foo", "res:///bar", "res:///bar")]
+		[TestCase("res:///tmp/foo", "file:///bar", "file:///bar")]
+		[TestCase(@"c:\tmp\foo", "bar", "file:///c:/tmp/bar")]
+		[TestCase("res:///tmp/foo/", "bar", "res:///tmp/foo/bar")]
+		[TestCase("file:///tmp/foo/", "bar", "file:///tmp/foo/bar")]
+		[TestCase(@"c:\tmp\foo\", "bar", "file:///c:/tmp/foo/bar")]
+		[TestCase("file:///tmp/foo/", "res:///bar", "res:///bar")]
+		[TestCase("res:///tmp/foo/", "file:///bar", "file:///bar")]
+		public void ResolveUri(string baseUriString, string relativeUri, string resultUri)
+		{
+			var sut = M3ToXAmpleTransformer.GetResourceResolver("ParserCoreTests");
+
+			var baseUri = baseUriString == null ? null : new Uri(baseUriString);
+			Assert.That(sut.ResolveUri(baseUri, relativeUri), Is.EqualTo(new Uri(resultUri)));
+		}
 	}
 }

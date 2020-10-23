@@ -1102,7 +1102,7 @@ namespace LanguageExplorer.Controls.DetailControls.Slices
 					}
 					if (_comboListBox == null)
 					{
-						_comboListBox = new ComboListBox(_mainFlexForm)
+						_comboListBox = new ComboListBox()
 						{
 							// Since we may initialize with TsStrings, need to set WSF.
 							WritingSystemFactory = _propertyTable.GetValue<LcmCache>(FwUtilsConstants.cache).LanguageWritingSystemFactoryAccessor,

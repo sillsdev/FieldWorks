@@ -10,6 +10,7 @@ using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Core.Text;
 using SIL.ObjectModel;
+using SIL.PlatformUtilities;
 
 namespace LanguageExplorer.Controls.DetailControls
 {
@@ -91,7 +92,7 @@ namespace LanguageExplorer.Controls.DetailControls
 				ichSel = selInfo.IchEnd;
 				hvoObj = selInfo.Hvo(true);
 				tag = selInfo.Tag(true);
-				if (Environment.OSVersion.Platform == PlatformID.Win32NT && ichSel != selInfo.IchAnchor)
+				if (Platform.IsWindows && ichSel != selInfo.IchAnchor)
 				{
 					// TSF also replaces our carefully created selection, adjusted carefully to follow the
 					// inserted character, with one of its own choosing after we return, so flag that we'll
@@ -111,7 +112,6 @@ namespace LanguageExplorer.Controls.DetailControls
 			var cmorphs = m_sda.get_VecSize(m_hvoSbWord, SandboxBase.ktagSbWordMorphs);
 			for (var imorph = 0; imorph < cmorphs; ++imorph)
 			{
-				var hvoMorph = m_sda.get_VecItem(m_hvoSbWord, SandboxBase.ktagSbWordMorphs, imorph);
 				if (imorph != 0)
 				{
 					builder.ReplaceTsString(builder.Length, builder.Length, space);
@@ -121,12 +121,13 @@ namespace LanguageExplorer.Controls.DetailControls
 						builder.ReplaceTsString(builder.Length, builder.Length, space);
 					}
 				}
-				var hvoMorphForm = sda.get_ObjectProp(hvoMorph, SandboxBase.ktagSbMorphForm);
+				var hvoMorph = m_sda.get_VecItem(m_hvoSbWord, SandboxBase.ktagSbWordMorphs, imorph);
 				if (hvoMorph == hvoObj && tag == SandboxBase.ktagSbMorphPrefix)
 				{
 					m_ichSel = builder.Length + ichSel;
 				}
 				builder.ReplaceTsString(builder.Length, builder.Length, sda.get_StringProp(hvoMorph, SandboxBase.ktagSbMorphPrefix));
+				var hvoMorphForm = sda.get_ObjectProp(hvoMorph, SandboxBase.ktagSbMorphForm);
 				if (hvoMorphForm == hvoObj && tag == SandboxBase.ktagSbNamedObjName)
 				{
 					m_ichSel = builder.Length + ichSel;

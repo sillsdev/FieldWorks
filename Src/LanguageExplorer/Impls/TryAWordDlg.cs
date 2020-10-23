@@ -24,6 +24,7 @@ using SIL.FieldWorks.FwCoreDlgs;
 using SIL.FieldWorks.FwCoreDlgs.Controls;
 using SIL.FieldWorks.WordWorks.Parser.XAmple;
 using SIL.LCModel;
+using SIL.Xml;
 
 namespace LanguageExplorer.Impls
 {
@@ -685,11 +686,12 @@ namespace LanguageExplorer.Impls
 
 		private class ParserTraceUITransform
 		{
+			private const string PresentationTransforms = "PresentationTransforms";
 			private readonly XslCompiledTransform m_transform;
 
 			internal ParserTraceUITransform(string xslName)
 			{
-				m_transform = M3ToXAmpleTransformer.CreateTransform(xslName, "PresentationTransforms");
+				m_transform = M3ToXAmpleTransformer.CreateTransform(xslName, PresentationTransforms);
 			}
 
 			internal string Transform(IPropertyTable propertyTable, XDocument doc, string baseName)
@@ -704,8 +706,9 @@ namespace LanguageExplorer.Impls
 				args.AddParam("prmIconPath", "", IconPath);
 				var filePath = Path.Combine(Path.GetTempPath(), cache.ProjectId.Name + baseName + ".htm");
 				using (var writer = new StreamWriter(filePath))
+				using (var xmlWriter = new XmlTextWriter(writer))
 				{
-					m_transform.Transform(doc.CreateNavigator(), args, writer);
+					m_transform.Transform(doc.CreateNavigator(), args, xmlWriter, M3ToXAmpleTransformer.GetResourceResolver(PresentationTransforms));
 				}
 				return filePath;
 			}
@@ -780,7 +783,8 @@ namespace LanguageExplorer.Impls
 			string IParserTrace.CreateResultPage(IPropertyTable propertyTable, XDocument result, bool isTrace)
 			{
 				var args = new XsltArgumentList();
-				args.AddParam("prmHCTraceLoadErrorFile", "", Path.Combine(Path.GetTempPath(), propertyTable.GetValue<LcmCache>(FwUtilsConstants.cache).ProjectId.Name + "HCLoadErrors.xml"));
+				var loadErrorUri = new Uri(Path.Combine(Path.GetTempPath(), propertyTable.GetValue<LcmCache>("cache").ProjectId.Name + "HCLoadErrors.xml"));
+				args.AddParam("prmHCTraceLoadErrorFile", "", loadErrorUri.AbsoluteUri);
 				args.AddParam("prmShowTrace", "", isTrace.ToString().ToLowerInvariant());
 				return TraceTransform.Transform(propertyTable, result, isTrace ? "HCTrace" : "HCParse", args);
 			}

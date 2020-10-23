@@ -453,6 +453,8 @@ namespace LanguageExplorer.Controls.DetailControls
 			{
 				var comboListBox = (ComboListBox)m_combo;
 				comboListBox.AdjustSize(500, 400); // these are maximums!
+				comboListBox.LaunchingForm = Owner.ParentForm;
+				comboListBox.FormHidden += ComboListHidden;
 				comboListBox.Launch(Owner.RectangleToScreen(loc), Screen.GetWorkingArea(Owner));
 			}
 		}
@@ -512,6 +514,19 @@ namespace LanguageExplorer.Controls.DetailControls
 				Owner.Controls.Remove(combo);
 			}
 			(m_combo as ComboListBox)?.HideForm();
+		}
+
+		public void ComboListHidden(object sender, EventArgs args)
+		{
+			if (!(sender is ComboListBox))
+			{
+				throw new ApplicationException("Unexpected origin of ComboListHidden event.");
+			}
+			((ComboListBox)sender).FormHidden -= ComboListHidden;
+			if (Owner != null && !Owner.IsDisposed)
+			{
+				Owner.Focus();
+			}
 		}
 	}
 }

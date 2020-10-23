@@ -1539,7 +1539,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <summary>
 		/// Get the text props for the text immediately after the bottom of the selection.
 		/// </summary>
-		/// <returns>Text props associated with the charcter immediately after the bottom of the
+		/// <returns>Text props associated with the character immediately after the bottom of the
 		/// selection, or null if there is no following character</returns>
 		public ITsTextProps PropsAfter
 		{

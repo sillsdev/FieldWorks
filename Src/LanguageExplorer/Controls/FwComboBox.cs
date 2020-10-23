@@ -49,7 +49,7 @@ namespace LanguageExplorer.Controls
 		protected override IDropDownBox CreateDropDownBox()
 		{
 			// Create the list.
-			var comboListBox = new ComboListBox(Form.ActiveForm)
+			var comboListBox = new ComboListBox()
 			{
 				LaunchButton = m_button
 			};

@@ -641,8 +641,11 @@ namespace LanguageExplorer.Controls.DetailControls
 			propsBuilder.SetIntPropValues((int)FwTextPropType.ktptWs, (int)FwTextPropVar.ktpvDefault, m_wsVern);
 			try
 			{
+				// if the IP is at the beginning of the
+				// morpheme we want fAssocPrev to be false (LT-7773), but otherwise want
+				// it to be true (LT-19236)
 				m_sandbox.RootBox.MakeTextSelection(m_sandbox.IndexOfCurrentItem, clev, rgsli, m_tagSel, 0,
-					m_ichSelOutput, m_ichSelOutput, m_wsVern, false, -1, propsBuilder.GetTextProps(), true);
+					m_ichSelOutput, m_ichSelOutput, m_wsVern, m_ichSelOutput > 0, -1, propsBuilder.GetTextProps(), true);
 			}
 			catch (Exception)
 			{

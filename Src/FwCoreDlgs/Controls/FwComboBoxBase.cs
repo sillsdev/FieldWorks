@@ -785,25 +785,22 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			{
 				m_dropDownBox.Form.Size = sz;
 			}
-			if (Platform.IsMono)
+			// FWNX-748: ensure a launching form that is not m_dropDownBox itself.
+			// In Mono, Form.ActiveForm occasionally returns m_dropDownBox at this point.  So we
+			// try another approach to finding the launching form for displaying m_dropDownBox.
+			// Note that the launching form never changes, so it needs to be set only once.
+			if (m_dropDownBox.LaunchingForm == null)
 			{
-				// FWNX-748: ensure a launching form that is not m_dropDownBox itself.
-				// In Mono, Form.ActiveForm occasionally returns m_dropDownBox at this point.  So we
-				// try another approach to finding the launching form for displaying m_dropDownBox.
-				// Note that the launching form never changes, so it needs to be set only once.
-				if (m_dropDownBox.LaunchingForm == null)
+				Control parent = this;
+				Form launcher = null;
+				while (parent != null && launcher == null)
 				{
-					Control parent = this;
-					Form launcher = null;
-					while (parent != null && launcher == null)
-					{
-						parent = parent.Parent;
-						launcher = parent as Form;
-					}
-					if (launcher != null)
-					{
-						m_dropDownBox.LaunchingForm = launcher;
-					}
+					parent = parent.Parent;
+					launcher = parent as Form;
+				}
+				if (launcher != null)
+				{
+					m_dropDownBox.LaunchingForm = launcher;
 				}
 			}
 			m_dropDownBox.Launch(Parent.RectangleToScreen(Bounds), workingArea);

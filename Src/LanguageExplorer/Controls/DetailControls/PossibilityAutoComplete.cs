@@ -40,7 +40,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			m_displayNameProperty = displayNameProperty;
 			m_displayWs = displayWs;
 			_propertyTable = propertyTable;
-			m_listBox = new ComboListBox(_propertyTable.GetValue<Form>(FwUtilsConstants.window))
+			m_listBox = new ComboListBox()
 			{
 				DropDownStyle = ComboBoxStyle.DropDownList,
 				ActivateOnShow = false

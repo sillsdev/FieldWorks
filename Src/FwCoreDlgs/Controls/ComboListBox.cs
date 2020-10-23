@@ -15,6 +15,12 @@ using SIL.PlatformUtilities;
 
 namespace SIL.FieldWorks.FwCoreDlgs.Controls
 {
+
+	/// <summary>
+	/// Event fired whenever the combo box form is hidden
+	/// </summary>
+	internal delegate void FormHidden(object sender, EventArgs args);
+
 	/// <summary>
 	/// A "Combo" list box is one that can launch itself as a stand-alone, yet modal window, like the drop-down
 	/// list in a Combo. It can also be used for other drop-down lists, for example, from an icon button.
@@ -23,14 +29,10 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 	/// </summary>
 	internal sealed class ComboListBox : FwListBox, IComboList, IDropDownBox
 	{
+		private delegate void HideComboBoxDelegate(object sender, EventArgs args);
+
 		#region Data members
 
-		// This is a Form to contain the ListBox. I tried just making the list box visible,
-		// but it seems only a Form can show up as a top-level window.
-		// We track the form that was active when we launched, in hopes of working around
-		// a peculiar bug that brings another window to the front when we close on some
-		// systems (LT-2962).
-		private Form m_mainFlexForm;
 		// This filter captures clicks outside the list box while it is displayed.
 		private FwComboMessageFilter m_comboMessageFilter;
 		// This flag determines whether we close the Dropdown List during a selection.
@@ -39,6 +41,8 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		private ComboBoxState m_state = ComboBoxState.Normal;
 
 		private bool m_activateOnShow;
+
+		private event HideComboBoxDelegate HideComboBoxForm;
 
 		#endregion Data members
 
@@ -149,6 +153,11 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			set => SelectedIndex = FindStringExact(value);
 		}
 
+		/// <summary>
+		/// Event fired whenever the combo box is hidden
+		/// </summary>
+		public event FormHidden FormHidden;
+
 		/// <inheritdoc />
 		public Form Form { get; private set; }
 
@@ -159,14 +168,8 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		#region Construction and disposal
 
 		/// <summary />
-		public ComboListBox(Form mainFlexForm)
+		public ComboListBox()
 		{
-			if (mainFlexForm == null)
-			{
-				// Some tests have no main window.
-				mainFlexForm = Form.ActiveForm;
-			}
-
 			m_activateOnShow = true;
 			HasBorder = true;
 			// It fills the list form.
@@ -176,8 +179,6 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			Form.Controls.Add(this);
 			Form.Deactivate += m_ListForm_Deactivate;
 			Tracking = true;
-			// Make sure this isn't null, allow launch to update its value
-			m_mainFlexForm = mainFlexForm;
 		}
 
 		#region IDisposable & Co. implementation
@@ -255,15 +256,6 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		/// that the list is to appear on.</param>
 		public void Launch(Rectangle launcherBounds, Rectangle screenBounds)
 		{
-			if (Platform.IsMono)
-			{
-				// FWNX-908: Crash closing combobox.
-				// Somehow on Mono, Form.ActiveForm can sometimes return m_listForm at this point.
-				if (m_mainFlexForm == null || m_mainFlexForm == Form)
-				{
-					m_mainFlexForm = LaunchingForm;
-				}
-			}
 			// this is mainly to prevent it showing in the task bar.
 			Form.ShowInTaskbar = false;
 			//Figure where to put it. First try right below the main combo box.
@@ -295,11 +287,11 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 
 			if (m_activateOnShow)
 			{
-				Form.Show(m_mainFlexForm);
+				Form.Show(LaunchingForm);
 			}
 			else
 			{
-				ShowInactiveTopmost(m_mainFlexForm, Form);
+				ShowInactiveTopmost(LaunchingForm, Form);
 			}
 
 			if (m_comboMessageFilter != null)
@@ -315,6 +307,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			if (m_activateOnShow)
 			{
 				FocusAndCapture();
+				HideComboBoxForm += HideComboBox;
 			}
 		}
 
@@ -356,10 +349,16 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		}
 
 		/// <summary>
-		/// Hide the containing form (and thus the list box as a whole).
+		/// Hide the from that the listbox is drawn in (and thus the list box as a whole).
 		/// </summary>
 		public void HideForm()
 		{
+			HideComboBoxForm?.Invoke(this, EventArgs.Empty);
+		}
+
+		private void HideComboBox(object sender, EventArgs args)
+		{
+			HideComboBoxForm -= HideComboBox; // remove to avoid recursive calls
 			// There have been several historical bugs about Flex losing focus or failing to activate
 			// the right windows when dismissing combo boxes. LT-2962, LT-19219 and probably others.
 			// It seems that setting TopMost to false on the listForm before activating the previous form
@@ -370,7 +369,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 				listTopMostValue = Form.TopMost;
 				Form.TopMost = false;
 			}
-			m_mainFlexForm?.Activate();
+			LaunchingForm?.Activate();
 			if (Form != null)
 			{
 				Form.Visible = false;
@@ -385,6 +384,8 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 				m_comboMessageFilter.Dispose();
 				m_comboMessageFilter = null;
 			}
+			// If anyone is listening for our closing events notify them
+			FormHidden?.Invoke(this, EventArgs.Empty);
 		}
 
 		/// <summary>
