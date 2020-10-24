@@ -414,7 +414,7 @@
     <Compile Include="Controls\XMLViews\TestColumnConfigureDialog.cs" />
     <Compile Include="Controls\XMLViews\TestManyOneBrowse.cs" />
     <Compile Include="Controls\XMLViews\TestNeededPropertyInfo.cs" />
-    <Compile Include="Controls\XMLViews\TestObjectListPublisher.cs" />
+    <Compile Include="TestObjectListPublisher.cs" />
     <Compile Include="Controls\XMLViews\TestPartGenerate.cs" />
     <Compile Include="Controls\XMLViews\TestXmlBrowseView.cs" />
     <Compile Include="Controls\XMLViews\TestXmlViewsDataCache.cs" />

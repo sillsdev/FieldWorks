@@ -4,7 +4,6 @@
 
 using System.Linq;
 using LanguageExplorer;
-using LanguageExplorer.Areas;
 using LanguageExplorer.Controls.XMLViews;
 using LanguageExplorer.TestUtilities;
 using NUnit.Framework;

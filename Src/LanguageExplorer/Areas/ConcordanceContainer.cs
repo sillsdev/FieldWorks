@@ -5,7 +5,6 @@
 using System.Diagnostics;
 using System.Windows.Forms;
 using LanguageExplorer.Controls;
-using LanguageExplorer.Controls.XMLViews;
 using SIL.FieldWorks.Common.RootSites;
 
 namespace LanguageExplorer.Areas

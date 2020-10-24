@@ -3,14 +3,14 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Linq;
-using LanguageExplorer.Controls.XMLViews;
+using LanguageExplorer;
 using NUnit.Framework;
 using SIL.LCModel;
 using SIL.LCModel.Application;
 using SIL.LCModel.Infrastructure;
 using SIL.LCModel.Infrastructure.Impl;
 
-namespace LanguageExplorerTests.Controls.XMLViews
+namespace LanguageExplorerTests
 {
 	[TestFixture]
 	public class TestObjectListPublisher : MemoryOnlyBackendProviderTestBase

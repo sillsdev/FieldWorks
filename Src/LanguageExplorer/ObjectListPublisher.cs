@@ -9,7 +9,7 @@ using SIL.LCModel.Application;
 using SIL.LCModel.Core.Cellar;
 using SIL.LCModel.Infrastructure;
 
-namespace LanguageExplorer.Controls.XMLViews
+namespace LanguageExplorer
 {
 	/// <summary>
 	/// This class publishes a list of objects through the ISilDataAccess interface.

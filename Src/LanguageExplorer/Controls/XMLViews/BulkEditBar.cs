@@ -588,6 +588,10 @@ namespace LanguageExplorer.Controls.XMLViews
 			int ws;
 			string items;
 			int flidSub;
+#if RANDYTODO
+			// TODO: Use a factory (i.e., IBulkEditorFactory) to create them.
+			// TODO: The interface could be in the root namespace and the impl ni the Impls namespace, maybe.
+#endif
 			switch (beSpec)
 			{
 				case "BulkReversalEntryPosEditor":
@@ -5749,6 +5753,619 @@ namespace LanguageExplorer.Controls.XMLViews
 					}
 					return match;
 				}
+			}
+		}
+
+		/// <summary>
+		/// BulkPosEditor is the spec/display component of the Bulk Edit bar used to
+		/// set the PartOfSpeech of group of LexSenses (actually by creating or modifying an
+		/// MoStemMsa that is the MorphoSyntaxAnalysis of the sense).
+		/// </summary>
+		private abstract class BulkPosEditorBase : IBulkEditSpecControl, IFlexComponent, ITextChangedNotification, IDisposable
+		{
+			#region Data members & event declarations
+			private TreeCombo m_tree;
+			protected LcmCache m_cache;
+			private XMLViewsDataCache m_sda;
+			private POSPopupTreeManager m_pOSPopupTreeManager;
+			protected int m_selectedHvo;
+			protected string m_selectedLabel;
+			public event FwSelectionChangedEventHandler ValueChanged;
+
+			#endregion Data members & event declarations
+
+			#region Construction
+
+			protected BulkPosEditorBase()
+			{
+				m_pOSPopupTreeManager = null;
+				m_tree = new TreeCombo();
+				m_tree.TreeLoad += m_tree_TreeLoad;
+				//	Handle AfterSelect event in m_tree_TreeLoad() through m_pOSPopupTreeManager
+			}
+
+			#endregion Construction
+
+			#region ITextChangedNotification implementation
+			/// <summary>
+			/// Inform the editor that the text of the tree changed (without changing the selected index...
+			/// that needs to be updated).
+			/// </summary>
+			public void ControlTextChanged()
+			{
+				if (m_pOSPopupTreeManager == null)
+				{
+					var oldText = m_tree.Text;
+					m_tree_TreeLoad(this, new EventArgs());
+					m_tree.Text = oldText; // Load clears it.
+				}
+				var nodes = m_tree.Nodes.Find(m_tree.Text, true);
+				if (nodes.Length == 0)
+				{
+					m_tree.Text = string.Empty;
+				}
+				else
+				{
+					m_tree.SelectedNode = nodes[0];
+					// AfterSelect doesn't do this because the selection is not 'by mouse' so it is defeated by
+					// the code that prevents AfterSelect handling up and down arrows which change the selection
+					// without confirming it.
+					SelectNode(nodes[0]);
+				}
+			}
+			#endregion ITextChangedNotification implementation
+
+			#region IDisposable & Co. implementation
+
+			/// <summary>
+			/// See if the object has been disposed.
+			/// </summary>
+			private bool IsDisposed { get; set; }
+
+			/// <summary>
+			/// Finalizer, in case client doesn't dispose it.
+			/// Force Dispose(false) if not already called (i.e. m_isDisposed is true)
+			/// </summary>
+			/// <remarks>
+			/// In case some clients forget to dispose it directly.
+			/// </remarks>
+			~BulkPosEditorBase()
+			{
+				Dispose(false);
+				// The base class finalizer is called automatically.
+			}
+
+			/// <summary />
+			public void Dispose()
+			{
+				Dispose(true);
+				// This object will be cleaned up by the Dispose method.
+				// Therefore, you should call GC.SuppressFinalize to
+				// take this object off the finalization queue
+				// and prevent finalization code for this object
+				// from executing a second time.
+				GC.SuppressFinalize(this);
+			}
+
+			/// <summary>
+			/// Executes in two distinct scenarios.
+			///
+			/// 1. If disposing is true, the method has been called directly
+			/// or indirectly by a user's code via the Dispose method.
+			/// Both managed and unmanaged resources can be disposed.
+			///
+			/// 2. If disposing is false, the method has been called by the
+			/// runtime from inside the finalizer and you should not reference (access)
+			/// other managed objects, as they already have been garbage collected.
+			/// Only unmanaged resources can be disposed.
+			/// </summary>
+			/// <param name="disposing"></param>
+			/// <remarks>
+			/// If any exceptions are thrown, that is fine.
+			/// If the method is being done in a finalizer, it will be ignored.
+			/// If it is thrown by client code calling Dispose,
+			/// it needs to be handled by fixing the bug.
+			///
+			/// If subclasses override this method, they should call the base implementation.
+			/// </remarks>
+			protected virtual void Dispose(bool disposing)
+			{
+				Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
+				if (IsDisposed)
+				{
+					// No need to run it more than once.
+					return;
+				}
+
+				if (disposing)
+				{
+					// Dispose managed resources here.
+					if (m_tree != null)
+					{
+						m_tree.Load -= m_tree_TreeLoad;
+						m_tree.Dispose();
+					}
+					if (m_pOSPopupTreeManager != null)
+					{
+						m_pOSPopupTreeManager.AfterSelect -= m_pOSPopupTreeManager_AfterSelect;
+						m_pOSPopupTreeManager.Dispose();
+					}
+				}
+
+				// Dispose unmanaged resources here, whether disposing is true or false.
+				m_selectedLabel = null;
+				m_tree = null;
+				m_pOSPopupTreeManager = null;
+				m_cache = null;
+				PropertyTable = null;
+				Publisher = null;
+				Subscriber = null;
+
+				IsDisposed = true;
+			}
+
+			#endregion IDisposable & Co. implementation
+
+			#region Properties
+
+			/// <summary>
+			/// Get or set the cache. Must be set before the tree values need to load.
+			/// </summary>
+			public LcmCache Cache
+			{
+				get => m_cache;
+				set
+				{
+					m_cache = value;
+					// The following fixes LT-6298: when a control needs a writing system factory,
+					// it needs a *VALID* writing system factory!
+					if (m_cache != null && m_tree != null)
+					{
+						m_tree.WritingSystemFactory = m_cache.WritingSystemFactory;
+						m_tree.WritingSystemCode = m_cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle;   // should it be DefaultUserWs?
+					}
+				}
+			}
+
+			/// <summary>
+			/// The special cache that can handle the preview and check-box properties.
+			/// </summary>
+			public XMLViewsDataCache DataAccess
+			{
+				get => m_sda ?? throw new InvalidOperationException("Must set the special cache of a BulkEditSpecControl");
+				set => m_sda = value;
+			}
+
+			/// <summary>
+			/// Get the actual tree control.
+			/// </summary>
+			public Control Control => m_tree;
+
+			protected abstract ICmPossibilityList List
+			{
+				get;
+			}
+
+			#endregion Properties
+
+			#region Event handlers
+
+			private void m_tree_TreeLoad(object sender, EventArgs e)
+			{
+				if (m_pOSPopupTreeManager == null)
+				{
+					m_pOSPopupTreeManager = new POSPopupTreeManager(m_tree,
+						m_cache,
+						List,
+						m_cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle,
+						false,
+						new FlexComponentParameters(PropertyTable, Publisher, Subscriber),
+						PropertyTable.GetValue<Form>(FwUtilsConstants.window));
+					m_pOSPopupTreeManager.AfterSelect += m_pOSPopupTreeManager_AfterSelect;
+				}
+				m_pOSPopupTreeManager.LoadPopupTree(0);
+			}
+
+			private void m_pOSPopupTreeManager_AfterSelect(object sender, TreeViewEventArgs e)
+			{
+				// Todo: user selected a part of speech.
+				// Arrange to turn all relevant items blue.
+				SelectNode(e.Node);
+				// Tell the parent control that we may have changed the selected item so it can
+				// enable or disable the Apply and Preview buttons based on the selection.
+				if (ValueChanged == null)
+				{
+					return;
+				}
+				// the user may have selected "<Not Sure>", which has a 0 hvo value
+				// but that's a valid thing to allow the user to Apply/Preview.
+				// So, we also pass in an index to resolve ambiguity.
+				var index = m_tree.SelectedNode.Index;
+				ValueChanged(sender, new FwObjectSelectionEventArgs(m_selectedHvo, index));
+			}
+
+			// Do the core data-affecting tasks associated with selecting a node.
+			private void SelectNode(TreeNode node)
+			{
+				// Remember which item was selected so we can later 'doit'.
+				if (node == null)
+				{
+					m_selectedHvo = 0;
+					m_selectedLabel = string.Empty;
+				}
+				else
+				{
+					m_selectedHvo = ((HvoTreeNode)node).Hvo;
+					m_selectedLabel = node.Text;
+				}
+			}
+
+			#endregion Event handlers
+
+			#region IBulkEditSpecControl implementation
+
+			/// <summary>
+			/// Returns the Suggest button if our target is Semantic Domains, otherwise null.
+			/// </summary>
+			public Button SuggestButton => null;
+
+			public abstract void DoIt(IEnumerable<int> itemsToChange, ProgressState state);
+
+			public void FakeDoit(IEnumerable<int> itemsToChange, int tagMadeUpFieldIdentifier, int tagEnable, ProgressState state)
+			{
+				var tss = TsStringUtils.MakeString(m_selectedLabel, m_cache.DefaultAnalWs);
+				var i = 0;
+				// Report progress 50 times or every 100 items, whichever is more (but no more than once per item!)
+				var interval = Math.Min(100, Math.Max(itemsToChange.Count() / 50, 1));
+				foreach (var hvo in itemsToChange)
+				{
+					i++;
+					if (i % interval == 0)
+					{
+						state.PercentDone = i * 100 / itemsToChange.Count();
+						state.Breath();
+					}
+					var fEnable = CanFakeIt(hvo);
+					if (fEnable)
+					{
+						m_sda.SetString(hvo, tagMadeUpFieldIdentifier, tss);
+					}
+					m_sda.SetInt(hvo, tagEnable, (fEnable ? 1 : 0));
+				}
+			}
+
+			/// <summary>
+			/// Used by SemanticDomainChooserBEditControl to make suggestions and then call FakeDoIt
+			/// </summary>
+			public void MakeSuggestions(IEnumerable<int> itemsToChange, int tagMadeUpFieldIdentifier, int tagEnabled, ProgressState state)
+			{
+				throw new NotSupportedException("The method or operation is not supported.");
+			}
+
+			/// <summary>
+			/// Required interface member currently ignored.
+			/// </summary>
+			public IVwStylesheet Stylesheet
+			{
+				set { }
+			}
+
+			/// <summary>
+			/// Subclasses may override if they can clear the field value.
+			/// </summary>
+			public virtual bool CanClearField => false;
+
+			/// <summary>
+			/// Subclasses should override if they override CanClearField to return true.
+			/// </summary>
+			public virtual void SetClearField()
+			{
+				throw new NotSupportedException();
+			}
+
+			public virtual List<int> FieldPath => null;
+
+			#endregion IBulkEditSpecControl implementation
+
+			#region Other methods
+
+			protected abstract bool CanFakeIt(int hvo);
+
+			#endregion Other methods
+
+			#region Implementation of IPropertyTableProvider
+
+			/// <summary>
+			/// Placement in the IPropertyTableProvider interface lets FwApp call IPropertyTable.DoStuff.
+			/// </summary>
+			public IPropertyTable PropertyTable { get; set; }
+
+			#endregion
+
+			#region Implementation of IPublisherProvider
+
+			/// <summary>
+			/// Get the IPublisher.
+			/// </summary>
+			public IPublisher Publisher { get; private set; }
+
+			#endregion
+
+			#region Implementation of ISubscriberProvider
+
+			/// <summary>
+			/// Get the ISubscriber.
+			/// </summary>
+			public ISubscriber Subscriber { get; private set; }
+
+			/// <summary>
+			/// Initialize a FLEx component with the basic interfaces.
+			/// </summary>
+			/// <param name="flexComponentParameters">Parameter object that contains the required three interfaces.</param>
+			public void InitializeFlexComponent(FlexComponentParameters flexComponentParameters)
+			{
+				FlexComponentParameters.CheckInitializationValues(flexComponentParameters, new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
+
+				PropertyTable = flexComponentParameters.PropertyTable;
+				Publisher = flexComponentParameters.Publisher;
+				Subscriber = flexComponentParameters.Subscriber;
+			}
+
+			#endregion
+		}
+
+		/// <summary />
+		private sealed class BulkReversalEntryPosEditor : BulkPosEditorBase
+		{
+			/// <summary />
+			protected override ICmPossibilityList List
+			{
+				get
+				{
+					var riGuid = FwUtils.GetObjectGuidIfValid(PropertyTable, LanguageExplorerConstants.ReversalIndexGuid);
+					if (riGuid.Equals(Guid.Empty))
+					{
+						return null;
+					}
+					ICmPossibilityList list = null;
+					if (m_cache.ServiceLocator.GetInstance<IReversalIndexRepository>().TryGetObject(riGuid, out var ri))
+					{
+						list = ri.PartsOfSpeechOA;
+					}
+					// Will be null, if the reversal index was not found.
+					return list;
+				}
+			}
+
+			/// <summary />
+			public override List<int> FieldPath => new List<int>(new[] { ReversalIndexEntryTags.kflidPartOfSpeech, CmPossibilityTags.kflidName });
+
+			/// <summary>
+			/// Execute the change requested by the current selection in the combo.
+			/// Basically we want the PartOfSpeech indicated by m_selectedHvo, even if 0,
+			/// to become the POS of each record that is appropriate to change.
+			/// We do nothing to records where the check box is turned off,
+			/// and nothing to ones that currently have an MSA other than an IMoStemMsa.
+			/// (a) If the owning entry has an IMoStemMsa with the
+			/// right POS, set the sense to use it.
+			/// (b) If the sense already refers to an IMoStemMsa, and any other senses
+			/// of that entry which point at it are also to be changed, change the POS
+			/// of the MSA.
+			/// (c) If the entry has an IMoStemMsa which is not used at all, change it to the
+			/// required POS and use it.
+			/// (d) Make a new IMoStemMsa in the ILexEntry with the required POS and point the sense at it.
+			/// </summary>
+			public override void DoIt(IEnumerable<int> itemsToChange, ProgressState state)
+			{
+				var asList = new List<int>(itemsToChange);
+				m_cache.DomainDataByFlid.BeginUndoTask(LanguageExplorerResources.ksUndoBulkEditRevPOS, LanguageExplorerResources.ksRedoBulkEditRevPOS);
+				var i = 0;
+				var interval = Math.Min(100, Math.Max(asList.Count / 50, 1));
+				foreach (var entryId in asList)
+				{
+					i++;
+					if (i % interval == 0)
+					{
+						state.PercentDone = i * 80 / asList.Count + 20;
+						state.Breath();
+					}
+					var entry = m_cache.ServiceLocator.GetInstance<IReversalIndexEntryRepository>().GetObject(entryId);
+					entry.PartOfSpeechRA = m_selectedHvo == 0 ? null : m_cache.ServiceLocator.GetInstance<IPartOfSpeechRepository>().GetObject(m_selectedHvo);
+				}
+				m_cache.DomainDataByFlid.EndUndoTask();
+			}
+
+			/// <summary />
+			protected override bool CanFakeIt(int hvo)
+			{
+				return true;
+			}
+		}
+
+		/// <summary>
+		/// BulkPosEditor is the spec/display component of the Bulk Edit bar used to
+		/// set the PartOfSpeech of group of LexSenses (actually by creating or modifying an
+		/// MoStemMsa that is the MorphoSyntaxAnalysis of the sense).
+		/// </summary>
+		private sealed class BulkPosEditor : BulkPosEditorBase
+		{
+			protected override ICmPossibilityList List => m_cache.LanguageProject.PartsOfSpeechOA;
+
+			public override void DoIt(IEnumerable<int> itemsToChange, ProgressState state)
+			{
+				var senseRepo = m_cache.ServiceLocator.GetInstance<ILexSenseRepository>();
+				// FWR-2781 should be able to bulk edit entries to POS <Not sure>.
+				IPartOfSpeech posWanted = null;
+				if (m_selectedHvo > 0)
+				{
+					posWanted = (IPartOfSpeech)m_cache.ServiceLocator.GetObject(m_selectedHvo);
+				}
+				// Make a hashtable from entry to list of modified senses.
+				var sensesByEntry = new Dictionary<ILexEntry, List<ILexSense>>();
+				var i = 0;
+				// Report progress 50 times or every 100 items, whichever is more (but no more than once per item!)
+				var interval = Math.Min(100, Math.Max(itemsToChange.Count() / 50, 1));
+				foreach (var hvoSense in itemsToChange)
+				{
+					i++;
+					if (i % interval == 0)
+					{
+						state.PercentDone = i * 20 / itemsToChange.Count();
+						state.Breath();
+					}
+					var sense = senseRepo.GetObject(hvoSense);
+					var msa = sense.MorphoSyntaxAnalysisRA;
+					if (msa != null && msa.ClassID != MoStemMsaTags.kClassId)
+					{
+						continue; // can't fix this one, not a stem.
+					}
+					var entry = sense.OwnerOfClass(LexEntryTags.kClassId) as ILexEntry;
+					if (!sensesByEntry.TryGetValue(entry, out var senses))
+					{
+						senses = new List<ILexSense>();
+						sensesByEntry[entry] = senses;
+					}
+					senses.Add(sense);
+				}
+				UndoableUnitOfWorkHelper.Do(LcmUiResources.ksUndoBulkEditPOS, LcmUiResources.ksRedoBulkEditPOS, m_cache.ActionHandlerAccessor, () => DoUpdatePos(state, sensesByEntry, posWanted));
+			}
+
+			private void DoUpdatePos(ProgressState state, Dictionary<ILexEntry, List<ILexSense>> sensesByEntry, IPartOfSpeech posWanted)
+			{
+				var i = 0;
+				var interval = Math.Min(100, Math.Max(sensesByEntry.Count / 50, 1));
+				foreach (var kvp in sensesByEntry)
+				{
+					i++;
+					if (i % interval == 0)
+					{
+						state.PercentDone = i * 80 / sensesByEntry.Count + 20;
+						state.Breath();
+					}
+					var entry = kvp.Key;
+					var sensesToChange = kvp.Value;
+					// Try to find an existing MSA with the right POS.
+					var msmTarget = entry.MorphoSyntaxAnalysesOC.Where(msa => msa.ClassID == (uint)MoStemMsaTags.kClassId && ((IMoStemMsa)msa).PartOfSpeechRA == posWanted)
+						.Select(msa => (IMoStemMsa)msa).FirstOrDefault();
+					if (msmTarget == null)
+					{
+						// No existing MSA has the desired POS.
+						// See if we can reuse an existing MoStemMsa by changing it.
+						// This is possible if it is used only by senses in the list, or not used at all.
+						var otherSenses = new List<ILexSense>();
+						AddExcludedSenses(entry, otherSenses, sensesToChange); // Get all the unchanged senses of the entry.
+						foreach (var msa in entry.MorphoSyntaxAnalysesOC)
+						{
+							if (msa.ClassID != MoStemMsaTags.kClassId)
+							{
+								continue;
+							}
+							var fOk = true;
+							foreach (var otherSense in otherSenses)
+							{
+								if (otherSense.MorphoSyntaxAnalysisRA != msa)
+								{
+									continue;
+								}
+								fOk = false; // we can't change it, one of the unchanged senses uses it
+								break;
+							}
+							if (!fOk)
+							{
+								continue;
+							}
+							// Can reuse this one! Nothing we don't want to change uses it. Go ahead and set it to the
+							// required POS.
+							msmTarget = (IMoStemMsa)msa;
+							var oldPOS = msmTarget.PartOfSpeechRA;
+							msmTarget.PartOfSpeechRA = posWanted;
+							// compare MoStemMsa.ResetInflectionClass: changing POS requires us to clear inflection class,
+							// if it is set.
+							if (oldPOS != null && msmTarget.InflectionClassRA != null)
+							{
+								msmTarget.InflectionClassRA = null;
+							}
+							break;
+						}
+					}
+					if (msmTarget == null)
+					{
+						// Nothing we can reuse...make a new one.
+						msmTarget = m_cache.ServiceLocator.GetInstance<IMoStemMsaFactory>().Create();
+						entry.MorphoSyntaxAnalysesOC.Add(msmTarget);
+						msmTarget.PartOfSpeechRA = posWanted;
+					}
+					// Finally! Make the senses we want to change use it.
+					foreach (var sense in sensesToChange)
+					{
+						if (sense.MorphoSyntaxAnalysisRA == msmTarget)
+						{
+							continue; // reusing a modified msa.
+						}
+						sense.MorphoSyntaxAnalysisRA = msmTarget;
+					}
+				}
+			}
+
+			/// <summary>
+			/// We can set POS to null.
+			/// </summary>
+			public override bool CanClearField => true;
+
+			/// <summary>
+			/// We can set POS to null.
+			/// </summary>
+			public override void SetClearField()
+			{
+				m_selectedHvo = 0;
+				m_selectedLabel = string.Empty;
+				// Do NOT call base method (it throws not implemented)
+			}
+
+			public override List<int> FieldPath => new List<int>(new[] { LexSenseTags.kflidMorphoSyntaxAnalysis });
+
+			/// <summary>
+			/// Add to excludedSenses any sense of the entry (directly or indirectly owned)
+			/// which is not a member of includedSenses.
+			/// </summary>
+			private static void AddExcludedSenses(ILexEntry entry, List<ILexSense> excludedSenses, List<ILexSense> includedSenses)
+			{
+				foreach (var sense in entry.SensesOS)
+				{
+					if (!includedSenses.Contains(sense))
+					{
+						excludedSenses.Add(sense);
+					}
+					AddExcludedSenses(sense, excludedSenses, includedSenses);
+				}
+			}
+
+			/// <summary>
+			/// Add to excludedSenses any sense of the entry (directly or indirectly owned)
+			/// which is not a member of includedSenses.
+			/// </summary>
+			private static void AddExcludedSenses(ILexSense owningSense, List<ILexSense> excludedSenses, List<ILexSense> includedSenses)
+			{
+				foreach (var sense in owningSense.SensesOS)
+				{
+					if (!includedSenses.Contains(sense))
+					{
+						excludedSenses.Add(sense);
+					}
+					AddExcludedSenses(sense, excludedSenses, includedSenses);
+				}
+			}
+
+			protected override bool CanFakeIt(int hvo)
+			{
+				var canFakeit = true;
+				var hvoMsa = m_cache.DomainDataByFlid.get_ObjectProp(hvo, LexSenseTags.kflidMorphoSyntaxAnalysis);
+				if (hvoMsa != 0)
+				{
+					var clsid = m_cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvoMsa).ClassID;
+					canFakeit = (clsid == MoStemMsaTags.kClassId);
+				}
+				return canFakeit;
 			}
 		}
 	}

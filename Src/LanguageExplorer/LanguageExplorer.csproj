@@ -939,7 +939,7 @@
     <Compile Include="Controls\XMLViews\FilterSortItem.cs" />
     <Compile Include="Controls\XMLViews\FindComboItem.cs" />
     <Compile Include="Controls\XMLViews\IBulkEditSpecControl.cs" />
-    <Compile Include="Controls\XMLViews\IClearValues.cs" />
+    <Compile Include="IClearValues.cs" />
     <Compile Include="Controls\XMLViews\IGetReplacedObjects.cs" />
     <Compile Include="Controls\XMLViews\IGhostable.cs" />
     <Compile Include="Controls\XMLViews\ItemsCollectorEnv.cs" />
@@ -1285,7 +1285,6 @@
     <Compile Include="Controls\BaseGoDlg.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Controls\XMLViews\BulkPosEditorBase.cs" />
     <Compile Include="LcmUi\CmAnalObjectVc.cs" />
     <Compile Include="LcmUi\CmObjectUi.cs" />
     <Compile Include="LcmUi\CmObjectVc.cs" />
@@ -1585,7 +1584,7 @@
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Controls\ObjectLabel.cs" />
-    <Compile Include="Controls\XMLViews\ObjectListPublisher.cs" />
+    <Compile Include="ObjectListPublisher.cs" />
     <Compile Include="Controls\XMLViews\PartGenerator.cs" />
     <Compile Include="Controls\XMLViews\ReallySimpleListChooser.cs">
       <SubType>Form</SubType>
@@ -1650,7 +1649,6 @@
     <Compile Include="ISnapSplitPosition.cs" />
     <Compile Include="LanguageExplorerConstants.cs" />
     <Compile Include="LayoutKeyUtils.cs" />
-    <Compile Include="LcmUi\BulkPosEditor.cs" />
     <Compile Include="LcmUi\CantRestoreLinkedFilesToOriginalLocation.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -2742,7 +2740,6 @@
     <Compile Include="Controls\DetailControls\Slices\AffixRuleFormulaSlice.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Controls\XMLViews\BulkReversalEntryPosEditor.cs" />
     <Compile Include="Controls\DetailControls\AddComplexFormChooserCommand.cs" />
     <Compile Include="Controls\DetailControls\AddPrimaryLexemeChooserCommand.cs" />
     <Compile Include="Areas\Lexicon\Tools\BasicPaneBarContainer.cs">
