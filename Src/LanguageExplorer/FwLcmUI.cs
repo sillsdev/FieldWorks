@@ -6,12 +6,13 @@ using System;
 using System.ComponentModel;
 using System.IO;
 using System.Windows.Forms;
+using LanguageExplorer.LcmUi;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FwCoreDlgs;
 using SIL.LCModel;
 using SIL.LCModel.Utils;
 
-namespace LanguageExplorer.LcmUi
+namespace LanguageExplorer
 {
 	/// <summary>
 	/// The implementation of ILcmUI for FieldWorks apps.

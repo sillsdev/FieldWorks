@@ -4,7 +4,6 @@
 
 using System.Windows.Forms;
 using LanguageExplorer.Controls;
-using LanguageExplorer.LcmUi;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Infrastructure;
@@ -108,12 +107,9 @@ namespace LanguageExplorer.Areas
 				return;
 			}
 			var column = m_possRepo.GetObject(hvoMove);
-			using (var columnUI = CmPossibilityUi.MakeLcmModelUiObject(column))
+			if (column.CheckAndReportProtectedChartColumn())
 			{
-				if (columnUI.CheckAndReportProtectedChartColumn())
-				{
-					return;
-				}
+				return;
 			}
 			var owner = column.Owner;
 			if (owner == null) // probably not possible

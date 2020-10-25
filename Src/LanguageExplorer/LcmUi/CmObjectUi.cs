@@ -5,7 +5,6 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
 using System.Windows.Forms;
 using System.Xml.Linq;
 using SIL.FieldWorks.Common.FwUtils;
@@ -13,7 +12,6 @@ using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.LCModel;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Core.Text;
-using SIL.LCModel.DomainServices;
 using SIL.LCModel.Infrastructure;
 using SIL.Reporting;
 
@@ -79,45 +77,6 @@ namespace LanguageExplorer.LcmUi
 		///				break;
 		/// </summary>
 		internal virtual IVwViewConstructor Vc => m_vc ?? (m_vc = new CmObjectVc(m_cache));
-
-		/// <summary>
-		/// Returns a View Constructor that can be used to produce various displays of the
-		/// object in the default vernacular writing system.  Various fragments may be
-		/// supported, depending on the class.
-		///
-		/// Typical usage:
-		/// 		public override void Display(IVwEnv vwenv, int hvo, int frag)
-		/// 		{
-		/// 		...
-		/// 		switch(frag)
-		/// 		{
-		/// 		...
-		/// 		case sometypeshownbyshortname:
-		/// 			IVwViewConstructor vcName = CmObjectUi.MakeLcmModelUiObject(m_cache, hvo).VernVc;
-		/// 			vwenv.AddObj(hvo, vcName, VcFrags.kfragShortName);
-		/// 			break;
-		/// 		...
-		/// 		}
-		///
-		/// Note that this involves putting an extra level of object structure into the display,
-		/// unless it is done in an AddObjVec loop, where AddObj is needed anyway for each
-		/// object.  This is unavoidable in cases where the property involves polymorphic
-		/// objects.  If all objects in a sequence are the same type, the appropriate Vc may be
-		/// retrieved in the fragment that handles the sequence and passed to AddObjVecItems.
-		/// If an atomic property is to be displayed in this way, code like the following may be
-		/// used:
-		///			case something:
-		///				...// possibly other properties of containing object.
-		///				// Display shortname of object in atomic object property XYZ
-		///				int hvoObj = vwenv.DataAccess.get_ObjectProp(hvo, kflidXYZ);
-		///				IVwViewConstructor vcName = CmObjectUi.MakeLcmModelUiObject(m_cache, hvoObj).VernVc;
-		///				vwenv.AddObjProp(kflidXYZ, vcName, VcFrags.kfragShortName);
-		///				...
-		///				break;
-		/// </summary>
-		internal virtual IVwViewConstructor VernVc => new CmVernObjectVc(m_cache);
-
-		internal virtual IVwViewConstructor AnalVc => new CmAnalObjectVc(m_cache);
 		#endregion Properties
 
 		#region Construction and initialization
@@ -185,7 +144,7 @@ namespace LanguageExplorer.LcmUi
 						result = new LexSenseUi();
 						break;
 					case LexEntryTags.kClassId:
-						result = new LexEntryUi();
+						result = new CmObjectUi();
 						break;
 					case MoInflAffMsaTags.kClassId:
 					case MoDerivAffMsaTags.kClassId:
@@ -246,7 +205,7 @@ namespace LanguageExplorer.LcmUi
 		internal static CmObjectUi MakeLcmModelUiObject(int classId, int hvoOwner, int flid, int insertionPosition, LcmCache cache)
 		{
 			CmObjectUi newUiObj = null;
-			UndoableUnitOfWorkHelper.Do(LcmUiResources.ksUndoInsert, LcmUiResources.ksRedoInsert, cache.ServiceLocator.GetInstance<IActionHandler>(), () =>
+			UndoableUnitOfWorkHelper.Do(LanguageExplorerResources.ksUndoInsert, LanguageExplorerResources.ksRedoInsert, cache.ServiceLocator.GetInstance<IActionHandler>(), () =>
 			{
 				var newHvo = cache.DomainDataByFlid.MakeNewObject(classId, hvoOwner, flid, insertionPosition);
 				newUiObj = MakeLcmModelUiObject(cache, newHvo, classId);
@@ -324,7 +283,7 @@ namespace LanguageExplorer.LcmUi
 			if (disposing)
 			{
 				// Dispose managed resources here.
-				PropertyTable?.GetValue<IFwMainWnd>(FwUtilsConstants.window).IdleQueue.Remove(TryToDeleteFile);
+				PropertyTable?.GetValue<IFwMainWnd>(FwUtilsConstants.window).IdleQueue.Remove(FwUtils.TryToDeleteFile);
 				(m_vc as IDisposable)?.Dispose();
 			}
 
@@ -346,28 +305,6 @@ namespace LanguageExplorer.LcmUi
 
 		#region Jumping
 
-		/// <summary>
-		/// Return either the object or an owner ("parent") up the ownership chain that is of
-		/// the desired class.  Being a subclass of the desired class also matches, unlike
-		/// ICmObject.OwnerOfClass() where the class must match exactly.
-		/// </summary>
-		internal static ICmObject GetSelfOrParentOfClass(ICmObject cmo, int classIdToSearchFor)
-		{
-			if (cmo == null)
-			{
-				return null;
-			}
-			var mdc = cmo.Cache.DomainDataByFlid.MetaDataCache;
-			for (; cmo != null; cmo = cmo.Owner)
-			{
-				if ((DomainObjectServices.IsSameOrSubclassOf(mdc, cmo.ClassID, classIdToSearchFor)))
-				{
-					return cmo;
-				}
-			}
-			return null;
-		}
-
 		private ICmObject GetCurrentCmObject()
 		{
 			return PropertyTable.GetValue<ICmObject>(LanguageExplorerConstants.ActiveListSelectedObject, null);
@@ -384,7 +321,7 @@ namespace LanguageExplorer.LcmUi
 				cannotDeleteMsg = null;
 				return true;
 			}
-			cannotDeleteMsg = LcmUiResources.ksCannotDeleteItem;
+			cannotDeleteMsg = LanguageExplorerResources.ksCannotDeleteItem;
 			return false;
 		}
 
@@ -447,54 +384,7 @@ namespace LanguageExplorer.LcmUi
 				// No cleanup needed
 				return;
 			}
-			ConsiderDeletingRelatedFile(file, PropertyTable);
-		}
-
-		internal static bool ConsiderDeletingRelatedFile(ICmFile file, IPropertyTable propertyTable)
-		{
-			if (file == null)
-			{
-				return false;
-			}
-			var refs = file.ReferringObjects;
-			if (refs.Count > 1)
-			{
-				return false; // exactly one if only this CmPicture uses it.
-			}
-			var path = file.InternalPath;
-			if (Path.IsPathRooted(path))
-			{
-				return false; // don't delete external file
-			}
-			var msg = string.Format(LcmUiResources.ksDeleteFileAlso, path);
-			if (MessageBox.Show(Form.ActiveForm, msg, LcmUiResources.ksDeleteFileCaption, MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes)
-			{
-				return false;
-			}
-			if (propertyTable != null && propertyTable.TryGetValue(LanguageExplorerConstants.App, out IFlexApp app))
-			{
-				app.PictureHolder.ReleasePicture(file.AbsoluteInternalPath);
-			}
-			var fileToDelete = file.AbsoluteInternalPath;
-			propertyTable.GetValue<IFwMainWnd>(FwUtilsConstants.window).IdleQueue.Add(IdleQueuePriority.Low, TryToDeleteFile, fileToDelete);
-			return false;
-		}
-
-		private static bool TryToDeleteFile(object param)
-		{
-			try
-			{
-				// I'm not sure why, but if we try to delete it right away, we typically get a failure,
-				// with an exception indicating that something is using the file, despite the code above that
-				// tries to make our picture cache let go of it.
-				// However, waiting until idle seems to solve the problem.
-				File.Delete((string)param);
-			}
-			catch (IOException)
-			{
-				// If we can't actually delete the file for some reason, don't bother the user complaining.
-			}
-			return true; // task is complete, don't try again.
+			file.ConsiderDeletingRelatedFile(PropertyTable);
 		}
 
 		protected virtual void ReallyDeleteUnderlyingObject()

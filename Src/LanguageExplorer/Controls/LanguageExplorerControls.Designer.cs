@@ -2251,7 +2251,7 @@ namespace LanguageExplorer.Controls {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Blank.
+        ///   Looks up a localized string similar to Remove target feature.
         /// </summary>
         internal static string ksRemoveThisFeature {
             get {

@@ -557,4 +557,22 @@ Do you want to proceed?</value>
   <data name="Sorted_From_End" xml:space="preserve">
     <value>Sorted From End</value>
   </data>
+  <data name="ksRedoBEInflClass" xml:space="preserve">
+    <value>Redo Bulk Edit Inflection Class</value>
+  </data>
+  <data name="ksRedoBEPhonemeFeatures" xml:space="preserve">
+    <value>Redo Assign Features to Phonemes</value>
+  </data>
+  <data name="ksRedoBulkEditPOS" xml:space="preserve">
+    <value>Redo Bulk Edit POS</value>
+  </data>
+  <data name="ksUndoBEInflClass" xml:space="preserve">
+    <value>Undo Bulk Edit Inflection Class</value>
+  </data>
+  <data name="ksUndoBEPhonemeFeatures" xml:space="preserve">
+    <value>Undo Assign Features to Phonemes</value>
+  </data>
+  <data name="ksUndoBulkEditPOS" xml:space="preserve">
+    <value>Undo Bulk Edit POS</value>
+  </data>
 </root>

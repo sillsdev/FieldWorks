@@ -1678,7 +1678,7 @@ namespace LanguageExplorer.Controls.DetailControls.Slices
 					switch (fieldType)
 					{
 						case CellarPropertyType.OwningCollection:
-							// order is not fully predicatable, figure where it DID show up.
+							// order is not fully predictable, figure where it DID show up.
 							insertionPosition = Cache.DomainDataByFlid.GetObjIndex(hvoOwner, flid, uiObj.MyCmObject.Hvo);
 							break;
 

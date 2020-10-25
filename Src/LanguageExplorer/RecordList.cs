@@ -12,9 +12,7 @@ using System.Windows.Forms;
 using System.Xml.Linq;
 using LanguageExplorer.Areas;
 using LanguageExplorer.Controls;
-using LanguageExplorer.Controls.XMLViews;
 using LanguageExplorer.Filters;
-using LanguageExplorer.LcmUi;
 using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
@@ -1054,7 +1052,7 @@ namespace LanguageExplorer
 				}
 				else
 				{
-					dlg.SetDlgInfo(thingToDelete, m_cache, PropertyTable, TsStringUtils.MakeString(LcmUiResources.ksCannotDeleteItem, m_cache.DefaultUserWs));
+					dlg.SetDlgInfo(thingToDelete, m_cache, PropertyTable, TsStringUtils.MakeString(LanguageExplorerResources.ksCannotDeleteItem, m_cache.DefaultUserWs));
 				}
 				var window = PropertyTable.GetValue<Form>(FwUtilsConstants.window);
 				if (DialogResult.Yes == dlg.ShowDialog(window))

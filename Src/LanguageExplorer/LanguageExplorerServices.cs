@@ -3,17 +3,20 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Windows.Forms;
 using System.Xml.Linq;
 using LanguageExplorer.Controls;
 using LanguageExplorer.DictionaryConfiguration;
-using LanguageExplorer.LcmUi;
 using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FwCoreDlgs;
 using SIL.LCModel;
+using SIL.LCModel.Core.KernelInterfaces;
 
 namespace LanguageExplorer
 {
@@ -69,8 +72,71 @@ namespace LanguageExplorer
 			rootSite.RootBox.Selection.GetWordLimitsOfSelection(out var ichMin, out var ichLim, out var hvo, out var tag, out var ws, out _);
 			if (ichLim > ichMin)
 			{
-				LexEntryUi.DisplayOrCreateEntry(cache, hvo, tag, ws, ichMin, ichLim, flexComponentParameters.PropertyTable.GetValue<IWin32Window>(FwUtilsConstants.window), flexComponentParameters, flexComponentParameters.PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider), FwUtilsConstants.UserHelpFile);
+				DisplayOrCreateEntry(cache, hvo, tag, ws, ichMin, ichLim, flexComponentParameters.PropertyTable.GetValue<IWin32Window>(FwUtilsConstants.window), flexComponentParameters, flexComponentParameters.PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider), FwUtilsConstants.UserHelpFile);
 			}
+		}
+
+		/// <summary />
+		internal static void DisplayOrCreateEntry(LcmCache cache, int hvoSrc, int tagSrc, int wsSrc, int ichMin, int ichLim, IWin32Window owner, FlexComponentParameters flexComponentParameters, IHelpTopicProvider helpProvider, string helpFileKey)
+		{
+			var tssContext = cache.DomainDataByFlid.get_StringProp(hvoSrc, tagSrc);
+			if (tssContext == null)
+			{
+				return;
+			}
+			var text = tssContext.Text;
+			// If the string is empty, it might be because it's multilingual.  Try that alternative.
+			// (See TE-6374.)
+			if (text == null && wsSrc != 0)
+			{
+				tssContext = cache.DomainDataByFlid.get_MultiStringAlt(hvoSrc, tagSrc, wsSrc);
+				if (tssContext != null)
+				{
+					text = tssContext.Text;
+				}
+			}
+			ITsString tssWf = null;
+			if (text != null)
+			{
+				tssWf = tssContext.GetSubstring(ichMin, ichLim);
+			}
+			if (tssWf == null || tssWf.Length == 0)
+			{
+				return;
+			}
+			// We want to limit the lookup to the current word's current analysis, if one exists.
+			// See FWR-956.
+			IWfiAnalysis wfa = null;
+			if (tagSrc == StTxtParaTags.kflidContents)
+			{
+				IAnalysis anal = null;
+				var para = cache.ServiceLocator.GetInstance<IStTxtParaRepository>().GetObject(hvoSrc);
+				foreach (var seg in para.SegmentsOS)
+				{
+					if (seg.BeginOffset <= ichMin && seg.EndOffset >= ichLim)
+					{
+						var occurrence = seg.FindWagform(ichMin - seg.BeginOffset, ichLim - seg.BeginOffset, out _);
+						if (occurrence != null)
+						{
+							anal = occurrence.Analysis;
+						}
+						break;
+					}
+				}
+				if (anal != null)
+				{
+					switch (anal)
+					{
+						case IWfiAnalysis analysis:
+							wfa = analysis;
+							break;
+						case IWfiGloss gloss:
+							wfa = gloss.OwnerOfClass<IWfiAnalysis>();
+							break;
+					}
+				}
+			}
+			DisplayEntries(cache, owner, flexComponentParameters, helpProvider, helpFileKey, tssWf, wfa);
 		}
 
 		internal static void AddToLexicon(LcmCache lcmCache, FlexComponentParameters flexComponentParameters, RootSite rootSite)
@@ -209,6 +275,149 @@ namespace LanguageExplorer
 			Guard.AgainstNull(persistAsXml, nameof(persistAsXml));
 			element.Add(new XAttribute("class", persistAsXml.GetType().FullName));
 			persistAsXml.PersistAsXml(element);
+		}
+
+		internal static void DisplayEntries(LcmCache cache, IWin32Window owner, FlexComponentParameters flexComponentParameters, IHelpTopicProvider helpProvider, string helpFileKey, ITsString tssWfIn, IWfiAnalysis wfa)
+		{
+			var tssWf = tssWfIn;
+			var duplicates = false;
+			var entries = cache.ServiceLocator.GetInstance<ILexEntryRepository>().FindEntriesForWordform(cache, tssWf, wfa, ref duplicates);
+			if (duplicates)
+			{
+				MessageBox.Show(Form.ActiveForm, string.Format(LanguageExplorerResources.ksDuplicateWordformsMsg, tssWf.Text), LanguageExplorerResources.ksDuplicateWordformsCaption, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+			}
+			var styleSheet = FwUtils.StyleSheetFromPropertyTable(flexComponentParameters.PropertyTable);
+			if (entries == null || entries.Count == 0)
+			{
+				var entry = ShowFindEntryDialog(cache, flexComponentParameters, tssWf, owner);
+				if (entry == null)
+				{
+					return;
+				}
+
+				entries = new List<ILexEntry>(1) { entry };
+			}
+			//DisplayEntriesRecursive(cache, owner, flexComponentParameters, styleSheet, helpProvider, helpFileKey, entries, tssWf);
+			// Loop showing the SummaryDialogForm as long as the user clicks the Other button
+			// in that dialog.
+			bool otherButtonClicked;
+			do
+			{
+				using (var sdform = new SummaryDialogForm(new List<int>(entries.Select(le => le.Hvo)), helpProvider, helpFileKey, styleSheet, cache, flexComponentParameters.PropertyTable))
+				{
+					SetCurrentModalForm(sdform);
+					if (owner == null)
+					{
+						sdform.StartPosition = FormStartPosition.CenterScreen;
+					}
+					sdform.ShowDialog(owner);
+					if (sdform.ShouldLink)
+					{
+						sdform.LinkToLexicon();
+					}
+					otherButtonClicked = sdform.OtherButtonClicked;
+					sdform.Activated -= s_activeModalForm_Activated;
+				}
+				if (otherButtonClicked)
+				{
+					// Look for another entry to display.  (If the user doesn't select another
+					// entry, loop back and redisplay the current entry.)
+					var entry = ShowFindEntryDialog(cache, flexComponentParameters, tssWf, owner);
+					if (entry != null)
+					{
+						// We need a list that contains the entry we found to display on the
+						// next go around of this loop.
+						entries = new List<ILexEntry> { entry };
+						tssWf = entry.HeadWord;
+					}
+				}
+			} while (otherButtonClicked);
+		}
+
+		/// <summary>
+		/// Set a Modal Form to temporarily show on top of all applications
+		/// and have an icon that is accessible for the user after it goes behind other users.
+		/// See http://support.ubs-icap.org/default.asp?11269
+		/// </summary>
+		private static void SetCurrentModalForm(Form newActiveModalForm)
+		{
+			newActiveModalForm.TopMost = true;
+			newActiveModalForm.Activated += s_activeModalForm_Activated;
+			newActiveModalForm.ShowInTaskbar = true;
+		}
+
+		/// <summary>
+		/// setting TopMost in SetCurrentModalForm() forces a dialog to show on top of other applications
+		/// in another process that want to launch this dialog (e.g. Paratext via WCF).
+		/// but we don't want it to stay on top if the User switches to another application,
+		/// so reset TopMost to false after it has launched to the top.
+		/// </summary>
+		private static void s_activeModalForm_Activated(object sender, EventArgs e)
+		{
+			((Form)sender).TopMost = false;
+		}
+
+		/// <summary>
+		/// Launch the Find Entry dialog, and if one is created or selected return it.
+		/// </summary>
+		/// <returns>The HVO of the selected or created entry</returns>
+		private static ILexEntry ShowFindEntryDialog(LcmCache cache, FlexComponentParameters flexComponentParameters, ITsString tssForm, IWin32Window owner)
+		{
+			using (var entryGoDlg = new EntryGoDlg())
+			{
+				entryGoDlg.InitializeFlexComponent(flexComponentParameters);
+				// Temporarily set TopMost to true so it will launch above any calling app (e.g. Paratext)
+				// but reset after activated.
+				SetCurrentModalForm(entryGoDlg);
+				var wp = new WindowParams
+				{
+					m_btnText = LanguageExplorerResources.ksShow,
+					m_title = LanguageExplorerResources.ksFindInDictionary,
+					m_label = LanguageExplorerResources.ksFind_
+				};
+				if (owner == null)
+				{
+					entryGoDlg.StartPosition = FormStartPosition.CenterScreen;
+				}
+				entryGoDlg.Owner = owner as Form;
+				entryGoDlg.SetDlgInfo(cache, wp, tssForm);
+				entryGoDlg.SetHelpTopic("khtpFindInDictionary");
+				if (entryGoDlg.ShowDialog() == DialogResult.OK)
+				{
+					var entry = entryGoDlg.SelectedObject as ILexEntry;
+					Debug.Assert(entry != null);
+					entryGoDlg.Activated -= s_activeModalForm_Activated;
+					return entry;
+				}
+				entryGoDlg.Activated -= s_activeModalForm_Activated;
+			}
+			return null;
+		}
+
+		public static bool ConsiderDeletingRelatedFile(this ICmFile me, IPropertyTable propertyTable)
+		{
+			var refs = me.ReferringObjects;
+			if (refs.Count > 1)
+			{
+				return false; // exactly one if only this CmPicture uses it.
+			}
+			var path = me.InternalPath;
+			if (Path.IsPathRooted(path))
+			{
+				return false; // don't delete external file
+			}
+			var msg = string.Format(LanguageExplorerResources.ksDeleteFileAlso, path);
+			if (MessageBox.Show(Form.ActiveForm, msg, LanguageExplorerResources.ksDeleteFileCaption, MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes)
+			{
+				return false;
+			}
+			if (propertyTable != null && propertyTable.TryGetValue(LanguageExplorerConstants.App, out IFlexApp app))
+			{
+				app.PictureHolder.ReleasePicture(me.AbsoluteInternalPath);
+			}
+			var fileToDelete = me.AbsoluteInternalPath;
+			propertyTable.GetValue<IFwMainWnd>(FwUtilsConstants.window).IdleQueue.Add(IdleQueuePriority.Low, FwUtils.TryToDeleteFile, fileToDelete);
+			return false;
 		}
 	}
 }

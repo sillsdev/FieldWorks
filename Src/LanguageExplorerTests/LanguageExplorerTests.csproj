@@ -331,7 +331,6 @@
       <DependentUpon>LanguageExplorerTestsResources.resx</DependentUpon>
     </Compile>
     <Compile Include="LayoutKeyUtilsTests.cs" />
-    <Compile Include="LcmUi\LcmUiTests.cs" />
     <Compile Include="Repository\LexiconAreaTests.cs" />
     <Compile Include="Controls\DetailControls\LexEntryChangeHandlerTests.cs" />
     <Compile Include="Controls\DetailControls\Slices\LexReferenceTreeRootLauncherTests.cs" />

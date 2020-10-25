@@ -27,7 +27,6 @@ using Gecko;
 using L10NSharp;
 using LanguageExplorer;
 using LanguageExplorer.Controls;
-using LanguageExplorer.LcmUi;
 using LanguageExplorer.SendReceive;
 using Microsoft.Win32;
 using SIL.Code;

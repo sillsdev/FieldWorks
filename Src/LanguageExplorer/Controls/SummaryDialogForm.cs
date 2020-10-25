@@ -15,17 +15,17 @@ using SIL.LCModel;
 using SIL.LCModel.Application;
 using SIL.LCModel.Core.KernelInterfaces;
 
-namespace LanguageExplorer.LcmUi
+namespace LanguageExplorer.Controls
 {
 	/// <summary>
-	/// SummaryDialogForm is the dialog that TE launches from its Find In Lexicon command,
+	/// SummaryDialogForm is the dialog that Paratext launche,
 	/// when there is a matching lexical entry. It displays a representation of the lex entry,
 	/// with buttons to find other similar entries, or to open Flex showing the relevant entry.
 	/// NOTE: after calling ShowDialog, clients should test the ShouldLink property, and if it
 	/// is true, call LinkToLexicon().
 	/// This unusual pattern is used, instead of having the button do the linking directly,
 	/// because it is necessary to fully close the dialog before invoking the link. Otherwise,
-	/// TE will jump back in front of Flex even before Flex has finished jumping to the entry.
+	/// PT will jump back in front of Flex even before Flex has finished jumping to the entry.
 	/// See LT-3461.
 	/// </summary>
 	/// <remarks>

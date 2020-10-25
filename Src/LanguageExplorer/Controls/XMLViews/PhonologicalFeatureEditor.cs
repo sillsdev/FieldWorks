@@ -8,7 +8,6 @@ using System.Diagnostics;
 using System.Linq;
 using System.Windows.Forms;
 using System.Xml.Linq;
-using LanguageExplorer.LcmUi;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Core.KernelInterfaces;
@@ -226,7 +225,7 @@ namespace LanguageExplorer.Controls.XMLViews
 					if (sender is PhonologicalFeaturePopupTreeManager ptm)
 					{
 						SelectedHvo = ptm.ClosedFeature.Hvo;
-						SelectedLabel = LcmUiResources.ksRemoveThisFeature;
+						SelectedLabel = LanguageExplorerControls.ksRemoveThisFeature;
 						EnableTargetFeatureCombo?.Invoke(this, new TargetFeatureEventArgs(true));
 					}
 				}
@@ -294,7 +293,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			var i = 0;
 			// Report progress 50 times or every 100 items, whichever is more (but no more than once per item!)
 			var interval = Math.Min(100, Math.Max(itemsToChange.Count() / 50, 1));
-			m_cache.DomainDataByFlid.BeginUndoTask(LcmUiResources.ksUndoBEPhonemeFeatures, LcmUiResources.ksRedoBEPhonemeFeatures);
+			m_cache.DomainDataByFlid.BeginUndoTask(XMLViewsStrings.ksUndoBEPhonemeFeatures, XMLViewsStrings.ksRedoBEPhonemeFeatures);
 			if (SelectedHvo != 0)
 			{
 				var fsTarget = GetTargetFsFeatStruc();

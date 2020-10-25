@@ -3,8 +3,8 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Linq;
-using LanguageExplorer.Controls;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.LCModel;
 using SIL.LCModel.Core.KernelInterfaces;
@@ -12,13 +12,13 @@ using SIL.LCModel.Core.Text;
 using SIL.LCModel.DomainImpl;
 using SIL.LCModel.DomainServices;
 
-namespace LanguageExplorer.LcmUi
+namespace LanguageExplorer.Controls
 {
 	/// <summary>
 	/// Override to support kfragHeadword with a properly live display of the headword.
 	/// Also, the default of displaying the vernacular writing system can be overridden.
 	/// </summary>
-	internal sealed class LexEntryVc : CmVernObjectVc
+	internal sealed class LexEntryVc : FwBaseVc
 	{
 		/// <summary>
 		/// arbitrary.
@@ -36,8 +36,8 @@ namespace LanguageExplorer.LcmUi
 
 		/// <summary />
 		internal LexEntryVc(LcmCache cache)
-			: base(cache)
 		{
+			Cache = cache;
 			WritingSystemCode = cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Handle;
 		}
 
@@ -102,8 +102,11 @@ namespace LanguageExplorer.LcmUi
 				case kfragFormForm: // form of MoForm
 					vwenv.AddStringAltMember(MoFormTags.kflidForm, m_wsActual, this);
 					break;
+				case (int)VcFrags.kfragShortName:
+					vwenv.AddString(TsStringUtils.MakeString(m_cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvo).ShortName, m_cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Handle));
+					break;
 				default:
-					base.Display(vwenv, hvo, frag);
+					vwenv.AddString(TsStringUtils.MakeString(m_cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvo).ToString(), m_cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Handle));
 					break;
 			}
 		}

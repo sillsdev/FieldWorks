@@ -18,7 +18,7 @@ using SIL.LCModel;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Core.Text;
 
-namespace LanguageExplorer.LcmUi
+namespace SIL.FieldWorks.LexicalProvider
 {
 	/// <summary />
 	internal sealed class RelatedWords : Form
@@ -41,7 +41,7 @@ namespace LanguageExplorer.LcmUi
 		/// </summary>
 		internal static void ShowNotInDictMessage(IWin32Window owner)
 		{
-			MessageBox.Show(owner, LcmUiResources.kstidFindRelWordsNotInDict, LcmUiResources.kstidFindRelWordsTitle);
+			MessageBox.Show(owner, Properties.Resources.kstidFindRelWordsNotInDict, Properties.Resources.kstidFindRelWordsTitle);
 		}
 
 		/// <summary>
@@ -55,12 +55,12 @@ namespace LanguageExplorer.LcmUi
 			var fHaveLexRels = LoadLexicalRelationInfo(cache, hvoEntry, out lexrelsOut, cdaTemp);
 			if (!fHaveSemDomains && !fHaveLexRels)
 			{
-				MessageBox.Show(owner, LcmUiResources.ksNoSemanticDomainsListedForEntry, LcmUiResources.ksFindRelatedWords);
+				MessageBox.Show(owner, Properties.Resources.ksNoSemanticDomainsListedForEntry, Properties.Resources.ksFindRelatedWords);
 				return false;
 			}
 			if (domainsOut.Length == 0 && lexrelsOut.Length == 0)
 			{
-				MessageBox.Show(owner, LcmUiResources.ksNoEntriesWithSameSemanticDomain, LcmUiResources.ksFindRelatedWords);
+				MessageBox.Show(owner, Properties.Resources.ksNoEntriesWithSameSemanticDomain, Properties.Resources.ksFindRelatedWords);
 				return false;
 			}
 			return true;
@@ -367,7 +367,7 @@ namespace LanguageExplorer.LcmUi
 			}
 		}
 
-		private LexEntryUi GetSelWord()
+		private ILexEntry GetEntryForSelectedWordform()
 		{
 			var sel = m_view.RootBox.Selection;
 			var sel2 = sel?.EndPoint(false);
@@ -385,37 +385,34 @@ namespace LanguageExplorer.LcmUi
 			}
 			// Ignore what part of it is selected...we want the entry whose whole citation form
 			// the selection is part of.
-			//string wf = tssWf.Text.Substring(ichMin, ichLim - ichMin);
-			return LexEntryUi.FindEntryForWordform(m_cache, tssWf);
+			return m_cache.ServiceLocator.GetInstance<ILexEntryRepository>().FindEntryForWordform(m_cache, tssWf);
 		}
 
-		private void m_btnLookup_Click(object sender, System.EventArgs e)
+		private void m_btnLookup_Click(object sender, EventArgs e)
 		{
-			using (var leui = GetSelWord())
+			var entryForSelectedWordform = GetEntryForSelectedWordform();
+			if (entryForSelectedWordform == null)
 			{
-				if (leui == null)
-				{
-					ShowNotInDictMessage(this);
-					return;
-				}
-				if (!LoadDomainAndRelationInfo(m_cache, leui.MyCmObject.Hvo, out var domains, out var lexrels, out var cdaTemp, this))
-				{
-					return;
-				}
-				m_cdaTemp.ClearAllData();
-				// copy the names loaded into the even more temporary cda to the main one.
-				foreach (var hvoDomain in domains)
-				{
-					m_cdaTemp.CacheStringProp(hvoDomain, RelatedWordsVc.ktagName, ((ISilDataAccess)cdaTemp).get_StringProp(hvoDomain, RelatedWordsVc.ktagName));
-				}
-				foreach (var hvoLexRel in lexrels)
-				{
-					m_cdaTemp.CacheStringProp(hvoLexRel, RelatedWordsVc.ktagName, ((ISilDataAccess)cdaTemp).get_StringProp(hvoLexRel, RelatedWordsVc.ktagName));
-				}
-				m_hvoEntry = leui.MyCmObject.Hvo;
-				SetupForEntry(domains, lexrels);
-				m_view.SetEntry(m_hvoEntry);
+				ShowNotInDictMessage(this);
+				return;
 			}
+			if (!LoadDomainAndRelationInfo(m_cache, entryForSelectedWordform.Hvo, out var domains, out var lexrels, out var cdaTemp, this))
+			{
+				return;
+			}
+			m_cdaTemp.ClearAllData();
+			// copy the names loaded into the even more temporary cda to the main one.
+			foreach (var hvoDomain in domains)
+			{
+				m_cdaTemp.CacheStringProp(hvoDomain, RelatedWordsVc.ktagName, ((ISilDataAccess)cdaTemp).get_StringProp(hvoDomain, RelatedWordsVc.ktagName));
+			}
+			foreach (var hvoLexRel in lexrels)
+			{
+				m_cdaTemp.CacheStringProp(hvoLexRel, RelatedWordsVc.ktagName, ((ISilDataAccess)cdaTemp).get_StringProp(hvoLexRel, RelatedWordsVc.ktagName));
+			}
+			m_hvoEntry = entryForSelectedWordform.Hvo;
+			SetupForEntry(domains, lexrels);
+			m_view.SetEntry(m_hvoEntry);
 		}
 
 		private void m_btnCopy_Click(object sender, System.EventArgs e)
@@ -426,41 +423,39 @@ namespace LanguageExplorer.LcmUi
 		private void m_view_SelChanged(object sender, EventArgs e)
 		{
 			// Todo: create or update XmlView of selected word if any.
-			using (var leui = GetSelWord())
+			var entryForSelectedWordform = GetEntryForSelectedWordform();
+			var fEnable = m_view.GotRangeSelection && entryForSelectedWordform != null;
+			m_btnCopy.Enabled = fEnable;
+			m_btnInsert.Enabled = fEnable;
+			m_btnLookup.Enabled = fEnable;
+			if (entryForSelectedWordform == null)
 			{
-				var fEnable = m_view.GotRangeSelection && leui != null;
-				m_btnCopy.Enabled = fEnable;
-				m_btnInsert.Enabled = fEnable;
-				m_btnLookup.Enabled = fEnable;
-				if (leui == null)
-				{
-					return;
-				}
-				if (m_detailView == null)
-				{
-					// Give the detailView the bottom 1/3 of the available height.
-					SuspendLayout();
-					var totalHeight = m_view.Height;
-					m_view.Height = totalHeight * 2 / 3;
-					m_detailView = MakeSummaryView(leui.MyCmObject.Hvo, m_cache, m_styleSheet);
-					m_detailView.Left = m_view.Left;
-					m_detailView.Width = m_view.Width;
-					m_detailView.Top = m_view.Bottom + 5;
-					m_detailView.Height = totalHeight / 3;
-					m_detailView.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-					m_detailView.EditingHelper.DefaultCursor = Cursors.Arrow;
-					Controls.Add(m_detailView);
-					ResumeLayout();
-					// JohnT: I'm not sure why this is needed here and not
-					// elsewhere, but without it, the root box somehow never
-					// receives an OnSizeChanged call and never actually
-					// constructs.
-					m_detailView.RootBox.Reconstruct();
-				}
-				else
-				{
-					m_detailView.RootObjectHvo = leui.MyCmObject.Hvo;
-				}
+				return;
+			}
+			if (m_detailView == null)
+			{
+				// Give the detailView the bottom 1/3 of the available height.
+				SuspendLayout();
+				var totalHeight = m_view.Height;
+				m_view.Height = totalHeight * 2 / 3;
+				m_detailView = MakeSummaryView(entryForSelectedWordform.Hvo, m_cache, m_styleSheet);
+				m_detailView.Left = m_view.Left;
+				m_detailView.Width = m_view.Width;
+				m_detailView.Top = m_view.Bottom + 5;
+				m_detailView.Height = totalHeight / 3;
+				m_detailView.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+				m_detailView.EditingHelper.DefaultCursor = Cursors.Arrow;
+				Controls.Add(m_detailView);
+				ResumeLayout();
+				// JohnT: I'm not sure why this is needed here and not
+				// elsewhere, but without it, the root box somehow never
+				// receives an OnSizeChanged call and never actually
+				// constructs.
+				m_detailView.RootBox.Reconstruct();
+			}
+			else
+			{
+				m_detailView.RootObjectHvo = entryForSelectedWordform.Hvo;
 			}
 		}
 
@@ -606,8 +601,8 @@ namespace LanguageExplorer.LcmUi
 				m_wsDefault = wsUser;
 				m_tssColon = TsStringUtils.MakeString(": ", wsUser);
 				m_tssComma = TsStringUtils.MakeString(", ", wsUser);
-				m_tssSdRelation = TsStringUtils.MakeString(LcmUiResources.ksWordsRelatedBySemanticDomain, wsUser);
-				m_tssLexRelation = TsStringUtils.MakeString(LcmUiResources.ksLexicallyRelatedWords, wsUser);
+				m_tssSdRelation = TsStringUtils.MakeString(Properties.Resources.ksWordsRelatedBySemanticDomain, wsUser);
+				m_tssLexRelation = TsStringUtils.MakeString(Properties.Resources.ksLexicallyRelatedWords, wsUser);
 				var semanticDomainStrBuilder = m_tssSdRelation.GetBldr();
 				var index = semanticDomainStrBuilder.Text.IndexOf("{0}");
 				if (index > 0)

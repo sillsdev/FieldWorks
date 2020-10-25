@@ -13,7 +13,6 @@ using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.LCModel;
 using SIL.LCModel.Core.KernelInterfaces;
-using SIL.LCModel.Infrastructure;
 using SIL.LCModel.Utils;
 
 namespace LanguageExplorerTests.Impls
@@ -117,8 +116,7 @@ namespace LanguageExplorerTests.Impls
 			ILexEntry entry = null;
 			// We normally let undo and redo be localized independently, but we compromise in the interests of making macros
 			// easier to create.
-			UndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(string.Format(LanguageExplorerResources.Undo_0, commandName), string.Format(LanguageExplorerResources.Redo_0, commandName),
-				Cache.ActionHandlerAccessor, () =>
+			UowHelpers.UndoExtensionUsingNewOrCurrentUOW(commandName, Cache.ActionHandlerAccessor, () =>
 			{
 				entry = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create();
 				macro.RunMacro(entry, LexEntryTags.kflidRestrictions, Cache.DefaultAnalWs, 2, 5);

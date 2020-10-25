@@ -246,4 +246,24 @@ Do you want to continue with the export?</value>
     <value>???</value>
     <comment>signals unknown/missing information</comment>
   </data>
+  <data name="ksInsertSense" xml:space="preserve">
+    <value>Insert Sense</value>
+  </data>
+  <data name="Redo_0" xml:space="preserve">
+    <value>Redo {0}</value>
+  </data>
+  <data name="Undo_0" xml:space="preserve">
+    <value>Undo {0}</value>
+  </data>
+  <data name="ksCantDeleteDefaultDiscourseTemplate" xml:space="preserve">
+    <value>The default discourse chart template cannot be deleted, moved or promoted.</value>
+    <comment>Error message attempting to delete the one and only discourse chart template. Same message is used for moving or promoting.</comment>
+  </data>
+  <data name="ksCantModifyTemplateInUse" xml:space="preserve">
+    <value>This part of a chart template cannot be moved or deleted, because it or one of its children is in use in one or more charts (e.g., {0}).</value>
+    <comment>{0} is the title of a text, or possibly a scripture reference.</comment>
+  </data>
+  <data name="ksWarningCaption" xml:space="preserve">
+    <value>Warning</value>
+  </data>
 </root>

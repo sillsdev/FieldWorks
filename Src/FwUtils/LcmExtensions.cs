@@ -104,6 +104,24 @@ namespace SIL.FieldWorks.Common.FwUtils
 		}
 
 		/// <summary>
+		/// Return either the object or an owner ("parent") up the ownership chain that is of
+		/// the desired class.  Being a subclass of the desired class also matches, unlike
+		/// ICmObject.OwnerOfClass() where the class must match exactly.
+		/// </summary>
+		public static ICmObject GetSelfOrParentOfClass(this ICmObject me, int classIdToSearchFor)
+		{
+			var mdc = me.Cache.DomainDataByFlid.MetaDataCache;
+			for (; me != null; me = me.Owner)
+			{
+				if ((DomainObjectServices.IsSameOrSubclassOf(mdc, me.ClassID, classIdToSearchFor)))
+				{
+					return me;
+				}
+			}
+			return null;
+		}
+
+		/// <summary>
 		/// Try to get the WS from a selection range.
 		/// </summary>
 		/// <returns>Return '0' if:
@@ -185,6 +203,40 @@ namespace SIL.FieldWorks.Common.FwUtils
 		{
 			referringRecord = me.AssociatedNotebookRecord;
 			return referringRecord != null;
+		}
+
+		public static bool CheckAndReportProtectedChartColumn(this ICmPossibility me)
+		{
+			if (!me.CanModifyChartColumn(out var msg))
+			{
+				MessageBoxUtils.Show(msg, FwUtilsStrings.ksWarningCaption, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+				return true;
+			}
+			return false;
+		}
+
+		public static bool CanModifyChartColumn(this ICmPossibility me, out string msg)
+		{
+			if (me.IsDefaultDiscourseTemplate)
+			{
+				msg = FwUtilsStrings.ksCantDeleteDefaultDiscourseTemplate;
+				return false;
+			}
+			if (me.IsThisOrDescendantInUseAsChartColumn)
+			{
+				var rootPossibility = me;
+				while (rootPossibility.Owner is ICmPossibility)
+				{
+					rootPossibility = (ICmPossibility)rootPossibility.Owner;
+				}
+				var chart = rootPossibility.Services.GetInstance<IDsChartRepository>().InstancesWithTemplate(rootPossibility).First();
+				var textName = ((IDsConstChart)chart).BasedOnRA.Title.BestAnalysisVernacularAlternative.Text;
+				// This is an actual column; it's a problem if it has instances
+				msg = string.Format(FwUtilsStrings.ksCantModifyTemplateInUse, textName);
+				return false;
+			}
+			msg = null;
+			return true;
 		}
 
 		public static string ItemTypeName(this ICmPossibility me)
@@ -767,6 +819,142 @@ namespace SIL.FieldWorks.Common.FwUtils
 			return doc.FirstChild;
 		}
 
+		public static ILexSense CreateNewLexSense(this ILexEntry me, int insertionPosition = int.MaxValue)
+		{
+			var cache = me.Cache;
+			ILexSense newSense = null;
+			UowHelpers.UndoExtension(FwUtilsStrings.ksInsertSense, cache.ServiceLocator.GetInstance<IActionHandler>(), () =>
+			{
+				IMoMorphSynAnalysis msa;
+				var entrySenseCount = me.SensesOS.Count;
+				var appendNewSense = insertionPosition >= entrySenseCount;
+				if (entrySenseCount == 0)
+				{
+					// No senses at all.
+					// If we don't get the MSA here, trouble ensues.  See LT-5411.
+					msa = me.FindOrCreateDefaultMsa();
+				}
+				else
+				{
+					// Use the MSA from the sense right before the location we want the new one to go into.
+					ILexSense senseToGetMsaFrom;
+					if (insertionPosition == 0)
+					{
+						// Use first sense.
+						senseToGetMsaFrom = me.SensesOS.First();
+					}
+					else if (appendNewSense)
+					{
+						// Use last sense.
+						senseToGetMsaFrom = me.SensesOS.Last();
+					}
+					else
+					{
+						// Use the one before the insertion point.
+						senseToGetMsaFrom = me.SensesOS[insertionPosition - 1];
+					}
+					msa = GetSafeMsa(cache, senseToGetMsaFrom);
+				}
+				newSense = cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create();
+				if (appendNewSense)
+				{
+					me.SensesOS.Add(newSense);
+				}
+				else
+				{
+					me.SensesOS.Insert(insertionPosition, newSense);
+				}
+				newSense.MorphoSyntaxAnalysisRA = msa;
+			});
+			return newSense;
+		}
+
+		public static ILexSense CreateNewLexSense(this ILexSense me, int insertionPosition = int.MaxValue)
+		{
+			var cache = me.Cache;
+			ILexSense newSense = null;
+			UowHelpers.UndoExtension(FwUtilsStrings.ksInsertSense, cache.ServiceLocator.GetInstance<IActionHandler>(), () =>
+			{
+				IMoMorphSynAnalysis msa;
+				var senseSubsenseCount = me.SensesOS.Count;
+				var appendNewSense = (insertionPosition == int.MaxValue) || (insertionPosition >= senseSubsenseCount);
+				if (senseSubsenseCount == 0)
+				{
+					// No senses at all.
+					// If we don't get the MSA here, trouble ensues.  See LT-5411.
+					msa = me.Entry.FindOrCreateDefaultMsa();
+				}
+				else
+				{
+					// Use the MSA from the sense right before the location we want the new one to go into.
+					ILexSense senseToGetMsaFrom;
+					if (insertionPosition == 0)
+					{
+						// Use first sense.
+						senseToGetMsaFrom = me.SensesOS.First();
+					}
+					else if (appendNewSense)
+					{
+						// Use last sense.
+						senseToGetMsaFrom = me.SensesOS.Last();
+					}
+					else
+					{
+						// Use the one before the insertion point.
+						senseToGetMsaFrom = me.SensesOS[insertionPosition - 1];
+					}
+					msa = GetSafeMsa(cache, senseToGetMsaFrom);
+				}
+				newSense = cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create();
+				if (appendNewSense)
+				{
+					me.SensesOS.Add(newSense);
+				}
+				else
+				{
+					me.SensesOS.Insert(insertionPosition, newSense);
+				}
+				newSense.MorphoSyntaxAnalysisRA = msa;
+			});
+			return newSense;
+		}
+
+		/// <summary>
+		/// This method will get an MSA which the senses MorphoSyntaxAnalysisRA points to.
+		/// If it is null it will try and find an appropriate one in the owning Entries list, if that fails it will make one and put it there.
+		/// </summary>
+		private static IMoMorphSynAnalysis GetSafeMsa(LcmCache cache, ILexSense sense)
+		{
+			if (sense.MorphoSyntaxAnalysisRA != null)
+			{
+				//situation normal, return
+				return sense.MorphoSyntaxAnalysisRA;
+			}
+			//Situation not normal.
+			var entryPrimaryMorphType = sense.Entry.PrimaryMorphType; // Guard against corrupted data. Every entry should have a PrimaryMorphType
+			var isAffixType = entryPrimaryMorphType?.IsAffixType ?? false;
+			foreach (var msa in sense.Entry.MorphoSyntaxAnalysesOC) //go through each MSA in the Entry list looking for one with an unknown category
+			{
+				if (!isAffixType && msa is IMoStemMsa stemMsa && stemMsa.PartOfSpeechRA == null)
+				{
+					sense.MorphoSyntaxAnalysisRA = stemMsa;
+					return stemMsa;
+				}
+				if (msa is IMoUnclassifiedAffixMsa affixMsa && affixMsa.PartOfSpeechRA == null)
+				{
+					sense.MorphoSyntaxAnalysisRA = affixMsa;
+					return affixMsa;
+				}
+			}
+			if (sense.MorphoSyntaxAnalysisRA != null)
+			{
+				return sense.MorphoSyntaxAnalysisRA;
+			}
+			var safeMsa = isAffixType ? cache.ServiceLocator.GetInstance<IMoUnclassifiedAffixMsaFactory>().Create() : (IMoMorphSynAnalysis)cache.ServiceLocator.GetInstance<IMoStemMsaFactory>().Create();
+			sense.Entry.MorphoSyntaxAnalysesOC.Add(safeMsa);
+			sense.MorphoSyntaxAnalysisRA = safeMsa;
+			return sense.MorphoSyntaxAnalysisRA;
+		}
 
 		/// <summary />
 		private sealed class ReversalSubEntryIcuComparer : IComparer<IReversalIndexEntry>, IDisposable

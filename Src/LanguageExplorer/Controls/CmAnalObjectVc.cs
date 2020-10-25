@@ -7,7 +7,7 @@ using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.LCModel;
 using SIL.LCModel.Core.Text;
 
-namespace LanguageExplorer.LcmUi
+namespace LanguageExplorer.Controls
 {
 	/// <summary>
 	/// Special VC for classes that should display in the default analysis writing system.

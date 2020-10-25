@@ -24,7 +24,7 @@ namespace LanguageExplorer.LcmUi
 			Guard.AgainstNull(cache, nameof(cache));
 
 			LexPronunciationUi result = null;
-			UndoableUnitOfWorkHelper.Do(LcmUiResources.ksUndoInsert, LcmUiResources.ksRedoInsert, cache.ActionHandlerAccessor, () =>
+			UndoableUnitOfWorkHelper.Do(LanguageExplorerResources.ksUndoInsert, LanguageExplorerResources.ksRedoInsert, cache.ActionHandlerAccessor, () =>
 			{
 				var newHvo = cache.DomainDataByFlid.MakeNewObject(classId, hvoOwner, flid, insertionPosition);
 				result = (LexPronunciationUi)MakeLcmModelUiObject(cache, newHvo);

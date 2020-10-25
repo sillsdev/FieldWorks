@@ -15,7 +15,6 @@ using LanguageExplorer.Controls;
 using LanguageExplorer.Controls.DetailControls;
 using LanguageExplorer.Controls.PaneBar;
 using LanguageExplorer.DictionaryConfiguration;
-using LanguageExplorer.LcmUi;
 using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FwCoreDlgs.FileDialog;
@@ -366,7 +365,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools
 
 			private void Insert_Sense_Clicked(object sender, EventArgs e)
 			{
-				LexSenseUi.CreateNewLexSense(_cache, (ILexEntry)_recordList.CurrentObject);
+				((ILexEntry)_recordList.CurrentObject).CreateNewLexSense();
 			}
 
 			private bool IsCommonVisible
@@ -405,13 +404,13 @@ namespace LanguageExplorer.Areas.Lexicon.Tools
 			private void Insert_Subsense_Clicked(object sender, EventArgs e)
 			{
 				var owningSense = _dataTree.CurrentSlice.MyCmObject as ILexSense ?? _dataTree.CurrentSlice.MyCmObject.OwnerOfClass<ILexSense>();
-				LexSenseUi.CreateNewLexSense(_cache, owningSense);
+				owningSense.CreateNewLexSense();
 			}
 
 			private void Insert_Allomorph_Clicked(object sender, EventArgs e)
 			{
 				var lexEntry = (ILexEntry)_recordList.CurrentObject;
-				UndoableUnitOfWorkHelper.Do(LcmUiResources.ksUndoInsert, LcmUiResources.ksRedoInsert, _cache.ServiceLocator.GetInstance<IActionHandler>(), () =>
+				UndoableUnitOfWorkHelper.Do(LanguageExplorerResources.ksUndoInsert, LanguageExplorerResources.ksRedoInsert, _cache.ServiceLocator.GetInstance<IActionHandler>(), () =>
 				{
 					_cache.DomainDataByFlid.MakeNewObject(lexEntry.GetDefaultClassForNewAllomorph(), lexEntry.Hvo, LexEntryTags.kflidAlternateForms, lexEntry.AlternateFormsOS.Count);
 				});
@@ -429,7 +428,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools
 			private void Insert_Pronunciation_Clicked(object sender, EventArgs e)
 			{
 				var lexEntry = (ILexEntry)_recordList.CurrentObject;
-				UndoableUnitOfWorkHelper.Do(LcmUiResources.ksUndoInsert, LcmUiResources.ksRedoInsert, _cache.ServiceLocator.GetInstance<IActionHandler>(), () =>
+				UndoableUnitOfWorkHelper.Do(LanguageExplorerResources.ksUndoInsert, LanguageExplorerResources.ksRedoInsert, _cache.ServiceLocator.GetInstance<IActionHandler>(), () =>
 				{
 					_cache.DomainDataByFlid.MakeNewObject(LexPronunciationTags.kClassId, lexEntry.Hvo, LexEntryTags.kflidPronunciations, lexEntry.PronunciationsOS.Count);
 					// Forces them to be created (lest it try to happen while displaying the new object in PropChanged).
@@ -1128,12 +1127,12 @@ namespace LanguageExplorer.Areas.Lexicon.Tools
 				}
 				if (currentSense.Owner is ILexSense owningSense)
 				{
-					LexSenseUi.CreateNewLexSense(_cache, owningSense, owningSense.SensesOS.IndexOf(currentSense) + 1);
+					owningSense.CreateNewLexSense(owningSense.SensesOS.IndexOf(currentSense) + 1);
 				}
 				else
 				{
 					var owningEntry = (ILexEntry)_recordList.CurrentObject;
-					LexSenseUi.CreateNewLexSense(_cache, owningEntry, owningEntry.SensesOS.IndexOf(currentSense) + 1);
+					owningEntry.CreateNewLexSense(owningEntry.SensesOS.IndexOf(currentSense) + 1);
 				}
 			}
 
@@ -1204,7 +1203,8 @@ namespace LanguageExplorer.Areas.Lexicon.Tools
 				UowHelpers.UndoExtensionUsingNewOrCurrentUOW(LexiconResources.Delete_Media_Link, cache.ActionHandlerAccessor, () =>
 				{
 					var media = (ICmMedia)_dataTree.CurrentSlice.MyCmObject;
-					if (CmObjectUi.ConsiderDeletingRelatedFile(media.MediaFileRA, _propertyTable))
+					var mediaFile = media.MediaFileRA;
+					if (mediaFile != null && mediaFile.ConsiderDeletingRelatedFile(_propertyTable))
 					{
 						cache.DomainDataByFlid.DeleteObj(media.Hvo);
 					}

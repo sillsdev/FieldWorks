@@ -88,15 +88,6 @@ namespace LanguageExplorer.LcmUi {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Sorry, FieldWorks cannot delete this item..
-        /// </summary>
-        internal static string ksCannotDeleteItem {
-            get {
-                return ResourceManager.GetString("ksCannotDeleteItem", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Sorry, FieldWorks cannot delete this wordform because it occurs in your texts..
         /// </summary>
         internal static string ksCannotDeleteWordform {
@@ -120,15 +111,6 @@ namespace LanguageExplorer.LcmUi {
         internal static string ksCannotMoveObjectToCopy {
             get {
                 return ResourceManager.GetString("ksCannotMoveObjectToCopy", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The default discourse chart template cannot be deleted, moved or promoted..
-        /// </summary>
-        internal static string ksCantDeleteDefaultDiscourseTemplate {
-            get {
-                return ResourceManager.GetString("ksCantDeleteDefaultDiscourseTemplate", resourceCulture);
             }
         }
         
@@ -160,15 +142,6 @@ namespace LanguageExplorer.LcmUi {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to This part of a chart template cannot be moved or deleted, because it or one of its children is in use in one or more charts (e.g., {0})..
-        /// </summary>
-        internal static string ksCantModifyTemplateInUse {
-            get {
-                return ResourceManager.GetString("ksCantModifyTemplateInUse", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to  (Ctrl-Click).
         /// </summary>
         internal static string ksCtrlClick {
@@ -178,74 +151,11 @@ namespace LanguageExplorer.LcmUi {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The FieldWorks internal copy of this file ({0}) is not used elsewhere in the project. Would you like to delete it also? (This cannot be undone!).
-        /// </summary>
-        internal static string ksDeleteFileAlso {
-            get {
-                return ResourceManager.GetString("ksDeleteFileAlso", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Delete File?.
-        /// </summary>
-        internal static string ksDeleteFileCaption {
-            get {
-                return ResourceManager.GetString("ksDeleteFileCaption", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Duplicate Wordforms.
-        /// </summary>
-        internal static string ksDuplicateWordformsCaption {
-            get {
-                return ResourceManager.GetString("ksDuplicateWordformsCaption", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to FieldWorks has detected that there are two wordforms with the form {0}. This is not supposed to happen! If you can figure out how it came about please let the developers know. It would be good to manually delete all but one of them. In the meantime, here is the information on the first of them..
-        /// </summary>
-        internal static string ksDuplicateWordformsMsg {
-            get {
-                return ResourceManager.GetString("ksDuplicateWordformsMsg", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Select the entry to merge the current entry into:.
         /// </summary>
         internal static string ksEntries {
             get {
                 return ResourceManager.GetString("ksEntries", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Find....
-        /// </summary>
-        internal static string ksFind_ {
-            get {
-                return ResourceManager.GetString("ksFind_", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Find in Dictionary.
-        /// </summary>
-        internal static string ksFindInDictionary {
-            get {
-                return ResourceManager.GetString("ksFindInDictionary", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Find related words.
-        /// </summary>
-        internal static string ksFindRelatedWords {
-            get {
-                return ResourceManager.GetString("ksFindRelatedWords", resourceCulture);
             }
         }
         
@@ -264,15 +174,6 @@ namespace LanguageExplorer.LcmUi {
         internal static string ksHierarchyLimit {
             get {
                 return ResourceManager.GetString("ksHierarchyLimit", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to These words are lexically related to {0}:.
-        /// </summary>
-        internal static string ksLexicallyRelatedWords {
-            get {
-                return ResourceManager.GetString("ksLexicallyRelatedWords", resourceCulture);
             }
         }
         
@@ -349,57 +250,11 @@ namespace LanguageExplorer.LcmUi {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Sorry, no other entries were found with the same semantic domain(s) as that entry..
-        /// </summary>
-        internal static string ksNoEntriesWithSameSemanticDomain {
-            get {
-                return ResourceManager.GetString("ksNoEntriesWithSameSemanticDomain", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Sorry, no semantic domains are listed for any of the senses of that entry, and no lexical relations (or cross references) include that entry or any of its senses.
-        ///Without these, we cannot find related entries..
-        /// </summary>
-        internal static string ksNoSemanticDomainsListedForEntry {
-            get {
-                return ResourceManager.GetString("ksNoSemanticDomainsListedForEntry", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Program error.
         /// </summary>
         internal static string ksProgramError {
             get {
                 return ResourceManager.GetString("ksProgramError", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Redo Bulk Edit Inflection Class.
-        /// </summary>
-        internal static string ksRedoBEInflClass {
-            get {
-                return ResourceManager.GetString("ksRedoBEInflClass", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Redo Assign Features to Phonemes.
-        /// </summary>
-        internal static string ksRedoBEPhonemeFeatures {
-            get {
-                return ResourceManager.GetString("ksRedoBEPhonemeFeatures", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Redo Bulk Edit POS.
-        /// </summary>
-        internal static string ksRedoBulkEditPOS {
-            get {
-                return ResourceManager.GetString("ksRedoBulkEditPOS", resourceCulture);
             }
         }
         
@@ -422,38 +277,11 @@ namespace LanguageExplorer.LcmUi {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Redo Insert.
-        /// </summary>
-        internal static string ksRedoInsert {
-            get {
-                return ResourceManager.GetString("ksRedoInsert", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Redo Insert Sense.
-        /// </summary>
-        internal static string ksRedoInsertSense {
-            get {
-                return ResourceManager.GetString("ksRedoInsertSense", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Redo Merge.
         /// </summary>
         internal static string ksRedoMerge {
             get {
                 return ResourceManager.GetString("ksRedoMerge", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Remove target feature.
-        /// </summary>
-        internal static string ksRemoveThisFeature {
-            get {
-                return ResourceManager.GetString("ksRemoveThisFeature", resourceCulture);
             }
         }
         
@@ -467,38 +295,11 @@ namespace LanguageExplorer.LcmUi {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Show.
-        /// </summary>
-        internal static string ksShow {
-            get {
-                return ResourceManager.GetString("ksShow", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to A discourse chart template can only have three levels (template, column group, and column)..
         /// </summary>
         internal static string ksTemplateTooDeep {
             get {
                 return ResourceManager.GetString("ksTemplateTooDeep", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Sorry, that entry is not yet in the dictionary.
-        /// </summary>
-        internal static string kstidFindRelWordsNotInDict {
-            get {
-                return ResourceManager.GetString("kstidFindRelWordsNotInDict", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Find related words.
-        /// </summary>
-        internal static string kstidFindRelWordsTitle {
-            get {
-                return ResourceManager.GetString("kstidFindRelWordsTitle", resourceCulture);
             }
         }
         
@@ -521,33 +322,6 @@ namespace LanguageExplorer.LcmUi {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Undo Bulk Edit Inflection Class.
-        /// </summary>
-        internal static string ksUndoBEInflClass {
-            get {
-                return ResourceManager.GetString("ksUndoBEInflClass", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Undo Assign Features to Phonemes.
-        /// </summary>
-        internal static string ksUndoBEPhonemeFeatures {
-            get {
-                return ResourceManager.GetString("ksUndoBEPhonemeFeatures", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Undo Bulk Edit POS.
-        /// </summary>
-        internal static string ksUndoBulkEditPOS {
-            get {
-                return ResourceManager.GetString("ksUndoBulkEditPOS", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Undo {0}.
         /// </summary>
         internal static string ksUndoCommand {
@@ -566,24 +340,6 @@ namespace LanguageExplorer.LcmUi {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Undo Insert.
-        /// </summary>
-        internal static string ksUndoInsert {
-            get {
-                return ResourceManager.GetString("ksUndoInsert", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Undo Insert Sense.
-        /// </summary>
-        internal static string ksUndoInsertSense {
-            get {
-                return ResourceManager.GetString("ksUndoInsertSense", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Undo Merge.
         /// </summary>
         internal static string ksUndoMerge {
@@ -593,26 +349,8 @@ namespace LanguageExplorer.LcmUi {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Warning.
-        /// </summary>
-        internal static string ksWarningCaption {
-            get {
-                return ResourceManager.GetString("ksWarningCaption", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Words related by semantic domain to {0}:.
-        /// </summary>
-        internal static string ksWordsRelatedBySemanticDomain {
-            get {
-                return ResourceManager.GetString("ksWordsRelatedBySemanticDomain", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
-        ///&lt;parameters id=&quot;mergeAllomorphList&quot; listItemsClass=&quot;MoForm&quot; filterBar=&quot;false&quot; treeBarAvailability=&quot;NotAllowed&quot; defaultCursor=&quot;Arrow&quot; hscroll=&quot;true&quot; editable=&quot;false&quot; selectColumn=&quot;false&quot;&gt;
+        ///&lt;parameters id=&quot;mergeAllomorphList&quot; listItemsClass=&quot;MoForm&quot; treeBarAvailability=&quot;NotAllowed&quot; defaultCursor=&quot;Arrow&quot; hscroll=&quot;true&quot; editable=&quot;false&quot; selectColumn=&quot;false&quot;&gt;
         ///	&lt;columns&gt;
         ///		&lt;column label=&quot;Form&quot; width=&quot;80%&quot; layout=&quot;Allomorph&quot; ws=&quot;$ws=vernacular&quot;/&gt;
         ///		&lt;column label=&quot;Type&quot; width=&quot;20%&quot; layout=&quot;MorphTypeName&quot;/&gt;
@@ -628,7 +366,7 @@ namespace LanguageExplorer.LcmUi {
         
         /// <summary>
         ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
-        ///&lt;parameters id=&quot;mergeReversalEntryList&quot; listItemsClass=&quot;ReversalIndexEntry&quot; filterBar=&quot;false&quot; treeBarAvailability=&quot;NotAllowed&quot; defaultCursor=&quot;Arrow&quot; 	hscroll=&quot;true&quot; editable=&quot;false&quot; selectColumn=&quot;false&quot;&gt;
+        ///&lt;parameters id=&quot;mergeReversalEntryList&quot; listItemsClass=&quot;ReversalIndexEntry&quot; treeBarAvailability=&quot;NotAllowed&quot; defaultCursor=&quot;Arrow&quot; 	hscroll=&quot;true&quot; editable=&quot;false&quot; selectColumn=&quot;false&quot;&gt;
         ///	&lt;columns&gt;
         ///		&lt;column label=&quot;Entry&quot; width=&quot;100%&quot; layout=&quot;ReversalForm&quot; ws=&quot;$ws=reversal&quot;/&gt;
         ///	&lt;/columns&gt;
@@ -643,11 +381,12 @@ namespace LanguageExplorer.LcmUi {
         
         /// <summary>
         ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
-        ///&lt;parameters id=&quot;mergeSenseList&quot; listItemsClass=&quot;LexSense&quot; filterBar=&quot;false&quot; treeBarAvailability=&quot;NotAllowed&quot; defaultCursor=&quot;Arrow&quot; hscroll=&quot;true&quot; editable=&quot;false&quot; selectColumn=&quot;false&quot;&gt;
+        ///&lt;parameters id=&quot;mergeSenseList&quot; listItemsClass=&quot;LexSense&quot; treeBarAvailability=&quot;NotAllowed&quot; defaultCursor=&quot;Arrow&quot; hscroll=&quot;true&quot; editable=&quot;false&quot; selectColumn=&quot;false&quot;&gt;
         ///	&lt;columns&gt;
         ///		&lt;column label=&quot;Gloss&quot; width=&quot;50%&quot; layout=&quot;Gloss&quot; ws=&quot;$ws=best analysis&quot;/&gt;
         ///		&lt;column label=&quot;Grammatical Info.&quot; width=&quot;50%&quot; multipara=&quot;true&quot; layout=&quot;GrammaticalInfoAbbrForSense&quot;/&gt;
-        ///		&lt;column label=&quot;Definition&quot; width=&quot;100%&quot; layout=&quot;Definition&quot; ws=&quot;$ws=analysis&quot; visibility= [rest of string was truncated]&quot;;.
+        ///		&lt;column label=&quot;Definition&quot; width=&quot;100%&quot; layout=&quot;Definition&quot; ws=&quot;$ws=analysis&quot; visibility=&quot;menu&quot;/&gt;
+        ///	&lt;/colum [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string MergeSenseListParameters {
             get {
@@ -657,7 +396,7 @@ namespace LanguageExplorer.LcmUi {
         
         /// <summary>
         ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
-        ///&lt;parameters id=&quot;mergeWordGlossList&quot; listItemsClass=&quot;WfiGloss&quot; filterBar=&quot;false&quot; treeBarAvailability=&quot;NotAllowed&quot; defaultCursor=&quot;Arrow&quot; hscroll=&quot;true&quot; editable=&quot;false&quot; selectColumn=&quot;false&quot;&gt;
+        ///&lt;parameters id=&quot;mergeWordGlossList&quot; listItemsClass=&quot;WfiGloss&quot; treeBarAvailability=&quot;NotAllowed&quot; defaultCursor=&quot;Arrow&quot; hscroll=&quot;true&quot; editable=&quot;false&quot; selectColumn=&quot;false&quot;&gt;
         ///  &lt;columns&gt;
         ///    &lt;column label=&quot;Gloss&quot; width=&quot;100%&quot; layout=&quot;Form&quot; ws=&quot;$ws=best analysis&quot; field=&quot;Form&quot;/&gt;
         ///  &lt;/columns&gt;

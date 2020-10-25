@@ -573,6 +573,23 @@ namespace SIL.FieldWorks.Common.FwUtils
 			return tpb.GetTextProps();
 		}
 
+		public static bool TryToDeleteFile(object param)
+		{
+			try
+			{
+				// I'm not sure why, but if we try to delete it right away, we typically get a failure,
+				// with an exception indicating that something is using the file, despite the code above that
+				// tries to make our picture cache let go of it.
+				// However, waiting until idle seems to solve the problem.
+				File.Delete((string)param);
+			}
+			catch (IOException)
+			{
+				// If we can't actually delete the file for some reason, don't bother the user complaining.
+			}
+			return true; // task is complete, don't try again.
+		}
+
 		/// <summary>
 		/// Fetches the GUID value of the given property, having checked it is a valid object.
 		/// If it is not a valid object, the property is removed.

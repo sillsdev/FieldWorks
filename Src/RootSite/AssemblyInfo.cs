@@ -10,6 +10,7 @@ using System.Runtime.InteropServices;
 
 [assembly: ComVisible(false)]
 
+[assembly: InternalsVisibleTo("FieldWorks")]
 [assembly: InternalsVisibleTo("FwCoreDlgs")]
 [assembly: InternalsVisibleTo("LanguageExplorer")]
 [assembly: InternalsVisibleTo("LanguageExplorerTests")]

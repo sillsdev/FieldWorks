@@ -310,7 +310,7 @@ namespace LanguageExplorer.Controls
 					m_fDoingHeadword = true;
 					m_fAwaitingHeadwordForm = true;
 					break;
-				case LcmUi.LexEntryVc.kfragVariantTypes:
+				case LexEntryVc.kfragVariantTypes:
 					m_fDoingVariantTypes = true;
 					OpenItem("variantTypes");
 					var icuCode = m_cache.LanguageWritingSystemFactoryAccessor.GetStrFromWs(m_cache.DefaultAnalWs);
@@ -335,7 +335,7 @@ namespace LanguageExplorer.Controls
 					m_fDoingHomographNumber = false;
 					WritePendingItem("hn", ref m_tssPendingHomographNumber);
 					break;
-				case LcmUi.LexEntryVc.kfragVariantTypes:
+				case LexEntryVc.kfragVariantTypes:
 					CloseItem();
 					m_fDoingVariantTypes = false;
 					break;

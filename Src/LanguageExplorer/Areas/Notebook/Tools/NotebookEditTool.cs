@@ -14,7 +14,6 @@ using LanguageExplorer.Controls;
 using LanguageExplorer.Controls.DetailControls;
 using LanguageExplorer.Controls.PaneBar;
 using LanguageExplorer.Controls.XMLViews;
-using LanguageExplorer.LcmUi;
 using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.ViewsInterfaces;
@@ -261,7 +260,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools
 				var currentSliceAsStTextSlice = _dataTree.CurrentSliceAsStTextSlice;
 				if (currentSliceAsStTextSlice.RootSite.RootBox.Selection.GetSelectedWordPos(out var hvo, out var tag, out var ws, out var ichMin, out var ichLim))
 				{
-					LexEntryUi.DisplayOrCreateEntry(_majorFlexComponentParameters.LcmCache, hvo, tag, ws, ichMin, ichLim, (IWin32Window)currentSliceAsStTextSlice, _majorFlexComponentParameters.FlexComponentParameters, _majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider), FwUtilsConstants.UserHelpFile);
+					LanguageExplorerServices.DisplayOrCreateEntry(_majorFlexComponentParameters.LcmCache, hvo, tag, ws, ichMin, ichLim, (IWin32Window)currentSliceAsStTextSlice, _majorFlexComponentParameters.FlexComponentParameters, _majorFlexComponentParameters.FlexComponentParameters.PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider), FwUtilsConstants.UserHelpFile);
 				}
 			}
 

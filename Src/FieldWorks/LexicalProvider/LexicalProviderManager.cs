@@ -10,9 +10,9 @@ using System.ServiceModel;
 using System.Threading;
 using System.Windows.Forms;
 using LanguageExplorer;
-using LanguageExplorer.LcmUi;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.ScriptureUtils;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.LCModel;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Core.Text;
@@ -197,6 +197,37 @@ namespace SIL.FieldWorks.LexicalProvider
 				m_cache = cache;
 			}
 
+			/// <summary>
+			/// Assuming the selection can be expanded to a word and a corresponding LexEntry can
+			/// be found, show the related words dialog with the words related to the selected one.
+			/// </summary>
+			/// <remarks>
+			/// Currently only called from WCF (11/21/2013 - AP)
+			/// </remarks>
+			private static void DisplayRelatedEntries(LcmCache cache, IWin32Window owner, IVwStylesheet styleSheet, IHelpTopicProvider helpProvider, string helpFileKey, ITsString tssWf,
+				bool hideInsertButton, IVwSelection sel = null)
+			{
+				if (tssWf == null || tssWf.Length == 0)
+				{
+					return;
+				}
+				var entryForSelectedWordform = cache.ServiceLocator.GetInstance<ILexEntryRepository>().FindEntryForWordform(cache, tssWf);
+				if (entryForSelectedWordform == null)
+				{
+					RelatedWords.ShowNotInDictMessage(owner);
+					return;
+				}
+				var hvoEntry = entryForSelectedWordform.Hvo;
+				if (!RelatedWords.LoadDomainAndRelationInfo(cache, hvoEntry, out var domains, out var lexrels, out var cdaTemp, owner))
+				{
+					return;
+				}
+				using (var rw = new RelatedWords(cache, sel, hvoEntry, domains, lexrels, cdaTemp, styleSheet, hideInsertButton))
+				{
+					rw.ShowDialog(owner);
+				}
+			}
+
 			#region ILexicalServiceProvider Members
 
 			/// <inheritdoc />
@@ -268,7 +299,7 @@ namespace SIL.FieldWorks.LexicalProvider
 						IPropertyTable propertyTable = new MyDoAlmostNothingPropertyTable();
 						var styleSheet = FwUtils.StyleSheetFromPropertyTable(propertyTable);
 						styleSheet.Init(FieldWorks.Cache, FieldWorks.Cache.LanguageProject.Hvo, LangProjectTags.kflidStyles);
-						LexEntryUi.DisplayEntries(FieldWorks.Cache, null, new FlexComponentParameters(propertyTable, publisher, subscriber), new FlexHelpTopicProvider(), FwUtilsConstants.UserHelpFile, tss, null);
+						LanguageExplorerServices.DisplayEntries(FieldWorks.Cache, null, new FlexComponentParameters(propertyTable, publisher, subscriber), new FlexHelpTopicProvider(), FwUtilsConstants.UserHelpFile, tss, null);
 					});
 				}
 
@@ -288,7 +319,7 @@ namespace SIL.FieldWorks.LexicalProvider
 					{
 						var styleSheet = new LcmStyleSheet();
 						styleSheet.Init(FieldWorks.Cache, FieldWorks.Cache.LanguageProject.Hvo, LangProjectTags.kflidStyles);
-						LexEntryUi.DisplayRelatedEntries(FieldWorks.Cache, null, styleSheet, new FlexHelpTopicProvider(), FwUtilsConstants.UserHelpFile, TsStringUtils.MakeString(entry, FieldWorks.Cache.DefaultVernWs), true);
+						DisplayRelatedEntries(FieldWorks.Cache, null, styleSheet, new FlexHelpTopicProvider(), FwUtilsConstants.UserHelpFile, TsStringUtils.MakeString(entry, FieldWorks.Cache.DefaultVernWs), true);
 					});
 				}
 

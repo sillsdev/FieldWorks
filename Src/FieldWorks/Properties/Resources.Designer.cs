@@ -198,6 +198,15 @@ namespace SIL.FieldWorks.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Find related words.
+        /// </summary>
+        internal static string ksFindRelatedWords {
+            get {
+                return ResourceManager.GetString("ksFindRelatedWords", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to FieldWorks can&apos;t run.
         /// </summary>
         internal static string ksHklmCaption {
@@ -223,6 +232,15 @@ namespace SIL.FieldWorks.Properties {
         internal static string ksInvalidLinkedFilesFolder {
             get {
                 return ResourceManager.GetString("ksInvalidLinkedFilesFolder", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to These words are lexically related to {0}:.
+        /// </summary>
+        internal static string ksLexicallyRelatedWords {
+            get {
+                return ResourceManager.GetString("ksLexicallyRelatedWords", resourceCulture);
             }
         }
         
@@ -268,6 +286,25 @@ namespace SIL.FieldWorks.Properties {
         internal static string ksMovingProjectsCaption {
             get {
                 return ResourceManager.GetString("ksMovingProjectsCaption", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sorry, no other entries were found with the same semantic domain(s) as that entry..
+        /// </summary>
+        internal static string ksNoEntriesWithSameSemanticDomain {
+            get {
+                return ResourceManager.GetString("ksNoEntriesWithSameSemanticDomain", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sorry, no semantic domains are listed for any of the senses of that entry, and no lexical relations (or cross references) include that entry or any of its senses.
+        ///Without these, we cannot find related entries..
+        /// </summary>
+        internal static string ksNoSemanticDomainsListedForEntry {
+            get {
+                return ResourceManager.GetString("ksNoSemanticDomainsListedForEntry", resourceCulture);
             }
         }
         
@@ -386,6 +423,24 @@ namespace SIL.FieldWorks.Properties {
         internal static string kstidFieldWorksRespondedNotSure {
             get {
                 return ResourceManager.GetString("kstidFieldWorksRespondedNotSure", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sorry, that entry is not yet in the dictionary.
+        /// </summary>
+        internal static string kstidFindRelWordsNotInDict {
+            get {
+                return ResourceManager.GetString("kstidFindRelWordsNotInDict", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Find related words.
+        /// </summary>
+        internal static string kstidFindRelWordsTitle {
+            get {
+                return ResourceManager.GetString("kstidFindRelWordsTitle", resourceCulture);
             }
         }
         
@@ -523,6 +578,15 @@ namespace SIL.FieldWorks.Properties {
         internal static string ksWelcomeDialogCheckboxText {
             get {
                 return ResourceManager.GetString("ksWelcomeDialogCheckboxText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Words related by semantic domain to {0}:.
+        /// </summary>
+        internal static string ksWordsRelatedBySemanticDomain {
+            get {
+                return ResourceManager.GetString("ksWordsRelatedBySemanticDomain", resourceCulture);
             }
         }
         

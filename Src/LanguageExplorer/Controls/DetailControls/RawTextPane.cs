@@ -8,7 +8,6 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Xml.Linq;
-using LanguageExplorer.LcmUi;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.ViewsInterfaces;
@@ -689,7 +688,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		{
 			if (GetSelectedWordPos(RootBox.Selection, out var hvo, out var tag, out var ws, out var ichMin, out var ichLim))
 			{
-				LexEntryUi.DisplayOrCreateEntry(m_cache, hvo, tag, ws, ichMin, ichLim, this, new FlexComponentParameters(PropertyTable, Publisher, Subscriber), PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider), FwUtilsConstants.UserHelpFile);
+				LanguageExplorerServices.DisplayOrCreateEntry(m_cache, hvo, tag, ws, ichMin, ichLim, this, new FlexComponentParameters(PropertyTable, Publisher, Subscriber), PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider), FwUtilsConstants.UserHelpFile);
 			}
 		}
 

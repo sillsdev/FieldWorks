@@ -881,6 +881,24 @@ namespace LanguageExplorer.Controls.XMLViews {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Redo Bulk Edit Inflection Class.
+        /// </summary>
+        internal static string ksRedoBEInflClass {
+            get {
+                return ResourceManager.GetString("ksRedoBEInflClass", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Redo Assign Features to Phonemes.
+        /// </summary>
+        internal static string ksRedoBEPhonemeFeatures {
+            get {
+                return ResourceManager.GetString("ksRedoBEPhonemeFeatures", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Redo Bulk Delete.
         /// </summary>
         internal static string ksRedoBulkDelete {
@@ -895,6 +913,15 @@ namespace LanguageExplorer.Controls.XMLViews {
         internal static string ksRedoBulkEdit {
             get {
                 return ResourceManager.GetString("ksRedoBulkEdit", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Redo Bulk Edit POS.
+        /// </summary>
+        internal static string ksRedoBulkEditPOS {
+            get {
+                return ResourceManager.GetString("ksRedoBulkEditPOS", resourceCulture);
             }
         }
         
@@ -1151,6 +1178,24 @@ namespace LanguageExplorer.Controls.XMLViews {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Undo Bulk Edit Inflection Class.
+        /// </summary>
+        internal static string ksUndoBEInflClass {
+            get {
+                return ResourceManager.GetString("ksUndoBEInflClass", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Undo Assign Features to Phonemes.
+        /// </summary>
+        internal static string ksUndoBEPhonemeFeatures {
+            get {
+                return ResourceManager.GetString("ksUndoBEPhonemeFeatures", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Undo Bulk Delete.
         /// </summary>
         internal static string ksUndoBulkDelete {
@@ -1165,6 +1210,15 @@ namespace LanguageExplorer.Controls.XMLViews {
         internal static string ksUndoBulkEdit {
             get {
                 return ResourceManager.GetString("ksUndoBulkEdit", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Undo Bulk Edit POS.
+        /// </summary>
+        internal static string ksUndoBulkEditPOS {
+            get {
+                return ResourceManager.GetString("ksUndoBulkEditPOS", resourceCulture);
             }
         }
         
@@ -1298,14 +1352,14 @@ namespace LanguageExplorer.Controls.XMLViews {
         ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
         ///&lt;guicontrols&gt;
         ///	&lt;guicontrol id=&quot;PeopleFlatList&quot;&gt;
-        ///		&lt;parameters id=&quot;peopleList&quot; listItemsClass=&quot;CmPerson&quot; filterBar=&quot;false&quot; treeBarAvailability=&quot;NotAllowed&quot; defaultCursor=&quot;Arrow&quot; hscroll=&quot;true&quot; editable=&quot;false&quot; selectColumn=&quot;true&quot;&gt;
+        ///		&lt;parameters id=&quot;peopleList&quot; listItemsClass=&quot;CmPerson&quot; treeBarAvailability=&quot;NotAllowed&quot; defaultCursor=&quot;Arrow&quot; hscroll=&quot;true&quot; editable=&quot;false&quot; selectColumn=&quot;true&quot;&gt;
         ///			&lt;columns&gt;
         ///				&lt;column label=&quot;Name&quot; sortmethod=&quot;Name&quot; ws=&quot;$ws=best vernoranal&quot; editable=&quot;false&quot; width=&quot;100%&quot; field=&quot;Name&quot;&gt;
         ///					&lt;span&gt;
         ///						&lt;properties&gt;
         ///							&lt;editable value=&quot;false&quot;/&gt;
         ///						&lt;/properties&gt;
-        ///						&lt;string field=&quot;Nam [rest of string was truncated]&quot;;.
+        ///						&lt;string field=&quot;Name&quot; ws=&quot;best vernor [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string SimpleChooserParameters {
             get {

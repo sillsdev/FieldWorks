@@ -18,7 +18,6 @@ using System.Xml.XPath;
 using System.Xml.Xsl;
 using Gecko;
 using LanguageExplorer.Controls;
-using LanguageExplorer.LcmUi;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FwCoreDlgs;
 using SIL.FieldWorks.FwCoreDlgs.Controls;
@@ -1051,7 +1050,7 @@ namespace LanguageExplorer.Impls
 				{
 					return; // do nothing
 				}
-				cmo = CmObjectUi.GetSelfOrParentOfClass(cmo, parentClassId);
+				cmo = cmo.GetSelfOrParentOfClass(parentClassId);
 				if (cmo == null)
 				{
 					return; // do nothing

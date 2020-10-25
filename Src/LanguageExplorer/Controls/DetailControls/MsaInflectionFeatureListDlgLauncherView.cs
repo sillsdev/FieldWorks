@@ -3,7 +3,6 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Diagnostics;
-using LanguageExplorer.LcmUi;
 using SIL.LCModel;
 
 namespace LanguageExplorer.Controls.DetailControls

@@ -1042,9 +1042,6 @@ If you click No, you will see various options for starting work in Language Expl
   <data name="ShowAllRightNow" xml:space="preserve">
     <value>Show all right now</value>
   </data>
-  <data name="Redo_0" xml:space="preserve">
-    <value>Redo {0}</value>
-  </data>
   <data name="kstidIncompatibleDTDVersion" xml:space="preserve">
     <value>{0} conforms to a DTD which is incompatible with this version of the program.
 This version of the program requires version {1}.</value>
@@ -1166,9 +1163,6 @@ This version of the program requires version {1}.</value>
   </data>
   <data name="ksHideFields" xml:space="preserve">
     <value>Hide Fields</value>
-  </data>
-  <data name="Undo_0" xml:space="preserve">
-    <value>Undo {0}</value>
   </data>
   <data name="ksWhatItDoes" xml:space="preserve">
     <value>What it does:</value>
@@ -2062,9 +2056,6 @@ you expect.</value>
   <data name="Show_Word_Category_in_Concordance" xml:space="preserve">
     <value>Show Word Category in Concordance</value>
   </data>
-  <data name="String1" xml:space="preserve">
-    <value />
-  </data>
   <data name="UndoInsertText" xml:space="preserve">
     <value>Undo insert text</value>
   </data>
@@ -2264,5 +2255,37 @@ you expect.</value>
   <data name="ksDeleteX" xml:space="preserve">
     <value>Delete {0}</value>
     <comment>Title of delete confirmation dialog box</comment>
+  </data>
+  <data name="ksDuplicateWordformsCaption" xml:space="preserve">
+    <value>Duplicate Wordforms</value>
+  </data>
+  <data name="ksDuplicateWordformsMsg" xml:space="preserve">
+    <value>FieldWorks has detected that there are two wordforms with the form {0}. This is not supposed to happen! If you can figure out how it came about please let the developers know. It would be good to manually delete all but one of them. In the meantime, here is the information on the first of them.</value>
+  </data>
+  <data name="ksFindInDictionary" xml:space="preserve">
+    <value>Find in Dictionary</value>
+  </data>
+  <data name="ksFind_" xml:space="preserve">
+    <value>Find...</value>
+  </data>
+  <data name="ksShow" xml:space="preserve">
+    <value>Show</value>
+    <comment>button text</comment>
+  </data>
+  <data name="ksCannotDeleteItem" xml:space="preserve">
+    <value>Sorry, FieldWorks cannot delete this item.</value>
+  </data>
+  <data name="ksDeleteFileAlso" xml:space="preserve">
+    <value>The FieldWorks internal copy of this file ({0}) is not used elsewhere in the project. Would you like to delete it also? (This cannot be undone!)</value>
+    <comment>Used in deleting pictures, sounds,...</comment>
+  </data>
+  <data name="ksDeleteFileCaption" xml:space="preserve">
+    <value>Delete File?</value>
+  </data>
+  <data name="ksRedoInsert" xml:space="preserve">
+    <value>Redo Insert</value>
+  </data>
+  <data name="ksUndoInsert" xml:space="preserve">
+    <value>Undo Insert</value>
   </data>
 </root>

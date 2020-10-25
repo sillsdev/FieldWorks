@@ -1226,6 +1226,15 @@ namespace LanguageExplorer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Sorry, FieldWorks cannot delete this item..
+        /// </summary>
+        internal static string ksCannotDeleteItem {
+            get {
+                return ResourceManager.GetString("ksCannotDeleteItem", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to In this tool, we do not allow deleting parts of Scripture sections. Please use Translation Editor to edit Scripture..
         /// </summary>
         internal static string ksCannotDeleteScripture {
@@ -1821,6 +1830,24 @@ namespace LanguageExplorer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The FieldWorks internal copy of this file ({0}) is not used elsewhere in the project. Would you like to delete it also? (This cannot be undone!).
+        /// </summary>
+        internal static string ksDeleteFileAlso {
+            get {
+                return ResourceManager.GetString("ksDeleteFileAlso", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Delete File?.
+        /// </summary>
+        internal static string ksDeleteFileCaption {
+            get {
+                return ResourceManager.GetString("ksDeleteFileCaption", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Note: this will remove this entire {0} reference set tree..
         /// </summary>
         internal static string ksDeleteLexTree {
@@ -1898,6 +1925,24 @@ namespace LanguageExplorer {
         internal static string ksDictionaryView {
             get {
                 return ResourceManager.GetString("ksDictionaryView", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Duplicate Wordforms.
+        /// </summary>
+        internal static string ksDuplicateWordformsCaption {
+            get {
+                return ResourceManager.GetString("ksDuplicateWordformsCaption", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to FieldWorks has detected that there are two wordforms with the form {0}. This is not supposed to happen! If you can figure out how it came about please let the developers know. It would be good to manually delete all but one of them. In the meantime, here is the information on the first of them..
+        /// </summary>
+        internal static string ksDuplicateWordformsMsg {
+            get {
+                return ResourceManager.GetString("ksDuplicateWordformsMsg", resourceCulture);
             }
         }
         
@@ -2226,11 +2271,29 @@ namespace LanguageExplorer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Find....
+        /// </summary>
+        internal static string ksFind_ {
+            get {
+                return ResourceManager.GetString("ksFind_", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Find and fix errors in a FieldWorks data (XML) file..
         /// </summary>
         internal static string ksFindAndFixErrors {
             get {
                 return ResourceManager.GetString("ksFindAndFixErrors", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Find in Dictionary.
+        /// </summary>
+        internal static string ksFindInDictionary {
+            get {
+                return ResourceManager.GetString("ksFindInDictionary", resourceCulture);
             }
         }
         
@@ -3645,6 +3708,15 @@ namespace LanguageExplorer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Redo Insert.
+        /// </summary>
+        internal static string ksRedoInsert {
+            get {
+                return ResourceManager.GetString("ksRedoInsert", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Redo Insert {0}.
         /// </summary>
         internal static string ksRedoInsert0 {
@@ -4028,6 +4100,15 @@ namespace LanguageExplorer {
         internal static string ksSetReversal {
             get {
                 return ResourceManager.GetString("ksSetReversal", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Show.
+        /// </summary>
+        internal static string ksShow {
+            get {
+                return ResourceManager.GetString("ksShow", resourceCulture);
             }
         }
         
@@ -4612,6 +4693,15 @@ namespace LanguageExplorer {
         internal static string ksUndoHomographWs {
             get {
                 return ResourceManager.GetString("ksUndoHomographWs", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Undo Insert.
+        /// </summary>
+        internal static string ksUndoInsert {
+            get {
+                return ResourceManager.GetString("ksUndoInsert", resourceCulture);
             }
         }
         
@@ -5427,10 +5517,10 @@ namespace LanguageExplorer {
         
         /// <summary>
         ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
-        ///&lt;parameters id=&quot;lexentryMatchList&quot; listItemsClass=&quot;LexEntry&quot; filterBar=&quot;false&quot; treeBarAvailability=&quot;NotAllowed&quot; defaultCursor=&quot;Arrow&quot; hscroll=&quot;true&quot; altTitleId=&quot;LexEntry-Plural&quot; editable=&quot;false&quot;&gt;
+        ///&lt;parameters id=&quot;lexentryMatchList&quot; listItemsClass=&quot;LexEntry&quot; treeBarAvailability=&quot;NotAllowed&quot; defaultCursor=&quot;Arrow&quot; hscroll=&quot;true&quot; altTitleId=&quot;LexEntry-Plural&quot; editable=&quot;false&quot;&gt;
         ///	&lt;columns&gt;
         ///		&lt;column label=&quot;Headword&quot; sortmethod=&quot;FullSortKey&quot; ws=&quot;$ws=best vernoranal&quot; editable=&quot;false&quot; width=&quot;68000&quot; layout=&quot;EntryHeadwordForFindEntry&quot; /&gt;
-        ///		&lt;column label=&quot;Lexeme Form&quot; visibility=&quot;menu&quot; common=&quot;true&quot; sortmethod=&quot;MorphSortKey&quot; ws=&quot;$ws=best vernoranal&quot; ed [rest of string was truncated]&quot;;.
+        ///		&lt;column label=&quot;Lexeme Form&quot; visibility=&quot;menu&quot; common=&quot;true&quot; sortmethod=&quot;MorphSortKey&quot; ws=&quot;$ws=best vernoranal&quot; editable=&quot;false&quot; lay [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string MatchingEntriesParameters {
             get {
@@ -5598,15 +5688,6 @@ namespace LanguageExplorer {
         internal static string Redo {
             get {
                 return ResourceManager.GetString("Redo", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Redo {0}.
-        /// </summary>
-        internal static string Redo_0 {
-            get {
-                return ResourceManager.GetString("Redo_0", resourceCulture);
             }
         }
         
@@ -5856,15 +5937,6 @@ namespace LanguageExplorer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
-        /// </summary>
-        internal static string String1 {
-            get {
-                return ResourceManager.GetString("String1", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Cannot show normally.
         /// </summary>
         internal static string TargetNotFound {
@@ -5934,15 +6006,6 @@ namespace LanguageExplorer {
         internal static string Undo {
             get {
                 return ResourceManager.GetString("Undo", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Undo {0}.
-        /// </summary>
-        internal static string Undo_0 {
-            get {
-                return ResourceManager.GetString("Undo_0", resourceCulture);
             }
         }
         

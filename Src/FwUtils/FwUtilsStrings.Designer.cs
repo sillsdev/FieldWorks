@@ -79,6 +79,24 @@ namespace SIL.FieldWorks.Common.FwUtils {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The default discourse chart template cannot be deleted, moved or promoted..
+        /// </summary>
+        public static string ksCantDeleteDefaultDiscourseTemplate {
+            get {
+                return ResourceManager.GetString("ksCantDeleteDefaultDiscourseTemplate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This part of a chart template cannot be moved or deleted, because it or one of its children is in use in one or more charts (e.g., {0})..
+        /// </summary>
+        public static string ksCantModifyTemplateInUse {
+            get {
+                return ResourceManager.GetString("ksCantModifyTemplateInUse", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Change Failed.
         /// </summary>
         public static string ksChangeFailed {
@@ -175,6 +193,15 @@ namespace SIL.FieldWorks.Common.FwUtils {
         public static string ksIllegalNameMsg {
             get {
                 return ResourceManager.GetString("ksIllegalNameMsg", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Insert Sense.
+        /// </summary>
+        public static string ksInsertSense {
+            get {
+                return ResourceManager.GetString("ksInsertSense", resourceCulture);
             }
         }
         
@@ -362,6 +389,15 @@ namespace SIL.FieldWorks.Common.FwUtils {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Warning.
+        /// </summary>
+        public static string ksWarningCaption {
+            get {
+                return ResourceManager.GetString("ksWarningCaption", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Punctuation in custom field name.
         /// </summary>
         public static string PunctInfieldNameCaption {
@@ -377,6 +413,24 @@ namespace SIL.FieldWorks.Common.FwUtils {
         public static string PunctInFieldNameWarning {
             get {
                 return ResourceManager.GetString("PunctInFieldNameWarning", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Redo {0}.
+        /// </summary>
+        public static string Redo_0 {
+            get {
+                return ResourceManager.GetString("Redo_0", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Undo {0}.
+        /// </summary>
+        public static string Undo_0 {
+            get {
+                return ResourceManager.GetString("Undo_0", resourceCulture);
             }
         }
     }

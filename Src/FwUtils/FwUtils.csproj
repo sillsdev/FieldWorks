@@ -297,6 +297,7 @@
     <Compile Include="StartupException.cs" />
     <Compile Include="StringTable.cs" />
     <Compile Include="TextType.cs" />
+    <Compile Include="UowHelpers.cs" />
     <Compile Include="UserActivityMonitor.cs" />
     <Compile Include="VersionInfoProvider.cs" />
     <Compile Include="ViewsExtensions.cs" />

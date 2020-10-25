@@ -313,4 +313,30 @@ We don't know why this happens. If you have any idea what recently changed on yo
     <value>Projects Folder</value>
     <comment>label for folder chooser dialog</comment>
   </data>
+  <data name="ksFindRelatedWords" xml:space="preserve">
+    <value>Find related words</value>
+    <comment>message box title</comment>
+  </data>
+  <data name="ksLexicallyRelatedWords" xml:space="preserve">
+    <value>These words are lexically related to {0}:</value>
+    <comment>{0} is a vernacular word</comment>
+  </data>
+  <data name="ksNoEntriesWithSameSemanticDomain" xml:space="preserve">
+    <value>Sorry, no other entries were found with the same semantic domain(s) as that entry.</value>
+  </data>
+  <data name="ksNoSemanticDomainsListedForEntry" xml:space="preserve">
+    <value>Sorry, no semantic domains are listed for any of the senses of that entry, and no lexical relations (or cross references) include that entry or any of its senses.
+Without these, we cannot find related entries.</value>
+  </data>
+  <data name="kstidFindRelWordsNotInDict" xml:space="preserve">
+    <value>Sorry, that entry is not yet in the dictionary</value>
+  </data>
+  <data name="kstidFindRelWordsTitle" xml:space="preserve">
+    <value>Find related words</value>
+    <comment>Title for message box when Find Related Words can't find any related words</comment>
+  </data>
+  <data name="ksWordsRelatedBySemanticDomain" xml:space="preserve">
+    <value>Words related by semantic domain to {0}:</value>
+    <comment>{0} is a vernacular word</comment>
+  </data>
 </root>

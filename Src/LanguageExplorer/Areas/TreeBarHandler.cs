@@ -8,7 +8,6 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
 using LanguageExplorer.Controls;
-using LanguageExplorer.LcmUi;
 using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
@@ -658,15 +657,12 @@ namespace LanguageExplorer.Areas
 		/// <returns>true means we found and reported a bad move.</returns>
 		private bool CheckAndReportBadDiscourseTemplateMove(ICmPossibility movingColumn, int hvoTemplate, int hvoTemplateList, int hvoDest)
 		{
-			using (var movingColumnUI = CmPossibilityUi.MakeLcmModelUiObject(movingColumn))
+			// NB: Doesn't need to call 'InitializeFlexComponent', since the code doesn't access the three objects the init call sets.
+			// First, check whether we're allowed to manipulate this column at all. This is the same check as
+			// whether we're allowed to delete it.
+			if (movingColumn.CheckAndReportProtectedChartColumn())
 			{
-				// NB: Doesn't need to call 'InitializeFlexComponent', since the code doesn't access the three objects the init call sets.
-				// First, check whether we're allowed to manipulate this column at all. This is the same check as
-				// whether we're allowed to delete it.
-				if (movingColumnUI.CheckAndReportProtectedChartColumn())
-				{
-					return true;
-				}
+				return true;
 			}
 			// Other things being equal, we now need to make sure we aren't messing up the chart levels
 			// Unless something is badly wrong, the destination is either the root template,
@@ -688,14 +684,11 @@ namespace LanguageExplorer.Areas
 			if (m_objRepo.GetObject(hvoDest).Owner.Hvo == hvoTemplate && moveColumnIsLeaf)
 			{
 				var dest = m_possRepo.GetObject(hvoDest);
-				using (var destUI = CmPossibilityUi.MakeLcmModelUiObject(dest))
+				// NB: Doesn't need to call 'InitializeFlexComponent', since the code doesn't access the three objects the init call sets.
+				// If it isn't already a group, we can only turn it into one if it's empty
+				if (dest.SubPossibilitiesOS.Count == 0)
 				{
-					// NB: Doesn't need to call 'InitializeFlexComponent', since the code doesn't access the three objects the init call sets.
-					// If it isn't already a group, we can only turn it into one if it's empty
-					if (dest.SubPossibilitiesOS.Count == 0)
-					{
-						return destUI.CheckAndReportProtectedChartColumn();
-					}
+					return dest.CheckAndReportProtectedChartColumn();
 				}
 				// If it's already a group it should be fine as a destination.
 				return false;

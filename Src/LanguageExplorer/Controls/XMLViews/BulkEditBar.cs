@@ -14,7 +14,6 @@ using System.Xml.Linq;
 using ECInterfaces;
 using LanguageExplorer.Filters;
 using LanguageExplorer.Impls;
-using LanguageExplorer.LcmUi;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.FwCoreDlgs;
@@ -4946,7 +4945,7 @@ namespace LanguageExplorer.Controls.XMLViews
 					sensesByEntry[hvoEntry].Add(ls);
 				}
 				//REVIEW: Should these really be the same Undo/Redo strings as for InflectionClassEditor.cs?
-				m_cache.DomainDataByFlid.BeginUndoTask(LcmUiResources.ksUndoBEInflClass, LcmUiResources.ksRedoBEInflClass);
+				m_cache.DomainDataByFlid.BeginUndoTask(XMLViewsStrings.ksUndoBEInflClass, XMLViewsStrings.ksRedoBEInflClass);
 				i = 0;
 				interval = Math.Min(100, Math.Max(sensesByEntry.Count / 50, 1));
 				IFsFeatStruc fsTarget = null;
@@ -5555,7 +5554,7 @@ namespace LanguageExplorer.Controls.XMLViews
 					}
 					sensesByEntryAndPos[key].Add(ls);
 				}
-				m_cache.DomainDataByFlid.BeginUndoTask(LcmUiResources.ksUndoBEInflClass, LcmUiResources.ksRedoBEInflClass);
+				m_cache.DomainDataByFlid.BeginUndoTask(XMLViewsStrings.ksUndoBEInflClass, XMLViewsStrings.ksRedoBEInflClass);
 				i = 0;
 				interval = Math.Min(100, Math.Max(sensesByEntryAndPos.Count / 50, 1));
 				foreach (var kvp in sensesByEntryAndPos)
@@ -6227,7 +6226,7 @@ namespace LanguageExplorer.Controls.XMLViews
 					}
 					senses.Add(sense);
 				}
-				UndoableUnitOfWorkHelper.Do(LcmUiResources.ksUndoBulkEditPOS, LcmUiResources.ksRedoBulkEditPOS, m_cache.ActionHandlerAccessor, () => DoUpdatePos(state, sensesByEntry, posWanted));
+				UndoableUnitOfWorkHelper.Do(XMLViewsStrings.ksUndoBulkEditPOS, XMLViewsStrings.ksRedoBulkEditPOS, m_cache.ActionHandlerAccessor, () => DoUpdatePos(state, sensesByEntry, posWanted));
 			}
 
 			private void DoUpdatePos(ProgressState state, Dictionary<ILexEntry, List<ILexSense>> sensesByEntry, IPartOfSpeech posWanted)

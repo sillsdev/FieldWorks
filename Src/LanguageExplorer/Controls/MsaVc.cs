@@ -6,7 +6,7 @@ using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.LCModel;
 using SIL.LCModel.Core.KernelInterfaces;
 
-namespace LanguageExplorer.LcmUi
+namespace LanguageExplorer.Controls
 {
 	/// <summary>
 	/// Special VC for MSAs. These have the InterlinearName method.

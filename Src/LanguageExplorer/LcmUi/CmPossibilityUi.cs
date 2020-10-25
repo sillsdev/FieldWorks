@@ -30,11 +30,6 @@ namespace LanguageExplorer.LcmUi
 
 		internal CmPossibilityUi() { }
 
-		internal static CmPossibilityUi MakeLcmModelUiObject(ICmPossibility obj)
-		{
-			return new CmPossibilityUi(obj);
-		}
-
 		internal static CmObjectUi MakeLcmModelUiObject(LcmCache cache, int classId, int hvoOwner, int flid, int insertionPosition)
 		{
 			Guard.AgainstNull(cache, nameof(cache));
@@ -107,19 +102,16 @@ namespace LanguageExplorer.LcmUi
 			}
 			// We can't turn a column into a group if it's in use.
 			var poss = cache.ServiceLocator.GetInstance<ICmPossibilityRepository>().GetObject(hvoItem);
-			using (var col = new CmPossibilityUi(poss))
+			// If the item doesn't already have children, we can only add them if it isn't already in use
+			// as a column: we don't want to change a column into a group. Thus, if there are no
+			// children, we generally call the same routine as when deleting.
+			// However, that routine has a special case to prevent deletion of the default template even
+			// if NOT in use...and we must not prevent adding to that when it is empty! Indeed any
+			// empty CHART can always be added to, so only if col's owner is a CmPossibility (it's not a root
+			// item in the templates list) do we need to check for it being in use.
+			if (poss.SubPossibilitiesOS.Count == 0 && poss.Owner is ICmPossibility && poss.CheckAndReportProtectedChartColumn())
 			{
-				// If the item doesn't already have children, we can only add them if it isn't already in use
-				// as a column: we don't want to change a column into a group. Thus, if there are no
-				// children, we generally call the same routine as when deleting.
-				// However, that routine has a special case to prevent deletion of the default template even
-				// if NOT in use...and we must not prevent adding to that when it is empty! Indeed any
-				// empty CHART can always be added to, so only if col's owner is a CmPossibility (it's not a root
-				// item in the templates list) do we need to check for it being in use.
-				if (poss.SubPossibilitiesOS.Count == 0 && poss.Owner is ICmPossibility && col.CheckAndReportProtectedChartColumn())
-				{
-					return true;
-				}
+				return true;
 			}
 			// Finally, we have to confirm the three-level rule.
 			var owner = cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvoItem).Owner;
@@ -133,46 +125,12 @@ namespace LanguageExplorer.LcmUi
 
 		internal override bool CanDelete(out string cannotDeleteMsg)
 		{
-			if (!CanModifyChartColumn(out cannotDeleteMsg))
+			var poss = (ICmPossibility)MyCmObject;
+			if (!poss.CanModifyChartColumn(out cannotDeleteMsg))
 			{
 				return false;
 			}
 			return CanDeleteTextMarkupTag(out cannotDeleteMsg) && base.CanDelete(out cannotDeleteMsg);
-		}
-
-		internal bool CheckAndReportProtectedChartColumn()
-		{
-			if (!CanModifyChartColumn(out var msg))
-			{
-				MessageBoxUtils.Show(msg, LcmUiResources.ksWarningCaption, MessageBoxButtons.OK, MessageBoxIcon.Warning);
-				return true;
-			}
-			return false;
-		}
-
-		private bool CanModifyChartColumn(out string msg)
-		{
-			var poss = (ICmPossibility)MyCmObject;
-			if (poss.IsDefaultDiscourseTemplate)
-			{
-				msg = LcmUiResources.ksCantDeleteDefaultDiscourseTemplate;
-				return false;
-			}
-			if (poss.IsThisOrDescendantInUseAsChartColumn)
-			{
-				var rootPossibility = (ICmPossibility)MyCmObject;
-				while (rootPossibility.Owner is ICmPossibility)
-				{
-					rootPossibility = (ICmPossibility)rootPossibility.Owner;
-				}
-				var chart = rootPossibility.Services.GetInstance<IDsChartRepository>().InstancesWithTemplate(rootPossibility).First();
-				var textName = ((IDsConstChart)chart).BasedOnRA.Title.BestAnalysisVernacularAlternative.Text;
-				// This is an actual column; it's a problem if it has instances
-				msg = string.Format(LcmUiResources.ksCantModifyTemplateInUse, textName);
-				return false;
-			}
-			msg = null;
-			return true;
 		}
 
 		private bool CanDeleteTextMarkupTag(out string msg)

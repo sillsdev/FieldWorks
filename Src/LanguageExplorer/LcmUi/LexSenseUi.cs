@@ -5,13 +5,11 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using System.Xml.Linq;
 using SIL.Code;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
-using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Core.Text;
-using SIL.LCModel.Infrastructure;
 
 namespace LanguageExplorer.LcmUi
 {
@@ -84,169 +82,12 @@ namespace LanguageExplorer.LcmUi
 			switch (owner)
 			{
 				case ILexEntry entry:
-					return CreateNewLexSenseUiObject(cache, entry, insertionPosition);
+					return new LexSenseUi(entry.CreateNewLexSense(insertionPosition));
 				case ILexSense sense:
-					return CreateNewLexSenseUiObject(cache, sense, insertionPosition);
+					return new LexSenseUi(sense.CreateNewLexSense(insertionPosition));
 				default:
 					throw new ArgumentOutOfRangeException(nameof(hvoOwner), $"Owner must be an ILexEntry or an ILexSense, but it was: '{owner.ClassName}'.");
 			}
-		}
-
-		/// <summary>
-		/// Create a new LexSenseUi in the given entry.
-		/// </summary>
-		private static LexSenseUi CreateNewLexSenseUiObject(LcmCache cache, ILexEntry ownerEntry, int insertionPosition)
-		{
-			return new LexSenseUi(CreateNewLexSense(cache, ownerEntry, insertionPosition));
-		}
-
-		/// <summary>
-		/// Create a new LexSenseUi in the given sense.
-		/// </summary>
-		private static LexSenseUi CreateNewLexSenseUiObject(LcmCache cache, ILexSense ownerSense, int insertionPosition = int.MaxValue)
-		{
-			return new LexSenseUi(CreateNewLexSense(cache, ownerSense, insertionPosition));
-		}
-
-		/// <summary>
-		/// Create a new LexSense in the given entry.
-		/// </summary>
-		internal static ILexSense CreateNewLexSense(LcmCache cache, ILexEntry ownerEntry, int insertionPosition = int.MaxValue)
-		{
-			ILexSense newSense = null;
-			UndoableUnitOfWorkHelper.Do(LcmUiResources.ksUndoInsertSense, LcmUiResources.ksRedoInsertSense, cache.ServiceLocator.GetInstance<IActionHandler>(), () =>
-			{
-				IMoMorphSynAnalysis msa;
-				var entrySenseCount = ownerEntry.SensesOS.Count;
-				var appendNewSense = insertionPosition >= entrySenseCount;
-				if (entrySenseCount == 0)
-				{
-					// No senses at all.
-					// If we don't get the MSA here, trouble ensues.  See LT-5411.
-					msa = ownerEntry.FindOrCreateDefaultMsa();
-				}
-				else
-				{
-					// Use the MSA from the sense right before the location we want the new one to go into.
-					ILexSense senseToGetMsaFrom;
-					if (insertionPosition == 0)
-					{
-						// Use first sense.
-						senseToGetMsaFrom = ownerEntry.SensesOS.First();
-					}
-					else if (appendNewSense)
-					{
-						// Use last sense.
-						senseToGetMsaFrom = ownerEntry.SensesOS.Last();
-					}
-					else
-					{
-						// Use the one before the insertion point.
-						senseToGetMsaFrom = ownerEntry.SensesOS[insertionPosition - 1];
-					}
-					msa = GetSafeMsa(cache, senseToGetMsaFrom);
-				}
-				newSense = cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create();
-				if (appendNewSense)
-				{
-					ownerEntry.SensesOS.Add(newSense);
-				}
-				else
-				{
-					ownerEntry.SensesOS.Insert(insertionPosition, newSense);
-				}
-				newSense.MorphoSyntaxAnalysisRA = msa;
-			});
-			return newSense;
-		}
-
-		/// <summary>
-		/// Create a new LexSense in the given sense.
-		/// </summary>
-		internal static ILexSense CreateNewLexSense(LcmCache cache, ILexSense ownerSense, int insertionPosition = int.MaxValue)
-		{
-			ILexSense newSense = null;
-			UndoableUnitOfWorkHelper.Do(LcmUiResources.ksUndoInsertSense, LcmUiResources.ksRedoInsertSense, cache.ServiceLocator.GetInstance<IActionHandler>(), () =>
-			{
-				IMoMorphSynAnalysis msa;
-				var senseSubsenseCount = ownerSense.SensesOS.Count;
-				var appendNewSense = (insertionPosition == int.MaxValue) || (insertionPosition >= senseSubsenseCount);
-				if (senseSubsenseCount == 0)
-				{
-					// No senses at all.
-					// If we don't get the MSA here, trouble ensues.  See LT-5411.
-					msa = ownerSense.Entry.FindOrCreateDefaultMsa();
-				}
-				else
-				{
-					// Use the MSA from the sense right before the location we want the new one to go into.
-					ILexSense senseToGetMsaFrom;
-					if (insertionPosition == 0)
-					{
-						// Use first sense.
-						senseToGetMsaFrom = ownerSense.SensesOS.First();
-					}
-					else if (appendNewSense)
-					{
-						// Use last sense.
-						senseToGetMsaFrom = ownerSense.SensesOS.Last();
-					}
-					else
-					{
-						// Use the one before the insertion point.
-						senseToGetMsaFrom = ownerSense.SensesOS[insertionPosition - 1];
-					}
-					msa = GetSafeMsa(cache, senseToGetMsaFrom);
-				}
-				newSense = cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create();
-				if (appendNewSense)
-				{
-					ownerSense.SensesOS.Add(newSense);
-				}
-				else
-				{
-					ownerSense.SensesOS.Insert(insertionPosition, newSense);
-				}
-				newSense.MorphoSyntaxAnalysisRA = msa;
-			});
-			return newSense;
-		}
-
-		/// <summary>
-		/// This method will get an MSA which the senses MorphoSyntaxAnalysisRA points to.
-		/// If it is null it will try and find an appropriate one in the owning Entries list, if that fails it will make one and put it there.
-		/// </summary>
-		private static IMoMorphSynAnalysis GetSafeMsa(LcmCache cache, ILexSense sense)
-		{
-			if (sense.MorphoSyntaxAnalysisRA != null)
-			{
-				//situation normal, return
-				return sense.MorphoSyntaxAnalysisRA;
-			}
-			//Situation not normal.
-			var entryPrimaryMorphType = sense.Entry.PrimaryMorphType; // Guard against corrupted data. Every entry should have a PrimaryMorphType
-			var isAffixType = entryPrimaryMorphType?.IsAffixType ?? false;
-			foreach (var msa in sense.Entry.MorphoSyntaxAnalysesOC) //go through each MSA in the Entry list looking for one with an unknown category
-			{
-				if (!isAffixType && msa is IMoStemMsa && (msa as IMoStemMsa).PartOfSpeechRA == null)
-				{
-					sense.MorphoSyntaxAnalysisRA = msa;
-					return msa;
-				}
-				if (msa is IMoUnclassifiedAffixMsa && (msa as IMoUnclassifiedAffixMsa).PartOfSpeechRA == null)
-				{
-					sense.MorphoSyntaxAnalysisRA = msa;
-					return msa;
-				}
-			}
-			if (sense.MorphoSyntaxAnalysisRA != null)
-			{
-				return sense.MorphoSyntaxAnalysisRA;
-			}
-			var safeMsa = isAffixType ? cache.ServiceLocator.GetInstance<IMoUnclassifiedAffixMsaFactory>().Create() : (IMoMorphSynAnalysis)cache.ServiceLocator.GetInstance<IMoStemMsaFactory>().Create();
-			sense.Entry.MorphoSyntaxAnalysesOC.Add(safeMsa);
-			sense.MorphoSyntaxAnalysisRA = safeMsa;
-			return sense.MorphoSyntaxAnalysisRA;
 		}
 	}
 }
