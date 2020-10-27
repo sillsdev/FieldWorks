@@ -10,7 +10,6 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
-using LanguageExplorer.LcmUi;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.ViewsInterfaces;
@@ -2636,11 +2635,8 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		private void DeleteAnalysis_Clicked(object sender, EventArgs e)
 		{
-			using (var ui = CmObjectUi.MakeLcmModelUiObject(Cache, ((IWfiAnalysis)((ToolStripMenuItem)sender).Tag).Hvo))
-			{
-				ui.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
-				ui.DeleteUnderlyingObject();
-			}
+			var cmObjectUi = PropertyTable.GetValue<ICmObjectUiFactory>(LanguageExplorerConstants.CmObjectUiFactory).MakeLcmModelUiObject((IWfiAnalysis)((ToolStripMenuItem)sender).Tag);
+			cmObjectUi.DeleteUnderlyingObject();
 		}
 
 		/// <summary>

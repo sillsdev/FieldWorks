@@ -380,6 +380,24 @@ namespace SIL.FieldWorks.Common.FwUtils {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to There was a problem opening the current version of the file {0}, dated {1}. Would you like to open the automatic backup, {2}, dated {3}?.
+        /// </summary>
+        public static string kstidOfferToRestore {
+            get {
+                return ResourceManager.GetString("kstidOfferToRestore", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Problem opening file.
+        /// </summary>
+        public static string kstidProblemOpeningFile {
+            get {
+                return ResourceManager.GetString("kstidProblemOpeningFile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to  pt.
         /// </summary>
         public static string kstidPt {

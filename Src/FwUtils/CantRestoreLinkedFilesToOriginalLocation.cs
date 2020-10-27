@@ -4,29 +4,32 @@
 
 using System;
 using System.Windows.Forms;
-using SIL.FieldWorks.Common.FwUtils;
 
-namespace LanguageExplorer.LcmUi
+namespace SIL.FieldWorks.Common.FwUtils
 {
 	/// <summary />
-	internal sealed partial class RestoreLinkedFilesToProjectsFolder : Form
+	internal sealed partial class CantRestoreLinkedFilesToOriginalLocation : Form
 	{
 		private readonly IHelpTopicProvider m_helpTopicProvider;
 
 		/// <summary />
-		internal RestoreLinkedFilesToProjectsFolder(IHelpTopicProvider helpTopicProvider)
+		internal CantRestoreLinkedFilesToOriginalLocation(IHelpTopicProvider helpTopicProvider)
 		{
 			m_helpTopicProvider = helpTopicProvider;
 			InitializeComponent();
 		}
 
 		/// <summary />
-		internal bool RestoreLinkedFilesToProjectFolder => radio_Yes.Checked;
+		internal bool RestoreLinkedFilesToProjectFolder => radio_Thanks.Checked;
+
+		/// <summary />
+		internal bool DoNotRestoreLinkedFiles => radio_NoThanks.Checked;
 
 		private void button_OK_Click(object sender, EventArgs e)
 		{
 			DialogResult = DialogResult.OK;
 			Close();
+
 		}
 
 		private void button_Cancel_Click(object sender, EventArgs e)

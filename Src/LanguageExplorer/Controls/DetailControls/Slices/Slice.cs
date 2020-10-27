@@ -11,7 +11,6 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using System.Xml.Linq;
-using LanguageExplorer.LcmUi;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Resources;
@@ -58,6 +57,7 @@ namespace LanguageExplorer.Controls.DetailControls.Slices
 		protected bool m_isHighlighted;
 		protected Font m_fontLabel = new Font(MiscUtils.StandardSansSerif, 10);
 		protected Point m_location;
+		private ICmObjectUiFactory _cmObjectUiFactory;
 		// what things can be inserted here.
 		// Indicates the 'weight' of object that starts at the top of this slice.
 		// By default a slice is just considered to be a field (of the same object as the one before).
@@ -1592,11 +1592,13 @@ namespace LanguageExplorer.Controls.DetailControls.Slices
 			// OK, we can add to property flid of the object of slice slice.
 			var insertionPosition = 0; // Leave it at 0 if it does not matter. (Sequences will matter, unless nobody is home at all.)
 			var hvoOwner = MyCmObject.Hvo;
+			var cmObject = MyCmObject;
 			var clidOwner = MyCmObject.ClassID;
 			var clidOfFlid = flid / 1000;
 			if (clidOwner != clidOfFlid && clidOfFlid == MyCmObject.Owner.ClassID)
 			{
 				hvoOwner = MyCmObject.Owner.Hvo;
+				cmObject = MyCmObject.Owner;
 			}
 			if (GetFieldType(flid) == (int)CellarPropertyType.OwningSequence)
 			{
@@ -1653,49 +1655,46 @@ namespace LanguageExplorer.Controls.DetailControls.Slices
 						insertionPosition = -2;
 						break;
 				}
-				using (var uiObj = CmObjectUi.MakeLcmModelUiObject(PropertyTable, Publisher, newObjectClassId, hvoOwner, flid, insertionPosition))
+				var cmObjectUi = _cmObjectUiFactory.MakeLcmModelUiObject(cmObject, newObjectClassId, flid, insertionPosition);
+				// If uiObj is null, typically MakeLcmModelUiObject displayed a dialog and the user cancelled.
+				// We return -1 to make the caller give up trying to insert, so we don't get another dialog if
+				// there is another slice that could insert this kind of object.
+				if (cmObjectUi == null)
 				{
-					// If uiObj is null, typically CreateNewUiObject displayed a dialog and the user cancelled.
-					// We return -1 to make the caller give up trying to insert, so we don't get another dialog if
-					// there is another slice that could insert this kind of object.
-					if (uiObj == null)
-					{
-						return -2; // Nothing created.
-					}
-					// If 'this' isDisposed, typically the inserted object occupies a place in the record list for
-					// this view, and inserting an object caused the list to be refreshed and all slices for this
-					// record to be disposed. In that case, we won't be able to find a child of this to activate,
-					// so we'll just settle for having created the object.
-					// Enhance JohnT: possibly we could load information from the slice into local variables before
-					// calling CreateNewUiObject so that we could do a better job of picking the slice to focus
-					// after an insert which disposes 'this'. Or perhaps we could improve the refresh list process
-					// so that it more successfully restores the current item without disposing of all the slices.
-					if (IsDisposed)
-					{
-						return -1;
-					}
-					uiObj.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
-					switch (fieldType)
-					{
-						case CellarPropertyType.OwningCollection:
-							// order is not fully predictable, figure where it DID show up.
-							insertionPosition = Cache.DomainDataByFlid.GetObjIndex(hvoOwner, flid, uiObj.MyCmObject.Hvo);
-							break;
-
-						case CellarPropertyType.OwningAtomic:
-							insertionPosition = 0;
-							break;
-					}
-					if (hvoOwner == MyCmObject.Hvo && Expansion == TreeItemState.ktisCollapsed)
-					{
-						// We added something to the object of the current slice...almost certainly it
-						// will be something that will display under this node...if it is still collapsed,
-						// expand it to show the thing inserted.
-						TreeNode.ToggleExpansion(IndexInContainer);
-					}
-					var child = ExpandSubItem(uiObj.MyCmObject.Hvo) as Slice;
-					child?.FocusSliceOrChild();
+					// NB: CmPossibilityUi will return null in certain cases.
+					return -2; // Nothing created.
 				}
+				// If 'this' isDisposed, typically the inserted object occupies a place in the record list for
+				// this view, and inserting an object caused the list to be refreshed and all slices for this
+				// record to be disposed. In that case, we won't be able to find a child of this to activate,
+				// so we'll just settle for having created the object.
+				// Enhance JohnT: possibly we could load information from the slice into local variables before
+				// calling CreateNewUiObject so that we could do a better job of picking the slice to focus
+				// after an insert which disposes 'this'. Or perhaps we could improve the refresh list process
+				// so that it more successfully restores the current item without disposing of all the slices.
+				if (IsDisposed)
+				{
+					return -1;
+				}
+				switch (fieldType)
+				{
+					case CellarPropertyType.OwningCollection:
+						// order is not fully predictable, figure where it DID show up.
+						insertionPosition = Cache.DomainDataByFlid.GetObjIndex(hvoOwner, flid, cmObjectUi.MyCmObject.Hvo);
+						break;
+					case CellarPropertyType.OwningAtomic:
+						insertionPosition = 0;
+						break;
+				}
+				if (hvoOwner == MyCmObject.Hvo && Expansion == TreeItemState.ktisCollapsed)
+				{
+					// We added something to the object of the current slice...almost certainly it
+					// will be something that will display under this node...if it is still collapsed,
+					// expand it to show the thing inserted.
+					TreeNode.ToggleExpansion(IndexInContainer);
+				}
+				var child = ExpandSubItem(cmObjectUi.MyCmObject.Hvo) as Slice;
+				child?.FocusSliceOrChild();
 			}
 			finally
 			{
@@ -1809,11 +1808,8 @@ namespace LanguageExplorer.Controls.DetailControls.Slices
 			try
 			{
 				dataTree.SetCurrentObjectFlids(obj.Hvo, 0);
-				using (var ui = CmObjectUi.MakeLcmModelUiObject(Cache, obj.Hvo))
-				{
-					ui.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
-					result = ui.DeleteUnderlyingObject();
-				}
+				var cmObjectUi = _cmObjectUiFactory.MakeLcmModelUiObject(obj);
+				result = cmObjectUi.DeleteUnderlyingObject();
 			}
 			finally
 			{
@@ -2021,11 +2017,8 @@ namespace LanguageExplorer.Controls.DetailControls.Slices
 			{
 				throw new FwConfigurationException("Slice:GetObjectHvoForMenusToOperateOn is either messed up or should not have been called, because it could not find the object to be merged.", ConfigurationNode);
 			}
-			using (var ui = CmObjectUi.MakeLcmModelUiObject(Cache, obj.Hvo))
-			{
-				ui.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
-				ui.MergeUnderlyingObject(fLoseNoTextData);
-			}
+			var cmObjectUi = _cmObjectUiFactory.MakeLcmModelUiObject(obj);
+			cmObjectUi.MergeUnderlyingObject(fLoseNoTextData);
 			// The slice will likely be disposed in the MergeUnderlyingObject call,
 			// so make sure we aren't collected until we leave this method, at least.
 			GC.KeepAlive(this);
@@ -2076,11 +2069,8 @@ namespace LanguageExplorer.Controls.DetailControls.Slices
 			{
 				throw new FwConfigurationException("Slice:GetObjectHvoForMenusToOperateOn is either messed up or should not have been called, because it could not find the object to be moved to a copy of its owner.", ConfigurationNode);
 			}
-			using (var ui = CmObjectUi.MakeLcmModelUiObject(Cache, obj.Hvo))
-			{
-				ui.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
-				ui.MoveUnderlyingObjectToCopyOfOwner();
-			}
+			var cmObjectUi = _cmObjectUiFactory.MakeLcmModelUiObject(obj);
+			cmObjectUi.MoveUnderlyingObjectToCopyOfOwner();
 			// The slice will likely be disposed in the MoveUnderlyingObjectToCopyOfOwner call,
 			// so make sure we aren't collected until we leave this method, at least.
 			GC.KeepAlive(this);
@@ -2308,6 +2298,7 @@ namespace LanguageExplorer.Controls.DetailControls.Slices
 			Publisher = flexComponentParameters.Publisher;
 			Subscriber = flexComponentParameters.Subscriber;
 
+			_cmObjectUiFactory = PropertyTable.GetValue<ICmObjectUiFactory>(LanguageExplorerConstants.CmObjectUiFactory);
 			if (Control is IFlexComponent)
 			{
 				((IFlexComponent)Control).InitializeFlexComponent(flexComponentParameters);

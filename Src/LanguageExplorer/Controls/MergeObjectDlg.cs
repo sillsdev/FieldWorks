@@ -10,7 +10,6 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using System.Xml.Linq;
-using LanguageExplorer.Controls.XMLViews;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FwCoreDlgs.Controls;
 using SIL.LCModel;
@@ -19,7 +18,7 @@ using SIL.LCModel.Core.Text;
 using SIL.LCModel.Utils;
 using SIL.Windows.Forms;
 
-namespace LanguageExplorer.LcmUi
+namespace LanguageExplorer.Controls
 {
 	/// <summary />
 	internal sealed class MergeObjectDlg : Form, IFlexComponent
@@ -156,7 +155,7 @@ namespace LanguageExplorer.LcmUi
 		private void SetBottomMessage()
 		{
 			var userWs = m_cache.ServiceLocator.WritingSystemManager.UserWs;
-			var sBase = m_obj != null && m_obj.Hvo > 0 ? LcmUiResources.ksMergeXIntoY : LcmUiResources.ksMergeXIntoSelection;
+			var sBase = m_obj != null && m_obj.Hvo > 0 ? LanguageExplorerControls.ksMergeXIntoY : LanguageExplorerControls.ksMergeXIntoSelection;
 			var tsb = TsStringUtils.MakeStrBldr();
 			tsb.ReplaceTsString(0, tsb.Length, TsStringUtils.MakeString(sBase, userWs));
 			// Replace every "{0}" with the headword we'll be merging, and make it bold.

@@ -62,11 +62,12 @@ namespace LanguageExplorer.Impls
 	{
 		[Import]
 		private IAreaRepository _areaRepository;
-
 		[Import]
 		private IFlexApp _flexApp;
 		[Import]
 		private MacroMenuHandler _macroMenuHandler;
+		[Import]
+		private ICmObjectUiFactory _cmObjectUiFactory;
 
 		static bool _inUndoRedo; // true while executing an Undo/Redo command.
 		private bool _windowIsCopy;
@@ -1032,6 +1033,7 @@ namespace LanguageExplorer.Impls
 				FwUtilsConstants.cache,
 				LanguageExplorerConstants.HelpTopicProvider,
 				LanguageExplorerConstants.PersistAsXmlFactory,
+				LanguageExplorerConstants.CmObjectUiFactory,
 				FwUtilsConstants.FlexStyleSheet,
 				LanguageExplorerConstants.LinkHandler,
 				LanguageExplorerConstants.MajorFlexComponentParameters,
@@ -1056,6 +1058,9 @@ namespace LanguageExplorer.Impls
 						break;
 					case LanguageExplorerConstants.PersistAsXmlFactory:
 						PropertyTable.SetProperty(key, new PersistAsXmlFactory());
+						break;
+					case LanguageExplorerConstants.CmObjectUiFactory:
+						PropertyTable.SetProperty(key, _cmObjectUiFactory);
 						break;
 					case FwUtilsConstants.FlexStyleSheet:
 						PropertyTable.SetProperty(key, _stylesheet);

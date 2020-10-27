@@ -6,6 +6,7 @@ using System;
 using System.Drawing;
 using System.Runtime.InteropServices.ComTypes;
 using System.Windows.Forms;
+using LanguageExplorer.Controls;
 using LanguageExplorer.Controls.XMLViews;
 using LanguageExplorer.TestUtilities;
 using NUnit.Framework;

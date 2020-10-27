@@ -49,6 +49,7 @@ namespace LanguageExplorer
 				typeof(PropertyTable),
 				typeof(IdleQueue),
 				typeof(MacroMenuHandler),
+				typeof(CmObjectUiFactory),
 				// Areas & their respective tools.
 				typeof(AreaRepository),
 				typeof(LexiconArea),

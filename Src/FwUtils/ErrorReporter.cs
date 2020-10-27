@@ -11,13 +11,11 @@ using System.Threading;
 using System.Windows.Forms;
 using Microsoft.Win32;
 using SIL.Email;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel.Utils;
 using SIL.PlatformUtilities;
 using SIL.Reporting;
-using SIL.Utils;
 
-namespace SIL.FieldWorks.FwCoreDlgs
+namespace SIL.FieldWorks.Common.FwUtils
 {
 	/// <summary />
 	public sealed class ErrorReporter : Form

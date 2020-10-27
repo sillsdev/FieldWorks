@@ -493,6 +493,15 @@ namespace LanguageExplorer.Controls {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to BUG!.
+        /// </summary>
+        internal static string ksBUG {
+            get {
+                return ResourceManager.GetString("ksBUG", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to 	• {0}{1}.
         /// </summary>
         internal static string ksBullettedItem {
@@ -516,6 +525,15 @@ namespace LanguageExplorer.Controls {
         internal static string ksCancel {
             get {
                 return ResourceManager.GetString("ksCancel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sorry, FieldWorks cannot delete this wordform because it occurs in your texts..
+        /// </summary>
+        internal static string ksCannotDeleteWordform {
+            get {
+                return ResourceManager.GetString("ksCannotDeleteWordform", resourceCulture);
             }
         }
         
@@ -565,6 +583,15 @@ namespace LanguageExplorer.Controls {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Do not know how to move this object to a new copy of its owner..
+        /// </summary>
+        internal static string ksCannotMoveObjectToCopy {
+            get {
+                return ResourceManager.GetString("ksCannotMoveObjectToCopy", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Cannot parse date/time value &quot;{0}&quot; for a \{1} field..
         /// </summary>
         internal static string ksCannotParseDateTime {
@@ -598,6 +625,33 @@ namespace LanguageExplorer.Controls {
         internal static string ksCannotSoTryAgain {
             get {
                 return ResourceManager.GetString("ksCannotSoTryAgain", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The last remaining Text Markup tag list cannot be deleted..
+        /// </summary>
+        internal static string ksCantDeleteLastTagList {
+            get {
+                return ResourceManager.GetString("ksCantDeleteLastTagList", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You cannot delete a Text Markup tag when there are texts using the tag. One such text using this tag is {0}..
+        /// </summary>
+        internal static string ksCantDeleteMarkupTagInUse {
+            get {
+                return ResourceManager.GetString("ksCantDeleteMarkupTagInUse", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You cannot delete a Text Markup type when there are texts using its tags. One such text using this type of tag is {0}..
+        /// </summary>
+        internal static string ksCantDeleteMarkupTypeInUse {
+            get {
+                return ResourceManager.GetString("ksCantDeleteMarkupTypeInUse", resourceCulture);
             }
         }
         
@@ -868,6 +922,15 @@ namespace LanguageExplorer.Controls {
         internal static string ksEncodingConversionProblem {
             get {
                 return ResourceManager.GetString("ksEncodingConversionProblem", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Select the entry to merge the current entry into:.
+        /// </summary>
+        internal static string ksEntries {
+            get {
+                return ResourceManager.GetString("ksEntries", resourceCulture);
             }
         }
         
@@ -1174,6 +1237,15 @@ namespace LanguageExplorer.Controls {
         internal static string ksHideAdvanced {
             get {
                 return ResourceManager.GetString("ksHideAdvanced", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Hierarchical Limit.
+        /// </summary>
+        internal static string ksHierarchyLimit {
+            get {
+                return ResourceManager.GetString("ksHierarchyLimit", resourceCulture);
             }
         }
         
@@ -1511,6 +1583,15 @@ namespace LanguageExplorer.Controls {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The Text Markup Tags list can only have two levels (tag types and tags)..
+        /// </summary>
+        internal static string ksMarkupTagsTooDeep {
+            get {
+                return ResourceManager.GetString("ksMarkupTagsTooDeep", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The following may indicate a bug in the import process..
         /// </summary>
         internal static string ksMayBeBugInImport {
@@ -1520,11 +1601,65 @@ namespace LanguageExplorer.Controls {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Merge Allomorph.
+        /// </summary>
+        internal static string ksMergeAllomorph {
+            get {
+                return ResourceManager.GetString("ksMergeAllomorph", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Merge Entry.
         /// </summary>
         internal static string ksMergeEntry {
             get {
                 return ResourceManager.GetString("ksMergeEntry", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Merge Reversal Entry.
+        /// </summary>
+        internal static string ksMergeReversalEntry {
+            get {
+                return ResourceManager.GetString("ksMergeReversalEntry", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Merge Sense.
+        /// </summary>
+        internal static string ksMergeSense {
+            get {
+                return ResourceManager.GetString("ksMergeSense", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Merge Word Gloss.
+        /// </summary>
+        internal static string ksMergeWordGloss {
+            get {
+                return ResourceManager.GetString("ksMergeWordGloss", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &quot;{0}&quot; will be merged into what you select above,{1}resulting in one item..
+        /// </summary>
+        internal static string ksMergeXIntoSelection {
+            get {
+                return ResourceManager.GetString("ksMergeXIntoSelection", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &quot;{0}&quot; will be merged into &quot;{1}&quot;,{2}resulting in one item..
+        /// </summary>
+        internal static string ksMergeXIntoY {
+            get {
+                return ResourceManager.GetString("ksMergeXIntoY", resourceCulture);
             }
         }
         
@@ -2134,6 +2269,15 @@ namespace LanguageExplorer.Controls {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Redo Delete.
+        /// </summary>
+        internal static string ksRedoDelete {
+            get {
+                return ResourceManager.GetString("ksRedoDelete", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Redo Delete Reference.
         /// </summary>
         internal static string ksRedoDeleteRef {
@@ -2193,6 +2337,15 @@ namespace LanguageExplorer.Controls {
         internal static string ksRedoInsertPhonologicalFeature {
             get {
                 return ResourceManager.GetString("ksRedoInsertPhonologicalFeature", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Redo Merge.
+        /// </summary>
+        internal static string ksRedoMerge {
+            get {
+                return ResourceManager.GetString("ksRedoMerge", resourceCulture);
             }
         }
         
@@ -2458,6 +2611,15 @@ namespace LanguageExplorer.Controls {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Select the form to merge the current allomorph into:.
+        /// </summary>
+        internal static string ksSelectAlternateForm {
+            get {
+                return ResourceManager.GetString("ksSelectAlternateForm", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Select the Shoebox Anthropology Database file to import.
         /// </summary>
         internal static string ksSelectAnthropologyStdFmtFile {
@@ -2476,6 +2638,15 @@ namespace LanguageExplorer.Controls {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Select the gloss to merge the current gloss into:.
+        /// </summary>
+        internal static string ksSelectGloss {
+            get {
+                return ResourceManager.GetString("ksSelectGloss", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Select the Import Settings file to load.
         /// </summary>
         internal static string ksSelectLoadImportSettingsFile {
@@ -2490,6 +2661,15 @@ namespace LanguageExplorer.Controls {
         internal static string ksSelectSaveImportSettingsFile {
             get {
                 return ResourceManager.GetString("ksSelectSaveImportSettingsFile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Select the sense to merge the current sense into:.
+        /// </summary>
+        internal static string ksSelectSense {
+            get {
+                return ResourceManager.GetString("ksSelectSense", resourceCulture);
             }
         }
         
@@ -2625,6 +2805,15 @@ namespace LanguageExplorer.Controls {
         internal static string ksStringImportOptions {
             get {
                 return ResourceManager.GetString("ksStringImportOptions", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to A discourse chart template can only have three levels (template, column group, and column)..
+        /// </summary>
+        internal static string ksTemplateTooDeep {
+            get {
+                return ResourceManager.GetString("ksTemplateTooDeep", resourceCulture);
             }
         }
         
@@ -2809,6 +2998,15 @@ namespace LanguageExplorer.Controls {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Undo Delete.
+        /// </summary>
+        internal static string ksUndoDelete {
+            get {
+                return ResourceManager.GetString("ksUndoDelete", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Undo Delete Reference.
         /// </summary>
         internal static string ksUndoDeleteRef {
@@ -2868,6 +3066,15 @@ namespace LanguageExplorer.Controls {
         internal static string ksUndoInsertPhonologicalFeature {
             get {
                 return ResourceManager.GetString("ksUndoInsertPhonologicalFeature", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Undo Merge.
+        /// </summary>
+        internal static string ksUndoMerge {
+            get {
+                return ResourceManager.GetString("ksUndoMerge", resourceCulture);
             }
         }
         
@@ -3178,6 +3385,67 @@ namespace LanguageExplorer.Controls {
         internal static string MatchingEntriesGuiControlParameters {
             get {
                 return ResourceManager.GetString("MatchingEntriesGuiControlParameters", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
+        ///&lt;parameters id=&quot;mergeAllomorphList&quot; listItemsClass=&quot;MoForm&quot; treeBarAvailability=&quot;NotAllowed&quot; defaultCursor=&quot;Arrow&quot; hscroll=&quot;true&quot; editable=&quot;false&quot; selectColumn=&quot;false&quot;&gt;
+        ///	&lt;columns&gt;
+        ///		&lt;column label=&quot;Form&quot; width=&quot;80%&quot; layout=&quot;Allomorph&quot; ws=&quot;$ws=vernacular&quot;/&gt;
+        ///		&lt;column label=&quot;Type&quot; width=&quot;20%&quot; layout=&quot;MorphTypeName&quot;/&gt;
+        ///	&lt;/columns&gt;
+        ///&lt;/parameters&gt;
+        ///.
+        /// </summary>
+        internal static string MergeAllomorphListParameters {
+            get {
+                return ResourceManager.GetString("MergeAllomorphListParameters", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
+        ///&lt;parameters id=&quot;mergeReversalEntryList&quot; listItemsClass=&quot;ReversalIndexEntry&quot; treeBarAvailability=&quot;NotAllowed&quot; defaultCursor=&quot;Arrow&quot; 	hscroll=&quot;true&quot; editable=&quot;false&quot; selectColumn=&quot;false&quot;&gt;
+        ///	&lt;columns&gt;
+        ///		&lt;column label=&quot;Entry&quot; width=&quot;100%&quot; layout=&quot;ReversalForm&quot; ws=&quot;$ws=reversal&quot;/&gt;
+        ///	&lt;/columns&gt;
+        ///&lt;/parameters&gt;
+        ///.
+        /// </summary>
+        internal static string MergeReversalEntryListParameters {
+            get {
+                return ResourceManager.GetString("MergeReversalEntryListParameters", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
+        ///&lt;parameters id=&quot;mergeSenseList&quot; listItemsClass=&quot;LexSense&quot; treeBarAvailability=&quot;NotAllowed&quot; defaultCursor=&quot;Arrow&quot; hscroll=&quot;true&quot; editable=&quot;false&quot; selectColumn=&quot;false&quot;&gt;
+        ///	&lt;columns&gt;
+        ///		&lt;column label=&quot;Gloss&quot; width=&quot;50%&quot; layout=&quot;Gloss&quot; ws=&quot;$ws=best analysis&quot;/&gt;
+        ///		&lt;column label=&quot;Grammatical Info.&quot; width=&quot;50%&quot; multipara=&quot;true&quot; layout=&quot;GrammaticalInfoAbbrForSense&quot;/&gt;
+        ///		&lt;column label=&quot;Definition&quot; width=&quot;100%&quot; layout=&quot;Definition&quot; ws=&quot;$ws=analysis&quot; visibility=&quot;menu&quot;/&gt;
+        ///	&lt;/colum [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string MergeSenseListParameters {
+            get {
+                return ResourceManager.GetString("MergeSenseListParameters", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
+        ///&lt;parameters id=&quot;mergeWordGlossList&quot; listItemsClass=&quot;WfiGloss&quot; treeBarAvailability=&quot;NotAllowed&quot; defaultCursor=&quot;Arrow&quot; hscroll=&quot;true&quot; editable=&quot;false&quot; selectColumn=&quot;false&quot;&gt;
+        ///  &lt;columns&gt;
+        ///    &lt;column label=&quot;Gloss&quot; width=&quot;100%&quot; layout=&quot;Form&quot; ws=&quot;$ws=best analysis&quot; field=&quot;Form&quot;/&gt;
+        ///  &lt;/columns&gt;
+        ///&lt;/parameters&gt;
+        ///.
+        /// </summary>
+        internal static string MergeWordGlossListParameters {
+            get {
+                return ResourceManager.GetString("MergeWordGlossListParameters", resourceCulture);
             }
         }
         

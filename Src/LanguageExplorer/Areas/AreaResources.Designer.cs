@@ -701,15 +701,6 @@ namespace LanguageExplorer.Areas {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to A discourse chart template can only have three levels (template, column group, and column)..
-        /// </summary>
-        internal static string ksTemplateTooDeep {
-            get {
-                return ResourceManager.GetString("ksTemplateTooDeep", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Duplicate Custom Field Names.
         /// </summary>
         internal static string LabelAlreadyExists {

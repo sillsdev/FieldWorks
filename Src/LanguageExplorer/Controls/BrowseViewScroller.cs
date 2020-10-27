@@ -7,7 +7,7 @@ using System.Diagnostics;
 using System.Windows.Forms;
 using SIL.PlatformUtilities;
 
-namespace LanguageExplorer.Controls.XMLViews
+namespace LanguageExplorer.Controls
 {
 	/// <summary>
 	/// This class manages the parts of the BrowseViewer that scroll horizontally in sync.

@@ -695,7 +695,7 @@ namespace LanguageExplorer.Areas
 			}
 			// Anything else represents an attempt to make the tree too deep, e.g., moving a
 			// column into child column, or a group into another group.
-			MessageBox.Show(m_tree, AreaResources.ksTemplateTooDeep, AreaResources.ksProhibitedMovement, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+			MessageBox.Show(m_tree, LanguageExplorerControls.ksTemplateTooDeep, AreaResources.ksProhibitedMovement, MessageBoxButtons.OK, MessageBoxIcon.Warning);
 			return true;
 		}
 

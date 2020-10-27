@@ -11,6 +11,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using System.Xml.Linq;
+using LanguageExplorer.Controls.XMLViews;
 using LanguageExplorer.Filters;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
@@ -26,7 +27,7 @@ using SIL.PlatformUtilities;
 using SIL.Reporting;
 using SIL.Xml;
 
-namespace LanguageExplorer.Controls.XMLViews
+namespace LanguageExplorer.Controls
 {
 	/// <summary>
 	/// BrowseViewer is a container for various windows related to browsing. At a minimum it contains

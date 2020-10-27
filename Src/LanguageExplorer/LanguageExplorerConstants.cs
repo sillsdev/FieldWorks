@@ -239,6 +239,7 @@ namespace LanguageExplorer
 		internal const string HomographConfiguration = "HomographConfiguration";
 		internal const string HelpTopicProvider = "HelpTopicProvider";
 		internal const string PersistAsXmlFactory = "PersistAsXmlFactory";
+		internal const string CmObjectUiFactory = "CmObjectUiFactory";
 		internal const string LinkHandler = "LinkHandler";
 		internal const string MajorFlexComponentParameters = "MajorFlexComponentParameters";
 		internal const string RecordListRepository = "RecordListRepository";

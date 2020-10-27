@@ -343,15 +343,6 @@ namespace LanguageExplorer.Controls.DetailControls {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Redo Delete.
-        /// </summary>
-        internal static string ksRedoDelete {
-            get {
-                return ResourceManager.GetString("ksRedoDelete", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Redo Delete Item in {0}.
         /// </summary>
         internal static string ksRedoDeleteItem {
@@ -501,15 +492,6 @@ namespace LanguageExplorer.Controls.DetailControls {
         internal static string ksUndoCreatingInflectionalAffixCategoryItem {
             get {
                 return ResourceManager.GetString("ksUndoCreatingInflectionalAffixCategoryItem", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Undo Delete.
-        /// </summary>
-        internal static string ksUndoDelete {
-            get {
-                return ResourceManager.GetString("ksUndoDelete", resourceCulture);
             }
         }
         

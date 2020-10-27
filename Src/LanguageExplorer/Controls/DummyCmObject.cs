@@ -3,20 +3,22 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using SIL.LCModel;
 
-namespace LanguageExplorer.LcmUi
+namespace LanguageExplorer.Controls
 {
 	/// <summary>
 	/// A light weight object used in the merge dlg to show relevant objects.
 	/// </summary>
 	internal sealed class DummyCmObject : IComparable
 	{
-		private string m_displayName;
+		private readonly ICmObject _cmObject;
+		private readonly string _displayName;
 
 		/// <summary>
 		/// Get the HVO for the dummy object.
 		/// </summary>
-		internal int Hvo { get; }
+		internal int Hvo => _cmObject.Hvo;
 
 		/// <summary>
 		/// Get the writing system integer.
@@ -26,10 +28,10 @@ namespace LanguageExplorer.LcmUi
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-		internal DummyCmObject(int hvo, string displayName, int ws)
+		internal DummyCmObject(ICmObject cmObject, string displayName, int ws)
 		{
-			Hvo = hvo;
-			m_displayName = displayName ?? " ";
+			_cmObject = cmObject;
+			_displayName = displayName ?? " ";
 			WS = ws;
 		}
 
@@ -39,14 +41,14 @@ namespace LanguageExplorer.LcmUi
 		/// <returns></returns>
 		public override string ToString()
 		{
-			return m_displayName;
+			return _displayName;
 		}
 
 		#region IComparable Members
 
 		public int CompareTo(object obj)
 		{
-			return !(obj is DummyCmObject otherGuy) ? -1 : m_displayName.CompareTo(otherGuy.m_displayName);
+			return !(obj is DummyCmObject otherGuy) ? -1 : _displayName.CompareTo(otherGuy._displayName);
 		}
 
 		#endregion

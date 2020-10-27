@@ -390,9 +390,6 @@
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Design\FwButtonDesigner.cs" />
-    <Compile Include="ErrorReporter.cs">
-      <SubType>Form</SubType>
-    </Compile>
     <Compile Include="FileDialog\FileDialogAdapter.cs" />
     <Compile Include="FileDialog\FileDialogFactory.cs" />
     <Compile Include="FileDialog\FileDialogStrings.Designer.cs">
@@ -474,11 +471,6 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="RegionListItem.cs" />
-    <Compile Include="ReportingStrings.Designer.cs">
-      <DependentUpon>ReportingStrings.resx</DependentUpon>
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-    </Compile>
     <Compile Include="ScriptListItem.cs" />
     <Compile Include="SharedBackendServicesHelper.cs" />
     <Compile Include="SpellingDictionaryItem.cs" />
@@ -581,10 +573,6 @@
     <EmbeddedResource Include="DeleteWritingSystemWarningDialog.resx">
       <DependentUpon>DeleteWritingSystemWarningDialog.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="ErrorReporter.resx">
-      <DependentUpon>ErrorReporter.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
     <EmbeddedResource Include="FileDialog\FileDialogStrings.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>FileDialogStrings.Designer.cs</LastGenOutput>
@@ -613,11 +601,6 @@
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="ReportingStrings.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>ReportingStrings.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Strings.resx">
@@ -659,7 +642,6 @@
     <None Include="Resources\MissingGlyph.png" />
     <None Include="FileDialog\readme.txt" />
     <EmbeddedResource Include="Resources\BorderDrawing.bmp" />
-    <None Include="Resources\cc.png" />
     <Content Include="Resources\Checked.bmp" />
     <Content Include="Resources\FWButtonMenuArrow.bmp" />
     <Content Include="Resources\GreyChecked.bmp" />

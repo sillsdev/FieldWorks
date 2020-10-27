@@ -895,7 +895,7 @@ namespace LanguageExplorerTests.Impls
 				"LanguageExplorer.Areas.TextsAndWords.ImportWordSetDlg",
 				"LanguageExplorer.Filters.PosFilter",
 				"LanguageExplorer.Controls.DetailControls.AtomicReferenceLauncher",
-				"LanguageExplorer.Controls.XMLViews.BrowseViewer"
+				"LanguageExplorer.Controls.BrowseViewer"
 			};
 			var idx = 0;
 			foreach (var childElement in rootElement.Elements())

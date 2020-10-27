@@ -5,6 +5,7 @@
 using System;
 using System.Xml.Linq;
 using System.Xml.XPath;
+using LanguageExplorer.Controls;
 using LanguageExplorer.Controls.XMLViews;
 using LanguageExplorer.TestUtilities;
 using NUnit.Framework;

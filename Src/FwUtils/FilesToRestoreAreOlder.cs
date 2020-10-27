@@ -4,33 +4,31 @@
 
 using System;
 using System.Windows.Forms;
-using SIL.FieldWorks.Common.FwUtils;
 
-namespace LanguageExplorer.LcmUi
+namespace SIL.FieldWorks.Common.FwUtils
 {
 	/// <summary />
-	internal sealed partial class CantRestoreLinkedFilesToOriginalLocation : Form
+	internal sealed partial class FilesToRestoreAreOlder : Form
 	{
 		private readonly IHelpTopicProvider m_helpTopicProvider;
 
 		/// <summary />
-		internal CantRestoreLinkedFilesToOriginalLocation(IHelpTopicProvider helpTopicProvider)
+		internal FilesToRestoreAreOlder(IHelpTopicProvider helpTopicProvider)
 		{
 			m_helpTopicProvider = helpTopicProvider;
 			InitializeComponent();
 		}
 
 		/// <summary />
-		internal bool RestoreLinkedFilesToProjectFolder => radio_Thanks.Checked;
+		internal bool KeepFilesThatAreNewer => radio_Keep.Checked;
 
 		/// <summary />
-		internal bool DoNotRestoreLinkedFiles => radio_NoThanks.Checked;
+		internal bool OverWriteThatAreNewer => radio_Overwrite.Checked;
 
 		private void button_OK_Click(object sender, EventArgs e)
 		{
 			DialogResult = DialogResult.OK;
 			Close();
-
 		}
 
 		private void button_Cancel_Click(object sender, EventArgs e)
@@ -41,7 +39,7 @@ namespace LanguageExplorer.LcmUi
 
 		private void button_Help_Click(object sender, EventArgs e)
 		{
-			ShowHelp.ShowHelpTopic(m_helpTopicProvider, "khtp-LinkedFilesFolder");
+			ShowHelp.ShowHelpTopic(m_helpTopicProvider, "khtp-LinkedFilesInBackupAreOlder");//"khtp-LinkedFilesFolder")
 		}
 	}
 }

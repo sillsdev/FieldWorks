@@ -220,11 +220,54 @@
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="ActivationContextHelper.cs" />
+    <Compile Include="CantRestoreLinkedFilesToOriginalLocation.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="CantRestoreLinkedFilesToOriginalLocation.Designer.cs">
+      <DependentUpon>CantRestoreLinkedFilesToOriginalLocation.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ConflictingSaveDlg.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ConflictingSaveDlg.Designer.cs">
+      <DependentUpon>ConflictingSaveDlg.cs</DependentUpon>
+    </Compile>
     <Compile Include="ContextPosition.cs" />
     <Compile Include="ControlExtensions.cs" />
+    <Compile Include="ErrorReporter.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FilesToRestoreAreOlder.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FilesToRestoreAreOlder.Designer.cs">
+      <DependentUpon>FilesToRestoreAreOlder.cs</DependentUpon>
+    </Compile>
     <Compile Include="FontHeightAdjuster.cs" />
     <Compile Include="FwAppArgs.cs" />
+    <EmbeddedResource Include="ConflictingSaveDlg.resx">
+      <DependentUpon>ConflictingSaveDlg.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ErrorReporter.resx">
+      <DependentUpon>ErrorReporter.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FilesToRestoreAreOlder.resx">
+      <DependentUpon>FilesToRestoreAreOlder.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ReportingStrings.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <SubType>Designer</SubType>
+      <LastGenOutput>ReportingStrings.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="RestoreLinkedFilesToProjectsFolder.resx">
+      <DependentUpon>RestoreLinkedFilesToProjectsFolder.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <None Include="FwUtils.template.cs" />
+    <Compile Include="FwLcmUI.cs" />
     <Compile Include="FwUtilsConstants.cs" />
     <Compile Include="GraphiteFontFeatures.cs" />
     <Compile Include="IApp.cs" />
@@ -290,6 +333,17 @@
     <Compile Include="PuncPatternsList.cs" />
     <Compile Include="RecordErrorEventArgs.cs" />
     <Compile Include="Properties\Settings.cs" />
+    <Compile Include="ReportingStrings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ReportingStrings.resx</DependentUpon>
+    </Compile>
+    <Compile Include="RestoreLinkedFilesToProjectsFolder.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="RestoreLinkedFilesToProjectsFolder.Designer.cs">
+      <DependentUpon>RestoreLinkedFilesToProjectsFolder.cs</DependentUpon>
+    </Compile>
     <Compile Include="SettingsGroup.cs" />
     <Compile Include="ShowHelp.cs">
       <SubType>Code</SubType>
@@ -303,6 +357,10 @@
     <Compile Include="ViewsExtensions.cs" />
     <Compile Include="WordAndPunct.cs" />
     <Compile Include="XmlSerializationHelper.cs" />
+    <EmbeddedResource Include="CantRestoreLinkedFilesToOriginalLocation.resx">
+      <DependentUpon>CantRestoreLinkedFilesToOriginalLocation.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="FwUtilsStrings.resx">
       <SubType>Designer</SubType>
       <Generator>PublicResXFileCodeGenerator</Generator>
@@ -347,6 +405,12 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\question.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\cc.png" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

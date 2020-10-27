@@ -4,7 +4,7 @@
 
 using System.Diagnostics;
 
-namespace LanguageExplorer.LcmUi
+namespace SIL.FieldWorks.Common.FwUtils
 {
 	partial class ConflictingSaveDlg
 	{

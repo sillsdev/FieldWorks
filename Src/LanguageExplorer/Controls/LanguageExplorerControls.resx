@@ -1297,4 +1297,92 @@ Sorry, in this browser, opening the file via hyperlink presents a security risk.
     <value>import translated grammatical categories</value>
     <comment>This string is used in the Undo command, as in "Undo {0}" or "Redo {0}.</comment>
   </data>
+  <data name="ksBUG" xml:space="preserve">
+    <value>BUG!</value>
+    <comment>title for message box</comment>
+  </data>
+  <data name="ksCannotDeleteWordform" xml:space="preserve">
+    <value>Sorry, FieldWorks cannot delete this wordform because it occurs in your texts.</value>
+  </data>
+  <data name="ksCannotMoveObjectToCopy" xml:space="preserve">
+    <value>Do not know how to move this object to a new copy of its owner.</value>
+    <comment>error message displayed in message box</comment>
+  </data>
+  <data name="ksCantDeleteLastTagList" xml:space="preserve">
+    <value>The last remaining Text Markup tag list cannot be deleted.</value>
+    <comment>Error message attempting to delete the one and only text markup tag type.</comment>
+  </data>
+  <data name="ksCantDeleteMarkupTagInUse" xml:space="preserve">
+    <value>You cannot delete a Text Markup tag when there are texts using the tag. One such text using this tag is {0}.</value>
+    <comment>{0} is (one) text that prevents the delete.</comment>
+  </data>
+  <data name="ksCantDeleteMarkupTypeInUse" xml:space="preserve">
+    <value>You cannot delete a Text Markup type when there are texts using its tags. One such text using this type of tag is {0}.</value>
+    <comment>{0} is (one) text that prevents the delete.</comment>
+  </data>
+  <data name="ksEntries" xml:space="preserve">
+    <value>Select the entry to merge the current entry into:</value>
+  </data>
+  <data name="ksHierarchyLimit" xml:space="preserve">
+    <value>Hierarchical Limit</value>
+  </data>
+  <data name="ksMarkupTagsTooDeep" xml:space="preserve">
+    <value>The Text Markup Tags list can only have two levels (tag types and tags).</value>
+  </data>
+  <data name="ksMergeAllomorph" xml:space="preserve">
+    <value>Merge Allomorph</value>
+  </data>
+  <data name="ksMergeReversalEntry" xml:space="preserve">
+    <value>Merge Reversal Entry</value>
+  </data>
+  <data name="ksMergeSense" xml:space="preserve">
+    <value>Merge Sense</value>
+  </data>
+  <data name="ksMergeWordGloss" xml:space="preserve">
+    <value>Merge Word Gloss</value>
+  </data>
+  <data name="ksMergeXIntoSelection" xml:space="preserve">
+    <value>"{0}" will be merged into what you select above,{1}resulting in one item.</value>
+    <comment>{1} is a line separator character</comment>
+  </data>
+  <data name="ksMergeXIntoY" xml:space="preserve">
+    <value>"{0}" will be merged into "{1}",{2}resulting in one item.</value>
+    <comment>{2} is a line separator character</comment>
+  </data>
+  <data name="ksRedoDelete" xml:space="preserve">
+    <value>Redo Delete</value>
+  </data>
+  <data name="ksRedoMerge" xml:space="preserve">
+    <value>Redo Merge</value>
+  </data>
+  <data name="ksSelectAlternateForm" xml:space="preserve">
+    <value>Select the form to merge the current allomorph into:</value>
+  </data>
+  <data name="ksSelectGloss" xml:space="preserve">
+    <value>Select the gloss to merge the current gloss into:</value>
+  </data>
+  <data name="ksSelectSense" xml:space="preserve">
+    <value>Select the sense to merge the current sense into:</value>
+  </data>
+  <data name="ksTemplateTooDeep" xml:space="preserve">
+    <value>A discourse chart template can only have three levels (template, column group, and column).</value>
+  </data>
+  <data name="ksUndoDelete" xml:space="preserve">
+    <value>Undo Delete</value>
+  </data>
+  <data name="ksUndoMerge" xml:space="preserve">
+    <value>Undo Merge</value>
+  </data>
+  <data name="MergeAllomorphListParameters" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\MergeAllomorphListParameters.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="MergeReversalEntryListParameters" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\MergeReversalEntryListParameters.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="MergeSenseListParameters" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\MergeSenseListParameters.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="MergeWordGlossListParameters" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\MergeWordGlossListParameters.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
 </root>

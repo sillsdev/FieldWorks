@@ -5,7 +5,7 @@
 using System.Diagnostics;
 using System.Windows.Forms;
 
-namespace LanguageExplorer.LcmUi
+namespace SIL.FieldWorks.Common.FwUtils
 {
 	partial class CantRestoreLinkedFilesToOriginalLocation
 	{
@@ -82,7 +82,7 @@ namespace LanguageExplorer.LcmUi
 			//
 			// pictureBox1
 			//
-			this.pictureBox1.Image = global::LanguageExplorer.LcmUi.LcmUiResources.question;
+			this.pictureBox1.Image = ReportingStrings.question;
 			resources.ApplyResources(this.pictureBox1, "pictureBox1");
 			this.pictureBox1.Name = "pictureBox1";
 			this.pictureBox1.TabStop = false;

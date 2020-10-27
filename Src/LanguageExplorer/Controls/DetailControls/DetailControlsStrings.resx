@@ -187,9 +187,6 @@
   <data name="ksRedoChangeTo" xml:space="preserve">
     <value>Redo change to {0}</value>
   </data>
-  <data name="ksRedoDelete" xml:space="preserve">
-    <value>Redo Delete</value>
-  </data>
   <data name="ksRedoDeleteItem" xml:space="preserve">
     <value>Redo Delete Item in {0}</value>
   </data>
@@ -205,9 +202,6 @@
   </data>
   <data name="ksUndoChangeTo" xml:space="preserve">
     <value>Undo change to {0}</value>
-  </data>
-  <data name="ksUndoDelete" xml:space="preserve">
-    <value>Undo Delete</value>
   </data>
   <data name="ksUndoDeleteItem" xml:space="preserve">
     <value>Undo Delete Item in {0}</value>

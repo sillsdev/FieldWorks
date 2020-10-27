@@ -6,24 +6,21 @@ using System;
 using System.ComponentModel;
 using System.IO;
 using System.Windows.Forms;
-using LanguageExplorer.LcmUi;
-using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FwCoreDlgs;
 using SIL.LCModel;
 using SIL.LCModel.Utils;
 
-namespace LanguageExplorer
+namespace SIL.FieldWorks.Common.FwUtils
 {
 	/// <summary>
 	/// The implementation of ILcmUI for FieldWorks apps.
 	/// </summary>
-	internal sealed class FwLcmUI : ILcmUI
+	public sealed class FwLcmUI : ILcmUI
 	{
 		private readonly IHelpTopicProvider m_helpTopicProvider;
 		private readonly UserActivityMonitor m_activityMonitor;
 		private readonly ISynchronizeInvoke _synchronizeInvoke;
 
-		internal FwLcmUI(IHelpTopicProvider helpTopicProvider, ISynchronizeInvoke synchronizeInvoke)
+		public FwLcmUI(IHelpTopicProvider helpTopicProvider, ISynchronizeInvoke synchronizeInvoke)
 		{
 			m_helpTopicProvider = helpTopicProvider;
 			_synchronizeInvoke = synchronizeInvoke;
@@ -184,8 +181,8 @@ namespace LanguageExplorer
 		/// </summary>
 		bool ILcmUI.OfferToRestore(string projectPath, string backupPath)
 		{
-			return _synchronizeInvoke.Invoke(() => MessageBox.Show(string.Format(LcmUiResources.kstidOfferToRestore, projectPath, File.GetLastWriteTime(projectPath),
-				backupPath, File.GetLastWriteTime(backupPath)), LcmUiResources.kstidProblemOpeningFile, MessageBoxButtons.YesNo, MessageBoxIcon.Error) == DialogResult.Yes);
+			return _synchronizeInvoke.Invoke(() => MessageBox.Show(string.Format(FwUtilsStrings.kstidOfferToRestore, projectPath, File.GetLastWriteTime(projectPath),
+				backupPath, File.GetLastWriteTime(backupPath)), FwUtilsStrings.kstidProblemOpeningFile, MessageBoxButtons.YesNo, MessageBoxIcon.Error) == DialogResult.Yes);
 		}
 	}
 }

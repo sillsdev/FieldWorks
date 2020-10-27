@@ -12,7 +12,6 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
-using LanguageExplorer;
 using LanguageExplorer.Controls;
 using LanguageExplorer.Controls.DetailControls;
 using LCMBrowser.Properties;
