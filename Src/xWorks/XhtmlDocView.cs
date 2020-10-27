@@ -372,7 +372,7 @@ namespace SIL.FieldWorks.XWorks
 					}
 					entryElement.InnerHtml = string.Join("", entryDoc.Root.Elements().Select(x => x.ToString(SaveOptions.DisableFormatting)));
 					// Get the div of the first entry element
-					var before = browserElement.SelectFirst("*[contains(@class, 'entry')]");
+					var before = browserElement.EvaluateXPath("*[contains(@class, 'entry')]").GetSingleNodeValue();
 					before.ParentElement.InsertBefore(entryElement, before);
 				}
 				ChangeHtmlForCurrentAndAdjacentButtons(newCurPageRange, newAdjPageRange, currentPageButton, true);
@@ -439,13 +439,13 @@ namespace SIL.FieldWorks.XWorks
 		private static GeckoHtmlElement GetBottomCurrentPageButton(GeckoElement pageButtonElement)
 		{
 			// from the parent node select the second instance of the current page (the one with the id)
-			return (GeckoHtmlElement)pageButtonElement?.OwnerDocument?.Body?.SelectFirst("(//*[@class='pagebutton' and @id])[2]");
+			return (GeckoHtmlElement)pageButtonElement?.OwnerDocument?.Body?.EvaluateXPath("(//*[@class='pagebutton' and @id])[2]")?.GetSingleNodeValue();
 		}
 
 		private static GeckoHtmlElement GetTopCurrentPageButton(GeckoElement element)
 		{
 			// The page with the id is the current page, select the first one on the page
-			return (GeckoHtmlElement)element?.OwnerDocument?.Body?.SelectFirst("//*[@class='pagebutton' and @id]");
+			return (GeckoHtmlElement)element?.OwnerDocument?.Body?.EvaluateXPath("//*[@class='pagebutton' and @id]")?.GetSingleNodeValue();
 		}
 
 		private static bool HandleClickOnPageButton(RecordClerk clerk, GeckoElement element)
