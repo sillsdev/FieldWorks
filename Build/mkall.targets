@@ -588,10 +588,10 @@
 		<!-- NuGet packages. Property- and ItemGroups are inside the target so $(arch) and *'s are read properly -->
 		<PropertyGroup>
 			<!-- This package must be updated in encoding-converters-core also -->
-			<Architecture Condition="'$(arch)'=='x64'">64</Architecture>
-			<Architecture Condition="'$(arch)'!='x64'">32</Architecture>
-			<GeckoDir Condition="'$(OS)'=='Windows_NT'">$(fwrt)/packages/Geckofx60.$(Architecture).60.0.47</GeckoDir>
-			<GeckoDir Condition="'$(OS)'!='Windows_NT'">$(fwrt)/packages/Geckofx60.$(Architecture).Linux.60.0.49</GeckoDir>
+			<Architecture Condition="'$(Platform)'=='x64'">64</Architecture>
+			<Architecture Condition="'$(Platform)'!='x64'">32</Architecture>
+			<GeckoDir Condition="'$(OS)'=='Windows_NT'">$(fwrt)/packages/Geckofx60.$(Architecture).60.0.50</GeckoDir>
+			<GeckoDir Condition="'$(OS)'!='Windows_NT'">$(fwrt)/packages/Geckofx60.$(Architecture).Linux.60.0.51</GeckoDir>
 		</PropertyGroup>
 		<ItemGroup>
 			<NuGottenFiles Include="$(GeckoDir)/lib/net45/*.*" Condition="'$(OS)'=='Windows_NT'"/>

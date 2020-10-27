@@ -234,7 +234,7 @@
 	<CreateProperty Value="ByHand,SmokeTest" Condition="'$(runAllTests)'!=''">
 	  <Output TaskParameter="Value" PropertyName="excludedCategories"/>
 	</CreateProperty>
-	<CreateProperty Value="$(excludedCategories),ExcludeOnLinux64" Condition="'$(arch)'=='x64'">
+	<CreateProperty Value="$(excludedCategories),ExcludeOnLinux64" Condition="'$(arch)'=='x86_64'">
 	  <Output TaskParameter="Value" PropertyName="excludedCategories"/>
 	</CreateProperty>
 

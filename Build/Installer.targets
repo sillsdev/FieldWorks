@@ -216,8 +216,6 @@
 			<MergeModules Include="$(OutputDirForConfig)\EncConvertersAppDataMover40*"/>
 			<MergeModules Include="$(OutputDirForConfig)\FieldWorks.vshost.*"/>
 			<MergeModules Include="$(OutputDirForConfig)\FormsTester.*"/>
-			<!-- <MergeModules Include="$(OutputDirForConfig)\Geckofx-Core.dll"/> < Installed by EC merge modules-->
-			<!-- <MergeModules Include="$(OutputDirForConfig)\Geckofx-Winforms.dll"/> < Installed by EC merge modules-->
 			<MergeModules Include="$(OutputDirForConfig)\Good.xml"/>
 			<MergeModules Include="$(OutputDirForConfig)\IcuConvEC.dll"/> <!-- Installed by EC merge modules-->
 			<MergeModules Include="$(OutputDirForConfig)\IcuEC.dll"/> <!-- Installed by EC merge modules-->
