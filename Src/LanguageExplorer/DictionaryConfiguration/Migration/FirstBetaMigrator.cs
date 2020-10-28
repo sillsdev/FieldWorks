@@ -13,7 +13,7 @@ using SIL.Linq;
 
 namespace LanguageExplorer.DictionaryConfiguration.Migration
 {
-	internal class FirstBetaMigrator
+	internal sealed class FirstBetaMigrator
 	{
 		private ISimpleLogger m_logger;
 		internal const int VersionBeta5 = 14;
@@ -26,10 +26,10 @@ namespace LanguageExplorer.DictionaryConfiguration.Migration
 			m_logger = logger;
 		}
 
-		public string AppVersion { get; }
-		public LcmCache Cache { get; set; }
+		internal string AppVersion { get; }
+		internal LcmCache Cache { get; set; }
 
-		public void MigrateIfNeeded()
+		internal void MigrateIfNeeded()
 		{
 			var foundOne = $"{AppVersion}: Configuration was found in need of migration. - {DateTime.Now:yyyy MMM d h:mm:ss}";
 			var configSettingsDir = LcmFileHelper.GetConfigSettingsDir(Cache.ProjectId.ProjectFolder);

@@ -1344,10 +1344,10 @@
     </Compile>
     <Compile Include="VectorPropertyParameterObject.cs" />
     <Compile Include="DictionaryConfiguration\ConfigType.cs" />
-    <Compile Include="DictionaryConfiguration\ConfigureHomographDlg.cs">
+    <Compile Include="Controls\ConfigureHomographDlg.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="DictionaryConfiguration\ConfigureHomographDlg.designer.cs">
+    <Compile Include="Controls\ConfigureHomographDlg.designer.cs">
       <DependentUpon>ConfigureHomographDlg.cs</DependentUpon>
     </Compile>
     <Compile Include="Controls\DetailControls\ContextMenuRequestedEventArgs.cs" />
@@ -1749,43 +1749,43 @@
     </Compile>
     <Compile Include="Areas\Lexicon\Tools\DictionaryConfigurationUtils.cs" />
     <Compile Include="DictionaryConfiguration\DictionaryDetailsController.cs" />
-    <Compile Include="DictionaryConfiguration\DictionaryDetailsView\ButtonOverPanel.cs">
+    <Compile Include="DictionaryConfiguration\ButtonOverPanel.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="DictionaryConfiguration\DictionaryDetailsView\ButtonOverPanel.Designer.cs">
+    <Compile Include="DictionaryConfiguration\ButtonOverPanel.Designer.cs">
       <DependentUpon>ButtonOverPanel.cs</DependentUpon>
     </Compile>
-    <Compile Include="DictionaryConfiguration\DictionaryDetailsView\DetailsView.cs">
+    <Compile Include="DictionaryConfiguration\DetailsView.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="DictionaryConfiguration\DictionaryDetailsView\DetailsView.Designer.cs">
+    <Compile Include="DictionaryConfiguration\DetailsView.Designer.cs">
       <DependentUpon>DetailsView.cs</DependentUpon>
     </Compile>
-    <Compile Include="DictionaryConfiguration\DictionaryDetailsView\GroupingOptionsView.cs">
+    <Compile Include="DictionaryConfiguration\GroupingOptionsView.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="DictionaryConfiguration\DictionaryDetailsView\GroupingOptionsView.Designer.cs">
+    <Compile Include="DictionaryConfiguration\GroupingOptionsView.Designer.cs">
       <DependentUpon>GroupingOptionsView.cs</DependentUpon>
     </Compile>
-    <Compile Include="DictionaryConfiguration\DictionaryDetailsView\LabelOverPanel.cs">
+    <Compile Include="DictionaryConfiguration\LabelOverPanel.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="DictionaryConfiguration\DictionaryDetailsView\LabelOverPanel.Designer.cs">
+    <Compile Include="DictionaryConfiguration\LabelOverPanel.Designer.cs">
       <DependentUpon>LabelOverPanel.cs</DependentUpon>
     </Compile>
-    <Compile Include="DictionaryConfiguration\DictionaryDetailsView\ListOptionsView.cs">
+    <Compile Include="DictionaryConfiguration\ListOptionsView.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="DictionaryConfiguration\DictionaryDetailsView\ListOptionsView.Designer.cs">
+    <Compile Include="DictionaryConfiguration\ListOptionsView.Designer.cs">
       <DependentUpon>ListOptionsView.cs</DependentUpon>
     </Compile>
-    <Compile Include="DictionaryConfiguration\DictionaryDetailsView\SenseOptionsView.cs">
+    <Compile Include="DictionaryConfiguration\SenseOptionsView.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="DictionaryConfiguration\DictionaryDetailsView\SenseOptionsView.Designer.cs">
+    <Compile Include="DictionaryConfiguration\SenseOptionsView.Designer.cs">
       <DependentUpon>SenseOptionsView.cs</DependentUpon>
     </Compile>
-    <Compile Include="DictionaryConfiguration\DictionaryDetailsView\SpecialCharacterHandling.cs" />
+    <Compile Include="DictionaryConfiguration\SpecialCharacterHandling.cs" />
     <Compile Include="DictionaryExportService.cs" />
     <Compile Include="DictionaryHomographConfiguration.cs" />
     <Compile Include="DictionaryConfiguration\DictionaryNodeGroupingOptions.cs" />
@@ -2300,7 +2300,7 @@
       <DependentUpon>BaseGoDlg.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="DictionaryConfiguration\ConfigureHomographDlg.resx">
+    <EmbeddedResource Include="Controls\ConfigureHomographDlg.resx">
       <DependentUpon>ConfigureHomographDlg.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Areas\Notebook\AnthroFieldMappingDlg.resx">
@@ -2513,22 +2513,22 @@
     <EmbeddedResource Include="DictionaryConfiguration\DictionaryConfigurationTreeControl.resx">
       <DependentUpon>DictionaryConfigurationTreeControl.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="DictionaryConfiguration\DictionaryDetailsView\ButtonOverPanel.resx">
+    <EmbeddedResource Include="DictionaryConfiguration\ButtonOverPanel.resx">
       <DependentUpon>ButtonOverPanel.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="DictionaryConfiguration\DictionaryDetailsView\DetailsView.resx">
+    <EmbeddedResource Include="DictionaryConfiguration\DetailsView.resx">
       <DependentUpon>DetailsView.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="DictionaryConfiguration\DictionaryDetailsView\GroupingOptionsView.resx">
+    <EmbeddedResource Include="DictionaryConfiguration\GroupingOptionsView.resx">
       <DependentUpon>GroupingOptionsView.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="DictionaryConfiguration\DictionaryDetailsView\LabelOverPanel.resx">
+    <EmbeddedResource Include="DictionaryConfiguration\LabelOverPanel.resx">
       <DependentUpon>LabelOverPanel.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="DictionaryConfiguration\DictionaryDetailsView\ListOptionsView.resx">
+    <EmbeddedResource Include="DictionaryConfiguration\ListOptionsView.resx">
       <DependentUpon>ListOptionsView.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="DictionaryConfiguration\DictionaryDetailsView\SenseOptionsView.resx">
+    <EmbeddedResource Include="DictionaryConfiguration\SenseOptionsView.resx">
       <DependentUpon>SenseOptionsView.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\ExportDialog.resx">

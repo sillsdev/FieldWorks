@@ -4,7 +4,7 @@
 
 using System.Diagnostics;
 
-namespace LanguageExplorer.DictionaryConfiguration.DictionaryDetailsView
+namespace LanguageExplorer.DictionaryConfiguration
 {
 	partial class LabelOverPanel
 	{

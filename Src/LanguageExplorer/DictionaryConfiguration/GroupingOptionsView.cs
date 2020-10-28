@@ -5,7 +5,7 @@
 using System;
 using System.Windows.Forms;
 
-namespace LanguageExplorer.DictionaryConfiguration.DictionaryDetailsView
+namespace LanguageExplorer.DictionaryConfiguration
 {
 	/// <summary>
 	/// This view is responsible for the display of options for a GroupingNode in the configuration dialog

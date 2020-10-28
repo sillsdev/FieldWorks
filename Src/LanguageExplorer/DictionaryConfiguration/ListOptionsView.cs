@@ -11,7 +11,7 @@ using System.Linq;
 using System.Windows.Forms;
 using SIL.PlatformUtilities;
 
-namespace LanguageExplorer.DictionaryConfiguration.DictionaryDetailsView
+namespace LanguageExplorer.DictionaryConfiguration
 {
 	/// <summary>
 	/// Displays controls for detailed configuration of elements of dictionary entries that have an orderable list of selectable items

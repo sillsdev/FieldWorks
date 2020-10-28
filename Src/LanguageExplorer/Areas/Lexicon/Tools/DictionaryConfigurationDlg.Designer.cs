@@ -5,7 +5,6 @@
 using System.Diagnostics;
 using System.Windows.Forms;
 using LanguageExplorer.DictionaryConfiguration;
-using LanguageExplorer.DictionaryConfiguration.DictionaryDetailsView;
 using SIL.Windows.Forms.HtmlBrowser;
 
 namespace LanguageExplorer.Areas.Lexicon.Tools

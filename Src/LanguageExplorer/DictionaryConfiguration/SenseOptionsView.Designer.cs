@@ -5,7 +5,7 @@
 using System.Diagnostics;
 using System.Resources;
 
-namespace LanguageExplorer.DictionaryConfiguration.DictionaryDetailsView
+namespace LanguageExplorer.DictionaryConfiguration
 {
 	partial class SenseOptionsView
 	{
@@ -46,7 +46,7 @@ namespace LanguageExplorer.DictionaryConfiguration.DictionaryDetailsView
 			get
 			{
 				return s_resourceMan ?? (s_resourceMan =
-					new ResourceManager("LanguageExplorer.DictionaryConfiguration.DictionaryDetailsView.SenseOptionsView", typeof(SenseOptionsView).Assembly));
+					new ResourceManager("LanguageExplorer.DictionaryConfiguration.SenseOptionsView", typeof(SenseOptionsView).Assembly));
 			}
 		}
 

@@ -7,12 +7,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
 
-namespace LanguageExplorer.DictionaryConfiguration.DictionaryDetailsView
+namespace LanguageExplorer.DictionaryConfiguration
 {
 	/// <summary>
 	/// Handles revealing non-printable characters in a View, such as DetailsView or SenseOptionsView.
 	/// </summary>
-	public static class SpecialCharacterHandling
+	internal static class SpecialCharacterHandling
 	{
 		private static Dictionary<char, string> s_visibleCharacterSubstitutions;
 		private static Dictionary<char, string> s_cssCharacterSubstitutions;
@@ -62,7 +62,7 @@ namespace LanguageExplorer.DictionaryConfiguration.DictionaryDetailsView
 		/// <summary>
 		/// Display visible characters instead of invisible characters in a textbox.
 		/// </summary>
-		public static void RevealInvisibleCharacters(object sender, EventArgs eventArgs)
+		internal static void RevealInvisibleCharacters(object sender, EventArgs eventArgs)
 		{
 			var textBox = ((TextBox)sender);
 			var selectionStart = textBox.SelectionStart;
@@ -89,7 +89,7 @@ namespace LanguageExplorer.DictionaryConfiguration.DictionaryDetailsView
 			return VisibleCharacterSubstitutions.Aggregate(operand, (current, replacement) => current.Replace(replacement.Key.ToString(), replacement.Value));
 		}
 
-		public static string VisibleToInvisibleCharacters(string operand)
+		internal static string VisibleToInvisibleCharacters(string operand)
 		{
 			return VisibleCharacterSubstitutions.Aggregate(operand, (current, replacement) => current.Replace(replacement.Value, replacement.Key.ToString()));
 		}
@@ -102,7 +102,7 @@ namespace LanguageExplorer.DictionaryConfiguration.DictionaryDetailsView
 			};
 		}
 
-		public static string MakeSafeCss(string operand)
+		internal static string MakeSafeCss(string operand)
 		{
 			if (s_cssCharacterSubstitutions == null)
 			{

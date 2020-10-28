@@ -13,7 +13,7 @@ namespace LanguageExplorer.DictionaryConfiguration.Migration
 	/// <summary>
 	/// This file will migrate all the configurations produced during the first 8.3 alpha
 	/// </summary>
-	internal class FirstAlphaMigrator
+	internal sealed class FirstAlphaMigrator
 	{
 		private ISimpleLogger m_logger;
 		internal const int VersionAlpha2 = 5;
@@ -23,18 +23,18 @@ namespace LanguageExplorer.DictionaryConfiguration.Migration
 		private const string ReversePrefix = "Reverse "; // for reverse labels
 		private const string RevAbbr = "ReverseAbbr";
 		private const string RevName = "ReverseName";
+		private LcmCache Cache { get; }
 
-		public FirstAlphaMigrator(string appVersion, LcmCache cache, ISimpleLogger logger)
+		internal FirstAlphaMigrator(string appVersion, LcmCache cache, ISimpleLogger logger)
 		{
 			AppVersion = appVersion;
 			Cache = cache;
 			m_logger = logger;
 		}
 
-		public string AppVersion { get; }
-		private LcmCache Cache { get; }
+		internal string AppVersion { get; }
 
-		public void MigrateIfNeeded()
+		internal void MigrateIfNeeded()
 		{
 			var foundOne = $"{AppVersion}: Configuration was found in need of migration. - {DateTime.Now:yyyy MMM d h:mm:ss}";
 			foreach (var config in DictionaryConfigurationServices.GetConfigsNeedingMigration(Cache, VersionAlpha3))

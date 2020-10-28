@@ -7,7 +7,6 @@ using System.Globalization;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
-using LanguageExplorer.DictionaryConfiguration.DictionaryDetailsView;
 
 namespace LanguageExplorer.DictionaryConfiguration
 {

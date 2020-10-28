@@ -12,7 +12,7 @@ using SIL.LCModel;
 using SIL.LCModel.DomainImpl;
 using SIL.LCModel.DomainServices;
 
-namespace LanguageExplorer.DictionaryConfiguration
+namespace LanguageExplorer.Controls
 {
 	internal partial class ConfigureHomographDlg : Form
 	{

@@ -4,9 +4,9 @@
 
 using System.Diagnostics;
 
-namespace LanguageExplorer.DictionaryConfiguration.DictionaryDetailsView
+namespace LanguageExplorer.DictionaryConfiguration
 {
-	partial class GroupingOptionsView
+	partial class ButtonOverPanel
 	{
 		/// <summary> 
 		/// Required designer variable.
@@ -41,37 +41,36 @@ namespace LanguageExplorer.DictionaryConfiguration.DictionaryDetailsView
 		/// </summary>
 		private void InitializeComponent()
 		{
-			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(GroupingOptionsView));
-			this.descriptionBox = new System.Windows.Forms.TextBox();
-			this.displayInParagraph = new System.Windows.Forms.CheckBox();
+			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ButtonOverPanel));
+			this.panel = new System.Windows.Forms.Panel();
+			this.button = new System.Windows.Forms.Button();
 			this.SuspendLayout();
 			// 
-			// descriptionBox
+			// panel
 			// 
-			resources.ApplyResources(this.descriptionBox, "descriptionBox");
-			this.descriptionBox.Name = "descriptionBox";
+			resources.ApplyResources(this.panel, "panel");
+			this.panel.Name = "panel";
 			// 
-			// displayInParagraph
+			// button
 			// 
-			resources.ApplyResources(this.displayInParagraph, "displayInParagraph");
-			this.displayInParagraph.Name = "displayInParagraph";
-			this.displayInParagraph.UseVisualStyleBackColor = true;
+			resources.ApplyResources(this.button, "button");
+			this.button.Name = "button";
+			this.button.UseVisualStyleBackColor = true;
 			// 
-			// GroupingOptionsView
+			// ButtonOverPanel
 			// 
 			resources.ApplyResources(this, "$this");
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.Controls.Add(this.displayInParagraph);
-			this.Controls.Add(this.descriptionBox);
-			this.Name = "GroupingOptionsView";
+			this.Controls.Add(this.button);
+			this.Controls.Add(this.panel);
+			this.Name = "ButtonOverPanel";
 			this.ResumeLayout(false);
-			this.PerformLayout();
 
 		}
 
 		#endregion
 
-		private System.Windows.Forms.TextBox descriptionBox;
-		private System.Windows.Forms.CheckBox displayInParagraph;
+		private System.Windows.Forms.Panel panel;
+		private System.Windows.Forms.Button button;
 	}
 }

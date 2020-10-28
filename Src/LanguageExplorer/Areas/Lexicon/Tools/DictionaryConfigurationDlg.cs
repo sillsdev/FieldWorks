@@ -10,7 +10,6 @@ using System.Linq;
 using System.Windows.Forms;
 using Gecko;
 using LanguageExplorer.DictionaryConfiguration;
-using LanguageExplorer.DictionaryConfiguration.DictionaryDetailsView;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Infrastructure;

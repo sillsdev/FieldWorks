@@ -9,7 +9,6 @@ using System.Text;
 using System.Windows.Forms;
 using LanguageExplorer.Controls.Styles;
 using LanguageExplorer.Controls.XMLViews;
-using LanguageExplorer.DictionaryConfiguration.DictionaryDetailsView;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.DomainImpl;

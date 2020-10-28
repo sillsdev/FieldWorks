@@ -4,7 +4,6 @@
 
 using System.Windows.Forms;
 using LanguageExplorer.DictionaryConfiguration;
-using LanguageExplorer.DictionaryConfiguration.DictionaryDetailsView;
 using NUnit.Framework;
 
 namespace LanguageExplorerTests.DictionaryConfiguration

@@ -8,7 +8,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using LanguageExplorer.Controls.Styles;
 
-namespace LanguageExplorer.DictionaryConfiguration.DictionaryDetailsView
+namespace LanguageExplorer.DictionaryConfiguration
 {
 	/// <summary>
 	/// Displays the portion of the dialog where an element in a dictionary entry is configured in detail, including Writing Systems,

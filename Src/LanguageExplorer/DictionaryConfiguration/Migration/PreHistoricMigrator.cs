@@ -8,7 +8,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Xml.Linq;
-using LanguageExplorer.Areas;
 using LanguageExplorer.Areas.Lexicon;
 using LanguageExplorer.Controls.XMLViews;
 using SIL.FieldWorks.Common.FwUtils;
@@ -28,10 +27,10 @@ namespace LanguageExplorer.DictionaryConfiguration.Migration
 	/// the process involves comparing converted nodes to the static 8.3Alpha configuration files
 	/// stored in {DistFiles}/Language Explorer/AlphaConfigs.
 	/// </summary>
-	internal class PreHistoricMigrator : ILayoutConverter
+	internal sealed class PreHistoricMigrator : ILayoutConverter
 	{
-		public const int VersionPre83 = -1;
-		public const int VersionAlpha1 = 1;
+		internal const int VersionPre83 = -1;
+		internal const int VersionAlpha1 = 1;
 		private IPropertyTable m_propertyTable;
 		private IPublisher m_publisher;
 		private Inventory m_layoutInventory;
@@ -70,7 +69,7 @@ namespace LanguageExplorer.DictionaryConfiguration.Migration
 		/// </summary>
 		private const string AlphaConfigFolder = "AlphaConfigs";
 
-		public void MigrateIfNeeded()
+		internal void MigrateIfNeeded()
 		{
 			LayoutLevels = new LayoutLevels();
 			m_layoutInventory = Inventory.GetInventory("layouts", Cache.ProjectId.Name);
@@ -102,7 +101,7 @@ namespace LanguageExplorer.DictionaryConfiguration.Migration
 		/// <summary>
 		/// Loads the xml configuration for the given tool and returns its configureLayouts child.
 		/// </summary>
-		private XElement GetConfigureLayoutsNodeForTool(string tool)
+		private static XElement GetConfigureLayoutsNodeForTool(string tool)
 		{
 			switch (tool)
 			{
@@ -137,8 +136,10 @@ namespace LanguageExplorer.DictionaryConfiguration.Migration
 			return Directory.Exists(configSettingsDir) && Directory.EnumerateFiles(configSettingsDir, "*.fwlayout").Any();
 		}
 
-		/// <summary>ILayoutConverter implementation</summary>
-		public void AddDictionaryTypeItem(XElement layoutNode, List<LayoutTreeNode> oldNodes)
+		#region ILayoutConverter implementation
+
+		/// <summary />
+		void ILayoutConverter.AddDictionaryTypeItem(XElement layoutNode, List<LayoutTreeNode> oldNodes)
 		{
 			// layoutNode is expected to look similar to:
 			//<layoutType label="Stem-based (complex forms as main entries)" layout="publishStem">
@@ -157,6 +158,56 @@ namespace LanguageExplorer.DictionaryConfiguration.Migration
 			MigratePublicationLayoutSelection(layout, convertedModel.FilePath);
 			m_logger.DecreaseIndent();
 		}
+
+		IEnumerable<XElement> ILayoutConverter.GetLayoutTypes()
+		{
+			return m_layoutInventory.GetLayoutTypes();
+		}
+
+		private LcmCache Cache { get; }
+		LcmCache ILayoutConverter.Cache => Cache;
+
+		bool ILayoutConverter.UseStringTable => false;
+
+		private LayoutLevels LayoutLevels { get; set; }
+		LayoutLevels ILayoutConverter.LayoutLevels => LayoutLevels;
+
+		void ILayoutConverter.ExpandWsTaggedNodes(string sWsTag)
+		{
+			m_layoutInventory.ExpandWsTaggedNodes(sWsTag);
+		}
+
+		void ILayoutConverter.SetOriginalIndexForNode(LayoutTreeNode mainLayoutNode)
+		{
+			//Not important for migration
+		}
+
+		XElement ILayoutConverter.GetLayoutElement(string className, string layoutName)
+		{
+			return LegacyConfigurationUtils.GetLayoutElement(m_layoutInventory, className, layoutName);
+		}
+
+		XElement ILayoutConverter.GetPartElement(string className, string sRef)
+		{
+			return LegacyConfigurationUtils.GetPartElement(m_partInventory, className, sRef);
+		}
+
+		void ILayoutConverter.BuildRelationTypeList(LayoutTreeNode ltn)
+		{
+			//Not important for migration - Handled separately by the new configuration dialog
+		}
+
+		void ILayoutConverter.BuildEntryTypeList(LayoutTreeNode ltn, string layoutName)
+		{
+			//Not important for migration - Handled separately by the new configuration dialog
+		}
+
+		void ILayoutConverter.LogConversionError(string errorLog)
+		{
+			m_logger.WriteLine(errorLog);
+		}
+
+		#endregion ILayoutConverter implementation
 
 		/// <summary>
 		/// This method will take a skeleton model which has been already converted from LayoutTreeNodes
@@ -1003,55 +1054,7 @@ namespace LanguageExplorer.DictionaryConfiguration.Migration
 			}
 		}
 
-		#region trivial portions of the ILayoutConverter implementation
-		public IEnumerable<XElement> GetLayoutTypes()
-		{
-			return m_layoutInventory.GetLayoutTypes();
-		}
-
 		public string AppVersion { get; }
-
-		public LcmCache Cache { get; }
-
-		public bool UseStringTable => false;
-
-		public LayoutLevels LayoutLevels { get; private set; }
-
-		public void ExpandWsTaggedNodes(string sWsTag)
-		{
-			m_layoutInventory.ExpandWsTaggedNodes(sWsTag);
-		}
-
-		public void SetOriginalIndexForNode(LayoutTreeNode mainLayoutNode)
-		{
-			//Not important for migration
-		}
-
-		public XElement GetLayoutElement(string className, string layoutName)
-		{
-			return LegacyConfigurationUtils.GetLayoutElement(m_layoutInventory, className, layoutName);
-		}
-
-		public XElement GetPartElement(string className, string sRef)
-		{
-			return LegacyConfigurationUtils.GetPartElement(m_partInventory, className, sRef);
-		}
-
-		public void BuildRelationTypeList(LayoutTreeNode ltn)
-		{
-			//Not important for migration - Handled separately by the new configuration dialog
-		}
-
-		public void BuildEntryTypeList(LayoutTreeNode ltn, string layoutName)
-		{
-			//Not important for migration - Handled separately by the new configuration dialog
-		}
-
-		public void LogConversionError(string errorLog)
-		{
-			m_logger.WriteLine(errorLog);
-		}
-		#endregion
 
 		/// <summary>
 		/// Only use for tests which don't enter the migrator class at the standard entry point

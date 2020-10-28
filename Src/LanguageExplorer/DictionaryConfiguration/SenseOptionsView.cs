@@ -8,7 +8,7 @@ using System.Windows.Forms;
 using LanguageExplorer.Controls;
 using LanguageExplorer.Controls.Styles;
 
-namespace LanguageExplorer.DictionaryConfiguration.DictionaryDetailsView
+namespace LanguageExplorer.DictionaryConfiguration
 {
 	/// <summary>
 	/// Displays the controls for detailed configuration of Senses, including Sense numbers.

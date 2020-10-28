@@ -10,7 +10,6 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using LanguageExplorer.Controls.XMLViews;
-using LanguageExplorer.DictionaryConfiguration.DictionaryDetailsView;
 using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;

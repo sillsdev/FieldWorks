@@ -12,7 +12,6 @@ using LanguageExplorer.Controls;
 using LanguageExplorer.Controls.Styles;
 using LanguageExplorer.Controls.XMLViews;
 using LanguageExplorer.DictionaryConfiguration;
-using LanguageExplorer.DictionaryConfiguration.DictionaryDetailsView;
 using LanguageExplorer.TestUtilities;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwUtils;

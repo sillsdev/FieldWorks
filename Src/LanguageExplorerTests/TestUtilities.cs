@@ -4,10 +4,12 @@
 // Changed in 2008 and 2009 by SIL International to convert to C# and add more functionality.
 
 using System;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Xml.Linq;
 using System.Xml.XPath;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.Xml;
 
 namespace LanguageExplorerTests
@@ -20,6 +22,7 @@ namespace LanguageExplorerTests
 		internal const string LanguageExplorerTests = "LanguageExplorerTests";
 		internal const string LanguageExplorerTests_DictionaryConfiguration_TestRootClass = "LanguageExplorerTests.DictionaryConfiguration.TestRootClass";
 		internal const string LanguageExplorerTests_DictionaryConfiguration_TestPictureClass = "LanguageExplorerTests.DictionaryConfiguration.TestPictureClass";
+		internal static string LanguageExplorerTests_DictionaryConfiguration_TestDataPath => Path.Combine(FwDirectoryFinder.SourceDirectory, "LanguageExplorerTests", "DictionaryConfiguration", "TestData");
 
 		/// <summary>
 		/// Use by converting code that doesn't have proper access such as
