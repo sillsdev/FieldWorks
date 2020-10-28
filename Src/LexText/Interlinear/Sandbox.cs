@@ -5,7 +5,6 @@
 using System.Linq;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel;
-using SIL.FieldWorks.Common.ViewsInterfaces;
 using XCore;
 using SIL.LCModel.DomainServices;
 

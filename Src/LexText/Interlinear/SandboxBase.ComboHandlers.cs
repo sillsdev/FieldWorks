@@ -405,6 +405,20 @@ namespace SIL.FieldWorks.IText
 				return handler;
 			}
 
+			private void ComboListHidden(object sender, EventArgs args)
+			{
+
+				if (!(sender is ComboListBox))
+				{
+					throw new ApplicationException("Unexpected origin of ComboListHidden event.");
+				}
+				((ComboListBox)sender).FormHidden -= ComboListHidden;
+				if (m_sandbox != null && !m_sandbox.IsDisposed)
+				{
+					m_sandbox.Focus();
+				}
+			}
+
 			/// <summary>
 			/// Hide yourself.
 			/// </summary>
@@ -421,8 +435,6 @@ namespace SIL.FieldWorks.IText
 			{
 				CheckDisposed();
 
-				if (m_sandbox.ParentForm == Form.ActiveForm)
-					m_sandbox.Focus();
 				ComboListBox clb = m_comboList as ComboListBox;
 				if (clb != null)
 				{
@@ -450,6 +462,7 @@ namespace SIL.FieldWorks.IText
 				AdjustListBoxSize();
 				ComboListBox c = (m_comboList as ComboListBox);
 				c.AdjustSize(500, 400); // these are maximums!
+				c.FormHidden += ComboListHidden;
 				c.Launch(m_sandbox.RectangleToScreen(loc),
 					Screen.GetWorkingArea(m_sandbox));
 			}
@@ -524,7 +537,9 @@ namespace SIL.FieldWorks.IText
 				// Assuming it's not disposed, which it might be apparently on switching tools.
 				// (See LT-12350)
 				if (!m_sandbox.IsDisposed)
+				{
 					m_sandbox.HandleComboSelChange(sender, ea);
+				}
 				// Alternative re-implementation:
 				//	if (m_fUnderConstruction)
 				//		return;
@@ -2610,7 +2625,7 @@ namespace SIL.FieldWorks.IText
 				// had was an entry or msa, or some similar special case.
 				if (NeedSelectSame())
 					this.HandleSelect(ComboList.SelectedIndex);
-				this.HideCombo();
+				HideCombo();
 			}
 
 			public override void HandleSelect(int index)

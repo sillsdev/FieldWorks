@@ -326,6 +326,7 @@
     <Compile Include="EntryGoSearchEngine.cs" />
     <Compile Include="InsertEntrySearchEngine.cs" />
     <Compile Include="IPatternControl.cs" />
+    <Compile Include="MasterCategory.cs" />
     <Compile Include="OccurrenceDlg.cs">
       <SubType>Form</SubType>
     </Compile>

@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -1316,6 +1316,12 @@ Sorry, in this browser, opening the file via hyperlink presents a security risk.
   </data>
   <data name="ksUndoSelectionOfPhonologicalFeatures" xml:space="preserve">
     <value>Undo selection of Phonological Features</value>
+  </data>
+  <data name="ksRedoImportTranslateGrammaticalCategories" xml:space="preserve">
+    <value>Redo import translated grammatical categories</value>
+  </data>
+  <data name="ksUndoImportTranslateGrammaticalCategories" xml:space="preserve">
+    <value>Undo import translated grammatical categories</value>
   </data>
   <data name="ks_DontCare_" xml:space="preserve">
     <value>&lt;n/a&gt;</value>

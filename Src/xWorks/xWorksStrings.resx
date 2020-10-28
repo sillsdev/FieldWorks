@@ -1211,4 +1211,10 @@ If you are not the one designated user who adds fields, or you are making some o
     <value>Failed to upload {0}.</value>
     <comment>Status text displayed when a file fails to upload to webonary</comment>
   </data>
+  <data name="ImportTranslatedGramCats" xml:space="preserve">
+    <value>Update Grammatical Categories</value>
+  </data>
+  <data name="ImportTranslatedGramCatsPrompt" xml:space="preserve">
+    <value>Importing translated grammatical category content will update all grammatical categories (parts of speech) in this project with the latest translations for all Analysis Writing Systems, including English.</value>
+  </data>
 </root>

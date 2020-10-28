@@ -18,6 +18,7 @@ using System.Xml.Serialization;
 using System.Xml.Xsl;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel.Utils;
+using SIL.PlatformUtilities;
 
 namespace SIL.Utils
 {
@@ -717,7 +718,10 @@ namespace SIL.Utils
 
 		public static XslCompiledTransform CreateTransform(string xslName, string assemblyName)
 		{
-			var transform = new XslCompiledTransform();
+			// If we're running on Mono we enable debug for XslCompiledTransform. This works
+			// around a crash somewhere deep in Mono (LT-20249). We could always pass true here,
+			// but it's probably a little bit faster if we only do it where we need it.
+			var transform = new XslCompiledTransform(Platform.IsMono);
 			if (MiscUtils.IsDotNet)
 			{
 				// Assumes the XSL has been precompiled.  xslName is the name of the precompiled class
@@ -727,45 +731,63 @@ namespace SIL.Utils
 			}
 			else
 			{
-				string libPath = Path.GetDirectoryName(FileUtils.StripFilePrefix(Assembly.GetExecutingAssembly().CodeBase));
-				Assembly transformAssembly = Assembly.LoadFrom(Path.Combine(libPath, assemblyName + ".dll"));
-				using (Stream stream = transformAssembly.GetManifestResourceStream(xslName + ".xsl"))
+				var resolver = GetResourceResolver(assemblyName);
+				var transformAssembly = ((XmlResourceResolver)resolver).Assembly;
+				using (var stream = transformAssembly.GetManifestResourceStream(xslName + ".xsl"))
 				{
 					Debug.Assert(stream != null);
-					using (XmlReader reader = XmlReader.Create(stream))
-						transform.Load(reader, new XsltSettings(true, false), new XmlResourceResolver(transformAssembly));
+					using (var reader = XmlReader.Create(stream))
+						transform.Load(reader, new XsltSettings(true, false), resolver);
 				}
 			}
 			return transform;
 		}
 
+		public static XmlResolver GetResourceResolver(string assemblyName)
+		{
+			var libPath = Path.GetDirectoryName(FileUtils.StripFilePrefix(Assembly.GetExecutingAssembly().CodeBase));
+			var transformAssembly = Assembly.LoadFrom(Path.Combine(libPath, assemblyName + ".dll"));
+			return new XmlResourceResolver(transformAssembly);
+		}
+
 		private class XmlResourceResolver : XmlUrlResolver
 		{
-			private readonly Assembly m_assembly;
+			public Assembly Assembly { get; }
 
 			public XmlResourceResolver(Assembly assembly)
 			{
-				m_assembly = assembly;
+				Assembly = assembly;
 			}
 
 			public override Uri ResolveUri(Uri baseUri, string relativeUri)
 			{
-				if (baseUri == null)
-					return new Uri(string.Format("res://{0}", relativeUri));
-				return base.ResolveUri(baseUri, relativeUri);
+				if (baseUri != null)
+					return base.ResolveUri(baseUri, relativeUri);
+
+				var uri = new Uri(relativeUri, UriKind.RelativeOrAbsolute);
+				if (uri.IsAbsoluteUri)
+				{
+					if (uri.Scheme == "res")
+						return uri;
+					relativeUri = uri.AbsolutePath;
+				}
+
+				return new Uri($"res://{relativeUri}");
 			}
 
 			public override object GetEntity(Uri absoluteUri, string role, Type ofObjectToReturn)
 			{
 				switch (absoluteUri.Scheme)
 				{
-				case "res":
-					return m_assembly.GetManifestResourceStream(absoluteUri.OriginalString.Substring(6));
+					case "res":
+						return Assembly.GetManifestResourceStream(
+							// strip off res://
+							absoluteUri.OriginalString.Substring(6));
 
-				default:
-					// Handle file:// and http://
-					// requests from the XmlUrlResolver base class
-					return base.GetEntity(absoluteUri, role, ofObjectToReturn);
+					default:
+						// Handle file:// and http://
+						// requests from the XmlUrlResolver base class
+						return base.GetEntity(absoluteUri, role, ofObjectToReturn);
 				}
 			}
 		}

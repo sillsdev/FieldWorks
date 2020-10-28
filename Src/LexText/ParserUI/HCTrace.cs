@@ -2,6 +2,7 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System;
 using System.IO;
 using System.Xml.Linq;
 using System.Xml.Xsl;
@@ -26,7 +27,9 @@ namespace SIL.FieldWorks.LexText.Controls
 		public string CreateResultPage(PropertyTable propertyTable, XDocument result, bool isTrace)
 		{
 			var args = new XsltArgumentList();
-			args.AddParam("prmHCTraceLoadErrorFile", "", Path.Combine(Path.GetTempPath(), propertyTable.GetValue<LcmCache>("cache").ProjectId.Name + "HCLoadErrors.xml"));
+			var loadErrorUri = new Uri(Path.Combine(Path.GetTempPath(),
+				propertyTable.GetValue<LcmCache>("cache").ProjectId.Name + "HCLoadErrors.xml"));
+			args.AddParam("prmHCTraceLoadErrorFile", "", loadErrorUri.AbsoluteUri);
 			args.AddParam("prmShowTrace", "", isTrace.ToString().ToLowerInvariant());
 			return TraceTransform.Transform(propertyTable, result, isTrace ? "HCTrace" : "HCParse", args);
 		}

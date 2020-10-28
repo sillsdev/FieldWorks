@@ -19,7 +19,7 @@ namespace SIL.FieldWorks.LexText.Controls {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class LexTextControls {
@@ -187,7 +187,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &amp;Writing System:.
+        ///   Looks up a localized string similar to Writing System:.
         /// </summary>
         internal static string ks_WritingSystem_ {
             get {
@@ -665,7 +665,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to To create a circumfix, every non-blank alternative of the form must have two morphemes separated by a space or period(s)..
+        ///   Looks up a localized string similar to To create a circumfix, every non-blank alternative of the Lexeme Form must have two morphemes separated by a space or period(s)..
         /// </summary>
         internal static string ksCompleteCircumfix {
             get {
@@ -1874,7 +1874,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The import process has detected some entries in which the field markers were not ordered as expected. (Refer to the list below to see which entries are affected.).
+        ///   Looks up a localized string similar to The import process has detected some entries in which the field markers were not ordered as expected. (Refer to the list below to see which entries are affected.) The links will open Zedit in the original SFM file at the location of interest. It only works in Internet Explorer. To use it, when the page opens, at the bottom of the browser, it displays, &quot;Internet Explorer restricted this webpage from running scripts or ActiveX controls&quot;. Click &quot;Allow blocked content&quot;. After the first link is clicked, the foll [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string ksMisorderedMarkers {
             get {
@@ -2488,6 +2488,15 @@ namespace SIL.FieldWorks.LexText.Controls {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Redo import translated grammatical categories.
+        /// </summary>
+        internal static string ksRedoImportTranslateGrammaticalCategories {
+            get {
+                return ResourceManager.GetString("ksRedoImportTranslateGrammaticalCategories", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Redo Insert Category.
         /// </summary>
         internal static string ksRedoInsertCategory {
@@ -3033,6 +3042,15 @@ namespace SIL.FieldWorks.LexText.Controls {
         internal static string ksUndoCreateVarEntry {
             get {
                 return ResourceManager.GetString("ksUndoCreateVarEntry", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Undo import translated grammatical categories.
+        /// </summary>
+        internal static string ksUndoImportTranslateGrammaticalCategories {
+            get {
+                return ResourceManager.GetString("ksUndoImportTranslateGrammaticalCategories", resourceCulture);
             }
         }
         

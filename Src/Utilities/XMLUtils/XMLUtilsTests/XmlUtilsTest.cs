@@ -1,7 +1,8 @@
-// Copyright (c) 2003-2017 SIL International
+// Copyright (c) 2003-2020 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System;
 using NUnit.Framework;
 
 namespace SIL.Utils
@@ -12,28 +13,23 @@ namespace SIL.Utils
 	[TestFixture]
 	public class XmlUtilsTest
 	{
-		/// <summary>
-		///
-		/// </summary>
-		[Test]
-		public void GetBooleanAttributeValueTest()
+		[TestCase(null, ExpectedResult = false)]
+		[TestCase("", ExpectedResult = false)]
+		[TestCase("FALSE", ExpectedResult = false)]
+		[TestCase("False", ExpectedResult = false)]
+		[TestCase("false", ExpectedResult = false)]
+		[TestCase("NO", ExpectedResult = false)]
+		[TestCase("No", ExpectedResult = false)]
+		[TestCase("no", ExpectedResult = false)]
+		[TestCase("TRUE", ExpectedResult = true)]
+		[TestCase("True", ExpectedResult = true)]
+		[TestCase("true", ExpectedResult = true)]
+		[TestCase("YES", ExpectedResult = true)]
+		[TestCase("Yes", ExpectedResult = true)]
+		[TestCase("yes", ExpectedResult = true)]
+		public bool GetBooleanAttributeValue(string input)
 		{
-			// All in this section should return false.
-			Assert.IsFalse(XmlUtils.GetBooleanAttributeValue(null), "Null returns false");
-			Assert.IsFalse(XmlUtils.GetBooleanAttributeValue("FALSE"), "'FALSE' returns false");
-			Assert.IsFalse(XmlUtils.GetBooleanAttributeValue("False"), "'False' returns false");
-			Assert.IsFalse(XmlUtils.GetBooleanAttributeValue("false"), "'false' returns false");
-			Assert.IsFalse(XmlUtils.GetBooleanAttributeValue("NO"), "'NO' returns false");
-			Assert.IsFalse(XmlUtils.GetBooleanAttributeValue("No"), "'No' returns false");
-			Assert.IsFalse(XmlUtils.GetBooleanAttributeValue("no"), "'no' returns false");
-
-			// All in this section should return true.
-			Assert.IsTrue(XmlUtils.GetBooleanAttributeValue("TRUE"), "'TRUE' returns true");
-			Assert.IsTrue(XmlUtils.GetBooleanAttributeValue("True"), "'True' returns true");
-			Assert.IsTrue(XmlUtils.GetBooleanAttributeValue("true"), "'true' returns true");
-			Assert.IsTrue(XmlUtils.GetBooleanAttributeValue("YES"), "'YES' returns true");
-			Assert.IsTrue(XmlUtils.GetBooleanAttributeValue("Yes"), "'Yes' returns true");
-			Assert.IsTrue(XmlUtils.GetBooleanAttributeValue("yes"), "'yes' returns true");
+			return XmlUtils.GetBooleanAttributeValue(input);
 		}
 
 		[Test]
@@ -44,6 +40,54 @@ namespace SIL.Utils
 
 			sFixed = XmlUtils.MakeSafeXmlAttribute("abc&def\r\nghi\u001Fjkl\u007F\u009Fmno");
 			Assert.AreEqual("abc&amp;def&#xD;&#xA;ghi&#x1F;jkl&#x7F;&#x9F;mno", sFixed, "Second Test of MakeSafeXmlAttribute");
+		}
+	}
+
+	[TestFixture]
+	public class XmlResourceResolverTests
+	{
+		[TestCase(null, "", "res:///")]
+		[TestCase(null, "foo", "res://foo")]
+		[TestCase(null, "/foo", "res:///foo")]
+		[TestCase(null, "/tmp/foo", "res:///tmp/foo")]
+		[TestCase(null, @"c:\tmp\foo", "res:///c:/tmp/foo")]
+		[TestCase(null, "res:///tmp/foo", "res:///tmp/foo")]
+		[TestCase(null, "file:///tmp/foo", "res:///tmp/foo")]
+		[TestCase("res:///tmp/foo", "bar", "res:///tmp/bar")]
+		[TestCase("file:///tmp/foo", "bar", "file:///tmp/bar")]
+		[TestCase("file:///tmp/foo", "res:///bar", "res:///bar")]
+		[TestCase("res:///tmp/foo", "file:///bar", "file:///bar")]
+		[TestCase(@"c:\tmp\foo", "bar", "file:///c:/tmp/bar")]
+		[TestCase("res:///tmp/foo/", "bar", "res:///tmp/foo/bar")]
+		[TestCase("file:///tmp/foo/", "bar", "file:///tmp/foo/bar")]
+		[TestCase(@"c:\tmp\foo\", "bar", "file:///c:/tmp/foo/bar")]
+		[TestCase("file:///tmp/foo/", "res:///bar", "res:///bar")]
+		[TestCase("res:///tmp/foo/", "file:///bar", "file:///bar")]
+		public void ResolveUri(string baseUriString, string relativeUri, string resultUri)
+		{
+			var sut = XmlUtils.GetResourceResolver("XMLUtilsTests");
+
+			var baseUri = baseUriString == null ? null : new Uri(baseUriString);
+			Assert.That(sut.ResolveUri(baseUri, relativeUri), Is.EqualTo(new Uri(resultUri)));
+		}
+
+		[Platform(Include = "Linux")]
+		[TestCase("/tmp/foo", "bar", "file:///tmp/bar")]
+		[TestCase("/tmp/foo/", "bar", "file:///tmp/foo/bar")]
+		public void ResolveUri_Linux(string baseUriString, string relativeUri, string resultUri)
+		{
+			var sut = XmlUtils.GetResourceResolver("XMLUtilsTests");
+
+			var baseUri = baseUriString == null ? null : new Uri(baseUriString);
+			Assert.That(sut.ResolveUri(baseUri, relativeUri), Is.EqualTo(new Uri(resultUri)));
+		}
+
+		[TestCase(null, typeof(ArgumentNullException))]
+		public void ResolveUri_ThrowsException(string relativeUri, Type expectedException)
+		{
+			var sut = XmlUtils.GetResourceResolver("XMLUtilsTests");
+
+			Assert.That(() => sut.ResolveUri(null, relativeUri), Throws.InstanceOf(expectedException));
 		}
 	}
 }

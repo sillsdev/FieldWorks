@@ -15,6 +15,9 @@ Description:
 	(or just the one paragraph if Anchor and End are in the same paragraph).  To some extent, we
 	also pretend that a nonexistent selection (or a nontext selection) means an empty document
 	regardless of how much text actually exists in the rootbox.
+
+	This class basically connects a view (rootbox) with keyboards. This class gets created by
+	the VwRootBox on Windows. Linux uses a managed implementation (ViewInputManager).
 -------------------------------------------------------------------------------*//*:End Ignore*/
 
 //:>********************************************************************************************

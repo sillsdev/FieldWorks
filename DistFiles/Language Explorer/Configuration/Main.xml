@@ -99,6 +99,7 @@
 			</parameters>
 		</command>
 		<command id="CmdImportTranslatedLists" label="_Translated List Content" message="ImportTranslatedLists"/>
+		<command id="CmdImportTranslatedGramCats" label="Translated _Grammatical Category Content" message="ImportTranslatedGramCats"/>
 		<command id="CmdExport" label="_Export..." message="Export"/>
 		<command id="CmdSynch" label="S_ynchronize with LiftShare..." message="Synchronize" translate="This command tries to update from an external source of lexical data."/>
 		<command id="CmdAddCustomField" label="Custom _Fields..." message="AddCustomField"/>
@@ -417,6 +418,7 @@
 				<item command="CmdImportInterlinearData"/>
 				<item command="CmdImportSFMNotebook"/>
 				<item command="CmdImportTranslatedLists"/>
+				<item command="CmdImportTranslatedGramCats"/>
 				<include path="Extensions/*/MainConfigurationExtension.xml" query="root/menuAddOn/menu[@id='Import']/*"/>
 			</menu>
 			<item command="CmdExport"/>
