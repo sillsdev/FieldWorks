@@ -3,7 +3,7 @@
 // Derived from OutlookBar v2 2005 <http://www.codeproject.com/KB/vb/OutlookBar.aspx>, Copyright 2007 by Star Vega.
 // Changed in 2008 and 2009 by SIL International to convert to C# and add more functionality.
 
-namespace LanguageExplorer.Controls.SilSidePane
+namespace LanguageExplorer.Impls.SilSidePane
 {
 	/// <summary />
 	internal enum Renderer

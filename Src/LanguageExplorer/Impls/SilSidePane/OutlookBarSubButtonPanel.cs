@@ -7,7 +7,7 @@ using System.Diagnostics;
 using System.Drawing.Drawing2D;
 using System.Windows.Forms;
 
-namespace LanguageExplorer.Controls.SilSidePane
+namespace LanguageExplorer.Impls.SilSidePane
 {
 	/// <summary>
 	/// Color-themed panel

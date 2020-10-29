@@ -8,15 +8,15 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Windows.Forms;
 
-namespace LanguageExplorer.Controls.SilSidePane
+namespace LanguageExplorer.Impls.SilSidePane
 {
 	/// <summary>
 	/// Banner at the top of a sidepane to display the name of the currently-selected tab.
 	/// </summary>
-	internal class Banner : Label
+	internal sealed class Banner : Label
 	{
 		/// <summary />
-		public Banner()
+		internal Banner()
 		{
 			ForeColor = Color.White;
 		}

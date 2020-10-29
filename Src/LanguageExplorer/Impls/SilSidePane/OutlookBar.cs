@@ -10,19 +10,20 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.Windows.Forms;
+using LanguageExplorer.Controls;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.PlatformUtilities;
 
-namespace LanguageExplorer.Controls.SilSidePane
+namespace LanguageExplorer.Impls.SilSidePane
 {
 	/// <summary />
 	[DefaultEvent("ButtonClicked")]
-	internal class OutlookBar : Control
+	internal sealed class OutlookBar : Control
 	{
 		/// <summary />
-		public event ButtonClickedEventHandler ButtonClicked;
+		internal event ButtonClickedEventHandler ButtonClicked;
 		/// <summary />
-		public delegate void ButtonClickedEventHandler(object sender, OutlookBarButton button);
+		internal delegate void ButtonClickedEventHandler(object sender, OutlookBarButton button);
 
 		#region Member variables and constants
 		private const int kImageDimensionLarge = 26;
@@ -54,7 +55,7 @@ namespace LanguageExplorer.Controls.SilSidePane
 		#endregion
 
 		/// <summary />
-		public OutlookBar()
+		internal OutlookBar()
 		{
 			m_renderer = Platform.IsMono ? Renderer.Outlook2003 : Renderer.Outlook2007;
 			SetStyle(ControlStyles.AllPaintingInWmPaint, true);

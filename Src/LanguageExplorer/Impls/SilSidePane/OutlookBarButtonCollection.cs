@@ -9,25 +9,25 @@ using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Linq;
 
-namespace LanguageExplorer.Controls.SilSidePane
+namespace LanguageExplorer.Impls.SilSidePane
 {
 	/// <summary />
-	internal class OutlookBarButtonCollection : CollectionBase
+	internal sealed class OutlookBarButtonCollection : CollectionBase
 	{
 		private readonly OutlookBar Owner;
 
 		/// <summary />
-		public OutlookBarButtonCollection(OutlookBar owner)
+		internal OutlookBarButtonCollection(OutlookBar owner)
 			: base()
 		{
 			Owner = owner;
 		}
 
 		/// <summary />
-		public OutlookBarButton this[int index] => (OutlookBarButton)List[index];
+		internal OutlookBarButton this[int index] => (OutlookBarButton)List[index];
 
 		/// <summary />
-		public OutlookBarButton this[string text]
+		internal OutlookBarButton this[string text]
 		{
 			get
 			{
@@ -42,7 +42,7 @@ namespace LanguageExplorer.Controls.SilSidePane
 		}
 
 		/// <summary />
-		public void Add(OutlookBarButton item)
+		internal void Add(OutlookBarButton item)
 		{
 			item.Owner = Owner;
 			List.Add(item);
@@ -50,7 +50,7 @@ namespace LanguageExplorer.Controls.SilSidePane
 
 		/// <summary />
 		[SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
-		public void AddRange(OutlookBarButtonCollection items)
+		internal void AddRange(OutlookBarButtonCollection items)
 		{
 			foreach (OutlookBarButton item in items)
 			{
@@ -59,25 +59,25 @@ namespace LanguageExplorer.Controls.SilSidePane
 		}
 
 		/// <summary />
-		public int IndexOf(OutlookBarButton item)
+		internal int IndexOf(OutlookBarButton item)
 		{
 			return List.IndexOf(item);
 		}
 
 		/// <summary />
-		public void Insert(int index, OutlookBarButton value)
+		internal void Insert(int index, OutlookBarButton value)
 		{
 			List.Insert(index, value);
 		}
 
 		/// <summary />
-		public void Remove(OutlookBarButton value)
+		internal void Remove(OutlookBarButton value)
 		{
 			List.Remove(value);
 		}
 
 		/// <summary />
-		public bool Contains(OutlookBarButton item)
+		internal bool Contains(OutlookBarButton item)
 		{
 			return List.Contains(item);
 		}
@@ -92,6 +92,6 @@ namespace LanguageExplorer.Controls.SilSidePane
 		}
 
 		/// <summary />
-		public int VisibleCount => List.Cast<OutlookBarButton>().Count(b => b.Visible & b.Allowed);
+		internal int VisibleCount => List.Cast<OutlookBarButton>().Count(b => b.Visible & b.Allowed);
 	}
 }

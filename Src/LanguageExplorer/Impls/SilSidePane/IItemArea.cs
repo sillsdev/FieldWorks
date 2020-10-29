@@ -6,7 +6,7 @@
 using System.Collections.Generic;
 using System.Windows.Forms;
 
-namespace LanguageExplorer.Controls.SilSidePane
+namespace LanguageExplorer.Impls.SilSidePane
 {
 	/// <summary>
 	/// Delegate that listeners to IItemArea.ItemClicked must implement.

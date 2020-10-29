@@ -9,7 +9,7 @@ using System.Linq;
 using System.Windows.Forms;
 using SIL.PlatformUtilities;
 
-namespace LanguageExplorer.Controls.SilSidePane
+namespace LanguageExplorer.Impls.SilSidePane
 {
 	/// <summary>
 	/// Item area in a side pane which uses large buttons with large icons.

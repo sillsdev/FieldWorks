@@ -4,10 +4,10 @@
 // Changed in 2008 and 2009 by SIL International to convert to C# and add more functionality.
 
 using System.Drawing;
-using LanguageExplorer.Controls.SilSidePane;
+using LanguageExplorer.Impls.SilSidePane;
 using NUnit.Framework;
 
-namespace LanguageExplorerTests.Controls.SilSidePane
+namespace LanguageExplorerTests.Impls.SilSidePane
 {
 	[TestFixture]
 	public class OutlookBarButtonTests

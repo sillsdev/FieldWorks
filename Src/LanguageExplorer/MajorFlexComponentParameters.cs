@@ -3,7 +3,6 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Windows.Forms;
-using LanguageExplorer.Controls.SilSidePane;
 using LanguageExplorer.Impls;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
@@ -40,11 +39,9 @@ namespace LanguageExplorer
 		/// <summary />
 		internal ISharedEventHandlers SharedEventHandlers { get; }
 		/// <summary />
-		internal SidePane SidePane { get; }
-		/// <summary />
 		internal MajorFlexComponentParameters(ICollapsingSplitContainer mainCollapsingSplitContainer, MenuStrip menuStrip, ToolStripContainer toolStripContainer,
 			UiWidgetController uiWidgetController, StatusBar statusBar, ParserMenuManager parserMenuManager, DataNavigationManager dataNavigationManager,
-			FlexComponentParameters flexComponentParameters, LcmCache lcmCache, IFlexApp flexApp, IFwMainWnd mainWindow, ISharedEventHandlers sharedEventHandlers, SidePane sidePane)
+			FlexComponentParameters flexComponentParameters, LcmCache lcmCache, IFlexApp flexApp, IFwMainWnd mainWindow, ISharedEventHandlers sharedEventHandlers)
 		{
 			MainCollapsingSplitContainer = mainCollapsingSplitContainer;
 			MenuStrip = menuStrip;
@@ -58,7 +55,6 @@ namespace LanguageExplorer
 			FlexApp = flexApp;
 			MainWindow = mainWindow;
 			SharedEventHandlers = sharedEventHandlers;
-			SidePane = sidePane;
 		}
 	}
 }

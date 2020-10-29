@@ -6,13 +6,13 @@
 using System.Drawing;
 using System.Windows.Forms;
 
-namespace LanguageExplorer.Controls.SilSidePane
+namespace LanguageExplorer.Impls.SilSidePane
 {
 	/// <summary>
 	/// Item area in a sidepane which uses a list of small icons next to text labels,
 	/// implemented using ToolStrip.
 	/// </summary>
-	internal class StripListItemArea : OutlookButtonPanelItemArea
+	internal sealed class StripListItemArea : OutlookButtonPanelItemArea
 	{
 		/// <summary />
 		internal StripListItemArea()

@@ -6,12 +6,12 @@
 using System;
 using System.Drawing;
 
-namespace LanguageExplorer.Controls.SilSidePane
+namespace LanguageExplorer.Impls.SilSidePane
 {
 	/// <summary>
 	/// Item of a Tab in a SidePane
 	/// </summary>
-	public class Item
+	internal class Item
 	{
 		/// <summary>
 		/// Actual underlying widget associated with this Item instance
@@ -19,21 +19,21 @@ namespace LanguageExplorer.Controls.SilSidePane
 		internal object UnderlyingWidget { get; set; }
 
 		/// <summary>Internal name of the tab</summary>
-		public string Name { get; set; }
+		internal string Name { get; set; }
 
 		/// <summary>Text that displays on the tab</summary>
-		public string Text { get; set; }
+		internal string Text { get; set; }
 
 		/// <summary />
-		public Image Icon { get; set; }
+		internal Image Icon { get; set; }
 
 		/// <summary>
 		/// A place where clients can store arbitrary data associated with this item.
 		/// </summary>
-		public object Tag { get; set; }
+		internal object Tag { get; set; }
 
 		/// <summary />
-		public Item(string name)
+		internal Item(string name)
 		{
 			Name = name ?? throw new ArgumentNullException(nameof(name));
 			Text = name;

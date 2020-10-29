@@ -9,10 +9,10 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Windows.Forms;
 
-namespace LanguageExplorer.Controls.SilSidePane
+namespace LanguageExplorer.Impls.SilSidePane
 {
 	/// <summary />
-	internal class OutlookBarPanelRenderer : ToolStripRenderer
+	internal sealed class OutlookBarPanelRenderer : ToolStripRenderer
 	{
 		/// <summary />
 		protected override void OnRenderButtonBackground(ToolStripItemRenderEventArgs e)

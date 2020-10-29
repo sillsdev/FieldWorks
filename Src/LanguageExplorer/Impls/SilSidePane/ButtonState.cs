@@ -5,7 +5,7 @@
 
 using System;
 
-namespace LanguageExplorer.Controls.SilSidePane
+namespace LanguageExplorer.Impls.SilSidePane
 {
 	/// <summary />
 	[Flags]

@@ -10,7 +10,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwUtils;
 
-namespace LanguageExplorer.Controls.SilSidePane
+namespace LanguageExplorer.Impls.SilSidePane
 {
 	/// <summary>
 	/// Area to hold items. An OutlookButtonPanel holds items in a Tab.
@@ -21,7 +21,7 @@ namespace LanguageExplorer.Controls.SilSidePane
 		private IContainer components = new Container();
 
 		/// <summary />
-		public OutlookButtonPanel()
+		internal OutlookButtonPanel()
 		{
 			AutoSize = false;
 			GripStyle = ToolStripGripStyle.Hidden;
@@ -84,7 +84,7 @@ namespace LanguageExplorer.Controls.SilSidePane
 		/// Gets or sets a value indicating how much margin to include above and below each
 		/// sub button.
 		/// </summary>
-		public int SubButtonVerticalMargin { get; set; } = 3;
+		internal int SubButtonVerticalMargin { get; set; } = 3;
 
 		/// <summary />
 		protected override void OnItemAdded(ToolStripItemEventArgs e)

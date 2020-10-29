@@ -907,9 +907,9 @@
     <Compile Include="Controls\RegexHelperContextMenu.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Controls\SilSidePane\ButtonState.cs" />
-    <Compile Include="Controls\SilSidePane\OutlookBarPanelRenderer.cs" />
-    <Compile Include="Controls\SilSidePane\Renderer.cs" />
+    <Compile Include="Impls\SilSidePane\ButtonState.cs" />
+    <Compile Include="Impls\SilSidePane\OutlookBarPanelRenderer.cs" />
+    <Compile Include="Impls\SilSidePane\Renderer.cs" />
     <Compile Include="Controls\TreeCombo.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -3434,51 +3434,51 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Controls\SilSidePane\Banner.cs">
+    <Compile Include="Impls\SilSidePane\Banner.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Controls\SilSidePane\IItemArea.cs" />
-    <Compile Include="Controls\SilSidePane\Item.cs" />
-    <Compile Include="Controls\SilSidePane\ListViewItemArea.cs">
+    <Compile Include="Impls\SilSidePane\IItemArea.cs" />
+    <Compile Include="Impls\SilSidePane\Item.cs" />
+    <Compile Include="Impls\SilSidePane\ListViewItemArea.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Controls\SilSidePane\NavPaneOptionsDlg.cs">
+    <Compile Include="Impls\SilSidePane\NavPaneOptionsDlg.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Controls\SilSidePane\NavPaneOptionsDlg.Designer.cs">
+    <Compile Include="Impls\SilSidePane\NavPaneOptionsDlg.Designer.cs">
       <DependentUpon>NavPaneOptionsDlg.cs</DependentUpon>
     </Compile>
-    <Compile Include="Controls\SilSidePane\OutlookBar.cs">
+    <Compile Include="Impls\SilSidePane\OutlookBar.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Controls\SilSidePane\OutlookBarButton.cs" />
-    <Compile Include="Controls\SilSidePane\OutlookBarButtonCollection.cs" />
-    <Compile Include="Controls\SilSidePane\OutlookBarSubButtonPanel.cs">
+    <Compile Include="Impls\SilSidePane\OutlookBarButton.cs" />
+    <Compile Include="Impls\SilSidePane\OutlookBarButtonCollection.cs" />
+    <Compile Include="Impls\SilSidePane\OutlookBarSubButtonPanel.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Controls\SilSidePane\OutlookButtonPanel.cs">
+    <Compile Include="Impls\SilSidePane\OutlookButtonPanel.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Controls\SilSidePane\OutlookButtonPanelItemArea.cs">
+    <Compile Include="Impls\SilSidePane\OutlookButtonPanelItemArea.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Controls\SilSidePane\SidePane.cs">
+    <Compile Include="Impls\SilSidePane\SidePane.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Controls\SilSidePane\SidePaneItemAreaStyle.cs" />
-    <Compile Include="Controls\SilSidePane\SilSidePane.Designer.cs">
+    <Compile Include="Impls\SilSidePane\SidePaneItemAreaStyle.cs" />
+    <Compile Include="Impls\SilSidePane\SilSidePane.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>SilSidePane.resx</DependentUpon>
     </Compile>
-    <Compile Include="Controls\SilSidePane\StripListItemArea.cs">
+    <Compile Include="Impls\SilSidePane\StripListItemArea.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Controls\SilSidePane\Tab.cs" />
-    <EmbeddedResource Include="Controls\SilSidePane\NavPaneOptionsDlg.resx">
+    <Compile Include="Impls\SilSidePane\Tab.cs" />
+    <EmbeddedResource Include="Impls\SilSidePane\NavPaneOptionsDlg.resx">
       <DependentUpon>NavPaneOptionsDlg.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Controls\SilSidePane\SilSidePane.resx">
+    <EmbeddedResource Include="Impls\SilSidePane\SilSidePane.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>SilSidePane.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>

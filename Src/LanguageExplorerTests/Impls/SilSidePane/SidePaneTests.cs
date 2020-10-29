@@ -7,10 +7,10 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
-using LanguageExplorer.Controls.SilSidePane;
+using LanguageExplorer.Impls.SilSidePane;
 using NUnit.Framework;
 
-namespace LanguageExplorerTests.Controls.SilSidePane
+namespace LanguageExplorerTests.Impls.SilSidePane
 {
 	/// <summary />
 	[TestFixture]

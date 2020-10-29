@@ -272,7 +272,7 @@ namespace LanguageExplorer.Impls
 			this.Toolbar_CmdFLExLiftBridge = new System.Windows.Forms.ToolStripButton();
 			this.toolStripContainer = new System.Windows.Forms.ToolStripContainer();
 			this.mainContainer = new LanguageExplorer.Controls.CollapsingSplitContainer();
-			this._sidePane = new LanguageExplorer.Controls.SilSidePane.SidePane();
+			this._sidePane = new LanguageExplorer.Impls.SilSidePane.SidePane();
 			this._rightPanel = new System.Windows.Forms.Panel();
 			this._statusbar = new System.Windows.Forms.StatusBar();
 			this.statusBarPanelMessage = new System.Windows.Forms.StatusBarPanel();
@@ -3116,7 +3116,7 @@ namespace LanguageExplorer.Impls
 		private ToolStripSeparator standardToolStripSeparator2;
 		private LanguageExplorer.Controls.CollapsingSplitContainer mainContainer;
 		private Panel _rightPanel;
-		private Controls.SilSidePane.SidePane _sidePane;
+		private SilSidePane.SidePane _sidePane;
 		private ToolStripSeparator toolMenuSeparator1;
 		private ToolStripMenuItem CmdProjectUtilities;
 		private ToolStripMenuItem _parserToolStripMenuItem;

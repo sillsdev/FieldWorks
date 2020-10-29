@@ -10,7 +10,7 @@ using System.Linq;
 using System.Windows.Forms;
 using SIL.Code;
 
-namespace LanguageExplorer.Controls.SilSidePane
+namespace LanguageExplorer.Impls.SilSidePane
 {
 	/// <summary>
 	/// SidePane is the main class for clients to use of the SilSidePane library.

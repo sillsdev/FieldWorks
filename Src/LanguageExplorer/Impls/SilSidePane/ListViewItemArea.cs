@@ -9,18 +9,19 @@ using System.Diagnostics;
 using System.Windows.Forms;
 using SIL.LCModel.Utils;
 
-namespace LanguageExplorer.Controls.SilSidePane
+namespace LanguageExplorer.Impls.SilSidePane
 {
 	/// <summary>
 	/// Item area in a sidepane which uses a list of small icons next to text labels.
 	/// </summary>
-	internal class ListViewItemArea : ListView, IItemArea
+	internal sealed class ListViewItemArea : ListView, IItemArea
 	{
 		private ImageList _smallImageList;
 		private ImageList _largeImageList;
+		private bool _clicked;
 
 		/// <summary />
-		public ListViewItemArea()
+		internal ListViewItemArea()
 		{
 			Items = new List<Item>();
 			_smallImageList = new ImageList();
@@ -110,7 +111,7 @@ namespace LanguageExplorer.Controls.SilSidePane
 		/// Handles when the selection of which widget (ListViewItem in the ListView)
 		/// in this item area is changed.
 		/// </summary>
-		void HandleWidgetSelectionChanged(object sender, ListViewItemSelectionChangedEventArgs e)
+		private void HandleWidgetSelectionChanged(object sender, ListViewItemSelectionChangedEventArgs e)
 		{
 			// Event fires twice when switching from one item to another. Only handle second event.
 			if (e == null || !e.IsSelected)
@@ -129,8 +130,6 @@ namespace LanguageExplorer.Controls.SilSidePane
 				ItemClicked?.Invoke(item);
 			}
 		}
-
-		private bool _clicked;
 
 		/// <summary>
 		/// Override OnMouseDown.

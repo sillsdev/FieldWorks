@@ -8,11 +8,11 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 
-namespace LanguageExplorer.Controls.SilSidePane
+namespace LanguageExplorer.Impls.SilSidePane
 {
 	/// <summary />
 	[DesignTimeVisible(false), DefaultProperty("Text")]
-	internal class OutlookBarButton : IDisposable
+	internal sealed class OutlookBarButton : IDisposable
 	{
 		private OutlookBar _owner;
 		private bool _disposeOwner;
@@ -23,14 +23,14 @@ namespace LanguageExplorer.Controls.SilSidePane
 		private bool _selected;
 
 		/// <summary />
-		public OutlookBarButton()
+		internal OutlookBarButton()
 		{
 			_owner = new OutlookBar();
 			_disposeOwner = true;
 		}
 
 		/// <summary />
-		public OutlookBarButton(string text, Image image) : this()
+		internal OutlookBarButton(string text, Image image) : this()
 		{
 			Text = text;
 			Image = image;
@@ -54,7 +54,7 @@ namespace LanguageExplorer.Controls.SilSidePane
 
 		// IDisposable
 		/// <summary></summary>
-		protected virtual void Dispose(bool disposing)
+		private void Dispose(bool disposing)
 		{
 			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + ". ****** ");
 			if (IsDisposed)
@@ -115,11 +115,11 @@ namespace LanguageExplorer.Controls.SilSidePane
 		}
 
 		/// <summary />
-		public string Text { get; set; }
+		internal string Text { get; set; }
 
 		/// <summary />
 		[DefaultValue(typeof(bool), "True")]
-		public bool Visible
+		internal bool Visible
 		{
 			get => _visible;
 			set
@@ -134,7 +134,7 @@ namespace LanguageExplorer.Controls.SilSidePane
 
 		/// <summary />
 		[DefaultValue(typeof(bool), "False"), Browsable(false)]
-		public bool Selected
+		internal bool Selected
 		{
 			get => _selected;
 			set
@@ -155,7 +155,7 @@ namespace LanguageExplorer.Controls.SilSidePane
 
 		/// <summary />
 		[DefaultValue(typeof(bool), "True")]
-		public bool Allowed
+		internal bool Allowed
 		{
 			get => _allowed;
 			set
@@ -170,7 +170,7 @@ namespace LanguageExplorer.Controls.SilSidePane
 
 		/// <summary />
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Visible)]
-		public Image Image
+		internal Image Image
 		{
 			get
 			{
@@ -194,15 +194,15 @@ namespace LanguageExplorer.Controls.SilSidePane
 
 		/// <summary />
 		[DefaultValue(typeof(bool), "True")]
-		public bool Enabled { get; set; }
+		internal bool Enabled { get; set; }
 
 		/// <summary>
 		/// A place where clients can store arbitrary data associated with this item.
 		/// </summary>
-		public object Tag { get; set; }
+		internal object Tag { get; set; }
 
 		/// <summary />
-		public string Name { get; set; }
+		internal string Name { get; set; }
 
 		/// <summary />
 		public override string ToString()

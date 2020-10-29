@@ -6,14 +6,14 @@
 using System.Collections.Generic;
 using System.Windows.Forms;
 
-namespace LanguageExplorer.Controls.SilSidePane
+namespace LanguageExplorer.Impls.SilSidePane
 {
 	/// <summary>
 	/// The Navigation Pane Options dialog is accessible from the context menu button at the bottom
 	/// of the tab area in a sidepane. It allows a user to adjust sidepane settings related to
 	/// which tabs appear and in what order.
 	/// </summary>
-	internal partial class NavPaneOptionsDlg : Form
+	internal sealed partial class NavPaneOptionsDlg : Form
 	{
 		/// <summary>
 		/// Preserve previous list of tabs and their checked state so can restore tab ordering and
@@ -30,10 +30,31 @@ namespace LanguageExplorer.Controls.SilSidePane
 		/// Create a navpane options dialog. This zero-argument constructor is not useful normally,
 		/// but may be helpful to Designer.
 		/// </summary>
-		public NavPaneOptionsDlg()
+		internal NavPaneOptionsDlg()
 		{
 			InitializeComponent();
 			tabListBox.SelectedIndex = 0;
+		}
+
+		/// <summary>
+		/// Create a navpane options dialog, and populate it with tabs.
+		/// The collection of tabs given by the caller will be manipulated by this dialog.
+		/// </summary>
+		internal NavPaneOptionsDlg(OutlookBarButtonCollection tabs)
+		{
+			InitializeComponent();
+			// No tab is selected, so Up and Down should be disabled
+			btn_Up.Enabled = false;
+			btn_Down.Enabled = false;
+			tabListBox.SelectedIndexChanged += tabListBox_SelectedIndexChanged;
+			tabListBox.ItemCheck += HandleTabListBoxItemCheck;
+			if (tabs == null)
+			{
+				return;
+			}
+			Tabs = tabs;
+			BackupTabs();
+			FillList();
 		}
 
 		/// <summary>
@@ -49,27 +70,6 @@ namespace LanguageExplorer.Controls.SilSidePane
 					tabListBox.Items.Add(b, b.Visible);
 				}
 			}
-		}
-
-		/// <summary>
-		/// Create a navpane options dialog, and populate it with tabs.
-		/// The collection of tabs given by the caller will be manipulated by this dialog.
-		/// </summary>
-		public NavPaneOptionsDlg(OutlookBarButtonCollection tabs)
-		{
-			InitializeComponent();
-			// No tab is selected, so Up and Down should be disabled
-			btn_Up.Enabled = false;
-			btn_Down.Enabled = false;
-			tabListBox.SelectedIndexChanged += tabListBox_SelectedIndexChanged;
-			tabListBox.ItemCheck += HandleTabListBoxItemCheck;
-			if (tabs == null)
-			{
-				return;
-			}
-			Tabs = tabs;
-			BackupTabs();
-			FillList();
 		}
 
 		/// <summary>

@@ -3,19 +3,27 @@
 // Derived from OutlookBar v2 2005 <http://www.codeproject.com/KB/vb/OutlookBar.aspx>, Copyright 2007 by Star Vega.
 // Changed in 2008 and 2009 by SIL International to convert to C# and add more functionality.
 
-using LanguageExplorer.Controls.SilSidePane;
+using System;
+using LanguageExplorer.Impls.SilSidePane;
 using NUnit.Framework;
 
-namespace LanguageExplorerTests.Controls.SilSidePane
+namespace LanguageExplorerTests.Impls.SilSidePane
 {
 	[TestFixture]
-	public class TabTests
+	public class ItemTests
 	{
 		[Test]
-		public void TabTest_basic()
+		public void ItemTest_basic()
 		{
-			Assert.DoesNotThrow(() => new Tab("name"));
-			Assert.DoesNotThrow(() => new Tab(string.Empty));
+			Assert.DoesNotThrow(()=> new Item(string.Empty));
+			Assert.DoesNotThrow(() => new Item("itemname"));
+		}
+
+		[Test]
+		[ExpectedException(typeof(ArgumentNullException))]
+		public void ItemTest_null()
+		{
+			var item = new Item(null);
 		}
 	}
 }

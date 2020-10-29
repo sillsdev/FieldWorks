@@ -5,7 +5,7 @@
 
 using System.Diagnostics;
 
-namespace LanguageExplorer.Controls.SilSidePane
+namespace LanguageExplorer.Impls.SilSidePane
 {
 	partial class NavPaneOptionsDlg
 	{

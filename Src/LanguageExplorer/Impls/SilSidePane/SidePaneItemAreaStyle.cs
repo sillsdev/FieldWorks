@@ -3,11 +3,12 @@
 // Derived from OutlookBar v2 2005 <http://www.codeproject.com/KB/vb/OutlookBar.aspx>, Copyright 2007 by Star Vega.
 // Changed in 2008 and 2009 by SIL International to convert to C# and add more functionality.
 
-namespace LanguageExplorer.Controls.SilSidePane
+namespace LanguageExplorer.Impls.SilSidePane
 {
 	/// <summary>
 	/// Style of the item area
 	/// </summary>
+	/// <remarks>Must be public, because some test uses the enum as a parameter to a method that must be public.</remarks>
 	public enum SidePaneItemAreaStyle
 	{
 		/// <summary>Strip of buttons with large icons</summary>

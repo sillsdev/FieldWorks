@@ -344,11 +344,11 @@
     <Compile Include="Controls\MGA\GlossListBoxTest.cs" />
     <Compile Include="Repository\NotebookAreaTests.cs" />
     <Compile Include="SendReceive\LiftBridgeTests.cs" />
-    <Compile Include="Controls\SilSidePane\ItemTests.cs" />
-    <Compile Include="Controls\SilSidePane\NavPaneOptionsDlgTests.cs" />
-    <Compile Include="Controls\SilSidePane\OutlookBarButtonTests.cs" />
-    <Compile Include="Controls\SilSidePane\SidePaneTests.cs" />
-    <Compile Include="Controls\SilSidePane\TabTests.cs" />
+    <Compile Include="Impls\SilSidePane\ItemTests.cs" />
+    <Compile Include="Impls\SilSidePane\NavPaneOptionsDlgTests.cs" />
+    <Compile Include="Impls\SilSidePane\OutlookBarButtonTests.cs" />
+    <Compile Include="Impls\SilSidePane\SidePaneTests.cs" />
+    <Compile Include="Impls\SilSidePane\TabTests.cs" />
     <Compile Include="TestUtilities.cs" />
     <Compile Include="SfmToXml\ConverterTests.cs" />
     <Compile Include="SimpleLoggerTests.cs" />
@@ -422,7 +422,9 @@
     <Compile Include="Controls\XMLViews\XmlVcTests.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="BuildInclude.targets" />
+    <None Include="BuildInclude.targets">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="Controls\DetailControls\Test.fwlayout" />
     <None Include="Areas\TextsAndWords\Tools\FlexTextExportOutput.flextext" />
     <None Include="Controls\XMLViews\LayoutMergerTestData\LexEntry.fwlayout" />
