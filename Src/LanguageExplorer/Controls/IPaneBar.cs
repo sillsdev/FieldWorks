@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwUtils;
 
-namespace LanguageExplorer
+namespace LanguageExplorer.Controls
 {
 	/// <summary>
 	/// Interface for a Pane bar.

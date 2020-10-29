@@ -2,11 +2,11 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-namespace LanguageExplorer.Controls.PaneBar
+namespace LanguageExplorer.Controls
 {
-	internal class Spacer : PanelExtension
+	internal sealed class Spacer : PanelExtension
 	{
-		public Spacer()
+		internal Spacer()
 		{
 			Dock = System.Windows.Forms.DockStyle.Right;
 			Location = new System.Drawing.Point(545, 2);

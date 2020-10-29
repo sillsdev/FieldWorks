@@ -5,6 +5,7 @@
 using System;
 using System.Diagnostics;
 using System.Windows.Forms;
+using LanguageExplorer.Controls;
 using SIL.FieldWorks.Common.FwUtils;
 
 namespace LanguageExplorer.Areas.Lexicon.Tools

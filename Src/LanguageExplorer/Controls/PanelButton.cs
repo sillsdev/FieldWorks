@@ -9,7 +9,7 @@ using System.Windows.Forms;
 using LanguageExplorer.Controls.DetailControls;
 using SIL.FieldWorks.Common.FwUtils;
 
-namespace LanguageExplorer.Controls.PaneBar
+namespace LanguageExplorer.Controls
 {
 	internal class PanelButton : PanelExtension
 	{

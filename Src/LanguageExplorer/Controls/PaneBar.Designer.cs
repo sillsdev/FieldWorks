@@ -4,7 +4,7 @@
 
 using System.Diagnostics;
 
-namespace LanguageExplorer.Controls.PaneBar
+namespace LanguageExplorer.Controls
 {
 	partial class PaneBar
 	{
@@ -48,7 +48,7 @@ namespace LanguageExplorer.Controls.PaneBar
 		{
 			components = new System.ComponentModel.Container();
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.m_panelMain = new LanguageExplorer.Controls.PaneBar.PanelExtension();
+			this.m_panelMain = new PanelExtension();
 			this.m_panelMain.SuspendLayout();
 			this.SuspendLayout();
 			//
@@ -76,6 +76,6 @@ namespace LanguageExplorer.Controls.PaneBar
 
 		#endregion
 
-		private LanguageExplorer.Controls.PaneBar.PanelExtension m_panelMain;
+		private PanelExtension m_panelMain;
 	}
 }

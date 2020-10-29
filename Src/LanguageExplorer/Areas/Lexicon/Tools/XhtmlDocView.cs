@@ -12,6 +12,7 @@ using System.Windows.Forms;
 using System.Xml.Linq;
 using Gecko;
 using Gecko.DOM;
+using LanguageExplorer.Controls;
 using LanguageExplorer.Controls.DetailControls;
 using LanguageExplorer.DictionaryConfiguration;
 using SIL.FieldWorks.Common.FwUtils;

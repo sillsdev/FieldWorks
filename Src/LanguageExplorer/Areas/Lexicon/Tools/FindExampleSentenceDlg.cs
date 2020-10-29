@@ -6,7 +6,7 @@ using System;
 using System.Linq;
 using System.Windows.Forms;
 using System.Xml.Linq;
-using LanguageExplorer.Controls.PaneBar;
+using LanguageExplorer.Controls;
 using LanguageExplorer.Controls.XMLViews;
 using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;

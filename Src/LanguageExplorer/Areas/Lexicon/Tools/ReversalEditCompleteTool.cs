@@ -12,7 +12,6 @@ using System.Windows.Forms;
 using System.Xml.Linq;
 using LanguageExplorer.Controls;
 using LanguageExplorer.Controls.DetailControls;
-using LanguageExplorer.Controls.PaneBar;
 using LanguageExplorer.DictionaryConfiguration;
 using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;

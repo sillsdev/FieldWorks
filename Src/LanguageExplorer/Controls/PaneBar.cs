@@ -7,7 +7,7 @@ using System.Linq;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwUtils;
 
-namespace LanguageExplorer.Controls.PaneBar
+namespace LanguageExplorer.Controls
 {
 	/// <summary>
 	/// Blue bar used to hold various controls, such as links, above main content panes on the right (of the side bar) of FLEx.

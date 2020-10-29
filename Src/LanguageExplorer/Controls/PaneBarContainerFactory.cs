@@ -20,7 +20,7 @@ namespace LanguageExplorer.Controls
 		/// <param name="paneBar"></param>
 		/// <param name="mainChildControl">Main child control for the new PaneBarContainer</param>
 		/// <returns>The new PaneBarContainer instance.</returns>
-		internal static PaneBarContainer Create(FlexComponentParameters flexComponentParameters, ICollapsingSplitContainer mainCollapsingSplitContainer, Control mainChildControl, PaneBar.PaneBar paneBar = null)
+		internal static PaneBarContainer Create(FlexComponentParameters flexComponentParameters, ICollapsingSplitContainer mainCollapsingSplitContainer, Control mainChildControl, PaneBar paneBar = null)
 		{
 			var newPaneBarContainer = new PaneBarContainer(mainChildControl, paneBar);
 			mainCollapsingSplitContainer.SecondControl = newPaneBarContainer;
@@ -40,7 +40,7 @@ namespace LanguageExplorer.Controls
 		/// <param name="paneBar"></param>
 		/// <param name="mainChildControl">Main child control for the new PaneBarContainer</param>
 		/// <returns>The new PaneBarContainer instance.</returns>
-		internal static PaneBarContainer Create(FlexComponentParameters flexComponentParameters, Control mainChildControl, PaneBar.PaneBar paneBar = null)
+		internal static PaneBarContainer Create(FlexComponentParameters flexComponentParameters, Control mainChildControl, PaneBar paneBar = null)
 		{
 			var newPaneBarContainer = new PaneBarContainer(mainChildControl, paneBar)
 			{

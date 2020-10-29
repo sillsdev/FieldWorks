@@ -46,12 +46,12 @@ namespace LanguageExplorer.Controls
 		}
 
 		/// <summary />
-		internal PaneBarContainer(Control mainControl, PaneBar.PaneBar paneBar = null)
+		internal PaneBarContainer(Control mainControl, PaneBar paneBar = null)
 			: this()
 		{
 			if (paneBar == null)
 			{
-				paneBar = new PaneBar.PaneBar();
+				paneBar = new PaneBar();
 			}
 			MainControl = mainControl;
 			PaneBar = paneBar;

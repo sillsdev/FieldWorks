@@ -1628,9 +1628,9 @@
     <Compile Include="IMainContentControl.cs" />
     <Compile Include="IMainUserControl.cs" />
     <Compile Include="Inventory.cs" />
-    <Compile Include="IPaneBar.cs" />
-    <Compile Include="IPaneBarContainer.cs" />
-    <Compile Include="IPaneBarUser.cs" />
+    <Compile Include="Controls\IPaneBar.cs" />
+    <Compile Include="Controls\IPaneBarContainer.cs" />
+    <Compile Include="Controls\IPaneBarUser.cs" />
     <Compile Include="IPersistenceProvider.cs" />
     <Compile Include="IPostLayoutInit.cs" />
     <Compile Include="IRecordBar.cs" />
@@ -2951,16 +2951,16 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Controls\PaneBarContainerFactory.cs" />
-    <Compile Include="Controls\PaneBar\PanelButton.cs">
+    <Compile Include="Controls\PanelButton.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Controls\PaneBar\PanelExtension.cs">
+    <Compile Include="Controls\PanelExtension.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Controls\PaneBar\PanelMenu.cs">
+    <Compile Include="Controls\PanelMenu.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Controls\PaneBar\Spacer.cs">
+    <Compile Include="Controls\Spacer.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="FlexHelpTopicProvider.cs" />
@@ -3173,10 +3173,10 @@
     <Compile Include="Controls\PaneBarContainer.Designer.cs">
       <DependentUpon>PaneBarContainer.cs</DependentUpon>
     </Compile>
-    <Compile Include="Controls\PaneBar\PaneBar.cs">
+    <Compile Include="Controls\PaneBar.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Controls\PaneBar\PaneBar.Designer.cs">
+    <Compile Include="Controls\PaneBar.Designer.cs">
       <DependentUpon>PaneBar.cs</DependentUpon>
     </Compile>
     <Compile Include="Impls\FlexApp.cs" />

@@ -8,7 +8,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using LanguageExplorer.Controls.DetailControls;
 
-namespace LanguageExplorer.Controls.PaneBar
+namespace LanguageExplorer.Controls
 {
 	/// <summary>
 	/// PaneBar control that displays a context menu.

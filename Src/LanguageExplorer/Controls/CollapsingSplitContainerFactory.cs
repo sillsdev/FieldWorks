@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.Windows.Forms;
 using System.Xml.Linq;
 using LanguageExplorer.Controls.DetailControls;
-using LanguageExplorer.Controls.PaneBar;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 
@@ -54,7 +53,7 @@ namespace LanguageExplorer.Controls
 			};
 			var recordEditView = new RecordEditView(configurationParametersElement, sliceFilterDocument, cache, recordList, dataTree, uiWidgetController);
 			recordEditView.InitializeFlexComponent(flexComponentParameters);
-			var paneBar = new PaneBar.PaneBar();
+			var paneBar = new PaneBar();
 			paneBar.AddControls(new List<Control> { panelButton });
 			var paneBarContainer = new PaneBarContainer(recordEditView, paneBar);
 			var panel2ChildControlAsControl = (Control)paneBarContainer;

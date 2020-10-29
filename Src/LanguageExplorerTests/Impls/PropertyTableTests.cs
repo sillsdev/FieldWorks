@@ -885,7 +885,7 @@ namespace LanguageExplorerTests.Impls
 				"LanguageExplorer.Inventory",
 				"LanguageExplorer.Impls.PropertyTable",
 				"LanguageExplorer.Controls.SilSidePane.Banner",
-				"LanguageExplorer.Controls.PaneBar.PaneBar",
+				"LanguageExplorer.Controls.PaneBar",
 				"LanguageExplorer.Controls.DetailControls.AdvancedMTDialog",
 				"LanguageExplorer.Areas.TextsAndWords.Tools.ClosedFeatureValue",
 				"LanguageExplorer.UtilityTools.UtilityDlg+CircularRefBreaker",
