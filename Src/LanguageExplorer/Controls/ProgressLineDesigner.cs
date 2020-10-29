@@ -7,7 +7,7 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Windows.Forms.Design;
 
-namespace LanguageExplorer.Controls.Designer
+namespace LanguageExplorer.Controls
 {
 	/// <summary />
 	internal sealed class ProgressLineDesigner: ControlDesigner

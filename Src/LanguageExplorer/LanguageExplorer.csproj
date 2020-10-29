@@ -376,8 +376,8 @@
     <Compile Include="ContextMenuName.cs" />
     <Compile Include="Controls\AlphaOutline.cs" />
     <Compile Include="Controls\ControlServices.cs" />
-    <Compile Include="Controls\Designer\FwHelpButtonDesigner.cs" />
-    <Compile Include="Controls\Designer\ProgressLineDesigner.cs" />
+    <Compile Include="Controls\FwHelpButtonDesigner.cs" />
+    <Compile Include="Controls\ProgressLineDesigner.cs" />
     <Compile Include="Controls\DetailControls\ISliceFactory.cs" />
     <Compile Include="DictionaryConfiguration\IFragmentWriter.cs" />
     <Compile Include="DictionaryConfiguration\LcmJsonGenerator.cs" />
@@ -458,15 +458,10 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Controls\LineTypes.cs" />
-    <Compile Include="Controls\MessageBoxEx\MessageBoxExForm.cs">
+    <Compile Include="Controls\MessageBoxExForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Controls\MessageBoxEx\MessageBoxExManager.cs" />
-    <Compile Include="Controls\MessageBoxEx\MessageBoxExResources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>MessageBoxExResources.resx</DependentUpon>
-    </Compile>
+    <Compile Include="Controls\MessageBoxExManager.cs" />
     <Compile Include="Controls\ProgressLine.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -1946,7 +1941,6 @@
     </Compile>
     <None Include="images\FwContorls\ExplorerBar_Collapse_Glyph.png" />
     <None Include="images\FwContorls\ExplorerBar_Epand_Glyph.png" />
-    <Content Include="Controls\MessageBoxEx\Notes.txt" />
     <Content Include="images\Usage.ico" />
     <Content Include="Resources\AnalysisInSegmentsOccurrenceList.xml" />
     <None Include="Resources\ConstituentChartStyleInfo.xml" />
@@ -2013,12 +2007,8 @@
     <EmbeddedResource Include="Controls\HtmlControl.resx">
       <DependentUpon>HtmlControl.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Controls\MessageBoxEx\MessageBoxExForm.resx">
+    <EmbeddedResource Include="Controls\MessageBoxExForm.resx">
       <DependentUpon>MessageBoxExForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Controls\MessageBoxEx\MessageBoxExResources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>MessageBoxExResources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\ProgressLine.resx">
       <DependentUpon>ProgressLine.cs</DependentUpon>

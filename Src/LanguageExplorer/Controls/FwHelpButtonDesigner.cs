@@ -6,7 +6,7 @@ using System.Collections;
 using System.Diagnostics;
 using System.Windows.Forms.Design;
 
-namespace LanguageExplorer.Controls.Designer
+namespace LanguageExplorer.Controls
 {
 	/// <summary>
 	/// Implementation of FwHelpButtonDesigner which contains additional design-time

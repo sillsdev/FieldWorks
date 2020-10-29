@@ -1385,4 +1385,10 @@ Sorry, in this browser, opening the file via hyperlink presents a security risk.
   <data name="MergeWordGlossListParameters" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\MergeWordGlossListParameters.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>
+  <data name="CannotRestoreSavedResponses" xml:space="preserve">
+    <value>Information dialogs you previously dismissed with "do not show me this again" will be shown again due to an error. Sorry!</value>
+  </data>
+  <data name="DonTShowThisAgain" xml:space="preserve">
+    <value>Do not show this again.</value>
+  </data>
 </root>

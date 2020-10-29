@@ -13,7 +13,7 @@ using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.PlatformUtilities;
 
-namespace LanguageExplorer.Controls.MessageBoxEx
+namespace LanguageExplorer.Controls
 {
 	/// <summary>
 	/// An advanced MessageBox that supports customizations like Font, Icon,

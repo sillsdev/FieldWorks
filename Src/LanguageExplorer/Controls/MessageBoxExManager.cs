@@ -11,7 +11,7 @@ using System.Xml.Serialization;
 using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
 
-namespace LanguageExplorer.Controls.MessageBoxEx
+namespace LanguageExplorer.Controls
 {
 	/// <summary>
 	/// Manages a collection of MessageBoxes. Basically manages the
@@ -43,7 +43,7 @@ namespace LanguageExplorer.Controls.MessageBoxEx
 
 			msgBox.Caption = caption;
 			msgBox.Text = text;
-			msgBox.SaveResponseText = MessageBoxExResources.DonTShowThisAgain;
+			msgBox.SaveResponseText = LanguageExplorerControls.DonTShowThisAgain;
 			msgBox.AllowSaveResponse = displayDontShowAgainButton;
 			msgBox.UseSavedResponse = displayDontShowAgainButton;
 			switch (iconName)
@@ -112,12 +112,12 @@ namespace LanguageExplorer.Controls.MessageBoxEx
 				var activeForm = Form.ActiveForm;
 				if (activeForm == null)
 				{
-					MessageBoxUtils.Show(MessageBoxExResources.CannotRestoreSavedResponses);
+					MessageBoxUtils.Show(LanguageExplorerControls.CannotRestoreSavedResponses);
 				}
 				else
 				{
 					// Make sure as far as possible it comes up in front of any active window, including the splash screen.
-					activeForm.Invoke((Func<DialogResult>)(() => MessageBoxUtils.Show(activeForm, MessageBoxExResources.CannotRestoreSavedResponses, string.Empty)));
+					activeForm.Invoke((Func<DialogResult>)(() => MessageBoxUtils.Show(activeForm, LanguageExplorerControls.CannotRestoreSavedResponses, string.Empty)));
 				}
 			}
 			finally

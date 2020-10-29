@@ -70,6 +70,24 @@ namespace LanguageExplorer.Controls {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Information dialogs you previously dismissed with &quot;do not show me this again&quot; will be shown again due to an error. Sorry!.
+        /// </summary>
+        internal static string CannotRestoreSavedResponses {
+            get {
+                return ResourceManager.GetString("CannotRestoreSavedResponses", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Do not show this again..
+        /// </summary>
+        internal static string DonTShowThisAgain {
+            get {
+                return ResourceManager.GetString("DonTShowThisAgain", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to import translated grammatical categories.
         /// </summary>
         internal static string ImportTranslateGrammaticalCategories {
