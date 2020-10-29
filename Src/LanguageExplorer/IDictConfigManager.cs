@@ -5,7 +5,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace LanguageExplorer.DictionaryConfiguration
+namespace LanguageExplorer
 {
 	/// <summary>
 	/// Interface which the DictionaryConfigManager exposes to its Caller (XmlDocConfigureDlg).

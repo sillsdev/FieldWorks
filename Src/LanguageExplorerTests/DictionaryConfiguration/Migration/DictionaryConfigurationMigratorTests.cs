@@ -14,7 +14,6 @@ using NUnit.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.IO;
 using SIL.LCModel;
-using SIL.LCModel.Utils;
 
 namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 {

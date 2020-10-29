@@ -10,12 +10,12 @@ namespace LanguageExplorer.DictionaryConfiguration
 	/// <summary>
 	/// This view is responsible for the display of options for a GroupingNode in the configuration dialog
 	/// </summary>
-	public partial class GroupingOptionsView : UserControl, IDictionaryGroupingOptionsView
+	internal partial class GroupingOptionsView : UserControl, IDictionaryGroupingOptionsView
 	{
 		private Control m_panelContents;
 		private readonly ToolTip m_tt = new ToolTip();
 
-		public GroupingOptionsView()
+		internal GroupingOptionsView()
 		{
 			InitializeComponent();
 			m_tt.SetToolTip(descriptionBox, "Description of the intended use of this grouping node. (Not published)");

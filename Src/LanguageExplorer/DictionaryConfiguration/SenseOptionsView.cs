@@ -13,9 +13,9 @@ namespace LanguageExplorer.DictionaryConfiguration
 	/// <summary>
 	/// Displays the controls for detailed configuration of Senses, including Sense numbers.
 	/// </summary>
-	public partial class SenseOptionsView : UserControl, IDictionarySenseOptionsView
+	internal partial class SenseOptionsView : UserControl, IDictionarySenseOptionsView
 	{
-		public SenseOptionsView(bool isSubsense)
+		internal SenseOptionsView(bool isSubsense)
 		{
 			InitializeComponent();
 			textBoxBefore.KeyDown += UnicodeCharacterEditingHelper.HandleKeyDown;

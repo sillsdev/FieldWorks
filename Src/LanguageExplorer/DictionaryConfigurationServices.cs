@@ -514,7 +514,7 @@ namespace LanguageExplorer
 		internal static List<DictionaryConfigurationModel> GetDictionaryConfigurationModels(LcmCache cache, string defaultPath, string projectPath)
 		{
 			var configurationPaths = ListDictionaryConfigurationChoices(defaultPath, projectPath);
-			var configurationModels = Enumerable.Select<string, DictionaryConfigurationModel>(configurationPaths, path => new DictionaryConfigurationModel(path, cache)).ToList();
+			var configurationModels = Enumerable.Select(configurationPaths, path => new DictionaryConfigurationModel(path, cache)).ToList();
 			configurationModels.Sort((lhs, rhs) => string.Compare(lhs.Label, rhs.Label, StringComparison.InvariantCulture));
 			return configurationModels;
 		}

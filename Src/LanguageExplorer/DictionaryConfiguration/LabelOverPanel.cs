@@ -8,21 +8,21 @@ using System.Windows.Forms;
 
 namespace LanguageExplorer.DictionaryConfiguration
 {
-	public partial class LabelOverPanel : UserControl
+	internal partial class LabelOverPanel : UserControl
 	{
 		private Control m_panelContents;
 		private readonly ToolTip m_tt = new ToolTip { AutoPopDelay = 32767 }; // We expect verbose tooltips; make them show as long as possible (33s)
 
-		public LabelOverPanel()
+		internal LabelOverPanel()
 		{
 			InitializeComponent();
 		}
 
-		public string LabelText { set => label.Text = value; }
+		internal string LabelText { set => label.Text = value; }
 
-		public string LabelToolTip { set => m_tt.SetToolTip(label, value); }
+		internal string LabelToolTip { set => m_tt.SetToolTip(label, value); }
 
-		public UserControl PanelContents
+		internal UserControl PanelContents
 		{
 			set
 			{
@@ -41,7 +41,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 			}
 		}
 
-		public event EventHandler LabelClicked
+		internal event EventHandler LabelClicked
 		{
 			add => label.Click += value;
 			remove => label.Click -= value;

@@ -6,7 +6,7 @@ using System;
 
 namespace LanguageExplorer.DictionaryConfiguration
 {
-	public interface IDictionaryGroupingOptionsView
+	internal interface IDictionaryGroupingOptionsView
 	{
 		string Description { get; set; }
 

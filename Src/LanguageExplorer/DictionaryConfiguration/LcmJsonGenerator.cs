@@ -23,11 +23,11 @@ namespace LanguageExplorer.DictionaryConfiguration
 	/// a robust implementation that will always generate correct .json given any <code>LCMCache</code> and
 	/// <code>DictionaryConfigurationModel</code>
 	/// </summary>
-	public class LcmJsonGenerator : ILcmContentGenerator
+	internal sealed class LcmJsonGenerator : ILcmContentGenerator
 	{
 		private LcmCache Cache { get; }
 
-		public LcmJsonGenerator(LcmCache cache)
+		internal LcmJsonGenerator(LcmCache cache)
 		{
 			Cache = cache;
 		}

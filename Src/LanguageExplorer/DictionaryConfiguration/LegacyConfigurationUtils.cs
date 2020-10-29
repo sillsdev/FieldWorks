@@ -476,15 +476,5 @@ namespace LanguageExplorer.DictionaryConfiguration
 				return true;
 			}
 		}
-
-		internal static XElement GetLayoutElement(Inventory layouts, string className, string layoutName)
-		{
-			return layouts.GetElement("layout", new[] { className, "jtview", layoutName, null });
-		}
-
-		internal static XElement GetPartElement(Inventory parts, string className, string sRef)
-		{
-			return parts.GetElement("part", new[] { className + "-Jt-" + sRef });
-		}
 	}
 }

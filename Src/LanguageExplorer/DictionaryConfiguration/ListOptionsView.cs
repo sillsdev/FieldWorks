@@ -19,9 +19,9 @@ namespace LanguageExplorer.DictionaryConfiguration
 	/// Writing Systems (list of checkable Writing Systems; single checkbox to display WS Abbreviations), but it can be configured for anything,
 	/// for example, Complex Forms (list of checkable Complex Form Types, single checkbox to display each Complex Form in a paragraph).
 	/// </summary>
-	public partial class ListOptionsView : UserControl, IDictionaryListOptionsView
+	internal partial class ListOptionsView : UserControl, IDictionaryListOptionsView
 	{
-		public ListOptionsView()
+		internal ListOptionsView()
 		{
 			InitializeComponent();
 			var resources = new ComponentResourceManager(typeof(DictionaryConfigurationTreeControl));

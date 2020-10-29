@@ -8,9 +8,10 @@ using System.Diagnostics;
 using System.Linq;
 using System.Windows.Forms;
 using System.Xml.Linq;
+using LanguageExplorer.DictionaryConfiguration;
 using SIL.FieldWorks.Common.FwUtils;
 
-namespace LanguageExplorer.DictionaryConfiguration
+namespace LanguageExplorer.Controls
 {
 	/// <summary>
 	/// Interacts with the user and the DictionaryConfigManager to deal with the stored

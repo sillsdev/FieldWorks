@@ -5,7 +5,7 @@
 namespace LanguageExplorer.DictionaryConfiguration
 {
 	/// <summary />
-	public interface IParaOption
+	internal interface IParaOption
 	{
 		bool DisplayEachInAParagraph { get; set; }
 	}

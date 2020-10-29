@@ -265,7 +265,6 @@
       <DependentUpon>XmlViewsResources.resx</DependentUpon>
     </Compile>
     <Compile Include="Controls\DetailControls\GlossToolLoadsGuessContentsTests.cs" />
-    <Compile Include="DictionaryConfiguration\DictionaryConfigTestPresenter.cs" />
     <Compile Include="Filters\ManyOnePathSortItemsPersistenceTests.cs" />
     <Compile Include="Impls\DummyFwFindReplaceDlg.cs">
       <SubType>Form</SubType>
@@ -367,14 +366,13 @@
     <Compile Include="DictionaryConfiguration\CssGeneratorTests.cs" />
     <Compile Include="Areas\Lists\CustomListDlgTests.cs" />
     <Compile Include="Areas\Lists\Tools\DeleteCustomListTests.cs" />
-    <Compile Include="DictionaryConfiguration\DictionaryConfigManagerTests.cs" />
+    <Compile Include="Controls\DictionaryConfigManagerTests.cs" />
     <Compile Include="DictionaryConfiguration\DictionaryConfigurationControllerTests.cs" />
     <Compile Include="DictionaryConfiguration\DictionaryConfigurationImportControllerTests.cs" />
     <Compile Include="DictionaryConfiguration\DictionaryConfigurationServicesTests.cs" />
     <Compile Include="DictionaryConfiguration\DictionaryConfigurationManagerControllerTests.cs" />
     <Compile Include="DictionaryConfiguration\DictionaryConfigurationModelTests.cs" />
     <Compile Include="Areas\Lexicon\Tools\DictionaryConfigurationUtilsTests.cs" />
-    <Compile Include="DictionaryConfiguration\DictionaryConfigViewerStub.cs" />
     <Compile Include="DictionaryConfiguration\DictionaryDetailsControllerTests.cs" />
     <Compile Include="DictionaryExportServiceTests.cs" />
     <Compile Include="DictionaryConfiguration\DictionaryNodeOptionsTests.cs" />

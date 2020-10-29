@@ -524,6 +524,16 @@ namespace LanguageExplorer
 		/// </summary>
 		internal Dictionary<string, string[]> KeyAttributes { get; }
 
+		internal XElement GetLayoutElement(string className, string layoutName)
+		{
+			return GetElement("layout", new[] { className, "jtview", layoutName, null });
+		}
+
+		internal XElement GetPartElement(string className, string sRef)
+		{
+			return GetElement("part", new[] { className + "-Jt-" + sRef });
+		}
+
 		/// <summary>
 		/// Get the node (if any) that has the specified element name and the specified value
 		/// for each of the attributes listed in KeyAttributes. If an item in attrvals is null,

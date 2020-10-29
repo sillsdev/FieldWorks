@@ -8,7 +8,7 @@ using LanguageExplorer.Controls.Styles;
 
 namespace LanguageExplorer.DictionaryConfiguration
 {
-	public interface IDictionarySenseOptionsView
+	internal interface IDictionarySenseOptionsView
 	{
 		bool NumberMetaConfigEnabled { set; }
 

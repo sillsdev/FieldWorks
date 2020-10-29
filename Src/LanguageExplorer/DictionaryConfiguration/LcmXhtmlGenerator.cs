@@ -19,7 +19,7 @@ using SIL.LCModel.Utils;
 
 namespace LanguageExplorer.DictionaryConfiguration
 {
-	internal class LcmXhtmlGenerator : ILcmContentGenerator
+	internal sealed class LcmXhtmlGenerator : ILcmContentGenerator
 	{
 		internal const string CurrentEntryMarker = "blueBubble.png";
 		private const string ImagesFolder = "Images";
@@ -28,7 +28,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 		/// <summary>
 		/// This is the limit for the number of entries allowed on a single page of the output (used only when generating internal previews)
 		/// </summary>
-		public const int EntriesPerPage = 1000;
+		internal const int EntriesPerPage = 1000;
 
 
 		/// <summary>

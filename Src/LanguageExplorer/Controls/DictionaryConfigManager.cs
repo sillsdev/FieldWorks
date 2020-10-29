@@ -8,10 +8,11 @@ using System.Diagnostics;
 using System.Linq;
 using System.Windows.Forms;
 using System.Xml.Linq;
+using LanguageExplorer.DictionaryConfiguration;
 using SIL.LCModel.Utils;
 using SIL.Xml;
 
-namespace LanguageExplorer.DictionaryConfiguration
+namespace LanguageExplorer.Controls
 {
 	/// <summary>
 	/// Manages the stored dictionary configurations. In the Model-View-Presenter pattern, this
@@ -30,7 +31,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 		/// <summary>
 		/// Create the Manager for stored dictionary configurations.
 		/// </summary>
-		public DictionaryConfigManager(IDictConfigViewer viewer, List<XElement> configViews, XElement current)
+		internal DictionaryConfigManager(IDictConfigViewer viewer, List<XElement> configViews, XElement current)
 		{
 			Viewer = viewer;
 			m_originalViewConfigNodes = configViews;
@@ -339,69 +340,5 @@ namespace LanguageExplorer.DictionaryConfiguration
 		}
 
 		#endregion
-
-		/// <summary>
-		/// Item to be managed by the DictionaryConfigManager. Represents a user-configurable
-		/// Dictionary view layout.
-		/// </summary>
-		/// <remarks>This needs to be internal, because tests use it. Otherwise, it would be private</remarks>
-		internal class DictConfigItem
-		{
-			private readonly string m_initialName;
-
-			#region Auto-Properties
-
-			public string DispName { get; set; }
-			public string UniqueCode { get; }
-			public bool IsProtected { get; }
-			public bool UserMarkedDelete { get; set; }
-			public string CopyOf { get; }
-
-			#endregion
-
-			private const string ksUnnamed = "NoName";
-
-			/// <summary>
-			/// Constructor for config items being sent to dialog.
-			/// </summary>
-			/// <param name="code"></param>
-			/// <param name="name"></param>
-			/// <param name="original">Original items to be protected.</param>
-			public DictConfigItem(string code, string name, bool original)
-			{
-				UniqueCode = code;
-				m_initialName = name;
-				DispName = m_initialName;
-				IsProtected = original;
-				CopyOf = null;
-				UserMarkedDelete = false;
-			}
-
-			/// <summary>
-			/// Constructor for config items created by the Manager as copies of
-			/// an existing item.
-			/// </summary>
-			public DictConfigItem(DictConfigItem source)
-			{
-				UniqueCode = CreateUniqueIdCode(source.DispName);
-				IsProtected = false;
-				UserMarkedDelete = false;
-				CopyOf = source.UniqueCode;
-				DispName = string.Format(DictionaryConfigurationStrings.ksDictConfigCopyOf, source.DispName);
-				m_initialName = DispName;
-			}
-
-			private static string CreateUniqueIdCode(string oldName)
-			{
-				var nameSeed = oldName.PadRight(5);
-				var result = nameSeed + ksUnnamed; // make sure we don't have something too short!
-				var num = DateTime.UtcNow.Millisecond.ToString();
-				return result.Substring(0, 5) + num;
-			}
-
-			public bool IsNew => !string.IsNullOrEmpty(CopyOf);
-
-			public bool IsRenamed => !IsNew && !UserMarkedDelete && m_initialName != DispName;
-		}
 	}
 }

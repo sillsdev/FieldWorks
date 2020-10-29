@@ -38,7 +38,7 @@ namespace LanguageExplorer.DictionaryConfiguration.Migration
 		private ISimpleLogger m_logger;
 		/// <summary>
 		/// The innermost directory of the configurations presently being migrated.
-		/// To migrate, this class calls out to <see cref="LegacyConfigurationUtils"/>, which calls this class back through the
+		/// To migrate, this class claims it calls out to "LegacyConfigurationUtils" (but it does not), which calls this class back through the
 		/// <see cref="ILayoutConverter"/> interface. There is no way to pass this directory name out and back through the current
 		/// interfaces, so we store it as a member variable.
 		/// </summary>
@@ -184,12 +184,12 @@ namespace LanguageExplorer.DictionaryConfiguration.Migration
 
 		XElement ILayoutConverter.GetLayoutElement(string className, string layoutName)
 		{
-			return LegacyConfigurationUtils.GetLayoutElement(m_layoutInventory, className, layoutName);
+			return m_layoutInventory.GetLayoutElement(className, layoutName);
 		}
 
 		XElement ILayoutConverter.GetPartElement(string className, string sRef)
 		{
-			return LegacyConfigurationUtils.GetPartElement(m_partInventory, className, sRef);
+			return m_layoutInventory.GetPartElement(className, sRef);
 		}
 
 		void ILayoutConverter.BuildRelationTypeList(LayoutTreeNode ltn)

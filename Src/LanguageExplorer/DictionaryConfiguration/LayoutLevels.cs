@@ -20,7 +20,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 		/// <summary>
 		/// Add a set of nodes that represent a level in the tree (possibly hidden).
 		/// </summary>
-		public void Push(XElement partref, XElement layout)
+		internal void Push(XElement partref, XElement layout)
 		{
 			m_stackCallers.Add(new PartCaller(layout, partref));
 		}
@@ -28,7 +28,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 		/// <summary>
 		/// Remove the most recent set of nodes that represent a (possibly hidden) level.
 		/// </summary>
-		public void Pop()
+		internal void Pop()
 		{
 			if (m_stackCallers.Count > 0)
 			{
@@ -39,18 +39,18 @@ namespace LanguageExplorer.DictionaryConfiguration
 		/// <summary>
 		/// Get the most recent part (ref=) node.
 		/// </summary>
-		public XElement PartRef => m_stackCallers.Count > 0 ? m_stackCallers[m_stackCallers.Count - 1].PartRef : null;
+		internal XElement PartRef => m_stackCallers.Count > 0 ? m_stackCallers[m_stackCallers.Count - 1].PartRef : null;
 
 		/// <summary>
 		/// Get the most recent layout node.
 		/// </summary>
-		public XElement Layout => m_stackCallers.Count > 0 ? m_stackCallers[m_stackCallers.Count - 1].Layout : null;
+		internal XElement Layout => m_stackCallers.Count > 0 ? m_stackCallers[m_stackCallers.Count - 1].Layout : null;
 
 		/// <summary>
 		/// If the most recent part (ref=) node was "hidden", get the oldest part (ref=)
 		/// on the stack that was hidden.  (This allows multiple levels of hiddenness.)
 		/// </summary>
-		public XElement HiddenPartRef
+		internal XElement HiddenPartRef
 		{
 			get
 			{
@@ -79,7 +79,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 		/// layout on the stack that was hidden.  (This allows multiple levels of
 		/// hiddenness.)
 		/// </summary>
-		public XElement HiddenLayout
+		internal XElement HiddenLayout
 		{
 			get
 			{

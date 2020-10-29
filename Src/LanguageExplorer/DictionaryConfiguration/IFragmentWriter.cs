@@ -9,7 +9,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 	/// <summary>
 	/// A disposable writer for generating a fragment of a larger document.
 	/// </summary>
-	public interface IFragmentWriter : IDisposable
+	internal interface IFragmentWriter : IDisposable
 	{
 		void Flush();
 	}

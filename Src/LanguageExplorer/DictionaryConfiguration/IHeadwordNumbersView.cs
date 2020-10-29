@@ -13,7 +13,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 	/// This is the view interface used by the HeadwordNumbersDlg to facilitate unit testing the controller
 	/// without any UI.
 	/// </summary>
-	public interface IHeadwordNumbersView
+	internal interface IHeadwordNumbersView
 	{
 		event EventHandler RunStylesDialog;
 		event EventHandler CustomDigitsChanged;

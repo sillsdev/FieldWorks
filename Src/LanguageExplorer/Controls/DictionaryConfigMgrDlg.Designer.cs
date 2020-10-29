@@ -4,7 +4,7 @@
 
 using System.Diagnostics;
 
-namespace LanguageExplorer.DictionaryConfiguration
+namespace LanguageExplorer.Controls
 {
 	partial class DictionaryConfigMgrDlg
 	{

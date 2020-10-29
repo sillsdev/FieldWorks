@@ -15,14 +15,14 @@ namespace LanguageExplorer.DictionaryConfiguration
 	/// This class is responsible for manipulating the model and view related to HeadwordNumbers when configuring
 	/// a dictionary or reversal index.
 	/// </summary>
-	internal class HeadwordNumbersController
+	internal sealed class HeadwordNumbersController
 	{
 		private IHeadwordNumbersView _view;
 		private DictionaryConfigurationModel _model;
 		private LcmCache _cache;
 		private DictionaryHomographConfiguration _homographConfig;
 
-		public HeadwordNumbersController(IHeadwordNumbersView view, DictionaryConfigurationModel model, LcmCache cache)
+		internal HeadwordNumbersController(IHeadwordNumbersView view, DictionaryConfigurationModel model, LcmCache cache)
 		{
 			Guard.AgainstNull(view, nameof(view));
 			Guard.AgainstNull(model, nameof(model));
@@ -70,7 +70,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 		/// Save any changes the user made into the model and update the singleton.
 		/// The values from the dialog map to different model parts depending on the configuration type (Dictionary, Reversal Index, etc.)
 		/// </summary>
-		public void Save()
+		internal void Save()
 		{
 			_homographConfig.HomographNumberBefore = _view.HomographBefore;
 			_homographConfig.ShowHwNumber = _view.ShowHomograph;

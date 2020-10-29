@@ -8,7 +8,7 @@ using System.Windows.Forms;
 
 namespace LanguageExplorer.DictionaryConfiguration
 {
-	public interface IDictionaryListOptionsView : IDisposable
+	internal interface IDictionaryListOptionsView : IDisposable
 	{
 		/// <summary>
 		/// Returns all items in the list control

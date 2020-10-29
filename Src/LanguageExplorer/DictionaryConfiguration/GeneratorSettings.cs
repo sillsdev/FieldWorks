@@ -11,7 +11,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 	/// <summary>
 	/// Settings used while generating XHTML output by ConfiguredLcmLGenerator
 	/// </summary>
-	public sealed class GeneratorSettings
+	internal sealed class GeneratorSettings
 	{
 		internal ILcmContentGenerator ContentGenerator = new LcmXhtmlGenerator();
 		internal LcmCache Cache { get; }

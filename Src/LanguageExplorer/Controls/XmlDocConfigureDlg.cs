@@ -3291,12 +3291,12 @@ namespace LanguageExplorer.Controls
 
 		public XElement GetLayoutElement(string className, string layoutName)
 		{
-			return LegacyConfigurationUtils.GetLayoutElement(m_layouts, className, layoutName);
+			return m_layouts.GetLayoutElement(className, layoutName);
 		}
 
 		public XElement GetPartElement(string className, string sRef)
 		{
-			return LegacyConfigurationUtils.GetPartElement(m_parts, className, sRef);
+			return m_parts.GetPartElement(className, sRef);
 		}
 		#endregion
 

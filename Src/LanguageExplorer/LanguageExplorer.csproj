@@ -311,6 +311,7 @@
       <DependentUpon>DetailControlsStrings.resx</DependentUpon>
     </Compile>
     <Compile Include="Controls\DetailControls\RecordChangeHandlerFactory.cs" />
+    <Compile Include="DictionaryConfiguration\DictConfigItem.cs" />
     <Compile Include="FactoryNames.cs" />
     <Compile Include="Filters\InflectionClassFilter.cs" />
     <Compile Include="Filters\IntCompareFinder.cs" />
@@ -1703,11 +1704,11 @@
       <DependentUpon>CustomListDlg.cs</DependentUpon>
     </Compile>
     <Compile Include="Areas\Lists\Tools\DeleteCustomList.cs" />
-    <Compile Include="DictionaryConfiguration\DictionaryConfigManager.cs" />
-    <Compile Include="DictionaryConfiguration\DictionaryConfigMgrDlg.cs">
+    <Compile Include="Controls\DictionaryConfigManager.cs" />
+    <Compile Include="Controls\DictionaryConfigMgrDlg.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="DictionaryConfiguration\DictionaryConfigMgrDlg.Designer.cs">
+    <Compile Include="Controls\DictionaryConfigMgrDlg.Designer.cs">
       <DependentUpon>DictionaryConfigMgrDlg.cs</DependentUpon>
     </Compile>
     <Compile Include="DictionaryConfiguration\DictionaryConfigurationController.cs" />
@@ -1826,9 +1827,9 @@
     </Compile>
     <Compile Include="IAnalysisOccurrenceFromHvo.cs" />
     <Compile Include="ICreateAndInsert.cs" />
-    <Compile Include="DictionaryConfiguration\IDictConfigManager.cs" />
-    <Compile Include="DictionaryConfiguration\IDictConfigPresenter.cs" />
-    <Compile Include="DictionaryConfiguration\IDictConfigViewer.cs" />
+    <Compile Include="IDictConfigManager.cs" />
+    <Compile Include="IDictConfigPresenter.cs" />
+    <Compile Include="IDictConfigViewer.cs" />
     <Compile Include="DictionaryConfiguration\IDictionaryConfigurationView.cs" />
     <Compile Include="DictionaryConfiguration\IDictionaryDetailsView.cs" />
     <Compile Include="DictionaryConfiguration\IDictionaryGroupingOptionsView.cs" />
@@ -2491,7 +2492,7 @@
       <DependentUpon>CustomListDlg.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="DictionaryConfiguration\DictionaryConfigMgrDlg.resx">
+    <EmbeddedResource Include="Controls\DictionaryConfigMgrDlg.resx">
       <DependentUpon>DictionaryConfigMgrDlg.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>

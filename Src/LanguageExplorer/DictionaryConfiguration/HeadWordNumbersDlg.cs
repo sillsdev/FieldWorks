@@ -18,14 +18,14 @@ namespace LanguageExplorer.DictionaryConfiguration
 	/// <summary>
 	/// Handles the display and manipulation of HeadWordNumbers
 	/// </summary>
-	public partial class HeadwordNumbersDlg : Form, IHeadwordNumbersView
+	internal partial class HeadwordNumbersDlg : Form, IHeadwordNumbersView
 	{
 		private FwTextBox[] _digitBoxes;
 		private IHelpTopicProvider m_helpTopicProvider;
 		protected HelpProvider m_helpProvider;
 		protected string m_helpTopic = string.Empty; // Default help topic ID
 
-		public HeadwordNumbersDlg()
+		internal HeadwordNumbersDlg()
 		{
 			InitializeComponent();
 			// Initially we want the combo box to show the user what the style is but not let them change it.
