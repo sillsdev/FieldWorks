@@ -163,7 +163,7 @@
     <value>0</value>
   </data>
   <data name="description.Text" xml:space="preserve">
-    <value>Choose the lines you wish to display and the order in which to display them. Some restrictions apply in editable views.</value>
+    <value>Select the writing systems to display for each line. Drag the lines to reorder them. Some restrictions apply in editable views.</value>
   </data>
   <data name="&gt;&gt;description.Name" xml:space="preserve">
     <value>description</value>
