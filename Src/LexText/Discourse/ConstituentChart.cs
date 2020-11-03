@@ -91,6 +91,7 @@ namespace SIL.FieldWorks.Discourse
 			Vc = new InterlinVc(Cache);
 
 			BuildUIComponents();
+			ConfigPropName = "InterlinConfig_v2_Edit_ConstituentChart";
 		}
 
 		/// <summary>
@@ -135,10 +136,6 @@ namespace SIL.FieldWorks.Discourse
 		{
 			PropertyTable.SetProperty(ConfigPropName,
 				m_ribbon.Vc.LineChoices.Persist(Cache.LanguageWritingSystemFactoryAccessor),
-				PropertyTable.SettingsGroup.LocalSettings,
-				true);
-			PropertyTable.SetProperty(ConfigPropName,
-				m_body.LineChoices.Persist(Cache.LanguageWritingSystemFactoryAccessor),
 				PropertyTable.SettingsGroup.LocalSettings,
 				true);
 			UpdateDisplayForNewLineChoices();
@@ -1405,8 +1402,7 @@ namespace SIL.FieldWorks.Discourse
 			string persist = null;
 			if (PropertyTable != null)
 			{
-				string configPropName = (ConfigPropName == null) ? "InterlinConfig_Edit_ConstituentChart" : ConfigPropName;
-				persist = PropertyTable.GetStringProperty(configPropName, null, PropertyTable.SettingsGroup.LocalSettings);
+				persist = PropertyTable.GetStringProperty(ConfigPropName, null, PropertyTable.SettingsGroup.LocalSettings);
 			}
 			InterlinLineChoices lineChoices = null;
 

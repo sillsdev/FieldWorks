@@ -82,10 +82,10 @@ namespace SIL.FieldWorks.IText
 			Assert.IsFalse(choices[7].LexEntryLevel);	// free trans
 
 			choices.Add(InterlinLineChoices.kflidMorphemes);
-			Assert.AreEqual(InterlinLineChoices.kflidMorphemes, choices[1].Flid);
-			Assert.AreEqual(1, choices.FirstMorphemeIndex);	// morpheme line
-			Assert.AreEqual(2, choices.FirstLexEntryIndex);	// lex entry
-			Assert.IsFalse(choices[1].LexEntryLevel);	// morphemes
+			Assert.AreEqual(InterlinLineChoices.kflidMorphemes, choices[5].Flid);
+			Assert.AreEqual(1, choices.FirstMorphemeIndex);	// first morpheme group line
+			Assert.AreEqual(1, choices.FirstLexEntryIndex);	// lex entry
+			Assert.IsFalse(choices[5].LexEntryLevel);	// morphemes
 		}
 		[Test]
 		public void AddRemoveEditFields()
@@ -142,12 +142,13 @@ namespace SIL.FieldWorks.IText
 			Assert.AreEqual(InterlinLineChoices.kflidFreeTrans, choices[4].Flid);
 			Assert.AreEqual(5, choices.Count);
 
-			// Add Morphemes and Lexentries lines above other MorphemeLevel lines by default.
+			// Add Morphemes and Lexentries lines at the end of the other morpheme group rows.
 			choices.Add(InterlinLineChoices.kflidLexEntries); // bring entries back in
 			choices.Add(InterlinLineChoices.kflidMorphemes); // bring entries and morphemes back in
 			Assert.AreEqual(7, choices.Count);
-			Assert.AreEqual(InterlinLineChoices.kflidMorphemes, choices[1].Flid);
+			// in 9.1 we have removed the restrictions that the Morphemes and LexEntries lines be at the top
 			Assert.AreEqual(InterlinLineChoices.kflidLexEntries, choices[2].Flid);
+			Assert.AreEqual(InterlinLineChoices.kflidMorphemes, choices[3].Flid);
 			choices.Remove(choices[2]); // and get rid of the entries
 			Assert.AreEqual(6, choices.Count);
 		}

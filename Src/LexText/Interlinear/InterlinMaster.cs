@@ -169,16 +169,21 @@ namespace SIL.FieldWorks.IText
 			if (site is ISetupLineChoices)
 			{
 				var interlinearView = site as ISetupLineChoices;
-				string lineChoicesKey = "InterlinConfig_" + (interlinearView.ForEditing ? "Edit" : "Doc") + "_" + InterlinearTab;
-				InterlinLineChoices.InterlinMode mode = GetLineMode();
-				interlinearView.SetupLineChoices(lineChoicesKey, mode);
+				interlinearView.SetupLineChoices($"InterlinConfig_v2_{(interlinearView.ForEditing ? "Edit" : "Doc")}_{InterlinearTab}",
+					GetLineMode());
 			}
 			// Review: possibly need to do SetPaneSizeAndRoot
-			if (site != null && site is IChangeRootObject)
+			if (site is IChangeRootObject rootObject)
 			{
-				if (site is Control) (site as Control).SuspendLayout();
-				(site as IChangeRootObject).SetRoot(RootStTextHvo);
-				if (site is Control) (site as Control).ResumeLayout();
+				if (rootObject is Control)
+				{
+					(rootObject as Control).SuspendLayout();
+				}
+				rootObject.SetRoot(RootStTextHvo);
+				if (rootObject is Control)
+				{
+					(rootObject as Control).ResumeLayout();
+				}
 			}
 		}
 

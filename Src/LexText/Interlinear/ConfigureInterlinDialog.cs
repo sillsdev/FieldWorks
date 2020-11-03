@@ -427,7 +427,7 @@ namespace SIL.FieldWorks.IText
 		{
 			var rowChoices = new List<InterlinearTableGroup>();
 			var remainingChoiceRows = new Queue<InterlinearTableRow>();
-			var lineOptions = choices.LineOptions();
+			var lineOptions = choices.AllLineOptions;
 			foreach (var lineOption in lineOptions)
 			{
 				remainingChoiceRows.Enqueue(new InterlinearTableRow(new Tuple<LineOption, InterlinLineSpec[]>(lineOption,

@@ -167,18 +167,30 @@ namespace SIL.FieldWorks.IText
 			Add(InterlinLineChoices.kflidFreeTrans); // 7
 		}
 
+		/// <summary>
+		/// Persist all the line options
+		/// </summary>
 		public string Persist(ILgWritingSystemFactory wsf)
 		{
-			StringBuilder builder = new StringBuilder();
+			var builder = new StringBuilder();
 			builder.Append(GetType().Name);
-			foreach (InterlinLineSpec spec in AllLineSpecs)
+			// For every LineOption persist the selected writing systems. If none are selected still persist the option so the order is restored.
+			foreach (LineOption option in AllLineOptions)
 			{
-				builder.Append(",");
-				builder.Append(spec.Flid);
-				builder.Append("%");
-				builder.Append(spec.IsMagicWritingSystem
-					? $"{WritingSystemServices.GetMagicWsNameFromId(spec.WritingSystem)}"
-					: wsf.GetStrFromWs(spec.WritingSystem));
+				var lineSpecs = AllLineSpecs.Where(spec => spec.Flid == option.Flid).ToList();
+				if (!lineSpecs.Any())
+				{
+					builder.Append($",{option.Flid}%");
+					continue;
+				}
+
+				foreach (var lineSpec in lineSpecs)
+				{
+					var wsName = lineSpec.IsMagicWritingSystem
+						? WritingSystemServices.GetMagicWsNameFromId(lineSpec.WritingSystem)
+						: wsf.GetStrFromWs(lineSpec.WritingSystem);
+					builder.Append($",{option.Flid}%{wsName}");
+				}
 			}
 			return builder.ToString();
 		}
@@ -203,12 +215,18 @@ namespace SIL.FieldWorks.IText
 				default:
 					throw new Exception("Unrecognised type of InterlinLineChoices: " + parts[0]);
 			}
+
+			var lineChoicesFlids = new List<int>();
 			for (int i = 1; i < parts.Length; i++)
 			{
 				string[] flidAndWs = parts[i].Split('%');
 				if (flidAndWs.Length != 2)
 					throw new Exception("Unrecognized InterlinLineSpec: " + parts[i]);
-				int flid = Int32.Parse(flidAndWs[0]);
+				var flid = int.Parse(flidAndWs[0]);
+				if (!lineChoicesFlids.Contains(flid))
+				{
+					lineChoicesFlids.Add(flid);
+				}
 				int ws = wsf.GetWsFromStr(flidAndWs[1]);
 				// try magic writing system
 				if (ws == 0)
@@ -216,18 +234,20 @@ namespace SIL.FieldWorks.IText
 					ws = WritingSystemServices.GetMagicWsIdFromName(flidAndWs[1]);
 				}
 				// Some virtual Ids such as -61 and 103 create standard items. so, we need to add those items always
-				if (flid <= ComplexConcPatternVc.kfragFeatureLine || ((IFwMetaDataCacheManaged)proj.Cache.MetaDataCacheAccessor).FieldExists(flid))
-					result.Add(flid, ws);
-				else
+				if (ws != 0 && (flid <= ComplexConcPatternVc.kfragFeatureLine ||
+								((IFwMetaDataCacheManaged)proj.Cache.MetaDataCacheAccessor).FieldExists(flid)))
 				{
-					if (propertyTable != null && !string.IsNullOrEmpty(configPropName))
-					{
-						data = data.Replace("," + flid + "%", "");
-						propertyTable.SetProperty(configPropName, data, false);
-						propertyTable.SetPropertyPersistence(configPropName, true);
-					}
+					result.Add(flid, ws);
+				}
+				else if (propertyTable != null && !string.IsNullOrEmpty(configPropName))
+				{
+					data = data.Replace("," + flid + "%", "");
+					propertyTable.SetProperty(configPropName, data, false);
+					propertyTable.SetPropertyPersistence(configPropName, true);
 				}
 			}
+			result.AllLineOptions = lineChoicesFlids.Select(choice => result.AllLineOptions.Find(x => x.Flid == choice))
+				.Where(optionToMove => optionToMove != null).ToList();
 			return result;
 		}
 
@@ -285,9 +305,7 @@ namespace SIL.FieldWorks.IText
 					// and there's already morpheme-level stuff present it must follow
 					// the existing morpheme-level stuff.
 					if (fGotMorpheme && spec.MorphemeLevel && i >= firstMorphemeIndex &&
-						(!this[i].MorphemeLevel ||
-						spec.Flid == kflidMorphemes ||
-						spec.Flid == kflidLexEntries && this[i].Flid != kflidMorphemes))
+						!this[i].MorphemeLevel)
 					{
 						continue;
 					}
