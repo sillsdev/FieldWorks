@@ -217,6 +217,11 @@ namespace SIL.FieldWorks.IText
 			}
 
 			var lineChoicesFlids = new List<int>();
+			// If there is any saved data in the lines then clear the line specs to repopulate them with the restored data
+			if (parts.Length > 1)
+			{
+				result.AllLineSpecs.Clear();
+			}
 			for (int i = 1; i < parts.Length; i++)
 			{
 				string[] flidAndWs = parts[i].Split('%');
@@ -1017,8 +1022,8 @@ namespace SIL.FieldWorks.IText
 			// past all of them. Same treatment for notes if there is more than one ws (one per line)
 			if (!spec.MorphemeLevel && this[newPos].MorphemeLevel)
 				for (; newPos > 0 && this[newPos - 1].MorphemeLevel; newPos--) {}
-			if (spec.Flid != kflidNote && this[newPos].Flid == kflidNote)
-				for (; newPos > 0 && this[newPos - 1].Flid == kflidNote; newPos--) {}
+			if (spec.Flid != this[newPos].Flid && newPos - 1 >= 0 && this[newPos - 1].Flid == this[newPos].Flid)
+				for (; newPos > 0 && this[newPos - 1].Flid == this[newPos].Flid; newPos--) {}
 			// If it can't go here it just can't move.
 			if (newPos > 0 && !CanFollow(this[newPos - 1], spec))
 				return -1;
@@ -1049,20 +1054,37 @@ namespace SIL.FieldWorks.IText
 				return;
 			InterlinLineSpec spec = this[n];
 			// If this was the first morpheme field, move the others too.
-			bool fMoveMorphemeGroup = spec.MorphemeLevel && !this[n - 1].MorphemeLevel;
-			bool fMoveNoteGroup	= spec.Flid == kflidNote && this[n - 1].Flid != kflidNote;
-			AllLineSpecs.RemoveAt(n);
-			AllLineSpecs.Insert(dest, spec);
-			if (fMoveMorphemeGroup || fMoveNoteGroup)
+			var isMorphGroupMove = spec.MorphemeLevel && !this[n - 1].MorphemeLevel;
+			var isWsGroupMove = Count > n + 1 && this[n + 1].Flid == spec.Flid && this[n - 1].Flid != spec.Flid;
+
+			MoveLine(n, dest, spec);
+			if (isMorphGroupMove || isWsGroupMove)
 			{
-				for (int i = n + 1; i < Count && ((fMoveMorphemeGroup && this[i].MorphemeLevel) ||
-												  (fMoveNoteGroup && this[i].Flid == kflidNote)); i++)
+				for (int i = n + 1; i < Count && ((isMorphGroupMove && this[i].MorphemeLevel) ||
+												  (isWsGroupMove && this[i].Flid == spec.Flid)); i++)
 				{
 					InterlinLineSpec specT = this[i];
-					AllLineSpecs.RemoveAt(i);
-					AllLineSpecs.Insert(dest + i - n, specT);
+					MoveLine(i, dest + i - n, specT);
 				}
 			}
+		}
+
+		/// <summary>
+		/// This will move the LineSpec and, if necessary, the LineOption.
+		/// If this is a WS reorder within a field, only the LineSpec will be moved
+		/// </summary>
+		private void MoveLine(int start, int dest, InterlinLineSpec spec)
+		{
+			var lineOptionStart = AllLineOptions.IndexOf(AllLineOptions.First(lo => lo.Flid == AllLineSpecs[start].Flid));
+			var lineOptionDest = AllLineOptions.IndexOf(AllLineOptions.First(lo => lo.Flid == AllLineSpecs[dest].Flid));
+			if (lineOptionStart != lineOptionDest)
+			{
+				var lineOptionToMove = AllLineOptions[lineOptionStart];
+				AllLineOptions.RemoveAt(lineOptionStart);
+				AllLineOptions.Insert(lineOptionDest, lineOptionToMove);
+			}
+			AllLineSpecs.RemoveAt(start);
+			AllLineSpecs.Insert(dest, spec);
 		}
 
 		/// <summary>

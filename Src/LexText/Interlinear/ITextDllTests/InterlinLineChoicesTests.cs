@@ -219,6 +219,64 @@ namespace SIL.FieldWorks.IText
 		}
 
 		[Test]
+		public void MoveWsRowsUp()
+		{
+			const int fakeSecondWs = 90008;
+			InterlinLineChoices choices = new InterlinLineChoices(m_lp, kwsVernInPara, kwsAnalysis);
+			choices.Add(InterlinLineChoices.kflidWord); // 0
+			choices.Add(InterlinLineChoices.kflidWordPos); // 1
+			choices.Add(InterlinLineChoices.kflidWordGloss, kwsAnalysis); // 2
+			choices.Add(InterlinLineChoices.kflidWordGloss, fakeSecondWs); // 3
+
+			Assert.That(choices.OkToMoveUp(0), Is.False); // words line already at top
+			Assert.That(choices.OkToMoveUp(1), Is.True);
+			Assert.That(choices.OkToMoveUp(2), Is.True);
+			Assert.That(choices.OkToMoveUp(3), Is.True);
+
+			choices.MoveUp(3);
+			// Second ws moved above first
+			Assert.That(choices[2].Flid, Is.EqualTo(InterlinLineChoices.kflidWordGloss));
+			Assert.That(choices[2].WritingSystem, Is.EqualTo(fakeSecondWs));
+
+			// Moving one line of a ws group for a flid moves both up
+			choices.MoveUp(2);
+			Assert.That(choices[1].Flid, Is.EqualTo(InterlinLineChoices.kflidWordGloss));
+			Assert.That(choices[1].WritingSystem, Is.EqualTo(fakeSecondWs));
+			Assert.That(choices[2].Flid, Is.EqualTo(InterlinLineChoices.kflidWordGloss));
+			Assert.That(choices[2].WritingSystem, Is.EqualTo(kwsAnalysis));
+			Assert.That(choices[3].Flid, Is.EqualTo(InterlinLineChoices.kflidWordPos));
+		}
+
+		[Test]
+		public void MoveWsRowsDown()
+		{
+			const int fakeSecondWs = 90008;
+			InterlinLineChoices choices = new InterlinLineChoices(m_lp, kwsVernInPara, kwsAnalysis);
+			choices.Add(InterlinLineChoices.kflidWord); // 0
+			choices.Add(InterlinLineChoices.kflidWordGloss, kwsAnalysis); // 1
+			choices.Add(InterlinLineChoices.kflidWordGloss, fakeSecondWs); // 2
+			choices.Add(InterlinLineChoices.kflidWordPos); // 3
+
+			Assert.That(choices.OkToMoveDown(0), Is.True); // words line already at top
+			Assert.That(choices.OkToMoveDown(1), Is.True);
+			Assert.That(choices.OkToMoveDown(2), Is.True);
+			Assert.That(choices.OkToMoveDown(3), Is.False);
+
+			choices.MoveDown(1);
+			// First ws row moved below second
+			Assert.That(choices[2].Flid, Is.EqualTo(InterlinLineChoices.kflidWordGloss));
+			Assert.That(choices[2].WritingSystem, Is.EqualTo(kwsAnalysis));
+
+			// Moving one line of a ws group for a flid moves both down
+			choices.MoveDown(2);
+			Assert.That(choices[1].Flid, Is.EqualTo(InterlinLineChoices.kflidWordPos));
+			Assert.That(choices[2].Flid, Is.EqualTo(InterlinLineChoices.kflidWordGloss));
+			Assert.That(choices[2].WritingSystem, Is.EqualTo(fakeSecondWs));
+			Assert.That(choices[3].Flid, Is.EqualTo(InterlinLineChoices.kflidWordGloss));
+			Assert.That(choices[3].WritingSystem, Is.EqualTo(kwsAnalysis));
+		}
+
+		[Test]
 		public void EditMoveUp()
 		{
 			InterlinLineChoices choices = new EditableInterlinLineChoices(m_lp, kwsVernInPara, kwsAnalysis);
@@ -299,77 +357,86 @@ namespace SIL.FieldWorks.IText
 			wsList = choices.WritingSystemsForFlid(InterlinLineChoices.kflidLexGloss);
 			Assert.AreEqual(1, wsList.Count);
 			Assert.AreEqual(WritingSystemServices.kwsFirstAnal, wsList[0]);
-			choices.Add(InterlinLineChoices.kflidLexGloss, 3004); //becomes 4 (by default, after existing field with same flid)
+			var fakeWs = 3004;
+			choices.Add(InterlinLineChoices.kflidLexGloss, fakeWs); //becomes 4 (by default, after existing field with same flid)
 			wsList = choices.WritingSystemsForFlid(InterlinLineChoices.kflidLexGloss);
 			Assert.AreEqual(2, wsList.Count);
 			Assert.AreEqual(WritingSystemServices.kwsFirstAnal, wsList[0]);
-			Assert.AreEqual(3004, wsList[1]);
+			Assert.AreEqual(fakeWs, wsList[1]);
 			Assert.AreEqual(InterlinLineChoices.kflidLexGloss, choices[4].Flid);
-			choices.MoveDown(4);
-			Assert.AreEqual(InterlinLineChoices.kflidLexGloss, choices[5].Flid);
-			Assert.IsTrue(choices.OkToMoveUp(5));
-			choices.MoveUp(5);
-			Assert.AreEqual(InterlinLineChoices.kflidLexGloss, choices[4].Flid);
-			Assert.AreEqual(3004, choices[4].WritingSystem);
-			Assert.AreEqual(InterlinLineChoices.kflidLexPos, choices[5].Flid);
+			choices.MoveDown(4); // This will move both ws for kflidLexGloss (rows 3 and 4) down below kflidLexPos
+			Assert.That(choices[3].Flid, Is.EqualTo(InterlinLineChoices.kflidLexPos));
+			Assert.That(choices[4].Flid, Is.EqualTo(InterlinLineChoices.kflidLexGloss));
+			Assert.That(choices[5].Flid, Is.EqualTo(InterlinLineChoices.kflidLexGloss));
+			Assert.That(choices.OkToMoveUp(4), Is.True);
+			choices.MoveUp(4);
+			Assert.That(choices[3].Flid, Is.EqualTo(InterlinLineChoices.kflidLexGloss));
+			Assert.That(choices[3].WritingSystem, Is.EqualTo(WritingSystemServices.kwsFirstAnal));
+			Assert.That(choices[4].Flid, Is.EqualTo(InterlinLineChoices.kflidLexGloss));
+			Assert.That(choices[4].WritingSystem, Is.EqualTo(fakeWs));
+			Assert.That(choices[5].Flid, Is.EqualTo(InterlinLineChoices.kflidLexPos));
 			Assert.IsTrue(choices.OkToMoveUp(5));
 
 			Assert.IsTrue(choices.OkToMoveUp(4));
 			choices.MoveUp(4);
 			Assert.AreEqual(InterlinLineChoices.kflidLexGloss, choices[3].Flid);
-			Assert.AreEqual(3004, choices[3].WritingSystem);
+			Assert.AreEqual(fakeWs, choices[3].WritingSystem);
 			Assert.AreEqual(InterlinLineChoices.kflidLexGloss, choices[4].Flid);
 			Assert.AreEqual(WritingSystemServices.kwsFirstAnal, choices[4].WritingSystem);
 			Assert.IsTrue(choices.OkToMoveUp(3));
 
-			// Another ws of entries can move up just as far (not past the primary
-			// one that has the controls).
+			// Another ws of entries can move up just as far
 			choices = new EditableInterlinLineChoices(m_lp, kwsVernInPara, kwsAnalysis);
 			MakeStandardState(choices);
 			wsList = choices.WritingSystemsForFlid(InterlinLineChoices.kflidLexEntries);
 			Assert.AreEqual(1, wsList.Count);
 			Assert.AreEqual(kwsVernInPara, wsList[0]);
-			choices.Add(InterlinLineChoices.kflidLexEntries, 3005); //becomes 3
+			var fakeEntriesWs = 3005;
+			choices.Add(InterlinLineChoices.kflidLexEntries, fakeEntriesWs); //becomes 3
 			wsList = choices.WritingSystemsForFlid(InterlinLineChoices.kflidLexEntries);
-			Assert.AreEqual(2, wsList.Count);
-			Assert.AreEqual(kwsVernInPara, wsList[0]);
-			Assert.AreEqual(3005, wsList[1]);
-			Assert.AreEqual(InterlinLineChoices.kflidLexEntries, choices[3].Flid);
-			choices.MoveDown(3);
-			choices.MoveDown(4);
-			Assert.AreEqual(InterlinLineChoices.kflidLexEntries, choices[5].Flid);
-			Assert.IsTrue(choices.OkToMoveUp(5));
-			choices.MoveUp(5);
-			Assert.IsTrue(choices.OkToMoveUp(4));
+			Assert.That(wsList.Count, Is.EqualTo(2));
+			Assert.That(wsList[0], Is.EqualTo(kwsVernInPara));
+			Assert.That(wsList[1], Is.EqualTo(fakeEntriesWs));
+			Assert.That(choices[3].Flid, Is.EqualTo(InterlinLineChoices.kflidLexEntries));
+			choices.MoveDown(3); // Both LexEntries lines move down (2 & 3, become 3 & 4)
+			choices.MoveDown(4); // now 4 & 5
+			Assert.That(choices[5].Flid, Is.EqualTo(InterlinLineChoices.kflidLexEntries));
+			Assert.That(choices.OkToMoveUp(4), Is.True); // Move them both up by the top ws
 			choices.MoveUp(4);
-			Assert.AreEqual(InterlinLineChoices.kflidLexEntries, choices[3].Flid);
-			Assert.AreEqual(3005, choices[3].WritingSystem);
-			Assert.AreEqual(InterlinLineChoices.kflidLexGloss, choices[4].Flid);
-			Assert.AreEqual(WritingSystemServices.kwsFirstAnal, choices[4].WritingSystem);
-			Assert.IsTrue(choices.OkToMoveUp(3)); // not past primary LexEntry.
+			Assert.That(choices.OkToMoveUp(3), Is.True);
+			choices.MoveUp(3);
+			// Now LexEntries should be rows 2 & 3 with row 3 as the fakeWs
+			Assert.That(choices[2].Flid, Is.EqualTo(InterlinLineChoices.kflidLexEntries));
+			Assert.That(choices[3].Flid, Is.EqualTo(InterlinLineChoices.kflidLexEntries));
+			Assert.That(choices[3].WritingSystem, Is.EqualTo(fakeEntriesWs));
+			Assert.That(choices[4].Flid, Is.EqualTo(InterlinLineChoices.kflidLexGloss));
+			Assert.That(choices[4].WritingSystem, Is.EqualTo(WritingSystemServices.kwsFirstAnal));
+			Assert.That(choices.OkToMoveUp(3), Is.True); // not past primary LexEntry.
 
-			// Another ws of morphemes can move up just under the primary one (not past the primary
-			// one that has the controls).
+			// Another ws of morphemes can move up just under the primary one
 			choices = new EditableInterlinLineChoices(m_lp, kwsVernInPara, kwsAnalysis);
 			MakeStandardState(choices);
-			choices.Add(InterlinLineChoices.kflidMorphemes, 3006); //becomes 2
+			var fakeMorphWs = 3006;
+			choices.Add(InterlinLineChoices.kflidMorphemes, fakeMorphWs); //becomes 2
 			wsList = choices.WritingSystemsForFlid(InterlinLineChoices.kflidMorphemes);
 			Assert.AreEqual(2, wsList.Count);
 			Assert.AreEqual(InterlinLineChoices.kflidMorphemes, choices[2].Flid);
-			choices.MoveDown(2);
+			choices.MoveDown(2); // Moves 1 & 2 down (both ws options for Morphemes)
 			choices.MoveDown(3);
 			choices.MoveDown(4);
-			Assert.AreEqual(InterlinLineChoices.kflidMorphemes, choices[5].Flid);
-			Assert.IsTrue(choices.OkToMoveUp(5));
-			choices.MoveUp(5);
-			Assert.IsTrue(choices.OkToMoveUp(4));
+			// The pair moved together
+			Assert.That(choices[4].Flid, Is.EqualTo(InterlinLineChoices.kflidMorphemes));
+			Assert.That(choices[5].Flid, Is.EqualTo(InterlinLineChoices.kflidMorphemes));
+			Assert.That(choices.OkToMoveUp(4), Is.True);
 			choices.MoveUp(4);
-			Assert.IsTrue(choices.OkToMoveUp(3));
+			Assert.That(choices.OkToMoveUp(3), Is.True);
 			choices.MoveUp(3);
-			Assert.AreEqual(InterlinLineChoices.kflidMorphemes, choices[2].Flid);
-			Assert.AreEqual(3006, choices[2].WritingSystem);
-			Assert.AreEqual(InterlinLineChoices.kflidLexEntries, choices[3].Flid);
-			Assert.IsTrue(choices.OkToMoveUp(2)); // not past primary morphemes.
+			Assert.That(choices.OkToMoveUp(2), Is.True);
+			choices.MoveUp(2);
+			Assert.That(choices[2].Flid, Is.EqualTo(InterlinLineChoices.kflidMorphemes));
+			Assert.That(choices[2].WritingSystem, Is.EqualTo(fakeMorphWs));
+			Assert.That(choices[3].Flid, Is.EqualTo(InterlinLineChoices.kflidLexEntries));
+			Assert.That(choices.OkToMoveUp(2), Is.True);
 
 			// Another ws of word starts out right after it.
 			choices = new EditableInterlinLineChoices(m_lp, kwsVernInPara, kwsAnalysis);
@@ -391,6 +458,7 @@ namespace SIL.FieldWorks.IText
 			choices.Add(InterlinLineChoices.kflidFreeTrans); //7
 			choices.Add(InterlinLineChoices.kflidLitTrans); //8
 		}
+
 		[Test]
 		public void MoveDown()
 		{
