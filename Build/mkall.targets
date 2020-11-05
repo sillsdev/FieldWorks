@@ -596,7 +596,7 @@
 		<ItemGroup>
 			<NuGottenFiles Include="$(GeckoDir)/lib/net45/*.*" Condition="'$(OS)'=='Windows_NT'"/>
 			<NuGottenFiles Include="$(GeckoDir)/lib/net40/*.*" Condition="'$(OS)'!='Windows_NT'"/>
-			<NuGottenFiles Include="$(GeckoDir)/build/Geckofx-Core.dll.config" Condition="'$(OS)'!='Windows_NT'"/>
+			<NuGottenFiles Include="$(GeckoDir)/build/*.dll.config" Condition="'$(OS)'!='Windows_NT'"/>
 			<NuGottenFiles Include="$(GeckoDir)/content/**/*.*"/>
 			<NuGottenFiles Include="$(fwrt)/packages/DotNetZip.1.13.3/lib/net40/*.*"/>
 			<NuGottenFiles Include="$(fwrt)/packages/NAudio.1.10.0/lib/net35/NAudio.dll"/>

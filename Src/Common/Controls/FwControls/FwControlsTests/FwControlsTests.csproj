@@ -191,17 +191,17 @@
     <Reference Include="FwUtilsTests">
       <HintPath>..\..\..\..\..\Output\Debug\FwUtilsTests.dll</HintPath>
     </Reference>
-    <Reference Include="gtk-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" >
-      <HintPath>..\..\..\..\..\Lib\gtk-sharp.dll</HintPath>
-      <Private>False</Private>
+    <Reference Include="AtkSharp">
+      <HintPath>..\..\..\..\..\packages\AtkSharp-signed.3.22.24.37\lib\netstandard2.0\AtkSharp.dll</HintPath>
     </Reference>
-    <Reference Include="glib-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" >
-      <HintPath>..\..\..\..\..\Lib\glib-sharp.dll</HintPath>
-      <Private>False</Private>
+    <Reference Include="GdkSharp">
+      <HintPath>..\..\..\..\packages\GdkSharp-signed.3.22.24.37\lib\netstandard2.0\GdkSharp.dll</HintPath>
     </Reference>
-    <Reference Include="atk-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" >
-      <HintPath>..\..\..\..\..\Lib\atk-sharp.dll</HintPath>
-      <Private>False</Private>
+    <Reference Include="GLibSharp">
+      <HintPath>..\..\..\..\..\packages\GLibSharp-signed.3.22.24.37\lib\netstandard2.0\GLibSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="GtkSharp">
+      <HintPath>..\..\..\..\..\packages\GtkSharp-signed.3.22.24.37\lib\netstandard2.0\GtkSharp.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

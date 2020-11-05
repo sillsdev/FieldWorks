@@ -38,7 +38,6 @@ ARCH=$(uname -m)
 # Dependency locations
 # search for xulrunner and geckofx, select the best, and add its location to LD_LIBRARY_PATH
 . ./environ-xulrunner
-[ -d /usr/lib/cli/gdk-sharp-2.0 ] && GDK_SHARP=/usr/lib/cli/gdk-sharp-2.0/
 ENC_CONVERTERS=/usr/lib/fieldworks
 
 MONO_RUNTIME=v4.0.30319
@@ -104,7 +103,7 @@ then
 	MONO_PATH="${BASE}/DistFiles:${BASE}/Output_${ARCH}/${BUILD}"
 fi
 
-MONO_PATH="${MONO_PATH}:${GDK_SHARP}:${ENC_CONVERTERS}:${GECKOFX}"
+MONO_PATH="${MONO_PATH}:${ENC_CONVERTERS}:${GECKOFX}"
 MONO_TRACE_LISTENER="Console.Out"
 #MONO_IOMAP=case
 MONO_MWF_SCALING=disable
