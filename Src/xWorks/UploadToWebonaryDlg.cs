@@ -93,7 +93,7 @@ namespace SIL.FieldWorks.XWorks
 
 		private void siteNameBox_TextChanged(object sender, EventArgs e)
 		{
-			var subDomain = UploadToWebonaryController.UseJsonApi ? "cloud-api" : "www";
+			var subDomain = m_controller.UseJsonApi ? "cloud-api" : "www";
 			// ReSharper disable once LocalizableElement -- this is the *world-wide* web, not a LAN.
 			webonarySiteURLLabel.Text = $"https://{subDomain}.{UploadToWebonaryController.Server}/{webonarySiteNameTextbox.Text}";
 		}

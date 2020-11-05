@@ -118,12 +118,16 @@ then
 	FLEXBRIDGEDIR="/usr/lib/flexbridge"
 fi
 
+# Enable the cloud api upload. Remove it or set it to nothing to disable it.
+WEBONARY_API="true"
+
 export \
 	PATH LD_LIBRARY_PATH PKG_CONFIG_PATH LD_PRELOAD \
 	COMPONENTS_MAP_PATH \
 	FW_ROOT FW_ROOTCODE FW_ROOTDATA \
 	ICU_DATA \
 	FLEXBRIDGEDIR \
+	WEBONARY_API \
 	MONO_HELP_VIEWER \
 	MONO_PATH MONO_REGISTRY_PATH \
 	MONO_PREFIX MONO_GAC_PREFIX \

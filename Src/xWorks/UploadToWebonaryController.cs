@@ -34,8 +34,6 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		protected Func<IWebonaryClient> CreateWebClient = () => new WebonaryClient { Encoding = Encoding.UTF8 };
 
-		public PropertyTable PropertyTable { private get; set; }
-
 		public UploadToWebonaryController(LcmCache cache, PropertyTable propertyTable, Mediator mediator)
 		{
 			m_cache = cache;
@@ -233,7 +231,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		internal static bool UseJsonApi => !string.IsNullOrEmpty(Environment.GetEnvironmentVariable("WEBONARY_API"));
+		internal virtual bool UseJsonApi => !string.IsNullOrEmpty(Environment.GetEnvironmentVariable("WEBONARY_API"));
 
 		internal void UploadToWebonary(string zipFileToUpload, UploadToWebonaryModel model, IUploadToWebonaryView view)
 		{

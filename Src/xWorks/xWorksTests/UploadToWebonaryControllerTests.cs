@@ -807,6 +807,8 @@ namespace SIL.FieldWorks.XWorks
 			/// </summary>
 			public string UploadURI { get; set; }
 
+			internal override bool UseJsonApi => false;
+
 			/// <summary>
 			/// This constructor should be used in tests that will actually hit a server, and are marked [ByHand]
 			/// </summary>
@@ -830,9 +832,9 @@ namespace SIL.FieldWorks.XWorks
 			public class MockWebonaryClient : IWebonaryClient
 			{
 				private readonly WebonaryClient.WebonaryException _exceptionResponse;
-				private readonly object _responseContents;
+				private readonly byte[] _responseContents;
 
-				public MockWebonaryClient(WebonaryClient.WebonaryException exceptionResponse, object responseContents, HttpStatusCode responseStatus)
+				public MockWebonaryClient(WebonaryClient.WebonaryException exceptionResponse, byte[] responseContents, HttpStatusCode responseStatus)
 				{
 					_exceptionResponse = exceptionResponse;
 					_responseContents = responseContents;
@@ -889,14 +891,14 @@ namespace SIL.FieldWorks.XWorks
 				{
 					if (_exceptionResponse != null)
 						throw _exceptionResponse;
-					return (string)_responseContents;
+					return Encoding.UTF8.GetString(_responseContents);
 				}
 
 				private byte[] MockByteArrayResponse()
 				{
 					if (_exceptionResponse != null)
 						throw _exceptionResponse;
-					return (byte[])_responseContents;
+					return _responseContents;
 				}
 			}
 
